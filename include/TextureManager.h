@@ -51,7 +51,6 @@ typedef std::map<int, ImageInfo*> TextureIDMap;
 class TextureManager : public Singleton<TextureManager>
 {
 public:
- // OpenGLTexture* getTexture( const char* name, bool reportFail = true );
   int getTextureID( const char* name, bool reportFail = true );
   int addTexture( const char*, OpenGLTexture *texture  );
   

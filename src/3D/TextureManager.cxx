@@ -65,27 +65,6 @@ TextureManager::~TextureManager()
   textureIDs.clear();
 }
 
-/*OpenGLTexture* TextureManager::getTexture( const char* name, bool reportFail )
-{
-  if (!name)
-  	return NULL;
-  std::string texName = name;
-  // see if we have the texture
-  TextureNameMap::iterator it = textureNames.find(texName);
-  if (it != textureNames.end())
-    return it->second.texture;
-  else { // we don't have it so try and load it
-	  FileTextureInit	file;
-	  file.filter = OpenGLTexture::LinearMipmapLinear;
-	  file.name = texName;
-          ImageInfo info;
-          int   id = addTexture(name,loadTexture(file,reportFail));
-	  if (id >=0)
-	    return textureIDs[id]->texture;
-  }  
-  return NULL;
-} */
-
 int TextureManager::getTextureID( const char* name, bool reportFail )
 {
   if (!name)

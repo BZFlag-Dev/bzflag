@@ -196,23 +196,24 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // make mountain stuff
   mountainsAvailable = false;
   {
-    int mountainTexture;
+    int mountainTexture = -1;
     int width  = 0;
     int height = 0;
-	bool done = false;
-	while (!done){
-		char text[256];
-		sprintf(text,"mountain%d",numMountainTextures+1);
-		mountainTexture = tm.getTextureID(text,false);
-		if (mountainTexture>=0){
-                        const ImageInfo &info = tm.getInfo(mountainTexture);
-			height = info.y;
-			width += info.x;
-			numMountainTextures++;
-		}
-		else
-			done = true;
-	}
+    numMountainTextures = 0;
+    bool done = false;
+    while (!done){
+      char text[256];
+      sprintf(text,"mountain%d",numMountainTextures+1);
+      mountainTexture = tm.getTextureID(text,false);
+      if (mountainTexture>=0){
+              const ImageInfo &info = tm.getInfo(mountainTexture);
+	      height = info.y;
+	      width += info.x;
+	      numMountainTextures++;
+      }
+      else
+	      done = true;
+    }
 
     if (numMountainTextures>0) {
       mountainsAvailable = true;
