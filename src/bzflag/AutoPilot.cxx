@@ -70,13 +70,6 @@ bool isFlagUseful(FlagType *type)
   return ((float)flagValue) >= avg;
 }
 
-float normalizeAngle(float ang)
-{
-  if (ang < -1.0f * M_PI) ang += (float)(2.0 * M_PI);
-  if (ang > 1.0f * M_PI) ang -= (float)(2.0 * M_PI);
-  return ang;
-}
-
 ShotPath *findWorstBullet(float &minDistance)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -232,9 +225,9 @@ bool	avoidBullet(float &rotation, float &speed)
   } else if (dotProd > 0.96f) {
     speed = 1.0;
     float myAzimuth = myTank->getAngle();
-    float rotation1 = normalizeAngle((float)((shotAngle + M_PI/2.0) - myAzimuth));
+    float rotation1 = TargetingUtils::normalizeAngle((float)((shotAngle + M_PI/2.0) - myAzimuth));
 
-    float rotation2 = normalizeAngle((float)((shotAngle - M_PI/2.0) - myAzimuth));
+    float rotation2 = TargetingUtils::normalizeAngle((float)((shotAngle - M_PI/2.0) - myAzimuth));
 
     float zCross = shotUnitVec[0]*trueVec[1] - shotUnitVec[1]*trueVec[0];
 
@@ -449,7 +442,7 @@ bool chasePlayer(float &rotation, float &speed)
       float absBias = (float)(M_PI/20.0 * (distance / 100.0));
       float bias = ((period % 4) < 2) ? absBias : -absBias;
       rotation += bias;
-      rotation = normalizeAngle(rotation);
+      rotation = TargetingUtils::normalizeAngle(rotation);
       speed = 1.0;
     }
   } else if (target->getFlag() != Flags::Burrow) {

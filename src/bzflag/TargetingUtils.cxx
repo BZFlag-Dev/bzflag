@@ -17,6 +17,13 @@
 
 // These routines are 2 dimensional
 
+float TargetingUtils::normalizeAngle(float ang)
+{
+  if (ang < -1.0f * M_PI) ang += (float)(2.0 * M_PI);
+  if (ang > 1.0f * M_PI) ang -= (float)(2.0 * M_PI);
+  return ang;
+}
+
 void TargetingUtils::getUnitVector( const float *src, const float *target, float unitVector[3] )
 {
   unitVector[0] = target[0] - src[0];

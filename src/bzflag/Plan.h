@@ -17,6 +17,8 @@
 #include <stack>
 #include "TimeKeeper.h"
 
+class ShotPath;
+
 /**
  * Roger will follow a plan. These plans are stored on a plan stack
  * allowing for short medium and long range plans to cooperate to 
@@ -32,6 +34,8 @@ public:
 	 * implementation just checks for an expiration time, to keep
 	 * roger from bullheadedly trying something that just aint
 	 * gonna work. You can override this method for specific plans
+	 *
+	 * @returns whether this plan is still valid
 	 */
 	virtual bool isValid();
 
@@ -41,6 +45,8 @@ public:
 	 * might consist of avoiding a building, or weaving, for instance.
 	 * if this method returns true, than this plan is just a coordinator
 	 * of sub plans.
+	 *
+	 * @returns whether this plan uses sub plans
      */
 	virtual bool usesSubPlan() = 0;
 
@@ -48,6 +54,8 @@ public:
 	 * creates a sub plan to be placed on the stack to accomplish
 	 * this plan's goals. This method only gets called if usesSubPlan
 	 * return true.
+	 *
+	 * @returns a plan that can be used to accomplish part of this task
 	 */
 	virtual Plan *createSubPlan() = 0;
 
@@ -56,10 +64,23 @@ public:
 	 * to shoot at enemies. Overridden methods should call this base
 	 * implementation. This method only gets called if usesSubPlan
 	 * return false.
+	 *
+	 * @param rotation an output reference to the desired rotation 
+	 * @param speed an output reference to the desired speed
 	 */
-	virtual void execute();
+	virtual void execute(float &rotation, float &speed);
+
+	/**
+	 * checks to see if i am in imminent danger. If so move so
+	 * that my danger level goes down. Avoiding bullets
+	 * is not a plan, it operates a more subconscious level.
+	 *
+	 * returns whether or not we avoided a bullet
+	 */
+	static bool avoidBullet(float &rotation, float &speed);
 
 private:
+	static ShotPath *findWorstBullet(float &minDistance);
 	TimeKeeper planExpiration;
 	TimeKeeper lastShot;
 };
@@ -68,7 +89,7 @@ class PlanStack
 {
 public:
 	PlanStack();
-	void execute();
+	void execute(float &rotation, float &speed);
 private:
 	std::stack<Plan *> plans;
 };
@@ -90,7 +111,7 @@ public:
 	
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan() ;
-	virtual void execute();
+	virtual void execute(float &rotation, float &speed);
 
 private:
 	float gotoPt[3];
@@ -104,7 +125,7 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan* createSubPlan();
-	virtual void execute();
+	virtual void execute(float &rotation, float &speed);
 
 private:
 	int playerID;

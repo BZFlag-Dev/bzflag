@@ -17,6 +17,7 @@
 class TargetingUtils
 {
 public:
+  static float normalizeAngle( float ang );
   static void getUnitVector( const float *src, const float *target, float unitVector[3] );
   static void get3DUnitVector( const float *src, const float *target, float unitVector[3] );
   static float getTargetDistance( const float *src, const float *target );

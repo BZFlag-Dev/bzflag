@@ -40,7 +40,7 @@ bool Plan::isValid()
 	return (delta < 0.0f);
 }
 
-void Plan::execute()
+void Plan::execute(float &, float &)
 {
 	float pos[3];
 	LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -145,6 +145,160 @@ void Plan::execute()
 	}
 }
 
+bool Plan::avoidBullet(float &rotation, float &speed)
+{
+	LocalPlayer *myTank = LocalPlayer::getMyTank();
+	const float *pos = myTank->getPosition();
+
+	if ((myTank->getFlag() == Flags::Narrow) || (myTank->getFlag() == Flags::Burrow))
+		return false; // take our chances
+
+	float minDistance;
+	ShotPath *shot = findWorstBullet(minDistance);
+
+	if ((shot == NULL) || (minDistance > 100.0f))
+		return false;
+
+	const float *shotPos = shot->getPosition();
+	const float *shotVel = shot->getVelocity();
+	float shotAngle = atan2f(shotVel[1],shotVel[0]);
+	float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+
+	float trueVec[2] = {(pos[0]-shotPos[0])/minDistance,(pos[1]-shotPos[1])/minDistance};
+	float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
+
+#ifdef _MSC_VER
+	if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
+	|| (myTank->getFlag()) == Flags::Wings))
+	&& (minDistance < (max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
+	&& (myTank->getFlag() != Flags::NoJumping)) {
+#else
+	if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
+	|| (myTank->getFlag()) == Flags::Wings))
+	&& (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
+	&& (myTank->getFlag() != Flags::NoJumping)) {
+#endif
+		myTank->setJump();
+		return (myTank->getFlag() != Flags::Wings);
+	} else if (dotProd > 0.96f) {
+		speed = 1.0;
+		float myAzimuth = myTank->getAngle();
+		float rotation1 = TargetingUtils::normalizeAngle((float)((shotAngle + M_PI/2.0) - myAzimuth));
+
+		float rotation2 = TargetingUtils::normalizeAngle((float)((shotAngle - M_PI/2.0) - myAzimuth));
+
+		float zCross = shotUnitVec[0]*trueVec[1] - shotUnitVec[1]*trueVec[0];
+
+		if (zCross > 0.0f) { //if i am to the left of the shot from shooter pov
+			rotation = rotation1;
+			if (fabs(rotation1) < fabs(rotation2))
+				speed = 1.0f;
+			else if (dotProd > 0.98f)
+				speed = -0.5f;
+			else
+				speed = 0.5f;
+		} else {
+			rotation = rotation2;
+			if (fabs(rotation2) < fabs(rotation1))
+				speed = 1.0f;
+			else if (dotProd > 0.98f)
+				speed = -0.5f;
+			else
+				speed = 0.5f;
+		}
+
+		return true;
+	}
+	return false;
+}
+
+ShotPath *Plan::findWorstBullet(float &minDistance)
+{
+	LocalPlayer *myTank = LocalPlayer::getMyTank();
+	const float *pos = myTank->getPosition();
+	ShotPath *minPath = NULL;
+
+	minDistance = Infinity;
+	for (int t = 0; t < curMaxPlayers; t++) {
+		if (t == myTank->getId() || !player[t])
+			continue;
+
+		const int maxShots = player[t]->getMaxShots();
+		for (int s = 0; s < maxShots; s++) {
+			ShotPath* shot = player[t]->getShot(s);
+			if (!shot || shot->isExpired())
+				continue;
+
+			if ((shot->getFlag() == Flags::InvisibleBullet) &&
+				(myTank->getFlag() != Flags::Seer))
+				continue; //Theoretically Roger could triangulate the sound
+			if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
+				continue;
+			if ((shot->getFlag() == Flags::Laser) &&
+				(myTank->getFlag() == Flags::Cloaking))
+				continue; //cloaked tanks can't die from lasers
+
+			const float* shotPos = shot->getPosition();
+			if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
+				(shot->getFlag() != Flags::GuidedMissile))
+				continue;
+
+			const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
+			if (dist < minDistance) {
+				const float *shotVel = shot->getVelocity();
+				float shotAngle = atan2f(shotVel[1], shotVel[0]);
+				float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+
+				float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
+				float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
+
+				if (dotProd <= 0.1f) //pretty wide angle, evasive actions prolly aren't gonna work
+					continue;
+
+				minDistance = dist;
+				minPath = shot;
+			}
+		}
+	}
+
+	float oldDistance = minDistance;
+	WorldPlayer *wp = World::getWorld()->getWorldWeapons();
+	for (int w = 0; w < wp->getMaxShots(); w++) {
+		ShotPath* shot = wp->getShot(w);
+		if (!shot || shot->isExpired())
+			continue;
+
+		if (shot->getFlag() == Flags::InvisibleBullet && myTank->getFlag() != Flags::Seer)
+			continue; //Theoretically Roger could triangulate the sound
+		if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
+			continue; //cloaked tanks can't die from lasers
+
+		const float* shotPos = shot->getPosition();
+		if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
+			continue;
+
+		const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
+		if (dist < minDistance) {
+			const float *shotVel = shot->getVelocity();
+			float shotAngle = atan2f(shotVel[1], shotVel[0]);
+			float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+
+			float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
+			float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
+
+			if (dotProd <= 0.1f) //pretty wide angle, evasive actions prolly aren't gonna work
+				continue;
+
+			minDistance = dist;
+			minPath = shot;
+		}
+	}
+	if (oldDistance < minDistance)
+		minDistance = oldDistance; //pick the closer bullet
+	return minPath;
+}
+
+
 /**
  * PlanStack
  */
@@ -155,8 +309,11 @@ PlanStack::PlanStack()
 	plans.push(pPlan);
 }
 
-void PlanStack::execute()
+void PlanStack::execute(float &rotation, float &speed)
 {
+	if (Plan::avoidBullet(rotation, speed))
+		return;
+
 	Plan *pPlan = NULL;
 	
 	while (plans.size() > 0) {
@@ -172,7 +329,7 @@ void PlanStack::execute()
 		plans.push(pPlan);
 	}
 
-	pPlan->execute();
+	pPlan->execute(rotation, speed);
 }
 
 /**
@@ -220,11 +377,11 @@ Plan *GotoPointPlan::createSubPlan()
 	return NULL;
 }
 
-void GotoPointPlan::execute()
+void GotoPointPlan::execute(float &rotation, float &speed)
 {
 	//TODO: goto point, then
 
-	Plan::execute();
+	Plan::execute(rotation, speed);
 }
 
 /**
@@ -240,9 +397,19 @@ WeavePlan::WeavePlan(int pID, bool right )
 
 bool WeavePlan::isValid()
 {
+	Player *pPlayer = lookupPlayer(playerID);
+	if (pPlayer == NULL)
+		return false;
+
+	if (!pPlayer->isAlive())
+		return false;
+
 	LocalPlayer *myTank = LocalPlayer::getMyTank();
 	const float *pVel = myTank->getVelocity();
-	return (pVel[0] > 0.0f) || (pVel[1] > 0.0f) || (pVel[2] > 0.0f);
+	if ((pVel[0] == 0.0f) && (pVel[1] == 0.0f) && (pVel[2] == 0.0f))
+		return false;
+
+	return true;
 }
 
 bool WeavePlan::usesSubPlan()
@@ -255,11 +422,11 @@ Plan* WeavePlan::createSubPlan()
 	return NULL;
 }
 
-void WeavePlan::execute()
+void WeavePlan::execute(float &rotation, float &speed)
 {
 	//TODO: weave, then
 
-	Plan::execute();
+	Plan::execute(rotation, speed);
 }
 
 /**
