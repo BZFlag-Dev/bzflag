@@ -1909,6 +1909,9 @@ void WeatherRenderer::draw ( const SceneRenderer& /*sr*/ )
 			glColor4f(1,1,1,1.0f - alphaMod);
 			glPushMatrix();
 			glTranslatef(itr->pos[0],itr->pos[1],itr->pos[2]);
+			if (doBillBoards)
+				sr.getViewFrustum().executeBillboard();
+
 			glRotatef(lastRainTime*10.0f * rainSpeed,0,0,1);
 			
 			dropList.execute();
@@ -1962,6 +1965,24 @@ void WeatherRenderer::buildDropList ( void )
 	dropList.begin();
 	glPushMatrix();
 
+	if (doBillBoards)
+	{
+		glBegin(GL_QUADS);
+		glTexCoord2f(0,0);
+		glVertex3f(-rainSize[0],-rainSize[1],0);
+
+		glTexCoord2f(1,0);
+		glVertex3f(rainSize[0],-rainSize[1],0);
+
+		glTexCoord2f(1,1);
+		glVertex3f(rainSize[0],rainSize[1],0);
+
+		glTexCoord2f(0,1);
+		glVertex3f(-rainSize[0],rainSize[1],0);
+		glEnd();
+	}
+	else
+	{
 		glBegin(GL_QUADS);
 		glTexCoord2f(0,0);
 		glVertex3f(-rainSize[0],0,-rainSize[1]);
@@ -2007,7 +2028,7 @@ void WeatherRenderer::buildDropList ( void )
 		glTexCoord2f(0,1);
 		glVertex3f(-rainSize[0],0,rainSize[1]);
 		glEnd();
-
+	}
 	glPopMatrix();
 	dropList.end();
 }

@@ -65,6 +65,7 @@ class WeatherRenderer {
 		float						rainSpread;
 		bool						doPuddles;
 		bool						doLineRain;
+		bool						doBillBoards;
 		float						rainStartZ;
 		float						rainEndZ;
 		float						maxPuddleTime;

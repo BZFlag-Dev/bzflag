@@ -30,6 +30,8 @@ MessageOfTheDay::~MessageOfTheDay()
 const std::string& MessageOfTheDay::get ( const std::string URL )
 {
   data = "";
+	return data;
+
   // get all up on the internet and go get the thing
   if (!URLManager::instance().getURL(URL,data)) {
     data = "Default MOTD";
