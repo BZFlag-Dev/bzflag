@@ -2,7 +2,6 @@
 .SH NAME
 BZFlag \- a tank battle game
 .SH SYNOPSIS
-.sS
 .B bzflag
 [\fB\-3dfx\fR]
 [\fB\-no3dfx\fR]
@@ -52,7 +51,6 @@ with the next highest score becomes the rabbit. The object is to
 remain the rabbit for as long as possible. The rabbit is marked as
 a white tank.
 .SS Options
-.RS
 .TP 15
 .B -3dfx
 For Mesa users with a pass-through 3Dfx card, e.g. a Voodoo or
@@ -174,9 +172,6 @@ callsign used for the previous game is used.  If that cannot be found
 then the callsign is the value of the \fBBZFLAGID\fR environment variable.
 If \fBBZFLAGID\fR is empty or undefined then \fBbzflag\fR will prompt for a
 callsign when joining a game.
-.TP
-
-.RE
 .SS Controls
 Tanks are controlled by moving the mouse within the large yellow box
 in the main view.  When the mouse is inside the small yellow box,
@@ -439,7 +434,6 @@ Bad flags disappear after the first possession.
 .PP
 Here is a brief description of each good superflag with the flag's code
 in parentheses:
-.RS
 .TP 15
 .B High Speed (V)
 Boosts top speed by 50%.
@@ -552,11 +546,9 @@ It's useless!
 Tank can drive around in the air, and may be able to jump multiple times.
 This can be useful when jumping
 or falling.
-.RE
 .PP
 A brief description of each bad superflag with the flag's code
 in parentheses:
-.RS
 .TP 15
 .B Colorblindness (CB)
 Prevents tank from seeing any team information about other tanks.
@@ -644,9 +636,7 @@ and \fIfirst person\fR modes is that you can choose to do it with the winning ta
 This is selected by cycling through the tanks until you see the \fRwinner\fR option. In this mode,
 you will always be engaged with whomever has the best score (and is alive).
 The default is \fIdrive with winner\fR mode.
-.RE
 .SH User Commands
-.RS
 The following commands can be executed by sending a message to all and using these strings as the message
 .TP 15
 SILENCE \fIplayerName\fR
@@ -657,15 +647,12 @@ Reshow messages coming from player with \fIplayerName\fR name
 .TP 15
 SAVEWORLD \fIfilename\fR
 Save the current world to \fIfilename\fR.
-.RE
 .SH FILES
-.RS
 .TP 15
 $(HOME)/.bzflag
 Stores options between game sessions.  Used when HOST is not defined.
 .TP 15
 $(HOME)/.bzflag.$(HOST)
 Stores options between game sessions.  Used when HOST is defined.
-.RE
 .SH SEE ALSO
 bzfls(6), bzfs(6)
