@@ -47,8 +47,9 @@ const char *usageString =
 "[-banfile <filename>] "
 "[-c] "
 "[-conf <filename>] "
-"[-cr [density]] "
+"[-cr] "
 "[-d] "
+"[-density <num>] "
 "[+f {good|<id>}] "
 "[-f {bad|<id>}] "
 "[-fb] "
@@ -122,8 +123,9 @@ const char *extraUsageString =
 "\t-banfile: specify a file to load and store the banlist in\n"
 "\t-c: capture-the-flag style game,\n"
 "\t-conf: configuration file\n"
-"\t-cr [density]: capture-the-flag style game with random world\n\t\toptionally specify integer density (default 5)\n"
+"\t-cr: capture-the-flag style game with random world\n"
 "\t-d: increase debugging level\n"
+"\t-density: specify density of buildings for CTF or random worlds (default is 5)\n"
 "\t+f: always have flag <id> available\n"
 "\t-f: never randomly generate flag <id>\n"
 "\t-fb: allow flags on box buildings\n"
@@ -484,15 +486,6 @@ void parse(int argc, char **argv, CmdLineOptions &options)
           options.numTeamFlags[t] += 1;
 	teamFlagsAdded = true;
       }
-
-      // if there are any arguments following, see if they are 'density'
-      if (i+1 != argc) {
-	if (isdigit(*argv[i+1])) {
-	  options.citySize = atoi(argv[i+1]);
-	  i++;
-	}
-      }
-
     } else if (strcmp(argv[i], "-d") == 0) {
       // increase debug level
       int count = 0;
@@ -503,6 +496,15 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	usage(argv[0]);
       }
       options.debug += count;
+    } else if (strcmp(argv[i], "-density") ==0) {
+      if (i+1 != argc && isdigit(*argv[i+1])) {
+	options.citySize = atoi(argv[i+1]);
+	i++;
+      }
+      else {
+	fprintf(stderr, "integer argument expected for -density\n");
+	usage(argv[0]);
+      }
     } else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
       if (++i == argc) {
