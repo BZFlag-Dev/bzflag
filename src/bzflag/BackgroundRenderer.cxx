@@ -1649,7 +1649,7 @@ void WeatherRenderer::init ( void )
 
 void WeatherRenderer::set ( void )
 {
-	TextureManager &tm = TextureManager::instance();
+	//TextureManager &tm = TextureManager::instance();
 
 	// check the bzdb and see if we need to change any rain stuff
 	rainDensity = 0;
@@ -1858,7 +1858,7 @@ void WeatherRenderer::update ( void )
 	}
 }
 
-void WeatherRenderer::draw ( const SceneRenderer& sr )
+void WeatherRenderer::draw ( const SceneRenderer& /*sr*/ )
 {
 	if (doLineRain)	// we are doing line rain
 	{
