@@ -429,13 +429,11 @@ bool readPermsFile(const std::string &filename)
     return false;
   in.unsetf(ios::skipws);
   bool done = false;
-  std::string name;
-  std::vector<std::string> groups;
   char c;
 
   while (!done) {
-    name.erase(name.begin(), name.end());
-    groups.erase(groups.begin(), groups.end());
+    std::string name;
+    std::vector<std::string> groups;
     // get a name
     while ((in >> c) && (!in.eof()) && (c != '\n'))
       name += c;
