@@ -227,7 +227,8 @@ Kicks players after \fIwarn-count\fR lag warnings.
 Send warnings to players that lag more than \fItime\fR.
 .TP
 \fB-masterBanURL\fI URL/s\fR
-Specify an alternate URL for the master ban file to be pulled from.
+Specify alternate URLs for the master ban file to be pulled from.
+This argument may be provided multiple times.
 .TP
 \fB-maxidle\fI time/s\fR
 Kick players that did not play longer than time seconds. Pausing players are
@@ -293,8 +294,8 @@ Advertise this server on the \fBbzfls\fR servers listed at \fIurl\fR.
 Only has an effect when used with \fB-public\fR.
 A built-in url is used by default.  The \fBBZFlag\fR clients use the
 same built-in url so, by default, clients will see public servers
-automatically.  See \fBbzfls\fR for a description of the format of
-\fIurl\fR.
+automatically.  This argument may be provided multiple times to
+publicize a server to multiple list servers.
 .TP
 .B -q
 If specified, the server will not listen for nor respond to ``pings''.
