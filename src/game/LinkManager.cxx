@@ -214,7 +214,7 @@ void LinkManager::findTelesByName(const std::string& name,
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
   for (unsigned int i = 0; i < teles.size(); i++) {
     Teleporter* tele = (Teleporter*) teles[i];
-    const std::string teleName = tele->getName();
+    const std::string& teleName = tele->getName();
 
     std::string front = teleName;
     front += ":f";
