@@ -1458,7 +1458,7 @@ static void acceptClient()
   // if game was over and this is the first player then game is on
   if (gameOver) {
     int count = GameKeeper::Player::count();
-    if (count == 1) {
+    if (count == 0) {
       gameOver = false;
       gameStartTime = TimeKeeper::getCurrent();
       if (clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
