@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- spin inversion bug, fix in MeshTransform.cxx (around line 300)
+  during the next protocol breakage
+
 - Mac/SDL client will not process keyboard input if started on the
   command-line with -window instead of going through the Finder.
 
