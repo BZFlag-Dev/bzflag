@@ -1447,6 +1447,12 @@ static void addPlayer(int playerIndex)
       return;
     }
   }
+  
+  // no spoofing the server name
+  if (strcasecmp (player[playerIndex].getCallSign(), "SERVER") == 0) {
+     rejectPlayer(playerIndex, RejectRepeatCallsign);
+     return;
+  }
 
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {

@@ -57,7 +57,8 @@ typedef std::map<FlagType*,bool> FlagOptionMap;
 struct CmdLineOptions
 {
   CmdLineOptions()
-  : wksPort(ServerPort), gameStyle(PlainGameStyle), rabbitSelection(ScoreRabbitSelection), servermsg(NULL),
+  : wksPort(ServerPort), gameStyle(PlainGameStyle),
+    rabbitSelection(ScoreRabbitSelection), servermsg(NULL),
     advertisemsg(NULL), worldFile(NULL), pingInterface(NULL),
     listServerURL(DefaultListServerURL), password(NULL),
     publicizedTitle(""), publicizedAddress(""),
