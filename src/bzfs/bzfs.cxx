@@ -3327,9 +3327,9 @@ static void handleCommand(int t, const void *rawbuf)
       }
       // check if the target player is invalid
       else if (realPlayer(targetPlayer)) {
-	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
-      } else {
 	sendMessage(t, targetPlayer, message);
+      } else {
+	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
       }
       break;
     }
