@@ -141,7 +141,7 @@ bool URLManager::beginGet(const std::string)
 #endif
 {
 #ifdef HAVE_CURL
-  CURLcode result;
+  CURLcode result = 0;
   if (!easyHandle) {
     return false;
   }
@@ -150,9 +150,15 @@ bool URLManager::beginGet(const std::string)
   if (BZDB.isSet("httpTimeout"))
     timeout = BZDB.eval("httpTimeout");
 
-  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, timeout);
-  if (result)
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_NOSIGNAL, true);
+  if (result) {
     DEBUG1("Something wrong with CURL; Error: %d\n", result);
+  }
+
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, timeout);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+  }
 
   result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
   if (result) {
