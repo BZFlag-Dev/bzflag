@@ -83,14 +83,6 @@ public:
 	void construct(pointer __p, const T& __val) { new(__p) T(__val); }
 	void destroy(pointer __p) { __p->~T(); }
 };
-
-#else
-
-// egcs doesn't support std::foo<> (i.e. std namespace on a template).
-// we need std::unary_function<> so we'll use unary_function and a
-// macro.
-//#define std::unary_function unary_function
-
 #endif
 
 #if defined(_MSC_VER) || defined(__BCPLUSPLUS__) // these do not have HP style construct/destroy 
