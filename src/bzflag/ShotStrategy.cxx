@@ -555,7 +555,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
 			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 
 			ShotRadius, 
-			BZDBCache::tankHeight);
+			0.5f * BZDBCache::tankHeight);
     }
     else {
       // find time when shot hits sphere around tank
