@@ -2470,6 +2470,7 @@ static void dropFlag(int playerIndex, float pos[3])
   if (!playerData)
     return;
 
+  const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
   const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   if (pos[0] < -size || pos[0] > size)
     pos[0] = 0.0;
@@ -2497,8 +2498,7 @@ static void dropFlag(int playerIndex, float pos[3])
   bool limited = clOptions->flagLimit[drpFlag.flag.type] != -1;
   if (limited && drpFlag.numShots > 0) drpFlag.grabs = 0;
 
-  topmosttype = world->cylinderInBuilding(&container,
-                  pos, 0, BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+  topmosttype = world->cylinderInBuilding(&container, pos, 0, flagHeight);
 
   // the tank is inside a building - find the roof
   if (topmosttype != NOT_IN_BUILDING) {
@@ -2506,8 +2506,7 @@ static void dropFlag(int playerIndex, float pos[3])
     int tmp;
     for (float i = container->getPosition()[2] + container->getSize()[2];
 	 (tmp = world->cylinderInBuilding(&container,
-				  pos[0], pos[1], i, 0,
-				  BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT))) !=
+					  pos[0], pos[1], i, 0, flagHeight)) !=
 	   NOT_IN_BUILDING; i += 0.1f) {
       topmosttype = tmp;
       topmost = container;
@@ -2516,8 +2515,7 @@ static void dropFlag(int playerIndex, float pos[3])
     // the tank is _not_ inside a building - find the floor
     for (float i = pos[2]; ; i -= 0.1f) {
       topmosttype = world->cylinderInBuilding
-	(&topmost, pos[0], pos[1], i, 0,
-	 BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+	(&topmost, pos[0], pos[1], i, 0, flagHeight);
       if (topmosttype != NOT_IN_BUILDING)
 	break;
       if (i < 0)
@@ -2567,7 +2565,7 @@ static void dropFlag(int playerIndex, float pos[3])
 					landingPos[2]);
 	  topmosttype = world->cylinderInBuilding
 	    (&container, landingPos, BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
-	     BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+	     flagHeight);
 	  if ((topmosttype != NOT_IN_BUILDING) || (landingPos[2] <= deadUnder)) {
 	    TeamBases &teamBases = bases[flagTeam];
 	    const TeamBase &base = teamBases.getRandomBase(flagIndex);
@@ -2591,7 +2589,7 @@ static void dropFlag(int playerIndex, float pos[3])
 	const float pos[3] = {0.0f, 0.0f, 0.0f};
 	topmosttype = world->cylinderInBuilding
 	  (&container, pos, BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
-	   BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+	   flagHeight);
 	if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
 	  landingPos[0] = 0.0f;
 	  landingPos[1] = 0.0f;
@@ -2737,6 +2735,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     repack = true;
   }
 
+  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
   // verify player flag
   if ((firingInfo.flagType != Flags::Null)
@@ -2745,10 +2744,8 @@ static void shotFired(int playerIndex, void *buf, int len)
 	   playerIndex, firingInfo.flagType->flagAbbv,
 	   fInfo.flag.type->flagAbbv);
     firingInfo.flagType = Flags::Null;
-    firingInfo.shot.vel[0] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED)
-      * cos(lastState[playerIndex].azimuth);
-    firingInfo.shot.vel[1] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED)
-      * sin(lastState[playerIndex].azimuth);
+    firingInfo.shot.vel[0] = shotSpeed * cos(lastState[playerIndex].azimuth);
+    firingInfo.shot.vel[1] = shotSpeed * sin(lastState[playerIndex].azimuth);
     firingInfo.shot.vel[2] = 0.0f;
   }
 
@@ -2760,14 +2757,15 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
-  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  const float maxTankSpeed  = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+  float tankSpeed           = maxTankSpeed;
   float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
   if (firingInfo.flagType == Flags::ShockWave) {
     shotSpeed = 0.0f;
     tankSpeed = 0.0f;
   } else if (firingInfo.flagType == Flags::Velocity) {
-    tankSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+    tankSpeed *= tankSpeedMult;
   } else if (firingInfo.flagType == Flags::Thief) {
     tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
   } else if ((firingInfo.flagType == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
@@ -2777,7 +2775,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   } else {
     //If shot is different height than player, can't be sure they didn't drop V in air
     if (lastState[playerIndex].pos[2] != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
-      tankSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+      tankSpeed *= tankSpeedMult;
     }
   }
 
@@ -2810,8 +2808,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     front *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
 
   float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (BZDB.eval(StateDatabase::BZDB_TANKSPEED) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD) + front) *
-	      (BZDB.eval(StateDatabase::BZDB_TANKSPEED) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD) + front)) {
+  if (delta > (maxTankSpeed * tankSpeedMult + front)
+      * (maxTankSpeed * tankSpeedMult + front)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
 	    shooter.getCallSign(), playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
@@ -3534,7 +3532,7 @@ static void handleCommand(int t, const void *rawbuf)
 	    float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
 				      state.velocity[1]*state.velocity[1];
 
-	    float maxPlanarSpeedSqr = BZDB.eval(StateDatabase::BZDB_TANKSPEED)*BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+	    float maxPlanarSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
 
 	    bool logOnly = false;
 
@@ -3546,15 +3544,11 @@ static void handleCommand(int t, const void *rawbuf)
 	    if (pFlag >= 0) {
 	      FlagInfo &flag = *FlagInfo::get(pFlag);
   	      if (flag.flag.type == Flags::Velocity)
-	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD)
-		  * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
 	      else if (flag.flag.type == Flags::Thief)
-	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD)
-		  * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
 	      else if (flag.flag.type == Flags::Agility)
-	        maxPlanarSpeedSqr
-		  *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL)
-		  * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
  	      else if ((flag.flag.type == Flags::Burrow) &&
 	        (lastState[t].pos[2] == state.pos[2]) &&
 	        (lastState[t].velocity[2] == state.velocity[2]) &&
@@ -3562,10 +3556,9 @@ static void handleCommand(int t, const void *rawbuf)
 	        // if we have burrow and are not actively burrowing
 	        // You may have burrow and still be above ground. Must
 	        // check z in ground!!
- 	        maxPlanarSpeedSqr
-		  *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD)
-		  * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+ 	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	    }
+	    float maxPlanarSpeedSqr = maxPlanarSpeed * maxPlanarSpeed;
 
 	    // If player is moving vertically, or not alive the speed checks
 	    // seem to be problematic. If this happens, just log it for now,
