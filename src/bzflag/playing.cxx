@@ -2720,11 +2720,16 @@ static void		checkEnvironment()
     }
   }
 
+  // if not dead yet, see if i've dropped below the death level
+  else if (myTank->getPosition()[2] <= BZDB.eval(StateDatabase::BZDB_DEADUNDER)) {
+    gotBlowedUp(myTank, SelfDestruct, /*FIXME - myTank->getId()*/ ServerPlayer);
+  }
+
   // if not dead yet, see if i got run over by the steamroller
   else {
     const float* myPos = myTank->getPosition();
     const float myRadius = myTank->getRadius();
-    for (i = 0; i < curMaxPlayers; i++)
+    for (i = 0; i < curMaxPlayers; i++) {
       if (player[i] && !player[i]->isPaused() &&
 	  (player[i]->getFlag() == Flags::Steamroller ||
 	   (myPos[2] < 0.0f && player[i]->isAlive() &&
@@ -2733,10 +2738,12 @@ static void		checkEnvironment()
 	if (pos[2] < 0.0f) continue;
 	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
 	  const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f) < radius)
+	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f) < radius) {
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
+	  }
 	}
       }
+    }
   }
 }
 
