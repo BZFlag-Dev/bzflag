@@ -34,27 +34,6 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset (callSign, 0, CallSignLen);
 }
 
-inline std::string PlayerInfo::getLastMsg() {
-  return lastMsgSent;
-}
-
-inline TimeKeeper PlayerInfo::getLastMsgTime() {
-  return lastMsgTime;
-}
-
-inline int PlayerInfo::getSpamWarns() {
-  return spamWarns;
-}
-
-inline void PlayerInfo::incSpamWarns() {
-  ++spamWarns;
-}
-
-inline void PlayerInfo::setLastMsg(std::string msg) {
-  lastMsgSent = msg;
-  lastMsgTime = now;
-}
-
 void PlayerInfo::resetPlayer(bool ctf) {
   wasRabbit = false;
 
@@ -84,10 +63,6 @@ inline bool PlayerInfo::isAlive() {
   return state == PlayerAlive;
 };
 
-inline bool PlayerInfo::isDead() {
-  return state == PlayerDead;
-};
-
 void PlayerInfo::setAlive() {
   state = PlayerAlive;
   flag = -1;
@@ -95,14 +70,6 @@ void PlayerInfo::setAlive() {
 
 void PlayerInfo::setDead() {
   state = PlayerDead;
-};
-
-inline bool PlayerInfo::isPaused() {
-  return paused;
-};
-
-inline bool PlayerInfo::isBot() {
-  return type == ComputerPlayer;
 };
 
 void *PlayerInfo::packUpdate(void *buf) {
@@ -277,10 +244,6 @@ void PlayerInfo::wasARabbit() {
 
 void PlayerInfo::wasNotARabbit() {
   wasRabbit = false;
-};
-
-inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) {
-  return wasRabbit || victim.team == RabbitTeam;
 };
 
 void PlayerInfo::resetFlag() {

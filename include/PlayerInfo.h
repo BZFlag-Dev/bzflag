@@ -59,36 +59,36 @@ class PlayerInfo {
 public:
   PlayerInfo(int _playerIndex);
 
-  inline void	      setLastMsg(std::string msg);
-  inline std::string getLastMsg();
-  inline TimeKeeper  getLastMsgTime();
-  inline void	      incSpamWarns();
-  inline int	      getSpamWarns();
+  void	      setLastMsg(std::string msg);
+  std::string getLastMsg();
+  TimeKeeper  getLastMsgTime();
+  void	      incSpamWarns();
+  int	      getSpamWarns();
   void        resetPlayer(bool ctf);
   void        setRestartOnBase(bool on);
   bool        shouldRestartAtBase();
   bool        isPlaying();
   void        signingOn();
-  inline bool        isAlive();
-  inline bool        isDead();
+  bool        isAlive();
+  bool        isDead();
   void        setAlive();
   void        setDead();
-  inline bool        isPaused();
-  inline bool        isBot();
-  inline bool        isHuman();
+  bool        isPaused();
+  bool        isBot();
+  bool        isHuman();
   void       *packUpdate(void *buf);
   void       *packId(void *buf);
   bool        unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
   const char *getCallSign() const;
   const char *getEMail() const;
   void       *packVirtualFlagCapture(void *buf);
-  inline bool        isTeam(TeamColor team) const;
-  inline bool        isObserver() const;
-  inline TeamColor   getTeam();
+  bool        isTeam(TeamColor team) const;
+  bool        isObserver() const;
+  TeamColor   getTeam();
   void        setTeam(TeamColor team);
   void        wasARabbit();
   void        wasNotARabbit();
-  inline bool        isARabbitKill(PlayerInfo &victim);
+  bool        isARabbitKill(PlayerInfo &victim);
   void        resetFlag();
   bool        haveFlag() const;
   int         getFlag() const;
@@ -188,6 +188,43 @@ inline bool PlayerInfo::haveFlag() const
 inline int PlayerInfo::getFlag() const
 {
   return flag;
+}
+
+inline std::string PlayerInfo::getLastMsg() {
+  return lastMsgSent;
+}
+
+inline TimeKeeper PlayerInfo::getLastMsgTime() {
+  return lastMsgTime;
+}
+
+inline int PlayerInfo::getSpamWarns() {
+  return spamWarns;
+}
+
+inline void PlayerInfo::incSpamWarns() {
+  ++spamWarns;
+}
+
+inline void PlayerInfo::setLastMsg(std::string msg) {
+  lastMsgSent = msg;
+  lastMsgTime = now;
+}
+
+inline bool PlayerInfo::isDead() {
+  return state == PlayerDead;
+}
+
+inline bool PlayerInfo::isPaused() {
+  return paused;
+}
+
+inline bool PlayerInfo::isBot() {
+  return type == ComputerPlayer;
+}
+
+inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) {
+  return wasRabbit || victim.team == RabbitTeam;
 }
 
 #endif
