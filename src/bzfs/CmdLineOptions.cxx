@@ -1105,8 +1105,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
   // get player counts.  done after other arguments because we need
   // to ignore counts for rogues if rogues aren't allowed.
-  if (playerCountArg > 0 && (!parsePlayerCount(argv[playerCountArg], options) ||
-			     playerCountArg2 > 0 && !parsePlayerCount(argv[playerCountArg2], options)))
+  if ((playerCountArg > 0) && !parsePlayerCount(argv[playerCountArg], options))
+    usage(argv[0]);
+  if ((playerCountArg2 > 0)
+      && !parsePlayerCount(argv[playerCountArg2], options))
     usage(argv[0]);
 
   // first disallow flags inconsistent with game style
