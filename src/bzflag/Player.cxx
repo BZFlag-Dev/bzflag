@@ -209,7 +209,7 @@ void			Player::changeTeam(TeamColor _team)
 
   // change color of tank
   const float* _color = Team::getTankColor(team);
-  if (useColorTexture){	// color is in the image
+  if (BZDB.isTrue("texture")){	// color is in the image
     color[0] = 1.0f;
     color[1] = 1.0f;
     color[2] = 1.0f;
