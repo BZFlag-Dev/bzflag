@@ -338,7 +338,7 @@ void			BillboardSceneNode::BillboardRenderNode::render()
   // can't translate in Z after the billboard is applied because that
   // will move in the direction of the view, which isn't necessarily
   // the direction to the billboard from the eye.
-  ViewFrustum& frustum = SceneRenderer::getInstance()->getViewFrustum();
+  ViewFrustum& frustum = RENDERER.getViewFrustum();
   const GLfloat* eye = frustum.getEye();
   const GLfloat* sphere = sceneNode->getSphere();
   GLfloat dir[3], d;

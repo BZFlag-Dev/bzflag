@@ -261,12 +261,12 @@ void			BoltSceneNode::BoltRenderNode::render()
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
-    SceneRenderer::getInstance()->getViewFrustum().executeBillboard();
+    RENDERER.getViewFrustum().executeBillboard();
     glScalef(sceneNode->size, sceneNode->size, sceneNode->size);
 
     // draw some flares
     if (sceneNode->drawFlares) {
-      if (!SceneRenderer::getInstance()->isSameFrame()) {
+      if (!RENDERER.isSameFrame()) {
 	numFlares = 3 + int(3.0f * (float)bzfrand());
 	for (int i = 0; i < numFlares; i++) {
 	  theta[i] = 2.0f * M_PI * (float)bzfrand();
@@ -417,7 +417,7 @@ void			BoltSceneNode::BoltRenderNode::render()
 
   glPopMatrix();
 
-  if (SceneRenderer::getInstance()->isLastFrame()) {
+  if (RENDERER.isLastFrame()) {
     if (++u == cu) {
       u = 0;
       if (++v == cv) v = 0;

@@ -180,7 +180,7 @@ void			FlagSceneNode::FlagRenderNode::render()
 			(sceneNode->transparent || sceneNode->texturing))
       myStipple(sceneNode->color[3]);
     if (sceneNode->billboard) {
-      SceneRenderer::getInstance()->getViewFrustum().executeBillboard();
+      RENDERER.getViewFrustum().executeBillboard();
       glBegin(GL_QUAD_STRIP);
 	for (int i = 0; i <= flagChunks; i++) {
 	  const float x = float(i) / float(flagChunks);

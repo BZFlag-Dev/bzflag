@@ -134,9 +134,9 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
-    SceneRenderer::getInstance()->getViewFrustum().executeBillboard();
+    RENDERER.getViewFrustum().executeBillboard();
 
-    if (!SceneRenderer::getInstance()->isSameFrame()) {
+    if (!RENDERER.isSameFrame()) {
       numFlares = 3 + int(3.0f * (float)bzfrand());
       for (int i = 0; i < numFlares; i++) {
 	theta[i] = 2.0f * M_PI * (float)bzfrand();

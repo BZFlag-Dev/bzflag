@@ -116,7 +116,7 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
 
-    if (sphere[2] > SceneRenderer::getInstance()->getViewFrustum().getEye()[2]){
+    if (sphere[2] > RENDERER.getViewFrustum().getEye()[2]){
       for (int i = 0; i < 7; i++) {
 	GLfloat s = sceneNode->size - 0.05f * float(i);
 	if (s < 0.0f) break;
