@@ -20,6 +20,8 @@ These should happen before the next release:
 
 * support gameinfo requests as one time udp packets (if udp)
 
+* either use AudioFile or disable it from the build
+
 These are lower priority
 
 * create new 64x64, 48x48, 32x32, 16x16 official bzflag icons.
