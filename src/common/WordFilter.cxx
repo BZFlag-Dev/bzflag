@@ -20,8 +20,10 @@
 #include "WordFilter.h"
 
 // implementation-specific headers
-#include <algorithm>
 #include "TimeKeeper.h"
+
+
+/* private */
 
 /* protected */
 
@@ -73,9 +75,9 @@ bool WordFilter::aggressiveFilter(char *input) const
   if (input == NULL) return false;
   int inputLength = strlen(input);
 
-  // a buffer to destroy during matching
+  // a buffer to destroy during matching (includes terminating null)
   char *sInput = new char(inputLength + 1);
-  strcpy(sInput, input);
+  memcpy(sInput, input, inputLength + 1);
   
   /* maintain an array of match indices of the input; values are in
    * pairs.  the first number is the start position, the second is
@@ -89,11 +91,16 @@ bool WordFilter::aggressiveFilter(char *input) const
   // stores which letters have been used already
   std::string wordIndices;
 
-  // get a list of characters that might be the start of a word
+  /* here, we get a list of characters that might be the start of a word.
+   * characters that are preceded by a non-alphabetic character are added
+   * to a list of letters.  e.g. the first line of this comment consists
+   * of the letters:  hwgaloctmbs
+   * This means that we will only search through filter words that begin
+   * with those letters.
+   */
   char previousChar = 0;
-  static char c2[2] = {0};
   for (int counter = 0; counter < inputLength; counter++) {
-    char c = tolower(*(input + counter));
+    char c = tolower(*(sInput + counter));
 
     if (!isAlphabetic(previousChar) && isVisible(c)) {
 
@@ -102,25 +109,21 @@ bool WordFilter::aggressiveFilter(char *input) const
 
         std::string puncChars = alphabeticSetFromCharacter(c);
 	for (unsigned int cnt = 0; cnt < puncChars.size(); cnt++) {
-	  char d = tolower(puncChars[cnt]);
-
-	  if (count(wordIndices.begin(), wordIndices.end(), d) == 0) {
-	    c2[0] = d;
-	    wordIndices.append(c2);
-	  }
+	  appendUniqueChar(wordIndices, tolower(puncChars[cnt]));
 	}
       }
 
       // add the character itself if not previously added
-      if (count(wordIndices.begin(), wordIndices.end(), c) == 0) {
-	c2[0] = c;
-	wordIndices.append(c2);
-      }
+      appendUniqueChar(wordIndices, c);
     }
     previousChar = c;
   }
 
-  /* prefixes are a special case.. see if any match and capture the next letter if there is one.   */
+  /* check the input for a words that begin with a prefix.  if it does,
+   * then add the next letter as a letter to check for during matching.
+   * e.g. "bzstring" will match a prefix of "bz" and make "s" get added
+   * as a bin to check for during matching.
+   */
   for (std::set<filter_t, expressionCompare>::iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
     if (regexec(i->compiled, input, 1, match, 0) == 0) {
       if ( (match[0].rm_eo < inputLength) && isAlphabetic(input[match[0].rm_eo]) ) {
@@ -129,13 +132,8 @@ bool WordFilter::aggressiveFilter(char *input) const
 	  continue;
 	}
 
-	/* we found a prefix -- add the letter */
-	char d = tolower(input[match[0].rm_eo]);
-//std::cout << "Matched a letter after prefix: " << d << " for prefix: " << i->word << std::endl;
-	if (count(wordIndices.begin(), wordIndices.end(), d) == 0) {
-	  c2[0] = d;
-	  wordIndices.append(c2);
-	}
+	/* we found a prefix -- add the letter that follows */
+	appendUniqueChar(wordIndices, tolower(input[match[0].rm_eo]));
       }
     }
   }
@@ -685,9 +683,6 @@ WordFilter::WordFilter()
   fix.word = "bz";
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
-//  fix.word = "bez";
-//  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-//  prefixes.insert(fix);
   fix.word = "beze";
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);

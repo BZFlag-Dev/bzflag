@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <algorithm>
 #include <string.h>
 
 // work around an ugly STL bug in BeOS
@@ -151,6 +152,11 @@ class WordFilter
    */
   inline int filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces) const;
 
+  /** utility method adds a letter to a string if it is not
+   * already in the string
+   */
+  inline void appendUniqueChar(std::string& string, char c) const;
+  
  protected:
 
   /** This filter does a simple case-insensitive
@@ -272,6 +278,16 @@ inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t 
 
   }
     return count;
+}
+
+
+inline void WordFilter::appendUniqueChar(std::string& string, char c) const
+{
+  static char c2[2] = {0};
+  if (count(string.begin(), string.end(), c) == 0) {
+    c2[0] = c;
+    string.append(c2);
+  }
 }
 
 
