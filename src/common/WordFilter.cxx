@@ -545,9 +545,10 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
 
   } else if (append) {
     /* add words with all suffixes appended */
+  std::set<filter_t, expressionCompare>::iterator i;
 #if 1
     std::string fullPrefix = "(";
-    for (std::set<filter_t, expressionCompare>::iterator i = suffixes.begin();
+    for (i = suffixes.begin();
 	 i != suffixes.end();) {
       fullPrefix.append(i->word);
       if (++i != suffixes.end()) {
@@ -566,7 +567,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
 #endif
     
     /* add words with all prefixes prepended */
-    for (std::set<filter_t, expressionCompare>::iterator i = prefixes.begin();
+    for (i = prefixes.begin();
 	 i != prefixes.end(); ++i) {
       addToFilter(i->word + word, i->expression + expression, false);
       
