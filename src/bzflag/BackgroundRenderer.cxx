@@ -288,7 +288,7 @@ void BackgroundRenderer::setupGroundMaterials()
         memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
         groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
       } else {
-        // only apply the texture matrix is the texture is valid
+        // only apply the texture matrix if the texture is valid
         groundTextureMatrixID = bzmat->getTextureMatrix(0);
       }
     }

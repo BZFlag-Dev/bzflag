@@ -51,7 +51,6 @@ class WorldBuilder {
     void		setMaxFlags(int maxFlags);
     void		setShakeTimeout(float timeout) const;
     void		setShakeWins(int wins) const;
-    void		setTeleporterTarget(int source, int target);
     void		setBase(TeamColor team,
 				const float* pos, float rotation,
 				float w, float b, float h);
@@ -62,7 +61,6 @@ class WorldBuilder {
   private:
     bool		owned;
     World*		world;
-    std::vector<int>	teleportTargets;
 };
 
 

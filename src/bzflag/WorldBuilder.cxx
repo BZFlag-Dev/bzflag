@@ -254,10 +254,10 @@ void WorldBuilder::preGetWorld()
     world->flagWarpNodes[i] = new FlagWarpSceneNode(world->flags[i].position);
     world->flagNodes[i]->setTexture(World::flagTexture);
   }
-
-  // copy the teleporter targets list
-  world->teleportTargets = teleportTargets;
+  
+  return;
 }
+
 
 World* WorldBuilder::getWorld()
 {
@@ -266,11 +266,13 @@ World* WorldBuilder::getWorld()
   return world;
 }
 
+
 World* WorldBuilder::peekWorld()
 {
   preGetWorld();
   return world;
 }
+
 
 void WorldBuilder::setGameStyle(short gameStyle)
 {
@@ -306,15 +308,6 @@ void WorldBuilder::setShakeTimeout(float timeout) const
 void WorldBuilder::setShakeWins(int wins) const
 {
   world->shakeWins = wins;
-}
-
-void WorldBuilder::setTeleporterTarget(int src, int tgt)
-{
-  if ((int)teleportTargets.size() < src+1)
-    teleportTargets.resize(((src/2)+1)*2);
-
-  // record target in source entry
-  teleportTargets[src] = tgt;
 }
 
 void WorldBuilder::setBase(TeamColor team,

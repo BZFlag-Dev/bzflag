@@ -170,7 +170,6 @@ class World {
     TeamBases		bases[NumTeams];
     Team		team[NumTeams];
 
-    std::vector<int>	teleportTargets;
     std::vector<Weapon>	weapons;
     std::vector<EntryZone> entryZones;
 
