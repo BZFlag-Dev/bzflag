@@ -394,7 +394,13 @@ void updateConfigFile(void)
 
     // TODO - any other breaking changes from 1.10 to 1.12
 
-  case 1: // 1.12
+  case 1: // 1.11.20
+    if (KEYMGR.stringToKeyEvent("Tab", key)
+        && (KEYMGR.get(key, false) == ""))
+      KEYMGR.bind(key, false, "jump");
+    break; // no action, current version
+
+  case 2: // 1.12
     break; // no action, current version
 
   default: // hm, we don't know about this one...
