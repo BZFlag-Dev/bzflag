@@ -6044,7 +6044,7 @@ static const char *extraUsageString =
 "\t-ttl: time-to-live for pings (default=8)\n"
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n"
-"\t-speedtol: percent over normal speed to at which player is auto kicked (default=112.5)\n";
+"\t-speedtol: percent over normal speed at which player is auto kicked (default=112.5)\n";
 
 
 static void printVersion()
