@@ -738,5 +738,136 @@ a poll.
 If there is a poll active, this will cancel the poll.  By default, you must be
 an admin to veto a poll.
 
+.SH WORLDS
+
+BZFlag worlds come in two varieties, randomly generated ones, and human designed
+ones. By default, bzfs uses randomly generated world unless you specify the -world
+command line or configuration file option. The world file specified by the -world 
+option is a text based file that contains a list of world objects. This file can
+be created using programs found on sourceforge.net through cvs, or can be hand edited.
+
+The format of this text file consists of any number of objects listed in any order. 
+The list of world types consists of
+
+
+.B	box
+.br
+.B	pyramid
+.br
+.B	teleporter
+.br
+.B	link
+.br
+.B	base
+.br
+.B	world
+.br
+.B	weapon
+.br
+
+Each object is described by placing the type on one line, the world /fIend/fR on a following line,
+and a list of attributes for that object, one per line, inbetween. Attributes may be listed in
+any order. Attributes have default values, and if that is good enough, the attribute need not 
+be listed. Words are always specified in lowercase. Line comments can be specified by placing a 
+# sign at the start of the line.
+
+.br
+In the following examples, the values are the defaults.
+
+.B The Box object
+
+\fBbox\fR
+.br
+\fBposition\fR 0.0 0.0 0.0
+.br
+\fBsize\fR 30.0 30.0 9.42
+.br
+\fBrotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+
+.B The Pyramid object
+
+\fBpyramid\fR
+.br
+\fBposition\fR 0.0 0.0 0.0
+.br
+\fBsize\fR 8.2 8.2 10.25
+.br
+\fBrotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+.B The Teleporter object
+
+\fBteleporter\fR
+.br
+\fBposition\fR 0.0 0.0 0.0
+.br
+\fBsize\fR 5.06 4.48 20.16
+.br
+\fBrotation\fR 0.0
+.br
+\fBborder\fR 1.12
+.br
+\fBend\fR
+.br
+
+.B The Link object
+
+\fBlink\fR
+.br
+\fBfrom\fR 0
+.br
+\fBto\fR 0
+.br
+\fBend\fR
+.br
+
+.B The Base object
+
+\fBbase\fR
+.br
+\fBposition\fR 0.0 0.0 0.0
+.br
+\fBsize\fR 60.0 60.0 0.0
+.br
+\fBrotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+.B The World object
+
+\fBworld\fR
+.br
+\fBsize\fR 800.0
+.br
+\fBflagHeight\fR 0.0
+.br
+\fBend\fR
+.br
+
+.B The Weapon object
+
+\fBweapon\fR
+.br
+\fBposition\fR 0.0 0.0 0.0
+.br
+\fBrotation\fR 0.0
+.br
+\fBinitdelay\fR 10.0
+.br
+\fBdelay\fR 10.0
+.br
+\fBtype\fR V
+.br
+\fBend\fR
+.br
+
+
 .SH SEE ALSO
 bzflag(6), bzfls(6), bzfrelay(6)
