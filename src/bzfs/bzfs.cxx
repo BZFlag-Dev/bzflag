@@ -171,7 +171,8 @@ static int prealwrite(int playerIndex, const void *b, int l)
 
     // dump other errors and remove the player
     nerror("error on write");
-    removePlayer(playerIndex, "Write error", false);
+    player[playerIndex].toBeKicked = true;
+    player[playerIndex].toBeKickedReason = "Write error";
     return -1;
   }
 
@@ -325,7 +326,7 @@ static void pwrite(int playerIndex, const void *b, int l)
   if (p.fd != NotConnected && p.outmsgSize == 0) {
     const int n = prealwrite(playerIndex, b, l);
     if (n > 0) {
-      buf  = (void*)(((const char*)b) + n);
+      b  = (void*)(((const char*)b) + n);
       l -= n;
     }
   }
@@ -345,7 +346,8 @@ static void pwrite(int playerIndex, const void *b, int l)
       if (newCapacity >= 20 * 1024) {
 	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
 	    p.callSign, playerIndex, p.outmsgSize + l);
-	removePlayer(playerIndex, "Unable to communicate with player -- unresponsive connection", false);
+	player[playerIndex].toBeKicked = true;
+	player[playerIndex].toBeKickedReason = "send queue too big";
 	return;
       }
 
@@ -371,7 +373,7 @@ static void pwrite(int playerIndex, const void *b, int l)
     }
 
     // append data
-    memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, buf, l);
+    memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, b, l);
     p.outmsgSize += l;
   }
 }
@@ -5071,20 +5073,10 @@ int main(int argc, char **argv)
       }
 
     for (i = 0; i < curMaxPlayers; i++) {
-      // kick any clients that don't speak UDP
-      if (clOptions->requireUDP && player[i].toBeKicked) {
-	char message[MessageLen];
+      // kick any clients that need to be
+      if (player[i].toBeKicked) {
+	removePlayer(i, player[i].toBeKickedReason.c_str(), false);
 	player[i].toBeKicked = false;
-	sprintf(message,"Your end is not using UDP, turn on udp");
-	sendMessage(ServerPlayer, i, message, true);
-
-	sprintf(message,"upgrade your client http://BZFlag.org/ or");
-	sendMessage(ServerPlayer, i, message, true);
-
-	sprintf(message,"Try another server, Bye!");
-	sendMessage(ServerPlayer, i, message, true);
-
-	removePlayer(i, "no UDP");
       }
     }
     // check messages
@@ -5185,7 +5177,17 @@ int main(int argc, char **argv)
 	  // he/she must not be using the UDP link
 	  if (clOptions->requireUDP && (player[i].type != ComputerPlayer)) {
 	    if (code == MsgShotBegin) {
-	      player[i].toBeKicked = true;
+	      char message[MessageLen];
+	      sprintf(message,"Your end is not using UDP, turn on udp");
+	      sendMessage(ServerPlayer, i, message, true);
+	  
+	      sprintf(message,"upgrade your client http://BZFlag.org/ or");
+	      sendMessage(ServerPlayer, i, message, true);
+	  
+	      sprintf(message,"Try another server, Bye!");
+	      sendMessage(ServerPlayer, i, message, true);
+	      removePlayer(i, "no UDP");
+	      continue;
 	    }
 	  }
 

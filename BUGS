@@ -13,14 +13,6 @@ must fix for 1.10.4 patch release
   expected behavior, but I expect one can also trojan any server's counts 
   using this same technique..
 
-- sendFlagUpdate indirectly calls pwrite which potentially calls
-  removePlayer which fills the direct message buffer which sendFlagUpdate
-  then tries to send out to other players as a remove player message structure
-  tagged as a MsgFlagUpdate message. This crashes clients.  This may also have
-  accounted for the occasional behavior of team flags appearing in non-CTF
-  games. [I have what I believe is a fix, but I'm play testing it before I
-  commit -shkoo]
-
 recent bugs
 ------------
 

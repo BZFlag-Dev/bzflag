@@ -136,6 +136,7 @@ struct PlayerInfo {
     bool paused;
     bool notResponding;
     bool toBeKicked;
+    std::string toBeKickedReason;
 
 
     // lag measurement
