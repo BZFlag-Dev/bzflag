@@ -57,9 +57,10 @@ const char *usageString =
 "[-filterChat] "
 "[-filterSimple] "
 "[-g] "
-"[-groupdb <group file>]"
+"[-groupdb <group file>] "
 "[-h] "
-"[-helpmsg <file> <name>]"
+"[-handicap] "
+"[-helpmsg <file> <name>] "
 "[-i interface] "
 "[-j] "
 "[-lagdrop <num>] "
@@ -70,7 +71,7 @@ const char *usageString =
 "[-ms <shots>] "
 "[-mts <score>] "
 "[-p <port>] "
-"[-passdb <password file>]"
+"[-passdb <password file>] "
 "[-passwd <password>] "
 #ifdef PRINTSCORE
 "[-printscore] "
@@ -89,8 +90,8 @@ const char *usageString =
 "[-s <flag-count>] "
 "[-sa] "
 "[-sb] "
-"[-sl <id> <num>]"
-"[-speedtol <tolerance>]"
+"[-sl <id> <num>] "
+"[-speedtol <tolerance>] "
 "[-srvmsg <text>] "
 "[-st <time>] "
 "[-sw <num>] "
@@ -103,16 +104,16 @@ const char *usageString =
 #endif
 "[-tk] "
 "[-tkkr <percent>] "
-"[-userdb <user permissions file>]"
-"[-vars <filename>]"
+"[-userdb <user permissions file>] "
+"[-vars <filename>] "
 "[-version] "
-"[-vetoTime <seconds> ]"
-"[-votePercentage <percentage>]"
-"[-voteRepeatTime <seconds>]"
-"[-votesRequired <num>]"
-"[-voteTime <seconds> ]"
-"[-world <filename>]"
-"[-worldsize < world size>]";
+"[-vetoTime <seconds> ] "
+"[-votePercentage <percentage>] "
+"[-voteRepeatTime <seconds>] "
+"[-votesRequired <num>] "
+"[-voteTime <seconds> ] "
+"[-world <filename>] "
+"[-worldsize < world size>] ";
 
 const char *extraUsageString =
 "\t-a: maximum acceleration settings\n"
@@ -136,6 +137,7 @@ const char *extraUsageString =
 "\t-g: serve one game and then exit\n"
 "\t-groupdb: file to read for group permissions\n"
 "\t-h: use random building heights\n"
+"\t-handicap: give players an advantage based on their relative playing ability\n"
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
@@ -617,6 +619,9 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-j") == 0) {
       // allow jumping
       options.gameStyle |= int(JumpingGameStyle);
+    } else if (strcmp(argv[i], "-handicap") == 0) {
+      // allow handicap advantage
+      options.gameStyle |= int(HandicapGameStyle);
     } else if (strcmp(argv[i], "-lagdrop") == 0) {
       if (++i == argc) {
 	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
