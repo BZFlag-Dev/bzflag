@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2002 Tim Riker
+ * Copyright (c) 1993 - 2003 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -234,7 +234,7 @@ static const GLfloat	stars[][6] = {
 			{ 0.46f, 0.46f, 0.46f, 0.21357986f, -0.01931197f, 0.97673470f },
 			{ 0.46f, 0.46f, 0.46f, -0.42782041f, -0.90014207f, -0.08193851f },
 			{ 0.46f, 0.46f, 0.46f, -0.27625582f, 0.67330223f, -0.68581831f },
-			{ 0.46f, 0.46f, 0.46f, 0.54202002f, -0.84024471f, -0.01425304f },
+			{ 0.46f, 0.46f, 0.46f, 0.54202003f, -0.84024471f, -0.01425304f },
 			{ 0.46f, 0.46f, 0.46f, 0.21405357f, -0.81399381f, 0.53999555f },
 			{ 0.46f, 0.46f, 0.46f, 0.84575307f, 0.14659369f, 0.51304197f },
 			{ 0.46f, 0.46f, 0.46f, 0.09268724f, -0.99442381f, -0.05030242f },
