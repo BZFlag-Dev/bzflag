@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* remove -noudp option
+
 * move -synctime data to different Msg packet, or create new one
 
 * server should pick client enter position
