@@ -9,5 +9,11 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
+#include <cstdint>
+#include <cstdio>
 #include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>
+
+#undef TCP_NODELAY
+#undef TCP_MAXSEG
+#define __unix__

@@ -3323,8 +3323,20 @@ void			ServerStartMenu::execute()
 
     // get path to server from path to client
     extern const char* argv0;			// from bzflag.cxx
-    char serverCmd[512];
+	// add 256 for flags room
+    char serverCmd[PATH_MAX+256];
     strcpy(serverCmd, argv0);
+#ifdef _MACOSX_
+	/* this should be in a header file somewhere */
+	extern char *GetMacOSXDataPath();
+	//rae
+	// the bzfs server is in the same "Resource" directory as
+	// all the images. Perhaps it should be elsewhere?
+	string serverPath(GetMacOSXDataPath());
+	serverPath += "/";
+	serverPath += serverApp;
+	strcpy(serverCmd, serverPath.c_str());
+#else /* _MACOSX_ */
     char* base = strrchr(serverCmd, '/');
 #if defined(_WIN32)
     char* base2 = strrchr(serverCmd, '\\');
@@ -3334,6 +3346,8 @@ void			ServerStartMenu::execute()
     if (!base) base = serverCmd;
     else base++;
     strcpy(base, serverApp);
+
+#endif
 
     // prepare arguments for starting server
     const char* args[30];
@@ -3461,8 +3475,12 @@ void			ServerStartMenu::execute()
       close(1);
       close(2);
 
-      // exec server and exit if it returns.
+      // exec server
       execvp(serverCmd, (char* const*)args);
+      // If execvp returns, bzfs wasnt at the anticipated location.
+      // Let execvp try to find it in $PATH by feeding it the "bzfs" name by it self
+      execvp(serverApp, (char* const*)args);
+      // If that returns too, something bad has happened. Exit.
       exit(2);
     }
     else if (pid != 0) {

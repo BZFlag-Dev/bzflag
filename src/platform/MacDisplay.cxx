@@ -144,24 +144,20 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 								 ::kEventParamKeyCode,
 								 ::typeUInt32,
 								 NULL,
-								 sizeof(char),
+								 sizeof(eventKeyCode),
 								 NULL,
 								 &eventKeyCode);
 	  switch(eventKind) {
 		case ::kEventRawKeyDown:
 		case ::kEventRawKeyRepeat:
-		  if((eventModifiers & ::cmdKeyBit) && eventChar == 'q') {
-			  // somehow force app to quit on cmd-Q -- but how do we get our hands
-			  // on MainWindow to call setQuit()?
-		  }
-	bzf_event.type = BzfEvent::KeyDown;
-		  getKey(bzf_event.keyDown, eventChar, eventKeyCode);
-	break;
+			bzf_event.type = BzfEvent::KeyDown;
+			getKey(bzf_event.keyDown, eventChar, eventKeyCode);
+		break;
 
 		case ::kEventRawKeyUp:
-	bzf_event.type = BzfEvent::KeyUp;
-		  getKey(bzf_event.keyDown, eventChar, eventKeyCode);
-	break;
+			bzf_event.type = BzfEvent::KeyUp;
+			getKey(bzf_event.keyDown, eventChar, eventKeyCode);
+		break;
 	  }
 	break;
 
@@ -230,32 +226,27 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
     case kPageDownCharCode  : bzf_key.button = BzfKeyEvent::PageDown; break;
     case kHelpCharCode      : bzf_key.button = BzfKeyEvent::Insert;   break;
     case kDeleteCharCode    : bzf_key.button = BzfKeyEvent::Delete;   break;
-    case kFunctionKeyCharCode  :
-    switch((keycode << 16) >> 24) {
-      // These are the f-key codes on my apple extended keyboard
-      case kF15KeyCode:	bzf_key.button = BzfKeyEvent::Pause; break;
-      case kF12KeyCode:	bzf_key.button = BzfKeyEvent::F12;	break;
-      case kF11KeyCode:	bzf_key.button = BzfKeyEvent::F11;	break;
-      case kF10KeyCode:	bzf_key.button = BzfKeyEvent::F10;	break;
-      case kF9KeyCode:	bzf_key.button = BzfKeyEvent::F9;	break;
-      case kF8KeyCode:	bzf_key.button = BzfKeyEvent::F8;	break;
-      case kF7KeyCode:	bzf_key.button = BzfKeyEvent::F7;	break;
-      case kF6KeyCode:	bzf_key.button = BzfKeyEvent::F6;	break;
-      case kF5KeyCode:	bzf_key.button = BzfKeyEvent::F5;	break;
-      case kF4KeyCode:	bzf_key.button = BzfKeyEvent::F4;	break;
-      case kF3KeyCode:	bzf_key.button = BzfKeyEvent::F3;	break;
-      case kF2KeyCode:	bzf_key.button = BzfKeyEvent::F2;	break;
-      case kF1KeyCode:	bzf_key.button = BzfKeyEvent::F1;	break;
-	  default:
-		fprintf(stderr, "Uknown function key code: 0x%X\n", ((keycode << 16) >> 24));
-	break;
-    }
+    case kFunctionKeyCharCode:
+		switch(keycode) {
+		// These are the f-key codes on my apple extended keyboard
+		case kF15KeyCode:	bzf_key.button = BzfKeyEvent::Pause; break;
+		case kF12KeyCode:	bzf_key.button = BzfKeyEvent::F12;	break;
+		case kF11KeyCode:	bzf_key.button = BzfKeyEvent::F11;	break;
+		case kF10KeyCode:	bzf_key.button = BzfKeyEvent::F10;	break;
+		case kF9KeyCode:	bzf_key.button = BzfKeyEvent::F9;	break;
+		case kF8KeyCode:	bzf_key.button = BzfKeyEvent::F8;	break;
+		case kF7KeyCode:	bzf_key.button = BzfKeyEvent::F7;	break;
+		case kF6KeyCode:	bzf_key.button = BzfKeyEvent::F6;	break;
+		case kF5KeyCode:	bzf_key.button = BzfKeyEvent::F5;	break;
+		case kF4KeyCode:	bzf_key.button = BzfKeyEvent::F4;	break;
+		case kF3KeyCode:	bzf_key.button = BzfKeyEvent::F3;	break;
+		case kF2KeyCode:	bzf_key.button = BzfKeyEvent::F2;	break;
+		case kF1KeyCode:	bzf_key.button = BzfKeyEvent::F1;	break;
+		default:	fprintf(stderr, "Uknown function key code: 0x%lX\n", keycode);	break;
+		}
     break;
-
-    default:
-	  fprintf(stderr, "Standard key: 0x%X ['%c']\n", char_code, char_code);
-      bzf_key.ascii  = char_code;
-	break;
+	// standard key; a-z, 0-9 etc
+	default:	bzf_key.ascii  = char_code;		break;
   }
 }
 
@@ -264,7 +255,6 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
 // application bundle
 char *GetMacOSXDataPath(void)
 {
-  ::CFStringRef	coreString		= NULL;
   ::CFBundleRef	appBundle		= NULL;
   ::CFURLRef	resourceURL		= NULL;
   char *		string			= NULL;
@@ -281,7 +271,7 @@ char *GetMacOSXDataPath(void)
 	string = basePath;
   }
   ::CFRelease(resourceURL);
-
+  fprintf(stderr, "data path is \"%s\"\n", string);
   return string;
 }
 // ex: shiftwidth=2 tabstop=8
