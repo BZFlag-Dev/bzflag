@@ -1041,7 +1041,13 @@ int			main(int argc, char** argv)
     BZDB.set("directory", GetMacOSXDataPath());
     BZDB.setPersistent("directory", false);
 #elif (defined(_WIN32) || defined(WIN32))
-    // What to put here?
+		char	exePath[MAX_PATH];
+		GetModuleFileName(NULL,exePath,MAX_PATH);
+		char* last = strrchr(exePath,'\\');
+		if (last)
+			*last = NULL;
+		strcat (exePath,"\\data");
+		PlatformFactory::getMedia()->setMediaDirectory(exePath);
 #else
     // It's only checking existence of l10n directory
     DIR *localedir = opendir("data/l10n/");
