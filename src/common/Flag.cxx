@@ -28,13 +28,13 @@ FlagSet FlagDesc::flagSets[NumQualities];
 // Initialize flag description singletons in our Flags namespace
 namespace Flags {
   FlagDesc *Null		    = new FlagDesc( "", "", FlagNormal, NormalShot, FlagGood, NoTeam, NULL );
-  FlagDesc *RedTeam                 = new FlagDesc( "Red Team", "R*", FlagNormal, NormalShot, FlagGood, RedTeam,
+  FlagDesc *RedTeam                 = new FlagDesc( "Red Team", "R*", FlagNormal, NormalShot, FlagGood, ::RedTeam,
 					    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
-  FlagDesc *GreenTeam               = new FlagDesc( "Green Team", "G*", FlagNormal, NormalShot, FlagGood, GreenTeam,
+  FlagDesc *GreenTeam               = new FlagDesc( "Green Team", "G*", FlagNormal, NormalShot, FlagGood, ::GreenTeam,
 					    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
-  FlagDesc *BlueTeam                = new FlagDesc( "Blue Team", "B*", FlagNormal, NormalShot, FlagGood, BlueTeam,
+  FlagDesc *BlueTeam                = new FlagDesc( "Blue Team", "B*", FlagNormal, NormalShot, FlagGood, ::BlueTeam,
 					    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
-  FlagDesc *PurpleTeam              = new FlagDesc( "Purple Team", "P*", FlagNormal, NormalShot, FlagGood, PurpleTeam,
+  FlagDesc *PurpleTeam              = new FlagDesc( "Purple Team", "P*", FlagNormal, NormalShot, FlagGood, ::PurpleTeam,
 					    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
   FlagDesc *HighSpeed               = new FlagDesc( "High Speed", "V", FlagUnstable, NormalShot, FlagGood, NoTeam,
 					    "Velocity (+V):  Tank moves faster.  Outrun bad guys." );
@@ -151,12 +151,12 @@ FlagDesc* Flag::getDescFromAbbreviation(const char* abbreviation)
 
 FlagSet&		Flag::getGoodFlags()
 {
-  return Flag::Desc::flagSets[FlagGood];
+  return FlagDesc::flagSets[FlagGood];
 }
 
 FlagSet&		Flag::getBadFlags()
 {
-  return Flag::Desc::flagSets[FlagBad];
+  return FlagDesc::flagSets[FlagBad];
 }
 
 const float*		FlagDesc::getColor()
