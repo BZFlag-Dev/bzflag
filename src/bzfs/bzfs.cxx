@@ -1640,14 +1640,12 @@ static void sendPlayerUpdate(int playerIndex, int index)
 	buf = nboPackUShort(buf, uint16_t(pPlayer->losses));
 	buf = nboPackString(buf, pPlayer->callSign, CallSignLen);
 	buf = nboPackString(buf, pPlayer->email, EmailLen);
-	// this playerid is for the player itself to get our playerid (hack)
-	buf = nboPackUByte(buf, playerIndex);
 	if (playerIndex == index) {
 		// send all players info about player[playerIndex]
 		for (int i = 0; i < maxPlayers; i++)
 			if (player[i].state > PlayerInLimbo && i != playerIndex)
-				directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart - PlayerIdPLen, bufStart);
-		// append playerid which will not be mangled so new clients can adapt
+				directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+		// send our player
 		directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
 	} else
 		directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart - PlayerIdPLen, bufStart);
