@@ -4,7 +4,7 @@
 * additional lines for a group modify permissions instead of replacing them - Frank Evers
 * bzfs creates default groups before parsing groupdb file - Frank Evers
 * +ALL and -ALL adds/removes all perms froma a group in groupdb - Frank Evers
-* Support for +,- and ! operators in bzfs/ groupdb file - Frank Evers
+* Support for +,- and ! operators in bzfs' groupdb file - Frank Evers
 
 BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)
 -------------------------------------------
