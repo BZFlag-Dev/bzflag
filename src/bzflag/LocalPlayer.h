@@ -17,6 +17,7 @@
 #include "ShotPath.h"
 #include "FlagSceneNode.h"
 #include "Ray.h"
+#include "BzfEvent.h"
 
 class Obstacle;
 
@@ -108,13 +109,18 @@ class LocalPlayer : public BaseLocalPlayer {
 
     void		addAntidote(SceneDatabase*);
 
+    boolean		isKeyboardMoving() const;
+    void		setKeyboardMoving(bool status);
     void 		setKeyboardSpeed(float speed);
     void 		setKeyboardAngVel(float angVel);
     float 		getKeyboardSpeed() const;
     float 		getKeyboardAngVel() const;
     void 		setKey(int button, boolean pressed);
     boolean             getKeyPressed() const;
-    int                 getKeyButton() const;
+    int 		getKeyButton() const;
+    void                resetKey();
+    void                setSlowKeyboard(boolean slow);
+    boolean             hasSlowKeyboard() const;
 
     static LocalPlayer*	getMyTank();
     static void		setMyTank(LocalPlayer*);
@@ -150,10 +156,12 @@ class LocalPlayer : public BaseLocalPlayer {
     const Player*	target;
     const Player*	nemesis;
     static LocalPlayer*	mainPlayer;
+    boolean		keyboardMoving;
     float		keyboardSpeed;
     float		keyboardAngVel;
-    int			keyButton;
+    int 		keyButton;
     boolean             keyPressed;
+    boolean             slowKeyboard;
 };
 
 //
@@ -190,6 +198,16 @@ inline const Obstacle*	LocalPlayer::getContainingBuilding() const
   return insideBuilding;
 }
 
+inline boolean LocalPlayer::isKeyboardMoving() const
+{
+  return keyboardMoving;
+}
+
+inline void LocalPlayer::setKeyboardMoving(bool status)
+{
+  keyboardMoving = status;
+}
+
 inline void LocalPlayer::setKeyboardSpeed(float speed)
 {
   keyboardSpeed = speed;
@@ -216,6 +234,12 @@ inline void LocalPlayer::setKey(int button, boolean pressed)
   keyPressed = pressed;
 }
 
+inline void LocalPlayer::resetKey()
+{
+  keyButton = BzfKeyEvent::NoButton;
+  keyPressed = False;
+}
+
 inline boolean LocalPlayer::getKeyPressed() const
 {
   return keyPressed;
@@ -224,6 +248,16 @@ inline boolean LocalPlayer::getKeyPressed() const
 inline int LocalPlayer::getKeyButton() const
 {
   return keyButton;
+}
+
+inline void LocalPlayer::setSlowKeyboard(boolean slow)
+{
+  slowKeyboard = slow;
+}
+
+inline boolean LocalPlayer::hasSlowKeyboard() const
+{
+  return slowKeyboard;
 }
 
 #endif // BZF_LOCAL_PLAYER_H

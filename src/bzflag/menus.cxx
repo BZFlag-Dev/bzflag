@@ -641,6 +641,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.append(createLabel(NULL, "Fast Quit:"));
   controls.append(createLabel(NULL, "Scroll Backward:"));
   controls.append(createLabel(NULL, "Scroll Forward:"));
+  controls.append(createLabel(NULL, "Slow Keyboard Motion:"));
 
   // set control order
   controls[0]->setNext(controls[0]);
@@ -664,8 +665,9 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls[17]->setNext(controls[18]);
   controls[18]->setNext(controls[19]);
   controls[19]->setNext(controls[20]);
-  controls[20]->setNext(controls[1]);
-  controls[1]->setPrev(controls[20]);
+  controls[20]->setNext(controls[21]);
+  controls[21]->setNext(controls[1]);
+  controls[1]->setPrev(controls[21]);
   controls[2]->setPrev(controls[1]);
   controls[3]->setPrev(controls[2]);
   controls[4]->setPrev(controls[3]);
@@ -685,6 +687,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls[18]->setPrev(controls[17]);
   controls[19]->setPrev(controls[18]);
   controls[20]->setPrev(controls[19]);
+  controls[21]->setPrev(controls[20]);
   // set initial focus
   setFocus(controls[1]);
 }
@@ -1472,7 +1475,8 @@ void			Help1Menu::resize(int width, int height)
 				BzfKeyMap::Pause,
 				BzfKeyMap::Quit,
 				BzfKeyMap::ScrollBackward,
-				BzfKeyMap::ScrollForward
+				BzfKeyMap::ScrollForward,
+				BzfKeyMap::SlowKeyboardMotion
 			};
 
   // get current key mapping and set strings appropriately

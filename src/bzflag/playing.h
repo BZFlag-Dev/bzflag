@@ -44,7 +44,6 @@ struct StartupInfo {
     int			listServerPort;
     boolean		joystick;
     BzfString		joystickName;
-    boolean		keyboardMoving;
 };
 
 typedef void		(*JoinGameCallback)(boolean success, void* data);

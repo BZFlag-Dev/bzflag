@@ -137,6 +137,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   shots = new LocalShotPath*[numShots];
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
+  keyboardMoving = False;
 }
 
 LocalPlayer::~LocalPlayer()
@@ -667,7 +668,8 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   setAngularVelocity(0.0f);
   setKeyboardSpeed(0.0f);
   setKeyboardAngVel(0.0f);
-  keyButton = BzfKeyEvent::NoButton;
+  setSlowKeyboard(False);
+  resetKey();
   doUpdateMotion(0.0f);
 
   // make me alive now

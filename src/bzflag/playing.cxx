@@ -401,6 +401,16 @@ static float		roamPhi = 0.0f, roamDPhi;
 static float		roamZoom = 60.0f, roamDZoom;
 #endif
 
+static void		showKeyboardStatus()
+{
+  if (myTank->isKeyboardMoving()) 
+    controlPanel->addMessage("Keyboard movement");
+  else if (mainWindow->joystick())
+    controlPanel->addMessage("Joystick movement");
+  else
+    controlPanel->addMessage("Mouse movement");
+}
+
 static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 {
   if (keymap.isMappedTo(BzfKeyMap::TimeForward, key)) {
@@ -428,22 +438,6 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
   else {
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {
-      case 'K':
-      case 'k':
-	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
-	  if (pressed) {
-            if (!startupInfo.keyboardMoving) 
-              controlPanel->addMessage("Keyboard movement");
-            else if (mainWindow->joystick())
-              controlPanel->addMessage("Joystick movement");
-            else
-              controlPanel->addMessage("Mouse movement");
-            startupInfo.keyboardMoving = !startupInfo.keyboardMoving;
-          }
-          return True;
-        }
-        break;
-
       case 'T':
       case 't':
 	// toggle frames-per-second display
@@ -821,9 +815,26 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       }
     }
   }
+  else if (keymap.isMappedTo(BzfKeyMap::SlowKeyboardMotion, key)) {
+    if (myTank->isKeyboardMoving()) 
+      myTank->setSlowKeyboard(pressed);
+  }
   // Might be a direction key. Save it for later.
-  else if (myTank->isAlive() && startupInfo.keyboardMoving) 
-    myTank->setKey(key.button, pressed);
+  else if (myTank->isAlive()) {
+    if (!myTank->isKeyboardMoving() && pressed)
+      switch (key.button)
+      {
+      case BzfKeyEvent::Left:
+      case BzfKeyEvent::Right:
+      case BzfKeyEvent::Up:
+      case BzfKeyEvent::Down:
+        myTank->setKeyboardMoving(True);
+        showKeyboardStatus();
+        break;
+      }
+    if (myTank->isKeyboardMoving())
+      myTank->setKey(key.button, pressed);
+  }
 }
 
 static float getKeyValue(bool pressed)
@@ -839,11 +850,12 @@ static void		doMotion()
   if (motionFreeze) return;
 #endif
 
-  float rotation, speed, rotationModifier = 1.0f;
+  float rotation, speed;
 
-  if (startupInfo.keyboardMoving) {
+  if (myTank->isKeyboardMoving()) {
     rotation = myTank->getKeyboardAngVel();
     speed = myTank->getKeyboardSpeed();
+
     switch (myTank->getKeyButton())
     {
     case BzfKeyEvent::Left:
@@ -859,12 +871,17 @@ static void		doMotion()
       speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
       break;
     }
-    if (myTank->getMagnify())
-      rotationModifier = 0.2f;
 
     myTank->setKeyboardAngVel(rotation);
     myTank->setKeyboardSpeed(speed);
-    myTank->setKey(BzfKeyEvent::NoButton, false);
+    myTank->resetKey();
+
+    if (myTank->getMagnify())
+      rotation *= 0.2;
+    if (myTank->hasSlowKeyboard()) {
+      rotation /= 2.0;
+      speed /= 2.0;
+    }
   }
   else {
     // get mouse position
@@ -925,7 +942,7 @@ static void		doMotion()
       if (speed < -0.5f) speed = -0.5f;
     }
   }
-  myTank->setDesiredAngVel(rotation * rotationModifier);
+  myTank->setDesiredAngVel(rotation);
   myTank->setDesiredSpeed(speed);
 }
 
@@ -1029,6 +1046,10 @@ static void		doEvent(BzfDisplay* display)
       break;
 
     case BzfEvent::MouseMove:
+      if (myTank && myTank->isAlive() && myTank->isKeyboardMoving()) {
+        myTank->setKeyboardMoving(False);
+        showKeyboardStatus();
+      }
       break;
   }
 }

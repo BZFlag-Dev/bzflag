@@ -612,7 +612,6 @@ void			dumpResources(BzfDisplay* display,
 {
   // collect new configuration
 
-  db.addValue("keyboardmoving", startupInfo.keyboardMoving ? "yes" : "no"); 
   db.addValue("udpnet", startupInfo.useUDPconnection ? "yes" : "no");	
   db.addValue("callsign", startupInfo.callsign);
   db.addValue("team", Team::getName(startupInfo.team));
@@ -1135,10 +1134,6 @@ int			main(int argc, char** argv)
   // set server list URL
   if (db.hasValue("list"))
     startupInfo.listServerURL = db.getValue("list");
-
-  // keyboard moving
-  if (db.hasValue("keyboardmoving"))
-    startupInfo.keyboardMoving = db.getValue("keyboardmoving") == "yes";
 
   // start playing
   startPlaying(display, renderer, db, &startupInfo);
