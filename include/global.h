@@ -95,8 +95,8 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-extern const unsigned int		numGlobalDBItems;
-extern const GlobalDBItem		globalDBItems[];
+extern const unsigned int numGlobalDBItems;
+extern const struct GlobalDBItem globalDBItems[];
 
 #endif // BZF_GLOBAL_H
 
