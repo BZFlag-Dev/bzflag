@@ -705,17 +705,17 @@ void    dropHardFlags()
 void	doAutoPilot(float &rotation, float &speed)
 {
     dropHardFlags(); //Perhaps we should remove this and let learning do it's work
-	if (!avoidBullet(rotation, speed)) {
-	  if (!stuckOnWall(rotation, speed)) {
+    if (!avoidBullet(rotation, speed)) {
+      if (!stuckOnWall(rotation, speed)) {
         if (!chasePlayer(rotation, speed)) {
-		  if (!lookForFlag(rotation, speed)) {
-			navigate(rotation, speed);
-		  }
+          if (!lookForFlag(rotation, speed)) {
+            navigate(rotation, speed);
+          }
         }
       }
-	}
+    }
 
-	avoidDeathFall(rotation, speed);
+    avoidDeathFall(rotation, speed);
 
     fireAtTank();
 }
