@@ -70,6 +70,9 @@ inline int wresize(WINDOW* w, int lines, int cols) {
   return (resize_window(w, lines, cols) != NULL);
 }
 
+inline int resizeterm(int lines, int cols) {
+  return resize_term(lines, cols);
+}
 
 // Local Variables: ***
 // mode: C++ ***
