@@ -619,11 +619,49 @@ void			World::addFlags(SceneDatabase* scene)
   }
 }
 
+
+static void writeBZDBvar (const std::string& name, void *userData)
+{
+  std::ofstream *out = (std::ofstream *)userData;
+  if ((BZDB.getPermission(name) == StateDatabase::Server)
+      && (BZDB.get(name) != BZDB.getDefault(name))
+      && (name != "poll")) {
+    (*out) << "\t-set " << name << " " << BZDB.get(name) << std::endl;
+  }
+  return;
+}
+
+
 bool			World::writeWorld(std::string filename)
 {
   std::ofstream out(filename.c_str());
   if (!out)
     return false;
+    
+  // Write BZDB server variables that aren't defaults
+  out << "options" << std::endl;
+  BZDB.iterate (writeBZDBvar, &out);
+  out << "end" << std::endl;
+  out << std::endl;
+
+  // Write World
+  {
+    float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+    float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
+    if ((worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str()))
+    ||  (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())))
+    {
+      out << "world" << std::endl;
+      if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) {
+	out << "\tsize " << worldSize / 2.0f << std::endl;
+      }
+      if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())) {
+	out << "\tflagHeight " << flagHeight << std::endl;
+      }
+      out << "end" << std::endl;
+      out << std::endl;
+    }
+  }
 
   // Write bases
   {
@@ -731,25 +769,6 @@ bool			World::writeWorld(std::string filename)
       }
       else {
         out << "\tto " << to << std::endl;
-      }
-      out << "end" << std::endl;
-      out << std::endl;
-    }
-  }
-
-  // Write World
-  {
-    float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-    float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
-    if ((worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str()))
-    ||  (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())))
-    {
-      out << "world" << std::endl;
-      if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) {
-	out << "\tsize " << worldSize / 2.0f << std::endl;
-      }
-      if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())) {
-	out << "\tflagHeight " << flagHeight << std::endl;
       }
       out << "end" << std::endl;
       out << std::endl;
