@@ -570,33 +570,34 @@ void			SceneRenderer::render(
     theSun.enableLight(SunLight);
   }
 
-  // turn on fog for teleporter blindness if close to a teleporter
-  float teleporterProximity = 0.0f;
-  if (!blank && LocalPlayer::getMyTank())
-    teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
+  bool doFog = LocalPlayer::getMyTank() && (LocalPlayer::getMyTank()->getTeam() != ObserverTeam);
 
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-  bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
-  if (reallyUseFogHack) {
-    if (useDimming) {
-      const float density = dimDensity;
-      glFogi(GL_FOG_MODE, GL_LINEAR);
-      glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-      glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-      glFogfv(GL_FOG_COLOR, dimnessColor);
-      glEnable(GL_FOG);
-    }
-    else if (teleporterProximity > 0.0f && useFogHack) {
-      const float density = (teleporterProximity > 0.75f) ?
-				1.0f : teleporterProximity / 0.75f;
-      glFogi(GL_FOG_MODE, GL_LINEAR);
-      glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-      glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-      glFogfv(GL_FOG_COLOR, blindnessColor);
-      glEnable(GL_FOG);
-    }
-  }
+    // turn on fog for teleporter blindness if close to a teleporter
+    float teleporterProximity = 0.0f;
+    if (!blank && LocalPlayer::getMyTank())
+      teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
 
+    float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+    bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
+    if (doFog && reallyUseFogHack) {
+      if (useDimming) {
+        const float density = dimDensity;
+        glFogi(GL_FOG_MODE, GL_LINEAR);
+        glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
+        glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
+        glFogfv(GL_FOG_COLOR, dimnessColor);
+        glEnable(GL_FOG);
+      }
+      else if (doFog && teleporterProximity > 0.0f && useFogHack) {
+        const float density = (teleporterProximity > 0.75f) ?
+				  1.0f : teleporterProximity / 0.75f;
+        glFogi(GL_FOG_MODE, GL_LINEAR);
+        glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
+        glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
+        glFogfv(GL_FOG_COLOR, blindnessColor);
+        glEnable(GL_FOG);
+      }
+    }
   // set scissor
 
   glScissor(window.getOriginX(), window.getOriginY() + window.getHeight() - window.getViewHeight(),
@@ -712,10 +713,10 @@ void			SceneRenderer::render(
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glPopMatrix();
 
-  if (reallyUseFogHack && (teleporterProximity > 0.0f || useDimming))
+  if (!doFog || (reallyUseFogHack && (teleporterProximity > 0.0f || useDimming)))
     glDisable(GL_FOG);
 
-  if (!reallyUseFogHack) {
+  if (doFog && !reallyUseFogHack) {
     float density = 0.0f;
     const GLfloat* color = NULL;
     if (useDimming) {
