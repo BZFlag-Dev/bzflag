@@ -4639,7 +4639,9 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // figure out landing spot -- if flag in a Bad Place
   // when dropped, move to safety position or make it going
-  TeamColor teamBase = whoseBase(pos[0], pos[1], pos[2]);
+  TeamColor teamBase = whoseBase(pos[0], pos[1],
+				 (topmosttype == NOT_IN_BUILDING ? pos[2] : 
+				  topmost->pos[2] + topmost->size[2] + 0.01f));
   FlagId flagId = pFlagInfo->flag.id;
   bool isTeamFlag = (flagId >= FirstTeamFlag) && (flagId <= LastTeamFlag);
 
