@@ -64,7 +64,7 @@ bzflag_SOURCES = 			\
 
 noinst_HEADERS = \
 	stars.cxx
-COMMON_ADD =				\
+LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
@@ -73,9 +73,9 @@ COMMON_ADD =				\
 	../scene/libSceneDB.a		\
 	../geometry/libGeometry.a
 if WIN32
-  LDADD = $(COMMON_ADD) bzflag.res $(GLIBS)
+  LDADD += bzflag.res $(GLIBS)
 else
-  LDADD = $(COMMON_ADD) $(GLIBS)
+  LDADD += $(GLIBS)
 endif
 EXTRA_DIST = bzflag.bmp
 AM_CPPFLAGS = $(X_CFLAGS)
