@@ -4936,7 +4936,7 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
-	sprintf(reply,"%-12s : %4dms (%d)%s",player[i].callSign,
+	sprintf(reply,"%-16s : %4dms (%d)%s",player[i].callSign,
 	    int(player[i].lagavg*1000),player[i].lagcount,
 	    player[i].doespings ? "" : " (old)");
 	if (player[i].doespings && player[i].pingslost>0)
@@ -4951,7 +4951,7 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
-	sprintf(reply,"%-12s : %4ds",player[i].callSign,
+	sprintf(reply,"%-16s : %4ds",player[i].callSign,
 		int(now-player[i].lastupdate));
 	sendMessage(t,player[t].id,player[t].team,reply);
       }
@@ -4963,7 +4963,7 @@ static void parseCommand(const char *message, int t)
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
 	char flag[MessageLen];
-	sprintf(reply,"%-12s : ",player[i].callSign );
+	sprintf(reply,"%-16s : ",player[i].callSign );
 	FlagHistoryListIterator fhIt(player[i].flagHistory);
    
 	while (!fhIt.isDone()) {
@@ -4983,7 +4983,7 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
 	char reply[MessageLen];
-	sprintf(reply,"[%d]%-12s: %s:%d%s%s",i,player[i].callSign,
+	sprintf(reply,"[%d]%-16s: %s:%d%s%s",i,player[i].callSign,
 	    inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
 	    player[i].ulinkup ? " udp" : "",
 	    player[i].knowId ? " id" : "");
