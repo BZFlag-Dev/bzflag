@@ -128,6 +128,7 @@ public:
   static const std::string	BZDB_SHOTRADIUS;
   static const std::string	BZDB_SHOTLENGTH;
   static const std::string	BZDB_SHOTTAILLENGTH;
+  static const std::string	BZDB_LOCKONANGLE;
 
 private:
   StateDatabase();

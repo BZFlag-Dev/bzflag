@@ -4183,7 +4183,7 @@ static void		setTarget()
     const float a = fabsf(y / d);
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
-    if (a < 0.15f &&					// about 8.5 degrees
+    if (a < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
 	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
 	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
 	!player[i]->isPaused() &&			// can't lock on paused
@@ -4277,7 +4277,7 @@ static void		setHuntTarget()
     const float a = fabsf(y / d);
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
-    if (a < 0.15f &&					// about 8.5 degrees
+    if (a < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
 	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
 	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
 	!player[i]->isPaused() &&			// can't lock on paused

@@ -32,6 +32,7 @@ const std::string StateDatabase::BZDB_MUZZLEFRONT	= std::string("_muzzleFront");
 const std::string StateDatabase::BZDB_SHOTRADIUS	= std::string("_shotRadius");
 const std::string StateDatabase::BZDB_SHOTLENGTH	= std::string("_shotLength");
 const std::string StateDatabase::BZDB_SHOTTAILLENGTH	= std::string("_shotTailLength");
+const std::string StateDatabase::BZDB_LOCKONANGLE	= std::string("_lockOnAngle");
 
 //
 // StateDatabase::Item
