@@ -3938,20 +3938,25 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
         float	fudge = 5.0f;
         bool InBounds = true;
         float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-        if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge))
+        if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge)) {
+	  std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << fudge << ")" << std::endl;
 	  InBounds = false;
-        else if ( (state.pos[0] >= worldSize*0.5f + fudge) || (state.pos[0] <= -worldSize*0.5f - fudge))
+	} else if ( (state.pos[0] >= worldSize*0.5f + fudge) || (state.pos[0] <= -worldSize*0.5f - fudge)) {
+	  std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << fudge << ")" << std::endl;
        	  InBounds = false;
+	}
 
-        if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH))
+        if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH) + 0.5) {
+	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB->eval(StateDatabase::BZDB_BURROWDEPTH) << " + 0.5)" << std::endl;
 	  InBounds = false;
+	}
 
 
         // kick em cus they are cheating
         if (!InBounds)
 	{
 	  char message[MessageLen];
-	  DEBUG1("kicking Player %s [%d] Out of map bounds\n", player[t].callSign, t);
+	  DEBUG1("kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].callSign, t, state.pos[0], state.pos[1], state.pos[2]);
 	  strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
 	  sendMessage(ServerPlayer, t, message, true);
 	  removePlayer(t, "Out of map bounds");
