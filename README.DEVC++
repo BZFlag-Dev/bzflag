@@ -15,19 +15,11 @@ is quite easy.
    a debug table remove located in the "\bin\" directory of Dev-C++, on the
    outputed .exe's to remove nearly half of the original file size.
 
-You will need DirectX library unless building using SDL. DirectX can
-be retrieved from:
+SDL is needed for the current building style, which is considerably smaller
+than DirectX SDK, and is available from:
 
-   http://www.microsoft.com/directX
-
-It is over 200 MB!
-
-MinGW32 includes DirectX libraries, but not the headers.
-Unfortunately, the MS license agreement prohibits us from 
-redistributing only the needed files, so you must get the entire
-DirectX SDK.
-
-The needed DirectX file for BZFlag is dsound.h, but that will then 
-include ddraw.h and d3dtypes.h.  You may either add an entry in the
-include paths to the DirectX include folder, or place those three
-headers in bzflag\include.
+    www.libsdl.org
+    
+It is only a few megabytes, and is cross-platform. Remeber to download the
+one for MinGW32 so it works nicely (however, a VC++ one may also work). Place
+the .a files in your "/lib/" directory of Dev-C++, and the headers in "/include/".
