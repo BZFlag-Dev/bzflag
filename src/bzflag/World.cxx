@@ -645,10 +645,15 @@ bool			World::writeWorld(std::string filename)
       out << "\tsize " << base.getWidth() << " " << base.getBreadth() << " " << base.getHeight() << std::endl;
       out << "\trotation " << ((base.getRotation() * 180.0) / M_PI) << std::endl;
       out << "\tcolor " << base.getTeam() << std::endl;
-      if (base.isDriveThrough())
-	out << "drivethrough" << std::endl;
-      if (base.isShootThrough())
-	out << "shootthrough" << std::endl;
+      if (base.isDriveThrough()&&base.isShootThrough())
+        out << "passable" << std::endl;
+      else{
+        if (base.isDriveThrough())
+          out << "drivethrough" << std::endl;
+        if (base.isShootThrough())
+          out << "shootthrough" << std::endl;
+      }
+
       out << "end" << std::endl;
       out << std::endl;
     }
@@ -663,11 +668,15 @@ bool			World::writeWorld(std::string filename)
       const float *pos = box.getPosition();
       out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
       out << "\tsize " << box.getWidth() << " " << box.getBreadth() << " " << box.getHeight() << std::endl;
-      out << "\trotation " << ((box.getRotation() * 180.0) / M_PI) << std::endl;	
-      if (box.isDriveThrough())
-	out << "drivethrough" << std::endl;
-      if (box.isShootThrough())
-	out << "shootthrough" << std::endl;
+      out << "\trotation " << ((box.getRotation() * 180.0) / M_PI) << std::endl;
+      if (box.isDriveThrough()&&box.isShootThrough())
+        out << "passable" << std::endl;
+      else{
+        if (box.isDriveThrough())
+	  out << "drivethrough" << std::endl;
+        if (box.isShootThrough())
+	  out << "shootthrough" << std::endl;
+      }
       out << "end" << std::endl;
       out << std::endl;
     }
@@ -680,15 +689,20 @@ bool			World::writeWorld(std::string filename)
       PyramidBuilding pyr = *it;
       out << "pyramid" << std::endl;
       const float *pos = pyr.getPosition();
-      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+      float z = pos[2];
+      if (pyr.getZFlip())
+        z = -z;
+      out << "\tposition " << pos[0] << " " << pos[1] << " " << z << std::endl;
       out << "\tsize " << pyr.getWidth() << " " << pyr.getBreadth() << " " << pyr.getHeight() << std::endl;
       out << "\trotation " << ((pyr.getRotation() * 180.0) / M_PI) << std::endl;
-      if (pyr.isDriveThrough())
-	out << "drivethrough" << std::endl;
-      if (pyr.isShootThrough())
-	out << "shootthrough" << std::endl;
-      if (pyr.getZFlip())
-	out << "flipz" << std::endl;
+      if (pyr.isDriveThrough()&&pyr.isShootThrough())
+        out << "passable" << std::endl;
+      else{
+        if (pyr.isDriveThrough())
+	  out << "drivethrough" << std::endl;
+        if (pyr.isShootThrough())
+	  out << "shootthrough" << std::endl;
+      }
       out << "end" << std::endl;
       out << std::endl;
     }
