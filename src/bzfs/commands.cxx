@@ -1048,7 +1048,7 @@ void handlePollCmd(int t, const char *message)
 
   /* make sure that there is not a poll active already */
   if (arbiter->knowsPoll()) {
-    sprintf(reply,"A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
+    sprintf(reply,"A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply, true);
     sendMessage(ServerPlayer, t, "Unable to start a new poll until the current one is over", true);
     return;
@@ -1116,14 +1116,15 @@ void handlePollCmd(int t, const char *message)
 
   /* handle subcommands */
 
-  if ((cmd == "ban") || (cmd == "kick")) {
-    std::string nick;
+  if ((cmd == "ban") || (cmd == "kick") || (cmd == "set")) {
+    std::string target;
+    std::string parameter = "";
 
     arguments = arguments.substr(endPosition);
 
-    DEBUG2("Command arguments rguments is [%s]\n", arguments.c_str());
+    DEBUG2("Command arguments are [%s]\n", arguments.c_str());
 
-    /* find the start of the player name */
+    /* find the start of the target (e.g. player name) */
     startPosition = 0;
     while ((startPosition < arguments.size()) &&
 	   (isspace(arguments[startPosition]))) {
@@ -1134,9 +1135,9 @@ void handlePollCmd(int t, const char *message)
       startPosition++;
     }
 
-    DEBUG2("Start position for player name is %d\n", (int)startPosition);
+    DEBUG2("Start position for target is %d\n", (int)startPosition);
 
-    /* find the end of the player name */
+    /* find the end of the target */
     endPosition = arguments.size() - 1;
     while ((endPosition > 0) &&
 	   (isspace(arguments[endPosition]))) {
@@ -1147,57 +1148,58 @@ void handlePollCmd(int t, const char *message)
       endPosition--;
     }
 
-    DEBUG2("End position for player name is %d\n", (int)endPosition);
+    DEBUG2("End position for target is %d\n", (int)endPosition);
 
-    nick = arguments.substr(startPosition, endPosition - startPosition + 1);
+    target = arguments.substr(startPosition, endPosition - startPosition + 1);
 
-    DEBUG2("Player specified to vote upon is [%s]\n", nick.c_str());
+    DEBUG2("Target specified to vote upon is [%s]\n", target.c_str());
 
-    if (nick.length() == 0) {
-      sprintf(reply,"%s, no player was specified for the [%s] vote", player[t].callSign, cmd.c_str());
+    if (target.length() == 0) {
+      sprintf(reply,"%s, no target was specified for the [%s] vote", player[t].callSign, cmd.c_str());
       sendMessage(ServerPlayer, t, reply, true);
-      sprintf(reply,"Usage: /poll %s playername", cmd.c_str());
+      sprintf(reply,"Usage: /poll %s target", cmd.c_str());
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
 
-    /* make sure the requested player is actually here */
-    bool foundPlayer=false;
-    std::string playerIP = "";
-    for (int v = 0; v < curMaxPlayers; v++) {
-      if (strncasecmp(nick.c_str(), player[v].callSign, 256) == 0) {
-	playerIP = player[v].peer.getDotNotation().c_str();
-	foundPlayer=true;
-	break;
+    if (cmd != "set") {
+      // all polls that are not set polls take a player name
+
+      /* make sure the requested player is actually here */
+      bool foundPlayer=false;
+      for (int v = 0; v < curMaxPlayers; v++) {
+	if (strncasecmp(target.c_str(), player[v].callSign, 256) == 0) {
+	  parameter = player[v].peer.getDotNotation().c_str();
+	  foundPlayer=true;
+	  break;
+	}
       }
-    }
 
-    if (!foundPlayer) {
-      /* wrong name? */
-      sprintf(reply, "The player specified for a %s vote is not here", cmd.c_str());
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
+      if (!foundPlayer) {
+	/* wrong name? */
+	sprintf(reply, "The player specified for a %s vote is not here", cmd.c_str());
+	sendMessage(ServerPlayer, t, reply, true);
+	return;
+      }
     }
 
     /* create and announce the new poll */
+    bool canDo = false;
     if (cmd == "ban") {
-      if (arbiter->pollToBan(nick.c_str(), player[t].callSign, playerIP) == false) {
-	sprintf(reply,"You are not able to request a ban poll right now, %s", player[t].callSign);
-	sendMessage(ServerPlayer, t, reply, true);
-	return;
-      } else {
-	sprintf(reply,"A poll to temporarily ban %s has been requested by %s", nick.c_str(), player[t].callSign);
-	sendMessage(ServerPlayer, AllPlayers, reply, true);
-      }
+      canDo = (arbiter->pollToBan(target.c_str(), player[t].callSign, parameter));
+    } else if (cmd == "kick") {
+      canDo = (arbiter->pollToKick(target.c_str(), player[t].callSign));
+    } else if (cmd == "set") {
+      canDo = (arbiter->pollToSet(target.c_str(), player[t].callSign));
+    }
+
+    if (!canDo) {
+      sprintf(reply,"You are not able to request a %s poll right now, %s", cmd.c_str(), player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
     } else {
-      if (arbiter->pollToKick(nick.c_str(), player[t].callSign) == false) {
-	sprintf(reply,"You are not able to request a kick poll right now, %s", player[t].callSign);
-	sendMessage(ServerPlayer, t, reply, true);
-	return;
-      } else {
-	sprintf(reply,"A poll to %s %s has been requested by %s", cmd.c_str(), nick.c_str(), player[t].callSign);
+	sprintf(reply,"A poll to %s %s has been requested by %s", cmd.c_str(), target.c_str(), player[t].callSign);
 	sendMessage(ServerPlayer, AllPlayers, reply, true);
-      }
     }
 
     unsigned int necessaryToSucceed = (unsigned int)((clOptions->votePercentage / 100.0) * (double)available);
@@ -1221,7 +1223,7 @@ void handlePollCmd(int t, const char *message)
     bool voted = arbiter->voteYes(player[t].callSign);
     if (!voted) {
       sendMessage(ServerPlayer, t, "Unable to automatically place your vote for some unknown reason", true);
-      DEBUG2("Unable to  to automatically place a vote for [%s]\n", player[t].callSign);
+      DEBUG2("Unable to automatically place a vote for [%s]\n", player[t].callSign);
     }
 
   } else if (cmd == "vote") {
@@ -1357,7 +1359,7 @@ void handleVoteCmd(int t, const char *message)
 
   if (!cast) {
     /* player was unable to cast their vote; probably already voted */
-    sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
+    sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
@@ -1389,7 +1391,7 @@ void handleVetoCmd(int t, const char * /*message*/)
     return;
   }
 
-  sendMessage(ServerPlayer, t, string_util::format("%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str()).c_str(), true);
+  sendMessage(ServerPlayer, t, string_util::format("%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str()).c_str(), true);
 
   /* poof */
   arbiter->forgetPoll();

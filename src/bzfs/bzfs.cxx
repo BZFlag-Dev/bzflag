@@ -4941,12 +4941,12 @@ int main(int argc, char **argv)
       }
     }
 
-    // manage voting poll for collective kicks/bans
+    // manage voting poll for collective kicks/bans/sets
     if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {
       if (votingarbiter->knowsPoll()) {
 	char message[MessageLen];
 
-	std::string person = votingarbiter->getPollPlayer();
+	std::string target = votingarbiter->getPollTarget();
 	std::string action = votingarbiter->getPollAction();
 
 	static unsigned short int voteTime = 0;
@@ -4960,7 +4960,7 @@ int main(int argc, char **argv)
 	if (!announcedOpening) {
 	  voteTime = votingarbiter->getVoteTime();
 
-	  sprintf(message, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), person.c_str(), voteTime);
+	  sprintf(message, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), target.c_str(), voteTime);
 	  sendMessage(ServerPlayer, AllPlayers, message, true);
 	  announcedOpening = true;
 	}
@@ -4971,7 +4971,7 @@ int main(int argc, char **argv)
 	if (((voteTime - (int)(TimeKeeper::getCurrent() - votingarbiter->getStartTime()) - 1) % 15 == 0) &&
 	    ((int)(TimeKeeper::getCurrent() - lastAnnounce) != 0) &&
 	    (votingarbiter->timeRemaining() > 0)) {
-	  sprintf(message, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), person.c_str());
+	  sprintf(message, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), target.c_str());
 	  sendMessage(ServerPlayer, AllPlayers, message, true);
 	  lastAnnounce = TimeKeeper::getCurrent();
 	}
@@ -4986,14 +4986,21 @@ int main(int argc, char **argv)
 
 	  if (votingarbiter->isPollSuccessful()) {
 	    if (!announcedClosure) {
+	      std::string pollAction;
+	      if (action == "ban")
+		pollAction = "temporarily banned";
+	      else if (action == "kick")
+		pollAction = "kicked";
+	      else
+		pollAction = action;
 	      // a poll that exists and is closed has ended successfully
-	      sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", person.c_str(), action == "ban" ? "temporarily banned" : "kicked");
+	      sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 	      announcedClosure = true;
 	    }
 	  } else {
 	    if (!announcedClosure) {
-	      sprintf(message, "The poll to %s %s was not successful", action.c_str(), person.c_str());
+	      sprintf(message, "The poll to %s %s was not successful", action.c_str(), target.c_str());
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 	      announcedClosure = true;
 
@@ -5009,31 +5016,42 @@ int main(int argc, char **argv)
 	    /* maybe successful, maybe not */
 	    if (votingarbiter->isPollSuccessful()) {
 	      // perform the action of the poll, if any
-	      sprintf(message, "%s has been %s", person.c_str(), action == "ban" ? "banned for 10 minutes." : "kicked.");
+	      std::string pollAction;
+	      if (action == "ban")
+		pollAction = "banned for 10 minutes.";
+	      else if (action == "kick")
+		pollAction = "kicked.";
+	      else
+		pollAction = action;
+	      sprintf(message, "%s has been %s", target.c_str(), pollAction);
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 
 	      /* regardless of whether or not the player was found, if the poll
 	       * is a ban poll, ban the weenie
 	       */
 	      if (action == "ban") {
-		clOptions->acl.ban(votingarbiter->getPollPlayerIP().c_str(), person.c_str(), 10);
+		clOptions->acl.ban(votingarbiter->getPollTargetIP().c_str(), target.c_str(), 10);
 	      }
-
-	      // lookup the player id
-	      bool foundPlayer=false;
-	      int v;
-	      for (v = 0; v < curMaxPlayers; v++) {
-		if (strncmp(player[v].callSign, person.c_str(), 256)==0) {
-		  foundPlayer=true;
-		  break;
+	      
+	      if ((action == "ban") || (action == "kick")) {
+		// lookup the player id
+		bool foundPlayer=false;
+		int v;
+		for (v = 0; v < curMaxPlayers; v++) {
+		  if (strncmp(player[v].callSign, target.c_str(), 256)==0) {
+		    foundPlayer=true;
+		    break;
+		  }
 		}
-	      }
-	      if (foundPlayer) {
-		// notify the player
-		sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
-		sendMessage(ServerPlayer, v, message, true);
-		sprintf(message, "/poll %s", action.c_str());
-		removePlayer(v, message);
+		if (foundPlayer) {
+		  // notify the player
+		  sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
+		  sendMessage(ServerPlayer, v, message, true);
+		  sprintf(message, "/poll %s", action.c_str());
+		  removePlayer(v, message);
+		}
+	      } else if (action == "set") {
+		parseCommand(string_util::format("set %s", target.c_str()).c_str(), ServerPlayer);
 	      }
 	    } /* end if poll is successful */
 
@@ -5048,7 +5066,7 @@ int main(int argc, char **argv)
 	} else {
 	  // the poll may get enough votes early
 	  if (votingarbiter->isPollSuccessful()) {
-	    sprintf(message, "Enough votes were collected to %s %s early.", action.c_str(), person.c_str());
+	    sprintf(message, "Enough votes were collected to %s %s early.", action.c_str(), target.c_str());
 	    sendMessage(ServerPlayer, AllPlayers, message, true);
 
 	    // close the poll since we have enough votes (next loop will kick off notification)
