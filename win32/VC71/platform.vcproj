@@ -584,9 +584,6 @@
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath="..\..\src\platform\XIJoystick.cxx">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
