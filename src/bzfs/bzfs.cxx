@@ -4736,7 +4736,11 @@ static void parseCommand(const char *message, int t)
 		FlagHistoryListIterator fhIt(player[i].flagHistory);
    
 		while (!fhIt.isDone()) {
-			sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)fhIt.getItem()) );
+			FlagId fID = (FlagId)fhIt.getItem();
+			if (Flag::getType(fID) == FlagNormal)
+				sprintf( flag, "(*%c) ", Flag::getName(fID)[0] );
+			else
+				sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)fhIt.getItem()) );
 			strcat( reply, flag );
 			fhIt.inc();
 		}
