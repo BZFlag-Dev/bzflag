@@ -134,6 +134,21 @@ extern std::string		getScreenShotDirName()
   return setupString("screenshots");
 }
 
+extern std::string		getTempDirName()
+{
+// FIXME: needs something for Windows and maybe other platforms
+#if defined(_WIN32)
+#else
+  std::string name;
+  if (getenv("TMPDIR")) {
+    name = getenv("TMPDIR");
+  } else {
+    name = "/tmp";
+  }
+#endif
+  name += DirectorySeparator;
+  return name;
+}
 
 extern std::string		getWorldDirName()
 {

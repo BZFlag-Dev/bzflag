@@ -29,6 +29,8 @@
 #endif
 #include <assert.h>
 
+#include "DirectoryNames.h"
+
 #ifdef HAVE_KRB5
 krb5_context   Authentication::context        = NULL;
 krb5_ccache    Authentication::cc             = NULL;
@@ -68,7 +70,7 @@ void Authentication::init(const char *address, int port, const char *password)
     com_err("bzfs:", retval, "while initializing krb5");
 
   // Gettin a default cache different for any bzfs process
-  sprintf(ccfile, "FILE:/tmp/krb5cc_p%ld", (long)getpid());
+  sprintf(ccfile, "FILE:%skrb5cc_p%ld", getTempDirName().c_str(), (long)getpid());
   if (context && (retval = krb5_cc_set_default_name(context, ccfile)))
     com_err("bzfs:", retval, "setting default cache");
   unlink(ccfile+strlen("FILE:"));
