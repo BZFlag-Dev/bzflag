@@ -51,6 +51,19 @@ void Authentication::init(const char *address, int port, const char *password)
   krb5_error_code retval;
   char            ccfile[MAXPATHLEN+6]; // FILE:path+\0
 
+  if (!address)
+    return;
+
+  int i;
+  char serverName[128];
+  strncpy(serverName, address, 128);
+  for (i = 0; i < 127 && serverName[i] != 0 && serverName[i] != ':'; i++);
+
+  // With no public address we cannot do auth
+  if (!i)
+    return;
+  serverName[i] = 0;
+
   // Initializing kerberos library
   if ((retval = krb5_init_context(&context)))
     com_err("bzfs:", retval, "while initializing krb5");
@@ -68,7 +81,7 @@ void Authentication::init(const char *address, int port, const char *password)
   // Getting principal identifier
   char serverPort[8];
   snprintf(serverPort, sizeof(serverPort), "%d", port);
-  if (cc && (retval = krb5_sname_to_principal(context, address, serverPort,
+  if (cc && (retval = krb5_sname_to_principal(context, serverName, serverPort,
 					      KRB5_NT_SRV_HST, &client)))
     com_err("bzfs:", retval, "getting principal name");
 
