@@ -522,7 +522,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   bool expelled;
   const Obstacle* obstacle;
   float timeStep = dt;
-//  if (location != Dead && location != Exploding) location = OnGround;
+  if (location != Dead && location != Exploding) location = OnGround;
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
     // record position at beginning of time step
     float tmpPos[3], tmpAzimuth;
