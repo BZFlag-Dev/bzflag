@@ -461,13 +461,23 @@ static void				doMotion()
 
 	if (myTank->isAutoPilot()) {
 		//FIXME bot motion
-		PlayerId target;
-		// FIXME should pick nearest "enemy"
-		for (target = 0; target < maxPlayers; target++)
-			if ((target != myTank->getId()) && player[target] &&
+		PlayerId t;
+		PlayerId target = maxPlayers;
+		const float *mp = myTank->getPosition();
+		float distance = Infinity;
+		for (t = 0; t < maxPlayers; t++)
+			if ((t != myTank->getId()) && player[t] &&
+					player[t]->isAlive() &&
+					!player[t]->isPaused() &&
+					!player[t]->isNotResponding() &&
 					((myTank->getTeam() == RogueTeam) ||
-					(player[target]->getTeam() != myTank->getTeam()))) {
-				break;
+					(player[t]->getTeam() != myTank->getTeam()))) {
+				const float *tp = player[t]->getPosition();
+				float d = hypotf(tp[0] - mp[0], tp[1] - mp[1]);
+				if (d < distance) {
+					target = t;
+					break;
+				}
 			}
 		if (target == maxPlayers) {
 			// no target. just sit here for now
@@ -475,20 +485,24 @@ static void				doMotion()
 			rotation = speed = 0.0f;
 		}
 		else {
+			myTank->setTarget(player[target]);
 			// blindly head towards the player
-			const float *mp = myTank->getPosition();
 			const float *tp = player[target]->getPosition();
 			float azimuth = atan2f(tp[1] - mp[1], tp[0] - mp[0]);
 			if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
 			rotation = atan2f(tp[1] - mp[1], tp[0] - mp[0]) - myTank->getAngle();
 			if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
+			if (fabs(rotation) > M_PI / 2)
+				speed = -0.5f;
+			else
+				speed =	1.0f;
 			if (rotation > 1.0f)
 				rotation = 1.0f;
 			else if (rotation < -1.0f)
 				rotation = -1.0f;
-			speed = 1.0f - fabs(rotation);
+			if (speed == 1.0f)
+				speed = 1.0f - fabs(rotation);
 #ifdef DEBUG_ROBOT
-			float distance = hypotf(tp[0] - mp[0], tp[1] - mp[1]);
 			// FIXME speed should drop as distance goes from say 40 to 0?
 			printf("p%d an%f az%f dis%f r%f s%f mp %3.1f:%3.1f tp %3.1f:%3.1f\n",
 					target, myTank->getAngle(), azimuth, distance,
@@ -788,7 +802,7 @@ static std::string	cmdAutoPilot(const std::string&,
 	if (args.size() != 0)
 		return "usage: autopilot";
 
-	if (myTank != NULL && myTank->isAlive()) {
+	if (myTank != NULL) {
 		if (myTank->isAutoPilot()) {
 			myTank->setAutoPilot(false);
 			MSGMGR->insert("messages", "autopilot disabled");

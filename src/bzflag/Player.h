@@ -35,8 +35,7 @@ public:
 		Teleporting =	0x0008,		// teleported recently
 		FlagActive =	0x0010,		// flag special powers active
 		CrossingWall =	0x0020,		// tank crossing building wall
-		Falling =		0x0040,		// tank accel'd by gravity
-		AutoPilot =		0x0080		// pseudo bot code
+		Falling =		0x0040		// tank accel'd by gravity
 	};
 
 	Player(PlayerId, TeamColor,
@@ -81,9 +80,10 @@ public:
 	bool				isTeleporting() const;
 	bool				isExploding() const;
 	bool				isCrossingWall() const;
-	bool				isAutoPilot() const;
 	bool				isNotResponding() const;
 	void				resetNotResponding();
+	bool				isAutoPilot() const;
+	void				setAutoPilot(bool = true);
 
 	// returns true iff dead reckoning is too different from the
 	// current tank state.
@@ -134,6 +134,7 @@ private:
 
 	// data not communicated with other players
 	bool				notResponding;
+	bool				autoPilot;
 	PlayerId			id;						// my credentials
 
 	// permanent data
@@ -318,11 +319,6 @@ inline bool				Player::isCrossingWall() const
 	return (status & short(CrossingWall)) != 0;
 }
 
-inline bool				Player::isAutoPilot() const
-{
-	return (status & short(AutoPilot)) != 0;
-}
-
 inline bool				Player::isNotResponding() const
 {
 	return notResponding;
@@ -332,5 +328,16 @@ inline void				Player::resetNotResponding()
 {
 	notResponding = false;
 }
+
+inline bool				Player::isAutoPilot() const
+{
+	return (autoPilot);
+}
+
+inline void				Player::setAutoPilot(bool _autoPilot)
+{
+		autoPilot = _autoPilot;
+}
+
 
 #endif // BZF_PLAYER_H
