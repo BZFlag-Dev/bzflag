@@ -1,12 +1,10 @@
-bin
-lib
-config-sys
-build-stamp
-work
-*patch
-*diff
 aclocal.m4
+build-stamp
+bzflag.spec
 config.cache
 config.log
 config.status
 configure
+work
+*patch
+*diff
