@@ -560,26 +560,46 @@ user identifies, they become part of the REGISTERED group.
 The available permissions are as follows:
 
 IDLESTATS               /idlestats
+.br
 LAGSTATS                /lagstats
+.br
 FLAGMOD                 /flag
+.br
 FLAGHISTORY             /flaghistory
+.br
 LAGWARN                 /lagwarn
+.br
 KICK                    /kick
+.br
 BAN                     /ban
+.br
 BANLIST                 /banlist
+.br
 UNBAN                   /unban
+.br
 COUNTDOWN               /countdown
+.br
 ENDGAME                 /endgame
+.br
 SHUTDOWNSERVER          /shutdownserver
+.br
 SUPERKILL               /superkill
+.br
 PLAYERLIST              /playerlist
+.br
 INFO                    not implemented
+.br
 LISTPERMS               not implemented
+.br
 SHOWOTHERS              not implemented
+.br
 REMOVEPERMS             /removegroup
-SETPERMS		/setgroup
-SETALL			use of all set/remove commands
-SETPASSWORD		not implemented
+.br
+SETPERMS                /setgroup
+.br
+SETALL                  use of all set/remove commands
+.br
+SETPASSWORD             not implemented
 
 .TP
 .B /register {password}
