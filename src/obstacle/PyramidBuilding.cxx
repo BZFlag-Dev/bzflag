@@ -222,16 +222,17 @@ float			PyramidBuilding::shrinkFactor(float z) const
   z -= pos[2];
 
   if (getZFlip()){
-  if (z < 0.0f)
-    return 0.0f;
-  if (z > getHeight())
-    return 0.0f;
+	  if (z < 0.0f)
+		return 0.0f;
+	  if (z == 0.0f)
+		  return 0.01f; // hack for the tip since we only test the bottom of a tank.
+	  if (z > getHeight())
+		return 0.0f;
   }else{
-  if (z < 0.0f)
-    return 0.0f;
-  if (z > getHeight())
-    return 0.0f;
-
+	  if (z < 0.0f)
+		return 0.0f;
+	  if (z > getHeight())
+		return 0.0f;
   }
 
   float shrink = (getHeight() - z) / getHeight();
