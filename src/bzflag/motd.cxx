@@ -14,6 +14,9 @@
 #pragma warning( 4: 4786)
 #endif
 
+#include <vector>
+#include <string>
+
 #include "motd.h"
 #include "URLManager.h"
 #include "TextUtils.h"
@@ -24,11 +27,12 @@ MessageOfTheDay::MessageOfTheDay()
 
 MessageOfTheDay::~MessageOfTheDay()
 {
-
 }
 
-const std::string& MessageOfTheDay::get ( const std::string URL )
+void MessageOfTheDay::getURL(const std::string URL)
 {
+  messages.clear();
+
   // get all up on the internet and go get the thing
   if (!URLManager::instance().getURL(URL,data)) {
     data = "Default MOTD";
@@ -39,7 +43,44 @@ const std::string& MessageOfTheDay::get ( const std::string URL )
       data.erase(l, 1);
       l--;
     }
+
+    // parse into messages
+    std::vector<std::string> lines = TextUtils::tokenize(data, "\n");
+    if (((float)lines.size() / 4) != (floorf((float)lines.size() / 4))) {
+      data = "MOTD contains unexpected data";
+    } else {
+      for (unsigned int i = 0; i < lines.size(); ++i) {
+	MOTD_message msg;
+	msg.title = lines[i++];
+	msg.date = lines[i++];
+	msg.text = lines[i++];
+	msg.version = lines[i].substr(lines[i].find(':') + 2);
+	messages.push_back(msg);
+      }
+    }
   }
 
-  return data;
+  if (messages.size() == 0) {
+    MOTD_message msg;
+    msg.text = data;
+    messages.push_back(msg);
+  }
+}
+
+std::vector<std::string> MessageOfTheDay::getPrintable(const std::vector<std::string>& matchVersions)
+{
+  std::vector<std::string> retval;
+  unsigned int i, j;
+  for (i = 0; i < messages.size(); ++i) {
+    if (matchVersions.size() == 0) {
+      retval.push_back(messages[i].text);
+    } else {
+      for (j = 0; j < matchVersions.size(); ++j) {
+	if (messages[i].version == matchVersions[j]) {
+	  retval.push_back(messages[i].text);
+	}
+      }
+    }
+  }
+  return retval;
 }

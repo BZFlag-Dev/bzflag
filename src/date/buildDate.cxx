@@ -106,13 +106,35 @@ const char*		getServerVersion()
   return serverVersion.c_str();
 }
 
+const char*		getMajorMinorVersion()
+{
+  static std::string	version = "";
+  if (!version.size()){
+    std::ostringstream	versionStream;
+    versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION;
+    version = versionStream.str();
+  }
+  return version.c_str();
+}
+
+const char*		getMajorMinorRevVersion()
+{
+  static std::string	version = "";
+  if (!version.size()){
+    std::ostringstream	versionStream;
+    versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV;
+    version = versionStream.str();
+  }
+  return version.c_str();
+}
+
 const char*		getAppVersion()
 {
   static std::string	appVersion = "";
   if (!appVersion.size()){
     std::ostringstream	appVersionStream;
     // TODO add current platform, release, cpu, etc
-    appVersionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV << "." << BZ_BUILD_DATE
+    appVersionStream << getMajorMinorRevVersion() << "." << BZ_BUILD_DATE
 	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
 #ifdef HAVE_SDL
     appVersionStream << "-SDL";

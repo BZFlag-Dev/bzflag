@@ -5927,8 +5927,18 @@ void			startPlaying(BzfDisplay* _display,
 
   // get current MOTD
   if (!BZDB.isTrue("disableMOTD")) {
+    motd.getURL(BZDB.get("motdServer"));
     controlPanel->addMessage(ColorStrings[UnderlineColor] + ColorStrings[WhiteColor] +
-			     "MOTD: " + motd.get(BZDB.get("motdServer")));
+			     "Message of the day: ");
+    std::vector<std::string> versions;
+    versions.push_back("0.0");
+    versions.push_back(getMajorMinorVersion());
+    versions.push_back(getMajorMinorRevVersion());
+    std::vector<std::string> msgs = motd.getPrintable(versions);
+
+    for (unsigned int j = 0; j < msgs.size(); ++j) {
+      controlPanel->addMessage(ColorStrings[UnderlineColor] + ColorStrings[WhiteColor] + msgs[j]);
+    }
   }
 
   // inform user of silencePlayers on startup

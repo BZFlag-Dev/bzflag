@@ -16,15 +16,28 @@
 
 // bzflag global header
 #include "global.h"
+#include <string>
+#include <vector>
+
+typedef struct {
+  std::string title;
+  std::string date;
+  std::string text;
+  std::string version;
+} MOTD_message;
 
 class MessageOfTheDay {
 public:
 	MessageOfTheDay();
 	~MessageOfTheDay();
 
-	const std::string& get ( const std::string URL );
-protected:
-	std::string	data;
+	void			  getURL(const std::string URL);
+
+	std::vector<MOTD_message> getMessages() { return messages; };
+	std::vector<std::string>  getPrintable(const std::vector<std::string>& matchVersions);
+
 private:
+	std::string		  data;
+	std::vector<MOTD_message> messages;
 };
 #endif //__MOTD_H__
