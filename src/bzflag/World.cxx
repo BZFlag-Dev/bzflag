@@ -64,17 +64,7 @@ World::World() : gameStyle(PlainGameStyle),
 				pyramidInsideNodes(NULL),
 				baseInsideNodes(NULL)
 {
-  int i;
   worldWeapons = new WorldPlayer();
-  for (i = 0; i < NumTeams; i++) {
-    bases[i][0] = 0.0f;
-    bases[i][1] = 0.0f;
-    bases[i][2] = 0.0f;
-    bases[i][3] = 0.0f;
-    bases[i][4] = 0.0f;
-    bases[i][5] = 0.0f;
-    bases[i][6] = 0.0f;
-  }
 }
 
 World::~World()
@@ -86,6 +76,9 @@ World::~World()
     delete players[i];
   delete[] players;
   delete worldWeapons;
+  for (i = 0; i < NumTeams; i++) {
+    bases[i].clear();
+  }
 }
 
 void			World::init()
@@ -159,19 +152,22 @@ TeamColor		World::whoseBase(const float* pos) const
     return NoTeam;
 
   for (int i = 1; i < NumTeams; i++) {
-    float nx = pos[0] - bases[i][0];
-    float ny = pos[1] - bases[i][1];
-    float rx = (float) (cosf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
-    float ry = (float) (sinf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
-    if(fabsf(rx) < bases[i][4] &&
-       fabsf(ry) < bases[i][5]) {
-      float nz = bases[i][2] + bases[i][6];
-      float rz = pos[2] - nz;
-      if(fabsf(rz) < 0.1) { // epsilon kludge
-	return TeamColor(i);
+    for (TeamBases::const_iterator it = bases[i].begin(); it != bases[i].end(); ++it) {
+      float nx = pos[0] - it->p[0];
+      float ny = pos[1] - it->p[1];
+      float rx = (float) (cosf(atanf(ny/nx)-it->p[3]) * sqrt((ny * ny) + (nx * nx)));
+      float ry = (float) (sinf(atanf(ny/nx)-it->p[3]) * sqrt((ny * ny) + (nx * nx)));
+      if(fabsf(rx) < it->p[4] &&
+         fabsf(ry) < it->p[5]) {
+        float nz = it->p[2] + it->p[6];
+        float rz = pos[2] - nz;
+        if(fabsf(rz) < 0.1) { // epsilon kludge
+	  return TeamColor(i);
+	}
       }
     }
   }
+
   return NoTeam;
 }
 
@@ -1098,13 +1094,16 @@ void			WorldBuilder::setBase(TeamColor team,
 					      float w, float b, float h)
 {
   int teamIndex = int(team);
-  world->bases[teamIndex][0] = pos[0];
-  world->bases[teamIndex][1] = pos[1];
-  world->bases[teamIndex][2] = pos[2];
-  world->bases[teamIndex][3] = rotation;
-  world->bases[teamIndex][4] = w;
-  world->bases[teamIndex][5] = b;
-  world->bases[teamIndex][6] = h;
+
+  World::BaseParms bp;
+  bp.p[0] = pos[0];
+  bp.p[1] = pos[1];
+  bp.p[2] = pos[2];
+  bp.p[3] = rotation;
+  bp.p[4] = w;
+  bp.p[5] = b;
+  bp.p[6] = h;
+  world->bases[teamIndex].push_back( bp );
 }
 
 

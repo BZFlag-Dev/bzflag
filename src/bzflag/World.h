@@ -75,7 +75,7 @@ class World {
     RemotePlayer*&	getPlayer(int index) const;
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
-    const float*	getBase(int) const;
+    const float*	getBase(int, int=0) const;
     const std::vector<WallObstacle>	&getWalls() const;
     const std::vector<BoxBuilding>&	getBoxes() const;
     const std::vector<PyramidBuilding>& getPyramids() const;
@@ -131,6 +131,8 @@ class World {
     void		freeInsideNodes();
 
   private:
+    typedef struct BaseParms { float p[7]; };
+    typedef std::vector<BaseParms> TeamBases;
     short		gameStyle;
     float		linearAcceleration;
     float		angularAcceleration;
@@ -141,7 +143,7 @@ class World {
     float		shakeTimeout;
     int			shakeWins;
     uint32_t		epochOffset;
-    float		bases[NumTeams][7];
+    TeamBases		bases[NumTeams];
     std::vector<BoxBuilding>		boxes;
     std::vector<PyramidBuilding>	pyramids;
     std::vector<BaseBuilding>		basesR;
@@ -353,9 +355,13 @@ inline Flag&		World::getFlag(int index) const
   return flags[index];
 }
 
-inline const float*	World::getBase(int team) const
+inline const float*	World::getBase(int team, int base) const
 {
-  return bases[team];
+  const TeamBases &b = bases[team];
+  if ((base < 0) || (base >= b.size()))
+    return NULL;
+
+  return b[base].p;
 }
 
 inline const std::vector<WallObstacle>&	World::getWalls() const
