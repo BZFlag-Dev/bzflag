@@ -22,8 +22,15 @@
 
 // globals/
 
-bool useSmothBounce = true;
+bool useMaterials = true;
+bool useAmbient = true;
+bool useDiffuse = true;
+bool useSpecular = true;
+bool useShininess = true;
+bool useNormals = true;
+bool useTexcoords = true;
 bool flipYZ = false;
+bool useSmoothBounce = false;
 
 typedef std::vector<int> tvIndexList;
 
@@ -63,6 +70,7 @@ public:
 	CFace(){};
 	~CFace(){};
 
+	std::string material;
 	tvIndexList verts;
 	tvIndexList	normals;
 	tvIndexList	texCoords;
@@ -105,12 +113,11 @@ public:
 	tvTexCoordList	texCoords;
 
 	std::string name;
-	std::string material;
 	tvFaceList	faces;
 
 	bool valid ( void )
 	{
-		return material.size() || faces.size();
+		return faces.size();
 	}
 
 	void clear ( void )
@@ -119,7 +126,6 @@ public:
 		verts.clear();
 		normals.clear();
 		texCoords.clear();
-		material = "";
 		name = "";
 	}
 	void reindex ( void );
@@ -142,6 +148,19 @@ public:
 		materials.clear();
 	}
 };
+
+
+static void underscoreBeforeNumbers(std::string& name)
+{
+  const char first = name[0];
+  if ((first >= '0') && (first <= '9')) {
+    std::string tmp = "_";
+    tmp += name;
+	  name = tmp;
+	}
+	return;
+}
+    
 
 void readMTL ( CModel &model, std::string file )
 {
@@ -193,6 +212,7 @@ void readMTL ( CModel &model, std::string file )
 				if (TextUtils::tolower(tag) == "newmtl")
 				{
 					matName = lineParts[1];
+					underscoreBeforeNumbers(matName);
 					model.materials[matName] = material;
 				}
 				if (TextUtils::tolower(tag) == "ka")
@@ -293,6 +313,9 @@ void readOBJ ( CModel &model, std::string file )
 	tvVertList		temp_verts;
 	tvVertList		temp_normals;
 	tvTexCoordList	temp_texCoords;
+	
+	
+	std::string currentMaterial = "";
 
 	std::vector<std::string>::iterator lineItr = lines.begin();
 	while ( lineItr != lines.end() )
@@ -363,11 +386,13 @@ void readOBJ ( CModel &model, std::string file )
 				}
 				else if (TextUtils::tolower(lineParts[0]) == "usemtl" && lineParts.size()>1)
 				{
-					mesh.material = lineParts[1];
+					currentMaterial = lineParts[1];
+					underscoreBeforeNumbers(currentMaterial);
 				}
 				else if (TextUtils::tolower(lineParts[0]) == "f" && lineParts.size()>3)
 				{
 					CFace face;
+					face.material = currentMaterial;
 
 					int partCount = (int)lineParts.size();
 					for ( int i = 1; i < partCount; i++ )
@@ -389,6 +414,7 @@ void readOBJ ( CModel &model, std::string file )
 							printf ("bad face triplet specification: %s\n", section.c_str());
 						}
 					}	
+
 					mesh.faces.push_back(face);
 				}
 			}
@@ -414,25 +440,32 @@ void writeBZW  ( CModel &model, std::string file )
 	if (!fp)
 		return;
 
-	tmMaterialMap::iterator materialItr = model.materials.begin();
-	while ( materialItr != model.materials.end() )
-	{
-		CMaterial &material = materialItr->second;
-		fprintf (fp,"material\n  name %s\n",materialItr->first.c_str());
-		if ( material.texture.size())
-			fprintf (fp,"  texture %s\n", material.texture.c_str());
-		else
-			fprintf (fp,"  notextures\n");
+	if (useMaterials) {
+	  tmMaterialMap::iterator materialItr = model.materials.begin();
+		while ( materialItr != model.materials.end() )
+		{
+			CMaterial &material = materialItr->second;
+			fprintf (fp,"material\n  name %s\n",materialItr->first.c_str());
+			if ( material.texture.size())
+				fprintf (fp,"  texture %s\n", material.texture.c_str());
+			else
+				fprintf (fp,"  notextures\n");
 
-		fprintf (fp,"  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
-		fprintf (fp,"  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
-		fprintf (fp,"  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
-		fprintf (fp,"  shininess %f\n", material.shine);
-		fprintf (fp,"end\n\n");
+			if (useAmbient)
+				fprintf (fp,"  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
+			if (useDiffuse)
+				fprintf (fp,"  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
+			if (useSpecular)
+				fprintf (fp,"  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
+			if (useShininess)
+				fprintf (fp,"  shininess %f\n", material.shine);
 
-		materialItr++;
+			fprintf (fp,"end\n\n");
+
+			materialItr++;
+		}
+		fprintf (fp,"\n");
 	}
-	fprintf (fp,"\n");
 
 	tvMeshList::iterator	meshItr = model.meshes.begin();
 
@@ -443,15 +476,13 @@ void writeBZW  ( CModel &model, std::string file )
 		mesh.reindex();
 
 		fprintf (fp,"mesh # %s\n", mesh.name.c_str());
-		if (mesh.material.size())
-			fprintf (fp,"  matref %s\n", mesh.material.c_str());
 
 		fprintf (fp,"# vertices: %d\n", (int)mesh.verts.size());
 		fprintf (fp,"# normals: %d\n", (int)mesh.normals.size());
 		fprintf (fp,"# texcoords: %d\n", (int)mesh.texCoords.size());
 		fprintf (fp,"# faces: %d\n\n", (int) mesh.faces.size());
 
-		if (useSmothBounce)
+		if (useSmoothBounce)
 			fprintf (fp,"  smoothbounce\n");
 			
 		tvVertList::iterator vertItr = mesh.verts.begin();
@@ -489,18 +520,26 @@ void writeBZW  ( CModel &model, std::string file )
 				fprintf(fp," %d",*indexItr++);
 			fprintf (fp,"\n");
 
-			indexItr = face.normals.begin();
-			fprintf (fp,"    normals");
-			while ( indexItr != face.normals.end() )
-				fprintf(fp," %d",*indexItr++);
-			fprintf (fp,"\n");
+      if (useNormals) {
+				indexItr = face.normals.begin();
+				fprintf (fp,"    normals");
+				while ( indexItr != face.normals.end() )
+					fprintf(fp," %d",*indexItr++);
+				fprintf (fp,"\n");
+			}
 
-			indexItr = face.texCoords.begin();
-			fprintf (fp,"    texcoords");
-			while ( indexItr != face.texCoords.end() )
-				fprintf(fp," %d",*indexItr++);
-			fprintf (fp,"\n");
+      if (useTexcoords) {
+				indexItr = face.texCoords.begin();
+				fprintf (fp,"    texcoords");
+				while ( indexItr != face.texCoords.end() )
+					fprintf(fp," %d",*indexItr++);
+				fprintf (fp,"\n");
+			}
 
+			if (useMaterials && (face.material.size() > 0)) {
+			  fprintf (fp, "    matref %s\n", face.material.c_str());
+			}
+			
 			fprintf (fp,"  endface\n");
 
 			faceItr++;
@@ -515,7 +554,16 @@ void writeBZW  ( CModel &model, std::string file )
 int  dumpUsage ( char *exeName, const char* reason )
 {
 	printf("error: %s\n",reason);
-	printf("usage: %s <input_file_name> -flipYZ -smoothBounce\n", exeName);
+	printf("usage: %s <input_file_name> [options]\n", exeName);
+	printf("       -sm : use the smoothbounce property\n");
+	printf("       -yz : flip y and z coordinates\n");
+	printf("       -n  : disable normals\n");
+	printf("       -t  : disable texture cooridnates\n");
+	printf("       -m  : disable materials\n");
+	printf("       -a  : disable ambient coloring\n");
+	printf("       -d  : disable diffuse coloring\n");
+	printf("       -s  : disable specular coloring\n");
+	printf("       -sh : disable shininess\n");
 	return 1;
 }
 
@@ -528,13 +576,13 @@ int main(int argc, char* argv[])
 	// make sure we have all the right stuff
 	if ( argc < 2)
 		return dumpUsage(argv[0],"No input file specified");
-
+		
 	// get the input file
 	// check argv for 
 	if ( argv[1][0] == '\"' )
 	{
 		argv[1]++;
-		argv[strlen(argv[1])-1] = 0;
+		argv[1][strlen(argv[1])-1] = 0;
 	}
 	input = argv[1];
 	
@@ -543,24 +591,43 @@ int main(int argc, char* argv[])
 	if (p)
 		extenstion = p+1;
 
-	if (!p)
+	if (!p) {
 		output = input + ".bzw";
-	else
-	{
+	} else {
 		*p = '\0'; // clip the old extension
 		output = argv[1] + std::string(".bzw");
 	}
 
-	if ( argc > 2 )
-	{
-		for ( int i = 2; i < argc; i++)
-		{
-			std::string command = argv[i];
+	for ( int i = 2; i < argc; i++) {
+		std::string command = argv[i];
+		command = TextUtils::tolower(command);
 
-			if ( TextUtils::tolower(command) == "-flipyz")
-				flipYZ = true;
-			else if ( TextUtils::tolower(command) == "-smoothBounce")
-				useSmothBounce = true;
+		if (command == "-yz") {
+			flipYZ = true;
+		}
+		else if (command == "-sm") {
+			useSmoothBounce = true;
+		}
+		else if (command == "-n") {
+			useNormals = false;
+		}
+		else if (command == "-t") {
+			useTexcoords = false;
+		}
+		else if (command == "-m") {
+			useMaterials = false;
+		}
+		else if (command == "-a") {
+			useAmbient = false;
+		}
+		else if (command == "-d") {
+			useDiffuse = false;
+		}
+		else if (command == "-s") {
+			useSpecular = false;
+		}
+		else if (command == "-sh") {
+			useShininess = false;
 		}
 	}
 	// make a model
@@ -630,6 +697,8 @@ void CMesh::reindex ( void )
 	{
 		CFace	&face = *faceItr;
 		CFace	newFace;
+		
+		newFace.material = face.material;
 
 		tvIndexList::iterator indexItr = face.verts.begin();
 		while ( indexItr != face.verts.end() )
