@@ -595,7 +595,7 @@ void			Player::setDeadReckoning(float timestamp)
   } else if (deadReckoningState == 1) {
     alpha     = 0.5;
   } else {
-    alpha     = 0.1;
+    alpha     = (float)0.1;
   }
   // alpha filtering
   deltaTime = deltaTime + offset * alpha;
