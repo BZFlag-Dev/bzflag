@@ -78,9 +78,10 @@ for my $line (@lines) {
       unpack("A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4", $flags);
   my $playerSize = hex($rogueSize) + hex($redSize) + hex($greenSize)
       + hex($blueSize) + hex($purpleSize);
-  my $playerMax = hex($rogueMax) + hex($redMax) + hex($greenMax)
-      + hex($blueMax) + hex($purpleMax);
   if (($#ARGV == 0) && ($serverport eq $ARGV[0])) {
+    my $playerMax = hex($rogueMax) + hex($redMax) + hex($greenMax)
+        + hex($blueMax) + hex($purpleMax);
+    $playerMax = hex($maxPlayers) if (hex($maxPlayers) < $playerMax);
     print("$playerSize\n$playerMax\nunknown uptime\nplayers on $ARGV[0]\n");
     exit(0);
   }
