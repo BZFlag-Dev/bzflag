@@ -20,10 +20,12 @@
 #endif  // _MSC_VER
 
 #ifndef _WIN32
+#  define  DIRECTORY_SEPARATOR '/'
 #  include <sys/types.h>
 #  include <sys/stat.h>
 typedef int64_t s64;
 #else
+#  define  DIRECTORY_SEPARATOR '\\'
 #  include <time.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
@@ -250,7 +252,11 @@ bool Record::stop (int playerIndex)
 
 bool Record::setDirectory (const char *dirname)
 {
+  int len = strlen (dirname);
   RecordDir = dirname;
+  if (dirname[len - 2] != DIRECTORY_SEPARATOR) {
+    RecordDir += DIRECTORY_SEPARATOR;
+  }
   
   if (makeDirExist (RecordDir.c_str()) == false) {
     // you've been warned, leave it at that
@@ -310,7 +316,7 @@ bool Record::sendStats (int playerIndex)
 bool Record::saveFile (int playerIndex, const char *filename)
 {
   char buffer[MessageLen];
-  std::string name = getRecordDirName();
+  std::string name = RecordDir;
   name += filename;
   
   if (ReplayMode) {
@@ -361,7 +367,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
 {
   RRpacket *p;
   char buffer[MessageLen];
-  std::string name = getRecordDirName();
+  std::string name = RecordDir;
   name += filename;
   
   if (ReplayMode) {
@@ -589,7 +595,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   ReplayHeader header;
   RRpacket *p;
   char buffer[MessageLen];
-  std::string name = getRecordDirName();
+  std::string name = RecordDir;
   name += filename;
   
   if (!ReplayMode) {
@@ -1249,11 +1255,7 @@ static FILE *
 openFile (const char *filename, const char *mode)
 {
   std::string name = RecordDir.c_str();
-#ifndef _WIN32  
-  name += "/";
-#else
-  name += "\\";
-#endif
+  name += DIRECTORY_SEPARATOR;
   name += filename;
   
   return fopen (name.c_str(), mode);

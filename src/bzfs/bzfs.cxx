@@ -4363,8 +4363,9 @@ int main(int argc, char **argv)
   delete world; world = NULL;
   delete[] worldDatabase; worldDatabase = NULL;
   delete votingarbiter; votingarbiter = NULL;
-  Replay::kill();
+
   Record::kill();
+  Replay::kill();
   
 #if defined(_WIN32)
   WSACleanup();
