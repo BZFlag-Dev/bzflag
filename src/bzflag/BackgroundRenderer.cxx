@@ -629,7 +629,8 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
   // the ground or is drawn back to front and is occluded by everything
   // drawn after it.  also use projection with very far clipping plane.
 
-  if (!BZDBCache::texture) {
+  // only draw the grid lines if texturing is disabled
+  if (!BZDBCache::texture || (renderer.useQuality() <= 0)) {
     drawGroundGrid(renderer);
   }
 
