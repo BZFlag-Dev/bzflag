@@ -10,7 +10,7 @@ is quite easy.
 3. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
-Latest CVS project files maintained using Dev-C++ 4.9.9.0
+Latest CVS project files are maintained using Dev-C++ 4.9.9.0
 
 The latest version of Dev-C++ has been used to create and maintain these project
 files, so older versions may not necessarily work. The version of MinGW32 that Dev-C++
@@ -33,8 +33,8 @@ than DirectX SDK, and is available from:
 It is only a few megabytes, and is cross-platform. Remember to download the
 one for MinGW32 so it works nicely (however, a VC++ one may also work), if you
 are on Windows, otherwise download the one for GCC on Linux. Place
-the .a files in your "/lib/" directory of Dev-C++, and the headers in "/include/".
-Also, make sure you put the dynamic library for SDL (i.e., "SDL.dll" on Windows)
+the .a files in your "/lib/" directory of Dev-C++ (or MinGW32 dir), and the headers in
+"/include/". Also, make sure you put the dynamic library for SDL (i.e., "SDL.dll" on Windows)
 somewhere in your PATH environment variable (on Windows), such as "c:\WINDOWS\".
 On Linux, place it in a directory that it knows to look in.
 
