@@ -97,6 +97,7 @@ const int udpBufSize = 128000;
 #include "WorldInfo.h"
 #include "Permissions.h"
 
+
 float	WorldSize = DEFAULT_WORLD;
 bool    gotWorld = false;
 
