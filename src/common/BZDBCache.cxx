@@ -14,7 +14,7 @@
 #pragma warning(4: 4786)
 #endif
 
-#include <string>
+// interface header
 #include "BZDBCache.h"
 
 bool  BZDBCache::displayMainFlags;
