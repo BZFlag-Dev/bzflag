@@ -17,7 +17,6 @@
 
 /* local implementation headers */
 #include "FileManager.h"
-#include "playing.h"  // FIXME - do we need this here?
 #include "Protocol.h"
 #include "DirectoryNames.h"
 

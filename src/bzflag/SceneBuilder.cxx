@@ -19,7 +19,6 @@
 #include <vector>
 
 // local implemenation headers
-#include "playing.h"  // eew, FIXME - do we really need the entire playing header?
 #include "SceneBuilder.h"
 #include "SceneRenderer.h"
 #include "SceneDatabase.h"
@@ -350,12 +349,12 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   useColorTexture = pyramidTexture >= 0;
 
   // Using boxTexHeight since it's (currently) the same and it's already available
-  float texutureFactor = BZDB.eval("pyrWallTexRepeat");
+  float textureFactor = BZDB.eval("pyrWallTexRepeat");
   if (BZDB.eval("useQuality")>=3)
-    texutureFactor = BZDB.eval("pyrWallHighResTexRepeat");
+    textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
-  while ((node = nodeGen->getNextNode(-texutureFactor * boxTexHeight,
-				-texutureFactor * boxTexHeight,
+  while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
+				-textureFactor * boxTexHeight,
 				pyramidLOD))) {
     node->setColor(pyramidColors[part]);
     node->setModulateColor(pyramidModulateColors[part]);
