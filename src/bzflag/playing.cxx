@@ -2273,7 +2273,7 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     unsigned char* bz = new unsigned char[h * w * 3 + h + 15];  //just like b, but compressed; might get bigger, so give it room
     unsigned long zlength = h * w * 3 + h + 15;     //length of bz[], will be changed by zlib to the length of the compressed string contained therein
     //compress b into bz with best compression
-    compress2(bz, &zlength, b, h * w * 3 + h, 9);
+    compress2(bz, &zlength, b, h * w * 3 + h, 5);
     temp = htonl(zlength);                          //(length) IDAT length after compression
     f.write((char*) &temp, 4);
     temp = htonl(PNGTAG("IDAT"));                   //(tag) IDAT
