@@ -4273,7 +4273,6 @@ void			drawFrame(const float dt)
 
           const bool cloaked = (player[i]->getFlag() == Flags::Cloaking) &&
                                (myTank->getFlag() != Flags::Seer);
-          const bool showTreads = BZDB.isTrue("showTreads");
           const bool following = roaming && (roamView == roamViewFP) && 
                                  (roamTrackWinner == i);
           const bool showPlayer = !following || showTreads;
