@@ -17,6 +17,7 @@ EXTRA_DIST =	\
 	obstacle.dsp	\
 	ogl.dsp	\
 	platform.dsp	\
+	regex.dsp	\
 	scene.dsp	\
 	zlib.dsp
 
