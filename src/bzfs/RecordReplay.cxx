@@ -208,9 +208,7 @@ static const char *msgString (u16 code);
 
 extern char hexDigest[50];
 extern int numFlags;
-extern int numFlagsInAir;
 extern FlagInfo *flag;
-extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
