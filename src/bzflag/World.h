@@ -10,35 +10,37 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * World:
- *	Game database -- buildings, teleporters, game style
- */
-
-#ifndef	BZF_WORLD_H
-#define	BZF_WORLD_H
+#ifndef	__WORLD_H__
+#define	__WORLD_H__
 
 #include "common.h"
-#include "global.h"
+
+/* system interface headers */
+#include <vector>
+#include <string>
+
+/* common interface headers */
+#include "Team.h"
+#include "WallObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
 #include "Teleporter.h"
-#include "WallObstacle.h"
-#include "Flag.h"
-#include "Team.h"
 #include "EighthDimSceneNode.h"
+#include "FlagWarpSceneNode.h"
+#include "Obstacle.h"
 #include "BundleMgr.h"
+#include "FlagSceneNode.h"
+
+/* local interface headers */
+#include "RemotePlayer.h"
+#include "WorldPlayer.h"
 
 
-class Ray;
-class Player;
-class RemotePlayer;
-class WorldPlayer;
-class SceneDatabase;
-class FlagSceneNode;
-class FlagWarpSceneNode;
-
+/**
+ * World:
+ *	Game database -- buildings, teleporters, game style
+ */
 class World {
   friend class WorldBuilder;
   public:
@@ -161,44 +163,10 @@ class World {
     static World*	playingField;
     static BundleMgr	*bundleMgr;
     static std::string	locale;
+    static int flagTexture;
+
 };
 
-class WorldBuilder {
-  public:
-			WorldBuilder();
-			~WorldBuilder();
-
-    void*		unpack(void*);
-
-    World*		getWorld();
-    World*		peekWorld();	// doesn't give up ownership
-
-    void		setGameStyle(short gameStyle);
-    void		setInertia(float linearAccel, float angularAccel);
-    void		setMaxPlayers(int maxPlayers);
-    void		setMaxShots(int maxSimultaneousShots);
-    void		setMaxFlags(int maxFlags);
-    void		setShakeTimeout(float timeout) const;
-    void		setShakeWins(int wins) const;
-    void		setEpochOffset(uint32_t seconds) const;
-    void		append(const WallObstacle&);
-    void		append(const BoxBuilding&);
-    void		append(const PyramidBuilding&);
-    void		append(const BaseBuilding&);
-    void		append(const Teleporter&);
-    void		setTeleporterTarget(int source, int target);
-    void		setBase(TeamColor team,
-				const float* pos, float rotation,
-				float w, float b, float h);
-
-  private:
-    void		preGetWorld();
-
-  private:
-    bool		owned;
-    World*		world;
-    std::vector<int>	teleportTargets;
-};
 
 //
 // World
@@ -408,13 +376,13 @@ inline void		World::setLocale(const std::string& locale)
   World::locale = locale;
 }
 
-#endif // BZF_WORLD_H
+
+#endif /* __WORLD_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

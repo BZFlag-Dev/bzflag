@@ -53,6 +53,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "HUDRenderer.h"
 #include "HUDui.h"
 #include "World.h"
+#include "WorldBuilder.h"
 #include "Team.h"
 #include "FileManager.h"
 #include "Flag.h"

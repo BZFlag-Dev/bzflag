@@ -64,7 +64,7 @@ private:
     Vote,
     Poll,
     Veto,
-    Password, // leave this as the last item
+    Password  // leave this as the last item
   };
 
   Mode mode;
