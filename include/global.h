@@ -89,9 +89,6 @@ const int		MinX = 256;
 const int		MinY = 192;
 const int		NoMotionSize =	10;		// no motion zone size
 const int		MaxMotionSize = 37;		// motion zone size
-const float		RadarLowRangeFactor =	0.25f;// low radar range
-const float		RadarMedRangeFactor =	0.5f;	// medium radar range
-const float		RadarHiRangeFactor =	1.0f;	// high radar range
 
 // game styles
 enum GameStyle {
