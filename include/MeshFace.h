@@ -101,7 +101,7 @@ inline int MeshFace::getVertexCount() const
   return vertexCount;
 }
 
-inline const float* MeshFace::MeshFace::getVertex(int index) const
+inline const float* MeshFace::getVertex(int index) const
 {
   return (const float*)vertices[index];
 }
