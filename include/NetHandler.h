@@ -47,7 +47,7 @@ public:
   static int  getUdpSocket();
   static int  udpReceive(char *buffer, struct sockaddr *uaddr);
   static void fdSetUdp(fd_set *read_set, int &maxFile);
-  static bool isUdpFdSet(fd_set *read_set);
+  static int  isUdpFdSet(fd_set *read_set);
 
   void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
   int         fdIsSet(fd_set *set);

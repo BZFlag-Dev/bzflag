@@ -73,7 +73,7 @@ void NetHandler::fdSetUdp(fd_set *read_set, int &maxFile) {
     maxFile = udpSocket;
 }
 
-bool NetHandler::isUdpFdSet(fd_set *read_set) {
+int NetHandler::isUdpFdSet(fd_set *read_set) {
   return FD_ISSET(udpSocket, read_set);
 }
 
