@@ -18,6 +18,8 @@ recent bugs
   are not. This causes Burrow tanks to get stuck on bases, because they
   don't release they are on a building and shouldn't fall.
   NOTE: This is fixed. I wonder if it will fix the below bug 10/15
+  NO: Stuck happens when bases are in air too. Restart on base needs
+  to make sure that OnBuilding status is set-fixed. Maybe below is fixed
 
 - players gets stuck for no reason, can't move or turn, but can shoot.
   Seen on xmission (CTF), also seen on brlcad (FFA). Was stuck after each respawn,
