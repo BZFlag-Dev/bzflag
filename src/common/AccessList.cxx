@@ -101,7 +101,7 @@ void AccessList::reload()
       c = c + 5;
     }
     else if (strncasecmp(c, "deny_regex", 10) == 0) {
-      type = deny;
+      type = deny_regex;
       c = c + 10;
     }
     else if (strncasecmp(c, "deny", 4) == 0) {
