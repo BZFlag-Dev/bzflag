@@ -29,7 +29,7 @@ static const int defaultAudioRate=22050;
 // SDLMedia
 //
 
-SDLMedia::SDLMedia() : BzfMedia()
+SDLMedia::SDLMedia() : BzfMedia(), outputBuffer(NULL)
 {
   cmdFill       = 0;
   audioReady    = false;
