@@ -100,6 +100,34 @@ extern int countdownDelay;
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern void sendPlayerInfo(void);
 
+class NoDigit
+{
+public:
+ bool operator() (char c) {return !isdigit(c);}
+};
+
+int getSlotNumber(std::string player) {
+  int slot = -1; // invalid
+  if (player[0] == '#') {
+    // string player is a slot number
+    player[0] = '0';
+    if(find_if(player.begin(), player.end(), NoDigit()) == player.end()) {
+      // a valid number is in the string
+      slot = atoi(player.c_str());
+    }
+  } else {
+    // invalid number.. may be a player callsign
+    slot = GameKeeper::Player::getPlayerIDByName(player);
+  }
+  
+  if ((slot >= curMaxPlayers) && (slot < 0))
+    slot = -1; // invalid, out of range
+  GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(slot);
+  if (!p)
+    slot = -1; // not a player
+
+  return slot;
+}
 static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
 {
   float rawTime;
@@ -518,21 +546,23 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
   int i;
   std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
 
-  if (argv.size() < 2) {
-    sendMessage(ServerPlayer, t, "Syntax: /kick <PlayerName/\"Player Name\"> [reason]");
+  if (argv.size() < 3) {
+    sendMessage(ServerPlayer, t, "Syntax: /kick <#slot | PlayerName | \"Player Name\"> <reason>");
     sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
     return;
   }
+  
 
-  i = GameKeeper::Player::getPlayerIDByName(argv[1]);
+  i = getSlotNumber(argv[1]);
 
-  if ((i < curMaxPlayers) && (i >= 0)) {
+  if (i >= 0) {
     char kickmessage[MessageLen];
+    
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 
     // admins can override antiperms
     if (!playerData->accessInfo.isAdmin()) {
-      // otherwise make sure the player is not protected with an antiperm
-      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      // otherwise make sure the player is not protected with an antiperm      
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
 	sprintf(kickmessage, "%s is protected from being kicked.", p->player.getCallSign());
 	sendMessage(ServerPlayer, i, kickmessage);
@@ -547,6 +577,8 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
       sprintf(kickmessage, " reason given : %s",argv[2].c_str());
       sendMessage(ServerPlayer, i, kickmessage);
     }
+    sprintf(kickmessage, "%s kicked by %s, reason: %s", p->player.getCallSign(), playerData->player.getCallSign(),argv[2].c_str());
+    sendMessage(ServerPlayer, AdminPlayers, kickmessage);
     removePlayer(i, "/kick");
   } else {
     char errormessage[MessageLen];
@@ -647,13 +679,22 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
   std::string msg = message;
   std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 4);
 
-  if (argv.size() < 2) {
-    sendMessage(ServerPlayer, t, "Syntax: /ban <ip> [duration] [reason]");
+  if (argv.size() < 4) {
+    sendMessage(ServerPlayer, t, "Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip> <duration> <reason>");
     sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
   } else {
     std::string ip = argv[1];
     std::string reason;
     int durationInt = clOptions->banTime;
+    
+    int victim = getSlotNumber(argv[1]);
+    
+    if (victim >= 0) {
+      // valid slot or callsign
+      GameKeeper::Player *playerBannedData  = GameKeeper::Player::getPlayerByIndex(victim);
+      if (playerBannedData)
+	ip = playerBannedData->netHandler->getTargetIP();
+    }
 
     // set the ban time
     if (argv.size() >= 3) {
@@ -710,11 +751,15 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
 	    sendMessage(ServerPlayer, i, kickmessage);
 	  }
+	  sprintf(kickmessage, "%s banned by %s, reason: %s", otherPlayer->player.getCallSign(), playerData->player.getCallSign(),reason.c_str());
+	  sendMessage(ServerPlayer, AdminPlayers, kickmessage);
 	  removePlayer(i, "/ban");
 	}
       }
     } else {
-      sendMessage(ServerPlayer, t, "Malformed address");
+      char errormessage[MessageLen];
+      sprintf(errormessage, "Malformed address or invalid Player/Slot: %s", argv[1].c_str());
+      sendMessage(ServerPlayer, t, errormessage);
     }
   }
   return;

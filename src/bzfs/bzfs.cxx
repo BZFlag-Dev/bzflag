@@ -1812,6 +1812,16 @@ static void addPlayer(int playerIndex)
       return ;
     }
   }
+  
+  // # not allowed in first position because used in /kick /ban #slot
+  char cs[CallSignLen];
+  memcpy(cs, playerData->player.getCallSign(), sizeof(char) * CallSignLen);
+  if (cs[0] == '#') {
+    rejectPlayer(playerIndex, RejectBadCallsign,
+		   "The callsign was rejected.  Not allowed starting in #");
+    return;
+  }
+  
 
   TeamColor t = autoTeamSelect(playerData->player.getTeam());
   playerData->player.setTeam(t);

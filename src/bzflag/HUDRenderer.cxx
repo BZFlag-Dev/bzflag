@@ -1594,6 +1594,14 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   std::string playerInfo = dimString;
   // team color
   playerInfo += ColorStrings[teamIndex];
+  //Slot number only for admins
+  LocalPlayer* localPlayer = LocalPlayer::getMyTank();
+  if (localPlayer->isAdmin()){
+    char slot[3];
+    sprintf(slot, "%3d",player->getId());
+    playerInfo += slot;
+    playerInfo += " - ";
+  }
   // callsign
   playerInfo += player->getCallSign();
   // email in parenthesis
@@ -1679,4 +1687,3 @@ void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
