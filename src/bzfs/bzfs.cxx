@@ -2571,6 +2571,7 @@ static bool defineWorld()
       return false;
    }
 
+   int improperly_cached_maxTankHeight;
    maxTankHeight = world->getMaxWorldHeight() + 1.0f + ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -BZDB->eval(StateDatabase::BZDB_GRAVITY)));
 
    // package up world
@@ -2604,6 +2605,7 @@ static bool defineWorld()
     for (int i = 1; i < CtfTeams; i++) {
       if (!clOptions->randomCTF || (clOptions->maxTeam[i] > 0)) {
 	buf = nboPackUShort(buf, WorldCodeBase);
+	buf = nboPackUShort(buf, 46);
 	buf = nboPackUShort(buf, uint16_t(i));
 	buf = nboPackVector(buf, basePos[i]);
 	buf = nboPackFloat(buf, baseRotation[i]);
