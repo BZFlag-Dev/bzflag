@@ -465,8 +465,7 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 					break;
 
 					case IN_MATRIX_ROTATION:
-						angle = atof( token.c_str( ));
-						rotation = (angle * TWO_PI) / 360.0;
+						rotation = atof( token.c_str( ));
 						state = IN_MATRIX;
 					break;
 
