@@ -3946,8 +3946,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
        	  InBounds = false;
 	}
 
-        if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH) + 0.5) {
-	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB->eval(StateDatabase::BZDB_BURROWDEPTH) << " + 0.5)" << std::endl;
+        if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH) + -0.5) {
+	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB->eval(StateDatabase::BZDB_BURROWDEPTH) << " + -0.5)" << std::endl;
 	  InBounds = false;
 	}
 
