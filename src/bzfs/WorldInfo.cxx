@@ -185,6 +185,7 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
 				     float height)
 {
   ObstacleLocationList::iterator it;
+  PyramidList::iterator pyrit;
   TeleporterList::iterator telit;
 
   for (it = bases.begin(); it != bases.end(); ++it) {
@@ -207,8 +208,8 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
       return IN_BOX;
     }
   }
-  for (it = pyramids.begin(); it != pyramids.end(); ++it) {
-    ObstacleLocation &pyr = *it;
+  for (pyrit = pyramids.begin(); pyrit != pyramids.end(); ++pyrit) {
+    ObstacleLocation &pyr = *pyrit;
     if ((pyr.pos[2] < (z + height))
 	&& ((pyr.pos[2] + pyr.size[2]) > z)
 	&&	(inRect(pyr.pos, pyr.rotation, pyr.size,x,y,r))) {
