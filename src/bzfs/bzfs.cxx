@@ -2871,7 +2871,7 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 static void parseCommand(const char *message, int t)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData && t != ServerPlayer) //it's ok; the server has the go-ahead
+  if (!playerData)
     return;
 
   if (strncmp(message + 1, "me ", 3) == 0) {
@@ -4265,9 +4265,9 @@ int main(int argc, char **argv)
 		  removePlayer(v, message);
 		}
      	      } else if (action == "set") {
-		parseCommand(string_util::format("/set %s", target.c_str()).c_str(), ServerPlayer);
+		CMDMGR.run(string_util::format("/set %s", target.c_str()));
 	      } else if (action == "flagreset") {
-		parseCommand("/flag reset unused", ServerPlayer);
+		CMDMGR.run("flag reset unused");
 	      }
 	    } /* end if poll is successful */
 
