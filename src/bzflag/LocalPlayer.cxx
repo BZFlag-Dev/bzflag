@@ -320,6 +320,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newVelocity[0] += v[0];
       newVelocity[1] += v[1];
       newVelocity[2] += v[2];
+
+      // play the jump sound
+      if (v[2] > 0.0f) {
+        playLocalSound(SFX_JUMP);
+      }
       
       if (av != 0.0f) {
         // the angular velocity is a percentage of 360/second
