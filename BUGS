@@ -22,10 +22,6 @@ recent bugs
   (up to 10 times); with a new gl contetx each time, startup is slow, because
   it needs to reload fonts and stuff
 
-- server can kick very bad players for speeding in handicapped style mode;
-  it does some compensation for handicap, but obviously not enough/correct
-  *** hopefully fixed, someone test please
-
 - sometimes players will receive the message "So-and-so destroyed by server"
   instead of "So-and-so killed by such-and-such".  Appears to depend on
   So-and-so's player slot.
