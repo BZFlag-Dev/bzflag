@@ -34,6 +34,7 @@ public:
   void resetFlag(float position[3]);
   void grab(int playerIndex);
   int  teamIndex();
+  int  getIndex();
 
   static void setSize(int _numFlags);
   static void setAllowed(std::vector<FlagType*> allowed);

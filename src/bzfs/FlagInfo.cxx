@@ -193,6 +193,11 @@ int FlagInfo::teamIndex()
   return flag.type->flagTeam;
 }
 
+int FlagInfo::getIndex()
+{
+  return flagIndex;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
