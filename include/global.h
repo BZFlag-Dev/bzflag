@@ -36,6 +36,7 @@ enum PlayerType {
 // team info
 const int		NumTeams = 7;
 const int		CtfTeams = 5;
+const int		HtfTeam  = 1;
 enum TeamColor {
 			AutomaticTeam = -2,
 			NoTeam = -1,
@@ -71,6 +72,7 @@ enum GameStyle {
 	PlainGameStyle =		0x0000,
 	TeamFlagGameStyle =		0x0001,	// capture the flag
 	SuperFlagGameStyle =		0x0002,	// superflags allowed
+	HoldFlagGameStyle =		0x0004,	// hold the flag
 
 	JumpingGameStyle =		0x0008,	// jumping allowed
 	InertiaGameStyle =		0x0010,	// momentum for all
