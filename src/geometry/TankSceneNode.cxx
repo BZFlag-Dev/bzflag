@@ -9,6 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#define _NO_LIST_ID 0xffffffff
 
 #include <stdlib.h>
 #include <math.h>
@@ -798,7 +799,7 @@ TankSceneNode::LowTankRenderNode::~LowTankRenderNode()
 GLuint			TankSceneNode::LowTankRenderNode::
 				getParts(Style style)
 {
-  if (parts[style] == 0) {
+  if (parts[style] == _NO_LIST_ID) {
     prepStyle(style);
 
     parts[style] = glGenLists(5);
@@ -830,7 +831,10 @@ void			TankSceneNode::LowTankRenderNode::freeParts()
 {
   // forget about old parts
   for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
-    parts[i] = 0;
+  {
+    glDeleteLists(parts[i],5);
+    parts[i] = _NO_LIST_ID;
+  }
 }
 
 //
@@ -855,7 +859,7 @@ TankSceneNode::MedTankRenderNode::~MedTankRenderNode()
 GLuint			TankSceneNode::MedTankRenderNode::
 				getParts(Style style)
 {
-  if (parts[style] == 0) {
+  if (parts[style] == _NO_LIST_ID) {
     prepStyle(style);
 
     parts[style] = glGenLists(5);
@@ -886,8 +890,10 @@ GLuint			TankSceneNode::MedTankRenderNode::
 void			TankSceneNode::MedTankRenderNode::freeParts()
 {
   // forget about old parts
-  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
-    parts[i] = 0;
+  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++){
+    glDeleteLists(parts[i],5);
+    parts[i] = _NO_LIST_ID;
+  }
 }
 
 //
@@ -912,7 +918,7 @@ TankSceneNode::HighTankRenderNode::~HighTankRenderNode()
 GLuint			TankSceneNode::HighTankRenderNode::
 				getParts(Style style)
 {
-  if (parts[style] == 0) {
+  if (parts[style] == _NO_LIST_ID) {
     prepStyle(style);
 
     parts[style] = glGenLists(5);
@@ -943,8 +949,10 @@ GLuint			TankSceneNode::HighTankRenderNode::
 void			TankSceneNode::HighTankRenderNode::freeParts()
 {
   // forget about old parts
-  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
-    parts[i] = 0;
+  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++){
+    glDeleteLists(parts[i],5);
+    parts[i] = _NO_LIST_ID;
+  }
 }
 
 //

@@ -119,7 +119,7 @@ class TankSceneNode : public SceneNode {
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
       protected:
 	enum Part {
-			Body,
+			Body = 0,
 			Barrel,
 			Turret,
 			LeftTread,
