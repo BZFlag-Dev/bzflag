@@ -52,7 +52,7 @@ static int compareAscending(const void* a, const void* b);
 static int compareDescending(const void* a, const void* b);
 static bool isDeathLanding(const Obstacle* landing);
 static bool isOpposingTeam(const Obstacle* obs, int team);
-static bool isValidLanding(const Obstacle* obs, const Ray& ray);
+static bool isValidLanding(const Obstacle* obs);
 static bool isValidClearance(const float pos[3], float radius,
                              float height, int team);
 static bool dropIt(float pos[3], float minZ, float maxZ,
@@ -126,7 +126,7 @@ static inline bool isOpposingTeam(const Obstacle* obs, int team)
 }
 
 
-static inline bool isValidLanding(const Obstacle* obs, const Ray& ray)
+static inline bool isValidLanding(const Obstacle* obs)
 {
   // must be a flattop buildings
   if (!obs->isFlatTop()) {
@@ -139,11 +139,6 @@ static inline bool isValidLanding(const Obstacle* obs, const Ray& ray)
 
   // death buildings are not potential landings
   if (isDeathLanding(obs)) {
-    return false;
-  }
-
-  // make sure that it intersects
-  if (obs->intersect(ray) < 0.0f) {
     return false;
   }
 
@@ -264,9 +259,15 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
       }
       pos[2] = zTop;
       
-      if (isValidLanding(obs, ray) &&
-          isValidClearance(pos, radius, height, team)) {
-        return true;
+      if (obs->intersect(ray) >= 0.0f) {
+        if (isValidLanding(obs) &&
+            isValidClearance(pos, radius, height, team)) {
+          return true;
+        } else {
+          // a potential hit surface was tested and failed, unless
+          // we want to pass through it, we have to return false.
+          return false;
+        }
       }
     }
     // check the ground
@@ -292,7 +293,8 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
       }
       pos[2] = zTop;
       
-      if (isValidLanding(obs, ray) &&
+      if (isValidLanding(obs) &&
+          (obs->intersect(ray) >= 0.0f) &&
           isValidClearance(pos, radius, height, team)) {
         return true;
       }
