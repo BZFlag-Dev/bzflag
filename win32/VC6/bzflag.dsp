@@ -217,6 +217,10 @@ SOURCE=..\..\src\bzflag\stars.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\TargetingUtils.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\texture.cxx
 # End Source File
 # Begin Source File
