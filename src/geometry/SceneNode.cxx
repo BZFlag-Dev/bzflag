@@ -11,6 +11,7 @@
  */
 
 #include <string.h>
+#include <math.h>
 #include "common.h"
 #include "BZDBCache.h"
 #include "SceneNode.h"
