@@ -701,6 +701,12 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\Filter.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\Filter.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\FlagHistory.cxx">
 			</File>
 			<File
