@@ -356,25 +356,18 @@ bool readPassFile(const std::string &filename)
   ifstream in(filename.c_str());
   if (!in)
     return false;
-  in.unsetf(ios::skipws);
-  bool done = false;
-  std::string name;
-  std::string pass;
-  char c;
-  while (!done) {
-    name.erase(name.begin(), name.end());
-    pass.erase(pass.begin(), pass.end());
-    while ((in >> c && (!in.eof())) && (c != ':'))
-      name += c;
-    makeupper(name);
-    while ((in >> c && (!in.eof())) && (c != '\n') && (c != '\r'))
-      pass += c;
-    if (name.size() == 0 || pass.size() == 0)
-      done = true;
-    else
+
+  std::string line;
+  while (getline(in, line)) {
+    std::string::size_type colonpos = line.find(':');
+    if (colonpos != std::string::npos) {
+      std::string name = line.substr(0, colonpos);
+      std::string pass = line.substr(colonpos + 1);
+      makeupper(name);
       setUserPassword(name.c_str(), pass.c_str());
+    }
   }
-  in.close();
+
   return (passwordDatabase.size() > 0);
 }
 
@@ -397,31 +390,21 @@ bool readGroupsFile(const std::string &filename)
   ifstream in(filename.c_str());
   if (!in)
     return false;
-  in.unsetf(ios::skipws);
-  bool done = false;
 
-  char c;
-  while (!done) {
-    std::string name;
-    std::string perm;
-    while ((in >> c) && (!in.eof()) && (c != ':'))
-      name += c;
-    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r'))
-      perm += c;
-
-
-
-    if (name.size() == 0 || perm.size() == 0)
-      done = true;
-    else {
+  std::string line;
+  while (getline(in, line)) {
+    std::string::size_type colonpos = line.find(':');
+    if (colonpos != std::string::npos) {
+      std::string name = line.substr(0, colonpos);
+      std::string perm = line.substr(colonpos + 1);
       makeupper(name);
       PlayerAccessInfo info;
-	  parsePermissionString(perm.c_str(),info.explicitAllows);
+      parsePermissionString(perm, info.explicitAllows);
       info.verified = true;
       groupAccess[name] = info;
     }
   }
-  in.close();
+
   return true;
 }
 
@@ -430,49 +413,35 @@ bool readPermsFile(const std::string &filename)
   ifstream in(filename.c_str());
   if (!in)
     return false;
-  in.unsetf(ios::skipws);
-  bool done = false;
-  char c;
 
-  while (!done) {
+  for (;;) {
+    // 1st line - name
     std::string name;
-    std::vector<std::string> groups;
-    // get a name
-    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r'))
-      name += c;
-    makeupper(name);
-    // get the groups
-    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r')) {
-      std::string temp;
-      temp += c;
-      while ((in >> c) && (!in.eof()) && (c != ' '))
-	temp += c;
-      if (temp.size() > 0)
-	groups.push_back(temp);
-    }
+    if (!getline(in, name))
+      break;
 
     PlayerAccessInfo info;
 
+    // 2nd line - groups
+    std::string groupline;
+    getline(in, groupline); // FIXME -it's an error when line cannot be read
+    std::istringstream groupstream(groupline);
+    std::string group;
+    while (groupstream >> group) {
+      info.groups.push_back(group);
+    }
+
+    // 3rd line - allows
     std::string perms;
-    // get the allows
-    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r'))
-      perms += c;
+    getline(in, perms);
     parsePermissionString(perms, info.explicitAllows);
 
-    perms="";
-    // get the denys
-    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r'))
-      perms += c;
+    getline(in, perms);
     parsePermissionString(perms, info.explicitDenys);
 
-    if (name.size() == 0)
-      done = true;
-    else {
-      info.groups = groups;
-      userDatabase[name] = info;
-    }
+    userDatabase[name] = info;
   }
-  in.close();
+
   return true;
 }
 
