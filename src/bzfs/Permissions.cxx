@@ -159,7 +159,7 @@ bool PlayerAccessInfo::hasGroup(const std::string &group)
   std::string str = group;
   makeupper(str);
 
-  return find(groups.begin(), groups.end(), str) != groups.end();
+  return std::find(groups.begin(), groups.end(), str) != groups.end();
 }
 
 bool PlayerAccessInfo::addGroup(const std::string &group)
@@ -182,7 +182,7 @@ bool PlayerAccessInfo::removeGroup(const std::string &group)
   std::string str = group;
   makeupper(str);
 
-  groups.erase(find(groups.begin(), groups.end(), str));
+  groups.erase(std::find(groups.begin(), groups.end(), str));
   return true;
 }
 
