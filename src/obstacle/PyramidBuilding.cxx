@@ -45,8 +45,9 @@ std::string		PyramidBuilding::getClassName() // const
 
 float			PyramidBuilding::intersect(const Ray& r) const
 {
-  return timeRayHitsPyramids(r, getPosition(), getRotation(),
-			     getWidth(), getBreadth(), getHeight());
+  const float s = shrinkFactor(r.getOrigin()[2]);
+  return timeRayHitsBlock(r, getPosition(), getRotation(),
+			s * getWidth(), s * getBreadth(), getHeight());
 }
 
 void			PyramidBuilding::getNormal(const float* p,
