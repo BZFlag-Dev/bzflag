@@ -128,11 +128,11 @@ class BzfMedia {
     virtual std::string	getSoundExtension() const;
 
     // return NULL on failure
-    virtual unsigned char* doReadImage(const char* filename,
+    virtual unsigned char* doReadImage(const std::string& filename,
 				int& width, int& height, int& depth) const;
 
     // return NULL on failure
-    virtual float*	doReadSound(const char* filename,
+    virtual float*	doReadSound(const std::string& filename,
 				int& numFrames, int& rate) const;
 
     // concatenate directory to filename

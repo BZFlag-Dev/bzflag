@@ -202,9 +202,9 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
     nameToTry = init.name;
   unsigned char* image = NULL;
   if (nameToTry.size() && nameToTry.c_str())
-    image = MediaFile::readImage( nameToTry.c_str(), &width, &height);
+    image = MediaFile::readImage( nameToTry, &width, &height);
   if (!image)
-    image = MediaFile::readImage( init.name.c_str(), &width, &height);
+    image = MediaFile::readImage( init.name, &width, &height);
   if (!image) {
     if (reportFail) {
       std::vector<std::string> args;

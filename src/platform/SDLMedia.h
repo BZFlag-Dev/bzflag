@@ -45,7 +45,7 @@ class SDLMedia : public BzfMedia {
     void		audioSleep(bool, double) {};
     void                setDriver(std::string driverName);
     void                setDevice(std::string deviceName);
-    float*	        doReadSound(const char* filename,
+    float*	        doReadSound(const std::string& filename,
 				    int& numFrames, int& rate) const;
 
   private:

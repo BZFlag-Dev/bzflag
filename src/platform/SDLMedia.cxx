@@ -247,7 +247,7 @@ void        SDLMedia::setDevice(std::string deviceName) {
   putenv(envAssign);
 };
 
-float*	    SDLMedia::doReadSound(const char* filename, int &numFrames,
+float*	    SDLMedia::doReadSound(const std::string &filename, int &numFrames,
 				  int &rate) const
 {
   SDL_AudioSpec wav_spec;
@@ -260,7 +260,7 @@ float*	    SDLMedia::doReadSound(const char* filename, int &numFrames,
 
   float        *data = NULL;
   rate        = defaultAudioRate;
-  if (SDL_LoadWAV(filename, &wav_spec, &wav_buffer, &wav_length)) {
+  if (SDL_LoadWAV(filename.c_str(), &wav_spec, &wav_buffer, &wav_length)) {
     /* Build AudioCVT */
     ret = SDL_BuildAudioCVT(&wav_cvt,
 			    wav_spec.format, wav_spec.channels, wav_spec.freq,
@@ -268,7 +268,7 @@ float*	    SDLMedia::doReadSound(const char* filename, int &numFrames,
     /* Check that the convert was built */
     if (ret == -1) {
       printFatalError("Could not build converter for Wav file %s: %s.\n",
-		      filename, SDL_GetError());
+		      filename.c_str(), SDL_GetError());
     } else {
       /* Setup for conversion */
       wav_cvt.buf = (Uint8*)malloc(wav_length * wav_cvt.len_mult);
