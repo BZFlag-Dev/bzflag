@@ -390,7 +390,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   if (textureFiltering) {
     int texID = pFont->getTextureID();
     TextureManager& tm = TextureManager::instance();
-    tm.setTextureFilter(texID, OpenGLTexture::Off);
+    tm.setTextureFilter(texID, OpenGLTexture::Nearest);
   }
 
   return;  

@@ -186,7 +186,7 @@ void TextureFont::preLoadLists(void)
   TextureManager &tm = TextureManager::instance();
   std::string textureAndDir = "fonts/" + texture;
   textureID = tm.getTextureID(textureAndDir.c_str());
-  tm.setTextureFilter(textureID, OpenGLTexture::Off);
+  tm.setTextureFilter(textureID, OpenGLTexture::Nearest);
 
   DEBUG4("Font %s (face %s) has texture ID %d\n", texture.c_str(), faceName.c_str(), textureID);
 
