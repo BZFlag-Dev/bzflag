@@ -4,6 +4,7 @@
 
 #include <string>
 #include <fstream>
+#include <stdio.h>
 #include "Bundle.h"
 
 Bundle::Bundle(const Bundle *pBundle)
@@ -16,13 +17,13 @@ Bundle::Bundle(const Bundle *pBundle)
 
 Bundle::Bundle(const Bundle &xBundle)
 {
-	throw new exception("Operation not supported");
+//	throw new exception("Operation not supported");
 }
 
 Bundle& Bundle::operator=(const Bundle &xBundle)
 {
-	if (this != &xBundle)
-		throw new exception("Operation not supported");
+//	if (this != &xBundle)
+//		throw new exception("Operation not supported");
 	return *this;
 }
 
