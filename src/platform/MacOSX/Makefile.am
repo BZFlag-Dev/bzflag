@@ -1,6 +1,5 @@
 SUBDIRS = English.lproj BZFlag.pbproj
 
-if MACOS
 libMac_a_SOURCES =			\
 	MacPlatformFactory.cxx		\
 	MacPlatformFactory.h		\
@@ -13,6 +12,7 @@ libMac_a_SOURCES =			\
 	MacMedia.cxx			\
 	MacMedia.h
 
+if MACOS
 if CLIENT_INCLUDED
 noinst_LIBRARIES = libMac.a
 endif
