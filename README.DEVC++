@@ -15,12 +15,15 @@ files, so older versions may not necessarily work. The version of MinGW32 that D
 uses shouldn't matter as long as it is reasonably up to date (at this time, 3.2.x is
 a good minimum for best performance, let alone error less compilation).
 
+All of the project files instruct the compiler to optimize to a mild extent, so
+compilation might be a small bit slower than normal compilation, but it is worth it.
+
 SDL is needed for the current building style, which is considerably smaller
 than DirectX SDK, and is available from:
 
     www.libsdl.org
 
-It is only a few megabytes, and is cross-platform. Remeber to download the
+It is only a few megabytes, and is cross-platform. Remember to download the
 one for MinGW32 so it works nicely (however, a VC++ one may also work), if you
 are on Windows, otherwise download the one for GCC on Linux. Place
 the .a files in your "/lib/" directory of Dev-C++, and the headers in "/include/".
@@ -31,6 +34,7 @@ On Linux, place it in a directory that it knows to look in.
 Dev-C++ currently exhibits a bug in which if any project is opened from inside Dev-C++,
 rather than launching the project file itself (double-clicking the project file's icon in
 Explorer, on Windows), it will fail to create a makefile and therefore cannot compile.
+This bug may not happen all the time, but it is present.
 
 If you want to use the given project file to compile BZAdmin using
 PDCurses (http://pdcurses.sf.net), make sure your PDCurses lib file is
