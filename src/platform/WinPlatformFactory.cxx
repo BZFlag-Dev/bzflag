@@ -295,5 +295,5 @@ BzfString				WinPlatformFactory::getConfigFileName() const
 	}
 
 	// append the config file name
-	return FILEMGR->catPath(name, "bzflag.bzc");
+	return FILEMGR->catPath(name, "bzflag18.bzc");
 }

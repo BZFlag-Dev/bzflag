@@ -241,5 +241,5 @@ BzfString				UnixPlatformFactory::getConfigFileName() const
 	struct passwd* pwent = getpwuid(getuid());
 	BzfString homeDir((pwent != NULL && pwent->pw_dir != NULL) ?
 								pwent->pw_dir : "");
-	return FILEMGR->catPath(homeDir, ".bzflag");
+	return FILEMGR->catPath(homeDir, ".bzflag18");
 }
