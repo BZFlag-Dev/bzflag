@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 #include "PNGImageFile.h"
 #include <string>
 #include <iostream>
@@ -17,9 +18,7 @@
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
-#ifdef WIN32
-#include <winsock2.h>
-#else
+#ifndef WIN32
 #include <netinet/in.h>
 #endif
 

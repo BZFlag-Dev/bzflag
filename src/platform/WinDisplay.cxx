@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#define INITGUID
-
 #include "WinDisplay.h"
 #include "WinWindow.h"
 #include "resource.h"
