@@ -3,6 +3,9 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* sdl build does not set the application icon .. kinda important for
+  the folks with icons
+
 * fix bug where tanks disappear when they are sitting still (perhaps
   only on OS X?)
 
