@@ -1,6 +1,6 @@
 
 			     BZFlag release notes
-
+* Beginnings of flag 'negotiation' - Dave Brosius
 * Pass reason in MsgKilled, add support for SR noise - Dave Brosius
 * Remove unnessary MsgScore from player to server - Dave Brosius
 * Remove old lag pings - Dave Brosius

@@ -6070,6 +6070,56 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       }
       break;
 
+      case MsgNegotiateFlags: {
+	void *bufStart;
+	char abbv[3];
+	int i;
+
+	unsigned short numClientFlags;
+	buf = nboUnpackUShort(buf, numClientFlags);
+	if (numClientFlags != (LastFlag-FirstFlag+1)) {
+		directMessage(t, MsgNull, 0, getDirectMessageBuffer());
+		return;
+	}
+
+	bool *hasFlag = new bool[LastFlag - FirstFlag + 1];
+	memset( hasFlag, 0, LastFlag - FirstFlag + 1);
+
+	for (i = 0; i < numClientFlags; i++) {
+		buf = nboUnpackString( buf, abbv, 2);
+		abbv[2] = 0;
+		if (strlen(abbv) == 0)
+			continue;
+		FlagId fID = Flag::getIDFromAbbreviation( abbv );
+		if (fID == NullFlag) {
+			directMessage(t, MsgNull, 0, getDirectMessageBuffer());
+			break;
+		}
+		hasFlag[fID-FirstFlag] = true;
+	}
+	for (i = FirstFlag; i <= LastFlag; i++)
+		if (!hasFlag[i-FirstFlag])
+			break;
+	
+	delete hasFlag;
+	if (i <= LastFlag) {
+		directMessage(t, MsgNull, 0, getDirectMessageBuffer());
+		break;
+	}
+
+	bufStart = getDirectMessageBuffer();
+	buf = nboPackUShort(bufStart,LastFlag-FirstFlag+1);
+	for (i = FirstFlag; i <= LastFlag; i++) {
+		buf = nboPackUShort(buf, i);
+		const char *abbv = Flag::getAbbreviation((FlagId)i);
+		buf = nboPackString(buf, abbv, 2);
+	}
+	directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
+	break;
+    }
+
+
+			
     // player wants more of world database
     case MsgGetWorld: {
       // data: count (bytes read so far)

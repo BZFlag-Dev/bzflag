@@ -60,6 +60,7 @@ class Flag {
     static FlagSet&	getBadFlags();
     static const char*	getName(FlagId);
     static const char*	getAbbreviation(FlagId);
+    static FlagId	getIDFromAbbreviation(const char* abbreviation);
     static FlagType	getType(FlagId);
     static const char*	getHelp(FlagId);
     static ShotType	getShotType(FlagId);

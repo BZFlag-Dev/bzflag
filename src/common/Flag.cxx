@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#endif
+
 #include <math.h>
 #include "common.h"
 #include "Team.h"
@@ -129,6 +133,19 @@ const char*		Flag::getName(FlagId id)
 const char*		Flag::getAbbreviation(FlagId id)
 {
   return descriptions[id].flagAbbv;
+}
+
+FlagId	Flag::getIDFromAbbreviation(const char* abbreviation)
+{
+  for (int q = 0; q < NumQualities; q++) {
+    for (std::set<FlagId>::iterator it = Flag::Desc::flagSets[q].begin(); 
+         it != Flag::Desc::flagSets[q].end(); ++it) {
+	   const char* abbrev = Flag::getAbbreviation(*it);
+           if (strcasecmp(abbreviation, abbrev) == 0)
+	      return *it;
+	 }
+  }
+  return NullFlag;
 }
 
 FlagType		Flag::getType(FlagId id)

@@ -75,6 +75,7 @@ const uint16_t		MsgGrabFlag = 0x6766;			// 'gf'
 const uint16_t		MsgGetWorld = 0x6777;			// 'gw'
 const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
+const uint16_t		MsgNegotiateFlags = 0x6e66;		// 'nf'
 const uint16_t		MsgNetworkRelay = 0x6e72;		// 'nr'
 const uint16_t		MsgQueryGame = 0x7167;			// 'qg'
 const uint16_t		MsgQueryPlayers = 0x7170;		// 'qp'
@@ -200,6 +201,7 @@ player to server messages:
 			<-- MsgAccept or MsgReject
   MsgWantWHash		(player wants md5 of world file
 			-->
+  MsgNegotiateFlags     -->flagCount/[flagabbv]
 
 server to player messages:
   MsgSuperKill		player must disconnect from server
@@ -250,6 +252,7 @@ server to player messages:
   MsgQueryPlayers	list of players
   MsgWantWHash		md5 digest of world file
 			<== temp|perm, digest
+  MsgNegotiateFlags	<==flagCount/[flagabbv]
 */
 
 #endif // BZF_PROTOCOL_H

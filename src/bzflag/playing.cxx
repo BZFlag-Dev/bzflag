@@ -4608,6 +4608,26 @@ static void markOld(std::string &fileName)
 #endif
 }
 
+static bool negotiateFlags(ServerLink* serverLink)
+{
+  uint16_t code, len;
+  char msg[MaxPacketLen];
+  char *buf = msg;
+  buf = (char *) nboPackUShort(buf, LastFlag - FirstFlag + 1);
+  for (int i = FirstFlag; i <= LastFlag; i++) {
+	const char *abbv = Flag::getAbbreviation((FlagId)i);
+	buf = (char *) nboPackString( buf, abbv, 2);
+  }
+  serverLink->send( MsgNegotiateFlags, buf - msg, msg );
+
+  if (serverLink->read(code, len, msg, 5000) <= 0) return false;
+  if (code == MsgNull || code == MsgSuperKill) return false;
+  if (code != MsgNegotiateFlags) return false;
+
+
+  return true;
+}
+
 //
 // join/leave a game
 //
@@ -5014,6 +5034,12 @@ static bool		joinGame(const StartupInfo* info,
 
   // set tank textures
   Player::setTexture(*tankTexture);
+
+  if (!negotiateFlags(serverLink)) {
+	printError("Your tank is not capable of carrying flags found in this world");
+	leaveGame();
+	return false;
+  }
 
   // create world
   world = makeWorld(serverLink);
