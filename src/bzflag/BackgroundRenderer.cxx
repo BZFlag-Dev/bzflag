@@ -615,20 +615,25 @@ void			BackgroundRenderer::drawGround()
   // draw ground
   glNormal3f(0.0f, 0.0f, 1.0f);
   if (invert) {
-    if (BZDBCache::texture)
-      glColor3f(1, 1, 1);
-    else
+    if (BZDBCache::texture) {
+      glColor3f(1.0f, 1.0f, 1.0f);
+    } else {
       glColor3fv(groundColorInv[styleIndex]);
+    }
     invGroundGState[styleIndex].setState();
   } else {
-    if (BZDBCache::texture)
-      glColor3f(1, 1, 1);
-		else if (BZDB.isSet("GroundOverideColor")){
-			float color[3];
-			sscanf(BZDB.get("GroundOverideColor").c_str(),"%f %f %f",&color[0],&color[1],&color[2]);
-			glColor3fv(color);
-		}else
+    if (BZDBCache::texture) {
+      glColor3f(1.0f, 1.0f, 1.0f);
+    }
+    else if (BZDB.isSet("GroundOverideColor")) {
+      float color[3];
+      sscanf(BZDB.get("GroundOverideColor").c_str(),"%f %f %f",
+             &color[0], &color[1], &color[2]);
+      glColor3fv(color);
+    }
+    else {
       glColor3fv(groundColor[styleIndex]);
+    }
     groundGState[styleIndex].setState();
   }
 
@@ -731,7 +736,7 @@ void			BackgroundRenderer::drawGroundReceivers(
   }
 
   // bright sun dims intensity of ground receivers
-  const float B = 1.0f - 0.6f * renderer.getSunBrightness();
+  const float B = 1.0f - (0.6f * renderer.getSunBrightness());
 
   receiverGState.setState();
   glPushMatrix();
@@ -745,8 +750,19 @@ void			BackgroundRenderer::drawGroundReceivers(
     const GLfloat* pos = light.getPosition();
     const GLfloat* lightColor = light.getColor();
     const GLfloat* atten = light.getAttenuation();
-    glTranslatef(pos[0], pos[1], 0.0f);
 
+    // point under light
+    float d = pos[2];
+    float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
+    
+    // if I is too low, don't bother drawing anything
+    if (I < 0.02f) {
+      continue;
+    }
+
+    // move to the light's position
+    glTranslatef(pos[0], pos[1], 0.0f);
+    
     // modulate light color by ground color
     float color[3];
     if (invert) {
@@ -762,9 +778,6 @@ void			BackgroundRenderer::drawGroundReceivers(
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN);
     {
-      // point under light
-      float d = pos[2];
-      float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
       glColor3f(I * color[0] > 1.0f ? 1.0f : I * color[0],
 		I * color[1] > 1.0f ? 1.0f : I * color[1],
 		I * color[2] > 1.0f ? 1.0f : I * color[2]);
