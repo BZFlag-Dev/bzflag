@@ -5322,7 +5322,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  // out with Robot
 	  // Should check why!
 // 	  char message[MessageLen];
-	  DEBUG1("kicking Player %s [%d]: Invalid Id %s [%d]\n",
+	  DEBUG1("kicking Player %s [%d] Invalid Id %s [%d]\n",
 		 player[t].callSign, t, player[id].callSign, id);
 // 	  strcpy(message, "Autokick: Using invalid PlayerId, don't cheat.");
 // 	  sendMessage(ServerPlayer, t, message, true);
@@ -5337,7 +5337,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
-	DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callSign, t);
+	DEBUG1("kicking Player %s [%d] jump too high\n", player[t].callSign, t);
 	strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
 	sendMessage(ServerPlayer, t, message, true);
 	removePlayer(t, "too high");
@@ -5362,7 +5362,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (!InBounds)
       {
 	char message[MessageLen];
-	DEBUG1("kicking Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
+	DEBUG1("kicking Player %s [%d] Out of map bounds\n", player[t].callSign, t);
 	strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
 	sendMessage(ServerPlayer, t, message, true);
 	removePlayer(t, "Out of map bounds");
@@ -5402,13 +5402,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	maxPlanarSpeedSqr *= realtol;
 	if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	  if (logOnly) {
-	    DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+	    DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		   player[t].callSign, t,
 		   sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	  }
 	  else {
 	    char message[MessageLen];
-	    DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
+	    DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
 	      player[t].callSign, t,
 	      sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	    strcpy(message, "Autokick: Tank moving too fast, Update your client." );
@@ -5763,7 +5763,7 @@ int main(int argc, char **argv)
 	    (tm - player[i].lastupdate >
 	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
 	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh))) {
-	  DEBUG1("kicking Player %s [%d]: idle %d\n", player[i].callSign, i,
+	  DEBUG1("kicking Player %s [%d] idle %d\n", player[i].callSign, i,
 		 int(tm - player[i].lastupdate));
 	  char message[MessageLen] = "You were kicked because of idling too long";
 	  sendMessage(ServerPlayer, i,  message, true);
