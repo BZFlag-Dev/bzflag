@@ -4544,15 +4544,15 @@ static void cleanWorldCache()
 {
   char buffer[10];
   int cacheLimit = 100L * 1024L;
-  if (resources->hasValue("worldCacheLimit"))
-    cacheLimit = atoi(resources->getValue("worldCacheLimit").c_str());
+  if (BZDB->isSet("worldCacheLimit"))
+    cacheLimit = atoi(BZDB->get("worldCacheLimit").c_str());
   else {
 #ifndef _WIN32
     snprintf(buffer, 10, "%d", cacheLimit);
 #else
     sprintf(buffer, "%d", cacheLimit);
 #endif
-    resources->addValue("worldCacheLimit", buffer);
+    BZDB->set("worldCacheLimit", buffer);
   }
 
   std::string worldPath = getCacheDirectoryName();
