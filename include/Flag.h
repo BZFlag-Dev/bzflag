@@ -158,7 +158,7 @@ namespace Flags {
     *Wings, *ReverseControls,
     *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, 
     *Blindness, *Jamming, *WideAngle, *NoJumping, *TriggerHappy,
-    *ReverseOnly, *ForwardOnly;
+    *ReverseOnly, *ForwardOnly, *Bouncy;
 
   void init();
 }

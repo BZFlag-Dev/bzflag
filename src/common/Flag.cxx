@@ -74,6 +74,7 @@ namespace Flags {
   FlagType *NoJumping;
   FlagType *TriggerHappy;
   FlagType *ReverseControls;
+  FlagType *Bouncy;
 
   void init()
   {
@@ -166,6 +167,8 @@ namespace Flags {
 						    "No Jumping (-NJ):  Tank can't jump.");
     TriggerHappy            = new FlagType( "Trigger Happy", "TR", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "Trigger Happy (-TR):  Tank can't stop firing.");
+    Bouncy                  = new FlagType( "Bouncy", "BY", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Bouncy (-BY):  Tank can't stop bouncing.");
   }
 }
 

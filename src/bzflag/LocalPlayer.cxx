@@ -616,6 +616,17 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (antidoteFlag)
     antidoteFlag->waveFlag(dt, 0.0f);
 
+  if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding))) {
+    if (oldLocation != InAir) {
+      if ((TimeKeeper::getCurrent() - bounceTime) > 0)
+        this->jump();
+    }
+    else {
+      bounceTime = TimeKeeper::getCurrent();
+      bounceTime += ((float) (bzfrand()*4.0f));
+    }
+  }
+
   if (gettingSound) {
     if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
 	oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
@@ -1022,8 +1033,9 @@ void			LocalPlayer::jump()
      if (wingsFlapCount <= 0)
         return;
      wingsFlapCount--;
-  } else if ((getFlag() != Flags::Jumping && !World::getWorld()->allowJumping()) ||
-	     (getFlag() == Flags::NoJumping))
+  } else if ((getFlag() != Flags::Bouncy)
+    &&       ((getFlag() != Flags::Jumping && !World::getWorld()->allowJumping()) ||
+	      (getFlag() == Flags::NoJumping)))
      return;
 
   // add jump velocity (actually, set the vertical component since you

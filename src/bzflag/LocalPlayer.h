@@ -136,6 +136,7 @@ private:
   Location	location;
   FiringStatus	firingStatus;
   TimeKeeper	jamTime;
+  TimeKeeper    bounceTime;
   float		flagShakingTime;
   int		flagShakingWins;
   float		flagAntidotePos[3];

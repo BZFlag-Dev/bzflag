@@ -518,7 +518,7 @@ SOURCE=..\..\include\BaseBuilding.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\BaseLocalPlayer.h
+SOURCE=..\..\src\bzflag\BaseLocalPlayer.h
 # End Source File
 # Begin Source File
 
