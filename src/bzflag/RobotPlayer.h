@@ -54,6 +54,9 @@ class RobotPlayer : public LocalPlayer {
 				BzfRegion* region, BzfRegion* targetRegion,
 				const float targetPoint[2], int mailbox);
 
+     void		projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const;
+     void		getProjectedPosition(const Player *targ, float *projpos) const;
+
   private:
     const Player*	target;
     std::vector<RegionPoint>	path;
