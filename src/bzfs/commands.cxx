@@ -48,6 +48,303 @@ extern int getPlayerIDByRegName(const std::string &regName);
 // externs that ghost needs
 extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
 
+// externs that shutdownserver requires
+extern bool done;
+
+// externs that superkill and gameover requires
+extern bool gameOver;
+extern char *getDirectMessageBuffer();
+extern void broadcastMessage(uint16_t code, int len, const void *msg);
+
+// externs needed by the countdown command
+#include "TimeKeeper.h"
+extern TimeKeeper gameStartTime;
+#include "PlayerInfo.h"
+extern TeamInfo team[NumTeams];
+extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
+extern int numFlags;
+extern void zapFlag(int flagIndex);
+extern void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1);
+extern void resetFlag(int flagIndex);
+
+// externs that countdown requires
+extern bool countdownActive;
+
+
+void handlePasswordCmd(int t, const char *message)
+{
+  if (player[t].passwordAttempts >=5 ){	// see how many times they have tried, you only get 5
+    sendMessage(ServerPlayer, t, "Too many attempts");
+  }else{
+    player[t].passwordAttempts++;
+    if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
+      player[t].passwordAttempts = 0;
+      player[t].Admin = true;
+      sendMessage(ServerPlayer, t, "You are now an administrator!");
+    }else{
+      sendMessage(ServerPlayer, t, "Wrong Password!");
+    }
+  }
+  return;
+}
+
+
+void handleSetCmd(int t, const char *message)
+{
+  sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
+  return;
+}
+
+
+void handleResetCmd(int t, const char *message)
+{
+  sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
+  return;
+}
+
+
+void handleShutdownserverCmd(int t, const char *)
+{
+  done = true;
+  return;
+}
+
+
+void handleSuperkillCmd(int t, const char *)
+{
+  for (int i = 0; i < curMaxPlayers; i++)
+    removePlayer(i, "/superkill");
+  gameOver = true;
+  if (clOptions->timeManualStart)
+    countdownActive = false;
+  return;
+}
+
+
+void handleGameoverCmd(int t, const char *message)
+{
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, t);
+  buf = nboPackUShort(buf, uint16_t(NoTeam));
+  broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+  gameOver = true;
+  if (clOptions->timeManualStart)
+    countdownActive = false;
+  return;
+}
+
+
+void handleCountdownCmd(int t, const char *message)
+{
+#ifdef TIMELIMIT
+  // /countdown starts timed game, if start is manual, everyone is allowed to
+  char reply[MessageLen] = {0};
+  if (clOptions->timeLimit > 0.0f) {
+    gameStartTime = TimeKeeper::getCurrent();
+    clOptions->timeElapsed = 0.0f;
+    countdownActive = true;
+    
+    char msg[2];
+    void *buf = msg;
+    nboPackUShort(buf, (uint16_t)(int)clOptions->timeLimit);
+    broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
+  }
+  // reset team scores
+  for (int i=RedTeam;i<=PurpleTeam;i++) {
+    team[i].team.lost = team[i].team.won=0;
+  }
+  sendTeamUpdate();
+
+  sprintf(reply, "Countdown started.");
+  sendMessage(ServerPlayer, t, reply, true);
+
+  // CTF game -> simulate flag captures to return ppl to base
+  if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
+    // get someone to can do virtual capture
+    int j;
+    for (j=0;j<curMaxPlayers;j++) {
+      if (player[j].state > PlayerInLimbo)
+	break;
+    }
+    if (j < curMaxPlayers) {
+      for (int i=0;i<curMaxPlayers;i++) {
+	if (player[i].playedEarly) {
+	  void *buf, *bufStart = getDirectMessageBuffer();
+	  buf = nboPackUByte(bufStart, j);
+	  buf = nboPackUShort(buf, uint16_t(int(player[i].team)-1));
+	  buf = nboPackUShort(buf, uint16_t(1+((int(player[i].team))%4)));
+	  directMessage(i, MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
+	  player[i].playedEarly = false;
+	}
+      }
+    }
+  }
+  // reset all flags
+  for (int i = 0; i < numFlags; i++)
+    zapFlag(i);
+#endif
+  return;
+}
+
+
+void handleFlagCmd(int t, const char *message)
+{
+  if (strncmp(message + 6, "reset", 5) == 0) {
+    bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
+    for (int i = 0; i < numFlags; i++) {
+      // see if someone had grabbed flag,
+      const int playerIndex = flag[i].player;
+      if ((playerIndex != -1) && (!onlyUnused)) {
+	//	tell 'em to drop it.
+	flag[i].player = -1;
+	flag[i].flag.status = FlagNoExist;
+	player[playerIndex].flag = -1;
+
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUShort(buf, uint16_t(i));
+	buf = flag[i].flag.pack(buf);
+	broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+	player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
+
+      }
+      if ((playerIndex == -1) || (!onlyUnused))
+	resetFlag(i);
+    }
+
+  } else if (strncmp(message + 6, "up", 2) == 0) {
+    for (int i = 0; i < numFlags; i++) {
+      if (flag[i].flag.desc->flagTeam != ::NoTeam) {
+	// see if someone had grabbed flag.  tell 'em to drop it.
+	const int playerIndex = flag[i].player;
+	if (playerIndex != -1) {
+	  flag[i].player = -1;
+	  flag[i].flag.status = FlagNoExist;
+	  player[playerIndex].flag = -1;
+
+	  void *buf, *bufStart = getDirectMessageBuffer();
+	  buf = nboPackUByte(bufStart, playerIndex);
+	  buf = nboPackUShort(buf, uint16_t(i));
+	  buf = flag[i].flag.pack(buf);
+	  broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+	  player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
+	}
+	flag[i].flag.status = FlagGoing;
+	if (!flag[i].required)
+	  flag[i].flag.desc = Flags::Null;
+	sendFlagUpdate(i);
+      }
+    }
+
+  } else if (strncmp(message + 6, "show", 4) == 0) {
+    for (int i = 0; i < numFlags; i++) {
+      char message[MessageLen];
+      sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
+	      flag[i].required, flag[i].grabs, flag[i].flag.desc->flagAbbv,
+	      flag[i].flag.status,
+	      flag[i].flag.position[0],
+	      flag[i].flag.position[1],
+	      flag[i].flag.position[2]);
+      sendMessage(ServerPlayer, t, message, true);
+    }
+  }
+  return;
+}
+
+
+void handleKickCmd(int t, const char *message)
+{
+  int i;
+  const char *victimname = message + 6;
+  for (i = 0; i < curMaxPlayers; i++) {
+    if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0) {
+      break;
+    }
+  }
+  if (i < curMaxPlayers) {
+    char kickmessage[MessageLen];
+    sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
+    sendMessage(ServerPlayer, i, kickmessage, true);
+    removePlayer(i, "/kick");
+  } else {
+    char errormessage[MessageLen];
+    sprintf(errormessage, "player %s not found", victimname);
+    sendMessage(ServerPlayer, t, errormessage, true);
+  }
+  return;
+}
+
+
+void handleBanlistCmd(int t, const char *)
+{
+  clOptions->acl.sendBans(t);
+  return;
+}
+
+
+void handleBanCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  std::string msg = message;
+  std::vector<std::string> argv = string_util::tokenize( msg, " \t", 4 );
+  
+  //    for(int i = 0; i < argc; i++)
+  //      printf("argv[%d] = %s\n", i, argv[i] );
+
+  if( argv.size() < 2 ){
+    strcpy(reply, "Syntax: /ban <ip> [duration] [reason]");
+    sendMessage(ServerPlayer, t, reply, true);
+    strcpy(reply, "        Please keep in mind that reason is displayed to the user.");
+    sendMessage(ServerPlayer, t, reply, true);
+  }
+  else {
+    int durationInt = 0;
+    std::string ip = argv[1];
+    std::string reason;
+    
+    if( argv.size() >= 3 )
+      durationInt = string_util::parseDuration(argv[2]);
+    
+    if( argv.size() == 4 )
+      reason = argv[3];
+    
+    if (clOptions->acl.ban(ip, player[t].callSign, durationInt, reason.c_str())){
+      strcpy(reply, "IP pattern added to banlist");
+      char kickmessage[MessageLen];
+      for (int i = 0; i < curMaxPlayers; i++) {
+	if ((player[i].fd != NotConnected) && (!clOptions->acl.validate(player[i].taddr.sin_addr))) {
+	  sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
+	  sendMessage(ServerPlayer, i, kickmessage, true);
+	  if( reason.length() > 0 ){ 
+	    sprintf(kickmessage,"Reason given: %s", reason.c_str()); 
+	    sendMessage(ServerPlayer, i, kickmessage, true);
+	  }
+	  removePlayer(i, "/ban");
+	}
+      } 
+    }
+    else {
+      strcpy(reply, "malformed address");
+    } 
+    sendMessage(ServerPlayer, t, reply, true);
+  }
+  return;
+}
+
+
+void handleUnbanCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  if (clOptions->acl.unban(message + 7))
+    strcpy(reply, "removed IP pattern");
+  else
+    strcpy(reply, "no pattern removed");
+  sendMessage(ServerPlayer, t, reply, true);
+  return;
+}
+
 
 void handleLagwarnCmd(int t, const char *message)
 {
@@ -541,7 +838,7 @@ void handleRemovegroupCmd(int t, const char *message)
   return;
 }
 
-void handleResetCmd(int t, const char *)
+void handleReloadCmd(int t, const char *)
 {
   groupAccess.clear();
   userDatabase.clear();

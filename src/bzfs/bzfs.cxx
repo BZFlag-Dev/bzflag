@@ -60,15 +60,15 @@ PlayerInfo player[MaxPlayers];
 // players + observers
 uint16_t softmaxPlayers = MaxPlayers;
 // team info
-static TeamInfo team[NumTeams];
+TeamInfo team[NumTeams];
 // num flags in flag list
 int numFlags;
 static int numFlagsInAir;
 // types of extra flags allowed
 std::vector<FlagDesc*> allowedFlags;
-static bool done = false;
+bool done = false;
 // true if hit time/score limit
-static bool gameOver = true;
+ bool gameOver = true;
 static int exitCode = 0;
 uint16_t maxPlayers = MaxPlayers;
 uint16_t curMaxPlayers = 0;
@@ -80,8 +80,8 @@ static float maxWorldHeight = 0.0f;
 static char hexDigest[50];
 
 #ifdef TIMELIMIT
-static TimeKeeper gameStartTime;
-static bool countdownActive = false;
+TimeKeeper gameStartTime;
+bool countdownActive = false;
 #endif
 static TimeKeeper listServerLastAddTime;
 static ListServerLink listServerLinks[MaxListServers];
@@ -107,7 +107,7 @@ static WorldWeapons  wWeapons;
 static TimeKeeper lastWorldParmChange;
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
-static void resetFlag(int flagIndex);
+void resetFlag(int flagIndex);
 static void dropFlag(int playerIndex, float pos[3]);
 
 
@@ -968,7 +968,7 @@ static int pread(int playerIndex, int l)
 }
 
 
-static void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
+void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
 
@@ -1016,7 +1016,7 @@ static void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 }
 
 
-static void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1)
+void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1)
 {
   // If teamIndex1 is -1, send all teams
   // If teamIndex2 is -1, just send teamIndex1 team
@@ -2854,7 +2854,7 @@ static void randomFlag(int flagIndex)
 }
 
 
-static void resetFlag(int flagIndex)
+void resetFlag(int flagIndex)
 {
   // NOTE -- must not be called until world is defined
   assert(world != NULL);
@@ -2929,7 +2929,7 @@ static void resetFlag(int flagIndex)
 }
 
 
-static void zapFlag(int flagIndex)
+void zapFlag(int flagIndex)
 {
   // called when a flag must just disappear -- doesn't fly
   // into air, just *poof* vanishes.
@@ -3853,235 +3853,42 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 // parse player comands (messages with leading /)
 static void parseCommand(const char *message, int t)
 {
-  int i=0;
-  char reply[MessageLen];
-
-  // /password command allows player to become operator
   if (strncmp(message + 1, "password", 8) == 0) {
-    if (player[t].passwordAttempts >=5 ){	// see how many times they have tried, you only get 5
-      sendMessage(ServerPlayer, t, "Too many attempts");
-    }else{
-      player[t].passwordAttempts++;
-      if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
-        player[t].passwordAttempts = 0;
-        player[t].Admin = true;
-        sendMessage(ServerPlayer, t, "You are now an administrator!");
-      }else{
-        sendMessage(ServerPlayer, t, "Wrong Password!");
-      }
-    }
+    handleSetCmd(t, message);
 
-  // /set sets a world configuration variable that gets sent to all clients
   } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "set", 3) == 0) {
-    sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
+    handleSetCmd(t, message);
+
   } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "reset", 5) == 0) {
-    sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
-  // /shutdownserver terminates the server
-  } else if (hasPerm(t, PlayerAccessInfo::shutdownServer) &&
-	    strncmp(message + 1, "shutdownserver", 8) == 0) {
-    done = true;
-  // /superkill closes all player connections
+    handleResetCmd(t, message);
+
+  } else if (hasPerm(t, PlayerAccessInfo::shutdownServer) && strncmp(message + 1, "shutdownserver", 8) == 0) {
+    handleShutdownserverCmd(t, message);
+
   } else if (hasPerm(t, PlayerAccessInfo::superKill) && strncmp(message + 1, "superkill", 8) == 0) {
-    for (i = 0; i < curMaxPlayers; i++)
-      removePlayer(i, "/superkill");
-    gameOver = true;
-    if (clOptions->timeManualStart)
-      countdownActive = false;
-  // /gameover command allows operator to end the game
+    handleSuperkillCmd(t, message);
+
   } else if (hasPerm(t, PlayerAccessInfo::endGame) && strncmp(message + 1, "gameover", 8) == 0) {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, t);
-    buf = nboPackUShort(buf, uint16_t(NoTeam));
-    broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-    gameOver = true;
-    if (clOptions->timeManualStart)
-      countdownActive = false;
-#ifdef TIMELIMIT
-  // /countdown starts timed game, if start is manual, everyone is allowed to
+    handleGameoverCmd(t, message);
+
   } else if ((hasPerm(t, PlayerAccessInfo::countdown) || clOptions->timeManualStart) &&
-	    strncmp(message + 1, "countdown", 9) == 0) {
-    if (clOptions->timeLimit > 0.0f) {
-      gameStartTime = TimeKeeper::getCurrent();
-      clOptions->timeElapsed = 0.0f;
-      countdownActive = true;
+	     strncmp(message + 1, "countdown", 9) == 0) {
+    handleCountdownCmd(t, message);
 
-      char msg[2];
-      void *buf = msg;
-      nboPackUShort(buf, (uint16_t)(int)clOptions->timeLimit);
-      broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
-    }
-    // reset team scores
-    for (i=RedTeam;i<=PurpleTeam;i++) {
-      team[i].team.lost = team[i].team.won=0;
-    }
-    sendTeamUpdate();
-
-    sprintf(reply, "Countdown started.");
-    sendMessage(ServerPlayer, t, reply, true);
-
-    // CTF game -> simulate flag captures to return ppl to base
-    if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
-      // get someone to can do virtual capture
-      int j;
-      for (j=0;j<curMaxPlayers;j++) {
-	if (player[j].state > PlayerInLimbo)
-	  break;
-      }
-      if (j < curMaxPlayers) {
-	for (int i=0;i<curMaxPlayers;i++) {
-          if (player[i].playedEarly) {
-	    void *buf, *bufStart = getDirectMessageBuffer();
-	    buf = nboPackUByte(bufStart, j);
-	    buf = nboPackUShort(buf, uint16_t(int(player[i].team)-1));
-            buf = nboPackUShort(buf, uint16_t(1+((int(player[i].team))%4)));
-	    directMessage(i, MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
-	    player[i].playedEarly = false;
-	  }
-	}
-      }
-    }
-    // reset all flags
-    for (int i = 0; i < numFlags; i++)
-      zapFlag(i);
-#endif
-  // /flag command allows operator to control flags
   } else if (hasPerm(t, PlayerAccessInfo::flagMod) && strncmp(message + 1, "flag ", 5) == 0) {
-    if (strncmp(message + 6, "reset", 5) == 0) {
-      bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
-      for (int i = 0; i < numFlags; i++) {
-	  // see if someone had grabbed flag,
-	  const int playerIndex = flag[i].player;
-	  if ((playerIndex != -1) && (!onlyUnused)) {
-	    //	tell 'em to drop it.
-	    flag[i].player = -1;
-	    flag[i].flag.status = FlagNoExist;
-	    player[playerIndex].flag = -1;
+    handleFlagCmd(t,message);
 
-	    void *buf, *bufStart = getDirectMessageBuffer();
-	    buf = nboPackUByte(bufStart, playerIndex);
-	    buf = nboPackUShort(buf, uint16_t(i));
-	    buf = flag[i].flag.pack(buf);
-	    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
-	    player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
-
-	  }
-	  if ((playerIndex == -1) || (!onlyUnused))
-	    resetFlag(i);
-      }
-    } else if (strncmp(message + 6, "up", 2) == 0) {
-      for (int i = 0; i < numFlags; i++) {
-        if (flag[i].flag.desc->flagTeam != ::NoTeam) {
-	  // see if someone had grabbed flag.  tell 'em to drop it.
-	  const int playerIndex = flag[i].player;
-	  if (playerIndex != -1) {
-	    flag[i].player = -1;
-	    flag[i].flag.status = FlagNoExist;
-	    player[playerIndex].flag = -1;
-
-	    void *buf, *bufStart = getDirectMessageBuffer();
-	    buf = nboPackUByte(bufStart, playerIndex);
-	    buf = nboPackUShort(buf, uint16_t(i));
-	    buf = flag[i].flag.pack(buf);
-	    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
-	    player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
-	  }
-	  flag[i].flag.status = FlagGoing;
-	  if (!flag[i].required)
-	    flag[i].flag.desc = Flags::Null;
-	  sendFlagUpdate(i);
-	}
-      }
-    } else if (strncmp(message + 6, "show", 4) == 0) {
-      for (int i = 0; i < numFlags; i++) {
-	char message[MessageLen];
-	sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
-	    flag[i].required, flag[i].grabs, flag[i].flag.desc->flagAbbv,
-	    flag[i].flag.status,
-	    flag[i].flag.position[0],
-	    flag[i].flag.position[1],
-	    flag[i].flag.position[2]);
-	sendMessage(ServerPlayer, t, message, true);
-      }
-    }
-  // /kick command allows operator to remove players
   } else if (hasPerm(t, PlayerAccessInfo::kick) && strncmp(message + 1, "kick ", 5) == 0) {
-    int i;
-    const char *victimname = message + 6;
-    for (i = 0; i < curMaxPlayers; i++)
-      if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0)
-	break;
-    if (i < curMaxPlayers) {
-      char kickmessage[MessageLen];
-      sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
-      sendMessage(ServerPlayer, i, kickmessage, true);
-      removePlayer(i, "/kick");
-    } else {
-      char errormessage[MessageLen];
-      sprintf(errormessage, "player %s not found", victimname);
-      sendMessage(ServerPlayer, t, errormessage, true);
-    }
-  }
-  // /banlist command shows ips that are banned
-  else if (hasPerm(t, PlayerAccessInfo::banlist) &&
-	  strncmp(message+1, "banlist", 7) == 0) {
-	clOptions->acl.sendBans(t);
-  }
-  // /ban command allows operator to ban players based on ip
-  else if (hasPerm(t, PlayerAccessInfo::ban) && strncmp(message+1, "ban", 3) == 0) {
-    // /ban <ip> [duration] ...
-    // any text after duration is considered as the reason for banning.
-    
-    std::string msg = message;
-    std::vector<std::string> argv = string_util::tokenize( msg, " \t", 4 );
+    handleKickCmd(t, message);
 
-//    for(int i = 0; i < argc; i++)
-//      printf("argv[%d] = %s\n", i, argv[i] );
+  } else if (hasPerm(t, PlayerAccessInfo::banlist) && strncmp(message+1, "banlist", 7) == 0) {
+    handleBanlistCmd(t, message);
 
-    if( argv.size() < 2 ){
-      strcpy(reply, "Syntax: /ban <ip> [duration] [reason]");
-      sendMessage(ServerPlayer, t, reply, true);
-      strcpy(reply, "        Please keep in mind that reason is displayed to the user.");
-      sendMessage(ServerPlayer, t, reply, true);
-    }
-    else {
-      int durationInt = 0;
-      std::string ip = argv[1];
-      std::string reason;
+  } else if (hasPerm(t, PlayerAccessInfo::ban) && strncmp(message+1, "ban", 3) == 0) {
+    handleBanCmd(t, message);
 
-      if( argv.size() >= 3 )
-	durationInt = string_util::parseDuration(argv[2]);
-	
-      if( argv.size() == 4 )
-	reason = argv[3];
-
-      if (clOptions->acl.ban(ip, player[t].callSign, durationInt, reason.c_str())){
-	strcpy(reply, "IP pattern added to banlist");
-	char kickmessage[MessageLen];
-	for (int i = 0; i < curMaxPlayers; i++) {
-	  if ((player[i].fd != NotConnected) && (!clOptions->acl.validate(player[i].taddr.sin_addr))) {
-	    sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
-	    sendMessage(ServerPlayer, i, kickmessage, true);
-	    if( reason.length() > 0 ){ 
-	      sprintf(kickmessage,"Reason given: %s", reason.c_str()); 
-	      sendMessage(ServerPlayer, i, kickmessage, true);
-	    }
-	    removePlayer(i, "/ban");
-	  }
-	} 
-      }
-      else {
-	strcpy(reply, "malformed address");
-      } 
-      sendMessage(ServerPlayer, t, reply, true);
-    }
-  }
-  // /unban command allows operator to remove ips from the banlist
-  else if (hasPerm(t, PlayerAccessInfo::unban) && strncmp(message+1, "unban", 5) == 0) {
-    if (clOptions->acl.unban(message + 7))
-      strcpy(reply, "removed IP pattern");
-    else
-      strcpy(reply, "no pattern removed");
-    sendMessage(ServerPlayer, t, reply, true);
+  } else if (hasPerm(t, PlayerAccessInfo::unban) && strncmp(message+1, "unban", 5) == 0) {
+    handleUnbanCmd(t, message);
 
   } else if (hasPerm(t, PlayerAccessInfo::lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
     handleLagwarnCmd(t, message);
@@ -4131,12 +3938,13 @@ static void parseCommand(const char *message, int t)
   } else if ((hasPerm(t, PlayerAccessInfo::setPerms) || hasPerm(t, PlayerAccessInfo::setAll)) &&
 	     strncmp(message + 1, "setgroup", 8) == 0) {
     handleSetgroupCmd(t, message);
+
   } else if ((hasPerm(t, PlayerAccessInfo::setPerms) || hasPerm(t, PlayerAccessInfo::setAll)) &&
 	     strncmp(message + 1, "removegroup", 11) == 0) {
     handleRemovegroupCmd(t, message);
 
   } else if (hasPerm(t, PlayerAccessInfo::setAll) && strncmp(message + 1, "reload", 6) == 0) {
-    handleResetCmd(t, message);
+    handleReloadCmd(t, message);
 
   } else if (strncmp(message+1, "poll",4) == 0) {
     handlePollCmd(t, message);
@@ -4148,6 +3956,7 @@ static void parseCommand(const char *message, int t)
     handleVetoCmd(t, message);
 
   } else {
+    char reply[MessageLen];
     sprintf(reply, "Unknown command [%s]", message+1);
     sendMessage(ServerPlayer, t, reply, true);
   }

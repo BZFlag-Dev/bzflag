@@ -14,6 +14,90 @@
 #define __COMMANDS_H__
 
 
+/** password command hook function
+ *
+ * /password command allows player to become operator
+ */
+void handlePasswordCmd(int t, const char *message);
+
+
+/** set command hook function
+ *
+ * /set sets a world configuration variable that gets sent to all clients
+ */
+void handleSetCmd(int t, const char *message);
+
+
+/** reset command hook function
+ */
+void handleResetCmd(int t, const char *message);
+
+
+/** shutdownserver command hook function
+ *
+ * /shutdownserver terminates the server
+ */
+void handleShutdownserverCmd(int t, const char *);
+
+
+/** superkill command hook function
+ *
+ * /superkill closes all player connections
+ */
+void handleSuperkillCmd(int t, const char *);
+
+
+/** gameover command hook function
+ *
+ * /gameover command allows operator to end the game
+ */
+void handleGameoverCmd(int t, const char *message);
+
+
+/** countdown command hook function
+ *
+ * /countdown command allows operator to end the game
+ */
+void handleCountdownCmd(int t, const char *message);
+
+
+/** flag command hook function
+ *
+ * /flag command allows operator to control flags
+ */
+void handleFlagCmd(int t, const char *message);
+
+
+/** kick command hook function
+ *
+ * /kick command allows operator to remove players
+ */
+void handleKickCmd(int t, const char *message);
+
+
+/** unban command hook function
+ *
+ * /banlist command shows ips that are banned
+ */
+void handleBanlistCmd(int t, const char *);
+
+
+/** unban command hook function
+ *
+ * /ban command allows operator to ban players based on ip
+ * /ban <ip> [duration] ...
+ * any text after duration is considered as the reason for banning.
+ */
+void handleBanCmd(int t, const char *message);
+    
+
+/** unban command hook function
+ *
+ * /unban command allows operator to remove ips from the banlist
+ */
+void handleUnbanCmd(int t, const char *message);
+
+
 /** lagwarn command hook function
  *
  * /lagwarn - set maximum allowed lag
@@ -113,7 +197,7 @@ void handleRemovegroupCmd(int i, const char *message);
 
 /** reset command hook function
  */
-void handleResetCmd(int i, const char *message);
+void handleReloadCmd(int i, const char *message);
 
 
 /** /poll command hook function
@@ -128,7 +212,7 @@ void handleVoteCmd(int t, const char *message);
 
 /** /veto command hook function
  */
-void handleVetoCmd(int t, const char * /*message*/);
+void handleVetoCmd(int t, const char *message);
 
 
 #endif
