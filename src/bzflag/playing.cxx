@@ -556,7 +556,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  }
 	  messageHistory.push_front(message);
 	}
-	
+
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer, message.c_str(), MessageLen);
@@ -1463,15 +1463,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       std::cerr << result << std::endl;
     return true;
   }
-  if (keymap.isMappedTo(BzfKeyMap::TimeForward, key)) {
-    // plus five minutes
-    if (pressed) clockAdjust += 5.0f * 60.0f;
-    return true;
-  } else if (keymap.isMappedTo(BzfKeyMap::TimeBackward, key)) {
-    // minus five minutes
-    if (pressed) clockAdjust -= 5.0f * 60.0f;
-    return true;
-  } else if (key.ascii == 27) {
+  if (key.ascii == 27) {
     if (pressed) HUDDialogStack::get()->push(mainMenu);
     return true;
   } else if (keymap.isMappedTo(BzfKeyMap::Hunt, key)) {
@@ -2215,6 +2207,21 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
   return std::string();
 }
 
+static std::string cmdTime(const std::string&, const CommandManager::ArgList& args)
+{
+  // FIXME - time should be moved into BZDB
+  if (args.size() != 1)
+    return "usage: time {forward|backward}";
+  if (args[0] == "forward") {
+    clockAdjust += 5.0f * 60.0f;
+  } else if (args[0] == "backward") {
+    clockAdjust -= 5.0f * 60.0f;
+  } else {
+    return "usage: time {forward|backward}";
+  }
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2229,7 +2236,8 @@ static const CommandListItem commandList[] = {
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
   { "pause",	&cmdPause,	"pause:  pause/resume" },
   { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" },
-  { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" }
+  { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
+  { "time",	&cmdTime,	"time {forward|backward}: adjust the current time" }
 };
 
 static void		doEvent(BzfDisplay* display)
