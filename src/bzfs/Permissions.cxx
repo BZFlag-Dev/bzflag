@@ -164,6 +164,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::poll: return "poll";
     case PlayerAccessInfo::vote: return "vote";
     case PlayerAccessInfo::veto: return "veto";
+		case PlayerAccessInfo::adminMessages: return "adminMessages";
     case PlayerAccessInfo::requireIdentify: return "requireIdentify";
   default: return "";
   };
@@ -197,6 +198,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "VOTE") return PlayerAccessInfo::vote;
   if (name == "VETO") return PlayerAccessInfo::veto;
   if (name == "REQUIREIDENTIFY") return PlayerAccessInfo::requireIdentify;
+	if (name == "ADMINMESSAGES") return PlayerAccessInfo::adminMessages;
   return PlayerAccessInfo::lastPerm;
 }
 

@@ -38,6 +38,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("send team"), press));
   wayToBindActions.insert(std::make_pair(std::string("send nemesis"), press));
   wayToBindActions.insert(std::make_pair(std::string("send recipient"), press));
+	wayToBindActions.insert(std::make_pair(std::string("send admin"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayScore"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayBinoculars"), press));
   wayToBindActions.insert(std::make_pair(std::string("pause"), press));
@@ -95,6 +96,7 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("M"), std::string("send team")));
   defaultBinding.insert(std::make_pair(std::string(","), std::string("send nemesis")));
   defaultBinding.insert(std::make_pair(std::string("."), std::string("send recipient")));
+	defaultBinding.insert(std::make_pair(std::string("Z"), std::string("send admin")));
   defaultBinding.insert(std::make_pair(std::string("S"), std::string("toggle displayScore")));
   defaultBinding.insert(std::make_pair(std::string("B"), std::string("toggle displayBinoculars")));
   defaultBinding.insert(std::make_pair(std::string("Pause"), std::string("pause")));

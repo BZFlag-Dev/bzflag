@@ -2164,8 +2164,15 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
     for (int i = 0; i < curMaxPlayers; i++)
       if (player[i].state > PlayerInLimbo && player[i].team == team)
         directMessage(i, MsgMessage, len, bufStart);
-  }
-  else
+  } else if (targetPlayer == AdminPlayers){
+    // admin messages
+    for (int i = 0; i < curMaxPlayers; i++){
+      if (player[i].state > PlayerInLimbo && 
+        hasPerm(i,PlayerAccessInfo::adminMessages)){
+         directMessage(i, MsgMessage,len, bufStart);
+      }
+    }
+  } else
     broadcastMessage(MsgMessage, len, bufStart);
 }
 
@@ -4206,6 +4213,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  pos++;
 	}
 	parseCommand(message, t);
+      } else if (targetPlayer == AdminPlayers){
+        //printf ("Admin message %s\n",message);
+        sendMessage (t, AdminPlayers,message, true);
       }
       // check if the target player is invalid
       else if (targetPlayer < LastRealPlayer && 

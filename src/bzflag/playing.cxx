@@ -2161,7 +2161,7 @@ static std::string cmdSend(const std::string&, const CommandManager::ArgList& ar
 {
   static ComposeDefaultKey composeKeyHandler;
   if (args.size() != 1)
-    return "usage: send {all|team|nemesis|recipient}";
+    return "usage: send {all|team|nemesis|recipient|admin}";
   std::string composePrompt;
   if (args[0] == "all") {
     void* buf = messageMessage;
@@ -2198,8 +2198,13 @@ static std::string cmdSend(const std::string&, const CommandManager::ArgList& ar
       composePrompt += recipient->getCallSign();
       composePrompt += ": ";
     }
-  } else {
-    return "usage: send {all|team|nemesis|recipient}";
+  } else if (args[0] == "admin") {
+    void* buf = messageMessage;
+    buf = nboPackUByte(buf, AdminPlayers);
+    composePrompt = "Send to Admin : ";			
+		
+	} else { 
+    return "usage: send {all|team|nemesis|recipient|admin}";
   }
   messageHistoryIndex = 0;
   hud->setComposing(composePrompt);
@@ -2592,7 +2597,7 @@ static const CommandListItem commandList[] = {
   { "restart",	&cmdRestart,	"restart:  restart playing" },
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
   { "pause",	&cmdPause,	"pause:  pause/resume" },
-  { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" },
+  { "send",	&cmdSend,	"send {all|team|nemesis|recipient|admin}:  start composing a message" },
 #ifdef SNAPPING
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
 #endif
@@ -3710,10 +3715,18 @@ static void		handleServerMessage(bool human, uint16_t code,
     TeamColor dstTeam = PlayerIdToTeam(dst);
     bool toAll = (dst == AllPlayers);
     bool fromServer = (src == ServerPlayer);
+		bool toAdmin = (dst == AdminPlayers);
+    std::string dstName;
 
     const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
-    const std::string dstName = dstPlayer ?
-      dstPlayer->getCallSign() : "(UNKNOWN)";
+    
+    if (dstPlayer){
+			dstName = dstPlayer->getCallSign();
+    } else if (toAdmin){
+      dstName = "Admin";
+    } else {
+      dstName = "(UNKNOWN)";
+		} 
 
     std::string fullMsg;
 
@@ -3804,7 +3817,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     std::string origText = std::string((char*)msg);
     std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
 
-    if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
+    if (toAll || toAdmin || srcPlayer == myTank || dstPlayer == myTank ||
 	dstTeam == myTank->getTeam()) {
       // message is for me
       std::string colorStr;
@@ -3861,6 +3874,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
       else {
 	// team message
+
+	if (toAdmin) fullMsg += "[Admin] ";
+
 	if (dstTeam != NoTeam) {
 #ifdef BWSUPPORT
 	  fullMsg = "[to ";
