@@ -100,6 +100,7 @@ bool			MenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
     case 13:	// return
       HUDDialogStack::get()->top()->execute();
+      playLocalSound(SFX_FIRE);
       return true;
   }
 
