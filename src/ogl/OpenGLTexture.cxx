@@ -12,6 +12,10 @@
 
 #include <string.h>
 // glu used to resample textures for mipmaps;  should use something better.
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #if defined(_MACOSX_)
 #include <OpenGL/glu.h>
 #else
