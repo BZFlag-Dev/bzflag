@@ -1377,15 +1377,20 @@ toket                   # id - women's breast
 
 
 # Italian
-bocchino                # it - blowjob
+belin			# it - penis (dialect)
+bochino                 # it - blowjob
 butana                  # it - cunt
 cacata                  # it - shitting
 cacatura                # it - shit
 cacca                   # it - shit
-cacchiata               # it - fuck-up/mistake
-cacchio                 # it - fuck!
+cachiata                # it - fuck-up/mistake
+cachio                  # it - fuck!
 # (already added by spanish) caga                    # it - he shit
-catzo vai via stronzo   # it - get the fuck out of here ass hole
+catza	   	        # it - fuck
+catzo	   	        # it - dick
+cazza	   	        # it - fuck
+cazzo	   	        # it - dick
+checca			# it - faggot
 chiavare                # it - to fuck with
 # (already added by spanish) culo                    # it - ass
 ditalino                # it - masturbation
@@ -1394,38 +1399,41 @@ fica                    # it - cunt
 ficona                  # it - whore
 figa                    # it - cunt
 figona                  # it - whore
-figlio de puttana       # it - you are a piece of shit.
-finocchio               # it - fag, homosexual
+figlio			# it - you shit.
+finochio                # it - gay, homosexual
 fottere                 # it - to fuck
 fottuto                 # it - fucked (i'm)
 fregare                 # it - to hump
 fregata                 # it - fucking (noun)
 fregna                  # it - cunt
-fregnacciaro            # it - bullshitter, liar (from fregna)
+fregnaciaro             # it - bullshitter, liar (from fregna)
 frigna                  # it - cunt
 froselo                 # it - fag, homosexual
 fungula                 # it - fuck
-grilletto               # it - clitoris
+grileto                 # it - clitoris
 loffa                   # it - fart
 merda                   # it - shit
 merdone                 # it - frequent shitter
 merdoso                 # it - covered in shit
 mierde                  # it - shit
-mignotta                # it - whore
+mignota                 # it - whore
 minchia                 # it - cock, penis
 # mona                    # it - pussy, vagina
-no skuche ala gats!     # it - what the fuck do you want from my balls?
-patacca                 # it - pussy, vagina
-pezzo de merda          # it - son of a bitch
-pisciatella             # it - pussy
+no skuche ala gats      # it - what the fuck do you want from my balls?
+pataca                  # it - pussy, vagina
+piciu			# it - penis
+pisciatela              # it - pussy
 piscio                  # it - piss (usually followed by "in your head")
-pisella                 # it - pussy
-puchiacca               # it - cunt
+pisela                  # it - pussy
+pompino			# it - blowjob
+puchiaca                # it - cunt
 # (already added by spanish) puta                    # it - whore
-puttana                 # it - whore
+putana                  # it - whore
 quaglia                 # it - pussy
 que catza               # it - what the fuck
 sbatiare                # it - to bang/screw/fuck
+sbatere                 # it - to bang/screw/fuck
+sbatare                 # it - to bang/screw/fuck
 sbato                   # it - fuck it (i don't give a shit)
 sborare                 # it - to cum
 sboro                   # it - cum
@@ -1433,17 +1441,18 @@ sburo                   # it - cum
 scopa                   # it - fuck
 scopare                 # it - to fuck
 scopata                 # it - a fuck
-screggia                # it - cheap whore, easy lay, promicuous woman
-# sega                    # it - beat/fuck off (noun)
+scoregia                # it - fart
+scregia                 # it - fart
+# sega                    # it - beat/fuck off (noun) [common English gaming word]
 segata                  # it - fuck-up
-stronzetto              # it - piece of shit
+stronzeto               # it - piece of shit
 stronzino               # it - piece of shit
 stronzo                 # it - piece of shit
 stronzolo               # it - piece of shit
 suchiamelo              # it - blowjob (slang)
-uccellino               # it - dick
-uccello                 # it - dick
-vaffanculo              # it - fuck off
+ucelino                 # it - dick
+ucelo                   # it - dick
+vafanculo               # it - fuck off
 venire                  # it - to cum
 
 
