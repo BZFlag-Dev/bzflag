@@ -11,6 +11,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
    to and from both work - working?
    from server works, to does not - would NOT work with NAT
 
+* Try to build bzadmin on Win32 using PDCurses (it works with the X11
+  version of PDCurses) at least include stdin/stdout in win32 builds 
+
 
 THESE ARE LOWER PRIORITY
 
@@ -25,9 +28,6 @@ THESE ARE LOWER PRIORITY
   - open group registration. one nick is master for each group
 
 * remove UDP client setting. code should figure that out now.
-
-* Try to build bzadmin on Win32 using PDCurses (it works with the X11
-  version of PDCurses)
 
 * make it so keys can be bound to multiple actions, and provide a way
    to do global scoping on key actions
