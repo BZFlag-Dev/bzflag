@@ -27,6 +27,7 @@ BZFlag 1.7e3
 * fix team flag display - Colin Bayer
 * add rogue team and radar colors to config - Valery Fouques
 * Shots as lines on radar - Valery Fouques, Tim Riker
+* CTF world from file - Colin Bayer, Tim Riker
 
 BZFlag 1.7e2
 ------------
