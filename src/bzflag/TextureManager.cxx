@@ -83,39 +83,39 @@ void TextureManager::addTexture( const char* name, OpenGLTexture *texture )
    // this is why IDs are way better then objects for this stuff
    TextureNameMap::iterator it = m_Textures.find(name);
    if (it != m_Textures.end())
-	   delete(it->second);
+     delete it->second;
 
-  m_Textures[name] = texture;
+   m_Textures[name] = texture;
 }
 
-OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init, bool reportFail )
+OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFail)
 {
   int width, height;
   std::string nameToTry = "";
 
-  if (BZDB.isSet( "altImageDir" )){
-	   nameToTry = BZDB.get( "altImageDir" );
+  if (BZDB.isSet( "altImageDir" )) {
+    nameToTry = BZDB.get( "altImageDir" );
 #ifdef WIN32
-	nameToTry += '\\';
+   nameToTry += '\\';
 #else
-	nameToTry += '/';
+   nameToTry += '/';
 #endif
-	nameToTry += init.name;
+   nameToTry += init.name;
   }
   else
-	 nameToTry = init.name;
+    nameToTry = init.name;
   unsigned char* image =NULL;
   if (nameToTry.size() && nameToTry.c_str())
-	 image = MediaFile::readImage( nameToTry.c_str(), &width, &height);
+    image = MediaFile::readImage( nameToTry.c_str(), &width, &height);
   if (!image)
-	  image =  MediaFile::readImage( init.name.c_str(), &width, &height);
+    image = MediaFile::readImage( init.name.c_str(), &width, &height);
   if (!image) {
-	  if (reportFail){
-        std::vector<std::string> args;
-        args.push_back(init.name);
-        printError("cannot load texture: {1}", &args);
-	  }
-    return new OpenGLTexture();
+    if (reportFail) {
+      std::vector<std::string> args;
+      args.push_back(init.name);
+      printError("cannot load texture: {1}", &args);
+    }
+    return new OpenGLTexture;
   }
 
   OpenGLTexture *texture = new OpenGLTexture(width, height, image, init.filter, true);
