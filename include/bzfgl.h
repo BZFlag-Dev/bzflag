@@ -10,40 +10,60 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * include gl.h.  this isn't as simple as including GL/gl.h
- * on win32 because it depends on platform specific identifiers.
- * that's very rude.
+#ifndef __BZFGL_H__
+#define __BZFGL_H__
+
+/** this file contains headers necessary for opengl */
+
+#ifdef _WIN32
+/* windows wants to include winsock but we can't allow that.  we
+ * include winsock2.h (in network.h) and the two don't play together.
  */
+#  define _WINSOCKAPI_
+/* including windows.h slows down compiles a *lot*.  should
+ * replace this with only the necessary definitions.
+ */
+#  include <windows.h>
+#endif // _WIN32
 
-#ifndef BZF_GL_H
-
-#if defined(_WIN32)
-// windows wants to include winsock but we can't allow that.  we
-// include winsock2.h (in network.h) and the two don't play together.
-#define _WINSOCKAPI_
-
-// including windows.h slows down compiles a *lot*.  should
-// replace this with only the necessary definitions.
-#include <windows.h>
-#endif
-
-#if defined(__APPLE__)
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#ifdef __APPLE__
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
 #else
-#include <GL/gl.h>
-#include <GL/glu.h>
+#  include <GL/gl.h>
+#  include <GL/glu.h>
 #endif
 
+/* These will track glBegin/End pairs to make sure that they match */
+#if DEBUG
+int __beginendCount=0;
+#define glBegin(_value) {\
+  if (__beginendCount==0) { \
+    __beginendCount++;\
+  } else {\
+    fprintf(stderr, "ERROR: glBegin called on %s:%d without calling glEnd before\n", __FILE__, __LINE__); \
+    assert(__beginendCount==0 && "glBegin called without glEnd"); \
+  } \
+  glBegin(_value);\
+}
+#define glEnd(_value) {\
+  if (__beginendCount==0) { \
+    fprintf(stderr, "ERROR: glEnd called on %s:%d without calling glBegin before\n", __FILE__, __LINE__); \
+    assert(__beginendCount!=0 && "glEnd called without glBegin"); \
+  } else {\
+    __beginendCount--;\
+  } \
+  glEnd(_value);\
+}
 #endif
 
+
+#endif /* __BZFGL_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
