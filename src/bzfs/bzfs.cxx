@@ -4735,7 +4735,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // if not, start the flag timeout
   if (isTeamFlag && team[flagIndex + 1].team.activeSize == 0) {
     team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
-    team[flagIndex + 1].flagTimeout += clOptions.teamFlagTimeout;
+    team[flagIndex + 1].flagTimeout += (float)clOptions.teamFlagTimeout;
   }
 
   pFlagInfo->flag.position[0] = pFlagInfo->flag.landingPosition[0];

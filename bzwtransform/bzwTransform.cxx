@@ -48,18 +48,18 @@ public:
 	void makeRotationZ( float angle )
 	{
 		makeIdentity();
-		matrix[0][0] = cos(angle);
-		matrix[0][1] = -sin(angle);
-		matrix[1][0] = sin(angle);
-		matrix[1][1] = cos(angle);
+		matrix[0][0] = (float)cos(angle);
+		matrix[0][1] = (float)-sin(angle);
+		matrix[1][0] = (float)sin(angle);
+		matrix[1][1] = (float)cos(angle);
 	}
 
 	void makeTranslation( float xPos, float yPos, float zPos )
 	{
 		makeIdentity();
-		matrix[0][3] = xPos;
-		matrix[1][3] = yPos;
-		matrix[2][3] = zPos;
+		matrix[0][3] = (float)xPos;
+		matrix[1][3] = (float)yPos;
+		matrix[2][3] = (float)zPos;
 	}
 
 	void postMultiply( Matrix3D &inMatrix )
@@ -272,7 +272,7 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 							sizeMatrix.makeIdentity();
 							count = 1;
 							rotation = 0.0f;
-							for (int i = 0; i < objects.size(); i++)
+							for (unsigned int i = 0; i < objects.size(); i++)
 								delete objects[i];
 							objects.clear();
 						}
@@ -380,40 +380,40 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 
 
 					case IN_POSITION0:
-						position[0] = atof(token.c_str());
+						position[0] = (float)atof(token.c_str());
 						state = IN_POSITION1;
 					break;
 
 					case IN_POSITION1:
-						position[1] = atof(token.c_str());
+						position[1] = (float)atof(token.c_str());
 						state = IN_POSITION2;
 					break;
 
 					case IN_POSITION2:
-						position[2] = atof(token.c_str());
+						position[2] = (float)atof(token.c_str());
 						state = stateStack.top();
 						stateStack.pop();
 					break;
 
 
 					case IN_SIZE0:
-						size[0] = atof(token.c_str());
+						size[0] = (float)atof(token.c_str());
 						state = IN_SIZE1;
 					break;
 
 					case IN_SIZE1:
-						size[1] = atof(token.c_str());
+						size[1] = (float)atof(token.c_str());
 						state = IN_SIZE2;
 					break;
 
 					case IN_SIZE2:
-						size[2] = atof(token.c_str());
+						size[2] = (float)atof(token.c_str());
 						state = stateStack.top();
 						stateStack.pop();
 					break;
 
 					case IN_ROTATION:
-						rotation = atof(token.c_str());
+						rotation = (float)atof(token.c_str());
 						state = stateStack.top();
 						stateStack.pop();
 					break;
@@ -467,15 +467,15 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 					break;
 
 					case IN_MATRIX_ROTATION:
-						rotation = atof( token.c_str( ));
+						rotation = (float)atof( token.c_str( ));
 						state = IN_MATRIX;
 					break;
 
 					case IN_ANGLE:
-						angle = atof( token.c_str( ));
+						angle = (float)atof( token.c_str( ));
 						state = stateStack.top();
 						stateStack.pop();
-						tempMatrix.makeRotationZ( (angle * TWO_PI) / 360.0 );
+						tempMatrix.makeRotationZ( (float)((angle * TWO_PI) / 360.0f) );
 						if (state == IN_MATRIX_POSITION)
 							posMatrix.postMultiply( tempMatrix );
 						else if (state == IN_MATRIX_SIZE)
@@ -483,17 +483,17 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 					break;
 
 					case IN_SCALE0:
-						scale[0] = atof( token.c_str( ));
+						scale[0] = (float)atof( token.c_str( ));
 						state = IN_SCALE1;
 					break;
 
 					case IN_SCALE1:
-						scale[1] = atof( token.c_str( ));
+						scale[1] = (float)atof( token.c_str( ));
 						state = IN_SCALE2;
 					break;
 
 					case IN_SCALE2:
-						scale[2] = atof( token.c_str( ));
+						scale[2] = (float)atof( token.c_str( ));
 						state = stateStack.top();
 						stateStack.pop();
 						tempMatrix.makeScale( scale[0], scale[1], scale[2] );
@@ -504,17 +504,17 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 					break;
 
 					case IN_TRANSLATE0:
-						translate[0] = atof( token.c_str( ));
+						translate[0] = (float)atof( token.c_str( ));
 						state = IN_TRANSLATE1;
 					break;
 
 					case IN_TRANSLATE1:
-						translate[1] = atof( token.c_str( ));
+						translate[1] = (float)atof( token.c_str( ));
 						state = IN_TRANSLATE2;
 					break;
 
 					case IN_TRANSLATE2:
-						translate[2] = atof( token.c_str( ));
+						translate[2] = (float)atof( token.c_str( ));
 						state = stateStack.top();
 						stateStack.pop();
 						tempMatrix.makeTranslation( translate[0], translate[1], translate[2] );

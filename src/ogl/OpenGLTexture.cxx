@@ -151,12 +151,12 @@ void			OpenGLTexture::Rep::setFilter(int filter)
   // limit filter.  try to keep nearest... filters as nearest and
   // linear... as linear.
   if (filter > maxFilter) {
-    if (filter & 1 == 1)	// nearest...
-      if (maxFilter & 1 == 1) filter = maxFilter;
+    if ((filter & 1) == 1)	// nearest...
+      if ((maxFilter & 1) == 1) filter = maxFilter;
       else filter = maxFilter > 0 ? maxFilter - 1 : 0;
 
     else			// linear...
-      if (maxFilter & 1 == 1) filter = maxFilter - 1;
+      if ((maxFilter & 1) == 1) filter = maxFilter - 1;
       else filter = maxFilter;
   }
 
