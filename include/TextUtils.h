@@ -523,6 +523,65 @@ inline std::string url_encode(std::string text)
 }
 
 
+/** escape a string
+ */
+inline std::string escape(std::string text, char escaper)
+{
+  char c;
+  int  i;
+  std::string destination;
+  for (i = 0; i < (int) text.size(); i++) {
+    c = text[i];
+    if (!isAlphanumeric(c))
+      destination += escaper;
+    destination += c;
+  }
+  return destination;
+}
+
+/** un-escape a string
+ */
+inline std::string unescape(std::string text, char escaper)
+{
+  char c;
+  int  i;
+  int  len = (int) text.size();
+  std::string destination;
+  for (i = 0; i < len; i++) {
+    c = text[i];
+    if (c == escaper) {
+      if (i < len - 1)
+	destination += text[++i];
+      else
+	// Should print an error 
+	;
+    } else {
+      destination += c;
+    }
+  }
+  return destination;
+}
+
+/** lookup for an un-escaped separator
+ */
+inline int unescape_lookup(std::string text, char escaper, char sep)
+{
+  char c;
+  int  i;
+  int  position = -1;
+  for (i = 0; i < (int) text.size(); i++) {
+    c = text[i];
+    if (c == sep) {
+      position = i;
+      break;
+    }
+    if (c == escaper)
+      i++;
+  }
+  return position;
+}
+
+
 // so we can keep a map with strings as the key
 inline  bool operator < (const std::string &s1,const std::string &s2) { return (s1.compare(s2)<0);}
 
