@@ -1152,3 +1152,26 @@ msgstr "tiden indtil et dårligt flag smides (hvis der er en tidsbegrænsning)."
   
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "Andre informationer kan forekomme af og til."
+
+# BZFS Messages
+
+msgid "You are now an administrator!"
+msgstr "Du er nu administrator"
+
+msgid "Wrong Password!"
+msgstr "Forkert kodeord"
+
+msgid "unknown command"
+msgstr "Ukendt kommando"
+
+msgid "Countdown started."
+msgstr "Nedtælling startet."
+
+msgid "IP pattern added to banlist"
+msgstr "IP mønster tilføjet til blokeringsliste"
+
+msgid "malformed address"
+msgstr "Ugyldig adresse"
+
+msgid "removed IP pattern"
+msgstr "IP mønster fjernet"
