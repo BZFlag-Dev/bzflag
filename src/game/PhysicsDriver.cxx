@@ -214,7 +214,8 @@ void PhysicsDriver::setVelocity(const float vel[3])
 
 void PhysicsDriver::setAngular(float angleVel, const float anglePos[2])
 {
-  angularVel = angleVel;
+  // convert from (rotations/second) to (radians/second)
+  angularVel = angleVel * (2.0f * M_PI);
   angularPos[0] = anglePos[0];
   angularPos[1] = anglePos[1];
   return;

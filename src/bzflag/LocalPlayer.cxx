@@ -343,13 +343,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
       }
       
       if (av != 0.0f) {
-        // the angular velocity is a percentage of 360/second
-        const float angvel = (av * 2.0f * M_PI);
-        newAngVel += angvel;
+        // the angular velocity is in radians/sec
+        newAngVel += av;
         const float dx = oldPosition[0] - ap[0];
         const float dy = oldPosition[1] - ap[1];
-        newVelocity[0] -= angvel * dy;
-        newVelocity[1] += angvel * dx;
+        newVelocity[0] -= av * dy;
+        newVelocity[1] += av * dx;
       }
       
       setPhysicsDriver(driverId);

@@ -52,6 +52,7 @@ typedef struct {
 static std::list<TrackEntry> TrackList;
 static int TrackTexture = -1;
 static float TrackFadeTime = 5.0f;
+static float UserFadeScale = 1.0f;
 //static float TrackWidth = 1.0f;
 
 
@@ -105,6 +106,8 @@ void TrackMarks::init()
   gb.setMaterial(treadsMaterial);
   treadsState = gb.getState();
   
+  setUserFade(BZDB.eval("userTrackFade"));
+  
 //  BZDB.addCallback("_trackMarkTime", bzdbCallback, NULL);
   
   return;
@@ -134,6 +137,28 @@ void TrackMarks::clear()
 {
   TrackList.clear();
   return;
+}
+
+
+void TrackMarks::setUserFade(float value)
+{
+  if (value < 0.0f) {
+    value = 0.0f;
+  }
+  else if (value > 1.0f) {
+    value = 1.0f;
+  }
+
+  UserFadeScale = value;
+  BZDB.setFloat("userTrackFade", value);
+  
+  return;
+}
+
+
+float TrackMarks::getUserFade()
+{
+  return BZDB.eval("userTrackFade");
 }
 
 
@@ -176,7 +201,7 @@ void TrackMarks::update(float dt)
         const float av = phydrv->getAngularVel();
         if (av != 0.0f) {
           const float* ap = phydrv->getAngularPos();
-          const float da = ((av * 2.0f * M_PI) * dt);
+          const float da = (av * dt);
           const float cos_val = cosf(da);
           const float sin_val = sinf(da);
           const float dx = te.pos[0] - ap[0];
@@ -196,6 +221,7 @@ void TrackMarks::update(float dt)
 void TrackMarks::render()
 {
   TrackFadeTime = BZDB.eval(StateDatabase::BZDB_TRACKFADE);
+  TrackFadeTime = TrackFadeTime * UserFadeScale;
   
   if ((TrackFadeTime <= 0.0f) || 
       (RENDERER.useQuality() < 3) || !BZDBCache::zbuffer) {

@@ -801,7 +801,9 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
   // prepare z buffer
   if (BZDBCache::zbuffer) {
-    if (sameFrame && ++depthRange == numDepthRanges) depthRange = 0;
+    if (sameFrame && ++depthRange == numDepthRanges) {
+      depthRange = 0;
+    }
     if (exposed || useHiddenLineOn || --depthRange < 0) {
       depthRange = numDepthRanges - 1;
       if (clearZbuffer) {
