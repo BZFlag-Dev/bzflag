@@ -351,6 +351,17 @@ void handleBanlistCmd(int t, const char *)
 }
 
 
+void handleHostBanlistCmd(int t, const char *)
+{
+  if (!hasPerm(t, PlayerAccessInfo::banlist)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the banlist command");
+    return;
+  }
+  clOptions->acl.sendHostBans(t);
+  return;
+}
+
+
 void handleBanCmd(int t, const char *message)
 {
   if (!hasPerm(t, PlayerAccessInfo::ban)) {
@@ -402,6 +413,59 @@ void handleBanCmd(int t, const char *message)
 }
 
 
+void handleHostBanCmd(int t, const char *message)
+{
+  if (!hasPerm(t, PlayerAccessInfo::ban)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
+    return;
+  }
+  char reply[MessageLen] = {0};
+
+  std::string msg = message;
+  std::vector<std::string> argv = string_util::tokenize( msg, " \t", 4 );
+
+  if( argv.size() < 2 ){
+    strcpy(reply, "Syntax: /hostban <host pattern> [duration] [reason]");
+    sendMessage(ServerPlayer, t, reply, true);
+    strcpy(reply, "        Please keep in mind that reason is displayed to the user.");
+    sendMessage(ServerPlayer, t, reply, true);
+  }
+  else {
+    int durationInt = 0;
+    std::string hostpat = argv[1];
+    std::string reason;
+
+    if( argv.size() >= 3 )
+      durationInt = string_util::parseDuration(argv[2]);
+
+    if( argv.size() == 4 )
+      reason = argv[3];
+
+    clOptions->acl.hostBan(hostpat, player[t].callSign, durationInt, reason.c_str());
+    clOptions->acl.save();
+#ifdef HAVE_ADNS_H
+    strcpy(reply, "Host pattern added to banlist");
+    char kickmessage[MessageLen];
+    for (int i = 0; i < curMaxPlayers; i++) {
+      if ((player[i].fd != NotConnected) && (!clOptions->acl.hostValidate(player[i].hostname))) {
+	sprintf(kickmessage,"You were banned from this server by %s", player[t].callSign);
+	sendMessage(ServerPlayer, i, kickmessage, true);
+	if( reason.length() > 0 ){
+	  sprintf(kickmessage,"Reason given: %s", reason.c_str());
+	  sendMessage(ServerPlayer, i, kickmessage, true);
+	}
+	removePlayer(i, "/hostban");
+      }
+    }
+#else
+    strcpy(reply, "Host pattern added to banlist. WARNING: host patterns not supported in this compilation.");
+#endif
+    sendMessage(ServerPlayer, t, reply, true);
+  }
+  return;
+}
+
+
 void handleUnbanCmd(int t, const char *message)
 {
   if (!hasPerm(t, PlayerAccessInfo::unban)) {
@@ -416,6 +480,24 @@ void handleUnbanCmd(int t, const char *message)
   } else {
     strcpy(reply, "no pattern removed");
   }
+  sendMessage(ServerPlayer, t, reply, true);
+  return;
+}
+
+void handleHostUnbanCmd(int t, const char *message)
+{
+  if (!hasPerm(t, PlayerAccessInfo::unban)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
+    return;
+  }
+  char reply[MessageLen] = {0};
+
+  if (clOptions->acl.hostUnban(message + 11)) {
+    strcpy(reply, "removed host pattern");
+    clOptions->acl.save();
+  }
+  else
+    strcpy(reply, "no pattern removed");
   sendMessage(ServerPlayer, t, reply, true);
   return;
 }
@@ -532,8 +614,15 @@ void handlePlayerlistCmd(int t, const char *)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].state > PlayerInLimbo) {
-      sprintf(reply, "[%d]%-16s: %s%s%s", i, player[i].callSign,
+      sprintf(reply, "[%d]%-16s: %s%s%s%s%s%s", i, player[i].callSign,
 	      player[i].peer.getDotNotation().c_str(),
+#ifdef HAVE_ADNS_H
+	      player[i].hostname ? " (" : "",
+	      player[i].hostname ? player[i].hostname : "",
+	      player[i].hostname ? ")" : "",
+#else
+	      "", "", "",
+#endif
 	      player[i].udpin ? " udp" : "",
 	      player[i].udpout ? "+" : "");
       sendMessage(ServerPlayer, t, reply, true);

@@ -59,6 +59,32 @@ struct BanInfo
   std::string	reason;		// reason for banning
 };
 
+struct HostBanInfo
+{
+  HostBanInfo(std::string hostpat, const char *bannedBy = NULL, int period = 0 ) {
+    this->hostpat = hostpat;
+    if (bannedBy)
+      this->bannedBy = bannedBy;
+    if (period == 0) {
+      banEnd = TimeKeeper::getSunExplodeTime();
+    } else {
+      banEnd = TimeKeeper::getCurrent();
+      banEnd += period * 60.0f;
+    }
+  }
+  bool operator==(const HostBanInfo &rhs) const {
+    return hostpat == rhs.hostpat;
+  }
+  bool operator != (const HostBanInfo& rhs) const {
+    return hostpat != rhs.hostpat;
+  }
+  
+  std::string hostpat;
+  TimeKeeper banEnd;
+  std::string bannedBy;
+  std::string reason;
+};
+
 /* FIXME the AccessControlList assumes that 255 is a wildcard. it "should"
  * include a cidr mask with each address. it's still useful as is, though
  * see wildcard conversion occurs in convert().
@@ -104,6 +130,16 @@ public:
     return added;
   }
 
+  void hostBan(std::string hostpat, const char *bannedBy, int period = 0, const char *reason = NULL) {
+    HostBanInfo toban(hostpat, bannedBy, period);
+    if (reason) toban.reason = reason;
+    hostBanList_t::iterator oldit = std::find(hostBanList.begin(), hostBanList.end(), toban);
+    if (oldit != hostBanList.end())
+      *oldit = toban;
+    else
+      hostBanList.push_back(toban);
+  }
+
   bool unban(in_addr &ipAddr) {
     banList_t::iterator it = std::remove(banList.begin(), banList.end(), BanInfo(ipAddr));
     if (it != banList.end()) {
@@ -137,6 +173,15 @@ public:
     return success;
   }
 
+  bool hostUnban(std::string hostpat) {
+    hostBanList_t::iterator it = std::remove(hostBanList.begin(), hostBanList.end(), HostBanInfo(hostpat));
+    if (it != hostBanList.end()) {
+      hostBanList.erase(it, hostBanList.end());
+      return true;
+    }
+    return false;
+  }
+
   bool validate(in_addr &ipAddr) {
     expire();
 
@@ -153,6 +198,44 @@ public:
       if (mask.s_addr == ipAddr.s_addr)
 	return false;
     }
+    return true;
+  }
+
+  static bool does_match(const char *targ, int targlen, const char *pat, int patlen)
+  {
+    if (!targlen)
+      return patlen == 0;
+    if (!patlen)
+      return targlen == 0;
+
+    while (*pat != '*') {
+      if (*pat != *targ)
+	return false;
+
+      pat++; patlen--;
+      targ++; targlen--;
+      if (!targlen)
+	return patlen == 0;
+      if (!patlen)
+	return targlen == 0;
+    }
+
+    // found a *, search for matches in the rest of the string
+    for (int pos = 0; pos <= targlen; pos++)
+      if (does_match(targ+pos, targlen-pos, pat+1, patlen-1))
+	return true;
+    return false;
+  }
+
+  bool hostValidate(const char *hostname) {
+    expire();
+
+    for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
+      if (does_match(hostname, strlen(hostname), it->hostpat.c_str(), it->hostpat.length())) {
+	return false;
+      }
+    }
+    
     return true;
   }
 
@@ -204,6 +287,36 @@ public:
     }
   }
 
+  void sendHostBans(PlayerId id)
+  {
+    char banlistmessage[MessageLen];
+    expire();
+
+    sendMessage(ServerPlayer, id, "Host Ban List", false);
+    sendMessage(ServerPlayer, id, "-------------", false);
+    for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
+      char *pMsg = banlistmessage;
+
+      sprintf(pMsg, "%s", it->hostpat.c_str());
+
+      // print duration when < 1 year
+      double duration = it->banEnd - TimeKeeper::getCurrent();
+      if (duration < 365.0f * 24 * 3600)
+	sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
+      if( it->bannedBy.length() )
+	sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
+
+      sendMessage(ServerPlayer, id, banlistmessage, true);
+
+      // add reason, if any
+      if( it->reason.size() ) {
+	char *pMsg = banlistmessage;
+	sprintf(pMsg, "   reason: %s", it->reason.c_str() );
+	sendMessage(ServerPlayer, id, banlistmessage, true );
+      }
+    }
+  }
+
   /** This function tells this object where to save the banlist, and where
       to load it from. */
   void setBanFile(const std::string& filename) {
@@ -225,15 +338,13 @@ public:
     banList.clear();
    
     // try to read ban entries
-    std::string ipAddress, bannedBy, reason, tmp;
+    std::string ipAddress, hostpat, bannedBy, reason, tmp;
     long banEnd;
     is>>std::ws;
     while (!is.eof()) {
       is>>ipAddress;
-      std::string::size_type n;
-      while ((n = ipAddress.find('*')) != std::string::npos) {
-	ipAddress.replace(n, 1, "255");
-      }
+      if (ipAddress == "host:")
+	is>>hostpat;
       is>>tmp;
       if (tmp != "end:")
 	return false;
@@ -257,9 +368,18 @@ public:
       is>>std::ws;
       if (banEnd != 0 && banEnd < TimeKeeper::getCurrent().getSeconds())
 	continue;
-      if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-	       (reason.size() > 0 ? reason.c_str() : NULL)))
-	return false;
+      if (ipAddress == "host:") {
+	hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
+		(reason.size() > 0 ? reason.c_str() : NULL));
+      } else {
+	std::string::size_type n;
+	while ((n = ipAddress.find('*')) != std::string::npos) {
+	  ipAddress.replace(n, 1, "255");
+	}
+	if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
+		 (reason.size() > 0 ? reason.c_str() : NULL)))
+	  return false;
+      }
     }
     return true;
   }
@@ -273,9 +393,7 @@ public:
       std::cerr<<"Could not open "<<banFile<<std::endl;
       return;
     }
-    banList_t::const_iterator it;
-    for (it = banList.begin(); it != banList.end(); ++it) {
-
+    for (banList_t::const_iterator it = banList.begin(); it != banList.end(); ++it) {
       // print address
       in_addr mask = it->addr;
       os<<((ntohl(mask.s_addr) >> 24) % 256)<<'.';
@@ -307,6 +425,22 @@ public:
       os<<"banner: "<<it->bannedBy<<'\n';
       os<<"reason: "<<it->reason<<'\n';
     }
+    for (hostBanList_t::const_iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
+      // print address
+      os<<"host: "<<it->hostpat<<'\n';
+
+      // print ban end, banner, and reason
+      if (it->banEnd.getSeconds() ==
+	  TimeKeeper::getSunExplodeTime().getSeconds()) {
+	os<<"end: 0"<<'\n';
+      }
+      else {
+	os<<"end: "<<(long(it->banEnd.getSeconds() + time(NULL) -
+			   TimeKeeper::getCurrent().getSeconds()))<<'\n';
+      }
+      os<<"banner: "<<it->bannedBy<<'\n';
+      os<<"reason: "<<it->reason<<'\n';
+    }
   }
 
 private:
@@ -316,6 +450,10 @@ private:
 
   typedef std::vector<BanInfo> banList_t;
   banList_t banList;
+
+  typedef std::vector<HostBanInfo> hostBanList_t;
+  hostBanList_t hostBanList;
+
   std::string banFile;
 };
 

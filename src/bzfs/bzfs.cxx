@@ -62,6 +62,10 @@ uint16_t maxPlayers = MaxPlayers;
 uint16_t curMaxPlayers = 0;
 int debugLevel = 0;
 
+#ifdef HAVE_ADNS_H
+adns_state adnsState;
+#endif
+
 static float maxWorldHeight = 0.0f;
 
 static char hexDigest[50];
@@ -933,6 +937,10 @@ static bool serverStart()
     player[i].outmsgSize = 0;
     player[i].outmsgOffset = 0;
     player[i].outmsgCapacity = 0;
+#ifdef HAVE_ADNS_H
+    player[i].hostname = NULL;
+    player[i].adnsQuery = NULL;
+#endif
   }
 
   listServerLinksCount = 0;
@@ -1890,6 +1898,23 @@ static void acceptClient()
   player[playerIndex].lastState.order = 0;
   player[playerIndex].paused = false;
 
+#ifdef HAVE_ADNS_H
+  if (player[playerIndex].adnsQuery) {
+    adns_cancel(player[playerIndex].adnsQuery);
+    player[playerIndex].adnsQuery = NULL;
+  }
+  // launch the asynchronous query to look up this hostname
+  if (adns_submit_reverse(adnsState, (struct sockaddr *)&clientAddr, adns_r_ptr,
+			  (adns_queryflags)(adns_qf_quoteok_cname|adns_qf_cname_loose),
+			  0, &player[playerIndex].adnsQuery) != 0) {
+    DEBUG1("Player [%d] failed to submit reverse resolve query: errno %d\n", playerIndex, getErrno());
+    player[playerIndex].adnsQuery = NULL;
+  } else {
+    DEBUG2("Player [%d] submitted reverse resolve query\n", playerIndex);
+  }
+#endif
+
+
   player[playerIndex].pausedSince = TimeKeeper::getNullTime();
 #ifdef NETWORK_STATS
   initPlayerMessageStats(playerIndex);
@@ -2666,6 +2691,13 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   player[playerIndex].outmsgSize = 0;
 
   player[playerIndex].flagHistory.clear();
+
+#ifdef HAVE_ADNS_H
+  if (player[playerIndex].hostname) {
+    free(player[playerIndex].hostname);
+    player[playerIndex].hostname = NULL;
+  }
+#endif
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
@@ -3703,11 +3735,20 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message+1, "banlist", 7) == 0) {
     handleBanlistCmd(t, message);
 
+  } else if (strncmp(message+1, "hostbanlist", 11) == 0) {
+    handleHostBanlistCmd(t, message);
+
   } else if (strncmp(message+1, "ban", 3) == 0) {
     handleBanCmd(t, message);
 
+  } else if (strncmp(message+1, "hostban", 7) == 0) {
+    handleHostBanCmd(t, message);
+
   } else if (strncmp(message+1, "unban", 5) == 0) {
     handleUnbanCmd(t, message);
+
+  } else if (strncmp(message+1, "hostunban", 9) == 0) {
+    handleHostUnbanCmd(t, message);
 
   } else if (strncmp(message+1, "lagwarn",7) == 0) {
     handleLagwarnCmd(t, message);
@@ -4450,6 +4491,14 @@ int main(int argc, char **argv)
     }
   }
 
+#ifdef HAVE_ADNS_H
+  /* start up our resolver if we have ADNS */
+  if (adns_init(&adnsState, adns_if_nosigpipe, 0) < 0) {
+    perror("ADNS init failed");
+    exit(1);
+  }
+#endif
+
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
     votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime);
@@ -4732,6 +4781,39 @@ int main(int argc, char **argv)
 	}
       }
     }
+
+#ifdef HAVE_ADNS_H
+    for (int h = 0; h < curMaxPlayers; h++) {
+      if (player[h].adnsQuery) {
+	// check to see if query has completed
+ 	adns_answer *answer;
+ 	if (adns_check(adnsState, &player[h].adnsQuery, &answer, 0) != 0) {
+ 	  if (getErrno() != EAGAIN) {
+ 	    DEBUG1("Player [%d] failed to resolve: errno %d\n", h, getErrno());
+ 	    player[h].adnsQuery = NULL;
+ 	  }
+ 	} else {
+ 	  // we got our reply.
+ 	  if (answer->status == adns_s_ok) {
+ 	    if (player[h].hostname)
+ 	      free(player[h].hostname); // shouldn't happen, but just in case
+ 	    player[h].hostname = strdup(*answer->rrs.str);
+ 	    DEBUG1("Player [%d] resolved to hostname: %s\n", h, player[h].hostname);
+ 	    free(answer);
+ 	    player[h].adnsQuery = NULL;
+ 	    // check against ban lists
+ 	    if (!clOptions->acl.hostValidate(player[h].hostname)) {
+ 	      removePlayer(h, "bannedhost");
+ 	    }
+ 	  } else {
+ 	    DEBUG1("Player [%d] got bad status from resolver: %s\n", h, adns_strerror(answer->status));
+ 	    free(answer);
+ 	    player[h].adnsQuery = NULL;
+ 	  }
+ 	}
+      }
+    }
+#endif
 
     // manage voting poll for collective kicks/bans/sets
     if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {

@@ -589,6 +589,23 @@ IP Ban List
 .ft R
 
 .TP
+.B /hostban {hostpat} {duration} {reason}
+
+Ban players using the specified hostnames for a certain length of time from using this server.  Example:
+
+.ft CW
+.nf
+.ne 4
+/hostban *.foo.com 2 cheating
+bans all players from foo.com for 2 minutes
+.ft R
+
+Note: Bzfs must be compiled to use the ADNS asynchronous resolver library in order for this feature to work.
+
+.TP
+.B /hostbanlist
+List all of the host patterns currently banned from this server.
+.TP
 .B /countdown
 Starts the countdown sequence for a timed game. Example:
 
@@ -642,11 +659,11 @@ LAGWARN                 /lagwarn
 .br
 KICK                    /kick
 .br
-BAN                     /ban
+BAN                     /ban /hostban
 .br
-BANLIST                 /banlist
+BANLIST                 /banlist /hostbanlist
 .br
-UNBAN                   /unban
+UNBAN                   /unban /hostunban
 .br
 COUNTDOWN               /countdown
 .br
