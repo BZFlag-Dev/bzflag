@@ -4239,8 +4239,10 @@ void			drawFrame(const float dt)
         if (roaming) {
 	  myTank->setHidden(false);
         } else {
-	  // or make it hidden
-	  myTank->setHidden(true);
+	  if (!BZDB.isTrue("showTreads")) {
+	    // or make it hidden
+	    myTank->setHidden(true);
+          }
         }
       }
 
