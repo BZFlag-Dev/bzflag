@@ -125,7 +125,7 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-GM_simple" />
     <gstate>
-      <texture repeat="false" rgba="true" filename="missile.rgb" />
+      <texture repeat="false" rgba="true" filename="missile" />
       <blending src="sa" dst="1-sa" />
       <alpha func=">=" ref="0.1" />
       <culling cull="false" />

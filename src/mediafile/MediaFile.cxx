@@ -113,6 +113,7 @@ uint32_t				MediaFile::swap32BE(uint32_t* d)
 
 #include "FileManager.h"
 #include "SGIImageFile.h"
+#include "PNGImageFile.h"
 #include "WaveAudioFile.h"
 #define OPENMEDIA(_T)												\
 do {																\
@@ -137,6 +138,8 @@ unsigned char*			MediaFile::readImage(
 	// try opening file as an image
 	std::istream* stream;
 	ImageFile* file = NULL;
+	if (file == NULL)
+		OPENMEDIA(PNGImageFile);
 	if (file == NULL)
 		OPENMEDIA(SGIImageFile);
 

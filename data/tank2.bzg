@@ -14,7 +14,7 @@
 <!--  medium detail tank model -->
 <group>
   <gstate>
-    <texture filename="flage.rgb" />
+    <texture filename="flage" />
     <!--  body -->
     <geometry>
       <texcoord>
@@ -437,7 +437,7 @@
 
       <!--  now smooth -->
       <gstate>
-        <texture filename="flage.rgb" />
+        <texture filename="flage" />
         <shading model="smooth" />
         <!--  right -->
         <primitive type="tfan">

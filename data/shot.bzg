@@ -100,7 +100,7 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-r-simple" />
     <gstate>
-      <texture repeat="false" rgba="true" filename="rbolt.rgb" />
+      <texture repeat="false" rgba="true" filename="rbolt" />
       <blending src="sa" dst="1-sa" />
       <culling cull="false" />
       <ref id="shot_textured" />
@@ -141,7 +141,7 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-g-simple" />
     <gstate>
-      <texture repeat="false" rgba="true" filename="gbolt.rgb" />
+      <texture repeat="false" rgba="true" filename="gbolt" />
       <blending src="sa" dst="1-sa" />
       <culling cull="false" />
       <ref id="shot_textured" />
@@ -182,7 +182,7 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-b-simple" />
     <gstate>
-      <texture repeat="false" rgba="true" filename="bbolt.rgb" />
+      <texture repeat="false" rgba="true" filename="bbolt" />
       <blending src="sa" dst="1-sa" />
       <culling cull="false" />
       <ref id="shot_textured" />
@@ -223,7 +223,7 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-p-simple" />
     <gstate>
-      <texture repeat="false" rgba="true" filename="pbolt.rgb" />
+      <texture repeat="false" rgba="true" filename="pbolt" />
       <blending src="sa" dst="1-sa" />
       <culling cull="false" />
       <ref id="shot_textured" />
@@ -264,7 +264,7 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-y-simple" />
     <gstate>
-      <texture repeat="false" rgba="true" filename="ybolt.rgb" />
+      <texture repeat="false" rgba="true" filename="ybolt" />
       <blending src="sa" dst="1-sa" />
       <culling cull="false" />
       <ref id="shot_textured" />

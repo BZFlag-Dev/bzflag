@@ -179,8 +179,8 @@ bool					PNGImageFile::read(void* buffer)
 			return false;
 		}
 
-		err = inflate(&stream, Z_FINISH);
-		while (err == Z_BUF_ERROR) {
+		err = inflate(&stream, Z_SYNC_FLUSH);
+		while ((err == Z_OK) && (stream.avail_out == 0)) {
 
 			expand();
 
@@ -194,9 +194,10 @@ bool					PNGImageFile::read(void* buffer)
 
 			switchLineBuffers();
 			line = getLineBuffer();
+
 			stream.next_out = line;
 			stream.avail_out = lineBufferSize;
-			err = inflate(&stream, Z_FINISH);
+			err = inflate(&stream, Z_SYNC_FLUSH);
 		}
 
 		if (err != Z_STREAM_END) {
@@ -539,7 +540,7 @@ PNGChunk *PNGChunk::readChunk(std::istream *stream)
 }
 
 /* 
-PNGChunk *PNGChunk::readChunk(std::istream *stream)
+PNGChunk::PNGChunk()
 
   Default (private) constructor for a png chunk
 */
@@ -550,7 +551,7 @@ PNGChunk::PNGChunk()
 }
 
 /* 
-PNGChunk *PNGChunk::readChunk(std::istream *stream)
+PNGChunk::~PNGChunk()
 
   Default destructor
 */

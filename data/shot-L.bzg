@@ -67,7 +67,7 @@
 </geometry>
 
 <gstate id="shot-L">
-	<texture repeat="false" rgba="true" filename="laser.rgb" />
+	<texture repeat="false" rgba="true" filename="laser" />
 	<blending src="sa" dst="1" />
 	<culling cull="false" />
 	<depth write="false" />

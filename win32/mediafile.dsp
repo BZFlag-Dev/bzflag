@@ -98,6 +98,10 @@ SOURCE=..\src\mediafile\MediaFile.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\mediafile\PNGImageFile.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\mediafile\SGIImageFile.cxx
 # End Source File
 # Begin Source File
@@ -119,6 +123,10 @@ SOURCE=..\src\mediafile\ImageFile.h
 # Begin Source File
 
 SOURCE=..\include\MediaFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\PNGImageFile.h
 # End Source File
 # Begin Source File
 

@@ -49,7 +49,7 @@
 				</primitive>
 			</gstate>
 			<gstate>
-				<texture repeat="false" rgba="true" filename="flag.rgb" />
+				<texture repeat="false" rgba="true" filename="flag" />
 				<culling cull="false" />
 				<blending src="sa" dst="1-sa" />
 				<primitive type="tstrip">

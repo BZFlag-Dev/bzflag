@@ -19,7 +19,7 @@
 		<billboard>
 			<axis>0 0 0</axis>
 			<gstate>
-				<texture repeat="false" rgba="true" filename="explode1.rgb" />
+				<texture repeat="false" rgba="true" filename="explode1" />
 				<culling cull="false" />
 				<blending src="sa" dst="1-sa" />
 				<alpha func=">=" ref="0.1" />
