@@ -16,7 +16,9 @@ TARGETS  = $(LIBDIR)/libView.a
 
 CXXFILES =				\
 	View.cxx			\
+	ViewItemAccum.cxx		\
 	ViewItemBuffer.cxx		\
+	ViewItemColorMask.cxx		\
 	ViewItemIf.cxx			\
 	ViewItemMenu.cxx		\
 	ViewItemMessages.cxx		\

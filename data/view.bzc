@@ -1,3 +1,16 @@
+<!--
+# bzflag
+# Copyright (c) 1993 - 2002 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+-->
+
 <views>
 
 <!-- the usual stuff shown overlayed on the out-the-window scene -->
@@ -174,6 +187,30 @@ tests for:
 	</viewport>
 	<viewport x="50%" y="0%" w="50%" h="100%">
 		<scene x="0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
+		<ref id="normalOverlay" />
+	</viewport>
+</view>
+
+<!--
+test - draws view in anaglyph stereo mode (red-blue glasses)
+tests for:
+  scene parameters
+  accumulation buffering
+  color masking
+  correct projection skewing for stereo
+-->
+<view id="anaglyph-stereo">
+	<viewport x="0%" y="0%" w="100%" h="100%">
+		<colormask red="true" green="false" blue="false" alpha="true">
+			<scene x="-0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
+		</colormask>
+	</viewport>
+	<viewport x="0%" y="0%" w="100%" h="100%">
+		<colormask red="false" green="true" blue="true" alpha="true">
+			<scene x="0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
+		</colormask>
+	</viewport>
+	<viewport x="0%" y="0%" w="100%" h="100%">
 		<ref id="normalOverlay" />
 	</viewport>
 </view>

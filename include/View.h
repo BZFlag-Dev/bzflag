@@ -108,17 +108,17 @@ protected:
 	virtual void		onPostRender(float x, float y, float w, float h);
 
 	// render child views.  x,y,w,h are as in onPreRender().
-	void				renderChildren(float x, float y, float w, float h);
+	virtual void		renderChildren(float x, float y, float w, float h);
 
 	// called before onRender() when colors may be dirty
 	virtual void		onUpdateColors() { }
 
-private:
 	typedef std::vector<View*> Views;
+	Views				views;
 
+private:
 	int					refCount;
 	ViewState			state;
-	Views				views;
 	int					style;
 	int					colorMark;
 	static int			colorMailbox;

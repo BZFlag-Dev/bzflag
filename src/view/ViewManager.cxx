@@ -12,7 +12,9 @@
 
 #include "ViewManager.h"
 #include "View.h"
+#include "ViewItemAccum.h"
 #include "ViewItemBuffer.h"
+#include "ViewItemColorMask.h"
 #include "ViewItemIf.h"
 #include "ViewItemMenu.h"
 #include "ViewItemMessages.h"
@@ -30,7 +32,9 @@ ViewManager*			ViewManager::mgr = NULL;
 ViewManager::ViewManager()
 {
 	// register built-in tag readers
+	addReader("accumulation", new ViewItemAccumReader);
 	addReader("buffer", new ViewItemBufferReader);
+	addReader("colormask", new ViewItemColorMaskReader);
 	addReader("if", new ViewItemIfReader(false));
 	addReader("menu", new ViewItemMenuReader);
 	addReader("message", new ViewItemMessagesReader);
