@@ -1546,6 +1546,9 @@ void handleRecordCmd(int t, const char * message)
   else if (strncmp (buf, "stats", 5) == 0) {
     Record::sendStats(t);
   }
+  else if (strncmp (buf, "list", 4) == 0) {
+    Replay::sendFileList (t); // stolen from '/replay'
+  }
   else if (strncmp (buf, "save", 4) == 0) {
     buf = buf + 4;
     char filename[MessageLen];

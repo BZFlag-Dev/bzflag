@@ -60,8 +60,8 @@ typedef struct RRpacket {
 static const int RRpacketHdrLen = sizeof (RRpacket) - 
                                   (2 * sizeof (RRpacket*) - sizeof (void *));
 typedef struct {
-  int byteCount;
-  int packetCount;
+  s64 byteCount;
+  s64 packetCount;
   // into the head, out of the tail
   RRpacket *head; // last packet in 
   RRpacket *tail; // first packet in
@@ -99,9 +99,9 @@ static bool Recording = false;
 static RecordType RecordMode = BufferedRecord;
 static RRtime RecordUpdateTime = 0;
 static RRtime RecordUpdateRate = 0;
-static int RecordMaxBytes = DefaultMaxBytes;
-static int RecordFileBytes = 0;
-static int RecordFilePackets = 0;
+static s64 RecordMaxBytes = DefaultMaxBytes;
+static s64 RecordFileBytes = 0;
+static s64 RecordFilePackets = 0;
 static int RecordFilePrevLen = 0;
 
 static bool Replaying = false;
@@ -127,7 +127,12 @@ static bool saveFlagStates ();
 static bool savePlayerStates ();
 static bool resetStates ();
 
-// saves straight to a file, or into a buffer
+static bool saveVars (FILE *f); // FIXME - need to go into the state updates,
+static bool loadVars (FILE *f); // or just at the beginning? (use dirty bits?)
+static bool saveFlagTypes (FILE *f);
+static bool loadFlagTypes (FILE *f);
+
+// saves straight to a file, or into the buffer
 static bool routePacket (u16 code, int len, const void * data, u16 mode);
 
 static RRpacket *newRRpacket (u16 mode, u16 code, int len, const void *data);
@@ -135,14 +140,18 @@ static RRpacket *delRRpacket (RRbuffer *b);         // delete from the tail
 static void addRRpacket (RRbuffer *b, RRpacket *p); // add to head
 static void freeRRbuffer (RRbuffer *buf);           // clean it out
 static void initRRpacket (u16 mode, u16 code, int len, const void *data,
-                          RRpacket *p);
+                          RRpacket *p);             // copy params into packet
 
 static bool saveRRpacket (RRpacket *p, FILE *f);
-static RRpacket *loadRRpacket (FILE *f); // makes a new packet
+static RRpacket *loadRRpacket (FILE *f);            // makes a new packet
+
 static bool saveHeader (int playerIndex, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
+static bool matchWorldDatabase (ReplayHeader *h);
+
 static FILE *openFile (const char *filename, const char *mode);
 static FILE *openWriteFile (int playerIndex, const char *filename);
+
 static bool badFilename (const char *name);
 static bool makeDirExist (const char *dirname);
 static bool makeDirExistMsg (const char *dirname, int playerIndex);
@@ -298,11 +307,11 @@ bool Record::sendStats (int playerIndex)
   }
    
   if (RecordMode == BufferedRecord) {
-    snprintf (buffer, MessageLen, "  buffered: %i bytes, %i packets, time = %i",
+    snprintf (buffer, MessageLen, "  buffered: %lli bytes, %lli packets, time = %i",
              RecordBuf.byteCount, RecordBuf.packetCount, 0);
   }
   else {
-    snprintf (buffer, MessageLen, "  saved: %i bytes, %i packets, time = %i",
+    snprintf (buffer, MessageLen, "  saved: %lli bytes, %lli packets, time = %i",
              RecordFileBytes, RecordFilePackets, 0);   
   }
   sendMessage (ServerPlayer, playerIndex, buffer, true);
@@ -373,7 +382,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
     return false;
   }
     
-  if (!Recording || (RecordMode != BufferedRecord)) { // FIXME - !Recording ?
+  if (!Recording || (RecordMode != BufferedRecord)) { // FIXME - !Recording?
     sendMessage (ServerPlayer, playerIndex, "No buffer to save");
     return false;
   }
@@ -544,8 +553,9 @@ void Record::sendHelp (int playerIndex)
   sendMessage(ServerPlayer, playerIndex, "  /record size <Mbytes>");
   sendMessage(ServerPlayer, playerIndex, "  /record rate <seconds>");
   sendMessage(ServerPlayer, playerIndex, "  /record stats");
-  sendMessage(ServerPlayer, playerIndex, "  /record file <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /record list");
   sendMessage(ServerPlayer, playerIndex, "  /record save <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /record file <filename>");
   return;
 }
                           
@@ -639,7 +649,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   }
 
   // preload the buffer 
-  // FIXME - this needs to be a moving window
+  // FIXME - this should be a moving window, for big files, mmap() ?
   while (ReplayBuf.byteCount < RecordMaxBytes) {
     p = loadRRpacket (ReplayFile);
     if (p == NULL) {
@@ -660,6 +670,71 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   snprintf (buffer, MessageLen, "Loaded file: %s", name.c_str());
   sendMessage (ServerPlayer, playerIndex, buffer, true);
+  
+  return true;
+}
+
+
+static bool
+matchWorldDatabase (ReplayHeader *h)
+{
+  matchWorldDatabase (h); //FIXME
+
+  // Ok, this is where it gets a bit borked. The bzflag client
+  // has dynamic arrays for some of its objects (players, flags, 
+  // shots, etc...) If the client array is too small, there will
+  // be memory overruns. The maxPlayers problem is already dealt
+  // with, because it is set to (MaxPlayers + ReplayObservers)
+  // as soon as the -replay flag is used. The rest of them are 
+  // still an issue.
+  //
+  // Here are a few of options:
+  //
+  // 1) make the command line option  -replay <filename>, and
+  //    only allow loading of world DB's that match the one
+  //    from the command line file. This is probably how this
+  //    feature will get used for the most part anyways.
+  //
+  // 2) kick all observers off of the server if an incompatible
+  //    record file is loaded (with an appropriate warning). 
+  //    then they can reload with the original DB upon rejoining
+  //    (DB with modified maxPlayers).
+  //
+  // 3) make fixed sized arrays on the client side
+  //    (but what if someone really needs 1000 flags?)
+  //
+  // 4) implement a world reload feature on the client side, 
+  //    so that if the server sends a MsgGetWorld to the client
+  //    when it isn't expecting one, it reaquires and regenerates
+  //    its world DB. this would be the slick way to do it.
+  //
+  // 5) implement a resizing command, but that's icky.
+  // 
+  // 6) leave it be, and let clients fall where they may.
+  //
+
+  // maxPlayers [from WorldBuilder.cxx]
+  //   world->players = new RemotePlayer*[world->maxPlayers];
+  
+  // maxFlags [from WorldBuilder.cxx]
+  //   world->flags = new Flag[world->maxFlags];
+  //   world->flagNodes = new FlagSceneNode*[world->maxFlags];
+  //   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];  
+
+  // maxShots [from RemotePlayer.cxx]
+  //   numShots = World::getWorld()->getMaxShots();
+  //   shots = new RemoteShotPath*[numShots];
+    
+  
+  // probably a different map, or a different gameStyle
+  if (h->worldSize != worldDatabaseSize) {
+    return false;
+  }
+  
+  // compare the whole world, options and all
+  if (memcmp (h->world, worldDatabase, h->worldSize) != 0) {
+    return false;
+  }
   
   return true;
 }
@@ -855,7 +930,8 @@ bool Replay::skip(int playerIndex, int seconds)
   ReplayPos = p;
   
   char buffer[MessageLen];
-  sprintf (buffer, "Skipping %.3f seconds (asked %i)", (float)diff/1000000.0f, seconds);
+  sprintf (buffer, "Skipping %.3f seconds (asked %i)",
+           (float)diff/1000000.0f, seconds);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -875,11 +951,11 @@ bool Replay::sendPackets () {
     
     p = ReplayPos;
 
-    if (p == NULL) { // FIXME - internal error here?
+    if (p == NULL) { // FIXME - internal error here? (tagged with !!! for now)
       resetStates ();
       Replaying = false;
       ReplayPos = ReplayBuf.tail;
-      sendMessage (ServerPlayer, AllPlayers, "Replay Finished");
+      sendMessage (ServerPlayer, AllPlayers, "Replay Finished!!!"); 
       return false;
     }
     
@@ -1089,9 +1165,10 @@ savePlayerStates ()
     }
   }
 
-  // Rather then recording the original MsgAdminInfo message
+  // As well as recording the original MsgAdminInfo message
   // that gets sent out, we'll record the players' addresses
-  // here in case the record buffer has grown past it.
+  // here in case the record buffer has grown past the original
+  // packet.
   if (i > 0) {
     buf = nboPackUByte (adminPtr, i);
     routePacket (MsgAdminInfo,
@@ -1144,6 +1221,40 @@ resetStates ()
 }
 
 
+static bool
+saveVars (FILE *f)
+{
+  //FIXME
+  loadVars (f);
+  return true;
+}
+
+static bool
+loadVars (FILE *f)
+{
+  //FIXME
+  saveVars (f);
+  return true;
+}
+
+static bool
+saveFlagTypes (FILE *f)
+{
+  //FIXME
+  loadFlagTypes (f);
+  return true;
+}
+
+
+static bool
+loadFlagTypes (FILE *f)
+{
+  //FIXME
+  saveFlagTypes (f);
+  return true;
+}
+
+
 /****************************************************************************/
 
 // File Functions
@@ -1173,7 +1284,7 @@ saveRRpacket (RRpacket *p, FILE *f)
     return false;
   }
 
-  fflush (f);//FIXME
+  // fflush (f); // FIXME (implment as a command, flush on ::kill())
   
   RecordFileBytes += p->len + RRpacketHdrLen;
   RecordFilePackets++;
@@ -1301,8 +1412,8 @@ loadHeader (ReplayHeader *h, FILE *f)
   buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
   buf = nboUnpackString (buf, h->fakeHash, sizeof (h->fakeHash));
   
-  //FIXME - make sure this doesn't leak anywhere
-  h->world = (char*) malloc (h->worldSize);
+  // FIXME - make sure this doesn't leak anywhere
+  h->world = new char [h->worldSize]; // use new, as defineWorld() does
   if (h->world == NULL) {
     return false;
   }

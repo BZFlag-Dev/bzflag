@@ -18,9 +18,9 @@
 const int ReplayObservers = 16;
 
 enum ReplayPacketMode {
-  RealPacket   = 0,
-  FakePacket   = 1,
-  HiddenPacket = 2
+  RealPacket   = 0, // broadcasted during replay
+  FakePacket   = 1, // broadcasted to those you aren't yet stateful
+  HiddenPacket = 2  // never broadcasted (stored for admin. purposes)
 };
 
 namespace Record {
