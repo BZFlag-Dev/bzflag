@@ -177,6 +177,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
+#endif
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -187,7 +188,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
-#endif
 
   BzfWindow* window = getMainWindow()->getWindow();
   option = new HUDuiList;
@@ -281,8 +281,8 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useCullingTree() ? 1 : 0);
 #endif
+    ((HUDuiList*)list[i++])->setIndex(renderer->useCullingTree() ? 1 : 0);
 
     if (!BZDBCache::texture)
       tex->setIndex(0);
@@ -370,10 +370,10 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
   case 'c':
     sceneRenderer->setDepthComplexity(list->getIndex() != 0);
     break;
+#endif
   case 'd':
     sceneRenderer->setCullingTree(list->getIndex() != 0);
     break;
-#endif
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();
     if (window->hasGammaControl())
