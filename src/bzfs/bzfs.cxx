@@ -4115,8 +4115,8 @@ static void addPlayer(int playerIndex)
 {
   // find out if we're the first player to join
   bool firstPlayer = true;
-  for (PlayerId i = 0; i < maxPlayers; i++) {
-    if ((player[i].state != PlayerNoExist) && (i != playerIndex)) {
+  for (PlayerId playerid = 0; playerid < maxPlayers; playerid++) {
+    if ((player[playerid].state != PlayerNoExist) && (playerid != playerIndex)) {
       firstPlayer = false;
       break;
     }
