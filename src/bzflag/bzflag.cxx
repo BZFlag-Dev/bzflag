@@ -394,6 +394,12 @@ void updateConfigFile ( void )
 
   case 1: // 1.12
     break; // no action, current version
+
+  default: // hm, we don't know about this one...
+    printError(string_util::format("Config file is tagged version \"%d\", "
+                                   "which was not expected (too new perhaps). "
+				   "Trying to load anyhow.", configVersion));
+    break;
   }
 
   // set us as the updated version
