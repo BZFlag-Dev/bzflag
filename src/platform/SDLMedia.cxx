@@ -28,10 +28,6 @@ static const int defaultAudioRate=22050;
 
 SDLMedia::SDLMedia() : BzfMedia()
 {
-  if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
-    printFatalError("Could not initialize SDL-Audio: %s.\n", SDL_GetError());
-    exit(-1);
-  }; 
   cmdFill       = 0;
   sndMutex      = SDL_CreateMutex();
   cmdMutex      = SDL_CreateMutex();
@@ -48,7 +44,6 @@ SDLMedia::~SDLMedia()
   SDL_DestroyCond(fillCond);
   SDL_DestroyCond(wakeCond);
   SDL_DestroyMutex(sndMutex);
-  SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 double			SDLMedia::stopwatch(bool start)
@@ -77,6 +72,11 @@ bool			SDLMedia::openAudio()
 {
   // don't re-initialize
   if (audioReady) return false;
+
+  if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
+    printFatalError("Could not initialize SDL-Audio: %s.\n", SDL_GetError());
+    exit(-1);
+  }; 
 
   static SDL_AudioSpec desired;
  
@@ -145,6 +145,7 @@ void			SDLMedia::closeAudio()
   SDL_CloseAudio();
   delete [] outputBuffer;
   outputBuffer  = 0;
+  SDL_QuitSubSystem(SDL_INIT_AUDIO);
   audioReady    = false;
 }
 
@@ -364,6 +365,15 @@ void			SDLMedia::audioSleep(bool, double endTime)
     exit(-1);
   }
 }
+
+// Setting Audio Driver
+void        SDLMedia::setDriver(std::string driverName) {
+  setenv("SDL_AUDIODRIVER", driverName.c_str(), 0);
+};
+
+// Setting Audio Device
+void        SDLMedia::setDevice(std::string) {
+};
 
 #endif //HAVE_SDL
 // Local Variables: ***

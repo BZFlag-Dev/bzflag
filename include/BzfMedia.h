@@ -112,6 +112,9 @@ class BzfMedia {
     virtual void	audioSleep(bool checkLowWater,
 				double maxTime = -1.0) = 0;
 
+    virtual void        setDriver(std::string driverName);
+    virtual void        setDevice(std::string deviceName);
+
   protected:
     // return default extensions for image and sound files
     virtual std::string	getImageExtension() const;

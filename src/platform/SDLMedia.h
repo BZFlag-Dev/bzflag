@@ -39,6 +39,8 @@ class SDLMedia : public BzfMedia {
     bool		isAudioTooEmpty() const;
     void		writeAudioFrames(const float* samples, int numFrames);
     void		audioSleep(bool checkLowWater, double maxTime);
+    void                setDriver(std::string driverName);
+    void                setDevice(std::string deviceName);
 
   private:
     void                fillAudio (Uint8 *, int);

@@ -465,6 +465,14 @@ float*			BzfMedia::doReadSound(const char* filename,
   return data;
 }
 
+// Setting Audio Driver
+void        BzfMedia::setDriver(std::string) {
+};
+
+// Setting Audio Device
+void        BzfMedia::setDevice(std::string) {
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
