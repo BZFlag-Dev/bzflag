@@ -12,7 +12,9 @@
 
 // Jeff Myers 10/13/97 changed direct sound cooperative level to
 //	exclusive for compatibility with NT.
+#include "common.h"
 
+#ifndef HAVE_SDL
 #include "WinMedia.h"
 #include "WinWindow.h"
 #include "TimeKeeper.h"
@@ -438,7 +440,7 @@ void			WinMedia::audioSleep(
     WaitForSingleObject(audioCommandEvent, timeout);
   }
 }
-
+#endif
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

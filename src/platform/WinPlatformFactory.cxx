@@ -45,14 +45,12 @@ WinPlatformFactory::~WinPlatformFactory()
 
 BzfDisplay*		WinPlatformFactory::createDisplay(
 #ifdef HAVE_SDL
-				const char* name, const char*)
-#else
-				const char* name, const char* videoFormat)
-#endif
+				const char*, const char*)
 {
-#ifdef HAVE_SDL
   SDLDisplay* display = new SDLDisplay();
 #else
+				const char* name, const char* videoFormat)
+{
   WinDisplay* display = new WinDisplay(name, videoFormat);
 #endif
   if (!display || !display->isValid()) {

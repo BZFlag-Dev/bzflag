@@ -7,7 +7,13 @@
 
 /* @(#) $Id$ */
 
+#ifdef __MINGW32__
+#undef __STRICT_ANSI__
+#endif
 #include <stdio.h>
+#ifdef __MINGW32__
+#define __STRICT_ANSI__
+#endif
 
 #include "zutil.h"
 
