@@ -67,8 +67,8 @@
 		1492F48B07962F620008E0BD = {
 			buildActionMask = 2147483647;
 			files = (
-				1492F56D079635F50008E0BD,
-				1492F60F0797888E0008E0BD,
+				14CF6DBD0798F32A0071D7DA,
+				14CF6EB00798FF7A0071D7DA,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,12 +87,17 @@
 			buildRules = (
 			);
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_MODEL_CPU = "";
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
+				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Carbon";
 				OTHER_REZFLAGS = "";
@@ -260,66 +265,27 @@
 			shellPath = /bin/sh;
 			shellScript = "cp -pR data/* ${TEMP_ROOT}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/.\nfind ${TEMP_ROOT}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/. -regex '.*CVS.*' -type f -exec rm -f {} \\;\nfind ${TEMP_ROOT}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/. -name 'CVS' -type d | xargs rmdir\n";
 		};
-		1492F56C079635F50008E0BD = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = SDL.framework;
-			path = /Library/Frameworks/SDL.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		1492F56D079635F50008E0BD = {
-			fileRef = 1492F56C079635F50008E0BD;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		1492F5CB079788480008E0BD = {
 			children = (
-				1492F60E0797888E0008E0BD,
-				1492F56C079635F50008E0BD,
+				14CF6EAF0798FF7A0071D7DA,
+				14CF6DBC0798F32A0071D7DA,
+				14CF6EE1079904C90071D7DA,
 			);
 			isa = PBXGroup;
 			name = "Frameworks & Libraries";
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		1492F60E0797888E0008E0BD = {
-			isa = PBXFileReference;
-			lastKnownFileType = "compiled.mach-o.dylib";
-			name = libcurl.dylib;
-			path = /usr/lib/libcurl.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		1492F60F0797888E0008E0BD = {
-			fileRef = 1492F60E0797888E0008E0BD;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		1492F62B07978AF80008E0BD = {
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1492F63107978B160008E0BD,
-				1492F63007978B110008E0BD,
+				14CF6ED50798FF880071D7DA,
+				14CF6EE9079904E30071D7DA,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1492F63007978B110008E0BD = {
-			fileRef = 1492F60E0797888E0008E0BD;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1492F63107978B160008E0BD = {
-			fileRef = 1492F56C079635F50008E0BD;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		14CF6D6B0798A1510071D7DA = {
 			fileEncoding = 30;
@@ -329,6 +295,54 @@
 			path = "src/platform/MacOSX/BZFlag-Info.plist";
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		14CF6DBC0798F32A0071D7DA = {
+			explicitFileType = archive.ar;
+			isa = PBXFileReference;
+			name = libcurl.a;
+			path = /usr/lib/libcurl.a;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		14CF6DBD0798F32A0071D7DA = {
+			fileRef = 14CF6DBC0798F32A0071D7DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14CF6EAF0798FF7A0071D7DA = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = SDL.framework;
+			path = /Library/Frameworks/SDL.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		14CF6EB00798FF7A0071D7DA = {
+			fileRef = 14CF6EAF0798FF7A0071D7DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14CF6ED50798FF880071D7DA = {
+			fileRef = 14CF6EAF0798FF7A0071D7DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14CF6EE1079904C90071D7DA = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libcurl.dylib;
+			path = /usr/lib/libcurl.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		14CF6EE9079904E30071D7DA = {
+			fileRef = 14CF6EE1079904C90071D7DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = 147C9C3F0794FB1800910F8C;
