@@ -162,6 +162,19 @@ b) karma system
 * Do we want or need some privileged players whose ratings have more weight?
   This might be needed to get the system started.
   
-  
+Basic rules for karma adjustment:
+---------------------------------
+1) A user needs to spread his/her karma adjustments around - they cannot rate
+   a player twice without rating a minimum # of other players as well
+
+2) Impact is determined by these factors:
+   a) Current rating
+   b) Assignment tendency (neutral             = more impact
+                           all good or all bad = less impact)
+        [keep in mind that some users will ONLY rate players whom they like]
+   c) Player age - long-time players will have more influence
+   d) Playing time - people who spend their lives in BZFlag
+      should have more power
+
 Well, probably a whole bunch of stuff is still missing. Feel free to add
 anything.
