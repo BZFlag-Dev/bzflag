@@ -183,9 +183,6 @@ player to server messages:
   MsgShotEnd		shot has terminated
 			--> shooter id, shot number, reason
 			<== MsgShotEnd
-  MsgScore		player score has changed
-			--> wins, losses
-			<== MsgScore
   MsgTeleport		player has teleported
 			--> /id,/ from-teleporter, to-teleporter
 			<== MsgTeleport

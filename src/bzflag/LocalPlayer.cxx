@@ -1000,7 +1000,6 @@ void			LocalPlayer::changeScore(short deltaWins,
 						short deltaLosses)
 {
   Player::changeScore(deltaWins, deltaLosses);
-  ServerLink::getServer()->sendNewScore(getWins(), getLosses());
   if (deltaWins > 0 && World::getWorld()->allowShakeWins() &&
 						flagShakingWins > 0) {
     flagShakingWins -= deltaWins;

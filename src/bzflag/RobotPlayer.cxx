@@ -38,7 +38,6 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
   shots = new LocalShotPath*[numShots];
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
-  scoreChanged = false;
 }
 
 RobotPlayer::~RobotPlayer()
@@ -134,10 +133,6 @@ void			RobotPlayer::doUpdate(float dt)
     if (shots[i])
       shots[i]->update(dt);
 
-  if (scoreChanged) {
-    scoreChanged = false;
-    server->sendNewScore(getWins(), getLosses());
-  }
 }
 
 void			RobotPlayer::doUpdateMotion(float dt)
@@ -302,7 +297,6 @@ void			RobotPlayer::changeScore(short deltaWins,
 						short deltaLosses)
 {
   Player::changeScore(deltaWins, deltaLosses);
-  scoreChanged = true;
 }
 
 void			RobotPlayer::restart()

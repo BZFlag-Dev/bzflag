@@ -1010,9 +1010,6 @@ struct PlayerInfo {
     bool trypings,doespings,pingpending;
     TimeKeeper nextping,lastping;
     int pingseqno,pingslost,pingssent;
-    // old method (on kill)
-    bool lagkillerpending;
-    TimeKeeper lagkillertime;
 
     std::vector<int> flagHistory;
 #ifdef TIMELIMIT
@@ -4229,7 +4226,6 @@ static void addPlayer(int playerIndex)
   player[playerIndex].laglastwarn = 0;
   player[playerIndex].lagwarncount = 0;
   player[playerIndex].lagalpha = 1;
-  player[playerIndex].lagkillerpending = false;
 
   player[playerIndex].lastupdate = TimeKeeper::getCurrent();
   player[playerIndex].lastmsg	 = TimeKeeper::getCurrent();
@@ -4842,17 +4838,6 @@ static void playerKilled(int victimIndex, int killerIndex,
   buf = nboPackShort(buf, shotIndex);
   broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
 
-  // we try to estimate lag by measuring time between broadcast of MsgKilled
-  // and MsgScore reply of the killer; should give us a good approximation
-  // of the killer's round trip time
-  // don't do this if player supports lag pings
-  if (!player[killerIndex].doespings &&        // lag ping is superior method
-      victimIndex != killerIndex &&	       // suicide doesn't change score twice
-      !player[killerIndex].lagkillerpending) { // two rapid kills
-    player[killerIndex].lagkillerpending = true;
-    player[killerIndex].lagkillertime = TimeKeeper::getCurrent();
-  }
-
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
   int flagid = player[victimIndex].flag;
@@ -5328,23 +5313,6 @@ static void calcLag(int playerIndex, float timepassed)
 	clOptions.maxlagwarn);
       sendMessage(playerIndex, playerIndex, pl.team, message, true);
       removePlayer(playerIndex, "lag");
-    }
-  }
-}
-
-static void scoreChanged(int playerIndex)
-{
-  // Client score statistics are now ignored, and processed by server
-  // just used for lag measurement
-  // got reference time?
-  if (player[playerIndex].lagkillerpending) {
-    PlayerInfo &killer = player[playerIndex];
-    TimeKeeper now = TimeKeeper::getCurrent(),&then = killer.lagkillertime;
-    float timepassed = now - then;
-    killer.lagkillerpending = false;
-    // huge lags might be error!?
-    if (timepassed < 10.0) {
-      calcLag(playerIndex, timepassed);
     }
   }
 }
@@ -6204,16 +6172,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = nboUnpackShort(buf, shot);
       buf = nboUnpackUShort(buf, reason);
       shotEnded(sourcePlayer, shot, reason);
-      break;
-    }
-
-    // player score changed
-    case MsgScore: {
-      if (player[t].Observer)
-	break;
-      //MsgScore from client is ignored now
-      //This is just used for old client lag calc
-      scoreChanged(t);
       break;
     }
 

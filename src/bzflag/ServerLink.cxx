@@ -708,15 +708,6 @@ void			ServerLink::sendTeleport(int from, int to)
   send(MsgTeleport, sizeof(msg), msg);
 }
 
-void			ServerLink::sendNewScore(int wins, int losses)
-{
-  char msg[4];
-  void* buf = msg;
-  buf = nboPackUShort(buf, uint16_t(wins));
-  buf = nboPackUShort(buf, uint16_t(losses));
-  send(MsgScore, sizeof(msg), msg);
-}
-
 void			ServerLink::sendUDPlinkRequest()
 {
   char msg[2];

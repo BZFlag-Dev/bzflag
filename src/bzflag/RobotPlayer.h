@@ -69,7 +69,6 @@ class RobotPlayer : public BaseLocalPlayer {
     std::vector<RegionPoint>	path;
     std::vector<float>	pathAzimuth;
     int			pathIndex;
-    bool		scoreChanged;
     float		timeSinceShot;
 };
 
