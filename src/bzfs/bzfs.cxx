@@ -3042,6 +3042,12 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   // victim has been destroyed.  keep score.
   if (killerIndex == InvalidPlayer ||
 	player[victimIndex].state != PlayerAlive) return;
+  if (killerIndex != ServerPlayer) {
+    int si = shotIndex & 0x00FF;
+    if ((si < -1) || (si >= clOptions->maxShots))
+      return;
+  }
+
   player[victimIndex].state = PlayerDead;
 
   const bool sameteam = player[victimIndex].team == player[killerIndex].team;
