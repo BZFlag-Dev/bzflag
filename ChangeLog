@@ -331,7 +331,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * Pass reason in MsgKilled, add support for SR noise - Dave Brosius
 * Remove unnessary MsgScore from player to server - Dave Brosius
 * Remove old lag pings - Dave Brosius
-* BeOS port - François Revol
+* BeOS port - Fran√ßois Revol
 * Collision detection fixes - David Trowbridge, Jeff Myers
 * PlayerId -> ubyte - David Trowbridge, Frank Thilo
 * Get rid of reconnect port - David Trowbridge
@@ -469,7 +469,7 @@ BZFlag 1.7e6  Armoured Smashing Fist (2002-06-19 was 1.7e5)
 BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 -----------------------------------
 
-* ::memset() instead of bzero() - Björn Augustsson
+* ::memset() instead of bzero() - Bj√∂rn Augustsson
 * win32 audio thread fix for win2k - crs
 * send to nemesis - Dave Brosius, Frank Thilo
 * USB joystick support - Nick Sayer
@@ -556,7 +556,7 @@ BZFlag 1.7e release 000 (2001-01-26)
 * FreeBSD patch - Eric Anholt
 * world creation reordering to support world from file
 * compilation with VC++6 - Jeremiah Moss
-* world from a file - Daniel Léonard
+* world from a file - Daniel L√©onard
 * travel underneath floating buildings - Jeremiah Moss
 * radar update to not hide teleporters under buildings - Jeremiah Moss
 * teleporter player positioning - Jeremiah Moss
@@ -572,7 +572,7 @@ BZFlag 1.7d release 9 (2000-02-01)
 
 * fixed bug in parsing arguments in bzfls
 * fixed reference counting bug in bzfls
-* improved win32 config file location - Daniel Léonard
+* improved win32 config file location - Daniel L√©onard
 
 
 BZFlag 1.7d release 8
@@ -732,7 +732,7 @@ BZFlag 1.7c release 2
 
 first official open source release.
 
-* misc. changes for solaris - Björn Augustsson
+* misc. changes for solaris - Bj√∂rn Augustsson
 * changed u_int* to uint*
 * replaced [ds]rand48() with [s]rand()
 * changed variable name `sun' with 'theSun'
@@ -741,7 +741,7 @@ first official open source release.
 * glColor*() are macros;  changed code that took address of function
 * no hstrerror
 * solaris defines SIG_PF
-* added unofficial solaris config - Björn Augustsson
+* added unofficial solaris config - Bj√∂rn Augustsson
 * porting is not complete
 * not included in platform list
 * made generic linux config - Phillip Ezolt
