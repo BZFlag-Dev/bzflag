@@ -107,7 +107,7 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
   for (int tries=0 ; errdistance > 0.05 && tries < 4 ; tries++)
   {
     float t = (float)distance / (float)shotspeed;
-    projectPosition(targ, t + 0.05, tx, ty, tz); // add 50ms for lag
+    projectPosition(targ, t + 0.05f, tx, ty, tz); // add 50ms for lag
     double distance2 = hypotf(tx - myx, ty - myy);
     errdistance = fabs(distance2-distance) / (distance + ZERO_TOLERANCE);
     distance = distance2;
