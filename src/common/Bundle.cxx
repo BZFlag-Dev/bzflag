@@ -139,6 +139,9 @@ void Bundle::ensureNormalText(std::string &msg)
 	i++;
 	msg.insert(i, 1, 'e');
       break;
+      case 'Â':
+	msg[i] = 'A';
+      break;
       case 'Ä':
       case 'Æ':
 	msg[i] = 'A';
@@ -161,6 +164,7 @@ void Bundle::ensureNormalText(std::string &msg)
       break;
       case 'î':
       case 'ï':
+      case 'í':
 	msg[i] = 'i';
       break;
       case 'ô':
@@ -201,9 +205,26 @@ void Bundle::ensureNormalText(std::string &msg)
 	msg[i] = ' ';
       break;
 
+      default: // A temporary patch, to catch untranslated chars.. To be removed eventually
+        if (((c >= 'A') && (c <= 'Z'))
+	    || ((c >= 'a') && (c <= 'z'))
+            || ((c >= '0') && (c <= '9'))
+            || (c == '}') || (c == '{') || (c == ' ')
+            || (c == ':') || (c == '/') || (c == '-')
+	    || (c == ',') || (c == '&') || (c == '?')
+	    || (c == '<') || (c == '>') || (c == '.')
+	    || (c == '(') || (c == ')') || (c == '%')
+	    || (c == '!') || (c == '+') || (c == '-')
+	    || (c == '$') || (c == ';'))
+	;
+	else {
+		msg = std::string("unsupported char:") + c;
+		return;
+	}
+      break;
+	  
     }
   }
-  
 }
 
 
