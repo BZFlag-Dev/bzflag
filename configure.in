@@ -147,7 +147,7 @@ if test $ac_cv_search_glBegin != no; then
   for ac_lib in glu32 GLU; do
     LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
     AC_TRY_LINK([#include <GL/glu.h>],
-                [gluScaleImage(GL_RED,0,0,GL_INT,NULL,0,0,GL_INT,NULL)],
+                [gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)],
 		[ac_cv_search_gluScaleImage="-l$ac_lib"
 		 break])
   done
