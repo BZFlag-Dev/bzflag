@@ -579,15 +579,12 @@ void			HUDuiTypeIn::doRender()
   glColor3fv(hasFocus() ? textColor : dimTextColor);
   getFont().draw(string, getX(), getY());
 
-  float start = getFont().getWidth(string.c_str(), cursorPos);
-/*  float stop;
-  if (cursorPos >= string.getLength())
-    stop = start + getFont().getWidth("m", 1);
-  else
-    stop = start + getFont().getWidth(string.getString() + cursorPos, 1);
-*/
-  if (HUDui::getFocus() == this && allowEdit)
+  // find the position of where to draw the input cursor
+  float start = getFont().getWidth(string.substr(0, cursorPos));
+
+  if (HUDui::getFocus() == this && allowEdit) {
     getFont().draw("_", getX() + start, getY());
+  }
 }
 
 //
