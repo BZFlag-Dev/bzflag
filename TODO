@@ -3,13 +3,6 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* test the new bzfls.php:
-  - add this option to server
-      -http -publiclist http://bz.brlcad.org/bzfls.php
-  - add this option to client
-      -http -list http://bz.brlcad.org:80/bzfls.php
-  when test are good, force -http (and remove) and find a new home to bzfls
-
 * Test, Test, Test
 
 * Name the version
