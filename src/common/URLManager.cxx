@@ -121,7 +121,7 @@ bool URLManager::getURLHeader(const std::string& URL)
   }
 #endif
 
-  result = curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+  result = curl_easy_setopt(curl, CURLOPT_TIMEOUT, (long)timeout);
   if (result != CURLE_OK) {
     errorCode = result;
     DEBUG1("CURLOPT_TIMEOUT error: %d\n", result);
