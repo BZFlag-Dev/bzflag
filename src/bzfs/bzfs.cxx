@@ -1645,10 +1645,8 @@ static void sendPlayerUpdate(int playerIndex, int index)
 		for (int i = 0; i < maxPlayers; i++)
 			if (player[i].state > PlayerInLimbo && i != playerIndex)
 				directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-		// send our player
-		directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-	} else
-		directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart - PlayerIdPLen, bufStart);
+	}
+	directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
 }
 
 static void closeListServer(int index)
