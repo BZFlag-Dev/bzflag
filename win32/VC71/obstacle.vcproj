@@ -299,6 +299,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\obstacle\ObstacleList.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\ObstacleMgr.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\ObstacleModifier.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\obstacle\PyramidBuilding.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -467,6 +476,15 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Obstacle.h">
+			</File>
+			<File
+				RelativePath="..\..\include\ObstacleList.h">
+			</File>
+			<File
+				RelativePath="..\..\include\ObstacleMgr.h">
+			</File>
+			<File
+				RelativePath="..\..\include\ObstacleModifier.h">
 			</File>
 			<File
 				RelativePath="..\..\include\OpenGLGState.h">

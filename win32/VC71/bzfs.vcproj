@@ -360,6 +360,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomGroup.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomMeshTransform.cxx">
 			</File>
 			<File
@@ -994,6 +997,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomGate.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomGroup.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomLink.h">
