@@ -437,6 +437,7 @@ AC_OUTPUT(bzflag.spec
 	bzflag.lsm
 	Makefile
 	data/Makefile
+	data/alternate/Makefile
 	data/l10n/Makefile
 	debian/Makefile
 	doc/Makefile

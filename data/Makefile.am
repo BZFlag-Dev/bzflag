@@ -1,4 +1,4 @@
-SUBDIRS = l10n
+SUBDIRS = l10n alternate
 
 EXTRA_DIST = \
 	blue_basetop.png	\
