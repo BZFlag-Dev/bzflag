@@ -2425,7 +2425,7 @@ static void		checkEnvironment()
       myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // Don't grab too fast
     static TimeKeeper lastGrabSent;
-    if (TimeKeeper::getTick()-lastGrabSent>0.2) {
+    if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
       // grab any and all flags i'm driving over
       const float* tpos = myTank->getPosition();
       const float radius = myTank->getRadius();
@@ -2434,7 +2434,7 @@ static void		checkEnvironment()
 	if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
 	  continue;
 	const float* fpos = world->getFlag(i).position;
-	if (tpos[2] == fpos[2] && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
 	  serverLink->sendGrabFlag(i);
 	  lastGrabSent=TimeKeeper::getTick();
