@@ -10,13 +10,15 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* bzflag special common - 1st one */
+#include "common.h"
+
 #ifdef _MSC_VER
 #pragma warning(4:4786)
 #endif
 
 #include <iostream>
 
-#include <config.h>
 #include "ActionBinding.h"
 #include "CommandManager.h"
 #include "KeyManager.h"
