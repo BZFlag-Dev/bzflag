@@ -89,7 +89,7 @@ which might already be present)
 
   % sh autogen.sh
 
-Now that you have a configure scrupt, create a work directory parallel
+Now that you have a configure script, create a work directory parallel
 to the one you just downloaded and autoconfigured:
 
   % mkdir ../work
@@ -157,7 +157,7 @@ Mailing Lists
 =============
 
 There are two BZFlag mailing lists, a user list and a developer's
-list.  The former is for general BZFlag discussion and annoucements.
+list.  The former is for general BZFlag discussion and announcements.
 The latter is for coding and development discussion only.
 
 To join a mailing list, go to http://BZFlag.org/email-list.html/ and
@@ -169,7 +169,7 @@ Contributions
 Patches should be entered into the patch tracking system on
 http://sourceforge.net/projects/bzflag/ If you like you may also send
 mail to either the BZFlag development mailing list, or Tim@Rikers.org
-(the development mailing list is prefered) to discuss contributions to
+(the development mailing list is preferred) to discuss contributions to
 the official BZFlag source code.  Small changes can be attached to the
 mail in 'cvs diff -u' unified diff format.
 
@@ -179,7 +179,7 @@ Bug Reports
 
 For bug reports please go to bug tracking system on
 http://sourceforge.net/projects/bzflag/ Alternatively, you can email
-bug reports to Tim@Rikers.org but the web based method is prefered.
+bug reports to Tim@Rikers.org but the web based method is preferred.
 
 
 Known Bugs
@@ -226,7 +226,7 @@ area.
   can see me but I get 'black caps' after a few seconds for all other
   players?
 
-Two possibilies:
+Two possibilities:
 
 a) you are behind a NAT router that is not forwarding UDP traffic to
    your system. Try reconfiguring the router to do NAT on UDP packets.

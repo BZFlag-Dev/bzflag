@@ -28,7 +28,7 @@ src/mediafile	- sound and image file support
 game independent, platform dependent libraries
 ----------------------------------------------
 src/net		- networking
-src/platform	- general platform dependant code
+src/platform	- general platform dependent code
 
 "other stuff"
 -------------
@@ -52,7 +52,7 @@ Coding conventions
 
 If you plan on contributing any source code to BZFlag, we would like
 you to follow certain conventions.  Contributions that don't conform are
-likely to be rediculed and rejected until they do.
+likely to be ridiculed and rejected until they do.
 
 Code Organization
 -----------------
@@ -79,12 +79,12 @@ work.  The source implementation file should include it's interface
 and whatever else it might need specific to the implementation.  For C
 code, the header file should include everything the C code needs
 (otherwise there's no point to the header) including prototypes for
-all non-statc functions.  The include order for headers within a
+all non-static functions.  The include order for headers within a
 header is common.h, system headers, common interface headers, and then
 local interface headers.  The include order for headers within a
 source file is common.h, it's own interface header, common
 implementation headers, and then local implementation headers.
-Adhering to this order will avoid nasty ordering dependancies and
+Adhering to this order will avoid nasty ordering dependencies and
 makes it easy to change things down the road.
 
 Ideally, there should be one class per file.  There are, of course,
@@ -149,7 +149,7 @@ code serves for examples but some rules:
           }
         }
 
-  3)  an else clause goes on the same line (there are many unacceptible
+  3)  an else clause goes on the same line (there are many unacceptable
       alternatives):
 
         if (expr) {
@@ -159,7 +159,7 @@ code serves for examples but some rules:
 	 please clean this up wherever you may find it*
 
   4)  if *either* the if block or else block requires brackets then
-      they both get brackets.  if neither require brackets then use
+      they both get brackets.  if neither requires brackets then use
       brackets on both or neither at your discretion.
 
   5)  when using `delete' or `delete[]' don't bother to test the
@@ -238,7 +238,7 @@ BZDB
 BZDB is the generic name:value pair database within bzflag and
 bzfs. Its useful for data that can be serialized to a string that
 needs to be accessible to many areas of the code. It also provides
-facilities for saving persistant pairs to the config file and
+facilities for saving persistent pairs to the config file and
 downloading variables from the server.
 
 BZDB is not an object broker, and isn't meant to be. If you have data
@@ -247,7 +247,7 @@ but don't want to pass the object around, you could store that data
 within BZDB (if accessed often, such as game variables like gravity,
 you will need a cached version anyway to avoid the overhead of
 lookup). Using BZDB adds unnecessary overhead if objects generally
-keep their data hidden without needing persistant state.
+keep their data hidden without needing persistent state.
 
 Basically, if your data can be serialized to a string, and it makes
 sense to do so (eg: config file option, game variable downloaded from
@@ -341,19 +341,19 @@ All "development" versions use an odd number for the minor version
 number.  All "release" versions use an even number for the minor
 version, e.g.. 1.9.x is a development version for a future 1.10
 release.  Release versions also use even revision version
-numbers. Maintainance work is done on odd numbered revisions and
+numbers. Maintenance work is done on odd numbered revisions and
 releases are even numbered. For development versions the revision
-version represents signifigant feature changes or stages in a
+version represents significant feature changes or stages in a
 development version, such as a change to the network protocol or a
-move to a definate testing stage.  For "release" versions, the
+move to a definite testing stage.  For "release" versions, the
 revision represents patches or bug fixes to the base release, but not
 new feature development.  This allows the developers to "leave some
 room" for patches and emergency fixes to a release line.
 
 The network protocol version is a string. When changes to the protocol
-are made that render it incompatable with prior releases, the version
+are made that render it incompatible with prior releases, the version
 number of the protocol must be changed.  This is necessary to prevent
-incompatable clients from atempting connections.  When a change is
+incompatible clients from attempting connections.  When a change is
 made, the network protocol version needs to be set to the application
 version that is current at that time.  This is also when the revistion
 of the application should be incremented.
@@ -385,7 +385,7 @@ In order to make a release, there are handful of steps that need to be
 taken.  If any step fails to be completed successfully, the release
 cannot proceed.  A checklist of items to be completed follows:
 
-- All code is commited to CVS
+- All code is committed to CVS
 
 - ChangeLog includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
@@ -395,8 +395,8 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Version numbers are updated to the next expected release number.
   This minimally includes updating README, configure.in, and
-  ChangeLog.  Other platform-specific README.* files should also be
-  verfied that all version numbers are up-to-date.
+  ChangeLog.  Version numbers in all other platform-specific 
+  README.* files should also be verified.
 
 - Update package/win32/nsis/*.nsi (for windows) with appropriate
   version numbers 
@@ -406,7 +406,7 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE 
-	e.g.cvs tag v1_10_2
+	e.g. cvs tag v1_10_2
 
 - Perform a "cvs export -r vMAJOR_MINOR_RELEASE" from somehwere else
   in the filesystem to obtain a tagged version of the sources.
@@ -423,7 +423,7 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Increment and commit the version number in the CVS source
   configure.in file so that later builds are immediately
-  distiguished..
+  distinguished.
 
 - Notify the following (at least):
 
