@@ -45,47 +45,8 @@
 #endif
 
 #include "common.h"
+#include "TextUtils.h"
 
-
-/** utility function returns truthfully whether
- * given character is an alphanumeric.  this is 
- * strictly letters and numbers.
- */
-inline bool isAlphanumeric(const char c)
-{
-  if (  ( c > 96 && c < 123 ) ||
-	( c > 64  && c < 91 ) ||
-	( c > 47 && c < 58 )) {
-    return true;
-  }
-  return false;
-}
-
-/** utility function returns truthfully whether
- * given character is printable.  this includes
- * letters, numbers, punctuation, and whitespace
- */
-inline bool isPrintable(const char c)
-{
-  /* 9 is tab, 10 is newline, 32 is space */
-  if (((c < 32) && (c != 9) && (c != 10)) || ((unsigned char)c == 127)) {
-    return false;
-  }
-  return true;
-}
-
-/** utility function returns truthfully whether
- * a given character is printable whitespace.
- * this includes newline, carriage returns, tabs
- * and spaces.
- */
-inline bool isWhitespace(const char c)
-{
-  if (((c >= 9) && (c <= 13)) || (c == 32)) {
-    return true;
-  }
-  return false;
-}
 
 #if defined (UINT8_MAX)
 static const unsigned short int MAX_FILTERS = UINT8_MAX;
@@ -189,26 +150,6 @@ class WordFilter
   std::set<filter_t, expressionCompare> prefixes;
 
 
-  /** utility method that returns the position of the
-   * first printable character from a string
-   */
-  inline int firstAlphanumeric(const std::string &input) const;
-
-  /** utility method that returns the position of the
-   * first printable character from a string
-   */
-  inline int firstNonalphanumeric(const std::string &input) const;
-
-  /** utility method that returns the position of the
-   * first printable character from a string
-   */
-  inline int firstPrintable(const std::string &input) const;
-
-  /** utility method that returns the position of the
-   * first non-printable character from a string
-   */
-  inline int firstNonprintable(const std::string &input) const;
-
   /** utility method performs an actual replacement of
    * characters in an input character ray within a specified
    * range.
@@ -283,76 +224,6 @@ class WordFilter
 };
 
 
-
-/** utility method that returns the position of the
-* first printable character from a string
-*/
-inline int WordFilter::firstAlphanumeric(const std::string &input) const
-{
-  if (input.size() == 0) {
-    return -1;
-  }
-
-  int i = 0;
-  /* range of printable characters, with failsafe */
-  while (!isAlphanumeric(input[i])) {
-    i++;
-  }
-  return i;
-}
-
-
-/** utility method that returns the position of the
-* first printable character from a string
-*/
-inline int WordFilter::firstNonalphanumeric(const std::string &input) const
-{
-  if (input.size() == 0) {
-    return -1;
-  }
-
-  int i = 0;
-  /* range of printable characters, with failsafe */
-  while (isAlphanumeric(input[i])) {
-    i++;
-  }
-  return i;
-}
-
-
-/** utility method that returns the position of the
-* first printable character from a string
-*/
-inline int WordFilter::firstPrintable(const std::string &input) const
-{
-  if (input.size() == 0) {
-    return -1;
-  }
-
-  int i = 0;
-  /* range of printable characters, with failsafe */
-  while (!isPrintable(input[i]) && (i < MAX_FILTERS)) {
-    i++;
-  }
-  return i;
-}
-
-/** utility method that returns the position of the
-* first non-printable character from a string
-*/
-inline int WordFilter::firstNonprintable(const std::string &input) const
-{
-  if (input.size() == 0) {
-    return -1;
-  }
-
-  int i = 0;
-  /* range of non-printable characters, with failsafe */
-  while (isPrintable(input[i]) && (i < MAX_FILTERS)) {
-    i++;
-  }
-  return i;
-}
 
 /** utility method performs an actual replacement of
 * characters in an input character ray within a specified
