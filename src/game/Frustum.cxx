@@ -32,9 +32,6 @@ Frustum::Frustum()
 
   setProjection(M_PI/4.0, 1.0, 100.0, 1, 1, 1);
   setView(defaultEye, defaultTarget);
-
-  // set previous eye position to underground
-  eye[2] = -100.0;
 }
 
 Frustum::~Frustum()
@@ -51,9 +48,6 @@ float			Frustum::getEyeDepth(const float* p) const
 void			Frustum::setView(const float* _eye,
 						const float* target)
 {
-  eyeMove = hypotf(eye[0] - _eye[0],
-		   hypotf(eye[1] - _eye[1], eye[2] - _eye[2]));
-
   // set eye point
   eye[0] = _eye[0];
   eye[1] = _eye[1];
