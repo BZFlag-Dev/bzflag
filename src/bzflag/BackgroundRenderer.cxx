@@ -84,7 +84,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     init = true;
 
     // sky pyramid must fit inside far clipping plane
-    const GLfloat skySize = 1.3f * WorldSize;
+    const GLfloat skySize = 1.3f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
     for (i = 0; i < 4; i++) {
       skyPyramid[i][0] = skySize * squareShape[i][0];
       skyPyramid[i][1] = skySize * squareShape[i][1];
@@ -369,7 +369,8 @@ void			BackgroundRenderer::setCelestial(
 				moonDir[2] * sunDir[2];
   // hack coverage to lean towards full
   coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
-  const float moonRadius = 2.0f * WorldSize *
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  const float moonRadius = 2.0f * worldSize *
 				atanf(60.0f * M_PI / 180.0f) / 60.0f;
   // limbAngle is dependent on moon position but sun is so much farther
   // away that the moon's position is negligible.  rotate sun and moon
@@ -389,15 +390,15 @@ void			BackgroundRenderer::setCelestial(
     glRotatef(asinf(moonDirection[2]) * 180.0f / M_PI, 0.0f, -1.0f, 0.0f);
     glRotatef(limbAngle * 180.0f / M_PI, 1.0f, 0.0f, 0.0f);
     glBegin(GL_TRIANGLE_STRIP);
-      glVertex3f(2.0f * WorldSize, 0.0f, -moonRadius);
+      glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
       for (int i = 0; i < 11; i++) {
 	const float angle = 0.5f * M_PI * float(i-5) / 6.0f;
-	glVertex3f(2.0f * WorldSize, coverage * moonRadius * cosf(angle),
+	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosf(angle),
 					moonRadius * sinf(angle));
-	glVertex3f(2.0f * WorldSize, moonRadius * cosf(angle),
+	glVertex3f(2.0f * worldSize, moonRadius * cosf(angle),
 					moonRadius * sinf(angle));
       }
-      glVertex3f(2.0f * WorldSize, 0.0f, moonRadius);
+      glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
     glEnd();
     glPopMatrix();
   moonList.end();
@@ -406,7 +407,7 @@ void			BackgroundRenderer::setCelestial(
   starXFormList.begin();
     glPushMatrix();
     glMultMatrixf(renderer.getCelestialTransform());
-    glScalef(WorldSize, WorldSize, WorldSize);
+    glScalef(worldSize, worldSize, worldSize);
     starList.execute();
     glPopMatrix();
   starXFormList.end();
@@ -849,13 +850,14 @@ void			BackgroundRenderer::doInitDisplayLists()
 
   // sun first.  sun is a disk that should be about a half a degree wide
   // with a normal (60 degree) perspective.
-  const float sunRadius = 2.0f * WorldSize * atanf(60.0f*M_PI/180.0f) / 60.0f;
+  const float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  const float sunRadius = 2.0f * worldSize * atanf(60.0f*M_PI/180.0f) / 60.0f;
   sunList.begin();
     glBegin(GL_TRIANGLE_FAN);
-      glVertex3f(2.0f * WorldSize, 0.0f, 0.0f);
+      glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
       for (i = 0; i < 20; i++) {
 	const float angle = 2.0f * M_PI * float(i) / 19.0f;
-	glVertex3f(2.0f * WorldSize, sunRadius * sinf(angle),
+	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
 					sunRadius * cosf(angle));
       }
     glEnd();
@@ -882,8 +884,8 @@ void			BackgroundRenderer::doInitDisplayLists()
   // RIVA 128 can't repeat texture uv's too much.  if we're using one
   // of those, only texture the ground inside the game area.
   float uv[2];
-  const GLfloat groundSize = 10.0f * WorldSize;
-  const GLfloat gameSize = 0.5f * WorldSize;
+  const GLfloat groundSize = 10.0f * worldSize;
+  const GLfloat gameSize = 0.5f * worldSize;
   GLfloat groundPlane[4][3];
   GLfloat gameArea[4][3];
   for (i = 0; i < 4; i++) {
@@ -1173,13 +1175,13 @@ void			BackgroundRenderer::doInitDisplayLists()
 			 -M_SQRT1_2 * sinf(angle),
 			  M_SQRT1_2);
 	    glTexCoord2f(frac, 0.02f);
-	    glVertex3f(2.25f * WorldSize * cosf(angle),
-			 2.25f * WorldSize * sinf(angle),
+	    glVertex3f(2.25f * worldSize * cosf(angle),
+			 2.25f * worldSize * sinf(angle),
 			 0.0f);
 	    glTexCoord2f(frac, 0.99f);
-	    glVertex3f(2.25f * WorldSize * cosf(angle),
-			 2.25f * WorldSize * sinf(angle),
-			 0.45f * WorldSize);
+	    glVertex3f(2.25f * worldSize * cosf(angle),
+			 2.25f * worldSize * sinf(angle),
+			 0.45f * worldSize);
 	  }
 	glEnd();
 	glBegin(GL_TRIANGLE_STRIP);
@@ -1193,13 +1195,13 @@ void			BackgroundRenderer::doInitDisplayLists()
 			 -M_SQRT1_2 * sinf(angle),
 			  M_SQRT1_2);
 	    glTexCoord2f(frac, 0.02f);
-	    glVertex3f(2.25f * WorldSize * cosf(angle),
-			 2.25f * WorldSize * sinf(angle),
+	    glVertex3f(2.25f * worldSize * cosf(angle),
+			 2.25f * worldSize * sinf(angle),
 			 0.0f);
 	    glTexCoord2f(frac, 0.99f);
-	    glVertex3f(2.25f * WorldSize * cosf(angle),
-			 2.25f * WorldSize * sinf(angle),
-			 0.45f * WorldSize);
+	    glVertex3f(2.25f * worldSize * cosf(angle),
+			 2.25f * worldSize * sinf(angle),
+			 0.45f * worldSize);
 	  }
 	glEnd();
       mountainsList[j].end();

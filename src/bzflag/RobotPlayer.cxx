@@ -311,9 +311,10 @@ void			RobotPlayer::restart()
   float startPoint[3];
   startPoint[2] = 0.0f;
   float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   do {
-    startPoint[0] = (WorldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-    startPoint[1] = (WorldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+    startPoint[0] = (worldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+    startPoint[1] = (worldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
   } while (World::getWorld()->inBuilding(startPoint, 2.0f * tankRadius));
 
   // NOTE -- code taken directly from LocalPlayer
@@ -359,9 +360,10 @@ float			RobotPlayer::getTargetPriority(const
 
   // go after closest player
   // FIXME -- this is a pretty stupid heuristic
+  const float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   const float* p1 = getPosition();
   const float* p2 = _target->getPosition();
-  return 1.0f - 0.5f * hypotf(p2[0] - p1[0], p2[1] - p1[1]) / WorldSize;
+  return 1.0f - 0.5f * hypotf(p2[0] - p1[0], p2[1] - p1[1]) / worldSize;
 }
 
 const Player*		RobotPlayer::getTarget() const

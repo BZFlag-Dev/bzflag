@@ -72,8 +72,6 @@ bool			echoClean = false;
 
 static BzfDisplay*	display = NULL;
 
-float		WorldSize =	DEFAULT_WORLD;					// meters
-
 // default database entries
 struct DefaultDBItem {
   const char*			name;

@@ -1062,7 +1062,8 @@ static void		audioLoop(void*)
   audioBufferSize = media->getAudioBufferChunkSize() << 1;
 
   /* initialize */
-  timeSizeOfWorld = 1.414f * WorldSize / SpeedOfSound;
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  timeSizeOfWorld = 1.414f * worldSize / SpeedOfSound;
   for (i = 0; i < MaxEvents; i++) {
     events[i].samples = NULL;
     events[i].busy = false;

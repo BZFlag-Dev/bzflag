@@ -600,7 +600,9 @@ void*			WorldBuilder::unpack(void* buf)
   if (serverMapVersion != mapVersion)
 	  return NULL;
 
-  buf = nboUnpackFloat(buf, WorldSize);
+  float worldSize;
+  buf = nboUnpackFloat(buf, worldSize);
+  BZDB->set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%f", worldSize));
   buf = nboUnpackUShort(buf, gameStyle);
   setGameStyle(short(gameStyle));
   buf = nboUnpackUShort(buf, maxPlayers);

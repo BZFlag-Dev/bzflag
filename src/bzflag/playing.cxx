@@ -3620,6 +3620,7 @@ static void		restartPlaying()
   // The best one is that which violates the minimum safe distance by the
   // smallest amount.
   float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   do {
     do {
       if (restartOnBase) {
@@ -3636,12 +3637,12 @@ static void		restartPlaying()
       }
       else {
 	if (world->allowTeamFlags()) {
-	  startPoint[0] = 0.4f * WorldSize * ((float)bzfrand() - 0.5f);
-	  startPoint[1] = 0.4f * WorldSize * ((float)bzfrand() - 0.5f);
+	  startPoint[0] = 0.4f * worldSize * ((float)bzfrand() - 0.5f);
+	  startPoint[1] = 0.4f * worldSize * ((float)bzfrand() - 0.5f);
 	}
 	else {
-	  startPoint[0] = (WorldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-	  startPoint[1] = (WorldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+	  startPoint[0] = (worldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+	  startPoint[1] = (worldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
 	}
       }
       startAzimuth = 2.0f * M_PI * (float)bzfrand();
@@ -4422,14 +4423,15 @@ static void		makeObstacleList()
 
   // FIXME -- shouldn't hard code game area
   float gameArea[4][2];
-  gameArea[0][0] = -0.5f * WorldSize;
-  gameArea[0][1] = -0.5f * WorldSize;
-  gameArea[1][0] =  0.5f * WorldSize;
-  gameArea[1][1] = -0.5f * WorldSize;
-  gameArea[2][0] =  0.5f * WorldSize;
-  gameArea[2][1] =  0.5f * WorldSize;
-  gameArea[3][0] = -0.5f * WorldSize;
-  gameArea[3][1] =  0.5f * WorldSize;
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  gameArea[0][0] = -0.5f * worldSize;
+  gameArea[0][1] = -0.5f * worldSize;
+  gameArea[1][0] =  0.5f * worldSize;
+  gameArea[1][1] = -0.5f * worldSize;
+  gameArea[2][0] =  0.5f * worldSize;
+  gameArea[2][1] =  0.5f * worldSize;
+  gameArea[3][0] = -0.5f * worldSize;
+  gameArea[3][1] =  0.5f * worldSize;
   obstacleList.push_back(new BzfRegion(4, gameArea));
 
   const std::vector<BoxBuilding>& boxes = World::getWorld()->getBoxes();
@@ -5210,6 +5212,7 @@ static void		leaveGame()
 
   // reset viewpoint
   float eyePoint[3], targetPoint[3];
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   eyePoint[0] = 0.0f;
   eyePoint[1] = 0.0f;
   eyePoint[2] = 0.0f + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
@@ -5217,7 +5220,7 @@ static void		leaveGame()
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
-      1.1f, 1.5f * WorldSize, mainWindow->getWidth(),
+      1.1f, 1.5f * worldSize, mainWindow->getWidth(),
       mainWindow->getHeight(), mainWindow->getViewHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
@@ -5794,8 +5797,9 @@ static void		playingLoop()
 	fov = roamZoom * M_PI / 180.0f;
 	moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
       }
+      float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
       sceneRenderer->getViewFrustum().setProjection(fov,
-	  1.1f, 1.5f * WorldSize,
+	  1.1f, 1.5f * worldSize,
 	  mainWindow->getWidth(),
 	  mainWindow->getHeight(),
 	  mainWindow->getViewHeight());
@@ -6068,7 +6072,7 @@ static void		playingLoop()
 	  const int w = mainWindow->getWidth();
 	  const int h = mainWindow->getHeight();
 	  const int vh = mainWindow->getViewHeight();
-	  sceneRenderer->getViewFrustum().setProjection(fov, 1.1f, 1.5f * WorldSize, w, h, vh);
+	  sceneRenderer->getViewFrustum().setProjection(fov, 1.1f, 1.5f * worldSize, w, h, vh);
 	  sceneRenderer->render();
 
 	  // set entire window
@@ -6418,8 +6422,9 @@ static void		findFastConfiguration()
   float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   static const GLfloat eyePoint[3] = { 0.0f, 0.0f, muzzleHeight };
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
-					1.1f, 1.5f * WorldSize,
+					1.1f, 1.5f * worldSize,
 					mainWindow->getWidth(),
 					mainWindow->getHeight(),
 					mainWindow->getViewHeight());

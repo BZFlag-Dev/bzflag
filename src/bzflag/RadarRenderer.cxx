@@ -216,11 +216,12 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     return;
 
   // prepare transforms
-  float range = BZDB->eval("displayRadarRange") * WorldSize;
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float range = BZDB->eval("displayRadarRange") * worldSize;
   // when burrowed, limit radar range
   if (myTank && (myTank->getFlag() == Flags::Burrow) &&
       (myTank->getPosition()[2] < 0.0f)) {
-    range = min(range, WorldSize / 4.0f);
+    range = min(range, worldSize / 4.0f);
   }
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();

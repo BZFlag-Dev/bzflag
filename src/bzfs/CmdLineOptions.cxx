@@ -927,8 +927,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      WorldSize = (float) atof(argv[i]);
-      fprintf(stderr, "using world size of \"%f\"\n", WorldSize);
+      BZDB->set(StateDatabase::BZDB_WORLDSIZE, argv[i]);
+      fprintf(stderr, "using world size of \"%f\"\n", BZDB->eval(StateDatabase::BZDB_WORLDSIZE));
     }
     else if (strcmp(argv[i], "-speedtol") == 0) {
       if (++i == argc) {

@@ -12,7 +12,6 @@
 #include "bzfs.h"
 
 const int udpBufSize = 128000;
-float	WorldSize = DEFAULT_WORLD;
 bool    gotWorld = false;
 
 static void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
@@ -613,7 +612,7 @@ bool CustomWorld::read(const char *cmd, istream& input)
 {
   if (strcmp(cmd, "size") == 0) {
     input >> size;
-    WorldSize = size;
+    BZDB->set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d", size));
   }
   else if (strcmp(cmd, "flagHeight") == 0)
     input >> fHeight;
@@ -1807,10 +1806,11 @@ static WorldInfo *defineWorldFromFile(const char *filename)
 
   // make walls
   float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
-  world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, wallHeight);
-  world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, wallHeight);
-  world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, wallHeight);
-  world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, wallHeight);
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
   // add objects
   const int n = list.size();
@@ -1829,7 +1829,8 @@ static WorldInfo *defineTeamWorld()
     if (!world)
       return NULL;
 
-    float worldfactor = WorldSize/(float)DEFAULT_WORLD;
+    float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+    float worldfactor = worldSize/(float)DEFAULT_WORLD;
     float pyrBase = BZDB->eval(StateDatabase::BZDB_PYRBASE);
 
     // set team base and team flag safety positions
@@ -1843,7 +1844,7 @@ static WorldInfo *defineTeamWorld()
     safetyBasePos[0][1] = basePos[0][1];
     safetyBasePos[0][2] = basePos[0][2];
 
-    basePos[1][0] = (-WorldSize + BaseSize*worldfactor) / 2.0f;
+    basePos[1][0] = (-worldSize + BaseSize*worldfactor) / 2.0f;
     basePos[1][1] = 0.0f;
     basePos[1][2] = 0.0f;
     baseRotation[1] = 0.0f;
@@ -1853,7 +1854,7 @@ static WorldInfo *defineTeamWorld()
     safetyBasePos[1][1] = basePos[1][1] + 0.5f * BaseSize *worldfactor+ pyrBase;
     safetyBasePos[1][2] = basePos[1][2];
 
-    basePos[2][0] = (WorldSize - BaseSize) / 2.0f;
+    basePos[2][0] = (worldSize - BaseSize) / 2.0f;
     basePos[2][1] = 0.0f;
     basePos[2][2] = 0.0f;
     baseRotation[2] = 0.0f;
@@ -1864,7 +1865,7 @@ static WorldInfo *defineTeamWorld()
     safetyBasePos[2][2] = basePos[2][2];
 
     basePos[3][0] = 0.0f;
-    basePos[3][1] = (-WorldSize + BaseSize*worldfactor) / 2.0f;
+    basePos[3][1] = (-worldSize + BaseSize*worldfactor) / 2.0f;
     basePos[3][2] = 0.0f;
     baseRotation[3] = 0.0f;
     baseSize[3][0] = BaseSize*worldfactor / 2.0f;
@@ -1874,7 +1875,7 @@ static WorldInfo *defineTeamWorld()
     safetyBasePos[3][2] = basePos[3][2];
 
     basePos[4][0] = 0.0f;
-    basePos[4][1] = (WorldSize - BaseSize*worldfactor) / 2.0f;
+    basePos[4][1] = (worldSize - BaseSize*worldfactor) / 2.0f;
     basePos[4][2] = 0.0f;
     baseRotation[4] = 0.0f;
     baseSize[4][0] = BaseSize*worldfactor / 2.0f;
@@ -1885,10 +1886,10 @@ static WorldInfo *defineTeamWorld()
 
     // make walls
     float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
-    world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, wallHeight);
-    world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, wallHeight);
-    world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, wallHeight);
-    world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, wallHeight);
+    world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
+    world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
+    world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);
+    world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
     float pyrHeight = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
     // make pyramids
@@ -1987,8 +1988,8 @@ static WorldInfo *defineTeamWorld()
       for (i = 0; i < numBoxes;) {
 	if (clOptions->randomHeights)
 	  h = boxHeight * (2.0f * (float)bzfrand() + 0.5f);
-	float x=WorldSize * ((float)bzfrand() - 0.5f);
-	float y=WorldSize * ((float)bzfrand() - 0.5f);
+	float x=worldSize * ((float)bzfrand() - 0.5f);
+	float y=worldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center and bases
 	if ((redGreen &&
 	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
@@ -2009,7 +2010,7 @@ static WorldInfo *defineTeamWorld()
 	      BoxBase*4*worldfactor ||
 	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <=
 	      BoxBase*4*worldfactor)) ||
-	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
+	    (hypotf(fabs(x),fabs(y)) <= worldSize/12))
 	  continue;
 
 	float angle=2.0f * M_PI * (float)bzfrand();
@@ -2031,8 +2032,8 @@ static WorldInfo *defineTeamWorld()
       for (i = 0; i < numPyrs; i++) {
 	if (clOptions->randomHeights)
 	  h = pyrHeight * (2.0f * (float)bzfrand() + 0.5f);
-	float x=WorldSize * ((float)bzfrand() - 0.5f);
-	float y=WorldSize * ((float)bzfrand() - 0.5f);
+	float x=worldSize * ((float)bzfrand() - 0.5f);
+	float y=worldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center or bases
 	if ((redGreen &&
 	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
@@ -2053,7 +2054,7 @@ static WorldInfo *defineTeamWorld()
 	      pyrBase*6*worldfactor ||
 	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <=
 	      pyrBase*6*worldfactor)) ||
-	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
+	    (hypotf(fabs(x),fabs(y)) <= worldSize/12))
 	  continue;
 
 	float angle=2.0f * M_PI * (float)bzfrand();
@@ -2076,8 +2077,8 @@ static WorldInfo *defineTeamWorld()
 	const int numLinks = 2 * numTeleporters / teamFactor;
 	int (*linked)[2] = new int[numLinks][2];
 	for (i = 0; i < numTeleporters;) {
-	  const float x = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-	  const float y = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+	  const float x = (worldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+	  const float y = (worldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
 	  const float rotation = 2.0f * M_PI * (float)bzfrand();
 
 	  // if too close to building then try again
@@ -2274,13 +2275,14 @@ static WorldInfo *defineRandomWorld()
     return NULL;
 
   // make walls
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
-  world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, wallHeight);
-  world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, wallHeight);
-  world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, wallHeight);
-  world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, wallHeight);
+  world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
-  float worldfactor = WorldSize/(float)DEFAULT_WORLD;
+  float worldfactor = worldSize/(float)DEFAULT_WORLD;
   // make boxes
   int i;
   float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
@@ -2289,8 +2291,8 @@ static WorldInfo *defineRandomWorld()
   for (i = 0; i < numBoxes; i++) {
     if (clOptions->randomHeights)
       h = boxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-      world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
-	  WorldSize * ((float)bzfrand() - 0.5f),
+      world->addBox(worldSize * ((float)bzfrand() - 0.5f),
+	  worldSize * ((float)bzfrand() - 0.5f),
 	  0.0f, 2.0f * M_PI * (float)bzfrand(),
 	  BoxBase*worldfactor, BoxBase*worldfactor, h);
   }
@@ -2303,8 +2305,8 @@ static WorldInfo *defineRandomWorld()
   for (i = 0; i < numPyrs; i++) {
     if (clOptions->randomHeights)
       h = pyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-      world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
-	  WorldSize * ((float)bzfrand() - 0.5f),
+      world->addPyramid(worldSize * ((float)bzfrand() - 0.5f),
+	  worldSize * ((float)bzfrand() - 0.5f),
 	  0.0f, 2.0f * M_PI * (float)bzfrand(),
 	  pyrBase*worldfactor, pyrBase*worldfactor, h);
   }
@@ -2313,8 +2315,8 @@ static WorldInfo *defineRandomWorld()
     // make teleporters
     int (*linked)[2] = new int[numTeleporters][2];
     for (i = 0; i < numTeleporters;) {
-      const float x = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-      const float y = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+      const float x = (worldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+      const float y = (worldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
       const float rotation = 2.0f * M_PI * (float)bzfrand();
 
       // if too close to building then try again
@@ -2403,7 +2405,7 @@ static bool defineWorld()
   buf = nboPackUShort(buf, WorldCodeHeaderSize);
   buf = nboPackUShort(buf, WorldCodeHeader);
   buf = nboPackUShort(buf, mapVersion);
-  buf = nboPackFloat(buf, WorldSize);
+  buf = nboPackFloat(buf, BZDB->eval(StateDatabase::BZDB_WORLDSIZE));
   buf = nboPackUShort(buf, clOptions->gameStyle);
   buf = nboPackUShort(buf, maxPlayers);
   buf = nboPackUShort(buf, clOptions->maxShots);
@@ -3045,8 +3047,9 @@ static void resetFlag(int flagIndex)
     if (pFlagInfo->flag.desc == Flags::Obesity)
       r *= 2.0f * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
     WorldInfo::ObstacleLocation *obj;
-    pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-    pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+    float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+    pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+    pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[2] = 0.0f;
     int topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
 					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
@@ -3059,8 +3062,8 @@ static void resetFlag(int flagIndex)
       }
       else
       {
-        pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-        pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+        pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+        pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
         pFlagInfo->flag.position[2] = 0.0f;
       }
       topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
@@ -5345,10 +5348,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // test all the map bounds + some fudge factor, just in case
       float	fudge = 5.0f;
       bool InBounds = true;
-
-      if ( (state.pos[1] >= WorldSize*0.5f + fudge) || (state.pos[1] <= -WorldSize*0.5f - fudge))
+      float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+      if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge))
 	InBounds = false;
-      else if ( (state.pos[0] >= WorldSize*0.5f + fudge) || (state.pos[0] <= -WorldSize*0.5f - fudge))
+      else if ( (state.pos[0] >= worldSize*0.5f + fudge) || (state.pos[0] <= -worldSize*0.5f - fudge))
 	InBounds = false;
 
       if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH))

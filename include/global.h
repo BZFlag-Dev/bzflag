@@ -57,8 +57,8 @@ const float		Infinity =	MAXFLOAT;	// arbitrary
 
 #define	DEFAULT_GRAVITY	-9.81f
 #define DEFAULT_WORLD	800
+
 // universe info
-extern float	WorldSize;							// meters
 const float		BaseSize =	60.0f;					// meters
 
 // rough shot geometry

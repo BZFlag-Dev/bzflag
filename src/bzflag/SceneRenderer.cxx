@@ -554,13 +554,14 @@ void			SceneRenderer::render(
   if (!blank && LocalPlayer::getMyTank())
     teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
 
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
   if (reallyUseFogHack) {
     if (useDimming) {
       const float density = dimDensity;
       glFogi(GL_FOG_MODE, GL_LINEAR);
-      glFogf(GL_FOG_START, -density * 1000.0f * WorldSize);
-      glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * WorldSize);
+      glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
+      glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
       glFogfv(GL_FOG_COLOR, dimnessColor);
       glEnable(GL_FOG);
     }
@@ -568,8 +569,8 @@ void			SceneRenderer::render(
       const float density = (teleporterProximity > 0.75f) ?
 				1.0f : teleporterProximity / 0.75f;
       glFogi(GL_FOG_MODE, GL_LINEAR);
-      glFogf(GL_FOG_START, -density * 1000.0f * WorldSize);
-      glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * WorldSize);
+      glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
+      glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
       glFogfv(GL_FOG_COLOR, blindnessColor);
       glEnable(GL_FOG);
     }

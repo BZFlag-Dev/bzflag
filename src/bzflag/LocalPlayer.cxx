@@ -1007,6 +1007,7 @@ void			LocalPlayer::setFlag(FlagDesc* flag)
 {
   Player::setFlag(flag);
 
+  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   // if it's bad then reset countdowns and set antidote flag
   if (getFlag() != Flags::Null && getFlag()->flagType == FlagSticky) {
     if (World::getWorld()->allowShakeTimeout())
@@ -1017,13 +1018,13 @@ void			LocalPlayer::setFlag(FlagDesc* flag)
       float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
       do {
 	if (World::getWorld()->allowTeamFlags()) {
-	  flagAntidotePos[0] = 0.5f * WorldSize * ((float)bzfrand() - 0.5f);
-	  flagAntidotePos[1] = 0.5f * WorldSize * ((float)bzfrand() - 0.5f);
+	  flagAntidotePos[0] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
+	  flagAntidotePos[1] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
 	}
 	else {
-	  flagAntidotePos[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-	  flagAntidotePos[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+	  flagAntidotePos[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+	  flagAntidotePos[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
 	}
       } while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius));
