@@ -97,6 +97,7 @@ BzfString		HUDRenderer::teamScoreLabel("Team Score");
 BzfString		HUDRenderer::playerLabel("Player");
 BzfString		HUDRenderer::restartLabelFormat("Press %s to start");
 BzfString		HUDRenderer::resumeLabel("Press Pause to resume");
+BzfString		HUDRenderer::cancelDestructLabel("Press Destruct to cancel");
 BzfString		HUDRenderer::gameOverLabel("GAME OVER");
 const char*		HUDRenderer::flagHelpString[int(LastFlag) -
 							int(FirstFlag) + 1] = {
@@ -311,6 +312,7 @@ void			HUDRenderer::setBigFontSize(int, int height)
 
   restartLabelWidth = bigFont.getWidth(restartLabel);
   resumeLabelWidth = bigFont.getWidth(resumeLabel);
+  cancelDestructLabelWidth = bigFont.getWidth(cancelDestructLabel);
   gameOverLabelWidth = bigFont.getWidth(gameOverLabel);
 }
 

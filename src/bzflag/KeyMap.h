@@ -41,6 +41,7 @@ class BzfKeyMap {
 			TimeForward,
 			TimeBackward,
 			Pause,
+			Destruct,
 			Quit,
 			ScrollBackward,
 			ScrollForward,

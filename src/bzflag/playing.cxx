@@ -111,6 +111,7 @@ static double		epochOffset;
 static double		lastEpochOffset;
 static float		clockAdjust = 0.0f;
 static float		pauseCountdown = 0.0f;
+static float		destructCountdown = 0.0f;
 //static float		maxPauseCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
@@ -142,14 +143,16 @@ enum BlowedUpReason {
 			GotShot,
 			GotRunOver,
 			GotCaptured,
-			GenocideEffect
+			GenocideEffect,
+			SelfDestruct
 };
 static const char*	blowedUpMessage[] = {
 			  NULL,
 			  "Got hit by shot",
 			  "Got run over by Steamroller",
 			  "Team flag was captured",
-			  "Teammate hit by Genocide"
+			  "Teammate hit by Genocide",
+			  "Tank Self Destructed",
 			};
 static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 					BlowedUpReason reason,
@@ -1097,6 +1100,23 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	  pauseCountdown = 3.0f;
 	  char msgBuf[40];
 	  sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
+	  hud->setAlert(1, msgBuf, 1.0f, False);
+	}
+      }
+    }
+  }
+  else if (keymap.isMappedTo(BzfKeyMap::Destruct, key)) {
+    // pause/resume
+    if (pressed) {
+      if (myTank->isAlive()) {
+	if (destructCountdown > 0.0f) {
+	  destructCountdown = 0.0f;
+	  hud->setAlert(1, "Self Destruct cancelled", 1.5f, True);
+	}
+	else {
+	  destructCountdown = 3.0f;
+	  char msgBuf[40];
+	  sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
 	  hud->setAlert(1, msgBuf, 1.0f, False);
 	}
       }
@@ -4117,6 +4137,31 @@ static void		playingLoop()
       }
     }
 
+    // update destruct countdown
+    if (!myTank) destructCountdown = 0.0f;
+    if (destructCountdown > 0.0f && !myTank->isAlive()) {
+      destructCountdown = 0.0f;
+      hud->setAlert(1, NULL, 0.0f, True);
+    }
+    if (destructCountdown > 0.0f) {
+      const int oldDestructCountdown = (int)(destructCountdown + 0.99f);
+      destructCountdown -= dt;
+      if (destructCountdown <= 0.0f) {
+
+	// now actually destruct
+	gotBlowedUp( myTank, SelfDestruct, myTank->getId() );
+
+	hud->setAlert(1, NULL, 0.0f, True);
+	controlPanel->addMessage("Tank self Destructed");
+      }
+      else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
+	// update countdown alert
+	char msgBuf[40];
+	sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
+	hud->setAlert(1, msgBuf, 1.0f, False);
+      }
+    }
+    
     // reposition flags
     updateFlags(dt);
 

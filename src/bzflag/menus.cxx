@@ -639,6 +639,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.append(createLabel(NULL, "Time Forward:"));
   controls.append(createLabel(NULL, "Time Backward:"));
   controls.append(createLabel(NULL, "Pause/Resume:"));
+  controls.append(createLabel(NULL, "Self Destruct/Cancel:"));
   controls.append(createLabel(NULL, "Fast Quit:"));
   controls.append(createLabel(NULL, "Scroll Backward:"));
   controls.append(createLabel(NULL, "Scroll Forward:"));
@@ -1436,6 +1437,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.append(createLabel("set time of day backward"));
   list.append(createLabel("set time of day forward"));
   list.append(createLabel("pause/resume"));
+  list.append(createLabel("self destruct/cancel"));
   list.append(createLabel("quit"));
   list.append(createLabel("scroll message log backward"));
   list.append(createLabel("scroll message log forward"));
@@ -1470,6 +1472,7 @@ void			Help1Menu::resize(int width, int height)
 				BzfKeyMap::TimeForward,
 				BzfKeyMap::TimeBackward,
 				BzfKeyMap::Pause,
+				BzfKeyMap::Destruct,
 				BzfKeyMap::Quit,
 				BzfKeyMap::ScrollBackward,
 				BzfKeyMap::ScrollForward,

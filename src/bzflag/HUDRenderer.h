@@ -177,6 +177,7 @@ class HUDRenderer {
     float		teamScoreLabelWidth;
     float		restartLabelWidth;
     float		resumeLabelWidth;
+    float		cancelDestructLabelWidth;
     float		gameOverLabelWidth;
     BzfString		restartLabel;
     BzfString		roamingLabel;
@@ -217,6 +218,7 @@ class HUDRenderer {
     static BzfString	playerLabel;
     static BzfString	restartLabelFormat;
     static BzfString	resumeLabel;
+    static BzfString	cancelDestructLabel;
     static BzfString	gameOverLabel;
     static const char*	flagHelpString[int(LastFlag) - int(FirstFlag) + 1];
 };
