@@ -228,7 +228,7 @@ void			SDLMedia::writeAudioFrames(
 
 // Setting Audio Driver
 void	SDLMedia::setDriver(std::string driverName) {
-  char envAssign[256];
+  static char envAssign[256];
   std::string envVar = "SDL_AUDIODRIVER=" + driverName;
   strncpy(envAssign, envVar.c_str(), 255);
   envAssign[255]     = '\0';
@@ -237,7 +237,7 @@ void	SDLMedia::setDriver(std::string driverName) {
 
 // Setting Audio Device
 void	SDLMedia::setDevice(std::string deviceName) {
-  char envAssign[256];
+  static char envAssign[256];
   std::string envVar = "SDL_PATH_DSP=" + deviceName;
   strncpy(envAssign, envVar.c_str(), 255);
   envAssign[255]     = '\0';
