@@ -181,13 +181,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   warningColor[1] = 0.0f;
   warningColor[2] = 0.0f;
 
-  composeFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
-  bigFont = TextureFont::getTextureFont(TextureFont::HelveticaBoldItalic, True);
-  alertFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
-  majorFont = TextureFont::getTextureFont(TextureFont::TimesBold, True);
-  minorFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
-  headingFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
-
   // make sure we're notified when MainWindow resizes
   window.getWindow()->addResizeCallback(resizeCallback, this);
 
@@ -312,6 +305,7 @@ int			HUDRenderer::getMaxMotionSize() const
 void			HUDRenderer::setBigFontSize(int, int height)
 {
   const float s = (float)height / 15.0f;
+  bigFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
   bigFont.setSize(s, s);
 
   restartLabelWidth = bigFont.getWidth(restartLabel);
@@ -322,11 +316,18 @@ void			HUDRenderer::setBigFontSize(int, int height)
 void			HUDRenderer::setAlertFontSize(int, int height)
 {
   const float s = (float)height / 24.0f;
+  if (s > 20.0f)
+    minorFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    minorFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    alertFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   alertFont.setSize(s, s);
 
   for (int i = 0; i < MaxAlerts; i++)
     if (alertClock[i].isOn())
       alertLabelWidth[i] = alertFont.getWidth(alertLabel[i]);
+
   alertY = -majorFont.getSpacing() +
 	   -alertFont.getSpacing() + alertFont.getDescent();
 }
@@ -334,6 +335,7 @@ void			HUDRenderer::setAlertFontSize(int, int height)
 void			HUDRenderer::setMajorFontSize(int, int height)
 {
   const float s = (float)height / 24.0f;
+  majorFont = TextureFont::getTextureFont(TextureFont::TimesBold, True);
   majorFont.setSize(s, s);
 
   alertY = -majorFont.getSpacing() +
@@ -342,7 +344,13 @@ void			HUDRenderer::setMajorFontSize(int, int height)
 
 void			HUDRenderer::setMinorFontSize(int, int height)
 {
-  const float s = (float)height / 42.0f;
+  const float s = (float)height / 48.0f;
+  if (s > 20.0f)
+    minorFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    minorFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    minorFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   minorFont.setSize(s, s);
 
   scoreLabelWidth = minorFont.getWidth(scoreSpacingLabel);
@@ -363,6 +371,12 @@ void			HUDRenderer::setMinorFontSize(int, int height)
 void			HUDRenderer::setHeadingFontSize(int, int height)
 {
   const float s = (float)height / 96.0f;
+  if (s > 20.0f)
+    headingFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    headingFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    headingFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   headingFont.setSize(s, s);
 
   // compute heading labels and (half) widths
@@ -381,6 +395,13 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
 void			HUDRenderer::setComposeFontSize(int, int height)
 {
   const float s = (float)height / 48.0f;
+  if (s > 20.0f)
+    composeFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    composeFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    composeFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
+  composeTypeIn->setFont(composeFont);
   composeTypeIn->setFontSize(s, s);
 }
 
@@ -797,19 +818,17 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !World::getWorld()) return;
 
-  const float x1 = 0.0125f * renderer.getWindow().getWidth();
+  const float x1 = 0.01f * renderer.getWindow().getWidth();
   const float x2 = x1 + scoreLabelWidth;
   const float x3 = x2 + scoreLabelWidth;
-  const float x5 = (1.0f - 0.01f) * renderer.getWindow().getWidth() -
-							teamScoreLabelWidth;
-  const float y0 = (float)renderer.getWindow().getHeight() -
-				2.0f * alertFont.getSpacing();
+  const float x5 = (1.0f - 0.01f) * renderer.getWindow().getWidth() - teamScoreLabelWidth;
+  const float y0 = (1.0f - 0.07f) * renderer.getWindow().getHeight();
   hudColor3fv(messageColor);
-  headingFont.draw(scoreLabel, x1, y0);
-  headingFont.draw(killLabel, x2, y0);
-  headingFont.draw(playerLabel, x3, y0);
-  headingFont.draw(teamScoreLabel, x5, y0);
-  const float dy = headingFont.getSpacing();
+  minorFont.draw(scoreLabel, x1, y0);
+  minorFont.draw(killLabel, x2, y0);
+  minorFont.draw(playerLabel, x3, y0);
+  minorFont.draw(teamScoreLabel, x5, y0);
+  const float dy = minorFont.getSpacing();
   int y = (int)(y0 - dy);
 
   // print players sorted by score
@@ -1339,16 +1358,16 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   if (player->isPaused())
     strcpy(status,"[p]");
 
-  const float callSignWidth = headingFont.getWidth(player->getCallSign());
-  const float emailWidth = headingFont.getWidth(email);
-  const float flagWidth = headingFont.getWidth(flag);
+  const float callSignWidth = minorFont.getWidth(player->getCallSign());
+  const float emailWidth = minorFont.getWidth(email);
+  const float flagWidth = minorFont.getWidth(flag);
   hudSColor3fv(Team::getRadarColor(player->getTeam()));
-  headingFont.draw(score, x1, y);
-  headingFont.draw(kills, x2, y);
-  headingFont.draw(player->getCallSign(), x3, y);
-  headingFont.draw(email, x3 + callSignWidth, y);
-  headingFont.draw(flag, x3 + callSignWidth + emailWidth, y);
-  headingFont.draw(status, x3 + callSignWidth + flagWidth + emailWidth, y);
+  minorFont.draw(score, x1, y);
+  minorFont.draw(kills, x2, y);
+  minorFont.draw(player->getCallSign(), x3, y);
+  minorFont.draw(email, x3 + callSignWidth, y);
+  minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
+  minorFont.draw(status, x3 + callSignWidth + flagWidth + emailWidth, y);
 }
 
 void			HUDRenderer::drawDeadPlayerScore(const Player* player,
@@ -1368,6 +1387,6 @@ void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
   sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
 
   hudColor3fv(Team::getRadarColor((TeamColor)teamIndex));
-  headingFont.draw(score, x1, y);
+  minorFont.draw(score, x1, y);
 }
 // ex: shiftwidth=2 tabstop=8

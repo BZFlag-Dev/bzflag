@@ -96,8 +96,7 @@ const char*		TextureFont::fontFileName[] = {
 OpenGLTexFont*		TextureFont::font[sizeof(TextureFont::fontFileName) /
 					  sizeof(TextureFont::fontFileName[0])];
 
-OpenGLTexFont		TextureFont::getTextureFont(
-				Font index, boolean required)
+OpenGLTexFont		TextureFont::getTextureFont(Font index, boolean required)
 {
   static boolean init = False;
   if (!init) {

@@ -3685,7 +3685,7 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 				optionsMenu(NULL), quitMenu(NULL)
 {
   // create font
-  font = TextureFont::getTextureFont(TextureFont::HelveticaBoldItalic, True);
+  font = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
   mainFont = &font;
 
   // load title

@@ -62,9 +62,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
 
-  // load message font texture
-  messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
-
   blend = renderer.useBlending();
 
   const float iWidth = 256.0f;
@@ -264,9 +261,13 @@ void			ControlPanel::resize()
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
 				radarAreaPixels[2], radarAreaPixels[3]);
 
+  const float fontSize = (float)messageAreaPixels[3] / 12.4444f;
+  if (fontSize > 1.0f)
+    messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    messageFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   // pick font size, room for 20 lines plus 4/9 line margin
   //const float fontSize = (float)messageAreaPixels[3] / 9.4444f;
-  const float fontSize = (float)messageAreaPixels[3] / 20.4444f;
   messageFont.setSize(fontSize, fontSize);
 
   // note that we've been resized at least once
