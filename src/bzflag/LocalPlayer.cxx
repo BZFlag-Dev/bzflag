@@ -536,8 +536,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
       setStatus(getStatus() | int(PlayerState::CrossingWall));
     else
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
-  } else if (World::getWorld()->crossingTeleporter(newPos, newAzimuth,
-						 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH), crossingPlane)) {
+  } else if (World::getWorld()->crossingTeleporter( newPos, newAzimuth,
+                      0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 
+                      0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH),
+                      BZDBCache::tankHeight, crossingPlane)) {
     setStatus(getStatus() | int(PlayerState::CrossingWall));
   } else {
     setStatus(getStatus() & ~int(PlayerState::CrossingWall));
@@ -689,7 +691,7 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
   }
 
   const Obstacle* obstacle = World::getWorld()->
-    hitBuilding(p, a, length, width);
+    hitBuilding(p, a, length, width, BZDBCache::tankHeight);
   expelled = (obstacle != NULL);
   if (expelled && phased)
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
@@ -728,7 +730,7 @@ const Obstacle*		LocalPlayer::getHitBuilding(
   }
 
   const Obstacle* obstacle = World::getWorld()->
-    hitBuilding(oldP, oldA, p, a, length, width);
+    hitBuilding(oldP, oldA, p, a, length, width, BZDBCache::tankHeight);
   expelled = (obstacle != NULL);
   if (expelled && phased)
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
@@ -1299,7 +1301,8 @@ void			LocalPlayer::setFlag(FlagType* flag)
 	  flagAntidotePos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
 	}
-      } while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius));
+      } while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius,
+                                             BZDBCache::tankHeight));
       antidoteFlag = new FlagSceneNode(flagAntidotePos);
       antidoteFlag->setColor(1.0f, 1.0f, 0.0f);
       World::setFlagTexture(antidoteFlag);

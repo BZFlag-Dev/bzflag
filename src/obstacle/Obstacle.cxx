@@ -54,17 +54,27 @@ Obstacle::~Obstacle()
 
 bool			Obstacle::isValid() const
 {
-  float maxX = fabsf(cos(angle) * size[0]) +
-               fabsf(sin(angle) * size[1]) + fabsf(pos[0]);
-  float maxY = fabsf(cos(angle) * size[1]) +
-               fabsf(sin(angle) * size[0]) + fabsf(pos[1]);
-
-  if ((maxX > maxExtent) || (maxY > maxExtent) ||
-      ((fabsf(pos[2]) + fabsf(size[2])) > maxExtent)) {
-    return false;
+  float mins[3], maxs[3];
+  getExtents (mins, maxs);
+  for (int a = 0; a < 3; a++) {
+    if ((mins[a] < -maxExtent) || (maxs[a] > maxExtent)) {
+      return false;
+    }
   }
-  
   return true;
+}
+
+void			Obstacle::getExtents(float* mins, float* maxs) const
+{
+  float xspan = (fabsf(cos(angle)) * size[0]) + (fabsf(sin(angle)) * size[1]);
+  float yspan = (fabsf(cos(angle)) * size[1]) + (fabsf(sin(angle)) * size[0]);
+  mins[0] = pos[0] - xspan;
+  maxs[0] = pos[0] + xspan;
+  mins[1] = pos[1] - yspan;
+  maxs[1] = pos[1] + yspan;
+  mins[2] = pos[2];
+  maxs[2] = pos[2] + size[2];
+  return;
 }
 
 bool			Obstacle::isDriveThrough() const

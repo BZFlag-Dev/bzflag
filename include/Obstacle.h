@@ -81,6 +81,9 @@ class Obstacle {
   /** This function returns the obstacle's full height. */
   float getHeight() const;
   
+  /** This function fills in the obstacle's x/y/z extents */
+  virtual void getExtents(float* mins, float* maxs) const;
+  
   /** This function returns the time of intersection between the obstacle
       and a Ray object. If the ray does not intersect this obstacle -1 is 
       returned. */

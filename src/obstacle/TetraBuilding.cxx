@@ -145,6 +145,14 @@ bool TetraBuilding::isValid() const
 }
 
 
+void TetraBuilding::getExtents(float* _mins, float* _maxs) const
+{
+  memcpy (_mins, mins, sizeof(float[3]));
+  memcpy (_maxs, maxs, sizeof(float[3]));
+  return;
+}
+
+
 void TetraBuilding::getCorner(int index, float* pos) const
 {
   memcpy (pos, vertices[index], 3 * sizeof(float));
@@ -360,10 +368,10 @@ bool TetraBuilding::inMovingBox(const float*, float,
 
 
 // This is only used when the player has an Oscillation Overthruster
-// flag, and only after we already know that the tank is ineterfering
-// with another object (inBox() type test), so it doesn't have to be
-// particularly fast. As a note, some of the info from the original
-// collision test might be handy here.
+// flag, and only after we already know that the tank is interfering
+// with this tetrahedron, so it doesn't have to be particularly fast.
+// As a note, some of the info from the original collision test might
+// be handy here.
 bool TetraBuilding::isCrossing(const float* p, float angle,
                                float dx, float dy, float height,
                                float* plane) const
@@ -379,12 +387,16 @@ bool TetraBuilding::isCrossing(const float* p, float angle,
   corner[0][1] = (cosval * dy) + (sinval * dx);
   corner[1][1] = (cosval * dy) - (sinval * dx);
   for (bv = 0; bv < 2; bv++) {
-    corner[bv+2][0] = -corner[bv][0];
-    corner[bv+2][1] = -corner[bv][1];
+    corner[bv + 2][0] = -corner[bv][0];
+    corner[bv + 2][1] = -corner[bv][1];
   }
   for (bv = 0; bv < 4; bv++) {
-    corner[bv+0][2] = p[2];
-    corner[bv+4][2] = p[2] + height;
+    corner[bv][0] = p[0] + corner[bv][0];
+    corner[bv][1] = p[1] + corner[bv][1];
+    corner[bv][2] = p[2];
+    corner[bv + 4][0] = corner[bv][0];
+    corner[bv + 4][1] = corner[bv][1];
+    corner[bv + 4][2] = corner[bv][2] + height;
   }
 
   // see if any tetra planes separate the box vertices

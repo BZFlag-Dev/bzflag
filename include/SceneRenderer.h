@@ -75,6 +75,7 @@ public:
   int			useQuality() const;
   bool		useDepthComplexity() const;
   bool		useCullingTree() const;
+  bool		useCollisionTree() const;
   bool		useWireframe() const;
   bool		useHiddenLine() const;
   float		getPanelOpacity() const;
@@ -90,6 +91,7 @@ public:
   void		setQuality(int value);
   void		setDepthComplexity(bool on);
   void		setCullingTree(bool on);
+  void		setCollisionTree(bool on);
   void		setWireframe(bool on);
   void		setHiddenLine(bool on);
   void		setPanelOpacity(float opacity);
@@ -178,6 +180,7 @@ private:
   int			useQualityValue;
   bool		useDepthComplexityOn;
   bool		useCullingTreeOn;
+  bool		useCollisionTreeOn;
   bool		useWireframeOn;
   bool		useHiddenLineOn;
   float		panelOpacity;

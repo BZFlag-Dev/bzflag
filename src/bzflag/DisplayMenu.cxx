@@ -191,6 +191,16 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   list.push_back(option);
 
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Collision Tree:");
+  option->setCallback(callback, (void*)"e");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
   BzfWindow* window = getMainWindow()->getWindow();
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -293,6 +303,7 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
 #endif
     ((HUDuiList*)list[i++])->setIndex(renderer->useCullingTree() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(renderer->useCollisionTree() ? 1 : 0);
 
     if (!BZDBCache::texture)
       tex->setIndex(0);
@@ -382,6 +393,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
 #endif
   case 'd':
     sceneRenderer->setCullingTree(list->getIndex() != 0);
+    break;
+  case 'e':
+    sceneRenderer->setCollisionTree(list->getIndex() != 0);
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();

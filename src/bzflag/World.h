@@ -94,18 +94,20 @@ class World {
     EighthDimSceneNode*	getInsideSceneNode(const Obstacle*) const;
 
     TeamColor		whoseBase(const float* pos) const;
-    const Obstacle*	inBuilding(const float* pos, float radius) const;
+    const Obstacle*	inBuilding(const float* pos, float radius,
+                                   float tankHeight) const;
     const Obstacle*	hitBuilding(const float* pos, float angle,
-					float tankWidth,
-					float tankBreadth) const;
+                                    float tankWidth, float tankBreadth,
+                                    float tankHeight) const;
     const Obstacle*	hitBuilding(const float* oldPos, float oldAngle,
 				    const float* pos, float angle,
-				    float tankWidth, float tankBreadth) const;
+				    float tankWidth, float tankBreadth,
+				    float tankHeight) const;
     bool		crossingTeleporter(const float* oldPos, float angle,
 					float tankWidth, float tankBreadth,
-					float* plane) const;
+					float tankHeight, float* plane) const;
     const Teleporter*	crossesTeleporter(const float* oldPos,
-					const float* newPos, int& face) const;
+					  const float* newPos, int& face) const;
     const Teleporter*	crossesTeleporter(const Ray& r, int& face) const;
     float		getProximity(const float* pos, float radius) const;
 
@@ -115,6 +117,8 @@ class World {
 
     static World*	getWorld();
     static void		setWorld(World*);
+    
+    static const CollisionManager* getCollisionManager();
 
     static BundleMgr*	getBundleMgr();
     static void		setBundleMgr(BundleMgr *bundleMgr);
@@ -130,7 +134,8 @@ class World {
     void                checkCollisionManager();
 
     bool		writeWorld(std::string filename);
-
+    
+    void		drawCollisionGrid();
 
 
   private:
@@ -378,6 +383,16 @@ inline const std::vector<Teleporter>&	World::getTeleporters() const
 inline World*		World::getWorld()
 {
   return playingField;
+}
+
+inline const CollisionManager* World::getCollisionManager()
+{
+  if (playingField != NULL) {
+    return &playingField->collisionManager;
+  }
+  else {
+    return NULL;
+  }
 }
 
 inline BundleMgr*	World::getBundleMgr()

@@ -31,6 +31,7 @@ class TetraBuilding : public Obstacle {
     const char*		getType() const;
     static const char*	getClassName(); // const
     bool                isValid() const;
+    void                getExtents(float* mins, float* maxs) const;
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;

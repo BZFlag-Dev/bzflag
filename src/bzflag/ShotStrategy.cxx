@@ -18,6 +18,7 @@
 
 /* common implementation headers */
 #include "StateDatabase.h"
+#include "CollisionManager.h"
 #include "Intersect.h"
 #include "Obstacle.h"
 #include "WallObstacle.h"
@@ -96,6 +97,37 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
 {
   const Obstacle* closestObstacle = NULL;
 
+  const CollisionManager* colMgr = World::getCollisionManager();
+  if (colMgr == NULL) {
+    return NULL;
+  }
+  
+  const ObsList* olist = colMgr->rayTest (&ray);
+  
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    if (!obs->isShootThrough()) {
+      const float timet = obs->intersect(ray);
+      if (obs->getType() == Teleporter::getClassName()) {
+        const Teleporter* tele = (const Teleporter*) obs;
+        int face;
+	if ((timet > min) && (timet < t) && 
+            (tele->isTeleported(ray, face) < 0.0f)) {
+	  t = timet;
+	  closestObstacle = obs;
+        }
+      }
+      else {
+	if ((timet > min) && (timet < t)) {
+	  t = timet;
+	  closestObstacle = obs;
+        }
+      }
+    }
+  }
+        
+  return closestObstacle;
+/*
   // check walls
   {
     const std::vector<WallObstacle> &walls = World::getWorld()->getWalls();
@@ -198,8 +230,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
       it++;
     }
   }
-
-  return closestObstacle;
+*/
 }
 
 void ShotStrategy::reflect(float* v, const float* n) // const

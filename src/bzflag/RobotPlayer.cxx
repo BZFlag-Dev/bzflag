@@ -123,7 +123,7 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
   projpos[0] = tx; projpos[1] = ty; projpos[2] = tz;
 
   // projected pos in building -> use current pos
-  if (World::getWorld()->inBuilding(projpos, 0.0f)) {
+  if (World::getWorld()->inBuilding(projpos, 0.0f, BZDBCache::tankHeight)) {
     projpos[0] = targ->getPosition()[0];
     projpos[1] = targ->getPosition()[1];
     projpos[2] = targ->getPosition()[2];

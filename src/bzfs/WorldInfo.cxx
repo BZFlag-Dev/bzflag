@@ -150,16 +150,15 @@ WorldWeapons& WorldInfo::getWorldWeapons()
 
 void                    WorldInfo::loadCollisionManager()
 {
-  collisionManager.load(boxes, pyramids, tetras, teleporters, bases);
+  collisionManager.load(walls, boxes, bases, pyramids, tetras, teleporters);
   return;
 }
 
 void                    WorldInfo::checkCollisionManager()
 {
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-  if (worldSize != collisionManager.getWorldSize()) {
+  if (collisionManager.needReload()) {
     // reload the collision grid
-    collisionManager.load(boxes, pyramids, tetras, teleporters, bases);
+    collisionManager.load(walls, boxes, bases, pyramids, tetras, teleporters);
   }
   return;
 }
@@ -223,11 +222,10 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
     
   *location = NULL;
   
-  // check everything but walls
-  ObstacleList olist = collisionManager.getObstacles (pos, radius);
-  for (ObstacleList::const_iterator oit = olist.begin();
-       oit != olist.end(); oit++) {
-    const Obstacle* obs = *oit;
+  const ObsList* olist = collisionManager.cylinderTest (pos, radius, height);
+
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
     if (obs->inCylinder(pos, radius, height)) {
       *location = obs;
       break;
@@ -257,11 +255,11 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
     
   *location = NULL;
   
-  // check everything but walls
-  ObstacleList olist = collisionManager.getObstacles (pos, angle, width, breadth);
-  for (ObstacleList::const_iterator oit = olist.begin();
-       oit != olist.end(); oit++) {
-    const Obstacle* obs = *oit;
+  const ObsList* olist =
+    collisionManager.boxTest (pos, angle, width, breadth, height);
+
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
     if (obs->inBox(pos, angle, width, breadth, height)) {
       *location = obs;
       break;

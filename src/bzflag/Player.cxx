@@ -335,12 +335,14 @@ void			Player::addToScene(SceneDatabase* scene,
       float tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
       const GLfloat a = atan2f(forward[1], forward[0]);
       const Obstacle* obstacle = World::getWorld()->hitBuilding(state.pos, a,
-								0.5f * tankLength, 0.5f * tankWidth);
+								0.5f * tankLength, 0.5f * tankWidth,
+								BZDBCache::tankHeight);
       if (obstacle && obstacle->isCrossing(state.pos, a,
 					   0.5f * tankLength, 0.5f * tankWidth, 
 					   BZDBCache::tankHeight, plane) ||
 	  World::getWorld()->crossingTeleporter(state.pos, a,
-						0.5f * tankLength, 0.5f * tankWidth, plane)) {
+						0.5f * tankLength, 0.5f * tankWidth,
+						BZDBCache::tankHeight, plane)) {
 	// stick in interdimensional lights node
 	if (showIDL) {
 	  tankIDLNode->move(plane);

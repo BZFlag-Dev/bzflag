@@ -40,6 +40,7 @@
 #include "HUDRenderer.h"
 #include "LocalPlayer.h"
 #include "daylight.h"
+#include "World.h"
 
 
 const GLint		SceneRenderer::SunLight = 0;	// also for the moon
@@ -95,6 +96,7 @@ SceneRenderer::SceneRenderer() :
 				useQualityValue(2),
 				useDepthComplexityOn(false),
 				useCullingTreeOn(false),
+				useCollisionTreeOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
 				panelOpacity(0.3f),
@@ -292,6 +294,11 @@ bool			SceneRenderer::useCullingTree() const
   return useCullingTreeOn;
 }
 
+bool			SceneRenderer::useCollisionTree() const
+{
+  return useCollisionTreeOn;
+}
+
 void			SceneRenderer::setDepthComplexity(bool on)
 {
   if (on) {
@@ -301,9 +308,15 @@ void			SceneRenderer::setDepthComplexity(bool on)
   }
   useDepthComplexityOn = on;
 }
+
 void			SceneRenderer::setCullingTree(bool on)
 {
   useCullingTreeOn = on;
+}
+
+void			SceneRenderer::setCollisionTree(bool on)
+{
+  useCollisionTreeOn = on;
 }
 
 
@@ -731,6 +744,9 @@ void			SceneRenderer::render(
 
     if (sceneIterator && useCullingTreeOn) {
       sceneIterator->drawCuller();
+    }
+    if (sceneIterator && useCollisionTreeOn && (World::getWorld() != NULL)) {
+      World::getWorld()->drawCollisionGrid();
     }
     
     doRender();
