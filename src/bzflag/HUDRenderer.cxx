@@ -755,7 +755,7 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
 
 void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
 {
-  int i;
+  int i, j;
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !World::getWorld()) return;
@@ -775,9 +775,37 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   const float dy = minorFont.getSpacing();
   int y = (int)(y0 - dy);
   drawPlayerScore(myTank, x1, x2, x3, (float)y);
+  y -= (int)dy;
   const int maxPlayers = World::getWorld()->getMaxPlayers();
-  for (i = 0; i < maxPlayers; i++) {
-    RemotePlayer* player = World::getWorld()->getPlayer(i);
+  RemotePlayer* players_unsorted[maxPlayers];
+  RemotePlayer* players[maxPlayers];
+  int hiScore;
+  int hiScoreIndex;
+  RemotePlayer* hiScorePlayer;
+  int plrCount = 0;
+  // run a sort by score
+  for (j = 0; j < maxPlayers; j++) {
+    players_unsorted[j] = World::getWorld()->getPlayer(j);
+    if (players_unsorted[j]) plrCount++;
+  }
+  for (i = 0; i < plrCount; i++) {
+    hiScoreIndex = -1;
+    hiScore = 0;
+    hiScorePlayer = (RemotePlayer *)NULL;
+    for (j = 0; j < maxPlayers; j++) {
+      if (players_unsorted[j] && (hiScoreIndex < 0 || (players_unsorted[j]->getScore() > hiScore))) {
+	hiScore = players_unsorted[j]->getScore();
+	hiScorePlayer = players_unsorted[j];
+        hiScoreIndex = j;
+      }
+    }
+    if (hiScoreIndex >= 0) {
+      players[i] = hiScorePlayer;
+      players_unsorted[hiScoreIndex] = (RemotePlayer *)NULL;
+    }
+  }
+  for (i = 0; i < plrCount; i++) {
+    RemotePlayer* player = players[i];
     if (!player) continue;
     y -= (int)dy;
     drawPlayerScore(player, x1, x2, x3, (float)y);
