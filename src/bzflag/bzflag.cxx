@@ -360,7 +360,37 @@ void updateConfigFile ( void )
     KEYMGR.unbindCommand(std::string("roam rotate right"));
     KEYMGR.unbindCommand(std::string("roam rotate up"));
     KEYMGR.unbindCommand(std::string("roam rotate down"));
-    // TODO - any other breaking changes from 1.10 to 1.11
+
+    // add new default keybindings if there's no conflict
+    // iconify
+    BzfKeyEvent key;
+    if (KEYMGR.stringToKeyEvent("F4", key) 
+        && (KEYMGR.get(key, true) == std::string("")))
+      KEYMGR.bind(key, true, "iconify");
+    // toggle console & radar
+    if (KEYMGR.stringToKeyEvent("F3", key) 
+        && (KEYMGR.get(key, true) == std::string("")))
+      KEYMGR.bind(key, true, "toggleConsoleAndRadar");
+    // controlpanel tabs - all or nothing
+    if (KEYMGR.stringToKeyEvent("Shift+F1", key) 
+        && (KEYMGR.get(key, true) == std::string(""))
+	&& KEYMGR.stringToKeyEvent("Shift+F2", key) 
+        && (KEYMGR.get(key, true) == std::string(""))
+	&& KEYMGR.stringToKeyEvent("Shift+F3", key) 
+        && (KEYMGR.get(key, true) == std::string(""))
+	&& KEYMGR.stringToKeyEvent("Shift+F4", key) 
+        && (KEYMGR.get(key, true) == std::string(""))) {
+      KEYMGR.stringToKeyEvent("Shift+F1", key);
+      KEYMGR.bind(key, true, "messagepanel all");
+      KEYMGR.stringToKeyEvent("Shift+F2", key);
+      KEYMGR.bind(key, true, "messagepanel chat");
+      KEYMGR.stringToKeyEvent("Shift+F3", key);
+      KEYMGR.bind(key, true, "messagepanel server");
+      KEYMGR.stringToKeyEvent("Shift+F4", key);
+      KEYMGR.bind(key, true, "messagepanel misc");
+    }
+
+    // TODO - any other breaking changes from 1.10 to 1.12
 
   case 1: // 1.12
     break; // no action, current version
