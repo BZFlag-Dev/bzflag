@@ -1459,8 +1459,8 @@ static TeamColor autoTeamSelect(TeamColor t)
     return ObserverTeam;
 
   // count current number of players
-  int numplayers = 0;
-  for (int i = 0; i < int(ObserverTeam); i++)
+  int numplayers = 0, i = 0;
+  for (i = 0; i < int(ObserverTeam); i++)
     numplayers += team[i].team.size;
 
   // if no player are available, join as Observer
@@ -1479,7 +1479,7 @@ static TeamColor autoTeamSelect(TeamColor t)
   // Fill a vector with teams status, not putting in not enabled teams
   std::vector<TeamSize> teams;
 
-  for (int i = (int)RedTeam; i < (int)ObserverTeam; i++) {
+  for (i = (int)RedTeam; i < (int)ObserverTeam; i++) {
     TeamSize currTeam = {(TeamColor)i,
 			 team[i].team.size,
 			 clOptions->maxTeam[i]};
