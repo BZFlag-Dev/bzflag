@@ -3453,40 +3453,45 @@ static void handleCommand(int t, const void *rawbuf)
       if (state.order <= lastState[t].order)
 	break;
 
-      playerData->lagInfo.updateLag(timestamp,
-				     state.order - lastState[t].order > 1);
+      playerData->lagInfo.updateLag(timestamp, 
+                                    state.order - lastState[t].order > 1);
       playerData->player.updateIdleTime();
 
-      TimeKeeper now = TimeKeeper::getCurrent();
       //Don't kick players up to 10 seconds after a world parm has changed,
-      static const float heightFudge = 1.1f; /* 10% */
+      TimeKeeper now = TimeKeeper::getCurrent();
+
       if (now - lastWorldParmChange > 10.0f) {
-	float gravity;
-	int pFlag = playerData->player.getFlag();
-	if ((pFlag >= 0)
-	    && (FlagInfo::flagList[pFlag].flag.type == Flags::Wings))
-          gravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
-	else
-	  gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
 
-	if (gravity < 0.0f) {
-	  float maxTankHeight;
+        // see if the player is too high
+        static const float heightFudge = 1.10f; /* 10% */
+        
+	float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
+	float normalGravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+	if ((wingsGravity < 0.0f) && (normalGravity < 0.0f)) {
+
+	  float wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+	  wingsMaxHeight *= wingsMaxHeight;
+	  wingsMaxHeight *= (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
+	  wingsMaxHeight /= (-wingsGravity * 0.5f);
+
+	  float normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+	  normalMaxHeight *= normalMaxHeight;
+	  normalMaxHeight /= (-normalGravity * 0.5f);
+
+	  float maxHeight;
+	  if (wingsMaxHeight > normalMaxHeight) {
+	    maxHeight = wingsMaxHeight;
+          } else {
+            maxHeight = normalMaxHeight;
+          }
+          
+          // final adjustments
+          maxHeight *= heightFudge;
+          maxHeight += maxWorldHeight;
 	  
-	  if ((pFlag >= 0)
-	      && (FlagInfo::flagList[pFlag].flag.type == Flags::Wings))
-	    maxTankHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)
-	      * BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)
-	      * (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
-          else
-	    maxTankHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)
-	      * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-	  maxTankHeight *= heightFudge / (2.0f * -gravity);
-	  maxTankHeight += maxWorldHeight;
-
-	  if (state.pos[2] > maxTankHeight) {
+	  if (state.pos[2] > maxHeight) {
 	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-		   playerData->player.getCallSign(), t, maxTankHeight,
-		   state.pos[2]);
+		   playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
 	    sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
 	    removePlayer(t, "too high");
 	    break;
@@ -3526,6 +3531,10 @@ static void handleCommand(int t, const void *rawbuf)
 	// a short period of time after player drops a flag. Currently
 	// 2 second, adjust as needed.
 	if (playerData->player.isFlagTransitSafe()) {
+
+          // we'll be checking against the player's flag type
+          int pFlag = playerData->player.getFlag();
+          
 	  // check for highspeed cheat; if inertia is enabled, skip test for now
 	  if (clOptions->linearAcceleration == 0.0f) {
 	    // Doesn't account for going fast backwards, or jumping/falling

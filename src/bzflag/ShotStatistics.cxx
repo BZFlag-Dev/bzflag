@@ -93,7 +93,7 @@ FlagType* ShotStatistics::getFavoriteFlag() const
 
   // we don't deal with the case where there are two "equally favorite"
   // flags; doesn't really matter
-  for (int i = 0; i < flags.size(); i++) {
+  for (int i = 0; i < (int)flags.size(); i++) {
     if (flags[i].second > greatest.second)
       greatest = flags[i];
   }
@@ -123,7 +123,7 @@ FlagType* ShotStatistics::getBestFlag() const
 
   // we don't deal with the case where there are two "equally best"
   // flags; doesn't really matter
-  for (int i = 0; i < flags.size(); i++) {
+  for (int i = 0; i < (int)flags.size(); i++) {
     if (flags[i].second > greatest.second)
       greatest = flags[i];
   }
