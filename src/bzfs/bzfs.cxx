@@ -5098,11 +5098,25 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player is sending his position/speed (bulk data)
     case MsgPlayerUpdate: {
-      player[t].lastupdate = TimeKeeper::getCurrent();
       PlayerId id;
       PlayerState state;
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf);
+      if (t != id) {
+	// Should be a Robot or a cheater
+	if ((id >= curMaxPlayers) || (player[id].type != ComputerPlayer)) {
+	  char message[MessageLen];
+	  DEBUG1("kicking Player %s [%d]: Invalid Id %s [%d]\n",
+		 player[t].callSign, t, player[id].callSign, id);
+	  strcpy(message, "Autokick: Using invalid PlayerId, don't cheat.");
+	  sendMessage(ServerPlayer, t, message, true);
+	  removePlayer(t, "Using invalid PlayerId");
+	  break;
+	}
+	t = id;
+      }
+
+      player[t].lastupdate = TimeKeeper::getCurrent();
       float maxTankHeight = maxWorldHeight + 1.0f + ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -BZDB->eval(StateDatabase::BZDB_GRAVITY)));
 
       if (state.pos[2] > maxTankHeight) {
