@@ -1,9 +1,6 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
-- With lo-quality rendering options (the important part is probleme no
-  textures), team bases are not rendered in team color.
-
 - quol reports that his 1.10.3 server is requiring identification, although
   require identify is not listed anywhere in his group file.  problem still
   happens if he moves the group file out of the way. larsl wonders if this
