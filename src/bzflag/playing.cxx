@@ -5861,10 +5861,10 @@ static void		playingLoop()
       roamTheta  += dt * roamDTheta;
       roamPhi    += dt * roamDPhi;
       roamZoom   += dt * roamDZoom;
-      if (roamZoom < 1.0f)
-	roamZoom = 1.0f;
-      else if (roamZoom > 179.0f)
-	roamZoom = 179.0f;
+      if (roamZoom < BZDB.eval("roamZoomMin"))
+	roamZoom = BZDB.eval("roamZoomMin");
+      else if (roamZoom > BZDB.eval("roamZoomMax"))
+	roamZoom = BZDB.eval("roamZoomMax");
     }
     setRoamingLabel(false);
 

@@ -119,6 +119,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
+  { "roamZoomMax",		"120",			false,	StateDatabase::ReadWrite,	NULL },
+  { "roamZoomMin",		"15",			false,	StateDatabase::ReadWrite,	NULL },
   { "altImageDir",		"alternate",		true,	StateDatabase::ReadWrite,	NULL },
   { "groundTexRepeat",		"0.1",                  true,	StateDatabase::ReadWrite,	NULL },
 
@@ -127,7 +129,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "zoneGroundTexture",	"zone_ground",          true,	StateDatabase::ReadWrite,	NULL },
   { "boxWallTexture",	        "boxwall",              true,	StateDatabase::ReadWrite,	NULL },
   { "boxTopTexture",	        "roof",                 true,	StateDatabase::ReadWrite,	NULL },
-  { "pryWallTexture",	        "prywall",              true,	StateDatabase::ReadWrite,	NULL },
+  { "pyrWallTexture",	        "pyrwall",              true,	StateDatabase::ReadWrite,	NULL },
   { "cautionTexture",	        "caution",              true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes
