@@ -34,7 +34,7 @@ class SDLDisplay : public BzfDisplay {
   bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
   void setFullscreen(bool);
   void setWindowSize(int width, int height);
-  void getWindowSize(int& width, int& height) const;
+  void getWindowSize(int& width, int& height);
   void doSetVideoMode();
   void enableGrabMouse(bool);
  private:

@@ -464,12 +464,16 @@ void SDLDisplay::setWindowSize(int _width, int _height) {
   base_height = _height;
 }
 
-void SDLDisplay::getWindowSize(int& width, int& height) const {
+void SDLDisplay::getWindowSize(int& width, int& height) {
   if (fullScreen) {
-    if (modeIndex >= 0) {
-      width  = getResolution(modeIndex)->width;
-      height = getResolution(modeIndex)->height;
+    if (modeIndex < 0)
+      modeIndex = 0;
+    const BzfDisplay::ResInfo *resolution = getResolution(modeIndex);
+    if (resolution != NULL) {
+      width  = resolution->width;
+      height = resolution->height;
     } else {
+      modeIndex = -1;
       width  = 640;
       height = 480;
     }
