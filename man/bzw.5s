@@ -632,6 +632,8 @@ Adds an object that places a tank at another teleporter in a different area when
 
 \fBteleporter\fR [name]
 .br
+# the [name] tag is used for linkage
+.br
 \fB  name\fR example_teleporter
 .br
 \fB  position\fR 0.0 0.0 0.0
@@ -645,19 +647,39 @@ Adds an object that places a tank at another teleporter in a different area when
 \fBend\fR
 .br
 
+
 .B The Link object
 .br
 Adds a route to teleport a tank between two teleporters.
+
+# Teleporter names are terminated with either :f (forward)
+.br
+# or :b (backwards). The forwards link points to 0 degrees,
+.br
+# and the backwards link points to 180. Links are made by
+.br
+# pattern matching the teleporter names. The '*' and '?' 
+.br
+# globbing characters can be used to make multiple matches.
+.br
+# If there are multiple matches for the "to" link, then the
+.br
+# destination will be selected randomly between the matches.
+.br 
+# in-game.
+.br
+
+# NOTE: bzfs -d -d -d -d will print the linkage table.
 
 \fBlink\fR
 .br
 \fB  name\fR example_link
 .br
-\fB  from\fR 0
+# this will link all teleporters randomly to all other teleporters
 .br
-\fB  to\fR 0
+\fB  from\fR *
 .br
-# the 'to' parameter can now be set to 'random'
+\fB  to\fR   *
 .br
 \fBend\fR
 .br
