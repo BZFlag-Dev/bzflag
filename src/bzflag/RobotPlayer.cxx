@@ -178,16 +178,17 @@ void			RobotPlayer::doUpdateMotion(float dt)
 	v[1] = endPoint[1] - position[1];
 	const float distance = hypotf(v[0], v[1]);
 	float t;
-	if (distance <= dt * BZDB->eval(StateDatabase::BZDB_TANKSPEED)) {
+	float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+	if (distance <= dt * tankSpeed) {
 	  pathIndex++;
-	  t = distance / BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+	  t = distance / tankSpeed;
 	}
 	else {
 	  t = dt;
 	}
 	dt -= t;
-	position[0] += t * BZDB->eval(StateDatabase::BZDB_TANKSPEED) * cosf(azimuth);
-	position[1] += t * BZDB->eval(StateDatabase::BZDB_TANKSPEED) * sinf(azimuth);
+	position[0] += t * tankSpeed * cosf(azimuth);
+	position[1] += t * tankSpeed * sinf(azimuth);
       }
     }
   }

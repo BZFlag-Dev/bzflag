@@ -774,9 +774,10 @@ RapidFireStrategy::RapidFireStrategy(ShotPath* path) :
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
   f.lifetime *= BZDB->eval(StateDatabase::BZDB_RFIREADLIFE);
-  f.shot.vel[0] *= BZDB->eval(StateDatabase::BZDB_RFIREADVEL);
-  f.shot.vel[1] *= BZDB->eval(StateDatabase::BZDB_RFIREADVEL);
-  f.shot.vel[2] *= BZDB->eval(StateDatabase::BZDB_RFIREADVEL);
+  float fireAdVel = BZDB->eval(StateDatabase::BZDB_RFIREADVEL);
+  f.shot.vel[0] *= fireAdVel;
+  f.shot.vel[1] *= fireAdVel;
+  f.shot.vel[2] *= fireAdVel;
   setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_RFIREADRATE));
 
   // make segments
@@ -806,9 +807,10 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   f.shot.vel[2] /= 4.0f;
 
   makeSegments(Stop);
-  f.shot.vel[0] *= 4.0f * BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
-  f.shot.vel[1] *= 4.0f * BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
-  f.shot.vel[2] *= 4.0f * BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
+  float thiefAdShotVel = BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
+  f.shot.vel[0] *= 4.0f * thiefAdShotVel;
+  f.shot.vel[1] *= 4.0f * thiefAdShotVel;
+  f.shot.vel[2] *= 4.0f * thiefAdShotVel;
   setCurrentTime(getLastTime());
   endTime = f.lifetime;
 
@@ -886,9 +888,10 @@ MachineGunStrategy::MachineGunStrategy(ShotPath* path) :
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
   f.lifetime *= BZDB->eval(StateDatabase::BZDB_MGUNADLIFE);
-  f.shot.vel[0] *= BZDB->eval(StateDatabase::BZDB_MGUNADVEL);
-  f.shot.vel[1] *= BZDB->eval(StateDatabase::BZDB_MGUNADVEL);
-  f.shot.vel[2] *= BZDB->eval(StateDatabase::BZDB_MGUNADVEL);
+  float mgunAdVel = BZDB->eval(StateDatabase::BZDB_MGUNADVEL);
+  f.shot.vel[0] *= mgunAdVel;
+  f.shot.vel[1] *= mgunAdVel;
+  f.shot.vel[2] *= mgunAdVel;
   setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_MGUNADRATE));
 
   // make segments
@@ -943,9 +946,10 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
   f.lifetime *= BZDB->eval(StateDatabase::BZDB_LASERADLIFE);
-  f.shot.vel[0] *= BZDB->eval(StateDatabase::BZDB_LASERADVEL);
-  f.shot.vel[1] *= BZDB->eval(StateDatabase::BZDB_LASERADVEL);
-  f.shot.vel[2] *= BZDB->eval(StateDatabase::BZDB_LASERADVEL);
+  float laserAdVel = BZDB->eval(StateDatabase::BZDB_LASERADVEL);
+  f.shot.vel[0] *= laserAdVel;
+  f.shot.vel[1] *= laserAdVel;
+  f.shot.vel[2] *= laserAdVel;
   setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_LASERADRATE));
 
   // make segments
@@ -1158,23 +1162,25 @@ void			GuidedMissileStrategy::update(float dt)
     float newElevation = atan2f(desiredDir[2],
 				hypotf(desiredDir[1], desiredDir[0]));
 
+    float gmissileAng = BZDB->eval(StateDatabase::BZDB_GMISSILEANG);
+
     // compute new azimuth
     float deltaAzimuth = limitAngle(newAzimuth - azimuth);
-    if (fabsf(deltaAzimuth) <= dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG))
+    if (fabsf(deltaAzimuth) <= dt * gmissileAng)
       azimuth = limitAngle(newAzimuth);
     else if (deltaAzimuth > 0.0f)
-      azimuth = limitAngle(azimuth + dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG));
+      azimuth = limitAngle(azimuth + dt * gmissileAng);
     else
-      azimuth = limitAngle(azimuth - dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG));
+      azimuth = limitAngle(azimuth - dt * gmissileAng);
 
     // compute new elevation
     float deltaElevation = limitAngle(newElevation - elevation);
-    if (fabsf(deltaElevation) <= dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG))
+    if (fabsf(deltaElevation) <= dt * gmissileAng)
       elevation = limitAngle(newElevation);
     else if (deltaElevation > 0.0f)
-      elevation = limitAngle(elevation + dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG));
+      elevation = limitAngle(elevation + dt * gmissileAng);
     else
-      elevation = limitAngle(elevation - dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG));
+      elevation = limitAngle(elevation - dt * gmissileAng);
   }
   float newDirection[3];
   newDirection[0] = cosf(azimuth) * cosf(elevation);
@@ -1446,7 +1452,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
   f.lifetime *= BZDB->eval(StateDatabase::BZDB_SHOCKADLIFE);
 
   // make scene node
-  shockNode = new SphereSceneNode(path->getPosition(), BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS));
+  shockNode = new SphereSceneNode(path->getPosition(), radius);
   Player* p = lookupPlayer(path->getPlayer());
   TeamColor team = p ? p->getTeam() : RogueTeam;
   const float* c = Team::getRadarColor(team);

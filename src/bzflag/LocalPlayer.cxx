@@ -570,17 +570,22 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
 {
   float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
   float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  float factor;
+
   if (getFlag() == Flags::Obesity) {
-    length *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-    width *= 2.0f * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Tiny) {
-    length *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-    width *= 2.0f * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Thief) {
-    length *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    width *= 2.0f * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Narrow) {
     width = 0.0f;
@@ -604,17 +609,21 @@ bool			LocalPlayer::getHitNormal(const Obstacle* o,
 {
   float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
   float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  float factor;
   if (getFlag() == Flags::Obesity) {
-    length *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-    width *= 2.0f * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Tiny) {
-    length *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-    width *= 2.0f * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Thief) {
-    length *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    width *= 2.0f * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Narrow) {
     width = 0.0f;

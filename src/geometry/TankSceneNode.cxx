@@ -21,7 +21,7 @@
 #include "StateDatabase.h"
 
   //Modifiers for Normal, Obese. Tiny and Thin
-static const GLfloat styleFactors[5][3] = {
+static GLfloat styleFactors[5][3] = {
 			{ 1.0f, 1.0f, 1.0f },
 			{ BZDB->eval(StateDatabase::BZDB_OBESEFACTOR), BZDB->eval(StateDatabase::BZDB_OBESEFACTOR), 1.0f },
 			{ BZDB->eval(StateDatabase::BZDB_TINYFACTOR), BZDB->eval(StateDatabase::BZDB_TINYFACTOR), 1.0f },
@@ -45,7 +45,15 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				highRenderNode(this),
 				shadowRenderNode(this)
 {
-  // prepare geometry
+  // setup style factors (BZDB isn't set up at global init time
+  styleFactors[1][0] = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  styleFactors[1][1] = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  styleFactors[2][0] = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  styleFactors[2][1] = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  styleFactors[4][0] = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  styleFactors[4][1] = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+			
+			// prepare geometry
   move(pos, forward);
   baseRadius = 0.25f * (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) +
 			BZDB->eval(StateDatabase::BZDB_TANKWIDTH) * BZDB->eval(StateDatabase::BZDB_TANKWIDTH) +

@@ -3663,6 +3663,8 @@ static void		restartPlaying()
       // (mine don't count because I can't come alive before all my
       // shots have expired anyway)
       const int maxShots = World::getWorld()->getMaxShots();
+      float tankLength = BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
+      float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
       for (int j = 0; j < maxShots; j++) {
 	// get shot and ignore non-existent ones
 	ShotPath* shot = player[i]->getShot(j);
@@ -3673,7 +3675,7 @@ static void		restartPlaying()
 	// larger than the actual tank size to give some leeway.
 	const Ray ray(shot->getPosition(), shot->getVelocity());
 	const float t = timeRayHitsBlock(ray, startPoint, startAzimuth,
-				4.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 4.0f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH),
+				4.0f * tankLength, 4.0f * tankWidth,
 				2.0f * TankHeight);
 	if (t >= 0.0f && t < MinShotImpact) {
 	  located = false;
@@ -4348,8 +4350,9 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
   //	0.49*TankWidth of a building at any orientation which means they
   //	could penetrate buildings.  it's either this or have robots go
   //	dead when they (or the target) moves within a dead-zone.
-  const float w = obstacle.getWidth() + 0.49f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
-  const float h = obstacle.getBreadth() + 0.49f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  const float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  const float w = obstacle.getWidth() + 0.49f * tankWidth;
+  const float h = obstacle.getBreadth() + 0.49f * tankWidth;
   const float xx =  w * cosf(a);
   const float xy =  w * sinf(a);
   const float yx = -h * sinf(a);
