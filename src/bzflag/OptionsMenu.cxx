@@ -142,8 +142,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL),
   glGetIntegerv(GL_DEPTH_BITS, &value);
   if (value == 0) {
     options->push_back(std::string("Not available"));
-  }
-  else {
+  } else {
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
   }
@@ -186,8 +185,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL),
   int numFormats = display->getNumResolutions();
   if (numFormats < 2) {
     videoFormat = NULL;
-  }
-  else {
+  } else {
     videoFormat = label = new HUDuiLabel;
     label->setFont(MainMenu::getFont());
     label->setLabel("Change Video Format");
@@ -201,8 +199,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL),
   option->setCallback(callback, (void*)"g");
   if (window->hasGammaControl()) {
     option->createSlider(15);
-  }
-  else {
+  } else {
     options = &option->getList();
     options->push_back(std::string("Unavailable"));
   }
@@ -280,27 +277,22 @@ void OptionsMenu::execute()
   if (focus == videoFormat) {
     if (!formatMenu) formatMenu = new FormatMenu;
     HUDDialogStack::get()->push(formatMenu);
-  }
-  else if (focus == guiOptions) {
+  } else if (focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
     HUDDialogStack::get()->push(guiOptionsMenu);
-  }
-  else if (focus == clearCache) {
+  } else if (focus == clearCache) {
     if ((ServerListCache::get())->clearCache()){
       controlPanel->addMessage("Cache Cleared");
     } else {
       // already cleared -- do nothing
     }
-  }
-  else if (focus == saveWorld) {
+  } else if (focus == saveWorld) {
     if (!saveWorldMenu) saveWorldMenu = new SaveWorldMenu;
     HUDDialogStack::get()->push(saveWorldMenu);
-  }
-  else if (focus == inputSetting) {
+  } else if (focus == inputSetting) {
     if (!inputMenu) inputMenu = new InputMenu;
     HUDDialogStack::get()->push(inputMenu);
-  }
-  else if (focus == audioSetting) {
+  } else if (focus == audioSetting) {
     if (!audioMenu) audioMenu = new AudioMenu;
     HUDDialogStack::get()->push(audioMenu);
   }

@@ -95,6 +95,7 @@ public:
   void		setInputMethod(InputMethod newInput);
   void		setInputMethod(std::string newInput);
   static std::string	getInputMethodName(InputMethod whatInput);
+  bool		queryInputChange();
   void		setKeyboardSpeed(float speed);
   void		setKeyboardAngVel(float angVel);
   float		getKeyboardSpeed() const;
@@ -149,6 +150,7 @@ private:
   const Player*	recipient;
   static LocalPlayer*	mainPlayer;
   InputMethod	inputMethod;
+  bool		inputChanged;
   float		keyboardSpeed;
   float		keyboardAngVel;
   int		keyButton;
@@ -196,6 +198,7 @@ inline LocalPlayer::InputMethod LocalPlayer::getInputMethod() const
 inline void LocalPlayer::setInputMethod(InputMethod newInput)
 {
   inputMethod = newInput;
+  inputChanged = true;
 }
 
 inline void LocalPlayer::setInputMethod(std::string newInput)
@@ -203,8 +206,15 @@ inline void LocalPlayer::setInputMethod(std::string newInput)
   // FIXME - using hardcoded upper bound is ugly
   for (int i = 0; i < 3; i++) {
     if (newInput == getInputMethodName((InputMethod)i))
-      inputMethod = (InputMethod)i;
+      setInputMethod((InputMethod)i);
   }
+}
+
+inline bool LocalPlayer::queryInputChange()
+{
+  const bool returnVal = inputChanged;
+  inputChanged = false;
+  return returnVal;
 }
 
 inline void LocalPlayer::setKeyboardSpeed(float speed)

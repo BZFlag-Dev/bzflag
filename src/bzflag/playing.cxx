@@ -493,7 +493,7 @@ void setRoamingLabel(bool force)
     hud->setRoamingLabel("Roaming");
 }
 
-static void		showKeyboardStatus()
+static void		showInputStatus()
 {
   if (myTank->getInputMethod() == LocalPlayer::Keyboard)
     controlPanel->addMessage("Keyboard movement");
@@ -679,10 +679,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	case BzfKeyEvent::Right:
 	case BzfKeyEvent::Up:
 	case BzfKeyEvent::Down:
-	  if (BZDB.isTrue("allowInputChange")) {
+	  if (BZDB.isTrue("allowInputChange"))
 	    myTank->setInputMethod(LocalPlayer::Keyboard);
-	    showKeyboardStatus();
-	  }
 	  break;
 	}
     } else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
@@ -1175,10 +1173,8 @@ static void		doEvent(BzfDisplay* display)
     break;
 
   case BzfEvent::MouseMove:
-    if (myTank && myTank->isAlive() && (myTank->getInputMethod() != LocalPlayer::Mouse) && (BZDB.isTrue("allowInputChange"))) {
+    if (myTank && myTank->isAlive() && (myTank->getInputMethod() != LocalPlayer::Mouse) && (BZDB.isTrue("allowInputChange")))
       myTank->setInputMethod(LocalPlayer::Mouse);
-      showKeyboardStatus();
-    }
     break;
 
   default:
@@ -4485,6 +4481,10 @@ static void		playingLoop()
       }
     }
 
+    // notify if input changed
+    if ((myTank != NULL) && (myTank->queryInputChange() == true))
+      showInputStatus();
+
     // reposition flags
     updateFlags(dt);
 
@@ -4520,16 +4520,14 @@ static void		playingLoop()
 	myTankPos = defaultPos;
 	myTankDir = defaultDir;
 	fov = 60.0f;
-      }
-      else {
+      } else {
 	myTankPos = myTank->getPosition();
 	myTankDir = myTank->getForward();
 
 	if (viewType == SceneRenderer::ThreeChannel) {
 	  if (myTank->getFlag() == Flags::WideAngle) fov = 90.0f;
 	  else fov = (BZDB.isTrue("displayBinoculars") ? 12.0f : 45.0f);
-	}
-	else {
+	} else {
 	  if (myTank->getFlag() == Flags::WideAngle) fov = 120.0f;
 	  else fov = (BZDB.isTrue("displayBinoculars") ? 15.0f : 60.0f);
 	}
