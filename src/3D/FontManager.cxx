@@ -218,6 +218,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
     return;
   }
 
+  // don't scale tiny fonts
+  size = getClosestRealSize(faceID, size);
+
   float scale = size / (float)pFont->getSize();
 
   /* 
@@ -382,6 +385,9 @@ float FontManager::getStrLength(int faceID, float size, std::string text)
     return 0;
   }
 
+  // don't scale tiny fonts
+  size = getClosestRealSize(faceID, size);
+
   float scale = size / (float)pFont->getSize();
 
   return pFont->getStrLength(scale, stripAnsiCodes(text).c_str());
@@ -392,7 +398,7 @@ float FontManager::getStrLength(std::string face, float size, std::string text)
   return getStrLength(getFaceID(face), size, text);
 }
 
-float FontManager::getStrHeight(int /*faceID*/, float size, std::string text)
+float FontManager::getStrHeight(int faceID, float size, std::string text)
 {
   int lines = 1;
 
@@ -402,6 +408,9 @@ float FontManager::getStrHeight(int /*faceID*/, float size, std::string text)
     if (text[i] == '\n')
       lines++;
   }
+
+  // don't scale tiny fonts
+  size = getClosestRealSize(faceID, size);
 
   return (lines * size * 1.5f);
 }
@@ -452,6 +461,27 @@ TextureFont* FontManager::getClosestSize(int faceID, float size)
     pFont = fontFaces[faceID].rbegin()->second;
 
   return pFont;
+}
+
+float	    FontManager::getClosestRealSize(int faceID, float desiredSize)
+{
+  /* 
+   * tiny fonts scale poorly, this function will return the nearest unscaled size of a font
+   * if the font is too tiny to scale, and a scaled size if it's big enough.
+   */
+
+  if (desiredSize < 14.0f) {
+    // get the next biggest font size from requested
+    TextureFont* font = getClosestSize(faceID, desiredSize);
+    if (!font) {
+      DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
+	     "requested size %f\n", faceID, desiredSize);
+      return 0;
+    }
+    return (float)font->getSize();
+  } else {
+    return desiredSize;
+  }
 }
 
 void	    FontManager::getBlinkColor(const GLfloat *color, GLfloat *blinkColor) const

@@ -49,7 +49,7 @@ public:
   float getStrLength(int faceID, float size, std::string text);
   float getStrLength(std::string face, float size, std::string text);
 
-  float getStrHeight(int /*faceID*/, float size, std::string text);
+  float getStrHeight(int faceID, float size, std::string text);
   float getStrHeight(std::string face, float size, std::string text);
 
   void unloadAll(void);
@@ -60,6 +60,7 @@ protected:
 private:
   void		getBlinkColor(const GLfloat* color, GLfloat* blinkColor) const;
   TextureFont*	getClosestSize(int faceID, float size);
+  float		getClosestRealSize(int faceID, float size);
   FontFaceMap	faceNames;
   FontFaceList  fontFaces;
 };
