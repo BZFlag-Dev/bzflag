@@ -26,11 +26,8 @@
 #include "ViewFrustum.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "TextureManager.h"
 #include <string.h>
-
-static const char*	groundFilename = "ground";
-static const char*	cloudFilename = "clouds";
-static const char*	mountainFilename = "mountain";
 
 static const GLfloat	squareShape[4][2] =
 				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },
@@ -86,11 +83,12 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     resizeSky();
   }
 
+  TextureManager *tm = TextureManager::getTextureManager();
+
   // ground
   {
     // load texture
-    OpenGLTexture groundTexture = getTexture(groundFilename,
-					OpenGLTexture::LinearMipmapLinear);
+    OpenGLTexture *groundTexture = tm->getTexture( TX_GROUND );
 
     // gstates
     gstate.reset();
@@ -99,11 +97,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.setMaterial(defaultMaterial);
     groundGState[1] = gstate.getState();
     gstate.reset();
-    gstate.setTexture(groundTexture);
+    gstate.setTexture(*groundTexture);
     groundGState[2] = gstate.getState();
     gstate.reset();
     gstate.setMaterial(defaultMaterial);
-    gstate.setTexture(groundTexture);
+    gstate.setTexture(*groundTexture);
     groundGState[3] = gstate.getState();
   }
 
@@ -148,15 +146,14 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // make cloud stuff
   cloudsAvailable = false;
-  OpenGLTexture cloudsTexture = getTexture(cloudFilename,
-					OpenGLTexture::LinearMipmapLinear);
-  if (cloudsTexture.isValid()) {
+  OpenGLTexture *cloudsTexture = tm->getTexture( TX_CLOUDS );
+  if (cloudsTexture->isValid()) {
     cloudsAvailable = true;
     gstate.reset();
     gstate.setShading();
     gstate.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     gstate.setMaterial(defaultMaterial);
-    gstate.setTexture(cloudsTexture);
+    gstate.setTexture(*cloudsTexture);
     gstate.setAlphaFunc();
     cloudsGState = gstate.getState();
   }
@@ -170,7 +167,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     // border pixels from adjacent textures, so must add 2 pixels to
     // width of each texture (if the texture gets split up).
     int width, height, depth;
-    unsigned char* mountainImage = getTextureImage(mountainFilename,
+    unsigned char* mountainImage = getTextureImage("mountains",
 							width, height, depth);
     if (mountainImage) {
       mountainsAvailable = true;

@@ -46,6 +46,10 @@ TextureInit loader[] =
 	{ TX_THIEF, NO_VARIANT, "thief", OpenGLTexture::Max },
 	{ TX_MISSILE, NO_VARIANT, "missile", OpenGLTexture::Max },
 
+	{ TX_GROUND, NO_VARIANT, "ground", OpenGLTexture::LinearMipmapLinear },
+	{ TX_CLOUDS, NO_VARIANT, "clouds", OpenGLTexture::LinearMipmapLinear },
+	{ TX_MOUNTAIN, NO_VARIANT, "mountain", OpenGLTexture::LinearMipmapLinear },
+
 };
 
 
