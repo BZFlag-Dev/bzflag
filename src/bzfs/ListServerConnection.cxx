@@ -184,7 +184,10 @@ void ListServerLink::read()
 	int playerIndex = getTarget(callsign);
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  if (!playerData->accessInfo.hasRealPassword()) {
+	  // don't accept the global auth if there's a local account of the same name
+	  // and the local account is not marked as being the same as the global account
+	  if (!playerData->accessInfo.hasRealPassword() 
+	      || playerData->accessInfo.getUserInfo(callsign).hasGroup("LOCAL.GLOBAL")) {
 	    if (!playerData->accessInfo.isRegistered())
 	      playerData->accessInfo.storeInfo(NULL);
 	    playerData->accessInfo.setPermissionRights();
@@ -196,15 +199,18 @@ void ListServerLink::read()
 	      //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
 	      group = nextgroup;
 	    }
+	    // automatically give global users permission to use local accounts
+	    // since they either already have it, or there's no existing local account.
+	    playerData->accessInfo.addGroup("LOCAL.GLOBAL");
 	    sendMessage(ServerPlayer, playerIndex, "Global login approved!");
 	    sendIPUpdate(playerIndex, -1);
 	    sendPlayerInfo();
 	  } else {
-	    // if a player by this name has already /registered locally on this server
-	    // then don't set any permissions for them
 	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
-			"This callsign is registered locally on this server, please ask "
-			"an admin to deregister it.");
+			"This callsign is registered locally on this server.  If it is "
+			"yours, please ask an admin to grant it membership in the "
+			"LOCAL.GLOBAL group.  If it is not yours, please ask an admin "
+			"to deregister it so that you may use your global callsign.");
 	  }
 	  playerData->player.clearToken();
 	}
