@@ -122,7 +122,9 @@ protected:
   WINDOW* cmdWin;
   WINDOW* menuWin;
   
-  bool inMenu;
+  // 0 = no menu, 1 = menu is visible and handles keystrokes, 2 = menu is
+  // visible but command prompt handles keystrokes
+  int menuState;
   CursesMenu menu;
   
   std::string cmd;

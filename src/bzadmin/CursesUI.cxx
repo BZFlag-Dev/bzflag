@@ -22,7 +22,7 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 
 CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
-  inMenu(false), menu(p), players(p), me(m), maxHistory(20), 
+  menuState(0), menu(p), players(p), me(m), maxHistory(20), 
   currentHistory(0), maxBufferSize(300) {
 
   // initialize ncurses
@@ -131,7 +131,7 @@ bool CursesUI::checkCommand(std::string& str) {
   }
   
   // if the menu is active, use the keystrokes for that
-  if (inMenu)
+  if (menuState == 1)
     return menu.handleKey(c, str);
   
   // if not, go ahead and parse commands
@@ -342,22 +342,27 @@ void CursesUI::updateCmdWin() {
 
 
 void CursesUI::toggleMenu() {
-  if (!inMenu) {
+  if (menuState == 0) {
+    menuState = 1;
+    curs_set(0);
     wresize(mainWin, LINES - 2 - (LINES - 2) / 2, COLS);
     mvwin(mainWin, (LINES - 2) / 2, 0);
     updateMainWinFromBuffer(LINES - 2 - (LINES - 2) / 2);
-    inMenu = true;
     menuWin = newwin((LINES - 2) / 2, 0, 0, 0);
     menu.setWindow(menuWin);
     menu.showMenu();
   }
+  else if (menuState == 1) {
+    menuState = 2;
+    curs_set(1);
+  }
   else {
+    menuState = 0;
     menu.setWindow(NULL);
     delwin(menuWin);
     wresize(mainWin, LINES - 2, COLS);
     mvwin(mainWin, 0, 0);
     updateMainWinFromBuffer(LINES - 2);
-    inMenu = false;
   }
   wrefresh(targetWin);
   wrefresh(cmdWin);
