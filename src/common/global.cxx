@@ -18,11 +18,9 @@
 
 
 const struct GlobalDBItem globalDBItems[] = {
-  { "_agilityAdVel",		"_velocityAd*0.9",		false, StateDatabase::Locked},
-  { "_agilityAdAngVel",		"_angularAd*0.9",		false, StateDatabase::Locked},
-  { "_agilityDodgeCount",	"5.0",				false, StateDatabase::Locked},
-  { "_agilityTimeWindow",	"2.0",				false, StateDatabase::Locked},
-  { "_agilityVelDelta",		"0.4",				false, StateDatabase::Locked},
+  { "_agilityAdVel",		"2.25",				false, StateDatabase::Locked},
+  { "_agilityTimeWindow",	"0.25",				false, StateDatabase::Locked},
+  { "_agilityVelDelta",	        "0.5",				false, StateDatabase::Locked},
   { "_angleTolerance",		"0.01",				false, StateDatabase::Locked},
   { "_angularAd",		"1.5",				false, StateDatabase::Locked},
   { "_avenueSize",		"2.0*_boxBase",			false, StateDatabase::Locked},

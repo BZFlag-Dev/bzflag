@@ -47,7 +47,6 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   stuckingFrameCount(0),
   spawning(false),
   wingsFlapCount(0),
-  dodgeCount(0),
   handicap(0.0f)
 {
   // initialize shots array to no shots fired
@@ -852,8 +851,6 @@ void			LocalPlayer::setTeam(TeamColor team)
 void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
   FlagType* flag = getFlag();
-  float previousFraction = fracOfMaxSpeed;
-
   // can't go faster forward than at top speed, and backward at half speed
   if (fracOfMaxSpeed > 1.0f) fracOfMaxSpeed = 1.0f;
   else if (fracOfMaxSpeed < -0.5f) fracOfMaxSpeed = -0.5f;
@@ -876,19 +873,18 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   } else if ((flag == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0)) {
     fracOfMaxSpeed = 0.0f;
   } else if (flag == Flags::Agility) {
-    dodgeCount= 10;
-    if (dodgeCount-- > 0) {
+    if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW)) {
       fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
     } else {
-      // make sure we are dodging campared to our previous acceleration
-      if (fabs(fracOfMaxSpeed - previousFraction) > BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA)) {
-	// we've changed direction so reset dodge count
-	if ((fracOfMaxSpeed * previousFraction < 0.0f) || 
-	    (fabs(fracOfMaxSpeed) > fabs(previousFraction))) {
-	  dodgeCount = (int)BZDB.eval(StateDatabase::BZDB_AGILITYDODGECOUNT);
-	}
+      const float oldFrac = desiredSpeed / BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+      float limit = BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA);
+      if (fracOfMaxSpeed < 0.0f)
+	limit /= 2.0f;
+      if (fabs(fracOfMaxSpeed - oldFrac) > limit) {
+        fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+	agilityTime = TimeKeeper::getCurrent();
       }
-    }
+    }      
   }
 
   // apply handicap advantage to tank speed
@@ -917,8 +913,6 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
     fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_ANGULARAD);
   } else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
     fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
-  } else if (flag == Flags::Agility) {
-    fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_AGILITYADANGVEL);
   }
 
   // set desired turn speed

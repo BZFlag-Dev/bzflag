@@ -138,6 +138,7 @@ private:
   FiringStatus	firingStatus;
   TimeKeeper	jamTime;
   TimeKeeper    bounceTime;
+  TimeKeeper	agilityTime;
   float		flagShakingTime;
   int		flagShakingWins;
   float		flagAntidotePos[3];
@@ -161,7 +162,6 @@ private:
   int           stuckingFrameCount;
   bool		spawning;
   int		wingsFlapCount;
-  int		dodgeCount;
   float		handicap;
 };
 
