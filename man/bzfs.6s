@@ -13,7 +13,7 @@ bzfs \- BZFlag game server
 [\fB\-banfile \fIfilename\fR]
 [\fB\-c\fR]
 [\fB\-conf \fIconfigfile\fR]
-[\fB\-cr \fR[\fIcount\fR]]
+[\fB\-cr \fR[\fIdensity\fR]]
 [\fB\-d\fR]
 [\fB\+f \fR{\fIgood\fR|\fIbad\fR|\fIflag-id\fR}[\fI{count}\fR]]
 [\fB\-f \fR{\fIgood\fR|\fIbad\fR|\fIflag-id\fR}]
