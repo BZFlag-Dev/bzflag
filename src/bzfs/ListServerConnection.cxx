@@ -244,10 +244,11 @@ void ListServerLink::addMe(PingPacket pingInfo,
   pingInfo.packHex(gameInfo);
 
   // send ADD message (must send blank line)
-  msg = string_util::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s HTTP/1.1\r\n"
+  msg = string_util::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s&title=%s HTTP/1.1\r\n"
     "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
     pathname.c_str(), publicizedAddress.c_str(),
     getServerVersion(), gameInfo,
+    getAppVersion(),
     publicizedTitle.c_str(),
     hostname.c_str());
   sendMessage(msg);
