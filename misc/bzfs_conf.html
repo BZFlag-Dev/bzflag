@@ -196,9 +196,19 @@
 						d.writeln("-userdb \"" + mainform.userdb.value + "\"<br/><br/>");
 					}
 
-					if (mainform.vars.value.length > 0) {
-						d.writeln("#File that stores world parameter variable overrides<br/>");
-						d.writeln("-vars \"" + mainform.vars.value + "\"<br/><br/>");
+					if (mainform.filtercallsigns.checked) {
+						d.writeln("#Filter callsigns to disallow inappropriate user names<br/>");
+						d.writeln("-filterCallsigns<br/><br/>");
+					}
+
+					if (mainform.filterchat.checked) {
+						d.writeln("#Filter chat messages<br/>");
+						d.writeln("-filterChat<br/><br/>");
+					}
+
+					if (mainform.filtersimple.checked) {
+						d.writeln("#Perform simple exact matches with the bad word list<br/>");
+						d.writeln("-filterSimple<br/><br/>");
 					}
 
 					if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
@@ -284,6 +294,11 @@
 					if (mainform.teamflagzap_timeout.value != 30) {
 						d.writeln("#Time to keep team flag around after last member has left [s]<br/>");
 						d.writeln("-tftimeout " + mainform.teamflagzap_timeout.value + "<br/><br/>");
+					}
+
+					if (mainform.vars.value.length > 0) {
+						d.writeln("#File that stores world parameter variable overrides<br/>");
+						d.writeln("-vars \"" + mainform.vars.value + "\"<br/><br/>");
 					}
 
 					if (mainform.allow_jumping.checked) {
@@ -495,12 +510,15 @@
 					<tr>
 						<td>User Privilege Database</td>
 						<td><input type="file" name="userdb" title="File that stores user privileges"/></td>
+						<td>Filter Callsigns</td>
+						<td><input type="checkbox" name="filtercallsigns" title="Filter callsigns to disallow inappropriate user names"/></td>
 					</tr>
 					<tr>
-						<td>World Property Variables file</td>
-						<td><input type="file" name="vars" title="File that stores world variable overrides"/></td>
+						<td>Filter Chat</td>
+						<td><input type="checkbox" name="filterchat" title="Filter chat messages"/></td>
+						<td>Filter Simple</td>
+						<td><input type="checkbox" name="filtersimple" title="Perform simple exact matches with the bad word list"/></td>
 					</tr>
-
 				</table>
 			</fieldset>
 			<br/>
@@ -584,6 +602,8 @@
 					<tr>
 						<td>Team flag zap timeout</td>
 						<td><input type="text" name="teamflagzap_timeout" value="30" title="Time to keep team flag after all members have left [s]"/></td>
+						<td>World Property Variables file</td>
+						<td><input type="file" name="vars" title="File that stores world variable overrides"/></td>
 					</tr>
 				</table>
 			</fieldset>
