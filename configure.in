@@ -434,9 +434,8 @@ if test x$enable_debug = xyes; then
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     case $host_os in
-	linux-gnu|cygwin|mingw32)
-		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
-		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";;
+	 linux-gnu|cygwin|mingw32)
+		CXXFLAGS="$CXXFLAGS -ffast-math -fno-exceptions";;
 	 solaris*)
 		CFLAGS="$CFLAGS -O";
 		CXXFLAGS="$CXXFLAGS -O";;
