@@ -440,8 +440,11 @@ in parentheses:
 .B High Speed (V)
 Boosts top speed by 50%.
 .TP
-.B Quick Turn (A)
+.B Quick Turn (QT)
 Boosts turn rate by 50%.
+.TP
+.B Agility (A)
+Improves a tank's dodging capabilities.
 .TP
 .B Oscillation Overthruster (OO)
 Let's the tank go through buildings.  You cannot back up in or into
@@ -564,10 +567,10 @@ Prevents the tank from turning right.
 .B Right Turn Only (->)
 Prevents the tank from turning left.
 .TP
-.B Forward Only (<-)
+.B Forward Only (FO)
 Prevents the tank from going backwards.
 .TP
-.B Reverse Only (->)
+.B Reverse Only (RO)
 Prevents the tank from going forward.
 .TP
 .B Momentum (M)
