@@ -1715,6 +1715,32 @@ static void		doMotion()
 				mp[0],mp[1],tp[0],tp[1]);
 #endif
 	}
+
+	if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
+	   //teach autopilot bad habits
+	   const float *apPos = myTank->getPosition();
+           for (t = 0; t < maxPlayers; t++) {
+		if ((t == myTank->getId()) || (player[t] == NULL) || !player[t]->isAlive() ||
+		    player[t]->isPaused())
+		    continue;
+		int maxShots = player[t]->getMaxShots();
+		for (int s = 0; s < maxShots; s++) {
+		  ShotPath* shot = player[t]->getShot(s);
+		  if (shot == NULL)
+		    continue;
+		  const float* shotPos = shot->getPosition();
+		  if (abs(shotPos[2] - apPos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
+		    continue;
+		  float dist = hypot(shotPos[0] - apPos[0], shotPos[1] - apPos[1]);
+		  if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
+		    myTank->jump();
+		    s = maxShots;
+		    t = maxPlayers;
+		  }
+		}
+
+	   }
+	}
   }
   else if (myTank->isKeyboardMoving()) {
     rotation = myTank->getKeyboardAngVel();
