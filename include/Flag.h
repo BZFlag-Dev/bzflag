@@ -43,35 +43,40 @@
 #ifndef	BZF_FLAG_H
 #define	BZF_FLAG_H
 
+#include "common.h"
+
+/* system interface headers */
 #include <set>
 #include <map>
-#include "common.h"
+
+/* common interface headers */
 #include "global.h"
 #include "Address.h"
 
+
 enum FlagStatus {
-			FlagNoExist = 0,
-			FlagOnGround,
-			FlagOnTank,
-			FlagInAir,
-			FlagComing,
-			FlagGoing
+  FlagNoExist = 0,
+  FlagOnGround,
+  FlagOnTank,
+  FlagInAir,
+  FlagComing,
+  FlagGoing
 };
 enum FlagEndurance {
-			FlagNormal = 0,		// permanent flag
-			FlagUnstable = 1,	// disappears after use
-			FlagSticky = 2		// can't be dropped normally
+  FlagNormal = 0,		// permanent flag
+  FlagUnstable = 1,	// disappears after use
+  FlagSticky = 2		// can't be dropped normally
 };
 
 enum FlagQuality {
-			FlagGood = 0,
-			FlagBad = 1,
-			NumQualities
+  FlagGood = 0,
+  FlagBad = 1,
+  NumQualities
 };
 
 enum ShotType {
-			NormalShot = 0,
-			SpecialShot = 1
+  NormalShot = 0,
+  SpecialShot = 1
 };
 
 const int		FlagPLen = 6 + PlayerIdPLen + 48;
@@ -80,64 +85,82 @@ class FlagType;
 typedef std::map<std::string, FlagType*> FlagTypeMap;
 
 class FlagType {
-  public:
-    FlagType( const char* name, const char* abbv, FlagEndurance _endurance,
-	      ShotType sType, FlagQuality quality, TeamColor team, const char* help ) {
-      flagName = name;
-      flagAbbv = abbv;
-      endurance = _endurance;
-      flagShot = sType;
-      flagQuality = quality;
-      flagHelp = help;
-      flagTeam = team;
+public:
+  FlagType( const char* name, const char* abbv, FlagEndurance _endurance,
+	    ShotType sType, FlagQuality quality, TeamColor team, const char* help ) {
+    flagName = name;
+    flagAbbv = abbv;
+    endurance = _endurance;
+    flagShot = sType;
+    flagQuality = quality;
+    flagHelp = help;
+    flagTeam = team;
 
-      flagSets[flagQuality].insert(this);
-      getFlagMap()[flagAbbv] = this;
-      flagCount++;
-    }
+    flagSets[flagQuality].insert(this);
+    getFlagMap()[flagAbbv] = this;
+    flagCount++;
+  }
 
-    const float*	getColor();
-    void* pack(void* buf) const;
-    static void* unpack(void* buf, FlagType* &desc);
-    /** Static wrapper function that makes sure that the flag map is
-	initialized before it's used. */
-    static FlagTypeMap& getFlagMap();
+  /** returns a label of flag name and abbreviation with the flag name
+   * excentuating the abbreviation if relevant.
+   */
+  const std::string label() const;
 
-    const char*		flagName;
-    const char*		flagAbbv;
-    FlagEndurance	endurance;
-    const char*		flagHelp;
-    FlagQuality		flagQuality;
-    ShotType		flagShot;
-    TeamColor		flagTeam;
+  /** returns information about a flag including the name, abbreviation, and
+   * description.  format is "name ([+|-]abbrev): description" where +|-
+   * indicates whether the flag is inherintly good or bad by default.
+   */
+  const std::string information() const;
 
-    typedef std::set<FlagType*> FlagSet;
-    static int		flagCount;
-    static FlagSet	flagSets[NumQualities];
+  /** returns the color of the flag */
+  const float* getColor() const;
+
+  /** network serialization */
+  void* pack(void* buf) const;
+
+  /** network deserialization */
+  static void* unpack(void* buf, FlagType* &desc);
+
+  /** Static wrapper function that makes sure that the flag map is
+   * initialized before it's used. 
+   */
+  static FlagTypeMap& getFlagMap();
+
+  const char* flagName;
+  const char* flagAbbv;
+  FlagEndurance	endurance;
+  const char* flagHelp;
+  FlagQuality flagQuality;
+  ShotType flagShot;
+  TeamColor flagTeam;
+
+  typedef std::set<FlagType*> FlagSet;
+  static int flagCount;
+  static FlagSet flagSets[NumQualities];
 };
+
 
 typedef FlagType::FlagSet  FlagSet;
 
 class Flag {
-  public:
-    void*		pack(void*) const;
-    void*		unpack(void*);
+public:
+  void* pack(void*) const;
+  void* unpack(void*);
 
-    static FlagSet&	getGoodFlags();
-    static FlagSet&	getBadFlags();
-    static FlagType*	getDescFromAbbreviation(const char* abbreviation);
+  static FlagSet& getGoodFlags();
+  static FlagSet& getBadFlags();
+  static FlagType* getDescFromAbbreviation(const char* abbreviation);
 
-  public:
-    FlagType*		type;
-    FlagStatus		status;
-    FlagEndurance	endurance;
-    PlayerId		owner;			// who has flag
-    float		position[3];		// position on ground
-    float		launchPosition[3];	// position flag launched from
-    float		landingPosition[3];	// position flag will land
-    float		flightTime;		// flight time so far
-    float		flightEnd;		// total duration of flight
-    float		initialVelocity;	// initial launch velocity
+  FlagType* type;
+  FlagStatus status;
+  FlagEndurance	endurance;
+  PlayerId owner;		// who has flag
+  float position[3];		// position on ground
+  float launchPosition[3];	// position flag launched from
+  float landingPosition[3];	// position flag will land
+  float flightTime;		// flight time so far
+  float flightEnd;		// total duration of flight
+  float initialVelocity;	// initial launch velocity
 };
 
 // Flags no longer use enumerated IDs. Over the wire, flags are all represented
@@ -149,7 +172,7 @@ class Flag {
 //
 namespace Flags {
   extern FlagType
-    *Null,
+  *Null,
     *RedTeam, *GreenTeam, *BlueTeam, *PurpleTeam, *Velocity, *QuickTurn,
     *OscillationOverthruster, *RapidFire, *MachineGun, *GuidedMissile, *Laser,
     *Ricochet, *SuperBullet, *InvisibleBullet, *Stealth, *Tiny, *Narrow,
