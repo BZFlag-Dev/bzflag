@@ -89,7 +89,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   {
     // load texture for normal ground
     OpenGLTexture *groundTexture = NULL;
-    
+
     if (userTextures[0].size())
       groundTexture = tm.getTexture( userTextures[0].c_str(),false );
 
@@ -509,9 +509,10 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
 // draw in world space
 void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 {
-	if (!blank) {
-		// do your drawing here
-	}
+  // use renderer to avoid a warning =)
+  if (&renderer && !blank) {
+    // do your drawing here
+  }
 }
 
 void BackgroundRenderer::resizeSky() {
