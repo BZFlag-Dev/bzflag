@@ -1525,10 +1525,10 @@ static void				handleServerMessage(bool human, uint16_t code,
 			TeamColor dstTeam = PlayerIdToTeam(dst);
 			bool toAll = (dst == AllPlayers);
 			bool fromServer = (src == ServerPlayer);
-			const string srcName=srcPlayer ?
+			const std::string srcName=srcPlayer ?
 			  srcPlayer->getCallSign() :
 			  fromServer ? "SERVER" : "(UNKNOWN)";
-			const string dstName=dstPlayer ?
+			  const std::string dstName=dstPlayer ?
 			  dstPlayer->getCallSign() : "(UNKNOWN)";
 
 			if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
