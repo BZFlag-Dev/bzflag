@@ -5661,7 +5661,13 @@ int main(int argc, char **argv)
     readPermsFile(userDatabaseFile);
 
 
-  /* MAIN SERVER RUN LOOP */
+  /* MAIN SERVER RUN LOOP
+   *
+   * the main loop runs at approximately 2 iterations per 5 seconds
+   * when there are no players on the field.  this can increase to
+   * about 100 iterations per 5 seconds with a single player, though
+   * average is about 20-40 iterations per five seconds.
+   **/
   int i;
   while (!done) {
     // prepare select set
