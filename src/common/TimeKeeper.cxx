@@ -218,7 +218,7 @@ void TimeKeeper::sleep(float seconds)
   usleep((unsigned int)(1.0e6 * seconds));
   return;
 #endif
-#ifdef HAVE_SLEEP
+#if defined(HAVE_SLEEP) && !defined(__APPLE__)
   // equivalent to _sleep() on win32 (not sleep(3))
   Sleep((DWORD)(seconds * 1000));
   return;
