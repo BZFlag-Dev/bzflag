@@ -544,9 +544,12 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       int w = mainWindow->getWidth();
       int h = mainWindow->getHeight();
       unsigned char* b = (unsigned char*)malloc(w * h * 3);
-      glReadPixels(0, 0, w, h, GL_RED, GL_UNSIGNED_BYTE, b + 0 * w * h);
-      glReadPixels(0, 0, w, h, GL_GREEN, GL_UNSIGNED_BYTE, b + 1 * w * h);
-      glReadPixels(0, 0, w, h, GL_BLUE, GL_UNSIGNED_BYTE, b + 2 * w * h);
+      //glReadPixels(0, 0, w, h, GL_RED, GL_UNSIGNED_BYTE, b + 0 * w * h);
+      //glReadPixels(0, 0, w, h, GL_GREEN, GL_UNSIGNED_BYTE, b + 1 * w * h);
+      //glReadPixels(0, 0, w, h, GL_BLUE, GL_UNSIGNED_BYTE, b + 2 * w * h);
+      // use something like netpbm and the following command to get usable images
+      // rawtoppm -rgb 640 480 bzfi0000.raw | pnmflip -tb | pnmtojpeg --quality=100 > test.jpg
+      glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
       fwrite(b, 3 * w * h, 1, f);
       free(b);
       fclose(f);
