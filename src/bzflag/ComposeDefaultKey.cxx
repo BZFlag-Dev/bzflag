@@ -48,15 +48,50 @@ void selectNextRecipient (bool forward, bool robotIn);
 MessageQueue	messageHistory;
 unsigned int	messageHistoryIndex = 0;
 
+
 void printout(const std::string& name, void*)
 {
   std::cout << name << " = " << BZDB.get(name) << std::endl;
 }
 
-void listSetVars(const std::string& name, void*)
-{
-  char message[MessageLen];
 
+static bool varIsEqual(const std::string& name)
+{
+  // avoid "poll"
+  if (name[0] != '_') {
+    return true;
+  }
+  
+  // get the parameters
+  const std::string exp = BZDB.get(name);
+  const std::string defexp = BZDB.getDefault(name);
+  const float val = BZDB.eval(name);
+  BZDB.set("tmp", defexp); // BZDB.eval() can't take expressions directly
+  BZDB.setPersistent("tmp", false);
+  const float defval = BZDB.eval("tmp");
+  const bool valNaN = !(val == val);
+  const bool defNaN = !(defval == defval);
+  
+  if (valNaN != defNaN) {
+    return false;
+  } 
+
+  if (valNaN) {
+    return (exp == defexp);
+  } else {
+    return (val == defval);
+  }
+}
+
+
+static void listSetVars(const std::string& name, void* boolPtr)
+{
+  bool& diff = *((bool*)boolPtr);
+  if (diff && varIsEqual(name)) {
+    return;
+  }
+
+  char message[MessageLen];
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
     if (BZDBCache::colorful) {
       sprintf(message, "/set %s%s %s%f %s%s",
@@ -70,6 +105,7 @@ void listSetVars(const std::string& name, void*)
     addMessage(LocalPlayer::getMyTank(), message, 2);
   }
 }
+
 
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -158,7 +194,11 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  addMessage(NULL, "Invalid file name specified");
 	}
       } else if (message == "/set") {
-	BZDB.iterate(listSetVars, NULL);
+        bool diff = false;
+	BZDB.iterate(listSetVars, &diff);
+      } else if (message == "/diff") {
+        bool diff = true;
+	BZDB.iterate(listSetVars, &diff);
 #ifdef DEBUG
       } else if (strncmp(cmd, "/localset", 9) == 0) {
 	std::string params = cmd + 9;
