@@ -2378,6 +2378,12 @@ static void addFlag(int flagIndex)
   flag[flagIndex].flag.initialVelocity = -0.5f * BZDB.eval(StateDatabase::BZDB_GRAVITY) * flightTime;
   flag[flagIndex].dropDone = TimeKeeper::getCurrent();
   flag[flagIndex].dropDone += flightTime;
+	
+	// decide how sticky the flag will be
+	if (flag[flagIndex].flag.type->flagQuality == FlagBad)
+    flag[flagIndex].flag.endurance = FlagSticky;
+  else
+    flag[flagIndex].flag.endurance = FlagUnstable;
 
   // how times will it stick around
   if ((flag[flagIndex].flag.endurance == FlagSticky)
