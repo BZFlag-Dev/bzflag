@@ -51,16 +51,7 @@ static uint32_t		packetsSent;
 static uint32_t		packetsReceived;
 #endif
 
-#if !defined(_WIN32)
-
-static void		timeout(int)
-{
-  bzSignal(SIGALRM, SIG_IGN);
-  alarm(0);
-}
-
-#else // Connection timeout for Windows
-
+#if defined(_WIN32)
 DWORD ThreadID;		// Thread ID
 HANDLE hConnected;	// "Connected" event
 HANDLE hThread;		// Connection thread
@@ -138,11 +129,42 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   remoteAddress = addr.sin_addr.s_addr;
 
 #if !defined(_WIN32)
-  bzSignal(SIGALRM, SIG_PF(timeout));
-  alarm(5);
-  const bool okay = (connect(query, (CNCTType*)&addr, sizeof(addr)) >= 0);
-  alarm(0);
-  bzSignal(SIGALRM, SIG_IGN);
+  const bool okay = true;
+  int fdMax = query;
+  if (BzfNetwork::setNonBlocking(query) < 0) {
+    close(query);
+    return;
+  }
+  struct timeval timeout;
+  fd_set write_set;
+  fd_set read_set;
+  int nfound;
+  if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0) {
+    if (getErrno() != EINPROGRESS) {
+      close(query);
+      return;
+    }
+    FD_ZERO(&write_set);
+    FD_SET(query, &write_set);
+    timeout.tv_sec = long(5);
+    timeout.tv_usec = 0;
+    nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
+    if (nfound <= 0) {
+      close(query);
+      return;
+    }
+    int       connectError;
+    socklen_t errorLen = sizeof(int);
+    if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
+	< 0) {
+      close(query);
+      return;
+    }
+    if (connectError != 0) {
+      close(query);
+      return;
+    }
+  }
 #else // Connection timeout for Windows
 
   // Initialize structure
@@ -167,6 +189,17 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
     goto done;
 
   // get server version and verify (last digit in version is ignored)
+#if !defined(_WIN32)
+  FD_ZERO(&read_set);
+  FD_SET(query, &read_set);
+  timeout.tv_sec = long(5);
+  timeout.tv_usec = 0;
+  nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
+  if (nfound <= 0) {
+    close(query);
+    return;
+  }
+#endif // !defined(_WIN32)
   i = recv(query, (char*)version, 8, 0);
   if (i < 8)
     goto done;
@@ -182,6 +215,17 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   }
 
   // read local player's id
+#if !defined(_WIN32)
+  FD_ZERO(&read_set);
+  FD_SET(query, &read_set);
+  timeout.tv_sec = long(5);
+  timeout.tv_usec = 0;
+  nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
+  if (nfound <= 0) {
+    close(query);
+    return;
+  }
+#endif // !defined(_WIN32)
   i = recv(query, (char *) &id, sizeof(id), 0);
   if (i < (int) sizeof(id))
     return;
