@@ -123,18 +123,18 @@ const TimeKeeper& TimeKeeper::getNullTime(void)
 
 const char *TimeKeeper::timestamp(void) // const
 {
+  static char buffer[256]; // static, so that it doesn't vanish
   time_t tnow = time(0);
   struct tm *now = localtime(&tnow);
   now->tm_year += 1900;
   ++now->tm_mon;
   
-  return string_util::format("%04d-%02d-%02d %02d:%02d:%02d",
-			     now->tm_year,
-			     now->tm_mon,
-			     now->tm_mday,
-			     now->tm_hour,
-			     now->tm_min,
-			     now->tm_sec).c_str();
+  strncpy (buffer, string_util::format("%04d-%02d-%02d %02d:%02d:%02d",
+	             now->tm_year, now->tm_mon, now->tm_mday,
+	             now->tm_hour, now->tm_min, now->tm_sec).c_str(), 256);
+  buffer[255] = '\0'; // safety
+  
+  return buffer;
 }
 
 // Local Variables: ***
