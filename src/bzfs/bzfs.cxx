@@ -2273,7 +2273,7 @@ static void addPlayer(int playerIndex)
 
       // see if the player's choice was a weak team
       bool foundTeam = false;
-      for (int i = 0; i < minIndex.size(); i++) {
+      for (int i = 0; i < (int) minIndex.size(); i++) {
 	if (minIndex[i] == (TeamColor)t) {
 	  foundTeam = true;
 	  break;
