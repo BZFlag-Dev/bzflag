@@ -19,12 +19,6 @@
 #include "Protocol.h"
 #include "Intersect.h"
 
-/* bzfs specific headers */
-#include "WorldWeapons.h"
-
-/* FIXME - external dependancies */
-extern WorldWeapons wWeapons;
-
 
 WorldInfo::WorldInfo() :
   maxHeight(0),
@@ -88,7 +82,9 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   setTeleporterTarget ((index * 2), (index * 2) + 1);
 }
 
-void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
+void WorldInfo::addBase(float x, float y, float z, float r,
+                        float w, float d, float h,
+                        bool /* drive */, bool /* shoot */)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -97,10 +93,6 @@ void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, fl
   const float size[3] = {w, d, h};
   BaseBuilding base (pos, r, size, 0 /* fake the team */);
   bases.push_back (base);
-  
-  //FIXME - warnings
-  drive = drive;
-  shoot = shoot;  
 }
 
 void WorldInfo::addLink(int from, int to)
@@ -120,6 +112,12 @@ void WorldInfo::addZone(const CustomZone *zone)
   entryZones.addZone( zone );
 }
 
+void WorldInfo::addWeapon(const FlagType *type, const float *origin, float direction,
+                          float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
+{
+  worldWeapons.add(type, origin, direction, initdelay, delay, sync);
+}                          
+
 float WorldInfo::getMaxWorldHeight()
 {
   return maxHeight;
@@ -132,6 +130,11 @@ void WorldInfo::setTeleporterTarget(int src, int tgt)
 
   // record target in source entry
   teleportTargets[src] = tgt;
+}
+
+WorldWeapons& WorldInfo::getWorldWeapons()
+{
+  return worldWeapons;
 }
 
 void                    WorldInfo::loadCollisionManager()
@@ -328,7 +331,7 @@ int WorldInfo::packDatabase()
     (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
     (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
-    wWeapons.packSize() + entryZones.packSize();
+    worldWeapons.packSize() + entryZones.packSize();
   database = new char[databaseSize];
   void *databasePtr = database;
 
@@ -411,7 +414,7 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackUShort(databasePtr, uint16_t(teleportTargets[i * 2 + 1]));
   }
   
-  databasePtr = wWeapons.pack (databasePtr);
+  databasePtr = worldWeapons.pack (databasePtr);
   databasePtr = entryZones.pack (databasePtr);
 
   return 1;

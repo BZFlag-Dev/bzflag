@@ -19,6 +19,7 @@
 #include <vector>
 #include <string>
 #include "EntryZones.h"
+#include "WorldWeapons.h"
 
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
@@ -52,6 +53,8 @@ public:
   void addLink(int from, int to);
   void addZone(const CustomZone *zone);
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
+  void addWeapon(const FlagType *type, const float *origin, float direction,
+                 float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
   float getMaxWorldHeight();
   bool getZonePoint(const std::string &qualifier, float *pt);
   bool getSafetyPoint(const std::string &qualifier, const float *pos, float *pt);
@@ -59,6 +62,7 @@ public:
   int packDatabase();
   void *getDatabase() const;
   int getDatabaseSize() const;
+  WorldWeapons& getWorldWeapons();
 
 private:
 
@@ -107,6 +111,7 @@ private:
   std::vector<Teleporter> teleporters;
 
   EntryZones	       entryZones;
+  WorldWeapons         worldWeapons;
   std::vector<int> teleportTargets;
   
   CollisionManager collisionManager;

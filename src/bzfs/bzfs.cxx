@@ -120,8 +120,6 @@ BasesList bases;
 // FIXME: should be static, but needed by RecordReplay
 uint8_t rabbitIndex = NoPlayer;
 
-WorldWeapons  wWeapons;
-
 static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
@@ -3925,7 +3923,7 @@ int main(int argc, char **argv)
   
   // no original world weapons in replay mode
   if (Replay::enabled()) {
-    wWeapons.clear();
+    world->getWorldWeapons().clear();
   }
 
   if (!serverStart()) {
@@ -4029,8 +4027,8 @@ int main(int argc, char **argv)
     GameKeeper::Player::updateLatency(waitTime);
 
     // get time for the next world weapons shot
-    if (wWeapons.count() > 0) {
-      float nextTime = wWeapons.nextTime ();
+    if (world->getWorldWeapons().count() > 0) {
+      float nextTime = world->getWorldWeapons().nextTime ();
       if (nextTime < waitTime) {
         waitTime = nextTime;
       }
@@ -4611,7 +4609,7 @@ int main(int argc, char **argv)
     }
 
     // Fire world weapons
-    wWeapons.fire();
+    world->getWorldWeapons().fire();
   }
 
   serverStop();
