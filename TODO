@@ -25,10 +25,6 @@ THESE ARE LOWER PRIORITY
 
 * do ansi color in curses bzadmin
 
-* Need to use different, clearly disjoint numbering system on bzfs.  perhaps just
-  start from 0001 when 1.10 is released.  otherwise it gets unnecessarily bumped to
-  match the client version.  it's a separate communication protocol version.
-
 * server should track last reported player and shot positions
 
 * Improve server picked spawn locations
