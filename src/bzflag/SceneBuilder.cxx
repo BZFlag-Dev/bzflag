@@ -330,7 +330,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   if (o.userTextures[0].size())
     pyramidTexture = tm.getTexture(o.userTextures[0].c_str(),false);
   if (!pyramidTexture || !pyramidTexture->isValid())
-    pyramidTexture = tm.getTexture(BZDB.get("pryWallTexture").c_str(),false);
+    pyramidTexture = tm.getTexture(BZDB.get("pyrWallTexture").c_str(),false);
 
   useColorTexture = BZDB.isTrue("texture") && pyramidTexture && pyramidTexture->isValid();
 
