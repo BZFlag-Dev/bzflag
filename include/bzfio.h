@@ -25,10 +25,10 @@
 
 /* insert any other broken OS conditionals here */
 #if !defined(_WIN32)
-using namespace std;
 #endif
 
 #include <iostream>
+using namespace std;
 
 #endif
 

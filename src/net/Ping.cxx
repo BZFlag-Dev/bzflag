@@ -9,6 +9,11 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+// todo make this turn off for .net
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 
 #include <string.h>
 #include <math.h>

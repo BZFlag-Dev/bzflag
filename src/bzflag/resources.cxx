@@ -9,6 +9,9 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
 
 #include "resources.h"
 #include "BzfDisplay.h"
