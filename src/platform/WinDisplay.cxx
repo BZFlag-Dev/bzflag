@@ -425,8 +425,17 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
 
   // count the resolutions
   int i, j = 0;
-  DEVMODE dm;
-  while (EnumDisplaySettings(NULL, j, &dm))
+  typedef struct {   //On WinXP, DEVMODE buffer overruns are occuring, if the DEVMODE data structure
+					 //is not up to date. You need to compile with the new header files
+	  DEVMODE dm;    //Using old headers, Buffer is 148, but the data returned is 156, causing stack corruption
+	  byte fudge[30];//Throw some fudge in here so that it works even with old headers
+  } SlopDEVMODE;
+  SlopDEVMODE dm;
+  DEVMODE *pdm = &dm.dm;
+
+  memset( pdm, 0, sizeof(DEVMODE));
+  pdm->dmSize = sizeof(DEVMODE);
+  while (EnumDisplaySettings(NULL, j, pdm))
     j++;
 
   // allocate space for resolutions
@@ -435,25 +444,25 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
 
   // enumerate all resolutions.  note that we might throw some
   // resolutions away, so resolutions may be bigger than necessary.
-  for (i = j = 0; EnumDisplaySettings(NULL, j, &dm); j++) {
+  for (i = j = 0; EnumDisplaySettings(NULL, j, pdm); j++) {
     // convert frequency of 1 to 0 (meaning the default)
-    if ((dm.dmFields & DM_DISPLAYFREQUENCY) && dm.dmDisplayFrequency == 1)
-      dm.dmDisplayFrequency = 0;
+    if ((pdm->dmFields & DM_DISPLAYFREQUENCY) && pdm->dmDisplayFrequency == 1)
+      pdm->dmDisplayFrequency = 0;
 
     // ignore formats of different depth if we can't change depth
-    if (!changeDepth && (int)dm.dmBitsPerPel != currentDepth)
+    if (!changeDepth && (int)pdm->dmBitsPerPel != currentDepth)
       continue;
 
     // ignore formats we know won't work
-    if (dm.dmPelsWidth < 640 || dm.dmPelsHeight < 400 || dm.dmBitsPerPel < 8)
+    if (pdm->dmPelsWidth < 640 || pdm->dmPelsHeight < 400 || pdm->dmBitsPerPel < 8)
       continue;
 
     // fill in format
     Resolution r;
-    r.width = dm.dmPelsWidth;
-    r.height = dm.dmPelsHeight;
-    r.refresh = dm.dmDisplayFrequency;
-    r.depth = dm.dmBitsPerPel;
+    r.width = pdm->dmPelsWidth;
+    r.height = pdm->dmPelsHeight;
+    r.refresh = pdm->dmDisplayFrequency;
+    r.depth = pdm->dmBitsPerPel;
 
     // do we already have an equivalent format already?
     int k;
