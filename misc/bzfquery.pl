@@ -46,7 +46,7 @@ die $! unless sysread(S, $buffer, 9) == 9;
 
 # quit if version isn't valid
 die "not a bzflag server" if ($magic ne "BZFS");
-die "incompatible version" if ($protocol ne "1906");
+die "incompatible version" if ($protocol ne "1907");
 
 # quit if rejected
 die "rejected by server" if ($port == 0);
@@ -105,12 +105,12 @@ die $! unless sysread(S, $buffer, 5) == 5;
 print "\n";
 @teamName = ("Rogue", "Red", "Green", "Blue", "Purple", "Observer", "Rabbit");
 for (1..$numTeams) {
-die $! unless sysread(S, $buffer, 10) == 10;
-($team,$size,$aSize,$won,$lost) = unpack("n5", $buffer);
+die $! unless sysread(S, $buffer, 8) == 8;
+($team,$size,$won,$lost) = unpack("n4", $buffer);
 die $! unless $code == 0x7475;
 $score = $won - $lost;
 print "$teamName[$team] team:\n";
-print "  $aSize players\n  score: $score ($won wins, $lost losses)\n";
+print "  $size players\n  score: $score ($won wins, $lost losses)\n";
 }
 print "\n";
 
