@@ -128,6 +128,11 @@ void			SoundManager::playLocalSound(std::string sound)
 	sendJob(SQC_LOCAL_SFX, sound, "", false, 0, 0, 0, 0, 0);
 }
 
+void			SoundManager::playLoopedLocalSound(std::string sound, std::string id)
+{
+	sendJob(SQC_LOCAL_SFX, sound, id, true, 0, 0, 0, 0, 0);
+}
+
 void			SoundManager::addJob(std::string jobname, AudioJob& job)
 {
 	jobs.insert(std::pair<std::string, AudioJob>(jobname, job));
@@ -460,7 +465,7 @@ static void recieverVelocity(float x, float y, float)
 //	velZ = s * z;
 }
 
-static int addLocalContribution(SoundEvent* e, long* len)
+static int addLocalContribution(SoundEvent* e, long& len)
 {
 	long			n, numSamples;
 	float*			src;
@@ -471,10 +476,10 @@ static int addLocalContribution(SoundEvent* e, long* len)
 
 	if (!mutingOn && numSamples != 0) {
 		// initialize new areas of scratch space and adjust output sample count
-		if (numSamples > *len) {
-			for (n = *len; n < numSamples; n += 2)
+		if (numSamples > len) {
+			for (n = len; n < numSamples; n += 2)
 				scratch[n] = scratch[n + 1] = 0.0;
-			*len = numSamples;
+			len = numSamples;
 		}
 
 		// add contribution -- conditionals outside loop for run-time efficiency
@@ -519,6 +524,35 @@ static int addLocalContribution(SoundEvent* e, long* len)
 	return 0;
 }
 
+static int addLoopedLocalContribution(SoundEvent* e, long& len)
+{
+	long			n, x;
+	float*			src;
+
+	len = audioBufferSize;
+
+	// add contribution -- conditionals outside loop for run-time efficiency
+	src = e->samples->data;
+	x = 0;
+	if (volumeAtten == 1.0) {
+		for (n = e->ptr; n < e->ptr + audioBufferSize; n += 2) {
+			scratch[x] += src[n % e->samples->length];
+			scratch[x + 1] += src[(n + 1) % e->samples->length];
+			x++;
+		}
+	}
+	else {
+		for (n = e->ptr; n < e->ptr + audioBufferSize; n += 2) {
+			scratch[x] += src[n % e->samples->length] * volumeAtten;
+			scratch[x + 1] += src[(n + 1) % e->samples->length] * volumeAtten;
+			x++;
+		}
+	}
+	e->ptr = (e->ptr + audioBufferSize) % e->samples->length;
+
+	return 0;
+}
+
 static void getWorldStuff(SoundEvent* e, float* la, float* ra, double* sampleStep)
 {
 	float leftAtten, rightAtten;
@@ -548,7 +582,7 @@ static void getWorldStuff(SoundEvent* e, float* la, float* ra, double* sampleSte
 	*sampleStep = double(1.0 + velX * e->dx + velY * e->dy);
 }
 
-static int addWorldContribution(SoundEvent* e, long* len)
+static int addWorldContribution(SoundEvent* e, long& len)
 {
 	bool		fini = false;
 	long		n, nmL, nmR;
@@ -564,10 +598,10 @@ static int addWorldContribution(SoundEvent* e, long* len)
 		fini = true;
 
 	// initialize new areas of scratch space and adjust output sample count
-	if (*len < audioBufferSize) {
-		for (n = *len; n < audioBufferSize; n += 2)
+	if (len < audioBufferSize) {
+		for (n = len; n < audioBufferSize; n += 2)
 			scratch[n] = scratch[n + 1] = 0.0;
-		*len = audioBufferSize;
+		len = audioBufferSize;
 	}
 
 	// add contribution with crossfade
@@ -891,9 +925,12 @@ static bool audioInnerLoop(bool noWaiting)
 
 				int deltaCount;
 				if (events[j].flags & SEF_WORLD)
-					deltaCount = addWorldContribution(events + j, &numSamples);
+					deltaCount = addWorldContribution(events + j, numSamples);
 				else
-					deltaCount = addLocalContribution(events + j, &numSamples);
+					if (events[j].loop)
+						deltaCount = addLoopedLocalContribution(events + j, numSamples);
+					else
+						deltaCount = addLocalContribution(events + j, numSamples);
 				portUseCount += deltaCount;
 			}
 		}

@@ -81,6 +81,8 @@ public:
 										float z, bool important = false);
 	// sound effect positioned at receiver
 	void			playLocalSound(std::string sound);
+	// looped local sound
+	void			playLoopedLocalSound(std::string sound, std::string id);
 
 	void			addJob(std::string jobname, AudioJob& job);
 	void			removeJob(std::string jobname);
