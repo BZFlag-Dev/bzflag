@@ -160,6 +160,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "scrollPages",		"20",			true,	StateDatabase::ReadWrite,	NULL },
   { "remoteSounds",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "leadingShotLine",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "saveIdentity",		"2",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
@@ -771,8 +772,18 @@ void			dumpResources(BzfDisplay* display,
 				SceneRenderer& renderer)
 {
   // collect new configuration
-  BZDB.set("callsign", startupInfo.callsign);
-  BZDB.set("password", startupInfo.password);
+
+  // only dump username and password if we're allowed to, otherwise
+  // erase them if they exist
+  if (BZDB.eval("saveIdentity") > 0)
+    BZDB.set("callsign", startupInfo.callsign);
+  else
+    BZDB.set("callsign", "");
+  if (BZDB.eval("saveIdentity") > 1)
+    BZDB.set("password", startupInfo.password);
+  else
+    BZDB.set("password", "");
+
   BZDB.set("team", Team::getName(startupInfo.team));
   BZDB.set("server", startupInfo.serverName);
   if (startupInfo.serverPort != ServerPort) {
@@ -823,11 +834,11 @@ void			dumpResources(BzfDisplay* display,
 
   if ((int)list.size() < maxListSize) maxListSize = list.size();
   for (int i = 0; i < maxListSize; i++) {
-    sprintf(buffer,"silencedPerson%d",i);
+    sprintf(buffer, "silencedPerson%d", i);
     BZDB.set(TextUtils::format("silencedPerson%d", i), list[i]);
   }
 
-  BZDB.set("email",startupInfo.email); // note email of zero length does not stick
+  BZDB.set("email", startupInfo.email); // note email of zero length does not stick
 
   BZDB.set("serverCacheAge", TextUtils::format("%1d", (long)(ServerListCache::get())->getMaxCacheAge()));
 

@@ -18,7 +18,6 @@
 #include <string>
 
 /* common implementation headers */
-#include "BZDBCache.h"
 #include "FontManager.h"
 #include "StartupInfo.h"
 #include "StateDatabase.h"
@@ -84,6 +83,17 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   label->setFontFace(fontFace);
   label->setLabel("");
   list.push_back(label);
+
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Save identity:");
+  option->setCallback(callback, (void*)"i");
+  options = &option->getList();
+  options->push_back(std::string("No"));
+  options->push_back(std::string("Username only"));
+  options->push_back(std::string("Username and password"));
+  option->update();
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -201,6 +211,8 @@ void OptionsMenu::resize(int width, int height)
   {
     int i = 7;
 
+    ((HUDuiList*)list[i++])->setIndex((int)BZDB.eval("saveIdentity"));
+
     const StartupInfo* info = getStartupInfo();
 
     // mind the ++i !
@@ -255,6 +267,11 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
       (ServerListCache::get())->setMaxCacheAge(minutes);
       break;
     }
+
+    case 'i': { // save identity
+	BZDB.setInt("saveIdentity", list->getIndex());
+	break;
+      }
   }
 }
 
