@@ -635,7 +635,7 @@ struct CmdLineOptions
   AccessControlList	acl;
   TextChunkManager	textChunker;
   BadWordList		bwl;
- 
+
   std::string		reportFile;
   std::string		reportPipe;
 };
@@ -2887,7 +2887,7 @@ static WorldInfo *defineTeamWorld()
 	      PyrBase*6)) ||
 	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
 	  continue;
-	
+
 	float angle=2.0f * M_PI * (float)bzfrand();
 	if (redGreen) {
 	  world->addPyramid(x,y, 0.0f, angle,PyrBase, PyrBase, h);
@@ -2917,17 +2917,17 @@ static WorldInfo *defineTeamWorld()
 	    continue;
 	  // if to close to a base then try again
 	  if ((redGreen &&
-	       (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= 
+	       (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
 		BaseSize*4 ||
-		hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <= 
-		BaseSize*4)) || 
+		hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <=
+		BaseSize*4)) ||
 	      (bluePurple &&
-	       (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= 
+	       (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <=
 		BaseSize*4 ||
-		hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <= 
+		hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <=
 		BaseSize*4)))
 	    continue;
-	  
+
 	  linked[i/teamFactor][0] = linked[i/teamFactor][1] = 0;
 	  if (redGreen) {
 	    world->addTeleporter(x, y, 0.0f, rotation, 0.5f*TeleWidth,
@@ -2937,10 +2937,10 @@ static WorldInfo *defineTeamWorld()
 	    i+=2;
 	  }
 	  if (bluePurple) {
-	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2, 
+	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2,
 				 0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight,
 				 TeleWidth);
-	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2, 
+	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2,
 				 0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight,
 				 TeleWidth);
 	    i+=2;
@@ -3090,7 +3090,7 @@ static WorldInfo *defineTeamWorld()
 	world->addLink(15, 6);
       }
     }
-    
+
     return world;
   } else {
     return defineWorldFromFile(clOptions.worldFile);
@@ -3369,7 +3369,7 @@ static void acceptClient()
   if (playerIndex < maxPlayers) {
     DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
 	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
-  
+
     if (playerIndex >= curMaxPlayers)
       curMaxPlayers = playerIndex+1;
   } else { // full? reject by closing socket
@@ -3388,7 +3388,7 @@ static void acceptClient()
     DEBUG2("acceptClient: close(%d)\n", fd);
     close(fd);
   }
-  
+
   // FIXME add new client server welcome packet here when client code is ready
 
   // update player state
