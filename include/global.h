@@ -78,7 +78,7 @@ enum GameStyle {
 	RicochetGameStyle =		0x0020,	// all shots ricochet
 	ShakableGameStyle =		0x0040,	// can drop bad flags
 	AntidoteGameStyle =		0x0080,	// anti-bad flags
-	HandicapGameStyle =		0x0100, // hadicap players based on ability
+	HandicapGameStyle =		0x0100, // handicap players based on score
 
 	RabbitChaseGameStyle =		0x0200	// rabbit chase
 };
