@@ -63,6 +63,7 @@ static const char	copyright[] = "Copyright 1993-1999, Chris Schoeneman";
 #include "KeyMap.h"
 #include "Intersect.h"
 #include "Ping.h"
+#include "OpenGLTexture.h"
 
 #include "AList.h"
 BZF_DEFINE_ALIST(ExplosionList, BillboardSceneNode*);
@@ -111,6 +112,7 @@ static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static PlayingCallbackList	playingCallbacks;
 boolean			gameOver = False;
+static OpenGLTexture*	tankTexture = NULL;
 static ExplosionList	explosions;
 static ExplosionList	prototypeExplosions;
 static int		savedVolume = -1;
@@ -2872,6 +2874,9 @@ static boolean		joinGame(const StartupInfo* info,
   }
 */
 
+  // set tank textures
+  Player::setTexture(*tankTexture);
+
   // create world
   world = makeWorld(serverLink);
   if (!world) {
@@ -4019,7 +4024,8 @@ void			startPlaying(BzfDisplay* _display,
 
   // catch kill signals before changing video mode so we can
   // put it back even if we die.  ignore a few signals.
-  signal(SIGINT, SIG_PF(suicide));
+  if (signal(SIGINT, SIG_IGN) != SIG_IGN)
+    signal(SIGINT, SIG_PF(suicide));
   signal(SIGILL, SIG_PF(dying));
   signal(SIGABRT, SIG_PF(dying));
   signal(SIGSEGV, SIG_PF(dying));
@@ -4027,7 +4033,8 @@ void			startPlaying(BzfDisplay* _display,
 #if !defined(_WIN32)
   signal(SIGPIPE, SIG_PF(hangup));
   signal(SIGHUP, SIG_IGN);
-  signal(SIGQUIT, SIG_PF(dying));
+  if (signal(SIGQUIT, SIG_IGN) != SIG_IGN)
+    signal(SIGQUIT, SIG_PF(dying));
   signal(SIGBUS, SIG_PF(dying));
   signal(SIGUSR1, SIG_IGN);
   signal(SIGUSR2, SIG_IGN);
@@ -4127,6 +4134,15 @@ void			startPlaying(BzfDisplay* _display,
     prototypeExplosions.append(explosion);
   }
 
+  // get tank textures
+  {
+    static const char* tankFilename = "flage";
+    int width, height;
+    tankTexture = new OpenGLTexture;
+    *tankTexture = getTexture(tankFilename, &width, &height,
+					OpenGLTexture::LinearMipmapLinear);
+  }
+
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
   World::init();
@@ -4188,6 +4204,7 @@ void			startPlaying(BzfDisplay* _display,
   playingLoop();
 
   // clean up
+  delete tankTexture;
   for (i = 0; i < prototypeExplosions.getLength(); i++)
     delete prototypeExplosions[i];
   prototypeExplosions.removeAll();

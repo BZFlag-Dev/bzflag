@@ -1,6 +1,19 @@
 
                              bzflag 1.7 release notes
 
+bzflag 1.7d release 8
+---------------------
+
+* fixed bug in bzfs that caused the player table to fill up
+* fixed bugs in bzfls that left open sockets and leaked memory
+* fixed bug in bzfls that could cause one server to be listed multiple times
+* made bzfls more picky about format of messages
+* added uptime to bzfls statistics
+* changed bzfls protocol and bzfs to match
+    deliberately not backwards compatible to force upgrades
+* gave flag help messsages more space to avoid overlapping target box
+
+
 bzflag 1.7d release 7
 ---------------------
 
@@ -9,6 +22,7 @@ bzflag 1.7d release 7
 * changed RPM naming scheme to be more standard (now named 1.7d.7)
 * fixes for solaris compiler
 * fixed tarball make target to include top level directory
+* fixes to avoid making OpenGL calls after exiting main
 * fixed mix-up between brightness and volume controls on options menu
 * fixed busy wait bug in linux sound code
 * incremented number of sound chunks on linux and fixed low water mark

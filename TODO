@@ -7,9 +7,6 @@ to do list for bzflag
    file system stuff (dir delimiter, etc.)
    user name stuff
 
-* write bzfbiff
-   watch server for players;  run program when somebody joins
-
 * windows makefiles
    currently have microsoft visual c++ projects only
 
@@ -20,5 +17,28 @@ to do list for bzflag
 
 * add type of shot (normal, gm, sw, etc) to killed message
 
-* support resolutions besides 640x480 on passthrough 3Dfx cards
+* more flag types
+
+* mines:
+   not necessarily a good idea.  if mines are visible
+   then they're fairly useless.  if invisible then they're
+   not fun because you're destroyed without warning and
+   no amount of skill will help you.  someone suggested
+   making them visible within a certain range.  another
+   possibility is damage before destruction.
+
+* improve non-multicast communication:
+   currently falls back to TCP relay through server.
+   better would be UDP relay through server because we
+   don't need TCP's reliability for player packets.
+
+* radio chat:
+   allow players to communicate via low-quality audio.
+   already some support built into the server for this.
+
+* pre-game waiting room:
+   provide a means for players to gather before and after
+   a game.  basic text chat facilities.  allows players
+   to wait for enough players for a game and to discuss
+   strategy, etc.  could build this into bzfs easily.
 

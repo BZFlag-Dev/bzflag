@@ -18,7 +18,6 @@
 #include "World.h"
 #include "WallSceneNode.h"
 #include "TankSceneNode.h"
-#include "Player.h"
 #include "playing.h"
 #include "texture.h"
 
@@ -27,7 +26,6 @@ static const char*	boxwallFilename = "boxwall";
 static const char*	boxtopFilename = "roof";
 static const char*	pyramidFilename = "pyrwall";
 static const char*	teleporterFilename = "caution";
-static const char*	tankFilename = "flage";
 
 static OpenGLTexture	getImage(const BzfString& file,
 				float* aspectRatio = NULL,
@@ -165,9 +163,6 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 
   // make teleporter styles
   teleporterTexture = getImage(teleporterFilename);
-
-  // get tank textures
-  Player::setTexture(getImage(tankFilename));
 
   // lower maximum tank lod if lowdetail is true
   if (renderer->useQuality() == 0) TankSceneNode::setMaxLOD(2);

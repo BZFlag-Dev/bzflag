@@ -117,7 +117,7 @@ const char*		HUDRenderer::flagHelpString[int(LastFlag) -
 		"Shots are still visible.  Sneak up behind enemies!",
 "Tiny (+T):  Tank is small and can get through small openings.  "
 		"Very hard to hit.",
-"Narrow (+N):  Tank is super thin.  Very hard to hit from front but is"
+"Narrow (+N):  Tank is super thin.  Very hard to hit from front but is "
 		"normal size from side.  Can get through small openings.",
 "SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time.",
 "SteamRoller (+SR):  Destroys tanks you touch but you have to get really close.",
@@ -288,7 +288,7 @@ void			HUDRenderer::resize(boolean firstTime)
       const float x = dx + dy + 2.0f * font.getSpacing();
       const float y = dy;
       composeTypeIn->setLabelWidth(dx);
-      composeTypeIn->setPosition(x, y + dy);
+      composeTypeIn->setPosition(x, y);
       composeTypeIn->setSize(w - x - dy, font.getSpacing());
     }
   }
@@ -345,7 +345,8 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   teamScoreLabelWidth = minorFont.getWidth(teamScoreLabel);
   if (scoreLabelWidth > teamScoreLabelWidth)
     teamScoreLabelWidth = scoreLabelWidth;
-  flagHelpY = minorFont.getDescent() + 10.0f;
+  flagHelpY = composeTypeIn->getFont().getSpacing() + 4.0f +
+			minorFont.getDescent();
 
   const float spacing = minorFont.getWidth("  ");
   scoreLabelWidth += spacing;
@@ -485,7 +486,7 @@ void			HUDRenderer::setComposing(const char* prompt)
       const float x = dx + dy + 2.0f * font.getSpacing();
       const float y = dy;
       composeTypeIn->setLabelWidth(dx);
-      composeTypeIn->setPosition(x, y + dy);
+      composeTypeIn->setPosition(x, y);
       composeTypeIn->setSize(window.getWidth() - x - dy, font.getSpacing());
     }
   }
@@ -567,7 +568,7 @@ BzfString		HUDRenderer::makeHelpString(const char* help) const
 
   // find sections of string not more than maxWidth pixels wide
   // and put them into a BzfString separated by NUL's.
-  const float maxWidth = 2.0f * (float)maxMotionSize;
+  const float maxWidth = 3.0f * (float)maxMotionSize;
   BzfString msg;
   const char* scan = help;
   while (*scan) {
@@ -907,11 +908,11 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw flag help
   if (flagHelpClock.isOn()) {
     hudColor3fv(messageColor);
-    y = flagHelpY + (float)flagHelpLines * alertFont.getSpacing();
+    y = flagHelpY + (float)flagHelpLines * minorFont.getSpacing();
     const char* flagHelpBase = flagHelp[flagHelpIndex].getString();
     for (i = 0; i < flagHelpLines; i++) {
-      minorFont.draw(flagHelpBase, (float)(centerx - maxMotionSize), y);
       y -= minorFont.getSpacing();
+      minorFont.draw(flagHelpBase, (float)(centerx - 1.5f * maxMotionSize), y);
       while (*flagHelpBase) flagHelpBase++;
       flagHelpBase++;
     }

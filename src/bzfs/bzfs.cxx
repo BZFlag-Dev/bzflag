@@ -518,6 +518,12 @@ static int		pread(int playerIndex, int l)
     return -1;
   }
 
+  else {
+    // disconnected
+    removePlayer(playerIndex);
+    return -1;
+  }
+
   return e;
 }
 
@@ -755,8 +761,9 @@ static void		sendMessageToListServerForReal(int index)
     pingReply.packHex(gameInfo);
 
     // send ADD message
-    sprintf(msg, "%s %s %s %.*s %.256s\n\n", link.nextMessage,
+    sprintf(msg, "%s %s %d %s %.*s %.256s\n\n", link.nextMessage,
 				(const char*)publicizedAddress,
+				VERSION % 1000,
 				ServerVersion,
 				PingPacketHexPackedSize, gameInfo,
 				publicizedTitle);
@@ -800,9 +807,6 @@ static void		publicize()
 
   // parse the list server URL if we're publicizing ourself
   if (publicizeServer && publicizedTitle) {
-    // assume we'll fail to find any list server
-    publicizeServer = False;
-
     // dereference URL, including following redirections.  get no
     // more than MaxListServers urls.
     BzfStringAList urls, failedURLs;
@@ -839,7 +843,6 @@ static void		publicize()
 	listServerLinks[listServerLinksCount].socket  = NotConnected;
 	listServerLinksCount++;
     }
-    publicizeServer = (listServerLinksCount > 0);
 
     // schedule message for list server
     sendMessageToListServer("ADD");
@@ -1994,7 +1997,7 @@ static void		removePlayer(int playerIndex)
   // anybody left?
   int i;
   for (i = 0; i < maxPlayers; i++)
-    if (player[i].fd != NotConnected)
+    if (player[i].fd != NotConnected && player[i].state != PlayerInLimbo)
       break;
 
   // if everybody left then reset world
@@ -3390,7 +3393,8 @@ int			main(int argc, char** argv)
   }
 
   // trap some signals
-  signal(SIGINT, SIG_PF(terminateServer));	// let user kill server
+  if (signal(SIGINT, SIG_IGN) != SIG_IGN)	// let user kill server
+    signal(SIGINT, SIG_PF(terminateServer));
   signal(SIGTERM, SIG_PF(terminateServer));	// ditto
 #if !defined(_WIN32)				// no SIGPIPE in Windows
   signal(SIGPIPE, SIG_IGN);			// don't die on broken pipe
@@ -3576,6 +3580,25 @@ int			main(int argc, char** argv)
     // dropped for some reason).
     if (publicizeServer)
       if (tm - listServerLastAddTime > ListServerReAddTime) {
+	// if there are no list servers and nobody is playing then
+	// try publicizing again because we probably failed to get
+	// the list last time we published, and if we don't do it
+	// here then unless somebody stumbles onto this server then
+	// quits we'll never try publicizing ourself again.
+	if (listServerLinksCount == 0) {
+	  // count the number of players
+	  int i;
+	  for (i = 0; i < maxPlayers; i++)
+	    if (player[i].fd != NotConnected &&
+		player[i].state != PlayerInLimbo)
+	      break;
+
+	  // if nobody playing then publicize
+	  if (i == maxPlayers)
+	    publicize();
+	}
+
+	// send add request
 	sendMessageToListServer("ADD");
 	listServerLastAddTime = tm;
       }

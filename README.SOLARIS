@@ -21,6 +21,9 @@ Bjorn's fixes included:
   * changed u_int16_t and u_int32_t to uint16_t and uint32_t
   * INADDR_NONE not defined
 
+Bjorn reports that gcc 2.95 doesn't compile bzflag but gcc
+2.95.2 does.
+
 --
 The following are the comments of Andrew White.
 

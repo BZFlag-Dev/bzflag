@@ -11,6 +11,7 @@
  */
 
 #include "SolarisMedia.h"
+#include "TimeKeeper.h"
 
 #define DEBUG_SOLARIS			0	//(1 = debug, 0 = don't!)
 
@@ -244,7 +245,7 @@ int			SolarisMedia::getAudioBufferChunkSize() const
 boolean			SolarisMedia::isAudioTooEmpty() const
 {
   ioctl(audioctl_fd, AUDIO_GETINFO, &a_info);
-  return (a_info.play.eof >= eof_written - audioLowWaterMark);
+  return ((int)a_info.play.eof >= eof_written - audioLowWaterMark);
 }
 
 void			SolarisMedia::writeAudioFrames(

@@ -63,7 +63,7 @@ make linux-ppc-noopt
 %ifarch i386 i486 i586 i686
 make linux-i386-noopt
 %else
-make linux
+make linux-noopt
 %endif
 %endif
 make ACXXOPTS="$RPM_OPT_FLAGS" ACOPTS="$RPM_OPT_FLAGS"		\

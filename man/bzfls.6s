@@ -111,19 +111,19 @@ ignored.
 .RS
 .TP 15
 \fBSIGUSR1\fR
-Causes bzfls to write the current server list to /var/tmp/bzfls.lst.
+Causes bzfls to write the current server list to /tmp/bzfls.lst.
 This list can be used as a bootstrap file.
 .TP 15
 \fBSIGUSR2\fR
-Causes bzfls to write network statistics to /var/tmp/bzfls.cnt.
+Causes bzfls to write network statistics to /tmp/bzfls.cnt.
 .RE
 .SH FILES
 .RS
 .TP 15
-/var/tmp/bzfls.cnt
+/tmp/bzfls.cnt
 The network statistics dumped by SIGUSR2.
 .TP
-/var/tmp/bzfls.lst
+/tmp/bzfls.lst
 The server list dumped by SIGUSR1.
 .RE
 .SH SEE ALSO

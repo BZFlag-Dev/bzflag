@@ -24,6 +24,6 @@ CONFIG	= solaris-cc
 #
 CC    = cc
 CXX   = CC
-PCOPTS   = -KPIC
-PCXXOPTS = -KPIC
+PCOPTS   = -fast
+PCXXOPTS = -fast
 

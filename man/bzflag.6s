@@ -65,6 +65,9 @@ you don't want bzflag to use the passthrough card.  This option
 is only a convenience;  you can achieve the same effect by
 unsetting MESA_GLX_FX in your environment.
 .TP
+\fB-anonymous\fR
+Uses the email address \fIanonymous\fR instead of \fIusername@hostname\fR.
+.TP
 \fB-callsign\fI callsign\fR
 Uses \fIcallsign\fR as the player's callsign.
 The callsign is taken from the command line if provided.  Otherwise the
