@@ -56,13 +56,12 @@ public:
     // DelayQueue for "Lag Flag"
     DelayQueue       *delayq;
     // FlagHistory
-    FlagHistory      *flagHistory;
+    FlagHistory       flagHistory;
     // Score
-    Score            *score;
+    Score             score;
   private:
     static Player *playerList[PlayerSlot];
     int    playerIndex;
-    Score            _score;
   };
   class Flag {
   };

@@ -51,7 +51,6 @@
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
 extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
-extern FlagHistory flagHistory[MaxPlayers  + ReplayObservers];
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
@@ -609,9 +608,10 @@ void handleFlaghistoryCmd(int t, const char *)
 
   char reply[MessageLen];
   for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (player[i].isPlaying() && !player[i].isObserver()) {
       sprintf(reply,"%-16s : ", player[i].getCallSign());
-      flagHistory[i].get(reply+strlen(reply));
+      playerData->flagHistory.get(reply+strlen(reply));
       sendMessage(ServerPlayer, t, reply, true);
     }
   }

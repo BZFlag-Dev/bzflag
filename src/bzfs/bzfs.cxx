@@ -50,8 +50,6 @@ PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 PlayerState lastState[MaxPlayers  + ReplayObservers];
 // DelayQueue for "Lag Flag"
 DelayQueue delayq[MaxPlayers  + ReplayObservers];
-// FlagHistory
-FlagHistory flagHistory[MaxPlayers  + ReplayObservers];
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -388,7 +386,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
   PlayerInfo *pPlayer = &player[playerIndex];
   buf = nboPackUByte(bufStart, playerIndex);
   buf = pPlayer->packUpdate(buf);
-  buf = playerData->score->pack(buf);
+  buf = playerData->score.pack(buf);
   buf = pPlayer->packId(buf);
   
   if (playerIndex == index) {
@@ -2398,8 +2396,8 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   //update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
-    killerData->score->tK();
-    if (killerData->score->isTK()) {
+    killerData->score.tK();
+    if (killerData->score.isTK()) {
        char message[MessageLen];
        strcpy(message, "You have been automatically kicked for team killing" );
        sendMessage(ServerPlayer, killerIndex, message, true);
@@ -2432,36 +2430,36 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
   // change the player score
   bufStart = getDirectMessageBuffer();
-  victimData->score->killedBy();
+  victimData->score.killedBy();
   if (killer) {
     if (victimIndex != killerIndex) {
       if (teamkill) {
         if (clOptions->teamKillerDies)
           playerKilled(killerIndex, killerIndex, reason, -1);
         else
-          killerData->score->killedBy();
+          killerData->score.killedBy();
       } else {
-        killerData->score->kill();
+        killerData->score.kill();
       }
     }
 
     buf = nboPackUByte(bufStart, 2);
     buf = nboPackUByte(buf, killerIndex);
-    buf = killerData->score->pack(buf);
+    buf = killerData->score.pack(buf);
   }
   else {
     buf = nboPackUByte(bufStart, 1);
   }
 
   buf = nboPackUByte(buf, victimIndex);
-  buf = victimData->score->pack(buf);
+  buf = victimData->score.pack(buf);
   broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
   // see if the player reached the score limit
   if (clOptions->maxPlayerScore != 0
       && killerIndex != InvalidPlayer
       && killerIndex != ServerPlayer
-      && killerData->score->reached()) {
+      && killerData->score.reached()) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, killerIndex);
     buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -2508,6 +2506,9 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
 static void grabFlag(int playerIndex, int flagIndex)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
   // Sanity check
   if (flagIndex < -1 || flagIndex >= numFlags)
     return;
@@ -2549,7 +2550,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  flagHistory[playerIndex].add(flag[flagIndex].flag.type);
+  playerData->flagHistory.add(flag[flagIndex].flag.type);
 }
 
 static void dropFlag(int playerIndex, float pos[3])

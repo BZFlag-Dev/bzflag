@@ -1387,7 +1387,7 @@ savePlayersState ()
       PlayerInfo *pPlayer = &player[i];
       buf = nboPackUByte(bufStart, i);
       buf = pPlayer->packUpdate(buf);
-      buf = playerData->score->pack(buf);
+      buf = playerData->score.pack(buf);
       buf = pPlayer->packId(buf);
       routePacket (MsgAddPlayer, 
                    (char*)buf - (char*)bufStart, bufStart, StatePacket);

@@ -18,14 +18,12 @@ extern PlayerInfo       player[PlayerSlot];
 extern PlayerAccessInfo accessInfo[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
 extern DelayQueue       delayq[PlayerSlot];
-extern FlagHistory      flagHistory[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
 GameKeeper::Player::Player(int _playerIndex):
   player(&::player[_playerIndex]), accessInfo(&::accessInfo[_playerIndex]),
   lastState(&::lastState[_playerIndex]), delayq(&::delayq[_playerIndex]),
-  flagHistory(&::flagHistory[_playerIndex]), score(&_score),
   playerIndex(_playerIndex)
 {
   playerList[playerIndex] = this;
@@ -40,7 +38,7 @@ GameKeeper::Player::~Player()
   accessInfo->removePlayer();
   player->removePlayer();
   delayq->dequeuePackets();
-  flagHistory->clear();
+  flagHistory.clear();
   delete lagInfo;
   playerList[playerIndex] = NULL;
 }
@@ -67,7 +65,7 @@ void GameKeeper::Player::dumpScore()
   int p;
   for (p = 0; p < PlayerSlot; p++) 
     if ((playerData = playerList[p]) && playerData->player->isPlaying()) {
-      playerData->_score.dump();
+      playerData->score.dump();
       std::cout << ' ' << playerData->player->getCallSign() << std::endl;
     }
 }
@@ -85,7 +83,7 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
     if ((playerData = playerList[i]))
       if (playerData->player->canBeRabbit(true)) {
 	bool  goodRabbit = i != oldRabbit && playerData->player->isAlive();
-	float ratio      = playerData->_score.ranking();
+	float ratio      = playerData->score.ranking();
 	bool  select     = false;
 	if (goodRabbitSelected) {
 	  if (goodRabbit && (ratio > topRatio)) {
