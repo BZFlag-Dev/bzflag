@@ -60,7 +60,7 @@ void MeshFace::finalize()
   float maxCrossSqr = 0.0f;
   float bestCross[3] = { 0.0f, 0.0f, 0.0f };
   int bestSet[3] = { -1, -1, -1 };
-
+  
   // find the best vertices for making the plane
   int i, j, k;
   for (i = 0; i < (vertexCount - 2); i++) {
@@ -91,13 +91,12 @@ void MeshFace::finalize()
 
   // make the plane
   float scale = 1.0f / sqrtf (maxCrossSqr);
-  float* p = plane;
   const float* vert = vertices[bestSet[1]];
-  p[0] = bestCross[0] * scale;
-  p[1] = bestCross[1] * scale;
-  p[2] = bestCross[2] * scale;
-  p[3] = -((p[0] * vert[0]) + (p[1] * vert[1]) + (p[2] * vert[2]));
-
+  plane[0] = bestCross[0] * scale;
+  plane[1] = bestCross[1] * scale;
+  plane[2] = bestCross[2] * scale;
+  plane[3] = -vec3dot(plane, vert);
+  
   // see if the whole face is convex
   int v, a;
   for (v = 0; v < vertexCount; v++) {
@@ -112,6 +111,20 @@ void MeshFace::finalize()
       vertexCount = 0;
       return;
     }
+  }
+
+  // make the edge planes
+  edgePlanes = new fvec4[vertexCount];
+  for (v = 0; v < vertexCount; v++) {
+    float edge[3];
+    const int next = (v + 1) % vertexCount;
+    vec3sub(edge, vertices[next], vertices[v]);
+    vec3cross(edgePlanes[v], edge, plane);
+    const float scale = 1.0f / sqrtf(vec3dot(edgePlanes[v], edgePlanes[v]));
+    edgePlanes[v][0] = edgePlanes[v][0] * scale;
+    edgePlanes[v][1] = edgePlanes[v][1] * scale;
+    edgePlanes[v][2] = edgePlanes[v][2] * scale;
+    edgePlanes[v][3] = -vec3dot(vertices[v], edgePlanes[v]);
   }
 
   // setup extents
@@ -147,6 +160,7 @@ MeshFace::~MeshFace()
   delete[] vertices;
   delete[] normals;
   delete[] texcoords;
+  delete[] edgePlanes;
   return;
 }
 
@@ -256,6 +270,14 @@ void MeshFace::get3DNormal(const float* /*p*/, float* n) const
 }
 
 
+void MeshFace::getNormal(const float* /*p*/, float* n) const
+{
+  memcpy (n, plane, sizeof(float[3]));
+  n[0] = 0.0f;
+  n[1] = 0.0f;
+  n[2] = 1.0f;
+  return;
+}
 
 
 /////////////////////////////////////////////////////////////
@@ -263,44 +285,37 @@ void MeshFace::get3DNormal(const float* /*p*/, float* n) const
 /////////////////////////////////////////////////////////////
 
 
-
-void MeshFace::getNormal(const float* p, float* n) const
-{
-  p = p;
-  n[0] = 0.0f;
-  n[1] = 0.0f;
-  n[2] = +1.0f;
-}
-
-
 bool MeshFace::getHitNormal(const float* pos1, float,
-				 const float* pos2, float,
-				 float, float, float height,
-				 float* normal) const
+                            const float* pos2, float,
+			    float, float, float height,
+			    float* normal) const
 {
   pos1 = pos2;
-  normal = normal;
   height = height;
+  memcpy (normal, plane, sizeof(float[3]));
+  normal[0] = 0.0f;
+  normal[1] = 0.0f;
+  normal[2] = 1.0f;
   return false;
 }
 
 
-bool MeshFace::inCylinder(const float* p,
-                               float radius, float height) const
+bool MeshFace::inCylinder(const float* p,float radius, float height) const
 {
-  p = p;
-  radius = height;
-  return false;
+  return inBox(p, 0.0f, radius, radius, height);
 }
 
 
 bool MeshFace::inBox(const float* p, float angle,
                           float dx, float dy, float height) const
 {
-  p = p;
-  angle = angle;
-  dx = dy = height;
-  return false;
+  if ((mins[0] > (p[0] + dx)) || (maxs[0] < (p[0] - dx)) ||
+      (mins[1] > (p[1] + dy)) || (maxs[1] < (p[1] - dy)) ||
+      (mins[2] > (p[2] + height)) || (maxs[2] < p[2])) {
+    return false;
+  }
+  angle = angle; //FIXME
+  return true;
 }
 
 
@@ -308,10 +323,7 @@ bool MeshFace::inMovingBox(const float*, float,
                                 const float* p, float angle,
                                 float dx, float dy, float height) const
 {
-  p = p;
-  angle = angle;
-  dx = dy = height;
-  return false;
+  return inBox(p, angle, dx, dy, height);
 }
 
 

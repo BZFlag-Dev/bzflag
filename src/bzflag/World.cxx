@@ -93,7 +93,7 @@ void			World::done()
 
 void                    World::loadCollisionManager()
 {
-  collisionManager.load(boxes, basesR, pyramids, tetras, teleporters);
+  collisionManager.load(meshes, boxes, basesR, pyramids, tetras, teleporters);
   return;
 }
 
@@ -101,7 +101,7 @@ void                    World::checkCollisionManager()
 {
   if (collisionManager.needReload()) {
     // reload the collision grid
-    collisionManager.load(boxes, basesR, pyramids, tetras, teleporters);
+    collisionManager.load(meshes, boxes, basesR, pyramids, tetras, teleporters);
   }
   return;
 }

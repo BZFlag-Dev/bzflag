@@ -189,7 +189,7 @@ WorldWeapons& WorldInfo::getWorldWeapons()
 
 void                    WorldInfo::loadCollisionManager()
 {
-  collisionManager.load(boxes, bases, pyramids, tetras, teleporters);
+  collisionManager.load(meshes, boxes, bases, pyramids, tetras, teleporters);
   return;
 }
 
@@ -197,7 +197,7 @@ void                    WorldInfo::checkCollisionManager()
 {
   if (collisionManager.needReload()) {
     // reload the collision grid
-    collisionManager.load(boxes, bases, pyramids, tetras, teleporters);
+    collisionManager.load(meshes, boxes, bases, pyramids, tetras, teleporters);
   }
   return;
 }

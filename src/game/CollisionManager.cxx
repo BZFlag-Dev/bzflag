@@ -224,7 +224,8 @@ const ObsList *CollisionManager::rayTest (const Ray* ray) const
 }
 
 
-void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
+void CollisionManager::load (std::vector<MeshObstacle*>   &meshes,
+                             std::vector<BoxBuilding>     &boxes,
                              std::vector<BaseBuilding>    &bases,
                              std::vector<PyramidBuilding> &pyrs,
                              std::vector<TetraBuilding>   &tetras,
@@ -239,8 +240,15 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   minElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
 
   // determine the total number of obstacles
-  int fullCount = (int)(boxes.size() + bases.size() + pyrs.size() +
-                  tetras.size() + teles.size());
+  int fullCount = 0;
+  std::vector<MeshObstacle*>::iterator it_mesh;
+  for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
+    MeshObstacle* mesh = *it_mesh;
+    fullCount = fullCount + mesh->getFaceCount();
+  }
+  fullCount = fullCount + (int)(boxes.size() + bases.size() +
+                                pyrs.size() + tetras.size() +
+                                teles.size());
 
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -248,6 +256,12 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   FullList.count = 0;
 
   // add everything to the full list
+  for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
+    MeshObstacle* mesh = *it_mesh;
+    for (int f = 0; f < mesh->getFaceCount(); f++) {
+      addToFullList((Obstacle*) mesh->getFace(f));
+    }
+  }
   for (std::vector<BoxBuilding>::iterator it_box = boxes.begin();
        it_box != boxes.end(); it_box++) {
     addToFullList((Obstacle*) &(*it_box));
