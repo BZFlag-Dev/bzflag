@@ -2534,7 +2534,7 @@ void resetFlag(int flagIndex)
   int teamIndex = pFlagInfo->flag.type->flagTeam;
   if ((teamIndex >= ::RedTeam) 
   &&  (teamIndex <= ::PurpleTeam)
-  &&  ((*bases)[teamIndex] != NULL)) {
+  &&  (bases->find(teamIndex) != bases->end())) {
     const float *pos = (*bases)[teamIndex]->getBasePosition(0);
     const float *size = (*bases)[teamIndex]->getBaseSize(0);
     pFlagInfo->flag.position[0] = pos[0];
@@ -2869,10 +2869,12 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
   // if everybody left then reset world
   if (i == curMaxPlayers) {
-    for (BasesList::iterator it = bases->begin(); it != bases->end(); ++it) {
-      delete it->second;
+    if (!clOptions->worldFile) {
+      for (BasesList::iterator it = bases->begin(); it != bases->end(); ++it) {
+        delete it->second;
+      }
+      bases->clear();
     }
-    bases->clear();
 
     if (clOptions->oneGameOnly) {
       done = true;
@@ -2922,7 +2924,7 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
 {
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
-  if (player[playerId].restartOnBase && (player[playerId].type != ComputerPlayer) && (team >= RedTeam) && (team <= PurpleTeam) && ((*bases)[team] != NULL)) {
+  if (player[playerId].restartOnBase && (player[playerId].type != ComputerPlayer) && (team >= RedTeam) && (team <= PurpleTeam) && (bases->find(team) != bases->end())) {
     (*bases)[team]->getRandomPosition( spawnpos[0], spawnpos[1], spawnpos[2] );
     player[playerId].restartOnBase = false;
   }
@@ -3421,7 +3423,7 @@ static void dropFlag(int playerIndex, float pos[3])
     drpFlag.flag.landingPosition[1] = pos[1];
     drpFlag.flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
   }
-  else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagTeam) && ((*bases)[teamBase] != NULL)) {
+  else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagTeam) && (bases->find(teamBase) != bases->end())) {
     (*bases)[teamBase]->getSafetyZone( drpFlag.flag.landingPosition[0],
                                     drpFlag.flag.landingPosition[1],
                                     drpFlag.flag.landingPosition[2] );
