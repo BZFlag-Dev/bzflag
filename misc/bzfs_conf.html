@@ -86,7 +86,7 @@
 					}
 	
 					if (!mainform.ping_ttl.value.disabled && mainform.ping_ttl.value != 8) {
-						d.writeln("# Time to Live for Ping<br/>");
+						d.writeln("#Time to Live for Ping<br/>");
 						d.writeln("-ttl " + mainform.ping_ttl.value + "<br/><br/>");
 					}
 	
@@ -175,7 +175,7 @@
 					}
 	
 					if (mainform.flags_on_buildings.checked) {
-						d.writeln("#Flags on buildings<br/>");
+						d.writeln("#Flags can exist on buildings<br/>");
 						d.writeln("-fb<br/><br/>");
 					}
 	
@@ -328,46 +328,46 @@
 				<table width="100%">
 					<tr>
 						<td>Port</td>
-						<td><input type="text" name="port" value="5155" size="30"/></td>
+						<td><input type="text" name="port" value="5155" size="30" title="Initial port clients connect on"/></td>
 						<td>Reconnect Port</td>
-						<td><input type="text" name="reconnect_port" value="5156" size="30"/></td>
+						<td><input type="text" name="reconnect_port" value="5156" size="30" title="Reconnect port"/></td>
 					</tr>
 					<tr>
 						<td>UDP</td>
 						<td>
-							<select name="udp" value="allowed">
+							<select name="udp" value="allowed" title="Specify how UDP protocol is used">
 								<option value="required">Required</option>
 								<option value="allowed" SELECTED>Allowed</option>
 								<option value="never">Never</option>
 							</select>
 						</td>
 						<td>Listen On Interface</td>
-						<td><input type="text" name="listen_interface" size="30"/></td>
+						<td><input type="text" name="listen_interface" size="30" title="Listen on this network interface"/></td>
 					</tr>
 					<tr>
 						<td>Public Description</td>
-						<td><input type="text" name="public_description" size="30"/></td>
+						<td><input type="text" name="public_description" size="30" title="Public description for the server"/></td>
 						<td>Public Address</td>
-						<td><input type="text" name="public_address" size="30"/></td>
+						<td><input type="text" name="public_address" size="30" title="Public network address for the server"/></td>
 					</tr>
 					<tr>
 						<td>Use Public List Server</td>
-						<td><input type="text" name="public_list_server" size="30"/></td>
+						<td><input type="text" name="public_list_server" size="30" title="Public List server to register with"/></td>
 						<td>Server Message</td>
-						<td><input type="text" name="server_message" size="30"/></td>
+						<td><input type="text" name="server_message" size="30" title="Server Message displayed when player joins"/></td>
 					</tr>
 					<tr>
 						<td>Respond to Pings</td>
 						<td>
-							<input type="checkbox" name="respond_pings" onClick="return ableControls()" CHECKED/>
+							<input type="checkbox" name="respond_pings" onClick="return ableControls()" title="Whether or not Server will respond to pings" CHECKED/>
 						</td>
 						<td>Ping TTL </td>
-						<td><input type="text" name="ping_ttl" value="8" size="30"/></td>
+						<td><input type="text" name="ping_ttl" value="8" size="30" title="Time to Live for Ping"/></td>
 					</tr>
 					<tr>
 						<td>Synchronize Time</td>
 						<td>
-							<input type="checkbox" name="sync_time"/>
+							<input type="checkbox" name="sync_time" title="Synchronize time of day on all clients"/>
 						</td>
 					</tr>
 				</table>
@@ -378,46 +378,46 @@
 				<table width="100%">
 					<tr>
 						<td>Lag Warn Time</td>
-						<td><input type="text" name="lag_warn_time" value="0" size="30"/></td>
+						<td><input type="text" name="lag_warn_time" value="0" size="30" title="Lag Warning threshold time [ms]"/></td>
 						<td>Lag Warn Drop Count</td>
-						<td><input type="text" name="lag_drop_time" value="0" size="30"/></td>
+						<td><input type="text" name="lag_drop_time" value="0" size="30" title="Drop player after this many lag warnings"/></td>
 					</tr>
 					<tr span="2">
 						<td>Ban List</td>
-						<td colspan="3"><input type="text" name="ban_list" size="100"/></td>
+						<td colspan="3"><input type="text" name="ban_list" size="100" title="Ban players based on ip addresses"/></td>
 					</tr>
 					<tr>
 						<td>Idle Kick Time</td>
-						<td><input type="text" name="idle_kick_time" value="0" size="30"/></td>
+						<td><input type="text" name="idle_kick_time" value="0" size="30" title="Idle Kick Threshold [s]"/></td>
 						<td>Team Killers Die</td>
 						<td>
-							<input type="checkbox" name="team_killers_die" CHECKED/>
+							<input type="checkbox" name="team_killers_die" title="Whether or not Player dies when killing a teammate" CHECKED/>
 						</td>
 					</tr>
 					<tr>
 						<td>Team Killer Kick Ratio</td>
-						<td><input type="text" name="team_killer_kick_ratio" value="0" size="30"/></td>
+						<td><input type="text" name="team_killer_kick_ratio" value="0" size="30" title="Team killer to wins percentage (1-100) above which player is kicked"/></td>
 						<td>Bad Word File</td>
-						<td><input type="file" name="bad_words"/></td>
+						<td><input type="file" name="bad_words" title="Bad Words filter file specification"/></td>
 					</tr>
 					<tr span="2">
 						<td>Advertisement Message</td>
-						<td colspan="3"><input type="text" name="advertisement_message" size="100"/></td>
+						<td colspan="3"><input type="text" name="advertisement_message" size="100" title="Message that is broadcast every 15 minutes"/></td>
 					</tr>
 					<tr>	
 						<td>Print Score</td>
-						<td><input type="checkbox" name="print_score"/></td>
+						<td><input type="checkbox" name="print_score" title="Write score to stdout whenever it changes"/></td>
 					</tr>
 					<tr>
 						<td>Time</td>
-						<td><input type="text" name="time" size="30"/></td>
+						<td><input type="text" name="time" size="30" title="Set time limit on each game [s]"/></td>
 						<td>Time Manual</td>
-						<td><input type="checkbox" name="time_manual"/></td>
+						<td><input type="checkbox" name="time_manual" title="Whether or not Countdown for timed games has to be started with /countdown"/></td>
 					</tr>
 					<tr>
 						<td>Debug Level</td>
 						<td>
-							<select name="debug_level" value="0">
+							<select name="debug_level" value="0" title="Set debugging level">
 								<option value="0">None</option>
 								<option value="1">1</option>
 								<option value="2">2</option>
@@ -426,7 +426,7 @@
 							</select>
 						</td>
 						<td>Password</td>
-						<td><input type="text" name="password" size="30"/></td>
+						<td><input type="text" name="password" size="30" title="Administrator's password"/></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -437,75 +437,75 @@
 					<tr>
 						<td>World File</td>
 						<td colspan="2">
-							<input type="checkbox" name="world_type" onClick="return ableControls()"/>
-							<input type="file" name="world_file"/>
+							<input type="checkbox" name="world_type" onClick="return ableControls()" title="Whether or not the world is based on a file"/>
+							<input type="file" name="world_file" title="World file to load"/>
 						</td>
 					</tr>
 					<tr>
 						<td>Game Style</td>
 						<td>
-							<select name="game_style" value="ffa" onClick="return ableControls()">
+							<select name="game_style" value="ffa" onClick="return ableControls()" title="Free for all or Capture the flag game style">
 								<option value="ffa">Free for All</option>
 								<option value="ctf">Capture the Flag</option>
 							</select>
 						</td>
 						<td>Flags on Buildings</td>
 						<td>
-							<input type="checkbox" name="flags_on_buildings"/>
+							<input type="checkbox" name="flags_on_buildings" title="Whether or not flags can exist on buildings"/>
 						</td>
 					</tr>
 					<tr>
 						<td>Randomly Orient Buildings</td>
 						<td>
-							<input type="checkbox" name="randomly_orient_buildings"/>
+							<input type="checkbox" name="randomly_orient_buildings" title="Whether or not buildings will be rotated randomly"/>
 						</td>
 						<td>Randomly Building Heights</td>
 						<td>
-							<input type="checkbox" name="random_building_heights"/>
+							<input type="checkbox" name="random_building_heights" title="Whether or not buildings will have random heights"/>
 						</td>
 					</tr>
 					<tr>
 						<td>Maximum Acceleration</td>
 						<td>
-							<input type="checkbox" name="maximum_acceleration"/>
+							<input type="checkbox" name="maximum_acceleration" title="Whether or not tank acceleration is limited"/>
 						</td>
 						<td>Balanced CTF Map</td>
 						<td>
-							<input type="checkbox" name="balanced_ctf_map"/>
+							<input type="checkbox" name="balanced_ctf_map" title="Whether or not buildings are generated in a balanced fashion"/>
 						</td>
 					</tr>
 					<tr>
 						<td>Exit after one game</td>
 						<td>
-							<input type="checkbox" name="exit_one_game"/>
+							<input type="checkbox" name="exit_one_game" title="Whether or not the server shuts down after one game"/>
 						</td>
 					</tr>
 					<tr>
 						<td>Maximum Players</td>
-						<td><input type="text" name="maximum_players" value="40" size="30"/></td>
+						<td><input type="text" name="maximum_players" value="40" size="30" title="Maximum number of players who can join"/></td>
 						<td>Maximum Observers</td>
-						<td><input type="text" name="maximum_observers" value="3" size="30"/></td>
+						<td><input type="text" name="maximum_observers" value="3" size="30" title="Maximum number of players that can watch"/></td>
 					</tr>
 					<tr>
 						<td>Maximum Team Score</td>
-						<td><input type="text" name="maximum_team_score" value="0" size="30"/></td>
+						<td><input type="text" name="maximum_team_score" value="0" size="30" title="Team score at which the game will end"/></td>
 						<td>Maximum Player Score</td>
-						<td><input type="text" name="maximum_player_score" value="0" size="30"/></td>
+						<td><input type="text" name="maximum_player_score" value="0" size="30" title="Player score at which the game will end"/></td>
 					</tr>
 					<tr>
 						<td>Mandatory SuperFlags</td>
-						<td><input type="text" name="mandatory_superflags" value="16" size="30"/></td>
+						<td><input type="text" name="mandatory_superflags" value="16" size="30" title="Number of flags that exist at all times"/></td>
 						<td>Allowed SuperFlags</td>
-						<td><input type="text" name="allowed_superflags" value="16" size="30"/></td>
+						<td><input type="text" name="allowed_superflags" value="16" size="30" title="Maximum Number of flags that can exist at any time"/></td>
 					</tr>
 					<tr>
 						<td>Allow Teleporters</td>
 						<td>
-							<input type="checkbox" name="allow_teleporters"/>
+							<input type="checkbox" name="allow_teleporters" title="Whether or not teleporters will be generated"/>
 						</td>
 						<td>Insert Antidote flags</td>
 						<td>
-							<input type="checkbox" name="insert_antidote_flags"/>
+							<input type="checkbox" name="insert_antidote_flags" title="Whether or not antidote flags will be inserted"/>
 						</td>
 					</tr>
 				</table>
@@ -517,26 +517,26 @@
 					<tr>
 						<td>Allow Jumping</td>
 						<td>
-							<input type="checkbox" name="allow_jumping"/>
+							<input type="checkbox" name="allow_jumping" title="Whether or not tanks can jump without a flag"/>
 						</td>
 						<td>Max Concurrent Shots</td>
-						<td><input type="text" name="max_concurrent_shots" value="1" size="30"/></td>
+						<td><input type="text" name="max_concurrent_shots" value="1" size="30" title="Maximum number of shots a tank shoots at one time"/></td>
 					</tr>
 					<tr>
 						<td>Allow Richochet</td>
 						<td>
-							<input type="checkbox" name="allow_richochet"/>
+							<input type="checkbox" name="allow_richochet" title="Whether or not bullets richochet without a flag"/>
 						</td>
 						<td>Allow Rogues</td>
 						<td>
-							<input type="checkbox" name="allow_rogues"/>
+							<input type="checkbox" name="allow_rogues" title="Whether or not Rogues are allowed to join"/>
 						</td>
 					</tr>
 					<tr>
 						<td>Bad Flag Shake Time</td>
-						<td><input type="text" name="bad_flag_shake_time" value="0" size="30"/></td>
+						<td><input type="text" name="bad_flag_shake_time" value="0" size="30" title="Bad Flag shake time [s]"/></td>
 						<td>Bad Flag Shake Wins</td>
-						<td><input type="text" name="bad_flag_shake_wins" value="0" size="30"/></td>
+						<td><input type="text" name="bad_flag_shake_wins" value="0" size="30" title="Bad Flag shake wins"/></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -547,48 +547,48 @@
 					<legend>Mandatory Flags</legend>
 					<table width="100%">
 						<tr>
-							<td align="right">(good)</td><td><input type="text" id="gd" name="good_mand_flag" value="0" size="3"/></td>
+							<td align="right">(good)</td><td><input type="text" id="gd" name="good_mand_flag" value="0" size="3" title="All good flags"/></td>
 						</tr>
 						<tr>
-							<td align="right">(V)</td><td><input type="text" name="v_mand_flag" value="0" size="3"/></td>
-							<td align="right">(A)</td><td><input type="text" name="a_mand_flag" value="0" size="3"/></td>
-							<td align="right">(OO)</td><td><input type="text" name="oo_mand_flag" value="0" size="3"/></td>
-							<td align="right">(F)</td><td><input type="text" name="f_mand_flag" value="0" size="3"/></td>
-							<td align="right">(MG)</td><td><input type="text" name="mg_mand_flag" value="0" size="3"/></td>
-							<td align="right">(GM)</td><td><input type="text" name="gm_mand_flag" value="0" size="3"/></td>
+							<td align="right">(V)</td><td><input type="text" name="v_mand_flag" value="0" size="3" title="High Speed"/></td>
+							<td align="right">(A)</td><td><input type="text" name="a_mand_flag" value="0" size="3" title="Quick Turn"/></td>
+							<td align="right">(OO)</td><td><input type="text" name="oo_mand_flag" value="0" size="3" title="Oscillating Overthruster"/></td>
+							<td align="right">(F)</td><td><input type="text" name="f_mand_flag" value="0" size="3" title="Rapid Shot"/></td>
+							<td align="right">(MG)</td><td><input type="text" name="mg_mand_flag" value="0" size="3" title="Machine Gun"/></td>
+							<td align="right">(GM)</td><td><input type="text" name="gm_mand_flag" value="0" size="3" title="Guided Missile/></td>
 						</tr>
 						<tr>
-							<td align="right">(L)</td><td><input type="text" name="l_mand_flag" value="0" size="3"/></td>
-							<td align="right">(R)</td><td><input type="text" name="r_mand_flag" value="0" size="3"/></td>
-							<td align="right">(SB)</td><td><input type="text" name="sb_mand_flag" value="0" size="3"/></td>
-							<td align="right">(IB)</td><td><input type="text" name="ib_mand_flag" value="0" size="3"/></td>
-							<td align="right">(ST)</td><td><input type="text" name="st_mand_flag" value="0" size="3"/></td>
-							<td align="right">(T)</td><td><input type="text" name="t_mand_flag" value="0" size="3"/></td>
+							<td align="right">(L)</td><td><input type="text" name="l_mand_flag" value="0" size="3" title="Laser"/></td>
+							<td align="right">(R)</td><td><input type="text" name="r_mand_flag" value="0" size="3" title="Richochet"/></td>
+							<td align="right">(SB)</td><td><input type="text" name="sb_mand_flag" value="0" size="3" title="Super Bullet"/></td>
+							<td align="right">(IB)</td><td><input type="text" name="ib_mand_flag" value="0" size="3" title="Invisible Bullet"/></td>
+							<td align="right">(ST)</td><td><input type="text" name="st_mand_flag" value="0" size="3" title="Stealth"/></td>
+							<td align="right">(T)</td><td><input type="text" name="t_mand_flag" value="0" size="3" title="Tiny"/></td>
 						</tr>
 						<tr>
-							<td align="right">(N)</td><td><input type="text" name="n_mand_flag" value="0" size="3"/></td>
-							<td align="right">(SH)</td><td><input type="text" name="sh_mand_flag" value="0" size="3"/></td>
-							<td align="right">(SR)</td><td><input type="text" name="sr_mand_flag" value="0" size="3"/></td>
-							<td align="right">(SW)</td><td><input type="text" name="sw_mand_flag" value="0" size="3"/></td>
-							<td align="right">(PZ)</td><td><input type="text" name="pz_mand_flag" value="0" size="3"/></td>
-							<td align="right">(G)</td><td><input type="text" name="g_mand_flag" value="0" size="3"/></td>
+							<td align="right">(N)</td><td><input type="text" name="n_mand_flag" value="0" size="3" title="Narrow"/></td>
+							<td align="right">(SH)</td><td><input type="text" name="sh_mand_flag" value="0" size="3" title="Shield"/></td>
+							<td align="right">(SR)</td><td><input type="text" name="sr_mand_flag" value="0" size="3" title="Steam Roller"/></td>
+							<td align="right">(SW)</td><td><input type="text" name="sw_mand_flag" value="0" size="3" title="Shock Wave"/></td>
+							<td align="right">(PZ)</td><td><input type="text" name="pz_mand_flag" value="0" size="3" title="Phantom Zone"/></td>
+							<td align="right">(G)</td><td><input type="text" name="g_mand_flag" value="0" size="3" title="Genocide"/></td>
 						</tr>
 						<tr>
-							<td align="right">(JP)</td><td><input type="text" name="jp_mand_flag" value="0" size="3"/></td>
-							<td align="right">(ID)</td><td><input type="text" name="id_mand_flag" value="0" size="3"/></td>
-							<td align="right">(CL)</td><td><input type="text" name="cl_mand_flag" value="0" size="3"/></td>
+							<td align="right">(JP)</td><td><input type="text" name="jp_mand_flag" value="0" size="3" title="Jumping"/></td>
+							<td align="right">(ID)</td><td><input type="text" name="id_mand_flag" value="0" size="3" title="Identify"/></td>
+							<td align="right">(CL)</td><td><input type="text" name="cl_mand_flag" value="0" size="3" title="Cloaking"/></td>
 						</tr>
 						<tr>
 						<tr>
-							<td align="right">(CB)</td><td><input type="text" name="cb_mand_flag" value="0" size="3"/></td>
-							<td align="right">(&lt;-)</td><td><input type="text" name="lt_mand_flag" value="0" size="3"/></td>
-							<td align="right">(-&gt;)</td><td><input type="text" name="gt_mand_flag" value="0" size="3"/></td>
-							<td align="right">(M)</td><td><input type="text" name="m_mand_flag" value="0" size="3"/></td>
-							<td align="right">(B)</td><td><input type="text" name="b_mand_flag" value="0" size="3"/></td>
-							<td align="right">(JM)</td><td><input type="text" name="jm_mand_flag" value="0" size="3"/></td>
+							<td align="right">(CB)</td><td><input type="text" name="cb_mand_flag" value="0" size="3" title="Colorblind"/></td>
+							<td align="right">(&lt;-)</td><td><input type="text" name="lt_mand_flag" value="0" size="3" title="Left turn only"/></td>
+							<td align="right">(-&gt;)</td><td><input type="text" name="gt_mand_flag" value="0" size="3" title="Right turn only"/></td>
+							<td align="right">(M)</td><td><input type="text" name="m_mand_flag" value="0" size="3" title="Momentum"/></td>
+							<td align="right">(B)</td><td><input type="text" name="b_mand_flag" value="0" size="3" title="Blindness"/></td>
+							<td align="right">(JM)</td><td><input type="text" name="jm_mand_flag" value="0" size="3" title="Jamming"/></td>
 						</tr>
 						<tr>
-							<td align="right">(WA)</td><td><input type="text" name="wa_mand_flag" value="0" size="3"/></td>
+							<td align="right">(WA)</td><td><input type="text" name="wa_mand_flag" value="0" size="3" title="Wide Angle"/></td>
 						</tr>
 					</table>
 				</fieldset>
@@ -596,48 +596,48 @@
 					<legend>Forbidden Optional Flags</legend>
 					<table width="100%">
 						<tr>
-							<td align="right">(bad)</td><td><input type="checkbox" name="bad_forbid_flag"/></td>
+							<td align="right">(bad)</td><td><input type="checkbox" name="bad_forbid_flag" title="All bad flags"/></td>
 						</tr>
 						<tr>
-							<td align="right">(V)</td><td><input type="checkbox" name="v_forbid_flag"/></td>
-							<td align="right">(A)</td><td><input type="checkbox" name="a_forbid_flag"/></td>
-							<td align="right">(OO)</td><td><input type="checkbox" name="oo_forbid_flag"/></td>
-							<td align="right">(F)</td><td><input type="checkbox" name="f_forbid_flag"/></td>
-							<td align="right">(MG)</td><td><input type="checkbox" name="mg_forbid_flag"/></td>
-							<td align="right">(GM)</td><td><input type="checkbox" name="gm_forbid_flag"/></td>
+							<td align="right">(V)</td><td><input type="checkbox" name="v_forbid_flag" title="High Speed"/></td>
+							<td align="right">(A)</td><td><input type="checkbox" name="a_forbid_flag" title="Quick Turn"/></td>
+							<td align="right">(OO)</td><td><input type="checkbox" name="oo_forbid_flag" title="Oscillating Overthruster"/></td>
+							<td align="right">(F)</td><td><input type="checkbox" name="f_forbid_flag" title="Rapid Shot"/></td>
+							<td align="right">(MG)</td><td><input type="checkbox" name="mg_forbid_flag" title="Machine Gun"/></td>
+							<td align="right">(GM)</td><td><input type="checkbox" name="gm_forbid_flag" title="Guided Missile"/></td>
 						</tr>
 						<tr>
-							<td align="right">(L)</td><td><input type="checkbox" name="l_forbid_flag"/></td>
-							<td align="right">(R)</td><td><input type="checkbox" name="r_forbid_flag"/></td>
-							<td align="right">(SB)</td><td><input type="checkbox" name="sb_forbid_flag"/></td>
-							<td align="right">(IB)</td><td><input type="checkbox" name="ib_forbid_flag"/></td>
-							<td align="right">(ST)</td><td><input type="checkbox" name="st_forbid_flag"/></td>
-							<td align="right">(T)</td><td><input type="checkbox" name="t_forbid_flag"/></td>
+							<td align="right">(L)</td><td><input type="checkbox" name="l_forbid_flag" title="Laser"/></td>
+							<td align="right">(R)</td><td><input type="checkbox" name="r_forbid_flag" title="Richochet"/></td>
+							<td align="right">(SB)</td><td><input type="checkbox" name="sb_forbid_flag" title="Super Bullet"/></td>
+							<td align="right">(IB)</td><td><input type="checkbox" name="ib_forbid_flag" title="Invisible Bullet"/></td>
+							<td align="right">(ST)</td><td><input type="checkbox" name="st_forbid_flag" title="Stealth"/></td>
+							<td align="right">(T)</td><td><input type="checkbox" name="t_forbid_flag" title="Tiny"/></td>
 						</tr>
 						<tr>
-							<td align="right">(N)</td><td><input type="checkbox" name="n_forbid_flag"/></td>
-							<td align="right">(SH)</td><td><input type="checkbox" name="sh_forbid_flag"/></td>
-							<td align="right">(SR)</td><td><input type="checkbox" name="sr_forbid_flag"/></td>
-							<td align="right">(SW)</td><td><input type="checkbox" name="sw_forbid_flag"/></td>
-							<td align="right">(PZ)</td><td><input type="checkbox" name="pz_forbid_flag"/></td>
-							<td align="right">(G)</td><td><input type="checkbox" name="g_forbid_flag"/></td>
+							<td align="right">(N)</td><td><input type="checkbox" name="n_forbid_flag" title="Narrow"/></td>
+							<td align="right">(SH)</td><td><input type="checkbox" name="sh_forbid_flag" title="Shield"/></td>
+							<td align="right">(SR)</td><td><input type="checkbox" name="sr_forbid_flag" title="Steam Roller"/></td>
+							<td align="right">(SW)</td><td><input type="checkbox" name="sw_forbid_flag" title="Shock Wave"/></td>
+							<td align="right">(PZ)</td><td><input type="checkbox" name="pz_forbid_flag" title="Phantom Zone"/></td>
+							<td align="right">(G)</td><td><input type="checkbox" name="g_forbid_flag" title="Genocide"/></td>
 						</tr>
 						<tr>
-							<td align="right">(JP)</td><td><input type="checkbox" name="jp_forbid_flag"/></td>
-							<td align="right">(ID)</td><td><input type="checkbox" name="id_forbid_flag"/></td>
-							<td align="right">(CL)</td><td><input type="checkbox" name="cl_forbid_flag"/></td>
+							<td align="right">(JP)</td><td><input type="checkbox" name="jp_forbid_flag" title="Jumping"/></td>
+							<td align="right">(ID)</td><td><input type="checkbox" name="id_forbid_flag" title="Identify"/></td>
+							<td align="right">(CL)</td><td><input type="checkbox" name="cl_forbid_flag" title="Cloaking"/></td>
 						</tr>
 						<tr>
 						<tr>
-							<td align="right">(CB)</td><td><input type="checkbox" name="cb_forbid_flag"/></td>
-							<td align="right">(&lt;-)</td><td><input type="checkbox" name="lt_forbid_flag"/></td>
-							<td align="right">(-&gt;)</td><td><input type="checkbox" name="gt_forbid_flag"/></td>
-							<td align="right">(M)</td><td><input type="checkbox" name="m_forbid_flag"/></td>
-							<td align="right">(B)</td><td><input type="checkbox" name="b_forbid_flag"/></td>
-							<td align="right">(JM)</td><td><input type="checkbox" name="jm_forbid_flag"/></td>
+							<td align="right">(CB)</td><td><input type="checkbox" name="cb_forbid_flag" title="Colorblind"/></td>
+							<td align="right">(&lt;-)</td><td><input type="checkbox" name="lt_forbid_flag" title="Left turn only"/></td>
+							<td align="right">(-&gt;)</td><td><input type="checkbox" name="gt_forbid_flag" title="Right turn only"/></td>
+							<td align="right">(M)</td><td><input type="checkbox" name="m_forbid_flag" title="Momentum"/></td>
+							<td align="right">(B)</td><td><input type="checkbox" name="b_forbid_flag" title="Blindness"/></td>
+							<td align="right">(JM)</td><td><input type="checkbox" name="jm_forbid_flag" title="Jamming"/></td>
 						</tr>
 						<tr>
-							<td align="right">(WA)</td><td><input type="checkbox" name="wa_forbid_flag"/></td>
+							<td align="right">(WA)</td><td><input type="checkbox" name="wa_forbid_flag" title="Wide Angle"/></td>
 						</tr>
 					</table>
 				</fieldset>
