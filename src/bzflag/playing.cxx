@@ -3256,11 +3256,11 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
 
 #ifdef ROBOT
-      for (int i = 0; i < numRobots; i++)
-	if (robots[i]->getId() == id)
-	  robots[i]->changeTeam(RabbitTeam);
+      for (int r = 0; r < numRobots; r++)
+	if (robots[r]->getId() == id)
+	  robots[r]->changeTeam(RabbitTeam);
 	else
-	  robots[i]->changeTeam(RogueTeam);
+	  robots[r]->changeTeam(RogueTeam);
 #endif
       break;
     }
