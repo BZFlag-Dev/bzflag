@@ -4129,9 +4129,9 @@ static void		playingLoop()
     // move roaming camera
     if (roaming) {
       if (myTank) {
-	bool control = (shiftKeyStatus & BzfKeyEvent::ControlKey != 0);
-	bool alt     = (shiftKeyStatus & BzfKeyEvent::AltKey != 0);
-	bool shift   = (shiftKeyStatus & BzfKeyEvent::ShiftKey != 0);
+	bool control = ((shiftKeyStatus & BzfKeyEvent::ControlKey) != 0);
+	bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0);
+	bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey) != 0);
 	if (display->hasGetKeyMode())
 	  display->getModState (shift, control, alt);
 	roamDPos[0] = 0.0;
