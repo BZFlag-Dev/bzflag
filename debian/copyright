@@ -1,11 +1,12 @@
-This package was debianized by Anand Kumria <wildfire@progsoc.uts.edu.au> on
-Sun, 12 Dec 1999 14:07:25 +1100.
+This package is now maintained by Tim Riker <Tim@Rikers.org>
 
-It was downloaded from ftp://ftp.linuxgames.com/bzflag/src/
+This package was debianized by Anand Kumria <wildfire@progsoc.uts.edu.au>
+
+It was downloaded from http://download.sourceforge.net/bzflag/
 
 Upstream Author(s): Tim Riker <Tim@Rikers.org>
 
-Copyright:
+Copyright: Copyright (c) 1993 - 2001 Tim Riker
 
 bzflag is licensed under the GNU General Public Licence. On Debian GNU/Linux
 systems you can the full text of this licence in /usr/share/common-licences/GPL

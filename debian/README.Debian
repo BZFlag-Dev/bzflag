@@ -1,4 +1,4 @@
-bzflag for Debian
+BZFlag for Debian
 ----------------------
 
 - the data files are stored in /usr/share/bzflag/data
@@ -17,8 +17,8 @@ bzflag uses XFree86's VidMode extension to change resoultions
 not been able to identify the reason (yet). Please report a bug if you
 are having problems.
 
-Other people, myself included, have colour map problems when the change of
-Video resolution occurs. If this happens to you as well please report it.
+Other people, have color map problems when the change of video
+resolution occurs. If this happens to you as well please report it.
 The workaround it to manually switch resoultions before running bzflag
 
 bzflag, by default, will takeover your entire screen. By specifying
@@ -40,4 +40,5 @@ If you use a Csh style sheel like /bin/csh or /bin/tcsh use this:
 
 % set MESA_GLX_FX fullscreen
 
- -- Anand Kumria <wildfire@progsoc.uts.edu.au>, Sun, 12 Dec 1999 14:07:25 +1100
+original by Anand Kumria <wildfire@progsoc.uts.edu.au>
+modified by Tim Riker <Tim@Rikers.org>

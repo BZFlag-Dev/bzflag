@@ -1,8 +1,14 @@
-bzflag (1.7d.@VERSION@) unstable frozen; urgency=low
+bzflag (1.7e1.@VERSION@) unstable frozen; urgency=low
 
   * CVS Build
 
- -- Erik J. Bernhardson <journey@jps.net>  @DATE@
+ -- Tim Riker <Tim@Rikers.org>  Thu, 22 Feb 2001 16:42:22 -0700
+
+bzflag (1.7d.20000324) unstable frozen; urgency=low
+
+  * CVS Build
+
+ -- Erik J. Bernhardson <journey@jps.net>  Fri, 24 Mar 2000 02:34:56 -0800
 
 bzflag (1.7d-1) unstable frozen; urgency=low
 

@@ -1,7 +1,7 @@
 Source: bzflag
 Section: games
 Priority: optional
-Maintainer: Anand Kumria <wildfire@progsoc.uts.edu.au>
+Maintainer: Tim Riker <Tim@Rikers.org>
 Standards-Version: 3.1.1.1
 Build-Depends: groff, mesag-dev, libstdc++-dev
 
