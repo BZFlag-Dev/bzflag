@@ -4664,7 +4664,8 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify player flag
-  if ((firingInfo.flag != NullFlag) && (firingInfo.flag != player[playerIndex].flag)) {
+  if ((firingInfo.flag != NullFlag) && (firingInfo.flag != flag[player[playerIndex].flag].flag.id)) {
+    DEBUG2("shot flag mismatch %d %d\n", firingInfo.flag, flag[player[playerIndex].flag].flag.id);
     firingInfo.flag = NullFlag;
     repack = true;
   }
