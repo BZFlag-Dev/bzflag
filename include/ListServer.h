@@ -30,6 +30,7 @@ typedef struct _ListServer {
     int			phase;
     std::string	 hostname;
     std::string	 pathname;
+    int			failures;
     int			bufferSize;
     char		buffer[1024];
 } ListServer;
