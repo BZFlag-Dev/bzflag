@@ -1549,6 +1549,39 @@
 			settings = {
 			};
 		};
+		14B9934E04E1D81500A80164 = {
+			isa = PBXFileReference;
+			path = burrow.wav;
+			refType = 4;
+		};
+		14B9934F04E1D81500A80164 = {
+			isa = PBXFileReference;
+			path = thief.png;
+			refType = 4;
+		};
+		14B9935004E1D81500A80164 = {
+			isa = PBXFileReference;
+			path = thief.wav;
+			refType = 4;
+		};
+		14B9935104E1D81500A80164 = {
+			fileRef = 14B9934E04E1D81500A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14B9935204E1D81500A80164 = {
+			fileRef = 14B9934F04E1D81500A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14B9935304E1D81500A80164 = {
+			fileRef = 14B9935004E1D81500A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		14C1C18A04B63B8C00A80164 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -2345,6 +2378,9 @@
 				1401FCC104B564EB00A80164,
 				1401FCC204B564EB00A80164,
 				1401FCC304B564EB00A80164,
+				14B9935104E1D81500A80164,
+				14B9935204E1D81500A80164,
+				14B9935304E1D81500A80164,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2622,6 +2658,9 @@
 				1401FC9C04B564EB00A80164,
 				1401FC9D04B564EB00A80164,
 				1401FC9E04B564EB00A80164,
+				14B9934E04E1D81500A80164,
+				14B9934F04E1D81500A80164,
+				14B9935004E1D81500A80164,
 			);
 			isa = PBXGroup;
 			name = data;
