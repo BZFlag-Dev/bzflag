@@ -13,7 +13,8 @@
 /* no header other than VotingArbiter.h should be included here */
 
 #ifdef _WIN32
-#pragma warning( 4:4786)
+#  pragma warning( 4:4786)
+#  define sprintf _snprintf
 #endif
 
 #include "VotingArbiter.h"
@@ -59,7 +60,7 @@ bool VotingArbiter::forgetPoll(void)
   _startTime = TimeKeeper::getNullTime();
   _pollee = "nobody";
   _polleeIP = "";
-  _action = UNDEFINED;
+  _action = "";
   _pollRequestor = "nobody";
 
   /* poof */
@@ -68,10 +69,10 @@ bool VotingArbiter::forgetPoll(void)
   return true;
 }
 
-bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollAction_t action, std::string playerIP) 
+bool VotingArbiter::poll(std::string player, std::string playerRequesting, std::string action, std::string playerIP) 
 {
   poller_t p;
-  char message[256];
+  std::string message;
   bool tooSoon;
   
   // you have to forget the current poll before another can be spawned
@@ -94,11 +95,8 @@ bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollA
   _pollers.push_back(p);
 
   // create the booth to record votes
-#ifdef _WIN32
-  _snprintf(message, 256,  "%s %s", action == POLL_KICK_PLAYER ? "kick" : "ban", player.c_str());
-#else
-  snprintf(message, 256,  "%s %s", action == POLL_KICK_PLAYER ? "kick" : "ban", player.c_str());
-#endif
+  message = player + " " + action;
+
   if (_votingBooth != NULL) {
     delete _votingBooth;
   }
@@ -116,12 +114,12 @@ bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollA
 
 bool VotingArbiter::pollToKick(std::string player, std::string playerRequesting)
 {
-  return (this->poll(player, playerRequesting, POLL_KICK_PLAYER));
+  return (this->poll(player, playerRequesting, "kick"));
 }
 
 bool VotingArbiter::pollToBan(std::string player, std::string playerRequesting, std::string playerIP)
 {
-  return (this->poll(player, playerRequesting, POLL_BAN_PLAYER, playerIP));
+  return (this->poll(player, playerRequesting, "ban", playerIP));
 }
 
 bool VotingArbiter::closePoll(void)

@@ -39,12 +39,7 @@ class VotingArbiter
     TimeKeeper lastRequest;
   } poller_t;
 
-  typedef enum {
-    UNDEFINED,
-    POLL_KICK_PLAYER,
-    POLL_BAN_PLAYER
-  } pollAction_t;
-
+  
 private:
   VotingBooth *_votingBooth;
 
@@ -69,7 +64,7 @@ private:
   /* who and what are being voted on, and who asked for the poll */
   std::string _pollee;
   std::string _polleeIP;
-  pollAction_t _action;
+  std::string _action;
   std::string _pollRequestor;
 
   /* names of players who are allowed to vote */
@@ -137,14 +132,15 @@ private:
 
   /** attempt to activate/open a poll
    */
-  bool poll(std::string player, std::string playerRequesting, pollAction_t action=POLL_BAN_PLAYER, std::string playerIP="");
+  bool poll(std::string player, std::string playerRequesting, std::string action, std::string playerIP="");
+
   /** convenience method to attempt to start a kick poll
     */
   bool pollToKick(std::string player, std::string playerRequesting);
   /** convenience method to attempt to start a ban poll
     */
   bool pollToBan(std::string player, std::string playerRequesting, std::string playerIP);
-  
+
   /** halt/close the poll if it is open
    */
   bool closePoll(void);
@@ -221,7 +217,7 @@ inline VotingArbiter::VotingArbiter(unsigned short int voteTime=60,
   _startTime = TimeKeeper::getNullTime();
   _pollee = "nobody";
   _polleeIP = "";
-  _action = UNDEFINED;
+  _action = "";
   _pollRequestor = "nobody";
   return;
 }
@@ -298,13 +294,10 @@ inline bool VotingArbiter::isPollExpired(void) const
 
 inline std::string VotingArbiter::getPollAction(void) const
 {
-  if (_action == POLL_BAN_PLAYER) {
-    return "ban";
-  } else if (_action == POLL_KICK_PLAYER) {
-    return "kick";
+  if (_action.size() <= 0) {
+    return "do something unknown to";
   }
-
-  return "do something unknown to";
+  return _action;
 }
 
 inline std::string VotingArbiter::getPollPlayer(void) const
