@@ -648,6 +648,7 @@ bool			World::writeWorld(std::string &filename)
       out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
       out << "\tsize " << base.getWidth() << " " << base.getBreadth() << " " << base.getHeight() << std::endl;
       out << "\trotation " << ((base.getRotation() * 180.0) / M_PI) << std::endl;
+      out << "\tcolor " << base.getTeam() << std::endl;
       if (base.isDriveThrough())
         out << "drivethrough" << std::endl;
       if (base.isShootThrough())
