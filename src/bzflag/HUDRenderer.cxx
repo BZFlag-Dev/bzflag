@@ -327,9 +327,6 @@ void			HUDRenderer::setAlertFontSize(int, int height)
   for (int i = 0; i < MaxAlerts; i++)
     if (alertClock[i].isOn())
       alertLabelWidth[i] = alertFont.getWidth(alertLabel[i]);
-
-  alertY = -majorFont.getSpacing() +
-	   -alertFont.getSpacing() + alertFont.getDescent();
 }
 
 void			HUDRenderer::setMajorFontSize(int, int height)
@@ -337,9 +334,6 @@ void			HUDRenderer::setMajorFontSize(int, int height)
   const float s = (float)height / 24.0f;
   majorFont = TextureFont::getTextureFont(TextureFont::TimesBold, True);
   majorFont.setSize(s, s);
-
-  alertY = -majorFont.getSpacing() +
-	   -alertFont.getSpacing() + alertFont.getDescent();
 }
 
 void			HUDRenderer::setMinorFontSize(int, int height)
@@ -697,13 +691,14 @@ void			HUDRenderer::render(SceneRenderer& renderer)
 void			HUDRenderer::renderAlerts(SceneRenderer& renderer)
 {
   const float centerx = 0.5f * (float)renderer.getWindow().getWidth();
-  float y = (float)renderer.getWindow().getHeight() + alertY;
+
+  float y = (float)renderer.getWindow().getHeight() + -majorFont.getSpacing() + -alertFont.getSpacing();
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
       hudColor3fv(alertColor[i]);
       alertFont.draw(alertLabel[i], centerx - 0.5f * alertLabelWidth[i], y);
+      y -= alertFont.getSpacing();
     }
-    y -= alertFont.getSpacing();
   }
 }
 
@@ -715,7 +710,15 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   char buffer[60];
   const float h = majorFont.getSpacing();
   float x = 0.25f * h, y = (float)renderer.getWindow().getHeight() - h;
+  TeamColor teamIndex = player->getTeam();
   FlagId flag = player->getFlag();
+
+  // print player name and score in upper left corner in team (radar) color
+  if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
+    sprintf(buffer, "%s: %d", player->getCallSign(), player->getScore());
+    hudColor3fv(Team::getRadarColor(teamIndex));
+    majorFont.draw(buffer, x, y);
+  }
 
   // print flag if player has one in upper right
   if (flag != NoFlag) {
@@ -820,7 +823,8 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   const float x2 = x1 + scoreLabelWidth;
   const float x3 = x2 + scoreLabelWidth;
   const float x5 = (1.0f - 0.01f) * renderer.getWindow().getWidth() - teamScoreLabelWidth;
-  const float y0 = (1.0f - 0.07f) * renderer.getWindow().getHeight();
+  const float y0 = (float)renderer.getWindow().getHeight() -
+      majorFont.getSpacing() - alertFont.getSpacing() * 2.0f + alertFont.getDescent();
   hudColor3fv(messageColor);
   minorFont.draw(scoreLabel, x1, y0);
   minorFont.draw(killLabel, x2, y0);

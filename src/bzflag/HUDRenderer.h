@@ -184,7 +184,6 @@ class HUDRenderer {
     FlashClock		globalClock;
     FlashClock		scoreClock;
 
-    float		alertY;
     FlashClock		alertClock[MaxAlerts];
     BzfString		alertLabel[MaxAlerts];
     float		alertLabelWidth[MaxAlerts];
