@@ -35,7 +35,7 @@ XEXT_LIB = $(XF86VIDMODE_LIB) $(JOYSTICK_LIB)
 #
 # install locations
 #
-INSTALL_DATA_DIR = /usr/X11R6/lib/X11/bzflag/data
+INSTALL_DATA_DIR = /usr/share/bzflag
 
 #
 # tools

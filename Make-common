@@ -28,7 +28,7 @@ PACKAGEDIR = $(DEPTH)/dist
 #
 # default install directories (configs can override these)
 #
-INSTALL_DATA_DIR = /usr/local/lib/bzflag
+INSTALL_DATA_DIR = /usr/share/bzflag
 
 #
 # C options
