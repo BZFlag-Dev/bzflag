@@ -77,7 +77,7 @@ enum FlagQuality {
 
 enum ShotType {
   NormalShot = 0,
-  SpecialShot = 1,
+  SpecialShot = 1
 };
 
 const int		FlagPLen = 6 + PlayerIdPLen + 48;
