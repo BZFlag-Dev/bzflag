@@ -300,8 +300,7 @@ void			Player::updateTank(float dt)
 void			Player::setupTreads(float dt)
 {
   // setup the tread offsets
-  float speedFactor = sqrtf ((getVelocity()[0] * getVelocity()[0]) +
-                             (getVelocity()[1] * getVelocity()[1]));
+  float speedFactor = inputSpeed;
   if (dimensions[0] > 0.001f) {
     speedFactor = speedFactor / dimensions[0];
   } else {
