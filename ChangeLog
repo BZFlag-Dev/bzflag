@@ -4,7 +4,7 @@
 BZFlag 1.10.4
 -------------
 
-* Refactor base handling in preparation for allowing multiple bases per team - Dave Brosius
+* Allow multiple bases per team - Dave Brosius
 * Use cyan for observer messages in old console color mode - Frank Thilo
 * Config file based auto-identify - Tupone Alfredo, Sean Morrison, Frank Thilo
 * List Server checks ip of requesting server - Tupone Alfredo
