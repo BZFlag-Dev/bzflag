@@ -67,8 +67,9 @@
 		1492F48B07962F620008E0BD = {
 			buildActionMask = 2147483647;
 			files = (
-				14CF6DBD0798F32A0071D7DA,
 				14CF6EB00798FF7A0071D7DA,
+				14CF6EFD0799EA370071D7DA,
+				14CF6EFE0799EA370071D7DA,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,6 +99,7 @@
 				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				LIBRARY_STYLE = STATIC;
+				MACOSX_DEPLOYMENT_TARGET = 10.1;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Carbon";
 				OTHER_REZFLAGS = "";
@@ -172,7 +174,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# ./autogen.sh 2>&1\n# ./configure --disable-regex 2>&1\nmake -j2\n";
+			shellScript = "# ./autogen.sh 2>&1\n# ./configure --without-regex 2>&1\n\nmake -j2\nretcode=$?\n\n[ -f src/bzflag/bzflag ] && strip src/bzflag/bzflag\n[ -f src/bzfs/bzfs ] && strip src/bzfs/bzfs\n[ -f src/bzadmin/bzadmin ] && strip src/bzadmin/bzadmin\n\nexit $?\n";
 		};
 		1492F4DA079630A30008E0BD = {
 			buildActionMask = 2147483647;
@@ -267,9 +269,9 @@
 		};
 		1492F5CB079788480008E0BD = {
 			children = (
+				14CF6EFB0799EA370071D7DA,
+				14CF6EFC0799EA370071D7DA,
 				14CF6EAF0798FF7A0071D7DA,
-				14CF6DBC0798F32A0071D7DA,
-				14CF6EE1079904C90071D7DA,
 			);
 			isa = PBXGroup;
 			name = "Frameworks & Libraries";
@@ -281,8 +283,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				14CF6F0A0799EA940071D7DA,
+				14CF6F0B0799EA940071D7DA,
 				14CF6ED50798FF880071D7DA,
-				14CF6EE9079904E30071D7DA,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -295,20 +298,6 @@
 			path = "src/platform/MacOSX/BZFlag-Info.plist";
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		14CF6DBC0798F32A0071D7DA = {
-			explicitFileType = archive.ar;
-			isa = PBXFileReference;
-			name = libcurl.a;
-			path = /usr/lib/libcurl.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		14CF6DBD0798F32A0071D7DA = {
-			fileRef = 14CF6DBC0798F32A0071D7DA;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		14CF6EAF0798FF7A0071D7DA = {
 			isa = PBXFileReference;
@@ -330,16 +319,42 @@
 			settings = {
 			};
 		};
-		14CF6EE1079904C90071D7DA = {
+		14CF6EFB0799EA370071D7DA = {
 			isa = PBXFileReference;
 			lastKnownFileType = "compiled.mach-o.dylib";
-			name = libcurl.dylib;
-			path = /usr/lib/libcurl.dylib;
+			name = libcrypto.0.9.7.dylib;
+			path = /usr/lib/libcrypto.0.9.7.dylib;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		14CF6EE9079904E30071D7DA = {
-			fileRef = 14CF6EE1079904C90071D7DA;
+		14CF6EFC0799EA370071D7DA = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libcurl.2.dylib;
+			path = /usr/lib/libcurl.2.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		14CF6EFD0799EA370071D7DA = {
+			fileRef = 14CF6EFB0799EA370071D7DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14CF6EFE0799EA370071D7DA = {
+			fileRef = 14CF6EFC0799EA370071D7DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14CF6F0A0799EA940071D7DA = {
+			fileRef = 14CF6EFB0799EA370071D7DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14CF6F0B0799EA940071D7DA = {
+			fileRef = 14CF6EFC0799EA370071D7DA;
 			isa = PBXBuildFile;
 			settings = {
 			};
