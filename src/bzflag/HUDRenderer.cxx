@@ -966,8 +966,14 @@ void			HUDRenderer::renderScoreboard(void)
       if (!getHunting()) player->setHunted(false); // if not hunting make sure player isn't hunted
       else if (player->isHunted()) huntPlayerAlive = true; // confirm hunted player is alive
     }
-    if (!drewMyScore && myTank->getScore() > player->getScore() &&
-	myTank->getTeam() != ObserverTeam) {
+    bool myTurn = false;
+    if (!drewMyScore && myTank->getTeam() != ObserverTeam)
+      if (World::getWorld()->allowRabbit()) {
+	myTurn = myTank->getRabbitScore() > player->getRabbitScore();
+      } else {
+	myTurn = myTank->getScore() > player->getScore();
+      }
+    if (myTurn) {
 	  if(getHunt() && getHuntPosition() == i) setHuntIndicator(false);// don't hunt myself
       // if i have greater score than remote player draw my name here
       drawPlayerScore(myTank, x1, x2, x3, (float)y);
