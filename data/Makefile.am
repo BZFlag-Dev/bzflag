@@ -53,9 +53,9 @@ EXTRA_DIST = \
 	red_super_bolt.png	\
 	ricochet.wav	\
 	roof.png	\
-	rougue_bolt.png	\
-	rougue_laser.png	\
-	rougue_super_bolt.png	\
+	rogue_bolt.png	\
+	rogue_laser.png	\
+	rogue_super_bolt.png	\
 	shock.wav	\
 	steamroller.wav	\
 	tank.png	\
