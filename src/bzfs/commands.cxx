@@ -230,7 +230,7 @@ void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
 
   // valid callsign
   if (to >= curMaxPlayers) {
-    message2 = string_util::format("No such callsign.", recipient.c_str());
+    message2 = string_util::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
     sendMessage(ServerPlayer, from, message2.c_str());
     return;
   }
@@ -338,13 +338,13 @@ void handleMsgCmd2(GameKeeper::Player *playerData, const char *message)
 	  msg = string_util::format("Quote mismatch?  \"%s\" is not here.  No such callsign.", arguments.c_str() + 1);
 	  sendMessage(ServerPlayer, t, msg.c_str());
 	} else {
-	  msg = string_util::format("No such callsign.", recipient.c_str());
+	  msg = string_util::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
 	  sendMessage(ServerPlayer, t, msg.c_str());
 	  sendMessage(ServerPlayer, t, "Usage: /msg callsign some message");
 	}
       }
     } else {
-      msg = string_util::format("No such callsign.", recipient.c_str());
+      msg = string_util::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
       sendMessage(ServerPlayer, t, msg.c_str());
       sendMessage(ServerPlayer, t, "Usage: /msg callsign some message");
     }
@@ -488,7 +488,6 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
 
   int i, j;
   // /countdown starts timed game, if start is manual, everyone is allowed to
-  char reply[MessageLen] = {0};
   if (clOptions->timeLimit > 0.0f) {
     gameStartTime = TimeKeeper::getCurrent();
     clOptions->timeElapsed = 0.0f;
@@ -505,8 +504,7 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
   }
   sendTeamUpdate();
 
-  sprintf(reply, "Countdown started.");
-  sendMessage(ServerPlayer, t, reply);
+  sendMessage(ServerPlayer, t, "Countdown started.");
 
   // CTF game -> simulate flag captures to return ppl to base
   if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
@@ -662,16 +660,13 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
   }
-  char reply[MessageLen] = {0};
 
   std::string msg = message;
   std::vector<std::string> argv = string_util::tokenize(msg, " \t", 4);
 
   if (argv.size() < 2) {
-    strcpy(reply, "Syntax: /ban <ip> [duration] [reason]");
-    sendMessage(ServerPlayer, t, reply);
-    strcpy(reply, "        Please keep in mind that reason is displayed to the user.");
-    sendMessage(ServerPlayer, t, reply);
+    sendMessage(ServerPlayer, t, "Syntax: /ban <ip> [duration] [reason]");
+    sendMessage(ServerPlayer, t, "        Please keep in mind that reason is displayed to the user.");
   } else {
     int durationInt = 0;
     std::string ip = argv[1];
@@ -686,7 +681,9 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
     if (clOptions->acl.ban(ip, playerData->player.getCallSign(), durationInt,
 			   reason.c_str())) {
       clOptions->acl.save();
-      strcpy(reply, "IP pattern added to banlist");
+
+      sendMessage(ServerPlayer, AllPlayers, "IP pattern added to banlist");
+
       char kickmessage[MessageLen];
       for (int i = 0; i < curMaxPlayers; i++) {
 	NetHandler *handler = NetHandler::getHandler(i);
@@ -714,9 +711,8 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 	}
       }
     } else {
-      strcpy(reply, "Malformed address");
+      sendMessage(ServerPlayer, t, "Malformed address");
     }
-    sendMessage(ServerPlayer, t, reply);
   }
   return;
 }
@@ -729,16 +725,13 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
   }
-  char reply[MessageLen] = {0};
 
   std::string msg = message;
   std::vector<std::string> argv = string_util::tokenize( msg, " \t", 4 );
 
   if( argv.size() < 2 ){
-    strcpy(reply, "Syntax: /hostban <host pattern> [duration] [reason]");
-    sendMessage(ServerPlayer, t, reply);
-    strcpy(reply, "        Please keep in mind that reason is displayed to the user.");
-    sendMessage(ServerPlayer, t, reply);
+    sendMessage(ServerPlayer, t, "Syntax: /hostban <host pattern> [duration] [reason]");
+    sendMessage(ServerPlayer, t, "        Please keep in mind that reason is displayed to the user.");
   }
   else {
     int durationInt = 0;
@@ -756,7 +749,9 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
 			   reason.c_str());
     clOptions->acl.save();
 #ifdef HAVE_ADNS_H
-    strcpy(reply, "Host pattern added to banlist");
+
+    sendMessage(ServerPlayer, AllPlayers, "Host pattern added to banlist");
+
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
       GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
@@ -789,9 +784,8 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
       }
     }
 #else
-    strcpy(reply, "Host pattern added to banlist. WARNING: host patterns not supported in this compilation.");
+    sendMessage(ServerPlayer, t, "Host pattern added to banlist. WARNING: host patterns not supported in this compilation.");
 #endif
-    sendMessage(ServerPlayer, t, reply);
   }
   return;
 }
@@ -804,15 +798,13 @@ void handleUnbanCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
     return;
   }
-  char reply[MessageLen] = {0};
 
   if (clOptions->acl.unban(message + 7)) {
-    strcpy(reply, "removed IP pattern");
+    sendMessage(ServerPlayer, t, "Removed IP pattern from the ban list");
     clOptions->acl.save();
   } else {
-    strcpy(reply, "no pattern removed");
+    sendMessage(ServerPlayer, t, "No pattern removed");
   }
-  sendMessage(ServerPlayer, t, reply);
   return;
 }
 
@@ -823,15 +815,13 @@ void handleHostUnbanCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
     return;
   }
-  char reply[MessageLen] = {0};
 
   if (clOptions->acl.hostUnban(message + 11)) {
-    strcpy(reply, "removed host pattern");
+    sendMessage(ServerPlayer, t, "Removed host pattern from the ban list");
     clOptions->acl.save();
+  } else {
+    sendMessage(ServerPlayer, t, "No pattern removed");
   }
-  else
-    strcpy(reply, "no pattern removed");
-  sendMessage(ServerPlayer, t, reply);
   return;
 }
 
@@ -850,11 +840,10 @@ void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message)
     const char *maxlag = message + 9;
     clOptions->lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
     sprintf(reply,"lagwarn is now %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
-    sendMessage(ServerPlayer, t, reply);
   } else {
     sprintf(reply,"lagwarn is set to %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
-    sendMessage(ServerPlayer, t, reply);
   }
+  sendMessage(ServerPlayer, t, reply);
   return;
 }
 
@@ -963,10 +952,9 @@ void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
 void handleReportCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
-  char reply[MessageLen] = {0};
 
   if (strlen(message + 1) < 8) {
-    sprintf(reply, "Nothing reported");
+    sendMessage(ServerPlayer, t, "Nothing reported");
   } else {
     time_t now = time(NULL);
     char* timeStr = ctime(&now);
@@ -987,9 +975,8 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
       pclose(pipeWrite);
     }
     if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
-      sprintf(reply, "The /report command is disabled on this server.");
+      sendMessage(ServerPlayer, t, "The report command is disabled on this server");
     } else {
-      sprintf(reply, "Your report has been filed. Thank you.");
       std::string temp = std::string("**\"") + playerData->player.getCallSign() + "\" reports: " +
                          (message + 8);
       if (temp.size() <= (unsigned) MessageLen) {
@@ -1009,9 +996,11 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage (ServerPlayer, AdminPlayers, message);
       DEBUG1("Player %s [%d] has filed a report (time: %s).\n",
 	     playerData->player.getCallSign(), t, timeStr);
+
+      sendMessage(ServerPlayer, t, "Your report has been filed. Thank you.");
     }
   }
-  sendMessage(ServerPlayer, t, reply);
+
   return;
 }
 
@@ -1741,7 +1730,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     if (!clOptions->disableKick)
       sendMessage(ServerPlayer, t, "    or /poll kick playername");
     if (!clOptions->disableSet)
-		sendMessage(ServerPlayer, t, "    or /poll set variable value");
+      sendMessage(ServerPlayer, t, "    or /poll set variable value");
     if (!clOptions->disableFlagReset)
       sendMessage(ServerPlayer, t, "    or /poll flagreset");
 
