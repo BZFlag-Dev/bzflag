@@ -312,7 +312,7 @@ void TextureMatrix::print(std::ostream& out, int /*level*/)
   }
   if ((rotateFreq != 0.0f) ||
       (uRotateCenter != 0.0f) || (vRotateCenter != 0.0f)) {
-    out << "  shift " << rotateFreq << " "
+    out << "  rotate " << rotateFreq << " "
                       << uRotateCenter << " " << vRotateCenter << std::endl;
   }
   if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||

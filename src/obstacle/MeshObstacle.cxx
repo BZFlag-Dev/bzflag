@@ -449,6 +449,15 @@ int MeshObstacle::packSize()
 }
 
 
+static void outputFloat(std::ostream& out, float value)
+{
+  char buffer[32];
+  sprintf (buffer, " %.8f", value);
+  out << buffer;
+  return;
+}
+
+
 void MeshObstacle::print(std::ostream& out, int level)
 {
   out << "mesh" << std::endl;
@@ -462,27 +471,38 @@ void MeshObstacle::print(std::ostream& out, int level)
     out << "# maxs = " << maxs[0] << " " << maxs[1] << " " << maxs[2] << std::endl;
   }
 
-  int i;
+  int i, j;
   for (i = 0; i < checkCount; i++) {
     if (checkTypes[i] == CheckInside) {
-      out << "  inside ";
+      out << "  inside";
     } else {
-      out << "  outside ";
+      out << "  outside";
     }
-    out << checkPoints[i][0] << " " << checkPoints[i][1] << " "
-        << checkPoints[i][2] << " # " << i << std::endl;
+    for (j = 0; j < 3; j++) {
+      outputFloat(out, checkPoints[i][j]);
+    }
+    out << std::endl;
   }
   for (i = 0; i < vertexCount; i++) {
-    out << "  vertex " << vertices[i][0] << " " << vertices[i][1] << " "
-                       << vertices[i][2] << " # " << i << std::endl;
+    out << "  vertex";
+    for (j = 0; j < 3; j++) {
+      outputFloat(out, vertices[i][j]);
+    }
+    out << std::endl;
   }
   for (i = 0; i < normalCount; i++) {
-    out << "  normal " << normals[i][0] << " " << normals[i][1] << " "
-                       << normals[i][2] << " # " << i << std::endl;;
+    out << "  normal";
+    for (j = 0; j < 3; j++) {
+      outputFloat(out, normals[i][j]);
+    }
+    out << std::endl;
   }
   for (i = 0; i < texcoordCount; i++) {
-    out << "  texcoord " << texcoords[i][0] << " " << texcoords[i][1] << " "
-                         << " # " << i << std::endl;
+    out << "  texcoord";
+    for (j = 0; j < 3; j++) {
+      outputFloat(out, texcoords[i][j]);
+    }
+    out << std::endl;
   }
 
   for (int f = 0; f < faceCount; f++) {
