@@ -10,6 +10,7 @@ bzfs_SOURCES = \
 	CmdLineOptions.h \
 	FlagInfo.cxx \
 	FlagInfo.h \
+	PackVars.h \
 	Permissions.cxx \
 	Permissions.h \
         PlayerInfo.h \
