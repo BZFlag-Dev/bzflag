@@ -5590,6 +5590,11 @@ int main(int argc, char **argv)
   if (clOptions->voteTime > 0) {
     unsigned short int maxplayers = 0;
     votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage);
+    DEBUG1("There is a voting arbiter with the following settings:\n");
+    DEBUG1("\tvote time is %d seconds\n", clOptions->voteTime);
+    DEBUG1("\tveto time is %d seconds\n", clOptions->vetoTime);
+    DEBUG1("\tvotes required are %d\n", clOptions->votesRequired);
+    DEBUG1("\tvote percentage necessary is %f\n", clOptions->votePercentage);
     for (int i=0; i < NumTeams; i++) {
       // includes observers on purpose
       maxplayers+=clOptions->maxTeam[i];
@@ -5823,14 +5828,14 @@ int main(int argc, char **argv)
 	    if (!announcedClosure) {
 	      // a poll that exists and is closed has ended successfully
 	      memset(message, 0, 256);
-	      sprintf(message, "DEBUG: voting poll is closed and successful");
+	      sprintf(message, "DEBUG: Voting poll is closed and successful (veto timeout still remaining)");
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 	      announcedClosure = true;
 	    }
 	  } else {
 	    if (!announcedClosure) {
 	      memset(message, 0, 256);
-	      sprintf(message, "DEBUG: voting poll is closed and unsuccessful");
+	      sprintf(message, "DEBUG: Voting poll is closed and unsuccessful");
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 	      announcedClosure = true;
 	    }
