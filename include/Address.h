@@ -60,7 +60,6 @@ class Address {
 
   private:
     std::vector <InAddr> addr;
-    static Address	localAddress;
 };
 
 typedef uint8_t		PlayerId;

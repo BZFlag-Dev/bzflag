@@ -41,10 +41,6 @@
 // Address
 //
 
-#if !defined( GUSI_20 ) && !defined( WIN32 )
-  Address			Address::localAddress("");
-#endif
-
 Address::Address()
 {
   InAddr tempAddr;
