@@ -3732,9 +3732,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player joining
     case MsgEnter: {
       // data: type, team, name, email
-      uint16_t type, team;
+      uint16_t type;
+      int16_t team;
       buf = nboUnpackUShort(buf, type);
-      buf = nboUnpackUShort(buf, team);
+      buf = nboUnpackShort(buf, team);
       player[t].type = PlayerType(type);
       player[t].team = TeamColor(team);
       buf = nboUnpackString(buf, player[t].callSign, CallSignLen);
