@@ -4639,7 +4639,7 @@ int main(int argc, char **argv)
   if(groupsFile.size())
     readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
-  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find("DEFAULT");
+  PlayerAccessMap::iterator itr = groupAccess.find("DEFAULT");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     info.explicitAllows[PlayerAccessInfo::idleStats] = true;

@@ -731,7 +731,7 @@ void handleDeregisterCmd(int t, const char *message)
   if (strlen(message) == 11) {
     // removing own callsign
     std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(player[t].regName);
-    std::map<std::string, PlayerAccessInfo>::iterator itr2 = userDatabase.find(player[t].regName);
+    PlayerAccessMap::iterator itr2 = userDatabase.find(player[t].regName);
     passwordDatabase.erase(itr1);
     userDatabase.erase(itr2);
     updateDatabases();
@@ -742,7 +742,7 @@ void handleDeregisterCmd(int t, const char *message)
     makeupper(name);
     if (userExists(name)) {
       std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(name);
-      std::map<std::string, PlayerAccessInfo>::iterator itr2 = userDatabase.find(name);
+      PlayerAccessMap::iterator itr2 = userDatabase.find(name);
       passwordDatabase.erase(itr1);
       userDatabase.erase(itr2);
       updateDatabases();
@@ -784,7 +784,7 @@ void handleSetpassCmd(int t, const char *message)
 void handleGrouplistCmd(int t, const char *)
 {
   sendMessage(ServerPlayer, t, "Group List:");
-  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
+  PlayerAccessMap::iterator itr = groupAccess.begin();
   while (itr != groupAccess.end()) {
     sendMessage(ServerPlayer, t, itr->first.c_str());
     itr++;
@@ -845,7 +845,7 @@ void handleShowgroupCmd(int t, const char *message)
 void handleGrouppermsCmd(int t, const char *)
 {
   sendMessage(ServerPlayer, t, "Group List:");
-  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
+  PlayerAccessMap::iterator itr = groupAccess.begin();
   std::string line;
   while (itr != groupAccess.end()) {
     line = itr->first + ":   ";
@@ -968,7 +968,7 @@ void handleReloadCmd(int t, const char *)
   if (groupsFile.size())
     readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
-  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find("DEFAULT");
+  PlayerAccessMap::iterator itr = groupAccess.find("DEFAULT");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     info.explicitAllows[PlayerAccessInfo::idleStats] = true;

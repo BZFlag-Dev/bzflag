@@ -20,8 +20,8 @@
 #include "Permissions.h"
 #include "md5.h"
 
-std::map<std::string, PlayerAccessInfo>	groupAccess;
-std::map<std::string, PlayerAccessInfo>	userDatabase;
+PlayerAccessMap	groupAccess;
+PlayerAccessMap	userDatabase;
 std::map<std::string, std::string>	passwordDatabase;
 
 bool hasGroup(PlayerAccessInfo& info, const std::string &group)
@@ -76,7 +76,7 @@ bool hasPerm(PlayerAccessInfo& info, PlayerAccessInfo::AccessPerm right)
   if (info.explicitAllows.test(right))
     return true;
   std::vector<std::string>::iterator itr = info.groups.begin();
-  std::map<std::string, PlayerAccessInfo>::iterator group;
+  PlayerAccessMap::iterator group;
   while (itr != info.groups.end()) {
     group = groupAccess.find(*itr);
     if (group != groupAccess.end())
@@ -91,7 +91,7 @@ bool userExists(const std::string &nick)
 {
   std::string str = nick;
   makeupper(str);
-  std::map<std::string, PlayerAccessInfo>::iterator itr = userDatabase.find(str);
+  PlayerAccessMap::iterator itr = userDatabase.find(str);
   if (itr == userDatabase.end())
     return false;
   return true;
@@ -104,7 +104,7 @@ PlayerAccessInfo& getUserInfo(const std::string &nick)
 //    return false;
   std::string str = nick;
   makeupper(str);
-  std::map<std::string, PlayerAccessInfo>::iterator itr = userDatabase.find(str);
+  PlayerAccessMap::iterator itr = userDatabase.find(str);
 //  if (itr == userDatabase.end())
 //    return false;
   return itr->second;
@@ -317,7 +317,7 @@ bool writePermsFile(const std::string &filename)
   std::ofstream out(filename.c_str());
   if (!out)
     return false;
-  std::map<std::string, PlayerAccessInfo>::iterator itr = userDatabase.begin();
+  PlayerAccessMap::iterator itr = userDatabase.begin();
   std::vector<std::string>::iterator group;
   while (itr != userDatabase.end()) {
     out << itr->first << std::endl;

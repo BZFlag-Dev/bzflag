@@ -27,7 +27,6 @@
 
 #include "TimeKeeper.h"
 
-
 struct PlayerAccessInfo
 {
   // player access info
@@ -73,8 +72,10 @@ struct PlayerAccessInfo
 
 };
 
-extern std::map<std::string, PlayerAccessInfo>	groupAccess;
-extern std::map<std::string, PlayerAccessInfo>	userDatabase;
+typedef std::map<std::string, PlayerAccessInfo> PlayerAccessMap;
+
+extern PlayerAccessMap	groupAccess;
+extern PlayerAccessMap	userDatabase;
 extern std::map<std::string, std::string>	passwordDatabase;
 
 extern std::string		groupsFile;
