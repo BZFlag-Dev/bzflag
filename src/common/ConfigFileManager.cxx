@@ -66,7 +66,6 @@ bool				ConfigFileManager::read(const std::string& filename)
 {
   std::istream* stream = FILEMGR.createDataInStream(filename);
   if (stream == NULL) {
-    std::cerr << "WARNING: Unable to read the configuration file [" << filename << "]" << std::endl;
     return false;
   }
   bool ret = parse(*stream);
@@ -83,7 +82,6 @@ bool				ConfigFileManager::write(const std::string& filename)
 {
   std::ostream* stream = FILEMGR.createDataOutStream(filename);
   if (stream == NULL) {
-    std::cerr << "WARNING: Unable to write the configuration file [" << filename << "]" << std::endl;
     return false;
   }
   BZDB.write(writeBZDB, stream);

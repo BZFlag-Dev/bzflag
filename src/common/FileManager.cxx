@@ -84,7 +84,6 @@ std::istream*			FileManager::createDataInStream(
   }
 #endif
 
-  std::cerr << "WARNING: Unable to create input stream for [" << filename << "]" << std::endl;
   return NULL;
 }
 
@@ -159,7 +158,6 @@ std::ostream*			FileManager::createDataOutStream(
     delete stream;
   }
 
-  std::cerr << "WARNING: Unable to create output stream for [" << filename << "]" << std::endl;
   return NULL;
 }
 
