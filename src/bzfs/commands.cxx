@@ -112,7 +112,7 @@ void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 {
   std::string message2;
 
-  message2 = string_util::format("%s has quit \"%s\" ",
+  message2 = string_util::format("%s has quit (\"%s\") ",
 				 playerData->player.getCallSign(),  message + 6);
 
   DEBUG2("%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), message + 6);
