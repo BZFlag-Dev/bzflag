@@ -5386,15 +5386,17 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       player[t].lastupdate = TimeKeeper::getCurrent();
       float gravity = BZDB->eval(StateDatabase::BZDB_GRAVITY);
-      float maxTankHeight = maxWorldHeight + 1.05f * ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * (gravity < -1 ? -gravity : 1)));
+      if (gravity < 0.0f) {
+        float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
 
-      if (state.pos[2] > maxTankHeight) {
-	char message[MessageLen];
-	DEBUG1("kicking Player %s [%d] jump too high\n", player[t].callSign, t);
-	strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
-	sendMessage(ServerPlayer, t, message, true);
-	removePlayer(t, "too high");
-	break;
+        if (state.pos[2] > maxTankHeight) {
+	  char message[MessageLen];
+	  DEBUG1("kicking Player %s [%d] jump too high\n", player[t].callSign, t);
+	  strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
+	  sendMessage(ServerPlayer, t, message, true);
+	  removePlayer(t, "too high");
+	  break;
+	}
       }
 
       // make sure the player is still in the map
