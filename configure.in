@@ -345,7 +345,11 @@ fi
 
 case $host_os in
      macos|darwin*)
-	LIBS="$LIBS -framework Carbon -framework OpenGL"
+	if test x$with_SDL = xyes; then
+	    LIBS="$LIBS -framework Carbon -framework OpenGL"
+	else
+	    LIBS="$LIBS -framework Carbon -framework OpenGL -framework AGL"
+	fi
 	;;
      irix)
 	if test x$host_cpu = xmips64; then
