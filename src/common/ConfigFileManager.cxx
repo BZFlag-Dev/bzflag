@@ -65,7 +65,7 @@ bool				ConfigFileManager::parse(std::istream& stream)
   return true;
 }
 
-bool				ConfigFileManager::read(std::string& filename)
+bool				ConfigFileManager::read(const std::string& filename)
 {
   std::istream* stream = FILEMGR->createDataInStream(filename);
   if (stream == NULL)
@@ -80,7 +80,7 @@ void				ConfigFileManager::read(std::istream& stream)
   parse(stream);
 }
 
-bool				ConfigFileManager::write(std::string& filename)
+bool				ConfigFileManager::write(const std::string& filename)
 {
   std::ostream* stream = FILEMGR->createDataOutStream(filename);
   if (stream == NULL)
