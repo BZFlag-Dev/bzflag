@@ -3401,7 +3401,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    fullMsg=text;
 	  }
 	  else {
-	    if (BZDB->get("kilerhighlight") == "0")
+	    if (BZDB->get("killerhighlight") == "0")
 	      fullMsg += ColorStrings[BlinkColor];
 	    else if (BZDB->get("killerhighlight") == "1")
 	      fullMsg += ColorStrings[UnderlineColor];
