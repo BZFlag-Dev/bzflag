@@ -23,8 +23,6 @@
 #endif
 #define NULL 0
 
-using namespace std;
-
 #include <iostream.h>
 
 #endif
