@@ -802,7 +802,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   default:
     if (isPhantomZoned())
       firingStatus = Zoned;
-    else if (getReloadTime() > 0.0f)
+    else if ((getReloadTime() > 0.0f) && (getFlag() != Flags::TriggerHappy))
       firingStatus = Loading;
     else
       firingStatus = Ready;
