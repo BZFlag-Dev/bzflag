@@ -4,6 +4,7 @@
 BZFlag 1.11.x (development)
 ---------------------------
 
+* Display player addr on join to admins - Sean Morrison
 * Make -debug a public client option - Frank Thilo
 * Communicate autopilot state, display in scoreboard - Frank Thilo
 * Observer counts and match times added to game queries - David Vuorio
