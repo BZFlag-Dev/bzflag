@@ -71,7 +71,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       vbuf = nboUnpackUShort(vbuf, tks);
       vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
       vbuf = nboUnpackString(vbuf, email, EmailLen);
-      players[p].clear();
+      players[p].resize(0);
       players[p].append(callsign);
       if (p != sLink.getId() && ui != NULL)
 	ui->addedPlayer(p);
