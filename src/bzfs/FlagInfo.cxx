@@ -96,7 +96,7 @@ void FlagInfo::setRequiredFlag(FlagType *desc)
 void FlagInfo::addFlag()
 {
   const float flagAltitude = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
-  const float gravity      = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  const float gravity      = BZDBCache::gravity;
   const float maxGrabs     = BZDB.eval(StateDatabase::BZDB_MAXFLAGGRABS);
 
   // flag in now entering game
@@ -153,7 +153,7 @@ void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
 
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude
-  const float gravity        = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  const float gravity        = BZDBCache::gravity;
   const float flagAltitude   = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
   const float thrownAltitude = (flag.type == Flags::Shield) ?
     BZDB.eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;

@@ -23,6 +23,7 @@
 #include "PlayerInfo.h"
 #include "PlayerState.h"
 #include "GameKeeper.h"
+#include "BZDBCache.h"
 
 // FIXME: from bzfs.cxx
 extern int getCurMaxPlayers();
@@ -50,13 +51,13 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     base.getRandomPosition(pos[0], pos[1], pos[2]);
     playerData->player.setRestartOnBase(false);
   } else {
-    const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
-    const float tankWidth = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-    const float tankLength = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
-    const float tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
-    safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDB.eval(StateDatabase::BZDB_TANKRADIUS)) * 1.5);
+    const float tankRadius = BZDBCache::tankRadius;
+    const float tankWidth = 0.5f * BZDBCache::tankWidth;
+    const float tankLength = 0.5f * BZDBCache::tankLength;
+    const float tankHeight = BZDBCache::tankHeight;
+    safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * 1.5);
     safeDistance = tankRadius * 20; // FIXME: is this a good value?
-    const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+    const float size = BZDBCache::worldSize;
     const float maxWorldHeight = world->getMaxWorldHeight();
     const Obstacle *building = NULL;
 

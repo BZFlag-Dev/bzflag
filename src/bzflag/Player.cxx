@@ -82,9 +82,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   }
 
   // setup the dimension properties
-  dimensions[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
-  dimensions[1] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  dimensions[2] = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  dimensions[0] = 0.5f * BZDBCache::tankLength;
+  dimensions[1] = 0.5f * BZDBCache::tankWidth;
+  dimensions[2] = BZDBCache::tankHeight;
   memcpy (oldDimensions, dimensions, sizeof(float[3]));
   for (int i = 0; i < 3; i++) {  
     dimensionsRate[i] = 0.0f;
@@ -259,11 +259,11 @@ void			Player::updateTank(float dt)
   
   // set the actual dimensions based on the scale
   dimensions[0] = dimensionsScale[0] *
-                  0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+                  0.5f * BZDBCache::tankLength;
   dimensions[1] = dimensionsScale[1] * 
-                  0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+                  0.5f * BZDBCache::tankWidth;
   dimensions[2] = dimensionsScale[2] *
-                  BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+                  BZDBCache::tankHeight;
                   
   // update the alpha value
   if (alphaRate != 0.0f) {
@@ -311,7 +311,7 @@ void			Player::setupTreads(float dt)
   }
 
   float angularFactor = inputAngVel;
-  const float halfWidth = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  const float halfWidth = 0.5f * BZDBCache::tankWidth;
   // not using dimensions[1], because it may be set to 0.001 by a Narrow flag
   angularFactor *= dimensionsScale[0] * halfWidth;
 
@@ -585,7 +585,7 @@ void            Player::setLandingSpeed(float velocity)
   if (squishTime < 0.001) {
     return;
   }
-  const float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  const float gravity = BZDBCache::gravity;
   if (velocity > 0.0f) {
     velocity = 0.0f;
   }
@@ -706,7 +706,7 @@ bool			Player::getDeadReckoning(
       *predictedAzimuth = inputAzimuth;
 
     // update z with Newtownian integration (like LocalPlayer)
-    inputZSpeed += BZDB.eval(StateDatabase::BZDB_GRAVITY) * (dt - dt2);
+    inputZSpeed += BZDBCache::gravity * (dt - dt2);
     inputPos[2] += inputZSpeed * (dt - dt2);
   } else {
     // azimuth changes linearly
@@ -885,7 +885,7 @@ void			Player::setDeadReckoning(float timestamp)
        inputAzimuth -= offset * inputAngVel;
 
     // update z
-    float deltaSpeed      = BZDB.eval(StateDatabase::BZDB_GRAVITY) * offset;
+    float deltaSpeed      = BZDBCache::gravity * offset;
     inputZSpeed          -= deltaSpeed;
     inputPos[2]          -= (deltaSpeed / 2.0f + inputZSpeed) * offset;
   } else {

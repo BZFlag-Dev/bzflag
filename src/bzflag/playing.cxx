@@ -2395,13 +2395,13 @@ bool			addExplosion(const float* _pos,
   newExplosion->setSize(size);
   newExplosion->setDuration(duration);
   newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
-  newExplosion->setLightScaling(size / BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
+  newExplosion->setLightScaling(size / BZDBCache::tankLength);
   newExplosion->setLightFadeStartTime(0.7f * duration);
 
   // add copy to list of current explosions
   explosions.push_back(newExplosion);
 
-  if (size < (3.0f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH))) return true; // shot explosion
+  if (size < (3.0f * BZDBCache::tankLength)) return true; // shot explosion
 
   int boom = (int) (bzfrand() * 8.0) + 3;
   while (boom--) {
@@ -2418,7 +2418,7 @@ bool			addExplosion(const float* _pos,
     newExplosion->setSize(size);
     newExplosion->setDuration(duration);
     newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
-    newExplosion->setLightScaling(size / BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
+    newExplosion->setLightScaling(size / BZDBCache::tankLength);
     newExplosion->setLightFadeStartTime(0.7f * duration);
 
     // add copy to list of current explosions
@@ -2436,13 +2436,13 @@ void			addTankExplosion(const float* pos)
 void			addShotExplosion(const float* pos)
 {
   // only play explosion sound if you see an explosion
-  if (addExplosion(pos, 1.2f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.8f))
+  if (addExplosion(pos, 1.2f * BZDBCache::tankLength, 0.8f))
     playWorldSound(SFX_SHOT_BOOM, pos[0], pos[1], pos[2]);
 }
 
 void			addShotPuff(const float* pos)
 {
-  addExplosion(pos, 0.3f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.8f);
+  addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f);
 }
 
 // update events from outside if they should be checked
@@ -3082,7 +3082,7 @@ static void		makeObstacleList()
 
   // FIXME -- shouldn't hard code game area
   float gameArea[4][2];
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   gameArea[0][0] = -0.5f * worldSize + tankRadius;
   gameArea[0][1] = -0.5f * worldSize + tankRadius;
   gameArea[1][0] =  0.5f * worldSize - tankRadius;
@@ -3838,7 +3838,7 @@ void		leaveGame()
 
   // reset viewpoint
   float eyePoint[3], targetPoint[3];
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   eyePoint[0] = 0.0f;
   eyePoint[1] = 0.0f;
   eyePoint[2] = 0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
@@ -4235,7 +4235,7 @@ void			drawFrame(const float dt)
       fov = roamZoom * M_PI / 180.0f;
       moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
     }
-    float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+    float worldSize = BZDBCache::worldSize;
     sceneRenderer->getViewFrustum().setProjection(fov,
 						  NearPlane, FarPlaneScale * worldSize,
 						  mainWindow->getWidth(),
@@ -4390,7 +4390,7 @@ void			drawFrame(const float dt)
       // back to center channel
       mainWindow->setQuadrant(MainWindow::UpperRight);
     } else if (viewType == SceneRenderer::Stacked) {
-      static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+      static float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
       static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
       static bool init = false;
       if (!init) {
@@ -4427,7 +4427,7 @@ void			drawFrame(const float dt)
       // back to left channel
       mainWindow->setQuadrant(MainWindow::LowerHalf);
     } else if (viewType == SceneRenderer::Stereo) {
-      static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+      static float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
       static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
       static bool init = false;
       if (!init) {
@@ -4484,7 +4484,7 @@ void			drawFrame(const float dt)
       mainWindow->setQuadrant(MainWindow::UpperRight);
 #endif
     } else if (viewType == SceneRenderer::Anaglyph) {
-      static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+      static float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
       static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
       static bool init = false;
       if (!init) {
@@ -4770,17 +4770,17 @@ static void		playingLoop()
 	roamDPhi    = 0.0;
 	if (!control && !shift)
 	  roamDPos[0] = (float)(4 * myTank->getSpeed())
-	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+	    * BZDBCache::tankSpeed;
 	if (alt)
 	  roamDPos[1] = (float)(4 * myTank->getRotation())
-	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+	    * BZDBCache::tankSpeed;
 	else
 	  roamDTheta  = roamZoom * (float)myTank->getRotation();
 	if (control)
 	  roamDPhi    = -2.0f * roamZoom / 3.0f * (float)myTank->getSpeed();
 	if (shift)
 	  roamDPos[2] = (float)(-4 * myTank->getSpeed())
-	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+	    * BZDBCache::tankSpeed;
       }
       float c, s;
       c = cosf(roamTheta * M_PI / 180.0f);
@@ -5197,7 +5197,7 @@ static void		findFastConfiguration()
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   static const GLfloat eyePoint[3] = { 0.0f, 0.0f, muzzleHeight };
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
 						NearPlane, FarPlaneScale * worldSize,
 						mainWindow->getWidth(),

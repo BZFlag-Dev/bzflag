@@ -639,7 +639,7 @@ void			SceneRenderer::render(
   if (!blank && LocalPlayer::getMyTank() && (LocalPlayer::getMyTank()->getTeam() != ObserverTeam))
     teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
 
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
   if (reallyUseFogHack) {
     if (useDimming) {

@@ -213,7 +213,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       }
 
       // can't control explosion motion
-      newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
+      newVelocity[2] += BZDBCache::gravity * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
     } else if ((location == OnGround)
       ||       (location == OnBuilding)
@@ -254,9 +254,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
         wingsFlapCount = (int) BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
 
       if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
-	newVelocity[2] += 4 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
+	newVelocity[2] += 4 * BZDBCache::gravity * dt;
       else if (oldPosition[2] > groundLimit)
-	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
+	newVelocity[2] += BZDBCache::gravity * dt;
 
       // save speed for next update
       lastSpeed = speed;
@@ -286,7 +286,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
         newVelocity[2] += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
         lastSpeed = speed;
       } else {
-        newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
+        newVelocity[2] += BZDBCache::gravity * dt;
         newAngVel = oldAngVel;
       }
     }
@@ -535,15 +535,15 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // see if we're crossing a wall
   if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
     if (insideBuilding->isCrossing(newPos, newAzimuth,
-				   0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
-                                   0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH),
+				   0.5f * BZDBCache::tankLength,
+                                   0.5f * BZDBCache::tankWidth,
                                    BZDBCache::tankHeight, NULL))
       setStatus(getStatus() | int(PlayerState::CrossingWall));
     else
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   } else if (World::getWorld()->crossingTeleporter( newPos, newAzimuth,
-                      0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
-                      0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH),
+                      0.5f * BZDBCache::tankLength,
+                      0.5f * BZDBCache::tankWidth,
                       BZDBCache::tankHeight, crossingPlane)) {
     setStatus(getStatus() | int(PlayerState::CrossingWall));
   } else {
@@ -871,7 +871,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW)) {
       fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
     } else {
-      float oldFrac = desiredSpeed / BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+      float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
       if (oldFrac > 1.0f)
 	oldFrac = 1.0f;
       else if (oldFrac < -0.5f)
@@ -890,7 +890,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   fracOfMaxSpeed *= (1.0f - handicap);
 
   // set desired speed
-  desiredSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED) * fracOfMaxSpeed;
+  desiredSpeed = BZDBCache::tankSpeed * fracOfMaxSpeed;
 }
 
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
@@ -1122,7 +1122,7 @@ void			LocalPlayer::setRecipient(const Player* _recipient)
 void			LocalPlayer::explodeTank()
 {
   if (location == Dead || location == Exploding) return;
-  float gravity      = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  float gravity      = BZDBCache::gravity;
   float explodeTime  = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
   // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
@@ -1271,7 +1271,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
 {
   Player::setFlag(flag);
 
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   // if it's bad then reset countdowns and set antidote flag
   if (getFlag() != Flags::Null && getFlag()->endurance == FlagSticky) {
     if (World::getWorld()->allowShakeTimeout())

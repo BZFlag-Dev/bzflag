@@ -23,6 +23,7 @@
 #include "version.h"
 #include "Team.h"
 #include "TextUtils.h"
+#include "BZDBCache.h"
 
 /* FIXME implementation specific header for global that should eventually go
  * away */
@@ -1066,7 +1067,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-worldsize") == 0) {
       checkArgc(1, i, argc, argv[i]);
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%d",atoi(argv[i])*2));
-      std::cerr << "using world size of \"" << BZDB.eval(StateDatabase::BZDB_WORLDSIZE) << "\"" << std::endl;
+      std::cerr << "using world size of \"" << BZDBCache::worldSize << "\"" << std::endl;
     } else {
       std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;
       usage(argv[0]);

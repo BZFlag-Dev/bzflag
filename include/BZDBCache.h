@@ -34,9 +34,14 @@ public:
         static bool  colorful;
 
 	static float maxLOD;
+	static float worldSize;
+	static float gravity;
+	static float tankWidth;
+	static float tankLength;
 	static float tankHeight;
-	static float flagRadius;
+	static float tankSpeed;
 	static float tankRadius;
+	static float flagRadius;
 	static float flagPoleSize;
 	static float flagPoleWidth;
 	static int   linedRadarShots;

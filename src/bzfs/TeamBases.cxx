@@ -31,7 +31,7 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
     if (!initDefault)
       return;
 
-    float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+    float worldSize = BZDBCache::worldSize;
     float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
     float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 

@@ -599,7 +599,7 @@ static WorldInfo *defineTeamWorld()
   if (!world)
     return NULL;
 
-  const float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  const float worldSize = BZDBCache::worldSize;
   const float worldfactor = worldSize / (float)DEFAULT_WORLD;
   const int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
   const float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
@@ -1040,7 +1040,7 @@ static WorldInfo *defineRandomWorld()
     return NULL;
 
   // make walls
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
   world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
@@ -1193,7 +1193,7 @@ static bool defineWorld()
   buf = nboPackUShort(buf, WorldCodeHeaderSize);
   buf = nboPackUShort(buf, WorldCodeHeader);
   buf = nboPackUShort(buf, mapVersion);
-  buf = nboPackFloat(buf, BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
+  buf = nboPackFloat(buf, BZDBCache::worldSize);
   buf = nboPackUShort(buf, clOptions->gameStyle);
   buf = nboPackUShort(buf, maxPlayers);
   buf = nboPackUShort(buf, clOptions->maxShots);
@@ -1896,11 +1896,11 @@ void resetFlag(FlagInfo &flag)
 
   } else {
     // random position (not in a building)
-    float r = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+    float r = BZDBCache::tankRadius;
     if (flag.flag.type == Flags::Obesity)
       r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     const Obstacle *obj;
-    float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+    float worldSize = BZDBCache::worldSize;
     if (!world->getZonePoint(std::string(flag.flag.type->flagAbbv),
 			     flagPos)) {
       flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
@@ -2510,8 +2510,8 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
     return;
 
   //last Pos might be lagged by TankSpeed so include in calculation
-  const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
-  const float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  const float tankRadius = BZDBCache::tankRadius;
+  const float tankSpeed = BZDBCache::tankSpeed;
   const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius + BZDBCache::flagRadius);
   const float* tpos = lastState[playerIndex].pos;
   const float* fpos = flag.flag.position;
@@ -2541,7 +2541,7 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
 static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 {
   const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
-  const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  const float size = BZDBCache::worldSize;
   if (pos[0] < -size || pos[0] > size)
     pos[0] = 0.0;
   if (pos[1] < -size || pos[1] > size)
@@ -2634,7 +2634,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 					landingPos[1],
 					landingPos[2]);
 	  topmosttype = world->cylinderInBuilding
-	    (&container, landingPos, BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
+	    (&container, landingPos, BZDBCache::tankRadius,
 	     flagHeight);
 	  if ((topmosttype != NOT_IN_BUILDING) || (landingPos[2] <= waterLevel)) {
 	    TeamBases &teamBases = bases[flagTeam];
@@ -2658,7 +2658,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
       if (!world->getSafetyPoint(teamName, pos, landingPos)) {
 	const float pos[3] = {0.0f, 0.0f, 0.0f};
 	topmosttype = world->cylinderInBuilding
-	  (&container, pos, BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
+	  (&container, pos, BZDBCache::tankRadius,
 	   flagHeight);
 	if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f)) {
 	  landingPos[0] = 0.0f;
@@ -2828,7 +2828,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
-  const float maxTankSpeed  = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  const float maxTankSpeed  = BZDBCache::tankSpeed;
   const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   float tankSpeed           = maxTankSpeed;
   float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
@@ -3544,7 +3544,7 @@ static void handleCommand(int t, const void *rawbuf)
         static const float heightFudge = 1.10f; /* 10% */
 
 	float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
-	float normalGravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+	float normalGravity = BZDBCache::gravity;
 	if ((wingsGravity < 0.0f) && (normalGravity < 0.0f)) {
 
 	  float wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
@@ -3580,7 +3580,7 @@ static void handleCommand(int t, const void *rawbuf)
 	// test all the map bounds + some fudge factor, just in case
 	static const float positionFudge = 10.0f; /* linear distance */
 	bool InBounds = true;
-	float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+	float worldSize = BZDBCache::worldSize;
 	if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) {
 	  std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
 	  InBounds = false;
@@ -3619,7 +3619,7 @@ static void handleCommand(int t, const void *rawbuf)
 	    float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
 				      state.velocity[1]*state.velocity[1];
 
-	    float maxPlanarSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+	    float maxPlanarSpeed = BZDBCache::tankSpeed;
 
 	    bool logOnly = false;
 

@@ -269,15 +269,15 @@ static void setupScales()
 {
   float scale;
   
-  scaleFactors[Normal][0] = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  scaleFactors[Normal][0] = BZDBCache::tankLength;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
   scaleFactors[Normal][0] /= scale;
 
-  scaleFactors[Normal][1] = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  scaleFactors[Normal][1] = BZDBCache::tankWidth;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKWIDTH).c_str());
   scaleFactors[Normal][1] /= scale;
 
-  scaleFactors[Normal][2] = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  scaleFactors[Normal][2] = BZDBCache::tankHeight;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKHEIGHT).c_str());
   scaleFactors[Normal][2] /= scale;
   

@@ -28,12 +28,17 @@ bool  BZDBCache::lighting;
 bool  BZDBCache::smooth;
 bool  BZDBCache::colorful;
 
+float BZDBCache::worldSize;
+float BZDBCache::gravity;
+float BZDBCache::tankWidth;
+float BZDBCache::tankLength;
+float BZDBCache::tankHeight;
+float BZDBCache::tankSpeed;
+float BZDBCache::tankRadius;
+float BZDBCache::flagRadius;
 float BZDBCache::flagPoleSize;
 float BZDBCache::flagPoleWidth;
 float BZDBCache::maxLOD;
-float BZDBCache::tankHeight;
-float BZDBCache::flagRadius;
-float BZDBCache::tankRadius;
 int   BZDBCache::linedRadarShots;
 int   BZDBCache::sizedRadarShots;
 
@@ -51,16 +56,28 @@ void BZDBCache::init()
   BZDB.addCallback("colorful", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_GRAVITY, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_TANKWIDTH, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_TANKLENGTH, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_TANKSPEED, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_FLAGRADIUS, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_FLAGPOLESIZE, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_FLAGPOLEWIDTH, serverCallback, NULL);
 
-  maxLOD     = BZDB.eval(StateDatabase::BZDB_MAXLOD);
+  maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
+  worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
   tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
   flagPoleSize = BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE);
   flagPoleWidth = BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH);
+
   update();
 }
 
@@ -90,16 +107,37 @@ void BZDBCache::clientCallback(const std::string& name, void *)
 
 void BZDBCache::serverCallback(const std::string& name, void *)
 {
-  if (name == StateDatabase::BZDB_MAXLOD)
+  if (name == StateDatabase::BZDB_MAXLOD) {
     maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
-  else if (name == StateDatabase::BZDB_TANKHEIGHT)
+  }
+  if (name == StateDatabase::BZDB_WORLDSIZE) {
+    worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  }
+  if (name == StateDatabase::BZDB_GRAVITY) {
+    gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  }
+  else if (name == StateDatabase::BZDB_TANKWIDTH) {
+    tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  }
+  else if (name == StateDatabase::BZDB_TANKLENGTH) {
+    tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  }
+  else if (name == StateDatabase::BZDB_TANKHEIGHT) {
     tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
-  else if (name == StateDatabase::BZDB_FLAGRADIUS)
-    flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
-  else if (name == StateDatabase::BZDB_FLAGPOLESIZE)
+  }
+  else if (name == StateDatabase::BZDB_TANKSPEED) {
+    tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  }
+// Why only in update() ?
+//  else if (name == StateDatabase::BZDB_FLAGRADIUS) {
+//    flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
+//  }
+  else if (name == StateDatabase::BZDB_FLAGPOLESIZE) {
     flagPoleSize = BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE);
-  else if (name == StateDatabase::BZDB_FLAGPOLEWIDTH)
+  }
+  else if (name == StateDatabase::BZDB_FLAGPOLEWIDTH) {
     flagPoleWidth = BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH);
+  }
 }
 
 void BZDBCache::update() {

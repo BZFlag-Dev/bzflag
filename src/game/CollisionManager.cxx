@@ -281,7 +281,7 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   clear();
 
   // setup the octree parameters
-  WorldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  WorldSize = BZDBCache::worldSize;
   maxDepth = BZDB.evalInt (StateDatabase::BZDB_COLDETDEPTH);
   minElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
 

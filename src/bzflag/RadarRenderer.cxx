@@ -187,7 +187,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     return;
 
   // prepare transforms
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   float range = BZDB.eval("displayRadarRange") * worldSize;
   // when burrowed, limit radar range
   if (myTank && (myTank->getFlag() == Flags::Burrow) &&

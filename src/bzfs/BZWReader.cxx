@@ -19,6 +19,7 @@
 
 // implementation-specific bzflag headers
 #include "URLManager.h"
+#include "BZDBCache.h"
 
 // implementation-specific bzfs-specific headers
 #include "WorldFileObject.h"
@@ -231,7 +232,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
 
   // make walls
   float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
   world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
   world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);

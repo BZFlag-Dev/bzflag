@@ -41,6 +41,7 @@
 
 // common implementation headers
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 #include "TextureManager.h"
 #include "MeshMaterial.h"
 #include "DynamicColor.h"
@@ -300,7 +301,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   }
 
   // setup the vertex and texture coordinates
-  float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float size = BZDBCache::worldSize;
   GLfloat3Array v(4);
   GLfloat3Array n(0);
   GLfloat2Array t(4);

@@ -85,7 +85,7 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
   y=(float)hisy+(float)sy;
   z=(float)hisz+(float)hisvz*t;
   if (targ->getStatus() & PlayerState::Falling)
-    z += 0.5f * BZDB.eval(StateDatabase::BZDB_GRAVITY) * t * t;
+    z += 0.5f * BZDBCache::gravity * t * t;
   if (z < 0) z = 0;
 }
 
@@ -102,7 +102,7 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
   double hisy = targ->getPosition()[1];
   double deltax = hisx - myx;
   double deltay = hisy - myy;
-  double distance = hypotf(deltax,deltay) - BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+  double distance = hypotf(deltax,deltay) - BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - BZDBCache::tankRadius;
   if (distance <= 0) distance = 0;
   double shotspeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED)*
     (getFlag() == Flags::Laser ? BZDB.eval(StateDatabase::BZDB_LASERADVEL) :
@@ -168,9 +168,9 @@ void			RobotPlayer::doUpdate(float dt)
       BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - tankRadius;
 
     const float missby = fabs(azimuthDiff) *
-      (targetdistance - BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
+      (targetdistance - BZDBCache::tankLength);
     // only shoot if we miss by less than half a tanklength and no building inbetween
-    if (missby < 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) &&
+    if (missby < 0.5f * BZDBCache::tankLength &&
         p1[2] < shotRadius) {
       float pos[3] = {getPosition()[0], getPosition()[1],
 		      getPosition()[2] +  BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)};
@@ -194,7 +194,7 @@ void			RobotPlayer::doUpdate(float dt)
 			     getPosition()[1] - p->getPosition()[1],
 			     getPosition()[2] - p->getPosition()[2]};
 	  Ray ray(relpos, dir);
-	  float impact = rayAtDistanceFromOrigin(ray, 5 * BZDB.eval(StateDatabase::BZDB_TANKRADIUS));
+	  float impact = rayAtDistanceFromOrigin(ray, 5 * BZDBCache::tankRadius);
 	  if (impact > 0 && impact < shotRange)
 	  {
 	    shoot=false;
@@ -224,7 +224,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
     position[2] = oldPosition[2];
     float azimuth = oldAzimuth;
     float tankAngVel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
-    float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+    float tankSpeed = BZDBCache::tankSpeed;
 
 
     // basically a clone of Roger's evasive code
@@ -357,7 +357,7 @@ float			RobotPlayer::getTargetPriority(const
 
   // go after closest player
   // FIXME -- this is a pretty stupid heuristic
-  const float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  const float worldSize = BZDBCache::worldSize;
   const float* p1 = getPosition();
   const float* p2 = _target->getPosition();
 

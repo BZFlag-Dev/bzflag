@@ -338,7 +338,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-			   0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
+			   0.5f * BZDBCache::tankLength,
 			   shotRadius,
 			   BZDBCache::tankHeight);
     } else {

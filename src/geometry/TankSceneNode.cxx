@@ -47,9 +47,9 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 
 			// prepare geometry
   move(pos, forward);
-  float length = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  float length = BZDBCache::tankLength;
   length = 0.5f * (length + MuzzleMaxX);
-  const float width = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  const float width = BZDBCache::tankWidth;
   const float height = 0.5f * BZDBCache::tankHeight;
 
   baseRadius = (length * length) + (width * width) + (height * height);
@@ -369,7 +369,7 @@ TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
 {
   static const GLfloat defaultPlane[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
   move(defaultPlane);
-  float radius = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  float radius = BZDBCache::tankLength;
   radius = radius * 4.0f;
   setRadius(radius);
 
@@ -396,9 +396,9 @@ void TankIDLSceneNode::move(const GLfloat _plane[4])
 
   // compute new sphere
   const GLfloat* s = tank->getSphere();
-  setCenter(s[0] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[0],
-	    s[1] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[1],
-	    s[2] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[2]);
+  setCenter(s[0] + 1.5f * BZDBCache::tankLength * plane[0],
+	    s[1] + 1.5f * BZDBCache::tankLength * plane[1],
+	    s[2] + 1.5f * BZDBCache::tankLength * plane[2]);
 }
 
 
@@ -542,7 +542,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
 	      sphere[2] * _plane[2] + _plane[3]);
 
   // compute projection point -- one TankLengthy in from plane
-  const GLfloat pd = -1.0f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) - plane[3];
+  const GLfloat pd = -1.0f * BZDBCache::tankLength - plane[3];
   GLfloat origin[3];
   origin[0] = pd * plane[0];
   origin[1] = pd * plane[1];

@@ -17,6 +17,7 @@
 #include "TimeKeeper.h"
 #include "PlatformFactory.h"
 #include "BzfMedia.h"
+#include "BZDBCache.h"
 
 const float		SpeedOfSound = 343.0f;			// meters/sec
 const int		MaxEvents = 30;
@@ -186,7 +187,7 @@ void			openSound(const char*)
   audioBufferSize = media->getAudioBufferChunkSize() << 1;
 
   /* initialize */
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   timeSizeOfWorld = 1.414f * worldSize / SpeedOfSound;
   for (i = 0; i < MaxEvents; i++) {
     events[i].samples = NULL;

@@ -347,7 +347,7 @@ void			BackgroundRenderer::setCelestial(
 				moonDir[2] * sunDir[2];
   // hack coverage to lean towards full
   coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDBCache::worldSize;
   const float moonRadius = 2.0f * worldSize *
 				atanf(60.0f * M_PI / 180.0f) / 60.0f;
   // limbAngle is dependent on moon position but sun is so much farther
@@ -500,7 +500,7 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
 
 void BackgroundRenderer::resizeSky() {
   // sky pyramid must fit inside far clipping plane
-  const GLfloat skySize = 1.3f * BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  const GLfloat skySize = 1.3f * BZDBCache::worldSize;
   for (int i = 0; i < 4; i++) {
     skyPyramid[i][0] = skySize * squareShape[i][0];
     skyPyramid[i][1] = skySize * squareShape[i][1];
@@ -845,7 +845,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 
   // sun first.  sun is a disk that should be about a half a degree wide
   // with a normal (60 degree) perspective.
-  const float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  const float worldSize = BZDBCache::worldSize;
   const float sunRadius = 2.0f * worldSize * atanf(60.0f*M_PI/180.0f) / 60.0f;
   sunList.begin();
     glBegin(GL_TRIANGLE_FAN);

@@ -182,12 +182,12 @@ bool	avoidBullet(float &rotation, float &speed)
 #ifdef _MSC_VER
   if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
    || (myTank->getFlag()) == Flags::Wings))
-   && (minDistance < (max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.25f))
+   && (minDistance < (max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
    && (myTank->getFlag() != Flags::NoJumping)) {
 #else
   if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
    || (myTank->getFlag()) == Flags::Wings))
-   && (minDistance < (std::max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.25f))
+   && (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
    && (myTank->getFlag() != Flags::NoJumping)) {
 #endif
     myTank->jump();
@@ -381,7 +381,7 @@ bool chasePlayer(float &rotation, float &speed)
       //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
       if ((d > 20.0f) && (d < 50.0f) && (building->getType() == BoxBuilding::typeName)) {
         float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-        float maxJump = (jumpVel * jumpVel) / (2 * -BZDB.eval(StateDatabase::BZDB_GRAVITY));
+        float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
 
         if (((building->getPosition()[2] - pos[2] + building->getHeight())) < maxJump) {
           speed = d / 50.0f;

@@ -19,12 +19,13 @@
 /* common implementation headers */
 #include "StateDatabase.h"
 #include "TextUtils.h"
+#include "BZDBCache.h"
 
 
 CustomWorld::CustomWorld()
 {
   // initialize with database defaults
-  _size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  _size = BZDBCache::worldSize;
   _fHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
 }
 
