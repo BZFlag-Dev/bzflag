@@ -703,7 +703,7 @@ void			ControlPanel::addMessage(const std::string& line,
     messages[MessageAll].push_back(item);
   } else {
     // rotate list and replace oldest (in newest position after rotate)
-    messages[MessageAll].erase(messages[MessageAll].begin());
+    messages[MessageAll].pop_front();
     messages[MessageAll].push_back(item);
   }
 
@@ -714,7 +714,7 @@ void			ControlPanel::addMessage(const std::string& line,
       messages[mode].push_back(item);
     } else {
       // rotate list and replace oldest (in newest position after rotate)
-      messages[mode].erase(messages[mode].begin());
+      messages[mode].pop_front();
       messages[mode].push_back(item);
     }
   }

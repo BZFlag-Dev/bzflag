@@ -23,6 +23,7 @@
 #include "OpenGLGState.h"
 #include <string>
 #include <vector>
+#include <deque>
 
 class RadarRenderer;
 class SceneRenderer;
@@ -89,7 +90,7 @@ class ControlPanel {
     float		du, dv;
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
-    std::vector<ControlPanelMessage>	messages[MessageModeCount];
+    std::deque<ControlPanelMessage>	messages[MessageModeCount];
     int messageMode;
     GLfloat		teamColor[3];
     static int		messagesOffset;
