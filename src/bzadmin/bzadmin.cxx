@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
     strncpy(startupInfo.serverName, serverName.c_str(), sizeof(startupInfo.serverName) - 1);
   }
   std::cerr << "Connecting to " <<
-    startupInfo.callsign << ":" <<
+    startupInfo.callsign << "@" <<
     startupInfo.serverName << ":" <<
     startupInfo.serverPort;
   if (strlen(startupInfo.password)) {
