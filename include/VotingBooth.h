@@ -26,8 +26,6 @@
 #undef private
 #endif
 
-#include <iostream>
-
 /* positive vote is an index; non-positive is an error or retracted vote */
 typedef long int vote_t;
 
@@ -76,26 +74,6 @@ class VotingBooth
   bool _requireUnique;
 
  protected:
-
-  /* strait from stroustrup; with added  */
-  inline static int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
-  {
-    std::string::const_iterator p1 = s1.begin();
-    std::string::const_iterator p2 = s2.begin();
-    int i=0;
-    while (p1 != s1.end() && p2 != s2.end()) {
-      if (i >= maxlength) {
-	return 0;
-      }
-      if (tolower(*p1) != tolower(*p2)) {
-	return (tolower(*p1) < tolower(*p2)) ? -1 : 1;
-      }
-      ++p1;
-      ++p2;
-      ++i;
-    }
-    return (s2.size() == s1.size()) ? 0 : (s1.size() < s2.size()) ? -1 : 1; // size is unsigned
-  }
 
  public:
 
