@@ -11,10 +11,6 @@
  */
 
 /*
- * ShotUpdate:
- *	Encapsulates info needed to update a shot on remote
- *	hosts. Can be packed for transmission on the net.
- *
  * FiringInfo:
  *	Encapsulates info needed to create RemoteShotPath.
  *	Can be packed for transmission on the net.
@@ -39,26 +35,11 @@
 #include "Pack.h"
 #include "Address.h"
 #include "Player.h"
+#include "ShotUpdate.h"
 
 class ShotStrategy;
 class BaseLocalPlayer;
 class SceneDatabase;
-
-const int		ShotUpdatePLen = PlayerIdPLen + 30;
-const int		FiringInfoPLen = ShotUpdatePLen + 6;
-
-struct ShotUpdate {
-  public:
-    void*		pack(void*) const;
-    void*		unpack(void*);
-
-  public:
-    PlayerId		player;			// who's shot
-    uint16_t		id;			// shot id unique to player
-    float		pos[3];			// shot position
-    float		vel[3];			// shot velocity
-    float		dt;			// time shot has existed
-};
 
 struct FiringInfo {
   public:

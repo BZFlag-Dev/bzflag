@@ -70,7 +70,7 @@ const int udpBufSize = 128000;
 #include "multicast.h"
 #include "Ping.h"
 #include "TimeBomb.h"
-#include "../src/bzflag/ShotPath.h" //ShotPath.h should be moved to include directory
+#include "ShotUpdate.h"
 
 static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message);
 
