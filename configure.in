@@ -2,31 +2,19 @@
 
 AC_INIT(src/bzflag/bzflag.cxx)
 
-# Version numbers - change these when bumping the version
-MAJOR_VERSION=1
-MINOR_VERSION=9
-REV=0
-PROTO="109a"
-BUILD_SOURCE="CVS"
+# sed magic to get version numbers from include/version.h
+MAJOR_VERSION=`sed  -e 's/#[ \t]*define[ \t]\+BZ_MAJOR_VERSION[ \t]\+\(.*\).*/\1/' -e t -e d < include/version.h`
+MINOR_VERSION=`sed  -e 's/#[ \t]*define[ \t]\+BZ_MINOR_VERSION[ \t]\+\(.*\).*/\1/' -e t -e d < include/version.h`
+REV=`sed  -e 's/#[ \t]*define[ \t]\+BZ_REV[ \t]\+\(.*\).*/\1/' -e t -e d < include/version.h`
 
 CONF_DATE=`date +%Y%m%d`
 AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV-$CONF_DATE)
 AM_CONFIG_HEADER(include/config.h)
 
-# Need this here for $host_os
+# Let the C++ code know about OS and user
 AC_CANONICAL_HOST
-
-# Let the C++ code know about version
-AC_DEFINE_UNQUOTED(BZ_PROTO_VERSION, "$PROTO", [Server Protocol version])
-AC_DEFINE_UNQUOTED(BZ_MAJOR_VERSION, $MAJOR_VERSION, 
-                   [Bzflag Major Version Number])
-AC_DEFINE_UNQUOTED(BZ_MINOR_VERSION, $MINOR_VERSION, 
-                   [Bzflag Minor Version Number])
-AC_DEFINE_UNQUOTED(BZ_REV, $REV, [Bzflag Revision Number])
-AC_DEFINE_UNQUOTED(BZ_BUILD_SOURCE, "$BUILD_SOURCE",[Bzflag Build Environment])
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [Bzflag System Environment])
 AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled Bzflag])
-
 
 #Checks for programs.
 AC_PROG_MAKE_SET
