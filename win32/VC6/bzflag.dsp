@@ -278,7 +278,7 @@ SOURCE=..\..\src\bzflag\callbacks.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\CommandsStandard.cxx
+SOURCE=..\..\src\bzflag\commands.cxx
 # End Source File
 # Begin Source File
 
@@ -598,7 +598,7 @@ SOURCE=..\..\include\CommandManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\CommandsStandard.h
+SOURCE=..\..\include\commands.h
 # End Source File
 # Begin Source File
 

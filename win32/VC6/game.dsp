@@ -138,12 +138,20 @@ LIB32=link.exe -lib
 # PROP Default_Filter "c;cxx"
 # Begin Source File
 
+SOURCE=..\..\src\game\CommandsStandard.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\VotingArbiter.cxx
 # End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h"
+# Begin Source File
+
+SOURCE=..\..\src\game\CommandsStandard.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\include\VotingArbiter.h
