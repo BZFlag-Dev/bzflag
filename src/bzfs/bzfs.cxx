@@ -34,8 +34,7 @@ float speedTolerance = 1.125f;
 
 #define MAX_FLAG_HISTORY (10)
 
-class ListServerLink {
-  public:
+struct ListServerLink {
     Address address;
     int port;
     int socket;
