@@ -75,14 +75,14 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				drawTime(-1.0),
 				restartLabel(restartLabelFormat),
 				roamingLabel("observing"),
+				tabCompletion(-1),
 				showCompose(false),
 				showCracks(true),
 				huntIndicator(false),
 				hunting(false),
 				huntPosition(0),
 				huntSelection(false),
-				showHunt(false),
-				tabCompletion(-1)
+				showHunt(false)
 {
   int i;
 

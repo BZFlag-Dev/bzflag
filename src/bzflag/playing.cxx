@@ -728,7 +728,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   int d = temp.size() - 1;
   while (!isspace(temp[d]) && d >= 0) //get the pos of the start of the seed callsign
     --d;
-  while (d != temp.size()) { //now just load the seed callsign, which finishes the string
+  while (d != (int)temp.size()) { //now just load the seed callsign, which finishes the string
     name += temp[d];
     ++d;
   }
