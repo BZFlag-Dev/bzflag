@@ -14,6 +14,7 @@
 #include "common.h"
 #include "daylight.h"
 #include "StateDatabase.h"
+#include "ParseColor.h"
 
 static const double	radPerDeg = M_PI / 180.0;
 static const double	radPerHour = M_PI / 12.0;
@@ -279,10 +280,6 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
   static const GLfloat	sunrise1Color[3] = { 0.30f, 0.12f, 0.08f };
   static const GLfloat	sunrise2Color[3] = { 0.47f, 0.12f, 0.08f };
 
-  float skyDarknessFactor = 1;
-  if (BZDB.isSet("_skyDarknessFactor"))
-	  skyDarknessFactor = BZDB.eval("_skyDarknessFactor");
-
   // sky colors
   if (sunDir[2] < nightElevation) {
     // nighttime
@@ -354,19 +351,23 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
     sky[3][2] = horizonColor[2];
   }
 
-  // apply the darkness factor
-  sky[0][0]  *= skyDarknessFactor;
-  sky[0][1]  *= skyDarknessFactor;
-  sky[0][2]  *= skyDarknessFactor;
-  sky[1][0]  *= skyDarknessFactor;
-  sky[1][1]  *= skyDarknessFactor;
-  sky[1][2]  *= skyDarknessFactor;
-  sky[2][0]  *= skyDarknessFactor;
-  sky[2][1]  *= skyDarknessFactor;
-  sky[2][2]  *= skyDarknessFactor;
-  sky[3][0]  *= skyDarknessFactor;
-  sky[3][1]  *= skyDarknessFactor;
-  sky[3][2]  *= skyDarknessFactor;
+  // user adjustment for the sky color
+  if (BZDB.get("_skyColor") != "white") {
+    float skyColor[4];
+    parseColorString(BZDB.get("_skyColor"), skyColor);
+    sky[0][0]  *= skyColor[0];
+    sky[0][1]  *= skyColor[1];
+    sky[0][2]  *= skyColor[2];
+    sky[1][0]  *= skyColor[0];
+    sky[1][1]  *= skyColor[1];
+    sky[1][2]  *= skyColor[2];
+    sky[2][0]  *= skyColor[0];
+    sky[2][1]  *= skyColor[1];
+    sky[2][2]  *= skyColor[2];
+    sky[3][0]  *= skyColor[0];
+    sky[3][1]  *= skyColor[1];
+    sky[3][2]  *= skyColor[2];
+  }
 }
 
 bool			areShadowsCast(const float sunDir[3])

@@ -103,7 +103,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_shotRange",		"350.0",			false, StateDatabase::Locked},
   { "_shotSpeed",		"100.0",			false, StateDatabase::Locked},
   { "_shotsKeepVerticalVelocity",	"0",			false, StateDatabase::Locked},
-  { "_skyDarknessFactor",	"1",			false, StateDatabase::Locked},
+  { "_skyColor",		"white",			false, StateDatabase::Locked},
   { "_srRadiusMult",		"2.0",				false, StateDatabase::Locked},
   { "_squishFactor",		"1.0",				false, StateDatabase::Locked},
   { "_squishTime",		"1.0",				false, StateDatabase::Locked},
