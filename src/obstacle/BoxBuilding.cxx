@@ -15,7 +15,6 @@
 #include "global.h"
 #include "BoxBuilding.h"
 #include "Intersect.h"
-#include "QuadWallSceneNode.h"
 
 const char*		BoxBuilding::typeName = "BoxBuilding";
 
