@@ -123,7 +123,7 @@ public:
      * std::set compiler bug of making flagSets a fixed array.
      */
     if (flagSets == NULL) {
-      flagSets = new FlagSet[2];
+      flagSets = new FlagSet[NumQualities];
     }
 
     flagSets[flagQuality].insert(this);
