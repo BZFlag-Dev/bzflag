@@ -35,6 +35,8 @@ public:
   void execute();
   void resize(int width, int height);
   static void callback(HUDuiControl* w, void* data);
+private:
+  HUDuiTypeIn*	driver;
 };
 
 

@@ -28,6 +28,7 @@ AudioMenu::AudioMenu()
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
+  std::string currentDriver = BZDB.get("audioDriver");
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
@@ -63,6 +64,13 @@ AudioMenu::AudioMenu()
   option->update();
   list.push_back(option);
 
+  driver = new HUDuiTypeIn;
+  driver->setFont(MainMenu::getFont());
+  driver->setLabel("Driver:");
+  driver->setMaxLength(10);
+  driver->setString(currentDriver);
+  list.push_back(driver);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -72,6 +80,10 @@ AudioMenu::~AudioMenu()
 
 void			AudioMenu::execute()
 {
+  HUDuiControl* focus = HUDui::getFocus();
+  if (focus == driver) {
+    BZDB.set("audioDriver", driver->getString().c_str());
+  }
 }
 
 void			AudioMenu::resize(int width, int height)
