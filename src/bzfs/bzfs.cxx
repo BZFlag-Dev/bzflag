@@ -327,11 +327,6 @@ static int maxPlayerScore = 0;
 static int maxTeamScore = 0;
 static int debug = 0;
 
-// true if only new clients allowed
-static bool requireUDP;
-// true if UDP can be used in parallel to TCP connections
-static bool alsoUDP;
-
 #ifdef PRINTSCORE
 static bool printScore = false;
 #endif
@@ -1932,14 +1927,12 @@ static bool serverStart()
 	}
 	maxFileDescriptor = wksSocket;
 
-	// udp socket
-	if (alsoUDP) {
-		int n;
-		// we open a udp socket on the same port if alsoUDP
-		if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-			nerror("couldn't make udp connect socket");
-			return false;
-		}
+	int n;
+	// we open a udp socket on the same port
+	if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+		nerror("couldn't make udp connect socket");
+		return false;
+	}
 
 		// increase send/rcv buffer size
 #if defined(_WIN32)
@@ -3928,12 +3921,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 		// player is requesting an additional UDP connection, sending its own UDP port
 		case MsgUDPLinkRequest: {
-			if (alsoUDP) {
-				uint16_t port;
-				buf = nboUnpackUShort(buf, port);
-				player[t].ulinkup = false;
-				createUDPcon(t, port);
-			}
+			uint16_t port;
+			buf = nboUnpackUShort(buf, port);
+			player[t].ulinkup = false;
+			createUDPcon(t, port);
 			break;
 		}
 
@@ -3943,11 +3934,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			buf = nboUnpackUShort(buf, queueUpdate);
 			OOBQueueUpdate(t, queueUpdate);
 			DEBUG3("STATUS: Up UDP CON received\n");
-			// enable the downlink
-			//player[t].ulinkup = true;
-			if (!alsoUDP) {
-				fprintf(stderr,"Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
-			}
 			break;
 		}
 
@@ -3955,7 +3941,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		case MsgServerControl:
 			break;
 
-		// just forward these. FIXME should patch playerid
+		// just forward these. FIXME playerid should get overwritten someplace
 		case MsgPlayerUpdate:
 		case MsgGMUpdate:
 		case MsgAudio:
@@ -3993,7 +3979,6 @@ static const char *usageString =
 "[-publiclist <list-server-url>] "
 "[+r] "
 "[-r] "
-"[-requireudp]"
 "[{+s|-s} [<num>]] "
 "[-sa] "
 "[-st <time>] [-sw <num>] [-synctime] "
@@ -4061,7 +4046,6 @@ static void extraUsage(const char *pname)
 	std::cout << "\t -q: don't listen for or respond to pings" << std::endl;
 	std::cout << "\t +r: all shots ricochet" << std::endl;
 	std::cout << "\t -r: allow rogue tanks" << std::endl;
-	std::cout << "\t -requireudp: require clients to use udp" << std::endl;
 	std::cout << "\t +s: always have <num> super flags (default=16)" << std::endl;
 	std::cout << "\t -s: allow up to <num> super flags (default=16)" << std::endl;
 	std::cout << "\t -sa: insert antidote superflags" << std::endl;
@@ -4193,8 +4177,6 @@ static void parse(int argc, char **argv)
 	linearAcceleration = 0.0f;
 	angularAcceleration = 0.0f;
 	numAllowedFlags = 0;
-	requireUDP = false;
-	alsoUDP = true;
 	delete[] flag;  flag = NULL;
 	delete[] allowedFlags;  allowedFlags = NULL;
 
@@ -4215,14 +4197,6 @@ static void parse(int argc, char **argv)
 	// parse command line
 	int playerCountArg = 0;
 	for (i = 1; i < argc; i++) {
-		if (strcmp(argv[i], "-noudp") == 0) {
-			DEBUG4("Setup: Server will use only TCP for connections\n");
-			alsoUDP = false;
-		}
-		else if (strcmp(argv[i], "-requireudp") == 0) {
-			DEBUG4("Setup: Server requires (UDP) clients!\n");
-			requireUDP = true;
-		}
 		else if (strcmp(argv[i], "-srvmsg") == 0) {
 			if (++i == argc) {
 				std::cerr << "argument expected for -srvmsg" << std::endl;
@@ -5006,25 +4980,6 @@ int main(int argc, char **argv)
 				// send add request
 				sendMessageToListServer("ADD");
 				listServerLastAddTime = tm;
-			}
-		}
-
-		for (i = 0; i < maxPlayers; i++) {
-			// kick any clients that don't speak UDP
-			if (requireUDP && player[i].toBeKicked) {
-				char message[MessageLen];
-				player[i].toBeKicked = false;
-				sprintf(message,"Your end is not using UDP, turn on udp");
-				sendMessage(i, i, player[i].team, message);
-
-				sprintf(message,"upgrade your client http://BZFlag.org/ or");
-				sendMessage(i, i, player[i].team, message);
-
-				sprintf(message,"Try another server, Bye!");
-				sendMessage(i, i, player[i].team, message);
-
-				DEBUG1("*** Kicking Player - no UDP [%d]\n",i);
-				removePlayer(i);
 			}
 		}
 
