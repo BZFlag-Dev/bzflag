@@ -150,6 +150,18 @@ void			RobotPlayer::doUpdate(float dt)
 	|| (shootingRange <= shotRange
 	    && fabs(azimuthDiff) < tankRadius / shootingRange))
       shoot = true;
+    // Sometimes, after respawn, bots can go inside building
+    // at least not shoot from that
+    if (shoot) {
+      shoot = false;
+      unsigned int o;
+      if (obstacleList)
+	for (o = 0; o < obstacleList->size(); o++)
+	  if ((*obstacleList)[o]->isInside(p2)) {
+	    shoot = true;
+	    break;
+	  }
+    }
   }
   if (isAlive() && timeSinceShot > reloadTime / numShots && shoot) {
     timeSinceShot -= reloadTime / numShots;
