@@ -3758,9 +3758,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       const char *oldcolor = NULL;
       if (dstTeam == RogueTeam || srcPlayer->getTeam() == NoTeam)
 	oldcolor = ColorStrings[RogueTeam];
+      else if (srcPlayer->getTeam() == ObserverTeam)
+        oldcolor = ColorStrings[CyanColor];
       else
 	oldcolor = ColorStrings[srcPlayer->getTeam()];
-
       addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
       break;
     } else if (fromServer) {
@@ -3863,10 +3864,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	fullMsg += text;
       }
       const char *oldcolor = NULL;
-      if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-	oldcolor = ColorStrings[srcPlayer->getTeam()];
-      else
+      if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
 	oldcolor = ColorStrings[RogueTeam];
+      else if (srcPlayer->getTeam() == ObserverTeam)
+	oldcolor = ColorStrings[CyanColor];
+      else
+	oldcolor = ColorStrings[srcPlayer->getTeam()];
       addMessage(NULL, fullMsg, false, oldcolor);
 
       if (!srcPlayer || srcPlayer!=myTank)
