@@ -700,7 +700,6 @@ void			dumpResources(BzfDisplay* display,
   }
 
   BZDB->set("serverCacheAge", string_util::format("%1d", (long)ServerMenu::getMaxCacheAge()));
-  db.addValue("serverCacheAge", string_util::format("%1d", (long)ServerMenu::getMaxCacheAge()));
 
   // save configuration
   {
@@ -1177,8 +1176,8 @@ int			main(int argc, char** argv)
       keepGoing = false;
   }
 
-  if (db.hasValue("serverCacheAge")) {
-    ServerMenu::setMaxCacheAge(atoi(db.getValue("serverCacheAge").c_str()));
+  if (BZDB->isSet("serverCacheAge")) {
+    ServerMenu::setMaxCacheAge(atoi(BZDB->get("serverCacheAge").c_str()));
   }
 
   // start playing
