@@ -20,6 +20,7 @@
 #include <math.h>
 #include <time.h>
 #include "common.h"
+#include "TimeKeeper.h"
 #include "OpenGLTexFont.h"
 //#include "global.h"		// for TeamColor enum
 #include "common.h"		// for bool type
@@ -546,21 +547,31 @@ void			OpenGLTexFont::draw(const char* s,
   draw(s, ::strlen(s), x, y, z);
 }
 
+void			OpenGLTexFont::getBlinkColor(const GLfloat *color, float blinkFactor, GLfloat *blinkColor) const
+{
+  blinkFactor = fmodf(blinkFactor, BLINK_RATE) - BLINK_RATE/2.0f;
+  blinkFactor = fabsf (blinkFactor) / (BLINK_RATE/2.0f);
+  blinkFactor = BLINK_DEPTH * blinkFactor + (1.0f - BLINK_DEPTH);
+
+  blinkColor[0] = color[0] * blinkFactor;
+  blinkColor[1] = color[1] * blinkFactor;
+  blinkColor[2] = color[2] * blinkFactor;
+}
+
 void			OpenGLTexFont::draw(const char* string, int length,
 				float x, float y, float z) const
 {
   bool blinking = false;
   bool underline = false;
-  bool textures = false;
+  bool textures = OpenGLTexture::getFilter() != OpenGLTexture::Off;
   const GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
   const GLfloat grey_color[3]  = {0.5f, 0.5f, 0.5f};
   const GLfloat cyan_color[3]  = {0.5f, 0.8f, 0.85f};
-  GLfloat blinkColor[3];
   const GLfloat *color = white_color;
+  GLfloat blinkColor[3];
   float xpos = x;
 
-  if (OpenGLTexture::getFilter() != OpenGLTexture::Off) {
-    textures = true;
+  if (textures) {
     rep->gstate.setState();
     glBegin(GL_QUADS);
   }
@@ -571,23 +582,17 @@ void			OpenGLTexFont::draw(const char* string, int length,
       OpenGLTexFont::BitmapRep::setState();
   }
 
+  float blinkTime = TimeKeeper::getCurrent().getSeconds();
+
+
   for (int i = 0; i < length; i++) {
     const unsigned int c = (unsigned int)string[i];
 
     if (blinking) {
-      float blinkFactor;
-
-      blinkFactor = (float)((int)time(NULL));
-      blinkFactor = fmodf(blinkFactor, BLINK_RATE) - BLINK_RATE/2.0f;
-      blinkFactor = fabsf (blinkFactor) / (BLINK_RATE/2.0f);
-      blinkFactor = BLINK_DEPTH * blinkFactor + (1.0f - BLINK_DEPTH);
-
-      blinkColor[0] = color[0] * blinkFactor;
-      blinkColor[1] = color[1] * blinkFactor;
-      blinkColor[2] = color[2] * blinkFactor;
-
+      getBlinkColor(color, blinkTime, blinkColor);
       glColor3fv(blinkColor);
     }
+
 
     if (c >= 32 && c < 127) {
       if (textures) {

@@ -189,6 +189,8 @@ class OpenGLTexFont {
     };
 
   private:
+    void		getBlinkColor(const GLfloat *color, float blinkFactor, GLfloat *blinkColor) const;
+
     Rep*		rep;
     BitmapRep*		bitmapRep;
     float		width, height;
