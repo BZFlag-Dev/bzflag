@@ -109,6 +109,10 @@ SOURCE=..\src\bzfs\bzfs.cxx
 
 SOURCE=..\src\bzfs\TextChunkManager.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldInfo.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -172,6 +176,10 @@ SOURCE=..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldInfo.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
