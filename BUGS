@@ -13,8 +13,8 @@ recent bugs
 
 - Flipped pyramids are not safe to walk on: getting stucked
 
-- bzadmin exits when the curses interface is used (both ncurses and pdcurses)
-  and the terminal size is changed
+- bzadmin doesn't redraw / resize windows properly when the terminal is
+  resized
 
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
