@@ -485,7 +485,7 @@ void			TankIDLSceneNode::IDLRenderNode::render()
     glRotatef(azimuth, 0.0f, 0.0f, 1.0f);
 
     glBegin(GL_QUADS);
-    const int numFaces = sizeof(idlFaces) / sizeof(idlFaces[0]);
+    const int numFaces = countof(idlFaces);
     for (int i = 0; i < numFaces; i++) {
       // get distances from plane
       const int* face = idlFaces[i] + 1;
@@ -831,7 +831,7 @@ GLuint			TankSceneNode::LowTankRenderNode::
 void			TankSceneNode::LowTankRenderNode::freeParts()
 {
   // forget about old parts
-  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
+  for (unsigned int i = 0; i < countof(parts); i++)
   {
     glDeleteLists(parts[i],5);
     parts[i] = _NO_LIST_ID;
@@ -892,7 +892,7 @@ GLuint			TankSceneNode::MedTankRenderNode::
 void			TankSceneNode::MedTankRenderNode::freeParts()
 {
   // forget about old parts
-  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++){
+  for (unsigned int i = 0; i < countof(parts); i++){
     glDeleteLists(parts[i],5);
     parts[i] = _NO_LIST_ID;
   }
@@ -952,7 +952,7 @@ GLuint			TankSceneNode::HighTankRenderNode::
 void			TankSceneNode::HighTankRenderNode::freeParts()
 {
   // forget about old parts
-  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++){
+  for (unsigned int i = 0; i < countof(parts); i++){
     glDeleteLists(parts[i],5);
     parts[i] = _NO_LIST_ID;
   }

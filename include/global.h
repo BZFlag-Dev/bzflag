@@ -122,8 +122,8 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-// why is this fixed length?
-extern GlobalDBItem		globalDBItems[67];
+extern const unsigned int		numGlobalDBItems;
+extern const GlobalDBItem		globalDBItems[];
 
 #endif // BZF_GLOBAL_H
 

@@ -4309,7 +4309,7 @@ int main(int argc, char **argv)
   clOptions = new CmdLineOptions();
 
   // set default DB entries
-  for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
+  for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
     assert(globalDBItems[gi].name != NULL);
     if (globalDBItems[gi].value != NULL) {
       BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);

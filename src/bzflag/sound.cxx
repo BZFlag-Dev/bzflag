@@ -102,7 +102,7 @@ static const char*	soundFiles[] = {
 				"thief",
 				"burrow"
 			};
-#define	SFX_COUNT	((int)(sizeof(soundFiles) / sizeof(soundFiles[0])))
+#define	SFX_COUNT	((int)(countof(soundFiles)))
 
 /*
  * producer/consumer shared arena

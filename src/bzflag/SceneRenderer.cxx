@@ -740,7 +740,7 @@ void			SceneRenderer::render(
 				{ 1.0f, 0.5f, 0.0f },	// orange -- 6 times
 				{ 1.0f, 0.0f, 0.0f }	// red -- 7 or more
 			};
-    static const int numColors = sizeof(depthColors) / sizeof(depthColors[0]);
+    static const int numColors = countof(depthColors);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);

@@ -56,7 +56,7 @@ const GLfloat		BackgroundRenderer::receiverColorInv[3] =
 				{ 0.55f, 0.3f, 0.55f };
 
 #include "stars.cxx"
-const int		NumStars = sizeof(stars)/sizeof(stars[0]);
+const int		NumStars = countof(stars);
 
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 				blank(false),

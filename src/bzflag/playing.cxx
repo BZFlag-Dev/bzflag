@@ -1935,7 +1935,7 @@ static void		doMotion()
       };
 
       static unsigned long old_buttons = 0;
-      const int button_count = sizeof(button_map) / sizeof(button_map[0]);
+      const int button_count = countof(button_map);
       unsigned long new_buttons = mainWindow->getJoyButtonSet();
       if (old_buttons != new_buttons)
         for (int j = 0; j<button_count; j++) {

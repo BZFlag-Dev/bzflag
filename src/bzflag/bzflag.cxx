@@ -189,7 +189,7 @@ const char*	defaultBindings[] = {
   "bind I up restart",
   "bind 9 down autopilot"
 };
-const unsigned int numDefaultBindings = sizeof(defaultBindings)/sizeof(defaultBindings[0]);
+const unsigned int numDefaultBindings = countof(defaultBindings);
 
 #ifdef ROBOT
 // ROBOT -- tidy up
@@ -787,7 +787,7 @@ int			main(int argc, char** argv)
   bzfsrand(time(0));
 
     // set default DB entries
-  for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
+  for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
     assert(globalDBItems[gi].name != NULL);
     if (globalDBItems[gi].value != NULL) {
       BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);

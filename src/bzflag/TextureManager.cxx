@@ -65,12 +65,12 @@ FileTextureInit fileLoader[] =
 	{ TX_TITLEFONT, NO_VARIANT, "title", OpenGLTexture::Linear },
 };
 
-FileTextureInit fileBigLoader[] = 
+FileTextureInit fileBigLoader[] =
 {
 	{ TX_MOUNTAIN, NO_VARIANT, "mountain", OpenGLTexture::LinearMipmapLinear },
 };
 
-ProcTextureInit procLoader[] = 
+ProcTextureInit procLoader[] =
 {
 	{ TX_NOISE, NO_VARIANT, TextureManager::noiseProc, OpenGLTexture::Nearest },
 };
@@ -79,16 +79,16 @@ ProcTextureInit procLoader[] =
 TextureManager::TextureManager()
 {
   int i, numTextures;
-  
-  numTextures = sizeof( fileLoader ) / sizeof( FileTextureInit );
+
+  numTextures = countof(fileLoader);
   for (i = 0; i < numTextures; i++)
     addTexture( fileLoader[i].type, fileLoader[i].variant, loadTexture( fileLoader[i] ));
 
-  numTextures = sizeof(fileBigLoader) / sizeof(FileTextureInit);
+  numTextures = countof(fileBigLoader);
   for (i = 0; i < numTextures; i++)
     loadBigTexture(fileBigLoader[i].type, fileBigLoader[i]);
 
-  numTextures = sizeof( procLoader ) / sizeof( ProcTextureInit );
+  numTextures = countof(procLoader);
   for (i = 0; i < numTextures; i++)
     addTexture( procLoader[i].type, procLoader[i].variant, procLoader[i].proc( procLoader[i] ));
 }

@@ -17,7 +17,7 @@
 
 #include "global.h"
 
-GlobalDBItem				globalDBItems[] = {
+const GlobalDBItem				globalDBItems[] = {
 	{ "_angleTolerance",		"0.01",				false, StateDatabase::Locked},
 	{ "_angularAd",			"1.5",				false, StateDatabase::Locked},
 	{ "_boxHeight",			"6.0*_muzzleHeight",		false, StateDatabase::Locked},
@@ -86,6 +86,7 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_wideAngleAng",		"1.745329", 			false, StateDatabase::Locked},
 	{ "_worldSize",			"800.0",			false, StateDatabase::Locked}
 };
+const unsigned int	numGlobalDBItems = countof(globalDBItems);
 
 // Local Variables: ***
 // mode:C++ ***
