@@ -38,7 +38,7 @@ main(int argc, char *argv[])
   int status, i, size, versionsize;
   struct stat statbuf;
   char *inp, *outp;
-  char versionstring[16];
+  char versionstring[128];
   char *filename = INNAME;
 
   if (atexit(cleanup) < 0){
