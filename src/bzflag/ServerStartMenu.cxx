@@ -210,9 +210,6 @@ ServerStartMenu::ServerStartMenu()
   items = &list->getList();
   items->push_back("random map");
 
-  // begin searching for .bzw files
-  setStatus("Searching for *.bzw world files...");
-
   // add a list of .bzw files found in the world file dir
   std::string searchDir = getWorldDirName();
   scanWorldFiles (searchDir, items);
@@ -245,9 +242,6 @@ ServerStartMenu::ServerStartMenu()
 #endif // _WIN32
   scanWorldFiles (searchDir, items);
   
-  // done searching for .bzw files
-  setStatus("");
-
   list->update();
   controls.push_back(list);
 
