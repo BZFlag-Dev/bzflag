@@ -2202,13 +2202,10 @@ static void addPlayer(int playerIndex)
   {
     if (i == playerIndex || player[i].state <= PlayerInLimbo)
       continue;
-    if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0)
-      break;
-  }
-  if (i < curMaxPlayers)
-  {
-    rejectPlayer(playerIndex, RejectRepeatCallsign);
-    return;
+    if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0) {
+      rejectPlayer(playerIndex, RejectRepeatCallsign);
+      return;
+    }
   }
 
   // make sure the name is not obscene/filtered
@@ -2217,11 +2214,7 @@ static void addPlayer(int playerIndex)
     bool filtered = false;
     char cs[CallSignLen];
     memcpy(cs, player[playerIndex].callSign, sizeof(char) * CallSignLen);
-    if (clOptions->filterSimple) {
-      filtered = clOptions->filter.filter(cs, true);
-    } else {
-      filtered = clOptions->filter.filter(cs, false);
-    }
+    filtered = clOptions->filter.filter(cs, clOptions->filterSimple);
     if (filtered) {
       rejectPlayer(playerIndex, RejectBadCallsign);
       return ;
@@ -2243,6 +2236,57 @@ static void addPlayer(int playerIndex)
       numobservers++;
   }
 
+  // automatically assign the player's team
+  if (clOptions->autoTeam) {
+    std::vector<TeamColor> minIndex;
+    int mostEmpty = 0;
+
+    for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
+      // if the team is valid and not full
+      if ((clOptions->maxTeam[i] > 0) && 
+	  (team[i].team.size < softmaxPlayers) &&
+	  (team[i].team.size <= mostEmpty)) {
+	if (team[i].team.size < mostEmpty) {
+	  minIndex.clear();
+	  mostEmpty = team[i].team.size;
+	}
+	minIndex.push_back((TeamColor)i);
+      }
+    } // end iteration over teams
+
+#if 0
+    std::cout << "Found " << minIndex.size() << " equally empty (" << mostEmpty << ") teams; softmax is " << softmaxPlayers << std::endl;
+    for (int i = 0; i < minIndex.size(); i++) {
+      std::cout << "  Team " << minIndex[i] << " has maxteam of " << clOptions->maxTeam[i] << std::endl;
+    }
+#endif
+
+    // reassign the team
+    if (minIndex.size() == 0) {
+      // all teams are all full, try observer
+      t = player[playerIndex].team = ObserverTeam;
+    } else if (minIndex.size() == 1) {
+      // only one team has a slot open anyways
+      t = player[playerIndex].team = minIndex[0];
+    } else {
+      // multiple equally unfilled teams, choose the one sucking most
+
+      // see if the player's choice was a weak team
+      bool foundTeam = false;
+      for (int i = 0; i < minIndex.size(); i++) {
+	if (minIndex[i] == (TeamColor)t) {
+	  foundTeam = true;
+	  break;
+	}
+      }
+      if (!foundTeam) {
+	// FIXME -- should pick the team with the least average player kills
+	// for now, pick random
+	t = player[playerIndex].team = minIndex[rand() % minIndex.size()];
+      }
+    }
+  }
+
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full.
    if (player[playerIndex].type != TankPlayer &&
@@ -2255,8 +2299,8 @@ static void addPlayer(int playerIndex)
    } else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle)) {
      rejectPlayer(playerIndex, RejectNoRogues);
      return;
-   } else if (t != ObserverTeam && numplayers >= softmaxPlayers ||
-	      (t == ObserverTeam) && numobservers >= clOptions->maxObservers) {
+   } else if (((t != ObserverTeam) && (numplayers >= softmaxPlayers)) ||
+	      ((t == ObserverTeam) && (numobservers >= clOptions->maxObservers))) {
      rejectPlayer(playerIndex, RejectServerFull);
      return;
    } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
