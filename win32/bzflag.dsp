@@ -223,6 +223,11 @@ SOURCE=..\src\bzflag\texture.cxx
 
 SOURCE=..\src\bzflag\World.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ServerListCache.cxx
+# End Source File
+
 # End Group
 # Begin Group "Header Files"
 
@@ -326,6 +331,10 @@ SOURCE=..\src\bzflag\texture.h
 # Begin Source File
 
 SOURCE=..\src\bzflag\World.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ServerListCache.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
