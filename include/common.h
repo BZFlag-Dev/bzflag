@@ -60,6 +60,10 @@
 #define	tanf		(float)tan
 #endif
 
+#ifndef HAVE_SOCKLEN_T
+#define socklen_t int
+#endif
+
 // random number stuff
 #include <stdlib.h>
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))

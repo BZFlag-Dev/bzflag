@@ -16,6 +16,9 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 
+#Checks for types
+AC_CHECK_TYPES(socklen_t)
+
 AC_CANONICAL_HOST
 AM_CONDITIONAL(LINUX, test x$host_os = xlinux-gnu)
 AM_CONDITIONAL(PC,    test x$host_vendor = xpc)
