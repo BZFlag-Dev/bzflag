@@ -157,6 +157,7 @@ void JoinMenu::show()
 
   // clear status
   setStatus("");
+  setFailedMessage("");
 }
 
 void JoinMenu::dismiss()
