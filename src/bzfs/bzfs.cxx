@@ -4651,6 +4651,7 @@ static void parse(int argc, char **argv)
   randomBoxes = False;
   randomHeights = False;
   useTeleporters = False;
+  flagsOnBuildings = False;
   oneGameOnly = False;
   numExtraFlags = 0;
   maxShots = 1;
