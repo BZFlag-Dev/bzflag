@@ -793,11 +793,7 @@ void			ServerMenu::checkEchos()
 	  bool errorSending;
 	  {
 	    char url[1024];
-#ifdef _WIN32
-	    _snprintf(url, sizeof(url),
-#else
 	    snprintf(url, sizeof(url),
-#endif
 		     "GET %s?action=LIST&version=%s HTTP/1.1\r\nHost: %s\r\nCache-control: no-cache\r\n\r\n",
 		     listServer.pathname.c_str(), getServerVersion(),
 		     listServer.hostname.c_str());
