@@ -38,13 +38,14 @@ $result = mysql_query("SELECT * FROM servers");
 # If the servers table does not exist, create it.
 if (!$result) {
   mysql_query("CREATE TABLE servers " .
-              "(nameport varchar(20), " .
-              " build varchar(10), " .
-              " version varchar(40), " .
-              " gameinfo varchar(80), " .
-              " ipaddr varchar(20), " .
+              "(nameport varchar(60) NOT NULL, " .
+              " build varchar(20), " .
+              " version varchar(9) NOT NULL, " .
+              " gameinfo varchar(73) NOT NULL, " .
+              " ipaddr varchar(17) NOT NULL, " .
               " title varchar(80), " .
-              " lastmod varchar(10))")
+              " lastmod INT NOT NULL DEFAULT '0', ".
+	      " PRIMARY KEY (nameport))")
     or die ("Could not create table: " . mysql_error());
 }
 # remove all inactive servers from the table
@@ -117,9 +118,13 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
 # Server exists already, so update the table entry
 # ASSUMPTION: only the 'lastmod' column of table needs updating since all
 # else should remain the same as before
-    $result = mysql_query("UPDATE servers "
-			  . "SET gameinfo = '$gameinfo', lastmod = $curtime "
-			  . "WHERE nameport = '$nameport'")
+    $result = mysql_query("UPDATE servers SET " .
+			  "build = '$build', " .
+			  "version = '$version', " .
+			  "gameinfo = '$gameinfo', " .
+			  "title = '$title', " .
+			  "lastmod = $curtime " .
+			  "WHERE nameport = '$nameport'")
       or die ("Invalid query: ". mysql_error());
   }
   print "ADD complete\n";
