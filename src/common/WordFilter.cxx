@@ -74,9 +74,9 @@ bool WordFilter::aggressiveFilter(char *input) const
   int inputLength = strlen(input);
 
   // a buffer to destroy during matching
-  char *sInput = new char(inputLength);
-  memcpy(sInput, input, inputLength * sizeof(char));  
-
+  char *sInput = new char(inputLength + 1);
+  strcpy(sInput, input);
+  
   /* maintain an array of match indices of the input; values are in
    * pairs.  the first number is the start position, the second is
    * a length.  array has initial size of 256 (128 words).
