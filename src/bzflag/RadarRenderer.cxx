@@ -345,11 +345,14 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       RemotePlayer* player = world.getPlayer(i);
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {
-	// color radar patch -- CB
-	glColor3fv(Team::getRadarColor(player->getTeam()));
 	const ShotPath* shot = player->getShot(j);
-	if (shot && shot->getFlag() != InvisibleBulletFlag)
+	if (shot && shot->getFlag() != InvisibleBulletFlag) {
+	  if (myTank->getFlag() == ColorblindnessFlag)
+	    glColor3fv(Team::getRadarColor(RogueTeam));
+	  else
+	    glColor3fv(Team::getRadarColor(player->getTeam()));
 	  shot->radarRender();
+	}
       }
     }
 
