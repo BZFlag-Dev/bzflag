@@ -679,11 +679,16 @@ static void createCacheSignature ()
   //         < http://www.brynosaurus.com/cachedir/ >
 
   const char cacheSignature[] = "Signature: 8a477f597d28d172789f06886806bc55\n";
+  const char cacheComment[] = 
+    "# This file is a cache directory tag created by BZFlag.\n"
+    "# For information about cache directory tags, see:\n"
+    "#     http://www.brynosaurus.com/cachedir/\n";
   std::string cacheTagName =  getCacheDirName();
-  cacheTagName += ".IsCacheDirectory";
+  cacheTagName += "CACHEDIR.TAG";
   std::ostream* cacheTag = FILEMGR.createDataOutStream(cacheTagName, true, true);
   if (cacheTag != NULL) {
-    cacheTag->write(cacheSignature, strlen (cacheSignature));
+    cacheTag->write(cacheSignature, strlen(cacheSignature));
+    cacheTag->write(cacheComment, strlen(cacheComment));
   }
   delete cacheTag;
 
