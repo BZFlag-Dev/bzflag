@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "global.h"
 #include "network.h"
