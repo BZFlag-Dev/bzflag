@@ -31,8 +31,8 @@ MTL=midl.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "makehtml___Win32_Release"
-# PROP BASE Intermediate_Dir "makehtml___Win32_Release"
+# PROP BASE Output_Dir "Release"
+# PROP BASE Intermediate_Dir "Release"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
@@ -44,8 +44,8 @@ MTL=midl.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "makehtml___Win32_Debug"
-# PROP BASE Intermediate_Dir "makehtml___Win32_Debug"
+# PROP BASE Output_Dir "Debug"
+# PROP BASE Intermediate_Dir "Debug"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
@@ -61,17 +61,17 @@ MTL=midl.exe
 # Name "makehtml - Win32 Debug"
 # Begin Source File
 
-SOURCE=..\man\bzadmin.6s
+SOURCE=..\..\man\bzadmin.6s
 
 !IF  "$(CFG)" == "makehtml - Win32 Release"
 
 # Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
 OutDir=.\Release
 ProjDir=.
-InputPath=..\man\bzadmin.6s
+InputPath=..\..\man\bzadmin.6s
 
-"$(ProjDir)\..\doc\bzadmin.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzadmin.html
+"$(ProjDir)\..\..\doc\bzadmin.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\..\doc\bzadmin.html
 
 # End Custom Build
 
@@ -80,10 +80,10 @@ InputPath=..\man\bzadmin.6s
 # Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
 OutDir=.\Debug
 ProjDir=.
-InputPath=..\man\bzadmin.6s
+InputPath=..\..\man\bzadmin.6s
 
-"$(ProjDir)\..\doc\bzadmin.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzadmin.html
+"$(ProjDir)\..\..\doc\bzadmin.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\..\doc\bzadmin.html
 
 # End Custom Build
 
@@ -92,7 +92,7 @@ InputPath=..\man\bzadmin.6s
 # End Source File
 # Begin Source File
 
-SOURCE=..\man\bzflag.6s
+SOURCE=..\..\man\bzflag.6s
 
 !IF  "$(CFG)" == "makehtml - Win32 Release"
 
@@ -100,10 +100,10 @@ SOURCE=..\man\bzflag.6s
 # Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
 OutDir=.\Release
 ProjDir=.
-InputPath=..\man\bzflag.6s
+InputPath=..\..\man\bzflag.6s
 
-"$(ProjDir)\..\doc\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzflag.html
+"$(ProjDir)\..\..\doc\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\..\doc\bzflag.html
 
 # End Custom Build
 
@@ -113,10 +113,10 @@ InputPath=..\man\bzflag.6s
 # Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
 OutDir=.\Debug
 ProjDir=.
-InputPath=..\man\bzflag.6s
+InputPath=..\..\man\bzflag.6s
 
-"$(ProjDir)\..\doc\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzflag.html
+"$(ProjDir)\..\..\doc\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\..\doc\bzflag.html
 
 # End Custom Build
 
@@ -125,17 +125,17 @@ InputPath=..\man\bzflag.6s
 # End Source File
 # Begin Source File
 
-SOURCE=..\man\bzfs.6s
+SOURCE=..\..\man\bzfs.6s
 
 !IF  "$(CFG)" == "makehtml - Win32 Release"
 
 # Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
 OutDir=.\Release
 ProjDir=.
-InputPath=..\man\bzfs.6s
+InputPath=..\..\man\bzfs.6s
 
-"$(ProjDir)\..\doc\bzfs.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzfs.html
+"$(ProjDir)\..\..\doc\bzfs.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\..\doc\bzfs.html
 
 # End Custom Build
 
@@ -144,10 +144,10 @@ InputPath=..\man\bzfs.6s
 # Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
 OutDir=.\Debug
 ProjDir=.
-InputPath=..\man\bzfs.6s
+InputPath=..\..\man\bzfs.6s
 
-"$(ProjDir)\..\doc\bzfs.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzfs.html
+"$(ProjDir)\..\..\doc\bzfs.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\..\doc\bzfs.html
 
 # End Custom Build
 
