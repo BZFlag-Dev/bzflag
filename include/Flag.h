@@ -10,35 +10,36 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// Flags add some spice to the game.  There are two kinds of flags:
-// team flags and super flags.  Super flags come in two types: good
-// and bad.
-//
-//   When playing a "capture the flag" style game, each team with at
-// least one player has a team flag which has the same color as the
-// team.  A team flag will remain in the game as long as there is a
-// player on that team.  A team flag may be picked up and freely
-// dropped at any time.  It may be captured, which causes it to go
-// back to it's home position (centered in the team base).  If a
-// flag is dropped by a hostile player in a third team's base, the
-// flag will go to the third team's flag safety position.  For example,
-// if a Green Team player dropped the Red Flag on Blue's Base, the
-// Red Flag would go to the Blue Team's safety position.  This is
-// because if it stayed in the Blue Base, any Red Team member who
-// picked it up would instantly have brought his team flag into
-// enemy territory and so blow up his whole team.
-//
-//   A super flag causes the characteristics of the tank that possesses
-// it to change.  A good super flag generally makes the tank more
-// powerful or deadly.  A bad super flag generally does the opposite.
-// A good super flag may always be dropped.  A bad super flag is
-// "sticky" which means that it can't be freely dropped.  The server
-// may have some means of getting rid of a bad super flag (perhaps
-// by destroying an enemy or two or after waiting 20 seconds).
-// The creation and destruction of super flags is under the server's
-// control so super flags may appear and disappear seemingly at
-// random.
-//
+/**
+ * Flags add some spice to the game.  There are two kinds of flags:
+ * team flags and super flags.  Super flags come in two types: good
+ * and bad.
+ *
+ *   When playing a "capture the flag" style game, each team with at
+ * least one player has a team flag which has the same color as the
+ * team.  A team flag will remain in the game as long as there is a
+ * player on that team.  A team flag may be picked up and freely
+ * dropped at any time.  It may be captured, which causes it to go
+ * back to it's home position (centered in the team base).  If a
+ * flag is dropped by a hostile player in a third team's base, the
+ * flag will go to the third team's flag safety position.  For example,
+ * if a Green Team player dropped the Red Flag on Blue's Base, the
+ * Red Flag would go to the Blue Team's safety position.  This is
+ * because if it stayed in the Blue Base, any Red Team member who
+ * picked it up would instantly have brought his team flag into
+ * enemy territory and so blow up his whole team.
+ *
+ *   A super flag causes the characteristics of the tank that possesses
+ * it to change.  A good super flag generally makes the tank more
+ * powerful or deadly.  A bad super flag generally does the opposite.
+ * A good super flag may always be dropped.  A bad super flag is
+ * "sticky" which means that it can't be freely dropped.  The server
+ * may have some means of getting rid of a bad super flag (perhaps
+ * by destroying an enemy or two or after waiting 20 seconds).
+ * The creation and destruction of super flags is under the server's
+ * control so super flags may appear and disappear seemingly at
+ * random.
+ */
 
 #ifndef	BZF_FLAG_H
 #define	BZF_FLAG_H
