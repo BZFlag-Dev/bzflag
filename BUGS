@@ -1,10 +1,6 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
-- Flag handling is busted. Team flags can't be smushed in the top
-  part of the flags array, as they are index by team id.
-  Should always keep 4 slots available for them.
-
 - MQ changes color not texture, when using a color texture, blends both color and texture (JM).
 
 - the aggressive filter will occasionally encounter a false-positive match
