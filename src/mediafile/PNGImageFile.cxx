@@ -431,6 +431,7 @@ bool PNGImageFile::filter()
     default:
       return false;
   }
+  return false;
 }
 
 
