@@ -518,23 +518,13 @@ static void		parse(int argc, char** argv)
       userTime.tm_mday = day;
       userTime.tm_mon = month - 1;
       userTime.tm_year = year;
+#endif
     } else if (strcmp(argv[i], "-time") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      int hours, minutes, seconds;
-      if (sscanf(argv[i], "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
-		hours < 0 || hours > 23 ||
-		minutes < 0 || minutes > 59 ||
-		seconds < 0 || seconds > 59) {
-	printFatalError("Invalid argument for %s.", argv[i-1]);
-	usage();
-      }
-      userTime.tm_sec = seconds;
-      userTime.tm_min = minutes;
-      userTime.tm_hour = hours;
-#endif
+      BZDB.set("fixedTime", argv[i]);
     } else if (strcmp(argv[i], "-view") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
@@ -898,6 +888,22 @@ int			main(int argc, char** argv)
 
   // parse arguments
   parse(argc, argv);
+
+  // set time from BZDB
+  if (BZDB.isSet("fixedTime")) {
+    int hours, minutes, seconds;
+    char dbTime[256];
+    strcpy(dbTime,BZDB.get("fixedTime").c_str());
+    if (sscanf(dbTime, "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
+	hours < 0 || hours > 23 ||
+	minutes < 0 || minutes > 59 ||
+	seconds < 0 || seconds > 59) {
+      printFatalError("Invalid argument for fixedTime = %s", dbTime);
+    }
+    userTime.tm_sec = seconds;
+    userTime.tm_min = minutes;
+    userTime.tm_hour = hours;
+  }
 
   // see if there is a _default_ badwords file
   if (!BZDB.isSet("filterFilename")) {
