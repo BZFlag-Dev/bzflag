@@ -347,12 +347,9 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += "&groups=";
   PlayerAccessMap::iterator itr = groupAccess.begin();
   for ( ; itr != groupAccess.end(); itr++) {
-    std::vector<std::string>::iterator nitr = clOptions->nonRemoteGroups.begin();
-    for ( ; nitr != clOptions->nonRemoteGroups.end(); nitr++) {
-      if (itr->first != *nitr) {
-	msg += itr->first.c_str();
-	msg += "%0D%0A";
-      }
+    if (itr->first.substr(0, 6) != "LOCAL.") {
+      msg += itr->first.c_str();
+      msg += "%0D%0A";
     }
   }
 

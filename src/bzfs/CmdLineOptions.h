@@ -88,9 +88,6 @@ struct CmdLineOptions
 
     listServerURL.push_back(DefaultListServerURL);
     masterBanListURL.push_back(DefaultMasterBanURL);
-
-    // never use remote for the ADMIN group
-    nonRemoteGroups.push_back("ADMIN");
   }
 
   int			wksPort;
@@ -104,8 +101,6 @@ struct CmdLineOptions
   std::string   worldFile;
   std::string   pingInterface;
   std::string   password;
-
-  std::vector<std::string> nonRemoteGroups;
 
   bool listServerOverridden;
   std::vector<std::string>   listServerURL;

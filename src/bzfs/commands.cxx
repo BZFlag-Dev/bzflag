@@ -1467,13 +1467,13 @@ void handleReloadCmd(GameKeeper::Player *playerData, const char *)
     info.explicitAllows[PlayerAccessInfo::poll] = true;
     groupAccess["VERIFIED"] = info;
   }
-  itr = groupAccess.find("ADMIN");
+  itr = groupAccess.find("LOCAL.ADMIN");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
       info.explicitAllows[i] = true;
     info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
-    groupAccess["ADMIN"] = info;
+    groupAccess["LOCAL.ADMIN"] = info;
   }
   if (passFile.size())
     readPassFile(passFile);

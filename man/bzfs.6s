@@ -91,7 +91,6 @@ bzfs \- BZFlag game server
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-userdb \fIfile\fR]
-[\fB\-excluderemotegroups \fIgroup\fR,[\fIgroup\fR],[\fI...\fR]]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
 [\fB\-vetoTime \fIseconds\fR]
@@ -444,11 +443,6 @@ Kicks players whose team killing to normal kill ratio is greater than
 .TP
 \fB-userdb \fIfile\fR
 Load group associations from file
-.TP
-\fB\-excluderemotegroups \fIgroup\fR,[\fIgroup\fR],[\fI...\fR]
-Never ask the list server for information about player membership in these groups.
-Players will need to be added to these groups manually by editing the groupdb file
-or using /addgroup.
 .TP
 \fB-vars \fIfile\fR
 Loads values for game configurable variables from \fIfile\fR. Entries are
