@@ -2767,20 +2767,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 						uint16_t, void* msg)
 {
   std::vector<std::string> args;
-  char buf[50];
   bool checkScores = false;
   static WordFilter *wordfilter = (WordFilter *)BZDB->getPointer("filter");
 
   switch (code) {
 
-    // FIXME server should NOT send port number. always the same as tcp port
     case MsgUDPLinkRequest:
-      uint16_t portNo;
-      msg = nboUnpackUShort(msg, portNo);
-	  sprintf(buf,"%d", portNo);
-	  args.push_back(buf);
-	  printError("Server sent downlink endpoint information, port {1}",&args);
-	  serverLink->setUDPRemotePort(portNo);
+      serverLink->setUDPRemotePort();
       break;
 
     case MsgSuperKill:
@@ -5439,8 +5432,6 @@ static bool		joinGame(const StartupInfo* info,
     leaveGame();
     return false;
   }
-
-  printError("Using multicast relay");
 
   // use parallel UDP if desired and using server relay
   if (startupInfo.useUDPconnection)

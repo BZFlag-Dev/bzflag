@@ -83,7 +83,7 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
     return false;
 
   // check that it's a reply
-  if (code != PingCodeReply)
+  if (code != MsgPingCodeReply)
     return false;
 
   // unpack body of reply
@@ -144,7 +144,7 @@ bool			PingPacket::write(int fd,
   char buffer[PacketSize];
   void* buf = buffer;
   buf = nboPackUShort(buf, PacketSize - 4);
-  buf = nboPackUShort(buf, PingCodeReply);
+  buf = nboPackUShort(buf, MsgPingCodeReply);
   buf = pack(buf, getServerVersion());
   return sendMulticast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
@@ -160,7 +160,7 @@ bool			PingPacket::isRequest(int fd,
   if (size < 2) return false;
   msg = nboUnpackUShort(msg, len);
   msg = nboUnpackUShort(msg, code);
-  if (minReplyTTL && size == 6 && len == 2 && code == PingCodeRequest) {
+  if (minReplyTTL && size == 6 && len == 2 && code == MsgPingCodeRequest) {
     uint16_t ttl;
     msg = nboUnpackUShort(msg, ttl);
     *minReplyTTL = (int)ttl;
@@ -168,7 +168,7 @@ bool			PingPacket::isRequest(int fd,
   else if (minReplyTTL) {
     *minReplyTTL = 0;
   }
-  return code == PingCodeRequest;
+  return code == MsgPingCodeRequest;
 }
 
 bool			PingPacket::sendRequest(int fd,
@@ -179,7 +179,7 @@ bool			PingPacket::sendRequest(int fd,
   char buffer[6];
   void *msg = buffer;
   msg = nboPackUShort(msg, 2);
-  msg = nboPackUShort(msg, PingCodeRequest);
+  msg = nboPackUShort(msg, MsgPingCodeRequest);
   msg = nboPackUShort(msg, (uint16_t)replyMinTTL);
   return sendMulticast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
@@ -361,7 +361,7 @@ void			 PingPacket::writeToFile (ostream& out) const
   char buffer[PingPacket::PacketSize];
   void* buf = buffer;
   buf = nboPackUShort(buf, PingPacket::PacketSize - 4);
-  buf = nboPackUShort(buf, PingCodeReply);
+  buf = nboPackUShort(buf, MsgPingCodeReply);
   buf = pack(buf, getServerVersion());
   out.write(buffer,sizeof(buffer));
 }

@@ -111,8 +111,8 @@ const uint16_t		WorldCodeTeleporterSize = 33;
 const uint16_t		WorldCodeLinkSize = 4;
 
 // ping packet sizes, codes and structure
-const uint16_t		PingCodeReply = 0x0303;
-const uint16_t		PingCodeRequest = 0x0404;
+const uint16_t		MsgPingCodeReply = 0x0303;
+const uint16_t		MsgPingCodeRequest = 0x0404;
 
 // rejection codes
 const uint16_t		RejectBadRequest = 0x0000;

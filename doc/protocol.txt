@@ -917,11 +917,17 @@ UDP negotiation:
   this is broken at present as it only tests one direction.
   also bots don't do it right
 
-  // server sends with redundant server port number
   MsgUDPLinkRequest = 0x6f66;		// 'of'
 
-  // player responds accepting request
   MsgUDPLinkEstablished = 0x6f67;	// 'og'
 
-  // not used at present
+  not used at present
   MsgUDPLinkUpdate = 0x6f68;		// 'oh'
+
+  if client has udp enabled
+    player sends MsgUDPLinkRequest with player number over udp
+
+  if request has valid player number and is from same address
+    server sends MsgUDPLinkRequest over back over udp
+
+  player responds with MsgUDPLinkEstablished accepting request over udp

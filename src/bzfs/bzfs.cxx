@@ -14,7 +14,6 @@
 const int udpBufSize = 128000;
 bool    gotWorld = false;
 
-void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
 // every ListServerReAddTime server add ourself to the list
@@ -50,7 +49,6 @@ static Address serverAddress;
 static int wksSocket;
 // udpSocket should also be on serverAddress
 static int udpSocket;
-// relay player packets
 bool handlePings = true;
 static PingPacket pingReply;
 // highest fd used
@@ -484,13 +482,12 @@ static int puwrite(int playerIndex, const void *b, int l)
   PlayerInfo& p = player[playerIndex];
 
 #ifdef TESTLINK
-  if ((random()%LINKQUALITY) != 0)
+  if ((random()%LINKQUALITY) == 0) {
+    DEBUG1("Drop Packet due to Test\n");
+    return 0;
+  }
 #endif
   return sendto(udpSocket, (const char *)b, l, 0, (struct sockaddr*)&p.uaddr, sizeof(p.uaddr));
-#ifdef TESTLINK
-  DEBUG1("Drop Packet due to Test\n");
-  return 0;
-#endif
 }
 
 
@@ -647,7 +644,6 @@ static void pwrite(int playerIndex, const void *b, int l)
 
   // Check if UDP Link is used instead of TCP, if so jump into puwrite
   if (p.ulinkup) {
-
     // only send bulk messages by UDP
     switch (code) {
       case MsgShotBegin:
@@ -655,9 +651,16 @@ static void pwrite(int playerIndex, const void *b, int l)
       case MsgPlayerUpdate:
       case MsgGMUpdate:
       case MsgLagPing:
+      case MsgUDPLinkEstablished:
 	puwrite(playerIndex,b,l);
 	return;
     }
+  }
+
+  // always sent MsgUDPLinkRequest over udp with puwrite
+  if (code == MsgUDPLinkRequest) {
+    puwrite(playerIndex,b,l);
+    return;
   }
 
   // try flushing buffered data
@@ -773,11 +776,7 @@ static void onGlobalChanged(const std::string& msg, void*)
 
 static void sendUDPupdate(int playerIndex)
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, clOptions->wksPort);
-  DEBUG4("LOCAL Update to %d port %d\n",playerIndex, clOptions->wksPort);
-  // send it
-  directMessage(playerIndex, MsgUDPLinkRequest, (char*)buf - (char*)bufStart, bufStart);
+  directMessage(playerIndex, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
 }
 
 //static void sendUDPseqno(int playerIndex)
@@ -793,19 +792,11 @@ static void createUDPcon(int t, int remote_port) {
   if (remote_port == 0)
     return;
 
-  struct sockaddr_in addr;
-  // now build the send structure for sendto()
-  memset((char *)&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  player[t].peer.pack(&addr.sin_addr.s_addr);
-  addr.sin_port = htons(remote_port);
-  // udp address is same as tcp address
-  addr.sin_addr = player[t].taddr.sin_addr;
-  memcpy((char *)&player[t].uaddr,(char *)&addr, sizeof(addr));
+  player[t].uaddr.sin_port = htons(remote_port);
 
   // show some message on the console
   DEBUG3("Player %s [%d] UDP link requested, remote %s:%d\n",
-      player[t].callSign, t, inet_ntoa(addr.sin_addr), remote_port);
+      player[t].callSign, t, inet_ntoa(player[t].uaddr.sin_addr), remote_port);
 
   // init the queues
   player[t].uqueue = player[t].dqueue = NULL;
@@ -851,77 +842,87 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   *nopackets = 0;
 
   PlayerInfo *pPlayerInfo;
-    int pi;
-    for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-      if ((pPlayerInfo->ulinkup) &&
-	  (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
-	  (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
-	break;
-      }
+  int pi;
+  for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
+    if ((pPlayerInfo->ulinkup) &&
+	(pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
+	(memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
+      break;
     }
-    if (pi == curMaxPlayers) {
-      // didn't find player so test for exact match new player
+  }
+  if (pi == curMaxPlayers) {
+    ushort len, code;
+    void *tmpbuf;
+    tmpbuf = nboUnpackUShort(ubuf, len);
+    tmpbuf = nboUnpackUShort(tmpbuf, code);
+    if ((len == 1) && (code == MsgUDPLinkRequest)) {
+      tmpbuf = nboPackUByte(tmpbuf, pi);
+      pi--; //FIXME this is off by one? server supplied it...
+      DEBUG2("dump %x %x %x %x %x  %x %x %d %d\n",
+	  ubuf[0], ubuf[1], ubuf[2], ubuf[3], ubuf[4], len, code, pi, curMaxPlayers);
+      if ((pi <= curMaxPlayers) && !player[pi].ulinkup) {
+	if (memcmp(&player[pi].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
+	  DEBUG2("Player %s [%d] uread() udp up %s:%d actual %d\n",
+	      player[pi].callSign, pi, inet_ntoa(player[pi].uaddr.sin_addr),
+	      ntohs(player[pi].uaddr.sin_port),
+	      ntohs(uaddr.sin_port));
+	  createUDPcon(pi, ntohs(uaddr.sin_port));
+	} else {
+	  DEBUG2("Player %s [%d] uread() udp rejected %s:%d\n",
+	      player[pi].callSign, pi, inet_ntoa(player[pi].uaddr.sin_addr),
+	      ntohs(player[pi].uaddr.sin_port));
+	  pi = curMaxPlayers;
+	}
+      } else {
+	pi = curMaxPlayers;
+      }
+    } else if ((len == 0) && (code == MsgUDPLinkEstablished)) {
       for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-	if (!pPlayerInfo->ulinkup &&
-	    (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
+	if ((pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
 	    (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
-	  DEBUG2("Player %s [%d] uread() exact udp up %s:%d\n",
-	      pPlayerInfo->callSign, pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-	      ntohs(pPlayerInfo->uaddr.sin_port));
 	  pPlayerInfo->ulinkup = true;
+          DEBUG3("Player %s [%d] UDP confirmed\n", pPlayerInfo->callSign, pi);
+  	  // directMessage(pi, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
 	  break;
 	}
       }
     }
-    if (pi == curMaxPlayers) {
-      // still didn't find player so test for just address not port (ipmasq fw etc.)
-      for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-	if (!pPlayerInfo->ulinkup &&
-	    memcmp(&uaddr.sin_addr, &pPlayerInfo->uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
-	  DEBUG2("Player %s [%d] uread() fuzzy udp up %s:%d actual port %d\n",
-	      pPlayerInfo->callSign, pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-	      ntohs(pPlayerInfo->uaddr.sin_port), ntohs(uaddr.sin_port));
-	  pPlayerInfo->uaddr.sin_port = uaddr.sin_port;
-	  pPlayerInfo->ulinkup = true;
-	  break;
-	}
+  }
+
+  // get the packet
+  n = recv(udpSocket, (char *)ubuf, MaxPacketLen, 0);
+  if (pi == curMaxPlayers) {
+    // no match, discard packet
+    DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+    for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
+      if (pPlayerInfo->fd != -1) {
+	DEBUG3(" %d(%d) %s:%d",
+	    pi, pPlayerInfo->ulinkup,
+	    inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+	    ntohs(pPlayerInfo->uaddr.sin_port));
       }
     }
+    DEBUG2("\n");
+    *playerIndex = 0;
+    return 0;
+  }
 
-    // get the packet
-    n = recv(udpSocket, (char *)ubuf, MaxPacketLen, 0);
-    if (pi == curMaxPlayers) {
-      // no match, discard packet
-      DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-      for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-	if (pPlayerInfo->fd != -1) {
-	  DEBUG3(" %d(%d) %s:%d",
-	      pi, pPlayerInfo->ulinkup,
-	      inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-	      ntohs(pPlayerInfo->uaddr.sin_port));
-	}
-      }
-      DEBUG2("\n");
-      *playerIndex = 0;
-      return 0;
+  *playerIndex = pi;
+  pPlayerInfo = &player[pi];
+  DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
+      pPlayerInfo->callSign, pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+      ntohs(pPlayerInfo->uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
+      ntohs(uaddr.sin_port), udpSocket);
+
+  if (n > 0) {
+    *nopackets = 1;
+    int clen = n;
+    if (clen < 1024) {
+      memcpy(pPlayerInfo->udpmsg,ubuf,clen);
+      pPlayerInfo->udplen = clen;
     }
-
-    *playerIndex = pi;
-    pPlayerInfo = &player[pi];
-    DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
-	pPlayerInfo->callSign, pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-	ntohs(pPlayerInfo->uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
-	ntohs(uaddr.sin_port), udpSocket);
-
-    if (n > 0) {
-      *nopackets = 1;
-      int clen = n;
-      if (clen < 1024) {
-	memcpy(pPlayerInfo->udpmsg,ubuf,clen);
-	pPlayerInfo->udplen = clen;
-      }
-      return pPlayerInfo->udplen;
-    }
+    return pPlayerInfo->udplen;
+  }
   return 0;
 }
 
@@ -2421,10 +2422,10 @@ static void acceptClient()
 
   // store address information for player
   memcpy(&player[playerIndex].taddr, &clientAddr, addr_len);
+  memcpy(&player[playerIndex].uaddr, &clientAddr, addr_len);
 
   buffer[8] = (uint8_t)playerIndex;
   send(fd, (const char*)buffer, sizeof(buffer), 0);
-
 
   // FIXME add new client server welcome packet here when client code is ready
 
@@ -2684,7 +2685,6 @@ static void addPlayer(int playerIndex)
      PackVars pv(bufStart, playerIndex);
      BZDB->iterate(PackVars::packIt, &pv);
   }
-
 
   // abort if we hung up on the client
   if (player[playerIndex].fd == NotConnected)
@@ -4226,23 +4226,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	break;
     }
 
-
-    // player is requesting an additional UDP connection, sending its own UDP port
-    // FIXME this is broken for NAT firewalls
-    case MsgUDPLinkRequest: {
-	uint16_t port;
-	buf = nboUnpackUShort(buf, port);
-	player[t].ulinkup = false;
-	createUDPcon(t, port);
+    case MsgUDPLinkEstablished:
+      // handled inside uread()
       break;
-    }
-
-    // player is ready to receive data over UDP connection, sending 0
-    // FIXME it got our request and was able to reach our udp port
-    case MsgUDPLinkEstablished: {
-      DEBUG3("Player %s [%d] UDP confirmed\n", player[t].callSign, t);
-      break;
-    }
 
     case MsgNewRabbit: {
       if (t == rabbitIndex)
@@ -4423,6 +4409,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (player[t].team == ObserverTeam)
 	break;
       relayPlayerPacket(t, len, rawbuf);
+      break;
+
+    // FIXME handled inside uread, but not discarded
+    case MsgUDPLinkRequest:
       break;
 
     // unknown msg type
@@ -5124,7 +5114,7 @@ int main(int argc, char **argv)
 	  unsigned char ubuf[MaxPacketLen];
 	  AddrLen recvlen = sizeof(uaddr);
 	  int n = recvfrom(udpSocket, (char *) ubuf, MaxPacketLen, MSG_PEEK,
-			   (struct sockaddr*)&uaddr, &recvlen);
+	      (struct sockaddr*)&uaddr, &recvlen);
 	  if (n < 4)
 	    break;
 
@@ -5133,7 +5123,7 @@ int main(int argc, char **argv)
 	  void *buf = ubuf;
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
-	  if (n == 6 && len == 2 && code == PingCodeRequest) {
+	  if (n == 6 && len == 2 && code == MsgPingCodeRequest) {
 	    respondToPing();
 	    continue;
 	  }

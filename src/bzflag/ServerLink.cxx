@@ -127,7 +127,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   UDEBUG("Remote %s\n", inet_ntoa(addr.sin_addr));
 
   // for UDP, used later
-  remoteAddress = addr.sin_addr.s_addr;
+  memcpy((unsigned char *)&usendaddr,(unsigned char *)&addr, sizeof(addr));
 
 #if !defined(_WIN32)
   const bool okay = true;
@@ -323,19 +323,25 @@ void			ServerLink::send(uint16_t code, uint16_t len,
   buf = nboPackUShort(buf, code);
   if (msg && len != 0) buf = nboPackString(buf, msg, len);
 
-  switch (code) {
+  if ((urecvfd>=0) && ulinkup ) {
+    switch (code) {
 	case MsgShotBegin:
 	case MsgShotEnd:
 	case MsgPlayerUpdate:
 	case MsgGMUpdate:
 	case MsgAudio:
 	case MsgVideo:
-        case MsgUDPLinkEstablished:
+	case MsgUDPLinkRequest:
+	case MsgUDPLinkEstablished:
 		needForSpeed=true;
 		break;
+    }
   }
+  // MsgUDPLinkRequest always goes udp
+  if (code == MsgUDPLinkRequest)
+    needForSpeed=true;
 
-  if (needForSpeed && (urecvfd>=0) && ulinkup ) {
+  if (needForSpeed) {
 #ifdef TESTLINK
     if ((random()%TESTQUALTIY) != 0)
 #endif
@@ -371,7 +377,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 
   if (state != Okay) return -1;
 
-  if ((urecvfd >= 0) && ulinkup) {
+  if ((urecvfd >= 0) /* && ulinkup */) {
     int n;
 
     AddrLen recvlen = sizeof(urecvaddr);
@@ -610,7 +616,7 @@ void			ServerLink::sendUDPlinkRequest()
   if ((server_abilities & CanDoUDP) != CanDoUDP)
 	return; // server does not support udp (future bzfls test)
 
-  char msg[2];
+  char msg[1];
   unsigned short localPort;
   void* buf = msg;
 
@@ -619,7 +625,7 @@ void			ServerLink::sendUDPlinkRequest()
   if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 	return; // we cannot comply
   }
-  // TODO try the tcp port we got first
+  // TODO try our tcp port first
   // TODO then do this stuff
   for (int port=17200; port < 65000; port++) {
 	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
@@ -631,6 +637,7 @@ void			ServerLink::sendUDPlinkRequest()
 	}
   }
 #if !defined(_WIN32)
+  // TODO this should not be needed even on windows
   AddrLen addr_len = sizeof(serv_addr);
   if (getsockname(urecvfd, (struct sockaddr*)&serv_addr, (socklen_t*) &addr_len) < 0) {
 	close(urecvfd);
@@ -648,17 +655,17 @@ void			ServerLink::sendUDPlinkRequest()
   args.push_back(lps);
   printError("Network: Created local UDP downlink port {1}", &args);
 
-  buf = nboPackUShort(buf, uint16_t(localPort));
-
-  send(MsgUDPLinkRequest, sizeof(msg), msg);
+  buf = nboPackUByte(buf, id);
 
   if (BzfNetwork::setNonBlocking(urecvfd) < 0) {
 	printError("Error: Unable to set NonBlocking for UDP receive socket");
   }
+
+  send(MsgUDPLinkRequest, sizeof(msg), msg);
 }
 
 // This concludes an UDP network endpoint setup
-void			ServerLink::setUDPRemotePort(unsigned short portno)
+void			ServerLink::setUDPRemotePort()
 {
   struct sockaddr_in serv_addr, existing_addr;
   AddrLen addr_len = sizeof(existing_addr);
@@ -668,20 +675,14 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
 	return;  // we cannot get
   }
 
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = remoteAddress;
-  serv_addr.sin_port = htons(portno);
-  memcpy((unsigned char *)&usendaddr,(unsigned char *)&serv_addr, sizeof(serv_addr));
-
-  printError("Server did send endpoint information, UDP connection up");
   std::vector<std::string> args;
   args.push_back(inet_ntoa(serv_addr.sin_addr));
   char info[10];
-  sprintf(info,"%d", portno);
+  sprintf(info,"%d", ntohs(serv_addr.sin_port));
   args.push_back(info);
   sprintf(info,"%d", urecvfd);
   args.push_back(info);
-  printError("More Info: [{1}:{2}:{3}]", &args);
+  printError("Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]", &args);
 
   ulinkup = true;
   send(MsgUDPLinkEstablished, 0, NULL);

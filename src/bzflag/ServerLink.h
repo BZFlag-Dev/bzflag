@@ -74,16 +74,15 @@ class ServerLink {
 
     static ServerLink*	getServer(); // const
     static void		setServer(ServerLink*);
-    void		setUDPRemotePort(unsigned short port);
+    void		setUDPRemotePort();
 
   private:
     State		state;
     int			fd;
 
-    uint32_t		remoteAddress;
     struct sockaddr	usendaddr;
     int			urecvfd;
-    struct sockaddr	urecvaddr;
+    struct sockaddr	urecvaddr; // the clients udp listen address
     bool		ulinkup;
 
     PlayerId		id;
