@@ -30,6 +30,9 @@
 /* On windows, strcasecmp is really stricmp */
 #define HAVE_STRICMP 1
 
+/* windows version constant */
+#define _WIN32_WINNT 0x0400
+
 // define our OS
 #ifndef BZ_BUILD_OS
  	#if defined(_MSC_VER) && (_MSC_VER == 1100)
@@ -40,7 +43,6 @@
  		#endif //_DEBUG
  	#endif //_MSC_VER == 1100
  	#if defined(_MSC_VER) && (_MSC_VER == 1200)
-                #define _WIN32_WINNT 0x0400
  		#ifdef _DEBUG
  			#define BZ_BUILD_OS			"W32VC6D"
  		#else
