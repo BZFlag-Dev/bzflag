@@ -32,7 +32,7 @@
 // minor release number changes.  adding new graphics effects normally
 // only require incrementing the revision number.
 
-const char* const	ServerVersion = "BZFS107e";
+const char* const	ServerVersion = "BZFS109a";
 
 // well known service port number for bzflag server
 const int		ServerPort = 5155;
