@@ -3774,6 +3774,7 @@ static void		handleServerMessage(bool human, uint16_t code,
           string_util::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
           string_util::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
           string_util::format("%s@%s", startupInfo.callsign, startupInfo.serverName),
+          string_util::format("%s", startupInfo.serverName),
           string_util::format("%s", startupInfo.callsign),
           "@" // catch-all for all callsign/server/ports
         };
