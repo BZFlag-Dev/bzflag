@@ -20,6 +20,10 @@
 #include "BzfDisplay.h"
 #include <X11/Xlib.h>
 
+#ifdef XIJOYSTICK
+#include <X11/extensions/XInput.h>
+#endif
+
 class BzfString;
 class BzfKeyEvent;
 class XDisplayMode;
@@ -47,10 +51,32 @@ class XDisplay : public BzfDisplay {
 	int		getScreen() const { return screen; }
 	Window		getRootWindow() const;
 
+#ifdef XIJOYSTICK
+        XDeviceInfo*	getDevices() const { return devices; }
+        int		getNDevices() const { return ndevices; }
+	void		setButtonPressType(int& type) { 
+                          buttonPressType = type; 
+                        }
+        void		setButtonReleaseType(int& type) { 
+                          buttonReleaseType = type;
+                        }
+	int		getButtonPressType() const
+				{ return buttonPressType; }
+        int		getButtonReleaseType() const
+				{ return buttonReleaseType; }
+	int		mapButton(int button) const;
+#endif
+
       private:
 	int		refCount;
 	Display*	display;
 	int		screen;
+#ifdef XIJOYSTICK
+	XDeviceInfo*	devices;
+        int		ndevices;
+        int		buttonPressType;
+        int		buttonReleaseType;
+#endif
     };
     Rep*		getRep() const { return rep; }
 

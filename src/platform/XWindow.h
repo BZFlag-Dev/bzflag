@@ -22,6 +22,10 @@
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 
+#ifdef XIJOYSTICK
+#include <X11/extensions/XInput.h>
+#endif
+
 class XVisual;
 
 class XWindow : public BzfWindow {
@@ -58,6 +62,12 @@ class XWindow : public BzfWindow {
     void		makeContext();
     void		freeContext();
 
+#ifdef XIJOYSTICK
+    void		initJoystick(char* joystickName);
+    boolean		joystick() const;
+    void		getJoy(int& x, int& y) const;
+#endif
+
     // other X stuff
     static XWindow*	lookupWindow(Window);
 
@@ -83,6 +93,12 @@ class XWindow : public BzfWindow {
     unsigned long*	colormapPixels;
     float		gammaVal;
     static XWindow*	first;
+    
+#ifdef XIJOYSTICK
+    XDevice*		device;
+    int			scaleX, constX;
+    int			scaleY, constY;
+#endif
 };
 
 #endif // BZF_XWINDOW_H

@@ -11,6 +11,7 @@
  */
 
 #include "BzfWindow.h"
+#include "ErrorHandler.h"
 
 BzfWindow::BzfWindow(const BzfDisplay* _display) : display(_display)
 {
@@ -83,3 +84,9 @@ void			BzfWindow::removeResizeCallback(
     }
   }
 }
+
+void			BzfWindow::initJoystick(const char* joystickName)
+{
+  printError("joystick '%s' not supported...", joystickName);
+}
+

@@ -21,6 +21,18 @@ XF86VIDMODE_DEF = -DXF86VIDMODE_EXT
 XF86VIDMODE_LIB = -lXxf86vm
 
 #
+# use XInput extension for joystick support (comment out to disable)
+#
+JOYSTICK_DEF = -DXIJOYSTICK
+JOYSTICK_LIB = -lXi
+
+#
+# accumulate extension definitions and libs
+#
+XEXT_DEF = $(XF86VIDMODE_DEF) $(JOYSTICK_DEF)
+XEXT_LIB = $(XF86VIDMODE_LIB) $(JOYSTICK_LIB)
+
+#
 # install locations
 #
 INSTALL_DATA_DIR = /usr/X11R6/lib/X11/bzflag/data
@@ -44,10 +56,8 @@ ECHO	= echo
 #
 # compiler definitions
 #
-PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO \
-	   $(XF86VIDMODE_DEF)
-PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO \
-	   $(XF86VIDMODE_DEF)
+PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO $(XEXT_DEF)
+PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO $(XEXT_DEF)
 
 #
 # compiler options
@@ -85,7 +95,6 @@ AUDIO_LIBS =				\
 	$(NULL)
 
 DISPLAY_LIBS =				\
-	$(XF86VIDMODE_LIB)		\
 	$(NULL)
 
 GL_LIBS =				\
@@ -100,6 +109,7 @@ NETWORK_LIBS =				\
 	$(NULL)
 
 WINDOW_LIBS =				\
+	$(XEXT_LIB)			\
 	-lXext				\
 	-lX11				\
 	$(NULL)

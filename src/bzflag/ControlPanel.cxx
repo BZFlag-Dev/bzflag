@@ -55,6 +55,7 @@ extern void		printMissingDataDirectoryError(const char*);
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
 				resized(False),
+				numBuffers(2),
 				radarRenderer(NULL),
 				panelZoomedImageSize(0),
 				panelZoomedImage(NULL),
@@ -187,7 +188,7 @@ ControlPanel::~ControlPanel()
   delete[] origPanelZoomedImage;
 }
 
-void			ControlPanel::render(int retouch)
+void			ControlPanel::render()
 {
 int          msgRowOffset;		// These are used for line-wrap and may be
 unsigned int lineCharWidth;		//  better suited for a {} group below.
@@ -195,12 +196,6 @@ BzfString    curMsgPos;			// Current position in display message
 float        curMsgY;				// Current Y offset for this message
 
   if (!resized) resize();
-  if (retouch) {
-    if (exposed) exposed += retouch;
-    if (changedMessage) changedMessage += retouch;
-    if (changedStatus) changedStatus += retouch;
-    if (changedCounts) changedCounts += retouch;
-  }
   if (!exposed && !changedMessage && !changedStatus && !changedCounts)
     return;
 
@@ -459,12 +454,18 @@ void			ControlPanel::resizeCallback(void* self)
   ((ControlPanel*)self)->resize();
 }
 
+void			ControlPanel::setNumberOfFrameBuffers(int n)
+{
+  numBuffers = n;
+  expose();
+}
+
 void			ControlPanel::expose()
 {
-  exposed = 2;
-  changedMessage = 2;
-  changedStatus = 2;
-  changedCounts = 2;
+  exposed = numBuffers;
+  changedMessage = numBuffers;
+  changedStatus = numBuffers;
+  changedCounts = numBuffers;
 }
 
 void			ControlPanel::exposeCallback(void* self)
@@ -555,27 +556,27 @@ void			ControlPanel::addMessage(const BzfString& line,
   if (echoToConsole)
     fprintf(stdout, "%s\n", (const char*)line);
 
-  changedMessage = 2;
+  changedMessage = numBuffers;
 }
 
 void			ControlPanel::setStatus(const char* _status)
 {
   status = _status;
-  changedStatus = 2;
+  changedStatus = numBuffers;
 }
 
 void			ControlPanel::resetTeamCounts()
 {
   for (int i = 0; i < NumTeams; i++)
     teamCounts[i] = 0;
-  changedCounts = 2;
+  changedCounts = numBuffers;
 }
 
 void			ControlPanel::setTeamCounts(const int* counts)
 {
   for (int i = 0; i < NumTeams; i++)
     teamCounts[i] = counts[i];
-  changedCounts = 2;
+  changedCounts = numBuffers;
 }
 
 void			ControlPanel::setRadarRenderer(RadarRenderer* rr)

@@ -31,7 +31,7 @@ package: $(_FORCE)
 	$(CD) package; $(MAKE) $(MFLAGS) targets
 
 clean:
-	$(RM) $(LIBDIR)/*
+	- $(RM) $(LIBDIR)/*
 	$(CD) src; $(MAKE) $(MFLAGS) $@
 	$(CD) man; $(MAKE) $(MFLAGS) $@
 	$(CD) package; $(MAKE) $(MFLAGS) $@

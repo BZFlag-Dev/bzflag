@@ -42,6 +42,8 @@ struct StartupInfo {
     char		email[EmailLen];
     BzfString		listServerURL;
     int			listServerPort;
+    boolean		joystick;
+    BzfString		joystickName;
 };
 
 typedef void		(*JoinGameCallback)(boolean success, void* data);

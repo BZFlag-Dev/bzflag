@@ -242,6 +242,8 @@ static void		usage()
 	" [-echo]"
 	" [-geometry <geometry-spec>]"
 	" [-interface <interface>]"
+	" [-joystick {yes|no}]"
+	" [-joystickname <name>]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
 	" [-list <server-list-url>] [-nolist]"
 	" [-multisample]"
@@ -432,6 +434,24 @@ static void		parse(int argc, char** argv,
 	startupInfo.ttl = MaximumTTL;
 	printFatalError("Using maximum ttl of %d.", startupInfo.ttl);
       }
+    }
+    else if (strcmp(argv[i], "-joystick") == 0) {
+      if (++i == argc) {
+	printFatalError("Missing argument for %s.", argv[i-1]);
+	usage();
+      }
+      if (strcmp(argv[i], "no") != 0 && strcmp(argv[i], "yes") != 0) {
+	printFatalError("Invalid argument for %s.", argv[i-1]);
+	usage();
+      }
+      startupInfo.joystick = (strcmp(argv[i], "yes") == 0);
+    }
+    else if (strcmp(argv[i], "-joystickname") == 0) {
+      if (++i == argc) {
+	printFatalError("Missing argument for %s.", argv[i-1]);
+	usage();
+      }
+      startupInfo.joystickName = argv[i];
     }
     else if (strcmp(argv[i], "-v") == 0 ||
 	     strcmp(argv[i], "-version") == 0 ||
@@ -667,6 +687,9 @@ void			dumpResources(BzfDisplay* display,
   db.addValue("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
   db.addValue("showscore", renderer.getScore() ? "yes" : "no");
 
+  db.addValue("joystick", startupInfo.joystick ? "yes" : "no");
+  db.addValue("joystickname", startupInfo.joystickName);
+
   // don't save these configurations
   db.removeValue("window");
   db.removeValue("multisample");
@@ -789,6 +812,11 @@ int			main(int argc, char** argv)
 			sizeof(startupInfo.multicastInterface) - 1] = '\0';
     }
 
+    if (db.hasValue("joystick"))
+      startupInfo.joystick = (db.getValue("joystick") == "yes");
+    if (db.hasValue("joystickname"))
+      startupInfo.joystickName = db.getValue("joystickname");
+
     // key mapping
     KeyMap& map = getKeyMap();
     for (int i = 0; i < (int)KeyMap::LastKey; i++) {
@@ -900,6 +928,10 @@ int			main(int argc, char** argv)
   }
   window->setTitle("bzflag");
 
+  /* initialize the joystick */
+  if (startupInfo.joystick)
+    window->initJoystick(startupInfo.joystickName.getString());
+
   // set data directory if user specified
   if (db.hasValue("directory"))
     PlatformFactory::getMedia()->setMediaDirectory(db.getValue("directory"));
@@ -921,7 +953,7 @@ int			main(int argc, char** argv)
 				(ys != '-' && ys != '+'))) {
       db.removeValue("geometry");
     }
-    else {
+    /*else*/ {
       setSize = True;
       if (w < 640) w = 640;
       if (h < 400) h = 400;

@@ -19,6 +19,8 @@ BZFlag 1.7e1
 * fix bzfls for servers on non-5155 - TimR
 * pgup/pgdn support in help menu - Kris Verbeeck
 * stop using signal() as suggested by Frank Thilo - TimR
+* Triple buffering support (actually n way buffering) - XiGraphics
+* Joystick support - XiGraphics
 
 
 BZFlag 1.7e release 000

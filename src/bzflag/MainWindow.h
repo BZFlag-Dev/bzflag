@@ -68,8 +68,14 @@ class MainWindow {
 
     void		resize();
 
-    // FIXME -- try to get rid of this
+    // return true iff there's a joystick available (and it's been initialized)
+    boolean		joystick() const;
+
+    // FIXME -- try to get rid of these.  we'd like to receive
+    // events instead because it means no round trip to the server
+    // for these values that we need every frame.
     void		getMousePosition(int& mx, int& my) const;
+    void		getJoyPosition(int& mx, int& my) const;
 
   private:
     // no copying

@@ -227,3 +227,17 @@ void			MainWindow::resizeCB(void* _self)
   MainWindow* self = (MainWindow*)_self;
   self->resize();
 }
+
+
+boolean			MainWindow::joystick() const
+{
+  return window->joystick();
+}
+
+void			MainWindow::getJoyPosition(int& mx, int& my) const
+{
+  window->getJoy(mx, my);
+  mx = ((width >> 1)*mx)/(900);
+  my = ((viewHeight >> 1)*my)/(900);
+}
+

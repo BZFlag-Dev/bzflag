@@ -1098,8 +1098,8 @@ void			OptionsMenu::resize(int width, int height)
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 24.0f;
-  const float fontHeight = (float)height / 24.0f;
+  const float fontWidth = (float)height / 30.0f;
+  const float fontHeight = (float)height / 30.0f;
 
   // reposition title
   HUDuiControlList& list = getControls();

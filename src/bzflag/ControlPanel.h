@@ -38,8 +38,10 @@ class ControlPanel {
 			ControlPanel(MainWindow&, SceneRenderer&);
 			~ControlPanel();
 
-    void		render(int retouch = 0);
+    void		render();
     void		resize();
+
+    void		setNumberOfFrameBuffers(int);
 
     void		addMessage(const BzfString&, const GLfloat* = NULL);
 	void		setMessagesOffset(int offset, int whence);
@@ -64,6 +66,7 @@ class ControlPanel {
   private:
     MainWindow&		window;
     boolean		resized;
+    int			numBuffers;
     int			exposed;
     int			changedMessage;
     int			changedStatus;

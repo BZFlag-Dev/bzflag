@@ -167,6 +167,8 @@ StartupInfo::StartupInfo() : hasConfiguration(False),
   strcpy(multicastInterface, "");
   strcpy(callsign, "");
   strcpy(email, "");
+  joystickName = "joystick";
+  joystick = False;
 }
 
 //
@@ -407,7 +409,10 @@ static void		doMotion()
 
   // get mouse position
   int mx, my;
-  mainWindow->getMousePosition(mx, my);
+  if (mainWindow->joystick())
+    mainWindow->getJoyPosition(mx, my);
+  else
+    mainWindow->getMousePosition(mx, my);
 
   // calculate desired rotation
   const int noMotionSize = hud->getNoMotionSize();
@@ -3611,7 +3616,7 @@ static void		playingLoop()
        sceneRenderer->render(False);
        hud->render(*sceneRenderer);
        renderDialog();
-       controlPanel->render(1);
+       controlPanel->render();
        if (radar) radar->render(*sceneRenderer, blankRadar);
 
        // set up view for right eye
@@ -3653,7 +3658,7 @@ static void		playingLoop()
 #ifndef USE_GL_STEREO
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render(1);
+	controlPanel->render();
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -4109,6 +4114,34 @@ void			startPlaying(BzfDisplay* _display,
   // make control panel
   ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
   controlPanel = &_controlPanel;
+
+  // tell the control panel how many frame buffers there are.  we
+  // cheat when drawing the control panel, not drawing it if it
+  // hasn't changed.  that only works if we've filled all the
+  // frame buffers (e.g. front and back buffers) with the correct
+  // data.
+  // FIXME -- assuming the contents of any frame buffer except the
+  // front buffer are anything but garbage violates the OpenGL
+  // spec.  we really should redraw the control panel every frame
+  // but this works on every system so far.
+  {
+    int n = 3;	// assume triple buffering
+    switch (sceneRenderer->getViewType()) {
+      case SceneRenderer::Stacked:
+      case SceneRenderer::Stereo:
+#ifndef USE_GL_STEREO
+	// control panel drawn twice per frame
+	n *= 2;
+#endif
+	break;
+
+      case SceneRenderer::ThreeChannel:
+      default:
+	// only one copy of control panel visible
+	break;
+    }
+    controlPanel->setNumberOfFrameBuffers(n);
+  }
 
   // if no configuration, turn off fancy rendering so startup is fast,
   // even on a slow machine.
