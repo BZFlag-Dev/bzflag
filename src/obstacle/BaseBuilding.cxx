@@ -209,7 +209,6 @@ BaseSceneNodeGenerator::~BaseSceneNodeGenerator()
 
 WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeats, bool lod)
 {
-  const GLfloat *pos = base->getPosition();
   const float height = base->getHeight();
   if(getNodeNumber() >= 1 && height == 0) return NULL;
   if(getNodeNumber() >= 6) return NULL;
