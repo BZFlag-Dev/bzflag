@@ -18,7 +18,7 @@
 
 void MeshMaterial::reset()
 {
-  texture = "";
+  texture = "mesh";
   textureMatrix = -1;
   dynamicColor = -1;
   const float defAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
