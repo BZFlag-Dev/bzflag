@@ -258,6 +258,9 @@
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="..\..\src\ogl\TextureManager.cxx">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -291,6 +294,9 @@
 			</File>
 			<File
 				RelativePath="..\include\RenderNode.h">
+			</File>
+			<File
+				RelativePath="..\..\include\TextureManager.h">
 			</File>
 		</Filter>
 	</Files>
