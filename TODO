@@ -13,6 +13,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* rework the BZDB->eval() cacheing to support expression
+  dependencies - if a variable changes, all the expressions
+  that use that variable should be updated as well
+
 * require an email contact name for public servers. Perhaps
   unpublished by default
 
