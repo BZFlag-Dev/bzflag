@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- it appears that MSVC5 has problems loading large world files
+  (for example: 500Kbytes).
+
 - tank begins driving backwards on spawn (perhaps only with keyboard,
   perhaps only with mac)
 
