@@ -78,6 +78,8 @@ Flag::Desc	Flag::descriptions[] =
 		"CLoaking (+CL):  Makes your tank invisible out-the-window.  Still visible on radar."),
 	Desc( "Useless", "US", FlagUnstable, NormalShot, FlagGood,
 		"USeless (+US):  You have found the useless flag. Use it wisely."),
+	Desc( "Masquerade", "MQ", FlagUnstable, NormalShot, FlagGood,
+		"MasQuerade (+MQ):  In opponent's hud, you appear as a teammate."),
 	Desc( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad,
 		"ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!"),
 	Desc( "Obesity", "O", FlagSticky, NormalShot, FlagBad,

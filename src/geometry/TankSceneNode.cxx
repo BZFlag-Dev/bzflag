@@ -34,7 +34,7 @@ const int		TankSceneNode::numLOD = 3;
 int			TankSceneNode::maxLevel = numLOD;
 
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-				colorblind(false),
+				useOverride(false),
 				hidden(false),
 				invisible(false),
 				clip(false),
@@ -182,9 +182,11 @@ void			TankSceneNode::addShadowNodes(
   renderer.addShadowNode(&shadowRenderNode);
 }
 
-void			TankSceneNode::setColorblind(bool on)
+void			TankSceneNode::setColorOverride(const float *override)
 {
-  colorblind = on;
+  useOverride = (override != NULL);
+  if (useOverride)
+    memmove(colorOverride, override, sizeof(colorOverride));
 }
 
 void			TankSceneNode::setNormal()
@@ -554,12 +556,10 @@ void			TankSceneNode::TankRenderNode::sortOrder(
 
 void			TankSceneNode::TankRenderNode::render()
 {
-  static const GLfloat colorblindColor[3] = { 0.25f, 0.25f, 0.25f };
-
   base = getParts(sceneNode->style);
   explodeFraction = sceneNode->explodeFraction;
   isExploding = (explodeFraction != 0.0f);
-  color = sceneNode->colorblind ? colorblindColor : sceneNode->color;
+  color = sceneNode->useOverride ? sceneNode->colorOverride : sceneNode->color;
   alpha = sceneNode->color[3];
 
   if (!sceneNode->blending && sceneNode->transparent) myStipple(alpha);
