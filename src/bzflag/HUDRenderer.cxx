@@ -698,7 +698,7 @@ void			HUDRenderer::renderStatus(void)
 
     // print time or date
     if (dater)
-      sprintf(buffer, "%4d.%2d.%2d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday);
+      sprintf(buffer, "%4d.%02d.%02d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday);
     else
       sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
 
