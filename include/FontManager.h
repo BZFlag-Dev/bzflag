@@ -13,7 +13,7 @@
 #ifndef _FONT_MANAGER_H_
 #define _FONT_MANAGER_H_
 
-#ifdef _WIN32
+#ifdef _MSC_VER
   #pragma warning(disable : 4786)  // Disable warning message
 #endif
 

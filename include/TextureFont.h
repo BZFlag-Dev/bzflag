@@ -13,7 +13,7 @@
 #ifndef _TEXTURE_FONT_H_
 #define _TEXTURE_FONT_H_
 
-#ifdef _WIN32
+#ifdef _MSC_VER
   #pragma warning(disable : 4786)  // Disable warning message
 #endif
 
