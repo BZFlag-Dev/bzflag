@@ -4511,7 +4511,8 @@ static void grabFlag(int playerIndex, int flagIndex)
 		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
 
  if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
-    DEBUG2("p[%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n", playerIndex,
+   DEBUG2("Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
+        player[playerIndex].callSign, playerIndex,
 	tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
     return;
   }
@@ -4700,29 +4701,31 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 static void shotFired(int playerIndex, void *buf, int len)
 {
   bool repack = false;
-  if (player[playerIndex].Observer)
+  const PlayerInfo &shooter = player[playerIndex];
+  if (shooter.Observer)
     return;
   FiringInfo firingInfo;
   firingInfo.unpack(buf);
+  const ShotUpdate &shot = firingInfo.shot;
 
   // verify playerId
-  if (firingInfo.shot.player != player[playerIndex].id) {
-    DEBUG2("p[%d] shot playerid mismatch\n", playerIndex);
+  if (shot.player != shooter.id) {
+    DEBUG2("Player %s [%d] shot playerid mismatch\n", shooter.callSign, playerIndex);
     return;
   }
 
   // verify player flag
-  if ((firingInfo.flag != NullFlag) && (firingInfo.flag != flag[player[playerIndex].flag].flag.id)) {
-    DEBUG2("p[%d] shot flag mismatch %d %d\n", playerIndex, firingInfo.flag,
-	flag[player[playerIndex].flag].flag.id);
+  if ((firingInfo.flag != NullFlag) && (firingInfo.flag != flag[shooter.flag].flag.id)) {
+    DEBUG2("Player %s [%d] shot flag mismatch %d %d\n", shooter.callSign,
+           playerIndex, firingInfo.flag, flag[shooter.flag].flag.id);
     firingInfo.flag = NullFlag;
     repack = true;
   }
 
   // verify shot number
-  if ((firingInfo.shot.id & 0xff) > clOptions.maxShots - 1) {
-    DEBUG2("p[%d] shot id out of range %d %d\n", playerIndex,
-	firingInfo.shot.id & 0xff, clOptions.maxShots);
+  if ((shot.id & 0xff) > clOptions.maxShots - 1) {
+    DEBUG2("Player %s [%d] shot id out of range %d %d\n", shooter.callSign,
+           playerIndex,	shot.id & 0xff, clOptions.maxShots);
     return;
   }
 
@@ -4738,7 +4741,7 @@ static void shotFired(int playerIndex, void *buf, int len)
       tankSpeed *= VelocityAd;
     default:
       //If shot is different height than player, can't be sure they didn't drop V in air
-      if (player[playerIndex].lastState.pos[2] != (firingInfo.shot.pos[2]-MuzzleHeight))
+      if (shooter.lastState.pos[2] != (shot.pos[2]-MuzzleHeight))
 	tankSpeed *= VelocityAd;
       break;
   }
@@ -4747,32 +4750,32 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify lifetime
   if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
-    DEBUG2("p[%d] shot lifetime mismatch %f %f\n", playerIndex, firingInfo.lifetime, lifetime);
+    DEBUG2("Player %s [%d] shot lifetime mismatch %f %f\n", shooter.callSign,
+           playerIndex, firingInfo.lifetime, lifetime);
     return;
   }
 
   // verify velocity
-  if (hypotf(firingInfo.shot.vel[0], hypotf(firingInfo.shot.vel[1],
-      firingInfo.shot.vel[2])) > shotSpeed * 1.01f) {
-    DEBUG2("p[%d] shot over speed %f %f\n", playerIndex, hypotf(firingInfo.shot.vel[0],
-	  hypotf(firingInfo.shot.vel[1], firingInfo.shot.vel[2])), shotSpeed);
+  if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f) {
+    DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.callSign,
+           playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
+           shotSpeed);
     return;
   }
 
   // verify position
 
-  float dx = player[playerIndex].lastState.pos[0] - firingInfo.shot.pos[0];
-  float dy = player[playerIndex].lastState.pos[1] - firingInfo.shot.pos[1];
-  float dz = player[playerIndex].lastState.pos[2] - firingInfo.shot.pos[2];
+  float dx = shooter.lastState.pos[0] - shot.pos[0];
+  float dy = shooter.lastState.pos[1] - shot.pos[1];
+  float dz = shooter.lastState.pos[2] - shot.pos[2];
 
   float delta = dx*dx + dy*dy + dz*dz;
   if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd)) {
-    DEBUG2("p[%d] shot origination %f %f %f to far from tank %f %f %f: distance=%f\n", playerIndex,
-	    firingInfo.shot.pos[0], firingInfo.shot.pos[1], firingInfo.shot.pos[2],
-	    player[playerIndex].lastState.pos[0],
-	    player[playerIndex].lastState.pos[1],
-	    player[playerIndex].lastState.pos[2],
-	    sqrt(delta));
+    DEBUG2("Plkayer %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
+            shooter.callSign, playerIndex,
+	    shot.pos[0], shot.pos[1], shot.pos[2],
+            shooter.lastState.pos[0], shooter.lastState.pos[1],
+            shooter.lastState.pos[2], sqrt(delta));
     return;
   }
 
