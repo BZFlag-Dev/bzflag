@@ -1007,7 +1007,7 @@ static bool startReplyClient(int index)
 		Server* server = findServer(args[0]);
 		if (server != NULL) {
 			int players[NumTeams];
-			for (int i = 0; i < NumTeams; ++i)
+			for (unsigned int i = 0; i < NumTeams; ++i)
 				players[i] = atoi(args[i + 1]);
 			server->setNumPlayers(players);
 			server->setFresh();
