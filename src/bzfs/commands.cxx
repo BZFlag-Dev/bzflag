@@ -1010,10 +1010,12 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
         return;
       }
       const std::vector<std::string> words = string_util::tokenize(temp, " \t");
-      while (temp.size() > 0 && words.size() > 0) {
+      unsigned int cur = 0;
+      const unsigned int wordsize = words.size();
+      while (cur != wordsize) {
         std::string temp2;
-        unsigned int cur = 0;
         while (temp2.size() <= (unsigned) MessageLen &&
+               cur != wordsize &&
                (temp2.size() + words[cur].size()) <= (unsigned) MessageLen) {
             temp2 += words[cur] + " ";
             ++cur;
