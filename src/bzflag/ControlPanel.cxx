@@ -347,7 +347,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   glColor3f(teamColor[0], teamColor[1], teamColor[2] );
   glBegin(GL_LINE_LOOP); {
     // bottom left
-    xpos = x + messageAreaPixels[0];
+    xpos = x + messageAreaPixels[0] - 1;
     ypos = y + messageAreaPixels[1] - 1;
     glVertex2f((float) xpos, (float) ypos);
     
