@@ -2233,7 +2233,12 @@ void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, string_util::format("There are %d bans, only displaying the first 20", bans.size()).c_str());
 
     } else if (bans.size() == 0) {
+#if (!defined(_MSC_VER) || (_MSC_VER > 1100))
       sendMessage(ServerPlayer, t, "There are no master bans loaded.");
+#else
+      // listMasterBans does essentially nothing on VC5, don't send an innaccurate error.
+      sendMessage(ServerPlayer, t, "This server build does not support displaying master bans.");
+#endif
 
     } else {
       // print out a list header
