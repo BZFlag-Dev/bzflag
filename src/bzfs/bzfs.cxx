@@ -937,7 +937,8 @@ struct PlayerInfo {
   public:
     // player access
     PlayerAccessInfo accessInfo;
-    // player's registration name
+    bool Admin;
+  // player's registration name
     std::string regName;
     // time accepted
     TimeKeeper time;
@@ -1001,7 +1002,6 @@ struct PlayerInfo {
 
     bool toBeKicked;
 
-    bool Admin;
     bool Observer;
 
     // lag measurement
