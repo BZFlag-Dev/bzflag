@@ -10,11 +10,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 #include "ParseColor.h"
 
 #include <ctype.h>
 #include <string.h>
-#include <strings.h>
 #include <string>
 #include <stdio.h>
 
