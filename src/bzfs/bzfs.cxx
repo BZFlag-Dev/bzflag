@@ -1373,37 +1373,7 @@ static void acceptClient()
   memcpy(buffer, getServerVersion(), 8);
   // send 0xff if list is full
   buffer[8] = (char)0xff;
-
-  BanInfo info(clientAddr.sin_addr);
-  if (!clOptions->acl.validate(clientAddr.sin_addr,&info)) {
-
-    std::string rejectionMessage;
-
-    rejectionMessage = BanRefusalString;
-    if (info.reason.size())
-      rejectionMessage += info.reason;
-    else
-      rejectionMessage += "General Ban";
-
-    rejectionMessage += ColorStrings[WhiteColor];
-    if (info.bannedBy.size()) {
-      rejectionMessage += " by ";
-      rejectionMessage += ColorStrings[BlueColor];
-      rejectionMessage += info.bannedBy;
-    }
-
-    rejectionMessage += ColorStrings[GreenColor];
-    if (info.fromMaster)
-      rejectionMessage += " [you are on the master ban list]";
-
-    // send back 0xff before closing
-    rejectionMessage += (char)0xff;
-    send(fd, rejectionMessage.c_str(), rejectionMessage.size(), 0);
-
-    close(fd);
-    return;
-  }
-
+  
   int keepalive = 1, n;
   n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
 		 (SSOType)&keepalive, sizeof(int));
@@ -1783,6 +1753,56 @@ static void addPlayer(int playerIndex)
     rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
     return ;
   }
+  
+  // check against ban lists
+  in_addr playerIP = playerData->netHandler->getIPAddress();
+  BanInfo info(playerIP);
+  if (!clOptions->acl.validate(playerIP,&info)) {
+
+      std::string rejectionMessage;
+
+      rejectionMessage = BanRefusalString;
+      if (info.reason.size())
+        rejectionMessage += info.reason;
+      else
+        rejectionMessage += "General Ban";
+
+      rejectionMessage += ColorStrings[WhiteColor];
+      if (info.bannedBy.size()) {
+        rejectionMessage += " by ";
+        rejectionMessage += ColorStrings[BlueColor];
+        rejectionMessage += info.bannedBy;
+      }
+
+      rejectionMessage += ColorStrings[GreenColor];
+      if (info.fromMaster)
+        rejectionMessage += " [you are on the master ban list]";
+
+      rejectPlayer(playerIndex, RejectIPBanned, rejectionMessage.c_str());
+      return;
+    }
+  
+    // Checking hostname resolution and ban player if has to
+    const char *hostname = playerData->netHandler->getHostname();
+  
+    HostBanInfo hostInfo("*");
+    if (hostname && !clOptions->acl.hostValidate(hostname,&hostInfo)) {
+      std::string reason = "bannedhost for: ";
+      if (hostInfo.reason.size())
+        reason += hostInfo.reason;
+      else
+        reason += "General Ban";
+
+      if (hostInfo.bannedBy.size()) {
+        reason += " by ";
+        reason += hostInfo.bannedBy;
+      }
+
+      if (hostInfo.fromMaster)
+        reason += " from the master server";
+      rejectPlayer(playerIndex,RejectHostBanned, reason.c_str());
+      return;
+    }
 
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
@@ -3950,29 +3970,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       return;
     }
   }
-
-  // Checking hostname resolution and ban player if has to
-  const char *hostname = playerData.netHandler->getHostname();
-  // check against ban lists
-  HostBanInfo info("*");
-  if (hostname && !clOptions->acl.hostValidate(hostname,&info)) {
-    std::string reason = "bannedhost for: ";
-    if (info.reason.size())
-      reason += info.reason;
-    else
-      reason += "General Ban";
-
-    if (info.bannedBy.size()) {
-      reason += " by ";
-      reason += info.bannedBy;
-    }
-
-    if (info.fromMaster)
-      reason += " from the master server";
-    removePlayer(p, reason.c_str());
-    return;
-  }
-
+  
   // update notResponding
   if (playerData.player.hasStartedToNotRespond()) {
     // if player is the rabbit, anoint a new one
