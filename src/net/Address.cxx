@@ -131,7 +131,7 @@ Address			Address::getHostAddress(const char* hname)
       if (setjmp(alarmEnv) != 0) {
 	// alarm went off
 	hent = NULL;
-	printError("Address::getHostAddress: timeout");
+	printError("Looking up host name: timeout");
 	return a;
       }
 
@@ -151,7 +151,7 @@ Address			Address::getHostAddress(const char* hname)
   }
 
   if (!hent) {
-    herror("Address::getHostAddress");
+    herror("Looking up host name");
     return a;
   }
 

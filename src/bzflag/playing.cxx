@@ -1257,7 +1257,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
     case MsgNetworkRelay: {
       // server is telling us that we must use multicast relaying
       playerLink->setUseRelay();
-      printError("Now using multicast relay");
+      printError("Now using server as relay");
       break;
     }
 
@@ -2820,7 +2820,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
       case MsgNetworkRelay: {
 	playerLink->setUseRelay();
 	playerLink->setRelay(serverLink);
-	printError("Using multicast relay");
+	printError("Using server as relay");
 	break;
       }
       case MsgUDPLinkRequest:
@@ -4347,6 +4347,7 @@ void			startPlaying(BzfDisplay* _display,
 
   // print copyright
   controlPanel->addMessage(copyright);
+  controlPanel->addMessage("Author: Chris Schoeneman <crs23@bigfoot.com>");
   controlPanel->addMessage("Maintainer: Tim Riker <Tim@Rikers.org>");
   // print OpenGL renderer
   controlPanel->addMessage((const char*)glGetString(GL_RENDERER));
