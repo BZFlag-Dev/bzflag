@@ -23,10 +23,10 @@
 
 typedef uint16_t u16;
 
-#ifndef _WIN32 //FIXME
+#ifndef _MSC_VER
 typedef int64_t CRtime;
 #else
-typedef int CRtime;
+typedef __int64 CRtime;
 #endif
 
 typedef enum {
@@ -165,7 +165,7 @@ bool Capture::init ()
     FileName = NULL;
   }
   freeCRbuffer (&CaptureBuf);
-  
+
   Capturing = false;
   CaptureMode = BufferedCapture;
   CaptureMaxBytes = DefaultMaxBytes; // FIXME - this doesn't seem right
@@ -221,7 +221,7 @@ bool Capture::setSize (int playerIndex, int Mbytes)
 {
   char buffer[64];
   CaptureMaxBytes = Mbytes * (1024) * (1024);
-  sprintf (buffer, "Capture size set to %i", Mbytes);
+  snprintf (buffer, sizeof(buffer), "Capture size set to %i", Mbytes);
   sendMessage(ServerPlayer, playerIndex, buffer);    
   return true;
 }
@@ -231,7 +231,7 @@ bool Capture::setRate (int playerIndex, int seconds)
 {
   char buffer[64];
   UpdateRate = seconds * 1000000;
-  sprintf (buffer, "Capture rate set to %i", seconds);
+  snprintf (buffer, sizeof(buffer), "Capture rate set to %i", seconds);
   sendMessage(ServerPlayer, playerIndex, buffer);    
   return true;
 }
@@ -249,11 +249,11 @@ bool Capture::sendStats (int playerIndex)
   }
    
   if (CaptureMode == BufferedCapture) {
-    sprintf (buffer, "  buffered: %i bytes, %i packets, time = %i",
+    snprintf (buffer, MessageLen, "  buffered: %i bytes, %i packets, time = %i",
              CaptureBuf.byteCount, CaptureBuf.packetCount, 0);
   }
   else {
-    sprintf (buffer, "  saved: %i bytes, %i packets, time = %i",
+    snprintf (buffer, MessageLen, "  saved: %i bytes, %i packets, time = %i",
              CaptureFileBytes, CaptureFilePackets, 0);   
   }
   sendMessage (ServerPlayer, playerIndex, buffer);
@@ -265,7 +265,7 @@ bool Capture::sendStats (int playerIndex)
 bool Capture::saveFile (int playerIndex, const char *filename)
 {
   ReplayHeader header;
-  char buffer[256];
+  char buffer[MessageLen];
   
   if (ReplayMode) {
     return false;
@@ -278,26 +278,26 @@ bool Capture::saveFile (int playerIndex, const char *filename)
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
     Capture::init();
-    sprintf (buffer, "Could not open for writing: %s", filename);
+    snprintf (buffer, MessageLen, "Could not open for writing: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveHeader (&header, CaptureFile)) {
     Capture::init();
-    sprintf (buffer, "Could not save header: %s", filename);
+    snprintf (buffer, MessageLen, "Could not save header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveStates ()) {
     Capture::init();
-    sprintf (buffer, "Could not save states: %s", filename);
+    snprintf (buffer, MessageLen, "Could not save states: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
 
-  sprintf (buffer, "Capturing to file: %s", filename);
+  snprintf (buffer, MessageLen, "Capturing to file: %s", filename);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -308,7 +308,7 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
 {
   ReplayHeader header;
   CRpacket *p;
-  char buffer[256];
+  char buffer[MessageLen];
   
   if (ReplayMode || !Capturing || (CaptureMode != BufferedCapture)) {
     return false;
@@ -317,14 +317,14 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
     Capture::init();
-    sprintf (buffer, "Could not open for writing: %s", filename);
+    snprintf (buffer, MessageLen, "Could not open for writing: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveHeader (&header, CaptureFile)) {
     Capture::init();
-    sprintf (buffer, "Could not save header: %s", filename);
+    snprintf (buffer, MessageLen, "Could not save header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
@@ -341,7 +341,7 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
   CaptureFilePackets = 0;
   CaptureFilePrevLen = 0;
   
-  sprintf (buffer, "Captured buffer saved to: %s", filename);
+  snprintf (buffer, MessageLen, "Captured buffer saved to: %s", filename);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -360,7 +360,7 @@ routePacket (u16 code, int len, const void * data, bool fake)
   if (fake) {
     fakeval = FakedPacket;
   }
-  
+
   if (CaptureMode == BufferedCapture) {
     CRpacket *p = newCRpacket (fakeval, code, len, data);
     p->timestamp = getCRtime();
@@ -479,7 +479,7 @@ bool Replay::loadFile(int playerIndex, const char * filename)
 {
   ReplayHeader header;
   CRpacket *p;
-  char buffer[256];
+  char buffer[MessageLen];
   
   if (!ReplayMode) {
     return false;
@@ -489,20 +489,20 @@ bool Replay::loadFile(int playerIndex, const char * filename)
   
   ReplayFile = fopen (filename, "rb");
   if (ReplayFile == NULL) {
-    sprintf (buffer, "Could not open: %s", filename);
+    snprintf (buffer, MessageLen, "Could not open: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!loadHeader (&header, ReplayFile)) {
-    sprintf (buffer, "Could not open header: %s", filename);
+    snprintf (buffer, MessageLen, "Could not open header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     ReplayFile = NULL;
     return false;
   }
 
   if (header.magic != ReplayMagic) {
-    sprintf (buffer, "Not a bzflag replay file: %s", filename);
+    snprintf (buffer, MessageLen, "Not a bzflag replay file: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     fclose (ReplayFile);
     ReplayFile = NULL;
@@ -527,12 +527,12 @@ bool Replay::loadFile(int playerIndex, const char * filename)
   }
 
   if (ReplayBuf.tail == NULL) {
-    sprintf (buffer, "No valid data: %s", filename);
+    snprintf (buffer, MessageLen, "No valid data: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
 
-  sprintf (buffer, "Loaded file: %s", filename);
+  snprintf (buffer, MessageLen, "Loaded file: %s", filename);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -541,7 +541,7 @@ bool Replay::loadFile(int playerIndex, const char * filename)
 
 bool Replay::sendFileList(int playerIndex)
 {
-#ifndef _WIN32
+#ifndef _WIN32 //FIXME
   DIR *dir;
   struct dirent *de;
   
@@ -647,7 +647,7 @@ bool Replay::skip(int playerIndex, int seconds)
   ReplayOffset = newOffset;
   ReplayPos = p;
   
-  char buffer[256];
+  char buffer[MessageLen];
   sprintf (buffer, "Skipping %f seconds (asked %i)", (float)diff/1000000.0f, seconds);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
@@ -732,10 +732,6 @@ bool Replay::sendPackets () {
 
 float Replay::nextTime()
 {
-#ifdef _WIN32
-  return 1000.0f;
-#endif
-
   if (!ReplayMode || !Replaying || (ReplayPos == NULL)) {
     return 1000.0f;
   }
@@ -784,7 +780,7 @@ saveTeamStates ()
   void *buf;
   
   buf = nboPackUByte (bufStart, CtfTeams);
-  for (i=0 ; i<CtfTeams; i++) {
+  for (i = 0; i < CtfTeams; i++) {
     // ubyte for the team number, 3 ushort for scores
     buf = team[i].team.pack(buf);
   }
@@ -907,7 +903,7 @@ resetStates ()
 static bool
 saveCRpacket (CRpacket *p, FILE *f)
 {
-  const int bufsize = sizeof(u16)*2 + sizeof(int);
+  const int bufsize = sizeof(u16)*2 + sizeof(int)*2;
   char bufStart[bufsize];
   void *buf;
 
@@ -1144,16 +1140,17 @@ freeCRbuffer (CRbuffer *b)
 static CRtime
 getCRtime ()
 {
-#ifndef _WIN32
   CRtime now;
+#ifndef _WIN32
   struct timeval tv;
   gettimeofday (&tv, NULL);
-  now = (CRtime)tv.tv_sec *  (CRtime)1000000;
+  now = (CRtime)tv.tv_sec * (CRtime)1000000;
   now = now + (CRtime)tv.tv_usec;
+#else //_WIN32
+  now = (CRtime)time(NULL) * (CRtime)1000000;
+  now = now + (CRtime)time(NULL);
+#endif //_WIN32
   return now;
-#else
-  return 0; // FIXME - Windows is currently broken
-#endif
 }
 
 
