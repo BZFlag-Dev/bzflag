@@ -20,6 +20,7 @@
 /* common implementation headers */
 #include "OpenGLTexFont.h"
 #include "KeyManager.h"
+#include "Flag.h"
 
 /* local implementation headers */
 #include "HUDui.h"
@@ -352,7 +353,7 @@ public:
   ~Help4Menu() { }
 };
 
-Help4Menu::Help4Menu() : HelpMenu("Flags I")
+Help4Menu::Help4Menu() : HelpMenu("Flags")
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
@@ -389,28 +390,22 @@ protected:
   float getLeftSide(int width, int height);
 };
 
-Help5Menu::Help5Menu() : HelpMenu("Flags II")
+Help5Menu::Help5Menu() : HelpMenu("Good Flags")
 {
-  // add controls
   std::vector<HUDuiControl*>& list = getControls();
   list.push_back(createLabel("", "Good Flags:"));
-  list.push_back(createLabel("boosts top speed", "High Speed (V)"));
-  list.push_back(createLabel("boosts turn rate", "Quick Turn (A)"));
-  list.push_back(createLabel("can drive through buildings", "Oscillation Overthruster (OO)"));
-  list.push_back(createLabel("faster shots more often", "Rapid Fire (F)"));
-  list.push_back(createLabel("very fast reload, very short range", "Machine Gun (MG)"));
-  list.push_back(createLabel("shots guide themselves (right mouse locks on)", "Guided Missile (GM)"));
-  list.push_back(createLabel("infinite shot speed and range, long reload time", "Laser (L)"));
-  list.push_back(createLabel("shots ricochet", "Ricochet (R)"));
-  list.push_back(createLabel("shoots through buildings", "Super Bullet (SB)"));
-  list.push_back(createLabel("tank invisible on enemy radar", "Stealth (ST)"));
-  list.push_back(createLabel("tank invisible out the window", "Cloaking (CL)"));
-  list.push_back(createLabel("shots invisible on radar", "Invisible Bullet (IB)"));
-  list.push_back(createLabel("tank becomes smaller", "Tiny (T)"));
-  list.push_back(createLabel("tank becomes paper thin", "Narrow (N)"));
-  list.push_back(createLabel("getting hit just drops the flag", "Shield (SH)"));
-  list.push_back(createLabel("destroy tanks by touching them", "Steamroller (SR)"));
-  list.push_back(createLabel("expanding spherical shell of destruction", "Shock Wave (SW)"));
+
+  FlagSet fs = Flag::getGoodFlags();
+  for (FlagSet::iterator it = fs.begin(); it != fs.end(); it++) {
+
+    if (((*it)->flagQuality != FlagGood) || 
+	((*it)->flagTeam != NoTeam) ||
+	(strcmp((*it)->flagName,"") == 0)) {
+      continue;
+    }
+
+    list.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str())); 
+  }
 }
 
 float			Help5Menu::getLeftSide(int width, int)
@@ -431,33 +426,22 @@ protected:
   float		getLeftSide(int width, int height);
 };
 
-Help6Menu::Help6Menu() : HelpMenu("Flags III")
+Help6Menu::Help6Menu() : HelpMenu("Bad Flags")
 {
-  // add controls
   std::vector<HUDuiControl*>& list = getControls();
-  list.push_back(createLabel("teleport to enter/leave zone", "Phantom Zone (PZ)"));
-  list.push_back(createLabel("destroys player and all player's teammates", "Genocide (G)"));
-  list.push_back(createLabel("allows tank to jump", "Jumping (JP)"));
-  list.push_back(createLabel("shows type of nearest superflag", "Identify (ID)"));
-  list.push_back(createLabel("it's useless", "Useless (US)"));
-  list.push_back(createLabel("In opponent's hud, you appear as a teammate", "Masquerade (MQ)"));
-  list.push_back(createLabel("See stealthed, cloaked and masquerading tanks as normal.", "Seer (SE)"));
-  list.push_back(createLabel("Steal flags.  Small and fast but can't kill.", "Thief (TH)"));
-  list.push_back(createLabel("Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!", 
-			     "Burrow (BU)"));
-  list.push_back(createLabel("Tanks can drive in air", "Wings (WG)"));
-  list.push_back(createLabel("", ""));
   list.push_back(createLabel("", "Bad Flags:"));
-  list.push_back(createLabel("can't identify tanks", "Colorblindness (CB)"));
-  list.push_back(createLabel("makes tank very large", "Obesity (O)"));
-  list.push_back(createLabel("tank can't turn right", "Left Turn Only (<-)"));
-  list.push_back(createLabel("tank can't turn left", "Right Turn Only (->)"));
-  list.push_back(createLabel("tank has lots of momentum", "Momentum (M)"));
-  list.push_back(createLabel("can't see out the window", "Blindness (B)"));
-  list.push_back(createLabel("can't see anything on radar", "Jamming (JM)"));
-  list.push_back(createLabel("fish eye view out the window", "Wide Angle (WA)"));
-  list.push_back(createLabel("can't jump in the air", "No Jumping (NJ)"));
-  list.push_back(createLabel("can't stop firing", "Trigger Happy (TR)"));
+
+  FlagSet fs = Flag::getBadFlags();
+  for (FlagSet::iterator it = fs.begin(); it != fs.end(); it++) {
+
+    if (((*it)->flagQuality != FlagBad) ||
+	((*it)->flagTeam != NoTeam) ||
+	(strcmp((*it)->flagName,"") == 0)) {
+      continue;
+    }
+
+    list.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str())); 
+  }
 }
 
 float Help6Menu::getLeftSide(int width, int)
