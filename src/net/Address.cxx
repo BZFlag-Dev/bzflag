@@ -15,11 +15,10 @@
 #if !defined(_WIN32)
 #include <unistd.h>
 #include <setjmp.h>
-#include "common.h"
+#endif
 #include "Address.h"
 #include "bzsignal.h"
 #include "ErrorHandler.h"
-#endif
 
 #if defined(sun)
   // Solaris...
