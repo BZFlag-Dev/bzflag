@@ -606,7 +606,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
 	currentLineWidth = 0.0f;
       }
       msg.append(word);
-      word.clear();
+      word.resize(0);
 
     } else {
       word += c;
