@@ -120,17 +120,17 @@ You can also build an installable package using:
 The package will be placed in ./dist;  the exact form of the package depends on
 the platform.
 
-There are three cleanup targets:  clean, clobber, and pristine.
+There are three cleanup targets:  clean, distclean, and maintainer-clean.
 
 `make clean' removes intermediate files but leaves bzflag and other programs
 and any man pages.
 
-`make clobber' removes everything clean does and also programs
-and man pages.
+`make distclean' removes everything clean does and also programs
+and man pages. This should get things back to a tarball state.
 
-`make pristine' removes everything clobber does and also packages, directories
-created during the build, and the platform configuration;  this should get the
-source tree back to its original state.
+`make maintainer-clean' removes everything distclean does and also packages,
+directories created during the build, and the platform configuration;  this
+should get the source tree back to its state in CVS.
 
 To build BZFlag for an unsupported platform, see PORTING.
 
