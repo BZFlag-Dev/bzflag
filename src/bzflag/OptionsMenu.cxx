@@ -34,7 +34,6 @@
 
 /* FIXME - from playing.h */
 SceneRenderer* getSceneRenderer();
-void setSceneDatabase();
 StartupInfo* getStartupInfo();
 extern ControlPanel* controlPanel;
 
@@ -45,136 +44,13 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
+  HUDuiList* option;
+  std::vector<std::string>* options;
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setString("Options");
   list.push_back(label);
-
-  HUDuiList* option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Dithering:");
-  option->setCallback(callback, (void*)"1");
-  std::vector<std::string>* options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Blending:");
-  option->setCallback(callback, (void*)"2");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Smoothing:");
-  option->setCallback(callback, (void*)"3");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Lighting:");
-  option->setCallback(callback, (void*)"4");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Texturing:");
-  option->setCallback(callback, (void*)"5");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("Nearest"));
-  options->push_back(std::string("Linear"));
-  options->push_back(std::string("Nearest Mipmap Nearest"));
-  options->push_back(std::string("Linear Mipmap Nearest"));
-  options->push_back(std::string("Nearest Mipmap Linear"));
-  options->push_back(std::string("Linear Mipmap Linear"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Quality:");
-  option->setCallback(callback, (void*)"6");
-  options = &option->getList();
-  options->push_back(std::string("Low"));
-  options->push_back(std::string("Medium"));
-  options->push_back(std::string("High"));
-  options->push_back(std::string("Experimental"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Shadows:");
-  option->setCallback(callback, (void*)"7");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Depth Buffer:");
-  option->setCallback(callback, (void*)"8");
-  options = &option->getList();
-  GLint value;
-  glGetIntegerv(GL_DEPTH_BITS, &value);
-  if (value == 0) {
-    options->push_back(std::string("Not available"));
-  } else {
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-  }
-  option->update();
-  list.push_back(option);
-
-#if defined(DEBUG_RENDERING)
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Hidden Line:");
-  option->setCallback(callback, (void*)"a");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Wireframe:");
-  option->setCallback(callback, (void*)"b");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Depth Complexity:");
-  option->setCallback(callback, (void*)"c");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-#endif
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
@@ -281,8 +157,8 @@ void OptionsMenu::resize(int width, int height)
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 36.0f;
-  const float fontHeight = (float)height / 36.0f;
+  const float fontWidth = (float)height / 30.0f;
+  const float fontHeight = (float)height / 30.0f;
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
@@ -295,56 +171,23 @@ void OptionsMenu::resize(int width, int height)
   title->setPosition(x, y);
 
   // reposition options in two columns
-  x = 0.3f * (float)width;
-  const float topY = y - 0.6f * titleFont.getHeight();
-  y = topY;
-  list[1]->setFontSize(fontWidth, fontHeight);
-  const float h = list[1]->getFont().getHeight();
+  x = 0.5f * (float)width;
+  y -= 0.6f * titleFont.getHeight();
   const int count = list.size();
-  const int mid = count / 2;
-
-  for (i = 1; i <= mid; i++) {
+  for (i = 1; i < count; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
-    y -= 1.0f * h;
-  }
-
-  x = 0.80f * (float)width;
-  y = topY;
-  for (i = mid + 1; i < count; i++) {
-    list[i]->setFontSize(fontWidth, fontHeight);
-    list[i]->setPosition(x, y);
-    y -= 1.0f * h;
+    y -= 1.0f * list[i]->getFont().getHeight();
   }
 
   // load current settings
-  SceneRenderer* renderer = getSceneRenderer();
-  if (renderer) {
-    HUDuiList* tex;
+  {
     int i = 1;
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::blend);
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("lighting"));
-    tex = (HUDuiList*)list[i++];
-    ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("zbuffer"));
-#if defined(DEBUG_RENDERING)
-    ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
-#endif
 
     const StartupInfo* info = getStartupInfo();
 
     // mind the ++i !
     ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
-
-    if (!BZDBCache::texture)
-      tex->setIndex(0);
-    else
-      tex->setIndex(OpenGLTexture::getFilter());
 
     // server cache age
     int index = 0;
@@ -370,65 +213,7 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
 {
   HUDuiList* list = (HUDuiList*)w;
 
-  SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
-    case '1':
-      BZDB.set("dither", list->getIndex() ? "1" : "0");
-      sceneRenderer->notifyStyleChange();
-      break;
-
-    case '2':
-      BZDB.set("blend", list->getIndex() ? "1" : "0");
-      sceneRenderer->notifyStyleChange();
-      break;
-
-    case '3':
-      BZDB.set("smooth", list->getIndex() ? "1" : "0");
-      sceneRenderer->notifyStyleChange();
-      break;
-
-    case '4':
-      BZDB.set("lighting", list->getIndex() ? "1" : "0");
-
-      BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
-				   sceneRenderer->useQuality() < 2) ? "1" : "0");
-      BZDB.setPersistent("_texturereplace", false);
-      sceneRenderer->notifyStyleChange();
-      break;
-
-    case '5':
-#ifdef _MSC_VER
-      // Suppose Pat want to remind himself
-      { int patlabor_get_tm_to_set_texture; }
-#endif
-      /*
-	OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
-	BZDB.set("texture", OpenGLTexture::getFilterName());
-	sceneRenderer->notifyStyleChange();
-      */
-      break;
-
-    case '6':
-      sceneRenderer->setQuality(list->getIndex());
-
-      BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
-				   sceneRenderer->useQuality() < 2) ? "1" : "0");
-      BZDB.setPersistent("_texturereplace", false);
-      sceneRenderer->notifyStyleChange();
-      break;
-
-    case '7':
-      BZDB.set("shadows", list->getIndex() ? "1" : "0");
-      sceneRenderer->notifyStyleChange();
-      break;
-
-    case '8':
-      BZDB.set("zbuffer", list->getIndex() ? "1" : "0");
-      // FIXME - test for whether the z buffer will work
-      setSceneDatabase();
-      sceneRenderer->notifyStyleChange();
-      break;
-
     case 'U': {
       StartupInfo* info = getStartupInfo();
       info->useUDPconnection = (list->getIndex() != 0);
@@ -453,20 +238,6 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
       (ServerListCache::get())->setMaxCacheAge(minutes);
       break;
     }
-
-#if defined(DEBUG_RENDERING)
-    case 'a':
-      sceneRenderer->setHiddenLine(list->getIndex() != 0);
-      break;
-
-    case 'b':
-      sceneRenderer->setWireframe(list->getIndex() != 0);
-      break;
-
-    case 'c':
-      sceneRenderer->setDepthComplexity(list->getIndex() != 0);
-      break;
-#endif
 
     case 'r':
       // do nothing -- wait for enter or t key

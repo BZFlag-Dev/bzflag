@@ -19,6 +19,8 @@
 
 /* common implementation headers */
 #include "BzfDisplay.h"
+#include "SceneRenderer.h"
+#include "BZDBCache.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -28,20 +30,148 @@
 /* FIXME - from playing.h */
 BzfDisplay* getDisplay();
 MainWindow* getMainWindow();
+SceneRenderer* getSceneRenderer();
+void setSceneDatabase();
 
 DisplayMenu::DisplayMenu() : formatMenu(NULL)
 {
   // add controls
   std::vector<std::string>* options;
   std::vector<HUDuiControl*>& list  = getControls();
+  HUDuiList* option;
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setString("Display Setting");
   list.push_back(label);
 
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Dithering:");
+  option->setCallback(callback, (void*)"1");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Blending:");
+  option->setCallback(callback, (void*)"2");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Smoothing:");
+  option->setCallback(callback, (void*)"3");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Lighting:");
+  option->setCallback(callback, (void*)"4");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Texturing:");
+  option->setCallback(callback, (void*)"5");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("Nearest"));
+  options->push_back(std::string("Linear"));
+  options->push_back(std::string("Nearest Mipmap Nearest"));
+  options->push_back(std::string("Linear Mipmap Nearest"));
+  options->push_back(std::string("Nearest Mipmap Linear"));
+  options->push_back(std::string("Linear Mipmap Linear"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Quality:");
+  option->setCallback(callback, (void*)"6");
+  options = &option->getList();
+  options->push_back(std::string("Low"));
+  options->push_back(std::string("Medium"));
+  options->push_back(std::string("High"));
+  options->push_back(std::string("Experimental"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Shadows:");
+  option->setCallback(callback, (void*)"7");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Depth Buffer:");
+  option->setCallback(callback, (void*)"8");
+  options = &option->getList();
+  GLint value;
+  glGetIntegerv(GL_DEPTH_BITS, &value);
+  if (value == 0) {
+    options->push_back(std::string("Not available"));
+  } else {
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+  }
+  option->update();
+  list.push_back(option);
+
+#if defined(DEBUG_RENDERING)
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Hidden Line:");
+  option->setCallback(callback, (void*)"a");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Wireframe:");
+  option->setCallback(callback, (void*)"b");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Depth Complexity:");
+  option->setCallback(callback, (void*)"c");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+#endif
+
   BzfWindow* window = getMainWindow()->getWindow();
-  HUDuiList* option = new HUDuiList;
+  option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Brightness:");
   option->setCallback(callback, (void*)"g");
@@ -105,7 +235,7 @@ void			DisplayMenu::resize(int width, int height)
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.5f * ((float)width + 0.5f * titleWidth);
+  x = 0.5f * ((float)width);
   y -= 0.6f * titleFont.getHeight();
   const int count = list.size();
   for (i = 1; i < count; i++) {
@@ -115,6 +245,30 @@ void			DisplayMenu::resize(int width, int height)
   }
 
   i = 1;
+  // load current settings
+  SceneRenderer* renderer = getSceneRenderer();
+  if (renderer) {
+    HUDuiList* tex;
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::blend);
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("lighting"));
+    tex = (HUDuiList*)list[i++];
+    ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("zbuffer"));
+#if defined(DEBUG_RENDERING)
+    ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
+#endif
+
+    if (!BZDBCache::texture)
+      tex->setIndex(0);
+    else
+      tex->setIndex(OpenGLTexture::getFilter());
+  }
+
   // brightness
   BzfWindow* window = getMainWindow()->getWindow();
   if (window->hasGammaControl())
@@ -136,7 +290,66 @@ float DisplayMenu::indexToGamma(int index)
 
 void			DisplayMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
+  SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
+  case '1':
+    BZDB.set("dither", list->getIndex() ? "1" : "0");
+    sceneRenderer->notifyStyleChange();
+    break;
+  case '2':
+    BZDB.set("blend", list->getIndex() ? "1" : "0");
+    sceneRenderer->notifyStyleChange();
+    break;
+  case '3':
+    BZDB.set("smooth", list->getIndex() ? "1" : "0");
+    sceneRenderer->notifyStyleChange();
+    break;
+  case '4':
+    BZDB.set("lighting", list->getIndex() ? "1" : "0");
+    BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
+				 sceneRenderer->useQuality() < 2) ? "1" : "0");
+    BZDB.setPersistent("_texturereplace", false);
+    sceneRenderer->notifyStyleChange();
+    break;
+  case '5':
+#ifdef _MSC_VER
+    // Suppose Pat want to remind himself
+    { int patlabor_get_tm_to_set_texture; }
+#endif
+    /*
+      OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
+      BZDB.set("texture", OpenGLTexture::getFilterName());
+      sceneRenderer->notifyStyleChange();
+    */
+    break;
+  case '6':
+    sceneRenderer->setQuality(list->getIndex());
+    BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
+				 sceneRenderer->useQuality() < 2) ? "1" : "0");
+    BZDB.setPersistent("_texturereplace", false);
+    sceneRenderer->notifyStyleChange();
+    break;
+  case '7':
+    BZDB.set("shadows", list->getIndex() ? "1" : "0");
+    sceneRenderer->notifyStyleChange();
+    break;
+  case '8':
+    BZDB.set("zbuffer", list->getIndex() ? "1" : "0");
+    // FIXME - test for whether the z buffer will work
+    setSceneDatabase();
+    sceneRenderer->notifyStyleChange();
+    break;
+#if defined(DEBUG_RENDERING)
+  case 'a':
+    sceneRenderer->setHiddenLine(list->getIndex() != 0);
+    break;
+  case 'b':
+    sceneRenderer->setWireframe(list->getIndex() != 0);
+    break;
+  case 'c':
+    sceneRenderer->setDepthComplexity(list->getIndex() != 0);
+    break;
+#endif
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();
     if (window->hasGammaControl())
