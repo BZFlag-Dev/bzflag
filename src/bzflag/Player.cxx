@@ -301,7 +301,7 @@ void			Player::addPlayer(SceneDatabase* scene,
       tankNode->setClipPlane(NULL);
     }
   }
-  else if (isExploding()) {
+  else if (isExploding() && state.pos[2] > 1.0e-5) {
     float t = (TimeKeeper::getTick() - explodeTime) / BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
       // FIXME
