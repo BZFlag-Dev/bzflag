@@ -55,6 +55,7 @@ const uint16_t		MsgNull = 0x0000;
 
 // server message codes
 const uint16_t		MsgAccept = 0x6163;			// 'ac'
+const uint16_t		MsgAdminInfo = 0x6169;			// 'ai'
 const uint16_t		MsgAlive = 0x616c;			// 'al'
 const uint16_t		MsgAddPlayer = 0x6170;			// 'ap'
 const uint16_t		MsgAudio = 0x6175;			// 'au'
@@ -211,6 +212,10 @@ server to player messages:
 			<== id, type, team, name, email
   MsgRemovePlayer	player has exited the server
 			<== id
+  MsgAdminInfo		update of players' IP addresses and some other 
+                        properties, only sent to players with the PLAYERLIST
+                        permission
+			<-- count, [chunklen, id, bitfield, address]*
   MsgFlagUpdate		update of flag info
 			<== count, [flag, flag-info]*
   MsgTeamUpdate		update of team info

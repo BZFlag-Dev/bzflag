@@ -22,6 +22,7 @@
 #include "Address.h"
 #include "bzsignal.h"
 #include "ErrorHandler.h"
+#include "Pack.h"
 
 #if defined(sun)
   // Solaris...
@@ -98,6 +99,10 @@ bool			Address::isAny() const
 std::string		Address::getDotNotation() const
 {
   return std::string(inet_ntoa(addr));
+}
+
+uint8_t		        Address::getIPVersion() const {
+  return 4;
 }
 
 #if !defined(_WIN32)
@@ -211,8 +216,9 @@ const char*		Address::getHostName(const char* hostname) // const
 
 void*			Address::pack(void* _buf) const
 {
-  // everything in Address is already in network byte order
   unsigned char* buf = (unsigned char*)_buf;
+  buf = (unsigned char*)nboPackUByte(_buf, 4);
+  // everything in InAddr  is already in network byte order
   int32_t hostaddr = int32_t(addr.s_addr);
   ::memcpy(buf, &hostaddr, sizeof(int32_t));	buf += sizeof(int32_t);
   return (void*)buf;
@@ -220,8 +226,11 @@ void*			Address::pack(void* _buf) const
 
 void*			Address::unpack(void* _buf)
 {
-  // everything in Address should be stored in network byte order
   unsigned char* buf = (unsigned char*)_buf;
+  // FIXME - should actually parse the first byte to see if it's IPv4 or
+  // IPv6
+  ++buf;
+  // everything in InAddr should be stored in network byte order
   int32_t hostaddr;
   ::memcpy(&hostaddr, buf, sizeof(int32_t));	buf += sizeof(int32_t);
   addr.s_addr = u_long(hostaddr);

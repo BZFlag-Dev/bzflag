@@ -78,6 +78,8 @@ extern void resetFlag(int flagIndex);
 // externs that countdown requires
 extern bool countdownActive;
 
+// externs that identify and password requires
+extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 
 void handlePasswordCmd(int t, const char *message)
 {
@@ -88,6 +90,7 @@ void handlePasswordCmd(int t, const char *message)
     if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
       player[t].passwordAttempts = 0;
       player[t].Admin = true;
+      sendIPUpdate(t, -1);
       sendMessage(ServerPlayer, t, "You are now an administrator!");
     }else{
       sendMessage(ServerPlayer, t, "Wrong Password!");
@@ -639,7 +642,10 @@ void handleIdentifyCmd(int t, const char *message)
 	player[t].accessInfo.explicitAllows = info.explicitAllows;
 	player[t].accessInfo.explicitDenys = info.explicitDenys;
 	player[t].accessInfo.groups = info.groups;
-
+	
+	// if they have the PLAYERLIST permission, send the IP list
+	sendIPUpdate(t, -1);
+	
 	DEBUG1("Identify %s\n",player[t].regName.c_str());
       } else {
 	player[t].accessInfo.loginAttempts++;

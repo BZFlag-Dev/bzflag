@@ -66,13 +66,16 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   colorMap[ObserverTeam] = Cyan;
   
   // initialise the msg type map
+  msgTypeMap["bzdb"] = MsgSetVar;
   msgTypeMap["chat"] = MsgMessage;
+  msgTypeMap["admin"] = MsgAdminInfo;
   msgTypeMap["join"] = MsgAddPlayer;
   msgTypeMap["kill"] = MsgKilled;
   msgTypeMap["leave"] = MsgRemovePlayer;
   msgTypeMap["pause"] = MsgPause;
   msgTypeMap["ping"] = MsgLagPing;
   msgTypeMap["rabbit"] = MsgNewRabbit;
+  msgTypeMap["score"] = MsgScore;
   msgTypeMap["spawn"] = MsgAlive;
 }
 
@@ -94,14 +97,14 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
   while (sLink.read(code, len, inbuf, 100) == 1) {
-
     colorCode = Default;
     void* vbuf = inbuf;
     PlayerId p;
     PlayerIdMap::const_iterator it;
     std::string victimName, killerName;
     returnString = ""; 
-     
+    Address a;
+    
     switch (code) {
 
     case MsgNewRabbit:
@@ -148,7 +151,10 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 	BZDB.setPersistent(name, false);
 	BZDB.setPermission(name, StateDatabase::Locked);
       }
-      return NoMessage;
+      returnString = returnString + "*** Received BZDB update, " +
+	string_util::format("%d", numVars) + " variable" +
+	(numVars == 1 ? "" : "s") + " updated.";
+      break;
 
     case MsgAddPlayer:
       uint16_t team, type, wins, losses, tks;
@@ -172,7 +178,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 	ui->addedPlayer(p);
       returnString = returnString + "*** '" + callsign + "' joined the game.";
       break;
-
+      
     case MsgRemovePlayer:
       vbuf = nboUnpackUByte(vbuf, p);
       returnString = returnString + "*** '" + players[p].name + 
@@ -180,6 +186,23 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       if (ui != NULL)
 	ui->removingPlayer(p);
       players.erase(p);
+      break;
+
+    case MsgAdminInfo:
+      uint8_t numIPs;
+      uint8_t dummy;
+      vbuf = nboUnpackUByte(vbuf, numIPs);
+      for (int i = 0; i < numIPs; ++i) {
+	vbuf = nboUnpackUByte(vbuf, dummy);
+	vbuf = nboUnpackUByte(vbuf, p);
+	// FIXME - actually parse the bitfield
+	vbuf = nboUnpackUByte(vbuf, dummy);
+	vbuf = a.unpack(vbuf);
+	players[p].ip = a.getDotNotation();
+      }
+      returnString = returnString + "*** IP update received, " + 
+	string_util::format("%d", numIPs) + " IP" + (numIPs == 1 ? "" : "s") +
+	" updated.";
       break;
 
     case MsgKilled:
@@ -221,7 +244,10 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 	  iter->second.tks = tks;
 	}
       }
-      return NoMessage;
+      returnString = returnString + "*** Received score update, score for " +
+	string_util::format("%d", numScores) + " player" + 
+	(numScores == 1 ? "s" : "") + " updated.";
+      break;
     }
 
     case MsgMessage:
@@ -233,27 +259,6 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       vbuf = nboUnpackUByte(vbuf, src);
       vbuf = nboUnpackUByte(vbuf, dst);
       returnString = std::string((char*)vbuf);
-      
-      // parse playerlist
-      std::istringstream iss(returnString);
-      char c, d;
-      int pt;
-      if (iss >> c >> pt >> d) {
-        PlayerIdMap::iterator iter;
-        if (c == '[' && (iter = players.find(pt)) != players.end() && d == ']') {
-          std::vector<std::string> tokens = string_util::tokenize(returnString, " ");
-          if (!tokens.empty()) {
-            if (*tokens.rbegin() == "udp" || *tokens.rbegin() == "udp+")
-              tokens.pop_back();
-            if (tokens.size() >= 2) {
-              std::string callsign = *(++tokens.rbegin());
-              if (*callsign.rbegin() == ':') {
-                iter->second.ip = *tokens.rbegin();
-              }
-            }
-          }
-        }
-      }
       
       // is the message for me?
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
@@ -290,8 +295,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 }
 
 
-BZAdminClient::ServerCode 
-BZAdminClient::getServerString(std::string& str) {
+BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
   ColorCode cc;
   return getServerString(str, cc);
 }

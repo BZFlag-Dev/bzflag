@@ -723,6 +723,70 @@ static void sendPlayerUpdate(int playerIndex, int index)
 }
 
 
+void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
+  // targetPlayer = -1: send to all players with the PLAYERLIST permission
+  // playerIndex = -1: send info about all players
+
+  // send to who?
+  std::vector<int> receivers;
+  if (targetPlayer != -1 && 
+      hasPerm(targetPlayer, PlayerAccessInfo::playerList)) {
+    receivers.push_back(targetPlayer);
+  }
+  else {
+    for (int i = 0; i < curMaxPlayers; ++i) {
+      if (player[i].state > PlayerInLimbo && 
+	  hasPerm(i, PlayerAccessInfo::playerList))
+	receivers.push_back(i);
+    }
+  }
+
+  // FIXME - the 'bitfield' should contain boolean values for different
+  // player properties (player is admin, player is registered, 
+  // player has identified etc).
+  
+  // pack and send the message(s)
+  void *buf, *bufStart = getDirectMessageBuffer();
+  if (playerIndex != -1) {
+    buf = nboPackUByte(bufStart, 1);
+    buf = nboPackUByte(buf, (player[playerIndex].peer.getIPVersion() == 4 ?
+			     8 : 20)); // 8 for IPv4, 20 for IPv6
+    buf = nboPackUByte(buf, playerIndex);
+    buf = nboPackUByte(buf, 0); // put bitfield here
+    buf = player[playerIndex].peer.pack(buf);
+    for (unsigned int i = 0; i < receivers.size(); ++i) {
+      directMessage(receivers[i], MsgAdminInfo,
+		    (char*)buf - (char*)bufStart, bufStart);
+    }
+  }
+  else {
+    int numPlayers = 0;
+    for (int i = 0; i <= int(ObserverTeam); i++)
+      numPlayers += team[i].team.size;
+    int ipsPerPackage = (MaxPacketLen - 3) / (PlayerIdPLen + 7);
+    int c = 0;
+    buf = nboPackUByte(bufStart, 0); // will be overwritten later
+    for (int i = 0; i < curMaxPlayers; ++i) {
+      if (player[i].state > PlayerInLimbo) {
+	buf = nboPackUByte(buf, (player[i].peer.getIPVersion() == 4 ? 8 : 20));
+	buf = nboPackUByte(buf, i);
+	buf = nboPackUByte(buf, 5); // put bitfield here
+	buf = player[i].peer.pack(buf);
+	++c;
+      }
+      if (c == ipsPerPackage || i + 1 == curMaxPlayers) {
+	int size = (char*)buf - (char*)bufStart;
+	buf = nboPackUByte(bufStart, c);
+	c = 0;
+	for (unsigned int j = 0; j < receivers.size(); ++j)
+	  directMessage(receivers[j], MsgAdminInfo, size, bufStart);
+      }
+
+    }
+  }
+}
+
+
 static void closeListServer()
 {
   ListServerLink& link = listServerLink;
@@ -2411,7 +2475,10 @@ static void addPlayer(int playerIndex)
 
   // send update of info for team just joined
   sendTeamUpdate(-1, teamIndex);
-
+  
+  // send IP update to everyone with PLAYERLIST permission
+  sendIPUpdate(-1, playerIndex);
+  
   // send rabbit information
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     void *buf, *bufStart = getDirectMessageBuffer();
