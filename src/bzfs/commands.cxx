@@ -18,6 +18,7 @@
 #include "commands.h"
 
 // implementation-specific system headers
+#include <vector>
 #include <string>
 #ifdef HAVE_CSTDIO
 #include <cstdio>

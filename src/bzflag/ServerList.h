@@ -13,6 +13,8 @@
 #ifndef __SERVERLIST_H__
 #define __SERVERLIST_H__
 
+#include <vector>
+
 #include "ListServer.h"
 #include "BzfEvent.h"
 #include "ServerItem.h"

@@ -31,8 +31,12 @@
 /* interface header */
 #include "XIJoystick.h"
 
-/* implementation headers */
+/* system headers */
 #include <stdlib.h>
+#include <vector>
+#include <string>
+
+/* implementation headers */
 #include "ErrorHandler.h"
 
 static int	ioErrorHandler(Display*)

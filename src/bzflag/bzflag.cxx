@@ -11,6 +11,8 @@
  */
 
 #include "common.h"
+#include <vector>
+#include <string>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

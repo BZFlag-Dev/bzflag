@@ -18,6 +18,11 @@
 /* interface headers */
 #include "SDLJoystick.h"
 
+/* system headers */
+#include <vector>
+#include <string>
+#include <string.h>
+
 /* implementation headers */
 #include "ErrorHandler.h"
 #include "bzfSDL.h"

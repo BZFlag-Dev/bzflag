@@ -19,6 +19,8 @@
 
 #include "BzfJoystick.h"
 #include <X11/extensions/XInput.h>
+#include <vector>
+#include <string>
 
 class XIJoystick : public BzfJoystick {
   public:

@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include <string.h> // strstr, etc
 #include <string>   // std::string
+#include <vector>
 
 // local implementation headers
 #include "BzfEvent.h"

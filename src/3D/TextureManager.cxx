@@ -14,9 +14,15 @@
 #pragma warning( 4: 4786 )
 #endif
 
+// interface headers
 #include "TextureManager.h"
-#include "TextUtils.h"
 
+// system headers
+#include <vector>
+#include <string>
+
+// common implementation headers
+#include "TextUtils.h"
 #include "global.h"
 #include "MediaFile.h"
 #include "ErrorHandler.h"

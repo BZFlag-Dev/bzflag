@@ -12,6 +12,7 @@
 
 /* system implementation headers */
 #include <math.h>
+#include <vector>
 
 /* interface header */
 #include "Region.h"

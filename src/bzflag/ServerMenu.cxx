@@ -18,6 +18,8 @@
 #if !defined(_WIN32)
 #include <errno.h>
 #endif
+#include <vector>
+#include <string>
 
 /* common implementation headers */
 #include "version.h"

@@ -29,7 +29,6 @@
 
 #include <string>
 #include <sstream>
-#include <vector>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand

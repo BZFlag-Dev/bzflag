@@ -17,7 +17,13 @@
 #ifndef	BZF_BSP_SCENE_DATABASE_H
 #define	BZF_BSP_SCENE_DATABASE_H
 
+// common goes first
 #include "common.h"
+
+// system headers
+#include <vector>
+
+// common implementation headers
 #include "bzfgl.h"
 #include "SceneDatabase.h"
 

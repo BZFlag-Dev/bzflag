@@ -17,6 +17,8 @@
 
 /* system implementation headers */
 #include <sys/types.h>
+#include <vector>
+#include <string>
 #ifndef _WIN32
 #  include <unistd.h>
 #  include <dirent.h>

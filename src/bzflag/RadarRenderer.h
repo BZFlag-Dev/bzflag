@@ -19,6 +19,7 @@
 #define	BZF_RADAR_RENDERER_H
 
 #include "common.h"
+#include "bzfgl.h"
 #include "Obstacle.h"
 
 

@@ -17,7 +17,13 @@
 #ifndef	BZF_OPENGL_LIGHT_H
 #define	BZF_OPENGL_LIGHT_H
 
+// common goes first
 #include "common.h"
+
+// system headers
+#include <vector>
+
+// common headers
 #include "bzfgl.h"
 
 typedef std::vector<GLuint> OpenGLLightDLStack;

@@ -13,7 +13,13 @@
 /* interface header */
 #include "ComposeDefaultKey.h"
 
+/* system headers */
+#include <iostream>
+#include <vector>
+#include <string>
+
 /* common implementation headers */
+#include "BzfEvent.h"
 #include "RemotePlayer.h"
 #include "KeyManager.h"
 

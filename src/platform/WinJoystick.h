@@ -18,6 +18,8 @@
 #define	BZF_WINJOY_H
 
 #include "BzfJoystick.h"
+#include <vector>
+#include <string>
 
 class WinJoystick : public BzfJoystick {
   public:

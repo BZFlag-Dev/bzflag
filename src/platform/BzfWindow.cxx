@@ -10,8 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "ErrorHandler.h"
+// interface header
 #include "BzfWindow.h"
+
+// system headers
+#include <vector>
+
+// common implementation headers
+#include "ErrorHandler.h"
 
 BzfWindow::BzfWindow(const BzfDisplay* _display) : display(_display)
 {

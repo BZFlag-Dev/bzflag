@@ -10,26 +10,37 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// interface header
+#include "RadarRenderer.h"
+
+// bzflag common header
+#include "common.h"
+
+// system headers
 #include <stdlib.h>
 #include <string.h>
-#include "common.h"
+#include <vector>
+
+// common implementation headers
 #include "bzfgl.h"
 #include "global.h"
 #include "OpenGLTexture.h"
-#include "RadarRenderer.h"
 #include "SceneRenderer.h"
 #include "MainWindow.h"
-#include "World.h"
-#include "LocalPlayer.h"
-#include "RemotePlayer.h"
-#include "WorldPlayer.h"
 #include "Team.h"
 #include "Flag.h"
 #include "OpenGLGState.h"
-#include "HUDRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+
+// local implementation headers
+#include "LocalPlayer.h"
+#include "RemotePlayer.h"
+#include "WorldPlayer.h"
+#include "World.h"
+#include "HUDRenderer.h"
+
 
 FlashClock flashTank;
 static bool toggleTank = false;

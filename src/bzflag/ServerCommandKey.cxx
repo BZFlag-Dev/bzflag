@@ -11,6 +11,7 @@
  */
 
 #include "common.h"
+#include <string>
 #include <vector>
 
 #include "ServerCommandKey.h"

@@ -19,6 +19,9 @@
 
 #include "common.h"
 
+#include <vector>
+#include <string>
+
 class std::ostream;
 
 class BaseResources {

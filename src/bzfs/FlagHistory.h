@@ -16,6 +16,9 @@
 // bzflag global header
 #include "global.h"
 
+// system headers
+#include <vector>
+
 // bzflag library headers
 #include "Flag.h"
 

@@ -16,8 +16,12 @@
 /* interface header */
 #include "WinJoystick.h"
 
-/* implementation headers */
+/* system headers */
 #include <mmsystem.h>
+#include <vector>
+#include <string>
+
+/* implementation headers */
 #include "ErrorHandler.h"
 #include "TextUtils.h"
 

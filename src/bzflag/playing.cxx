@@ -16,6 +16,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 
 // system includes
 #include <string.h>
+#include <vector>
+#include <string>
 #include <ctype.h>
 #include <sys/types.h>
 #include <time.h>

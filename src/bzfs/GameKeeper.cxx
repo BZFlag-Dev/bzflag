@@ -13,6 +13,9 @@
 /* interface header */
 #include "GameKeeper.h"
 
+/* system headers */
+#include <vector>
+
 // players list FIXME should be resized based on maxPlayers
 extern PlayerState      lastState[PlayerSlot];
 

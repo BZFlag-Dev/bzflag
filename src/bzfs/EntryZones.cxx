@@ -14,6 +14,7 @@
 #include "CustomZone.h"
 
 #include <string>
+#include <vector>
 
 #include "common.h"
 #include "global.h"

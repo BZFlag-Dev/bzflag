@@ -14,6 +14,7 @@
 #define __ENTRYZONES_H__
 
 #include <vector>
+#include <string>
 #include <map>
 #include "Flag.h"
 #include "WorldFileLocation.h"

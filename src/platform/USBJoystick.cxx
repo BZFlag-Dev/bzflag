@@ -24,6 +24,9 @@
 #error Native USB Joystick support requires BSD. On other platforms please enable SDL or XIJOYSTICK.
 #endif
 
+#include <vector>
+#include <string>
+
 // Moved bodily from XWindow.h - hope it still works :)
 #ifdef __cplusplus
 /* Argh! usb.h has a structure with a member "class". We don't use it, so

@@ -13,6 +13,11 @@
 /* interface header */
 #include "ServerList.h"
 
+/* system headers */
+#include <iostream>
+#include <vector>
+#include <string>
+
 /* common implementation headers */
 #include "version.h"
 #include "bzsignal.h"
@@ -20,7 +25,6 @@
 #include "Protocol.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
-#include <iostream>
 
 /* local implementation headers */
 #include "ServerListCache.h"

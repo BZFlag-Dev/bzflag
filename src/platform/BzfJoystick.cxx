@@ -10,8 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "ErrorHandler.h"
+// interface header
 #include "BzfJoystick.h"
+
+// system headers
+#include <string.h>
+#include <vector>
+#include <string>
+
+// common implementation headers
+#include "ErrorHandler.h"
 
 BzfJoystick::BzfJoystick()
 {

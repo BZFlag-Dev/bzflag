@@ -10,9 +10,15 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <stdio.h>
+// bzflag common header
 #include "common.h"
-#include "playing.h"
+
+// system headers
+#include <stdio.h>
+#include <vector>
+
+// local implemenation headers
+#include "playing.h"  // eew, FIXME - do we really need the entire playing header?
 #include "SceneBuilder.h"
 #include "SceneRenderer.h"
 #include "SceneDatabase.h"

@@ -11,6 +11,7 @@
  */
 
 #include "common.h"
+#include <vector>
 #include "global.h"
 #include "WorldPlayer.h"
 

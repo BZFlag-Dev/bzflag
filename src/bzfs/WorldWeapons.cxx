@@ -17,7 +17,11 @@
 // class-interface header
 #include "WorldWeapons.h"
 
+// system headers
+#include <vector>
+
 // common-interface headers
+#include "TimeKeeper.h"
 #include "ShotUpdate.h"
 #include "Protocol.h"
 #include "Address.h"

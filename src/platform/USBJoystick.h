@@ -24,6 +24,8 @@
 #include <X11/Intrinsic.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <vector>
+#include <string>
 
 #include <stdio.h>
 

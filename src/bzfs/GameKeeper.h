@@ -16,6 +16,9 @@
 // bzflag global header
 #include "common.h"
 
+// system headers
+#include <vector>
+
 // common interface headers
 #include "DelayQueue.h"
 #include "PlayerInfo.h"

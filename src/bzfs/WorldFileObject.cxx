@@ -15,8 +15,14 @@
 #endif
 
 #include "common.h"
+
 // interface header
 #include "WorldFileObject.h"
+
+// system headers
+#include <string>
+#include <iostream>
+#include <vector>
 
 
 bool WorldFileObject::read(const char *cmd, std::istream& input)

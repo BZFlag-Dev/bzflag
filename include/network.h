@@ -21,6 +21,9 @@
 
 #include "common.h"
 
+#include <vector>
+#include <string>
+
 #if !defined(_WIN32)
 
 #include <sys/time.h>

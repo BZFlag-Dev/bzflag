@@ -17,6 +17,8 @@
 // system headers
 #include <stdio.h>
 #include <stdarg.h>
+#include <vector>
+#include <string>
 
 // local implementation headers
 #include "bzfio.h"

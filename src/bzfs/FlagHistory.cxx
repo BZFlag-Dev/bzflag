@@ -13,6 +13,10 @@
 /* interface header */
 #include "FlagHistory.h"
 
+/* system headers */
+#include <vector>
+#include <string.h>
+
 #define MAX_FLAG_HISTORY (10)
 
 void FlagHistory::clear() {

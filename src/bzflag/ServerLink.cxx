@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>
+#include <vector>
 
 #include "network.h"
 #include "ServerLink.h"

@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <string>
+#include <vector>
 
 /* common implementation headers */
 #include "TextureManager.h"
