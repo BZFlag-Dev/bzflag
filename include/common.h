@@ -18,8 +18,10 @@
 #define	BZF_COMMON_H
 
 #ifndef _WIN32
-#include "config.h"
+// use <> instead of "" cause autoconf recommends it
+#include <config.h>
 #endif
+
 #include <string>
 #include <sstream>
 #include <vector>

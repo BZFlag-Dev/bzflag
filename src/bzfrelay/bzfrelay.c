@@ -16,7 +16,9 @@
  * note that this program does not depend on any other bzflag files.
  */
 
-#include "config.h"
+// use <> instead of "" cause autoconf recommends it
+#include <config.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
