@@ -253,6 +253,10 @@ SOURCE=..\..\src\bzflag\ServerMenu.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ServerList.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\ServerStartMenu.cxx
 # End Source File
 # End Group
@@ -498,6 +502,10 @@ SOURCE=..\..\src\bzflag\ServerItem.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ServerMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerList.h
 # End Source File
 # Begin Source File
 

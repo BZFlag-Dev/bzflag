@@ -85,6 +85,8 @@ bzflag_SOURCES =			\
 	ServerCommandKey.h		\
 	ServerItem.cxx			\
 	ServerItem.h			\
+	ServerList.cxx			\
+	ServerList.h			\
 	ServerListCache.cxx		\
 	ServerListCache.h		\
 	ServerLink.cxx			\

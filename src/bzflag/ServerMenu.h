@@ -22,6 +22,7 @@
 #include "BzfEvent.h"
 #include "HUDDialog.h"
 #include "ServerItem.h"
+#include "ServerList.h"
 #include "ServerListCache.h"
 
 /* local interface headers */
@@ -55,38 +56,26 @@ public:
   void execute();
   void dismiss();
   void resize(int width, int height);
+  static void playingCB(void*);
+  void updateStatus();
 
   static const int NumItems;
 
 private:
   void addLabel(const char* str, const char* label);
-  void checkEchos();
-  void readServerList(int index);
-  void addToList(ServerItem&, bool doCache=false);
-  void addToListWithLookup(ServerItem&);
   void setStatus(const char*, const std::vector<std::string> *parms = NULL);
   void pick();
-  static void playingCB(void*);
-  void addCacheToList();
   ServerItem& serversAt(int index);
 
 private:
+  ServerList serverList;
   ServerMenuDefaultKey	defaultKey;
-  std::vector<ServerItem> servers;
-  struct sockaddr_in pingInAddr;
-  int pingBcastSocket;
-  struct sockaddr_in pingBcastAddr;
   HUDuiLabel* status;
 
   HUDuiLabel* pageLabel;
   int selectedIndex;
-
-  int phase;
-  ListServer listServers[MaxListServers];
-  int numListServers;
-  ServerListCache* serverCache;
-  bool addedCacheToList;
-
+  unsigned int serversFound;
+  
   static const int NumReadouts;
 };
 
