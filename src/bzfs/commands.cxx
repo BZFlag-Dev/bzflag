@@ -61,7 +61,8 @@
 // FIXME -- need to pull communication out of bzfs.cxx...
 
 // externs that poll, veto, vote, and clientquery require
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool isFiltered = true);
+extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+extern void sendFilteredMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
@@ -208,7 +209,7 @@ void handleMeCmd(GameKeeper::Player *playerData, const char *message)
    * unauthoized players from using the command or spoofing actions.
    */
   message2 = TextUtils::format("* %s %s\t*", playerData->player.getCallSign(), message + 4);
-  sendMessage(t, AllPlayers, message2.c_str());
+  sendFilteredMessage(t, AllPlayers, message2.c_str());
 }
 
 
@@ -542,7 +543,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
     for (int i = 0; i < numFlags; i++) {
       char message[MessageLen];
       FlagInfo::get(i)->getTextualInfo(message);
-      sendMessage(ServerPlayer, t, message, false);
+      sendMessage(ServerPlayer, t, message);
     }
   } else {
     sendMessage(ServerPlayer, t, "reset|show|up");
@@ -883,7 +884,7 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
     GameKeeper::Player *p = sortedPlayer[i];
     p->lagInfo.getLagStats(reply);
     if (reply[0])
-      sendMessage(ServerPlayer, t, reply, false);
+      sendMessage(ServerPlayer, t, reply);
   }
 }
 
@@ -945,7 +946,7 @@ void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->player.isPlaying()) {
       otherData->netHandler->getPlayerList(reply);
-      sendMessage(ServerPlayer, t, reply, false);
+      sendMessage(ServerPlayer, t, reply);
     }
   }
   return;

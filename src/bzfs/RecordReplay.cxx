@@ -225,7 +225,7 @@ extern char *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code,
 			  int len, const void *msg);
 extern void sendMessage(int playerIndex, PlayerId targetPlayer,
-			const char *message, bool isFiltered = true);
+			const char *message);
 
 
 /****************************************************************************/

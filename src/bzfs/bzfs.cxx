@@ -135,7 +135,7 @@ static RejoinList rejoinList;
 static TimeKeeper lastWorldParmChange;
 static bool       isIdentifyFlagIn = false;
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool isFiltered = true);
+void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
@@ -1469,24 +1469,32 @@ static void respondToPing(Address addr)
 }
 
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool isFiltered)
+void sendFilteredMessage(int playerIndex, PlayerId targetPlayer, const char *message)
+{
+  const char* msg = message;
+
+  if (clOptions->filterChat) {
+    char filtered[MessageLen] = {0};
+    strncpy(filtered, message, MessageLen);
+    if (clOptions->filterSimple) {
+      clOptions->filter.filter(filtered, true);
+    } else {
+      clOptions->filter.filter(filtered, false);
+    }
+    msg = filtered;
+  }
+  
+  sendMessage(playerIndex, targetPlayer, msg);
+}
+
+
+void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
 {
   long int msglen = strlen(message) + 1; // include null terminator
   const char *msg = message;
 
   if (message[0] == '/' && message[1] == '/')
     msg = &message[1];
-  /* filter all outbound messages unless specified otherwise by isFiltered*/
-  if (clOptions->filterChat && isFiltered) {
-    char message2[MessageLen] = {0};
-    strncpy(message2, message, MessageLen);
-    if (clOptions->filterSimple) {
-      clOptions->filter.filter(message2, true);
-    } else {
-      clOptions->filter.filter(message2, false);
-    }
-    msg = message2;
-  }
 
   if (msglen > MessageLen) {
     msglen = MessageLen;
@@ -3579,7 +3587,7 @@ possible attack from %s\n",
 	break;
       // check for command
       if (message[0] == '/' && message[1] != '/') {
-	/* make commands case insensitive for user-friendlyness */
+	// make commands case insensitive for user-friendlyness
 	unsigned int pos = 1;
 	while ((pos < strlen(message)) && (TextUtils::isAlphanumeric(message[pos]))) {
 	  message[pos] = tolower((int)message[pos]);
@@ -3598,15 +3606,15 @@ possible attack from %s\n",
 	if (playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend)) {
 	  sendMessage (t, AdminPlayers, message);
 	} else {
-	  sendMessage(ServerPlayer, t,
+	  sendFilteredMessage(ServerPlayer, t,
 		      "You do not have permission to speak on the admin channel.");
 	}
       } else if ((targetPlayer < LastRealPlayer) && !realPlayer(targetPlayer)) {
 	// check for bogus targets
-	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
+	sendFilteredMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
       } else {
 	// most messages should come here
-	sendMessage(t, targetPlayer, message);
+	sendFilteredMessage(t, targetPlayer, message);
       }
       break;
     }

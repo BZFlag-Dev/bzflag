@@ -32,7 +32,7 @@
 #include "TextUtils.h"
 
 /* FIXME - needs to come from a public header */
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool isFiltered = true);
+extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 
 void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period, const char *reason, bool fromMaster) {
   BanInfo toban(ipAddr, bannedBy, period,fromMaster);
