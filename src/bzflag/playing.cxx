@@ -1475,7 +1475,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
         hud->setHunt(!hud->getHunt());
         hud->setHuntPosition(0);
 	if (!BZDB->isTrue("showscore"))
-	  BZDB->set("showscore", "yes");
+	  BZDB->set("showscore", "1");
       }
     }
     return true;
@@ -1945,7 +1945,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   else if (keymap.isMappedTo(BzfKeyMap::Score, key)) {
     // toggle score board
     if (pressed) {
-      BZDB->set("showscore", BZDB->isTrue("showscore") ? "no" : "yes");
+      BZDB->set("showscore", BZDB->isTrue("showscore") ? "0" : "1");
     }
   }
 
@@ -5065,13 +5065,13 @@ static bool		joinGame(const StartupInfo* info,
 
   // make scene database
   const bool oldUseZBuffer = BZDB->isTrue("zbuffer");
-  BZDB->set("zbuffer", "no");
+  BZDB->set("zbuffer", "0");
   bspScene = sceneBuilder->make(world);
-  BZDB->set("zbuffer", "yes");
+  BZDB->set("zbuffer", "1");
   // FIXME - test the zbuffer here
   if (BZDB->isTrue("zbuffer"))
     zScene = sceneBuilder->make(world);
-  BZDB->set("zbuffer", oldUseZBuffer ? "yes" : "no");
+  BZDB->set("zbuffer", oldUseZBuffer ? "1" : "0");
   setSceneDatabase();
 
   mainWindow->getWindow()->yieldCurrent();
@@ -5308,7 +5308,7 @@ static void		playingLoop()
   const SceneRenderer::ViewType viewType = sceneRenderer->getViewType();
   const int zoomFactor = getZoomFactor();
   const bool fakeCursor = resources->hasValue("fakecursor") &&
-		strcmp(resources->getValue("fakecursor").c_str(), "yes") == 0;
+		strcmp(resources->getValue("fakecursor").c_str(), "1") == 0;
   mainWindow->setZoomFactor(zoomFactor);
   if (fakeCursor)
     mainWindow->getWindow()->hideMouse();
@@ -6029,7 +6029,7 @@ static void		playingLoop()
 static float		timeConfiguration(bool useZBuffer)
 {
   // prepare depth buffer if requested
-  BZDB->set("zbuffer", useZBuffer ? "yes" : "no");
+  BZDB->set("zbuffer", useZBuffer ? "1" : "0");
   if (useZBuffer) {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -6054,14 +6054,14 @@ static void		timeConfigurations()
   static const float MaxFrameTime = 0.050f;	// seconds
 
   // ignore results of first test.  OpenGL could be doing lazy setup.
-  BZDB->set("blend", "no");
-  BZDB->set("smooth", "no");
-  BZDB->set("lighting", "no");
-  BZDB->set("texture", "no");
+  BZDB->set("blend", "0");
+  BZDB->set("smooth", "0");
+  BZDB->set("lighting", "0");
+  BZDB->set("texture", "0");
   sceneRenderer->setQuality(0);
-  BZDB->set("dither", "yes");
-  BZDB->set("shadows", "no");
-  BZDB->set("enhancedradar", "no");
+  BZDB->set("dither", "1");
+  BZDB->set("shadows", "0");
+  BZDB->set("enhancedradar", "0");
   OpenGLTexture::setFilter(OpenGLTexture::Off);
   timeConfiguration(true);
 
@@ -6071,7 +6071,7 @@ static void		timeConfigurations()
   printError("  lowest quality");
   const float timeNoBlendNoZ = timeConfiguration(false);
   const float timeNoBlendZ   = timeConfiguration(true);
-  BZDB->set("blend", "yes");
+  BZDB->set("blend", "1");
   const float timeBlendNoZ   = timeConfiguration(false);
   const float timeBlendZ     = timeConfiguration(true);
   if (timeNoBlendNoZ > MaxFrameTime &&
@@ -6082,30 +6082,30 @@ static void		timeConfigurations()
 	timeNoBlendNoZ < timeBlendNoZ &&
 	timeNoBlendNoZ < timeBlendZ) {
       // no depth, no blending definitely fastest
-      BZDB->set("zbuffer", "no");
-      BZDB->set("blend", "no");
+      BZDB->set("zbuffer", "0");
+      BZDB->set("blend", "0");
     }
     if (timeNoBlendZ < timeBlendNoZ &&
 	timeNoBlendZ < timeBlendZ) {
       // no blending faster than blending
-      BZDB->set("zbuffer", "no");
-      BZDB->set("blend", "no");
+      BZDB->set("zbuffer", "0");
+      BZDB->set("blend", "0");
     }
     if (timeBlendNoZ < timeBlendZ) {
       // blending faster than depth
-      BZDB->set("zbuffer", "no");
-      BZDB->set("blend", "yes");
+      BZDB->set("zbuffer", "0");
+      BZDB->set("blend", "1");
     }
     // blending and depth faster than without either
-    BZDB->set("zbuffer", "yes");
-    BZDB->set("blend", "yes");
+    BZDB->set("zbuffer", "1");
+    BZDB->set("blend", "1");
     return;
   }
 
   // leave blending on if blending clearly faster than stippling
   if (timeBlendNoZ > timeNoBlendNoZ || timeBlendNoZ > timeNoBlendZ &&
       timeBlendZ   > timeNoBlendNoZ || timeBlendZ   > timeNoBlendZ) {
-    BZDB->set("blend", "no");
+    BZDB->set("blend", "0");
   }
 
   // try texturing.  if it's too slow then fall back to
@@ -6116,7 +6116,7 @@ static void		timeConfigurations()
   printError("  lowest quality with texture");
   if (timeConfiguration(false) > MaxFrameTime ||
       timeConfiguration(true) > MaxFrameTime) {
-    BZDB->set("texture", "no");
+    BZDB->set("texture", "0");
     OpenGLTexture::setFilter(OpenGLTexture::Off);
     sceneRenderer->setQuality(0);
     return;
@@ -6124,20 +6124,20 @@ static void		timeConfigurations()
 
   // everything
   printError("  full quality");
-  BZDB->set("blend", "yes");
-  BZDB->set("smooth", "yes");
-  BZDB->set("lighting", "yes");
+  BZDB->set("blend", "1");
+  BZDB->set("smooth", "1");
+  BZDB->set("lighting", "1");
   OpenGLTexture::setFilter(OpenGLTexture::LinearMipmapLinear);
   BZDB->set("texture", OpenGLTexture::getFilterName());
   sceneRenderer->setQuality(2);
-  BZDB->set("dither", "yes");
-  BZDB->set("shadows", "yes");
-  BZDB->set("enhancedradar", "yes");
+  BZDB->set("dither", "1");
+  BZDB->set("shadows", "1");
+  BZDB->set("enhancedradar", "1");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // try it without shadows -- some platforms stipple very slowly
-  BZDB->set("shadows", "no");
+  BZDB->set("shadows", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
@@ -6159,32 +6159,32 @@ static void		timeConfigurations()
 
   // no texturing
   printError("  no texturing");
-  BZDB->set("texture", "no");
+  BZDB->set("texture", "0");
   OpenGLTexture::setFilter(OpenGLTexture::Off);
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no blending
   printError("  no blending");
-  BZDB->set("blend", "no");
+  BZDB->set("blend", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no smoothing.  shouldn't really affect fill rate too much.
   printError("  no smoothing");
-  BZDB->set("smooth", "no");
+  BZDB->set("smooth", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no lighting.  shouldn't really affect fill rate, either.
   printError("  no lighting");
-  BZDB->set("lighting", "no");
+  BZDB->set("lighting", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no dithering
   printError("  no dithering");
-  BZDB->set("dither", "no");
+  BZDB->set("dither", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 }
@@ -6300,14 +6300,14 @@ void			startPlaying(BzfDisplay* _display,
   // if no configuration, turn off fancy rendering so startup is fast,
   // even on a slow machine.
   if (!_info->hasConfiguration) {
-    BZDB->set("blend", "no");
-    BZDB->set("smooth", "no");
-    BZDB->set("lighting", "no");
-    BZDB->set("texture", "no");
+    BZDB->set("blend", "0");
+    BZDB->set("smooth", "0");
+    BZDB->set("lighting", "0");
+    BZDB->set("texture", "0");
     sceneRenderer->setQuality(0);
-    BZDB->set("dither", "no");
-    BZDB->set("shadows", "no");
-    BZDB->set("enhancedradar", "no");
+    BZDB->set("dither", "0");
+    BZDB->set("shadows", "0");
+    BZDB->set("enhancedradar", "0");
     OpenGLTexture::setFilter(OpenGLTexture::Off);
   }
 

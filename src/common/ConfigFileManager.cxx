@@ -15,18 +15,29 @@
 #include "FileManager.h"
 #include "CommandManager.h"
 #include "StateDatabase.h"
+#include "KeyManager.h"
 
 ConfigFileManager* ConfigFileManager::mgr = NULL;
 static const int        MaximumLineLength = 1024;
 
-void writeEntry(const std::string& name, void *stream)
+void writeBZDB(const std::string& name, void *stream)
 {
-  std::ostream &s = *reinterpret_cast<std::ostream*>(stream);
+  std::ostream& s = *reinterpret_cast<std::ostream*>(stream);
   std::string value = BZDB->get(name);
   // quotify anything with a space
   if (value.find(' ') != value.npos)
     value = std::string("\"") + value + "\"";
   s << "set " << name << ' ' << value << std::endl;
+}
+
+void writeKEYMGR(const std::string& name, bool press, const std::string& command, void* stream)
+{
+  std::ostream& s = *reinterpret_cast<std::ostream*>(stream);
+  // quotify anything with a space
+  std::string value = command;
+  if (value.find(' ') != value.npos)
+    value = std::string("\"") + value + "\"";
+  s << "bind " << name << ' ' << (press ? "down" : "up") << ' ' << value << std::endl;
 }
 
 ConfigFileManager::ConfigFileManager()
@@ -74,15 +85,16 @@ bool				ConfigFileManager::write(std::string filename)
   std::ostream* stream = FILEMGR->createDataOutStream(filename);
   if (stream == NULL)
     return false;
-  BZDB->write(writeEntry, stream);
+  BZDB->write(writeBZDB, stream);
+  KEYMGR->iterate(writeKEYMGR, stream);
   delete stream;
   return true;
 }
 
 void				ConfigFileManager::addDefaults()
 {
-  BZDB->setDefault("udpnet", "yes");
-  BZDB->set("udpnet", "yes");
+  BZDB->setDefault("udpnet", "1");
+  BZDB->set("udpnet", "1");
   BZDB->setDefault("team", "Rogue");
   BZDB->set("team", "Rogue");
   BZDB->setDefault("list", "http://BZFlag.SourceForge.net/list-server.txt");
@@ -94,12 +106,12 @@ void				ConfigFileManager::addDefaults()
   BZDB->setDefault("longitude", "122");
   BZDB->set("longitude", "122");
   // FIXME: keys?
-  BZDB->setDefault("joystick", "no");
-  BZDB->set("joystick", "no");
-  BZDB->setDefault("enhancedRadar", "yes");
-  BZDB->set("enhancedRadar", "yes");
-  BZDB->setDefault("coloredradarshots", "yes");
-  BZDB->set("coloredradarshots", "yes");
+  BZDB->setDefault("joystick", "0");
+  BZDB->set("joystick", "0");
+  BZDB->setDefault("enhancedRadar", "1");
+  BZDB->set("enhancedRadar", "1");
+  BZDB->setDefault("coloredradarshots", "1");
+  BZDB->set("coloredradarshots", "1");
   BZDB->setDefault("linedradarshots", "0");
   BZDB->set("linedradarshots", "0");
   BZDB->setDefault("panelopacity", "0.3");
@@ -108,10 +120,10 @@ void				ConfigFileManager::addDefaults()
   BZDB->set("radarsize", "4");
   BZDB->setDefault("mouseboxsize", "5");
   BZDB->set("mouseboxsize", "5");
-  BZDB->setDefault("bigfont", "no");
-  BZDB->set("bigfont", "no");
-  BZDB->setDefault("colorful", "yes");
-  BZDB->set("colorful", "yes");
+  BZDB->setDefault("bigfont", "0");
+  BZDB->set("bigfont", "0");
+  BZDB->setDefault("colorful", "1");
+  BZDB->set("colorful", "1");
   BZDB->setDefault("underline", "0");
   BZDB->set("underline", "0");
   BZDB->setDefault("killerhighlight", "0");

@@ -15,7 +15,8 @@
 
 #define CFGMGR (ConfigFileManager::getInstance())
 
-void writeEntry(const std::string& name, void *stream);
+void writeBZDB(const std::string& name, void *stream);
+void writeKEYMGR(const std::string& name, bool press, const std::string& command, void* stream);
 
 /**
  Reads in the config file.

@@ -392,7 +392,7 @@ static void		parse(int argc, char** argv,
       noAudio = true;
     }
     else if (strcmp(argv[i], "-multisample") == 0) {
-      BZDB->set("_multisample", "yes");
+      BZDB->set("_multisample", "1");
     }
     else if (strcmp(argv[i], "-port") == 0) {
       if (++i == argc) {
@@ -458,7 +458,7 @@ static void		parse(int argc, char** argv,
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      if (strcmp(argv[i], "no") != 0 && strcmp(argv[i], "yes") != 0) {
+      if (strcmp(argv[i], "0") != 0 && strcmp(argv[i], "1") != 0) {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
@@ -483,7 +483,7 @@ static void		parse(int argc, char** argv,
       exit(0);
     }
     else if (strcmp(argv[i], "-window") == 0) {
-      BZDB->set("_window", "yes");
+      BZDB->set("_window", "1");
     }
     else if (strcmp(argv[i], "-3dfx") == 0 || strcmp(argv[i], "-3Dfx") == 0) {
 #if !defined(__linux__)
@@ -562,7 +562,7 @@ static void		parse(int argc, char** argv,
 	usage();
       }
       if (strcmp(argv[i], "on") == 0) {
-	resources.addValue("zbuffer", "yes");
+	resources.addValue("zbuffer", "1");
       }
       else if (strcmp(argv[i], "off") == 0) {
 	resources.addValue("zbuffer", "disable");
@@ -635,7 +635,7 @@ void			dumpResources(BzfDisplay* display,
   GLint value;
   glGetIntegerv(GL_DEPTH_BITS, &value);
   if (value == 0) {
-    BZDB->set("zbuffer", "no");
+    BZDB->set("zbuffer", "0");
   }
 
   if (renderer.getWindow().getWindow()->hasGammaControl()) {
@@ -668,8 +668,8 @@ void			dumpResources(BzfDisplay* display,
     }
   }
   BZDB->set("startcode", ServerStartMenu::getSettings());
-  BZDB->set("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
-  BZDB->set("showlabels", renderer.getLabels() ? "yes" : "no");
+  BZDB->set("showflaghelp", renderer.getShowFlagHelp() ? "1" : "0");
+  BZDB->set("showlabels", renderer.getLabels() ? "1" : "0");
 
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
 
@@ -1075,7 +1075,7 @@ int			main(int argc, char** argv)
     const char* renderer = (const char*)glGetString(GL_RENDERER);
     if ((renderer != NULL) && (strncmp(renderer, "Mesa Glide", 10) == 0 ||
 	strncmp(renderer, "3Dfx", 4) == 0))
-      db.addValue("fakecursor", "yes");
+      db.addValue("fakecursor", "1");
   }
 
   // set gamma if set in resources and we have gamma control
@@ -1090,7 +1090,7 @@ int			main(int argc, char** argv)
   // restore rendering configuration
   if (startupInfo.hasConfiguration) {
     if (db.hasValue("zbuffersplit"))
-      renderer.setZBufferSplit(db.getValue("zbuffersplit") == "yes");
+      renderer.setZBufferSplit(db.getValue("zbuffersplit") == "1");
     if (BZDB->isSet("texture")) {
       OpenGLTexture::setFilter(BZDB->get("texture"));
     }
@@ -1104,7 +1104,7 @@ int			main(int argc, char** argv)
 	}
     }
     BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
-	      renderer.useQuality() < 2) ? "yes" : "no");
+	      renderer.useQuality() < 2) ? "1" : "0");
     BZDB->setPersistent("_texturereplace", false);
     if (db.hasValue("view")) {
       renderer.setViewType(SceneRenderer::Normal);

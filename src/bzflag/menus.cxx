@@ -1088,11 +1088,11 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
   SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
     case 'e':
-      BZDB->set("enhancedradar", list->getIndex() ? "yes" : "no");
+      BZDB->set("enhancedradar", list->getIndex() ? "1" : "0");
       break;
 
     case 'w':
-      BZDB->set("bigfont", list->getIndex() ? "yes" : "no");
+      BZDB->set("bigfont", list->getIndex() ? "1" : "0");
       break;
 
     case 'y':
@@ -1102,7 +1102,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     }
 
     case 'z':
-      BZDB->set("coloredradarshots", list->getIndex() ? "yes" : "no");
+      BZDB->set("coloredradarshots", list->getIndex() ? "1" : "0");
       break;
 
     case 'l':
@@ -1123,7 +1123,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'c':
     {
-      BZDB->set("colorful", list->getIndex() ? "yes" : "no");
+      BZDB->set("colorful", list->getIndex() ? "1" : "0");
       break;
     }
 
@@ -1571,22 +1571,22 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
   SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
     case '1':
-      BZDB->set("dither", list->getIndex() ? "yes" : "no");
+      BZDB->set("dither", list->getIndex() ? "1" : "0");
       break;
 
     case '2':
-      BZDB->set("blend", list->getIndex() ? "yes" : "no");
+      BZDB->set("blend", list->getIndex() ? "1" : "0");
       break;
 
     case '3':
-      BZDB->set("smooth", list->getIndex() ? "yes" : "no");
+      BZDB->set("smooth", list->getIndex() ? "1" : "0");
       break;
 
     case '4':
-      BZDB->set("lighting", list->getIndex() ? "yes" : "no");
+      BZDB->set("lighting", list->getIndex() ? "1" : "0");
 
       BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
-		sceneRenderer->useQuality() < 2) ? "yes" : "no");
+		sceneRenderer->useQuality() < 2) ? "1" : "0");
       BZDB->setPersistent("_texturereplace", false);
       break;
 
@@ -1599,16 +1599,16 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       sceneRenderer->setQuality(list->getIndex());
 
       BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
-		sceneRenderer->useQuality() < 2) ? "yes" : "no");
+		sceneRenderer->useQuality() < 2) ? "1" : "0");
       BZDB->setPersistent("_texturereplace", false);
       break;
 
     case '7':
-      BZDB->set("shadows", list->getIndex() ? "yes" : "no");
+      BZDB->set("shadows", list->getIndex() ? "1" : "0");
       break;
 
     case '8':
-      BZDB->set("zbuffer", list->getIndex() ? "yes" : "no");
+      BZDB->set("zbuffer", list->getIndex() ? "1" : "0");
       // FIXME - test for whether the z buffer will work
       setSceneDatabase();
       break;
