@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
+#include <math.h>
 
 extern int debugLevel;
 // Like verbose debug messages?
@@ -61,25 +62,50 @@ extern int debugLevel;
 #endif
 
 // some platforms don't have float versions of the math library
-#if defined(_old_linux_) || defined(sun)
-#define	asinf		(float)asin
-#define	atanf		(float)atan
-#define	atan2f		(float)atan2
-#define	cosf		(float)cos
-#define	expf		(float)exp
-#define	fabsf		(float)fabs
-#define	floorf		(float)floor
-#define	fmodf		(float)fmod
-#define	hypotf		(float)hypot
-#define	logf		(float)log
-#define	powf		(float)pow
-#define	sinf		(float)sin
-#define	sqrtf		(float)sqrt
-#define	tanf		(float)tan
+#ifndef HAVE_ASINF
+#  define	asinf		(float)asin
+#endif
+#ifndef HAVE_ATAN2F
+#  define	atan2f		(float)atan2
+#endif
+#ifndef HAVE_ATANF
+#  define	atanf		(float)atan
+#endif
+#ifndef HAVE_COSF
+#  define	cosf		(float)cos
+#endif
+#ifndef HAVE_EXPF
+#  define	expf		(float)exp
+#endif
+#ifndef HAVE_FABSF
+#  define	fabsf		(float)fabs
+#endif
+#ifndef HAVE_FLOORF
+#  define	floorf		(float)floor
+#endif
+#ifndef HAVE_FMODF
+#  define	fmodf		(float)fmod
+#endif
+#ifndef HAVE_HYPOTF
+#  define	hypotf		(float)hypot
+#endif
+#ifndef HAVE_LOGF
+#  define	logf		(float)log
+#endif
+#ifndef HAVE_POWF
+#  define	powf		(float)pow
+#endif
+#ifndef HAVE_SINF
+#  define	sinf		(float)sin
+#endif
+#ifndef HAVE_SQRTF
+#  define	sqrtf		(float)sqrt
+#endif
+#ifndef HAVE_TANF
+#  define	tanf		(float)tan
 #endif
 
-#if defined (__APPLE__) && defined (__GNUC__) && ( __GNUC__ == 3 )
-#include <math.h>
+#if 0
 extern "C" {
   inline float acosf(float x) {
     return (float) acos( (double) x);
