@@ -726,7 +726,8 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
 	  int i, j;
 	  for (i = 0; i < curMaxPlayers; i++) {
 	    j = (roamTrackTank + i + 2) % (curMaxPlayers + 1) - 1;
-	    if ((j == -1) || (player[j] && player[j]->isAlive())) {
+	    if ((j == -1)
+		|| (player[j] && player[j]->getTeam() != ObserverTeam)) {
 	      roamTrackTank = roamTrackWinner = j;
 	      break;
 	    }
@@ -748,8 +749,10 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
 	  }
 	} else {
 	  for (int i = 0; i < curMaxPlayers; i++) {
-	    int j = (roamTrackTank - i + curMaxPlayers + 1) % (curMaxPlayers + 1) - 1;
-	    if ((j == -1) || (player[j] && player[j]->isAlive())) {
+	    int j = (roamTrackTank - i + curMaxPlayers + 1)
+	      % (curMaxPlayers + 1) - 1;
+	    if ((j == -1)
+		|| (player[j] && player[j]->getTeam() != ObserverTeam)) {
 	      roamTrackTank = roamTrackWinner = j;
 	      break;
 	    }
