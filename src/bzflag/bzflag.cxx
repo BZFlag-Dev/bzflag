@@ -665,7 +665,7 @@ static void		parse(int argc, char** argv,
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      resources.addValue("eyesep", argv[i]);
+      BZDB->set("eyesep", argv[i]);
     }
     else if (strcmp(argv[i], "-focal") == 0) {
       if (++i == argc) {

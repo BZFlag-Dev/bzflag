@@ -5825,8 +5825,8 @@ static void		playingLoop()
        static bool init = false;
        if (!init) {
 	 init = true;
-	 if (resources->hasValue("eyesep"))
-	   EyeDisplacement = (float)atof(resources->getValue("eyesep").c_str());
+	 if (BZDB->isSet("eyesep"))
+	   EyeDisplacement = BZDB->eval("eyesep");
 	 if (resources->hasValue("focal"))
 	   FocalPlane = (float)atof(resources->getValue("focal").c_str());
        }
@@ -5863,8 +5863,8 @@ static void		playingLoop()
 	static bool init = false;
 	if (!init) {
 	  init = true;
-	  if (resources->hasValue("eyesep"))
-	    EyeDisplacement = (float)atof(resources->getValue("eyesep").c_str());
+	  if (BZDB->isSet("eyesep"))
+	    EyeDisplacement = BZDB->eval("eyesep");
 	  if (resources->hasValue("focal"))
 	    FocalPlane = (float)atof(resources->getValue("focal").c_str());
 	}
