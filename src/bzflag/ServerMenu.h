@@ -14,21 +14,21 @@
 #define __SERVERMENU_H__
 
 /* system interface headers */
-#include <vector>
 #include <string>
+#include <vector>
 
 /* common interface headers */
-#include "ListServer.h"
 #include "BzfEvent.h"
 #include "HUDDialog.h"
+#include "ListServer.h"
 #include "ServerItem.h"
 #include "ServerList.h"
 #include "ServerListCache.h"
 
 /* local interface headers */
-#include "MenuDefaultKey.h"
 #include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
+#include "MenuDefaultKey.h"
 
 class ServerMenu;
 
