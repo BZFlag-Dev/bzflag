@@ -249,8 +249,6 @@ bool chasePlayer( float &rotation, float &speed)
     const Obstacle *building = NULL;
     float d = distance - 5.0f; //Make sure building is REALLY in front of player (-5)
 
-    const float *velocity = myTank->getVelocity();
-
     float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
     Ray tankRay(pos, dir);
   
