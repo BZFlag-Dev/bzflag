@@ -169,7 +169,7 @@ extern void		doAutoPilot(float &rotation, float &speed);
 extern void		teachAutoPilot( FlagType *, int );
 
 // Far and Near Frustum clipping planes
-const float NearPlane = 0.5f;
+const float NearPlane = 0.25f;
 const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
 
 enum BlowedUpReason {
