@@ -13,6 +13,7 @@
 #include "common.h"
 
 #include <math.h>
+#include <stdlib.h>
 
 #include "Octree.h"
 #include "Intersect.h"
@@ -68,6 +69,26 @@ inline static void squeezeChildren (OctreeNode** children)
     }
   }
   return;
+}
+
+
+static int compareZExtents(const void* a, const void* b)
+{
+  const SceneNode* nodeA = *((const SceneNode**)a);
+  const SceneNode* nodeB = *((const SceneNode**)b);
+  // FIXME: getExtents() really needs fixing, this is stupid
+  float dummy[3], maxsA[3], maxsB[3];
+  nodeA->getExtents(dummy, maxsA);
+  nodeB->getExtents(dummy, maxsB);
+  if (maxsA[2] > maxsB[2]) {
+    return +1;
+  }
+  else if (maxsB[2] > maxsA[2]) {
+    return -1;
+  }
+  else {
+    return 0;
+  }
 }
 
 
@@ -131,6 +152,8 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 
   getExtents (mins, maxs, list, listSize);
 
+  // sorted from lowest to highest
+  qsort(list, listSize, sizeof(SceneNode*), compareZExtents);
 
   // making babies
   root = new OctreeNode(0, mins, maxs, list, listSize);
@@ -153,13 +176,12 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 
 
 int Octree::getFrustumList (SceneNode** list, int listSize,
-			    const Frustum* frustum) const
+			    const Frustum* frustum, bool occlude) const
 {
   if (!root) {
     return 0;
   }
 
-  // FIXME - testing hack
   if (listSize > CullListSize) {
     printf ("Octree::getFrustumList() Internal error! (%i vs %i)\n",
 	    listSize, CullListSize);
@@ -171,12 +193,21 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   CullListCount = 0;
 
   // update the occluders before using them
-  OcclMgr.update(CullFrustum);
+  if (occlude) {
+    OcclMgr.update(CullFrustum);
+  } else {
+    OcclMgr.disable();
+  }
 
   // get the nodes
   root->getFrustumList ();
 
-  OcclMgr.select(CullList, CullListCount);
+  // pick new occluders
+  if (occlude) {
+    OcclMgr.select(CullList, CullListCount);
+  } else {
+    OcclMgr.enable(); // reenable
+  }
 
   return CullListCount;
 }
@@ -347,6 +378,7 @@ void Octree::draw () const
 // The Nodes
 //
 
+
 OctreeNode::OctreeNode(unsigned char _depth,
 		       const float* _mins, const float *_maxs,
 		       SceneNode** _list, int _listSize)
@@ -391,7 +423,7 @@ OctreeNode::OctreeNode(unsigned char _depth,
 
   // resize the list to save space
   list = (SceneNode**) realloc (list, count * sizeof (SceneNode*));
-
+  
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (listSize <= minElements)) {
     DEBUG4 ("LEAF NODE: depth = %d, items = %i\n", depth, count);

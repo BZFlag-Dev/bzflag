@@ -47,10 +47,14 @@ class OccluderManager {
     bool occludePeek(const float* mins, const float* maxs);
 
     int getOccluderCount () const;
-
+    
+    void enable() { enabled = true; }
+    void disable() { enabled = false; }
+    
     void draw() const;
 
   private:
+    bool enabled;
     void setMaxOccluders(int size);
     void sort();
     int activeOccluders;

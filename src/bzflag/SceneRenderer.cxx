@@ -1101,7 +1101,8 @@ void SceneRenderer::getRenderNodes()
     }
 
     // add the shadow rendering nodes
-    if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)) {
+    if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)
+        && (!mirror || !clearZbuffer)) {
       scene->addShadowNodes(*this);
     }
   }

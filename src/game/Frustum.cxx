@@ -240,6 +240,62 @@ void			Frustum::flipHorizontal()
   return;
 }
 
+
+// used for radar culling, not really a frustum
+void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
+{
+  // setup the eye, and the clipping planes
+  memcpy(eye, view.getEye(), sizeof(float[3]));
+  
+  float front[2], left[2];
+  const float* dir = view.getDirection();
+  float len = (dir[0] * dir[0]) + (dir[1] * dir[1]);
+  if (len != 0) {
+    len = 1.0f / sqrtf(len);
+    front[0] = dir[0] * len;
+    front[1] = dir[1] * len;
+  } else {
+    front[0] = 1.0f; 
+    front[1] = 0.0f;
+  }
+   
+  left[0] = -front[1];
+  left[1] = +front[0];
+  
+  plane[1][0] = +left[0];
+  plane[1][1] = +left[1];
+  plane[1][3] = -((eye[0] * plane[1][0]) + (eye[1] * plane[1][1])) + width;
+
+  plane[2][0] = -left[0];
+  plane[2][1] = -left[1];
+  plane[2][3] = -((eye[0] * plane[2][0]) + (eye[1] * plane[2][1])) + width;
+
+  plane[3][0] = +front[0];
+  plane[3][1] = +front[1];
+  plane[3][3] = -((eye[0] * plane[3][0]) + (eye[1] * plane[3][1])) + breadth;
+
+  plane[4][0] = -front[0];
+  plane[4][1] = -front[1];
+  plane[4][3] = -((eye[0] * plane[4][0]) + (eye[1] * plane[4][1])) + breadth;
+  
+  plane[1][2] = 0.0f;
+  plane[2][2] = 0.0f;
+  plane[3][2] = 0.0f;
+  plane[4][2] = 0.0f;
+
+  // disable the near and far planes
+  plane[0][0] = plane[0][1] = 0.0f;
+  plane[0][2] = 1.0f;
+  plane[0][3] = -1.0e6;
+  plane[5][0] = plane[0][1] = 0.0f;
+  plane[5][2] = 1.0f;
+  plane[5][3] = -1.0e6;
+  
+  return;
+}
+
+
+                                               
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

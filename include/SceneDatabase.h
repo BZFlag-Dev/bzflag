@@ -46,6 +46,7 @@ class SceneDatabase {
     virtual void	addLights(SceneRenderer& renderer) = 0;
     virtual void	addShadowNodes(SceneRenderer &renderer) = 0;
     virtual void	addRenderNodes(SceneRenderer& renderer) = 0;
+    virtual void	renderRadarNodes(const ViewFrustum&) = 0;
 
     virtual void	drawCuller() = 0;
 

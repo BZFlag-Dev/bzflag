@@ -30,7 +30,7 @@ class Octree {
     void addNodes (SceneNode** list, int listSize, int depth, int elements);
 
     int getFrustumList (SceneNode** list, int listSize,
-			const Frustum* frustum) const;
+			const Frustum* frustum, bool occlude) const;
     int getShadowList (SceneNode** list, int listSize,
 		       const Frustum* frustum, const float* sunDir) const;
     void clear ();

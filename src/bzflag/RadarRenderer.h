@@ -43,7 +43,8 @@ class RadarRenderer {
     void		setJammed(bool = true);
 
     void		render(SceneRenderer&, bool blank = false);
-    void		makeList(bool, SceneRenderer&);
+    void		renderObstacles(bool smoothing);
+    void		renderTextureObstacles(bool smoothing, float range);
 
   private:
     // no copying

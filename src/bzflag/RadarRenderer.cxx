@@ -34,6 +34,7 @@
 #include "TextureManager.h"
 #include "PhysicsDriver.h"
 #include "ObstacleMgr.h"
+#include "CollisionManager.h"
 
 // local implementation headers
 #include "LocalPlayer.h"
@@ -160,6 +161,9 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
   const bool smoothingOn = smooth && BZDBCache::smooth;
 
+  const bool textureRadar = BZDB.isTrue("textureRadar") &&
+                            !BZDBCache::enhancedRadar && BZDBCache::zbuffer;
+
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
   float opacity = renderer.getPanelOpacity();
@@ -208,8 +212,15 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   const double yCenter = double(y) + 0.5 * double(h);
   const double xUnit = 2.0 * range / double(w);
   const double yUnit = 2.0 * range / double(h);
-  glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
-		-yCenter * yUnit, (ySize - yCenter) * yUnit, -1.0, 1.0);
+  if (textureRadar) {
+    const double maxHeight = (double) COLLISIONMGR.getMaxWorldHeight();
+    glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
+            -yCenter * yUnit, (ySize - yCenter) * yUnit,
+            -maxHeight, +maxHeight);
+  } else {
+    glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
+	    -yCenter * yUnit, (ySize - yCenter) * yUnit, -1.0, +1.0);
+  }
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -317,7 +328,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glTranslatef(-pos[0], -pos[1], 0.0f);
 
     // Redraw buildings
-    makeList(smoothingOn, renderer);
+    if (textureRadar) {
+      renderTextureObstacles(smoothingOn, range);
+    } else {
+      renderObstacles(smoothingOn);
+    }
 
     // antialiasing on for lines and points unless we're multisampling,
     // in which case it's automatic and smoothing makes them look worse.
@@ -502,7 +517,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glPopMatrix();
 }
 
-float			RadarRenderer::colorScale(const float z, const float h)
+
+float RadarRenderer::colorScale(const float z, const float h)
 {
   float scaleColor;
   if (BZDBCache::enhancedRadar == true) {
@@ -528,7 +544,8 @@ float			RadarRenderer::colorScale(const float z, const float h)
   return scaleColor;
 }
 
-float			RadarRenderer::transScale(const float z, const float h)
+
+float RadarRenderer::transScale(const float z, const float h)
 {
   float scaleColor;
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
@@ -548,7 +565,101 @@ float			RadarRenderer::transScale(const float z, const float h)
   return scaleColor;
 }
 
-void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
+
+void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
+{
+  // FIXME - This is hack code at the moment, but even when
+  //         rendering the full world, it draws the aztec map
+  //         3X faster (the culling algo is actually slows us
+  //         down in that case)
+  //       - need a better default gradient texture
+  //         (better colors, and tied in to show max jump height?)
+  //       - build a procedural texture if default is missing
+  //       - use a GL_TEXTURE_1D
+  //       - setup the octree to return Z sorted elements
+  //       - add a renderClass() member to SceneNode (also for coloring)
+  //       - also add a renderShadow() member (they don't need sorting,
+  //         and if you don't have double-buffering, you shouldn't be
+  //         using shadows)
+
+  // draw the walls normally
+  if (smoothingOn) {
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  }
+
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
+  int count = walls.size();
+  glColor3f(0.25f, 0.5f, 0.5f);
+  glBegin(GL_LINES);
+  int i;
+  for (i = 0; i < count; i++) {
+    const WallObstacle& wall = *((const WallObstacle*) walls[i]);
+    const float w = wall.getBreadth();
+    const float c = w * cosf(wall.getRotation());
+    const float s = w * sinf(wall.getRotation());
+    const float* pos = wall.getPosition();
+    glVertex2f(pos[0] - s, pos[1] + c);
+    glVertex2f(pos[0] + s, pos[1] - c);
+  }
+  glEnd();
+
+  if (smoothingOn) {
+    glDisable(GL_BLEND);
+    glDisable(GL_LINE_SMOOTH);
+    glEnable(GL_POLYGON_SMOOTH);
+  }
+
+  // get the texture
+  int gradientTexId = -1;
+  TextureManager &tm = TextureManager::instance();
+  gradientTexId = tm.getTextureID("radar", false);
+  
+  // GL state
+  OpenGLGStateBuilder gb;
+  gb.setTexture(gradientTexId);
+  gb.setShading(GL_FLAT);
+  gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  OpenGLGState gs = gb.getState();
+  gs.setState();
+
+  // setup the texturing mapping
+  const float hf = 50.0f; // height factor, goes from 0.0 to 1.0 in texcoords
+  const float vfz = RENDERER.getViewFrustum().getEye()[2];
+  const GLfloat plane[4] =
+    { 0.0f, 0.0f, (1.0f / hf), (((hf * 0.5f) - vfz) / hf) };
+  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+  glTexGenfv(GL_S, GL_OBJECT_PLANE, plane);
+
+  // setup texture generation
+  glEnable(GL_TEXTURE_GEN_S);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+
+  // 
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+  ViewFrustum radarClipper;
+  // it's also interesting to just use the viewing frustum
+  radarClipper.setOrthoPlanes(RENDERER.getViewFrustum(), range, range);
+  RENDERER.getSceneDatabase()->renderRadarNodes(radarClipper);
+
+  // restore texture generation
+  glDisable(GL_TEXTURE_GEN_S);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+  // restore smoothing
+  if (smoothingOn) {
+    glDisable(GL_POLYGON_SMOOTH);
+  }
+  
+  OpenGLGState::resetState();
+  
+  return;  
+}
+  
+  
+void RadarRenderer::renderObstacles(bool smoothingOn)
 {
   // antialias if smoothing is on.
   if (smoothingOn) {
@@ -558,7 +669,6 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   }
 
   // draw walls.  walls are flat so a line will do.
-
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   int count = walls.size();
   glColor3f(0.25f, 0.5f, 0.5f);

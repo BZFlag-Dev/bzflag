@@ -220,6 +220,40 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 }
 
 
+void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
+{
+  // see if we need an octree, or if it needs to be rebuilt
+  setupCullList();
+
+  // cull if we're supposed to
+  if (octree) {
+    const Frustum* f = (const Frustum *) &vf;
+    culledCount = octree->getFrustumList (culledList, staticCount, f, false);
+  }
+  
+  // if the node has a plane, see that it isn't downwards
+  for (int i = 0; i < culledCount; i++) {
+    SceneNode* snode = culledList[i];
+    const float* plane = snode->getPlane();
+    if (plane != NULL) {
+      if (plane[2] > 0.0f) {
+        RenderNode* rnode = snode->getRenderNode(0);
+        if (rnode != NULL) {
+          rnode->renderShadow();
+        }
+      }
+    } else {
+      RenderNode* rnode = snode->getRenderNode(0);
+      if (rnode != NULL) {
+        rnode->renderShadow();
+      }
+    }
+    snode->octreeState = SceneNode::OctreeCulled;
+  }
+  return;
+}
+
+
 void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
 {
   int i;
@@ -231,8 +265,8 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
 
   // cull if we're supposed to
   if (octree) {
-    culledCount = octree->getFrustumList (
-		    culledList, staticCount, (const Frustum *) &frustum);
+    const Frustum* f = (const Frustum *) &frustum;
+    culledCount = octree->getFrustumList (culledList, staticCount, f, true);
   }
 
   const Frustum* frustumPtr = (const Frustum *) &frustum;

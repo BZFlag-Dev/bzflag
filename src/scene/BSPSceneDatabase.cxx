@@ -28,6 +28,12 @@
 // BSPSceneDatabase::Node
 //
 
+void BSPSceneDatabase::renderRadarNodes(const ViewFrustum&)
+{
+}
+
+    
+
 BSPSceneDatabase::Node::Node(bool _dynamic, SceneNode* _node):
 				dynamic(_dynamic),
 				count(0),

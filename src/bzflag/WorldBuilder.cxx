@@ -182,8 +182,11 @@ void* WorldBuilder::unpack(void* buf)
     OBSTACLEMGR.replaceBasesWithBoxes();
   }
 
-  world->loadCollisionManager();
   world->makeLinkMaterial();
+  
+  // NOTE: relying on checkCollisionManager() to do the first loading
+  //       of ColiisionManager, because the BZDB variables come in later,
+  //       and would cause a double loading if we did it now.
 
   return buf;
 }

@@ -49,6 +49,10 @@ class Frustum {
     void		flipVertical();
     void		flipHorizontal();
 
+    // used for radar culling
+    void		setOrthoPlanes(const Frustum& view,
+                                       float width, float breadth);
+
   protected:
     void		makePlane(const float* v1, const float* v2, int);
 
