@@ -555,7 +555,6 @@ void SDLWindow::warpMouse(int x, int y) {
 };
 
 void SDLWindow::getMouse(int& x, int& y) const {
-  std::cout << "getMouse (" << mx << "," << my << ")" << std::endl;
   x = mx;
   y = my;
 };
