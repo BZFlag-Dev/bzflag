@@ -14,6 +14,7 @@
 #include "ComposeDefaultKey.h"
 
 /* common implementation headers */
+#include "win32.h"
 #include "RemotePlayer.h"
 #include "KeyManager.h"
 
