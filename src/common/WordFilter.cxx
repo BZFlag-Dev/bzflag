@@ -65,9 +65,9 @@ bool WordFilter::aggressiveFilter(char *input) const
   static regmatch_t match[1];
   char errorBuffer[512];
   
-  /* implicit limit of only match up to 128 words per input */
+  /* implicit limit of only match up to 256 words per input */
   /* !!! make dynamic */
-  int matchPair[128 * 2];
+  int matchPair[256 * 2];
   int matchCount = 0;
   
   int regCode;
@@ -171,7 +171,6 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
     
   }
   
-  // ??? need to test performance of REG_NOSUB until we get a match
   if ( regcomp(compiledReg, word.c_str(), REG_EXTENDED | REG_ICASE) != 0 ) {
     std::cerr << "Warning: unable to compile regular expression for [" << word << "]" << std::endl;
     return (regex_t *)NULL;
@@ -543,10 +542,13 @@ void WordFilter::loadFromFile(const std::string &fileName)
 #if 0
     std::cout << "[[[" <<	 filterWord << "]]]" << std::endl;
 #endif
+
+    std::cout << ".";
     
     this->addToFilter(filterWord, "", true);
     
   } // end iteration over input file
+  std::cout << std::endl;
   
 } // end loadFromFile
 
@@ -638,9 +640,21 @@ int main (int argc, char *argv[])
   std::cout << message << std::endl;
   
   char message2[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
+  char message4[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
+  char message5[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
+  char message6[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
+  char message7[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   std::cout << message2 << std::endl;
   filter.filter(message2);
   std::cout << message2 << std::endl;
+  filter.filter(message4);
+  std::cout << message4 << std::endl;
+  filter.filter(message5);
+  std::cout << message5 << std::endl;
+  filter.filter(message6);
+  std::cout << message6 << std::endl;
+  filter.filter(message7);
+  std::cout << message7 << std::endl;
   
   //  filter.outputWords();
   return 0;
