@@ -341,15 +341,15 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       Obstacle* obs = list[i]->copyWithTransform(xform);
       if (obs->isValid()) {
         obs->setSource(Obstacle::GroupDefSource);
-        world->addObstacle(obs);
         obsMod.execute(obs);
-        // generate container meshes
+        world->addObstacle(obs);
+        // generate contained meshes
         MeshObstacle* mesh = getContainedMesh(type, obs);
         if (mesh != NULL) {
           mesh->setSource(Obstacle::GroupDefSource |
                           Obstacle::ContainerSource);
-          world->addObstacle(mesh);
           obsMod.execute(mesh);
+          world->addObstacle(mesh);
         }
       }
     }
@@ -362,7 +362,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
     if (groupDef != NULL) {
       ObstacleModifier newObsMod(obsMod, *group);
       MeshTransform tmpXform = xform;
-      tmpXform.append(group->getTransform());
+      tmpXform.prepend(group->getTransform());
       groupDef->makeGroups(tmpXform, newObsMod, world);
     }
   }

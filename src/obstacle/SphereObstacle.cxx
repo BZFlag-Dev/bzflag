@@ -110,6 +110,13 @@ MeshObstacle* SphereObstacle::getMesh()
 }
 
 
+void SphereObstacle::disownMesh()
+{
+  mesh = NULL;
+  return;
+}
+
+
 void SphereObstacle::finalize()
 {
   int i, j, q;

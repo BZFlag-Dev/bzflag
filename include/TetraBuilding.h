@@ -38,6 +38,7 @@ class TetraBuilding : public Obstacle {
     Obstacle* copyWithTransform(const MeshTransform&) const;
     
     MeshObstacle* getMesh();
+    void disownMesh();
 
     void		finalize();
 

@@ -118,6 +118,13 @@ MeshObstacle* ArcObstacle::getMesh()
 }
 
 
+void ArcObstacle::disownMesh()
+{
+  mesh = NULL;
+  return;
+}
+
+
 void ArcObstacle::finalize()
 {
   bool isPie = false;    // has no inside edge

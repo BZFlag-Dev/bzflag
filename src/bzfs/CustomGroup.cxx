@@ -56,6 +56,7 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     float tint[4];
     if (!parseColorStream(input, tint)) {
       std::cout << "bad " << cmd << " specification" << std::endl;
+      return false;
     } else {
       group->setTint(tint);
     }

@@ -27,16 +27,8 @@
 
 // obstacle headers
 #include "Obstacle.h"
-#include "WallObstacle.h"
-#include "BoxBuilding.h"
-#include "PyramidBuilding.h"
 #include "BaseBuilding.h"
-#include "Teleporter.h"
 #include "MeshObstacle.h"
-#include "ArcObstacle.h"
-#include "ConeObstacle.h"
-#include "SphereObstacle.h"
-#include "TetraBuilding.h"
 
 
 ObstacleModifier::ObstacleModifier()
@@ -87,7 +79,12 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
       tint[2] = obsMod.tint[2];
       tint[3] = obsMod.tint[3];
     }
-  } 
+  } else {
+    tint[0] = 1.0f;
+    tint[1] = 1.0f;
+    tint[2] = 1.0f;
+    tint[3] = 1.0f;
+  }
 
   if (grpinst.modifyPhysicsDriver || obsMod.modifyPhysicsDriver) {
     modifyPhysicsDriver = true;
@@ -145,7 +142,10 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
         MeshFace* face = (MeshFace*) mesh->getFace(i);
-        face->phydrv = phydrv;
+        // only modify faces that already have a physics driver
+        if (face->phydrv >= 0) {
+          face->phydrv = phydrv;
+        }
       }
     }
   }

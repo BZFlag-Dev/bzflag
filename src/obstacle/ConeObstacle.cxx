@@ -111,6 +111,13 @@ MeshObstacle* ConeObstacle::getMesh()
 }
 
 
+void ConeObstacle::disownMesh()
+{
+  mesh = NULL;
+  return;
+}
+
+
 void ConeObstacle::finalize()
 {
   bool isCircle = false; // angle of 360 degrees

@@ -48,6 +48,7 @@ class ConeObstacle : public Obstacle {
     Obstacle* copyWithTransform(const MeshTransform&) const;
 
     MeshObstacle* getMesh();
+    void disownMesh();
 
     const char* getType() const;
     static const char* getClassName(); // const

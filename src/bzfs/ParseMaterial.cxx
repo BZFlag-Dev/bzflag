@@ -36,10 +36,9 @@ bool parseMaterials(const char* cmd, std::istream& input,
       error = true;
     }
     const BzMaterial* matref = MATERIALMGR.findMaterial(name);
-    if (matref == NULL) {
-      if (name != "-1") {
-        std::cout << "couldn't find reference material: " << name << std::endl;
-      }
+    if ((matref == NULL) && (name != "-1")) {
+      std::cout << "couldn't find reference material: " << name << std::endl;
+      error = true;
     } else {
       for (i = 0; i < materialCount; i++) {
 	materials[i] = *matref;
@@ -58,13 +57,13 @@ bool parseMaterials(const char* cmd, std::istream& input,
       error = true;
     }
     int dynamicColor = DYNCOLORMGR.findColor(dyncol);
-    if (dynamicColor == -1) {
-      if (dyncol != "-1") {
-        std::cout << "couldn't find dynamicColor: " << dyncol << std::endl;
+    if ((dynamicColor == -1) && (dyncol != "-1")) {
+      std::cout << "couldn't find dynamicColor: " << dyncol << std::endl;
+      error = true;
+    } else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setDynamicColor(dynamicColor);
       }
-    }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setDynamicColor(dynamicColor);
     }
   }
   else if (strcasecmp(cmd, "ambient") == 0) {
@@ -127,9 +126,10 @@ bool parseMaterials(const char* cmd, std::istream& input,
     if (!(input >> name)) {
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
-    }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setTexture(name);
+    } else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setTexture(name);
+      }
     }
   }
   else if (strcasecmp(cmd, "notextures") == 0) {
@@ -154,10 +154,8 @@ bool parseMaterials(const char* cmd, std::istream& input,
       error = true;
     }
     int textureMatrix = TEXMATRIXMGR.findMatrix(texmat);
-    if (textureMatrix == -1) {
-      if (texmat != "-1") {
-        std::cout << "couldn't find textureMatrix: " << texmat << std::endl;
-      }
+    if ((textureMatrix == -1) && (texmat != "-1")) {
+      std::cout << "couldn't find textureMatrix: " << texmat << std::endl;
     }
     for (i = 0; i < materialCount; i++) {
       materials[i].setTextureMatrix(textureMatrix);

@@ -228,6 +228,13 @@ MeshObstacle* TetraBuilding::getMesh()
 }
 
 
+void TetraBuilding::disownMesh()
+{
+  mesh = NULL;
+  return;
+}
+
+
 void TetraBuilding::getExtents(float*, float*) const
 {
   assert(false);
