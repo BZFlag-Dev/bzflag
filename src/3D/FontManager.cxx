@@ -24,11 +24,6 @@
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"
 
-// depth is how dark it should get (1.0 is to black)
-#define PULSE_DEPTH	(0.4f)
-// rate is how fast it should pulsate (smaller is faster)
-#define PULSE_RATE	(1.0f)
-
 // initialize the singleton
 template <>
 FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
@@ -494,9 +489,14 @@ void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) c
 {
   float pulseTime = TimeKeeper::getCurrent().getSeconds();
 
-  float pulseFactor = fmodf(pulseTime, PULSE_RATE) - PULSE_RATE/2.0f;
-  pulseFactor = fabsf(pulseFactor) / (PULSE_RATE/2.0f);
-  pulseFactor = PULSE_DEPTH * pulseFactor + (1.0f - PULSE_DEPTH);
+  // depth is how dark it should get (1.0 is to black)
+  float pulseDepth = BZDB.eval("pulseDepth");
+  // rate is how fast it should pulsate (smaller is faster)
+  float pulseRate = BZDB.eval("pulseRate");
+
+  float pulseFactor = fmodf(pulseTime, pulseRate) - pulseRate /2.0f;
+  pulseFactor = fabsf(pulseFactor) / (pulseRate/2.0f);
+  pulseFactor = pulseDepth * pulseFactor + (1.0f - pulseDepth);
 
   pulseColor[0] = color[0] * pulseFactor;
   pulseColor[1] = color[1] * pulseFactor;

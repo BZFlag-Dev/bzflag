@@ -209,8 +209,24 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Underline"));
   option->update();
   list.push_back(option);
+  // Pulsate Rate
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Pulsation Rate:");
+  option->setCallback(callback, (void*)"r");
+  option->createSlider(9);
+  option->update();
+  list.push_back(option);
+  // Pulsate Depth
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Pulsation Depth:");
+  option->setCallback(callback, (void*)"d");
+  option->createSlider(9);
+  option->update();
+  list.push_back(option);
 
-  initNavigation(list, 1,list.size()-1);
+  initNavigation(list, 1, list.size()-1);
 }
 
 GUIOptionsMenu::~GUIOptionsMenu()
@@ -282,6 +298,8 @@ void			GUIOptionsMenu::resize(int width, int height)
     }
 
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("killerhighlight")));
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseRate") * 5) - 1);
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseDepth") * 10) - 1);
   }
 }
 
@@ -377,6 +395,18 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 	GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();
 	if (menu)
 	  menu->resize(menu->getWidth(), menu->getHeight());
+	break;
+      }
+
+    case 'r':
+      {
+	BZDB.set("pulseRate", string_util::format("%f", (float)(list->getIndex() + 1) / 5.0f));
+	break;
+      }
+
+    case 'd':
+      {
+	BZDB.set("pulseDepth", string_util::format("%f", (float)(list->getIndex() + 1) / 10.0f));
 	break;
       }
   }

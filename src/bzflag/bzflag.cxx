@@ -141,6 +141,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "tetraWallTexRepeat",	"3.0",                  true,	StateDatabase::ReadWrite,	NULL },
   { "tetraWallHighResTexRepeat","8.0",                  true,	StateDatabase::ReadWrite,	NULL },
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "pulseDepth",		"0.4",			true,	StateDatabase::ReadWrite,	NULL },
+  { "pulseRate",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
