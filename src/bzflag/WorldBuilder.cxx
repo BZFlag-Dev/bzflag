@@ -306,13 +306,23 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[7]);
 	buf = nboUnpackFloat(buf, data[8]);
 	buf = nboUnpackFloat(buf, data[9]);
-	BaseBuilding* base = new BaseBuilding(data, data[3], data +4, team);
-        if (base->isValid()) {
-	  world->basesR.push_back(base);
-	  setBase(TeamColor(team), data, data[3], data[4], data[5], data[6]);
-        } else {
-          delete base;
-        }
+	if (gameStyle & TeamFlagGameStyle) {
+	  BaseBuilding* base = new BaseBuilding(data, data[3], data +4, team);
+	  if (base->isValid()) {
+	    world->basesR.push_back(base);
+	    setBase(TeamColor(team), data, data[3], data[4], data[5], data[6]);
+	  } else {
+	    delete base;
+	  }
+	} else {
+	  BoxBuilding* box =
+	    new BoxBuilding(data, data[3], data[4], data[5], data[6]);
+	  if (box->isValid()) {
+	    world->boxes.push_back(box);
+	  } else {
+	    delete box;
+	  }
+	}
 	break;
       }
       case WorldCodeWeapon: {

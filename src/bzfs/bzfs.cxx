@@ -1172,11 +1172,7 @@ static bool defineWorld()
   maxWorldHeight = world->getMaxWorldHeight();
 
   // package up world
-  if (clOptions->gameStyle & TeamFlagGameStyle) {
-    world->packDatabase(&bases);
-  } else {
-    world->packDatabase(NULL);
-  }
+  world->packDatabase(&bases);
 
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + WorldCodeHeaderSize +
