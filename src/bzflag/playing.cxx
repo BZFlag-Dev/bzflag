@@ -100,7 +100,6 @@ static boolean		restartOnBase = False;
 static boolean		firstLife = False;
 static boolean		showFPS = False;
 static boolean		showDrawTime = False;
-static boolean		showFlagHelp = False;
 static boolean		pausedByUnmap = False;
 static boolean		unmapped = False;
 static int		preUnmapFormat = -1;
@@ -716,15 +715,15 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
   else if (keymap.isMappedTo(KeyMap::Score, key)) {
     // toggle score board
     if (pressed) {
-      hud->setScore(!hud->getScore());
+      sceneRenderer->setScore(!sceneRenderer->getScore());
     }
   }
 
   else if (keymap.isMappedTo(KeyMap::FlagHelp, key)) {
     // toggle flag help
     if (pressed) {
-      showFlagHelp = !showFlagHelp;
-      if (!showFlagHelp) hud->setFlagHelp(NoFlag, 0.0);
+      sceneRenderer->setShowFlagHelp(!sceneRenderer->getShowFlagHelp());
+      if (!sceneRenderer->getShowFlagHelp()) hud->setFlagHelp(NoFlag, 0.0);
       else hud->setFlagHelp(myTank->getFlag(), FlagHelpDuration);
     }
   }
@@ -1048,7 +1047,7 @@ static void		updateFlag(FlagId id)
     hud->setAlert(2, Flag::getName(id), 3.0f, Flag::getType(id) == FlagSticky);
   }
 
-  if (showFlagHelp)
+  if (sceneRenderer->getShowFlagHelp())
     hud->setFlagHelp(id, FlagHelpDuration);
 
   if (!radar && !myTank || !World::getWorld()) return;
@@ -3994,7 +3993,7 @@ void			startPlaying(BzfDisplay* _display,
     setGrabMouse(True);
 #if defined(__linux__) && !defined(DEBUG)
   // linux usually has a virtual root window so grab mouse always
-  // setGrabMouse(True);
+  setGrabMouse(True);
 #endif
 
   // show window and clear it immediately

@@ -160,7 +160,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				fps(-1.0),
 				drawTime(-1.0),
 				restartLabel(restartLabelFormat),
-				showScore(False),
 				showCompose(False)
 {
   int i;
@@ -451,11 +450,6 @@ void			HUDRenderer::setAlert(int index, const char* string,
   }
 }
 
-boolean			HUDRenderer::getScore() const
-{
-  return showScore;
-}
-
 boolean			HUDRenderer::getComposing() const
 {
   return showCompose;
@@ -464,11 +458,6 @@ boolean			HUDRenderer::getComposing() const
 BzfString		HUDRenderer::getComposeString() const
 {
   return composeTypeIn->getString();
-}
-
-void			HUDRenderer::setScore(boolean _showScore)
-{
-  showScore = _showScore;
 }
 
 void			HUDRenderer::setComposing(const char* prompt)
@@ -903,7 +892,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // show player scoreboard
   float x, y;
-  if (showScore) renderScoreboard(renderer);
+  if (renderer.getScore()) renderScoreboard(renderer);
 
   // draw flag help
   if (flagHelpClock.isOn()) {

@@ -143,6 +143,10 @@ class SceneRenderer {
     void		notifyStyleChange();
     void		addRenderNode(RenderNode* node, const OpenGLGState*);
     void		addShadowNode(RenderNode* node);
+    boolean		getShowFlagHelp() const;
+    void		setShowFlagHelp(boolean showFlagHelp);
+    boolean		getScore() const;
+    void		setScore(boolean showScore);
 
   private:
     // disallowed -- don't want to deal with potential state problems
@@ -203,6 +207,8 @@ class SceneRenderer {
     boolean		sameFrame;
     FlareLightList	flareLightList;
     OpenGLGState	flareGState;
+	  boolean		showFlagHelp;
+    boolean		showScore;
 
     static SceneRenderer* instance;
 };

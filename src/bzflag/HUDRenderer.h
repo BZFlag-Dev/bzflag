@@ -83,11 +83,9 @@ class HUDRenderer {
 
     void		setDim(boolean);
 
-    boolean		getScore() const;
     boolean		getComposing() const;
     BzfString		getComposeString() const;
 
-    void		setScore(boolean showScore);
     void		setComposing(const char* prompt);
 
     void		render(SceneRenderer&);
@@ -190,7 +188,6 @@ class HUDRenderer {
     int			flagHelpIndex;
     int			flagHelpLines;
 
-    boolean		showScore;
     boolean		showOptions;
     boolean		showCompose;
 

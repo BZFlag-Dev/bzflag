@@ -682,6 +682,8 @@ void			dumpResources(BzfDisplay* display,
     }
   }
   db.addValue("startcode", ServerStartMenu::getSettings());
+  db.addValue("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
+  db.addValue("showscore", renderer.getScore() ? "yes" : "no");
 
   // don't save these configurations
   db.removeValue("window");
@@ -859,21 +861,26 @@ int			main(int argc, char** argv)
   parse(argc, argv, db);
 
   // get email address if not anonymous
-  BzfString email = anonymousName;
-  if (!anonymous) {
-    const char* hostname = Address::getHostName();
+  BzfString email;
+  if (db.hasValue("email"))
+    email = db.getValue("email");
+  else {
+    BzfString email = anonymousName;
+    if (!anonymous) {
+      const char* hostname = Address::getHostName();
 #if !defined(_WIN32)
-    struct passwd* pwent = getpwuid(getuid());
-    const char* username = pwent ? pwent->pw_name : NULL;
+      struct passwd* pwent = getpwuid(getuid());
+      const char* username = pwent ? pwent->pw_name : NULL;
 #else /* !defined(_WIN32) */
-    char username[256];
-    DWORD usernameLen = sizeof(username);
-    GetUserName(username, &usernameLen);
+      char username[256];
+      DWORD usernameLen = sizeof(username);
+      GetUserName(username, &usernameLen);
 #endif /* !defined(_WIN32) */
-    if (username && hostname) {
-      email = username;
-      email += "@";
-      email += hostname;
+      if (username && hostname) {
+        email = username;
+        email += "@";
+        email += hostname;
+      }
     }
   }
   email.truncate(sizeof(startupInfo.email) - 1);
@@ -1069,6 +1076,10 @@ int			main(int argc, char** argv)
 
     if (db.hasValue("startcode"))
       ServerStartMenu::setSettings(db.getValue("startcode"));
+    if (db.hasValue("showflaghelp"))
+      renderer.setShowFlagHelp(db.getValue("showflaghelp") == "yes");
+    if (db.hasValue("showscore"))
+      renderer.setScore(db.getValue("showscore") == "yes");
   }
 
   // grab the mouse only if allowed
