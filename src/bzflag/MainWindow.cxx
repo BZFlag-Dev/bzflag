@@ -78,7 +78,7 @@ void			MainWindow::showWindow(boolean on)
 void			MainWindow::warpMouse()
 {
   // move mouse to center of view window (zero motion box)
-  int y = height >> 1;
+  int y = viewHeight >> 1;
   if (quadrant != FullWindow) y += ((trueHeight+1) >> 1) - yOrigin;
   window->warpMouse((width >> 1) + xOrigin, y);
 }
@@ -87,7 +87,7 @@ void			MainWindow::getMousePosition(int& mx, int& my) const
 {
   window->getMouse(mx, my);
   mx -= (width >> 1) + xOrigin;
-  my -= (height >> 1);
+  my -= (viewHeight >> 1);
   if (quadrant != FullWindow) my -= ((trueHeight+1) >> 1) - yOrigin;
 }
 
