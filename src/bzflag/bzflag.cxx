@@ -617,10 +617,9 @@ void			dumpResources(BzfDisplay* display,
 				SceneRenderer& renderer)
 {
   // collect new configuration
-  db.addValue("udpnet", startupInfo.useUDPconnection ? "yes" : "no");
   db.addValue("callsign", startupInfo.callsign);
   BZDB->set("team", Team::getName(startupInfo.team));
-  db.addValue("server", startupInfo.serverName);
+  BZDB->set("server", startupInfo.serverName);
   if (startupInfo.serverPort != ServerPort) {
     char buf[20];
     sprintf(buf, "%d", startupInfo.serverPort);
@@ -833,8 +832,8 @@ int			main(int argc, char** argv)
 	  break;
 	}
     }
-    if (db.hasValue("server")) {
-      strncpy(startupInfo.serverName, db.getValue("server").c_str(),
+    if (BZDB->isSet("server")) {
+      strncpy(startupInfo.serverName, BZDB->get("server").c_str(),
 					sizeof(startupInfo.serverName) - 1);
       startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
     }
@@ -912,10 +911,8 @@ int			main(int argc, char** argv)
     BZDB->unset("_multisample");
   }
 
-  // use UDP?
+  // use UDP? yes
   startupInfo.useUDPconnection=true;
-  if (db.hasValue("udpnet"))
-    startupInfo.useUDPconnection=(db.getValue("udpnet") == "yes");
 
   // parse arguments
   parse(argc, argv, db);
