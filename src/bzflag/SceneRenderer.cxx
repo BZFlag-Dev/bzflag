@@ -30,6 +30,7 @@
 
 const GLint		SceneRenderer::SunLight = 0;	// also for the moon
 
+#ifdef GL_ABGR_EXT
 static int		strrncmp(const char* s1, const char* s2, int num)
 {
   int len1 = strlen(s1) - 1;
@@ -40,6 +41,7 @@ static int		strrncmp(const char* s1, const char* s2, int num)
   }
   return 0;
 }
+#endif
 
 //
 // FlareLight
