@@ -44,6 +44,11 @@ void ClientAuthentication::init()
   // Initializing kerberos library
   if ((retval = krb5_init_context(&context)))
     err("bzflag:", retval, "while initializing krb5");
+  // Getting a default cache specifically for bzflag
+  if (context && (retval
+		  = krb5_cc_set_default_name(context,
+					     "FILE:/tmp/krb5_cc_bzflag")))
+    err("bzflag", retval, "setting default cache");
   // Getting credential cache 
   if (context && (retval = krb5_cc_default(context, &cc)))
     err("bzflag:", retval, "getting credentials cache");
