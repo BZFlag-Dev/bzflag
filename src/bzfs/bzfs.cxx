@@ -4638,12 +4638,12 @@ int main(int argc, char **argv)
 	static TimeKeeper lastAnnounce = TimeKeeper::getNullTime();
 
 	/* make a heartbeat announcement every 15 seconds */
-	if (((voteTime - (int)(TimeKeeper::getCurrent() - votingarbiter->getStartTime()) - 1) % 15 == 0) &&
-	    ((int)(TimeKeeper::getCurrent() - lastAnnounce) != 0) &&
+	if (((voteTime - (int)(tm - votingarbiter->getStartTime()) - 1) % 15 == 0) &&
+	    ((int)(tm - lastAnnounce) != 0) &&
 	    (votingarbiter->timeRemaining() > 0)) {
 	  sprintf(message, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), target.c_str());
 	  sendMessage(ServerPlayer, AllPlayers, message);
-	  lastAnnounce = TimeKeeper::getCurrent();
+	  lastAnnounce = tm;
 	}
 
 	if (votingarbiter->isPollClosed()) {
@@ -4803,8 +4803,8 @@ int main(int argc, char **argv)
     // periodic advertising broadcast
     static const std::vector<std::string>* adLines = clOptions->textChunker.getTextChunk("admsg");
     if ((clOptions->advertisemsg != "") || adLines != NULL) {
-      static TimeKeeper lastbroadcast = TimeKeeper::getCurrent();
-      if (TimeKeeper::getCurrent() - lastbroadcast > 900) {
+      static TimeKeeper lastbroadcast = tm;
+      if (tm - lastbroadcast > 900) {
 	// every 15 minutes
 	char message[MessageLen];
 	if (clOptions->advertisemsg != "") {
@@ -4828,7 +4828,7 @@ int main(int argc, char **argv)
 	    sendMessage(ServerPlayer, AllPlayers, (*adLines)[j].c_str());
 	  }
 	}
-	lastbroadcast = TimeKeeper::getCurrent();
+	lastbroadcast = tm;
       }
     }
 
