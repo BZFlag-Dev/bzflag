@@ -30,6 +30,8 @@
 
 extern Address serverAddress;
 extern PingPacket getTeamCounts();
+extern uint16_t curMaxPlayers;
+extern int getTarget(const char *victimname);
 
 ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle)
 {
@@ -148,9 +150,39 @@ void ListServerLink::read()
   if (isConnected()) {
     char    buf[2048];
     int bytes = recv(linkSocket, buf, sizeof(buf)-1, 0);
-    buf[bytes]=0;
-    DEBUG4("ListServerStart\n%sListServerEnd\n", buf);
+    // TODO don't close unless we've got it all
     closeLink();
+    buf[bytes]=0;
+    char* base = buf;
+    static char *tokGoodIdentifier = "TOKGOOD: ";
+    // walks entire reply including HTTP headers
+    while (*base) {
+      // find next newline
+      char* scan = base;
+      while (*scan && *scan != '\r' && *scan != '\n') scan++;
+      // if no newline then no more complete replies
+      if (*scan != '\r' && *scan != '\n') break;
+      while (*scan && (*scan == '\r' || *scan == '\n')) *scan++ = '\0';
+      DEBUG4("Got line: \"%s\"\n", base);
+      // TODO don't do this if we don't want central logins
+      if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
+	DEBUG3("Got: %s %d\n", base, getTarget(base));
+        char *callsign, *group;
+        callsign = (char *)(base + strlen(tokGoodIdentifier));
+	group = callsign;
+        while (*group && !isspace(*group)) group++;
+        while (*group && isspace(*group)) *group++ = 0;
+	if (getTarget(callsign) < curMaxPlayers) {
+	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(getTarget(callsign));
+	  // TODO this will crash if there is no group database
+	  playerData->accessInfo.setPermissionRights();
+	  DEBUG3("Got: \"%s\" \"%s\" %d\n", callsign, group, getTarget(callsign));
+	}
+	//TODO see what groups we got back
+      }
+      // next reply
+      base = scan;
+    }
     if (nextMessageType != ListServerLink::NONE) {
       // There was a pending request arrived after we write:
       // we should redo all the stuff
@@ -262,8 +294,6 @@ void ListServerLink::addMe(PingPacket pingInfo,
     pathname.c_str(), publicizedAddress.c_str(),
     getServerVersion(), gameInfo,
     getAppVersion());
-// FIXME should be in a header someplace NOT an extern
-extern uint16_t curMaxPlayers;
   msg += "&checktokens=";
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
@@ -271,7 +301,7 @@ extern uint16_t curMaxPlayers;
       msg += TextUtils::format(playerData->player.getCallSign());
       msg += "=";
       msg += TextUtils::format(playerData->player.getToken());
-      msg += "%%0D%%0A";
+      msg += "%0D%0A";
     }
   }
   msg += TextUtils::format("&title=%s HTTP/1.1\r\n"
