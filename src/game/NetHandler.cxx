@@ -10,12 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* kill warning on MSVC: C4800: forcing value to true or false (performance warning)
-   refers to isUdpFdSet and isFdSet */
-#ifdef _MSC_VER
-#pragma warning(4 : 4800)
-#endif
-
 /* interface header */
 #include "NetHandler.h"
 
