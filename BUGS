@@ -5,6 +5,12 @@ must fix for 1.10.4 patch release
 
 - MQ changes color not texture, when using a color texture, blends both color and texture (JM).
 
+- the aggressive filter will occasionally encounter a false-positive match
+  due to apostrophe's -- need to take then into consideration.  need a
+  a better way to handle localized pre/suffix matching too as a handful
+  of international words match incorrectly when an english-common suffix
+  is applied. -- in addition, learner completely broke the suffix matching
+  with a recent commit so it's effectively not working properly now too.
 
 recent bugs
 ------------
@@ -29,12 +35,6 @@ recent bugs
 - with clients contemporary entering the server, bzfs can miss the last
   list server communication (requests are not queued), so the list server
   number are outdated until some other player enter/exit from the game
-
-- the aggressive filter will occasionally encounter a false-positive match
-  due to apostrophe's -- need to take then into consideration.  need a
-  a better way to handle localized pre/suffix matching too as a handful
-  of international words match incorrectly when an english-common suffix
-  is applied.
 
 - GL Bugs: Looks like the handling of gl contexts is severely messed up in
   bzflag, and there is no very easy cure for this. Someone obviously had
