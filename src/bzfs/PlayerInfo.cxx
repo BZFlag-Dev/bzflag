@@ -13,6 +13,9 @@
 /* interface header */
 #include "PlayerInfo.h"
 
+// system headers
+#include <errno.h>
+
 /* system implementation headers */
 #include <assert.h>
 
