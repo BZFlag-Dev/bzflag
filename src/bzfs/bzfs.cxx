@@ -1930,9 +1930,8 @@ void resetFlag(FlagInfo &flag)
         // it. there may be obstacles in the zone that cause the
         // NOT_IN_BUILDING test to fail a couple of times, but
         // hopefully the map maker is using zones wisely.
-      } else if (clOptions->flagsOnBuildings 
-                 && obj->isFlatTop()
-                 && !obj->isDriveThrough()
+      } else if (clOptions->flagsOnBuildings && obj
+                 && obj->isFlatTop() && !obj->isDriveThrough()
 		 && (obj->getPosition()[2]
 		     < (flagPos[2] + flagHeight - Epsilon))
 		 && ((obj->getPosition()[2] + obj->getSize()[2] - Epsilon)
