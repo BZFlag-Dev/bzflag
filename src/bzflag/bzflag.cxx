@@ -109,7 +109,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
-  { "displayRadarRange",	"1.0",			false,	StateDatabase::ReadWrite,	NULL }
+  { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL }
 };
 
 // default key bindings
