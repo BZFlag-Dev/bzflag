@@ -561,6 +561,8 @@ struct PlayerInfo {
     TimeKeeper lastupdate;
     TimeKeeper lastmsg;
 
+	// number of times they have tried to /password
+	int passwordAtempts;
 #ifdef NETWORK_STATS
     // message stats bloat
     TimeKeeper perSecondTime[2];
@@ -3901,6 +3903,8 @@ static void addPlayer(int playerIndex)
   player[playerIndex].ulinkup = false;
   player[playerIndex].toBeKicked = false;
   player[playerIndex].Admin = false;
+  player[playerIndex].passwordAtempts = 0;
+
 
   player[playerIndex].lastRecvPacketNo = 0;
   player[playerIndex].lastSendPacketNo = 0;
@@ -5009,13 +5013,19 @@ static void parseCommand(const char *message, int t)
 {
   int i;
   // /password command allows player to become operator
-  if (strncmp(message + 1,"password ",9) == 0) {
-    if (clOptions.password && strncmp(message + 10, clOptions.password, strlen(clOptions.password)) == 0) {
-      player[t].Admin = true;
-      sendMessage(t, player[t].id, player[t].team, "You are now an administrator!");
-    } else {
-      sendMessage(t, player[t].id, player[t].team, "Wrong Password!");
-    }
+  if (strncmp(message + 1,"password ",9) == 0){
+	if (player[t].passwordAtempts >=5){	// see how many times they have tried, you only get 5
+		sendMessage(t, player[t].id, player[t].team, "Too many atemps");
+	}else{
+	player[t].passwordAtempts++;
+	if (clOptions.password && strncmp(message + 10, clOptions.password, strlen(clOptions.password)) == 0){
+	  player[t].passwordAtempts = 0;
+	  player[t].Admin = true;
+	  sendMessage(t, player[t].id, player[t].team, "You are now an administrator!");
+	}else{
+	  sendMessage(t, player[t].id, player[t].team, "Wrong Password!");
+	}
+	}
   // /shutdownserver terminates the server
   } else if (player[t].Admin && strncmp(message + 1, "shutdownserver", 8) == 0) {
     done = true;
