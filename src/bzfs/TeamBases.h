@@ -24,7 +24,8 @@ typedef std::map<int, TeamBases> BasesList;
 class TeamBases
 {
 public:
-  TeamBases(TeamColor team = RedTeam, bool initDefault = false);
+  TeamBases();
+  TeamBases(TeamColor team, bool initDefault = false);
   void addBase( const float *position, const float *size, float rotation, const float *safetyZone );
   int size() const;
   TeamColor getTeam() const;

@@ -19,6 +19,11 @@
 #include "Pack.h"
 #include "BZDBCache.h"
 
+TeamBases::TeamBases()
+{
+    color = RedTeam;
+}
+
 TeamBases::TeamBases(TeamColor team, bool initDefault)
 {
     color = team;
