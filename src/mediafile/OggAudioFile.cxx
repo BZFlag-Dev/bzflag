@@ -65,7 +65,7 @@ size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
 	std::streampos pos1 = in->tellg();
 	in->read((char*)ptr, size * nmemb);
 	std::streampos pos2 = in->tellg();
-	size_t bytesRead = pos2 - pos1;
+	size_t bytesRead = streamoff(pos2) - streamoff(pos1);
 	if(in->eof() && bytesRead == 0)
 		return 0;
 	return bytesRead;
