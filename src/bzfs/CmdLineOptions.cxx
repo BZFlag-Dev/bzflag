@@ -122,7 +122,7 @@ const char *extraUsageString =
 "\t-banfile: specify a file to load and store the banlist in\n"
 "\t-c: capture-the-flag style game\n"
 "\t-conf: configuration file\n"
-"\t-cr [density]: capture-the-flag style game with random world\n\t\toptionly specify integer density (default 5)\n"
+"\t-cr [density]: capture-the-flag style game with random world\n\t\toptionally specify integer density (default 5)\n"
 "\t-d: increase debugging level\n"
 "\t+f: always have flag <id> available\n"
 "\t-f: never randomly generate flag <id>\n"
