@@ -5,8 +5,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * configure should test and enable the fudged acosf atanf asinf
 
-* the players have spoken, and hold-the-flag is wanted
-
 * add language translations for the new flags
 
 * either disable server checks when -handicap mode is enabled, or
@@ -25,6 +23,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 
 THESE ARE LOWER PRIORITY
+
+* the players have spoken, and hold-the-flag is wanted
 
 * server should precompute it's MAX_Z and send it to the client.
   Client should use that Z and not let the tank go over it.
