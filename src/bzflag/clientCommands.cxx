@@ -383,10 +383,11 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
     unsigned char* b = new unsigned char[h * w * 3 + h];  //screen of pixels + column for filter type required by PNG
 
     //Prepare gamma table
+    const bool gammaAdjust = BZDB.isSet("gamma");
     unsigned char gammaTable[256];
-    if (BZDB.isSet("gamma")) {
+    if (gammaAdjust) {
       float gamma = (float) atof(BZDB.get("gamma").c_str());
-      for(int i = 0; i < 256; i++) {
+      for (int i = 0; i < 256; i++) {
 	float lum = ((float) i) / 256.0f;
 	float lumadj = pow(lum, 1.0f / gamma);
 	gammaTable[i] = (unsigned char) (lumadj * 256);
@@ -439,19 +440,24 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
 
     // IDAT chunk
     for (i = h - 1; i >= 0; i--) {
-      b[(h - (i + 1)) * (w * 3 + 1)] = 0;  //filter type byte at the beginning of each scanline (0 = no filter)
-      glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + (h - (i + 1)) * (w * 3 + 1) + 1);
-      // apply gamma correction if necessary
-      if (BZDB.isSet("gamma")) {
-	unsigned char *ptr = b + (h - (i + 1)) * (w * 3 + 1) + 1;
-	for(int i = 0; i < w * 3; i++) {
+      const unsigned long line = (h - (i + 1)) * (w * 3 + 1); //beginning of this line
+      b[line] = 0;  //filter type byte at the beginning of each scanline (0 = no filter, 1 = sub filter)
+      glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + line + 1); //capture line
+      // do image modification
+      unsigned char *ptr = b + line + w * 3;
+      for (int i = w * 3; i > 0; i--) {
+	// apply gamma correction if necessary
+        if (gammaAdjust)
 	  *ptr = gammaTable[*ptr];
-	  ptr++;
-	}
+	// apply sub filtering (er, or not - doesn't work right now)
+	/* if (i > 3)
+	  *ptr -= *(ptr - 3);
+	*/
+	ptr--;
       }
     }
-    unsigned char* bz = new unsigned char[h * w * 3 + h + 15];  //just like b, but compressed; might get bigger, so give it room
     unsigned long zlength = h * w * 3 + h + 15;     //length of bz[], will be changed by zlib to the length of the compressed string contained therein
+    unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
     //compress b into bz with some compression
     compress2(bz, &zlength, b, h * w * 3 + h, 5);
     temp = htonl(zlength);                          //(length) IDAT length after compression
@@ -488,16 +494,11 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
     crc = htonl(crc32(crc = 0, (unsigned char*) &temp, 4));
     //(data) IEND has no data field
     f.write((char*) &crc, 4);     //(crc) write crc
-    crc = 0;
     delete [] bz;
     delete [] b;
     f.close();
     char notify[128];
-#ifdef _WIN32
-    _snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
-#else
     snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
-#endif
     controlPanel->addMessage(notify);
   }
   return std::string();
