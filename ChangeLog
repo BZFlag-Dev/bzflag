@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* improved /ban /banlist added reason and time parsing - Dennis Pedersen
 * Shortened GM to 0.95 normal shot (tuneable) - Tim Riker
 * tarball now supports "rpm -tb <foo>.tar.gz" - Tim Riker
 * bzfs use only 1 port instead of 2 (by default IANA assigned: 5154) - Alfredo Tupone
