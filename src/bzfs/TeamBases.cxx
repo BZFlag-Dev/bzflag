@@ -79,6 +79,11 @@ void TeamBases::addBase( const float *position, const float *size, float rotatio
   teamBases.push_back( base );
 }
 
+int TeamBases::size() const
+{
+  return teamBases.size();
+}
+
 TeamColor TeamBases::getTeam() const
 {
   return color;

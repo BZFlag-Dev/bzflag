@@ -26,6 +26,7 @@ class TeamBases
 public:
   TeamBases(TeamColor team, bool initDefault = false);
   void addBase( const float *position, const float *size, float rotation, const float *safetyZone );
+  int size() const;
   TeamColor getTeam() const;
   const float *TeamBases::getBasePosition( int base ) const;
   const float *TeamBases::getBaseSize( int base ) const;

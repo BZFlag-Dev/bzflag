@@ -1274,16 +1274,6 @@ static WorldInfo *defineWorldFromFile(const char *filename)
     return NULL;
   }
 
-  if (clOptions->gameStyle & TeamFlagGameStyle) {
-    for (int i = RedTeam; i <= PurpleTeam; i++) {
-      if ((clOptions->maxTeam[i] > 0) && bases->find(i) == bases->end()) {
-	printf("base was not defined for team %i capture the flag game style removed.\n", i);
-	clOptions->gameStyle &= (~TeamFlagGameStyle);
-	break;
-      }
-    }
-  }
-
   // make walls
   float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
@@ -1297,6 +1287,16 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   for (int i = 0; i < n; ++i)
     list[i]->write(world);
 
+  if (clOptions->gameStyle & TeamFlagGameStyle) {
+    for (int i = RedTeam; i <= PurpleTeam; i++) {
+      if ((clOptions->maxTeam[i] > 0) && bases->find(i) == bases->end()) {
+	printf("base was not defined for team %i capture the flag game style removed.\n", i);
+	clOptions->gameStyle &= (~TeamFlagGameStyle);
+	break;
+      }
+    }
+  }
+  
   // clean up
   emptyWorldFileObjectList(list);
   return world;
@@ -1831,13 +1831,17 @@ static bool defineWorld()
 
   maxWorldHeight = world->getMaxWorldHeight();
 
+  int numBases = 0;
+  for (BasesList::iterator it = bases->begin(); it != bases->end(); ++it)
+    numBases += it->second->size();
+
   // package up world
   world->packDatabase();
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + WorldCodeHeaderSize +
       world->getDatabaseSize() + 4 + WorldCodeEndSize;
   if (clOptions->gameStyle & TeamFlagGameStyle)
-    worldDatabaseSize += 4 * (4 + WorldCodeBaseSize);
+    worldDatabaseSize += numBases * (4 + WorldCodeBaseSize);
 
   worldDatabase = new char[worldDatabaseSize];
   // this should NOT happen but it does sometimes
