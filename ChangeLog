@@ -1,5 +1,13 @@
 
+	
 			     BZFlag release notes
+
+* Add back PNG support from 1.8 - Dave Brosius, Sean
+* Add back BZDB from 1.8 - David Trowbridge
+* Don't broadcast single player messages - Dave Brosius
+* Customizable map size in maps - Jeff Myers
+* Drive and Shoot thru options in maps - Jeff Myers
+* Show Team kill score in Scoreboard - Dave Brosius
 * Beginnings of flag 'negotiation' - Dave Brosius
 * Pass reason in MsgKilled, add support for SR noise - Dave Brosius
 * Remove unnessary MsgScore from player to server - Dave Brosius
