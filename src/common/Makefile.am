@@ -1,25 +1,25 @@
 noinst_LIBRARIES = libCommon.a
 
 libCommon_a_SOURCES  =			\
+	BZDBCache.cxx			\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
-	BZDBCache.cxx			\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
 	Flag.cxx			\
 	KeyManager.cxx			\
+	PlayerState.cxx			\
 	ShotUpdate.cxx			\
+	StateDatabase.cxx		\
 	Team.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
-	PlayerState.cxx			\
-	StateDatabase.cxx		\
-	WordFilter.cxx			\
 	VotingBooth.cxx			\
-	bzsignal.c			\
+	WordFilter.cxx			\
 	bzfio.cxx			\
+	bzsignal.c			\
 	global.cxx			\
 	md5.cxx
 
