@@ -41,6 +41,10 @@ to do / idea list for bzflag
 * encourage server admins to provide an email contact by adding
    an option to bzfs
 
+* enable readline-like editing to the console: should be able to recall
+   previous commands, edit the curent line and do tab-completion for
+   commands and variables
+
 * windows makefiles
    currently have microsoft visual c++ projects only
 
