@@ -1,4 +1,4 @@
-DIST_SUBDIRS = res
+SUBDIRS = res
 
 bin_PROGRAMS = TextTool
 

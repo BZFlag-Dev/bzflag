@@ -1,5 +1,5 @@
-DIST_SUBDIRS = \
-	TextTool_W32 \
+SUBDIRS = \
+	TextTool-W32 \
 	bzwtransform \
 	modeltool
 

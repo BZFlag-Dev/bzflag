@@ -1,4 +1,4 @@
-DIST_SUBDIRS = vc71
+SUBDIRS = vc71
 
 bin_PROGRAMS = modeltool
 
