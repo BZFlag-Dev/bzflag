@@ -20,10 +20,6 @@
 #include <string>
 
 /* common implementation headers */
-#include "BzfDisplay.h"
-#include "BzfWindow.h"
-#include "OpenGLTexture.h"
-#include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "FontManager.h"
 #include "DirectoryNames.h"
@@ -31,10 +27,6 @@
 /* local implementation headers */
 #include "MenuDefaultKey.h"
 #include "World.h"
-#include "FormatMenu.h"
-#include "KeyboardMapMenu.h"
-#include "GUIOptionsMenu.h"
-#include "SaveWorldMenu.h"
 #include "ServerListCache.h"
 #include "MainMenu.h"
 #include "HUDDialog.h"

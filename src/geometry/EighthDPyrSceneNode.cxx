@@ -10,12 +10,21 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface header
+#include "EighthDPyrSceneNode.h"
+
+// system headers
 #include <stdlib.h>
 #include <math.h>
-#include "common.h"
-#include "EighthDPyrSceneNode.h"
-#include "SceneRenderer.h"
+
+// common implementation header
 #include "StateDatabase.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 const int		PyrPolygons = 20;
 

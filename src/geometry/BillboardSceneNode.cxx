@@ -10,15 +10,26 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface header
+#include "BillboardSceneNode.h"
+
+// system headers
 #include <stdlib.h>
 #include <math.h>
-#include "common.h"
-#include "BillboardSceneNode.h"
-#include "ViewFrustum.h"
-#include "SceneRenderer.h"
-#include "StateDatabase.h"
+
+// common implementation headers
 #include "BZDBCache.h"
 #include "TextureManager.h"
+
+// local implementation headers
+#include "ViewFrustum.h"
+#include "StateDatabase.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
 				show(false),

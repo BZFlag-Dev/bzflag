@@ -20,7 +20,6 @@
 
 #include "common.h"
 #include "OpenGLMaterial.h"
-#include "OpenGLTexture.h"
 
 class SceneRenderer;
 class SceneDatabase;

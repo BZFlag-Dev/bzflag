@@ -21,8 +21,6 @@
 #include "ShotSceneNode.h"
 #include "OpenGLLight.h"
 
-class OpenGLTexture;
-
 class BoltSceneNode : public ShotSceneNode {
   public:
 			BoltSceneNode(const GLfloat pos[3]);
@@ -34,7 +32,6 @@ class BoltSceneNode : public ShotSceneNode {
     void		setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgb);
     void		setTexture(const int);
-    void		setColorblindTexture(const OpenGLTexture&);
     void		setTextureAnimation(int cu, int cv);
 
     bool		getColorblind() const;

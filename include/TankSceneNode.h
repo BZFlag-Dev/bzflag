@@ -22,7 +22,6 @@
 #include "TankGeometryMgr.h"
 
 class TankSceneNode;
-class OpenGLTexture;
 
 class TankIDLSceneNode : public SceneNode {
   public:

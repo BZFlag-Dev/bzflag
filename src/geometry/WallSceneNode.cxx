@@ -10,16 +10,27 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface headers
+#include "WallSceneNode.h"
+#include "PolyWallSceneNode.h"
+
+// system headers
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "common.h"
-#include "WallSceneNode.h"
-#include "ViewFrustum.h"
-#include "SceneRenderer.h"
-#include "PolyWallSceneNode.h"
+
+// common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+
+// local implementation headers
+#include "ViewFrustum.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 WallSceneNode::WallSceneNode() : numLODs(0),
 				elementAreas(NULL),

@@ -10,14 +10,25 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface header
+#include "FlagWarpSceneNode.h"
+
+// system headers
 #include <stdlib.h>
 #include <math.h>
-#include "common.h"
-#include "FlagWarpSceneNode.h"
-#include "SceneRenderer.h"
-#include "ViewFrustum.h"
+
+// common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+
+// local implementation headers
+#include "ViewFrustum.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 const float		FlagWarpSize =	7.5;		// meters
 const GLfloat		FlagWarpAlpha = 0.5f;

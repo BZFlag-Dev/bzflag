@@ -10,9 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-
+// system headers
 #include <assert.h>
 #include <math.h>
+
+// local implementation headers
 #include "TankSceneNode.h"
 #include "TankGeometryMgr.h"
 

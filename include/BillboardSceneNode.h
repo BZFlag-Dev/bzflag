@@ -21,8 +21,6 @@
 #include "SceneNode.h"
 #include "OpenGLLight.h"
 
-class OpenGLTexture;
-
 class BillboardSceneNode : public SceneNode {
   public:
 			BillboardSceneNode(const GLfloat pos[3]);

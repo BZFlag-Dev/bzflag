@@ -10,14 +10,25 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// BZFlag common header
+#include "common.h"
+
+// interface header
+#include "PTSceneNode.h"
+
+// system headers
 #include <stdlib.h>
 #include <math.h>
-#include "common.h"
-#include "PTSceneNode.h"
-#include "ViewFrustum.h"
-#include "SceneRenderer.h"
+
+// common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+
+// local implementation headers
+#include "ViewFrustum.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 const GLfloat		PhotonTorpedoSceneNode::CoreSize = 0.125f;
 const GLfloat		PhotonTorpedoSceneNode::CoronaSize = 1.0f;

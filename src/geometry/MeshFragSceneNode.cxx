@@ -10,17 +10,25 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface header
+#include "MeshFragSceneNode.h"
+
+// system headers
 #include <math.h>
 #include <string.h>
-#include "common.h"
-#include "MeshFragSceneNode.h"
-#include "SceneRenderer.h"
+
+// common implementation headers
 #include "Intersect.h"
 #include "MeshFace.h"
 #include "MeshSceneNodeGenerator.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 // FIXME - no tesselation is done on for shot lighting
 

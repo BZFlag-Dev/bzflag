@@ -20,9 +20,9 @@
 
 /* common interface headers */
 #include "global.h"
+#include "bzfgl.h"
 #include "TimeKeeper.h"
 #include "Address.h"
-#include "OpenGLTexture.h"
 #include "Flag.h"
 #include "PlayerState.h"
 #include "ShotStatistics.h"

@@ -10,13 +10,21 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface header
+#include "SceneNode.h"
+
+// system implementation headers
 #include <string.h>
 #include <math.h>
-#include "common.h"
-#include "BZDBCache.h"
-#include "SceneNode.h"
-#include "SceneRenderer.h"
+
+// common implementation headers
 #include "StateDatabase.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 #ifndef __MINGW32__
 void			(__stdcall *SceneNode::color3f)(GLfloat, GLfloat, GLfloat);

@@ -10,9 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
+// bzflag common header
 #include "common.h"
+
+// interface header
 #include "PolyWallSceneNode.h"
+
+// system headers
+#include <math.h>
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
 //

@@ -10,12 +10,21 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface header
+#include "TriWallSceneNode.h"
+
+// system headers
 #include <math.h>
 #include <stdlib.h>
-#include "common.h"
-#include "TriWallSceneNode.h"
-#include "SceneRenderer.h"
+
+// common implementation headers
 #include "Intersect.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 //
 // TriWallSceneNode::Geometry

@@ -10,14 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface header
+#include "EighthDimSceneNode.h"
+
+// system headers
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "common.h"
-#include "EighthDimSceneNode.h"
-#include "SceneRenderer.h"
+
+// common implementation header
 #include "StateDatabase.h"
-#include "BZDBCache.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 EighthDimSceneNode::EighthDimSceneNode(int numPolygons) :
 				renderNode(this, numPolygons)
@@ -40,10 +48,9 @@ void			EighthDimSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
-  if (BZDBCache::blend) {
+  if (BZDB.isTrue("blend")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  }
-  else {
+  } else {
     builder.setStipple(0.75f);
   }
   gstate = builder.getState();

@@ -457,6 +457,12 @@
 				RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.h">
 			</File>
 			<File
+				RelativePath="..\..\include\MeshFace.h">
+			</File>
+			<File
+				RelativePath="..\..\include\MeshObstacle.h">
+			</File>
+			<File
 				RelativePath="..\..\src\obstacle\MeshUtils.h">
 			</File>
 			<File

@@ -10,13 +10,19 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include <string>
+// bzflag common headers
 #include "common.h"
 #include "global.h"
+
+// interface header
 #include "TankGeometryMgr.h"
+
+// system headers
+#include <stdlib.h>
+#include <math.h>
+#include <string>
+
+// common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "OpenGLGState.h"

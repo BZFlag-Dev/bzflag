@@ -10,19 +10,25 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- *
- */
+// bzflag common header
+#include "common.h"
 
+// interface header
+#include "FlagSceneNode.h"
+
+// system headers
 #include <stdlib.h>
 #include <math.h>
-#include "common.h"
-#include "FlagSceneNode.h"
-#include "ViewFrustum.h"
-#include "SceneRenderer.h"
-#include "OpenGLTexture.h"
+
+// common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+
+// local implementation headers
+#include "ViewFrustum.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 int	                flagChunks = 8;		// draw flag as 8 quads
 bool                    geoPole = false;        // draw the pole as quads

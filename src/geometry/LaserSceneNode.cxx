@@ -10,13 +10,21 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
+// bzflag common header
 #include "common.h"
+
+// interface header
 #include "LaserSceneNode.h"
-#include "SceneRenderer.h"
-#include "OpenGLTexture.h"
+
+// system headers
+#include <math.h>
+
+// common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 const GLfloat		LaserRadius = 0.1f;
 

@@ -24,7 +24,6 @@
 // common implementation headers
 #include "bzfgl.h"
 #include "global.h"
-#include "OpenGLTexture.h"
 #include "SceneRenderer.h"
 #include "MainWindow.h"
 #include "Team.h"

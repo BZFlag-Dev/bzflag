@@ -11,17 +11,25 @@
  */
 #define _NO_LIST_ID 0xffffffff
 
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include <string>
+// bzflag common headers
 #include "common.h"
 #include "global.h"
+
+// interface header
 #include "TankSceneNode.h"
-#include "ViewFrustum.h"
-#include "SceneRenderer.h"
+
+// system headers
+#include <math.h>
+
+// common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+
+// local implementation headers
+#include "ViewFrustum.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 using namespace TankGeometryEnums;
 

@@ -10,14 +10,24 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
+// bzflag common header
 #include "common.h"
+
+// interface header
 #include "TracerSceneNode.h"
-#include "ShellSceneNode.h"
-#include "ViewFrustum.h"
-#include "SceneRenderer.h"
+
+// system headers
+#include <math.h>
+
+// common implementation headers
 #include "StateDatabase.h"
-#include "BZDBCache.h"
+
+// local implemenation headers
+#include "ViewFrustum.h"
+#include "ShellSceneNode.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 #define	ShellRadius1_2	(M_SQRT1_2 * ShellRadius)
 
@@ -76,7 +86,7 @@ void			TracerSceneNode::addLight(SceneRenderer& renderer)
 void			TracerSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
-  if (BZDBCache::blend) {
+  if (BZDB.isTrue("blend")) {
     // add tail contribution instead of regular blend
     builder.setBlending(GL_SRC_ALPHA, GL_ONE);
     builder.setShading(GL_SMOOTH);

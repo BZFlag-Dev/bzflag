@@ -36,7 +36,6 @@
 #include "bzfgl.h"
 #include "ErrorHandler.h"
 #include "OpenGLGState.h"
-#include "OpenGLTexture.h"
 #include "SceneRenderer.h"
 #include "MainWindow.h"
 #include "Address.h"

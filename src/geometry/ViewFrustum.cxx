@@ -10,12 +10,15 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
-#include <string.h>
+// bzflag common header
 #include "common.h"
-#include "bzfgl.h"
+
+// interface headers
 #include "Frustum.h"
 #include "ViewFrustum.h"
+
+// common implementation headers
+#include "bzfgl.h"
 
 ViewFrustum::ViewFrustum()
 {

@@ -10,13 +10,21 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
+// bzflag common header
 #include "common.h"
+
+// interface header
 #include "ShellSceneNode.h"
-#include "SceneRenderer.h"
+
+// system headers
+#include <math.h>
+
+// common implementation headers
 #include "OpenGLMaterial.h"
 #include "StateDatabase.h"
-#include "BZDBCache.h"
+
+// FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "SceneRenderer.h"
 
 #define	ShellRadius1_2	(M_SQRT1_2 * ShellRadius)
 
@@ -75,7 +83,7 @@ void			ShellSceneNode::move(const GLfloat pos[3],
 void			ShellSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
-  const bool lighting = BZDBCache::lighting;
+  const bool lighting = BZDB.isTrue("lighting");
   builder.enableMaterial(lighting);
   builder.setShading(lighting ? GL_SMOOTH : GL_FLAT);
   renderNode.setLighting(lighting);
