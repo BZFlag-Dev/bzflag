@@ -329,6 +329,16 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
     databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[1]));
   }
+
+/*  Base *pBase;
+  for (i = 0, pBase = bases; i < numBases; i++, pBase++) {
+    databasePtr = nboPackUShort(databasePtr, WorldCodeBase);
+    databasePtr = nboPackUShort(databasePtr, team); // FIXME?
+    databasePtr = nboPackVector(databasePtr, pBase->pos);
+    databasePtr = nboPackFloat(databasePtr, pBase->rotation);
+    databasePtr = nboPackFloat(databasePtr, pBase->size[0]);
+    databasePtr = nboPackFloat(databasePtr, pBase->size[1]);
+  }*/
   return 1;
 }
 

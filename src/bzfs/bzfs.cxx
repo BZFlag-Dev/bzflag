@@ -849,7 +849,7 @@ static int exitCode = 0;
 static uint16_t maxPlayers = MaxPlayers;
 static uint16_t curMaxPlayers = 0;
 // max simulataneous per player
-static bool hasBase[NumTeams] = { false };
+static bool hasBase[CtfTeams] = { false };
 
 static float maxTankHeight = 0.0f;
 
@@ -866,10 +866,10 @@ static int listServerLinksCount = 0;
 static WorldInfo *world = NULL;
 static char *worldDatabase = NULL;
 static uint32_t worldDatabaseSize = 0;
-static float basePos[NumTeams][3];
-static float baseRotation[NumTeams];
-static float baseSize[NumTeams][3];
-static float safetyBasePos[NumTeams][3];
+static float basePos[CtfTeams][3];
+static float baseRotation[CtfTeams];
+static float baseSize[CtfTeams][3];
+static float safetyBasePos[CtfTeams][3];
 
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
@@ -1078,7 +1078,7 @@ CustomBase::CustomBase()
 bool CustomBase::read(const char *cmd, istream& input) {
   if (strcmp(cmd, "color") == 0) {
     input >> color;
-    if ((color >= 0) && (color < NumTeams)) {
+    if ((color >= 0) && (color < CtfTeams)) {
       hasBase[color] = true;
     }
     else
@@ -3238,7 +3238,7 @@ static bool defineWorld()
   // time-of-day will go here
   buf = nboPackUInt(buf, 0);
   if (clOptions.gameStyle & TeamFlagGameStyle) {
-    for (int i = 1; i < NumTeams; i++) {
+    for (int i = 1; i < CtfTeams; i++) {
       if (!clOptions.randomCTF || (clOptions.maxTeam[i] > 0)) {
 	buf = nboPackUShort(buf, WorldCodeBase);
 	buf = nboPackUShort(buf, uint16_t(i));
@@ -3286,7 +3286,7 @@ static TeamColor whoseBase(float x, float y, float z)
   float highest = -1;
   int highestteam = -1;
   //Skip Rogue
-  for (int i = 1; i < NumTeams; i++) {
+  for (int i = 1; i < CtfTeams; i++) {
     if (clOptions.randomCTF && (clOptions.maxTeam[i] == 0))
       continue;
     float nx = x - basePos[i][0];

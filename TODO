@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* move team base packing into WorldInfo (bzfs)
+
 * remove reconnect from server and client
 
 * make server udp/tcp port the same

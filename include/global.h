@@ -34,6 +34,7 @@ enum PlayerType {
 
 // team info
 const int		NumTeams = 6;
+const int		CtfTeams = 5;
 enum TeamColor {
 			NoTeam = -1,
 			RogueTeam = 0,
