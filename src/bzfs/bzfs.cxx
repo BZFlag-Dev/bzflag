@@ -6162,6 +6162,38 @@ static void parseCommand(const char *message, int t)
 	sendMessage(t, player[t].id, player[t].team, "There is no user by that name");
       }
     }
+  } else if (hasPerm(t, setAll) &&
+	  strncmp(message + 1, "reload", 6) == 0) {
+      // reload the databases
+	  if(groupsFile.size())
+		readGroupsFile(groupsFile);
+	  // make sure that the 'admin' & 'default' groups exist
+	  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find(std::string("DEFAULT"));
+	  if (itr == groupAccess.end()) {
+		PlayerAccessInfo info;
+		info.explicitAllows[idleStats] = true;
+		info.explicitAllows[lagStats] = true;
+		info.explicitAllows[flagHistory] = true;
+	   groupAccess[std::string("DEFAULT")] = info;
+	  }
+	  itr = groupAccess.find(std::string("ADMIN"));
+	  if (itr == groupAccess.end()) {
+		PlayerAccessInfo info;
+		for (int i = 0; i < lastPerm; i++)
+		  info.explicitAllows[i] = true;
+		groupAccess[std::string("ADMIN")] = info;
+	  }
+	  if (passFile.size())
+		readPassFile(passFile);
+	  if (userDatabaseFile.size())
+		readPermsFile(userDatabaseFile);
+	  for ( int p = 0; p < p; i++){
+		  if (player[p].accessInfo.verified && userExists(player[p].regName)){
+			player[p].accessInfo = getUserInfo(player[p].regName);
+			player[p].accessInfo.verified = true;
+		  }
+	  sendMessage(t,player[t].id,player[t].team,"Databases reloaded");
+	  }
   } else {
     sendMessage(t,player[t].id,player[t].team,"unknown command");
   }
