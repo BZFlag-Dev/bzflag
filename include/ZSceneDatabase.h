@@ -19,7 +19,6 @@
 
 #include "common.h"
 #include "SceneDatabase.h"
-#include "Octree.h"
 
 class ZSceneDatabase : public SceneDatabase {
   friend class ZSceneIterator;
@@ -62,7 +61,7 @@ class ZSceneIterator : public SceneIterator {
     bool		culledDone, dynamicDone;
     int			culledIndex, dynamicIndex;
 
-    Octree*             octree;
+    class Octree*       octree;
     SceneNode**         culledList;
     int			culledCount;
     int			cullDepth;

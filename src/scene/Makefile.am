@@ -7,6 +7,7 @@ MAINTAINERCLEANFILES = \
 
 libSceneDB_a_SOURCES =			\
 	Octree.cxx					\
+	Octree.h					\
 	SceneDatabase.cxx		\
 	ZSceneDatabase.cxx		\
 	BSPSceneDatabase.cxx    

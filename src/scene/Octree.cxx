@@ -96,7 +96,6 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
   maxDepth = depth;
   minElements = elements;
   
-  
   CullList = list;
   CullListSize = listSize;
   
@@ -251,7 +250,28 @@ OctreeNode::OctreeNode(const float* center, float width,
   
   // resize the list to save space
   list = (SceneNode**) realloc (list, count * sizeof (SceneNode*));
-  
+
+  // resize the cell
+  float absMins[3] = { +MAXFLOAT, +MAXFLOAT, +MAXFLOAT};
+  float absMaxs[3] = { -MAXFLOAT, -MAXFLOAT, -MAXFLOAT};
+  float tmpMins[3], tmpMaxs[3];
+  for (i = 0; i < count; i++) {
+    SceneNode* node = list[i];
+    node->getExtents (tmpMins, tmpMaxs);
+    for (int a = 0; a < 3; a++) {
+      if (tmpMins[a] < absMins[a])
+        absMins[a] = tmpMins[a];
+      if (tmpMaxs[a] > absMaxs[a])
+        absMaxs[a] = tmpMaxs[a];
+    }
+  }
+  for (i = 0; i < 3; i++) {
+   if (absMins[i] > mins[i])
+      mins[i] = absMins[i];
+    if (absMaxs[i] < maxs[i])
+      maxs[i] = absMaxs[i];
+  }
+
   if (((int)depth >= maxDepth) || (listSize <= minElements)) {
     DEBUG4 ("FINAL NODE: depth = %d, items = %i\n", depth, count);
     leafNodes++;
