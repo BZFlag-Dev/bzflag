@@ -221,6 +221,10 @@ SOURCE=..\..\src\bzflag\KeyboardMapMenu.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\LoginMenu.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\MainMenu.cxx
 # End Source File
 # Begin Source File
@@ -514,6 +518,10 @@ SOURCE=..\..\src\bzflag\JoinMenu.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\KeyboardMapMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\LoginMenu.h
 # End Source File
 # Begin Source File
 
