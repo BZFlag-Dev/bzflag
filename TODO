@@ -1,7 +1,7 @@
 to do list for bzflag
 ---------------------
 
-* build a tar as output that supports "rpm -bt <tar>"
+* build a tar as output that supports "rpm -tb <tar>"
 
 * one tcp port. Tim Riker is working on this code. 1.7e4
   included playerid mangling support to get ready for this.
