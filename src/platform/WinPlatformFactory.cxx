@@ -11,13 +11,14 @@
  */
 
 #include "WinPlatformFactory.h"
+#ifdef HAVE_SDL
+#include "SDLMedia.h"
+#include "SDLDisplay.h"
+#else
+#include "WinMedia.h"
 #include "WinDisplay.h"
 #include "WinVisual.h"
 #include "WinWindow.h"
-#ifdef HAVE_SDL
-#include "SDLMedia.h"
-#else
-#include "WinMedia.h"
 #endif
 
 PlatformFactory*	PlatformFactory::getInstance()
@@ -26,7 +27,11 @@ PlatformFactory*	PlatformFactory::getInstance()
   return instance;
 }
 
+#ifdef HAVE_SDL
+SDLWindow*		WinPlatformFactory::window = NULL;
+#else
 WinWindow*		WinPlatformFactory::window = NULL;
+#endif
 
 WinPlatformFactory::WinPlatformFactory()
 {
@@ -38,6 +43,18 @@ WinPlatformFactory::~WinPlatformFactory()
   // do nothing
 }
 
+#ifdef HAVE_SDL
+BzfDisplay*		WinPlatformFactory::createDisplay(
+				const char*, const char*)
+{
+  SDLDisplay* display = new SDLDisplay();
+  if (!display || !display->isValid()) {
+    delete display;
+    return NULL;
+  }
+  return display;
+}
+#else
 BzfDisplay*		WinPlatformFactory::createDisplay(
 				const char* name, const char* videoFormat)
 {
@@ -48,19 +65,37 @@ BzfDisplay*		WinPlatformFactory::createDisplay(
   }
   return display;
 }
+#endif
 
+#ifdef HAVE_SDL
+BzfVisual*		WinPlatformFactory::createVisual(
+				const BzfDisplay* display)
+{
+  return new SDLVisual((const SDLDisplay*)display);
+}
+#else
 BzfVisual*		WinPlatformFactory::createVisual(
 				const BzfDisplay* display)
 {
   return new WinVisual((const WinDisplay*)display);
 }
+#endif
 
+#ifdef HAVE_SDL
+BzfWindow*		WinPlatformFactory::createWindow(
+				const BzfDisplay* display, BzfVisual* visual)
+{
+  window = new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
+  return window;
+}
+#else
 BzfWindow*		WinPlatformFactory::createWindow(
 				const BzfDisplay* display, BzfVisual* visual)
 {
   window = new WinWindow((const WinDisplay*)display, (WinVisual*)visual);
   return window;
 }
+#endif
 
 BzfMedia*		WinPlatformFactory::createMedia()
 {
