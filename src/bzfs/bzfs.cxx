@@ -4679,7 +4679,29 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
-    
+
+    // get available voter count
+    unsigned short int available = 0;
+    for (int i=0; i < curMaxPlayers; i++) {
+      // anyone on the server (even observers) are eligible to vote
+      if (player[i].fd != NotConnected) {
+	available++;
+      }
+    }
+
+    // make sure there are enough players to even make a poll (don't count the pollee)
+    if (available - 1 < clOptions->votesRequired) {
+      sprintf(reply,"Unable to initiate a new poll.  There are not enough players.");
+      sendMessage(ServerPlayer, t, reply, true);
+      sprintf(reply,"There needs to be at least %d other %s and only %d %s available.", 
+	      clOptions->votesRequired,
+	      clOptions->votesRequired - 1 == 1 ? "player" : "players", 
+	      available - 1,
+	      available - 1 == 1 ? "is" : "are");
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+    }
+
     size_t messageLength = strlen(message);
     char command[5];
     size_t commandLength;
@@ -4834,6 +4856,20 @@ static void parseCommand(const char *message, int t)
 	  sendMessage(ServerPlayer, AllPlayers, reply, true);
 	}
       }
+
+      // set the number of available voters
+      arbiter->setAvailableVoters(available);
+
+      // keep track of who is allowed to vote
+      for (int i=0; i < curMaxPlayers; i++) {
+	// anyone on the server (even observers) are eligible to vote
+	if (player[i].fd != NotConnected) {
+	  arbiter->grantSuffrage(player[i].callSign);
+	}
+      }
+      
+      // automatically place a vote for the player requesting the poll
+      arbiter->voteYes(player[t].callSign);
 
       
     } else if (strncmp(command, "vote", 4) == 0) {
@@ -5857,21 +5893,6 @@ int main(int argc, char **argv)
 	
 	std::string person = votingarbiter->getPollPlayer();
 	std::string action = votingarbiter->getPollAction();
-
-	// update available voter count
-	static unsigned short int available = 0;
-	unsigned short int availplayers = 0;
-	for (int i=0; i < curMaxPlayers; i++) {
-	  // anyone on the server (even observers) are eligible to vote
-	  if (player[i].fd != NotConnected) {
-	    availplayers++;
-	  }
-	}
-	if (availplayers != available) {
-	  // update the number of available voters
-	  votingarbiter->setAvailableVoters(availplayers);
-	  available = availplayers;
-	}
 
 	if (votingarbiter->isPollClosed()) {
 	  if (votingarbiter->isPollSuccessful()) {
