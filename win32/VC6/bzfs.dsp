@@ -111,6 +111,10 @@ SOURCE=..\..\src\bzfs\BZWReader.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CaptureRelay.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CmdLineOptions.cxx
 # End Source File
 # Begin Source File
@@ -240,6 +244,10 @@ SOURCE=..\..\src\bzfs\BZWReader.h
 # Begin Source File
 
 SOURCE=..\..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CaptureRelay.h
 # End Source File
 # Begin Source File
 
