@@ -238,8 +238,11 @@ bool Teleporter::inCylinder(const float* p, float radius, float height) const
 bool Teleporter::inBox(const float* p, float a,
 		       float dx, float dy, float dz) const
 {
-  if ((p[2] < (getHeight() + getPosition()[2] - getBorder()))
-      && ((p[2] + dz) >= getPosition()[2])) {
+  const float tankTop = p[2] + dz;
+  const float teleTop = getPosition()[2] + getHeight();
+  const float crossbarBottom = teleTop - getBorder();
+
+  if ((p[2] < crossbarBottom) && (tankTop >= getPosition()[2])) {
     // test individual border columns
     const float c = cosf(getRotation()), s = sinf(getRotation());
     const float d = getBreadth() - 0.5f * getBorder();
@@ -247,13 +250,17 @@ bool Teleporter::inBox(const float* p, float a,
     float o[2];
     o[0] = getPosition()[0] - s * d;
     o[1] = getPosition()[1] + c * d;
-    if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return true;
+    if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) {
+      return true;
+    }
     o[0] = getPosition()[0] + s * d;
     o[1] = getPosition()[1] - c * d;
-    if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return true;
+    if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) {
+      return true;
+    }
   }
-  else if ((p[2] <= (getPosition()[2] + getHeight())) && 
-           (p[2] > getPosition()[2])) {
+
+  if ((p[2] < teleTop) && (tankTop >= crossbarBottom)) {
     // test crossbar
     if (testRectRect(p, a, dx, dy, getPosition(),
                      getRotation(), getWidth(), getBreadth())) {
@@ -265,11 +272,18 @@ bool Teleporter::inBox(const float* p, float a,
 }
 
 
-bool Teleporter::inMovingBox(const float* /* oldP */, float /*oldAngle */,
+bool Teleporter::inMovingBox(const float* oldP, float /*oldAngle */,
 			     const float* p, float a,
 			     float dx, float dy, float dz) const
 {
-  return inBox (p, a, dx, dy, dz);
+  const float* minPos;
+  if (oldP[2] < p[2]) {
+    minPos = oldP;
+  } else {
+    minPos = p;
+  }
+  dz += fabsf(oldP[2] - p[2]);
+  return inBox(minPos, a, dx, dy, dz);
 }
 
 
