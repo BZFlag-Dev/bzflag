@@ -161,15 +161,10 @@ void readMTL ( CModel &model, std::string file )
 
 	std::string lineTerminator = "\n";
 
-	char *p = strchr(pData,13);
-	if (p)
-	{
-		if ( *(p+1) == 10)  // windows file
-			lineTerminator = "\r\n";
-	}
-
 	std::string fileText = pData;
 	free(pData);
+
+	TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
 
 	std::vector<std::string> lines = TextUtils::tokenize(fileText, lineTerminator);
 
@@ -250,7 +245,7 @@ void readOBJ ( CModel &model, std::string file )
 {
 	model.clear();
 
-	FILE *fp = fopen(file.c_str(),"rb");
+	FILE *fp = fopen(file.c_str(),"r");
 	if (!fp) {
 	  printf ("Could not open %s\n", file.c_str());
 		return;
@@ -281,15 +276,10 @@ void readOBJ ( CModel &model, std::string file )
 	
 	std::string lineTerminator = "\n";
 
-	p = strchr(pData,13);
-	if (p)
-	{
-		if ( *(p+1) == 10)  // windows file
-			lineTerminator = "\r\n";
-	}
-
 	std::string fileText = pData;
 	free(pData);
+
+	TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
 
 	std::vector<std::string> lines = TextUtils::tokenize(fileText,lineTerminator);
 
