@@ -143,7 +143,7 @@ int			WallSceneNode::pickLevelOfDetail(
   // bump up LOD if view point is close to wall.
 
   // limit lod to maximum allowed
-  if (bestLOD > BZDBCache::maxLOD) bestLOD = BZDBCache::maxLOD;
+  if (bestLOD > BZDBCache::maxLOD) bestLOD = (int)BZDBCache::maxLOD;
 
   // return highest level required -- note that we don't care about
   // the view point because, being flat, the wall would always

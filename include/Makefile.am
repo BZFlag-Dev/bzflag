@@ -8,6 +8,7 @@ noinst_HEADERS =		\
 	BSPSceneDatabase.h	\
 	Bundle.h		\
 	BundleMgr.h		\
+	BZDBCache.h		\
 	BzfDisplay.h		\
 	BzfEvent.h		\
 	bzfgl.h			\

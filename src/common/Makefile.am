@@ -19,6 +19,7 @@ libCommon_a_SOURCES  =			\
 	WordFilter.cxx			\
 	VotingBooth.cxx			\
 	bzsignal.c			\
+	BZDBCache.cxx			\
 	global.cxx
 
 EXTRA_DIST = Ping.cxx
