@@ -110,6 +110,7 @@ bool CursesUI::checkCommand(string& str) {
   case 21:
     cmd = "";
     updateCmdWin();
+    currentHistory = history.size();
 
     // delete last character
   case KEY_BACKSPACE:
