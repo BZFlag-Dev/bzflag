@@ -171,6 +171,8 @@ libPlatform_a_SOURCES =				\
 	WinPlatformFactory.h			\
 	WinDisplay.cxx				\
 	WinDisplay.h				\
+	DXJoystick.cxx				\
+	DXJoystick.h				\
 	WinJoystick.cxx				\
 	WinJoystick.h				\
 	WinVisual.cxx				\

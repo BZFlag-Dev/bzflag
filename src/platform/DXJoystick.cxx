@@ -65,7 +65,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    */
   GUID thisDevice;
   for (unsigned int i = 0; i < devices.size(); i++) {
-    if (joystickName = devices[i].tszProductName) {
+    if (joystickName == devices[i].tszProductName) {
       thisDevice = devices[i].guidInstance;
       break;
     }
@@ -363,51 +363,51 @@ void DXJoystick::DXError(const char* situation, HRESULT problem)
   char buffer[40] = {0};
 
   // some stuff we can handle
-  if (problem == DIERR_UNPLUGGED) {
+  if (problem == (HRESULT)DIERR_UNPLUGGED) {
     device = NULL;
     printError("Joystick device in use has been unplugged.");
     enumerateDevices();
     return;
   }
-  if (problem == DIERR_INPUTLOST) {
+  if (problem == (HRESULT)DIERR_INPUTLOST) {
     reaquireDevice();
     return;
   }
-  if (problem == DIERR_DEVICEFULL) {
+  if (problem == (HRESULT)DIERR_DEVICEFULL) {
     printError("DirectInput device is full.  Resetting FF state.");
     resetFF();
     return;
   }
 
   // print error messages
-  if (problem == DIERR_DEVICENOTREG)
+  if (problem == (HRESULT)DIERR_DEVICENOTREG)
     sprintf(buffer, "Device not registered");
-  else if (problem == DIERR_INVALIDPARAM)
+  else if (problem == (HRESULT)DIERR_INVALIDPARAM)
     sprintf(buffer, "Invalid parameter");
-  else if (problem == DIERR_NOTINITIALIZED)
+  else if (problem == (HRESULT)DIERR_NOTINITIALIZED)
     sprintf(buffer, "Device not initialized");
-  else if (problem == DI_BUFFEROVERFLOW)
+  else if (problem == (HRESULT)DI_BUFFEROVERFLOW)
     sprintf(buffer, "Buffer overflow");
-  else if (problem == DIERR_BADDRIVERVER)
+  else if (problem == (HRESULT)DIERR_BADDRIVERVER)
     sprintf(buffer, "Bad or incompatible device driver");
-  else if (problem == DIERR_EFFECTPLAYING)
+  else if (problem == (HRESULT)DIERR_EFFECTPLAYING)
     sprintf(buffer, "Effect already playing");
-  else if (problem == DIERR_INCOMPLETEEFFECT)
+  else if (problem == (HRESULT)DIERR_INCOMPLETEEFFECT)
     sprintf(buffer, "Incomplete effect");
-  else if (problem == DIERR_MOREDATA)
+  else if (problem == (HRESULT)DIERR_MOREDATA)
     sprintf(buffer, "Return buffer not large enough");
-  else if (problem == DIERR_NOTACQUIRED)
+  else if (problem == (HRESULT)DIERR_NOTACQUIRED)
     sprintf(buffer, "Device not acquired");
-  else if (problem == DIERR_NOTDOWNLOADED)
+  else if (problem == (HRESULT)DIERR_NOTDOWNLOADED)
     sprintf(buffer, "Effect not downloaded");
-  else if (problem == DIERR_NOTINITIALIZED)
+  else if (problem == (HRESULT)DIERR_NOTINITIALIZED)
     sprintf(buffer, "Device not initialized");
-  else if (problem == DIERR_OUTOFMEMORY)
+  else if (problem == (HRESULT)DIERR_OUTOFMEMORY)
     sprintf(buffer, "Out of memory");
-  else if (problem == DIERR_UNSUPPORTED)
+  else if (problem == (HRESULT)DIERR_UNSUPPORTED)
     sprintf(buffer, "Action not supported by driver");
   else
-    sprintf(buffer, "Unknown error (%d)", problem);
+    sprintf(buffer, "Unknown error (%d)", (int)problem);
   printError(string_util::format("%s (%s).", situation, buffer));
 }
 
