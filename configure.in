@@ -167,21 +167,21 @@ case $host_os in
 	CFLAGS="$CFLAGS -ansi";
 	CXXFLAGS="$CXXFLAGS -fno-exceptions";
 	case $host_vendor in
-	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=i486";;
-	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=603";;
+	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
+	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	esac;;
      cygwin)
         CPPFLAGS="$CPPFLAGS -I/usr/include -D_BSD_SOURCE -D_POSIX_SOURCE";
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
-	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=i486"
+	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu"
 	CFLAGS="$CFLAGS -ansi";
 	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
      mingw32)
         CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=i486";
+	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";
 	CFLAGS="$CFLAGS -ansi";
 	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
      solaris*)

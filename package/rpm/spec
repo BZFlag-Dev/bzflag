@@ -47,7 +47,7 @@ styles are available.
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"		\
-	./configure --prefix=/usr --enable-robots
+	./configure --prefix=/usr --enable-robots --host=i486-pc-linux-gnu
 make
 
 %install
