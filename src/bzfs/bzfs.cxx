@@ -4326,10 +4326,9 @@ static void addPlayer(int playerIndex)
 
   // send king information
   if (clOptions.gameStyle & int(KingOfTheHillGameStyle)) {
-    char msg[PlayerIdPLen];
-    void *buf = msg;
-    buf = nboPackUByte(buf, kingIndex);
-    directMessage(playerIndex, MsgNewKing, sizeof(msg), msg);
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = nboPackUByte(bufStart, kingIndex);
+    directMessage(playerIndex, MsgNewKing, (char*)buf-(char*)bufStart, bufStart);
   }
 
 #ifdef TIMELIMIT
@@ -4579,10 +4578,9 @@ static void annointNewKing()
       }
     }
   }
-  char msg[PlayerIdPLen];
-  void *buf = msg;
-  buf = nboPackUByte(buf, kingIndex);
-  broadcastMessage(MsgNewKing, sizeof(msg), msg);
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, kingIndex);
+  broadcastMessage(MsgNewKing, (char*)buf-(char*)bufStart, bufStart);
 }
 
 static void removePlayer(int playerIndex, char *reason, bool notify)
@@ -5495,13 +5493,12 @@ static void parseCommand(const char *message, int t)
       }
       if (j < curMaxPlayers) {
 	for (int i=0;i<curMaxPlayers;i++) {
-	  if (player[i].playedEarly) {
-	    char msg[PlayerIdPLen + 4];
-	    void *buf = msg;
-	    buf = nboPackUByte(buf, j);
+          if (player[i].playedEarly) {
+	    void *buf, *bufStart = getDirectMessageBuffer();
+	    buf = nboPackUByte(bufStart, j);
 	    buf = nboPackUShort(buf, uint16_t(int(player[i].team)-1));
-	    buf = nboPackUShort(buf, uint16_t(1+((int(player[i].team))%4)));
-	    directMessage(i,MsgCaptureFlag, sizeof(msg), msg);
+            buf = nboPackUShort(buf, uint16_t(1+((int(player[i].team))%4)));
+	    directMessage(i, MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 	    player[i].playedEarly = false;
 	  }
 	}
@@ -6204,9 +6201,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       break;
     }
 
-    case MsgWantWHash:
-      directMessage(t, MsgWantWHash, strlen(hexDigest)+1, hexDigest);
+    case MsgWantWHash: {
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackString(bufStart, hexDigest, strlen(hexDigest)+1);
+      directMessage(t, MsgWantWHash, (char*)buf-(char*)bufStart, bufStart);
       break;
+    }
 
     case MsgQueryGame:
       sendQueryGame(t);
