@@ -763,7 +763,8 @@ Each object is described by placing the type on one line, the word \fIend\fR on 
 and a list of attributes for that object, one per line, inbetween. Attributes may be listed in
 any order. Attributes have default values, and if that is good enough, the attribute need not
 be listed. Words are always specified in lowercase. Line comments can be specified by placing a
-# sign at the start of the line.
+# sign at the start of the line. For documentation purposes, you can tag each object by adding
+a name attribute.
 
 .br
 In the following examples, the values are the defaults.
@@ -771,6 +772,8 @@ In the following examples, the values are the defaults.
 .B The Box object
 
 \fBbox\fR
+.br
+\fBname\fR example_box
 .br
 \fBposition\fR 0.0 0.0 0.0
 .br
@@ -786,6 +789,8 @@ In the following examples, the values are the defaults.
 
 \fBpyramid\fR
 .br
+\fBname\fR example_pyramid
+.br
 \fBposition\fR 0.0 0.0 0.0
 .br
 \fBsize\fR 8.2 8.2 10.25
@@ -798,6 +803,8 @@ In the following examples, the values are the defaults.
 .B The Teleporter object
 
 \fBteleporter\fR
+.br
+\fBname\fR example_teleporter
 .br
 \fBposition\fR 0.0 0.0 0.0
 .br
@@ -814,6 +821,8 @@ In the following examples, the values are the defaults.
 
 \fBlink\fR
 .br
+\fBname\fR example_link
+.br
 \fBfrom\fR 0
 .br
 \fBto\fR 0
@@ -824,6 +833,8 @@ In the following examples, the values are the defaults.
 .B The Base object
 
 \fBbase\fR
+.br
+\fBname\fR example_base
 .br
 \fBposition\fR 0.0 0.0 0.0
 .br
@@ -840,6 +851,8 @@ In the following examples, the values are the defaults.
 
 \fBworld\fR
 .br
+\fBname\fR example_world
+.br
 \fBsize\fR 800.0
 .br
 \fBflagHeight\fR 0.0
@@ -850,6 +863,8 @@ In the following examples, the values are the defaults.
 .B The Weapon object
 
 \fBweapon\fR
+.br
+\fBname\fR example_weapon
 .br
 \fBposition\fR 0.0 0.0 0.0
 .br
