@@ -634,6 +634,7 @@ AC_CHECK_FUNCS(\
 	sqrtf \
 	tanf \
 	usleep \
+	vsnprintf \
 	wglGetCurrentContext \
 )
 

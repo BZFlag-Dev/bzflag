@@ -24,7 +24,11 @@ namespace TextUtils
 {
   std::string vformat(const char* fmt, va_list args) {
     char *buffer = NULL;
+#ifdef HAVE_VSNPRINTF
     int bs = vsnprintf(buffer, 0, fmt, args);
+#else
+    int bs = vsnprintf(buffer, fmt, args);
+#endif
     buffer = new char[bs];
     vsnprintf(buffer, bs, fmt, args);
     std::string ret = std::string(buffer);
