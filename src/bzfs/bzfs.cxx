@@ -5545,8 +5545,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  }
 	}
 
-	// allow a 1% tolerance level for speed
-	maxPlanarSpeedSqr *= 1.0201f;
+	// allow a 5% tolerance level for speed
+	maxPlanarSpeedSqr *= 1.1025f;
 	if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	  if (logOnly) {
 		DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
