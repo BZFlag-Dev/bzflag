@@ -99,14 +99,14 @@ PostBuild_Cmds=copy ..\..\src\bzflag\debug\*.exe ..\..\*.exe	copy  ..\..\src\bzf
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "bzflag___Win32_SDL_Release"
-# PROP BASE Intermediate_Dir "bzflag___Win32_SDL_Release"
+# PROP BASE Output_Dir "..\..\src\bzflag\SDL_Release"
+# PROP BASE Intermediate_Dir "..\..\src\bzflag\SDL_Release"
 # PROP BASE Ignore_Export_Lib 0
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "bzflag___Win32_SDL_Release"
-# PROP Intermediate_Dir "bzflag___Win32_SDL_Release"
+# PROP Output_Dir "..\..\src\bzflag\SDL_Release"
+# PROP Intermediate_Dir "..\..\src\bzflag\SDL_Release"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\win32" /I ".\\" /D "_WINDOWS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FD /c
@@ -127,7 +127,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\src\bzflag\*.exe ..\..\*.exe
+PostBuild_Cmds=copy ..\..\src\bzflag\SDL_Release\*.exe ..\..\*.exe
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "bzflag - Win32 SDL_Debug"
