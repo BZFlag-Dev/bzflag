@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- bzfs sometimes segfaults, seems to be caused by stealing a flag
+
 - can send private messages to robots
   There's no way to tell whether a RemotePlayer is a Robot.
   We could use dynamic_cast, but we haven't used RTTI as of yet
