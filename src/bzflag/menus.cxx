@@ -774,17 +774,27 @@ void			KeyboardMapMenu::resize(int width, int height)
   float y = (float)height - titleFont.getHeight();
   title->setPosition(x, y);
 
-  // reposition options
-  x = 0.5f * (float)width;
-  y -= 0.6f * titleFont.getHeight();
+  // reposition options in two columns
+  x = 0.30f * (float)width;
+  const float topY = y - 0.6f * titleFont.getHeight();
+  y = topY;
   list[1]->setFontSize(fontWidth, fontHeight);
   const float h = list[1]->getFont().getHeight();
   const int count = list.getLength();
-  for (int i = 1; i < count; i++) {
+  const int mid = count / 2;
+
+  for (int i = 1; i <= mid; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
-    if (i == 1) y -= 0.5f * h;
+  }
+
+  x = 0.80f * (float)width;
+  y = topY;
+  for (i = mid+1; i < count; i++) {
+    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setPosition(x, y);
+    y -= 1.0f * h;
   }
 
   update();
