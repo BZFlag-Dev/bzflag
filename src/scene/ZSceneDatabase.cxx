@@ -185,7 +185,7 @@ void ZSceneDatabase::addLights(SceneRenderer& renderer)
 void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 {
   int i;
-  const float* sun = renderer.getSunDirection();
+  const float* sunDir = renderer.getSunDirection();
   
   if (sun == NULL) {
     // no sun = no shadows, simple
@@ -200,7 +200,7 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
     const ViewFrustum& vf = renderer.getViewFrustum();
     const Frustum* frustum = (const Frustum*) &vf;
     culledCount = octree->getShadowList (culledList, staticCount,
-                                         frustum, sun);
+                                         frustum, sunDir);
   }
   
   // add the static nodes
