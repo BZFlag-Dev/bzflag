@@ -1575,7 +1575,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  // terminate the shot
 	  killerLocal->endShot(shotId, True);
 	}
-	if (killerLocal != victimPlayer) {
+	if (victimPlayer && killerLocal != victimPlayer) {
 	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
 	      killerLocal->getTeam() != RogueTeam) {
 	    if (killerLocal == myTank) {
