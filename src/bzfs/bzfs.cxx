@@ -104,6 +104,9 @@ BZF_DEFINE_ALIST(FlagHistoryList, int);
 // custom server login message
 static char *servermsg = NULL;
 
+// custom periodic advertise message
+static char *advertisemsg = NULL;
+
 enum PlayerState {
   PlayerNoExist, // does not exist
   PlayerAccept, // got connect, sending hello
@@ -5161,6 +5164,7 @@ static void terminateServer(int /*sig*/)
 
 static const char *usageString =
 "[-a <vel> <rot>] [-b] [-c] [-cr] [+f {good|<id>}] [-f {bad|<id>}] [-g] "
+"[-admsg <text>] "
 "[-ban ip{,ip}*] "
 "[-d] "
 "[-h] "
@@ -5229,6 +5233,7 @@ static void extraUsage(const char *pname)
   printVersion(cout);
   cout << "usage: " << pname << " " << usageString << endl;
   cout << "\t -a: maximum acceleration settings" << endl;
+  cout << "\t -admsg: specify a <msg> which will be broadcast every 15 minutes" << endl;
   cout << "\t -b: randomly oriented buildings" << endl;
   cout << "\t -ban ip{,ip}*: ban players based on ip address" << endl;
   cout << "\t -c: capture-the-flag style game" << endl;
@@ -5436,6 +5441,13 @@ static void parse(int argc, char **argv)
 	   usage(argv[0]);
 	 }
 	 servermsg = argv[i];
+      } else
+      if (strcmp(argv[i], "-admsg") == 0) {
+	 if (++i == argc) {
+	   cerr << "argument expected for -admsg" << endl;
+	   usage(argv[0]);
+	 }
+	 advertisemsg = argv[i];
       } else
       if (strcmp(argv[i], "-world") == 0) {
 	 if (++i == argc) {
@@ -6261,6 +6273,24 @@ int main(int argc, char **argv)
         }
       }
     }
+
+    // periodic advertising broadcast
+    if (advertisemsg)
+    {
+      static TimeKeeper lastbroadcast = TimeKeeper::getCurrent();
+      if (TimeKeeper::getCurrent() - lastbroadcast > 900) // every 15 minutes
+      {
+        char message[MessageLen];
+        strncpy(message, advertisemsg, MessageLen);
+
+        for (int i=0; i<maxPlayers; i++)
+          if (player[i].state > PlayerInLimbo)
+            sendMessage(i, player[i].id, player[i].team, message);
+
+        lastbroadcast = TimeKeeper::getCurrent();
+      }
+    }
+
 
     // if any flags were in the air, see if they've landed
     if (numFlagsInAir > 0) {

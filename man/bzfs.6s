@@ -5,6 +5,7 @@ bzfs \- BZFlag game server
 .sS
 .B bzfs
 [\fB\-a \fIvelocity\fR \fIrotation\fR]
+[\fB\-admsg \fImessage\fR]
 [\fB\-b\fR]
 [\fB\-ban \fIaddress\fR[,...]]
 [\fB\-c\fR]
@@ -38,6 +39,7 @@ bzfs \- BZFlag game server
 [\fB\+s \fIflag-count\fR]
 [\fB\-s \fIflag-count\fR]
 [\fB\-sa\fR]
+[\fB\-srvmsg \fImessage\fR]
 [\fB\-st \fItime\fR]
 [\fB\-sw \fIcount\fR]
 [\fB\-synctime\fR]
@@ -59,6 +61,9 @@ Enables inertia and sets the maximum linear and angular accelerations.
 The units are somewhat arbitrary so you'll have to experiment to find
 suitable values.  The values must be non-negative and higher values
 yield greater inertia.
+.TP 15
+\fB\-admsg \fImessage\fR
+Define a message which will be broadcast to all players every 15 minutes.
 .TP
 .B -b
 When \fB-c\fR is supplied, this option randomly rotates the buildings.
@@ -211,6 +216,9 @@ in the \fInum-flags\fR total.
 .TP
 .B -sa
 Antidote flags are provided for players with bad flags.
+.TP
+\fB\-srvmsg \fImessage\fR
+Define a server welcome message.
 .TP
 \fB-st\fI time\fR
 Bad flags are automatically dropped after \fItime\fR seconds.
