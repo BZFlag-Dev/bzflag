@@ -58,7 +58,10 @@ RobotPlayer::~RobotPlayer()
 // NOTE -- code taken directly from LocalPlayer
 ShotPath*		RobotPlayer::getShot(int index) const
 {
-  return shots[index & 255];
+  index &= 0x00FF;
+  if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
+    return NULL;
+  return shots[index];
 }
 
 // NOTE -- code taken directly from LocalPlayer

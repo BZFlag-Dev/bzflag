@@ -63,7 +63,10 @@ void			RemotePlayer::addShot(const FiringInfo& info)
 
 ShotPath*		RemotePlayer::getShot(int index) const
 {
-  return shots[index & 255];
+  index &= 0x00FF;
+  if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
+    return NULL;
+  return shots[index];
 }
 
 bool			RemotePlayer::doEndShot(
