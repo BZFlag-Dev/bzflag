@@ -2819,6 +2819,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 	&& teamIndex == int(otherData->player.getTeam()) &&
 	otherData->player.isAlive()) {
       otherData->player.setDead();
+      zapFlagByPlayer(i);
       otherData->player.setRestartOnBase(true);
     }
 
@@ -4584,6 +4585,7 @@ int main(int argc, char **argv)
 
 	      // be sure to reset the player!
 	      player->player.setDead();
+	      zapFlagByPlayer(i);
 	      player->player.setPlayedEarly(false);
 	    }
 	  }
