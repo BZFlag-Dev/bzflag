@@ -1704,22 +1704,18 @@ static void		doMotion()
       }
       else {
         myTank->setTarget(player[target]);
-        // weave towards the player
+
+	//drive towards player
         const float *tp = player[target]->getPosition();
         float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
         if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
         rotation = atan2f(tp[1] - pos[1], tp[0] - pos[0]) - myTank->getAngle();
         if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
         int period = int(TimeKeeper::getCurrent().getSeconds());
-        float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
-	rotation += bias;
-        if (fabs(rotation) > M_PI / 2)
-          speed = -0.5f;
-        else
-          speed = 1.0f;
- 
+
+	bool shotFired = false;
         TimeKeeper now = TimeKeeper::getCurrent();
-	if (now - lastShot >= 0.5f) {
+	if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
 	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
 	    float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
 	    Ray tankRay(pos, dir);
@@ -1728,9 +1724,21 @@ static void		doMotion()
 	    if (!building) {
 	       myTank->fireShot();
 	       lastShot = now;
+	       shotFired = true;
 	    }
           }
         }
+
+	// weave towards the player
+	if (!shotFired) { // don't weave if you're shooting
+          float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
+	  rotation += bias;
+	}
+        if (fabs(rotation) > M_PI / 2)
+          speed = -0.5f;
+        else
+          speed = 1.0f;
+ 
       }
 
       if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
