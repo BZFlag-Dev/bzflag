@@ -92,15 +92,16 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
     if (hFoundFile == INVALID_HANDLE_VALUE) break;	// Invalid path
 
     do {
-      strcpy(fileName, &(data.cFileName[7]));
-      if (strcmp(&(fileName[strlen(fileName) - 3]), ".po") != 0)
-	continue;	// Doesnt end in ".po". Should not happen
-
-      fileName[strlen(fileName) - 3] = '\0';
-
-      if (strcmp(fileName, "xx") != 0)	// Dont add the xx locale
-	list->push_back(fileName);
-
+      std::string poFile = data.cFileName;
+      int dotPos = poFile.find_first_of('.');
+      if ((dotPos >= 0) && (poFile.substr(dotPos+1) == "po")) {
+	 int underPos = poFile.find_first_of('_');
+	 if (underPos >= 0) {
+	   std::string locale = poFile.substr(underPos+1, dotPos-underPos-1);
+	   if (locale != "xx")
+	     list->push_back(locale);
+	 }
+      }
     } while (FindNextFile(hFoundFile, &data) == TRUE);
 
     FindClose(hFoundFile);
@@ -115,24 +116,17 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
     
     struct dirent 	*dirinfo = NULL;
     while ((dirinfo = readdir(localedir)) != NULL) {
-      // dirinfo points to an item in the directory
-      const int length = strlen(dirinfo->d_name);
-      if (length < 11) continue;  // Name is to short to contain bzflag_...po
-      if (strncmp(dirinfo->d_name, "bzflag_", 7) ||
-          strncmp(dirinfo->d_name + length - 3, ".po", 3))
-        continue;  // The name doesnt start with bzflag_ or end with .po
 
-      // This is a (hopefully) valid bzflag locale file
-      // Copy the filename and strip out the trailing .po
-      strncpy(fileName, &(dirinfo->d_name[7]), length - 7);
-      fileName[length - 7] = '\0';
-      end = strrchr(fileName, '.');
-      if (end == NULL) continue;	// This should not be able to happen
-      *end = '\0';
-      
-      // fileName should now contain our locale name
-      if (strcmp(fileName, "xx") != 0)	// Dont add the xx locale
-        list->push_back(fileName);
+      std::string poFile = dirinfo->d_name;
+      int dotPos = poFile.find_first_of('.');
+      if ((dotPos >= 0) && (poFile.substr(dotPos+1) == "po")) {
+	 int underPos = poFile.find_first_of('_');
+	 if (underPos >= 0) {
+	   std::string locale = poFile.substr(underPos+1, dotPos-underPos-1);
+	   if (locale != "xx")
+	     list->push_back(locale);
+	 }
+      }
     }
 
     closedir(localedir);
