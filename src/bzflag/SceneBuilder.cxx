@@ -240,7 +240,7 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
   if (!wallTexture || !wallTexture->isValid())
     wallTexture = tm.getTexture( "wall" );
   else
-    useColorTexture = BZDB.isTrue("texture");
+    useColorTexture = wallTexture && wallTexture->isValid();
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
 				o.getHeight() / wallTexHeight, wallLOD))) {
@@ -275,7 +275,7 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   if (!boxTexture || !boxTexture->isValid())
     boxTexture = tm.getTexture(BZDB.get("boxWallTexture").c_str(),true);
    
-  useColorTexture[0] = BZDB.isTrue("texture") && boxTexture && boxTexture->isValid();
+  useColorTexture[0] = boxTexture && boxTexture->isValid();
 
   OpenGLTexture *boxTopTexture = NULL;
 
@@ -284,7 +284,7 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   if (!boxTopTexture || !boxTopTexture->isValid())
     boxTopTexture = tm.getTexture(BZDB.get("boxTopTexture").c_str(),true);
 
-  useColorTexture[1] = BZDB.isTrue("texture") && boxTopTexture && boxTopTexture->isValid();
+  useColorTexture[1] = boxTopTexture && boxTopTexture->isValid();
 
   float texutureFactor = BZDB.eval("boxWallTexRepeat");
   if (BZDB.eval("useQuality")>=3)
@@ -336,7 +336,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   if (!pyramidTexture || !pyramidTexture->isValid())
     pyramidTexture = tm.getTexture(BZDB.get("pyrWallTexture").c_str(),false);
 
-  useColorTexture = BZDB.isTrue("texture") && pyramidTexture && pyramidTexture->isValid();
+  useColorTexture = pyramidTexture && pyramidTexture->isValid();
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   float texutureFactor = BZDB.eval("pryWallTexRepeat");
@@ -383,7 +383,7 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   if (!boxTexture || !boxTexture->isValid())
     boxTexture = tm.getTexture( BZDB.get("boxWallTexture").c_str() );
 
-  useColorTexture[0] = BZDB.isTrue("texture") && boxTexture && boxTexture->isValid();
+  useColorTexture[0] = boxTexture && boxTexture->isValid();
 
   OpenGLTexture *baseTopTexture = NULL;
 
@@ -397,7 +397,7 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   if (!baseTopTexture || !baseTopTexture->isValid())
     baseTopTexture = NULL;
   else
-    useColorTexture[1] = BZDB.isTrue("texture") && baseTopTexture && baseTopTexture->isValid();
+    useColorTexture[1] = baseTopTexture && baseTopTexture->isValid();
 
   // this assumes bases have 6 parts - if they don't, it still works
   int part = 0;

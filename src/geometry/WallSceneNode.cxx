@@ -310,7 +310,7 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
 
 void			WallSceneNode::setColor()
 {
-  if (useColorTexture)
+  if (BZDB.isTrue("texture") && useColorTexture)
       glColor4f(1,1,1,1);
   else {
     switch (style) {
