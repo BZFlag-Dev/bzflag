@@ -99,7 +99,7 @@ public:
    * Checking is quite raw. Does not use the CollisionManager and
    * can therefore be used before it has been setup.
    */
-  InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
+  InBuildingType inCylinderNoOctree(Obstacle **location,
                                                float x, float y, float z, float r,
                                                float height);
 
