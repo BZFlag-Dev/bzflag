@@ -5217,7 +5217,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
       }
       case MsgUDPLinkRequest:
 	printError("*** Received UDP Link Request");
-	// internally
+	// internally <- TimRiker says huh? what's "internally" mean?
 	break;
       case MsgSetVar: {
         buf = handleMsgSetVars(buf);
@@ -5444,7 +5444,7 @@ static bool		joinGame(const StartupInfo* info,
 
   // use parallel UDP if desired and using server relay
   if (startupInfo.useUDPconnection)
-    serverLink->enableUDPCon();
+    serverLink->sendUDPlinkRequest();
   else
     printError("No UDP connection, see Options to enable.");
 
