@@ -8,6 +8,7 @@ recent bugs
 				float x, float y, float z) const
   (OpenGLTexFont.cxx line 549)
   appears to be whacked as regards to glBegin/glEnd pairs
+  This is not the cause for the change video format / alt-tab bug, though.
 
 - taking a full-screen snapshot take too long to complete. That's happening
   since we are saving in png.
