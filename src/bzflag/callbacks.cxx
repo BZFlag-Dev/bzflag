@@ -41,6 +41,5 @@ void setDepthBuffer(const std::string& name, void*)
       BZDB->addCallback(name, setDepthBuffer, NULL);
     }
   }
-  std::cout << "depth buffer callback!\n";
 }
 // ex: shiftwidth=2 tabstop=8

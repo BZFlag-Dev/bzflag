@@ -87,5 +87,10 @@ private:
   static const char*	asciiNames[][2];
 };
 
+// this is to be implemented within the requisite source file for the application using it.
+// in BZFlag's case, it happens to be in bzflag.cxx
+#define NUM_DEFAULT_BINDINGS	65
+extern const char*		defaultBindings[NUM_DEFAULT_BINDINGS];
+
 #endif // BZF_KEYMANAGER_H
 // ex: shiftwidth=2 tabstop=8

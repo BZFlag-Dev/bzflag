@@ -56,6 +56,7 @@
 #include "StateDatabase.h"
 #include "FileManager.h"
 #include "CommandManager.h"
+#include "KeyManager.h"
 #include "callbacks.h"
 #include "ServerListCache.h"
 
@@ -112,7 +113,7 @@ static DefaultDBItem	defaultDBItems[] = {
 };
 
 // default key bindings
-static const char*	bindingList[] = {
+const char*	defaultBindings[NUM_DEFAULT_BINDINGS] = {
   "bind F12 down quit",
   "bind \"Left Mouse\" down fire",
   "bind Enter down fire",
@@ -853,8 +854,8 @@ int			main(int argc, char** argv)
   unsigned int i;
 
   // bind default keys
-  for (i = 0; i < countof(bindingList); ++i) {
-    CMDMGR->run(bindingList[i]);
+  for (i = 0; i < NUM_DEFAULT_BINDINGS; ++i) {
+    CMDMGR->run(defaultBindings[i]);
   }
 
   // prepare DB entries

@@ -63,6 +63,7 @@
 #include "Bundle.h"
 #include "ControlPanel.h"
 #include "StateDatabase.h"
+#include "CommandManager.h"
 #include "CommandsStandard.h"
 #include "KeyManager.h"
 #include "ServerListCache.h"
@@ -590,12 +591,12 @@ class KeyboardMapMenu : public HUDDialog {
 
     bool		isEditing() const;
     void		setKey(const BzfKeyEvent&);
-    void		onChanged(const std::string& name, bool, const std::string&);
+    void		onReset(const std::string& name, bool, const std::string&);
     void		onScan(const std::string& name, bool press, const std::string& cmd);
-    static void		onChangedCB(const std::string& name, bool press,
-    				    const std::string& cmd, void* userData);
+    static void		onResetCB(const std::string& name, bool press,
+				    const std::string& cmd, void* userData);
     static void		onScanCB(const std::string& name, bool press,
-    				 const std::string& cmd, void* userData);
+				 const std::string& cmd, void* userData);
 
   private:
     void		update();
@@ -754,6 +755,11 @@ void			KeyboardMapMenu::execute()
   const HUDuiControl* const focus = HUDui::getFocus();
   if (focus == reset) {
     // FIXME - need to reset keymap to default values
+    KEYMGR->iterate(onResetCB, this);
+    for (int i = 0; i < NUM_DEFAULT_BINDINGS; ++i) {
+      CMDMGR->run(defaultBindings[i]);
+    }
+    update();
   }
   else {
     // start editing
@@ -859,9 +865,12 @@ void			KeyboardMapMenu::update()
   }
 }
 
-void			KeyboardMapMenu::onChanged(const std::string&/* name*/, bool,
-						   const std::string&)
+void			KeyboardMapMenu::onReset(const std::string&, bool press,
+						   const std::string& cmd)
 {
+  BzfKeyEvent ev;
+  KEYMGR->stringToKeyEvent(cmd, ev);
+  KEYMGR->unbind(ev, press);
 }
 
 void			KeyboardMapMenu::onScan(const std::string& name, bool press,
@@ -878,10 +887,10 @@ void			KeyboardMapMenu::onScan(const std::string& name, bool press,
     it->second.key2 = name;
 }
 
-void			KeyboardMapMenu::onChangedCB(const std::string& name, bool press,
+void			KeyboardMapMenu::onResetCB(const std::string& name, bool press,
 						     const std::string& cmd, void* userData)
 {
-  reinterpret_cast<KeyboardMapMenu*>(userData)->onChanged(name, press, cmd);
+  reinterpret_cast<KeyboardMapMenu*>(userData)->onReset(name, press, cmd);
 }
 
 void			KeyboardMapMenu::onScanCB(const std::string& name, bool press,
