@@ -36,6 +36,10 @@ public:
   const vector<string>& getParameters() const;
   /** This function parses the given command line. */
   bool parse(int argc, char** argv);
+  /** This function prints the help text to the stream @c out. */
+  void printHelp(ostream& os) const;
+  /** This function prints the usage text to the stream @c out. */
+  void printUsage(ostream& os, const string& progName) const;
   /** This template function connects the variable @c variable to the command
       line option @c option. This means that if you call this function like
       this: <code>registerVariable("name", myName)</code>, and then gives
@@ -43,23 +47,31 @@ public:
       the variable @c myName will get the value <code>"Lars Luthman"</code>
       when the command line is parsed. */
   template <class T>
-  bool registerVariable(const string& option, T& variable);
+  bool registerVariable(const string& option, T& variable, 
+			const string& usage = "", const string& help = "");
 
 protected:
 
   /** This is an abstract base class for all different option types. */
   class Parser {
   public:
+    Parser(const string& usageText, const string& helpText)
+      : usage(usageText), help(helpText) { }
+    virtual ~Parser() { }
     /** This function is called when the option that this parser is mapped
 	to is given on the command line. */
     virtual int parse(char** argv) = 0;
+    const string usage;
+    const string help;
   };
 
   /** This is a template class for the variable parser. */
   template <class T>
   class VariableParser : public Parser {
   public:
-    VariableParser(T& variable) : var(variable) { }
+    VariableParser(T& variable, const string& usageText, 
+		   const string& helpText) 
+      : Parser(usageText, helpText), var(variable) { }
     virtual int parse(char** argv) {
       istringstream iss(argv[0]);
       iss>>var;
@@ -77,8 +89,9 @@ protected:
 
 // implement the template functions here
 template <class T>
-bool OptionParser::registerVariable(const string& option, T& variable) {
-  VariableParser<T>* parser = new VariableParser<T>(variable);
+bool OptionParser::registerVariable(const string& option, T& variable,
+				    const string& usage, const string& help) {
+  VariableParser<T>* parser = new VariableParser<T>(variable, usage, help);
   parsers[option] = parser;
   return true;
 }

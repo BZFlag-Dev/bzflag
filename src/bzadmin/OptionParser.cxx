@@ -50,4 +50,16 @@ bool OptionParser::parse(int argc, char** argv) {
 }
 
 
+void OptionParser::printHelp(ostream& os) const {
+  map<string, Parser*>::const_iterator iter;
+  for (iter = parsers.begin(); iter != parsers.end(); ++iter)
+    os<<"   -"<<iter->first<<": "<<iter->second->help<<endl;
+}
 
+
+void OptionParser::printUsage(ostream& os, const string& progName) const {
+  map<string, Parser*>::const_iterator iter;
+  os<<"Usage: "<<progName<<" ";
+  for (iter = parsers.begin(); iter != parsers.end(); ++iter)
+    os<<iter->second->usage<<" ";
+}

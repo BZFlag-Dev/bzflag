@@ -50,11 +50,13 @@ map<PlayerId, string> players;
 TeamColor myTeam;
 struct CLOptions {
   CLOptions()
-    : team("green"), stdin(false), stdout(false) { }
+    : team("green"), stdboth(false), stdin(false), stdout(false), 
+      showHelp(false) { }
   string team;
   bool stdboth;
   bool stdin;
   bool stdout;
+  bool showHelp;
 } clOptions;
 
 
@@ -63,13 +65,29 @@ int main(int argc, char** argv) {
 
   // parse command line arguments
   OptionParser op;
-  op.registerVariable("team", clOptions.team);
-  op.registerVariable("stdboth", clOptions.stdboth);
-  op.registerVariable("stdin", clOptions.stdin);
-  op.registerVariable("stdout", clOptions.stdout);
+  op.registerVariable("team", clOptions.team, 
+		      "[-team red|green|blue|purple|rogue]",
+		      "choose a team for your observer");
+  op.registerVariable("stdboth", clOptions.stdboth, "[-stdboth]",
+		      "use both stdin and stdout (no curses)");
+  op.registerVariable("stdin", clOptions.stdin, "[-stdin]",
+		      "read input from stdin, ignore server output");
+  op.registerVariable("stdout", clOptions.stdout, "[-stdout]",
+		      "print server output to stdout, ignore user input");
+  op.registerVariable("help", clOptions.showHelp, "[-help]",
+		      "print this help message");
   if (!op.parse(argc, argv)) {
     cerr<<op.getError()<<endl;
+    op.printUsage(cout, argv[0]);
+    cout<<"<CALLSIGN>@<HOST>[:PORT]"<<endl;
     return 1;
+  }
+  if (clOptions.showHelp) {
+    cout<<"bzadmin "<<VERSION<<endl;
+    op.printUsage(cout, argv[0]);
+    cout<<endl<<endl;
+    op.printHelp(cout);
+    return 0;
   }
   if (clOptions.team == "rogue")
     myTeam = RogueTeam;
