@@ -69,12 +69,12 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
 	  continue;
       sprintf(name, "%dx%d    ", w, h);
       resolutions[j] = new ResInfo(name, w, h, 0);
-      j++;
 #ifdef WIN32
       // use a safe default resolution because there are so many screwy drivers out there
       if ((w == defaultWidth) && (h == defaultHeight))
 	defaultResolutionIndex = j;
 #endif
+      j++;
     }
   } else {
     // if no modes then make default
