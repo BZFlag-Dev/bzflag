@@ -5826,7 +5826,8 @@ static void		playingLoop()
     }
 
     // update time of day -- update sun and sky every few seconds
-    epochOffset += (double)dt;
+    if (!BZDB.isSet("fixedTime") || (world && !world->allowTimeOfDayAdjust()))
+      epochOffset += (double)dt;
     if (!world || world->allowTimeOfDayAdjust())
       epochOffset += (double)(50.0f * dt * clockAdjust);
     if (fabs(epochOffset - lastEpochOffset) >= 4.0) {
