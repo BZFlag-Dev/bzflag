@@ -451,57 +451,6 @@ void* WorldBuilder::unpack(void* buf)
 
   delete[] uncompressedWorld;
   
-
-  // FIXME
-/*  
-  const float pos[3] = {0.0f, 0.0f, 0.0f};
-  const float size[3] = {50.0f, 50.0f, 20.0f};
-  const float texsize[4] = {-4.0f, -4.0f, -4.0f, -4.0f};
-  BzMaterial mat;
-  mat.setTexture("caution");
-  const BzMaterial* matref = MATERIALMGR.addMaterial(&mat);
-  const BzMaterial* mats[6] = {matref, matref, matref, matref, matref, matref};
-  ArcObstacle* arc =
-    new ArcObstacle(pos, size, 0.0f, 360.0f, 0.25, texsize, true,
-                    30, mats, false, false, false);
-  if (arc->isValid()) {
-    world->arcs.push_back(arc);
-    world->meshes.push_back(arc->getMesh());
-  } else {
-    delete arc;
-  }
-
-
-  mat.setTexture("boxwall");
-  matref = MATERIALMGR.addMaterial(&mat);
-  const BzMaterial* mats2[6] = {matref, matref, matref, matref, matref, matref};
-  const float pos2[3] = {0.0f, 0.0f, 30.0f};
-  ConeObstacle* cone =
-    new ConeObstacle(pos2, size, 0.0f, 360.0f, texsize, true,
-                     30, mats2, false, false, false);
-  if (cone->isValid()) {
-    world->cones.push_back(cone);
-    world->meshes.push_back(cone->getMesh());
-  } else {
-    delete cone;
-  }
-  
-  mat.setTexture("roof");
-  matref = MATERIALMGR.addMaterial(&mat);
-  const BzMaterial* mats3[6] = {matref, matref, matref, matref, matref, matref};
-  const float pos3[3] = {0.0f, 0.0f, 75.0f};
-  SphereObstacle* sphere =
-    new SphereObstacle(pos3, size, 0.0f, texsize, true, false,
-                       20, mats3, false, false, false);
-  if (sphere->isValid()) {
-    world->spheres.push_back(sphere);
-    world->meshes.push_back(sphere->getMesh());
-  } else {
-    delete sphere;
-  }
-*/  
-  
-
   world->loadCollisionManager();
 
   return buf;
