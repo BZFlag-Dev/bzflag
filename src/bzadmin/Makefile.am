@@ -24,8 +24,6 @@ endif
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
 bzadmin_SOURCES = \
-	AutoCompleter.h \
-	AutoCompleter.cxx \
 	BZAdminClient.h \
 	BZAdminClient.cxx \
 	BZAdminUI.h \
