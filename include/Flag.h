@@ -101,6 +101,7 @@ const int		FlagPLen = 6 + PlayerIdPLen + 48;
 
 class FlagType;
 typedef std::map<std::string, FlagType*> FlagTypeMap;
+typedef std::set<FlagType*> FlagSet;
 
 /** This class represents a flagtype, like "GM" or "CL". */
 class FlagType {
@@ -114,6 +115,13 @@ public:
     flagQuality = quality;
     flagHelp = help;
     flagTeam = team;
+
+    /* allocate flagset array on first use to work around mipspro
+     * std::set compiler bug of making flagSets a fixed array.
+     */
+    if (flagSets == NULL) {
+      flagSets = new FlagSet[2];
+    }
 
     flagSets[flagQuality].insert(this);
     getFlagMap()[flagAbbv] = this;
@@ -153,14 +161,11 @@ public:
   ShotType flagShot;
   TeamColor flagTeam;
 
-  typedef std::set<FlagType*> FlagSet;
   static int flagCount;
-  static FlagSet flagSets[NumQualities];
+  static FlagSet *flagSets;
   static int packSize;
 };
 
-
-typedef FlagType::FlagSet  FlagSet;
 
 /** This class represents an actual flag. It has functions for serialization
     and deserialization as well as static functions that returns sets of
