@@ -1853,9 +1853,8 @@ void resetFlag(int flagIndex)
 
   // reposition flag
   int teamIndex = pFlagInfo->flag.type->flagTeam;
-  if ((teamIndex >= ::RedTeam) 
-  &&  (teamIndex <= ::PurpleTeam)
-  &&  (bases.find(teamIndex) != bases.end())) {
+  if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
+      && (bases.find(teamIndex) != bases.end())) {
     TeamBases &teamBases = bases[teamIndex];
     const TeamBase &base = teamBases.getRandomBase( flagIndex );
     pFlagInfo->flag.position[0] = base.position[0];
@@ -1873,15 +1872,17 @@ void resetFlag(int flagIndex)
       pFlagInfo->flag.position[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
       pFlagInfo->flag.position[2] = 0.0f;
     }
+    
+    float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
     int topmosttype = world->inBuilding(&obj,
 					pFlagInfo->flag.position[0],
 					pFlagInfo->flag.position[1],
 					pFlagInfo->flag.position[2],
 					r,
 					flagHeight);
-    while (topmosttype != NOT_IN_BUILDING) {
+    while ((topmosttype != NOT_IN_BUILDING) || (pFlagInfo->flag.position[2] <= deadUnder)) {
       if ((clOptions->flagsOnBuildings
-	   && ((topmosttype == IN_BOX_NOTDRIVETHROUGH) || (topmosttype == IN_BASE)))
+	  && ((topmosttype == IN_BOX_NOTDRIVETHROUGH) || (topmosttype == IN_BASE)))
 	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight - Epsilon))
 	  && ((obj->pos[2] + obj->size[2] - Epsilon) > pFlagInfo->flag.position[2])
 	  && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
