@@ -140,6 +140,10 @@ SOURCE=..\..\src\bzflag\HUDDialog.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\HUDDialogStack.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\HUDRenderer.cxx
 # End Source File
 # Begin Source File
@@ -397,6 +401,10 @@ SOURCE=..\..\include\global.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\HUDDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDDialogStack.h
 # End Source File
 # Begin Source File
 
