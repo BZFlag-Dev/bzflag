@@ -15,13 +15,6 @@ critical bugs
   starts firing all the shots over and over. Seen on Mac and Windows.  Happens
   every time on the mac client.
 
-- Reported that sometimes you get stuck trying to respawn (You don't respawn). 
-  It's reported that it happens to a group of players at roughly the same time 
-  at a certain time during the game.
-  If this only happened when players were killed without getting shot at
-  (G, SR, selfdestruct etc) it has been fixed now, if it happens again 
-  there is another bug somewhere.
-
 recent bugs
 ------------
 
