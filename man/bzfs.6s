@@ -63,6 +63,7 @@ bzfs \- BZFlag game server
 [\fB\-userdb \fIfile\fR]
 [\fB\-version\fR]
 [\fB\-world \fIworld-file\fR]
+[\fB\-worldsize \fIworld size\fR]
 .SH DESCRIPTION
 \fBBzfs\fR is the server for \fBBZFlag\fR,
 and it must be running to play.  It can be run on any system on the
@@ -327,6 +328,9 @@ Prints the version number of the executable.
 .TP
 \fB-world \fIworld-file\fR
 Reads a specific world layout for the game map.
+.TP
+\fB-worldsize \fIworld-size\fR
+changes the size for random maps
 .RE
 .SS Notes
 The server uses nearly zero CPU time when nobody is playing, and even

@@ -5256,7 +5256,8 @@ static const char *usageString =
 "[-speedtol <tolerance>]"
 "[-passdb <password file>]"
 "[-groupdb <group file>]"
-"[-userdb <user permissions file>]";
+"[-userdb <user permissions file>]"
+"[-worldsize < world size>]";
 
 static const char *extraUsageString =
 "\t-a: maximum acceleration settings\n"
@@ -5325,7 +5326,8 @@ static const char *extraUsageString =
 "\t-speedtol: multiplyers over normal speed to auto kick at. defaults to 1.25, should not be less then 1.0\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-groupdb: file to read for group permissions\n"
-"\t-userdb: file to read for user access permissions\n";
+"\t-userdb: file to read for user access permissions\n"
+"\t-worldsize: numeric value for the size of the world ( def 400 )\n";
 
 static void printVersion()
 {
@@ -6082,6 +6084,14 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	usage(argv[0]);
       }
       options.idlekickthresh = (float) atoi(argv[i]);
+    }
+	else if (strcmp(argv[i], "-worldsize") == 0) {
+      if (++i == argc) {
+	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	usage(argv[0]);
+      }
+      WorldSize = (float) atof(argv[i]);
+      fprintf(stderr, "using world size of \"%f\"\n", speedTolerance);
     }
     else if (strcmp(argv[i], "-speedtol") == 0) {
       if (++i == argc) {
