@@ -4570,7 +4570,7 @@ int main(int argc, char **argv)
     DEBUG1("\tvotes required are %d\n", clOptions->votesRequired);
     DEBUG1("\tvote percentage necessary is %f\n", clOptions->votePercentage);
     DEBUG1("\tvote repeat time is %d seconds\n", clOptions->voteRepeatTime);
-    DEBUG1("\tMax players is initially configured to %d\n", maxPlayers);
+    DEBUG1("\tavailable voters is initially set to %d\n", maxPlayers);
 
     // override the default voter count to the max number of players possible
     votingarbiter->setAvailableVoters(maxPlayers);
