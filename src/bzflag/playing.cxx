@@ -1400,6 +1400,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       buffer[MessageLen - 1] = '\0';
       reason = buffer;
       printError(reason);
+      serverError = true;
       break;
     }
 
