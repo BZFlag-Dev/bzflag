@@ -4237,6 +4237,10 @@ static void		playingLoop()
 	if (fireButton && myTank->getFlag() == MachineGunFlag)
 	  myTank->fireShot();
       }
+      else {
+        int mx, my;
+        mainWindow->getMousePosition(mx, my);        
+      }
       myTank->update();
     }
 
