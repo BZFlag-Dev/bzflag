@@ -58,7 +58,11 @@ void ClientAuthentication::init()
 #endif
 }
 
+#ifdef HAVE_KRB5
 void ClientAuthentication::sendCredential(ServerLink &serverLink)
+#else
+void ClientAuthentication::sendCredential(ServerLink&)
+#endif // HAVE_KRB5
 {
   if (!authentication)
     return;
