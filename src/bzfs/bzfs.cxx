@@ -5538,17 +5538,17 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  }
 	}
   
-	if (curPlanarSpeedSqr > (4.0f + maxPlanarSpeedSqr)) {
+	if (curPlanarSpeedSqr > (10.0f + maxPlanarSpeedSqr)) {
 	  if (logOnly) {
 		DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		 player[t].callSign, t,
-		 sqrt(curPlanarSpeedSqr), sqrt(4.0f + maxPlanarSpeedSqr));
+		 sqrt(curPlanarSpeedSqr), sqrt(10.0f + maxPlanarSpeedSqr));
 	  }
 	  else {
 		char message[MessageLen];
 		DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
 		 player[t].callSign, t,
-		 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		 sqrt(curPlanarSpeedSqr), sqrt(10.0f + maxPlanarSpeedSqr));
 		strcpy( message, "Autokick: Tank moving too fast, Update your client." );
 		sendMessage(t, player[t].id, player[t].team, message);
 		removePlayer(t, "too fast");
