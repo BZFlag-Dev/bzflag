@@ -24,6 +24,10 @@ CXXFILES =				\
 	TimeKeeper.cxx			\
 	$(NULL)
 
+CFILES =				\
+	bzsignal.c			\
+	$(NULL)
+
 targets: $(TARGETS)
 
 $(TARGETS): $(OBJECTS)

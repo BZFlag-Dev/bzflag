@@ -58,7 +58,7 @@ const int MaxShots = 10;
 #include <sys/types.h>
 #include <errno.h>
 #include <math.h>
-#include <signal.h>
+#include "bzsignal.h"
 #include <time.h>
 #include "common.h"
 #include "global.h"
@@ -1954,8 +1954,8 @@ static void serverStop()
 {
   // shut down server
   // first ignore further attempts to kill me
-  signal(SIGINT, SIG_IGN);
-  signal(SIGTERM, SIG_IGN);
+  bzSignal(SIGINT, SIG_IGN);
+  bzSignal(SIGTERM, SIG_IGN);
 
   // reject attempts to talk to server
   shutdown(wksSocket, 2);
@@ -3902,8 +3902,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void* rawbuf)
 
 static void terminateServer(int /*sig*/)
 {
-  signal(SIGINT, SIG_PF(terminateServer));
-  signal(SIGTERM, SIG_PF(terminateServer));
+  bzSignal(SIGINT, SIG_PF(terminateServer));
+  bzSignal(SIGTERM, SIG_PF(terminateServer));
   exitCode = 0;
   done = True;
 }
@@ -4668,11 +4668,11 @@ int main(int argc, char** argv)
   }
 
   // trap some signals
-  if (signal(SIGINT, SIG_IGN) != SIG_IGN)	// let user kill server
-    signal(SIGINT, SIG_PF(terminateServer));
-  signal(SIGTERM, SIG_PF(terminateServer));	// ditto
+  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)	// let user kill server
+    bzSignal(SIGINT, SIG_PF(terminateServer));
+  bzSignal(SIGTERM, SIG_PF(terminateServer));	// ditto
 #if !defined(_WIN32)				// no SIGPIPE in Windows
-  signal(SIGPIPE, SIG_IGN);			// don't die on broken pipe
+  bzSignal(SIGPIPE, SIG_IGN);			// don't die on broken pipe
 #endif
 
   // initialize

@@ -21,7 +21,7 @@
 #include <bstring.h>
 #include <sys/prctl.h>
 #include <sys/wait.h>
-#include <signal.h>
+#include "bzsignal.h"
 #include <limits.h>
 #include <sys/schedctl.h>
 
@@ -246,7 +246,7 @@ void			SGIMedia::audioThreadInit(void*)
 
   // parent will kill me when it wants me to quit.  catch the signal
   // and gracefully exit.
-  signal(SIGTERM, SIG_PF(die));
+  bzSignal(SIGTERM, SIG_PF(die));
 
 #if defined(DEADLINE)
   // increase priority

@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-static const char	copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
+static const char copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 
 // must be before windows.h
 #include "network.h"
@@ -27,7 +27,7 @@ static const char	copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 #include <ctype.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <signal.h>
+#include "bzsignal.h"
 #include <time.h>
 #include "common.h"
 #include "global.h"
@@ -1164,7 +1164,7 @@ static void writeClient(int index, const TimeKeeper& tm)
 static void dumpServerList(int /*sig*/)
 {
 #if !defined(_WIN32)				// no SIGUSR1 in Windows
-  signal(SIGUSR1, SIG_PF(dumpServerList));
+  bzSignal(SIGUSR1, SIG_PF(dumpServerList));
 #endif
 
   // open a file to receive server list
@@ -1192,7 +1192,7 @@ static void dumpServerList(int /*sig*/)
 static void dumpTraffic(int /*sig*/)
 {
 #if !defined(_WIN32)				// no SIGUSR2 in Windows
-  signal(SIGUSR2, SIG_PF(dumpTraffic));
+  bzSignal(SIGUSR2, SIG_PF(dumpTraffic));
 #endif
 
   // open a file to receive traffic counts
@@ -1275,8 +1275,8 @@ static boolean done = False;
 
 static void terminateServer(int /*sig*/)
 {
-  signal(SIGINT, SIG_PF(terminateServer));
-  signal(SIGTERM, SIG_PF(terminateServer));
+  bzSignal(SIGINT, SIG_PF(terminateServer));
+  bzSignal(SIGTERM, SIG_PF(terminateServer));
   exitCode = 0;
   done = True;
 }
@@ -1365,13 +1365,13 @@ int main(int argc, char** argv)
   }
 
   // trap some signals
-  if (signal(SIGINT, SIG_IGN) != SIG_IGN)	// let user kill server
-    signal(SIGINT, SIG_PF(terminateServer));
-  signal(SIGTERM, SIG_PF(terminateServer));	// ditto
+  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)	// let user kill server
+    bzSignal(SIGINT, SIG_PF(terminateServer));
+  bzSignal(SIGTERM, SIG_PF(terminateServer));	// ditto
 #if !defined(_WIN32)				// these signals not in Win32
-  signal(SIGPIPE, SIG_IGN);			// don't die on broken pipe
-  signal(SIGUSR1, SIG_PF(dumpServerList));
-  signal(SIGUSR2, SIG_PF(dumpTraffic));
+  bzSignal(SIGPIPE, SIG_IGN);			// don't die on broken pipe
+  bzSignal(SIGUSR1, SIG_PF(dumpServerList));
+  bzSignal(SIGUSR2, SIG_PF(dumpTraffic));
 #endif
 
   // initialize

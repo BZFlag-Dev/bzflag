@@ -15,7 +15,7 @@
 #include <sys/types.h>
 #if !defined(_WIN32)
 #include <unistd.h>
-#include <signal.h>
+#include "bzsignal.h"
 #include <setjmp.h>
 #include "ErrorHandler.h"
 #endif
@@ -126,7 +126,7 @@ Address			Address::getHostAddress(const char* hname)
   else {				// non-local address
 #if !defined(_WIN32)
     // set alarm to avoid waiting too long
-    SIG_PF oldAlarm = signal(SIGALRM, SIG_PF(onAlarm));
+    SIG_PF oldAlarm = bzSignal(SIGALRM, SIG_PF(onAlarm));
     if (oldAlarm != SIG_ERR) {
       if (setjmp(alarmEnv) != 0) {
 	// alarm went off
@@ -145,7 +145,7 @@ Address			Address::getHostAddress(const char* hname)
 #if !defined(_WIN32)
     if (oldAlarm != SIG_ERR) {
       alarm(0);
-      signal(SIGALRM, oldAlarm);
+      bzSignal(SIGALRM, oldAlarm);
     }
 #endif
   }
@@ -163,7 +163,7 @@ BzfString		Address::getHostByAddress(InAddr addr)
 {
 #if !defined(_WIN32)
   // set alarm to avoid waiting too long
-  SIG_PF oldAlarm = signal(SIGALRM, SIG_PF(onAlarm));
+  SIG_PF oldAlarm = bzSignal(SIGALRM, SIG_PF(onAlarm));
   if (oldAlarm != SIG_ERR) {
     if (setjmp(alarmEnv) != 0) {
       // alarm went off
@@ -181,7 +181,7 @@ BzfString		Address::getHostByAddress(InAddr addr)
 #if !defined(_WIN32)
   if (oldAlarm != SIG_ERR) {
     alarm(0);
-    signal(SIGALRM, oldAlarm);
+    bzSignal(SIGALRM, oldAlarm);
   }
 #endif
 

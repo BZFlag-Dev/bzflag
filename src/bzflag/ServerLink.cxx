@@ -24,8 +24,8 @@
 
 #if !defined(_WIN32)
 #include <unistd.h>
-#include <signal.h>
 #endif
+#include "bzsignal.h"
 
 #define UDEBUG if (UDEBUGMSG) printf
 #define UDEBUGMSG false
@@ -71,7 +71,7 @@ int bcmp(unsigned char *a1, unsigned char *a2, int length)
 
 static void		timeout(int)
 {
-  signal(SIGALRM, SIG_IGN);
+  bzSignal(SIGALRM, SIG_IGN);
   alarm(0);
 }
 #endif // !defined(_WIN32)
@@ -135,13 +135,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   remoteAddress = addr.sin_addr.s_addr;
 
 #if !defined(_WIN32)
-  signal(SIGALRM, SIG_PF(timeout));
+  bzSignal(SIGALRM, SIG_PF(timeout));
   alarm(5);
 #endif // !defined(_WIN32)
   const boolean okay = (connect(query, (CNCTType*)&addr, sizeof(addr)) >= 0);
 #if !defined(_WIN32)
   alarm(0);
-  signal(SIGALRM, SIG_IGN);
+  bzSignal(SIGALRM, SIG_IGN);
 #endif // !defined(_WIN32)
   if (!okay) goto done;
 

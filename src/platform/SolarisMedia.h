@@ -20,7 +20,7 @@
 #include <math.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <signal.h>
+#include "bzsignal.h"
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>

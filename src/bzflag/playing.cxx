@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-static const char	copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
+static const char copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
+#include "bzsignal.h"
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
@@ -302,7 +302,7 @@ void			joinGameHandler(boolean okay, void*)
 
 static void		dying(int sig)
 {
-  signal(sig, SIG_DFL);
+  bzSignal(sig, SIG_DFL);
   display->setDefaultResolution();
   raise(sig);
 }
@@ -313,7 +313,7 @@ static void		dying(int sig)
 
 static void		suicide(int sig)
 {
-  signal(sig, SIG_PF(suicide));
+  bzSignal(sig, SIG_PF(suicide));
   if (mainWindow) mainWindow->setQuit();
 }
 
@@ -323,7 +323,7 @@ static void		suicide(int sig)
 
 static void		hangup(int sig)
 {
-  signal(sig, SIG_PF(hangup));
+  bzSignal(sig, SIG_PF(hangup));
   serverDied = True;
   serverError = True;
 }
@@ -2133,7 +2133,8 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 					const PlayerId& killer,
 					int shotId)
 {
-  if (!tank->isAlive()) return False;
+  if (!tank->isAlive())
+    return False;
 
   // you can't take it with you
   const FlagId flag = tank->getFlag();
@@ -4157,20 +4158,20 @@ void			startPlaying(BzfDisplay* _display,
 
   // catch kill signals before changing video mode so we can
   // put it back even if we die.  ignore a few signals.
-  if (signal(SIGINT, SIG_IGN) != SIG_IGN)
-    signal(SIGINT, SIG_PF(suicide));
-  signal(SIGILL, SIG_PF(dying));
-  signal(SIGABRT, SIG_PF(dying));
-  signal(SIGSEGV, SIG_PF(dying));
-  signal(SIGTERM, SIG_PF(suicide));
+  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)
+    bzSignal(SIGINT, SIG_PF(suicide));
+  bzSignal(SIGILL, SIG_PF(dying));
+  bzSignal(SIGABRT, SIG_PF(dying));
+  bzSignal(SIGSEGV, SIG_PF(dying));
+  bzSignal(SIGTERM, SIG_PF(suicide));
 #if !defined(_WIN32)
-  signal(SIGPIPE, SIG_PF(hangup));
-  signal(SIGHUP, SIG_IGN);
-  if (signal(SIGQUIT, SIG_IGN) != SIG_IGN)
-    signal(SIGQUIT, SIG_PF(dying));
-  signal(SIGBUS, SIG_PF(dying));
-  signal(SIGUSR1, SIG_IGN);
-  signal(SIGUSR2, SIG_IGN);
+  bzSignal(SIGPIPE, SIG_PF(hangup));
+  bzSignal(SIGHUP, SIG_IGN);
+  if (bzSignal(SIGQUIT, SIG_IGN) != SIG_IGN)
+    bzSignal(SIGQUIT, SIG_PF(dying));
+  bzSignal(SIGBUS, SIG_PF(dying));
+  bzSignal(SIGUSR1, SIG_IGN);
+  bzSignal(SIGUSR2, SIG_IGN);
 #endif /* !defined(_WIN32) */
 
   // set the resolution (only if in full screen mode)

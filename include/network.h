@@ -118,12 +118,6 @@ int			getErrno();
 #define CNCTType	const struct sockaddr
 #endif
 
-// some platforms don't have a SIG_PF type.
-// note that this isn't really network code.
-#if !defined(__sgi) && !defined(sun)
-typedef void		(*SIG_PF)(int);
-#endif
-
 #if !defined(INADDR_NONE)
 #define INADDR_NONE	((in_addr_t)0xffffffff)
 #endif

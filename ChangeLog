@@ -18,6 +18,7 @@ BZFlag 1.7e1
 * dim paused/nr tanks on radar - chestal
 * fix bzfls for servers on non-5155 - TimR
 * pgup/pgdn support in help menu - Kris Verbeeck
+* stop using signal() as suggested by Frank Thilo - TimR
 
 
 BZFlag 1.7e release 000

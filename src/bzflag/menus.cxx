@@ -15,7 +15,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include <signal.h>
+#include "bzsignal.h"
 #if defined(_WIN32)
 #include <process.h>
 #else
@@ -2648,7 +2648,7 @@ void			ServerMenu::checkEchos()
 	  static const char* msg = "LIST\n\n";
 #if !defined(_WIN32)
 	  // ignore SIGPIPE for this send
-	  SIG_PF oldPipeHandler = signal(SIGPIPE, SIG_IGN);
+	  SIG_PF oldPipeHandler = bzSignal(SIGPIPE, SIG_IGN);
 #endif
 	  if (send(listServer.socket, msg, strlen(msg), 0) != (int)strlen(msg)) {
 	    // probably unable to connect to server
@@ -2660,7 +2660,7 @@ void			ServerMenu::checkEchos()
 	    listServer.bufferSize = 0;
 	  }
 #if !defined(_WIN32)
-	  signal(SIGPIPE, oldPipeHandler);
+	  bzSignal(SIGPIPE, oldPipeHandler);
 #endif
 	}
       }
