@@ -149,6 +149,7 @@ struct CmdLineOptions
   bool			startRecording;
   bool			timestampLog;
   bool			timestampMicros;
+	bool			countdownPaused;
 
   uint16_t		maxTeam[NumTeams];
   FlagNumberMap		flagCount;
@@ -204,4 +205,3 @@ struct CmdLineOptions;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

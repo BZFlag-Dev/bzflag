@@ -105,6 +105,7 @@ static bool disableHeightChecks = false;
 char hexDigest[50];
 
 TimeKeeper gameStartTime;
+TimeKeeper countdownPauseStart = TimeKeeper::getNullTime();
 bool countdownActive = false;
 int countdownDelay = -1;
 
@@ -4655,24 +4656,47 @@ int main(int argc, char **argv)
       } // end check if second has elapsed
     } // end check if countdown delay is active
 
-    // see if game time ran out
+    // see if game time ran out or if we are paused
     if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
       float newTimeElapsed = tm - gameStartTime;
       float timeLeft = clOptions->timeLimit - newTimeElapsed;
       if (timeLeft <= 0.0f) {
-	timeLeft = 0.0f;
-	gameOver = true;
-	countdownActive = false;
+				timeLeft = 0.0f;
+				gameOver = true;
+				countdownActive = false;
+				countdownPauseStart = TimeKeeper::getNullTime();
+				clOptions->countdownPaused = false;
       }
-      if (timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f) {
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUInt(bufStart, (uint32_t)timeLeft);
-	broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
-	clOptions->timeElapsed = newTimeElapsed;
-	if (clOptions->oneGameOnly && timeLeft == 0.0f) {
-	  done = true;
-	  exitCode = 0;
-	}
+			
+			if (countdownActive && clOptions->countdownPaused && !countdownPauseStart) {
+				// we have a new pause
+				countdownPauseStart = tm;
+				void *buf, *bufStart = getDirectMessageBuffer();
+				buf = nboPackInt(bufStart, -1 );
+				broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
+			}
+			
+			if (countdownActive && !clOptions->countdownPaused && countdownPauseStart) {
+				// resumed
+				gameStartTime += (tm - countdownPauseStart);
+				countdownPauseStart = TimeKeeper::getNullTime();
+				newTimeElapsed = tm - gameStartTime;
+				timeLeft = clOptions->timeLimit - newTimeElapsed;
+				void *buf, *bufStart = getDirectMessageBuffer();
+				buf = nboPackInt(bufStart, (int32_t)timeLeft);
+				broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
+			}
+				
+      if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f) && !clOptions->countdownPaused) {
+				// send update every 30 seconds
+				void *buf, *bufStart = getDirectMessageBuffer();
+				buf = nboPackInt(bufStart, (int32_t)timeLeft);
+				broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
+				clOptions->timeElapsed = newTimeElapsed;
+				if (clOptions->oneGameOnly && timeLeft == 0.0f) {
+	  			done = true;
+	  			exitCode = 0;
+				}
       }
     }
 

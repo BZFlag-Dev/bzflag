@@ -95,6 +95,7 @@ extern void sendDrop(FlagInfo &flag);
 // externs that countdown requires
 extern bool countdownActive;
 extern int countdownDelay;
+extern TimeKeeper countdownPauseStart;
 
 // externs that identify and password requires
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
@@ -616,9 +617,12 @@ static void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
   buf = nboPackUShort(buf, uint16_t(NoTeam));
   broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
   gameOver = true;
-  if (clOptions->timeManualStart)
+  if (clOptions->timeManualStart) {
     countdownActive = false;
+		countdownPauseStart = TimeKeeper::getNullTime();
+		clOptions->countdownPaused = false;
   return;
+ }
 }
 
 static void zapAllFlags()
@@ -645,9 +649,35 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
 
   // if the timelimit is not set .. don't countdown
   if (clOptions->timeLimit > 1.0f) {
-    std::istringstream timespec(message+10);
-    if (!(timespec >> countdownDelay))
-      countdownDelay = 10;
+		std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
+		if (parts[1] != "") {
+			if (parts[1] == "pause") {
+				if (clOptions->countdownPaused) {
+					sendMessage(ServerPlayer, t, "The game is already paused");
+					return;
+				}
+				clOptions->countdownPaused = true;
+				sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",playerData->player.getCallSign()).c_str());
+				return;
+			} else 
+			
+			if (parts[1] == "resume") {
+				if (!clOptions->countdownPaused) {
+					sendMessage(ServerPlayer, t, "The game is not paused");
+					return;
+				}
+				clOptions->countdownPaused = false;
+				sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",playerData->player.getCallSign()).c_str());
+				return;
+				
+			} else { 
+				std::istringstream timespec(message+10);
+				if (!(timespec >> countdownDelay))
+				countdownDelay = 10;
+			}
+		} else {
+			countdownDelay = 10;
+		}
 
     // limit/sanity check
     const int max_delay = 120;
