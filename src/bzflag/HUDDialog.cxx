@@ -50,6 +50,36 @@ void			HUDDialog::setFocus(HUDuiControl* _focus)
   focus = _focus;
 }
 
+void			HUDDialog::initNavigation(std::vector<HUDuiControl*> &list, int start, int end)
+{
+  int i;
+  const int count = list.size();
+
+  for (i = 0; i < start; i++) {
+    list[i]->setNext(list[i]);
+    list[i]->setPrev(list[i]);
+  }
+
+  if (start < end) {
+    list[start]->setNext(list[start+1]);
+    list[start]->setPrev(list[end]);
+    for (i = start+1; i < end; i++) {
+	list[i]->setNext(list[i+1]);
+	list[i]->setPrev(list[i-1]);
+    }
+    list[end]->setNext(list[start]);
+    list[end]->setPrev(list[end-1]);
+  }
+
+  for (i = end+1; i < count; i++) {
+    list[i]->setNext(list[i]);
+    list[i]->setPrev(list[i]);
+  }
+
+  setFocus(list[start]);
+}
+
+
 //
 // HUDDialogStack
 //

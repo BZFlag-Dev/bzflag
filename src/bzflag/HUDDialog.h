@@ -37,6 +37,8 @@ class HUDDialog {
     HUDuiControl*		getFocus() const;
     void			setFocus(HUDuiControl*);
 
+    void			initNavigation(std::vector<HUDuiControl*> &list, int start, int end);
+
 
 
   protected:

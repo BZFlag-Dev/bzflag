@@ -149,15 +149,7 @@ QuitMenu::QuitMenu()
   label->setString("Really quit?");
   list.push_back(label);
 
-  // set control order
-  const int count = list.size();
-  for (int i = 0; i < count; i++) {
-    list[i]->setNext(list[i]);
-    list[i]->setPrev(list[i]);
-  }
-
-  // set initial focus
-  setFocus(list[1]);
+  initNavigation(list, 1, 1);
 }
 
 HUDuiControl*		QuitMenu::createLabel(const char* string,
@@ -647,21 +639,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.push_back(createLabel(NULL, "Scroll Forward:"));
   controls.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
 
-  // set control order
-  const int count = controls.size();
-  controls[0]->setNext(controls[0]);
-  controls[0]->setPrev(controls[0]);
-  controls[1]->setNext(controls[2]);
-  controls[1]->setPrev(controls[count - 1]);
-  for (int i = 2; i < count - 1; i++) {
-    controls[i]->setNext(controls[i + 1]);
-    controls[i]->setPrev(controls[i - 1]);
-  }
-  controls[count - 1]->setNext(controls[1]);
-  controls[count - 1]->setPrev(controls[count - 2]);
-
-  // set initial focus
-  setFocus(controls[1]);
+  initNavigation(controls, 1, controls.size()-1);
 }
 
 bool			KeyboardMapMenu::isEditing() const
@@ -904,21 +882,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   list.push_back(option);
 
-  // set control order
-  const int count = list.size();
-  list[0]->setNext(list[0]);
-  list[0]->setPrev(list[0]);
-  list[1]->setPrev(list[count - 1]);
-  list[1]->setNext(list[2]);
-  for (int j = 2; j < count - 1; j++) {
-    list[j]->setPrev(list[j - 1]);
-    list[j]->setNext(list[j + 1]);
-  }
-  list[count - 1]->setPrev(list[count - 2]);
-  list[count - 1]->setNext(list[1]);
-
-  // set initial focus
-  setFocus(list[1]);
+  initNavigation(list, 1,list.size()-1);
 }
 
 GUIOptionsMenu::~GUIOptionsMenu()
@@ -1248,21 +1212,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   label->setLabel("GUI Options");
   list.push_back(label);
 
-  // set control order
-  const int count = list.size();
-  list[0]->setNext(list[0]);
-  list[0]->setPrev(list[0]);
-  list[1]->setPrev(list[count - 1]);
-  list[1]->setNext(list[2]);
-  for (int j = 2; j < count - 1; j++) {
-    list[j]->setPrev(list[j - 1]);
-    list[j]->setNext(list[j + 1]);
-  }
-  list[count - 1]->setPrev(list[count - 2]);
-  list[count - 1]->setNext(list[1]);
-
-  // set initial focus
-  setFocus(list[1]);
+  initNavigation(list, 1,list.size()-1);
 }
 
 OptionsMenu::~OptionsMenu()
@@ -1530,12 +1480,8 @@ HelpMenu::HelpMenu(const char* title) : HUDDialog()
   list.push_back(createLabel("Page Down for next page",
 			  "Page Up for previous page"));
 
-  // set control order
-  list[1]->setNext(list[1]);
-  list[1]->setPrev(list[1]);
 
-  // set initial focus
-  setFocus(list[1]);
+  initNavigation(list, 1, 1);
 }
 
 HUDuiControl*		HelpMenu::createLabel(const char* string,
@@ -3215,49 +3161,10 @@ ServerStartMenu::ServerStartMenu()
   failedMessage = createLabel("");
   controls.push_back(failedMessage);
 
-  // set control order
-  controls[0]->setNext(controls[0]);
-  controls[0]->setPrev(controls[0]);
-  controls[16]->setNext(controls[16]);
-  controls[16]->setPrev(controls[16]);
-  controls[17]->setNext(controls[17]);
-  controls[17]->setPrev(controls[17]);
-  controls[1]->setNext(controls[2]);
-  controls[2]->setNext(controls[3]);
-  controls[3]->setNext(controls[4]);
-  controls[4]->setNext(controls[5]);
-  controls[5]->setNext(controls[6]);
-  controls[6]->setNext(controls[7]);
-  controls[7]->setNext(controls[8]);
-  controls[8]->setNext(controls[9]);
-  controls[9]->setNext(controls[10]);
-  controls[10]->setNext(controls[11]);
-  controls[11]->setNext(controls[12]);
-  controls[12]->setNext(controls[13]);
-  controls[13]->setNext(controls[14]);
-  controls[14]->setNext(controls[15]);
-  controls[15]->setNext(controls[1]);
-  controls[1]->setPrev(controls[15]);
-  controls[2]->setPrev(controls[1]);
-  controls[3]->setPrev(controls[2]);
-  controls[4]->setPrev(controls[3]);
-  controls[5]->setPrev(controls[4]);
-  controls[6]->setPrev(controls[5]);
-  controls[7]->setPrev(controls[6]);
-  controls[8]->setPrev(controls[7]);
-  controls[9]->setPrev(controls[8]);
-  controls[10]->setPrev(controls[9]);
-  controls[11]->setPrev(controls[10]);
-  controls[12]->setPrev(controls[11]);
-  controls[13]->setPrev(controls[12]);
-  controls[14]->setPrev(controls[13]);
-  controls[15]->setPrev(controls[14]);
+  initNavigation(controls, 1, controls.size()-3);
 
   // set settings
   loadSettings();
-
-  // set initial focus
-  setFocus(controls[1]);
 }
 
 void			ServerStartMenu::setSettings(const char* _settings)
@@ -3647,30 +3554,7 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   failedMessage->setString("");
   list.push_back(failedMessage);
 
-  // set control order
-  list[0]->setNext(list[0]);
-  list[0]->setPrev(list[0]);
-  list[8]->setNext(list[8]);
-  list[8]->setPrev(list[8]);
-  list[9]->setNext(list[9]);
-  list[9]->setPrev(list[9]);
-  list[1]->setNext(list[2]);
-  list[2]->setNext(list[3]);
-  list[3]->setNext(list[4]);
-  list[4]->setNext(list[5]);
-  list[5]->setNext(list[6]);
-  list[6]->setNext(list[7]);
-  list[7]->setNext(list[1]);
-  list[1]->setPrev(list[7]);
-  list[2]->setPrev(list[1]);
-  list[3]->setPrev(list[2]);
-  list[4]->setPrev(list[3]);
-  list[5]->setPrev(list[4]);
-  list[6]->setPrev(list[5]);
-  list[7]->setPrev(list[6]);
-
-  // set initial focus
-  setFocus(list[1]);
+  initNavigation(list, 1, list.size()-3);
 }
 
 JoinMenu::~JoinMenu()
@@ -3888,22 +3772,7 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
   label->setString("Quit");
   list.push_back(label);
 
-  // set control order
-  list[0]->setNext(list[0]);
-  list[0]->setPrev(list[0]);
-  list[1]->setNext(list[1]);
-  list[1]->setPrev(list[1]);
-  list[2]->setNext(list[3]);
-  list[3]->setNext(list[4]);
-  list[4]->setNext(list[5]);
-  list[5]->setNext(list[2]);
-  list[2]->setPrev(list[5]);
-  list[3]->setPrev(list[2]);
-  list[4]->setPrev(list[3]);
-  list[5]->setPrev(list[4]);
-
-  // set initial focus
-  setFocus(list[2]);
+  initNavigation(list, 2, list.size()-1);
 }
 
 MainMenu::~MainMenu()
