@@ -3433,7 +3433,6 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   return world;
 }
 
-
 static WorldInfo *defineTeamWorld()
 {
   if (!clOptions.worldFile) {
@@ -3577,17 +3576,15 @@ static WorldInfo *defineTeamWorld()
 	  basePos[4][0] + 0.5f * BaseSize + PyrBase,
 	  basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
 	  PyrBase, PyrBase, PyrHeight);
-    }
+    }	 
 
     // create symmetric map of random buildings for random CTF mode
     if (clOptions.randomCTF) {
       int i;
       float h = BoxHeight;
-      int numTeams = ((clOptions.maxTeam[1] > 0) ? 1 : 0) +
-		     ((clOptions.maxTeam[2] > 0) ? 1 : 0) +
-		     ((clOptions.maxTeam[3] > 0) ? 1 : 0) +
-		     ((clOptions.maxTeam[4] > 0) ? 1 : 0);
-      if (numTeams == 0) {
+      bool redGreen = clOptions.maxTeam[1] > 0 || clOptions.maxTeam[2] > 0;
+      bool bluePurple = clOptions.maxTeam[3] > 0 || clOptions.maxTeam[4] > 0;
+      if (!redGreen && !bluePurple) {
 	fprintf(stderr, "need some teams, use -mp");
 	exit(20);
       }
@@ -3598,22 +3595,39 @@ static WorldInfo *defineTeamWorld()
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center and bases
-	if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > BoxBase*4 &&
-	    hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > BoxBase*4 &&
-	    hypotf(fabs(x),fabs(y)) > WorldSize/12)
-	  if ((numTeams <= 2) ||
-	     (hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) > BoxBase*4 &&
-	      hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > BoxBase*4)) {
-	    float angle = 2.0f * M_PI * (float)bzfrand();
-	    world->addBox(x,y,0.0f, angle, BoxBase, BoxBase, h);
-	    world->addBox(-x,-y,0.0f, angle, BoxBase, BoxBase, h);
-	    i += 2;
-	    if (numTeams > 2) {
-	      world->addBox(y,-x,0.0f, angle, BoxBase, BoxBase, h);
-	      world->addBox(-y,x,0.0f, angle, BoxBase, BoxBase, h);
-	      i += 2;
-	    }
-	  }
+	if ((redGreen && 
+	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= 
+	      BoxBase*4 ||
+	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <= 
+	      BoxBase*4)) ||
+	    (bluePurple && 
+	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <= 
+	      BoxBase*4 ||
+	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <= 
+	      BoxBase*4)) ||
+	    (redGreen && bluePurple && 
+	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= 
+	      BoxBase*4 ||
+	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <= 
+	      BoxBase*4 ||
+	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <= 
+	      BoxBase*4 ||
+	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <= 
+	      BoxBase*4)) ||
+	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
+	  continue;
+	
+	float angle=2.0f * M_PI * (float)bzfrand();
+	if (redGreen) {
+	  world->addBox(x,y,0.0f, angle, BoxBase, BoxBase, h);
+	  world->addBox(-x,-y,0.0f, angle, BoxBase, BoxBase, h);
+	  i+=2;
+	}
+	if (bluePurple) {
+	  world->addBox(y,-x,0.0f, angle, BoxBase, BoxBase, h);
+	  world->addBox(-y,x,0.0f, angle, BoxBase, BoxBase, h);
+	  i+=2;
+	}
       }
 
       // make pyramids
@@ -3625,26 +3639,44 @@ static WorldInfo *defineTeamWorld()
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center or bases
-	if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > PyrBase*4 &&
-	    hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > PyrBase*4 &&
-	    hypotf(fabs(x),fabs(y)) > WorldSize/12)
-	  if ((numTeams <= 2) ||
-	     (hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) > PyrBase*4 &&
-	     hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > PyrBase*4)) {
-	    float angle = 2.0f * M_PI * (float)bzfrand();
-	    world->addPyramid(x,y, 0.0f, angle,PyrBase, PyrBase, h);
-	    world->addPyramid(-x,-y, 0.0f, angle,PyrBase, PyrBase, h);
-	    if (numTeams > 2) {
-	      world->addPyramid(y,-x,0.0f, angle, PyrBase, PyrBase, h);
-	      world->addPyramid(-y,x,0.0f, angle, PyrBase, PyrBase, h);
-	      i += 2;
-	    }
-	  }
+	if ((redGreen && 
+	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= 
+	      PyrBase*6 ||
+	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <= 
+	      PyrBase*6)) ||
+	    (bluePurple && 
+	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <= 
+	      PyrBase*6 ||
+	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <= 
+	      PyrBase*6)) ||
+	    (redGreen && bluePurple && 
+	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= 
+	      PyrBase*6 ||
+	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <= 
+	      PyrBase*6 ||
+	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <= 
+	      PyrBase*6 ||
+	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <= 
+	      PyrBase*6)) ||
+	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
+	  continue;
+	
+	float angle=2.0f * M_PI * (float)bzfrand();
+	if (redGreen) {
+	  world->addPyramid(x,y, 0.0f, angle,PyrBase, PyrBase, h);
+	  world->addPyramid(-x,-y, 0.0f, angle,PyrBase, PyrBase, h);
+	  i+=2;
+	}
+	if (bluePurple) {
+	  world->addPyramid(y,-x,0.0f, angle, PyrBase, PyrBase, h);
+	  world->addPyramid(-y,x,0.0f, angle, PyrBase, PyrBase, h);
+	  i+=2;
+	}
       }
 
       // make teleporters
       if (clOptions.useTeleporters) {
-	const int teamFactor = numTeams > 2 ? 4 : 2;
+	const int teamFactor = redGreen && bluePurple ? 4 : 2;
 	const int numTeleporters = (8 + int(8 * (float)bzfrand())) / teamFactor * teamFactor;
 	const int numLinks = 2 * numTeleporters / teamFactor;
 	int (*linked)[2] = new int[numLinks][2];
@@ -3657,36 +3689,34 @@ static WorldInfo *defineTeamWorld()
 	  if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
 	    continue;
 	  // if to close to a base then try again
-	  if (((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) &&
-	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= BaseSize*4 ||
-	     hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <= BaseSize*4))
-	    continue;
-
-	  if (((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) &&
-	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= BaseSize*4 ||
-	     hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <= BaseSize*4))
+	  if ((redGreen &&
+	       (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= 
+		BaseSize*4 ||
+		hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <= 
+		BaseSize*4)) || 
+	      (bluePurple &&
+	       (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= 
+		BaseSize*4 ||
+		hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <= 
+		BaseSize*4)))
 	    continue;
 	  
 	  linked[i/teamFactor][0] = linked[i/teamFactor][1] = 0;
-	  if ((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) {
+	  if (redGreen) {
 	    world->addTeleporter(x, y, 0.0f, rotation, 0.5f*TeleWidth,
 		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
-	    i++;
-	  }
-	  if ((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) {
-	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2, 0.5f*TeleWidth,
-		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
-	    i++;
-	  }
-	  if ((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) {
 	    world->addTeleporter(-x, -y, 0.0f, rotation + M_PI, 0.5f*TeleWidth,
 		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
-	    i++;
+	    i+=2;
 	  }
-	  if ((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) {
-	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2, 0.5f*TeleWidth,
-		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
-	    i++;
+	  if (bluePurple) {
+	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2, 
+				 0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight,
+				 TeleWidth);
+	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2, 
+				 0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight,
+				 TeleWidth);
+	    i+=2;
 	  }
 	}
 
@@ -3704,7 +3734,7 @@ static WorldInfo *defineTeamWorld()
 		if (k++ == a) {
 		  world->addLink((2 * i + j) * teamFactor, (2 * i2 + j2) * teamFactor);
 		  world->addLink((2 * i + j) * teamFactor + 1, (2 * i2 + j2) * teamFactor + 1);
-		  if (numTeams > 2) {
+		  if (redGreen && bluePurple) {
 		    world->addLink((2 * i + j) * teamFactor + 2, (2 * i2 + j2) * teamFactor + 2);
 		    world->addLink((2 * i + j) * teamFactor + 3, (2 * i2 + j2) * teamFactor + 3);
 		  }
@@ -3713,7 +3743,7 @@ static WorldInfo *defineTeamWorld()
 		  if (i != i2 || j != j2) {
 		    world->addLink((2 * i2 + j2) * teamFactor, (2 * i + j) * teamFactor);
 		    world->addLink((2 * i2 + j2) * teamFactor + 1, (2 * i + j) * teamFactor + 1);
-		    if (numTeams > 2) {
+		    if (redGreen && bluePurple) {
 		      world->addLink((2 * i2 + j2) * teamFactor + 2, (2 * i + j) * teamFactor + 2);
 		      world->addLink((2 * i2 + j2) * teamFactor + 3, (2 * i + j) * teamFactor + 3);
 		    }
@@ -3794,27 +3824,26 @@ static WorldInfo *defineTeamWorld()
 	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
       }
-
       // add teleporters
       if (clOptions.useTeleporters) {
 	const float xoff = BoxBase + 0.5f * AvenueSize;
 	const float yoff = BoxBase + 0.5f * AvenueSize;
 	world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
-	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
-	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
-	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
-	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-	world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
-	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+  	world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
+	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.75f * M_PI,
-	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+                             0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter( 3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.75f * M_PI,
-	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+                             0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter( 3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.25f * M_PI,
-	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+                             0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 
 	world->addLink(0, 14);
 	world->addLink(1, 7);
@@ -3834,6 +3863,7 @@ static WorldInfo *defineTeamWorld()
 	world->addLink(15, 6);
       }
     }
+    
     return world;
   } else {
     return defineWorldFromFile(clOptions.worldFile);
