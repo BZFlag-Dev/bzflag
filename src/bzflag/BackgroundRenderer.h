@@ -77,6 +77,9 @@ class BackgroundRenderer {
     void		doInitDisplayLists();
     static void		freeContext(void*);
     static void		initContext(void*);
+    void		makeCelestialLists(const SceneRenderer&,
+				           const float sunDirection[3],
+				           const float moonDirection[3]);
 
   private:
     // rendering state

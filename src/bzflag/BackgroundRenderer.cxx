@@ -337,9 +337,32 @@ void		BackgroundRenderer::resize() {
 }
 
 
-void			BackgroundRenderer::setCelestial(
-				const SceneRenderer& renderer,
-				const float sunDir[3], const float moonDir[3])
+void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
+				      const float sunDir[3],
+				      const float moonDir[3])
+{
+  if (sunXFormList != INVALID_GL_LIST_ID) {
+    glDeleteLists(sunXFormList, 1);
+    sunXFormList = INVALID_GL_LIST_ID;
+  }
+  if (moonList != INVALID_GL_LIST_ID) {
+    glDeleteLists(moonList, 1);
+    moonList = INVALID_GL_LIST_ID;
+  }
+  if (starXFormList != INVALID_GL_LIST_ID) {
+    glDeleteLists(starXFormList, 1);
+    starXFormList = INVALID_GL_LIST_ID;
+  }
+  
+  makeCelestialLists(renderer, sunDir, moonDir);
+  
+  return;
+}
+
+
+void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer,
+				            const float sunDir[3],
+                                            const float moonDir[3])
 {
   // save sun and moon positions
   sunDirection[0] = sunDir[0];
@@ -371,10 +394,6 @@ void			BackgroundRenderer::setCelestial(
   doSunset = getSunsetTop(sunDirection, sunsetTop);
 
   // make pretransformed display list for sun
-  if (sunXFormList != INVALID_GL_LIST_ID) {
-    glDeleteLists(sunXFormList, 1);
-    sunXFormList = INVALID_GL_LIST_ID;
-  }
   sunXFormList = glGenLists(1);
   glNewList(sunXFormList, GL_COMPILE);
   {
@@ -409,10 +428,6 @@ void			BackgroundRenderer::setCelestial(
   const float limbAngle = atan2f(sun2[2], sun2[1]);
 
   int moonSegements = (int)BZDB.eval("moonSegments");
-  if (moonList != INVALID_GL_LIST_ID) {
-    glDeleteLists(moonList, 1);
-    moonList = INVALID_GL_LIST_ID;
-  }
   moonList = glGenLists(1);
   glNewList(moonList, GL_COMPILE);
   {
@@ -442,10 +457,6 @@ void			BackgroundRenderer::setCelestial(
   glEndList();
 
   // make pretransformed display list for stars
-  if (starXFormList != INVALID_GL_LIST_ID) {
-    glDeleteLists(starXFormList, 1);
-    starXFormList = INVALID_GL_LIST_ID;
-  }
   starXFormList = glGenLists(1);
   glNewList(starXFormList, GL_COMPILE);
   {
@@ -456,7 +467,8 @@ void			BackgroundRenderer::setCelestial(
     glPopMatrix();
   }
   glEndList();
-
+  
+  return;
 }
 
 
@@ -1097,19 +1109,16 @@ void BackgroundRenderer::doInitDisplayLists()
   glNewList(sunList, GL_COMPILE);
   {
     glBegin(GL_TRIANGLE_FAN);
+    {
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
       for (i = 0; i < 20; i++) {
 	const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
 	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
 					sunRadius * cosf(angle));
       }
+    }
     glEnd();
   }
-  glEndList();
-
-  // make (empty) moon list
-  moonList =  glGenLists(1);
-  glNewList(moonList, GL_COMPILE);
   glEndList();
 
   // make stars list
@@ -1424,7 +1433,7 @@ void BackgroundRenderer::doInitDisplayLists()
   //
 
   static const float up[3] = { 0.0f, 0.0f, 1.0f };
-  setCelestial(renderer, up, up);
+  makeCelestialLists(renderer, up, up);
 }
 
 
