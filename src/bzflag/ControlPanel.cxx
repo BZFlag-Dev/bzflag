@@ -64,10 +64,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 
   blend = renderer.useBlending();
 
-  background[0] = 0;
-  background[1] = 0;
-  background[2] = 0;
-
   // other initialization
   radarAreaPixels[0] = 0;
   radarAreaPixels[1] = 0;
@@ -98,8 +94,6 @@ void			ControlPanel::setControlColor(const GLfloat *color)
 
 void			ControlPanel::render(SceneRenderer& renderer)
 {
-  background[3] = renderer.getPanelOpacity();
-
   if (!resized) resize();
 
   int i, j;
@@ -120,8 +114,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
   const float margin = lineHeight / 4.0f;
 
 
-  if (changedMessage || (background[3] != 1.0f)) {
-    if (changedMessage) {
+  if (changedMessage || renderer.getPanelOpacity() < 1.0f) {
+    if (changedMessage > 0) {
       changedMessage--;
     }
     float fx = messageAreaPixels[0] + margin;
@@ -133,14 +127,14 @@ void			ControlPanel::render(SceneRenderer& renderer)
   
     OpenGLGState::resetState();
     // nice blended messages background
-    if(renderer.useBlending() && (background[3] != 1.0f))
+    if (renderer.useBlending() && renderer.getPanelOpacity() < 1.0f)
       glEnable(GL_BLEND);
-    glColor4f(background[0], background[1], background[2], background[3] );
+    glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
     glRecti(messageAreaPixels[0],
         messageAreaPixels[1],
         messageAreaPixels[0] + messageAreaPixels[2],
         messageAreaPixels[1] + messageAreaPixels[3]);
-    if(renderer.useBlending() && (background[3] != 1.0f))
+    if (renderer.useBlending() && renderer.getPanelOpacity() < 1.0f)
       glDisable(GL_BLEND);
   
     // draw messages
@@ -241,7 +235,7 @@ void			ControlPanel::resize()
   float w = (float)window.getWidth();
   const float h = (float)window.getHeight();
   radarSize = h / 4.0f;
-  if (background[3] == 1.0f)
+  if (SceneRenderer::getInstance()->getPanelOpacity() == 1.0f)
     radarSpace = 0.0f;
   else
     radarSpace = 3.0f * w / MinY;
@@ -272,7 +266,6 @@ void			ControlPanel::resize()
 
   // note that we've been resized at least once
   resized = True;
-  window.setFullView(background[3] != 1.0f);
   expose();
 }
 
@@ -332,7 +325,7 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
       }
       break;
   }
-  changedMessage = 2;
+  changedMessage = numBuffers;
 }
 
 void			ControlPanel::addMessage(const BzfString& line,

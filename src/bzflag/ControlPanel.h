@@ -81,7 +81,6 @@ class ControlPanel {
     static int		messagesOffset;
     static const int	maxScrollPages;
     static const int	maxLines;
-    GLfloat				background[4];
 };
 
 #endif // BZF_CONTROL_PANEL_H

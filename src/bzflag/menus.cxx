@@ -982,8 +982,10 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case 'y':
+    {
       sceneRenderer->setPanelOpacity(((float)list->getIndex()) / 10.0f);
       break;
+    }
 
     case 'z':
       sceneRenderer->setColoredShots(list->getIndex() != 0);

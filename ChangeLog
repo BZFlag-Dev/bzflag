@@ -2,7 +2,7 @@
 			     BZFlag release notes
 
 * add new updates here without heading until a release
-* new GUI options menu - Frank Thilo (resizing still needs work!)
+* new GUI options menu - Frank Thilo
 * exclude observers from /idlestats list - Frank Thilo
 * server based scoring - Dave Brosius, Tim Riker
 * max. number of observers now defaults to 3 instead of 0 - Frank Thilo

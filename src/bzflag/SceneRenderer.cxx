@@ -430,8 +430,13 @@ boolean			SceneRenderer::useEnhancedRadar() const
 
 void			SceneRenderer::setPanelOpacity(float opacity)
 {
+  bool needtoresize = opacity == 1.0f || panelOpacity == 1.0f;
   panelOpacity = opacity;
   notifyStyleChange();
+  if (needtoresize) {
+    window.setFullView(panelOpacity < 1.0f);
+    window.getWindow()->callResizeCallbacks();
+  }
 }
 
 float			SceneRenderer::getPanelOpacity() const
@@ -461,7 +466,7 @@ int			SceneRenderer::getRadarShotLength() const
     return radarShotLength;
 }
 
-void            SceneRenderer::setBigFont(boolean _setBigFont)
+void			SceneRenderer::setBigFont(boolean _setBigFont)
 {
     useBigFontOn = _setBigFont;
     notifyStyleChange();
