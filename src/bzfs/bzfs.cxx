@@ -3479,11 +3479,16 @@ static void dropFlag(int playerIndex, float pos[3])
   // okay, go ahead and drop it
   drpFlag.player = -1;
   drpFlag.numShots = 0;
-  if (drpFlag.flag.endurance == FlagNormal && --drpFlag.grabs > 0)
-    drpFlag.flag.status = FlagInAir;
-  else
+  if (drpFlag.flag.endurance == FlagNormal) {
+    if (--drpFlag.grabs > 0)
+      drpFlag.flag.status = FlagInAir;
+    else
+      drpFlag.flag.status = FlagGoing;
+    numFlagsInAir++;
+  } else if (drpFlag.flag.endurance == FlagSticky) {
     drpFlag.flag.status = FlagGoing;
-  numFlagsInAir++;
+    numFlagsInAir++;
+  }
 
   topmosttype = world->inBuilding(&container, pos[0], pos[1], pos[2], 0);
 
@@ -3515,7 +3520,7 @@ static void dropFlag(int playerIndex, float pos[3])
 				  topmost->pos[2] + topmost->size[2] + 0.01f));
 
   int flagTeam = drpFlag.flag.type->flagTeam;
-  bool isTeamFlag = flagTeam != ::NoTeam;
+  bool isTeamFlag = (flagTeam != ::NoTeam);
 
   if (drpFlag.flag.status == FlagGoing) {
     drpFlag.flag.landingPosition[0] = pos[0];

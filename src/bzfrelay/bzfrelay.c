@@ -71,7 +71,7 @@
 #endif
 
 #define	RELAY_BUFLEN		4096		/* size of relay buffers */
-#define BZFS_PORT		"5155"		/* well known bzfs port */
+#define BZFS_PORT		"5154"		/* well known bzfs port */
 #define RECONNECT_PORT		"5157"		/* listen for reconnect here */
 #define NETWORK_TIMEOUT		15		/* seconds until give up */
 

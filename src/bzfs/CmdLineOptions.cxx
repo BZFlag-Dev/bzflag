@@ -141,7 +141,7 @@ const char *extraUsageString =
 "\t-mps: set player score limit on each game\n"
 "\t-ms: maximum simultaneous shots per player\n"
 "\t-mts: set team score limit on each game\n"
-"\t-p: use alternative port (default is 5155)\n"
+"\t-p: use alternative port (default is 5154)\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-passwd: specify a <password> for operator commands\n"
 #ifdef PRINTSCORE

@@ -16,19 +16,19 @@ to the server.
 .PP
 When you start bzadmin without any command line options other than
 callsign and hostname a simple curses-based user interface will be
-started (unless you built bzadmin without curses support). This 
+started (unless you built bzadmin without curses support). This
 interface is divided into three rectangles; the output window
 (which covers almost all of the terminal), the target window, and
-the input window. 
+the input window.
 .PP
-The output window is where messages from the server will be shown. 
+The output window is where messages from the server will be shown.
 .PP
 The target window shows the name of the player that
 will receive your next message, or 'all' if it will be a public message.
 You can change target by using the left and right arrow keys.
 .PP
 The input window is where you type your messages. It also supports tab
-completion of commands and callsigns. You can clear the input window 
+completion of commands and callsigns. You can clear the input window
 with the key combination \fBCtrl-U\fR, and you can generate a \fB/kick\fR
 command for the current target with the F5 key (if the current target
 is a player).
@@ -42,7 +42,7 @@ Show a simple help text.
 Select the user interface that you want. The curses interface is the default,
 and it is described above.
 .br
-The stdin interface reads user commands from the standard in stream 
+The stdin interface reads user commands from the standard in stream
 and sends them to the server. All server output is ignored.
 .br
 The stdout interface prints all server output to the standard out stream.
@@ -54,7 +54,7 @@ the standard in stream.
 .TP
 \fIcallsign@hostname\fR[\fI:port\fR]
 Specifies the callsign that you want your client to use, and the
-hostname where the BZFlag server is. bzadmin always joins as an 
+hostname where the BZFlag server is. bzadmin always joins as an
 observer, but don't add '@' in the beginning of the callsign - it
 will be added automatically. The port number is optional, and the
 default value is 5154.
@@ -62,15 +62,15 @@ default value is 5154.
 \fIcommand\fR
 You can specify messages and commands to send to the server on the
 command line. If any such commands are specified, bzadmin will
-exit as soon as those commands has been sent, without starting 
+exit as soon as those commands has been sent, without starting
 an user interface.
 .RE
 .SS Examples
 .RS
 .TP 15
-\fBbzadmin admin@localhost:5155\fR
+\fBbzadmin admin@localhost:5154\fR
 .br
-Join the game on localhost, port 5155, using the callsign '@admin'.
+Join the game on localhost, port 5154, using the callsign '@admin'.
 .TP
 \fBbzadmin admin@localhost '/passwd secretpass' '/ban 192.168.0.2'
 .br

@@ -24,7 +24,7 @@ usage:  [-a <vel> <rot>] [-b] [-c] [+f {good|<id>}] [-f {bad|<id>}] [-g] [-h] [-
      -ms: maximum simultaneous shots per player
      -mps: set player score limit on each game
      -mts: set team score limit on each game
-     -p: use alternative port (default is 5155)
+     -p: use alternative port (default is 5154)
      -public <server-description>
      -publicaddr <effective-server-hostname>[:<effective-server-port>]
      -publiclist <list-server-url>

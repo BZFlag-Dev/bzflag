@@ -203,7 +203,7 @@ Server::Server(const char* inNamePort,
   else {
     // didn't get a port number. add it
     name = strdup(inNamePort);
-    port = strdup("5155");
+    port = strdup("5154");
     // add one for \0 and one for ':'
     nameport = (char *)malloc(strlen(name) + strlen(port) + 2);
     strcpy(nameport, name);
@@ -746,10 +746,10 @@ static Server* findServer(const char* inNamePort)
   if (delimiter)
     nameport = strdup(inNamePort);
   else {
-    // add one for \0 and five for ":5155"
+    // add one for \0 and five for ":5154"
     nameport = (char *)malloc(strlen(inNamePort) + 6);
     strcpy(nameport, inNamePort);
-    strcat(nameport, ":5155");
+    strcat(nameport, ":5154");
   }
   // search server list for exact same name
   Server* scan = serverList;
@@ -784,10 +784,10 @@ static int addServer(const char* inNamePort, const char* version,
   if (delimiter)
     nameport = strdup(inNamePort);
   else {
-    // add one for \0 and five for ":5155"
+    // add one for \0 and five for ":5154"
     nameport = (char *)malloc(strlen(inNamePort) + 6);
     strcpy(nameport, inNamePort);
-    strcat(nameport, ":5155");
+    strcat(nameport, ":5154");
   }
 
   // is server already in the list?  if so then freshen it.

@@ -94,7 +94,7 @@ elsif ( $action eq "ADD" ) {
   # Test to see whether nameport is valid by attempting to establish a
   # connection to it
   my ($servname, $servport) = split /:/, $nameport;
-  $servport = 5155 unless defined $servport;
+  $servport = 5154 unless defined $servport;
   my $servip32 = inet_aton ($servname);
   exit unless defined $servip32;
   my $servip = inet_ntoa ($servip32);

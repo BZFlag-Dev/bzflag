@@ -18,7 +18,7 @@ use Socket;
 
 # get arguments:  server [port]
 ($servername,$port) = @ARGV;
-$port = 5155 unless $port;
+$port = 5154 unless $port;
 
 # some socket defines
 $sockaddr = 'S n a4 x8';
