@@ -214,14 +214,18 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   if (strcmp(version, getServerVersion()) != 0) {
     state = BadVersion;
 
-		if (strcmp(version,"REFUSED_" ) == 0)
-		{
-			state = Refused;
-			char	message[512];
-			int len = recv(query, (char*)message, 512, 0);
-			message[len-1] = 0;
-			rejectionMessage = message;
-		}
+    if (strcmp(version,"REFUSED_" ) == 0) {
+      state = Refused;
+      char message[512];
+      int len = recv(query, (char*)message, 512, 0);
+      if (len > 0) {
+        message[len - 1] = 0;
+      } else {
+        message[0] = 0;
+      }
+      rejectionMessage = message;
+    }
+    
     goto done;
   }
 
