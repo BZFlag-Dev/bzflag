@@ -1,0 +1,1 @@
+EXTRA_DIST = bzflag.wrap.linux install.linux

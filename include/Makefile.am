@@ -1,0 +1,1 @@
+noinst_HEADERS = $(wildcard [A-Z]*.h)  $(wildcard [abd-z]*.h) common.h

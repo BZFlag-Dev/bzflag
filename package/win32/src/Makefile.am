@@ -1,0 +1,1 @@
+SUBDIRS = bzfinst bzfuinst makedb
