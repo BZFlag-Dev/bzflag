@@ -287,7 +287,7 @@ namespace TextUtils {
     }
 
     int i = 0;
-    while (isVisible(input[i]) && (i < max)) {
+    while (!isVisible(input[i]) && (i < max)) {
       i++;
     }
     return i;
@@ -305,7 +305,7 @@ namespace TextUtils {
     }
 
     int i = 0;
-    while (!isVisible(input[i]) && (i < max)) {
+    while (isVisible(input[i]) && (i < max)) {
       i++;
     }
     return i;
