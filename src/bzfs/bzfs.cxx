@@ -2862,11 +2862,6 @@ static void shotFired(int playerIndex, void *buf, int len)
 
       DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
 	     playerIndex, fireFlag.c_str(), holdFlag.c_str());
-      firingInfo.flagType = Flags::Null;
-      firingInfo.shot.vel[0] = shotSpeed * cos(lastState[playerIndex].azimuth);
-      firingInfo.shot.vel[1] = shotSpeed * sin(lastState[playerIndex].azimuth);
-      firingInfo.shot.vel[2] = 0.0f;
-      repack = true;
 
       // bye bye supposed cheater
       DEBUG1("Kicking Player %s [%d] Player using wrong shots\n", shooter.getCallSign(), playerIndex);
