@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- some ATI cards get font rendering to have variable alpha valuse
+  on each letter. The gl restate was removed from the font manager.
+  It should be put in and tied to a config option that defaults to
+  off.
+
 - teleporting is blocking when going from a ground teleporter to
   a teleporter sitting on a mesh object. fix during next protocol
   breakage  (workaround by dropping the ground teleporter by a
