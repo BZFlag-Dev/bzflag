@@ -342,6 +342,11 @@
 						d.writeln("-vars \"" + mainform.vars.value + "\"<br/><br/>");
 					}
 
+					if (mainform.auto_team.checked) {
+						d.writeln("#Auto Team assignments<br/>");
+						d.writeln("-autoTeam<br/><br/>");
+					}
+
 					if (mainform.allow_jumping.checked) {
 						d.writeln("#Tanks can jump<br/>");
 						d.writeln("-j<br/><br/>");
@@ -731,6 +736,10 @@
 							<td><input type="text" name="teamflagzap_timeout" value="30" size="30" title="Time to keep team flag after all members have left [s]"/></td>
 							<td>World Property Variables file</td>
 							<td><input type="file" name="vars" title="File that stores world variable overrides"/></td>
+						</tr>
+						<tr>
+							<td>Auto Team Assignment</td>
+							<td><input type="checkbox" name="auto_team" title="Server auto balances game by picking teams for joining players"/>
 						</tr>
 					</table>
 				</fieldset>
