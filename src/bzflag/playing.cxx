@@ -3764,15 +3764,22 @@ static void		handleServerMessage(bool human, uint16_t code,
        */
       static const char passwdRequest[] = "Identify with /identify";
       if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
-	std::string passwdKey = string_util::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort);
-	if (BZDB.isSet(passwdKey)) {
-	  std::string passwdResponse = "/identify " + BZDB.get(passwdKey);
-	  addMessage(srcPlayer, string_util::format("Autoidentifying with password stored for %s", passwdKey.c_str()).c_str(), false);
-          void *buf = messageMessage;
-          buf = nboPackUByte(buf, ServerPlayer);
- 	  nboPackString(buf, (void*) passwdResponse.c_str(), MessageLen);
- 	  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-	}
+        const std::string passwdKeys[] = {
+          string_util::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
+          string_util::format("%s@%s", startupInfo.callsign, startupInfo.serverName)
+        };
+
+        for (size_t i = 0; i < countof(passwdKeys); i++) {
+          if (BZDB.isSet(passwdKeys[i])) {
+            std::string passwdResponse = "/identify " + BZDB.get(passwdKeys[i]);
+            addMessage(0, ("Autoidentifying with password stored for " + passwdKeys[i]).c_str(), false);
+            void *buf = messageMessage;
+            buf = nboPackUByte(buf, ServerPlayer);
+            nboPackString(buf, (void*) passwdResponse.c_str(), MessageLen);
+            serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+            break;
+          }
+        }
       }
     }
 
