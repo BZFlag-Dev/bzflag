@@ -464,4 +464,7 @@
     <!INCLUDE "rain.bzg" />
   </group>
 
+  <!-- black hat for paused & nr -->
+  <!INCLUDE "blackhat.bzg" />
+
 </group>
