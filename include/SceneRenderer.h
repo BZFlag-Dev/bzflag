@@ -166,7 +166,10 @@ private:
   ViewFrustum		frustum;
   GLint		maxLights;
   GLint		reservedLights;
-  std::vector<OpenGLLight*>	lights;
+  GLint		dynamicLights;
+  int		lightsSize;
+  int		lightsCount;
+  OpenGLLight**	lights;
   OpenGLLight		theSun;
   bool		sunOrMoonUp;
   GLfloat		sunDirection[3];	// or moon

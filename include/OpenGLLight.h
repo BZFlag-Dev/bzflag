@@ -25,6 +25,7 @@
 
 // common headers
 #include "bzfgl.h"
+#include "ViewFrustum.h"
 
 typedef std::vector<GLuint> OpenGLLightDLStack;
 
@@ -48,7 +49,8 @@ class OpenGLLight {
     void		setAttenuation(const GLfloat* clq);
     void		setAttenuation(int index, GLfloat value);
 
-    GLfloat		getImportance(const GLfloat* pos) const;
+    void		setImportance(const ViewFrustum& frustum);
+    GLfloat		getImportance() const;
 
     void		execute(int index) const;
 
@@ -69,6 +71,7 @@ class OpenGLLight {
     GLfloat		color[4];
     GLfloat		atten[3];
     GLfloat		maxDist;
+    GLfloat		importance;
     GLuint		listBase;
     GLuint*		list;
     GLuint		mailbox;
@@ -98,6 +101,11 @@ inline const GLfloat*	OpenGLLight::getAttenuation() const
 inline const GLfloat	OpenGLLight::getMaxDist() const
 {
   return maxDist;
+}
+
+inline GLfloat		 OpenGLLight::getImportance() const
+{
+  return importance;
 }
 
 #endif // BZF_OPENGL_LIGHT_H

@@ -19,6 +19,7 @@
 #include "common.h"
 
 /* system implementation headers */
+#include <stdlib.h>
 #include <string.h>
 
 /* common implementation headers */
@@ -121,6 +122,10 @@ SceneRenderer::SceneRenderer() :
 
 void SceneRenderer::setWindow(MainWindow* _window) {
   window = _window;
+  
+  lightsSize = 4;
+  lightsCount = 0;
+  lights = new OpenGLLight*[lightsSize];
 
   // get visual info
   window->getWindow()->makeCurrent();
@@ -187,8 +192,11 @@ void SceneRenderer::setWindow(MainWindow* _window) {
 
 SceneRenderer::~SceneRenderer()
 {
-  // then free database
+  // free database
   delete scene;
+  
+  // free lights list
+  delete[] lights;
 }
 
 bool			SceneRenderer::useABGR() const
@@ -442,14 +450,24 @@ void			SceneRenderer::enableLight(int index, bool on)
 
 void			SceneRenderer::enableSun(bool on)
 {
-  if (BZDBCache::lighting && sunOrMoonUp)
+  if (BZDBCache::lighting && sunOrMoonUp) {
     theSun.enableLight(SunLight, on);
+  }
 }
 
 void			SceneRenderer::addLight(OpenGLLight& light)
 {
   // add light
-  lights.push_back(&light);
+  lightsCount++;
+  if (lightsCount > lightsSize) {
+    OpenGLLight** newList = new OpenGLLight*[lightsSize * 2];
+    memcpy (newList, lights, lightsSize * sizeof(OpenGLLight*));
+    delete[] lights;
+    lights = newList;
+    lightsSize = lightsSize * 2;
+  }
+  lights[lightsCount - 1] = &light;
+  return;
 }
 
 void			SceneRenderer::addFlareLight(
@@ -460,18 +478,22 @@ void			SceneRenderer::addFlareLight(
 
 int			SceneRenderer::getNumLights() const
 {
-  if ((int)lights.size() > maxLights) return maxLights;
-  return lights.size();
+  if (lightsCount > maxLights) {
+    return maxLights;
+  } else {
+    return lightsCount;
+  }
 }
 
 int			SceneRenderer::getNumAllLights() const
 {
-  return lights.size();
+  return lightsCount;
 }
 
 void			SceneRenderer::clearLights()
 {
-  lights.clear();
+  lightsCount = 0;
+  return;
 }
 
 void			SceneRenderer::setTimeOfDay(double julianDay)
@@ -530,6 +552,19 @@ void			SceneRenderer::setTimeOfDay(double julianDay)
     background->setCelestial(*this, sunDir, moonDir);
 }
 
+
+static int sortLights (const void* a, const void* b)
+{
+  // the higher getImportance(), the closer it is to the beginning
+  const OpenGLLight* lightA = *((const OpenGLLight**) a);
+  const OpenGLLight* lightB = *((const OpenGLLight**) b);
+  if (lightA->getImportance() > lightB->getImportance()) {
+    return -1;
+  } else {
+    return +1;
+  }
+}
+
 void			SceneRenderer::render(
 				bool _lastFrame,
 				bool _sameFrame,
@@ -568,31 +603,35 @@ void			SceneRenderer::render(
 
   // get the important lights in the scene
   int i;
-  int numLights = 0;
+  dynamicLights = 0;
   if (!sameFrame) {
     clearLights();
     if (scene && !blank && lighting) {
-      // add lights
+      // get the potential dynamic lights
       scene->addLights(*this);
-      numLights = lights.size();
+      
+      // calculate the light importances
+      int i;
+      for (i = 0; i < lightsCount; i++) {
+        lights[i]->setImportance(frustum);
+      }
 
-      // pick maxLights most important light sources
-      // should go by full lighting function but we'll just go by distance
-      if (numLights > maxLights) {
-	const GLfloat* eye = frustum.getEye();
-	for (i = 0; i < maxLights; i++) {
-	  GLfloat maxImportance = lights[i]->getImportance(eye);
-	  for (int j = i + 1; j < numLights; j++) {
-	    GLfloat importance = lights[j]->getImportance(eye);
-	    if (importance > maxImportance) {
-	      OpenGLLight* temp = lights[i];
-	      lights[j] = lights[i];
-	      lights[i] = temp;
-	      maxImportance = importance;
-	    }
-	  }
-	}
-	numLights = maxLights;
+      // sort by importance      
+      qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
+
+      // count the valid lights (negative values indicate culled lights)
+      dynamicLights = 0;      
+      for (i = 0; i < lightsCount; i++) {
+        if (lights[i]->getImportance() >= 0.0f) {
+          dynamicLights++;
+        }
+      }
+
+      // limit the light count      
+      if (lightsCount > maxLights) {
+        dynamicLights = maxLights;
+      } else {
+        dynamicLights = lightsCount;
       }
     }
   }
@@ -713,8 +752,9 @@ void			SceneRenderer::render(
   // prepare the other lights but don't turn them on yet --
   // we may need to turn them on when drawing the background.
   if (lighting) {
-    for (i = 0; i < numLights; i++)
+    for (i = 0; i < dynamicLights; i++) {
       lights[i]->execute(i + reservedLights);
+    }
   }
 
   // draw rest of background
@@ -724,7 +764,7 @@ void			SceneRenderer::render(
   if (!blank) {
     if (lighting) {
       // now turn on the remaining lights
-      for (i = 0; i < numLights; i++)
+      for (i = 0; i < dynamicLights; i++)
 	OpenGLLight::enableLight(i + reservedLights);
     }
 
@@ -766,8 +806,9 @@ void			SceneRenderer::render(
     // shut off lights
     if (lighting) {
       theSun.enableLight(SunLight, false);
-      for (i = 0; i < numLights; i++)
+      for (i = 0; i < dynamicLights; i++) {
 	OpenGLLight::enableLight(i + reservedLights, false);
+      }
     }
 
     if (BZDBCache::zbuffer) glDisable(GL_DEPTH_TEST);
@@ -882,13 +923,13 @@ const GLfloat* 		SceneRenderer::getSunDirection() const
 void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
 {
   // temporarily turn off non-applicable lights for big meshes
-  for (unsigned int i = (SunLight + 1); i < lights.size(); i++) {
+  for (int i = 0; i < dynamicLights; i++) {
     const float* pos = lights[i]->getPosition();
     const float dist = lights[i]->getMaxDist();
     if ((pos[0] < (mins[0] - dist)) || (pos[0] > (maxs[0] + dist)) ||
         (pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||
         (pos[2] < (mins[2] - dist)) || (pos[2] > (maxs[2] + dist))) {
-      lights[i]->enableLight(i, false);
+      lights[i]->enableLight(i + reservedLights, false);
     }
   }
   return;
@@ -897,8 +938,8 @@ void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
 void SceneRenderer::reenableLights()
 {
   // reenable the temporarily disabled lights
-  for (unsigned int i = (SunLight + 1); i < lights.size(); i++) {
-    lights[i]->enableLight(i, true);
+  for (int i = 0; i < dynamicLights; i++) {
+    lights[i]->enableLight(i + reservedLights, true);
   }
   return;
 }

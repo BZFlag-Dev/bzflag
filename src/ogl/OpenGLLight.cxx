@@ -14,6 +14,7 @@
 #include "common.h"
 #include "OpenGLLight.h"
 #include "OpenGLGState.h"
+#include "ViewFrustum.h"
 
 static class OpenGLLightCleanup {
   public:
@@ -23,6 +24,7 @@ static class OpenGLLightCleanup {
 
 GLint			OpenGLLight::maxLights = 0;
 OpenGLLightDLStack	OpenGLLight::oldLists;
+
 
 OpenGLLight::OpenGLLight() : mailbox(0)
 {
@@ -37,9 +39,22 @@ OpenGLLight::OpenGLLight() : mailbox(0)
   atten[0] = 1.0f;
   atten[1] = 0.0f;
   atten[2] = 0.0f;
-  maxDist = 50.0f; //FIXME
+  maxDist = 50.0f;
+  //
+  // Here's the equation for maxDist:
+  //
+  //   c - the cutoff value (ex: 0.02 = 2%)
+  //   d - falloff distance where percentage is less then 1/r
+  //
+  //   (d^2 * atten[2]) + (d * atten[1]) + (atten[0] - (1/c)) = 0
+  //
+  // Most of the lights used in BZFlag seem to be under 50, so
+  // it doesn't seem to be worth the bother or CPU time to actually
+  // use this equation. Grep for 'Attenuation' to find the values.
+  //
   makeLists();
 }
+
 
 OpenGLLight::OpenGLLight(const OpenGLLight& l) : mailbox(0)
 {
@@ -57,6 +72,7 @@ OpenGLLight::OpenGLLight(const OpenGLLight& l) : mailbox(0)
   makeLists();
 }
 
+
 OpenGLLight::~OpenGLLight()
 {
   OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
@@ -66,7 +82,8 @@ OpenGLLight::~OpenGLLight()
   delete[] list;
 }
 
-OpenGLLight&		OpenGLLight::operator=(const OpenGLLight& l)
+
+OpenGLLight& OpenGLLight::operator=(const OpenGLLight& l)
 {
   if (this != &l) {
     freeLists();
@@ -85,7 +102,8 @@ OpenGLLight&		OpenGLLight::operator=(const OpenGLLight& l)
   return *this;
 }
 
-void			OpenGLLight::setDirection(const GLfloat* _pos)
+
+void OpenGLLight::setDirection(const GLfloat* _pos)
 {
   freeLists();
   pos[0] = _pos[0];
@@ -94,7 +112,8 @@ void			OpenGLLight::setDirection(const GLfloat* _pos)
   pos[3] = 0.0f;
 }
 
-void			OpenGLLight::setPosition(const GLfloat* _pos)
+
+void OpenGLLight::setPosition(const GLfloat* _pos)
 {
   freeLists();
   pos[0] = _pos[0];
@@ -103,7 +122,8 @@ void			OpenGLLight::setPosition(const GLfloat* _pos)
   pos[3] = 1.0f;
 }
 
-void			OpenGLLight::setColor(GLfloat r, GLfloat g, GLfloat b)
+
+void OpenGLLight::setColor(GLfloat r, GLfloat g, GLfloat b)
 {
   freeLists();
   color[0] = r;
@@ -111,7 +131,8 @@ void			OpenGLLight::setColor(GLfloat r, GLfloat g, GLfloat b)
   color[2] = b;
 }
 
-void			OpenGLLight::setColor(const GLfloat* rgb)
+
+void OpenGLLight::setColor(const GLfloat* rgb)
 {
   freeLists();
   color[0] = rgb[0];
@@ -119,7 +140,8 @@ void			OpenGLLight::setColor(const GLfloat* rgb)
   color[2] = rgb[2];
 }
 
-void			OpenGLLight::setAttenuation(const GLfloat* _atten)
+
+void OpenGLLight::setAttenuation(const GLfloat* _atten)
 {
   freeLists();
   atten[0] = _atten[0];
@@ -127,26 +149,77 @@ void			OpenGLLight::setAttenuation(const GLfloat* _atten)
   atten[2] = _atten[2];
 }
 
-void			OpenGLLight::setAttenuation(int index, GLfloat value)
+
+void OpenGLLight::setAttenuation(int index, GLfloat value)
 {
   freeLists();
   atten[index] = value;
 }
 
-GLfloat			OpenGLLight::getImportance(const GLfloat* p2) const
+
+void OpenGLLight::setImportance(const ViewFrustum& frustum)
 {
-  // compute relative importance of light to position p2
-  if (pos[3] != 0.0f) {
-    const GLfloat d = GLfloat(hypotf(p2[0] - pos[0],
-				hypotf(p2[1] - pos[1], p2[2] - pos[2])));
-    return 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
+  // for away lights count the most
+  // (shouldn't happen for dynamic lights?)
+  if (pos[3] == 0.0f) {
+    importance = MAXFLOAT;
   }
-  else {
-    return 1.0f;
+  
+  // This is not an exact test, the real culling shape should
+  // be a frustum with extended in all directions by maxDist.
+  // The hard edges on the frustum are bogus zones.
+  
+  // check if the light is in front of the front viewing plane
+  bool sphereCull = true;
+  const GLfloat* dir = frustum.getDirection();
+  const float fd = (dir[0] * pos[0]) +
+                   (dir[1] * pos[1]) +
+                   (dir[2] * pos[2]) + dir[3];
+
+  // cull against the frustum planes
+  // (right, left, up, and down)
+  if (fd > 0.0f) {
+    sphereCull = false; // don't need a sphere cull
+    for (int i = 1; i < 5; i++) {
+      const float* p = frustum.getSide(i);
+      const float len = (p[0] * pos[0]) +
+                        (p[1] * pos[1]) +
+                        (p[2] * pos[2]) + dir[3];
+      if (len < -maxDist) {
+        importance = -1.0f;
+        return;
+      }
+    }
   }
+
+  // calculate the distance
+  const GLfloat* eye = frustum.getEye();
+  const float v[3] = {
+    (eye[0] - pos[0]),
+    (eye[1] - pos[1]),
+    (eye[2] - pos[2]),
+  };
+  float dist = (v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]);
+  dist = sqrtf(dist);
+  
+  // do a sphere cull if requested
+  if (sphereCull && (dist > maxDist)) {
+    importance = -1.0f;
+    return;
+  }
+  
+  // compute the 'importance' factor
+  if (dist == 0.0f) {
+    importance = 0.5f * MAXFLOAT;
+  } else {
+    importance = 1.0f / dist;
+  }
+  
+  return;
 }
 
-void			OpenGLLight::execute(int index) const
+
+void OpenGLLight::execute(int index) const
 {
   if (list[index] != mailbox) {
     list[index] = mailbox;
@@ -157,7 +230,8 @@ void			OpenGLLight::execute(int index) const
   glCallList(listBase + index);
 }
 
-void			OpenGLLight::genLight(GLenum light) const
+
+void OpenGLLight::genLight(GLenum light) const
 {
   glLightfv(light, GL_POSITION, pos);
   glLightfv(light, GL_DIFFUSE, color);
@@ -168,7 +242,8 @@ void			OpenGLLight::genLight(GLenum light) const
   glLightf(light, GL_QUADRATIC_ATTENUATION, atten[2]);
 }
 
-void			OpenGLLight::makeLists()
+
+void OpenGLLight::makeLists()
 {
   // make all lights dirty
   const int numLights = getMaxLights();
@@ -191,26 +266,30 @@ void			OpenGLLight::makeLists()
   OpenGLGState::registerContextInitializer(initContext, (void*)this);
 }
 
-void			OpenGLLight::freeLists()
+
+void OpenGLLight::freeLists()
 {
   mailbox++;
 }
 
-GLint			OpenGLLight::getMaxLights()
+
+GLint OpenGLLight::getMaxLights()
 {
   if (maxLights == 0)
     glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
   return maxLights;
 }
 
-void			OpenGLLight::enableLight(int index,
+
+void OpenGLLight::enableLight(int index,
 						bool on) // const
 {
   if (on) glEnable((GLenum)(GL_LIGHT0 + index));
   else glDisable((GLenum)(GL_LIGHT0 + index));
 }
 
-void			OpenGLLight::cleanup()
+
+void OpenGLLight::cleanup()
 {
   // free all display lists on oldLists list
   const int count = oldLists.size();
@@ -220,11 +299,13 @@ void			OpenGLLight::cleanup()
   }
 }
 
-void			OpenGLLight::initContext(void* self)
+
+void OpenGLLight::initContext(void* self)
 {
   // cause display list to be recreated on next execute()
   ((OpenGLLight*)self)->freeLists();
 }
+
 
 // Local Variables: ***
 // mode:C++ ***
