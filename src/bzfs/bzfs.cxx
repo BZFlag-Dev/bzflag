@@ -101,6 +101,7 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth);
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(int flagIndex);
 static void dropFlag(int playerIndex, float pos[3]);
+static void dropAssignedFlag(int playerIndex);
 
 
 // util functions
@@ -2231,6 +2232,8 @@ static void addPlayer(int playerIndex)
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
     sendMessage(ServerPlayer, playerIndex, "Identify with /identify <your password>");
   }
+
+  dropAssignedFlag(playerIndex);
 }
 
 
@@ -2408,6 +2411,16 @@ void zapFlag(int flagIndex)
   // reset flag status
   resetFlag(flagIndex);
 }
+
+// try to get over a bug where extraneous flag are attached to a tank
+// not really found why, but this should fix
+// Should be called when we sure that tank does not hold any
+static void dropAssignedFlag(int playerIndex) {
+  for (int flagIndex  = 0; flagIndex < numFlags; flagIndex++)
+    if (flag[flagIndex].flag.status == FlagOnTank
+	&& flag[flagIndex].flag.owner == playerIndex)
+      resetFlag(flagIndex);
+} // dropAssignedFlag
 
 // Take into account the quality of player wins/(wins+loss)
 // Try to penalize winning casuality 
@@ -2919,6 +2932,7 @@ static void playerAlive(int playerIndex)
   // player is coming alive.
   player[playerIndex].state = PlayerAlive;
   player[playerIndex].flag = -1;
+  dropAssignedFlag(playerIndex);
 
   // send MsgAlive
   float pos[3], fwd;
