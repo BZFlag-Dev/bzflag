@@ -450,19 +450,10 @@ float FontManager::getStrLength(const std::string &face, float size,
 float FontManager::getStrHeight(int faceID, float size,
 				const std::string &text)
 {
-  int lines = 1;
-
-  int len = (int)text.size();
-
-  for (int i = 0; i < len; i++) {
-    if (text[i] == '\n')
-      lines++;
-  }
-
   // don't scale tiny fonts
   getClosestRealSize(faceID, size, size);
 
-  return (lines * size * 1.5f);
+  return (size * 1.5f);
 }
 
 float FontManager::getStrHeight(std::string face, float size,

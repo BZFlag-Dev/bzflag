@@ -244,33 +244,26 @@ float TextureFont::getStrLength(float scale, const char *str, int len)
   int lastCharacter = 0;
 
   float totalLen = 0;
-  float thisPassLen = 0;
 
   for (int i = 0; i < len; i++) {
-    if (str[i] == '\n') {	// newline, get back to the intial X and push down
-      thisPassLen = 0;
-    } else {
-      lastCharacter = charToUse;
-      if (str[i] < 32)
-	charToUse = 32;
-      else if (str[i] > numberOfCharacters + 32)
-	charToUse = 32;
+    lastCharacter = charToUse;
+    if (str[i] < 32)
+      charToUse = 32;
+    else if (str[i] > numberOfCharacters + 32)
+      charToUse = 32;
+    else
+      charToUse = str[i];
+
+    charToUse -= 32;
+
+    if (charToUse == 0) {
+      if (i == 0)
+	totalLen += fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth + fontMetrics[charToUse].whiteSpaceDist;
       else
-	charToUse = str[i];
-
-      charToUse -= 32;
-
-      if (charToUse == 0) {
-	if (i == 0)
-	  thisPassLen += fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth + fontMetrics[charToUse].whiteSpaceDist;
-	else
-	  thisPassLen += fontMetrics[lastCharacter].whiteSpaceDist + fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth;
-      } else {
-	thisPassLen += fontMetrics[charToUse].endX - fontMetrics[charToUse].startX + fontMetrics[charToUse].initialDist;
-      }
+	totalLen += fontMetrics[lastCharacter].whiteSpaceDist + fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth;
+    } else {
+      totalLen += fontMetrics[charToUse].endX - fontMetrics[charToUse].startX + fontMetrics[charToUse].initialDist;
     }
-    if (thisPassLen > totalLen)
-      totalLen = thisPassLen;
   }
 
   return totalLen * scale;
@@ -309,29 +302,23 @@ void TextureFont::drawString(float scale, GLfloat color[3], const char *str,
   int charToUse = 0;
   int lastCharacter = 0;
   for (int i = 0; i < len; i++) {
-    if (str[i] == '\n') {	// newline, get back to the intial X and push down
-      glPopMatrix();
-      glTranslatef(0, -(float)textureZStep, 0);
-      glPushMatrix();
-    } else {
-      lastCharacter = charToUse;
-      if ((str[i] < 32) || (str[i] < 9))
-	charToUse = 32;
-      else if (str[i] > numberOfCharacters + 32)
-	charToUse = 32;
+    lastCharacter = charToUse;
+    if ((str[i] < 32) || (str[i] < 9))
+      charToUse = 32;
+    else if (str[i] > numberOfCharacters + 32)
+      charToUse = 32;
+    else
+      charToUse = str[i];
+
+    charToUse -= 32;
+
+    if (charToUse == 0) {
+      if (i == 0)
+	glTranslatef((float)fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth + (float)fontMetrics[charToUse].whiteSpaceDist, 0, 0);
       else
-	charToUse = str[i];
-
-      charToUse -= 32;
-
-      if (charToUse == 0) {
-	if (i == 0)
-	  glTranslatef((float)fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth + (float)fontMetrics[charToUse].whiteSpaceDist, 0, 0);
-	else
-	  glTranslatef((float)fontMetrics[lastCharacter].whiteSpaceDist + (float)fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth, 0, 0);
-      } else {
-	glCallList(listIDs[charToUse]);
-      }
+	glTranslatef((float)fontMetrics[lastCharacter].whiteSpaceDist + (float)fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth, 0, 0);
+    } else {
+      glCallList(listIDs[charToUse]);
     }
   }
   glPopMatrix();
