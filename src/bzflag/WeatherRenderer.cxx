@@ -275,10 +275,10 @@ void WeatherRenderer::set ( void )
 			rainEndZ = BZDB.eval("_rainEndZ");
 
 		if (dbItemSet("_rainBaseColor"))
-			parseColorString(BZDB.get("_rainBaseColor").c_str(), rainColor[0]);
+			parseColorString(BZDB.get("_rainBaseColor"), rainColor[0]);
 
 		if (dbItemSet("_rainTopColor"))
-			parseColorString(BZDB.get("_rainTopColor").c_str(), rainColor[1]);
+			parseColorString(BZDB.get("_rainTopColor"), rainColor[1]);
 
 		if (dbItemSet("_useRainPuddles"))
 			doPuddles = BZDB.evalInt("_useRainPuddles") == 1;
@@ -290,7 +290,7 @@ void WeatherRenderer::set ( void )
 			doBillBoards = BZDB.evalInt("_useRainBillboards") == 1;
 
 		if (dbItemSet("_rainPuddleColor"))
-			parseColorString(BZDB.get("_rainPuddleColor").c_str(), puddleColor);
+			parseColorString(BZDB.get("_rainPuddleColor"), puddleColor);
 
 		if (dbItemSet("_rainPuddleSpeed"))
 			puddleSpeed = BZDB.eval("rainPuddleSpeed");

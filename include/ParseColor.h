@@ -14,9 +14,11 @@
 #define _PARSE_COLOR_H_
 
 
+#include <string>
 #include <iostream>
 
-extern bool parseColorString(const char* str, float color[4]);
+extern bool parseColorCString(const char* str, float color[4]);
+extern bool parseColorString(const std::string& str, float color[4]);
 extern bool parseColorStream(std::istream& input, float color[4]);
 
 
