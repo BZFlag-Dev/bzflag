@@ -873,7 +873,7 @@ void handleSetpassCmd(int t, const char *message)
   setUserPassword(player[t].regName.c_str(), pass);
   updateDatabases();
   char text[MessageLen];
-  sprintf(text, "Your password is now set to \"%s\"", pass.c_str());
+  snprintf(text, MessageLen, "Your password is now set to \"%s\"", pass.c_str());
   sendMessage(ServerPlayer, t, text, true);
   return;
 }
