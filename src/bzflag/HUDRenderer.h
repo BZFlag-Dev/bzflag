@@ -105,6 +105,7 @@ class HUDRenderer {
     void		renderCracks();
     void		renderOptions(SceneRenderer&);
     void		renderCompose(SceneRenderer&);
+    void		renderBox(SceneRenderer&);
     void		renderScoreboard(void);
     void		renderTankLabels(SceneRenderer&);
     void		renderPlaying(SceneRenderer&);

@@ -140,7 +140,7 @@ static Bundle		*bdl = NULL;
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
 static std::vector<std::string>	messageHistory;
-static int		messageHistoryIndex = 0;
+static unsigned int	messageHistoryIndex = 0;
 static std::vector<std::string>	silencePlayers;
 
 static void		restartPlaying();
@@ -565,31 +565,54 @@ enum roamingView {
   roamViewFP,
   roamViewFlag,
   roamViewCount
-} roamView = roamViewFree;
-static int		roamTrackTank = 0, roamTrackFlag = 0;
+} roamView = roamViewFP;
+static int		roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
 static float		roamPos[3] = { 0.0f, 0.0f, MuzzleHeight },
 			roamDPos[3] = {0.0f, 0.0f, 0.0f};
 static float		roamTheta = 0.0f, roamDTheta = 0.0f;
 static float		roamPhi = 0.0f, roamDPhi = 0.0f;
 static float		roamZoom = 60.0f, roamDZoom = 0.0f;
 
-static void setRoamingLabel()
+static void setRoamingLabel(bool force)
 {
-  if (player[roamTrackTank]) {
+  if (!player)
+    return;
+  char *winner;
+  if (roamTrackTank == -1) {
+    int oldWinner = roamTrackWinner;
+    if (roamTrackWinner == -1) {
+      // in case we don't find one
+      roamTrackWinner = 0;
+    }
+    // FIXME find the current living winner alive
+    int bestScore = -65536; // nobody should be this bad, should they?
+    for (int i = 0; i < curMaxPlayers; i++) {
+      if (player[i] && player[i]->isAlive() && player[i]->getScore() >= bestScore) {
+	roamTrackWinner = i;
+	bestScore = player[i]->getScore();
+      }
+    }
+    if (!force && roamTrackWinner == oldWinner)
+      return;
+    winner="Winner ";
+  } else {
+    winner="";
+  }
+  if (player[roamTrackWinner]) {
     switch (roamView) {
       case roamViewTrack:
-	hud->setRoamingLabel(std::string("Tracking ") +
-			     player[roamTrackTank]->getCallSign());
+	hud->setRoamingLabel(std::string("Tracking ") + winner +
+			     player[roamTrackWinner]->getCallSign());
 	break;
 
       case roamViewFollow:
-	hud->setRoamingLabel(std::string("Following ") +
-			     player[roamTrackTank]->getCallSign());
+	hud->setRoamingLabel(std::string("Following ") + winner +
+			     player[roamTrackWinner]->getCallSign());
 	break;
 
       case roamViewFP:
-	hud->setRoamingLabel(std::string("Driving with ") +
-			     player[roamTrackTank]->getCallSign());
+	hud->setRoamingLabel(std::string("Driving with ") + winner +
+			     player[roamTrackWinner]->getCallSign());
 	break;
 
       case roamViewFlag:
@@ -835,15 +858,15 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	    }
 	  }
 	  else {
-	    for (int i = 1; i < curMaxPlayers; i++) {
-	      int j = (roamTrackTank - i + curMaxPlayers) % curMaxPlayers;
-	      if (player[j] && player[j]->isAlive()) {
-		roamTrackTank = j;
+	    for (int i = 2; i <= curMaxPlayers; i++) {
+	      int j = (roamTrackTank - i + curMaxPlayers) % (curMaxPlayers + 1) - 1;
+	      if ((j == -1) || (player[j] && player[j]->isAlive())) {
+		roamTrackTank = roamTrackWinner = j;
 		break;
 	      }
 	    }
 	  }
-	  setRoamingLabel();
+	  setRoamingLabel(true);
 	 }
 	 break;
 
@@ -864,15 +887,16 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	    }
 	  }
 	  else {
-	    for (int i = 1; i < curMaxPlayers; i++) {
-	      int j = (roamTrackTank + i) % curMaxPlayers;
-	      if (player[j] && player[j]->isAlive()) {
-		    roamTrackTank = j;
-		    break;
+	    int i, j;
+	    for (i = 2; i <= curMaxPlayers; i++) {
+	      j = (roamTrackTank + i) % (curMaxPlayers + 1) - 1;
+	      if ((j == -1) || (player[j] && player[j]->isAlive())) {
+		roamTrackTank = roamTrackWinner = j;
+		break;
 	      }
 	    }
 	  }
-	  setRoamingLabel();
+	  setRoamingLabel(true);
 	}
 	break;
 
@@ -893,22 +917,22 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	    if(!found)
 	      roamView = roamViewFree;
 	  }
-	  else if(roamView == roamViewTrack || roamView == roamViewFollow ||
-		roamView == roamViewFP) {
+	  else if ((roamTrackTank != -1) && (roamView == roamViewTrack ||
+	       	roamView == roamViewFollow || roamView == roamViewFP)) {
 	    if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
 	      bool found = false;
 	      for(int i = 0; i < curMaxPlayers; i++) {
 		if(player[i] && player[i]->isAlive()) {
-		  roamTrackTank = i;
+		  roamTrackTank = roamTrackWinner = i;
 		  found = true;
 		  break;
 		}
 	      }
 	      if(!found)
-		roamView = roamViewFree;
+		roamTrackTank = -1;
 	    }
 	  }
-	  setRoamingLabel();
+	  setRoamingLabel(true);
 	}
 	break;
 
@@ -1708,7 +1732,7 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
 }
 
 static void		handleServerMessage(bool human, uint16_t code,
-						uint16_t len, void* msg)
+						uint16_t, void* msg)
 {
   bool checkScores = false;
   switch (code) {
@@ -2314,7 +2338,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	srcName = srcPlayer->getCallSign();
 
       bool ignore = false;
-      for (int i = 0; i < silencePlayers.size(); i++) {
+      for (unsigned int i = 0; i < silencePlayers.size(); i++) {
 	const char *silenceCallSign = silencePlayers[i].c_str();
 	if ((strcmp(srcName.c_str(), silenceCallSign) == 0) 
         ||  (strcmp( "*", silenceCallSign) == 0)) {
@@ -4375,13 +4399,8 @@ static void		playingLoop()
 
     // handle events
     clockAdjust = 0.0f;
-//#ifndef macintosh
     while (!mainWindow->getQuit() && display->isEventPending())
       doEvent(display);
-
-//#else
-//     doEvent(display);
-//#endif
 
     // invoke callbacks
     callPlayingCallbacks();
@@ -4410,19 +4429,24 @@ static void		playingLoop()
     }
 
     // move roaming camera
-    float c, s;
-    c = cosf(roamTheta * M_PI / 180.0f);
-    s = sinf(roamTheta * M_PI / 180.0f);
-    roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
-    roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
-    roamPos[2] += dt * roamDPos[2];
-    if (roamPos[2] < MuzzleHeight)
-      roamPos[2] = MuzzleHeight;
-    roamTheta  += dt * roamDTheta;
-    roamPhi    += dt * roamDPhi;
-    roamZoom   += dt * roamDZoom;
-    if (roamZoom < 1.0f) roamZoom = 1.0f;
-    else if (roamZoom > 179.0f) roamZoom = 179.0f;
+    if (roaming) {
+      float c, s;
+      c = cosf(roamTheta * M_PI / 180.0f);
+      s = sinf(roamTheta * M_PI / 180.0f);
+      roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
+      roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
+      roamPos[2] += dt * roamDPos[2];
+      if (roamPos[2] < MuzzleHeight)
+	roamPos[2] = MuzzleHeight;
+      roamTheta  += dt * roamDTheta;
+      roamPhi    += dt * roamDPhi;
+      roamZoom   += dt * roamDZoom;
+      if (roamZoom < 1.0f)
+	roamZoom = 1.0f;
+      else if (roamZoom > 179.0f)
+	roamZoom = 179.0f;
+    }
+    setRoamingLabel(false);
 
     // update test video format timer
     if (testVideoFormatTimer > 0.0f) {
@@ -4439,18 +4463,6 @@ static void		playingLoop()
       pauseCountdown = 0.0f;
       hud->setAlert(1, NULL, 0.0f, true);
     }
-//    if (maxPauseCountdown > 0.0f) {
-//     const int oldMaxPauseCountdown = (int)(maxPauseCountdown + 0.99f);
-//      maxPauseCountdown -= dt;
-//     if (maxPauseCountdown <= 0.0f) {
-//			maxPauseCountdown=0.0;
-//	  }
-//	  if ((int)(maxPauseCountdown + 0.99f) != oldMaxPauseCountdown) {
-//		char msgBuf[40];
-//		sprintf(msgBuf, "Pause Countdown %d", (int)(maxPauseCountdown + 0.99f));
-//		hud->setAlert(1, msgBuf, 1.0f, false);
-//	  }
-//	}
     if (pauseCountdown > 0.0f) {
       const int oldPauseCountdown = (int)(pauseCountdown + 0.99f);
       pauseCountdown -= dt;
@@ -4570,9 +4582,11 @@ static void		playingLoop()
 	targetPoint[1] = eyePoint[1] + myTankDir[1];
 	targetPoint[2] = eyePoint[2] + myTankDir[2];
 #else
-	if ((roamView != roamViewFree) && player[roamTrackTank]) {
-	  RemotePlayer *target = player[roamTrackTank];
+	setRoamingLabel(false);
+	if ((roamView != roamViewFree) && player[roamTrackWinner]) {
+	  RemotePlayer *target = player[roamTrackWinner];
 	  const float *targetTankDir = target->getForward();
+	  hud->setAltitude(-1.0f);
 	  // fixed camera tracking target
 	  if (roamView == roamViewTrack) {
 	    eyePoint[0] = roamPos[0];
@@ -4599,6 +4613,7 @@ static void		playingLoop()
 	    targetPoint[0] = eyePoint[0] + targetTankDir[0];
 	    targetPoint[1] = eyePoint[1] + targetTankDir[1];
 	    targetPoint[2] = eyePoint[2] + targetTankDir[2];
+	    hud->setAltitude(target->getPosition()[2]);
 	  }
 	  // track team flag
 	  else if (roamView == roamViewFlag) {
@@ -4672,7 +4687,7 @@ static void		playingLoop()
 	    if (player[i]->getFlag() == CloakingFlag)
 	      player[i]->setInvisible();
 	    else
-	      player[i]->setHidden(roaming && roamView == roamViewFP && roamTrackTank == i);
+	      player[i]->setHidden(roaming && roamView == roamViewFP && roamTrackWinner == i);
 	  }
 
 	// add explosions
@@ -5535,8 +5550,8 @@ void			startPlaying(BzfDisplay* _display,
 
   // clean up
   delete tankTexture;
-  for (i = 0; i < prototypeExplosions.size(); i++)
-    delete prototypeExplosions[i];
+  for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)
+    delete prototypeExplosions[ext];
   prototypeExplosions.clear();
   *_info = startupInfo;
   leaveGame();

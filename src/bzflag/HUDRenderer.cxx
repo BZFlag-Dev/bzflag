@@ -168,7 +168,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				fps(-1.0),
 				drawTime(-1.0),
 				restartLabel(restartLabelFormat),
-				roamingLabel("Roaming"),
+				roamingLabel("observing"),
 				showCompose(false)
 {
   int i;
@@ -1019,7 +1019,7 @@ void			HUDRenderer::renderTimes(void)
   }
 }
 
-void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
+void			HUDRenderer::renderBox(SceneRenderer& renderer)
 {
   // get view metrics
   const int width = window.getWidth();
@@ -1030,50 +1030,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   const int centerx = width >> 1;
   const int centery = viewHeight >> 1;
   int i;
-
-  // use one-to-one pixel projection
-  glScissor(ox, oy + height - viewHeight, width, viewHeight);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-
-  // draw cracks
-  if (showCracks)
-    renderCracks();
-
-  // draw status line
-  renderStatus();
-
-  // draw alert messages
-  renderAlerts();
-
-  // show player scoreboard
   float x, y;
-  if (renderer.getScore()) renderScoreboard();
-
-  // draw flag help
-  if (flagHelpClock.isOn()) {
-    hudColor3fv(messageColor);
-    flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
-    y = flagHelpY - minorFont.getAscent();
-    const char* flagHelpBase = flagHelp[flagHelpIndex].c_str();
-    for (i = 0; i < flagHelpLines; i++) {
-      y -= minorFont.getSpacing();
-      minorFont.draw(flagHelpBase, (float)(centerx - minorFont.getWidth(flagHelpBase)/2.0), y);
-      while (*flagHelpBase) flagHelpBase++;
-      flagHelpBase++;
-    }
-  }
-
-  // draw times
-  renderTimes();
-
-  // draw message composition
-  if (showCompose)
-    renderCompose(renderer);
 
   OpenGLGState::resetState();
   const bool smooth = renderer.useSmoothing();
@@ -1286,6 +1243,65 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
       }
     }
   }
+}
+
+void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
+{
+  // get view metrics
+  const int width = window.getWidth();
+  const int height = window.getHeight();
+  const int viewHeight = window.getViewHeight();
+  const int ox = window.getOriginX();
+  const int oy = window.getOriginY();
+  const int centerx = width >> 1;
+  int i;
+  float y;
+
+  // use one-to-one pixel projection
+  glScissor(ox, oy + height - viewHeight, width, viewHeight);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  // draw cracks
+  if (showCracks)
+    renderCracks();
+
+  // draw status line
+  renderStatus();
+
+  // draw alert messages
+  renderAlerts();
+
+  // show player scoreboard
+  if (renderer.getScore()) renderScoreboard();
+
+  // draw flag help
+  if (flagHelpClock.isOn()) {
+    hudColor3fv(messageColor);
+    flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
+    y = flagHelpY - minorFont.getAscent();
+    const char* flagHelpBase = flagHelp[flagHelpIndex].c_str();
+    for (i = 0; i < flagHelpLines; i++) {
+      y -= minorFont.getSpacing();
+      minorFont.draw(flagHelpBase, (float)(centerx - minorFont.getWidth(flagHelpBase)/2.0), y);
+      while (*flagHelpBase) flagHelpBase++;
+      flagHelpBase++;
+    }
+  }
+
+  // draw times
+  renderTimes();
+
+  // draw message composition
+  if (showCompose)
+    renderCompose(renderer);
+
+  // draw targeting box
+  renderBox(renderer);
 
   // restore graphics state
   glPopMatrix();
@@ -1404,6 +1420,10 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   }
 
   renderStatus();
+
+  // draw targeting box
+  if (altitude != -1.0f)
+    renderBox(renderer);
 
   // restore graphics state
   glPopMatrix();
