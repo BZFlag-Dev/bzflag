@@ -1,15 +1,17 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
+- the word filter automatic suffix/prefix matching is not working (a recent
+  commit must have inadverntantly disabled it).
+
+recent bugs
+------------
+
 - the aggressive filter will occasionally encounter a false-positive match
   due to apostrophe's -- need to take then into consideration.  need a
   a better way to handle localized pre/suffix matching too as a handful
   of international words match incorrectly when an english-common suffix
-  is applied. -- in addition, learner completely broke the suffix matching
-  with a recent commit so it's effectively not working properly now too.
-
-recent bugs
-------------
+  is applied.
 
 - reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a
