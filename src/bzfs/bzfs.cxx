@@ -4292,9 +4292,9 @@ int main(int argc, char **argv)
 		  removePlayer(v, message);
 		}
      	      } else if (action == "set") {
-		parseCommand(string_util::format("set %s", target.c_str()).c_str(), ServerPlayer);
+		parseCommand(string_util::format("/set %s", target.c_str()).c_str(), ServerPlayer);
 	      } else if (action == "flagreset") {
-		parseCommand(string_util::format("flag reset unused").c_str(), ServerPlayer);
+		parseCommand("/flag reset unused", ServerPlayer);
 	      }
 	    } /* end if poll is successful */
 
