@@ -4543,7 +4543,7 @@ int main(int argc, char **argv)
 #if defined(_WIN32)
     WSACleanup();
 #endif /* defined(_WIN32) */
-    std::cerr << "ERROR: Unable to start the server" << std::endl;
+    std::cerr << "ERROR: Unable to start the server, perhaps one is already running?" << std::endl;
     return 2;
   }
 
