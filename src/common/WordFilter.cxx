@@ -77,12 +77,14 @@ bool WordFilter::aggressiveFilter(char *input) const
     return false;
   }
   std::string line = input + startPosition;
+  std::bitset<MAX_WORDS * 4> boundaryArray = 0;
 
+  boundaryArray.set(startPosition);
+  std::cout << "length: " << line.length() << std::endl;
   int inputPosition = startPosition;
   startPosition = 0;
 
   int endPosition;
-  //  std::string word;
   char wordIndices[MAX_WORDS];
   unsigned int wordIndexLength=0;
   
@@ -103,7 +105,8 @@ bool WordFilter::aggressiveFilter(char *input) const
     if (endPosition < 0) {
       endPosition = line.length();
     }
-    //    word = line.substr(startPosition, endPosition-startPosition);
+    // record the position of where words start and end
+    boundaryArray.set(endPosition+inputPosition-1);
 
     // words are hashed by lowercase first letter
     characterIndex = tolower(line[startPosition]);
@@ -126,13 +129,21 @@ bool WordFilter::aggressiveFilter(char *input) const
     inputPosition += endPosition + 1;
 
     startPosition = firstPrintable(line); // should be zero most of the time
-    if (startPosition > 0) {
+    if (startPosition == 0) {
+      //record the position of where words start and end
+      boundaryArray.set(inputPosition);
+
+    } else if (startPosition > 0) {
+      //record the position of where words start and end
+      boundaryArray.set(startPosition+inputPosition);
+
       line.erase(0,startPosition);
       inputPosition += startPosition;
       startPosition = 0;
     }
   }
   std::cout << "counted " << counter << " words" << std::endl;
+  std::cout << "boundary array:[" << boundaryArray << "]" << std::endl;
 
   counter = 0;
   /* iterate over the filter words for each unique initial word character */
@@ -146,6 +157,16 @@ bool WordFilter::aggressiveFilter(char *input) const
       
       if ( regCode == 0 ) {
 	/* !!! need to handle multiple matches */
+	/* make sure we only match on word boundaries */
+	if (!boundaryArray.test(match[0].rm_so)) {
+	  std::cout << "matched non-word start boundary at " << match[0].rm_so << std::endl;
+	  continue;
+	}
+	if (!boundaryArray.test(match[0].rm_eo-1)) {
+	  std::cout << "matched non-word end boundary at " << match[0].rm_eo << std::endl;
+	  continue;
+	}
+
 	matchPair[matchCount * 2] = match[0].rm_so; /* position */
 	matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
 	matchCount++;
@@ -272,7 +293,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
       if (i != length - 1) {
 	expression.append("[fp]+[^[:alpha:]]*h?[^[:alpha:]]*");
       } else {
-	expression.append("[fp]+h?");
+	expression.append("[fp]+h?[[:punct:]]*");
       }
     } else {
       if ( c[1] != 0 ) {
@@ -291,7 +312,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
       if (i != length - 1) {
 	expression.append("+[^[:alpha:]]*");
       } else {
-	expression.append("+");
+	expression.append("+[[:punct:]]*");
       }
       
     } // end test for multi-letter expansions
@@ -318,7 +339,7 @@ WordFilter::WordFilter()
   
   /* SUFFIXES */
 
-#if 1
+#if 0
   // noun
   fix.word = "dom";
   suffixes.insert(fix);
