@@ -53,18 +53,32 @@ ShotStats::ShotStats() : HUDDialog()
   columns = 11;
   rows = 0;
 
-  // section headings
-  createLabel("\nPlayer", list);
-  createLabel("\nHit%", list);
-  createLabel("\nTotal", list);
-  createLabel("\nNorm", list);
-  createLabel("\nGM", list);
-  createLabel("\nLaser", list);
-  createLabel("Super\nBullet", list);
-  createLabel("Shock\nWave", list);
-  createLabel("\nThief", list);
-  createLabel("Fave.\nFlag", list);
-  createLabel("Best\nFlag", list);
+  // section headings (upper)
+  createLabel("", list);
+  createLabel("", list);
+  createLabel("", list);
+  createLabel("", list);
+  createLabel("", list);
+  createLabel("", list);
+  createLabel("Super", list);
+  createLabel("Shock", list);
+  createLabel("", list);
+  createLabel("Fave.", list);
+  createLabel("Best", list);
+  ++rows;
+
+  // section headings (lower)
+  createLabel("Player", list);
+  createLabel("Hit%", list);
+  createLabel("Total", list);
+  createLabel("Norm", list);
+  createLabel("GM", list);
+  createLabel("Laser", list);
+  createLabel("Bullet", list);
+  createLabel("Wave", list);
+  createLabel("Thief", list);
+  createLabel("Flag", list);
+  createLabel("Flag", list);
   ++rows;
 
   // my statistics first
@@ -186,8 +200,6 @@ void			ShotStats::resize(int width, int height)
     // find coordinates corresponding to this row & column
     x = column * columnWidth;
     y = keyY - (row + 1) * rowHeight;
-    // headings take up an additional row (embedded newlines)
-    if (row > 0) y -= rowHeight;
 
     // move label to the specified coordinates
     list[i]->setFontSize(fontSize);
