@@ -430,8 +430,10 @@ bool lookForFlag( float &rotation, float &speed)
 
   if (closestFlag != -1) {
 	if (minDist < 10.0f) {
-      serverLink->sendDropFlag(myTank->getPosition());
-      handleFlagDropped(myTank);
+	  if (myTank->getFlag() != Flags::Null) {
+        serverLink->sendDropFlag(myTank->getPosition());
+        handleFlagDropped(myTank);
+	  }
 	}
 
     const float *fpos = world->getFlag(closestFlag).position;
