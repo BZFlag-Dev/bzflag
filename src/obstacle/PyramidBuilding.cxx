@@ -102,7 +102,7 @@ void			PyramidBuilding::get3DNormal(const float* p,
 		s * getWidth(), s * getBreadth(), n);
 
   // make sure we are not way above or way below it
-  // above is good so we can drive on it when it's fliped
+  // above is good so we can drive on it when it's flipped
   float top =  getPosition()[2]+getHeight();
   float bottom = getPosition()[2];
 
@@ -133,11 +133,18 @@ void			PyramidBuilding::get3DNormal(const float* p,
   }
 
   // now angle it due to slope of wall
-  // FIXME -- this assumes the pyramid has a square base!
-  const float h = 1.0f / hypotf(getHeight(), getWidth());
+  // we figure out if it was an X or Y wall that was hit
+  // by checking the normal returned from getNormalRect()
+  // FIXME -- fugly beyond belief
+  float baseLength = getWidth();
+  const float normalAngle = atan2f(n[1], n[0]);
+  if (fabsf(fmodf(normalAngle - getRotation() + M_PI/2.0f, M_PI)) < 0.1f) {
+    baseLength = getBreadth();
+  }
+  const float h = 1.0f / hypotf(getHeight(), baseLength);
   n[0] *= h * getHeight();
   n[1] *= h * getHeight();
-  n[2]  = h * getWidth();
+  n[2]  = h * baseLength;
 
   if (this->getZFlip())
     n[2] *= -1;

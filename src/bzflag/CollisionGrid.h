@@ -31,8 +31,8 @@ const int GridSizeY = 32;
 
 typedef struct {
   int count;
-  std::vector<const Obstacle *>        objs;
   float pos[3]; // center of cell
+  std::vector<const Obstacle *> objs;
 } CollisionCell;
 
 typedef std::vector<const CollisionCell *> CellList;

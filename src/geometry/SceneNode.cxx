@@ -135,7 +135,9 @@ void			SceneNode::getRenderNodes(SceneRenderer& renderer)
     addShadowNodes(renderer);
   }
   if (!cull(renderer.getViewFrustum())) {
-    if (!renderer.testAndSetStyle(styleMailbox)) notifyStyleChange(renderer);
+    if (!renderer.testAndSetStyle(styleMailbox)) {
+      notifyStyleChange(renderer);
+    }
     addRenderNodes(renderer);
   }
 }
