@@ -1357,6 +1357,8 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
   long int msglen = strlen(message) + 1; // include null terminator
   const char *msg = message;
 
+  if (message[0] == '/' && message[1] == '/')
+    msg = &message[1];
   /* filter all outbound messages */
   if (clOptions->filterChat) {
     char message2[MessageLen] = {0};
@@ -3325,7 +3327,7 @@ static void handleCommand(int t, const void *rawbuf)
       if (checkSpam(message, playerData, t))
         break;
       // check for command
-      if (message[0] == '/') {
+      if (message[0] == '/' && message[1] != '/') {
 	/* make commands case insensitive for user-friendlyness */
 	unsigned int pos = 1;
 	while ((pos < strlen(message)) && (isAlphanumeric(message[pos]))) {
