@@ -32,71 +32,12 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 
 // must be before windows.h
 #include "network.h"
-#include <iomanip>
 
 #if defined(_WIN32)
 #define popen _popen
 #define pclose _pclose
 #define sleep(_x) Sleep(1000 * (_x))
 #endif /* defined(_WIN32) */
-
-#include <stdio.h>
-#if !defined(_WIN32)
-#include <fcntl.h>
-#endif
-
-// system headers
-#include <assert.h>
-#include <string>
-#include <map>
-#include <string.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <math.h>
-#include <ctype.h>
-#include "bzsignal.h"
-#include <time.h>
-
-// common-interface headers
-#include "global.h"
-#include "Protocol.h"
-#include "Address.h"
-#include "Pack.h"
-#include "PlayerState.h"
-#include "TimeKeeper.h"
-#include "Flag.h"
-#include "Team.h"
-#include "Ping.h"
-#include "multicast.h"
-#include "TimeBomb.h"
-#include "md5.h"
-#include "ShotUpdate.h"
-#include "ConfigFileManager.h"
-#include "CommandManager.h"
-#include "BZDBCache.h"
-#include "TextUtils.h"
-#include "common.h"
-
-/* bzfs class-specific headers */
-#include "version.h"
-#include "commands.h"
-#include "TextChunkManager.h"
-#include "AccessControlList.h"
-#include "CmdLineOptions.h"
-#include "WorldInfo.h"
-#include "Permissions.h"
-#include "WorldWeapons.h"
-#include "FlagInfo.h"
-#include "VotingArbiter.h"
-#include "PlayerInfo.h"
-#include "PackVars.h"
-#include "TeamBases.h"
-#include "ListServerConnection.h"
-#include "BZWReader.h"
-#include "SpawnPosition.h"
-#include "RecordReplay.h"
-
 #endif
 
 // Local Variables: ***

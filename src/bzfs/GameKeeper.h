@@ -14,11 +14,12 @@
 #define __GAMEKEEPER_H__
 
 // bzflag global header
-#include "global.h"
+#include "common.h"
 
 // common interface headers
 #include "DelayQueue.h"
 #include "PlayerInfo.h"
+#include "PlayerState.h"
 
 // implementation-specific bzfs-specific headers
 #include "CmdLineOptions.h"
@@ -26,6 +27,7 @@
 #include "Permissions.h"
 #include "LagInfo.h"
 #include "Score.h"
+#include "RecordReplay.h"
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 

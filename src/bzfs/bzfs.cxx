@@ -9,10 +9,37 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+// interface header
 #include "bzfs.h"
+
+// implementation-specific system headers
+#include <assert.h>
+
+// implementation-specific bzflag headers
 #include "NetHandler.h"
+#include "VotingArbiter.h"
+#include "version.h"
+#include "md5.h"
+#include "BZDBCache.h"
+#include "ShotUpdate.h"
+#include "CommandManager.h"
+#include "TimeBomb.h"
+#include "ConfigFileManager.h"
+#include "bzsignal.h"
+
+// implementation-specific bzfs-specific headers
 #include "RejoinList.h"
 #include "GameKeeper.h"
+#include "ListServerConnection.h"
+#include "WorldInfo.h"
+#include "TeamBases.h"
+#include "WorldWeapons.h"
+#include "BZWReader.h"
+#include "PackVars.h"
+#include "SpawnPosition.h"
+#include "commands.h"
+#include "FlagInfo.h"
 
 const int udpBufSize = 128000;
 

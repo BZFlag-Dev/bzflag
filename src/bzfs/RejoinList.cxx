@@ -20,6 +20,7 @@
 
 // bzfs specific headers
 #include "CmdLineOptions.h" // for MaxPlayers & ReplayObservers
+#include "RecordReplay.h"
 
 // External dependencies  [from bzfs.cxx]
 extern PlayerInfo player[MaxPlayers + ReplayObservers];

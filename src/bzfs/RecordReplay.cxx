@@ -50,10 +50,12 @@ typedef __int64 s64;
 #include "NetHandler.h"
 #include "md5.h"
 #include "Score.h"
+#include "version.h"
 
 // bzfs specific headers
 #include "CmdLineOptions.h"
 #include "GameKeeper.h"
+#include "FlagInfo.h"
 
 
 // Type Definitions

@@ -19,12 +19,18 @@
  */
 #include "CmdLineOptions.h"
 
-// invoke persistent recompilation of this for build versioning
+// implementation-specific bzflag headers
 #include "version.h"
+#include "Team.h"
 
 /* FIXME implementation specific header for global that should eventually go
  * away */
 #include <vector>
+
+// implementation-specific bzfs-specific headers
+#include "RecordReplay.h"
+#include "bzfs.h"
+#include "FlagInfo.h"
 
 /* data nasties */
 extern float speedTolerance;

@@ -10,11 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* bzflag special common - 1st one */
 #include "common.h"
-#include <fstream>
+
+// interface header
 #include "BZWReader.h"
+
+// implementation-specific system headers
+#include <fstream>
+
+// implementation-specific bzflag headers
+#include "Team.h"
+
+// implementation-specific bzfs-specific headers
 #include "BZWError.h"
 #include "CmdLineOptions.h"
+#include "TeamBases.h"
 #include "WorldFileObject.h"
 #include "CustomBox.h"
 #include "CustomPyramid.h"
@@ -24,7 +35,6 @@
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
 #include "CustomZone.h"
-#include "Team.h"
 
 extern CmdLineOptions *clOptions;
 extern BasesList bases;

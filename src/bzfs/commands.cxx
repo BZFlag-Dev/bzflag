@@ -33,6 +33,8 @@
 // implementation-specific bzflag headers
 #include "global.h"
 #include "Address.h"
+#include "version.h"
+#include "CommandManager.h"
 
 // implementation-specific bzfs-specific headers
 #include "VotingArbiter.h"
@@ -44,6 +46,8 @@
 #include "LagInfo.h"
 #include "FlagHistory.h"
 #include "GameKeeper.h"
+#include "PackVars.h"
+#include "FlagInfo.h"
 
 // FIXME -- need to pull communication out of bzfs.cxx...
 

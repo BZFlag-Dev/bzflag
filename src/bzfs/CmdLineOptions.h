@@ -27,12 +27,7 @@
 
 /* bzfs-specific headers */
 #include "AccessControlList.h"
-#include "FlagInfo.h"
 #include "TextChunkManager.h"
-
-/* XXX -- nasty header to include just for a copyright */
-#include "bzfs.h"
-
 
 /* constants provided for general consumption */
 const int MaxPlayers = 200;
