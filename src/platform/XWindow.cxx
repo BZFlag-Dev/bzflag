@@ -23,10 +23,6 @@
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
-#ifdef XIJOYSTICK
-#include <stdlib.h>
-#include "ErrorHandler.h"
-#endif
 
 //
 // XWindow
@@ -47,9 +43,6 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
 				colormapPixels(NULL),
 				xsh(XAllocSizeHints()),
 				gammaVal(1.0)
-#ifdef XIJOYSTICK
-				,device(NULL)
-#endif
 {
   // get desired visual
   XVisualInfo* pvisual = _visual->get();
@@ -157,10 +150,6 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
 XWindow::~XWindow()
 {
   // free up stuff
-#ifdef XIJOYSTICK
-  if (device)
-    XCloseDevice(display->getDisplay(), device);
-#endif
   freeContext();
   if (window != None)
     XDestroyWindow(display->getDisplay(), window);
@@ -661,108 +650,6 @@ void			XWindow::reactivateAll()
   if (first)
     OpenGLGState::initContext();
 }
-
-#ifdef XIJOYSTICK
-
-/* Initialize an XInput joystick */
-void			XWindow::initJoystick(char* joystickName)
-{
-  XAnyClassPtr c;
-  XValuatorInfo *v = NULL;
-  XDeviceInfo *d = display->getDevices();
-
-  for (int i = 0; i < display->getNDevices(); i++) {
-    if (!strcmp(d[i].name, joystickName)) {
-      device = XOpenDevice(display->getDisplay(), d[i].id);
-      d = &d[i];
-      c = d->inputclassinfo;
-      for (int j = 0; j < d->num_classes; j++) {
-	if (c->c_class == ValuatorClass) {
-	  v = (XValuatorInfo*)c;
-	  break;
-	}
-	c = (XAnyClassPtr)(((char*)c) + c->length);
-      }
-      break;
-    }
-  }
-
-  if (v && v->num_axes >= 2) {
-    int maxX = v->axes[0].max_value;
-    int minX = v->axes[0].min_value;
-    int maxY = v->axes[1].max_value;
-    int minY = v->axes[1].min_value;
-    scaleX = (2000*10000)/(maxX-minX);
-    constX = 1000 + (2000*maxX)/(minX-maxX);
-    scaleY = (2000*10000)/(maxY-minY);
-    constY = 1000 + (2000*maxY)/(minY-maxY);
-  }
-  else {
-    XCloseDevice(display->getDisplay(), device);
-    device = NULL;
-  }
-
-  int bPress = -1;
-  int bRelease = -1;
-  if (device) {
-    XEventClass event_list[7];
-    int cnt = 0, i;
-    XInputClassInfo *ip;
-    for (ip = device->classes, i = 0; i < d->num_classes; i++, ip++) {
-      switch (ip->input_class) {
-	case ButtonClass:
-	  DeviceButtonPress(device, bPress, event_list[cnt]); cnt++;
-	  DeviceButtonRelease(device, bRelease, event_list[cnt]); cnt++;
-	  display->setButtonPressType(bPress);
-	  display->setButtonReleaseType(bRelease);
-	  break;
-      }
-    }
-    XSelectExtensionEvent(display->getDisplay(), window, event_list, cnt);
-    printError("using joystick...");
-  }
-}
-
-bool                       XWindow::joystick() const
-{
-  return (device != NULL);
-}
-
-/* Return joystick, normalized range of -1000 to 1000 */
-void                  XWindow::getJoy(int& x, int& y) const
-{
-  x = y = 0;
-
-  if (!device) return;
-  XDeviceState *state = XQueryDeviceState(display->getDisplay(), device);
-  if (!state) return;
-
-  XInputClass *cls = state->data;
-  for (int i = 0; i < state->num_classes; i++) {
-    switch (cls->c_class) {
-      case ValuatorClass:
-	XValuatorState *val = (XValuatorState*)cls;
-	if (val->num_valuators >= 2) {
-	  x = val->valuators[0];
-	  y = val->valuators[1];
-	}
-	break;
-    }
-    cls = (XInputClass *) ((char *) cls + cls->length);
-  }
-
-  XFreeDeviceState(state);
-
-  x = (x*scaleX)/10000 + constX;
-  y = (y*scaleY)/10000 + constY;
-
-  /* balistic */
-  x = (x * abs(x))/1000;
-  y = (y * abs(y))/1000;
-}
-
-#endif
-
 
 // Local Variables: ***
 // mode:C++ ***

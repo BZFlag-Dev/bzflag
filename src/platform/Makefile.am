@@ -35,6 +35,8 @@ libPlatform_a_SOURCES =				\
 	LinuxMedia.h				\
 	USBJoystick.cxx				\
 	USBJoystick.h				\
+	XIJoystick.cxx				\
+	XIJoystick.h				\
 	XDisplay.cxx				\
 	XDisplay.h				\
 	XVisual.cxx				\
@@ -182,6 +184,8 @@ endif
 EXTRA_libPlatform_a_SOURCES =		\
 	XDisplay.cxx			\
 	XDisplay.h			\
+	XIJoystick.cxx			\
+	XIJoystick.h			\
 	XVisual.cxx			\
 	XVisual.h			\
 	XWindow.cxx			\

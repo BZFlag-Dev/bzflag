@@ -46,9 +46,8 @@ extern "C" {
 
 #include "USBJoystick.h"
 
-USBJoystick::USBJoystick()
+USBJoystick::USBJoystick() : status(false)
 {
-  status = false;
 }
 USBJoystick::~USBJoystick()
 {
