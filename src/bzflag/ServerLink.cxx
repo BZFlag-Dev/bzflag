@@ -333,13 +333,11 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
     n = recvfrom(urecvfd, (char *)ubuf, 8192, 0, &urecvaddr, (socklen_t*) &recvlen);
     if (n>0) {
       // unpack header and get message
-      uint16_t sub_length;
       void* buf = ubuf;
-      buf = nboUnpackUShort(buf, sub_length);
+      buf = nboUnpackUShort(buf, len);
       buf = nboUnpackUShort(buf, code);
       UDEBUG("<** UDP Packet Code %x Len %x / %x\n",code, sub_length, len);
-      len = len - 4;
-      memcpy((char *)msg,(char *)buf, sub_length);
+      memcpy((char *)msg,(char *)buf, len);
       return 1;
     }
 
