@@ -32,6 +32,7 @@ class XDisplay : public BzfDisplay {
     bool		isValid() const;
     bool		isEventPending() const;
     bool		getEvent(BzfEvent&) const;
+    bool		peekEvent(BzfEvent&) const;
 
     // for other X stuff
     class Rep {

@@ -34,6 +34,8 @@ bzflag_SOURCES =			\
 	ControlPanel.h			\
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
+	Downloads.cxx			\
+	Downloads.h			\
 	EffectsMenu.cxx			\
 	EffectsMenu.h			\
 	EntryZone.cxx			\

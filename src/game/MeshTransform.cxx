@@ -293,12 +293,10 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
   }
 
   // FIXME - remove this check when protocol changes from "0026"
-  // abort due to a 2.0.0 bug
   const float badcheck_2_0_0 = vm[0][0] * vm[1][1] * vm[2][2];
   if ((determinant * badcheck_2_0_0) < 0.0f) {
-    printf ("ABORTING:  MeshTransform::Tool::Tool()  2.0.0 inversion bug\n");
-    printf ("           The most likely cause is a 'spin' transformation\n");
-    exit (EXIT_FAILURE);
+    printf ("WARNING:  MeshTransform::Tool::Tool()  2.0.0 inversion bug\n");
+    printf ("          The most likely cause is a 'spin' transformation\n");
   }
 
   return;

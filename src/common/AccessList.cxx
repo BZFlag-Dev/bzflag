@@ -23,11 +23,8 @@
 #include "bzfio.h"
 #include "bzglob.h"
 #include "regex.h"
+#include "FileManager.h"
 #include "DirectoryNames.h"
-
-
-AccessList ServerAccessList("ServerAccess.txt");
-AccessList DownloadAccessList("DownloadAccess.txt");
 
 
 static inline char* eatWhite(char* c)
@@ -47,11 +44,19 @@ static inline char* eatNonWhite(char* c)
 }
 
 
-AccessList::AccessList(const std::string& _filename)
+AccessList::AccessList(const std::string& _filename, const char* content)
 {
   filename = getConfigDirName();
   filename += _filename;
-  reload();
+  
+  alwaysAuth = false;
+
+  bool fileExists = reload();
+
+  if (!fileExists && (content != NULL)) {
+    makeContent(content);
+  }
+
   return;
 }
 
@@ -61,14 +66,19 @@ AccessList::~AccessList()
   return;
 }
 
-
-void AccessList::reload()
+const std::string& AccessList::getFileName() const
+{
+  return filename;
+}
+    
+bool AccessList::reload()
 {
   patterns.clear();
+  alwaysAuth = false;
   
   FILE* file = fopen(filename.c_str(), "r");
   if (file == NULL) {
-    return;
+    return false;
   }
   
   char buf[256];
@@ -133,7 +143,28 @@ void AccessList::reload()
   }
   
   fclose(file);
-  return;
+  
+  alwaysAuth = computeAlwaysAuth();
+  
+  return true;
+}
+
+
+bool AccessList::computeAlwaysAuth() const
+{
+  for (unsigned int i = 0; i < patterns.size(); i++) {
+    const AccessPattern& p = patterns[i];
+    if ((p.type == deny) || (p.type == deny_regex)) {
+      return false;
+    }
+    if ((p.type == allow) && (p.pattern == "*")) {
+      return true;
+    }
+    if ((p.type == allow_regex) && (p.pattern == ".*")) {
+      return true;
+    }
+  }
+  return true;
 }
     
     
@@ -173,6 +204,18 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
   }
   
   return true;
+}
+
+
+void AccessList::makeContent(const char* content) const
+{
+  FILE* file = fopen(filename.c_str(), "w");
+  if (file == NULL) {
+    return;
+  }
+  fputs(content, file);
+  fclose(file);
+  return;
 }
 
 

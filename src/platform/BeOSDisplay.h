@@ -33,6 +33,7 @@ public:
   bool				isValid() const;
   bool				isEventPending() const;
   bool				getEvent(BzfEvent&) const;
+  bool				peekEvent(BzfEvent&) const;
 
   void				postBzfEvent(BzfEvent&);
 

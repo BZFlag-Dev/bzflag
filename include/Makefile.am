@@ -24,6 +24,7 @@ noinst_HEADERS =			\
 	BzfMedia.h			\
 	BzfVisual.h			\
 	BzfWindow.h			\
+	CacheManager.h			\
 	CallbackList.h			\
 	CollisionManager.h		\
 	CommandManager.h		\

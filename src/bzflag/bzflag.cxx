@@ -167,6 +167,9 @@ static DefaultDBItem	defaultDBItems[] = {
   { "showCullingGrid",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCoordinates",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "jumpTyping",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "maxCacheMB",		"32",			true,	StateDatabase::ReadWrite,	NULL },
+  { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "updateDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },

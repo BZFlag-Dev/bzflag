@@ -35,11 +35,13 @@
 template <>
 URLManager* Singleton<URLManager>::_instance = (URLManager*)0;
 
-#ifdef HAVE_CURL
-static size_t writeFunction(void *ptr, size_t size, size_t nmemb, void *stream);
-#endif // HAVE_CURL
 
-bool URLManager::getURL(const std::string URL, std::string &data)
+#ifdef HAVE_CURL
+
+static size_t writeFunction(void *ptr, size_t size, size_t nmemb, void *stream);
+
+
+bool URLManager::getURL(const std::string& URL, std::string &data)
 {
   clearInternal();
 
@@ -56,7 +58,8 @@ bool URLManager::getURL(const std::string URL, std::string &data)
   return true;
 }
 
-bool URLManager::getURL(const std::string URL, void **data, unsigned int& size)
+
+bool URLManager::getURL(const std::string& URL, void **data, unsigned int& size)
 {
   clearInternal();
 
@@ -69,18 +72,92 @@ bool URLManager::getURL(const std::string URL, void **data, unsigned int& size)
   return true;
 }
 
+
+bool URLManager::getFileTime(const std::string& URL, time_t& t)
+{
+//  return false;
+  
+  bool retcode = true;
+  CURLcode result;
+  
+  float timeout = 15;
+  if (BZDB.isSet("httpTimeout")) {
+    timeout = BZDB.eval("httpTimeout");
+  }
+  
+#if LIBCURL_VERSION_NUM >= 0x070a00
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_NOSIGNAL, true);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+  }
+#endif
+
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, timeout);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+  }
+
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_NOBODY, 1);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+  }
+  
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+  }
+
+  // FIXME: This could block for a _long_ time.
+  result = curl_easy_perform((CURL*)easyHandle);
+  if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
+    DEBUG1("Error: server reported: %d\n", result);
+    retcode = false;
+  } else if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+  }
+
+  long filetime = 42;
+  result = curl_easy_getinfo((CURL*)easyHandle, CURLINFO_FILETIME, &filetime);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+    t = 0;
+  } else {
+    t = (time_t)filetime;
+  }
+
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, NULL);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+  }
+
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_NOBODY, 0);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+  }
+  
+  return retcode;
+}
+
+
 void URLManager::freeURLData(void *data)
 {
   free(data);
 }
+
 
 URLManager::URLManager()
 {
   easyHandle = NULL;
   theData = NULL;
   theLen = 0;
-
-#ifdef HAVE_CURL
 
 #if LIBCURL_VERSION_NUM >= 0x070a00
   CURLcode curlResult;
@@ -101,23 +178,25 @@ URLManager::URLManager()
   result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_FILE, this);
   if (result)
     DEBUG1("Something wrong with CURL; Error: %d\n", result);
-#endif
+
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_FILETIME, 1);
+  if (result)
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
 }
+
 
 URLManager::~URLManager()
 {
   clearInternal();
 
-#ifdef HAVE_CURL
   if (easyHandle)
     curl_easy_cleanup((CURL*)easyHandle);
 
 #if LIBCURL_VERSION_NUM >= 0x070a00
   curl_global_cleanup();
 #endif
-
-#endif
 }
+
 
 void URLManager::collectData(char* ptr, int len)
 {
@@ -132,6 +211,7 @@ void URLManager::collectData(char* ptr, int len)
   theData = newData;
 }
 
+
 void URLManager::clearInternal()
 {
   if (theData)
@@ -141,13 +221,9 @@ void URLManager::clearInternal()
   theLen = 0;
 }
 
-#ifdef HAVE_CURL
+
 bool URLManager::beginGet(const std::string URL)
-#else
-bool URLManager::beginGet(const std::string)
-#endif
 {
-#ifdef HAVE_CURL
   CURLcode result = CURLE_OK;
   if (!easyHandle) {
     return false;
@@ -194,19 +270,83 @@ bool URLManager::beginGet(const std::string)
     return false;
 
   return true;
-#else
-  return false;
-#endif // HAVE_CURL
 }
 
-#ifdef HAVE_CURL
+
+void URLManager::setProgressFunc(int (*func)(void* clientp, 
+                                             double dltotal, double dlnow,
+                                             double ultotal, double ulnow),
+                                             void* data)
+{
+  if (!easyHandle) {
+    return;
+  }
+  CURLcode code;
+  if (func != NULL) {
+    CURL* curl = (CURL*)easyHandle;
+    code = curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, func);
+    code = curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, data);
+    code = curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+  } else {
+    CURL* curl = (CURL*)easyHandle;
+    code = curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
+  }
+}
+
+
 static size_t writeFunction(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   int len = size * nmemb;
   ((URLManager*)stream)->collectData((char*)ptr, len);
   return len;
 }
+
+
+#else // HAVE_CURL
+
+// stub the functions
+URLManager::URLManager()
+{
+}
+URLManager::~URLManager()
+{
+}
+bool URLManager::getURL(const std::string&, std::string&)
+{
+  return false;
+}
+bool URLManager::getURL(const std::string&, void **, unsigned int&)
+{
+  return false;
+}
+bool URLManager::getFileTime(const std::string&, time_t &)
+{
+  return false;
+}
+void URLManager::freeURLData(void*)
+{
+  return;
+}
+void URLManager::collectData(char*, int)
+{
+  return;
+}
+void URLManager::clearInternal()
+{
+  return;
+}
+bool URLManager::beginGet(const std::string)
+{
+  return false;
+}
+void URLManager::setProgressFunc(int (*)(void*, double, double,
+                                                double, double), void*)
+{
+  return;
+}                                                
+
 #endif // HAVE_CURL
+
 
 // Local Variables: ***
 // mode:C++ ***

@@ -20,6 +20,7 @@
 #include "common.h"
 #include <string>
 #include <vector>
+#include <set>
 #include <iostream>
 
 
@@ -55,6 +56,7 @@ class BzMaterial {
     // the following set()'s operate on the last added texture
     void addTexture(const std::string&);
     void setTexture(const std::string&);
+    void setTextureLocal(int texid, const std::string& localname);
     void setTextureMatrix(int);
     void setCombineMode(int);
     void setUseTextureAlpha(bool);
@@ -85,6 +87,7 @@ class BzMaterial {
 
     int getTextureCount() const;
     const std::string& getTexture(int) const;
+    const std::string& getTextureLocal(int) const;
     int getTextureMatrix(int) const;
     int getCombineMode(int) const;
     bool getUseTextureAlpha(int) const;
@@ -132,6 +135,7 @@ class BzMaterial {
     int textureCount;
     typedef struct {
       std::string name;
+      std::string localname;
       int matrix;
       int combineMode;
       bool useAlpha;
@@ -167,6 +171,10 @@ class BzMaterialManager {
     const BzMaterial* findMaterial(const std::string& name) const;
     const BzMaterial* getMaterial(int id) const;
     int getIndex(const BzMaterial* material) const;
+    
+    typedef struct std::set<std::string> TextureSet;
+    void makeTextureList(TextureSet& set) const;
+    void setTextureLocal(const std::string& url, const std::string& local);
 
     void* pack(void*);
     void* unpack(void*);
@@ -178,6 +186,7 @@ class BzMaterialManager {
   private:
     std::vector<BzMaterial*> materials;
 };
+
 
 extern BzMaterialManager MATERIALMGR;
 

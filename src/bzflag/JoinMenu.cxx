@@ -29,8 +29,8 @@
 
 
 /* from playing.h */
-StartupInfo* getStartupInfo();
-void joinGame();
+extern StartupInfo* getStartupInfo();
+extern void joinGame();
 
 JoinMenu* JoinMenu::activeMenu = NULL;
 

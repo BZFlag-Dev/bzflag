@@ -22,6 +22,7 @@ class MacDisplay : public BzfDisplay {
     bool isEventPending() const;
 
     bool getEvent(BzfEvent&) const;
+    bool peekEvent(BzfEvent&) const;
     //void    setPending (bool val) const { pending = val; }
 
     int getWidth() const;

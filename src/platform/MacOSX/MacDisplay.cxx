@@ -41,6 +41,11 @@ bool MacDisplay::isEventPending() const
   return (status == ::noErr) ? true : false;
 }
 
+bool MacDisplay::peekEvent (BzfEvent &bzf_event) const
+{
+  return false;
+}
+
 bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
   ::EventRef		eventRef	= 0;
   ::OSStatus		status		= ::noErr;

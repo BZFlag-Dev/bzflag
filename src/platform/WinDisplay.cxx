@@ -231,6 +231,11 @@ bool			WinDisplay::isEventPending() const
   return (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0);
 }
 
+bool			WinDisplay::peekEvent(BzfEvent& event) const
+{
+  return false;
+}
+
 bool			WinDisplay::getEvent(BzfEvent& event) const
 {
   MSG msg;

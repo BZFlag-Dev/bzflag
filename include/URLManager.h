@@ -24,14 +24,22 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "time.h"
 
 // local implementation headers
 #include "Singleton.h"
 
 class URLManager : public Singleton<URLManager> {
 public:
-  bool getURL(const std::string URL, std::string &data);
-  bool getURL(const std::string URL, void **data, unsigned int& size);
+  bool getURL(const std::string& URL, std::string &data);
+  bool getURL(const std::string& URL, void **data, unsigned int& size);
+
+  bool getFileTime(const std::string& URL, time_t &t);
+
+  void setProgressFunc(int (*func)(void* clientp, 
+                                   double dltotal, double dlnow,
+                                   double ultotal, double ulnow),
+                                   void* data);
 
   void freeURLData(void *data);
 

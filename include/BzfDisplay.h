@@ -29,6 +29,7 @@ class BzfDisplay {
     virtual bool	isValid() const = 0;
     virtual bool	isEventPending() const = 0;
     virtual bool	getEvent(BzfEvent&) const = 0;
+    virtual bool	peekEvent(BzfEvent&) const = 0;
 
     virtual bool	hasGetKeyMode() {return false;};
     virtual void	getModState(bool &shift, bool &control, bool &alt) {

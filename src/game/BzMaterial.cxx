@@ -115,6 +115,7 @@ void* BzMaterialManager::pack(void* buf)
   for (unsigned int i = 0; i < materials.size(); i++) {
     buf = materials[i]->pack(buf);
   }
+
   return buf;
 }
 
@@ -171,6 +172,34 @@ void BzMaterialManager::printReference(std::ostream& out,
     out << index;
     return;
   }
+}
+
+
+void BzMaterialManager::makeTextureList(TextureSet& set) const
+{
+  set.clear();
+  for (unsigned int i = 0; i < materials.size(); i++) {
+    const BzMaterial* mat = materials[i];
+    for (int j = 0; j < mat->getTextureCount(); j++) {
+      set.insert(mat->getTexture(j));
+    }
+  }
+  return;
+}
+
+
+void BzMaterialManager::setTextureLocal(const std::string& url,
+                                        const std::string& local)
+{
+  for (unsigned int i = 0; i < materials.size(); i++) {
+    BzMaterial* mat = materials[i];
+    for (int j = 0; j < mat->getTextureCount(); j++) {
+      if (mat->getTexture(j) == url) {
+        mat->setTextureLocal(j, local);
+      }
+    }
+  }
+  return;
 }
 
 
@@ -363,6 +392,7 @@ void* BzMaterial::pack(void* buf) const
   buf = nboPackUByte(buf, textureCount);
   for (i = 0; i < textureCount; i++) {
     const TextureInfo* texinfo = &textures[i];
+
     buf = nboPackStdString(buf, texinfo->name);
     buf = nboPackInt(buf, texinfo->matrix);
     buf = nboPackInt(buf, texinfo->combineMode);
@@ -415,6 +445,7 @@ void* BzMaterial::unpack(void* buf)
   textures = new TextureInfo[textureCount];
   for (i = 0; i < textureCount; i++) {
     TextureInfo* texinfo = &textures[i];
+
     buf = nboUnpackStdString(buf, texinfo->name);
     buf = nboUnpackInt(buf, inTmp);
     texinfo->matrix = int(inTmp);
@@ -646,6 +677,7 @@ void BzMaterial::addTexture(const std::string& texname)
 
   TextureInfo* texinfo = &textures[textureCount - 1];
   texinfo->name = texname;
+  texinfo->localname = texname;
   texinfo->matrix = -1;
   texinfo->combineMode = decal;
   texinfo->useAlpha = true;
@@ -663,6 +695,14 @@ void BzMaterial::setTexture(const std::string& texname)
     textures[textureCount - 1].name = texname;
   }
 
+  return;
+}
+
+void BzMaterial::setTextureLocal(int texid, const std::string& localname)
+{
+  if ((texid >= 0) && (texid < textureCount)) {
+    textures[texid].localname = localname;
+  }
   return;
 }
 
@@ -815,6 +855,15 @@ const std::string& BzMaterial::getTexture(int texid) const
 {
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].name;
+  } else {
+    return nullString;
+  }
+}
+
+const std::string& BzMaterial::getTextureLocal(int texid) const
+{
+  if ((texid >= 0) && (texid < textureCount)) {
+    return textures[texid].localname;
   } else {
     return nullString;
   }

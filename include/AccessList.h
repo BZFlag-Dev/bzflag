@@ -19,14 +19,23 @@
 
 class AccessList {
   public:
-    AccessList(const std::string& filename);
+    AccessList(const std::string& filename, const char* content);
     ~AccessList();
-    void reload();
 
+    bool reload();
+
+    bool alwaysAuthorized() const;
     bool authorized(const std::vector<std::string>& strings) const;
+    
+    const std::string& getFileName() const;
 
   private:
+    bool computeAlwaysAuth() const;
+    void makeContent(const char* content) const;
+    
+  private:
     std::string filename;
+    bool alwaysAuth;
 
     enum AccessType {
       invalid,
@@ -43,8 +52,11 @@ class AccessList {
     std::vector<AccessPattern> patterns;
 };
 
-extern AccessList ServerAccessList;
-extern AccessList DownloadAccessList;
+inline bool AccessList::alwaysAuthorized() const
+{
+  return alwaysAuth;
+}
+
 
 #endif
 

@@ -7,6 +7,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 libGame_a_SOURCES =			\
 	BzMaterial.cxx			\
+	CacheManager.cxx		\
 	CollisionManager.cxx		\
 	CommandsStandard.cxx		\
 	DirectoryNames.cxx		\

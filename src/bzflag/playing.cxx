@@ -42,6 +42,7 @@
 #include "BzfEvent.h"
 #include "BzfWindow.h"
 #include "BzfMedia.h"
+#include "Downloads.h"
 #include "PlatformFactory.h"
 #include "Protocol.h"
 #include "Pack.h"
@@ -228,6 +229,7 @@ static char		*worldDatabase = NULL;
 static bool		isCacheTemp;
 static std::ostream	*cacheOut = NULL;
 
+static AccessList	ServerAccessList("ServerAccess.txt", NULL);
 
 // access silencePlayers from bzflag.cxx
 std::vector<std::string>& getSilenceList()
@@ -484,9 +486,9 @@ void			joinGame()
       worldDatabase = NULL;
     }
     HUDDialogStack::get()->setFailedMessage("Download stopped by user action");
-    joiningGame      = false;
+    joiningGame = false;
   }
-  joinRequested    = true;
+  joinRequested = true;
 }
 
 //
@@ -1402,6 +1404,45 @@ static bool isCached(char *hexDigest)
   return cached;
 }
 
+
+int curlProgressFunc(void* /*clientp*/,
+                     double dltotal, double dlnow,
+                     double /*ultotal*/, double /*ulnow*/)
+{
+  // download aborted?
+  BzfEvent event;
+  if (display->isEventPending()) {
+    if (display->peekEvent(event)) {
+      if (event.type == BzfEvent::Quit) {
+        return 1; // terminate the curl call
+      }
+      // FIXME - the flushes are cheezy
+      if (event.keyDown.ascii == 27) {
+        if (event.type == BzfEvent::KeyUp) {
+          display->getEvent(event); // flush the event
+        }
+        else if (event.type == BzfEvent::KeyDown) {
+          display->getEvent(event); // flush the event
+          return 1;                 // terminate the curl call
+        }
+      }
+    }
+  }
+
+  // update the status
+  double percentage = 0.0;
+  if ((int)dltotal > 0) {
+    percentage = 100.0 * dlnow / dltotal;
+  }
+  char buffer[128];
+  sprintf (buffer, "%2.1f%% (%i/%i)", percentage, (int)dlnow, (int)dltotal);
+  HUDDialogStack::get()->setFailedMessage(buffer);
+  drawFrame(0.0f);
+
+  return 0;
+}                            
+
+
 static bool isUrlCached()
 {
   bool	 gotFromURL = false;
@@ -1412,7 +1453,9 @@ static bool isUrlCached()
       (("Loading world from " + worldUrl).c_str());
     drawFrame(0.0f);
     URLManager& urlMgr = URLManager::instance();
+    urlMgr.setProgressFunc(curlProgressFunc, (char*)worldUrl.c_str());
     gotFromURL = urlMgr.getURL(worldUrl, (void **) &worldDatabase, readSize);
+    urlMgr.setProgressFunc(NULL, NULL);
   }
   if (gotFromURL) {
     MD5 md5;
@@ -1493,6 +1536,12 @@ static void loadCachedWorld()
   if (worldBuilder)
     delete worldBuilder;
   worldBuilder = NULL;
+
+  // do the downloads
+  if (BZDB.isTrue("doDownloads")) {
+    doDownloads();
+  }
+
   HUDDialogStack::get()->setFailedMessage("Entering game...");
   drawFrame(0.0f);
   joinInternetGame2();
@@ -4185,6 +4234,13 @@ static void joinInternetGame()
   nameAndIp.push_back(serverAddress.getDotNotation());
   if (!ServerAccessList.authorized(nameAndIp)) {
     HUDDialogStack::get()->setFailedMessage("Server Access Denied Locally");
+    std::string msg = ColorStrings[WhiteColor];
+    msg += "NOTE: ";
+    msg += ColorStrings[GreyColor];
+    msg += "server access is controlled by ";
+    msg += ColorStrings[YellowColor];
+    msg += ServerAccessList.getFileName();
+    addMessage(NULL, msg);
     return;
   }
 
@@ -4353,6 +4409,7 @@ static void joinInternetGame2()
 			myTank->getEmailAddress(),
 			startupInfo.token);
 }
+
 
 static void		renderDialog()
 {

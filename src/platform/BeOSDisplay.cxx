@@ -70,6 +70,11 @@ bool					BeOSDisplay::isEventPending() const
   return (port_buffer_size_etc(eventPort, B_TIMEOUT, 0LL) > 0);
 }
 
+bool					BeOSDisplay::peekEvent(BzfEvent& event) const
+{
+  return false;
+}
+
 bool					BeOSDisplay::getEvent(BzfEvent& event) const
 {
   //printf("BeOSDisplay::getEvent()\n");

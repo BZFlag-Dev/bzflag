@@ -105,8 +105,9 @@ SDLDisplay::~SDLDisplay()
 
 bool SDLDisplay::isEventPending() const
 {
-  return SDL_PollEvent(NULL) == 1;
+  return (SDL_PollEvent(NULL) == 1);
 };
+
 
 bool SDLDisplay::getEvent(BzfEvent& _event) const
 {
@@ -114,11 +115,27 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
   if (SDL_PollEvent(&event) == 0)
     return false;
 
+  return setupEvent(_event, event);
+};
+
+
+bool SDLDisplay::peekEvent(BzfEvent& _event) const
+{
+  SDL_Event event;
+  if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_ALLEVENTS) <= 0) {
+    return false;
+  }
+    
+  return setupEvent(_event, event);
+}
+
+
+bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
+{
   SDLMod mode = SDL_GetModState();
   bool shift  = ((mode & KMOD_SHIFT) != 0);
   bool ctrl   = ((mode & KMOD_CTRL) != 0);
   bool alt    = ((mode & KMOD_ALT) != 0);
-
 
   switch (event.type) {
 
@@ -256,7 +273,7 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     break;
 
   case SDL_VIDEORESIZE:
-    _event.type	  = BzfEvent::Resize;
+    _event.type = BzfEvent::Resize;
     _event.resize.width  = event.resize.w;
     _event.resize.height = event.resize.h;
     break;
@@ -280,12 +297,15 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
   return true;
 };
 
-void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
+
+void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
+{
   SDLMod mode = SDL_GetModState();
   shift       = ((mode & KMOD_SHIFT) != 0);
   ctrl	= ((mode & KMOD_CTRL) != 0);
   alt	 = ((mode & KMOD_ALT) != 0);
 }
+
 
 bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
 {
