@@ -766,7 +766,7 @@ void BackgroundRenderer::drawGroundCentered()
     {tXmin, tYmin}, {tXmax, tYmin}, {tXmax, tYmax}, {tXmin, tYmax}
   };
 
-  GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
+  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
 
   glVertexPointer(2, GL_FLOAT, 0, vertices);
   glEnableClientState(GL_VERTEX_ARRAY);
