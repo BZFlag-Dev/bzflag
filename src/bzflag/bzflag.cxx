@@ -292,7 +292,7 @@ void findConfigFile ( void )
 
 //#elif defined(macintosh) // for the 'tosh
 #else	// the other OSs should do what they need to do
-		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str());
+		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
 
 		FILE *newFile = fopen(configName.c_str(),"wb");
 		if (newFile)
@@ -301,7 +301,7 @@ void findConfigFile ( void )
 			int len = ftell(fp);
 			fseek(fp,0,SEEK_SET);
 
-			unsigned char* temp = malloc(len);
+			unsigned char* temp = (unsigned char*) malloc(len);
 
 			fread(temp,len,1,fp);
 			fwrite(temp,len,1,newFile);
@@ -323,7 +323,7 @@ void findConfigFile ( void )
 	{	
 		// there is an old config so lets copy it to the new dir and let the update take care of it.
 		// aperanly only linux needs this so do the magic
-		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str());
+		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
 
 		FILE *newFile = fopen(configName.c_str(),"wb");
 		if (newFile)
@@ -332,7 +332,7 @@ void findConfigFile ( void )
 			int len = ftell(fp);
 			fseek(fp,0,SEEK_SET);
 
-			unsigned char* temp = malloc(len);
+			unsigned char* temp = (unsigned char*) malloc(len);
 
 			fread(temp,len,1,fp);
 			fwrite(temp,len,1,newFile);
