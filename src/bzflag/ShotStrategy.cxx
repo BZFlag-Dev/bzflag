@@ -554,7 +554,7 @@ void			SegmentedShotStrategy::addShot(
     boltSceneNode->setColor(c[0], c[1], c[2]);
     TextureManager &tm = TextureManager::instance();
 	std::string imageName = Team::getImagePrefix(team);
-	imageName +="boltTexture";
+	imageName += BZDB.get("boltTexture");
     OpenGLTexture *texture = tm.getTexture(imageName.c_str());
     if (texture && texture->isValid())
       boltSceneNode->setTexture(*texture);
