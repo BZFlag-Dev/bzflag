@@ -1,3 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" 
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!--
+ Copyright (c) 1993 - 2003 Tim Riker
+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the license found in the file named COPYING
+ that should have accompanied this file.
+
+ THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
+ WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+ MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+-->
+]>
+
+<book>
+  <bookinfo>
+    <title>Networking Protocol</title>
+    <pubdate>2003-12-04</pubdate>
+
+    <copyright>
+      <year>2003</year>
+    </copyright>
+
+    <abstract>
+      <para>This specification describes the protocol that the BZFlag
+      client uses for talking with the server.</para>
+    </abstract>
+
+  </bookinfo>
+
+  <chapter id="filtering">
+
+    <screen>
+
 This description is not up to date, most recent changes in code have not
 been reflected in here, for example the move to 1 byte playerids, changes to
 MsgMessage, MsgNewRabbit etc.
@@ -934,3 +970,17 @@ UDP negotiation:
 
   server gets MsgUDPLinkEstablished
     server can now send over udp
+
+    </screen>
+
+  </chapter>
+
+</book>
+
+<!-- Local Variables: -->
+<!-- mode: SGML -->
+<!-- tab-width: 8 -->
+<!-- c-basic-offset: 2 -->
+<!-- indent-tabs-mode: t -->
+<!-- End: -->
+<!-- ex: shiftwidth=2 tabstop=8 -->
