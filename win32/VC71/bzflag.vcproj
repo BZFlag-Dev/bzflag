@@ -325,6 +325,9 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ShotStatistics.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\ShotStats.cxx">
 			</File>
 			<File
