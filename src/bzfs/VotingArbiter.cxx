@@ -249,7 +249,7 @@ bool VotingArbiter::isPollSuccessful(void) const
   }
   unsigned long int yesVotes = this->getYesCount();
   unsigned long int noVotes = this->getNoCount();
-  unsigned long int abstainVotes = this->getAbstainCount();
+  unsigned long int abstainVotes = this->getAbstentionCount();
   double total = (double)yesVotes + (double)noVotes + (double)abstainVotes;
 
   // ensure minimum votage (and sanity zero-div check)
@@ -275,7 +275,7 @@ bool VotingArbiter::isPollSureToFail(void) const
 
   unsigned long int yesVotes = this->getYesCount();
   unsigned long int noVotes = this->getNoCount();
-  unsigned long int abstainVotes = this->getAbstainCount();
+  unsigned long int abstainVotes = this->getAbstentionCount();
   double total = (double)yesVotes + (double)noVotes + (double)abstainVotes;
 
   // there is a poll, but nobody is allowed to vote
