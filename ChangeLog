@@ -4,6 +4,7 @@
 BZFlag 2.0.1
 ------------
 
+* A player will auto ghost if they use global authentication - Steve Krenzel
 * Server announces who started a countdown - Angelina Carlton
 * Fixed server start menu for windows - Daniel Remenak
 * Message spam fixed - Alfredo Tupone
