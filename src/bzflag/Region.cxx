@@ -292,7 +292,7 @@ void			BzfRegion::splitEdge(const BzfRegion* oldNeighbor,
       corners.insert(it1, p);
       if (onRight) {
 	std::vector<BzfRegion*>::iterator it2 = neighbors.begin();
-	for(int j = 0; j < i + 1; j++) it2++;
+	for(int j = 0; j < i; j++) it2++;
 	neighbors.insert(it2, newNeighbor);
       }
       else {
