@@ -9,7 +9,7 @@ REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/
 
 CONF_DATE=`date +%Y%m%d`
 echo "BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE"
-AC_CANONICAL_TARGET
+AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE)
 AM_CONFIG_HEADER(include/config.h)
 
