@@ -694,7 +694,7 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackUByte(buf, tempflags[2]);
 
 	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6],tempflags[0]!=0,tempflags[1]!=0);
-	if (tempflags !=0)
+	if (tempflags[2] !=0)
 		pyr.setZFlip();
 
 	append(pyr);
