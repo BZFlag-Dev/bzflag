@@ -1106,7 +1106,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'c':
     {
-      sceneRenderer->setConsoleColorization(list->getIndex());
+      sceneRenderer->setConsoleColorization(list->getIndex() != 0);
       break;
     }
 
