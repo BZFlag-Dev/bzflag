@@ -11,5 +11,6 @@ EXTRA_DIST = \
 libDate_a_SOURCES  =			\
 	buildDate.cxx
 
-all-local:
-	-rm -f buildDate.o
+buildDate.o: FORCE
+
+FORCE:
