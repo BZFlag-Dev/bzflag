@@ -112,9 +112,10 @@ int main(int argc, char** argv) {
   BZAdminClient client(name, host, port);
   if (!client.isValid())
     return 1;
-  for (unsigned i = 0; i < visibleMsgs.size(); ++i)
+  unsigned int i;
+  for (i = 0; i < visibleMsgs.size(); ++i)
     client.showMessageType(visibleMsgs[i]);
-  for (unsigned i = 0; i < invisibleMsgs.size(); ++i)
+  for (i = 0; i < invisibleMsgs.size(); ++i)
     client.ignoreMessageType(invisibleMsgs[i]);
 
   // if we got commands as arguments, send them and exit
