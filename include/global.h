@@ -110,7 +110,6 @@ const float		FlagRadius =	2.5f;		// meters
 
 // readout stuff
 const int		MaxMessages =	20;		// msg. history length
-const int		MaxMessageLen =	80;		// length of message
 const float		FlashOnTime =	1.0f;		// seconds
 const float		FlashOffTime =	0.2f;		// seconds
 const int		MinX = 256;
