@@ -96,13 +96,6 @@ PostBuild_Cmds=type ..\src\date\buildDate.cxx > __bd.cxx	type __bd.cxx > ..\src\
 # Begin Source File
 
 SOURCE=..\src\date\buildDate.cxx
-
-!IF  "$(CFG)" == "date - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "date - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # End Group
 # Begin Group "Header Files"
