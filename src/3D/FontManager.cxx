@@ -212,8 +212,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
   TextureFont* pFont = getClosestSize(faceID, size);
 
   if (!pFont) {
-    DEBUG2("Could not find applicable font size for rendering; font face ID %d,
-	    requested size %f\n", faceID, size);
+    DEBUG2("Could not find applicable font size for rendering; font face ID %d, "
+	   "requested size %f\n", faceID, size);
     return;
   }
 
@@ -376,8 +376,8 @@ float FontManager::getStrLength(int faceID, float size, std::string text)
   TextureFont* pFont = getClosestSize(faceID, size);
 
   if (!pFont) {
-    DEBUG2("Could not find applicable font size for sizing; font face ID %d,
-	    requested size %f\n", faceID, size);
+    DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
+	   "requested size %f\n", faceID, size);
     return 0;
   }
 
