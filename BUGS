@@ -8,7 +8,8 @@ recent bugs
 - Player continues to see the locked on me message after death until 
   shooter locked onto a different target. (Nidhoggr reported this)
 
-- Tanks spawn-in multiple times, in rapid fire, sometimes.  
+- Tanks spawn-in multiple times, in rapid fire, sometimes.  This happens if you right
+  click multiple times in response to "Right click to begin".
 
 - Sean: I'm not always crazy -- I reencountered the psycho machine gun behavior again, if
   that's what is meant by rapid fire.
