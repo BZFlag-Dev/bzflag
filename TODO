@@ -39,9 +39,6 @@ THESE ARE LOWER PRIORITY
 
 * integrate motd.php into mysql on db
 
-* bzflag should support command line central passwords:
-  "User:Password@bzflag.example.com:1234"
-
 * add language translations for the new flags
 
 * fix the corners and edges on the tabbed panels (corner pixels are

@@ -722,12 +722,21 @@ static void		parse(int argc, char** argv)
 	// find the beginning of the server name, parse the callsign
 	char* serverName;
 	if ((serverName = strchr(argv[i], '@')) != NULL) {
+    char* password;
 	  *serverName = '\0';
 	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
 	    printFatalError("Callsign truncated.");
 	  strncpy(startupInfo.callsign, argv[i],
 		  sizeof(startupInfo.callsign) - 1);
 	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+	  if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
+      *(strchr(startupInfo.callsign, ':')) = '\0';
+	    *password = '\0', ++password;
+	    if (strlen(argv[i]) >= sizeof(startupInfo.password))
+	      printFatalError("Password truncated.");
+	    strncpy(startupInfo.password, password, sizeof(startupInfo.password) - 1);
+	    startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
+    }
 	  ++serverName;
 	} else {
 	  serverName = argv[i];
