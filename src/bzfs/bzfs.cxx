@@ -141,15 +141,12 @@ static bool realPlayer(const PlayerId& id)
   return playerData && playerData->player.isPlaying();
 }
 
-static void pwrite(int playerIndex, const void *b, int l)
+static void pwrite(GameKeeper::Player &playerData, const void *b, int l)
 {
-  if (!NetHandler::exists(playerIndex))
-    return;
-  int result = NetHandler::getHandler(playerIndex)->pwrite(b, l);
+  int result = playerData.netHandler->pwrite(b, l);
   if (result == -1)
-    removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
+    removePlayer(playerData.getIndex(), "ECONNRESET/EPIPE", false);
 }
-
 
 static char sMsgBuf[MaxPacketLen];
 char *getDirectMessageBuffer()
@@ -163,13 +160,18 @@ char *getDirectMessageBuffer()
 // for MsgShotBegin the receiving buffer gets used directly
 void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
   // send message to one player
   void *bufStart = (char *)msg - 2*sizeof(short);
 
   void *buf = bufStart;
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
-  pwrite(playerIndex, bufStart, len + 4);
+  pwrite(*playerData, bufStart, len + 4);
 }
 
 
@@ -564,7 +566,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
 				     BZDB.eval(StateDatabase::BZDB_FAKELAG));
       } else {
         // send immediately
-        pwrite(i, rawbuf, len + 4);
+        pwrite(*playerData, rawbuf, len + 4);
       }
     }
   }
@@ -4101,7 +4103,7 @@ int main(int argc, char **argv)
       void *data;
       int length;
       if (playerData->delayq.getPacket(&length, &data)) {
-        pwrite (p, data, length);
+        pwrite(*playerData, data, length);
         free (data);
       }
     }
