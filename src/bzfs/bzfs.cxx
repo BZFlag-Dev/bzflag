@@ -862,60 +862,64 @@ int WorldInfo::packDatabase()
   // define i out here so we avoid the loop variable scope debates
   int i;
   // add walls
-  for (i = 0 ; i < numWalls ; i++ ) {
+  ObstacleLocation *pWall;
+  for (i = 0, pWall = walls ; i < numWalls ; i++, pWall++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-    databasePtr = nboPackFloat(databasePtr, walls[i].pos[0]);
-    databasePtr = nboPackFloat(databasePtr, walls[i].pos[1]);
-    databasePtr = nboPackFloat(databasePtr, walls[i].pos[2]);
-    databasePtr = nboPackFloat(databasePtr, walls[i].rotation);
-    databasePtr = nboPackFloat(databasePtr, walls[i].size[0]);
+    databasePtr = nboPackFloat(databasePtr, pWall->pos[0]);
+    databasePtr = nboPackFloat(databasePtr, pWall->pos[1]);
+    databasePtr = nboPackFloat(databasePtr, pWall->pos[2]);
+    databasePtr = nboPackFloat(databasePtr, pWall->rotation);
+    databasePtr = nboPackFloat(databasePtr, pWall->size[0]);
     // walls have no depth
-    // databasePtr = nboPackFloat(databasePtr, walls[i].size[1]);
-    databasePtr = nboPackFloat(databasePtr, walls[i].size[2]);
+    // databasePtr = nboPackFloat(databasePtr, pWall->size[1]);
+    databasePtr = nboPackFloat(databasePtr, pWall->size[2]);
   }
 
   // add boxes
-  for (i = 0 ; i < numBoxes ; i++ ) {
+  ObstacleLocation *pBox;
+  for (i = 0, pBox = boxes ; i < numBoxes ; i++, pBox++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-    databasePtr = nboPackFloat(databasePtr, boxes[i].pos[0]);
-    databasePtr = nboPackFloat(databasePtr, boxes[i].pos[1]);
-    databasePtr = nboPackFloat(databasePtr, boxes[i].pos[2]);
-    databasePtr = nboPackFloat(databasePtr, boxes[i].rotation);
-    databasePtr = nboPackFloat(databasePtr, boxes[i].size[0]);
-    databasePtr = nboPackFloat(databasePtr, boxes[i].size[1]);
-    databasePtr = nboPackFloat(databasePtr, boxes[i].size[2]);
+    databasePtr = nboPackFloat(databasePtr, pBox->pos[0]);
+    databasePtr = nboPackFloat(databasePtr, pBox->pos[1]);
+    databasePtr = nboPackFloat(databasePtr, pBox->pos[2]);
+    databasePtr = nboPackFloat(databasePtr, pBox->rotation);
+    databasePtr = nboPackFloat(databasePtr, pBox->size[0]);
+    databasePtr = nboPackFloat(databasePtr, pBox->size[1]);
+    databasePtr = nboPackFloat(databasePtr, pBox->size[2]);
   }
 
   // add pyramids
-  for (i = 0 ; i < numPyramids ; i++ ) {
+  ObstacleLocation *pPyramid;
+  for (i = 0, pPyramid = pyramids ; i < numPyramids ; i++, pPyramid++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-    databasePtr = nboPackFloat(databasePtr, pyramids[i].pos[0]);
-    databasePtr = nboPackFloat(databasePtr, pyramids[i].pos[1]);
-    databasePtr = nboPackFloat(databasePtr, pyramids[i].pos[2]);
-    databasePtr = nboPackFloat(databasePtr, pyramids[i].rotation);
-    databasePtr = nboPackFloat(databasePtr, pyramids[i].size[0]);
-    databasePtr = nboPackFloat(databasePtr, pyramids[i].size[1]);
-    databasePtr = nboPackFloat(databasePtr, pyramids[i].size[2]);
+    databasePtr = nboPackFloat(databasePtr, pPyramid->pos[0]);
+    databasePtr = nboPackFloat(databasePtr, pPyramid->pos[1]);
+    databasePtr = nboPackFloat(databasePtr, pPyramid->pos[2]);
+    databasePtr = nboPackFloat(databasePtr, pPyramid->rotation);
+    databasePtr = nboPackFloat(databasePtr, pPyramid->size[0]);
+    databasePtr = nboPackFloat(databasePtr, pPyramid->size[1]);
+    databasePtr = nboPackFloat(databasePtr, pPyramid->size[2]);
   }
 
   // add teleporters
-  for (i = 0 ; i < numTeleporters ; i++ ) {
+  Teleporter *pTeleporter;
+  for (i = 0, pTeleporter = teleporters ; i < numTeleporters ; i++, pTeleporter++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-    databasePtr = nboPackFloat(databasePtr, teleporters[i].pos[0]);
-    databasePtr = nboPackFloat(databasePtr, teleporters[i].pos[1]);
-    databasePtr = nboPackFloat(databasePtr, teleporters[i].pos[2]);
-    databasePtr = nboPackFloat(databasePtr, teleporters[i].rotation);
-    databasePtr = nboPackFloat(databasePtr, teleporters[i].size[0]);
-    databasePtr = nboPackFloat(databasePtr, teleporters[i].size[1]);
-    databasePtr = nboPackFloat(databasePtr, teleporters[i].size[2]);
-    databasePtr = nboPackFloat(databasePtr, teleporters[i].border);
+    databasePtr = nboPackFloat(databasePtr, pTeleporter->pos[0]);
+    databasePtr = nboPackFloat(databasePtr, pTeleporter->pos[1]);
+    databasePtr = nboPackFloat(databasePtr, pTeleporter->pos[2]);
+    databasePtr = nboPackFloat(databasePtr, pTeleporter->rotation);
+    databasePtr = nboPackFloat(databasePtr, pTeleporter->size[0]);
+    databasePtr = nboPackFloat(databasePtr, pTeleporter->size[1]);
+    databasePtr = nboPackFloat(databasePtr, pTeleporter->size[2]);
+    databasePtr = nboPackFloat(databasePtr, pTeleporter->border);
     // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
-    databasePtr = nboPackUShort(databasePtr, uint16_t(teleporters[i].to[0]));
+    databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[0]));
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
-    databasePtr = nboPackUShort(databasePtr, uint16_t(teleporters[i].to[1]));
+    databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[1]));
   }
   return 1;
 }
@@ -1348,6 +1352,7 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
     case MsgAlive:
       if (len == 32)
 	patchPlayerId(fromId, toId, msg, 4);
+      break;
       ;;
     case MsgDropFlag:
     case MsgGrabFlag:
@@ -1759,15 +1764,16 @@ static void sendPlayerUpdate(int playerIndex, int index)
 {
   char msg[PlayerIdPLen + 8 + CallSignLen + EmailLen + PlayerIdPLen];
   void *buf = msg;
-  buf = player[playerIndex].id.pack(buf);
-  buf = nboPackUShort(buf, uint16_t(player[playerIndex].type));
-  buf = nboPackUShort(buf, uint16_t(player[playerIndex].team));
-  buf = nboPackUShort(buf, uint16_t(player[playerIndex].wins));
-  buf = nboPackUShort(buf, uint16_t(player[playerIndex].losses));
-  buf = nboPackString(buf, player[playerIndex].callSign, CallSignLen);
-  buf = nboPackString(buf, player[playerIndex].email, EmailLen);
+  PlayerInfo *pPlayer = &player[playerIndex];
+  buf = pPlayer->id.pack(buf);
+  buf = nboPackUShort(buf, uint16_t(pPlayer->type));
+  buf = nboPackUShort(buf, uint16_t(pPlayer->team));
+  buf = nboPackUShort(buf, uint16_t(pPlayer->wins));
+  buf = nboPackUShort(buf, uint16_t(pPlayer->losses));
+  buf = nboPackString(buf, pPlayer->callSign, CallSignLen);
+  buf = nboPackString(buf, pPlayer->email, EmailLen);
   // this playerid is for the player itself to get our playerid (hack)
-  buf = player[playerIndex].id.pack(buf);
+  buf = pPlayer->id.pack(buf);
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
     for (int i = 0; i < maxPlayers; i++)
@@ -3355,47 +3361,48 @@ static void resetFlag(int flagIndex)
     return;
   }
 
+  FlagInfo *pFlagInfo = &flag[flagIndex];
   // reset a flag's info
-  flag[flagIndex].player = -1;
-  flag[flagIndex].flag.status = FlagNoExist;
+  pFlagInfo->player = -1;
+  pFlagInfo->flag.status = FlagNoExist;
 
   // if it's a random flag, reset flag id
   if (flagIndex >= numFlags - numExtraFlags)
-    flag[flagIndex].flag.id = NullFlag;
+    pFlagInfo->flag.id = NullFlag;
 
   // reposition flag
-  if (int(flag[flagIndex].flag.id) >= int(FirstTeamFlag) &&
-	int(flag[flagIndex].flag.id) <= int(LastTeamFlag)) {
-    int teamIndex = int(flag[flagIndex].flag.id);
-    flag[flagIndex].flag.position[0] = basePos[teamIndex][0];
-    flag[flagIndex].flag.position[1] = basePos[teamIndex][1];
-    flag[flagIndex].flag.position[2] = basePos[teamIndex][2];
+  if (int(pFlagInfo->flag.id) >= int(FirstTeamFlag) &&
+	int(pFlagInfo->flag.id) <= int(LastTeamFlag)) {
+    int teamIndex = int(pFlagInfo->flag.id);
+    pFlagInfo->flag.position[0] = basePos[teamIndex][0];
+    pFlagInfo->flag.position[1] = basePos[teamIndex][1];
+    pFlagInfo->flag.position[2] = basePos[teamIndex][2];
     if(basePos[teamIndex][2] > 0) {
-      flag[flagIndex].flag.position[2] += 1;
+      pFlagInfo->flag.position[2] += 1;
     }
   }
   else {
     // random position (not in a building)
     float r = TankRadius;
-    if (flag[flagIndex].flag.id == ObesityFlag)
+    if (pFlagInfo->flag.id == ObesityFlag)
        r *= 2.0f * ObeseFactor;
     do {
-      flag[flagIndex].flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-      flag[flagIndex].flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-      flag[flagIndex].flag.position[2] = 0.0f;
-    } while (world->inBuilding(NULL, flag[flagIndex].flag.position[0], flag[flagIndex].flag.position[1],
-	flag[flagIndex].flag.position[2], r));
+      pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+      pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+      pFlagInfo->flag.position[2] = 0.0f;
+    } while (world->inBuilding(NULL, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1],
+	pFlagInfo->flag.position[2], r));
   }
 
   // required flags mustn't just disappear
-  if (flag[flagIndex].required) {
-    if (int(flag[flagIndex].flag.id) >= FirstTeamFlag &&
-	int(flag[flagIndex].flag.id) <= LastTeamFlag)
-      if (team[int(flag[flagIndex].flag.id)].team.activeSize == 0)
-	flag[flagIndex].flag.status = FlagNoExist;
+  if (pFlagInfo->required) {
+    if (int(pFlagInfo->flag.id) >= FirstTeamFlag &&
+	int(pFlagInfo->flag.id) <= LastTeamFlag)
+      if (team[int(pFlagInfo->flag.id)].team.activeSize == 0)
+	pFlagInfo->flag.status = FlagNoExist;
       else
-	flag[flagIndex].flag.status = FlagOnGround;
-    else if (flag[flagIndex].flag.id == NullFlag)
+	pFlagInfo->flag.status = FlagOnGround;
+    else if (pFlagInfo->flag.id == NullFlag)
       randomFlag(flagIndex);
     else
       addFlag(flagIndex);
