@@ -313,12 +313,12 @@ void			Player::setVisualTeam (TeamColor visualTeam)
 
 
 void			Player::addToScene(SceneDatabase* scene,
-					  TeamColor efectiveTeam,
+					  TeamColor effectiveTeam,
 					  bool showIDL)
 {
   if (!isAlive() && !isExploding()) return;
   tankNode->move(state.pos, forward);
-  setVisualTeam(efectiveTeam);
+  setVisualTeam(effectiveTeam);
   if (isAlive()) {
     if (flagType == Flags::Obesity) tankNode->setObese();
     else if (flagType == Flags::Tiny) tankNode->setTiny();
