@@ -2948,38 +2948,50 @@ void			ServerMenu::pick()
     sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount + ping.greenCount +
 	ping.blueCount + ping.purpleCount + ping.observerCount, ping.maxPlayers);
     ((HUDuiLabel*)list[1])->setLabel(buf);
-printf("%d,%d,%d,%d,%d,%d\n",ping.rogueMax,ping.redMax,ping.greenMax,ping.blueMax,ping.purpleMax,ping.observerMax);
-    if (ping.rogueMax >= ping.maxPlayers)
+
+    if (ping.rogueMax == 0)
+      buf[0]=0;
+    else if (ping.rogueMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.rogueCount);
     else
       sprintf(buf, "%d/%d", ping.rogueCount, ping.rogueMax);
     ((HUDuiLabel*)list[2])->setLabel(buf);
 
-    if (ping.redMax >= ping.maxPlayers)
+    if (ping.redMax == 0)
+      buf[0]=0;
+    else if (ping.redMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.redCount);
     else
       sprintf(buf, "%d/%d", ping.redCount, ping.redMax);
     ((HUDuiLabel*)list[3])->setLabel(buf);
 
-    if (ping.greenMax >= ping.maxPlayers)
+    if (ping.greenMax == 0)
+      buf[0]=0;
+    else if (ping.greenMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.greenCount);
     else
       sprintf(buf, "%d/%d", ping.greenCount, ping.greenMax);
     ((HUDuiLabel*)list[4])->setLabel(buf);
 
-    if (ping.blueMax >= ping.maxPlayers)
+    if (ping.blueMax == 0)
+      buf[0]=0;
+    else if (ping.blueMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.blueCount);
     else
       sprintf(buf, "%d/%d", ping.blueCount, ping.blueMax);
     ((HUDuiLabel*)list[5])->setLabel(buf);
 
-    if (ping.purpleMax >= ping.maxPlayers)
+    if (ping.purpleMax == 0)
+      buf[0]=0;
+    else if (ping.purpleMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.purpleCount);
     else
       sprintf(buf, "%d/%d", ping.purpleCount, ping.purpleMax);
     ((HUDuiLabel*)list[6])->setLabel(buf);
 
-    if (ping.observerMax >= ping.maxPlayers)
+    if (ping.observerMax == 0)
+      buf[0]=0;
+    else if (ping.observerMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.observerCount);
     else
       sprintf(buf, "%d/%d", ping.observerCount, ping.observerMax);
