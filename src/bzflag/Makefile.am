@@ -15,6 +15,8 @@ bzflag_SOURCES =			\
 	CommandsStandard.cxx		\
 	HUDDialog.cxx			\
 	HUDDialog.h			\
+	HUDDialogStack.cxx		\
+	HUDDialogStack.h		\
 	HUDRenderer.cxx			\
 	HUDRenderer.h			\
 	HUDui.cxx			\
@@ -75,7 +77,6 @@ LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
-	../platform/MacOSX/libMac.a	\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\
 	../scene/libSceneDB.a		\
