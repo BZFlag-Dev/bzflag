@@ -320,7 +320,8 @@ void BZAdminClient::runLoop() {
     if (ui != NULL && ui->checkCommand(str)) {
       if (str == "/quit")
 	break;
-      sendMessage(str, ui->getTarget());
+      if (str != "")
+	sendMessage(str, ui->getTarget());
     }
   }
 
