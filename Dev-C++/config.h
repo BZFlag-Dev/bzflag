@@ -15,8 +15,18 @@
 #ifndef _DEVCPP_CONFIG
 #define _DEVCPP_CONFIG
 
+//a lot of things aren't declared if strict ansi is on, so just skip it
+#ifdef __STRICT_ANSI__
+#   undef __STRICT_ANSI__
+#endif
+
 #if defined(WIN32) && !defined(_WIN32)
 #define _WIN32
+#endif
+
+//__GNUC_PATCHLEVEL__ was introduced with GCC 3.x, so ifndef, this thing is old!
+#ifndef __GNUC_PATCHLEVEL__
+#   warning It is recommended that you update MinGW32 to the latest version of GCC.
 #endif
 
 /* Currently builds with SDL */

@@ -20,7 +20,7 @@ ObjectOutput=..\src\bzadmin
 OverrideOutput=1
 OverrideOutputName=bzadmin.exe
 HostApplication=
-Folders="Header Files","Header Files/Common","Header Files/UI","Resource Files","Source Files","Source Files/Common","Source Files/Net","Source Files/UI"
+Folders="Header Files","Header Files/BZAdmin","Header Files/Common","Header Files/UI","Resource Files","Source Files","Source Files/BZAdmin","Source Files/Common","Source Files/Net","Source Files/UI"
 CommandLine=
 UseCustomMakefile=0
 CustomMakefile=
@@ -42,7 +42,7 @@ BuildCmd=
 [Unit2]
 FileName=..\src\bzadmin\AutoCompleter.cxx
 CompileCpp=1
-Folder=Source Files/Common
+Folder=Source Files/UI
 Compile=1
 Link=1
 Priority=1000
@@ -52,7 +52,7 @@ BuildCmd=
 [Unit3]
 FileName=..\src\bzadmin\bzadmin.cxx
 CompileCpp=1
-Folder=Source Files/Common
+Folder=Source Files/BZAdmin
 Compile=1
 Link=1
 Priority=1000
@@ -62,7 +62,7 @@ BuildCmd=
 [Unit4]
 FileName=..\src\bzadmin\BZAdminClient.cxx
 CompileCpp=1
-Folder=Source Files/Common
+Folder=Source Files/BZAdmin
 Compile=1
 Link=1
 Priority=1000
@@ -72,7 +72,7 @@ BuildCmd=
 [Unit5]
 FileName=..\src\bzadmin\BZAdminUI.cxx
 CompileCpp=1
-Folder=Source Files/Common
+Folder=Source Files/BZAdmin
 Compile=1
 Link=1
 Priority=1000
@@ -82,7 +82,7 @@ BuildCmd=
 [Unit8]
 FileName=..\src\bzadmin\AutoCompleter.h
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Header Files/UI
 Compile=1
 Link=1
 Priority=1000
@@ -92,7 +92,7 @@ BuildCmd=
 [Unit9]
 FileName=..\src\bzadmin\BZAdminClient.h
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Header Files/BZAdmin
 Compile=1
 Link=1
 Priority=1000
@@ -112,7 +112,7 @@ BuildCmd=
 [Unit11]
 FileName=..\src\bzadmin\colors.h
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Header Files/BZAdmin
 Compile=1
 Link=1
 Priority=1000
@@ -122,7 +122,7 @@ BuildCmd=
 [Unit12]
 FileName=..\src\bzadmin\curses_wrapper.h
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Header Files/UI
 Compile=1
 Link=1
 Priority=1000
@@ -132,7 +132,7 @@ BuildCmd=
 [Unit13]
 FileName=..\src\bzadmin\CursesMenu.h
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Header Files/UI
 Compile=1
 Link=1
 Priority=1000
@@ -152,7 +152,7 @@ BuildCmd=
 [Unit15]
 FileName=..\src\bzadmin\OptionParser.h
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Header Files/BZAdmin
 Compile=1
 Link=1
 Priority=1000
@@ -270,7 +270,7 @@ BuildCmd=
 [Unit6]
 FileName=..\src\bzadmin\OptionParser.cxx
 CompileCpp=1
-Folder=Source Files/Common
+Folder=Source Files/BZAdmin
 Compile=1
 Link=1
 Priority=1000
