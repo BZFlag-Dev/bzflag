@@ -65,6 +65,7 @@
 #include "ControlPanel.h"
 #include "StateDatabase.h"
 #include "CommandsStandard.h"
+#include "KeyManager.h"
 
 #ifdef _WIN32
 #define PATH_MAX MAX_PATH
@@ -93,7 +94,7 @@ bool			MenuDefaultKey::keyPress(const BzfKeyEvent& key)
       return true;
   }
 
-  if (getBzfKeyMap().isMappedTo(BzfKeyMap::Quit, key)) {
+  if (KEYMGR->get(key, true) == "quit") {
     CommandsStandard::quit();
     return true;
   }

@@ -485,7 +485,7 @@ void printout(const std::string& name, void*)
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
-  if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
+  if (KEYMGR->get(key, true) == "jump") {
     // jump while typing
     myTank->jump();
   }
@@ -672,7 +672,7 @@ SilenceDefaultKey::SilenceDefaultKey()
 bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
-  if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
+  if (KEYMGR->get(key, true) == "jump") {
     // jump while typing
     myTank->jump();
   }
@@ -1073,7 +1073,7 @@ std::string		ServerCommandKey::makePattern(const InAddr& address)
 bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
-  if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
+  if (KEYMGR->get(key, true) == "jump") {
     // jump while typing
     myTank->jump();
   }
@@ -1467,18 +1467,18 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     return true;
   } else if (hud->getHunt()) {
     if (key.button == BzfKeyEvent::Down ||
-        keymap.isMappedTo(BzfKeyMap::Identify, key)) {
+        KEYMGR->get(key, true) == "identify") {
       if (pressed) {
         hud->setHuntPosition(hud->getHuntPosition()+1);
       }
       return true;
     } else if (key.button == BzfKeyEvent::Up ||
-               keymap.isMappedTo(BzfKeyMap::DropFlag, key)) {
+    	       KEYMGR->get(key, true) == "drop") {
       if (pressed) {
         hud->setHuntPosition(hud->getHuntPosition()-1);
       }
       return true;
-    } else if (keymap.isMappedTo(BzfKeyMap::FireShot, key)) {
+    } else if (KEYMGR->get(key, true) == "fire") {
       if (pressed) {
         hud->setHuntSelection(true);
         playLocalSound(SFX_HUNT_SELECT);
@@ -1491,7 +1491,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       case 'T':
       case 't':
 	// toggle frames-per-second display
-	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
+	if (KEYMGR->get(key, pressed).empty()) {
 	  if (pressed) {
 	    showFPS = !showFPS;
 	    if (!showFPS) hud->setFPS(-1.0);
@@ -1503,7 +1503,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       case 'Y':
       case 'y':
 	// toggle milliseconds for drawing
-	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
+	if (KEYMGR->get(key, pressed).empty()) {
 	  if (pressed) {
 	    showDrawTime = !showDrawTime;
 	    if (!showDrawTime) hud->setDrawTime(-1.0);
@@ -1536,7 +1536,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       case ']':
       case '}':
 	// plus 30 seconds
-	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
+	if (KEYMGR->get(key, pressed).empty()) {
 	  if (pressed) clockAdjust += 30.0f;
 	  return true;
 	}
@@ -1545,7 +1545,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       case '[':
       case '{':
 	// minus 30 seconds
-	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
+	if (KEYMGR->get(key, pressed).empty()) {
 	  if (pressed) clockAdjust -= 30.0f;
 	  return true;
 	}
@@ -1574,8 +1574,9 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 
   if (HUDui::getFocus())
     if ((pressed && HUDui::keyPress(key)) ||
-	(!pressed && HUDui::keyRelease(key)))
+	(!pressed && HUDui::keyRelease(key))) {
       return;
+    }
 
   if (doKeyCommon(key, pressed)) return;
 
@@ -1792,12 +1793,19 @@ static std::string cmdIdentify(const std::string&, const CommandManager::ArgList
 {
   if (args.size() != 0)
     return "usage: identify";
-  if (myTank != NULL) {
+  if (myTank != NULL)
+    if (myTank->isAlive() && !myTank->isPaused())
+      setTarget();
+  return std::string();
+}
+
+static std::string cmdRestart(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: restart";
+  if (myTank != NULL)
     if (!gameOver && !Observer && !myTank->isAlive() && !myTank->isExploding())
       restartPlaying();
-    else if (myTank->isAlive() && !myTank->isPaused())
-      setTarget();
-  }
   return std::string();
 }
 
@@ -2183,6 +2191,7 @@ static const CommandListItem commandList[] = {
   { "jump",	&cmdJump,	"jump:  make player jump" },
   { "drop",	&cmdDrop,	"drop:  drop the current flag" },
   { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
+  { "restart",	&cmdRestart,	"restart:  restart playing" },
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
   { "pause",	&cmdPause,	"pause:  pause/resume" },
   { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" },
@@ -2289,10 +2298,11 @@ static void		doEvent(BzfDisplay* display)
       break;
 
     case BzfEvent::KeyDown:
-      if (!myTank)
+      if (!myTank) {
 	doKeyNotPlaying(event.keyUp, true);
-      else
+      } else {
 	doKeyPlaying(event.keyUp, true);
+      }
       break;
 
     case BzfEvent::MouseMove:
@@ -2468,8 +2478,8 @@ static void		updateFlag(FlagDesc* flag)
 
 void			notifyBzfKeyMapChanged()
 {
-  hud->setRestartKeyLabel(BzfKeyMap::getKeyEventString(
-					keymap.get(BzfKeyMap::Identify)));
+  // eww - FIXME as soon as keys can be bound to multiple commands
+  hud->setRestartKeyLabel("Right Mouse");
 }
 
 //
