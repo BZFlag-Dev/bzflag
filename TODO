@@ -19,6 +19,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * .bzf/ on *ix should be a directory with db and cache/ entries
 
+* bzadmin needs -help and a man page
+
 THESE ARE LOWER PRIORITY
 
 * rework the BZDB->eval() cacheing to support expression
