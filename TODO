@@ -47,9 +47,6 @@ THESE ARE LOWER PRIORITY
 * Try to build bzadmin on Win32 using PDCurses (it almost works with
   the X11 version of PDCurses). It currently works with stdin/stdout.
 
-* add ability to capture a screenshot to a gamma-corrected png from
-  inside the game.
-
 * rewrite mac os x display/window code to support app switching,
   resolution mode changes, screen captures, etc.
 
