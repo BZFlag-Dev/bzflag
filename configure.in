@@ -440,7 +440,6 @@ AC_OUTPUT(bzflag.spec
 	package/mac/src/Makefile
 	package/win32/Makefile
 	package/win32/nsis/Makefile
-	package/win32/src/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
 	src/bzflag/Makefile
