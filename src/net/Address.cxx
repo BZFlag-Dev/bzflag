@@ -29,7 +29,7 @@
 // Address
 //
 
-#ifndef GUSI_20
+#if !defined( GUSI_20 ) && !defined( WIN32 )
   Address			Address::localAddress("");
 #endif
 
