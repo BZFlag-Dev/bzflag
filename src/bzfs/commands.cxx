@@ -2523,7 +2523,7 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
 
   // no anonymous messages
   messageText += " (";
-  messageText += playerData->accessInfo.getName();
+  messageText += playerData->player.getCallSign();
   messageText += ")";
 
   // send the message
