@@ -146,6 +146,25 @@ Images are stored as .png (portable network graphics format). Compression,
 but no additional options such as interlacing.
 
 
+BZDB
+====
+BZDB is the generic name:value pair database within bzflag and bzfs. Its useful
+for data that can be serialized to a string that needs to be accessible to
+many areas of the code. It also provides facilities for saving persistant
+pairs to the config file and downloading variables from the server.
+
+BZDB is not an object broker, and isn't meant to be. If you have data within an
+object that needs to be accessible from a number of places, but don't want to
+pass the object around, you could store that data within BZDB (if accessed
+often, such as game variables like gravity, you will need a cached version
+anyway to avoid the overhead of lookup). Using BZDB adds unnecessary overhead
+if objects generally keep their data hidden without needing persistant state.
+
+Basically, if your data can be serialized to a string, and it makes sense to do
+so (eg: config file option, game variable downloaded from server), use BZDB. If
+you wanted an object broker, use a freakin' global.
+
+
 Details -- common
 =================
 common.h	-- basic types and function declarations
