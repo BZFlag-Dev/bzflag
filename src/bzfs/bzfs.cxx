@@ -5076,11 +5076,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       
       if (!player[t].Observer) {
 	unsigned short shotFlag;
-	nboUnpackUShort(&(((byte *)buf)[ShotUpdatePLen]), shotFlag);
+	nboUnpackUShort(&(((unsigned char *)buf)[ShotUpdatePLen]), shotFlag);
 	if (shotFlag != 0) {
 	  int flagIndex = player[t].flag;
 	  if ((flagIndex == -1) || (shotFlag != flag[flagIndex].flag.id))
-	    nboPackUShort(&(((byte *)buf)[ShotUpdatePLen]), NullFlag);
+	    nboPackUShort(&(((unsigned char *)buf)[ShotUpdatePLen]), NullFlag);
 	}
 	shotFired(t, buf, int(len));
       }
