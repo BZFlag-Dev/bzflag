@@ -52,34 +52,146 @@ class string_util {
       va_end(args);
       return result;
     }
-    // get a vector of strings from a string, using all of chars of the delims
-    // string as separators. If maxTokens > 0, then the last 'token' may contain delimiters
-    // as it just returns the rest of the line
-    static std::vector<std::string> tokenize(std::string& in, std::string delims, int maxTokens = 0){
-      std::vector<std::string> out;
-      int numTokens = 0;
 
-      unsigned int startPos = in.find_first_not_of(delims);
-      while (startPos != std::string::npos){
-	unsigned int endPos;
+// replace all of in in replaceMe with withMe
+static std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe)
+{
+	std::string result;
+	unsigned int beginPos = 0;
+	unsigned int endPos = 0;
+	std::ostringstream tempStream;
 
-	if (maxTokens && (numTokens >= (maxTokens-1)))
-	  endPos = std::string::npos;
-	else
-	  endPos = in.find_first_of(delims,startPos);
 
-	if (endPos == std::string::npos) {
-	  out.push_back(in.substr(startPos));
-	  break;
+	endPos = in.find(replaceMe);
+	if (endPos == std::string::npos) return in; // can't find anything to replace
+	if (replaceMe == "") return in; // can't replace nothing with something -- can do reverse
+
+	while (endPos != std::string::npos){
+		// push the  part up to 
+		tempStream << in.substr(beginPos,endPos-beginPos); 
+		tempStream << withMe;
+		beginPos = endPos + replaceMe.size();
+		endPos = in.find(replaceMe,beginPos);
+	} 
+	tempStream << in.substr(beginPos);
+	return tempStream.str();
+}
+
+
+/**
+ * Get a vector of strings from a string, using all of chars of thedelims
+ * string as separators. If maxTokens > 0, then the last 'token' maycontain delimiters
+ * as it just returns the rest of the line
+ * if you specify use quotes then tokens can be grouped in quotes and delimeters
+ * inside quotes are ignored.
+ * Hence /ban "Mr Blahblah" isajerk parses to "/ban", "Mr Blahlah" and "isajerk"
+ * but so does "Mr Blahblah" "isajerk", so if you want 3 tokens and a delimeter
+ * is in one of the tokens, by puting quotes around it you can get the correct 
+ * parsing. When use quotes is enabled, \'s and "'s should\can be escaped with \
+ * escaping is not currently done for any other character.
+ * Should not have " as a delimeter if you want to use quotes
+ */
+static std::vector<std::string> tokenize(std::string& in, std::string delims, int maxTokens = 0, bool useQuotes = false){
+	std::vector<std::string> tokens;
+	int numTokens = 0;
+	bool inQuote = false;
+	bool enoughTokens;
+
+	unsigned int pos = 0; 
+	char currentChar;
+	std::ostringstream currentToken;
+	
+	pos = in.find_first_not_of(delims);
+	currentChar = (pos == std::string::npos)? -1: in[pos];
+	enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
+
+	while (pos != std::string::npos && !enoughTokens){
+	
+		// get next token
+		bool tokenDone = false;
+		bool foundSlash = false;
+
+		currentChar = (pos < in.size()) ? in[pos] : -1;
+		while (currentChar != -1 && !tokenDone){
+
+			tokenDone = false;
+
+			if (delims.find(currentChar) != std::string::npos && !inQuote) { // currentChar is a delim
+				pos ++;
+				break; // breaks out of while look
+			}
+			
+			if (!useQuotes){
+				currentToken << currentChar;
+			} else {
+
+				switch (currentChar){
+				case '\\' : // found a slash
+					if (foundSlash){
+						currentToken << currentChar;
+						foundSlash = false;
+					} else {
+						foundSlash = true;
+					}
+					break;
+				case '\"' : // found a quote
+					if (foundSlash){ // found \"
+						currentToken << currentChar;
+						foundSlash = false;
+					} else { // found unescaped "
+						if (inQuote){ // exiting a quote
+							// finish off current token
+							tokenDone = true;
+							inQuote = false;
+							//slurp off one additional delimeter if possible
+							if ( (pos+1 < in.size()) && (delims.find(in[pos+1]) != std::string::npos)){
+								pos++;
+							}
+
+						} else { // entering a quote
+							// finish off current token
+							tokenDone = true;
+							inQuote = true;
+						}
+					}
+					break;
+				default:
+					if (foundSlash){ // don't care about slashes except for above cases
+						currentToken << '\\';
+						foundSlash = false;
+					}
+					currentToken << currentChar;
+					break;
+				}
+			}
+
+			pos ++;
+			currentChar = (pos < in.size() )? in[pos] : -1;
+		} // end of getting a Token
+		
+		if (currentToken.str().size() > 0){ // if the token is something add to list
+			tokens.push_back(currentToken.str());
+			currentToken.str("");
+			numTokens ++;
+		}
+
+		enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
+		if (enoughTokens){
+			break;
+		} else{
+			pos = in.find_first_not_of(delims,pos);
+		}
+
+	} // end of getting all tokens -- either EOL or max tokens reached
+
+	if (enoughTokens && pos != std::string::npos){
+		std::string lastToken = in.substr(pos);
+		if (lastToken.size() > 0)
+			tokens.push_back(lastToken); 
 	}
-	else
-	  out.push_back(in.substr(startPos,endPos-startPos));
-	numTokens++;
-
-	startPos = in.find_first_not_of(delims,endPos);
-      }
-      return out;
-    }
+ 
+  return tokens;
+} 
 
     static int parseDuration(std::string &duration)
     {
