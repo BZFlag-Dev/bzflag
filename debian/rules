@@ -96,7 +96,7 @@ bzflag-server: build
 	dh_clean -k
 	dh_installdirs -p$@ usr/games usr/share/man/man6
 	# copy files into debian/$@/ here
-	cp -p man/bzfs.6 man/bzadmin.6 debian/$@/usr/share/man/man6
+	cp -p man/bzadmin.6 man/bzfquery.6 man/bzfs.6 debian/$@/usr/share/man/man6
 	cp -p src/bzfs/bzfs src/bzadmin/bzadmin misc/bzfquery.pl debian/$@/usr/games
 	chmod a+rx debian/$@/usr/games/bzfquery.pl
 #	dh_installdebconf -p$@
