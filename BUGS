@@ -1,5 +1,8 @@
 recent bugs
 ------------
+- bzc file writing seems to be goofy. Some options never are written into
+  the file, and some (binds) get written more than once. [I have two 
+  bind lines for the same key]
 
 - PyramidBuilding::getHitNormal seems to handle flipz wrongly, specifically
   if (flip)
