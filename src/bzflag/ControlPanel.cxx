@@ -59,6 +59,9 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
   const char* msg = string.c_str();
   int lineLen     = string.length();
 
+  // if there are tabs in the message, find the last one
+  int lastTab = string.find_last_of('\t', lineLen - 1);
+
   lines.clear();
 
   // in order for the new font engine to draw successive lines in the right
@@ -73,7 +76,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
     // how many characters will fit?
     // the unprinted ANSI codes don't count
-    if (fm.getStrLength(fontFace, fontSize, msg) <= maxLength) {
+    if ((fm.getStrLength(fontFace, fontSize, msg) <= maxLength) && (lastTab <= 0)) {
       n = lineLen;
     } else {
       n = 0;
@@ -109,7 +112,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	  lastWhitespace = n;
 	  // Tabs break out into their own message.  These get dealt with
 	  // in ::render, which will increment x instead of y.
-	  if (msg[n] == 9)
+	  if (msg[n] == '\t')
 	    break;
 	}
       }
@@ -124,6 +127,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     // account for portion broken
     msg += n;
     lineLen -= n;
+    lastTab -= n;
 
   }
 }
@@ -358,6 +362,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
     GLfloat whiteColor[3] = {1.0f, 1.0f, 1.0f};
     glColor3fv(whiteColor);
 
+    bool isTab = false;
+
     for (int l = 0; l < numLines; l++)  {
       assert(msgy >= 0);
 
@@ -366,24 +372,21 @@ void			ControlPanel::render(SceneRenderer& renderer)
       // Tab chars move horizontally instead of vertically
       // It doesn't matter where in the string the tab char is
       // Usually it will be like <ansi><ansi><ansi>\ttext
-      // We use 4 tabstops equally spaced over the controlpanel
-      // which is stupid, and can cause overlapping as the
-      // control panel font size can be changed (FIXME)
-      bool isTab = (msg.find('\t', 0) != std::string::npos);
-      if (isTab)
-	msgx += messageAreaPixels[0] / 4;
-      else
+      // We use 1 tabstop spaced 1/3 of the way across the controlpanel
+      isTab = (msg.find('\t', 0) != std::string::npos);
+      if (isTab) {
+	msgx += messageAreaPixels[2] / 3;
+	msgy++;
+      } else {
 	msgx = 0;
+      }
 
       // only draw message if inside message area
       if (j + msgy < maxLines)
 	fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
 
-      if (isTab) {
-	// don't mess up our calculations
-	numLines--;
-      } else {
-	// next line
+      // next line
+      if (!isTab) {
 	msgy--;
       }
     }
