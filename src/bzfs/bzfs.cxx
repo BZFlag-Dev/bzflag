@@ -1338,7 +1338,7 @@ static WorldInfo *defineTeamWorld()
 
     const float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     const float worldfactor = worldSize / (float)DEFAULT_WORLD;
-    const int actCitySize = int(clOptions->citySize * worldfactor);
+    const int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
     const float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
 
     // set team base and team flag safety positions
@@ -1768,7 +1768,7 @@ static WorldInfo *defineRandomWorld()
   world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
   const float worldfactor = worldSize / (float)DEFAULT_WORLD;
-  const int actCitySize = int(clOptions->citySize * worldfactor);
+  const int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
   const int numTeleporters = 8 + int(8 * (float)bzfrand() * worldfactor);
   // make boxes
   int i;
