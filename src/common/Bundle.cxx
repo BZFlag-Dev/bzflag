@@ -119,8 +119,7 @@ void Bundle::ensureNormalText(std::string &msg)
 // BZFlag's font bitmaps don't contain letters with accents, so strip them here
 // Would be nice if some kind sole added them.
 
-  int length = msg.length();
-  for (int i = 0; i < length; i++) {
+  for (int i = 0; i < msg.length(); i++) {
     char c = msg.at(i);
     switch (c) {
       case 'â':
@@ -128,6 +127,26 @@ void Bundle::ensureNormalText(std::string &msg)
       case 'à':
       case 'á':
 	msg[i] = 'a';
+      break;
+      case 'å':
+	msg[i] = 'a';
+	i++;
+	msg.insert(i, 1, 'a');
+      break;
+      case 'æ':
+	msg[i] = 'a';
+	i++;
+	msg.insert(i, 1, 'e');
+      break;
+      case 'Æ':
+	msg[i] = 'A';
+	i++;
+	msg.insert(i, 1, 'e');
+      break;
+      case 'Å':
+	msg[i] = 'A';
+	i++;
+	msg.insert(i, 1, 'a');
       break;
       case 'é':
       case 'è':
@@ -143,8 +162,18 @@ void Bundle::ensureNormalText(std::string &msg)
       case 'ó':
 	msg[i] = 'o';
       break;
+      case 'ø':
+	msg[i] = 'o';
+	i++;
+	msg.insert(i, 1, 'e');
+      break;
       case 'Ö':
 	msg[i] = 'O';
+      break;
+      case 'Ø':
+	msg[i] = 'O';
+	i++;
+	msg.insert(i, 1, 'e');
       break;
       case 'û':
       case 'ü':
