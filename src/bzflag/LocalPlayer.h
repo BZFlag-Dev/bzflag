@@ -121,6 +121,8 @@ public:
   bool		getKeyPressed() const;
   int			getKeyButton() const;
   void		resetKey();
+  bool		isSpawning();
+  void		setSpawning( bool spawn );
 
   static LocalPlayer*	getMyTank();
   static void		setMyTank(LocalPlayer*);
@@ -134,6 +136,8 @@ public:
 			     const float* pos1, float azimuth1,
 			     const float* pos2, float azimuth2,
 			     float* normal) const;
+
+
 protected:
   bool		doEndShot(int index, bool isHit, float* pos);
   void		doUpdate(float dt);
@@ -164,6 +168,7 @@ private:
   float		keyboardAngVel;
   int			keyButton;
   bool		keyPressed;
+  bool		spawning;
 };
 
 //
@@ -250,6 +255,16 @@ inline bool LocalPlayer::getKeyPressed() const
 inline int LocalPlayer::getKeyButton() const
 {
   return keyButton;
+}
+
+inline bool LocalPlayer::isSpawning()
+{
+  return spawning;
+}
+
+inline void LocalPlayer::setSpawning( bool spawn )
+{
+  spawning = spawn;
 }
 
 #endif // BZF_LOCAL_PLAYER_H

@@ -2033,8 +2033,11 @@ static std::string cmdRestart(const std::string&, const CommandManager::ArgList&
   if (args.size() != 0)
     return "usage: restart";
   if (myTank != NULL)
-    if (!gameOver && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding())
+    if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding()) {
       serverLink->sendAlive();
+      myTank->setSpawning(true);
+    }
+
   return std::string();
 }
 
@@ -3080,8 +3083,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       tank->setVelocity(zero);
       tank->setAngularVelocity(0.0f);
       tank->setDeadReckoning();
-      if (tank==myTank)
+      if (tank==myTank) {
 	playLocalSound(SFX_POP);
+        myTank->setSpawning(false);
+      }
       else
 	playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
     }

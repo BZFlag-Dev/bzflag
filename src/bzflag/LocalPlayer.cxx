@@ -319,7 +319,8 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   anyShotActive(false),
   target(NULL),
   nemesis(NULL),
-  recipient(NULL)
+  recipient(NULL),
+  spawning(false)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
