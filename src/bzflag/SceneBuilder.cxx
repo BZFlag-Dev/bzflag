@@ -550,10 +550,9 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   // try object, standard, then default
   if (o.userTextures[0].size())
     boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (boxTexture < 0)
-  {
+  if (boxTexture < 0) {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-    teamBase+=BZDB.get("baseWallTexture");
+    teamBase += BZDB.get("baseWallTexture");
     boxTexture = tm.getTextureID(teamBase.c_str(),false);
   }
   if (boxTexture < 0)
@@ -565,9 +564,9 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
 
   if (o.userTextures[1].size())
     baseTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
-  if (baseTopTexture < 0){
+  if (baseTopTexture < 0) {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-    teamBase+=BZDB.get("baseTopTexture").c_str();
+    teamBase += BZDB.get("baseTopTexture").c_str();
     baseTopTexture = tm.getTextureID(teamBase.c_str(),false);
   }
   if (baseTopTexture < 0)
