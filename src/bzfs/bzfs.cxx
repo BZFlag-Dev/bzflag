@@ -2514,78 +2514,79 @@ static void dropFlag(int playerIndex, float pos[3])
     obstacleTop = topmost->getPosition()[2] + topmost->getSize()[2];
   }
 
-  // figure out landing spot -- if flag in a Bad Place
-  // when dropped, move to safety position or make it going
-  TeamColor teamBase = whoseBase(pos[0], pos[1],
-				 (topmosttype == NOT_IN_BUILDING ? pos[2] :
-				  topmost->getPosition()[2] + topmost->getSize()[2] + 0.01f));
-
   // note: sticky/bad flags should always have grabs=1
-  if (isTeamFlag || (--drpFlag.grabs > 0))
+
+  if (isTeamFlag)
+    drpFlag.flag.status = FlagInAir;
+  else if (--drpFlag.grabs == 0)
+    drpFlag.flag.status = FlagGoing;
+  else if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f))
+    drpFlag.flag.status = FlagInAir;
+  else if (clOptions->flagsOnBuildings && (obstacleTop > deadUnder)
+	   && (topmosttype == IN_BOX_NOTDRIVETHROUGH
+	       || topmosttype == IN_BASE))
     drpFlag.flag.status = FlagInAir;
   else
     drpFlag.flag.status = FlagGoing;
 
-  if (drpFlag.flag.status == FlagGoing) {
-    drpFlag.flag.landingPosition[0] = pos[0];
-    drpFlag.flag.landingPosition[1] = pos[1];
-    drpFlag.flag.landingPosition[2] = pos[2];
-  } else if (isTeamFlag && (teamBase == flagTeam) && (topmosttype == IN_BASE)) {
-    drpFlag.flag.landingPosition[0] = pos[0];
-    drpFlag.flag.landingPosition[1] = pos[1];
-    drpFlag.flag.landingPosition[2] = obstacleTop;
-  } else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagTeam)
-           && (bases.find(teamBase) != bases.end())) {
-    std::string teamName = Team::getName ((TeamColor) flagTeam);
-    if (!world->getSafetyPoint(teamName, pos, drpFlag.flag.landingPosition)) {
-      bases[teamBase].getSafetyZone(drpFlag.flag.landingPosition[0],
-                                    drpFlag.flag.landingPosition[1],
-                                    drpFlag.flag.landingPosition[2]);
-      // default flag safety zones are on the ground
-      if (drpFlag.flag.landingPosition[2] <= deadUnder) {
-	TeamBases &teamBases = bases[flagTeam];
-	const TeamBase &base = teamBases.getRandomBase(flagIndex); 
-	drpFlag.flag.landingPosition[0] = base.position[0];
-	drpFlag.flag.landingPosition[1] = base.position[1];
-	drpFlag.flag.landingPosition[2] = base.position[2] + base.size[2];
+  float landingPos[3] = {pos[0], pos[1], obstacleTop};
+  
+  // With Team Flag, we should absolutely go for finding a landing
+  // position, while, for other flags, we could stay with default, or
+  // just let them vanish
+  if (isTeamFlag) {
+    if (topmosttype == IN_BASE) {
+      // figure out landing spot -- if flag in a Bad Place
+      // when dropped, move to safety position or make it going
+      TeamColor teamBase
+	= whoseBase(pos[0], pos[1], (topmost->getPosition()[2]
+				     + topmost->getSize()[2] + 0.01f));
+      if (teamBase != flagTeam) {
+	std::string teamName = Team::getName((TeamColor) flagTeam);
+	if (!world->getSafetyPoint(teamName, pos, landingPos)) {
+	  bases[teamBase].getSafetyZone(landingPos[0],
+					landingPos[1],
+					landingPos[2]);
+	  // default flag safety zones are on the ground
+	  if (landingPos[2] <= deadUnder) {
+	    TeamBases &teamBases = bases[flagTeam];
+	    const TeamBase &base = teamBases.getRandomBase(flagIndex); 
+	    landingPos[0] = base.position[0];
+	    landingPos[1] = base.position[1];
+	    landingPos[2] = base.position[2] + base.size[2];
+	  }
+	}
+      }
+    } else if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
+      // use default landing position
+    } else if (clOptions->flagsOnBuildings && (obstacleTop > deadUnder)
+	       && (topmosttype == IN_BOX_NOTDRIVETHROUGH)) {
+      // use default landing position
+    } else {
+      // people were cheating by dropping their flag above the nearest
+      // convenient building which makes it fly all the way back to
+      // your own base.  make it fly to the center of the board.
+      std::string teamName = Team::getName ((TeamColor) flagTeam);
+      if (!world->getSafetyPoint(teamName, pos, landingPos)) {
+	const float pos[3] = {0.0f, 0.0f, 0.0f};
+	topmosttype = world->cylinderInBuilding
+	  (&container, pos, BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
+	   BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+	if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
+	  landingPos[0] = 0.0f;
+	  landingPos[1] = 0.0f;
+	  landingPos[2] = 0.0f;
+	} else {// oh well, whatcha gonna do?
+	  TeamBases &teamBases = bases[flagTeam];
+	  const TeamBase &base = teamBases.getRandomBase(flagIndex); 
+	  landingPos[0] = base.position[0];
+	  landingPos[1] = base.position[1];
+	  landingPos[2] = base.position[2] + base.size[2];
+	}
       }
     }
-  } else if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
-    drpFlag.flag.landingPosition[0] = pos[0];
-    drpFlag.flag.landingPosition[1] = pos[1];
-    drpFlag.flag.landingPosition[2] = 0.0f;
   }
-  else if (clOptions->flagsOnBuildings && (obstacleTop > deadUnder)
-           && (topmosttype == IN_BOX_NOTDRIVETHROUGH || topmosttype == IN_BASE)) {
-    drpFlag.flag.landingPosition[0] = pos[0];
-    drpFlag.flag.landingPosition[1] = pos[1];
-    drpFlag.flag.landingPosition[2] = obstacleTop;
-  } else if (isTeamFlag) {
-    // people were cheating by dropping their flag above the nearest
-    // convenient building which makes it fly all the way back to
-    // your own base.  make it fly to the center of the board.
-    std::string teamName = Team::getName ((TeamColor) flagTeam);
-    if (!world->getSafetyPoint(teamName, pos, drpFlag.flag.landingPosition)) {
-      const float pos[3] = {0.0f, 0.0f, 0.0f};
-      topmosttype = world->cylinderInBuilding(&container, pos,
-				     BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
-				     BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
-      if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
-        drpFlag.flag.landingPosition[0] = 0.0f;
-	drpFlag.flag.landingPosition[1] = 0.0f;
-	drpFlag.flag.landingPosition[2] = 0.0f;
-      } else {// oh well, whatcha gonna do?
-	TeamBases &teamBases = bases[flagTeam];
-	const TeamBase &base = teamBases.getRandomBase(flagIndex); 
-	drpFlag.flag.landingPosition[0] = base.position[0];
-	drpFlag.flag.landingPosition[1] = base.position[1];
-	drpFlag.flag.landingPosition[2] = base.position[2] + base.size[2];
-      }
-    }
-  } else {
-    drpFlag.flag.status = FlagGoing;
-  }
-  drpFlag.dropFlag(pos);
+  drpFlag.dropFlag(pos, landingPos);
 
   // if it is a team flag, check if there are any players left in that team -
   // if not, start the flag timeout

@@ -104,11 +104,15 @@ void *FlagInfo::pack(void *buf)
   return buf;
 }
 
-void FlagInfo::dropFlag(float pos[3])
+void FlagInfo::dropFlag(float pos[3], float landingPos[3])
 {
-  flag.position[0]       = flag.landingPosition[0];
-  flag.position[1]       = flag.landingPosition[1];
-  flag.position[2]       = flag.landingPosition[2];
+  flag.landingPosition[0] = landingPos[0];
+  flag.landingPosition[1] = landingPos[1];
+  flag.landingPosition[2] = landingPos[2];
+
+  flag.position[0]       = landingPos[0];
+  flag.position[1]       = landingPos[1];
+  flag.position[2]       = landingPos[2];
   flag.launchPosition[0] = pos[0];
   flag.launchPosition[1] = pos[1];
   flag.launchPosition[2] = pos[2] + BZDBCache::tankHeight;
