@@ -25,10 +25,6 @@ recent bugs
   didn't respawn, waited a couple sec (was chatting), then the assertion was 
   raised.
 
-- Bots fall down if they spawn on an elevated base. This is because the bots
-  don't have any collision detection at all and normally just move on the
-  ground.
-
 - Change any documentation/help that says rabbit hunters are black (s/b orange)
   If that change is going to stick.
 
