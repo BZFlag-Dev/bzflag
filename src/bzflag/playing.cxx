@@ -1741,43 +1741,76 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  }
 	}
 
-	//figure out my rotation to my target
-	const float *tp = player[target]->getPosition();
-        float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
-        rotation = azimuth - myTank->getAngle();
-        if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
-	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
-
-	//If we are driving relatively towards our target and a building pops up jump over it
-	if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
-	  const Obstacle *building = NULL;
-	  float d = distance;
-
-	  const float *velocity = myTank->getVelocity();
-
-	  if ((myTank->getFlag() != Flags::SuperBullet) && (velocity[0] > 3.0f) || (velocity[1] > 3.0f))
-	    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
-	  if (building) {
-	    if ((d > 20.f) && (d < 50.0f) 
-	       && (building->getType() == BoxBuilding::typeName)
-	       && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
-	     
-	     myTank->jump();
+	// If relatively safe and have no flag, see if a flag is close
+        int closestFlag = -1;
+	if ((distance > 200.0f) && (myTank->getFlag() == Flags::Null)) {
+	  float minDist = Infinity;
+          for (int i = 0; i < numFlags; i++) {
+            if (world->getFlag(i).desc == Flags::Null ||
+	      world->getFlag(i).status != FlagOnGround) continue;
+            const float* fpos = world->getFlag(i).position;
+	    if (fpos[2] == pos[2]) {
+              const float dist = (pos[0] - fpos[0]) * (pos[0] - fpos[0]) +
+			         (pos[1] - fpos[1]) * (pos[1] - fpos[1]);
+              if ((dist < 1500.0f) && (dist < minDist)) {
+	        minDist = dist;
+	        closestFlag = i;
+	      }
 	    }
 	  }
 	}
+	else if (myTank->getFlag() == Flags::Useless) {
+	  serverLink->sendDropFlag(myTank->getPosition());
+          handleFlagDropped(myTank);
+	}
 
-	// weave towards the player
-	if (distance > 20.0f) {
-          int period = int(TimeKeeper::getCurrent().getSeconds());
-          float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
-	  rotation += bias;
+	if (closestFlag != -1) {
+	  const float *fpos = world->getFlag(closestFlag).position;
+	  float azimuth = atan2f(fpos[1] - pos[1], fpos[0] - pos[0]);
+	  rotation = azimuth - myTank->getAngle();
           if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
 	  if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
 	  speed = M_PI/2.0f - fabs(rotation);
 	}
-	else
-	  speed = -0.5f;
+	else {
+	  //figure out my rotation to my target
+	  const float *tp = player[target]->getPosition();
+          float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
+          rotation = azimuth - myTank->getAngle();
+          if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
+	  if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+
+	  //If we are driving relatively towards our target and a building pops up jump over it
+	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
+	    const Obstacle *building = NULL;
+	    float d = distance;
+
+	    const float *velocity = myTank->getVelocity();
+
+	    if ((myTank->getFlag() != Flags::SuperBullet) && (velocity[0] > 3.0f) || (velocity[1] > 3.0f))
+	      building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
+	    if (building) {
+	      if ((d > 20.f) && (d < 50.0f) 
+	         && (building->getType() == BoxBuilding::typeName)
+	         && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
+	     
+	       myTank->jump();
+	      }
+	    }
+	  }
+
+	  // weave towards the player
+	  if (distance > 20.0f) {
+            int period = int(TimeKeeper::getCurrent().getSeconds());
+            float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
+	    rotation += bias;
+            if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
+	    if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+	    speed = M_PI/2.0f - fabs(rotation);
+	  }
+	  else
+	    speed = -0.5f;
+	}
 
 	if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
 	//teach autopilot bad habits
