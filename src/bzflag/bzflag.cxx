@@ -662,11 +662,11 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB->set("focal", argv[i]);
-    } else if (strcmp(argv[i], "-psn") == 0) {
+    } else if (strncmp(argv[i], "-psn", 4) == 0) {
 	std::vector<std::string> args;
 	args.push_back(argv[i]);
 	printError("Ignoring Finder argument \"{1}\"", &args);
-	// ignore process serial number argument for MacOS X
+	// ignore process serial number argument (-psn_x_xxxx for MacOS X
     } else if (strcmp(argv[i], "-badwords") == 0) {
       if (++i == argc) {
 	printFatalError("Missing bad word filter filename argument for %s.", argv[i-1]);
