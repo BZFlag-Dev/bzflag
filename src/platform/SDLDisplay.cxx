@@ -116,9 +116,20 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
   case SDL_MOUSEMOTION:
     _event.type        = BzfEvent::MouseMove;
     mx                 = event.motion.x;
+#ifdef __APPLE__
+    /* deal with a SDL bug when in windowed mode related to
+     * Cocoa coordinate system of (0,0) in bottom-left corner.
+     */
+    if (fullScreen) {
+      my = event.motion.y;
+    } else {
+      my = base_height - 1 - event.motion.y;
+    }
+#else
     my                 = event.motion.y;
-    _event.mouseMove.x = event.motion.x;
-    _event.mouseMove.y = event.motion.y;
+#endif
+    _event.mouseMove.x = mx;
+    _event.mouseMove.y = my;
     break;
 
   case SDL_MOUSEBUTTONDOWN:
@@ -544,6 +555,7 @@ void SDLWindow::warpMouse(int x, int y) {
 };
 
 void SDLWindow::getMouse(int& x, int& y) const {
+  std::cout << "getMouse (" << mx << "," << my << ")" << std::endl;
   x = mx;
   y = my;
 };
