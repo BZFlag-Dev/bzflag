@@ -31,6 +31,11 @@ VotingBooth::VotingBooth(std::string question, bool requireUnique)
     _voterCount(0),
     _requireUnique(requireUnique)
 {
+  for (int i=0; i < MAX_VOTE_RESPONSES; i++) {
+    _response[i] = "";
+    _vote[i] = 0;
+    _voter[i] = "";
+  }
   return;
 }
 
@@ -69,11 +74,11 @@ VotingBooth *YesNoVotingBooth(std::string question)
 vote_t VotingBooth::addResponse(const std::string response)
 {
   if (response.size() == 0) {
-    return -1;
+    return ERROR_VOTE;
   }
   /* make sure there is enough room for the new response */
   if (_responseCount + 1 >= MAX_VOTE_RESPONSES) {
-    return -1;
+    return ERROR_VOTE;
   }
 
   for (vote_t i=0; i < _responseCount; i++) {
@@ -91,7 +96,7 @@ vote_t VotingBooth::addResponse(const std::string response)
 vote_t VotingBooth::getResponseIDFromString(const std::string response) const
 {
   if (response.size() == 0) {
-    return -1;
+    return ERROR_VOTE;
   }
   for (vote_t id = 0; id < _responseCount; id++) {
     if (VotingBooth::compare_nocase(_response[id], response, _response[id].size()) == 0) {
@@ -99,7 +104,7 @@ vote_t VotingBooth::getResponseIDFromString(const std::string response) const
     }
   }
 
-  return -1;
+  return ERROR_VOTE;
 }
 
 
@@ -148,16 +153,36 @@ bool VotingBooth::vote(std::string voter, vote_t id)
   _voterCount++;
 
   /* finally increment the dang vote */
-  _vote[id]++;
+  _vote[_voterCount] = id;
 
   return true;
 }
 
-unsigned long int VotingBooth::getVoteCount(vote_t id) const {
-  return _vote[id];
+bool VotingBooth::retractVote(const std::string name)
+{
+  for (int i = 0; i < _voterCount; i++) {
+    if (VotingBooth::compare_nocase(_voter[i], name, name.size()) == 0) {
+      _vote[i] = RETRACTED_VOTE;
+      return true;
+    }
+  }
+  
+  return false;
 }
 
-unsigned long int VotingBooth::getVoteCount(const std::string response) const {
+unsigned long int VotingBooth::getVoteCount(vote_t id) const 
+{
+  unsigned long int total=0;
+  for (unsigned long int i = 0; i < _voterCount; i++) {
+    if (_vote[i] == id) {
+      total++;
+    }
+  }
+  return total;
+}
+
+unsigned long int VotingBooth::getVoteCount(const std::string response) const 
+{
   if (response.size() == 0) {
     return 0;
   }
@@ -170,7 +195,8 @@ unsigned long int VotingBooth::getVoteCount(const std::string response) const {
   return 0;
 }
 
-unsigned long int VotingBooth::getTotalVotes(void) const {
+unsigned long int VotingBooth::getTotalVotes(void) const 
+{
   unsigned long int total=0;
   for (vote_t id = 0; id < _responseCount; id++) {
     total += this->getVoteCount(id);

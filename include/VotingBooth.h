@@ -28,8 +28,11 @@
 
 #include <iostream>
 
-/* positive vote is an index; non-positive is an error */
+/* positive vote is an index; non-positive is an error or retracted vote */
 typedef long int vote_t;
+
+static const vote_t ERROR_VOTE=-1;
+static const vote_t RETRACTED_VOTE=-2;
 
 /* max number of potential poll responses */
 static const unsigned short int MAX_VOTE_RESPONSES=255;
@@ -59,7 +62,7 @@ class VotingBooth
 
   /** counts of the vote responses
    */
-  unsigned long int _vote[MAX_VOTE_RESPONSES];
+  vote_t _vote[MAX_VOTE_RESPONSES];
 
   /** lists of who has voted
    */
@@ -121,6 +124,10 @@ class VotingBooth
    * response.
    */
   bool vote(const std::string name, vote_t id);
+
+  /** allow a vote to be retracted
+   */
+  bool retractVote(const std::string name);
   
   /** return how many votes have been placed for a particular response.
    * lookup votes by vote identifier.
