@@ -818,11 +818,6 @@ int			main(int argc, char** argv)
   CommandsStandard::add();
   unsigned int i;
 
-  // bind default keys
-  for (i = 0; i < numDefaultBindings; ++i) {
-    CMDMGR.run(defaultBindings[i]);
-  }
-
   // prepare DB entries
   for (i = 0; i < countof(defaultDBItems); ++i) {
     assert(defaultDBItems[i].name != NULL);
@@ -844,6 +839,11 @@ int			main(int argc, char** argv)
     if (CFGMGR.read(getConfigFileName2()))
       startupInfo.hasConfiguration = true;
 #endif
+
+  if (!startupInfo.hasConfiguration)
+    // bind default keys
+    for (i = 0; i < numDefaultBindings; ++i)
+      CMDMGR.run(defaultBindings[i]);
 
   ServerListCache::get()->loadCache();
 
