@@ -611,8 +611,8 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
 	  }
 	} else {
 	  int i, j;
-	  for (i = 2; i <= curMaxPlayers; i++) {
-	    j = (roamTrackTank + i) % (curMaxPlayers + 1) - 1;
+	  for (i = 0; i < curMaxPlayers; i++) {
+	    j = (roamTrackTank + i + 2) % (curMaxPlayers + 1) - 1;
 	    if ((j == -1) || (player[j] && player[j]->isAlive())) {
 	      roamTrackTank = roamTrackWinner = j;
 	      break;
@@ -634,8 +634,8 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
 	    }
 	  }
 	} else {
-	  for (int i = 2; i <= curMaxPlayers; i++) {
-	    int j = (roamTrackTank - i + curMaxPlayers) % (curMaxPlayers + 1) - 1;
+	  for (int i = 0; i < curMaxPlayers; i++) {
+	    int j = (roamTrackTank - i + curMaxPlayers + 1) % (curMaxPlayers + 1) - 1;
 	    if ((j == -1) || (player[j] && player[j]->isAlive())) {
 	      roamTrackTank = roamTrackWinner = j;
 	      break;
