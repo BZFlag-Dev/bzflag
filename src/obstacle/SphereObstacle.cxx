@@ -278,8 +278,9 @@ void SphereObstacle::finalize()
 
   // make the mesh
   int faceCount = (divisions * divisions) * 8;
-  mesh = new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
-                          faceCount, smoothBounce, driveThrough, shootThrough);
+  mesh = new MeshObstacle(checkTypes, checkPoints,
+                          vertices, normals, texcoords, faceCount,
+                          false, smoothBounce, driveThrough, shootThrough);
 
   // add the faces to the mesh
   std::vector<int> vlist;

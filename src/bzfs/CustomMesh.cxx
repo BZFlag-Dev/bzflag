@@ -27,10 +27,10 @@ CustomMesh::CustomMesh()
 {
   face = NULL;
   phydrv = -1;
+  noclusters = false;
+  smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
-  fragments = true;
-  smoothBounce = false;
   material.setTexture("mesh");
   
   return;
@@ -75,8 +75,8 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       std::cout << "discarding incomplete mesh face" << std::endl;
       delete face;
     }
-    face = new CustomMeshFace (material, phydrv, smoothBounce,
-                               driveThrough, shootThrough);
+    face = new CustomMeshFace (material, phydrv, noclusters,
+                               smoothBounce, driveThrough, shootThrough);
   }
   else if (strcasecmp(cmd, "inside") == 0) {
     cfvec3 inside;
@@ -130,9 +130,8 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
            (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
   }
-  else if ((strcasecmp(cmd, "nofrags") == 0) ||
-           (strcasecmp(cmd, "nofragments") == 0)) {
-    fragments = false;
+  else if (strcasecmp(cmd, "noclusters") == 0) {
+    noclusters = true;
   }
   else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
@@ -152,11 +151,9 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 void CustomMesh::write(WorldInfo *world) const
 {
   MeshObstacle* mesh = new MeshObstacle(
-    checkTypes, checkPoints, vertices, normals, texcoords,
-    faces.size(), smoothBounce, driveThrough, shootThrough);
+    checkTypes, checkPoints, vertices, normals, texcoords, faces.size(),
+    noclusters, smoothBounce, driveThrough, shootThrough);
     
-  mesh->setFragments(fragments);
-
   std::vector<CustomMeshFace*>::const_iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
     const CustomMeshFace* face = *face_it;

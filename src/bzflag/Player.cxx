@@ -293,7 +293,7 @@ void Player::updateDimensions(float dt, bool local)
 
   // do not resize if it will cause a collision
   // only checked for the local player, remote is computationally expensive
-  if (local) {
+  if (local || true) { // FIXME - testing
     // also do not bother with collision checking if we are not resizing
     if (resizing && hitObstacleResizing()) {
       // copy the old information

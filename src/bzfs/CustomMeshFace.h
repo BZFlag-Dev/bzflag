@@ -25,7 +25,7 @@
 
 class CustomMeshFace {
   public:
-    CustomMeshFace(const BzMaterial& material, int phydrv,
+    CustomMeshFace(const BzMaterial& material, int phydrv, bool noclusters,
                    bool smoothBounce, bool driveThrough, bool shootThrough);
     bool read(const char *cmd, std::istream& input);
     void write(MeshObstacle* mesh) const;
@@ -38,6 +38,7 @@ class CustomMeshFace {
     std::vector<int> texcoords;
 
     int phydrv;    
+    bool noclusters;
     bool smoothBounce;
     bool driveThrough;
     bool shootThrough;

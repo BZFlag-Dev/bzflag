@@ -285,8 +285,9 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
     fcount = fcount + 2; // add the start and end faces
   }
 
-  mesh = new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
-                          fcount, smoothBounce, driveThrough, shootThrough);
+  mesh = new MeshObstacle(checkTypes, checkPoints,
+                          vertices, normals, texcoords, fcount,
+                          false, smoothBounce, driveThrough, shootThrough);
 
   // now make the faces
   int vlen, nlen;
@@ -422,8 +423,9 @@ void ArcObstacle::makeRing(bool isCircle, float a, float r, float h,
     fcount = fcount + 2; // add the start and end faces
   }
 
-  mesh = new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
-                          fcount, smoothBounce, driveThrough, shootThrough);
+  mesh = new MeshObstacle(checkTypes, checkPoints,
+                          vertices, normals, texcoords, fcount,
+                          false, smoothBounce, driveThrough, shootThrough);
 
   // now make the faces
   int vlen, nlen;

@@ -37,7 +37,7 @@ class MeshFace : public Obstacle {
     MeshFace(MeshObstacle* _mesh, int _vertexCount,
              float** _vertices, float** _normals, float** _texcoords,
              const BzMaterial* _bzMaterial, int physics,
-             bool smoothBounce, bool drive, bool shoot);
+             bool noclusters, bool smoothBounce, bool drive, bool shoot);
     ~MeshFace();
 
     void finalize();
@@ -76,7 +76,7 @@ class MeshFace : public Obstacle {
     const float* getPlane() const;
     const BzMaterial* getMaterial() const;
     int getPhysicsDriver() const;
-    //const PhysicsDrive* getPhysicsDrive() const;
+    bool noClusters() const;
 
     bool isSpecial() const;
     bool isBaseFace() const;
@@ -108,6 +108,7 @@ class MeshFace : public Obstacle {
     float** texcoords;
     const BzMaterial* bzMaterial;
     bool smoothBounce;
+    bool noclusters;
     int phydrv;
 
     fvec3 mins, maxs;
@@ -204,6 +205,10 @@ inline bool MeshFace::useTexcoords() const
   return (texcoords != NULL);
 }
 
+inline bool MeshFace::noClusters() const
+{
+  return noclusters;
+}
 
 inline bool MeshFace::isSpecial() const
 {

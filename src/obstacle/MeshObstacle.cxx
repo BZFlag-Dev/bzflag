@@ -33,7 +33,7 @@ MeshObstacle::MeshObstacle()
   vertices = normals = NULL;
   texcoordCount = 0;
   texcoords = NULL;
-  fragments = true;
+  noclusters = false;
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
@@ -58,7 +58,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
                            const std::vector<cfvec3>& verticeList,
                            const std::vector<cfvec3>& normalList,
                            const std::vector<cfvec2>& texcoordList,
-                           int _faceCount,
+                           int _faceCount, bool _noclusters,
                            bool bounce, bool drive, bool shoot)
 {
   unsigned int i;
@@ -70,18 +70,22 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
   cfvec3ListToArray (checkList, checkCount, checkPoints);
   cfvec3ListToArray (verticeList, vertexCount, vertices);
   cfvec3ListToArray (normalList, normalCount, normals);
+
   texcoordCount = texcoordList.size();
   texcoords = new fvec2[texcoordCount];
   for (i = 0; i < (unsigned int)texcoordCount; i++) {
     memcpy (texcoords[i], texcoordList[i].data, sizeof(fvec2));
   }
+
   faceSize = _faceCount;
   faceCount = 0;
   faces = new MeshFace*[faceSize];
-  fragments = true;
+
+  noclusters = _noclusters;
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
+
   isLocal = false;
 
   return;
@@ -92,6 +96,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
                            const std::vector<int>& _normals,
                            const std::vector<int>& _texcoords,
                            const BzMaterial* _material, int phydrv,
+                           bool _noclusters,
                            bool bounce, bool drive, bool shoot)
 {
   // protect the face list from overrun
@@ -145,20 +150,15 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     }
   }
   
-  // override the flags if they're set for the whole mesh
-  if (smoothBounce) {
-    bounce = true;
-  }
-  if (driveThrough) {
-    drive = true;
-  }
-  if (shootThrough) {
-    shoot = true;
-  }
+  // override the flags if they are set for the whole mesh
+  _noclusters = _noclusters|| noclusters;
+  bounce = bounce || smoothBounce;
+  drive = drive || driveThrough;
+  shoot = shoot || shootThrough;
   
   // make the face
   MeshFace* face = new MeshFace(this, count, v, n, t, _material, phydrv,
-                                bounce, drive, shoot);
+                                _noclusters, bounce, drive, shoot);
 
   // check its validity
   if (face->isValid()) {
@@ -395,18 +395,10 @@ void *MeshObstacle::pack(void *buf)
 
   // pack the state byte
   unsigned char stateByte = 0;
-  if (isDriveThrough()) {
-    stateByte |= (1 << 0);
-  }
-  if (isShootThrough()) {
-    stateByte |= (1 << 1);
-  }
-  if (useSmoothBounce()) {
-    stateByte |= (1 << 2);
-  }
-  if (useFragments()) {
-    stateByte |= (1 << 3);
-  }
+  stateByte |= isDriveThrough() ? (1 << 0) : 0;
+  stateByte |= isShootThrough() ? (1 << 1) : 0;
+  stateByte |= smoothBounce     ? (1 << 2) : 0;
+  stateByte |= noclusters       ? (1 << 3) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -455,22 +447,12 @@ void *MeshObstacle::unpack(void *buf)
   }
 
   // unpack the state byte
-  driveThrough = shootThrough = false;
-  smoothBounce = fragments = false;
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  if (stateByte & (1 << 0)) {
-    driveThrough = true;
-  }
-  if (stateByte & (1 << 1)) {
-    shootThrough = true;
-  }
-  if (stateByte & (1 << 2)) {
-    smoothBounce = true;
-  }
-  if (stateByte & (1 << 3)) {
-    fragments = true;
-  }
+  driveThrough = (stateByte & (1 << 0)) != 0;
+  shootThrough = (stateByte & (1 << 1)) != 0;
+  smoothBounce = (stateByte & (1 << 2)) != 0;
+  noclusters   = (stateByte & (1 << 3)) != 0;
 
   finalize();
 
@@ -509,10 +491,6 @@ static void outputFloat(std::ostream& out, float value)
 
 void MeshObstacle::print(std::ostream& out, int level)
 {
-  if (isLocal) {
-    return;
-  }
-
   out << "mesh" << std::endl;
   if (level > 0) {
     out << "# faces = " << faceCount << std::endl;
@@ -524,6 +502,9 @@ void MeshObstacle::print(std::ostream& out, int level)
     out << "# maxs = " << maxs[0] << " " << maxs[1] << " " << maxs[2] << std::endl;
   }
   
+  if (noclusters) {
+    out << "  noclusters" << std::endl;
+  }
   if (smoothBounce) {
     out << "  smoothBounce" << std::endl;
   }

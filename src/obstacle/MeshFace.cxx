@@ -33,6 +33,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   vertices = NULL;
   normals = NULL;
   texcoords = NULL;
+  noclusters = false;
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
@@ -49,7 +50,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
                    float** _vertices, float** _normals, float** _texcoords,
                    const BzMaterial* _bzMaterial, int physics,
-                   bool bounce, bool drive, bool shoot)
+                   bool _noclusters, bool bounce, bool drive, bool shoot)
 {
   mesh = _mesh;
   vertexCount = _vertexCount;
@@ -58,6 +59,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   texcoords = _texcoords;
   bzMaterial = _bzMaterial;
   phydrv = physics;
+  noclusters = _noclusters;
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
@@ -544,28 +546,21 @@ void *MeshFace::pack(void *buf)
 {
   // state byte
   unsigned char stateByte = 0;
-  if (useNormals()) {
-    stateByte = stateByte | (1 << 0);
-  }
-  if (useTexcoords()) {
-    stateByte = stateByte | (1 << 1);
-  }
-  if (isDriveThrough()) {
-    stateByte = stateByte | (1 << 2);
-  }
-  if (isShootThrough()) {
-    stateByte = stateByte | (1 << 3);
-  }
-  if (smoothBounce) {
-    stateByte = stateByte | (1 << 4);
-  }
+  stateByte |= useNormals()     ? (1 << 0) : 0;
+  stateByte |= useTexcoords()   ? (1 << 1) : 0;
+  stateByte |= isDriveThrough() ? (1 << 2) : 0;
+  stateByte |= isShootThrough() ? (1 << 3) : 0;
+  stateByte |= smoothBounce     ? (1 << 4) : 0;
+  stateByte |= noclusters       ? (1 << 5) : 0;
   buf = nboPackUByte(buf, stateByte);
+  
   // vertices
   buf = nboPackInt(buf, vertexCount);
   for (int i = 0; i < vertexCount; i++) {
     int index = (fvec3*)vertices[i] - mesh->getVertices();
     buf = nboPackInt(buf, index);
   }
+  
   // normals
   if (useNormals()) {
     for (int i = 0; i < vertexCount; i++) {
@@ -573,6 +568,7 @@ void *MeshFace::pack(void *buf)
       buf = nboPackInt(buf, index);
     }
   }
+  
   // texcoords
   if (useTexcoords()) {
     for (int i = 0; i < vertexCount; i++) {
@@ -596,17 +592,16 @@ void *MeshFace::unpack(void *buf)
 {
   driveThrough = shootThrough = smoothBounce = false;
   // state byte
+  bool tmpNormals, tmpTexcoords;
   unsigned char stateByte = 0;
   buf = nboUnpackUByte(buf, stateByte);
-  if (stateByte & (1 << 2)) {
-    driveThrough = true;
-  }
-  if (stateByte & (1 << 3)) {
-    shootThrough = true;
-  }
-  if (stateByte & (1 << 4)) {
-    smoothBounce = true;
-  }
+  tmpNormals   = (stateByte & (1 << 0)) != 0;
+  tmpTexcoords = (stateByte & (1 << 1)) != 0;
+  driveThrough = (stateByte & (1 << 2)) != 0;
+  shootThrough = (stateByte & (1 << 3)) != 0;
+  smoothBounce = (stateByte & (1 << 4)) != 0;
+  noclusters   = (stateByte & (1 << 5)) != 0;
+  
   // vertices
   buf = nboUnpackInt(buf, vertexCount);
   vertices = new float*[vertexCount];
@@ -615,8 +610,9 @@ void *MeshFace::unpack(void *buf)
     buf = nboUnpackInt(buf, index);
     vertices[i] = (float*)mesh->getVertices()[index];
   }
+
   // normals
-  if (stateByte & (1 << 0)) {
+  if (tmpNormals) {
     normals = new float*[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
       int index;
@@ -624,8 +620,9 @@ void *MeshFace::unpack(void *buf)
       normals[i] = (float*)mesh->getNormals()[index];
     }
   }
+
   // texcoords
-  if (stateByte & (1 << 1)) {
+  if (tmpTexcoords) {
     texcoords = new float*[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
       int index;
@@ -734,6 +731,9 @@ void MeshFace::print(std::ostream& out, int level)
     out << std::endl;
   }
   
+  if (noclusters && !mesh->noClusters()) {
+    out << "    noclusters" << std::endl;
+  }
   if (smoothBounce && !mesh->useSmoothBounce()) {
     out << "    smoothBounce" << std::endl;
   }

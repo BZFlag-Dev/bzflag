@@ -27,13 +27,15 @@
 
 
 CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
+                               bool _noclusters, 
                                bool bounce, bool drive, bool shoot)
 {
-  material = _material;
-  smoothBounce = bounce;
   phydrv = physics;
-  driveThrough = drive;
+  noclusters = _noclusters;
+  smoothBounce = bounce;
   shootThrough = shoot;
+  driveThrough = drive;
+  material = _material;
   return;
 }
 
@@ -96,6 +98,9 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
            (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
   }
+  else if (strcasecmp(cmd, "noclusters") == 0) {
+    noclusters = true;
+  }
   else if (strcasecmp(cmd, "drivethrough") == 0) {
     driveThrough = true;
   }
@@ -123,7 +128,7 @@ void CustomMeshFace::write(MeshObstacle *mesh) const
 {
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
   mesh->addFace(vertices, normals, texcoords, matref, phydrv,
-                smoothBounce, driveThrough, shootThrough);
+                noclusters, smoothBounce, driveThrough, shootThrough);
   return;
 }
 

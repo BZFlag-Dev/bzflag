@@ -35,14 +35,14 @@ class MeshObstacle : public Obstacle {
                  const std::vector<cfvec3>& vertices,
                  const std::vector<cfvec3>& normals,
                  const std::vector<cfvec2>& texcoords,
-                 int faceCount,
+                 int faceCount, bool noclusters,
                  bool bounce, bool drive, bool shoot);
 
     bool addFace (const std::vector<int>& vertices,
                   const std::vector<int>& normals,
                   const std::vector<int>& texcoords,
                   const BzMaterial* bzMaterial, int physics,
-                  bool bounce, bool drive, bool shoot);
+                  bool noclusters, bool bounce, bool drive, bool shoot);
 
     ~MeshObstacle();
 
@@ -88,9 +88,7 @@ class MeshObstacle : public Obstacle {
     int getFaceCount() const;
     const MeshFace* getFace(int face) const;
     bool useSmoothBounce() const;
-
-    bool useFragments() const { return fragments; }
-    void setFragments(bool value) { fragments = value; }
+    bool noClusters() const;
     
     void setIsLocal(bool);
     bool getIsLocal() const;
@@ -118,7 +116,7 @@ class MeshObstacle : public Obstacle {
     int faceCount, faceSize;
     MeshFace** faces;
     bool smoothBounce;
-    bool fragments;
+    bool noclusters;
 
     fvec3 mins, maxs;
 };
@@ -176,6 +174,11 @@ inline const MeshFace* MeshObstacle::getFace(int face) const
 inline bool MeshObstacle::useSmoothBounce() const
 {
   return smoothBounce;
+}
+
+inline bool MeshObstacle::noClusters() const
+{
+  return noclusters;
 }
 
 inline void MeshObstacle::setIsLocal(bool value)

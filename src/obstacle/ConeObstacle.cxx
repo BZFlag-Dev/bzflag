@@ -253,8 +253,9 @@ void ConeObstacle::finalize()
     fcount = fcount + 2; // add the start and end faces
   }
 
-  mesh = new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
-                          fcount, smoothBounce, driveThrough, shootThrough);
+  mesh = new MeshObstacle(checkTypes, checkPoints,
+                          vertices, normals, texcoords, fcount,
+                          false, smoothBounce, driveThrough, shootThrough);
 
   // now make the faces
   int vlen;

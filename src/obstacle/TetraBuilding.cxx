@@ -95,7 +95,7 @@ void TetraBuilding::finalize()
   }
   
   mesh = new MeshObstacle(checkTypes, checkPoints, verts, norms, texcds,
-                          4, false, driveThrough, shootThrough);
+                          4, false, false, driveThrough, shootThrough);
   
   // add the faces to the mesh
   std::vector<int> vlist;

@@ -117,6 +117,15 @@ static int sortByMaterial(const void* a, const void *b)
 {
   const MeshFace* faceA = *((const MeshFace**)a);
   const MeshFace* faceB = *((const MeshFace**)b);
+  const bool noClusterA = faceA->noClusters();
+  const bool noClusterB = faceB->noClusters();
+  
+  if (noClusterA && !noClusterB) {
+    return -1;
+  }
+  if (noClusterB && !noClusterA) {
+    return +1;
+  }
   
   if (faceA->getMaterial() > faceB->getMaterial()) {
     return +1;
@@ -129,9 +138,14 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
 {
   const int faceCount = mesh->getFaceCount();
 
-  // just using regular MeshFaces?
-  const bool useMeshFrags = !BZDB.isTrue("noMeshFragments");
-  if (!(mesh->useFragments() && useMeshFrags && BZDBCache::zbuffer)) {
+  // NOTE: this is where MeshClusters start being called
+  //       MeshFragments. it would be good to rename all
+  //       of the MeshFragment files and classes to match
+  //       with the MeshCluster naming convention.
+  
+  // only using regular MeshFaces?
+  const bool noMeshClusters = BZDB.isTrue("noMeshClusters");
+  if (mesh->noClusters() || noMeshClusters || !BZDBCache::zbuffer) {
     for (int i = 0; i < faceCount; i++) {
       MeshNode mn;
       mn.isFace = true;
@@ -163,8 +177,8 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
     const MeshFace* firstFace = sortList[first];
     const BzMaterial* firstMat = firstFace->getMaterial();
     
-    // translucent faces are drawn individually
-    if (translucentMaterial(firstMat)) {
+    // see if this face needs to be drawn individually
+    if (translucentMaterial(firstMat) || firstFace->noClusters()) {
       MeshNode mn;
       mn.isFace = true;
       mn.faces.push_back(firstFace);

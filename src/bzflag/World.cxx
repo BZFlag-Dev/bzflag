@@ -735,8 +735,9 @@ static void writeBZDBvar (const std::string& name, void *userData)
 bool			World::writeWorld(std::string filename)
 {
   std::ostream *stream = FILEMGR.createDataOutStream(filename.c_str());
-  if (stream == NULL)
+  if (stream == NULL) {
     return false;
+  }
 
   // for notational convenience
   std::ostream& out = *stream;
@@ -830,50 +831,49 @@ bool			World::writeWorld(std::string filename)
     }
   }
 
-  // Write meshs
-  {
-    std::vector<MeshObstacle*>::iterator it;
-    for (it = meshes.begin(); it != meshes.end(); ++it) {
-      MeshObstacle* mesh = *it;
+  // Write mesh objects
+  unsigned int i;
+  
+  if (BZDB.isTrue("saveAsMeshes")) {
+    // Write all of the meshes
+    for (i = 0; i < meshes.size(); i++) {
+      MeshObstacle* mesh = meshes[i];
       mesh->print(out, 1);
     }
-  }
+  } else {
+    // Write the non-local meshes
+    for (i = 0; i < meshes.size(); i++) {
+      MeshObstacle* mesh = meshes[i];
+      if (!mesh->getIsLocal()) {
+        mesh->print(out, 1);
+      }
+    }
 
-  // Write arcs
-  {
-    std::vector<ArcObstacle*>::iterator it;
-    for (it = arcs.begin(); it != arcs.end(); ++it) {
-      ArcObstacle* arc = *it;
+    // Write arcs
+    for (i = 0; i < arcs.size(); i++) {
+      ArcObstacle* arc = arcs[i];
       arc->print(out, 1);
     }
-  }
 
-  // Write cones
-  {
-    std::vector<ConeObstacle*>::iterator it;
-    for (it = cones.begin(); it != cones.end(); ++it) {
-      ConeObstacle* cone = *it;
+    // Write cones
+    for (i = 0; i < cones.size(); i++) {
+      ConeObstacle* cone = cones[i];
       cone->print(out, 1);
     }
-  }
 
-  // Write spheres
-  {
-    std::vector<SphereObstacle*>::iterator it;
-    for (it = spheres.begin(); it != spheres.end(); ++it) {
-      SphereObstacle* sphere = *it;
+    // Write spheres
+    for (i = 0; i < spheres.size(); i++) {
+      SphereObstacle* sphere = spheres[i];
       sphere->print(out, 1);
     }
-  }
 
-  // Write tetras
-  {
-    std::vector<TetraBuilding*>::iterator it;
-    for (it = tetras.begin(); it != tetras.end(); ++it) {
-      TetraBuilding* tetra = *it;
+    // Write tetras
+    for (i = 0; i < tetras.size(); i++) {
+      TetraBuilding* tetra = tetras[i];
       tetra->print(out, 1);
     }
   }
+
 
   // Write bases
   {
