@@ -22,14 +22,14 @@
 
 
 class CustomWorld : public WorldFileObject {
-  public:
-    CustomWorld();
+public:
+  CustomWorld();
   virtual bool read(const char *cmd, std::istream&);
-    virtual void write(WorldInfo*) const;
-
-  protected:
-    int size;
-    int fHeight;
+  virtual void write(WorldInfo*) const;
+  
+protected:
+  double _size;
+  double _fHeight;
 };
 
 #endif  /* __CUSTOMWORLD_H__ */
