@@ -4395,7 +4395,9 @@ static void		addRobots(bool useMulticastRelay)
 #endif
 
     robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
-    if (world->allowRogues())
+    if (world->allowRabbit())
+      robots[j]->setTeam(RogueTeam);
+    else if (world->allowRogues())
       robots[j]->setTeam((TeamColor)((int)RogueTeam + (int)(bzfrand() *
 					(int)(PurpleTeam - RogueTeam + 1))));
     else
@@ -4736,6 +4738,9 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 {
 
   time_t timeout=time(0) + 10;  // give us 10 sec
+
+  if (world->allowRabbit())
+    myTank->setTeam(RogueTeam);
 
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
