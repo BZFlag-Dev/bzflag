@@ -30,6 +30,6 @@ LDADD = ../net/libNet.a ../common/libCommon.a
 
 bzfs$(EXEEXT): $(bzfs_OBJECTS) $(bzfs_DEPENDENCIES) 
 	@rm -f bzfs$(EXEEXT)
-	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cc
+	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cxx
 	$(CXXLINK) $(bzfs_LDFLAGS) $(bzfs_OBJECTS) buildDate.o \
 	$(bzfs_LDADD) $(LIBS)

@@ -37,7 +37,7 @@ bzadmin_SOURCES = \
 	bzadmin.cxx
 
 noinst_HEADERS = \
-	buildDate.cc
+	buildDate.cxx
 
 # ugly hack
 #all-local: ServerLink.cxx
@@ -49,6 +49,6 @@ LDADD = ../net/libNet.a ../common/libCommon.a @CURSES_LIB@
 
 bzadmin$(EXEEXT): $(bzadmin_OBJECTS) $(bzadmin_DEPENDENCIES) 
 	@rm -f bzadmin$(EXEEXT)
-	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cc
+	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cxx
 	$(CXXLINK) $(bzadmin_LDFLAGS) $(bzadmin_OBJECTS) buildDate.o \
 	$(bzadmin_LDADD) $(LIBS)

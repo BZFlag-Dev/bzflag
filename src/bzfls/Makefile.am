@@ -6,7 +6,7 @@ MAINTAINERCLEANFILES = \
 bzfls_SOURCES = bzfls.cxx
 
 noinst_HEADERS = \
-	buildDate.cc
+	buildDate.cxx
 
 LDADD =					\
 	../net/libNet.a			\
@@ -14,6 +14,6 @@ LDADD =					\
 
 bzfls$(EXEEXT): $(bzfls_OBJECTS) $(bzfls_DEPENDENCIES) 
 	@rm -f bzfls$(EXEEXT)
-	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cc
+	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cxx
 	$(CXXLINK) $(bzfls_LDFLAGS) $(bzfls_OBJECTS) buildDate.o \
 	$(bzfls_LDADD) $(LIBS)
