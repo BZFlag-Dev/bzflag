@@ -107,6 +107,23 @@ bool			Address::isAny() const
   return addr[0].s_addr == htonl(INADDR_ANY);
 }
 
+bool			Address::isPrivate() const
+{
+  // 127.0.0.0/8
+  if (addr[0].s_addr & 0xff000000 == 0x7f000000)
+    return(true);
+  // 10.0.0.0/8
+  if (addr[0].s_addr & 0xff000000 == 0x0a000000)
+    return(true);
+  // 172.16.0.0/12
+  if (addr[0].s_addr & 0xfff00000 == 0xac100000)
+    return(true);
+  // 192.168.0.0/16
+  if (addr[0].s_addr & 0xffff0000 == 0xc0a80000)
+    return(true);
+  return(false);
+}
+
 std::string		Address::getDotNotation() const
 {
   return std::string(inet_ntoa(addr[0]));
@@ -270,7 +287,7 @@ void*			Address::unpack(void* _buf)
 
 void*			ServerId::pack(void* _buf) const
 {
-  // everything in PlayerId is already in network byte order
+  // everything in ServerId is already in network byte order
   unsigned char* buf = (unsigned char*)_buf;
   int32_t hostaddr = int32_t(serverHost.s_addr);
   ::memcpy(buf, &hostaddr, sizeof(int32_t));	buf += sizeof(int32_t);

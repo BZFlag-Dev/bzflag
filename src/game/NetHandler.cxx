@@ -654,6 +654,8 @@ int NetHandler::whoIsAtIP(const std::string& IP) {
   NetHandler *player;
   for (int v = 0; v < maxHandlers; v++) {
     player = netPlayer[v];
+    // FIXME: this is broken for IPv6
+    // there can be multiple ascii formats for the same address
     if (player && !player->closed
 	&& !strcmp(player->peer.getDotNotation().c_str(), IP.c_str())) {
       position = v;
