@@ -1597,7 +1597,7 @@ zapierdole	      	# pl - fuck
 
 # Portuguese
 # broche                  # pt - cock sucking
-chupa-me a              # pt - suck my cock
+# chupame 		  # pt - suck my cock
 corno                   # pt - faggot
 foda-se                 # pt - fuck (figurative)
 fodeis                  # pt - ye fuck, formal
@@ -1710,7 +1710,7 @@ chingar                 # es - to fuck
 chingada		# es - fucking
 chingas tu madre        # es - fuck your mom
 chorizo                 # es - dick (lit. sausage)
-chupa me                # es - suck me
+chupame                 # es - suck me
 cogete                  # es - go fuck yourself (lit. go catch yourself)
 cono                    # es - cunt
 con~o                   # es - cunt
@@ -1738,6 +1738,7 @@ pendeja                 # es - (m/f) asshole, dickhead, etc.
 pene                    # es - dick
 perra                   # es - bitch
 picha                   # es - prick
+pija			# es - penis (slang)
 pinche                  # es - fucking (hispanic)
 pinga  			# es - dick
 puta                    # es - (feminine) whore, bitch
