@@ -114,6 +114,9 @@ Package=<4>
     Project_Dep_Name game
     End Project Dependency
     Begin Project Dependency
+    Project_Dep_Name zlib
+    End Project Dependency
+    Begin Project Dependency
     Project_Dep_Name world
     End Project Dependency
 }}}
