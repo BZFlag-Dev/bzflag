@@ -44,8 +44,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer&,
 				w(0),
 				h(0),
 				jammed(false),
-				decay(0.01),
-				list(0)
+				decay(0.01)
 {
   setControlColor();
 
@@ -56,15 +55,6 @@ RadarRenderer::RadarRenderer(const SceneRenderer&,
   glGetIntergerv(GL_SAMPLES_SGIS, &bits);
   if (bits > 0) smooth = false;
 #endif
-
-  // watch for context recreation
-  OpenGLGState::registerContextInitializer(initContext, (void*)this);
-}
-
-RadarRenderer::~RadarRenderer()
-{
-  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
-  freeList();
 }
 
 void			RadarRenderer::setControlColor(const GLfloat *color)
@@ -88,13 +78,6 @@ void			RadarRenderer::setJammed(bool _jammed)
 {
   jammed = _jammed;
   decay = 0.01;
-}
-
-void			RadarRenderer::freeList()
-{
-  if (list == 0) return;
-  glDeleteLists(list, 2);
-  list = 0;
 }
 
 void			RadarRenderer::drawShot(const ShotPath* shot)
@@ -727,17 +710,6 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
     glDisable(GL_BLEND);
     glDisable(GL_LINE_SMOOTH);
   }
-}
-
-void			RadarRenderer::doInitContext()
-{
-  // forget about old lists
-  list = 0;
-}
-
-void			RadarRenderer::initContext(void* self)
-{
-  ((RadarRenderer*)self)->doInitContext();
 }
 
 // Local Variables: ***

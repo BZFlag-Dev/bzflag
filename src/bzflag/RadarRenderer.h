@@ -30,7 +30,6 @@ class RadarRenderer {
   public:
 			RadarRenderer(const SceneRenderer&,
 						const World& world);
-			~RadarRenderer();
 
     void		setControlColor(const GLfloat *color = NULL);
 
@@ -43,7 +42,6 @@ class RadarRenderer {
     void		setJammed(bool = true);
 
     void		render(SceneRenderer&, bool blank = false);
-    void		freeList();
     void		makeList(bool, SceneRenderer&);
 
   private:
@@ -59,9 +57,6 @@ class RadarRenderer {
     static float	colorScale(const float z, const float h, bool enhanced);
     static float	transScale(const Obstacle& o);
 
-    void		doInitContext();
-    static void		initContext(void*);
-
   private:
     const World&	world;
     int			x, y;
@@ -72,7 +67,6 @@ class RadarRenderer {
     bool		smooth;
     bool		jammed;
     double		decay;
-    GLuint		list;
     GLfloat		teamColor[3];
     static const float	colorFactor;
 };
