@@ -187,7 +187,7 @@ bool			SceneRenderer::useABGR() const
 
 bool			SceneRenderer::useStencil() const
 {
-  return false;//useStencilOn;
+  return useStencilOn;
 }
 
 int			SceneRenderer::useQuality() const
