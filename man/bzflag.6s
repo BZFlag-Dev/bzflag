@@ -7,6 +7,7 @@ BZFlag \- a tank battle game
 [\fB\-3dfx\fR]
 [\fB\-no3dfx\fR]
 [\fB\-anonymous\fR]
+[\fB\-config \fIfilename\fR]
 [\fB\-debug\fR]
 [\fB\-directory \fIdirectory\fR]
 [\fB\-echo\fR]
@@ -77,6 +78,10 @@ Looks for data files in \fIdirectory\fR first.  This defaults to a
 directory named \fIdata\fR in the current directory.  If not found
 there, the game looks for data files in the current directory, then
 in the default installation location \fIINSTALL_DATA_DIR\fR.
+.TP
+.B -config
+Specify the configuration file to load. The name is relative to the 
+default configuration directory. This is usually only used by developers.
 .TP
 .B -debug
 Increase debugging level. Use multiple \fB-debug\fR options to obtain more
@@ -644,14 +649,14 @@ The default is \fIdrive with winner\fR mode.
 .RS
 The following commands can be executed by sending a message to all and using these strings as the message
 .TP 15
-CLIENTQUERY
-Requests that all users send you there version information
-.TP 15
 SILENCE \fIplayerName\fR
 Does not display any message coming from player with \fIplayerName\fR name
 .TP 15
 UNSILENCE \fIplayerName\fR
 Reshow messages coming from player with \fIplayerName\fR name
+.TP 15
+SAVEWORLD \fIfilename\fR
+Save the current world to \fIfilename\fR.
 .RE
 .SH FILES
 .RS
