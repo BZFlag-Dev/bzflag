@@ -347,9 +347,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     BZDB.set("lighting", list->getIndex() == 0 ? "0" : "1");
     BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
     if (oldLighting != BZDBCache::lighting) {
-      BZDB.set("_texturereplace", (!BZDBCache::lighting &&
+      BZDB.set("texturereplace", (!BZDBCache::lighting &&
 				   sceneRenderer->useQuality() < 2) ? "1" : "0");
-      BZDB.setPersistent("_texturereplace", false);
+      BZDB.setPersistent("texturereplace", false);
       sceneRenderer->notifyStyleChange();
     }
     break;
@@ -367,9 +367,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
       BZDB.set("zbuffer","1");
       setSceneDatabase();
     }
-    BZDB.set("_texturereplace", (!BZDBCache::lighting &&
+    BZDB.set("texturereplace", (!BZDBCache::lighting &&
 				 sceneRenderer->useQuality() < 2) ? "1" : "0");
-    BZDB.setPersistent("_texturereplace", false);
+    BZDB.setPersistent("texturereplace", false);
     sceneRenderer->notifyStyleChange();
     break;
   case '7':

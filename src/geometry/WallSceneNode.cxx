@@ -343,7 +343,7 @@ void			WallSceneNode::notifyStyleChange()
     builder.enableTextureMatrix(false);
     alpha = lighted ? lightedColor[3] : color[3];
   }
-  builder.enableTextureReplace(BZDB.isTrue("_texturereplace"));
+  builder.enableTextureReplace(BZDB.isTrue("texturereplace"));
   builder.enableMaterial(lighted);
   if (BZDBCache::blend && (wantBlending || (alpha != 1.0f))) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

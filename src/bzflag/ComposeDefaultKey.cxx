@@ -44,6 +44,8 @@ extern ServerLink*	serverLink;
 extern DefaultCompleter completer;
 void selectNextRecipient (bool forward, bool robotIn);
 
+static bool foundVarDiff = false;
+
 
 MessageQueue	messageHistory;
 unsigned int	messageHistoryIndex = 0;
@@ -87,10 +89,15 @@ static bool varIsEqual(const std::string& name)
 static void listSetVars(const std::string& name, void* boolPtr)
 {
   bool& diff = *((bool*)boolPtr);
-  if (diff && varIsEqual(name)) {
-    return;
-  }
 
+  if (diff) {
+    if (varIsEqual(name)) {
+      return;
+    } else {
+      foundVarDiff = true;
+    }
+  }
+   
   char message[MessageLen];
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
     if (BZDBCache::colorful) {
@@ -198,7 +205,11 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	BZDB.iterate(listSetVars, &diff);
       } else if (message == "/diff") {
         bool diff = true;
+        foundVarDiff = false;
 	BZDB.iterate(listSetVars, &diff);
+        if (!foundVarDiff) {
+          addMessage(LocalPlayer::getMyTank(), "all variables are at defaults", 2);
+        }
 #ifdef DEBUG
       } else if (strncmp(cmd, "/localset", 9) == 0) {
 	std::string params = cmd + 9;
