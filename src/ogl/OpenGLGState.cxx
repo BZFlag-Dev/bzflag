@@ -576,7 +576,6 @@ void			OpenGLGStateState::setOpenGLState(
         glMatrixMode(GL_TEXTURE);
         glLoadMatrixf(TEXMATRIXMGR.getMatrix(sorted.textureMatrix)->getMatrix());
         glMatrixMode(GL_MODELVIEW);
-        printf ("switch to matrix %i\n", sorted.textureMatrix);
       }
     }
     else {
