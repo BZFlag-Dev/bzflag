@@ -12,6 +12,7 @@ noinst_HEADERS =		\
 	BZDBCache.h		\
 	BzfDisplay.h		\
 	BzfEvent.h		\
+	BzfJoystick.h		\
 	bzfSDL.h		\
 	bzfgl.h			\
 	bzfio.h			\
