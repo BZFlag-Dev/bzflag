@@ -2627,6 +2627,8 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.push_back(createLabel("Brian Smits, Greg Spencer", ""));
   list.push_back(createLabel("Daryll Strauss, Frank Thilo", ""));
   list.push_back(createLabel("Dave Brosius, David Trowbridge", ""));
+  list.push_back(createLabel("Sean Morrison, Tupone Alfredo", ""));
+  list.push_back(createLabel("Lars Luthman, Nils McCarthy", ""));
   list.push_back(createLabel("", ""));
   list.push_back(createLabel("Tamar Cohen", "Tank Models:"));
   list.push_back(createLabel("", ""));
