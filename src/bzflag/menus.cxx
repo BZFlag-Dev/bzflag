@@ -3137,7 +3137,7 @@ void			ServerMenu::pick()
   else if (ping.gameStyle & RabbitChaseGameStyle)
     ((HUDuiLabel*)list[9])->setString("Rabbit Chase");
   else
-    ((HUDuiLabel*)list[8])->setString("Free-style");
+    ((HUDuiLabel*)list[9])->setString("Free-style");
 
   if (ping.gameStyle & SuperFlagGameStyle)
     ((HUDuiLabel*)list[10])->setString("Super Flags");
