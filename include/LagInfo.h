@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __PINGHANDLER_H__
-#define __PINGHANDLER_H__
+#ifndef __LAGINFO_H__
+#define __LAGINFO_H__
 
 #include "PlayerInfo.h"
 

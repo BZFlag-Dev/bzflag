@@ -36,8 +36,6 @@ bzfs_SOURCES = \
 	FlagInfo.h \
 	GameKeeper.cxx	\
 	GameKeeper.h	\
-	LagInfo.h	\
-	LagInfo.cxx	\
 	ListServerConnection.cxx \
 	ListServerConnection.h \
 	PackVars.h \
