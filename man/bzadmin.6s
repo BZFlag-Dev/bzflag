@@ -55,8 +55,10 @@ Show a simple help text.
 .TP
 \fB-hide \fR\fImsgtype\fR{\fI,msgtype\fR}*
 Tell bzadmin not to show these message types. The available message types are
-chat, join, kill, leave, pause, ping, rabbit, spawn, time, and over. By default chat,
-join, kill, leave, pause, and rabbit are shown.
+chat, join, kill, leave, pause, ping, rabbit, spawn, time, and over. By default
+chat, join, kill, leave, pause, and rabbit are shown. You can also change this
+while bzadmin is running with the commands \fB/show <msgtype>\fR and
+\fB/hide <msgtype>\fR, and from the curses menu.
 .TP
 \fB-show \fR\fImsgtype\fR{\fI,msgtype\fR}*
 Tell bzadmin to show these message types. See \fB-hide\fR for a list of
