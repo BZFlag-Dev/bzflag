@@ -178,6 +178,18 @@ private:
    */
   unsigned long int getAbstentionCount(void) const;
 
+  /** returns the vote duration length of the poll
+   */
+  unsigned short int getVoteTime(void) const;
+
+  /** returns the veto duration length of the poll
+   */
+  unsigned short int getVetoTime(void) const;
+
+  /** returns the time the poll was started
+   */
+  TimeKeeper getStartTime(void) const;
+
   /** returns truthfully if the poll has reached a passable tally.
    * i.e. enough positive votes have been received that the vote is
    * successful.
@@ -192,7 +204,7 @@ private:
   /** returns how much time (in seconds) is remaining on a poll, if one is
    * active
    */
-  unsigned long int timeRemaining(void) const;
+  unsigned short int timeRemaining(void) const;
 
   /** allow a player vote to be retracted (perhaps if a player leaves
    */
@@ -315,6 +327,23 @@ inline std::string VotingArbiter::getPollRequestor(void) const
   return _pollRequestor.size() == 0 ? "nobody" : _pollRequestor;
 }
 
+inline unsigned short int VotingArbiter::getVoteTime(void) const
+{
+  return _voteTime;
+}
+
+inline unsigned short int VotingArbiter::getVetoTime(void) const
+{
+  return _vetoTime;
+}
+
+inline TimeKeeper VotingArbiter::getStartTime(void) const
+{
+  if (!this->knowsPoll()) {
+    return TimeKeeper::getNullTime();
+  }
+  return _startTime;
+}
 
 #else
 class VotingArbiter;
