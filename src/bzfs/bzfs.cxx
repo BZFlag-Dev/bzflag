@@ -1744,7 +1744,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
     TeamColor team = TeamColor(250 - targetPlayer);
     // send message to all team members only
     for (int i = 0; i < curMaxPlayers; i++)
-      if (player[i].isPlaying() && player[i].team == team)
+      if (player[i].isPlaying() && player[i].isTeam(team))
         directMessage(i, MsgMessage, len, bufStart);
   } else if (targetPlayer == AdminPlayers){
 		// admin messages
@@ -1779,7 +1779,7 @@ static void fixTeamCount() {
     team[teamNum].team.size = 0;
   for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
     if (player[playerIndex].isPlaying()) {
-      teamNum = player[playerIndex].team;
+      teamNum = player[playerIndex].getTeam();
       if (teamNum == RabbitTeam)
 	teamNum = RogueTeam;
       team[teamNum].team.size++;
@@ -1847,7 +1847,7 @@ static void addPlayer(int playerIndex)
   }
 
 
-  TeamColor t = player[playerIndex].team;
+  TeamColor t = player[playerIndex].getTeam();
 
   // count current number of players and players+observers
   int numplayers = 0;
@@ -1857,7 +1857,8 @@ static void addPlayer(int playerIndex)
 
   // no player slots open -> try observer
   if (numplayers == maxRealPlayers) {
-    t = player[playerIndex].team = ObserverTeam;
+    t = ObserverTeam;
+    player[playerIndex].setTeam(ObserverTeam);
   } else {
     // automatically assign the player's team
     if ((clOptions->autoTeam && t < (int)ObserverTeam) || t == AutomaticTeam) {
@@ -1879,10 +1880,12 @@ static void addPlayer(int playerIndex)
       // reassign the team if
       if (minIndex.size() == 0) {
         // all teams are all full, try observer
-        t = player[playerIndex].team = ObserverTeam;
+	t = ObserverTeam;
+	player[playerIndex].setTeam(ObserverTeam);
       } else if (minIndex.size() == 1) {
         // only one team has a slot open anyways
-        t = player[playerIndex].team = minIndex[0];
+        t = minIndex[0];
+	player[playerIndex].setTeam(minIndex[0]);
       } else {
         // multiple equally unfilled teams, choose the one sucking most
 
@@ -1897,7 +1900,8 @@ static void addPlayer(int playerIndex)
         if (!foundTeam) {
           // FIXME -- should pick the team with the least average player kills
           // for now, pick random
-          t = player[playerIndex].team = minIndex[rand() % minIndex.size()];
+          t = minIndex[rand() % minIndex.size()];
+          player[playerIndex].setTeam(t);
         }
       }
     }
@@ -1946,9 +1950,10 @@ static void addPlayer(int playerIndex)
   // update team state and if first player on team,
   // add team's flag and reset it's score
   bool resetTeamFlag = false;
-  int teamIndex = int(player[playerIndex].team);
+  int teamIndex = int(player[playerIndex].getTeam());
   team[teamIndex].team.size++;
-  if (team[teamIndex].team.size == 1 && Team::isColorTeam(player[playerIndex].team)) {
+  if (team[teamIndex].team.size == 1
+      && Team::isColorTeam(player[playerIndex].getTeam())) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
     if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
@@ -2064,7 +2069,7 @@ static void addPlayer(int playerIndex)
     }
   }
 
-  if (player[playerIndex].team == ObserverTeam)
+  if (player[playerIndex].isObserver())
     sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
@@ -2293,12 +2298,13 @@ static void anointNewRabbit(int killerId = NoPlayer)
     // check to see if the rabbit was just killed by someone; if so, make them the rabbit if they're still around.
     if (killerId != oldRabbit && realPlayer(killerId) && !player[killerId].paused
 	&& !player[killerId].notResponding && player[killerId].isAlive()
-	&& player[killerId].team != ObserverTeam)
+	&& !player[killerId].isObserver())
       rabbitIndex = killerId;
   
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
-      if (i != oldRabbit && !player[i].paused && !player[i].notResponding && player[i].isAlive() && (player[i].team != ObserverTeam)) {
+      if (i != oldRabbit && !player[i].paused && !player[i].notResponding
+	  && player[i].isAlive() && !player[i].isObserver()) {
 	float ratio = rabbitRank(player[i]);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
@@ -2310,7 +2316,8 @@ static void anointNewRabbit(int killerId = NoPlayer)
   }
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i].isPlaying() && !player[i].paused && !player[i].notResponding && player[i].team != ObserverTeam) {
+      if (player[i].isPlaying() && !player[i].paused
+	  && !player[i].notResponding && !player[i].isObserver()) {
 	float ratio = rabbitRank(player[i]);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
@@ -2324,11 +2331,11 @@ static void anointNewRabbit(int killerId = NoPlayer)
 
   if (rabbitIndex != oldRabbit) {
     if (oldRabbit != NoPlayer) {
-      player[oldRabbit].team = RogueTeam;
+      player[oldRabbit].setTeam(RogueTeam);
       player[oldRabbit].wasRabbit = true;
     }
     if (rabbitIndex != NoPlayer) {
-      player[rabbitIndex].team = RabbitTeam;
+      player[rabbitIndex].setTeam(RabbitTeam);
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, rabbitIndex);
       broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
@@ -2408,7 +2415,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     if (playerIndex == rabbitIndex)
       anointNewRabbit();
 
-  if (player[playerIndex].team != NoTeam) {
+  if (!player[playerIndex].isTeam(NoTeam)) {
     int flagid = player[playerIndex].flag;
     if (flagid >= 0) {
       // do not simply zap team flag
@@ -2427,17 +2434,19 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
 
     // decrease team size
-    int teamNum = int(player[playerIndex].team);
+    int teamNum = int(player[playerIndex].getTeam());
     --team[teamNum].team.size;
 
     // if last active player on team then remove team's flag if no one
     // is carrying it
-    if (Team::isColorTeam(player[playerIndex].team) && team[teamNum].team.size == 0 &&
+    if (Team::isColorTeam(player[playerIndex].getTeam())
+	&& team[teamNum].team.size == 0 &&
         (clOptions->gameStyle & int(TeamFlagGameStyle))) {
       int flagid = lookupFirstTeamFlag(teamNum);
       if (flagid >= 0) {
         for (int n = 0; n < clOptions->numTeamFlags[teamNum]; n++) {
-          if ((flag[flagid+n].player == -1 || player[flag[flagid+n].player].team == teamNum))
+          if (flag[flagid+n].player == -1
+	      || player[flag[flagid+n].player].isTeam((TeamColor)teamNum))
 	    zapFlag(flagid+n);
 	}
       }
@@ -2506,7 +2515,7 @@ static float enemyProximityCheck(TeamColor team, float *pos, float &enemyAngle)
   float worstDist = 1e12f; // huge number
 
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isAlive() && areFoes(player[i].team, team)) {
+    if (player[i].isAlive() && areFoes(player[i].getTeam(), team)) {
       float *enemyPos = player[i].lastState.pos;
       if (fabs(enemyPos[2] - pos[2]) < 1.0f) {
         float x = enemyPos[0] - pos[0];
@@ -2526,7 +2535,7 @@ static float enemyProximityCheck(TeamColor team, float *pos, float &enemyAngle)
 static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
 {
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
-  const TeamColor team = player[playerId].team;
+  const TeamColor team = player[playerId].getTeam();
   *azimuth = (float)bzfrand() * 2.0f * M_PI;
 
   if (player[playerId].shouldRestartAtBase() &&
@@ -2716,7 +2725,7 @@ static void playerAlive(int playerIndex)
 {
   // ignore multiple MsgAlive; also observer should not send MsgAlive; diagnostic?
   if (!player[playerIndex].isDead() ||
-      player[playerIndex].team == ObserverTeam)
+      player[playerIndex].isObserver())
     return;
 
   // make sure the user identifies themselves if required.
@@ -2795,8 +2804,9 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;
   if (killer) {
-    const bool rabbitinvolved = killer->wasRabbit || victim->team == RabbitTeam;
-    const bool foe = areFoes(victim->team, killer->team);
+    const bool rabbitinvolved = killer->wasRabbit
+      || victim->isTeam(RabbitTeam);
+    const bool foe = areFoes(victim->getTeam(), killer->getTeam());
     teamkill = !foe && !rabbitinvolved;
   }
 
@@ -2888,23 +2898,23 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     int winningTeam = (int)NoTeam;
     if (!(clOptions->gameStyle & (TeamFlagGameStyle | RabbitChaseGameStyle))) {
       int killerTeam = -1;
-      if (killer && victim->team == killer->team) {
-	if (killer->team != RogueTeam)
+      if (killer && victim->getTeam() == killer->getTeam()) {
+	if (!killer->isTeam(RogueTeam))
 	  if (killerIndex == victimIndex)
-	    team[int(victim->team)].team.lost += 1;
+	    team[int(victim->getTeam())].team.lost += 1;
 	  else
-	    team[int(victim->team)].team.lost += 2;
+	    team[int(victim->getTeam())].team.lost += 2;
       } else {
-	if (killer && killer->team != RogueTeam) {
-	  winningTeam = int(killer->team);
+	if (killer && !killer->isTeam(RogueTeam)) {
+	  winningTeam = int(killer->getTeam());
 	  team[winningTeam].team.won++;
 	}
-	if (victim->team != RogueTeam)
-	  team[int(victim->team)].team.lost++;
+	if (!victim->isTeam(RogueTeam))
+	  team[int(victim->getTeam())].team.lost++;
 	if (killer)
-	  killerTeam = killer->team;
+	  killerTeam = killer->getTeam();
       }
-      sendTeamUpdate(-1,int(victim->team), killerTeam);
+      sendTeamUpdate(-1,int(victim->getTeam()), killerTeam);
     }
 #ifdef PRINTSCORE
     dumpScore();
@@ -2921,7 +2931,7 @@ static void grabFlag(int playerIndex, int flagIndex)
     return;
 
   // player wants to take possession of flag
-  if (player[playerIndex].team == ObserverTeam ||
+  if (player[playerIndex].isObserver() ||
       !player[playerIndex].isAlive() ||
       player[playerIndex].flag != -1 ||
       flag[flagIndex].flag.status != FlagOnGround)
@@ -3160,7 +3170,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].isConnected() &&
-	flag[flagIndex].flag.type->flagTeam == int(player[i].team) &&
+	flag[flagIndex].flag.type->flagTeam == int(player[i].getTeam()) &&
 	player[i].isAlive()) {
       player[i].setDead();
       player[i].setRestartOnBase(true);
@@ -3168,9 +3178,10 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // update score (rogues can't capture flags)
   int winningTeam = (int)NoTeam;
-  if (int(flag[flagIndex].flag.type->flagTeam) != int(player[playerIndex].team)) {
+  if (int(flag[flagIndex].flag.type->flagTeam)
+      != int(player[playerIndex].getTeam())) {
     // player captured enemy flag
-    winningTeam = int(player[playerIndex].team);
+    winningTeam = int(player[playerIndex].getTeam());
     team[winningTeam].team.won++;
   }
   team[int(flag[flagIndex].flag.type->flagTeam)].team.lost++;
@@ -3186,7 +3197,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 {
   bool repack = false;
   const PlayerInfo &shooter = player[playerIndex];
-  if (shooter.team == ObserverTeam)
+  if (shooter.isObserver())
     return;
   FiringInfo firingInfo;
   firingInfo.unpack(buf);
@@ -3358,7 +3369,8 @@ static void updateLag(int playerIndex, float timepassed)
   pl.lagalpha = pl.lagalpha / (0.9f + pl.lagalpha);
   pl.lagcount++;
   // warn players from time to time whose lag is > threshold (-lagwarn)
-  if (pl.team != ObserverTeam && clOptions->lagwarnthresh > 0 && pl.lagavg > clOptions->lagwarnthresh &&
+  if (!pl.isObserver() && clOptions->lagwarnthresh > 0
+      && pl.lagavg > clOptions->lagwarnthresh &&
       pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
     char message[MessageLen];
     sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -3638,7 +3650,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player declaring self destroyed
     case MsgKilled: {
-      if (player[t].team == ObserverTeam)
+      if (player[t].isObserver())
 	break;
       // data: id of killer, shot id of killer
       PlayerId killer;
@@ -3693,7 +3705,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // shot ended prematurely
     case MsgShotEnd: {
-      if (player[t].team == ObserverTeam)
+      if (player[t].isObserver())
 	break;
       // data: shooter id, shot number, reason
       PlayerId sourcePlayer;
@@ -3708,7 +3720,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player teleported
     case MsgTeleport: {
-      if (player[t].team == ObserverTeam)
+      if (player[t].isObserver())
 	break;
       uint16_t from, to;
       buf = nboUnpackUShort(buf, from);
@@ -4003,7 +4015,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgVideo:
       // observer shouldn't send bulk messages anymore, they used to when it was
       // a server-only hack; but the check does not hurt, either
-      if (player[t].team == ObserverTeam)
+      if (player[t].isObserver())
 	break;
       relayPlayerPacket(t, len, rawbuf, code);
       break;
@@ -4457,7 +4469,7 @@ int main(int argc, char **argv)
     // kick idle players
     if (clOptions->idlekickthresh > 0) {
       for (int i = 0; i < curMaxPlayers; i++) {
-        if (player[i].isPlaying() && player[i].team != ObserverTeam) {
+        if (player[i].isPlaying() && !player[i].isObserver()) {
           int idletime = (int)(tm - player[i].lastupdate);
 	  int pausetime = 0;
           if (player[i].paused && tm - player[i].pausedSince > idletime)

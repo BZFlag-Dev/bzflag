@@ -575,6 +575,28 @@ bool PlayerInfo::isEMailReadable() {
   return (emaillen <= 4) || (((float)emailAlnumCount / (float)emaillen) > 0.5);
 };
 
+void *PlayerInfo::packVirtualFlagCapture(void *buf) {
+  buf = nboPackUShort(buf, uint16_t(int(team) - 1));
+  buf = nboPackUShort(buf, uint16_t(1 + (int(team) % 4)));
+  return buf;
+};
+
+bool PlayerInfo::isTeam(TeamColor _team) const {
+  return team == _team;
+};
+
+bool PlayerInfo::isObserver() const {
+  return team == ObserverTeam;
+};
+
+TeamColor PlayerInfo::getTeam() {
+  return team;
+};
+
+void PlayerInfo::setTeam(TeamColor _team) {
+  team = _team;
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

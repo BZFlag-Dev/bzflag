@@ -143,6 +143,11 @@ public:
   const char *getEMail() const;
   void        cleanEMail();
   bool        isEMailReadable();
+  void       *packVirtualFlagCapture(void *buf);
+  bool        isTeam(TeamColor team) const;
+  bool        isObserver() const;
+  TeamColor   getTeam();
+  void        setTeam(TeamColor team);
 private:
     // player access
     PlayerAccessInfo accessInfo;
@@ -171,9 +176,9 @@ private:
     char callSign[CallSignLen];
     // player's email address
     char email[EmailLen];
-public:
     // player's team
     TeamColor team;
+public:
     // true for dead rabbit until respawn
     bool wasRabbit;
     // flag index player has

@@ -210,8 +210,7 @@ void handleCountdownCmd(int t, const char *)
 	if (player[i].playedEarly) {
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUByte(bufStart, j);
-	  buf = nboPackUShort(buf, uint16_t(int(player[i].team) - 1));
-	  buf = nboPackUShort(buf, uint16_t(1 + (int(player[i].team) % 4)));
+	  buf = player[i].packVirtualFlagCapture(buf);
 	  directMessage(i, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
 	  player[i].playedEarly = false;
 	}
@@ -561,7 +560,7 @@ void handleIdlestatsCmd(int t, const char *)
   TimeKeeper now = TimeKeeper::getCurrent();
   std::string reply;
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isPlaying() && player[i].team != ObserverTeam) {
+    if (player[i].isPlaying() && !player[i].isObserver()) {
       reply = string_util::format("%-16s : %4ds", player[i].getCallSign(), 
 				  int(now - player[i].lastupdate));
       if (player[i].paused) {
@@ -585,7 +584,7 @@ void handleFlaghistoryCmd(int t, const char *)
   char reply[MessageLen] = {0};
 
   for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i].isPlaying() && player[i].team != ObserverTeam) {
+    if (player[i].isPlaying() && !player[i].isObserver()) {
       char flag[MessageLen];
       sprintf(reply,"%-16s : ", player[i].getCallSign() );
       std::vector<FlagType*>::iterator fhIt = player[i].flagHistory.begin();
