@@ -11,9 +11,9 @@ BZFlag 1.7e release 000
 * FreeBSD patch by Eric Anholt
 * world creation reordering to support world from file
 * compilation with VC++6 Jeremiah Moss <moss-taylor@yahoo.com>
-* world from a file by Jeremiah
+* world from a file by Daniel Léonard <fork@videotron.ca>
 * travel underneath floating buildings by Jeremiah
-* radar update to not hide ojects under buildings by Jeremiah
+* radar update to not hide teleporters under buildings by Jeremiah
 * teleporter player positioning by Jeremiah
 * bottoms on floating buildings by Jeremiah
 * Windows highest refresh rate on program switch by Jeremiah
