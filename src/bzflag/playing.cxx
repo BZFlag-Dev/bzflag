@@ -4182,13 +4182,13 @@ static void		checkEnvironment()
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
-	if (myTank->getFlag() != Flags::Null) {
-		serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
-	}
-	stopShot = true;
+      if (myTank->getFlag() != Flags::Null) {
+              serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
+      }
+      stopShot = true;
     }
     else {
-        stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit->getShotId());
+      stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit->getShotId());
     }
 
     if (stopShot || hit->isStoppedByHit()) {
