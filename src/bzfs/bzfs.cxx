@@ -4210,11 +4210,13 @@ int main(int argc, char **argv)
 		pollAction = std::string("banned for ");
 		if (hours > 0) {
 		  pollAction += string_util::format("%d hour%s%s",
+						    hours,
 						    hours == 1 ? "." : "s",
 						    minutes > 0 ? " and " : "");
 		}
 		if (minutes > 0) {
 		  pollAction += string_util::format("%d minute%s",
+						    minutes,
 						    minutes > 1 ? "s" : "");
 		}
 		pollAction += ".";
