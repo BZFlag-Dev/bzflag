@@ -625,7 +625,7 @@ msgid "This game is full.  Try again later."
 msgstr "Le serveur est plein.  Re-essayez plus tard."
 
 msgid "Game is full or over.  Try again later."
-msgstr "Le serveur est plain ou le jeu est terminé.  Re-essayez plus tard."
+msgstr "Le serveur est plein ou le jeu est terminé.  Re-essayez plus tard."
 
 msgid "Error connecting to server."
 msgstr "Erreur lors de la connexion au serveur."
