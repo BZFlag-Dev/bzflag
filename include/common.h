@@ -96,6 +96,9 @@ typedef unsigned char	uint8_t;
 
 #if defined(_WIN32)
 
+// work around for statement scoping bug
+#define for				if (false) { } else for
+
 // missing float math functions
 #define hypotf			(float)hypot
 
