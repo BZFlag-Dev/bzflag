@@ -106,6 +106,10 @@ SOURCE=..\src\scene\SceneNodeChoice.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\scene\SceneNodeFieldReader.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\scene\SceneNodeGeometry.cxx
 # End Source File
 # Begin Source File
@@ -211,6 +215,10 @@ SOURCE=..\include\SceneNodeBillboard.h
 # Begin Source File
 
 SOURCE=..\include\SceneNodeChoice.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeFieldReader.h
 # End Source File
 # Begin Source File
 
