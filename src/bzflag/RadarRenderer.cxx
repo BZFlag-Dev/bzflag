@@ -629,6 +629,9 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
     int faces = mesh->getFaceCount();
     for (int f = 0; f < faces; f++) {
       const MeshFace* face = mesh->getFace(f);
+      if (face->getPlane()[2] <= 0.0f) {
+        continue;
+      }
       const float z = face->getPosition()[2];
       const float h = face->getHeight();
       const float cs = colorScale(z, h);
