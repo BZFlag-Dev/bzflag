@@ -1579,6 +1579,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   // draw
   if (player->getTeam() != ObserverTeam) {
+    hudColor3fv(Team::getRadarColor(player->getTeam()));
     fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
