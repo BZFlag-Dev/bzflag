@@ -82,8 +82,8 @@ LIB32=link.exe -lib
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "scene___Win32_SDL_Release"
-# PROP BASE Intermediate_Dir "scene___Win32_SDL_Release"
+# PROP BASE Output_Dir "..\..\src\scene\SDL_Release"
+# PROP BASE Intermediate_Dir "..\..\src\scene\SDL_Release"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
@@ -107,8 +107,8 @@ LIB32=link.exe -lib
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "scene___Win32_SDL_Debug"
-# PROP BASE Intermediate_Dir "scene___Win32_SDL_Debug"
+# PROP BASE Output_Dir "..\..\src\scene\SDL_Debug"
+# PROP BASE Intermediate_Dir "..\..\src\scene\SDL_Debug"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
