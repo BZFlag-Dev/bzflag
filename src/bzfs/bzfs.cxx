@@ -5916,7 +5916,7 @@ static const char *extraUsageString =
 "\t+s: always have <num> super flags (default=16)\n"
 "\t-s: allow up to <num> super flags (default=16)\n"
 "\t-sa: insert antidote superflags\n"
-"\t-sl: limit shot <id> to <num> shots\n"
+"\t-sl: limit flag <id> to <num> shots\n"
 "\t-srvmsg: specify a <msg> to print upon client login\n"
 "\t-st: shake bad flags in <time> seconds\n"
 "\t-sw: shake bad flags after <num> wins\n"
