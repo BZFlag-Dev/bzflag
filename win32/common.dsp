@@ -274,7 +274,7 @@ SOURCE=..\include\TimeKeeper.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\version.h
+SOURCE=..\include\version.h
 # End Source File
 # Begin Source File
 

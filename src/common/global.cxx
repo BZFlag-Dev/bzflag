@@ -105,7 +105,7 @@ const char*		getAppVersion()
     static std::string	appVersion = "";
 	if (!appVersion.size()){
        std::ostringstream	appVersionStream;
-       appVersionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV << "-" << BZ_BUILD_OS << "-" << BZ_BUILD_SOURCE << BZ_BUILD_DATE;
+       appVersionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV << "-" << BZ_BUILD_OS << "-" << BZ_BUILD_TYPE << BZ_BUILD_DATE;
        appVersion = appVersionStream.str();
 	}
   return appVersion.c_str();

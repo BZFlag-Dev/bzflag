@@ -37,3 +37,13 @@
 
 /* On windows, strcasecmp is really stricmp */
 #define HAVE_STRICMP 1
+
+// define our OS
+#ifndef BZ_BUILD_OS
+#ifdef _DEBUG
+#define BZ_BUILD_OS			"W32VCD"
+#else
+#define BZ_BUILD_OS			"W32VC"
+#endif
+#endif
+
