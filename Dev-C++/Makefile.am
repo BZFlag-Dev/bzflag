@@ -1,8 +1,8 @@
-SUBDIRS = VC6 VC71
-
 EXTRA_DIST =	\
-	bzflag.ico	\
-	bzflag.rc
+	bzadmin.dev	\
+	bzfs.dev	\
+	bzflag.dev	\
+	config.h
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
