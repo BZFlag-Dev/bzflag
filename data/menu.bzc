@@ -43,7 +43,6 @@
   <space/>
   <button label="Find" action="menu push find"/>
   <button label="Connect" action="set connect 1"/>
-
   <space/>
   <!-- edit field with given label reflecting name in DB with maximum length -->
   <edit label="Callsign:" name="infoCallsign" maxlen="32"/>
@@ -55,8 +54,10 @@
     <item label="Blue" value="blue"/>
     <item label="Purple" value="purple"/>
   </combo>
-
-  <space/>
+  <combo label="Type:" name="playerType">
+    <item label="Player" value="tank"/>
+    <item label="Observer" value="observer"/>
+  </combo>
   <edit label="Server:" name="infoServer" maxlen="64"/>
   <edit label="Port:" name="infoPort" maxlen="5" type="int"/>
  

@@ -27,20 +27,20 @@ const int				MessageLen = 128;		// including terminating NUL
 
 // types of things we can be
 enum PlayerType {
-						TankPlayer,
-						JAFOPlayer,
-						ComputerPlayer
+					TankPlayer,
+					JAFOPlayer,
+					ComputerPlayer
 };
 
 // team info
-const unsigned int		NumTeams = 5;
+const unsigned int			NumTeams = 5;
 enum TeamColor {
-						NoTeam = -1,
-						RogueTeam = 0,
-						RedTeam = 1,
-						GreenTeam = 2,
-						BlueTeam = 3,
-						PurpleTeam = 4
+					NoTeam = -1,
+					RogueTeam = 0,
+					RedTeam = 1,
+					GreenTeam = 2,
+					BlueTeam = 3,
+					PurpleTeam = 4
 };
 
 // epsilon and very far for ray intersections
@@ -109,16 +109,16 @@ const float				FlashOffTime =	0.2f;			// seconds
 
 // game styles
 enum GameStyle {
-						PlainGameStyle =		0x0000,
-						TeamFlagGameStyle =		0x0001,	// capture the flag
-						SuperFlagGameStyle =	0x0002,	// superflags allowed
-						RoguesGameStyle =		0x0004,	// rogues allowed
-						JumpingGameStyle =		0x0008,	// jumping allowed
-						InertiaGameStyle =		0x0010,	// momentum for all
-						RicochetGameStyle =		0x0020,	// all shots ricochet
-						ShakableGameStyle =		0x0040,	// can drop bad flags
-						AntidoteGameStyle =		0x0080,	// anti-bad flags
-						TimeSyncGameStyle =		0x0100	// time sync'd to srvr
+					PlainGameStyle =		0x0000,
+					TeamFlagGameStyle =		0x0001,	// capture the flag
+					SuperFlagGameStyle =		0x0002,	// superflags allowed
+					RoguesGameStyle =		0x0004,	// rogues allowed
+					JumpingGameStyle =		0x0008,	// jumping allowed
+					InertiaGameStyle =		0x0010,	// momentum for all
+					RicochetGameStyle =		0x0020,	// all shots ricochet
+					ShakableGameStyle =		0x0040,	// can drop bad flags
+					AntidoteGameStyle =		0x0080,	// anti-bad flags
+					TimeSyncGameStyle =		0x0100	// time sync'd to srvr
 };
 
 // flag stuff

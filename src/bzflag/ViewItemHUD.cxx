@@ -13,6 +13,7 @@
 #include "ViewItemHUD.h"
 #include "HUDManager.h"
 #include "LocalPlayer.h"
+#include "StateDatabase.h"
 #include "World.h"
 #include "bzfgl.h"
 #include <assert.h>
@@ -64,6 +65,9 @@ bool					ViewItemHUD::onPreRender(
 void					ViewItemHUD::onPostRender(
 								float x0, float y0, float, float)
 {
+	// don't draw targetting box if we're observer
+	if(BZDB->get("playerType") == "observer")
+		return;
 	OpenGLGState::resetState();
 
 	// draw targeting box

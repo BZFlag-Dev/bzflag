@@ -13,10 +13,13 @@
 #ifndef BZF_LOCAL_PLAYER_H
 #define BZF_LOCAL_PLAYER_H
 
+#include <string>
 #include "Player.h"
 #include "ShotPath.h"
 #include "math3D.h"
 #include "BzfEvent.h"
+#include "RemotePlayer.h"
+#include "World.h"
 
 class Obstacle;
 class SceneNodeGroup;
@@ -30,21 +33,21 @@ public:
 	~BaseLocalPlayer();
 
 	void				update();
-	Ray					getLastMotion() const;
+	Ray				getLastMotion() const;
 #ifdef __MWERKS__
-    const float			(*getLastMotionBBox() )[3] const;
+    const float				(*getLastMotionBBox() )[3] const;
 #else
-    const float			(*getLastMotionBBox() const)[3];
+    const float				(*getLastMotionBBox() const)[3];
 #endif
 
-    virtual void		explodeTank() = 0;
-    virtual bool		checkHit(const Player* source,
-								const ShotPath*& hit, float& minTime) const = 0;
+    virtual void			explodeTank() = 0;
+    virtual bool			checkHit(const Player* source,
+							const ShotPath*& hit, float& minTime) const = 0;
 
 protected:
 	int					getSalt();
-	virtual void		doUpdate(float dt) = 0;
-	virtual void		doUpdateMotion(float dt) = 0;
+	virtual void			doUpdate(float dt) = 0;
+	virtual void			doUpdateMotion(float dt) = 0;
 
 protected:
 	TimeKeeper			lastTime;
@@ -72,19 +75,27 @@ public:
 		OnBuilding,				// playing on building
 		InAir					// playing in air
 	};
+	enum _RoamView {
+		RoamViewTrack = 0,			// tracking another player
+		RoamViewFollow,				// following closely behind another player
+		RoamViewFP,				// first-person 'driving with' view
+		RoamViewFlag,				// tracking a specific flag
+		RoamViewFree				// free roaming
+	} RoamView;
+	static const int		roamViewCount = 5;
 
 	LocalPlayer(PlayerId, const char* name, const char* email);
 	~LocalPlayer();
 
 	Location			getLocation() const;
-	FiringStatus		getFiringStatus() const;
+	FiringStatus			getFiringStatus() const;
 	float				getReloadTime() const;
 	float				getFlagShakingTime() const;
-	int					getFlagShakingWins() const;
-	const float*		getAntidoteLocation() const;
+	int				getFlagShakingWins() const;
+	const float*			getAntidoteLocation() const;
 	ShotPath*			getShot(int index) const;
-	const Player*		getTarget() const;
-	const Obstacle*		getContainingBuilding() const;
+	const Player*			getTarget() const;
+	const Obstacle*			getContainingBuilding() const;
 
 	void				setTeam(TeamColor);
 	void				setDesiredSpeed(float fracOfMaxSpeed);
@@ -96,11 +107,11 @@ public:
 	void				setTarget(const Player*);
 
 	void				setNemesis(const Player*);
-	const Player*		getNemesis() const;
+	const Player*			getNemesis() const;
 
 	void				restart(const float* pos, float azimuth);
 	bool				checkHit(const Player* source, const ShotPath*& hit,
-														float& minTime) const;
+								float& minTime) const;
 
 	void				setFlag(FlagId);
 	void				changeScore(short deltaWins, short deltaLosses);
@@ -114,14 +125,23 @@ public:
 	float 				getKeyboardSpeed() const;
 	float 				getKeyboardAngVel() const;
 	void 				setKey(int button, bool pressed);
-	bool             	getKeyPressed() const;
+	bool				getKeyPressed() const;
 	int 				getKeyButton() const;
-	void                resetKey();
-	void                setSlowKeyboard(bool slow);
-	bool            	hasSlowKeyboard() const;
+	void				resetKey();
+	void				setSlowKeyboard(bool slow);
+	bool				hasSlowKeyboard() const;
 
-	static LocalPlayer*	getMyTank();
+	static LocalPlayer*		getMyTank();
 	static void			setMyTank(LocalPlayer*);
+
+	std::string			getRoamingStatus(RemotePlayer** players, World* world);
+
+	// observer roaming
+	int				roamTrackTank, roamTrackFlag;
+	Vec3				roamPos, roamDPos;
+	float				roamTheta, roamDTheta;
+	float				roamPhi, roamDPhi;
+	float				roamZoom, roamDZoom;
 
 protected:
 	bool				doEndShot(int index, bool isHit, float* pos);
@@ -129,7 +149,7 @@ protected:
 	void				doUpdateMotion(float dt);
 	void				doMomentum(float dt, float& speed, float& angVel);
 	void				doForces(float dt, float* velocity, float& angVel);
-	const Obstacle*		getHitBuilding(const float* pos, float angle,
+	const Obstacle*			getHitBuilding(const float* pos, float angle,
 							bool phased, bool& expel) const;
 	bool				getHitNormal(const Obstacle* o,
 							const float* pos1, float azimuth1,
@@ -138,27 +158,27 @@ protected:
 
 private:
 	Location			location;
-	FiringStatus		firingStatus;
+	FiringStatus			firingStatus;
 	float				flagShakingTime;
-	int					flagShakingWins;
+	int				flagShakingWins;
 	float				flagAntidotePos[3];
-	SceneNodeTransform*	antidoteFlag;
+	SceneNodeTransform*		antidoteFlag;
 	float				desiredSpeed;
 	float				desiredAngVel;
 	float				lastSpeed;
-	const Obstacle*		insideBuilding;
+	const Obstacle*			insideBuilding;
 	float				crossingPlane[4];
-	LocalShotPath**		shots;
+	LocalShotPath**			shots;
 	bool				anyShotActive;
-	const Player*		target;
-	const Player*		nemesis;
-	static LocalPlayer*	mainPlayer;
+	const Player*			target;
+	const Player*			nemesis;
+	static LocalPlayer*		mainPlayer;
 	bool				keyboardMoving;
 	float				keyboardSpeed;
 	float				keyboardAngVel;
 	int 				keyButton;
-	bool            	keyPressed;
-	bool            	slowKeyboard;
+	bool            		keyPressed;
+	bool            		slowKeyboard;
 };
 
 //

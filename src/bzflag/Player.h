@@ -28,13 +28,13 @@ const int				PlayerUpdatePLen = PlayerIdPLen + 34;
 class Player {
 public:
 	enum PStatus {					// bit masks
-		DeadStatus =	0x0000,		// not alive, not paused, etc.
+		DeadStatus =		0x0000,		// not alive, not paused, etc.
 		Alive =			0x0001,		// player is alive
 		Paused = 		0x0002,		// player is paused
 		Exploding =		0x0004,		// currently blowing up
-		Teleporting =	0x0008,		// teleported recently
-		FlagActive =	0x0010,		// flag special powers active
-		CrossingWall =	0x0020,		// tank crossing building wall
+		Teleporting =		0x0008,		// teleported recently
+		FlagActive =		0x0010,		// flag special powers active
+		CrossingWall =		0x0020,		// tank crossing building wall
 		Falling =		0x0040		// tank accel'd by gravity
 	};
 
@@ -48,10 +48,10 @@ public:
 	const char*			getEmailAddress() const;
 	FlagId				getFlag() const;
 	short				getStatus() const;
-	const float*		getPosition() const;
+	const float*			getPosition() const;
 	float				getAngle() const;
-	const float*		getForward() const;
-	const float*		getVelocity() const;
+	const float*			getForward() const;
+	const float*			getVelocity() const;
 	float				getAngularVelocity() const;
 	float				getRadius() const;
 	void				getMuzzle(float*) const;
@@ -60,12 +60,12 @@ public:
 	short				getScore() const;
 	short				getLocalWins() const;
 	short				getLocalLosses() const;
-	const TimeKeeper&	getExplodeTime() const;
-	const TimeKeeper&	getTeleportTime() const;
+	const TimeKeeper&		getExplodeTime() const;
+	const TimeKeeper&		getTeleportTime() const;
 	short				getFromTeleporter() const;
 	short				getToTeleporter() const;
 	float				getTeleporterProximity() const;
-	virtual ShotPath*	getShot(int index) const = 0;
+	virtual ShotPath*		getShot(int index) const = 0;
 
 	void				setId(PlayerId);
 
@@ -97,8 +97,8 @@ public:
 	void				setVelocity(const float* velocity);
 	void				setAngularVelocity(float);
 	void				changeTeam(TeamColor);
-	virtual void		setFlag(FlagId);
-	virtual void		changeScore(short deltaWins, short deltaLosses);
+	virtual void			setFlag(FlagId);
+	virtual void			changeScore(short deltaWins, short deltaLosses);
 	void				changeLocalScore(short deltaWins, short deltaLosses);
 	void				setStatus(short);
 	void				setExplode(const TimeKeeper&);
@@ -117,7 +117,7 @@ private:
 	// was already terminated.  position must be set to the shot's
 	// position if you return true (it's okay to return false if
 	// there's no meaningful shot position).
-	virtual bool		doEndShot(int index, bool isHit, float* position) = 0;
+	virtual bool			doEndShot(int index, bool isHit, float* position) = 0;
 	bool				getDeadReckoning(float* predictedPos,
 							float* predictedAzimuth,
 							float* predictedVel) const;
@@ -128,50 +128,50 @@ private:
 	// scene nodes
 	SceneNode*			teamPlayerSceneNode;
 	SceneNode*			roguePlayerSceneNode;
-	SceneNodeTransform*	transformSceneNode;
+	SceneNodeTransform*		transformSceneNode;
 	// need a black sphere for paused or not responding
 	// need a clip plane if isCrossingWall().
 
 	// data not communicated with other players
 	bool				notResponding;
 	bool				autoPilot;
-	PlayerId			id;						// my credentials
+	PlayerId			id;				// my credentials
 
 	// permanent data
-	TeamColor			team;					// my team
-	char				callSign[CallSignLen];	// my pseudonym
+	TeamColor			team;				// my team
+	char				callSign[CallSignLen];		// my pseudonym
 	char				email[EmailLen];		// my email address
 
 	// relatively stable data
-	FlagId				flag;					// flag I'm holding
+	FlagId				flag;				// flag I'm holding
 	TimeKeeper			explodeTime;			// time I started exploding
 	TimeKeeper			teleportTime;			// time I started teleporting
 	short				fromTeleporter;			// teleporter I entered
 	short				toTeleporter;			// teleporter I exited
-	float				teleporterProximity;	// how close to a teleporter
-	short				wins;					// number of kills
-	short				losses;					// number of deaths
+	float				teleporterProximity;		// how close to a teleporter
+	short				wins;				// number of kills
+	short				losses;				// number of deaths
 
 	// score of local player against this player
-	short				localWins;				// local player won this many
+	short				localWins;			// local player won this many
 	short				localLosses;			// local player lost this many
 
 	// highly dynamic data
-	short				status;					// see PStatus enum
-	float				pos[3];					// position of tank
-	float				azimuth;				// orientation of tank
+	short				status;				// see PStatus enum
+	float				pos[3];				// position of tank
+	float				azimuth;			// orientation of tank
 	float				velocity[3];			// velocity of tank
-	float				angVel;					// angular velocity of tank
+	float				angVel;				// angular velocity of tank
 
 	// computable highly dynamic data
-	float				forward[3];				// forward unit vector
+	float				forward[3];			// forward unit vector
 
 	// dead reckoning stuff
-	TimeKeeper			inputTime;				// time of input
+	TimeKeeper			inputTime;			// time of input
 	TimeKeeper			inputPrevTime;			// time of last dead reckoning
-	int					inputStatus;			// tank status
+	int				inputStatus;			// tank status
 	float				inputPos[3];			// tank position
-	float				inputSpeed;				// tank horizontal speed
+	float				inputSpeed;			// tank horizontal speed
 	float				inputZSpeed;			// tank vertical speed
 	float				inputAzimuth;			// direction tank is pointing
 	float				inputSpeedAzimuth;		// direction of speed

@@ -71,20 +71,20 @@ public:
 	float				time;
 	SceneNode*			node;
 };
-typedef std::vector<ExplosionInfo> ExplosionList;
+typedef std::vector<ExplosionInfo>	ExplosionList;
 
-const PlayerId			NoPlayer = 255; 	// FIXME - enum maybe?
-const PlayerId			AllPlayers = 254; 	// "
-const PlayerId			ServerPlayer = 253; // "
+const PlayerId				NoPlayer = 255; 	// FIXME - enum maybe?
+const PlayerId				AllPlayers = 254; 	// "
+const PlayerId				ServerPlayer = 253;	// "
 
-static ServerLink*		serverLink = NULL;
-static World*			world = NULL;
-static LocalPlayer*		myTank = NULL;
-static BzfDisplay*		display = NULL;
-static BzfWindow*		mainWindow = NULL;
-static Team*			teams = NULL;
+static ServerLink*			serverLink = NULL;
+static World*				world = NULL;
+static LocalPlayer*			myTank = NULL;
+static BzfDisplay*			display = NULL;
+static BzfWindow*			mainWindow = NULL;
+static Team*				teams = NULL;
 static int				maxPlayers = 0;				// not including me
-static RemotePlayer**	player = NULL;
+static RemotePlayer**			player = NULL;
 static int				numFlags = 0;
 static bool				serverError = false;
 static bool				serverDied = false;
@@ -93,11 +93,11 @@ static bool				restartOnBase = false;
 static bool				firstLife = false;
 static bool				pausedByUnmap = false;
 static bool				unmapped = false;
-static float			pauseCountdown = 0.0f;
+static float				pauseCountdown = 0.0f;
 bool					gameOver = false;
-static SceneNode*		explosion = NULL;
-static ExplosionList	explosions;
-static float			wallClock;
+static SceneNode*			explosion = NULL;
+static ExplosionList			explosions;
+static float				wallClock;
 static CallbackList<PlayingCallback>	playingCallbacks;
 
 static char				messageMessage[2 * PlayerIdPLen + MessageLen];
@@ -109,50 +109,51 @@ static void				handlePlayerMessage(uint16_t, uint16_t, void*);
 TeamColor  				PlayerIdToTeam(PlayerId id);
 PlayerId				TeamToPlayerId(TeamColor team);
 
-static const float		warningColor[] = { 1.0f, 0.0f, 0.0f };
-static const float		redColor[] = { 1.0f, 0.0f, 0.0f };
-static const float		greenColor[] = { 0.0f, 1.0f, 0.0f };
-static const float		yellowColor[] = { 1.0f, 1.0f, 0.0f };
+static const float			warningColor[] = { 1.0f, 0.0f, 0.0f };
+static const float			whiteColor[] = { 1.0f, 1.0f, 1.0f };
+static const float			redColor[] = { 1.0f, 0.0f, 0.0f };
+static const float			greenColor[] = { 0.0f, 1.0f, 0.0f };
+static const float			yellowColor[] = { 1.0f, 1.0f, 0.0f };
 
 enum BlowedUpReason {
-						GotKilledMsg,
-						GotShot,
-						GotRunOver,
-						GotCaptured,
-						GenocideEffect
+					GotKilledMsg,
+					GotShot,
+					GotRunOver,
+					GotCaptured,
+					GenocideEffect
 };
-static const char*		blowedUpMessage[] = {
-							NULL,
-							"Got hit by shot",
-							"Got run over by Steamroller",
-							"Team flag was captured",
-							"Teammate hit by Genocide"
-						};
+static const char*			blowedUpMessage[] = {
+						NULL,
+						"Got hit by shot",
+						"Got run over by Steamroller",
+						"Team flag was captured",
+						"Teammate hit by Genocide"
+					};
 static bool				gotBlowedUp(BaseLocalPlayer* tank,
-										BlowedUpReason reason,
-										PlayerId killer,
-										int shotId = -1);
+								BlowedUpReason reason,
+								PlayerId killer,
+								int shotId = -1);
 
 //
 // playing callbacks
 //
 
 void					addPlayingCallback(
-								PlayingCallback callback, void* userData)
+							PlayingCallback callback, void* userData)
 {
 	playingCallbacks.add(callback, userData);
 }
 
 void					removePlayingCallback(
-								PlayingCallback callback, void* userData)
+							PlayingCallback callback, void* userData)
 {
 	playingCallbacks.remove(callback, userData);
 }
 
 static bool				onPlayingCallback(
-								PlayingCallback callback,
-								void* userData,
-								void*)
+							PlayingCallback callback,
+							void* userData,
+							void*)
 {
 	callback(userData);
 	return true;
@@ -258,24 +259,6 @@ static void				onFlagHelp(const std::string&, void*)
 // user input handling
 //
 
-#if 0 // roaming, freezing, and snapping are out-of-date and so disabled
-#if defined(DEBUG)
-#define FREEZING
-#define ROAMING
-#define SNAPPING
-#endif
-#if defined(FREEZING)
-static bool				motionFreeze = false;
-#endif
-#if defined(ROAMING)
-static bool				roaming = false, roamTrack = false;
-static float			roamPos[3] = { 0.0f, 0.0f, MuzzleHeight }, roamDPos[3];
-static float			roamTheta = 0.0f, roamDTheta;
-static float			roamPhi = 0.0f, roamDPhi;
-static float			roamZoom = 60.0f, roamDZoom;
-#endif
-#endif
-
 static void				showKeyboardStatus()
 {
 	if (myTank->isKeyboardMoving())
@@ -325,124 +308,6 @@ static bool				doKey(const BzfKeyEvent& key, bool pressed)
 
 	return false;
 }
-
-// XXX -- old keyboard functions
-#if 0
-#if defined(SNAPPING)
-	static int snap = 0;
-	if (key.button == BzfKeyEvent::F11 && pressed) {
-		// snapshot
-		char filename[80];
-		sprintf(filename, "bzfi%04d.raw", snap++);
-		FILE* f = fopen(filename, "w");
-		if (f) {
-			int w, h;
-			mainWindow->getSize(w, h);
-			unsigned char* b = (unsigned char*)malloc(w * h * 3);
-			//glReadPixels(0, 0, w, h, GL_RED, GL_UNSIGNED_BYTE, b + 0 * w * h);
-			//glReadPixels(0, 0, w, h, GL_GREEN, GL_UNSIGNED_BYTE, b + 1 * w * h);
-			//glReadPixels(0, 0, w, h, GL_BLUE, GL_UNSIGNED_BYTE, b + 2 * w * h);
-			// use something like netpbm and the following command to get usable images
-			// rawtoppm -rgb 640 480 bzfi0000.raw | pnmflip -tb | pnmtojpeg --quality=100 > test.jpg
-			glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
-			fwrite(b, 3 * w * h, 1, f);
-			free(b);
-			fclose(f);
-			printError("%s: %dx%d", filename, w, h);
-		}
-	}
-#endif
-#if defined(FREEZING)
-	if (key.ascii == '`' && pressed) {
-		// toggle motion freeze
-		motionFreeze = !motionFreeze;
-	}
-	//  else
-#endif
-#if defined(ROAMING)
-	if (key.ascii == '~' && pressed) {
-		// toggle roaming
-		roaming = !roaming;
-	}
-	else if (roaming && pressed) {
-		switch (key.button) {
-			case BzfKeyEvent::Left:
-				roamDTheta = 60.0f * (roamZoom / 90.0f);
-				break;
-
-			case BzfKeyEvent::Right:
-				roamDTheta = -60.0f * (roamZoom / 90.0f);
-				break;
-
-			case BzfKeyEvent::Up:
-				roamDPhi = 60.0f * (roamZoom / 90.0f);
-				break;
-
-			case BzfKeyEvent::Down:
-				roamDPhi = -60.0f * (roamZoom / 90.0f);
-				break;
-
-			case BzfKeyEvent::End:
-				roamDPos[0] = -4.0f * TankSpeed;
-				break;
-
-			case BzfKeyEvent::Home:
-				roamDPos[0] =  4.0f * TankSpeed;
-				break;
-
-			case BzfKeyEvent::Delete:
-				roamDPos[1] =  4.0f * TankSpeed;
-				break;
-
-			case BzfKeyEvent::PageDown:
-				roamDPos[1] = -4.0f * TankSpeed;
-				break;
-
-			case BzfKeyEvent::Insert:
-				roamDPos[2] = -4.0f * TankSpeed;
-				break;
-
-			case BzfKeyEvent::PageUp:
-				roamDPos[2] =  4.0f * TankSpeed;
-				break;
-
-			case BzfKeyEvent::F9:
-				roamDZoom =  30.0;
-				break;
-
-			case BzfKeyEvent::F10:
-				roamDZoom = -30.0;
-				break;
-
-			case BzfKeyEvent::F8:
-				roamTrack = !roamTrack;
-				break;
-		}
-	}
-	//  else
-#endif
-
-	else if (keymap.isMappedTo(BzfKeyMap::SlowKeyboardMotion, key)) {
-		if (myTank->isKeyboardMoving())
-			myTank->setSlowKeyboard(pressed);
-	}
-	// Might be a direction key. Save it for later.
-	else if (myTank->isAlive()) {
-		if (!myTank->isKeyboardMoving() && pressed)
-			switch (key.button)
-			{
-			case BzfKeyEvent::Left:
-			case BzfKeyEvent::Right:
-			case BzfKeyEvent::Up:
-			case BzfKeyEvent::Down:
-				myTank->setKeyboardMoving(true);
-				showKeyboardStatus();
-				break;
-			}
-		if (myTank->isKeyboardMoving())
-			myTank->setKey(key.button, pressed);
-	}
-#endif
 
 static float getKeyValue(bool pressed)
 {
@@ -822,6 +687,227 @@ static std::string	cmdAutoPilot(const std::string&,
 	return std::string();
 }
 
+static std::string	cmdRoam(const std::string&,
+				const CommandManager::ArgList& args)
+{
+	if(args.size() == 0)
+		return "usage: roam {rotate|translate|zoom|cycle} <args>";
+	if(myTank == NULL)
+		return std::string();
+	if(args[0] == "rotate") {
+		if(args.size() != 2)
+			return "usage: roam rotate {left|right|up|down|stop}";
+		if(args[1] == "left") {
+		myTank->roamDTheta = 90.0f * (myTank->roamZoom / 90.0f);
+		}
+		else if(args[1] == "right") {
+		myTank->roamDTheta = -90.0f * (myTank->roamZoom / 90.0f);
+		}
+		else if(args[1] == "up") {
+		myTank->roamDPhi = -60.0f * (myTank->roamZoom / 90.0f);
+		}
+		else if(args[1] == "down") {
+		myTank->roamDPhi = 60.0f * (myTank->roamZoom / 90.0f);
+		}
+		else if(args[1] == "stop") {
+			myTank->roamDTheta = 0.0f;
+			myTank->roamDPhi   = 0.0f;
+			myTank->roamDPos[0] = 0.0f;
+			myTank->roamDPos[1] = 0.0f;
+			myTank->roamDPos[2] = 0.0f;
+		}
+		else {
+			return "usage: roam rotate {left|right|up|down|stop}";
+		}
+	}
+	else if(args[0] == "translate") {
+		if(args.size() != 2)
+			return "usage: roam translate {left|right|forward|backward|up|down|stop}";
+		if(args[1] == "left") {
+			myTank->roamDPos[1] = 4.0f * TankSpeed;
+		}
+		else if(args[1] == "right") {
+			myTank->roamDPos[1] = -4.0f * TankSpeed;
+		}
+		else if(args[1] == "forward") {
+			myTank->roamDPos[0] = 4.0f * TankSpeed;
+		}
+		else if(args[1] == "backward") {
+			myTank->roamDPos[0] = -4.0f * TankSpeed;
+		}
+		else if(args[1] == "up") {
+			myTank->roamDPos[2] = 4.0f * TankSpeed;
+		}
+		else if(args[1] == "down") {
+			myTank->roamDPos[2] = -4.0f * TankSpeed;
+		}
+		else if(args[1] == "stop") {
+			myTank->roamDTheta  = 0.0f;
+			myTank->roamDPhi    = 0.0f;
+			myTank->roamDPos[0] = 0.0f;
+			myTank->roamDPos[1] = 0.0f;
+			myTank->roamDPos[2] = 0.0f;
+		}
+		else {
+			return "usage: roam translate {left|right|forward|backward|up|down|stop}";
+		}
+	}
+	else if(args[0] == "zoom") {
+		if(args.size() != 2)
+			return "usage: roam zoom {in|out|normal|stop}";
+		if(args[1] == "in") {
+			myTank->roamDZoom = 50.0f;
+		}
+		else if(args[1] == "out") {
+			myTank->roamDZoom = -50.0f;
+		}
+		else if(args[1] == "stop") {
+			myTank->roamDZoom = 0.0f;
+		}
+		else if(args[1] == "normal") {
+			myTank->roamZoom = 60.0f;
+		}
+		else {
+			return "usage: roam zoom {in|out|stop}";
+		}
+	}
+	else if(args[0] == "cycle") {
+		if(args.size() != 3)
+			return "usage: roam cycle {type|subject} {forward|backward}";
+		if(args[1] == "type") {
+			int roamView = myTank->RoamView;
+			if(args[2] == "forward") {
+				roamView = (roamView + 1) % myTank->roamViewCount;
+				myTank->RoamView = (LocalPlayer::_RoamView) roamView;
+				if(myTank->RoamView == LocalPlayer::RoamViewTrack ||
+					myTank->RoamView == LocalPlayer::RoamViewFollow ||
+					myTank->RoamView == LocalPlayer::RoamViewFP) {
+					bool found = false;
+					for(int i = 0; i < maxPlayers; i++) {
+						if(player[i] && player[i]->isAlive()) {
+							myTank->roamTrackTank = i;
+							found = true;
+							break;
+						}
+					}
+					if(!found)
+						myTank->RoamView = LocalPlayer::RoamViewFree;
+				}
+				else if(myTank->RoamView == LocalPlayer::RoamViewFlag) {
+					const int maxFlags = world->getMaxFlags();
+					bool found = false;
+					for(int i = 0; i < maxFlags; i++) {
+						const Flag& flag = world->getFlag(i);
+						if(flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+							myTank->roamTrackFlag = i;
+							found = true;
+							break;
+						}
+					}
+					if(!found)
+						myTank->RoamView = LocalPlayer::RoamViewFree;
+				}
+			}
+			else if(args[2] == "backward") {
+				roamView--;
+				if(roamView < 0)
+					roamView = myTank->roamViewCount - 1;
+				myTank->RoamView = (LocalPlayer::_RoamView) roamView;
+				if(myTank->RoamView == LocalPlayer::RoamViewTrack ||
+					myTank->RoamView == LocalPlayer::RoamViewFollow ||
+					myTank->RoamView == LocalPlayer::RoamViewFP) {
+					bool found = false;
+					for(int i = 0; i < maxPlayers; i++) {
+						if(player[i] && player[i]->isAlive()) {
+							myTank->roamTrackTank = i;
+							found = true;
+							break;
+						}
+					}
+					if(!found)
+						myTank->RoamView = LocalPlayer::RoamViewFree;
+				}
+				else if(myTank->RoamView == LocalPlayer::RoamViewFlag) {
+					const int maxFlags = world->getMaxFlags();
+					bool found = false;
+					for(int i = 0; i < maxFlags; i++) {
+						const Flag& flag = world->getFlag(i);
+						if(flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+							myTank->roamTrackFlag = i;
+							found = true;
+							break;
+						}
+					}
+					if(!found)
+						myTank->RoamView = LocalPlayer::RoamViewFree;
+				}
+			}
+			else {
+				return "usage: roam cycle {type|subject} {forward|backward}";
+			}
+		}
+		else if(args[1] == "subject") {
+			if(args[2] == "forward") {
+				if(myTank->RoamView == LocalPlayer::RoamViewFree)
+					return std::string();
+				if(myTank->RoamView == LocalPlayer::RoamViewFlag) {
+					const int maxFlags = world->getMaxFlags();
+					for(int i = 1; i < maxFlags; i++) {
+						int j = (myTank->roamTrackFlag + i) % maxFlags;
+						const Flag& flag = world->getFlag(j);
+						if(flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+							myTank->roamTrackFlag = j;
+						}
+					}
+				}
+				else {
+					for(int i = 0; i < maxPlayers; i++) {
+						int j = (myTank->roamTrackTank + i) % maxPlayers;
+						if(player[j] && player[j]->isAlive()) {
+							myTank->roamTrackTank = j;
+							break;
+						}
+					}
+				}
+			}
+			else if(args[2] == "backward") {
+				if(myTank->RoamView == LocalPlayer::RoamViewFree)
+					return std::string();
+				if(myTank->RoamView == LocalPlayer::RoamViewFlag) {
+					const int maxFlags = world->getMaxFlags();
+					for(int i = 1; i < maxFlags; i++) {
+						int j = (myTank->roamTrackFlag - i + maxFlags) % maxFlags;
+						const Flag& flag = world->getFlag(j);
+						if(flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+							myTank->roamTrackFlag = j;
+							break;
+						}
+					}
+				}
+				else {
+					for(int i = 0; i < maxPlayers; i++) {
+						int j = (myTank->roamTrackTank - i + maxPlayers) % maxPlayers;
+						if(player[j] && player[j]->isAlive()) {
+							myTank->roamTrackTank = j;
+							break;
+						}
+					}
+				}
+			}
+			else {
+				return "usage: roam cycle {type|subject} {forward|backward}";
+			}
+		}
+		else {
+			return "usage: roam cycle {type|subject} {forward|backward}";
+		}
+	}
+	else {
+		return "usage: roam {rotate|translate|zoom|cycle} <args>";
+	}
+	return std::string();
+}
+
 /* XXX -- for testing forced recreation of OpenGL context
 		case 'o':
 		if (pressed) {
@@ -845,12 +931,13 @@ public:
 };
 static const CommandListItem commandList[] = {
 	{ "fire",		&cmdFire,		"fire [stop]:  start/stop firing" },
-	{ "drop",		&cmdDrop,		"drop:  drop a flag" },
-	{ "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
+	{ "drop",		&cmdDrop,		"drop:  drop current flag" },
+	{ "identify",		&cmdIdentify,		"identify:  identify/lock-on-to player in view" },
 	{ "jump",		&cmdJump,		"jump:  make player jump" },
 	{ "send",		&cmdSend,		"send {all|team|nemesis}:  start composing a message" },
 	{ "pause",		&cmdPause,		"pause:  pause/resume" },
-	{ "autopilot",	&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" }
+	{ "autopilot",		&cmdAutoPilot,		"autopilot:  set/unset autopilot bot code" },
+	{ "roam",		&cmdRoam,		"roam {rotate|translate|zoom|cycle} <args>: roam around" }
 };
 // ---- commands ----
 
@@ -2352,8 +2439,13 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 	time_t timeout=time(0) + 10;  // give us 10 sec
 
 	// tell server we want to join
-	serverLink->sendEnter(TankPlayer, myTank->getTeam(),
+	if(BZDB->get("playerType") == "tank") {
+		serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 				myTank->getCallSign(), myTank->getEmailAddress());
+	} else if(BZDB->get("playerType") == "observer") {
+		serverLink->sendEnter(JAFOPlayer, myTank->getTeam(),
+				myTank->getCallSign(), myTank->getEmailAddress());
+	}
 
 	// wait for response
 	uint16_t code, len;
@@ -2876,10 +2968,6 @@ static void				playingLoop()
 		}
 
 		// handle events
-#if defined(ROAMING)
-		roamDPos[0] = roamDPos[1] = roamDPos[2] = 0.0f;
-		roamDTheta = roamDPhi = roamDZoom = 0.0f;
-#endif
 #ifndef macintosh
 		while (!CommandsStandard::isQuit() && display->isEventPending())
 #endif
@@ -2918,22 +3006,22 @@ static void				playingLoop()
 			}
 		}
 
-#if defined(ROAMING)
-		{
-			// move roaming camera
+		// move roaming camera
+		if(myTank != NULL) {
 			float c, s;
-			c = cosf(roamTheta * M_PI / 180.0f);
-			s = sinf(roamTheta * M_PI / 180.0f);
-			roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
-			roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
-			roamPos[2] += dt * roamDPos[2];
-			roamTheta  += dt * roamDTheta;
-			roamPhi    += dt * roamDPhi;
-			roamZoom   += dt * roamDZoom;
-			if (roamZoom < 1.0f) roamZoom = 1.0f;
-			else if (roamZoom > 179.0f) roamZoom = 179.0f;
+			c = cosf(myTank->roamTheta * M_PI / 180.0f);
+			s = sinf(myTank->roamTheta * M_PI / 180.0f);
+			myTank->roamPos[0] += dt * (c * myTank->roamDPos[0] - s * myTank->roamDPos[1]);
+			myTank->roamPos[1] += dt * (c * myTank->roamDPos[1] + s * myTank->roamDPos[0]);
+			myTank->roamPos[2] += dt * myTank->roamDPos[2];
+			if(myTank->roamPos[2] < MuzzleHeight)
+				myTank->roamPos[2] = MuzzleHeight;
+			myTank->roamTheta  += dt * myTank->roamDTheta;
+			myTank->roamPhi    += dt * myTank->roamDPhi;
+			myTank->roamZoom   += dt * myTank->roamDZoom;
+			if(myTank->roamZoom < 1.0f) myTank->roamZoom = 1.0f;
+			else if(myTank->roamZoom > 179.0f) myTank->roamZoom = 179.0f;
 		}
-#endif
 
 		// update pause countdown
 		if (!myTank) pauseCountdown = 0.0f;
@@ -3005,36 +3093,6 @@ static void				playingLoop()
 				frameCount = 0;
 			}
 
-			// get tank camera info
-/* FIXME -- must move this to continue supporting roaming
-#if defined(ROAMING)
-			if (roaming) {
-#ifdef FOLLOWTANK
-				eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
-				eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
-				eyePoint[2] = myTankPos[2] + MuzzleHeight * 3;
-				targetPoint[0] = eyePoint[0] + myTankDir[0];
-				targetPoint[1] = eyePoint[1] + myTankDir[1];
-				targetPoint[2] = eyePoint[2] + myTankDir[2];
-#else
-				float dir[3];
-				dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
-				dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
-				dir[2] = sinf(roamPhi * M_PI / 180.0f);
-				eyePoint[0] = roamPos[0];
-				eyePoint[1] = roamPos[1];
-				eyePoint[2] = roamPos[2];
-				if (!roamTrack) {
-					targetPoint[0] = eyePoint[0] + dir[0];
-					targetPoint[1] = eyePoint[1] + dir[1];
-					targetPoint[2] = eyePoint[2] + dir[2];
-				}
-#endif
-				fov = roamZoom * M_PI / 180.0f;
-			}
-#endif
-*/
-
 			// if we're paused or blind then swap out the static scene and
 			// don't collect dynamic nodes
 			SceneNode* staticScene = NULL;
@@ -3071,7 +3129,8 @@ static void				playingLoop()
 							p->updateSparks(dt);
 							p->addShotsSceneNodes(dynamicGroup, colorblind);
 							if (p->getFlag() != CloakingFlag)
-								p->addPlayerSceneNode(dynamicGroup, colorblind);
+								if(!(myTank->RoamView == LocalPlayer::RoamViewFP && myTank->roamTrackTank == i))
+									p->addPlayerSceneNode(dynamicGroup, colorblind);
 						}
 					}
 
@@ -3105,42 +3164,118 @@ static void				playingLoop()
 
 			// set the view parameters
 			{
-				// choose field-of-view
-				float fov = 60.0f;
-				if (myTank != NULL) {
-					if (myTank->getFlag() == WideAngleFlag)
-						fov *= 2.0f;
-					else if (BZDB->isTrue("displayBinoculars"))
-						fov *= 0.25f;
-				}
-				// compute eye and target points (with rotated view direction)
-				const float* pos;
-				const float* dir;
-				if (myTank == NULL) {
-					static const float defaultPos[3] = { 0.0f, 0.0f, 0.0f };
-					static const float defaultDir[3] = { 1.0f, 0.0f, 0.0f };
-					pos = defaultPos;
-					dir = defaultDir;
-				}
-				else {
-					pos = myTank->getPosition();
-					dir = myTank->getForward();
-				}
-				float eye[3], focus[3];
-				eye[0]   = pos[0];
-				eye[1]   = pos[1];
-				eye[2]   = pos[2] + MuzzleHeight;
-				focus[0] = eye[0] + dir[0];
-				focus[1] = eye[1] + dir[1];
-				focus[2] = eye[2] + dir[2];
+				if(BZDB->get("playerType") == "tank" || myTank == NULL) {
+					// choose field-of-view
+					float fov = 60.0f;
+					if (myTank != NULL) {
+						if (myTank->getFlag() == WideAngleFlag)
+							fov *= 2.0f;
+						else if (BZDB->isTrue("displayBinoculars"))
+							fov *= 0.25f;
+					}
+					// compute eye and target points (with rotated view direction)
+					const float* pos;
+					const float* dir;
+					if (myTank == NULL) {
+						static const float defaultPos[3] = { 0.0f, 0.0f, 0.0f };
+						static const float defaultDir[3] = { 1.0f, 0.0f, 0.0f };
+						pos = defaultPos;
+						dir = defaultDir;
+					}
+					else {
+						pos = myTank->getPosition();
+						dir = myTank->getForward();
+					}
+					float eye[3], focus[3];
+					eye[0]   = pos[0];
+					eye[1]   = pos[1];
+					eye[2]   = pos[2] + MuzzleHeight;
+					focus[0] = eye[0] + dir[0];
+					focus[1] = eye[1] + dir[1];
+					focus[2] = eye[2] + dir[2];
 
-				// set the view parameters
-				SCENEMGR->getView().setView(eye, focus);
-				SCENEMGR->getView().setProjection(fov,
+					// set the view parameters
+					SCENEMGR->getView().setView(eye, focus);
+					SCENEMGR->getView().setProjection(fov,
 									static_cast<float>(wWindow) /
 										static_cast<float>(hWindow),
 									1.1f, 2.0f * WorldSize);
-				SCENEMGR->getView().setOffset(0.0f, 0.0f);
+					SCENEMGR->getView().setOffset(0.0f, 0.0f);
+				}
+				else if(BZDB->get("playerType") == "observer") {
+					float fov = myTank->roamZoom;
+					float eye[3], focus[3];
+					float roamViewAngle;
+
+					if(player[myTank->roamTrackTank] && myTank->RoamView != LocalPlayer::RoamViewFree) {
+					  RemotePlayer *target = player[myTank->roamTrackTank];
+					  const float *targetTankDir = target->getForward();
+					  if(myTank->RoamView == LocalPlayer::RoamViewTrack) {
+					    // fixed camera tracking target
+					    eye[0] = myTank->roamPos[0];
+					    eye[1] = myTank->roamPos[1];
+					    eye[2] = myTank->roamPos[2];
+					    focus[0] = target->getPosition()[0];
+					    focus[1] = target->getPosition()[1];
+					    focus[2] = target->getPosition()[2];
+					  }
+					  else if(myTank->RoamView == LocalPlayer::RoamViewFollow) {
+					    // camera following target
+					    eye[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+					    eye[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+					    eye[2] = target->getPosition()[2] + MuzzleHeight * 6;
+					    focus[0] = target->getPosition()[0];
+					    focus[1] = target->getPosition()[1];
+					    focus[2] = target->getPosition()[2];
+					  }
+					  else if(myTank->RoamView == LocalPlayer::RoamViewFP) {
+					    // target's view
+					    eye[0] = target->getPosition()[0];
+					    eye[1] = target->getPosition()[1];
+					    eye[2] = target->getPosition()[2] + MuzzleHeight;
+					    focus[0] = eye[0] + targetTankDir[0];
+					    focus[1] = eye[1] + targetTankDir[1];
+					    focus[2] = eye[2] + targetTankDir[2];
+					  }
+					  else if(myTank->RoamView == LocalPlayer::RoamViewFlag) {
+					    // track (team) flag
+					    Flag &targetFlag = world->getFlag(myTank->roamTrackFlag);
+					    eye[0] = myTank->roamPos[0];
+					    eye[1] = myTank->roamPos[1];
+					    eye[2] = myTank->roamPos[2];
+					    focus[0] = targetFlag.position[0];
+					    focus[1] = targetFlag.position[1];
+					    focus[2] = targetFlag.position[2];
+					  }
+					  roamViewAngle = (float) (atan2(focus[1] - eye[1], focus[0] - eye[0]) * 180.0f / M_PI);
+					}
+					else {
+					  // free roaming
+					  float dir[3];
+					  dir[0] = cosf(myTank->roamPhi * M_PI / 180.0f) * cosf(myTank->roamTheta * M_PI / 180.0f);
+					  dir[1] = cosf(myTank->roamPhi * M_PI / 180.0f) * sinf(myTank->roamTheta * M_PI / 180.0f);
+					  dir[2] = sinf(myTank->roamPhi * M_PI / 180.0f);
+					  eye[0] = myTank->roamPos[0];
+					  eye[1] = myTank->roamPos[1];
+					  eye[2] = myTank->roamPos[2];
+					  focus[0] = eye[0] + dir[0];
+					  focus[1] = eye[1] + dir[1];
+					  focus[2] = eye[2] + dir[2];
+					  roamViewAngle = myTank->roamTheta;
+					}
+					// virtPos[2] = 0 makes a bit more sense here in terms of radar,
+					// but it makes the screen go yellow when you move above a teleporter
+					float virtPos[] = {eye[0], eye[1], eye[2]};
+					myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
+
+					// set the view parameters
+					SCENEMGR->getView().setView(eye, focus);
+					SCENEMGR->getView().setProjection(fov,
+									static_cast<float>(wWindow) /
+										static_cast<float>(hWindow),
+									1.1f, 2.0f * WorldSize);
+					SCENEMGR->getView().setOffset(0.0f, 0.0f);
+				}
 			}
 
 			// set scene fade
@@ -3288,37 +3423,44 @@ static void				playingLoop()
 		if (myTank) {
 			BZDB->set("outputScore", string_util::format("%d", myTank->getScore()));
 
-			switch (myTank->getFiringStatus()) {
-				case LocalPlayer::Deceased:
-					MSGMGR->insert("alertStatus", "Dead", redColor);
-					break;
+			if(BZDB->get("playerType") == "tank") {
+				switch (myTank->getFiringStatus()) {
+					case LocalPlayer::Deceased:
+						MSGMGR->insert("alertStatus", "Dead", redColor);
+						break;
 
-				case LocalPlayer::Ready:
-					if (myTank->getFlag() != NoFlag &&
-						Flag::getType(myTank->getFlag()) == FlagSticky &&
-						world->allowShakeTimeout()) {
-					  /* have a bad flag -- show time left 'til we shake it */
-					  MSGMGR->insert("alertStatus", string_util::format("%.1f",
+					case LocalPlayer::Ready:
+						if (myTank->getFlag() != NoFlag &&
+							Flag::getType(myTank->getFlag()) == FlagSticky &&
+							world->allowShakeTimeout()) {
+						  /* have a bad flag -- show time left 'til we shake it */
+						  MSGMGR->insert("alertStatus", string_util::format("%.1f",
 									myTank->getFlagShakingTime()), yellowColor);
-					}
-					else {
-					  MSGMGR->insert("alertStatus", "Ready", greenColor);
-					}
-					break;
+						}
+						else {
+						  MSGMGR->insert("alertStatus", "Ready", greenColor);
+						}
+						break;
 
-				case LocalPlayer::Loading:
-					MSGMGR->insert("alertStatus",
+					case LocalPlayer::Loading:
+						MSGMGR->insert("alertStatus",
 									string_util::format("Reloaded in %.1f",
 									myTank->getReloadTime()), redColor);
-					break;
+						break;
 
-				case LocalPlayer::Sealed:
-					MSGMGR->insert("alertStatus", "Sealed", redColor);
-					break;
+					case LocalPlayer::Sealed:
+						MSGMGR->insert("alertStatus", "Sealed", redColor);
+						break;
 
-				case LocalPlayer::Zoned:
-					MSGMGR->insert("alertStatus", "Zoned", redColor);
-					break;
+					case LocalPlayer::Zoned:
+						MSGMGR->insert("alertStatus", "Zoned", redColor);
+						break;
+				}
+			}
+			else if(BZDB->get("playerType") == "observer") {
+				if(myTank != NULL) {
+					MSGMGR->insert("alertStatus", myTank->getRoamingStatus(player, world), whiteColor);
+				}
 			}
 		}
 		else {

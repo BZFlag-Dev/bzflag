@@ -45,13 +45,13 @@
 #include "ConfigFileManager.h"
 #include <iostream>
 
-static const char*		argv0;
-static BzfDisplay*		display = NULL;
-static BzfWindow*		window = NULL;
+static const char*			argv0;
+static BzfDisplay*			display = NULL;
+static BzfWindow*			window = NULL;
 static bool				echoToConsole = false;
 static bool				useFullscreen = false;
 static bool				allowResolutionChange = false;
-static const char*		commandPrompt = "> ";
+static const char*			commandPrompt = "> ";
 
 //
 // error handlers.  fatalErrorCallback() is used when the app is
@@ -567,28 +567,28 @@ static DefaultDBItem		defaultDBItems[] = {
 	{ "connect",			NULL,		false, StateDatabase::ReadWrite, NULL },
 	{ "connectError",		NULL,		false, StateDatabase::ReadOnly,  NULL },
 	{ "connectStatus",		NULL,		false, StateDatabase::ReadOnly,  NULL },
-	{ "displayBinoculars",	NULL,		false, StateDatabase::ReadWrite, NULL },
+	{ "displayBinoculars",		NULL,		false, StateDatabase::ReadWrite, NULL },
 	{ "displayConsole",		"0",		false, StateDatabase::ReadWrite, onConsole },
-	{ "displayCrosshair",	NULL,		true,  StateDatabase::ReadWrite, NULL },
+	{ "displayCrosshair",		NULL,		true,  StateDatabase::ReadWrite, NULL },
 	{ "displayCursor",		"1",		true,  StateDatabase::ReadWrite, onCursorChanged },
-	{ "displayFlagHelp",	NULL,		false, StateDatabase::ReadWrite, NULL },
-	{ "displayGrabCursor",	NULL,		true,  StateDatabase::ReadWrite, NULL },
+	{ "displayFlagHelp",		NULL,		false, StateDatabase::ReadWrite, NULL },
+	{ "displayGrabCursor",		NULL,		true,  StateDatabase::ReadWrite, NULL },
 	{ "displayRadar",		"1",		true,  StateDatabase::ReadWrite, NULL },
-	{ "displayRadarRange",	NULL,		false, StateDatabase::ReadWrite, NULL },
+	{ "displayRadarRange",		NULL,		false, StateDatabase::ReadWrite, NULL },
 	{ "displayScore",		NULL,		false, StateDatabase::ReadWrite, NULL },
 	{ "displayView",		"normal",	true,  StateDatabase::ReadWrite, NULL },
 	{ "featuresAudio",		"1",		false, StateDatabase::ReadOnly,  NULL },
 	{ "featuresGamma",		"1",		false, StateDatabase::ReadOnly,  NULL },
-	{ "featuresResolutions","",			false, StateDatabase::ReadOnly,  NULL },
-	{ "featuresServers",	NULL,		false, StateDatabase::ReadOnly,  NULL },
+	{ "featuresResolutions",	"",		false, StateDatabase::ReadOnly,  NULL },
+	{ "featuresServers",		NULL,		false, StateDatabase::ReadOnly,  NULL },
 	{ "audioVolume",		"10",		true,  StateDatabase::ReadWrite, NULL },
 	{ "audioMute",			"0",		false, StateDatabase::ReadWrite, NULL },
 	{ "renderBlending",		"1",		true,  StateDatabase::ReadWrite, onBlendingChanged },
-	{ "renderDithering",	"1",		true,  StateDatabase::ReadWrite, onDitheringChanged },
+	{ "renderDithering",		"1",		true,  StateDatabase::ReadWrite, onDitheringChanged },
 	{ "renderGamma",		"2.0",		true,  StateDatabase::ReadWrite, onGammaChanged },
 	{ "renderMaxLOD",		NULL,		true,  StateDatabase::ReadWrite, NULL },
 	{ "renderQuality",		"2",		true,  StateDatabase::ReadWrite, NULL },
-	{ "renderSmoothing",	"1",		true,  StateDatabase::ReadWrite, onSmoothingChanged },
+	{ "renderSmoothing",		"1",		true,  StateDatabase::ReadWrite, onSmoothingChanged },
 	{ "renderTexturing",	"linearmipmapnearest",	true,  StateDatabase::ReadWrite, onTexturingChanged },
 	{ "infoLatitude",		"37.5",		true,  StateDatabase::ReadWrite, NULL },
 	{ "infoLongitude",		"122.0",	true,  StateDatabase::ReadWrite, NULL },
@@ -605,7 +605,7 @@ static DefaultDBItem		defaultDBItems[] = {
 	{ "timeFPS",			NULL,		false, StateDatabase::ReadOnly,  NULL },
 	{ "multisample",		NULL,		false, StateDatabase::ReadOnly,  NULL },
 	{ "windowGeometry",		"fullscreen",	true,  StateDatabase::ReadWrite, NULL },
-	{ "windowResolution",	NULL,		true,  StateDatabase::ReadWrite, onResolutionChanged }
+	{ "windowResolution",		NULL,		true,  StateDatabase::ReadWrite, onResolutionChanged }
 };
 
 // default key bindings
@@ -633,13 +633,41 @@ static const char*		bindingList[] = {
 		"bind \"F\" down \"toggle displayFlagHelp\"",
 		"bind \"1\" down \"set displayRadarRange 0.25\"",
 		"bind \"2\" down \"set displayRadarRange 0.50\"",
-        "bind \"3\" down \"set displayRadarRange 1.00\"",
-        "bind \"9\" down \"mult displayRadarRange 0.95\"",
-        "bind \"0\" down \"mult displayRadarRange 1.05263\"",
+	        "bind \"3\" down \"set displayRadarRange 1.00\"",
+	        "bind \"9\" down \"mult displayRadarRange 0.95\"",
+	        "bind \"0\" down \"mult displayRadarRange 1.05263\"",
 		"bind \"Pause\" down \"pause\"",
 		"bind \"P\" down \"pause\"",
 		"bind \"T\" down \"toggle displayFPS\"",
-//		"bind \"A\" down \"set motionSlow\"",
+		"bind \"Left Arrow\" down \"roam rotate left\"",
+		"bind \"Shift+Left Arrow\" down \"roam translate left\"",
+		"bind \"Right Arrow\" down \"roam rotate right\"",
+		"bind \"Shift+Right Arrow\" down \"roam translate right\"",
+		"bind \"Up Arrow\" down \"roam rotate down\"",
+		"bind \"Shift+Up Arrow\" down \"roam translate forward\"",
+		"bind \"Alt+Up Arrow\" down \"roam translate up\"",
+		"bind \"Down Arrow\" down \"roam rotate up\"",
+		"bind \"Shift+Down Arrow\" down \"roam translate backward\"",
+		"bind \"Alt+Down Arrow\" down \"roam translate down\"",
+		"bind \"F6\" down \"roam cycle subject backward\"",
+		"bind \"F7\" down \"roam cycle subject forward\"",
+		"bind \"F8\" down \"roam cycle type forward\"",
+		"bind \"F9\" down \"roam zoom in\"",
+		"bind \"F10\" down \"roam zoom out\"",
+		"bind \"F11\" down \"roam zoom normal\"",
+		"bind \"Left Arrow\" up \"roam rotate stop\"",
+		"bind \"Shift+Left Arrow\" up \"roam translate stop\"",
+		"bind \"Right Arrow\" up \"roam rotate stop\"",
+		"bind \"Shift+Right Arrow\" up \"roam translate stop\"",
+		"bind \"Up Arrow\" up \"roam rotate stop\"",
+		"bind \"Shift+Up Arrow\" up \"roam translate stop\"",
+		"bind \"Alt+Up Arrow\" up \"roam translate stop\"",
+		"bind \"Down Arrow\" up \"roam rotate stop\"",
+		"bind \"Shift+Down Arrow\" up \"roam translate stop\"",
+		"bind \"Alt+Down Arrow\" up \"roam translate stop\"",
+		"bind \"F9\" up \"roam zoom stop\"",
+		"bind \"F10\" up \"roam zoom stop\"",
+//	"bind \"A\" down \"set motionSlow\"",
 //		"bind \"A\" up   \"unset motionSlow\"",
 };
 
@@ -698,9 +726,9 @@ int						main(int argc, char** argv)
 
 	// echo some stuff to other buffers
 	MSGMGR->get("messages")->addCallback(&onMessageCB,
-								MSGMGR->get("console"));
+							MSGMGR->get("console"));
 	MSGMGR->get("alertGameOver")->addCallback(&onMessageCB,
-								MSGMGR->get("messages"));
+							MSGMGR->get("messages"));
 
 	// register some commands
 	CommandsStandard::add();

@@ -20,6 +20,7 @@
 #include "ServerLink.h"
 #include "sound.h"
 #include "Flag.h"
+#include "StateDatabase.h"
 #include "BzfEvent.h"
 #include <stdlib.h>
 #include <math.h>
@@ -124,6 +125,17 @@ LocalPlayer*			LocalPlayer::mainPlayer = NULL;
 LocalPlayer::LocalPlayer(PlayerId id,
 								const char* name, const char* email) :
 								BaseLocalPlayer(id, name, email),
+								RoamView(RoamViewFree),
+								roamTrackTank(0),
+								roamTrackFlag(0),
+								roamPos(0.0, 0.0, MuzzleHeight),
+								roamDPos(0.0, 0.0, 0.0),
+								roamTheta(0.0),
+								roamDTheta(0.0),
+								roamPhi(0.0),
+								roamDPhi(0.0),
+								roamZoom(60.0),
+								roamDZoom(0.0),
 								location(Dead),
 								firingStatus(Deceased),
 								flagShakingTime(0.0f),
@@ -137,6 +149,9 @@ LocalPlayer::LocalPlayer(PlayerId id,
 								target(NULL),
 								nemesis(NULL)
 {
+	if(BZDB->get("playerType") == "observer") {
+		setStatus(Alive);
+	}
 	// initialize shots array to no shots fired
 	const int numShots = World::getWorld()->getMaxShots();
 	shots = new LocalShotPath*[numShots];
@@ -159,9 +174,25 @@ LocalPlayer::~LocalPlayer()
 		antidoteFlag->unref();
 }
 
-LocalPlayer*			LocalPlayer::getMyTank()
+LocalPlayer*				LocalPlayer::getMyTank()
 {
 	return mainPlayer;
+}
+
+std::string				LocalPlayer::getRoamingStatus(RemotePlayer** players, World* world) {
+	switch(RoamView) {
+		case RoamViewTrack:
+			return std::string("Tracking ") + players[roamTrackTank]->getCallSign();
+		case RoamViewFollow:
+			return std::string("Following ") + players[roamTrackTank]->getCallSign();
+		case RoamViewFP:
+			return std::string("Driving with ") + players[roamTrackTank]->getCallSign();
+		case RoamViewFlag:
+			return std::string("Tracking ") + Flag::getName(world->getFlag(roamTrackFlag).id) + " Flag";
+		case RoamViewFree:
+		default:
+			return std::string("Roaming");
+	}
 }
 
 void					LocalPlayer::setMyTank(LocalPlayer* player)
@@ -217,6 +248,8 @@ void					LocalPlayer::doUpdate(float dt)
 
 void					LocalPlayer::doUpdateMotion(float dt)
 {
+	if(BZDB->get("playerType") == "observer")
+		return;
 	static const float MinSearchStep = 0.0001f;
 	static const int MaxSearchSteps = 7;
 	static const int MaxSteps = 4;
@@ -737,6 +770,8 @@ void					LocalPlayer::setPause(bool pause)
 
 bool					LocalPlayer::fireShot()
 {
+	if(BZDB->get("playerType") == "observer")
+		return true;
 	// find an empty slot
 	const int numShots = World::getWorld()->getMaxShots();
 	int i;
