@@ -26,6 +26,21 @@
 #include "StdBothUI.h"
 #include "global.h"
 
+unsigned long __stdcall winInput(void *that)
+{
+  StdBothUI *input = (StdBothUI*)that;
+  unsigned long numRead;
+
+  while (WaitForSingleObject(input->processedEvent, INFINITE) == WAIT_OBJECT_0) {
+    numRead = 0;
+    ReadFile(input->console, &input->buffer[input->pos], MessageLen-input->pos, &numRead, NULL);
+    if (numRead > 0) {
+      input->pos += numRead;
+      SetEvent(input->readEvent);
+    }
+  }
+  return 0;
+}
 
 // add this UI to the map
 UIAdder StdBothUI::uiAdder("stdboth", &StdBothUI::creator);
@@ -33,12 +48,12 @@ UIAdder StdBothUI::uiAdder("stdboth", &StdBothUI::creator);
 StdBothUI::StdBothUI()
 {
 #ifdef _WIN32
-  unsigned long oldMode, newMode;
+  unsigned long tid;
   console = GetStdHandle(STD_INPUT_HANDLE);
-  GetConsoleMode(console, &oldMode);
-  newMode = oldMode & ~ENABLE_LINE_INPUT;
-  SetConsoleMode(console, newMode);
-
+  readEvent = CreateEvent(NULL,FALSE,FALSE,NULL);
+  processedEvent = CreateEvent(NULL,FALSE,TRUE,NULL);
+  thread = CreateThread(NULL,0,winInput,this,0,&tid);
+  pos = 0;
 #endif
 }
 
@@ -47,27 +62,30 @@ void StdBothUI::outputMessage(const string& msg) {
 }
 
 
+#ifdef _WIN32
+
+bool StdBothUI::checkCommand(string& str) {
+  if (WaitForSingleObject(readEvent, 100) == WAIT_OBJECT_0) {
+    if (pos > 2) {
+      if ((buffer[pos-1] == '\n') || (buffer[pos-1] == '\r') || (pos == MessageLen)) {
+        buffer[pos-2] = '\0';
+        str = buffer;
+	pos = 0;
+	SetEvent(processedEvent);
+	return true;
+      }
+    }
+    SetEvent(processedEvent);
+  }
+  return false;
+}
+
+#else
+
 bool StdBothUI::checkCommand(string& str) {
   static char buffer[MessageLen + 1];
   static int pos = 0;
-  bool gotChar = false;
 
-#ifdef _WIN32
-  unsigned long numRead = 0;
-  INPUT_RECORD inputEvent;
-  if (WaitForSingleObject(console, 1000) == WAIT_OBJECT_0) {
-    PeekConsoleInput(console, &inputEvent, 1, &numRead);
-    if (numRead > 0) {
-      if ((inputEvent.EventType  != KEY_EVENT)
-      ||  (inputEvent.Event.KeyEvent.bKeyDown == 0)
-      ||  (inputEvent.Event.KeyEvent.uChar.AsciiChar == 0)) {
-        ReadConsoleInput(console, &inputEvent, 1, &numRead);
-      }
-      else
-        gotChar = 0 != ReadFile(console, &buffer[pos], 1, &numRead, NULL);
-    }
-  }
-#else
   fd_set rfds;
   timeval tv;
   FD_ZERO(&rfds);
@@ -76,11 +94,6 @@ bool StdBothUI::checkCommand(string& str) {
   tv.tv_usec = 0;
   if (select(1, &rfds, NULL, NULL, &tv) > 0) {
     read(0, &buffer[pos], 1);
-    gotChar = true;
-  }
-#endif
-
-  if (gotChar) {
     if (buffer[pos] == '\n' || pos == MessageLen - 1) {
       buffer[pos] = '\0';
       str = buffer;
@@ -94,6 +107,7 @@ bool StdBothUI::checkCommand(string& str) {
   }
   return false;
 }
+#endif
 
 
 BZAdminUI* StdBothUI::creator(const map<PlayerId, string>&, PlayerId) {

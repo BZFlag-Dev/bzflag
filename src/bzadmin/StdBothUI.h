@@ -38,7 +38,12 @@ public:
 
   static UIAdder uiAdder;
 #ifdef _WIN32
+ public:
   HANDLE console;
+  HANDLE readEvent, processedEvent;
+  HANDLE thread;
+  char buffer[MessageLen + 1];
+  int pos;
 #endif
 };
 
