@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* observers == a team
+
 * move team base packing into WorldInfo (bzfs)
   and add height (z)
 
