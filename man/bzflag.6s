@@ -14,6 +14,7 @@ BZFlag \- a tank battle game
 [\fB\-interface \fIinterface\fR]
 [\fB\-latitude \fIlatitude\fR]
 [\fB\-list \fIurl\fR]
+[\fB\-locale \fIlocale\fR]
 [\fB\-longitude \fIlongitude\fR]
 [\fB\-multisample\fR]
 [\fB\-mute\fR]
@@ -102,9 +103,6 @@ multicast capable interface is used by default.
 \fB-latitude\fI latitude\fR
 Uses \fIlatitude\fR when computing celesital object positions.
 .TP
-\fB-longitude\fI longitude\fR
-Uses \fIlongitude\fR when computing celesital object positions.
-.TP
 \fB-list\fI url\fR
 Look for \fBbzfls\fR servers using \fIurl\fR.  A built-in url is
 used by default (the same url is the default for \fBbzfs\fR).
@@ -113,6 +111,12 @@ If \fIurl\fR is \fIdefault\fR then the url is reset to the built-in
 url (the url is remembered across invokations of \fBbzflag\fR).
 \fBBzfls\fR servers keep a list of \fBbzfs\fR servers accessible
 from the internet and are queried when using the Find Server menu.
+.TP
+\fB-locale\fI locale\fR
+Set the locale used to display messages, menus, hud alerts, etc.
+.TP
+\fB-longitude \fIlongitude\fR
+Uses \fIlongitude\fR when computing celesital object positions.
 .TP
 .B -multisample
 Uses a multisample buffer for rendering.  If multisampling isn't
