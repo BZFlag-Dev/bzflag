@@ -160,7 +160,7 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 std::string WordFilter::expressionFromString(const std::string &word) const
 {
   /* create the regular expression description */
-  std::string expression = word;
+  std::string expression;
   unsigned int length = word.length();
   char c[8];
   
@@ -170,6 +170,17 @@ std::string WordFilter::expressionFromString(const std::string &word) const
     // convert to lowercase for simplicity and speed
     c[0] = tolower(word[i]);
     
+    /* we specifically will create a regular expression that should at least
+     * match exactly the given input, including any spaces or special
+     * characters.  including spaces or other characters in the input will
+     * make them required to create a match.  BUT.. they need to be escaped
+     * so that the regexp compiles properly.
+     */
+    if (( c[0] < 48 ) || ((c[0] > 57) && (c[0] < 65)) || ((c[0] > 90) && (c[0] < 97)) || (c[0] > 122)) {
+      /* escape the non-alphanumeric */
+      c[1] = c[0];
+      c[0] = '\\';
+    }
     /* character classes for l33t-speak */
     if ( c[0] == 'l' ) {
       c[1] = 'i';
@@ -177,22 +188,25 @@ std::string WordFilter::expressionFromString(const std::string &word) const
       c[3] = '|';
       c[4] = '/';
       c[5] = '\\';
+      //      c[6] = '\\';
     } else if ( c[0] == 'i' ) {
       c[1] = 'l';
       c[2] = '|';
       c[3] = '!';
       c[4] = '/';
       c[5] = '\\';
+      //      c[6] = '\\';
     } else if ( c[0] == 'e' ) {
       c[1] = '3';
     } else if ( c[0] == 's' ) {
-      c[1] = '$';
+      c[1] = '$'; // should never be the last character
       c[2] = 'z';
       c[3] = '5';
     } else if ( c[0] == 't' ) {
       c[1] = '+';
     } else if ( c[0] == 'c' ) {
-      c[1] = '(';
+      c[1] = '\\';
+      c[2] = '(';
     } else if ( c[0] == 'a' ) {
       c[1] = '4';
       c[2] = '@';
@@ -206,12 +220,6 @@ std::string WordFilter::expressionFromString(const std::string &word) const
       c[1] = 's';
     }
     // need to handle 'f' special for f=>(f|ph)
-
-    /* we specifically will create a regular expression that should at least
-     * match exactly the given input, including any spaces or special
-     * characters.  including spaces or other characters in the input will
-     * make them required to create a match.
-     */
     
     /* append multi-letter expansions */
     if (c[0] == 'f') {
@@ -245,7 +253,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
     
   } // end iteration over word letters
   
-  // std::cout << "[" <<  expression << "]" << std::endl;
+  //  std::cout << "[" <<  expression << "]" << std::endl;
 
   return expression;
 }
@@ -360,24 +368,32 @@ WordFilter::WordFilter()
 
   for (std::set<filter_t, expressionCompare>::iterator i=suffixes.begin(); \
        i != suffixes.end(); ++i) {
-    std::cout << "suffix: " << i->word << std::endl;
-    //    i->expression = this->expressionFromString(i->word);
+    std::cout << "suffix:     " << i->word << std::endl;
+    i->expression = this->expressionFromString(i->word);
+    std::cout << "expression: " << i->expression << std::endl;
   }
 
   /* PREFIXES */
 
   // bz-specific
+
+#if 0
+  /* XXX adding prefixes significantly increases the expression count
+   * and is rather expensive (slow)
+   */
   fix.word = "bz";
-  suffixes.insert(fix);
+  prefixes.insert(fix);
   fix.word = "bez";
-  suffixes.insert(fix);
+  prefixes.insert(fix);
   fix.word = "beze";
-  suffixes.insert(fix);
+  prefixes.insert(fix);
   
   for (std::set<filter_t, expressionCompare>::iterator i=prefixes.begin(); i != prefixes.end(); ++i) {
-    std::cout << "suffix: " << i->word << std::endl;
-    //    this->expressionFromString(i->word);
+    std::cout << "suffix:     " << i->word << std::endl;
+    i->expression = this->expressionFromString(i->word);
+    std::cout << "expression: " << i->expression << std::endl;
   }
+#endif
 
   return;
 }
@@ -530,6 +546,19 @@ bool WordFilter::filter(char *input, bool simple) const
   return aggressiveFilter(input);
 }
 
+void WordFilter::outputFilter(void) const
+{
+  for (int i=0; i < MAX_FILTERS; ++i) {
+    int count=0;
+    for (std::set<filter_t, expressionCompare>::iterator j = filters[i].begin(); \
+	 j != filters[i].end(); \
+	 ++j) {
+      std::cout << count++ << ": " << j->word << std::endl;
+      std::cout << "    " << j->expression << std::endl;
+    }
+  }
+  
+}
 void WordFilter::outputWords(void) const
 {
   //		std::cout << "size of compiled set is " << () << std::endl;
@@ -565,14 +594,19 @@ int main (int argc, char *argv[])
     return -1;
   }
   
-  std::cout << "Loading file" << std::endl;
   WordFilter filter;
+  //  filter.addToFilter("fuck?!", true);
+  filter.addToFilter("test()");
+  //  filter.addToFilter("tah fei kei (tfk)?", true);
+
+  filter.outputWords();
+  filter.outputFilter();
+
+  std::cout << "Loading file" << std::endl;
   filter.loadFromFile(argv[1]);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
   filter.addToFilter("test", true);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
-
-  exit(1);
 
   char message[1024] = " This test is a fucKing simple test; you're NOT a beezeebitch!! ";
   std::cout << message << std::endl;

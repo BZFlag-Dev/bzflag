@@ -266,6 +266,8 @@ class WordFilter
 
   /** dump a list of words in the filter to stdout */
   void outputWords(void) const;
+  /** dump the filter to stdout (including expressions) */
+  void outputFilter(void) const;
   /** retuns a count of how many words are in the filter */
   unsigned long int wordCount(void) const;
 };
