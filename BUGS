@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- MsgKilled is not handled correctly in the server when killer is a world
+  weapon (see playerKilled())
+
 - doc/guide/NetworkProtocol.xml is not up to date
 
 - list server includes counts for players running on non-public servers on
