@@ -562,6 +562,7 @@ static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex);
 static void resetFlag(int flagIndex);
 static void releaseRadio(int playerIndex);
+static void dropFlag(int playerIndex, float pos[3]);
 
 //
 // types for reading world files
@@ -3994,8 +3995,17 @@ static void removePlayer(int playerIndex)
     // if player had flag then flag just disappears.  it'd be nice
     // to have it fly as if dropped, but we've no idea what the
     // player's position is.
-    if (player[playerIndex].flag != -1)
-      zapFlag(player[playerIndex].flag);
+    int flagid = player[playerIndex].flag;
+    if (flagid >= 0) {
+      // do not simply zap team flag
+      Flag &carriedflag = flag[flagid].flag;
+      if (carriedflag.id >= RedFlag && carriedflag.id <= PurpleFlag) {
+        dropFlag(playerIndex, carriedflag.position);
+      }
+      else {
+        zapFlag(flagid);
+      }
+    }
 
     // if player had radio then release it
     if (team[int(player[playerIndex].team)].radio == playerIndex)
@@ -4188,7 +4198,17 @@ static void playerKilled(int victimIndex, int killerIndex,
 
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
-  zapFlag(player[victimIndex].flag);
+  int flagid = player[victimIndex].flag;
+  if (flagid >= 0) {
+    // do not simply zap team flag
+    Flag &carriedflag=flag[flagid].flag;
+    if (carriedflag.id >= RedFlag && carriedflag.id <= PurpleFlag) {
+      dropFlag(victimIndex, carriedflag.position);
+    }
+    else {
+      zapFlag(flagid);
+    }
+  }
 
   // change the team scores -- rogues don't have team scores.  don't
   // change team scores for individual player's kills in capture the
