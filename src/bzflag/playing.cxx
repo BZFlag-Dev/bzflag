@@ -1751,10 +1751,11 @@ static void		doAutoPilot(float &rotation, float &speed)
 	//If we are driving relatively towards our target and a building pops up jump over it
 	if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
 	  const Obstacle *building = NULL;
+	  float d = distance;
 	  if (myTank->getFlag() != Flags::SuperBullet)
-	    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
+	    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
 	  if (building) {
-	    if ((distance > 20.f) && (distance < 50.0f) 
+	    if ((d > 20.f) && (d < 50.0f) 
 	       && (building->getType() == BoxBuilding::typeName)
 	       && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
 	     
@@ -1796,6 +1797,10 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    }
 	  }
 	}
+
+	//Lastly don't get right on the tank, you can't shoot it
+	if (distance < 20.0f)
+	  speed = -0.5f;
       }
   }
 }
