@@ -85,7 +85,6 @@ class CreateUsingMalloc {
  * basically does nothing, but it exposes the interface that needs to
  * be implmented for a multi-threading model.
  */
-template <typename T>
 class SingleThreaded {
 
  private:
@@ -106,15 +105,15 @@ class SingleThreaded {
    private:
 
     static void Lock() { }
-    static void UnLock() { }
+    static void Unlock() { }
 
    public:
 
     LockThread() {
-      SingleThreaded::Lock();
+      Lock();
     }
     ~LockThread() {
-      SingleThreaded::Unlock();
+      Unlock();
     }
   };
 };
@@ -130,8 +129,8 @@ class SingleThreaded {
  * policies need to define CreateInstance() and DestroyInstance().  Threading
  * model needs to define a default LockThread class.
  */
-template < typename T, typename CreationPolicy = CreateUsingNew<T>, template <typename> class ThreadingModel = SingleThreaded >
-class Singleton : public CreationPolicy, public ThreadingModel<T> {
+template < typename T, typename CreationPolicy = CreateUsingNew<T>, typename ThreadingModel = SingleThreaded >
+class Singleton : public CreationPolicy, public ThreadingModel {
 
  private:
 
@@ -142,7 +141,7 @@ class Singleton : public CreationPolicy, public ThreadingModel<T> {
 
   static void destroy() {
     if ( _instance != 0 ) {
-      //      ThreadingModel::LockThread lock;
+      LockThread lock;
       if ( _instance != 0 ) {
 	CreationPolicy::DestroyInstance(_instance);
 	_instance = 0;
@@ -162,7 +161,7 @@ class Singleton : public CreationPolicy, public ThreadingModel<T> {
    */
   static T& instance() {
     if ( _instance == 0 ) {
-      //      ThreadingModel::LockThread lock;
+      LockThread lock;
       if ( _instance == 0 ) {
 	_instance = CreationPolicy::CreateInstance();
 	// destroy the singleton when the application terminates
@@ -178,7 +177,7 @@ class Singleton : public CreationPolicy, public ThreadingModel<T> {
 };
 
 // statically initialize the instance to nothing
-template < typename T, typename CreationPolicy = CreateUsingNew<T>, template <typename> class ThreadingModel = SingleThreaded >
+template < typename T, typename CreationPolicy = CreateUsingNew<T>, typename ThreadingModel = SingleThreaded >
 T* Singleton<T, CreationPolicy, ThreadingModel>::_instance = 0;
 
 #endif /* __SINGLETON_H__ */
