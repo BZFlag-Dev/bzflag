@@ -122,27 +122,6 @@ bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
   return player[playerIndex].hasPermission(right);
 }
 
-
-// write an UDP packet down the link to the client
-static int puwrite(int playerIndex, const void *b, int l)
-{
-  PlayerInfo& p = player[playerIndex];
-
-#ifdef TESTLINK
-  if ((random()%LINKQUALITY) == 0) {
-    DEBUG1("Drop Packet due to Test\n");
-    return 0;
-  }
-#endif
-  return sendto(udpSocket, (const char *)b, l, 0, (struct sockaddr*)&p.uaddr, sizeof(p.uaddr));
-}
-
-static void prealwrite(int playerIndex, const void *b, int l) {
-  int result = player[playerIndex].bufferedSend(playerIndex, b, l);
-  if (result == -1)
-    removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
-}
-
 #ifdef NETWORK_STATS
 int countMessage(int playerIndex, uint16_t code, int len, int direction)
 {
@@ -199,27 +178,9 @@ static void pwrite(int playerIndex, const void *b, int l)
   countMessage(playerIndex, code, len, 1);
 #endif
 
-  // Check if UDP Link is used instead of TCP, if so jump into puwrite
-  if (p.udpout) {
-    // only send bulk messages by UDP
-    switch (code) {
-      case MsgShotBegin:
-      case MsgShotEnd:
-      case MsgPlayerUpdate:
-      case MsgGMUpdate:
-      case MsgLagPing:
-	puwrite(playerIndex,b,l);
-	return;
-    }
-  }
-
-  // always sent MsgUDPLinkRequest over udp with puwrite
-  if (code == MsgUDPLinkRequest) {
-    puwrite(playerIndex,b,l);
-    return;
-  }
-
-  prealwrite(playerIndex, b, l);
+  int result = p.pwrite(playerIndex, b, l, code, udpSocket);
+  if (result == -1)
+    removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
 }
 
 
@@ -282,23 +243,6 @@ static void sendUDPupdate(int playerIndex)
   directMessage(playerIndex, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
 }
 
-static void createUDPcon(int t, int remote_port) {
-  if (remote_port == 0)
-    return;
-
-  player[t].uaddr.sin_port = htons(remote_port);
-  player[t].udpin = true;
-
-  // init the queues
-  player[t].uqueue = player[t].dqueue = NULL;
-  player[t].lastRecvPacketNo = player[t].lastSendPacketNo = 0;
-
-  // send client the message that we are ready for him
-  sendUDPupdate(t);
-
-  return;
-}
-
 static bool realPlayer(const PlayerId& id)
 {
   return id<=curMaxPlayers && player[id].isPlaying();
@@ -351,9 +295,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   PlayerInfo *pPlayerInfo;
   PlayerId pi;
   for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-    if ((pPlayerInfo->udpin) &&
-	(pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
-	(memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
+    if (pPlayerInfo->isMyUdpAddrPort(uaddr)) {
       break;
     }
   }
@@ -364,22 +306,10 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     tmpbuf = nboUnpackUShort(tmpbuf, code);
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
       tmpbuf = nboUnpackUByte(tmpbuf, pi);
-      if ((pi <= curMaxPlayers) && !player[pi].udpin) {
-	if (memcmp(&player[pi].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
-	  DEBUG2("Player %s [%d] inbound UDP up %s:%d actual %d\n",
-	      player[pi].getCallSign(), pi,
-		 inet_ntoa(player[pi].uaddr.sin_addr),
-	      ntohs(player[pi].uaddr.sin_port),
-	      ntohs(uaddr.sin_port));
-	  createUDPcon(pi, ntohs(uaddr.sin_port));
-	} else {
-	  DEBUG2("Player %s [%d] inbound UDP rejected %s:%d different IP than %s:%d\n",
-		 player[pi].getCallSign(), pi,
-		 inet_ntoa(player[pi].uaddr.sin_addr),
-	      ntohs(player[pi].uaddr.sin_port),
-	      inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-	  pi = (PlayerId)curMaxPlayers;
-	}
+      if ((pi <= curMaxPlayers) && (pPlayerInfo->setUdpIn(uaddr, pi))) {
+	if (uaddr.sin_port)
+	  // send client the message that we are ready for him
+	  sendUDPupdate(pi);
       } else {
 	pi = (PlayerId)curMaxPlayers;
       }
@@ -392,12 +322,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     // no match, discard packet
     DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
     for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-      if (pPlayerInfo->isConnected()) {
-	DEBUG3(" %d(%d-%d) %s:%d",
-	    pi, pPlayerInfo->udpin, pPlayerInfo->udpout,
-	    inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-	    ntohs(pPlayerInfo->uaddr.sin_port));
-      }
+      pPlayerInfo->debugUdpInfo(pi);
     }
     DEBUG2("\n");
     *playerIndex = 0;
@@ -406,10 +331,8 @@ static int uread(int *playerIndex, int *nopackets, int& n,
 
   *playerIndex = pi;
   pPlayerInfo = &player[pi];
-  DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
-      pPlayerInfo->getCallSign(), pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-      ntohs(pPlayerInfo->uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
-      ntohs(uaddr.sin_port), udpSocket);
+
+  pPlayerInfo->debugUdpRead(pi, n, uaddr, udpSocket);
 
   if (n > 0) {
     *nopackets = 1;
@@ -3678,8 +3601,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
     }
 
     case MsgUDPLinkEstablished:
-      player[t].udpout = true;
-      DEBUG2("Player %s [%d] outbound UDP up\n", player[t].getCallSign(), t);
+      player[t].setUdpOut(t);
       break;
 
     case MsgNewRabbit: {
@@ -4766,9 +4688,9 @@ int main(int argc, char **argv)
 
       // now check messages from connected players and send queued messages
       for (i = 0; i < curMaxPlayers; i++) {
-	if (player[i].isConnected() && player[i].fdIsSet(&write_set)) {
-	  // send whatever we have ... if any
-	  prealwrite(i, NULL, 0);
+	// send whatever we have ... if any
+	if (player[i].pflush(i, &write_set) == -1) {
+	  removePlayer(i, "ECONNRESET/EPIPE", false);
 	}
 
 	if (player[i].exist() && player[i].fdIsSet(&read_set)) {

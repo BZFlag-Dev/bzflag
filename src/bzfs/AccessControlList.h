@@ -182,7 +182,7 @@ public:
     return false;
   }
 
-  bool validate(in_addr &ipAddr) {
+  bool validate(const in_addr &ipAddr) {
     expire();
 
     for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {

@@ -114,11 +114,20 @@ public:
   void        dumpMessageStats();
 #endif
   bool        isConnected();
-  int         bufferedSend(int playerIndex, const void *buffer, size_t length);
+  int         pflush(int playerIndex, fd_set *set);
   RxStatus    receive(size_t length);
+  int         pwrite(int playerIndex, const void *b, int l, uint16_t code,
+		     int udpSocket);
+  bool        setUdpIn(struct sockaddr_in &_uaddr, int player);
+  void        setUdpOut(int player);
+  void        createUdpCon(int remote_port);
+  bool        isMyUdpAddrPort(struct sockaddr_in &uaddr);
   void        resetComm();
   void        closeComm();
   void        dropUnconnected();
+  void        debugUdpInfo(int player);
+  void        debugUdpRead(int player, int n,
+			   struct sockaddr_in &_uaddr, int udpSocket);
   void        debugRemove(const char *reason, int index);
   void        debugAdd(int index);
   void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
@@ -175,8 +184,11 @@ public:
   void       *getUdpBuffer();
   void       *getTcpBuffer();
   void        cleanTcp();
+  in_addr     getIPAddress();
 private:
+  void        udpSend(int udpSocket, const void *b, size_t l);
   int         send(const void *buffer, size_t length);
+  int         bufferedSend(int playerIndex, const void *buffer, size_t length);
 
     // player access
     PlayerAccessInfo accessInfo;
@@ -230,7 +242,6 @@ private:
     int outmsgCapacity;
     char *outmsg;
 
-public:
     // UDP connection
     bool udpin; // udp inbound up, player is sending us udp
     bool udpout; // udp outbound up, we can send udp
@@ -238,6 +249,7 @@ public:
     // TCP connection
     struct sockaddr_in taddr;
 
+public:
     // UDP message queue
     struct PacketQueue *uqueue;
     struct PacketQueue *dqueue;

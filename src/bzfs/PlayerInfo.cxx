@@ -397,6 +397,55 @@ int PlayerInfo::bufferedSend(int playerIndex,
   return 0;
 };
 
+void PlayerInfo::udpSend(int udpSocket, const void *b, size_t l) {
+#ifdef TESTLINK
+  if ((random()%LINKQUALITY) == 0) {
+    DEBUG1("Drop Packet due to Test\n");
+    return;
+  }
+#endif
+  sendto(udpSocket, (const char *)b, l, 0, (struct sockaddr*)&uaddr,
+	 sizeof(uaddr));
+};
+
+void PlayerInfo::setUdpOut(int player) {
+  udpout = true;
+  DEBUG2("Player %s [%d] outbound UDP up\n", callSign, player);
+};
+
+bool PlayerInfo::isMyUdpAddrPort(struct sockaddr_in &_uaddr) {
+  return udpin && (uaddr.sin_port == _uaddr.sin_port) &&
+    (memcmp(&uaddr.sin_addr, &_uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0);
+};
+
+bool PlayerInfo::setUdpIn(struct sockaddr_in &_uaddr, int player) {
+  if (udpin)
+    return false;
+
+  bool same = !memcmp(&uaddr.sin_addr,
+		      &_uaddr.sin_addr,
+		      sizeof(uaddr.sin_addr));
+  if (same) {
+    DEBUG2("Player %s [%d] inbound UDP up %s:%d actual %d\n",
+	   callSign, player, inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port),
+	   ntohs(_uaddr.sin_port));
+    if (_uaddr.sin_port) {
+      uaddr.sin_port = _uaddr.sin_port;
+      udpin = true;
+
+      // init the queues
+      uqueue = dqueue = NULL;
+      lastRecvPacketNo = lastSendPacketNo = 0;
+    }
+  } else {
+    DEBUG2
+      ("Player %s [%d] inbound UDP rejected %s:%d different IP than %s:%d\n",
+       callSign, player, inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port),
+       inet_ntoa(_uaddr.sin_addr), ntohs(_uaddr.sin_port));
+  }
+  return same;
+};
+
 RxStatus PlayerInfo::receive(size_t length) {
   RxStatus returnValue;
   if (fd == -1)
@@ -456,6 +505,21 @@ void PlayerInfo::closeComm() {
 void PlayerInfo::dropUnconnected() {
   if (fd == -1)
     state = PlayerNoExist;
+};
+
+void PlayerInfo::debugUdpInfo(int player) {
+  if (fd != -1) {
+    DEBUG3(" %d(%d-%d) %s:%d", player, udpin, udpout,
+	   inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+  }
+};
+
+void PlayerInfo::debugUdpRead(int player, int n,
+			      struct sockaddr_in &_uaddr, int udpSocket) {
+  DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
+     callSign, player, inet_ntoa(uaddr.sin_addr),
+      ntohs(uaddr.sin_port), n, inet_ntoa(_uaddr.sin_addr),
+      ntohs(_uaddr.sin_port), udpSocket);
 };
 
 void PlayerInfo::debugRemove(const char *reason, int index) {
@@ -810,6 +874,42 @@ void *PlayerInfo::getTcpBuffer() {
 
 void PlayerInfo::cleanTcp() {
   tcplen = 0;
+};
+
+in_addr PlayerInfo::getIPAddress() {
+  return taddr.sin_addr;
+};
+
+int PlayerInfo::pwrite(int playerIndex, const void *b, int l, uint16_t code,
+		       int udpSocket) {
+  // Check if UDP Link is used instead of TCP, if so jump into udpSend
+  if (udpout) {
+    // only send bulk messages by UDP
+    switch (code) {
+    case MsgShotBegin:
+    case MsgShotEnd:
+    case MsgPlayerUpdate:
+    case MsgGMUpdate:
+    case MsgLagPing:
+      udpSend(udpSocket, b, l);
+      return 0;
+    }
+  }
+
+  // always sent MsgUDPLinkRequest over udp with udpSend
+  if (code == MsgUDPLinkRequest) {
+    udpSend(udpSocket, b, l);
+    return 0;
+  }
+
+  return bufferedSend(playerIndex, b, l);
+};
+
+int PlayerInfo::pflush(int playerIndex, fd_set *set) {
+  if ((fd != -1) && FD_ISSET(fd, set))
+    return bufferedSend(playerIndex, NULL, 0);
+  else
+    return 0;
 };
 // Local Variables: ***
 // mode:C++ ***

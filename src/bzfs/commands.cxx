@@ -395,7 +395,7 @@ void handleBanCmd(int t, const char *message)
       char kickmessage[MessageLen];
       for (int i = 0; i < curMaxPlayers; i++) {
 	if (player[i].isConnected()
-	    && !clOptions->acl.validate(player[i].taddr.sin_addr)) {
+	    && !clOptions->acl.validate(player[i].getIPAddress())) {
 	  sprintf(kickmessage,"You were banned from this server by %s",
 		  player[t].getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage, true);
