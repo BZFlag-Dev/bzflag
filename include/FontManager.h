@@ -75,7 +75,8 @@ private:
    */
   std::string	fontDirectory;
 
-  static void    callback(const std::string& name, void *);
+  static void	callback(const std::string& name, void *);
+  static void	initContext(void *data);
   static GLfloat underlineColor[3];
   float		 dimFactor;
 };
