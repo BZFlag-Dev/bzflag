@@ -48,6 +48,9 @@ bzfs \- BZFlag game server
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]
+[\fB\-recbuf \fIsize\fR]
+[\fB\-recdir \fIdirectory\fR]
+[\fB\-replay\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
 [\fB\-requireudp\fR]
@@ -94,6 +97,7 @@ yield greater inertia.
 .TP 15
 \fB\-admsg \fImessage\fR
 Define a message which will be broadcast to all players every 15 minutes.
+This option can be used multiple times to define a multiline message.
 .TP
 .B -autoTeam
 Automatically assign players to teams when they connect so that there
@@ -298,6 +302,15 @@ whoever kills the rabbit becomes the new rabbit.  The \fIrandom\fR
 algorithm randomly picks a new rabbit without regard to score.  (The
 \fIscore\fR algorithm is the original behavior.)
 .TP
+.B -recbuf\fI size\fR
+Start with the recording buffer active, with the specified size (in megabytes).
+.TP
+.B -recdir\fI directory\fR
+Specify the directory for record and replay files.
+.TP
+.B -replay
+Start the server in replay mode.
+.TP
 .B -reportfile\fI filename\fR
 Write messages to the server admin written using the \fB/report\fR command to
 this file. If neither \fB-reportfile\fR or \fB-reportpipe\fR is used the
@@ -339,7 +352,8 @@ Restrict flag \fIid\fR to \fInum\fR shots.
 Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplier.
 .TP
 \fB\-srvmsg \fImessage\fR
-Define a server welcome message.
+Define a server welcome message. This option can be used multiple times
+to define a multiline message.
 .TP
 \fB-st\fI time\fR
 Bad flags are automatically dropped after \fItime\fR seconds.

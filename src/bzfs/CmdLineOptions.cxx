@@ -84,6 +84,7 @@ const char *usageString =
 "[-q] "
 "[+r] "
 "[-rabbit [score|killer|random]] "
+"[-recbuf <Mbytes>] "
 "[-recdir <dirname>] "
 "[-replay] "
 "[-reportfile <filename>] "
@@ -166,6 +167,7 @@ const char *extraUsageString =
 "\t-q: don't listen for or respond to pings\n"
 "\t+r: all shots ricochet\n"
 "\t-rabbit [score|killer|random]: rabbit chase style\n"
+"\t-recbuf <Mbytes>: start with a recording buffer of specified megabytes\n"
 "\t-recdir <dirname>: specify the directory for recorded file\n"
 "\t-replay: setup the server to replay a previously saved game\n"
 "\t-reportfile <filename>: the file to store reports in\n"
@@ -832,6 +834,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	  i++;
 	}
       }
+    } else if (strcmp(argv[i], "-recbuf") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      Record::setSize (ServerPlayer, atoi(argv[i]));
+      options.startRecording = true;
     } else if (strcmp(argv[i], "-recdir") == 0) {
       checkArgc(1, i, argc, argv[i]);
       Record::setDirectory (argv[i]);

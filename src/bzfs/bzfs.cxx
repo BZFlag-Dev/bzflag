@@ -3745,6 +3745,7 @@ int main(int argc, char **argv)
 
   // Loading lag thresholds
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
+  
   // enable replay server mode
   if (clOptions->replayServer) {
 
@@ -3924,6 +3925,10 @@ int main(int argc, char **argv)
     readPassFile(passFile);
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
+    
+  if (clOptions->startRecording) {
+    Record::start (ServerPlayer);
+  }
 
 
   /* MAIN SERVER RUN LOOP
