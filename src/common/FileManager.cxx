@@ -27,6 +27,9 @@
 // FileManager
 //
 
+// initialize the singleton
+FileManager* Singleton<FileManager>::_instance = (FileManager*)0;
+
 FileManager::FileManager()
 {
   // do nothing

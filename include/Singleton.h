@@ -104,8 +104,8 @@ public:
 };
 
 // statically initialize the instance to nothing
-template < typename T >
-T* Singleton<T>::_instance = 0;
+//template < typename T >
+//T* Singleton<T>::_instance = 0;
 
 #endif /* __SINGLETON_H__ */
 

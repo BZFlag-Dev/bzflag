@@ -19,6 +19,9 @@
 
 static const int        MaximumLineLength = 1024;
 
+// initialize the singleton
+ConfigFileManager* Singleton<ConfigFileManager>::_instance = (ConfigFileManager*)0;
+
 void writeBZDB(const std::string& name, void *stream)
 {
   std::ostream& s = *reinterpret_cast<std::ostream*>(stream);

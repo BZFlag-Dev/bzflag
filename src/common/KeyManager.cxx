@@ -18,6 +18,9 @@
 #include <assert.h>
 #include <ctype.h>
 
+// initialize the singleton
+KeyManager* Singleton<KeyManager>::_instance = (KeyManager*)0;
+
 const char*		KeyManager::buttonNames[] = {
   "???",
   "Pause",

@@ -22,6 +22,10 @@
 
 const int NO_VARIANT = (-1);
 
+// initialize the singleton
+TextureManager* Singleton<TextureManager>::_instance = (TextureManager*)0;
+
+
 FileTextureInit fileLoader[] =
 {
 	{ TX_BOLT, RogueTeam, "ybolt", OpenGLTexture::Linear },

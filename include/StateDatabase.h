@@ -40,14 +40,8 @@
  * to do so (eg: config file option, game variable downloaded from server), use
  * BZDB. If you wanted an object broker, use a freakin' global.
  */
-class StateDatabase : public Singleton<StateDatabase> {
-
-protected:
-  friend class Singleton<StateDatabase>;
-
-  StateDatabase();
-  ~StateDatabase();
-
+class StateDatabase : public Singleton<StateDatabase>
+{
 public:
 
   typedef void (*Callback)(const std::string& name, void* userData);
@@ -242,7 +236,14 @@ public:
   static const std::string	BZDB_WIDEANGLEANG;
   static const std::string	BZDB_WORLDSIZE;
 
+
+protected:
+  friend class Singleton<StateDatabase>;
+
 private:
+
+  StateDatabase();
+  ~StateDatabase();
 
   static bool			onCallback(Callback, void* userData,
 					   void* iterateData);

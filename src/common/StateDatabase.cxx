@@ -66,6 +66,9 @@ void	_debugLookups(const std::string &name)
   #define debugLookups(name)
 #endif
 
+// initialize the singleton
+StateDatabase* Singleton<StateDatabase>::_instance = (StateDatabase*)0;
+
 
 const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
 const std::string StateDatabase::BZDB_ANGULARAD         = std::string("_angularAd");

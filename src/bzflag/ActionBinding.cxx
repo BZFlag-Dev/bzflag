@@ -21,6 +21,10 @@
 #include "CommandManager.h"
 #include "KeyManager.h"
 
+// initialize the singleton
+ActionBinding* Singleton<ActionBinding>::_instance = (ActionBinding*)0;
+
+
 ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("quit"), press));
   wayToBindActions.insert(std::make_pair(std::string("fire"), both));
