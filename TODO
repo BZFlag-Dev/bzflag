@@ -45,7 +45,10 @@ to do / idea list for bzflag
 
 * get rid of hardcoded game parameters, most importantly
    WorldSize, but most others in src/game/global.h should also
-   be specified by the server.
+   be specified by the server, including flag capabilities, e.g. how
+   fast people can go with high speed, reload time for laser and possibly
+   GM, too. This would allow a server admin to weaken flags which are
+   otherwise too powerful on certain maps.
 
 * encourage server admins to provide an email contact by adding
    an option to bzfs
