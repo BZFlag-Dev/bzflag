@@ -5515,27 +5515,27 @@ void			startPlaying(BzfDisplay* _display,
 
   bool done = false;
   int explostion = 1;
-  while (!done){
-	  char text[256];
-	  sprintf(text,"explode%d",explostion);
+  while (!done) {
+    char text[256];
+    sprintf(text, "explode%d", explostion);
 
-	  int tex = tm.getTextureID( text, false );
-	  
-	  if (tex < 0)
-		  done = true;
-          else {
-		// make explosion scene node
-		BillboardSceneNode* explosion = new BillboardSceneNode(zero);
-		explosion->setTexture(tex);
-		explosion->setTextureAnimation(8, 8);
-		explosion->setLight();
-		explosion->setLightColor(1.0f, 0.8f, 0.5f);
-		explosion->setLightAttenuation(0.04f, 0.0f, 0.01f);
+    int tex = tm.getTextureID(text, false);
+    
+    if (tex < 0) {
+      done = true;
+    } else {
+      // make explosion scene node
+      BillboardSceneNode* explosion = new BillboardSceneNode(zero);
+      explosion->setTexture(tex);
+      explosion->setTextureAnimation(8, 8);
+      explosion->setLight();
+      explosion->setLightColor(1.0f, 0.8f, 0.5f);
+      explosion->setLightAttenuation(0.04f, 0.0f, 0.01f);
 
-		// add it to list of prototype explosions
-		prototypeExplosions.push_back(explosion);
-		explostion++;
-	}
+      // add it to list of prototype explosions
+      prototypeExplosions.push_back(explosion);
+      explostion++;
+    }
   }
 
   // let other stuff do initialization

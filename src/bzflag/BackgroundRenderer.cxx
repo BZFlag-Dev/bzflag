@@ -199,21 +199,21 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     int height = 0;
     numMountainTextures = 0;
     bool done = false;
-    while (!done){
+    while (!done) {
       char text[256];
-      sprintf(text,"mountain%d",numMountainTextures+1);
-      mountainTexture = tm.getTextureID(text,false);
-      if (mountainTexture>=0){
-              const ImageInfo &info = tm.getInfo(mountainTexture);
-	      height = info.y;
-	      width += info.x;
-	      numMountainTextures++;
+      sprintf(text, "mountain%d", numMountainTextures + 1);
+      mountainTexture = tm.getTextureID(text, false);
+      if (mountainTexture >= 0) {
+        const ImageInfo &info = tm.getInfo(mountainTexture);
+	height = info.y;
+	width += info.x;
+	numMountainTextures++;
+      } else {
+	done = true;
       }
-      else
-	      done = true;
     }
 
-    if (numMountainTextures>0) {
+    if (numMountainTextures > 0) {
       mountainsAvailable = true;
 
       // prepare common gstate
@@ -237,10 +237,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       // prepare each texture
       mountainsGState = new OpenGLGState[numMountainTextures];
       for (i = 0; i < numMountainTextures; i++) {
-		char text[256];
-		sprintf(text,"mountain%d",i+1);
-		gstate.setTexture(tm.getTextureID(text));
-		mountainsGState[i] = gstate.getState();
+	char text[256];
+	sprintf(text,"mountain%d",i+1);
+	gstate.setTexture(tm.getTextureID(text));
+	mountainsGState[i] = gstate.getState();
       }
       mountainsList = new OpenGLDisplayList[numMountainTextures];
     }
