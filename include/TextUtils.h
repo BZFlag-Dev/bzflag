@@ -387,7 +387,7 @@ std::string url_encode(std::string text)
     c = text[i];
     if (isAlphanumeric(c)) {
       destination+=c;
-    } else if (isSpace(c)) {
+    } else if (isWhitespace(c)) {
       destination+='+';
     } else {
       destination+='%';
