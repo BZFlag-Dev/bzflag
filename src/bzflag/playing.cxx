@@ -588,8 +588,13 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   } else if (cmdDrive == "drive reverse") {
     keyboardMovement = Down;
   }
-  if (myTank)
-    switch (keyboardMovement) {
+
+  // if we don't have a tank, the key commands don't apply
+  if (!myTank) {
+    return false;
+  } 
+
+  switch (keyboardMovement) {
     case Left:
       myTank->setKey(BzfKeyEvent::Left, pressed);
       break;
@@ -604,7 +609,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       break;
     case None:
       break;
-    }
+  }
   if (!cmd.empty()) {
     if (cmd=="fire")
       fireButton = pressed;
@@ -616,64 +621,64 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     }
     return true;
   } else {
-
+    
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {
-    case 'T':
-    case 't':
-      // toggle frames-per-second display
-      if (pressed) {
-	showFPS = !showFPS;
-	if (!showFPS) hud->setFPS(-1.0);
-      }
-      return true;
+      case 'T':
+      case 't':
+	// toggle frames-per-second display
+	if (pressed) {
+	  showFPS = !showFPS;
+	  if (!showFPS) hud->setFPS(-1.0);
+	}
+	return true;
+	  
+      case 'Y':
+      case 'y':
+	// toggle milliseconds for drawing
+	if (pressed) {
+	  showDrawTime = !showDrawTime;
+	  if (!showDrawTime) hud->setDrawTime(-1.0);
+	}
+	return true;
+	  
+	/* XXX -- for testing forced recreation of OpenGL context
+	   case 'o':
+	   if (pressed) {
+	   // destroy OpenGL context
+	   getMainWindow()->getWindow()->freeContext();
+	     
+	   // recreate OpenGL context
+	   getMainWindow()->getWindow()->makeContext();
 
-    case 'Y':
-    case 'y':
-      // toggle milliseconds for drawing
-      if (pressed) {
-	showDrawTime = !showDrawTime;
-	if (!showDrawTime) hud->setDrawTime(-1.0);
-      }
-      return true;
+	   // force a redraw (mainly for control panel)
+	   getMainWindow()->getWindow()->callExposeCallbacks();
+	     
+	   // cause sun/moon to be repositioned immediately
+	   lastEpochOffset = epochOffset - 5.0;
+	     
+	   // reload display lists and textures and initialize other state
+	   OpenGLGState::initContext();
+	   }
+	   break;
+	*/
+	  
+      case ']':
+      case '}':
+	// plus 30 seconds
+	if (pressed) clockAdjust += 30.0f;
+	return true;
 
-      /* XXX -- for testing forced recreation of OpenGL context
-	 case 'o':
-	 if (pressed) {
-	 // destroy OpenGL context
-	 getMainWindow()->getWindow()->freeContext();
-
-	 // recreate OpenGL context
-	 getMainWindow()->getWindow()->makeContext();
-
-	 // force a redraw (mainly for control panel)
-	 getMainWindow()->getWindow()->callExposeCallbacks();
-
-	 // cause sun/moon to be repositioned immediately
-	 lastEpochOffset = epochOffset - 5.0;
-
-	 // reload display lists and textures and initialize other state
-	 OpenGLGState::initContext();
-	 }
-	 break;
-      */
-
-    case ']':
-    case '}':
-      // plus 30 seconds
-      if (pressed) clockAdjust += 30.0f;
-      return true;
-
-    case '[':
-    case '{':
-      // minus 30 seconds
-      if (pressed) clockAdjust -= 30.0f;
-      return true;
-
-    default:
-      break;
-    }
-  }
+      case '[':
+      case '{':
+	// minus 30 seconds
+	if (pressed) clockAdjust -= 30.0f;
+	return true;
+	  
+      default:
+	break;
+    } // end switch on key
+  } // end key handle
   return false;
 }
 

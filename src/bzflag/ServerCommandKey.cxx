@@ -64,6 +64,10 @@ void			ServerCommandKey::updatePrompt()
   // decide what should be on the composing prompt
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+  if (!myTank) {
+    // make sure we actually have a tank
+    return;
+  }
   const Player * recipient = myTank->getRecipient();
   if (mode >= Kick && mode <= Ghost) { // more complicated modes here
     if (recipient) {
