@@ -44,7 +44,7 @@ static const std::string urlProtocol("http://");
 BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
 {
   errorHandler = new BZWError(location);
-  if (filename.substr(0, urlProtocol.size()) == urlProtocol) {
+  if (filename.substr(0, urlProtocol.size()) != urlProtocol) {
     input = new std::ifstream(filename.c_str(), std::ios::in);
   } else {
     URLManager::instance().getURL(location, httpData);
