@@ -122,7 +122,10 @@ void BitmapFont::drawString(float scale, GLfloat color[3], const char *str,
 			    int len)
 {
   // BitmapFont cannot scale, should never be asked to
-  assert(scale == 1.0f);
+  if (scale != 1.0f) {
+    DEBUG1("ERROR: BitmapFont should not be asked to scale!\n");
+    assert(scale == 1.0f);
+  }
 
   if (!str)
     return;
@@ -147,7 +150,6 @@ void BitmapFont::drawString(float scale, GLfloat color[3], const char *str,
       charToUse = space;
     else
       charToUse = str[i];
-
 
     charToUse -= space;
 
