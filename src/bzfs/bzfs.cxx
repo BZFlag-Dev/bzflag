@@ -1261,6 +1261,7 @@ static void openListServer(int index)
 #endif
       if (getErrno() != EINPROGRESS) {
 	nerror("connecting to list server");
+	// TODO should try to lookup dns name again, but we don't have it anymore
 	closeListServer(index);
       }
       else {
