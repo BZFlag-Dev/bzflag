@@ -1461,7 +1461,73 @@ static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
   GameKeeper::Player::reloadAccessDatabase();
   sendMessage(ServerPlayer, t, "Databases reloaded");
+  
+  // Validate all of the current players
 
+  std::string reason;
+  char kickmessage[MessageLen];
+  
+  // Check host bans
+  #ifdef HAVE_ADNS_H
+    for (int i = 0; i < curMaxPlayers; i++) {
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      if (p == NULL)
+        continue;
+      NetHandler *netHandler = p->netHandler;
+      if (netHandler->getHostname()
+	  && (!clOptions->acl.hostValidate(netHandler->getHostname()))) {
+	    // admins can override antiperms
+	    if (!playerData->accessInfo.isAdmin()) {
+	    // make sure this player isn't protected
+	      if (p->accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
+	        sprintf(kickmessage,
+		      "%s is protected from being banned (skipped).",
+		      p->player.getCallSign());
+	        sendMessage(ServerPlayer, t, kickmessage);
+	        continue;
+	      }
+	    }
+	  sprintf(kickmessage,"You were banned from this server by %s",
+      playerData->player.getCallSign());
+	  sendMessage(ServerPlayer, i, kickmessage);
+	  if( reason.length() > 0 ){
+	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
+	    sendMessage(ServerPlayer, i, kickmessage);
+	  }
+	  removePlayer(i, "/hostban");
+    }
+  }
+#endif
+
+  //Check IP bans
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
+	if (otherPlayer && !clOptions->acl.validate
+	(otherPlayer->netHandler->getIPAddress())) {
+      // admins can override antiperms
+	  if (!playerData->accessInfo.isAdmin()) {
+	    // make sure this player isn't protected
+	    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+	    if ((p != NULL)
+		&& (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
+	      sprintf(kickmessage,
+		    "%s is protected from being banned (skipped).",
+		    p->player.getCallSign());
+	      sendMessage(ServerPlayer, t, kickmessage);
+	      continue;
+	    }
+	  }
+
+	  sprintf(kickmessage,"You were banned from this server by %s",
+		  playerData->player.getCallSign());
+	  sendMessage(ServerPlayer, i, kickmessage);
+	  if (reason.length() > 0) {
+	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
+	    sendMessage(ServerPlayer, i, kickmessage);
+	  }
+	  removePlayer(i, "/ban");
+	}
+  }
   return;
 }
 
