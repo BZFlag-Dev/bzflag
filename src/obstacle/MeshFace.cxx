@@ -281,7 +281,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
     int i;
     // calculate the triangle ares
     float totalArea = 0.0f;
-    float areas[vertexCount];
+    float* areas = new float[vertexCount];
     for (i = 0; i < vertexCount; i++) {
       int next = (i + 1) % vertexCount;
       float ea[3], eb[3], cross[3];
@@ -292,12 +292,14 @@ void MeshFace::get3DNormal(const float* p, float* n) const
       totalArea = totalArea + areas[i];
     }
     float smallestArea = MAXFLOAT;
-    float twinAreas[vertexCount];
+    float* twinAreas = new float[vertexCount];
     for (i = 0; i < vertexCount; i++) {
       int next = (i + 1) % vertexCount;
       twinAreas[i] = areas[i] + areas[next];
       if (twinAreas[i] < 1.0e-10f) {
         memcpy (n, normals[next], sizeof(float[3]));
+        delete[] areas;
+        delete[] twinAreas;
         return;
       }
       if (twinAreas[i] < smallestArea) {
@@ -315,12 +317,17 @@ void MeshFace::get3DNormal(const float* p, float* n) const
     float len = sqrtf(vec3dot(normal, normal));
     if (len < 1.0e-10) {
       memcpy (n, plane, sizeof(float[3]));
+      delete[] areas;
+      delete[] twinAreas;
       return;
     }
     len = 1.0f / len;
     n[0] = normal[0] * len;
     n[1] = normal[1] * len;
     n[2] = normal[2] * len;
+
+    delete[] areas;
+    delete[] twinAreas;
   }
   
   return;

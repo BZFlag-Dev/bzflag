@@ -292,7 +292,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 {
   float plane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
   const float level = world->getWaterLevel();
-  plane[3] = level;
+  plane[3] = -level;
 
   // don't draw it if it isn't active
   if (level < 0.0f) {

@@ -436,6 +436,7 @@ void OctreeNode::makeChildren ()
     center[i] = 0.5f * (maxs[i] + mins[i]);
   }
 
+  childCount = 0;
   const float* extentSet[3] = { mins, center, maxs };
 
   for (side[0] = 0; side[0] < 2; side[0]++) {

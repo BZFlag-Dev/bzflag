@@ -26,6 +26,8 @@
 
 /* static variables */
 
+static const float testFudge = 0.1f;
+
 static int maxDepth = 0;
 static int minElements = 0;
 
@@ -404,8 +406,8 @@ ColDetNode::ColDetNode(unsigned char _depth,
   for (i = 0; i < 3; i++) {
     mins[i] = _mins[i];
     maxs[i] = _maxs[i];
-    testMins[i] = mins[i] - 0.1f;
-    testMaxs[i] = maxs[i] + 0.1f;
+    testMins[i] = mins[i] - testFudge;
+    testMaxs[i] = maxs[i] + testFudge;
   }
 
   // find all of the intersecting nodes
@@ -484,6 +486,7 @@ void ColDetNode::makeChildren ()
     center[i] = 0.5f * (maxs[i] + mins[i]);
   }
 
+  childCount = 0;
   const float* extentSet[3] = { mins, center, maxs };
 
   for (side[0] = 0; side[0] < 2; side[0]++) {
