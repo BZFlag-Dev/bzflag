@@ -485,9 +485,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   for (i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-a") == 0) {
       // momentum settings
-      if (i + 2 >= argc)
-      	checkArgc(2, i, argc, argv[i]);
-      options.linearAcceleration = (float)atof(argv[++i]);
+      checkArgc(2, i, argc, argv[i]);
+      options.linearAcceleration = (float)atof(argv[i]);
       options.angularAcceleration = (float)atof(argv[++i]);
       if (options.linearAcceleration < 0.0f)
 	options.linearAcceleration = 0.0f;
@@ -563,8 +562,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (i+1 != argc && isdigit(*argv[i+1])) {
 	options.citySize = atoi(argv[i+1]);
 	i++;
-      }
-      else {
+      } else {
 	checkArgc(1, i, argc, argv[i], "integer");
       }
     } else if (strcmp(argv[i], "-disableBots") == 0) {
@@ -584,7 +582,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // std::cout << "Debug level is now " << debugLevel << "\n";
     } else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
-	checkArgc(1, i, argc, argv[i]);
+      checkArgc(1, i, argc, argv[i]);
       if (strcmp(argv[i], "bad") == 0) {
 	FlagSet badFlags = Flag::getBadFlags();
 	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
@@ -603,7 +601,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     } else if (strcmp(argv[i], "+f") == 0) {
       // add required flag
-	checkArgc(1, i, argc, argv[i]);
+      checkArgc(1, i, argc, argv[i]);
 
       char *repeatStr = strchr(argv[i], '{');
       int rptCnt = 1;
@@ -655,9 +653,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-help") == 0) {
       extraUsage(argv[0]);
     } else if (strcmp(argv[i], "-helpmsg") == 0) {
-      if (i + 2 >= argc)
-	checkArgc(2, i, argc, argv[i]);
-      i++;
+      checkArgc(2, i, argc, argv[i]);
       if (!options.textChunker.parseFile(argv[i], argv[i+1])){
 	std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"\n";
 	usage(argv[0]);
@@ -851,9 +847,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       DEBUG1 ("set variable: %s = %s\n", name, BZDB.get(name).c_str());
     } else if (strcmp(argv[i], "-sl") == 0) {
       // add required flag
-      if (i + 2 >= argc)
-	checkArgc(2, i, argc, argv[i]);
-      i++;
+      checkArgc(2, i, argc, argv[i]);
       FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
       if (fDesc == Flags::Null) {
 	std::cerr << "invalid flag \"" << argv[i] << "\"\n";
