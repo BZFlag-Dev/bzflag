@@ -2261,7 +2261,8 @@ static void		checkEnvironment()
     const float radius = myTank->getRadius();
     const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
     for (int i = 0; i < numFlags; i++) {
-      if (world->getFlag(i).id == NoFlag) continue;
+      if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
+	continue;
       const float* fpos = world->getFlag(i).position;
       if ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2) {
