@@ -2173,25 +2173,24 @@ static void		doMessages()
 // local update utility functions
 //
 
-static float		minSafeRange(float angleCosOffBoresight,
-				     double fractionOfTries)
+static float		minSafeRange(float angleCosOffBoresight)
 {
   // anything farther than this much from dead-center is okay to
   // place at MinRange
   static const float	SafeAngle = 0.5f;		// cos(angle)
 
   // don't ever place within this range
-  static const float	MinRange = 2.5f * ShotSpeed;	// meters
+  static const float	MinRange = 2.0f * ShotSpeed;	// meters
 
   // anything beyond this range is okay at any angle
-  static const float	MaxRange = 5.0f * ShotSpeed;	// meters
+  static const float	MaxRange = 4.0f * ShotSpeed;	// meters
 
   // if more than SafeAngle off boresight then MinRange is okay
   if (angleCosOffBoresight < SafeAngle) return MinRange;
 
   // ramp up to MaxRange as target comes to dead center
   const float f = (angleCosOffBoresight - SafeAngle) / (1.0f - SafeAngle);
-  return (float)((MinRange + f * (MaxRange - MinRange)) * (1.0f - fractionOfTries * 0.6));
+  return (float)(MinRange + f * (MaxRange - MinRange));
 }
 
 static void		restartPlaying()
@@ -2205,8 +2204,10 @@ static void		restartPlaying()
   // restart my tank
   float startPoint[3];
   float startAzimuth;
-  boolean located = False;
   int locateCount = 0;
+  startPoint[2] = 0.0f;
+  float bestStartPoint[3], bestDist = -1e6;
+  boolean located;
 
   // check for valid starting (no unfair advantage to player or enemies)
   // should find a good location in a few tries... locateCount is a safety
@@ -2214,7 +2215,9 @@ static void		restartPlaying()
   // if the enemy is loitering around waiting for players to reappear.
   // also have to make sure new position isn't in a building;  that must
   // be enforced no matter how many times we need to try new locations.
-  startPoint[2] = 0.0f;
+  // If I can't find a safe spot, try to use the best of the unsafe ones.
+  // The best one is that which violates the minimum safe distance by the
+  // smallest amount.
   do {
     do {
       if (restartOnBase) {
@@ -2242,6 +2245,13 @@ static void		restartPlaying()
       startAzimuth = 2.0f * M_PI * (float)bzfrand();
     } while (world->inBuilding(startPoint, 2.0f * TankRadius));
 
+    // use first point as best point, so we'll have a fallback
+    if (locateCount == 0) {
+      bestStartPoint[0] = startPoint[0];
+      bestStartPoint[1] = startPoint[1];
+      bestStartPoint[2] = startPoint[2];
+    }
+
     // get info on my tank
     const TeamColor myColor = myTank->getTeam();
     const float myCos = cosf(-startAzimuth);
@@ -2249,6 +2259,7 @@ static void		restartPlaying()
 
     // check each enemy tank
     located = True;
+    float worstDist = 1e6;
     for (int i = 0; i < maxPlayers; i++) {
       // ignore missing player
       if (!player[i]) continue;
@@ -2293,10 +2304,9 @@ static void		restartPlaying()
 
       // don't allow tank placement if enemy tank is +/- 30 degrees of
       // my boresight and in firing range (our unfair advantage)
-      if (enemyDist < minSafeRange(enemyCos,double(locateCount)/MaxTries)) {
-	located = False;
-	break;
-      }
+      float safeDist = enemyDist - minSafeRange(enemyCos);
+      if (safeDist < worstDist)
+        worstDist = safeDist;
 
       // compute my position in enemy coordinate system
       // cos = enemyUnitVect[0], sin = enemyUnitVect[1]
@@ -2312,15 +2322,22 @@ static void		restartPlaying()
 
       // don't allow tank placement if my tank is +/- 30 degrees of
       // the enemy's boresight and in firing range (enemy's unfair advantage)
-      if (myDist < minSafeRange(myCos,double(locateCount)/MaxTries)) {
-	located = False;
-	break;
-      }
+      safeDist = myDist - minSafeRange(myCos);
+      if (safeDist < worstDist)
+        worstDist = safeDist;
     }
+    if (located && worstDist > bestDist) {
+      bestDist = worstDist;
+      bestStartPoint[0] = startPoint[0];
+      bestStartPoint[1] = startPoint[1];
+      bestStartPoint[2] = startPoint[2];
+    }
+    if (bestDist < 0.0f)
+      located = False;
   } while (!located && ++locateCount <= MaxTries);
 
   // restart the tank
-  myTank->restart(startPoint, startAzimuth);
+  myTank->restart(bestStartPoint, startAzimuth);
   serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
   restartOnBase = False;
   firstLife = False;

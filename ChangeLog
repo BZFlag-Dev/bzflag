@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* PatchId fixes - Frank Thilo, Tim Riker
 * New lag measurement using pings - Frank Thilo
 * Fix MsgMessage and CLIENTQUERY handling - Frank Thilo
 * -ban - David Trowbridge, Dave Brosius, Tim Riker
