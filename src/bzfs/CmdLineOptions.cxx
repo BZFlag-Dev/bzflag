@@ -31,6 +31,7 @@
 #include "RecordReplay.h"
 #include "bzfs.h"
 #include "FlagInfo.h"
+#include "BZWError.h"
 
 /* data nasties */
 extern float speedTolerance;
@@ -391,14 +392,15 @@ static char **parseConfFile( const char *file, int &ac)
   std::vector<std::string> tokens;
   ac = 0;
 
+  BZWError errorHandler(file);
+
   std::ifstream confStrm(file);
   if (confStrm.is_open()) {
     char buffer[1024];
     confStrm.getline(buffer,1024);
 
     if (!confStrm.good()) {
-      std::cerr << "configuration file not found\n";
-      usage("bzfs");
+      errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
     }
 
     while (confStrm.good()) {
@@ -419,6 +421,8 @@ static char **parseConfFile( const char *file, int &ac)
       }
       confStrm.getline(buffer,1024);
     }
+  } else {
+	errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
   }
 
   const char **av = new const char*[tokens.size()+1];
