@@ -1130,7 +1130,7 @@ void handleRegisterCmd(GameKeeper::Player *playerData, const char *message)
 void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
-  char *p1 = strchr(message + 1, '\"');
+  char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
   if (!p2) {
@@ -1277,7 +1277,7 @@ void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
     }
   } else if (playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
     // show groups for other player
-    char *p1 = strchr(message + 1, '\"');
+    char *p1 = (char*) strchr(message + 1, '\"');
     char *p2 = 0;
     if (p1) p2 = strchr(p1 + 1, '\"');
     if (p2) {
@@ -1344,7 +1344,7 @@ void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
 void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
-  char *p1 = strchr(message + 1, '\"');
+  char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
   if (!p2) {
@@ -1389,7 +1389,7 @@ void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
 void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
-  char *p1 = strchr(message + 1, '\"');
+  char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
   if (!p2) {

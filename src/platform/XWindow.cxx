@@ -596,7 +596,7 @@ unsigned short		XWindow::getIntensityValue(float i) const
 {
   if (i <= 0.0f) return 0;
   if (i >= 1.0f) return 65535;
-  i = powf(i, 1.0 / gammaVal);
+  i = powf(i, 1.0f / gammaVal);
   return (unsigned short)(0.5f + 65535.0f * i);
 }
 

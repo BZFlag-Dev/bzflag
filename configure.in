@@ -260,6 +260,15 @@ regexec(0, 0, 0, 0, 0);
 ],
 [AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have regex stuff available])], [])
 
+AC_TRY_COMPILE([
+#include <algorithm>
+], [
+char array[] = "test";
+int i = std::count(array, array + 5, 't');
+],
+[AC_DEFINE(HAVE_STD_COUNT, 1, [Define to 1 if you have a conforming 
+std::count, otherwise old version of count template is assumed])])
+
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
 ac_func_search_save_LIBS=$LIBS

@@ -142,7 +142,7 @@ bool TextureFont::load(OSFile &file)
   char *temp;
 
   // get just the file part
-  temp = strrchr(fullName.c_str(), '/');
+  temp = strrchr((char*)fullName.c_str(), '/');
   if (temp)
     faceName = temp + 1;
   else
@@ -155,7 +155,7 @@ bool TextureFont::load(OSFile &file)
   if (extension)
     faceName.erase(faceName.size() - (strlen(extension) + 1), faceName.size());
 
-  temp = strrchr(faceName.c_str(), '_');
+  temp = strrchr((char*)faceName.c_str(), '_');
 
   if (temp) {
     size = atoi(temp+1);

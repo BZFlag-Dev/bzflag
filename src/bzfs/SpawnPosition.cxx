@@ -170,7 +170,7 @@ const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimu
   float dx = enemyPos[0] - testPos[0];
   float dy = enemyPos[0] - testPos[1];
   float angActual = atan2f (dy, dx);
-  float diff = fmodf(enemyAzimuth - angActual, M_PI * 2.0f);
+  float diff = fmodf(enemyAzimuth - angActual, (float)M_PI * 2.0f);
 
   // now diff is between {-PI*2 and +PI*2}, and we're looking for values around
   // -PI or +PI, because that's when the enemy is facing the source.

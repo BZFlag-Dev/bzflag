@@ -93,94 +93,76 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"),
 					 press));
 
-  defaultBinding.insert(std::make_pair(std::string("F12"), std::string("quit")));
-  defaultBinding.insert(std::make_pair(std::string("Left Mouse"), std::string("fire")));
-  defaultBinding.insert(std::make_pair(std::string("Enter"), std::string("fire")));
-  defaultBinding.insert(std::make_pair(std::string("Middle Mouse"), std::string("drop")));
-  defaultBinding.insert(std::make_pair(std::string("Space"), std::string("drop")));
-  defaultBinding.insert(std::make_pair(std::string("Right Mouse"), std::string("identify")));
-  defaultBinding.insert(std::make_pair(std::string("I"), std::string("identify")));
-  defaultBinding.insert(std::make_pair(std::string("Tab"), std::string("jump")));
-  defaultBinding.insert(std::make_pair(std::string("N"), std::string("send all")));
-  defaultBinding.insert(std::make_pair(std::string("M"), std::string("send team")));
-  defaultBinding.insert(std::make_pair(std::string(","), std::string("send nemesis")));
-  defaultBinding.insert(std::make_pair(std::string("."), std::string("send recipient")));
-  defaultBinding.insert(std::make_pair(std::string("Z"), std::string("send admin")));
-  defaultBinding.insert(std::make_pair(std::string("S"), std::string("toggle displayScore")));
-  defaultBinding.insert(std::make_pair(std::string("B"),
-				       std::string("viewZoom toggle")));
-  defaultBinding.insert(std::make_pair(std::string("Ctrl+Wheel Up"),
-				       std::string("viewZoom in")));
-  defaultBinding.insert(std::make_pair(std::string("Ctrl+Wheel Down"),
-				       std::string("viewZoom out")));
-  defaultBinding.insert(std::make_pair(std::string("Pause"), std::string("pause")));
-  defaultBinding.insert(std::make_pair(std::string("P"), std::string("pause")));
-  defaultBinding.insert(std::make_pair(std::string("F1"), std::string("fullscreen")));
-  defaultBinding.insert(std::make_pair(std::string("F3"), std::string("toggleConsoleAndRadar")));
-  defaultBinding.insert(std::make_pair(std::string("F4"), std::string("iconify")));
+  defaultBinding.insert(BindingTable::value_type("F12", "quit"));
+  defaultBinding.insert(BindingTable::value_type("Left Mouse", "fire"));
+  defaultBinding.insert(BindingTable::value_type("Enter", "fire"));
+  defaultBinding.insert(BindingTable::value_type("Middle Mouse", "drop"));
+  defaultBinding.insert(BindingTable::value_type("Space", "drop"));
+  defaultBinding.insert(BindingTable::value_type("Right Mouse", "identify"));
+  defaultBinding.insert(BindingTable::value_type("I", "identify"));
+  defaultBinding.insert(BindingTable::value_type("Tab", "jump"));
+  defaultBinding.insert(BindingTable::value_type("N", "send all"));
+  defaultBinding.insert(BindingTable::value_type("M", "send team"));
+  defaultBinding.insert(BindingTable::value_type(",", "send nemesis"));
+  defaultBinding.insert(BindingTable::value_type(".", "send recipient"));
+  defaultBinding.insert(BindingTable::value_type("Z", "send admin"));
+  defaultBinding.insert(BindingTable::value_type("S", "toggle displayScore"));
+  defaultBinding.insert(BindingTable::value_type("B", "viewZoom toggle"));
+  defaultBinding.insert(BindingTable::value_type("Ctrl+Wheel Up", "viewZoom in"));
+  defaultBinding.insert(BindingTable::value_type("Ctrl+Wheel Down", "viewZoom out"));
+  defaultBinding.insert(BindingTable::value_type("Pause", "pause"));
+  defaultBinding.insert(BindingTable::value_type("P", "pause"));
+  defaultBinding.insert(BindingTable::value_type("F1", "fullscreen"));
+  defaultBinding.insert(BindingTable::value_type("F3", "toggleConsoleAndRadar"));
+  defaultBinding.insert(BindingTable::value_type("F4", "iconify"));
 #ifdef SNAPPING
-  defaultBinding.insert(std::make_pair(std::string("F5"), std::string("screenshot")));
+  defaultBinding.insert(BindingTable::value_type("F5", "screenshot"));
 #endif
-  defaultBinding.insert(std::make_pair(std::string("-"), std::string("time backward")));
-  defaultBinding.insert(std::make_pair(std::string("="), std::string("time forward")));
-  defaultBinding.insert(std::make_pair(std::string("H"), std::string("toggleFlags radar")));
-  defaultBinding.insert(std::make_pair(std::string("J"), std::string("toggleFlags main")));
-  defaultBinding.insert(std::make_pair(std::string("K"), std::string("silence")));
-  defaultBinding.insert(std::make_pair(std::string("L"), std::string("toggle displayLabels")));
-  defaultBinding.insert(std::make_pair(std::string("Delete"), std::string("destruct")));
+  defaultBinding.insert(BindingTable::value_type("-", "time backward"));
+  defaultBinding.insert(BindingTable::value_type("=", "time forward"));
+  defaultBinding.insert(BindingTable::value_type("H", "toggleFlags radar"));
+  defaultBinding.insert(BindingTable::value_type("J", "toggleFlags main"));
+  defaultBinding.insert(BindingTable::value_type("K", "silence"));
+  defaultBinding.insert(BindingTable::value_type("L", "toggle displayLabels"));
+  defaultBinding.insert(BindingTable::value_type("Delete", "destruct"));
 
   // Default movement keys
-  defaultBinding.insert(std::make_pair(std::string("Left Arrow"),
-				       std::string("turn left")));
-  defaultBinding.insert(std::make_pair(std::string("Right Arrow"),
-				       std::string("turn right")));
-  defaultBinding.insert(std::make_pair(std::string("Up Arrow"),
-				       std::string("drive forward")));
-  defaultBinding.insert(std::make_pair(std::string("Down Arrow"),
-				       std::string("drive reverse")));
+  defaultBinding.insert(BindingTable::value_type("Left Arrow", "turn left"));
+  defaultBinding.insert(BindingTable::value_type("Right Arrow", "turn right"));
+  defaultBinding.insert(BindingTable::value_type("Up Arrow", "drive forward"));
+  defaultBinding.insert(BindingTable::value_type("Down Arrow", "drive reverse"));
   // End default movement keys
 
-  defaultBinding.insert(std::make_pair(std::string("Shift+Wheel Up"),
-				       std::string("radarZoom in")));
-  defaultBinding.insert(std::make_pair(std::string("Shift+Wheel Down"),
-				       std::string("radarZoom out")));
+  defaultBinding.insert(BindingTable::value_type("Shift+Wheel Up", "radarZoom in"));
+  defaultBinding.insert(BindingTable::value_type("Shift+Wheel Down", "radarZoom out"));
 
+  defaultBinding.insert(BindingTable::value_type("F6", "roam cycle subject backward"));
+  defaultBinding.insert(BindingTable::value_type("F7", "roam cycle subject forward"));
+  defaultBinding.insert(BindingTable::value_type("F8", "roam cycle type forward"));
+  defaultBinding.insert(BindingTable::value_type("F9", "roam zoom in"));
+  defaultBinding.insert(BindingTable::value_type("F10", "roam zoom out"));
+  defaultBinding.insert(BindingTable::value_type("F11", "roam zoom normal"));
+  defaultBinding.insert(BindingTable::value_type("O", "servercommand"));
+  defaultBinding.insert(BindingTable::value_type("F", "toggle displayFlagHelp"));
+  defaultBinding.insert(BindingTable::value_type("Page Up", "scrollpanel up"));
+  defaultBinding.insert(BindingTable::value_type("Wheel Up", "scrollpanel up"));
+  defaultBinding.insert(BindingTable::value_type("Page Down", "scrollpanel down"));
+  defaultBinding.insert(BindingTable::value_type("Wheel Down", "scrollpanel down"));
+  defaultBinding.insert(BindingTable::value_type("1", "set displayRadarRange 0.25"));
+  defaultBinding.insert(BindingTable::value_type("2", "set displayRadarRange 0.5"));
+  defaultBinding.insert(BindingTable::value_type("3", "set displayRadarRange 1.0"));
+  defaultBinding.insert(BindingTable::value_type("4", "radarZoom in"));
+  defaultBinding.insert(BindingTable::value_type("5", "radarZoom out"));
+  defaultBinding.insert(BindingTable::value_type("A", "toggle slowKeyboard"));
+  defaultBinding.insert(BindingTable::value_type("U", "hunt"));
+  defaultBinding.insert(BindingTable::value_type("Right Mouse", "restart"));
+  defaultBinding.insert(BindingTable::value_type("I", "restart"));
+  defaultBinding.insert(BindingTable::value_type("9", "autopilot"));
 
-  defaultBinding.insert(std::make_pair(std::string("F6"), std::string("roam cycle subject backward")));
-  defaultBinding.insert(std::make_pair(std::string("F7"), std::string("roam cycle subject forward")));
-  defaultBinding.insert(std::make_pair(std::string("F8"), std::string("roam cycle type forward")));
-  defaultBinding.insert(std::make_pair(std::string("F9"), std::string("roam zoom in")));
-  defaultBinding.insert(std::make_pair(std::string("F10"), std::string("roam zoom out")));
-  defaultBinding.insert(std::make_pair(std::string("F11"), std::string("roam zoom normal")));
-  defaultBinding.insert(std::make_pair(std::string("O"), std::string("servercommand")));
-  defaultBinding.insert(std::make_pair(std::string("F"), std::string("toggle displayFlagHelp")));
-  defaultBinding.insert(std::make_pair(std::string("Page Up"),
-				       std::string("scrollpanel up")));
-  defaultBinding.insert(std::make_pair(std::string("Wheel Up"),
-				       std::string("scrollpanel up")));
-  defaultBinding.insert(std::make_pair(std::string("Page Down"),
-				       std::string("scrollpanel down")));
-  defaultBinding.insert(std::make_pair(std::string("Wheel Down"),
-				       std::string("scrollpanel down")));
-  defaultBinding.insert(std::make_pair(std::string("1"), std::string("set displayRadarRange 0.25")));
-  defaultBinding.insert(std::make_pair(std::string("2"), std::string("set displayRadarRange 0.5")));
-  defaultBinding.insert(std::make_pair(std::string("3"), std::string("set displayRadarRange 1.0")));
-  defaultBinding.insert(std::make_pair(std::string("4"), std::string("radarZoom in")));
-  defaultBinding.insert(std::make_pair(std::string("5"), std::string("radarZoom out")));
-  defaultBinding.insert(std::make_pair(std::string("A"), std::string("toggle slowKeyboard")));
-  defaultBinding.insert(std::make_pair(std::string("U"), std::string("hunt")));
-  defaultBinding.insert(std::make_pair(std::string("Right Mouse"), std::string("restart")));
-  defaultBinding.insert(std::make_pair(std::string("I"), std::string("restart")));
-  defaultBinding.insert(std::make_pair(std::string("9"), std::string("autopilot")));
-
-  defaultBinding.insert(std::make_pair(std::string("Shift+F1"),
-				       std::string("messagepanel all")));
-  defaultBinding.insert(std::make_pair(std::string("Shift+F2"),
-				       std::string("messagepanel chat")));
-  defaultBinding.insert(std::make_pair(std::string("Shift+F3"),
-				       std::string("messagepanel server")));
-  defaultBinding.insert(std::make_pair(std::string("Shift+F4"),
-				       std::string("messagepanel misc")));
+  defaultBinding.insert(BindingTable::value_type("Shift+F1", "messagepanel all"));
+  defaultBinding.insert(BindingTable::value_type("Shift+F2", "messagepanel chat"));
+  defaultBinding.insert(BindingTable::value_type("Shift+F3", "messagepanel server"));
+  defaultBinding.insert(BindingTable::value_type("Shift+F4", "messagepanel misc"));
 }
 
 void ActionBinding::resetBindings() {
@@ -238,7 +220,7 @@ void ActionBinding::associate(std::string key,
       }
     }
   }
-  bindingTable.insert(std::make_pair(key, action));
+  bindingTable.insert(BindingTable::value_type(key, action));
   if (keyBind)
     bind(action, key);
 };

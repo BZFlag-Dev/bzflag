@@ -31,12 +31,14 @@
  */
 class PositionTracker
 {
+public:
+  typedef enum idtype { UNSET_ID, INT_ID, STR_ID } idtype_t;
+
 private:
 
   /** something that we are tracking (uniquely identified by either an
    * integer or a string)
    */
-  typedef enum idtype { UNSET_ID, INT_ID, STR_ID } idtype_t;
   typedef struct item {
     idtype_t id;
     long int intID;

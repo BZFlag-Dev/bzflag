@@ -400,7 +400,7 @@ const char* OSFile::getFileName ( void )
 		return NULL;
 
 	// yes I know this part is horrible, put it in the pimple
-	char	*path = strrchr(info->stdName.c_str(),'/');
+	char	*path = strrchr((char*)info->stdName.c_str(),'/');
 
 	if (path)
 		path++;
@@ -423,7 +423,7 @@ const char* OSFile::getExtension ( void )
 	if (info->stdName.size()== 0)
 		return NULL;
 
-	char	*pEnd = strrchr(info->stdName.c_str(),'.');
+	char	*pEnd = strrchr((char*)info->stdName.c_str(),'.');
 
 	if (pEnd)
 		pEnd++;
@@ -433,7 +433,7 @@ const char* OSFile::getExtension ( void )
 
 const char* OSFile::getOSFileDir ( void )
 {
-	char	*path = strrchr(info->stdName.c_str(),'/');
+	char	*path = strrchr((char*)info->stdName.c_str(),'/');
 
 	if (path)
 		path++;

@@ -96,6 +96,15 @@
  */
 class WordFilter
 {
+ public:
+
+  /** structure for a single filter word, and a compiled regular expression
+   */
+  typedef struct filterStruct {
+    std::string word;
+    regex_t *compiled;
+  } filter_t;
+
 
  private:
 
@@ -104,13 +113,6 @@ class WordFilter
 
   /** set of characters used to replace filtered content */
   std::string filterChars;
-
-  /** structure for a single filter word, and a compiled regular expression
-   */
-  typedef struct filterStruct {
-    std::string word;
-    regex_t *compiled;
-  } filter_t;
 
   /** word expressions to be filtered including compiled regexp versions */
   struct expressionCompare {
@@ -278,9 +280,19 @@ inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t 
 
 inline void WordFilter::appendUniqueChar(std::string& string, char c) const
 {
+#ifdef HAVE_STD_COUNT
+// ISO standard std::count
   if (std::count(string.begin(), string.end(), c) == 0) {
     string += c;
   }
+#else
+// old HP-style std::count (SunPRO for instance)
+  int n = 0;
+  std::count(string.begin(), string.end(), c, n);
+  if (n == 0) {
+    string += c;
+  }
+#endif
 }
 
 

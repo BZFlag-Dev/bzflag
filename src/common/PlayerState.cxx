@@ -76,7 +76,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     }
 
     // put the angle between -M_PI and +M_PI
-    float angle = fmodf (azimuth, M_PI * 2.0f);
+    float angle = fmodf (azimuth, (float)M_PI * 2.0f);
     if (angle > M_PI) {
       angle -= (M_PI * 2.0f);
     }
