@@ -191,12 +191,11 @@ void SceneRenderer::setWindow(MainWindow* _window) {
 
 SceneRenderer::~SceneRenderer()
 {
-  // free scene iterator
+  // free scene iterator first
   delete sceneIterator;
 
-  // free databases
+  // then free database
   delete scene;
-
 }
 
 bool			SceneRenderer::useABGR() const
@@ -399,10 +398,13 @@ void			SceneRenderer::setExposed()
 
 void			SceneRenderer::setSceneDatabase(SceneDatabase* db)
 {
-  if (scene)
-    delete scene;
-  scene = db;
+  // free scene iterator first
   delete sceneIterator;
+
+  // then free database
+  delete scene;
+  
+  scene = db;
   if (scene) {
     sceneIterator = scene->getRenderIterator();
     inOrder = scene->isOrdered();
