@@ -1561,8 +1561,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   // "Purple Team" is longest possible string for flag indicator
   std::string flag;
   FlagType* flagd = player->getFlag();
-  if (flagd != Flags::Null)
-    flag = flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv;
+  if (flagd != Flags::Null) {
+    flag = "/";
+    flag += flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv;
+  }
 
   // indicate tanks which are paused or not responding
   char status[5]="";
