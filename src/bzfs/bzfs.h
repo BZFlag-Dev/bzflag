@@ -15,8 +15,10 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
-// to enforce a game time limit
-#define TIMELIMIT
+#ifdef _WIN32
+#pragma warning( 4 : 4786 )
+#endif
+
 // to dump score info to stdout
 #define PRINTSCORE to include code to dump score info to stdout
 
@@ -28,13 +30,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
 #define SERVERLOGINMSG true
 
-#if defined(__sgi)
-#define FD_SETSIZE (MaxPlayers + 10)
-#endif /* defined(__sgi) */
-
-#ifdef _WIN32
-#pragma warning( 4 : 4786 )
-#endif
 
 // must be before network.h because that defines a close() macro which
 // messes up fstreams.	luckily, we don't need to call the close() method
@@ -48,7 +43,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #if defined(_WIN32)
   #pragma warning(disable: 4786)
 #endif
-
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -116,6 +110,11 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "CustomBase.h"
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
+
+
+#if defined(__sgi)
+#define FD_SETSIZE (MaxPlayers + 10)
+#endif /* defined(__sgi) */
 
 
 #endif

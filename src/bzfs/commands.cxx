@@ -182,7 +182,9 @@ void handleCountdownCmd(int t, const char *)
   // reset all flags
   for (i = 0; i < numFlags; i++)
     zapFlag(i);
-#endif
+
+#endif // end TIMELIMIT
+
   return;
 }
 

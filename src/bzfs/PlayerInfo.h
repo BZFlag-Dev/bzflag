@@ -30,6 +30,9 @@
 // bzfs-specific headers
 
 
+// ??? - we need a compile-time flag for this (that is always on)?
+#define TIMELIMIT
+
 enum ClientState {
   PlayerNoExist,
   PlayerInLimbo,
@@ -148,10 +151,9 @@ struct PlayerInfo {
     TimeKeeper lastmsg;
 
     std::vector<FlagType*> flagHistory;
-#ifdef TIMELIMIT
+
     // player played before countdown started
     bool playedEarly;
-#endif
 
     // number of times they have tried to /password
     int passwordAttempts;
