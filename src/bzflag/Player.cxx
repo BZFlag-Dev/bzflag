@@ -535,13 +535,9 @@ bool Player::hitObstacleResizing()
 
 void Player::buildExplosionMatrix()
 {
-	double a = 0.10 * bzfrand() - 0.05;
-	double b = 0.10 * bzfrand() - 0.05;
-	double c = 0.10 * bzfrand() - 0.05;
-	double d = sqrt(a * a + b * b + c * c);
-	a /= d;
-	b /= d;
-	c /= d;
+	double a = (2.0 * M_PI * bzfrand() - M_PI) / 50.0;
+	double b = (2.0 * M_PI * bzfrand() - M_PI) / 50.0;
+	double c = (2.0 * M_PI * bzfrand() - M_PI) / 50.0;
 	
     explosionMatrix[0][0] = float(cos(b) * cos(c));
 	explosionMatrix[0][1] = float(cos(b) * sin(c));
