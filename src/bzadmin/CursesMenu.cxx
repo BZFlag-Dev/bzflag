@@ -276,27 +276,33 @@ void CursesMenu::clear() {
 void CursesMenu::showMenu() {
   if (window == NULL)
     return;
-  wclear(window);
+  werase(window);
   
   // update the menu if needed
   rebuild();
   
+  // get the window size
+  int x1, x2, y1, y2, w, h;
+  getbegyx(window, y1, x1);
+  getmaxyx(window, y2, x2);
+  w = x2 - x1;
+  h = y2 - y1;
+  
   // this magic should scroll the menu so that the selected menu item
   // always is visible
-  int start = selection - LINES / 4 + 2;
-  start = (start + LINES / 2  - 3> (signed)items.size() ? 
-	   items.size() - LINES / 2 + 3 : start);
+  int start = selection - (h / 2 - 1);
+  start = (start + (h - 2) > (signed)items.size() ? 
+	   items.size() - (h - 2) : start);
   start = (start < 0 ? 0 : start);
-  int end = start + LINES / 2 - 3;
+  int end = start + (h - 2);
   end = ((unsigned)end > items.size() ? items.size() : end);
   
   // show the menu items
   for (int i = start; i < end; ++i)
-    items[i]->showItem(window, 1 + (i - start), 10, COLS - 20, 
-		       i == selection);
+    items[i]->showItem(window, 1 + (i - start), 10, w - 20, i == selection);
   
   // draw a line at the bottom of the menu window
-  wmove(window, (LINES - 2) / 2 - 1, 0);
+  wmove(window, h - 1, 0);
   wattron(window, A_UNDERLINE);
   for (int i = 0; i < COLS; ++i)
     waddstr(window, " ");

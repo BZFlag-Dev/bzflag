@@ -361,10 +361,11 @@ void CursesUI::toggleMenu() {
   if (menuState == 0) {
     menuState = 1;
     curs_set(0);
-    wresize(mainWin, LINES - 2 - (LINES - 2) / 2, COLS);
-    mvwin(mainWin, (LINES - 2) / 2, 0);
-    updateMainWinFromBuffer(LINES - 2 - (LINES - 2) / 2);
-    menuWin = newwin((LINES - 2) / 2, 0, 0, 0);
+    const int menuWinSize = (LINES - 2) / 2;
+    wresize(mainWin, LINES - 2 - menuWinSize, COLS);
+    mvwin(mainWin, menuWinSize, 0);
+    updateMainWinFromBuffer(LINES - 2 - menuWinSize);
+    menuWin = newwin(menuWinSize, 0, 0, 0);
     menu.setWindow(menuWin);
     menu.showMenu();
   }
