@@ -20,6 +20,12 @@
 		<message buffer="alertStatus" timeout=10/>
 	</viewport>
 
+	# and a rear view window ;-)
+	<if name="displayRear">
+		<viewport x=75% y=0% w=25% h=25%>
+			<scene x=0.0 y=0.0 z=0.0 fov=1.8 theta="300%" phi=0/>
+		</viewport>
+	</if>
 	# FIXME -- missing time left countdown
 
 	# frame rate (can be switched on/off)
