@@ -177,7 +177,7 @@ const char *extraUsageString =
 "\t-s: allow up to <num> super flags (default=16)\n"
 "\t-sa: insert antidote superflags\n"
 "\t-sb: allow tanks to respawn on buildings\n"
-"\t-set <name>=<value>: set a BZDB variable's value\n"
+"\t-set <name> <value>: set a BZDB variable's value\n"
 "\t-sl: limit flag <id> to <num> shots\n"
 "\t-spamtime <time>: make <time> be the required time in seconds between messages sent that are alike\n"
 "\t-spamwarn <warnAmt>: warn a spammer that sends messages before -spamtime times out <warnAmt> many times\n"
