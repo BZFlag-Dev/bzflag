@@ -162,10 +162,10 @@ enum BlowedUpReason {
 };
 static const char*	blowedUpMessage[] = {
 			  NULL,
-			  "Got hit by shot",
-			  "Got run over by Steamroller",
-			  "Team flag was captured",
-			  "Teammate hit by Genocide",
+			  "Got shot by ",
+			  "Got flattened by ",
+			  "Team flag was captured by ",
+			  "Teammate hit with Genocide by ",
 			  "Tank Self Destructed",
 			};
 static boolean		gotBlowedUp(BaseLocalPlayer* tank,
@@ -577,12 +577,12 @@ static void setRoamingLabel()
 	hud->setRoamingLabel(BzfString("Tracking ") +
 			     player[roamTrackTank]->getCallSign());
 	break;
-  
+
       case roamViewFollow:
 	hud->setRoamingLabel(BzfString("Following ") +
 			     player[roamTrackTank]->getCallSign());
 	break;
-  
+
       case roamViewFP:
 	hud->setRoamingLabel(BzfString("Driving with ") +
 			     player[roamTrackTank]->getCallSign());
@@ -890,7 +890,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	      roamView = roamViewFree;
 	  }
 	  else if(roamView == roamViewTrack || roamView == roamViewFollow ||
-	        roamView == roamViewFP) {
+		roamView == roamViewFP) {
 	    if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
 	      bool found = false;
 	      for(int i = 0; i < curMaxPlayers; i++) {
@@ -1809,7 +1809,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  curMaxPlayers--;
 	}
 	World::getWorld()->setCurMaxPlayers(curMaxPlayers);
-	
+
 	updateNumPlayers();
 	checkScores = True;
       }
@@ -1934,7 +1934,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	else if (!killerPlayer) {
 #ifdef DEBUG
 	  char message[41];
-	  sprintf(message, "destroyed by <%s:%d-%1x>", 
+	  sprintf(message, "destroyed by <%s:%d-%1x>",
 	      inet_ntoa(killer.serverHost),
 	      ntohs(killer.port),
 	      ntohs(killer.number));
@@ -1996,10 +1996,9 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	    message += "'s super bullet";
 	    break;
 	  default:
-	    message += "got wrecked by ";
+	    message += "killed by ";
 	    message += teammate;
 	    message += killerPlayer->getCallSign();
-	    message += "'s blast";
 	  }
 	  addMessage(victimPlayer, message);
 	}
@@ -2066,10 +2065,10 @@ static void		handleServerMessage(boolean human, uint16_t code,
       }
       else {
 	FlagId fID = world->getFlag(flagIndex).id;
-	if (((fID >= RedFlag) && (fID <= PurpleFlag)) 
-	    && (int(fID) != int(tank->getTeam())) 
+	if (((fID >= RedFlag) && (fID <= PurpleFlag))
+	    && (int(fID) != int(tank->getTeam()))
 	    && ((tank && (tank->getTeam() == myTank->getTeam())))) {
-          hud->setAlert(1, "Team Grab!!!", 3.0f, False);
+	  hud->setAlert(1, "Team Grab!!!", 3.0f, False);
 	  const float* pos = tank->getPosition();
 	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
 	}
@@ -2253,7 +2252,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 
       if (srcPlayer == NULL) {
 #ifdef DEBUG
-	sprintf(srcNameText, "<%s:%d-%1x>", 
+	sprintf(srcNameText, "<%s:%d-%1x>",
 	    inet_ntoa(src.serverHost),
 	    ntohs(src.port),
 	    ntohs(src.number));
@@ -2276,7 +2275,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 
       if (dstPlayer == NULL) {
 #ifdef DEBUG
-	sprintf(dstNameText, "<%s:%d-%1x>", 
+	sprintf(dstNameText, "<%s:%d-%1x>",
 	    inet_ntoa(dst.serverHost),
 	    ntohs(dst.port),
 	    ntohs(dst.number));
@@ -2902,8 +2901,28 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 
   // print reason if it's my tank
   if (tank == myTank && blowedUpMessage[reason]) {
-    controlPanel->addMessage(blowedUpMessage[reason]);
-    hud->setAlert(0, blowedUpMessage[reason], 4.0f, True);
+    BzfString blowedUpNotice = blowedUpMessage[reason];
+    // first, check if i'm the culprit
+    if (reason == GotShot && getLocalPlayer(killer) == myTank)
+      blowedUpNotice = "Shot myself";
+    else {
+      // 1-4 are messages sent when the player dies because of someone else
+      if (reason >= GotShot && reason <= GenocideEffect) {
+	// matching the team-display style of other kill messages
+	if (myTank->getTeam() == lookupPlayer(killer)->getTeam() && myTank->getTeam() != RogueTeam) {
+	  blowedUpNotice += "teammate " ;
+	  blowedUpNotice += lookupPlayer(killer)->getCallSign();
+	}
+	else {
+	  blowedUpNotice += lookupPlayer(killer)->getCallSign();
+	  blowedUpNotice += " (";
+	  blowedUpNotice += Team::getName(lookupPlayer(killer)->getTeam());
+	  blowedUpNotice += ")";
+	}
+      }
+    }
+    hud->setAlert(0, blowedUpNotice, 4.0f, True);
+    controlPanel->addMessage(blowedUpNotice);
   }
 
   // make sure shot is terminated locally (if not globally) so it can't
@@ -3561,7 +3580,7 @@ static World*		makeWorld(ServerLink* serverLink)
   uint16_t code, len, size;
   char msg[MaxPacketLen];
   BzfString worldPath;
-  bool isTemp = false; 
+  bool isTemp = false;
 
   //ask for the hash of the world (ignoring all other messages)
   serverLink->send( MsgWantWHash, 0, NULL );
@@ -4400,7 +4419,7 @@ static void		playingLoop()
 	hud->setAlert(1, msgBuf, 1.0f, False);
       }
     }
-    
+
     // reposition flags
     updateFlags(dt);
 
@@ -4862,7 +4881,7 @@ static void		playingLoop()
       }
       else {
 	int mx, my;
-	mainWindow->getMousePosition(mx, my);        
+	mainWindow->getMousePosition(mx, my);
       }
       myTank->update();
     }
