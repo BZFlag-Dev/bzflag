@@ -379,7 +379,7 @@ inline const std::vector<BoxBuilding>&	World::getBoxes() const
   return boxes;
 }
 
-inline const std::vector<PyramidBuilding>&	World::getPyramids() const
+inline const std::vector<PyramidBuilding>& World::getPyramids() const
 {
   return pyramids;
 }
@@ -394,24 +394,24 @@ inline World*		World::getWorld()
   return playingField;
 }
 
-inline BundleMgr* World::getBundleMgr()
+inline BundleMgr*	World::getBundleMgr()
 {
-	return World::bundleMgr;
+  return World::bundleMgr;
 }
 
-inline void World::setBundleMgr(BundleMgr *bundleMgr)
+inline void		World::setBundleMgr(BundleMgr *bundleMgr)
 {
-	World::bundleMgr = bundleMgr;
+  World::bundleMgr = bundleMgr;
 }
 
-inline std::string World::getLocale()
+inline std::string	World::getLocale()
 {
-	return locale;
+  return locale;
 }
 
-inline void World::setLocale(const std::string& locale)
+inline void		World::setLocale(const std::string& locale)
 {
-	World::locale = locale;
+  World::locale = locale;
 }
 
 #endif // BZF_WORLD_H
