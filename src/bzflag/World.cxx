@@ -736,8 +736,12 @@ bool			World::writeWorld(std::string filename)
     ||  (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())))
     {
       out << "world" << std::endl;
-      out << "\tsize " << worldSize / 2.0f << std::endl;
-      out << "\tflagHeight " << flagHeight << std::endl;
+      if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) {
+	out << "\tsize " << worldSize / 2.0f << std::endl;
+      }
+      if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())) {
+	out << "\tflagHeight " << flagHeight << std::endl;
+      }
       out << "end" << std::endl;
       out << std::endl;
     }
