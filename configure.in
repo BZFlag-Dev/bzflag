@@ -272,7 +272,7 @@ fi
 
 savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
-AC_ARG_WITH(SDL, [  --with-SDL              use Simple DirectMedia Layer])
+AC_ARG_WITH(SDL, [  --without-SDL              do not use Simple DirectMedia Layer])
 if test x$with_SDL != xno; then
   with_SDL=yes
 fi
