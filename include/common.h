@@ -17,7 +17,9 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
+#ifndef _WIN32
 #include <config.h>
+#endif
 #include <string>
 #include <sstream>
 #include <vector>
