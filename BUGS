@@ -5,7 +5,8 @@ recent bugs
   server tried to kick and fails to find the player. server iterates over
   player ids and it looks like it skips the id of the player to be kicked.
 
-- Reported that mapping Binocular, and perhaps others, doesn't work.
+- In order for key mappings to work, you must pick the option, hit enter,
+  and then type the key you choose. This seems backwards :)
 
 - players gets stuck for no reason, can't move or turn, but can shoot.
   Seen on xmission (CTF), also seen on brlcad (FFA). Was stuck after each respawn,
