@@ -57,6 +57,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "WorldBuilder.h"
 #include "Team.h"
 #include "FileManager.h"
+#include "AutoCompleter.h"
 #include "Flag.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
@@ -108,10 +109,10 @@ static const float	FlagHelpDuration = 60.0f;
 static StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 ServerLink*		serverLink = NULL;
-World*		world = NULL;
+World*			world = NULL;
 LocalPlayer*		myTank = NULL;
 static BzfDisplay*	display = NULL;
-MainWindow*	mainWindow = NULL;
+MainWindow*		mainWindow = NULL;
 static SceneRenderer*	sceneRenderer = NULL;
 ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
@@ -125,36 +126,36 @@ static ConnectStatusCallback connectCallback = NULL;
 bool			admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
-bool		fireButton = false;
-bool             roamButton = false;
+bool			fireButton = false;
+bool             	roamButton = false;
 static bool		firstLife = false;
 static bool		showFPS = false;
 static bool		showDrawTime = false;
-bool		pausedByUnmap = false;
+bool			pausedByUnmap = false;
 static bool		unmapped = false;
 static int		preUnmapFormat = -1;
 static double		epochOffset;
 static double		lastEpochOffset;
-float		clockAdjust = 0.0f;
-float		pauseCountdown = 0.0f;
-float		destructCountdown = 0.0f;
+float			clockAdjust = 0.0f;
+float			pauseCountdown = 0.0f;
+float			destructCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static std::vector<PlayingCallbackItem>	playingCallbacks;
 bool			gameOver = false;
 static std::vector<BillboardSceneNode*>	explosions;
 static std::vector<BillboardSceneNode*>	prototypeExplosions;
-int		savedVolume = -1;
+int			savedVolume = -1;
 static bool		grabMouseAlways = false;
 FlashClock		pulse;
 static bool             wasRabbit = false;
 
-MessageOfTheDay					motd;
+MessageOfTheDay		motd;
+DefaultCompleter	completer;
 
+char			messageMessage[PlayerIdPLen + MessageLen];
 
-char		messageMessage[PlayerIdPLen + MessageLen];
-
-void		setTarget();
+void			setTarget();
 static void		setHuntTarget();
 static void*		handleMsgSetVars(void *msg);
 void			handleFlagDropped(Player* tank);
@@ -775,41 +776,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 #endif
 
   if (key.ascii == 0 &&
-      key.button == BzfKeyEvent::F2 &&
+      key.button >= BzfKeyEvent::F1 &&
+      key.button <= BzfKeyEvent::F10 &&
       (key.shift & (BzfKeyEvent::ControlKey +
-		    BzfKeyEvent::AltKey)) == 0 && !haveBinding) {
-    if (!hud->getComposing() || !pressed)
-      return;
-    if (isspace(hud->getComposeString()[hud->getComposeString().size() - 1]))
-      return;
-    std::vector<std::string> tokens = string_util::tokenize(hud->getComposeString(), " ");
-    if (tokens.size() < 1)
-      return;
-    std::string name = tokens[tokens.size() - 1]; //the last token is the seed
-    int c;
-    bool found = false;
-    for (c = 0; c < curMaxPlayers; c++)
-      if (player[c] &&
-	  (strncmp(name.c_str(), player[c]->getCallSign(), name.size()) == 0) &&
-	  (hud->getTabCompletionRotation() != c)) {
-	found = true;
-	break;
-    }
-    if (found) {
-      hud->setTabCompletionRotation(c);
-      std::string line;
-      for (int d = 0; d <= (int)tokens.size() - 2; d++) //reassemble the string
-        line += tokens[d] + " ";
-      hud->setComposeString(line + player[c]->getCallSign());
-    } else {
-      hud->setTabCompletionRotation(-1);  //can't lock up a callsign forever
-    }
-  }
-  else if (key.ascii == 0 &&
-	   key.button >= BzfKeyEvent::F1 &&
-	   key.button <= BzfKeyEvent::F10 &&
-	   (key.shift & (BzfKeyEvent::ControlKey +
-			 BzfKeyEvent::AltKey)) != 0 && !haveBinding) {
+       		    BzfKeyEvent::AltKey)) != 0 && !haveBinding) {
     // [Ctrl]-[Fx] is message to team
     // [Alt]-[Fx] is message to all
     if (pressed) {
@@ -1314,6 +1284,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
     }
     addMessage(player[i], message);
   }
+  completer.registerWord(callsign);
 
   return player[i];
 }
@@ -1331,6 +1302,8 @@ static bool removePlayer (PlayerId id)
     myTank->setRecipient(0);
   if (myTank->getNemesis() == player[playerIndex])
     myTank->setNemesis(0);
+  completer.unregisterWord(player[playerIndex]->getCallSign());
+
   delete player[playerIndex];
   player[playerIndex] = NULL;
 
@@ -3931,6 +3904,7 @@ static bool		joinGame(const StartupInfo* info,
 
   // prep players
   curMaxPlayers = 0;
+  completer.setDefaults();
   player = world->getPlayers();
 
   // prep flags

@@ -1,10 +1,6 @@
 recent bugs
 ------------
 
-- callsign completion is flawed in case of multiple matches; the code tries to
-  cycle through them, but it cannot work, because the initial seed (first letters
-  typed) are lost after first completion, because they are replaced with the full match
-
 - /lagstats reporting looks horrible with variable width fonts
 
 - it appears that MSVC5 has problems loading large world files

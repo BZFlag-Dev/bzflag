@@ -130,7 +130,7 @@ protected:
   PlayerIdMap additionalTargets;
   PlayerIdMap::const_iterator targetIter;
   PlayerId me;
-  AutoCompleter comp;
+  DefaultCompleter comp;
   std::vector<std::string> history;
   unsigned int maxHistory;
   unsigned int currentHistory;

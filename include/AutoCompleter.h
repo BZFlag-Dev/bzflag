@@ -40,6 +40,20 @@ class AutoCompleter {
   std::vector<std::string> words;
 };
 
+
+/** This class will try to complete strings to registered words.
+    It starts with a bunch of common /-commands */
+class DefaultCompleter : public AutoCompleter
+{
+public:
+  /** ctor sets default words */
+  DefaultCompleter();
+
+  /** This function sets the list of registered words to a default which
+      consists of some /-commands; possible other words are removed */
+  void setDefaults();
+};
+
 #endif
 
 // Local Variables: ***

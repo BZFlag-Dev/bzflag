@@ -67,65 +67,6 @@ CursesUI::CursesUI(BZAdminClient& c) :
   // add additional chat targets
   additionalTargets[PlayerId(250 - ObserverTeam)] = PlayerInfo("teammates");
   additionalTargets[AdminPlayers] = PlayerInfo("admins");
-
-  // register commands for tab completion
-  comp.registerWord("/ban ");
-  comp.registerWord("/banlist");
-  comp.registerWord("/countdown");
-  comp.registerWord("/clientquery");
-  comp.registerWord("/date");
-  comp.registerWord("/deregister");
-  comp.registerWord("/flag ");
-  comp.registerWord("reset");
-  comp.registerWord("up");
-  comp.registerWord("show");
-  comp.registerWord("/flaghistory");
-  comp.registerWord("/gameover");
-  comp.registerWord("/ghost ");
-  comp.registerWord("/groupperms");
-  comp.registerWord("/help");
-  comp.registerWord("/identify ");
-  comp.registerWord("/idlestats");
-  comp.registerWord("/kick ");
-  comp.registerWord("/lagstats");
-  comp.registerWord("/lagwarn ");
-  comp.registerWord("/password ");
-  comp.registerWord("/playerlist");
-  comp.registerWord("/poll ");
-  comp.registerWord("ban");
-  comp.registerWord("kick");
-  comp.registerWord("/quit");
-  comp.registerWord("/record");
-  comp.registerWord("start");
-  comp.registerWord("stop");
-  comp.registerWord("size");
-  comp.registerWord("rate");
-  comp.registerWord("stats");
-  comp.registerWord("file");
-  comp.registerWord("save");
-  comp.registerWord("/register ");
-  comp.registerWord("/reload");
-  comp.registerWord("/masterban"); // also uses list
-  comp.registerWord("reload");
-  comp.registerWord("flush");
-  comp.registerWord("/removegroup ");
-  comp.registerWord("/replay ");
-  comp.registerWord("list");
-  comp.registerWord("load");
-  comp.registerWord("play");
-  comp.registerWord("skip");
-  comp.registerWord("/report ");
-  comp.registerWord("/reset");
-  comp.registerWord("/set");
-  comp.registerWord("/setgroup ");
-  comp.registerWord("/setpass ");
-  comp.registerWord("/shutdownserver");
-  comp.registerWord("/superkill");
-  comp.registerWord("/time");
-  comp.registerWord("/unban ");
-  comp.registerWord("/veto");
-  comp.registerWord("/viewreports");
-  comp.registerWord("/vote");
 }
 
 

@@ -53,6 +53,75 @@ std::string AutoCompleter::complete(const std::string& str) {
   return first->substr(0, i);
 }
 
+
+
+
+DefaultCompleter::DefaultCompleter() {
+  setDefaults();
+}
+
+void DefaultCompleter::setDefaults() {
+  words.clear();
+  registerWord("/ban ");
+  registerWord("/banlist");
+  registerWord("/countdown");
+  registerWord("/clientquery");
+  registerWord("/date");
+  registerWord("/deregister");
+  registerWord("/flag ");
+  registerWord("reset");
+  registerWord("up");
+  registerWord("show");
+  registerWord("/flaghistory");
+  registerWord("/gameover");
+  registerWord("/ghost ");
+  registerWord("/groupperms");
+  registerWord("/help");
+  registerWord("/identify ");
+  registerWord("/idlestats");
+  registerWord("/kick ");
+  registerWord("/lagstats");
+  registerWord("/lagwarn ");
+  registerWord("/password ");
+  registerWord("/playerlist");
+  registerWord("/poll ");
+  registerWord("ban");
+  registerWord("kick");
+  registerWord("/quit");
+  registerWord("/record");
+  registerWord("start");
+  registerWord("stop");
+  registerWord("size");
+  registerWord("rate");
+  registerWord("stats");
+  registerWord("file");
+  registerWord("save");
+  registerWord("/register ");
+  registerWord("/reload");
+  registerWord("/masterban"); // also uses list
+  registerWord("reload");
+  registerWord("flush");
+  registerWord("/removegroup ");
+  registerWord("/replay ");
+  registerWord("list");
+  registerWord("load");
+  registerWord("play");
+  registerWord("skip");
+  registerWord("/report ");
+  registerWord("/reset");
+  registerWord("/set");
+  registerWord("/setgroup ");
+  registerWord("/setpass ");
+  registerWord("/showgroup ");
+  registerWord("/shutdownserver");
+  registerWord("/superkill");
+  registerWord("/time");
+  registerWord("/unban ");
+  registerWord("/veto");
+  registerWord("/viewreports");
+  registerWord("/vote");
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

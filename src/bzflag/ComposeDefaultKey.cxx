@@ -22,6 +22,7 @@
 #include "BzfEvent.h"
 #include "RemotePlayer.h"
 #include "KeyManager.h"
+#include "AutoCompleter.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -36,6 +37,7 @@ extern char messageMessage[PlayerIdPLen + MessageLen];
 #define MAX_MESSAGE_HISTORY (20)
 extern HUDRenderer *hud;
 extern ServerLink*	serverLink;
+extern DefaultCompleter completer;
 void selectNextRecipient (bool forward, bool robotIn);
 
 
@@ -194,6 +196,12 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 	hud->setComposing(composePrompt);
       }
       return false;
+    }
+    else if (key.shift == 0 && key.button == BzfKeyEvent::F2) {  // auto completion
+      std::string line = hud->getComposeString();
+      int lastSpace = line.find_last_of(" \t");
+      line = line.substr(0, lastSpace+1) + completer.complete(line.substr(lastSpace+1));
+      hud->setComposeString(line);
     }
   }
   return keyPress(key);
