@@ -513,6 +513,11 @@ void TrackMarks::update(float dt)
   TrackFadeTime = BZDB.eval(StateDatabase::BZDB_TRACKFADE);
   TrackFadeTime = TrackFadeTime * UserFadeScale;
 
+  if (TrackFadeTime <= 0.0f) {
+    clear();
+    return;
+  }
+  
   updateList(SmokeList, dt);
   updateList(PuddleList, dt);
   updateList(TreadsGroundList, dt);
@@ -574,11 +579,6 @@ void TrackMarks::notifyStyleChange()
 
 void TrackMarks::renderGroundTracks()
 {
-  if (TrackFadeTime <= 0.0f) {
-    clear();
-    return;
-  }
-
   TrackEntry* ptr;
 
   // disable the zbuffer for drawing on the ground
@@ -613,11 +613,6 @@ void TrackMarks::renderObstacleTracks()
 {
   if (!BZDBCache::zbuffer) {
     return; // this is not for the BSP rendering
-  }
-
-  if (TrackFadeTime <= 0.0f) {
-    clear();
-    return;
   }
 
   TrackEntry* ptr;
