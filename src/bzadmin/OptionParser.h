@@ -97,7 +97,7 @@ protected:
   /** This is a specialization for @c string variables. It copies the
       entire parameter instead of just the first word (which the
       stream operator would have done). */
-  class VariableParser<std::string> : public Parser {
+  template<> class VariableParser<std::string> : public Parser {
   public:
     VariableParser(std::string& variable, const std::string& usageText,
 		   const std::string& helpText)
@@ -112,7 +112,7 @@ protected:
 
   /** This is a specialization for @c bool variables. It does not
       take a parameter, but just sets the variable to @c true. */
-  class VariableParser<bool> : public Parser {
+  template<> class VariableParser<bool> : public Parser {
   public:
     VariableParser(bool& variable, const std::string& usageText,
 		   const std::string& helpText)
