@@ -9,7 +9,7 @@ CppCompiler=-DBUILD_REGEX=1 -D__GNUWIN32__ -W -D_WINDOWS -DWIN32 -D_MBCS_@@_
 Includes=..\include;..\win32;.\\
 Linker=-lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=309
+UnitCount=307
 Folders="Header Files","Header Files/bzip2","Header Files/common","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzip2","Source Files/common","Source Files/models","Source Files/net","Source Files/regex"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -2797,87 +2797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit284]
-FileName=..\src\platform\WinWindow.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit285]
-FileName=..\src\platform\WinDisplay.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit287]
-FileName=..\src\platform\WinMedia.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit288]
-FileName=..\src\platform\WinPlatformFactory.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit289]
-FileName=..\src\platform\WinVisual.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit290]
-FileName=..\src\game\CollisionManager.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit291]
-FileName=..\src\game\Ray.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit292]
-FileName=..\src\scene\Octree.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit293]
 FileName=..\src\game\VotingArbiter.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2887,7 +2807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit294]
+[Unit288]
 FileName=..\src\game\DelayQueue.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2897,7 +2817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit295]
+[Unit289]
 FileName=..\src\game\Frustum.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2907,7 +2827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit296]
+[Unit290]
 FileName=..\src\game\Intersect.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2917,7 +2837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit297]
+[Unit291]
 FileName=..\src\game\LagInfo.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2927,7 +2847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit298]
+[Unit292]
 FileName=..\src\game\NetHandler.cxx
 CompileCpp=1
 Folder=Source Files/net
@@ -2937,7 +2857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit299]
+[Unit293]
 FileName=..\src\game\PlayerInfo.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2947,7 +2867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit300]
+[Unit294]
 FileName=bzflag.rc
 CompileCpp=1
 Folder=Resource Files
@@ -2957,7 +2877,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit302]
+[Unit295]
+FileName=..\src\regex\regcomp.c
+CompileCpp=0
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit296]
 FileName=..\src\regex\regerror.c
 CompileCpp=0
 Folder=Source Files/regex
@@ -2967,7 +2897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit303]
+[Unit297]
 FileName=..\src\regex\regexec.c
 CompileCpp=0
 Folder=Source Files/regex
@@ -2977,17 +2907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit305]
-FileName=..\src\regex\utils.h
-CompileCpp=0
-Folder=Header Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit304]
+[Unit298]
 FileName=..\src\regex\regfree.c
 CompileCpp=0
 Folder=Source Files/regex
@@ -2997,7 +2917,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit306]
+[Unit299]
+FileName=..\src\regex\utils.h
+CompileCpp=0
+Folder=Header Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit300]
 FileName=..\src\regex\cclass.h
 CompileCpp=0
 Folder=Header Files/regex
@@ -3007,10 +2937,60 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit307]
-FileName=..\src\regex\cname.h
+[Unit302]
+FileName=..\src\regex\regex2.h
 CompileCpp=0
 Folder=Header Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit303]
+FileName=..\src\scene\Occluder.cxx
+CompileCpp=1
+Folder=Source Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit305]
+FileName=..\src\platform\SDLDisplay.cxx
+CompileCpp=1
+Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit304]
+FileName=..\src\platform\SDLPlatformFactory.cxx
+CompileCpp=1
+Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit306]
+FileName=..\src\platform\SDLJoystick.cxx
+CompileCpp=1
+Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit307]
+FileName=..\src\platform\SDLMedia.cxx
+CompileCpp=1
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3408,7 +3388,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit286]
-FileName=..\src\platform\WinJoystick.cxx
+FileName=..\src\scene\Octree.cxx
 CompileCpp=1
 Folder=Source Files/common
 Compile=1
@@ -3418,9 +3398,29 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit301]
-FileName=..\src\regex\regcomp.c
+FileName=..\src\regex\cname.h
 CompileCpp=0
-Folder=Source Files/regex
+Folder=Header Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit284]
+FileName=..\src\game\CollisionManager.cxx
+CompileCpp=1
+Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit285]
+FileName=..\src\game\Ray.cxx
+CompileCpp=1
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
