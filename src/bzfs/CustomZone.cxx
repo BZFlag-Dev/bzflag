@@ -39,10 +39,28 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
     std::istringstream  parms(args);
 
     while (parms >> flag) {
-      FlagType *type = Flag::getDescFromAbbreviation(flag.c_str());
-      if (type == NULL)
-        return false;
-      qualifiers.push_back(flag);
+      FlagType *type;
+      
+      if (flag == "good") {
+        FlagSet &fs = Flag::getGoodFlags();
+	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
+	  FlagType *f = *it;
+	  qualifiers.push_back(f->flagAbbv);
+	}
+      }
+      else if (flag == "bad") {
+	FlagSet &fs = Flag::getBadFlags();
+	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
+	  FlagType *f = *it;
+	  qualifiers.push_back(f->flagAbbv);
+	}
+      }
+      else {
+        type = Flag::getDescFromAbbreviation(flag.c_str());
+        if (type == NULL)
+          return false;
+        qualifiers.push_back(flag);
+      }
     }
     input.putback('\n');
     if (qualifiers.size() == 0)
