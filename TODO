@@ -3,7 +3,7 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* convert bzflag/bzadmin/bzfs over to use http urls instead of bzflist
+* convert bzflag/bzfs over to use http urls instead of bzflist
   - use bzfls.pl as a starting point
   - see http://db.bzflag.org/ for example URLs
   - kill SETNUM and use action=ADD all the time
