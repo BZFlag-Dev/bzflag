@@ -10,8 +10,15 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#pragma warning( 4: 4786)
+#endif
+
 #include <iostream>
+#ifdef _WIN32
+#else
 #include <sys/select.h>
+#endif
 
 #include "StdBothUI.h"
 #include "global.h"

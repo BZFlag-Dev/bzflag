@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#pragma warning( 4: 4786)
+#endif
+
 #include <stdio.h>
 #include <iostream>
 #include <map>
@@ -37,7 +41,7 @@ int main(int argc, char** argv) {
   string uiName("curses");
 
   // no curses, use stdboth as default instead
-  const UIMap& interfaces(UIMap::getInstance());
+  const UIMap& interfaces = UIMap::getInstance();
   if (interfaces.find("curses") == interfaces.end())
     uiName = "stdboth";
 
@@ -51,8 +55,10 @@ int main(int argc, char** argv) {
   // register and parse command line arguments
   OptionParser op(string("bzadmin ") + getAppVersion(),
 		  "CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ...");
-  op.registerVariable("ui", uiName, uiUsage,
-		      "choose a user interface");
+
+  const std::string uiOption = "ui";
+  const std::string uiMsg = "choose a user interface";
+  op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
   if (!op.parse(argc, argv))
     return 1;
 

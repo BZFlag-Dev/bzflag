@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#pragma warning( 4: 4786)
+#endif
+
 #include <iostream>
 
 #include "BZAdminClient.h"
@@ -19,9 +23,9 @@ using namespace std;
 
 
 BZAdminClient::BZAdminClient(string callsign, string host,
-			     int port, BZAdminUI* interface)
+			     int port, BZAdminUI* bzInterface)
   : myTeam(ObserverTeam), sLink(Address(host), port), valid(false),
-    ui(interface) {
+    ui(bzInterface) {
 
   if (sLink.getState() != ServerLink::Okay) {
     cerr<<"Could not connect to "<<host<<':'<<port<<'.'<<endl;
@@ -218,8 +222,8 @@ string BZAdminClient::formatMessage(const string& msg, PlayerId src,
 }
 
 
-void BZAdminClient::setUI(BZAdminUI* interface) {
-  ui = interface;
+void BZAdminClient::setUI(BZAdminUI* bzInterface) {
+  ui = bzInterface;
 }
 
 

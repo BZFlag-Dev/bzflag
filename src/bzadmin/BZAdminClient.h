@@ -77,7 +77,7 @@ public:
       with the user. The object pointed to by @c interface will not be
       deallocated when BZAdminClient is done with it, you will have to
       do that yourself. */
-  void setUI(BZAdminUI* interface);
+  void setUI(BZAdminUI* bzInterface);
 
   /** Waits until we think the server has processed all our input so far. */
   void waitForServer();
