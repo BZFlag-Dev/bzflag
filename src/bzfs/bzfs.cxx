@@ -4700,7 +4700,7 @@ static void parseCommand(const char *message, int t)
     if (message[8] == ' ')
     {
       const char *maxlag = message + 9;
-      lagwarnthresh = atoi(maxlag) / 1000.0;
+      lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
       char reply[MessageLen];
       sprintf(reply,"lagwarn is now %d ms",int(lagwarnthresh * 1000 + 0.5));
       sendMessage(t, player[t].id,player[t].team,reply);
