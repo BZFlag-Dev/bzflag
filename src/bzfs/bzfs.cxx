@@ -2518,7 +2518,8 @@ void resetFlag(int flagIndex)
     pFlagInfo->flag.type = Flags::Null;
 
   // reposition flag
-  if (pFlagInfo->flag.type->flagTeam != ::NoTeam) {
+  if ((pFlagInfo->flag.type->flagTeam >= ::RedTeam) 
+  &&  (pFlagInfo->flag.type->flagTeam <= ::PurpleTeam)) {
     int teamIndex = pFlagInfo->flag.type->flagTeam;
     const float *pos = (*bases)[teamIndex]->getBasePosition(0);
     const float *size = (*bases)[teamIndex]->getBaseSize(0);
