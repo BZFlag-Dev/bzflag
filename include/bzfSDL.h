@@ -17,8 +17,8 @@
 
 #ifdef HAVE_SDL
 #  ifdef _WIN32
-#    include <SDL.h>
-#    include <SDL_thread.h>
+#    include <SDL/SDL.h>
+#    include <SDL/SDL_thread.h>
 #  else // cus linux is wierd
 #    include "SDL.h"
 #    include "SDL_thread.h"
