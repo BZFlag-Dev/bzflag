@@ -8,11 +8,11 @@ SUBDIRS = \
 	game \
 	geometry \
 	obstacle \
+	zlib \
 	bzfs \
 	ogl \
 	scene \
 	platform \
-	zlib \
 	mediafile \
 	bzflag \
 	bzadmin
