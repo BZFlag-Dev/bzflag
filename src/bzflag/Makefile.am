@@ -46,6 +46,7 @@ bzflag_SOURCES =			\
 	ShotPath.h			\
 	ShotStrategy.cxx		\
 	ShotStrategy.h			\
+	StartupInfo.h			\
 	TargetingUtils.cxx		\
 	TargetingUtils.h		\
 	World.cxx			\
