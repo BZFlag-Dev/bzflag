@@ -3260,6 +3260,7 @@ static void		addRobots()
 
     robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
     robots[j]->setTeam(AutomaticTeam);
+    robotServer[j]->sendVersionString();
     robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
 			      robots[j]->getCallSign(), robots[j]->getEmailAddress());
 
