@@ -5,13 +5,15 @@
 
 * public release now under LGPL v2.1 - Tim Riker
 * change LICENSE to COPYING - Tim Riker
+* server administration stuff - Jeff Myers, Frank Thilo, David Trowbridge
 * admin-by-keys - Michael Hoffman
-* cygwin/mingw32 fixes - Tupone Alfredo
 * /help messages - Michael Hoffman, David Trowbridge
 * New super-bullet texture - Justin Zaun, Jeff Mills, David Trowbridge
-* IRIX build fixes - David Trowbridge
+* IRIX fixes - David Trowbridge
+* cygwin/mingw32 fixes - Tupone Alfredo
+* Solaris fixes - David Trowbridge
+* OSX Fixes - Sean, David Wollner
 * server list cache - Michael Hoffman
-* OSX Fixes - Sean (brlcad | learner)
 * E-mail field fixes - Lars Luthman
 * colorized console - Dave R (Trepan), David Trowbridge
 * automake/autoconf - Tupone Alfredo, David Trowbridge, Tim Riker
