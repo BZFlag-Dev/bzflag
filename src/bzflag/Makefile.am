@@ -134,26 +134,17 @@ else
 RESOURCE =
 endif
 
-if MACOS
-LDADD =	\
-	../net/libNet.a			\
-	../common/libCommon.a		\
-	../game/libGame.a		\
-	../obstacle/libObstacle.a	\
-	../platform/MacOSX/libMac.a	\
-	../platform/libPlatform.a	\
-	../ogl/libGLKit.a		\
-	../scene/libSceneDB.a		\
-	../geometry/libGeometry.a	\
-	../mediafile/libMediaFile.a	\
-	../zlib/libz.a			\
-	../3D/lib3D.a			\
-	$(RESOURCE)			\
-	$(GLIBS)			\
-	$(SDL_LIBS)
-# This is required to hook in ogg/vorbis libraries
-#	$(ALIBS)
+if BUILDZLIB
+ZLIB = ../zlib/libz.a
 else
+ZLIB = -lz
+endif
+
+if MACOS
+EXTRALIB =	\
+	../platform/MacOSX/libMac.a
+endif
+
 LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
@@ -164,14 +155,14 @@ LDADD =	\
 	../scene/libSceneDB.a		\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
-	../zlib/libz.a			\
 	../3D/lib3D.a			\
+	$(EXTRALIB)			\
+	$(ZLIB)				\
 	$(RESOURCE)			\
 	$(GLIBS)			\
 	$(SDL_LIBS)
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
-endif
 
 AM_CPPFLAGS = $(X_CFLAGS) $(SDL_CFLAGS)
 
