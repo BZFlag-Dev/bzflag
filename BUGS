@@ -1,6 +1,5 @@
 recent bugs
 ------------
-- bzadmin defaults to player 0 instead of all even though it says "Send to all:"
 
 - Flaghelp falls into the radar area when radar is 'bigger'
 
