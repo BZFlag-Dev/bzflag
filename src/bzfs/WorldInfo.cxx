@@ -158,8 +158,10 @@ void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, fl
 
 void WorldInfo::addLink(int from, int to)
 {
-  // silently discard links from teleporters that don't exist
-  if (from <= numTeleporters * 2 + 1) {
+  // silently discard links to/from invalid teleporters
+  // and teleporters that don't (yet) exist
+  if ((from >= 0) && (from <= numTeleporters * 2 + 1) &&
+      (to >= 0) && (to <= numTeleporters * 2 + 1)) {
     teleporters[from / 2].to[from % 2] = to;
   }
 }
