@@ -28,8 +28,10 @@
 /* public */
 
 // flags list
-FlagInfo *FlagInfo::flagList = NULL;
+FlagInfo              *FlagInfo::flagList      = NULL;
 std::vector<FlagType*> FlagInfo::allowedFlags;
+int                    FlagInfo::numExtraFlags = 0;
+int                    FlagInfo::numFlags      = 0;
 
 FlagInfo::FlagInfo()
 {
@@ -54,8 +56,9 @@ FlagInfo::FlagInfo()
   grabs                   = 0;
 }
 
-void FlagInfo::setSize(int numFlags)
+void FlagInfo::setSize(int _numFlags)
 {
+  numFlags = _numFlags;
   delete[] flagList;
   flagList = new FlagInfo[numFlags];
   for (int i = 0; i < numFlags; i++)
@@ -65,6 +68,11 @@ void FlagInfo::setSize(int numFlags)
 void FlagInfo::setAllowed(std::vector<FlagType*> allowed)
 {
   allowedFlags = allowed;
+}
+
+void FlagInfo::setExtra(int extra)
+{
+  numExtraFlags = extra;
 }
 
 void FlagInfo::setRequiredFlag(FlagType *desc)
@@ -148,6 +156,21 @@ void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
   flag.flightEnd       = flightTime;
   flag.initialVelocity = -BZDB.eval(StateDatabase::BZDB_GRAVITY) * upTime;
 }
+
+void FlagInfo::resetFlag(float position[3])
+{
+  // reset a flag's info
+  player      = -1;
+  flag.status = FlagNoExist;
+  // if it's a random flag, reset flag id
+  if (flagIndex >= numFlags - numExtraFlags)
+    flag.type = Flags::Null;
+
+  flag.position[0] = position[0];
+  flag.position[1] = position[1];
+  flag.position[2] = position[2];
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

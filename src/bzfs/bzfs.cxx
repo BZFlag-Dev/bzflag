@@ -1763,23 +1763,18 @@ void resetFlag(int flagIndex)
   float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
   float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   FlagInfo *pFlagInfo = &FlagInfo::flagList[flagIndex];
-  // reset a flag's info
-  pFlagInfo->player = -1;
-  pFlagInfo->flag.status = FlagNoExist;
-
-  // if it's a random flag, reset flag id
-  if (flagIndex >= numFlags - clOptions->numExtraFlags)
-    pFlagInfo->flag.type = Flags::Null;
 
   // reposition flag
+  float flagPos[3] = {0.0f, 0.0f, 0.0f};
+
   int teamIndex = pFlagInfo->flag.type->flagTeam;
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
       && (bases.find(teamIndex) != bases.end())) {
     TeamBases &teamBases = bases[teamIndex];
     const TeamBase &base = teamBases.getRandomBase( flagIndex );
-    pFlagInfo->flag.position[0] = base.position[0];
-    pFlagInfo->flag.position[1] = base.position[1];
-    pFlagInfo->flag.position[2] = base.position[2] + base.size[2];
+    flagPos[0] = base.position[0];
+    flagPos[1] = base.position[1];
+    flagPos[2] = base.position[2] + base.size[2];
   } else {
     // random position (not in a building)
     float r = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
@@ -1787,10 +1782,11 @@ void resetFlag(int flagIndex)
       r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     const Obstacle *obj;
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-    if (!world->getZonePoint( std::string(pFlagInfo->flag.type->flagAbbv), pFlagInfo->flag.position)) {
-      pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-      pFlagInfo->flag.position[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-      pFlagInfo->flag.position[2] = 0.0f;
+    if (!world->getZonePoint(std::string(pFlagInfo->flag.type->flagAbbv),
+			     flagPos)) {
+      flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+      flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+      flagPos[2] = 0.0f;
     }
     
     float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
@@ -1799,36 +1795,38 @@ void resetFlag(int flagIndex)
       clOptions->flagsOnBuildings = true;
     }
     
-    int topmosttype = world->cylinderInBuilding(&obj,
-                        pFlagInfo->flag.position, r, flagHeight);
-					
-    while ((topmosttype != NOT_IN_BUILDING) || (pFlagInfo->flag.position[2] <= deadUnder)) {
+    int topmosttype = world->cylinderInBuilding(&obj, flagPos, r, flagHeight);
 
-      if (world->getZonePoint(std::string(pFlagInfo->flag.type->flagAbbv), pFlagInfo->flag.position)
-          && (pFlagInfo->flag.position[2] > deadUnder)) {
+    while ((topmosttype != NOT_IN_BUILDING) || (flagPos[2] <= deadUnder)) {
+      if (world->getZonePoint(std::string(pFlagInfo->flag.type->flagAbbv),
+			      flagPos)
+	  && (flagPos[2] > deadUnder)) {
         // if you got a related flag zone specified, always use
         // it. there may be obstacles in the zone that cause the
         // NOT_IN_BUILDING test to fail a couple of times, but
         // hopefully the map maker is using zones wisely.
+      } else if ((clOptions->flagsOnBuildings
+		  && ((topmosttype == IN_BOX_NOTDRIVETHROUGH)
+		      || (topmosttype == IN_BASE)))
+		 && (obj->getPosition()[2]
+		     < (flagPos[2] + flagHeight - Epsilon))
+		 && ((obj->getPosition()[2] + obj->getSize()[2] - Epsilon)
+		     > flagPos[2])
+		 && (world->inRect(obj->getPosition(), obj->getRotation(),
+				   obj->getSize(),
+				   flagPos[0], flagPos[1], 0.0f))) {
+	flagPos[2] = obj->getPosition()[2] + obj->getSize()[2];
+      } else {
+	flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+	flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+	flagPos[2] = 0.0f;
       }
-      else if ((clOptions->flagsOnBuildings
-	  && ((topmosttype == IN_BOX_NOTDRIVETHROUGH) || (topmosttype == IN_BASE)))
-	  && (obj->getPosition()[2] < (pFlagInfo->flag.position[2] + flagHeight - Epsilon))
-	  && ((obj->getPosition()[2] + obj->getSize()[2] - Epsilon) > pFlagInfo->flag.position[2])
-	  && (world->inRect(obj->getPosition(), obj->getRotation(), obj->getSize(),
-	                    pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f))) {
-	pFlagInfo->flag.position[2] = obj->getPosition()[2] + obj->getSize()[2];
-      }
-      else {
-	pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-	pFlagInfo->flag.position[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-	pFlagInfo->flag.position[2] = 0.0f;
-      }
-
-      topmosttype = world->cylinderInBuilding(&obj,
-                      pFlagInfo->flag.position, r, flagHeight);
+      topmosttype = world->cylinderInBuilding(&obj, flagPos, r, flagHeight);
     }
   }
+
+  // reset a flag's info
+  pFlagInfo->resetFlag(flagPos);
 
   // required flags mustn't just disappear
   if (pFlagInfo->required) {
@@ -3742,7 +3740,9 @@ int main(int argc, char **argv)
 
   // Loading lag thresholds
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
-  
+  // Loading extra flag number
+  FlagInfo::setExtra(clOptions->numExtraFlags);
+
   // enable replay server mode
   if (clOptions->replayServer) {
 
