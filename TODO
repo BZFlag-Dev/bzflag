@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* add byte lengths to each world component
+
 * observers == a team
 
 * move team base packing into WorldInfo (bzfs)
