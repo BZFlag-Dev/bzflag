@@ -353,7 +353,6 @@ por||pt|Portuguese|portugais
 pra|||Prakrit languages|prâkrit
 pro|||Provençal, Old (to 1500)|provençal ancien (jusqu'à 1500)
 pus||ps|Pushto|pachto
-qaa-qtz |||Reserved for local use|réservée à l'usage local
 que||qu|Quechua|quechua
 raj|||Rajasthani|rajasthani
 rap|||Rapanui|rapanui
