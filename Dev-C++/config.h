@@ -45,6 +45,9 @@
 /* Enabling Robots */
 #define ROBOT 1
 
+/* Enabling Motion-Freezing */
+#define FREEZING 1
+
 /* Enabling Snapping */
 #define SNAPPING 1
 
