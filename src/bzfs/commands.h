@@ -156,7 +156,7 @@ void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message);
  *
  * /lagstats gives simple statistics about players' lags
  */
-void handleLagstatsCmd(GameKeeper::Player *playerData, const char */*message*/);
+void handleLagstatsCmd(GameKeeper::Player *playerData, const char * /*message*/);
 
 
 /** date/time command hook function
