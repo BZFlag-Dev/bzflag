@@ -67,7 +67,11 @@ namespace TextUtils
   std::string no_whitespace(const std::string &s)
   {
     std::string result;
-    std::remove_copy_if(s.begin(), s.end(), std::back_inserter(result), isWhitespace);
+
+    for (std::string::const_iterator i=s.begin(), e=s.end(); i!=e ; ++i)
+      if (!isWhitespace(*i))
+	result+=*i;
+
     return result;
   }
 
