@@ -598,7 +598,7 @@ SOURCE=..\..\include\CommandManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\commands.h
+SOURCE=..\..\src\bzflag\commands.h
 # End Source File
 # Begin Source File
 
