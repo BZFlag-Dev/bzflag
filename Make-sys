@@ -50,7 +50,7 @@ pristine: clobber
 	-$(RM) -r $(DEPTH)/debian/bzflag-server
 	-$(RM) $(DEPTH)/debian/*debhelper
 	-$(RM) $(DEPTH)/debian/*substvars
-	-$(RM) $(DEPTH)/debian/changelog
+	#-$(RM) $(DEPTH)/debian/changelog
 	-$(RM) $(DEPTH)/debian/files
 
 tarball: pristine
