@@ -16,6 +16,7 @@ BZFlag 1.7e1
 * flags under high buildings - Jeremiah
 * "world" section in world from file - Jeremiah
 * dim paused/nr tanks on radar - chestal
+* fix bzfls for servers on non-5155 - TimR
 
 
 BZFlag 1.7e release 000

@@ -60,7 +60,7 @@ static const int NotConnected = -1;	// do NOT change
 
 class Server {
   public:
-    Server(const char *name, const char* version, const char* build,
+    Server(const char *nameport, const char* version, const char* build,
 				const char* gameInfo, const char* title);
     ~Server();
 
@@ -82,6 +82,7 @@ class Server {
     const char*		getVersion() const;
     const char*		getBuild() const;
     const char*		getGameInfo() const;
+    const char*		getNamePort() const;
     const char*		getName() const;
     const char*		getPort() const;
 
@@ -97,6 +98,7 @@ class Server {
     char		version[9];
     char*		build;
     char*		gameInfo;
+    char*		nameport;
     char*		name;
     char*		port;
     TimeKeeper		time;
@@ -162,7 +164,7 @@ static TimeKeeper	lastDumpTime, startTime;
 // Server
 //
 
-Server::Server(const char* inName,
+Server::Server(const char* inNamePort,
 		const char* inVersion,
 		const char* inBuild,
 		const char* inGameInfo,
@@ -173,27 +175,32 @@ Server::Server(const char* inName,
 		refCount(1),
 		time(TimeKeeper::getCurrent())
 {
-  name = strdup(inName);
-  // start with a padded localhost, fill in address when testing
   build = strdup(inBuild);
   title = strdup(inTitle);
   gameInfo = strdup(inGameInfo);
   strncpy(version, inVersion, 8);
   version[8] = '\0';
-  strncpy(address,"127.000.000.001",15);
-  address[15] = '\0';
+  // start with a padded address, fill in when testing
+  strcpy(address,"000.000.000.000");
 
-  // extract name and port from name
-  char* delimiter = strchr(name, ':');
+  // extract name and port from nameport
+  char* delimiter = strchr(inNamePort, ':');
   if (delimiter) {
-    *delimiter = '\0';
-    name = strdup(name);
+    nameport = strdup(inNamePort);
+    name = (char *)malloc(delimiter - inNamePort + 1);
+    strncpy(name, inNamePort, delimiter - inNamePort);
+    name[delimiter - inNamePort] = '\0';
     port = strdup(delimiter + 1);
-    *delimiter = ':';
   }
   else {
-    name = strdup(name);
-    port = NULL;
+    // didn't get a port number. add it
+    name = strdup(inNamePort);
+    port = strdup("5155");
+    // add one for \0 and one for ':'
+    nameport = (char *)malloc(strlen(name) + strlen(port) + 2);
+    strcpy(nameport, name);
+    strcat(nameport, ":");
+    strcat(nameport, port);
   }
 
   // truncate title
@@ -206,22 +213,27 @@ Server::Server(const char* inName,
       *scanTitle = ' ';
 
   if (debug >= 1)
-    fprintf(stderr, "added server: %s, %s, %s, %s, %s\n", name, build, gameInfo, address, title);
+    fprintf(stderr, "added server: %s, %s, %s, %s, %s\n", nameport, build, gameInfo, address, title);
 }
 
 Server::~Server()
 {
   if (debug >= 1)
-    fprintf(stderr, "removed server: %s\n", name);
+    fprintf(stderr, "removed server: %s\n", nameport);
 
   free(title);
   free(gameInfo);
   free(build);
+  free(nameport);
   free(name);
-  if (port) free(port);
+  free(port);
 
-  if (prev) prev->next = next;
-  if (next) next->prev = prev;
+  if (prev)
+    prev->next = next;
+  else
+    serverList = next; 
+  if (next)
+    next->prev = prev;
 }
 
 void Server::addAfter(Server* newServer)
@@ -249,7 +261,7 @@ void Server::setStale()
   if (fresh) {
     unref();
     if (debug >= 1)
-      fprintf(stderr, "server %s is stale\n", name);
+      fprintf(stderr, "server %s is stale\n", nameport);
   }
   fresh = False;
 }
@@ -259,7 +271,7 @@ void Server::setFresh()
   if (!fresh) {
     ref();
     if (debug >= 1)
-      fprintf(stderr, "server %s is fresh\n", name);
+      fprintf(stderr, "server %s is fresh\n", nameport);
   }
   time = TimeKeeper::getCurrent();
   fresh = True;
@@ -329,6 +341,11 @@ const char* Server::getGameInfo() const
   return gameInfo;
 }
 
+const char* Server::getNamePort() const
+{
+  return nameport;
+}
+
 const char* Server::getName() const
 {
   return name;
@@ -358,9 +375,14 @@ TestServer::TestServer(int in_fd, Server* inServer) :
 TestServer::~TestServer()
 {
   delete server;
-  if (fd != -1) close(fd);
-  if (prev) prev->next = next;
-  if (next) next->prev = prev;
+  if (fd != -1)
+    close(fd);
+  if (prev)
+    prev->next = next;
+  else
+    testingList = next;
+  if (next)
+    next->prev = prev;
 }
 
 void TestServer::addAfter(TestServer* newServer)
@@ -468,7 +490,6 @@ static void refServerList(Server* scan)
 // unreference the given server and every server after it in the list
 static void unrefServerList(Server* scan)
 {
-  if (scan) scan = scan->getNext();
   while (scan) {
     scan->unref();
     scan = scan->getNext();
@@ -582,11 +603,11 @@ static boolean serverStart()
   }
   maxFileDescriptor = wksSocket;
 
-  // make server list head
-  serverList = new Server("", "", "", "", "");
+  // init server list
+  serverList = NULL;
 
-  // make testing list head
-  testingList = new TestServer(-1, NULL);
+  // init testing list
+  testingList = NULL;
 
   // initialize clients
   for (int i = 0; i < MaxClients; ++i)
@@ -628,7 +649,7 @@ static void serverStop()
 // remove unused server entries in the database and make old entries stale
 static void checkList(const TimeKeeper& time)
 {
-  Server* scan = serverList->getNext();
+  Server* scan = serverList;
   while (scan) {
     // get the next server in list
     Server* next = scan->getNext();
@@ -689,64 +710,94 @@ static boolean scheduleServerTest(Server* server)
       // complete.
       if (fd > maxFileDescriptor)
 	maxFileDescriptor = fd;
-      testingList->addAfter(new TestServer(fd, server));
+      if (testingList)
+        testingList->addAfter(new TestServer(fd, server));
+      else
+	testingList = new TestServer(fd, server);
       return True;
     }
   }
   else {
     // connection succeeded immediately
     close(fd);
-    serverList->addAfter(server);
+    if (serverList)
+      serverList->addAfter(server);
+    else
+      serverList = server;
     lastChangeTime = getTime();
     return True;
   }
 }
 
 // lookup a server in the list by name
-static Server* findServer(const char* name)
+static Server* findServer(const char* inNamePort)
 {
+  char *nameport;
+  char* delimiter = strchr(inNamePort, ':');
+  if (delimiter)
+    nameport = strdup(inNamePort);
+  else {
+    // add one for \0 and five for ":5155"
+    nameport = (char *)malloc(strlen(inNamePort) + 6);
+    strcpy(nameport, inNamePort);
+    strcat(nameport, ":5155");
+  }
   // search server list for exact same name
-  Server* scan = serverList->getNext();
-  while (scan && strcmp(scan->getName(), name) != 0)
+  Server* scan = serverList;
+  while (scan && strcmp(scan->getNamePort(), nameport) != 0)
     scan = scan->getNext();
+  free(nameport);
   return scan;
 }
 
 // lookup a server in the list by name
-static TestServer* findTestServer(const char* name)
+static TestServer* findTestServer(const char* nameport)
 {
   // search server list for exact same name
-  TestServer* scan = testingList->getNext();
-  while (scan && strcmp(scan->getServer()->getName(), name) != 0)
+  TestServer* scan = testingList;
+  while (scan && strcmp(scan->getServer()->getNamePort(), nameport) != 0)
     scan = scan->getNext();
   return scan;
 }
 
 // add a server to the list (or freshen an existing entry)
-static int addServer(const char* name, const char* version,
+static int addServer(const char* inNamePort, const char* version,
 	const char* build, const char* gameInfo, const char* title)
 {
   // check format of version
   if (strncmp(version, "BZFS", 4) != 0)
     return 1;
+  char *nameport;
+  char* delimiter = strchr(inNamePort, ':');
+  if (delimiter)
+    nameport = strdup(inNamePort);
+  else {
+    // add one for \0 and five for ":5155"
+    nameport = (char *)malloc(strlen(inNamePort) + 6);
+    strcpy(nameport, inNamePort);
+    strcat(nameport, ":5155");
+  }
 
   // is server already in the list?  if so then freshen it.
-  Server* exists = findServer(name);
+  Server* exists = findServer(nameport);
   if (exists) {
   	exists->setTitle(title);
   	exists->setGameInfo(gameInfo);
     exists->setFresh();
     lastChangeTime = getTime();
+    free(nameport);
     return 0;
   }
 
   // is server already in testing list?  if so then ignore it.
-  if (findTestServer(name))
+  if (findTestServer(nameport)) {
+    free(nameport);
     return 1;
+  }
 
   // create server object but don't add it to our list yet
-  Server* server = new Server(name, version, build, gameInfo, title);
-
+  Server* server = new Server(nameport, version, build, gameInfo, title);
+  free(nameport);
   // can we connect to the server?  if not then we reject the request
   // to add the server.  this prevents most cases of inaccessible
   // servers being added to the list.  a typical situation here is a
@@ -831,22 +882,24 @@ static boolean continueReplyClient(int index)
   // go to the next fresh server in the list
   Server* server = client[index].nextServer;
   while (server != NULL) {
-    server = server->getNext();
     if (server != NULL) {
       server->unref();
       if (server->isFresh())
 	break;
     }
+    server = server->getNext();
   }
-  client[index].nextServer = server;
 
   // done if no more servers
-  if (server == NULL)
+  if (server == NULL) {
+    client[index].nextServer = NULL;
     return False;
+  } else
+    client[index].nextServer = server->getNext();
 
   // print server info into client buffer
   sprintf(client[index].buffer, "%s %s %s %s %s\r\n",
-				server->getName(),
+				server->getNamePort(),
 				server->getVersion(),
 				server->getGameInfo(),
 				server->getAddress(),
@@ -875,8 +928,7 @@ static boolean startReplyClient(int index)
   char* cmd = args[0];
   request = args[1];
   if (debug >= 4)
-    fprintf(stderr, "command %s on %d;  args: %s\n",
-				cmd, client[index].fd, request);
+    fprintf(stderr, "on %d, command %s %s\n", client[index].fd, cmd, request);
 
   // parse request
   if (strcmp(cmd, "ADD") == 0) {
@@ -884,12 +936,13 @@ static boolean startReplyClient(int index)
     numAddsTotal++;
 
     // looks like a server requesting to add itself
-    // ADD <name> <build> <version> <gameinfo> <title>
+    // ADD <name>[:<port>] <build> <version> <gameinfo> <title>
     if (!parseRequest(request, args, 5)) {
       numAddsBad++;
       return False;
     }
 
+    // addServer adds :port if needed
     client[index].buffer[0] = (char)addServer(args[0], args[2], args[1], args[3], args[4]);
     client[index].offset = 0;
     client[index].length = 1;
@@ -901,7 +954,7 @@ static boolean startReplyClient(int index)
     numRemovesTotal++;
 
     // looks like a server requesting to remove itself
-    // REMOVE <name>
+    // REMOVE <name>[:<port>]
     args[0] = request;
 
     // lookup server in list.  if there, make it stale
@@ -967,7 +1020,7 @@ static boolean startReplyClient(int index)
     // LIST
     unrefServerList(client[index].nextServer);
     client[index].nextServer = serverList;
-    refServerList(client[index].nextServer->getNext());
+    refServerList(client[index].nextServer);
     return continueReplyClient(index);
   }
 
@@ -1008,7 +1061,7 @@ static boolean startReplyClient(int index)
     // schedule list to be sent
     unrefServerList(client[index].nextServer);
     client[index].nextServer = serverList;
-    refServerList(client[index].nextServer->getNext());
+    refServerList(client[index].nextServer);
 
     return True;
   }
@@ -1121,7 +1174,7 @@ static void dumpServerList(int /*sig*/)
     server = server->getNext();
     if (server != NULL && server->isFresh()) {
       fprintf(file, "%s %s %s %s %s\r\n",
-				server->getName(),
+				server->getNamePort(),
 				server->getBuild(),
 				server->getVersion(),
 				server->getGameInfo(),
@@ -1379,7 +1432,7 @@ int main(int argc, char** argv)
 	else if (!client[i].sendingReply)
 	  FD_SET(client[i].fd, &read_set);
       }
-    TestServer* scan = testingList->getNext();
+    TestServer* scan = testingList;
     while (scan) {
       if (!scan->testWaitAndReset())
 	FD_SET(scan->getFD(), &write_set);
@@ -1411,7 +1464,7 @@ int main(int argc, char** argv)
       }
 
       // check for complete test connection to server
-      scan = testingList->getNext();
+      scan = testingList;
       while (scan) {
 	TestServer* next = scan->getNext();
 	if (FD_ISSET(scan->getFD(), &write_set)) {
@@ -1429,7 +1482,10 @@ int main(int argc, char** argv)
 	  }
 	  else {
 	    // success!  add to list
-	    serverList->addAfter(scan->orphanServer());
+	    if (serverList)
+	      serverList->addAfter(scan->orphanServer());
+	    else
+	      serverList = scan->orphanServer();
 	    lastChangeTime = getTime();
 	    delete scan;
 	  }
@@ -1453,7 +1509,7 @@ int main(int argc, char** argv)
 	removeClient(i);
 
     // throw out pending servers that aren't responding
-    scan = testingList->getNext();
+    scan = testingList;
     while (scan) {
       TestServer* next = scan->getNext();
       if (tm - scan->getTime() > DisconnectTimeout)
