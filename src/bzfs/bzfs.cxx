@@ -2934,23 +2934,21 @@ static void shotFired(int playerIndex, void *buf, int len)
   float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
   float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
   if (firingInfo.flagType == Flags::ShockWave) {
-      shotSpeed = 0.0f;
-      tankSpeed = 0.0f;
-  }
-  else if (firingInfo.flagType == Flags::Velocity) {
+    shotSpeed = 0.0f;
+    tankSpeed = 0.0f;
+  } else if (firingInfo.flagType == Flags::Velocity) {
+    tankSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+  } else if (firingInfo.flagType == Flags::Thief) {
+    tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+  } else if ((firingInfo.flagType == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
+    tankSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+  } else if (firingInfo.flagType == Flags::Agility) {
+    tankSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+  } else {
+    //If shot is different height than player, can't be sure they didn't drop V in air
+    if (lastState[playerIndex].pos[2] != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
       tankSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-  }
-  else if (firingInfo.flagType == Flags::Thief) {
-      tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-  }
-  else if ((firingInfo.flagType == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
-      tankSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-  }
-  else {
-      //If shot is different height than player, can't be sure they didn't drop V in air
-      if (lastState[playerIndex].pos[2]
-	  != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
-	tankSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+    }
   }
 
   // FIXME, we should look at the actual TankSpeed ;-)
