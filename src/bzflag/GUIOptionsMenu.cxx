@@ -353,11 +353,11 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case 'l':
-      BZDB.set("linedradarshots", string_util::format("%d", list->getIndex()));
+      BZDB.set("linedradarshots", TextUtils::format("%d", list->getIndex()));
       break;
 
     case 's':
-      BZDB.set("sizedradarshots", string_util::format("%d", list->getIndex()));
+      BZDB.set("sizedradarshots", TextUtils::format("%d", list->getIndex()));
       break;
 
     case 'R':
@@ -380,7 +380,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 't':
       {
-	BZDB.set("showtabs", string_util::format("%d", list->getIndex()));
+	BZDB.set("showtabs", TextUtils::format("%d", list->getIndex()));
 	break;
       }
 
@@ -394,7 +394,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'k':
       {
-	BZDB.set("killerhighlight", string_util::format("%d", list->getIndex()));
+	BZDB.set("killerhighlight", TextUtils::format("%d", list->getIndex()));
 	break;
       }
 
@@ -415,13 +415,13 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'r':
       {
-	BZDB.set("pulseRate", string_util::format("%f", (float)(list->getIndex() + 1) / 5.0f));
+	BZDB.set("pulseRate", TextUtils::format("%f", (float)(list->getIndex() + 1) / 5.0f));
 	break;
       }
 
     case 'd':
       {
-	BZDB.set("pulseDepth", string_util::format("%f", (float)(list->getIndex() + 1) / 10.0f));
+	BZDB.set("pulseDepth", TextUtils::format("%f", (float)(list->getIndex() + 1) / 10.0f));
 	break;
       }
 //#if defined(DEBUG_RENDERING)

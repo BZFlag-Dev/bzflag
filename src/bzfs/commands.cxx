@@ -114,7 +114,7 @@ void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 {
   std::string message2;
 
-  message2 = string_util::format("%s has quit (\"%s\") ",
+  message2 = TextUtils::format("%s has quit (\"%s\") ",
 				 playerData->player.getCallSign(),  message + 6);
 
   DEBUG2("%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), message + 6);
@@ -141,7 +141,7 @@ void handleMeCmd(GameKeeper::Player *playerData, const char *message)
   /* wrap the action using "* blah\t*" for effect.  the \t prevents
    * unauthoized players from using the command or spoofing actions.
    */
-  message2 = string_util::format("* %s %s\t*", playerData->player.getCallSign(), message + 4);
+  message2 = TextUtils::format("* %s %s\t*", playerData->player.getCallSign(), message + 4);
   sendMessage(t, AllPlayers, message2.c_str());
 }
 
@@ -232,7 +232,7 @@ void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
 
   // valid callsign
   if (to >= curMaxPlayers) {
-    message2 = string_util::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
+    message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
     sendMessage(ServerPlayer, from, message2.c_str());
     return;
   }
@@ -240,7 +240,7 @@ void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
   // make sure there is something to send
   if ((messageStart >= arguments.size() - 1) || (messageStart == 0)) {
     // found player, but nothing to send
-    message2 = string_util::format("No text to send to \"%s\".", recipient.c_str());
+    message2 = TextUtils::format("No text to send to \"%s\".", recipient.c_str());
     sendMessage(ServerPlayer, from, message2.c_str());
     return;
   }
@@ -330,21 +330,21 @@ void handleMsgCmd2(GameKeeper::Player *playerData, const char *message)
 
       if (getTarget(arguments.c_str() + 1) < curMaxPlayers) {
 	// got to the end ofthe string and matched a player name
-	msg = string_util::format("No text to send to \"%s\".", arguments.c_str() + 1);
+	msg = TextUtils::format("No text to send to \"%s\".", arguments.c_str() + 1);
 	sendMessage(ServerPlayer, t, msg.c_str());
       } else {
 	if (quoted) {
 	  // possible quote mismatch
-	  msg = string_util::format("Quote mismatch?  \"%s\" is not here.  No such callsign.", arguments.c_str() + 1);
+	  msg = TextUtils::format("Quote mismatch?  \"%s\" is not here.  No such callsign.", arguments.c_str() + 1);
 	  sendMessage(ServerPlayer, t, msg.c_str());
 	} else {
-	  msg = string_util::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
+	  msg = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
 	  sendMessage(ServerPlayer, t, msg.c_str());
 	  sendMessage(ServerPlayer, t, "Usage: /msg callsign some message");
 	}
       }
     } else {
-      msg = string_util::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
+      msg = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
       sendMessage(ServerPlayer, t, msg.c_str());
       sendMessage(ServerPlayer, t, "Usage: /msg callsign some message");
     }
@@ -586,7 +586,7 @@ void handleKickCmd(GameKeeper::Player *playerData, const char *message)
     return;
   }
   int i;
-  std::vector<std::string> argv = string_util::tokenize(message, " \t", 3, true);
+  std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
 
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /kick <PlayerName/\"Player Name\"> [reason]");
@@ -663,7 +663,7 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   std::string msg = message;
-  std::vector<std::string> argv = string_util::tokenize(msg, " \t", 4);
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 4);
 
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /ban <ip> [duration] [reason]");
@@ -675,7 +675,7 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 
     // set the ban time
     if (argv.size() >= 3) {
-      int specifiedDuration = string_util::parseDuration(argv[2]);
+      int specifiedDuration = TextUtils::parseDuration(argv[2]);
       if ((durationInt > 0) && 
           ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
           !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
@@ -744,7 +744,7 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   std::string msg = message;
-  std::vector<std::string> argv = string_util::tokenize( msg, " \t", 4 );
+  std::vector<std::string> argv = TextUtils::tokenize( msg, " \t", 4 );
 
   if( argv.size() < 2 ){
     sendMessage(ServerPlayer, t, "Syntax: /hostban <host pattern> [duration] [reason]");
@@ -757,7 +757,7 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
 
     // set the ban time
     if (argv.size() >= 3) {
-      int specifiedDuration = string_util::parseDuration(argv[2]);
+      int specifiedDuration = TextUtils::parseDuration(argv[2]);
       if ((durationInt > 0) && 
           ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
           !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
@@ -1012,7 +1012,7 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
         sendMessage (ServerPlayer, AdminPlayers, temp.c_str());
         return;
       }
-      const std::vector<std::string> words = string_util::tokenize(temp, " \t");
+      const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
       unsigned int cur = 0;
       const unsigned int wordsize = words.size();
       while (cur != wordsize) {
@@ -1898,7 +1898,7 @@ void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message*/)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::veto)) {
     /* permission denied for /veto */
     sendMessage(ServerPlayer, t,
-		string_util::format
+		TextUtils::format
 		("%s, you are presently not authorized to run /veto",
 		 playerData->player.getCallSign()).c_str());
     return;
@@ -1916,14 +1916,14 @@ void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message*/)
   /* make sure there is an unexpired poll */
   if ((arbiter != NULL) && !arbiter->knowsPoll()) {
     sendMessage(ServerPlayer, t,
-		string_util::format
+		TextUtils::format
 		("%s, there is presently no active poll to veto",
 		 playerData->player.getCallSign()).c_str());
     return;
   }
 
   sendMessage(ServerPlayer, t,
-	      string_util::format("%s, you have cancelled the poll to %s %s",
+	      TextUtils::format("%s, you have cancelled the poll to %s %s",
 				  playerData->player.getCallSign(),
 				  arbiter->getPollAction().c_str(),
 				  arbiter->getPollTarget().c_str()).c_str());
@@ -1932,7 +1932,7 @@ void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message*/)
   arbiter->forgetPoll();
 
   sendMessage(ServerPlayer, AllPlayers,
-	      string_util::format("The poll was cancelled by %s",
+	      TextUtils::format("The poll was cancelled by %s",
 				  playerData->player.getCallSign()).c_str());
 
   return;
@@ -1974,7 +1974,7 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
     for (i = 0; i < curMaxPlayers;i++) {
       target = GameKeeper::Player::getPlayerByIndex(i);
       if (target && strcmp(target->player.getCallSign(), name.c_str()) == 0) {
-        sendMessage(i, t, string_util::format("Version: %s",
+        sendMessage(i, t, TextUtils::format("Version: %s",
 		     target->player.getClientVersion()).c_str());
         return;
       }
@@ -1985,7 +1985,7 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
   sendMessage(ServerPlayer, t,
-              string_util::format("BZFS Version: %s", getAppVersion()).c_str());
+              TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
   // send all players' version strings
   // is faking a message from the remote client rude?
   // did that so that /clientquery and CLIENTQUERY look about the same.
@@ -1993,7 +1993,7 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
   for (int i = 0; i < curMaxPlayers;i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->player.isPlaying()) {
-      sendMessage(i, t, string_util::format
+      sendMessage(i, t, TextUtils::format
 		  ("Version: %s",
 		   otherData->player.getClientVersion()).c_str());
     }
@@ -2161,7 +2161,7 @@ void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
   DEBUG2("\"%s\" has requested masterban: %s\n", callsign.c_str(), message);
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::masterBan)) {
-    sendMessage(ServerPlayer, t, string_util::format("%s, you are presently not authorized to run /masterban", callsign.c_str()).c_str());
+    sendMessage(ServerPlayer, t, TextUtils::format("%s, you are presently not authorized to run /masterban", callsign.c_str()).c_str());
     return;
   }
 
@@ -2209,7 +2209,7 @@ void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, "Previous master ban list entries have been flushed.");
       
       for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
-	std::string reloadmsg = string_util::format("Reloaded master ban list from %s\n", i->c_str());
+	std::string reloadmsg = TextUtils::format("Reloaded master ban list from %s\n", i->c_str());
 	clOptions->acl.merge(banList.get(i->c_str()));
 	DEBUG1("%s", reloadmsg.c_str());
 	sendMessage(ServerPlayer, t, reloadmsg.c_str());
@@ -2233,14 +2233,14 @@ void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
     std::vector<std::pair<std::string, std::string> > bans = clOptions->acl.listMasterBans();
 
     if (bans.size() > 20) {
-      sendMessage(ServerPlayer, t, string_util::format("There are %d bans, only displaying the first 20", bans.size()).c_str());
+      sendMessage(ServerPlayer, t, TextUtils::format("There are %d bans, only displaying the first 20", bans.size()).c_str());
 
     } else if (bans.size() == 0) {
       sendMessage(ServerPlayer, t, "There are no master bans loaded.");
 
     } else {
       // print out a list header
-      std::string banmsg = string_util::format("Master Bans from %s:", DefaultMasterBanURL);
+      std::string banmsg = TextUtils::format("Master Bans from %s:", DefaultMasterBanURL);
       sendMessage(ServerPlayer, t, banmsg.c_str());
       for (size_t i = 0; i < banmsg.size(); i++) {
 	banmsg[i] = '-';
@@ -2251,14 +2251,14 @@ void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
     // print out the bans
     int counter = 0;
     for (std::vector<std::pair<std::string, std::string> >::const_iterator j = bans.begin(); j != bans.end() && counter < 20; j++, counter++) {
-      sendMessage(ServerPlayer, t, string_util::format("%s: %s", (j->first).c_str(), (j->second).c_str()).c_str());
+      sendMessage(ServerPlayer, t, TextUtils::format("%s: %s", (j->first).c_str(), (j->second).c_str()).c_str());
     }
 
   } else {
     if (cmd.size() > 0) {
-      sendMessage(ServerPlayer, t, string_util::format("Unknown masterban command [%s]", cmd.c_str()).c_str());
+      sendMessage(ServerPlayer, t, TextUtils::format("Unknown masterban command [%s]", cmd.c_str()).c_str());
     }
-    sendMessage(ServerPlayer, t, string_util::format("Usage: /masterban list|reload|flush").c_str());
+    sendMessage(ServerPlayer, t, TextUtils::format("Usage: /masterban list|reload|flush").c_str());
   }
 
   return;

@@ -71,7 +71,7 @@ std::string			CommandManager::run(const std::string& name,
   // look up command
   Commands::const_iterator index = commands.find(name);
   if (index == commands.end())
-    return string_util::format("Command %s not found", name.c_str());
+    return TextUtils::format("Command %s not found", name.c_str());
   // run it
   return (*index->second.func)(name, args);
 }

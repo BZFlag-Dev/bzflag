@@ -270,7 +270,7 @@ static std::string cmdMult(const std::string&, const CommandManager::ArgList& ar
   if (sscanf(args[1].c_str(), "%f", &amount) != 1)
     amount = 1.0;
   value *= amount;
-  BZDB.set(args[0], string_util::format("%f", value), StateDatabase::User);
+  BZDB.set(args[0], TextUtils::format("%f", value), StateDatabase::User);
   return std::string();
 }
 

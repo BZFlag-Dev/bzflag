@@ -47,12 +47,12 @@ QuickKeysMenu::QuickKeysMenu()
 
   int i;
   for (i=1; i < 11; i++) {
-    std::string keyLabel = string_util::format("Alt-F%d", i);
+    std::string keyLabel = TextUtils::format("Alt-F%d", i);
     controls.push_back(createInput(keyLabel));
   }
 
   for (i=1; i < 11; i++) {
-    std::string keyLabel = string_util::format("Ctrl-F%d", i);
+    std::string keyLabel = TextUtils::format("Ctrl-F%d", i);
     controls.push_back(createInput(keyLabel));
   }
 
@@ -75,14 +75,14 @@ void QuickKeysMenu::show()
   int i;
   for (i=1; i < 11; i++) {
     HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[firstKeyControl + i - 1]);
-    std::string keyName = string_util::format("quickMessage%d", i);
+    std::string keyName = TextUtils::format("quickMessage%d", i);
     std::string keyValue = BZDB.get(keyName);
     entry->setString(keyValue);
   }
 
   for (i=1; i < 11; i++) {
     HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[firstKeyControl + i + 9]);
-    std::string keyName = string_util::format("quickTeamMessage%d", i);
+    std::string keyName = TextUtils::format("quickTeamMessage%d", i);
     std::string keyValue = BZDB.get(keyName);
     entry->setString(keyValue);
   }
@@ -96,7 +96,7 @@ void QuickKeysMenu::dismiss()
   for (i=1; i < 11; i++) {
     HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[firstKeyControl + i - 1]);
     std::string keyValue = entry->getString();
-    std::string keyName = string_util::format("quickMessage%d", i);
+    std::string keyName = TextUtils::format("quickMessage%d", i);
     if (keyValue.empty() && BZDB.isSet(keyName))
       BZDB.unset(keyName);
     else if (!keyValue.empty())
@@ -106,7 +106,7 @@ void QuickKeysMenu::dismiss()
   for (i=1; i < 11; i++) {
     HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[firstKeyControl + i + 9]);
     std::string keyValue = entry->getString();
-    std::string keyName = string_util::format("quickTeamMessage%d", i);
+    std::string keyName = TextUtils::format("quickTeamMessage%d", i);
     if (keyValue.empty() && BZDB.isSet(keyName))
       BZDB.unset(keyName);
     else if (!keyValue.empty())

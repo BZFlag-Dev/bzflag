@@ -1880,17 +1880,20 @@ void resetFlag(FlagInfo &flag)
   float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
   float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
-  // reposition flag
+  // reposition flag (middle of the map might be a bad idea)
   float flagPos[3] = {0.0f, 0.0f, 0.0f};
 
   int teamIndex = flag.teamIndex();
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
       && (bases.find(teamIndex) != bases.end())) {
+    // return the flag to the center of the top of one of the team
+    // bases.. we assume it'll fit.
     TeamBases &teamBases = bases[teamIndex];
     const TeamBase &base = teamBases.getRandomBase(flag.getIndex());
     flagPos[0] = base.position[0];
     flagPos[1] = base.position[1];
     flagPos[2] = base.position[2] + base.size[2];
+
   } else {
     // random position (not in a building)
     float r = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
@@ -3389,7 +3392,7 @@ static void handleCommand(int t, const void *rawbuf)
       if (message[0] == '/' && message[1] != '/') {
 	/* make commands case insensitive for user-friendlyness */
 	unsigned int pos = 1;
-        while ((pos < strlen(message)) && (string_util::isAlphanumeric(message[pos]))) {
+        while ((pos < strlen(message)) && (TextUtils::isAlphanumeric(message[pos]))) {
 	  message[pos] = tolower((int)message[pos]);
 	  pos++;
 	}
@@ -4082,7 +4085,7 @@ int main(int argc, char **argv)
     clOptions->publicizedAddress = Address::getHostName();
     if (clOptions->publicizedAddress.find('.') == std::string::npos)
       clOptions->publicizedAddress = serverAddress.getDotNotation();
-    clOptions->publicizedAddress += string_util::format(":%d", clOptions->wksPort);
+    clOptions->publicizedAddress += TextUtils::format(":%d", clOptions->wksPort);
   }
 
   /* print debug information about how the server is running */
@@ -4429,13 +4432,13 @@ int main(int argc, char **argv)
 		}
 		pollAction = std::string("banned for ");
 		if (hours > 0) {
-		  pollAction += string_util::format("%d hour%s%s",
+		  pollAction += TextUtils::format("%d hour%s%s",
 						    hours,
 						    hours == 1 ? "." : "s",
 						    minutes > 0 ? " and " : "");
 		}
 		if (minutes > 0) {
-		  pollAction += string_util::format("%d minute%s",
+		  pollAction += TextUtils::format("%d minute%s",
 						    minutes,
 						    minutes > 1 ? "s" : "");
 		}
@@ -4485,7 +4488,7 @@ int main(int argc, char **argv)
 		  removePlayer(v, message);
 		}
 	      } else if (action == "set") {
-		CMDMGR.run(string_util::format("/set %s", target.c_str()));
+		CMDMGR.run(TextUtils::format("/set %s", target.c_str()));
 	      } else if (action == "flagreset") {
 		CMDMGR.run("flag reset unused");
 	      }

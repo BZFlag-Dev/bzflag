@@ -272,7 +272,7 @@ void			SceneRenderer::setQuality(int value)
   else
     BZDB.set("moonSegments","12");
 
-  BZDB.set("useQuality",string_util::format("%d",value));
+  BZDB.set("useQuality",TextUtils::format("%d",value));
 }
 
 bool			SceneRenderer::useDepthComplexity() const

@@ -1239,7 +1239,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 
   // sanity check
   if (i < 0) {
-    printError(string_util::format("Invalid player identification (%d)", i));
+    printError(TextUtils::format("Invalid player identification (%d)", i));
     std::cerr << "WARNING: invalid player identification when adding player with id " << i << std::endl;
     return NULL;
   }
@@ -2079,11 +2079,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	static const char passwdRequest[] = "Identify with /identify";
 	if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
 	  const std::string passwdKeys[] = {
-	    string_util::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
-	    string_util::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
-	    string_util::format("%s@%s", startupInfo.callsign, startupInfo.serverName),
-	    string_util::format("%s", startupInfo.serverName),
-	    string_util::format("%s", startupInfo.callsign),
+	    TextUtils::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
+	    TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
+	    TextUtils::format("%s@%s", startupInfo.callsign, startupInfo.serverName),
+	    TextUtils::format("%s", startupInfo.serverName),
+	    TextUtils::format("%s", startupInfo.callsign),
 	    "@" // catch-all for all callsign/server/ports
 	  };
 
@@ -3574,7 +3574,7 @@ static World*		makeWorld(ServerLink* serverLink)
     size = bytesLeft + len - 4;
     worldDatabase = new char[size];
 
-    connectStatusCB(string_util::format("Downloading World (%d kb)...", size / 1024));
+    connectStatusCB(TextUtils::format("Downloading World (%d kb)...", size / 1024));
 
     // get world database
     uint32_t ptr = 0;
@@ -3595,7 +3595,7 @@ static World*		makeWorld(ServerLink* serverLink)
       // get bytes left
       buf = nboUnpackUInt(msg, bytesLeft);
 
-      connectStatusCB(string_util::format("Downloading World (%2d%% complete/%d kb remaining)...",
+      connectStatusCB(TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
 					  100 - (100 * (bytesLeft / 1024) / (size / 1024)), bytesLeft / 1024));
     }
     // add final chunk
@@ -3683,12 +3683,12 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	  // if server assigns us a different team, display a message
 	  std::string teamMsg;
 	  if (myTank->getTeam() != AutomaticTeam) {
-	    teamMsg = string_util::format("%s team was unavailable, you were joined ",
+	    teamMsg = TextUtils::format("%s team was unavailable, you were joined ",
 					  Team::getName(myTank->getTeam()));
 	    if ((TeamColor)team == ObserverTeam) {
 	      teamMsg += "as an Observer";
 	    } else {
-	      teamMsg += string_util::format("to the %s",
+	      teamMsg += TextUtils::format("to the %s",
 					     Team::getName((TeamColor)team));
 	    }
 	  } else {
@@ -3696,9 +3696,9 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	      teamMsg = "You were joined as an observer";
 	    } else {
 	      if (team != RogueTeam)
-		teamMsg = string_util::format("You joined the %s",Team::getName((TeamColor)team));
+		teamMsg = TextUtils::format("You joined the %s",Team::getName((TeamColor)team));
 	      else
-		teamMsg = string_util::format("You joined as a %s",Team::getName((TeamColor)team));
+		teamMsg = TextUtils::format("You joined as a %s",Team::getName((TeamColor)team));
 	    }
 	  }
 	  if (myTank->getTeam() != (TeamColor)team) {
@@ -3910,7 +3910,7 @@ static bool		joinGame(const StartupInfo* info,
 	break;
 
       default:
-	printError(string_util::format("Internal error connecting to server (error code %d).", serverLink->getState()));
+	printError(TextUtils::format("Internal error connecting to server (error code %d).", serverLink->getState()));
 	break;
     }
 

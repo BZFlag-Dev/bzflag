@@ -239,7 +239,7 @@ void		     StateDatabase::setInt(const std::string& name,
                                            const int& value,
                                            Permission access)
 {
-  set(name,string_util::format("%d",value),access);
+  set(name,TextUtils::format("%d",value),access);
 }
 
 void		    StateDatabase::setBool(const std::string& name,
@@ -253,7 +253,7 @@ void		   StateDatabase::setFloat(const std::string& name,
                                            const float& value,
                                            Permission access)
 {
-  set(name,string_util::format("%f",value),access);
+  set(name,TextUtils::format("%f",value),access);
 }
 
 void			StateDatabase::setPointer(const std::string& name,

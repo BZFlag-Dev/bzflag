@@ -176,7 +176,7 @@ std::string		ServerCommandKey::makePattern(const InAddr& address)
   const char * c = inet_ntoa(address);
   if (c == NULL) return "";
   std::string dots = c;
-  std::vector<std::string> dotChunks = string_util::tokenize(dots, ".");
+  std::vector<std::string> dotChunks = TextUtils::tokenize(dots, ".");
   if (dotChunks.size() != 4) return "";
 
   switch (mode) {
@@ -242,8 +242,8 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
 	case Kick:
 	  // escape the name
-	  name = string_util::replace_all(name, "\\", "\\\\");
-	  name = string_util::replace_all(name, "\"", "\\\"");
+	  name = TextUtils::replace_all(name, "\\", "\\\\");
+	  name = TextUtils::replace_all(name, "\"", "\\\"");
 	  sendMsg="/kick \"" + name + "\"";
 	  if (message != "") sendMsg = sendMsg + " " + message;
 	  break;

@@ -486,7 +486,7 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
     return "usage: screenshot";
 
   std::string filename = getScreenShotDirName();
-  filename += string_util::format("bzfi%04d.png", snap++);
+  filename += TextUtils::format("bzfi%04d.png", snap++);
 
   std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
 

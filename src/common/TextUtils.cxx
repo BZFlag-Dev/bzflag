@@ -20,7 +20,7 @@
 #include <stdarg.h>
 #include <vector>
 
-namespace string_util
+namespace TextUtils
 {
   std::string vformat(const char* fmt, va_list args) {
     // FIXME -- should prevent buffer overflow in all cases
@@ -260,10 +260,9 @@ namespace string_util
 };
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

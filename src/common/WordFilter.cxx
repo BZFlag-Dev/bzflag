@@ -104,10 +104,10 @@ bool WordFilter::aggressiveFilter(char *input) const
   for (int counter = 0; counter < inputLength; counter++) {
     char c = tolower(sInput[counter]);
 
-    if (!isalpha(previousChar) && string_util::isVisible(c)) {
+    if (!isalpha(previousChar) && TextUtils::isVisible(c)) {
 
       // expand punctuation to potential alphabetic characters
-      if (string_util::isPunctuation(c)) {
+      if (TextUtils::isPunctuation(c)) {
 
 	std::string puncChars = alphabeticSetFromCharacter(c);
 	for (unsigned int cnt = 0; cnt < puncChars.size(); cnt++) {

@@ -293,7 +293,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::date: return "date";
     case PlayerAccessInfo::vote: return "vote";
     case PlayerAccessInfo::shortBan: return "shortBan";
-    default: return string_util::format("UNKNOWN_PERMISSION: %d", (int)perm).c_str();
+    default: return TextUtils::format("UNKNOWN_PERMISSION: %d", (int)perm).c_str();
   };
 }
 
@@ -367,11 +367,11 @@ bool readPassFile(const std::string &filename)
   std::string line;
   while (std::getline(in, line)) {
     // Should look at an unescaped ':'
-    int colonpos = string_util::unescape_lookup(line, '\\', ':');
+    int colonpos = TextUtils::unescape_lookup(line, '\\', ':');
     if (colonpos == -1)
       continue;
     {
-      std::string name = string_util::unescape(line.substr(0, colonpos), '\\');
+      std::string name = TextUtils::unescape(line.substr(0, colonpos), '\\');
       std::string pass = line.substr(colonpos + 1);
       makeupper(name);
       setUserPassword(name.c_str(), pass.c_str());
@@ -388,7 +388,7 @@ bool writePassFile(const std::string &filename)
     return false;
   PasswordMap::iterator itr = passwordDatabase.begin();
   while (itr != passwordDatabase.end()) {
-    out << string_util::escape(itr->first, '\\') << ':' << itr->second << std::endl;
+    out << TextUtils::escape(itr->first, '\\') << ':' << itr->second << std::endl;
     itr++;
   }
   out.close();

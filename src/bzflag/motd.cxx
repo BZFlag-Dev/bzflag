@@ -36,7 +36,7 @@ const std::string& MessageOfTheDay::get ( const std::string URL )
   } else {
     // trim trailing whitespace
     int l = data.size() - 1;
-    while (string_util::isWhitespace(data[l])) {
+    while (TextUtils::isWhitespace(data[l])) {
       data.erase(l, 1);
       l--;
     }

@@ -122,7 +122,7 @@ public:
 		 const std::string& helpText)
     : Parser(usageText, helpText), var(variable) { }
   virtual int parse(char** argv) {
-    std::vector<std::string> tmpVector = string_util::tokenize(argv[0], ",");
+    std::vector<std::string> tmpVector = TextUtils::tokenize(argv[0], ",");
     T t;
     for (unsigned i = 0; i < tmpVector.size(); ++i) {
       std::istringstream iss(tmpVector[i]);

@@ -19,6 +19,7 @@
 
 #include "common.h"
 
+/* system interface headers */
 #include <algorithm>
 #include <string>
 #include <stdarg.h>
@@ -27,7 +28,7 @@
 /** This namespace provides basic functionality to parse and
  * format strings
  */
-namespace string_util {
+namespace TextUtils {
   std::string vformat(const char* fmt, va_list args);
   std::string format(const char* fmt, ...);
 

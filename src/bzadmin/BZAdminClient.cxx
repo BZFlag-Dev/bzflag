@@ -201,7 +201,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       }
       if (messageMask[MsgSetVar]) {
 	lastMessage.first = std::string("*** Received BZDB update, ") +
-	  string_util::format("%d", numVars) + " variable" +
+	  TextUtils::format("%d", numVars) + " variable" +
 	  (numVars == 1 ? "" : "s") + " updated.";
       }
       break;
@@ -259,7 +259,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       }
       if (messageMask[MsgAdminInfo]) {
 	lastMessage.first = std::string("*** IP update received, ") +
-	  string_util::format("%d", numIPs) + " IP" +(numIPs == 1 ? "" : "s") +
+	  TextUtils::format("%d", numIPs) + " IP" +(numIPs == 1 ? "" : "s") +
 	  " updated.";
       }
       break;
@@ -288,7 +288,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  lastMessage.first = "*** Time Expired.";
 	else
 	  lastMessage.first = std::string("*** ") +
-	    string_util::format("%d", timeLeft) + " seconds remaining.";
+	    TextUtils::format("%d", timeLeft) + " seconds remaining.";
       }
       break;
 
@@ -338,7 +338,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       if (messageMask[MsgScore]) {
 	lastMessage.first =
 	  std::string("*** Received score update, score for ")+
-	  string_util::format("%d", numScores) + " player" +
+	  TextUtils::format("%d", numScores) + " player" +
 	  (numScores == 1 ? "s" : "") + " updated.";
       }
       break;

@@ -101,14 +101,14 @@ void ShotStats::addStats(Player* player, std::vector<HUDuiControl*>& list)
   const ShotStatistics* stats = player->getShotStatistics();
   createLabel(player->getCallSign(), list);
 
-  createLabel(string_util::format("%2d%%", stats->getTotalPerc()), list);
-  createLabel(string_util::format("%d/%d", stats->getTotalHit(),  stats->getTotalFired()),  list);
-  createLabel(string_util::format("%d/%d", stats->getNormalHit(), stats->getNormalFired()), list);
-  createLabel(string_util::format("%d/%d", stats->getGMHit(),     stats->getGMFired()),     list);
-  createLabel(string_util::format("%d/%d", stats->getLHit(),      stats->getLFired()),      list);
-  createLabel(string_util::format("%d/%d", stats->getSBHit(),     stats->getSBFired()),     list);
-  createLabel(string_util::format("%d/%d", stats->getSWHit(),     stats->getSWFired()),     list);
-  createLabel(string_util::format("%d/%d", stats->getTHHit(),     stats->getTHFired()),     list);
+  createLabel(TextUtils::format("%2d%%", stats->getTotalPerc()), list);
+  createLabel(TextUtils::format("%d/%d", stats->getTotalHit(),  stats->getTotalFired()),  list);
+  createLabel(TextUtils::format("%d/%d", stats->getNormalHit(), stats->getNormalFired()), list);
+  createLabel(TextUtils::format("%d/%d", stats->getGMHit(),     stats->getGMFired()),     list);
+  createLabel(TextUtils::format("%d/%d", stats->getLHit(),      stats->getLFired()),      list);
+  createLabel(TextUtils::format("%d/%d", stats->getSBHit(),     stats->getSBFired()),     list);
+  createLabel(TextUtils::format("%d/%d", stats->getSWHit(),     stats->getSWFired()),     list);
+  createLabel(TextUtils::format("%d/%d", stats->getTHHit(),     stats->getTHFired()),     list);
 
   std::string flagName = stats->getFavoriteFlag()->flagAbbv;
   if (flagName.empty())

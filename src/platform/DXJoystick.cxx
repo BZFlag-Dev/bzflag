@@ -411,7 +411,7 @@ void DXJoystick::DXError(const char* situation, HRESULT problem)
     sprintf(buffer, "Action not supported by driver");
   else
     sprintf(buffer, "Unknown error (%d)", (int)problem);
-  printError(string_util::format("%s (%s).", situation, buffer));
+  printError(TextUtils::format("%s (%s).", situation, buffer));
 }
 
 /* Nasty callbacks 'cause DirectX sucks */

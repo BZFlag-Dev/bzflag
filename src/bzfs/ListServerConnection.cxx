@@ -229,7 +229,7 @@ void ListServerLink::sendQueuedMessages()
 
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
-    addMe(getTeamCounts(), publicizeAddress, string_util::url_encode(publicizeDescription));
+    addMe(getTeamCounts(), publicizeAddress, TextUtils::url_encode(publicizeDescription));
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     DEBUG3("Queuing REMOVE message to list server\n");
@@ -248,7 +248,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   pingInfo.packHex(gameInfo);
 
   // send ADD message (must send blank line)
-  msg = string_util::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s&title=%s HTTP/1.1\r\n"
+  msg = TextUtils::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s&title=%s HTTP/1.1\r\n"
     "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
     pathname.c_str(), publicizedAddress.c_str(),
     getServerVersion(), gameInfo,
@@ -262,7 +262,7 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 {
   std::string msg;
   // send REMOVE (must send blank line)
-  msg = string_util::format("GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
+  msg = TextUtils::format("GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
     "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
     pathname.c_str(),
     publicizedAddress.c_str(),

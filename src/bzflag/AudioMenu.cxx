@@ -147,7 +147,7 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
   std::string selectedOption = (*options)[list->getIndex()];
   switch (((const char*)data)[0]) {
     case 's':
-      BZDB.set("volume", string_util::format("%d", list->getIndex()));
+      BZDB.set("volume", TextUtils::format("%d", list->getIndex()));
       setSoundVolume(list->getIndex());
       break;
   }

@@ -311,7 +311,7 @@ const std::string FlagType::label() const
     caseName += " flag";
   } else {
     /* non-team flags */
-    caseName += string_util::format(" (%c%s)",
+    caseName += TextUtils::format(" (%c%s)",
 				    flagQuality==FlagGood?'+':'-',
 				    flagAbbv);
   }
@@ -322,7 +322,7 @@ const std::string FlagType::label() const
 
 const std::string FlagType::information() const
 {
-  return string_util::format("%s: %s",
+  return TextUtils::format("%s: %s",
 			     label().c_str(),
 			     flagHelp);
 }

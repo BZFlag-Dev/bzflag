@@ -38,7 +38,7 @@ void VotingArbiter::updatePollers(void)
 bool VotingArbiter::isPollerWaiting(const std::string &name) const
 {
   for (unsigned int i = 0; i < _pollers.size(); i++) {
-    if (string_util::compare_nocase(_pollers[i].name, name) == 0) {
+    if (TextUtils::compare_nocase(_pollers[i].name, name) == 0) {
       return true;
     }
   }
@@ -151,7 +151,7 @@ bool VotingArbiter::setAvailableVoters(unsigned short int count)
 bool VotingArbiter::grantSuffrage(const std::string &player)
 {
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
-    if (string_util::compare_nocase(_suffraged[i], player) == 0) {
+    if (TextUtils::compare_nocase(_suffraged[i], player) == 0) {
       return true;
     }
   }
@@ -169,7 +169,7 @@ bool VotingArbiter::hasSuffrage(const std::string &player) const
   // was this player granted the right to vote?
   bool foundPlayer = false;
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
-    if (string_util::compare_nocase(_suffraged[i], player) == 0) {
+    if (TextUtils::compare_nocase(_suffraged[i], player) == 0) {
       foundPlayer = true;
       break;
     }
@@ -179,7 +179,7 @@ bool VotingArbiter::hasSuffrage(const std::string &player) const
   }
 
   // has this player already voted?
-  if (_votingBooth->hasVoted(string_util::tolower(player))) {
+  if (_votingBooth->hasVoted(TextUtils::tolower(player))) {
     return false;
   }
 
@@ -202,7 +202,7 @@ bool VotingArbiter::voteYes(const std::string &player)
     return false;
   }
 
-  return (_votingBooth->vote(string_util::tolower(player), "yes"));
+  return (_votingBooth->vote(TextUtils::tolower(player), "yes"));
 }
 
 bool VotingArbiter::voteNo(const std::string &player)
@@ -216,7 +216,7 @@ bool VotingArbiter::voteNo(const std::string &player)
     return false;
   }
 
-  return (_votingBooth->vote(string_util::tolower(player), "no"));
+  return (_votingBooth->vote(TextUtils::tolower(player), "no"));
 }
 
 unsigned long int VotingArbiter::getYesCount(void) const
@@ -320,7 +320,7 @@ bool VotingArbiter::retractVote(const std::string &player)
   if (_votingBooth == NULL) {
     return false;
   }
-  return _votingBooth->retractVote(string_util::tolower(player));
+  return _votingBooth->retractVote(TextUtils::tolower(player));
 }
 
 

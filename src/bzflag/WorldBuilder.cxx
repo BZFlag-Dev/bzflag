@@ -61,7 +61,7 @@ void* WorldBuilder::unpack(void* buf)
 
   float worldSize;
   buf = nboUnpackFloat(buf, worldSize);
-  BZDB.set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%f", worldSize));
+  BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%f", worldSize));
   buf = nboUnpackUShort(buf, gameStyle);
   setGameStyle(short(gameStyle));
   buf = nboUnpackUShort(buf, maxPlayers);

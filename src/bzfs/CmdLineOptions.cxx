@@ -34,8 +34,8 @@
 #include "FlagInfo.h"
 #include "BZWError.h"
 
-// import from string_util for convenience
-using string_util::compare_nocase;
+// import from TextUtils for convenience
+using TextUtils::compare_nocase;
 
 /* data nasties */
 extern float speedTolerance;
@@ -791,7 +791,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // parse the variety of poll system variables
       checkArgc(1, i, argc, argv[i]);
 
-      std::vector<std::string> args = string_util::tokenize(argv[i], std::string("="), 2, true);
+      std::vector<std::string> args = TextUtils::tokenize(argv[i], std::string("="), 2, true);
       if (args.size() != 2) {
 	std::cerr << "expected -poll variable=value" << std::endl;
 	usage(argv[0]);
@@ -1065,7 +1065,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
         std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
     } else if (strcmp(argv[i], "-worldsize") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      BZDB.set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d",atoi(argv[i])*2));
+      BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%d",atoi(argv[i])*2));
       std::cerr << "using world size of \"" << BZDB.eval(StateDatabase::BZDB_WORLDSIZE) << "\"" << std::endl;
     } else {
       std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;

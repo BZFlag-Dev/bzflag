@@ -137,10 +137,10 @@ void	      WinJoystick::getJoyDevices(std::vector<std::string> &list) const
     // we have at least one joystick driver, get the name of both joystick IDs if they exist.
     JOYCAPS joyCaps;
     if (joyGetDevCaps(JOYSTICKID1, &joyCaps, sizeof(joyCaps)) == JOYERR_NOERROR) {
-      list.push_back(string_util::format("Joystick 1 (%s)", joyCaps.szPname));
+      list.push_back(TextUtils::format("Joystick 1 (%s)", joyCaps.szPname));
     }
     if (joyGetDevCaps(JOYSTICKID2, &joyCaps, sizeof(joyCaps)) == JOYERR_NOERROR) {
-      list.push_back(string_util::format("Joystick 2 (%s)", joyCaps.szPname));
+      list.push_back(TextUtils::format("Joystick 2 (%s)", joyCaps.szPname));
     }
   }
 }

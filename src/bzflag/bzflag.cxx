@@ -399,7 +399,7 @@ void updateConfigFile(void)
     break; // no action, current version
 
   default: // hm, we don't know about this one...
-    printError(string_util::format("Config file is tagged version \"%d\", "
+    printError(TextUtils::format("Config file is tagged version \"%d\", "
                                    "which was not expected (too new perhaps). "
 				   "Trying to load anyhow.", configVersion));
     break;
@@ -762,13 +762,13 @@ void			dumpResources(BzfDisplay* display,
   BZDB.set("team", Team::getName(startupInfo.team));
   BZDB.set("server", startupInfo.serverName);
   if (startupInfo.serverPort != ServerPort) {
-    BZDB.set("port", string_util::format("%d", startupInfo.serverPort));
+    BZDB.set("port", TextUtils::format("%d", startupInfo.serverPort));
   } else {
     BZDB.unset("port");
   }
   BZDB.set("list", startupInfo.listServerURL);
   if (isSoundOpen()) {
-    BZDB.set("volume", string_util::format("%d", getSoundVolume()));
+    BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
   }
   GLint value;
   glGetIntegerv(GL_DEPTH_BITS, &value);
@@ -777,7 +777,7 @@ void			dumpResources(BzfDisplay* display,
   }
 
   if (renderer.getWindow().getWindow()->hasGammaControl()) {
-    BZDB.set("gamma", string_util::format("%f", renderer.getWindow().getWindow()->getGamma()));
+    BZDB.set("gamma", TextUtils::format("%f", renderer.getWindow().getWindow()->getGamma()));
   }
 
   BZDB.set("quality", configQualityValues[renderer.useQuality()]);
@@ -787,11 +787,11 @@ void			dumpResources(BzfDisplay* display,
   }
   BZDB.set("startcode", ServerStartMenu::getSettings());
 
-  BZDB.set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
+  BZDB.set("panelopacity", TextUtils::format("%f", renderer.getPanelOpacity()));
 
-  BZDB.set("radarsize", string_util::format("%d", renderer.getRadarSize()));
+  BZDB.set("radarsize", TextUtils::format("%d", renderer.getRadarSize()));
 
-  BZDB.set("mouseboxsize", string_util::format("%d", renderer.getMaxMotionFactor()));
+  BZDB.set("mouseboxsize", TextUtils::format("%d", renderer.getMaxMotionFactor()));
 
   // don't save these configurations
   BZDB.setPersistent("_window", false);
@@ -810,12 +810,12 @@ void			dumpResources(BzfDisplay* display,
   if ((int)list.size() < maxListSize) maxListSize = list.size();
   for (int i = 0; i < maxListSize; i++) {
     sprintf(buffer,"silencedPerson%d",i);
-    BZDB.set(string_util::format("silencedPerson%d", i), list[i]);
+    BZDB.set(TextUtils::format("silencedPerson%d", i), list[i]);
   }
 
   BZDB.set("email",startupInfo.email); // note email of zero length does not stick
 
-  BZDB.set("serverCacheAge", string_util::format("%1d", (long)(ServerListCache::get())->getMaxCacheAge()));
+  BZDB.set("serverCacheAge", TextUtils::format("%1d", (long)(ServerListCache::get())->getMaxCacheAge()));
 
   (ServerListCache::get())->saveCache();
 }
