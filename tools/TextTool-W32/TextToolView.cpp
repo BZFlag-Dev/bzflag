@@ -545,16 +545,17 @@ void CTextToolView::OnBatchProcessing()
     bool good = ttb->getNext(item);
     while (good) {
       // set the font
-      BYTE italic;
+      BYTE italic, quality;
       int bold;
       if (item.italic) italic = TRUE; else italic = FALSE;
       if (item.bold) bold = FW_BOLD; else bold = FW_NORMAL;
       int nHeight = -MulDiv(item.size, iLogicalPixelsY, 72);
+      if (item.size >= 16) quality = ANTIALIASED_QUALITY; else quality = NONANTIALIASED_QUALITY;
 
       delete(m_pFont);
       m_pFont = new CFont;
       m_pFont->CreateFont(nHeight, 0, 0, 0, bold, italic, FALSE, FALSE, ANSI_CHARSET, OUT_TT_PRECIS,
-			  CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+			  CLIP_DEFAULT_PRECIS, quality, DEFAULT_PITCH | FF_DONTCARE,
 			  item.font.c_str());
 
       LOGFONT rLogFont;

@@ -392,10 +392,10 @@ EndY: 72
 
 Char: "K"
 InitialDist: 1
-Width: 11
-Whitespace: 1
+Width: 12
+Whitespace: 0
 StartX: 24
-EndX: 35
+EndX: 36
 StartY: 48
 EndY: 72
 
@@ -536,10 +536,10 @@ EndY: 72
 
 Char: "["
 InitialDist: 4
-Width: 5
-Whitespace: 4
+Width: 6
+Whitespace: 3
 StartX: 408
-EndX: 413
+EndX: 414
 StartY: 48
 EndY: 72
 
