@@ -3,6 +3,7 @@
 // bzlist.php
 //
 // original by D. John <g33k@despammed.com>
+// php native code by Tim Riker <Tim@Rikers.org>
 //
 // Copyright (c) 1993 - 2004 Tim Riker
 //
@@ -15,11 +16,10 @@
 // WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // This is a simple script that reports current public servers
-// and creates links to server stats via bzfquery.pl.
+// and creates links to server stats.
 
 
 $listserver = 'http://db.bzflag.org/db/?action=LIST';
-$bzfquery = './bzfquery.pl';
 
 $title="BZFlag Server List";
 
@@ -28,42 +28,38 @@ if ($_GET["hostport"]) {
 }
 
 function query ($hostport) {
-  list($host, $port) = split(":", $hostport, 2);
+  list($server['host'], $server['port']) = split(":", $hostport, 2);
   $protocol = 'tcp';
   $get_prot = getprotobyname($protocol);
   if ($get_prot == -1) {
      // if nothing found, returns -1
      echo 'Invalid Protocol';
-     return;
+     return $server;
   }
-  if (!ctype_digit($port)) {
-    $port = getservbyname($port, 'tcp');
+  if (!ctype_digit($server['port'])) {
+    $server['port'] = getservbyname($server['port'], $protocol);
   }
-  $ip = gethostbyname($host);
-  echo "$host:$port:$ip";
-  $fp = fsockopen($host, $port, $errno, $errstr, 5);
+  $server['ip'] = gethostbyname($server['host']);
+  $fp = fsockopen($server['host'], $server['port'], $errno, $errstr, 5);
   if (!$fp) {
-    echo "$errstr ($errno)<br>\n";
-    return;
+    echo "$errstr ($errno)\n";
+    return $server;
   }
   $buffer=fread($fp, 9);
   //var_dump($buffer);
   # parse reply
-  $server = unpack("a4magic/a4protocol/Cid", $buffer);
+  $server += unpack("a4magic/a4protocol/Cid", $buffer);
   //var_dump($server);
-  $magic = $server['magic'];
-  $protocol = $server['protocol'];
-  $id = $server['id'];
-  echo "$magic $protocol $id\n";
-  if ($magic != "BZFS") {
-    echo "not a bzflag server";
+  if ($server['magic'] != "BZFS") {
+    echo "not a bzflag server\n";
     fclose($fp);
-    return;
+    return $server;
   }
-  if ($protocol != "1910") {
-    echo "incompatible version";
+  if ($server['protocol'] != "1910") {
+    # FIXME should be a case statement and handle other bzfs versions
+    echo "incompatible version\n";
     fclose($fp);
-    return;
+    return $server;
   }
   # MsgQueryGame
   $request = pack("n2", 0, 0x7167);
@@ -99,12 +95,12 @@ function query ($hostport) {
     }
     $server['player'][$player] = unpack("nlen/ncode/Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $buffer);
   }
-  var_dump($server);
   fclose($fp);
   return $server;
 }
 
 function dump ($server) {
+  echo $server['host'] . ":" . $server['port'] . " (" . $server['ip'] . ")\n";
   echo "style:";
   if ($server['style'] & 0x0001) echo " CTF";
   if ($server['style'] & 0x0002) echo " flags";
@@ -133,8 +129,26 @@ function dump ($server) {
   echo "max player score: " . $server['maxPlayerScore'] . "\n";
   echo "max team score: " . $server['maxTeamScore'] . "\n";
   echo "max time: " . $maxTime / 10 . "\n";
-
-  var_dump($server);
+  $teamName = array(0=>"Rogue", 1=>"Red", 2=>"Green", 3=>"Blue", 4=>"Purple", 5=>"Observer", 6=>"Rabbit");
+  for ( $team = 0; $team < $server['numTeams']; $team++ ) {
+    echo $teamName[$team] . " team: "
+	. $server['team'][$team]['size'] . " players, "
+	. "score: " . $server['team'][$team]['score']
+        . " (" . $server['team'][$team]['won'] . " wins, "
+	. $server['team'][$team]['lost'] . " losses)\n";
+  }
+  echo "\n";
+  $playerType = array(0=>"tank", 1=>"observer", 2=>"robot tank");
+  for ( $player = 0; $player < $server['numPlayers']; $player++ ) {
+    echo "player " . $server['player'][$player]['sign']
+	. " (" . $teamName[$server['player'][$player]['team']]
+	. " team) is a " . $playerType[$server['player'][$player]['type']] . ":\n";
+    echo "  " . $server['player'][$player]['email'] . "\n";
+    echo "  score: " . ( $server['player'][$player]['won'] - $server['player'][$player]['lost'] )
+	. " (" . $server['player'][$player]['won']
+	. " wins, " . $server['player'][$player]['lost'] . " losses)\n";
+  }
+  //var_dump($server);
   return;
 }
 
@@ -150,13 +164,9 @@ if($_GET["hostport"]) {
   ?>
   <table border=0 cellpadding=0 cellspacing=0>
     <tr>
-      <td><? echo "$_GET[hostport] Stats:"; ?></td>
-    </tr>
-    <tr><td>&nbsp;</td></tr>
-    <tr>
       <td>
-	<pre><? dump(query($hostport)); ?></pre>
-	<pre><? system("$bzfquery $hostport"); ?></pre>
+	<pre><? dump(query($hostport)); echo "\n"; ?></pre>
+	<!-- <pre><? #system("bzfquery.pl $hostport"); ?></pre> -->
       </td>
     </tr>
   </table>
@@ -181,8 +191,8 @@ if ($fp) {
     $LINK = "<a href=\"$_SERVER[PHP_SELF]?hostport=$array[0]\">$array[0]</a>";
     if (($array[0])) {
       echo "<tr>";
-      echo "<td>$LINK</td>";
-      echo "<td>$array[3]</td>";
+      echo "<td>$LINK&nbsp;</td>";
+      echo "<td>$array[3]&nbsp;</td>";
       unset($array[0], $array[1], $array[2], $array[3]);
       foreach ( $array as $line ) {
 	$description .= "$line ";
