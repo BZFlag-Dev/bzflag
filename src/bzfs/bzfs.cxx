@@ -3050,7 +3050,7 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   if (p.isObserver() || p.isPaused()) {
     if (p.isPaused()) {
       char buffer[MessageLen];
-      DEBUG1("Player \"%s\" (%s) tried to %s while paused\n", p.getCallSign(), p.getTargetIP(), action);
+      DEBUG1("Player \"%s\" tried to %s while paused\n", p.getCallSign(), action);
       snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
       sendMessage(ServerPlayer, t, buffer);
       snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
