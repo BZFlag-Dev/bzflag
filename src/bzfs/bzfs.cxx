@@ -1577,7 +1577,9 @@ static WorldInfo *defineTeamWorld()
 	  const float rotation = 2.0f * M_PI * (float)bzfrand();
 
 	  // if too close to building then try again
-	  if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
+	  if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0,
+						   1.75f * TeleBreadth,
+						   1.0f))
 	    continue;
 	  // if to close to a base then try again
 	  if ((redGreen &&
@@ -1817,7 +1819,8 @@ static WorldInfo *defineRandomWorld()
       const float rotation = 2.0f * M_PI * (float)bzfrand();
 
       // if too close to building then try again
-      if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
+      if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0,
+					       1.75f * TeleBreadth, 1.0f))
 	continue;
 
       world->addTeleporter(x, y, 0.0f, rotation,
