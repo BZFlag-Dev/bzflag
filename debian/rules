@@ -13,12 +13,12 @@ build-stamp:
 	dh_testdir
 
 	# Add here commands to compile the package.
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	./configure --enable-debug
+ifeq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	./configure --enable-debug --prefix=/usr
 else
-	./configure --enable-debug
+	./configure --prefix=/usr
 endif
-	$(MAKE) INSTALL_DATA_DIR=/usr/share/bzflag all
+	$(MAKE)
 
 	touch build-stamp
 
@@ -28,7 +28,7 @@ clean:
 	rm -f build-stamp
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) pristine
+	-$(MAKE) distclean
 
 	dh_clean
 
