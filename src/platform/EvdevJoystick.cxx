@@ -336,7 +336,7 @@ void                    EvdevJoystick::ffResetRumble()
    * Once that happens, we stick with the same effect slot
    * as long as we have the device open.
    */
-  memset(&ff_rumble, 0, sizeof(ff_rumble));
+  memset(ff_rumble, 0, sizeof(*ff_rumble));
   ff_rumble->type = FF_RUMBLE;
   ff_rumble->id = -1;
 #endif
@@ -365,7 +365,7 @@ void                    EvdevJoystick::ffRumble(int count,
     ff_rumble->u.rumble.weak_magnitude = (int) (0xFFFF * weak_motor + 0.5);
     ff_rumble->replay.length = (int) (duration * 1000 + 0.5);
     ff_rumble->replay.delay = (int) (delay * 1000 + 0.5);
-    ioctl(joystickfd, EVIOCSFF, &ff_rumble);
+    ioctl(joystickfd, EVIOCSFF, ff_rumble);
 
     /* Play it the indicated number of times */
     struct input_event event;
