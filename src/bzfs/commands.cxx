@@ -544,7 +544,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
   } else if (strncmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = FlagInfo::flagList[i];
-      if (flag.flag.type->flagTeam != ::NoTeam) {
+      if (flag.flag.type->flagTeam == ::NoTeam) {
 	sendDrop(flag);
 	flag.flag.status = FlagGoing;
 	if (!flag.required)
