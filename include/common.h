@@ -116,6 +116,7 @@ typedef unsigned int	uint32_t;
 #define MAXFLOAT		3.402823466e+38f
 #endif
 
+#include <math.h>
 // replace constants with float versions
 #ifdef M_PI
 #undef M_PI
