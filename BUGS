@@ -1,6 +1,8 @@
-
 recent bugs
 ------------
+
+- bzfrelay is probably broken for current net protocol. Should be just
+  forwarding TCP and UDP packets on a single port.
 
 - can't ctrl-c quit the bzfs server from win32
 
