@@ -10,31 +10,34 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* BzfMedia:
- *	Abstract, platform independent base for media I/O.
- */
-
-#ifndef BZF_MEDIA_H
-#define	BZF_MEDIA_H
+#ifndef __BZFMEDIA_H__
+#define	__BZFMEDIA_H__
 
 #include "common.h"
 #include <string>
 #include <stdio.h>
 
-// if HALF_RATE_AUDIO defined then use half the normal audio sample
-// rate (and downsample the audio files to match).  this reduces the
-// demands on the system.
-// #define HALF_RATE_AUDIO
 
-// if NO_AUDIO_THREAD defined then play audio in the same thread as
-// the main playing loop.  note that not all platforms support this;
-// those platforms will use a separate thread regardless.
-//
-// some platforms don't context switch well enough for the real
-// time demands of audio.  but be aware that running audio in the
-// main thread is fraught with peril.
-// #define NO_AUDIO_THREAD
+static const std::string	DEFAULT_MEDIA_DIR = "data";
 
+/** BzfMedia is a helper class that will read in audio and image
+ * data files.  It's an abstract, platform independant base for
+ * media I/O.
+ *
+ * if HALF_RATE_AUDIO defined then use half the normal audio sample
+ * rate (and downsample the audio files to match).  this reduces the
+ * demands on the system.
+ * #define HALF_RATE_AUDIO
+ *
+ * if NO_AUDIO_THREAD defined then play audio in the same thread as
+ * the main playing loop.  note that not all platforms support this;
+ * those platforms will use a separate thread regardless.
+ *
+ * some platforms don't context switch well enough for the real
+ * time demands of audio.  but be aware that running audio in the
+ * main thread is fraught with peril.
+ * #define NO_AUDIO_THREAD
+ */
 class BzfMedia {
   public:
 			BzfMedia();
@@ -150,7 +153,7 @@ class BzfMedia {
     std::string		mediaDir;
 };
 
-#endif // BZF_MEDIA_H
+#endif // __BZFMEDIA_H__
 
 // Local variables: ***
 // mode:C++ ***
