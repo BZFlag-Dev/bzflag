@@ -20,6 +20,12 @@ to install it and stay updated.
 
 *** Part II: Obtain necessary platform files
 
+If you would like to build BZAdmin in curses mode, you need to download PDCurses
+from http://pdcurses.sourceforge.net/.  Build it according to their instructions
+for MingW, and rename the resulting file from pdcurses.a to libpdcurses.a.  Then
+copy libpdcurses.a and curses.h to the appropriate subdirectories of MingW32
+(lib and include respectively).
+
 If you want to build using SDL support, you should get SDL at libsdl.org and
 follow their instructions to install it under MinGW before configuring bzflag.
 Then move on to Part III.

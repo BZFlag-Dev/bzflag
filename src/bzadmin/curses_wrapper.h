@@ -134,6 +134,10 @@ inline int resizeterm(int lines, int cols) {
   return resize_term(lines, cols);
 }
 
+inline void use_default_colors() {
+  return;
+}
+
 #endif // pdcurses
 
 

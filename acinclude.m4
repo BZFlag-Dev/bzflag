@@ -33,6 +33,20 @@ AC_ARG_WITH(curses, [  --with-curses           Force the use of curses over ncur
        CURSES_LIB="-lcurses"
      fi
    fi
+   if test ! "$CURSES_LIB" -a "$with_xcurses" != yes
+   then
+     AC_CACHE_CHECK([for working PDcurses], mp_cv_pdcurses,
+       [LIBS="$mp_save_LIBS -lpdcurses"
+        AC_TRY_LINK(
+          [#include <curses.h>],
+          [chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr(); ],
+          mp_cv_pdcurses=yes, mp_cv_pdcurses=no)])
+     if test "$mp_cv_pdcurses" = yes
+     then
+       AC_DEFINE(HAVE_CURSES_H, , [Use the header file curses.h])
+       CURSES_LIB="-lpdcurses"
+     fi
+   fi
    if test ! "$CURSES_LIB" -a "$with_curses" != yes
    then
      xcurses_deplibs="-L$x_libraries -lXaw -lXmu -lXt -lX11 -lSM -lICE -lXext"

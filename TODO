@@ -26,10 +26,6 @@ THESE ARE LOWER PRIORITY
 * Fix the Windows version of bzadmin so that EOF quits the program, like
   the UNIX version (see checkCommand() in StdBothUI.cxx).
 
-* get a curses system working on windows:  try to build bzadmin on Win32
-  using PDCurses (it almost works with the X11 version of PDCurses). It
-  currently only works with stdin/stdout.
-
 * provide the ability to publish a singer server to multiple list servers.
   (i.e. multiple -publiclist options)  this is useful for a variety of
   reasons, including testing out a new user-reg'd, karmafied list server,
