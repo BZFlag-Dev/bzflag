@@ -837,6 +837,8 @@ In the following examples, the values are the defaults.
 .br
 \fBrotation\fR 0.0
 .br
+\fBcolor\fR 0
+.br
 \fBend\fR
 .br
 
