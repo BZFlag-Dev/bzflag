@@ -1,13 +1,16 @@
-known bugs in bzflag
+known bugs in BZFlag
 --------------------
 
+see the bug tracker on SourceForge for more 
+http://SourceForge.net/tracker/?group_id=3248&atid=103248
+
 * exploding tank parts sometimes move along the ground instead of
-  flying up into the air.
+   flying up into the air.
 
 * not dropping a flag grabbed just before being destroyed
 
 * same stipple on teleporters and phantom zone, making phatom
-  tank behind teleporter virtually invisible when blending is off.
+   tank behind teleporter virtually invisible when blending is off.
 
 * hit detection on pyramids computed at altitude of ray origin
 
@@ -47,4 +50,3 @@ known bugs in bzflag
 * robots can sometimes go through buildings
    the code to generate the cells of open space are susceptible
    to roundoff error, causing an open cell inside a building.
-
