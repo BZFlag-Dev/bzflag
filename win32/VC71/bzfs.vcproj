@@ -345,6 +345,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomTetra.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomWeapon.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -652,6 +655,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomPyramid.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomTetra.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomWeapon.h">

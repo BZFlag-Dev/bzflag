@@ -325,6 +325,9 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ShotStats.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\sound.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -1098,6 +1101,12 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ShotPath.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ShotStatistics.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ShotStats.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ShotStrategy.h">
