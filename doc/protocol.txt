@@ -903,3 +903,17 @@ enters a game.  Clients must be prepared to handle them in any order.
         target changes, these message will be fairly rare.  Note that different
         players may have different ideas of where the target is and that that
         may cause slightly different courses.  This is generally not a problem.
+
+  MsgLagPing
+        +----+----+----+----+----+----+
+        | 00 | 02 | 70 | 69 | seq. no.|
+        +----+----+----+----+----+----+
+        Sent by the server to active players every 10s to measure lag. The
+        client just echoes the message back to the server. The time
+        between sending and receiving the message in the server is
+        considered to be the current lag ot the respective player.
+        
+        The two byte sequence number is included to be able to deal with
+        lost or severely delayed messages. On each ping sent by the server,
+        the sequence number is incremented (modulo 10000). The server
+        manages this number on a per player basis.
