@@ -371,7 +371,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
       // We use 4 tabstops equally spaced over the controlpanel
       // which is stupid, and can cause overlapping as the
       // control panel font size can be changed (FIXME)
-      bool isTab = (msg.find('\t', 0) > -1);
+      bool isTab = (msg.find('\t', 0) != std::string::npos);
       if (isTab)
 	msgx += messageAreaPixels[0] / 4;
       else
