@@ -895,7 +895,7 @@ void			HUDRenderer::renderScoreboard(void)
 	myTurn = myTank->getScore() > player->getScore();
       }
     if (myTurn) {
-      if(getHunt() && getHuntPosition() == i) setHuntIndicator(false);// don't hunt myself
+      setHuntIndicator(false); // don't hunt myself
       // if i have greater score than remote player draw my name here
       drawPlayerScore(myTank, x1, x2, x3, (float)y);
       drewMyScore = true;
@@ -907,6 +907,7 @@ void			HUDRenderer::renderScoreboard(void)
   }
   if (!huntPlayerAlive && getHunting()) setHunting(false); //stop hunting if hunted player is dead
   if (!drewMyScore && (myTank->getTeam() != ObserverTeam)) {
+    setHuntIndicator(false); // don't hunt myself
     // if my score is smaller or equal to last remote player draw my score here
     drawPlayerScore(myTank, x1, x2, x3, (float)y);
     y -= (int)dy;
