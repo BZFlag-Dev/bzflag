@@ -549,6 +549,9 @@ copy debug\*.pdb ..\..\*.pdb
 			<File
 				RelativePath="..\..\src\bzflag\TargetingUtils.cxx">
 			</File>
+			<File
+				RelativePath="..\..\src\bzflag\TrackMarks.cxx">
+			</File>
 			<Filter
 				Name="drawing"
 				Filter="">
@@ -1567,6 +1570,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\include\TextUtils.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\TrackMarks.h">
 			</File>
 			<File
 				RelativePath="..\..\include\version.h">
