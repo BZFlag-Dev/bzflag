@@ -9,20 +9,13 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
-
-/*
- *  BZRLOG
- *
- *  This program can be used by server admins to
- *  examine their record/replay files in detail.
- *
- */
 
 
-// interface header 
-#include "RecordReplay.h"
-
+//  RRLOG
+//
+//  This program can be used by server admins to
+//  examine their record/replay files in detail.
+//
 
 // system headers
 #include <stdio.h>
@@ -45,6 +38,9 @@ typedef __int64 s64;
 #include "Pack.h"
 #include "TextUtils.h"
 #include "version.h"
+
+// bzfs headers
+#include "RecordReplay.h"
 
 // local headers
 #include "MsgStrings.h"
@@ -93,6 +89,7 @@ static const int ReplayHeaderSize = sizeof(ReplayHeader) - (2 * sizeof(char*));
 // Function Prototypes
 // -------------------
 
+static void printHelp(const char* execName);
 static bool loadHeader (ReplayHeader *h, FILE *f);
 static RRpacket *loadPacket (FILE *f);
 static void *nboUnpackRRtime (void *buf, RRtime& value);
@@ -105,24 +102,66 @@ static int outputLevel = 0;
 
 /****************************************************************************/
 
-int main (int argc, char **argv)
+int main (int argc, char** argv)
 {
   FILE *file = NULL;
-  ReplayHeader header; 
-  RRpacket *p; 
+  ReplayHeader header;
+  RRpacket *p;
+  const char* execName = argv[0];
+  bool useColor = true;
+  bool useEmail = true;
+  bool onlyMessages = false;
 
-  printf ("\nBZRLOG-%s\nProtocol %s: %i known packet types\n\n",
+  printf ("\nRRLOG-%s\nProtocol BZFS%s:  %i known packet types\n\n",
           getAppVersion(), getProtocolVersion(),
           MsgStrings::knownPacketTypes());
   
   if (argc < 2) {
+    printHelp(execName);
     exit (1);
   }
+
+  while (argc > 1) {  
+    if (strcmp ("-h", argv[1]) == 0) {
+      printHelp(execName);
+      exit(0);
+    }
+    else if (strcmp ("-o", argv[1]) == 0) {
+      if (argc < 3) {
+        printf ("* Missing the -o parameter or the filename\n\n");
+        printHelp (execName);
+        exit (1);
+      } else {
+        outputLevel = atoi (argv[2]);
+        argc = argc - 2;
+        argv = argv + 2;
+      }
+    }
+    else if (strcmp ("-c", argv[1]) == 0) {
+      useColor = false;
+      argc--;
+      argv++;
+    }
+    else if (strcmp ("-e", argv[1]) == 0) {
+      useEmail = false;
+      argc--;
+      argv++;
+    }
+    else if (strcmp ("-m", argv[1]) == 0) {
+      onlyMessages = true;
+      argc--;
+      argv++;
+    }
+    else {
+      argc++;
+      break;
+    }
+  }
   
-  // FIXME
-  if ((argc == 4) && (strcmp ("-o", argv[1]) == 0)) {
-    outputLevel = atoi (argv[2]);
-    argv = argv + 2;
+  if (argc < 2) {
+    printf ("* Missing filename\n\n");
+    printHelp (execName);
+    exit (1);
   }
   
   file = fopen (argv[1], "rb");
@@ -160,6 +199,8 @@ int main (int argc, char **argv)
 
 
   MsgStrings::init();
+  MsgStrings::colorize(useColor);
+  MsgStrings::showEmail(useEmail);
 //  MsgStrings::colorize(false);
   bool needUpdate = true;
   
@@ -169,22 +210,26 @@ int main (int argc, char **argv)
     }
     if ((p->mode == RealPacket) || (p->mode == HiddenPacket) ||
         ((p->mode == StatePacket) && needUpdate)) {
-      int i, j;
-      MsgStringList list = MsgStrings::msgFromServer (p->len, p->code, p->data);
-      for (i = 0; i < (int) list.size(); i++) {
-        if (list[i].level > outputLevel) {
-          break;
+      if (!onlyMessages || (p->code == MsgMessage)) {
+        int i, j;
+        MsgStringList list = MsgStrings::msgFromServer (p->len, p->code, p->data);
+        for (i = 0; i < (int) list.size(); i++) {
+          if (list[i].level > outputLevel) {
+            break;
+          }
+          if (i == 0) {
+            std::cout << strRRtime (p->timestamp) << ": ";
+          }
+          for (j = 0; j < list[i].level; j++) {
+            std::cout << "  ";
+          }
+          std::cout << list[i].color;
+          std::cout << list[i].text;
+          if (useColor) {
+            std::cout << "\033[0m";
+          }
+          std::cout << std::endl;
         }
-        if (i == 0) {
-          std::cout << strRRtime (p->timestamp) << ": ";
-        }
-        for (j = 0; j < list[i].level; j++) {
-          std::cout << "  ";
-        }
-        std::cout << list[i].color;
-        std::cout << list[i].text;
-        std::cout << "\033[0m";
-        std::cout << std::endl;
       }
     }
     else if (p->mode == StatePacket) {
@@ -193,6 +238,7 @@ int main (int argc, char **argv)
     else if (p->mode == UpdatePacket) {
       std::cout << strRRtime (p->timestamp) << ": UPDATE PACKET" << std::endl;
     }
+    
     delete[] p->data;
     delete p;
   }
@@ -203,6 +249,20 @@ int main (int argc, char **argv)
   fclose (file);
   
   return 0;
+}
+
+/****************************************************************************/
+
+static void printHelp(const char* execName)
+{
+  printf ("usage:\t%s [options] <filename>\n\n", execName);
+  printf ("  -h          : print help\n");
+  printf ("  -o <level>  : set output level\n");
+  printf ("  -c          : disable printing ANSI colors\n");
+//  printf ("  -e          : disable printing emails\n");
+//  printf ("  -m          : only print message packets\n");
+  printf ("\n");
+  return;
 }
 
 /****************************************************************************/
