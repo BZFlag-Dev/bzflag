@@ -822,9 +822,7 @@ bool CustomWorld::read(const char *cmd, istream& input)
 
 void CustomWorld::write(WorldInfo*) const
 {
-  char buffer[50];
-  sprintf(buffer, "set %s %f", StateDatabase::BZDB_FLAGHEIGHT.c_str(), fHeight);
-  CMDMGR->run(buffer);
+  BZDB->set(StateDatabase::BZDB_FLAGHEIGHT, string_util::format("%f", fHeight));
 }
 
 static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)

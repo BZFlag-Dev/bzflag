@@ -590,7 +590,6 @@ void*			WorldBuilder::unpack(void* buf)
   // unpack world database from network transfer
   // read style header
   uint16_t code, len;
-  void* tmpBuf = buf;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
   if (code != WorldCodeHeader) return NULL;
