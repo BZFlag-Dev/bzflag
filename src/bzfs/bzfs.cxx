@@ -3764,12 +3764,12 @@ static void addPlayer(int playerIndex)
   // or if the team is full.
 
   // strip any non-printable characters from callsign
-  char *sp=player[playerIndex].callSign, *tp=sp;
+  char *sp = player[playerIndex].callSign, *tp = sp;
   do {
     if (isprint(*sp))
-      *tp++=*sp;
+      *tp++ = *sp;
   } while (*++sp);
-  *tp=*sp;
+  *tp = *sp;
 
   // look if there is as name clash, we won't allow this
   int i;
