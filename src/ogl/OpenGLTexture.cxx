@@ -85,8 +85,8 @@ OpenGLTexture::OpenGLTexture(int _width, int _height,
 				height(_height),
 				repeat(_repeat),
 				internalFormat(_internalFormat),
-				maxFilter(_maxFilter),
-				list(0)
+				list(0),
+				maxFilter(_maxFilter)
 {
   // check for texture object extension
   if (hasTextureObject < 0) {
@@ -116,7 +116,10 @@ OpenGLTexture::OpenGLTexture(int _width, int _height,
   image = new GLubyte[4 * width * height];
   ::memcpy(image, pixels, 4 * width * height);
 
+#ifdef _MSC_VER
+  // Suppose Pat want to remind himself
   { int patlabor_remove_this_once_tm_does_this; }
+#endif
   setFilter(std::string("linearmipmaplinear"));
 
   initContext();
