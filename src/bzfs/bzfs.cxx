@@ -6249,7 +6249,10 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      options.password = argv[i];
+      // at least put password someplace that ps won't see
+      options.password = (char *)malloc(strlen(argv[i]) + 1);
+      strcpy(options.password, argv[i]);
+      memset(argv[i], ' ', strlen(options.password));
     }
     else if (strcmp(argv[i], "-lagwarn") == 0) {
       if (++i == argc) {
