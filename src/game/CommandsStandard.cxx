@@ -277,7 +277,7 @@ static std::string cmdMult(const std::string&, const CommandManager::ArgList& ar
 // command name to function mapping
 //
 
-const CommandListItem commandList[] = {
+const struct CommandsItem commands[] = {
   { "quit",	&cmdQuit,	"quit:  quit the program" },
   { "help",	&cmdHelp,	"help [<command-name>]:  get help on a command or a list of commands" },
   { "print",	&cmdPrint,	"print ...:  print arguments; $name is replaced by value of variable \"name\"" },
@@ -298,15 +298,15 @@ const CommandListItem commandList[] = {
 void				CommandsStandard::add()
 {
   unsigned int i;
-  for (i = 0; i < countof(commandList); ++i)
-    CMDMGR.add(commandList[i].name, commandList[i].func, commandList[i].help);
+  for (i = 0; i < countof(commands); ++i)
+    CMDMGR.add(commands[i].name, commands[i].func, commands[i].help);
 }
 
 void				CommandsStandard::remove()
 {
   unsigned int i;
-  for (i = 0; i < countof(commandList); ++i)
-    CMDMGR.remove(commandList[i].name);
+  for (i = 0; i < countof(commands); ++i)
+    CMDMGR.remove(commands[i].name);
 }
 
 void				CommandsStandard::quit()

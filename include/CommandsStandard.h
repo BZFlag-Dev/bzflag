@@ -10,11 +10,24 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZF_COMMANDS_STANDARD_H
-#define BZF_COMMANDS_STANDARD_H
+#ifndef __COMMANDSSTANDARD_H__
+#define __COMMANDSSTANDARD_H__
 
-#include "common.h"
+/* common interface headers */
+#include "CommandManager.h"
 
+
+struct CommandsItem {
+public:
+  const char* name;
+  CommandManager::CommandFunction func;
+  const char* help;
+};
+extern const struct CommandsItem commands[];
+
+
+/** standard commands
+ */
 class CommandsStandard {
 public:
   static void		add();
@@ -23,13 +36,13 @@ public:
   static bool		isQuit();
 };
 
-#endif
+
+#endif /* __COMMANDSSTANDARD_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
