@@ -399,8 +399,9 @@ Kick all players off the server
 .B /gameover
 Ends the current game
 .TP
-.B /flag reset
-Removes flags from all players
+.B /flag reset {unused}
+Removes and repositions flags including player's flags when unused not specified
+Removes all flags not carried by tanks when /unused specified
 .TP
 .B /flag up
 Removes all flags from the game
