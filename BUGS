@@ -1,6 +1,20 @@
 recent bugs
 ------------
 
+- Joining with bots fails if there is already another player with bots joined.
+  Crashed inside of addPlayer during enterServer performing a strncmp.
+
+- Spawn code sometimes spawns you mid-air
+
+- Performing a saveworld of a map with a size set in the bzw doesn't save the
+  size
+
+- Robots that spawn on rooftop in MrAC's playground sometimes conveniently
+  fall through to the bottom when their selected target is down below.
+
+- Robots don't take elevated bases into consideration.  The spawn
+  inside them and move around as if they were flat. See MrAC's playground.
+
 - Robots are forced onto the observer team if no slots are available.
   They should just be rejected
 
