@@ -115,7 +115,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
   //check everything else
   const ObsList* olist = COLLISIONMGR.rayTest (&ray, t);
 
-  for (i = 0; (unsigned int)i < olist->count; i++) {
+  for (i = 0; i < (unsigned int)olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (!obs->isShootThrough()) {
       const float timet = obs->intersect(ray);
