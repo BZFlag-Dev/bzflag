@@ -191,6 +191,7 @@ LDADD =	\
 	$(ZLIB)				\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
+	$(CURL_LIBS)			\
 	$(GLIBS)
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)

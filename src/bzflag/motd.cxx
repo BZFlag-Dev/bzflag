@@ -52,7 +52,7 @@ size_t MessageOfTheDay::writeFunction(void *ptr, size_t size, size_t nmemb,
 																		void *stream)
 {
 	int len = size * nmemb;
-	((MasterBanList *)stream)->collectData((char *)ptr, len);
+	((MessageOfTheDay *)stream)->collectData((char *)ptr, len);
 	return len;
 }
 #endif
