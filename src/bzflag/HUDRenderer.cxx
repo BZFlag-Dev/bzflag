@@ -276,12 +276,12 @@ void			HUDRenderer::resize(bool firstTime)
     OpenGLTexFont font = composeTypeIn->getFont();
     if (font.isValid()) {
       const float dx = font.getWidth(composeTypeIn->getLabel()) + 2.0f;
-      const float dy = font.getDescent() + 4.0f;
-      const float x = dx + dy + 2.0f * font.getSpacing();
-      const float y = dy + window.getViewHeight() / 3;
+      const float dy = font.getDescent() + 1.0f;
+      const float x = dx + font.getSpacing();
+      const float y = dy;
       composeTypeIn->setLabelWidth(dx);
       composeTypeIn->setPosition(x, y);
-      composeTypeIn->setSize(w - x - dy, font.getSpacing());
+      composeTypeIn->setSize(window.getWidth() - x - dy, font.getSpacing());
     }
   }
 }
@@ -524,15 +524,6 @@ void			HUDRenderer::setComposing(const std::string &prompt,
     composeTypeIn->setFocus();
 
     OpenGLTexFont font = composeTypeIn->getFont();
-    if (font.isValid()) {
-      const float dx = font.getWidth(composeTypeIn->getLabel()) + 2.0f;
-      const float dy = font.getDescent() + 4.0f;
-      const float x = dx + dy + 2.0f * font.getSpacing();
-      const float y = dy;
-      composeTypeIn->setLabelWidth(dx);
-      composeTypeIn->setPosition(x, y);
-      composeTypeIn->setSize(window.getWidth() - x - dy, font.getSpacing());
-    }
   }
   else {
     HUDui::setFocus(NULL);
