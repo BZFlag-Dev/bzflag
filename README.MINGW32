@@ -1,5 +1,10 @@
-To build bzflag on Windows Intel you can use an MinGW and MSYS, both Open Source
+To build bzflag on Windows Intel you can use MinGW and MSYS, both Open Source
 and freely available from http://www.mingw.org
+
+There's a troubleshooting section at the end of this file in case you run into
+problems.
+
+*** Part I: Obtain MingW and MSYS
 
 MinGW stands for Minimalistic GNU for Windows
   it is a collection of library, header and a collection of GNU tools
@@ -13,36 +18,24 @@ Now, to build bzflag, you have to procure MinGW and MSYS. Get the
 whole MinGW, including the DTK (Development ToolKit), follow the instruction
 to install it and stay updated.
 
-Before starting building you have to get yourself a couples of header files to
-interface the DirectX MS subsystem. They are normally parts of any Microsoft
-development kit; you can get from your Visual C installation or from MSDN on
-internet.
+*** Part II: Obtain necessary platform files
+
+If you would like to build BZAdmin in curses mode, you need to download PDCurses
+from http://pdcurses.sourceforge.net/.  Build it according to their instructions
+for MingW, and rename the resulting file from pdcurses.a to libpdcurses.a.  Then
+copy libpdcurses.a and curses.h to the appropriate subdirectories of MingW32
+(lib and include respectively).
+
+You also have to get yourself a couple of header files to interface the MS DirectX 
+subsystem. They are normally part of any Microsoft development kit; you can get 
+from your Visual C installation or from MSDN on internet.
 Any way you got these files, you should copy either on the MinGW installation,
 under the include directory or, if you don't like to clutter the MinGW
 installation, just put under src/platform.
 
 The files in question are dsound.h, d3dtypes.h and ddraw.h.
 
-Note that we cannot redistribute these files separate of the entire SDK.
-
-If you get bzflag files from CVS you should run this command
-
-sh autogen.sh
-
-from the top bzflag directory.
-You should have all the automake, autoconf, m4, perl stuff - they
-are in DTK kit.
-
-If you are able to find a bzflag dist kit, just run the configure script,
-looking at the help (configure --help) for options. Then make
-
-Executable file are puts on src/bzflag/bzflag src/bzfs/bzfs ...
-
-When you are confident of the compilation result you can run make install and
-then make a link to the application (e.g. on your Desktop) to run this bejoux.
-
-To get the needed file from the Microsoft DirectX SDK
-
+To get the needed DirectX header files from the Microsoft DirectX SDK:
     * Go to http://msdn.microsoft.com/downloads/
     * Select the DirectX 9.0 Software Development Kit
     * Click on the Download link on the right
@@ -52,5 +45,72 @@ To get the needed file from the Microsoft DirectX SDK
     * Click "OK" and "Close" when the program finishes extracting the files
     * Copy ddraw.h dinput.h and dsound.h from the SDK's include directory
 
-Tupone Alfredo
-(atupone on sourceforge)
+Note that we cannot redistribute these files separate of the entire SDK.
+
+*** Part IV: Obtain BZFlag
+
+If you get bzflag files from CVS be sure to check them out with UNIX linebreaks,
+or MSYS will choke.  In WinCVS, this can be done with the "Check out text files
+with the Unix LF (0xA)" option in Global Preferences; in TortoiseCVS, use the
+"Unix line endings" option in Advanced Preferences.
+
+If you get the bzflag files from a released source tarball, they should already
+be in the correct format.
+
+*** Part V: Compile and Install BZFlag
+
+Once you have the files checked out correctly, you should run this command
+
+sh autogen.sh
+
+from the top bzflag directory.
+
+You should have all the automake, autoconf, m4, perl stuff - they
+are in DTK kit.
+
+If you are able to find a bzflag dist kit, just run the configure script,
+looking at the help (configure --help) for options.
+
+Then run
+
+./configure (with any desired arguments)
+make
+make install
+
+Compiled executable files are found in src/bzflag (bzflag.exe), src/bzfs/bzfs
+(bzfs.exe), and src/bzadmin (bzadmin.exe).
+
+When you are confident of the compilation result you can run make install and
+then make a link to the application (e.g. on your Desktop) to run this bejoux.
+
+
+--- Troubleshooting:
+
+Q. When I run autogen.sh, I get a message like "sh: aclocal: command not found"
+A. aclocal and associated programs are part of the GNU autotools package.  This
+   is included in the MSYS Developer's Tool Kit (DTK), which can be downloaded
+   from http://www.mingw.org.  BZFlag requires the autotools to build.
+
+Q. When I run ./configure, it reports "No C Compiler found" or similar.
+A. Make sure you install MingW32 before MSYS, and when installing MSYS, be sure
+   to tell it where MingW32 is.  If this does not work (or you don't want
+   to reinstall), copy the MingW32 directory into the MSYS directory as mingw.
+   E.g. if you have MingW installed to c:\MingW32 and MSYS to c:\msys\1.0, copy
+   the MingW32 directory to c:\msys\1.0 and rename it mingw, so you have
+   c:\msys\1.0\mingw with all the MingW files in it.
+
+Q. When I run ./configure, sed dumps the contents of version.h, configure
+   continues normally for a while, and then I get repeated sed errors like
+   "sed: <file>: unterminated `s' command" and others.  Make fails with
+   "*** No targets.  Stop." or similar.
+A. When checking out the bzflag sources from CVS, you must check them out with
+   UNIX line breaks.  For instructions for TortoiseCVS or WinCVS, see Part IV.
+   Alternatively, use mingw's or cygwin's built-in CVS to check out the files.
+
+Q. When I run make, it reports an error about not being able to find dsound.h.
+A. Follow the above directions to get the needed DirectX headers from the MS DX SDK.
+
+Q. I get errors not mentioned in this file.
+A. File a support request at http://sourceforge.net/projects/bzflag or jump on
+   #bzflag on irc.freenode.net and ask for help compiling on MingW.  Be sure to 
+   include the first few lines of error if you file a support request.

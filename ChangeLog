@@ -5,6 +5,7 @@
 BZFlag 1.10.6
 -------------
 
+* Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
 * Add support for aggressive filtering on more platforms - Sean Morrison
 * bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
 * Fixed bug that allowed empty callsigns - Frank Thilo
