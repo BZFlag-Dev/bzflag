@@ -17,7 +17,7 @@
 #include "common.h"
 
 #ifdef __APPLE__
-#import <CoreFoundation/CoreFoundation.h>
+#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 class Bundle;
