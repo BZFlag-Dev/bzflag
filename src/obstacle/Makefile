@@ -18,6 +18,7 @@ CXXFILES =				\
 	Intersect.cxx			\
 	Obstacle.cxx			\
 	BoxBuilding.cxx			\
+	BaseBuilding.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	WallObstacle.cxx		\

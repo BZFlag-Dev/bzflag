@@ -23,6 +23,7 @@ CXXFILES =				\
 	TriWallSceneNode.cxx		\
 	PolyWallSceneNode.cxx		\
 	EighthDimSceneNode.cxx		\
+	EighthDBaseSceneNode.cxx	\
 	EighthDBoxSceneNode.cxx		\
 	EighthDPyrSceneNode.cxx		\
 	ShellSceneNode.cxx		\

@@ -46,8 +46,6 @@ class BackgroundRenderer {
 					const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
 
-    void		notifyWorldChange();
-
   protected:
     void		drawSky(SceneRenderer&);
     void		drawGround(SceneRenderer&);

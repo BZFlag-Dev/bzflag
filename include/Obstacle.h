@@ -69,7 +69,7 @@ class Obstacle {
 				float oWidth, float oBreadth, float oHeight,
 				float* normal) const;
 
-  private:
+  protected:
     float		pos[3];
     float		angle;
     float		width;

@@ -23,6 +23,7 @@
 #include "SceneDatabase.h"
 #include "EighthDBoxSceneNode.h"
 #include "EighthDPyrSceneNode.h"
+#include "EighthDBaseSceneNode.h"
 #include "playing.h"
 #include "texture.h"
 
@@ -48,7 +49,8 @@ World::World() : gameStyle(PlainGameStyle),
 				flagNodes(NULL),
 				flagWarpNodes(NULL),
 				boxInsideNodes(NULL),
-				pyramidInsideNodes(NULL)
+				pyramidInsideNodes(NULL),
+				baseInsideNodes(NULL)
 {
   int i;
   for (i = 0; i < NumTeams; i++) {
@@ -131,8 +133,12 @@ EighthDimSceneNode*	World::getInsideSceneNode(const Obstacle* o) const
 {
   if (!o) return NULL;
 
-  const int numBoxes = boxes.getLength();
   int i;
+  const int numBases = basesR.getLength();
+  for (i = 0; i < numBases; i++)
+    if (&(basesR[i]) == o)
+      return baseInsideNodes[i];
+  const int numBoxes = boxes.getLength();
   for (i = 0; i < numBoxes; i++)
     if (&(boxes[i]) == o)
       return boxInsideNodes[i];
@@ -148,11 +154,20 @@ TeamColor		World::whoseBase(const float* pos) const
   if (!(gameStyle & TeamFlagGameStyle))
     return NoTeam;
 
-  // FIXME -- doesn't handle rotated bases
-  for (int i = 1; i < NumTeams; i++)
-    if (fabsf(pos[0] - bases[i][0]) < bases[i][4] &&
-	fabsf(pos[1] - bases[i][1]) < bases[i][5])
-      return TeamColor(i);
+  for (int i = 1; i < NumTeams; i++) {
+    float nx = pos[0] - bases[i][0];
+    float ny = pos[1] - bases[i][1];
+    float rx = cosf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx));
+    float ry = sinf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx));
+    if(fabsf(rx) < bases[i][4] &&
+       fabsf(ry) < bases[i][5]) {
+      float nz = (bases[i][2] > 0) ? (bases[i][2] + 1) : 0;
+      float rz = pos[2] - nz;
+      if(fabsf(rz) < 0.1) { // epsilon kludge
+	return TeamColor(i);
+      }
+    }
+  }
   return NoTeam;
 }
 
@@ -174,6 +189,15 @@ const Obstacle*		World::inBuilding(const float* pos, float radius) const
     if (pyramid.isInside(pos, radius))
       return &pyramid;
     pyramidScan->next();
+  }
+  
+  // check bases
+  BaseBuildingsCIteratorPtr baseScan(basesR.newCIterator());
+  while(!baseScan->isDone()) {
+    const BaseBuilding &base = baseScan->getItem();
+    if(base.isInside(pos, radius))
+      return &base;
+    baseScan->next();
   }
 
   // check teleporters
@@ -228,7 +252,15 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
     pyramidScan->next();
   }
 
-  // strike three -- you're out
+  // strike three -- check bases
+  BaseBuildingsCIteratorPtr baseScan(basesR.newCIterator());
+  while(!baseScan->isDone()) {
+    const BaseBuilding &base = baseScan->getItem();
+    if(base.isInside(pos, angle, dx, dy))
+      return &base;
+    baseScan->next();
+  }
+  // strike four -- you're out
   return NULL;
 }
 
@@ -324,6 +356,13 @@ void			World::freeInsideNodes()
       delete pyramidInsideNodes[i];
     delete[] pyramidInsideNodes;
     pyramidInsideNodes = NULL;
+  }
+  if (baseInsideNodes) {
+    const int numBases = basesR.getLength();
+    for(int i = 0; i < numBases; i++)
+      delete baseInsideNodes[i];
+    delete [] baseInsideNodes;
+    baseInsideNodes = NULL;
   }
 }
 
@@ -677,6 +716,8 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackFloat(buf, data[7]);
 	buf = nboUnpackFloat(buf, data[8]);
+	BaseBuilding base(data, data[3], data +4, team);
+	append(base);
 	setBase(TeamColor(team), data, data[3], data[4], data[5], data + 6);
 	break;
       }
@@ -737,6 +778,16 @@ void			WorldBuilder::preGetWorld()
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
     world->pyramidInsideNodes[i] = new EighthDPyrSceneNode(o.getPosition(),
+						obstacleSize, o.getRotation());
+  }
+  const int numBases = world->basesR.getLength();
+  world->baseInsideNodes = new EighthDimSceneNode*[numBases];
+  for (i = 0; i < numBases; i++) {
+    const Obstacle& o = world->basesR[i];
+    obstacleSize[0] = o.getWidth();
+    obstacleSize[1] = o.getBreadth();
+    obstacleSize[2] = o.getHeight();
+    world->baseInsideNodes[i] = new EighthDBaseSceneNode(o.getPosition(),
 						obstacleSize, o.getRotation());
   }
 
@@ -816,6 +867,11 @@ void			WorldBuilder::append(const BoxBuilding& box)
 void			WorldBuilder::append(const PyramidBuilding& pyramid)
 {
   world->pyramids.append(pyramid);
+}
+
+void			WorldBuilder::append(const BaseBuilding& base)
+{
+  world->basesR.append(base);
 }
 
 void			WorldBuilder::append(const Teleporter& teleporter)

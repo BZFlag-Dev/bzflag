@@ -227,6 +227,7 @@ class WorldInfo {
     void addBox(float x, float y, float z, float r, float w, float d, float h);
     void addPyramid(float x, float y, float z, float r, float w, float d, float h);
     void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b);
+    void addBase(float x, float y, float z, float r, float w, float d, float h);
     void addLink(int from, int to);
     int packDatabase();
     void *getDatabase() const;
@@ -261,6 +262,7 @@ class WorldInfo {
 
   private:
     int numWalls;
+    int numBases;
     int numBoxes;
     int numPyramids;
     int numTeleporters;
@@ -268,8 +270,10 @@ class WorldInfo {
     int sizeBoxes;
     int sizePyramids;
     int sizeTeleporters;
+    int sizeBases;
     ObstacleLocation *walls;
     ObstacleLocation *boxes;
+    ObstacleLocation *bases;
     ObstacleLocation *pyramids;
     Teleporter *teleporters;
     char *database;
@@ -564,8 +568,13 @@ CustomBase::CustomBase()
 bool CustomBase::read(const char *cmd, istream& input) {
   if (strcmp(cmd, "color") == 0)
     input >> color;
-  else
-    return WorldFileObstacle::read(cmd, input);
+  else {
+    WorldFileObstacle::read(cmd, input);
+    if(!flagsOnBuildings) {
+      cerr << "Dropping team base down to 0 because -fb not set\n";
+      pos[2] = 0;
+    }
+  }
   return True;
 }
 
@@ -576,7 +585,11 @@ void CustomBase::write(WorldInfo* world) const {
   baseRotation[color] = rotation;
   baseSize[color][0] = size[0];
   baseSize[color][1] = size[1];
-  safetyBasePos[color][2] = basePos[color][2];
+  baseSize[color][2] = size[2];
+  safetyBasePos[color][0] = 0;
+  safetyBasePos[color][1] = 0;
+  safetyBasePos[color][2] = 0;
+  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0) ? 1 : 0);
 }
 
 class CustomWorld : public WorldFileObject {
@@ -628,6 +641,7 @@ static void emptyWorldFileObjectList(WorldFileObjectList& list)
 // WorldInfo
 WorldInfo::WorldInfo() :
     numWalls(0),
+    numBases(0),
     numBoxes(0),
     numPyramids(0),
     numTeleporters(0),
@@ -635,8 +649,10 @@ WorldInfo::WorldInfo() :
     sizeBoxes(0),
     sizePyramids(0),
     sizeTeleporters(0),
+    sizeBases(0),
     walls(NULL),
     boxes(NULL),
+    bases(NULL),
     pyramids(NULL),
     teleporters(NULL),
     database(NULL)
@@ -649,6 +665,8 @@ WorldInfo::~WorldInfo()
   free(boxes);
   free(pyramids);
   free(teleporters);
+  if(bases != NULL)
+    free(bases);
   delete[] database;
 }
 
@@ -721,6 +739,21 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   numTeleporters++;
 }
 
+void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h) {
+  if(numBases >= sizeBases) {
+    sizeBases = (sizeBases == 0) ? 16 : 2 * sizeBases;
+    bases = (ObstacleLocation *) realloc(bases, sizeof(ObstacleLocation) * sizeBases);
+  }
+  bases[numBases].pos[0] = x;
+  bases[numBases].pos[1] = y;
+  bases[numBases].pos[2] = z;
+  bases[numBases].rotation = r;
+  bases[numBases].size[0] = w;
+  bases[numBases].size[1] = d;
+  bases[numBases].size[2] = h;
+  numBases++;
+}
+
 void WorldInfo::addLink(int from, int to)
 {
   // silently discard links from teleporters that don't exist
@@ -779,12 +812,20 @@ boolean WorldInfo::inRect(const float *p1, float angle, const float *size, float
 int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float y, float z, float r) const
 {
   int i;
+  for (i = 0; i < numBases; i++) {
+    if ((inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r) && bases[i].pos[2] <
+	(z + flagHeight)) && (bases[i].pos[2] + bases[i].size[2]) > z) {
+      if(location != NULL)
+	*location = &bases[i];
+      return 1;
+    }
+  }
   for (i = 0; i < numBoxes; i++)
     if ((inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] < 
 	(z + flagHeight)) && (boxes[i].pos[2] + boxes[i].size[2]) > z) {
       if (location != NULL)
 	*location = &boxes[i];
-      return 1;
+      return 2;
     }
   for (i = 0; i < numPyramids; i++) {
     float modSize[3];
@@ -795,7 +836,7 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
 	pyramids[i].pos[2] < (z + flagHeight) && (pyramids[i].pos[2] + pyramids[i].size[2]) > z) {
       if (location != NULL)
 	*location = &pyramids[i];
-      return 2;
+      return 3;
     }
   }
   for (i = 0; i < numTeleporters; i++)
@@ -806,7 +847,7 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
       __teleporter = teleporters[i];
       if (location != NULL)
 	*location = &__teleporter;
-      return 3;
+      return 4;
     }
   if (location != NULL)
     *location = (ObstacleLocation *)NULL;
@@ -2412,28 +2453,6 @@ static WorldInfo *defineWorldFromFile(const char *filename, boolean is_CTF = fal
   for (int i = 0; i < n; ++i)
     list[i]->write(world);
 
-  // if it's a CTF world, add bases
-  if (is_CTF) {
-    basePos[0][0] = 0.0f;
-    basePos[0][1] = 0.0f;
-    basePos[0][2] = 0.0f;
-    safetyBasePos[0][0] = basePos[0][0];
-    safetyBasePos[0][1] = basePos[0][1];
-    safetyBasePos[0][2] = basePos[0][2];
-    safetyBasePos[1][0] = basePos[1][0] + 0.5f * baseSize[1][0] + PyrBase;
-    safetyBasePos[1][1] = basePos[1][1] + 0.5f * baseSize[1][1] + PyrBase;
-    safetyBasePos[1][2] = basePos[1][2];
-    safetyBasePos[2][0] = basePos[2][0] - 0.5f * baseSize[2][0] - PyrBase;
-    safetyBasePos[2][1] = basePos[2][1] - 0.5f * baseSize[2][1] - PyrBase;
-    safetyBasePos[2][2] = basePos[2][2];
-    safetyBasePos[3][0] = basePos[3][0] - 0.5f * baseSize[3][0] - PyrBase;
-    safetyBasePos[3][1] = basePos[3][1] + 0.5f * baseSize[3][1] + PyrBase;
-    safetyBasePos[3][2] = basePos[3][2];
-    safetyBasePos[4][0] = basePos[4][0] + 0.5f * baseSize[4][0] + PyrBase;
-    safetyBasePos[4][1] = basePos[4][1] - 0.5f * baseSize[4][1] - PyrBase;
-    safetyBasePos[4][2] = basePos[4][2];
-  }
-
   // clean up
   emptyWorldFileObjectList(list);
   return world;
@@ -2847,17 +2866,31 @@ static boolean defineWorld()
   return True;
 }
 
-static TeamColor whoseBase(float x, float y)
+static TeamColor whoseBase(float x, float y, float z)
 {
   if (!(gameStyle & TeamFlagGameStyle))
     return NoTeam;
 
-  // FIXME -- doesn't handle rotated bases
-  for (int i = 1; i < NumTeams; i++)
-    if (fabsf(x - basePos[i][0]) < 0.5 * BaseSize &&
-	fabsf(y - basePos[i][1]) < 0.5 * BaseSize)
-      return TeamColor(i);
-  return NoTeam;
+  float highest = -1;
+  int highestteam = -1;
+  for (int i = 1; i < NumTeams; i++) {
+    float nx = x - basePos[i][0];
+    float ny = y - basePos[i][1];
+    float rx = cosf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx));
+    float ry = sinf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx));
+    if (fabsf(rx) < baseSize[i][0] &&
+	fabsf(ry) < baseSize[i][1] &&
+	basePos[i][2] < z) {
+      if(basePos[i][2] > highest) {
+	highest = basePos[i][2];
+	highestteam = i;
+      }
+    }
+  }
+  if(highestteam == -1)
+    return NoTeam;
+  else
+    return TeamColor(highestteam);
 }
 
 #ifdef PRINTSCORE
@@ -3325,6 +3358,9 @@ static void resetFlag(int flagIndex)
     flag[flagIndex].flag.position[0] = basePos[teamIndex][0];
     flag[flagIndex].flag.position[1] = basePos[teamIndex][1];
     flag[flagIndex].flag.position[2] = basePos[teamIndex][2];
+    if(basePos[teamIndex][2] > 0) {
+      flag[flagIndex].flag.position[2] += 1;
+    }
   }
   else {
     // random position (not in a building)
@@ -3712,7 +3748,7 @@ static void dropFlag(int playerIndex, float pos[3])
 {
   assert(world != NULL);
   WorldInfo::ObstacleLocation* container;
-  int topmosttype;
+  int topmosttype = 0;
   WorldInfo::ObstacleLocation* topmost = (WorldInfo::ObstacleLocation *)NULL;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
@@ -3738,15 +3774,22 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // figure out landing spot -- if flag in a Bad Place
   // when dropped, move to safety position or make it going
-  TeamColor teamBase = whoseBase(pos[0], pos[1]);
+  TeamColor teamBase = whoseBase(pos[0], pos[1], pos[2]);
   if (flag[flagIndex].flag.status == FlagGoing) {
     flag[flagIndex].flag.landingPosition[0] = pos[0];
     flag[flagIndex].flag.landingPosition[1] = pos[1];
     flag[flagIndex].flag.landingPosition[2] = pos[2];
   }
-  else if (int(flag[flagIndex].flag.id) >= int(FirstTeamFlag) &&
-      int(flag[flagIndex].flag.id) <= int(LastTeamFlag) &&
-      teamBase != NoTeam && int(teamBase) != int(flag[flagIndex].flag.id)) {
+  else if ((int(flag[flagIndex].flag.id) >= int(FirstTeamFlag)) &&
+      int((flag[flagIndex].flag.id) <= int(LastTeamFlag)) &&
+      (teamBase != NoTeam) && (int(teamBase) == int(flag[flagIndex].flag.id)) && (topmosttype == 1)) {
+    flag[flagIndex].flag.landingPosition[0] = pos[0];
+    flag[flagIndex].flag.landingPosition[1] = pos[1];
+    flag[flagIndex].flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
+  }
+  else if ((int(flag[flagIndex].flag.id) >= int(FirstTeamFlag)) &&
+      int((flag[flagIndex].flag.id) <= int(LastTeamFlag)) &&
+      (teamBase != NoTeam) && (int(teamBase) != int(flag[flagIndex].flag.id))) {
     flag[flagIndex].flag.landingPosition[0] = safetyBasePos[int(teamBase)][0];
     flag[flagIndex].flag.landingPosition[1] = safetyBasePos[int(teamBase)][1];
     flag[flagIndex].flag.landingPosition[2] = safetyBasePos[int(teamBase)][2];
@@ -3756,7 +3799,7 @@ static void dropFlag(int playerIndex, float pos[3])
     flag[flagIndex].flag.landingPosition[1] = pos[1];
     flag[flagIndex].flag.landingPosition[2] = 0.0f;
   }
-  else if (flagsOnBuildings && (topmosttype == 1)) {
+  else if (flagsOnBuildings && (topmosttype == 2 || topmosttype == 1)) {
     flag[flagIndex].flag.landingPosition[0] = pos[0];
     flag[flagIndex].flag.landingPosition[1] = pos[1];
     flag[flagIndex].flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];

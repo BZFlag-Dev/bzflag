@@ -2051,6 +2051,11 @@ static void		restartPlaying()
 	const float y = (base[5] - 2.0f * TankRadius) * ((float)bzfrand() - 0.5f);
 	startPoint[0] = base[0] + x * cosf(base[3]) - y * sinf(base[3]);
 	startPoint[1] = base[1] + x * sinf(base[3]) + y * cosf(base[3]);
+	if(base[2] != 0) {
+	  startPoint[2] = base[2] + 1;
+	} else {
+	  startPoint[2] = base[2];
+	}
       }
       else {
 	if (world->allowTeamFlags()) {
@@ -2382,7 +2387,11 @@ static void		checkEnvironment()
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
-    if (myTank->getLocation() == LocalPlayer::OnGround && base != NoTeam &&
+    if(base != NoTeam) {
+      if(((int(flagId) == int(team)) && (base != team)) ||
+	 ((int(flagId) != int(team)) && (base == team)));
+    }
+    if ((base != NoTeam) &&
 	((int(flagId) == int(team) && base != team) ||
 	 (int(flagId) != int(team) && base == team)))
       serverLink->sendCaptureFlag(base);
@@ -3066,7 +3075,6 @@ static void		leaveGame()
 
   // update UI
   controlPanel->resetTeamCounts();
-  sceneRenderer->getBackground()->notifyWorldChange();
   hud->setPlaying(False);
   hud->setCracks(False);
   hud->setPlayerHasHighScore(False);
@@ -3326,7 +3334,6 @@ static boolean		joinGame(const StartupInfo* info,
   }
 
   // initialize some other stuff
-  sceneRenderer->getBackground()->notifyWorldChange();
   updateNumPlayers();
   updateFlag(NoFlag);
   updateHighScores();

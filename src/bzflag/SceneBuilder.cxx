@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stdio.h>
 #include "SceneBuilder.h"
 #include "SceneRenderer.h"
 #include "SceneDatabase.h"
@@ -185,6 +186,7 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
 {
   // set LOD flags
   wallLOD = renderer->useLighting() && renderer->useZBuffer();
+  baseLOD = renderer->useLighting() && renderer->useZBuffer();
   boxLOD = renderer->useLighting() && renderer->useZBuffer();
   pyramidLOD = renderer->useLighting() && renderer->useZBuffer();
   teleporterLOD = renderer->useLighting() && renderer->useZBuffer();
@@ -217,6 +219,11 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   while (!pyramidScan->isDone()) {
     addPyramid(db, pyramidScan->getItem());
     pyramidScan->next();
+  }
+  BaseBuildingsCIteratorPtr baseScan(world->getBases().newCIterator());
+  while (!baseScan->isDone()) {
+    addBase(db, baseScan->getItem());
+    baseScan->next();
   }
 
   return db;
@@ -291,6 +298,33 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
 
     db->addStaticNode(node);
     part = (part + 1) % 5;
+  }
+  delete nodeGen;
+}
+
+void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
+    						const BaseBuilding &o)
+{
+  WallSceneNode *node;
+  ObstacleSceneNodeGenerator *nodeGen = o.newSceneNodeGenerator();
+
+  // this assumes bases have 6 parts - if they don't, it still works
+  int part = 0;
+  while ((node = ((part < 2) ? nodeGen->getNextNode(
+				o.getBreadth(), o.getHeight(),
+				baseLOD) : nodeGen->getNextNode(
+				o.getBreadth() / boxTexWidth,
+				o.getHeight() / boxTexHeight, boxLOD)))) {
+    if(part >= 2) {
+      node->setColor(boxColors[part - 2]);
+      node->setModulateColor(boxModulateColors[part - 2]);
+      node->setLightedColor(boxLightedColors[part - 2]);
+      node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
+      node->setMaterial(boxMaterial);
+      node->setTexture(boxTexture);
+    }
+    part++;
+    db->addStaticNode(node);
   }
   delete nodeGen;
 }

@@ -119,10 +119,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   gstate.setSmoothing();
   gridGState = gstate.getState();
 
-  // make team base stuff
-  gstate.reset();
-  teamBasesGState = gstate.getState();
-
   // make receiver stuff
   {
     // gstates
@@ -287,27 +283,6 @@ BackgroundRenderer::~BackgroundRenderer()
   OpenGLGState::unregisterContextInitializer(initDisplayLists, (void*)this);
   delete[] mountainsGState;
   delete[] mountainsList;
-}
-
-void			BackgroundRenderer::notifyWorldChange()
-{
-  World* world = World::getWorld();
-  doTeamBases = (world && world->allowTeamFlags());
-  teamBasesList.begin();
-    if (doTeamBases) {
-      glBegin(GL_QUADS);
-      for (int i = 1; i < NumTeams; i++) {
-	const float* color = Team::getTankColor(TeamColor(i));
-	const float* base = world->getBase(i);
-	glColor3f(0.7f * color[0], 0.7f * color[1], 0.7f * color[2]);
-	glVertex2f(base[0] - base[4], base[1] - base[5]);
-	glVertex2f(base[0] + base[4], base[1] - base[5]);
-	glVertex2f(base[0] + base[4], base[1] + base[5]);
-	glVertex2f(base[0] - base[4], base[1] + base[5]);
-      }
-      glEnd();
-    }
-  teamBasesList.end();
 }
 
 void			BackgroundRenderer::notifyStyleChange(
@@ -1187,12 +1162,6 @@ void			BackgroundRenderer::doInitDisplayLists()
       mountainsList[j].end();
     }
   }
-
-  //
-  // team bases
-  //
-
-  notifyWorldChange();
 
   //
   // update objects in sky.  the appearance of these objects will

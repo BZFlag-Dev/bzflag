@@ -170,6 +170,18 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
     boxScan->next();
   }
 
+  BaseBuildingsCIteratorPtr baseScan(World::getWorld()->
+      	                             getBases().newCIterator());
+  while(!baseScan->isDone()) {
+    const BaseBuilding &baseb = baseScan->getItem();
+    const float baset = baseb.intersect(ray);
+    if(baset > min && baset < t) {
+      t = baset;
+      closestObstacle = &baseb;
+    }
+    baseScan->next();
+  }
+
   // check pyramids
   PyramidBuildingsCIteratorPtr pyramidScan(World::getWorld()->
 						getPyramids().newCIterator());

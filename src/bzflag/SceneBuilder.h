@@ -27,6 +27,7 @@ class SceneDatabase;
 class WallObstacle;
 class BoxBuilding;
 class PyramidBuilding;
+class BaseBuilding;
 class Teleporter;
 class World;
 
@@ -41,6 +42,7 @@ class SceneDatabaseBuilder {
     void		addWall(SceneDatabase*, const WallObstacle&);
     void		addBox(SceneDatabase*, const BoxBuilding&);
     void		addPyramid(SceneDatabase*, const PyramidBuilding&);
+    void		addBase(SceneDatabase*, const BaseBuilding&);
     void		addTeleporter(SceneDatabase*, const Teleporter&);
 
   private:
@@ -65,6 +67,8 @@ class SceneDatabaseBuilder {
     OpenGLMaterial	pyramidMaterial;
     OpenGLTexture	pyramidTexture;
     boolean		pyramidLOD;
+
+    boolean		baseLOD;
 
     OpenGLMaterial	teleporterMaterial;
     OpenGLTexture	teleporterTexture;
