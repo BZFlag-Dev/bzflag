@@ -19,9 +19,6 @@ bool    gotWorld = false;
 // or dropped us for some reason.
 static const float ListServerReAddTime = 30.0f * 60.0f;
 
-// maximum number of list servers to advertise ourself to
-static const int MaxListServers = 5;
-
 static const float FlagHalfLife = 45.0f;
 // do NOT change
 int NotConnected = -1;
@@ -84,7 +81,7 @@ TimeKeeper gameStartTime;
 bool countdownActive = false;
 #endif
 static TimeKeeper listServerLastAddTime;
-static ListServerLink listServerLinks[MaxListServers];
+static ListServerLink listServerLink;
 static int listServerLinksCount = 0;
 
 static WorldInfo *world = NULL;
@@ -705,51 +702,35 @@ static void sendPlayerUpdate(int playerIndex, int index)
 }
 
 
-static void closeListServer(int index)
+static void closeListServer()
 {
-  assert(index >= 0 && index < MaxListServers);
-  if (index >= listServerLinksCount)
-    return;
-
-  ListServerLink& link = listServerLinks[index];
+  ListServerLink& link = listServerLink;
   if (link.socket != NotConnected) {
     shutdown(link.socket, 2);
     close(link.socket);
-    DEBUG4("Closing List server %d\n",index);
+    DEBUG4("Closing List server\n");
     link.socket = NotConnected;
     link.nextMessageType = ListServerLink::NONE;
   }
 }
 
 
-static void closeListServers()
+static void openListServer()
 {
-  for (int i = 0; i < listServerLinksCount; ++i)
-    closeListServer(i);
-}
-
-
-static void openListServer(int index)
-{
-  assert(index >= 0 && index < MaxListServers);
-  if (index >= listServerLinksCount)
-    return;
-
-  ListServerLink& link = listServerLinks[index];
+  ListServerLink& link = listServerLink;
   link.nextMessageType = ListServerLink::NONE;
 
   // start opening connection if not already doing so
   if (link.socket == NotConnected) {
     link.socket = socket(AF_INET, SOCK_STREAM, 0);
-    DEBUG4("Opening List Server %d\n",index);
+    DEBUG4("Opening List Server\n");
     if (link.socket == NotConnected) {
-      closeListServer(index);
       return;
     }
 
     // set to non-blocking for connect
     if (BzfNetwork::setNonBlocking(link.socket) < 0) {
-      closeListServer(index);
+      closeListServer();
       return;
     }
 
@@ -767,7 +748,7 @@ static void openListServer(int index)
       if (getErrno() != EINPROGRESS) {
 	nerror("connecting to list server");
 	// TODO should try to lookup dns name again, but we don't have it anymore
-	closeListServer(index);
+	closeListServer();
       }
       else {
 	if (maxFileDescriptor < link.socket)
@@ -785,25 +766,21 @@ static void sendMessageToListServer(ListServerLink::MessageType type)
     return;
 
   // start opening connections if not already doing so
-  for (int i = 0; i < listServerLinksCount; i++) {
-    openListServer(i);
+  if (listServerLinksCount) {
+    openListServer();
 
     // record next message to send.  note that each message overrides
     // any other message.
-    ListServerLink& link = listServerLinks[i];
+    ListServerLink& link = listServerLink;
     link.nextMessageType = type;
   }
 }
 
 
-static void sendMessageToListServerForReal(int index)
+static void sendMessageToListServerForReal()
 {
-  assert(index >= 0 && index < MaxListServers);
-  if (index >= listServerLinksCount)
-    return;
-
   // ignore if link not connected
-  ListServerLink& link = listServerLinks[index];
+  ListServerLink& link = listServerLink;
   if (link.socket == NotConnected)
     return;
 
@@ -871,52 +848,48 @@ static void sendMessageToListServerForReal(int index)
   }
 
   // hangup
-  closeListServer(index);
+  closeListServer();
 }
 
 
 static void publicize()
 {
   // hangup any previous list server sockets
-  closeListServers();
+  if (listServerLinksCount)
+    closeListServer();
 
   // list server initialization
   listServerLinksCount	= 0;
 
   // parse the list server URL if we're publicizing ourself
   if (clOptions->publicizeServer) {
-    // dereference URL, including following redirections.  get no
-    // more than MaxListServers urls.
-    std::vector<std::string> urls, failedURLs;
-    urls.push_back(clOptions->listServerURL);
-
-    // check url list for validity
-    for (unsigned int i = 0; i < urls.size(); ++i) {
+    {
       // parse url
       std::string protocol, hostname, pathname;
       int port = 80;
-      if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, pathname))
-	continue;
+      if (!BzfNetwork::parseURL(clOptions->listServerURL, protocol,
+				hostname, port, pathname))
+	return;
 
       // ignore if not right protocol
       if (protocol != "http")
-	continue;
+	return;
 
       // ignore if port is bogus
       if (port < 1 || port > 65535)
-	continue;
+	return;
 
       // ignore if bad address
       Address address = Address::getHostAddress(hostname.c_str());
       if (address.isAny())
-	continue;
+	return;
 
       // add to list
-      listServerLinks[listServerLinksCount].address = address;
-      listServerLinks[listServerLinksCount].port = port;
-      listServerLinks[listServerLinksCount].socket  = NotConnected;
-      listServerLinks[listServerLinksCount].pathname = pathname;
-      listServerLinks[listServerLinksCount].hostname = hostname;
+      listServerLink.address  = address;
+      listServerLink.port     = port;
+      listServerLink.socket   = NotConnected;
+      listServerLink.pathname = pathname;
+      listServerLink.hostname = hostname;
       listServerLinksCount++;
     }
 
@@ -1099,10 +1072,10 @@ static void serverStop()
     int fdMax = -1;
     fd_set write_set;
     FD_ZERO(&write_set);
-    for (i = 0; i < listServerLinksCount; i++)
-      if (listServerLinks[i].socket != NotConnected) {
-	FD_SET(listServerLinks[i].socket, &write_set);
-	fdMax = listServerLinks[i].socket;
+    if (listServerLinksCount)
+      if (listServerLink.socket != NotConnected) {
+	FD_SET(listServerLink.socket, &write_set);
+	fdMax = listServerLink.socket;
       }
     if (fdMax == -1)
       break;
@@ -1114,14 +1087,15 @@ static void serverStop()
     int nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, 0, &timeout);
     // check for connection to list server
     if (nfound > 0)
-      for (i = 0; i < listServerLinksCount; ++i)
-	if (listServerLinks[i].socket != NotConnected &&
-	    FD_ISSET(listServerLinks[i].socket, &write_set))
-	  sendMessageToListServerForReal(i);
+      if (listServerLinksCount)
+	if (listServerLink.socket != NotConnected &&
+	    FD_ISSET(listServerLink.socket, &write_set))
+	  sendMessageToListServerForReal();
   } while (true);
 
   // stop list server communication
-  closeListServers();
+  if (listServerLinksCount)
+    closeListServer();
 }
 
 
@@ -4559,9 +4533,9 @@ int main(int argc, char **argv)
     FD_SET(udpSocket, &read_set);
 
     // check for list server socket connected
-    for (i = 0; i < listServerLinksCount; i++)
-      if (listServerLinks[i].socket != NotConnected)
-	FD_SET(listServerLinks[i].socket, &write_set);
+    if (listServerLinksCount)
+      if (listServerLink.socket != NotConnected)
+	FD_SET(listServerLink.socket, &write_set);
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -4945,10 +4919,10 @@ int main(int argc, char **argv)
 	acceptClient();
 
       // check for connection to list server
-      for (i = 0; i < listServerLinksCount; ++i)
-	if (listServerLinks[i].socket != NotConnected &&
-	    FD_ISSET(listServerLinks[i].socket, &write_set))
-	  sendMessageToListServerForReal(i);
+      if (listServerLinksCount)
+	if (listServerLink.socket != NotConnected &&
+	    FD_ISSET(listServerLink.socket, &write_set))
+	  sendMessageToListServerForReal();
 
       // check if we have any UDP packets pending
       if (FD_ISSET(udpSocket, &read_set)) {
