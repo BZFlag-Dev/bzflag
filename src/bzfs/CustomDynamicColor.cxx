@@ -67,6 +67,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
   std::string command;
   std::getline(input, args);
   std::istringstream parms(args);
+  input.putback('\n');
 
   if (!(parms >> command)) {
     std::cout << "missing parameter type for "
@@ -112,8 +113,6 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
   else {
     return false;
   }
-
-  input.putback('\n');
 
   return true;
 }

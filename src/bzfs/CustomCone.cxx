@@ -113,15 +113,17 @@ bool CustomCone::parseSideMaterials(const char* cmd, std::istream& input,
       std::getline(input, line);
       std::istringstream parms(line);
       if (!(parms >> matcmd)) {
-        input.putback('\n');
         error = true;
       } else {
         // put the material command string back into the stream
         for (int i = 0; i < (int)(line.size() - matcmd.size()); i++) {
           input.putback(line[line.size() - i]);
         }
-        parseMaterial(matcmd.c_str(), input, materials[n], error);
+        if (!parseMaterial(matcmd.c_str(), input, materials[n], error)) {
+          error = true;
+        }
       }
+      input.putback('\n');
       return true;
     }
   }
@@ -233,8 +235,8 @@ void CustomCone::write(WorldInfo *world) const
 
     // texture coordinates (around the edge)
     cfvec2 t;
-    t[0] = texsz[0] * (0.5f + (0.5f * cos_val));
-    t[1] = texsz[1] * (0.5f + (0.5f * sin_val));
+    t[0] = texsz[0] * (0.5f + (0.5f * cos(ang)));
+    t[1] = texsz[1] * (0.5f + (0.5f * sin(ang)));
     texcoords.push_back(t);
   }
 

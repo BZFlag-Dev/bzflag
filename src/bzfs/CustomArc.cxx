@@ -123,15 +123,17 @@ bool CustomArc::parseSideMaterials(const char* cmd, std::istream& input,
       std::getline(input, line);
       std::istringstream parms(line);
       if (!(parms >> matcmd)) {
-        input.putback('\n');
         error = true;
       } else {
         // put the material command string back into the stream
         for (int i = 0; i < (int)(line.size() - matcmd.size()); i++) {
           input.putback(line[line.size() - i]);
         }
-        parseMaterial(matcmd.c_str(), input, materials[n], error);
+        if (!parseMaterial(matcmd.c_str(), input, materials[n], error)) {
+          error = true;
+        }
       }
+      input.putback('\n');
       return true;
     }
   }
@@ -294,7 +296,7 @@ void CustomArc::makePie(bool isCircle, float a, float r, float h,
 
   // texture coordinates (around the disc)
   for (i = 0; i < (divisions + 1); i++) {
-    float ang = r + (astep * (float)i);
+    float ang = astep * (float)i;
     float cos_val = cos(ang);
     float sin_val = sin(ang);
     cfvec2 t;

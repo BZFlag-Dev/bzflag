@@ -36,26 +36,22 @@ bool parseMaterial(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "texture") == 0) {
     if (!(input >> material.texture)) {
       error = true;
-      return false;
     }
   }
   else if (strcasecmp(cmd, "texmat") == 0) {
     if (!(input >> material.textureMatrix)) {
       error = true;
-      return true;
     }
   }
   else if (strcasecmp(cmd, "dyncol") == 0) {
     if (!(input >> material.dynamicColor)) {
       error = true;
-      return true;
     }
   }
   else if (strcasecmp(cmd, "ambient") == 0) {
     if (!(input >> material.ambient[0] >> material.ambient[1]
                 >> material.ambient[2] >> material.ambient[3])) {
       error = true;
-      return true;
     }
   }
   else if ((strcasecmp(cmd, "diffuse") == 0) || // currently used by bzflag
@@ -63,27 +59,23 @@ bool parseMaterial(const char* cmd, std::istream& input,
     if (!(input >> material.diffuse[0] >> material.diffuse[1]
                 >> material.diffuse[2] >> material.diffuse[3])) {
       error = true;
-      return true;
     }
   }
   else if (strcasecmp(cmd, "specular") == 0) {
     if (!(input >> material.specular[0] >> material.specular[1]
                 >> material.specular[2] >> material.specular[3])) {
       error = true;
-      return true;
     }
   }
   else if (strcasecmp(cmd, "emission") == 0) {
     if (!(input >> material.emission[0] >> material.emission[1]
                 >> material.emission[2] >> material.emission[3])) {
       error = true;
-      return true;
     }
   }
   else if (strcasecmp(cmd, "shininess") == 0) {
     if (!(input >> material.shininess)) {
       error = true;
-      return true;
     }
   }
   else {

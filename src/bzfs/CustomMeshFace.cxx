@@ -38,11 +38,11 @@ static void getIntList (std::istream& input, std::vector<int>& list)
   list.clear();
   std::getline(input, args);
   std::istringstream parms(args);
+  input.putback('\n');
 
   while (parms >> value) {
     list.push_back(value);
   }
-  input.putback('\n');
 
   return;
 }

@@ -49,9 +49,9 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     std::string args;
     std::getline(input, args);
     std::istringstream parms(args);
+    input.putback('\n');
 
     if (!(parms >> rotation)) {
-      input.putback('\n');
       return false;
     }
     // convert to radians
@@ -61,18 +61,15 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     std::string tmpStr;
     if (parms >> tmpStr) {
       if (tmpStr[0] == '#') {
-        input.putback('\n');
         return true;
       } else {
 	normal[0] = (float)atof(tmpStr.c_str());
       }
 
       if (!((parms >> normal[1]) && (parms >> normal[2]))) {
-        input.putback('\n');
         return false;
       }
     }
-    input.putback('\n');
   }
   else {
     return WorldFileObject::read(cmd, input);
