@@ -26,14 +26,15 @@
 			function ableControls()
 			{
 				var mainform = document.forms["main"];
-				var ctf = (mainform.game_style.value == "ctf") || (mainform.ctf_map_citysize.checked);
-				var freeForAll = (mainform.game_style.value == "ffa");
+				var ctf = (mainform.game_style.value == "ctf") || (mainform.game_style.value == 'bc');
+				var freeForAll = (mainform.game_style.value == "ffa");	
+
 				var rabbit = (mainform.game_style.value == "rc");
 				mainform.allow_teleporters.disabled = mainform.world_type.checked;
 				mainform.world_file.disabled = !mainform.world_type.checked;
 				mainform.randomly_orient_buildings.disabled = mainform.world_type.checked;
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
-				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || !ctf || freeForAll || rabbit;
+				mainform.density.disabled = (mainform.world_type.checked);
 				mainform.rabbit_selection.disabled = !rabbit;
 				mainform.ctf_map_citysize.disabled = !(mainform.balanced_ctf_map.checked) || (mainform.balanced_ctf_map.disabled);
 				var el = document.getElementById( "team_flags" );
@@ -255,6 +256,10 @@
 						d.writeln("#Capture the flag game style<br/>");
 						d.writeln("-c<br/><br/>");
 					}
+					else if (mainform.game_style.value == 'bc') {
+						d.writeln("#Balanced world Capture the flag game style<br/>");
+						d.writeln("-cr<br/><br/>");
+					}
 					else if (mainform.game_style.value == 'rc') {
 						d.writeln("#Rabbit chase game style<br/>");
 						d.writeln("-rabbit " + mainform.rabbit_selection.value + "<br/><br/>");
@@ -265,9 +270,9 @@
 						d.writeln("-world \"" + mainform.world_file.value + "\"<br/><br/>");
 					}
 
-					if ((!mainform.balanced_ctf_map.disabled) && mainform.balanced_ctf_map.checked) {
-						d.writeln("#Balanced capture the flag world<br/>");
-						d.writeln("-cr " + mainform.ctf_map_citysize + "<br/><br/>");
+					if (!mainform.density.disabled && (mainform.density.value != 5)) {
+						d.writeln("#Random world density<br/>");
+						d.writeln("-density " + mainform.density.value + "<br/><br/>");
 					}
 
 					if (mainform.flags_on_buildings.checked) {
@@ -380,7 +385,7 @@
 						d.writeln("-autoTeam<br/><br/>");
 					}
 
-					if ((mainform.game_style.value == "ctf") || (mainform.ctf_map_citysize.checked)) {
+					if ((mainform.game_style.value == "ctf") || (mainform.game_style.value == "bc")) {
 						commentWritten = false;
 						if (mainform.extra_team_flag.value > 0) {
 							if (!commentWritten) {
@@ -722,6 +727,7 @@
 								<select name="game_style" value="ffa" onClick="return ableControls()" title="Free for all or Capture the flag game style">
 									<option value="ffa">Free for All</option>
 									<option value="ctf">Capture the Flag</option>
+									<option value="bc">Uniform world Capture the Flag</option>
 									<option value="rc">Rabbit Chase</option>
 								</select>
 							</td>
@@ -732,10 +738,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Balanced CTF Map</td>
+							<td>Building Density</td>
 							<td>
-								<input type="checkbox" name="balanced_ctf_map" title="Whether or not buildings are generated in a balanced fashion" onClick="return ableControls()" disabled />
-								<select name="ctf_map_citysize" value="5" title="Building Density" onClick="return ableControls()" disabled>
+								<select name="density" value="5" title="Building Density" onClick="return ableControls()">
 									<option value="5">5 (default)</option>
 									<option value="0">0</option>
 									<option value="1">1</option>
@@ -747,7 +752,7 @@
 									<option value="7">7</option>
 									<option value="8">8</option>
 									<option value="9">9</option>
-								</select> density level
+								</select>
 							</td>
 							<td>Rabbit Selection</td>
 							<td>
