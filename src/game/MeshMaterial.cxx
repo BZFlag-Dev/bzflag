@@ -55,7 +55,7 @@ MeshMaterial::MeshMaterial(const MeshMaterial& m)
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
   useTexture = m.useTexture;
-  useTexture = m.useTextureAlpha;
+  useTextureAlpha = m.useTextureAlpha;
   useColorOnTexture = m.useColorOnTexture;
   return;
 }
@@ -72,7 +72,7 @@ MeshMaterial& MeshMaterial::operator=(const MeshMaterial& m)
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
   useTexture = m.useTexture;
-  useTexture = m.useTextureAlpha;
+  useTextureAlpha = m.useTextureAlpha;
   useColorOnTexture = m.useColorOnTexture;
   return *this;
 }
@@ -202,7 +202,7 @@ void* MeshMaterial::unpack(void* buf)
 {
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  useTexture =  useTextureAlpha= useColorOnTexture = false;
+  useTexture = useTextureAlpha = useColorOnTexture = false;
   if (stateByte & (1 << 0)) {
     useTexture = true;
   }
