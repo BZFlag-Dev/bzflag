@@ -379,7 +379,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   delete[] flag;  flag = NULL;
 
   // prepare flag counts
-  int f, i;
+  int i;
   bool allFlagsOut = false;
 
   // parse command line
@@ -1046,8 +1046,9 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   // allocate space for flags
   numFlags = options.numExtraFlags;
   if (options.gameStyle & TeamFlagGameStyle) {
-    // rogues don't get a flag
-    numFlags += CtfTeams - 1;
+    for (int col = RedTeam; col <= PurpleTeam; col++)
+      if (options.maxTeam[col] > 0)
+        numFlags++;
   }
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
        it != FlagType::getFlagMap().end(); ++it) {
@@ -1078,20 +1079,32 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     flag[i].grabs = 0;
     flag[i].required = false;
   }
-  f = 0;
+  int f = 0;
   if (options.gameStyle & TeamFlagGameStyle) {
-    flag[0].required = true;
-    flag[0].flag.type = Flags::RedTeam;
-    flag[0].flag.endurance = FlagNormal;
-    flag[1].required = true;
-    flag[1].flag.type = Flags::GreenTeam;
-    flag[1].flag.endurance = FlagNormal;
-    flag[2].required = true;
-    flag[2].flag.type = Flags::BlueTeam;
-    flag[2].flag.endurance = FlagNormal;
-    flag[3].required = true;
-    flag[3].flag.type = Flags::PurpleTeam;
-    flag[3].flag.endurance = FlagNormal;
+    if (options.maxTeam[RedTeam] > 0) {
+      flag[f].required = true;
+      flag[f].flag.type = Flags::RedTeam;
+      flag[f].flag.endurance = FlagNormal;
+      f++;
+    }
+    if (options.maxTeam[GreenTeam] > 0) {
+      flag[f].required = true;
+      flag[f].flag.type = Flags::GreenTeam;
+      flag[f].flag.endurance = FlagNormal;
+      f++;
+    }
+    if (options.maxTeam[BlueTeam] > 0) {
+      flag[f].required = true;
+      flag[f].flag.type = Flags::BlueTeam;
+      flag[f].flag.endurance = FlagNormal;
+      f++;
+    }
+    if (options.maxTeam[PurpleTeam] > 0) {
+      flag[f].required = true;
+      flag[f].flag.type = Flags::PurpleTeam;
+      flag[f].flag.endurance = FlagNormal;
+      f++;
+    }
     f = 4;
   }
 
