@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- Bad BZDB: "/set _syncTime -" goes boom on the client side.
+  (StateDatabase::ExpressionToken::operator=, StateDatabase.cxx:890)
+
 - Observer movement controls seems to get locked-up in Hunt mode.
 
 - Sometimes letters can go missing from the status line of the HUD.
