@@ -14,8 +14,6 @@
 const int udpBufSize = 128000;
 bool    gotWorld = false;
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
-
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
@@ -71,7 +69,7 @@ static int exitCode = 0;
 uint16_t maxPlayers = MaxPlayers;
 uint16_t curMaxPlayers = 0;
 // max simulataneous per player
-static bool hasBase[CtfTeams] = { false };
+bool hasBase[CtfTeams] = { false };
 
 static float maxWorldHeight = 0.0f;
 
@@ -88,10 +86,10 @@ static int listServerLinksCount = 0;
 static WorldInfo *world = NULL;
 static char *worldDatabase = NULL;
 static uint32_t worldDatabaseSize = 0;
-static float basePos[CtfTeams][3];
-static float baseRotation[CtfTeams];
-static float baseSize[CtfTeams][3];
-static float safetyBasePos[CtfTeams][3];
+float basePos[CtfTeams][3];
+float baseRotation[CtfTeams];
+float baseSize[CtfTeams][3];
+float safetyBasePos[CtfTeams][3];
 
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
@@ -100,9 +98,11 @@ static float safetyBasePos[CtfTeams][3];
 // be found.
 static uint8_t rabbitIndex = NoPlayer;
 
-static WorldWeapons  wWeapons;
+WorldWeapons  wWeapons;
 
 static TimeKeeper lastWorldParmChange;
+
+void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(int flagIndex);
@@ -123,356 +123,6 @@ int getPlayerIDByRegName(const std::string &regName)
 bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
 {
   return player[playerIndex].Admin || hasPerm(player[playerIndex].accessInfo, right);
-}
-
-//
-// types for reading world files
-//
-
-class WorldFileObject {
-  public:
-    WorldFileObject() { }
-    virtual ~WorldFileObject() { }
-
-    virtual bool read(const char *cmd, istream&) = 0;
-    virtual void write(WorldInfo*) const = 0;
-};
-
-
-class WorldFileObstacle : public WorldFileObject {
-  public:
-    WorldFileObstacle();
-    virtual bool read(const char *cmd, istream&);
-
-  protected:
-    float pos[3];
-    float rotation;
-    float size[3];
-	bool driveThrough;
-	bool shootThrough;
-	bool flipZ;
-};
-
-
-WorldFileObstacle::WorldFileObstacle()
-{
-  pos[0] = pos[1] = pos[2] = 0.0f;
-  rotation = 0.0f;
-  size[0] = size[1] = size[2] = 1.0f;
-  driveThrough = false;
-  shootThrough = false;
-  flipZ = false;
-}
-
-
-bool WorldFileObstacle::read(const char *cmd, istream& input)
-{
-	if (strcasecmp(cmd, "position") == 0)
-    input >> pos[0] >> pos[1] >> pos[2];
-	else if (strcasecmp(cmd, "rotation") == 0) {
-    input >> rotation;
-    rotation = rotation * M_PI / 180.0f;
-  } else if (strcasecmp(cmd, "size") == 0){
-    input >> size[0] >> size[1] >> size[2];
-	if (size[2] < 0)
-	flipZ = true;
-	size[0] = fabs(size[0]);	// make sure they are postive, no more tricks
-	size[1] = fabs(size[1]);
-	size[2] = fabs(size[2]);
-  }
-    else if (strcasecmp(cmd, "drivethrough") == 0)
-    driveThrough = true;
-    else if (strcasecmp(cmd, "shootthrough") == 0)
-    shootThrough = true;
-    else if (strcasecmp(cmd, "flipz") == 0)
-    flipZ = true;
-    else
-    return false;
-  return true;
-}
-
-
-class CustomBox : public WorldFileObstacle {
-  public:
-    CustomBox();
-    virtual void write(WorldInfo*) const;
-};
-
-
-CustomBox::CustomBox()
-{
-  size[0] = size[1] = BoxBase;
-  size[2] = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
-}
-
-
-void CustomBox::write(WorldInfo *world) const
-{
-  world->addBox(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough);
-}
-
-
-class CustomPyramid : public WorldFileObstacle {
-  public:
-    CustomPyramid();
-    virtual void write(WorldInfo*) const;
-};
-
-
-CustomPyramid::CustomPyramid()
-{
-  size[0] = size[1] = BZDB->eval(StateDatabase::BZDB_PYRBASE);
-  size[2] = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
-}
-
-
-void CustomPyramid::write(WorldInfo *world) const
-{
-  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough,flipZ);
-}
-
-
-class CustomGate : public WorldFileObstacle {
-  public:
-    CustomGate();
-    virtual bool read(const char *cmd, istream&);
-    virtual void write(WorldInfo*) const;
-
-  protected:
-    float border;
-};
-
-
-CustomGate::CustomGate()
-{
-  size[0] = 0.5f * TeleWidth;
-  size[1] = TeleBreadth;
-  size[2] = 2.0f * TeleHeight;
-  border = TeleWidth;
-}
-
-
-bool CustomGate::read(const char *cmd, istream& input)
-{
-  if (strcmp(cmd, "border") == 0)
-    input >> border;
-  else
-    return WorldFileObstacle::read(cmd, input);
-  return true;
-}
-
-
-void CustomGate::write(WorldInfo *world) const
-{
-  world->addTeleporter(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2], border,driveThrough,shootThrough);
-}
-
-
-class CustomLink : public WorldFileObject {
-  public:
-    CustomLink();
-    virtual bool read(const char *cmd, istream&);
-    virtual void write(WorldInfo*) const;
-
-  protected:
-    int from;
-    int to;
-};
-
-
-CustomLink::CustomLink()
-{
-  from = 0;
-  to = 0;
-}
-
-
-bool CustomLink::read(const char *cmd, istream& input)
-{
-  if (strcmp(cmd, "from") == 0)
-    input >> from;
-  else if (strcmp(cmd, "to") == 0)
-    input >> to;
-  else
-    return false;
-  return true;
-}
-
-
-void CustomLink::write(WorldInfo *world) const
-{
-  world->addLink(from, to);
-}
-
-
-class CustomBase : public WorldFileObstacle {
-  public:
-    CustomBase();
-    virtual bool read(const char *cmd, istream&);
-    virtual void write(WorldInfo*) const;
-
-  protected:
-    int color;
-};
-
-
-CustomBase::CustomBase()
-{
-  pos[0] = pos[1] = pos[2] = 0.0f;
-  rotation = 0.0f;
-  size[0] = size[1] = BaseSize;
-}
-
-
-bool CustomBase::read(const char *cmd, istream& input) {
-  if (strcmp(cmd, "color") == 0) {
-    input >> color;
-    if ((color >= 0) && (color < CtfTeams)) {
-      hasBase[color] = true;
-    }
-    else
-      return false;
-  }
-  else {
-    if (!WorldFileObstacle::read(cmd, input))
-      return false;
-    if(!clOptions->flagsOnBuildings && (pos[2] != 0)) {
-      printf("Dropping team base down to 0 because -fb not set\n");
-      pos[2] = 0;
-    }
-  }
-  return true;
-}
-
-
-void CustomBase::write(WorldInfo* world) const {
-  basePos[color][0] = pos[0];
-  basePos[color][1] = pos[1];
-  basePos[color][2] = pos[2];
-  baseRotation[color] = rotation;
-  baseSize[color][0] = size[0];
-  baseSize[color][1] = size[1];
-  baseSize[color][2] = size[2];
-  safetyBasePos[color][0] = 0;
-  safetyBasePos[color][1] = 0;
-  safetyBasePos[color][2] = 0;
-  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0.0) ? 1.0f : 0.0f,driveThrough,shootThrough);
-}
-
-
-class CustomWeapon : public WorldFileObstacle {
-  public:
-    CustomWeapon();
-    virtual bool read(const char *cmd, istream&);
-    virtual void write(WorldInfo*) const;
-
-  protected:
-    float initdelay;
-    std::vector<float> delay;
-    FlagType *type;
-    static TimeKeeper sync;
-};
-
-
-TimeKeeper CustomWeapon::sync = TimeKeeper::getCurrent();
-
-
-CustomWeapon::CustomWeapon()
-{
-  pos[0] = pos[1] = pos[2] = 0.0f;
-  rotation = 0.0f;
-  size[0] = size[1] = size[2] = 1.0f;
-  initdelay = 10.0f;
-  delay.push_back(10.0f);
-  type = Flags::Null;
-}
-
-
-bool CustomWeapon::read(const char *cmd, istream& input) {
-  if (strcmp(cmd, "initdelay") == 0) {
-    input >> initdelay;
-  }
-  else if (strcmp(cmd, "delay") == 0) {
-    std::string args;
-    float d;
-
-    delay.clear();
-    getline(input, args);
-    std::istringstream  parms(args);
-
-    while (parms.good()) {
-      parms >> d;
-      delay.push_back(d);
-    }
-    input.putback('\n');
-    if (delay.size() == 0)
-      return false;
-  }
-  else if (strcmp(cmd, "type") == 0) {
-    std::string abbv;
-    input >> abbv;
-    type = Flag::getDescFromAbbreviation(abbv.c_str());
-    if (type == NULL)
-      return false;
-  }
-  else if (!WorldFileObstacle::read(cmd, input))
-      return false;
-
-  return true;
-}
-
-
-void CustomWeapon::write(WorldInfo*) const {
-  wWeapons.add(type, pos, rotation, initdelay, delay, sync);
-}
-
-
-class CustomWorld : public WorldFileObject {
-  public:
-    CustomWorld();
-    virtual bool read(const char *cmd, istream&);
-    virtual void write(WorldInfo*) const;
-
-  protected:
-    int size;
-    int fHeight;
-};
-
-
-CustomWorld::CustomWorld()
-{
-  size = 800;
-  fHeight = 0;
-}
-
-
-bool CustomWorld::read(const char *cmd, istream& input)
-{
-  if (strcmp(cmd, "size") == 0) {
-    input >> size;
-	size *=2;
-    BZDB->set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d", size));
-  }
-  else if (strcmp(cmd, "flagHeight") == 0)
-    input >> fHeight;
-  else
-    return false;
-  return true;
-}
-
-
-void CustomWorld::write(WorldInfo*) const
-{
-  BZDB->set(StateDatabase::BZDB_FLAGHEIGHT, string_util::format("%f", fHeight));
-}
-
-
-static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
-{
-  const int n = wlist.size();
-  for (int i = 0; i < n; ++i)
-    delete wlist[i];
-  wlist.clear();
 }
 
 
