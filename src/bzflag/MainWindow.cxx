@@ -26,6 +26,7 @@
 #include "SceneRenderer.h"
 #include "bzfgl.h"
 #include "BzfJoystick.h"
+#include "OpenGLGState.h"
 
 //
 // MainWindow
@@ -47,6 +48,7 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 				faulting(false)
 {
   window->addResizeCallback(resizeCB, this);
+  window->addResizeCallback(initContextCB, this);
   resize();
 }
 
