@@ -2,7 +2,6 @@
 .SH NAME
 bzfls \- BZFlag game server-list server
 .SH SYNOPSIS
-.sS
 .B bzfls
 .SH DESCRIPTION
 \fBBzfls\fR keeps a list of \fBbzfs\fR servers.  It's used to help

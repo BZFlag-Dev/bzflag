@@ -2,7 +2,6 @@
 .SH NAME
 bzadmin \- a text based client for BZFlag
 .SH SYNOPSIS
-.sS
 .B bzadmin
 [\fB\-help\fR]
 [\fB\-hide \fR\fImsgtype\fR{\fI,msgtype\fR}*\fR]

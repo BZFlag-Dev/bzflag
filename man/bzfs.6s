@@ -2,7 +2,6 @@
 .SH NAME
 bzfs \- BZFlag game server
 .SH SYNOPSIS
-.sS
 .B bzfs
 [\fB\-a \fIvelocity\fR \fIrotation\fR]
 [\fB\-admsg \fImessage\fR]
@@ -47,11 +46,11 @@ bzfs \- BZFlag game server
 [\fB\-passwd \fIpassword\fR]
 [\fB\-printscore\fR]
 [\fB\-public \fIdescription\fR]
-[\fB\-publicaddr \fIaddress\fR[\fI:port\fR]
+[\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
-[\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]
+[\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
 [\fB\-recbuf \fIsize\fR]
 [\fB\-recdir \fIdirectory\fR]
 [\fB\-replay\fR]
