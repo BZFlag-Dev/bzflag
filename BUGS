@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- if you fire IMMEDIATELY after spawning, you'll expand into the bullet
+  (try pounding on both mouse buttons at once, like a 4-year-old would)
+  (is this worth fixing?)
+
 - spawn expansion can seal your tank in buildings
 
 - sometimes players will recieve the message "So-and-so destroyed by server"
