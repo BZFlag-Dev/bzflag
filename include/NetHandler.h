@@ -13,9 +13,10 @@
 #ifndef __NETHANDLER_H__
 #define __NETHANDLER_H__
 
-/* local implementation headers */
+/* common interface headers */
 #include "PlayerInfo.h"
 #include "Address.h"
+#include "AdnsHandler.h"
 
 enum RxStatus {
   ReadAll,
@@ -73,6 +74,12 @@ public:
   static bool initHandlers(struct sockaddr_in addr);
   static void destroyHandlers();
 
+  /** Class-Wide update
+      Should be called any available time to update NetHandler internal
+      structure.
+  */
+  static void updateHandlers();
+
   /** General function to support the select statement
    */
   static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
@@ -125,6 +132,8 @@ public:
   void       *packAdminInfo(void *buf);
   static int  whoIsAtIP(const std::string& IP);
   in_addr     getIPAddress();
+  const char *getHostname();
+
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
@@ -133,6 +142,9 @@ private:
   RxStatus    receive(size_t length);
 #ifdef NETWORK_STATS
   void        countMessage(uint16_t code, int len, int direction);
+#endif
+#ifdef HAVE_ADNS_H
+  AdnsHandler *adns;
 #endif
 
 //On win32, a socket is typedef UINT_PTR SOCKET;

@@ -5,6 +5,7 @@ MAINTAINERCLEANFILES = \
 
 libNet_a_SOURCES =			\
 	Address.cxx			\
+	AdnsHandler.cxx			\
 	Pack.cxx			\
 	Ping.cxx			\
 	multicast.cxx			\

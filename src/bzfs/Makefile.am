@@ -66,8 +66,8 @@ REGEX = \
 endif
 
 LDADD = \
-	../net/libNet.a		\
 	../game/libGame.a	\
+	../net/libNet.a		\
 	../common/libCommon.a	\
 	$(REGEX)
 

@@ -3711,10 +3711,6 @@ int main(int argc, char **argv)
     }
   }
 
-#ifdef HAVE_ADNS_H
-  PlayerInfo::startupResolver();
-#endif
-
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
     votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime);
@@ -4002,16 +3998,17 @@ int main(int argc, char **argv)
       }
     }
 
-#ifdef HAVE_ADNS_H
+    NetHandler::updateHandlers();
     for (int h = 0; h < curMaxPlayers; h++) {
-      if (player[h].checkDNSResolution()) {
+      NetHandler *handler = NetHandler::getHandler(h);
+      if (handler) {
+	const char *hostname = handler->getHostname();
 	// check against ban lists
-	if (!clOptions->acl.hostValidate(player[h].getHostname())) {
+	if (hostname && !clOptions->acl.hostValidate(hostname)) {
 	  removePlayer(h, "bannedhost");
 	}
       }
     }
-#endif
 
     // manage voting poll for collective kicks/bans/sets
     if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {

@@ -49,6 +49,11 @@ bool NetHandler::initHandlers(struct sockaddr_in addr) {
   }
   // don't buffer info, send it immediately
   BzfNetwork::setNonBlocking(udpSocket);
+
+#ifdef HAVE_ADNS_H
+  AdnsHandler::startupResolver();
+#endif
+
   return true;
 }
 
@@ -214,6 +219,9 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 #endif
   if (!netPlayer[playerIndex])
     netPlayer[playerIndex] = this;
+#ifdef HAVE_ADNS_H
+  adns = new AdnsHandler(_playerIndex, (struct sockaddr *) &clientAddr);
+#endif
 }
 
 NetHandler::~NetHandler() {
@@ -225,6 +233,10 @@ NetHandler::~NetHandler() {
 
   if (netPlayer[playerIndex] == this)
     netPlayer[playerIndex] = NULL;
+
+#ifdef HAVE_ADNS_H
+  delete adns;
+#endif 
 }
 
 bool NetHandler::exists(int _playerIndex) {
@@ -549,9 +561,9 @@ void NetHandler::getPlayerList(char *list) {
   sprintf(list, "[%d]%-16s: %s%s%s%s%s%s", playerIndex, info->getCallSign(),
 	  peer.getDotNotation().c_str(),
 #ifdef HAVE_ADNS_H
-	  info->getHostname() ? " (" : "",
-	  info->getHostname() ? info->getHostname() : "",
-	  info->getHostname() ? ")" : "",
+	  adns->getHostname() ? " (" : "",
+	  adns->getHostname() ? adns->getHostname() : "",
+	  adns->getHostname() ? ")" : "",
 #else
 	  "", "", "",
 #endif
@@ -587,6 +599,22 @@ int NetHandler::whoIsAtIP(const std::string& IP) {
 
 in_addr NetHandler::getIPAddress() {
   return uaddr.sin_addr;
+}
+
+void NetHandler::updateHandlers() {
+#ifdef HAVE_ADNS_H
+  for (int h = 0; h < maxHandlers; h++)
+    if (netPlayer[h])
+      netPlayer[h]->adns->checkDNSResolution();
+#endif
+}
+
+const char *NetHandler::getHostname() {
+#ifdef HAVE_ADNS_H
+  return adns->getHostname();
+#else
+  return NULL;
+#endif
 }
 
 // Local Variables: ***

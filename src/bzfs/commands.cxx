@@ -465,8 +465,9 @@ void handleHostBanCmd(int t, const char *message)
     strcpy(reply, "Host pattern added to banlist");
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
-      if (NetHandler::exists(i) && player[i].getHostname()
-	  && (!clOptions->acl.hostValidate(player[i].getHostname()))) {
+      NetHandler *netHandler = NetHandler::getHandler(i);
+      if (netHandler && netHandler->getHostname()
+	  && (!clOptions->acl.hostValidate(netHandler->getHostname()))) {
 	sprintf(kickmessage,"You were banned from this server by %s",
 		player[t].getCallSign());
 	sendMessage(ServerPlayer, i, kickmessage, true);

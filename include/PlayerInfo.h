@@ -23,10 +23,6 @@
 #include <sys/socket.h>
 #endif
 
-#ifdef HAVE_ADNS_H
-#include <adns.h>
-#endif
-
 // bzflag library headers
 #include "global.h"
 #include "TimeKeeper.h"
@@ -138,13 +134,6 @@ public:
   void        setReplayState(PlayerReplayState state);
   PlayerReplayState getReplayState();
   
-#ifdef HAVE_ADNS_H
-  // return true if host is resolved
-  bool        checkDNSResolution();
-  const char *getHostname();
-  static void startupResolver();
-#endif
-
 private:
   void        cleanCallSign();
   void        cleanEMail();
@@ -155,13 +144,6 @@ private:
 
     // peer's network address
     Address peer;
-#ifdef HAVE_ADNS_H
-    // peer's network hostname (malloc/free'd)
-    char *hostname;
-    // adns query state for while we're looking up hostname
-    adns_query adnsQuery;
-  static adns_state adnsState;
-#endif
     // current state of player
     ClientState state;
     // type of player

@@ -24,10 +24,6 @@
 
 #define MAX_FLAG_HISTORY (10)
 
-#ifdef HAVE_ADNS_H
-adns_state PlayerInfo::adnsState;
-#endif
-
 void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr,
 			    int _playerIndex) {
   playerIndex      = _playerIndex;
@@ -38,25 +34,6 @@ void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr,
 
   state = PlayerInLimbo;
   paused = false;
-#ifdef HAVE_ADNS_H
-  if (adnsQuery) {
-    adns_cancel(adnsQuery);
-    adnsQuery = NULL;
-  }
-  // launch the asynchronous query to look up this hostname
-  if (adns_submit_reverse
-      (adnsState, (struct sockaddr *)&clientAddr,
-       adns_r_ptr,
-       (adns_queryflags)(adns_qf_quoteok_cname|adns_qf_cname_loose), 0,
-       &adnsQuery) != 0) {
-    DEBUG1("Player [%d] failed to submit reverse resolve query: errno %d\n",
-	   playerIndex, getErrno());
-    adnsQuery = NULL;
-  } else {
-    DEBUG2("Player [%d] submitted reverse resolve query\n", playerIndex);
-  }
-#endif
-
   pausedSince = TimeKeeper::getNullTime();
 };
 
@@ -106,13 +83,6 @@ bool PlayerInfo::removePlayer() {
 
   flagHistory.clear();
 
-#ifdef HAVE_ADNS_H
-  if (hostname) {
-    free(hostname);
-    hostname = NULL;
-  }
-#endif
-
   state = PlayerNoExist;
 
   return wasPlaying;
@@ -129,10 +99,6 @@ bool PlayerInfo::shouldRestartAtBase() {
 void PlayerInfo::resetComm() {
     state = PlayerNoExist;
     delayq.init();
-#ifdef HAVE_ADNS_H
-    hostname = NULL;
-    adnsQuery = NULL;
-#endif  
 };
 
 bool PlayerInfo::isPlaying() {
@@ -610,54 +576,6 @@ PlayerReplayState PlayerInfo::getReplayState()
   return replayState;
 }
 
-
-#ifdef HAVE_ADNS_H
-// return true if host is resolved
-bool PlayerInfo::checkDNSResolution() {
-  if (!adnsQuery)
-    return false;
-
-  // check to see if query has completed
-  adns_answer *answer;
-  if (adns_check(adnsState, &adnsQuery, &answer, 0) != 0) {
-    if (getErrno() != EAGAIN) {
-      DEBUG1("Player [%d] failed to resolve: errno %d\n", playerIndex,
-	     getErrno());
-      adnsQuery = NULL;
-    }
-    return false;
-  }
-
-  // we got our reply.
-  if (answer->status != adns_s_ok) {
-    DEBUG1("Player [%d] got bad status from resolver: %s\n", playerIndex,
-	   adns_strerror(answer->status));
-    free(answer);
-    adnsQuery = NULL;
-    return false;
-  }
-
-  if (hostname)
-    free(hostname); // shouldn't happen, but just in case
-  hostname = strdup(*answer->rrs.str);
-  DEBUG1("Player [%d] resolved to hostname: %s\n", playerIndex, hostname);
-  free(answer);
-  adnsQuery = NULL;
-  return true;
-}
-
-const char *PlayerInfo::getHostname() {
-  return hostname;
-}
-
-void PlayerInfo::startupResolver() {
-  /* start up our resolver if we have ADNS */
-  if (adns_init(&adnsState, adns_if_nosigpipe, 0) < 0) {
-    perror("ADNS init failed");
-    exit(1);
-  }
-}
-#endif
 
 // Local Variables: ***
 // mode:C++ ***
