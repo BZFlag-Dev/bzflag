@@ -4993,7 +4993,7 @@ int main(int argc, char **argv)
       if (votingarbiter->knowsPoll()) {
 	char message[MessageLen];
 
-	std::string person = votingarbiter->getPollPlayer();
+	std::string person = votingarbiter->getPollTarget();
 	std::string action = votingarbiter->getPollAction();
 
 	static unsigned short int voteTime = 0;
@@ -5063,7 +5063,7 @@ int main(int argc, char **argv)
 	       * is a ban poll, ban the weenie
 	       */
 	      if (action == "ban") {
-		clOptions->acl.ban(votingarbiter->getPollPlayerIP().c_str(), person.c_str(), 10);
+		clOptions->acl.ban(votingarbiter->getPollTargetIP().c_str(), person.c_str(), 10);
 	      }
 
 	      // lookup the player id

@@ -314,7 +314,7 @@ void handleKickCmd(int t, const char *message)
   const char *victimname = argv[1].c_str();
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0) {
+    if (player[i].fd != NotConnected && strcasecmp(player[i].callSign, victimname) == 0) {
       break;
     }
   }
@@ -1131,7 +1131,7 @@ void handlePollCmd(int t, const char *message)
 
   /* make sure that there is not a poll active already */
   if (arbiter->knowsPoll()) {
-    sprintf(reply,"A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
+    sprintf(reply,"A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply, true);
     sendMessage(ServerPlayer, t, "Unable to start a new poll until the current one is over", true);
     return;
@@ -1440,7 +1440,7 @@ void handleVoteCmd(int t, const char *message)
 
   if (!cast) {
     /* player was unable to cast their vote; probably already voted */
-    sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
+    sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
@@ -1472,7 +1472,7 @@ void handleVetoCmd(int t, const char * /*message*/)
     return;
   }
 
-  sendMessage(ServerPlayer, t, string_util::format("%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str()).c_str(), true);
+  sendMessage(ServerPlayer, t, string_util::format("%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str()).c_str(), true);
 
   /* poof */
   arbiter->forgetPoll();
