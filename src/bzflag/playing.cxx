@@ -1997,17 +1997,10 @@ static void		handleServerMessage(bool human, uint16_t code,
     // player now has flag
     tank->setFlag(world->getFlag(flagIndex).type);
     if (tank == myTank) {
-      // not allowed to grab it if not on the ground
-      if (myTank->getLocation() != LocalPlayer::OnGround &&
-	  myTank->getLocation() != LocalPlayer::OnBuilding) {
-	serverLink->sendDropFlag(myTank->getPosition());
-      }
-      else {
 	// grabbed flag
 	playLocalSound(myTank->getFlag()->endurance != FlagSticky ?
 		       SFX_GRAB_FLAG : SFX_GRAB_BAD);
 	updateFlag(myTank->getFlag());
-      }
     }
     else if (myTank->getTeam() != RabbitTeam && tank &&
 	     tank->getTeam() != myTank->getTeam() &&
