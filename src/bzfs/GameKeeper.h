@@ -98,6 +98,7 @@ public:
     // Score
     Score	     score;
     Authentication    authentication;
+    bool	    recvdGlobalLoginMsg;
   private:
     static Player    *playerList[PlayerSlot];
     int	       playerIndex;

@@ -188,7 +188,10 @@ void ListServerLink::read()
 	    //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
 	    group = nextgroup;
 	  }
-	  sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+	  if (!playerData->recvdGlobalLoginMsg) {
+	    sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+	    playerData->recvdGlobalLoginMsg = true;
+	  }
 	}
       }
       // next reply

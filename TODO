@@ -3,8 +3,6 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* "Global login approved!" message should only be sent _once_ to players.
-
 * bzflag should display errors from DB. if you put an invalid char
   in your password, then you no longer get a list of servers
 

@@ -37,7 +37,8 @@ GameKeeper::Player::Player(int _playerIndex,
 			   tcpCallback _clientCallback):
   player(_playerIndex), lagInfo(&player),
   lastState(&::lastState[_playerIndex]),
-  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback)
+  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+  recvdGlobalLoginMsg(false)
 {
   playerList[playerIndex] = this;
 
