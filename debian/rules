@@ -64,7 +64,8 @@ bzflag: build
 	dh_clean -k
 	dh_installdirs -p$@
 	# copy files into debian/$@/ here
-	cp -pr data/[^C]* debian/$@/usr/share/bzflag/
+	-cp -p data/[^CM]* debian/$@/usr/share/bzflag/
+	cp -p data/l10n/[^CM]* debian/$@/usr/share/bzflag/l10n/
 	cp -p man/bzflag.6 debian/$@/usr/share/man/man6/
 	cp -p src/bzflag/bzflag debian/$@/usr/games/
 #	dh_installdebconf -p$@
@@ -73,8 +74,8 @@ bzflag: build
 #	dh_installmanpages -p$@
 	dh_installinfo -p$@
 #	dh_undocumented -p$@
-	dh_installchangelogs -p$@
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	dh_installchangelogs -p$@ ChangeLog
+ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	dh_strip -p$@
 endif
 	dh_link -p$@
@@ -95,7 +96,7 @@ bzflag-server: build
 	dh_clean -k
 	dh_installdirs -p$@
 	# copy files into debian/$@/ here
-	cp -p man/bzfs.6 man/bzfrelay.6 man/bzfls.6 debian/$@/usr/share/man/man6
+	cp -p man/bzfquery.pl.6 man/bzfs.6 man/bzfrelay.6 man/bzfls.6 debian/$@/usr/share/man/man6
 	cp -p src/bzfs/bzfs src/bzfrelay/bzfrelay src/bzfls/bzfls misc/bzfquery.pl debian/$@/usr/games
 	chmod a+rx debian/$@/usr/games/bzfquery.pl
 #	dh_installdebconf -p$@
@@ -111,7 +112,7 @@ bzflag-server: build
 	dh_installinfo -p$@
 #	dh_undocumented -p$@ bzfquery.pl.6
 	dh_installchangelogs -p$@
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	dh_strip -p$@
 endif
 	dh_link -p$@
