@@ -138,7 +138,7 @@ your system for more information:
   IRIX				README.IRIX
   Solaris			README.SOLARIS
   Mac OS X			README.MacOSX
-  Windows 95/98/NT		README.WIN32, README.MINGW32
+  Windows 95/98/NT		README.WIN32, README.MINGW32, README.DEVC++
 
 
 You can also build an installable package using:
