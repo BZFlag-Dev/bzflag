@@ -1,8 +1,5 @@
 recent bugs
 ------------
-- It happens that killed bots does not respawn at bases if, in the meantime,
-  team flag is captures. I suppose it happens also to normal player
-
 - using the -worldsize option makes the client rendering go berzerk (see the 
   brlcad.org Test Server I or II).  size ends up getting set to a trillion..
 
@@ -10,8 +7,6 @@ recent bugs
   doesn't assign a default team/color when color attribute isn't present.
   (2 separate issues really).  if you define a color in the map, the world
   objects disappear (see the brlcad.org Test Server III)
-
-- Flipped pyramids are not safe to walk on: getting stucked
 
 - bzadmin doesn't redraw / resize windows properly when the terminal is
   resized
@@ -43,13 +38,6 @@ recent bugs
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
   (this is probably a bug in automake 1.4, not in our files)
-
-- bzfls seems not to talk the new protocol correctly when testing server:
-  1.9: Player [0] accept() from 208.186.182.172:53438 on 6
-       Player  [0] on 6 removed: ECONNRESET/EPIPE
-
-  1.7: Player [0] accept() from 208.186.182.172:53470 on 7
-       Player [0] shutdownAcceptClient: close(7)
 
 older bugs in BZFlag
 --------------------
