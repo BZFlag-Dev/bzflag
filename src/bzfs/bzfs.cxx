@@ -219,13 +219,12 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
 //
 // global variable callback
 //
-static void onGlobalChanged(const std::string& msg, void*)
+static void onGlobalChanged(const std::string& name, void*)
 {
   // This Callback is removed in replay mode. As
   // well, the /set and /reset commands are blocked.
 
-  std::string name  = msg;
-  std::string value = BZDB.get(msg);
+  std::string value = BZDB.get(name);
   void *bufStart = getDirectMessageBuffer();
   void *buf = nboPackUShort(bufStart, 1);
   buf = nboPackUByte(buf, name.length());
