@@ -11,6 +11,9 @@
  */
 
 #include "common.h"
+
+#include <math.h>
+
 #include "Octree.h"
 #include "Intersect.h"
 #include "Occluder.h"
