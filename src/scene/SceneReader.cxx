@@ -383,6 +383,93 @@ void					SceneNodeVectorReader<BzfString>::parseData(
 	}
 }
 
+//
+// SceneNodeParticleSystemReader
+//
+
+class SceneNodeParticleSystemReader : public SceneNodeFieldReader {
+public:
+	SceneNodeParticleSystemReader(SceneNodeParticleSystem* _node);
+	virtual ~SceneNodeParticleSystemReader();
+
+	virtual bool			parse(XMLTree::iterator);
+	virtual const char*		getName() const;
+
+private:
+	const char*			getField(XMLTree::iterator xml = NULL) const;
+
+private:
+	SceneNodeParticleSystem*	node;
+};
+
+SceneNodeParticleSystemReader::SceneNodeParticleSystemReader(SceneNodeParticleSystem* _node) :
+								node(_node)
+{
+	assert(node != NULL);
+}
+
+SceneNodeParticleSystemReader::~SceneNodeParticleSystemReader()
+{
+	node->stopped = false;
+	// kludge: copy fields from SceneNode scalars/vectors into real variables
+	// this looks -really- gross
+	// TODO: switch everything to SceneNodeVFFloats and similar types instead
+	// of basic arrays and scalars.
+	node->location[0] = node->locationV.get()[0];
+	node->location[1] = node->locationV.get()[1];
+	node->location[2] = node->locationV.get()[2];
+	node->velocity[0] = node->velocityV.get()[0];
+	node->velocity[1] = node->velocityV.get()[1];
+	node->velocity[2] = node->velocityV.get()[2];
+	node->startColor[0] = node->startColorV.get()[0];
+	node->startColor[1] = node->startColorV.get()[1];
+	node->startColor[2] = node->startColorV.get()[2];
+	node->startColor[3] = node->startColorV.get()[3];
+	node->endColor[0] = node->endColorV.get()[0];
+	node->endColor[1] = node->endColorV.get()[1];
+	node->endColor[2] = node->endColorV.get()[2];
+	node->endColor[3] = node->endColorV.get()[3];
+	node->startSize = node->startSizeV.get();
+	node->endSize = node->endSizeV.get();
+	node->gravity[0] = node->gravityV.get()[0];
+	node->gravity[1] = node->gravityV.get()[1];
+	node->gravity[2] = node->gravityV.get()[2];
+	node->speed = node->speedV.get();
+	node->life = node->lifeV.get();
+	node->fieldAngle = node->fieldAngleV.get();
+	node->attractionPercent = node->attractionPercentV.get();
+	if(node->action == CreateBurst) {
+		node->particlesPerSecond = node->burstSizeV.get();
+	}
+	else {
+		node->particlesPerSecond = node->creationSpeedV.get();
+	}
+}
+
+bool SceneNodeParticleSystemReader::parse(XMLTree::iterator xml = NULL)
+{
+	static const XMLParseEnumList<ParticleSystemType> s_enumMethod[] = {
+		{ "burst",	CreateBurst },
+		{ "continuous",	CreateConstant },
+		{ NULL, 	CreateConstant }
+	};
+
+	if(xml->value == "attracting") {
+		xml->getAttribute("state", xmlParseEnum(s_xmlEnumBool, xmlSetVar(node->attracting)));
+	}
+	else if(xml->value == "method") {
+		xml->getAttribute("action", xmlParseEnum(s_enumMethod, xmlSetVar(node->action)));
+	}
+	else {
+		return false;
+	}
+	return true;
+}
+
+const char*				SceneNodeParticleSystemReader::getName() const
+{
+	return "";
+}
 
 //
 // SceneNodeGStateReader
@@ -399,7 +486,6 @@ public:
 private:
 	SceneNodeGState*	node;
 	OpenGLGStateBuilder	builder;
-	BzfString			active;
 };
 
 SceneNodeGStateReader::SceneNodeGStateReader(SceneNodeGState* _node) :
@@ -595,7 +681,7 @@ bool					SceneNodeGStateReader::parse(XMLTree::iterator xml)
 
 const char*				SceneNodeGStateReader::getName() const
 {
-	return active.c_str();
+	return "";
 }
 
 
@@ -948,6 +1034,28 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 		SceneNodeMetadata* node = new SceneNodeMetadata;
 		push(xml, node);
 		addReader(new SceneNodeScalarReader<BzfString>(&node->data));
+	}
+
+	else if (xml->value == "particlesystem") {
+		SceneNodeParticleSystem* node = new SceneNodeParticleSystem;
+		push(xml, node);
+		addReader(new SceneNodeVectorReader<float>(&node->locationV));
+		addReader(new SceneNodeVectorReader<float>(&node->velocityV));
+		addReader(new SceneNodeVectorReader<float>(&node->startColorV));
+		addReader(new SceneNodeVectorReader<float>(&node->endColorV));
+		addReader(new SceneNodeScalarReader<float>(&node->startSizeV));
+		addReader(new SceneNodeScalarReader<float>(&node->endSizeV));
+		addReader(new SceneNodeVectorReader<float>(&node->gravityV));
+		addReader(new SceneNodeScalarReader<float>(&node->speedV));
+		addReader(new SceneNodeScalarReader<float>(&node->lifeV));
+		addReader(new SceneNodeScalarReader<float>(&node->fieldAngleV));
+		addReader(new SceneNodeScalarReader<float>(&node->attractionPercentV));
+		addReader(new SceneNodeScalarReader<unsigned int>(&node->creationSpeedV));
+		addReader(new SceneNodeScalarReader<unsigned int>(&node->burstSizeV));
+		addReader(new SceneNodeScalarReader<unsigned int>(&node->spreadMinV));
+		addReader(new SceneNodeScalarReader<unsigned int>(&node->spreadMaxV));
+		addReader(new SceneNodeScalarReader<float>(&node->spreadFactorV));
+		addReader(new SceneNodeParticleSystemReader(node));
 	}
 
 	// see if it's a reference

@@ -1,0 +1,32 @@
+<!--
+# bzflag
+# Copyright (c) 1993 - 2002 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+-->
+
+<particlesystem>
+	<location>0 0 1</location>
+	<velocity>1.0 1.0 1.0</velocity>
+	<startcolor>0.0 1.0 0.0 1.0</startcolor>
+	<endcolor>0.0  0.55  0.1  0.0</endcolor>
+	<startsize>0.1</startsize>
+	<endsize>0.1</endsize>
+	<speed>10</speed>
+	<life>3</life>
+	<fieldangle>180</fieldangle>
+	<spreadmin>-1</spreadmin>
+	<spreadmax>1</spreadmax>
+	<spreadfactor>1</spreadfactor>
+	<gravity>0.0 0.0 0.0</gravity>
+	<attracting state="true" />
+	<attraction>10</attraction>
+	<burstsize>1000</burstsize>
+	<method action="burst" />
+</particlesystem>

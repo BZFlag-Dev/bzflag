@@ -28,6 +28,7 @@ CXXFILES =				\
 	SceneNodeMatrixTransform.cxx	\
 	SceneNodeMetadata.cxx		\
 	SceneNodeParameters.cxx		\
+	SceneNodeParticleSystem.cxx	\
 	SceneNodePrimitive.cxx		\
 	SceneNodeSelector.cxx		\
 	SceneNodeSphereTransform.cxx	\

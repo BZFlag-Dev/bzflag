@@ -32,6 +32,7 @@ public:
 	virtual bool		visit(SceneNodeMatrixTransform*);
 	virtual bool		visit(SceneNodeMetadata*);
 	virtual bool		visit(SceneNodeParameters*);
+	virtual bool		visit(SceneNodeParticleSystem*);
 	virtual bool		visit(SceneNodePrimitive*);
 	virtual bool		visit(SceneNodeSelector*);
 	virtual bool		visit(SceneNodeTransform*);

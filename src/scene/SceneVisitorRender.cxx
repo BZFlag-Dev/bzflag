@@ -13,6 +13,7 @@
 #include "SceneVisitorRender.h"
 #include "StateDatabase.h"
 #include "TimeKeeper.h"
+#include "ViewFrustum.h"
 #include "bzfgl.h"
 #include <math.h>
 #include <algorithm>
@@ -201,7 +202,8 @@ void					SceneVisitorRender::draw()
 {
 	static const GLenum typeMap[] = {
 		GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
-		GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN };
+		GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN,
+		GL_QUADS };
 
 	// prep rendering state
 	glMatrixMode(GL_PROJECTION);
@@ -371,10 +373,26 @@ void					SceneVisitorRender::draw()
 			glVertexPointer(3, GL_FLOAT, 0, pVertex->get());
 		}
 
-		// draw primitive
-		const unsigned int num    = job.primitive->index.getNum();
-		const unsigned int type   = job.primitive->type.get();
-		const unsigned int* index = job.primitive->index.get();
+		// draw whatever
+		unsigned int num;
+		unsigned int type;
+		unsigned int *index;
+		if(job.primitive != NULL) {
+			num   = job.primitive->index.getNum();
+			type  = job.primitive->type.get();
+			index = (unsigned int *) job.primitive->index.get();
+		}
+		else if(job.particle != NULL) {
+			num   = job.particle->index.getNum();
+			type  = job.particle->type;
+			index = (unsigned int *) job.particle->index.get();
+		}
+		else {
+			num = 0;
+			type = 0;
+			index = NULL;
+		}
+
 		glDrawElements(typeMap[type], num, GL_UNSIGNED_INT, index);
 	}
 
@@ -620,6 +638,7 @@ bool					SceneVisitorRender::visit(SceneNodePrimitive* n)
 	// prepare job
 	Job job(gstateStack.back());
 	job.primitive       = n;
+	job.particle        = NULL;
 	job.depth           = -aaBoundingBox[0][2];
 	job.gstate          = gstateStack.back();
 	job.compare         = job.gstate.getState();
@@ -668,6 +687,119 @@ bool					SceneVisitorRender::visit(SceneNodePrimitive* n)
 			break;
 	}
 	++getInstr()->nNodes;
+
+	return true;
+}
+
+bool					SceneVisitorRender::visit(SceneNodeParticleSystem* n)
+{
+	// skip if the emitter isn't going
+	if(n->isStopped())
+		return true;
+
+	n->type = 7; // GL_QUADS
+
+	// handle bounding box
+	switch(boundingBoxCull) {
+		case kCullOld:
+			n->getBoundingBox(&boundingBox);
+			// fall through
+
+		case kCullDirty: {
+			if(frustumDirty) {
+				computeFrustum();
+			}
+			BoundingBox xformBoundingBox(boundingBox);
+			xformBoundingBox.transform(modelXFormStack.back());
+			xformBoundingBox.get(aaBoundingBox[0], aaBoundingBox[1]);
+			if(isCulled(aaBoundingBox)) {
+				boundingBoxCull = kCullYes;
+				return true;
+			}
+			boundingBoxCull = kCullNo;
+			break;
+		}
+
+		case kCullYes:
+			return true;
+
+		case kCullNo:
+			break;
+	}
+
+	// save transforms that haven't been added to a list yet
+	Matrix m(modelXFormStack.back());
+	float *matrix = m.get();
+	float x = hypotf(matrix[0], hypotf(matrix[4], matrix[8]));
+	float y = hypotf(matrix[1], hypotf(matrix[5], matrix[9]));
+	float z = hypotf(matrix[2], hypotf(matrix[6], matrix[10]));
+	matrix[0]  = x;
+	matrix[1]  = 0.0;
+	matrix[2]  = 0.0;
+	matrix[4]  = 0.0;
+	matrix[5]  = y;
+	matrix[6]  = 0.0;
+	matrix[8]  = 0.0;
+	matrix[9]  = 0.0;
+	matrix[10] = z;
+	m.mult(ViewFrustum::getTransform());
+	unsigned int modelXFormIndex = matrixList.size();
+	matrixList.push_back(m);
+	if (projectionXFormIndexStack.back() == 0xffffffff) {
+		projectionXFormIndexStack.back() = matrixList.size();
+		matrixList.push_back(projectionXFormStack.back());
+	}
+	if (textureXFormIndexStack.back() == 0xffffffff) {
+		textureXFormIndexStack.back() = matrixList.size();
+		matrixList.push_back(textureXFormStack.back());
+	}
+
+	// save lights that haven't been added to the list yet
+	unsigned int numLights = lightIndexStack.size();
+	if (numLights > maxLights)
+		numLights = maxLights;
+	unsigned int i = numLights;
+	while (i-- > 0 && lightIndexStack[i] == 0xffffffff) {
+		lightIndexStack[i] = lightList.size();
+		lightList.push_back(lightStack[i]);
+	}
+
+	// save light set if it hasn't been added to the list yet
+	if (lightSetIndexStack.back() == 0xffffffff) {
+		// create set
+		LightSet lights;
+		lights.size = 0;
+		for (i = 0; i < numLights; ++i)
+			lights.index[lights.size++] = lightIndexStack[i];
+
+		// add to list
+		lightSetIndexStack.back() = lightSetList.size();
+		lightSetList.push_back(lights);
+	}
+
+	// update our particle system
+	n->update(getParams().getFloat("time"), modelXFormStack.back());
+
+	Job job(gstateStack.back());
+	job.primitive		= NULL;
+	job.particle		= n;
+	job.depth		= -aaBoundingBox[0][2];
+	job.gstate		= gstateStack.back();
+	job.compare		= job.gstate.getState();
+	job.stipple		= stippleStack.back();
+	job.color		= &(n->colors);
+	job.texcoord		= &(n->texcoords);
+	job.normal		= normalStack.back();
+	job.vertex		= &(n->verteces);
+	job.xformView		= modelXFormIndex;
+	job.xformProjection	= projectionXFormIndexStack.back();
+	job.xformTexture	= textureXFormIndexStack.back();
+	job.lightSet		= lightSetIndexStack.back();
+
+	jobs.push_back(job);
+
+	// count
+	getInstr()->nQuads += n->particles.size();
 
 	return true;
 }

@@ -38,6 +38,7 @@ public:
 		unsigned int	nPoints;
 		unsigned int	nLines;
 		unsigned int	nTriangles;
+		unsigned int	nQuads;
 	};
 	const Instruments*	instrGet() const;
 

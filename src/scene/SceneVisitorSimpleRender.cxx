@@ -319,6 +319,38 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeGeometry* n)
 	return result;
 }
 
+bool					SceneVisitorSimpleRender::visit(SceneNodeParticleSystem* n)
+{
+	float size;
+	float vertex[3];
+
+	for(unsigned int i = 0; i < n->particles.size(); i++) {
+		size = n->particles[i].size / 2;
+		glColor4fv(n->particles[i].color);
+
+		glBegin(GL_TRIANGLE_STRIP); {
+		  vertex[0] = n->particles[i].location[0] - size;
+		  vertex[1] = n->particles[i].location[1] + size;
+		  vertex[2] = n->particles[i].location[2];
+		  glVertex3fv(vertex);
+		  vertex[0] = n->particles[i].location[0] + size;
+		  vertex[1] = n->particles[i].location[1] + size;
+		  vertex[2] = n->particles[i].location[2];
+		  glVertex3fv(vertex);
+		  vertex[0] = n->particles[i].location[0] - size;
+		  vertex[1] = n->particles[i].location[1] - size;
+		  vertex[2] = n->particles[i].location[2];
+		  glVertex3fv(vertex);
+		  vertex[0] = n->particles[i].location[0] + size;
+		  vertex[1] = n->particles[i].location[1] - size;
+		  vertex[2] = n->particles[i].location[2];
+		  glVertex3fv(vertex);
+		}
+	}
+
+	return true;
+}
+
 bool					SceneVisitorSimpleRender::visit(SceneNodePrimitive* n)
 {
 	static const GLenum typeMap[] = {

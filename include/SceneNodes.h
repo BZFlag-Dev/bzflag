@@ -21,6 +21,7 @@
 #include "SceneNodeMatrixTransform.h"
 #include "SceneNodeMetadata.h"
 #include "SceneNodeParameters.h"
+#include "SceneNodeParticleSystem.h"
 #include "SceneNodePrimitive.h"
 #include "SceneNodeSelector.h"
 #include "SceneNodeSphereTransform.h"

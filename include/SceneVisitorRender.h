@@ -22,29 +22,30 @@
 
 class SceneVisitorRender : public SceneVisitorBaseRender {
 public:
-	SceneVisitorRender();
-	virtual ~SceneVisitorRender();
+						SceneVisitorRender();
+	virtual 				~SceneVisitorRender();
 
 	// SceneVisitor overrides
-	virtual bool		traverse(SceneNode*);
-	virtual bool		visit(SceneNodeAnimate*);
-	virtual bool		visit(SceneNodeBaseTransform*);
-	virtual bool		visit(SceneNodeGState*);
-	virtual bool		visit(SceneNodeGeometry*);
-	virtual bool		visit(SceneNodeLight*);
-	virtual bool		visit(SceneNodeParameters*);
-	virtual bool		visit(SceneNodePrimitive*);
-	virtual bool		visit(SceneNodeSelector*);
+	virtual bool				traverse(SceneNode*);
+	virtual bool				visit(SceneNodeAnimate*);
+	virtual bool				visit(SceneNodeBaseTransform*);
+	virtual bool				visit(SceneNodeGState*);
+	virtual bool				visit(SceneNodeGeometry*);
+	virtual bool				visit(SceneNodeLight*);
+	virtual bool				visit(SceneNodeParameters*);
+	virtual bool				visit(SceneNodeParticleSystem*);
+	virtual bool				visit(SceneNodePrimitive*);
+	virtual bool				visit(SceneNodeSelector*);
 
 private:
-	void				sort();
-	void				draw();
+	void					sort();
+	void					draw();
 
-	void				computeFrustum();
-	bool				isCulled(const float aabb[2][3]) const;
-	void				setPlane(unsigned int index, const float* p,
+	void					computeFrustum();
+	bool					isCulled(const float aabb[2][3]) const;
+	void					setPlane(unsigned int index, const float* p,
 							const float* v1, const float* v2);
-	bool				insidePlane(const float* plane,
+	bool					insidePlane(const float* plane,
 							float x, float y, float z) const;
 
 	struct Job {
@@ -53,86 +54,87 @@ private:
 
 	public:
 		SceneNodePrimitive*		primitive;
-		float					depth;
+		SceneNodeParticleSystem*	particle;
+		float				depth;
 		OpenGLGState			gstate;
 		const GState*			compare;
-		const SceneNodeVFFloat*	stipple;
-		const SceneNodeVFFloat*	color;
-		const SceneNodeVFFloat*	texcoord;
-		const SceneNodeVFFloat*	normal;
-		const SceneNodeVFFloat*	vertex;
+		const SceneNodeVFFloat*		stipple;
+		const SceneNodeVFFloat*		color;
+		const SceneNodeVFFloat*		texcoord;
+		const SceneNodeVFFloat*		normal;
+		const SceneNodeVFFloat*		vertex;
 		unsigned int			xformView;
 		unsigned int			xformProjection;
 		unsigned int			xformTexture;
 		unsigned int			lightSet;
 	};
-	static bool			jobLess(const Job&, const Job&);
+	static bool				jobLess(const Job&, const Job&);
 
 private:
-	typedef std::vector<OpenGLGState> GStateStack;
-	typedef std::vector<Matrix> XFormStack;
+	typedef std::vector<OpenGLGState>	GStateStack;
+	typedef std::vector<Matrix>		XFormStack;
 	typedef std::vector<const SceneNodeVFFloat*> GeometryStack;
-	typedef std::vector<float> ShininessStack;
+	typedef std::vector<float>		ShininessStack;
 	typedef std::vector<SceneNodeGeometry*> GeometryNodeStack;
 
-    struct LightInfo {
-    public:
-		float			ambient[4];
-		float			diffuse[4];
-		float			specular[4];
-		float			position[4];
-		float			spotDirection[3];
-		float			spotExponent;
-		float			spotCutoff;
-		float			attenuation[3];
-    };
-    typedef std::vector<unsigned int> IndexStack;
-    typedef std::vector<LightInfo> LightStack;
-    typedef std::vector<LightInfo> LightList;
-    struct LightSet {
-    public:
-		unsigned int	size;
-		unsigned int	index[8];
-    };
-    typedef std::vector<LightSet> LightSetList;
-    typedef std::vector<Matrix> MatrixList;
-    typedef std::vector<Job> JobList;
-    enum CullingState { kCullOld, kCullDirty, kCullNo, kCullYes };
+	struct LightInfo {
+	public:
+		float				ambient[4];
+		float				diffuse[4];
+		float				specular[4];
+		float				position[4];
+		float				spotDirection[3];
+		float				spotExponent;
+		float				spotCutoff;
+		float				attenuation[3];
+	};
+	typedef std::vector<unsigned int>	IndexStack;
+	typedef std::vector<LightInfo>		LightStack;
+	typedef std::vector<LightInfo>		LightList;
+	struct LightSet {
+	public:
+		unsigned int			size;
+		unsigned int			index[8];
+	};
+	typedef std::vector<LightSet>		LightSetList;
+	typedef std::vector<Matrix>		MatrixList;
+	typedef std::vector<Job>		JobList;
+	enum CullingState { kCullOld, kCullDirty, kCullNo, kCullYes };
 
-	BzfString			nameMask, nameLighting;
+	BzfString				nameMask, nameLighting;
 
-    SceneNodeVFFloat	dummyParams;
-	GStateStack			gstateStack;
-	XFormStack			modelXFormStack;
-	XFormStack			projectionXFormStack;
-	XFormStack			textureXFormStack;
-    IndexStack			modelXFormIndexStack;
-    IndexStack			projectionXFormIndexStack;
-    IndexStack			textureXFormIndexStack;
-	GeometryStack		stippleStack;
-	GeometryStack		colorStack;
-	GeometryStack		texcoordStack;
-	GeometryStack		normalStack;
-	GeometryStack		vertexStack;
-    GeometryNodeStack	geometryStack;
-    LightStack			lightStack;
-    IndexStack			lightIndexStack;
-    IndexStack			lightSetIndexStack;
-    unsigned int		maxLights;
+	SceneNodeVFFloat			dummyParams;
+	GStateStack				gstateStack;
+	XFormStack				modelXFormStack;
+	XFormStack				projectionXFormStack;
+	XFormStack				textureXFormStack;
+	IndexStack				modelXFormIndexStack;
+	IndexStack				projectionXFormIndexStack;
+	IndexStack				textureXFormIndexStack;
+	GeometryStack				stippleStack;
+	GeometryStack				colorStack;
+	GeometryStack				texcoordStack;
+	GeometryStack				normalStack;
+	GeometryStack				vertexStack;
+	GeometryNodeStack			geometryStack;
+	LightStack				lightStack;
+	IndexStack				lightIndexStack;
+	IndexStack				lightSetIndexStack;
+	unsigned int				maxLights;
 
-    MatrixList			matrixList;
-    LightList			lightList;
-    LightSetList		lightSetList;
+	MatrixList					matrixList;
+	LightList					lightList;
+	LightSetList				lightSetList;
 
-    BoundingBox			boundingBox;
-    float				aaBoundingBox[2][3];
-    CullingState		boundingBoxCull;
-    bool				frustumDirty;
-    float				frustum[6][4];
-    unsigned int		frustumDir[6][3];
+	BoundingBox				boundingBox;
+	float					aaBoundingBox[2][3];
+	CullingState				boundingBoxCull;
+	bool					frustumDirty;
+	float					frustum[6][4];
+	unsigned int				frustumDir[6][3];
 
-    SceneVisitor*		resetter;
-    JobList				jobs;
+	SceneVisitor*				resetter;
+	JobList					jobs;
 };
 
 #endif
