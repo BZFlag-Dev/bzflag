@@ -54,6 +54,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
   } else {
     const float tankRadius = BZDBCache::tankRadius;
     safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * 1.5);
+    safeSRRadius = tankRadius * 3;
     safeDistance = tankRadius * 20; // FIXME: is this a good value?
     const float size = BZDBCache::worldSize;
     const float maxWorldHeight = world->getMaxWorldHeight();
@@ -177,6 +178,10 @@ const bool SpawnPosition::isImminentlyDangerous() const
 	  }
 	} else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
 	  if (distanceFrom(enemyPos) < safeSWRadius) { // too close to SW
+	    return true;	// eek, don't spawn here
+	  }
+	} else if (ftype == Flags::Steamroller || ftype == Flags::Burrow) { // don't spawn if you'll squish or be squished
+	  if (distanceFrom(enemyPos) < safeSRRadius) { // too close to SR or BU
 	    return true;	// eek, don't spawn here
 	  }
 	}

@@ -43,6 +43,7 @@ private:
   int	      curMaxPlayers;
 
   float	      safeSWRadius;
+  float	      safeSRRadius;
   float	      safeDistance;
 
 };
