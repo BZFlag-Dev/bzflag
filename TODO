@@ -7,6 +7,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* Use listserver to give global announce (e.g. New version released) to client
+  & possibly server)
+
 * Smaller ideas: Make PZ have PZ shots, only useahle on PZ tanks, but scare
   the begeebers out of regular folk.
 
