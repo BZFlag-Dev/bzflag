@@ -259,8 +259,8 @@ void TextureMatrix::update (float t)
 {
   // FIXME - implement rotation and scaling
   float angle = fmodf(t * rotateFreq, 1.0f) * (M_PI * 2.0f);
-  float c = cos (-angle);
-  float s = sin (-angle);
+  float c = cosf (-angle);
+  float s = sinf (-angle);
   float tu = fmodf(t * uShiftFreq, 1.0f);
   float tv = fmodf(t * vShiftFreq, 1.0f);
   //float tu = t * uShiftFreq;
@@ -285,13 +285,13 @@ void TextureMatrix::update (float t)
   float uScale = 1.0f;
   if (uScaleFreq != 0.0f) {
     uScale = fmodf(t * uScaleFreq, 1.0f);
-    uScale = (1.5f - (0.5f * cos ((M_PI * 2.0f) * uScale))) / uScale;
+    uScale = (1.5f - (0.5f * cosf ((M_PI * 2.0f) * uScale))) / uScale;
   }
 
   float vScale = 1.0f;
   if (vScaleFreq != 0.0f) {
     vScale = fmodf(t * vScaleFreq, 1.0f);
-    vScale = (1.5f - (0.5f * cos ((M_PI * 2.0f) * vScale))) / vScale;
+    vScale = (1.5f - (0.5f * cosf ((M_PI * 2.0f) * vScale))) / vScale;
   }
 
   float su = uScaleCenter;
