@@ -49,6 +49,12 @@
 #include "PackVars.h"
 #include "FlagInfo.h"
 
+#if defined(_WIN32)
+#define popen _popen
+#define pclose _pclose
+#endif
+
+
 // FIXME -- need to pull communication out of bzfs.cxx...
 
 // externs that poll, veto, vote, and clientquery require
