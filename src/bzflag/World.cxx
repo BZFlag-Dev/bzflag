@@ -33,6 +33,7 @@
 #include "playing.h"
 #include "texture.h"
 #include "StateDatabase.h"
+#include "Flag.h"
 
 static OpenGLTexture*	flagTexture = NULL;
 
@@ -387,7 +388,7 @@ void			World::freeInsideNodes()
 void			World::initFlag(int index)
 {
   // set color of flag (opaque)
-  const float* color = Flag::getColor(flags[index].id);
+  const float* color = flags[index].desc->getColor();
   flagNodes[index]->setColor(color[0], color[1], color[2]);
 
   // if coming or going then position warp
@@ -527,7 +528,7 @@ void			World::updateFlag(int index, float dt)
   flagNodes[index]->move(flags[index].position);
 
   // narrow flag on tank turns with tank (so it's almost invisible head-on)
-  if (flag.id == NarrowFlag && flag.status == FlagOnTank) {
+  if (flag.desc == Flags::Narrow && flag.status == FlagOnTank) {
     for (int i = 0; i < curMaxPlayers; i++)
       if (players[i] && players[i]->getId() == flag.owner) {
 	const float* dir = players[i]->getForward();
@@ -554,7 +555,7 @@ void			World::addFlags(SceneDatabase* scene)
     // skip flag on a tank that isn't alive.  also skip Cloaking
     // flags on tanks.
     if (flags[i].status == FlagOnTank) {
-      if (flags[i].id == CloakingFlag) continue;
+      if (flags[i].desc == Flags::Cloaking) continue;
       int j;
       for (j = 0; j < curMaxPlayers; j++)
 	if (players[j] && players[j]->getId() == flags[i].owner)
@@ -780,7 +781,7 @@ void			WorldBuilder::preGetWorld()
   world->flagNodes = new FlagSceneNode*[world->maxFlags];
   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];
   for (i = 0; i < world->maxFlags; i++) {
-    world->flags[i].id = NoFlag;
+    world->flags[i].desc = Flags::Null;
     world->flags[i].status = FlagNoExist;
     world->flags[i].position[0] = 0.0f;
     world->flags[i].position[1] = 0.0f;
