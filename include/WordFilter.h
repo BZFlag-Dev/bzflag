@@ -185,6 +185,11 @@ class WordFilter
    */
   std::string l33tspeakSetFromCharacter(const char c) const;
 
+  /** returns what alphabetic character a given char
+   * corresponds to (e.g. 3 => e, | => il)
+   */
+  std::string setFromCharacter(const char c) const;
+  
   /** expands a word into an uncompiled regular
    *  expression.
    */
@@ -225,9 +230,9 @@ class WordFilter
 
 
 /** utility method performs an actual replacement of
-* characters in an input character ray within a specified
-* range.
-*/
+ * characters in an input character ray within a specified
+ * range.
+ */
 inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces=false) const
 {
   if (input == NULL) {

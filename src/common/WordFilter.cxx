@@ -71,18 +71,24 @@ bool WordFilter::aggressiveFilter(char *input) const
   static regmatch_t match[1];
   char errorBuffer[512];
 
-  /* implicit limit of only match up to 256 words per input */
-  /* !!! make dynamic */
-  int matchPair[MAX_FILTER_SETS * 2];
+  /* maintain an array of match indices of the input; values are in
+   * pairs.  the first number is the start position, the second is
+   * a length.  array has initial size of 256 (128 words).
+   */
+  std::vector<int> matchPair(MAX_FILTER_SETS);
   int matchCount = 0;
 
   int regCode;
 
-  int startPosition = firstAlphanumeric(input);
+  int startPosition = firstVisible(input);
   if (startPosition < 0) {
     return false;
   }
   std::string line = input + startPosition;
+
+  /* we keep track of where words seem to start and end via
+   * two separate bit sets.
+   */
   std::bitset<MAX_FILTER_SETS * 4> startBoundaryArray = 0;
   std::bitset<MAX_FILTER_SETS * 4> endBoundaryArray = 0;
 
@@ -91,14 +97,14 @@ bool WordFilter::aggressiveFilter(char *input) const
   startPosition = 0;
 
   int endPosition;
-  unsigned char wordIndices[MAX_FILTER_SETS];
+
+  /* stores which letters have been used already
+   * XXX consider using a list
+   */
+  std::vector<unsigned char> wordIndices(MAX_FILTER_SETS);
   unsigned int wordIndexLength=0;
 
   char characterIndex;
-
-  /* clear memory for arrays */
-  memset(matchPair, 0, MAX_FILTER_SETS * 2 * sizeof matchPair[0]);
-  memset(wordIndices, 0, MAX_FILTER_SETS * sizeof wordIndices[0]);
 
   /* iterate over all the words start position in the input and keep track
    * of the starting character of each word (we only need to check those)
@@ -107,7 +113,7 @@ bool WordFilter::aggressiveFilter(char *input) const
   int counter=0;
   int characterFound;
   while (startPosition >= 0) {
-    endPosition = firstNonalphanumeric(line);
+    endPosition = firstNonalphabetic(line);
     if (endPosition < 0) {
       endPosition = line.length();
     }
@@ -134,7 +140,7 @@ bool WordFilter::aggressiveFilter(char *input) const
     line.erase(0, endPosition + 1);
     inputPosition += endPosition + 1;
 
-    startPosition = firstAlphanumeric(line); // should be zero most of the time
+    startPosition = firstVisible(line); // should be zero most of the time
     if (startPosition == 0) {
       //record the position of where words start and end
       startBoundaryArray.set(inputPosition);
@@ -149,11 +155,8 @@ bool WordFilter::aggressiveFilter(char *input) const
     }
   }
 
-  /*
-    std::cout << "counted " << counter << " words" << std::endl;
-    std::cout << "boundary array:[" << boundaryArray << "]" << std::endl;
-  */
-
+  // now we have a record of all potential word boundary positions
+  
   counter = 0;
   /* iterate over the filter words for each unique initial word character */
   int startMatchPos;
@@ -209,10 +212,12 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   /* finally filter the input.  only filter actual alphanumerics. */
   for (int i=0; i < matchCount; i++) {
+    /* !!! debug */
+#if 1
     char tmp[256] = {0};
     strncpy(tmp, input + matchPair[i*2], matchPair[(i*2)+1]);
-    //    std::cout << "i: " << i << "  " << matchPair[i*2] << " for " << matchPair[(i*2)+1] << std::endl;
     std::cout << "Matched: [" << tmp << "]" << std::endl;
+#endif
     
     if (filterCharacters(input, matchPair[i*2], matchPair[(i*2)+1]) <= 0) {
       // XXX with multiple matching, we will be unable to filter overlapping matches
@@ -220,7 +225,6 @@ bool WordFilter::aggressiveFilter(char *input) const
       continue;
     }
   }
-
 
   return filtered;
 
@@ -321,6 +325,58 @@ std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
 }
 
 
+std::string WordFilter::setFromCharacter(const char c) const
+{
+  std::string set = " ";
+
+  /* for most punctuation, we include the actual punctuation
+   * last just in case it was really intended
+   */
+  switch(c) {
+    case '!':
+      set = "il!";
+      break;
+    case '@':
+      set = "a@";
+      break;
+    case '$':
+      set =  "s$";
+      break;
+    case '&':
+      set = "s&";
+      break;
+    case '(':
+      set = "cil(";
+      break;
+    case ')':
+      set = "il)";
+      break;
+    case '+':
+      set = "t+";
+      break;
+    case '|':
+      set = "li|";
+      break;
+    case '\\':
+      set = "li\\";
+      break;
+    case '{':
+      set = "c{";
+      break;
+    case '/':
+      set = "il/";
+      break;
+    default:
+      set = " ";
+      set[0] = c;
+      break;
+  }
+  
+  return set;
+}
+
+
+
 std::string WordFilter::expressionFromString(const std::string &word) const
 {
   /* create the regular expression description */
@@ -377,7 +433,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
 
   } // end iteration over word letters
 
-  std::cout << "EXP: " <<  expression << std::endl;
+  //  std::cout << "EXP: " <<  expression << std::endl;
 
   return expression;
 }
@@ -784,7 +840,7 @@ bool WordFilter::filter(char *input, bool simple) const
     filtered = aggressiveFilter(input);
   }
   TimeKeeper after = TimeKeeper::getCurrent();
-#if 0
+#if 1
   std::cout << "Time elapsed: " << after - before << " seconds" << std::endl;
 #endif
   return filtered;
