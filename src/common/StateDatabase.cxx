@@ -73,10 +73,10 @@ const std::string StateDatabase::BZDB_TANKSPEED         = std::string("_tankSpee
 const std::string StateDatabase::BZDB_TANKWIDTH		= std::string("_tankWidth");
 const std::string StateDatabase::BZDB_TARGETINGANGLE	= std::string("_targetingAngle");
 const std::string StateDatabase::BZDB_TELEPORTTIME      = std::string("_teleportTime");
-const std::string StateDatabase::BZDB_THIEFADLIFE	= std::string("_thiefAdLife");  ;
+const std::string StateDatabase::BZDB_THIEFADLIFE	= std::string("_thiefAdLife");
 const std::string StateDatabase::BZDB_THIEFADRATE       = std::string("_thiefAdRate");
 const std::string StateDatabase::BZDB_THIEFADSHOTVEL    = std::string("_thiefAdShotVel");
-const std::string StateDatabase::BZDB_THIEFTINYFACTOR   = std::string("_thiefTinyFactor")
+const std::string StateDatabase::BZDB_THIEFTINYFACTOR   = std::string("_thiefTinyFactor");
 const std::string StateDatabase::BZDB_THIEFVELAD        = std::string("_thiefVelAd");
 const std::string StateDatabase::BZDB_TINYFACTOR        = std::string("_tinyFactor");
 const std::string StateDatabase::BZDB_VELOCITYAD        = std::string("_velocityAd");
@@ -251,7 +251,7 @@ float			StateDatabase::eval(const std::string& name)
   memset(&NaN, 0xff, sizeof(float));
 
   if (variables.find(name) != variables.end())
-      return NaN;
+    return NaN;
 
   std::set<std::string>::iterator ins_it = variables.insert(name).first;
 
