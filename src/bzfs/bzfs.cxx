@@ -3073,9 +3073,10 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
 bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 {
   std::string tempmsg = message, lmsg = playerData->player.getLastMsg();
-  for (int c = 0; c <= (int)tempmsg.size() - 1; c++)
-    if (isspace(tempmsg[c]))
-      tempmsg.erase(tempmsg.begin() + c);
+  const std::string::iterator sizer = tempmsg.end();
+  for (std::string::iterator c = tempmsg.begin(); c <= sizer; c++)
+    if (isspace(*c))
+      tempmsg.erase(c);
   if (playerData->player.getLastMsg().size() > 0 &&
       strncasecmp(tempmsg.c_str(), lmsg.c_str(),
       lmsg.size() > tempmsg.size() ? tempmsg.size() : lmsg.size()) == 0 &&

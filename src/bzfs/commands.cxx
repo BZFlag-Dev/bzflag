@@ -983,13 +983,14 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
         sendMessage (ServerPlayer, AdminPlayers, temp.c_str());
         return;
       }
-      std::vector<std::string> words = string_util::tokenize(temp, " \t");
+      const std::vector<std::string> words = string_util::tokenize(temp, " \t");
       while (temp.size() > 0 && words.size() > 0) {
         std::string temp2;
+        unsigned int cur = 0;
         while (temp2.size() <= (unsigned) MessageLen &&
-               (temp2.size() + words[0].size()) <= (unsigned) MessageLen) {
-            temp2 += words[0] + " ";
-            words.erase(words.begin());
+               (temp2.size() + words[cur].size()) <= (unsigned) MessageLen) {
+            temp2 += words[cur] + " ";
+            ++cur;
         }
         sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
       }
