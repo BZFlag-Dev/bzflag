@@ -106,5 +106,6 @@ AM_CPPFLAGS = $(X_CFLAGS)
 
 bzflag_LDFLAGS = ../date/buildDate.o
 
-bzflag.res: bzflag.rc bzflag.ico
-	windres -i bzflag.rc -o bzflag.res -O coff
+bzflag.res: $(srcdir)/bzflag.rc $(srcdir)/bzflag.ico
+	windres -include-dir=$(srcdir) -i $(srcdir)/bzflag.rc -o bzflag.res \
+	-O coff

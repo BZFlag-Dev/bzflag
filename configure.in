@@ -9,11 +9,11 @@ REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/
 
 CONF_DATE=`date +%Y%m%d`
 echo "BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE"
+AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE)
 AM_CONFIG_HEADER(include/config.h)
 
 # Let the C++ code know about OS and user
-AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
 AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
 
@@ -124,7 +124,7 @@ AC_CHECK_LIB(m, sqrtf)
 # avoid using X11 in BeOS
 if test $host_os != beos; then
   CPPFLAGS=
-  if test x$X_DISPLAY_MISSING = x; then
+  if test x$no_x = x; then
     GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $GLIBS"
   fi
 
@@ -187,7 +187,8 @@ LIBS=$ac_func_search_save_LIBS
 AC_SUBST(GLIBS)
 
 if test $host_os = mingw32; then
-  LIBS="-mwindows -lgdi32 -lws2_32 -ldsound -lwinmm $LIBS"
+  LIBS="-lwinmm $LIBS"
+  GLIBS="-mwindows -lgdi32 -lws2_32 -ldsound $LIBS"
 fi
 
 # Remove ogg/vorbis dependencies until we actually need them.
