@@ -398,6 +398,7 @@ if test x$enable_bzadmin != xno; then
       [bzAdmin build has been requested, but GL is not fully available
 ... disabling bzAdmin generation])
     AM_CONDITIONAL(BZADMIN_INCLUDED, false)
+    enable_bzadmin=no
   else
     MP_WITH_CURSES
     if test "x$CURSES_LIB" = x; then
@@ -423,8 +424,7 @@ AC_LANG_C
 if test x$with_SDL = xyes; then
   AM_PATH_SDL(1.2.5,, with_SDL=no)
   if test x$with_SDL = xno; then
-     AC_MSG_WARN([could not find an appropriate SDL version. \
-BZflag will build without SDL])
+     AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
   fi
 fi
 AC_LANG_CPLUSPLUS
@@ -467,6 +467,7 @@ if test x$enable_client != xno; then
     [Client build has been requested, but GL is not fully available
      ... disabling client generation])
     AM_CONDITIONAL(CLIENT_INCLUDED, false)
+    enable_client=no
   else
     AM_CONDITIONAL(CLIENT_INCLUDED, true)
   fi
@@ -611,6 +612,7 @@ AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
+
 AC_OUTPUT(bzflag.info
 	bzflag.lsm
 	Dev-C++/Makefile
@@ -669,3 +671,27 @@ AC_OUTPUT(bzflag.info
 	win32/Makefile
 	win32/VC6/Makefile
 	win32/VC71/Makefile)
+
+# use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
+AC_MSG_RESULT([])
+AC_MSG_RESULT([BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE with the following:])
+if test "x$CURSES_LIB" = x; then
+       AC_MSG_RESULT([     no curses!])
+else
+       AC_MSG_RESULT([     curses: $CURSES_LIB])
+fi
+if test x$with_SDL = xno; then
+       AC_MSG_RESULT([     no SDL!])
+else
+       AC_MSG_RESULT([     SDL])
+fi
+if test "x$enable_bzadmin" = "xno"; then
+       AC_MSG_RESULT([     no bzadmin client binary!])
+else
+       AC_MSG_RESULT([     bzadmin])
+fi
+if test "x$enable_client" = "xno"; then
+       AC_MSG_RESULT([     no bzflag client binary!])
+else
+       AC_MSG_RESULT([     bzflag client])
+fi
