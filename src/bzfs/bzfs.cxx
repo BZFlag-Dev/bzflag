@@ -1217,7 +1217,7 @@ void *assembleSendPacket(int playerIndex, int *len)
 
   if (noinqueue > 128) {
     // we have more than 128 not aknowledged packets
-    DEBUG1("%d Packets outstanding\n",noinqueue);
+    DEBUG2("%d Packets outstanding\n",noinqueue);
   }
 
   // this is actually the number of single
@@ -1300,7 +1300,7 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
       break;
     else
       if (ilength > 1024) {
-		DEBUG1("* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
+		DEBUG2("* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
 	    playerIndex, ilength);
 	break;
       }
@@ -1344,7 +1344,7 @@ static int puwrite(int playerIndex, const void *b, int l)
 
   if (!tobesend || (l == 0)) {
     removePlayer(playerIndex);
-    DEBUG1("Send Queue Overrun for player %d (%s)\n", playerIndex, p.callSign);
+    DEBUG2("Send Queue Overrun for player %d (%s)\n", playerIndex, p.callSign);
     if (tobesend)
       free((unsigned char *)tobesend);
     return -1;
@@ -1384,8 +1384,8 @@ static int puwrite(int playerIndex, const void *b, int l)
 
     // dump other errors and continue
     nerror("error on UDP write");
-    DEBUG1("player is %d (%s)\n", playerIndex, p.callSign);
-    DEBUG1("%d bytes\n", n);
+    DEBUG2("player is %d (%s)\n", playerIndex, p.callSign);
+    DEBUG2("%d bytes\n", n);
 
     // we may actually run into not enough buffer space here
     // but as the link is unreliable anyway we never treat it as
@@ -1421,7 +1421,7 @@ static int prealwrite(int playerIndex, const void *b, int l)
 
     // dump other errors and remove the player
     nerror("error on write");
-    DEBUG1("player is %d (%s)\n", playerIndex, p.callSign);
+    DEBUG2("player is %d (%s)\n", playerIndex, p.callSign);
     DEBUG4("REMOVE: WRITE ERROR\n");
     removePlayer(playerIndex);
     return -1;
@@ -1615,7 +1615,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       // are the network is down or too unreliable to that player.
       // FIXME -- is 20kB to big?  to small?
       if (newCapacity >= 20 * 1024) {
-	DEBUG1("dropping unresponsive player %d (%s) with %d bytes queued\n",
+	DEBUG2("dropping unresponsive player %d (%s) with %d bytes queued\n",
 	    playerIndex, p.callSign, p.outmsgSize + l);
 	DEBUG4("REMOVE: CAPACITY\n");
 	removePlayer(playerIndex);
@@ -1873,7 +1873,7 @@ static int uread(int *playerIndex, int *nopackets)
 	if (!pPlayerInfo->ulinkup &&
 	    (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
 	    (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
-	  DEBUG1("uread() exact udp up for player %d %s:%d\n",
+	  DEBUG2("uread() exact udp up for player %d %s:%d\n",
 	      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
 	      ntohs(pPlayerInfo->uaddr.sin_port));
 	  pPlayerInfo->ulinkup = true;
@@ -1886,7 +1886,7 @@ static int uread(int *playerIndex, int *nopackets)
       for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
 	if (!pPlayerInfo->ulinkup &&
 	    memcmp(&uaddr.sin_addr, &pPlayerInfo->uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
-	  DEBUG1("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
+	  DEBUG2("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
 	      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
 	      ntohs(pPlayerInfo->uaddr.sin_port), ntohs(uaddr.sin_port));
 	  pPlayerInfo->uaddr.sin_port = uaddr.sin_port;
@@ -1973,20 +1973,20 @@ static int pread(int playerIndex, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
-      DEBUG1("REMOVE: Socket reset (2)\n");
+      DEBUG2("REMOVE: Socket reset (2)\n");
       removePlayer(playerIndex);
       return -1;
     }
 
     // dump other errors and remove the player
     nerror("error on read");
-    DEBUG1("player is %d (%s)\n", playerIndex, p.callSign);
+    DEBUG2("player is %d (%s)\n", playerIndex, p.callSign);
     DEBUG4("REMOVE: READ ERROR\n");
     removePlayer(playerIndex);
     return -1;
   } else {
     // disconnected
-    DEBUG1("REMOVE: Disconnected (3)\n");
+    DEBUG2("REMOVE: Disconnected (3)\n");
     removePlayer(playerIndex);
     return -1;
   }
@@ -2214,7 +2214,7 @@ static void publicize()
     BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
 
     for (int j = 0; j < failedURLs.getLength(); ++j)
-      DEBUG1("failed: %s\n", (const char*)failedURLs[j]);
+      DEBUG2("failed: %s\n", (const char*)failedURLs[j]);
 
     // check url list for validity
     for (int i = 0; i < urls.getLength(); ++i) {
@@ -2567,7 +2567,7 @@ static void relayPlayerPacket()
   char buffer[MaxPacketLen];
   const int msglen = recvMulticast(relayInSocket, buffer, MaxPacketLen, NULL);
   if (msglen < 4) {
-    DEBUG1("incomplete read of player message header\n");
+    DEBUG2("incomplete read of player message header\n");
     return;
   }
 
@@ -2575,7 +2575,7 @@ static void relayPlayerPacket()
   uint16_t len;
   nboUnpackUShort(buffer, len);
   if (int(len) != msglen - 4) {
-    DEBUG1("incomplete read of player message body\n");
+    DEBUG2("incomplete read of player message body\n");
     return;
   }
 
@@ -4446,6 +4446,8 @@ static void calcLag(int playerIndex, float timepassed)
       sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
         maxlagwarn);
       sendMessage(playerIndex, pl.id, pl.team, message);
+      DEBUG1("*** Player %s [%d] was lag-kicked\n",
+              player[playerIndex].callSign, playerIndex);
       removePlayer(playerIndex);
     }
   }
@@ -4969,7 +4971,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = targetPlayer.unpack(buf);
       buf = nboUnpackUShort(buf, targetTeam);
       buf = nboUnpackString(buf, message, sizeof(message));
-      DEBUG4("Player %s [%d]: %s\n",player[t].callSign, t, message);
+      DEBUG1("Player %s [%d]: %s\n",player[t].callSign, t, message);
       // check for command
       if (message[0] == '/') {
 	parseCommand(message, t);
@@ -5014,7 +5016,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // enable the downlink
       //player[t].ulinkup = true;
       if (!alsoUDP) {
-	DEBUG1("Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
+	DEBUG2("Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
       }
       break;
     }
@@ -5061,6 +5063,7 @@ static void terminateServer(int /*sig*/)
 static const char *usageString =
 "[-a <vel> <rot>] [-b] [-c] [-cr] [+f {good|<id>}] [-f {bad|<id>}] [-g] "
 "[-ban ip{,ip}*] "
+"[-d] "
 "[-h] "
 "[-i interface] "
 "[-j] "
@@ -5130,7 +5133,7 @@ static void extraUsage(const char *pname)
   cout << "\t -ban ip{,ip}*: ban players based on ip address" << endl;
   cout << "\t -c: capture-the-flag style game" << endl;
   cout << "\t -cr: capture-the-flag style game with random world" << endl;
-//  cout << "\t -d: increase debugging level" << endl;
+  cout << "\t -d: increase debugging level" << endl;
   cout << "\t +f: always have flag <id> available" << endl;
   cout << "\t -f: never randomly generate flag <id>" << endl;
   cout << "\t -fb: allow flags on box buildings" << endl;
@@ -5961,12 +5964,12 @@ int main(int argc, char **argv)
     static const int major = 2, minor = 2;
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
-      DEBUG1("Failed to initialize winsock.  Terminating.\n");
+      DEBUG2("Failed to initialize winsock.  Terminating.\n");
       return 1;
     }
     if (LOBYTE(wsaData.wVersion) != major ||
 	HIBYTE(wsaData.wVersion) != minor) {
-      DEBUG1("Version mismatch in winsock;"
+      DEBUG2("Version mismatch in winsock;"
 	  "  got %d.%d.  Terminating.\n",
 	  (int)LOBYTE(wsaData.wVersion),
 	  (int)HIBYTE(wsaData.wVersion));
