@@ -63,12 +63,18 @@ DXJoystick::~DXJoystick()
 
 void	      DXJoystick::initJoystick(const char* joystickName)
 {
+  // turn it off
+  if (strcmp(joystickName, "off") == 0) {
+    device = NULL;
+    return;
+  }
+
   /*
    * Find this device, and try to initialize it.
    */
   GUID thisDevice;
   for (unsigned int i = 0; i < devices.size(); i++) {
-    if (joystickName == devices[i].tszProductName) {
+    if (strcmp(joystickName, devices[i].tszProductName) == 0) {
       thisDevice = devices[i].guidInstance;
       break;
     }
