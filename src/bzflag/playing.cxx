@@ -1979,10 +1979,10 @@ static float		minSafeRange(float angleCosOffBoresight)
   static const float	SafeAngle = 0.5f;		// cos(angle)
 
   // don't ever place within this range
-  static const float	MinRange = 0.5f * ShotSpeed;	// meters
+  static const float	MinRange = 1.0f * ShotSpeed;	// meters
 
   // anything beyond this range is okay at any angle
-  static const float	MaxRange = 1.5f * ShotSpeed;	// meters
+  static const float	MaxRange = 3.0f * ShotSpeed;	// meters
 
   // if more than SafeAngle off boresight then MinRange is okay
   if (angleCosOffBoresight < SafeAngle) return MinRange;
@@ -1995,7 +1995,7 @@ static float		minSafeRange(float angleCosOffBoresight)
 static void		restartPlaying()
 {
   // maximum tries to find a safe place
-  static const int	MaxTries = 20;		
+  static const int	MaxTries = 100;
 
   // minimum time before an existing shot can hit us
   static const float	MinShotImpact = 2.0f;		// seconds
