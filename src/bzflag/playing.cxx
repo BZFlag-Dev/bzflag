@@ -1369,7 +1369,6 @@ static void		showKeyboardStatus()
 static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   const std::string cmd = KEYMGR->get(key, pressed);
-
   if (key.ascii == 27) {
     if (pressed) HUDDialogStack::get()->push(mainMenu);
     return true;
@@ -1395,6 +1394,8 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     }
   }
   if (!cmd.empty()) {
+    if (cmd=="fire")
+      fireButton = pressed;
     std::string result = CMDMGR->run(cmd);
     if (!result.empty())
       std::cerr << result << std::endl;
@@ -1953,7 +1954,8 @@ static std::string cmdFire(const std::string&, const CommandManager::ArgList& ar
 {
   if (args.size() != 0)
     return "usage: fire";
-  if (myTank != NULL && myTank->isAlive() && myTank->getTeam() != ObserverTeam)
+  if (fireButton && myTank != NULL && myTank->isAlive()
+      && myTank->getTeam() != ObserverTeam)
     myTank->fireShot();
   return std::string();
 }

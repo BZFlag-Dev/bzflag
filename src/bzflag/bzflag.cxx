@@ -121,6 +121,7 @@ static DefaultDBItem	defaultDBItems[] = {
 const char*	defaultBindings[NUM_DEFAULT_BINDINGS] = {
   "bind F12 down quit",
   "bind \"Left Mouse\" down fire",
+  "bind \"Left Mouse\" up fire",
   "bind Enter down fire",
   "bind \"Middle Mouse\" down drop",
   "bind Space down drop",
