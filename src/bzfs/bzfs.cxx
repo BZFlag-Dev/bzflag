@@ -3668,6 +3668,13 @@ static void addClient(int acceptSocket)
     if (player[playerIndex].state == PlayerAccept)
       break;
   }
+  // strange - didn't find a suitable player
+  if (playerIndex == curMaxPlayers) {
+    DEBUG2("addClient: no candidate player slot found\n");
+    int fd = accept(acceptSocket, 0, 0); // get socket and close it right away
+    close(fd);
+    return;
+  }
   // close the old connection FIXME hope it's the right one
   DEBUG2("Player [%d] addClient: close(%d)\n", playerIndex, player[playerIndex].fd);
   close(player[playerIndex].fd);
