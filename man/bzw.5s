@@ -1243,7 +1243,7 @@ tetra :=
 .B (CustomTextureMatrix.cxx/CustomTextureMatrix::read)
 .br
 .TP
-matrix :=
+textureMatrix :=
 .br
 	  "fixedshift" 2dpoint
 .br
