@@ -459,7 +459,45 @@ static void				doMotion()
 
 	float rotation, speed;
 
-	if (myTank->isKeyboardMoving()) {
+	if (myTank->isAutoPilot()) {
+		//FIXME bot motion
+		PlayerId target;
+		// FIXME should pick nearest "enemy"
+		for (target = 0; target < maxPlayers; target++)
+			if ((target != myTank->getId()) && player[target] &&
+					((myTank->getTeam() == RogueTeam) ||
+					(player[target]->getTeam() != myTank->getTeam()))) {
+				break;
+			}
+		if (target == maxPlayers) {
+			// no target. just sit here for now
+			// FIXME should go flag hunting ;-)
+			rotation = speed = 0.0f;
+		}
+		else {
+			// blindly head towards the player
+			const float *mp = myTank->getPosition();
+			const float *tp = player[target]->getPosition();
+			float azimuth = atan2f(tp[1] - mp[1], tp[0] - mp[0]);
+			if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
+			rotation = atan2f(tp[1] - mp[1], tp[0] - mp[0]) - myTank->getAngle();
+			if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
+			if (rotation > 1.0f)
+				rotation = 1.0f;
+			else if (rotation < -1.0f)
+				rotation = -1.0f;
+			speed = 1.0f - fabs(rotation);
+#ifdef DEBUG_ROBOT
+			float distance = hypotf(tp[0] - mp[0], tp[1] - mp[1]);
+			// FIXME speed should drop as distance goes from say 40 to 0?
+			printf("p%d an%f az%f dis%f r%f s%f mp %3.1f:%3.1f tp %3.1f:%3.1f\n",
+					target, myTank->getAngle(), azimuth, distance,
+					rotation, speed,
+					mp[0],mp[1],tp[0],tp[1]);
+#endif
+		}
+	}
+	else if (myTank->isKeyboardMoving()) {
 		rotation = myTank->getKeyboardAngVel();
 		speed = myTank->getKeyboardSpeed();
 
