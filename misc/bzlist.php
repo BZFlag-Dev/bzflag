@@ -65,13 +65,25 @@ function query ($hostport) {
     fclose($fp);
     return;
   }
+  # MsgQueryGame
   $request = pack("n2", 0, 0x7167);
   //var_dump($request);
   fwrite($fp, $request);
   $buffer=fread($fp, 40);
   //var_dump($buffer);
   $array += unpack("nlen/ncode/nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime", $buffer);
-  var_dump($array);
+
+  # MsgQueryPlayers
+  $request = pack("n2", 0, 0x7170);
+  //var_dump($request);
+  fwrite($fp, $request);
+  $buffer=fread($fp, 8);
+  var_dump(unpack("c8", $buffer));
+  $array += unpack("nlen/ncode/nnumTeams/nnumPlayers", $buffer);
+
+  $buffer=fread($fp, 5);
+  var_dump(unpack("c5", $buffer));
+  fclose($fp);
 
   echo "style:";
   if ($array['style'] & 0x0001) echo " CTF";
@@ -102,7 +114,7 @@ function query ($hostport) {
   echo "max team score: " . $array['maxTeamScore'] . "\n";
   echo "max time: " . $maxTime / 10 . "\n";
 
-  fclose($fp);
+  var_dump($array);
   return;
 }
 
