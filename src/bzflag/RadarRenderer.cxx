@@ -403,14 +403,14 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
     bool coloredShot = BZDB.isTrue("coloredradarshots");
     // draw other tanks' shells
+    bool iSeeAll = myTank && (myTank->getFlag() == Flags::Seer);
     maxShots = World::getWorld()->getMaxShots();
     for (i = 0; i < curMaxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {
 	const ShotPath* shot = player->getShot(j);
-	if ((shot && shot->getFlag() != Flags::InvisibleBullet ||
- 			(myTank && (myTank->getFlag() == Flags::Seer)))) {
+	if (shot && (shot->getFlag() != Flags::InvisibleBullet || iSeeAll)) {
 	  const float *shotcolor;
 	  if (coloredShot) {
 	    if (myTank->getFlag() == Flags::Colorblindness)
