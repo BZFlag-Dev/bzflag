@@ -128,6 +128,14 @@ bool CursesUI::checkCommand(std::string& str) {
     updateCmdWin();
     return false;
 
+    // redraw command (12 is ctrl-l)
+  case 12:
+    wclear(cmdWin);
+    wclear(targetWin);
+    updateCmdWin();
+    updateTargetWin();
+    return false;
+
     // send command
   case '\n': // works with PDCurses
   case 13:   // works with ncurses
@@ -248,7 +256,7 @@ void CursesUI::handleResize(int lines, int cols) {
 
 
 void CursesUI::updateTargetWin() {
-  wclear(targetWin);
+  werase(targetWin);
   wmove(targetWin, 0, 0);
   wmove(targetWin, 1, 1);
   std::string tmp = "Send to ";
@@ -260,7 +268,7 @@ void CursesUI::updateTargetWin() {
 
 
 void CursesUI::updateCmdWin() {
-  wclear(cmdWin);
+  werase(cmdWin);
   wmove(cmdWin, 1, 1);
   waddstr(cmdWin, cmd.c_str());
   wmove(cmdWin, 1, 1 + cmd.size());
