@@ -42,7 +42,7 @@ Source2-MD5: aa52a5f19cb52f073ce3301303fb9c6f
 
 # Dependancies
 Depends: libpng3-shlibs
-BuildDepends: autoconf | autoconf2.5, automake1.4 | automake1.5 | automake1.6 | automake1.7 | automake1.8, ncurses-dev, libpng3
+BuildDepends: autoconf2.5 | autoconf, automake1.8 | automake1.7 | automake1.6 | automake1.5 | automake1.4, ncurses-dev, libpng3
 
 # Build
 GCC: 3.3
