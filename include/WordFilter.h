@@ -13,6 +13,12 @@
 #ifndef __WORDFILTER_H__
 #define __WORDFILTER_H__
 
+#ifdef _WIN32
+#  define HAVE_REGEX_H 0
+#else
+#  define HAVE_REGEX_H 1
+#endif
+
 #include <string>
 #include <vector>
 #include <set>
@@ -21,10 +27,29 @@
 #include <iostream>
 
 #include <sys/types.h>
-#include <regex.h>
 #include <stdint.h>
 
+#if HAVE_REGEX_H
+#  include <regex.h>
+#else
+#  define regex_t void
+#endif
+
 #include "common.h"
+
+
+/** utility method returns truthfully whether 
+ * given character is an alphanumeric
+ */
+bool isAlphanumeric(const char c)
+{
+  if (  ( c > 96 && c < 123 ) || 
+	( c > 64  && c < 91 ) || 
+	( c > 47 && c < 58 )) {
+    return true;
+  }
+  return false;
+}
 
 
 /** WordFilter will load a list of words and phrases from a file or one at
@@ -125,7 +150,8 @@ class WordFilter
 
   /** used by the agressive filter */
   std::set<filter_t, expressionCompare> prefixes;
-  
+
+
   /** utility method that returns the position of the 
    * first printable character from a string
    */
@@ -194,20 +220,19 @@ class WordFilter
       } while (randomCharPos == previousCharPos);
       previousCharPos = randomCharPos;
       
-      /* when filterspaces is truce, we filter everything.
+      /* when filterspaces is true, we filter everything.
        * otherise the ascii character code ranges for a-z, A-Z, and 0-9 
        * are filtered.
        */
       if (filterSpaces) {
 	input[start + j] = filterChars[randomCharPos];
 	count++;
-      } else  if (  ( c > 96 && c < 123 ) || 
-		    ( c > 64  && c < 91 ) || 
-		    ( c > 47 && c < 58 )) {
+      } else if (isAlphanumeric(c)) {
 	input[start + j] = filterChars[randomCharPos];
 	count++;
+      } else {
+	std::cerr << "Impossible sanity check reached in " << __FILE__ << ":" << __LINE__ << std::endl;
       }
-      
     }
     return count;
   }

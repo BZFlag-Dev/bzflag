@@ -56,6 +56,7 @@ bool WordFilter::simpleFilter(char *input) const
 
 bool WordFilter::aggressiveFilter(char *input) const
 {
+#if HAVE_REGEX_H
   bool filtered = false;
   static regmatch_t match[1];
   char errorBuffer[512];
@@ -196,12 +197,19 @@ bool WordFilter::aggressiveFilter(char *input) const
   
   
   return filtered;
+
+#else /* HAVE_REGEX_H */
+  std::cerr << "Regular expressions are not available" << std::endl;
+  return simpleFilter(input);
+
+#endif /* HAVE_REGEX_H */
 } // end aggressiveFilter
 
 
 // provides a pointer to a fresh compiled expression for some given expression
 regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 {
+#if HAVE_REGEX_H
   regex_t *compiledReg;
   
   /* XXX need to convert this to use new/delete */
@@ -218,6 +226,11 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
     return (regex_t *)NULL;
   }
   return compiledReg;
+
+#else /* HAVE_REGEX_H */
+  return (regex_t *)NULL;
+
+#endif /* HAVE_REGEX_H */
 }
 
 
@@ -240,7 +253,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
      * make them required to create a match.  BUT.. they need to be escaped
      * so that the regexp compiles properly.
      */
-    if (( c[0] < 48 ) || ((c[0] > 57) && (c[0] < 65)) || ((c[0] > 90) && (c[0] < 97)) || (c[0] > 122)) {
+    if (!isAlphanumeric(c[0])) {
       /* escape the non-alphanumeric */
       c[1] = c[0];
       c[0] = '\\';
@@ -292,7 +305,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
       if (i != length - 1) {
 	expression.append("[fp]+[^[:alpha:]]*h?[^[:alpha:]]*");
       } else {
-	expression.append("[fp]+h?[[:punct:]]*");
+	expression.append("[fp]+h?");
       }
     } else {
       if ( c[1] != 0 ) {
@@ -311,7 +324,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
       if (i != length - 1) {
 	expression.append("+[^[:alpha:]]*");
       } else {
-	expression.append("+[[:punct:]]*");
+	expression.append("+");
       }
       
     } // end test for multi-letter expansions
@@ -532,10 +545,25 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
 
   } else if (append) {
     /* add words with all suffixes appended */
+#if 1
+    std::string fullPrefix = "(";
+    for (std::set<filter_t, expressionCompare>::iterator i = suffixes.begin();
+	 i != suffixes.end();) {
+      fullPrefix.append(i->word);
+      if (++i != suffixes.end()) {
+	fullPrefix.append("|");
+      }
+    }
+    fullPrefix.append(")*");
+    //    std::cout << "prefixes: " << fullPrefix << std::endl;
+    return addToFilter(word, expression, false);
+    return addToFilter(word, expression +  fullPrefix, false);
+#else
     for (std::set<filter_t, expressionCompare>::iterator i = suffixes.begin();
 	 i != suffixes.end(); ++i) {
       addToFilter(word + i->word, expression + i->expression, false);
     }
+#endif
     
     /* add words with all prefixes prepended */
     for (std::set<filter_t, expressionCompare>::iterator i = prefixes.begin();
@@ -753,18 +781,18 @@ int main (int argc, char *argv[])
   filter.filter(message, true);
   std::cout << "POST SIMPLE " << message << std::endl;
 
-  filter.addToFilter("fuking");
+  filter.addToFilter("fuking", true);
 
   std::cout << "Loading file" << std::endl;
-  filter.loadFromFile(argv[1], true);
+  //  filter.loadFromFile(argv[1], true);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
   filter.addToFilter("test", true);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
 
   //  filter.outputWords();
-  //  filter.outputFilter();
+  filter.outputFilter();
 
-  char message2[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
+  char message2[1024] = "f  u  c  k  !  fuuukking 'test' ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   char message3[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   char message4[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   char message5[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
@@ -773,6 +801,8 @@ int main (int argc, char *argv[])
 
   filter.filter(message2);
   std::cout << "POST AGGRESSIVE " << message2 << std::endl;
+
+  exit(0);
 
   filter.filter(message3);
   std::cout << "POST AGGRESSIVE " << message3 << std::endl;
