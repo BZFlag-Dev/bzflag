@@ -3,6 +3,14 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (1.10.2) unstable; urgency=medium
+
+  * Release Manager: see below, network api changed, stable/testing/unstable
+  * 1.10.x bug fixes including server hangs
+  * Network fix for game list server access
+
+ -- Tim Riker <Tim@Rikers.org>  Tue, 23 Dec 2003 14:48:09 -0600
+
 bzflag (1.10.0) unstable; urgency=medium
 
   * Release Manager: see below, network api changed, stable/testing/unstable
