@@ -4957,14 +4957,14 @@ static void parseCommand(const char *message, int t)
     bool cast = false;
     if (vote == 0) {
       if ((cast = arbiter->voteNo(player[t].callSign)) == true) {
-	/* player voted yes */
-	sprintf(reply,"%s, your vote in favor of the poll has been recorded", player[t].callSign);
+	/* player voted no */
+	sprintf(reply,"%s, your vote in opposition of the poll has been recorded", player[t].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
       }	
     } else if (vote == 1) {
       if ((cast = arbiter->voteYes(player[t].callSign)) == true) {
-	/* player voted no */
-	sprintf(reply,"%s, your vote in opposition of the poll has been recorded", player[t].callSign);
+	/* player voted yes */
+	sprintf(reply,"%s, your vote in favor of the poll has been recorded", player[t].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
       }
     } else {
