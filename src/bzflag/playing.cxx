@@ -4240,7 +4240,7 @@ static void		checkEnvironment()
 	if (pos[2] < 0.0f) continue;
 	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
 	  const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius)
+	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f) < radius)
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 	}
       }
