@@ -1,6 +1,14 @@
 recent bugs
 ------------
 
+- VC6 builds only if you have an updated platform SDK. It would but there is
+  one developer who insisits that he is special and keeps changing the code
+  to a method that only works for him, and not for the other people who use 
+  the software.
+
+- VC 7.1 builds do not work, link errors in texture manager. Guess this means
+  we can desuport windows.
+
 - if a modified client sends an invalid id back to the server, the invalid id
   gets propagated to all clients, crashing everyone during unpack() with a
   variety of nasty results.  simple to reproduce, modify the
