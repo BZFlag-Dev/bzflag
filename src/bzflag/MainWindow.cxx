@@ -48,14 +48,12 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 				faulting(false)
 {
   window->addResizeCallback(resizeCB, this);
-  window->addResizeCallback(initContextCB, this);
   resize();
 }
 
 MainWindow::~MainWindow()
 {
   window->removeResizeCallback(resizeCB, this);
-  window->removeResizeCallback(initContextCB, this);
 }
 
 void			MainWindow::setZoomFactor(int _zoomFactor)
@@ -240,6 +238,7 @@ void			MainWindow::resize()
   if (!window->create())
     faulting = true;
   setQuadrant(quadrant);
+  OpenGLGState::initContext();
 }
 
 void			MainWindow::resizeCB(void* _self)
