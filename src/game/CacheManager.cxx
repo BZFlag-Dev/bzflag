@@ -282,7 +282,11 @@ static void removeDirs(const std::string& path)
   unsigned int minLen = getConfigDirName().size();
   std::string tmp = path;
   while (tmp.size() > minLen) {
+#ifndef _WIN32
     unsigned int i = tmp.find_last_of('/');
+#else    
+    unsigned int i = tmp.find_last_of('\\');
+#endif
     tmp = tmp.substr(0, i);
     if (remove(tmp.c_str()) != 0) {
       break;
