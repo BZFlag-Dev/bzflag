@@ -260,6 +260,8 @@ Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const
 {
   std::cout << "ERROR: Obstacle::copyWithTransform()" << std::endl;
   exit(1);
+  // umm, yeah...make the compiler happy...
+  return NULL;
 }
 
 
