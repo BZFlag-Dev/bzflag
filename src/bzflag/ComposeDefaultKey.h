@@ -13,6 +13,8 @@
 #ifndef __COMPOSEDEFAULTKEY_H__
 #define __COMPOSEDEFAULTKEY_H__
 
+#include "common.h"
+
 /* system interface headers */
 #include <deque>
 #include <string>
