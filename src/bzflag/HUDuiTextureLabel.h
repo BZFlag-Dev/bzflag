@@ -28,14 +28,19 @@ class HUDuiTextureLabel : public HUDuiLabel {
 			~HUDuiTextureLabel();
 
     void		setTexture(const int);
+    int			getTexture();
 
   protected:
     void		doRender();
 
   private:
     OpenGLGState	gstate;
-    int  	texture;
+    int  		texture;
 };
+
+inline int HUDuiTextureLabel::getTexture() {
+  return texture;
+}
 
 #endif // __HUDUITEXTURELABEL_H__
 

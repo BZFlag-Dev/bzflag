@@ -54,7 +54,7 @@ void	  MainMenu::createControls()
   list.erase(list.begin(), list.end());
 
   // load title
-  int title = tm.getTextureID( "title" );
+  int title = tm.getTextureID("title");
 
   // add controls
   textureLabel = new HUDuiTextureLabel;
@@ -153,7 +153,7 @@ void			MainMenu::resize(int width, int height)
   HUDDialog::resize(width, height);
 
   // use a big font
-  const float titleFontSize = (float)height / 15.0f;
+  const float titleFontSize = (float)height / 8.0f;
   const float tinyFontSize = (float)height / 54.0f;
   const float fontSize = (float)height / 22.0f;
   FontManager &fm = FontManager::instance();
@@ -163,27 +163,32 @@ void			MainMenu::resize(int width, int height)
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
+  // scale appropriately to center properly
+  TextureManager &tm = TextureManager::instance();
+  float texHeight = (float)tm.getInfo(((HUDuiTextureLabel*)title)->getTexture()).y;
+  float texWidth = (float)tm.getInfo(((HUDuiTextureLabel*)title)->getTexture()).x;
+  float titleWidth = (texWidth / texHeight) * titleFontSize;
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - fm.getStrHeight(fontFace, titleFontSize, title->getString());
+  float y = (float)height - titleFontSize * 1.25f;
   title->setPosition(x, y);
 
   // reposition instructions
   HUDuiLabel* hint = (HUDuiLabel*)list[1];
   hint->setFontSize(tinyFontSize);
   const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
-  y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, title->getString());
+  y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
   hint->setPosition(0.5f * ((float)width - hintWidth), y);
-  y -= 1.5f * fm.getStrHeight(fontFace, fontSize, title->getString());
+  y -= 1.5f * fm.getStrHeight(fontFace, fontSize, hint->getString());
 
-  // reposition menu items
-  x += 0.5f * fontSize;
+  // reposition menu items (first is centered, rest aligned to the first)
+  const float firstWidth = fm.getStrLength(fontFace, fontSize, ((HUDuiLabel*)list[2])->getString());
+  x = 0.5f * ((float)width - firstWidth);
   const int count = list.size();
   for (int i = 2; i < count; i++) {
     HUDuiLabel* label = (HUDuiLabel*)list[i];
     label->setFontSize(fontSize);
     label->setPosition(x, y);
-    y -= 1.2f * fm.getStrHeight(fontFace, fontSize, title->getString());
+    y -= 1.2f * fm.getStrHeight(fontFace, fontSize, label->getString());
   }
 }
 
