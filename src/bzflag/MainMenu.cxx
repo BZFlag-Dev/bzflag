@@ -26,6 +26,7 @@
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
 #include "JoinMenu.h"
+#include "LoginMenu.h"
 #include "OptionsMenu.h"
 #include "QuitMenu.h"
 #include "HUDuiControl.h"
@@ -35,7 +36,7 @@
 /* from playing.cxx */
 void leaveGame();
 
-MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
+MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), loginMenu(NULL),
 		       optionsMenu(NULL), quitMenu(NULL)
 {
   // add controls
@@ -67,6 +68,9 @@ void	  MainMenu::createControls()
 
   join = createLabel("Join Game");
   list.push_back(join);
+
+  login = createLabel("Login");
+  list.push_back(login);
 
   options = createLabel("Options");
   list.push_back(options);
@@ -103,6 +107,7 @@ HUDuiControl* MainMenu::createLabel(const char* string)
 MainMenu::~MainMenu()
 {
   delete joinMenu;
+  delete loginMenu;
   delete optionsMenu;
   delete quitMenu;
   HelpMenu::done();
@@ -125,6 +130,9 @@ void			MainMenu::execute()
   if (focus == join) {
     if (!joinMenu) joinMenu = new JoinMenu;
     HUDDialogStack::get()->push(joinMenu);
+  } else if (focus == login) {
+    if (!loginMenu) loginMenu = new LoginMenu;
+    HUDDialogStack::get()->push(loginMenu);
   } else if (focus == options) {
     if (!optionsMenu) optionsMenu = new OptionsMenu;
     HUDDialogStack::get()->push(optionsMenu);
@@ -147,7 +155,7 @@ void			MainMenu::resize(int width, int height)
   // use a big font
   const float titleFontSize = (float)height / 15.0f;
   const float tinyFontSize = (float)height / 54.0f;
-  const float fontSize = (float)height / 18.0f;
+  const float fontSize = (float)height / 22.0f;
   FontManager &fm = FontManager::instance();
   int fontFace = getFontFace();
 

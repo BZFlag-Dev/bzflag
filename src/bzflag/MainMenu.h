@@ -20,6 +20,7 @@
 #include "HUDuiDefaultKey.h"
 
 class JoinMenu;
+class LoginMenu;
 class OptionsMenu;
 class QuitMenu;
 
@@ -42,12 +43,14 @@ private:
   HUDuiControl* createLabel(const char* string);
 
   HUDuiControl*	join;
+  HUDuiControl*	login;
   HUDuiControl*	options;
   HUDuiControl*	help;
   HUDuiControl*	leave;
   HUDuiControl*	quit;
 
   JoinMenu*	joinMenu;
+  LoginMenu*	loginMenu;
   OptionsMenu*	optionsMenu;
   QuitMenu*	quitMenu;
 };

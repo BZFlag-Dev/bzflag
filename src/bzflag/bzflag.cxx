@@ -69,7 +69,6 @@
 #include "FontManager.h"
 #include "OSFile.h"
 #include "TextureManager.h"
-#include "ClientAuthentication.h"
 // invoke incessant rebuilding for build versioning
 #include "version.h"
 
@@ -1454,12 +1453,6 @@ int			main(int argc, char** argv)
 
   if (BZDB.isSet("serverCacheAge")) {
     (ServerListCache::get())->setMaxCacheAge(atoi(BZDB.get("serverCacheAge").c_str()));
-  }
-
-  // Initializing Authentication
-  if (BZDB.isSet("username") && BZDB.isSet("password")) {
-    ClientAuthentication::init(BZDB.get("username").c_str(),
-                               BZDB.get("password").c_str());
   }
 
   // start playing

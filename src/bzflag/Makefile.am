@@ -65,6 +65,8 @@ bzflag_SOURCES =			\
 	ListServer.h			\
 	LocalPlayer.cxx			\
 	LocalPlayer.h			\
+	LoginMenu.cxx			\
+	LoginMenu.h			\
 	MainMenu.cxx			\
 	MainMenu.h			\
 	MainWindow.cxx			\
