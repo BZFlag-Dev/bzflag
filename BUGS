@@ -33,6 +33,12 @@ recent bugs
 - rendering options like textures and shadows do not immediately take
   effect; need to call notifystylechange()?
 
+- team tag was added to shots to calculate team kills correctly when players 
+  change teams (rabbit mode); this does nto really seem to be used or thought through
+  so far (apart from printing a different message when one gets shot); without
+  having digged any depper it looks like we would add team id inforamtion to 
+  MsgKilled, too.
+
 older bugs in BZFlag
 --------------------
 
