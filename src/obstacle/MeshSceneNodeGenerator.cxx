@@ -42,6 +42,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
 {
   int i;
   const MeshFace* face;
+  const MeshMaterial* mat;
 
   // remove any faces on the ground that will not be displayed
   // also, return NULL if we are at the end of the face list
@@ -50,6 +51,14 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
       return NULL;
     }
     face = mesh->getFace(faceNumber);
+    mat = face->getMaterial();
+    const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->dynamicColor);
+    if ((mat->diffuse[3] == 0.0f) && (dyncol == NULL) &&
+        !(mat->useTexture && !mat->useColorOnTexture)) {
+      // face is invisible
+      faceNumber++;
+      continue;
+    }
     const float* plane = face->getPlane();
     if (plane[2] < -0.9f) {
       // plane is facing downwards
@@ -111,7 +120,6 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
   MeshPolySceneNode* node =
     new MeshPolySceneNode(face->getPlane(), vertices, normals, texcoords);
 
-  const MeshMaterial* mat = face->getMaterial();
   setupNodeMaterial(node, mat);
 
   faceNumber++;
