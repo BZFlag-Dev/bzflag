@@ -20,6 +20,7 @@ bzfs_SOURCES = \
 	WorldInfo.h \
 	WorldWeapons.cxx \
 	WorldWeapons.h \
-	bzfs.cxx
+	bzfs.cxx \
+	bzfs.h
 
 LDADD = ../net/libNet.a ../common/libCommon.a
