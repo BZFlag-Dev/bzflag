@@ -1562,6 +1562,13 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
 }
 
+static void doKey(const BzfKeyEvent& key, bool pressed) {
+  if (!myTank)
+    doKeyNotPlaying(key, pressed);
+  else
+    doKeyPlaying(key, pressed);
+}
+
 static float getKeyValue(bool pressed)
 {
   if (pressed)
@@ -2643,18 +2650,11 @@ static void		doEvent(BzfDisplay* display)
     break;
 
   case BzfEvent::KeyUp:
-    if (!myTank)
-      doKeyNotPlaying(event.keyDown, false);
-    else
-      doKeyPlaying(event.keyDown, false);
+    doKey(event.keyDown, false);
     break;
 
   case BzfEvent::KeyDown:
-    if (!myTank) {
-      doKeyNotPlaying(event.keyUp, true);
-    } else {
-      doKeyPlaying(event.keyUp, true);
-    }
+    doKey(event.keyUp, true);
     break;
 
   case BzfEvent::MouseMove:
@@ -5811,7 +5811,7 @@ static void		playingLoop()
 	    ev.button = button_map[j];
 	    ev.ascii = 0;
 	    ev.shift = 0;
-	    doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
+	    doKey(ev, (new_buttons&(1<<j)) != 0);
 	  }
 	}
       old_buttons = new_buttons;
