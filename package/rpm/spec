@@ -52,7 +52,7 @@ CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"	\
 make
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT install
+make DESTDIR=$RPM_BUILD_ROOT install-strip
 
 %clean
 [ ${RPM_BUILD_ROOT} != "/" ] && rm -rf ${RPM_BUILD_ROOT}
