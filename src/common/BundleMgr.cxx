@@ -10,14 +10,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+// interface header
+#include "BundleMgr.h"
 
+// system headers
 #if (!defined(_WIN32) && !defined(WIN32))
 #include <sys/types.h>
 #include <dirent.h>
 #endif
 
-#include "BundleMgr.h"
+// local implementation headers
+#include "common.h"
 #include "Bundle.h"
 
 Bundle		*BundleMgr::currentBundle	= NULL;

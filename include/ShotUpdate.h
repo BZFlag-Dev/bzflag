@@ -23,7 +23,10 @@
 #ifndef	BZF_SHOT_UPDATE_H
 #define	BZF_SHOT_UPDATE_H
 
+// system headers
 #include <math.h>
+
+// local implementation headers
 #include "common.h"
 #include "Address.h"
 #include "Flag.h"

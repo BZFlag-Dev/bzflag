@@ -19,6 +19,8 @@
 
 #include <algorithm>
 #include <common.h>
+#include <string>
+#include <vector>
 
 /** The string utility class provides basic functionality to parse and
  * format strings

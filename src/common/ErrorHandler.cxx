@@ -10,9 +10,15 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+
+// interface header
 #include "ErrorHandler.h"
+
+// system headers
 #include <stdio.h>
 #include <stdarg.h>
+
+// local implementation headers
 #include "bzfio.h"
 #include "common.h"
 #include "BundleMgr.h"

@@ -14,9 +14,17 @@
 #pragma warning(4:4503)
 #endif
 
+// interface header
 #include "KeyManager.h"
+
+// system headers
 #include <assert.h>
 #include <ctype.h>
+#include <string.h> // strstr, etc
+#include <string>   // std::string
+
+// local implementation headers
+#include "BzfEvent.h"
 
 // initialize the singleton
 template <>

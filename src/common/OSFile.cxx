@@ -10,16 +10,24 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 #ifdef _MSC_VER
   #pragma warning( disable : 4786 )  // Disable warning message
-#else
+#endif
+
+// inteface header
+#include "OSFile.h"
+
+// system headers
+#include <vector>
+#include <string> //std::string
+#include <string.h> //c-style string
+#include <stdio.h>
+#ifndef _MSC_VER
   #include <stddef.h>
 #endif
 
-#include <vector>
-#include "OSFile.h"
+// local implementation headers
+#include "common.h"
 
 void getUpperName ( char *szData )
 {

@@ -14,10 +14,15 @@
 #pragma warning(4:4786)
 #endif
 
+// interface header
+#include "Bundle.h"
+
+// system headers
 #include <string>
 #include <fstream>
 #include <stdio.h>
-#include "Bundle.h"
+
+// local implementation headers
 #include "StateDatabase.h"
 
 Bundle::Bundle(const Bundle *pBundle)

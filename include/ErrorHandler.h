@@ -17,6 +17,11 @@
 #ifndef BZF_ERROR_HANDLER_H
 #define	BZF_ERROR_HANDLER_H
 
+// system headers
+#include <vector>
+#include <string>
+
+// local implementation headers
 #include "common.h"
 #include "Bundle.h"
 

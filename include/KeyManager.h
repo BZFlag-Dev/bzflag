@@ -18,9 +18,13 @@
 #define BZF_KEYMANAGER_H
 
 #include "common.h"
+
+// system headers
 #include <string>
 #include <map>
 #include <vector>
+
+// local implementation headers
 #include "BzfEvent.h"
 #include "CallbackList.h"
 #include "Singleton.h"

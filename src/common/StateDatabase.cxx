@@ -14,19 +14,26 @@
 #pragma warning(4:4503)
 #endif
 
-
+// interface header
 #include "StateDatabase.h"
-#include "ErrorHandler.h"
+
+// system headers
 #include <assert.h>
 #include <ctype.h>
 #include <stack>
 #include <set>
 #include <iostream>
 #include <math.h>
+#include <string>
+
+// local implementation headers
+#include "ErrorHandler.h"
 #include "TextUtils.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
-#include <TimeKeeper.h> // only for _debugLookups()
+// headers needed only for _debugLookups()
+#include <map>
+#include "TimeKeeper.h" 
 
 void	_debugLookups(const std::string &name)
 {

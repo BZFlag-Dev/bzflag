@@ -10,9 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-#include "math.h"
+// interface header
 #include "PlayerState.h"
+
+// system headers
+#include <math.h>
+
+// local implementation headers
+#include "common.h"
 #include "Pack.h"
 #include "Protocol.h"
 #include "StateDatabase.h"

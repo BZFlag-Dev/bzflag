@@ -14,8 +14,12 @@
 #pragma warning( 4:4786)
 #endif
 
+// interface header
 #include "VotingBooth.h"
 
+// system headers
+#include <string>
+#include <vector>
 
 const short int VotingBooth::RETRACTED_VOTE=-2;
 

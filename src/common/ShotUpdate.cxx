@@ -11,9 +11,12 @@
  */
 
 
-
-#include "common.h"
+// interface header
 #include "ShotUpdate.h"
+
+// implementation headers
+#include "common.h"
+#include "Pack.h"
 
 //
 // ShotUpdate

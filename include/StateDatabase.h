@@ -13,9 +13,16 @@
 #ifndef BZF_STATE_DATABASE_H
 #define BZF_STATE_DATABASE_H
 
+// common header first
 #include "common.h"
+
+// system headers
 #include <string>
 #include <vector>
+#include <map>
+#include <iostream>
+
+// implementation headers
 #include "CallbackList.h"
 #include "bzfio.h"
 #include "Singleton.h"

@@ -10,18 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// interface header
 #include "FileManager.h"
-#include "string"
-#include "StateDatabase.h"
+
+// system headers
+#include <string>
 #include <ctype.h>
 #include <fstream>
-
 #include <sys/stat.h>
 #ifndef _WIN32
 #include <sys/types.h>
 #else
 #include <direct.h>
 #endif
+
+// local implementation headers
+#include "StateDatabase.h"
 
 //
 // FileManager

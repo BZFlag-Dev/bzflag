@@ -21,11 +21,15 @@
 #ifndef	BZF_INET_ADDR_H
 #define	BZF_INET_ADDR_H
 
+// system headers
 #include <sys/types.h>
+#include <vector>
+#include <string>
+
+// local headers
 #include "common.h"
 #include "network.h"
 #include "Pack.h"
-#include <vector>
 
 typedef struct in_addr	InAddr;			// shorthand
 
