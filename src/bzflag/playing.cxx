@@ -71,6 +71,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "sound.h"
 #include "TimeBomb.h"
 #include "HUDDialog.h"
+#include "HUDDialogStack.h"
 #include "menus.h"
 #include "texture.h"
 #include "ErrorHandler.h"

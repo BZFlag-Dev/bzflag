@@ -10,23 +10,27 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * HUDDialog:
- *	A dialog of HUDuiControls.
- */
+#ifndef	__HUDDIALOG_H__
+#define	__HUDDIALOG_H__
 
-#ifndef	BZF_HUDDIALOG_H
-#define	BZF_HUDDIALOG_H
-
+/* common */
 #include "common.h"
-#include "HUDui.h"
 
 #if defined(_MSC_VER)
 	#pragma warning(disable: 4786)
 #endif
 
+/* system headers */
 #include <vector>
 
+/* local interface headers */
+#include "HUDui.h"
+
+
+/**
+ * HUDDialog:
+ *	A dialog of HUDuiControls.
+ */
 class HUDDialog {
   public:
 			HUDDialog();
@@ -62,29 +66,8 @@ class HUDDialog {
     HUDuiControl*		focus;
 };
 
-class HUDDialogStack {
-  public:
-    static HUDDialogStack*	get();
 
-    bool		isActive() const;
-    HUDDialog*		top() const;
-    void		push(HUDDialog*);
-    void		pop();
-
-    void		render();
-
-			HUDDialogStack();
-			~HUDDialogStack();
-
-  private:
-    static void		resize(void*);
-
-  private:
-    std::vector<HUDDialog*>	stack;
-    static HUDDialogStack globalStack;
-};
-
-#endif /* BZF_HUDDIALOG_H */
+#endif /* __HUDDIALOG_H__ */
 
 // Local Variables: ***
 // mode:C++ ***

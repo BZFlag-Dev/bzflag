@@ -85,6 +85,7 @@
 #include "TextureManager.h"
 #include "ActionBinding.h"
 #include "TextUtils.h"
+#include "HUDDialogStack.h"
 
 // cause persistent rebuilding for build versioning
 #include "version.h"
