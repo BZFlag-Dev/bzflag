@@ -158,8 +158,8 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 
 #ifdef ROBOT
 static void		handleMyTankKilled();
-static ServerLink*	robotServer[20];
-static RobotPlayer*	robots[20];
+static ServerLink*	robotServer[MAX_ROBOTS];
+static RobotPlayer*	robots[MAX_ROBOTS];
 static int		numRobots = 0;
 #endif
 
@@ -3295,9 +3295,9 @@ static void		addRobots(boolean useMulticastRelay)
   for (int j = 0; j < numRobots;) {
 
 #if !defined(_WIN32)
-	snprintf(callsign, CallSignLen, "%s%d", myTank->getCallSign(), j);
+	snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
 #else
-	sprintf(callsign, "%s%d", myTank->getCallSign(), j);
+	sprintf(callsign, "%s%2.2d", myTank->getCallSign(), j);
 #endif
 
     robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());

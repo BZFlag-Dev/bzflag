@@ -1,7 +1,8 @@
 
 			     BZFlag release notes
-* Fix 'Change Key Mapping' arrowkeys - Andrew Greig 
 * add new updates here without heading until a release
+* increase max player and robot counts - Tim Riker
+* Fix 'Change Key Mapping' arrowkeys - Andrew Greig 
 * show the time in upper right if no flag
 * opacity in config - Dave Brosius, Tim Riker
 * [UN]SILENCE - Dave Brosius, Tim Riker

@@ -396,7 +396,7 @@ static void		parse(int argc, char** argv,
 	usage();
       }
       numRobotTanks = atoi(argv[i]);
-      if (numRobotTanks < 1 || numRobotTanks > 20) {
+      if (numRobotTanks < 1 || numRobotTanks > MAX_ROBOTS) {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }

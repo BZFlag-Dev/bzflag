@@ -43,6 +43,11 @@ enum TeamColor {
 			PurpleTeam = 4
 };
 
+#ifdef ROBOT
+// robots
+#define MAX_ROBOTS 100
+#endif
+
 // epsilon and very far for ray intersections
 const float		Epsilon =	1.0e-5f;	// arbitrary
 const float		Infinity =	MAXFLOAT;	// arbitrary

@@ -24,7 +24,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 
 #define SERVERLOGINMSG true
 
-const int MaxPlayers = 40;
+const int MaxPlayers = 200;
 const int MaxShots = 10;
 const int udpBufSize = 128000;
 #if defined(__sgi)
