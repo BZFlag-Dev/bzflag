@@ -363,10 +363,12 @@ class ListServerLink {
     const char *nextMessage;
 };
 
+// class to easily send a bunch of BZDB variables via MsgSetVar
+// dtor does the actual send
 class PackVars
 {
 public:
-  PackVars( void *buffer, int playerIndex )
+  PackVars(void *buffer, int playerIndex)
   {
      bufStart = (char *)buffer;
      buf = nboPackUShort(bufStart, 0);//placeholder
@@ -378,14 +380,15 @@ public:
   ~PackVars()
   {
     if (len > sizeof(uint16_t)) {
-      nboPackUShort(bufStart,count);
+      nboPackUShort(bufStart, count);
       directMessage(playerId, MsgSetVar, len, bufStart);
     }
   }
 
+  // callback forwarder
   static void packIt(const std::string &key, void *pv)
   {
-     ((PackVars *) pv)->sendPackVars(key);
+     reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
   }
 
   void sendPackVars(const std::string &key)
@@ -393,7 +396,7 @@ public:
     std::string value = BZDB->get(key);
     int pairLen = key.length() + 1 + value.length() + 1;
     if ((pairLen + len) > (MaxPacketLen - 2*sizeof(short))) {
-      nboPackUShort(bufStart,count);
+      nboPackUShort(bufStart, count);
       count = 0;
       directMessage(playerId, MsgSetVar, len, bufStart);
       buf = nboPackUShort(bufStart,0); //placeholder
@@ -411,9 +414,8 @@ public:
 private:
   void *buf, *bufStart;
   int playerId;
-  int len;
+  unsigned int len;
   int count;
-
 };
 
 
@@ -2962,7 +2964,7 @@ static void addPlayer(int playerIndex)
   //send SetVars
   { // scoping is mandatory
      PackVars pv(bufStart, playerIndex);
-     BZDB->iterate( PackVars::packIt, &pv);
+     BZDB->iterate(PackVars::packIt, &pv);
   }
 
 
