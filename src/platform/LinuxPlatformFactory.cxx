@@ -22,6 +22,7 @@
 #else
   #include "EvdevJoystick.h"
 #endif
+#include "StateDatabase.h"
 
 PlatformFactory*	PlatformFactory::getInstance()
 {
@@ -72,7 +73,8 @@ BzfJoystick*		LinuxPlatformFactory::createJoystick()
   return new XIJoystick;
 #elif defined(HAVE_LINUX_INPUT_H)
   // Event device joystick
-  return new EvdevJoystick;
+  if (!BZDB.isSet("enable_evdev") || BZDB.isTrue("enable_evdev"))
+    return new EvdevJoystick;
 #else
   return new BzfJoystick;
 #endif

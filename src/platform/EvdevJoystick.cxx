@@ -32,7 +32,6 @@
 
 /* implementation headers */
 #include "ErrorHandler.h"
-#include "StateDatabase.h"
 
 #define test_bit(nr, addr) \
 	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
@@ -43,12 +42,8 @@ bool             EvdevJoystick::isEvdevAvailable()
 {
   /* Test whether this driver should be used without actually
    * loading it. Will return false if no event devices can be
-   * located, or if it has been specifically disabled by setting
-   * the environment variable BZFLAG_ENABLE_EVDEV=0
+   * located
    */
-
-  if (BZDB.isSet("enable_evdev") && !BZDB.isTrue("enable_evdev"))
-    return false;
 
   std::map<std::string,EvdevJoystickInfo> joysticks;
   scanForJoysticks(joysticks);
