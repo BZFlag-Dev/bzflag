@@ -139,6 +139,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\net\AdnsHandler.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\net\multicast.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -224,6 +227,9 @@
 			Filter="h;hpp;hxx;hm;inl">
 			<File
 				RelativePath="..\..\include\Address.h">
+			</File>
+			<File
+				RelativePath="..\..\include\AdnsHandler.h">
 			</File>
 			<File
 				RelativePath="..\..\include\bzfio.h">
