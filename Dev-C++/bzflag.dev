@@ -1313,11 +1313,11 @@ BuildCmd=
 FileName=..\src\common\bzsignal.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c bzsignal.c -o ../src/bzflag/bzsignal.o $(CFLAGS)
 
 [Unit132]
 FileName=..\src\common\CommandManager.cxx
@@ -1803,97 +1803,97 @@ BuildCmd=
 FileName=..\src\zlib\uncompr.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c uncompr.c -o ../src/bzflag/uncompr.o $(CFLAGS)
 
 [Unit182]
 FileName=..\src\zlib\zutil.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c zutil.c -o ../src/bzflag/zutil.o $(CFLAGS)
 
 [Unit183]
 FileName=..\src\zlib\adler32.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c adler32.c -o ../src/bzflag/adler32.o $(CFLAGS)
 
 [Unit184]
 FileName=..\src\zlib\compress.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c compress.c -o ../src/bzflag/compress.o $(CFLAGS)
 
 [Unit185]
 FileName=..\src\zlib\crc32.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c crc32.c -o ../src/bzflag/crc32.o $(CFLAGS)
 
 [Unit186]
 FileName=..\src\zlib\deflate.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c deflate.c -o ../src/bzflag/deflate.o $(CFLAGS)
 
 [Unit187]
 FileName=..\src\zlib\gzio.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c gzio.c -o ../src/bzflag/gzio.o $(CFLAGS)
 
 [Unit188]
 FileName=..\src\zlib\infblock.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c infblock.c -o ../src/bzflag/infblock.o $(CFLAGS)
 
 [Unit189]
 FileName=..\src\zlib\infcodes.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c infcodes.c -o ../src/bzflag/infcodes.o $(CFLAGS)
 
 [Unit190]
 FileName=..\src\zlib\inffast.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
@@ -1903,7 +1903,7 @@ BuildCmd=
 FileName=..\src\zlib\inflate.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
@@ -1913,7 +1913,7 @@ BuildCmd=
 FileName=..\src\zlib\inftrees.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
@@ -1923,7 +1923,7 @@ BuildCmd=
 FileName=..\src\zlib\infutil.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
@@ -1933,11 +1933,11 @@ BuildCmd=
 FileName=..\src\zlib\trees.c
 Folder=Source Files
 Compile=1
-CompileCpp=1
+CompileCpp=0
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c trees.c -o ../src/bzflag/trees.o $(CFLAGS)
 
 [Unit195]
 FileName=..\src\geometry\WallSceneNode.cxx
