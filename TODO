@@ -23,8 +23,6 @@ to do list for bzflag
 * break the net compatibility to allow some fixes
    including:
 
-* player ids to one byte synced on server and clients
-
 * ipv6 support
 
 * version as strings as in 1.9.0-cvs20030604
