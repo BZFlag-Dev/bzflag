@@ -330,21 +330,21 @@ void * DynamicColor::pack(void *buf)
     buf = nboPackFloat (buf, p.maxValue);
 
     // sinusoids
-    buf = nboPackUInt (buf, p.sinusoids.size());
+    buf = nboPackUInt (buf, (unsigned int)p.sinusoids.size());
     for (i = 0; i < p.sinusoids.size(); i++) {
       buf = nboPackFloat (buf, p.sinusoids[i].period);
       buf = nboPackFloat (buf, p.sinusoids[i].offset);
       buf = nboPackFloat (buf, p.sinusoids[i].weight);
     }
     // clampUps
-    buf = nboPackUInt (buf, p.clampUps.size());
+    buf = nboPackUInt (buf, (unsigned int)p.clampUps.size());
     for (i = 0; i < p.clampUps.size(); i++) {
       buf = nboPackFloat (buf, p.clampUps[i].period);
       buf = nboPackFloat (buf, p.clampUps[i].offset);
       buf = nboPackFloat (buf, p.clampUps[i].width);
     }
     // clampDowns
-    buf = nboPackUInt (buf, p.clampDowns.size());
+    buf = nboPackUInt (buf, (unsigned int)p.clampDowns.size());
     for (i = 0; i < p.clampDowns.size(); i++) {
       buf = nboPackFloat (buf, p.clampDowns[i].period);
       buf = nboPackFloat (buf, p.clampDowns[i].offset);
@@ -403,11 +403,11 @@ int DynamicColor::packSize()
   for (int c = 0; c < 4; c++) {
     fullSize += sizeof(float) * 2; // the limits
     fullSize += sizeof(unsigned int);
-    fullSize += channels[c].sinusoids.size() * (sizeof(sinusoidParams));
+    fullSize += (int)(channels[c].sinusoids.size() * (sizeof(sinusoidParams)));
     fullSize += sizeof(unsigned int);
-    fullSize += channels[c].clampUps.size() * (sizeof(clampParams));
+    fullSize += (int)(channels[c].clampUps.size() * (sizeof(clampParams)));
     fullSize += sizeof(unsigned int);
-    fullSize += channels[c].clampDowns.size() * (sizeof(clampParams));
+    fullSize += (int)(channels[c].clampDowns.size() * (sizeof(clampParams)));
   }
   return fullSize;
 }
