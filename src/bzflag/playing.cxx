@@ -1706,20 +1706,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
   //  else
 
-  if (keymap.isMappedTo(BzfKeyMap::ServerCommand, key)) {
-    if (pressed) {
-      static bool prevAdmin = admin;
-      if (prevAdmin == false && admin == true) serverCommandKeyHandler.adminInit();
-      if (prevAdmin == true && admin == false) serverCommandKeyHandler.nonAdminInit();
-      prevAdmin = admin;
-
-      messageHistoryIndex = 0;
-      serverCommandKeyHandler.init();
-      HUDui::setDefaultKey(&serverCommandKeyHandler);
-    }
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::ScrollBackward, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::ScrollBackward, key)) {
     // scroll message list backward
     if (pressed) {
       controlPanel->setMessagesOffset(2,1);
@@ -2207,6 +2194,22 @@ static std::string cmdSilence(const std::string&, const CommandManager::ArgList&
   return std::string();
 }
 
+static std::string cmdServerCommand(const std::string&, const CommandManager::ArgList& args)
+{
+  static ServerCommandKey serverCommandKeyHandler;
+  if (args.size() != 0)
+    return "usage: servercommand";
+  static bool prevAdmin = admin;
+  if (prevAdmin == false && admin == true) serverCommandKeyHandler.adminInit();
+  if (prevAdmin == true && admin == false) serverCommandKeyHandler.nonAdminInit();
+  prevAdmin = admin;
+
+  messageHistoryIndex = 0;
+  serverCommandKeyHandler.init();
+  HUDui::setDefaultKey(&serverCommandKeyHandler);
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2226,7 +2229,8 @@ static const CommandListItem commandList[] = {
 #endif
   { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
   { "roam",	&cmdRoam,	"roam {rotate|translate|zoom|cycle} <args>:  roam around" },
-  { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" }
+  { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
+  { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" }
 };
 
 static void		doEvent(BzfDisplay* display)
