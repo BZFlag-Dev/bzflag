@@ -37,7 +37,7 @@ public:
 
 private:
 
-  void createLabel(const char* string, std::vector<HUDuiControl*>& list);
+  void createLabel(const std::string &str, std::vector<HUDuiControl*>& list);
 
   int rows;
   int columns;

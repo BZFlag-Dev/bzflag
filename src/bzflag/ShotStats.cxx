@@ -23,6 +23,7 @@
 /* common implementation headers */
 #include "FontManager.h"
 #include "StateDatabase.h"
+#include "TextUtils.h"
 
 /* local implementation headers */
 #include "ShotStatsDefaultKey.h"
@@ -87,49 +88,39 @@ ShotStats::~ShotStats()
 {
 }
 
-void ShotStats::createLabel(const char* string, std::vector<HUDuiControl*>& list)
+void ShotStats::createLabel(const std::string &str, std::vector<HUDuiControl*>& list)
 {
   HUDuiLabel* control = new HUDuiLabel;
   control->setFontFace(getFontFace());
-  control->setString(string);
+  control->setString(str);
   list.push_back(control);
 }
 
 void ShotStats::addStats(Player* player, std::vector<HUDuiControl*>& list)
 {
-  char* buffer = new char[32];
-
   const ShotStatistics* stats = player->getShotStatistics();
   createLabel(player->getCallSign(), list);
 
-  sprintf(buffer, "%2d%%", stats->getTotalPerc());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d/%d", stats->getTotalHit(), stats->getTotalFired());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d/%d", stats->getNormalHit(), stats->getNormalFired());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d/%d", stats->getGMHit(), stats->getGMFired());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d/%d", stats->getLHit(), stats->getLFired());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d/%d", stats->getSBHit(), stats->getSBFired());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d/%d", stats->getSWHit(), stats->getSWFired());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d/%d", stats->getTHHit(), stats->getTHFired());
-  createLabel(buffer, list);
+  createLabel(string_util::format("%2d%%", stats->getTotalPerc()), list);
+  createLabel(string_util::format("%d/%d", stats->getTotalHit(),  stats->getTotalFired()),  list);
+  createLabel(string_util::format("%d/%d", stats->getNormalHit(), stats->getNormalFired()), list);
+  createLabel(string_util::format("%d/%d", stats->getGMHit(),     stats->getGMFired()),     list);
+  createLabel(string_util::format("%d/%d", stats->getLHit(),      stats->getLFired()),      list);
+  createLabel(string_util::format("%d/%d", stats->getSBHit(),     stats->getSBFired()),     list);
+  createLabel(string_util::format("%d/%d", stats->getSWHit(),     stats->getSWFired()),     list);
+  createLabel(string_util::format("%d/%d", stats->getTHHit(),     stats->getTHFired()),     list);
 
-  strcpy(buffer, stats->getFavoriteFlag()->flagAbbv);
-  if (buffer == "") buffer = "None";
-  createLabel(buffer, list);
+  std::string flagName = stats->getFavoriteFlag()->flagAbbv;
+  if (flagName.empty())
+    flagName = "None";
+  createLabel(flagName, list);
 
-  strcpy(buffer, stats->getBestFlag()->flagAbbv);
-  if (buffer == "") buffer = "None";
-  createLabel(buffer, list);
+  flagName = stats->getBestFlag()->flagAbbv;
+  if (flagName.empty())
+    flagName = "None";
+  createLabel(flagName, list);
 
   ++rows;
-
-  delete[] buffer;
 }
 
 const int		ShotStats::getFontFace()
