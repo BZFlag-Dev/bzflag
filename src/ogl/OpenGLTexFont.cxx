@@ -18,6 +18,7 @@
 #include <string>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include "common.h"
 #include "OpenGLTexFont.h"
 //#include "global.h"		// for TeamColor enum
