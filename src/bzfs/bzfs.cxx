@@ -3049,8 +3049,6 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   // Sanity check
   if (killerIndex < 0 || killerIndex >= curMaxPlayers)
     return;
-  if (shotIndex < -1 || shotIndex > clOptions->maxShots)
-    return;
 
   // victim has been destroyed.  keep score.
   if (killerIndex == InvalidPlayer ||
