@@ -517,10 +517,10 @@ static void		parse(int argc, char** argv)
       checkArgc(i, argc, argv[i]);
       BZDB.set("focal", argv[i]);
     } else if (strncmp(argv[i], "-psn", 4) == 0) {
-	std::vector<std::string> args;
-	args.push_back(argv[i]);
-	printError("Ignoring Finder argument \"{1}\"", &args);
-	// ignore process serial number argument (-psn_x_xxxx for MacOS X
+      std::vector<std::string> args;
+      args.push_back(argv[i]);
+      printError("Ignoring Finder argument \"{1}\"", &args);
+      // ignore process serial number argument (-psn_x_xxxx for MacOS X
     } else if (strcmp(argv[i], "-badwords") == 0) {
       checkArgc(i, argc, argv[i], "Missing bad word filter file");
       BZDB.set("filterFilename", argv[i], StateDatabase::ReadOnly);
@@ -537,9 +537,9 @@ static void		parse(int argc, char** argv)
 		  sizeof(startupInfo.callsign) - 1);
 	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
 	  ++serverName;
-	}
-	else
+	} else {
 	  serverName = argv[i];
+	}
 	
 	// find the beginning of the port number, parse it
 	char* portNumber;
@@ -555,8 +555,7 @@ static void		parse(int argc, char** argv)
 	}
 	if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
 	  printFatalError("Server name too long.  Ignoring.");
-	}
-	else {
+	} else {
 	  strcpy(startupInfo.serverName, serverName);
 	  startupInfo.autoConnect = true;
 	}
@@ -715,8 +714,7 @@ int			main(int argc, char** argv)
 		    "  got %d.%d, expected %d.%d.  Terminating.\n",
 		    (int)LOBYTE(wsaData.wVersion),
 		    (int)HIBYTE(wsaData.wVersion),
-						 major,
-						 minor);
+		    major, minor);
     WSACleanup();
     return 1;
   }
@@ -1193,10 +1191,11 @@ int			main(int argc, char** argv)
 
   // restore rendering configuration
   if (startupInfo.hasConfiguration) {
-    if (BZDB.isSet("zbuffersplit"))
+    if (BZDB.isSet("zbuffersplit")) {
       RENDERER.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
+    }
     if (BZDBCache::texture) {
-			TextureManager::instance().setMaxFilter(BZDB.get("texture"));
+      TextureManager::instance().setMaxFilter(BZDB.get("texture"));
     }
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");

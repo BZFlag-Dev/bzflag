@@ -27,7 +27,7 @@ typedef enum  {
 	NearestMipmapLinear,
 	LinearMipmapLinear,
 	Max = LinearMipmapLinear
-}eTextureFilter;
+} eTextureFilter;
 
 struct FileTextureInit
 {
@@ -50,10 +50,10 @@ class TextureManager;
 
 struct ProcTextureInit
 {
-  std::string						name;
-  TextureManager				*manager;
-  eTextureFilter				filter;
-	int	(*proc)(ProcTextureInit &init);
+  std::string		name;
+  TextureManager	*manager;
+  eTextureFilter	filter;
+  int			(*proc)(ProcTextureInit &init);
 };
 
 typedef std::map<std::string, ImageInfo> TextureNameMap;
@@ -71,10 +71,10 @@ public:
   const ImageInfo& getInfo ( int id );
   const ImageInfo& getInfo ( const char* name );
 
-	eTextureFilter getMaxFilter ( void ) { return currentMaxFilter;}
-	std::string getMaxFilterName ( void );
-	void setMaxFilter ( eTextureFilter filter );
-	void setMaxFilter ( std::string filter );
+  eTextureFilter getMaxFilter ( void ) { return currentMaxFilter;}
+  std::string getMaxFilterName ( void );
+  void setMaxFilter ( eTextureFilter filter );
+  void setMaxFilter ( std::string filter );
 
   float GetAspectRatio ( int id );
 
@@ -95,8 +95,8 @@ private:
   TextureIDMap   textureIDs;
   TextureNameMap textureNames;
 
-	eTextureFilter	currentMaxFilter;
-	std::string	configFilterValues[Max];
+  eTextureFilter currentMaxFilter;
+  std::string	 configFilterValues[Max];
 };
 
 #endif//_TEXTURE_MANAGER_H

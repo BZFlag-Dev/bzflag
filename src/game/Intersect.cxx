@@ -659,7 +659,7 @@ bool			testRectInRect(const float* p1, float angle1,
 
 // true if tri-plane touches the axis aligned box
 bool			testTriPlaneInAxisBox(const float** points,
-									  const float* plane,
+				      const float* plane,
                                       const float* boxMins,
                                       const float* boxMaxs)
 {
@@ -669,11 +669,11 @@ bool			testTriPlaneInAxisBox(const float** points,
     for (a = 0; a < 3; a++) {
       if ((points[p][a] < boxMins[a]) || (points[p][a] > boxMaxs[a])) {
         break;
-	  }
+      }
     }
     if (a >= 3) {
-	  return true;
-	}
+      return true;
+    }
   }
   plane = plane; // FIXME - warnings
   return false;

@@ -39,16 +39,16 @@ ProcTextureInit procLoader[1];
 
 TextureManager::TextureManager()
 {
-	configFilterValues[Off] = "no";
-	configFilterValues[Nearest] = "nearest";
-	configFilterValues[Linear] = "linear";
-	configFilterValues[NearestMipmapNearest] = "linearmipmapnearest";
-	configFilterValues[LinearMipmapNearest] = "linearmipmapnearest";
-	configFilterValues[NearestMipmapLinear] = "nearestmipmaplinear";
-	configFilterValues[LinearMipmapLinear] = "linearmipmaplinear";
+  configFilterValues[Off] = "no";
+  configFilterValues[Nearest] = "nearest";
+  configFilterValues[Linear] = "linear";
+  configFilterValues[NearestMipmapNearest] = "nearestmipmapnearest";
+  configFilterValues[LinearMipmapNearest] = "linearmipmapnearest";
+  configFilterValues[NearestMipmapLinear] = "nearestmipmaplinear";
+  configFilterValues[LinearMipmapLinear] = "linearmipmaplinear";
 
-	// init the default filter methods
-	currentMaxFilter = Max;
+  // init the default filter methods
+  currentMaxFilter = Max;
 
   // fill out the standard proc textures
   procLoader[0].name = "noise";
@@ -142,40 +142,38 @@ bool TextureManager::bind ( const char* name )
 
 std::string		TextureManager::getMaxFilterName ( void )
 {
-	return configFilterValues[static_cast<int>(currentMaxFilter)];
+  return configFilterValues[static_cast<int>(currentMaxFilter)];
 }
 
 void TextureManager::setMaxFilter ( std::string filter )
 {
-	eTextureFilter realFilter = Max;
+  eTextureFilter realFilter = Max;
 
-	for ( int i = 0; i < (int)Max; i++)
-	{
-		if (filter == configFilterValues[i])
-			realFilter = (eTextureFilter)i;
-	}
-	setMaxFilter(realFilter);
+  for (int i = 0; i < (int)Max; i++) {
+    if (filter == configFilterValues[i])
+      realFilter = (eTextureFilter)i;
+  }
+  setMaxFilter(realFilter);
 }
 
 void TextureManager::setMaxFilter ( eTextureFilter filter )
 {
-	currentMaxFilter = filter;
-	// flush all the textures so they ger rebuilt on next use
+  currentMaxFilter = filter;
+  // flush all the textures so they get rebuilt on next use
 
-	TextureNameMap::iterator	itr = textureNames.begin();
+  TextureNameMap::iterator	itr = textureNames.begin();
 
-	while (itr != textureNames.end())
-	{
-		FileTextureInit	fileInit;
-		fileInit.filter = currentMaxFilter;
-		fileInit.name = itr->second.name;
+  while (itr != textureNames.end()) {
+    FileTextureInit	fileInit;
+    fileInit.filter = currentMaxFilter;
+    fileInit.name = itr->second.name;
 
-		OpenGLTexture	*newTexture = loadTexture(fileInit,false);
+    OpenGLTexture	*newTexture = loadTexture(fileInit, false);
 
-		delete(itr->second.texture);
-		itr->second.texture = newTexture;
-		itr++;
-	}
+    delete(itr->second.texture);
+    itr->second.texture = newTexture;
+    itr++;
+  }
 }
 
 float TextureManager::GetAspectRatio ( int id )
@@ -268,12 +266,12 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
     }
     return NULL;
   }
-	OpenGLTexture::Filter RealFilter;
+  OpenGLTexture::Filter RealFilter;
 
-	if (init.filter > currentMaxFilter)
-		RealFilter = (OpenGLTexture::Filter)currentMaxFilter;
-	else
-		RealFilter = (OpenGLTexture::Filter)init.filter ;
+  if (init.filter > currentMaxFilter)
+    RealFilter = (OpenGLTexture::Filter)currentMaxFilter;
+  else
+    RealFilter = (OpenGLTexture::Filter)init.filter;
 
   OpenGLTexture *texture = new OpenGLTexture(width, height, image, RealFilter, true);
   delete[] image;
@@ -283,12 +281,12 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
 
 int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data, eTextureFilter filter, bool repeat, int format)
 {
-	OpenGLTexture::Filter RealFilter;
+  OpenGLTexture::Filter RealFilter;
 
-	if (filter > currentMaxFilter)
-		RealFilter = (OpenGLTexture::Filter)currentMaxFilter;
-	else
-		RealFilter = (OpenGLTexture::Filter)filter ;
+  if (filter > currentMaxFilter)
+    RealFilter = (OpenGLTexture::Filter)currentMaxFilter;
+  else
+    RealFilter = (OpenGLTexture::Filter)filter;
 
   return addTexture(name, new OpenGLTexture(x, y, data, RealFilter, repeat, format));
 }

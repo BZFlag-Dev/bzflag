@@ -348,9 +348,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   }
   case '5':
-			TextureManager::instance().setMaxFilter((eTextureFilter)list->getIndex());
-      BZDB.set("texture", TextureManager::instance().getMaxFilterName());
-      sceneRenderer->notifyStyleChange();
+    TextureManager::instance().setMaxFilter((eTextureFilter)list->getIndex());
+    BZDB.set("texture", TextureManager::instance().getMaxFilterName());
+    sceneRenderer->notifyStyleChange();
     break;
   case '6':
     sceneRenderer->setQuality(list->getIndex());
