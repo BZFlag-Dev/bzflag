@@ -2622,7 +2622,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	p->setAdmin((info & IsAdmin) != 0);
 	p->setRegistered((info & IsRegistered) != 0);
 	p->setVerified((info & IsVerified) != 0);
-	p->setPlayerList((info & HasPlayerList) != 0);
       }
       break;
     }
