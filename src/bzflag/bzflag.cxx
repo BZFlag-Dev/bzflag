@@ -970,7 +970,7 @@ int			main(int argc, char** argv)
   World::setBundleMgr(bm);
 
   if (db.hasValue("locale"))
-	  World::setLocale(db.getValue("locale"));
+    World::setLocale(db.getValue("locale"));
 
   bool setPosition = false, setSize = false;
   int x = 0, y = 0, w = 0, h = 0;
