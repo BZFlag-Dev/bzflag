@@ -136,6 +136,7 @@ void PlayerAccessInfo::storeInfo(const char* pwd) {
   info.addGroup("VERIFIED");
 
   if (pwd == NULL) {
+    info.addGroup("LOCAL.GLOBAL");
     setUserPassword(regName.c_str(), "");
     DEBUG1("Global Temp Register %s\n", regName.c_str());
   } else {
