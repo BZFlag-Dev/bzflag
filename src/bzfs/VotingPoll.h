@@ -41,17 +41,52 @@ class VotingPoll
   
  public:
   
-  VotingPoll(unsigned short int voteTime=60, 
-	     unsigned short int vetoTime=20,
-	     unsigned short int votesRequired=3,
-	     float votePercentage=50.1,
-	     unsigned short int voteRepeatTime=300);
-  ~VotingPoll(void);
-
-  inline VotingBooth *getBooth(void) {
-    return _votingBooth;
+  VotingPoll(unsigned short int voteTime=60, unsigned short int vetoTime=20,
+	     unsigned short int votesRequired=3, float votePercentage=50.1,
+	     unsigned short int voteRepeatTime=300) 
+    : _voteTime(voteTime), 
+      _vetoTime(vetoTime),
+      _votesRequired(votesRequired),
+      _votePercentage(votePercentage),
+      _voteRepeatTime(voteRepeatTime)
+  {
+    return;
   }
   
+  ~VotingPoll(void) 
+  {
+    if (_votingBooth != NULL) {
+      delete _votingBooth;
+    }
+    return;
+  }
+
+
+  /** is the poll accepting votes?
+   */
+  bool isOpen(void);
+  /** is the poll not accepting votes?
+   */
+  inline bool isClosed(void) {
+    return (!this->isOpen());
+  };
+
+  /** returns whether truthfully whether a certain player is permitted
+   * to vote; a player should check their right to vote before voting.
+   */
+  bool allowSuffrage();
+
+  /** apply a yes vote; returns true if the vote could be made
+   */
+  bool voteYes();
+  /** apply a no vote; returns true if the vote could be made
+   */
+  bool voteNo();
+
+  /** returns truthfully if the poll has reached a passable tally.
+   * i.e. enough votes have been received that the vote is successful
+   */
+  bool isSuccessful(void);
 
 };
 

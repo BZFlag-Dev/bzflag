@@ -25,24 +25,23 @@
 
 /* public: */
 
-VotingPoll::VotingPoll(unsigned short int voteTime, 
-		       unsigned short int vetoTime,
-		       unsigned short int votesRequired,
-		       float votePercentage,
-		       unsigned short int voteRepeatTime)
-  : _voteTime(voteTime), 
-    _vetoTime(vetoTime),
-    _votesRequired(votesRequired),
-    _votePercentage(votePercentage),
-    _voteRepeatTime(voteRepeatTime)
-{
-  return;
+bool VotingPoll::isOpen(void) {
+  return false;
 }
 
-VotingPoll::~VotingPoll(void) 
-{
-  return;
+bool VotingPoll::allowSuffrage() {
+  return (this->isOpen());
 }
 
+bool VotingPoll::voteYes() {
+  return false;
+}
+bool VotingPoll::voteNo() {
+  return false;
+}
+
+bool VotingPoll::isSuccessful(void) {
+  return false;
+}
 
 // ex: shiftwidth=2 tabstop=8
