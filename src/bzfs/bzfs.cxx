@@ -4343,8 +4343,12 @@ static void addPlayer(int playerIndex)
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full.
 
-  // strip any non-printable characters from callsign
+  // strip leading blanks
   char *sp = player[playerIndex].callSign, *tp = sp;
+  while (*sp==' ')
+    sp++;
+
+  // strip any non-printable characters from callsign
   do {
     if (isprint(*sp))
       *tp++ = *sp;
@@ -4372,7 +4376,7 @@ static void addPlayer(int playerIndex)
   }
 
   // use '@' as first letter of callsign to become observer
-  player[playerIndex].Observer = player[playerIndex].callSign[0]=='@';
+  player[playerIndex].Observer = player[playerIndex].callSign[0] == '@';
   TeamColor t = player[playerIndex].team;
 
   int numplayers=0;
@@ -5502,7 +5506,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	  // also handle case where limit was set to 0
 	  float lastPos [3];
 	  for (int i = 0; i < 3; i ++){
-	    lastPos[i]=shooter.lastState.pos[i];
+	    lastPos[i] = shooter.lastState.pos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
 	  dropFlag(playerIndex, lastPos);	 
@@ -5668,7 +5672,7 @@ static void parseCommand(const char *message, int t)
       team[i].team.lost = team[i].team.won=0;
       sendTeamUpdate(i);
     }
-    char reply[MessageLen]="Countdown started.";
+    char reply[MessageLen] = "Countdown started.";
     sendMessage(t, player[t].id, player[t].team, reply, true);
 
     // CTF game -> simulate flag captures to return ppl to base
@@ -7971,7 +7975,7 @@ int main(int argc, char **argv)
 	       3 * clOptions.idlekickthresh : clOptions.idlekickthresh))) {
 	  DEBUG1("kicking Player %s [%d]: idle %d\n", player[i].callSign, i,
 		 int(tm - player[i].lastupdate));
-	  char message[MessageLen]="You were kicked because of idling too long";
+	  char message[MessageLen] = "You were kicked because of idling too long";
 	  sendMessage(i, player[i].id, player[i].team, message, true);
 	  removePlayer(i, "idling");
 	}
