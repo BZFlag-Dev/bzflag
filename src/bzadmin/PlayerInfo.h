@@ -24,6 +24,9 @@ struct PlayerInfo {
   std::string name;
   std::string ip;
   TeamColor team;
+  int wins;
+  int losses;
+  int tks;
 };
 
 

@@ -12,6 +12,7 @@
 
 #include "CursesMenu.h"
 #include "StateDatabase.h"
+#include "TextUtils.h"
 
 
 CursesMenuItem::CursesMenuItem(const std::string& str) : text(str) {

@@ -46,6 +46,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   showMessageType(MsgSuperKill);
   showMessageType(MsgMessage);
   showMessageType(MsgSetVar);
+  showMessageType(MsgScore);
   
   // initialise the colormap
   colorMap[NoTeam] = Yellow;
@@ -72,6 +73,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
   std::string returnString = "";
   int i;
   colorCode = Default;
+  PlayerIdMap::iterator iter;
 
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
@@ -110,15 +112,13 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 	BZDB.setPermission(name, StateDatabase::Locked);
       }
       str = returnString;
-      return GotMessage;
+      return NoMessage;
 
     case MsgAddPlayer:
-
-      vbuf = nboUnpackUByte(vbuf, p);
-
       uint16_t team, type, wins, losses, tks;
       char callsign[CallSignLen];
       char email[EmailLen];
+      vbuf = nboUnpackUByte(vbuf, p);
       vbuf = nboUnpackUShort(vbuf, type);
       vbuf = nboUnpackUShort(vbuf, team);
       vbuf = nboUnpackUShort(vbuf, wins);
@@ -129,6 +129,9 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       players[p].name.resize(0);
       players[p].name.append(callsign);
       players[p].team = TeamColor(team);
+      players[p].wins = wins;
+      players[p].losses = losses;
+      players[p].tks = tks;
       if (ui != NULL)
 	ui->addedPlayer(p);
       returnString = returnString + "*** '" + callsign + "' joined the game.";
@@ -173,6 +176,23 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
     case MsgSuperKill:
       str = returnString;
       return Superkilled;
+
+    case MsgScore:
+      uint8_t numScores;
+      vbuf = nboUnpackUByte(vbuf, numScores);
+      for (uint8_t i = 0; i < numScores; i++) {
+	uint16_t wins, losses, tks;
+	vbuf = nboUnpackUByte(vbuf, p);
+	vbuf = nboUnpackUShort(vbuf, wins);
+	vbuf = nboUnpackUShort(vbuf, losses);
+	vbuf = nboUnpackUShort(vbuf, tks);
+	if ((iter = players.find(p)) != players.end()) {
+	  iter->second.wins = wins;
+	  iter->second.losses = losses;
+	  iter->second.tks = tks;
+	}
+      }
+      return NoMessage;
 
     case MsgMessage:
 
