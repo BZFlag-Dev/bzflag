@@ -28,7 +28,7 @@ BZFlag 1.10.4
 * Color carried team flags according to their team - Sean Morrison
 * Start of better spawn positions based on tanks - Dave Brosius
 * PNG image grabbing - Daniel Remenak
-* Texture Manager only loads textures when needed, reorg textures to make more sense - Jeff Myers
+* Texture Manager only loads textures when needed, reorg of textures to make more sense - Jeff Myers
 * BZDB alternate image dir added - Jeff Myers
 * Ground Texture Repeat added to BZDB, deafault increased to 0.1  - Jeff Myers
 * Tanks will search for colored team textures and use them if found. - Jeff Myers
@@ -37,6 +37,10 @@ BZFlag 1.10.4
 * Non rabbit tanks will be forced to use orange color if not using an overide texture - Jeff Myers
 * Menu uses it's own image for the arrow, menu_arrow.png. - Jeff Myers
 * Rename team based datafiles to have the team in the name. - Jeff Myers
+* Map objects will search for colored textures and use them if found. - Jeff Myers
+* Bases will search for colored team textures and use them if found. - Jeff Myers
+* Tanks and map objects will use an object specified texture if one is present when the object is instanced. - Jeff Myers
+* Menu Arrow support animations. - Jeff Myers
 
 
 BZFlag 1.10.2
