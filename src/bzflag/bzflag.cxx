@@ -734,6 +734,7 @@ int			main(int argc, char** argv)
 #endif /* defined(_WIN32) */
 {
   initDebug();
+  BZDB.setDebug(true);
   WordFilter *filter = (WordFilter *)NULL;
 
   argv0 = argv[0];
@@ -894,6 +895,9 @@ int			main(int argc, char** argv)
 
   // parse arguments
   parse(argc, argv);
+
+  if (debugLevel >= 4)
+    BZDB.setDebug(true);
 
   // set time from BZDB
   if (BZDB.isSet("fixedTime")) {
