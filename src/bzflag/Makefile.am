@@ -12,6 +12,8 @@ bzflag_SOURCES =			\
 	AudioMenu.h			\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
+	BaseLocalPlayer.cxx		\
+	BaseLocalPlayer.h		\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
