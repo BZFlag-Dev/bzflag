@@ -2193,8 +2193,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       // but if I'm on the same team as the capturer then my team won.
       if (capturedTeam == int(myTank->getTeam()))
 	playLocalSound(SFX_LOSE);
-      else if (capturer->getTeam() == myTank->getTeam())
+				if (capturer && capturer->getTeam() == myTank->getTeam())
 	playLocalSound(SFX_CAPTURE);
+			
 
       // blow up if my team flag captured
       if (capturedTeam == int(myTank->getTeam())) {
