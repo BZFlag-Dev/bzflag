@@ -19,7 +19,7 @@
 #include "SceneVisitorSimpleRender.h"
 #include "Trackball.h"
 
-typedef SceneVisitorRender RendererType;
+typedef SceneVisitorSimpleRender RendererType;
 
 static SceneNode* scene = NULL;
 static SceneNodeMatrixTransform* camera;
@@ -356,8 +356,24 @@ int main(int argc, char** argv)
 						break;
 
 					case BzfEvent::KeyDown:
-						if (event.keyUp.ascii == 27)
-							quit = true;
+						switch (event.keyUp.ascii) {
+							case 27:
+							case 'q':
+								quit = true;
+								break;
+							case 't':
+								//printf("key %d t %f f %f\n", event.keyUp.ascii, t, frame);
+								t = 0.0f;
+								frame = 0.0f;
+								break;
+							case 'r':
+								fov = 45.0;
+								aspect = 1.0;
+								break;
+							default:
+								//printf("key %d\n", event.keyUp.ascii);
+								break;
+						}
 						break;
 
 					case BzfEvent::Resize:
