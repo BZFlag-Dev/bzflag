@@ -48,7 +48,8 @@ struct CmdLineOptions
   CmdLineOptions()
   : wksPort(ServerPort), gameStyle(PlainGameStyle), servermsg(NULL),
     advertisemsg(NULL), worldFile(NULL), pingInterface(NULL),
-    publicizedTitle(NULL), listServerURL(DefaultListServerURL), password(NULL),
+    listServerURL(DefaultListServerURL), password(NULL),
+    publicizedTitle(""), publicizedAddress(""),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
@@ -59,7 +60,7 @@ struct CmdLineOptions
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
     useTeleporters(false), teamKillerDies(true), printScore(false),
-    publicizeServer(false), publicizedAddressGiven(false), filterFilename(""),
+    publicizeServer(false), filterFilename(""),
     filterCallsigns(false), filterChat(false), filterSimple(false), voteTime(60),
     vetoTime(20), votesRequired(3), votePercentage(50.1f),
     voteRepeatTime(300), autoTeam(false),
@@ -84,10 +85,10 @@ struct CmdLineOptions
   const char		*advertisemsg;
   const char		*worldFile;
   const char		*pingInterface;
-  const char		*publicizedTitle;
   const char		*listServerURL;
   char			*password;
 
+  std::string		publicizedTitle;
   std::string		publicizedAddress;
 
   uint16_t		maxShots;
@@ -122,7 +123,6 @@ struct CmdLineOptions
   bool			teamKillerDies;
   bool			printScore;
   bool			publicizeServer;
-  bool			publicizedAddressGiven;
 
   uint16_t		maxTeam[NumTeams];
   std::map<FlagType*,int> flagCount;

@@ -682,7 +682,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
       options.publicizeServer = true;
       options.publicizedTitle = argv[i];
-      if (strlen(options.publicizedTitle) > 127) {
+      if (options.publicizedTitle.length() > 127) {
 	argv[i][127] = '\0';
 	fprintf(stderr, "description too long... truncated\n");
       }
@@ -692,7 +692,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	usage(argv[0]);
       }
       options.publicizedAddress = argv[i];
-      options.publicizedAddressGiven = true;
+      options.publicizeServer = true;
     } else if (strcmp(argv[i], "-publiclist") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "argument expected for -publiclist\n");

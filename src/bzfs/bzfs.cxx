@@ -863,7 +863,7 @@ static void publicize()
   listServerLinksCount	= 0;
 
   // parse the list server URL if we're publicizing ourself
-  if (clOptions->publicizeServer && clOptions->publicizedTitle) {
+  if (clOptions->publicizeServer) {
     // dereference URL, including following redirections.  get no
     // more than MaxListServers urls.
     std::vector<std::string> urls, failedURLs;
@@ -901,6 +901,7 @@ static void publicize()
 
     // schedule message for list server
     sendMessageToListServer("ADD");
+    DEBUG3("Sent ADD message to list server\n");
   }
 }
 
@@ -4372,22 +4373,21 @@ int main(int argc, char **argv)
     BZDB.setPermission("poll", StateDatabase::ReadOnly);
   }
 
-  if (clOptions->pingInterface)
+  if (clOptions->pingInterface) {
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
+  }
+
 // TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
 //  if (!pingInterface)
 //    pingInterface = serverAddress.getHostName();
-
 
   // my address to publish.  allow arguments to override (useful for
   // firewalls).  use my official hostname if it appears to be
   // canonicalized, otherwise use my IP in dot notation.
   // set publicized address if not set by arguments
   if (clOptions->publicizedAddress.length() == 0) {
-    // FIXME - it is undefined to initialize std::string with a NULL pointer.
-    // similar code can be found at other places in bzfs as well
-    const char* tmp = Address::getHostName();
-    clOptions->publicizedAddress = (tmp == NULL ? "" : tmp);
+    const std::string tmp = Address::getHostName();
+    clOptions->publicizedAddress = tmp;
     if (strchr(clOptions->publicizedAddress.c_str(), '.') == NULL)
       clOptions->publicizedAddress = serverAddress.getDotNotation();
     if (clOptions->wksPort != ServerPort) {
@@ -4396,6 +4396,16 @@ int main(int argc, char **argv)
       clOptions->publicizedAddress += portString;
     }
   }
+
+  /* print debug information about how the server is running */
+  if (clOptions->publicizeServer) {
+    DEBUG1("Running a public server with the following settings:\n");
+    DEBUG1("\tpublic address is %s\n", clOptions->publicizedAddress.c_str());
+  } else {
+    DEBUG1("Running a private server with the following settings:\n");
+  }
+  DEBUG1("\trunning on local port %d\n", clOptions->wksPort);
+  DEBUG1("\twith title of [%s]\n", clOptions->publicizedTitle.c_str());
 
   // prep ping reply
   pingReply.serverId.serverHost = serverAddress;
