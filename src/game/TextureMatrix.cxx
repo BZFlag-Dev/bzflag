@@ -265,8 +265,8 @@ void TextureMatrix::update (float t)
   float tv = fmodf(t * vShiftFreq, 1.0f);
   //float tu = t * uShiftFreq;
   //float tv = t * vShiftFreq;
-  float ru = uRotateCenter;
-  float rv = vRotateCenter;
+  float ru = -uRotateCenter;
+  float rv = -vRotateCenter;
   matrix[(0*4) + 0] = c;
   matrix[(0*4) + 1] = s;
   matrix[(1*4) + 0] = -s;
