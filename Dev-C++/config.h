@@ -92,16 +92,19 @@
             #define BZ_BUILD_OS			"W32-DevC++-MinGW32D"
         #else
             #define BZ_BUILD_OS			"W32-DevC++-MinGW32"
+        #endif
     #elif defined(__CYGWIN__)
         #ifdef DEBUG
             #define BZ_BUILD_OS			"W32-DevC++-CygwinD"
         #else
             #define BZ_BUILD_OS			"W32-DevC++-Cygwin"
+        #endif
     #else
         #ifdef DEBUG
             #define BZ_BUILD_OS			"W32-DevC++"
         #else
             #define BZ_BUILD_OS			"W32-DevC++"
+        #endif
     #endif
   #endif //__linux
 #endif
