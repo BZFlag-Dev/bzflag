@@ -227,24 +227,34 @@ PlayerCMItem::PlayerCMItem(const PlayerIdMap& players, PlayerId playerId)
 
 void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 			    bool selected) {
-  // show the player name to the left of the center, reverse video if selected
-  wmove(menuWin, line, col);
-  if (selected)
-    wattron(menuWin, A_REVERSE);
+  // score (wins-losses)[tks] callsign IP, reverse video if selected
   std::string name, ip;
+  int wins, losses, tks;
   PlayerIdMap::const_iterator iter = playerMap.find(id);
   if (iter != playerMap.end()) {
     name = iter->second.name;
     ip = iter->second.ip;
+    wins = iter->second.wins;
+    losses = iter->second.losses;
+    tks = iter->second.tks;
+    std::ostringstream oss;
+    oss<<(wins - losses)<<" ("<<wins<<"-"<<losses<<")["<<tks<<"]";
+    unsigned int scoreLength = oss.str().size();
+    for (unsigned int i = 0; i < 21 - scoreLength; ++i)
+      oss<<' ';
+    oss<<name;
+    for (unsigned int i = 0; i < CallSignLen + 1 - name.size(); ++i)
+      oss<<' ';
+    oss<<ip;
+    for (unsigned int i = 0; i < 15 - ip.size(); ++i)
+      oss<<' ';
+    if (selected)
+      wattron(menuWin, A_REVERSE);
+    wmove(menuWin, line, col);
+    waddstr(menuWin, oss.str().substr(0, width).c_str());
+    if (selected)
+      wattroff(menuWin, A_REVERSE);
   }
-  for (unsigned int i = 0; i < width / 2 - name.size() - 1; ++i)
-    waddstr(menuWin, " ");
-  waddstr(menuWin, name.c_str());
-  wmove(menuWin, line, col + width / 2 + 1);
-  waddstr(menuWin, ip.c_str());
-  for (int i = width / 2 + 1 + ip.size(); i < width; ++i)
-    waddstr(menuWin, " ");
-  wattroff(menuWin, A_REVERSE);
 }
 
 
