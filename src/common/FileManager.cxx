@@ -181,8 +181,6 @@ bool				FileManager::isAbsolute(const std::string& path) const
   if (path.size() >= 3 && isalpha(cpath[0]) && cpath[1] == ':' &&
       (cpath[2] == '\\' || cpath[2] == '/'))
     return true;
-#elif defined(macintosh)
-#error FIXME -- what indicates an absolute path on mac?
 #else
   if (path.c_str()[0] == '/')
     return true;
@@ -204,8 +202,6 @@ std::string			FileManager::catPath(
   std::string c = a;
 #if defined(_WIN32)
   c += "\\";
-#elif defined(macintosh)
-  c += ':';
 #else
   c += "/";
 #endif
@@ -213,11 +209,11 @@ std::string			FileManager::catPath(
   return c;
 }
 
+
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

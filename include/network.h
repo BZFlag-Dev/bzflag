@@ -21,6 +21,7 @@
 
 #include "common.h"
 
+/* system headers */
 #include <vector>
 #include <string>
 
@@ -30,70 +31,57 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+
 #ifndef GUSI_20
-  #include <sys/param.h>
+#  include <sys/param.h>
 #endif
+
 #include <net/if.h>
 #include <netinet/in.h>
+
 #if defined(__linux__)
 /* these are defined in both socket.h and tcp.h without ifdef guards. */
-#undef TCP_NODELAY
-#undef TCP_MAXSEG
+#  undef TCP_NODELAY
+#  undef TCP_MAXSEG
 #endif
+
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(BSD) && !defined(__APPLE__) && !defined(macintosh) && !defined(__BEOS__))
-#include <bstring.h>
-#endif
-
-// add our own def block
-#if defined (macintosh)
-  #ifdef GUSI_20
-    #define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
-    #define accept(a,b,c)	    accept(a,b,(unsigned int *)c)
-    #define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
-
-    #define MAXHOSTNAMELEN 255
-
-    #define O_NDELAY O_NONBLOCK
-
-    #define hstrerror(x) "hstrerror is broken"
-  #endif
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(BSD) && !defined(__APPLE__) && !defined(__BEOS__))
+#  include <bstring.h>
 #endif
 
 #if defined(__linux__) && !defined(_old_linux_)
-#define AddrLen		unsigned int
-
+#  define AddrLen		unsigned int
 /* setsockopt incorrectly prototypes the 4th arg without const. */
-#define SSOType		void*
+#  define SSOType		void*
 #endif
 
 #if defined(BSD) || defined(sun)
-#define AddrLen		socklen_t
+#  define AddrLen		socklen_t
 #endif
 
 #if defined(sun)
 /* setsockopt prototypes the 4th arg as const char*. */
-#define SSOType		const char*
-
+#  define SSOType		const char*
 /* connect prototypes the 2nd arg without const */
-#define CNCTType	struct sockaddr
+#  define CNCTType	struct sockaddr
 #endif
 
 extern "C" {
 
 #define herror(_x)	bzfherror(_x)
 
-void			nerror(const char* msg);
-void			bzfherror(const char* msg);
-int			getErrno();
+  void			nerror(const char* msg);
+  void			bzfherror(const char* msg);
+  int			getErrno();
 
 }
 
 /* BeOS net_server has closesocket(), which _must_ be used in place of close() */
 #if defined(__BEOS__) && (IPPROTO_TCP != 6)
-#define close(__x) closesocket(__x)
+#  define close(__x) closesocket(__x)
 #endif
 
 #else /* !defined(_WIN32) */
@@ -116,57 +104,57 @@ inline int close(SOCKET s) { return closesocket(s); }
 
 extern "C" {
 
-int			inet_aton(const char* cp, struct in_addr* pin);
-void			nerror(const char* msg);
-void			herror(const char* msg);
-int			getErrno();
+  int			inet_aton(const char* cp, struct in_addr* pin);
+  void			nerror(const char* msg);
+  void			herror(const char* msg);
+  int			getErrno();
 
 }
 
 #endif /* !defined(_WIN32) */
 
 #if !defined(AddrLen)
-#define AddrLen		int
+#  define AddrLen		int
 #endif
 
 #if !defined(SSOType)
-#define SSOType		const void*
+#  define SSOType		const void*
 #endif
 #if !defined(CNCTType)
-#define CNCTType	const struct sockaddr
+#  define CNCTType	const struct sockaddr
 #endif
 
 #if !defined(INADDR_NONE)
-#define INADDR_NONE	((in_addr_t)0xffffffff)
+#  define INADDR_NONE	((in_addr_t)0xffffffff)
 #endif
 
 class BzfNetwork {
-  public:
-    static int		setNonBlocking(int fd);
-    static int		setBlocking(int fd);
-    static bool	dereferenceURLs(std::vector<std::string>& list,
+public:
+  static int		setNonBlocking(int fd);
+  static int		setBlocking(int fd);
+  static bool	dereferenceURLs(std::vector<std::string>& list,
 				unsigned int max, std::vector<std::string>& failedList);
-    static bool	parseURL(const std::string& url,
-				std::string& protocol,
-				std::string& hostname,
-				int& port,
-				std::string& pathname);
+  static bool	parseURL(const std::string& url,
+			 std::string& protocol,
+			 std::string& hostname,
+			 int& port,
+			 std::string& pathname);
 
-  private:
-    static std::string	dereferenceHTTP(const std::string& hostname, int port,
-				const std::string& pathname);
-    static std::string	dereferenceFile(const std::string& pathname);
-    static void		insertLines(std::vector<std::string>& list,
-				int index, const std::string& data);
-};
+private:
+  static std::string	dereferenceHTTP(const std::string& hostname, int port,
+					const std::string& pathname);
+  static std::string	dereferenceFile(const std::string& pathname);
+  static void		insertLines(std::vector<std::string>& list,
+				    int index, const std::string& data);
+}
 
 #endif // BZF_NETWORK_H
 
+
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -1,5 +1,5 @@
 SUBDIRS =
-DIST_SUBDIRS = linux rpm irix mac win32
+DIST_SUBDIRS = linux rpm irix win32
 TARGETDIR  = $(top_srcdir)/bin
 PACKAGEDIR = $(top_srcdir)/dist
 

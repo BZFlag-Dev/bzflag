@@ -508,13 +508,6 @@ void ServerStartMenu::execute()
       setStatus("Server started.");
       success = true;
     }
-#elif defined (macintosh)
-
-    MacLaunchServer (arg, args);
-
-    // umm...assume it succeeded?
-    // maybe FIXME some mac person?
-    success = true;
 
 #else /* defined(_WIN32) */
 

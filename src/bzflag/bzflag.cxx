@@ -29,7 +29,7 @@
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #  include <direct.h>
-#elif !defined(macintosh)
+#else
 #  include <pwd.h>
 #  include <dirent.h>
 #endif /* defined(_WIN32) */
@@ -226,7 +226,7 @@ static const char*	configViewValues[] = {
 
 static std::string	getOldConfigFileName()
 {
-#if !defined(_WIN32) & !defined(macintosh)
+#if !defined(_WIN32)
 
   std::string name = getConfigDirName();
   name += "config";
@@ -250,14 +250,10 @@ static std::string	getOldConfigFileName()
   name += oldConfigName;
   return name;
 
-#elif defined(macintosh)
-
-  return oldConfigName; // FIXME - use getConfigDirName() ?
-
-#endif /* !defined(_WIN32) & !defined(macintosh) */
+#endif /* !defined(_WIN32) */
 }
 
-#if !defined(_WIN32) & !defined(macintosh)		// who uses this sucker any more?
+#if !defined(_WIN32)		// who uses this sucker any more?
 static std::string	getReallyOldConfigFileName()
 {
   std::string name = getConfigDirName();
@@ -273,7 +269,7 @@ std::string getCurrentConfigFileName(void)
   std::string name = getConfigDirName(BZ_CONFIG_DIR_VERSION);
   name += configFile;
 
-#if !defined(_WIN32) & !defined(macintosh)
+#if !defined(_WIN32)
   // add in hostname on UNIX
   if (getenv("HOST")) {
     name += ".";
@@ -310,7 +306,6 @@ void findConfigFile(void)
     // copy the old config to the new dir location with the new name
     CopyFile(oldConfigName.c_str(), configName.c_str(),true);
 
-//#elif defined(macintosh) // for the 'tosh
 #else	// the other OSs should do what they need to do
     mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
 
@@ -335,7 +330,7 @@ void findConfigFile(void)
 
   // try and find the REALLY old file
   // who uses this sucker any more?
-#if !defined(_WIN32) & !defined(macintosh)
+#if !defined(_WIN32)
   std::string realyOldConfigName = getReallyOldConfigFileName();
   fp = fopen(realyOldConfigName.c_str(), "rb");
   if (fp) {
@@ -1109,7 +1104,7 @@ int			main(int argc, char** argv)
   // see if there is a _default_ badwords file
   if (!BZDB.isSet("filterFilename")) {
     std::string name;
-#if !defined(_WIN32) & !defined(macintosh)
+#if !defined(_WIN32)
     name = getConfigDirName();
     name += "badwords.txt";
 #elif defined(_WIN32) /* !defined(_WIN32) */
@@ -1117,7 +1112,7 @@ int			main(int argc, char** argv)
     name += "badwords.txt";
 #else
     name = "badwords.txt"; // FIXME - use getConfigDirName() ?
-#endif /* !defined(_WIN32) & !defined(macintosh) */
+#endif /* !defined(_WIN32) */
 
     // get a handle on a filter object to attempt a load
     if (BZDB.isSet("filter")) {
@@ -1170,8 +1165,6 @@ int			main(int argc, char** argv)
       char username[256];
       DWORD usernameLen = sizeof(username);
       GetUserName(username, &usernameLen);
-#elif defined(macintosh)
-      const char *username = "mac_user";
 #else
       struct passwd* pwent = getpwuid(getuid());
       const char* username = pwent ? pwent->pw_name : NULL;
@@ -1650,11 +1643,11 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 
 #endif /* defined(_WIN32) */
 
+
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

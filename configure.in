@@ -645,9 +645,6 @@ AC_OUTPUT(bzflag.info
 	package/linux/Makefile
 	package/rpm/Makefile
 	package/irix/Makefile
-	package/mac/Makefile
-	package/mac/platform/Makefile
-	package/mac/src/Makefile
 	package/win32/Makefile
 	package/win32/nsis/Makefile
 	src/Makefile

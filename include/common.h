@@ -150,7 +150,7 @@ typedef uint_t		uint32_t;
 
 typedef unsigned char	uint8_t;
 
-#if defined( macintosh ) || defined( __BEOS__ )
+#if defined( __BEOS__ )
 
 // missing constants
 
@@ -169,11 +169,6 @@ typedef unsigned char	uint8_t;
 // need some integer types
 #  include <inttypes.h>
 
-// my own strcasecmp, missing in MSL
-#  ifdef __MWERKS__
-#    include "strcasecmp.h"
-#  endif
-
 #  ifndef setenv
 #    define setenv(a,b,c)
 #  endif
@@ -181,7 +176,7 @@ typedef unsigned char	uint8_t;
 #  ifndef putenv
 #    define putenv(a)
 #  endif
-#endif /* defined( macintosh ) || defined( __BEOS__ ) */
+#endif /* defined( __BEOS__ ) */
 
 #ifdef countof
 #  undef countof
@@ -199,4 +194,3 @@ typedef unsigned char	uint8_t;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
