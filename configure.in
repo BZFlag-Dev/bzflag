@@ -750,6 +750,7 @@ AC_OUTPUT(bzflag.info
 	src/scene/Makefile
 	src/zlib/Makefile
 	tools/Makefile
+	tools/bzwtransform/Makefile
 	win32/Makefile
 	win32/VC6/Makefile
 	win32/VC71/Makefile)
