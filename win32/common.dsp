@@ -118,10 +118,6 @@ SOURCE=..\src\common\md5.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\common\Ping.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\common\PlayerState.cxx
 # End Source File
 # Begin Source File
