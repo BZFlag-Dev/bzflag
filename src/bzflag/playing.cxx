@@ -1461,7 +1461,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgShotBegin: {
 			FiringInfo firingInfo;
 			msg = firingInfo.unpack(msg);
-            int id = firingInfo.shot.player;
+			int id = firingInfo.shot.player;
 			if (isRemotePlayer(id)) {
 				const float* pos = firingInfo.shot.pos;
 				player[id]->addShot(firingInfo);
