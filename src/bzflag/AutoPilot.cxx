@@ -635,7 +635,8 @@ bool fireAtTank()
 	    myTank->validTeamTarget(player[t])) {
 
 	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
-	      && (myTank->getFlag() != Flags::SuperBullet))
+	      && (myTank->getFlag() != Flags::SuperBullet)
+        && (myTank->getFlag() != Flags::ShockWave))
 	    continue;
 
 	  const float *tp = player[t]->getPosition();
