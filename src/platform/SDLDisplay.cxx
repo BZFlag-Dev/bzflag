@@ -272,6 +272,9 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   case SDLK_INSERT:
     key.button = BzfKeyEvent::Insert;
     break;
+  case SDLK_BACKSPACE:
+    key.button = BzfKeyEvent::Backspace;
+    break;
   case SDLK_DELETE:
     key.button = BzfKeyEvent::Delete;
     break;

@@ -550,6 +550,9 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       cursorPos = string.length();
       return true;
 
+    case BzfKeyEvent::Backspace:
+      c = backspace;
+      break;
 
     case BzfKeyEvent::Delete:
       if (cursorPos < (int)string.length()) {

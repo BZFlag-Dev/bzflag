@@ -62,6 +62,7 @@ class BzfKeyEvent {
 			PageDown,
 			Insert,
 			/* Ascii character */
+			Backspace,
 			Delete,
 			/* Numeric keypad */
 			Kp0,
