@@ -25,6 +25,7 @@
 #if !defined(_WIN32)
 #include <unistd.h>
 #endif
+
 #include "bzsignal.h"
 
 #define UDEBUG if (UDEBUGMSG) printf
@@ -51,6 +52,31 @@ static void		timeout(int)
   bzSignal(SIGALRM, SIG_IGN);
   alarm(0);
 }
+
+#else // Connection timeout for Windows
+
+DWORD ThreadID; 		// Thread ID
+HANDLE hConnected;	// "Connected" event
+HANDLE hThread; 		// Connection thread
+
+typedef struct {
+	int query;
+	CNCTType* addr;
+	int saddr;
+} TConnect;
+
+TConnect conn;
+
+DWORD WINAPI ThreadConnect(LPVOID params)
+{
+	TConnect *conn = (TConnect*)params;
+	if(connect(conn->query, conn->addr, conn->saddr) >= 0) {
+		SetEvent(hConnected); // Connect successful
+		}
+	ExitThread(0);
+	return 0;
+}
+
 #endif // !defined(_WIN32)
 
 // FIXME -- packet recording
@@ -112,11 +138,28 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 #if !defined(_WIN32)
   bzSignal(SIGALRM, SIG_PF(timeout));
   alarm(5);
-#endif // !defined(_WIN32)
   const boolean okay = (connect(query, (CNCTType*)&addr, sizeof(addr)) >= 0);
-#if !defined(_WIN32)
   alarm(0);
   bzSignal(SIGALRM, SIG_IGN);
+#else // Connection timeout for Windows
+
+	// Initialize structure
+	conn.query = query;
+	conn.addr = (CNCTType*)&addr;
+	conn.saddr = sizeof(addr);
+
+	// Create event
+	hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
+
+	hThread=CreateThread(NULL, 0, ThreadConnect, &conn, 0, &ThreadID);
+	const boolean okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
+	if(!okay)
+		TerminateThread(hThread ,1);
+	
+	// Do some cleanup
+	CloseHandle(hConnected);
+	CloseHandle(hThread);
+
 #endif // !defined(_WIN32)
   if (!okay)
     goto done;
