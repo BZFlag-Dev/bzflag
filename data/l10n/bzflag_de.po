@@ -2,7 +2,7 @@
 # Author: Martin Jungowski, mj@hashmark.net
 
 msgid "Join Game"
-msgstr "Spiel Starten"
+msgstr "Spiel starten"
 
 msgid "Find Server"
 msgstr "Server suchen"
@@ -108,7 +108,7 @@ msgid "Sound Volume:"
 msgstr "Lautstärke:"
 
 msgid "UDP network connection:"
-msgstr "UDB Netzwerkverbindung"
+msgstr "UDP-Netzwerkverbindung"
 
 msgid "Change Key Mapping" 
 msgstr "Tastenbelegung ändern"
@@ -120,7 +120,7 @@ msgid "Enhanced radar:"
 msgstr "Erweitertes Radar:"
 
 msgid "Controlpanel & Score FontSize:" 
-msgstr "Controlpanel & Schriftgröße:"
+msgstr "Panel- & Spielstand-Schriftgröße:"
 
 #msgid "normal" 
 #msgstr "Normal"
@@ -129,19 +129,19 @@ msgid "bigger"
 msgstr "Größer"
 
 msgid "Radar & Panel Opacity:" 
-msgstr "Radar & Panel Transparenz:"
+msgstr "Radar- & Panel-Transparenz:"
 
 msgid "Colored shots on radar:" 
-msgstr "Farbige Schüsse auf dem Radar"
+msgstr "Farbige Schüsse auf dem Radar:"
 
 msgid "Radar Shot Length:" 
-msgstr "Radar Schußlänge:"
+msgstr "Radar-Schusslänge:"
 
-#msgid "Radar & Panel Size:"
-#msgstr ""
+msgid "Radar & Panel Size:"
+msgstr "Radar- & Panel-Größe:"
 
-#msgid "Mouse Box Size:"
-#msgstr ""
+msgid "Mouse Box Size:"
+msgstr "Mausboxgröße:"
 
 msgid "Page Down for next page" 
 msgstr "Bild Ab für nächste Seite"
