@@ -63,7 +63,7 @@ const float		TankWidth =	2.8f;		// meters
 const float		TankHeight =	2.05f;		// meters
 const float		TankRadius =	0.72f*TankLength;// meters
 const float		MuzzleHeight =	1.57f;		// meters
-const float		MuzzleFront =	TankRadius+0.2f;// meters
+const float		MuzzleFront =	TankRadius+0.1f;// meters
 
 // rough shot geometry
 const float		ShotRadius =	0.5f;		// meters
