@@ -23,7 +23,7 @@ void formatDebug(const char* fmt, ...)
     vsnprintf(buffer, 8192, fmt, args);
     va_end(args);
     #if defined(_WIN32)
-		W32_DEBUG_TRACE(buffer);
+      W32_DEBUG_TRACE(buffer);
     #else
       std::cout << buffer;
     #endif
