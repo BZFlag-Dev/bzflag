@@ -54,6 +54,9 @@ bzfs_SOURCES = \
 LDADD = \
 	../net/libNet.a		\
 	../game/libGame.a	\
-	../common/libCommon.a
+	../common/libCommon.a	\
+	$(CURL_LIBS)
+
+AM_CPPFLAGS = $(CURL_CFLAGS)
 
 bzfs_LDFLAGS = ../date/buildDate.o
