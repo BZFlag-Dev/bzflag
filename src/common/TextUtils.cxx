@@ -27,7 +27,7 @@ namespace TextUtils
 #ifdef HAVE_VSNPRINTF
     int bs = vsnprintf(buffer, 0, fmt, args);
 #else
-    int bs = vsnprintf(buffer, fmt, args);
+    int bs = vsprintf(buffer, fmt, args);
 #endif
     buffer = new char[bs];
     vsnprintf(buffer, bs, fmt, args);
