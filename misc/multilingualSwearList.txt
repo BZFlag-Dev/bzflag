@@ -1043,62 +1043,45 @@ pojeb sa								# cs - fuck off
 
 
 
-# Chinese Cantonese (phonetic, more or less)
-chow fah hai            # zh - smelly cheap cunt
-d'iu ne lo mo           # zh - fuck your mom
-fei hai                 # zh - fat cunt
-# gai                     # zh - whore
-hai-paw                 # zh - cunty woman
+# Chinese (Cantonese, Mandarin, and Hokkien - phonetic, more or less)
+bawlanjiao              # zh - no cock
+blowdz			# zh - bitch
+chaocheebye		# zh - smelly cunt
+chaoniniang             # zh - fuck your mom
+chapjong                # zh - bastard
+chewhai                 # zh - smelly cunt
+chowfahhai              # zh - smelly cheap cunt
+diaoniameh              # zh - fuck your mom
+diunelomo               # zh - fuck your mom
+feihai                  # zh - fat cunt
+ganniniang		# zh - fuck your mother
+gunnima			# zh - fuck your mom
+haipaw                  # zh - cunty woman
 hamsap                  # zh - horny person (not a swear word actually, just an insult)
-hum kah chan            # zh - death to your family!
-jhew lun dou            # zh - pig cock scrotum
-lay da yuen fay gay mm sai sou 		# zh - you jack off and never wash hands
-lok chat                # zh - dick
-lun-yeung		# zh - dick face
-lun tao			# zh - dick head
-ow lun dun jhew hai     # zh - ox cock double-boiled in a pig's cunt
-poq gai                 # zh - "go die in the street", general purpose swearword (ie can fit in any context, like "shit!" or "fuck you" or "you bastard" etc etc etc.  add words before and after for effect
-say baht poh            # zh - bitch
-sek si                  # zh - eat shit
-tiu nia ma chow hai     # zh - fuck your mom's smelly cunt
-
-
-# Chinese Mandarin (phonetic, more or less)
-chao ni niang           # zh - fuck your mom
-# dah bien                # zh - shit
-gun ni ma 							# zh - fuck your mom
-liu mang                # zh - standard swear for bastard/assmunch/etc
-ni ma la bi             # zh - your mother contracts turtles.
-
-
-# Chinese Hokkien (Phonectic, more or less)
-and the chao cheebye    # zh - smelly cunt
-baw lan jiao            # zh - no cock
-# beo                     # zh  crude, infers leering at girls
-# chao                    # zh - cheeby smelly pussy
-# cheeby                  # zh - pussy
-gan ni zhu gong di yi meah 	 # zh - fuck your fore-father number one
-ka ni lao beh           # zh - fuck your father
-ka ni na                # zh - fuck your mother
-ka ni na beh chao cheeby 	# zh - fuck your bloody mother's smelly pussy
-# keh                     # zh - whore
-kiu mo                  # zh - pubic hair
-lan hoot                # zh - balls
-lan jiao                # zh - dick
-# neh                     # zh - breast
-ni na bu                # zh - your fucking mother
-peh bu ki ho gao kan    # zh - parents go fuck by dogs
-peh bu ki ho lang kan   # zh - parents go fuck by someone
-sai ne niang            # zh - shit on your mother (usually in her ear)
-
-
-# Chinese Hakka (Phonectic, more or less)
-bot nia meh see tai lang             # zh - fuck your mom's smelly cunt
-chap jong               # zh - bastard
-chew hai                # zh - smelly cunt
-diao nia meh            # zh - fuck your mom
-# guy                     # zh - whore
-nia meh boon kiu diao   # zh - let the dog fuck your mom
+humkahchan              # zh - death to your family!
+ingdow			# zh - vagina
+ingjing			# zh - penis
+jhewlundou              # zh - pig cock scrotum
+jiniu			# zh - whore
+kanilaobeh              # zh - fuck your father
+kanina                  # zh - fuck your mother
+kiumo                   # zh - pubic hair
+lanhoot                 # zh - balls
+lanjiao                 # zh - dick
+liumang                 # zh - standard swear for bastard/assmunch/etc
+lokchat                 # zh - dick
+lunyeung		# zh - dick face
+luntao			# zh - dick head
+nimalabi                # zh - your mother contracts turtles.
+ninabu                  # zh - your fucking mother
+owlundunjhewhai         # zh - ox cock double-boiled in a pig's cunt
+poqgai                  # zh - "go die in the street", general purpose swearword (ie can fit in any context, like "shit!" or "fuck you" or "you bastard" etc etc etc.  add words before and after for effect
+saineniang              # zh - shit on your mother (usually in her ear)
+saybahtpoh              # zh - bitch
+seksi                   # zh - eat shit
+tamada			# zh - fuck you
+tiuniamachowhai         # zh - fuck your mom's smelly cunt
+tsaunima		# zh - fuck your mother
 
 
 # Dutch (Holland-Belgium)
