@@ -43,7 +43,7 @@ static void getRandomPoint (const float* center,
 
 
 EighthDTetraSceneNode::EighthDTetraSceneNode(const float (*vertices)[3],
-                                             const float (*/*planes*/)[4]) :
+                                             const float (* /*planes*/)[4]) :
                                              EighthDimSceneNode(TetraPolygons),
                                              renderNode(this, vertices)
 {
