@@ -26,6 +26,7 @@ public:
 	static bool  enhancedRadar;
 	static bool  blend;
 	static bool  texture;
+	static bool  shadows;
 
 	static float maxLOD;
 	static float tankHeight;

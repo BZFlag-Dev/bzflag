@@ -12,6 +12,7 @@
 
 #include <string.h>
 #include "common.h"
+#include "BZDBCache.h"
 #include "SceneNode.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
@@ -130,7 +131,9 @@ void			SceneNode::setSphere(const GLfloat _sphere[4])
 
 void			SceneNode::getRenderNodes(SceneRenderer& renderer)
 {
-  addShadowNodes(renderer);
+  if (BZDBCache::shadows) {
+    addShadowNodes(renderer);
+  }
   if (!cull(renderer.getViewFrustum())) {
     if (!renderer.testAndSetStyle(styleMailbox)) notifyStyleChange(renderer);
     addRenderNodes(renderer);
