@@ -5813,6 +5813,8 @@ static void		playingLoop()
 	    if (!colorblind && (player[i]->getFlag() == Flags::Masquerade) && (myTank->getFlag() != Flags::Seer)) {
 	       override = Team::getTankColor(myTank->getTeam());
 	    }
+	    else
+	       override = false;
 	    player[i]->addPlayer(scene, override, true);
 	    if ((player[i]->getFlag() == Flags::Cloaking) && (myTank->getFlag() != Flags::Seer))
 	      player[i]->setInvisible();
