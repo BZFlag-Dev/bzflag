@@ -25,6 +25,7 @@
 #include <iostream>
 #include <math.h>
 
+#ifdef DEBUG
 #include <TimeKeeper.h> // only for _debugLookups()
 
 void	_debugLookups(const std::string &name)
@@ -60,7 +61,6 @@ void	_debugLookups(const std::string &name)
   }
 }
 
-#ifdef DEBUG
   #define debugLookups(name) _debugLookups(name)
 #else
   #define debugLookups(name)
