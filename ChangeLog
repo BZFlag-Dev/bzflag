@@ -10,6 +10,7 @@ BZFlag 2.0.1
 * Lagstats and Playerlist no longer filtered - Steve Krenzel
 * print errors in red - Frank Thilo
 * simple scroll indicator for control panel - Frank Thilo
+* antiban perm actually counters a server ban now - Steve Krenzel
 
 BZFlag 2.0.0  "Falcor's Despair" (2004-01-17)
 ---------------------------------------------
