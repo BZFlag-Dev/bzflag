@@ -81,6 +81,9 @@
 /* Define to 1 if you have the `Sleep' function. */
 #define HAVE_SLEEP 1
 
+/* Define to 1 if you have the `wglGetCurrentContext' function. */
+#define HAVE_WGLGETCURRENTCONTEXT 1
+
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
 inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}

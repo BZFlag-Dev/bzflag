@@ -107,4 +107,7 @@
 /* Define to 1 if you have the `Sleep' function. */
 #define HAVE_SLEEP 1
 
+/* Define to 1 if you have the `wglGetCurrentContext' function. */
+#define HAVE_WGLGETCURRENTCONTEXT 1
+
 #endif //_VC5_6_CONFIG
