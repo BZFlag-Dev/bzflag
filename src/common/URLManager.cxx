@@ -84,9 +84,9 @@ URLManager::URLManager()
   theLen = 0;
 
 #ifdef HAVE_CURL
-  CURLcode curlResult;
 
 #if LIBCURL_VERSION_NUM >= 0x070a00
+  CURLcode curlResult;
   if ((curlResult = curl_global_init(CURL_GLOBAL_NOTHING)))
     DEBUG1("Unexpected error from libcurl; Error: %d\n", curlResult);
 #endif
