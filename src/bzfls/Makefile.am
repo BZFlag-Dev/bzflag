@@ -5,7 +5,6 @@ MAINTAINERCLEANFILES = \
 
 bzfls_SOURCES = bzfls.cxx
 
-AM_LDFLAGS  = ../date/buildDate.o
 LDADD =					\
 	../net/libNet.a			\
 	../common/libCommon.a
