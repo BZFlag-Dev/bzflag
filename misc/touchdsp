@@ -2,20 +2,42 @@
 #
 # update the version numbers in the win32 projects
 
-root=".."			# bzflag top-level dir
-dir="$root/win32"		# location of projects
-files="bzflag bzfs bzfls"	# projects to update
+# bzflag top-level dir
+for root in . .. ; do
+    if [ -r $root/config ] ; then
+	break
+    fi
+done
+
+# location of files
+dir="$root/win32"
+# files to update
+files="bzflag.dsp bzfs.dsp bzfls.dsp"
+tmp=tmp.$$
 
 # get version number from config file
 eval `grep "^VERSION *= *" $root/config | sed -e 's/ *//g'`
 
 # do replacement
 for file in $files; do
-    if [ ! -w $dir/${file}.dsp ]; then
-	echo "$dir/${file}.dsp not found or not writable."
+    if [ ! -w $dir/${file} ]; then
+	echo "$dir/${file} not found or not writable."
 	continue
     fi
-    cat $dir/${file}.dsp | sed -e 's/VERSION=[0-9]*/'VERSION=$VERSION/g > tmp.dsp
-    mv tmp.dsp $dir/${file}.dsp
+    cat $dir/${file} | sed -e 's/VERSION=[0-9]*/'VERSION=$VERSION/g > $tmp
+    cat $tmp > $dir/${file}
 done
 
+# get version id from config file and update rpm spec file
+file=spec
+dir=$root/package/rpm
+eval `grep "^VERSIONID *= *" $root/config | sed -e 's/ *//g'`
+
+if [ ! -w $dir/${file} ]; then
+    echo "$dir/${file} not found or not writable."
+    continue
+fi
+cat $dir/${file} | sed -e "s/^%define version .*$/%define version $VERSIONID/g" > $tmp
+cat $tmp > $dir/${file}
+
+rm $tmp
