@@ -64,7 +64,6 @@ class FlagSceneNode : public SceneNode {
     FlagRenderNode	renderNode;
     static const GLfloat Width;
     static const GLfloat Height;
-    static const GLfloat Base;
     static const float	RippleSpeed1;
     static const float	RippleSpeed2;
     static const float	DroopFactor;

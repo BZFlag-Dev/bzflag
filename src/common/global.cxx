@@ -27,6 +27,7 @@ const GlobalDBItem				globalDBItems[] = {
 	{ "_explodeTime",		"5.0",				false, StateDatabase::Locked},
 	{ "_flagAltitude",		"11.0",				false, StateDatabase::Locked},
 	{ "_flagHeight",		"10.0",				false, StateDatabase::Locked},
+	{ "_flagPoleSize",		"0.8",				false, StateDatabase::Locked},
 	{ "_flagRadius",		"2.5",				false, StateDatabase::Locked},
 	{ "_gMissileAng",		"0.628319",			false, StateDatabase::Locked},
 	{ "_gMissileAdLife",		"0.95",				false, StateDatabase::Locked},

@@ -31,7 +31,6 @@ const float		FlagSceneNode::DroopFactor = 0.0f;
 static const GLfloat	Unit = 0.8f;		// meters
 const GLfloat		FlagSceneNode::Width = 1.5f * Unit;
 const GLfloat		FlagSceneNode::Height = Unit;
-const GLfloat		FlagSceneNode::Base = Unit;
 
 FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
 				billboard(true),
@@ -164,6 +163,7 @@ FlagSceneNode::FlagRenderNode::~FlagRenderNode()
 
 void			FlagSceneNode::FlagRenderNode::render()
 {
+  float base = BZDB.eval( StateDatabase::BZDB_FLAGPOLESIZE );
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
@@ -182,8 +182,8 @@ void			FlagSceneNode::FlagRenderNode::render()
 	  const float shift1 = damp * sinf(angle1);
 	  GLfloat v1[3], v2[3];
 	  v1[0] = v2[0] = Width * x;
-	  v1[1] = Base + Height - shift1;
-	  v2[1] = Base - shift1;
+	  v1[1] = base + Height - shift1;
+	  v2[1] = base - shift1;
 	  v1[2] = damp * (sinf(angle1 - 0.28f * M_PI) +
 				sinf(sceneNode->ripple2 + 1.16f * M_PI));
 	  v2[2] = shift1 + damp * sinf(sceneNode->ripple2);
@@ -199,13 +199,13 @@ void			FlagSceneNode::FlagRenderNode::render()
       glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
       glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0.0f, Base, 0.0f);
+	glVertex3f(0.0f, base, 0.0f);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(Width, Base, 0.0f);
+	glVertex3f(Width, base, 0.0f);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(Width, Base + Height, 0.0f);
+	glVertex3f(Width, base + Height, 0.0f);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0.0f, Base + Height, 0.0f);
+	glVertex3f(0.0f, base + Height, 0.0f);
       glEnd();
     }
 
@@ -213,7 +213,7 @@ void			FlagSceneNode::FlagRenderNode::render()
     if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
     glBegin(GL_LINE_STRIP);
       glVertex3f(0.0f, 0.0f, 0.0f);
-      glVertex3f(0.0f, Base + Height, 0.0f);
+      glVertex3f(0.0f, base + Height, 0.0f);
     glEnd();
     if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
 
