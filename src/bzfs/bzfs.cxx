@@ -2819,6 +2819,7 @@ static void getSpawnLocation( int team, float* pos, float *azimuth)
 
   float size = BZDB->eval( StateDatabase::BZDB_WORLDSIZE);
   WorldInfo::ObstacleLocation *building;
+  float radius = 2.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
 
   int lastType = IN_PYRAMID;
   while ((lastType == IN_PYRAMID) || (lastType == IN_TELEPORTER)) {
@@ -2826,17 +2827,17 @@ static void getSpawnLocation( int team, float* pos, float *azimuth)
     pos[1] = (bzfrand() * size) - (size/2.0f);
     pos[2] = (bzfrand() * maxWorldHeight);
 
-    int type = world->inBuilding(&building, pos[0], pos[1], pos[2], 2.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+    int type = world->inBuilding(&building, pos[0], pos[1], pos[2], radius);
     if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
       pos[2] = 0.0f;
-      type = world->inBuilding(&building, pos[0], pos[1], pos[2], 2.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+      type = world->inBuilding(&building, pos[0], pos[1], pos[2], radius);
     }
 
     lastType = NOT_IN_BUILDING;
     while (type != NOT_IN_BUILDING) {
       pos[2] = building->pos[2] + building->size[2] + 0.25f;
       lastType = type;
-      type = world->inBuilding(&building, pos[0], pos[1], pos[2], 2.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+      type = world->inBuilding(&building, pos[0], pos[1], pos[2], radius);
     }
   }
 
