@@ -195,6 +195,7 @@ public:
   static const std::string	BZDB_MUZZLEHEIGHT;
   static const std::string	BZDB_NOTRESPONDINGTIME;
   static const std::string	BZDB_OBESEFACTOR;
+  static const std::string	BZDB_PAUSEDROPTIME;
   static const std::string	BZDB_POSITIONTOLERANCE;
   static const std::string      BZDB_PYRBASE;
   static const std::string      BZDB_PYRHEIGHT;

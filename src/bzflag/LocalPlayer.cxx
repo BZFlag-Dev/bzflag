@@ -355,14 +355,33 @@ void			LocalPlayer::doUpdate(float dt)
 {
   const bool hadShotActive = anyShotActive;
   const int numShots = World::getWorld()->getMaxShots();
+  static TimeKeeper pauseTime = TimeKeeper::getNullTime();
+  static bool wasPaused = false;
 
   // if paused then boost the reload times by dt (so that, effectively,
   // reloading isn't performed)
   int i;
-  if (isPaused())
-    for (i = 0; i < numShots; i++)
-      if (shots[i])
+  if (isPaused()) {
+    for (i = 0; i < numShots; i++) {
+      if (shots[i]) {
 	shots[i]->boostReloadTime(dt);
+      }
+    }
+
+    // if we've been paused for a long time, drop our flag
+    if (!wasPaused) {
+      pauseTime = TimeKeeper::getCurrent();
+      wasPaused = true;
+    }
+    if (TimeKeeper::getCurrent() -  pauseTime > BZDB->eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
+      ServerLink::getServer()->sendDropFlag(getPosition());
+      pauseTime = TimeKeeper::getSunExplodeTime();
+    }
+    
+  } else {
+    pauseTime = TimeKeeper::getNullTime();
+    wasPaused = false;
+  }
 
   // reap dead (reloaded) shots
   for (i = 0; i < numShots; i++)

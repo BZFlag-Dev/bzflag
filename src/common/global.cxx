@@ -49,6 +49,7 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_muzzleHeight",		"1.57",				false, StateDatabase::Locked},
 	{ "_notRespondingTime",		"3.5",				false, StateDatabase::Locked},
 	{ "_obeseFactor",		"2.5",				false, StateDatabase::Locked},
+	{ "_pauseDropTime",		"15.0",				false, StateDatabase::Locked},
 	{ "_positionTolerance",		"0.01",				false, StateDatabase::Locked},
 	{ "_pyrBase",			"4.0*_tankHeight",		false, StateDatabase::Locked},
 	{ "_pyrHeight",			"5.0*_tankHeight",		false, StateDatabase::Locked},
