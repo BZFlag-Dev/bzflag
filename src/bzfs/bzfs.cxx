@@ -2809,7 +2809,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   } else if (--drpFlag.grabs <= 0) {
     vanish = true;
     drpFlag.grabs = 0;
-  } else if (!clOptions->flagsOnBuildings && (pos[2] > 0.0f)) {
+  } else if (!clOptions->flagsOnBuildings && (landing[2] > 0.0f)) {
     vanish = true;
   } else {
     vanish = !safelyDropped;
