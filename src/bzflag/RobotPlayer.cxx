@@ -382,7 +382,8 @@ float			RobotPlayer::getTargetPriority(const
   float basePriority = 1.0f;
   // give bonus to non-deadzone targets
   if (obstacleList) {
-    const BzfRegion* targetRegion = findRegion (p2);
+    float nearest[2];
+    const BzfRegion* targetRegion = findRegion (p2, nearest);
     if (targetRegion && targetRegion->isInside(p2))
       basePriority += 1.0f;
   }
@@ -411,22 +412,22 @@ void			RobotPlayer::setTarget(const Player* _target)
 
   // work backwards (from target to me)
   const float* p1 = target->getPosition();
-  const float* tgt = p1;
   const float* p2 = getPosition();
-  BzfRegion* headRegion = findRegion(p1);
-  BzfRegion* tailRegion = findRegion(p2);
+  float q1[2], q2[2];
+  BzfRegion* headRegion = findRegion(p1, q1);
+  BzfRegion* tailRegion = findRegion(p2, q2);
   if (!headRegion || !tailRegion) {
     // if can't reach target then forget it
     return;
   }
 
   mailbox++;
-  headRegion->setPathStuff(0.0f, NULL, p1, mailbox);
+  headRegion->setPathStuff(0.0f, NULL, q1, mailbox);
   RegionPriorityQueue queue;
   queue.insert(headRegion, 0.0f);
   BzfRegion* next;
   while (!queue.isEmpty() && (next = queue.remove()) != tailRegion)
-    findPath(queue, next, tailRegion, p2, mailbox);
+    findPath(queue, next, tailRegion, q2, mailbox);
 
   // get list of points to go through to reach the target
   next = tailRegion;
@@ -435,13 +436,15 @@ void			RobotPlayer::setTarget(const Player* _target)
     path.push_back(p1);
     next = next->getTarget();
   } while (next && next != headRegion);
-  if (headRegion->isInside(tgt))
-    path.push_back(tgt);
+  path.push_back(q1);
   pathIndex = 0;
 }
 
-BzfRegion*		RobotPlayer::findRegion(const float p[2]) const
+BzfRegion*		RobotPlayer::findRegion(const float p[2],
+						float nearest[2]) const
 {
+  nearest[0] = p[0];
+  nearest[1] = p[1];
   const int count = obstacleList->size();
   for (int o = 0; o < count; o++)
     if ((*obstacleList)[o]->isInside(p))
@@ -451,10 +454,13 @@ BzfRegion*		RobotPlayer::findRegion(const float p[2]) const
   float      distance      = maxDistance;
   BzfRegion* nearestRegion = NULL;
   for (int i = 0; i < count; i++) {
-    float currDistance = (*obstacleList)[i]->getDistance(p);
+    float currNearest[2];
+    float currDistance = (*obstacleList)[i]->getDistance(p, currNearest);
     if (currDistance < distance) {
       nearestRegion = (*obstacleList)[i];
       distance = currDistance;
+      nearest[0] = currNearest[0];
+      nearest[1] = currNearest[1];
     }
   }
   return nearestRegion;

@@ -95,18 +95,12 @@ bool			BzfRegion::isInside(const float p[2]) const
   return inside;
 }
 
-float			BzfRegion::getDistance(const float p[2]) const
+float			BzfRegion::getDistance(const float p[2],
+					       float nearest[2]) const
 {
-  // compute distance from any corner
   const int count = corners.size();
   float currentDistance = maxDistance;
   float pointDistance;
-  for (int i = 0; i < count; i++) {
-    const float* p1 = corners[i].get();
-    pointDistance = hypotf(p[0] - p1[0], p[1] - p1[1]);
-    if (pointDistance < currentDistance)
-      currentDistance = pointDistance;
-  }
 
   //compute distance from any edge
   const float* p1 = corners[count - 1].get();
@@ -115,21 +109,34 @@ float			BzfRegion::getDistance(const float p[2]) const
   float        m[2];
   float        t;
   float        edgeSquareDist;
+  float        x, y;
   for (int c = 0; c < count; c++) {
     p2   = corners[c].get();
-    d[0] = p2[1] - p1[0];
+    d[0] = p2[0] - p1[0];
     d[1] = p2[1] - p1[1];
     m[0] = p[0]  - p1[0];
     m[1] = p[1]  - p1[1];
     edgeSquareDist = d[0] * d[0] + d[1] * d[1];
     t = (m[0] * d[0] + m[1] * d[1]) / edgeSquareDist;
-    p1 = p2;
-    // t must be within 0..1 to get point - segment distance
-    if ((t <= 0) && (t >= 1))
-      continue;
-    pointDistance = hypotf(m[0] - t * d[0], m[1] - t * d[1]);
-    if (pointDistance < currentDistance)
+    if (t <= 0) {
+      pointDistance = hypotf(m[0], m[1]);
+      x = p1[0];
+      y = p1[1];
+    } else if (t >= 1) {
+      pointDistance = hypotf(m[0] - d[0], m[1] - d[1]);
+      x = p2[0];
+      y = p2[1];
+    } else {
+      pointDistance = hypotf(m[0] - t * d[0], m[1] - t * d[1]);
+      x = p1[0] + t * d[0];
+      y = p1[1] + t * d[1];
+    }
+    if (pointDistance < currentDistance) {
       currentDistance = pointDistance;
+      nearest[0] = x;
+      nearest[1] = y;
+    }
+    p1 = p2;
   }
   return currentDistance;
 }

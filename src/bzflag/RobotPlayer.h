@@ -53,7 +53,7 @@ class RobotPlayer : public BaseLocalPlayer {
     bool		doEndShot(int index, bool isHit, float* pos);
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
-    BzfRegion*		findRegion(const float p[2]) const;
+    BzfRegion*		findRegion(const float p[2], float nearest[2]) const;
     float		getRegionExitPoint(
 				const float p1[2], const float p2[2],
 				const float a[2], const float targetPoint[2],
