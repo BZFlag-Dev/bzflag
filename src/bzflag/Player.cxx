@@ -368,7 +368,10 @@ void Player::updateJumpJets(float dt)
   
 void Player::updateTrackMarks()
 {
-  if (isAlive() && ((state.status & PlayerState::Falling) == 0)) {
+  const float minSpeed = 0.1f; // relative speed slop
+  
+  if (isAlive() && !isFalling() && 
+      ((getFlag() != Flags::PhantomZone) || !isFlagActive())) {
     const float lifeTime = TimeKeeper::getCurrent() - lastTrackDraw;
     if (lifeTime > TrackMarks::updateTime) {
       bool drawMark = true;
@@ -377,19 +380,21 @@ void Player::updateTrackMarks()
       // FIXME - again, this should be pulled for TankGeometryMgr
       const float fullLength = 6.0f;
       const float treadHeight = 1.2f;
-      const float dist = dimensions[0] * 
-                         ((fullLength - treadHeight) / fullLength);
-      if (relativeSpeed > +0.001f) {
+      const float dist =
+        dimensions[0] * ((fullLength - treadHeight) / fullLength);
+      
+      if (relativeSpeed > +minSpeed) {
 	// draw the mark at the back of the treads
 	markPos[0] = state.pos[0] - (forward[0] * dist);
 	markPos[1] = state.pos[1] - (forward[1] * dist);
-      } else if (relativeSpeed < -0.001f) {
+      } else if (relativeSpeed < -minSpeed) {
 	// draw the mark at the front of the treads
 	markPos[0] = state.pos[0] + (forward[0] * dist);
 	markPos[1] = state.pos[1] + (forward[1] * dist);
       } else {
 	drawMark = false;
       }
+      
       if (drawMark) {
 	TrackMarks::addMark(markPos, dimensionsScale[1],
 			    state.azimuth, state.phydrv);

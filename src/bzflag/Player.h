@@ -95,6 +95,7 @@ public:
 
   bool		isAlive() const;
   bool		isPaused() const;
+  bool		isFalling() const;
   bool		isFlagActive() const;
   bool		isTeleporting() const;
   bool		isExploding() const;
@@ -413,6 +414,11 @@ inline bool		Player::isAlive() const
 inline bool		Player::isPaused() const
 {
   return (state.status & short(PlayerState::Paused)) != 0;
+}
+
+inline bool		Player::isFalling() const
+{
+  return (state.status & short(PlayerState::Falling)) != 0;
 }
 
 inline bool		Player::isFlagActive() const
