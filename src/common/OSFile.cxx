@@ -14,7 +14,7 @@
   #pragma warning( disable : 4786 )  // Disable warning message
 #endif
 
-// inteface header
+// interface header
 #include "OSFile.h"
 
 // system headers

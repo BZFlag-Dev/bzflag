@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// inteface header
+// interface header
 #include "Country.h"
 
 // system headers
