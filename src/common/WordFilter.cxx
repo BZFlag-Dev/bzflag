@@ -31,7 +31,8 @@ bool WordFilter::simpleFilter(char *input) const
 
   int endPosition;
   std::string word;
-
+  unsigned int firstchar;
+  
   /* here we iterate over all of the words in the input and replace
    * exact matches with asterisks
    */
@@ -42,9 +43,7 @@ bool WordFilter::simpleFilter(char *input) const
 
     word = line.substr(startPosition, endPosition-startPosition);
     findWord.word = word;
-    int firstchar = word[0];
-    if (firstchar < 0)
-      firstchar+=256; // FIXME, not very clean?
+    firstchar = (unsigned int)word[0];
     if (filters[firstchar].find(findWord) != \
 	filters[firstchar].end()) {
 
@@ -640,9 +639,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     newFilter.expression = expression;
     newFilter.compiled = getCompiledExpression(expression);
 
-    int firstchar = tolower(word[0]);
-    if (firstchar < 0)
-      firstchar += 256; // FIXME, not too clean?
+    unsigned int firstchar = (unsigned int)tolower(word[0]);
     /* check if the word is already added */
     if (filters[firstchar].find(newFilter) != \
 	filters[firstchar].end()) {
