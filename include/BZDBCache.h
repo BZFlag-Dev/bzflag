@@ -13,8 +13,7 @@
 #ifndef	BZDBCACHE_H
 #define	BZDBCACHE_H
 
-#include <string>
-
+// implementation headers
 #include "StateDatabase.h"
 
 class BZDBCache
