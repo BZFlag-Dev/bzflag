@@ -5,6 +5,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * add language translations for the new flags
 
+* either disable server checks when -handicap mode is enabled, or
+  incorporate the player's handicap value into the check calculations.
+
+
 THESE ARE LOWER PRIORITY
 
 * ban both the player's name in addition to their IP case insensitively.
