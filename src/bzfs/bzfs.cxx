@@ -4751,7 +4751,6 @@ int main(int argc, char **argv)
   parse(argc, argv);
 
   serverAddress = Address::getHostAddress(pingInterface);
-  publicizedAddress = "";
   if (!pingInterface)
     pingInterface = serverAddress.getHostName();
 
