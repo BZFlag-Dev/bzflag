@@ -201,6 +201,7 @@ enum FlagId {
 			JumpingFlag,		// lets your tank jump
 			IdentifyFlag,		// lets you identify other flags
 			CloakingFlag,		// make you invisible out window
+			UselessFlag,		// yay, its useless
 
 			// the bad super flags
 			ColorblindnessFlag,	// can't see team colors
