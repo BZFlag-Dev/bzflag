@@ -4444,7 +4444,7 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
 {
   float p[4][2];
   const float* c = obstacle.getPosition();
-  const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  const float tankRadius = BZDBCache::tankRadius;
 
   if (BZDBCache::tankHeight < c[2])
     return;
@@ -4499,7 +4499,7 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
 
 static void		makeObstacleList()
 {
-  const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  const float tankRadius = BZDBCache::tankRadius;
   int i;
   const int count = obstacleList.size();
   for (i = 0; i < count; i++)
@@ -5619,6 +5619,7 @@ static void		playingLoop()
 
   // main loop
   while (!CommandsStandard::isQuit()) {
+    BZDBCache::update();
     // get delta time
     TimeKeeper prevTime = TimeKeeper::getTick();
     TimeKeeper::setTick();

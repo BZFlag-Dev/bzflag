@@ -19,6 +19,7 @@
 #include "SphereSceneNode.h"
 #include "SceneDatabase.h"
 #include "OpenGLMaterial.h"
+#include "BZDBCache.h"
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds
@@ -68,7 +69,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     tankNode = new TankSceneNode(state.pos, forward);
     tankIDLNode = new TankIDLSceneNode(tankNode);
     changeTeam(team);
-    pausedSphere = new SphereSceneNode(state.pos, 1.5f * BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
+    pausedSphere = new SphereSceneNode(state.pos,
+				       1.5f * BZDBCache::tankRadius);
     pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
     totalCount++;
   }
@@ -90,7 +92,7 @@ Player::~Player()
 
 float			Player::getRadius() const
 {
-  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float tankRadius = BZDBCache::tankRadius;
   if (flagType == Flags::Obesity) return tankRadius * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   if (flagType == Flags::Tiny)    return tankRadius * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   if (flagType == Flags::Thief)   return tankRadius * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
@@ -128,7 +130,8 @@ void			Player::move(const float* _pos, float _azimuth)
 
   // compute teleporter proximity
   if (World::getWorld())
-    teleporterProximity = World::getWorld()->getProximity(state.pos, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
+    teleporterProximity = World::getWorld()
+      ->getProximity(state.pos, BZDBCache::tankRadius);
 }
 
 void			Player::setVelocity(const float* _velocity)
@@ -222,7 +225,8 @@ void			Player::endShot(int index,
 void			Player::updateSparks(float /*dt*/)
 {
   if (flagType != Flags::PhantomZone || !isFlagActive()) {
-    teleporterProximity = World::getWorld()->getProximity(state.pos, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
+    teleporterProximity = World::getWorld()
+      ->getProximity(state.pos, BZDBCache::tankRadius);
     if (teleporterProximity == 0.0f) {
       color[3] = 1.0f;
       tankNode->setColor(color);
@@ -305,7 +309,7 @@ void			Player::addPlayer(SceneDatabase* scene,
     scene->addDynamicNode(tankNode);
   }
   if (isAlive() && (isPaused() || isNotResponding())) {
-    pausedSphere->move(state.pos, 1.5f * BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
+    pausedSphere->move(state.pos, 1.5f * BZDBCache::tankRadius);
     scene->addDynamicSphere(pausedSphere);
   }
 }

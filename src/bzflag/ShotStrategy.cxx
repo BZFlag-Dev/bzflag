@@ -506,7 +506,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   else if (tank->getFlag() == Flags::Thief) scaleFactor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
 
   // get tank radius
-  float radius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS) * scaleFactor;
+  float radius = BZDBCache::tankRadius * scaleFactor;
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -1351,7 +1351,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
     return minTime;
 
   // get tank radius
-  float radius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float radius = BZDBCache::tankRadius;
   if (tank->getFlag() == Flags::Obesity)   radius *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (tank->getFlag() == Flags::Thief) radius *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);

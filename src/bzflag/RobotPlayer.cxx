@@ -22,6 +22,7 @@
 #include "RobotPlayer.h"
 #include "World.h"
 #include "ServerLink.h"
+#include "BZDBCache.h"
 
 std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;
 
@@ -117,7 +118,7 @@ void			RobotPlayer::doUpdate(float dt)
   // fire shot if any available
   timeSinceShot += dt;
   float reloadTime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
-  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float tankRadius = BZDBCache::tankRadius;
   float shotRange  = BZDB->eval(StateDatabase::BZDB_SHOTRANGE);
 #if !defined(SHOOTING_FIX)
   timeSinceShot += reloadTime / numShots;
@@ -190,7 +191,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
       v[1] = endPoint[1] - position[1];
       distance = hypotf(v[0], v[1]);
       float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
-      float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+      float tankRadius = BZDBCache::tankRadius;
       if (distance <= tankRadius)
 	pathIndex++;
 

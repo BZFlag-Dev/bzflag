@@ -133,7 +133,7 @@ void			RadarRenderer::drawShot(const ShotPath* shot)
 void RadarRenderer::drawTank(float x, float y, float z)
 {
   // Does not change with height.
-  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float tankRadius = BZDBCache::tankRadius;
   float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
   GLfloat s = tankRadius > 1.5f + 2.0f * ps ? tankRadius : 1.5f + 2.0f * ps;
   glRectf(x - s, y - s, x + s, y + s);
@@ -167,7 +167,7 @@ void RadarRenderer::drawFlag(float x, float y, float)
 
 void RadarRenderer::drawFlagOnTank(float x, float y, float)
 {
-  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float tankRadius = BZDBCache::tankRadius;
   GLfloat s = 2.5f * tankRadius > 4.0f * ps ? 2.5f * tankRadius : 4.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(x - s, y);

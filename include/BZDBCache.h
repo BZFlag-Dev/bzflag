@@ -28,7 +28,14 @@ public:
 	static float maxLOD;
 	static float tankHeight;
 	static float flagRadius;
+	static float tankRadius;
 
+public:
+  /** public method to update cached variable
+      has to be called at best opportunity
+      (e.g. at beginnig of main loop)
+   */
+  static void update();
 
 private:
 	static void clientCallback(const std::string &name, void *);
