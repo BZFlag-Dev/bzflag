@@ -358,8 +358,8 @@ void ServerMenu::pick()
   else
     ((HUDuiLabel*)list[15])->setString("");
 
-  if (ping.gameStyle & InertiaGameStyle)
-    ((HUDuiLabel*)list[16])->setString("Inertia");
+  if (ping.gameStyle & HandicapGameStyle)
+    ((HUDuiLabel*)list[16])->setString("Handicap");
   else
     ((HUDuiLabel*)list[16])->setString("");
 
