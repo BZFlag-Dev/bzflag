@@ -15,6 +15,7 @@
 
 /* system interface headers */
 #include <string>
+#include <curl/curl.h>
 
 /* common interface headers */
 #include "Address.h"
@@ -30,7 +31,7 @@ class ListServer {
     std::string         hostname;
     std::string         pathname;
     int			bufferSize;
-    char		buffer[1024];
+    char		buffer[CURL_MAX_WRITE_SIZE];
 };
 
 
