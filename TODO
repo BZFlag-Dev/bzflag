@@ -20,8 +20,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
 
-* make the TextureManager mode switching work   :)
-
 
 THESE ARE LOWER PRIORITY
 
