@@ -9,6 +9,11 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* provide the ability to publish a singer server to multiple list servers.
+  (i.e. multiple -publiclist options)  this is useful for a variety of
+  reasons, including testing out a new user-reg'd, karmafied list server,
+  without needing to run multiple servers.
+
 * when game is over, autoboot everyone after some time, so server cannot be
   blocked forever by one player just sitting there.
 
