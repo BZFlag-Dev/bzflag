@@ -905,7 +905,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  }
 	  else {
 	    int period = int(TimeKeeper::getTick().getSeconds());
-	    float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
+	    float absBias = M_PI/20.0f * (distance / 100.0f);
+	    float bias = ((period % 4) < 2) ? absBias : -absBias;
 	    rotation += bias;
 	    if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
 	    if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
@@ -973,19 +974,20 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 		float zCross = shotUnitVec[0]*trueVec[1] - shotUnitVec[1]*trueVec[0];
 
-		if (zCross > 0.0f) //i am to the left of the shot from shooter pov
+		if (zCross > 0.0f) { //if i am to the left of the shot from shooter pov
 		  rotation = rotation1;
-		else
-		  rotation = rotation2;
-		speed = 1.0f;
-/*		  
-		if (fabs(rotation1) < fabs(rotation2)) {
-		  rotation = rotation1; //i'm rotating to the left of the shot from shooter pov
+		  if (fabs(rotation1) < fabs(rotation2))
+		    speed = 1.0f;
+		  else
+		    speed = 0.5f;
 		}
 		else {
-		  rotation = rotation2; //i'm rotating to the right of the shot from shooter pov
+		  rotation = rotation2;
+		  if (fabs(rotation2) < fabs(rotation1))
+		    speed = 1.0f;
+		  else
+		    speed = 0.5f;
 		}
-*/
 	      }
 	    }
 	  }
