@@ -1549,11 +1549,13 @@ static void		handleServerMessage(boolean human, uint16_t code,
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
 	 !(killerPlayer == myTank && victimPlayer == myTank)) {
 	if (killerLocal == myTank) {
-	  victimPlayer->changeLocalScore(1, 0);
+	  if (victimPlayer)
+	    victimPlayer->changeLocalScore(1, 0);
 	  myTank->setNemesis(victimPlayer);
 	}
 	else {
-	  killerPlayer->changeLocalScore(0, 1);
+	  if (killerPlayer)
+	    killerPlayer->changeLocalScore(0, 1);
 	  myTank->setNemesis(killerPlayer);
 	}
       }

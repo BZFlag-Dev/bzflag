@@ -4,6 +4,9 @@
 BZFlag 1.7e5
 ------------
 
+* Fix client crashes with UNKNOWNS - Valery Fouques
+* fix patchMessage for MsgAlive - Dave Brosius
+* fix find closest flag (ID) with flags on buildings - Dave Brosius
 * scale flags bases on elevation - Tim Riker
 * don't scale radar based on screen res - Tim Riker
 * flag radar updated - Tim Riker
