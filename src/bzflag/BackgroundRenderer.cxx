@@ -573,24 +573,7 @@ void			BackgroundRenderer::drawGround()
   glNormal3f(0.0f, 0.0f, 1.0f);
   groundGState[styleIndex].setState();
 
-#ifdef LOST
-  if (simpleGround) {
-    simpleGroundList[styleIndex].execute();
-  }
-  else {
-    groundList[styleIndex].execute();
-    SceneDatabase* scene = renderer.getSceneDatabase();
-    SceneDatabaseRenderIterator* groundIterator = scene->getGroundIterator();
-    groundIterator->resetFrustum(&renderer.getViewFrustum());
-    groundIterator->reset();
-    SceneNode* node;
-    while ((node = groundIterator->getNext()) != NULL)
-      node->getRenderNodes(renderer);
-    delete groundIterator;
-  }
-#else
   simpleGroundList[styleIndex].execute();
-#endif
 }
 
 void			BackgroundRenderer::drawGroundGrid(
@@ -964,63 +947,6 @@ void			BackgroundRenderer::doInitDisplayLists()
   simpleGroundList[0].end();
   simpleGroundList[1] = simpleGroundList[0];
   simpleGroundList[3] = simpleGroundList[2];
-
-  groundList[0] = OpenGLDisplayList();
-  groundList[0].begin();
-    glBegin(GL_TRIANGLE_STRIP);
-      glVertex2fv(gameArea[0]);
-      glVertex2fv(groundPlane[0]);
-      glVertex2fv(gameArea[1]);
-      glVertex2fv(groundPlane[1]);
-      glVertex2fv(gameArea[2]);
-      glVertex2fv(groundPlane[2]);
-      glVertex2fv(gameArea[3]);
-      glVertex2fv(groundPlane[3]);
-      glVertex2fv(gameArea[0]);
-      glVertex2fv(groundPlane[0]);
-    glEnd();
-  groundList[0].end();
-  groundList[1] = groundList[0];
-
-  groundList[2] = OpenGLDisplayList();
-  groundList[2].begin();
-    glBegin(GL_TRIANGLE_STRIP);
-      renderer.getGroundUV(gameArea[0], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(gameArea[0]);
-      renderer.getGroundUV(groundPlane[0], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(groundPlane[0]);
-
-      renderer.getGroundUV(gameArea[1], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(gameArea[1]);
-      renderer.getGroundUV(groundPlane[1], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(groundPlane[1]);
-
-      renderer.getGroundUV(gameArea[2], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(gameArea[2]);
-      renderer.getGroundUV(groundPlane[2], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(groundPlane[2]);
-
-      renderer.getGroundUV(gameArea[3], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(gameArea[3]);
-      renderer.getGroundUV(groundPlane[3], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(groundPlane[3]);
-
-      renderer.getGroundUV(gameArea[0], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(gameArea[0]);
-      renderer.getGroundUV(groundPlane[0], uv);
-      glTexCoord2f(uv[0], uv[1]);
-      glVertex2fv(groundPlane[0]);
-    glEnd();
-  groundList[2].end();
 
   //
   // clouds

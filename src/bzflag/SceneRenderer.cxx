@@ -364,14 +364,6 @@ void			SceneRenderer::setBackground(BackgroundRenderer* br)
   background = br;
 }
 
-#ifdef LOST
-void			SceneRenderer::setCulling(bool enabled)
-{
-  background->setSimpleGround(!enabled);
-  sceneIterator->setNoCullingByNearby(!enabled);
-}
-#endif
-
 void			SceneRenderer::getGroundUV(const float p[2],
 							float uv[2]) const
 {

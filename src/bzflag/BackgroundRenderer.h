@@ -77,7 +77,6 @@ class BackgroundRenderer {
 
     // stuff for ground
     OpenGLGState	groundGState[4];
-    OpenGLDisplayList	groundList[4];
     OpenGLDisplayList	simpleGroundList[4];
 
     // stuff for grid
