@@ -115,33 +115,42 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     std::string message = hud->getComposeString();
 
     if (message.length() > 0) {
-      const char* silence = message.c_str();
-      if (strncmp(silence, "SILENCE", 7) == 0) {
-	Player *loudmouth = getPlayerByName(silence + 8);
+      const char* cmd = message.c_str();
+      if (strncmp(cmd, "SILENCE", 7) == 0) {
+	Player *loudmouth = getPlayerByName(cmd + 8);
 	if (loudmouth) {
-	  silencePlayers.push_back(silence + 8);
+	  silencePlayers.push_back(cmd + 8);
 	  std::string message = "Silenced ";
-	  message += (silence + 8);
+	  message += (cmd + 8);
 	  addMessage(NULL, message);
 	}
-      } else if (strncmp(silence, "DUMP", 4) == 0) {
+      } else if (strncmp(cmd, "DUMP", 4) == 0) {
 	BZDB.iterate(printout, NULL);
-      } else if (strncmp(silence, "UNSILENCE", 9) == 0) {
-	Player *loudmouth = getPlayerByName(silence + 10);
+      } else if (strncmp(cmd, "UNSILENCE", 9) == 0) {
+	Player *loudmouth = getPlayerByName(cmd + 10);
 	if (loudmouth) {
 	  std::vector<std::string>::iterator it = silencePlayers.begin();
 	  for (; it != silencePlayers.end(); it++) {
-	    if (*it == silence + 10) {
+	    if (*it == cmd + 10) {
 	      silencePlayers.erase(it);
 	      std::string message = "Unsilenced ";
-	      message += (silence + 10);
+	      message += (cmd + 10);
 	      addMessage(NULL, message);
 	      break;
 	    }
 	  }
 	}
-      } else if (strncmp(silence, "SAVEWORLD", 9) == 0) {
-	std::string path = silence + 10;
+      } else if (message == "CLIENTQUERY") {
+	message = "/clientquery";
+
+	char messageBuffer[MessageLen];
+	memset(messageBuffer, 0, MessageLen);
+	strncpy(messageBuffer, message.c_str(), MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+
+      } else if (strncmp(cmd, "SAVEWORLD", 9) == 0) {
+	std::string path = cmd + 10;
 	if (World::getWorld()->writeWorld(path)) {
 	  addMessage(NULL, "World Saved");
 	} else {
@@ -150,8 +159,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       } else if (message == "/set") {
 	BZDB.iterate(listSetVars, NULL);
 #ifdef DEBUG
-      } else if (strncmp(silence, "/localset", 9) == 0) {
-	std::string params = silence + 9;
+      } else if (strncmp(cmd, "/localset", 9) == 0) {
+	std::string params = cmd + 9;
 	std::vector<std::string> tokens =
 	  TextUtils::tokenize(params, " ", 2);
 	if (tokens.size() == 2) {
