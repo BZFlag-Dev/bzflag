@@ -287,17 +287,27 @@ inline void WordFilter::appendUniqueChar(std::string& string, char c) const
 inline void WordFilter::addPrefix(const char *word)
 {
   filter_t fix;
+  std::pair<ExpCompareSet::iterator, bool> result;
   fix.word = std::string(word);
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);
+  result = prefixes.insert(fix);
+  if (!result.second && fix.compiled) {
+    regfree(fix.compiled);
+    free(fix.compiled);
+  }
 }
 
 inline void WordFilter::addSuffix(const char *word)
 {
   filter_t fix;
+  std::pair<ExpCompareSet::iterator, bool> result;
   fix.word = std::string(word);
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  result = suffixes.insert(fix);
+  if (!result.second && fix.compiled) {
+    regfree(fix.compiled);
+    free(fix.compiled);
+  }
 }
 
 
