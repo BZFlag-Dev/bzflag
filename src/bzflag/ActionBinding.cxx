@@ -77,6 +77,15 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("restart"), release));
   wayToBindActions.insert(std::make_pair(std::string("autopilot"), press));
 
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel all"),
+					 press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel chat"),
+					 press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel server"),
+					 press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"),
+					 press));
+
   defaultBinding.insert(std::make_pair(std::string("F12"), std::string("quit")));
   defaultBinding.insert(std::make_pair(std::string("Left Mouse"), std::string("fire")));
   defaultBinding.insert(std::make_pair(std::string("Enter"), std::string("fire")));
@@ -138,6 +147,15 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("Right Mouse"), std::string("restart")));
   defaultBinding.insert(std::make_pair(std::string("I"), std::string("restart")));
   defaultBinding.insert(std::make_pair(std::string("9"), std::string("autopilot")));
+
+  defaultBinding.insert(std::make_pair(std::string("Shift+F1"),
+				       std::string("messagepanel all")));
+  defaultBinding.insert(std::make_pair(std::string("Shift+F2"),
+				       std::string("messagepanel chat")));
+  defaultBinding.insert(std::make_pair(std::string("Shift+F3"),
+				       std::string("messagepanel server")));
+  defaultBinding.insert(std::make_pair(std::string("Shift+F4"),
+				       std::string("messagepanel misc")));
 }
 
 void ActionBinding::resetBindings() {
