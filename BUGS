@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- dropping a team flag, when the related team is empty, start a timeout.
+  The related code does not take into account that we can have now 
+  multiple team flags.
+
 - if the display cannot initialize properly, it will start bzflag with a
   black screen.  need to prevent this by either detecting if there is an
   available mode that is possible, lowering memory usage, or reporting
