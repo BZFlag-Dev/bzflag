@@ -23,10 +23,10 @@
   //Modifiers for Normal, Obese. Tiny and Thin
 static GLfloat styleFactors[5][3] = {
 			{ 1.0f, 1.0f, 1.0f },
-			{ BZDB->eval(StateDatabase::BZDB_OBESEFACTOR), BZDB->eval(StateDatabase::BZDB_OBESEFACTOR), 1.0f },
-			{ BZDB->eval(StateDatabase::BZDB_TINYFACTOR), BZDB->eval(StateDatabase::BZDB_TINYFACTOR), 1.0f },
+			{ 1.0f, 1.0f, 1.0f },
+			{ 1.0f, 1.0f, 1.0f },
 			{ 1.0f, 0.0f, 1.0f },
-			{ BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR), BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR), 1.0f }
+			{ 1.0f, 1.0f, 1.0f }
 		};
 
 // parts: body, turret, barrel, left tread, right tread
@@ -47,11 +47,11 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 {
   // setup style factors (BZDB isn't set up at global init time
   styleFactors[1][0] = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  styleFactors[1][1] = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  styleFactors[1][1] = styleFactors[1][0];
   styleFactors[2][0] = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  styleFactors[2][1] = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  styleFactors[2][1] = styleFactors[2][0];
   styleFactors[4][0] = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  styleFactors[4][1] = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  styleFactors[4][1] = styleFactors[4][0];
 			
 			// prepare geometry
   move(pos, forward);
