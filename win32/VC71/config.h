@@ -20,6 +20,9 @@
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
 
+/* Building regex */
+#define BUILD_REGEX 1
+
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
 
