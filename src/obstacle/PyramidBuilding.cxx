@@ -159,7 +159,7 @@ bool			PyramidBuilding::isInside(const float* p, float a,
   if (p[2] + BZDBCache::tankHeight < getPosition()[2])
     return false;
   // Tank is above pyramid ?
-  if (p[2] >= getPosition()[2] + getHeight())
+  if (p[2] > getPosition()[2] + getHeight())
     return false;
   // Could be inside. Then check collision with the rectangle at object height
   // This is a rectangle reduced by shrinking but pass the height that we are
@@ -344,21 +344,21 @@ float			PyramidBuilding::shrinkFactor(float z,
   if (oHeight <= ZERO_TOLERANCE) {
     shrink = 1.0f;
   } else {
-  // Normalize heights
-  z /= oHeight;
+    // Normalize heights
+    z /= oHeight;
 
-  // if flipped the bigger intersection is at top of obiect
-  if (flip) {
-    // Normalize the object height, we have not done yet
-    z += height / oHeight;
-  }
+    // if flipped the bigger intersection is at top of the object
+    if (flip) {
+      // Normalize the object height, we have not done yet
+      z += height / oHeight;
+    }
 
-  // shrink is that
-  if (flip) {
-    shrink = z;
-  } else {
-    shrink = 1.0f - z;
-  }
+    // shrink is that
+    if (flip) {
+      shrink = z;
+    } else {
+      shrink = 1.0f - z;
+    }
   }
 
   // clamp in 0 .. 1
