@@ -1683,7 +1683,7 @@ static void addPlayer(int playerIndex)
 #ifdef PRINTSCORE
   dumpScore();
 #endif
-  char message[MessageLen];
+  char message[MessageLen] = {0};
 
 #ifdef SERVERLOGINMSG
   sprintf(message,"BZFlag server %s, http://BZFlag.org/", getAppVersion());
