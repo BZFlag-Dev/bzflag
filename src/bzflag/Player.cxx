@@ -186,10 +186,10 @@ void			Player::changeTeam(TeamColor _team)
 
   TextureManager &tm = TextureManager::instance();
   std::string texName;
-  if (!World::getWorld()->allowRabbit() || ( World::getWorld()->allowRabbit() && (team == RabbitTeam )))
+  if (!World::getWorld()->allowRabbit() || team == RabbitTeam)
     texName = Team::getImagePrefix(team);
   else
-	texName = "h";
+    texName = "h";
   texName += "tank";
   tankTexture = tm.getTexture(texName.c_str());
   if (tankTexture && tankTexture->isValid())
