@@ -13,6 +13,9 @@
 /* interface header */
 #include "Downloads.h"
 
+/* system headers */
+#include <map>
+
 /* common implementation headers */
 #include "network.h"
 #include "Address.h"
@@ -64,10 +67,12 @@ static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
 
 // Function Prototypes
 static void printAuthNotice();
+static void setHudMessage(const std::string& msg);
 static bool getFileTime(const std::string& url, time_t& t);
 static bool getAndCacheURL(const std::string& url);
-static bool authorizedServer(const std::string& url);
-static void setHudMessage(const std::string& msg);
+static bool authorizedServer(const std::string& hostname);
+static bool checkAuthorizations(BzMaterialManager::TextureSet& set);
+
 
 void Downloads::doDownloads()
 {
@@ -80,21 +85,15 @@ void Downloads::doDownloads()
   BzMaterialManager::TextureSet::iterator set_it;
   MATERIALMGR.makeTextureList(set, false /* ignore referencing */);
 
-  bool authNotice = false;
-
   const bool doDownloads =	BZDB.isTrue("doDownloads");
   const bool updateDownloads =  BZDB.isTrue("updateDownloads");
+
+  // check hosts' access permissions
+  bool authNotice = checkAuthorizations(set);
 
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
     const std::string& texUrl = set_it->c_str();
     if (CACHEMGR.isCacheFileType(texUrl)) {
-
-      // check access authorization
-      if (!authorizedServer(texUrl)) {
-	MATERIALMGR.setTextureLocal(texUrl, "");
-	authNotice = true;
-	continue;
-      }
 
       // use the cache?
       CacheManager::CacheRecord oldrec;
@@ -154,18 +153,13 @@ bool Downloads::updateDownloads(bool& rebuild)
 
   rebuild = false;
   bool updated = false;
-  bool authNotice = false;
+
+  // check hosts' access permissions
+  bool authNotice = checkAuthorizations(set);
 
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
     const std::string& texUrl = set_it->c_str();
     if (CACHEMGR.isCacheFileType(texUrl)) {
-
-      // check access authorization
-      if (!authorizedServer(texUrl)) {
-	MATERIALMGR.setTextureLocal(texUrl, "");
-	authNotice = true;
-	continue;
-      }
 
       // use the cache or update?
       CacheManager::CacheRecord oldrec;
@@ -300,24 +294,12 @@ static bool getAndCacheURL(const std::string& url)
 }
 
 
-static bool authorizedServer(const std::string& url)
+static bool authorizedServer(const std::string& hostname)
 {
-  // avoid the DNS lookup
-  if (DownloadAccessList.alwaysAuthorized()) {
-    return true;
-  }
-
-  // parse url
-  std::string protocol, hostname, path, ip;
-  int port = 1;
-  if (BzfNetwork::parseURL(url, protocol, hostname, port, path) &&
-      ((protocol == "http") || (protocol == "ftp")) &&
-      (port >= 1) && (port <= 65535)) {
-    setHudMessage("Access DNS check...");
-    Address address(hostname); // get the address  (BLOCKING)
-    ip = address.getDotNotation();
-    setHudMessage("");
-  }
+  setHudMessage("Access DNS check...");
+  Address address(hostname); // get the address  (BLOCKING)
+  std::string ip = address.getDotNotation();
+  setHudMessage("");
 
   // make the list of strings to check
   std::vector<std::string> nameAndIp;
@@ -328,17 +310,82 @@ static bool authorizedServer(const std::string& url)
     nameAndIp.push_back(ip);
   }
 
-  // check and print error if not authorized
-  if (!DownloadAccessList.authorized(nameAndIp)) {
-    std::string msg = ColorStrings[RedColor];
-    msg += "local server denial: ";
-    msg += ColorStrings[GreyColor];
-    msg += url;
-    addMessage(NULL, msg);
+  return DownloadAccessList.authorized(nameAndIp);
+}
+
+
+static bool parseHostname(const std::string& url, std::string& hostname)
+{
+  std::string protocol, path, ip;
+  int port;
+  if (BzfNetwork::parseURL(url, protocol, hostname, port, path)) {
+    if ((protocol == "http") || (protocol == "ftp")) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
+{
+  // avoid the DNS lookup
+  if (DownloadAccessList.alwaysAuthorized()) {
     return false;
   }
+  
+  bool hostFailed = false;
+  
+  BzMaterialManager::TextureSet::iterator set_it;
+  
+  std::map<std::string, bool> hostMap;
+  std::map<std::string, bool>::iterator host_it;
+  
+  // get the list of hosts to check
+  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+    const std::string& url = *set_it;
+    std::string hostname;
+    if (parseHostname(url, hostname)) {
+      hostMap[hostname] = true;
+    }
+  }
+  
+  // check the hosts
+  for (host_it = hostMap.begin(); host_it != hostMap.end(); host_it++) {
+    const std::string& host = host_it->first;
+    printf ("Checking host: %s ", host.c_str());//FIXME
+    if (authorizedServer(host)) {
+      host_it->second = true;
+      printf ("passed\n");//FIXME
+    } else {    
+      host_it->second = false;
+      printf ("failed\n");//FIXME
+    }
+  }
+  
+  // clear any unauthorized urls
+  set_it = set.begin();
+  while (set_it != set.end()) {
+    BzMaterialManager::TextureSet::iterator next_it = set_it;
+    next_it++;
+    const std::string& url = *set_it;
+    std::string hostname;
+    if (parseHostname(url, hostname) && !hostMap[hostname]) {
+      hostFailed = true;
+      // remove the url
+      set.erase(set_it);
+      MATERIALMGR.setTextureLocal(url, "");
+      // send a message
+      std::string msg = ColorStrings[RedColor];
+      msg += "local denial: ";
+      msg += ColorStrings[GreyColor];
+      msg += url;
+      addMessage(NULL, msg);
+    }
+    set_it = next_it;
+  }
 
-  return true;
+  return hostFailed;  
 }
 
 
