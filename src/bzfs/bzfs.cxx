@@ -3445,9 +3445,7 @@ static void randomFlag(int flagIndex)
 {
   // pick a random flag
 
-  int i = allowedFlags.size() * (float)bzfrand();
-
-  flag[flagIndex].flag.desc = allowedFlags[i];
+  flag[flagIndex].flag.desc = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
   addFlag(flagIndex);
 }
 
