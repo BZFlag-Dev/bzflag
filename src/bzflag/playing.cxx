@@ -3009,15 +3009,6 @@ static World*		makeWorld(ServerLink* serverLink)
   // get world database
   uint16_t ptr = 0, bytesLeft = size;
   while (bytesLeft != 0) {
-    // ask and wait for next chunk
-    nboPackUShort(msg, ptr);
-    serverLink->send(MsgGetWorld, 2, msg);
-    if (serverLink->read(code, len, msg, 5000) < 0 ||
-	code == MsgNull || code == MsgSuperKill) {
-      delete[] worldDatabase;
-      return NULL;
-    }
-
     // get bytes left
     void* buf = msg;
     buf = nboUnpackUShort(buf, bytesLeft);
@@ -3027,6 +3018,15 @@ static World*		makeWorld(ServerLink* serverLink)
 
     // increment pointer
     ptr += len - 2;
+
+	// ask and wait for next chunk
+	nboPackUShort(msg, ptr);
+	serverLink->send(MsgGetWorld, 2, msg);
+	if (serverLink->read(code, len, msg, 5000) < 0 ||
+	code == MsgNull || code == MsgSuperKill) {
+	  delete[] worldDatabase;
+	  return NULL;
+	}
   }
 
   // make world
