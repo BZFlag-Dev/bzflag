@@ -38,6 +38,7 @@ bzfs_SOURCES = \
 	Permissions.cxx \
 	Permissions.h \
 	PlayerInfo.h \
+	PlayerInfo.cxx \
 	TeamBases.cxx \
 	TeamBases.h \
 	TextChunkManager.cxx \
