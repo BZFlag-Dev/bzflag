@@ -10,25 +10,38 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* FIXME -- ugh.. the class header for this file is listed as a public header
+ * and is used by other libs, yet this cxx is here.. bad bad bad.  need to 
+ * decouple this file from the bzflag front-end specific sources so that it
+ * may be moved elsewhere.
+ */
+
 #include "common.h"
+
+/* system implementation headers */
+#include <string.h>
+
+/* common implementation headers */
 #include "bzfgl.h"
 #include "SceneRenderer.h"
-#include "BackgroundRenderer.h"
-#include "HUDRenderer.h"
 #include "SceneDatabase.h"
 #include "SceneNode.h"
 #include "MainWindow.h"
-#include "LocalPlayer.h"
-#include "daylight.h"
 #include "OpenGLGState.h"
 #include "RenderNode.h"
 #include "BzfWindow.h"
 #include "TankSceneNode.h"
 #include "StateDatabase.h"
-#include "texture.h"
-#include <string.h>
 #include "TextUtils.h"
+#include "texture.h"
 #include "BZDBCache.h"
+
+/* FIXME - local implementation dependancies */
+#include "BackgroundRenderer.h"
+#include "HUDRenderer.h"
+#include "LocalPlayer.h"
+#include "daylight.h"
+
 
 const GLint		SceneRenderer::SunLight = 0;	// also for the moon
 
@@ -839,11 +852,11 @@ void			SceneRenderer::doRender()
   glDepthMask(GL_TRUE);
 }
 
+
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
