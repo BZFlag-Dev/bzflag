@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* Fix flags spawning in pyramids - Dave Brosius
 * Fix client crashes with UNKNOWNS - Valery Fouques
 * fix patchMessage for MsgAlive - Dave Brosius
 * fix find closest flag (ID) with flags on buildings - Dave Brosius
