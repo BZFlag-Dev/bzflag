@@ -688,7 +688,6 @@ void			ControlPanel::addMessage(const std::string& line,
     messages[MessageAll].pop_front();
     messages[MessageAll].push_back(item);
   }
-  unRead[MessageAll] = true;
 
   // Add to other tab
   if (mode >= MessageChat && mode <= MessageMisc) {
