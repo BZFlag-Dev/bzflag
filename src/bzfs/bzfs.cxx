@@ -112,6 +112,8 @@ static float flagHeight = FlagAltitude;
 // meters
 //float WorldSize = 800.0f;
 
+static float speedTolerance = 1.125f;
+
 #define MAX_FLAG_HISTORY (10)
 
 // FIXME this assumes that 255 is a wildcard
@@ -5702,7 +5704,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 
 	// allow a 5% tolerance level for speed
-	maxPlanarSpeedSqr *= 1.1025f;
+	maxPlanarSpeedSqr *= speedTolerance;
 	if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	  if (logOnly) {
 	    DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
@@ -5807,7 +5809,8 @@ static const char *usageString =
 "[-tkkr <percent>] "
 "[-ttl <ttl>] "
 "[-version] "
-"[-world <filename>]";
+"[-world <filename>]"
+"[-speedtol <tolerance>]";
 
 static const char *extraUsageString =
 "\t-a: maximum acceleration settings\n"
@@ -5868,7 +5871,8 @@ static const char *extraUsageString =
 "\t-tkkr: team killer to wins percentage (1-100) above which player is kicked\n"
 "\t-ttl: time-to-live for pings (default=8)\n"
 "\t-version: print version and exit\n"
-"\t-world: world file to load\n";
+"\t-world: world file to load\n"
+"\t-speedtol: percent over normal speed to auto kick at\n";
 
 
 static void printVersion()
@@ -6626,7 +6630,15 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       }
       options.idlekickthresh = (float) atoi(argv[i]);
     }
-    else {
+    else if (strcmp(argv[i], "-speedtol") == 0) {
+      if (++i == argc) {
+	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	usage(argv[0]);
+      }
+      speedTolerance = (float) atof(argv[i]);
+	  fprintf(stderr, "using speed autokick tolerance of \"%f\"\n", speedTolerance);
+    }
+	else {
       fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
       usage(argv[0]);
     }
