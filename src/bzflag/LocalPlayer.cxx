@@ -284,7 +284,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
 	newVelocity[2] = 0.0f;
 
-	if (oldPosition[2] > groundLimit)
+	if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
+	  newVelocity[2] += 4 * Gravity * dt;
+	else if (oldPosition[2] > groundLimit)
 	  newVelocity[2] += Gravity * dt;
       }
       else {
@@ -497,6 +499,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // play landing sound if we weren't on something and now we are
   if (oldLocation == InAir && (location == OnGround || location == OnBuilding))
     playLocalSound(SFX_LAND);
+  else if ((location == OnGround) && (oldPosition[2] == 0.0f) && (newPos[2] < 0.0f))
+    playLocalSound(SFX_BURROW);
 
   // set falling status
   if (location == OnGround || location == OnBuilding ||
