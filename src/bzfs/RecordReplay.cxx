@@ -67,7 +67,7 @@ typedef struct RRpacket {
   u32 len;
   u32 prev_len;
   RRtime timestamp;
-  void *data;
+  char *data;
 } RRpacket;
 static const int RRpacketHdrSize = sizeof(RRpacket) - 
                                    (2 * sizeof(RRpacket*) - sizeof(void*));
@@ -86,14 +86,13 @@ typedef struct {
   u32 offset;                   // length of the full header
   u32 seconds;                  // number of seconds in the file
   u32 player;                   // player that saved this record file
+  u32 flagsSize;                // size of the flags data
+  u32 worldSize;                // size of world database 
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];         // player's email
   char serverVersion[8];        // BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];            // hash of worldDatabase
-  char fakeHash[64];            // hash of worldDatabase
-  u32 flagsSize;                // size of the flags data
-  u32 worldSize;                // size of world database 
   char *flags;                  // a list of the flags types
   char *world;                  // the world
 } ReplayHeader;
@@ -167,6 +166,7 @@ static bool saveHeader (int playerIndex, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
 static bool replaceFlagTypes (ReplayHeader *h);
 static bool replaceWorldDatabase (ReplayHeader *h);
+static bool modifyWorldDatabase ();
 static bool flagIsActive (FlagType *type);
 static bool packFlagTypes (char *flags, u32 *flagsSize);
 
@@ -276,12 +276,12 @@ bool Record::setDirectory (const char *dirname)
 {
   int len = strlen (dirname);
   RecordDir = dirname;
-  if (dirname[len - 2] != DirectorySeparator) {
+  if (dirname[len - 1] != DirectorySeparator) {
     RecordDir += DirectorySeparator;
   }
   
   if (!makeDirExist (RecordDir.c_str())) {
-    // you've been warned, leave it at that
+    // they've been warned, leave it at that
     printf ("Could not open or create record directory: %s\n",
             RecordDir.c_str());
     return false;
@@ -524,8 +524,8 @@ routePacket (u16 code, int len, const void * data, u16 mode)
       DEBUG4 ("routePacket: deleting until State Update\n");
       while (((p = delRRpacket (&RecordBuf)) != NULL) &&
              !(p->mode && (p->code == MsgTeamUpdate))) {
-        free (p->data);
-        free (p);
+        delete[] p->data;
+        delete p;
       }
     }
   }
@@ -895,7 +895,7 @@ bool Replay::sendPackets () {
     
     p = ReplayPos;
 
-    if (p == NULL) { // FIXME - internal error here? (tagged with !!! for now)
+    if (p == NULL) { // FIXME - internal error? (tag with !!! for now)
       resetStates ();
       Replaying = false;
       ReplayPos = ReplayBuf.tail;
@@ -1200,7 +1200,7 @@ saveVariableStates ()
 {
   // This is basically a PackVars.h rip-off, with the
   // difference being that instead of sending packets
-  // to the network, it send them to routePacket().
+  // to the network, it sends them to routePacket().
 
   char buffer[MaxPacketLen];
   packVarData pvd;
@@ -1268,10 +1268,10 @@ loadRRpacket (FILE *f)
     return false;
   }
   
-  p = (RRpacket *) malloc (sizeof (RRpacket));
+  p = new RRpacket;
 
   if (fread (bufStart, RRpacketHdrSize, 1, f) <= 0) {
-    free (p);
+    delete p;
     return NULL;
   }
   buf = nboUnpackUShort (bufStart, p->mode);
@@ -1284,15 +1284,15 @@ loadRRpacket (FILE *f)
 
   if (p->len > (MaxPacketLen - ((int)sizeof(u16) * 2))) {
     fprintf (stderr, "loadRRpacket: ERROR, packtlen = %i\n", p->len);
-    free (p);
+    delete p;
     replayReset();
     return NULL;
   }
 
-  p->data = malloc (p->len);
+  p->data = new char [p->len];
   if (fread (p->data, p->len, 1, f) <= 0) {
-    free (p->data);
-    free (p);
+    delete[] p->data;
+    delete p;
     return NULL;
   }
   
@@ -1329,16 +1329,11 @@ static inline int osStat (const char *dir, struct stat *buf)
 #ifdef _WIN32
   // Windows sucks yet again, if there is a trailing  "\"
   // at the end of the filename, _stat will return -1.
-  int retval;
-  char *dirname = strdup (dir);
-  char *str = dirname + (strlen (dirname) - 1);
-  while (*str == '\\') {
-    *str = '\0';
-    str--;
+  std::string dirname = dir;
+  while (dirname.find_last_of('\\') == (dirname.size() - 1)) {
+    dirname.resize (dirname.size() - 1);
   }
-  retval = _stat(dirname, (struct _stat *) buf);
-  free (dirname);  
-  return retval;
+  return _stat(dirname.c_str(), (struct _stat *) buf);
 #else
   return stat (dir, buf);
 #endif
@@ -1430,7 +1425,6 @@ saveHeader (int p, FILE *f)
   strncpy (hdr.serverVersion, getServerVersion(), sizeof (hdr.serverVersion));
   strncpy (hdr.appVersion, getAppVersion(), sizeof (hdr.appVersion));
   strncpy (hdr.realHash, hexDigest, sizeof (hdr.realHash));
-  strncpy (hdr.fakeHash, hexDigest, sizeof (hdr.fakeHash)); //FIXME
   packFlagTypes (flagsBuf, &hdr.flagsSize);
   hdr.flags = flagsBuf;
 
@@ -1449,7 +1443,6 @@ saveHeader (int p, FILE *f)
   buf = nboPackString (buf, hdr.serverVersion, sizeof (hdr.serverVersion));
   buf = nboPackString (buf, hdr.appVersion, sizeof (hdr.appVersion));
   buf = nboPackString (buf, hdr.realHash, sizeof (hdr.realHash));
-  buf = nboPackString (buf, hdr.fakeHash, sizeof (hdr.fakeHash));
 
   // store the data  
   if ((fwrite (buffer, ReplayHeaderSize, 1, f) == 0) ||
@@ -1486,7 +1479,6 @@ loadHeader (ReplayHeader *h, FILE *f)
   buf = nboUnpackString (buf, h->serverVersion, sizeof (h->serverVersion));
   buf = nboUnpackString (buf, h->appVersion, sizeof (h->appVersion));
   buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
-  buf = nboUnpackString (buf, h->fakeHash, sizeof (h->fakeHash));
   
   h->flags = new char [h->flagsSize];
   h->world = new char [h->worldSize]; // use new, as defineWorld() does
@@ -1621,9 +1613,8 @@ replaceWorldDatabase (ReplayHeader *h)
   // copy the current timestamp into
   // the header world, and change the
   // header maxPlayers to 216...
-  
-  //FIXME - forgot the hash
 
+  modifyWorldDatabase ();
 
   if ((h->worldSize != worldDatabaseSize) ||
       (memcmp (h->world, worldDatabase, h->worldSize) != 0)) {
@@ -1640,8 +1631,9 @@ replaceWorldDatabase (ReplayHeader *h)
     MD5 md5;
     md5.update ((unsigned char *)worldDatabase, worldDatabaseSize);
     md5.finalize();
-    
-    memset (hexDigest, 0, 50); // FIXME
+    std::string hash = md5.hexdigest();
+    hexDigest[0] = h->realHash[0];
+    strncpy (hexDigest + 1, hash.c_str(), sizeof (hexDigest) - 1);
 
     delete[] tmp;
     return true;   // the world was replaced
@@ -1653,8 +1645,73 @@ replaceWorldDatabase (ReplayHeader *h)
 
 
 static bool
+modifyWorldDatabase ()
+{
+  // for record files, use a different MD5 hash.
+  // data that is modified for replay mode is ignored.
+  
+  unsigned short max_players, num_flags;
+  unsigned int   timestamp;
+  char *buf;
+
+  // zero maxPlayers, numFlags, and the timestamp
+  
+  if (worldDatabase == NULL) {
+    return false;
+  }
+  else {
+    buf = worldDatabase;
+  }
+  
+  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
+  buf = (char*)nboUnpackUShort (buf, max_players);
+  buf -= sizeof (unsigned short);      // rewind
+  buf = (char*)nboPackUShort (buf, 0); // clear
+  
+  buf += sizeof (unsigned short);                          // at numFlags
+  buf = (char*)nboUnpackUShort (buf, num_flags);
+  buf -= sizeof (unsigned short);      // rewind
+  buf = (char*)nboPackUShort (buf, 0); // clear
+
+  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
+  buf = (char*)nboUnpackUInt (buf, timestamp);
+  buf -= sizeof (unsigned int);        // rewind
+  buf = (char*)nboPackUInt (buf, 0);   // clear
+  
+  // calculate the hash
+  
+  MD5 md5;
+  md5.update ((unsigned char *)worldDatabase, worldDatabaseSize);
+  md5.finalize ();
+  //if (clOptions->worldFile == NULL)
+  //result = "t";
+  //else
+  //result = "p";
+  //result += md5.hexdigest();
+
+  // put them back the way they were
+  
+  buf = worldDatabase;
+  
+  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
+  buf = (char*)nboPackUShort (buf, max_players);
+  
+  buf += sizeof (unsigned short);                          // at numFlags
+  buf = (char*)nboPackUShort (buf, num_flags);
+
+  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
+  buf = (char*)nboPackUInt (buf, timestamp);
+
+  return true;
+}
+
+
+static bool
 flagIsActive (FlagType *type)
 {
+  // Please see the MsgNegotiateFlags code in [bzfs.cxx]
+  // to see what it is that we are trying to fake.
+
   if ((clOptions->flagCount[type] > 0) ||
       ((clOptions->numExtraFlags > 0) &&
        !clOptions->flagDisallowed[type])) {
@@ -1667,9 +1724,6 @@ flagIsActive (FlagType *type)
 static bool
 packFlagTypes (char *flags, u32 *flagsSize)
 {
-  // Please see the MsgNegotiateFlags code in [bzfs.cxx]
-  // to see what it is that we are trying to fake.
-	
   void *buf = flags;
   FlagTypeMap::iterator it;
   
@@ -1698,19 +1752,19 @@ initRRpacket (u16 mode, u16 code, int len, const void *data, RRpacket *p)
   p->mode = mode;
   p->code = code;
   p->len = len;
-  p->data = (void*) data; // dirty little trick
+  p->data = (char*) data; // dirty little trick
 }
 
 
 static RRpacket *
 newRRpacket (u16 mode, u16 code, int len, const void *data)
 {
-  RRpacket *p = (RRpacket *) malloc (sizeof (RRpacket));
+  RRpacket *p = new RRpacket;
   
   p->next = NULL;
   p->prev = NULL;
 
-  p->data = malloc (len);
+  p->data = new char [len];
   if (data != NULL) {
     memcpy (p->data, data, len);
   }
@@ -1775,8 +1829,8 @@ freeRRbuffer (RRbuffer *b)
 
   while (p != NULL) {
     ptmp = p->next;
-    free (p->data);
-    free (p);
+    delete[] p->data;
+    delete p;
     p = ptmp;
   }
   
@@ -1804,75 +1858,14 @@ getRRtime ()
   now = now + (RRtime)tv.tv_usec;
 #else //_WIN32
   // FIXME - this will roll every (2^32/1000) seconds (49.71 days)
+  // do something like watch for time() to increase, and remove
+  // 1000000 from the timeGetTime() value (watching for rolls, of course)
+  // Put a hook somewhere to keep the updates constant?
   now = (RRtime)timeGetTime() * (RRtime)1000;
 #endif //_WIN32
   
   return now;
 }
-
-
-/****************************************************************************/
-
-bool modifyWorldDatabase ()
-{
-  // for record files, use a different MD5 hash.
-  // data that is modified for replay mode is ignored.
-  
-  unsigned short max_players, num_flags;
-  unsigned int   timestamp;
-  char *buf;
-
-  // zero maxPlayers, numFlags, and the timestamp
-  
-  if (worldDatabase == NULL) {
-    return false;
-  }
-  else {
-    buf = worldDatabase;
-  }
-  
-  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
-  buf = (char*)nboUnpackUShort (buf, max_players);
-  buf -= sizeof (unsigned short);      // rewind
-  buf = (char*)nboPackUShort (buf, 0); // clear
-  
-  buf += sizeof (unsigned short);                          // at numFlags
-  buf = (char*)nboUnpackUShort (buf, num_flags);
-  buf -= sizeof (unsigned short);      // rewind
-  buf = (char*)nboPackUShort (buf, 0); // clear
-
-  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
-  buf = (char*)nboUnpackUInt (buf, timestamp);
-  buf -= sizeof (unsigned int);        // rewind
-  buf = (char*)nboPackUInt (buf, 0);   // clear
-  
-  // calculate the hash
-  
-  MD5 md5;
-  md5.update ((unsigned char *)worldDatabase, worldDatabaseSize);
-  md5.finalize ();
-  //if (clOptions->worldFile == NULL)
-  //result = "t";
-  //else
-  //result = "p";
-  //result += md5.hexdigest();
-
-  // put them back the way they were
-  
-  buf = worldDatabase;
-  
-  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
-  buf = (char*)nboPackUShort (buf, max_players);
-  
-  buf += sizeof (unsigned short);                          // at numFlags
-  buf = (char*)nboPackUShort (buf, num_flags);
-
-  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
-  buf = (char*)nboPackUInt (buf, timestamp);
-
-  return true;
-}
-
 
 /****************************************************************************/
 
