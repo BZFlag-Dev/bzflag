@@ -5,6 +5,7 @@ MAINTAINERCLEANFILES = \
 
 libGame_a_SOURCES = \
 	CommandsStandard.cxx		\
+	NetHandler.cxx			\
 	VotingArbiter.cxx
 
 EXTRA_DIST = \
