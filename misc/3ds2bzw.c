@@ -29,11 +29,10 @@
 #include <lib3ds/node.h>
 #include <lib3ds/material.h>
 #include <lib3ds/matrix.h>
+#include <lib3ds/mesh.h>
 #include <lib3ds/vector.h>
 #include <lib3ds/light.h>
 
-
-static void printNode (Lib3dsNode *node);
 
 static Lib3dsFile* File3DS = NULL;
 static int UseDiffuse = 0;
@@ -45,7 +44,7 @@ static double NormalDir = +1.0;
 
 int main (int argc, char **argv)
 {
-  Lib3dsNode* node;
+  Lib3dsMesh* mesh;
   const char* execname = argv[0];
 
   while (argc > 1) {
@@ -75,16 +74,82 @@ int main (int argc, char **argv)
     return 1;
   }
 
+  // load the file
   File3DS = lib3ds_file_load (argv[1]);
   if (File3DS == NULL) {
     printf ("Problems loading file\n");
     return 1;
   }
 
+  // evaluate the first frame
   lib3ds_file_eval (File3DS, 0.0f /* the frame time */);
+  
+  // dump all of the meshes
+  for (mesh = File3DS->meshes; mesh != NULL; mesh = mesh->next) {
+    // FIXME - Lib3dsMatrix* matrix = &mesh->matrix;
+    // comments on statistics
+    unsigned int i;
+    printf ("mesh  # %s\n", mesh->name);
+    printf ("# vertices:  %i\n", (int)mesh->points);
+    printf ("# normals:   %i\n", (int)mesh->faces * 3);
+    printf ("# texcoords: %i\n", (int)mesh->texels);
+    printf ("# faces:     %i\n", (int)mesh->faces);
 
-  for (node = File3DS->nodes; node != NULL; node = node->next) {
-    printNode (node);
+    // vertices
+    for (i = 0; i < mesh->points; i++) {
+      Lib3dsPoint* point = &(mesh->pointL[i]);
+      printf ("  vertex %f %f %f  # %i\n", 
+              point->pos[0], point->pos[1], point->pos[2], i);
+    }
+
+    // normals  (cheat for now, flat normals)
+    Lib3dsVector* normals = (Lib3dsVector*)
+      malloc (3 * mesh->faces * sizeof(Lib3dsVector));
+    lib3ds_mesh_calculate_normals (mesh, normals);
+    for (i = 0; i < (mesh->faces * 3); i++) {
+      printf ("  normal %f %f %f  # %i\n",
+              normals[i][0], normals[i][1], normals[i][2], i);
+    }
+    free (normals);
+
+    // texcoords
+    for (i = 0; i < mesh->texels; i++) {
+      Lib3dsTexel* texel = &(mesh->texelL[i]);
+      printf ("  texcoord %f %f  # %i\n", *texel[0], *texel[1], i);
+    }
+
+    // faces
+    for (i = 0; i < mesh->faces; i++) {
+      Lib3dsFace* face = &(mesh->faceL[i]);
+      Lib3dsWord* points = face->points;
+      printf ("  face  # material = %s\n", face->material);
+      printf ("    vertices %i %i %i\n", points[0], points[1], points[2]);
+      printf ("    normals %i %i %i\n", (i * 3) + 0, (i * 3) + 1, (i * 3) + 2);
+      Lib3dsMaterial* mat =
+        lib3ds_file_material_by_name(File3DS, face->material);
+      if (mat) {
+        if (mesh->texels != 0) {
+          printf ("    texture %s\n", mat->texture1_map.name);
+          printf ("    texcoords %i %i %i\n", points[0], points[1], points[2]);
+
+          // BZ isn't ready for these, yet... 
+          // printf ("  #texture %s\n", material->texture2_map.name);
+          // printf ("  #texture %s\n", material->texture1_mask.name);
+          // printf ("  #texture %s\n", material->texture2_mask.name);
+          
+        }
+        printf ("    ambient %f %f %f %f\n", mat->ambient[0],
+                mat->ambient[1], mat->ambient[2], mat->ambient[3]);
+        printf ("    diffuse %f %f %f %f\n", mat->diffuse[0],
+                mat->diffuse[1], mat->diffuse[2], mat->diffuse[3]);
+        printf ("    specular %f %f %f %f\n", mat->specular[0],
+                mat->specular[1], mat->specular[2], mat->specular[3]);
+        printf ("    shininess %f\n", mat->shininess);
+      }
+      printf ("  endface\n");
+    }
+
+    printf ("end  # %s\n\n", mesh->name); 
   }
 
   lib3ds_file_free (File3DS);
@@ -93,152 +158,3 @@ int main (int argc, char **argv)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
-static void printNode (Lib3dsNode *node)
-{
-  Lib3dsNode* child;
-  for (child = node->childs; child != NULL; child = child->next) {
-    printNode (child);
-  }
-
-  if (node->type == LIB3DS_OBJECT_NODE) {
-
-    if (strcmp(node->name,"$$$DUMMY") == 0) {
-      return;
-    }
-
-    if (!node->user.d) {
-      node->user.d = 1;
-      Lib3dsMesh* mesh = lib3ds_file_mesh_by_name (File3DS, node->name);
-      if (mesh == NULL) {
-        return;
-      }
-
-      Lib3dsVector* normalL = (Lib3dsVector *)
-        malloc (3 * sizeof (Lib3dsVector) * mesh->faces);
-      lib3ds_mesh_calculate_normals (mesh, normalL);
-
-      int f;
-      for (f = 0; f < (int)mesh->faces; f++) {
-
-        Lib3dsFace* face = &mesh->faceL[f];
-        Lib3dsMaterial* mat = NULL;
-
-        const float* vertices[3];
-        vertices[0] = mesh->pointL[face->points[0]].pos;
-        vertices[1] = mesh->pointL[face->points[1]].pos;
-        vertices[2] = mesh->pointL[face->points[2]].pos;
-
-        double edges[2][3];
-        edges[0][0] = (double) (vertices[0][0] - vertices[1][0]);
-        edges[0][1] = (double) (vertices[0][1] - vertices[1][1]);
-        edges[0][2] = (double) (vertices[0][2] - vertices[1][2]);
-        edges[1][0] = (double) (vertices[1][0] - vertices[2][0]);
-        edges[1][1] = (double) (vertices[1][1] - vertices[2][1]);
-        edges[1][2] = (double) (vertices[1][2] - vertices[2][2]);
-
-        double cross[3];
-        cross[0] = (edges[0][1] * edges[1][2]) - (edges[0][2] * edges[1][1]);
-        cross[1] = (edges[0][2] * edges[1][0]) - (edges[0][0] * edges[1][2]);
-        cross[2] = (edges[0][0] * edges[1][1]) - (edges[0][1] * edges[1][0]);
-
-        double length = (cross[0] * cross[0]) +
-                        (cross[1] * cross[1]) +
-                        (cross[2] * cross[2]);
-
-        length = sqrt (length);
-        if (length < 0.000001) {
-          fprintf (stderr, "Ditched face: length = %f\n", length);
-          continue;
-        }
-
-        // normalize
-        cross[0] = cross[0] / length;
-        cross[1] = cross[1] / length;
-        cross[2] = cross[2] / length;
-
-        double center[3] = { 0.0f, 0.0f, 0.0f };
-
-        printf ("\n");
-        printf ("tetra\n");
-
-        if (face->material[0]) {
-          mat = lib3ds_file_material_by_name(File3DS, face->material);
-
-          if (mat != NULL) {
-            if (UseDiffuse) {
-              printf ("  color %i %i %i %i # diffuse\n",
-                       (int)(mat->diffuse[0] * 255.5f),
-                       (int)(mat->diffuse[1] * 255.5f),
-                       (int)(mat->diffuse[2] * 255.5f),
-                       (int)(mat->diffuse[3] * 255.5f));
-            } else {
-              printf ("  color %i %i %i %i # ambient\n",
-                       (int)(mat->ambient[0] * 255.5f),
-                       (int)(mat->ambient[1] * 255.5f),
-                       (int)(mat->ambient[2] * 255.5f),
-                       (int)(mat->ambient[3] * 255.5f));
-            }
-          }
-        }
-
-        int v;
-        for (v = 0; v < 3; v++) {
-          const float* vertex = vertices[v];
-          printf ("  vertex %f %f %f\n", vertex[0], vertex[1], vertex[2]);
-          center[0] = center[0] + vertex[0];
-          center[1] = center[1] + vertex[1];
-          center[2] = center[2] + vertex[2];
-        }
-
-        center[0] = center[0] / 3.0;
-        center[1] = center[1] / 3.0;
-        center[2] = center[2] / 3.0;
-
-        double maxLength = -1.0e38;
-        double minLength = +1.0e38;
-        for (v = 0; v < 3; v++) {
-          double outwards[3];
-          outwards[0] = vertices[v][0] - center[0];
-          outwards[1] = vertices[v][1] - center[1];
-          outwards[2] = vertices[v][2] - center[2];
-
-          double tmpLength = (outwards[0] * outwards[0]) +
-                             (outwards[1] * outwards[1]) +
-                             (outwards[2] * outwards[2]);
-          tmpLength = sqrt (tmpLength);
-
-          if (tmpLength > maxLength) {
-            maxLength = tmpLength;
-          }
-          if (tmpLength < minLength) {
-            minLength = tmpLength;
-          }
-        }
-
-        double fourthLength;
-        if (maxLength > (0.1 * minLength)) {
-          fourthLength = minLength;
-        } else {
-          fourthLength = maxLength;
-        }
-        fourthLength = fourthLength * (0.1 * NormalDir);
-
-        double fourth[3];
-        fourth[0] = center[0] + (cross[0] * fourthLength);
-        fourth[1] = center[1] + (cross[1] * fourthLength);
-        fourth[2] = center[2] + (cross[2] * fourthLength);
-        printf ("  vertex %f %f %f\n", fourth[0], fourth[1], fourth[2]);
-
-        printf ("  visible 0 0 0 1\n");
-        printf ("end\n");
-      }
-      free (normalL);
-    }
-  }
-  return;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-
