@@ -233,7 +233,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // if was teleporting and exceeded teleport time then not teleporting anymore
   if (isTeleporting() && getTeleportTime() - lastTime >= TeleportTime)
-    setStatus(getStatus() & ~short(Teleporting));
+    setStatus(getStatus() & ~short(PlayerState::Teleporting));
 
   // phased means we can pass through buildings
   const bool phased = (location == Dead || location == Exploding ||
@@ -253,7 +253,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       if (lastTime - getExplodeTime() >= ExplodeTime) {
 	dt -= (lastTime - getExplodeTime()) - ExplodeTime;
 	if (dt < 0.0f) dt = 0.0f;
-	setStatus(DeadStatus);
+	setStatus(PlayerState::DeadStatus);
 	location = Dead;
       }
 
@@ -437,16 +437,16 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (location == InBuilding && getFlag() == OscOverthrusterFlag) {
     if (insideBuilding->isCrossing(newPos, newAzimuth,
 			0.5f * TankLength, 0.5f * TankWidth, NULL))
-      setStatus(getStatus() | int(CrossingWall));
+      setStatus(getStatus() | int(PlayerState::CrossingWall));
     else
-      setStatus(getStatus() & ~int(CrossingWall));
+      setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   }
   else if (World::getWorld()->crossingTeleporter(newPos, newAzimuth,
 			0.5f * TankLength, 0.5f * TankWidth, crossingPlane)) {
-    setStatus(getStatus() | int(CrossingWall));
+	  setStatus(getStatus() | int(PlayerState::CrossingWall));
   }
   else {
-    setStatus(getStatus() & ~int(CrossingWall));
+    setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   }
 
   // compute actual velocities.  do this before teleportation.
@@ -464,7 +464,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (teleporter) {
     if (getFlag() == PhantomZoneFlag) {
       // change zoned state
-      setStatus(getStatus() ^ FlagActive);
+      setStatus(getStatus() ^ PlayerState::FlagActive);
       playLocalSound( SFX_PHANTOM );
     }
     else {
@@ -492,9 +492,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // set falling status
   if (location == OnGround || location == OnBuilding ||
 	(location == InBuilding && newPos[2] == 0.0f))
-    setStatus(getStatus() & ~short(Falling));
+    setStatus(getStatus() & ~short(PlayerState::Falling));
   else if (location == InAir || location == InBuilding)
-    setStatus(getStatus() | short(Falling));
+    setStatus(getStatus() | short(PlayerState::Falling));
 
   // compute firing status
   switch (location) {
@@ -640,7 +640,7 @@ ShotPath*		LocalPlayer::getShot(int index) const
 void			LocalPlayer::restart(const float* pos, float _azimuth)
 {
   // put me in limbo
-  setStatus(short(DeadStatus));
+  setStatus(short(PlayerState::DeadStatus));
 
   // can't have a flag
   setFlag(NoFlag);
@@ -674,7 +674,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   doUpdateMotion(0.0f);
 
   // make me alive now
-  setStatus(getStatus() | short(Alive));
+  setStatus(getStatus() | short(PlayerState::Alive));
 }
 
 void			LocalPlayer::setTeam(TeamColor team)
@@ -725,10 +725,10 @@ void			LocalPlayer::setPause(bool pause)
 {
   if (isAlive()) {
     if (pause && !isPaused()) {
-      setStatus(getStatus() | short(Paused));
+      setStatus(getStatus() | short(PlayerState::Paused));
     }
     else if (!pause && isPaused()) {
-      setStatus(getStatus() & ~short(Paused));
+      setStatus(getStatus() & ~short(PlayerState::Paused));
     }
   }
 }

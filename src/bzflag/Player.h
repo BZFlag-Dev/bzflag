@@ -19,6 +19,7 @@
 #include "Address.h"
 #include "ShotPath.h"
 #include "OpenGLTexture.h"
+#include "PlayerState.h"
 
 class ShotPath;
 class SceneDatabase;
@@ -30,17 +31,6 @@ const int		PlayerUpdatePLen = PlayerIdPLen + 34;
 
 class Player {
   public:
-    enum PStatus {				// bit masks
-			DeadStatus =	0x0000,	// not alive, not paused, etc.
-			Alive =		0x0001,	// player is alive
-			Paused = 	0x0002,	// player is paused
-			Exploding =	0x0004,	// currently blowing up
-			Teleporting =	0x0008,	// teleported recently
-			FlagActive =	0x0010,	// flag special powers active
-			CrossingWall =	0x0020,	// tank crossing building wall
-			Falling =	0x0040	// tank accel'd by gravity
-    };
-
 			Player(const PlayerId&, TeamColor,
 				const char* callsign, const char* emailAddress);
     virtual		~Player();
@@ -155,11 +145,7 @@ class Player {
     short		localLosses;		// local player lost this many
 
     // highly dynamic data
-    short		status;			// see PStatus enum
-    float		pos[3];			// position of tank
-    float		azimuth;		// orientation of tank
-    float		velocity[3];		// velocity of tank
-    float		angVel;			// angular velocity of tank
+    PlayerState		state;
 
     // computable highly dynamic data
     float		forward[3];		// forward unit vector
@@ -209,17 +195,17 @@ inline FlagId		Player::getFlag() const
 
 inline short		Player::getStatus() const
 {
-  return status;
+  return state.status;
 }
 
 inline const float*	Player::getPosition() const
 {
-  return pos;
+  return state.pos;
 }
 
 inline float		Player::getAngle() const
 {
-  return azimuth;
+  return state.azimuth;
 }
 
 inline const float*	Player::getForward() const
@@ -229,12 +215,12 @@ inline const float*	Player::getForward() const
 
 inline const float*	Player::getVelocity() const
 {
-  return velocity;
+  return state.velocity;
 }
 
 inline float		Player::getAngularVelocity() const
 {
-  return angVel;
+  return state.angVel;
 }
 
 inline short		Player::getWins() const
@@ -289,32 +275,32 @@ inline float		Player::getTeleporterProximity() const
 
 inline bool		Player::isAlive() const
 {
-  return (status & short(Alive)) != 0;
+  return (state.status & short(PlayerState::Alive)) != 0;
 }
 
 inline bool		Player::isPaused() const
 {
-  return (status & short(Paused)) != 0;
+  return (state.status & short(PlayerState::Paused)) != 0;
 }
 
 inline bool		Player::isFlagActive() const
 {
-  return (status & short(FlagActive)) != 0;
+  return (state.status & short(PlayerState::FlagActive)) != 0;
 }
 
 inline bool		Player::isTeleporting() const
 {
-  return (status & short(Teleporting)) != 0;
+  return (state.status & short(PlayerState::Teleporting)) != 0;
 }
 
 inline bool		Player::isExploding() const
 {
-  return (status & short(Exploding)) != 0;
+  return (state.status & short(PlayerState::Exploding)) != 0;
 }
 
 inline bool		Player::isCrossingWall() const
 {
-  return (status & short(CrossingWall)) != 0;
+  return (state.status & short(PlayerState::CrossingWall)) != 0;
 }
 
 inline bool		Player::isNotResponding() const

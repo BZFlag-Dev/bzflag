@@ -68,6 +68,7 @@ const int udpBufSize = 128000;
 #include "Protocol.h"
 #include "Address.h"
 #include "Pack.h"
+#include "PlayerState.h"
 #include "TimeKeeper.h"
 #include "Flag.h"
 #include "Team.h"
@@ -387,7 +388,7 @@ struct CmdLineOptions
   AccessControlList	acl;
 };
 
-enum PlayerState {
+enum ClientState {
   PlayerNoExist, // does not exist
   PlayerAccept, // got connect, sending hello
   PlayerInLimbo, // not entered
@@ -425,7 +426,7 @@ struct PlayerInfo {
     // peer's network address
     Address peer;
     // current state of player
-    PlayerState state;
+    ClientState state;
     // player's id
     PlayerId id;
     // does player know his real id?
@@ -5405,16 +5406,19 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player is sending multicast data
     case MsgPlayerUpdate: {// FIXME verify velocity etc.
       player[t].lastupdate = TimeKeeper::getCurrent();
-      float pos[3];
-      nboUnpackVector((char*)buf+PlayerIdPLen+sizeof(int16_t), pos);
-      if (pos[2] > maxTankHeight) {
+      PlayerId id;
+      PlayerState state;
+      buf = id.unpack(buf);
+      buf = state.unpack(buf);
+      if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
 	strcpy( message, "Autokick: Out of world bounds, Jump too high, Update your client." );
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
 	break;
       }
-	}
+    }
+    //Fall thru
     case MsgGMUpdate:
     case MsgAudio:
     case MsgVideo:

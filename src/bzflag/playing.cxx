@@ -1882,7 +1882,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (playerIndex >= 0) {
 	static const float zero[3] = { 0.0f, 0.0f, 0.0f };
 	Player* tank = getPlayerByIndex(playerIndex);
-	tank->setStatus(Player::Alive);
+	tank->setStatus(PlayerState::Alive);
 	tank->move(pos, atan2f(forward[1], forward[0]));
 	tank->setVelocity(zero);
 	tank->setAngularVelocity(0.0f);
@@ -2464,17 +2464,17 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       short oldStatus = tank->getStatus();
       tank->unpack(msg);
       short newStatus = tank->getStatus();
-      if ((oldStatus & short(Player::Paused)) !=
-				(newStatus & short(Player::Paused)))
-	addMessage(tank, (tank->getStatus() & Player::Paused) ?
+      if ((oldStatus & short(PlayerState::Paused)) !=
+				(newStatus & short(PlayerState::Paused)))
+	addMessage(tank, (tank->getStatus() & PlayerState::Paused) ?
 						"Paused" : "Resumed");
-      if ((oldStatus & short(Player::Exploding)) == 0 &&
-		(newStatus & short(Player::Exploding)) != 0) {
+      if ((oldStatus & short(PlayerState::Exploding)) == 0 &&
+		(newStatus & short(PlayerState::Exploding)) != 0) {
 	// player has started exploding and we haven't gotten killed
 	// message yet -- set explosion now, play sound later (when we
 	// get killed message).  status is already !Alive so make player
 	// alive again, then call setExplode to kill him.
-	tank->setStatus(newStatus | short(Player::Alive));
+	tank->setStatus(newStatus | short(PlayerState::Alive));
 	tank->setExplode(TimeKeeper::getTick());
 	// ROBOT -- play explosion now
       }
@@ -3004,6 +3004,8 @@ static void		checkEnvironment()
       const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
       for (int i = 0; i < numFlags; i++) {
 	if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
+	  continue;
+	if (world->getFlag(i).id == NullFlag)
 	  continue;
 	const float* fpos = world->getFlag(i).position;
 	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +

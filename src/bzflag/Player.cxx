@@ -43,10 +43,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 				wins(0),
 				losses(0),
 				localWins(0),
-				localLosses(0),
-				status(DeadStatus)
+				localLosses(0)
 {
-  // initialize position, etc.
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
   setVelocity(zero);
@@ -62,10 +60,10 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   email[EmailLen-1] = '\0';
 
   // make scene nodes
-  tankNode = new TankSceneNode(pos, forward);
+  tankNode = new TankSceneNode(state.pos, forward);
   tankIDLNode = new TankIDLSceneNode(tankNode);
   changeTeam(team);
-  pausedSphere = new SphereSceneNode(pos, 1.5f * TankRadius);
+  pausedSphere = new SphereSceneNode(state.pos, 1.5f * TankRadius);
   pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
 
   totalCount++;
@@ -95,43 +93,43 @@ void			Player::getMuzzle(float* m) const
   float front = MuzzleFront;
   if (flag == ObesityFlag) front *= ObeseFactor;
   else if (flag == TinyFlag) front *= TinyFactor;
-  m[0] = pos[0] + front * forward[0];
-  m[1] = pos[1] + front * forward[1];
-  m[2] = pos[2] + front * forward[2] + MuzzleHeight;
+  m[0] = state.pos[0] + front * forward[0];
+  m[1] = state.pos[1] + front * forward[1];
+  m[2] = state.pos[2] + front * forward[2] + MuzzleHeight;
 }
 
 void			Player::move(const float* _pos, float _azimuth)
 {
   // assumes _forward is normalized
-  pos[0] = _pos[0];
-  pos[1] = _pos[1];
-  pos[2] = _pos[2];
-  azimuth = _azimuth;
+  state.pos[0] = _pos[0];
+  state.pos[1] = _pos[1];
+  state.pos[2] = _pos[2];
+  state.azimuth = _azimuth;
 
   // limit angle
-  if (azimuth < 0.0f) azimuth = 2.0f * M_PI - fmodf(-azimuth, 2.0f * M_PI);
-  else if (azimuth >= 2.0f * M_PI) azimuth = fmodf(azimuth, 2.0f * M_PI);
+  if (state.azimuth < 0.0f) state.azimuth = 2.0f * M_PI - fmodf(-state.azimuth, 2.0f * M_PI);
+  else if (state.azimuth >= 2.0f * M_PI) state.azimuth = fmodf(state.azimuth, 2.0f * M_PI);
 
   // update forward vector (always in horizontal plane)
-  forward[0] = cosf(azimuth);
-  forward[1] = sinf(azimuth);
+  forward[0] = cosf(state.azimuth);
+  forward[1] = sinf(state.azimuth);
   forward[2] = 0.0f;
 
   // compute teleporter proximity
   if (World::getWorld())
-    teleporterProximity = World::getWorld()->getProximity(pos, TankRadius);
+    teleporterProximity = World::getWorld()->getProximity(state.pos, TankRadius);
 }
 
 void			Player::setVelocity(const float* _velocity)
 {
-  velocity[0] = _velocity[0];
-  velocity[1] = _velocity[1];
-  velocity[2] = _velocity[2];
+  state.velocity[0] = _velocity[0];
+  state.velocity[1] = _velocity[1];
+  state.velocity[2] = _velocity[2];
 }
 
 void			Player::setAngularVelocity(float _angVel)
 {
-  angVel = _angVel;
+  state.angVel = _angVel;
 }
 
 void			Player::setTexture(const OpenGLTexture& _texture)
@@ -164,15 +162,15 @@ void			Player::changeTeam(TeamColor _team)
 
 void			Player::setStatus(short _status)
 {
-  status = _status;
+  state.status = _status;
 }
 
 void			Player::setExplode(const TimeKeeper& t)
 {
   if (!isAlive()) return;
   explodeTime = t;
-  setStatus((getStatus() | short(Exploding) | short(Falling)) &
-			~(short(Alive) | short(Paused)));
+  setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
+			~(short(PlayerState::Alive) | short(PlayerState::Paused)));
 }
 
 void			Player::setTeleport(const TimeKeeper& t,
@@ -182,7 +180,7 @@ void			Player::setTeleport(const TimeKeeper& t,
   teleportTime = t;
   fromTeleporter = from;
   toTeleporter = to;
-  setStatus(getStatus() | short(Teleporting));
+  setStatus(getStatus() | short(PlayerState::Teleporting));
 }
 
 void			Player::changeScore(short deltaWins, short deltaLosses)
@@ -213,7 +211,7 @@ void			Player::endShot(int index,
 void			Player::updateSparks(float /*dt*/)
 {
   if (flag != PhantomZoneFlag || !isFlagActive()) {
-    teleporterProximity = World::getWorld()->getProximity(pos, TankRadius);
+	  teleporterProximity = World::getWorld()->getProximity(state.pos, TankRadius);
     if (teleporterProximity == 0.0f) {
       color[3] = 1.0f;
       tankNode->setColor(color);
@@ -237,7 +235,7 @@ void			Player::addPlayer(SceneDatabase* scene,
 						bool showIDL)
 {
   if (!isAlive() && !isExploding()) return;
-  tankNode->move(pos, forward);
+  tankNode->move(state.pos, forward);
   tankNode->setColorblind(colorblind);
   if (isAlive()) {
     if (flag == ObesityFlag) tankNode->setObese();
@@ -251,11 +249,11 @@ void			Player::addPlayer(SceneDatabase* scene,
       // get which plane to compute IDL against
       GLfloat plane[4];
       const GLfloat a = atan2f(forward[1], forward[0]);
-      const Obstacle* obstacle = World::getWorld()->hitBuilding(pos, a,
+      const Obstacle* obstacle = World::getWorld()->hitBuilding(state.pos, a,
 					0.5f * TankLength, 0.5f * TankWidth);
-      if (obstacle && obstacle->isCrossing(pos, a,
+      if (obstacle && obstacle->isCrossing(state.pos, a,
 				0.5f * TankLength, 0.5f * TankWidth, plane) ||
-		World::getWorld()->crossingTeleporter(pos, a,
+		World::getWorld()->crossingTeleporter(state.pos, a,
 				0.5f * TankLength, 0.5f * TankWidth, plane)) {
 	// stick in interdimensional lights node
 	if (showIDL) {
@@ -286,7 +284,7 @@ void			Player::addPlayer(SceneDatabase* scene,
     scene->addDynamicNode(tankNode);
   }
   if (isAlive() && (isPaused() || isNotResponding())) {
-    pausedSphere->move(pos, 1.5f * TankRadius);
+    pausedSphere->move(state.pos, 1.5f * TankRadius);
     scene->addDynamicSphere(pausedSphere);
   }
 }
@@ -315,23 +313,12 @@ void			Player::addShots(SceneDatabase* scene,
 void*			Player::pack(void* buf) const
 {
   ((Player*)this)->setDeadReckoning();
-  buf = nboPackShort(buf, int16_t(status));
-  buf = nboPackVector(buf, pos);
-  buf = nboPackVector(buf, velocity);
-  buf = nboPackFloat(buf, azimuth);
-  buf = nboPackFloat(buf, angVel);
-  return buf;
+  return state.pack(buf);
 }
 
 void*			Player::unpack(void* buf)
 {
-  int16_t inStatus;
-  buf = nboUnpackShort(buf, inStatus);
-  buf = nboUnpackVector(buf, pos);
-  buf = nboUnpackVector(buf, velocity);
-  buf = nboUnpackFloat(buf, azimuth);
-  buf = nboUnpackFloat(buf, angVel);
-  status = short(inStatus);
+  buf = state.unpack(buf);
   setDeadReckoning();
   return buf;
 }
@@ -341,20 +328,20 @@ void			Player::setDeadReckoning()
   // save stuff for dead reckoning
   inputTime = TimeKeeper::getTick();
   inputPrevTime = inputTime;
-  inputStatus = status;
-  inputPos[0] = pos[0];
-  inputPos[1] = pos[1];
-  inputPos[2] = pos[2];
-  inputSpeed = hypotf(velocity[0], velocity[1]);
-  if (cosf(azimuth) * velocity[0] + sinf(azimuth) * velocity[1] < 0.0f)
+  inputStatus = state.status;
+  inputPos[0] = state.pos[0];
+  inputPos[1] = state.pos[1];
+  inputPos[2] = state.pos[2];
+  inputSpeed = hypotf(state.velocity[0], state.velocity[1]);
+  if (cosf(state.azimuth) * state.velocity[0] + sinf(state.azimuth) * state.velocity[1] < 0.0f)
     inputSpeed = -inputSpeed;
   if (inputSpeed != 0.0f)
-    inputSpeedAzimuth = atan2f(velocity[1], velocity[0]);
+    inputSpeedAzimuth = atan2f(state.velocity[1], state.velocity[0]);
   else
     inputSpeedAzimuth = 0.0f;
-  inputZSpeed = velocity[2];
-  inputAzimuth = azimuth;
-  inputAngVel = angVel;
+  inputZSpeed = state.velocity[2];
+  inputAzimuth = state.azimuth;
+  inputAngVel = state.angVel;
 }
 
 bool			Player::getDeadReckoning(
@@ -366,7 +353,7 @@ bool			Player::getDeadReckoning(
   ((Player*)this)->inputPrevTime = TimeKeeper::getTick();
   const float dt = inputPrevTime - inputTime;
 
-  if (inputStatus & Paused) {
+  if (inputStatus & PlayerState::Paused) {
     // don't move when paused
     predictedPos[0] = inputPos[0];
     predictedPos[1] = inputPos[1];
@@ -376,7 +363,7 @@ bool			Player::getDeadReckoning(
     predictedVel[2] = 0.0f;
     *predictedAzimuth = inputAzimuth;
   }
-  else if (inputStatus & Falling) {
+  else if (inputStatus & PlayerState::Falling) {
     // no control when falling
     predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
     predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
@@ -386,7 +373,7 @@ bool			Player::getDeadReckoning(
     predictedPos[1] = inputPos[1] + dt * predictedVel[1];
 
     // only turn if alive
-    if (inputStatus & Alive)
+    if (inputStatus & PlayerState::Alive)
       *predictedAzimuth = inputAzimuth + dt * inputAngVel;
     else
       *predictedAzimuth = inputAzimuth;
@@ -439,12 +426,12 @@ bool			Player::getDeadReckoning(
 bool			Player::isDeadReckoningWrong() const
 {
   // always send a new packet when some kinds of status change
-  if ((status & (Alive | Paused | Falling)) !=
-      (inputStatus & (Alive | Paused | Falling)))
+  if ((state.status & (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling)) !=
+      (inputStatus & (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling)))
     return true;
 
   // never send a packet when dead
-  if (!(status & Alive)) return false;
+  if (!(state.status & PlayerState::Alive)) return false;
 
   // otherwise always send at least one packet per second
   if (TimeKeeper::getTick() - inputTime >= MaxUpdateTime) return true;
@@ -462,10 +449,10 @@ bool			Player::isDeadReckoningWrong() const
   if (TimeKeeper::getTick() - inputTime < minUpdateTime) return false;
 
   // see if position and azimuth are close enough
-  if (fabsf(pos[0] - predictedPos[0]) > PositionTolerance) return true;
-  if (fabsf(pos[1] - predictedPos[1]) > PositionTolerance) return true;
-  if (fabsf(pos[2] - predictedPos[2]) > PositionTolerance) return true;
-  if (fabsf(azimuth - predictedAzimuth) > AngleTolerance) return true;
+  if (fabsf(state.pos[0] - predictedPos[0]) > PositionTolerance) return true;
+  if (fabsf(state.pos[1] - predictedPos[1]) > PositionTolerance) return true;
+  if (fabsf(state.pos[2] - predictedPos[2]) > PositionTolerance) return true;
+  if (fabsf(state.azimuth - predictedAzimuth) > AngleTolerance) return true;
 
   // prediction is good enough
   return false;
@@ -488,7 +475,7 @@ void			Player::doDeadReckoning()
   if (predictedPos[2] < 0.0f) {
     predictedPos[2] = 0.0f;
     predictedVel[2] = 0.0f;
-    inputStatus &= ~Falling;
+    inputStatus &= ~PlayerState::Falling;
     inputZSpeed = 0.0f;
     inputSpeedAzimuth = inputAzimuth;
   }

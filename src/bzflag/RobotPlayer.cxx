@@ -197,7 +197,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
   }
   else if (isExploding()) {
     if (lastTime - getExplodeTime() >= ExplodeTime)
-      setStatus(DeadStatus);
+      setStatus(PlayerState::DeadStatus);
   }
 
   float velocity[3];
@@ -319,7 +319,7 @@ void			RobotPlayer::restart()
 
   // NOTE -- code taken directly from LocalPlayer
   // put me in limbo
-  setStatus(short(DeadStatus));
+  setStatus(short(PlayerState::DeadStatus));
 
   // can't have a flag
   setFlag(NoFlag);
@@ -347,7 +347,7 @@ void			RobotPlayer::restart()
   doUpdateMotion(0.0f);
 
   // make me alive now
-  setStatus(getStatus() | short(Alive));
+  setStatus(getStatus() | short(PlayerState::Alive));
 }
 
 float			RobotPlayer::getTargetPriority(const

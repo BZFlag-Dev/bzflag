@@ -540,7 +540,7 @@ void			World::addFlags(SceneDatabase* scene)
 	if (players[j] && players[j]->getId() == flags[i].owner)
 	  break;
 
-      if (j < curMaxPlayers && !(players[j]->getStatus() & Player::Alive))
+      if (j < curMaxPlayers && !(players[j]->getStatus() & PlayerState::Alive))
 	continue;
     }
 
