@@ -119,6 +119,11 @@ BzfString				ViewItemScoreboardPlayerFormatter::format(
 
 		case ViewItemScoreboard::Part::LocalLosses:
 			return BzfString::format(part.format.c_str(), player->getLocalLosses());
+
+		case ViewItemScoreboard::Part::Status:
+			return BzfString::format(part.format.c_str(), 
+								player->isNotResponding() ? "[not responding]" :
+								player->isPaused() ? "[Paused]" : "");
 	}
 }
 
@@ -516,6 +521,10 @@ void					ViewItemScoreboard::makeParts(
 					part.item = Part::Number;
 					break;
 
+				case 'S':
+					part.item = Part::Status;
+					break;
+
 				default:
 					goto done;
 			}
@@ -532,6 +541,7 @@ void					ViewItemScoreboard::makeParts(
 				case Part::EMail:
 				case Part::Flag:
 				case Part::FlagAbbr:
+				case Part::Status:
 					if (width > 0)
 						part.format += BzfString::format("%%%s%ds",
 								alignRight ? " " : "", width);

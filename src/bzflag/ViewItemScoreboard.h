@@ -66,7 +66,8 @@ public:
 			Losses,			// %l		%l
 			LocalWins,		// %W
 			LocalLosses,	// %L
-			Number			//			%n (number of players)
+			Number,			//			%n (number of players)
+			Status			// %S
 		};
 
 		bool			useOffset;

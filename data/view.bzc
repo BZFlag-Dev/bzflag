@@ -34,7 +34,7 @@
 		<font name="fixed" size="7p" />
 		<color value="white" />
 		<align h="right" v="bottom" />
-		<text x="-4p" y="4p" shadow="yes">FPS: ${timeFPS} (${timeFrame}us)</text>
+		<text x="-4p" y="304p" shadow="yes">FPS: ${timeFPS} (${timeFrame}us)</text>
 	</if>
 
 	# scoreboard (can be switched on/off)
@@ -43,7 +43,7 @@
 		<color value="white" />
 		<viewport x="5%" y="-36p" w="60%" h="70%">
 			<score shadow=yes title="Score@34%Callsign"
-					format="%s (%w-%l) (%W-%L)@34%%c (%F)"></score>
+					format="%s (%w-%l) (%W-%L)@34%%c (%F)%S"></score>
 		</viewport>
 		<viewport x="72%" y="-36p" w="25%" h="70%">
 			<score team=yes shadow=yes title="" format="%n % 11c %s (%w-%l)" />
@@ -54,7 +54,7 @@
 
 	# radar (can be switched on/off though i don't know why you'd want it off)
 	<if name="displayRadar">
-		<viewport x="4%" y="4%" w="15%" h="1x">
+		<viewport x="1%" y="1%" w="15%" h="1x">
 			<radar>
 				# draw radar background
 				<model filename="radar.bzg" />
@@ -67,7 +67,7 @@
 		<align h="left" v="top" />
 		<font name="fixed" size="7p" />
 		<color value=black shift="1.0 0.5 0.0" />
-		<message buffer="messages" timeout="5" input="yes" shadow="yes" />
+		<message buffer="messages" timeout="15" input="yes" shadow="yes" />
 	</viewport>
 
 	# alerts
