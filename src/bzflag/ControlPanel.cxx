@@ -391,11 +391,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
       glVertex2f((float) xpos, (float) ypos);
     }
     
-    /* bottom left
-    ypos = y + messageAreaPixels[1];
-    glVertex2f((float) xpos, (float) ypos);
-    */
-    
   } glEnd();
 
   // some engines miss the corners
