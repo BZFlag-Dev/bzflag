@@ -20,6 +20,7 @@
 #include <ws2tcpip.h>
 #include <wincon.h>
 #else
+#include <sys/types.h>
 #include <sys/select.h>
 #endif
 
