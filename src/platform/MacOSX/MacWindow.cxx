@@ -69,7 +69,7 @@ bool gMouseGrabbed;
 class GLContext
 {
   const CGLPixelFormatAttribute* GetPixelFormat(u_int32_t display_id = 0x01,
-      int color = settings.depth, int depth = 0, int stencil = 0) {
+      int color = settings.depth, int depth = 16, int stencil = 0) {
     static CGLPixelFormatAttribute attribs[32];
 
     CGLPixelFormatAttribute* attrib = attribs;
@@ -377,7 +377,7 @@ public:
 
 void Display(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
