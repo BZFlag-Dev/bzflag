@@ -63,6 +63,9 @@ private:
   TextureFont*	getClosestRealSize(int faceID, float desiredSize, float &actualSize);
   FontFaceMap	faceNames;
   FontFaceList  fontFaces;
+
+  static void    callback(const std::string& name, void *);
+  static GLfloat underlineColor[3];
 };
 
 #endif //_FONT_MANAGER_H_

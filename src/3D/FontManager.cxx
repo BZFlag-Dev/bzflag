@@ -66,10 +66,32 @@ static GLfloat DimColors[8][3] = {
   {0.0f,0.7f,0.7f}  // cyan
 };
 
+GLfloat FontManager::underlineColor[3];
+void FontManager::callback(const std::string &, void *)
+{
+  // set underline color
+  const char* uColor = BZDB.get("underlineColor").c_str();
+  if (strcasecmp(uColor, "text") == 0) {
+    underlineColor[0] = -1.0f;
+    underlineColor[1] = -1.0f;
+    underlineColor[2] = -1.0f;
+  } else if (strcasecmp(uColor, "cyan") == 0) {
+    underlineColor[0] = BrightColors[CyanColor][0];
+    underlineColor[1] = BrightColors[CyanColor][1];
+    underlineColor[2] = BrightColors[CyanColor][2];
+  } else if (strcasecmp(uColor, "grey") == 0) {
+    underlineColor[0] = BrightColors[GreyColor][0];
+    underlineColor[1] = BrightColors[GreyColor][1];
+    underlineColor[2] = BrightColors[GreyColor][2];
+  }
+}
+
 FontManager::FontManager() : Singleton<FontManager>()
 {
   faceNames.clear();
   fontFaces.clear();
+  BZDB.addCallback(std::string("underlineColor"), callback, NULL);
+  BZDB.touch("underlineColor");
 }
 
 FontManager::~FontManager()
@@ -231,20 +253,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[3] = {-1.0f, -1.0f, -1.0f};
 
-  // set underline color
-  const char* uColor = BZDB.get("underlineColor").c_str();
-  GLfloat underlineColor[3] = {-1.0f, -1.0f, -1.0f};
-  if (strcasecmp(uColor, "text") == 0) {
-    // use the initialized color, no change
-  } else if (strcasecmp(uColor, "cyan") == 0) {
-    underlineColor[0] = BrightColors[CyanColor][0];
-    underlineColor[1] = BrightColors[CyanColor][1];
-    underlineColor[2] = BrightColors[CyanColor][2];
-  } else if (strcasecmp(uColor, "grey") == 0) {
-    underlineColor[0] = BrightColors[GreyColor][0];
-    underlineColor[1] = BrightColors[GreyColor][1];
-    underlineColor[2] = BrightColors[GreyColor][2];
-  }
 
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
