@@ -180,7 +180,11 @@ bool PlayerInfo::isCallSignReadable() {
 	alnumCount++;
     }
   } while (*++sp);
-  return ((float)alnumCount / (float)callsignlen > 0.5f);
+
+  bool readable = ((float)alnumCount / (float)callsignlen) > 0.5f;
+  if (!readable)
+    errorString = "Callsign rejected. Please use mostly letters and numbers.";
+  return readable;
 };
 
 const char *PlayerInfo::getEMail() const {
