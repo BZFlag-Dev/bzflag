@@ -70,6 +70,8 @@ class Server {
     void		setStale();
     void		setFresh();
     void		setNumPlayers(int* players);
+    void		setGameInfo(const char* gameInfo);
+    void		setTitle(const char* title);
 
     Server*		getNext() const;
     boolean		isReferenced() const;
@@ -262,6 +264,20 @@ void			Server::setFresh()
 void			Server::setNumPlayers(int* players)
 {
   PingPacket::repackHexPlayerCounts(gameInfo, players);
+}
+
+void			Server::setTitle(const char* inTitle)
+{
+	if (title)
+		free(title);
+	title = strdup(inTitle);
+}
+
+void			Server::setGameInfo(const char* inGameInfo)
+{
+	if (gameInfo)
+		free(gameInfo);
+	gameInfo = strdup(inGameInfo);
 }
 
 Server*			Server::getNext() const
@@ -695,6 +711,8 @@ static int		addServer(const char* address, const char* version,
   // is server already in the list?  if so then freshen it.
   Server* exists = findServer(address);
   if (exists) {
+  	exists->setTitle(title);
+  	exists->setGameInfo(gameInfo);
     exists->setFresh();
     lastChangeTime = getTime();
     return 0;
