@@ -660,6 +660,8 @@ void			dumpResources(BzfDisplay* display,
     BZDB.set(string_util::format("silencedPerson%d", i), list[i]);
   }
 
+  BZDB.set("email",startupInfo.email); // note email of zero length does not stick
+
   BZDB.set("serverCacheAge", string_util::format("%1d", (long)(ServerListCache::get())->getMaxCacheAge()));
 
   (ServerListCache::get())->saveCache();

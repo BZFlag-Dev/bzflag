@@ -4309,6 +4309,7 @@ class JoinMenu : public HUDDialog {
   private:
     float		center;
     HUDuiTypeIn*	callsign;
+    HUDuiTypeIn*	email;
     HUDuiList*		team;
     HUDuiTypeIn*	server;
     HUDuiTypeIn*	port;
@@ -4387,6 +4388,13 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   port->setString(buffer);
   list.push_back(port);
 
+  email = new HUDuiTypeIn;
+  email->setFont(MainMenu::getFont());
+  email->setLabel("Email:");
+  email->setMaxLength(EmailLen - 1);
+  email->setString(info->email);
+  list.push_back(email);
+
   startServer = new HUDuiLabel;
   startServer->setFont(MainMenu::getFont());
   startServer->setString("Start Server");
@@ -4445,10 +4453,12 @@ void			JoinMenu::loadInfo()
   info->team = getTeam();
   strcpy(info->serverName, server->getString().c_str());
   info->serverPort = atoi(port->getString().c_str());
+  strcpy(info->email, email->getString().c_str());
 }
 
 void			JoinMenu::execute()
 {
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == startServer) {
     if (!serverStartMenu) serverStartMenu = new ServerStartMenu;
@@ -4575,7 +4585,7 @@ void			JoinMenu::resize(int width, int height)
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
-    if (i <= 2 || i == 6) y -= 0.5f * h;
+    if (i <= 2 || i == 7) y -= 0.5f * h;
   }
 }
 
