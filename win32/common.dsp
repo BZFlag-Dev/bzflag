@@ -118,6 +118,10 @@ SOURCE=..\src\common\ShotUpdate.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\StateDatabase.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\Team.cxx
 # End Source File
 # Begin Source File
@@ -158,6 +162,10 @@ SOURCE=..\include\bzsignal.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
@@ -187,6 +195,10 @@ SOURCE=..\include\Pack.h
 # Begin Source File
 
 SOURCE=..\include\PlayerState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneDatabase.h
 # End Source File
 # Begin Source File
 
