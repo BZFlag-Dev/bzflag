@@ -1160,11 +1160,11 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
       if (options.flagCount[it2->second] > 0) {
-	  for (int j = 0; j < options.flagCount[it2->second]; j++) {
-		  if (setRequiredFlag(flag[f], it2->second))
-			f++;
-	  }
-	  options.gameStyle |= int(SuperFlagGameStyle);
+	for (int j = 0; j < options.flagCount[it2->second]; j++) {
+	  if (setRequiredFlag(flag[f], it2->second))
+	    f++;
+	}
+	options.gameStyle |= int(SuperFlagGameStyle);
       }
     }
   }
