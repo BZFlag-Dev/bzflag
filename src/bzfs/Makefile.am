@@ -24,6 +24,8 @@ bzfs_SOURCES = \
 	CustomWorld.h \
 	FlagInfo.cxx \
 	FlagInfo.h \
+	ListServerConnection.cxx \
+	ListServerConnection.h \
 	PackVars.h \
 	Permissions.cxx \
 	Permissions.h \
