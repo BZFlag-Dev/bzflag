@@ -54,8 +54,10 @@ ServerStartMenu::ServerStartMenu()
   HUDuiList* list;
   std::vector<std::string>* items;
 
+  // 0
   controls.push_back(createLabel("Start Server"));
 
+  // 1
   list = createList("Style:");
   items = &list->getList();
   items->push_back("Capture the Flag");
@@ -64,6 +66,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 2
   list = createList("Max Players:");
   items = &list->getList();
   items->push_back("2");
@@ -75,6 +78,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 3
   list = createList("Max Shots:");
   items = &list->getList();
   items->push_back("1");
@@ -85,6 +89,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 4
   list = createList("Teleporters:");
   items = &list->getList();
   items->push_back("no");
@@ -92,6 +97,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 5
   list = createList("Ricochet:");
   items = &list->getList();
   items->push_back("no");
@@ -99,6 +105,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 6
   list = createList("Jumping:");
   items = &list->getList();
   items->push_back("no");
@@ -106,6 +113,15 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 7
+  list = createList("Handicap:");
+  items = &list->getList();
+  items->push_back("no");
+  items->push_back("yes");
+  list->update();
+  controls.push_back(list);
+
+  // 8
   list = createList("Superflags:");
   items = &list->getList();
   items->push_back("no");
@@ -114,6 +130,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 9
   list = createList("Max Superflags:");
   items = &list->getList();
   items->push_back("10");
@@ -123,6 +140,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 10
   list = createList("Bad Flag Antidote:");
   items = &list->getList();
   items->push_back("no");
@@ -130,6 +148,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 11
   list = createList("Bad Flag Time Limit:");
   items = &list->getList();
   items->push_back("no limit");
@@ -140,6 +159,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 12
   list = createList("Bad Flag Win Limit:");
   items = &list->getList();
   items->push_back("no limit");
@@ -149,6 +169,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 13
   list = createList("Game Over:");
   items = &list->getList();
   items->push_back("never");
@@ -166,6 +187,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 14
   list = createList("Server Reset:");
   items = &list->getList();
   items->push_back("no, quit after game");
@@ -173,6 +195,7 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 15
   list = createList("World Map:");
   items = &list->getList();
   items->push_back("random map");
@@ -290,12 +313,15 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  // 16
   start = createLabel("Start");
   controls.push_back(start);
 
+  // 17
   status = createLabel("");
   controls.push_back(status);
 
+  // 18
   failedMessage = createLabel("");
   controls.push_back(failedMessage);
 
@@ -423,8 +449,12 @@ void ServerStartMenu::execute()
     if (((HUDuiList*)list[6])->getIndex() == 1)
       args[arg++] = "-j";
 
+    // handicap
+    if (((HUDuiList*)list[7])->getIndex() == 1)
+      args[arg++] = "-handicap";
+
     // superflags
-    const int superflagOption = ((HUDuiList*)list[7])->getIndex();
+    const int superflagOption = ((HUDuiList*)list[8])->getIndex();
     if (superflagOption != 0) {
       if (superflagOption == 1) {
 	args[arg++] = "-f";
@@ -435,20 +465,20 @@ void ServerStartMenu::execute()
 
       // max superflags
       static const char* numFlags[] = { "10", "20", "30", "40" };
-      args[arg++] = numFlags[((HUDuiList*)list[8])->getIndex()];
+      args[arg++] = numFlags[((HUDuiList*)list[9])->getIndex()];
     }
 
     // shaking
     static const char* shakingTime[] = { "", "15", "30", "60", "180" };
     static const char* shakingWins[] = { "", "1", "2", "3" };
-    if (((HUDuiList*)list[9])->getIndex() == 1) args[arg++] = "-sa";
-    if (((HUDuiList*)list[10])->getIndex() != 0) {
-      args[arg++] = "-st";
-      args[arg++] = shakingTime[((HUDuiList*)list[10])->getIndex()];
-    }
+    if (((HUDuiList*)list[10])->getIndex() == 1) args[arg++] = "-sa";
     if (((HUDuiList*)list[11])->getIndex() != 0) {
+      args[arg++] = "-st";
+      args[arg++] = shakingTime[((HUDuiList*)list[11])->getIndex()];
+    }
+    if (((HUDuiList*)list[12])->getIndex() != 0) {
       args[arg++] = "-sw";
-      args[arg++] = shakingWins[((HUDuiList*)list[11])->getIndex()];
+      args[arg++] = shakingWins[((HUDuiList*)list[12])->getIndex()];
     }
 
     // game over
@@ -460,20 +490,20 @@ void ServerStartMenu::execute()
 					   "300", "900", "3600", "10800",
 					   "3", "10", "25",
 					   "3", "10", "25", "100" };
-    if (((HUDuiList*)list[12])->getIndex() != 0) {
-      args[arg++] = gameOverArg[((HUDuiList*)list[12])->getIndex()];
-      args[arg++] = gameOverValue[((HUDuiList*)list[12])->getIndex()];
+    if (((HUDuiList*)list[13])->getIndex() != 0) {
+      args[arg++] = gameOverArg[((HUDuiList*)list[13])->getIndex()];
+      args[arg++] = gameOverValue[((HUDuiList*)list[13])->getIndex()];
     }
 
     // server reset
-    if (((HUDuiList*)list[13])->getIndex() == 0)
+    if (((HUDuiList*)list[14])->getIndex() == 0)
       args[arg++] = "-g";
 
     // world map file
-    if (((HUDuiList*)list[14])->getIndex() != 0) { // not random
+    if (((HUDuiList*)list[15])->getIndex() != 0) { // not random
       args[arg++] = "-world";
-      std::vector<std::string> fileList = ((HUDuiList*)list[14])->getList();
-      std::string filename = fileList[((HUDuiList*)list[14])->getIndex()].c_str();
+      std::vector<std::string> fileList = ((HUDuiList*)list[15])->getList();
+      std::string filename = fileList[((HUDuiList*)list[15])->getIndex()].c_str();
       args[arg++] = worldFiles[filename].c_str();
     }
 
