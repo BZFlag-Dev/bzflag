@@ -399,6 +399,12 @@ bool Downloads::updateDownloads(bool& /*rebuild*/)
   return false;
 }
 
+void Downloads::removeTextures()
+{
+  /* FIXME: just a placeholder as this function is declared but only defined for
+     HAVE_CURL building */
+  return;
+}
 
 /******************************************************************************/
 #endif // HAVE_CURL
