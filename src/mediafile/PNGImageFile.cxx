@@ -132,9 +132,9 @@ PNGImageFile::~PNGImageFile()
   if (palette)
     delete palette;
   if (lineBuffers[0] != NULL)
-    delete lineBuffers[0];
+    delete [] lineBuffers[0];
   if (lineBuffers[1] != NULL)
-    delete lineBuffers[1];
+    delete [] lineBuffers[1];
 }
 
 /*
