@@ -907,8 +907,7 @@ static void		doMotion()
     if (speed < 0.0f)
       speed /= 2.0;
 
-    if (BZDB.isTrue("displayBinoculars"))
-      rotation *= 0.2f;
+    rotation *= BZDB.eval("displayFOV") / 60.0f;
     if (BZDB.isTrue("slowKeyboard")) {
       rotation /= 2.0f;
       speed /= 2.0f;
@@ -4111,13 +4110,12 @@ void			drawFrame(const float dt)
       myTankPos = myTank->getPosition();
       myTankDir = myTank->getForward();
 
-      if (viewType == SceneRenderer::ThreeChannel) {
-	if (myTank->getFlag() == Flags::WideAngle) fov = 90.0f;
-	else fov = (BZDB.isTrue("displayBinoculars") ? 12.0f : 45.0f);
-      } else {
-	if (myTank->getFlag() == Flags::WideAngle) fov = 120.0f;
-	else fov = (BZDB.isTrue("displayBinoculars") ? 15.0f : 60.0f);
-      }
+      if (myTank->getFlag() == Flags::WideAngle)
+	fov = 120.0f;
+      else
+	fov = BZDB.eval("displayFOV");
+      if (viewType == SceneRenderer::ThreeChannel)
+	fov *= 0.75f;
     }
     fov *= M_PI / 180.0f;
 

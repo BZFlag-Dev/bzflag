@@ -127,7 +127,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("send recipient", ++i);
   initkeymap("send admin",++i);
   initkeymap("jump", ++i);
-  initkeymap("toggle displayBinoculars", ++i);
+  initkeymap("viewZoom toggle", ++i);
   initkeymap("toggle displayScore", ++i);
   initkeymap("toggle displayLabels", ++i);
   initkeymap("toggle displayFlagHelp", ++i);

@@ -103,6 +103,7 @@ const struct CommandListItem commandList[] = {
   { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
   { "radarZoom", &cmdRadarZoom, "radarZoom {in/out}: change maxRadar range"},
+  { "viewZoom",  &cmdViewZoom,  "viewZoom {in/out/toggle}: change view angle"},
   { "messagepanel", &cmdMessagePanel,
     "messagepanel {all|chat|server|misc}:  set message tab" },
   { "toggleConsoleAndRadar", &cmdToggleConsoleAndRadar, "toggleConsoleAndRadar:  turn off/on radar and console"},
@@ -366,6 +367,37 @@ std::string cmdRadarZoom(const std::string&,
     BZDB.setFloat("displayRadarRange", range);
   } else {
     return "usage: radarZoom {in|out}";
+  }
+
+  return std::string();
+}
+
+std::string cmdViewZoom(const std::string&,
+			const CommandManager::ArgList& args)
+{
+  if (args.size() != 1)
+    return "usage: viewZoom {in|out|toggle}";
+
+  float fov = BZDB.eval("displayFOV");
+
+  if (args[0] == "in") {
+    fov += 0.1f;
+    if (fov > 60.0f)
+      fov = 60.0f;
+    BZDB.setFloat("displayFOV", fov);
+  } else if (args[0] == "out") {
+    fov -= 0.1f;
+    if (fov < 15.0f)
+      fov = 15.0f;
+    BZDB.setFloat("displayFOV", fov);
+  } else if (args[0] == "toggle") {
+    if (fov < 15.5f)
+      fov = 60.0f;
+    else
+      fov = 15.0f;
+    BZDB.setFloat("displayFOV", fov);
+  } else {
+    return "usage: viewZoom {in|out|toggle}";
   }
 
   return std::string();

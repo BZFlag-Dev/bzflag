@@ -197,7 +197,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   initKeymap("send nemesis", 11);
   initKeymap("send recipient", 12);
   initKeymap("jump", 13);
-  initKeymap("toggle displayBinoculars", 14);
+  initKeymap("viewZoom toggle", 14);
   initKeymap("toggle displayScore", 15);
   initKeymap("toggle displayLabels", 16);
   initKeymap("toggle displayFlagHelp", 17);
