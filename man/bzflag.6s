@@ -55,18 +55,18 @@ a white tank.
 .RS
 .TP 15
 .B -3dfx
-For Mesa users with a passthrough 3Dfx card, e.g. a Voodoo or
+For Mesa users with a pass-through 3Dfx card, e.g. a Voodoo or
 Voodoo 2 based card.  This sets the MESA_GLX_FX environment
-variable to use fullscreen passthrough mode.  Use \fB-geometry\fR
-to use a resolution other than 640x480 on the passthrough card.
+variable to use fullscreen pass-through mode.  Use \fB-geometry\fR
+to use a resolution other than 640x480 on the pass-through card.
 You should not use this option with \fB-window\fR.
 .TP
 .B -no3dfx
-For Mesa users with a passthrough 3Dfx card, such as Voodoo or
+For Mesa users with a pass-through 3Dfx card, such as Voodoo or
 Voodoo 2 based cards.  This unsets the MESA_GLX_FX environment
-variable so that the passthrough card isn't used.  Use this
+variable so that the pass-through card isn't used.  Use this
 option if MESA_GLX_FX is normally set in your environment and
-you don't want bzflag to use the passthrough card.  This option
+you don't want bzflag to use the pass-through card.  This option
 is only a convenience;  you can achieve the same effect by
 unsetting MESA_GLX_FX in your environment.
 .TP

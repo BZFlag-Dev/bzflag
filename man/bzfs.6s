@@ -151,7 +151,7 @@ is 5).  One team flag per team is provided, but more can be added thru +f team.
 By default, the free-for-all style is used.
 .TP
 .B -d
-Increase debugging level. More -d are used, more debugging info are obtained.
+Increase debugging level. If more -d is given, more debugging info is obtained.
 .TP
 \fB-density \fR\fInum\fR
 Specify density for buildings, i.e. the higher the integer number, the more
@@ -264,7 +264,7 @@ Sets a maximum score for teams.  The first team to reach this score is
 declared the winner and the game is over.
 .TP
 .B -noMasterBanList
-Forces the server to not atempt to load the master ban list from the internet.
+Forces the server to not attempt to load the master ban list from the internet.
 .TP
 \fB-p\fI port\fR
 Listen for game connections on \fIport\fR instead of the default port.
@@ -322,7 +322,7 @@ style is used.  You must specify the algorithm used to pick a new
 rabbit when the old one dies.  The \fIscore\fR algorithm uses a modified
 wins/(wins+losses) score and picks the top scoring player to be the new
 rabbit.  The \fIkiller\fR algorithm specifies a reverse tag game where
-whoever kills the rabbit becomes the new rabbit.  The \fIrandom\fR
+whomever kills the rabbit becomes the new rabbit.  The \fIrandom\fR
 algorithm randomly picks a new rabbit without regard to score.  (The
 \fIscore\fR algorithm is the original behavior.)
 .TP
@@ -669,7 +669,7 @@ Repositions flags. If unused is specified, flags carried by tanks are not affect
 Removes all flags from the game
 .TP
 .B /flag show
-Shows all flags with information Example:
+Shows all flags with information. Example:
 .ft CW
 .nf
 .ne 2
@@ -680,7 +680,7 @@ Shows all flags with information Example:
 .br
 .TP
 .B /kick {playerName}
-Kick a named player off the server.Example:
+Kick a named player off the server. Example:
 .ft CW
 .nf
 .ne 2
