@@ -25,13 +25,13 @@ public:
 	static bool  displayMainFlags;
 	static bool  enhancedRadar;
 	static bool  blend;
-	static float flagPoleSize;
-	static float flagPoleWidth;
 
 	static float maxLOD;
 	static float tankHeight;
 	static float flagRadius;
 	static float tankRadius;
+	static float flagPoleSize;
+	static float flagPoleWidth;
 	static int   linedRadarShots;
 	static int   sizedRadarShots;
 

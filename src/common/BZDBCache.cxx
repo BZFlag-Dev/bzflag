@@ -20,10 +20,10 @@
 bool  BZDBCache::displayMainFlags;
 bool  BZDBCache::enhancedRadar;
 bool  BZDBCache::blend;
+
+
 float BZDBCache::flagPoleSize;
 float BZDBCache::flagPoleWidth;
-
-
 float BZDBCache::maxLOD;
 float BZDBCache::tankHeight;
 float BZDBCache::flagRadius;
@@ -35,17 +35,19 @@ void BZDBCache::init()
 {
   BZDB.addCallback("displayMainFlags", clientCallback, NULL);
   BZDB.addCallback("enhancedradar", clientCallback, NULL);
-  BZDB.addCallback("flagPoleSize", clientCallback, NULL);
-  BZDB.addCallback("flagPoleWidth", clientCallback, NULL);
   BZDB.addCallback("blend", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_FLAGRADIUS, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_FLAGPOLESIZE, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_FLAGPOLEWIDTH, serverCallback, NULL);
 
   maxLOD     = BZDB.eval(StateDatabase::BZDB_MAXLOD);
   tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
   flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
+  flagPoleSize = BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE);
+  flagPoleWidth = BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH);
   update();
 }
 
@@ -57,10 +59,6 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     displayMainFlags = BZDB.isTrue("displayMainFlags");
   else if (name == "enhancedradar")
     enhancedRadar = BZDB.isTrue("enhancedradar");
-  else if (name == "flagPoleSize")
-    flagPoleSize = BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE);
-  else if (name == "flagPoleWidth")
-    flagPoleWidth = BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH);
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)
@@ -71,6 +69,10 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
   else if (name == StateDatabase::BZDB_FLAGRADIUS)
     flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
+  else if (name == StateDatabase::BZDB_FLAGPOLESIZE)
+    flagPoleSize = BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE);
+  else if (name == StateDatabase::BZDB_FLAGPOLEWIDTH)
+    flagPoleWidth = BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH);
 }
 
 void BZDBCache::update() {
