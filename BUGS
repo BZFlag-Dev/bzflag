@@ -6,7 +6,9 @@ must fix for 1.10.4 patch release
 
 - quol reports that his 1.10.3 server is requiring identification, although
   require identify is not listed anywhere in his group file.  problem still
-  happens if he moves the group file out of the way.
+  happens if he moves the group file out of the way. larsl wonders if this
+  happens for all registered users or just the ones in the admin group
+  (the admin users have all permissions, including REQUIREIDENTIFY).
 
 recent bugs
 ------------
