@@ -116,14 +116,19 @@ int main(int argc, char** argv) {
       if (password.size() <= 1) {
 	std::cerr << "Not using central login" << std::endl;
       }
-      std::cout << "Server to connect to: ";
+      std::cout << "Server[:port] to connect to: ";
       std::getline(std::cin, serverName);
       if (serverName.size() <= 1) {
 	std::cerr << "You must specify a host name to connect to.  Exiting." << std::endl;
 	return 1;
       }
-    } else { // callsign/host on command line
+    } else { // callsign:password@host:port on command line
       callsign = op.getParameters()[0].substr(0, atPos);
+      int pPos = callsign.find(':');
+      if (pPos != -1) {
+	password = callsign.substr(pPos + 1).c_str();
+	callsign = callsign.substr(0, pPos);
+      }
       serverName = op.getParameters()[0].substr(atPos + 1);
     }
     startupInfo.serverPort = ServerPort;
@@ -132,20 +137,18 @@ int main(int argc, char** argv) {
       startupInfo.serverPort = atoi(serverName.substr(cPos + 1).c_str());
       serverName = serverName.substr(0, cPos);
     }
-    cPos = callsign.find(':');
-    if (cPos != -1) {
-      password = callsign.substr(cPos + 1).c_str();
-      callsign = callsign.substr(0, cPos);
-    }
     strncpy(startupInfo.callsign, callsign.c_str(), sizeof(startupInfo.callsign) - 1);
     strncpy(startupInfo.password, password.c_str(), sizeof(startupInfo.password) - 1);
     strncpy(startupInfo.serverName, serverName.c_str(), sizeof(startupInfo.serverName) - 1);
   }
   std::cerr << "Connecting to " <<
     startupInfo.callsign << ":" <<
-    startupInfo.password << "@" <<
     startupInfo.serverName << ":" <<
-    startupInfo.serverPort << std::endl;
+    startupInfo.serverPort;
+  if (strlen(startupInfo.password)) {
+    std::cerr << " using central login";
+  }
+  std::cerr << std::endl;
 
   // try to connect
   BZAdminClient client;
