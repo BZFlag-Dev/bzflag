@@ -18,6 +18,14 @@
 #include <math.h>
 #include <string.h>
 
+  //Modifiers for Normal, Obese. Tiny and Thin
+static const GLfloat styleFactors[4][3] = {
+			{ 1.0f, 1.0f, 1.0f },
+			{ ObeseFactor, ObeseFactor, 1.0f },
+			{ TinyFactor, TinyFactor, 1.0f },
+			{ 1.0f, 0.0f, 1.0f }
+		};
+
 // parts: body, turret, barrel, left tread, right tread
 
 const int		TankSceneNode::numLOD = 3;
@@ -680,12 +688,6 @@ void			TankSceneNode::TankRenderNode::renderPart(Part part)
 
 void			TankSceneNode::TankRenderNode::prepStyle(Style style)
 {
-  static const GLfloat styleFactors[4][3] = {
-				{ 1.0f, 1.0f, 1.0f },
-				{ ObeseFactor, ObeseFactor, 1.0f },
-				{ TinyFactor, TinyFactor, 1.0f },
-				{ 1.0f, 0.0f, 1.0f }
-			};
   vertexScale[0] = styleFactors[style][0];
   vertexScale[1] = styleFactors[style][1];
   vertexScale[2] = styleFactors[style][2];
@@ -913,11 +915,11 @@ void			TankSceneNode::TankRenderNode::renderLights()
   glPointSize(2.0f);
   glBegin(GL_POINTS);
     myColor3fv(lights[0]);
-    glVertex3f(lights[0][3], lights[0][4], lights[0][5]);
+    glVertex3f(lights[0][3]*styleFactors[sceneNode->style][0], lights[0][4]*styleFactors[sceneNode->style][1], lights[0][5]*styleFactors[sceneNode->style][2]);
     myColor3fv(lights[1]);
-    glVertex3f(lights[1][3], lights[1][4], lights[1][5]);
+    glVertex3f(lights[1][3]*styleFactors[sceneNode->style][0], lights[1][4]*styleFactors[sceneNode->style][1], lights[1][5]*styleFactors[sceneNode->style][2]);
     myColor3fv(lights[2]);
-    glVertex3f(lights[2][3], lights[2][4], lights[2][5]);
+    glVertex3f(lights[2][3]*styleFactors[sceneNode->style][0], lights[2][4]*styleFactors[sceneNode->style][1], lights[2][5]*styleFactors[sceneNode->style][2]);
   glEnd();
   glPointSize(1.0f);
   sceneNode->gstate.setState();
