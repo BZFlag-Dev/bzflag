@@ -20,6 +20,9 @@
 #include "common.h"
 
 #ifdef USBJOYSTICK
+#ifndef BSD
+#error Native USB Joystick support requires BSD. On other platforms please enable SDL or XIJOYSTICK.
+#endif
 
 // Moved bodily from XWindow.h - hope it still works :)
 #ifdef __cplusplus
