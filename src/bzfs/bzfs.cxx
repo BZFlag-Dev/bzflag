@@ -2524,6 +2524,12 @@ static void addFlag(int flagIndex)
   flag[flagIndex].dropDone = TimeKeeper::getCurrent();
   flag[flagIndex].dropDone += flightTime;
 
+	// decide how sticky our flag is
+	if (flag[flagIndex].flag.type->flagQuality == FlagBad)
+    flag[flagIndex].flag.endurance = FlagSticky;
+  else
+    flag[flagIndex].flag.endurance = FlagUnstable;
+
   // how times will it stick around
   if ((flag[flagIndex].flag.endurance == FlagSticky)
   ||  (flag[flagIndex].flag.type == Flags::Thief))
