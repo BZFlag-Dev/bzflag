@@ -714,12 +714,18 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     glLoadIdentity();
 
     float mirrorColor[4];
-    if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
-      mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
-      mirrorColor[3] = 0.5f;
-    } else if (mirrorColor[3] == 1.0f) {
-      // probably a mistake
-      mirrorColor[3] = 0.5f;
+    if (!invert) {
+      if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
+        mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
+        mirrorColor[3] = 0.5f;
+      } else if (mirrorColor[3] == 1.0f) {
+        // probably a mistake
+        mirrorColor[3] = 0.5f;
+      }
+    } else {
+      // PhantomZoned view goes to purple mirror
+      const float purple[4] = {1.0f, 0.0f, 1.0f, 0.2f};
+      memcpy (mirrorColor, purple, sizeof(float[4]));
     }
 
     // if low quality then use stipple -- it's probably much faster

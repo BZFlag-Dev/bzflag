@@ -1114,8 +1114,10 @@ bool			LocalPlayer::fireShot()
   if (i == numShots) return false;
 
   // make sure we're allowed to shoot
-  if (!isAlive() || isPaused() || (location == InBuilding))
+  if (!isAlive() || isPaused() || 
+      ((location == InBuilding) && !isPhantomZoned())) {
     return false;
+  }
 
   // prepare shot
   FiringInfo firingInfo(*this, i + getSalt());
