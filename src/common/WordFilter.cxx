@@ -170,12 +170,15 @@ bool WordFilter::aggressiveFilter(char *input) const
 //std::cout << "We matched ... ";
 
 	  /* make sure we only match on word boundaries */
-	  if ( (startOffset>1) && (isalpha(sInput[startOffset-1])) ) {
+	  /* ignore apostrophes (decimal 39) to prevent false positives */
+	  if ( (startOffset>1) && 
+	       (isalpha(sInput[startOffset-1]) || 
+		(sInput[startOffset-1] == 39))) {
 
 //std::cout << "but didn't match a word beginning" << std::endl;
 
 	    /* we are in the middle of a word.. see if we can match a prefix before this */
-	    bool foundit =  false;
+	    bool foundit = false;
 	    for (ExpCompareSet::const_iterator j = prefixes.begin();
 		 j != prefixes.end(); ++j) {
 	      if (regexec(j->compiled, sInput.c_str(), 1, match, 0) == 0) {
