@@ -85,6 +85,7 @@ void handlePasswordCmd(int t, const char *message)
 {
   if (player[t].passwordAttempts >= 5) {  // see how many times they have tried, you only get 5
     sendMessage(ServerPlayer, t, "Too many attempts");
+    DEBUG1("%s (%s) has attempted too many /password tries\n", player[t].callSign, player[t].peer.getDotNotation().c_str());
   } else {
     player[t].passwordAttempts++;
     if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
@@ -661,6 +662,7 @@ void handleReportCmd(int t, const char *message)
       sprintf(reply, "The /report command is disabled on this server.");
     } else {
       sprintf(reply, "Your report has been filed. Thank you.");
+      DEBUG1("Player %s [%d] has filed a report (time: %s).", player[t].callSign, t, timeStr);
     }
   }
   sendMessage(ServerPlayer, t, reply, true);
