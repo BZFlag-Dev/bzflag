@@ -139,7 +139,7 @@ struct PlayerInfo {
     // does player know his real id?
     int knowId;
     // what an old client thinks its id is
-    PlayerId perceivedId;
+    PlayerId oldId;
     // type of player
     PlayerType type;
     // player's pseudonym
@@ -170,6 +170,8 @@ struct PlayerInfo {
     // UDP connection
     boolean ulinkup;
     struct sockaddr_in uaddr;
+    // TCP connection
+    struct sockaddr_in taddr;
 
     // UDP message queue
     struct PacketQueue *uqueue;
@@ -1311,6 +1313,109 @@ static void pwrite(int playerIndex, const void *b, int l)
   }
 }
 
+// a hack to handle old clients
+// old clients use <serverip><serverport><number> as id
+// where serverip etc is as seen from the client
+// new clients use <clientip><clientport><number> as id
+// where clientip etc is as seen from the server
+// here we patch up one id, from fromId to toId
+static void patchPlayerId(PlayerId fromId, PlayerId toId, const void *msg, int offset)
+{
+  PlayerId id;
+
+  id.unpack((char *)msg + offset);
+  if (id == fromId) {
+#ifdef DEBUG_PLAYERID
+    fprintf(stderr, "patchPlayerId %c%c(%02x%02x)%08x:%u(%04x):%u(%04x)->",
+        *((unsigned char *)msg + 2), *((unsigned char *)msg + 3),
+        *((unsigned char *)msg + 2), *((unsigned char *)msg + 3),
+        ntohl(*(int *)((char *)msg + offset)),
+        ntohs(*((short *)((char *)msg + offset + 4))),
+        ntohs(*((short *)((char *)msg + offset + 4))),
+        ntohs(*((short *)((char *)msg + offset + 6))),
+        ntohs(*((short *)((char *)msg + offset + 6))));
+#endif
+    toId.pack((char *)msg + offset);
+#ifdef DEBUG_PLAYERID
+    fprintf(stderr, "%08x:%u(%04x):%u(%04x)\n",
+        ntohl(*(int *)((char *)msg + offset)),
+        ntohs(*((short *)((char *)msg + offset + 4))),
+        ntohs(*((short *)((char *)msg + offset + 4))),
+        ntohs(*((short *)((char *)msg + offset + 6))),
+        ntohs(*((short *)((char *)msg + offset + 6))));
+#endif
+  }
+}
+
+// Tim Riker <Tim@Rikers.org> is responsible for this
+// butt ugly hack. All this to allow support for old clients
+// patch all incoming or outgoing packets to old clients
+// so they still see what they want to see.
+static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
+{
+  uint16_t len;
+  uint16_t code;
+
+  nboUnpackUShort((unsigned char *)msg, len);
+  nboUnpackUShort((unsigned char *)msg + 2, code);
+  switch (code) {
+    case MsgAddPlayer:
+    case MsgCaptureFlag:
+    case MsgDropFlag:
+    case MsgEnter:
+    case MsgGMUpdate:
+    case MsgGrabFlag:
+    case MsgPlayerUpdate:
+    case MsgRemovePlayer:
+    case MsgScoreOver:
+    case MsgShotBegin:
+    case MsgShotEnd:
+    case MsgTeleport:
+      patchPlayerId(fromId, toId, msg, 4);
+      break;
+      ;;
+    case MsgScore:
+      if (len == 12)
+        patchPlayerId(fromId, toId, msg, 4);
+      ;;
+    case MsgAlive:
+      if (len == 32)
+        patchPlayerId(fromId, toId, msg, 4);
+      ;;
+    case MsgFlagUpdate:
+      patchPlayerId(fromId, toId, msg, 12);
+      break;
+      ;;
+    case MsgKilled:
+    case MsgMessage:
+      patchPlayerId(fromId, toId, msg, 4);
+      if (len > 16)
+        patchPlayerId(fromId, toId, msg, 12);
+      break;
+      ;;
+    case MsgAccept:
+    case MsgClientVersion:
+    case MsgExit:
+    case MsgGetWorld:
+    case MsgNetworkRelay:
+    case MsgReject:
+    case MsgSetTTL:
+    case MsgSuperKill:
+    case MsgTeamUpdate:
+    case MsgUDPLinkEstablished:
+    case MsgUDPLinkRequest:
+      // No changes required
+      break;
+      ;;
+    default:
+#ifdef DEBUG_PLAYERID
+      fprintf(stderr, "unhandled msg type: %c%c(%04x)\n", code >> 8, code, code);
+#endif
+      break;
+      ;;
+  }
+}
+
 static void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
   if (player[playerIndex].fd == NotConnected)
@@ -1322,6 +1427,7 @@ static void directMessage(int playerIndex, uint16_t code, int len, const void *m
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
   buf = nboPackString(buf, msg, len);
+  patchMessage(player[playerIndex].id, player[playerIndex].oldId, msgbuf);
   pwrite(playerIndex, msgbuf, len + 4);
 }
 
@@ -2832,10 +2938,9 @@ static void acceptClient()
 static void addClient(int playerIndex)
 {
   // accept game connection
-  struct sockaddr_in addr;
-  AddrLen addr_len = sizeof(addr);
+  AddrLen addr_len = sizeof(player[playerIndex].taddr);
   player[playerIndex].fd = accept(reconnect[playerIndex].listen,
-				(struct sockaddr*)&addr, &addr_len);
+				(struct sockaddr*)&player[playerIndex].taddr, &addr_len);
   if (player[playerIndex].fd == NotConnected)
     nerror("accepting client connection");
 
@@ -2855,7 +2960,7 @@ static void addClient(int playerIndex)
   player[playerIndex].state = PlayerInLimbo;
   if (player[playerIndex].fd > maxFileDescriptor)
     maxFileDescriptor = player[playerIndex].fd;
-  player[playerIndex].peer = Address(addr);
+  player[playerIndex].peer = Address(player[playerIndex].taddr);
   player[playerIndex].multicastRelay = False;
   player[playerIndex].len = 0;
   assert(player[playerIndex].outmsg == NULL);
@@ -3896,12 +4001,16 @@ static void parseCommand(const char *message, int t)
 static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 {
   void *buf = (void*)((char*)rawbuf + 4);
+  patchMessage(player[t].oldId, player[t].id, rawbuf);
   switch (code) {
     // player joining
     case MsgEnter: {
       // data: id, type, team, name, email
       uint16_t type, team;
-      buf = player[t].id.unpack(buf);
+      buf = player[t].oldId.unpack(buf);
+      player[t].id.number = htons(t);
+      player[t].id.port = player[t].taddr.sin_port;
+      memcpy(&player[t].id.serverHost, &player[t].taddr.sin_addr.s_addr, sizeof(player[t].id.serverHost));
       buf = nboUnpackUShort(buf, type);
       buf = nboUnpackUShort(buf, team);
       player[t].type = PlayerType(type);
