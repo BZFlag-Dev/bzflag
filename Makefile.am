@@ -1,5 +1,5 @@
 SUBDIRS = data include man package src doc
-DIST_SUBDIRS = $(SUBDIRS) debian misc win32
+DIST_SUBDIRS = $(SUBDIRS) debian misc win32 Dev-C++
 
 package: FORCE
 	cd package && $(MAKE) targets

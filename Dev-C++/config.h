@@ -47,9 +47,9 @@
 // define our OS
 #ifndef BZ_BUILD_OS
   #ifdef DEBUG
-    #define BZ_BUILD_OS			"W32-MinGW32"
+    #define BZ_BUILD_OS			"W32-DevC++Debug_MinGW32"
   #else
-    #define BZ_BUILD_OS			"W32-MinGW32"
+    #define BZ_BUILD_OS			"W32-DevC++MinGW32"
   #endif //DEBUG
 #endif
 
