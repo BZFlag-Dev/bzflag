@@ -52,6 +52,9 @@ class OpenGLLight {
     void		setImportance(const ViewFrustum& frustum);
     GLfloat		getImportance() const;
 
+    void		setOnlyGround(bool value);
+    bool		getOnlyGround() const;
+
     void		execute(int index) const;
 
     static GLint	getMaxLights();
@@ -72,6 +75,7 @@ class OpenGLLight {
     GLfloat		atten[3];
     GLfloat		maxDist;
     GLfloat		importance;
+    bool		onlyGround;
     GLuint		listBase;
     GLuint*		list;
     GLuint		mailbox;
@@ -107,6 +111,12 @@ inline GLfloat		 OpenGLLight::getImportance() const
 {
   return importance;
 }
+
+inline bool		 OpenGLLight::getOnlyGround() const
+{
+  return onlyGround;
+}
+
 
 #endif // BZF_OPENGL_LIGHT_H
 

@@ -52,6 +52,7 @@ OpenGLLight::OpenGLLight() : mailbox(0)
   // it doesn't seem to be worth the bother or CPU time to actually
   // use this equation. Grep for 'Attenuation' to find the values.
   //
+  onlyGround = false;
   makeLists();
 }
 
@@ -208,7 +209,7 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
     importance = -1.0f;
     return;
   }
-  
+
   // compute the 'importance' factor
   if (dist == 0.0f) {
     importance = 0.5f * MAXFLOAT;
@@ -229,6 +230,14 @@ void OpenGLLight::execute(int index) const
     glEndList();
   }
   glCallList(listBase + index);
+  return;
+}
+
+
+void OpenGLLight::setOnlyGround(bool value)
+{
+  onlyGround = value;
+  return;
 }
 
 

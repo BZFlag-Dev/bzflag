@@ -126,6 +126,7 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   lightsSize = 4;
   lightsCount = 0;
   lights = new OpenGLLight*[lightsSize];
+  dynamicLights = 0;
 
   // get visual info
   window->getWindow()->makeCurrent();
@@ -481,11 +482,7 @@ void			SceneRenderer::addFlareLight(
 
 int			SceneRenderer::getNumLights() const
 {
-  if (lightsCount > maxLights) {
-    return maxLights;
-  } else {
-    return lightsCount;
-  }
+  return dynamicLights;
 }
 
 int			SceneRenderer::getNumAllLights() const
@@ -561,7 +558,37 @@ static int sortLights (const void* a, const void* b)
   // the higher getImportance(), the closer it is to the beginning
   const OpenGLLight* lightA = *((const OpenGLLight**) a);
   const OpenGLLight* lightB = *((const OpenGLLight**) b);
-  if (lightA->getImportance() > lightB->getImportance()) {
+  const float valA = lightA->getImportance();
+  const float valB = lightB->getImportance();
+
+  // first sort by cull
+  if (valA < 0.0f) {
+    if (valB >= 0.0f) {
+      return +1;
+    } else {
+      return 0;
+    }
+  }
+  if (valB < 0.0f) {
+    if (valA >= 0.0f) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+  
+  // sort by grounded state
+  const bool groundedA = lightA->getOnlyGround();
+  const bool groundedB = lightB->getOnlyGround();
+  if (groundedA && !groundedB) {
+    return +1;
+  }
+  if (!groundedA && groundedB) {
+    return -1;
+  }
+
+  // sort by importance
+  if (valA > valB) {
     return -1;
   } else {
     return +1;
@@ -573,6 +600,7 @@ void			SceneRenderer::render(
 				bool _sameFrame,
 				bool fullWindow)
 {
+  int i;
   static const GLfloat blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
   static const GLfloat dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   static const float dimDensity = 0.75f;
@@ -607,8 +635,6 @@ void			SceneRenderer::render(
   // chance we're waiting on the vertical retrace.
 
   // get the important lights in the scene
-  int i;
-  dynamicLights = 0;
   if (!sameFrame) {
 
     clearLights();
@@ -622,18 +648,27 @@ void			SceneRenderer::render(
         lights[i]->setImportance(frustum);
       }
 
-      // sort by importance      
+      // sort by cull state, grounded state, and importance
       qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
 
-      // count the valid lights (negative values indicate culled lights)
-      dynamicLights = 0;      
+      // count the unculled valid lights and potential dynamic lights
+      // (negative values indicate culled lights)
+      dynamicLights = 0;
+      int unculledCount = 0;
       for (i = 0; i < lightsCount; i++) {
+        // any value below 0.0f is culled
         if (lights[i]->getImportance() >= 0.0f) {
-          dynamicLights++;
+          unculledCount++;
+          if (!lights[i]->getOnlyGround()) {
+            dynamicLights++;
+          }
         }
       }
+      
+      // set the total light count to the number of unculled lights
+      lightsCount = unculledCount;
 
-      // limit the light count      
+      // limit the dynamic OpenGL light count      
       if (dynamicLights > maxLights) {
         dynamicLights = maxLights;
       }

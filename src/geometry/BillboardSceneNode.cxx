@@ -43,6 +43,7 @@ BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
   setLightColor(1.0f, 1.0f, 1.0f);
   setLightAttenuation(0.05f, 0.0f, 0.03f);
   setLightFadeStartTime(duration);
+  setGroundLight(false);
 
   // prepare geometry
   move(pos);
@@ -127,8 +128,9 @@ void			BillboardSceneNode::updateTime(float dt)
   setFrame();
 
   // update light intensity if it changed
-  if (t > lightCutoffTime || ot > lightCutoffTime)
+  if (t > lightCutoffTime || ot > lightCutoffTime) {
     prepLight();
+  }
 }
 
 bool			BillboardSceneNode::isAtEnd() const
@@ -189,6 +191,12 @@ void			BillboardSceneNode::setLightFadeStartTime(float t)
 {
   lightCutoffTime = t;
   prepLight();
+}
+
+void			BillboardSceneNode::setGroundLight(bool value)
+{
+  groundLight = value;
+  light.setOnlyGround(value);
 }
 
 void			BillboardSceneNode::prepLight()
@@ -265,8 +273,9 @@ void			BillboardSceneNode::setAngle(GLfloat _angle)
 void			BillboardSceneNode::addLight(
 				SceneRenderer& renderer)
 {
-  if (show)
+  if (show) { /* && !groundLight) { FIXME - will disable puff ground lights */
     renderer.addLight(light);
+  }
 }
 
 void			BillboardSceneNode::notifyStyleChange()

@@ -743,9 +743,6 @@ void			BackgroundRenderer::drawGroundReceivers(
   int i, j;
   for (int k = 0; k < count; k++) {
     const OpenGLLight& light = renderer.getLight(k);
-    if (light.getImportance() < 0.0f) {
-      continue; // this is a culled light
-    }
     
     const GLfloat* pos = light.getPosition();
     const GLfloat* lightColor = light.getColor();

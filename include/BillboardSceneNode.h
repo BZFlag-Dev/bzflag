@@ -42,6 +42,7 @@ class BillboardSceneNode : public SceneNode {
     void		setLightAttenuation(GLfloat c, GLfloat l, GLfloat q);
     void		setLightScaling(GLfloat intensityScaleFactor);
     void		setLightFadeStartTime(float t);
+    void		setGroundLight(bool value);
 
     void		setSize(float side);
     void		setSize(float width, float height);
@@ -85,6 +86,7 @@ class BillboardSceneNode : public SceneNode {
     bool		hasTextureAlpha;
     bool		looping;
     bool		lightSource;
+    bool		groundLight;
     float		width, height;
     GLfloat		color[4];
     GLfloat		angle;

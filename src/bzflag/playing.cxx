@@ -2617,7 +2617,7 @@ static void		updateFlags(float dt)
 }
 
 bool			addExplosion(const float* _pos,
-				     float size, float duration)
+				     float size, float duration, bool grounded)
 {
   // ignore if no prototypes available;
   if (prototypeExplosions.size() == 0) return false;
@@ -2644,6 +2644,9 @@ bool			addExplosion(const float* _pos,
   newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
   newExplosion->setLightScaling(size / BZDBCache::tankLength);
   newExplosion->setLightFadeStartTime(0.7f * duration);
+  if (grounded) {
+    newExplosion->setGroundLight(true);
+  }
 
   // add copy to list of current explosions
   explosions.push_back(newExplosion);
@@ -2667,6 +2670,9 @@ bool			addExplosion(const float* _pos,
     newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
     newExplosion->setLightScaling(size / BZDBCache::tankLength);
     newExplosion->setLightFadeStartTime(0.7f * duration);
+    if (grounded) {
+      newExplosion->setGroundLight(true);
+    }
 
     // add copy to list of current explosions
     explosions.push_back(newExplosion);
@@ -2677,19 +2683,19 @@ bool			addExplosion(const float* _pos,
 
 void			addTankExplosion(const float* pos)
 {
-  addExplosion(pos, BZDB.eval(StateDatabase::BZDB_TANKEXPLOSIONSIZE), 1.2f);
+  addExplosion(pos, BZDB.eval(StateDatabase::BZDB_TANKEXPLOSIONSIZE), 1.2f, false);
 }
 
 void			addShotExplosion(const float* pos)
 {
   // only play explosion sound if you see an explosion
-  if (addExplosion(pos, 1.2f * BZDBCache::tankLength, 0.8f))
+  if (addExplosion(pos, 1.2f * BZDBCache::tankLength, 0.8f, false))
     playWorldSound(SFX_SHOT_BOOM, pos[0], pos[1], pos[2]);
 }
 
 void			addShotPuff(const float* pos)
 {
-  addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f);
+  addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
 }
 
 // update events from outside if they should be checked
