@@ -20,7 +20,7 @@
 
 const int NO_VARIANT = (-1);
 
-TextureInit loader[] =
+FileTextureInit fileLoader[] =
 {
 	{ TX_BOLT, RogueTeam, "ybolt", OpenGLTexture::Linear },
 	{ TX_BOLT, RedTeam, "rbolt", OpenGLTexture::Linear },
@@ -56,11 +56,25 @@ TextureInit loader[] =
 	{ TX_FLAG, NO_VARIANT, "flag", OpenGLTexture::Max },
 };
 
+OpenGLTexture *noiseProc();
+
+ProcTextureInit procLoader[] = 
+{
+	{ TX_NOISE, NO_VARIANT, noiseProc, OpenGLTexture::Nearest },
+};
+
+
 TextureManager::TextureManager()
 {
-  int numTextures = sizeof( loader ) / sizeof( TextureInit );
-  for (int i = 0; i < numTextures; i++)
-    addTexture( loader[i].type, loader[i].variant, loadTexture( loader[i] ));
+  int i, numTextures;
+  
+  numTextures = sizeof( fileLoader ) / sizeof( FileTextureInit );
+  for (i = 0; i < numTextures; i++)
+    addTexture( fileLoader[i].type, fileLoader[i].variant, loadTexture( fileLoader[i] ));
+
+  numTextures = sizeof( procLoader ) / sizeof( ProcTextureInit );
+  for (i = 0; i < numTextures; i++)
+    addTexture( procLoader[i].type, procLoader[i].variant, procLoader[i].proc() );
 }
 
 TextureManager::~TextureManager()
@@ -100,11 +114,18 @@ void TextureManager::addTexture( TextureType type, int variant, OpenGLTexture *t
   m_Textures.insert(std::map<int,OpenGLTexture*>::value_type(type<<16|(variant&65535), texture));
 }
 
-OpenGLTexture* TextureManager::loadTexture( TextureInit &init )
+OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
 {
   OpenGLTexture *texture = new OpenGLTexture();
   *texture = ::getTexture( init.fileName, init.filter);
   return texture;
+}
+
+/* --- Procs --- */
+
+OpenGLTexture *noiseProc()
+{
+	return new OpenGLTexture();
 }
 
 

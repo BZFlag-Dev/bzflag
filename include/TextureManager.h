@@ -18,14 +18,22 @@
 
 typedef enum TextureType { TX_BOLT, TX_TRANSBOLT, TX_LASER, TX_THIEF, TX_MISSILE,
                            TX_GROUND, TX_CLOUDS, TX_MOUNTAIN, TX_EXPLOSION,
-			   TX_TANK, TX_FLAG
+			   TX_TANK, TX_FLAG, TX_NOISE
 			};
 
-struct TextureInit
+struct FileTextureInit
 {
   TextureType		type;
   int			variant;
   char*			fileName;
+  OpenGLTexture::Filter	filter;
+};
+
+struct ProcTextureInit
+{
+  TextureType		type;
+  int			variant;
+  OpenGLTexture*	(*proc)();
   OpenGLTexture::Filter	filter;
 };
 
@@ -46,7 +54,7 @@ private:
   TextureManager(const TextureManager &tm);
   TextureManager& operator=(const TextureManager &tm);
   
-  OpenGLTexture* loadTexture( TextureInit &init );
+  OpenGLTexture* loadTexture( FileTextureInit &init );
   
   std::map<int, OpenGLTexture*> m_Textures;
 };
