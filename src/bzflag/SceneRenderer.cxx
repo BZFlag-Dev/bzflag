@@ -88,7 +88,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				useEnhancedRadarOn(True),
 				useColoredShotsOn(True),
 				radarShotLength(0),
-				panelOpacity(0.3),
+				panelOpacity(0.3f),
                                 useBigFontOn(False),
 				useFogHack(False),
 				viewType(Normal),
