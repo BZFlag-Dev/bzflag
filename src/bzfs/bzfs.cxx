@@ -1269,7 +1269,7 @@ static void acceptClient()
   int verLen = strlen(getServerVersion());
   char buffer[256];
   // format here is length(char)version(string, length char)slot(char)NULL
-  sprintf(buffer, "%c%s\0\0", verLen, getServerVersion());
+  sprintf(buffer, "%c%s%c%c", verLen, getServerVersion(), 0, 0);
 
   // send 0xff if list is full
   buffer[verLen + 1] = (char)0xff;
