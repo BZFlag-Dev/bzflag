@@ -5,7 +5,7 @@ Ver=1
 IsCpp=1
 Type=1
 Compiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
-CppCompiler=-lstdc++ -DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
+CppCompiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
 Includes=..\include;..\win32;.
 Linker=-lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
