@@ -65,10 +65,10 @@ bzflag_SOURCES = 			\
 noinst_HEADERS = \
 	stars.cxx
 
-RESOURCE =
-
 if WIN32
-  RESOURCE = bzflag.res
+RESOURCE = bzflag.res
+else
+RESOURCE =
 endif
 
 LDADD =	\
