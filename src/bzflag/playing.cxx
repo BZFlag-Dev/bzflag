@@ -3757,7 +3757,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       serverLink->send(MsgMessage, sizeof(response), response);
       const char *oldcolor = NULL;
       if (dstTeam == RogueTeam || srcPlayer->getTeam() == NoTeam)
-	oldcolor = ColorStrings[RogueTeam];
+        oldcolor = ColorStrings[RogueTeam];
+      else if (srcPlayer->getTeam() == ObserverTeam)
+        oldcolor = ColorStrings[CyanColor];
       else
 	oldcolor = ColorStrings[srcPlayer->getTeam()];
 
@@ -3863,10 +3865,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	fullMsg += text;
       }
       const char *oldcolor = NULL;
-      if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-	oldcolor = ColorStrings[srcPlayer->getTeam()];
+      if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
+       oldcolor = ColorStrings[RogueTeam];
+      else if (srcPlayer->getTeam() == ObserverTeam)
+       oldcolor = ColorStrings[CyanColor];
       else
-	oldcolor = ColorStrings[RogueTeam];
+       oldcolor = ColorStrings[srcPlayer->getTeam()];
       addMessage(NULL, fullMsg, false, oldcolor);
 
       if (!srcPlayer || srcPlayer!=myTank)

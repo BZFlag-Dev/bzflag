@@ -1115,7 +1115,6 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       flag[f].flag.endurance = FlagNormal;
       f++;
     }
-    f = 4;
   }
 
 

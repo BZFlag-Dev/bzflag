@@ -471,6 +471,15 @@ static int lookupPlayer(const PlayerId& id)
   return id;
 }
 
+static int lookupTeamFlag(int teamindex)
+{
+  for (int i = 0; i < numFlags; i++) {
+    if (flag[i].flag.type->flagTeam == teamindex)
+      return i;
+  }
+  // FIXME should never get here, throw?
+  return -1;
+}
 
 static void setNoDelay(int fd)
 {
@@ -2365,11 +2374,14 @@ static void addPlayer(int playerIndex)
   if (team[teamIndex].team.size == 1 && Team::isColorTeam(player[playerIndex].team)) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
-    if ((clOptions->gameStyle & int(TeamFlagGameStyle)) &&
-	flag[teamIndex - 1].flag.status == FlagNoExist)
-      // can't call resetFlag() here cos it'll screw up protocol for
-      // player just joining, so do it later
-      resetTeamFlag = true;
+    if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
+      int flagid = lookupTeamFlag(teamIndex);
+      if (flagid >= 0 && flag[flagid].flag.status == FlagNoExist) {
+        // can't call resetFlag() here cos it'll screw up protocol for
+        // player just joining, so do it later
+        resetTeamFlag = true;
+      }
+    }
   }
 
   // send new player updates on each player, all existing flags, and all teams.
@@ -2424,8 +2436,11 @@ static void addPlayer(int playerIndex)
     return;
 
   // reset that flag
-  if (resetTeamFlag)
-    resetFlag(teamIndex-1);
+  if (resetTeamFlag) {
+    int flagid = lookupTeamFlag(teamIndex);
+    if (flagid >= 0)
+      resetFlag(flagid);
+  }
 
   fixTeamCount();
 
@@ -2848,10 +2863,11 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // if last active player on team then remove team's flag if no one
     // is carrying it
     if (Team::isColorTeam(player[playerIndex].team) && team[teamNum].team.size == 0 &&
-	(clOptions->gameStyle & int(TeamFlagGameStyle))) {
-      if (flag[teamNum - 1].player == -1 ||
-	  player[flag[teamNum - 1].player].team == teamNum)
-	zapFlag(teamNum - 1);
+        (clOptions->gameStyle & int(TeamFlagGameStyle))) {
+      int flagid = lookupTeamFlag(teamNum);
+      if (flagid >=0 &&
+          (flag[flagid].player == -1 || player[flag[flagid].player].team == teamNum))
+	zapFlag(flagid);
     }
 
     // send team update
@@ -3476,7 +3492,7 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // if it is a team flag, check if there are any players left in that team -
   // if not, start the flag timeout
-  if (isTeamFlag && team[flagIndex + 1].team.size == 0) {
+  if (isTeamFlag && team[drpFlag.flag.type->flagTeam].team.size == 0) {
     team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
     team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
   }
@@ -4974,17 +4990,16 @@ int main(int argc, char **argv)
     }
 
     // check team flag timeouts
-    /* FIXME -- there is some assumption being made here that is bad.  There
-     * should be a way to prevent indexing flag[-1] when i is 0 without relying
-     * on the flagTimeout or active team size for rogues..
-     */
     if (clOptions->gameStyle & TeamFlagGameStyle) {
-      for (i = 0; i < CtfTeams; ++i) {
-	if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0 &&
-	    flag[i - 1].flag.status != FlagNoExist &&
-	    flag[i - 1].player == -1) {
-	  DEBUG1("Flag timeout for team %d\n", i);
-	  zapFlag(i - 1);
+      for (i = RedTeam; i < CtfTeams; ++i) {
+        if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0) {
+          int flagid = lookupTeamFlag(i);
+          if (flagid >= 0 &&
+	      flag[flagid].flag.status != FlagNoExist &&
+	      flag[flagid].player == -1) {
+	    DEBUG1("Flag timeout for team %d\n", i);
+            zapFlag(i - 1);
+          }
 	}
       }
     }
