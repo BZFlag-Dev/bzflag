@@ -63,9 +63,6 @@ recent bugs
 - Windows VC71 client crashes sometimes if you leave it paused for a while
   with no useful trace information (looks like a double free maybe).
 
-- tank begins driving backwards on spawn (perhaps only with keyboard,
-  perhaps only with mac)
-
 - player counts do not seem to get updated on list server
 
 - player score doesn't seem to match the server's score when relaying to
