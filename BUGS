@@ -1,8 +1,6 @@
 recent bugs
 ------------
 
-- Jamming flag hurts bzflag: SIGSEGV
-
 - tank begins driving backwards on spawn (perhaps only with keyboard,
   perhaps only with mac)
 

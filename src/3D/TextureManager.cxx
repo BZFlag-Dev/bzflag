@@ -159,6 +159,7 @@ void TextureManager::setMaxFilter ( std::string filter )
 void TextureManager::setMaxFilter ( eTextureFilter filter )
 {
   currentMaxFilter = filter;
+
   // flush all the textures so they get rebuilt on next use
 
   TextureNameMap::iterator	itr = textureNames.begin();
@@ -173,6 +174,12 @@ void TextureManager::setMaxFilter ( eTextureFilter filter )
     delete(itr->second.texture);
     itr->second.texture = newTexture;
     itr++;
+  }
+
+  // rebuild proc textures
+  for (int i = 0; i < countof(procLoader); i++) {
+    procLoader[i].manager = this;
+    procLoader[i].proc(procLoader[i]);
   }
 }
 
