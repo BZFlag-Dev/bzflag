@@ -3400,7 +3400,7 @@ void			ServerMenu::checkEchos()
   // how frequent to update spinner
   const float STATUS_UPDATE_FREQUENCY = 0.5; 
   // timer used to track the spinner update frequency
-  static TimeKeeper lastUpdate = TimeKeeper::getSunGenesisTime();
+  static TimeKeeper lastUpdate = TimeKeeper::getCurrent();
 
   // print a spinning status message that updates periodically until we are 
   // actually receiving data from a list server (phase 3).  the loop below
