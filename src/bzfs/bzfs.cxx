@@ -2897,6 +2897,12 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   DEBUG1("Player %s [%d] on %d removed: %s\n",
       player[playerIndex].callSign, playerIndex, player[playerIndex].fd, reason);
 
+  // if there is an active poll, cancel any vote this player may have made
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
+  if ((arbiter != NULL) && (arbiter->knowsPoll())) {
+    arbiter->retractVote(player[playerIndex].callSign);
+  }
+
   // send a super kill to be polite
   if (notify)
     directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
@@ -2960,12 +2966,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 
   player[playerIndex].state = PlayerNoExist;
-
-  // if there is an active poll, cancel any vote this player may have made
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
-  if ((arbiter != NULL) && (arbiter->knowsPoll())) {
-    arbiter->retractVote(player[playerIndex].callSign);
-  }
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle))
     if (playerIndex == rabbitIndex)
