@@ -17,7 +17,6 @@
 #include "SDLDisplay.h"
 #include "OpenGLGState.h"
 #include <iostream>
-extern "C" int SDL_GetGamma(float *red, float *green, float *blue);
 
 static int mx = 0;
 static int my = 0;
@@ -553,17 +552,46 @@ void SDLWindow::setGamma(float gamma) {
   }
 };
 
+// Code taken from SDL (not available through the headers)
+static float CalculateGammaFromRamp(Uint16 ramp[256]) {
+  /* The following is adapted from a post by Garrett Bass on OpenGL
+     Gamedev list, March 4, 2000.
+  */
+  float sum = 0.0;
+  int i, count = 0;
+  
+  float gamma = 1.0;
+  for (i = 1; i < 256; ++i) {
+    if ((ramp[i] != 0) && (ramp[i] != 65535)) {
+      double B = (double)i / 256.0;
+      double A = ramp[i] / 65535.0;
+      sum += (float) (log(A) / log(B));
+      count++;
+    }
+  }
+  if ( count && sum ) {
+    gamma = 1.0f / (sum / count);
+  }
+  return gamma;
+}
+
 float SDLWindow::getGamma() const {
+  Uint16 redRamp[256];
+  Uint16 greenRamp[256];
+  Uint16 blueRamp[256];
   float red;
   float green;
   float blue;
   float gamma = 1.0;
-  // SDL Calculation of the gamma isn't officially supported.
-  int result = SDL_GetGamma(&red, &green, &blue);
-  if (result == -1)
+  int result = SDL_GetGammaRamp(redRamp, greenRamp, blueRamp);
+  if (result == -1) {
     printf("Could not get Gamma: %s.\n", SDL_GetError());
-  else
+  } else {
+    red   = CalculateGammaFromRamp(redRamp);
+    green = CalculateGammaFromRamp(greenRamp);
+    blue  = CalculateGammaFromRamp(blueRamp);
     gamma = (red + green + blue) / 3.0;
+  }
   return gamma;
 };
 
