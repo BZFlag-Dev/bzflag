@@ -4805,17 +4805,17 @@ int			main(int argc, char** argv)
       }
 
     for (i = 0; i < maxPlayers; i++) {
-	// lets kick the old bastards
+	// kick any clients that don't speak UDP
 	if (udpOnly && player[i].toBeKicked) {
 		char message[MessageLen];
 		player[i].toBeKicked = false;
-                sprintf(message,"You don't run an UDP link");
+                sprintf(message,"Your end does not support UDP");
                 sendMessage(i, player[i].id, player[i].team, message);
 
-                sprintf(message,"Please update, Bye!");
+                sprintf(message,"Try another server, Bye!");
                 sendMessage(i, player[i].id, player[i].team, message);
 
-		fprintf(stderr, "*** Kicking Player due to old client [%d]\n",i);
+		fprintf(stderr, "*** Kicking Player - no UDP [%d]\n",i);
 		removePlayer(i);
 	}
 	if (player[i].ulinkup && pupeek(i)) {
