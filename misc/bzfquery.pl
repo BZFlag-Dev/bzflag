@@ -62,7 +62,6 @@ die $! unless sysread(S, $buffer, 40) == 40;
 	$shakeWins,$shakeTimeout,
 	$maxPlayerScore,$maxTeamScore,$maxTime) = unpack("n20", $buffer);
 die $! unless $code == 0x7167;
-print "$len, code = $code\n";
 
 # print info
 print "style:";
@@ -99,13 +98,15 @@ print S pack("n2", 0, 0x7170);
 die $! unless sysread(S, $buffer, 8) == 8;
 ($len,$code,$numTeams,$numPlayers) = unpack("n4", $buffer);
 die $! unless $code == 0x7170;
+die $! unless sysread(S, $buffer, 5) == 5;
+($len,$code,$numTeams) = unpack("n n C", $buffer);
 
 # get the teams
 print "\n";
-@teamName = ("Rogue", "Red", "Green", "Blue", "Purple");
+@teamName = ("Rogue", "Red", "Green", "Blue", "Purple", "Observer", "Rabbit");
 for (1..$numTeams) {
-die $! unless sysread(S, $buffer, 14) == 14;
-($len,$code,$team,$size,$aSize,$won,$lost) = unpack("n7", $buffer);
+die $! unless sysread(S, $buffer, 10) == 10;
+($team,$size,$aSize,$won,$lost) = unpack("n5", $buffer);
 die $! unless $code == 0x7475;
 $score = $won - $lost;
 print "$teamName[$team] team:\n";
@@ -117,14 +118,14 @@ print "\n";
 @playerType = ("tank", "observer", "robot tank");
 for (1..$numPlayers) {
 
-$bytesRead =  sysread(S, $buffer, 180);
-while ($bytesRead != 180 && $bytesRead != 0){
- $bytesRead += sysread(S, $buffer, 180-$bytesRead)
+$bytesRead = sysread(S, $buffer, 175);
+while ($bytesRead != 175 && $bytesRead != 0){
+ $bytesRead += sysread(S, $buffer, 175-$bytesRead)
 }
-if ($bytesRead == undef || $bytesRead < 180){ die $!; }
+if ($bytesRead == undef || $bytesRead < 175){ die $!; }
 
-($len,$code,$pAddr,$pPort,$pNum,$type,$team,$won,$lost,$sign,$email) =
-					unpack("n2Nn2 n4A32A128", $buffer);
+($len,$code,$pID,$type,$team,$won,$lost,$tks,$sign,$email) =
+					unpack("n2Cn5A32A128", $buffer);
 die $! unless $code == 0x6170;
 $score = $won - $lost;
 print "player $sign ($teamName[$team] team) is a $playerType[$type]:\n";
