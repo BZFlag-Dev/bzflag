@@ -381,7 +381,7 @@ int StateDatabase::ExpressionToken::getPrecedence()
 	}
 }
 
-istream&operator >> (istream& src, StateDatabase::ExpressionToken& dst)
+std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst)
 {
 	char temp;
 	std::string tempname;
@@ -500,7 +500,7 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
 	return src;
 }
 
-ostream& operator << (ostream& dst, StateDatabase::ExpressionToken& src)
+std::ostream& operator << (std::ostream& dst, StateDatabase::ExpressionToken& src)
 {
 	switch (src.tokenType) {
 	case StateDatabase::ExpressionToken::number:
@@ -540,7 +540,7 @@ ostream& operator << (ostream& dst, StateDatabase::ExpressionToken& src)
 	return dst;
 }
 
-istream& operator >> (istream& src, StateDatabase::Expression& dst)
+std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
 {
 	StateDatabase::ExpressionToken temp;
 	char tempc;
@@ -573,7 +573,7 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
 	return src;
 }
 
-ostream& operator << (ostream& dst, StateDatabase::Expression& src)
+std::ostream& operator << (std::ostream& dst, StateDatabase::Expression& src)
 {
 	if(src.size()) {
 		for (unsigned int i = 0; i < src.size() - 1; i++) {

@@ -172,9 +172,9 @@ public:
 
 		int					getPrecedence();
 
-		friend istream&		operator >> (istream& src, ExpressionToken& dst);
+		friend std::istream&		operator >> (std::istream& src, ExpressionToken& dst);
 		friend std::string&	operator >> (std::string& src, ExpressionToken& dst);
-		friend ostream&		operator << (ostream& dst, ExpressionToken& src);
+		friend std::ostream&		operator << (std::ostream& dst, ExpressionToken& src);
 	private:
 		Type tokenType;
 		Contents tokenContents;
@@ -187,9 +187,9 @@ private:
 	float					evaluate(Expression e) const;
 };
 
-istream& operator >> (istream& src, StateDatabase::Expression& dst);
+std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst);
 std::string& operator >> (std::string& src, StateDatabase::Expression& dst);
-ostream& operator << (ostream& dst, StateDatabase::Expression& src);
+std::ostream& operator << (std::ostream& dst, StateDatabase::Expression& src);
 
 #endif // BZF_STATE_DATABASE_H
 // ex: shiftwidth=4 tabstop=4
