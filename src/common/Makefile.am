@@ -35,4 +35,5 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 EXTRA_DIST = \
+	OSFile.cxx	\
 	README
