@@ -364,8 +364,8 @@ else
 		CFLAGS="$CFLAGS -O";
 		CXXFLAGS="$CXXFLAGS -O";;
 	 macos|darwin*)
-		CFLAGS="$CFLAGS -O2";
-		CXXFLAGS="$CXXFLAGS -O2";
+		CFLAGS="$CFLAGS -O3";
+		CXXFLAGS="$CXXFLAGS -O3";
 		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
 		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";;
 	 windows**)
