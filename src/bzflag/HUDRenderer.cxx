@@ -181,7 +181,7 @@ void			HUDRenderer::setBigFontSize(int, int height)
 {
   const float s = (float)height / 22.0f;
   FontManager &fm = FontManager::instance();
-  bigFontFace = fm.getFaceID("TogaSansBold");
+  bigFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   bigFontSize = s;
 
   restartLabelWidth = fm.getStrLength(bigFontFace, bigFontSize, restartLabel);
@@ -195,7 +195,7 @@ void			HUDRenderer::setAlertFontSize(int, int height)
 {
   const float s = (float)height / 36.0f;
   FontManager &fm = FontManager::instance();
-  alertFontFace = fm.getFaceID("TogaSansBold");
+  alertFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   alertFontSize = s;
 
   for (int i = 0; i < MaxAlerts; i++)
@@ -207,7 +207,7 @@ void			HUDRenderer::setMajorFontSize(int, int height)
 {
   const float s = (float)height / 36.0f;
   FontManager &fm = FontManager::instance();
-  majorFontFace = fm.getFaceID("TogaSerifBold");
+  majorFontFace = fm.getFaceID(BZDB.get("serifFont"));
   majorFontSize = s;
 }
 
@@ -216,7 +216,7 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   const float add = BZDB.isTrue("bigfont") ? 7.0f : 0.0f;
   const float s = add + (float)height / 72.0f;
   FontManager &fm = FontManager::instance();
-  minorFontFace = fm.getFaceID("VeraMonoBold");
+  minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   minorFontSize = s;
 
   scoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, scoreSpacingLabel);
@@ -232,7 +232,7 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
 {
   const float s = (float)height / 144.0f;
   FontManager &fm = FontManager::instance();
-  headingFontFace = fm.getFaceID("TogaSansBold");
+  headingFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   headingFontSize = s;
 
   // compute heading labels and (half) widths
@@ -252,7 +252,7 @@ void			HUDRenderer::setComposeFontSize(int, int height)
 {
   const float s = (float)height / 72.0f;
   FontManager &fm = FontManager::instance();
-  composeFontFace = fm.getFaceID("VeraMonoBold");
+  composeFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   composeTypeIn->setFontFace(composeFontFace);
   composeTypeIn->setFontSize(s);
 }
@@ -261,7 +261,7 @@ void			HUDRenderer::setLabelsFontSize(int, int height)
 {
   const float s = (float)height / 96.0f;
   FontManager &fm = FontManager::instance();
-  labelsFontFace = fm.getFaceID("VeraMonoBold");
+  labelsFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   labelsFontSize = s;
 }
 

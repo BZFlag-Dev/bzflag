@@ -143,6 +143,11 @@ static DefaultDBItem	defaultDBItems[] = {
   { "cautionTexture",	        "caution",              true,	StateDatabase::ReadWrite,	NULL },
   { "deadUnderTexture",	        "deadunder",            true,	StateDatabase::ReadWrite,	NULL },
 
+  // default fonts
+  { "consoleFont",		"VeraMonoBold",		true,	StateDatabase::ReadWrite,	NULL },
+  { "sansSerifFont",		"TogaSansBold",		true,	StateDatabase::ReadWrite,	NULL },
+  { "serifFont",		"TogaSerifBold",	true,	StateDatabase::ReadWrite,	NULL },
+
   // team based object sufixes
   { "tankTexture",	        "tank",                 true,	StateDatabase::ReadWrite,	NULL },
   { "boltTexture",	        "bolt",                 true,	StateDatabase::ReadWrite,	NULL },
@@ -1051,7 +1056,7 @@ int			main(int argc, char** argv)
   // load fonts from data directory
   fm.loadAll(PlatformFactory::getMedia()->getMediaDirectory());
   // try to get a font - only returns -1 if there are no fonts at all
-  if (fm.getFaceID("TogaSansBold") < 0) {
+  if (fm.getFaceID(BZDB.get("consoleFont")) < 0) {
     printFatalError("No fonts found.  Exiting");
     return 1;
   }

@@ -108,7 +108,7 @@ MainMenu::~MainMenu()
 const int		MainMenu::getFontFace()
 {
   // create font
-  return FontManager::instance().getFaceID("TogaSansBold");
+  return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));
 }
 
 HUDuiDefaultKey*	MainMenu::getDefaultKey()

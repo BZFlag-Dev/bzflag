@@ -321,7 +321,7 @@ void			ControlPanel::resize()
   const bool useBigFont = messageAreaPixels[2] / (BZDB.isTrue("bigfont") ? 60.0f : 80.0f) > 10.0f;
   fontSize = useBigFont ? 11.0f : 7.0f;
   FontManager &fm = FontManager::instance();
-  fontFace = fm.getFaceID("VeraMonoBold");
+  fontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
   // rebuild font gstates
   fm.rebuild();
