@@ -35,8 +35,8 @@ namespace Flags {
 						    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
   FlagDesc *PurpleTeam              = new FlagDesc( "Purple Team", "P*", FlagNormal, NormalShot, FlagGood, ::PurpleTeam,
 						    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
-  FlagDesc *Velocity                = new FlagDesc( "Velocity", "V", FlagUnstable, NormalShot, FlagGood, NoTeam,
-						    "Velocity (+V):  Tank moves faster.  Outrun bad guys." );
+  FlagDesc *Velocity                = new FlagDesc( "High Speed", "V", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "High Speed (+V):  Tank moves faster.  Outrun bad guys." );
   FlagDesc *QuickTurn               = new FlagDesc( "Quick Turn", "A", FlagUnstable, NormalShot, FlagGood, NoTeam,
 						    "Angular velocity (+A):  Tank turns faster.  Dodge quicker." );
   FlagDesc *OscillationOverthruster = new FlagDesc( "Oscillation Overthruster", "OO", FlagUnstable, NormalShot, FlagGood, NoTeam,
