@@ -88,6 +88,9 @@ std::string CacheManager::getLocalName(const std::string name) const
     local = getCacheDirName() + "ftp/";
     local += partialEncoding(name.substr(6));
   }
+#ifdef _WIN32
+  std::replace(local.begin(), local.end(), '/', '\\');
+#endif  
   return local;
 }
 
@@ -303,10 +306,10 @@ static void removeNewlines(char* c)
 
 static std::string partialEncoding(const std::string& string)
 {
-// URL encoding removes the '/' and '.', which I don't find
-// acceptable. It would be nice to both have the directory
-// structure, and the be able to point and click your way
-// through it to view ".png"s.
+  // URL encoding removes the '/' and '.', which is
+  // not acceptable. It is nice to have the directory
+  // structure, and to be able to point and click your
+  // way through it to view ".png"s.
   std::string tmp;
   char hex[5];
   for (unsigned int i = 0; i < string.size(); i++) {
