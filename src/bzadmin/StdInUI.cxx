@@ -28,7 +28,7 @@ bool StdInUI::checkCommand(std::string& str) {
     str = "/quit";
     return true;
   }
-  getline(std::cin, str);
+  std::getline(std::cin, str);
   if (str == "")
     return false;
   return true;

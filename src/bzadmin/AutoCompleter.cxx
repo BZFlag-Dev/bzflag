@@ -20,7 +20,7 @@
 
 
 void AutoCompleter::registerWord(const std::string& str) {
-  words.insert(lower_bound(words.begin(), words.end(), str), str);
+  words.insert(std::lower_bound(words.begin(), words.end(), str), str);
 }
 
 
@@ -38,12 +38,12 @@ std::string AutoCompleter::complete(const std::string& str) {
 
   // find the first and last word with the prefix str
   std::vector<std::string>::iterator first, last;
-  first = lower_bound(words.begin(), words.end(), str);
+  first = std::lower_bound(words.begin(), words.end(), str);
   if (first == words.end() || first->substr(0, str.size()) != str)
     return str;
   std::string tmp = str;
   tmp[tmp.size() - 1]++;
-  last = lower_bound(first, words.end(), tmp) - 1;
+  last = std::lower_bound(first, words.end(), tmp) - 1;
 
   // return the largest common prefix
   unsigned int i;
