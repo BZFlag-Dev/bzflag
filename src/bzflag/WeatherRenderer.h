@@ -72,7 +72,6 @@ protected:
 	OpenGLDisplayList			dropList;
 	OpenGLDisplayList			puddleList;
 
-
 	typedef struct {
 		float    pos[3];
 		float	 speed;
@@ -94,6 +93,23 @@ protected:
 
 	bool updateDrop ( std::vector<rain>::iterator &drop, float frameTime );
 	bool updatePuddle ( std::vector<puddle>::iterator &splash, float frameTime );
+
+	// some kinda culling
+	void addDrop ( rain & drop );
+
+	int keyFromPos ( float x, float y );
+
+	float				gridSize;
+	float				keyFactor;
+
+	typedef struct  {
+		std::vector<rain>	drops;
+		float				bbox[4];
+	}visibleChunk;
+
+	std::map<int,visibleChunk>	chunkMap;
+
+	void setChunkFromDrop ( visibleChunk &chunk, rain & drop );
 };
 
 #endif // BZF_WEATHER_RENDERER_H

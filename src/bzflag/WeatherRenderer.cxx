@@ -50,6 +50,10 @@ WeatherRenderer::WeatherRenderer()
 	puddleSpeed = 1.0f;
 
 	puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] = 1.0f;
+
+	gridSize = 100;
+
+	keyFactor = 1.0f/gridSize;
 }
 
 WeatherRenderer::~WeatherRenderer()
@@ -226,6 +230,15 @@ void WeatherRenderer::set ( void )
 
 		if (BZDB.isSet("rainTopColor"))
 			BZDB.evalTriplet("rainTopColor",rainColor[1]);
+
+		if (BZDB.isSet("useRainPuddles"))
+			doPuddles = BZDB.evalInt("useRainPuddles") == 1;
+
+		if (BZDB.isSet("useLineRain"))
+			doLineRain = BZDB.evalInt("useLineRain") == 1;
+
+		if (BZDB.isSet("useRainBillboards"))
+			doBillBoards = BZDB.evalInt("useRainBillboards") == 1;
 
 		if (BZDB.isSet("rainPuddleColor"))
 			BZDB.evalTriplet("rainPuddleColor",puddleColor);
@@ -583,6 +596,51 @@ bool WeatherRenderer::updatePuddle ( std::vector<puddle>::iterator &splash, floa
 	}
 	splash->time += frameTime;
 	return true;
+}
+
+void WeatherRenderer::addDrop ( rain & drop )
+{
+	int key = keyFromPos(drop.pos[0],drop.pos[1]);
+
+	std::map<int,visibleChunk>::iterator itr = chunkMap.find(key);
+	
+	if (itr != chunkMap.end())
+	{
+		itr->second.drops.push_back(drop);
+		return;
+	}
+	
+	visibleChunk	chunk;
+
+	setChunkFromDrop(chunk,drop);
+
+	chunk.drops.push_back(drop);
+	chunkMap[key] = chunk;
+}
+
+int WeatherRenderer::keyFromPos ( float x, float y )
+{
+	// todo, optimze this
+	int keyX = (int)(x*keyFactor);
+	int keyY = (int)(y*keyFactor);
+
+	short	temp[2];
+
+	temp[0] = (short)keyX;
+	temp[1] = (short)keyY;
+
+	return  *((int*)temp);
+}
+
+void WeatherRenderer::setChunkFromDrop ( visibleChunk &chunk, rain & drop )
+{
+	int keyX = (int)(drop.pos[0]*keyFactor);
+	int keyY = (int)(drop.pos[1]*keyFactor);
+
+	chunk.bbox[0] = keyX * gridSize;
+	chunk.bbox[1] = keyY * gridSize;
+	chunk.bbox[0] = keyX * gridSize + gridSize;
+	chunk.bbox[1] = keyY * gridSize + gridSize;
 }
 
 // Local Variables: ***
