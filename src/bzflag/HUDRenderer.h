@@ -126,6 +126,7 @@ class HUDRenderer {
     void		resize(boolean firstTime);
     static void		resizeCallback(void*);
     static int		tankScoreCompare(const void* _a, const void* _b);
+    static int		teamScoreCompare(const void* _a, const void* _b);
 
     class Marker {
       public:

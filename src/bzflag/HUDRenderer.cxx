@@ -769,6 +769,15 @@ int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
   return b->getScore() - a->getScore();
 }
 
+int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
+{
+
+  Team* c= World::getWorld()->getTeams()+*(int*)_c;
+  Team* d= World::getWorld()->getTeams()+*(int*)_d;
+	 
+  return (d->won-d->lost) - (c->won-c->lost);
+}
+
 void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
 {
   int i, j;
@@ -820,14 +829,25 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
     drawDeadPlayerScore(deadPlayers[i], x1, x2, x3, (float)y);
   }
 
-  // TODO should sort these by score
+  // print teams sorted by score
+  int *teams = new int[NumTeams];
+  int teamCount = 0;
+
   y = (int)y0;
   for (i = RedTeam; i < NumTeams; i++) {
     const Team* team = World::getWorld()->getTeams() + i;
     if (team->activeSize == 0) continue;
-    y -= (int)dy;
-    drawTeamScore(i, x5, (float)y);
+    teams[teamCount++] = i;
   }
+
+  qsort(teams, teamCount, sizeof(int), teamScoreCompare);
+
+  y -= (int)dy;
+  for (i = 0 ; i < teamCount; i++){
+    y -= (int)dy;
+    drawTeamScore(teams[i], x5, (float)y);
+  }
+  delete[] teams;
 }
 
 void			HUDRenderer::renderCracks(SceneRenderer& renderer)
