@@ -98,7 +98,7 @@ class ServerLink {
     bool		ulinkup;
 
     PlayerId		id;
-    char		version[255];
+    char		version[9];
     static ServerLink*	server;
     int			server_abilities;
 };

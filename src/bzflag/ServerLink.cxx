@@ -95,7 +95,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
 {
   int i;
   char cServerVersion[128];
-  unsigned char buf = 0; // for holding length of version string
 
   struct protoent* p;
 #if defined(_WIN32)
@@ -203,17 +202,11 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
     return;
   }
 #endif // !defined(_WIN32)
-
-  // first byte sent is size of version string
-  i = recv(query, (char*)&buf, 1, 0);
-  // grab version string
-  i = recv(query, (char*)version, (int)buf, 0);
-  // null-terminate it
-  version[buf] = '\0';
-  if (i < (int)buf)
+  i = recv(query, (char*)version, 8, 0);
+  if (i < 8)
     goto done;
 
-  sprintf(cServerVersion,"Server version: '%s'", version);
+  sprintf(cServerVersion,"Server version: '%8s'",version);
   printError(cServerVersion);
 
   // FIXME is it ok to try UDP always?
