@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# bzflag
+# bzflag 
 # Copyright (c) 1993 - 2003 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
