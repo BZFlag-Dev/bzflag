@@ -85,8 +85,8 @@ void	      WinJoystick::getJoy(int& x, int& y) const
   }
 
   // adjust X and Y to scale
-  x = (joyInfo.dwXpos / xMax) * 2000 - 1000;
-  y = (joyInfo.dwYpos / yMax) * 2000 - 1000;
+  x = (int)((joyInfo.dwXpos / xMax) * 2000 - 1000);
+  y = (int)((joyInfo.dwYpos / yMax) * 2000 - 1000);
 
   // ballistic
   x = (x * abs(x)) / 1000;
