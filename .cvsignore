@@ -1,5 +1,5 @@
 aclocal.m4
-build-stamp
+bzflag.lsm
 bzflag.spec
 config.cache
 config.log
