@@ -2974,7 +2974,8 @@ static void		setHuntTarget()
   if (!bestTarget) return;
 
 
-  if (bestTarget->isHunted() && myTank->getFlag() != Flags::Blindness) {
+  if (bestTarget->isHunted() && myTank->getFlag() != Flags::Blindness &&
+      myTank->getFlag() != Flags::Colorblindness) {
     if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
       std::string msg("SPOTTED: ");
       msg += bestTarget->getCallSign();
@@ -3879,7 +3880,7 @@ static bool		joinGame(const StartupInfo* info,
 	break;
 
       default:
-	printError("Internal error connecting to server.");
+	printError(string_util::format("Internal error connecting to server (error code %d).", serverLink->getState()));
 	break;
     }
 
