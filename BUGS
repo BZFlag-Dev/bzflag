@@ -36,7 +36,8 @@ recent bugs
   Is it possible we are respawning IN the base by accident sometimes?
   Please report if it happens again after 10/15
 
-- Can only see flag and lights of thief tank
+- Can only see flag and lights of thief tank - I believe this is happening
+  at a medium distance (LOD) only. Medium resolution tank? - MAC
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
