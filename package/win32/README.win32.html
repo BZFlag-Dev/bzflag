@@ -9,7 +9,7 @@ B<FONT SIZE="4">ZFLAG</FONT> R<FONT SIZE="4">EADME</FONT>
 </H1>
 <HR>
 <P>
-This is the README file for the Windows 95/98/NT version of BZFlag.
+This is the README file for the Windows version of BZFlag.
 </P>
 <P>
 <A HREF="http://BZFlag.SourceForge.net/">BZFlag</A> is a network
@@ -21,14 +21,18 @@ found where you installed BZFlag.
 <HR>
 <H3>R<FONT SIZE="2">EQUIREMENTS</FONT></H3>
 <P>
-BZFlag should run well on a Windows 95/98/NT system with 16MB RAM,
-though 24MB is recommended.  Any graphics card will work but a
+BZFlag should run well on a Windows 95/98/NT/2000/XP system with 32MB RAM,
+though 64MB is recommended.  Later versions of Windows will naturally
+require more memory.  Any graphics card will work but a
 3D graphics card with OpenGL acceleration is highly recommended.
 A sound card with DirectSound support is optional.  A network
-card or a modem with PPP software is required.
+card or a modem with PPP software (such as Dial-up Networking, provided
+with Windows) is required.
 </P>
 <P>
-BZFlag requires, but does not come with, three free "libraries."
+BZFlag requires, but does not come with, three free "libraries."  Note 
+that Windows 98 and later ship with these libraries, so unless you are 
+using Windows 95 or NT4, you should not need to download them.
 <UL>
     <LI><A HREF="ftp://ftp.microsoft.com/softlib/mslfiles/opengl95.exe">OpenGL</A>
 	-- a vendor neutral, platform independent 3D graphics library
@@ -38,7 +42,8 @@ BZFlag requires, but does not come with, three free "libraries."
 	-- a TCP/IP network library
 </UL>
 The easiest way to find out if you have the necessary libraries installed
-is to run <B>bzflag.exe</B>.  Look for these errors:
+is to run <B>bzflag.exe</B> (you can find a shortcut in your start menu if
+you chose to install one).  Look for these errors:
 <UL>
     <LI>OPENGL32.DLL not found -- install OpenGL
     <LI>DSOUND.DLL not found -- install DirectX
@@ -46,19 +51,18 @@ is to run <B>bzflag.exe</B>.  Look for these errors:
 </UL>
 </P>
 <HR>
-<H3>U<FONT SIZE="2">INSTALLING</FONT></H3>
+<H3>U<FONT SIZE="2">NINSTALLING</FONT></H3>
 <P>
-Run Add/Remove Programs (from the control panels), select BZFlag, and
+Run Add/Remove Programs (from the control panel), select BZFlag, and
 press Add/Remove....
 </P>
 <HR>
 <H3>P<FONT SIZE="2">LAYING</FONT></H3>
 <P>
-To begin playing BZFlag, double-click the bzflag.exe icon.
-BZFlag may ask you to choose a screen resolution and color
-depth.  Once you've selected one that BZFlag could successfully
-switch to (sometimes it has trouble switching), the game will
-go fullscreen, load its data files, and show the main menu.
+To begin playing BZFlag, launch bzflag.exe using the start menu
+or quicklaunch shortcuts.  The game will go fullscreen (unless you
+are starting in windowed mode), load its data files, and show the 
+main menu.
 <P>
 </P>
 Use the arrow, enter, and escape keys to navigate the menus.
@@ -77,10 +81,10 @@ server to connect to.
 </P>
 Use `Find Server' to search for an existing server.  Select a
 server from the list and press enter (press escape to cancel).
-This sets the server name in the `Join Game' menu.  You can
-enter a name manually if `Find Server' doesn't show the server
-you want.  You may need to set the port too.  The default port
-number is 5154 and most servers will use this.
+This sets the server name and port number in the `Join Game' 
+menu.  You can enter a name manually if `Find Server' doesn't 
+show the server you want.  You may need to set the port too.  
+The default port number is 5154 and most servers will use this.
 <P>
 </P>
 If you haven't entered a callsign before, you need to type one
@@ -92,19 +96,18 @@ cannot change teams once you've joined a game, though you can
 reconnect later with a different team and/or callsign.
 <P>
 </P>
-Once you have your callsign, team, server, and port setup, use
+Once you have your callsign, team, server, and port set up, use
 `Connect' to join the game.  If anything goes wrong, the game
 will show an error message telling you how to correct the
-problem.  Otherwise, you'll find yourself ready to play in the
-center of the game board.
+problem.  Otherwise, you'll find yourself ready to play.
 <P>
 </P>
 Your name and score are shown in your team color in the upper
-left.  The scoreboard lists all the players (you're always
-listed first), their scores, and the number of times you've
-killed and been killed by that player.  Your current status is
-at the top center.  Press the right mouse button to start
-playing!
+left.  The scoreboard lists all the players (in order by score),
+their scores, what flag they are carrying (if any), and the 
+number of times you've killed and been killed by that player.  
+Your current status is at the top center.  Press the right 
+mouse button to start playing!
 </P>
 <HR>
 <H3>T<FONT SIZE="2">ROUBLE</FONT></H3>
@@ -119,32 +122,44 @@ frame rate.  Some cards support OpenGL better than others so you
 may want to fiddle with the graphics options in the `Options'
 menu if your frame rate is low or the graphics look wrong.  The
 `t' and `y' keys toggle frame rate and time-per-frame readouts.
+If you are having very low framerates, ensure that Lighting and
+Shadows are off.
 </P>
 <P>
 If the game runs but the rendering is wrong, your OpenGL driver
-is broken.  It is <U>not</U> a problem with BZFlag.  Try getting the
+is broken.  It is <B>not</B> a problem with BZFlag.  Try getting the
 latest OpenGL drivers from your card manufacturer (or even the
-latest reference drivers from the chipset manufacturer).  Also,
-the freeware Mesa library accelerates OpenGL on 3Dfx cards.
-</P>
-<P>
-One exception to this is if the rendering is too dark.  This is
-because BZFlag assumes a linear brightness mapping but this isn't
-true unless you've set the appropriate gamma correction for your
-display.  If your graphics card supports `gamma correction' on
-the display control panel, then modify the gamma to a level that
-makes BZFlag look better.  Gamma correction should be a standard
-part of the operating system, but as of Windows 98 and NT 4.0
-Microsoft has neglected to do this.  If your card doesn't support
-gamma correction, you'll simply have to adjust the options to get
-the brightest results you can.  Try adjusting the time of day and
-turning off lighting.
+latest reference drivers from the chipset manufacturer).  The 
+freeware <A HREF="http://mesa3d.sourceforge.net/">Mesa library</A> 
+accelerates OpenGL on 3Dfx cards.<BR>
+Useful links:<BR>
+<A HREF="http://www.nvidia.com/content/drivers/drivers.asp">nVidia 
+accelerated reference drivers</A><BR>
+<A HREF="http://www.ati.com/support/driver.html">ATI accelerated
+drivers</A><BR>
+<A HREF="http://www.matrox.com/mga/support/drivers/home.cfm">Matrox
+accelerated drivers</A><BR>
+<A HREF="http://download.sis.com/index1.htm">SiS reference drivers</A>
 </P>
 <P>
 BZFlag prints the renderer name when it starts up in the message
 window.  If it says `Generic' then you're using software only.
-You either haven't installed the OpenGL ICD correctly.  Quit the
-game, fix the problem and run BZFlag again.
+You either haven't installed the OpenGL ICD correctly, or you are
+not using the right drivers.  Quit the game, fix the problem and 
+run BZFlag again.
+</P>
+<P>
+One exception to this is if the rendering is too dark.  This is
+because BZFlag assumes a linear brightness mapping, but this isn't
+true unless you've set the appropriate gamma correction for your
+display.  If your graphics card supports `gamma correction' in the
+`Advanced' section of the display control panel, then modify the 
+gamma to a level that makes BZFlag look better.  Gamma correction 
+should be a standard part of the operating system, but as of 
+Windows 98 and NT 4.0 Microsoft has neglected to do this.  If your 
+card doesn't support gamma correction, you'll simply have to adjust 
+the brightness slider in the options to get the brightest results 
+you can.
 </P>
 <P>
 <B>Network</B>:  Network problems can be more difficult to track down.
@@ -176,7 +191,7 @@ get a web browser working across your network then try BZFlag again.
 </P>
 <P>
 If you can't find servers on your network, there either aren't any
-servers or your network doesn't support multicating.  Either `Start
+servers or your network doesn't support multicasting.  Either `Start
 Server' or enter the server host name manually on the `Join Game'
 menu then Connect.
 </P>
@@ -188,9 +203,9 @@ the shortcut to bzflag.exe (or otherwise run bzflag.exe) with the
 command line option `-ttl 0'.
 </P>
 <P>
-If you're using BZFlag over a modem, you'll need to run PPP before
-starting BZFlag.  BZFlag only uses TCP/IP networking;  PPP makes
-TCP/IP work over your modem.
+If you're using BZFlag over a modem, you'll need to run PPP (usually
+in the form of Windows' Dial-up Networking) before starting BZFlag.  
+BZFlag only uses TCP/IP networking;  PPP makes TCP/IP work over your modem.
 </P>
 <P>
 Visit the <A HREF="http://BZFlag.SourceForge.net/">BZFlag
