@@ -1,6 +1,8 @@
 
 			     BZFlag release notes
 
+* BeOS port - Francois Revol
+* Collision detection fixes - David Trowbridge, Jeff Myers
 * PlayerId -> ubyte - David Trowbridge, Frank Thilo
 * Get rid of reconnect port - David Trowbridge
 * Hunt opponent in HUD - Adam Krell, David Trowbridge
