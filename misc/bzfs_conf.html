@@ -46,13 +46,9 @@
 						d.writeln("-pr " + mainform.reconnect_port.value+"<br/><br/>");
 					}
 
-					if (mainform.udp.value == "required") {
+					if (mainform.udp_required.checked) {
 						d.writeln("#Require UDP<br/>");
 						d.writeln("-requireudp<br/><br/>");
-					}
-					else if (mainform.udp.value == "none") {
-						d.writeln("#Disallow UDP<br/>");
-						d.writeln("-noudp<br/><br/>");
 					}
 
 					if (mainform.listen_interface.value.length > 0) {
@@ -382,13 +378,9 @@
 						<td><input type="text" name="reconnect_port" value="5156" size="30" title="Reconnect port"/></td>
 					</tr>
 					<tr>
-						<td>UDP</td>
+						<td>UDP Required</td>
 						<td>
-							<select name="udp" value="allowed" title="Specify how UDP protocol is used">
-								<option value="required">Required</option>
-								<option value="allowed" SELECTED>Allowed</option>
-								<option value="never">Never</option>
-							</select>
+							<input type="checkbox" name="udp_required" title="Specify how UDP protocol is used"/>
 						</td>
 						<td>Listen On Interface</td>
 						<td><input type="text" name="listen_interface" size="30" title="Listen on this network interface"/></td>
