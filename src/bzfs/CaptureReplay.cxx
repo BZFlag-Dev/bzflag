@@ -62,8 +62,9 @@ typedef struct {
 typedef struct {
   unsigned int magic;   // automatic for saves
   unsigned int version; // automatic for saves
+  unsigned int seconds; // automatic for saves
   char worldhash[64];   // automatic for saves
-  char padding[1024-2*sizeof(unsigned int)-64]; // all padding for now
+  char padding[1024-(3*sizeof(unsigned int)+64)];
 } ReplayHeader;
 
 // Local Variables
@@ -108,11 +109,10 @@ static FILE *CaptureFile = NULL;
 // -------------------------
 
 static bool saveStates ();
-static bool saveTeamScores ();
+static bool saveTeamStates ();
 static bool saveFlagStates ();
 static bool savePlayerStates ();
-
-//static bool clearStates ();
+static bool resetStates ();
 
 static bool saveHeader (ReplayHeader *h, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
@@ -135,6 +135,7 @@ static const char *print_msg_code (u16 code);
 // External Dependencies   (from bzfs.cxx)
 // ---------------------
 
+extern char hexDigest[50];
 extern int numFlags;
 extern int numFlagsInAir;
 extern FlagInfo *flag;
@@ -334,6 +335,7 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
   }
   
   fclose (CaptureFile);
+  CaptureFile = NULL;
   CaptureFileBytes = 0;
   CaptureFilePackets = 0;
   CaptureFilePrevLen = 0;
@@ -392,7 +394,7 @@ Capture::addPacket (u16 code, int len, const void * data, bool fake)
   if ((getCRtime() - UpdateTime) > (int)UpdateRate) {
     // save the states periodically. if there's nothing happening
     // on the server, then this won't get called, and the file size
-    // should remaining small.
+    // will not increase.
     saveStates ();
   }
   return routePacket (code, len, data, fake);
@@ -493,7 +495,22 @@ bool Replay::loadFile(int playerIndex, const char * filename)
   if (!loadHeader (&header, ReplayFile)) {
     sprintf (buffer, "Could not open header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
+    ReplayFile = NULL;
     return false;
+  }
+
+  if (header.magic != ReplayMagic) {
+    sprintf (buffer, "Not a bzflag replay file: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
+    fclose (ReplayFile);
+    ReplayFile = NULL;
+    return false;
+  }
+
+  if (strncmp (header.worldhash, hexDigest, 50) != 0) {
+    // issue a warning, and then continue on
+    sendMessage (ServerPlayer, playerIndex, 
+                 "Warning: replay file contains different map");
   }
 
   // preload the buffer
@@ -557,8 +574,9 @@ bool Replay::play(int playerIndex)
   Replaying = true;
   ReplayOffset = getCRtime () - ReplayBuf.tail->timestamp;
 
-  // reset the players' view of state  
-  for (int i = 0; i < curMaxPlayers; i++) {
+  // reset the replay observers' view of state  
+  resetStates ();
+  for (int i = MaxPlayers; i < curMaxPlayers; i++) {
     player[i].setReplayState (ReplayNone);
   }
 
@@ -568,22 +586,27 @@ bool Replay::play(int playerIndex)
 }
 
 
-bool Replay::skip(int playerIndex, int seconds) //FIXME
+bool Replay::skip(int playerIndex)
 {
-  seconds = seconds;
-  
   if (!ReplayMode || (ReplayFile == NULL)) {
     sendMessage (ServerPlayer, playerIndex,
                  "Server is not in replay mode, or no file loaded");
     return false;
   }
 
-  // FIXME - just jump to the next packet for now
-  
   if (ReplayBuf.tail == NULL) {
     sendMessage (ServerPlayer, playerIndex, "can't skip, no more data");
     return false;
   }
+  
+  // FIXME - just jump to the next packet for now
+  //         no need for a resetStates(), yet
+  
+  // reset the replay observers' view of state  
+//  resetStates();
+//  for (int i = MaxPlayers; i < curMaxPlayers; i++) {
+//    player[i].setReplayState (ReplayNone);
+//  }
   
   CRtime newOffset = getCRtime() - ReplayBuf.tail->timestamp;
   CRtime diff = ReplayOffset - newOffset;
@@ -609,8 +632,10 @@ bool Replay::sendPackets () {
 
     p = delCRpacket (&ReplayBuf);
     
-    if (p == NULL) { // notify here?
-      Replaying = false;
+    if (p == NULL) {
+      Replay::init();
+      resetStates ();
+      sendMessage (ServerPlayer, AllPlayers, "Replay Finished");
       return false;
     }
 
@@ -618,8 +643,8 @@ bool Replay::sendPackets () {
             p->len, print_msg_code (p->code), p->data);
     fflush (stdout);
 
-    // send message to everyone
-    for (i = 0; i < curMaxPlayers; i++) {
+    // send message to all replay observers
+    for (i = MaxPlayers; i < curMaxPlayers; i++) {
       PlayerInfo &pi = player[i];
       bool faked = false;
       if (p->fake == FakedPacket) {
@@ -660,6 +685,12 @@ bool Replay::sendPackets () {
     free (p);
     
   } // while loop
+
+  if (ReplayBuf.tail == NULL) {
+    Replay::init();
+    sendMessage (ServerPlayer, AllPlayers, "Replay Complete");
+    return false;
+  }
     
   return true;
 }
@@ -698,7 +729,7 @@ void Replay::sendHelp (int playerIndex)
   sendMessage(ServerPlayer, playerIndex, "  /replay listfiles");
   sendMessage(ServerPlayer, playerIndex, "  /replay load <filename>");
   sendMessage(ServerPlayer, playerIndex, "  /replay play");
-  sendMessage(ServerPlayer, playerIndex, "  /replay skip <seconds>  (+/-)");
+  sendMessage(ServerPlayer, playerIndex, "  /replay skip");
   return;
 }
 
@@ -712,7 +743,7 @@ void Replay::sendHelp (int playerIndex)
 // at the time which this function was called.
 
 static bool
-saveTeamScores ()
+saveTeamStates ()
 {
   int i;
   char bufStart[MaxPacketLen];
@@ -793,12 +824,41 @@ savePlayerStates ()
 static bool
 saveStates ()
 {
-  saveTeamScores ();
+  saveTeamStates ();
   saveFlagStates ();
   savePlayerStates ();
   
   UpdateTime = getCRtime ();
   
+  return true;
+}
+
+static bool
+resetStates ()
+{
+  int i;
+  void *buf, *bufStart = getDirectMessageBuffer();
+
+  // reset team scores 
+  buf = nboPackUByte(bufStart, CtfTeams);
+  for (i = 0; i < CtfTeams; i++) {
+    buf = nboPackUShort(buf, i);
+    buf = team[i].team.pack(buf);
+  }
+  for (i = MaxPlayers; i < curMaxPlayers; i++) {
+    if (player[i].isPlaying()) {
+      directMessage(i, MsgTeamUpdate, (char*)buf-(char*)bufStart, bufStart);
+    }
+  }
+  
+  // reset players and flags using MsgReplayReset
+  buf = nboPackUByte(bufStart, MaxPlayers); // the last player to remove
+  for (i = MaxPlayers; i < curMaxPlayers; i++) {
+    if (player[i].isPlaying()) {
+      directMessage(i, MsgReplayReset, (char*)buf-(char*)bufStart, bufStart);
+    }
+  }
+
   return true;
 }
 
@@ -881,7 +941,7 @@ loadCRpacket (FILE *f)
     return NULL;
   }
   
-  printf ("loadCRpacket(): len = %4i, code = %s, data = %p\n",
+  DEBUG3 ("loadCRpacket(): len = %4i, code = %s, data = %p\n",
           p->len, print_msg_code (p->code), p->data);
 
   return p;  
@@ -893,6 +953,7 @@ saveHeader (ReplayHeader *h, FILE *f)
 {
   const int bufsize = sizeof(ReplayHeader);
   char buffer[bufsize];
+  int hashlen = strlen (hexDigest) + 1;
   void *buf;
   
   h = h;  // FIXME - avoid warnings
@@ -903,6 +964,9 @@ saveHeader (ReplayHeader *h, FILE *f)
 
   buf = nboPackUInt (buffer, ReplayMagic);
   buf = nboPackUInt (buf, ReplayVersion);
+  buf = nboPackUInt (buf, 0 /* place holder for seconds */);
+  buf = nboPackString (buf, hexDigest, hashlen);
+  buf = (char*)buf + (sizeof (h->worldhash) - hashlen);
   
   fwrite (buffer, bufsize, 1, f);
   
@@ -923,10 +987,14 @@ loadHeader (ReplayHeader *h, FILE *f)
     return false;
   }
 
-  fread (buffer, bufsize, 1, f);
+  if (fread (buffer, bufsize, 1, f) <= 0) {
+    fclose (f);
+    return false;
+  }
   
   buf = nboUnpackUInt (buffer, h->magic);
   buf = nboUnpackUInt (buf, h->version);
+  buf = nboUnpackUInt (buf, h->seconds);
   memcpy (h->worldhash, buf, sizeof (h->worldhash));
   
   return true;

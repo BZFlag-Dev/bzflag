@@ -65,7 +65,7 @@ int debugLevel = 0;
 
 static float maxWorldHeight = 0.0f;
 
-static char hexDigest[50];
+char hexDigest[50];
 
 #ifdef TIMELIMIT
 TimeKeeper gameStartTime;
@@ -3590,6 +3590,23 @@ int main(int argc, char **argv)
       DEBUG1("WARNING: unable to load the variable file\n");
     }
   }
+  
+  
+  if (Replay::enabled()) {
+    if (clOptions->maxTeam[ObserverTeam] == 0) {
+      std::cerr << "ERROR: Replay server requires at least 1 observer" << std::endl;
+#if defined(_WIN32)
+      WSACleanup();
+#endif /* defined(_WIN32) */
+      return 1;
+    }
+    else if (clOptions->maxTeam[ObserverTeam] > ReplayObservers) {
+      std::cerr << "WARNING: Replay observer count set to " << 
+        ReplayObservers << std::endl;
+      clOptions->maxTeam[ObserverTeam] = ReplayObservers;
+    }
+  }
+      
 
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {

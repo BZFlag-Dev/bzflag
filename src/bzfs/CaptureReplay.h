@@ -15,6 +15,7 @@
 
 #include "bzfs.h"
 
+const int ReplayObservers = 10;
 
 namespace Capture {
   extern bool init ();
@@ -47,7 +48,7 @@ namespace Replay {
   extern bool sendFileList (int playerIndex);
   extern bool loadFile (int playerIndex, const char *filename);
   extern bool play (int playerIndex);
-  extern bool skip (int playerIndex, int seconds); // forward or backwards
+  extern bool skip (int playerIndex);
   
   extern bool enabled ();
   extern bool playing ();

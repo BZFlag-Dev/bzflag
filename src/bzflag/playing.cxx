@@ -1250,6 +1250,36 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   return player[i];
 }
 
+static bool removePlayer (PlayerId id)
+{
+  int playerIndex = lookupPlayerIndex(id);
+
+  if (playerIndex < 0) {
+    return false;
+  }
+  
+  addMessage(player[playerIndex], "signing off");
+  if (myTank->getRecipient() == player[playerIndex])
+    myTank->setRecipient(0);
+  if (myTank->getNemesis() == player[playerIndex])
+    myTank->setNemesis(0);
+  delete player[playerIndex];
+  player[playerIndex] = NULL;
+
+  while ((playerIndex >= 0)
+         &&     (playerIndex+1 == curMaxPlayers)
+         &&     (player[playerIndex] == NULL))
+    {
+      playerIndex--;
+      curMaxPlayers--;
+    }
+  World::getWorld()->setCurMaxPlayers(curMaxPlayers);
+
+  updateNumPlayers();
+
+  return true;
+}
+
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t, void* msg)
 {
@@ -1383,26 +1413,7 @@ static void		handleServerMessage(bool human, uint16_t code,
   case MsgRemovePlayer: {
     PlayerId id;
     msg = nboUnpackUByte(msg, id);
-    int playerIndex = lookupPlayerIndex(id);
-    if (playerIndex >= 0) {
-      addMessage(player[playerIndex], "signing off");
-      if (myTank->getRecipient() == player[playerIndex])
-	myTank->setRecipient(0);
-      if (myTank->getNemesis() == player[playerIndex])
-	myTank->setNemesis(0);
-      delete player[playerIndex];
-      player[playerIndex] = NULL;
-
-      while ((playerIndex >= 0)
-	     &&     (playerIndex+1 == curMaxPlayers)
-	     &&     (player[playerIndex] == NULL))
-	{
-	  playerIndex--;
-	  curMaxPlayers--;
-	}
-      World::getWorld()->setCurMaxPlayers(curMaxPlayers);
-
-      updateNumPlayers();
+    if (removePlayer (id)) {
       checkScores = true;
     }
     break;
@@ -2178,6 +2189,29 @@ static void		handleServerMessage(bool human, uint16_t code,
     break;
   }
 
+  case MsgReplayReset: {
+    int i;
+    unsigned char lastPlayer;
+    msg = nboUnpackUByte(msg, lastPlayer);
+    
+    // remove players up to 'lastPlayer'
+    // any PlayerId above lastPlayer is a replay observers
+    for (i=0 ; i<lastPlayer ; i++) {
+      if (removePlayer (i)) {
+        checkScores = true;
+      }
+    }
+    
+    // remove all of the flags
+    for (i=0 ; i<numFlags; i++) {
+      Flag& flag = world->getFlag(i);
+      flag.owner = (PlayerId) -1;
+      flag.status = FlagNoExist;
+      world->initFlag (i);
+    }
+    break;
+  }
+  
     // inter-player relayed message
   case MsgPlayerUpdate:
   case MsgGMUpdate:

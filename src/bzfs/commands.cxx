@@ -1600,16 +1600,7 @@ void handleReplayCmd(int t, const char * message)
     Replay::play (t);
   }
   else if (strncmp (buf, "skip", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-    
-    if (*buf == '\0') {
-      Replay::sendHelp (t);
-    }
-    else {
-      int skip = atoi (buf);
-      Replay::skip (t, skip);
-    }
+    Replay::skip (t);
   }
   else {
     Replay::sendHelp (t);
