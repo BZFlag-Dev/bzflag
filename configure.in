@@ -41,6 +41,7 @@ if test $my_cv_curl_vers != NONE; then
   AC_SUBST(CURL_CFLAGS)
   AC_SUBST(CURL_LIBS)
 fi
+AC_ISC_POSIX
 
 # Just for kicks
 echo -n "checking for artificial intelligence for robots..." 1>&6
@@ -56,7 +57,7 @@ else
 fi
 
 #Checks for headers
-AC_CHECK_HEADERS([stdlib.h stdio.h string.h])
+AC_STDC_HEADERS
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
 AC_CHECK_HEADERS([cstdlib cstdio cstring])
@@ -66,6 +67,7 @@ AC_LANG_RESTORE
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
 #AC_CHECK_TYPES(socklen_t)
+AC_CONST
 
 AC_TRY_COMPILE([#include <sys/types.h>
 		#include <sys/socket.h>],
