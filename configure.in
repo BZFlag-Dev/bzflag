@@ -332,8 +332,8 @@ case $host_os in
 	fi;;
      macos|darwin*)
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
-	CPPFLAGS="$CPPFLAGS -Wall -Wstrict-prototypes";
-	CFLAGS="$CFLAGS -ansi -fno-exceptions -Wall -Wstrict-prototypes";
+	CPPFLAGS="$CPPFLAGS -ansi -pedantic -fno-exceptions -Wall -Wstrict-prototypes";
+	CFLAGS="$CFLAGS -ansi -pedantic -fno-exceptions -Wall -Wstrict-prototypes";
 	CXXFLAGS="$CXXFLAGS";;
      windows**)
 	CPPFLAGS="$CPPFLAGS /D \"WIN32\" /D \"_MBCS\"";
