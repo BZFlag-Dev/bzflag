@@ -245,49 +245,44 @@ static void setNoDelay(int fd)
   }
 }
 
+void sendFlagUpdate(FlagInfo &flag)
+{
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUShort(bufStart,1);
+  buf = flag.pack(buf);
+  broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+}
 
-void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
+// Update the player "playerIndex" with all the flags status
+static void sendFlagUpdate(int playerIndex)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
 
-  if (flagIndex != -1) {
-    buf = nboPackUShort(bufStart,1);
-    buf = FlagInfo::flagList[flagIndex].pack(buf);
-    if (playerIndex == -1)
-      broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-    else
-      directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-  }
-  else {
-    buf = nboPackUShort(bufStart,0); //placeholder
-    int cnt = 0;
-    int length = sizeof(uint16_t);
-    for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-	if (FlagInfo::flagList[flagIndex].flag.status != FlagNoExist) {
-	  if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t)) {
-	      nboPackUShort(bufStart, cnt);
-	      if (playerIndex == -1)
-		broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-	      else
-		directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-	      cnt = 0;
-	      length = sizeof(uint16_t);
-	      buf = nboPackUShort(bufStart,0); //placeholder
-	  }
-
-	  buf = FlagInfo::flagList[flagIndex].pack(buf);
-	  length += sizeof(uint16_t)+FlagPLen;
-	  cnt++;
-	}
-    }
-
-    if (cnt > 0) {
+  buf = nboPackUShort(bufStart,0); //placeholder
+  int cnt = 0;
+  int length = sizeof(uint16_t);
+  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+    if (FlagInfo::flagList[flagIndex].flag.status != FlagNoExist) {
+      if ((length + sizeof(uint16_t) + FlagPLen)
+	  > MaxPacketLen - 2*sizeof(uint16_t)) {
 	nboPackUShort(bufStart, cnt);
-	if (playerIndex == -1)
-	  broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-	else
-	  directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+	directMessage(playerIndex, MsgFlagUpdate,
+		      (char*)buf - (char*)bufStart, bufStart);
+	cnt    = 0;
+	length = sizeof(uint16_t);
+	buf    = nboPackUShort(bufStart,0); //placeholder
+      }
+
+      buf     = FlagInfo::flagList[flagIndex].pack(buf);
+      length += sizeof(uint16_t)+FlagPLen;
+      cnt++;
     }
+  }
+
+  if (cnt > 0) {
+    nboPackUShort(bufStart, cnt);
+    directMessage(playerIndex, MsgFlagUpdate,
+		  (char*)buf - (char*)bufStart, bufStart);
   }
 }
 
@@ -1688,7 +1683,7 @@ static void addPlayer(int playerIndex)
   // because of an error.
   if (!playerData->player.isBot()) {
     sendTeamUpdate(playerIndex);
-    sendFlagUpdate(-1, playerIndex);
+    sendFlagUpdate(playerIndex);
     GameKeeper::Player *otherData;
     for (int i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
       if (i != playerIndex) {
@@ -1811,22 +1806,6 @@ static void addPlayer(int playerIndex)
 }
 
 
-static void addFlag(int flagIndex)
-{
-  if (flagIndex < 0) {
-    // invalid flag
-    return;
-  }
-
-  // flag in now entering game
-  numFlagsInAir++;
-
-  FlagInfo::flagList[flagIndex].addFlag();
-
-  sendFlagUpdate(flagIndex);
-}
-
-
 void resetFlag(int flagIndex)
 {
   // NOTE -- must not be called until world is defined
@@ -1912,11 +1891,13 @@ void resetFlag(int flagIndex)
       else
 	pFlagInfo->flag.status = FlagOnGround;
     } else {
-      addFlag(flagIndex);
+      // flag in now entering game
+      numFlagsInAir++;
+      pFlagInfo->addFlag();
     }
   }
 
-  sendFlagUpdate(flagIndex);
+  sendFlagUpdate(*pFlagInfo);
 }
 
 
@@ -2663,7 +2644,7 @@ static void dropFlag(int playerIndex, float pos[3])
   broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
 
   // notify of new flag state
-  sendFlagUpdate(flagIndex);
+  sendFlagUpdate(drpFlag);
 
 }
 
@@ -4390,7 +4371,7 @@ int main(int argc, char **argv)
 	  if (FlagInfo::flagList[i].dropDone - tm <= 0.0f) {
 	    FlagInfo::flagList[i].flag.status = FlagOnGround;
 	    numFlagsInAir--;
-	    sendFlagUpdate(i);
+	    sendFlagUpdate(FlagInfo::flagList[i]);
 	  }
 	} else if (FlagInfo::flagList[i].flag.status == FlagGoing) {
 	  if (FlagInfo::flagList[i].dropDone - tm <= 0.0f) {
@@ -4426,10 +4407,13 @@ int main(int argc, char **argv)
       if ((float)bzfrand() > t) {
 	// find an empty slot for an extra flag
 	for (i = numFlags - clOptions->numExtraFlags; i < numFlags; i++)
-	  if (FlagInfo::flagList[i].flag.type == Flags::Null)
+	  if (FlagInfo::flagList[i].flag.type == Flags::Null) {
+	    // flag in now entering game
+	    numFlagsInAir++;
+	    FlagInfo::flagList[i].addFlag();
+	    sendFlagUpdate(FlagInfo::flagList[i]);
 	    break;
-	if (i != numFlags)
-	  addFlag(i);
+	  }
 	lastSuperFlagInsertion = tm;
       }
     }

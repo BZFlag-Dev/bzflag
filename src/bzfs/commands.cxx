@@ -83,7 +83,7 @@ extern TeamInfo team[NumTeams];
 extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
 extern int numFlags;
 extern void zapFlag(int flagIndex);
-extern void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1);
+extern void sendFlagUpdate(FlagInfo &flag);
 extern void resetFlag(int flagIndex);
 
 // externs that countdown requires
@@ -565,7 +565,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
 	FlagInfo::flagList[i].flag.status = FlagGoing;
 	if (!FlagInfo::flagList[i].required)
 	  FlagInfo::flagList[i].flag.type = Flags::Null;
-	sendFlagUpdate(i);
+	sendFlagUpdate(FlagInfo::flagList[i]);
       }
     }
 
