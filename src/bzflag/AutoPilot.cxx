@@ -94,6 +94,10 @@ ShotPath *findWorstBullet(float &minDistance)
     
       if (shot->getFlag() == Flags::InvisibleBullet)
         continue; //Theoretically Roger could triangulate the sound
+      if (player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
+      		(myTank->getFlag() == Flags::PhantomZone && !myTank->isFlagActive()) ||
+      		(myTank->getFlag() != Flags::PhantomZone))
+    		continue;
 			if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
 				continue; //cloaked tanks can't die from lasers
 
