@@ -75,6 +75,7 @@ class HUDRenderer {
     void		setAlert(int num, const char* string, float duration,
 						bool warning = false);
     void		setFlagHelp(FlagId, float duration);
+    void		initCracks();
     void		setCracks(bool showCracks);
     void		setMarker(int index, bool = true);
     void		setMarkerHeading(int index, float heading);
@@ -101,7 +102,7 @@ class HUDRenderer {
     void		hudSColor3fv(const GLfloat*);
     void		renderAlerts(void);
     void		renderStatus(void);
-    void		renderCracks(void);
+    void		renderCracks();
     void		renderOptions(SceneRenderer&);
     void		renderCompose(SceneRenderer&);
     void		renderScoreboard(void);
@@ -116,7 +117,7 @@ class HUDRenderer {
 					float x1, float x2, float x3, float y);
     void		drawTeamScore(int team, float x, float y);
 
-    void		makeCrack(int n, int l, float a);
+    void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
     std::string		makeHelpString(const char* help) const;
 
   private:
@@ -203,6 +204,7 @@ class HUDRenderer {
     bool		showCompose;
 
     GLfloat		cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1][2];
+    TimeKeeper		crackStartTime;
     bool		showCracks;
 
     Marker		marker[MaxHUDMarkers];

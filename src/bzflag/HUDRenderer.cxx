@@ -259,18 +259,6 @@ void			HUDRenderer::resize(bool firstTime)
   headingMarkSpacing = (int)(5.0f * float(maxMotionSize) / headingOffset);
   altitudeMarkSpacing = floorf(5.0f * float(maxMotionSize) / altitudeOffset);
 
-  // initialize cracks
-  for (int i = 0; i < HUDNumCracks; i++) {
-    const float d = 0.5f * float(maxMotionSize) * ((float)bzfrand() + 0.5f);
-    const float a = 2.0f * M_PI * (float(i) + (float)bzfrand()) /
-							float(HUDNumCracks);
-    cracks[i][0][0] = 0.0f;
-    cracks[i][0][1] = 0.0f;
-    cracks[i][1][0] = d * cosf(a);
-    cracks[i][1][1] = d * sinf(a);
-    makeCrack(i, 1, a);
-  }
-
   // pick appropriate font sizes
   setBigFontSize(w, vh);
   setAlertFontSize(w, vh);
@@ -552,8 +540,26 @@ void			HUDRenderer::setFlagHelp(FlagId id, float duration)
       flagHelpLines++;
 }
 
+void			HUDRenderer::initCracks()
+{
+    for (int i = 0; i < HUDNumCracks; i++) {
+	const float d = 0.90f * float(maxMotionSize) * ((float)bzfrand() + 0.90f);
+	const float a = 2.0f * M_PI * (float(i) + (float)bzfrand()) /
+							float(HUDNumCracks);
+	cracks[i][0][0] = 0.0f;
+	cracks[i][0][1] = 0.0f;
+	cracks[i][1][0] = d * cosf(a);
+	cracks[i][1][1] = d * sinf(a);
+	makeCrack(cracks, i, 1, a);
+    }
+}
+
 void			HUDRenderer::setCracks(bool _showCracks)
 {
+  if ((showCracks != _showCracks) && _showCracks) {
+	initCracks();
+	crackStartTime = TimeKeeper::getCurrent();
+  }
   showCracks = _showCracks;
 }
 
@@ -628,21 +634,21 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
   return msg;
 }
 
-void			HUDRenderer::makeCrack(int n, int l, float a)
+void			HUDRenderer::makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a)
 {
   if (l >= (1 << (HUDCrackLevels - 1))) return;
   float d = 0.5f * float(maxMotionSize) *
 		((float)bzfrand() + 0.5f) * powf(0.5f, 0.69f * logf(float(l)));
   float newAngle = a + M_PI * (float)bzfrand() / float(HUDNumCracks);
-  cracks[n][2*l][0] = cracks[n][l][0] + d * cosf(newAngle);
-  cracks[n][2*l][1] = cracks[n][l][1] + d * sinf(newAngle);
-  makeCrack(n, 2*l, newAngle);
+  crackpattern[n][2*l][0] = crackpattern[n][l][0] + d * cosf(newAngle);
+  crackpattern[n][2*l][1] = crackpattern[n][l][1] + d * sinf(newAngle);
+  makeCrack(crackpattern, n, 2*l, newAngle);
   d = 0.5f * float(maxMotionSize) *
 		((float)bzfrand() + 0.5f) * powf(0.5f, 0.69f * logf(float(l)));
   newAngle = a - M_PI * (float)bzfrand() / float(HUDNumCracks);
-  cracks[n][2*l+1][0] = cracks[n][l][0] + d * cosf(newAngle);
-  cracks[n][2*l+1][1] = cracks[n][l][1] + d * sinf(newAngle);
-  makeCrack(n, 2*l+1, newAngle);
+  crackpattern[n][2*l+1][0] = crackpattern[n][l][0] + d * cosf(newAngle);
+  crackpattern[n][2*l+1][1] = crackpattern[n][l][1] + d * sinf(newAngle);
+  makeCrack(crackpattern, n, 2*l+1, newAngle);
 }
 
 static const float dimFactor = 0.2f;
@@ -948,8 +954,13 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
   }
 }
 
-void			HUDRenderer::renderCracks(void)
+void			HUDRenderer::renderCracks()
 {
+  double delta = (TimeKeeper::getCurrent() - crackStartTime) * 5.0;
+  if (delta > 1.0)
+     delta = 1.0;
+  int maxLevels = (int) (HUDCrackLevels * delta);
+
   glPushMatrix();
   glTranslatef(GLfloat(window.getWidth() >> 1),
                GLfloat(window.getViewHeight() >> 1), 0.0f);
@@ -959,7 +970,7 @@ void			HUDRenderer::renderCracks(void)
     for (int i = 0; i < HUDNumCracks; i++) {
       glVertex2fv(cracks[i][0]);
       glVertex2fv(cracks[i][1]);
-      for (int j = 0; j < HUDCrackLevels-1; j++) {
+      for (int j = 0; j < maxLevels-1; j++) {
 	const int num = 1 << j;
 	for (int k = 0; k < num; k++) {
 	  glVertex2fv(cracks[i][num + k]);
