@@ -16,21 +16,30 @@ echo "The following might need to be added to Makefile.am"
 pwd=`pwd`
 dirs=`find . -type f -name Entries | sed -e 's|/CVS/Entries||'`
 for dir in $dirs ; do
- if [ -f $dir/Makefile.am ] ; then
-  cd $dir
-  files=`grep '^/' CVS/Entries | sed -e 's|/\([^/]*\)/.*|\1|' | sort`
-  for file in $files ; do
-   case $file in
-    Makefile.am|.cvsignore)
-    ;;
-   *)
-    grep -q $file Makefile.am || \
-     echo "$dir/$file"
-    ;;
-   esac
-  done
-  cd $pwd
- else
-  echo "$dir/Makefile.am"
- fi
+  if [ -f $dir/Makefile.am ] ; then
+    cd $dir
+    files=`grep '^/' CVS/Entries | sed -e 's|/\([^/]*\)/.*|\1|' | sort`
+    for file in $files ; do
+      case $file in
+	Makefile.am|.cvsignore)
+	;;
+	*)
+	grep -q $file Makefile.am || \
+	  echo "$dir/$file"
+	;;
+      esac
+    done
+    cd $pwd
+  else
+    echo "$dir/Makefile.am"
+  fi
 done
+
+# Local Variables: ***
+# mode: sh ***
+# tab-width: 8 ***
+# sh-basic-offset: 2 ***
+# sh-indentation: 2 ***
+# indent-tabs-mode: t ***
+# End: ***
+# ex: shiftwidth=2 tabstop=8
