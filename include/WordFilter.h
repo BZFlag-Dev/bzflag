@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <bitset>
 #include <fstream>
 #include <iostream>
 
