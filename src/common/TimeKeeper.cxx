@@ -28,8 +28,9 @@ static double		qpcFrequency = 0.0;
 TimeKeeper		TimeKeeper::currentTime;
 TimeKeeper		TimeKeeper::tickTime;
 TimeKeeper		TimeKeeper::sunExplodeTime;
+TimeKeeper		TimeKeeper::nullTime;
 
-const TimeKeeper&	TimeKeeper::getCurrent()
+const TimeKeeper&	TimeKeeper::getCurrent(void)
 {
   // if not first call then update current time, else use default initial time
 #if !defined(_WIN32)
@@ -73,20 +74,26 @@ const TimeKeeper&	TimeKeeper::getCurrent()
   return currentTime;
 }
 
-const TimeKeeper&	TimeKeeper::getTick() // const
+const TimeKeeper&	TimeKeeper::getTick(void) // const
 {
   return tickTime;
 }
 
-void			TimeKeeper::setTick()
+void			TimeKeeper::setTick(void)
 {
   tickTime = getCurrent();
 }
 
-const TimeKeeper& TimeKeeper::getSunExplodeTime()
+const TimeKeeper& TimeKeeper::getSunExplodeTime(void)
 {
-	sunExplodeTime.seconds = 10000.0 * 365 * 24 * 60 * 60;
-	return sunExplodeTime;
+  sunExplodeTime.seconds = 10000.0 * 365 * 24 * 60 * 60;
+  return sunExplodeTime;
+}
+
+const TimeKeeper& TimeKeeper::getNullTime(void)
+{
+  nullTime.seconds = 0;
+  return nullTime;
 }
 
 // ex: shiftwidth=2 tabstop=8

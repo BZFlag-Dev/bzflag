@@ -25,6 +25,12 @@
 
 #include "common.h"
 
+/** TimeKeeper keeps time.  It's useful to determine how much time has
+ * elapsed from some other point in time.  Use getCurrent() to return a
+ * timekeeper object set to the current time.  You can then use subsequent
+ * calls to getCurrent and subtract the second from the first to get an
+ * elapsed float time value.
+ */
 class TimeKeeper {
   public:
 			TimeKeeper();
@@ -35,18 +41,29 @@ class TimeKeeper {
     float		operator-(const TimeKeeper&) const;
     TimeKeeper&		operator+=(float);
     bool		operator<=(const TimeKeeper&) const;
-    float               getSeconds() const;
 
-    static const TimeKeeper&	getCurrent();
-    static const TimeKeeper&	getTick(); // const
-	static const TimeKeeper&	getSunExplodeTime();
-    static void			setTick();
+    /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
+    float               getSeconds(void) const;
 
-  private:
+    /** returns a timekeeper representing the current time */
+    static const TimeKeeper&	getCurrent(void);
+
+    /** sets the time to the current time (recalculates) */
+    static void			setTick(void);
+    /** returns a timekeeper that is updated periodically via setTick */
+    static const TimeKeeper&	getTick(void); // const
+
+    /** returns a timekeeper representing +Inf */
+    static const TimeKeeper&	getSunExplodeTime(void);
+    /** returns a timekeeper representing an unset timekeeper */
+    static const TimeKeeper&	getNullTime(void);
+
+private:
     double		seconds;
     static TimeKeeper	currentTime;
     static TimeKeeper	tickTime;
-	static TimeKeeper	sunExplodeTime;
+    static TimeKeeper	sunExplodeTime;
+    static TimeKeeper	nullTime;
 };
 
 //
@@ -91,7 +108,7 @@ inline bool		TimeKeeper::operator<=(const TimeKeeper& t) const
   return seconds <= t.seconds;
 }
 
-inline float		TimeKeeper::getSeconds() const
+inline float		TimeKeeper::getSeconds(void) const
 {
   return seconds;
 }
