@@ -51,8 +51,6 @@ bzflag_SOURCES =			\
 	daylight.h			\
 	texture.cxx			\
 	texture.h			\
-	resources.cxx			\
-	resources.h			\
 	sound.cxx			\
 	sound.h				\
 	bzflag.cxx			\

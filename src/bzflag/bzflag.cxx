@@ -36,7 +36,6 @@
 #include "OpenGLGState.h"
 #include "OpenGLTexture.h"
 #include "SceneRenderer.h"
-#include "resources.h"
 #include "MainWindow.h"
 #include "Address.h"
 #include "Protocol.h"
