@@ -17,7 +17,7 @@ end
 group
   font Toga Serif
   flags bold
-  sizes 16 32
+  sizes 12 16 32
   filename TogaSerifBold_$s
 end
 
