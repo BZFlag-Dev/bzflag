@@ -102,10 +102,25 @@ namespace Flags {
 					    "Wide Angle (-WA):  Fish-eye lens distorts view.");
 }
 
-void*			Flag::pack(void* buf) const
+void* FlagDesc::pack(void* buf) const
 {
   buf = nboPackUByte(buf, desc->flagAbbv[0]);
   buf = nboPackUByte(buf, desc->flagAbbv[1]);
+  return buf;
+}
+
+void* FlagDesc::unpack(void* buf, FlagDesc &desc)
+{
+  unsigned char abbv[3] = {0,0,0};
+  buf = nboUnpackUByte(buf, abbv[0]);
+  buf = nboUnpackUByte(buf, abbv[1]);
+  desc = Flag::getDescFromAbbreviation((const char *)abbv);
+  return buf;
+}
+
+void*			Flag::pack(void* buf) const
+{
+  buf = desc->pack(buf);
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUByte(buf, owner);
@@ -121,12 +136,8 @@ void*			Flag::pack(void* buf) const
 void*			Flag::unpack(void* buf)
 {
   uint16_t data;
-  unsigned char abbv[3] = {0,0,0};
 
-  buf = nboUnpackUByte(buf, abbv[0]);
-  buf = nboUnpackUByte(buf, abbv[1]);
-  desc = Flag::getDescFromAbbreviation((const char *)abbv);
-
+  buf = FlagDesc::unpack(buf, desc);
   buf = nboUnpackUShort(buf, data); status = FlagStatus(data);
   buf = nboUnpackUShort(buf, data); type = FlagType(data);
   buf = nboUnpackUByte(buf, owner);

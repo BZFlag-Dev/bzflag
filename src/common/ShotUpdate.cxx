@@ -20,7 +20,7 @@
 void*			ShotUpdate::pack(void* buf) const
 {
   buf = nboPackUByte(buf, player);
-  buf = nboPackUShort(buf, id);
+  buf = flagnboPackUShort(buf, id);
   buf = nboPackVector(buf, pos);
   buf = nboPackVector(buf, vel);
   buf = nboPackFloat(buf, dt);
