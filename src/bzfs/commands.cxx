@@ -103,14 +103,14 @@ void handleResetCmd(int t, const char *message)
 }
 
 
-void handleShutdownserverCmd(int t, const char *)
+void handleShutdownserverCmd(int, const char *)
 {
   done = true;
   return;
 }
 
 
-void handleSuperkillCmd(int t, const char *)
+void handleSuperkillCmd(int, const char *)
 {
   for (int i = 0; i < curMaxPlayers; i++)
     removePlayer(i, "/superkill");
@@ -121,7 +121,7 @@ void handleSuperkillCmd(int t, const char *)
 }
 
 
-void handleGameoverCmd(int t, const char *message)
+void handleGameoverCmd(int t, const char *)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, t);
@@ -134,7 +134,7 @@ void handleGameoverCmd(int t, const char *message)
 }
 
 
-void handleCountdownCmd(int t, const char *message)
+void handleCountdownCmd(int t, const char *)
 {
 #ifdef TIMELIMIT
   // /countdown starts timed game, if start is manual, everyone is allowed to
@@ -143,7 +143,7 @@ void handleCountdownCmd(int t, const char *message)
     gameStartTime = TimeKeeper::getCurrent();
     clOptions->timeElapsed = 0.0f;
     countdownActive = true;
-    
+
     char msg[2];
     void *buf = msg;
     nboPackUShort(buf, (uint16_t)(int)clOptions->timeLimit);
@@ -288,7 +288,7 @@ void handleBanCmd(int t, const char *message)
 
   std::string msg = message;
   std::vector<std::string> argv = string_util::tokenize( msg, " \t", 4 );
-  
+
   //    for(int i = 0; i < argc; i++)
   //      printf("argv[%d] = %s\n", i, argv[i] );
 
@@ -302,13 +302,13 @@ void handleBanCmd(int t, const char *message)
     int durationInt = 0;
     std::string ip = argv[1];
     std::string reason;
-    
+
     if( argv.size() >= 3 )
       durationInt = string_util::parseDuration(argv[2]);
-    
+
     if( argv.size() == 4 )
       reason = argv[3];
-    
+
     if (clOptions->acl.ban(ip, player[t].callSign, durationInt, reason.c_str())){
       strcpy(reply, "IP pattern added to banlist");
       char kickmessage[MessageLen];
@@ -316,17 +316,17 @@ void handleBanCmd(int t, const char *message)
 	if ((player[i].fd != NotConnected) && (!clOptions->acl.validate(player[i].taddr.sin_addr))) {
 	  sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
 	  sendMessage(ServerPlayer, i, kickmessage, true);
-	  if( reason.length() > 0 ){ 
-	    sprintf(kickmessage,"Reason given: %s", reason.c_str()); 
+	  if( reason.length() > 0 ){
+	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
 	    sendMessage(ServerPlayer, i, kickmessage, true);
 	  }
 	  removePlayer(i, "/ban");
 	}
-      } 
+      }
     }
     else {
       strcpy(reply, "malformed address");
-    } 
+    }
     sendMessage(ServerPlayer, t, reply, true);
   }
   return;
@@ -409,7 +409,7 @@ void handleFlaghistoryCmd(int t, const char *)
       char flag[MessageLen];
       sprintf(reply,"%-16s : ",player[i].callSign );
       std::vector<FlagDesc*>::iterator fhIt = player[i].flagHistory.begin();
-      
+
       while (fhIt != player[i].flagHistory.end()) {
 	FlagDesc * fDesc = (FlagDesc*)(*fhIt);
 	if (fDesc->flagType == FlagNormal)
@@ -529,13 +529,13 @@ void handleIdentifyCmd(int t, const char *message)
       if (verifyUserPassword(player[t].regName.c_str(), message + 10)) {
 	sendMessage(ServerPlayer, t, "Password Accepted, welcome back.");
 	player[t].accessInfo.verified = true;
-	
+
 	// get their real info
 	PlayerAccessInfo &info = getUserInfo(player[t].regName);
 	player[t].accessInfo.explicitAllows = info.explicitAllows;
 	player[t].accessInfo.explicitDenys = info.explicitDenys;
 	player[t].accessInfo.groups = info.groups;
-	
+
 	DEBUG1("Identify %s\n",player[t].regName.c_str());
       } else {
 	player[t].accessInfo.loginAttempts++;
@@ -566,7 +566,7 @@ void handleRegisterCmd(int t, const char *message)
 	setUserPassword(player[t].regName.c_str(), pass.c_str());
 	setUserInfo(player[t].regName, info);
 	DEBUG1("Register %s %s\n",player[t].regName.c_str(),pass.c_str());
-	
+
 	sendMessage(ServerPlayer, t, "Callsign registration confirmed,"
 		    " please /identify to login");
 	  updateDatabases();
@@ -590,9 +590,9 @@ void handleGhostCmd(int t, const char *message)
   } else {
     std::string ghostie(p1+1,p2-p1-1);
     std::string ghostPass=p2+2;
-    
+
     makeupper(ghostie);
-    
+
     int user = getPlayerIDByRegName(ghostie);
     if (user == -1) {
       sendMessage(ServerPlayer, t, "There is no user logged in by that name");
@@ -682,7 +682,7 @@ void handleGrouplistCmd(int t, const char *)
 void handleShowgroupCmd(int t, const char *message)
 {
   std::string settie;
-  
+
   if (strlen(message) == 10) {	 // show own groups
     if (player[t].accessInfo.verified) {
       settie = player[t].regName;
@@ -703,12 +703,12 @@ void handleShowgroupCmd(int t, const char *message)
   } else {
     sendMessage(ServerPlayer, t, "No permission!");
   }
-  
+
   // something is wrong
   if (settie!="") {
     if (userExists(settie)) {
       PlayerAccessInfo &info = getUserInfo(settie);
-      
+
       std::string line = "Groups for ";
       line += settie;
       line += ", ";
@@ -736,7 +736,7 @@ void handleGrouppermsCmd(int t, const char *)
   while (itr != groupAccess.end()) {
     line = itr->first + ":   ";
     sendMessage(ServerPlayer, t, line.c_str());
-    
+
     for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
       if (itr->second.explicitAllows.test(i)) {
 	line = "     ";
@@ -760,10 +760,10 @@ void handleSetgroupCmd(int t, const char *message)
   } else {
     string settie(p1+1, p2-p1-1);
     string group=p2+2;
-    
+
     makeupper(settie);
     makeupper(group);
-    
+
     if (userExists(settie)) {
       bool canset = true;
       if (!hasPerm(t, PlayerAccessInfo::setAll))
@@ -772,7 +772,7 @@ void handleSetgroupCmd(int t, const char *message)
 	sendMessage(ServerPlayer, t, "You do not have permission to set this group");
       } else {
 	PlayerAccessInfo &info = getUserInfo(settie);
-	
+
 	if (addGroup(info, group)) {
 	  sendMessage(ServerPlayer, t, "Group Add successful");
 	  int getID = getPlayerIDByRegName(settie);
@@ -816,7 +816,7 @@ void handleRemovegroupCmd(int t, const char *message)
 	sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
       } else {
 	PlayerAccessInfo &info = getUserInfo(settie);
-	
+
 	if (removeGroup(info, group)) {
 	  sendMessage(ServerPlayer, t, "Group Remove successful");
 	  int getID = getPlayerIDByRegName(settie);
@@ -897,7 +897,7 @@ void handlePollCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   DEBUG2("Player has permission\n");
 
   /* make sure that there is a poll arbiter */
@@ -906,7 +906,7 @@ void handlePollCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   DEBUG2("BZDB poll value is not empty\n");
 
   // only need to do this once
@@ -922,7 +922,7 @@ void handlePollCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   DEBUG2("The arbiter says there is not another poll active\n");
 
   // get available voter count
@@ -935,7 +935,7 @@ void handlePollCmd(int t, const char *message)
   }
 
   DEBUG2("There are %d available players for %d votes required\n", available, clOptions->votesRequired);
-  
+
   /* make sure there are enough players to even make a poll that has a chance
    * of succeeding (not counting the person being acted upon)
    */
@@ -950,7 +950,7 @@ void handlePollCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   std::string arguments = &message[5];
   std::string cmd = "";
 
@@ -962,7 +962,7 @@ void handlePollCmd(int t, const char *message)
 	 (isWhitespace(arguments[startPosition]))) {
     startPosition++;
   }
-  
+
   DEBUG2("Start position is %d\n", (int)startPosition);
 
   /* find the end of the command */
@@ -987,7 +987,6 @@ void handlePollCmd(int t, const char *message)
   /* handle subcommands */
 
   if ((cmd == "ban") || (cmd == "kick")) {
-    
     std::string nick;
 
     arguments = arguments.substr(endPosition);
@@ -1031,7 +1030,7 @@ void handlePollCmd(int t, const char *message)
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
-    
+
     /* make sure the requested player is actually here */
     bool foundPlayer=false;
     std::string playerIP = "";
@@ -1042,14 +1041,14 @@ void handlePollCmd(int t, const char *message)
 	break;
       }
     }
-    
+
     if (!foundPlayer) {
       /* wrong name? */
       sprintf(reply, "The player specified for a %s vote is not here", cmd.c_str());
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
-      
+
     /* create and announce the new poll */
     if (cmd == "ban") {
       if (arbiter->pollToBan(nick.c_str(), player[t].callSign, playerIP) == false) {
@@ -1070,10 +1069,10 @@ void handlePollCmd(int t, const char *message)
 	sendMessage(ServerPlayer, AllPlayers, reply, true);
       }
     }
-      
+
     // set the number of available voters
     arbiter->setAvailableVoters(available);
-      
+
     // keep track of who is allowed to vote
     for (int j=0; j < curMaxPlayers; j++) {
       // anyone on the server (even observers) are eligible to vote
@@ -1094,32 +1093,25 @@ void handlePollCmd(int t, const char *message)
     }
 
   } else if (cmd == "vote") {
-    
     if (!hasPerm(t, PlayerAccessInfo::vote)) {
       sprintf(reply,"%s, you do not presently have permission to vote (must /identify first)", player[t].callSign);
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
-    
+
     /* !!! needs to be handled by the /vote command  */
     sprintf(reply,"%s, your vote has been recorded -- unimplemented", player[t].callSign);
     sendMessage(ServerPlayer, t, reply, true);
-    
-    
   } else if (cmd == "veto") {
-    
     if (!hasPerm(t, PlayerAccessInfo::veto)) {
       sprintf(reply,"%s, you do not have permission to veto the poll", player[t].callSign);
       sendMessage(ServerPlayer, t, reply, true);
     }
-    
+
     /* !!! needs to be handled by the /veto command  */
     sprintf(reply,"%s, you have aborted the poll -- unimplemented", player[t].callSign);
     sendMessage(ServerPlayer, t, reply, true);
-    
-    
   } else {
-    
     sprintf(reply,"Invalid option to the poll command");
     sendMessage(ServerPlayer, t, reply, true);
     sprintf(reply,"Usage: /poll ban|kick playername");
@@ -1129,7 +1121,7 @@ void handlePollCmd(int t, const char *message)
     sprintf(reply,"    or /poll veto");
     sendMessage(ServerPlayer, t, reply, true);
   } /* end handling of poll subcommands */
-  
+
   return;
 }
 
@@ -1161,17 +1153,17 @@ void handleVoteCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   std::string voteCmd = &message[5];
   std::string answer;
 
-  /* find the start of the vote answer */  
+  /* find the start of the vote answer */
   size_t startPosition = 0;
   while ((startPosition < voteCmd.size()) &&
 	 (isWhitespace(voteCmd[startPosition]))) {
     startPosition++;
   }
-  
+
   /* stash the answer ('yes', 'no', etc) in lowercase to simplify comparison */
   for (size_t i = startPosition;  i < voteCmd.size() && !isWhitespace(voteCmd[i]); i++) {
     answer += tolower(voteCmd[i]);
@@ -1240,7 +1232,7 @@ void handleVoteCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   if (!cast) {
     /* player was unable to cast their vote; probably already voted */
     sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
@@ -1262,33 +1254,33 @@ void handleVetoCmd(int t, const char * /*message*/)
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   /* make sure that there is a poll arbiter */
   if (BZDB->isEmpty("poll")) {
     sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   // only need to do this once
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
-  
+
   /* make sure there is an unexpired poll */
   if ((arbiter != NULL) && !arbiter->knowsPoll()) {
     sprintf(reply, "%s, there is presently no active poll to veto", player[t].callSign);
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
-  
+
   /* poof */
   arbiter->forgetPoll();
-  
+
   sprintf(reply,"%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
   sendMessage(ServerPlayer, t, reply, true);
-  
+
   sprintf(reply,"The poll was cancelled by %s", player[t].callSign);
   sendMessage(ServerPlayer, AllPlayers, reply, true);
- 
+
   return;
 }
 
