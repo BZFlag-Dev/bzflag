@@ -234,6 +234,10 @@ SOURCE=..\..\src\common\TimeKeeper.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\common\URLManager.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\common\VotingBooth.cxx
 # End Source File
 # Begin Source File
@@ -387,6 +391,10 @@ SOURCE=..\..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\URLManager.h
 # End Source File
 # Begin Source File
 

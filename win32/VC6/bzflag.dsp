@@ -298,6 +298,10 @@ SOURCE=..\..\src\bzflag\callbacks.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ClientAuthentication.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\clientCommands.cxx
 # End Source File
 # Begin Source File
@@ -659,6 +663,10 @@ SOURCE=..\..\include\CallbackList.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\callbacks.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ClientAuthentication.h
 # End Source File
 # Begin Source File
 
