@@ -22,9 +22,6 @@
 #include "TextUtils.h"
 
 
-// static filter initialized on first-use
-WordFilter *PlayerInfo::serverSpoofingFilter = (WordFilter *)NULL;
-
 PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
   spamWarns(0), lastMsgTime(TimeKeeper::getCurrent()), paused(false),
@@ -143,9 +140,8 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   cleanEMail();
 
   // spoof filter holds "SERVER" for robust name comparisons
-  if (serverSpoofingFilter == NULL) {
-    serverSpoofingFilter = new WordFilter();
-    serverSpoofingFilter->addToFilter(std::string("SERVER"), std::string(""));
+  if (serverSpoofingFilter.wordCount() == 0) {
+    serverSpoofingFilter.addToFilter(std::string("SERVER"), std::string(""));
   }
 
   // don't allow empty callsign
@@ -156,7 +152,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   }
 
   // no spoofing the server name
-  if (serverSpoofingFilter->filter(callSign)) {
+  if (serverSpoofingFilter.filter(callSign)) {
     rejectCode   = RejectRepeatCallsign;
     strcpy(rejectMsg, "The callsign specified is already in use.");
     return false;

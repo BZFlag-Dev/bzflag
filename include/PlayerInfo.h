@@ -168,7 +168,7 @@ private:
   unsigned short int tracker;
 
   // just need one of these for 
-  static WordFilter *serverSpoofingFilter;
+  static WordFilter serverSpoofingFilter;
 };
 
 
