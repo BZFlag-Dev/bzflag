@@ -252,7 +252,7 @@ stay alive.
 .TP
 \fB-tkkr\fI percent\fR
 Kicks players whose team killing to normal kill ratio is greater than
-\fIpercent\fR. A start up grace period is given to players.
+\fIpercent\fR [1-100]. A start up grace period is given to players.
 .TP
 \fB-ttl\fI time-to-live\fR
 Sets the maximum number of hops a ``ping'' reply will take.  This
