@@ -4,6 +4,7 @@
 * add new updates here without heading until a release
 
 * optional tank labels for roaming - Frank Thilo, Tim Riker
+* draw tank lights correctly for (T)(N)(O) tanks - Dave Brosius
 * new GUI options menu - Frank Thilo
 * exclude observers from /idlestats list - Frank Thilo
 * server based scoring - Dave Brosius, Tim Riker
