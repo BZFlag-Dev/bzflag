@@ -115,6 +115,34 @@ SOURCE=..\src\bzfs\commands.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\CustomBase.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomBox.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomGate.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomLink.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomPyramid.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomWeapon.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomWorld.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzfs\FlagInfo.cxx
 # End Source File
 # Begin Source File
@@ -128,6 +156,14 @@ SOURCE=..\src\bzfs\TextChunkManager.cxx
 # Begin Source File
 
 SOURCE=..\src\bzfs\VotingArbiter.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldFileObject.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldFileObstacle.cxx
 # End Source File
 # Begin Source File
 
@@ -176,6 +212,34 @@ SOURCE=..\src\bzfs\commands.h
 # Begin Source File
 
 SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomBase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomGate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomLink.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomPyramid.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomWeapon.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\CustomWorld.h
 # End Source File
 # Begin Source File
 
@@ -256,6 +320,14 @@ SOURCE=..\src\bzfs\VotingArbiter.h
 # Begin Source File
 
 SOURCE=..\include\WordFilter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldFileObject.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldFileObstacle.h
 # End Source File
 # Begin Source File
 
