@@ -379,7 +379,6 @@ case $host_os in
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
 	CPPFLAGS="$CPPFLAGS -Wall -W"
-	CFLAGS="$CFLAGS -ansi";
 	case $host_vendor in
 	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
@@ -390,12 +389,10 @@ case $host_os in
 	#if test x$no_sdl = xyes; then
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
-	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu"
-	CFLAGS="$CFLAGS -ansi";;
+	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";;
      mingw32)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";
-	CFLAGS="$CFLAGS -ansi";;
+	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";;
      solaris*)
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
 	if $sun_wspro; then
@@ -405,7 +402,7 @@ case $host_os in
 	fi;;
      macos|darwin*)
 	CPPFLAGS="$CPPFLAGS -pipe -ansi -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";
-	CFLAGS="$CFLAGS -pipe -ansi -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";;
+	CFLAGS="$CFLAGS -pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";;
      irix)
 	CPPFLAGS="$CPPFLAGS -Wall";
 	if test x$host_cpu = xmips64; then
