@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" 
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!--
  Copyright (c) 1993 - 2003 Tim Riker
@@ -46,7 +46,7 @@
     <sect1>
 
       <title>Introduction</title>
-	
+
       <para>BZFlag has a voting system in place to request input from
       the players on a server in order to perform some action.
       Presently, this action includes a request to kick or ban some
@@ -208,7 +208,7 @@
     </sect1>
 
     <sect1>
-      
+
       <title>vote command</title>
 
       <para><command>/vote {answer}</command></para>
@@ -301,7 +301,7 @@
 
   </chapter>
 
-</book>  
+</book>
 
 <!-- Local Variables: -->
 <!-- mode: SGML -->

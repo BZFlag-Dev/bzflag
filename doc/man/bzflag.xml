@@ -15,7 +15,7 @@
 <refsynopsisdiv id='synopsis'>
 <cmdsynopsis>
   <command>bzflag</command>
-    
+
     <arg choice='opt'>-3dfx </arg>
     <arg choice='opt'>-no3dfx </arg>
     <arg choice='opt'>-anonymous </arg>
@@ -230,10 +230,10 @@ higher screen resolution if a depth buffer isn't allocated.</para>
 <varlistentry>
 <term>[<emphasis remap='I'>callsign@</emphasis>]<emphasis remap='I'>server</emphasis>[<emphasis remap='I'>:port</emphasis>]</term>
 <listitem>
-<para>Specifies the callsign you want, and the host running the <emphasis remap='B'>bzfs</emphasis> 
-server. Multiple independent games can be run on a single network, or 
-even on different ports on a single computer. Which server and port you 
-choose decides which game you enter. 
+<para>Specifies the callsign you want, and the host running the <emphasis remap='B'>bzfs</emphasis>
+server. Multiple independent games can be run on a single network, or
+even on different ports on a single computer. Which server and port you
+choose decides which game you enter.
 The callsign and the port is optional. If you don't specify a port the
 standard server port will be used, and if you don't specify a callsign the
 callsign used for the previous game is used.  If that cannot be found

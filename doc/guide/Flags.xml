@@ -10,7 +10,7 @@
 
  THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
  WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
- MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.  
+ MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 -->
 
 <!ENTITY Blindness SYSTEM "Flags/Blindness.xml">
@@ -132,7 +132,7 @@
 	<para>Flags that aren't useful aren't fun.</para>
       </listitem>
     </unorderedlist>
-    
+
     <para>Not a flag, but a heavily requested feature, is multiple
     flags at once. Each tank could posses up to N flags at once (N set
     on the server) and flag powers would combine to the extent that
@@ -161,7 +161,7 @@
     </sect1>
 
     <sect1>
-    
+
       <title>Flag powers can counteract/balance each other</title>
 
       <para>Some flags are handily defeated with another kind of

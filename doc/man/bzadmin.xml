@@ -15,14 +15,14 @@
 <refsynopsisdiv id='synopsis'>
 <cmdsynopsis>
   <command>bzadmin</command>
-    
+
     <arg choice='opt'>-help </arg>
     <arg choice='opt'><arg choice='plain'>-ui </arg><group choice='opt'><arg choice='plain'><replaceable>curses</replaceable></arg><arg choice='plain'><replaceable>stdboth</replaceable></arg><arg choice='plain'><replaceable>stdin</replaceable></arg><arg choice='plain'><replaceable>stdout</replaceable></arg></group></arg>
     <arg choice='plain'><replaceable>callsign@hostname:</replaceable></arg>
     <arg choice='opt'><replaceable>port</replaceable></arg>
     <arg choice='opt'><replaceable>command</replaceable></arg>
     <arg choice='opt' rep='repeat'><replaceable>command</replaceable></arg>
-    
+
 </cmdsynopsis>
 </refsynopsisdiv>
 
@@ -83,7 +83,7 @@ the standard in stream.</para>
 <term><emphasis remap='I'>callsign@hostname</emphasis>[<emphasis remap='I'>:port</emphasis>]</term>
 <listitem>
 <para>Specifies the callsign that you want your client to use, and the
-hostname where the BZFlag server is. The port number is optional, 
+hostname where the BZFlag server is. The port number is optional,
 and the default value is 5154.</para>
 </listitem>
 </varlistentry>

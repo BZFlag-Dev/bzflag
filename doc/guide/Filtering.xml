@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" 
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!--
  Copyright (c) 1993 - 2003 Tim Riker
@@ -59,7 +59,7 @@
     <sect1>
 
       <title>Quick Start</title>
-      
+
       <para>To enable client-side filtering, modify your BZFlag
       configuration file and add the following line near the top of
       the file on a line by itself:</para>
@@ -169,7 +169,7 @@
 
       <title>Server Filtering</title>
 
-      <para>There are four options provided that pertain to server 
+      <para>There are four options provided that pertain to server
       filtering.</para>
 
       <para>-badwords {filename}</para>
@@ -193,7 +193,7 @@
       a server using offensive or unacceptible callsigns.  If the
       player attempts to join with a callsign that matches a word in
       the filter, they will be unable to connect.</para>
-       
+
       <para>-filterSimple</para>
 
       <para>By default, the server will <quote>aggressively</quote>
@@ -308,13 +308,13 @@
 	  attempting to bypass a word filter, that they will insert
 	  spaces or underscores within a word. Spreading out the word
 	  in this manner will still result in a match.</para>
-	   
+
 	</listitem>
 
 	<listitem>
 
 	  <title>common prefixes and suffixes</title>
-	   
+
 	  <para>Example: <quote>dumb ass</quote> will match
 	  <quote>dumb asses</quote> and <quote>bzdumb assly</quote>,
 	  etc</para>
@@ -324,7 +324,7 @@
 	  prefix are not necessary.</para>
 
 	  <para>repetitive identical letter expansions</para>
-	  
+
 	  <para>Example: <quote>dumb ass</quote> will match
 	  <quote>dumb asssss</quote> and <quote>duuumbb aasss</quote>,
 	  etc</para>
@@ -338,7 +338,7 @@
 	<listitem>
 
 	  <title>l33t-speak</title>
-	   
+
 	  <para>Example: <quote>dumb ass</quote> will match
 	  <quote>dumb @$$</quote> and <quote>dum8 *55</quote>,
 	  etc</para>
