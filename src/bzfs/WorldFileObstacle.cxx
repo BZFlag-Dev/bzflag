@@ -23,7 +23,6 @@ WorldFileObstacle::WorldFileObstacle()
   size[0] = size[1] = size[2] = 1.0f;
   driveThrough = false;
   shootThrough = false;
-  flipZ = false;
 }
 
 
@@ -36,11 +35,6 @@ bool WorldFileObstacle::read(const char *cmd, std::istream& input)
     rotation = rotation * M_PI / 180.0f;
   } else if (strcasecmp(cmd, "size") == 0){
     input >> size[0] >> size[1] >> size[2];
-    if (size[2] < 0)
-      flipZ = true;
-    size[0] = fabs(size[0]);	// make sure they are postive, no more tricks
-    size[1] = fabs(size[1]);
-    size[2] = fabs(size[2]);
   }
   else if (strcasecmp(cmd, "drivethrough") == 0)
     driveThrough = true;
@@ -48,8 +42,6 @@ bool WorldFileObstacle::read(const char *cmd, std::istream& input)
     shootThrough = true;
   else if (strcasecmp(cmd, "passable") == 0)
     driveThrough = shootThrough = true;
-  else if (strcasecmp(cmd, "flipz") == 0)
-    flipZ = true;
   else
     return WorldFileObject::read(cmd, input);
   return true;

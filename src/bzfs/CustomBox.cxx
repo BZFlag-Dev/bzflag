@@ -30,7 +30,7 @@ CustomBox::CustomBox()
 
 void CustomBox::write(WorldInfo *world) const
 {
-  world->addBox(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough);
+  world->addBox(pos[0], pos[1], pos[2], rotation, fabs(size[0]), fabs(size[1]), fabs(size[2]),driveThrough,shootThrough);
 }
 
 // Local variables: ***

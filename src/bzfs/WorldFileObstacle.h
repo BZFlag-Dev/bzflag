@@ -30,7 +30,6 @@ protected:
   float size[3];
   bool driveThrough;
   bool shootThrough;
-  bool flipZ;
 };
 
 #endif /* __WORLDFILEOBSTACLE_H__ */

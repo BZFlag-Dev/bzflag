@@ -39,7 +39,7 @@ bool CustomGate::read(const char *cmd, std::istream& input)
 
 void CustomGate::write(WorldInfo *world) const
 {
-  world->addTeleporter(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2], border,driveThrough,shootThrough);
+  world->addTeleporter(pos[0], pos[1], pos[2], rotation, fabs(size[0]), fabs(size[1]), fabs(size[2]), border,driveThrough,shootThrough);
 }
 
 // Local variables: ***

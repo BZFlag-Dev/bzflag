@@ -59,7 +59,7 @@ void CustomBase::write(WorldInfo* world) const {
     bases[color] = TeamBases((TeamColor)color);
   bases[color].addBase( pos, size, rotation, safety );
 
-  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],
+  world->addBase(pos[0], pos[1], pos[2], rotation, fabs(size[0]), fabs(size[1]), fabs(size[2]),
 		 driveThrough, shootThrough);
 }
 

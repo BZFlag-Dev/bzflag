@@ -24,12 +24,25 @@ CustomPyramid::CustomPyramid()
 {
   size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
   size[2] = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+  flipZ = false;
+}
+
+bool CustomPyramid::read(const char *cmd, std::istream& input)
+{
+  if (strcasecmp(cmd, "flipz") == 0)
+    flipZ = true;
+  else 
+    return WorldFileObstacle::read(cmd, input);
+  return true;
 }
 
 
 void CustomPyramid::write(WorldInfo *world) const
 {
-  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough,flipZ);
+  bool flipit = flipZ;
+  if (size[2] < 0.0f)
+    flipit = true;
+  world->addPyramid(pos[0], pos[1], pos[2], rotation, fabs(size[0]), fabs(size[1]), fabs(size[2]),driveThrough,shootThrough,flipit);
 }
 
 // Local variables: ***

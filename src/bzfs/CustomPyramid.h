@@ -21,7 +21,10 @@
 class CustomPyramid : public WorldFileObstacle {
   public:
     CustomPyramid();
+    virtual bool read(const char *cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
+  private:
+    bool flipZ;
 };
 
 #endif  /* __CUSTOMPYRAMID_H__ */
