@@ -19,8 +19,10 @@
  * VC++ helps us out here by treating typedef as #define
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
-#if defined socklen_t
-#define HAVE_SOCKELEN_T
+#ifndef _VC_NET
+	#if defined socklen_t
+		#define HAVE_SOCKELEN_T
+	#endif
 #endif
 
 /* Time Bomb expiration */

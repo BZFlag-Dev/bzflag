@@ -170,31 +170,31 @@ SOURCE=..\..\src\common\WordFilter.cxx
 # PROP Default_Filter "h"
 # Begin Source File
 
-SOURCE=..\include\Address.h
+SOURCE=..\..\include\Address.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Bundle.h
+SOURCE=..\..\include\Bundle.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BundleMgr.h
+SOURCE=..\..\include\BundleMgr.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BZDBCache.h
+SOURCE=..\..\include\BZDBCache.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzfio.h
+SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzsignal.h
+SOURCE=..\..\include\bzsignal.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\CallbackList.h
+SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
@@ -202,87 +202,87 @@ SOURCE=..\include\CommandManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\common.h
+SOURCE=..\..\include\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\config.h
+SOURCE=..\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ConfigFileManager.h
+SOURCE=..\..\include\ConfigFileManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ErrorHandler.h
+SOURCE=..\..\include\ErrorHandler.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\FileManager.h
+SOURCE=..\..\include\FileManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Flag.h
+SOURCE=..\..\include\Flag.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\global.h
+SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\KeyManager.h
+SOURCE=..\..\include\KeyManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\md5.h
+SOURCE=..\..\include\md5.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Pack.h
+SOURCE=..\..\include\Pack.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\PlayerState.h
+SOURCE=..\..\include\PlayerState.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SceneDatabase.h
+SOURCE=..\..\include\SceneDatabase.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ShotUpdate.h
+SOURCE=..\..\include\ShotUpdate.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\StateDatabase.h
+SOURCE=..\..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Team.h
+SOURCE=..\..\include\Team.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TextUtils.h
+SOURCE=..\..\include\TextUtils.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TimeBomb.h
+SOURCE=..\..\include\TimeBomb.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TimeKeeper.h
+SOURCE=..\..\include\TimeKeeper.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\version.h
+SOURCE=..\..\include\version.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\VotingBooth.h
+SOURCE=..\..\include\VotingBooth.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\WordFilter.h
+SOURCE=..\..\include\WordFilter.h
 # End Source File
 # End Group
 # End Target

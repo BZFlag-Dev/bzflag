@@ -54,6 +54,10 @@
 #define strncasecmp _strnicmp
 #endif
 
+#ifndef HAVE_SOCKELEN_T
+#define socklen_t int
+#endif
+
 #include <assert.h>
 #include <stddef.h>
 
