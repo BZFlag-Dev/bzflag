@@ -270,3 +270,16 @@ LIBGL_ALWAYS_INDIRECT=1
 
 On many systems this will force software rendering. It will greatly reduce
 the performance, but may solve rendering issues.
+
+Release Announcements
+=====================
+
+Please notify the following (at least):
+
+bzflag-users list
+http://slashdot.org/
+http://freshmeat.net/projects/bzflag/ (rank BZFlag here!)
+http://happypenguin.org/ (BZFlag is now #2 in the ratings!)
+http://LinuxGames.com/
+John Gowin <jgowin@linuxorbit.com> (thanx for the review!)
+jd@linuxgaming.co.uk
