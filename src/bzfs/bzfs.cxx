@@ -4771,7 +4771,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   float delta = dx*dx + dy*dy + dz*dz;
   if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd)) {
-    DEBUG2("Plkayer %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
+    DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
             shooter.callSign, playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
             shooter.lastState.pos[0], shooter.lastState.pos[1],
