@@ -2049,99 +2049,96 @@ static void		handleServerMessage(bool human, uint16_t code,
     std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
 
     if (toAll || toAdmin || srcPlayer == myTank  || dstPlayer == myTank ||
-			dstTeam == myTank->getTeam()) 
-		{
+      dstTeam == myTank->getTeam()) {
       // message is for me
       std::string colorStr;
 
       if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-				colorStr += ColorStrings[srcPlayer->getTeam()];
+	colorStr += ColorStrings[srcPlayer->getTeam()];
       else
-				colorStr += ColorStrings[RogueTeam];
+	colorStr += ColorStrings[RogueTeam];
 
       fullMsg += colorStr;
 
       // direct message to or from me
       if (dstPlayer) {
-				if (fromServer && (origText == "You are now an administrator!"
-			   || origText == "Password Accepted, welcome back."))
-				 admin = true;
-				 // talking to myself? that's strange
-				if (dstPlayer==myTank && srcPlayer==myTank) {
-					fullMsg=text;
-				} else {
-					if (BZDB.get("killerhighlight") == "0")
-						fullMsg += ColorStrings[BlinkColor];
-					else if (BZDB.get("killerhighlight") == "1")
-						fullMsg += ColorStrings[UnderlineColor];
-					fullMsg += "[";
-					if (srcPlayer == myTank) {
-						fullMsg += "->";
-						fullMsg += dstName;
-						fullMsg += colorStr;
-					} else {
-						fullMsg += srcName;
-						fullMsg += colorStr;
-						fullMsg += "->";
-						if (srcPlayer)
-							myTank->setRecipient(srcPlayer);
-	    
-						// play a sound on a private message not from self or server
-						if (!fromServer) {
-							static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-							if (TimeKeeper::getTick() - lastMsg > 2.0f)
-								playLocalSound( SFX_MESSAGE_PRIVATE );
-							lastMsg = TimeKeeper::getTick();
-						}
+	if (fromServer && (origText == "You are now an administrator!"
+	    || origText == "Password Accepted, welcome back."))
+	  admin = true;
+	  // talking to myself? that's strange
+	if (dstPlayer == myTank && srcPlayer == myTank) {
+    	  fullMsg = text;
+	} else {
+	  if (BZDB.get("killerhighlight") == "0")
+	    fullMsg += ColorStrings[BlinkColor];
+	  else if (BZDB.get("killerhighlight") == "1")
+	    fullMsg += ColorStrings[UnderlineColor];
+	  fullMsg += "[";
+	  if (srcPlayer == myTank) {
+	    fullMsg += "->";
+	    fullMsg += dstName;
+	    fullMsg += colorStr;
+	  } else {
+	    fullMsg += srcName;
+	    fullMsg += colorStr;
+	    fullMsg += "->";
+	    if (srcPlayer)
+	      myTank->setRecipient(srcPlayer);
 
-					} 
-					fullMsg += "]";
-					fullMsg += ColorStrings[ResetColor];
-					fullMsg += " ";
-					fullMsg += ColorStrings[CyanColor];
-					fullMsg += text;
-				} 
+	    // play a sound on a private message not from self or server
+	    if (!fromServer) {
+	      static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	      if (TimeKeeper::getTick() - lastMsg > 2.0f)
+		playLocalSound( SFX_MESSAGE_PRIVATE );
+	      lastMsg = TimeKeeper::getTick();
+	    }
+	  } 
+	  fullMsg += "]";
+	  fullMsg += ColorStrings[ResetColor];
+	  fullMsg += " ";
+	  fullMsg += ColorStrings[CyanColor];
+	  fullMsg += text;
+	} 
       } else {
-				// team / admin message
+	// team / admin message
+	if (toAdmin) {
+	  fullMsg += "[Admin] ";
+	}
 
-				if (toAdmin){
-					fullMsg += "[Admin] ";
-				}
+	if (dstTeam != NoTeam) {
+#ifdef BWSUPPORT
+	  fullMsg = "[to ";
+	  fullMsg += Team::getName(TeamColor(dstTeam));
+	  fullMsg += "] ";
+#else
+	  fullMsg += "[Team] ";
+#endif
 
-			  if (dstTeam != NoTeam) {
-					#ifdef BWSUPPORT
-							fullMsg = "[to ";
-							fullMsg += Team::getName(TeamColor(dstTeam));
-							fullMsg += "] ";
-					#else
-							fullMsg += "[Team] ";
-					#endif
-
-					// play a sound if I didn't send the message
-					if (srcPlayer != myTank) {
-						static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-						if (TimeKeeper::getTick() - lastMsg > 2.0f)
-							playLocalSound( SFX_MESSAGE_TEAM );
-						lastMsg = TimeKeeper::getTick();
-					}
-				}
-				fullMsg += srcName;
-				fullMsg += colorStr;
-				fullMsg += ": ";
-				fullMsg += ColorStrings[CyanColor];
-				fullMsg += text;
+	  // play a sound if I didn't send the message
+	  if (srcPlayer != myTank) {
+	    static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	    if (TimeKeeper::getTick() - lastMsg > 2.0f)
+	      playLocalSound(SFX_MESSAGE_TEAM);
+	    lastMsg = TimeKeeper::getTick();
+	  }
+	}
+	fullMsg += srcName;
+	fullMsg += colorStr;
+	fullMsg += ": ";
+	fullMsg += ColorStrings[CyanColor];
+	fullMsg += text;
       }
       const char *oldcolor = NULL;
       if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
-       oldcolor = ColorStrings[RogueTeam];
+        oldcolor = ColorStrings[RogueTeam];
       else if (srcPlayer->getTeam() == ObserverTeam)
-       oldcolor = ColorStrings[CyanColor];
+        oldcolor = ColorStrings[CyanColor];
       else
-       oldcolor = ColorStrings[srcPlayer->getTeam()];
+        oldcolor = ColorStrings[srcPlayer->getTeam()];
       addMessage(NULL, fullMsg, false, oldcolor);
 
       if (!srcPlayer || srcPlayer!=myTank)
-				hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
+	hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
     }
     break;
   }
