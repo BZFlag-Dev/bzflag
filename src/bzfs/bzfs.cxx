@@ -5981,7 +5981,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     }
     else if (strcmp(argv[i], "-badwords") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -ban\n");
+	fprintf(stderr, "argument expected for -badwords\n");
 	usage(argv[0]);
       }
       else
