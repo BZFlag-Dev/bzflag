@@ -2858,7 +2858,7 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
     float y = (baseSize[team][1] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
     pos[0] = basePos[team][0] + x * cosf(baseRotation[team]) - y * sinf(baseRotation[team]);
     pos[1] = basePos[team][1] + x * sinf(baseRotation[team]) + y * cosf(baseRotation[team]);
-    pos[2] = basePos[team][2];
+    pos[2] = basePos[team][2] + baseSize[team][2];
     player[playerId].restartOnBase = false;
   }
   else {
