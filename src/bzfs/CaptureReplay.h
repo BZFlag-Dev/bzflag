@@ -40,7 +40,8 @@ namespace Capture {
   extern int getRate ();
   extern const char * getFileName ();
 
-  extern bool addPacket (uint16_t code, int len, const void * data);
+  extern bool addPacket (uint16_t code, int len, const void * data,
+                         bool fake = false); // fake used internally
 };
 
 namespace Replay {

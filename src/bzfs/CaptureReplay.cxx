@@ -18,29 +18,41 @@
 
 typedef uint16_t u16;
 
-typedef enum {
-  NormalPacket      = 0,
-  FlagStatePacket   = 1,
-  PlayerStatePacket = 2
-} ReplayPacketType;
+#ifndef _WIN32 //FIXME
+typedef uint64_t CRtime;
+#else
+typedef int CRtime;
+#endif
 
-typedef struct RPpacket {
-  struct RPpacket *next;
-  struct RPpacket *prev;
-  u16 type;
+typedef enum {
+  FakedPacket  = 0,
+  NormalPacket = 1
+} RCPacketType;
+
+typedef enum {
+  StraightToFile    = 0,
+  BufferedCapture   = 1
+} CaptureType;
+
+typedef struct CRpacket {
+  struct CRpacket *next;
+  struct CRpacket *prev;
+  u16 fake;
   u16 code;
   int len;
-  char *data;
-} RPpacket;
+  CRtime timestamp;
+  void *data;
+} CRpacket;
 
 typedef struct {
   int byteCount;
   int packetCount;
   // into the head, out of the tail
-  RPpacket *head; // last packet in 
-  RPpacket *tail; // first packet in
-//  std::list<RPpacket *> ListTest;
-} RPbuffer;
+  CRpacket *head; // last packet in 
+  CRpacket *tail; // first packet in
+//  std::list<CRpacket *> ListTest;
+} CRbuffer;
+
 
 typedef struct {
   unsigned int magic;
@@ -60,19 +72,22 @@ static const int ReplayVersion = 0x0001;
 
 
 static bool Capturing = false;
+static CaptureType CaptureMode = BufferedCapture;
+
 static bool Replaying = false;
 static bool ReplayMode = false;
-static char *FileName = NULL;
 
 static int TotalBytes = 0;
 static int MaxBytes = DefaultMaxBytes;
 static int UpdateRate = DefaultUpdateRate;
 
+static char *FileName = NULL;
+
 
 static TimeKeeper StartTime;
 
-static RPbuffer ReplayBuf = {0, 0, NULL, NULL}; // for replaying
-static RPbuffer CaptureBuf = {0, 0, NULL, NULL};  // for capturing
+static CRbuffer ReplayBuf = {0, 0, NULL, NULL}; // for replaying
+static CRbuffer CaptureBuf = {0, 0, NULL, NULL};  // for capturing
 
 static FILE *ReplayFile = NULL;
 static FILE *CaptureFile = NULL;
@@ -83,33 +98,40 @@ static PlayerInfo PlayerState[MaxPlayers];
 // Local Function Prototypes
 // -------------------------
 
-//static bool saveStates ();
-//static bool loadStates ();
+static bool saveStates ();
+static bool saveTeamScores ();
+static bool saveFlagStates ();
+static bool savePlayerStates ();
+
+//static bool clearStates ();
 
 static bool saveHeader (ReplayHeader *h, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
- 
-static RPpacket *newRPpacket (u16 type, u16 code, int len, const void *data);
-static void addRPpacket (RPbuffer *b, RPpacket *p); // add to head
-static RPpacket *delRPpacket (RPbuffer *b); // delete from the tail
-static void freeRPbuffer (RPbuffer *buf); // clean it out
 
-static bool saveRPpacket (RPpacket *p, FILE *f);
-static RPpacket *loadRPpacket (FILE *f); // makes a new packet
+static CRtime getCRtime ();
 
-//static bool sendFlagState ();
-//static bool sendPlayerState ();
+static void initCRpacket (u16 fake, u16 code, int len, const void *data,
+                          CRpacket *p);
+static CRpacket *newCRpacket (u16 fake, u16 code, int len, const void *data);
+static void addCRpacket (CRbuffer *b, CRpacket *p); // add to head
+static CRpacket *delCRpacket (CRbuffer *b); // delete from the tail
+static void freeCRbuffer (CRbuffer *buf); // clean it out
+
+static bool saveCRpacket (CRpacket *p, FILE *f);
+static CRpacket *loadCRpacket (FILE *f); // makes a new packet
 
 static const char *print_msg_code (u16 code);
 
-// External Dependencies
+
+// External Dependencies   (from bzfs.cxx)
 // ---------------------
 
 extern int numFlags;
 extern int numFlagsInAir;
 extern FlagInfo *flag;
 extern PlayerInfo player[MaxPlayers];
-extern void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1);
+extern uint16_t curMaxPlayers;
+extern TeamInfo team[NumTeams];
 extern void *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code, 
                           int len, const void *msg);
@@ -118,32 +140,36 @@ extern void sendMessage(int playerIndex, PlayerId targetPlayer,
                         
 /****************************************************************************/
 
+// Capture Functions
+
 bool Capture::init ()
 {
   if (CaptureFile != NULL) {
     fclose (CaptureFile);
+    CaptureFile = NULL;
   }
   if ((FileName != NULL) && (FileName != DefaultFileName)) {
     free (FileName);
+    FileName = NULL;
   }
-  freeRPbuffer (&CaptureBuf);
+  freeCRbuffer (&CaptureBuf);
   
   MaxBytes = DefaultMaxBytes;
   UpdateRate = DefaultUpdateRate;
-  FileName = NULL;
   Capturing = false;
-  TotalBytes = 0; 
+  TotalBytes = 0;
+  CaptureMode = BufferedCapture;
   
   return true;
 }
 
 bool Capture::kill ()
 {
-  freeRPbuffer (&CaptureBuf);
+  freeCRbuffer (&CaptureBuf);
   if (CaptureFile != NULL) {
     fclose (CaptureFile);
   }
-  freeRPbuffer (&ReplayBuf);
+  freeCRbuffer (&ReplayBuf);
   if (ReplayFile != NULL) {
     fclose (ReplayFile);
   }
@@ -160,6 +186,10 @@ bool Capture::start ()
 bool Capture::stop ()
 {
   Capturing = false;
+  if (CaptureMode == StraightToFile) {
+    Capture::init();
+  }
+  
   return true;
 }
 
@@ -184,18 +214,30 @@ bool Capture::sendStats (int playerIndex)
 bool Capture::saveFile (const char *filename)
 {
   ReplayHeader header;
+  
+  Capture::init();
+  Capturing = true;
+  CaptureMode = StraightToFile;
+
   if (filename == NULL) {
     filename = DefaultFileName;
   }
-  CaptureFile = fopen (DefaultFileName, "wb");
+  
+  CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
+    Capture::init();
     return false;
   }
+  
   if (!saveHeader (&header, CaptureFile)) {
+    Capture::init();
     return false;
   }
-
-  fclose (CaptureFile);
+  
+  if (!saveStates ()) {
+    Capture::init();
+    return false;
+  }
   
   return true;
 }
@@ -206,6 +248,30 @@ bool Capture::saveBuffer (const char *filename)
   return true;
 }
 
+bool 
+Capture::addPacket (u16 code, int len, const void * data, bool fake)
+{
+  u16 fakeval = NormalPacket;
+  if (fake) {
+    fakeval = FakedPacket;
+  }
+  
+  if (CaptureMode == BufferedCapture) {
+    CRpacket *p = newCRpacket (fakeval, code, len, data);
+    p->timestamp = getCRtime();
+    addCRpacket (&CaptureBuf, p);
+    printf ("Capture::addPacket: buffered %s\n", print_msg_code (code));
+  }
+  else {
+    CRpacket p;
+    p.timestamp = getCRtime();
+    initCRpacket (fakeval, code, len, data, &p);
+    saveCRpacket (&p, CaptureFile);
+    printf ("Capture::addPacket: saved %s\n", print_msg_code (code));
+  }
+  
+  return true; 
+}
 
 bool Capture::enabled ()
 {
@@ -227,19 +293,9 @@ const char * Capture::getFileName ()
   return FileName;
 }
                           
-bool Capture::addPacket (u16 code, int len, const void * data)
-{
-  RPpacket *p = newRPpacket (NormalPacket, code, len, data);
-  addRPpacket (&CaptureBuf, p);
-  saveRPpacket (p, CaptureFile);
-  free (p->data);
-  free (p);
-  printf ("Capture::addPacket: %s\n", print_msg_code (code));
-  
-  return true; 
-}
-
 /****************************************************************************/
+
+// Replay Functions
 
 bool Replay::init()
 {
@@ -312,31 +368,148 @@ bool Replay::nextPacket (u16 *code, int *len, void **data)
   *len = CaptureBuf.tail->len;
   *data = (void *) CaptureBuf.tail->data;
   
-  delRPpacket (&CaptureBuf); // remove from the tail
+  delCRpacket (&CaptureBuf); // remove from the tail
   
   return true;
 }
 
 /****************************************************************************/
 
+// State Management Functions
+
+// The goal is to save all of the states, such that if 
+// the packets are simply sent to a clean-state client,
+// the client's state will end up looking like the state
+// at the time which this function was called.
+
+/* from bzfs / addPlayer()
+
+  if (!player[playerIndex].isBot()) {
+    int i;
+    if (NetHandler::exists(playerIndex)) {
+      sendTeamUpdate(playerIndex);
+      sendFlagUpdate(-1, playerIndex);
+    }
+    for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
+      if (player[i].isPlaying() && i != playerIndex)
+        sendPlayerUpdate(i, playerIndex);
+  }
+*/  
+
+static bool
+saveTeamScores ()
+{
+  int i;
+  char bufStart[MaxPacketLen];
+  void *buf;
+  
+  buf = nboPackUByte (bufStart, CtfTeams);
+  for (i=0 ; i<CtfTeams; i++) {
+    // ubyte for the team number, 3 ushort for scores
+    buf = team[i].team.pack(buf);
+  }
+  
+  Capture::addPacket (MsgTeamUpdate, (char*)buf - (char*)bufStart,  bufStart, true);
+  
+  return true;
+}
+
+static bool
+saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
+{
+  int flagIndex;
+  char bufStart[MaxPacketLen];
+  void *buf;
+  
+  buf = nboPackUShort(bufStart,0); //placeholder
+  int cnt = 0;
+  int length = sizeof(uint16_t);
+  
+printf ("numFlags = %i\n", numFlags);
+fflush (stdout);
+  
+  for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+
+printf ("FlagNum = %i\n", flagIndex); fflush (stdout);
+
+    if (flag[flagIndex].flag.status != FlagNoExist) {
+      if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t)) {
+        // packet length overflow
+        nboPackUShort(bufStart, cnt);
+        Capture::addPacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
+
+        cnt = 0;
+        length = sizeof(uint16_t);
+        buf = nboPackUShort(bufStart,0); //placeholder
+      }
+
+      buf = nboPackUShort(buf, flagIndex);
+      buf = flag[flagIndex].flag.pack(buf);
+      length += sizeof(uint16_t)+FlagPLen;
+      cnt++;
+    }
+  }
+
+  if (cnt > 0) {
+    nboPackUShort(bufStart, cnt);
+    Capture::addPacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
+  }
+  
+  return true;
+}
+
+static bool
+savePlayerStates ()
+{
+  int i;
+  char bufStart[MaxPacketLen];
+  void *buf;
+
+  for (i = 0; i < curMaxPlayers; i++) {
+    if (player[i].isPlaying()) {
+      PlayerInfo *pPlayer = &player[i];
+      buf = nboPackUByte(bufStart, i);
+      buf = pPlayer->packUpdate(buf);
+      Capture::addPacket (MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart, true);
+    }
+  }
+  
+  return true;
+}
+
+static bool
+saveStates ()
+{
+  saveTeamScores ();
+  saveFlagStates ();
+  savePlayerStates ();
+  
+  return true;
+}
+
+/****************************************************************************/
+
+// File Functions
+
 // The replay files should work on different machine
 // types, so everything is saved in network byte order.
                           
 static bool
-saveRPpacket (RPpacket *p, FILE *f)
+saveCRpacket (CRpacket *p, FILE *f)
 {
   const int bufsize = sizeof(u16)*2 + sizeof(int);
-  char buffer[bufsize];
+  char bufStart[bufsize];
   void *buf;
 
   if (f == NULL) {
     return false;
   }
 
-  buf = nboPackUShort (buffer, p->type);
+  buf = nboPackUShort (bufStart, p->fake);
   buf = nboPackUShort (buf, p->code);
   buf = nboPackUInt (buf, p->len);
-  fwrite (buffer, bufsize, 1, f);
+  fwrite (bufStart, bufsize, 1, f);
+  fwrite (&p->timestamp, sizeof (CRtime), 1, f); //FIXME 
   fwrite (p->data, p->len, 1, f);
 
   fflush (f);//FIXME
@@ -344,25 +517,26 @@ saveRPpacket (RPpacket *p, FILE *f)
   return true;  
 }
 
-static RPpacket * //FIXME - totally botched
-loadRPpacket (FILE *f)
+static CRpacket * //FIXME - totally botched
+loadCRpacket (FILE *f)
 {
-  RPpacket *p;
+  CRpacket *p;
   const int bufsize = sizeof(u16)*2 + sizeof(int);
-  char buffer[bufsize];
+  char bufStart[bufsize];
   void *buf;
   
   if (f == NULL) {
     return false;
   }
 
-  fread (buffer, bufsize, 1, f);
-  buf = nboUnpackUShort (buffer, p->type);
+  fread (bufStart, bufsize, 1, f);
+  buf = nboUnpackUShort (bufStart, p->fake);
   buf = nboUnpackUShort (buf, p->code);
   buf = nboUnpackInt (buf, p->len);
+  fread (&p->timestamp, sizeof (CRtime), 1, f); //FIXME 
   fread (p->data, p->len, 1, f);
   
-  p = loadRPpacket (f);
+  p = loadCRpacket (f); //FIXME - to avoid warnings for now
 
   return NULL;  
 }
@@ -408,22 +582,36 @@ loadHeader (ReplayHeader *h, FILE *f)
                           
 /****************************************************************************/
 
-static RPpacket *
-newRPpacket (u16 type, u16 code, int len, const void *data)
+// Buffer Functions
+
+static void
+initCRpacket (u16 fake, u16 code, int len, const void *data, CRpacket *p)
 {
-  RPpacket *p = (RPpacket *) malloc (sizeof (RPpacket));
-  p->next = NULL;
-  p->prev = NULL;
-  p->type = type;
+  p->fake = fake;
   p->code = code;
   p->len = len;
-  p->data = (char *) malloc (len);
-  memcpy (p->data, data, len);
+  (const void *) p->data = data; // FIXME - dirty little trick
+}
+
+static CRpacket *
+newCRpacket (u16 fake, u16 code, int len, const void *data)
+{
+  CRpacket *p = (CRpacket *) malloc (sizeof (CRpacket));
+  
+  p->next = NULL;
+  p->prev = NULL;
+
+  p->data = malloc (len);
+  if (data != NULL) {
+    memcpy (p->data, data, len);
+  }
+  initCRpacket (fake, code, len, data, p);
+
   return p;
 }
 
 static void
-addRPpacket (RPbuffer *b, RPpacket *p)
+addCRpacket (CRbuffer *b, CRpacket *p)
 {
   if (b->head != NULL) {
     b->head->next = p;
@@ -441,10 +629,10 @@ addRPpacket (RPbuffer *b, RPpacket *p)
   return;
 }
 
-static RPpacket *
-delRPpacket (RPbuffer *b)
+static CRpacket *
+delCRpacket (CRbuffer *b)
 {
-  RPpacket *p = b->tail;
+  CRpacket *p = b->tail;
   if (b->tail == NULL) {
     b->head = NULL;
     b->tail = NULL;
@@ -473,9 +661,9 @@ delRPpacket (RPbuffer *b)
 }
 
 static void
-freeRPbuffer (RPbuffer *b)
+freeCRbuffer (CRbuffer *b)
 {
-  RPpacket *p, *ptmp;
+  CRpacket *p, *ptmp;
   
   p = b->tail;
 
@@ -487,6 +675,25 @@ freeRPbuffer (RPbuffer *b)
   }
   
   return;
+}
+
+/****************************************************************************/
+
+// Timing Functions
+
+static CRtime
+getCRtime ()
+{
+#ifndef _WIN32
+  CRtime now;
+  struct timeval tv;
+  gettimeofday (&tv, NULL);
+  now = (CRtime)tv.tv_sec *  (CRtime)1000000;
+  now = now + (CRtime)tv.tv_usec;
+  return now;
+#else
+  return 0; // FIXME - Windows is currently broken
+#endif
 }
 
 /****************************************************************************/
@@ -544,7 +751,7 @@ print_msg_code (u16 code)
 
     default:
       static char buf[32];
-      sprintf (buf, "MagUnknown: 0x%04X\n", code);
+      sprintf (buf, "MagUnknown: 0x%04X", code);
       return buf;
   }
 }
