@@ -10,5 +10,4 @@ libDate_a_SOURCES  =			\
 	buildDate.cxx
 
 all-local:
-	#$(CXX) -c -o buildDate.o $(srcdir)/buildDate.cxx
 	touch buildDate.cxx
