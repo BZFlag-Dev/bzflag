@@ -58,6 +58,8 @@ bzfs_SOURCES = \
 	GameKeeper.h	\
 	ListServerConnection.cxx \
 	ListServerConnection.h \
+	MasterBanList.cxx \
+	MasterBanList.h \
 	MeshUtils.h \
 	PackVars.h \
 	ParseMaterial.cxx \
