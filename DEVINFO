@@ -58,11 +58,13 @@ enough to be widely and well supported.  These features are now permitted and
 encouraged:
   bool			-- the boolean type and True and False are gone
   standard C++ library	-- use where appropriate (AList is gone)
+  templates		-- use where appropriate
+  exceptions		-- use where appropriate
 
 These should still be avoided:
-  templates
-  exceptions
-  run-time typing
+  run-time typing	-- if you find yourself needing RTTI, its often a
+			   sign of bad design. try to find another way to
+			   implement your idea.
 
 Multiple inheritance is strongly discouraged unless in the Java style of single
 implementation inheritance and multiple interface inheritance.  Multiple
