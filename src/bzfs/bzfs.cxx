@@ -3086,7 +3086,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 {
   // aliases for convenience
   // Warning: killer should not be used when killerIndex == InvalidPlayer
-  PlayerInfo &killer = player[killerIndex],
+  PlayerInfo &killer = player[killerIndex == InvalidPlayer ? 0 : killerIndex],
              &victim = player[victimIndex];
 
   // victim was already dead. keep score.
