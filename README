@@ -237,14 +237,3 @@ b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm)
    desktop firewalls set them up to let UDP port 17200 to 17220
    through.
 
-
-Testing
-=======
-
-If you have rendering problems you might want to try setting:
-
-LIBGL_ALWAYS_INDIRECT=1
-
-On many systems this will force software rendering. It will greatly
-reduce the performance, but may solve rendering issues.
-
