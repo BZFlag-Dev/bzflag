@@ -114,6 +114,11 @@ bool VotingArbiter::pollToKick(const std::string &player, const std::string &pla
   return (this->poll(player, playerRequesting, std::string("kick"), playerIP));
 }
 
+bool VotingArbiter::pollToKill(const std::string &player, const std::string &playerRequesting, const std::string &playerIP)
+{
+  return (this->poll(player, playerRequesting, std::string("kill"), playerIP));
+}
+
 bool VotingArbiter::pollToBan(const std::string &player, const std::string &playerRequesting, const std::string &playerIP)
 {
   return (this->poll(player, playerRequesting, std::string("ban"), playerIP));

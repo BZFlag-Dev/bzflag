@@ -88,6 +88,13 @@ void			ServerCommandKey::updatePrompt()
 	 hud->setComposing(composePrompt, true);
 	*/
 	break;
+
+	  case Kill:
+    composePrompt = "Kill -> ";
+	composePrompt = composePrompt + recipient->getCallSign() + " :";
+	hud->setComposing(composePrompt, true);
+    break;
+
       case Setgroup: composePrompt = "Set players group ";
 	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
 	hud->setComposing(composePrompt, true);
@@ -112,6 +119,9 @@ void			ServerCommandKey::updatePrompt()
       switch (mode) {
       case Kick:
 	hud->setComposing("Kick :", true);
+	break;
+	  case Kill:
+	hud->setComposing("Kill :", true);
 	break;
       case BanIp: case Ban1: case Ban2: case Ban3:
 	hud->setComposing("Ban :", true);
@@ -248,6 +258,14 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	  if (message != "") sendMsg = sendMsg + " " + message;
 	  break;
 
+	case Kill:
+	  // escape the name
+	  name = TextUtils::replace_all(name, "\\", "\\\\");
+	  name = TextUtils::replace_all(name, "\"", "\\\"");
+	  sendMsg="/kill \"" + name + "\"";
+	  if (message != "") sendMsg = sendMsg + " " + message;
+	  break;
+
 	case BanIp: case Ban1: case Ban2: case Ban3:
 
 	  /* FIXME FIXME FIXME
@@ -286,6 +304,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
 	switch (mode) {
 	case Kick: sendMsg = "/kick"; break;
+	case Kill: sendMsg = "/kill"; break;
 	case BanIp: sendMsg = "/ban"; break;
 	case Setgroup: sendMsg = "/setgroup"; break;
 	case Removegroup: sendMsg = "/removegroup"; break;

@@ -290,6 +290,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::antiban : return "antiban";
     case PlayerAccessInfo::antideregister : return "antideregister";
     case PlayerAccessInfo::antikick : return "antikick";
+    case PlayerAccessInfo::antikill : return "antikill";
     case PlayerAccessInfo::antipoll : return "antipoll";
     case PlayerAccessInfo::antipollban : return "antipollban";
     case PlayerAccessInfo::antipollkick : return "antipollkick";
@@ -304,6 +305,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::idleStats: return "idleStats";
     case PlayerAccessInfo::info: return "info";
     case PlayerAccessInfo::kick: return "kick";
+    case PlayerAccessInfo::kill: return "kill";
     case PlayerAccessInfo::lagStats: return "lagStats";
     case PlayerAccessInfo::lagwarn: return "lagwarn";
     case PlayerAccessInfo::listPerms: return "listPerms";
@@ -312,6 +314,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::poll: return "poll";
     case PlayerAccessInfo::pollBan: return "pollBan";
     case PlayerAccessInfo::pollKick: return "pollKick";
+    case PlayerAccessInfo::pollKill: return "pollKill";
     case PlayerAccessInfo::pollSet: return "pollSet";
     case PlayerAccessInfo::pollFlagReset: return "pollFlagReset";
     case PlayerAccessInfo::privateMessage: return "privateMessage";
@@ -346,6 +349,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "ANTIBAN") return PlayerAccessInfo::antiban;
   if (name == "ANTIDEREGISTER") return PlayerAccessInfo::antideregister;
   if (name == "ANTIKICK") return PlayerAccessInfo::antikick;
+  if (name == "ANTIKILL") return PlayerAccessInfo::antikill;
   if (name == "ANTIPOLL") return PlayerAccessInfo::antipoll;
   if (name == "ANTIPOLLBAN") return PlayerAccessInfo::antipollban;
   if (name == "ANTIPOLLKICK") return PlayerAccessInfo::antipollkick;
@@ -360,6 +364,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;
   if (name == "INFO") return PlayerAccessInfo::info;
   if (name == "KICK") return PlayerAccessInfo::kick;
+  if (name == "KILL") return PlayerAccessInfo::kill;
   if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
   if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
@@ -368,6 +373,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "POLL") return PlayerAccessInfo::poll;
   if (name == "POLLBAN") return PlayerAccessInfo::pollBan;
   if (name == "POLLKICK") return PlayerAccessInfo::pollKick;
+  if (name == "POLLKILL") return PlayerAccessInfo::pollKill;
   if (name == "POLLSET") return PlayerAccessInfo::pollSet;
   if (name == "POLLFLAGRESET") return PlayerAccessInfo::pollFlagReset;
   if (name == "PRIVATEMESSAGE") return PlayerAccessInfo::privateMessage;

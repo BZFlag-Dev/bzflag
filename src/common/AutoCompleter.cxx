@@ -80,6 +80,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("/identify ");
   registerWord("/idlestats");
   registerWord("/kick ");
+  registerWord("/kill ");
   registerWord("/lagstats");
   registerWord("/lagwarn ");
   registerWord("/password ");
@@ -87,6 +88,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("/poll ");
   registerWord("ban");
   registerWord("kick");
+  registerWord("kill");
   registerWord("/quit");
   registerWord("/record");
   registerWord("start");

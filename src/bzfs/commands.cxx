@@ -556,6 +556,60 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
   return;
 }
 
+static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kill)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the kill command");
+    return;
+  }
+  int i;
+  std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
+
+  if (argv.size() < 2) {
+    sendMessage(ServerPlayer, t, "Syntax: /kill <PlayerName/\"Player Name\"> [reason]");
+    sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
+    return;
+  }
+
+  i = GameKeeper::Player::getPlayerIDByName(argv[1]);
+
+  if ((i < curMaxPlayers) && (i >= 0)) {
+    char killmessage[MessageLen];
+
+    // admins can override antiperms
+    if (!playerData->accessInfo.isAdmin()) {
+      // otherwise make sure the player is not protected with an antiperm
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) {
+	sprintf(killmessage, "%s is protected from being killed.", p->player.getCallSign());
+	sendMessage(ServerPlayer, i, killmessage);
+	return;
+      }
+    }
+
+    sprintf(killmessage, "You were killed by %s",
+	    playerData->player.getCallSign());
+    sendMessage(ServerPlayer, i, killmessage);
+    if (argv.size() > 2) {
+      sprintf(killmessage, " reason given : %s",argv[2].c_str());
+      sendMessage(ServerPlayer, i, killmessage);
+    }
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, i);
+  buf = nboPackUByte(buf, t);
+  buf = nboPackShort(buf, 0);
+  buf = Flags::Null->pack(buf);
+  broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
+
+
+  } else {
+    char errormessage[MessageLen];
+    sprintf(errormessage, "player \"%s\" not found", argv[1].c_str());
+    sendMessage(ServerPlayer, t, errormessage);
+  }
+  return;
+}
 
 static void handleBanlistCmd(GameKeeper::Player *playerData, const char *)
 {
@@ -1717,7 +1771,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
   /* handle subcommands */
 
-  if ((cmd == "ban") || (cmd == "kick") || (cmd == "set") || (cmd == "flagreset")) {
+  if ((cmd == "ban") || (cmd == "kick") || (cmd == "kill") || (cmd == "set") || (cmd == "flagreset")) {
     std::string target;
     std::string targetIP = "";
 
@@ -1789,7 +1843,14 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       return;
     }
 
-    if ((cmd != "set") && (cmd != "flagreset")) {
+    if ((cmd == "kill") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKill))) {
+      sprintf(reply, "%s, you may not /poll kill on this server", callsign.c_str());
+      sendMessage(ServerPlayer, t, reply);
+      DEBUG3("Player %s is not allowed to /poll kill\n", callsign.c_str());
+      return;
+    }
+
+	if ((cmd != "set") && (cmd != "flagreset")) {
       // all polls that are not set or flagreset polls take a player name
 
       /* make sure the requested player is actually here */
@@ -1832,6 +1893,12 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	      sendMessage(ServerPlayer, t, reply);
 	      return;
 	    }
+	  } else if (cmd == "kill") {
+	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollkill)) {
+	      sprintf(reply, "%s is protected from being poll killed.", p->player.getCallSign());
+	      sendMessage(ServerPlayer, t, reply);
+	      return;
+	    }
 	  }
 	}
       } // end admin check
@@ -1844,6 +1911,8 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       canDo = (arbiter->pollToBan(target, callsign, targetIP));
     } else if (cmd == "kick") {
       canDo = (arbiter->pollToKick(target, callsign, targetIP));
+    } else if (cmd == "kill") {
+      canDo = (arbiter->pollToKill(target, callsign, targetIP));
     } else if (cmd == "set") {
       canDo = (arbiter->pollToSet(target, callsign));
     } else if (cmd == "flagreset") {
@@ -1904,6 +1973,8 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, "    or /poll ban playername");
     if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKick))
       sendMessage(ServerPlayer, t, "    or /poll kick playername");
+    if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKill))
+      sendMessage(ServerPlayer, t, "    or /poll kill playername");
     if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollSet))
       sendMessage(ServerPlayer, t, "    or /poll set variable value");
     if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))
@@ -2352,6 +2423,9 @@ void parseServerCommand(const char *message, int t)
 
   } else if (strncasecmp(message + 1, "kick", 4) == 0) {
     handleKickCmd(playerData, message);
+
+  } else if (strncasecmp(message + 1, "kill", 4) == 0) {
+    handleKillCmd(playerData, message);
 
   } else if (strncasecmp(message+1, "banlist", 7) == 0) {
     handleBanlistCmd(playerData, message);

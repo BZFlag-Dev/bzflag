@@ -4699,6 +4699,8 @@ int main(int argc, char **argv)
 		pollAction = "temporarily banned";
 	      else if (action == "kick")
 		pollAction = "kicked";
+		  else if (action == "kill")
+	    pollAction = "killed";
 	      else
 		pollAction = action;
 	      // a poll that exists and is closed has ended successfully
@@ -4749,6 +4751,8 @@ int main(int argc, char **argv)
 		pollAction += ".";
 	      } else if (action == "kick") {
 		pollAction = std::string("kicked.");
+	      } else if (action == "kill") {
+		pollAction = std::string("killed.");
 	      } else {
 		pollAction = action;
 	      }

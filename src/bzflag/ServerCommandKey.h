@@ -32,6 +32,7 @@ private:
 private:
   enum Mode {
     Kick,
+	Kill,
     BanIp,
     Ban1,
     Ban2,

@@ -138,6 +138,11 @@ public:
   /** convenience method to attempt to start a kick poll
    */
   bool pollToKick(const std::string &player, const std::string &playerRequesting, const std::string &playerIP);
+
+  /** convenience method to attempt to start a kill poll
+   */
+  bool pollToKill(const std::string &player, const std::string &playerRequesting, const std::string &playerIP);
+
   /** convenience method to attempt to start a ban poll
    */
   bool pollToBan(const std::string &player, const std::string &playerRequesting, const std::string &playerIP);
