@@ -1457,6 +1457,13 @@ static void		showKeyboardStatus()
 
 static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
+  const std::string cmd = KEYMGR->get(key, pressed);
+  if (!cmd.empty()) {
+    std::string result = CMDMGR->run(cmd);
+    if (!result.empty())
+      std::cerr << result;
+    return true;
+  }
   if (keymap.isMappedTo(BzfKeyMap::TimeForward, key)) {
     // plus five minutes
     if (pressed) clockAdjust += 5.0f * 60.0f;
@@ -1597,13 +1604,6 @@ static void		doKeyNotPlaying(const BzfKeyEvent& key, bool pressed)
 
 static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 {
-  const std::string cmd = KEYMGR->get(key, pressed);
-  if (!cmd.empty()) {
-    std::string result = CMDMGR->run(cmd);
-    if (!result.empty())
-      std::cerr << result;
-    return;
-  }
   static ComposeDefaultKey composeKeyHandler;
   static SilenceDefaultKey silenceKeyHandler;
   static ServerCommandKey serverCommandKeyHandler;
