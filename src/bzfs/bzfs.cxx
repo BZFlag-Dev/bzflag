@@ -3039,13 +3039,43 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
       snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
       removePlayer(t, buffer);
     } else {
-      DEBUG1("Player %s tried to %s while not playing\n", p.getCallSign(), action);
+      DEBUG1("Player %s tried to %s as an observer\n", p.getCallSign(), action);
     }
     return true;
   }
   return false;
 }
 
+bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
+{
+  std::string tempmsg = message, lmsg = playerData->player.getLastMsg();
+  for (int c = 0; c <= (int)tempmsg.size() - 1; c++)
+	 if (isspace(tempmsg[c]))
+  	   tempmsg.erase(tempmsg.begin() + c);
+   if (playerData->player.getLastMsg().size() > 0 &&
+       strncasecmp(tempmsg.c_str(),
+       lmsg.c_str(),
+       lmsg.size() > tempmsg.size() ? tempmsg.size() : lmsg.size()) == 0 &&
+	     TimeKeeper::getCurrent() - playerData->player.getLastMsgTime()
+	     <= clOptions->msgTimer) {
+	playerData->player.incSpamWarns();
+	sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
+	if (playerData->player.getSpamWarns() > clOptions->spamWarnMax
+	    || clOptions->spamWarnMax == 0) {
+	  sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
+	  DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
+		 "less than %d second(s) in between; player was warned %d times]",
+		 playerData->player.getCallSign(), t,
+		 TimeKeeper::getCurrent()
+		 - playerData->player.getLastMsgTime(),
+		 playerData->player.getSpamWarns());
+	  removePlayer(t, "spam");
+	  return true;
+	}
+      }
+  playerData->player.setLastMsg(tempmsg);
+  return false;
+}
 
 static void handleCommand(int t, const void *rawbuf)
 {
@@ -3195,9 +3225,8 @@ static void handleCommand(int t, const void *rawbuf)
       // data: flag index
       uint16_t flag;
 
-      if (invalidPlayerAction(playerData->player, t, "grab a flag")) {
+      if (invalidPlayerAction(playerData->player, t, "grab a flag"))
 	break;
-      }
 	
       buf = nboUnpackUShort(buf, flag);
       grabFlag(t, int(flag));
@@ -3218,9 +3247,8 @@ static void handleCommand(int t, const void *rawbuf)
       // data: team whose territory flag was brought to
       uint16_t team;
 
-      if (invalidPlayerAction(playerData->player, t, "capture a flag")) {
+      if (invalidPlayerAction(playerData->player, t, "capture a flag"))
 	break;
-      }
 	
       buf = nboUnpackUShort(buf, team);
       captureFlag(t, TeamColor(team));
@@ -3229,9 +3257,8 @@ static void handleCommand(int t, const void *rawbuf)
 
     // shot fired
     case MsgShotBegin:
-      if (invalidPlayerAction(playerData->player, t, "shoot")) {
+      if (invalidPlayerAction(playerData->player, t, "shoot"))
 	break;
-      }
 
       // Sanity check
       if (len == 39) //wow thats bad
@@ -3257,9 +3284,8 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgTeleport: {
       uint16_t from, to;
 
-      if (invalidPlayerAction(playerData->player, t, "teleport")) {
+      if (invalidPlayerAction(playerData->player, t, "teleport"))
 	break;
-      }
 
       buf = nboUnpackUShort(buf, from);
       buf = nboUnpackUShort(buf, to);
@@ -3277,33 +3303,8 @@ static void handleCommand(int t, const void *rawbuf)
       message[MessageLen - 1] = '\0';
       playerData->player.hasSent(message);
       // check for spamming
-      std::string tempmsg = message;
-      for (int c = 0; c <= (int)tempmsg.size() - 1; c++)
-	if (isspace(tempmsg[c]))
-      	  tempmsg.erase(tempmsg.begin() + c);
-      if (playerData->player.getLastMsg().size() > 0 &&
-          strncasecmp(tempmsg.c_str(),
-		     playerData->player.getLastMsg().c_str(),
-         playerData->player.getLastMsg().size() > tempmsg.size() ? tempmsg.size() :
-          playerData->player.getLastMsg().size()) == 0 &&
-	  TimeKeeper::getCurrent() - playerData->player.getLastMsgTime()
-	  <= clOptions->msgTimer) {
-	playerData->player.incSpamWarns();
-	sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
-	if (playerData->player.getSpamWarns() > clOptions->spamWarnMax
-	    || clOptions->spamWarnMax == 0) {
-	  sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-	  DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
-		 "less than %d second(s) in between; player was warned %d times]", 
-		 playerData->player.getCallSign(), t,
-		 TimeKeeper::getCurrent()
-		 - playerData->player.getLastMsgTime(),
-		 playerData->player.getSpamWarns());
-	  removePlayer(t, "spam");
-	  break;
-	}
-      }
-      playerData->player.setLastMsg(tempmsg);
+      if (checkSpam(message, playerData, t))
+        break;
       // check for command
       if (message[0] == '/') {
 	/* make commands case insensitive for user-friendlyness */
@@ -3718,12 +3719,12 @@ int main(int argc, char **argv)
     static const int major = 2, minor = 2;
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
-      DEBUG2("Failed to initialize winsock.  Terminating.\n");
+      DEBUG2("Failed to initialize Winsock.  Terminating.\n");
       return 1;
     }
     if (LOBYTE(wsaData.wVersion) != major ||
 	HIBYTE(wsaData.wVersion) != minor) {
-      DEBUG2("Version mismatch in winsock;"
+      DEBUG2("Version mismatch in Winsock;"
 	  "  got %d.%d, expected %d.%d.  Terminating.\n",
 	  (int)LOBYTE(wsaData.wVersion),
 	  (int)HIBYTE(wsaData.wVersion),
