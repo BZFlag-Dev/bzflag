@@ -32,8 +32,8 @@ public:
 	     callbackAdded = true;
 	 }
        }
-  
-       static void callback(const std::string& name, void* userData)
+
+       static void callback(const std::string& name, void*)
        {
 	  if (name == StateDatabase::BZDB_OBESEFACTOR) {
              styleFactors[1][0] = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
