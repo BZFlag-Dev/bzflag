@@ -395,7 +395,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   }
 
   // When NUM LOCK treat the KP number as numbers and Enter as Enter
-  if ((mod & KMOD_NUM) && unicode) {
+  if (mod & KMOD_NUM) {
     if (((key.button >= BzfKeyEvent::Kp0) && (key.button <= BzfKeyEvent::Kp9))
 	|| (key.button == BzfKeyEvent::Kp_Enter))
       key.button = BzfKeyEvent::NoButton;
@@ -409,6 +409,10 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
     } else {
       if ((sym >= SDLK_FIRST) && (sym <= SDLK_DELETE))
 	key.ascii = sym;
+      else if ((sym >= SDLK_KP0) && (sym <= SDLK_KP9))
+	key.ascii = sym - 208; // translate to normal number
+      else if (sym == SDLK_KP_ENTER)
+	key.ascii = 13; // enter
       else
 	return false;
     }
