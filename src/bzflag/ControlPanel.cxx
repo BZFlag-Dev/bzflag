@@ -262,7 +262,7 @@ void			ControlPanel::resize()
 				radarAreaPixels[2], radarAreaPixels[3]);
 
   const float fontSize = (float)messageAreaPixels[3] / 12.4444f;
-  if (fontSize > 1.0f)
+  if (fontSize > 10.0f)
     messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
   else
     messageFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
