@@ -979,7 +979,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.timeLimit = (float)atof(argv[i]);
       if (options.timeLimit <= 0.0f) {
-	options.timeLimit = 300.0f;
+	// league matches are 30 min
+	options.timeLimit = 1800.0f; 
       }
       std::cerr << "using time limit of " << (int)options.timeLimit << " seconds" << std::endl;
       options.timeElapsed = options.timeLimit;
