@@ -20,6 +20,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include <sys/types.h>
 #include <time.h>
 #ifdef _WIN32
+#pragma warning( 4 : 4786 )
 #define _WINSOCKAPI_
 #include <shlobj.h>
 #include <sys/types.h>
@@ -3137,6 +3138,15 @@ void			addShotPuff(const float* pos)
   addExplosion(pos, 0.3f * TankLength, 0.8f);
 }
 
+// update events from outside if they should be checked
+void                   updateEvents()
+{
+  if (mainWindow && display) {
+    while (display->isEventPending() &&!mainWindow->getQuit())
+      doEvent(display);
+  }
+}
+
 static void		updateExplosions(float dt)
 {
   // update time of all explosions
@@ -3775,7 +3785,7 @@ static void		addRobots(bool useMulticastRelay)
 
 #endif
 
-static std::string	getCacheDirectoryName()
+std::string		getCacheDirectoryName()
 {
 #if defined(_WIN32)
   std::string name("C:");

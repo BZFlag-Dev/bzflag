@@ -179,6 +179,7 @@ class HUDuiLabel : public HUDuiControl {
 
     std::string		getString() const;
     void		setString(const std::string&, const std::vector<std::string> *_params = NULL);
+    void		setDarker(bool d); // render darker than usual when not in focus
 
   protected:
     void		onSetFont();
@@ -189,6 +190,7 @@ class HUDuiLabel : public HUDuiControl {
   private:
   std::string		string;
   std::vector<std::string> *params;
+  bool			darker;
 };
 
 class HUDuiTextureLabel : public HUDuiLabel {

@@ -748,12 +748,17 @@ void			dumpResources(BzfDisplay* display,
     db.addValue(buffer, list[i]);	
   }
 
+  sprintf(buffer, "%ld", (long)ServerMenu::getMaxCacheAge());
+  db.addValue("serverCacheAge", buffer);
+
   // save configuration
   {
     ofstream resourceStream(getConfigFileName().c_str());
     if (resourceStream)
       resourceStream << db;
   }
+
+  ServerMenu::saveCache();
 }
 
 static bool		needsFullscreen()
@@ -835,6 +840,8 @@ int			main(int argc, char** argv)
     }
 #endif
   }
+
+  ServerMenu::loadCache();
 
   // restore some configuration (command line overrides these)
   if (startupInfo.hasConfiguration) {
@@ -1248,6 +1255,10 @@ int			main(int argc, char** argv)
       db.removeValue(buffer); 
     } else
       keepGoing = false;
+  }
+
+  if (db.hasValue("serverCacheAge")) {
+    ServerMenu::setMaxCacheAge(atoi(db.getValue("serverCacheAge").c_str()));
   }
 
   // start playing

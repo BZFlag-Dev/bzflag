@@ -22,6 +22,8 @@
 #include "Ping.h"
 #include "Protocol.h"
 #include "TimeKeeper.h"
+#include "bzfio.h"
+#include <fstream>
 
 //
 // PingPacket
@@ -339,3 +341,56 @@ char*			PingPacket::unpackHex16(char* buf, uint16_t& v)
   return buf;
 }
 // ex: shiftwidth=2 tabstop=8
+
+void			 PingPacket::zeroPlayerCounts()
+{
+  blueCount = 0; greenCount = 0; redCount = 0; purpleCount = 0; rogueCount = 0;
+}
+
+// serialize packet to file -- note lack of error checking
+// must write to a binary file if we use plain "pack"
+void			 PingPacket::writeToFile (ofstream& out) const
+{
+  if (!out) return;
+
+  char buffer[PingPacket::PacketSize];
+  void* buf = buffer;
+  buf = nboPackUShort(buf, PingPacket::PacketSize - 4);
+  buf = nboPackUShort(buf, PingCodeReply);
+  buf = pack(buf, ServerVersion);
+  out.write(buffer,sizeof(buffer)); 
+}
+
+// de serialize packet from file
+// must read from a binary file if we use plain "unpack"
+bool			 PingPacket::readFromFile(ifstream& in)
+{
+  if (!in) return false;
+
+  char buffer[PingPacket::PacketSize], serverVersion[9];
+  uint16_t len, code;
+
+  // get packet
+  in.read(buffer, sizeof(buffer));
+  if ((size_t)in.gcount() < sizeof(buffer)){
+    return false; 
+  }
+  
+  // decode header
+  void* buf = buffer;
+  buf = nboUnpackUShort(buf, len);
+  buf = nboUnpackUShort(buf, code);
+
+  // make sure we got the rest of the message
+  if (len != in.gcount() - 4){
+    return false;
+  }
+
+  // unpack body of reply
+  buf = unpack(buf, serverVersion);
+
+  // compare version against my version.  ignore last character of
+  // version number.  that's only used to indicate compatible
+  // client-side changes.
+  return (strncmp(serverVersion, ServerVersion, 7) == 0);
+}

@@ -21,6 +21,8 @@
 #include "Address.h"
 #include "Pack.h"
 #include "multicast.h"
+#include "bzfio.h"
+#include <fstream>
 
 static const int	PingPacketHexPackedSize = 2 * 2 * 18;
 
@@ -39,6 +41,9 @@ class PingPacket {
 
     void		packHex(char*) const;
     void		unpackHex(char*);
+    void		zeroPlayerCounts();
+    void		writeToFile(ofstream& out) const;
+    bool		readFromFile(ifstream& in);
     static void		repackHexPlayerCounts(char*, int* counts);
 
     static bool	isRequest(int fd, struct sockaddr_in*,

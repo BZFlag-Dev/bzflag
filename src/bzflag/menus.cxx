@@ -14,11 +14,16 @@
 #include "mac_funcs.h"
 #endif
 
+#ifdef _WIN32
+#pragma warning( 4 : 4786 )
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <map>
 #include "bzsignal.h"
 #if defined(_WIN32)
 #define _POSIX_
@@ -33,6 +38,9 @@
 #include <unistd.h>
 #endif
 #include <math.h>
+#include <time.h>
+#include <fstream>
+#include "bzfio.h"
 #include "menus.h"
 #include "sound.h"
 #include "global.h"
@@ -1378,6 +1386,24 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   option->update();
   list.push_back(option);
 
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Server List Cache:");
+  option->setCallback(callback, (void*)"S");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("5 Minutes"));
+  options->push_back(std::string("15 Minutes"));
+  options->push_back(std::string("30 Minutes"));
+  options->push_back(std::string("1 Hour"));
+  options->push_back(std::string("5 Hours"));
+  options->push_back(std::string("15 Hours"));
+  options->push_back(std::string("1 day"));
+  options->push_back(std::string("15 days"));
+  options->push_back(std::string("30 days"));
+  option->update();
+  list.push_back(option);
+
   keyMapping = label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setLabel("Change Key Mapping");
@@ -1479,12 +1505,29 @@ void			OptionsMenu::resize(int width, int height)
     const StartupInfo* info = getStartupInfo();
 
     // mind the ++i !
-    ((HUDuiList*)list[+i])->setIndex(info->useUDPconnection ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
 
     if (!renderer->useTexture())
       tex->setIndex(0);
     else
       tex->setIndex(OpenGLTexture::getFilter());
+
+    // server cache age
+    int index = 0;
+    switch (ServerMenu::getMaxCacheAge()){
+      case 0: index = 0; break;
+      case 5: index = 1; break;
+      case 15: index = 2; break;
+      case 30: index = 3; break;
+      case 60: index = 4; break;
+      case 60*5: index = 5; break;
+      case 60*15: index = 6; break;
+      case 60*24: index = 7; break;
+      case 60*24*15: index = 8; break;
+      case 60*24*30: index = 9; break;
+      default: index = 4;
+    }
+    ((HUDuiList*)list[i++])->setIndex(index);
   }
 }
 
@@ -1554,6 +1597,24 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       if (window->hasGammaControl())
 	window->setGamma(indexToGamma(list->getIndex()));
       break;
+    }
+
+    case 'S': { // server cache
+      time_t minutes = 0;
+      int index = list->getIndex();
+      switch (index){
+        case 0: minutes = 0; break;
+        case 1: minutes = 5; break;
+        case 2: minutes = 15; break;
+        case 3: minutes = 30; break;
+        case 4: minutes = 60; break;
+        case 5: minutes = 60*5; break;
+        case 6: minutes = 60*15; break;
+        case 7: minutes = 60*24; break;
+        case 8: minutes = 60*24*15; break;
+        case 9: minutes = 60*24*30; break;
+      }
+      ServerMenu::setMaxCacheAge(minutes);
     }
 
 #if defined(DEBUG_RENDERING)
@@ -2287,84 +2348,172 @@ void			HelpMenu::done()
 // ServerMenu
 //
 
-class ServerMenu;
+static const size_t MAX_STRING = 200; // size of description/name
 
-class ServerMenuDefaultKey : public MenuDefaultKey {
-  public:
-			ServerMenuDefaultKey(ServerMenu* _menu) :
-				menu(_menu) { }
-			~ServerMenuDefaultKey() { }
+void			ServerItem::writeToFile(ofstream& out) const
+{
+  char buffer[MAX_STRING+1];
 
-    bool		keyPress(const BzfKeyEvent&);
-    bool		keyRelease(const BzfKeyEvent&);
+  // write out desc.
+  memset(buffer,0,sizeof(buffer));
+  int copyLength = description.size() < MAX_STRING ? description.size(): MAX_STRING;
+  strncpy(&buffer[0],description.c_str(),copyLength);
+  out.write(buffer,sizeof(buffer));
 
-  private:
-    ServerMenu*		menu;
-};
+  // write out name
+  memset(buffer,0,sizeof(buffer));
+  copyLength = name.size() < MAX_STRING ? name.size(): MAX_STRING;
+  strncpy(&buffer[0],name.c_str(),copyLength);
+  out.write(buffer,sizeof(buffer));
 
-class ServerItem {
-  public:
-    std::string		name;
-    std::string		description;
-    PingPacket		ping;
-};
+  // write out pingpacket
+  ping.writeToFile(out);
 
-static const int	MaxListServers = 5;
-class ListServer {
-  public:
-    Address		address;
-    int			port;
-    int			socket;
-    int			phase;
-    int			bufferSize;
-    char		buffer[1024];
-};
+  // write out current time
+  memset(buffer,0,sizeof(buffer));
+  nboPackInt(buffer,(int32_t)updateTime);
+  out.write(&buffer[0], 4);
+}
 
-class ServerMenu : public HUDDialog {
-  public:
-			ServerMenu();
-			~ServerMenu() { }
+bool			ServerItem::readFromFile(ifstream& in)
+{
+  char buffer [MAX_STRING+1];
 
-    HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
-    int			getSelected() const;
-    void		setSelected(int);
-    void		show();
-    void		execute();
-    void		dismiss();
-    void		resize(int width, int height);
+  //read description
+  memset(buffer,0,sizeof(buffer));
+  in.read(buffer,sizeof(buffer));
+  if ((size_t)in.gcount() < sizeof(buffer)) return false; // failed to read entire string
+  description = buffer;
 
-  public:
-    static const int	NumItems;
+  //read name
+  memset(buffer,0,sizeof(buffer));
+  in.read(buffer,sizeof(buffer));
+  if ((size_t)in.gcount() < sizeof(buffer)) return false; // failed to read entire string
 
-  private:
-    void		addLabel(const char* string, const char* label);
-    void		checkEchos();
-    void		readServerList(int index);
-    void		addToList(ServerItem&);
-    void		addToListWithLookup(ServerItem&);
-    void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
-    void		pick();
-    int			getPlayerCount(int index) const;
-    static void		playingCB(void*);
+  name = buffer;
 
-  private:
-    ServerMenuDefaultKey defaultKey;
-    std::vector<ServerItem>		servers;
-    int			pingInSocket;
-    struct sockaddr_in	pingInAddr;
-    int			pingBcastSocket;
-    struct sockaddr_in	pingBcastAddr;
-    HUDuiLabel*		status;
+  bool pingWorked = ping.readFromFile(in);
+  if (!pingWorked) return false; // pingpacket failed to read
 
-    HUDuiLabel*		pageLabel;
-    int			selectedIndex;
+  // read in time
+  in.read(&buffer[0],4);
+  if (in.gcount() < 4) return false;
+  int32_t theTime;
+  nboUnpackInt(&buffer[0],theTime);
+  updateTime = (time_t) theTime;
+  cached = true;
+  return true;
+}
 
-    int			phase;
-    ListServer		listServers[MaxListServers];
-    int			numListServers;
+// set the last updated time to now
+void			ServerItem::setUpdateTime()
+{
+  updateTime = getNow();
+}
 
-    static const int	NumReadouts;
-};
+// get current age in minutes
+time_t			ServerItem::getAgeMinutes() const
+{
+  time_t time = (getNow() - updateTime)/(time_t)60;
+  return time;
+}
+
+// get current age in seconds
+time_t			ServerItem::getAgeSeconds() const
+{
+  time_t time = (getNow() - updateTime);
+  return time;
+}
+
+// get a simple string which describes the age of item
+std::string		ServerItem::getAgeString() const
+{
+  std::string returnMe;
+  char buffer [80];
+  time_t age = getAgeMinutes();
+  float fAge;
+  if (age < 60){ // < 1 hr
+    if (age < 1){
+      time_t ageSecs = getAgeSeconds();
+      sprintf(buffer,"%-3ld secs",(long)ageSecs);
+    } else {
+      sprintf(buffer,"%-3ld mins",(long)age);
+    }
+  } else { // >= 60 minutes
+    if (age < (24*60)){ // < 24 hours & > 1 hr
+      fAge = ((float)age / 60.0f);
+      sprintf(buffer, "%-2.1f hrs", fAge);
+    } else  { // > 24 hrs
+      if (age < (24*60*99)){  // > 1 day & < 99 days
+       fAge = ((float) age / (60.0f*24.0f));
+       sprintf(buffer, "%-2.1f days", fAge);
+      } else { // over 99 days
+       fAge = ((float) age / (60.0f*24.0f));
+       sprintf(buffer, "%-3f days", fAge);  //should not happen
+      }
+    }
+  }
+  returnMe = buffer;
+  return returnMe;
+}
+
+// get the current time
+time_t			ServerItem::getNow() const
+{
+#if defined(_WIN32)
+  return time(NULL);
+#else
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return tv.tv_sec;
+#endif
+}
+
+bool			ServerItem::operator<(const ServerItem &right)
+{
+  const ServerItem & left = *this;
+  if (left.cached && right.cached){
+    if (left.getPlayerCount() < right.getPlayerCount()){
+      return true;
+    }
+    else if (left.getPlayerCount() == right.getPlayerCount()){
+      if (left.getAgeMinutes() > right.getAgeMinutes()){
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+  else if (!left.cached && !right.cached) {
+    if (left.getPlayerCount() < right.getPlayerCount()){
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  else if (!left.cached && right.cached) {
+    return false;
+  }
+  else {
+    // left.cached && !right.cached // always less
+    return true;
+  }
+}
+
+int			ServerItem::getPlayerCount() const
+{
+  // if null ping we return a 0 player count
+  if (&ping != 0)
+    return ping.rogueCount + ping.redCount + ping.greenCount +
+                               ping.blueCount + ping.purpleCount;
+   else return 0;
+}
+
 
 bool			ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -2421,8 +2570,11 @@ bool			ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
-const int		ServerMenu::NumReadouts = 21;
+const int		ServerMenu::NumReadouts = 23;
 const int		ServerMenu::NumItems = 10;
+time_t			ServerMenu::maxCacheAge = 0;
+SRV_STR_MAP		ServerMenu::serverCache;
+int			ServerMenu::cacheAddedNum = 0;
 
 ServerMenu::ServerMenu() : defaultKey(this),
 				pingInSocket(-1),
@@ -2449,6 +2601,8 @@ ServerMenu::ServerMenu() : defaultKey(this),
   addLabel("", "");			// time limit
   addLabel("", "");			// max team score
   addLabel("", "");			// max player score
+  addLabel("", "");			// cached status
+  addLabel("", "");			// cached age
   addLabel("", "");			// search status
   addLabel("", "");			// page readout
   status = (HUDuiLabel*)(getControls()[NumReadouts - 2]);
@@ -2460,6 +2614,81 @@ ServerMenu::ServerMenu() : defaultKey(this),
 
   // set initial focus
   setFocus(status);
+}
+
+// load the server cache from the file fileName
+void			ServerMenu::saveCache()
+{
+  // get a file named e.g. BZFS107Server.bzs in the cache dir
+  // allows separation of server caches by version
+  std::string fileName = getCacheDirectoryName();
+  if (fileName == "") return;
+  std::string verString = ServerVersion;
+  verString = verString.substr(0,7);
+  fileName = fileName + "/" + verString + "Servers.bzs";
+
+  char buffer[MAX_STRING+1];
+
+  ofstream outFile (fileName.c_str(), ios::out|ios::binary);
+  int lenCpy = MAX_STRING;
+  bool doWeed = (cacheAddedNum >0); // weed out as many items as were added
+
+  if (outFile){
+    for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); iter++){
+      // weed out after 30 days *if* if we should
+      if (doWeed && iter->second.getAgeMinutes() > 60*24*30) {
+       cacheAddedNum --;
+       doWeed = (cacheAddedNum >0);
+       continue;
+      }
+
+      // write out the index of the map
+      memset(&buffer,0, sizeof(buffer));
+      lenCpy = (iter->first).size() < MAX_STRING ? (iter->first).size() : MAX_STRING;
+      strncpy(&buffer[0],(iter->first.c_str()),lenCpy);
+      outFile.write(buffer,sizeof(buffer));
+
+      // write out the serverinfo -- which is mapped by index
+      (iter->second).writeToFile(outFile);
+    }
+    outFile.close();
+  }
+}
+
+// load the server cache
+void			ServerMenu::loadCache()
+{
+  // get a file named BZFS107Server.bzs in the cache dir
+  // allows separation of server caches by version
+  std::string fileName = getCacheDirectoryName();
+  if (fileName == "") return;
+  std::string verString = ServerVersion;
+  verString = verString.substr(0,7);
+  fileName = fileName + "/" + verString + "Servers.bzs";
+
+  char buffer[MAX_STRING+1];
+
+  ifstream inFile (fileName.c_str(),ios::in|ios::binary);
+  bool infoWorked;
+
+  if (inFile) {
+    while(inFile) {
+      std::string serverIndex;
+      ServerItem info;
+
+      inFile.read(buffer,sizeof(buffer)); //read the index of the map
+      if ((size_t)inFile.gcount() < sizeof(buffer)) break; // failed to read entire string
+      serverIndex = buffer;
+
+      infoWorked = info.readFromFile(inFile);
+      // after a while it is doubtful that player counts are accurate
+      if (info.getAgeMinutes() > (time_t)30) info.ping.zeroPlayerCounts();
+      if (!infoWorked) break;
+
+      serverCache.insert(SRV_STR_MAP::value_type(serverIndex,info));
+    }
+    inFile.close();
+  }
 }
 
 void			ServerMenu::addLabel(
@@ -2501,10 +2730,18 @@ void			ServerMenu::setSelected(int index)
     const int base = newPage * NumItems;
     for (int i = 0; i < NumItems; ++i) {
       HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
-      if (base + i < (int)servers.size())
+      if (base + i < (int)servers.size()) {
 	label->setString(servers[base + i].description);
-      else
+	if (servers[base + i].cached ){
+	  label->setDarker(true);
+	}
+	else {
+	  label->setDarker(false);
+	}
+      }
+      else {
 	label->setString("");
+      }
     }
 
     // change page label
@@ -2541,47 +2778,73 @@ void			ServerMenu::pick()
   // update server readouts
   char buf[60];
   std::vector<HUDuiControl*>& list = getControls();
-  sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount +
-			ping.greenCount + ping.blueCount +
-			ping.purpleCount, ping.maxPlayers);
-  ((HUDuiLabel*)list[1])->setLabel(buf);
 
-  if (ping.redMax >= ping.maxPlayers)
-    sprintf(buf, "%d", ping.redCount);
-  else
-    sprintf(buf, "%d/%d", ping.redCount, ping.redMax);
-  ((HUDuiLabel*)list[2])->setLabel(buf);
+  const uint16_t maxes [] = { ping.maxPlayers,ping.redMax,ping.greenMax,ping.blueMax,
+  			      ping.purpleMax, ping.rogueMax };
 
-  if (ping.greenMax >= ping.maxPlayers)
-    sprintf(buf, "%d", ping.greenCount);
-  else
-    sprintf(buf, "%d/%d", ping.greenCount, ping.greenMax);
-  ((HUDuiLabel*)list[3])->setLabel(buf);
+  // if this is a cached item set the player counts to "?/max count"
+  if (item.cached && item.getPlayerCount() == 0) {
+    for (int i = 1; i <=6; i ++){
+      // handle all non rogue labels
+      if (i != 6){
+       sprintf(buf, "?/%d", maxes[i-1]);
+        ((HUDuiLabel*)list[i])->setLabel(buf);
 
-  if (ping.blueMax >= ping.maxPlayers)
-    sprintf(buf, "%d", ping.blueCount);
-  else
-    sprintf(buf, "%d/%d", ping.blueCount, ping.blueMax);
-  ((HUDuiLabel*)list[4])->setLabel(buf);
+      } else { // handle the rogue labels - case "i == 6"
+       if (ping.gameStyle & RoguesGameStyle){ // if we have rogues
+         ((HUDuiLabel*)list[i])->setString("Rogue");
+         sprintf(buf, "?/%d", maxes[i-1]);
+         ((HUDuiLabel*)list[i])->setLabel(buf);
+       } else { // no rogues
+         ((HUDuiLabel*)list[i])->setLabel("");
+         ((HUDuiLabel*)list[i])->setString("");
+       }
+      }
+    }
+  } else {  // not an old item, set players #s to info we have
+    sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount +
+                          ping.greenCount + ping.blueCount +
+                          ping.purpleCount, ping.maxPlayers);
+    ((HUDuiLabel*)list[1])->setLabel(buf);
 
-  if (ping.purpleMax >= ping.maxPlayers)
-    sprintf(buf, "%d", ping.purpleCount);
-  else
-    sprintf(buf, "%d/%d", ping.purpleCount, ping.purpleMax);
-  ((HUDuiLabel*)list[5])->setLabel(buf);
-
-  if (ping.gameStyle & RoguesGameStyle) {
-    if (ping.rogueMax >= ping.maxPlayers)
-      sprintf(buf, "%d", ping.rogueCount);
+    if (ping.redMax >= ping.maxPlayers)
+      sprintf(buf, "%d", ping.redCount);
     else
-      sprintf(buf, "%d/%d", ping.rogueCount, ping.rogueMax);
-    ((HUDuiLabel*)list[6])->setLabel(buf);
-    ((HUDuiLabel*)list[6])->setString("Rogue");
+      sprintf(buf, "%d/%d", ping.redCount, ping.redMax);
+    ((HUDuiLabel*)list[2])->setLabel(buf);
+
+    if (ping.greenMax >= ping.maxPlayers)
+      sprintf(buf, "%d", ping.greenCount);
+    else
+      sprintf(buf, "%d/%d", ping.greenCount, ping.greenMax);
+    ((HUDuiLabel*)list[3])->setLabel(buf);
+
+    if (ping.blueMax >= ping.maxPlayers)
+      sprintf(buf, "%d", ping.blueCount);
+    else
+      sprintf(buf, "%d/%d", ping.blueCount, ping.blueMax);
+    ((HUDuiLabel*)list[4])->setLabel(buf);
+
+    if (ping.purpleMax >= ping.maxPlayers)
+      sprintf(buf, "%d", ping.purpleCount);
+    else
+      sprintf(buf, "%d/%d", ping.purpleCount, ping.purpleMax);
+    ((HUDuiLabel*)list[5])->setLabel(buf);
+
+    if (ping.gameStyle & RoguesGameStyle) {
+      if (ping.rogueMax >= ping.maxPlayers)
+        sprintf(buf, "%d", ping.rogueCount);
+      else
+        sprintf(buf, "%d/%d", ping.rogueCount, ping.rogueMax);
+      ((HUDuiLabel*)list[6])->setLabel(buf);
+      ((HUDuiLabel*)list[6])->setString("Rogue");
+    }
+    else {
+      ((HUDuiLabel*)list[6])->setLabel("");
+      ((HUDuiLabel*)list[6])->setString("");
+    }
   }
-  else {
-    ((HUDuiLabel*)list[6])->setLabel("");
-    ((HUDuiLabel*)list[6])->setString("");
-  }
+
 
 
   std::vector<std::string> args;
@@ -2680,12 +2943,22 @@ void			ServerMenu::pick()
   }
   else
     ((HUDuiLabel*)list[18])->setString("");
+
+  if (item.cached){
+    ((HUDuiLabel*)list[19])->setString("Cached");
+    ((HUDuiLabel*)list[20])->setString(item.getAgeString());
+  }
+  else {
+    ((HUDuiLabel*)list[19])->setString("");
+    ((HUDuiLabel*)list[20])->setString("");
+  }
 }
 
 void			ServerMenu::show()
 {
   // clear server list
   servers.clear();
+  addedCacheToList = false;
 
   // clear server readouts
   std::vector<HUDuiControl*>& list = getControls();
@@ -2708,9 +2981,25 @@ void			ServerMenu::show()
   ((HUDuiLabel*)list[16])->setString("");
   ((HUDuiLabel*)list[17])->setString("");
   ((HUDuiLabel*)list[18])->setString("");
+  ((HUDuiLabel*)list[19])->setString("");
+
+  char buffer[80];
+
+  // add cache items w/o re-caching them
+  int numItemsAdded = 0;
+  for (SRV_STR_MAP::iterator iter = serverCache.begin();
+       iter != serverCache.end(); iter++) {
+    // if maxCacheAge is 0 we add nothing
+    // if the item is young enough we add it
+    if (maxCacheAge != 0 && iter->second.getAgeMinutes() < maxCacheAge) {
+      addToList(iter->second);
+      numItemsAdded ++;
+    }
+  }
   
   std::vector<std::string> args;
-  args.push_back("0");
+  sprintf(buffer, "%d", numItemsAdded);
+  args.push_back(buffer);
   setStatus("Servers found: {1}", &args);
   pageLabel->setString("");
   selectedIndex = -1;
@@ -2837,6 +3126,8 @@ void			ServerMenu::resize(int width, int height)
     label->setPosition(x, y);
   }
 
+  y = ((HUDuiLabel*)list[6])->getY(); //reset bottom to "rogue" label
+
   // reposition search status readout
   {
     fontWidth = (float)height / 24.0f;
@@ -2882,9 +3173,16 @@ void			ServerMenu::checkEchos()
     // print urls we failed to open
     int i;
     for (i = 0; i < (int)failedURLs.size(); ++i) {
-	std::vector<std::string> args;
-	args.push_back(failedURLs[i]);
-	printError("Can't open list server: {1}", &args);
+      std::vector<std::string> args;
+      args.push_back(failedURLs[i]);
+      printError("Can't open list server: {1}", &args);
+
+      // in all error cases we add the entire cache to the list
+      // but only one time
+      if (!addedCacheToList){
+	addedCacheToList = true;
+	addCacheToList();
+      }
     }
 
     // check urls for validity
@@ -2900,6 +3198,10 @@ void			ServerMenu::checkEchos()
 	    std::vector<std::string> args;
 	    args.push_back(urls[i]);
 	    printError("Can't open list server: {1}", &args);
+	    if (!addedCacheToList) {
+              addedCacheToList = true;
+              addCacheToList();
+            }
 	    continue;
 	}
 
@@ -2929,6 +3231,10 @@ void			ServerMenu::checkEchos()
       if (listServer.socket < 0) {
 	printError("Can't create list server socket");
 	listServer.socket = -1;
+	if (!addedCacheToList) {
+          addedCacheToList = true;
+          addCacheToList();
+        }
 	continue;
       }
 
@@ -2937,6 +3243,10 @@ void			ServerMenu::checkEchos()
 	printError("Error with list server socket");
 	close(listServer.socket);
 	listServer.socket = -1;
+	if (!addedCacheToList){
+          addedCacheToList = true;
+          addCacheToList();
+        }
 	continue;
       }
 
@@ -2954,6 +3264,10 @@ void			ServerMenu::checkEchos()
 	  printError("Can't connect list server socket");
 	  close(listServer.socket);
 	  listServer.socket = -1;
+	  if (!addedCacheToList){
+            addedCacheToList = true;
+            addCacheToList();
+          }
 	  continue;
 	}
       }
@@ -3003,12 +3317,14 @@ void			ServerMenu::checkEchos()
     if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set)) {
 		if (serverInfo.ping.read(pingInSocket, &addr)) {
 			serverInfo.ping.serverId.serverHost = addr.sin_addr;
+			serverInfo.cached = false;
 			addToListWithLookup(serverInfo);
 		}
 	}
 	if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
 		if (serverInfo.ping.read(pingBcastSocket, &addr)) {
 			serverInfo.ping.serverId.serverHost = addr.sin_addr;
+			serverInfo.cached = false;
 			addToListWithLookup(serverInfo);
 		}
 	}
@@ -3033,6 +3349,10 @@ void			ServerMenu::checkEchos()
 	    // probably unable to connect to server
 	    close(listServer.socket);
 	    listServer.socket = -1;
+	    if (!addedCacheToList){
+              addedCacheToList = true;
+              addCacheToList();
+             }
 	  }
 	  else {
 	    listServer.phase = 3;
@@ -3131,8 +3451,9 @@ void			ServerMenu::readServerList(int index)
 	  serverInfo.description += title;
 	}
 
-	// add to list
-	addToList(serverInfo);
+        serverInfo.cached = false;
+        // add to list & add it to the server cache
+        addToList(serverInfo,true);
       }
 
       // next reply
@@ -3170,65 +3491,112 @@ void			ServerMenu::addToListWithLookup(ServerItem& info)
     info.description += portBuf;
   }
 
-  addToList(info);
+  addToList(info); // do not cache network lan - etc. servers
 }
 
-int			ServerMenu::getPlayerCount(int index) const
-{
-  const PingPacket& item = servers[index].ping;
-  return item.rogueCount + item.redCount + item.greenCount +
-				item.blueCount + item.purpleCount;
-}
 
-void			ServerMenu::addToList(ServerItem& info)
+void			ServerMenu::addToList(ServerItem& info, bool doCache)
 {
   // update if we already have it
-  const int count = servers.size();
   int i;
-  for (i = 0; i < count; i++) {
+
+  // search and delete entry for this item if it exists
+  // (updating info in place may "unsort" the list)
+  for (i = 0; i < (int)servers.size(); i++) {
     ServerItem& server = servers[i];
-    if (server.ping.serverId.serverHost.s_addr ==
-				info.ping.serverId.serverHost.s_addr &&
-	server.ping.serverId.port == info.ping.serverId.port) {
-      if (server.description.size() < info.description.size())
-	server.description = info.description;
+    if (server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr
+        && server.ping.serverId.port == info.ping.serverId.port) {
+      servers.erase(servers.begin() + i); // erase this item
+    }
+  }
+
+  // find point to insert new player at
+  int insertPoint = -1; // point to insert server into
+  int numPlayers;
+
+  // insert new item before the first serveritem with is deemed to be less
+  // in value than the item to be inserted -- cached items are less than
+  // non-cached, items that have more players are more, etc..
+  for (i = 0; i < (int)servers.size(); i++) {
+    ServerItem& server = servers[i];
+    numPlayers = server.getPlayerCount();
+    if (server < info){
+      insertPoint = i;
       break;
     }
   }
 
-  // add if we don't already have it
-  if (i == count) {
-    std::vector<std::string> args;
-    char msg[50];
-    sprintf(msg, "%d", count + 1);
-    args.push_back(msg);
-    setStatus("Servers found: {1}", &args);
-
-    // add to server list
+  if (insertPoint == -1){ // no spot to insert it into -- goes on back
     servers.push_back(info);
   }
-
-  // sort by number of players
-  const int n = servers.size();
-  for (i = 0; i < n - 1; ++i) {
-    int indexWithMin = i;
-    for (int j = i + 1; j < n; ++j)
-      if (getPlayerCount(j) > getPlayerCount(indexWithMin))
-	indexWithMin = j;
-    ServerItem temp = servers[i];
-    servers[i] = servers[indexWithMin];
-    servers[indexWithMin] = temp;
+  else {  // found a spot to insert it into
+    servers.insert(servers.begin() + insertPoint,info);
   }
+
+  // update display
+  char buffer [80];
+  std::vector<std::string> args;
+  sprintf(buffer, "%d", servers.size());
+  args.push_back(buffer);
+  setStatus("Servers found: {1}", &args);
 
   // force update
   const int oldSelectedIndex = selectedIndex;
   selectedIndex = -1;
   setSelected(oldSelectedIndex);
+
+  if (doCache) {
+    // update server cache if asked for
+    // on save we delete at most as many items as we added
+    // if the added list is normal, we weed most out, if we
+    // get few items, we weed few items out
+    cacheAddedNum ++;
+
+    // make string like "sdfsd.dmsd.com:123"
+    char buffer [100];
+    std::string serverAddress = info.name;
+    sprintf(buffer,":%d",  ntohs((unsigned short) info.ping.serverId.port));
+    serverAddress += buffer;
+    info.cached = true; // values in cache are "cached"
+    // update the last updated time to now
+    info.setUpdateTime();
+
+    SRV_STR_MAP::iterator iter;
+    iter = serverCache.find(serverAddress);  // erase entry to allow update
+    if (iter != serverCache.end()){ // if we find it, update it
+      iter->second = info;
+    }
+    else {
+      // insert into cache -- wasn't found
+      serverCache.insert(SRV_STR_MAP::value_type(serverAddress,info));
+    }
+  }
+}
+
+// add the entire cache to the server list
+void			ServerMenu::addCacheToList()
+{
+  for (SRV_STR_MAP::iterator iter = serverCache.begin();
+       iter != serverCache.end(); iter++){
+    addToList(iter->second);
+  }
 }
 
 void			ServerMenu::playingCB(void* _self)
 {
   ((ServerMenu*)_self)->checkEchos();
+}
+
+// set the max age to # of minutes after which items in cache
+// are this old they are no longer shown -- 0 disables
+void			ServerMenu::setMaxCacheAge(time_t time)
+{
+  maxCacheAge = time;
+}
+
+time_t			ServerMenu::getMaxCacheAge()
+{
+  return maxCacheAge;
 }
 
 //

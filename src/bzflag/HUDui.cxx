@@ -20,6 +20,7 @@
 
 static const char*	arrowFile = "ybolt";
 static const GLfloat	dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
+static const GLfloat	moreDimTextColor[3] = { 0.4f, 0.4f, 0.4f };
 static const GLfloat	textColor[3] = { 1.0f, 1.0f, 1.0f };
 
 //
@@ -578,6 +579,7 @@ void			HUDuiTypeIn::doRender()
 
 HUDuiLabel::HUDuiLabel() : HUDuiControl()
 {
+  darker = false;
   params = NULL;
 }
 
@@ -661,11 +663,17 @@ bool			HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
   return false;
 }
 
+void			HUDuiLabel::setDarker(bool d)
+{
+  darker = d;
+}
+
 void			HUDuiLabel::doRender()
 {
   if (!getFont().isValid()) return;
   // render string
   glColor3fv(hasFocus() ? textColor : dimTextColor);
+  if (!hasFocus() && darker) glColor3fv(moreDimTextColor);
   getFont().draw(getString(), getX(), getY());
 }
 
