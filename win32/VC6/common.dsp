@@ -7,21 +7,21 @@
 CFG=common - Win32 SDL_Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
-!MESSAGE
+!MESSAGE 
 !MESSAGE NMAKE /f "common.mak".
-!MESSAGE
+!MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE
+!MESSAGE 
 !MESSAGE NMAKE /f "common.mak" CFG="common - Win32 SDL_Debug"
-!MESSAGE
+!MESSAGE 
 !MESSAGE Possible choices for configuration are:
-!MESSAGE
+!MESSAGE 
 !MESSAGE "common - Win32 Release" (based on "Win32 (x86) Static Library")
 !MESSAGE "common - Win32 Debug" (based on "Win32 (x86) Static Library")
 !MESSAGE "common - Win32 SDL_Release" (based on "Win32 (x86) Static Library")
 !MESSAGE "common - Win32 SDL_Debug" (based on "Win32 (x86) Static Library")
-!MESSAGE
+!MESSAGE 
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
@@ -125,7 +125,7 @@ LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
 
-!ENDIF
+!ENDIF 
 
 # Begin Target
 
@@ -230,6 +230,10 @@ SOURCE=..\..\src\common\Team.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\common\TextUtils.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\common\TimeBomb.cxx
 # End Source File
 # Begin Source File
@@ -254,11 +258,11 @@ SOURCE=..\..\src\common\WordFilter.cxx
 # PROP Default_Filter "h"
 # Begin Source File
 
-SOURCE=..\..\include\AnsiCodes.h
+SOURCE=..\..\include\Address.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\Address.h
+SOURCE=..\..\include\AnsiCodes.h
 # End Source File
 # Begin Source File
 
