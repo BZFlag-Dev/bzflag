@@ -36,6 +36,7 @@ MeshObstacle::MeshObstacle()
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
+  isLocal = false;
   return;
 }
 
@@ -79,6 +80,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
+  isLocal = false;
 
   return;
 }
@@ -87,7 +89,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
 bool MeshObstacle::addFace(const std::vector<int>& _vertices,
                            const std::vector<int>& _normals,
                            const std::vector<int>& _texcoords,
-                           const MeshMaterial& _material,
+                           const BzMaterial* _material,
                            bool bounce, bool drive, bool shoot)
 {
   // protect the face list from overrun
@@ -356,6 +358,10 @@ bool MeshObstacle::isCrossing(const float* p, float angle,
 
 void *MeshObstacle::pack(void *buf)
 {
+  if (isLocal) {
+    return buf;
+  }
+
   int i;
 
   buf = nboPackInt(buf, checkCount);
@@ -464,6 +470,10 @@ void *MeshObstacle::unpack(void *buf)
 
 int MeshObstacle::packSize()
 {
+  if (isLocal) {
+    return 0;
+  }
+  
   int fullSize = 5 * sizeof(int);
   fullSize += sizeof(char) * checkCount;
   fullSize += sizeof(fvec3) * checkCount;
@@ -489,6 +499,10 @@ static void outputFloat(std::ostream& out, float value)
 
 void MeshObstacle::print(std::ostream& out, int level)
 {
+  if (isLocal) {
+    return;
+  }
+
   out << "mesh" << std::endl;
   if (level > 0) {
     out << "# faces = " << faceCount << std::endl;

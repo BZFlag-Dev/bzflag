@@ -23,8 +23,8 @@
 #include "vectors.h"
 #include "Ray.h"
 #include "Obstacle.h"
-#include "MeshMaterial.h"
 #include "global.h"
+#include "BzMaterial.h"
 //#include "PhysicsDrive.h"
 
 
@@ -36,7 +36,7 @@ class MeshFace : public Obstacle {
     MeshFace(class MeshObstacle* mesh);
     MeshFace(MeshObstacle* _mesh, int _vertexCount,
              float** _vertices, float** _normals,
-             float** _texcoords, const MeshMaterial& _material,
+             float** _texcoords, const BzMaterial* _bzMaterial,
              bool smoothBounce, bool drive, bool shoot);
     ~MeshFace();
 
@@ -73,7 +73,7 @@ class MeshFace : public Obstacle {
     const float* getNormal(int index) const;
     const float* getTexcoord(int index) const;
     const float* getPlane() const;
-    const MeshMaterial* getMaterial() const;
+    const BzMaterial* getMaterial() const;
     //const PhysicsDrive* getPhysicsDrive() const;
 
     bool isSpecial() const;
@@ -98,7 +98,7 @@ class MeshFace : public Obstacle {
     float** vertices;
     float** normals;
     float** texcoords;
-    MeshMaterial material;
+    const BzMaterial* bzMaterial;
     bool smoothBounce;
     //PhysicsDrive* physics;
 
@@ -151,9 +151,9 @@ class MeshFace : public Obstacle {
     SpecialData* specialData;
 };
 
-inline const MeshMaterial* MeshFace::getMaterial() const
+inline const BzMaterial* MeshFace::getMaterial() const
 {
-  return &material;
+  return bzMaterial;
 }
 
 //inline const PhysicsDrive* MeshFace::getPhysicsDrive() const

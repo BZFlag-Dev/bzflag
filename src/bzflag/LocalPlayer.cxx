@@ -549,7 +549,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   } else {
     setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   }
-
+  
   // compute actual velocities.  do this before teleportation.
   if (!NEAR_ZERO(dt, ZERO_TOLERANCE)) {
     const float oodt = 1.0f / dt;

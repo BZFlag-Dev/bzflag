@@ -13,47 +13,40 @@
 #include "common.h"
 
 /* interface header */
-#include "CustomWaterLevel.h"
+#include "CustomMaterial.h"
+
+/* system implementation headers */
+#include <sstream>
 
 /* bzfs implementation headers */
-#include "WorldInfo.h"
 #include "ParseMaterial.h"
 
 /* common implementation headers */
 #include "BzMaterial.h"
-#include "TextureMatrix.h"
 
 
-CustomWaterLevel::CustomWaterLevel()
-{
-  modedMaterial = false;
-  return;
-}
-
-
-CustomWaterLevel::~CustomWaterLevel()
+CustomMaterial::CustomMaterial()
 {
   return;
 }
 
 
-bool CustomWaterLevel::read(const char *cmd, std::istream& input)
+CustomMaterial::~CustomMaterial()
+{
+  return;
+}
+
+
+bool CustomMaterial::read(const char *cmd, std::istream& input)
 {
   bool materror;
 
-  if (strcasecmp ("height", cmd) == 0) {
-    if (!(input >> height)) {
-      return false;
-    }
-  }
-  else if (parseMaterials(cmd, input, &material, 1, materror)) {
+  if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;
     }
-    modedMaterial = true;
   }
   else {
-    // NOTE: we don't use a WorldFileObstacle
     return WorldFileObject::read(cmd, input);
   }
 
@@ -61,15 +54,14 @@ bool CustomWaterLevel::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomWaterLevel::write(WorldInfo* world) const
+void CustomMaterial::write(WorldInfo * /*world*/) const
 {
-  if (modedMaterial) {
-    const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
-    world->addWaterLevel(height, matref);
-  } else {
-    world->addWaterLevel(height, NULL); // build the material later
+  material.setName(name);
+  const BzMaterial* refmat = MATERIALMGR.addMaterial(&material);
+  int index = MATERIALMGR.getIndex(refmat);
+  if (index < 0) {
+    std::cout << "CustomMaterial::write: material didn't register" << std::endl;
   }
-  
   return;
 }
 

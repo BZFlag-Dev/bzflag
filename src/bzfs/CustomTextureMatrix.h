@@ -25,6 +25,7 @@ class CustomTextureMatrix : public WorldFileObject {
     ~CustomTextureMatrix();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
+    bool writeImmediately() { return true; }
 
   private:
     mutable TextureMatrix* texmat;

@@ -56,8 +56,6 @@ struct ProcTextureInit
   int			(*proc)(ProcTextureInit &init);
 };
 
-typedef std::map<std::string, ImageInfo> TextureNameMap;
-typedef std::map<int, ImageInfo*> TextureIDMap;
 
 class TextureManager : public Singleton<TextureManager>
 {
@@ -89,6 +87,9 @@ private:
   ~TextureManager();
 
   OpenGLTexture* loadTexture( FileTextureInit &init, bool reportFail = true  );
+
+  typedef std::map<std::string, ImageInfo> TextureNameMap;
+  typedef std::map<int, ImageInfo*> TextureIDMap;
 
   int            lastImageID;
   int            lastBoundID;

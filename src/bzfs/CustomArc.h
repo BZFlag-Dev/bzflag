@@ -20,7 +20,7 @@
 #include "WorldInfo.h"
 
 /* common interface headers */
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 
 
 class CustomArc : public WorldFileObstacle {
@@ -55,7 +55,7 @@ class CustomArc : public WorldFileObstacle {
     float texsize[4];
     bool useNormals;
     bool smoothBounce;
-    MeshMaterial materials[MaterialCount];
+    BzMaterial materials[MaterialCount];
 };
 
 

@@ -20,7 +20,7 @@
 #include "WorldInfo.h"
 
 /* common interface headers */
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 
 
 class CustomSphere : public WorldFileObstacle {
@@ -45,7 +45,7 @@ class CustomSphere : public WorldFileObstacle {
     bool hemisphere;
     bool useNormals;
     bool smoothBounce;
-    MeshMaterial materials[MaterialCount];
+    BzMaterial materials[MaterialCount];
 };
 
 

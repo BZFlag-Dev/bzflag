@@ -17,6 +17,9 @@ libObstacle_a_SOURCES =			\
 	TeleporterSceneNodeGenerator.cxx\
 	WallSceneNodeGenerator.cxx	\
 	MeshSceneNodeGenerator.cxx	\
+	ArcObstacle.cxx			\
+	ConeObstacle.cxx		\
+	SphereObstacle.cxx		\
 	BaseBuilding.cxx		\
 	BoxBuilding.cxx			\
 	MeshFace.cxx			\
@@ -28,6 +31,9 @@ libObstacle_a_SOURCES =			\
 	WallObstacle.cxx
 else
 libObstacle_a_SOURCES =			\
+	ArcObstacle.cxx			\
+	ConeObstacle.cxx		\
+	SphereObstacle.cxx		\
 	BaseBuilding.cxx		\
 	BoxBuilding.cxx			\
 	MeshFace.cxx			\

@@ -34,6 +34,7 @@
 #include "CustomTetra.h"
 #include "CustomDynamicColor.h"
 #include "CustomTextureMatrix.h"
+#include "CustomMaterial.h"
 #include "CustomMesh.h"
 #include "CustomArc.h"
 #include "CustomCone.h"
@@ -94,7 +95,8 @@ void BZWReader::readToken(char *buffer, int n)
 }
 
 
-bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
+bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
+                                WorldInfo *world)
 {
   int line = 1;
   char buffer[1024];
@@ -126,7 +128,11 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
     } else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
         if (object != fakeObject) {
-	  wlist.push_back(object);
+          if (object->writeImmediately()) {
+            object->write(world);
+          } else {
+	    wlist.push_back(object);
+          }
 	}
 	object = NULL;
       } else {
@@ -170,6 +176,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
       newObject = new CustomDynamicColor;
     } else if (strcasecmp(buffer, "textureMatrix") == 0) {
       newObject = new CustomTextureMatrix;
+    } else if (strcasecmp(buffer, "material") == 0) {
+      newObject = new CustomMaterial;
     } else if (strcasecmp(buffer, "options") == 0) {
       newObject = fakeObject;
     } else if (object) {
@@ -223,7 +231,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
 
   // read file
   std::vector<WorldFileObject*> list;
-  if (!readWorldStream(list)) {
+  if (!readWorldStream(list, world)) {
     emptyWorldFileObjectList(list);
     errorHandler->fatalError(std::string("world file failed to load."), 0);
     delete world;
@@ -240,8 +248,9 @@ WorldInfo* BZWReader::defineWorldFromFile()
 
   // add objects
   const int n = list.size();
-  for (int i = 0; i < n; ++i)
+  for (int i = 0; i < n; ++i) {
     list[i]->write(world);
+  }
 
   // clean up
   emptyWorldFileObjectList(list);

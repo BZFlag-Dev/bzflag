@@ -25,7 +25,7 @@
 #include "TeamBases.h"
 
 /* common implementation headers */
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
@@ -33,6 +33,9 @@
 #include "Teleporter.h"
 #include "WallObstacle.h"
 #include "MeshObstacle.h"
+#include "ArcObstacle.h"
+#include "ConeObstacle.h"
+#include "SphereObstacle.h"
 #include "CollisionManager.h"
 
 class WorldFileLocation;
@@ -75,11 +78,14 @@ public:
 	       int color, bool drive = false, bool shoot = false);
   void addLink(int from, int to);
   void addMesh(MeshObstacle* mesh);
+  void addArc(ArcObstacle* arc);
+  void addCone(ConeObstacle* cone);
+  void addSphere(SphereObstacle* sphere);
   void addZone(const CustomZone *zone);
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
   void addWeapon(const FlagType *type, const float *origin, float direction,
                  float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
-  void addWaterLevel (float level, const MeshMaterial& material);
+  void addWaterLevel (float level, const BzMaterial* matref);
   float getWaterLevel() const;
   float getMaxWorldHeight();
   bool getZonePoint(const std::string &qualifier, float *pt);
@@ -97,6 +103,7 @@ private:
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
   void loadCollisionManager();
   InBuildingType classifyHit (const Obstacle* obstacle);
+  void makeWaterMaterial();
 
 public:
 
@@ -151,15 +158,18 @@ private:
   float gravity;
   float maxHeight;
   float waterLevel;
-  MeshMaterial waterMaterial;
+  const BzMaterial* waterMatRef;
 
   std::vector<WallObstacle*> 	walls;
   std::vector<MeshObstacle*> 	meshes;
+  std::vector<ArcObstacle*> 	arcs;
+  std::vector<ConeObstacle*> 	cones;
+  std::vector<SphereObstacle*> 	spheres;
   std::vector<TetraBuilding*> 	tetras;
   std::vector<BoxBuilding*>     boxes;
   std::vector<BaseBuilding*>	bases;
   std::vector<PyramidBuilding*> pyramids;
-  std::vector<Teleporter*> 		teleporters;
+  std::vector<Teleporter*> 	teleporters;
 
   EntryZones	       entryZones;
   WorldWeapons         worldWeapons;

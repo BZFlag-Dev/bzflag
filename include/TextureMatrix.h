@@ -16,6 +16,7 @@
 
 #include "TimeKeeper.h"
 
+#include <string>
 #include <vector>
 #include <iostream>
 
@@ -24,13 +25,15 @@ class TextureMatrix {
   public:
     TextureMatrix();
     ~TextureMatrix();
-    const float* getMatrix();
+    const float* getMatrix() const;
+    bool setName (const std::string& name);
     void setShiftParams (float uFreq, float vFreq);
     void setRotateParams (float freq, float uCenter, float vCenter);
     void setScaleParams (float uFreq, float vFreq,
                          float uCenter, float vCenter,
                          float uSize, float vSize);
     void update(float time);
+    const std::string& getName() const;
 
     void* pack(void*);
     void* unpack(void*);
@@ -39,6 +42,7 @@ class TextureMatrix {
     void print(std::ostream& out, int level);
 
   private:
+    std::string name;
     float matrix[16];
     float uPos, vPos; // time invariant
     float uSize, vSize; // time invariant
@@ -57,7 +61,8 @@ class TextureMatrixManager {
     void update();
     void clear();
     int addMatrix(TextureMatrix* matrix);
-    TextureMatrix* getMatrix(int id);
+    int findMatrix(const std::string& name) const;
+    const TextureMatrix* getMatrix(int id) const;
 
     void* pack(void*);
     void* unpack(void*);

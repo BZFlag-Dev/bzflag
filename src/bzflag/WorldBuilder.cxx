@@ -24,7 +24,7 @@
 #include "EighthDTetraSceneNode.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 #include "FlagSceneNode.h"
 
 /* compression library header */
@@ -75,12 +75,6 @@ void* WorldBuilder::unpack(void* buf)
   }
   buf = uncompressedWorld;
 
-  // unpack water level
-  buf = nboUnpackFloat(buf, world->waterLevel);
-  if (world->waterLevel >= 0.0f) {
-    buf = world->waterMaterial.unpack(buf);
-  }
-
   // unpack dynamic colors
   DYNCOLORMGR.clear();
   buf = DYNCOLORMGR.unpack(buf);
@@ -88,6 +82,18 @@ void* WorldBuilder::unpack(void* buf)
   // unpack texture matrices
   TEXMATRIXMGR.clear();
   buf = TEXMATRIXMGR.unpack(buf);
+
+  // unpack texture matrices
+  MATERIALMGR.clear();
+  buf = MATERIALMGR.unpack(buf);
+
+  // unpack water level
+  buf = nboUnpackFloat(buf, world->waterLevel);
+  if (world->waterLevel >= 0.0f) {
+    int matindex;
+    buf = nboUnpackInt(buf, matindex);
+    world->waterMaterial = MATERIALMGR.getMaterial(matindex);
+  }
 
   // read geometry
   buf = nboUnpackUShort(buf, len);
@@ -131,6 +137,57 @@ void* WorldBuilder::unpack(void* buf)
           delete mesh;
         }
 	break;
+      }
+      case WorldCodeArc: {
+        // a good double check, but a bogus length
+	if (len != WorldCodeArcSize) {
+          delete[] uncompressedWorld;
+          DEBUG1 ("WorldBuilder::unpack() bad arc size\n");
+	  return NULL;
+        }
+	ArcObstacle* arc = new ArcObstacle;
+	buf = arc->unpack(buf);
+        if (arc->isValid()) {
+	  world->arcs.push_back(arc);
+	  world->meshes.push_back(arc->getMesh());
+        } else {
+          delete arc;
+        }
+        break;
+      }
+      case WorldCodeCone: {
+        // a good double check, but a bogus length
+	if (len != WorldCodeConeSize) {
+          delete[] uncompressedWorld;
+          DEBUG1 ("WorldBuilder::unpack() bad cone size\n");
+	  return NULL;
+        }
+	ConeObstacle* cone = new ConeObstacle;
+	buf = cone->unpack(buf);
+        if (cone->isValid()) {
+	  world->cones.push_back(cone);
+	  world->meshes.push_back(cone->getMesh());
+        } else {
+          delete cone;
+        }
+        break;
+      }
+      case WorldCodeSphere: {
+        // a good double check, but a bogus length
+	if (len != WorldCodeSphereSize) {
+          delete[] uncompressedWorld;
+          DEBUG1 ("WorldBuilder::unpack() bad sphere size\n");
+	  return NULL;
+        }
+	SphereObstacle* sphere = new SphereObstacle;
+	buf = sphere->unpack(buf);
+        if (sphere->isValid()) {
+	  world->spheres.push_back(sphere);
+	  world->meshes.push_back(sphere->getMesh());
+        } else {
+          delete sphere;
+        }
+        break;
       }
       case WorldCodeBox: {
 	float data[7];
@@ -377,7 +434,8 @@ void* WorldBuilder::unpack(void* buf)
       }
       default:
         delete[] uncompressedWorld;
-        DEBUG1 ("WorldBuilder::unpack() unknown code\n");
+        DEBUG1 ("WorldBuilder::unpack() unknown code (0x%04X) len (%i)\n",
+                code, len);
 	return NULL;
     }
 
@@ -392,6 +450,57 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   delete[] uncompressedWorld;
+  
+
+  // FIXME
+/*  
+  const float pos[3] = {0.0f, 0.0f, 0.0f};
+  const float size[3] = {50.0f, 50.0f, 20.0f};
+  const float texsize[4] = {-4.0f, -4.0f, -4.0f, -4.0f};
+  BzMaterial mat;
+  mat.setTexture("caution");
+  const BzMaterial* matref = MATERIALMGR.addMaterial(&mat);
+  const BzMaterial* mats[6] = {matref, matref, matref, matref, matref, matref};
+  ArcObstacle* arc =
+    new ArcObstacle(pos, size, 0.0f, 360.0f, 0.25, texsize, true,
+                    30, mats, false, false, false);
+  if (arc->isValid()) {
+    world->arcs.push_back(arc);
+    world->meshes.push_back(arc->getMesh());
+  } else {
+    delete arc;
+  }
+
+
+  mat.setTexture("boxwall");
+  matref = MATERIALMGR.addMaterial(&mat);
+  const BzMaterial* mats2[6] = {matref, matref, matref, matref, matref, matref};
+  const float pos2[3] = {0.0f, 0.0f, 30.0f};
+  ConeObstacle* cone =
+    new ConeObstacle(pos2, size, 0.0f, 360.0f, texsize, true,
+                     30, mats2, false, false, false);
+  if (cone->isValid()) {
+    world->cones.push_back(cone);
+    world->meshes.push_back(cone->getMesh());
+  } else {
+    delete cone;
+  }
+  
+  mat.setTexture("roof");
+  matref = MATERIALMGR.addMaterial(&mat);
+  const BzMaterial* mats3[6] = {matref, matref, matref, matref, matref, matref};
+  const float pos3[3] = {0.0f, 0.0f, 75.0f};
+  SphereObstacle* sphere =
+    new SphereObstacle(pos3, size, 0.0f, texsize, true, false,
+                       20, mats3, false, false, false);
+  if (sphere->isValid()) {
+    world->spheres.push_back(sphere);
+    world->meshes.push_back(sphere->getMesh());
+  } else {
+    delete sphere;
+  }
+*/  
+  
 
   world->loadCollisionManager();
 

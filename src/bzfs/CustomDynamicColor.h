@@ -25,6 +25,7 @@ class CustomDynamicColor : public WorldFileObject {
     ~CustomDynamicColor();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
+    bool writeImmediately() { return true; }
 
   private:
     mutable DynamicColor* color;

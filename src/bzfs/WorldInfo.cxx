@@ -33,6 +33,7 @@ WorldInfo::WorldInfo() :
   size[1] = 400.0f;
   gravity = -9.81f;
   waterLevel = -1.0f;
+  waterMatRef = NULL;
 }
 
 WorldInfo::~WorldInfo()
@@ -43,7 +44,18 @@ WorldInfo::~WorldInfo()
     delete walls[i];
   }
   for (i = 0; i < meshes.size(); i++) {
-    delete meshes[i];
+    if (!meshes[i]->getIsLocal()) {
+      delete meshes[i];
+    }
+  }
+  for (i = 0; i < arcs.size(); i++) {
+    delete arcs[i];
+  }
+  for (i = 0; i < cones.size(); i++) {
+    delete cones[i];
+  }
+  for (i = 0; i < spheres.size(); i++) {
+    delete spheres[i];
   }
   for (i = 0; i < tetras.size(); i++) {
     delete tetras[i];
@@ -164,6 +176,42 @@ void WorldInfo::addMesh(MeshObstacle* mesh)
   meshes.push_back(mesh);
 }
 
+void WorldInfo::addArc(ArcObstacle* arc)
+{
+  float mins[3], maxs[3];
+  arc->getMesh()->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
+  }
+  arcs.push_back(arc);
+  arc->getMesh()->setIsLocal(true);
+  meshes.push_back(arc->getMesh());
+}
+
+void WorldInfo::addCone(ConeObstacle* cone)
+{
+  float mins[3], maxs[3];
+  cone->getMesh()->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
+  }
+  cones.push_back(cone);
+  cone->getMesh()->setIsLocal(true);
+  meshes.push_back(cone->getMesh());
+}
+
+void WorldInfo::addSphere(SphereObstacle* sphere)
+{
+  float mins[3], maxs[3];
+  sphere->getMesh()->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
+  }
+  spheres.push_back(sphere);
+  sphere->getMesh()->setIsLocal(true);
+  meshes.push_back(sphere->getMesh());
+}
+
 void WorldInfo::addZone(const CustomZone *zone)
 {
   entryZones.addZone( zone );
@@ -175,10 +223,34 @@ void WorldInfo::addWeapon(const FlagType *type, const float *origin, float direc
   worldWeapons.add(type, origin, direction, initdelay, delay, sync);
 }
 
-void WorldInfo::addWaterLevel (float level, const MeshMaterial& material)
+void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
 {
   waterLevel = level;
-  waterMaterial = material;
+  waterMatRef = matref;
+}
+
+void WorldInfo::makeWaterMaterial()
+{
+  // the texture matrix
+  TextureMatrix* texmat = new TextureMatrix;
+  texmat->setName("defaultWaterLevel");
+  texmat->setShiftParams(0.05f, 0.0f);
+  int texmatIndex = TEXMATRIXMGR.addMatrix(texmat);
+
+  // the material
+  BzMaterial material;
+  const float diffuse[4] = {0.65f, 1.0f, 0.5f, 0.9f};
+  material.reset();
+  material.setName("defaultWaterLevel");
+  material.setTexture("water");
+  material.setTextureMatrix(texmatIndex); // generate a default later
+  material.setDiffuse(diffuse);
+  material.setUseTextureAlpha(true); // make sure that alpha is enabled
+  material.setUseColorOnTexture(false); // only use the color as a backup
+  material.setUseSphereMap(false);
+  waterMatRef = MATERIALMGR.addMaterial(&material);
+
+  return;  
 }
 
 float WorldInfo::getWaterLevel() const
@@ -473,6 +545,13 @@ void WorldInfo::finishWorld()
 
 int WorldInfo::packDatabase(const BasesList* baseList)
 {
+  // make default water material. we wait to make the default material
+  // to avoid messing up any user indexing. this has to be done before
+  // the texture matrices and materials are packed.
+  if ((waterLevel >= 0.0f) && (waterMatRef == NULL)) {
+    makeWaterMaterial();
+  }
+
   std::vector<TetraBuilding*>::iterator tetra_it;
   std::vector<MeshObstacle*>::iterator mesh_it;
   int numBases = 0;
@@ -483,28 +562,23 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     }
   }
 
-  // make the default water texture matrix if it hasn't been set
-  // by the map. this has to be done after we've loaded all of
-  // the map defined matrices,
-  if ((waterLevel >= 0.0f) && (waterMaterial.textureMatrix == -2)) {
-    TextureMatrix* texmat = new TextureMatrix;
-    texmat->setShiftParams(0.05f, 0.0f);
-    waterMaterial.textureMatrix = TEXMATRIXMGR.addMatrix(texmat);
-  }
-
   databaseSize =
     (2 + 2 + WorldCodeBaseSize) * numBases +
     (2 + 2 + WorldCodeWallSize) * walls.size() +
     (2 + 2 + WorldCodeBoxSize) * boxes.size() +
     (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
+    (2 + 2 + WorldCodeArcSize) * arcs.size() +
+    (2 + 2 + WorldCodeConeSize) * cones.size() +
+    (2 + 2 + WorldCodeSphereSize) * spheres.size() +
     (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
     worldWeapons.packSize() + entryZones.packSize() +
-    DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize();
+    DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
+    MATERIALMGR.packSize();
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
-    databaseSize += waterMaterial.packSize();
+    databaseSize += sizeof(int);
   }
   // tetra sizes are variable
   for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
@@ -515,7 +589,9 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   // meshes have variable sizes
   for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
     MeshObstacle &mesh = (**mesh_it);
-    databaseSize += (2 + 2) + mesh.packSize();
+    if (!mesh.getIsLocal()) {
+      databaseSize += (2 + 2) + mesh.packSize();
+    }
   }
 
   database = new char[databaseSize];
@@ -523,27 +599,60 @@ int WorldInfo::packDatabase(const BasesList* baseList)
 
   unsigned char	bitMask;
 
-  // add water level
-  databasePtr = nboPackFloat(databasePtr, waterLevel);
-  if (waterLevel >= 0.0f) {
-    databasePtr = waterMaterial.pack(databasePtr);
-  }
-
   // add dynamic colors
   databasePtr = DYNCOLORMGR.pack(databasePtr);
 
   // add texture matrices
   databasePtr = TEXMATRIXMGR.pack(databasePtr);
 
+  // add materials
+  databasePtr = MATERIALMGR.pack(databasePtr);
+
+  // add water level
+  databasePtr = nboPackFloat(databasePtr, waterLevel);
+  if (waterLevel >= 0.0f) {
+    int matindex = MATERIALMGR.getIndex(waterMatRef);
+    databasePtr = nboPackInt(databasePtr, matindex);
+  }
+
   // add meshes
   for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
     MeshObstacle &mesh = **mesh_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodeMeshSize); // dummy value
-    databasePtr = nboPackUShort(databasePtr, WorldCodeMesh);
-    databasePtr = mesh.pack(databasePtr);
-    if (debugLevel > 3) {
-      mesh.print(std::cout, 3);
+    if (!mesh.getIsLocal()) {
+      databasePtr = nboPackUShort(databasePtr, WorldCodeMeshSize); // dummy
+      databasePtr = nboPackUShort(databasePtr, WorldCodeMesh);
+      databasePtr = mesh.pack(databasePtr);
+      if (debugLevel > 3) {
+        mesh.print(std::cout, 3);
+      }
     }
+  }
+
+  // add arcs
+  for (std::vector<ArcObstacle*>::iterator arc_it = arcs.begin();
+       arc_it != arcs.end(); ++arc_it) {
+    ArcObstacle& arc = **arc_it;
+    databasePtr = nboPackUShort(databasePtr, WorldCodeArcSize);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeArc);
+    databasePtr = arc.pack(databasePtr);
+  }
+
+  // add cones
+  for (std::vector<ConeObstacle*>::iterator cone_it = cones.begin();
+       cone_it != cones.end(); ++cone_it) {
+    ConeObstacle& cone = **cone_it;
+    databasePtr = nboPackUShort(databasePtr, WorldCodeConeSize);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeCone);
+    databasePtr = cone.pack(databasePtr);
+  }
+
+  // add spheres
+  for (std::vector<SphereObstacle*>::iterator sphere_it = spheres.begin();
+       sphere_it != spheres.end(); ++sphere_it) {
+    SphereObstacle& sphere = **sphere_it;
+    databasePtr = nboPackUShort(databasePtr, WorldCodeSphereSize);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeSphere);
+    databasePtr = sphere.pack(databasePtr);
   }
 
   // add tetras

@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = \
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
 libGame_a_SOURCES =			\
+	BzMaterial.cxx			\
 	CollisionManager.cxx		\
 	CommandsStandard.cxx		\
 	DelayQueue.cxx			\
@@ -14,7 +15,6 @@ libGame_a_SOURCES =			\
 	Frustum.cxx			\
 	Intersect.cxx			\
 	LagInfo.cxx			\
-	MeshMaterial.cxx		\
 	NetHandler.cxx			\
 	PlayerInfo.cxx			\
 	Ray.cxx				\

@@ -23,24 +23,29 @@
 #define	BZF_PACK_H
 
 #include "common.h"
+#include <string>
 
-void*			nboPackUByte(void*, uint8_t);
-void*			nboPackShort(void*, int16_t);
-void*			nboPackInt(void*, int32_t);
-void*			nboPackUShort(void*, uint16_t);
-void*			nboPackUInt(void*, uint32_t);
-void*			nboPackFloat(void*, float);
-void*			nboPackVector(void*, const float*);
-void*			nboPackString(void*, const void*, int len);
+void* nboPackUByte(void*, uint8_t);
+void* nboPackShort(void*, int16_t);
+void* nboPackInt(void*, int32_t);
+void* nboPackUShort(void*, uint16_t);
+void* nboPackUInt(void*, uint32_t);
+void* nboPackFloat(void*, float);
+void* nboPackVector(void*, const float*);
+void* nboPackString(void*, const void*, int len);
+void* nboPackStdString(void*, const std::string& str);
 
-void*			nboUnpackUByte(void*, uint8_t&);
-void*			nboUnpackShort(void*, int16_t&);
-void*			nboUnpackInt(void*, int32_t&);
-void*			nboUnpackUShort(void*, uint16_t&);
-void*			nboUnpackUInt(void*, uint32_t&);
-void*			nboUnpackFloat(void*, float&);
-void*			nboUnpackVector(void*, float*);
-void*			nboUnpackString(void*, void*, int len);
+void* nboUnpackUByte(void*, uint8_t&);
+void* nboUnpackShort(void*, int16_t&);
+void* nboUnpackInt(void*, int32_t&);
+void* nboUnpackUShort(void*, uint16_t&);
+void* nboUnpackUInt(void*, uint32_t&);
+void* nboUnpackFloat(void*, float&);
+void* nboUnpackVector(void*, float*);
+void* nboUnpackString(void*, void*, int len);
+void* nboUnpackStdString(void*, std::string& str);
+
+unsigned int nboStdStringPackSize(const std::string& str);
 
 #endif // BZF_PACK_H
 

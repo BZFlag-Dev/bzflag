@@ -112,7 +112,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
            (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
   }
-  else if (parseMaterial(cmd, input, material, materror)) {
+  else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;
     }

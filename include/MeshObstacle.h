@@ -40,7 +40,7 @@ class MeshObstacle : public Obstacle {
     bool addFace (const std::vector<int>& vertices,
                   const std::vector<int>& normals,
                   const std::vector<int>& texcoords,
-                  const MeshMaterial& material,
+                  const BzMaterial* bzMaterial,
                   bool bounce, bool drive, bool shoot);
 
     ~MeshObstacle();
@@ -84,6 +84,9 @@ class MeshObstacle : public Obstacle {
     int getFaceCount() const;
     const MeshFace* getFace(int face) const;
     bool hasSmoothBounce() const;
+    
+    void setIsLocal(bool);
+    bool getIsLocal() const;
 
     void *pack(void*);
     void *unpack(void*);
@@ -94,6 +97,8 @@ class MeshObstacle : public Obstacle {
   private:
 
     static const char* typeName;
+    bool isLocal; // generated on the client side
+    
     int checkCount;
     char* checkTypes;
     fvec3* checkPoints;
@@ -148,6 +153,17 @@ inline const MeshFace* MeshObstacle::getFace(int face) const
 inline bool MeshObstacle::hasSmoothBounce() const
 {
   return smoothBounce;
+}
+
+inline void MeshObstacle::setIsLocal(bool value)
+{
+  isLocal = value;
+  return;
+}
+
+inline bool MeshObstacle::getIsLocal() const
+{
+  return isLocal;
 }
 
 

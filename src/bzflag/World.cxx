@@ -25,6 +25,7 @@
 #include "FileManager.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
+#include "BzMaterial.h"
 #include "FlagSceneNode.h"
 
 
@@ -76,7 +77,9 @@ World::~World()
     delete walls[u];
   }
   for (u = 0; u < meshes.size(); u++) {
-    delete meshes[u];
+    if (!meshes[u]->getIsLocal()) {
+      delete meshes[u];
+    }
   }
   for (u = 0; u < tetras.size(); u++) {
     delete tetras[u];
@@ -92,6 +95,15 @@ World::~World()
   }
   for (u = 0; u < teleporters.size(); u++) {
     delete teleporters[u];
+  }
+  for (u = 0; u < arcs.size(); u++) {
+    delete arcs[u];
+  }
+  for (u = 0; u < cones.size(); u++) {
+    delete cones[u];
+  }
+  for (u = 0; u < spheres.size(); u++) {
+    delete spheres[u];
   }
 }
 
@@ -614,8 +626,8 @@ bool			World::writeWorld(std::string filename)
     //         -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
 
     if (allowTeamFlags()) {
-      out << "\t-c" << std::endl;
-      out << "\t-mp 2,";
+      out << "  -c" << std::endl;
+      out << "  -mp 2,";
       for (int i = RedTeam; i <= PurpleTeam; i++) {
         if (getBase(i,0) != NULL)
           out << "2,";
@@ -625,24 +637,24 @@ bool			World::writeWorld(std::string filename)
       out << "2" << std::endl;
     }
     if (allowRabbit())
-      out << "\t-rabbit" << std::endl;
+      out << "  -rabbit" << std::endl;
     if (allowJumping())
-      out << "\t-j" << std::endl;
+      out << "  -j" << std::endl;
     if (allShotsRicochet())
-      out << "\t+r" << std::endl;
+      out << "  +r" << std::endl;
     if (allowHandicap())
-      out << "\t-handicap" << std::endl;
+      out << "  -handicap" << std::endl;
     if (allowInertia()) {
-      out << "\t-a " << getLinearAcceleration() << " "
+      out << "  -a " << getLinearAcceleration() << " "
                      << getAngularAcceleration() << std::endl;
     }
     if (allowAntidote()) {
-      out << "\t-sa" << std::endl;
-      out << "\t-st " << getFlagShakeTimeout() << std::endl;
-      out << "\t-sw " << getFlagShakeWins() << std::endl;
+      out << "  -sa" << std::endl;
+      out << "  -st " << getFlagShakeTimeout() << std::endl;
+      out << "  -sw " << getFlagShakeWins() << std::endl;
     }
 
-    out << "\t-ms " << getMaxShots() << std::endl;
+    out << "  -ms " << getMaxShots() << std::endl;
 
     // Write BZDB server variables that aren't defaults
     BZDB.iterate (writeBZDBvar, &out);
@@ -659,22 +671,12 @@ bool			World::writeWorld(std::string filename)
     {
       out << "world" << std::endl;
       if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) {
-	out << "\tsize " << worldSize / 2.0f << std::endl;
+	out << "  size " << worldSize / 2.0f << std::endl;
       }
       if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())) {
-	out << "\tflagHeight " << flagHeight << std::endl;
+	out << "  flagHeight " << flagHeight << std::endl;
       }
       out << "end" << std::endl << std::endl;
-    }
-  }
-
-  // Write water level
-  {
-    if (waterLevel >= 0.0f) {
-      out << "waterLevel" << std::endl;
-      out << "\theight " << waterLevel << std::endl;
-      waterMaterial.print(out, 1);
-      out << "end" << std::endl;
     }
   }
 
@@ -684,11 +686,50 @@ bool			World::writeWorld(std::string filename)
   // Write texture matrices
   TEXMATRIXMGR.print(out, 1);
 
+  // Write materials
+  MATERIALMGR.print(out, 1);
+
+  // Write water level
+  {
+    if (waterLevel >= 0.0f) {
+      out << "waterLevel" << std::endl;
+      out << "  height " << waterLevel << std::endl;
+      out << "  refmat ";
+      MATERIALMGR.printReference(out, waterMaterial);
+      out << std::endl;
+      out << "end" << std::endl << std::endl;
+    }
+  }
+
   // Write meshs
   {
     for (std::vector<MeshObstacle*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
       MeshObstacle* mesh = *it;
       mesh->print(out, 1);
+    }
+  }
+
+  // Write arcs
+  {
+    for (std::vector<ArcObstacle*>::iterator it = arcs.begin(); it != arcs.end(); ++it) {
+      ArcObstacle* arc = *it;
+      arc->print(out, 1);
+    }
+  }
+
+  // Write cones
+  {
+    for (std::vector<ConeObstacle*>::iterator it = cones.begin(); it != cones.end(); ++it) {
+      ConeObstacle* cone = *it;
+      cone->print(out, 1);
+    }
+  }
+
+  // Write spheres
+  {
+    for (std::vector<SphereObstacle*>::iterator it = spheres.begin(); it != spheres.end(); ++it) {
+      SphereObstacle* sphere = *it;
+      sphere->print(out, 1);
     }
   }
 

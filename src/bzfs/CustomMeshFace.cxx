@@ -23,7 +23,7 @@
 #include <iostream>
 
 
-CustomMeshFace::CustomMeshFace(const MeshMaterial& _material,
+CustomMeshFace::CustomMeshFace(const BzMaterial& _material,
                                bool bounce, bool drive, bool shoot)
 {
   material = _material;
@@ -90,7 +90,7 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "passable") == 0) {
     driveThrough = shootThrough = true;
   }
-  else if (parseMaterial(cmd, input, material, materror)) {
+  else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;
     }
@@ -106,7 +106,8 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
 
 void CustomMeshFace::write(MeshObstacle *mesh) const
 {
-  mesh->addFace(vertices, normals, texcoords, material,
+  const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
+  mesh->addFace(vertices, normals, texcoords, matref,
                 smoothBounce, driveThrough, shootThrough);
   return;
 }

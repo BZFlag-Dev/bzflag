@@ -41,7 +41,7 @@ MeshSceneNodeGenerator::~MeshSceneNodeGenerator()
 WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
 {
   const MeshFace* face;
-  const MeshMaterial* mat;
+  const BzMaterial* mat;
 
   // remove any faces on the ground that will not be displayed
   // also, return NULL if we are at the end of the face list
@@ -51,9 +51,9 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
     }
     face = mesh->getFace(faceNumber);
     mat = face->getMaterial();
-    const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->dynamicColor);
-    if ((mat->diffuse[3] == 0.0f) && (dyncol == NULL) &&
-        !(mat->useTexture && !mat->useColorOnTexture)) {
+    const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
+    if ((mat->getDiffuse()[3] == 0.0f) && (dyncol == NULL) &&
+        !((mat->getTextureCount() > 0) && !mat->getUseColorOnTexture(0))) {
       // face is invisible
       faceNumber++;
       continue;
@@ -75,11 +75,6 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
     }
   }
 
-  GLfloat base[3], sCorner[3], tCorner[3];
-  memcpy (base, face->getVertex(0), sizeof(float[3]));
-  memcpy (sCorner, face->getVertex(1), sizeof(float[3]));
-  memcpy (tCorner, face->getVertex(2), sizeof(float[3]));
-  
   MeshPolySceneNode* node = getSceneNode(face);
 
   setupNodeMaterial(node, mat);
@@ -129,16 +124,17 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getSceneNode(const MeshFace* face)
 
 
 void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
-                                               const MeshMaterial* mat)
+                                               const BzMaterial* mat)
 {
   TextureManager &tm = TextureManager::instance();
-  OpenGLMaterial glMaterial(mat->specular, mat->emission, mat->shininess);
+  OpenGLMaterial glMaterial(mat->getSpecular(), mat->getEmission(), mat->getShininess());
 
+  int userTexture = (mat->getTextureCount() > 0);
   int faceTexture = -1;
   bool gotSpecifiedTexture = false;
-  if (mat->useTexture) {
-    if (mat->texture.size() > 0) {
-      faceTexture = tm.getTextureID(mat->texture.c_str());
+  if (userTexture) {
+    if (mat->getTexture(0).size() > 0) {
+      faceTexture = tm.getTextureID(mat->getTexture(0).c_str());
     }
     if (faceTexture >= 0) {
       gotSpecifiedTexture = true;
@@ -150,38 +146,42 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
   // NOTE: the diffuse color is used, and not the ambient color
   //       could use the ambient color for non-lighted,and diffuse
   //       for lighted
-  const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->dynamicColor);
-  const GLfloat* dc = dyncol->getColor();
+  const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
+  const GLfloat* dc = NULL;
+  if (dyncol != NULL) {
+    dc = dyncol->getColor();
+  }
   node->setDynamicColor(dc);
-  node->setColor(mat->diffuse); // redundant, see below
-  node->setModulateColor(mat->diffuse);
-  node->setLightedColor(mat->diffuse);
-  node->setLightedModulateColor(mat->diffuse);
+  node->setColor(mat->getDiffuse()); // redundant, see below
+  node->setModulateColor(mat->getDiffuse());
+  node->setLightedColor(mat->getDiffuse());
+  node->setLightedModulateColor(mat->getDiffuse());
   node->setMaterial(glMaterial);
   node->setTexture(faceTexture);
-  if (mat->useColorOnTexture || !gotSpecifiedTexture) {
+  if ((userTexture && mat->getUseColorOnTexture(0)) ||
+      !gotSpecifiedTexture) {
     // modulate with the color if asked to, or
     // if the specified texture was not available
     node->setUseColorTexture(false);
   } else {
     node->setUseColorTexture(true);
   }
-  node->setTextureMatrix(mat->textureMatrix);
+  node->setTextureMatrix(mat->getTextureMatrix(0));
 
   // deal with the blending setting for textures
   bool alpha = false;
-  if ((faceTexture >= 0) && mat->useTextureAlpha) {
+  if ((faceTexture >= 0) && (userTexture && mat->getUseTextureAlpha(0))) {
     const ImageInfo& imageInfo = tm.getInfo(faceTexture);
     alpha = imageInfo.alpha;
   }
   node->setBlending(alpha);
-  node->setSphereMap(mat->useSphereMap);
+  node->setSphereMap(mat->getUseSphereMap(0));
 
   // the current color can also affect the blending.
   // if blending is disabled then the alpha value from
   // one of these colors is used to set the stipple value.
   // we'll just set it to the middle value.
-  if (dc) {
+  if (dyncol) {
     const float color[4] = { 1.0f, 1.0f, 1.0f, 0.5f }; // alpha value != 1.0f
     if (dyncol->canHaveAlpha()) {
       node->setColor(color); // trigger transparency check

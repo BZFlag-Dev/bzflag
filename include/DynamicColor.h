@@ -16,6 +16,7 @@
 
 #include "TimeKeeper.h"
 
+#include <string>
 #include <vector>
 #include <iostream>
 
@@ -36,6 +37,7 @@ class DynamicColor {
     DynamicColor();
     ~DynamicColor();
 
+    bool setName(const std::string& name);
     void setLimits(int channel, float min, float max);
     void addSinusoid(int channel, const float sinusoid[3]);
     void addClampUp(int channel, const float clampUp[3]);
@@ -46,6 +48,7 @@ class DynamicColor {
 
     bool canHaveAlpha() const;
     const float* getColor() const;
+    const std::string& getName() const;
 
     void* pack(void*);
     void* unpack(void*);
@@ -56,6 +59,7 @@ class DynamicColor {
   private:
     static const float minPeriod;
 
+    std::string name;
     float color[4];
 
     typedef struct {
@@ -88,7 +92,8 @@ class DynamicColorManager {
     void update();
     void clear();
     int addColor(DynamicColor* dyncolor);
-    DynamicColor* getColor(int id);
+    int findColor(const std::string& name) const;
+    const DynamicColor* getColor(int id) const;
 
     void* pack(void*);
     void* unpack(void*);

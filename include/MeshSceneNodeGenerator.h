@@ -16,7 +16,7 @@
 #include "SceneNode.h"
 #include "MeshFace.h"
 #include "MeshObstacle.h"
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 
 class WallSceneNode;
 class MeshPolySceneNode;
@@ -29,7 +29,7 @@ class MeshSceneNodeGenerator {
     ~MeshSceneNodeGenerator();
     WallSceneNode* getNextNode(bool lod);
     static void setupNodeMaterial(MeshPolySceneNode* node,
-                                  const MeshMaterial* mat);
+                                  const BzMaterial* mat);
     static MeshPolySceneNode* getSceneNode(const MeshFace* face);
       
   protected:

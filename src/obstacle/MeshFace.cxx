@@ -46,7 +46,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
 
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
                    float** _vertices, float** _normals,
-                   float** _texcoords, const MeshMaterial& _material,
+                   float** _texcoords, const BzMaterial* _bzMaterial,
                    bool bounce, bool drive, bool shoot)
 {
   mesh = _mesh;
@@ -54,7 +54,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   vertices = _vertices;
   normals = _normals;
   texcoords = _texcoords;
-  material = _material;
+  bzMaterial = _bzMaterial;
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
@@ -549,7 +549,8 @@ void *MeshFace::pack(void *buf)
     }
   }
   // material
-  buf = material.pack(buf);
+  int matindex = MATERIALMGR.getIndex(bzMaterial);
+  buf = nboPackInt(buf, matindex);
 
   return buf;
 }
@@ -596,7 +597,9 @@ void *MeshFace::unpack(void *buf)
     }
   }
   // material
-  buf = material.unpack(buf);
+  int matindex;
+  buf = nboUnpackInt(buf, matindex);
+  bzMaterial = MATERIALMGR.getMaterial(matindex);
 
   finalize();
 
@@ -615,7 +618,7 @@ int MeshFace::packSize()
   if (useTexcoords()) {
     fullSize += sizeof(int) * vertexCount;
   }
-  fullSize += material.packSize();
+  fullSize += sizeof(int);//material
 
   return fullSize;
 }
@@ -674,7 +677,9 @@ void MeshFace::print(std::ostream& out, int level)
     out << std::endl;
   }
 
-  material.print(out, level);
+  out << "    refmat ";
+  MATERIALMGR.printReference(out, bzMaterial);
+  out  << std::endl;
   
   if (smoothBounce && !mesh->hasSmoothBounce()) {
     out << "    smoothBounce" << std::endl;

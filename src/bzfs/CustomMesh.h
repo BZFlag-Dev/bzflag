@@ -21,7 +21,7 @@
 #include "CustomMeshFace.h"
 
 /* common interface headers */
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 #include "MeshObstacle.h"
 #include "vectors.h"
 
@@ -39,7 +39,7 @@ class CustomMesh : public WorldFileObstacle {
 
   private:
 
-    MeshMaterial material; // holds current defaults
+    BzMaterial material; // holds current defaults
 
     std::vector<char> checkTypes;
     std::vector<cfvec3> checkPoints;

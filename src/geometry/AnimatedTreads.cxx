@@ -358,23 +358,25 @@ static void buildWheel(const float pos[3], float angle, int divisions)
   float tx, ty;
 
   // the edge loop
-  glBegin(GL_QUAD_STRIP);
   doNormal3f(0.0f, +1.0f, 0.0f);
-  for (i = 0; i < (divisions + 1); i++) {
-    const float ang = astep * (float)i;
-    const float cos_val = cosf(ang);
-    const float sin_val = sinf(ang);
-    doNormal3f(cos_val, 0.0f, sin_val);
-    tx = 0.5f + (cosf(angle + ang) * wheelInsideTexRad);
-    ty = 0.5f + (sinf(angle + ang) * wheelInsideTexRad);
-    doTexCoord2f(tx, ty);
-    x = (cos_val * wheelRadius) + pos[0];
-    z = (sin_val * wheelRadius) + pos[2];
-    doVertex3f(x, yRight, z);
-    tx = 0.5f + (cosf(angle + ang) * wheelOutsideTexRad);
-    ty = 0.5f + (sinf(angle + ang) * wheelOutsideTexRad);
-    doTexCoord2f(tx, ty);
-    doVertex3f(x, yLeft, z);
+  glBegin(GL_QUAD_STRIP);
+  {
+    for (i = 0; i < (divisions + 1); i++) {
+      const float ang = astep * (float)i;
+      const float cos_val = cosf(ang);
+      const float sin_val = sinf(ang);
+      doNormal3f(cos_val, 0.0f, sin_val);
+      tx = 0.5f + (cosf(angle + ang) * wheelInsideTexRad);
+      ty = 0.5f + (sinf(angle + ang) * wheelInsideTexRad);
+      doTexCoord2f(tx, ty);
+      x = (cos_val * wheelRadius) + pos[0];
+      z = (sin_val * wheelRadius) + pos[2];
+      doVertex3f(x, yRight, z);
+      tx = 0.5f + (cosf(angle + ang) * wheelOutsideTexRad);
+      ty = 0.5f + (sinf(angle + ang) * wheelOutsideTexRad);
+      doTexCoord2f(tx, ty);
+      doVertex3f(x, yLeft, z);
+    }
   }
   glEnd();
 
@@ -383,33 +385,37 @@ static void buildWheel(const float pos[3], float angle, int divisions)
     // the left face
     doNormal3f(0.0f, +1.0f, 0.0f);
     glBegin(GL_TRIANGLE_FAN);
-    for (i = 0; i < divisions; i++) {
-      const float ang = astep * (float)i;
-      const float cos_val = cosf(-ang);
-      const float sin_val = sinf(-ang);
-      tx = 0.5f + (cosf(angle - ang) * wheelInsideTexRad);
-      ty = 0.5f + (sinf(angle - ang) * wheelInsideTexRad);
-      doTexCoord2f(tx, ty);
-      x = (cos_val * wheelRadius) + pos[0];
-      z = (sin_val * wheelRadius) + pos[2];
-      doVertex3f(x, yLeft, z);
-      
+    {
+      for (i = 0; i < divisions; i++) {
+        const float ang = astep * (float)i;
+        const float cos_val = cosf(-ang);
+        const float sin_val = sinf(-ang);
+        tx = 0.5f + (cosf(angle - ang) * wheelInsideTexRad);
+        ty = 0.5f + (sinf(angle - ang) * wheelInsideTexRad);
+        doTexCoord2f(tx, ty);
+        x = (cos_val * wheelRadius) + pos[0];
+        z = (sin_val * wheelRadius) + pos[2];
+        doVertex3f(x, yLeft, z);
+        
+      }
     }
     glEnd();
     
     // the right face
     doNormal3f(0.0f, -1.0f, 0.0f);
     glBegin(GL_TRIANGLE_FAN);
-    for (i = 0; i < divisions; i++) {
-      const float ang = astep * (float)i;
-      const float cos_val = cosf(+ang);
-      const float sin_val = sinf(+ang);
-      tx = 0.5f + (cosf(angle + ang) * 0.4f);
-      ty = 0.5f + (sinf(angle + ang) * 0.4f);
-      doTexCoord2f(tx, ty);
-      x = (cos_val * wheelRadius) + pos[0];
-      z = (sin_val * wheelRadius) + pos[2];
-      doVertex3f(x, yRight, z);
+    {
+      for (i = 0; i < divisions; i++) {
+        const float ang = astep * (float)i;
+        const float cos_val = cosf(+ang);
+        const float sin_val = sinf(+ang);
+        tx = 0.5f + (cosf(angle + ang) * 0.4f);
+        ty = 0.5f + (sinf(angle + ang) * 0.4f);
+        doTexCoord2f(tx, ty);
+        x = (cos_val * wheelRadius) + pos[0];
+        z = (sin_val * wheelRadius) + pos[2];
+        doVertex3f(x, yRight, z);
+      }
     }
     glEnd();
   }

@@ -30,9 +30,12 @@
 #include "Teleporter.h"
 #include "EighthDimSceneNode.h"
 #include "FlagWarpSceneNode.h"
+#include "ArcObstacle.h"
+#include "ConeObstacle.h"
+#include "SphereObstacle.h"
 #include "Obstacle.h"
 #include "BundleMgr.h"
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 
 /* local interface headers */
 #include "RemotePlayer.h"
@@ -64,7 +67,7 @@ class World {
     bool		allowRabbit() const;
     bool		allowHandicap() const;
     float		getWaterLevel() const;
-    const MeshMaterial*	getWaterMaterial() const;
+    const BzMaterial*	getWaterMaterial() const;
     float		getLinearAcceleration() const;
     float		getAngularAcceleration() const;
     float		getFlagShakeTimeout() const;
@@ -156,7 +159,7 @@ class World {
     typedef std::vector<BaseParms> TeamBases;
     short		gameStyle;
     float		waterLevel;
-    MeshMaterial	waterMaterial;
+    const BzMaterial*	waterMaterial;
     float		linearAcceleration;
     float		angularAcceleration;
     int			maxPlayers;
@@ -174,6 +177,9 @@ class World {
     std::vector<WallObstacle*>		walls;
     std::vector<Teleporter*>		teleporters;
     std::vector<MeshObstacle*>		meshes;
+    std::vector<ArcObstacle*>		arcs;
+    std::vector<ConeObstacle*>		cones;
+    std::vector<SphereObstacle*>	spheres;
     std::vector<Weapon>		        weapons;
     std::vector<EntryZone>		entryZones;
     std::vector<int>			teleportTargets;
@@ -254,9 +260,9 @@ inline float		World::getWaterLevel() const
   return waterLevel;
 }
 
-inline const MeshMaterial*	World::getWaterMaterial() const
+inline const BzMaterial*	World::getWaterMaterial() const
 {
-  return &waterMaterial;
+  return waterMaterial;
 }
 
 inline float		World::getLinearAcceleration() const

@@ -13,13 +13,10 @@
 #ifndef __CUSTOM_MESH_FACE_H__
 #define __CUSTOM_MESH_FACE_H__
 
-/*  interface header */
-#include "CustomMeshFace.h"
-
 /* common interface header */
-#include "MeshMaterial.h"
 #include "MeshObstacle.h"
 #include "MeshFace.h"
+#include "BzMaterial.h"
 
 /* system header */
 #include <string>
@@ -28,13 +25,13 @@
 
 class CustomMeshFace {
   public:
-    CustomMeshFace(const MeshMaterial& material, bool smoothBounce,
+    CustomMeshFace(const BzMaterial& material, bool smoothBounce,
                    bool driveThrough, bool shootThrough);
     bool read(const char *cmd, std::istream& input);
     void write(MeshObstacle* mesh) const;
 
   private:
-    MeshMaterial material;
+    BzMaterial material;
 
     std::vector<int> vertices;
     std::vector<int> normals;

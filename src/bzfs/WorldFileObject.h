@@ -15,17 +15,22 @@
 // system headers
 #include <iostream>
 #include <vector>
+#include <string>
 
 class WorldInfo;
 
 
 class WorldFileObject {
-public:
-  WorldFileObject() { }
-  virtual ~WorldFileObject() { }
+  public:
+    WorldFileObject();
+    virtual ~WorldFileObject() { }
 
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void write(WorldInfo*) const = 0;
+    virtual bool read(const char *cmd, std::istream&);
+    virtual void write(WorldInfo*) const = 0;
+    virtual bool writeImmediately() { return false; }
+    
+  protected:
+    std::string name;
 };
 
 

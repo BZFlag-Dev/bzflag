@@ -120,6 +120,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 
 void CustomDynamicColor::write(WorldInfo * /*world*/) const
 {
+  color->setName(name);
   color->finalize();
   DYNCOLORMGR.addColor (color);
   color = NULL;

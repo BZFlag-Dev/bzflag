@@ -43,7 +43,7 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 #include "DynamicColor.h"
 
 
@@ -315,7 +315,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
     new MeshPolySceneNode(plane, v, n, t);
 
   // setup the material
-  const MeshMaterial* mat = world->getWaterMaterial();
+  const BzMaterial* mat = world->getWaterMaterial();
   MeshSceneNodeGenerator::setupNodeMaterial(node, mat);
 
   db->addStaticNode(node);
@@ -668,9 +668,9 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
     part = (part + 1) % numParts;
   }
 
-  MeshMaterial material;
-  material.useTexture = false;
-  memcpy (material.diffuse, teleporterLightedColors[2], sizeof(float[4]));
+  BzMaterial material;
+  material.clearTextures();
+  material.setDiffuse(teleporterLightedColors[2]);
   MeshPolySceneNode* linkNode;
 
   linkNode = MeshSceneNodeGenerator::getSceneNode(o.getBackLink());

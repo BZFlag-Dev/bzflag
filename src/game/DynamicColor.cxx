@@ -74,7 +74,31 @@ int DynamicColorManager::addColor(DynamicColor* color)
 }
 
 
-DynamicColor* DynamicColorManager::getColor(int id)
+int DynamicColorManager::findColor(const std::string& dyncol) const
+{
+  if (dyncol.size() <= 0) {
+    return -1;
+  }
+  else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
+    int index = atoi (dyncol.c_str());
+    if ((index < 0) || (index >= (int)colors.size())) {
+      return -1;
+    } else {
+      return index;
+    }
+  }
+  else {
+    for (int i = 0; i < (int)colors.size(); i++) {
+      if (colors[i]->getName() == dyncol) {
+        return i;
+      }
+    }
+    return -1;
+  }
+}
+
+
+const DynamicColor* DynamicColorManager::getColor(int id) const
 {
   if ((id >= 0) && (id < (int)colors.size())) {
     return colors[id];
@@ -147,6 +171,7 @@ DynamicColor::DynamicColor()
     channels[c].maxValue = 1.0f;
   }
   possibleAlpha = false;
+  name = "";
   return;
 }
 
@@ -177,6 +202,29 @@ void DynamicColor::finalize()
     }
   }
   return;
+}
+
+
+bool DynamicColor::setName(const std::string& dyncol)
+{
+  if (dyncol.size() <= 0) {
+    name = "";
+    return false;
+  }
+  else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
+    name = "";
+    return false;
+  }
+  else {
+    name = dyncol;
+  }
+  return true;
+}
+
+
+const std::string& DynamicColor::getName() const
+{
+  return name;
 }
 
 
@@ -321,10 +369,12 @@ void DynamicColor::update (float t)
 
 void * DynamicColor::pack(void *buf)
 {
+  buf = nboPackStdString(buf, name);
+
   for (int c = 0; c < 4; c++) {
     ChannelParams& p = channels[c];
     unsigned int i;
-
+    
     buf = nboPackFloat (buf, p.minValue);
     buf = nboPackFloat (buf, p.maxValue);
 
@@ -357,10 +407,12 @@ void * DynamicColor::pack(void *buf)
 
 void * DynamicColor::unpack(void *buf)
 {
+  buf = nboUnpackStdString(buf, name);
+    
   for (int c = 0; c < 4; c++) {
     ChannelParams& p = channels[c];
     unsigned int i, size;
-
+    
     buf = nboUnpackFloat (buf, p.minValue);
     buf = nboUnpackFloat (buf, p.maxValue);
 
@@ -398,7 +450,7 @@ void * DynamicColor::unpack(void *buf)
 
 int DynamicColor::packSize()
 {
-  int fullSize = 0;
+  int fullSize = nboStdStringPackSize(name);
   for (int c = 0; c < 4; c++) {
     fullSize += sizeof(float) * 2; // the limits
     fullSize += sizeof(unsigned int);
@@ -417,6 +469,11 @@ void DynamicColor::print(std::ostream& out, int /*level*/)
   const char *colorStrings[4] = { "red", "green", "blue", "alpha" };
 
   out << "dynamicColor" << std::endl;
+
+  if (name.size() > 0) {
+    out << "  name " << name << std::endl;
+  }
+
   for (int c = 0; c < 4; c++) {
     const char *colorStr = colorStrings[c];
     const ChannelParams& p = channels[c];

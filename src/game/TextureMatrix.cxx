@@ -79,7 +79,31 @@ int TextureMatrixManager::addMatrix(TextureMatrix* texmat)
 }
 
 
-TextureMatrix* TextureMatrixManager::getMatrix(int id)
+int TextureMatrixManager::findMatrix(const std::string& texmat) const
+{
+  if (texmat.size() <= 0) {
+    return -1;
+  }
+  else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
+    int index = atoi (texmat.c_str());
+    if ((index < 0) || (index >= (int)matrices.size())) {
+      return -1;
+    } else {
+      return index;
+    }
+  }
+  else {
+    for (int i = 0; i < (int)matrices.size(); i++) {
+      if (matrices[i]->getName() == texmat) {
+        return i;
+      }
+    }
+    return -1;
+  }
+}
+
+
+const TextureMatrix* TextureMatrixManager::getMatrix(int id) const
 {
   if ((id >= 0) && (id < (int)matrices.size())) {
     return matrices[id];
@@ -161,6 +185,8 @@ TextureMatrix::TextureMatrix()
   uScaleFreq = vScaleFreq = 0.0f;
   uScale = vScale = 1.0f;
   uScaleCenter = vScaleCenter = 0.0f;
+  
+  name = "";
 }
 
 
@@ -169,9 +195,32 @@ TextureMatrix::~TextureMatrix()
 }
 
 
-const float* TextureMatrix::getMatrix()
+const float* TextureMatrix::getMatrix() const
 {
   return matrix;
+}
+
+
+bool TextureMatrix::setName(const std::string& texmat)
+{
+  if (texmat.size() <= 0) {
+    name = "";
+    return false;
+  }
+  else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
+    name = "";
+    return false;
+  }
+  else {
+    name = texmat;
+  }
+  return true;
+}
+
+
+const std::string& TextureMatrix::getName() const
+{
+  return name;
 }
 
 
@@ -259,6 +308,8 @@ void TextureMatrix::update (float t)
 
 void * TextureMatrix::pack(void *buf)
 {
+  buf = nboPackStdString (buf, name);
+  
   buf = nboPackFloat (buf, uShiftFreq);
   buf = nboPackFloat (buf, vShiftFreq);
 
@@ -279,6 +330,8 @@ void * TextureMatrix::pack(void *buf)
 
 void * TextureMatrix::unpack(void *buf)
 {
+  buf = nboUnpackStdString (buf, name);
+
   buf = nboUnpackFloat (buf, uShiftFreq);
   buf = nboUnpackFloat (buf, vShiftFreq);
 
@@ -299,13 +352,17 @@ void * TextureMatrix::unpack(void *buf)
 
 int TextureMatrix::packSize()
 {
-  return sizeof(float[11]);
+  return (nboStdStringPackSize(name) + sizeof(float[11]));
 }
 
 
 void TextureMatrix::print(std::ostream& out, int /*level*/)
 {
   out << "textureMatrix" << std::endl;
+
+  if (name.size() > 0) {
+    out << "  name " << name << std::endl;
+  }
 
   if ((uShiftFreq != 0.0f) || (vShiftFreq != 0.0f)) {
     out << "  shift " << uShiftFreq << " " << vShiftFreq << std::endl;

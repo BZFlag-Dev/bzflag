@@ -16,6 +16,7 @@ noinst_HEADERS =			\
 	BoxBuilding.h			\
 	Bundle.h			\
 	BundleMgr.h			\
+	BzMaterial.h			\
 	BzfDisplay.h			\
 	BzfEvent.h			\
 	BzfJoystick.h			\
@@ -53,7 +54,6 @@ noinst_HEADERS =			\
 	MathUtils.h			\
 	MediaFile.h			\
 	MeshFace.h			\
-	MeshMaterial.h			\
 	MeshObstacle.h			\
 	MeshPolySceneNode.h		\
 	MeshSceneNodeGenerator.h	\

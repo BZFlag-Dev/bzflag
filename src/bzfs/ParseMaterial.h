@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+
 #ifndef __PARSE_MATERIAL_H__
 #define __PARSE_MATERIAL_H__
 
@@ -17,12 +18,14 @@
 #include <iostream>
 
 /* common interface headers */
-#include "MeshMaterial.h"
+#include "BzMaterial.h"
 
-extern bool parseMaterial(const char* cmd, std::istream& input,
-                          MeshMaterial& material, bool& error);
+extern bool parseMaterials(const char* cmd, std::istream& input,
+                           BzMaterial* materials, int materialCount,
+                           bool& error);
 
 #endif  /* __PARSE_MATERIAL_H__ */
+
 
 // Local variables: ***
 // mode: C++ ***

@@ -10,47 +10,28 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __CUSTOM_CONE_H__
-#define __CUSTOM_CONE_H__
+#ifndef __CUSTOM_MATERIAL_H__
+#define __CUSTOM_MATERIAL_H__
 
 /* interface header */
-#include "WorldFileObstacle.h"
+#include "WorldFileObject.h"
 
-/* local interface headers */
-#include "WorldInfo.h"
-
-/* common interface headers */
+/* common headers */
 #include "BzMaterial.h"
 
-
-class CustomCone : public WorldFileObstacle {
+class CustomMaterial : public WorldFileObject {
   public:
-    CustomCone();
-    ~CustomCone();
-    virtual bool read(const char* cmd, std::istream& input);
+    CustomMaterial();
+    ~CustomMaterial();
+    virtual bool read(const char *cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
+    bool writeImmediately() { return true; }
 
   private:
-    bool parseSideMaterials(const char* cmd, std::istream& input,
-                            bool& error);
-    enum {
-      Edge,
-      Bottom,
-      StartFace,
-      EndFace,
-      MaterialCount
-    };
-
-    int divisions;
-    float angle;
-    float texsize[2];
-    bool useNormals;
-    bool smoothBounce;
-    BzMaterial materials[MaterialCount];
+    mutable BzMaterial material;
 };
 
-
-#endif  /* __CUSTOM_CONE_H__ */
+#endif  /* __CUSTOM_MATERIAL_H__ */
 
 // Local variables: ***
 // mode: C++ ***

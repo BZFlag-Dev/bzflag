@@ -17,6 +17,11 @@
 
 #define	ADV(_b, _t)	((void*)(((char*)(_b)) + sizeof(_t)))
 
+
+//
+// Packers
+//
+
 void*			nboPackUByte(void* b, uint8_t v)
 {
   ::memcpy(b, &v, sizeof(uint8_t));
@@ -80,6 +85,19 @@ void*			nboPackString(void* b, const void* m, int len)
   ::memcpy(b, m, len);
   return (void*)((char*)b + len);
 }
+
+void*			nboPackStdString(void* b, const std::string& str)
+{
+  uint32_t strSize = str.size();
+  b = nboPackUInt(b, strSize);
+  b = nboPackString(b, str.c_str(), strSize);
+  return b;
+}
+
+
+//
+// UnPackers
+//
 
 void*			nboUnpackUByte(void* b, uint8_t& v)
 {
@@ -149,6 +167,29 @@ void*			nboUnpackString(void* b, void* m, int len)
   ::memcpy(m, b, len);
   return (void*)((char*)b + len);
 }
+
+void*			nboUnpackStdString(void* b, std::string& str)
+{
+  uint32_t strSize;
+  b = nboUnpackUInt(b, strSize);
+  char* buffer = new char[strSize + 1];
+  b = nboUnpackString(b, buffer, strSize);
+  buffer[strSize] = 0;
+  str = buffer;
+  delete[] buffer;
+  return b;
+}
+
+
+//
+// Utilities
+//
+
+unsigned int nboStdStringPackSize(const std::string& str)
+{
+  return (sizeof(uint32_t) + str.size());
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

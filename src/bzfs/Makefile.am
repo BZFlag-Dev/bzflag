@@ -30,6 +30,7 @@ bzfs_SOURCES = \
 	CustomGate.h \
 	CustomLink.cxx \
 	CustomLink.h \
+	CustomMaterial.cxx \
 	CustomMesh.cxx \
 	CustomMesh.h \
 	CustomMeshFace.cxx \
@@ -62,7 +63,6 @@ bzfs_SOURCES = \
 	ListServerConnection.h \
 	MasterBanList.cxx \
 	MasterBanList.h \
-	MeshUtils.h \
 	PackVars.h \
 	ParseMaterial.cxx \
 	ParseMaterial.h \

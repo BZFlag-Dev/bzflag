@@ -11,74 +11,172 @@
  */
 
 /* interface header */
+#include "BzMaterial.h"
 #include "ParseMaterial.h"
 
 /* common implementation headers */
-#include "MeshMaterial.h"
+#include "TextureMatrix.h"
+#include "DynamicColor.h"
 
-bool parseMaterial(const char* cmd, std::istream& input,
-                   MeshMaterial& material, bool& error)
+
+bool parseMaterials(const char* cmd, std::istream& input,
+                    BzMaterial* materials, int materialCount, bool& error)
 {
+  int i;
   error = false;
 
-  if (strcasecmp(cmd, "resetmat") == 0) {
-    material.reset();
-  }
-  else if (strcasecmp(cmd, "notexture") == 0) {
-    material.useTexture = false;
-  }
-  else if (strcasecmp(cmd, "notexalpha") == 0) {
-    material.useTextureAlpha = false;
-  }
-  else if (strcasecmp(cmd, "notexcolor") == 0) {
-    material.useColorOnTexture = false;
-  }
-  else if (strcasecmp(cmd, "texture") == 0) {
-    if (!(input >> material.texture)) {
+  if (strcasecmp(cmd, "refmat") == 0) {
+    std::string name;
+    if (!(input >> name)) {
       error = true;
     }
-  }
-  else if (strcasecmp(cmd, "texmat") == 0) {
-    if (!(input >> material.textureMatrix)) {
-      error = true;
+    const BzMaterial* matref = MATERIALMGR.findMaterial(name);
+    if (matref == NULL) {
+      std::cout << "couldn't find reference material: " << name << std::endl;
+    } else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i] = *matref;
+      }
     }
   }
-  else if (strcasecmp(cmd, "spheremap") == 0) {
-    material.useSphereMap = true;
+  else if (strcasecmp(cmd, "resetmat") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].reset();
+    }
   }
   else if (strcasecmp(cmd, "dyncol") == 0) {
-    if (!(input >> material.dynamicColor)) {
+    std::string dyncol;
+    if (!(input >> dyncol)) {
       error = true;
+    }
+    int dynamicColor = DYNCOLORMGR.findColor(dyncol);
+    if (dynamicColor == -1) {
+      std::cout << "couldn't find dynamicColor: " << dyncol << std::endl;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setDynamicColor(dynamicColor);
     }
   }
   else if (strcasecmp(cmd, "ambient") == 0) {
-    if (!(input >> material.ambient[0] >> material.ambient[1]
-                >> material.ambient[2] >> material.ambient[3])) {
+    float ambient[4];
+    if (!(input >> ambient[0] >> ambient[1] >> ambient[2] >> ambient[3])) {
       error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setAmbient(ambient);
     }
   }
   else if ((strcasecmp(cmd, "diffuse") == 0) || // currently used by bzflag
            (strcasecmp(cmd, "color") == 0)) {
-    if (!(input >> material.diffuse[0] >> material.diffuse[1]
-                >> material.diffuse[2] >> material.diffuse[3])) {
+    float diffuse[4];
+    if (!(input >> diffuse[0] >> diffuse[1] >> diffuse[2] >> diffuse[3])) {
       error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setDiffuse(diffuse);
     }
   }
   else if (strcasecmp(cmd, "specular") == 0) {
-    if (!(input >> material.specular[0] >> material.specular[1]
-                >> material.specular[2] >> material.specular[3])) {
+    float specular[4];
+    if (!(input >> specular[0] >> specular[1]
+                >> specular[2] >> specular[3])) {
       error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setSpecular(specular);
     }
   }
   else if (strcasecmp(cmd, "emission") == 0) {
-    if (!(input >> material.emission[0] >> material.emission[1]
-                >> material.emission[2] >> material.emission[3])) {
+    float emission[4];
+    if (!(input >> emission[0] >> emission[1]
+                >> emission[2] >> emission[3])) {
       error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setEmission(emission);
     }
   }
   else if (strcasecmp(cmd, "shininess") == 0) {
-    if (!(input >> material.shininess)) {
+    float shininess;
+    if (!(input >> shininess)) {
       error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setShininess(shininess);
+    }
+  }
+  else if (strcasecmp(cmd, "texture") == 0) {
+    std::string name;
+    if (!(input >> name)) {
+      error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setTexture(name);
+    }
+  }
+  else if (strcasecmp(cmd, "notextures") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].clearTextures();
+    }
+  }
+  else if (strcasecmp(cmd, "addtexture") == 0) {
+    std::string name;
+    if (!(input >> name)) {
+      error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].addTexture(name);
+    }
+  }
+  else if (strcasecmp(cmd, "texmat") == 0) {
+    std::string texmat;
+    if (!(input >> texmat)) {
+      error = true;
+    }
+    int textureMatrix = TEXMATRIXMGR.findMatrix(texmat);
+    if (textureMatrix == -1) {
+      std::cout << "couldn't find textureMatrix: " << texmat << std::endl;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setTextureMatrix(textureMatrix);
+    }
+  }
+  else if (strcasecmp(cmd, "notexalpha") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setUseTextureAlpha(false);
+    }
+  }
+  else if (strcasecmp(cmd, "notexcolor") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setUseColorOnTexture(false);
+    }
+  }
+  else if (strcasecmp(cmd, "spheremap") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setUseSphereMap(true);
+    }
+  }
+  else if (strcasecmp(cmd, "shader") == 0) {
+    std::string name;
+    if (!(input >> name)) {
+      error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setShader(name);
+    }
+  }
+  else if (strcasecmp(cmd, "addshader") == 0) {
+    std::string name;
+    if (!(input >> name)) {
+      error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].addShader(name);
+    }
+  }
+  else if (strcasecmp(cmd, "noshaders") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].clearShaders();
     }
   }
   else {
