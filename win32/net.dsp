@@ -115,10 +115,6 @@ SOURCE=..\include\Address.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\AList.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\include\bzfio.h
 # End Source File
 # Begin Source File

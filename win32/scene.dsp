@@ -103,10 +103,6 @@ SOURCE=..\src\scene\ZSceneDatabase.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\AList.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\include\BSPSceneDatabase.h
 # End Source File
 # Begin Source File

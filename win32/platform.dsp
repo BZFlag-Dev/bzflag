@@ -135,10 +135,6 @@ SOURCE=..\src\platform\WinWindow.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\AList.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\include\BzfDisplay.h
 # End Source File
 # Begin Source File

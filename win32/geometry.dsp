@@ -262,10 +262,6 @@ SOURCE=..\src\geometry\WallSceneNode.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\AList.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\include\BillboardSceneNode.h
 # End Source File
 # Begin Source File

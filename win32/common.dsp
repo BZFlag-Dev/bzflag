@@ -138,10 +138,6 @@ SOURCE=..\include\Address.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\AList.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\include\Bundle.h
 # End Source File
 # Begin Source File
