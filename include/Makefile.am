@@ -64,6 +64,7 @@ noinst_HEADERS =		\
 	ShellSceneNode.h	\
 	ShotSceneNode.h		\
 	ShotUpdate.h		\
+	Singleton.h		\
 	SphereSceneNode.h	\
 	StateDatabase.h		\
 	TankSceneNode.h		\
