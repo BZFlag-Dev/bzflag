@@ -400,6 +400,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       tm.bind(noiseTexture);
 
       glBegin(GL_QUADS);
+      {
 	glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
 	glVertex2f(-range,-range);
 	glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
@@ -408,8 +409,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	glVertex2f( range, range);
 	glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
 	glVertex2f(-range, range);
-
+      }
       glEnd();
+      
       glDisable(GL_TEXTURE_2D);
     }
 
@@ -417,8 +419,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	     (renderer.useQuality() == 0)) {
       glEnable(GL_TEXTURE_2D);
       tm.bind(noiseTexture);
-      glBegin(GL_QUADS);
 
+      glBegin(GL_QUADS);
+      {
 	glTexCoord2f(0,0);
 	glVertex2f(-range,-range);
 	glTexCoord2f(1,0);
@@ -427,8 +430,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	glVertex2f( range, range);
 	glTexCoord2f(0,1);
 	glVertex2f(-range, range);
-
+      }
       glEnd();
+      
       glDisable(GL_TEXTURE_2D);
     }
     if (decay > 0.015f) decay *= 0.5f;
@@ -830,6 +834,9 @@ void RadarRenderer::renderBoxPyrMeshFast(float range)
   OpenGLGState gs = gb.getState();
   gs.setState();
 
+  // now that the texture is bound, setup the clamp mode
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+
   // do this after the GState setting
   if (smooth) {
     glEnable(GL_POLYGON_SMOOTH);
@@ -845,7 +852,6 @@ void RadarRenderer::renderBoxPyrMeshFast(float range)
 
   // setup texture generation
   glEnable(GL_TEXTURE_GEN_S);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 
   // set the color
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -857,7 +863,6 @@ void RadarRenderer::renderBoxPyrMeshFast(float range)
 
   // restore texture generation
   glDisable(GL_TEXTURE_GEN_S);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
   OpenGLGState::resetState();
 
