@@ -2367,17 +2367,35 @@ static WorldInfo*	defineTeamWorld()
   world->addPyramid( (3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
 		PyrBase, PyrBase, PyrHeight);
 
-  // add boxes
+  // add boxes, four at once with same height so no team has an advantage
   const float xmin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
   const float ymin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
-  for (int j = 0; j < CitySize; j++)
-    for (int i = 0; i < CitySize; i++)
-      if (i != CitySize/2 || j != CitySize/2)
+  for (int j = 0; j <= CitySize/2; j++)
+    for (int i = 0; i < CitySize/2; i++)
+      if (i != CitySize/2 || j != CitySize/2) {
+        float h = BoxHeight;
+        if (randomHeights) h *= 2.0f * (float)bzfrand() + 0.5f;
 	world->addBox(
 		xmin + float(i) * (2.0f * BoxBase + AvenueSize),
 		ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
 		randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-		BoxBase, BoxBase, BoxHeight);
+		BoxBase, BoxBase, h);
+	world->addBox(
+		-1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
+		-1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
+		randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+		BoxBase, BoxBase, h);
+	world->addBox(
+		-1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
+		xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
+		randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+		BoxBase, BoxBase, h);
+	world->addBox(
+		ymin + float(j) * (2.0f * BoxBase + AvenueSize),
+		-1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
+		randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+		BoxBase, BoxBase, h);
+      }
 
   // add teleporters
   if (useTeleporters) {
