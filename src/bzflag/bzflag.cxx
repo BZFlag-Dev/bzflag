@@ -414,7 +414,7 @@ static void		parse(int argc, char** argv,
 			argv[i-1]);
 	usage();
       }
-      resources.addValue("geometry", argv[i]);
+      BZDB->set("geometry", argv[i]);
     }
     else if (strcmp(argv[i], "-i") == 0 ||
 		strcmp(argv[i], "-interface") == 0) {
@@ -1084,19 +1084,19 @@ int			main(int argc, char** argv)
 
   bool setPosition = false, setSize = false;
   int x = 0, y = 0, w = 0, h = 0;
-  if (db.hasValue("geometry")) {
+  if (BZDB->isSet("geometry")) {
     int count = 0;
     char xs, ys;
-    std::string geometry = db.getValue("geometry");
+    std::string geometry = BZDB->get("geometry");
     if (geometry == "default" ||
 	((count = sscanf(geometry.c_str(), "%dx%d%c%d%c%d",
 		&w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) ||
 	w < 0 || h < 0) {
-      db.removeValue("geometry");
+      BZDB->unset("geometry");
     }
     else if (count == 6 && ((xs != '-' && xs != '+') ||
 				(ys != '-' && ys != '+'))) {
-      db.removeValue("geometry");
+      BZDB->unset("geometry");
     }
     setSize = true;
     if (w < 256)

@@ -6449,10 +6449,10 @@ void			startPlaying(BzfDisplay* _display,
 	  display->setResolution(format)) {
 
 	// handle resize
-	if (resources->hasValue("geometry")) {
+	if (BZDB->isSet("geometry")) {
 	  int w, h, x, y, count;
 	  char xs, ys;
-	  count = sscanf(resources->getValue("geometry").c_str(),
+	  count = sscanf(BZDB->get("geometry").c_str(),
 			"%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
 	  if (w < 256) w = 256;
 	  if (h < 192) h = 192;
