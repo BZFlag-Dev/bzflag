@@ -18,7 +18,9 @@
 #include <sys/types.h>
 #if defined(_WIN32)
 #define _WINSOCKAPI_
-#include <windows.h>
+#include <shlobj.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #else /* defined(_WIN32) */
 #include <pwd.h>
 #endif /* defined(_WIN32) */
@@ -130,20 +132,28 @@ static BzfString	getConfigFileName()
 
 #else /* !defined(_WIN32) */
 
-  BzfString name;
+  // get location of personal files from system.  this appears to be
+  // the closest thing to a home directory on windows.  use root of
+  // C drive as a default in case we can't get the path or it doesn't
+  // exist.
+  BzfString name("C:");
   char dir[MAX_PATH];
-  if (GetWindowsDirectory(dir, sizeof(dir)) != 0) {
-    name = dir;
-    DWORD len = sizeof(dir);
-    if (GetUserName(dir, &len)) {
-      name += "\\Profiles\\";
-      name += dir;
+  ITEMIDLIST* idl;
+  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
+    if (SHGetPathFromIDList(idl, dir)) {
+      struct stat statbuf;
+      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
+	name = dir;
+    }
+
+    IMalloc* shalloc;
+    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
+      shalloc->Free(idl);
+      shalloc->Release();
     }
   }
-  else {
-    name = "C:";
-  }
 
+  // append the config file name
   name += "\\bzflag.bzc";
   return name;
 
