@@ -1574,7 +1574,7 @@ void handleRecordCmd(int t, const char * message)
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
     if (*buf == '\0') {
-      Record::saveBuffer (t, buf, 0);
+      Record::saveBuffer (t, filename, 0);
     }
     else {
       Record::saveBuffer (t, filename, atoi(buf));

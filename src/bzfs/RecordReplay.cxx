@@ -91,7 +91,7 @@ typedef struct {
   u32 magic;                    // record file type identifier
   u32 version;                  // record file version
   u32 offset;                   // length of the full header
-  u32 seconds;                  // number of seconds in the file
+  RRtime filetime;              // amount of time in the file
   u32 player;                   // player that saved this record file
   u32 flagsSize;                // size of the flags data
   u32 worldSize;                // size of world database 
@@ -111,7 +111,7 @@ static const int ReplayHeaderSize = sizeof(ReplayHeader) - (2 * sizeof(char*));
 
 static const u32 ReplayMagic       = 0x7272425A; // "rrBZ"
 static const u32 ReplayVersion     = 0x0001;
-static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
+static const u32 DefaultMaxBytes   = (16 * 1024);//FIXME * 1024); // 16 Mbytes
 static const u32 DefaultUpdateRate = (10 * 1000000); // seconds
 
 static std::string RecordDir = getRecordDirName();
@@ -168,8 +168,9 @@ static RRpacket *prevStatePacket ();
 static bool savePacket (RRpacket *p, FILE *f);
 static RRpacket *loadPacket (FILE *f);            // makes a new packet
 
-static bool saveHeader (int playerIndex, FILE *f);
+static bool saveHeader (int playerIndex, RRtime filetime, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
+static bool saveFileTime (RRtime filetime, FILE *f);
 static bool replaceFlagTypes (ReplayHeader *h);
 static bool replaceWorldDatabase (ReplayHeader *h);
 static bool flagIsActive (FlagType *type);
@@ -191,6 +192,8 @@ static void initPacket (u16 mode, u16 code, int len, const void *data,
                           RRpacket *p);             // copy params into packet
 
 static RRtime getRRtime ();
+static void *nboPackRRtime (void *buf, RRtime value);
+static void *nboUnpackRRtime (void *buf, RRtime& value);
 
 static const char *msgString (u16 code);
 
@@ -225,6 +228,11 @@ extern void sendMessage(int playerIndex, PlayerId targetPlayer,
 static bool recordReset ()
 {
   if (RecordFile != NULL) {
+    // replace the elapsed time placeholder
+    if (RecordMode == StraightToFile) {
+      RRtime filetime = getRRtime() - RecordStartTime;
+      saveFileTime (filetime, RecordFile); 
+    }
     fclose (RecordFile);
     RecordFile = NULL;
   }
@@ -401,7 +409,7 @@ bool Record::saveFile (int playerIndex, const char *filename)
     return false;
   }
   
-  if (!saveHeader (playerIndex, RecordFile)) {
+  if (!saveHeader (playerIndex, 0 /* placeholder */, RecordFile)) {
     recordReset();
     snprintf (buffer, MessageLen, "Could not save header: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
@@ -443,13 +451,12 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
     
   if (badFilename (filename)) {
     sendMessage (ServerPlayer, playerIndex,
-                 "Files must be with the local directory");
+                 "Files must be within the local directory");
     return false;
   }
   
 
   // setup the beginning position for the recording
-
   if (seconds != 0) { 
     DEBUG3 ("Record: saving %i seconds to %s\n", seconds, name.c_str());
     // start the first update that happened at least 'seconds' ago
@@ -465,7 +472,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
       p = p->prev;
     }
   }
-
+  
   if ((seconds == 0) || (p == NULL)) {
     // save the whole buffer from the first update
     p = RecordBuf.tail;
@@ -479,23 +486,25 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
     }
   }
   
+  // setup the elapsed file time
+  RRtime filetime = RecordBuf.head->timestamp - p->timestamp;
+
   RecordFile = openWriteFile (playerIndex, filename);
   if (RecordFile == NULL) {
-    recordReset();
     snprintf (buffer, MessageLen, "Could not open for writing: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
-  if (!saveHeader (playerIndex, RecordFile)) {
-    recordReset();
+  if (!saveHeader (playerIndex, filetime, RecordFile)) {
+    fclose (RecordFile);
+    RecordFile = NULL;
     snprintf (buffer, MessageLen, "Could not save header: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
 
   // Save the packets
-  
   while (p != NULL) {
     savePacket (p, RecordFile);
     p = p->next;
@@ -730,7 +739,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   }
 
   // preload the buffer 
-  while (ReplayBuf.byteCount < 5000 /*FIXME - RecordMaxBytes*/) {
+  while (ReplayBuf.byteCount < RecordMaxBytes) {
     p = loadPacket (ReplayFile);
     if (p == NULL) {
       break;
@@ -759,6 +768,17 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   snprintf (buffer, MessageLen, "Loaded file: %s", name.c_str());
   sendMessage (ServerPlayer, playerIndex, buffer, true);
+  snprintf (buffer, MessageLen, "  author:    %s (%s)",
+            header.callSign, header.email);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  snprintf (buffer, MessageLen, "  protocol:  %.8s", header.serverVersion);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  snprintf (buffer, MessageLen, "  server:    %s", header.appVersion);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  snprintf (buffer, MessageLen, "  seconds:   %.3f",
+            (float)header.filetime/1000000.0f);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  
   
   return true;
 }
@@ -1361,7 +1381,7 @@ savePlayersState ()
   char adminBuf[MaxPacketLen];
   void *buf, *adminPtr;
   
-  // place holder for the number of IPs
+  // placeholder for the number of IPs
   adminPtr = adminBuf + sizeof (unsigned char);
 
   for (i = 0; i < curMaxPlayers; i++) {
@@ -1509,8 +1529,7 @@ savePacket (RRpacket *p, FILE *f)
   buf = nboPackUInt (buf, p->len);
   buf = nboPackUInt (buf, nextFilePos);
   buf = nboPackUInt (buf, RecordFilePrevPos);
-  buf = nboPackUInt (buf, (u32) (p->timestamp >> 32));        // msb
-  buf = nboPackUInt (buf, (u32) (p->timestamp & 0xFFFFFFFF)); // lsb
+  buf = nboPackRRtime (buf, p->timestamp);
 
   if ((fwrite (bufStart, RRpacketHdrSize, 1, f) == 0) ||
       (fwrite (p->data, p->len, 1, f) == 0)) {
@@ -1531,7 +1550,6 @@ loadPacket (FILE *f)
   RRpacket *p;
   char bufStart[RRpacketHdrSize];
   void *buf;
-  u32 timeMsb, timeLsb;
   
   if (f == NULL) {
     return false;
@@ -1548,9 +1566,7 @@ loadPacket (FILE *f)
   buf = nboUnpackUInt (buf, p->len);
   buf = nboUnpackUInt (buf, p->nextFilePos);
   buf = nboUnpackUInt (buf, p->prevFilePos);
-  buf = nboUnpackUInt (buf, timeMsb);
-  buf = nboUnpackUInt (buf, timeLsb);
-  p->timestamp = ((RRtime)timeMsb << 32) + (RRtime)timeLsb;
+  buf = nboUnpackRRtime (buf, p->timestamp);
 
   if (p->len > (MaxPacketLen - ((int)sizeof(u16) * 2))) {
     fprintf (stderr, "loadRRpacket: ERROR, packtlen = %i\n", p->len);
@@ -1677,7 +1693,7 @@ badFilename (const char *name)
 
 
 static bool
-saveHeader (int p, FILE *f)
+saveHeader (int p, RRtime filetime, FILE *f)
 {
   char buffer[ReplayHeaderSize];
   char flagsBuf[MaxPacketLen]; // for the FlagType's
@@ -1704,7 +1720,7 @@ saveHeader (int p, FILE *f)
   buf = nboPackUInt (buffer, ReplayMagic);
   buf = nboPackUInt (buf, ReplayVersion);
   buf = nboPackUInt (buf, totalSize);
-  buf = nboPackUInt (buf, 0); // place holder for seconds
+  buf = nboPackRRtime (buf, filetime); // placeholder when saving to file
   buf = nboPackUInt (buf, p); // player index
   buf = nboPackUInt (buf, hdr.flagsSize);
   buf = nboPackUInt (buf, worldDatabaseSize);
@@ -1746,7 +1762,7 @@ loadHeader (ReplayHeader *h, FILE *f)
   buf = nboUnpackUInt (buffer, h->magic);
   buf = nboUnpackUInt (buf, h->version);
   buf = nboUnpackUInt (buf, h->offset);
-  buf = nboUnpackUInt (buf, h->seconds);
+  buf = nboUnpackRRtime (buf, h->filetime);
   buf = nboUnpackUInt (buf, h->player);
   buf = nboUnpackUInt (buf, h->flagsSize);
   buf = nboUnpackUInt (buf, h->worldSize);
@@ -1847,6 +1863,22 @@ loadHeader (ReplayHeader *h, FILE *f)
 }
                          
                           
+static bool
+saveFileTime (RRtime filetime, FILE *f)
+{
+  rewind (f);
+  if (fseek (f, sizeof (u32) * 3, SEEK_SET) < 0) {
+    return false;
+  }
+  char buffer[sizeof(RRtime)];
+  nboPackRRtime (buffer, filetime);
+  if (fwrite (buffer, sizeof(RRtime), 1, f) == 0) {
+    return false;
+  }
+  return true;
+}
+
+
 static bool
 replaceFlagTypes (ReplayHeader *h)
 {
@@ -2166,6 +2198,27 @@ getRRtime ()
 
 #endif //_WIN32
 }
+
+
+static void *
+nboPackRRtime (void *buf, RRtime value)
+{
+  buf = nboPackUInt (buf, (u32) (value >> 32));       // msb's
+  buf = nboPackUInt (buf, (u32) (value & 0xFFFFFFFF)); // lsb's
+  return buf;
+}
+
+
+static void *
+nboUnpackRRtime (void *buf, RRtime& value)
+{
+  u32 msb, lsb;
+  buf = nboUnpackUInt (buf, msb);
+  buf = nboUnpackUInt (buf, lsb);
+  value = ((RRtime)msb << 32) + (RRtime)lsb;
+  return buf;
+}
+
 
 /****************************************************************************/
 
