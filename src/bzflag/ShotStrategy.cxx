@@ -29,6 +29,7 @@
 #include "SceneRenderer.h"
 
 static OpenGLTexture*	boltTexture[NumTeams];
+static OpenGLTexture*	tboltTexture[NumTeams];
 static OpenGLTexture*	laserTexture[NumTeams];
 static OpenGLTexture*	gmTexture;
 
@@ -52,6 +53,8 @@ void			ShotStrategy::init()
   int i;
   for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++)
     boltTexture[i] = new OpenGLTexture;
+  for (i = 0; i < (int)(sizeof(tboltTexture) / sizeof(tboltTexture[0])); i++)
+    tboltTexture[i] = new OpenGLTexture;
   for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++)
     laserTexture[i] = new OpenGLTexture;
   gmTexture = new OpenGLTexture;
@@ -61,6 +64,11 @@ void			ShotStrategy::init()
   *boltTexture[GreenTeam] = getTexture("gbolt", OpenGLTexture::Linear);
   *boltTexture[BlueTeam] = getTexture("bbolt", OpenGLTexture::Linear);
   *boltTexture[PurpleTeam] = getTexture("pbolt", OpenGLTexture::Linear);
+  *tboltTexture[RogueTeam] = getTexture("ytbolt", OpenGLTexture::Linear);
+  *tboltTexture[RedTeam] = getTexture("rtbolt", OpenGLTexture::Linear);
+  *tboltTexture[GreenTeam] = getTexture("gtbolt", OpenGLTexture::Linear);
+  *tboltTexture[BlueTeam] = getTexture("btbolt", OpenGLTexture::Linear);
+  *tboltTexture[PurpleTeam] = getTexture("ptbolt", OpenGLTexture::Linear);
   *laserTexture[RogueTeam] = getTexture("ylaser", OpenGLTexture::Max);
   *laserTexture[RedTeam] = getTexture("rlaser", OpenGLTexture::Max);
   *laserTexture[GreenTeam] = getTexture("glaser", OpenGLTexture::Max);
@@ -78,6 +86,10 @@ void			ShotStrategy::done()
   for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++) {
     delete boltTexture[i];
     boltTexture[i] = NULL;
+  }
+  for (i = 0; i < (int)(sizeof(tboltTexture) / sizeof(tboltTexture[0])); i++) {
+    delete tboltTexture[i];
+    tboltTexture[i] = NULL;
   }
   for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++) {
     delete laserTexture[i];
@@ -322,7 +334,7 @@ ShotPathSegment&	ShotPathSegment::operator=(const
 // SegmentedShotStrategy
 //
 
-SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path) :
+SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) :
 				ShotStrategy(_path)
 {
   // initialize times
@@ -340,8 +352,10 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path) :
   boltSceneNode = new BoltSceneNode(_path->getPosition());
   const float* c = Team::getRadarColor(team);
   boltSceneNode->setColor(c[0], c[1], c[2]);
-  if (boltTexture[team] && boltTexture[team]->isValid())
+  if ((!transparent) && boltTexture[team] && boltTexture[team]->isValid())
     boltSceneNode->setTexture(*boltTexture[team]);
+  if ((transparent) && tboltTexture[team] && tboltTexture[team]->isValid())
+    boltSceneNode->setTexture(*tboltTexture[team]);
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
@@ -716,7 +730,7 @@ void			SegmentedShotStrategy::reflect(float* v,
 //
 
 NormalShotStrategy::NormalShotStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path)
+				SegmentedShotStrategy(path, false)
 {
   // make segments
   makeSegments(Stop);
@@ -732,7 +746,7 @@ NormalShotStrategy::~NormalShotStrategy()
 //
 
 RapidFireStrategy::RapidFireStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path)
+				SegmentedShotStrategy(path, false)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
@@ -756,7 +770,7 @@ RapidFireStrategy::~RapidFireStrategy()
 //
 
 MachineGunStrategy::MachineGunStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path)
+				SegmentedShotStrategy(path, false)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
@@ -780,7 +794,7 @@ MachineGunStrategy::~MachineGunStrategy()
 //
 
 RicochetStrategy::RicochetStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path)
+				SegmentedShotStrategy(path, false)
 {
   // make segments that bounce
   makeSegments(Reflect);
@@ -796,7 +810,7 @@ RicochetStrategy::~RicochetStrategy()
 //
 
 SuperBulletStrategy::SuperBulletStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path)
+				SegmentedShotStrategy(path, true)
 {
   // make segments that go through buildings
   makeSegments(Through);
@@ -812,7 +826,7 @@ SuperBulletStrategy::~SuperBulletStrategy()
 //
 
 LaserStrategy::LaserStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path),
+				SegmentedShotStrategy(path, false),
 				cumTime(0.0f)
 {
   // speed up shell and decrease lifetime

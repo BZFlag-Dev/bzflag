@@ -97,7 +97,7 @@ class ShotPathSegment {
 
 class SegmentedShotStrategy : public ShotStrategy {
   public:
-			SegmentedShotStrategy(ShotPath*);
+			SegmentedShotStrategy(ShotPath*, bool transparent);
 			~SegmentedShotStrategy();
 
     void		update(float dt);
