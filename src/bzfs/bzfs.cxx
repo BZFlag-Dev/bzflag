@@ -2352,6 +2352,8 @@ static void createUDPcon(int t, int remote_port) {
   addr.sin_family = AF_INET;
   player[t].peer.pack(&addr.sin_addr.s_addr);
   addr.sin_port = htons(remote_port);
+  // udp address is same as tcp address
+  addr.sin_addr = player[t].taddr.sin_addr;
   memcpy((char *)&player[t].uaddr,(char *)&addr, sizeof(addr));
 
   // show some message on the console
@@ -3989,6 +3991,9 @@ static void acceptClient()
 	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
     close(fd);
   }
+
+  // store address information for player
+  memcpy(&player[playerIndex].taddr, &clientAddr, addr_len);
 
   buffer[8] = (uint8_t)playerIndex;
   send(fd, (const char*)buffer, sizeof(buffer), 0);
@@ -6278,7 +6283,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       OOBQueueUpdate(t, queueUpdate);
       DEBUG3("Player %s [%d] UDP confirmed\n", player[t].callSign, t);
       // enable the downlink
-      //player[t].ulinkup = true;
+      player[t].ulinkup = true;
       if (!clOptions.alsoUDP) {
 	DEBUG2("Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
       }
