@@ -39,7 +39,6 @@
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
 				mainform.density.disabled = (mainform.world_type.checked);
 				mainform.rabbit_selection.disabled = !rabbit;
-				mainform.ctf_map_citysize.disabled = !(mainform.balanced_ctf_map.checked) || (mainform.balanced_ctf_map.disabled);
 				var el = document.getElementById( "team_flags" );
 				el.style.display = ctf ? "block" : "none";
 				return true;
