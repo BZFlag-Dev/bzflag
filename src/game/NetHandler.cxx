@@ -671,7 +671,6 @@ in_addr NetHandler::getIPAddress() {
 
 const char *NetHandler::getHostname() {
 #ifdef HAVE_ADNS_H
-  adns->checkDNSResolution();
   return adns->getHostname();
 #else
   return NULL;

@@ -25,7 +25,7 @@
 adns_state AdnsHandler::adnsState;
 
 AdnsHandler::AdnsHandler(int _index, struct sockaddr *clientAddr)
-  : index(_index), hostname(NULL), adnsQuery(NULL) {
+  : index(_index), hostname(NULL), adnsQuery(NULL), status(None) {
   // launch the asynchronous query to look up this hostname
   if (adns_submit_reverse
       (adnsState, clientAddr, adns_r_ptr,
@@ -34,8 +34,10 @@ AdnsHandler::AdnsHandler(int _index, struct sockaddr *clientAddr)
     DEBUG1("Player [%d] failed to submit reverse resolve query: errno %d\n",
 	   index, getErrno());
     adnsQuery = NULL;
+    status = Failed;
   } else {
     DEBUG2("Player [%d] submitted reverse resolve query\n", index);
+    status = Pending;
   }
 }
 
@@ -50,10 +52,9 @@ AdnsHandler::~AdnsHandler() {
   }
 }
 
-// return true if host is resolved
-bool AdnsHandler::checkDNSResolution() {
+void AdnsHandler::checkDNSResolution() {
   if (!adnsQuery)
-    return false;
+    return;
 
   // check to see if query has completed
   adns_answer *answer;
@@ -61,8 +62,9 @@ bool AdnsHandler::checkDNSResolution() {
     if (getErrno() != EAGAIN) {
       DEBUG1("Player [%d] failed to resolve: errno %d\n", index, getErrno());
       adnsQuery = NULL;
+      status = Failed;
     }
-    return false;
+    return;
   }
 
   // we got our reply.
@@ -71,7 +73,8 @@ bool AdnsHandler::checkDNSResolution() {
 	   adns_strerror(answer->status));
     free(answer);
     adnsQuery = NULL;
-    return false;
+    status = Failed;
+    return;
   }
 
   if (hostname)
@@ -80,10 +83,14 @@ bool AdnsHandler::checkDNSResolution() {
   DEBUG1("Player [%d] resolved to hostname: %s\n", index, hostname);
   free(answer);
   adnsQuery = NULL;
-  return true;
+  status = Succeeded;
+  return;
 }
 
 const char *AdnsHandler::getHostname() {
+  if (status == Pending) {
+    checkDNSResolution();
+  }
   return hostname;
 }
 

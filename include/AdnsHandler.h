@@ -25,17 +25,23 @@ class AdnsHandler {
   AdnsHandler(int index, struct sockaddr *clientAddr);
   ~AdnsHandler();
 
-  // return true if host is resolved
-  bool	checkDNSResolution();
   const char *getHostname();
   static void startupResolver();
  private:
+  void checkDNSResolution();
   int	       index;
   // peer's network hostname (malloc/free'd)
   char	     *hostname;
   // adns query state for while we're looking up hostname
   adns_query	adnsQuery;
   static adns_state adnsState;
+  enum ResolutionStatus {
+    None = 0,
+    Pending,
+    Failed,
+    Succeeded
+  };
+  ResolutionStatus status;
 };
 
 #endif
