@@ -786,7 +786,7 @@ void*			WorldBuilder::unpack(void* buf)
       }
       case WorldCodeBase: {
 	uint16_t team;
-	float data[9];
+	float data[10];
 
 	if (len != WorldCodeBaseSize)
 	  return NULL;
@@ -801,9 +801,10 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackFloat(buf, data[7]);
 	buf = nboUnpackFloat(buf, data[8]);
+	buf = nboUnpackFloat(buf, data[9]);
 	BaseBuilding base(data, data[3], data +4, team);
 	append(base);
-	setBase(TeamColor(team), data, data[3], data[4], data[5], data + 6);
+	setBase(TeamColor(team), data, data[3], data[4], data[5], data + 7);
 	break;
       }
 

@@ -1918,6 +1918,7 @@ static bool defineWorld()
 	buf = nboPackFloat(buf, baseRotation[i]);
 	buf = nboPackFloat(buf, baseSize[i][0]);
 	buf = nboPackFloat(buf, baseSize[i][1]);
+	buf = nboPackFloat(buf, baseSize[i][2]);
 	buf = nboPackVector(buf, safetyBasePos[i]);
       }
     }

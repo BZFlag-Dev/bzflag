@@ -25,11 +25,6 @@ BaseBuilding::BaseBuilding(const float *p, float rotation,
 		Obstacle(p, rotation, size[0], size[1], size[2]),
 		team(_team)
 {
-  if(pos[2] != 0) {
-    height = 1.0;
-  } else {
-    height = 0.0;
-  }
 }
 
 BaseBuilding::~BaseBuilding()

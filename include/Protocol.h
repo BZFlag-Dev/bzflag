@@ -102,7 +102,7 @@ const uint16_t		WorldCodeWall = 0x776c;			// 'wl'
 // world database sizes
 const uint16_t		WorldCodeHeaderSize = 30;
 const uint16_t		WorldCodeEpochOffset = 4+26; // huge hack, someone fix!!
-const uint16_t		WorldCodeBaseSize = 38;
+const uint16_t		WorldCodeBaseSize = 42;
 const uint16_t		WorldCodeWallSize = 24;
 const uint16_t		WorldCodeBoxSize = 29;
 const uint16_t		WorldCodeEndSize = 0;
