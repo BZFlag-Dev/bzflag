@@ -377,6 +377,7 @@ struct CmdLineOptions
     int i;
     for (i = int(FirstFlag); i <= int(LastFlag); i++) {
 	flagCount[i] = 0;
+	flagLimit[i] = -1;
 	flagDisallowed[i] = false;
     }
 
@@ -439,6 +440,7 @@ struct CmdLineOptions
 
   uint16_t		maxTeam[NumTeams];
   int			flagCount[LastFlag + 1];//
+  int			flagLimit[LastFlag + 1]; // # shots allowed / flag
   bool			flagDisallowed[LastFlag + 1];//
   AccessControlList	acl;
   BadWordList		bwl;
@@ -590,6 +592,8 @@ struct FlagInfo {
     bool required;
     // time flag will land
     TimeKeeper dropDone;
+    // number of shots on this flag
+    int numShots;
 };
 
 struct TeamInfo {
@@ -3948,7 +3952,6 @@ static void addPlayer(int playerIndex)
   player[playerIndex].wins = 0;
   player[playerIndex].losses = 0;
   player[playerIndex].tks = 0;
-
   // update team state and if first active player on team,
   // add team's flag and reset it's score
   bool resetTeamFlag = false;
@@ -4615,6 +4618,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   flag[flagIndex].flag.status = FlagOnTank;
   flag[flagIndex].flag.owner = player[playerIndex].id;
   flag[flagIndex].player = playerIndex;
+  flag[flagIndex].numShots = 0;
   player[playerIndex].flag = flagIndex;
 
   // send MsgGrabFlag
@@ -4645,6 +4649,7 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // okay, go ahead and drop it
   pFlagInfo->player = -1;
+  pFlagInfo->numShots = 0;
   if (pFlagInfo->flag.type == FlagNormal || --flag[flagIndex].grabs > 0)
     pFlagInfo->flag.status = FlagInAir;
   else
@@ -4906,8 +4911,44 @@ static void shotFired(int playerIndex, void *buf, int len)
   // repack if changed
   if (repack)
     firingInfo.pack(buf);
-  // player has fired shot -- send MsgShotBegin
-  broadcastMessage(MsgShotBegin, len, buf);
+
+ 
+  // if shooter has a flag
+  
+  char message[MessageLen];
+  if (shooter.flag >= 0){
+    
+    FlagInfo & fInfo = flag[shooter.flag];
+    fInfo.numShots++; // increase the # shots fired
+   
+    int limit = clOptions.flagLimit[fInfo.flag.id];
+    if (limit != -1){ // if there is a limit for players flag
+      int shotsLeft = limit -  fInfo.numShots;
+      if (shotsLeft > 0) { //still have some shots left
+	// give message each shot below 5, each 5th shot & at start
+	if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1){
+	  sprintf(message,"%d shots left",shotsLeft);
+	  sendMessage(playerIndex, shooter.id, shooter.team,message);
+	}
+      } else { // no shots left
+	if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)){
+	  // drop flag at last known position of player
+	  // also handle case where limit was set to 0
+	  float lastPos [3];
+	  for (int i = 0; i < 3; i ++){
+	    lastPos[i]=shooter.lastState.pos[i];
+	  }
+	  fInfo.grabs = 0; // recycle this flag now
+	  dropFlag(playerIndex, lastPos);        
+	} else { // more shots fired than allowed
+	  // do nothing for now -- could return and not allow shot
+	}
+      } // end no shots left 
+    } // end is limit 
+  } // end of player has flag 
+
+  broadcastMessage(MsgShotBegin, len, buf); 
+
 }
 
 static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
@@ -5701,6 +5742,7 @@ static const char *usageString =
 "[-requireudp] "
 "[{+s|-s} [<num>]] "
 "[-sa] "
+"[-sl <id> <num>]"
 "[-srvmsg <text>] "
 "[-st <time>] "
 "[-sw <num>] "
@@ -5759,6 +5801,7 @@ static const char *extraUsageString =
 "\t+s: always have <num> super flags (default=16)\n"
 "\t-s: allow up to <num> super flags (default=16)\n"
 "\t-sa: insert antidote superflags\n"
+"\t-sl: limit shot <id> to <num> shots\n"
 "\t-srvmsg: specify a <msg> to print upon client login\n"
 "\t-st: shake bad flags in <time> seconds\n"
 "\t-sw: shake bad flags after <num> wins\n"
@@ -5817,6 +5860,7 @@ static int lookupFlag(const char *code)
 	break;
   if (f < int(FirstSuperFlag) || f > int(LastSuperFlag))
     f = int(NoFlag);
+
   return f;
 }
 
@@ -6040,6 +6084,44 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	  usage(argv[0]);
 	}
 	options.flagCount[f] += rptCnt;
+      }
+    }
+    else if (strcmp(argv[i], "-sl") == 0) {
+      // add required flag
+      if (i +2 == argc) {
+	fprintf(stderr, "2 arguments expected for -sl\n");
+	usage(argv[0]);
+      }
+      else{
+	i++;
+	f = lookupFlag(argv[i]);
+	if (f == int(NoFlag)){
+	// enable lookup of team flags
+	  static char* teamFlags[] = {"RE","GR","BL","PU"};
+	  static FlagId ids[] = {RedFlag, GreenFlag,BlueFlag,PurpleFlag};
+	  for (int j = 0 ; j < 4; j ++){
+	    if (strcasecmp(argv[i], teamFlags[j]) == 0){
+	      f = ids[j];
+	      break;
+	    }
+	  }
+	}
+	if (f == int(NoFlag)) { // still no flag?
+	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
+	  usage(argv[0]);
+	}
+	else{
+	  i++;
+	  int x = 10;
+	  if (isdigit(argv[i][0])){
+	    x = atoi(argv[i]);
+	  } else {
+	    fprintf(stderr, "invalid shot limit \"%s\"\n", argv[i]);
+	    usage(argv[0]);
+	  } 
+	  options.flagLimit[f] = x; 
+	  
+	} 
       }
     }
     else if (strcmp(argv[i], "+r") == 0) {
