@@ -79,7 +79,7 @@ void ServerList::readServerList(int index)
   // read more data into server list buffer
   int n = recv(listServer.socket, listServer.buffer + listServer.bufferSize,
 				sizeof(listServer.buffer) -
-					listServer.bufferSize - 1, 0);
+				listServer.bufferSize - 1, 0);
   if (n > 0) {
     listServer.bufferSize += n;
     listServer.buffer[listServer.bufferSize] = 0;

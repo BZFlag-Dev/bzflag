@@ -33,6 +33,9 @@
 #include "HUDuiTypeIn.h"
 #include "HUDuiList.h"
 #include "TimeKeeper.h"
+#include "ServerList.h"
+#include "PlatformFactory.h"
+#include "BzfMedia.h"
 
 /* from playing.h */
 StartupInfo* getStartupInfo();
@@ -220,6 +223,20 @@ void JoinMenu::execute()
       sprintf(buffer, "Port is invalid.  Try %d.", ServerPort);
       setStatus(buffer);
       return;
+    }
+
+    // get token if we need to (have a password but no token)
+    if ((info->token[0] == '\0') && (info->password[0] != '\0')) {
+      BzfMedia* media = PlatformFactory::getMedia();
+      ServerList* serverList = new ServerList;
+      serverList->startServerPings();
+      // wait no more than 10 seconds for a token
+      for (int i = 0; i < 40; i++) {
+	serverList->checkEchos();
+	if (info->token[0] != '\0') break;
+	media->sleep(0.25f);
+      }
+      delete serverList;
     }
 
     // let user know we're trying

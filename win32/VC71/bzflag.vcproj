@@ -1464,6 +1464,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\KeyboardMapMenu.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ListServer.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\LocalPlayer.h">
 			</File>
 			<File
@@ -1540,6 +1543,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerLink.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ServerList.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerListCache.h">
