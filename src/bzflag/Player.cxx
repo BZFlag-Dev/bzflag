@@ -50,7 +50,10 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   tks(0),
   localWins(0),
   localLosses(0),
-  localTks(0)
+  localTks(0),
+  deltaTime(0.0),
+  offset(0.0),
+  deadReckoningState(0)
 {
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
@@ -406,8 +409,13 @@ void			Player::addShots(SceneDatabase* scene,
 
 void*			Player::unpack(void* buf, uint16_t code)
 {
+  float timestamp;
+  PlayerId id;
+
+  buf = nboUnpackFloat(buf, timestamp);
+  buf = nboUnpackUByte(buf, id);
   buf = state.unpack(buf, code);
-  setDeadReckoning();
+  setDeadReckoning(timestamp);
   return buf;
 }
 
@@ -429,9 +437,9 @@ bool			Player::getDeadReckoning(
 						 float* predictedVel) const
 {
   // see if predicted position and orientation (only) are close enough
-  const float dt2 = inputPrevTime - inputTime;
+  const float dt2 = inputPrevTime - inputTime - offset;
   inputPrevTime = TimeKeeper::getTick();
-  const float dt = inputPrevTime - inputTime;
+  const float dt = inputPrevTime - inputTime - offset;
 
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
@@ -572,6 +580,51 @@ void			Player::doDeadReckoning()
 
   move(predictedPos, predictedAzimuth);
   setVelocity(predictedVel);
+}
+
+void			Player::setDeadReckoning(float timestamp)
+{
+  // offset should be the time packet has been delayed above average
+  offset = timestamp - (TimeKeeper::getTick() - TimeKeeper::getNullTime())
+    - deltaTime;
+
+  float alpha;
+  if (deadReckoningState == 0) {
+    // Initialization
+    alpha     = 1.0;
+  } else if (deadReckoningState == 1) {
+    alpha     = 0.5;
+  } else {
+    alpha     = 0.1;
+  }
+  // alpha filtering
+  deltaTime = deltaTime + offset * alpha;
+  // this should take into account the initialization of filter so
+  // that average is really smoothed
+  if (deadReckoningState == 0) {
+    deadReckoningState = 1;
+    offset    = 0.0;
+  } else if (deadReckoningState == 1) {
+    deadReckoningState = 2;
+  }
+
+  // save stuff for dead reckoning
+  inputTime = TimeKeeper::getTick();
+  inputPrevTime = inputTime;
+  inputStatus = state.status;
+  inputPos[0] = state.pos[0];
+  inputPos[1] = state.pos[1];
+  inputPos[2] = state.pos[2];
+  inputSpeed = hypotf(state.velocity[0], state.velocity[1]);
+  if (cosf(state.azimuth) * state.velocity[0] + sinf(state.azimuth) * state.velocity[1] < 0.0f)
+    inputSpeed = -inputSpeed;
+  if (inputSpeed != 0.0f)
+    inputSpeedAzimuth = atan2f(state.velocity[1], state.velocity[0]);
+  else
+    inputSpeedAzimuth = 0.0f;
+  inputZSpeed = state.velocity[2];
+  inputAzimuth = state.azimuth;
+  inputAngVel = state.angVel;
 }
 
 void			Player::setDeadReckoning()

@@ -119,6 +119,7 @@ public:
   void*		unpack(void*, uint16_t code);
 
   void		setDeadReckoning();
+  void		setDeadReckoning(float timestamp);
 
   void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
 private:
@@ -187,6 +188,14 @@ private:
   float			inputAzimuth;		// direction tank is pointing
   float			inputSpeedAzimuth;	// direction of speed
   float			inputAngVel;		// tank turn rate
+  float                 deltaTime;              // average difference between
+						// time source and
+						// time destination
+  float                 offset;                 // time offset on last
+						// measurement
+  int                   deadReckoningState;     // 0 -> not received any sample
+                                                // 1 -> 1 sample rx
+                                                // 2 -> 2 or more sample rx
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.
