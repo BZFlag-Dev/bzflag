@@ -735,6 +735,7 @@ WordFilter::~WordFilter(void)
 	 i != filters[j].end();
 	 ++i) {
       if (i->compiled) {
+	regfree(i->compiled);
 	free(i->compiled);
       }
     }
@@ -744,6 +745,7 @@ WordFilter::~WordFilter(void)
        i != prefixes.end();
        ++i) {
     if (i->compiled) {
+      regfree(i->compiled);
       free(i->compiled);
     }
   }
@@ -752,13 +754,13 @@ WordFilter::~WordFilter(void)
        i != suffixes.end();
        ++i) {
     if (i->compiled) {
+      regfree(i->compiled);
       free(i->compiled);
     }
   }
 
   return;
 }
-// consider calling regfree()
 
 
 // adds an individual word to the filter list
