@@ -862,35 +862,33 @@ static void publicize()
 
   // parse the list server URL if we're publicizing ourself
   if (clOptions->publicizeServer) {
-    {
-      // parse url
-      std::string protocol, hostname, pathname;
-      int port = 80;
-      if (!BzfNetwork::parseURL(clOptions->listServerURL, protocol,
-				hostname, port, pathname))
-	return;
+    // parse url
+    std::string protocol, hostname, pathname;
+    int port = 80;
+    if (!BzfNetwork::parseURL(clOptions->listServerURL, protocol,
+                              hostname, port, pathname))
+      return;
 
-      // ignore if not right protocol
-      if (protocol != "http")
-	return;
+    // ignore if not right protocol
+    if (protocol != "http")
+      return;
 
-      // ignore if port is bogus
-      if (port < 1 || port > 65535)
-	return;
+    // ignore if port is bogus
+    if (port < 1 || port > 65535)
+      return;
 
-      // ignore if bad address
-      Address address = Address::getHostAddress(hostname.c_str());
-      if (address.isAny())
-	return;
+    // ignore if bad address
+    Address address = Address::getHostAddress(hostname.c_str());
+    if (address.isAny())
+      return;
 
-      // add to list
-      listServerLink.address  = address;
-      listServerLink.port     = port;
-      listServerLink.socket   = NotConnected;
-      listServerLink.pathname = pathname;
-      listServerLink.hostname = hostname;
-      listServerLinksCount++;
-    }
+    // add to list
+    listServerLink.address  = address;
+    listServerLink.port     = port;
+    listServerLink.socket   = NotConnected;
+    listServerLink.pathname = pathname;
+    listServerLink.hostname = hostname;
+    listServerLinksCount++;
 
     // schedule message for list server
     sendMessageToListServer(ListServerLink::ADD);
