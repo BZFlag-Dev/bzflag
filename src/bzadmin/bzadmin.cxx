@@ -41,15 +41,6 @@ void Player::setDeadReckoning()
 
 
 int main(int argc, char** argv) {
-  bool earlyQuit = false;
-
-  // FIXME - build this into OptionParser (VariableSimple parser?)
-  if ((argc > 1) && (strcmp (argv[1], "-q") == 0)) {
-    earlyQuit = true;
-    argv[1] = argv[0]; // eat the option
-    argv++;
-    argc--;
-  }
 
 #ifdef _WIN32
   // startup winsock
@@ -146,18 +137,14 @@ int main(int argc, char** argv) {
 
   // if we got commands as arguments, send them and exit
   if (op.getParameters().size() > 1) {
-    for (unsigned int i = 1; i < op.getParameters().size(); ++i)
+    for (unsigned int i = 1; i < op.getParameters().size(); ++i) {
+      if (op.getParameters()[i] == "/quit") {
+        client.waitForServer();
+        return 0;
+      }
       client.sendMessage(op.getParameters()[i], AllPlayers);
-      
-    if (earlyQuit) {
-      client.waitForServer();
-      return 0;
     }
   }
-
-  // Print a friendly warning
-  if (earlyQuit)
-    std::cout << "WARNING: didn't quit early, no command line commands" << std::endl;
 
   // create UI and run the main loop
   BZAdminUI*  ui = uiIter->second(client);
