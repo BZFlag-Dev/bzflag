@@ -18,7 +18,7 @@
 #define	BZF_COMMON_H
 
 #ifndef _WIN32
-#include <config.h>
+#include "config.h"
 #endif
 #include <string>
 #include <sstream>
@@ -60,9 +60,11 @@
 #define	tanf		(float)tan
 #endif
 
-#ifndef HAVE_SOCKLEN_T
-#define socklen_t int
-#endif
+/*
+ #ifndef HAVE_SOCKLEN_T
+ #define socklen_t int
+ #endif
+ */
 
 // random number stuff
 #include <stdlib.h>
