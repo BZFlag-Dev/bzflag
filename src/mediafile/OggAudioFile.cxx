@@ -52,15 +52,20 @@ std::string	OggAudioFile::getExtension()
 
 bool		OggAudioFile::read(void* buffer, int numFrames)
 {
+	//reading 512 bytes at a time on a 88K file takes forever
 	int result;
 	long bytestotal = numFrames * info->channels * 2;
 	while (bytestotal > 0) {
 		long oldoff = ov_pcm_tell(&file) * info->channels * 2;
 		long bytesleft = bytestotal - oldoff;
+#ifdef WIN32
+		result = ov_read(&file, ((char*) buffer) + oldoff, bytesleft, 0, 2, 1, &stream);
+#else
 #if BYTE_ORDER == BIG_ENDIAN
 		result = ov_read(&file, ((char*) buffer) + oldoff, bytesleft, 1, 2, 1, &stream);
 #else
 		result = ov_read(&file, ((char*) buffer) + oldoff, bytesleft, 0, 2, 1, &stream);
+#endif
 #endif
 		long newoff = ov_pcm_tell(&file) * info->channels * 2;
 		long bytesread = newoff - oldoff;
