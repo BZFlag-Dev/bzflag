@@ -589,7 +589,7 @@ void handlePlayerlistCmd(int t, const char *)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isPlaying()) {
-      player[i].getPlayerList(reply, i);
+      player[i].getPlayerList(reply);
       sendMessage(ServerPlayer, t, reply, true);
     }
   }

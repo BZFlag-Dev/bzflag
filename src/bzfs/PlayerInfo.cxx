@@ -24,7 +24,9 @@
 
 #define MAX_FLAG_HISTORY (10)
 
-void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd) {
+void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd,
+			    int _playerIndex) {
+  playerIndex      = _playerIndex;
   AddrLen addr_len = sizeof(clientAddr);
 
   // store address information for player
@@ -420,9 +422,9 @@ void PlayerInfo::udpSend(int udpSocket, const void *b, size_t l) {
 	 sizeof(uaddr));
 };
 
-void PlayerInfo::setUdpOut(int player) {
+void PlayerInfo::setUdpOut() {
   udpout = true;
-  DEBUG2("Player %s [%d] outbound UDP up\n", callSign, player);
+  DEBUG2("Player %s [%d] outbound UDP up\n", callSign, playerIndex);
 };
 
 bool PlayerInfo::isMyUdpAddrPort(struct sockaddr_in &_uaddr) {
@@ -430,7 +432,7 @@ bool PlayerInfo::isMyUdpAddrPort(struct sockaddr_in &_uaddr) {
     (memcmp(&uaddr.sin_addr, &_uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0);
 };
 
-bool PlayerInfo::setUdpIn(struct sockaddr_in &_uaddr, int player) {
+bool PlayerInfo::setUdpIn(struct sockaddr_in &_uaddr) {
   if (udpin)
     return false;
 
@@ -439,8 +441,8 @@ bool PlayerInfo::setUdpIn(struct sockaddr_in &_uaddr, int player) {
 		      sizeof(uaddr.sin_addr));
   if (same) {
     DEBUG2("Player %s [%d] inbound UDP up %s:%d actual %d\n",
-	   callSign, player, inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port),
-	   ntohs(_uaddr.sin_port));
+	   callSign, playerIndex, inet_ntoa(uaddr.sin_addr),
+	   ntohs(uaddr.sin_port), ntohs(_uaddr.sin_port));
     if (_uaddr.sin_port) {
       uaddr.sin_port = _uaddr.sin_port;
       udpin = true;
@@ -452,7 +454,7 @@ bool PlayerInfo::setUdpIn(struct sockaddr_in &_uaddr, int player) {
   } else {
     DEBUG2
       ("Player %s [%d] inbound UDP rejected %s:%d different IP than %s:%d\n",
-       callSign, player, inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port),
+       callSign, playerIndex, inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port),
        inet_ntoa(_uaddr.sin_addr), ntohs(_uaddr.sin_port));
   }
   return same;
@@ -519,29 +521,30 @@ void PlayerInfo::dropUnconnected() {
     state = PlayerNoExist;
 };
 
-void PlayerInfo::debugUdpInfo(int player) {
+void PlayerInfo::debugUdpInfo() {
   if (fd != -1) {
-    DEBUG3(" %d(%d-%d) %s:%d", player, udpin, udpout,
+    DEBUG3(" %d(%d-%d) %s:%d", playerIndex, udpin, udpout,
 	   inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
   }
 };
 
-void PlayerInfo::debugUdpRead(int player, int n,
+void PlayerInfo::debugUdpRead(int n,
 			      struct sockaddr_in &_uaddr, int udpSocket) {
   DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
-     callSign, player, inet_ntoa(uaddr.sin_addr),
+     callSign, playerIndex, inet_ntoa(uaddr.sin_addr),
       ntohs(uaddr.sin_port), n, inet_ntoa(_uaddr.sin_addr),
       ntohs(_uaddr.sin_port), udpSocket);
 };
 
-void PlayerInfo::debugRemove(const char *reason, int index) {
+void PlayerInfo::debugRemove(const char *reason) {
   // status message
-  DEBUG1("Player %s [%d] on %d removed: %s\n", callSign, index, fd, reason);
+  DEBUG1("Player %s [%d] on %d removed: %s\n", callSign, playerIndex, fd,
+	 reason);
 };
 
-void PlayerInfo::debugAdd(int index) {
+void PlayerInfo::debugAdd() {
   DEBUG1("Player %s [%d] has joined from %s:%d on %i\n",
-	 callSign, index, inet_ntoa(taddr.sin_addr),
+	 callSign, playerIndex, inet_ntoa(taddr.sin_addr),
 	 ntohs(taddr.sin_port), fd);
 };
 
@@ -560,8 +563,8 @@ int PlayerInfo::fdIsSet(fd_set *set) {
   return FD_ISSET(fd, set);
 }
 
-void PlayerInfo::getPlayerList(char *list, int index) {
-  sprintf(list, "[%d]%-16s: %s%s%s%s%s%s", index, callSign,
+void PlayerInfo::getPlayerList(char *list) {
+  sprintf(list, "[%d]%-16s: %s%s%s%s%s%s", playerIndex, callSign,
 	  peer.getDotNotation().c_str(),
 #ifdef HAVE_ADNS_H
 	  hostname ? " (" : "",
@@ -582,28 +585,28 @@ int PlayerInfo::sizeOfIP() {
    return peer.getIPVersion() == 4 ? 8 : 20; // 8 for IPv4, 20 for IPv6
 };
 
-void *PlayerInfo::packAdminInfo(void *buf, int index) {
+void *PlayerInfo::packAdminInfo(void *buf) {
   buf = nboPackUByte(buf, sizeOfIP());
-  buf = nboPackUByte(buf, index);
+  buf = nboPackUByte(buf, playerIndex);
   buf = nboPackUByte(buf, getPlayerProperties());
   buf = peer.pack(buf);
   return buf;
 };
 
-void PlayerInfo::debugUnknownPacket(int index, int code) {
+void PlayerInfo::debugUnknownPacket(int code) {
   DEBUG1("Player [%d] sent unknown packet type (%x), \
 possible attack from %s\n",
-	 index,code,peer.getDotNotation().c_str());
+	 playerIndex, code, peer.getDotNotation().c_str());
 };
 
 bool PlayerInfo::isAtIP(const std::string& IP) {
   return strcmp(peer.getDotNotation().c_str(), IP.c_str()) == 0;
 };
 
-void PlayerInfo::debugHugePacket(int index, int length) {
+void PlayerInfo::debugHugePacket(int length) {
   DEBUG1("Player [%d] sent huge packet length (len=%d), \
 possible attack from %s\n",
-	 index, length, peer.getDotNotation().c_str());
+	 playerIndex, length, peer.getDotNotation().c_str());
 };
 
 bool PlayerInfo::isPlaying() {
@@ -849,8 +852,8 @@ void PlayerInfo::setOneMoreWin() {
   wins++;
 };
 
-void *PlayerInfo::packScore(void *buf, int index) {
-  buf = nboPackUByte(buf, index);
+void *PlayerInfo::packScore(void *buf) {
+  buf = nboPackUByte(buf, playerIndex);
   buf = nboPackUShort(buf, wins);
   buf = nboPackUShort(buf, losses);
   buf = nboPackUShort(buf, tks);
@@ -887,7 +890,7 @@ in_addr PlayerInfo::getIPAddress() {
   return taddr.sin_addr;
 };
 
-int PlayerInfo::pwrite(int playerIndex, const void *b, int l, int udpSocket) {
+int PlayerInfo::pwrite(const void *b, int l, int udpSocket) {
 
   if (fd == -1 || l == 0) {
     return 0;
@@ -924,7 +927,7 @@ int PlayerInfo::pwrite(int playerIndex, const void *b, int l, int udpSocket) {
   return bufferedSend(playerIndex, b, l);
 };
 
-int PlayerInfo::pflush(int playerIndex, fd_set *set) {
+int PlayerInfo::pflush(fd_set *set) {
   if ((fd != -1) && FD_ISSET(fd, set))
     return bufferedSend(playerIndex, NULL, 0);
   else
@@ -952,7 +955,7 @@ const char *PlayerInfo::getClientVersion() {
   return clientVersion.c_str();
 };
 
-void *PlayerInfo::setClientVersion(int playerIndex, size_t length, void *buf) {
+void *PlayerInfo::setClientVersion(size_t length, void *buf) {
   char *versionString = new char[length];
   buf = nboUnpackString(buf, versionString, length);
   clientVersion = std::string(versionString);
@@ -986,7 +989,7 @@ void PlayerInfo::setPaused(bool _paused) {
   pausedSince = TimeKeeper::getCurrent();
 };
 
-bool PlayerInfo::isTooMuchIdling(TimeKeeper tm, float kickThresh, int index) {
+bool PlayerInfo::isTooMuchIdling(TimeKeeper tm, float kickThresh) {
   bool idling = false;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
     int idletime = (int)(tm - lastupdate);
@@ -995,7 +998,8 @@ bool PlayerInfo::isTooMuchIdling(TimeKeeper tm, float kickThresh, int index) {
       pausetime = (int)(tm - pausedSince);
     idletime = idletime > pausetime ? idletime : pausetime;
     if (idletime > (tm - lastmsg < kickThresh ? 3 * kickThresh : kickThresh)) {
-      DEBUG1("Kicking player %s [%d] idle %d\n", callSign, index, idletime);
+      DEBUG1("Kicking player %s [%d] idle %d\n", callSign, playerIndex,
+	     idletime);
       idling = true;
     }
   }
@@ -1115,9 +1119,9 @@ int PlayerInfo::getNextPingSeqno() {
   return pingseqno;
 };
 
-void PlayerInfo::hasSent(int index, char message[]) {
+void PlayerInfo::hasSent(char message[]) {
   lastmsg = TimeKeeper::getCurrent();
-  DEBUG1("Player %s [%d]: %s\n", callSign, index, message);
+  DEBUG1("Player %s [%d]: %s\n", callSign, playerIndex, message);
 };
 
 void PlayerInfo::handleFlagHistory(char message[]) {

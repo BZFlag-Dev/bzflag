@@ -122,7 +122,7 @@ bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
 
 static void pwrite(int playerIndex, const void *b, int l)
 {
-  int result = player[playerIndex].pwrite(playerIndex, b, l, udpSocket);
+  int result = player[playerIndex].pwrite(b, l, udpSocket);
   if (result == -1)
     removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
 }
@@ -250,7 +250,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     tmpbuf = nboUnpackUShort(tmpbuf, code);
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
       tmpbuf = nboUnpackUByte(tmpbuf, pi);
-      if ((pi <= curMaxPlayers) && (player[pi].setUdpIn(uaddr, pi))) {
+      if ((pi <= curMaxPlayers) && (player[pi].setUdpIn(uaddr))) {
 	if (uaddr.sin_port)
 	  // send client the message that we are ready for him
 	  sendUDPupdate(pi);
@@ -266,7 +266,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     // no match, discard packet
     DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
     for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-      pPlayerInfo->debugUdpInfo(pi);
+      pPlayerInfo->debugUdpInfo();
     }
     DEBUG2("\n");
     *playerIndex = 0;
@@ -276,7 +276,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   *playerIndex = pi;
   pPlayerInfo = &player[pi];
 
-  pPlayerInfo->debugUdpRead(pi, n, uaddr, udpSocket);
+  pPlayerInfo->debugUdpRead(n, uaddr, udpSocket);
 
   if (n > 0) {
     *nopackets = 1;
@@ -429,7 +429,7 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
   void *buf, *bufStart = getDirectMessageBuffer();
   if (playerIndex != -1) {
     buf = nboPackUByte(bufStart, 1);
-    buf = player[playerIndex].packAdminInfo(buf, playerIndex);
+    buf = player[playerIndex].packAdminInfo(buf);
     for (unsigned int i = 0; i < receivers.size(); ++i) {
       directMessage(receivers[i], MsgAdminInfo,
 		    (char*)buf - (char*)bufStart, bufStart);
@@ -444,7 +444,7 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     buf = nboPackUByte(bufStart, 0); // will be overwritten later
     for (i = 0; i < curMaxPlayers; ++i) {
       if (player[i].isPlaying()) {
-	buf = player[i].packAdminInfo(buf, i);
+	buf = player[i].packAdminInfo(buf);
 	++c;
       }
       if (c == ipsPerPackage || i + 1 == curMaxPlayers) {
@@ -1392,7 +1392,7 @@ static void acceptClient()
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
-  player[playerIndex].initPlayer(clientAddr, fd);
+  player[playerIndex].initPlayer(clientAddr, fd, playerIndex);
   lastState[playerIndex].order = 0;
 
 #ifdef HAVE_ADNS_H
@@ -2112,7 +2112,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     reason = "";
 
   // status message
-  player[playerIndex].debugRemove(reason, playerIndex);
+  player[playerIndex].debugRemove(reason);
 
   // send a super kill to be polite
   if (notify)
@@ -2590,13 +2590,13 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     }
 
     buf = nboPackUByte(bufStart, 2);
-    buf = killer->packScore(buf, killerIndex);
+    buf = killer->packScore(buf);
   }
   else {
     buf = nboPackUByte(bufStart, 1);
   }
 
-  buf = victim->packScore(buf, victimIndex);
+  buf = victim->packScore(buf);
   broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
   // see if the player reached the score limit
@@ -3220,7 +3220,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
     case MsgEnter: {
       buf = player[t].unpackEnter(buf);
       addPlayer(t);
-      player[t].debugAdd(t);
+      player[t].debugAdd();
       break;
     }
 
@@ -3313,7 +3313,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
 
     // player sent version string
     case MsgVersion: {
-      buf = player[t].setClientVersion(t, len, buf);
+      buf = player[t].setClientVersion(len, buf);
       break;
     }
 
@@ -3406,7 +3406,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
       buf = nboUnpackUByte(buf, targetPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
-      player[t].hasSent(t, message);
+      player[t].hasSent(message);
       // check for command
       if (message[0] == '/') {
 				/* make commands case insensitive for user-friendlyness */
@@ -3477,7 +3477,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
     }
 
     case MsgUDPLinkEstablished:
-      player[t].setUdpOut(t);
+      player[t].setUdpOut();
       break;
 
     case MsgNewRabbit: {
@@ -3694,7 +3694,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
 
     // unknown msg type
     default:
-      player[t].debugUnknownPacket(t, code);
+      player[t].debugUnknownPacket(code);
   }
 }
 
@@ -4134,7 +4134,7 @@ int main(int argc, char **argv)
     // kick idle players
     if (clOptions->idlekickthresh > 0) {
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i].isTooMuchIdling(tm, clOptions->idlekickthresh, i)) {
+	if (player[i].isTooMuchIdling(tm, clOptions->idlekickthresh)) {
 	  char message[MessageLen]
 	    = "You were kicked because you were idle too long";
 	  sendMessage(ServerPlayer, i,  message, true);
@@ -4540,7 +4540,7 @@ int main(int argc, char **argv)
       // now check messages from connected players and send queued messages
       for (i = 0; i < curMaxPlayers; i++) {
 	// send whatever we have ... if any
-	if (player[i].pflush(i, &write_set) == -1) {
+	if (player[i].pflush(&write_set) == -1) {
 	  removePlayer(i, "ECONNRESET/EPIPE", false);
 	}
 
@@ -4556,7 +4556,7 @@ int main(int argc, char **argv)
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
 	  if (len>MaxPacketLen) {
-	    player[i].debugHugePacket(i, len);
+	    player[i].debugHugePacket(len);
 	    removePlayer(i, "large packet recvd", false);
 	    continue;
 	  }

@@ -85,7 +85,8 @@ struct TeamInfo {
 
 class PlayerInfo {
 public:
-  void        initPlayer(const struct sockaddr_in& clientAddr, int _fd);
+  void        initPlayer(const struct sockaddr_in& clientAddr, int _fd,
+			 int _playerIndex);
   void        resetPlayer();
   bool        isAccessVerified() const;
   void        resetAccess();
@@ -114,30 +115,29 @@ public:
   void        dumpMessageStats();
 #endif
   bool        isConnected();
-  int         pflush(int playerIndex, fd_set *set);
+  int         pflush(fd_set *set);
   RxStatus    receive(size_t length);
-  int         pwrite(int playerIndex, const void *b, int l, int udpSocket);
-  bool        setUdpIn(struct sockaddr_in &_uaddr, int player);
-  void        setUdpOut(int player);
+  int         pwrite(const void *b, int l, int udpSocket);
+  bool        setUdpIn(struct sockaddr_in &_uaddr);
+  void        setUdpOut();
   void        createUdpCon(int remote_port);
   bool        isMyUdpAddrPort(struct sockaddr_in &uaddr);
   void        resetComm();
   void        closeComm();
   void        dropUnconnected();
-  void        debugUdpInfo(int player);
-  void        debugUdpRead(int player, int n,
-			   struct sockaddr_in &_uaddr, int udpSocket);
-  void        debugRemove(const char *reason, int index);
-  void        debugAdd(int index);
+  void        debugUdpInfo();
+  void        debugUdpRead(int n, struct sockaddr_in &_uaddr, int udpSocket);
+  void        debugRemove(const char *reason);
+  void        debugAdd();
   void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
   int         fdIsSet(fd_set *set);
-  void        getPlayerList(char *list, int index); 
+  void        getPlayerList(char *list); 
   const char *getTargetIP();
   int         sizeOfIP();
-  void       *packAdminInfo(void *buf, int index);
-  void        debugUnknownPacket(int index, int code);
+  void       *packAdminInfo(void *buf);
+  void        debugUnknownPacket(int code);
   bool        isAtIP(const std::string& IP);
-  void        debugHugePacket(int index, int length);
+  void        debugHugePacket(int length);
   bool        isPlaying();
   bool        exist();
   void        signingOn();
@@ -175,7 +175,7 @@ public:
   bool        setAndTestTK(float tkKickRatio);
   void        setOneMoreLoss();
   void        setOneMoreWin();
-  void       *packScore(void *buf, int index);
+  void       *packScore(void *buf);
   bool        scoreReached(int score);
   bool        isFlagTransitSafe();
   void        udpFillRead(void *buf, int len);
@@ -188,11 +188,11 @@ public:
   void        delayQueueDequeuePackets();
   float       delayQueueNextPacketTime();
   const char *getClientVersion();
-  void       *setClientVersion(int playerIndex, size_t length, void *buf);
+  void       *setClientVersion(size_t length, void *buf);
   std::string getIdleStat();
   bool        canBeRabbit(bool relaxing = false);
   void        setPaused(bool pauses);
-  bool        isTooMuchIdling(TimeKeeper tm, float kickThresh, int index);
+  bool        isTooMuchIdling(TimeKeeper tm, float kickThresh);
   bool        hasStartedToNotRespond();
   std::string reasonToKick();
   int         updatePingLag(void *buf, float threshold, float max,
@@ -200,7 +200,7 @@ public:
   void        updateLagPlayerUpdate(float timestamp, bool ooo);
   bool        nextPing(float &waitTime);
   int         getNextPingSeqno();
-  void        hasSent(int index, char message[]);
+  void        hasSent(char message[]);
   void        addFlagToHistory();
   void        handleFlagHistory(char message[]);
   void        addFlagToHistory(FlagType* type);
@@ -214,6 +214,8 @@ private:
   void        udpSend(int udpSocket, const void *b, size_t l);
   int         send(const void *buffer, size_t length);
   int         bufferedSend(int playerIndex, const void *buffer, size_t length);
+
+  int         playerIndex;
 
     // player access
     PlayerAccessInfo accessInfo;
