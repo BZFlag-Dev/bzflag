@@ -182,6 +182,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\BZWError.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\BZWReader.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -445,10 +448,10 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\ListServerConnection.cxx">
+				RelativePath="..\..\src\bzfs\LagInfo.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\LagInfo.cxx">
+				RelativePath="..\..\src\bzfs\ListServerConnection.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\Permissions.cxx">
@@ -609,6 +612,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\include\BzfString.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\BZWError.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\BZWReader.h">
 			</File>
 			<File
@@ -663,10 +669,10 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\include\global.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\ListServerConnection.h">
+				RelativePath="..\..\src\bzfs\LagInfo.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\LagInfo.h">
+				RelativePath="..\..\src\bzfs\ListServerConnection.h">
 			</File>
 			<File
 				RelativePath="..\include\md5.h">
