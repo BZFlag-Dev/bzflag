@@ -4161,7 +4161,7 @@ static void zapFlag(int flagIndex)
   resetFlag(flagIndex);
 }
 
-static void removePlayer(int playerIndex, char *reason, bool notify=true)
+static void removePlayer(int playerIndex, char *reason, bool notify)
 {
   // player is signing off or sent a bad packet.  since the
   // bad packet can come before MsgEnter, we must be careful
