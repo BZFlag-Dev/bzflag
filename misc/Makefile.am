@@ -10,7 +10,7 @@ EXTRA_DIST = \
 	mrtg-bzflag.pl	\
 	tar	\
 	touchcopyright	\
-	touchdsp
+	touchversion
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
