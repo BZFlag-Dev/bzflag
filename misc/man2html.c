@@ -1,10 +1,14 @@
-/* Copyright (c) 1995 DJ Delorie, 24 Kirsten Ave, Rochester NH USA */
- 
+/* Copyright (c) 1995 DJ Delorie, 334 North Road, Deerfield NH USA
+   Distributed under the terms of the GNU GPL, version 2 or later.
+   Note: The HTML output of this program is NOT considered a derived
+   work of this program.  */
+
 /*
    Original work by dj@delorie.com
- 
+
    Usage: man2html < program.man > program.html
 */
+
  
 
 #include <stdio.h>
