@@ -119,8 +119,8 @@ SceneRenderer::SceneRenderer() :
 				needStyleUpdate(true)
 {
   lightsSize = 4;
-  lightsCount = 0;
   lights = new OpenGLLight*[lightsSize];
+  lightsCount = 0;
   dynamicLights = 0;
   return;
 }
@@ -655,7 +655,6 @@ void			SceneRenderer::render(
 
       // count the unculled valid lights and potential dynamic lights
       // (negative values indicate culled lights)
-      dynamicLights = 0;
       int unculledCount = 0;
       for (i = 0; i < lightsCount; i++) {
         // any value below 0.0f is culled
