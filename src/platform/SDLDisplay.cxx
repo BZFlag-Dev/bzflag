@@ -537,7 +537,7 @@ void SDLVisual::setStereo(bool on) {
 };
   
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display), x(-1), y(-1), hasGamma(true)
+  : BzfWindow(_display), x(-1), y(-1), hasGamma(true), GLContextInited(false)
 {
 };
 
@@ -632,7 +632,11 @@ void SDLWindow::swapBuffers() {
 void SDLWindow::create(void) {
   ((SDLDisplay *)getDisplay())->createWindow();
   // reload context data
-  OpenGLGState::initContext();  
+  if (!GLContextInited)
+    OpenGLGState::initContext();
+#ifdef _WIN32
+  GLContextInited = true;
+#endif
 };
 
 void SDLWindow::enableGrabMouse(bool on) {

@@ -103,6 +103,7 @@ class SDLWindow : public BzfWindow {
   int          x;
   int          y;
   bool         hasGamma;
+  bool         GLContextInited;
 };
 
 #endif // BZF_SDLDISPLAY_H
