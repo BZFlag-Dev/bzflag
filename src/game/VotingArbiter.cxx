@@ -10,8 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* no header other than VotingArbiter.h should be included here */
+/* interface header */
 #include "VotingArbiter.h"
+
+/* common implementation headers */
+#include "TextUtils.h"
 
 
 /* private */
@@ -116,11 +119,6 @@ bool VotingArbiter::pollToBan(std::string player, std::string playerRequesting, 
   return (this->poll(player, playerRequesting, "ban", playerIP));
 }
 
-bool VotingArbiter::pollToSet(std::string setting, std::string playerRequesting)
-{
-  return (this->poll(setting, playerRequesting, "set"));
-}
-
 bool VotingArbiter::closePoll(void)
 {
   if (this->isPollClosed()) {
@@ -142,7 +140,7 @@ bool VotingArbiter::setAvailableVoters(unsigned short int count)
 bool VotingArbiter::grantSuffrage(std::string player)
 {
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
-    if (_suffraged[i] == player) {
+    if (compare_nocase(_suffraged[i], player) == 0) {
       return true;
     }
   }
@@ -160,7 +158,7 @@ bool VotingArbiter::hasSuffrage(std::string player) const
   // was this player granted the right to vote?
   bool foundPlayer = false;
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
-    if (_suffraged[i] == player) {
+    if (compare_nocase(_suffraged[i], player) == 0) {
       foundPlayer = true;
       break;
     }
@@ -232,7 +230,7 @@ unsigned long int VotingArbiter::getAbstentionCount(void) const
   if (!this->knowsPoll()) {
     return 0;
   }
-  int count = (int)_suffraged.size() - this->getYesCount() - this->getNoCount();
+  int count = int(_suffraged.size() - this->getYesCount() - this->getNoCount());
   if (count <= 0) {
     return 0;
   }
