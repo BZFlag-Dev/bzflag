@@ -79,7 +79,7 @@ protected:
   /** see if a person is in the list of people waiting for a repoll
    * timeout.
    */
-  bool isPollerWaiting(std::string &name) const;
+  bool isPollerWaiting(const std::string &name) const;
 
 
 public:
@@ -132,21 +132,21 @@ public:
 
   /** attempt to activate/open a poll
    */
-  bool poll(std::string &player, std::string &playerRequesting, std::string action, std::string playerIP="");
+  bool poll(const std::string &player, const std::string &playerRequesting, std::string action, std::string playerIP="");
 
   /** convenience method to attempt to start a kick poll
    */
-  bool pollToKick(std::string &player, std::string &playerRequesting, std::string &playerIP);
+  bool pollToKick(const std::string &player, const std::string &playerRequesting, const std::string &playerIP);
   /** convenience method to attempt to start a ban poll
    */
-  bool pollToBan(std::string &player, std::string &playerRequesting, std::string &playerIP);
+  bool pollToBan(const std::string &player, const std::string &playerRequesting, const std::string &playerIP);
   /** convenience method to attempt to start a set poll
    */
-  bool pollToSet(std::string &setting, std::string &playerRequesting);
+  bool pollToSet(const std::string &setting, const std::string &playerRequesting);
 
   /** convenience method to attempt to reset flags that, at the time, are unused
    */
-  bool pollToResetFlags(std::string &playerRequesting);
+  bool pollToResetFlags(const std::string &playerRequesting);
 
   /** halt/close the poll if it is open
    */
@@ -159,19 +159,19 @@ public:
 
   /** grant a player the right to vote
    */
-  bool grantSuffrage(std::string &player);
+  bool grantSuffrage(const std::string &player);
 
   /** returns whether truthfully whether a certain player is permitted
    * to vote; a player should check their right to vote before voting.
    */
-  bool hasSuffrage(std::string &player) const;
+  bool hasSuffrage(const std::string &player) const;
 
   /** apply a yes vote; returns true if the vote could be made
    */
-  bool voteYes(std::string &player);
+  bool voteYes(const std::string &player);
   /** apply a no vote; returns true if the vote could be made
    */
-  bool voteNo(std::string &player);
+  bool voteNo(const std::string &player);
 
   /** returns the number of yes votes received
    */
