@@ -421,6 +421,19 @@ int			sendMulticast(int fd, const void* buffer,
 #define AddrLen		int
 #endif
 
+#ifdef WIN32
+/* This is a really really fugly hack to get around winsock sillyness
+ * The newer versions of winsock have a socken_t typedef, and there
+ * doesn't seem to be any way to tell the versions apart. However,
+ * VC++ helps us out here by treating typedef as #define
+ * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
+ * avoid #define'ing it in common.h */
+
+#ifndef socklen_t
+	#define socklen_t int
+#endif 
+#endif //WIN32
+
 int			recvMulticast(int fd, void* buffer, int bufferLength,
 					 struct sockaddr_in* addr)
 {
