@@ -4,8 +4,27 @@
 BZFlag 1.10.4
 -------------
 
+* Config file based autoidentification, in the format 
+  /set username@server:port password - Tupone Alfredo, Sean Morrison
+* List Server, helping agains server abuse, check ip of requesting server
+  - Tupone Alfredo
+* AutoPilot does not bases his path on stealth echo anymore - Dave Brosius
+* Alt-Tab on windows and screen resolution changes does not mess the screen,
+  problem is still there, but now masked - Tupone Alfredo
+* Loosing OO flag in a building, start espelling out, but your still OO as
+  own window look & capability (no shoot) - Tupone Alfredo
+* Killed player, after explosion, stop drifting & clean dirty tank pieces
+  - Tupone Alfredo
+* Rabbit score formula changed and those values are displayed on HUD
+  - Tupone Alfredo
+* Sound samples are resampled, as bzflag don't do it - Tupone Alfredo
+* Enabling keepalive on bzfs tcp connection, for earlier discovering of 
+  client unclean disconnection - Tupone Alfredo
+* Improved communication between bzfs and list server, to help transparent
+  proxy - Tupone Alfredo
 * Add score, killer, or random selection algorithms to -rabbit flag - Nils McCarthy
-* Add the REQUIREIDENTIFY permission so people who are using registered callsigns without identifying can be prevented from spawning - Nils McCarthy
+* Add the REQUIREIDENTIFY permission so people who are using registered
+  callsigns without identifying can be prevented from spawning - Nils McCarthy
 * Color carried team flags according to their team - Sean Morrison
 * Start of better spawn positions based on tanks - Dave Brosius
 * PNG image grabbing - Daniel Remenak
