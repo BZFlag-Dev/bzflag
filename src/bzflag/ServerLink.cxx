@@ -127,7 +127,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   addr.sin_port = htons(port);
   addr.sin_addr = serverAddress;
 
-  UDEBUG("Remote %lx\n",addr.sin_addr.s_addr);
+  UDEBUG("Remote %s\n", inet_ntoa(addr.sin_addr));
 
   // for UDP, used later
   remoteAddress = addr.sin_addr.s_addr;
@@ -813,7 +813,7 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
   memcpy((unsigned char *)&usendaddr,(unsigned char *)&serv_addr, sizeof(serv_addr));
 
   printError("Server did send endpoint information, UDP connection up");
-  printError("More Info: [%04x : %d : %d]",(unsigned int) ntohl(remoteAddress), portno, urecvfd);
+  printError("More Info: [%s:%d:%d]", inet_ntoa(serv_addr.sin_addr), portno, urecvfd);
 
   buf = nboPackUShort(buf, 0);  // empty
 

@@ -1029,7 +1029,7 @@ static int		daemonize(void)
     rl.rlim_max = 1024;
 
   /* close all files except stderr */
-  for (i = 0; i < rl.rlim_max; i++)
+  for (i = 0; i < (int)rl.rlim_max; i++)
     if (i != 2)
       if (close(i) < 0 && errno != EBADF)
 	return -1;
