@@ -46,7 +46,12 @@ pristine: clobber
 	$(RM) config-sys
 	-$(RM) $(DEPTH)/bzflag-$(VERSIONID).tar
 	-$(RM) $(DEPTH)/bzflag-$(VERSIONID).tgz
+	-$(RM) $(DEPTH)/build-stamp
+	-$(RM) -r $(DEPTH)/debian/bzflag-server
+	-$(RM) $(DEPTH)/debian/*debhelper
+	-$(RM) $(DEPTH)/debian/*substvars
 	-$(RM) $(DEPTH)/debian/changelog
+	-$(RM) $(DEPTH)/debian/files
 
 tarball: pristine
 	cd $(DEPTH)/..; \
