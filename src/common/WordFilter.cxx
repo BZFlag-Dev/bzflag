@@ -20,7 +20,9 @@
 #include "WordFilter.h"
 
 // implementation-specific headers
-#include "TimeKeeper.h"
+#if DEBUG
+#  include "TimeKeeper.h"
+#endif
 
 
 /* private */
@@ -283,7 +285,7 @@ bool WordFilter::aggressiveFilter(char *input) const
   /* finally filter the input.  only filter actual alphanumerics. */
   for (unsigned int i=0; i < matchCount; i++) {
     /* !!! debug */
-#if 0
+#if DEBUG
     char tmp[256] = {0};
     strncpy(tmp, input + matchPair[i*2], matchPair[(i*2)+1]);
     std::cout << "Matched: [" << tmp << "]" << std::endl;
@@ -306,7 +308,10 @@ bool WordFilter::aggressiveFilter(char *input) const
 // provides a pointer to a fresh compiled expression for some given expression
 regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 {
-#ifdef HAVE_REGEX_H
+#ifndef HAVE_REGEX_H
+  return (regex_t *)NULL;
+
+#else /* HAVE_REGEX_H */
   regex_t *compiledReg;
 
   /* XXX need to convert this to use new/delete */
@@ -323,9 +328,6 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
     return (regex_t *)NULL;
   }
   return compiledReg;
-
-#else /* HAVE_REGEX_H */
-  return (regex_t *)NULL;
 
 #endif /* HAVE_REGEX_H */
 }
@@ -804,8 +806,10 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
   unsigned int totalAdded=0;
   std::ifstream filterStream(fileName.c_str());
 
-  if ((!filterStream) && (verbose))  {
-    std::cerr << "Warning: '" << fileName << "' bad word filter file not found" << std::endl;
+  if (!filterStream)  {
+    if (verbose) {
+      std::cerr << "Warning: '" << fileName << "' bad word filter file not found" << std::endl;
+    }
     return 0;
   }
 
@@ -853,8 +857,9 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
     bool added = addToFilter(filterWord, "");
     if ((!added) && (verbose)) {
 	std::cout << std::endl << "Word is already added: " << filterWord << std::endl;
+    } else {
+      totalAdded++;
     }
-    totalAdded++;
 
   } // end iteration over input file
   if (verbose) {
