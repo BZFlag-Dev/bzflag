@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2004 Tim Riker
+ * Copyright (c) 1993 - 2005 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -48,7 +48,7 @@ typedef struct {
   u16 code;
   const void *data;
 } PacketInfo;
-  
+
 
 static FlagListType   FlagList;
 static PlayerListType PlayerList;
@@ -174,7 +174,7 @@ static const int PacketListCount = sizeof (PacketList) / sizeof (PacketList[0]);
 void MsgStrings::init ()
 {
   Flags::init(); // Initialize the flags - FIXME - check if necessary
-  MsgStrings::reset(); 
+  MsgStrings::reset();
   return;
 }
 
@@ -182,12 +182,12 @@ void MsgStrings::init ()
 void MsgStrings::reset ()
 {
   unsigned int i;
-  
+
   UseDNS = true;
   Colorize = true;
   ShowEmail = true;
   TrackState = true;
-  
+
   FlagList.clear();
   PlayerList.clear();
 
@@ -201,7 +201,7 @@ void MsgStrings::reset ()
   }
 
   // set default DB entries
-  for (unsigned int i = 0; i < numGlobalDBItems; ++i) {  
+  for (unsigned int i = 0; i < numGlobalDBItems; ++i) {
     assert(globalDBItems[i].name != NULL);
     if (globalDBItems[i].value != NULL) {
       BZDB.set(globalDBItems[i].name, globalDBItems[i].value);
@@ -210,11 +210,11 @@ void MsgStrings::reset ()
     BZDB.setPersistent(globalDBItems[i].name, globalDBItems[i].persistent);
     BZDB.setPermission(globalDBItems[i].name, globalDBItems[i].permission);
   }
-  
+
   return;
 }
 
-  
+
 void MsgStrings::useDNS (bool value)
 {
   UseDNS = value;
@@ -284,7 +284,7 @@ MsgStringList MsgStrings::msgFromServer (u16 len, u16 code, const void *data)
     MsgStringList badcode;
     listPush (badcode, 0, "Unknown message code: 0x%04X\n", code);
     return badcode;
-  }    
+  }
 }
 
 
@@ -307,7 +307,7 @@ MsgStringList MsgStrings::msgFromClient (u16 len, u16 code, const void *data)
     listPush (list, 0, "Unknown message code: 0x%04X\n", code);
     list[0].text += "  << client to server messages unimplemented >>";
     return list;
-  }    
+  }
 }
 
 
@@ -339,10 +339,10 @@ static void listPush (MsgStringList &list, int level, const char *fmt, ...)
         break;
     }
   }
-      
+
   list.push_back (mstr);
   return;
-}                            
+}
 
 
 static MsgStringList listMsgBasics (PacketInfo *pi)
@@ -353,7 +353,7 @@ static MsgStringList listMsgBasics (PacketInfo *pi)
   return list;
 }
 
-  
+
 static std::string strFlag (u16 id)
 {
   FlagListType::iterator it = FlagList.find (id);
@@ -488,12 +488,12 @@ static MsgStringList handleMsgAdminInfo (PacketInfo *pi)
     d = nboUnpackUByte (d, ipsize);
     d = nboUnpackUByte (d, player);
     d = address.unpack (d);
-    
+
     listPush (list, 2, "player:     %s", strPlayer(player).c_str());
     listPush (list, 2, "ipsize:     %i", ipsize);
     listPush (list, 2, "address:    %s", strAddress(address).c_str());
   }
-  
+
   return list;
 }
 
@@ -501,13 +501,13 @@ static MsgStringList handleMsgAdminInfo (PacketInfo *pi)
 static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
-  
+
   void *d = (void*)pi->data;
   u8 index;
   u16 type, team, wins, losses, tks;
   char callsign[CallSignLen];
   char email[EmailLen];
-  
+
   d = nboUnpackUByte (d, index);
   d = nboUnpackUShort (d, type);
   d = nboUnpackUShort (d, team);
@@ -527,7 +527,7 @@ static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
   listPush (list, 2, "wins:   %i", wins);
   listPush (list, 2, "losses: %i", losses);
   listPush (list, 2, "tks:    %i", tks);
-  
+
   return list;
 }
 
@@ -535,12 +535,12 @@ static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
 static MsgStringList handleMsgCaptureFlag (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
-  
+
   void *d = (void*)pi->data;
   u16 team;
   d = nboUnpackUShort (d, team);
   listPush (list, 1, "team: %s", strTeam (team).c_str());
-  
+
   return list;
 }
 
@@ -558,7 +558,7 @@ static MsgStringList handleMsgDropFlag (PacketInfo *pi)
   d = flag.unpack (d);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 1, "flag: %s", strFlag (flagid).c_str());
-  
+
   return list;
 }
 
@@ -654,21 +654,21 @@ static MsgStringList handleMsgGetWorld (PacketInfo *pi)
 static MsgStringList handleMsgKilled (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
-  
+
   void *d = (void*)pi->data;
   u8 victim, killer;
   int16_t reason, shot;
   FlagType* flagType;
   d = nboUnpackUByte(d, victim);
   d = nboUnpackUByte(d, killer);
-  d = nboUnpackShort(d, reason);   
+  d = nboUnpackShort(d, reason);
   d = nboUnpackShort(d, shot);
   d = FlagType::unpack(d, flagType);
   listPush (list, 1, "victim: %s", strPlayer(victim).c_str());
   listPush (list, 1, "killer: %s", strPlayer(killer).c_str());
   listPush (list, 1, "reason: %s", strKillReason(reason).c_str());
   listPush (list, 1, "shotid: %i", shot);
-  
+
   return list;
 }
 
@@ -684,7 +684,7 @@ static MsgStringList handleMsgMessage (PacketInfo *pi)
   listPush (list, 1, "src: %s", strPlayer(src).c_str());
   listPush (list, 1, "dst: %s", strPlayer(dst).c_str());
   listPush (list, 1, "message: \"%s\"", (char*) d);
-  
+
   return list;
 }
 
@@ -697,7 +697,7 @@ static MsgStringList handleMsgNewRabbit (PacketInfo *pi)
   u8 player, paused;
   d = nboUnpackUByte (d, player);
   d = nboUnpackUByte (d, paused);
-  
+
   return list;
 }
 
@@ -749,11 +749,11 @@ static MsgStringList handleMsgPlayerInfo (PacketInfo *pi)
     if (properties & IsAdmin) {
       props += "Admin ";
     }
-    
+
     listPush (list, 2, "player:     %s", strPlayer(player).c_str());
     listPush (list, 2, "properties: %s(0x%02X)", props.c_str(), properties);
   }
-  
+
   return list;
 }
 
@@ -769,16 +769,16 @@ static MsgStringList handleMsgPlayerUpdate (PacketInfo *pi)
   d = nboUnpackFloat (d, timestamp);
   d = nboUnpackUByte (d, index);
   d = state.unpack (d, pi->code);
-  
+
   listPush (list, 1, "player: %s", strPlayer(index).c_str());
   listPush (list, 2, "state: 0x%04X  order: %i", state.status, state.order);
   listPush (list, 3, "pos:    %s", strVector (state.pos).c_str());
   listPush (list, 3, "vel:    %s", strVector (state.velocity).c_str());
-  listPush (list, 3, "angle:  %-8.3f = %8.3f deg", 
+  listPush (list, 3, "angle:  %-8.3f = %8.3f deg",
            state.azimuth, state.azimuth * (180.0f / M_PI));
-  listPush (list, 3, "angvel: %-8.3f = %8.3f deg/sec", 
+  listPush (list, 3, "angvel: %-8.3f = %8.3f deg/sec",
            state.angVel, state.angVel * (180.0f / M_PI));
-  
+
   return list;
 }
 
@@ -825,7 +825,7 @@ static MsgStringList handleMsgReplayReset (PacketInfo *pi)
 static MsgStringList handleMsgRemovePlayer (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
-  
+
   void *d = (void*)pi->data;
   u8 index;
   d = nboUnpackUByte (d, index);
@@ -875,7 +875,7 @@ static MsgStringList handleMsgScore (PacketInfo *pi)
     listPush (list, 2, "player: %s", strPlayer(player).c_str());
     listPush (list, 3, "wins: %i  losses: %i  tks: %i", wins, losses, tks);
   }
-    
+
   return list;
 }
 
@@ -958,7 +958,7 @@ static MsgStringList handleMsgTimeUpdate (PacketInfo *pi)
   u16 timeLeft;
   d = nboUnpackUShort(d, timeLeft);
   listPush (list, 1, "timeLeft: %i", timeLeft);
-  
+
   return list;
 }
 
@@ -996,7 +996,7 @@ static MsgStringList handleMsgTransferFlag (PacketInfo *pi)
   listPush (list, 1, "from: %s", strPlayer(from).c_str());
   listPush (list, 1, "to:   %s", strPlayer(to).c_str());
   listPush (list, 1, "flag: %s", strFlag(flagid).c_str());
-  
+
   return list;
 }
 

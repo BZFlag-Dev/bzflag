@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2004 Tim Riker
+ * Copyright (c) 1993 - 2005 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -64,7 +64,7 @@ typedef struct RRpacket {
   RRtime timestamp;
   char *data;
 } RRpacket;
-static const int RRpacketHdrSize = sizeof(RRpacket) - 
+static const int RRpacketHdrSize = sizeof(RRpacket) -
                                    (2 * sizeof(RRpacket*) - sizeof(char*));
 typedef struct {
   u32 magic;                    // record file type identifier
@@ -73,7 +73,7 @@ typedef struct {
   RRtime filetime;              // amount of time in the file
   u32 player;                   // player that saved this record file
   u32 flagsSize;                // size of the flags data
-  u32 worldSize;                // size of world database 
+  u32 worldSize;                // size of world database
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];         // player's email
   char serverVersion[8];        // BZFS protocol version
@@ -115,13 +115,13 @@ int main (int argc, char** argv)
   printf ("\nRRLOG-%s\nProtocol BZFS%s:  %i known packet types\n\n",
           getAppVersion(), getProtocolVersion(),
           MsgStrings::knownPacketTypes());
-  
+
   if (argc < 2) {
     printHelp(execName);
     exit (1);
   }
 
-  while (argc > 1) {  
+  while (argc > 1) {
     if (strcmp ("-h", argv[1]) == 0) {
       printHelp(execName);
       exit(0);
@@ -157,13 +157,13 @@ int main (int argc, char** argv)
       break;
     }
   }
-  
+
   if (argc < 2) {
     printf ("* Missing filename\n\n");
     printHelp (execName);
     exit (1);
   }
-  
+
   file = fopen (argv[1], "rb");
   if (file == NULL) {
     perror ("fopen");
@@ -174,7 +174,7 @@ int main (int argc, char** argv)
     fclose (file);
     exit (1);
   }
-  
+
   unsigned int secs = header.filetime / 1000000;
   unsigned int days = secs / (24 * 60 * 60);
   secs = secs % (24 * 60 * 60);
@@ -203,7 +203,7 @@ int main (int argc, char** argv)
   MsgStrings::showEmail(useEmail);
 //  MsgStrings::colorize(false);
   bool needUpdate = true;
-  
+
   while ((p = loadPacket (file)) != NULL) {
     if (needUpdate && (p->mode == RealPacket)) {
       needUpdate = false;
@@ -238,16 +238,16 @@ int main (int argc, char** argv)
     else if (p->mode == UpdatePacket) {
       std::cout << strRRtime (p->timestamp) << ": UPDATE PACKET" << std::endl;
     }
-    
+
     delete[] p->data;
     delete p;
   }
-  
+
   delete[] header.world;
   delete[] header.flags;
-  
+
   fclose (file);
-  
+
   return 0;
 }
 
@@ -272,11 +272,11 @@ loadHeader (ReplayHeader *h, FILE *f)
 {
   char buffer[ReplayHeaderSize];
   void *buf;
-  
+
   if (fread (buffer, ReplayHeaderSize, 1, f) <= 0) {
     return false;
   }
-  
+
   buf = nboUnpackUInt (buffer, h->magic);
   buf = nboUnpackUInt (buf, h->version);
   buf = nboUnpackUInt (buf, h->offset);
@@ -290,7 +290,7 @@ loadHeader (ReplayHeader *h, FILE *f)
   buf = nboUnpackString (buf, h->appVersion, sizeof (h->appVersion));
   buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
 
-  // load the flags, if there are any  
+  // load the flags, if there are any
   if (h->flagsSize > 0) {
     h->flags = new char [h->flagsSize];
     if (fread (h->flags, h->flagsSize, 1, f) == 0) {
@@ -300,13 +300,13 @@ loadHeader (ReplayHeader *h, FILE *f)
   else {
     h->flags = NULL;
   }
-  
+
   // load the world database
   h->world = new char [h->worldSize];
   if (fread (h->world, h->worldSize, 1, f) == 0) {
     return false;
   }
-  
+
   return true;
 }
 
@@ -318,11 +318,11 @@ loadPacket (FILE *f)
   RRpacket *p;
   char bufStart[RRpacketHdrSize];
   void *buf;
-  
+
   if (f == NULL) {
     return false;
   }
-  
+
   p = new RRpacket;
 
   if (fread (bufStart, RRpacketHdrSize, 1, f) <= 0) {
@@ -353,8 +353,8 @@ loadPacket (FILE *f)
       return NULL;
     }
   }
-  
-  return p;  
+
+  return p;
 }
 
 /****************************************************************************/
@@ -374,7 +374,7 @@ strRRtime (RRtime timestamp)
 {
   time_t date = (time_t) (timestamp / 1000000);
   char buffer[32];
-  
+
   strftime (buffer, 32, "%Y/%m/%d %T", gmtime (&date));
   std::string str = buffer;
   unsigned int millisecs = (timestamp % 1000000) / 1000;
