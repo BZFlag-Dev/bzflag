@@ -112,6 +112,10 @@ libPlatform_a_SOURCES =				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
+	SDLDisplay.h				\
+	SDLDisplay.cxx				\
+	SDLMedia.cxx				\
+	SDLMedia.h				\
 	wave.cxx				\
 	wave.h					\
 	WinPlatformFactory.cxx			\
