@@ -71,16 +71,15 @@ enum GameStyle {
 	PlainGameStyle =		0x0000,
 	TeamFlagGameStyle =		0x0001,	// capture the flag
 	SuperFlagGameStyle =		0x0002,	// superflags allowed
-	RunFlagGameStyle =		0x0004,	// run the flag (formerly hold-the-flag)
-
+	//FormerRogueStyle =		0x0004,	// used to be rogue, but now we have rogue maxplayers
 	JumpingGameStyle =		0x0008,	// jumping allowed
 	InertiaGameStyle =		0x0010,	// momentum for all
 	RicochetGameStyle =		0x0020,	// all shots ricochet
 	ShakableGameStyle =		0x0040,	// can drop bad flags
 	AntidoteGameStyle =		0x0080,	// anti-bad flags
-	HandicapGameStyle =		0x0100, // handicap players based on score
-
+	HandicapGameStyle =		0x0100,	// handicap players based on score (eek! was TimeSyncGameStyle)
 	RabbitChaseGameStyle =		0x0200	// rabbit chase
+	// add here before reusing old ones above
 };
 
 // map object flags
