@@ -334,6 +334,30 @@ SOURCE=..\..\src\bzflag\HUDui.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\HUDuiControl.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiDefaultKey.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiLabel.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiList.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiTextureLabel.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiTypeIn.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\LocalPlayer.cxx
 # End Source File
 # Begin Source File
@@ -731,6 +755,30 @@ SOURCE=..\..\src\bzflag\HUDRenderer.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\HUDui.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiControl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiDefaultKey.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiLabel.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiTextureLabel.hx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDuiTypeIn.h
 # End Source File
 # Begin Source File
 
