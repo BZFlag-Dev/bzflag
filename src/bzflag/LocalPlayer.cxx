@@ -1002,9 +1002,6 @@ float			LocalPlayer::getReloadTime() const
     if (t < minTime) minTime = t;
   }
 
-  // apply any handicap advantage to reload
-  minTime *= (1.0f - (handicap * (1.0f - HandicapReloadAdj)));
-
   if (minTime < 0.0f) minTime = 0.0f;
   return minTime;
 }
@@ -1227,6 +1224,13 @@ bool			LocalPlayer::fireShot()
     firingInfo.shot.vel[2] = 0.0f;
   }
   else {
+    // apply any handicap advantage to shot speed
+    if (handicap > 0.0f) {
+      const float speedAd = 1.0f + (handicap * (HandicapShotSpeedAdj - 1.0f));
+      firingInfo.shot.vel[0] *= speedAd;
+      firingInfo.shot.vel[1] *= speedAd;
+      firingInfo.shot.vel[2] *= speedAd;
+    }
     // Set _shotsKeepVerticalVelocity on the server if you want shots
     // to have the same vertical velocity as the tank when fired.
     // keeping shots moving horizontally makes the game more playable.
@@ -1622,8 +1626,8 @@ float LocalPlayer::updateHandicap()
       losses += player->getLocalLosses();
     }
 
-    // a standard deviation of 20 points will provide a handicap
-    handicap = float(losses - wins) / 20.0f;
+    // a relative score of -50 points will provide maximum handicap
+    handicap = float(losses - wins) / 50.0f;
 
     /* limit how much of a handicap is afforded, and only provide
      * handicap advantages instead of disadvantages.

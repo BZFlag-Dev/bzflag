@@ -1,18 +1,8 @@
 recent bugs
 ------------
 
-- faster reload in handicap style does not work:
-  reload time canot be shorter than lifetime of shots, and lifetime is
-  bound to speed and range: life=range/speed
-  So, must deice what advantage tank should have, can be:
-  - more speed + faster reload
-  - more speed + longer range, same reload
-  - same speed, shorter range, shorter reload
-  - or any other combination in-between
-  Simply giving it more speed with same lifetime/reload is probaby easiest
-  coding wise, because there already is eff. shotspeed = shotspeed + current tankspeed
-  In client, ShotPath / Strategy determine speed and lifetime, they don't know about
-  handicap of player, though
+- bots get no handicap at the moment; the relative score data is not
+  available to them; could instead use absolute score
 
 - teleporters ricochet on the frame seems incorrect
 

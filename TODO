@@ -3,6 +3,11 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* handicap mode now means faster tank and faster shots. It needs some 
+  testing to see, whether it is "balanced". Should it be done configurable,
+  i.e. make the 3 constants BZDB vars? (HandicapSpeedAdj, HandicapShotSpeedAdj,
+  relative score of -50 for max handicap)
+
 * change the version and build release packages
 
 THESE ARE LOWER PRIORITY
