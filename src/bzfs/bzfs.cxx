@@ -3268,12 +3268,11 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // okay, go ahead and drop it
   drpFlag.player = -1;
-  drpFlag.numShots = 0;
   numFlagsInAir++;
 
-	// limited flags should be disposed of 
-	bool limited = clOptions->flagLimit[drpFlag.flag.type] != -1;
-	if (limited) drpFlag.grabs = 0;
+  // limited flags that have been fired should be disposed of 
+  bool limited = clOptions->flagLimit[drpFlag.flag.type] != -1;
+  if (limited && drpFlag.numShots > 0) drpFlag.grabs = 0;
 
   // note: sticky/bad flags should always have grabs=1
   if (isTeamFlag || (--drpFlag.grabs > 0))
