@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="makehtml"
+	SccProjectName=""
+	SccLocalPath=""
+	Keyword="MakeFileProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\Debug"
+			IntermediateDirectory=".\Debug"
+			ConfigurationType="10"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\Debug/makehtml.tlb"
+				HeaderFileName=""/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
+			ConfigurationType="10"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\Release/makehtml.tlb"
+				HeaderFileName=""/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath="..\man\bzadmin.6s">
+			<FileConfiguration
+				Name="Debug|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Running $(OutDir)\man2html on $(InputPath)"
+					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzadmin.html
+"
+					Outputs="$(ProjectDir)..\doc\bzadmin.html"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Running $(OutDir)\man2html on $(InputPath)"
+					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzadmin.html
+"
+					Outputs="$(ProjectDir)..\doc\bzadmin.html"/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\man\bzflag.6s">
+			<FileConfiguration
+				Name="Debug|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Running $(OutDir)\man2html on $(InputPath)"
+					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzflag.html
+"
+					Outputs="$(ProjectDir)..\doc\bzflag.html"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Running $(OutDir)\man2html on $(InputPath)"
+					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzflag.html
+"
+					Outputs="$(ProjectDir)..\doc\bzflag.html"/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\man\bzfs.6s">
+			<FileConfiguration
+				Name="Debug|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Running $(OutDir)\man2html on $(InputPath)"
+					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzfs.html
+"
+					Outputs="$(ProjectDir)..\doc\bzfs.html"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Running $(OutDir)\man2html on $(InputPath)"
+					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzfs.html
+"
+					Outputs="$(ProjectDir)..\doc\bzfs.html"/>
+			</FileConfiguration>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
