@@ -83,6 +83,7 @@ noinst_HEADERS =		\
 	udpnetwork.h		\
 	version.h		\
 	ViewFrustum.h		\
+	VotingArbiter.h		\
 	VotingBooth.h		\
 	WallObstacle.h		\
 	WallSceneNode.h		\

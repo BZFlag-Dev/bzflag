@@ -32,8 +32,6 @@ bzfs_SOURCES = \
 	TeamBases.h \
 	TextChunkManager.cxx \
 	TextChunkManager.h \
-	VotingArbiter.cxx \
-	VotingArbiter.h \
 	WorldFileObject.cxx \
 	WorldFileObject.h \
 	WorldFileObstacle.cxx \
@@ -49,6 +47,7 @@ bzfs_SOURCES = \
 
 LDADD = \
 	../net/libNet.a		\
+	../game/libGame.a	\
 	../common/libCommon.a
 
 bzfs_LDFLAGS = ../date/buildDate.o
