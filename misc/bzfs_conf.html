@@ -250,11 +250,6 @@
 						d.writeln("-voteRepeatTime " + mainform.voterepeattime.value + "<br/><br/>");
 					}
 
-					if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
-						d.writeln("#World file to load<br/>");
-						d.writeln("-world \"" + mainform.world_file.value + "\"<br/><br/>");
-					}
-
 					if (mainform.game_style.value == "ctf") {
 						d.writeln("#Capture the flag game style<br/>");
 						d.writeln("-c<br/><br/>");
@@ -264,9 +259,24 @@
 						d.writeln("-rabbit " + mainform.rabbit_selection.value + "<br/><br/>");
 					}
 
+					if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
+						d.writeln("#World file to load<br/>");
+						d.writeln("-world \"" + mainform.world_file.value + "\"<br/><br/>");
+					}
+
+					if ((!mainform.balanced_ctf_map.disabled) && mainform.balanced_ctf_map.checked) {
+						d.writeln("#Balanced capture the flag world<br/>");
+						d.writeln("-cr " + mainform.ctf_map_citysize + "<br/><br/>");
+					}
+
 					if (mainform.flags_on_buildings.checked) {
 						d.writeln("#Flags can exist on buildings<br/>");
 						d.writeln("-fb<br/><br/>");
+					}
+
+					if (mainform.spawn_on_buildings.checked) {
+						d.writeln("#Tanks can spawn on buildings<br/>");
+						d.writeln("-sb<br/><br/>");
 					}
 
 					if ((!mainform.randomly_orient_buildings.disabled) && mainform.randomly_orient_buildings.checked) {
@@ -277,16 +287,6 @@
 					if ((!mainform.random_building_heights.disabled) && mainform.random_building_heights.checked) {
 						d.writeln("#Random height buildings<br/>");
 						d.writeln("-h<br/><br/>");
-					}
-
-					if (mainform.maximum_acceleration.checked) {
-						d.writeln("#Limit Acceleration<br/>");
-						d.writeln("-a<br/><br/>");
-					}
-
-					if ((!mainform.balanced_ctf_map.disabled) && mainform.balanced_ctf_map.checked) {
-						d.writeln("#Balanced capture the flag world<br/>");
-						d.writeln("-cr " + mainform.ctf_map_citysize + "<br/><br/>");
 					}
 
 					if (mainform.world_size.value != 400) {
@@ -302,11 +302,6 @@
 					if (mainform.maximum_players.value != 40) {
 						d.writeln("#Maximum number of players n, or max players per team n,n,n,n,n,n<br/>");
 						d.writeln("-mp " + mainform.maximum_players.value + "<br/><br/>");
-					}
-
-					if (mainform.spawn_on_buildings.checked) {
-						d.writeln("#Tanks can spawn on buildings<br/>");
-						d.writeln("-sb<br/><br/>");
 					}
 
 					if (mainform.maximum_team_score.value > 0) {
@@ -349,11 +344,6 @@
 						d.writeln("-vars \"" + mainform.vars.value + "\"<br/><br/>");
 					}
 
-					if (mainform.auto_team.checked) {
-						d.writeln("#Auto Team assignments<br/>");
-						d.writeln("-autoTeam<br/><br/>");
-					}
-
 					if (mainform.allow_jumping.checked) {
 						d.writeln("#Tanks can jump<br/>");
 						d.writeln("-j<br/><br/>");
@@ -369,6 +359,11 @@
 						d.writeln("-ms " + mainform.max_concurrent_shots.value + "<br/><br/>");
 					}
 
+					if (mainform.maximum_acceleration.checked) {
+						d.writeln("#Limit Acceleration<br/>");
+						d.writeln("-a<br/><br/>");
+					}
+
 					if (mainform.bad_flag_shake_time.value > 0) {
 						d.writeln("#Bad Flag shake time [s]<br/>");
 						d.writeln("-st " + mainform.bad_flag_shake_time.value + "<br/><br/>");
@@ -377,6 +372,11 @@
 					if (mainform.bad_flag_shake_wins.value > 0) {
 						d.writeln("#Bad Flag shake wins<br/>");
 						d.writeln("-sw " + mainform.bad_flag_shake_wins.value + "<br/><br/>");
+					}
+
+					if (mainform.auto_team.checked) {
+						d.writeln("#Auto Team assignments<br/>");
+						d.writeln("-autoTeam<br/><br/>");
 					}
 
 					commentWritten = false;
@@ -659,13 +659,6 @@
 					<legend>World Information</legend>
 					<table width="100%">
 						<tr>
-							<td>World File</td>
-							<td colspan="2">
-								<input type="checkbox" name="world_type" onClick="return ableControls()" title="Whether or not the world is based on a file"/>
-								<input type="file" name="world_file" title="World file to load"/>
-							</td>
-						</tr>
-						<tr>
 							<td>Game Style</td>
 							<td>
 								<select name="game_style" value="ffa" onClick="return ableControls()" title="Free for all or Capture the flag game style">
@@ -674,26 +667,13 @@
 									<option value="rc">Rabbit Chase</option>
 								</select>
 							</td>
-							<td>Flags on Buildings</td>
-							<td>
-								<input type="checkbox" name="flags_on_buildings" title="Whether or not flags can exist on buildings"/>
+							<td>World File</td>
+							<td colspan="2">
+								<input type="checkbox" name="world_type" onClick="return ableControls()" title="Whether or not the world is based on a file"/>
+								<input type="file" name="world_file" title="World file to load"/>
 							</td>
 						</tr>
 						<tr>
-							<td>Randomly Orient Buildings</td>
-							<td>
-								<input type="checkbox" name="randomly_orient_buildings" title="Whether or not buildings will be rotated randomly"/>
-							</td>
-							<td>Randomly Building Heights</td>
-							<td>
-								<input type="checkbox" name="random_building_heights" title="Whether or not buildings will have random heights"/>
-							</td>
-						</tr>
-						<tr>
-							<td>Maximum Acceleration</td>
-							<td>
-								<input type="checkbox" name="maximum_acceleration" title="Whether or not tank acceleration is limited"/>
-							</td>
 							<td>Balanced CTF Map</td>
 							<td>
 								<input type="checkbox" name="balanced_ctf_map" title="Whether or not buildings are generated in a balanced fashion" onClick="return ableControls()" disabled />
@@ -710,7 +690,32 @@
 									<option value="8">8</option>
 									<option value="9">9</option>
 								</select> density level
-
+							</td>
+							<td>Rabbit Selection</td>
+							<td>
+								<select name="rabbit_selection" value="score" title="Rabbit Selection Algorithm" disabled>
+									<option value="score">Top Score</option>
+									<option value="killer">Killer</option>
+									<option value="random">Random</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Flags on Buildings</td>
+							<td>
+								<input type="checkbox" name="flags_on_buildings" title="Whether or not flags can exist on buildings"/>
+							</td>
+							<td>Spawn on Buildings</td>
+							<td><input type="checkbox" name="spawn_on_buildings"  title="Tanks can spawn on buildings"/></td>
+						</tr>
+						<tr>
+							<td>Randomly Orient Buildings</td>
+							<td>
+								<input type="checkbox" name="randomly_orient_buildings" title="Whether or not buildings will be rotated randomly"/>
+							</td>
+							<td>Randomly Building Heights</td>
+							<td>
+								<input type="checkbox" name="random_building_heights" title="Whether or not buildings will have random heights"/>
 							</td>
 						</tr>
 						<tr>
@@ -726,8 +731,6 @@
 						<tr>
 							<td>Maximum Players</td>
 							<td><input type="text" name="maximum_players" value="40" size="30" title="Maximum number of players who can join (n), or max players per team (n,n,n,n,n,n)"/></td>
-							<td>Spawn on Buildings</td>
-							<td><input type="checkbox" name="spawn_on_buildings"  title="Tanks can spawn on buildings"/></td>
 						</tr>
 						<tr>
 							<td>Maximum Team Score</td>
@@ -757,18 +760,6 @@
 							<td>World Property Variables file</td>
 							<td><input type="file" name="vars" title="File that stores world variable overrides"/></td>
 						</tr>
-						<tr>
-							<td>Auto Team Assignment</td>
-							<td><input type="checkbox" name="auto_team" title="Server auto balances game by picking teams for joining players"/>
-							<td>Rabbit Selection</td>
-							<td>
-								<select name="rabbit_selection" value="score" title="Rabbit Selection Algorithm" disabled>
-									<option value="score">Top Score</option>
-									<option value="killer">Killer</option>
-									<option value="random">Random</option>
-								</select>
-							</td>
-						</tr>
 					</table>
 				</fieldset>
 			</div>
@@ -789,12 +780,20 @@
 						<tr>
 							<td>Max Concurrent Shots</td>
 							<td><input type="text" name="max_concurrent_shots" value="1" size="30" title="Maximum number of shots a tank shoots at one time"/></td>
+							<td>Maximum Acceleration</td>
+							<td>
+								<input type="checkbox" name="maximum_acceleration" title="Whether or not tank acceleration is limited"/>
+							</td>
 						</tr>
 						<tr>
 							<td>Bad Flag Shake Time</td>
 							<td><input type="text" name="bad_flag_shake_time" value="0" size="30" title="Bad Flag shake time [s]"/></td>
 							<td>Bad Flag Shake Wins</td>
 							<td><input type="text" name="bad_flag_shake_wins" value="0" size="30" title="Bad Flag shake wins"/></td>
+						</tr>
+						<tr>
+							<td>Auto Team Assignment</td>
+							<td><input type="checkbox" name="auto_team" title="Server auto balances game by picking teams for joining players"/>
 						</tr>
 					</table>
 				</fieldset>
