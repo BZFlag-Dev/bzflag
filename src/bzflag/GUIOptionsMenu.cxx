@@ -122,11 +122,11 @@ GUIOptionsMenu::GUIOptionsMenu()
   // radar shot leading line
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Leading Shot Line:");
+  option->setLabel("Radar Shot Line:");
   option->setCallback(callback, (void*)"F");
   options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  options->push_back(std::string("Lagging"));
+  options->push_back(std::string("Leading"));
   option->update();
   list.push_back(option);
 
