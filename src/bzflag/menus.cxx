@@ -65,6 +65,10 @@
 #include "resources.h"
 #include "ControlPanel.h"
 
+#ifdef _WIN32
+#define PATH_MAX MAX_PATH
+#endif
+
 extern ResourceDatabase db;	// bzflag.cxx
 extern int killerHighlight;	// playing.cxx
 extern ControlPanel* controlPanel; // playing.cxx
