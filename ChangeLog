@@ -4,6 +4,9 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Client shows a MessageOfTheDay from the master server on launch
+   for announcements and release notifications - Jeff Myers
+* Add generic URL retreval class - Jeff Myers, Alfredo Tupone
 * Windows Multimedia and DirectInput joystick support - Daniel Remenak
 * bzfs can now announce to multiple public list servers - Sean Morrison
 * Add shared public server bans via a master ban list - Jeff Myers and...
