@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -93,3 +93,4 @@ void			Team::setColors(TeamColor team,
   radarColor[int(team)][1] = radar[1];
   radarColor[int(team)][2] = radar[2];
 }
+// ex: shiftwidth=2 tabstop=8

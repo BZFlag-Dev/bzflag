@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -257,3 +257,4 @@ const float		MomentumAngAcc=	1.0f;		//
 const float		MagnetPower =	0.0f;		// off
 
 #endif // BZF_GLOBAL_H
+// ex: shiftwidth=2 tabstop=8

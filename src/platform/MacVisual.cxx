@@ -149,3 +149,4 @@ void MacVisual::setMultisample(int value) {
   // I couldn't find this attribute in agl docs
   return;
 }
+// ex: shiftwidth=2 tabstop=8

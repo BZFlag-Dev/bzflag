@@ -479,3 +479,4 @@ void MacWindow::makeCurrent() {}
 void MacWindow::swapBuffers() {
   gl_context.Flush();
 }
+// ex: shiftwidth=2 tabstop=8

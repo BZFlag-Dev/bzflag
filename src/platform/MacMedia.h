@@ -70,3 +70,4 @@ class MacMedia : public BzfMedia {
 };
 
 #endif // BZF_MACMEDIA_H
+// ex: shiftwidth=2 tabstop=8

@@ -43,3 +43,4 @@ class MacPlatformFactory : public PlatformFactory
 };
 
 #endif // BZF_WINPLATFORM_FACTORY_H
+// ex: shiftwidth=2 tabstop=8

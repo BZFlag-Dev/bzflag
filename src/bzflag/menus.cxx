@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1942,7 +1942,7 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.append(createLabel("http://BZFlag.org/",
 						"BZFlag Home Page:"));
   list.append(createLabel("", ""));
-  list.append(createLabel("Tim Riker", "Copyright (c) 1993 - 2001"));
+  list.append(createLabel("Tim Riker", "Copyright (c) 1993 - 2002"));
 }
 
 float			Help9Menu::getLeftSide(int width, int height)
@@ -3824,3 +3824,4 @@ void			MainMenu::resize(int width, int height)
     y -= 1.2f * fontHeight;
   }
 }
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -416,3 +416,4 @@ static const GLfloat	stars[][6] = {
 			{ 0.37f, 0.37f, 0.37f, 0.19701055f, -0.56322998f, 0.80247045f },
 			{ 0.37f, 0.37f, 0.37f, 0.17973220f, -0.12412395f, -0.97585326f }
 			};
+// ex: shiftwidth=2 tabstop=8

@@ -227,3 +227,4 @@ char *GetMacOSXDataPath(void)
 
   return basePath;
 }
+// ex: shiftwidth=2 tabstop=8

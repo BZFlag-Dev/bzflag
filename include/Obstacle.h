@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -143,3 +143,4 @@ inline int		ObstacleSceneNodeGenerator::incNodeNumber()
 }
 
 #endif // BZF_OBSTACLE_H
+// ex: shiftwidth=2 tabstop=8

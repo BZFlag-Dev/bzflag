@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -167,3 +167,4 @@ typedef unsigned int	uint32_t;
 #ifdef True
 #undef True
 #endif
+// ex: shiftwidth=2 tabstop=8

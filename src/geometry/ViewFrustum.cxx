@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -243,3 +243,4 @@ void			ViewFrustum::makePlane(const GLfloat* v1,
   plane[index][3] = -(eye[0] * plane[index][0] + eye[1] * plane[index][1] +
 						eye[2] * plane[index][2]);
 }
+// ex: shiftwidth=2 tabstop=8

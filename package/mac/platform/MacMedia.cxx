@@ -181,3 +181,4 @@ void    MacMedia::audioSleep (boolean checkLowWater, double maxTime) {
 }
 
 
+// ex: shiftwidth=2 tabstop=8

@@ -408,9 +408,9 @@ public:
       in_addr mask = banList[i];
       if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
         mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
-	  else if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
+      else if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
         mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) & 0x0000ffff));
-	  else if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+      else if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
         mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
 
       if (mask.s_addr == ipAddr.s_addr)
@@ -421,37 +421,37 @@ public:
 
   void sendBans(int playerIndex, PlayerId id, TeamColor teamColor)
   {
-	  char banlistmessage[MessageLen];
+    char banlistmessage[MessageLen];
 
-      sendMessage(playerIndex, id, teamColor, "IP Ban List");
-      sendMessage(playerIndex, id, teamColor, "-----------");
-	  int numBans = banList.getLength();
-	  for (int i = 0; i < numBans; i++) {
-		  char *pMsg = banlistmessage;
-		  in_addr mask = banList[i];
+    sendMessage(playerIndex, id, teamColor, "IP Ban List");
+    sendMessage(playerIndex, id, teamColor, "-----------");
+      int numBans = banList.getLength();
+      for (int i = 0; i < numBans; i++) {
+        char *pMsg = banlistmessage;
+	in_addr mask = banList[i];
 
-		  sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
-		  pMsg+=strlen(pMsg);
+	sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
+	pMsg+=strlen(pMsg);
 
-		  if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-			strcat( pMsg, "*.*.*" );
-		  else {
-			sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
-			pMsg+=strlen(pMsg);
-			if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-				strcat( pMsg, "*.*" );
-			else {
-				sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
-				pMsg+=strlen(pMsg);
-				if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-					strcat( pMsg, "*" );
-				else
-					sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
-			}
-		  }
-
-		  sendMessage(playerIndex, id, teamColor, banlistmessage);
+	if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
+	  strcat( pMsg, "*.*.*" );
+	else {
+	  sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
+	  pMsg+=strlen(pMsg);
+	  if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
+	    strcat( pMsg, "*.*" );
+	  else {
+	    sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+	    pMsg+=strlen(pMsg);
+	    if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+	      strcat( pMsg, "*" );
+	    else
+	      sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
 	  }
+	}
+
+      sendMessage(playerIndex, id, teamColor, banlistmessage);
+    }
   }
 
 private:
@@ -479,7 +479,7 @@ private:
     else
       b[3] = atoi(ip);
 
-	mask.s_addr= htonl(((unsigned int)b[0] << 24) |
+    mask.s_addr= htonl(((unsigned int)b[0] << 24) |
         ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3]);
     return true;
   }
@@ -643,9 +643,9 @@ class WorldFileObstacle : public WorldFileObject {
 
 WorldFileObstacle::WorldFileObstacle()
 {
-   pos[0] = pos[1] = pos[2] = 0.0f;
-   rotation = 0.0f;
-   size[0] = size[1] = size[2] = 1.0f;
+  pos[0] = pos[1] = pos[2] = 0.0f;
+  rotation = 0.0f;
+  size[0] = size[1] = size[2] = 1.0f;
 }
 
 bool WorldFileObstacle::read(const char *cmd, istream& input)
@@ -1352,7 +1352,7 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
       break;
     else
       if (ilength > 1024) {
-		DEBUG2("* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
+	DEBUG2("* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
 	    playerIndex, ilength);
 	break;
       }
@@ -1631,13 +1631,13 @@ static void pwrite(int playerIndex, const void *b, int l)
 
     // only send bulk messages by UDP
     switch (code) {
-	case MsgShotBegin:
-	case MsgShotEnd:
-	case MsgPlayerUpdate:
-	case MsgGMUpdate:
-	case MsgLagPing:
-	  puwrite(playerIndex,b,l);
-	  goto unpatch;
+      case MsgShotBegin:
+      case MsgShotEnd:
+      case MsgPlayerUpdate:
+      case MsgGMUpdate:
+      case MsgLagPing:
+        puwrite(playerIndex,b,l);
+	goto unpatch;
     }
   }
 
@@ -1714,87 +1714,87 @@ static char *getDirectMessageBuffer()
 #ifdef NETWORK_STATS
 void initPlayerMessageStats(int playerIndex)
 {
-	int i;
-	struct MessageCount *msg;
-	int direction;
+  int i;
+  struct MessageCount *msg;
+  int direction;
 
-	for (direction = 0; direction <= 1; direction++) {
-		msg = player[playerIndex].msg[direction];
-		for (i = 0; i < MessageTypes && msg[i].code != 0; i++) {
-			msg[i].count = 0;
-			msg[i].code = 0;
-		}
-		player[playerIndex].msgBytes[direction] = 0;
-		player[playerIndex].perSecondTime[direction] = player[playerIndex].time;
-		player[playerIndex].perSecondCurrentMsg[direction] = 0;
-		player[playerIndex].perSecondMaxMsg[direction] = 0;
-		player[playerIndex].perSecondCurrentBytes[direction] = 0;
-		player[playerIndex].perSecondMaxBytes[direction] = 0;
-	}
+  for (direction = 0; direction <= 1; direction++) {
+    msg = player[playerIndex].msg[direction];
+    for (i = 0; i < MessageTypes && msg[i].code != 0; i++) {
+      msg[i].count = 0;
+      msg[i].code = 0;
+    }
+    player[playerIndex].msgBytes[direction] = 0;
+    player[playerIndex].perSecondTime[direction] = player[playerIndex].time;
+    player[playerIndex].perSecondCurrentMsg[direction] = 0;
+    player[playerIndex].perSecondMaxMsg[direction] = 0;
+    player[playerIndex].perSecondCurrentBytes[direction] = 0;
+    player[playerIndex].perSecondMaxBytes[direction] = 0;
+  }
 }
 
 int countMessage(int playerIndex, uint16_t code, int len, int direction)
 {
-	int i;
-	struct MessageCount *msg;
+  int i;
+  struct MessageCount *msg;
 
-	// add length of type and length
-	len += 4;
-	player[playerIndex].msgBytes[direction] += len;
-	msg = player[playerIndex].msg[direction];
-	TimeKeeper now = TimeKeeper::getCurrent();
-	for (i = 0; i < MessageTypes && msg[i].code != 0; i++)
-		if (msg[i].code == code)
-			break;
-	msg[i].code = code;
-	if (msg[i].maxSize < len)
-		msg[i].maxSize = len;
-	msg[i].count++;
-	if (now - player[playerIndex].perSecondTime[direction] < 1.0f) {
-		player[playerIndex].perSecondCurrentMsg[direction]++;
-		player[playerIndex].perSecondCurrentBytes[direction] += len;
-	}
-	else {
-		player[playerIndex].perSecondTime[direction] = now;
-		if (player[playerIndex].perSecondMaxMsg[direction] <
-				player[playerIndex].perSecondCurrentMsg[direction])
-			player[playerIndex].perSecondMaxMsg[direction] =
-					player[playerIndex].perSecondCurrentMsg[direction];
-		if (player[playerIndex].perSecondMaxBytes[direction] <
-				player[playerIndex].perSecondCurrentBytes[direction])
-			player[playerIndex].perSecondMaxBytes[direction] =
-					player[playerIndex].perSecondCurrentBytes[direction];
-		player[playerIndex].perSecondCurrentMsg[direction] = 0;
-		player[playerIndex].perSecondCurrentBytes[direction] = 0;
-	}
-	return (msg[i].count);
+  // add length of type and length
+  len += 4;
+  player[playerIndex].msgBytes[direction] += len;
+  msg = player[playerIndex].msg[direction];
+  TimeKeeper now = TimeKeeper::getCurrent();
+  for (i = 0; i < MessageTypes && msg[i].code != 0; i++)
+    if (msg[i].code == code)
+      break;
+  msg[i].code = code;
+  if (msg[i].maxSize < len)
+    msg[i].maxSize = len;
+  msg[i].count++;
+  if (now - player[playerIndex].perSecondTime[direction] < 1.0f) {
+    player[playerIndex].perSecondCurrentMsg[direction]++;
+    player[playerIndex].perSecondCurrentBytes[direction] += len;
+  }
+  else {
+    player[playerIndex].perSecondTime[direction] = now;
+    if (player[playerIndex].perSecondMaxMsg[direction] <
+        player[playerIndex].perSecondCurrentMsg[direction])
+      player[playerIndex].perSecondMaxMsg[direction] =
+	  player[playerIndex].perSecondCurrentMsg[direction];
+    if (player[playerIndex].perSecondMaxBytes[direction] <
+	player[playerIndex].perSecondCurrentBytes[direction])
+      player[playerIndex].perSecondMaxBytes[direction] =
+	  player[playerIndex].perSecondCurrentBytes[direction];
+    player[playerIndex].perSecondCurrentMsg[direction] = 0;
+    player[playerIndex].perSecondCurrentBytes[direction] = 0;
+  }
+  return (msg[i].count);
 }
 
 void dumpPlayerMessageStats(int playerIndex)
 {
-	int i;
-	struct MessageCount *msg;
-	int total;
-	int direction;
+  int i;
+  struct MessageCount *msg;
+  int total;
+  int direction;
 
-	DEBUG1("Player connect time: %f\n",
-			TimeKeeper::getCurrent() - player[playerIndex].time);
-	for (direction = 0; direction <= 1; direction++) {
-		total = 0;
-		DEBUG1("Player messages %s:", direction ? "out" : "in");
-		msg = player[playerIndex].msg[direction];
-		for (i = 0; i < MessageTypes && msg[i].code != 0; i++) {
-			DEBUG1(" %c%c:%u(%u)", msg[i].code >> 8, msg[i].code & 0xff,
-					msg[i].count, msg[i].maxSize);
-			total += msg[i].count;
-		}
-		DEBUG1(" total:%u(%u) ", total, player[playerIndex].msgBytes[direction]);
-		DEBUG1("max msgs/bytes per second: %u/%u\n",
-				player[playerIndex].perSecondMaxMsg[direction],
-				player[playerIndex].perSecondMaxBytes[direction]);
+  DEBUG1("Player connect time: %f\n",
+      TimeKeeper::getCurrent() - player[playerIndex].time);
+  for (direction = 0; direction <= 1; direction++) {
+    total = 0;
+    DEBUG1("Player messages %s:", direction ? "out" : "in");
+    msg = player[playerIndex].msg[direction];
+    for (i = 0; i < MessageTypes && msg[i].code != 0; i++) {
+      DEBUG1(" %c%c:%u(%u)", msg[i].code >> 8, msg[i].code & 0xff,
+	  msg[i].count, msg[i].maxSize);
+      total += msg[i].count;
+    }
+    DEBUG1(" total:%u(%u) ", total, player[playerIndex].msgBytes[direction]);
+    DEBUG1("max msgs/bytes per second: %u/%u\n",
+	player[playerIndex].perSecondMaxMsg[direction],
+	player[playerIndex].perSecondMaxBytes[direction]);
 
-	}
-	fflush(stdout);
+  }
+  fflush(stdout);
 }
 #endif
 
@@ -2573,10 +2573,10 @@ static boolean startPlayerPacketRelay(int playerIndex)
   Address multicastAddress(BroadcastAddress);
   if (relayInSocket == -1)
     relayInSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-				pingTTL, pingInterface, "r", &relayInAddr);
+	pingTTL, pingInterface, "r", &relayInAddr);
   if (relayOutSocket == -1)
     relayOutSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-				pingTTL, pingInterface, "w", &relayOutAddr);
+	pingTTL, pingInterface, "w", &relayOutAddr);
   if (relayInSocket == -1 || relayOutSocket == -1) {
     stopPlayerPacketRelay();
 
@@ -2737,7 +2737,7 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
       if (!object->read(buffer, input)) {
        // unknown token
        cerr << location << "(" << line << ") : " <<
-		       "invalid object parameter \"" << buffer << "\"" << endl;
+	   "invalid object parameter \"" << buffer << "\"" << endl;
        delete object;
        return False;
       }
@@ -2967,8 +2967,8 @@ static WorldInfo *defineTeamWorld()
       float h = BoxHeight;
       int numTeams = ((maxTeam[1] > 0) ? 1 : 0) + ((maxTeam[2] > 0) ? 1 : 0) + ((maxTeam[3] > 0) ? 1 : 0) + ((maxTeam[4] > 0) ? 1 : 0);
       if (numTeams == 0) {
-		cerr << "need some teams, use -mp" << endl;
-		exit(20);
+	cerr << "need some teams, use -mp" << endl;
+	exit(20);
       }
       const int numBoxes = int((0.5 + 0.6 * bzfrand()) * CitySize * CitySize);
       for (i = 0; i < numBoxes;) {
@@ -4074,7 +4074,7 @@ static void removePlayer(int playerIndex)
     int teamNum = int(player[playerIndex].team);
     --team[teamNum].team.size;
     if (!player[playerIndex].Observer && player[playerIndex].type == TankPlayer ||
-		player[playerIndex].type == ComputerPlayer)
+	player[playerIndex].type == ComputerPlayer)
       --team[teamNum].team.activeSize;
 
     // if last active player on team then remove team's flag
@@ -4223,7 +4223,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 }
 
 static void playerKilled(int victimIndex, int killerIndex,
-							int16_t shotIndex)
+			int16_t shotIndex)
 {
   // victim has been destroyed.  keep score.
   if (killerIndex == InvalidPlayer ||
@@ -4768,13 +4768,13 @@ static void parseCommand(const char *message, int t)
     sendMessage(t, player[t].id, player[t].team, reply);
     char kickmessage[MessageLen];
     for (int i = 0; i < maxPlayers; i++) {
-		if ((player[i].fd != NotConnected) && (!acl.validate( player[i].taddr.sin_addr))) {
-		  player[i].toBeKicked = false;
-		  sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
-		  sendMessage(i, player[i].id, player[i].team, kickmessage);
-		  removePlayer(i);
-		}
-	}
+      if ((player[i].fd != NotConnected) && (!acl.validate( player[i].taddr.sin_addr))) {
+        player[i].toBeKicked = false;
+	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
+	sendMessage(i, player[i].id, player[i].team, kickmessage);
+	removePlayer(i);
+      }
+    }
   }
   // /unban command allows operator to rmove ips from the banlist
   else if (player[t].Admin && strncmp(message+1, "unban", 5) == 0) {
@@ -4807,9 +4807,9 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < maxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
         char reply[MessageLen];
-    	sprintf(reply,"%-12s : %4dms (%d)%s",player[i].callSign,
+	sprintf(reply,"%-12s : %4dms (%d)%s",player[i].callSign,
             int(player[i].lagavg*1000),player[i].lagcount,
-                player[i].doespings ? "" : " (old)");
+            player[i].doespings ? "" : " (old)");
         if (player[i].doespings && player[i].pingslost>0)
           sprintf(reply+strlen(reply)," %d lost",player[i].pingslost);
 	    sendMessage(t,player[t].id,player[t].team,reply);
@@ -4832,22 +4832,22 @@ static void parseCommand(const char *message, int t)
   else if (strncmp(message+1, "flaghistory", 11 ) == 0) {
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
-		char reply[MessageLen];
-		char flag[MessageLen];
-		sprintf(reply,"%-12s : ",player[i].callSign );
-		FlagHistoryListIterator fhIt(player[i].flagHistory);
+	char reply[MessageLen];
+	char flag[MessageLen];
+	sprintf(reply,"%-12s : ",player[i].callSign );
+	FlagHistoryListIterator fhIt(player[i].flagHistory);
    
-		while (!fhIt.isDone()) {
-			FlagId fID = (FlagId)fhIt.getItem();
-			if (Flag::getType(fID) == FlagNormal)
-				sprintf( flag, "(*%c) ", Flag::getName(fID)[0] );
-			else
-				sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)fhIt.getItem()) );
-			strcat( reply, flag );
-			fhIt.inc();
-		}
+	while (!fhIt.isDone()) {
+	  FlagId fID = (FlagId)fhIt.getItem();
+	  if (Flag::getType(fID) == FlagNormal)
+	    sprintf( flag, "(*%c) ", Flag::getName(fID)[0] );
+	  else
+	    sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)fhIt.getItem()) );
+	  strcat( reply, flag );
+	  fhIt.inc();
+	}
         sendMessage(t,player[t].id,player[t].team,reply);
-	  }
+      }
   }
   // /playerlist dumps a list of players with IPs etc.
   else if (player[t].Admin && strncmp(message+1,"playerlist",10) == 0) {
@@ -4855,9 +4855,9 @@ static void parseCommand(const char *message, int t)
       if (player[i].state > PlayerInLimbo) {
         char reply[MessageLen];
 	sprintf(reply,"[%d]%-12s: %s:%d%s%s",i,player[i].callSign,
-		inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
-		player[i].ulinkup ? " udp" : "",
-		player[i].knowId ? " id" : "");
+	    inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
+	    player[i].ulinkup ? " udp" : "",
+	    player[i].knowId ? " id" : "");
         sendMessage(t,player[t].id,player[t].team,reply);
       }
     }
@@ -5252,8 +5252,7 @@ static void extraUsage(const char *pname)
   cout << "\t -ms: maximum simultaneous shots per player" << endl;
   cout << "\t -mts: set team score limit on each game" << endl;
   cout << "\t -noudp: never use the new UDP networking" << endl;
-  cout << "\t -p: use alternative port (default is " <<
-					ServerPort << ")" << endl;
+  cout << "\t -p: use alternative port (default is " << ServerPort << ")" << endl;
   cout << "\t -pr <port>: use reconnect port" << endl;
 #ifdef PRINTSCORE
   cout << "\t -printscore: write score to stdout whenever it changes" << endl;
@@ -5523,14 +5522,14 @@ static void parse(int argc, char **argv)
 	angularAcceleration = 0.0f;
       gameStyle |= int(InertiaGameStyle);
     }
-	else if (strcmp(argv[i], "-ban") == 0) {
-		if (++i == argc) {
-			cerr << "argument expected for -ban" << endl;
-			usage(argv[0]);
-		}
-		else
-			acl.ban(argv[i]);
-	}
+    else if (strcmp(argv[i], "-ban") == 0) {
+      if (++i == argc) {
+	cerr << "argument expected for -ban" << endl;
+	usage(argv[0]);
+      }
+      else
+	acl.ban(argv[i]);
+    }
     else if (strcmp(argv[i], "-b") == 0) {
       // random rotation to boxes in capture-the-flag game
       randomBoxes = True;
@@ -6296,7 +6295,7 @@ int main(int argc, char **argv)
     if (numFlagsInAir > 0) {
       for (i = 0; i < numFlags; i++) {
 	if (flag[i].flag.status == FlagInAir ||
-		flag[i].flag.status == FlagComing) {
+	    flag[i].flag.status == FlagComing) {
 	  if (flag[i].dropDone - tm <= 0.0f) {
 	    flag[i].flag.status = FlagOnGround;
 	    numFlagsInAir--;
@@ -6518,3 +6517,4 @@ int main(int argc, char **argv)
   // done
   return exitCode;
 }
+// ex: shiftwidth=2 tabstop=8

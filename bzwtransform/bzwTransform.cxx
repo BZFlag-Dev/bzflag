@@ -567,3 +567,4 @@ int main( int argc, char **argv )
 	return 0;
 }
 
+// ex: shiftwidth=2 tabstop=8

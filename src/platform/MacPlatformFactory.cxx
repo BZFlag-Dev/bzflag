@@ -64,3 +64,4 @@ MacPlatformFactory::~MacPlatformFactory() {
   //delete display;
   //delete visual;
 }
+// ex: shiftwidth=2 tabstop=8

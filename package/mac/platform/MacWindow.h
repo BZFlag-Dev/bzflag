@@ -66,3 +66,4 @@ class MacWindow : public BzfWindow {
 };
 
 #endif // BZF_WINWINDOW_H
+// ex: shiftwidth=2 tabstop=8
