@@ -430,27 +430,29 @@ AC_OUTPUT(bzflag.spec
 	package/win32/src/bzfinst/Makefile
 	package/win32/src/bzfuinst/Makefile
 	package/win32/src/makedb/Makefile
-	win32/Makefile
 	src/Makefile
+	src/bzadmin/Makefile
+	src/bzflag/Makefile
 	src/bzfrelay/Makefile
-	src/date/Makefile
-	src/common/Makefile
-	src/net/Makefile
 	src/bzfs/Makefile
+	src/common/Makefile
+	src/date/Makefile
 	src/geometry/Makefile
 	src/geometry/models/Makefile
 	src/geometry/models/hitank/Makefile
 	src/geometry/models/medtank/Makefile
 	src/geometry/models/lowtank/Makefile
+	src/mediafile/Makefile
+	src/net/Makefile
 	src/obstacle/Makefile
 	src/ogl/Makefile
-	src/scene/Makefile
 	src/platform/Makefile
 	src/platform/MacOSX/Makefile
 	src/platform/MacOSX/BZFlag.pbproj/Makefile
 	src/platform/MacOSX/English.lproj/Makefile
 	src/platform/MacOSX/English.lproj/MainMenu.nib/Makefile
+	src/scene/Makefile
 	src/zlib/Makefile
-	src/mediafile/Makefile
-	src/bzflag/Makefile
-	src/bzadmin/Makefile)
+	win32/Makefile
+	win32/VC6/Makefile
+	win32/VC71/Makefile)
