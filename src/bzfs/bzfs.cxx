@@ -1466,7 +1466,7 @@ static int uread(int *playerIndex, int *nopackets)
       UMDEBUG("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
       for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
 	if (player[*playerIndex].fd != -1) {
-	  UMDEBUG(" %d(%d) %s:%d", 
+	  UMDEBUG(" %d(%d) %s:%d",
 	      *playerIndex, player[*playerIndex].ulinkup,
 	      inet_ntoa(player[*playerIndex].uaddr.sin_addr),
 	      ntohs(player[*playerIndex].uaddr.sin_port));
@@ -1477,11 +1477,11 @@ static int uread(int *playerIndex, int *nopackets)
       return 0;
     }
 
-    UMDEBUG("uread() player %d %s:%d len %d from %s:%d on %i\n", 
+    UMDEBUG("uread() player %d %s:%d len %d from %s:%d on %i\n",
 	*playerIndex, inet_ntoa(player[*playerIndex].uaddr.sin_addr),
 	ntohs(player[*playerIndex].uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
 	ntohs(uaddr.sin_port), udpSocket);
-      
+
     if (n > 0) {
       // got something! now disassemble the package block into single BZPackets
       // filling up the dqueue with these packets
@@ -2273,7 +2273,7 @@ static WorldInfo *defineWorldFromFile(const char *filename, boolean is_CTF = fal
     list[i]->write(world);
 
   // if it's a CTF world, add bases
-  if (is_CTF) { 
+  if (is_CTF) {
     basePos[0][0] = 0.0f;
     basePos[0][1] = 0.0f;
     basePos[0][2] = 0.0f;
@@ -3766,7 +3766,7 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
         killer.lagwarncount++;;
 	if (killer.lagwarncount++ > maxlagwarn) {
 	  // drop the player
-	  sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).", 
+	  sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
 	    maxlagwarn);
 	  sendMessage(playerIndex, killer.id, killer.team, message);
 	  removePlayer(playerIndex);
