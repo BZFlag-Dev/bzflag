@@ -17,6 +17,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   bzfls should use this udp to confirm server availability
   before falling back to tcp pipe for the same msgs.
 
+* .bzf/ on *ix should be a directory with db and cache/ entries
+
 THESE ARE LOWER PRIORITY
 
 * rework the BZDB->eval() cacheing to support expression
