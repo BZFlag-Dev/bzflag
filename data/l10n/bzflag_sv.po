@@ -147,6 +147,9 @@ msgstr "Skottlängd på radar:"
 #msgid "Radar & Panel Size:"
 #msgstr ""
 
+#msgid "Mouse Box Size:"
+#msgstr ""
+
 msgid "Page Down for next page" 
 msgstr "'Page Down' till nästa sida"
 
