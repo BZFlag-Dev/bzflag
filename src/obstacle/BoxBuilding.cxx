@@ -52,18 +52,17 @@ void			BoxBuilding::getNormal(const float* p, float* n) const
 bool			BoxBuilding::isInside(const float* p,
 						float radius) const
 {
-  return p[2] < getPosition()[2] + getHeight() && testRectCircle(getPosition(), getRotation(),
-					getWidth(), getBreadth(), p, radius)
-					&& p[2] >= getPosition()[2];
+  return (p[2] < (getPosition()[2] + getHeight())) 
+  &&     (p[2] >= getPosition()[2])
+  &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
 bool			BoxBuilding::isInside(const float* p, float a,
 						float dx, float dy) const
 {
-  return p[2] < getPosition()[2] + getHeight() && testRectRect(getPosition(), getRotation(),
-					getWidth(), getBreadth(),
-					p, a, dx, dy)
-					&& p[2] >= getPosition()[2];
+  return (p[2] < (getPosition()[2] + getHeight()))
+  &&     (p[2] >= getPosition()[2])
+  &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(), p, a, dx, dy);
 }
 
 bool			BoxBuilding::isCrossing(const float* p, float a,

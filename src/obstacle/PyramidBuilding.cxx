@@ -68,19 +68,18 @@ bool			PyramidBuilding::isInside(const float* p,
 						float radius) const
 {
   // really rough -- doesn't decrease size with height
-  return p[2] <= getHeight() && testRectCircle(getPosition(), getRotation(),
-					getWidth(), getBreadth(), p, radius)
-					&& p[2] >= getPosition()[2];
+  return (p[2] <= getHeight()) 
+  &&     (p[2] >= getPosition()[2])
+  &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
 bool			PyramidBuilding::isInside(const float* p, float a,
 						float dx, float dy) const
 {
   const float s = shrinkFactor(p[2]);
-  return s > 0.0 && testRectRect(getPosition(), getRotation(),
-					s * getWidth(), s * getBreadth(),
-					p, a, dx, dy)
-					&& p[2] >= getPosition()[2];
+  return (s > 0.0) 
+  &&     (p[2] >= getPosition()[2])
+  &&     testRectRect(getPosition(), getRotation(), s * getWidth(), s * getBreadth(), p, a, dx, dy);
 }
 
 bool			PyramidBuilding::isCrossing(const float* p, float a,
