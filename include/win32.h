@@ -17,8 +17,6 @@
 #ifndef __WIN32_H__
 #define	__WIN32_H__
 
-
-
 // missing constants
 #ifndef MAXFLOAT
 #define	MAXFLOAT	3.402823466e+38f

@@ -151,51 +151,6 @@ typedef unsigned char	uint8_t;
 #  endif
 #endif /* defined( macintosh ) || defined( __BEOS__ ) */
 
-/* definitions specific to Windows */
-#ifdef _WIN32
-
-// missing float math functions
-#  ifndef __MINGW32__
-#    define hypotf	(float)hypot
-#    define snprintf	_snprintf
-#  endif /* __MINGW32__ */
-
-// missing constants
-#  ifndef MAXFLOAT
-#    define	MAXFLOAT	3.402823466e+38f
-#  endif
-#  ifndef M_PI
-#    define	M_PI		3.14159265358979323846f
-#  endif
-#  ifndef M_SQRT1_2
-#    define	M_SQRT1_2	0.70710678118654752440f
-#  endif
-
-// missing types
-#  ifndef int16_t
-typedef signed short	int16_t;
-#  endif
-
-#  ifndef uint16_t
-typedef unsigned short	uint16_t;
-#  endif
-
-#  ifndef int32_t
-typedef signed int	int32_t;
-#  endif
-
-#  ifndef uint32_t
-typedef unsigned int	uint32_t;
-#  endif
-
-// there is no sigpipe in Windows
-#  ifndef SIGINT
-#    define SIGPIPE SIGINT
-#  endif
-
-#endif /* _WIN32 */
-
-
 #ifdef countof
 #  undef countof
 #endif
