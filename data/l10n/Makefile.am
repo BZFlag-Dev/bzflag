@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+	bzflag_cs_CZ.po	\
 	bzflag_da.po	\
 	bzflag_en_US_redneck.po	\
 	bzflag_it.po	\
