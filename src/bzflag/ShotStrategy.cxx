@@ -1172,7 +1172,7 @@ void			GuidedMissileStrategy::update(float dt)
     }
   }
 
-  if ((target != NULL) && (target->getFlag() == Flags::Stealth)) {
+  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0))) {
     target = NULL;
     lastTarget = NoPlayer;
     needUpdate = true;
