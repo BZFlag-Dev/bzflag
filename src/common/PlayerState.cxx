@@ -48,8 +48,6 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     float tmpf;
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
     
-    printf ("maxVel = %f, maxAngVel = %f\n", maxVel, maxAngVel);
-
     for (int i=0; i<3; i++) {
       if (pos[i] >= worldSize) 
         posShort[i] = 32767;
