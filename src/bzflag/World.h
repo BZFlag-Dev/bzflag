@@ -56,6 +56,7 @@ class World {
     bool		allowShakeTimeout() const;
     bool		allowShakeWins() const;
     bool		allowRabbit() const;
+    bool		allowHandicap() const;
     float		getLinearAcceleration() const;
     float		getAngularAcceleration() const;
     float		getFlagShakeTimeout() const;
@@ -215,6 +216,11 @@ inline bool		World::allowShakeWins() const
 inline bool		World::allowRabbit() const
 {
   return (gameStyle & short(RabbitChaseGameStyle)) != 0;
+}
+
+inline bool		World::allowHandicap() const
+{
+  return (gameStyle & short(HandicapGameStyle)) != 0;
 }
 
 inline float		World::getLinearAcceleration() const
