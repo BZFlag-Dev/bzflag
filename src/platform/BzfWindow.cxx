@@ -189,6 +189,8 @@ void                    BzfWindow::getJoyDevices(std::vector<std::string>
   int i;
   for (i = 0; i < numJoystick; i++)
     list.push_back(SDL_JoystickName(i));
+#else
+  list.clear();
 #endif
 }
 
