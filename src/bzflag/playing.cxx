@@ -1682,6 +1682,11 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
       name += message;
       message = name;
     }
+#ifdef DEBUG
+    const PlayerId& id = player[i]->getId();
+    message += " from ";
+    message += inet_ntoa(id.serverHost);
+#endif
     addMessage(player[i], message);
   }
 
