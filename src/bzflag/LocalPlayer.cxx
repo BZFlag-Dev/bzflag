@@ -124,6 +124,7 @@ void			LocalPlayer::doUpdate(float dt)
     }
     if (TimeKeeper::getCurrent() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
       server->sendDropFlag(getPosition());
+      setStatus(getStatus() & ~PlayerState::FlagActive);      
       pauseTime = TimeKeeper::getSunExplodeTime();
     }
 
