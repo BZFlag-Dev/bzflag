@@ -289,8 +289,7 @@ static void		setVisual(BzfVisual* visual,
   if (BZDB->isTrue("multisample"))
     visual->setMultisample(4);
 #ifdef USE_GL_STEREO
-  if (resources.hasValue("view") &&
-	resources.getValue("view") == configViewValues[1])
+  if (BZDB->isSet("view") && BZDB->get("view") == configViewValues[1])
     visual->setStereo(true);
 #endif
 }
@@ -601,7 +600,7 @@ static void		parse(int argc, char** argv,
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      resources.addValue("view", argv[i]);
+      BZDB->set("view", argv[i]);
     }
     else if (strcmp(argv[i], "-zoom") == 0) {
       if (++i == argc) {
@@ -776,10 +775,10 @@ static bool		needsFullscreen()
   if (!BZDB->isSet("_window")) return true;
 
   // not fullscreen if view is default (normal)
-  if (!db.hasValue("view")) return false;
+  if (!BZDB->isSet("view")) return false;
 
   // fullscreen if view is not default
-  std::string value = db.getValue("view");
+  std::string value = BZDB->get("view");
   for (int i = 1; i < (int)(sizeof(configViewValues) /
 			sizeof(configViewValues[0])); i++)
     if (value == configViewValues[i])
@@ -1181,9 +1180,9 @@ int			main(int argc, char** argv)
     BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
 	      renderer.useQuality() < 2) ? "1" : "0");
     BZDB->setPersistent("_texturereplace", false);
-    if (db.hasValue("view")) {
+    if (BZDB->isSet("view")) {
       renderer.setViewType(SceneRenderer::Normal);
-      std::string value = db.getValue("view");
+      std::string value = BZDB->get("view");
       for (int i = 0; i < (int)(sizeof(configViewValues) /
 				sizeof(configViewValues[0])); i++)
 	if (value == configViewValues[i]) {
