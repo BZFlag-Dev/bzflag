@@ -109,6 +109,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
 
+
 #endif
 
 // Local Variables: ***

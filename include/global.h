@@ -71,10 +71,6 @@ const float		TeleWidth =	1.0f * TeleUnit;// meters
 const float		TeleBreadth =	4.0f * TeleUnit;// meters
 const float		TeleHeight =	9.0f * TeleUnit;// meters
 
-// city geometry
-const int		CitySize =	5;
-const float		AvenueSize =	2.0f * BoxBase;	// meters
-
 // readout stuff
 const int		MaxMessages =	20;		// msg. history length
 const int		MinX = 256;

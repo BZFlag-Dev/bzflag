@@ -72,7 +72,7 @@ struct CmdLineOptions
     publicizeServer(false), filterFilename(""),
     filterCallsigns(false), filterChat(false), filterSimple(false), voteTime(60),
     vetoTime(20), votesRequired(3), votePercentage(50.1f),
-    voteRepeatTime(300), autoTeam(false),
+    voteRepeatTime(300), autoTeam(false), citySize(5),
     debug(0)
   {
     int i;
@@ -163,6 +163,9 @@ struct CmdLineOptions
 
   /* team balancing options */
   bool			autoTeam;
+
+  /* city options */
+  int			citySize;
 
   int			debug;
 };

@@ -47,7 +47,7 @@ const char *usageString =
 "[-banfile <filename>] "
 "[-c] "
 "[-conf <filename>] "
-"[-cr] "
+"[-cr [count]] "
 "[-d] "
 "[+f {good|<id>}] "
 "[-f {bad|<id>}] "
@@ -122,7 +122,7 @@ const char *extraUsageString =
 "\t-banfile: specify a file to load and store the banlist in\n"
 "\t-c: capture-the-flag style game\n"
 "\t-conf: configuration file\n"
-"\t-cr: capture-the-flag style game with random world\n"
+"\t-cr: capture-the-flag style game with random world\n\t\toptionly specify an integer density\n"
 "\t-d: increase debugging level\n"
 "\t+f: always have flag <id> available\n"
 "\t-f: never randomly generate flag <id>\n"
@@ -473,6 +473,16 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
 	fprintf(stderr, "Capture the flag assumed\n");
       }
+
+      // if there are any arguments following, see if they are a
+      // rabbit selection styles.
+      if (i+1 != argc) {
+	if (isdigit(*argv[i+1])) {
+	  options.citySize = atoi(argv[i+1]);
+	  i++;
+	}
+      }
+
     } else if (strcmp(argv[i], "-d") == 0) {
       // increase debug level
       int count = 0;
