@@ -245,6 +245,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomArc.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomBase.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -363,6 +366,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomSphere.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomTetra.cxx">
 			</File>
 			<File
@@ -370,6 +376,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomTextureMatrix.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomWaterLevel.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomWeapon.cxx">
@@ -482,6 +491,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\ListServerConnection.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\ParseMaterial.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\Permissions.cxx">
@@ -666,6 +678,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\include\common.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomArc.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomBase.h">
 			</File>
 			<File
@@ -681,7 +696,13 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\CustomPyramid.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomSphere.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomTetra.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomWaterLevel.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomWeapon.h">
@@ -727,6 +748,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\PackVars.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\ParseMaterial.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\Permissions.h">
