@@ -370,19 +370,19 @@ void			BackgroundRenderer::setCelestial(
     glRotatef(asinf(moonDirection[2]) * 180.0f / M_PI, 0.0f, -1.0f, 0.0f);
     glRotatef(limbAngle * 180.0f / M_PI, 1.0f, 0.0f, 0.0f);
     glBegin(GL_TRIANGLE_STRIP);
- //    glTexCoord2f(0,-1);
-     glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
+    // glTexCoord2f(0,-1);
+    glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
       for (int i = 0; i < moonSegements-1; i++) {
 	const float angle = 0.5f * M_PI * float(i-(moonSegements/2)-1) / (moonSegements/2.0f);
         float sinAngle = sinf(angle);
         float cosAngle = cosf(angle);
-     //   glTexCoord2f(coverage*cosAngle,sinAngle);
+        // glTexCoord2f(coverage*cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosAngle,moonRadius * sinAngle);
 
-    //    glTexCoord2f(cosAngle,sinAngle);
+        // glTexCoord2f(cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, moonRadius * cosAngle,moonRadius * sinAngle);
       }
-  //  glTexCoord2f(0,1);
+    // glTexCoord2f(0,1);
     glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
     glEnd();
     glPopMatrix();

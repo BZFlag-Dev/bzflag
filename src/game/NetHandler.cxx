@@ -591,7 +591,7 @@ const char *NetHandler::getTargetIP() {
 }
 
 int NetHandler::sizeOfIP() {
-   return peer.getIPVersion() == 4 ? 8 : 20; // 8 for IPv4, 20 for IPv6
+  return peer.getIPVersion() == 4 ? 8 : 20; // 8 for IPv4, 20 for IPv6
 }
 
 void *NetHandler::packAdminInfo(void *buf) {

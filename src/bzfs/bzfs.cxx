@@ -2283,15 +2283,15 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     teamkill = !foe && !rabbitinvolved;
   }
 
-  //update tk-score
+  // update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
     killerData->score.tK();
     if (killerData->score.isTK()) {
-       char message[MessageLen];
-       strcpy(message, "You have been automatically kicked for team killing" );
-       sendMessage(ServerPlayer, killerIndex, message);
-       removePlayer(killerIndex, "teamkilling");
-     }
+      char message[MessageLen];
+      strcpy(message, "You have been automatically kicked for team killing" );
+      sendMessage(ServerPlayer, killerIndex, message);
+      removePlayer(killerIndex, "teamkilling");
+    }
   }
 
   // send MsgKilled
@@ -3032,29 +3032,28 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 {
   std::string tempmsg = message, lmsg = playerData->player.getLastMsg();
   for (int c = 0; c <= (int)tempmsg.size() - 1; c++)
-	 if (isspace(tempmsg[c]))
-  	   tempmsg.erase(tempmsg.begin() + c);
-   if (playerData->player.getLastMsg().size() > 0 &&
-       strncasecmp(tempmsg.c_str(),
-       lmsg.c_str(),
-       lmsg.size() > tempmsg.size() ? tempmsg.size() : lmsg.size()) == 0 &&
-	     TimeKeeper::getCurrent() - playerData->player.getLastMsgTime()
-	     <= clOptions->msgTimer) {
-	playerData->player.incSpamWarns();
-	sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
-	if (playerData->player.getSpamWarns() > clOptions->spamWarnMax
-	    || clOptions->spamWarnMax == 0) {
-	  sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-	  DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
-		 "less than %d second(s) in between; player was warned %d times]",
-		 playerData->player.getCallSign(), t,
-		 TimeKeeper::getCurrent()
-		 - playerData->player.getLastMsgTime(),
-		 playerData->player.getSpamWarns());
-	  removePlayer(t, "spam");
-	  return true;
-	}
-      }
+    if (isspace(tempmsg[c]))
+      tempmsg.erase(tempmsg.begin() + c);
+  if (playerData->player.getLastMsg().size() > 0 &&
+      strncasecmp(tempmsg.c_str(), lmsg.c_str(),
+      lmsg.size() > tempmsg.size() ? tempmsg.size() : lmsg.size()) == 0 &&
+      TimeKeeper::getCurrent() - playerData->player.getLastMsgTime()
+      <= clOptions->msgTimer) {
+    playerData->player.incSpamWarns();
+    sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
+    if (playerData->player.getSpamWarns() > clOptions->spamWarnMax
+	|| clOptions->spamWarnMax == 0) {
+      sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
+      DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
+	     "less than %d second(s) in between; player was warned %d times]",
+	     playerData->player.getCallSign(), t,
+	     TimeKeeper::getCurrent()
+	     - playerData->player.getLastMsgTime(),
+	     playerData->player.getSpamWarns());
+      removePlayer(t, "spam");
+      return true;
+    }
+  }
   playerData->player.setLastMsg(tempmsg);
   return false;
 }

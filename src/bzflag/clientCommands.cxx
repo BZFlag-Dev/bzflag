@@ -148,7 +148,7 @@ CommandManager::ArgList& args)
     CMDMGR.run("toggle displayRadarFlags");
     warnAboutRadarFlags();
   } else {
-     return "usage: main|radar";
+    return "usage: main|radar";
   }
 
   return std::string();

@@ -1781,20 +1781,19 @@ static void		handleServerMessage(bool human, uint16_t code,
 	message += " territory";
 	addMessage(capturer, message);
  	if (capturer == myTank) {
-   hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
-   playLocalSound( SFX_KILL_TEAM );
-   if (myTank->isAutoPilot()) {
-   	char meaculpa[MessageLen];
-   	memset(meaculpa, 0, MessageLen);
-   	strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
-		char *buf = messageMessage;
-		buf = (char*)nboPackUShort(buf, myTank->getTeam());
-    nboPackString(buf, meaculpa, MessageLen-1);
-    serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-   }
- }
-      }
-      else {
+	  hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
+	  playLocalSound( SFX_KILL_TEAM );
+	  if (myTank->isAutoPilot()) {
+   	    char meaculpa[MessageLen];
+   	    memset(meaculpa, 0, MessageLen);
+   	    strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
+	    char *buf = messageMessage;
+	    buf = (char*)nboPackUShort(buf, myTank->getTeam());
+	    nboPackString(buf, meaculpa, MessageLen-1);
+	    serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	  }
+	}
+      } else {
 	std::string message("captured ");
 	message += Team::getName(TeamColor(capturedTeam));
 	message += "'s flag";

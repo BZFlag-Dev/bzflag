@@ -159,9 +159,9 @@ bool CursesUI::checkCommand(std::string& str) {
   // get a character and do checks that are always needed
   int c = wgetch(cmdWin);
   switch (c) {
-   case KEY_RESIZE:
-     handleResize(LINES, COLS);
-     return false;
+  case KEY_RESIZE:
+    handleResize(LINES, COLS);
+    return false;
   case KEY_F(2):
     toggleMenu();
     return false;

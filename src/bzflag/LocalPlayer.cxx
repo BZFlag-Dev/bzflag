@@ -249,7 +249,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       // reset our flap count if we have wings
       if (getFlag() == Flags::Wings)
-         wingsFlapCount = (int) BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
+        wingsFlapCount = (int) BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
 
       if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
 	newVelocity[2] += 4 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
@@ -274,8 +274,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	  if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
 	    newAngVel = desiredAngVel;
 	  }
-	} 
-	else { // mouse or joystick
+	} else { // mouse or joystick
 	  newAngVel = desiredAngVel;
 	}
         // compute velocity so far
@@ -284,8 +283,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
         newVelocity[1] = speed * sinf(angle);
         newVelocity[2] += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
         lastSpeed = speed;
-      }
-      else {
+      } else {
         newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
         newAngVel = oldAngVel;
       }
@@ -1070,19 +1068,20 @@ void			LocalPlayer::jump()
     return;
 
   if (getFlag() == Flags::Wings) {
-     if (wingsFlapCount <= 0) return;
-     wingsFlapCount--;
+    if (wingsFlapCount <= 0) return;
+    wingsFlapCount--;
   } else if (location != OnGround && location != OnBuilding) {
-     // can't jump unless on the ground or a building
-     if (getFlag() != Flags::Wings)
-        return;
-     if (wingsFlapCount <= 0)
-        return;
+    // can't jump unless on the ground or a building
+    if (getFlag() != Flags::Wings)
+      return;
+    if (wingsFlapCount <= 0)
+      return;
      wingsFlapCount--;
   } else if ((getFlag() != Flags::Bouncy)
     &&       ((getFlag() != Flags::Jumping && !World::getWorld()->allowJumping()) ||
-	      (getFlag() == Flags::NoJumping)))
-     return;
+	      (getFlag() == Flags::NoJumping))) {
+    return;
+  }
 
   // add jump velocity (actually, set the vertical component since you
   // can only jump if resting on something)
@@ -1091,11 +1090,11 @@ void			LocalPlayer::jump()
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
   if (getFlag() == Flags::Wings)
-	newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+    newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
   else if (getFlag() == Flags::Bouncy)
-	newVelocity[2] = (float)(bzfrand() * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY));
+    newVelocity[2] = (float)(bzfrand() * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY));
   else
-	newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+    newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
   setVelocity(newVelocity);
   location = InAir;
   playLocalSound(SFX_JUMP);

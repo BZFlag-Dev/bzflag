@@ -615,7 +615,7 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
   if (dim)
     glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], c[3]);
   else
-   glColor4fv(c);
+    glColor4fv(c);
 }
 
 void			HUDRenderer::render(SceneRenderer& renderer)
@@ -1012,7 +1012,7 @@ void			HUDRenderer::renderCracks()
 {
   double delta = (TimeKeeper::getCurrent() - crackStartTime) * 5.0;
   if (delta > 1.0)
-     delta = 1.0;
+    delta = 1.0;
   int maxLevels = (int) (HUDCrackLevels * delta);
 
   glPushMatrix();
@@ -1033,7 +1033,7 @@ void			HUDRenderer::renderCracks()
 	  glVertex2fv(cracks[i][2 * (num + k) + 1]);
 	}
       }
-  }
+    }
   glEnd();
   glLineWidth(1.0);
   glPopMatrix();

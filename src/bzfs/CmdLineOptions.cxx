@@ -392,32 +392,32 @@ static char **parseConfFile( const char *file, int &ac)
 
   std::ifstream confStrm(file);
   if (confStrm.is_open()) {
-     char buffer[1024];
-     confStrm.getline(buffer,1024);
+    char buffer[1024];
+    confStrm.getline(buffer,1024);
 
-     if (!confStrm.good()) {
-       std::cerr << "configuration file not found\n";
-       usage("bzfs");
-     }
+    if (!confStrm.good()) {
+      std::cerr << "configuration file not found\n";
+      usage("bzfs");
+    }
 
-     while (confStrm.good()) {
-       std::string line = buffer;
-       int startPos = line.find_first_not_of("\t \r\n");
-       while ((startPos >= 0) && (line.at(startPos) != '#')) {
-	 int endPos;
-	 if (line.at(startPos) == '"') {
-	   startPos++;
-	   endPos = line.find_first_of('"', startPos);
-	 }
-	 else
-	   endPos = line.find_first_of("\t \r\n", startPos+1);
-	 if (endPos < 0)
-	    endPos = line.length();
-	 tokens.push_back(line.substr(startPos,endPos-startPos));
-	 startPos = line.find_first_not_of("\t \r\n", endPos+1);
-       }
-       confStrm.getline(buffer,1024);
-     }
+    while (confStrm.good()) {
+      std::string line = buffer;
+      int startPos = line.find_first_not_of("\t \r\n");
+      while ((startPos >= 0) && (line.at(startPos) != '#')) {
+	int endPos;
+	if (line.at(startPos) == '"') {
+	  startPos++;
+	  endPos = line.find_first_of('"', startPos);
+	} else {
+	  endPos = line.find_first_of("\t \r\n", startPos+1);
+	}
+	if (endPos < 0)
+	  endPos = line.length();
+	tokens.push_back(line.substr(startPos,endPos-startPos));
+	startPos = line.find_first_not_of("\t \r\n", endPos+1);
+      }
+      confStrm.getline(buffer,1024);
+    }
   }
 
   const char **av = new const char*[tokens.size()+1];
@@ -435,46 +435,46 @@ static char **parseWorldOptions (const char *file, int &ac)
 
   std::ifstream confStrm(file);
   if (confStrm.is_open()) {
-     char buffer[1024];
-     confStrm.getline(buffer,1024);
+    char buffer[1024];
+    confStrm.getline(buffer,1024);
 
-     if (!confStrm.good()) {
-       std::cerr << "world file not found\n";
-       usage("bzfs");
-     }
+    if (!confStrm.good()) {
+      std::cerr << "world file not found\n";
+      usage("bzfs");
+    }
      
-     while (confStrm.good()) {
-       std::string line = buffer;
-       int startPos = line.find_first_not_of("\t \r\n");
-       if (strncmp ("options", line.c_str() + startPos, 7) == 0) {
-         confStrm.getline(buffer,1024);
-         break;
-       }
-       confStrm.getline(buffer,1024);
-     }
+    while (confStrm.good()) {
+      std::string line = buffer;
+      int startPos = line.find_first_not_of("\t \r\n");
+      if (strncmp ("options", line.c_str() + startPos, 7) == 0) {
+        confStrm.getline(buffer,1024);
+        break;
+      }
+      confStrm.getline(buffer,1024);
+    }
 
-     while (confStrm.good()) {
-       std::string line = buffer;
-       int startPos = line.find_first_not_of("\t \r\n");
-       if (strncmp ("end", line.c_str() + startPos, 3) == 0) {
-         break;
-       }
-       
-       while ((startPos >= 0) && (line.at(startPos) != '#')) {
-	 int endPos;
-	 if (line.at(startPos) == '"') {
-	   startPos++;
-	   endPos = line.find_first_of('"', startPos);
-	 }
-	 else
-	   endPos = line.find_first_of("\t \r\n", startPos+1);
-	 if (endPos < 0)
-	    endPos = line.length();
-	 tokens.push_back(line.substr(startPos,endPos-startPos));
-	 startPos = line.find_first_not_of("\t \r\n", endPos+1);
-       }
-       confStrm.getline(buffer,1024);
-     }
+    while (confStrm.good()) {
+      std::string line = buffer;
+      int startPos = line.find_first_not_of("\t \r\n");
+      if (strncmp ("end", line.c_str() + startPos, 3) == 0) {
+        break;
+      }
+      
+      while ((startPos >= 0) && (line.at(startPos) != '#')) {
+        int endPos;
+	if (line.at(startPos) == '"') {
+	  startPos++;
+	  endPos = line.find_first_of('"', startPos);
+	} else {
+	  endPos = line.find_first_of("\t \r\n", startPos+1);
+	}
+	if (endPos < 0)
+	  endPos = line.length();
+	tokens.push_back(line.substr(startPos,endPos-startPos));
+	startPos = line.find_first_not_of("\t \r\n", endPos+1);
+      }
+      confStrm.getline(buffer,1024);
+    }
   }
 
   const char **av = new const char*[tokens.size()+1];

@@ -277,7 +277,7 @@ OctreeNode::OctreeNode(const float* center, float width,
     }
   }
   for (i = 0; i < 3; i++) {
-   if (absMins[i] > mins[i])
+    if (absMins[i] > mins[i])
       mins[i] = absMins[i];
     if (absMaxs[i] < maxs[i])
       maxs[i] = absMaxs[i];

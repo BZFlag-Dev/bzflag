@@ -91,22 +91,22 @@ void			ServerListCache::saveCache()
 
   std::ostream* outFile = FILEMGR.createDataOutStream(fileName, true, true);
   int lenCpy = MAX_STRING;
-  bool doWeed = (cacheAddedNum >0); // weed out as many items as were added
+  bool doWeed = (cacheAddedNum > 0); // weed out as many items as were added
 
   if (outFile != NULL){
     for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); iter++){
       // weed out after 30 days *if* if we should
       if (doWeed && iter->second.getAgeMinutes() > 60*24*30) {
-       cacheAddedNum --;
-       doWeed = (cacheAddedNum >0);
-       continue;
+        cacheAddedNum --;
+        doWeed = (cacheAddedNum > 0);
+        continue;
       }
 
       // write out the index of the map
-      memset(&buffer,0, sizeof(buffer));
+      memset(&buffer, 0, sizeof(buffer));
       lenCpy = (iter->first).size() < MAX_STRING ? (iter->first).size() : MAX_STRING;
-      strncpy(&buffer[0],(iter->first.c_str()),lenCpy);
-      outFile->write(buffer,sizeof(buffer));
+      strncpy(&buffer[0], (iter->first.c_str()), lenCpy);
+      outFile->write(buffer, sizeof(buffer));
 
       ServerItem x = iter->second;
       // write out the serverinfo -- which is mapped by index

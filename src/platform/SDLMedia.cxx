@@ -132,13 +132,13 @@ void			SDLMedia::writeSoundCommand(const void* cmd, int len)
 
   SDL_LockAudio();
 
-   // Discard command if full
-   if ((cmdFill + len) < 2048) {
-     memcpy(&cmdQueue[cmdFill], cmd, len);
-     // We should awake audioSleep - but game become unplayable
-     // using here an SDL_CondSignal(wakeCond)
-     cmdFill += len;
-   }
+  // Discard command if full
+  if ((cmdFill + len) < 2048) {
+    memcpy(&cmdQueue[cmdFill], cmd, len);
+    // We should awake audioSleep - but game become unplayable
+    // using here an SDL_CondSignal(wakeCond)
+    cmdFill += len;
+  }
 
   SDL_UnlockAudio();
 }

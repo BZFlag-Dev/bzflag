@@ -43,8 +43,8 @@ struct BanInfo
       minutes from now. */
   BanInfo( in_addr &banAddr, const char *bannedBy = NULL, int period = 0 ) {
     memcpy( &addr, &banAddr, sizeof( in_addr ));
-    if( bannedBy )
-       this->bannedBy = bannedBy;
+    if (bannedBy)
+      this->bannedBy = bannedBy;
     if (period == 0) {
       banEnd = TimeKeeper::getSunExplodeTime();
     } else {
