@@ -948,19 +948,10 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\AccessControlList.h">
 			</File>
 			<File
-				RelativePath="..\include\Address.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\Authentication.h">
 			</File>
 			<File
-				RelativePath="..\include\bzfio.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\bzfs.h">
-			</File>
-			<File
-				RelativePath="..\include\BzfString.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\BZWError.h">
@@ -969,16 +960,10 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\BZWReader.h">
 			</File>
 			<File
-				RelativePath="..\include\CallbackList.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\CmdLineOptions.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\commands.h">
-			</File>
-			<File
-				RelativePath="..\include\common.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomArc.h">
@@ -1062,22 +1047,10 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\GameKeeper.h">
 			</File>
 			<File
-				RelativePath="..\include\global.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\ListServerConnection.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\MasterBanList.h">
-			</File>
-			<File
-				RelativePath="..\include\md5.h">
-			</File>
-			<File
-				RelativePath="..\include\multicast.h">
-			</File>
-			<File
-				RelativePath="..\include\Pack.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\PackVars.h">
@@ -1089,16 +1062,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\Permissions.h">
 			</File>
 			<File
-				RelativePath="..\include\Ping.h">
-			</File>
-			<File
 				RelativePath="..\..\include\PlayerInfo.h">
-			</File>
-			<File
-				RelativePath="..\include\PlayerState.h">
-			</File>
-			<File
-				RelativePath="..\include\Protocol.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.h">
@@ -1110,34 +1074,13 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\Score.h">
 			</File>
 			<File
-				RelativePath="..\include\ShotUpdate.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.h">
-			</File>
-			<File
-				RelativePath="..\include\StateDatabase.h">
-			</File>
-			<File
-				RelativePath="..\include\Team.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\TeamBases.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\TextChunkManager.h">
-			</File>
-			<File
-				RelativePath="..\include\TimeBomb.h">
-			</File>
-			<File
-				RelativePath="..\include\TimeKeeper.h">
-			</File>
-			<File
-				RelativePath="..\include\version.h">
-			</File>
-			<File
-				RelativePath="..\include\WordFilter.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\WorldFileLocation.h">
