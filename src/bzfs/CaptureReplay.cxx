@@ -12,6 +12,7 @@
 
 #include "bzfs.h"
 #include "CaptureReplay.h"
+#include "OSFile.h"
 
 // Type Definitions
 // ----------------
@@ -65,7 +66,7 @@ typedef struct {
 // ---------------
 
 static const int DefaultMaxBytes = (16 * 1024 * 1024); // 16 Mbytes
-static const int DefaultUpdateRate = 10; // seconds
+static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
 static const char DefaultFileName[] = "capture.bzr";
 static const int ReplayMagic = 0x425A7270; // "BZrp"
 static const int ReplayVersion = 0x0001;
@@ -73,13 +74,15 @@ static const int ReplayVersion = 0x0001;
 
 static bool Capturing = false;
 static CaptureType CaptureMode = BufferedCapture;
+static CRtime UpdateTime = 0;
 
 static bool Replaying = false;
 static bool ReplayMode = false;
+static CRtime ReplayOffset = 0;
 
 static int TotalBytes = 0;
 static int MaxBytes = DefaultMaxBytes;
-static int UpdateRate = DefaultUpdateRate;
+static unsigned int UpdateRate = DefaultUpdateRate;
 
 static char *FileName = NULL;
 
@@ -155,9 +158,10 @@ bool Capture::init ()
   freeCRbuffer (&CaptureBuf);
   
   MaxBytes = DefaultMaxBytes;
-  UpdateRate = DefaultUpdateRate;
-  Capturing = false;
   TotalBytes = 0;
+  UpdateRate = DefaultUpdateRate;
+  UpdateTime = 0;
+  Capturing = false;
   CaptureMode = BufferedCapture;
   
   return true;
@@ -165,20 +169,15 @@ bool Capture::init ()
 
 bool Capture::kill ()
 {
-  freeCRbuffer (&CaptureBuf);
-  if (CaptureFile != NULL) {
-    fclose (CaptureFile);
-  }
-  freeCRbuffer (&ReplayBuf);
-  if (ReplayFile != NULL) {
-    fclose (ReplayFile);
-  }
-  
+  Capture::init();  
   return true;
 }
 
 bool Capture::start ()
 {
+  if (ReplayMode) {
+    return false;
+  }
   Capturing = true;
   return true;
 }
@@ -201,7 +200,7 @@ bool Capture::setSize (int Mbytes)
 
 bool Capture::setRate (int seconds)
 {
-  UpdateRate = seconds;
+  UpdateRate = seconds * 1000000;
   return true;
 }
 
@@ -214,6 +213,10 @@ bool Capture::sendStats (int playerIndex)
 bool Capture::saveFile (const char *filename)
 {
   ReplayHeader header;
+  
+  if (ReplayMode) {
+    return false;
+  }
   
   Capture::init();
   Capturing = true;
@@ -249,9 +252,10 @@ bool Capture::saveBuffer (const char *filename)
 }
 
 bool 
-Capture::addPacket (u16 code, int len, const void * data, bool fake)
+routePacket (u16 code, int len, const void * data, bool fake)
 {
   u16 fakeval = NormalPacket;
+  
   if (fake) {
     fakeval = FakedPacket;
   }
@@ -260,17 +264,26 @@ Capture::addPacket (u16 code, int len, const void * data, bool fake)
     CRpacket *p = newCRpacket (fakeval, code, len, data);
     p->timestamp = getCRtime();
     addCRpacket (&CaptureBuf, p);
-    printf ("Capture::addPacket: buffered %s\n", print_msg_code (code));
+    printf ("routePacket: buffered %s\n", print_msg_code (code));
   }
   else {
     CRpacket p;
     p.timestamp = getCRtime();
     initCRpacket (fakeval, code, len, data, &p);
     saveCRpacket (&p, CaptureFile);
-    printf ("Capture::addPacket: saved %s\n", print_msg_code (code));
+    printf ("routePacket: saved %s\n", print_msg_code (code));
   }
   
   return true; 
+}
+
+bool 
+Capture::addPacket (u16 code, int len, const void * data, bool fake)
+{
+  if ((getCRtime() - UpdateTime) > UpdateRate) {
+    saveStates ();
+  }
+  return routePacket (code, len, data, fake);
 }
 
 bool Capture::enabled ()
@@ -285,7 +298,7 @@ int Capture::getSize ()
 
 int Capture::getRate ()
 {
-  return UpdateRate;
+  return (UpdateRate / 1000000);
 }
 
 const char * Capture::getFileName ()
@@ -299,15 +312,30 @@ const char * Capture::getFileName ()
 
 bool Replay::init()
 {
+  if (Capturing) {
+    return false;
+  }
+
+  if (ReplayFile != NULL) {
+    fclose (ReplayFile);
+    ReplayFile = NULL;
+  }
+  if ((FileName != NULL) && (FileName != DefaultFileName)) {
+    free (FileName);
+    FileName = NULL;
+  }
+  freeCRbuffer (&ReplayBuf);
+  
   ReplayMode = true;
+  Replaying = false;
+  ReplayOffset = 0;
+
   return true;
 }
 
 bool Replay::kill()
 {
-  if (ReplayFile != NULL) {
-    fclose (ReplayFile);
-  }
+  Replay::init();
   return true;
 }
 
@@ -332,45 +360,66 @@ bool Replay::loadFile(const char * filename)
   return true;
 }
 
-float Replay::nextTime()
-{
-  return 1000.0f;
-}
-
 bool Replay::replaying ()
 {
   return Replaying;
 }
                           
+bool Replay::sendFileList(int playerIndex)
+{
+#ifndef _WIN32
+  DIR *dir;
+  struct dirent *de;
+  
+  dir = opendir (".");
+  if (dir == NULL) {
+    return false;
+  }
+  
+  while ((de = readdir (dir)) != NULL) {
+    sendMessage (ServerPlayer, playerIndex, de->d_name);
+  }
+  
+  closedir (dir);
+  
+#endif // _WIN32
+    
+  return true;
+}
+
+bool Replay::play()
+{
+  Replaying = true;
+  // FIXME - preload the buffer here
+  return true;
+}
+
 bool Replay::skip(int seconds)
 {
   seconds = seconds;
   return true;
 }
 
-bool Replay::sendFileList(int playerIndex)
-{
-  playerIndex = playerIndex;
-  return true;
-}
-
-bool Replay::play()
-{
-  return true;
-}
-
-bool Replay::nextPacket (u16 *code, int *len, void **data)
-{
+bool Replay::sendPackets () {
   if (CaptureBuf.tail == NULL) {
     return false;
   }
-  *code = CaptureBuf.tail->code;
-  *len = CaptureBuf.tail->len;
-  *data = (void *) CaptureBuf.tail->data;
   
   delCRpacket (&CaptureBuf); // remove from the tail
   
   return true;
+}
+
+float Replay::nextTime()
+{
+  if (ReplayBuf.tail == NULL) {
+    return 1000.0f;
+  }
+  else {
+    CRtime diff;
+    diff = ReplayBuf.tail->timestamp - ReplayOffset - getCRtime();
+    return (float) ((float)diff / (float)1000000);
+  }
 }
 
 /****************************************************************************/
@@ -409,7 +458,7 @@ saveTeamScores ()
     buf = team[i].team.pack(buf);
   }
   
-  Capture::addPacket (MsgTeamUpdate, (char*)buf - (char*)bufStart,  bufStart, true);
+  routePacket (MsgTeamUpdate, (char*)buf - (char*)bufStart,  bufStart, true);
   
   return true;
 }
@@ -436,7 +485,7 @@ printf ("FlagNum = %i\n", flagIndex); fflush (stdout);
       if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t)) {
         // packet length overflow
         nboPackUShort(bufStart, cnt);
-        Capture::addPacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
+        routePacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
 
         cnt = 0;
         length = sizeof(uint16_t);
@@ -452,7 +501,7 @@ printf ("FlagNum = %i\n", flagIndex); fflush (stdout);
 
   if (cnt > 0) {
     nboPackUShort(bufStart, cnt);
-    Capture::addPacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
+    routePacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
   }
   
   return true;
@@ -470,7 +519,7 @@ savePlayerStates ()
       PlayerInfo *pPlayer = &player[i];
       buf = nboPackUByte(bufStart, i);
       buf = pPlayer->packUpdate(buf);
-      Capture::addPacket (MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart, true);
+      routePacket (MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart, true);
     }
   }
   
@@ -483,6 +532,8 @@ saveStates ()
   saveTeamScores ();
   saveFlagStates ();
   savePlayerStates ();
+  
+  UpdateTime = getCRtime ();
   
   return true;
 }

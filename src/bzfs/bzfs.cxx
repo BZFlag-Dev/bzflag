@@ -11,7 +11,7 @@
  */
 #include "bzfs.h"
 #include "NetHandler.h"
-#include "CaptureReplay.h" // FIXME - move into bzfs.h later?
+#include "CaptureReplay.h" // FIXME - DMR - move into bzfs.h later?
 
 const int udpBufSize = 128000;
 
@@ -41,9 +41,9 @@ static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers + ReplayObservers];
 // player access
-PlayerAccessInfo accessInfo[MaxPlayers];
+PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 // Last known position, vel, etc
-PlayerState lastState[MaxPlayers];
+PlayerState lastState[MaxPlayers  + ReplayObservers];
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -496,7 +496,7 @@ static bool serverStart()
     close(wksSocket);
     return false;
   }
-  for (int i = 0; i < MaxPlayers; i++) {	// no connections
+  for (int i = 0; i < (MaxPlayers + ReplayObservers); i++) {	// no connections
     player[i].resetComm();
   }
 
@@ -1255,11 +1255,21 @@ static void acceptClient()
   PlayerId playerIndex;
 
   // find open slot in players list
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-    if (!player[playerIndex].exist())
-      break;
+  
+  PlayerId minPlayerId = 0;
+  PlayerId maxPlayerId = maxPlayers;
+  if (Replay::enabled()) {
+     minPlayerId = MaxPlayers;
+     maxPlayerId = MaxPlayers + ReplayObservers;
+  }
 
-  if (playerIndex < maxPlayers) {
+  for (playerIndex = minPlayerId; playerIndex < maxPlayerId; playerIndex++) {
+    if (!player[playerIndex].exist()) {
+      break;
+    }
+  }
+
+  if (playerIndex < maxPlayerId) {
     DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
 	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
 
@@ -1458,7 +1468,7 @@ static void addPlayer(int playerIndex)
   const int numplayersobs = numplayers + team[ObserverTeam].team.size;
 
   // no player slots open -> try observer
-  if (numplayers == maxRealPlayers) {
+  if ((numplayers == maxRealPlayers) || Replay::enabled()) {
     t = ObserverTeam;
     player[playerIndex].setTeam(ObserverTeam);
   } else {

@@ -59,9 +59,8 @@ namespace Replay {
   extern int getMaxBytes ();
   extern const char * getFileName ();
 
-  // you have to free() the 'data', don't use delete...
-  extern bool nextPacket (uint16_t *code, int *len, void **data); 
   extern float nextTime ();
+  extern bool sendPackets ();
 };
 
 // Some notes:
