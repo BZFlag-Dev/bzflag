@@ -11,6 +11,7 @@
  */
 
 #include "XVisual.h"
+#include <assert.h>
 #include <string.h>
 #include <GL/glx.h>
 

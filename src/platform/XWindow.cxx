@@ -19,6 +19,7 @@
 #  include <X11/extensions/xf86vmode.h>
 #  undef private
 #endif
+#include <assert.h>
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
