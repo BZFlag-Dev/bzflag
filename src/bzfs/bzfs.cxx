@@ -194,9 +194,13 @@ struct PlayerInfo {
 		float lagavg,lagalpha;
 		int lagcount,laglastwarn,lagwarncount;
 #ifdef NETWORK_STATS
-		// message stat bloat
-		TimeKeeper startTime;
-		uint32_t bytes[2];
+		// message stats bloat
+		TimeKeeper perSecondTime[2];
+		uint32_t perSecondCurrentBytes[2];
+		uint32_t perSecondMaxBytes[2];
+		uint32_t perSecondCurrentMsg[2];
+		uint32_t perSecondMaxMsg[2];
+		uint32_t msgBytes[2];
 		struct MessageCount msg[2][MessageTypes];
 #endif
 };
@@ -1425,6 +1429,27 @@ static char *getDirectMessageBuffer()
 }
 
 #ifdef NETWORK_STATS
+void initPlayerMessageStats(int playerIndex)
+{
+	int i;
+	struct MessageCount *msg;
+	int direction;
+
+	for (direction = 0; direction <= 1; direction++) {
+		msg = player[playerIndex].msg[direction];
+		for (i = 0; i < MessageTypes && msg[i].code != 0; i++) {
+			msg[i].count = 0;
+			msg[i].code = 0;
+		}
+		player[playerIndex].msgBytes[direction] = 0;
+		player[playerIndex].perSecondTime[direction] = player[playerIndex].time;
+		player[playerIndex].perSecondCurrentMsg[direction] = 0;
+		player[playerIndex].perSecondMaxMsg[direction] = 0;
+		player[playerIndex].perSecondCurrentBytes[direction] = 0;
+		player[playerIndex].perSecondMaxBytes[direction] = 0;
+	}
+}
+
 int countMessage(int playerIndex, uint16_t code, int len, int direction)
 {
 	int i;
@@ -1432,8 +1457,9 @@ int countMessage(int playerIndex, uint16_t code, int len, int direction)
 
 	// add length of type and length
 	len += 4;
-	player[playerIndex].bytes[direction] += len;
+	player[playerIndex].msgBytes[direction] += len;
 	msg = player[playerIndex].msg[direction];
+	TimeKeeper now = TimeKeeper::getCurrent();
 	for (i = 0; i < MessageTypes && msg[i].code != 0; i++)
 		if (msg[i].code == code)
 			break;
@@ -1441,6 +1467,23 @@ int countMessage(int playerIndex, uint16_t code, int len, int direction)
 	if (msg[i].maxSize < len)
 		msg[i].maxSize = len;
 	msg[i].count++;
+	if (now - player[playerIndex].perSecondTime[direction] < 1.0f) {
+		player[playerIndex].perSecondCurrentMsg[direction]++;
+		player[playerIndex].perSecondCurrentBytes[direction] += len;
+	}
+	else {
+		player[playerIndex].perSecondTime[direction] = now;
+		if (player[playerIndex].perSecondMaxMsg[direction] <
+				player[playerIndex].perSecondCurrentMsg[direction])
+			player[playerIndex].perSecondMaxMsg[direction] =
+					player[playerIndex].perSecondCurrentMsg[direction];
+		if (player[playerIndex].perSecondMaxBytes[direction] <
+				player[playerIndex].perSecondCurrentBytes[direction])
+			player[playerIndex].perSecondMaxBytes[direction] =
+					player[playerIndex].perSecondCurrentBytes[direction];
+		player[playerIndex].perSecondCurrentMsg[direction] = 0;
+		player[playerIndex].perSecondCurrentBytes[direction] = 0;
+	}
 	return (msg[i].count);
 }
 
@@ -1452,8 +1495,7 @@ void dumpPlayerMessageStats(int playerIndex)
 	int direction;
 
 	DEBUG1("Player connect time: %f\n",
-			TimeKeeper::getCurrent() - player[playerIndex].startTime);
-	//TimeKeeper startTime = TimeKeeper::getCurrent();
+			TimeKeeper::getCurrent() - player[playerIndex].time);
 	for (direction = 0; direction <= 1; direction++) {
 		total = 0;
 		DEBUG1("Player messages %s:", direction ? "out" : "in");
@@ -1462,11 +1504,12 @@ void dumpPlayerMessageStats(int playerIndex)
 			DEBUG1(" %c%c:%u(%u)", msg[i].code >> 8, msg[i].code & 0xff,
 					msg[i].count, msg[i].maxSize);
 			total += msg[i].count;
-			msg[i].count = 0;
-			msg[i].code = 0;
 		}
-		DEBUG1(" total:%u(%u)\n", total, player[playerIndex].bytes[direction]);
-		player[playerIndex].bytes[direction] = 0;
+		DEBUG1(" total:%u(%u) ", total, player[playerIndex].msgBytes[direction]);
+		DEBUG1("max msgs/bytes per second: %u/%u\n",
+				player[playerIndex].perSecondMaxMsg[direction],
+				player[playerIndex].perSecondMaxBytes[direction]);
+
 	}
 	fflush(stdout);
 }
@@ -3052,7 +3095,7 @@ static void addClient(int acceptSocket)
 	player[playerIndex].outmsgOffset = 0;
 	player[playerIndex].outmsgCapacity = 0;
 #ifdef NETWORK_STATS
-	player[playerIndex].startTime = TimeKeeper::getCurrent();
+	initPlayerMessageStats(playerIndex);
 #endif
 
 	// if game was over and this is the first player then game is on
