@@ -73,10 +73,9 @@ targets: binprep rpmprep
 # prepare binaries
 #
 binprep:
-	strip $(TARGETDIR)/bzflag
-	strip $(TARGETDIR)/bzfls
-	strip $(TARGETDIR)/bzfrelay
-	strip $(TARGETDIR)/bzfs
+	strip ../src/bzflag/bzflag
+	strip ../src/bzfrelay/bzfrelay
+	strip ../src/bzfs/bzfs
 
 #
 # prepare RPM stuff
