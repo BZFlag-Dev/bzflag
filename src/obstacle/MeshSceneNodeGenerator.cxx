@@ -41,12 +41,31 @@ MeshSceneNodeGenerator::~MeshSceneNodeGenerator()
 WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
 {
   int i;
+  const MeshFace* face;
 
-  if (faceNumber >= mesh->getFaceCount()) {
-    return NULL;
+  // remove any faces on the ground that will not be displayed
+  // also, return NULL if we are at the end of the face list
+  while (true) {
+    if (faceNumber >= mesh->getFaceCount()) {
+      return NULL;
+    }
+    face = mesh->getFace(faceNumber);
+    const float* plane = face->getPlane();
+    if (plane[2] < -0.9f) {
+      // plane is facing downwards
+      float mins[3], maxs[3];
+      face->getExtents(mins, maxs);
+      if (maxs[2] < 0.001) {
+        // plane is on or below the ground, ditch it
+        faceNumber++;
+        continue;
+      } else {
+        break;
+      }
+    } else {
+      break;
+    }
   }
-
-  const MeshFace* face = mesh->getFace(faceNumber);
 
   GLfloat base[3], sCorner[3], tCorner[3];
   memcpy (base, face->getVertex(0), sizeof(float[3]));
