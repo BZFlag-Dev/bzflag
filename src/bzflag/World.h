@@ -98,7 +98,6 @@ class World {
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
     int			getTeleportTarget(int source) const;
-    EighthDimSceneNode*	getInsideSceneNode(const Obstacle*) const;
 
     TeamColor		whoseBase(const float* pos) const;
     const Obstacle*	inBuilding(const float* pos, float radius,
@@ -189,9 +188,6 @@ class World {
     Flag*		flags;
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
-    EighthDimSceneNode** boxInsideNodes;
-    EighthDimSceneNode** pyramidInsideNodes;
-    EighthDimSceneNode** baseInsideNodes;
     static World*	playingField;
     static BundleMgr	*bundleMgr;
     static std::string	locale;

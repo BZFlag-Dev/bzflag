@@ -182,6 +182,7 @@ const std::string StateDatabase::BZDB_TINYFACTOR        = std::string("_tinyFact
 const std::string StateDatabase::BZDB_UPDATETHROTTLERATE= std::string("_updateThrottleRate");
 const std::string StateDatabase::BZDB_VELOCITYAD        = std::string("_velocityAd");
 const std::string StateDatabase::BZDB_WALLHEIGHT        = std::string("_wallHeight");
+const std::string StateDatabase::BZDB_WEAPONS           = std::string("_weapons");
 const std::string StateDatabase::BZDB_WIDEANGLEANG      = std::string("_wideAngleAng");
 const std::string StateDatabase::BZDB_WINGSGRAVITY      = std::string("_wingsGravity");
 const std::string StateDatabase::BZDB_WINGSJUMPCOUNT    = std::string("_wingsJumpCount");

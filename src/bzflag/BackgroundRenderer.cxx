@@ -214,21 +214,22 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   mountainsAvailable = false;
   {
     int mountainTexture = -1;
-    int width  = 0;
+    int width = 0;
     int height = 0;
     numMountainTextures = 0;
     bool done = false;
     while (!done) {
       char text[256];
-      sprintf(text, "mountain%d", numMountainTextures + 1);
-      mountainTexture = tm.getTextureID(text, false);
+      sprintf (text, "mountain%d", numMountainTextures + 1);
+      mountainTexture = tm.getTextureID (text, false);
       if (mountainTexture >= 0) {
-        const ImageInfo &info = tm.getInfo(mountainTexture);
-	height = info.y;
-	width += info.x;
-	numMountainTextures++;
-      } else {
-	done = true;
+        const ImageInfo & info = tm.getInfo (mountainTexture);
+        height = info.y;
+        width += info.x;
+        numMountainTextures++;
+      }
+      else {
+        done = true;
       }
     }
 
@@ -236,30 +237,35 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       mountainsAvailable = true;
 
       // prepare common gstate
-      gstate.reset();
-      gstate.setShading();
-      gstate.setBlending();
-      gstate.setMaterial(defaultMaterial);
-      gstate.setAlphaFunc();
+      gstate.reset ();
+      gstate.setShading ();
+      gstate.setBlending ();
+      gstate.setMaterial (defaultMaterial);
+      gstate.setAlphaFunc ();
 
-      if (numMountainTextures > 1)
-	width -= 2 * numMountainTextures;
+      if (numMountainTextures > 1) {
+        width -= 2 * numMountainTextures;
+      }
       // find power of two at least as large as height
       int scaledHeight = 1;
-      while (scaledHeight < height) scaledHeight <<= 1;
+      while (scaledHeight < height) {
+        scaledHeight <<= 1;
+      }
 
       // choose minimum width
       int minWidth = scaledHeight;
-      if (minWidth > scaledHeight) minWidth = scaledHeight;
+      if (minWidth > scaledHeight) {
+        minWidth = scaledHeight;
+      }
       mountainsMinWidth = minWidth;
 
       // prepare each texture
       mountainsGState = new OpenGLGState[numMountainTextures];
       for (i = 0; i < numMountainTextures; i++) {
-	char text[256];
-	sprintf(text,"mountain%d",i+1);
-	gstate.setTexture(tm.getTextureID(text));
-	mountainsGState[i] = gstate.getState();
+        char text[256];
+        sprintf (text, "mountain%d", i + 1);
+        gstate.setTexture (tm.getTextureID (text));
+        mountainsGState[i] = gstate.getState ();
       }
       mountainsList = new OpenGLDisplayList[numMountainTextures];
     }
@@ -283,7 +289,7 @@ BackgroundRenderer::~BackgroundRenderer()
 
 void			BackgroundRenderer::notifyStyleChange()
 {
-  if (BZDB.isTrue("texture")) {
+  if (BZDBCache::texture) {
     if (BZDBCache::lighting)
       styleIndex = 3;
     else
@@ -429,11 +435,11 @@ void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
   else if (cloudDriftV < 0.0f) cloudDriftV += 1.0f;
 }
 
-void			BackgroundRenderer::renderSky(
-				SceneRenderer& renderer, bool fullWindow)
+void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
+                                   bool mirror, bool reflection)
 {
   if (renderer.useQuality() > 0) {
-    drawSky(renderer);
+    drawSky(renderer, mirror, reflection);
   } else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
     // to draw solid color sky and ground.
@@ -589,7 +595,7 @@ void BackgroundRenderer::resizeSky() {
 }
 
 
-void			BackgroundRenderer::drawSky(SceneRenderer& renderer)
+void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror, bool reflection)
 {
   // rotate sky so that horizon-point-toward-sun-color is actually
   // toward the sun
@@ -671,9 +677,23 @@ void			BackgroundRenderer::drawSky(SceneRenderer& renderer)
   }
 
   if (doStars) {
+    if (mirror) {
+      glEnable(GL_CLIP_PLANE0);
+      if (!reflection) {
+        const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
+        glClipPlane(GL_CLIP_PLANE0, plane);
+      } else {
+        const GLdouble plane[4] = {0.0, 0.0, -1.0, 0.0};
+        glClipPlane(GL_CLIP_PLANE0, plane);
+      }
+    }
     starGState[starGStateIndex].setState();
     starXFormList.execute();
+    if (mirror) {
+      glDisable(GL_CLIP_PLANE0);
+    }
   }
+  
 
   if (moonDirection[2] > -0.009f) {
     moonGState[doStars ? 1 : 0].setState();

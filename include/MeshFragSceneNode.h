@@ -52,10 +52,11 @@ class MeshFragSceneNode : public WallSceneNode {
   protected:
     class Geometry : public RenderNode {
       public:
-        Geometry(MeshFragSceneNode* node, bool shadow);
+        Geometry(MeshFragSceneNode* node);
         ~Geometry();
         
 	void render();
+	void renderShadow();
 	void setStyle(int _style) { style = _style; }
 	const GLfloat* getPosition() { return sceneNode->getSphere(); }
 	
@@ -67,13 +68,11 @@ class MeshFragSceneNode : public WallSceneNode {
 
       private:
 	int style;
-	bool isShadow; 
 	MeshFragSceneNode* sceneNode;
     };
 
   private:
     Geometry* renderNode;
-    Geometry* shadowNode;
     
     GLint faceCount;
     const MeshFace** faces;

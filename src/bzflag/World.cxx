@@ -52,10 +52,7 @@ World::World() :
   players(NULL),
   flags(NULL),
   flagNodes(NULL),
-  flagWarpNodes(NULL),
-  boxInsideNodes(NULL),
-  pyramidInsideNodes(NULL),
-  baseInsideNodes(NULL)
+  flagWarpNodes(NULL)
 {
   worldWeapons = new WorldPlayer();
   waterMaterial = NULL;
@@ -177,25 +174,6 @@ const Teleporter*	World::getTeleporter(int source, int& face) const
   return teleporters[source / 2];
 }
 
-EighthDimSceneNode*	World::getInsideSceneNode(const Obstacle* o) const
-{
-  if (!o) return NULL;
-
-  int i;
-  const int numBases = basesR.size();
-  for (i = 0; i < numBases; i++)
-    if (basesR[i] == o)
-      return baseInsideNodes[i];
-  const int numBoxes = boxes.size();
-  for (i = 0; i < numBoxes; i++)
-    if (boxes[i] == o)
-      return boxInsideNodes[i];
-  const int numPyramids = pyramids.size();
-  for (i = 0; i < numPyramids; i++)
-    if (pyramids[i] == o)
-      return pyramidInsideNodes[i];
-  return NULL;
-}
 
 TeamColor		World::whoseBase(const float* pos) const
 {
@@ -454,28 +432,27 @@ void			World::freeFlags()
 
 void			World::freeInsideNodes()
 {
-  // free eighth dimension nodes
-  if (boxInsideNodes) {
-    const int numBoxes = boxes.size();
-    for (int i = 0; i < numBoxes; i++)
-      delete boxInsideNodes[i];
-    delete[] boxInsideNodes;
-    boxInsideNodes = NULL;
+  unsigned int i;
+  int j;  
+  for (i = 0; i < boxes.size(); i++) {
+    Obstacle* obs = (Obstacle*) boxes[i];
+    for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
+      delete obs->getInsideSceneNodeList()[j];
+    }
   }
-  if (pyramidInsideNodes) {
-    const int numPyramids = pyramids.size();
-    for (int i = 0; i < numPyramids; i++)
-      delete pyramidInsideNodes[i];
-    delete[] pyramidInsideNodes;
-    pyramidInsideNodes = NULL;
+  for (i = 0; i < pyramids.size(); i++) {
+    Obstacle* obs = (Obstacle*) pyramids[i];
+    for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
+      delete obs->getInsideSceneNodeList()[j];
+    }
   }
-  if (baseInsideNodes) {
-    const int numBases = basesR.size();
-    for(int i = 0; i < numBases; i++)
-      delete baseInsideNodes[i];
-    delete [] baseInsideNodes;
-    baseInsideNodes = NULL;
+  for (i = 0; i < basesR.size(); i++) {
+    Obstacle* obs = (Obstacle*) basesR[i];
+    for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
+      delete obs->getInsideSceneNodeList()[j];
+    }
   }
+  return;
 }
 
 

@@ -524,34 +524,34 @@ void WorldBuilder::preGetWorld()
   world->freeInsideNodes();
   GLfloat obstacleSize[3];
   const int numBoxes = world->boxes.size();
-  world->boxInsideNodes = new EighthDimSceneNode*[numBoxes];
   for (i = 0; i < numBoxes; i++) {
-    const Obstacle& o = *world->boxes[i];
+    Obstacle& o = *world->boxes[i];
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
-    world->boxInsideNodes[i] = new EighthDBoxSceneNode(o.getPosition(),
-						       obstacleSize, o.getRotation());
+    SceneNode* node = new EighthDBoxSceneNode(o.getPosition(),
+                                              obstacleSize, o.getRotation());
+    o.addInsideSceneNode(node);
   }
   const int numPyramids = world->pyramids.size();
-  world->pyramidInsideNodes = new EighthDimSceneNode*[numPyramids];
   for (i = 0; i < numPyramids; i++) {
-    const Obstacle& o = *world->pyramids[i];
+    Obstacle& o = *world->pyramids[i];
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
-    world->pyramidInsideNodes[i] = new EighthDPyrSceneNode(o.getPosition(),
-							   obstacleSize, o.getRotation());
+    SceneNode* node  = new EighthDPyrSceneNode(o.getPosition(),
+                                               obstacleSize, o.getRotation());
+    o.addInsideSceneNode(node);
   }
   const int numBases = world->basesR.size();
-  world->baseInsideNodes = new EighthDimSceneNode*[numBases];
   for (i = 0; i < numBases; i++) {
-    const Obstacle& o = *world->basesR[i];
+    Obstacle& o = *world->basesR[i];
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
-    world->baseInsideNodes[i] = new EighthDBaseSceneNode(o.getPosition(),
-							 obstacleSize, o.getRotation());
+    SceneNode* node = new EighthDBaseSceneNode(o.getPosition(),
+                                               obstacleSize, o.getRotation());
+    o.addInsideSceneNode(node);
   }
 
   world->teleportTargets = teleportTargets;

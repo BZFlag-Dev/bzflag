@@ -34,9 +34,10 @@ void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
 #endif
 void			(*SceneNode::stipple)(GLfloat);
 
-SceneNode::SceneNode() : octreeState(OctreeCulled), noPlane(true)
+SceneNode::SceneNode()
 {
   static bool init = false;
+  
   if (!init) {
     init = true;
     setColorOverride(false);
@@ -45,6 +46,10 @@ SceneNode::SceneNode() : octreeState(OctreeCulled), noPlane(true)
 
   setCenter(0.0f, 0.0f, 0.0f);
   setRadius(0.0f);
+  
+  noPlane = true;
+  octreeState = OctreeCulled;
+  return;
 }
 
 SceneNode::~SceneNode()
@@ -220,6 +225,24 @@ const GLfloat* SceneNode::getVertex (int) const
 }
 
 
+void SceneNode::enableInvertView()
+{
+  OpenGLGState::setCullFace(GL_FRONT);
+  glPolygonMode(GL_FRONT, GL_LINE);
+  glLineWidth(2.0f);
+  return;
+}
+
+
+void SceneNode::disableInvertView()
+{
+  glLineWidth(1.0f);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  OpenGLGState::setCullFace(GL_BACK);
+  return;
+}
+
+
 //
 // GLfloat2Array
 //
@@ -264,6 +287,7 @@ GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
   }
   return *this;
 }
+
 
 
 // Local Variables: ***

@@ -273,7 +273,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
   setupNodeMaterial(node, mat);
 
   currentNode++;
-
+  
   return node;
 }
 

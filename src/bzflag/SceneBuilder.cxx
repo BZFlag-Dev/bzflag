@@ -330,8 +330,7 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
 }
 
 
-void			SceneDatabaseBuilder::addMesh(SceneDatabase* db,
-						const MeshObstacle* mesh)
+void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
 {
   WallSceneNode* node;
   MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator (mesh);
@@ -343,8 +342,7 @@ void			SceneDatabaseBuilder::addMesh(SceneDatabase* db,
 }
 
 
-void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
-						const BoxBuilding& o)
+void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 {
   // this assumes boxes have six parts:  four sides, a roof, and a bottom.
   int part = 0;

@@ -40,8 +40,8 @@ class SceneDatabaseBuilder {
 
   protected:
     void		addWall(SceneDatabase*, const WallObstacle&);
-    void		addMesh(SceneDatabase*, const MeshObstacle*);
-    void		addBox(SceneDatabase*, const BoxBuilding&);
+    void		addMesh(SceneDatabase*, MeshObstacle*);
+    void		addBox(SceneDatabase*, BoxBuilding&);
     void		addPyramid(SceneDatabase*, const PyramidBuilding&);
     void		addBase(SceneDatabase*, const BaseBuilding&);
     void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);

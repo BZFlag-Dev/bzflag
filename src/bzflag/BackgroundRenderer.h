@@ -37,7 +37,7 @@ class BackgroundRenderer {
 			BackgroundRenderer(const SceneRenderer&);
 			~BackgroundRenderer();
 
-    void		renderSky(SceneRenderer&, bool fullWindow);
+    void		renderSky(SceneRenderer&, bool fullWindow, bool mirror, bool reflection);
     void		renderGround(SceneRenderer&, bool fullWindow);
     void		renderGroundEffects(SceneRenderer&);
     void		renderEnvironment(SceneRenderer&);
@@ -59,7 +59,7 @@ class BackgroundRenderer {
 
     std::string		userTextures[2];
   protected:
-    void		drawSky(SceneRenderer&);
+    void		drawSky(SceneRenderer&, bool mirror, bool reflection);
     void		drawGround(void);
     void		drawGroundGrid(SceneRenderer&);
     void		drawGroundShadows(SceneRenderer&);

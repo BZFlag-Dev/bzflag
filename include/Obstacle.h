@@ -27,11 +27,15 @@
 #include "Ray.h"
 #include <string>
 
+
+class SceneNode;
+
 /** This ABC represents a (normally) solid object in a world. It has pure
     virtual functions for getting information about it's size, checking ray
     intersections, checking point intersections, computing normals etc.
     All these functions have to be implemented in concrete subclasses.
 */
+
 class Obstacle {
   public:
   /** The default constructor. It sets all values to 0
@@ -166,6 +170,12 @@ class Obstacle {
   */
   bool getZFlip(void) const;
 
+  // inside sceneNodes
+  void addInsideSceneNode(SceneNode* node);
+  void freeInsideSceneNodeList();
+  int getInsideSceneNodeCount() const;
+  SceneNode** getInsideSceneNodeList() const;
+
   /** This boolean is used by CollisionManager.
       Someone else can 'friend'ify it later.
   */
@@ -204,13 +214,17 @@ class Obstacle {
 		     float oWidth, float oBreadth, float oHeight,
 		     float* normal) const;
 
- protected:
-  float		pos[3];
-  float     size[3]; // width, breadth, height
-  float		angle;
-  bool		driveThrough;
-  bool		shootThrough;
-  bool		ZFlip;
+  protected:
+    float pos[3];
+    float size[3]; // width, breadth, height
+    float angle;
+    bool driveThrough;
+    bool shootThrough;
+    bool ZFlip;
+    
+  private:
+    int insideNodeCount;
+    SceneNode** insideNodes;
 };
 
 //

@@ -112,8 +112,13 @@ void			QuadWallSceneNode::Geometry::render()
 {
   wall->setColor();
   glNormal3fv(normal);
-  if (style >= 2) drawVT();
-  else drawV();
+  if (style >= 2) {
+    drawVT();
+  } else {
+    drawV();
+  }
+
+  return;
 }
 
 void			QuadWallSceneNode::Geometry::renderShadow()

@@ -43,11 +43,10 @@
 
 static int minLightDisabling = 100;
 
-MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node, bool shadow)
+MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node)
 {
   style = 0;
   sceneNode = node;
-  isShadow = shadow;
   return;
 }
 
@@ -58,41 +57,42 @@ MeshFragSceneNode::Geometry::~Geometry()
   return;
 }
 
-void			MeshFragSceneNode::Geometry::render()
+void MeshFragSceneNode::Geometry::render()
 {
-  if (isShadow) {
-    drawV();
+  const bool switchLights = (sceneNode->arrayCount >= minLightDisabling)
+                            && BZDBCache::lighting;
+  if (switchLights) {
+    RENDERER.disableLights(sceneNode->mins, sceneNode->maxs);
   }
-  else {
-  
-    const bool switchLights = (sceneNode->arrayCount >= minLightDisabling)
-                              && BZDBCache::lighting;
-    if (switchLights) {
-      RENDERER.disableLights(sceneNode->mins, sceneNode->maxs);
-    }
 
-    // set the color  
-    sceneNode->setColor();
+  // set the color  
+  sceneNode->setColor();
 
-    if (BZDBCache::lighting) {
-      if (BZDBCache::texture) {
-        drawVTN();
-      } else {
-        drawVN();
-      }
+  if (BZDBCache::lighting) {
+    if (BZDBCache::texture) {
+      drawVTN();
     } else {
-      if (BZDBCache::texture) {
-        drawVT();
-      } else {
-        drawV();
-      }
+      drawVN();
     }
-
-    if (switchLights) {
-      RENDERER.reenableLights();
+  } else {
+    if (BZDBCache::texture) {
+      drawVT();
+    } else {
+      drawV();
     }
   }
 
+  if (switchLights) {
+    RENDERER.reenableLights();
+  }
+  
+  return;
+}
+
+
+void MeshFragSceneNode::Geometry::renderShadow()
+{
+  drawV();
   return;
 }
 
@@ -214,9 +214,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
   setSphere(mySphere);
   
   // make the rendering nodes
-  renderNode = new Geometry(this, false);
-  shadowNode = new Geometry(this, true);
-  shadowNode->setStyle(0);
+  renderNode = new Geometry(this);
 
 
   // count the number of actual vertices
@@ -291,7 +289,6 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 MeshFragSceneNode::~MeshFragSceneNode()
 {
   delete renderNode;
-  delete shadowNode;
   delete[] faces;
   delete[] vertices;
   delete[] normals;
@@ -360,7 +357,7 @@ void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 
 void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
-  renderer.addShadowNode(shadowNode);
+  renderer.addShadowNode(renderNode);
   return;
 }
 

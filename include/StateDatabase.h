@@ -294,6 +294,7 @@ public:
   static const std::string	BZDB_UPDATETHROTTLERATE;
   static const std::string	BZDB_VELOCITYAD;
   static const std::string	BZDB_WALLHEIGHT;
+  static const std::string	BZDB_WEAPONS;
   static const std::string	BZDB_WIDEANGLEANG;
   static const std::string	BZDB_WINGSGRAVITY;
   static const std::string	BZDB_WINGSJUMPCOUNT;

@@ -4153,6 +4153,7 @@ void			drawFrame(const float dt)
   GLfloat eyePoint[3];
   GLfloat targetPoint[3];
   int i;
+  
 
   if (!unmapped) {
     // compute fps
@@ -4344,8 +4345,12 @@ void			drawFrame(const float dt)
 
       // if i'm inside a building then add eighth dimension scene node.
       if (myTank->getContainingBuilding()) {
-	SceneNode* node = world->getInsideSceneNode(myTank->getContainingBuilding());
-	if (node) scene->addDynamicNode(node);
+        int n;
+        const Obstacle* obs = myTank->getContainingBuilding();
+        // add the inside nodes
+        for (n = 0; n < obs->getInsideSceneNodeCount(); n++) {
+          scene->addDynamicNode(obs->getInsideSceneNodeList()[n]);
+        }
       }
     }
 
@@ -4357,9 +4362,18 @@ void			drawFrame(const float dt)
 			     myTank->isFlagActive());
 
     // turn on scene dimming when showing menu or when
-    // we're dead and no longer exploding.
-    sceneRenderer->setDim(HUDDialogStack::get()->isActive() ||
-			  (myTank && !roaming && !myTank->isAlive() && !myTank->isExploding()));
+    // we're dead and no longer exploding, or in a building.
+    bool insideDim = false;
+    if (myTank) {
+      const ViewFrustum& vf = sceneRenderer->getViewFrustum();
+      // using NearPlane is only really valid for perpendicular entrances
+      if (world->inBuilding(vf.getEye(), NearPlane, 0.0f) != NULL) {
+        insideDim = true;
+      }
+    }
+    sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
+			  (myTank && !roaming && !myTank->isAlive() &&
+			   !myTank->isExploding()));
 
     // set hud state
     hud->setDim(HUDDialogStack::get()->isActive());
@@ -4654,8 +4668,10 @@ void			drawFrame(const float dt)
     mainWindow->getWindow()->swapBuffers();
 
     // remove dynamic nodes from this frame
-    if (scene) scene->removeDynamicNodes();
-
+    if (scene) {
+      scene->removeDynamicNodes();
+    }
+    
   } else {
     // wait around a little to avoid spinning the CPU when iconified
     media->sleep(0.05f);

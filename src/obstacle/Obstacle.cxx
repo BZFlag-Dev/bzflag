@@ -29,6 +29,9 @@ Obstacle::Obstacle()
   angle = 0;
   driveThrough = false;
   shootThrough = false;
+
+  insideNodeCount = 0;
+  insideNodes = NULL;
 }
 
 Obstacle::Obstacle(const float* _pos, float _angle,
@@ -45,11 +48,15 @@ Obstacle::Obstacle(const float* _pos, float _angle,
   driveThrough = drive;
   shootThrough = shoot;
   ZFlip = false;
+
+  insideNodeCount = 0;
+  insideNodes = NULL;
 }
 
 Obstacle::~Obstacle()
 {
-  // do nothing
+  delete[] insideNodes;
+  return;
 }
 
 bool			Obstacle::isValid() const
@@ -214,6 +221,36 @@ float			Obstacle::getHitNormal(
   return minTime;
 }
 
+
+void Obstacle::addInsideSceneNode(SceneNode* node)
+{
+  insideNodeCount++;
+  SceneNode** tmp = new SceneNode*[insideNodeCount];
+  memcpy(tmp, insideNodes, (insideNodeCount - 1) * sizeof(SceneNode*));
+  delete[] insideNodes;
+  insideNodes = tmp;
+  insideNodes[insideNodeCount - 1] = node;
+}
+
+
+void Obstacle::freeInsideSceneNodeList()
+{
+  delete[] insideNodes;
+  insideNodes = NULL;
+  return;
+}
+
+
+int Obstacle::getInsideSceneNodeCount() const
+{
+  return insideNodeCount;
+}
+
+
+SceneNode** Obstacle::getInsideSceneNodeList() const
+{
+  return insideNodes;
+}
 
 
 // Local Variables: ***

@@ -52,6 +52,7 @@ class MeshPolySceneNode : public WallSceneNode {
         ~Geometry();
 	void setStyle(int _style) { style = _style; }
 	void render();
+	void renderShadow();
 	const GLfloat* getVertex(int i) const;
         const GLfloat (*getVertices() const)[3];
 	const int getVertexCount() const;
@@ -95,7 +96,6 @@ class MeshPolySceneNode : public WallSceneNode {
                      GLfloat* p, GLfloat* uv) const;
 
     Geometry* node;
-    Geometry* shadowNode;
     float mins[3], maxs[3];
 };
 

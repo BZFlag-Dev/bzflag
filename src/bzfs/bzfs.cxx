@@ -4963,7 +4963,9 @@ int main(int argc, char **argv)
     }
 
     // Fire world weapons
-    world->getWorldWeapons().fire();
+    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+      world->getWorldWeapons().fire();
+    }
 
     // Clean pending players
     GameKeeper::Player::clean();

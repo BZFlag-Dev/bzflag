@@ -50,7 +50,7 @@ MeshPolySceneNode::Geometry::~Geometry()
   return;
 }
 
-void			MeshPolySceneNode::Geometry::render()
+void MeshPolySceneNode::Geometry::render()
 {
   wall->setColor();
 
@@ -70,6 +70,12 @@ void			MeshPolySceneNode::Geometry::render()
   }
 
   return;
+}
+
+
+void MeshPolySceneNode::Geometry::renderShadow()
+{
+  drawV();
 }
 
 
@@ -131,7 +137,7 @@ void MeshPolySceneNode::Geometry::drawVTN() const
 
 MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
                                      const GLfloat3Array& vertices,
-				     const GLfloat3Array& normals,
+                                     const GLfloat3Array& normals,
                                      const GLfloat2Array& texcoords)
 {
   int i, j;
@@ -186,8 +192,6 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   }
   area[0] = 0.5f * fabsf(area[0]) / normal[ignoreAxis];
   node = new Geometry(this, vertices, normals, texcoords, getPlane());
-  shadowNode = new Geometry(this, vertices, normals, texcoords, getPlane());
-  shadowNode->setStyle(0);
 
   // set lod info
   setNumLODs(1, area);
@@ -233,7 +237,6 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
 MeshPolySceneNode::~MeshPolySceneNode()
 {
   delete node;
-  delete shadowNode;
   return;
 }
 
@@ -308,7 +311,7 @@ void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 
 void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 {
-  renderer.addShadowNode(shadowNode);
+  renderer.addShadowNode(node);
   return;
 }
 

@@ -74,6 +74,9 @@ class SceneNode {
 				SceneNode*& front, SceneNode*& back) const;
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
+    
+    static void		enableInvertView();
+    static void		disableInvertView();
 
     static void		setColorOverride(bool = true);
     static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
