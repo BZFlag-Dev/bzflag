@@ -31,9 +31,6 @@
 #include <vector>
 #include <stdarg.h>
 #include <stdio.h>
-#ifdef HAVE_STDINT_H
-#  include <stdint.h>
-#endif
 
 /* near zero by some epsilon convenience define since relying on
 * the floating point unit for proper equivalence is not safe
@@ -102,7 +99,20 @@
 #endif
 #include <sys/types.h>
 
+#if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
+typedef u_int16_t	uint16_t;
+typedef u_int32_t	uint32_t;
 #endif
+#if defined(sun)
+typedef signed short	int16_t;
+typedef ushort_t	uint16_t;
+typedef signed int	int32_t;
+typedef uint_t		uint32_t;
+#endif
+
+#endif
+
+typedef unsigned char	uint8_t;
 
 #if defined( macintosh ) || defined( __BEOS__ )
 
@@ -154,6 +164,13 @@
 #ifndef M_SQRT1_2
 #define	M_SQRT1_2	0.70710678118654752440f
 #endif
+
+// missing types
+
+typedef signed short	int16_t;
+typedef unsigned short	uint16_t;
+typedef signed int	int32_t;
+typedef unsigned int	uint32_t;
 
 #endif /* !defined(_WIN32) */
 

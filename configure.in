@@ -1,11 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/bzflag/bzflag.cxx)
-AC_PREREQ(2.14)
-
-#
-# Package Information
-#
 
 # sed magic to get version numbers from include/version.h
 MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
@@ -22,84 +17,20 @@ AM_CONFIG_HEADER(include/config.h)
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
 AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
 
-#
-# Check for programs.
-#
-
-AC_PROG_CC
-AC_PROG_CXX
-AC_PROG_CPP
-AC_PROG_CXXCPP
+#Checks for programs.
 AC_PROG_MAKE_SET
+AC_PROG_CC
+CFLAGS=
+AC_PROG_CXX
+CXXFLAGS=
 AC_PROG_LN_S
 AC_PROG_RANLIB
-CFLAGS=
-CXXFLAGS=
 
+# Just for kicks
+echo -n "checking for artificial intelligence for robots..." 1>&6
+echo " warning: not found" 1>&6
 
-#
-# Check for libraries. 
-#
-
-# for BeOS - old network stack don't have those libs ( move it in the case switch ?)
-AC_CHECK_LIB(socket, socket)
-AC_CHECK_LIB(bind, gethostent)
-
-AC_CHECK_LIB(m, sqrtf)
-
-
-#
-# Check for headers.
-#
-
-AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
-AC_HEADER_DIRENT
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
-AC_CHECK_HEADER( bitset,, 
-                 AC_MSG_ERROR( [[
-Header <bitset> not found. This is probably caused by having an incomplete
-C++ standard library implementation. Please upgrade to a compiler that is 
-ISO/IEC 14882 conformant.]]))
-AC_LANG_RESTORE
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h float.h langinfo.h limits.h locale.h \
-		  malloc.h memory.h netdb.h netinet/in.h sgtty.h stddef.h \
-		  stdint.h stdlib.h string.h strings.h sys/file.h sys/ioctl.h \
-		  sys/mount.h sys/param.h sys/socket.h sys/statfs.h \
-		  sys/time.h sys/timeb.h syslog.h termio.h termios.h unistd.h \
-		  utime.h values.h wchar.h])
-
-
-#
-# Checks for types and structures.
-#
-
-AC_CHECK_TYPE(int8_t,, 
-	      [AC_DEFINE_UNQUOTED(int8_t, signed char, 
-	      [Define to `signed char' if <sys/types.h> does not define.])])
-AC_CHECK_TYPE(int16_t,, 
-	      [AC_DEFINE_UNQUOTED(int16_t, signed short, 
-	      [Define to `signed short' if <sys/types.h> does not define.])])
-AC_CHECK_TYPE(int32_t,, 
-	      [AC_DEFINE_UNQUOTED(int32_t, signed long, 
-	      [Define to `signed long' if <sys/types.h> does not define.])])
-AC_CHECK_TYPE(int64_t,, 
-	      [AC_DEFINE_UNQUOTED(int64_t, signed long long, 
-	      [Define to `signed long long' if <sys/types.h> does not define.])])
-AC_CHECK_TYPE(uint8_t,, 
-	      [AC_DEFINE_UNQUOTED(uint8_t, unsigned char, 
-	      [Define to `unsigned char' if <sys/types.h> does not define.])])
-AC_CHECK_TYPE(uint16_t,, 
-	      [AC_DEFINE_UNQUOTED(uint16_t, unsigned short, 
-	      [Define to `unsigned short' if <sys/types.h> does not define.])])
-AC_CHECK_TYPE(uint32_t,, 
-	      [AC_DEFINE_UNQUOTED(uint32_t, unsigned long, 
-	      [Define to `unsigned long' if <sys/types.h> does not define.])])
-AC_CHECK_TYPE(uint64_t,, 
-	      [AC_DEFINE_UNQUOTED(uint64_t, unsigned long long, 
-	      [Define to `unsigned long long' if <sys/types.h> does not define.])])
-
+#Checks for types
 #AM_CHECK_TYPES(socklen_t)
 #AC_CHECK_TYPES(socklen_t)
 
@@ -113,16 +44,6 @@ if test $ac_cv_type_socklen_t != yes; then
 else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
 fi
-
-
-#
-# Check for compiler characteristics.
-#
-
-AC_CHECK_FUNC(getrlimit)
-
-# FIXME - all of the host and os conditional checks below really need to
-# be minimized or eliminated.  Try not to use for new checks.
 
 AM_CONDITIONAL(LINUX, test x$host_os = xlinux-gnu)
 AM_CONDITIONAL(BEOS, test x$host_os = xbeos)
@@ -201,6 +122,14 @@ case $host_os in
 #    LIBS="-lbind -lsocket -lbe";;
     LIBS="-lbe";;
 esac;
+
+AC_CHECK_FUNC(getrlimit)
+
+# for BeOS - old network stack don't have those libs ( move it in the case switch ?)
+AC_CHECK_LIB(socket, socket)
+AC_CHECK_LIB(bind, gethostent)
+
+AC_CHECK_LIB(m, sqrtf)
 
 # avoid using X11 in BeOS
 if test $host_os != beos; then
@@ -486,10 +415,6 @@ fi;
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
-
-#
-# Output files.
-# 
 
 AC_OUTPUT(bzflag.spec
 	bzflag.lsm
