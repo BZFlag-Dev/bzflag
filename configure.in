@@ -3,11 +3,12 @@
 AC_INIT(src/bzflag/bzflag.cxx)
 
 # sed magic to get version numbers from include/version.h
-MAJOR_VERSION=`sed  -e 's/#[ \t]*define[ \t]\+BZ_MAJOR_VERSION[ \t]\+\(.*\).*/\1/' -e t -e d < \$srcdir/include/version.h`
-MINOR_VERSION=`sed  -e 's/#[ \t]*define[ \t]\+BZ_MINOR_VERSION[ \t]\+\(.*\).*/\1/' -e t -e d < \$srcdir/include/version.h`
-REV=`sed  -e 's/#[ \t]*define[ \t]\+BZ_REV[ \t]\+\(.*\).*/\1/' -e t -e d < \$srcdir/include/version.h`
+MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
+MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
+REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
 
 CONF_DATE=`date +%Y%m%d`
+echo "BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV-$CONF_DATE"
 AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV-$CONF_DATE)
 AM_CONFIG_HEADER(include/config.h)
 
