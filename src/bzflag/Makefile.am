@@ -8,6 +8,8 @@ MAINTAINERCLEANFILES = \
 bzflag_SOURCES =			\
 	ActionBinding.cxx		\
 	ActionBinding.h			\
+	AudioMenu.cxx			\
+	AudioMenu.h			\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
 	ComposeDefaultKey.cxx		\

@@ -29,7 +29,6 @@
 #include "TextUtils.h"
 
 /* local implementation headers */
-#include "sound.h"
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "MainWindow.h"
@@ -47,7 +46,7 @@ extern ControlPanel* controlPanel;
 
 OptionsMenu::OptionsMenu() : formatMenu(NULL),
 			     guiOptionsMenu(NULL), saveWorldMenu(NULL),
-			     inputMenu(NULL)
+			     inputMenu(NULL), audioMenu(NULL)
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
@@ -212,30 +211,6 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL),
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
-  option->setLabel("Sound Volume:");
-  option->setCallback(callback, (void*)"s");
-  options = &option->getList();
-  if (isSoundOpen()) {
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("1"));
-    options->push_back(std::string("2"));
-    options->push_back(std::string("3"));
-    options->push_back(std::string("4"));
-    options->push_back(std::string("5"));
-    options->push_back(std::string("6"));
-    options->push_back(std::string("7"));
-    options->push_back(std::string("8"));
-    options->push_back(std::string("9"));
-    options->push_back(std::string("10"));
-  }
-  else {
-    options->push_back(std::string("Unavailable"));
-  }
-  option->update();
-  list.push_back(option);
-
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
   option->setLabel("UDP network connection:");
   option->setCallback(callback, (void*)"U");
   options = &option->getList();
@@ -282,6 +257,11 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL),
   label->setLabel("Input Setting");
   list.push_back(label);
 
+  audioSetting = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Audio Setting");
+  list.push_back(label);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -291,6 +271,7 @@ OptionsMenu::~OptionsMenu()
   delete guiOptionsMenu;
   delete saveWorldMenu;
   delete inputMenu;
+  delete audioMenu;
 }
 
 void OptionsMenu::execute()
@@ -318,6 +299,10 @@ void OptionsMenu::execute()
   else if (focus == inputSetting) {
     if (!inputMenu) inputMenu = new InputMenu;
     HUDDialogStack::get()->push(inputMenu);
+  }
+  else if (focus == audioSetting) {
+    if (!audioMenu) audioMenu = new AudioMenu;
+    HUDDialogStack::get()->push(audioMenu);
   }
 }
 
@@ -392,9 +377,6 @@ void OptionsMenu::resize(int width, int height)
     if (window->hasGammaControl())
       ((HUDuiList*)list[i])->setIndex(gammaToIndex(window->getGamma()));
     i++;
-
-    // sound
-    ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
 
     const StartupInfo* info = getStartupInfo();
 
@@ -487,11 +469,6 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
       // FIXME - test for whether the z buffer will work
       setSceneDatabase();
       sceneRenderer->notifyStyleChange();
-      break;
-
-    case 's':
-      BZDB.set("volume", string_util::format("%d", list->getIndex()));
-      setSoundVolume(list->getIndex());
       break;
 
     case 'U': {

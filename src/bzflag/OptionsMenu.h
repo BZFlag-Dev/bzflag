@@ -21,6 +21,7 @@
 #include "GUIOptionsMenu.h"
 #include "SaveWorldMenu.h"
 #include "InputMenu.h"
+#include "AudioMenu.h"
 
 
 class OptionsMenu : public HUDDialog {
@@ -45,10 +46,12 @@ private:
   HUDuiControl*	clearCache;
   HUDuiControl*	saveWorld;
   HUDuiControl*	inputSetting;
+  HUDuiControl*	audioSetting;
   FormatMenu*		formatMenu;
   GUIOptionsMenu*	guiOptionsMenu;
   SaveWorldMenu*	saveWorldMenu;
   InputMenu*            inputMenu;
+  AudioMenu*            audioMenu;
 };
 
 
