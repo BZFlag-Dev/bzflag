@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
+  in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
+  Could we be running of the end of the packet (ie count is fubar'ed?)
+  Perhaps add sanity check for not overruning end of buffer.
+
 - Player kicked after getting V flag (and possibly TH) stolen by another thief.
 
 - if you jump up and hit a flipped pyramid you will stick to it until you
