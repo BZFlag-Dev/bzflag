@@ -162,6 +162,10 @@ SOURCE=..\src\scene\SceneVisitor.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\scene\SceneVisitorBaseRender.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\scene\SceneVisitorFind.cxx
 # End Source File
 # Begin Source File
