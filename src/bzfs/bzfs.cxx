@@ -2569,6 +2569,7 @@ static void sendTeamUpdate(int teamIndex, int index = -1)
     directMessage(index, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
+// FIXME - can be simplified with the new playerid now!?
 static void sendPlayerUpdate(int playerIndex, int index)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -3979,7 +3980,7 @@ static void acceptClient()
   PlayerId playerIndex;
 
   // find open slot in players list
-  for (playerIndex = 1; playerIndex < maxPlayers; playerIndex++)
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
     if (player[playerIndex].state == PlayerNoExist)
       break;
 
@@ -4558,6 +4559,7 @@ static void annointNewRabbit()
   float topRatio = -100000.0f;
   int i;
   int oldRabbit = rabbitIndex;
+  rabbitIndex = 255;
 
   for (i = 0; i < maxPlayers; i++) {
     if (i != oldRabbit && player[i].state == PlayerAlive) {
