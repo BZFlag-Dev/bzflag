@@ -17,30 +17,37 @@
 
 /* bzfs implementation headers */
 #include "CustomMeshFace.h"
+#include "ParseMaterial.h"
 
 
 CustomMesh::CustomMesh()
 {
   face = NULL;
-  driveThrough = false;
-  shootThrough = false;
   return;
 }
 
 
 CustomMesh::~CustomMesh()
 {
+  if (face != NULL) {
+    std::cout << "discarded incomplete mesh face" << std::endl;
+    delete face;
+  }
+  
   std::vector<CustomMeshFace*>::iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
     CustomMeshFace* face = *face_it;
     delete face;
   }
+
   return;
 }
 
 
 bool CustomMesh::read(const char *cmd, std::istream& input)
 {
+  bool materror;
+  
   if (strcasecmp(cmd, "endface") == 0) {
     if (face == NULL) {
       std::cout << "extra 'endface' keyword found" << std::endl;
@@ -59,9 +66,6 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       delete face;
     }
     face = new CustomMeshFace (material);
-  }
-  else if (strcasecmp(cmd, "reset") == 0) {
-    material.reset();
   }
   else if (strcasecmp(cmd, "inside") == 0) {
     cfvec3 inside;
@@ -90,49 +94,15 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     input >> texcoord[0] >> texcoord[1];
     texcoords.push_back(texcoord);
   }
-  else if (strcasecmp(cmd, "notexture") == 0) {
-    material.texture = "";
-  }
-  else if (strcasecmp(cmd, "texture") == 0) {
-    input >> material.texture;
-  }
-  else if (strcasecmp(cmd, "texmat") == 0) {
-    input >> material.textureMatrix;
-  }
-  else if (strcasecmp(cmd, "dyncol") == 0) {
-    input >> material.dynamicColor;
-  }
-  else if (strcasecmp(cmd, "ambient") == 0) {
-    input >> material.ambient[0] >> material.ambient[1] >> 
-             material.ambient[2] >> material.ambient[3];
-  }
-  else if (strcasecmp(cmd, "diffuse") == 0) {
-    input >> material.diffuse[0] >> material.diffuse[1] >> 
-             material.diffuse[2] >> material.diffuse[3];
-  }
-  else if (strcasecmp(cmd, "specular") == 0) {
-    input >> material.specular[0] >> material.specular[1] >> 
-             material.specular[2] >> material.specular[3];
-  }
-  else if (strcasecmp(cmd, "emission") == 0) {
-    input >> material.emission[0] >> material.emission[1] >> 
-             material.emission[2] >> material.emission[3];
-  }
-  else if (strcasecmp(cmd, "shininess") == 0) {
-    input >> material.shininess;
-  }
-  else if (strcasecmp(cmd, "drivethrough") == 0) {
-    driveThrough = true;
-  }
-  else if (strcasecmp(cmd, "shootthrough") == 0) {
-    shootThrough = true;
-  }
-  else if (strcasecmp(cmd, "passable") == 0) {
-    driveThrough = shootThrough = true;
+  else if (parseMaterial(cmd, input, material, materror)) {
+    if (materror) {
+      return false;
+    }
   }
   else {
-    // NOTE: we don't use a WorldFileObstacle
-    return WorldFileObject::read(cmd, input);
+    // NOTE: the position, size, and rotation
+    //       parameters are currently ignored
+    return WorldFileObstacle::read(cmd, input);
   }
 
   return true;
@@ -141,11 +111,6 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 
 void CustomMesh::write(WorldInfo *world) const
 {
-  if (face != NULL) {
-    std::cout << "discarding incomplete mesh face" << std::endl;
-    delete face;
-  }
-  
   MeshObstacle* mesh = new MeshObstacle(
     checkTypes, checkPoints, vertices, normals, texcoords, 
     faces.size(), driveThrough, shootThrough);
@@ -155,6 +120,7 @@ void CustomMesh::write(WorldInfo *world) const
     const CustomMeshFace* face = *face_it;
     face->write(mesh);
   }
+
   mesh->finalize();
   
   world->addMesh(mesh);

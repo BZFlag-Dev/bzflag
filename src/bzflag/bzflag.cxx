@@ -152,7 +152,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "pyrWallTexture",	        "pyrwall",              true,	StateDatabase::ReadWrite,	NULL },
   { "tetraWallTexture",	        "tetrawall",            true,	StateDatabase::ReadWrite,	NULL },
   { "cautionTexture",	        "caution",              true,	StateDatabase::ReadWrite,	NULL },
-  { "deadUnderTexture",	        "deadunder",            true,	StateDatabase::ReadWrite,	NULL },
+  { "waterTexture",	        "water",                true,	StateDatabase::ReadWrite,	NULL },
 
   // default fonts
   { "consoleFont",		"VeraMonoBold",		true,	StateDatabase::ReadWrite,	NULL },

@@ -32,6 +32,7 @@ WorldInfo::WorldInfo() :
   size[0] = 400.0f;
   size[1] = 400.0f;
   gravity = -9.81f;
+  waterLevel = -1.0f;
 }
 
 WorldInfo::~WorldInfo()
@@ -154,6 +155,17 @@ void WorldInfo::addWeapon(const FlagType *type, const float *origin, float direc
                           float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
 {
   worldWeapons.add(type, origin, direction, initdelay, delay, sync);
+}
+
+void WorldInfo::addWaterLevel (float level, const MeshMaterial& material)
+{
+  waterLevel = level;
+  waterMaterial = material;
+}
+
+float WorldInfo::getWaterLevel() const
+{
+  return waterLevel;
 }
 
 float WorldInfo::getMaxWorldHeight()
@@ -449,6 +461,15 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     }
   }
 
+  // make the default water texture matrix if it hasn't been set
+  // by the map. this has to be done after we've loaded all of
+  // the map defined matrices,
+  if ((waterLevel >= 0.0f) && (waterMaterial.textureMatrix == -2)) {
+    TextureMatrix* texmat = new TextureMatrix;
+    texmat->setShiftParams(0.05f, 0.0f);
+    waterMaterial.textureMatrix = TEXMATRIXMGR.addMatrix(texmat);
+  }
+  
   databaseSize =
     (2 + 2 + WorldCodeBaseSize) * numBases +
     (2 + 2 + WorldCodeWallSize) * walls.size() +
@@ -458,14 +479,17 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
     worldWeapons.packSize() + entryZones.packSize() + 
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize();
-
+  // add water level size
+  databaseSize += sizeof(float);
+  if (waterLevel >= 0.0f) {
+    databaseSize += waterMaterial.packSize();
+  }
   // tetra sizes are variable
   for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
     TetraBuilding &tetra = *tetra_it;
     databaseSize = databaseSize + (2 + 2); 
     databaseSize = databaseSize + tetra.packSize();
   }
-
   // meshes have variable sizes
   for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
     MeshObstacle &mesh = (**mesh_it);
@@ -477,12 +501,18 @@ int WorldInfo::packDatabase(const BasesList* baseList)
 
   unsigned char	bitMask;
   
+  // add water level
+  databasePtr = nboPackFloat(databasePtr, waterLevel);
+  if (waterLevel >= 0.0f) {
+    databasePtr = waterMaterial.pack(databasePtr);
+  }
+
   // add dynamic colors
   databasePtr = DYNCOLORMGR.pack(databasePtr);
 
   // add texture matrices
   databasePtr = TEXMATRIXMGR.pack(databasePtr);
-
+  
   // add meshes
   for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
     MeshObstacle &mesh = **mesh_it;

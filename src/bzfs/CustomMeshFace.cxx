@@ -15,6 +15,9 @@
 /* interface header */
 #include "CustomMeshFace.h"
 
+/* bzfs implementation headers */
+#include "ParseMaterial.h"
+
 /* system headers */
 #include <sstream>
 #include <iostream>
@@ -47,6 +50,8 @@ static void getIntList (std::istream& input, std::vector<int>& list)
 
 bool CustomMeshFace::read(const char *cmd, std::istream& input)
 {
+  bool materror;
+  
   if (strcasecmp(cmd, "vertices") == 0) {
     getIntList (input, vertices);
     if (vertices.size() < 3) {
@@ -68,36 +73,10 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
       return false;
     }
   }
-  else if (strcasecmp(cmd, "notexture") == 0) {
-    material.texture = "";
-  }
-  else if (strcasecmp(cmd, "texture") == 0) {
-    input >> material.texture;
-  }
-  else if (strcasecmp(cmd, "texmat") == 0) {
-    input >> material.textureMatrix;
-  }
-  else if (strcasecmp(cmd, "dyncol") == 0) {
-    input >> material.dynamicColor;
-  }
-  else if (strcasecmp(cmd, "ambient") == 0) {
-    input >> material.ambient[0] >> material.ambient[1] >> 
-             material.ambient[2] >> material.ambient[3];
-  }
-  else if (strcasecmp(cmd, "diffuse") == 0) {
-    input >> material.diffuse[0] >> material.diffuse[1] >> 
-             material.diffuse[2] >> material.diffuse[3];
-  }
-  else if (strcasecmp(cmd, "specular") == 0) {
-    input >> material.specular[0] >> material.specular[1] >> 
-             material.specular[2] >> material.specular[3];
-  }
-  else if (strcasecmp(cmd, "emission") == 0) {
-    input >> material.emission[0] >> material.emission[1] >> 
-             material.emission[2] >> material.emission[3];
-  }
-  else if (strcasecmp(cmd, "shininess") == 0) {
-    input >> material.shininess;
+  else if (parseMaterial(cmd, input, material, materror)) {
+    if (materror) {
+      return false;
+    }
   }
   else {
     std::cout << "unknown mesh face property: " << cmd << std::endl;

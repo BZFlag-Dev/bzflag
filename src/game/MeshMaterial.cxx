@@ -18,7 +18,7 @@
 
 void MeshMaterial::reset()
 {
-  texture = "mesh";
+  texture = "";
   textureMatrix = -1;
   dynamicColor = -1;
   const float defAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -30,7 +30,8 @@ void MeshMaterial::reset()
   memcpy (specular, defSpecular, sizeof(specular));
   memcpy (emission, defEmission, sizeof(emission));
   shininess = 0.0f;
-  useColor = true;
+  useTexture = true;
+  useColorOnTexture = true;
   return;
 }
 
@@ -52,7 +53,8 @@ MeshMaterial::MeshMaterial(const MeshMaterial& m)
   memcpy (specular, m.specular, sizeof(specular));
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
-  useColor = m.useColor;
+  useTexture = m.useTexture;
+  useColorOnTexture = m.useColorOnTexture;
   return;
 }
 
@@ -67,7 +69,8 @@ MeshMaterial& MeshMaterial::operator=(const MeshMaterial& m)
   memcpy (specular, m.specular, sizeof(specular));
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
-  useColor = m.useColor;
+  useTexture = m.useTexture;
+  useColorOnTexture = m.useColorOnTexture;
   return *this;
 }
 
@@ -78,21 +81,68 @@ bool MeshMaterial::operator==(const MeshMaterial& m)
       (textureMatrix != m.textureMatrix) ||
       (dynamicColor != m.dynamicColor) ||
       (shininess != m.shininess) ||
-      (useColor != m.useColor)) {
+      (memcmp (ambient, m.ambient, sizeof(float[4])) != 0) ||
+      (memcmp (diffuse, m.diffuse, sizeof(float[4])) != 0) ||
+      (memcmp (specular, m.specular, sizeof(float[4])) != 0) ||
+      (memcmp (emission, m.emission, sizeof(float[4])) != 0) ||
+      (useTexture != m.useTexture) ||
+      (useColorOnTexture != m.useColorOnTexture)) {
     return false;
-  }
-  for (int i = 0; i < 4; i++) {
-    if ((ambient[i] != m.ambient[i]) ||
-        (diffuse[i] != m.diffuse[i]) ||
-        (specular[i] != m.specular[i]) ||
-        (emission[i] != m.emission[i])) {
-      return false;
-    }
   }
   return true;
 }
 
 
+bool MeshMaterial::copyDiffs(const MeshMaterial& moded,
+                             const MeshMaterial& orig)
+{
+  bool changed = false;
+  
+  if (orig.texture != moded.texture) {
+    texture = moded.texture;
+    changed = true;
+  }
+  if (orig.textureMatrix != moded.textureMatrix) {
+    textureMatrix = moded.textureMatrix;
+    changed = true;
+  }
+  if (orig.dynamicColor != moded.dynamicColor) {
+    dynamicColor = moded.dynamicColor;
+    changed = true;
+  }
+  if (orig.shininess != moded.shininess) {
+    shininess = moded.shininess;
+    changed = true;
+  }
+  if (memcmp (orig.ambient, moded.ambient, sizeof(float[4])) != 0) {
+    memcpy (ambient, moded.ambient, sizeof(float[4]));
+    changed = true;
+  }
+  if (memcmp (orig.diffuse, moded.diffuse, sizeof(float[4])) != 0) {
+    memcpy (diffuse, moded.diffuse, sizeof(float[4]));
+    changed = true;
+  }
+  if (memcmp (orig.specular, moded.specular, sizeof(float[4])) != 0) {
+    memcpy (specular, moded.specular, sizeof(float[4]));
+    changed = true;
+  }
+  if (memcmp (orig.emission, moded.emission, sizeof(float[4])) != 0) {
+    memcpy (emission, moded.emission, sizeof(float[4]));
+    changed = true;
+  }
+  if (orig.useTexture != moded.useTexture) {
+    useTexture = moded.useTexture;
+    changed = true;
+  }
+  if (orig.useColorOnTexture != moded.useColorOnTexture) {
+    useColorOnTexture = moded.useColorOnTexture;
+    changed = true;
+  }
+  
+  return changed;
+}                            
+ 
+                           
 static void* pack4Float(void *buf, const float values[4])
 {
   int i;
@@ -115,7 +165,15 @@ static void* unpack4Float(void *buf, float values[4])
 
 void* MeshMaterial::pack(void* buf)
 {
-	unsigned char len = (unsigned char)texture.size();
+  unsigned char stateByte = 0;
+  if (useTexture) {
+    stateByte = stateByte | (1 << 0);
+  }
+  if (useColorOnTexture) {
+    stateByte = stateByte | (1 << 1);
+  }
+  buf = nboPackUByte(buf, stateByte);
+  unsigned char len = (unsigned char)texture.size();
   buf = nboPackUByte(buf, len);
   buf = nboPackString(buf, texture.c_str(), len);
   buf = nboPackInt(buf, textureMatrix);
@@ -131,6 +189,16 @@ void* MeshMaterial::pack(void* buf)
 
 void* MeshMaterial::unpack(void* buf)
 {
+  unsigned char stateByte;
+  buf = nboUnpackUByte(buf, stateByte);
+  useTexture = false;
+  useColorOnTexture = false;
+  if (stateByte & (1 << 0)) {
+    useTexture = true;
+  } 
+  if (stateByte & (1 << 1)) {
+    useColorOnTexture = true;
+  } 
   char textureStr[256];
   unsigned char len;
   buf = nboUnpackUByte(buf, len);
@@ -150,7 +218,8 @@ void* MeshMaterial::unpack(void* buf)
 
 int MeshMaterial::packSize()
 {
-  const int basicSize = sizeof(unsigned char) + sizeof(int) + sizeof(int) +
+  const int basicSize = (2 * sizeof(unsigned char)) + 
+                        sizeof(int) + sizeof(int) +
                         (4 * sizeof(float[4])) + sizeof(float);
   unsigned char len = (unsigned char)texture.size();
   return basicSize + len;
@@ -159,8 +228,16 @@ int MeshMaterial::packSize()
 
 void MeshMaterial::print(std::ostream& out, int /*level*/)
 {
-  out << "    texture " << texture << std::endl;
+  if (texture.size() > 0) {
+    out << "    texture " << texture << std::endl;
+  }
   out << "    texmat " << textureMatrix << std::endl;
+  if (!useTexture) {
+    out << "    notexture" << std::endl;
+  }
+  if (!useColorOnTexture) {
+    out << "    notexcolor" << std::endl;
+  }
   out << "    dyncol " << dynamicColor << std::endl;
   out << "    ambient " << ambient[0] << " " << ambient[1] << " "
                         << ambient[2] << " " << ambient[3] << std::endl;

@@ -9,35 +9,23 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef __WORLDFILELOCATION_H__
-#define __WORLDFILELOCATION_H__
 
-// system headers
+#ifndef __PARSE_MATERIAL_H__
+#define __PARSE_MATERIAL_H__
+
+/* system interface headers */
 #include <iostream>
 
-// bzfs-specific headers
-#include "WorldFileObject.h"
+/* common interface headers */
+#include "MeshMaterial.h"
 
+extern bool parseMaterial(const char* cmd, std::istream& input,
+                          MeshMaterial& material, bool& error);
 
-class WorldFileLocation : public WorldFileObject {
-public:
-  WorldFileLocation();
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void write(WorldInfo*) const;
-  void *pack(void *buf) const;
-protected:
-  float pos[3];
-  float rotation;
-  float size[3];
-  float normal[3]; // for rotation
-};
-
-inline void WorldFileLocation::write(WorldInfo*) const {}
-
-#endif /* __WORLDFILELOCATION_H__ */
+#endif  /* __PARSE_MATERIAL_H__ */
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

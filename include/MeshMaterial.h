@@ -32,6 +32,7 @@ class MeshMaterial {
     MeshMaterial& operator=(const MeshMaterial& material);
     
     void reset();
+    bool copyDiffs(const MeshMaterial& moded, const MeshMaterial& orig);
     
     void *pack(void *);
     void *unpack(void *);
@@ -40,9 +41,6 @@ class MeshMaterial {
     void print(std::ostream& out, int level);
 
     // data
-    bool useColor;
-    bool useTexture;
-    bool useMaterial;
     std::string texture;
     int dynamicColor;
     int textureMatrix;
@@ -51,6 +49,8 @@ class MeshMaterial {
     float specular[4];
     float emission[4];
     float shininess;
+    bool useTexture;
+    bool useColorOnTexture;
 };
 
 #endif // BZF_MESH_MATERIAL_H

@@ -159,7 +159,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     driveThrough = shootThrough = true;
   }
   else {
-    // NOTE: we don't use a WorldFileObstacle
+    // NOTE: not using WorldFileObstacle
     return WorldFileObject::read(cmd, input);
   }
 

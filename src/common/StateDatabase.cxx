@@ -97,7 +97,6 @@ const std::string StateDatabase::BZDB_COLDETELEMENTS    = std::string("_coldetEl
 const std::string StateDatabase::BZDB_CULLDEPTH         = std::string("_cullDepth");
 const std::string StateDatabase::BZDB_CULLELEMENTS      = std::string("_cullElements");
 const std::string StateDatabase::BZDB_CULLOCCLUDERS     = std::string("_cullOccluders");
-const std::string StateDatabase::BZDB_DEADUNDER         = std::string("_deadUnder");
 const std::string StateDatabase::BZDB_DISABLEBOTS       = std::string("_disableBots");
 const std::string StateDatabase::BZDB_EXPLODETIME       = std::string("_explodeTime");
 const std::string StateDatabase::BZDB_FAKELAG           = std::string("_fakeLag");

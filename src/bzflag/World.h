@@ -33,6 +33,7 @@
 #include "Obstacle.h"
 #include "BundleMgr.h"
 #include "FlagSceneNode.h"
+#include "MeshMaterial.h"
 
 /* local interface headers */
 #include "RemotePlayer.h"
@@ -62,6 +63,8 @@ class World {
     bool		allowShakeWins() const;
     bool		allowRabbit() const;
     bool		allowHandicap() const;
+    float		getWaterLevel() const;
+    const MeshMaterial*	getWaterMaterial() const;
     float		getLinearAcceleration() const;
     float		getAngularAcceleration() const;
     float		getFlagShakeTimeout() const;
@@ -152,6 +155,8 @@ class World {
     typedef struct { float p[7]; } BaseParms;
     typedef std::vector<BaseParms> TeamBases;
     short		gameStyle;
+    float		waterLevel;
+    MeshMaterial	waterMaterial;
     float		linearAcceleration;
     float		angularAcceleration;
     int			maxPlayers;
@@ -242,6 +247,16 @@ inline bool		World::allowRabbit() const
 inline bool		World::allowHandicap() const
 {
   return (gameStyle & short(HandicapGameStyle)) != 0;
+}
+
+inline float		World::getWaterLevel() const
+{
+  return waterLevel;
+}
+
+inline const MeshMaterial*	World::getWaterMaterial() const
+{
+  return &waterMaterial;
 }
 
 inline float		World::getLinearAcceleration() const

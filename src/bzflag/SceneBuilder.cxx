@@ -25,18 +25,26 @@
 #include "ZSceneDatabase.h"
 #include "BSPSceneDatabase.h"
 #include "World.h"
+
+// scene node implemenation headers
 #include "WallSceneNode.h"
+#include "MeshPolySceneNode.h"
 #include "TankSceneNode.h"
-#include "StateDatabase.h"
-#include "TextureManager.h"
-#include "ObstacleSceneNodeGenerator.h"
 #include "BoxSceneNodeGenerator.h"
-#include "PyramidSceneNodeGenerator.h"
-#include "BaseSceneNodeGenerator.h"
-#include "TetraSceneNodeGenerator.h"
-#include "TeleporterSceneNodeGenerator.h"
 #include "WallSceneNodeGenerator.h"
 #include "MeshSceneNodeGenerator.h"
+#include "BaseSceneNodeGenerator.h"
+#include "TetraSceneNodeGenerator.h"
+#include "PyramidSceneNodeGenerator.h"
+#include "ObstacleSceneNodeGenerator.h"
+#include "TeleporterSceneNodeGenerator.h"
+
+// common implementation headers
+#include "StateDatabase.h"
+#include "TextureManager.h"
+#include "MeshMaterial.h"
+#include "DynamicColor.h"
+
 
 //
 // SceneDatabaseBuilder
@@ -272,10 +280,48 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     addBase(db, *baseScan);
     ++baseScan;
   }
+  
+  // add the water level node
+  addWaterLevel(db, world);
 
   return db;
 }
 
+void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
+                                         const World* world)
+{
+  float plane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
+  const float level = world->getWaterLevel();
+  plane[3] = level;
+
+  // don't draw it if it isn't active  
+  if (level < 0.0f) {
+    return;
+  }
+
+  // setup the vertex and texture coordinates  
+  float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  GLfloat3Array v(4);
+  GLfloat3Array n(0);
+  GLfloat2Array t(4);
+  v[0][0] = v[0][1] = v[1][1] = v[3][0] = -size/2.0f;
+  v[1][0] = v[2][0] = v[2][1] = v[3][1] = +size/2.0f;
+  v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;
+  t[0][0] = t[0][1] = t[1][1] = t[3][0] = 0.0f;
+  t[1][0] = t[2][0] = t[2][1] = t[3][1] = 2.0f;
+  
+  MeshPolySceneNode* node =
+    new MeshPolySceneNode(plane, v, n, t);
+    
+  // setup the material  
+  const MeshMaterial* mat = world->getWaterMaterial();
+  MeshSceneNodeGenerator::setupNodeMaterial(node, mat);
+
+  db->addStaticNode(node);
+    
+  return;
+}
+						
 void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
 						const WallObstacle& o)
 {

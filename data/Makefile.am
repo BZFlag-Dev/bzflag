@@ -12,7 +12,6 @@ EXTRA_DIST = \
 	burrow.wav	\
 	caution.png	\
 	clouds.png	\
-	deadunder.png	\
 	explode1.png	\
 	explosion.wav	\
 	fire.wav	\
@@ -79,6 +78,7 @@ EXTRA_DIST = \
 	thief.wav	\
 	title.png	\
 	wall.png	\
+	water.png	\
 	zone_ground.png
 
 MAINTAINERCLEANFILES = \

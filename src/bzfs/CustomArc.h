@@ -10,49 +10,47 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __CUSTOM_MESH_H__
-#define __CUSTOM_MESH_H__
+#ifndef __CUSTOM_ARC_H__
+#define __CUSTOM_ARC_H__
 
 /* interface header */
 #include "WorldFileObstacle.h"
 
 /* local interface headers */
 #include "WorldInfo.h"
-#include "CustomMeshFace.h"
 
 /* common interface headers */
 #include "MeshMaterial.h"
-#include "MeshObstacle.h"
-#include "vectors.h"
-
-/* system headers */
-#include <string>
-#include <vector>
 
 
-class CustomMesh : public WorldFileObstacle {
+class CustomArc : public WorldFileObstacle {
   public:
-    CustomMesh();
-    ~CustomMesh();
+    CustomArc();
+    ~CustomArc();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
 
   private:
-
-    MeshMaterial material; // holds current defaults
+    void makePie(bool isCircle);
+    void makeRing(bool isCircle);
     
-    std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> vertices;
-    std::vector<cfvec3> normals;
-    std::vector<cfvec2> texcoords;
-
-    CustomMeshFace* face;
-    std::vector<CustomMeshFace*> faces;
+    enum {
+      Top,
+      Bottom,
+      Inside,
+      Outside,
+      StartFace,
+      EndFace
+    };
+    
+    int divisions;
+    float angle;
+    float ratio;
+    MeshMaterial materials[6];
 };
 
 
-#endif  /* __CUSTOM_MESH_H__ */
+#endif  /* __CUSTOM_ARC_H__ */
 
 // Local variables: ***
 // mode: C++ ***

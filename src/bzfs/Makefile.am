@@ -14,6 +14,8 @@ bzfs_SOURCES = \
 	BZWReader.h \
 	CmdLineOptions.cxx \
 	CmdLineOptions.h \
+	CustomArc.cxx \
+	CustomArc.h \
 	CustomBase.cxx \
 	CustomBase.h \
 	CustomBox.cxx \
@@ -28,12 +30,16 @@ bzfs_SOURCES = \
 	CustomMesh.h \
 	CustomMeshFace.cxx \
 	CustomMeshFace.h \
+	CustomSphere.cxx \
+	CustomSphere.h \
 	CustomTextureMatrix.cxx \
 	CustomTextureMatrix.h \
 	CustomPyramid.cxx \
 	CustomPyramid.h \
 	CustomTetra.cxx \
 	CustomTetra.h \
+	CustomWaterLevel.cxx \
+	CustomWaterLevel.h \
 	CustomWeapon.cxx \
 	CustomWeapon.h \
 	CustomWorld.cxx \
@@ -50,7 +56,10 @@ bzfs_SOURCES = \
 	GameKeeper.h	\
 	ListServerConnection.cxx \
 	ListServerConnection.h \
+	MeshUtils.h \
 	PackVars.h \
+	ParseMaterial.cxx \
+	ParseMaterial.h \
 	Permissions.h \
 	Permissions.cxx \
 	RecordReplay.cxx \

@@ -90,23 +90,37 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
     makeTexcoords (face->getPlane(), vertices, texcoords);
   }
 
+  MeshPolySceneNode* node =
+    new MeshPolySceneNode(face->getPlane(), vertices, normals, texcoords);
+    
   const MeshMaterial* mat = face->getMaterial();
+  setupNodeMaterial(node, mat);
+  
+  faceNumber++;
+  
+  return node;
+}
+
+
+void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
+                                               const MeshMaterial* mat)
+{    
   OpenGLMaterial glMaterial(mat->specular, mat->emission, mat->shininess);
 
   int faceTexture = -1;
-  if (mat->texture != "") { // allow for untextured faces
+  bool gotSpecifiedTexture = false;
+  if (mat->useTexture) {
     TextureManager &tm = TextureManager::instance();
-    if (mat->texture.size()) {
+    if (mat->texture.size() > 0) {
       faceTexture = tm.getTextureID(mat->texture.c_str());
     }
-    if (faceTexture < 0) {
+    if (faceTexture >= 0) {
+      gotSpecifiedTexture = true;
+    } else {
       faceTexture = tm.getTextureID("mesh");
     }
   }
 
-  MeshPolySceneNode* node =
-    new MeshPolySceneNode(face->getPlane(), vertices, normals, texcoords);
-    
   // NOTE: the diffuse color is used,
   //       and not the ambient color
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->dynamicColor);
@@ -118,8 +132,14 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
   node->setLightedModulateColor(mat->diffuse);
   node->setMaterial(glMaterial);
   node->setTexture(faceTexture);  
-  node->setTextureMatrix(mat->textureMatrix);  
-  node->setUseColorTexture(false);
+  node->setTextureMatrix(mat->textureMatrix);
+  if (mat->useColorOnTexture || !gotSpecifiedTexture) {
+    // modulate with the color if asked to, or
+    // if the specified texture was not available
+    node->setUseColorTexture(false);
+  } else {
+    node->setUseColorTexture(true);
+  }
   if (dc) {
     const float color[4] = { 1.0f, 1.0f, 1.0f, 0.0f }; // alpha value != 1.0f
     if (dyncol->canHaveAlpha()) {
@@ -129,17 +149,15 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
       node->setLightedModulateColor(color);
     }
   }
-  
-  faceNumber++;
-  
-  return node;
 }
+
 
 bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
                                            const GLfloat3Array& vertices,
                                            GLfloat2Array& texcoords)
 {
   float x[3], y[3];
+
   vec3sub (x, vertices[1], vertices[0]);
   vec3cross (y, plane, x);
 
@@ -171,8 +189,8 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
   for (int i = 1; i < count; i++) {
     float delta[3];
     vec3sub (delta, vertices[i], vertices[0]);
-    texcoords[i][0] = uvScale * vec3dot(delta, x);
-    texcoords[i][1] = uvScale * vec3dot(delta, y);
+    texcoords[i][0] = vec3dot(delta, x) / uvScale;
+    texcoords[i][1] = vec3dot(delta, y) / uvScale;
   }
   
   return true;

@@ -165,7 +165,7 @@ enum BlowedUpReason {
   GotCaptured,
   GenocideEffect,
   SelfDestruct,
-  DeadUnderDeath
+  WaterDeath
 };
 static const char*	blowedUpMessage[] = {
   NULL,
@@ -1665,7 +1665,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	else if (!killerPlayer) {
 	  addMessage(victimPlayer, "destroyed by (UNKNOWN)");
 	}
-	else if (reason == DeadUnderDeath) {
+	else if (reason == WaterDeath) {
 	  message += "fell in the water";
 	  addMessage(victimPlayer, message);
 	}
@@ -2493,53 +2493,6 @@ static void		addExplosions(SceneDatabase* scene)
     scene->addDynamicNode(explosions[i]);
 }
 
-void addDeadUnder (SceneDatabase *db, float dt)
-{
-  static float texShift = 0.0f;
-  static GLfloat black[3] = {0.0f, 0.0f, 0.0f};
-  static OpenGLMaterial material(black, black, 0.0f);
-
-  float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
-  if (deadUnder < 0.0f) {
-    return;
-  }
-
-  float size = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
-  GLfloat base[3]  = {-size/2.0f, -size/2.0f, deadUnder};
-  GLfloat sEdge[3] = {0.0f, size, 0.0f};
-  GLfloat tEdge[3] = {size, 0.0f, 0.0f};
-
-  texShift = fmodf (texShift + (dt / 30.0f), 1.0f);
-  QuadWallSceneNode* node = new QuadWallSceneNode (base, tEdge, sEdge,
-                                                   texShift, 0.0f, 2.0, 2.0, false);
-
-  TextureManager &tm = TextureManager::instance();
-  int texture = tm.getTextureID(BZDB.get("deadUnderTexture").c_str(),true);
-
-  GLfloat color[4] = {1.0f, 1.0f, 1.0f, 0.94f};
-  if ((!BZDBCache::texture) || (texture < 0)) {
-    color[0] = 0.65f;
-    color[1] = 1.0f;
-    color[2] = 0.5f;
-  }
-  if (BZDB.isTrue("lighting")) {
-    // needs a little tweak
-    color[3] = 0.9f;
-  }
-
-  node->setColor(color);
-  node->setModulateColor(color);
-  node->setLightedColor(color);
-  node->setLightedModulateColor(color);
-  node->setMaterial(material);
-  node->setTexture(texture);
-  node->setUseColorTexture(false);
-
-  db->addDynamicNode(node);
-
-  return;
-}
-
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason)
 {
@@ -2702,7 +2655,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     // tell server I'm dead in case it doesn't already know
     if (reason == GotShot || reason == GotRunOver ||
         reason == GenocideEffect || reason == SelfDestruct ||
-        reason == DeadUnderDeath)
+        reason == WaterDeath)
       lookupServer(tank)->sendKilled(killer, reason, shotId);
   }
 
@@ -2819,7 +2772,7 @@ static void		checkEnvironment()
   // see if i've been shot
   const ShotPath* hit = NULL;
   float minTime = Infinity;
-  float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+  float waterLevel = World::getWorld()->getWaterLevel();
 
 
   if (myTank->getFlag() != Flags::Thief)
@@ -2860,8 +2813,8 @@ static void		checkEnvironment()
   }
 
   // if not dead yet, see if i've dropped below the death level
-  else if ((deadUnder > 0.0f) && (myTank->getPosition()[2] <= deadUnder)) {
-    gotBlowedUp(myTank, DeadUnderDeath, ServerPlayer);
+  else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel)) {
+    gotBlowedUp(myTank, WaterDeath, ServerPlayer);
   }
 
   // if not dead yet, see if i got run over by the steamroller
@@ -3266,7 +3219,7 @@ static void		checkEnvironment(RobotPlayer* tank)
   // Check Server Shots
   tank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
 
-  float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+  float waterLevel = World::getWorld()->getWaterLevel();
 
   if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
@@ -3296,8 +3249,8 @@ static void		checkEnvironment(RobotPlayer* tank)
   }
 
   // if not dead yet, see if the robot dropped below the death level
-  else if ((deadUnder > 0.0f) && (tank->getPosition()[2] <= deadUnder)) {
-    gotBlowedUp(tank, DeadUnderDeath, ServerPlayer);
+  else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
+    gotBlowedUp(tank, WaterDeath, ServerPlayer);
   }
 
   // if not dead yet, see if i got run over by the steamroller
@@ -4296,9 +4249,6 @@ void			drawFrame(const float dt)
 
       // add explosions
       addExplosions(scene);
-
-      // add water-like graphics for the deadUnder line
-      addDeadUnder (scene, dt);
 
       // if i'm inside a building then add eighth dimension scene node.
       if (myTank->getContainingBuilding()) {

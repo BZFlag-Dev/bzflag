@@ -1860,18 +1860,18 @@ void resetFlag(FlagInfo &flag)
       flagPos[2] = 0.0f;
     }
 
-    float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
-    if (deadUnder >= 0.0f) {
+    const float waterLevel = world->getWaterLevel();
+    if (waterLevel >= 0.0f) {
       // precautionary measure
       clOptions->flagsOnBuildings = true;
     }
 
     int topmosttype = world->cylinderInBuilding(&obj, flagPos, r, flagHeight);
 
-    while ((topmosttype != NOT_IN_BUILDING) || (flagPos[2] <= deadUnder)) {
+    while ((topmosttype != NOT_IN_BUILDING) || (flagPos[2] <= waterLevel)) {
       if (world->getZonePoint(std::string(flag.flag.type->flagAbbv),
 			      flagPos)
-	  && (flagPos[2] > deadUnder)) {
+	  && (flagPos[2] > waterLevel)) {
         // if you got a related flag zone specified, always use
         // it. there may be obstacles in the zone that cause the
         // NOT_IN_BUILDING test to fail a couple of times, but
@@ -2544,7 +2544,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   }
   // if topmosttype is NOT_IN_BUILDING position has reached ground
 
-  float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+  const float waterLevel = world->getWaterLevel();
   float obstacleTop = 0.0f;
   if (topmosttype != NOT_IN_BUILDING) {
     obstacleTop = topmost->getPosition()[2] + topmost->getSize()[2];
@@ -2557,9 +2557,9 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
     vanish = false;
   else if (--drpFlag.grabs == 0)
     vanish = true;
-  else if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f))
+  else if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f))
     vanish = false;
-  else if (clOptions->flagsOnBuildings && (obstacleTop > deadUnder)
+  else if (clOptions->flagsOnBuildings && (obstacleTop > waterLevel)
 	   && (topmosttype == IN_BOX_NOTDRIVETHROUGH
 	       || topmosttype == IN_BASE))
     vanish = false;
@@ -2586,7 +2586,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 	  topmosttype = world->cylinderInBuilding
 	    (&container, landingPos, BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
 	     flagHeight);
-	  if ((topmosttype != NOT_IN_BUILDING) || (landingPos[2] <= deadUnder)) {
+	  if ((topmosttype != NOT_IN_BUILDING) || (landingPos[2] <= waterLevel)) {
 	    TeamBases &teamBases = bases[flagTeam];
 	    const TeamBase &base = teamBases.getRandomBase(flagIndex);
 	    landingPos[0] = base.position[0];
@@ -2595,9 +2595,9 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 	  }
 	}
       }
-    } else if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
+    } else if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f)) {
       // use default landing position
-    } else if (clOptions->flagsOnBuildings && (obstacleTop > deadUnder)
+    } else if (clOptions->flagsOnBuildings && (obstacleTop > waterLevel)
 	       && (topmosttype == IN_BOX_NOTDRIVETHROUGH)) {
       // use default landing position
     } else {
@@ -2610,7 +2610,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 	topmosttype = world->cylinderInBuilding
 	  (&container, pos, BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
 	   flagHeight);
-	if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
+	if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f)) {
 	  landingPos[0] = 0.0f;
 	  landingPos[1] = 0.0f;
 	  landingPos[2] = 0.0f;

@@ -15,8 +15,10 @@
 
 #include "MeshObstacle.h"
 #include "SceneNode.h"
+#include "MeshMaterial.h"
 
 class WallSceneNode;
+class MeshPolySceneNode;
 
 class MeshSceneNodeGenerator {
 
@@ -25,7 +27,8 @@ class MeshSceneNodeGenerator {
   public:
     ~MeshSceneNodeGenerator();
     WallSceneNode* getNextNode(float, float, bool);
-
+    static void setupNodeMaterial(MeshPolySceneNode* node,
+                                  const MeshMaterial* mat);
   protected:
     MeshSceneNodeGenerator(const MeshObstacle*);
 

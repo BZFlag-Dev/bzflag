@@ -26,9 +26,9 @@ class DynamicColor {
     ~DynamicColor();
 
     void setLimits(int channel, float min, float max);
-    void setSinusoid(int channel, float period, float offset);
-    void setClampUp(int channel, float period, float offset, float width);
-    void setClampDown(int channel, float period, float offset, float width);
+    void addSinusoid(int channel, const float sinusoid[3]);
+    void addClampUp(int channel, const float clampUp[3]);
+    void addClampDown(int channel, const float clampDown[3]);
 
     void finalize();
     void update(float time);
@@ -43,15 +43,32 @@ class DynamicColor {
     void print(std::ostream& out, int level);
   
   private:
+    static const float minPeriod;
+  
     float color[4];
+    
+    typedef struct {
+      float period;
+      float offset;
+      float weight;
+    } sinusoidParams;
 
     typedef struct {
+      float period;
+      float offset;
+      float width;
+    } clampParams;
+    
+    typedef struct {
       float minValue, maxValue;
-      float sinusoidPeriod, sinusoidOffset;
-      float clampUpPeriod, clampUpOffset, clampUpWidth;
-      float clampDownPeriod, clampDownOffset, clampDownWidth;
+      float totalWeight; // tally of sinusoid weights
+      std::vector<sinusoidParams> sinusoids;
+      std::vector<clampParams> clampUps;
+      std::vector<clampParams> clampDowns;
     } ChannelParams;
+    
     ChannelParams channels[4];
+    
     bool possibleAlpha;
 };
 

@@ -18,10 +18,14 @@
 /* system interface headers */
 #include <vector>
 #include <string>
+
+/* bzfs implementation headers */
 #include "EntryZones.h"
 #include "WorldWeapons.h"
 #include "TeamBases.h"
 
+/* common implementation headers */
+#include "MeshMaterial.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
@@ -74,6 +78,8 @@ public:
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
   void addWeapon(const FlagType *type, const float *origin, float direction,
                  float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
+  void addWaterLevel (float level, const MeshMaterial& material);
+  float getWaterLevel() const;
   float getMaxWorldHeight();
   bool getZonePoint(const std::string &qualifier, float *pt);
   bool getSafetyPoint(const std::string &qualifier, const float *pos, float *pt);
@@ -143,6 +149,8 @@ private:
   float size[2];
   float gravity;
   float maxHeight;
+  float waterLevel;
+  MeshMaterial waterMaterial;
 
   std::vector<BoxBuilding> boxes;
   std::vector<BaseBuilding> bases;

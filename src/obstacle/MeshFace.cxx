@@ -426,7 +426,7 @@ void MeshFace::print(std::ostream& out, int level)
   int i;
   out << "  face" << std::endl;
   
-  if (level > 0) {
+  if (level > 1) {
     out << "  # plane normal = " << plane[0] << " " << plane[1] << " "
                                  << plane[2] << " " << plane[3] << std::endl;
   }
@@ -436,9 +436,11 @@ void MeshFace::print(std::ostream& out, int level)
     int index = (fvec3*)vertices[i] - mesh->getVertices();
     out << " " << index;
   }
-  out << " #";
-  for (i = 0; i < vertexCount; i++) {
-    out << " " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2];
+  if (level > 1) {
+    out << " #";
+    for (i = 0; i < vertexCount; i++) {
+      out << " " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2];
+    }
   }
   out << std::endl;
 
@@ -448,9 +450,11 @@ void MeshFace::print(std::ostream& out, int level)
       int index = (fvec3*)normals[i] - mesh->getNormals();
       out << " " << index;
     }
-    out << " #";
-    for (i = 0; i < vertexCount; i++) {
-      out << " " << normals[i][0] <<  " " << normals[i][1] << " " << normals[i][2];
+    if (level > 1) {
+      out << " #";
+      for (i = 0; i < vertexCount; i++) {
+        out << " " << normals[i][0] <<  " " << normals[i][1] << " " << normals[i][2];
+      }
     }
     out << std::endl;
   }
@@ -461,9 +465,11 @@ void MeshFace::print(std::ostream& out, int level)
       int index = (fvec2*)texcoords[i] - mesh->getTexcoords();
       out << " " << index;
     }
-    out << " #";
-    for (i = 0; i < vertexCount; i++) {
-      out << " " << texcoords[i][0] <<  " " << texcoords[i][1];
+    if (level > 1) {
+      out << " #";
+      for (i = 0; i < vertexCount; i++) {
+        out << " " << texcoords[i][0] <<  " " << texcoords[i][1];
+      }
     }
     out << std::endl;
   }

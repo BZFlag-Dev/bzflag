@@ -9,35 +9,32 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef __WORLDFILELOCATION_H__
-#define __WORLDFILELOCATION_H__
 
-// system headers
-#include <iostream>
+#ifndef __CUSTOM_WATER_LEVEL_H__
+#define __CUSTOM_WATER_LEVEL_H__
 
-// bzfs-specific headers
+/* interface header */
 #include "WorldFileObject.h"
 
+/* common headers */
+#include "MeshMaterial.h"
 
-class WorldFileLocation : public WorldFileObject {
-public:
-  WorldFileLocation();
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void write(WorldInfo*) const;
-  void *pack(void *buf) const;
-protected:
-  float pos[3];
-  float rotation;
-  float size[3];
-  float normal[3]; // for rotation
+class CustomWaterLevel : public WorldFileObject {
+  public:
+    CustomWaterLevel();
+    ~CustomWaterLevel();
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void write(WorldInfo*) const;
+
+  private:
+    float height;
+    mutable MeshMaterial material;
 };
 
-inline void WorldFileLocation::write(WorldInfo*) const {}
-
-#endif /* __WORLDFILELOCATION_H__ */
+#endif  /* __CUSTOM_WATER_LEVEL_H__ */
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

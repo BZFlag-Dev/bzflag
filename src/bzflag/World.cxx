@@ -38,6 +38,7 @@ int			World::flagTexture(-1);
 
 World::World() :
   gameStyle(PlainGameStyle),
+  waterLevel(-1.0f),
   linearAcceleration(0.0f),
   angularAcceleration(0.0f),
   maxPlayers(0),
@@ -649,17 +650,27 @@ bool			World::writeWorld(std::string filename)
     }
   }
   
+  // Write water level
+  {
+    if (waterLevel >= 0.0f) {
+      out << "waterLevel" << std::endl;
+      out << "\theight " << waterLevel << std::endl;
+      waterMaterial.print(out, 1);
+      out << "end" << std::endl;
+    }
+  }
+  
   // Write dynamic colors
-  DYNCOLORMGR.print(out, 3);
+  DYNCOLORMGR.print(out, 1);
 
   // Write texture matrices
-  TEXMATRIXMGR.print(out, 3);
+  TEXMATRIXMGR.print(out, 1);
 
   // Write meshs
   {
     for (std::vector<MeshObstacle*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
       MeshObstacle* mesh = *it;
-      mesh->print(out, 3);
+      mesh->print(out, 1);
     }
   }
 

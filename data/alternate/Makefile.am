@@ -5,7 +5,6 @@ EXTRA_DIST = \
 	boxwall.png		\
 	caution.png		\
 	clouds.png		\
-	deadunder.png		\
 	explode1.png		\
 	explode2.png		\
 	green_basetop.png	\
@@ -27,6 +26,7 @@ EXTRA_DIST = \
 	std_ground.png		\
 	title.png		\
 	wall.png		\
+	water.png		\
 	zone_ground.png
 
 MAINTAINERCLEANFILES = \

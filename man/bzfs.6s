@@ -919,12 +919,24 @@ option is a text based file that contains a list of world objects. This file can
 be created using programs found on sourceforge.net through cvs, or can be hand edited.
 
 The format of this text file consists of any number of objects listed in any order
-(except that teleporters must come before links, and texmatrix's must come before
-they are used in a mesh). The list of world types consists of:
+(except that teleporters must come before links, and textureMatrix's and dynamicColor's
+must come before they are used). The list of world types consists of:
 
-.B	texmatrix
+.B	world
+.br
+.B	options
+.br
+.B	waterLevel
+.br
+.B	dynamicColor
+.br
+.B	textureMatrix
 .br
 .B	mesh
+.br
+.B	arc
+.br
+.B	sphere
 .br
 .B	box
 .br
@@ -942,10 +954,6 @@ they are used in a mesh). The list of world types consists of:
 .br
 .B	zone
 .br
-.B	world
-.br
-.B	options
-.br
 
 Each object is described by placing the type on one line, the word \fIend\fR on a following line,
 and a list of attributes for that object, one per line, inbetween. Attributes may be listed in
@@ -953,33 +961,150 @@ any order. Attributes have default values, and if that is good enough, the attri
 be listed. Words are always specified in lowercase. Line comments can be specified by placing a
 # sign at the start of the line. For documentation purposes, you can tag each object by adding
 a name attribute. There is no set limit to the number of times you may use any of the objects
-except for the world and options objects, they can only be specified once. The options object
-contains command line arguments that are used to configure the server's game mode, but can not
-contain server specific options such as -p, -passwd, and -conf.
+except for the world, options, and waterLevel objects, they can only be specified once. The
+options object contains command line arguments that are used to configure the server's game mode,
+but can not contain server specific options such as -p, -passwd, and -conf.
 
 .br
 In the following examples, the values are the defaults.
 
+
+.B Material Properties
+
+Material properties may be set on several types of objects, including
+meshes, mesh faces, arcs, and spheres. Here are the properties:
+.br
+
+\fB  texture\fR filename  # set working texture (without PNG extension)
+.br
+\fB  notexture\fR  # specify that no texture is to be used
+.br
+\fB  notexcolor\fR  # the color is not applied to the texture
+.br
+  # if a texture is specified, but not found, the default texture
+.br
+  # will be used. if the default texture is also not available, then
+.br
+  # the color will be used (untextured)
+.br
+\fB  texmat\fR -1                 # texture matrix  (-1 for none)
+.br
+\fB  dyncol\fR -1                 # dynamic color  (-1 for none)
+.br
+\fB  ambient\fR 0.2 0.2 0.2 1.0   # ambient color
+.br
+\fB  diffuse\fR 0.8 0.8 0.8 1.0   # diffuse color (\fBmain color\fR)
+.br
+\fB  specular\fR 0.0 0.0 0.0 1.0  # specular color
+.br
+\fB  emission\fR 0.0 0.0 0.0 1.0  # emission color
+.br
+\fB  shininess\fR 0.0             # shininess
+.br
+\fB  resetmat\fR                  # restore default values
+.br
+
+
+.B The World object
+
+\fBworld\fR
+.br
+\fB  name\fR example_world
+.br
+\fB  size\fR 400.0
+.br
+\fB  flagHeight\fR 10.0
+.br
+\fBend\fR
+.br
+
+.B The Options object
+
+\fBoptions\fR
+.br
+  -set _tankSpeed 36
+.br
+  -j +r -ms 3
+.br
+  +f GM{5} +f SW{5}
+.br
+\fBend\fR
+.br
+
+
+.B The Water Level object
+
+\fBwaterLevel\fR
+.br
+\fB  name\fR example_waterlevel
+.br
+\fB  height\fR -1 # anything below 0 turns it off
+.br
+\fBend\fR
+.br
+
+
+.B The Dynamic Color object
+
+\fBdynamicColor\fR
+.br
+\fB  name\fR example_dyncol
+.br
+  # there are 4 channels that can be modified:
+.br
+  #   \fBred\fR, \fBgreen\fR, \fBblue\fR, \fBalpha\fR
+.br
+  # there are 4 types of commands per channel:
+.br
+  #   \fBlimits\fR, \fBsinusoid\fR, \fBclampUp\fR, \fBclampDown\fR
+.br
+  # except for "limits", the commands are \fBrepeatable\fR
+.br
+  # if both clampUp and clampDown are active, the value is (min+max)/2
+.br
+  # the sinusoid function starts at the max value
+.br
+  # the sum of a channel's sinusoids is clamped between 0 and 1
+.br
+\fB  red limits\fR 0 1               # min/max limits
+.br
+\fB  green sinusoid\fR 0.1 0 0.25    # period, offset, weight
+.br
+\fB  blue clampUp\fR 0.1 0 0.75      # period, offset, width
+.br
+\fB  alpha clampDown\fR 0.2 0.5 0.5  # period, offset, width
+.br
+\fBend\fR
+.br
+
+
 .B The Texture Matrix object
 
-\fBtexmatrix\fR
+\fBtextureMatrix\fR
 .br
 \fB  name\fR example_texmat
 .br
-\fB  shift\fR 0.1 0.2  # u/v freqs
+\fB  shift\fR 0.1 0.2              # u/v freqs
 .br
-\fB  rotate\fR 0.2 0.5 0.5  # rotation freq, u/v centers
+\fB  rotate\fR 0.2 0.5 0.5         # rotation freq, u/v centers
 .br
 \fB  scale\fR 0.1 0.2 2 3 0.5 0.5  # u/v freqs, u/v scales, u/v centers
 .br
 \fBend\fR
 .br
 
+
 .B The Mesh object
 
 \fBmesh\fR
 .br
 \fB  name\fR example_mesh
+.br
+  # Material properties applied to a mesh apply to all faces 
+.br
+  # that follow the setting. Mesh faces will alter their own
+.br
+  # properties with affecting the state of the mesh properties.
 .br
 \fB  inside\fR 5.5 4.5 1.2  # add an inside point  (\fBrepeatable\fR)
 .br
@@ -990,22 +1115,6 @@ In the following examples, the values are the defaults.
 \fB  normal\fR 1.0 0 0  # add a normal  (\fBrepeatable\fR)
 .br
 \fB  texcoord\fR 0.1 0.75  # add a texture coordinate  (\fBrepeatable\fR)
-.br
-\fB  ambient\fR 0.2 0.2 0.2 1.0  # set working ambient RGBA
-.br
-\fB  diffuse\fR 0.8 0.8 0.8 1.0  # set working diffuse RGBA
-.br
-\fB  specular\fR 0.0 0.0 0.0 1.0  # set working specular RGBA
-.br
-\fB  emission\fR 0.0 0.0 0.0 1.0  # set working emission RGBA
-.br
-\fB  shininess\fR 0.0  # set working shininess
-.br
-\fB  texture\fR filename  # set working texture (without PNG extension)
-.br
-\fB  notexture\fR # specify that no texture be used
-.br
-\fB  texmat\fR -1  # set working texture matrix  (-1 for none)
 .br
 \fB  reset\fR  # restore default values
 .br
@@ -1019,26 +1128,53 @@ In the following examples, the values are the defaults.
 .br
 \fB    texcoords\fR 10 3 2 4 9  # list of texture coordinates
 .br
-\fB    ambient\fR 0.1 0.2 0.3 1.0  # set face's ambient RGBA
-.br
-\fB    diffuse\fR 0.1 0.2 0.3 1.0  # set face's diffuse RGBA
-.br
-\fB    specular\fR 0.1 0.2 0.3 1.0  # set face's specular RGBA
-.br
-\fB    emission\fR 0.1 0.2 0.3 1.0  # set face's emission RGBA
-.br
-\fB    shininess\fR 0.1  # set face's shininess
-.br
-\fB    texture\fR filename  # set face's texture (without PNG extension)
-.br
-\fB    notexture\fR # specify that no texture be used
-.br
-\fB    texmat\fR 0  # set face's texture matrix  (-1 for none)
-.br
 \fB  endface\fR  # end the face
 .br
 \fBend\fR
 .br
+
+
+.B The Arc object
+
+\fBarc\fR
+.br
+\fB  name\fR example_arc
+.br
+\fB  divisions 16\fR  # number of subdivisions
+.br
+\fB  angle 360\fR     # the sweep angle
+.br
+\fB  ratio 1\fR       # (outrad - inrad) / outrad
+.br
+\fB  position\fR 0.0 0.0 0.0
+.br
+\fB  size\fR 10 10 10 
+.br
+\fB  rotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+
+.B The Sphere object
+
+\fBsphere\fR
+.br
+\fB  name\fR example_sphere
+.br
+\fB  divisions 4\fR  # number of subdivisions
+.br
+\fB  position\fR 0.0 0.0 10.0
+.br
+\fB  size\fR 10 10 10 
+.br
+\fB  radius 10\fR    #  sets all size values to this value
+.br
+\fB  rotation\fR 0.0
+.br
+\fBend\fR
+.br
+
 
 .B The Box object
 
@@ -1071,6 +1207,7 @@ In the following examples, the values are the defaults.
 \fBend\fR
 .br
 
+
 .B The Tetrahedron object
 
 \fBtetra\fR
@@ -1095,6 +1232,7 @@ In the following examples, the values are the defaults.
 .br
 \fBend\fR
 .br
+
 
 .B The Teleporter object
 
@@ -1128,6 +1266,7 @@ In the following examples, the values are the defaults.
 \fBend\fR
 .br
 
+
 .B The Base object
 
 \fBbase\fR
@@ -1145,18 +1284,6 @@ In the following examples, the values are the defaults.
 \fBend\fR
 .br
 
-.B The World object
-
-\fBworld\fR
-.br
-\fB  name\fR example_world
-.br
-\fB  size\fR 400.0
-.br
-\fB  flagHeight\fR 10.0
-.br
-\fBend\fR
-.br
 
 .B The Weapon object
 
@@ -1176,6 +1303,7 @@ In the following examples, the values are the defaults.
 .br
 \fBend\fR
 .br
+
 
 .B The Zone object
 
@@ -1204,18 +1332,6 @@ In the following examples, the values are the defaults.
 \fBend\fR
 .br
 
-.B The Options object
-
-\fBoptions\fR
-.br
-  -set _tankSpeed 36
-.br
-  -j +r -ms 3
-.br
-  +f GM{5} +f SW{5}
-.br
-\fBend\fR
-.br
 
 .SH SEE ALSO
 bzflag(6), bzfls(6), bzfrelay(6)

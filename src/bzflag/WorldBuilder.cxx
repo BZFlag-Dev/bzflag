@@ -24,6 +24,7 @@
 #include "EighthDTetraSceneNode.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
+#include "MeshMaterial.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"
@@ -94,6 +95,12 @@ void* WorldBuilder::unpack(void* buf)
     return NULL;
   }
   buf = uncompressedWorld;
+
+  // unpack water level
+  buf = nboUnpackFloat(buf, world->waterLevel);
+  if (world->waterLevel >= 0.0f) {
+    buf = world->waterMaterial.unpack(buf);
+  }
   
   // unpack dynamic colors
   DYNCOLORMGR.clear();

@@ -16,6 +16,7 @@
 #include "common.h"
 #include "Pack.h"
 #include <math.h>
+#include <sstream>
 
 #include "WorldFileObject.h"
 #include "WorldFileLocation.h"
@@ -25,21 +26,56 @@ WorldFileLocation::WorldFileLocation()
   pos[0] = pos[1] = pos[2] = 0.0f;
   rotation = 0.0f;
   size[0] = size[1] = size[2] = 1.0f;
+  normal[0] = normal[1] = 0.0f;
+  normal[2] = 1.0f;
 }
 
 
 bool WorldFileLocation::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "position") == 0)
+  if ((strcasecmp(cmd, "pos") == 0) || 
+      (strcasecmp(cmd, "position") == 0)) {
     input >> pos[0] >> pos[1] >> pos[2];
-  else if (strcasecmp(cmd, "rotation") == 0) {
-    input >> rotation;
-    rotation = rotation * M_PI / 180.0f;
   } else if (strcasecmp(cmd, "size") == 0){
     input >> size[0] >> size[1] >> size[2];
   }
-  else
+  else if ((strcasecmp(cmd, "rot") == 0) ||
+           (strcasecmp(cmd, "rotation") == 0)) {
+    
+    std::string args;
+    std::getline(input, args);
+    std::istringstream parms(args);
+
+    if (!(parms >> rotation)) {
+      input.putback('\n');
+      return false;
+    }
+    // convert to radians
+    rotation = rotation * (M_PI / 180.0f);
+    
+    // check if we have a rotation normal
+    std::string tmpStr;
+    if (parms >> tmpStr) {
+      if (tmpStr[0] == '#') {
+        input.putback('\n');
+        return true;
+      }
+      else {
+        char *end;
+        normal[0] = strtof (tmpStr.c_str(), &end);
+      }
+      
+      if (!((parms >> normal[1]) && (parms >> normal[2]))) {
+        input.putback('\n');
+        return false;
+      }
+    }
+    input.putback('\n');
+  }
+  else {
     return WorldFileObject::read(cmd, input);
+  }
+
   return true;
 }
 
