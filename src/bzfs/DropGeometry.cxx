@@ -82,8 +82,12 @@ bool DropGeometry::dropFlag(float pos[3], float minZ, float maxZ)
 bool DropGeometry::dropTeamFlag(float pos[3], float minZ, float maxZ,
                                 int team)
 {
+  // team flags do not get real clearance checks (radius = 0)
+  // if you want to put some smarts in to check for wedging
+  // (flag is stuck amongst obstacles), then add the code into
+  // isValidClearance().
   const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
-  return dropIt(pos, minZ, maxZ, BZDBCache::tankRadius, flagHeight, team);
+  return dropIt(pos, minZ, maxZ, 0.0f, flagHeight, team);
 }
 
 
@@ -150,13 +154,6 @@ static inline bool isValidLanding(const Obstacle* obs, const Ray& ray)
 static bool isValidClearance(const float pos[3], float radius,
                              float height, int team)
 {
-  // team flags do not get clearance checks
-  // (this is where you could add in some
-  //  smarts to check for wedged flags)
-  if (team >= 0) {
-    radius = 0.0f;
-  }
-
   const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, height);
 
   // invalid if it touches a building
