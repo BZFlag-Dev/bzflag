@@ -1491,6 +1491,31 @@ static void loadCachedWorld()
   joiningGame = false;
 }
 
+static void dumpMissingFlag(char *buf, uint16_t len)
+{
+  int i;
+  int numFlags = len/2;
+  std::string flags;
+
+  for (i = 0; i < numFlags; i++) {
+    /* We can't use FlagType::unpack() here, since it counts on the
+     * flags existing in our flag database.
+     */
+    if (i)
+      flags += ", ";
+    flags += buf[0];
+    if (buf[1])
+      flags += buf[1];
+    buf += 2;
+  }
+
+  std::vector<std::string> args;
+  args.push_back(flags);
+  printError("Flags not supported by this client: {1}", &args);
+  (*joinGameCallback)(false, joinGameUserData);
+  joinGameCallback = NULL;
+}
+
 static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
 {
   int totalSize = worldPtr + len + bytesLeft;
@@ -1543,6 +1568,15 @@ static void		handleServerMessage(bool human, uint16_t code,
       serverError = true;
       break;
     }
+
+  case MsgNegotiateFlags: {
+    if (len > 0) {
+      dumpMissingFlag((char *)msg, len);
+      break;
+    }
+    serverLink->send(MsgWantSetting, 0, NULL);
+    break;
+  }
 
   case MsgGameSetting: {
     if (worldBuilder)
@@ -3775,12 +3809,11 @@ static void markOld(std::string &fileName)
 #endif
 }
 
-static bool negotiateFlags(ServerLink* serverLink)
+static void sendFlagNegotiation()
 {
-  uint16_t code, len;
   char msg[MaxPacketLen];
-  char *buf = msg;
   FlagTypeMap::iterator i;
+  char *buf = msg;
 
   /* Send MsgNegotiateFlags to the server with
    * the abbreviations for all the flags we support.
@@ -3790,44 +3823,6 @@ static bool negotiateFlags(ServerLink* serverLink)
     buf = (char*) i->second->pack(buf);
   }
   serverLink->send(MsgNegotiateFlags, buf - msg, msg);
-
-  /* Response should always be a MsgNegotiateFlags. If not, assume the server
-   * is too old or new to understand our flag system.
-   */
-  if (serverLink->read(code, len, msg, 5000) <= 0 || code != MsgNegotiateFlags) {
-    printError("Unsupported response from server during flag negotiation.");
-    return false;
-  }
-
-  /* The response contains a list of flags we're missing. If it's empty,
-   * we're good to go. Otherwise, try to give a good error messages.
-   */
-  if (len > 0) {
-    int i;
-    int numFlags = len/2;
-    std::string flags;
-    buf = msg;
-
-    for (i = 0; i < numFlags; i++) {
-      /* We can't use FlagType::unpack() here, since it counts on the
-       * flags existing in our flag database.
-       */
-      if (i)
-	flags += ", ";
-      flags += buf[0];
-      if (buf[1])
-	flags += buf[1];
-      buf += 2;
-    }
-
-    std::vector<std::string> args;
-    args.push_back(flags);
-    printError("Flags not supported by this client: {1}", &args);
-
-    return false;
-  }
-
-  return true;
 }
 
 #if defined(FIXME) && defined(ROBOT)
@@ -4062,13 +4057,7 @@ static void joinInternetGame()
 
   connectStatusCB("Connection Established...");
 
-  if (!negotiateFlags(serverLink)) {
-    (*joinGameCallback)(false, joinGameUserData);
-    joinGameCallback = NULL;
-    return;
-  }
-
-  serverLink->send(MsgWantSetting, 0, NULL);
+  sendFlagNegotiation();
   joiningGame = true;
 }
 
