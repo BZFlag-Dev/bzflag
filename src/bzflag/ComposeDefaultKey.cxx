@@ -98,11 +98,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     break;
 
   case 6:	// ^F
-    if (key.shift == BzfKeyEvent::ControlKey) {
-      return true;
-    } else {
-      return false;
-    }
+    return true;
     break;
 
   default:
@@ -231,7 +227,7 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       return false;
     }
     else if (((key.shift == 0) && (key.button == BzfKeyEvent::F2)) ||
-             ((key.shift == BzfKeyEvent::ControlKey) && (key.ascii == 6))) {
+             (key.ascii == 6)) {
       // auto completion  (F2 or ^F)
       std::string line1 = hud->getComposeString();
       int lastSpace = line1.find_last_of(" \t");
