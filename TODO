@@ -110,10 +110,6 @@ THESE ARE LOWER PRIORITY
 * remove all DNS lookups from client when contacting a server IP
   supplied from the list server
 
-* add http proxy support for list servers
-
-* add http connect proxy support for game servers
-
 * allow /dev/dsp* on Linux to be selected someplace. command line,
   environment var, config file, who knows. ;-)
 
