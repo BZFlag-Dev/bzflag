@@ -68,7 +68,7 @@ void handleLagwarnCmd(int t, const char *message)
 }
 
 
-void handleLagstatsCmd(int t, const char *message)
+void handleLagstatsCmd(int t, const char *)
 {
   char reply[MessageLen] = {0};
 
@@ -87,7 +87,7 @@ void handleLagstatsCmd(int t, const char *message)
 }
 
 
-void handleIdlestatsCmd(int t, const char *message)
+void handleIdlestatsCmd(int t, const char *)
 {
   char reply[MessageLen] = {0};
 
@@ -103,7 +103,7 @@ void handleIdlestatsCmd(int t, const char *message)
 }
 
 
-void handleFlaghistoryCmd(int t, const char *message)
+void handleFlaghistoryCmd(int t, const char *)
 {
   char reply[MessageLen] = {0};
 
@@ -128,7 +128,7 @@ void handleFlaghistoryCmd(int t, const char *message)
 }
 
 
-void handlePlayerlistCmd(int t, const char *message)
+void handlePlayerlistCmd(int t, const char *)
 {
   char reply[MessageLen] = {0};
 
@@ -370,7 +370,7 @@ void handleSetpassCmd(int t, const char *message)
 }
 
 
-void handleGrouplistCmd(int t, const char *message)
+void handleGrouplistCmd(int t, const char *)
 {
   sendMessage(ServerPlayer, t, "Group List:");
   std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
@@ -431,7 +431,7 @@ void handleShowgroupCmd(int t, const char *message)
 }
 
 
-void handleGrouppermsCmd(int t, const char *message)
+void handleGrouppermsCmd(int t, const char *)
 {
   sendMessage(ServerPlayer, t, "Group List:");
   std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
@@ -541,7 +541,7 @@ void handleRemovegroupCmd(int t, const char *message)
   return;
 }
 
-void handleResetCmd(int t, const char *message)
+void handleResetCmd(int t, const char *)
 {
   groupAccess.clear();
   userDatabase.clear();
