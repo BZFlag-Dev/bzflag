@@ -1280,29 +1280,28 @@ static void acceptClient()
   // send 0xff if list is full
   buffer[8] = (char)0xff;
 
-	BanInfo info(clientAddr.sin_addr);
- if (!clOptions->acl.validate( clientAddr.sin_addr,&info)) {
+  BanInfo info(clientAddr.sin_addr);
+  if (!clOptions->acl.validate(clientAddr.sin_addr,&info)) {
 
-	 std::string rejectionMessage;
+    std::string rejectionMessage;
 
-	 rejectionMessage = "REFUSED_For: ";
-	 if (info.reason.size())
-		rejectionMessage += info.reason;
-	 else
-		 rejectionMessage += "General Ban";
+    rejectionMessage = "REFUSED_For: ";
+    if (info.reason.size())
+      rejectionMessage += info.reason;
+    else
+      rejectionMessage += "General Ban";
 
-	 if (info.bannedBy.size())
-	 {
-			rejectionMessage += " by ";
-			rejectionMessage += info.bannedBy;
-	 }
+    if (info.bannedBy.size()) {
+      rejectionMessage += " by ";
+      rejectionMessage += info.bannedBy;
+    }
 
-	 if (info.fromMaster)
-		rejectionMessage += " from the master server";
+    if (info.fromMaster)
+      rejectionMessage += " from the master server";
 
-	rejectionMessage += (char)0xff;
-// send back 0xff before closing
-	 send(fd, rejectionMessage.c_str(), rejectionMessage.size(), 0);
+    // send back 0xff before closing
+    rejectionMessage += (char)0xff;
+    send(fd, rejectionMessage.c_str(), rejectionMessage.size(), 0);
 
     close(fd);
     return;
