@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* move -synctime data to different Msg packet, or create new one
+
 * server should pick client enter position
 
 * flags should all be nullflags from client view until
