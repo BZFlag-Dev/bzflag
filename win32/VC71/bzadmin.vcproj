@@ -41,7 +41,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
 				OutputFile=".\..\..\src\bzadmin\Debug/bzadmin.exe"
-				LinkIncremental="1"
+				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzadmin\Debug/bzadmin.pdb"
