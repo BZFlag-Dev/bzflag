@@ -84,7 +84,8 @@ LDADD =	\
 	../zlib/libz.a			\
 	../3D/lib3D.a			\
 	$(RESOURCE)			\
-	$(GLIBS)
+	$(GLIBS)			\
+	$(SDL_LIBS)
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 else
@@ -100,12 +101,13 @@ LDADD =	\
 	../zlib/libz.a			\
 	../3D/lib3D.a			\
 	$(RESOURCE)			\
-	$(GLIBS)
+	$(GLIBS)			\
+	$(SDL_LIBS)
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 endif
 
-AM_CPPFLAGS = $(X_CFLAGS)
+AM_CPPFLAGS = $(X_CFLAGS) $(SDL_CFLAGS)
 
 bzflag_LDFLAGS = ../date/buildDate.o
 
