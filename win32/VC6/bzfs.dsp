@@ -147,6 +147,10 @@ SOURCE=..\..\src\bzfs\CustomPyramid.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomTetra.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomWeapon.cxx
 # End Source File
 # Begin Source File
@@ -308,6 +312,10 @@ SOURCE=..\..\src\bzfs\CustomLink.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomPyramid.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CustomTetra.h
 # End Source File
 # Begin Source File
 

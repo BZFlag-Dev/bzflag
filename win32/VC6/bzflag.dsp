@@ -260,6 +260,14 @@ SOURCE=..\..\src\bzflag\ServerMenu.cxx
 
 SOURCE=..\..\src\bzflag\ServerStartMenu.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShotStats.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShotStatsDefaultKey.cxx
+# End Source File
 # End Group
 # Begin Source File
 
@@ -542,6 +550,14 @@ SOURCE=..\..\src\bzflag\ServerMenu.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ServerStartMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShotStats.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShotStatsDefaultKey.h
 # End Source File
 # End Group
 # Begin Source File
@@ -967,6 +983,10 @@ SOURCE=..\..\src\bzflag\ShotStrategy.h
 # Begin Source File
 
 SOURCE=..\..\include\ShotUpdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShotStatistics.h
 # End Source File
 # Begin Source File
 

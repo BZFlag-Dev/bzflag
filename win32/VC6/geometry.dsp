@@ -229,6 +229,10 @@ SOURCE=..\..\src\geometry\EighthDPyrSceneNode.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\geometry\EighthDTetraSceneNode.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\geometry\FlagSceneNode.cxx
 # End Source File
 # Begin Source File
@@ -334,6 +338,10 @@ SOURCE=..\..\include\EighthDimSceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\EighthDPyrSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\EighthDTetraSceneNode.h
 # End Source File
 # Begin Source File
 
