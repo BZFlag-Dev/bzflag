@@ -163,6 +163,21 @@ void			KeyManager::unbind(const BzfKeyEvent& key,
   notify(key, press, "");
 }
 
+void			KeyManager::unbindCommand(std::string& command)
+{
+  EventToCommandMap::const_iterator index;
+  for (index = pressEventToCommand.begin(); index != pressEventToCommand.end(); ++index) {
+    if (index->second == command) {
+      this->unbind(index->first, true);
+    }
+  }
+  for (index = releaseEventToCommand.begin(); index != releaseEventToCommand.end(); ++index) {
+    if (index->second == command) {
+      this->unbind(index->first, false);
+    }
+  }
+}
+
 std::string		KeyManager::get(const BzfKeyEvent& key,
 					bool press) const
 {
