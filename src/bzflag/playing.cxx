@@ -2466,6 +2466,13 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
     handleFlagDropped(tank);
   }
 
+  // restore the sound, this happens when paused tank dies
+  // (genocide or team flag captured)
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
+  }
+
   // take care of explosion business -- don't want to wait for
   // round trip of killed message.  waiting would simplify things,
   // but the delay (2-3 frames usually) can really fool and irritate
