@@ -37,6 +37,9 @@
 /* Define to 1 if you have regex stuff available */
 /* undef HAVE_REGEX_H */
 
+/* Require libcurl */
+#define HAVE_CURL 1
+
 // define our OS
 #ifndef BZ_BUILD_OS
   #if defined(_MSC_VER) && (_MSC_VER == 1100)

@@ -26,6 +26,10 @@ When you want to build, set the active configuration to
 "BZFlag - Win32 SDL_Release" or "BZFlag - Win32 SDL_Debug"
 instead of the normal Win32 Release/Debug targets.
 
+You also need to have libCurl installed.
+Download it from http://curl.haxx.se/libcurl/
+Add the include directory and the lib as per the SDL instructions.
+
 Then each time you want to build an installer
 
   * open win32\bzflag.dsw
