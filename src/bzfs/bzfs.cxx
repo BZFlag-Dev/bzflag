@@ -2189,12 +2189,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     playerData->netHandler->pwrite(sMsgBuf, 4);
   }
 
-  // make them wait from the time they left, but only if they are
-  // not already waiting, and they are not currently an observer.
-  if ((playerData->player.getTeam() != ObserverTeam) &&
-      (rejoinList.waitTime (playerIndex) <= 0.0f)) {
-    rejoinList.add (playerIndex);
-  }
 
   // if there is an active poll, cancel any vote this player may have made
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
@@ -2216,6 +2210,13 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // don't count as a player.
 
   if (wasPlaying) {
+    // make them wait from the time they left, but only if they are
+    // not already waiting, and they are not currently an observer.
+    if ((playerData->player.getTeam() != ObserverTeam) &&
+        (rejoinList.waitTime (playerIndex) <= 0.0f)) {
+      rejoinList.add (playerIndex);
+    }
+    
     // tell everyone player has left
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
