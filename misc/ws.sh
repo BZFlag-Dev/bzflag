@@ -14,6 +14,12 @@
 # to improve the script.
 #	Thanx! Tim "ws king" Riker
 
+# hmm... the 8 spaces to tab rule is a likely candidate:
+# this        foo
+# this	      foo
+# those two line up before the script and won't afterwards
+# timr will look into fixing that.
+
 # cleanup whitespace issues
 # could use new sed, but not everybody has that yet
 # sed -i -e 's/search/replace/g' filename1 ...
