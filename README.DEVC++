@@ -23,3 +23,5 @@ than DirectX SDK, and is available from:
 It is only a few megabytes, and is cross-platform. Remeber to download the
 one for MinGW32 so it works nicely (however, a VC++ one may also work). Place
 the .a files in your "/lib/" directory of Dev-C++, and the headers in "/include/".
+Also, make sure you put "SDL.dll" somewhere in your PATH environment variable, such
+as "c:\WINDOWS\".

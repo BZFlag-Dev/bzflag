@@ -3,7 +3,7 @@ README for Win32 platforms
 
 Command line development tools on Win32 are in the stone age.
 NMAKE is bad but COMMAND.COM is infinitely worse.  So, for
-now, bzflag uses Microsoft Visual C++ project files.
+now, bzflag uses Microsoft Visual C++ or Dev-C++ project files.
 It is also possible to build on Win32 using MinGW/MSYS or
 Cygwin, both of which use their own shells rather than
 COMMAND.COM; for details, see README.MINGW32 (for MinGW)
@@ -33,3 +33,5 @@ Then each time you want to build an installer
   * build
 
 The installer is the bzflag executable in the dist folder.
+
+The instructions for building with Dev-C++ are enclosed in README.DEVC++
