@@ -47,8 +47,14 @@ bzfs_SOURCES = \
 	bzfs.cxx \
 	bzfs.h
 
+if BUILD_REGEX
+REGEX = \
+        ../regex/libregex.a
+endif
+
 LDADD = \
 	../net/libNet.a		\
-	../common/libCommon.a
+	../common/libCommon.a	\
+	$(REGEX)
 
 bzfs_LDFLAGS = ../date/buildDate.o

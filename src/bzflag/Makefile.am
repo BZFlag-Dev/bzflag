@@ -71,6 +71,11 @@ else
 RESOURCE =
 endif
 
+if BUILD_REGEX
+REGEX = \
+        ../regex/libregex.a
+endif
+
 if MACOS
 LDADD =	\
 	../net/libNet.a			\
@@ -83,6 +88,7 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
 	../zlib/libz.a			\
+	$(REGEX)			\
 	$(RESOURCE)			\
 	$(GLIBS)
 # This is required to hook in ogg/vorbis libraries
@@ -98,6 +104,7 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
 	../zlib/libz.a			\
+	$(REGEX)			\
 	$(RESOURCE)			\
 	$(GLIBS)
 # This is required to hook in ogg/vorbis libraries
