@@ -883,7 +883,7 @@ void			WorldBuilder::append(const Teleporter& teleporter)
 void			WorldBuilder::setTeleporterTarget(int src, int tgt)
 {
   // make sure list is big enough
-  growTargetList(src / 2);
+  growTargetList(src / 2 + 1);
 
   // record target in source entry
   teleportTargets[src] = tgt;
