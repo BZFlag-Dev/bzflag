@@ -219,12 +219,17 @@ bool	avoidBullet(float &rotation, float &speed)
 
 bool	stuckOnWall(float &rotation, float &speed)
 {
-  TimeKeeper lastStuckTime;
+  static TimeKeeper lastStuckTime;
   static float stuckRot = 0.0f, stuckSpeed = 0.0f;
 
-  if ((TimeKeeper::getCurrent() - lastStuckTime) < 1.0f) {
+  float stuckPeriod = TimeKeeper::getCurrent() - lastStuckTime;
+  if (stuckPeriod < 0.5f) {
     rotation = stuckRot;
     speed = stuckSpeed;
+    return true;
+  } else if (stuckPeriod < 1.0f) {
+    rotation = stuckRot;
+    speed = 1.0;
     return true;
   }
 
