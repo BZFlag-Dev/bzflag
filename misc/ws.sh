@@ -1,6 +1,5 @@
 #!/bin/sh
-# do NOT strip ws from the dsp files. loath M$
-files=`find . -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name Makefile.am -o -name README\* | sort`
+files=`find . -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name Makefile.am -o -name README\* -o -name \*dsp | sort`
 for file in $files ; do
  sed -i -e 's/[[:space:]]*$//' $file
 done
