@@ -482,6 +482,7 @@ AC_OUTPUT(bzflag.info
 	Makefile
 	data/Makefile
 	data/alternate/Makefile
+	data/fonts/Makefile
 	data/l10n/Makefile
 	debian/Makefile
 	doc/Makefile
