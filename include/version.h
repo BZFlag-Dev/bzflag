@@ -44,7 +44,7 @@
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"MAINTAINANCE"
+#define BZ_BUILD_TYPE		"MAINTENANCE"
 #endif
 
 // Build Date will be defined at link time, can be different for each exe
