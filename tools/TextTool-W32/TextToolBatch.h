@@ -7,7 +7,7 @@ struct BatchItem {
   bool bold;
   bool italic;
   std::string filename;
-}
+};
 
 class TextToolBatch {
 public:
@@ -15,12 +15,14 @@ public:
   TextToolBatch();
   ~TextToolBatch();
   
-  loadFile(std::string file);
+  void loadFile(std::string file);
   
   bool getNext(BatchItem& item);
 
+  void error(std::string msg);
+
 private:
-  int position;
+  unsigned int position;
   std::vector<BatchItem> items;
-}
+};
 

@@ -206,6 +206,9 @@
 				RelativePath="TextTool.rc">
 			</File>
 			<File
+				RelativePath=".\TextToolBatch.cpp">
+			</File>
+			<File
 				RelativePath="TextToolDoc.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -256,6 +259,9 @@
 			</File>
 			<File
 				RelativePath="TextTool.h">
+			</File>
+			<File
+				RelativePath=".\TextToolBatch.h">
 			</File>
 			<File
 				RelativePath="TextToolDoc.h">
