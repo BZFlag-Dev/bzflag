@@ -68,7 +68,7 @@ COPT     = -DNDEBUG -O2
 CXXOPT   = -DNDEBUG -O2 -ffast-math -fomit-frame-pointer -fnonnull-objects \
 		-fexpensive-optimizations
 CDEBUG   = -DDEBUG -g -Werror
-CXXDEBUG = -DDEBUG -g -Werror
+CXXDEBUG = -DDEBUG -g -Werror -Wno-deprecated
 CWOFF    =
 CXXWOFF  =
 
