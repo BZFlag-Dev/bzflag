@@ -530,11 +530,6 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
   if (sendIt) {
     std::string message = hud->getComposeString();
-    std::vector<std::string> v = string_util::tokenize(message," \t");
-    for (std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it) {
-	    std::string s = *it;
-	    cout << s << std::endl;
-    }
 
     if (message.length() > 0) {
       const char* silence = message.c_str();
