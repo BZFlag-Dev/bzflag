@@ -28,7 +28,6 @@
 #endif
 
 #include <string>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
 

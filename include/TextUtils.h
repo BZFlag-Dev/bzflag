@@ -17,10 +17,12 @@
 #ifndef __TEXTUTILS_H__
 #define	__TEXTUTILS_H__
 
+#include "common.h"
+
 #include <algorithm>
-#include <common.h>
-#include <string>
 #include <sstream>
+#include <string>
+#include <stdarg.h>
 #include <vector>
 
 /** The string utility class provides basic functionality to parse and
