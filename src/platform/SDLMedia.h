@@ -19,8 +19,8 @@
 #include "BzfMedia.h"
 
 #ifdef HAVE_SDL
-#include <SDL\SDL.h>
-#include <SDL\SDL_thread.h>
+#include "SDL.h"
+#include "SDL_thread.h"
 
 class SDLMedia : public BzfMedia {
   public:

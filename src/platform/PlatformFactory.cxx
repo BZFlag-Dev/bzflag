@@ -12,7 +12,7 @@
 
 #include "PlatformFactory.h"
 #ifdef HAVE_SDL
-#include <SDL\SDL.h>
+#include "SDL.h"
 #endif
 #include "ErrorHandler.h"
 
