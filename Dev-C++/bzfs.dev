@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=000000000110000000110
+CompilerSettings=000000000110000000100
 
 [Unit1]
 FileName=..\src\bzfs\AccessControlList.cxx
