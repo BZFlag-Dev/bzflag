@@ -12,14 +12,7 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
-#if defined(_WIN32)
-	#pragma warning(disable: 4786)
-	#pragma warning(disable: 4100)
-	#pragma warning(disable: 4511)
-#endif
-
-#include <string>
-#include <vector>
+// system includes
 #include <deque>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,18 +41,16 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
 // yikes! that's a lotsa includes!
 #include "common.h"
-#include "playing.h"
-#include "BzfDisplay.h"
+#include "global.h"
+#include "Address.h"
 #include "BzfEvent.h"
 #include "BzfWindow.h"
 #include "BzfMedia.h"
 #include "PlatformFactory.h"
-#include "global.h"
 #include "Address.h"
 #include "Protocol.h"
 #include "Pack.h"
 #include "ServerLink.h"
-#include "SceneRenderer.h"
 #include "SceneBuilder.h"
 #include "SceneDatabase.h"
 #include "BackgroundRenderer.h"
@@ -74,7 +65,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "RemotePlayer.h"
 #include "WorldPlayer.h"
 #include "RobotPlayer.h"
-#include "MainWindow.h"
 #include "ControlPanel.h"
 #include "ShotStrategy.h"
 #include "StateDatabase.h"
@@ -99,7 +89,12 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "BZDBCache.h"
 #include "WordFilter.h"
 
-#define MAX_MESSAGE_HISTORY (20)
+// versioning that makes us recompile every time
+#include "version.h"
+
+// get our interface
+#include "playing.h"
+
 
 static const float	FlagHelpDuration = 60.0f;
 ServerItem x;
@@ -1627,75 +1622,39 @@ static void		doAutoPilot(float &rotation, float &speed)
 	}
       }
       else {
-	Ray shotRay(pos,dir);
-	float minBuilding = -0.5f;
-	float shotAngle = myTank->getAngle();
-	float shotDir[3];
-	memcpy(shotDir,dir,sizeof(shotDir));
         TimeKeeper now = TimeKeeper::getCurrent();
         if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
-	  for (int tries = 0; tries < 2; tries++) {
-	    for (t = 0; t < curMaxPlayers; t++) {
-	      if (t != myTank->getId() && player[t] &&
-	        player[t]->isAlive() && !player[t]->isPaused() &&
-	        !player[t]->isNotResponding() &&
-	        myTank->validTeamTarget(player[t])) {
 
-	        const float *tp = player[t]->getPosition();
-	        if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(shotRay.getOrigin()[2] - tp[2]) < 2.0f * BZDBCache::tankHeight)) {
+	  for (t = 0; t < curMaxPlayers; t++) {
+	    if (t != myTank->getId() && player[t] &&
+	      player[t]->isAlive() && !player[t]->isPaused() &&
+	      !player[t]->isNotResponding() &&
+	      myTank->validTeamTarget(player[t])) {
 
-	          float targetAngle = atan2f(tp[1] - shotRay.getOrigin()[1], tp[0] - shotRay.getOrigin()[0]);
-	          float targetRotation = targetAngle - shotAngle;
-	          if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
-	          if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
+	      const float *tp = player[t]->getPosition();
+	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDBCache::tankHeight)) {
 
-	          if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
-	          ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
-		    float d = hypotf(tp[0] - shotRay.getOrigin()[0], tp[1] - shotRay.getOrigin()[1]);
-		    const Obstacle *building = NULL;
-		    if (myTank->getFlag() != Flags::SuperBullet)
-		      building = ShotStrategy::getFirstBuilding(shotRay, minBuilding, d);
+	        float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
+	        float targetRotation = targetAngle - myTank->getAngle();
+	        if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
+	        if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
 
-		    if (!building) {
-		      myTank->fireShot();
-		      lastShot = now;
-		      shotFired = true;
-		      t = curMaxPlayers;
-		      tries = 2;
-		    }	
-		  }
+	        if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
+	        ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
+		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
+		  const Obstacle *building = NULL;
+		  if (myTank->getFlag() != Flags::SuperBullet)
+		    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
+
+		  if (!building) {
+		    myTank->fireShot();
+		    lastShot = now;
+		    shotFired = true;
+		    t = curMaxPlayers;
+		  }	
 		}
 	      }
 	    }
-
-	    if (!shotFired && (myTank->getFlag() != Flags::SuperBullet) 
-	    &&  (myTank->getFlag() == Flags::Ricochet) || World::getWorld()->allShotsRicochet()) {
-	      float d = 200.0f;
-	      const Obstacle *building = ShotStrategy::getFirstBuilding(shotRay, -0.5f, d);
-	      if (building && (d > 30.0f) 
-	      && ((building->getType() == BoxBuilding::getClassName())
-	      || (building->getType() == WallObstacle::getClassName()))) {
-	        float shotPos[3];
-	        memcpy(shotPos,shotRay.getOrigin(),sizeof(shotPos));
-	        shotPos[0] += d * shotDir[0];
-	        shotPos[1] += d * shotDir[1];
-
-	        float normal[3];
-	        building->getNormal(shotPos, normal);
-		ShotStrategy::reflect(shotDir, normal);
-
-		shotAngle = atan2f(shotDir[1],shotDir[0]);
-		float reflectAngle = acos(normal[0]*shotDir[0]+normal[1]*shotDir[1]);
-		if (fabs(reflectAngle) > (7.0f * M_PI/180.0f)) {
-		  shotRay = Ray(shotPos,shotDir);
-		  minBuilding = 4.0f;
-		}
-		else
-		  tries = 2;
-	      }
-	    }
-	    else
-	      tries = 2;
 	  }
 	}
       }

@@ -62,6 +62,10 @@
 #include "BZDBCache.h"
 #include "WordFilter.h"
 
+// invoke incessant rebuilding for build versioning
+#include "version.h"
+
+
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
 static bool		anonymous = false;
@@ -935,15 +939,68 @@ int			main(int argc, char** argv)
   // parse arguments
   parse(argc, argv);
 
-  // load the bad word filter, if it was set
+  // see if there is a _default_ badwords file
+  if (!BZDB->isSet("filterFilename")) {
+    std::string name = "";
+#if !defined(_WIN32) & !defined(macintosh)
+    struct passwd* pwent = getpwuid(getuid());
+    if (pwent && pwent->pw_dir) {
+      name += std::string(pwent->pw_dir);
+      name += "/";
+    }
+    name += ".bzf/badwords.txt";
+#elif defined(_WIN32) /* !defined(_WIN32) */
+    name = "C:";
+    char dir[MAX_PATH];
+    ITEMIDLIST* idl;
+    if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
+      if (SHGetPathFromIDList(idl, dir)) {
+	struct stat statbuf;
+	if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
+	  name = dir;
+      }
+      IMalloc* shalloc;
+      if (SUCCEEDED(SHGetMalloc(&shalloc))) {
+	shalloc->Free(idl);
+	shalloc->Release();
+      }
+    }
+    /* XXX -- the windows resource dir needs to be a setting; this code
+      * will need to match the path in getConfigFileName().
+      */
+    name += "\\My BZFlag Files\\badwords.txt";
+
+#else
+    name = "badwords.txt";
+#endif /* !defined(_WIN32) & !defined(macintosh) */
+
+    // get a handle on a filter object to attempt a load
+    if (BZDB->isSet("filter")) {
+      filter = (WordFilter *)BZDB->getPointer("filter");
+      if (filter == NULL) {
+	filter = new WordFilter();
+      }
+    } else {
+      // filter is not set
+      filter = new WordFilter();
+    }
+    // XXX should stat the file first and load with interactive feedback
+    unsigned int count = filter->loadFromFile(name, false);
+    if (count > 0) {
+      std::cout << "Loaded " << count << " words from \"" << name << "\"" << std::endl;
+    }
+  }
+	  
+  // load the bad word filter, regardless of a default, if it was set
   if (BZDB->isSet("filterFilename")) {
     std::string filterFilename = BZDB->get("filterFilename");
     std::cout << "Filter file name specified is \"" << filterFilename << "\"" << std::endl;
     if (filterFilename.length() != 0) {
-      unsigned int count;
-      filter = new WordFilter();
+      if (filter == NULL) {
+	filter = new WordFilter();
+      }
       std::cout << "Loading " << filterFilename << std::endl;
-      count = filter->loadFromFile(filterFilename, true);
+      unsigned int count = filter->loadFromFile(filterFilename, true);
       std::cout << "Loaded " << count << " words" << std::endl;
 
       // stash the filter into the database for retrieval later
