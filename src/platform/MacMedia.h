@@ -14,7 +14,7 @@
 #define  BZF_MACMEDIA_H
 
 #include <Carbon/Carbon.h>
-#include "queue"
+#include <queue>
 #include "BzfMedia.h"
 
 class MacMedia : public BzfMedia {

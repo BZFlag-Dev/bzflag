@@ -9,6 +9,10 @@
 #include <vector>
 #include <map>
 
+#ifdef _MACOSX_
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 class Bundle;
 
 typedef std::map<std::string,Bundle *> BundleMap;

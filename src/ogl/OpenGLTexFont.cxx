@@ -10,10 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "OpenGLTexFont.h"
 #include <string>
 #include <string.h>
 #include <math.h>
+#include "OpenGLTexFont.h"
 #include "global.h"		// for TeamColor enum
 #include "Team.h"		// for TeamColor colors
 #include "TimeKeeper.h"	// for blinking timer

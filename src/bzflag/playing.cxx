@@ -32,6 +32,9 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include <dirent.h>
 #include <utime.h>
 #endif
+#if defined(_MACOSX_)
+#include <Carbon/Carbon.h>
+#endif
 
 // yikes! that's a lotsa includes!
 #include "playing.h"

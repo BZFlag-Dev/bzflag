@@ -2513,7 +2513,7 @@ void			ServerMenu::setSelected(int index)
       std::vector<std::string> args;
       sprintf(msg, "%d", newPage + 1);
       args.push_back(msg);
-      sprintf(msg, "%d", (servers.size() + NumItems - 1) / NumItems);
+      sprintf(msg, "%ld", (long int)(servers.size() + NumItems - 1) / NumItems);
       args.push_back(msg);
       pageLabel->setString("Page {1} of {2}", &args);
     }

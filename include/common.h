@@ -41,9 +41,11 @@
 #define	atan2f		(float)atan2
 #define	cosf		(float)cos
 #define	expf		(float)exp
+#if !defined(_MACOSX_)
 #define	fabsf		(float)fabs
 #define	floorf		(float)floor
 #define	fmodf		(float)fmod
+#endif
 #define	hypotf		(float)hypot
 #define	logf		(float)log
 #define	powf		(float)pow

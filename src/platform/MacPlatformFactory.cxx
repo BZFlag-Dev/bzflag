@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "MacPlatformFactory.h"
 #include "MacDisplay.h"
 #include "MacVisual.h"
 #include "MacWindow.h"
 #include "MacMedia.h"
+#include "MacPlatformFactory.h"
 
 PlatformFactory* PlatformFactory::getInstance()
 {

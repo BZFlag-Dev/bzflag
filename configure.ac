@@ -181,7 +181,7 @@ case $host_os in
 	   CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti"
 	fi;;
      macos)
-	CPPFLAGS="$CPPFLAGS -D_MACOSX_ -D_BSD_SOCKLEN_T_=int -I/usr/include";
+	CPPFLAGS="$CPPFLAGS -D_MACOSX_ -D_BSD_SOCKLEN_T_=int";
 	CPPFLAGS="$CPPFLAGS -Wall -W";
 	CFLAGS="$CFLAGS -ansi";
 	CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti";;

@@ -10,9 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <math.h>
+#include "Team.h"
 #include "Flag.h"
 #include "Pack.h"
-#include "Team.h"
 
 const char*		Flag::flagName[] = {
 				"Rogue",		// should never be used

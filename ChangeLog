@@ -3,6 +3,9 @@
 
 * add new updates here without heading until a release
 
+* OSX Fixes - Sean (brlcad | learner)
+* E-mail field fixes - Lars Luthman
+* colorized console - Dave R (Trepan), David Trowbridge
 * automake/autoconf build system - Tupone Alfredo, David Trowbridge
 * check for unknown message types - Frank Thilo 
 * check incoming TCP for oversized messages and dump player - Frank Thilo

@@ -55,8 +55,8 @@ CXXWOFF  = # turn off bogus C++ compiler warnings
 #
 # search paths
 #
-PCINCS   = -I/usr/include
-PCXXINCS = -I/usr/include
+PCINCS   =
+PCXXINCS =
 
 #
 # linker options

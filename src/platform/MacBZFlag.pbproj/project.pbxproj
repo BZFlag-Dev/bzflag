@@ -3406,7 +3406,7 @@
 //024
 		0249A665FF388DC511CA2CEA = {
 			isa = PBXApplicationReference;
-			path = "BZFlag 1.7g0.app";
+			path = BZFlag1.7g1.app;
 			refType = 3;
 		};
 		0249A669FF388E3911CA2CEA = {
@@ -3467,7 +3467,7 @@
 				DEBUGGING_SYMBOLS = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				NDEBUG = 1;
-				OPTIMIZATION_CFLAGS = "-O2 -ffast-math -fomit-frame-pointer -fexpensive-optimizations";
+				OPTIMIZATION_CFLAGS = "-O3 -ffast-math -fomit-frame-pointer -fexpensive-optimizations";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -3619,15 +3619,16 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_VERSION = 2.x;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications/BZFlag";
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "-Wall -W -fno-exceptions -fno-rtti";
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-Wall -ffast-math -fexpensive-optimizations";
+				OTHER_LDFLAGS = "-g";
 				OTHER_REZFLAGS = "";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = "MacBZFlag-prefix.h";
-				PRODUCT_NAME = "BZFlag 1.7g0";
+				PRODUCT_NAME = BZFlag1.7g1;
 				SECTORDER_FLAGS = "";
 				USE_GCC3_PFE_SUPPORT = NO;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -3650,9 +3651,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>BZFlag 1.7g0</string>
+	<string>BZFlag1.7g1</string>
 	<key>CFBundleGetInfoString</key>
-	<string>BZFlag version 1.7g0, © 1993-2003 Tim Riker, Chris Schoeneman</string>
+	<string>BZFlag version 1.7g1, © 1993-2003 Tim Riker, Chris Schoeneman</string>
 	<key>CFBundleIconFile</key>
 	<string>MacBZFlag.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -3664,11 +3665,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.7g0</string>
+	<string>1.7g1</string>
 	<key>CFBundleSignature</key>
 	<string>BZfl</string>
 	<key>CFBundleVersion</key>
-	<string>1.7g0</string>
+	<string>1.7g1</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 </dict>
@@ -3986,7 +3987,6 @@
 				D52E012803E58E05003210E6,
 			);
 			buildSettings = {
-				GCC_VERSION = 2.x;
 				INSTALL_PATH = "@executable_path";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-Wall -W -fno-exceptions -fno-rtti";
@@ -4309,7 +4309,6 @@
 				D57D7AAB03E42BAC006CC2CA,
 			);
 			buildSettings = {
-				GCC_VERSION = 2.x;
 				INSTALL_PATH = "@executable_path";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-Wall -W -fno-exceptions -fno-rtti";
@@ -4646,7 +4645,6 @@
 				D57D7B1803E43E1C006CC2CA,
 			);
 			buildSettings = {
-				GCC_VERSION = 2.x;
 				INSTALL_PATH = "@executable_path";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-Wall -W -fno-exceptions -fno-rtti";

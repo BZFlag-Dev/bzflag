@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <math.h>
 #include "Obstacle.h"
 #include "Intersect.h"
-#include <math.h>
 
 Obstacle::Obstacle(const float* _pos, float _angle,
 				float _width, float _breadth, float _height) :
