@@ -19,9 +19,6 @@
 #include <string>
 #include <map>
 #include <vector>
-#ifndef WIN32
-#include <multimap.h>
-#endif
 
 #define SOUNDMGR (SoundManager::getInstance())
 

@@ -18,7 +18,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #include <ctype.h>
 #include <sys/types.h>
 #include <time.h>
-#include <fstream.h>
+#include <fstream>
 #include "playing.h"
 #include "BzfDisplay.h"
 #include "BzfEvent.h"
@@ -700,8 +700,8 @@ static std::string	cmdScreenshot(const std::string&,
 
 	char filename[80];
 	snprintf(filename, 80, "bzfi%04d.raw", snap++);
-	fstream f;
-	f.open(filename, ios::out);
+	std::fstream f;
+    f.open(filename, std::ios::out | std::ios::binary);
 	if (f.is_open()) {
 		int w, h;
 		mainWindow->getSize(w, h);
@@ -715,7 +715,7 @@ static std::string	cmdScreenshot(const std::string&,
 		  *ptr = gammaTable[*ptr];
 		  ptr++;
 		}
-		f.write(b, w * h * 3);
+		f.write(reinterpret_cast<char*>(b), w * h * 3);
 		delete [] b;
 		f.close();
 		char notify[128];
@@ -2106,7 +2106,7 @@ static void				updateExplosions(float dt)
 		--i;
 		if (explosions[i].time >= explosions[i].duration) {
 			explosions[i].node->unref();
-			explosions.erase(&explosions[i]);
+			explosions.erase(explosions.begin() + i);
 		}
 	}
 }
@@ -2890,7 +2890,7 @@ static bool				joinGame(ServerLink* _serverLink)
 			break;
 
 		case KingTeam:
-			cout << "setting king team\n";
+            std::cout << "setting king team\n";
 			ViewColor::setMyTeam(ViewColor::King);
 	}
 

@@ -334,7 +334,7 @@ void					ViewItemRadar::drawTank(float x, float y, float z, float minsize)
 	}
 
 	// Does not change with height.
-	s = max(TankRadius, minsize);
+	s = std::max(TankRadius, minsize);
 	glRectf(x - s, y - s, x + s, y + s);
 }
 
