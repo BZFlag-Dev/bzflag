@@ -156,7 +156,6 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
     return;
   }
 
-
   // build up a list of faces and fragments
   const MeshFace** sortList = new const MeshFace*[faceCount];
 

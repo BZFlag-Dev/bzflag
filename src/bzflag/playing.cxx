@@ -5539,6 +5539,10 @@ void			startPlaying(BzfDisplay* _display,
     CMDMGR.add(commandList[c].name, commandList[c].func, commandList[c].help);
   }
 
+  // initialize the tank display lists
+  // (do this before calling SceneRenderer::render())
+  TankGeometryMgr::init();
+
   // make control panel
   ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
   controlPanel = &_controlPanel;
@@ -5747,10 +5751,6 @@ void			startPlaying(BzfDisplay* _display,
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
   World::init();
-
-  // initialize and build the tank display lists
-  TankGeometryMgr::init();
-  TankGeometryMgr::buildLists();
 
   // prepare dialogs
   mainMenu = new MainMenu;

@@ -27,6 +27,7 @@ bool  BZDBCache::tesselation;
 bool  BZDBCache::lighting;
 bool  BZDBCache::smooth;
 bool  BZDBCache::colorful;
+bool  BZDBCache::animatedTreads;
 
 float BZDBCache::worldSize;
 float BZDBCache::gravity;
@@ -54,6 +55,7 @@ void BZDBCache::init()
   BZDB.addCallback("lighting", clientCallback, NULL);
   BZDB.addCallback("smooth", clientCallback, NULL);
   BZDB.addCallback("colorful", clientCallback, NULL);
+  BZDB.addCallback("animatedTreads", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE, serverCallback, NULL);
@@ -98,11 +100,13 @@ void BZDBCache::clientCallback(const std::string& name, void *)
   else if (name == "tesselation")
     tesselation = BZDB.isTrue("tesselation");
   else if (name == "lighting")
-    lighting    = BZDB.isTrue("lighting");
+    lighting = BZDB.isTrue("lighting");
   else if (name == "smooth")
-    smooth      = BZDB.isTrue("smooth");
+    smooth = BZDB.isTrue("smooth");
   else if (name == "colorful")
-    colorful    = BZDB.isTrue("colorful");
+    colorful = BZDB.isTrue("colorful");
+  else if (name == "animatedTreads")
+    animatedTreads = BZDB.isTrue("animatedTreads");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)

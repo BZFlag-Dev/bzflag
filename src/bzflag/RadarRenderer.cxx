@@ -32,6 +32,7 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "PhysicsDriver.h"
 
 // local implementation headers
 #include "LocalPlayer.h"
@@ -217,11 +218,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   int noiseTexture = tm.getTextureID( "noise" );
 
   // if jammed then draw white noise.  occasionally draw a good frame.
-  if (jammed && bzfrand() > decay) {
+  if (jammed && (bzfrand() > decay)) {
 
-    glColor3f(1.0,1.0,1.0);
+    glColor3f(1.0f, 1.0f, 1.0f);
 
-    if (noiseTexture >= 0 && renderer.useQuality() > 0) {
+    if ((noiseTexture >= 0) && (renderer.useQuality() > 0)) {
 
       const int sequences = 10;
 
@@ -259,8 +260,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_TEXTURE_2D);
     }
 
-    else if (noiseTexture >= 0 && BZDBCache::texture &&
-	     renderer.useQuality() == 0) {
+    else if ((noiseTexture >= 0) && BZDBCache::texture &&
+	     (renderer.useQuality() == 0)) {
       glEnable(GL_TEXTURE_2D);
       tm.bind(noiseTexture);
       glBegin(GL_QUADS);
@@ -627,6 +628,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   for (i = 0; i < count; i++) {
     const MeshObstacle* mesh = meshes[i];
     int faces = mesh->getFaceCount();
+    
     for (int f = 0; f < faces; f++) {
       const MeshFace* face = mesh->getFace(f);
       if (face->getPlane()[2] <= 0.0f) {
@@ -635,7 +637,14 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
       const float z = face->getPosition()[2];
       const float h = face->getHeight();
       const float cs = colorScale(z, h);
-      glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, h));
+      // draw death faces with a soupcon of red
+      const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
+      if ((phydrv != NULL) && phydrv->getIsDeath()) {
+        glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, h));
+      } else {
+        glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, h));
+      }
+      // draw the face as a triangle fan
       int vertexCount = face->getVertexCount();
       glBegin(GL_TRIANGLE_FAN);
       for (int v = 0; v < vertexCount; v++) {

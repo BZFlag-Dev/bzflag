@@ -424,8 +424,8 @@ void			BackgroundRenderer::setCelestial(
 
 }
 
-void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
-							GLfloat vDrift)
+
+void BackgroundRenderer::addCloudDrift(GLfloat uDrift, GLfloat vDrift)
 {
   cloudDriftU += 0.01f * uDrift / cloudRepeats;
   cloudDriftV += 0.01f * vDrift / cloudRepeats;
@@ -434,6 +434,7 @@ void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
   if (cloudDriftV > 1.0f) cloudDriftV -= 1.0f;
   else if (cloudDriftV < 0.0f) cloudDriftV += 1.0f;
 }
+
 
 void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 				   bool mirror)
@@ -480,8 +481,9 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
   }
 }
 
-void			BackgroundRenderer::renderGround(
-				SceneRenderer& renderer, bool fullWindow)
+
+void BackgroundRenderer::renderGround(SceneRenderer& renderer,
+                                      bool fullWindow)
 {
   if (renderer.useQuality() > 0) {
     drawGround();
@@ -525,18 +527,20 @@ void			BackgroundRenderer::renderGround(
   }
 }
 
-void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer)
+
+void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
+                                             bool drawingMirror)
 {
   // zbuffer should be disabled.  either everything is coplanar with
   // the ground or is drawn back to front and is occluded by everything
   // drawn after it.  also use projection with very far clipping plane.
 
-  if (renderer.useQuality() < 3) {
+  if ((renderer.useQuality() < 3) && !drawingMirror) {
     drawGroundGrid(renderer);
   }
 
   if (!blank) {
-    if (doShadows && shadowsVisible) {
+    if (doShadows && shadowsVisible && !drawingMirror) {
       drawGroundShadows(renderer);
     }
 
@@ -544,7 +548,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer)
     // the ground gets illuminated).  this is necessary because lighting is
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
-    if (BZDBCache::blend && BZDBCache::lighting) {
+    if (BZDBCache::blend && BZDBCache::lighting && !drawingMirror) {
       drawGroundReceivers(renderer);
     }
 
@@ -568,6 +572,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer)
     }
   }
 }
+
 
 void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 {
@@ -703,7 +708,8 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   glPopMatrix();
 }
 
-void			BackgroundRenderer::drawGround()
+
+void BackgroundRenderer::drawGround()
 {
   // draw ground
   glNormal3f(0.0f, 0.0f, 1.0f);
@@ -849,8 +855,8 @@ void			BackgroundRenderer::drawGroundShadows(
   glPopMatrix();
 }
 
-void			BackgroundRenderer::drawGroundReceivers(
-						SceneRenderer& renderer)
+
+void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 {
   static const int receiverRings = 4;
   static const int receiverSlices = 8;
@@ -982,7 +988,8 @@ void			BackgroundRenderer::drawGroundReceivers(
   glPopMatrix();
 }
 
-void			BackgroundRenderer::drawMountains(void)
+
+void BackgroundRenderer::drawMountains(void)
 {
   glColor3f(1.0f, 1.0f, 1.0f);
   for (int i = 0; i < numMountainTextures; i++) {

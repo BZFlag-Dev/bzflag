@@ -23,6 +23,7 @@
 #include <string>
 
 // common implementation headers
+#include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
@@ -114,6 +115,7 @@ void TankGeometryMgr::init()
   BZDB.addCallback (StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL);
   BZDB.addCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
   BZDB.addCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
+  BZDB.addCallback ("animatedTreads", bzdbCallback, NULL);
 
   // install the context initializer
   OpenGLGState::registerContextInitializer (initContext, NULL);
@@ -127,7 +129,15 @@ void TankGeometryMgr::init()
 
 void TankGeometryMgr::kill()
 {
+  // remove the BZDB callbacks
+  BZDB.removeCallback (StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL);
+  BZDB.removeCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
+  BZDB.removeCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
+  BZDB.removeCallback ("animatedTreads", bzdbCallback, NULL);
+
+  // remove the context initializer callback
   OpenGLGState::unregisterContextInitializer(initContext, NULL);
+  
   return;
 }
 
@@ -162,18 +172,35 @@ void TankGeometryMgr::buildLists()
   // setup the scale factors
   setupScales();
   currentScaleFactor = scaleFactors[Normal];
+  const bool animated = BZDBCache::animatedTreads;
+  
+  // setup the quality level	
+  const int divisionLevels[4][2] = { // wheel divs, tread divs
+    {4, 4},   // low
+    {8, 16},  // med
+    {12, 24}, // high
+    {16, 32}  // experimental
+  };
+  int quality = RENDERER.useQuality();
+  if (quality < 0) {
+    quality = 0;
+  } else if (quality > 3) {
+    quality = 3;
+  }
+  int wheelDivs = divisionLevels[quality][0];
+  int treadDivs = divisionLevels[quality][1];
 
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
 
-	// only do the basics, unless we're making a HighTank
+	// only do the basics, unless we're making an animated tank
 	int lastPart = BasicTankParts;
-	if (lod == HighTankLOD) {
+	if (animated) {
 	  lastPart = HighTankParts;
 	}
 
-	// set the shadow mode for the doNormal3f() and doTexcoord2f()
+	// set the shadow mode for the doNormal3f() and doTexcoord2f() calls
 	shadowMode = (TankShadow) shadow;
 
 	for (int part = 0; part < lastPart; part++) {
@@ -186,38 +213,31 @@ void TankGeometryMgr::buildLists()
 	  // setup the scale factor
 	  currentScaleFactor = scaleFactors[size];
 
-	  if (part < MedTankParts) {
+	  if ((part <= Turret) || (!animated)) {
 	    // the basic parts
 	    partFunctions[lod][part]();
-	  }
-	  else {
-	    // the animated parts
-	    switch (part) {
-	      case LeftTread: {
-		buildHighLTread(30);
-		break;
-	      }
-	      case RightTread: {
-		buildHighRTread(30);
-		break;
-	      }
-	      case LeftWheel0:
-	      case LeftWheel1:
-	      case LeftWheel2:
-	      case LeftWheel3: {
-		int wheel = part - LeftWheel0;
-		buildHighLWheel(wheel, (float)wheel * M_PI/2.0f, 12);
-		break;
-	      }
-	      case RightWheel0:
-	      case RightWheel1:
-	      case RightWheel2:
-	      case RightWheel3: {
-		int wheel = part - RightWheel0;
-		buildHighRWheel(wheel, (float)wheel * M_PI/2.0f, 12);
-		break;
-	      }
-	    } // end part switch
+	  } else {
+            // the animated parts
+	    if (part == LeftCasing) {
+	      buildHighLCasingAnim();
+            } 
+	    else if (part == RightCasing) {
+	      buildHighRCasingAnim();
+            } 
+            else if (part == LeftTread) {
+              buildHighLTread(treadDivs);
+            }
+            else if (part == RightTread) {
+              buildHighRTread(treadDivs);
+            }
+            else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
+              int wheel = part - LeftWheel0;
+              buildHighLWheel(wheel, (float)wheel * (M_PI / 2.0f), wheelDivs);
+            }
+            else if ((part >= RightWheel0) && (part <= RightWheel3)) {
+              int wheel = part - RightWheel0;
+              buildHighRWheel(wheel, (float)wheel * (M_PI / 2.0f), wheelDivs);
+            }
 	  }
 
 	  // end of the list

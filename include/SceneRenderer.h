@@ -72,18 +72,18 @@ public:
 
   bool		useABGR() const;
   bool		useStencil() const;
-  int			useQuality() const;
+  int		useQuality() const;
   bool		useDepthComplexity() const;
   bool		useCullingTree() const;
   bool		useCollisionTree() const;
   bool		useWireframe() const;
   bool		useHiddenLine() const;
   float		getPanelOpacity() const;
-  int			getRadarSize() const;
-  int			getMaxMotionFactor() const;
+  int		getRadarSize() const;
+  int		getMaxMotionFactor() const;
   bool		isLastFrame() const;
   bool		isSameFrame() const;
-  ViewType		getViewType() const;
+  ViewType	getViewType() const;
 
   void		setSmoothing(bool on);
   void		setZBuffer(bool on);
@@ -99,6 +99,7 @@ public:
   void		setMaxMotionFactor(int size);
   void		setDim(bool on);
   void		setViewType(ViewType);
+  void		setRebuildTanks();
 
   void		setExposed();
 
@@ -199,32 +200,33 @@ private:
   float teleporterProximity;
 
   bool		abgr;
-  int			useQualityValue;
+  int		useQualityValue;
   bool		useDepthComplexityOn;
   bool		useCullingTreeOn;
   bool		useCollisionTreeOn;
   bool		useWireframeOn;
   bool		useHiddenLineOn;
   float		panelOpacity;
-  int			radarSize;
-  int			maxMotionFactor;
+  int		radarSize;
+  int		maxMotionFactor;
   bool		useFogHack;
   bool		useStencilOn;
-  ViewType		viewType;
-  RenderNodeList	shadowList;
-  RenderNodeGStateList orderedList;
+  ViewType	viewType;
   bool		inOrder;
-  int			depthRange;
-  int			numDepthRanges;
-  double		depthRangeSize;
+  int		depthRange;
+  int		numDepthRanges;
+  double	depthRangeSize;
   bool		useDimming;
   bool		canUseHiddenLine;
   bool		exposed;
   bool		lastFrame;
   bool		sameFrame;
   bool		needStyleUpdate;
-  std::vector<FlareLight>	flareLightList;
+  bool		rebuildTanks;
 
+  std::vector<FlareLight>	flareLightList;
+  RenderNodeList		shadowList;
+  RenderNodeGStateList 		orderedList;
 };
 
 
@@ -310,6 +312,11 @@ inline bool			SceneRenderer::isLastFrame() const
 inline bool			SceneRenderer::isSameFrame() const
 {
   return sameFrame;
+}
+
+inline int			SceneRenderer::useQuality() const
+{
+  return useQualityValue;
 }
 
 inline void SceneRenderer::addRenderNode(RenderNode* node,

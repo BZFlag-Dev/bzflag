@@ -145,6 +145,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "userRainScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "userMirror",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "showTreads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "animatedTreads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "userTrackFade",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "trackMarkCulling",		"3",			true,	StateDatabase::ReadWrite,	NULL },
   { "scrollPages",		"20",			true,	StateDatabase::ReadWrite,	NULL },
@@ -1386,16 +1387,13 @@ int			main(int argc, char** argv)
     }
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");
-      for (int i = 0; i < (int)(sizeof(configQualityValues) /
-				sizeof(configQualityValues[0])); i++)
+      const int qualityLevels = countof(configQualityValues);
+      for (int i = 0; i < qualityLevels; i++) {
 	if (value == configQualityValues[i]) {
 	  RENDERER.setQuality(i);
 	  break;
 	}
-	if (RENDERER.useQuality() > 3){	// experimental quality allways forces z buffer
-		BZDB.set("zbuffer","1");
-	//	RENDERER.setZBuffer(true);
-	}
+      }
     }
     BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 	      RENDERER.useQuality() < 2) ? "1" : "0");

@@ -123,15 +123,13 @@ namespace TankGeometryUtils {
   void buildHighLCasing (void);
   void buildHighRCasing (void);
 
+  // animated geometry builder
+  void buildHighLCasingAnim (void);
+  void buildHighRCasingAnim (void);
   void buildHighLTread (int divs);
   void buildHighRTread (int divs);
   void buildHighLWheel (int wheel, float angle, int divs);
   void buildHighRWheel (int wheel, float angle, int divs);
-
-  // these are left here for historical reasons
-  // they should not get linked into the builds
-  void buildHighLCasingOld (void);
-  void buildHighRCasingOld (void);
 }
 
 

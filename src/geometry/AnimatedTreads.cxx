@@ -427,13 +427,13 @@ static void buildWheel(const float pos[3], float angle, int divisions)
 }
 
 
-void TankGeometryUtils::buildHighLCasing()
+void TankGeometryUtils::buildHighLCasingAnim()
 {
   buildCasing(+treadYCenter);
   return;
 }
 
-void TankGeometryUtils::buildHighRCasing()
+void TankGeometryUtils::buildHighRCasingAnim()
 {
   buildCasing(-treadYCenter);
   return;

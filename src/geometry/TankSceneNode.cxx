@@ -236,24 +236,14 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   // set the level of detail
   TankLOD mode = LowTankLOD;
-  if (BZDBCache::zbuffer) {
-    if ((maxLevel == -1) || ((maxLevel > 2) && (size > 55.0f))) {
-      mode = HighTankLOD;
-    }
-    else if ((maxLevel > 1) && (size > 25.0f)) {
-      mode = MedTankLOD;
-    }
-    else {
-      mode = LowTankLOD;
-    }
+  if ((maxLevel == -1) || ((maxLevel > 2) && (size > 55.0f))) {
+    mode = HighTankLOD;
+  }
+  else if ((maxLevel > 1) && (size > 25.0f)) {
+    mode = MedTankLOD;
   }
   else {
-    // do BSP users a favor
-    if ((maxLevel == -1) || ((maxLevel > 0) && (size > 25.0f))) {
-      mode = MedTankLOD;
-    } else {
-      mode = LowTankLOD;
-    }
+    mode = LowTankLOD;
   }
   tankRenderNode.setTankLOD(mode);
 
@@ -263,7 +253,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   bool narrow = false;
   if ((tankSize == Narrow) &&
       (!useDimensions || (dimensions[1] < 0.01f)) &&
-      (mode == HighTankLOD) && BZDBCache::zbuffer) {
+      BZDBCache::animatedTreads && BZDBCache::zbuffer) {
     narrow = true;
   }
   tankRenderNode.setNarrowWithDepth(narrow);
@@ -299,7 +289,7 @@ void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
   }
 
   // use HighTankLOD shadows in experimental mode
-  if ((TankSceneNode::maxLevel == -1) && BZDBCache::zbuffer) {
+  if (TankSceneNode::maxLevel == -1) {
     shadowRenderNode.setTankLOD (HighTankLOD);
   } else {
     shadowRenderNode.setTankLOD (LowTankLOD);
@@ -891,7 +881,7 @@ void TankSceneNode::TankRenderNode::render()
     renderPart(Barrel);
     renderPart(LeftCasing);
     renderPart(RightCasing);
-    if (drawLOD == HighTankLOD) {
+    if (BZDBCache::animatedTreads) {
       for (int i = 0; i < 4; i++) {
 	if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
 	  continue;
@@ -922,7 +912,7 @@ void TankSceneNode::TankRenderNode::render()
 
   // render the jumpJets
   if (!isExploding && !isShadow) {
-    renderJumpJets(); // after the matrix has been reloaded
+    renderJumpJets(); // after the matrix has been restored
   }
 
   // FIXME -- add flare lights using addFlareLight().
@@ -943,7 +933,7 @@ void TankSceneNode::TankRenderNode::render()
 void TankSceneNode::TankRenderNode::renderLeftParts()
 {
   renderPart(LeftCasing);
-  if (drawLOD == HighTankLOD) {
+  if (BZDBCache::animatedTreads) {
     for (int i = 0; i < 4; i++) {
       // don't need the middle two wheels for shadows
       if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
@@ -960,7 +950,7 @@ void TankSceneNode::TankRenderNode::renderLeftParts()
 void TankSceneNode::TankRenderNode::renderRightParts()
 {
   renderPart(RightCasing);
-  if (drawLOD == HighTankLOD) {
+  if (BZDBCache::animatedTreads) {
     for (int i = 0; i < 4; i++) {
       // don't need the middle two wheels for shadows
       if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
@@ -1097,7 +1087,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
   // setup the animation texture matrix
   bool usingTexMat = false;
-  if (!isShadow && (drawLOD == HighTankLOD) && (part >= BasicTankParts)) {
+  if (!isShadow && BZDBCache::animatedTreads && (part >= BasicTankParts)) {
     usingTexMat = setupTextureMatrix(part);
   }
 

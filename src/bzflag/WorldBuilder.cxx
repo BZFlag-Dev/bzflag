@@ -185,7 +185,6 @@ void* WorldBuilder::unpack(void* buf)
 	if (tetra->isValid()) {
 	  world->tetras.push_back(tetra);
 	  world->meshes.push_back(tetra->getMesh());
-	  printf ("ADDED TETRA MESH!!!\n");
 	} else {
 	  delete tetra;
 	}

@@ -39,7 +39,7 @@ class BackgroundRenderer {
 
     void		renderSky(SceneRenderer&, bool fullWindow, bool mirror);
     void		renderGround(SceneRenderer&, bool fullWindow);
-    void		renderGroundEffects(SceneRenderer&);
+    void		renderGroundEffects(SceneRenderer&, bool drawingMirror);
     void		renderEnvironment(SceneRenderer&);
 
     void		resize();

@@ -38,6 +38,7 @@
 #include "TextUtils.h"
 #include "ParseColor.h"
 #include "BZDBCache.h"
+#include "TankGeometryMgr.h"
 
 /* FIXME - local implementation dependancies */
 #include "BackgroundRenderer.h"
@@ -121,7 +122,8 @@ SceneRenderer::SceneRenderer() :
 				exposed(true),
 				lastFrame(true),
 				sameFrame(false),
-				needStyleUpdate(true)
+				needStyleUpdate(true),
+				rebuildTanks(true)
 {
   lightsSize = 4;
   lights = new OpenGLLight*[lightsSize];
@@ -228,12 +230,6 @@ bool SceneRenderer::useStencil() const
 }
 
 
-int SceneRenderer::useQuality() const
-{
-  return useQualityValue;
-}
-
-
 SceneRenderer::ViewType	SceneRenderer::getViewType() const
 {
   return viewType;
@@ -269,18 +265,31 @@ void SceneRenderer::setZBufferSplit(bool on)
 
 void SceneRenderer::setQuality(int value)
 {
-  if (value < 0) value = 0;
-  else if (value > BZDB.eval("maxQuality")) value = (int)BZDB.eval("maxQuality");
+  // 0 = Low
+  // 1 = Medium
+  // 2 = High
+  // 3 = Experimental
+
+  if (value < 0) {
+    value = 0;
+  } else if (value > BZDB.eval("maxQuality")) {
+    value = (int)BZDB.eval("maxQuality");
+  }
+  if (useQualityValue != value) {
+    rebuildTanks = true;
+  }
   useQualityValue = value;
+
   notifyStyleChange();
+
   if (useQualityValue >= 2) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-  }
-  else {
+  } else {
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
   }
+  
   if (useQualityValue == 3)
     TankSceneNode::setMaxLOD(-1);
   else if (useQualityValue >= 1)
@@ -302,7 +311,7 @@ void SceneRenderer::setQuality(int value)
   else
     BZDB.set("moonSegments","12");
 
-  BZDB.set("useQuality",TextUtils::format("%d",value));
+  BZDB.set("useQuality",TextUtils::format("%d", value));
 }
 
 
@@ -338,6 +347,12 @@ void SceneRenderer::setDepthComplexity(bool on)
 void SceneRenderer::setCullingTree(bool on)
 {
   useCullingTreeOn = on;
+}
+
+
+void SceneRenderer::setRebuildTanks()
+{
+  rebuildTanks = true;
 }
 
 
@@ -661,6 +676,12 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     TrackMarks::notifyStyleChange();
     needStyleUpdate = false;
   }
+  
+  if (rebuildTanks) {
+    TankGeometryMgr::deleteLists();
+    TankGeometryMgr::buildLists();
+    rebuildTanks = false;
+  }
 
   // update the dynamic colors
   DYNCOLORMGR.update();
@@ -851,7 +872,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   // draw rest of background
   // (ground grid, shadows, fake shot lights, mountains, clouds)
   if (background) {
-    background->renderGroundEffects(*this);
+    background->renderGroundEffects(*this, mirror && clearZbuffer);
   }
 
   if (!blank) {
