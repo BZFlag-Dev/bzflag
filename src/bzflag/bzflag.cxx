@@ -1172,12 +1172,12 @@ int			main(int argc, char** argv)
 
   // if we're running on 3Dfx fullscreen add a fake cursor.
   // let the defaults file override this, though.
-  if (!db.hasValue("fakecursor")) {
+  if (!BZDB->isSet("fakecursor")) {
     // check that the renderer is Mesa Glide
     const char* renderer = (const char*)glGetString(GL_RENDERER);
     if ((renderer != NULL) && (strncmp(renderer, "Mesa Glide", 10) == 0 ||
 	strncmp(renderer, "3Dfx", 4) == 0))
-      db.addValue("fakecursor", "1");
+      BZDB->set("fakecursor", "1");
   }
 
   // set gamma if set in resources and we have gamma control

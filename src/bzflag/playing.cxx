@@ -5370,8 +5370,7 @@ static void		playingLoop()
   // get view type (constant for entire game)
   const SceneRenderer::ViewType viewType = sceneRenderer->getViewType();
   const int zoomFactor = getZoomFactor();
-  const bool fakeCursor = resources->hasValue("fakecursor") &&
-		strcmp(resources->getValue("fakecursor").c_str(), "1") == 0;
+  const bool fakeCursor = BZDB->isTrue("fakecursor");
   mainWindow->setZoomFactor(zoomFactor);
   if (fakeCursor)
     mainWindow->getWindow()->hideMouse();
