@@ -451,7 +451,7 @@ void GuidedMissileStrategy::radarRender() const
     dir[2] = vel[2] * d * shotTailLength * length;
     glBegin(GL_LINES);
     glVertex2fv(orig);
-    glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+    glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
     glEnd();
 
     // draw a "bright reddish" missle tip
@@ -459,7 +459,7 @@ void GuidedMissileStrategy::radarRender() const
       glColor3f(1.0f, 0.75f, 0.75f);
       glPointSize((float)size);
       glBegin(GL_POINTS);
-      glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+      glVertex2f(orig[0], orig[1]);
       glEnd();
       glPointSize(1.0f);
     }
