@@ -458,7 +458,7 @@ msgid "Invisible Bullet"
 msgstr "InVi$I8L3 Bulle+"
 
 msgid "Stealth"
-msgstr "InV1$I8lE 8UlLET"
+msgstr "573@17h"
 
 msgid "Tiny"
 msgstr "+iny"
