@@ -42,7 +42,7 @@ typedef enum {
 typedef struct CRpacket {
   struct CRpacket *next;
   struct CRpacket *prev;
-  u16 fake;
+  u16 mode;
   u16 code;
   int len;
   int prev_len;
@@ -74,9 +74,9 @@ typedef struct {
 
 static const unsigned int ReplayMagic = 0x425A6372; // "BZcr"
 static const unsigned int ReplayVersion = 0x0001;
+static const char *ReplayDir = "bzreplay";
 static const int DefaultMaxBytes = (16 * 1024 * 1024); // 16 Mbytes
 static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
-
 
 static bool Capturing = false;
 static CaptureType CaptureMode = BufferedCapture;
@@ -114,20 +114,25 @@ static bool saveFlagStates ();
 static bool savePlayerStates ();
 static bool resetStates ();
 
-static bool saveHeader (ReplayHeader *h, FILE *f);
-static bool loadHeader (ReplayHeader *h, FILE *f);
-
-static CRtime getCRtime ();
-
-static CRpacket *newCRpacket (u16 fake, u16 code, int len, const void *data);
+static CRpacket *newCRpacket (u16 mode, u16 code, int len, const void *data);
 static CRpacket *delCRpacket (CRbuffer *b); // delete from the tail
 static void addCRpacket (CRbuffer *b, CRpacket *p); // add to head
 static void freeCRbuffer (CRbuffer *buf); // clean it out
-static void initCRpacket (u16 fake, u16 code, int len, const void *data,
+static void initCRpacket (u16 mode, u16 code, int len, const void *data,
                           CRpacket *p);
 
 static bool saveCRpacket (CRpacket *p, FILE *f);
 static CRpacket *loadCRpacket (FILE *f); // makes a new packet
+static bool saveHeader (ReplayHeader *h, FILE *f);
+static bool loadHeader (ReplayHeader *h, FILE *f);
+
+static FILE *openFile (const char *filename, const char *mode);
+static FILE *openWriteFile (int playerIndex, const char *filename);
+static bool makeDirExist (int playerIndex);
+
+static bool badFilename (const char *name);
+
+static CRtime getCRtime ();
 
 static const char *print_msg_code (u16 code);
 
@@ -142,6 +147,7 @@ extern FlagInfo *flag;
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
 extern uint16_t curMaxPlayers;
 extern TeamInfo team[NumTeams];
+extern bool getReplayMD5 (std::string& hash);
 extern char *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code, 
                           int len, const void *msg);
@@ -221,7 +227,7 @@ bool Capture::setSize (int playerIndex, int Mbytes)
   char buffer[MessageLen];
   CaptureMaxBytes = Mbytes * (1024) * (1024);
   snprintf (buffer, MessageLen, "Capture size set to %i", Mbytes);
-  sendMessage(ServerPlayer, playerIndex, buffer);    
+  sendMessage(ServerPlayer, playerIndex, buffer, true);    
   return true;
 }
 
@@ -231,7 +237,7 @@ bool Capture::setRate (int playerIndex, int seconds)
   char buffer[MessageLen];
   UpdateRate = seconds * 1000000;
   snprintf (buffer, MessageLen, "Capture rate set to %i", seconds);
-  sendMessage(ServerPlayer, playerIndex, buffer);    
+  sendMessage(ServerPlayer, playerIndex, buffer, true);    
   return true;
 }
 
@@ -255,7 +261,7 @@ bool Capture::sendStats (int playerIndex)
     snprintf (buffer, MessageLen, "  saved: %i bytes, %i packets, time = %i",
              CaptureFileBytes, CaptureFilePackets, 0);   
   }
-  sendMessage (ServerPlayer, playerIndex, buffer);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
 
   return true;
 }
@@ -267,6 +273,13 @@ bool Capture::saveFile (int playerIndex, const char *filename)
   char buffer[MessageLen];
   
   if (ReplayMode) {
+    sendMessage (ServerPlayer, playerIndex, "Can't capture in replay mode");
+    return false;
+  }
+
+  if (badFilename (filename)) {
+    sendMessage (ServerPlayer, playerIndex,
+                 "Files must be with the local directory");
     return false;
   }
   
@@ -274,30 +287,30 @@ bool Capture::saveFile (int playerIndex, const char *filename)
   Capturing = true;
   CaptureMode = StraightToFile;
 
-  CaptureFile = fopen (filename, "wb");
+  CaptureFile = openWriteFile (playerIndex, filename);
   if (CaptureFile == NULL) {
     Capture::init();
     snprintf (buffer, MessageLen, "Could not open for writing: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveHeader (&header, CaptureFile)) {
     Capture::init();
     snprintf (buffer, MessageLen, "Could not save header: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveStates ()) {
     Capture::init();
     snprintf (buffer, MessageLen, "Could not save states: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
 
   snprintf (buffer, MessageLen, "Capturing to file: %s", filename);
-  sendMessage (ServerPlayer, playerIndex, buffer);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
   
   return true;
 }
@@ -309,22 +322,34 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
   CRpacket *p;
   char buffer[MessageLen];
   
-  if (ReplayMode || !Capturing || (CaptureMode != BufferedCapture)) {
+  if (ReplayMode) {
+    sendMessage (ServerPlayer, playerIndex, "Can't capture in replay mode");
     return false;
   }
     
-  CaptureFile = fopen (filename, "wb");
+  if (!Capturing || (CaptureMode != BufferedCapture)) { // FIXME - !Capturing ?
+    sendMessage (ServerPlayer, playerIndex, "No buffer to save");
+    return false;
+  }
+    
+  if (badFilename (filename)) {
+    sendMessage (ServerPlayer, playerIndex,
+                 "Files must be with the local directory");
+    return false;
+  }
+  
+  CaptureFile = openWriteFile (playerIndex, filename);
   if (CaptureFile == NULL) {
     Capture::init();
     snprintf (buffer, MessageLen, "Could not open for writing: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveHeader (&header, CaptureFile)) {
     Capture::init();
     snprintf (buffer, MessageLen, "Could not save header: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
@@ -341,37 +366,31 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
   CaptureFilePrevLen = 0;
   
   snprintf (buffer, MessageLen, "Captured buffer saved to: %s", filename);
-  sendMessage (ServerPlayer, playerIndex, buffer);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
   
   return true;
 }
 
 
 bool 
-routePacket (u16 code, int len, const void * data, bool fake)
+routePacket (u16 code, int len, const void * data, u16 mode)
 {
-  u16 fakeval = NormalPacket;
-  
   if (!Capturing) {
     return false;
   }
   
-  if (fake) {
-    fakeval = FakedPacket;
-  }
-
   if (CaptureMode == BufferedCapture) {
-    CRpacket *p = newCRpacket (fakeval, code, len, data);
+    CRpacket *p = newCRpacket (mode, code, len, data);
     p->timestamp = getCRtime();
     addCRpacket (&CaptureBuf, p);
-    DEBUG3 ("routeCRpacket(): fake = %i, len = %4i, code = %s, data = %p\n",
-            (int)p->fake, p->len, print_msg_code (p->code), p->data);
+    DEBUG3 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+            (int)p->mode, p->len, print_msg_code (p->code), p->data);
 
     if (CaptureBuf.byteCount > CaptureMaxBytes) {
       CRpacket *p;
       DEBUG3 ("routePacket: deleting until State Update\n");
       while (((p = delCRpacket (&CaptureBuf)) != NULL) &&
-             !(p->fake && (p->code == MsgTeamUpdate))) {
+             !(p->mode && (p->code == MsgTeamUpdate))) {
         free (p->data);
         free (p);
       }
@@ -380,10 +399,10 @@ routePacket (u16 code, int len, const void * data, bool fake)
   else {
     CRpacket p;
     p.timestamp = getCRtime();
-    initCRpacket (fakeval, code, len, data, &p);
+    initCRpacket (mode, code, len, data, &p);
     saveCRpacket (&p, CaptureFile);
-    DEBUG3 ("routeCRpacket(): fake = %i, len = %4i, code = %s, data = %p\n",
-            (int)p.fake, p.len, print_msg_code (p.code), p.data);
+    DEBUG3 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+            (int)p.mode, p.len, print_msg_code (p.code), p.data);
   }
   
   return true; 
@@ -391,7 +410,7 @@ routePacket (u16 code, int len, const void * data, bool fake)
 
 
 bool 
-Capture::addPacket (u16 code, int len, const void * data, bool fake)
+Capture::addPacket (u16 code, int len, const void * data, u16 mode)
 {
   bool retval;
   
@@ -402,7 +421,7 @@ Capture::addPacket (u16 code, int len, const void * data, bool fake)
   // but it's nice to be able to see the trigger message.
   
   if (code == MsgAddPlayer) {
-    retval = routePacket (code, len, data, fake);
+    retval = routePacket (code, len, data, mode);
   }
   
   if ((getCRtime() - UpdateTime) > (int)UpdateRate) {
@@ -416,7 +435,7 @@ Capture::addPacket (u16 code, int len, const void * data, bool fake)
     return retval;
   }
   else {
-    return routePacket (code, len, data, fake);
+    return routePacket (code, len, data, mode);
   }
 }
 
@@ -494,35 +513,42 @@ bool Replay::kill()
 }
 
 
-bool Replay::loadFile(int playerIndex, const char * filename)
+bool Replay::loadFile(int playerIndex, const char *filename)
 {
   ReplayHeader header;
   CRpacket *p;
   char buffer[MessageLen];
   
   if (!ReplayMode) {
+    sendMessage (ServerPlayer, playerIndex, "Server isn't in replay mode");
+    return false;
+  }
+  
+  if (badFilename (filename)) {
+    sendMessage (ServerPlayer, playerIndex,
+                 "Files must be with the local directory");
     return false;
   }
   
   Replay::init();
   
-  ReplayFile = fopen (filename, "rb");
+  ReplayFile = openFile (filename, "rb");
   if (ReplayFile == NULL) {
     snprintf (buffer, MessageLen, "Could not open: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!loadHeader (&header, ReplayFile)) {
     snprintf (buffer, MessageLen, "Could not open header: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     ReplayFile = NULL;
     return false;
   }
 
   if (header.magic != ReplayMagic) {
     snprintf (buffer, MessageLen, "Not a bzflag replay file: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     fclose (ReplayFile);
     ReplayFile = NULL;
     return false;
@@ -547,12 +573,12 @@ bool Replay::loadFile(int playerIndex, const char * filename)
 
   if (ReplayBuf.tail == NULL) {
     snprintf (buffer, MessageLen, "No valid data: %s", filename);
-    sendMessage (ServerPlayer, playerIndex, buffer);
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
 
   snprintf (buffer, MessageLen, "Loaded file: %s", filename);
-  sendMessage (ServerPlayer, playerIndex, buffer);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
   
   return true;
 }
@@ -564,7 +590,11 @@ bool Replay::sendFileList(int playerIndex)
   DIR *dir;
   struct dirent *de;
   
-  dir = opendir (".");
+  if (!makeDirExist(playerIndex)) {
+    return false;
+  }
+  
+  dir = opendir (ReplayDir);
   if (dir == NULL) {
     return false;
   }
@@ -637,7 +667,7 @@ bool Replay::skip(int playerIndex, int seconds)
     if (seconds > 0) {
       while (p != NULL) {
         if ((p->timestamp >= target) && ((p == ReplayPos) || 
-            (p->fake && (p->code == MsgTeamUpdate)))) { // start on an update
+            (p->mode && (p->code == MsgTeamUpdate)))) { // start on an update
           break;
         }
         p = p->next;
@@ -646,7 +676,7 @@ bool Replay::skip(int playerIndex, int seconds)
     else {
       while (p != ReplayBuf.tail) {
         if ((p->timestamp <= target) && 
-            (p->fake && (p->code == MsgTeamUpdate))) { // start on an update
+            (p->mode && (p->code == MsgTeamUpdate))) { // start on an update
           break;
         }
         p = p->prev;
@@ -700,48 +730,52 @@ bool Replay::sendPackets () {
       return false;
     }
     
-    DEBUG3 ("sendPackets(): fake = %i, len = %4i, code = %s, data = %p\n",
-            (int)p->fake, p->len, print_msg_code (p->code), p->data);
-    fflush (stdout);
+    DEBUG3 ("sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
+            (int)p->mode, p->len, print_msg_code (p->code), p->data);
 
-    // send message to all replay observers
-    for (i = MaxPlayers; i < curMaxPlayers; i++) {
-      PlayerInfo &pi = player[i];
-      bool faked = false;
-      if (p->fake == FakedPacket) {
-        faked = true;
-      }
-      
-      if (pi.isPlaying()) {
-        // State machine for State Updates
-        if (faked) {
-          if (p->code == MsgTeamUpdate) { // always start on a team update
-            if (pi.getReplayState() == ReplayNone) {
-              // start receiving state info
-              pi.setReplayState (ReplayReceiving);
-            }
-            else if (pi.getReplayState() == ReplayReceiving) {
-              // two states seesions back-to-back
-              pi.setReplayState (ReplayStateful);
+    if (p->mode != HiddenPacket) {
+      // send message to all replay observers
+      for (i = MaxPlayers; i < curMaxPlayers; i++) {
+        PlayerInfo &pi = player[i];
+        bool fake = true;
+        if (p->mode == RealPacket) { 
+          fake = false;
+        }
+        
+        if (pi.isPlaying()) {
+          // State machine for State Updates
+          if (fake) {
+            if (p->code == MsgTeamUpdate) { // always start on a team update
+              if (pi.getReplayState() == ReplayNone) {
+                // start receiving state info
+                pi.setReplayState (ReplayReceiving);
+              }
+              else if (pi.getReplayState() == ReplayReceiving) {
+                // two states seesions back-to-back
+                pi.setReplayState (ReplayStateful);
+              }
             }
           }
-        }
-        else if (pi.getReplayState() == ReplayReceiving) {
-          // this is the end of a state session
-          pi.setReplayState (ReplayStateful);
-        }
+          else if (pi.getReplayState() == ReplayReceiving) {
+            // this is the end of a state session
+            pi.setReplayState (ReplayStateful);
+          }
 
-        // send the packets
-        if ((faked && (pi.getReplayState() == ReplayReceiving)) ||
-            (!faked && (pi.getReplayState() == ReplayStateful))) {
-          // the 4 bytes before p->data need to be allocated
-          void *buf = getDirectMessageBuffer ();
-          memcpy (buf, p->data, p->len);
-          directMessage(i, p->code, p->len, buf);
+          // send the packets
+          if ((fake && (pi.getReplayState() == ReplayReceiving)) ||
+              (!fake && (pi.getReplayState() == ReplayStateful))) {
+            // the 4 bytes before p->data need to be allocated
+            void *buf = getDirectMessageBuffer ();
+            memcpy (buf, p->data, p->len);
+            directMessage(i, p->code, p->len, buf);
+          }
         }
-      }
-      
-    } // for loop
+        
+      } // for loop
+    } // if (p->mode != HiddenPacket)
+    else {
+      DEBUG3 ("  skipping hidden packet\n");
+    }
     
     ReplayPos = ReplayPos->next;
     sent = true;
@@ -949,7 +983,7 @@ saveCRpacket (CRpacket *p, FILE *f)
     return false;
   }
 
-  buf = nboPackUShort (bufStart, p->fake);
+  buf = nboPackUShort (bufStart, p->mode);
   buf = nboPackUShort (buf, p->code);
   buf = nboPackUInt (buf, p->len);
   buf = nboPackUInt (buf, CaptureFilePrevLen);
@@ -987,7 +1021,7 @@ loadCRpacket (FILE *f)
     free (p);
     return NULL;
   }
-  buf = nboUnpackUShort (bufStart, p->fake);
+  buf = nboUnpackUShort (bufStart, p->mode);
   buf = nboUnpackUShort (buf, p->code);
   buf = nboUnpackInt (buf, p->len);
   buf = nboUnpackInt (buf, p->prev_len);
@@ -1009,8 +1043,8 @@ loadCRpacket (FILE *f)
     return NULL;
   }
   
-  DEBUG3 ("loadCRpacket(): fake = %i, len = %4i, code = %s, data = %p\n",
-          (int)p->fake, p->len, print_msg_code (p->code), p->data);
+  DEBUG3 ("loadCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+          (int)p->mode, p->len, print_msg_code (p->code), p->data);
 
   return p;  
 }
@@ -1067,17 +1101,81 @@ loadHeader (ReplayHeader *h, FILE *f)
   
   return true;
 }
+                         
                           
+static FILE *
+openFile (const char *filename, const char *mode)
+{
+  std::string name = ReplayDir;
+#ifndef _WIN32  
+  name += "/";
+#else
+  name += "\\";
+#endif
+  name += filename;
+  
+  return fopen (name.c_str(), mode);
+}
+
+
+static FILE *
+openWriteFile (int playerIndex, const char *filename)
+{
+  if (!makeDirExist(playerIndex)) {
+    return NULL;
+  }
+  
+  return openFile (filename, "wb");
+}
+
+
+static bool
+makeDirExist (int playerIndex)
+{
+#ifndef _WIN32
+  struct stat statbuf;
+
+  if (stat (ReplayDir, &statbuf) < 0) {
+    // try to make the directory
+    if (mkdir (ReplayDir, 0755) < 0) {
+      sendMessage (ServerPlayer, playerIndex, 
+                   "Could not create default directory");
+      return false;
+    }
+    else {
+      sendMessage (ServerPlayer, playerIndex, "Created default directory");
+    }
+  }
+  else if (!S_ISDIR (statbuf.st_mode)) {
+    // is it really a directory
+    sendMessage (ServerPlayer, playerIndex, 
+                 "Could not create default directory");
+    return false;
+  }
+
+  return true;  
+
+#else
+  sendMessage (ServerPlayer, playerIndex,
+               "Directory ops not implemented on Windows yet");
+  char buffer[MessageLen];
+  snprintf (buffer, MessageLen,
+            "Please create: .\%s if doesn't exist", ReplayDir);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  return true;
+#endif
+}
+
 
 /****************************************************************************/
 
 // Buffer Functions
 
 static void
-initCRpacket (u16 fake, u16 code, int len, const void *data, CRpacket *p)
+initCRpacket (u16 mode, u16 code, int len, const void *data, CRpacket *p)
 {
   // CaptureFilePrevLen takes care of p->prev_len
-  p->fake = fake;
+  p->mode = mode;
   p->code = code;
   p->len = len;
   p->data = (void*) data; // dirty little trick
@@ -1085,7 +1183,7 @@ initCRpacket (u16 fake, u16 code, int len, const void *data, CRpacket *p)
 
 
 static CRpacket *
-newCRpacket (u16 fake, u16 code, int len, const void *data)
+newCRpacket (u16 mode, u16 code, int len, const void *data)
 {
   CRpacket *p = (CRpacket *) malloc (sizeof (CRpacket));
   
@@ -1096,7 +1194,7 @@ newCRpacket (u16 fake, u16 code, int len, const void *data)
   if (data != NULL) {
     memcpy (p->data, data, len);
   }
-  initCRpacket (fake, code, len, p->data, p);
+  initCRpacket (mode, code, len, p->data, p);
 
   return p;
 }
@@ -1188,6 +1286,30 @@ getCRtime ()
   now = (CRtime)timeGetTime() * (CRtime)1000;
 #endif //_WIN32
   return now;
+}
+
+
+/****************************************************************************/
+
+static bool
+badFilename (const char *name)
+{
+  while (name[0] != '\0') {
+    switch (name[0]) {
+      case '/':
+      case ':':
+      case '\\': {
+        return true;
+      }
+      case '.': {
+        if (name[1] == '.') {
+          return true;
+        }
+      }
+    }
+    name++;
+  }
+  return false;
 }
 
 

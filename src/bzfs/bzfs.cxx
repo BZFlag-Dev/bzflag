@@ -1184,6 +1184,65 @@ static bool defineWorld()
   return true;
 }
 
+bool getReplayMD5 (std::string& result)
+{
+  // for capture files, use a different MD5 hash.
+  // data that is modified for replay mode is ignored.
+  
+  unsigned short max_players, num_flags;
+  unsigned int   timestamp;
+  char *buf;
+
+  // zero maxPlayers, numFlags, and the timestamp
+  
+  if (worldDatabase == NULL) {
+    return false;
+  }
+  else {
+    buf = worldDatabase;
+  }
+  
+  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
+  buf = (char*)nboUnpackUShort (buf, max_players);
+  buf -= sizeof (unsigned short);      // rewind
+  buf = (char*)nboPackUShort (buf, 0); // clear
+  
+  buf += sizeof (unsigned short);                          // at numFlags
+  buf = (char*)nboUnpackUShort (buf, num_flags);
+  buf -= sizeof (unsigned short);      // rewind
+  buf = (char*)nboPackUShort (buf, 0); // clear
+
+  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
+  buf = (char*)nboUnpackUInt (buf, timestamp);
+  buf -= sizeof (unsigned int);        // rewind
+  buf = (char*)nboPackUInt (buf, 0);   // clear
+  
+  // calculate the hash
+  
+  MD5 md5;
+  md5.update ((unsigned char *)world->getDatabase(), world->getDatabaseSize());
+  md5.finalize ();
+  if (clOptions->worldFile == NULL)
+    result = "t";
+  else
+    result = "p";
+  result += md5.hexdigest();
+
+  // put them back the way they were
+  
+  buf = worldDatabase;
+  
+  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
+  buf = (char*)nboPackUShort (buf, max_players);
+  
+  buf += sizeof (unsigned short);                          // at numFlags
+  buf = (char*)nboPackUShort (buf, num_flags);
+
+  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
+  buf = (char*)nboPackUInt (buf, timestamp);
+
+  return true;
+}
 
 static TeamColor whoseBase(float x, float y, float z)
 {
@@ -1363,6 +1422,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
   buf = nboPackUByte(buf, targetPlayer);
   buf = nboPackString(buf, message, MessageLen);
 
+  bool broadcast = false;
   int len = (char*)buf - (char*)bufStart;
 
   if (targetPlayer <= LastRealPlayer) {
@@ -1385,8 +1445,14 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
 	directMessage(i, MsgMessage, len, bufStart);
       }
     }  
-  } else
+  } else {
     broadcastMessage(MsgMessage, len, bufStart);
+    broadcast = true;
+  }
+    
+  if (Capture::enabled() && !broadcast) {
+    Capture::addPacket (MsgMessage, len, bufStart, HiddenPacket);
+  }
 }
 
 

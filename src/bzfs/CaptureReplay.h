@@ -17,6 +17,12 @@
 
 const int ReplayObservers = 16;
 
+typedef enum {
+  RealPacket   = 0,
+  FakePacket   = 1,
+  HiddenPacket = 2
+} ReplayPacketMode;
+
 namespace Capture {
   extern bool init ();
   extern bool kill ();
@@ -36,8 +42,8 @@ namespace Capture {
   extern const char * getFileName ();
 
   extern bool addPacket (uint16_t code, int len, const void * data,
-                         bool fake = false); // fake used internally
-                         
+                         uint16_t mode = RealPacket);
+                                                  
   extern void sendHelp (int playerIndex);
 };
 
