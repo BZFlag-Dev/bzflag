@@ -71,8 +71,6 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				blank(false),
 				invert(false),
 				sunBrightness(1.0f),
-				latitude(37.5f),
-				longitude(122.0f),
 				scene(NULL),
 				background(NULL),
 				abgr(false),
@@ -535,33 +533,13 @@ void			SceneRenderer::clearLights()
   lights.clear();
 }
 
-float			SceneRenderer::getLatitude()
-{
-  return latitude;
-}
-
-float			SceneRenderer::getLongitude()
-{
-  return longitude;
-}
-
-void			SceneRenderer::setLatitude(float _latitude)
-{
-  if (_latitude < -90.0f) _latitude = -90.0f;
-  else if (_latitude > 90.0f) latitude = 90.0f;
-  else latitude = _latitude;
-}
-
-void			SceneRenderer::setLongitude(float _longitude)
-{
-  longitude = fmodf(_longitude, 360.0f);
-}
-
 void			SceneRenderer::setTimeOfDay(double julianDay)
 {
 
   // get position of sun and moon at 0,0 lat/long
   float sunDir[3], moonDir[3];
+  float latitude = BZDB->eval("latitude");
+  float longitude = BZDB->eval("longitude");
   getSunPosition(julianDay, latitude, longitude, sunDir);
   getMoonPosition(julianDay, latitude, longitude, moonDir);
   ::getCelestialTransform(julianDay, latitude, longitude,

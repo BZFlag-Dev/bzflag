@@ -655,12 +655,6 @@ void			dumpResources(BzfDisplay* display,
     db.addValue("resolution", display->getResolution(display->getResolution())->name);
   }
   {
-    BZDB->set("latitude", string_util::format("%f", renderer.getLatitude()));
-    db.addValue("latitude", string_util::format("%f", renderer.getLatitude()));
-    BZDB->set("longitude", string_util::format("%f", renderer.getLongitude()));
-    db.addValue("longitude", string_util::format("%f", renderer.getLongitude()));
-  }
-  {
     BzfKeyMap& map = getBzfKeyMap();
     for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
       // get value string
@@ -1172,11 +1166,6 @@ int			main(int argc, char** argv)
 
     if (db.hasValue("maxlod"))
       renderer.setMaxLOD(atoi(db.getValue("maxlod").c_str()));
-
-    if (db.hasValue("latitude"))
-      renderer.setLatitude((float)atof(db.getValue("latitude").c_str()));
-    if (db.hasValue("longitude"))
-      renderer.setLongitude((float)atof(db.getValue("longitude").c_str()));
 
     if (db.hasValue("startcode"))
       ServerStartMenu::setSettings(db.getValue("startcode").c_str());

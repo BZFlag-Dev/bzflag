@@ -127,10 +127,6 @@ class SceneRenderer {
     GLfloat		getSunBrightness() const;
     void		enableSun(bool = true);
     const GLfloat*	getCelestialTransform() const;
-    float		getLatitude();
-    float		getLongitude();
-    void		setLatitude(float latitude);
-    void		setLongitude(float longitude);
 
     SceneDatabase*	getSceneDatabase() const;
     void		setSceneDatabase(SceneDatabase*);
@@ -178,7 +174,6 @@ class SceneRenderer {
     GLfloat		sunScaledColor[3];
     GLfloat		celestialTransform[16];
     GLfloat		sunBrightness;
-    float		latitude, longitude;
     SceneDatabase*	scene;
     BackgroundRenderer*	background;
     static const GLint	SunLight;
