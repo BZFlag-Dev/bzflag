@@ -196,6 +196,7 @@ void					SceneVisitorRender::sort()
 	std::sort(jobs.begin(), jobs.end(), &jobLess);
 }
 
+#include <stdio.h>
 void					SceneVisitorRender::draw()
 {
 	static const GLenum typeMap[] = {
@@ -256,12 +257,12 @@ void					SceneVisitorRender::draw()
 				glLightfv(GL_LIGHT0 + j, GL_DIFFUSE,  light.diffuse);
 				glLightfv(GL_LIGHT0 + j, GL_SPECULAR, light.specular);
 				glLightfv(GL_LIGHT0 + j, GL_POSITION, light.position);
-				glLightfv(GL_LIGHT0 + numLights, GL_SPOT_DIRECTION, light.spotDirection);
-				glLightf(GL_LIGHT0 + numLights, GL_SPOT_EXPONENT, light.spotExponent);
-				glLightf(GL_LIGHT0 + numLights, GL_SPOT_CUTOFF, light.spotCutoff);
-				glLightf(GL_LIGHT0 + numLights, GL_CONSTANT_ATTENUATION, light.attenuation[0]);
-				glLightf(GL_LIGHT0 + numLights, GL_LINEAR_ATTENUATION, light.attenuation[1]);
-				glLightf(GL_LIGHT0 + numLights, GL_QUADRATIC_ATTENUATION, light.attenuation[2]);
+				glLightfv(GL_LIGHT0 + j, GL_SPOT_DIRECTION, light.spotDirection);
+				glLightf(GL_LIGHT0 + j, GL_SPOT_EXPONENT, light.spotExponent);
+				glLightf(GL_LIGHT0 + j, GL_SPOT_CUTOFF, light.spotCutoff);
+				glLightf(GL_LIGHT0 + j, GL_CONSTANT_ATTENUATION, light.attenuation[0]);
+				glLightf(GL_LIGHT0 + j, GL_LINEAR_ATTENUATION, light.attenuation[1]);
+				glLightf(GL_LIGHT0 + j, GL_QUADRATIC_ATTENUATION, light.attenuation[2]);
 			}
 
 			if (numLights < enabledLights)

@@ -337,14 +337,50 @@ void					SceneNodeVectorReader<BzfString>::parseData(
 								XMLTree::iterator,
 								const BzfString& data)
 {
-	// FIXME -- no reasonable way to make multiple string values
-
 	// skip leading whitespace
 	const char* scan = data.c_str();
 	while (*scan != '\0' && isspace(*scan))
 		++scan;
 
-	buffer.push_back(scan);
+	// values are delimited by (unescaped) commas
+	while (*scan != '\0') {
+		// find the first unescaped comma
+		BzfString value;
+		while (*scan != '\0') {
+			if (*scan == '\\') {
+				switch (*++scan) {
+					case '\0':
+						// trailing backslash.  discard.
+						break;
+
+					case ',':
+					case '\\':
+					default:
+						// add literal
+						value += *scan;
+						break;
+				}
+				++scan;
+			}
+			else if (*scan == ',') {
+				// end of value.  discard comma.
+				++scan;
+				break;
+			}
+			else {
+				// literal
+				value += *scan;
+				++scan;
+			}
+		}
+
+		// add value
+		buffer.push_back(value);
+
+		// skip leading whitespace of next value
+		while (*scan != '\0' && isspace(*scan))
+			++scan;
+	}
 }
 
 

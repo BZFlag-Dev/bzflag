@@ -283,11 +283,11 @@
       </transform>
       <parameters>
     	<src>
-          sunAltitude
+          sunAltitude,
           moonAltitude
     	</src>
     	<dst>
-          tSun
+          tSun,
           tMoon
     	</dst>
     	<scale>

@@ -218,9 +218,6 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 	buffer +=	      "<texcoord>\n";
 	buffer +=	        texcoord;
 	buffer +=	      "</texcoord>\n";
-	buffer +=	      "<normal>\n";
-	buffer +=	        normal;
-	buffer +=	      "</normal>\n";
 	buffer +=	      "<vertex>\n";
 	buffer +=	        vertex;
 	buffer +=	      "</vertex>\n";
@@ -458,14 +455,14 @@ void					SceneDatabaseBuilder::addPyramid(const PyramidBuilding& o)
 {
 	static const float s_normal[][3] = {
 						        {  0.0f,  0.0f,  1.0f },
-						        {  0.0f, -1.0f,  1.0f },
+								{ -1.0f,  0.0f,  1.0f },
+								{ -1.0f,  0.0f,  1.0f },
 								{  0.0f, -1.0f,  1.0f },
-						        {  1.0f,  0.0f,  1.0f },
-								{  1.0f,  0.0f,  1.0f },
+								{  0.0f, -1.0f,  1.0f },
 						        {  0.0f,  1.0f,  1.0f },
 								{  0.0f,  1.0f,  1.0f },
-						        { -1.0f,  0.0f,  1.0f },
-								{ -1.0f,  0.0f,  1.0f },
+						        {  1.0f,  0.0f,  1.0f },
+								{  1.0f,  0.0f,  1.0f },
 
 								{  0.0f,  0.0f, -1.0f },
 								{  0.0f,  0.0f, -1.0f },

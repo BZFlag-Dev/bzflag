@@ -214,7 +214,7 @@ static SceneNode* readScene(const char* pathname)
 		return reader.parse(xmlTree.begin());
 	}
 	catch (XMLIOException& e) {
-		fprintf(stderr, "%s (%d,%d): %s",
+		fprintf(stderr, "%s (%d,%d): %s\n",
 						pathname,
 						e.position.line,
 						e.position.column,
@@ -263,16 +263,6 @@ static SceneNode* wrapScene(SceneNode* world)
 //
 // main
 //
-
-void printFatalError(const char* fmt, ...)
-{
-	char buffer[1024];
-	va_list args;
-	va_start(args, fmt);
-	vsprintf(buffer, fmt, args);
-	va_end(args);
-	fprintf(stderr, "%s", buffer);
-}
 
 #if defined(_WIN32)
 int myMain(int argc, char** argv)
