@@ -714,7 +714,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	    myTank->setInputMethod(LocalPlayer::Keyboard);
 	  break;
 	}
-    } else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
+    } 
+    if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
       myTank->setKey(key.button, pressed);
     }
   }
