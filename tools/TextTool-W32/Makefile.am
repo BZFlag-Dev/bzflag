@@ -4,18 +4,16 @@ bin_PROGRAMS = TextTool
 
 TextTool_SOURCES = \
 	MainFrm.cpp \
-	StdAfx.cpp \
-	TextTool.cpp \
-	TextToolBatch.cpp \
-	TextToolDoc.cpp \
-	TextToolView.cpp
-
-TextTool_HEADERS = \
 	MainFrm.h \
+	StdAfx.cpp \
 	StdAfx.h \
+	TextTool.cpp \
 	TextTool.h \
+	TextToolBatch.cpp \
 	TextToolBatch.h \
+	TextToolDoc.cpp \
 	TextToolDoc.h \
+	TextToolView.cpp
 	TextToolView.h \
 	resource.h
 
