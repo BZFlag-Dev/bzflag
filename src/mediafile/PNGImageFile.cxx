@@ -55,8 +55,6 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), valid(true
 	data = (unsigned char *)nboUnpackUByte(data, filterMethod);
 	data = (unsigned char *)nboUnpackUByte(data, interlaceMethod);
 
-	int lineBufferSize;
-
 	switch (colorDepth) {
 		case 0:
 			lineBufferSize = (width * (8/bitDepth))+1;
@@ -78,6 +76,7 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), valid(true
 			lineBufferSize = (width * 4 * (8/bitDepth))+1;
 		break;
 	}
+
 	lineBuffers[0] = new unsigned char[lineBufferSize];
 	lineBuffers[1] = new unsigned char[lineBufferSize];
 	activeBufferIndex = 0;
@@ -137,7 +136,8 @@ bool					PNGImageFile::read(void* buffer)
 		while (err == Z_BUF_ERROR) {
 			//ignore filter bit for now, assume None!!!
 			//also assume rgb (2)
-			memcpy( ((unsigned char *)buffer)+bufferPos, line+1, lineBufferSize+1 );
+			memcpy( ((unsigned char *)buffer)+bufferPos, line+1, lineBufferSize-1 );
+			bufferPos += lineBufferSize-1;
 
 			switchLineBuffers();
 			line = getLineBuffer();
