@@ -149,12 +149,13 @@ char		messageMessage[PlayerIdPLen + MessageLen];
 void		setTarget();
 static void		setHuntTarget();
 static void*		handleMsgSetVars(void *msg);
-void		handleFlagDropped(Player* tank);
+void			handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 static void		setRobotTarget(RobotPlayer* robot);
-extern void	doAutoPilot(float &rotation, float &speed);
+extern void		doAutoPilot(float &rotation, float &speed);
+extern void		teachAutoPilot( FlagType *, int );
 
 
 enum BlowedUpReason {
@@ -1491,9 +1492,10 @@ static void		handleServerMessage(bool human, uint16_t code,
     if (victimPlayer == myTank) {
       // uh oh, i'm dead
       if (myTank->isAlive()) {
-	serverLink->sendDropFlag(myTank->getPosition());
-	handleMyTankKilled(reason);
+		serverLink->sendDropFlag(myTank->getPosition());
+		handleMyTankKilled(reason);
       }
+
     }
 #endif
     if (victimLocal) {
@@ -1549,6 +1551,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  } else {
 	    // enemy
 	    killerLocal->changeScore(1, 0, 0);
+		if (myTank->isAutoPilot()) {
+		  if (killerPlayer) {
+			const ShotPath* shot = killerPlayer->getShot(int(shotId));
+            if (shot != NULL)
+		      teachAutoPilot( shot->getFlag(), 1 );
+		  }
+		}
 	  }
 	}
       }
@@ -2518,6 +2527,9 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   // you can't take it with you
   const FlagType* flag = tank->getFlag();
   if (flag != Flags::Null) {
+	if (myTank->isAutoPilot())
+	  teachAutoPilot( myTank->getFlag(), -1 );
+
     // tell other players I've dropped my flag
     lookupServer(tank)->sendDropFlag(tank->getPosition());
 

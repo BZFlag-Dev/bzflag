@@ -20,6 +20,54 @@
 #include "ServerLink.h"
 #include "playing.h"
 
+typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
+
+static FlagSuccessMap flagSuccess;
+static int			  totalSum = 0;
+static int			  totalCnt = 0;
+
+void teachAutoPilot(FlagType *type, int adjust)
+{
+	if (type == Flags::Null)
+		return;
+
+	FlagSuccessMap::iterator it = flagSuccess.find(type);
+	if (it != flagSuccess.end()) {
+		std::pair<int,int> &pr = it->second;
+		pr.first += adjust;
+		pr.second++;
+	}
+	else
+		flagSuccess[type] = std::pair<int,int>(adjust,1);
+	totalSum += adjust;
+	totalCnt++;
+}
+
+bool isFlagUseful( FlagType *type )
+{
+	if (type == Flags::Null)
+		return false;
+
+	FlagSuccessMap::iterator it = flagSuccess.find( type );
+	float flagValue;
+	if (it != flagSuccess.end()) {
+		std::pair<int,int> &pr = it->second;
+		if (pr.second == 0)
+		  flagValue = 0.0f;
+		else
+		  flagValue = (float)pr.first / (float)pr.second;
+	}
+	else
+		flagValue = 0.0f;
+
+	float avg;
+	if (totalCnt == 0)
+		avg = 0.0f;
+	else
+		avg = (float)totalSum/(float)totalCnt;
+	return ((float)flagValue) >= avg;
+}
+
 float normalizeAngle(float ang)
 {
   if (ang < -1.0f * M_PI) ang += 2.0f * M_PI;
@@ -262,7 +310,7 @@ bool chasePlayer( float &rotation, float &speed)
 
   const float *targetPos = player->getPosition();
   float distance = TargetingUtils::getTargetDistance(pos, targetPos);
-  if ((distance > 250.0f) && (myTank->getFlag() == Flags::Null))
+  if (distance > 250.0f)
     return false;
 
   const float *tp = player->getPosition();
@@ -356,7 +404,8 @@ bool lookForFlag( float &rotation, float &speed)
   World *world = World::getWorld();
   int closestFlag = -1;
 
-  if (myTank->getFlag() != Flags::Null)
+  if ((myTank->getFlag() != Flags::Null)
+  &&  (isFlagUseful(myTank->getFlag())))
     return false;
 
   float minDist = Infinity;
@@ -380,6 +429,11 @@ bool lookForFlag( float &rotation, float &speed)
   }
 
   if (closestFlag != -1) {
+	if (minDist < 10.0f) {
+      serverLink->sendDropFlag(myTank->getPosition());
+      handleFlagDropped(myTank);
+	}
+
     const float *fpos = world->getFlag(closestFlag).position;
     float myAzimuth = myTank->getAngle();
     float flagAzimuth = TargetingUtils::getTargetAzimuth( pos, fpos );
@@ -556,7 +610,7 @@ void    dropHardFlags()
 
 void	doAutoPilot(float &rotation, float &speed)
 {
-  dropHardFlags();
+  dropHardFlags(); //Perhaps we should remove this and learning do it's work
   if (!avoidBullet(rotation, speed)) {
     if (!stuckOnWall(rotation, speed)) {
       if (!chasePlayer(rotation, speed)) {
