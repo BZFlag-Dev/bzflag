@@ -1624,7 +1624,7 @@ static void		doAutoPilot(float &rotation, float &speed)
     if (target == curMaxPlayers) {
       // wander around aimlessly
       // FIXME should go flag hunting ;-)
-      int period = int(TimeKeeper::getCurrent().getSeconds());
+      int period = int(TimeKeeper::getTick().getSeconds());
       float bias = ((period % 10) < 5) ? M_PI/6.0f : -M_PI/9.0f; //asymetrical on purpose
       rotation = bias + ((float)bzfrand() - 0.5f) * M_PI/12.0f;
       speed = 1.0f;
@@ -1640,7 +1640,7 @@ static void		doAutoPilot(float &rotation, float &speed)
       pos[2] -= BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 
       if (myTank->getFlag() == Flags::ShockWave) {
-	TimeKeeper now = TimeKeeper::getCurrent();
+	TimeKeeper now = TimeKeeper::getTick();
 	if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
 	  bool hasSWTarget = false;
 	  for (t = 0; t < curMaxPlayers; t++) {
@@ -1662,13 +1662,13 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  }
 	  if (hasSWTarget) {
 	    myTank->fireShot();
-	    lastShot = TimeKeeper::getCurrent();;
+	    lastShot = TimeKeeper::getTick();;
 	    shotFired = true;
 	  }
 	}
       }
       else {
-	TimeKeeper now = TimeKeeper::getCurrent();
+	TimeKeeper now = TimeKeeper::getTick();
 	if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
 
 	  float errorLimit = World::getWorld()->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
@@ -1786,7 +1786,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    speed = dotProd; //go forward inverse rel to how much you need to turn
 	  }
 	  else {
-	    int period = int(TimeKeeper::getCurrent().getSeconds());
+	    int period = int(TimeKeeper::getTick().getSeconds());
 	    float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
 	    rotation += bias;
 	    if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
