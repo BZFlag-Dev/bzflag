@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* Added client-side chat filtering - Sean Morrison
 * Configuration files and cache is stored in ~/.bzf/ on *IX - Lars Luthman
 * Added team ID to shots for TK reasons (1.9.2) - Jeff Myers
 * Changed version numbers to be xx.xx.xx and display with BuildOS and Build Date ( 1.9.0) - Jeff Myers & others for auto tools
