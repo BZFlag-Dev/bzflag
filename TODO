@@ -3,6 +3,8 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* need a new bounce.wav
+
 * need to verify that the anti permissions (e.g. antiban) really do
   prevent the action properly (e.g. you cannot get banned if you have
   antiban -- even from master ban list).
