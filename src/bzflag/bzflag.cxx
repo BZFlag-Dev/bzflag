@@ -676,8 +676,6 @@ void			dumpResources(BzfDisplay* display,
   db.addValue("startcode", ServerStartMenu::getSettings());
   BZDB->set("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
   db.addValue("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
-  BZDB->set("showscore", renderer.getScore() ? "yes" : "no");
-  db.addValue("showscore", renderer.getScore() ? "yes" : "no");
   BZDB->set("showlabels", renderer.getLabels() ? "yes" : "no");
   db.addValue("showlabels", renderer.getLabels() ? "yes" : "no");
 
@@ -703,19 +701,19 @@ void			dumpResources(BzfDisplay* display,
   BZDB->setPersistent("_multisample", false);
 
   const std::vector<std::string> list = getSilenceList();
-  
+
   // add entries silencedPerson0 silencedPerson1 etc..
   // to the database. Stores silenceList
   // By only allowing up to a certain # of people can prevent
   // the vague chance of buffer overrun.
   const int bufferLength = 30;
   int maxListSize = 1000000; //do even that many play bzflag?
-  char buffer [bufferLength]; 
-  
+  char buffer [bufferLength];
+
   if ((int)list.size() < maxListSize) maxListSize = list.size();
   for (int i = 0; i < maxListSize; i++) {
-    sprintf(buffer,"silencedPerson%d",i); 
-    db.addValue(buffer, list[i]);	
+    sprintf(buffer,"silencedPerson%d",i);
+    db.addValue(buffer, list[i]);
   }
 
   BZDB->set("serverCacheAge", string_util::format("%1d", (long)ServerMenu::getMaxCacheAge()));
@@ -988,7 +986,7 @@ int			main(int argc, char** argv)
 #elif (defined(_WIN32) || defined(WIN32))
 	// What to put here?
 #else
-	// It's only checking existence of l10n directory 
+	// It's only checking existence of l10n directory
 	DIR *localedir = opendir("data/l10n/");
 	if (localedir == NULL)
 	  PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
@@ -1150,8 +1148,6 @@ int			main(int argc, char** argv)
     if (db.hasValue("showflaghelp"))
       renderer.setShowFlagHelp(db.getValue("showflaghelp") == "yes");
     if (db.hasValue("showscore"))
-      renderer.setScore(db.getValue("showscore") == "yes");
-    if (db.hasValue("showscore"))
       renderer.setLabels(db.getValue("showlabels") == "yes");
 
     if (db.hasValue("panelopacity"))
@@ -1184,14 +1180,14 @@ int			main(int argc, char** argv)
 
   // setup silence list
   std::vector<std::string>& list = getSilenceList();
-  
+
   // search for entries silencedPerson0 silencedPerson1 etc..
   // to the database. Stores silenceList
   // By only allowing up to a certain # of people can prevent
   // the vague chance of buffer overrun.
   const int bufferLength = 30;
   int maxListSize = 1000000; // do even that many play bzflag?
-  char buffer [bufferLength]; 
+  char buffer [bufferLength];
   bool keepGoing = true;
 
   for (int i = 0; keepGoing && (i < maxListSize); i++) {
@@ -1201,7 +1197,7 @@ int			main(int argc, char** argv)
       list.push_back(db.getValue(buffer));
       // remove the value from the database so when we save
       // it saves the list's new values in order
-      db.removeValue(buffer); 
+      db.removeValue(buffer);
     } else
       keepGoing = false;
   }

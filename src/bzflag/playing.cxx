@@ -1474,8 +1474,8 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
         playLocalSound(SFX_HUNT);
         hud->setHunt(!hud->getHunt());
         hud->setHuntPosition(0);
-        if (!sceneRenderer->getScore())
-	  sceneRenderer->setScore(true);
+	if (!BZDB->isTrue("showscore"))
+	  BZDB->set("showscore", "yes");
       }
     }
     return true;
@@ -1945,7 +1945,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   else if (keymap.isMappedTo(BzfKeyMap::Score, key)) {
     // toggle score board
     if (pressed) {
-      sceneRenderer->setScore(!sceneRenderer->getScore());
+      BZDB->set("showscore", BZDB->isTrue("showscore") ? "no" : "yes");
     }
   }
 

@@ -94,8 +94,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				exposed(true),
 				lastFrame(true),
 				sameFrame(false),
-				showFlagHelp(false),
-				showScore(false)
+				showFlagHelp(false)
 {
   instance = this;
 
@@ -271,16 +270,6 @@ void			SceneRenderer::setWireframe(bool on)
 bool			SceneRenderer::useWireframe() const
 {
   return useWireframeOn;
-}
-
-bool			SceneRenderer::getScore() const
-{
-  return showScore;
-}
-
-void			SceneRenderer::setScore(bool _showScore)
-{
-  showScore = _showScore;
 }
 
 bool			SceneRenderer::getLabels() const

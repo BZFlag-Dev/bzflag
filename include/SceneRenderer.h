@@ -133,8 +133,6 @@ class SceneRenderer {
     void		addShadowNode(RenderNode* node);
     bool		getShowFlagHelp() const;
     void		setShowFlagHelp(bool showFlagHelp);
-    bool		getScore() const;
-    void		setScore(bool showScore);
     bool		getLabels() const;
     void		setLabels(bool showLabels);
 
@@ -191,7 +189,6 @@ class SceneRenderer {
     std::vector<FlareLight>	flareLightList;
     OpenGLGState	flareGState;
     bool		showFlagHelp;
-    bool		showScore;
     bool		showLabels;
 
     static SceneRenderer* instance;
