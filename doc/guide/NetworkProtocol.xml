@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="../doc.xsl"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!--
@@ -186,33 +187,43 @@
 
     <title>Protocol</title>
 
-    <screen>
+    <para>
 
 This description is not up to date, most recent changes in code have not
 been reflected in here, for example the move to 1 byte playerids, changes to
 MsgMessage, MsgNewRabbit etc.
+</para>
+
+<para>
 
 BZFlag network protocol
 -----------------------
 [ This is a work in progress.  It is mostly done but still incomplete. ]
+</para>
+<screen>
 
 --&gt; means from client to server
 &lt;-- means from server to client
-
+</screen>
+<para>
 All multi-byte data is in network byte order (aka big endian);  that is, the most
 significant byte comes first followed by successively less significant bytes.
+</para>
+<para>
 
 All numbers are integers unless otherwise specified.  Integers can be 8, 16, or 32
 bit signed 2's compliment or unsigned (encoding is the same in regardless of signed
 status).  Values in this document in byte boxes are given in hexadecimal.  Values
 in the text are given in decimal unless otherwise noted.
-
+</para>
+<para>
 Bitfields are encoded as unsigned integers.
 
 All floating point numbers are in standard IEEE-754 single precision format.
 
 Multibyte values are *not* necessarily aligned on 2 or 4 byte boundaries.
-
+</para>
+<para>
 A client normally follows the following sequence during game play:
 
   connect to server
@@ -221,18 +232,24 @@ A client normally follows the following sequence during game play:
   send/receive game messages
   leave game
   disconnect from server
-
-
+</para>
+<para>
 common message structures
 -------------------------
 Most messages begin with the length of the message in bytes followed by a 16 bit code.
 The length is 16 bits and excludes itself and the code, so it's the actual length of
 the message minus 4.
+</para>
+<screen>
 
 Player identifiers are 1 byte and are used in many messages.
 
-
-	FIXME list "special" playerids
+          0 - 243 : Regular Players
+        244 - 250 : Special Team Ids
+        251 - 252 : Unused IDs
+              253 : ServerPlayer (World weapons, etc)
+              254 : All Players
+              255 : No Player (Invalid Player)	
 
 Flag status is common to a few message types:
 
@@ -252,10 +269,12 @@ Flag status is common to a few message types:
 	float	flight time
 	float	flight end time
 	float	initial velocity
-
+</screen>
+<para>
 `Position,' `launch,' `landing,' `flight time,' `flight end,' and `initial velocity'
 are all floating point numbers.  `Flag id' is the type of flag,enumerated in FlagId.
-
+</para>
+<screen>
 `Status' gives the current location of the flag:
   FlagNoExist  -- the flag is not active (i.e. not in the game)
   FlagOnGround -- the flag is sitting on the ground ready to get picked up
@@ -263,59 +282,74 @@ are all floating point numbers.  `Flag id' is the type of flag,enumerated in Fla
   FlagInAir    -- the flag is in the air and will fall back down
   FlagComing   -- the flag just appeared and is falling to the ground
   FlagGoing    -- the flag was thrown in the air and is disappearing
-
+</screen>
+<para>
 `Type' indicates the behavior of the flag:  FlagNormal means the flag is permanent
 and can be dropped normally (e.g. a team flag);  FlagUnstable means the flag may
 disappear after use (e.g. a good super flag);  FlagSticky means the flag cannot be
 dropped normally (e.g. a bad super flag).
-
+</para>
+<para>
 `Player id' indicates which player has the flag when `status' is FlagOnTank.  It
 isn't used for any other status.
-
+</para>
+<para>
 `Position' is the location of the flag on the ground.  It only has meaning when
 `status' is FlagOnGround.  The position of a flag when on a tank is the position
 of the tank (centered on and at the top of the tank)
-
+</para>
+<para>
 `Launch' is the location of the flag where it was thrown in the air.  `Landing' is
 the location where the flag will/would touch ground.  These are used when `status'
 is FlagInAir, FlagComing, and FlagGoing.  The client should make the flag follow a
 reasonable flight path (e.g. a parabolic arc) from `launch' to `landing.'
-
+</para>
+<para>
 `Flight time' is the time elapsed since the flag was thrown into the air.  `Flight
 end' the time when the flag will reach the ground.  `Initial velocity' gives the
 vertical (z) velocity of the flag when lanuched.  The vertical position of the flag
 at time t (ranging from 0 to `flight end') is:  z = z0 + v * t + 0.5 * g * t * t.
 z0 = `launch z;' v = `initial velocity;'  g = acceleration due to gravity.
-
+</para>
+<screen>
 
 connect to server
 -----------------
   --&gt;   connect(server port)
-  &lt;--   +----+----+----+----+----+----+----+----+
-	| 42 | 5a | 46 | 53 | 31 | 30 | 37 | 62 |       BZFS107b        version
-	+----+----+----+----+----+----+----+----+
-	|   port  |
-	+----+----+
-  -->   close
-  -->   connect(port)
+  &lt;--   +----+----+----+----+----+----+----+----+----+
+	| 42 | 5a | 46 | 53 | 31 | 39 | 31 | 30 | FF |     BZFS1910        FF
+	+----+----+----+----+----+----+----+----+----+
 
-
+</screen>
+<para>
 Client should verify the version.  The first four bytes indicates a BZFlag server,
 the next byte indicates the major version number (as an ascii digit), the two bytes
-after that are the minor version number (as ascii digits), and the 8th byte is the
+after that are the minor version number (as ascii digits), and the 7th byte is the
 revision.  Major and minor version number changes indicate incompatible protocol
 changes.  Different revisions of a given version are compatible and usually just
-indicate client user interface changes.
+indicate client user interface changes. A following FF ends the packet.
+</para>
+<screen>
 
-The reconnect port is the port the client should reconnect to the server at.  If
-the connection is rejected for some reason then this port will be zero.  Yes, this
-step is really pointless, complicates firewall tunnels, and it could just as well
-use the original connection.  It's unfortunate historical cruft.  Note that the
-server will not wait long for the reconnection.
+negotiating world flags
+-----------------------
+  --&gt;   +----+----+----+----+----+----+----+----+----+----+
+	| length  | 6E | 66 | FlagID1 | FlagID2 | ....... |     MsgNegotiateFlags 
+	+----+----+----+----+----+----+----+----+----+----+     (List of client flag ids)
+  &lt;--   +----+----+----+----+----+----+----+----+----+----+
+	| length  | 6E | 66 | FlagID1 | FlagID2 | ....... |     MsgNegotiateFlags 
+	+----+----+----+----+----+----+----+----+----+----+     (List of server flag ids, that client doesn't know)
 
-The reconnected socket should have TCP_NODELAY enabled (Nagle algorithm disabled)
-to prevent the client from batching the many small packets.
-
+</screen>
+<para>
+Client sends to the server the two byte representation of all flags known to the client.
+In the case that a flag is only one letter, (N) for instance, the second byte is null.
+Otherwise, the null byte is implied at position 3. The server upon receipt of this list,
+finds all flags that are used by the server, but not known by the client, and sends this
+list to the client. The client upon receipt of the list, either disallows play, if flags exist,
+or continues if the list is empty. 
+</para>
+<screen>
 
 getting the world database
 --------------------------

@@ -85,15 +85,17 @@
 			<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 			<xsl:attribute name="style">display:none;</xsl:attribute>
 			<table width="100%">
-				<xsl:for-each select="para">
-					<tr><td>
-						<xsl:value-of select="."/>
-					</td></tr>
-				</xsl:for-each>
-				<xsl:for-each select="screen">
-					<tr><td><pre>
-						<xsl:value-of select="."/>
-					</pre></td></tr>
+				<xsl:for-each select="para|screen">
+					<xsl:if test='name(.)="para"'>
+						<tr><td>
+							<xsl:value-of select="."/>
+						</td></tr>
+					</xsl:if>
+					<xsl:if test='name(.)="screen"'>
+						<tr><td><pre>
+							<xsl:value-of select="."/>
+						</pre></td></tr>
+					</xsl:if>
 				</xsl:for-each>
 			</table>
 		</xsl:element>
