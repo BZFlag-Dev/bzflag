@@ -3436,9 +3436,15 @@ void			ServerMenu::checkEchos()
 	  bool errorSending;
 	  if (info->http) {
 	    char url[1024];
+#ifdef _WIN32
+	    _snprintf(url, sizeof(url), "GET http://%s%s?action=LIST\r\n",
+		     listServer.hostname.c_str(),
+		     listServer.pathname.c_str());
+#else
 	    snprintf(url, sizeof(url), "GET http://%s%s?action=LIST\r\n",
 		     listServer.hostname.c_str(),
 		     listServer.pathname.c_str());
+#endif
 	    errorSending = send(listServer.socket, url, strlen(url), 0)
 	      != (int) strlen(url);
 	  } else {
