@@ -50,6 +50,11 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo /out:"..\src\date\date.lib"
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Desc=Touching buildDate.cxx...
+PostBuild_Cmds=type ..\src\date\buildDate.cxx > __bd.cxx	type __bd.cxx > ..\src\date\buildDate.cxx	del __bd.cxx
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "date - Win32 Debug"
 
@@ -73,6 +78,11 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo /out:"..\src\date\Debug\date.lib"
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Desc=Touching buildDate.cxx...
+PostBuild_Cmds=type ..\src\date\buildDate.cxx > __bd.cxx	type __bd.cxx > ..\src\date\buildDate.cxx	del __bd.cxx
+# End Special Build Tool
 
 !ENDIF 
 
@@ -86,6 +96,13 @@ LIB32=link.exe -lib
 # Begin Source File
 
 SOURCE=..\src\date\buildDate.cxx
+
+!IF  "$(CFG)" == "date - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "date - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "Header Files"
