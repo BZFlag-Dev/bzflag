@@ -592,10 +592,11 @@ This would be a sample line defining a "cop" group:
 
 COPS:KICK BAN BANLIST UNBAN INFO
 
-The server will automatically create two groups if they are not specified in
-the groups file: DEFAULT and ADMIN. ADMIN has ever permission possible (similar
-to granting admin powers via /password). DEFAULT allows /lagstats, /idlestats,
-/flaghistory and /report.
+The server will automatically create three groups if they are not specified in
+the groups file: DEFAULT, REGISTERED, and ADMIN. ADMIN has every permission
+possible (similar to granting admin powers via /password). REGISTERED presently
+allows access to the voting system's /poll and /vote commands.  DEFAULT allows
+/lagstats, /idlestats, /flaghistory and /report.
 
 Once the server is running, users can register their callsigns and admins can
 set their group memberships. Users can use any command that their permissions
@@ -647,6 +648,12 @@ SETPERMS                /setgroup
 SETALL                  use of all set/remove commands
 .br
 SETPASSWORD             not implemented
+.br
+POLL			/poll ban|kick
+.br
+VOTE			/vote
+.br
+VETO			/veto
 
 .TP
 .B /register {password}
@@ -706,6 +713,30 @@ multiple servers on the same machine)
 
 With an argument, it deregisters another user's callsign. Without, it
 removes your own registration.
+
+.TP
+.B /poll ban|kick|vote|veto [...]
+
+Interact and make requests of the bzflag voting system via the /poll command.
+The ban and kick subcommands request a vote to respectively ban or kick some
+player.  The playername is expected as the next argument.  The vote and veto
+commands behave identical to the /vote and /veto command counterparts,
+expecting the same arguments in following.  By default, you must be registered
+to request and vote on a poll.
+
+.TP
+.B /vote yes|no
+
+If there is a poll active, this command will place a vote in favor or in
+opposition to the poll.  Multiple languages are supported as a vote arguement
+in addition to "yes" and "no".  By default, you must be registered to vote on
+a poll.
+
+.TP
+.B /veto
+
+If there is a poll active, this will cancel the poll.  By default, you must be
+an admin to veto a poll.
 
 .SH SEE ALSO
 bzflag(6), bzfls(6), bzfrelay(6)
