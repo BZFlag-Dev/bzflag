@@ -75,7 +75,6 @@ int LagInfo::updatePingLag(void *buf, bool &warn, bool &kick) {
     if (!info->isObserver() && (threshold > 0) && lagavg > threshold
 	&& lagcount - laglastwarn > 2 * lagwarncount) {
       laglastwarn = lagcount;
-      lagwarncount++;
       warn = true;
       kick = (lagwarncount++ > max);
     } else {
@@ -133,7 +132,6 @@ int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
     if (!info->isObserver() && (threshold > 0)
 	&& lagcount - laglastwarn > 2 * lagwarncount) {
       laglastwarn = lagcount;
-      lagwarncount++;
       warn = true;
       kick = (lagwarncount++ > max);
     }
