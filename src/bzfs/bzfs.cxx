@@ -4136,6 +4136,9 @@ int main(int argc, char **argv)
     int h;
     for (h = 0; h < curMaxPlayers; h++) {
       GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(h);
+      if (otherData == NULL) {
+        continue;
+      }
       if (otherData->player->hasStartedToNotRespond()) {
 	// if player is the rabbit, anoint a new one
 	if (h == rabbitIndex)
