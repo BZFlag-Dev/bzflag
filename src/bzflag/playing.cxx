@@ -716,37 +716,38 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
 #endif
 
-    if (key.ascii == 0 &&
-        key.button == BzfKeyEvent::F2 &&
-        (key.shift & (BzfKeyEvent::ControlKey +
-		    BzfKeyEvent::AltKey)) == 0 && !haveBinding) {
-  if (!hud->getComposing())
-    return;
-  std::string temp = hud->getComposeString(), name;
-  if (isspace(temp[temp.size() - 1]))
-    return;;
-  int d = temp.size() - 1;
-  while (!isspace(temp[d]) && d >= 0) //get the pos of the start of the seed callsign
-    --d;
-  while (d != (int)temp.size()) { //now just load the seed callsign, which finishes the string
-    name += temp[d];
-    ++d;
-  }
-  int c;
-  for (c = 0;c <= curMaxPlayers;c++)
-    if (strncmp(player[c]->getCallSign(), name.c_str(), name.size()) == 0 &&
-        hud->getTabCompletionRotation() != c)
-      break;
-  if (c < curMaxPlayers) {
-    hud->setTabCompletionRotation(c);
-    hud->setComposeString((temp + player[c]->getCallSign()));
-  }
- }
-  else if (key.ascii == 0 &&
-      key.button >= BzfKeyEvent::F1 &&
-      key.button <= BzfKeyEvent::F10 &&
+  if (key.ascii == 0 &&
+      key.button == BzfKeyEvent::F2 &&
       (key.shift & (BzfKeyEvent::ControlKey +
-		    BzfKeyEvent::AltKey)) != 0 && !haveBinding) {
+		    BzfKeyEvent::AltKey)) == 0 && !haveBinding) {
+    if (!hud->getComposing())
+      return;
+    std::string temp = hud->getComposeString(), name;
+    if (isspace(temp[temp.size() - 1]))
+      return;;
+    int d = temp.size() - 1;
+    while (!isspace(temp[d]) && d >= 0) //get the pos of the start of the seed callsign
+      --d;
+    while (d != (int)temp.size()) { //now just load the seed callsign, which finishes the string
+      name += temp[d];
+      ++d;
+    }
+    int c;
+    for (c = 0;c <= curMaxPlayers;c++)
+      if (player[c] &&
+	  (strncmp(player[c]->getCallSign(), name.c_str(), name.size()) == 0) &&
+	  (hud->getTabCompletionRotation() != c))
+	break;
+    if (c < curMaxPlayers) {
+      hud->setTabCompletionRotation(c);
+      hud->setComposeString((temp + player[c]->getCallSign()));
+    }
+  }
+  else if (key.ascii == 0 &&
+	   key.button >= BzfKeyEvent::F1 &&
+	   key.button <= BzfKeyEvent::F10 &&
+	   (key.shift & (BzfKeyEvent::ControlKey +
+			 BzfKeyEvent::AltKey)) != 0 && !haveBinding) {
     // [Ctrl]-[Fx] is message to team
     // [Alt]-[Fx] is message to all
     if (pressed) {
