@@ -95,6 +95,62 @@ SOURCE=..\src\bzfs\bzfs.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\include\Address.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\AList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\BzfString.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Flag.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\multicast.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Pack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Ping.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ShotUpdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Team.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TimeBomb.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TimeKeeper.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 
