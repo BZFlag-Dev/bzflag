@@ -3,6 +3,10 @@ recent bugs
 
 - On a Team Flag Capture, got explosion, without any jump, at xmission.
   Same thing happens to others at same time.
+  Happens all the time to me on both CTF and rabbit servers (haven't tried
+  FFA). Most of the time, there is no explosion jump, sometimes there is.
+  Haven't found a pattern yet. Client version does not seem to make a
+  difference.
 
 - list server includes counts for players running on non-public servers on
   the same machine on different ports
