@@ -442,7 +442,7 @@ if test x$with_SDL = xyes; then
   savedLDFLAGS="$LDFLAGS"
   LDFLAGS="$LDFLAGS -framework SDL"
   framework_SDL_flag_works=yes
-  AC_TRY_COMPILE( [], [], [], [framework_SDL_flag_works=no] )
+  AC_TRY_LINK( [#include <SDL/SDL.h>], [], [], [framework_SDL_flag_works=no] )
   AC_MSG_RESULT([$framework_SDL_flag_works])
   if test x$framework_SDL_flag_works = xno ; then
     LDFLAGS="$savedLDFLAGS"
