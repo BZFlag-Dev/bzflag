@@ -301,15 +301,19 @@ void			Player::setupTreads(float dt)
 {
   // setup the tread offsets
   float speedFactor = inputSpeed;
-  if (dimensions[0] > 0.001f) {
-    speedFactor = speedFactor / dimensions[0];
+  if (dimensionsScale[0] > 1.0e-6f) {
+    speedFactor = speedFactor / dimensionsScale[0];
   } else {
-    speedFactor = 1.0e6f;
+    speedFactor = speedFactor * 1.0e6f;
   }
-  float angularFactor = getAngularVelocity();
-  dt = dt * 0.25f;
-  float leftOff = dt * (speedFactor + angularFactor);
-  float rightOff = dt * (speedFactor - angularFactor);
+
+  float angularFactor = inputAngVel;
+  const float tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  // not using dimensions[1], because it may be set to 0 by a Narrow flag
+  angularFactor *= dimensionsScale[0] * (0.5f * tankWidth);
+
+  const float leftOff = dt * (speedFactor - angularFactor);
+  const float rightOff = dt * (speedFactor + angularFactor);
   tankNode->addTreadOffsets(leftOff, rightOff);
 
   return;  

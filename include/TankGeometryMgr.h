@@ -161,6 +161,13 @@ inline const float* TankGeometryMgr::currentScaleFactor()
 
 namespace TankGeometryUtils {
 
+  // degrees / meter
+  float getWheelScale();
+  // texcoords / meter
+  float getTreadScale();
+  // texcoords
+  float getTreadTexLen();
+
   // help to scale vertices and normals
   void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
   void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
@@ -192,6 +199,8 @@ namespace TankGeometryUtils {
   void buildHighLWheel (int wheel, float angle, int divs);
   void buildHighRWheel (int wheel, float angle, int divs);
 
+  // these are left here for historical reasons
+  // they should not get linked into the builds
   void buildHighLCasingOld (void);
   void buildHighRCasingOld (void);
 }

@@ -121,6 +121,7 @@ class TankSceneNode : public SceneNode {
 	void		renderParts();
 	void		renderPart(TankGeometryEnums::TankPart part);
 	void		renderLights();
+        void		setupPartColor(TankGeometryEnums::TankPart part);
         bool		setupTextureMatrix(TankGeometryEnums::TankPart part);
     
       protected:

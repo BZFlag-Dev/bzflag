@@ -132,14 +132,19 @@ void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
 
 void TankSceneNode::addTreadOffsets(float left, float right)
 {
-  // FIXME: need proper scaling constants
-  const float rad2deg = 180.0f / M_PI;
+  const float wheelScale = TankGeometryUtils::getWheelScale();
+  const float treadScale = TankGeometryUtils::getTreadScale();
+  const float treadTexLen = TankGeometryUtils::getTreadTexLen();
+  
+  leftTreadOffset += left * treadScale;
+  leftTreadOffset = fmodf (leftTreadOffset, treadTexLen);
+  leftWheelOffset += left * wheelScale;
+  leftWheelOffset = fmodf (leftWheelOffset, 360.0f);
 
-  leftTreadOffset = fmodf (leftTreadOffset + left, 1.0f);
-  leftWheelOffset = fmodf (leftWheelOffset + (left * 2.0f * rad2deg), 360.0f);
-
-  rightTreadOffset = fmodf (rightTreadOffset + right, 1.0f);
-  rightWheelOffset = fmodf (rightWheelOffset + (right * 2.0f * rad2deg), 360.0f);
+  rightTreadOffset += right * treadScale;
+  rightTreadOffset = fmodf (rightTreadOffset, treadTexLen);
+  rightWheelOffset += right * wheelScale;
+  rightWheelOffset = fmodf (rightWheelOffset, 360.0f);
   
   return;
 }
@@ -201,7 +206,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   }
   else {
     // do BSP users a favor  
-    if ((maxLevel > 0) && (size > 25.0f)) {
+    if ((maxLevel == -1) || ((maxLevel > 0) && (size > 25.0f))) {
       mode = MedTankLOD;
     } else {
       mode = LowTankLOD;
@@ -837,44 +842,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
  
   // set color
   if (!isShadow) {
-    switch (part) {
-      case Body: {
-        myColor4f(color[0], color[1], color[2], alpha);
-        break;
-      }
-      case Barrel: {
-        myColor4f(0.25f, 0.25f, 0.25f, alpha);
-        break;
-      }
-      case Turret: {
-        myColor4f(0.9f * color[0], 0.9f * color[1], 0.9f * color[2], alpha);
-        break;
-      }
-      case LeftCasing:
-      case RightCasing: {
-        myColor4f(0.9f * color[0], 0.9f * color[1], 0.9f * color[2], alpha);
-        break;
-      }
-      case LeftTread:
-      case RightTread: {
-        myColor4f(0.3f * color[0], 0.3f * color[1], 0.3f * color[2], alpha);
-        break;
-      }
-      case LeftWheel0:
-      case LeftWheel1:
-      case LeftWheel2:
-      case LeftWheel3:
-      case RightWheel0:
-      case RightWheel1:
-      case RightWheel2:
-      case RightWheel3: {
-        myColor4f(0.4f * color[0], 0.4f * color[1], 0.4f * color[2], alpha);
-        break;
-      }
-      case LastTankPart: { // avoid warnings about unused enumerated values
-        break;
-      }
-    }
+    setupPartColor(part);
   }
 
   // get the list
@@ -900,6 +868,50 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   if (isExploding) {
     glPopMatrix();
   }
+}
+
+
+void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
+{
+  switch (part) {
+    case Body: {
+      myColor4f(color[0], color[1], color[2], alpha);
+      break;
+    }
+    case Barrel: {
+      myColor4f(0.25f, 0.25f, 0.25f, alpha);
+      break;
+    }
+    case Turret: {
+      myColor4f(0.9f * color[0], 0.9f * color[1], 0.9f * color[2], alpha);
+      break;
+    }
+    case LeftCasing:
+    case RightCasing: {
+      myColor4f(0.7f * color[0], 0.7f * color[1], 0.7f * color[2], alpha);
+      break;
+    }
+    case LeftTread:
+    case RightTread: {
+      myColor4f(0.3f * color[0], 0.3f * color[1], 0.3f * color[2], alpha);
+      break;
+    }
+    case LeftWheel0:
+    case LeftWheel1:
+    case LeftWheel2:
+    case LeftWheel3:
+    case RightWheel0:
+    case RightWheel1:
+    case RightWheel2:
+    case RightWheel3: {
+      myColor4f(0.4f * color[0], 0.4f * color[1], 0.4f * color[2], alpha);
+      break;
+    }
+    case LastTankPart: { // avoid warnings about unused enumerated values
+      break;
+    }
+  }
+  return;
 }
 
 
