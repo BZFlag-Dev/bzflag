@@ -712,8 +712,9 @@ void			HUDRenderer::renderStatus(void)
   static const GLfloat yellowColor[3] = { 1.0f, 1.0f, 0.0f };
   static const GLfloat greenColor[3] = { 0.0f, 1.0f, 0.0f };
   const GLfloat* statusColor = warningColor;
-  // FIXME: probably need more states than this
-  if ((timeLeft == 0) || (timeLeft == ~0u)) {
+  // TODO: the upper 4 values of timeLeft (~0u-3 to ~0u)
+  // are reserved for future use as timer flags (e.g. paused)
+  if ((timeLeft == 0) || (timeLeft >= (~0u - 3))) {
     strcpy(buffer, "");
   } else {
     int t = timeLeft - (int)(TimeKeeper::getTick() - timeSet);
