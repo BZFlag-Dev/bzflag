@@ -5350,8 +5350,10 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	  if ((TeamColor)team == ObserverTeam) {
 	    teamMsg = "You were joined as an observer";
 	  } else {
-	    teamMsg = string_util::format("You were joined to the %s", 
-					  Team::getName((TeamColor)team));
+            if ( team != RogueTeam)
+	      teamMsg = string_util::format("You joined the %s",Team::getName((TeamColor)team));
+            else
+              teamMsg = string_util::format("You joined as a %s",Team::getName((TeamColor)team));
 	  }
 	}
 	if (myTank->getTeam() != (TeamColor)team) {
