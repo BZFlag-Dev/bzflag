@@ -185,6 +185,8 @@ struct PlayerInfo {
 
     boolean toBeKicked;
 
+    boolean Admin;
+
     // lag measurement
     bool lagkillerpending;
     TimeKeeper lagkillertime;
@@ -3143,6 +3145,7 @@ static void addPlayer(int playerIndex)
 
   player[playerIndex].ulinkup = false;
   player[playerIndex].toBeKicked = false;
+  player[playerIndex].Admin = false;
 
   player[playerIndex].lastRecvPacketNo = 0;
   player[playerIndex].lastSendPacketNo = 0;
@@ -3993,36 +3996,84 @@ static void releaseRadio(int playerIndex)
 // parse player comands (messages with leading /)
 static void parseCommand(const char *message, int t)
 {
-  // /kick command allows operator to remove players (-passwd)
-  if (strncmp(message+1,"kick ",5) == 0) {
-    if (password && strncmp(message + 6, password, strlen(password)) == 0) {
-      int i;
-      const char *victimname = message + 6 + strlen(password) + 1;
-      for (i = 0; i < maxPlayers; i++)
-        if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0)
-          break;
-      if (i < maxPlayers) {
-        char kickmessage[MessageLen];
-        player[i].toBeKicked = false;
-        sprintf(kickmessage,"*** Your were kicked off the server by %s ***",
-                player[t].callSign);
-        sendMessage(i, player[i].id, player[i].team, kickmessage);
-        removePlayer(i);
+  // /password command allows player to become operator
+  if (strncmp(message + 1,"password ",9) == 0) {
+    if (password && strncmp(message + 10, password, strlen(password)) == 0) {
+      player[t].Admin = true;
+      sendMessage(t, player[t].id, player[t].team, "You are now an administrator!");
+    } else {
+      sendMessage(t, player[t].id, player[t].team, "Wrong Password!");
+    }
+  // /flag command allows operator to control flags
+  } else if (player[t].Admin && strncmp(message + 1, "flag ",5) == 0) {
+    if (strncmp(message + 6, "reset", 5) == 0) {
+      for (int i = 0; i < numFlags; i++) {
+	// see if someone had grabbed flag.  tell 'em to drop it.
+	const int playerIndex = flag[i].player;
+	if (playerIndex != -1) {
+	  flag[i].player = -1;
+	  flag[i].flag.status = FlagNoExist;
+	  player[playerIndex].flag = -1;
+
+	  char msg[PlayerIdPLen + 2 + FlagPLen];
+	  void *buf = msg;
+	  buf = player[playerIndex].id.pack(buf);
+	  buf = nboPackUShort(buf, uint16_t(i));
+	  buf = flag[i].flag.pack(buf);
+	  broadcastMessage(MsgDropFlag, sizeof(msg), msg);
+	}
+        resetFlag(i);
       }
-      else {
-        char errormessage[MessageLen];
-        sprintf(errormessage, "player %s not found", victimname);
-        sendMessage(t, player[t].id, player[t].team, errormessage);
+    } else if (strncmp(message + 6, "up", 2) == 0) {
+      for (int i = 0; i < numFlags; i++) {
+	if (int(flag[i].flag.id) < int(FirstTeamFlag) ||
+	    int(flag[i].flag.id) > int(LastTeamFlag)) {
+	  // see if someone had grabbed flag.  tell 'em to drop it.
+	  const int playerIndex = flag[i].player;
+	  if (playerIndex != -1) {
+	    flag[i].player = -1;
+	    flag[i].flag.status = FlagNoExist;
+	    player[playerIndex].flag = -1;
+
+	    char msg[PlayerIdPLen + 2 + FlagPLen];
+	    void *buf = msg;
+	    buf = player[playerIndex].id.pack(buf);
+	    buf = nboPackUShort(buf, uint16_t(i));
+	    buf = flag[i].flag.pack(buf);
+	    broadcastMessage(MsgDropFlag, sizeof(msg), msg);
+	  }
+          flag[i].flag.status = FlagGoing;
+          sendFlagUpdate(i);
+	}
+      }
+    } else if (strncmp(message + 6, "show", 4) == 0) {
+      for (int i = 0; i < numFlags; i++) {
+	char message[MessageLen]; // FIXME
+	sprintf(message, "%d p:%d r:%d g:%d i:%s", i, flag[i].player,
+	    flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id));
+	sendMessage(t, player[t].id, player[t].team, message);
       }
     }
-    else {
-      if (password)
-        sendMessage(t, player[t].id,player[t].team,"Wrong Password!");
-      else
-        sendMessage(t, player[t].id,player[t].team,"kicking not enabled on server");
+  // /kick command allows operator to remove players
+  } else if (player[t].Admin && strncmp(message + 1, "kick ", 5) == 0) {
+    int i;
+    const char *victimname = message + 6;
+    for (i = 0; i < maxPlayers; i++)
+      if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0)
+        break;
+    if (i < maxPlayers) {
+      char kickmessage[MessageLen];
+      player[i].toBeKicked = false;
+      sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
+      sendMessage(i, player[i].id, player[i].team, kickmessage);
+      removePlayer(i);
+    } else {
+      char errormessage[MessageLen];
+      sprintf(errormessage, "player %s not found", victimname);
+      sendMessage(t, player[t].id, player[t].team, errormessage);
     }
   }
-  // /lagstats gives simpel statistics about players' lags
+  // /lagstats gives simple statistics about players' lags
   else if (strncmp(message+1,"lagstats",8) == 0) {
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
