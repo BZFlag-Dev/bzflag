@@ -650,8 +650,17 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
   // if the timelimit is not set .. don't countdown
   if (clOptions->timeLimit > 1.0f) {
 		std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
+		
 		if (parts.size() > 1) {
+			// we have an argument
+			
 			if (parts[1] == "pause") {
+				// pause the countdown
+				if (!countdownActive) {
+					sendMessage(ServerPlayer, t, "There is no active game to pause");
+					return;
+				} else
+				
 				if (clOptions->countdownPaused) {
 					sendMessage(ServerPlayer, t, "The game is already paused");
 					return;
@@ -662,6 +671,7 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
 			} else 
 			
 			if (parts[1] == "resume") {
+				// resume countdown if it was paused before
 				if (!clOptions->countdownPaused) {
 					sendMessage(ServerPlayer, t, "The game is not paused");
 					return;
@@ -670,14 +680,24 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
 				sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",playerData->player.getCallSign()).c_str());
 				return;
 				
-			} else { 
+			} else {
+				// so it's the countdown delay? else tell the player how to use /countdown
 				std::istringstream timespec(message+10);
-				if (!(timespec >> countdownDelay))
-				countdownDelay = 10;
+				if (!(timespec >> countdownDelay)) {
+					sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
+					return;
+				}
 			}
 		} else {
 			countdownDelay = 10;
 		}
+		
+		// cancel here if a game is already running
+		if (countdownActive) {
+		sendMessage(ServerPlayer, t, "A game is already in progress");
+		countdownDelay = -1;
+    return;
+ 	 }
 
     // limit/sanity check
     const int max_delay = 120;
