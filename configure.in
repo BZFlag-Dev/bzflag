@@ -491,6 +491,7 @@ AC_OUTPUT(bzflag.spec
 	src/platform/Makefile
 	src/platform/MacOSX/Makefile
 	src/platform/MacOSX/BZFlag.pbproj/Makefile
+	src/platform/MacOSX/BZFlag.xcode/Makefile
 	src/platform/MacOSX/English.lproj/Makefile
 	src/platform/MacOSX/English.lproj/MainMenu.nib/Makefile
 	src/regex/Makefile
