@@ -149,6 +149,7 @@ void			RobotPlayer::doUpdate(float dt)
 	// separate shot by 0.4 sec (experimental value)
 	timerForShot = 0.4f;
 	FiringInfo firingInfo(*this, i + getSalt());
+	firingInfo.shot.team = getTeam();
 	firingInfo.shot.vel[2] = 0.0f;
 	shots[i] = new LocalShotPath(firingInfo);
 	server->sendBeginShot(firingInfo);
