@@ -15,18 +15,6 @@ Bundle::Bundle(const Bundle *pBundle)
 	mappings = pBundle->mappings;
 }
 
-Bundle::Bundle(const Bundle &xBundle)
-{
-//	throw new exception("Operation not supported");
-}
-
-Bundle& Bundle::operator=(const Bundle &xBundle)
-{
-//	if (this != &xBundle)
-//		throw new exception("Operation not supported");
-	return *this;
-}
-
 void Bundle::load(const std::string &path)
 {
 	std::string untranslated;

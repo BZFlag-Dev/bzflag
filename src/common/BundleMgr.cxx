@@ -12,24 +12,11 @@ BundleMgr::BundleMgr(const std::string &path, const std::string &name)
 	bundleName = name;
 }
 
-BundleMgr::BundleMgr(const BundleMgr &xBundleMgr)
-{
-//	throw new exception("Operation not supported");
-}
-
 BundleMgr::~BundleMgr()
 {
 	for (BundleMap::iterator it = bundles.begin(); it != bundles.end(); ++it)
 		delete it->second;
 	bundles.clear();
-}
-
-BundleMgr& BundleMgr::operator=(const BundleMgr &xBundleMgr)
-{
-//	if (this != &xBundleMgr)
-//		throw new exception("Operation not supported");
-
-	return *this;
 }
 
 Bundle *BundleMgr::getBundle(const std::string &locale)
