@@ -273,15 +273,17 @@ const float* FlagType::getColor() const
 
 const std::string FlagType::label() const
 {
+  unsigned int i;
+
   /* convert to lowercase so we can uppercase the abbreviation later */
   std::string caseName = "";
-  for (unsigned int i = 0; i < strlen(flagName); i++) {
+  for (i = 0; i < strlen(flagName); i++) {
     caseName += tolower(flagName[i]);
   }
 
   /* modify the flag name to exemplify the abbreviation */
   int charPosition;
-  for (unsigned int i = 0; i < strlen(flagAbbv); i++) {
+  for (i = 0; i < strlen(flagAbbv); i++) {
     
     charPosition = caseName.find_first_of(tolower(flagAbbv[i]), 0);
 
