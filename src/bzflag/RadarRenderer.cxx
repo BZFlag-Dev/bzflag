@@ -654,9 +654,10 @@ void RadarRenderer::renderBoxPyrMeshFast(bool smoothingOn, float range)
   OpenGLGState gs = gb.getState();
   gs.setState();
 
+  // do this after the GState setting
   if (smoothingOn) {
-    // do this after the GState setting
-    glEnable(GL_POLYGON_SMOOTH); // do this after setting the GState
+    glEnable(GL_BLEND);
+    glEnable(GL_POLYGON_SMOOTH);
   }
 
   // setup the texturing mapping
@@ -683,12 +684,15 @@ void RadarRenderer::renderBoxPyrMeshFast(bool smoothingOn, float range)
   glDisable(GL_TEXTURE_GEN_S);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-  if (smoothingOn) {
-    glDisable(GL_POLYGON_SMOOTH);
-  }
-  
   OpenGLGState::resetState();
   
+  // do this after the GState setting
+  if (smoothingOn) {
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_POLYGON_SMOOTH);
+  }
+
   return;  
 }
   

@@ -54,7 +54,7 @@ MeshPolySceneNode::Geometry::~Geometry()
 void MeshPolySceneNode::Geometry::render()
 {
   sceneNode->setColor();
-  
+
   if (normals.getSize() != 0) {
     if (style >= 2) {
       drawVTN();
@@ -140,7 +140,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
 				     const GLfloat3Array& vertices,
 				     const GLfloat3Array& normals,
 				     const GLfloat2Array& texcoords) :
-  node(this, vertices, normals, texcoords, _plane)
+  node(this, vertices, normals, texcoords, plane)
 {
   int i, j;
   const int count = vertices.getSize();

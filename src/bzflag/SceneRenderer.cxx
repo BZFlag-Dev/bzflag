@@ -801,7 +801,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   // turn sunlight on -- the ground needs it
   if (BZDBCache::lighting && sunOrMoonUp) {
     theSun.execute(SunLight);
-    theSun.enableLight(SunLight);
+    theSun.enableLight(SunLight, true);
   }
 
   bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
@@ -890,7 +890,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
     if (BZDBCache::lighting) {
       // now turn on the remaining lights
       for (i = 0; i < dynamicLights; i++) {
-	OpenGLLight::enableLight(i + reservedLights);
+	OpenGLLight::enableLight(i + reservedLights, true);
       }
     }
 
@@ -1190,7 +1190,7 @@ void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
 
 void SceneRenderer::reenableLights()
 {
-  // reenable the temporarily disabled lights
+  // reenable the disabled lights
   for (int i = 0; i < dynamicLights; i++) {
     lights[i]->enableLight(i + reservedLights, true);
   }
@@ -1211,7 +1211,7 @@ const RenderNodeList& SceneRenderer::getShadowList() const
 }
 
 
-const GLfloat*		SceneRenderer::getSunDirection() const
+const GLfloat* SceneRenderer::getSunDirection() const
 {
   if (background) {
     return background->getSunDirection();

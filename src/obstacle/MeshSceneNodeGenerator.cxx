@@ -318,7 +318,9 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 					       const BzMaterial* mat)
 {
   TextureManager &tm = TextureManager::instance();
-  OpenGLMaterial glMaterial(mat->getSpecular(), mat->getEmission(), mat->getShininess());
+  OpenGLMaterial oglMaterial(mat->getSpecular(),
+                             mat->getEmission(),
+                             mat->getShininess());
 
   int userTexture = (mat->getTextureCount() > 0);
   int faceTexture = -1;
@@ -347,7 +349,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   node->setModulateColor(mat->getDiffuse());
   node->setLightedColor(mat->getDiffuse());
   node->setLightedModulateColor(mat->getDiffuse());
-  node->setMaterial(glMaterial);
+  node->setMaterial(oglMaterial);
   node->setTexture(faceTexture);
   if ((userTexture && mat->getUseColorOnTexture(0)) ||
       !gotSpecifiedTexture) {

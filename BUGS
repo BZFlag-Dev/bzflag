@@ -5,7 +5,7 @@ recent bugs
   (StateDatabase::ExpressionToken::operator=, StateDatabase.cxx:890)
 
 - Material properties for mesh containers are not adjusted by
-  ObstacleModifier, and will save correctly if using saveFlatFile.
+  ObstacleModifier, and will not save correctly if using saveFlatFile.
 
 - Observer movement controls seems to get locked-up in Hunt mode.
 

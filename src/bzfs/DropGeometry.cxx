@@ -30,7 +30,7 @@
 
 
 // prototypes
-static int sortByTopHeight(const void* a, const void* b);
+static int compareByTopHeight(const void* a, const void* b);
 
 
 
@@ -50,7 +50,7 @@ bool DropGeometry::dropPlayer (float pos[3], float minZ, float maxZ,
   const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, maxHeight);
 
   // sort by top height
-  qsort(olist->list, olist->count, sizeof(Obstacle*), sortByTopHeight);
+  qsort(olist->list, olist->count, sizeof(Obstacle*), compareByTopHeight);
 
   for (int i = 0; i < olist->count; i++) {
 
@@ -62,7 +62,7 @@ bool DropGeometry::dropPlayer (float pos[3], float minZ, float maxZ,
 }
 
 
-static int sortByTopHeight(const void* a, const void* b)
+static int compareByTopHeight(const void* a, const void* b)
 {
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
