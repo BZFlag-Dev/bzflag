@@ -1281,7 +1281,7 @@ int			main(int argc, char** argv)
   }
 
   // start playing
-  startPlaying(display, renderer, db, &startupInfo);
+  startPlaying(display, renderer, &startupInfo);
 
   // save resources
   dumpResources(display, renderer);

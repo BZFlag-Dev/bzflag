@@ -76,7 +76,6 @@ bool			setVideoFormat(int, bool test = false);
 Player*			lookupPlayer(PlayerId id);
 void			startPlaying(BzfDisplay* display,
 				SceneRenderer&,
-				ResourceDatabase&,
 				StartupInfo*);
 
 bool			addExplosion(const float* pos,

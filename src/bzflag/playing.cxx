@@ -60,7 +60,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "Pack.h"
 #include "ServerLink.h"
 #include "PlayerLink.h"
-#include "resources.h"
 #include "SceneRenderer.h"
 #include "SceneBuilder.h"
 #include "SceneDatabase.h"
@@ -111,7 +110,6 @@ static World*		world = NULL;
 static LocalPlayer*	myTank = NULL;
 static BzfDisplay*	display = NULL;
 static MainWindow*	mainWindow = NULL;
-static ResourceDatabase *resources = NULL;
 static SceneRenderer*	sceneRenderer = NULL;
 static SceneDatabase*	zScene = NULL;
 static SceneDatabase*	bspScene = NULL;
@@ -6324,14 +6322,12 @@ static void		startupErrorCallback(const char* msg)
 
 void			startPlaying(BzfDisplay* _display,
 					SceneRenderer& renderer,
-					ResourceDatabase& _resources,
 					StartupInfo* _info)
 {
   int i;
   // initalization
   display = _display;
   sceneRenderer = &renderer;
-  resources = &_resources;
   mainWindow = &sceneRenderer->getWindow();
 
   // register some commands
