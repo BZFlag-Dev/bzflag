@@ -1222,19 +1222,14 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 {
   char score[40], kills[40];
 #ifndef DEBUG
-  char email[EmailLen + 14];
-  sprintf(email, " (%s)%s", player->getEmailAddress(),
-  (!Flag::getType(player->getFlag()) && player->getFlag()) ?
-  Flag::getName(player->getFlag()) : Flag::getAbbreviation(player->getFlag()));
+  char email[EmailLen + 5];
+  sprintf(email, " (%s)", player->getEmailAddress());
 #else
-  char email[EmailLen + 35];
+  char email[EmailLen + 25];
   const PlayerId& id = player->getId();
-  sprintf(email, " %s:%04x-%1x(%s)%s", inet_ntoa(id.serverHost),
-      ntohs(id.port), ntohs(id.number), player->getEmailAddress(),
-      (!Flag::getType(player->getFlag()) && player->getFlag()) ?
-      Flag::getName(player->getFlag()) :
-      Flag::getAbbreviation(player->getFlag()));
-#endif
+  sprintf(email, " %s:%04x-%1x(%s)", inet_ntoa(id.serverHost),
+      ntohs(id.port), ntohs(id.number), player->getEmailAddress());
+#endif  
   sprintf(score, "%d (%d-%d)", player->getScore(),
       player->getWins(), player->getLosses());
   if (LocalPlayer::getMyTank() != player)
@@ -1242,13 +1237,32 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   else
     strcpy(kills, "");
 
-  const float callSignWidth = minorFont.getWidth(player->getCallSign());
+  // "Purple Team" is longest possible string for flag indicator
+  char flag[12]="";
+  FlagId flagid=player->getFlag();
+  if (flagid != NoFlag) {
+    sprintf(flag,"%s",
+            Flag::getType(flagid) == FlagNormal ?
+            Flag::getName(flagid) : Flag::getAbbreviation(flagid));
+  }
 
+  // indicate tanks which are paused or not responding
+  char status[5]="";
+  if (player->isNotResponding())
+    strcpy(status,"[nr]");
+  if (player->isPaused())
+    strcpy(status,"[p]");
+
+  const float callSignWidth = minorFont.getWidth(player->getCallSign());
+  const float emailWidth = minorFont.getWidth(email);
+  const float flagWidth = minorFont.getWidth(flag);
   hudSColor3fv(Team::getRadarColor(player->getTeam()));
   minorFont.draw(score, x1, y);
   minorFont.draw(kills, x2, y);
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
+  minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
+  minorFont.draw(status, x3 + callSignWidth + flagWidth + emailWidth, y);
 }
 
 void			HUDRenderer::drawDeadPlayerScore(const Player* player,
