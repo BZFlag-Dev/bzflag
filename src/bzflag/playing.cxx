@@ -101,6 +101,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 // get our interface
 #include "playing.h"
 
+#include "ClientAuthentication.h"
 
 static const float	FlagHelpDuration = 60.0f;
 static StartupInfo	startupInfo;
@@ -3954,6 +3955,9 @@ static bool		joinGame(const StartupInfo* info,
 
   // send my version string
   serverLink->sendVersionString();
+
+  // Sending our credential to the server
+  ClientAuthentication::sendCredential(*serverLink);
 
   // add robot tanks
 #if defined(ROBOT)

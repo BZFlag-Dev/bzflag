@@ -15,6 +15,8 @@ bzflag_SOURCES =			\
 	BackgroundRenderer.h		\
 	BaseLocalPlayer.cxx		\
 	BaseLocalPlayer.h		\
+	ClientAuthentication.cxx	\
+	ClientAuthentication.h		\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
