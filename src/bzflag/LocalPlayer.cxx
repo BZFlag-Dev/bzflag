@@ -462,6 +462,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (getFlag() == PhantomZoneFlag) {
       // change zoned state
       setStatus(getStatus() ^ FlagActive);
+      if (getStatus() & FlagActive)
+	      playLocalSound( SFX_PHANTOM );
     }
     else {
       // teleport

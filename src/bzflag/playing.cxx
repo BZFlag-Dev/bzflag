@@ -1507,8 +1507,10 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	if (killerLocal != victimPlayer) {
 	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
 	      killerLocal->getTeam() != RogueTeam) {
-	    if (killerLocal == myTank)
-	      hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
+	    if (killerLocal == myTank) {
+	         hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
+		 playLocalSound( SFX_KILL_TEAM );
+	    }
 	    // teammate
 	    killerLocal->changeScore(0, 1);
 	  }
