@@ -1029,6 +1029,26 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   list.push_back(option);
 
+  // set radar shot size
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Radar Shot Size:");
+  option->setCallback(callback, (void*)"s");
+  options = &option->getList();
+  options->push_back(std::string("[O----------]"));
+  options->push_back(std::string("[-O---------]"));
+  options->push_back(std::string("[--O--------]"));
+  options->push_back(std::string("[---O-------]"));
+  options->push_back(std::string("[----O------]"));
+  options->push_back(std::string("[-----O-----]"));
+  options->push_back(std::string("[------O----]"));
+  options->push_back(std::string("[-------O---]"));
+  options->push_back(std::string("[--------O--]"));
+  options->push_back(std::string("[---------O-]"));
+  options->push_back(std::string("[----------O]"));
+  option->update();
+  list.push_back(option);
+
   // set radar size
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
@@ -1181,6 +1201,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
     ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("coloredradarshots") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("linedradarshots")));
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("sizedradarshots")));
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
@@ -1216,6 +1237,10 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'l':
       BZDB->set("linedradarshots", string_util::format("%d", list->getIndex()));
+      break;
+
+    case 's':
+      BZDB->set("sizedradarshots", string_util::format("%d", list->getIndex()));
       break;
 
     case 'R':

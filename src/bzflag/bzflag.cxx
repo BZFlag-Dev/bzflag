@@ -98,6 +98,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "enhancedRadar",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "coloredradarshots",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "sizedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "panelopacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarsize",		"4",			true,	StateDatabase::ReadWrite,	NULL },
   { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
