@@ -387,7 +387,7 @@ float			StateDatabase::eval(const std::string& name)
   VariableSet::iterator ins_it = variables.insert(name).first;
 
   Map::const_iterator index = items.find(name);
-  if (index == items.end() || !index->second.isSet) {
+  if (index == items.end() || !index->second.isSet || index->second.value.empty()) {
     variables.erase(ins_it);
     return NaN;
   }
