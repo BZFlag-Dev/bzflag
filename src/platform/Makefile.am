@@ -202,6 +202,8 @@ EXTRA_libPlatform_a_SOURCES =		\
 	BeOSWindow.h			\
 	BeOSMedia.cxx			\
 	BeOSMedia.h			\
+	wave.cxx			\
+	wave.h				\
 	WinPlatformFactory.cxx		\
 	WinPlatformFactory.h		\
 	WinDisplay.cxx			\
