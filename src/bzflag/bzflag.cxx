@@ -166,7 +166,8 @@ int numRobotTanks = 0;
 static const char*	configQualityValues[] = {
 				"low",
 				"medium",
-				"high"
+				"high",
+				"experimental"
 			};
 static const char*	configViewValues[] = {
 				"normal",

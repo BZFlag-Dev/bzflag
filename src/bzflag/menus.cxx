@@ -1456,7 +1456,9 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   option->update();
   list.push_back(option);
 
-  option = new HUDuiList;
+  // moved into quality, this is here for an easy revert
+  // todo: remove this if the quality seting is ok
+ /* option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Texturing:");
   option->setCallback(callback, (void*)"5");
@@ -1469,7 +1471,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   options->push_back(std::string("Nearest Mipmap Linear"));
   options->push_back(std::string("Linear Mipmap Linear"));
   option->update();
-  list.push_back(option);
+  list.push_back(option); */
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
@@ -1479,6 +1481,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   options->push_back(std::string("Low"));
   options->push_back(std::string("Medium"));
   options->push_back(std::string("High"));
+  options->push_back(std::string("Experimental"));
   option->update();
   list.push_back(option);
 
@@ -1828,27 +1831,38 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       sceneRenderer->notifyStyleChange();
       break;
 
-    case '5':
+      // moved into quality, this is here for an easy revert
+  /*  case '5':
       OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
       BZDB.set("texture", OpenGLTexture::getFilterName());
       sceneRenderer->notifyStyleChange();
-      break;
+      break; */
 
-    case '6':
+    case '5':
+      {
       sceneRenderer->setQuality(list->getIndex());
+
+      int filter = 0;
+      if (list->getIndex()>2)
+	filter = 6;
+
+      OpenGLTexture::setFilter((OpenGLTexture::Filter)filter);
+      BZDB.set("texture", OpenGLTexture::getFilterName());
+    //  sceneRenderer->notifyStyleChange();
 
       BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
 		sceneRenderer->useQuality() < 2) ? "1" : "0");
       BZDB.setPersistent("_texturereplace", false);
       sceneRenderer->notifyStyleChange();
+      }
       break;
 
-    case '7':
+    case '6':
       BZDB.set("shadows", list->getIndex() ? "1" : "0");
       sceneRenderer->notifyStyleChange();
       break;
 
-    case '8':
+    case '7':
       BZDB.set("zbuffer", list->getIndex() ? "1" : "0");
       // FIXME - test for whether the z buffer will work
       setSceneDatabase();

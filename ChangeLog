@@ -44,7 +44,7 @@ BZFlag 1.10.4
 * Base wall and top textures - Jeff Myers
 * Hunter name used for kill, lock, and info messages - Jeff Myers
 * Increase resolution of textures to look better - Jeff Myers
-
+* Merge texture mode into queality seting, add experimental quality seting for enhanced effects- Jeff Myers
 
 BZFlag 1.10.2
 -------------
