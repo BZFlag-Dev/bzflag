@@ -48,7 +48,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(BSD) && !defined(__APPLE__) && !defined(__BEOS__))
+#ifdef HAVE_BSTRING_H
 #  include <bstring.h>
 #endif
 

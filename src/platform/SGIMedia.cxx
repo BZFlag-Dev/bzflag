@@ -18,7 +18,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include <bstring.h>
+#ifdef HAVE_BSTRING_H
+#  include <bstring.h>
+#endif
 #include <sys/prctl.h>
 #include <sys/wait.h>
 #include "bzsignal.h"
