@@ -26,7 +26,6 @@
 
 /* bzfs-specific headers */
 #include "AccessControlList.h"
-#include "TextChunkManager.h"
 #include "FlagInfo.h"
 
 /* XXX -- nasty header to include just for a copyright */
