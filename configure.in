@@ -80,6 +80,7 @@ AC_LANG_RESTORE
 AC_CHECK_HEADERS( \
 	sys/param.h \
 	values.h \
+	linux/input.h \
 )
 
 #Checks for types
@@ -98,6 +99,14 @@ else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
 fi
 
+# Check for working FF_RUMBLE support in linux/input.h
+AC_TRY_COMPILE([#include <linux/input.h>],
+	       [struct ff_effect x; x.u.rumble.weak_magnitude = 42; return 0;],
+               ac_ff_effect_rumble=yes,
+               ac_ff_effect_rumble=no)
+if test x$ac_ff_effect_rumble = xyes; then
+    AC_DEFINE(HAVE_FF_EFFECT_RUMBLE, 1, [we appear to have working support for rumble force feedback effects])
+fi
 
 case $host_os in
      linux*|freebsd*) linux=true;;

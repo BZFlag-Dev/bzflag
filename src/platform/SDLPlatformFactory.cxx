@@ -14,10 +14,7 @@
 #include "SDLMedia.h"
 #include "SDLDisplay.h"
 #include "SDLJoystick.h"
-
-#ifdef __linux__
 #include "EvdevJoystick.h"
-#endif
 
 PlatformFactory* PlatformFactory::getInstance()
 {
@@ -69,7 +66,7 @@ BzfJoystick* SdlPlatformFactory::createJoystick()
    * enumeration, but the big selling point so far is that it
    * supports force feedback.
    */
-#ifdef __linux__
+#ifdef HAVE_LINUX_INPUT_H
   if (EvdevJoystick::isEvdevAvailable())
     return new EvdevJoystick;
 #endif

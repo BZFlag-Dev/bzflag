@@ -28,8 +28,6 @@
 #include "BzfJoystick.h"
 #include <map>
 
-#include <linux/input.h>
-
 
 struct EvdevJoystickInfo {
   /* Information about a joystick that's installed on the
@@ -94,7 +92,7 @@ class EvdevJoystick : public BzfJoystick {
     EvdevJoystickInfo*          currentJoystick;
     int                         joystickfd;
     int                         buttons;
-    struct ff_effect            ff_rumble;
+    struct ff_effect*           ff_rumble;
 };
 
 #endif // BZF_EVDEV_JOY_H

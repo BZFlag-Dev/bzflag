@@ -16,6 +16,8 @@
 /* interface headers */
 #include "EvdevJoystick.h"
 
+#ifdef HAVE_LINUX_INPUT_H
+
 /* system headers */
 #include <vector>
 #include <string>
@@ -26,6 +28,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <linux/input.h>
 
 /* implementation headers */
 #include "ErrorHandler.h"
@@ -57,12 +60,14 @@ EvdevJoystick::EvdevJoystick()
 {
   joystickfd = 0;
   currentJoystick = NULL;
+  ff_rumble = new struct ff_effect;
   scanForJoysticks(joysticks);
 }
 
 EvdevJoystick::~EvdevJoystick()
 {
   initJoystick("");
+  delete ff_rumble;
 }
 
 void             EvdevJoystick::scanForJoysticks(std::map<std::string,
@@ -296,29 +301,34 @@ void                    EvdevJoystick::getJoyDevices(std::vector<std::string>
 
 bool                    EvdevJoystick::ffHasRumble() const
 {
+#ifdef HAVE_FF_EFFECT_RUMBLE
   if (!currentJoystick)
     return false;
   else
     return test_bit(EV_FF, currentJoystick->evbit) &&
            test_bit(FF_RUMBLE, currentJoystick->ffbit);
+#else
+  return false;
+#endif
 }
 
 void                    EvdevJoystick::ffResetRumble()
 {
+#ifdef HAVE_FF_EFFECT_RUMBLE
   /* Erase old effects before closing a device,
    * if we had any, then initialize the ff_rumble struct.
    */
-  if (ffHasRumble() && ff_rumble.id != -1) {
+  if (ffHasRumble() && ff_rumble->id != -1) {
 
     /* Stop the effect first */
     struct input_event event;
     event.type = EV_FF;
-    event.code = ff_rumble.id;
+    event.code = ff_rumble->id;
     event.value = 0;
     write(joystickfd, &event, sizeof(event));
 
     /* Erase the downloaded effect */
-    ioctl(joystickfd, EVIOCRMFF, ff_rumble.id);
+    ioctl(joystickfd, EVIOCRMFF, ff_rumble->id);
   }
 
   /* Reinit the ff_rumble struct. It starts out with
@@ -327,42 +337,47 @@ void                    EvdevJoystick::ffResetRumble()
    * as long as we have the device open.
    */
   memset(&ff_rumble, 0, sizeof(ff_rumble));
-  ff_rumble.type = FF_RUMBLE;
-  ff_rumble.id = -1;
+  ff_rumble->type = FF_RUMBLE;
+  ff_rumble->id = -1;
+#endif
 }
 
 void                    EvdevJoystick::ffRumble(int count,
 						float delay, float duration,
 						float strong_motor, float weak_motor)
 {
+#ifdef HAVE_FF_EFFECT_RUMBLE
   if (!ffHasRumble())
     return;
 
   /* Stop the previous effect we were playing, if any */
-  if (ff_rumble.id != -1) {
+  if (ff_rumble->id != -1) {
     struct input_event event;
     event.type = EV_FF;
-    event.code = ff_rumble.id;
+    event.code = ff_rumble->id;
     event.value = 0;
     write(joystickfd, &event, sizeof(event));
   }
 
   if (count > 0) {
     /* Download an updated effect */
-    ff_rumble.u.rumble.strong_magnitude = (int) (0xFFFF * strong_motor + 0.5);
-    ff_rumble.u.rumble.weak_magnitude = (int) (0xFFFF * weak_motor + 0.5);
-    ff_rumble.replay.length = (int) (duration * 1000 + 0.5);
-    ff_rumble.replay.delay = (int) (delay * 1000 + 0.5);
+    ff_rumble->u.rumble.strong_magnitude = (int) (0xFFFF * strong_motor + 0.5);
+    ff_rumble->u.rumble.weak_magnitude = (int) (0xFFFF * weak_motor + 0.5);
+    ff_rumble->replay.length = (int) (duration * 1000 + 0.5);
+    ff_rumble->replay.delay = (int) (delay * 1000 + 0.5);
     ioctl(joystickfd, EVIOCSFF, &ff_rumble);
 
     /* Play it the indicated number of times */
     struct input_event event;
     event.type = EV_FF;
-    event.code = ff_rumble.id;
+    event.code = ff_rumble->id;
     event.value = count;
     write(joystickfd, &event, sizeof(event));
   }
+#endif
 }
+
+#endif /* HAVE_LINUX_INPUT_H */
 
 // Local Variables: ***
 // mode:C++ ***

@@ -70,9 +70,11 @@ BzfJoystick*		LinuxPlatformFactory::createJoystick()
 #elif defined(XIJOYSTICK)
   // XInput Joystick
   return new XIJoystick;
-#else
+#elif defined(HAVE_LINUX_INPUT_H)
   // Event device joystick
   return new EvdevJoystick;
+#else
+  return new BzfJoystick;
 #endif
 }
 
