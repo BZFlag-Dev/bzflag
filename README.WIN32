@@ -1,7 +1,6 @@
 README for Win32 platforms
 --------------------------
 
-
 Command line development tools on Win32 are in the stone age.
 NMAKE is bad but COMMAND.COM is infinitely worse.  So, for
 now, bzflag uses Microsoft Visual C++ project files.
@@ -13,9 +12,15 @@ Configure your executables in the Tools/Options/Directory menu.
 Click the Executables tab, and add the directory where the nsis
 installer builder is found.
 
+If you want to build with SDL:
 Choose the Lib tab, and add SDLMain.lib and SDL.lib. These can be
-downloaded from libsdl.org. Next copy SDL.dll to the directory 
-that bzflag is running from src/bzflag or src/bzflag/debug.
+downloaded from libsdl.org. Also add the SDL include directory
+to the Includes tab.  Next copy SDL.dll to the directory 
+that bzflag is running from, e.g. src/bzflag/SDL_Release or 
+src/bzflag/SDL_Debug.
+When you want to build, set the active configuration to 
+"BZFlag - Win32 SDL_Release" or "BZFlag - Win32 SDL_Debug" 
+instead of the normal Win32 Release/Debug targets.
 
 Then each time you want to build an installer
 
@@ -24,8 +29,6 @@ Then each time you want to build an installer
   * build
 
 The installer is the bzflag executable in the dist folder.
-
-(or whatever the version number is)
 
 
 

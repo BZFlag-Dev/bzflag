@@ -7,6 +7,8 @@ enable an SDL build, it must be selected during configuration:
 
 ./configure --with-SDL
 
+For information on enabling SDL on windows builds, see README.WIN32.
+
 See the BUGS and TODO files for known issues.
 
 ---
