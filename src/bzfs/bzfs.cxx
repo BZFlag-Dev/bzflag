@@ -6240,8 +6240,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = nboUnpackUShort(buf, queueUpdate);
       OOBQueueUpdate(t, queueUpdate);
       DEBUG3("Player %s [%d] UDP confirmed\n", player[t].callSign, t);
-      // enable the downlink
-      player[t].ulinkup = true;
       if (!clOptions.alsoUDP) {
 	DEBUG2("Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
       }
