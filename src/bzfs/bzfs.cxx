@@ -3019,7 +3019,7 @@ static void parseCommand(const char *message, int t)
 }
 
 
-static bool invalidPlayerAction(PlayerInfo p, int t, const char *action) {
+static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   if (p.isNotPlaying()) {
     if (!p.isPaused()) {
       DEBUG1("Player %s tried to %s while not playing\n", p.getCallSign(), action);
@@ -4493,9 +4493,27 @@ int main(int argc, char **argv)
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
 
+	  // trying to get the real player from the message cause it
+	  // happens bots share tcp connection with the player
+	  PlayerId t = i;
+	  switch (code) {
+	  case MsgShotBegin: {
+	    nboUnpackUByte(buf, t);
+	    break;
+	  }
+	  default:
+	    break;
+	  }
+	  // Make sure is a bot
+	  if (t != i) {
+	    if (!player[t].isBot())
+	      t = i;
+	    // Should check also if bot and player are related
+	  }
+
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // he/she must not be using the UDP link
-	  if (clOptions->requireUDP && !player[i].isBot()) {
+	  if (clOptions->requireUDP && !player[t].isBot()) {
 	    if (code == MsgShotBegin) {
 	      char message[MessageLen];
 	      sprintf(message,"Your end is not using UDP, turn on udp");
@@ -4512,7 +4530,7 @@ int main(int argc, char **argv)
 	  }
 
 	  // handle the command
-	  handleCommand(i, netPlayer->getTcpBuffer());
+	  handleCommand(t, netPlayer->getTcpBuffer());
 	}
       }
     } else if (nfound < 0) {
