@@ -13,6 +13,10 @@
 #ifndef __REJOIN_LIST_H__
 #define __REJOIN_LIST_H__
 
+/* common header */
+#include "common.h"
+
+/* system headers */
 #include <list>
 
 class RejoinList {

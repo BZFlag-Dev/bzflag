@@ -15,7 +15,13 @@
 #ifndef __LISTSERVERCONNECTION_H__
 #define __LISTSERVERCONNECTION_H__
 
+/* common header */
+#include "common.h"
+
+/* system headers */
 #include <string>
+
+/* common interface headers */
 #include "Address.h"
 #include "Ping.h"
 #include "TimeKeeper.h"

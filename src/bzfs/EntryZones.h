@@ -13,10 +13,18 @@
 #ifndef __ENTRYZONES_H__
 #define __ENTRYZONES_H__
 
+/* common header */
+#include "common.h"
+
+/* system headers */
 #include <vector>
 #include <string>
 #include <map>
+
+/* common interface headers */
 #include "Flag.h"
+
+// bzfs-specific headers
 #include "WorldFileLocation.h"
 
 class CustomZone;

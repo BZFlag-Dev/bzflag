@@ -17,7 +17,13 @@
 #pragma warning(4:4786)
 #endif
 
+/* common header */
+#include "common.h"
+
+/* system headers */
 #include <vector>
+
+/* common interface headers */
 #include "Flag.h"
 #include "TimeKeeper.h"
 

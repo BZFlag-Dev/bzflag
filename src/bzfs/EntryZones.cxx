@@ -16,7 +16,6 @@
 #include <string>
 #include <vector>
 
-#include "common.h"
 #include "global.h"
 #include "Protocol.h"
 #include "Flag.h"
