@@ -27,6 +27,7 @@ known bugs in bzflag
 
 * some linux systems get XIO error on startup
    no idea why but it's consistent on those systems
+   (probably XIJoystick code?)
 
 * not blanking screen during win32 startup
    should black out screen before changing resolutions
