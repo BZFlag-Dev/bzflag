@@ -27,7 +27,7 @@
 #include <iostream>
 #include <math.h>
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
 #include <TimeKeeper.h> // only for _debugLookups()
 
 void	_debugLookups(const std::string &name)
