@@ -542,7 +542,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   keyboardMovement = None;
   shiftKeyStatus   = key.shift;
-  std::string cmd = KEYMGR.get(key, pressed);
+  const std::string cmd = KEYMGR.get(key, pressed);
   if (key.ascii == 27) {
     if (pressed) {
       mainMenu->createControls();
@@ -570,48 +570,49 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       return true;
     }
   }
-  if (cmd.empty()) {
+  std::string cmdDrive = cmd;
+  if (cmdDrive.empty()) {
     // Check for driving keys
     BzfKeyEvent cleanKey = key;
     cleanKey.shift = 0;
-    cmd = KEYMGR.get(cleanKey, pressed);
+    cmdDrive = KEYMGR.get(cleanKey, pressed);
   }
+  if (cmdDrive == "turn left") {
+    keyboardMovement = Left;
+  } else if (cmdDrive == "turn right") {
+    keyboardMovement = Right;
+  } else if (cmdDrive == "drive forward") {
+    keyboardMovement = Up;
+  } else if (cmdDrive == "drive reverse") {
+    keyboardMovement = Down;
+  }
+  if (myTank)
+    switch (keyboardMovement) {
+    case Left:
+      myTank->setKey(BzfKeyEvent::Left, pressed);
+      break;
+    case Right:
+      myTank->setKey(BzfKeyEvent::Right, pressed);
+      break;
+    case Up:
+      myTank->setKey(BzfKeyEvent::Up, pressed);
+      break;
+    case Down:
+      myTank->setKey(BzfKeyEvent::Down, pressed);
+      break;
+    case None:
+      break;
+    }
   if (!cmd.empty()) {
     if (cmd=="fire")
       fireButton = pressed;
     roamButton = pressed;
-    if (cmd == "turn left") {
-      keyboardMovement = Left;
-    } else if (cmd == "turn right") {
-      keyboardMovement = Right;
-    } else if (cmd == "drive forward") {
-      keyboardMovement = Up;
-    } else if (cmd == "drive reverse") {
-      keyboardMovement = Down;
-    } else {
+    if (keyboardMovement == None) {
       std::string result = CMDMGR.run(cmd);
       if (!result.empty())
 	std::cerr << result << std::endl;
     }
-    if (myTank)
-      switch (keyboardMovement) {
-      case Left:
-	myTank->setKey(BzfKeyEvent::Left, pressed);
-	break;
-      case Right:
-	myTank->setKey(BzfKeyEvent::Right, pressed);
-	break;
-      case Up:
-	myTank->setKey(BzfKeyEvent::Up, pressed);
-	break;
-      case Down:
-	myTank->setKey(BzfKeyEvent::Down, pressed);
-	break;
-      case None:
-	break;
-      }
     return true;
-
   } else {
 
     // built-in unchangeable keys.  only perform if not masked.
