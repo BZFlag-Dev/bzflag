@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef HAVE_ADNS_H
-
 /* interface header */
 #include "AdnsHandler.h"
 
@@ -21,6 +19,8 @@
 /* common implementation headers */
 #include "network.h"
 
+
+#ifdef HAVE_ADNS_H
 
 adns_state AdnsHandler::adnsState;
 
