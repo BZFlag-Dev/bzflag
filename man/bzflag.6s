@@ -285,11 +285,10 @@ seconds and then the previous resolution restored.  Press the
 key to permanently select a new resolution. When you quit the game,
 the resolution is restored to what it was before the game started.
 .PP
-Options are recorded between game sessions in the .bzflag file (or .bzflag.$(HOST)
-if the \fIHOST\fR environment variable is defined) in
-the user's home directory.  This file has a simple name/value pair
-format.  This file is completely rewritten by the game after each
-session.
+Options are recorded between game sessions in the .bzf/<version>/config.cfg
+file (or config.cfg.${HOST} if the \fIHOST\fR environment variable is defined)
+in the user's home directory.  This file has a simple name/value pair format.
+This file is completely rewritten by the game after each session.
 .PP
 You can send typed messages to other players by pressing the
 .IR m
@@ -649,10 +648,10 @@ SAVEWORLD \fIfilename\fR
 Save the current world to \fIfilename\fR.
 .SH FILES
 .TP 15
-$(HOME)/.bzflag
+~/.bzf/<version>/config.cfg
 Stores options between game sessions.  Used when HOST is not defined.
 .TP 15
-$(HOME)/.bzflag.$(HOST)
+~/.bzf/<version>/config.cfg.${HOST}
 Stores options between game sessions.  Used when HOST is defined.
 .SH SEE ALSO
 bzfls(6), bzfs(6)
