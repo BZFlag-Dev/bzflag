@@ -146,6 +146,13 @@ void *FlagInfo::pack(void *buf)
   return buf;
 }
 
+void *FlagInfo::fakePack(void *buf)
+{
+  buf = nboPackUShort(buf, flagIndex);
+  buf = FlagInfo::flagList[flagIndex].flag.fakePack(buf);
+  return buf;
+}
+
 void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
 {
   numFlagsInAir++;

@@ -145,6 +145,7 @@ public:
 
   /** network serialization */
   void* pack(void* buf) const;
+  void* fakePack(void* buf) const;
 
   /** network deserialization */
   static void* unpack(void* buf, FlagType* &desc);
@@ -176,8 +177,11 @@ public:
   /** This function serializes this object into a @c void* buffer for network
       transfer. */
   void* pack(void*) const;
+  /** This function serializes this object into a @c void* buffer for network
+      transfer. */
+  void* fakePack(void*) const;
   /** This function uses the given serialization to set the member variables
-      of this object. */
+      of this object. This really hide the type of flag */
   void* unpack(void*);
 
   /** This function returns a set of all good flagtypes that are available in

@@ -187,6 +187,13 @@ void* FlagType::pack(void* buf) const
   return buf;
 }
 
+void* FlagType::fakePack(void* buf) const
+{
+  buf = nboPackUByte(buf, 'P');
+  buf = nboPackUByte(buf, 'Z');
+  return buf;
+}
+
 void* FlagType::unpack(void* buf, FlagType* &type)
 {
   unsigned char abbv[3] = {0,0,0};
@@ -204,6 +211,21 @@ FlagTypeMap& FlagType::getFlagMap() {
 void* Flag::pack(void* buf) const
 {
   buf = type->pack(buf);
+  buf = nboPackUShort(buf, uint16_t(status));
+  buf = nboPackUShort(buf, uint16_t(endurance));
+  buf = nboPackUByte(buf, owner);
+  buf = nboPackVector(buf, position);
+  buf = nboPackVector(buf, launchPosition);
+  buf = nboPackVector(buf, landingPosition);
+  buf = nboPackFloat(buf, flightTime);
+  buf = nboPackFloat(buf, flightEnd);
+  buf = nboPackFloat(buf, initialVelocity);
+  return buf;
+}
+
+void* Flag::fakePack(void* buf) const
+{
+  buf = type->fakePack(buf);
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(endurance));
   buf = nboPackUByte(buf, owner);

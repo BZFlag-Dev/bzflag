@@ -127,6 +127,7 @@ uint8_t rabbitIndex = NoPlayer;
 static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
+static bool       idIsIn = false;
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 
@@ -262,7 +263,10 @@ void sendFlagUpdate(FlagInfo &flag)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUShort(bufStart,1);
-  buf = flag.pack(buf);
+  if (idIsIn)
+    buf = flag.pack(buf);
+  else
+    buf = flag.fakePack(buf);
   broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
@@ -295,7 +299,10 @@ static void sendFlagUpdate(int playerIndex)
 	buf    = nboPackUShort(bufStart,0); //placeholder
       }
 
-      buf     = flag.pack(buf);
+      if (idIsIn)
+	buf = flag.pack(buf);
+      else
+	buf = flag.fakePack(buf);
       length += sizeof(uint16_t)+FlagPLen;
       cnt++;
     }
@@ -4369,6 +4376,14 @@ int main(int argc, char **argv)
     readPassFile(passFile);
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
+
+  /* See if an ID flag is in the game. If not we could hide type info for all 
+     flags */
+  if (clOptions->flagCount[Flags::Identify] > 0)
+    idIsIn = true;
+  if ((clOptions->numExtraFlags > 0)
+      && !clOptions->flagDisallowed[Flags::Identify])
+    idIsIn = true;
 
   if (clOptions->startRecording) {
     Record::start (ServerPlayer);
