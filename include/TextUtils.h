@@ -17,6 +17,7 @@
 #ifndef __TEXTUTILS_H__
 #define	__TEXTUTILS_H__
 
+#include <algorithm>
 #include <common.h>
 
 /** The string utility class provides basic functionality to parse and
