@@ -21,8 +21,7 @@
 
 
 const int       MaxListServers = 5;
-class ListServer {
-  public:
+typedef struct _ListServer {
     Address		address;
     int			port;
     int			socket;
@@ -31,7 +30,7 @@ class ListServer {
     std::string	 pathname;
     int			bufferSize;
     char		buffer[1024];
-};
+} ListServer;
 
 
 #endif /* __LISTSERVER_H__ */
