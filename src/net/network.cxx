@@ -10,11 +10,13 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	#pragma warning(disable: 4786)
+#endif
+
+#ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
-
 #endif
 
 #if !defined(WIN32)
@@ -98,7 +100,10 @@ int			BzfNetwork::setBlocking(int fd)
 
 #else /* defined(_WIN32) */
 
+#ifdef _MSC_VER
 #pragma warning( 4: 4786 )
+#endif
+
 #include "network.h"
 #include "ErrorHandler.h"
 #include "Address.h"

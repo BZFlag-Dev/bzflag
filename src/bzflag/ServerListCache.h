@@ -13,7 +13,7 @@
 #ifndef	BZF_SERVER_LIST_CACHE_H
 #define	BZF_SERVER_LIST_CACHE_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
   #pragma warning(disable: 4786)
 #endif
 

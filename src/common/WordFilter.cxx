@@ -12,7 +12,7 @@
 
 /* no header other than WordFilter.h should be included here */
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma warning( 4:4786)
 #endif
 

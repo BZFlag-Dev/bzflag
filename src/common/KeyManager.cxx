@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if defined(WIN32)
+#if defined(_MSC_VER)
 #pragma warning(4:4503)
 #endif
 

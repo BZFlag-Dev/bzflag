@@ -17,7 +17,7 @@
 #ifndef	BZF_PLAYING_H
 #define	BZF_PLAYING_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 #pragma warning(disable: 4786)
 #pragma warning(disable: 4100)
 #pragma warning(disable: 4511)

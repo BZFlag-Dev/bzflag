@@ -17,7 +17,7 @@
 #ifndef BZF_WINDOW_H
 #define	BZF_WINDOW_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	#pragma warning(disable: 4786)
 #endif
 

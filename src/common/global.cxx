@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#if (_WIN32)
+#if (_MSC_VER)
 // turn off bogus `this used in base member initialization list'
 	#pragma warning(disable: 4786)
 #endif

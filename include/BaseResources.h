@@ -17,7 +17,7 @@
 #ifndef BZF_BASE_RESOURCES_H
 #define	BZF_BASE_RESOURCES_H
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma warning( 4: 4786 )
 #endif
 

@@ -15,7 +15,7 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma warning( 4 : 4786 )
 #endif
 
@@ -39,10 +39,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 // must be before windows.h
 #include "network.h"
 #include <iomanip>
-
-#if defined(_WIN32)
-  #pragma warning(disable: 4786)
-#endif
 
 #if defined(_WIN32)
 #include <windows.h>

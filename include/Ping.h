@@ -18,7 +18,7 @@
 #ifndef	BZF_PING_H
 #define	BZF_PING_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	#pragma warning(disable: 4786)
 #endif
 

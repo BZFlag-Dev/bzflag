@@ -21,7 +21,7 @@
 #include "common.h"
 #include "HUDui.h"
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	#pragma warning(disable: 4786)
 #endif
 

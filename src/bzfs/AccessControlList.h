@@ -13,7 +13,7 @@
 #ifndef __ACCESSCONTROLLIST_H__
 #define __ACCESSCONTROLLIST_H__
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma warning( 4: 4786)
 #endif
 

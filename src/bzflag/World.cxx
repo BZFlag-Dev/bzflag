@@ -11,7 +11,7 @@
  */
 
 // todo: make this turn off for .net
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	#pragma warning(disable: 4786)
 #endif
 

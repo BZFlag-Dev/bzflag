@@ -11,7 +11,7 @@
  */
 
 
-#ifdef _WIN32
+#ifdef _MSC_VER
   #define strcasecmp stricmp
   #pragma warning( disable : 4786 )  // Disable warning message
 #else

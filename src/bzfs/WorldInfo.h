@@ -13,7 +13,7 @@
 #ifndef __WORLDINFO_H__
 #define __WORLDINFO_H__
 
-#if (_WIN32)
+#if (_MSC_VER)
 // turn off bogus `this used in base member initialization list'
 	#pragma warning(disable: 4786)
 	#pragma warning(disable: 4503)

@@ -17,7 +17,7 @@
 #ifndef	BZF_ROBOT_PLAYER_H
 #define	BZF_ROBOT_PLAYER_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	#pragma warning(disable: 4786)
 #endif
 

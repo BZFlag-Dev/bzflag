@@ -17,7 +17,7 @@
 #ifndef	BZF_SCENE_RENDERER_H
 #define	BZF_SCENE_RENDERER_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	#pragma warning(disable: 4786)
 #endif
 

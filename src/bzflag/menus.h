@@ -18,7 +18,7 @@
 #ifndef	BZF_MENUS_H
 #define	BZF_MENUS_H
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma warning( 4 : 4786 )
 #endif
 

@@ -13,7 +13,7 @@
 #ifndef	BZF_BUNDLEMGR_H
 #define	BZF_BUNDLEMGR_H
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #pragma warning(4:4786)
 #endif
 

@@ -12,8 +12,10 @@
 
 /* no header other than VotingArbiter.h should be included here */
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #  pragma warning( 4:4786)
+#endif
+#ifdef _WIN32
 #  define snprintf _snprintf
 #endif
 
