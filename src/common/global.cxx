@@ -91,30 +91,23 @@ GlobalDBItem				globalDBItems[] = {
 
 // just a place to put the version stuff, as there was no where else
 // version strings
-std::string serverVersion;
-std::string	protVersion; 
-std::string	appVersion;
 
 const char*			getServerVersion()
 {
-    if (serverVersion.size()<1){
-        std::ostringstream serverVersionStream;
-        serverVersionStream << "BZFS" << getProtocolVersion();
-		serverVersion = serverVersionStream.str();
-	}
+  static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
   return serverVersion.c_str();
 }
 
 const char*			getProtocolVersion()
 {
-	if (protVersion.size()<1)
-		protVersion = BZ_PROTO_VERSION;
+  static std::string protVersion = BZ_PROTO_VERSION;
   return protVersion.c_str();
 }
 
 const char*		getAppVersion()
 {
-	if (appVersion.size()<1){
+    static std::string	appVersion = "";
+	if (!appVersion.size()){
        std::ostringstream	appVersionStream;
        appVersionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV << "-" << BZ_BUILD_OS << "-" << BZ_BUILD_SOURCE << BZ_BUILD_DATE;
        appVersion = appVersionStream.str();
