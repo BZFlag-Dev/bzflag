@@ -29,6 +29,7 @@
 
 #include "common.h"
 #include "bzfgl.h"
+#include "bzfio.h"
 #include "OpenGLGState.h"
 #include "RenderNode.h"
 

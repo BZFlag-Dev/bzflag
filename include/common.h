@@ -31,8 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "bzfio.h"
-
 extern int debugLevel;
 // Like verbose debug messages?
 #define DEBUG1 if (debugLevel >= 1) formatDebug
