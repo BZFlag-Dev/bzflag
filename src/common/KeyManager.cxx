@@ -156,26 +156,37 @@ void			KeyManager::bind(const BzfKeyEvent& key,
 void			KeyManager::unbind(const BzfKeyEvent& key,
 					   bool press)
 {
-  if (press)
-    pressEventToCommand.erase(key);
-  else
-    releaseEventToCommand.erase(key);
   notify(key, press, "");
 }
 
 void			KeyManager::unbindCommand(const char* command)
 {
-  EventToCommandMap::const_iterator index;
-  for (index = pressEventToCommand.begin(); index != pressEventToCommand.end(); ++index) {
-    if (index->second == command) {
-      this->unbind(index->first, true);
-    }
-  }
-  for (index = releaseEventToCommand.begin(); index != releaseEventToCommand.end(); ++index) {
-    if (index->second == command) {
-      this->unbind(index->first, false);
-    }
-  }
+  EventToCommandMap::iterator index;
+
+	index = pressEventToCommand.begin();
+	while(index != pressEventToCommand.end())
+	{
+		if (index->second == command)
+		{
+			unbind(index->first, true);
+			index = pressEventToCommand.erase(index);
+		}
+		else
+			index++;
+	}
+
+	index = releaseEventToCommand.begin();
+	while(index != releaseEventToCommand.end())
+	{
+		if (index->second == command)
+		{
+			unbind(index->first, true);
+			index = releaseEventToCommand.erase(index);
+
+		}
+		else
+			index++;
+	}
 }
 
 std::string		KeyManager::get(const BzfKeyEvent& key,

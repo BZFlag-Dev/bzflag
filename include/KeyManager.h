@@ -31,6 +31,8 @@
 
 #define KEYMGR (KeyManager::instance())
 
+
+
 class KeyManager : public Singleton<KeyManager> {
 public:
   typedef void (*IterateCallback)(const std::string& name, bool press,
@@ -40,7 +42,7 @@ public:
   // bind/unbind a command to/from a key event press or release
   void			bind(const BzfKeyEvent&,
 			     bool press, const std::string& cmd);
-  void			unbind(const BzfKeyEvent&, bool press);
+	void unbind(const BzfKeyEvent&, bool press);
 
   // unbind all keys bound to a specific command
   void			unbindCommand(const char* command);
@@ -83,13 +85,13 @@ private:
   static bool		onCallback(ChangeCallback, void*, void*);
 
 private:
-  class KeyEventLess {
-  public:
-    bool		operator()(const BzfKeyEvent&,
-				   const BzfKeyEvent&) const;
-  };
+	class KeyEventLess {
+	public:
+		bool		operator()(const BzfKeyEvent&,
+			const BzfKeyEvent&) const;
+	};
 
-  typedef std::map<BzfKeyEvent, std::string, KeyEventLess> EventToCommandMap;
+	typedef std::map<BzfKeyEvent, std::string, KeyEventLess> EventToCommandMap;
   typedef std::map<std::string, BzfKeyEvent> StringToEventMap;
 
   EventToCommandMap	pressEventToCommand;
