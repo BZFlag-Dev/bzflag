@@ -23,10 +23,10 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "common.h"
 
 // system includes
+#include <iostream>
 #include <deque>
 #include <stdio.h>
 #include <stdlib.h>
-#include "bzsignal.h"
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
@@ -49,6 +49,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 
 // yikes! that's a lotsa includes!
 #include "global.h"
+#include "bzsignal.h"
 #include "Address.h"
 #include "BzfEvent.h"
 #include "BzfWindow.h"
@@ -5246,9 +5247,10 @@ static World*		makeWorld(ServerLink* serverLink)
     {
       cachedWorld->seekg(0, std::ios::end);
       std::streampos size = cachedWorld->tellg();
+      unsigned long charSize = std::streamoff(size);
       cachedWorld->seekg(0);
-      worldDatabase = new char[size];
-      cachedWorld->read(worldDatabase, size);
+      worldDatabase = new char[charSize];
+      cachedWorld->read(worldDatabase, charSize);
     }
 
   // make world
