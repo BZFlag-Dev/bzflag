@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* this config is just for Dev-C++ since it doesn't use automake*/
+/* this config is just for Dev-C++ since it doesn't use automake */
 
 #ifndef _DEVCPP_CONFIG
 #define _DEVCPP_CONFIG
