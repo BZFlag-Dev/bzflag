@@ -335,7 +335,7 @@ std::string cmdMessagePanel(const std::string&,
 			    const CommandManager::ArgList& args)
 {
   if (args.size() != 1)
-    return "usage: autopilot {all|chat|server|misc}";
+    return "usage: messagepanel {all|chat|server|misc}";
 
   if (args[0] == "all")
     controlPanel->setMessagesMode(0);
@@ -346,7 +346,7 @@ std::string cmdMessagePanel(const std::string&,
   else if (args[0] == "misc")
     controlPanel->setMessagesMode(3);
   else
-    return "usage: autopilot {all|chat|server|misc}";
+    return "usage: messagepanel {all|chat|server|misc}";
 
   return std::string();
 }
