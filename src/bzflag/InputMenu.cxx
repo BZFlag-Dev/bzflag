@@ -78,17 +78,17 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->update();
   list.push_back(option);
 
-  forceInput = new HUDuiList;
-  forceInput->setFontFace(fontFace);
-  forceInput->setLabel("Force input device:");
-  forceInput->setCallback(callback, (void*)"F");
-  options = &forceInput->getList();
-  options->push_back("Do not force");
+  activeInput = new HUDuiList;
+  activeInput->setFontFace(fontFace);
+  activeInput->setLabel("Active input device:");
+  activeInput->setCallback(callback, (void*)"A");
+  options = &activeInput->getList();
+  options->push_back("Auto");
   options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Keyboard));
   options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Mouse));
   options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Joystick));
-  forceInput->update();
-  list.push_back(forceInput);
+  activeInput->update();
+  list.push_back(activeInput);
 
   option = new HUDuiList;
   // set joystick Device
@@ -131,18 +131,18 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
       BZDB.set("joystickname", selectedOption);
       getMainWindow()->initJoystick(selectedOption);
       break;
-    case 'F':
+    case 'A':
       {
 	LocalPlayer*   myTank = LocalPlayer::getMyTank();
-	// Do we force or not?
-	if (selectedOption == "Do not force") {
+	// Are we forced to use one input device, or do we allow it to change automatically?
+	if (selectedOption == "Auto") {
 	  BZDB.set("allowInputChange", "1");
 	} else {
 	  BZDB.set("allowInputChange", "0");
-	  BZDB.set("forceInputDevice", selectedOption);
+	  BZDB.set("activeInputDevice", selectedOption);
 	  // Set the current input device to whatever we're forced to
 	  if (myTank) {
-	    myTank->setInputMethod(BZDB.get("forceInputDevice"));
+	    myTank->setInputMethod(BZDB.get("activeInputDevice"));
 	  }
 	}
       }
@@ -190,14 +190,14 @@ void			InputMenu::resize(int width, int height)
   }
 
   // load current settings
-  std::vector<std::string> *options = &forceInput->getList();
+  std::vector<std::string> *options = &activeInput->getList();
   for (i = 0; i < (int)options->size(); i++) {
     std::string currentOption = (*options)[i];
-    if (BZDB.get("forceInputDevice") == currentOption)
-      forceInput->setIndex(i);
+    if (BZDB.get("activeInputDevice") == currentOption)
+      activeInput->setIndex(i);
   }
   if (BZDB.isTrue("allowInputChange"))
-    forceInput->setIndex(0);
+    activeInput->setIndex(0);
 }
 
 
