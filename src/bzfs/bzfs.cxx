@@ -78,6 +78,8 @@ const int udpBufSize = 128000;
 #include "../../include/md5.h"
 #include "ShotUpdate.h"
 
+typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
+
 static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message);
 
 // DisconnectTimeout is how long to wait for a reconnect before
@@ -582,7 +584,7 @@ class WorldInfo {
 	int to[2];
     };
 
-    int inBuilding(ObstacleLocation **location, float x, float y, float z, float radius) const;
+    InBuildingType inBuilding(ObstacleLocation **location, float x, float y, float z, float radius) const;
 
   private:
     int numWalls;
@@ -1124,7 +1126,7 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
-int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float y, float z, float r) const
+InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float y, float z, float r) const
 {
   int i;
   for (i = 0; i < numBases; i++) {
@@ -1132,7 +1134,7 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
 	(z + flagHeight)) && (bases[i].pos[2] + bases[i].size[2]) > z) {
       if(location != NULL)
 	*location = &bases[i];
-      return 1;
+      return IN_BASE;
     }
   }
   for (i = 0; i < numBoxes; i++)
@@ -1140,14 +1142,14 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
 	(z + flagHeight)) && (boxes[i].pos[2] + boxes[i].size[2]) > z) {
       if (location != NULL)
 	*location = &boxes[i];
-      return 2;
+      return IN_BOX;
     }
   for (i = 0; i < numPyramids; i++) {
     if ((inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r)) &&
 	pyramids[i].pos[2] < (z + flagHeight) && (pyramids[i].pos[2] + pyramids[i].size[2]) > z) {
       if (location != NULL)
 	*location = &pyramids[i];
-      return 3;
+      return IN_PYRAMID;
     }
   }
   for (i = 0; i < numTeleporters; i++)
@@ -1158,11 +1160,11 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
       __teleporter = teleporters[i];
       if (location != NULL)
 	*location = &__teleporter;
-      return 4;
+      return IN_TELEPORTER;
     }
   if (location != NULL)
     *location = (ObstacleLocation *)NULL;
-  return 0;
+  return NOT_IN_BUILDING;
 }
 
 int WorldInfo::packDatabase()
@@ -3135,7 +3137,7 @@ static WorldInfo *defineTeamWorld()
 	  const float rotation = 2.0f * M_PI * (float)bzfrand();
 
 	  // if too close to building then try again
-	  if (world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
+	  if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
 	    continue;
 	  // if to close to a base then try again
 	  if (((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) &&
@@ -3365,7 +3367,7 @@ static WorldInfo *defineRandomWorld()
       const float rotation = 2.0f * M_PI * (float)bzfrand();
 
       // if too close to building then try again
-      if (world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
+      if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
 	continue;
 
       world->addTeleporter(x, y, 0.0f, rotation,
@@ -4048,12 +4050,24 @@ static void resetFlag(int flagIndex)
     float r = TankRadius;
     if (pFlagInfo->flag.id == ObesityFlag)
        r *= 2.0f * ObeseFactor;
-    do {
-      pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-      pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-      pFlagInfo->flag.position[2] = 0.0f;
-    } while (world->inBuilding(NULL, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1],
-	pFlagInfo->flag.position[2], r));
+    WorldInfo::ObstacleLocation *obj;
+    pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+    pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+    pFlagInfo->flag.position[2] = 0.0f;
+    int topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0], 
+					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
+    while (topmosttype != NOT_IN_BUILDING) {
+	if (clOptions.flagsOnBuildings && (topmosttype == IN_BOX)) {
+	  pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
+	}
+	else {
+          pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+          pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+          pFlagInfo->flag.position[2] = 0.0f;
+	}
+        topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0], 
+					     pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
+    }
   }
 
   // required flags mustn't just disappear
@@ -4540,7 +4554,7 @@ static void dropFlag(int playerIndex, float pos[3])
 {
   assert(world != NULL);
   WorldInfo::ObstacleLocation* container;
-  int topmosttype = 0;
+  int topmosttype = NOT_IN_BUILDING;
   WorldInfo::ObstacleLocation* topmost = (WorldInfo::ObstacleLocation *)NULL;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
@@ -4559,7 +4573,7 @@ static void dropFlag(int playerIndex, float pos[3])
 
   for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
     topmosttype = world->inBuilding(&container, pos[0], pos[1], i, 0);
-    if (topmosttype) {
+    if (topmosttype != NOT_IN_BUILDING) {
       topmost = container;
       break;
     }
@@ -4576,7 +4590,7 @@ static void dropFlag(int playerIndex, float pos[3])
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = pos[2];
   }
-  else if (isTeamFlag && ((FlagId)teamBase == flagId) && (topmosttype == 1)) {
+  else if (isTeamFlag && ((FlagId)teamBase == flagId) && (topmosttype == IN_BASE)) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
@@ -4586,12 +4600,12 @@ static void dropFlag(int playerIndex, float pos[3])
     pFlagInfo->flag.landingPosition[1] = safetyBasePos[int(teamBase)][1];
     pFlagInfo->flag.landingPosition[2] = safetyBasePos[int(teamBase)][2];
   }
-  else if (topmosttype == 0) {
+  else if (topmosttype == NOT_IN_BUILDING) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = 0.0f;
   }
-  else if (clOptions.flagsOnBuildings && (topmosttype == 2 || topmosttype == 1)) {
+  else if (clOptions.flagsOnBuildings && (topmosttype == IN_BOX || topmosttype == IN_BASE)) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
@@ -4601,7 +4615,7 @@ static void dropFlag(int playerIndex, float pos[3])
     // convenient building which makes it fly all the way back to
     // your own base.  make it fly to the center of the board.
     topmosttype = world->inBuilding(&container, 0.0f, 0.0f, 0.0f, TankRadius);
-    if (topmosttype == 0) {
+    if (topmosttype == NOT_IN_BUILDING) {
 	pFlagInfo->flag.landingPosition[0] = 0.0f;
 	pFlagInfo->flag.landingPosition[1] = 0.0f;
 	pFlagInfo->flag.landingPosition[2] = 0.0f;
