@@ -338,6 +338,24 @@ msgstr "$CR0lL m35$493 loG B@ckWArd"
 msgid "scroll message log forward"
 msgstr "$cr0LL mE5S4g3 lo9 PHOrw4rD"
 
+msgid "Slow Keyboard Motion"
+msgstr "5LOw key804RD Mo+IoN"
+
+msgid "Toggle Radar Flags"
+msgstr "+OGglE R4daR fl@95"
+
+msgid "Toggle Main Flags"
+msgstr "t0GGL3 M41N fL4G5"
+
+msgid "Silence/UnSilence"
+msgstr "$1LenCE/UN5il3nCE"
+
+msgid "Server Admin"
+msgstr "$ERv3r @dmIn"
+
+msgid "Hunt"
+msgstr "hUn7"
+
 msgid "show/dismiss menu" 
 msgstr "5H0w/DI5Mis$ MENU"
 
