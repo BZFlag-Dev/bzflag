@@ -14,6 +14,7 @@
 #include "bzfs.h"
 
 // implementation-specific system headers
+#include <algorithm>
 #include <assert.h>
 #include <errno.h>
 #include <vector>
@@ -1492,7 +1493,7 @@ static TeamColor autoTeamSelect(TeamColor t)
     return RogueTeam;
 
   // Sort it by current team number
-  sort(teams.begin(), teams.end());
+  std::sort(teams.begin(), teams.end());
 
   // all teams are empty, select just one of them
   if (teams[0].current == 0) {
