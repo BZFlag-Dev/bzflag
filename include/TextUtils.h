@@ -54,28 +54,21 @@ class string_util {
     }
     // get a vector of strings from a string, using all of chars of the delims
     // string as separators
-    static std::vector<std::string> string_util::tokenize(std::string in, std::string delims){
+    static std::vector<std::string> string_util::tokenize(std::string& in, std::string delims){
       std::vector<std::string> out;
-      std::ostringstream outputString;
-      std::istringstream inStream (in);
 
-      std::string candidate;
-      std::string testme;
-
-      int character;
-      while ( (character = inStream.get()) != EOF){
-	testme = (char) character;
-	if (testme.find_first_of(delims) != std::string::npos){
-	  candidate = outputString.str();
-	  outputString.str(""); // clear it
-	  if (candidate != "")  out.push_back(candidate);
-	} else {
-	  outputString << (char)character;
+      int startPos = in.find_first_not_of(delims);
+      while (startPos != std::string::npos){
+	int endPos = in.find_first_of(delims,startPos);
+	if (endPos == std::string::npos) {
+	  out.push_back(in.substr(startPos));
+	  break;
 	}
-      }
+	else
+	  out.push_back(in.substr(startPos,endPos-startPos));
 
-      candidate = outputString.str();
-      if (candidate != "")  out.push_back(candidate);
+	startPos = in.find_first_not_of(delims,endPos);
+      }
       return out;
     }
 };
