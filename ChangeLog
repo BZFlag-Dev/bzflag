@@ -2,10 +2,12 @@
 
 			     BZFlag release notes
 
-BZFlag 1.10.5
+BZFlag 1.10.6
 -------------
 
+* Add support for aggressive filtering on more platforms - Sean Morrison
 * bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
+* Fixed bug that allowed empty callsigns - Frank Thilo
 * server option to disallow autopilot - Nils McCarthy
 * Bots drive around corners faster - Frank Thilo
 * Bots aim better, try to evade shots - Frank Thilo
