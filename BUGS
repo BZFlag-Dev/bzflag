@@ -1,5 +1,16 @@
 recent bugs
 ------------
+
+- PyramidBuilding::getHitNormal seems to handle flipz wrongly, specifically
+  if (flip)
+    oHeight = -oHeight;
+  if (oHeight < 0) {
+    flip    = !flip;
+    oHeight = -oHeight;
+  }
+  Given a Pyr with positive height, and flipz, causes flipz to be off, and the 
+  height to be positive. Which is incorrect.
+
 - Rabbit selection is borken. Two things. A player often is Rabbit two times
   in a row, which was intended to be illegal, and high scoring tanks get bypassed.
   Was playing on ducati where a player was consistantly in #1 slot, but NEVER 
