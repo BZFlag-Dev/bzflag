@@ -402,13 +402,15 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   // this assumes bases have 6 parts - if they don't, it still works
   int part = 0;
   // repeat the textue once for the top and bottom, else use the old messed up way
-  while ((node = ((part >= 4 ) ? nodeGen->getNextNode(
-                                1,
-                                1, boxLOD) :
-                                nodeGen->getNextNode(
-                                o.getBreadth(),
-                                o.getHeight(), boxLOD)))) {
-    if (part < 4) {
+  // There are 3 cases for the texture ordering:
+  // 1. getNextNode() only returns the top texture
+  // 2. getNextNode() returns the top texture(0), and the 4 sides(1-4)
+  // 3. getNextNode() returns the top texture(0), and the 4 sides(1-4), and the bottom(5)
+  while ((node = ( ((part % 5) == 0) ? nodeGen->getNextNode(1,1, boxLOD) :
+                                      nodeGen->getNextNode(o.getBreadth(),
+                                                           o.getHeight(),
+                                                           boxLOD)))) {
+    if ((part % 5) != 0) {
       node->setColor(boxColors[part - 2]);
       node->setModulateColor(boxModulateColors[part - 2]);
       node->setLightedColor(boxLightedColors[part - 2]);

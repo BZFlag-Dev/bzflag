@@ -39,29 +39,29 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
     base->getCorner(1, sCorner);
   } else {
     switch(incNodeNumber()) {
-      case 1:
+      case 1:  // This is the top polygon
+	base->getCorner(4, bPoint);
+	base->getCorner(5, sCorner);
+	base->getCorner(7, tCorner);
+	break;
+      case 2:
 	base->getCorner(0, bPoint);
 	base->getCorner(1, sCorner);
 	base->getCorner(4, tCorner);
 	break;
-      case 2:
+      case 3:
 	base->getCorner(1, bPoint);
 	base->getCorner(2, sCorner);
 	base->getCorner(5, tCorner);
 	break;
-      case 3:
+      case 4:
 	base->getCorner(2, bPoint);
 	base->getCorner(3, sCorner);
 	base->getCorner(6, tCorner);
 	break;
-      case 4:
+      case 5:
 	base->getCorner(3, bPoint);
 	base->getCorner(0, sCorner);
-	base->getCorner(7, tCorner);
-	break;
-      case 5:  // This is the top polygon
-	base->getCorner(4, bPoint);
-	base->getCorner(5, sCorner);
 	base->getCorner(7, tCorner);
 	break;
       case 6:  // This is the bottom polygon
