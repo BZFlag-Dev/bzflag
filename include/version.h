@@ -45,7 +45,7 @@
 
 #ifndef BZ_BUILD_TYPE
 #define BZ_BUILD_TYPE		"DEVELOPMENT"
-
+#endif
 
 // Build Date will be defined at link time, can be different for each exe
 extern char buildDate[];
