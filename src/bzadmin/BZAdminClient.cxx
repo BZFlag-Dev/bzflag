@@ -249,7 +249,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  Team temp;
 	  victimName = temp.getName((TeamColor)team);
 	}
-	lastMessage.first = std::string("*** ") + victimName + " won the game.";
+	lastMessage.first = std::string("*** \'") + victimName + "\' won the game.";
       }
       break;
       
