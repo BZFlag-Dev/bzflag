@@ -178,8 +178,8 @@ public:
   }
   
   /** This function removes any ban for the address @c ipAddr. 
-      @c returns @c true if there was a ban for that address, @c false if there
-                 wasn't.
+      @returns @c true if there was a ban for that address, @c false if there
+               wasn't.
   */
   bool unban(in_addr &ipAddr) {
     banList_t::iterator it = std::remove(banList.begin(), banList.end(), BanInfo(ipAddr));
