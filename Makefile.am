@@ -32,3 +32,8 @@ MAINTAINERCLEANFILES = \
 	missing \
 	mkinstalldirs \
 	Makefile.in
+
+deb: dist
+	-rm -rf $(distdir)
+	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
+	(cd $(distdir) && debian/buildsnap cvs)
