@@ -29,9 +29,6 @@
 /* On windows, strcasecmp is really stricmp */
 #define HAVE_STRICMP 1
 
-/* On windows, vsnprintf is _vsnprintf */
-#define vsnprintf _vsnprintf
-
 // define our OS
 #ifndef BZ_BUILD_OS
  	#if defined(_MSC_VER) && (_MSC_VER == 1100)

@@ -60,8 +60,8 @@ extern int debugLevel;
 #if defined HAVE_STRICMP
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
+#define vsnprintf _vsnprintf
 #endif
-\
 
 #include <assert.h>
 #include <stddef.h>
