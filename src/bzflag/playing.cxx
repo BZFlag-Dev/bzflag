@@ -2905,9 +2905,6 @@ static void		handleMyTankKilled(int reason)
     playLocalSound(SFX_RUNOVER);
   else
     playLocalSound(SFX_DIE);
-
-  // i lose a point
-  myTank->changeScore(0, 1, 0);
 }
 #endif
 
