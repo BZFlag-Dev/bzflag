@@ -324,7 +324,7 @@ static void		usage()
 #ifdef ROBOT
 	" [-solo <num-robots>]"
 #endif
-	" [-team {red|green|blue|purple|rogue}]"
+	" [-team {red|green|blue|purple|rogue|observer}]"
 	" [-version]"
 	" [-view {normal|stereo|stacked|three|anaglyph}]"
 	" [-window]"
@@ -457,6 +457,8 @@ static void		parse(int argc, char** argv)
 	startupInfo.team = PurpleTeam;
       } else if (strcmp(argv[i], "z") == 0 || strcmp(argv[i], "rogue") == 0) {
 	startupInfo.team = RogueTeam;
+      } else if (strcmp(argv[i], "o") == 0 || strcmp(argv[i], "observer") == 0) {
+	startupInfo.team = ObserverTeam;
       } else {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
