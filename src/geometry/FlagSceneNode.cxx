@@ -168,8 +168,8 @@ FlagSceneNode::FlagRenderNode::~FlagRenderNode()
 
 void			FlagSceneNode::FlagRenderNode::render()
 {
-  float base = BZDB.eval( StateDatabase::BZDB_FLAGPOLESIZE );
-  float poleWidth = BZDB.eval( StateDatabase::BZDB_FLAGPOLEWIDTH );
+  float base = BZDBCache::flagPoleSize;
+  float poleWidth = BZDBCache::flagPoleWidth;
 
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
