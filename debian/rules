@@ -14,11 +14,9 @@ build-stamp:
 
 	# Add here commands to compile the package.
 	# compile for i486 cause GL on i386 is hopeless
-ifeq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	case $(DEB_BUILD_ARCH) in \
-		i386) ./configure --enable-debug --prefix=/usr --host=i486-pc-linux-gnu ;; \
-		*) ./configure --enable-debug --prefix=/usr ;; \
-	esac
+	echo DEB_BUILD_OPTIONS=$(DEB_BUILD_OPTIONS)
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	./configure --enable-debug --prefix=/usr
 else
 	case $(DEB_BUILD_ARCH) in \
 		i386) ./configure --prefix=/usr --host=i486-pc-linux-gnu ;; \
