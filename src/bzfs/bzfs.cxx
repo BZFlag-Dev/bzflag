@@ -3391,7 +3391,9 @@ static void handleCommand(int t, const void *rawbuf)
 
     // unknown msg type
     default:
-      player[t].debugUnknownPacket(code);
+      DEBUG1("Player [%d] sent unknown packet type (%x), \
+possible attack from %s\n",
+	     t, code, player[t].getTargetIP());
   }
 }
 

@@ -95,7 +95,6 @@ public:
   const char *getTargetIP();
   int         sizeOfIP();
   void       *packAdminInfo(void *buf);
-  void        debugUnknownPacket(int code);
   bool        isAtIP(const std::string& IP);
   bool        isPlaying();
   bool        exist();

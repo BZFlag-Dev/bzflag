@@ -269,12 +269,6 @@ void *PlayerInfo::packAdminInfo(void *buf) {
   return buf;
 };
 
-void PlayerInfo::debugUnknownPacket(int code) {
-  DEBUG1("Player [%d] sent unknown packet type (%x), \
-possible attack from %s\n",
-	 playerIndex, code, peer.getDotNotation().c_str());
-};
-
 bool PlayerInfo::isAtIP(const std::string& IP) {
   return strcmp(peer.getDotNotation().c_str(), IP.c_str()) == 0;
 };
