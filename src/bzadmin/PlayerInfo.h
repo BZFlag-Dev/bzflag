@@ -16,11 +16,14 @@
 #include <map>
 
 #include "Address.h"
+#include "global.h"
 
 
 /** This struct stores information about a player that is relevant to 
     bzadmin. */
 struct PlayerInfo {
+  PlayerInfo() {}
+  PlayerInfo(const std::string& n) : name(n) { }
   std::string name;
   std::string ip;
   TeamColor team;

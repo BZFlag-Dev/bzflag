@@ -121,6 +121,7 @@ protected:
   
   std::string cmd;
   const PlayerIdMap& players;
+  PlayerIdMap additionalTargets;
   PlayerIdMap::const_iterator targetIter;
   PlayerId me;
   AutoCompleter comp;
