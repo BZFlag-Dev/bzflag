@@ -852,6 +852,7 @@ void			LocalPlayer::setTeam(TeamColor team)
 void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
   FlagType* flag = getFlag();
+  float previousFraction = fracOfMaxSpeed;
 
   // can't go faster forward than at top speed, and backward at half speed
   if (fracOfMaxSpeed > 1.0f) fracOfMaxSpeed = 1.0f;
@@ -874,6 +875,20 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     fracOfMaxSpeed = 0.0f;
   } else if ((flag == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0)) {
     fracOfMaxSpeed = 0.0f;
+  } else if (flag == Flags::Agility) {
+    dodgeCount= 10;
+    if (dodgeCount-- > 0) {
+      fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+    } else {
+      // make sure we are dodging campared to our previous acceleration
+      if (fabs(fracOfMaxSpeed - previousFraction) > BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA)) {
+	// we've changed direction so reset dodge count
+	if ((fracOfMaxSpeed * previousFraction < 0.0f) || 
+	    (fabs(fracOfMaxSpeed) > fabs(previousFraction))) {
+	  dodgeCount = (int)BZDB.eval(StateDatabase::BZDB_AGILITYDODGECOUNT);
+	}
+      }
+    }
   }
 
   // apply handicap advantage to tank speed
@@ -885,6 +900,8 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 {
+  FlagType* flag = getFlag();
+
   // limit turn speed to maximum
   if (fracOfMaxAngVel > 1.0f) fracOfMaxAngVel = 1.0f;
   else if (fracOfMaxAngVel < -1.0f) fracOfMaxAngVel = -1.0f;
@@ -896,10 +913,13 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
     fracOfMaxAngVel = 0.0f;
 
   // boost turn speed for other flags
-  if (getFlag() == Flags::QuickTurn)
+  if (flag == Flags::QuickTurn) {
     fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_ANGULARAD);
-  else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f))
+  } else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
     fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
+  } else if (flag == Flags::Agility) {
+    fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_AGILITYADANGVEL);
+  }
 
   // set desired turn speed
   desiredAngVel = fracOfMaxAngVel * BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
