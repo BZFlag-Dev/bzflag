@@ -468,6 +468,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\PlayerInfo.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\TeamBases.cxx">
 			</File>
 			<File
