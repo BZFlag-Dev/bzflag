@@ -42,3 +42,10 @@ to do list for bzflag
    a game.  basic text chat facilities.  allows players
    to wait for enough players for a game and to discuss
    strategy, etc.  could build this into bzfs easily.
+
+* spectator mode. Possibly only through a relay server
+  so as to not load down the normal server.
+
+* one tcp port. Tim Riker is working on this code. 1.7e4
+  should include playerid mangling support to get ready
+  for this patch.
