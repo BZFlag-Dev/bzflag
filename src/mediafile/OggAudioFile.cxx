@@ -25,9 +25,9 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	cb.tell_func = OAFTell;
 
 	OAFInputBundle* bundle = new OAFInputBundle;
-	in->seekg(0, std::ios::end);
+	in->seekg(0, ios::end);
 	bundle->input = in; bundle->length = std::streamoff(in->tellg());
-	in->seekg(0, std::ios::beg);
+	in->seekg(0, ios::beg);
 
 	if(ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0) {
 		std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
@@ -52,23 +52,23 @@ std::string	OggAudioFile::getExtension()
 
 bool		OggAudioFile::read(void* buffer, int numFrames)
 {
-	int frames;
-	int bytes = numFrames * info->channels * 2;
-	ogg_int64_t oldoff = ov_pcm_tell(&file);
+	int result;
+	long bytestotal = numFrames * info->channels * 2;
+	while (bytestotal > 0) {
+		long oldoff = ov_pcm_tell(&file) * info->channels * 2;
+		long bytesleft = bytestotal - oldoff;
 #if BYTE_ORDER == BIG_ENDIAN
-	frames = ov_read(&file, (char *) buffer, bytes, 1, 2, 1, &stream);
+		result = ov_read(&file, ((char*) buffer) + oldoff, bytesleft, 1, 2, 1, &stream);
 #else
-	frames = ov_read(&file, (char *) buffer, bytes, 0, 2, 1, &stream);
+		result = ov_read(&file, ((char*) buffer) + oldoff, bytesleft, 0, 2, 1, &stream);
 #endif
-	ogg_int64_t pcmoff = ov_pcm_tell(&file);
-	std::cout << "requested: " << numFrames << "\n";
-	std::cout << "actual:    " << (pcmoff  - oldoff) << "\n\n";
-	if (frames < 0) {
-		if (frames == OV_HOLE)
-			// OV_HOLE is non-fatal
-			return true;
-		else
+		long newoff = ov_pcm_tell(&file) * info->channels * 2;
+		long bytesread = newoff - oldoff;
+		if (result == OV_EBADLINK)
 			return false;
+		else if (result == 0)
+			return false;
+		bytestotal -= bytesread;
 	}
 	return true;
 }
