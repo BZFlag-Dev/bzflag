@@ -17,6 +17,13 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
 
+* server should precompute it's MAX_Z and send it to the client.
+	Client should use that Z and not let the tank go over it.
+	Server needs to resend max when ever gravity changes.
+	This way only real cheaters hit the cheat test.
+
+* make client say "loading map" when it's loading large maps.
+
 
 THESE ARE LOWER PRIORITY
 
