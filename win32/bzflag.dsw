@@ -3,7 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "bzflag"=.\bzflag.dsp - Package Owner=<4>
+Project: "bzflag"=".\bzflag.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -36,7 +36,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "bzfls"=.\bzfls.dsp - Package Owner=<4>
+Project: "bzfls"=".\bzfls.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -54,19 +54,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "bzfrelay"=.\bzfrelay.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "bzfs"=.\bzfs.dsp - Package Owner=<4>
+Project: "bzfs"=".\bzfs.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -84,7 +72,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "bzwtransform"=.\bzwtransform.dsp - Package Owner=<4>
+Project: "bzwtransform"=".\bzwtransform.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -96,7 +84,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "common"=.\common.dsp - Package Owner=<4>
+Project: "common"=".\common.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -108,7 +96,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "geometry"=.\geometry.dsp - Package Owner=<4>
+Project: "geometry"=".\geometry.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -120,7 +108,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "installer"=.\installer.dsp - Package Owner=<4>
+Project: "installer"=".\installer.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -144,7 +132,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "makehtml"=.\makehtml.dsp - Package Owner=<4>
+Project: "makehtml"=".\makehtml.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -159,7 +147,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "man2html"=.\man2html.dsp - Package Owner=<4>
+Project: "man2html"=".\man2html.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -171,7 +159,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "net"=.\net.dsp - Package Owner=<4>
+Project: "net"=".\net.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -183,7 +171,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "obstacle"=.\obstacle.dsp - Package Owner=<4>
+Project: "obstacle"=".\obstacle.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -195,7 +183,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "ogl"=.\ogl.dsp - Package Owner=<4>
+Project: "ogl"=".\ogl.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -207,7 +195,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "platform"=.\platform.dsp - Package Owner=<4>
+Project: "platform"=".\platform.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -219,7 +207,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "scene"=.\scene.dsp - Package Owner=<4>
+Project: "scene"=".\scene.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
