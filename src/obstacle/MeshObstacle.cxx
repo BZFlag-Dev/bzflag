@@ -613,7 +613,7 @@ void *MeshObstacle::unpack(void *buf)
 
 int MeshObstacle::packSize() const
 {
-  int fullSize = 5 * sizeof(int);
+  int fullSize = 5 * sizeof(int32_t);
   fullSize += sizeof(char) * checkCount;
   fullSize += sizeof(fvec3) * checkCount;
   fullSize += sizeof(fvec3) * vertexCount;

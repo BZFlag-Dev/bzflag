@@ -709,10 +709,10 @@ int ArcObstacle::packSize() const
   fullSize += sizeof(float);
   fullSize += sizeof(float);
   fullSize += sizeof(float);
-  fullSize += sizeof(int);
-  fullSize += sizeof(int);
+  fullSize += sizeof(int32_t);
+  fullSize += sizeof(int32_t);
   fullSize += sizeof(float[4]);
-  fullSize += sizeof(int[MaterialCount]);
+  fullSize += sizeof(int32_t[MaterialCount]);
   fullSize += sizeof(unsigned char);
   return fullSize;
 }

@@ -532,13 +532,13 @@ int DynamicColor::packSize() const
   int fullSize = nboStdStringPackSize(name);
   for (int c = 0; c < 4; c++) {
     fullSize += sizeof(float) * 2; // the limits
-    fullSize += sizeof(unsigned int);
+    fullSize += sizeof(uint32_t);
     fullSize += (int)(channels[c].sinusoids.size() * (sizeof(sinusoidParams)));
-    fullSize += sizeof(unsigned int);
+    fullSize += sizeof(uint32_t);
     fullSize += (int)(channels[c].clampUps.size() * (sizeof(clampParams)));
-    fullSize += sizeof(unsigned int);
+    fullSize += sizeof(uint32_t);
     fullSize += (int)(channels[c].clampDowns.size() * (sizeof(clampParams)));
-    fullSize += sizeof(unsigned int);
+    fullSize += sizeof(uint32_t);
     if (channels[c].sequence.list.size() > 0) {
       fullSize += sizeof(float) * 2; // period and offset
       fullSize += (int)channels[c].sequence.list.size() * sizeof(char);

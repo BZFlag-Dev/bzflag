@@ -26,6 +26,7 @@
 #include "Pack.h"
 #include "MeshTransform.h"
 #include "ObstacleModifier.h"
+#include "StateDatabase.h"
 
 // obstacle headers
 #include "Obstacle.h"
@@ -304,7 +305,21 @@ void GroupDefinition::addGroupInstance(GroupInstance* group)
 }
 
 
-static MeshObstacle* getContainedMesh(int type, Obstacle* obs)
+static bool isContainer(int type)
+{
+  switch (type) {
+    case GroupDefinition::arcType:
+    case GroupDefinition::coneType:
+    case GroupDefinition::sphereType:
+    case GroupDefinition::tetraType:
+      return true;
+    default:
+      return false;
+  }
+}
+
+
+static MeshObstacle* getContainedMesh(int type, const Obstacle* obs)
 {
   MeshObstacle* mesh = NULL;
   switch (type) {
@@ -339,19 +354,20 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 
   active = true;
 
-  const bool inWorld = (this == OBSTACLEMGR.getWorld());
+  const bool isWorld = (this == OBSTACLEMGR.getWorld());
+  char groupDefBit = isWorld ? 0 : Obstacle::GroupDefSource;
 
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& list = lists[type];
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs;
-      if (inWorld) {
-        obs = list[i];
+      if (isWorld) {
+        obs = list[i]; // no need to copy
       } else {
         obs = list[i]->copyWithTransform(xform);
       }
       if (obs->isValid()) {
-        if (!inWorld) {
+        if (!isWorld) {
           // add it to the world
           obs->setSource(Obstacle::GroupDefSource);
           obsMod.execute(obs);
@@ -360,12 +376,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
         // generate contained meshes
         MeshObstacle* mesh = getContainedMesh(type, obs);
         if ((mesh != NULL) && mesh->isValid()) {
-          if (inWorld) {
-            mesh->setSource(Obstacle::ContainerSource);
-          } else {
-            mesh->setSource(Obstacle::GroupDefSource |
-                            Obstacle::ContainerSource);
-          }
+          mesh->setSource(Obstacle::ContainerSource | groupDefBit);
           obsMod.execute(mesh);
           OBSTACLEMGR.addWorldObstacle(mesh);
         }
@@ -454,13 +465,13 @@ void* GroupDefinition::pack(void* buf) const
     const ObstacleList& list = getList(type);
     int count = 0;
     for (i = 0; i < list.size(); i++) {
-      if (list[i]->isFromWorld()) {
+      if (list[i]->isFromWorldFile()) {
 	count++;
       }
     }
     buf = nboPackUInt(buf, count);
     for (i = 0; i < list.size(); i++) {
-      if (list[i]->isFromWorld()) {
+      if (list[i]->isFromWorldFile()) {
 	buf = list[i]->pack(buf);
       }
     }
@@ -515,7 +526,7 @@ int GroupDefinition::packSize() const
     fullSize += sizeof(uint32_t);
     const ObstacleList& list = getList(type);
     for (unsigned int i = 0; i < list.size(); i++) {
-      if (list[i]->isFromWorld()) {
+      if (list[i]->isFromWorldFile()) {
 	fullSize += list[i]->packSize();
       }
     }
@@ -532,9 +543,12 @@ int GroupDefinition::packSize() const
 void GroupDefinition::print(std::ostream& out,
 			    const std::string& indent) const
 {
-  bool isWorld = false;
-  if (name.size() == 0) {
-    isWorld = true;
+  const bool isWorld = (this == OBSTACLEMGR.getWorld());
+  const bool saveAsMeshes = BZDB.isTrue("saveAsMeshes");
+  const bool saveFlatFile = BZDB.isTrue("saveFlatFile");
+  
+  if (saveFlatFile && !isWorld) {
+    return;
   }
 
   std::string myIndent = indent;
@@ -543,15 +557,28 @@ void GroupDefinition::print(std::ostream& out,
     out << indent << "define " << name << std::endl;
   }
 
+  // print the obstacles
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& list = getList(type);
     for (unsigned int i = 0; i < list.size(); i++) {
       const Obstacle* obs = list[i];
-      if (!obs->isFromContainer() && (!isWorld || obs->isFromWorld())) {
-	obs->print(out, myIndent);
-      }
+      DEBUG1 ("TYPE = %s\n", obs->getType()); // FIXME
+      DEBUG1 ("  isContainer     = %i\n", isContainer(type) ? 1 : 0);
+      DEBUG1 ("  isFromContainer = %i\n", obs->isFromContainer() ? 1 : 0);
+      DEBUG1 ("  isFromGroupDef  = %i\n", obs->isFromGroupDef() ? 1 : 0);
+      if ((isWorld && saveFlatFile) ||
+          !(isWorld && obs->isFromGroupDef())) {
+        if ((saveAsMeshes && !isContainer(type)) ||
+            (!saveAsMeshes && !obs->isFromContainer())) {
+          obs->print(out, myIndent);
+          DEBUG1 ("  PRINTING\n");
+        }
+      } 
+      DEBUG1 ("END\n");
     }
   }
+  
+  // print the groups
   for (unsigned int i = 0; i < groups.size(); i++) {
     groups[i]->print(out, myIndent);
   }

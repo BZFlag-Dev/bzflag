@@ -432,13 +432,13 @@ int BzMaterial::packSize() const
 {
   int i;
 
-  const int colorSize = sizeof(int) + (4 * sizeof(float[4])) + sizeof(float);
+  const int colorSize = sizeof(int32_t) + (4 * sizeof(float[4])) + sizeof(float);
 
   int textureSize = sizeof(unsigned char);
   for (i = 0; i < textureCount; i++) {
     textureSize += nboStdStringPackSize(textures[i].name);
-    textureSize += sizeof(int);
-    textureSize += sizeof(int);
+    textureSize += sizeof(int32_t);
+    textureSize += sizeof(int32_t);
     textureSize += sizeof(unsigned char);
   }
 

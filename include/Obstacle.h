@@ -193,7 +193,7 @@ class Obstacle {
   };
   void setSource(char);
   char getSource() const;
-  bool isFromWorld() const;
+  bool isFromWorldFile() const;
   bool isFromGroupDef() const;
   bool isFromContainer() const;
 
@@ -306,7 +306,7 @@ inline char Obstacle::getSource() const
   return source;
 }
 
-inline bool Obstacle::isFromWorld() const
+inline bool Obstacle::isFromWorldFile() const
 {
   return (source == WorldSource);
 }

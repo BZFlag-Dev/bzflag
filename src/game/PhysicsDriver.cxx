@@ -162,6 +162,8 @@ PhysicsDriver::PhysicsDriver()
   linear[0] = linear[1] = linear[2] = 0.0f;
   angularVel = 0.0f;
   angularPos[0] = angularPos[1] = 0.0f;
+  radialVel = 0.0f;
+  radialPos[0] = radialPos[1] = 0.0f;
   slide = false;
   slideTime = 0.0f;
   death = false;

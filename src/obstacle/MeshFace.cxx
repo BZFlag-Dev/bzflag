@@ -645,16 +645,16 @@ void *MeshFace::unpack(void *buf)
 int MeshFace::packSize() const
 {
   int fullSize = sizeof(unsigned char);
-  fullSize += sizeof(int);
-  fullSize += sizeof(int) * vertexCount;
+  fullSize += sizeof(int32_t);
+  fullSize += sizeof(int32_t) * vertexCount;
   if (useNormals()) {
-    fullSize += sizeof(int) * vertexCount;
+    fullSize += sizeof(int32_t) * vertexCount;
   }
   if (useTexcoords()) {
-    fullSize += sizeof(int) * vertexCount;
+    fullSize += sizeof(int32_t) * vertexCount;
   }
-  fullSize += sizeof(int); // material
-  fullSize += sizeof(int); // physics driver
+  fullSize += sizeof(int32_t); // material
+  fullSize += sizeof(int32_t); // physics driver
 
   return fullSize;
 }

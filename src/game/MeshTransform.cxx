@@ -649,7 +649,7 @@ int MeshTransform::packSize() const
     const TransformData& transform = transforms[i];
     fullSize += sizeof(uint8_t);
     if (transform.type == IndexTransform) {
-      fullSize += sizeof(int);
+      fullSize += sizeof(int32_t);
     } else {
       fullSize += sizeof(float[3]);
       if (transform.type == SpinTransform) {

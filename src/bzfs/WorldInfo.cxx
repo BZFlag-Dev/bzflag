@@ -524,7 +524,7 @@ int WorldInfo::packDatabase()
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
-    databaseSize += sizeof(int);
+    databaseSize += sizeof(int32_t);
   }
 
 

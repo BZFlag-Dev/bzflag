@@ -465,7 +465,7 @@ int TetraBuilding::packSize() const
     }
   }
   // materials
-  fullSize = fullSize + sizeof(int[4]);
+  fullSize = fullSize + sizeof(int32_t[4]);
 
   return fullSize;
 }
