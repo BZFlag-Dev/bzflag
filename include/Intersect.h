@@ -54,6 +54,13 @@ float			timeRayHitsBlock(const Ray& r, const float* boxPos,
 					float boxAngle, float dx,
 					float dy, float dz);
 
+// return t at which ray intersects pyramid (size 2dx x 2dy x dz)
+// (-1 if never, 0 if starts inside).
+float			timeRayHitsPyramids(const Ray& r,
+					    const float* pyrPos,
+					    float pyrAngle,
+					    float dx, float dy, float dz);
+
 // true iff rectangles intersect (in z = const plane)
 bool			testRectRect(const float* p1, float angle1,
 					float dx1, float dy1,

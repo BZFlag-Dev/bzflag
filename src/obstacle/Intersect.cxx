@@ -311,6 +311,146 @@ float			timeRayHitsBlock(const Ray& r, const float* p1,
   return timeRayHitsOrigBox(pb, db, dx, dy, dz);
 }
 
+float			timeRayHitsPyramids(const Ray& r,
+					    const float* p1, float angle,
+					    float dx, float dy, float dz)
+{
+  // get names for ray info
+  const float* p2 = r.getOrigin();
+  const float* d  = r.getDirection();
+
+  // translate origin
+  float pa[2];
+  pa[0] = p2[0] - p1[0];
+  pa[1] = p2[1] - p1[1];
+
+  // rotate
+  float pb[3], db[3];
+  const float c = cosf(-angle), s = sinf(-angle);
+  pb[0] = c * pa[0] - s * pa[1];
+  pb[1] = c * pa[1] + s * pa[0];
+  pb[2] = p2[2] - p1[2];
+  db[0] = c * d[0] - s * d[1];
+  db[1] = c * d[1] + s * d[0];
+  db[2] = d[2];
+
+  if (dx == 0.0f || dy == 0.0f || dz == 0.0f)
+    return timeRayHitsOrigBox(pb, db, dx, dy, dz);
+
+  pb[0] /= dx;
+  db[0] /= dx;
+  pb[1] /= dy;
+  db[1] /= dy;
+  pb[2] /= dz;
+  db[2] /= dz;
+
+  if (pb[0] < 0.0f) {
+    pb[0] = - pb[0];
+    db[0] = - db[0];
+  }
+  if (pb[1] < 0.0f) {
+    pb[1] = - pb[1];
+    db[1] = - db[1];
+  }
+
+  float maxXY = pb[0] > pb[1] ? pb[0] : pb[1];
+  if (maxXY <= 1.0f && pb[2] >= 0.0 && pb[2] <= 1 - maxXY)
+    return 0.0f;					 // inside
+
+  float residualTime = 0.0f;
+
+  if (pb[0] >= 1.0f) {
+    float residualTemp = 0.0f;
+    if (db[0] >= 0.0f) {
+      return -1.0f;
+    } else {
+      residualTemp = (pb[0] - 1.0f) / (- db[0]);
+      pb[0]  = 1.0f;
+      pb[1] += residualTemp * db[1];
+      pb[2] += residualTemp * db[2];
+    }
+    residualTime += residualTemp;
+  }
+
+  if (pb[1] >= 1.0f) {
+    float residualTemp = 0.0f;
+    if (db[1] >= 0.0f) {
+      return -1.0f;
+    } else {
+      residualTemp = (pb[1] - 1.0f) / (- db[1]);
+      pb[0] += residualTemp * db[0];
+      pb[1]  = 1.0f;
+      pb[2] += residualTemp * db[2];
+    }
+    residualTime += residualTemp;
+  }
+
+  if (pb[2] >= 1.0f) {
+    float residualTemp = 0.0f;
+    if (db[2] >= 0.0f) {
+      return -1.0f;
+    } else {
+      residualTemp = (pb[2] - 1.0f) / (- db[2]);
+      pb[0] += residualTemp * db[0];
+      pb[1] += residualTemp * db[1];
+      pb[2]  = 1.0f;
+    }
+    residualTime += residualTemp;
+  } else if (pb[2] <= 0.0f) {
+    float residualTemp = 0.0f;
+    if (db[2] <= 0.0f) {
+      return -1.0f;
+    } else {
+      residualTemp = - pb[2] / db[2];
+      pb[0] += residualTemp * db[0];
+      pb[1] += residualTemp * db[1];
+      pb[2]  = 0.0f;
+    }
+    residualTime += residualTemp;
+  }
+
+  if (db[2] == 0.0f)
+    return residualTime;
+    
+  float t11, t12, t21, t22;
+  float tMin = 1.0e+6;
+
+  float delta;
+
+  delta = db[2] - db[0];
+  if (delta != 0.0f) {
+    t11 = (1 - (pb[2] - pb[0])) / delta;
+    if (t11 < tMin)
+      tMin = t11;
+  }
+
+  delta = db[2] + db[0];
+  if (delta != 0.0f) {
+    t12 = (1 - (pb[2] + pb[0])) / delta;
+    if (t12 < tMin)
+      tMin = t12;
+  }
+
+  delta = db[2] - db[1];
+  if (delta != 0.0f) {
+    t21 = (1 - (pb[2] - pb[1])) / delta;
+    if (t21 < tMin)
+      tMin = t21;
+  }
+
+  delta = db[2] + db[1];
+  if (delta != 0.0f) {
+    t22 = (1 - (pb[2] + pb[1])) / delta;
+    if (t22 < tMin)
+      tMin = t22;
+  }
+
+  if (tMin == 1.0e6)
+    return -1.0f;
+  else
+    return residualTime + tMin;
+}
+
 // rect covers interval x=[-dx,dx], y=[-dy,dy]
 float			timeAndSideRayHitsOrigRect(
 				const float* p, const float* v,
