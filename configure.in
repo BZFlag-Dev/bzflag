@@ -154,8 +154,7 @@ AC_TRY_LINK([
 #include <regex.h>],
 [regcomp(0, 0, 0);
  regexec(0, 0, 0, 0, 0)],
-[AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have regex stuff available])],
-[AC_MSG_WARN([regexp/regcomp seems not being available on your system])])
+[AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have regex stuff available])], [])
 
 AC_TRY_LINK([
 #include <adns.h>],
@@ -420,6 +419,14 @@ else
 fi;
 
 
+# do we want to build our own regex lib
+AC_ARG_WITH(regex, AC_HELP_STRING([--with-regex],[Use bzflag regex lib]))
+if test x$with_regex != xno ; then
+   AM_CONDITIONAL(BUILD_REGEX, true)
+   AC_DEFINE(BUILD_REGEX, 1, [Building regex])
+fi;
+
+
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
@@ -470,6 +477,7 @@ AC_OUTPUT(bzflag.spec
 	src/platform/MacOSX/BZFlag.pbproj/Makefile
 	src/platform/MacOSX/English.lproj/Makefile
 	src/platform/MacOSX/English.lproj/MainMenu.nib/Makefile
+	src/regex/Makefile
 	src/scene/Makefile
 	src/zlib/Makefile
 	win32/Makefile
