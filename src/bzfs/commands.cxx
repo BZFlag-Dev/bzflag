@@ -33,12 +33,559 @@
 #include "PlayerInfo.h"
 
 // FIXME -- need to pull communication out of bzfs.cxx...
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer);
+
+// externs that poll, veto, and vote require
+extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 extern bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right);
 extern PlayerInfo player[MaxPlayers];
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
+
+// externs that removegroup needs
+extern int getPlayerIDByRegName(const std::string &regName);
+
+// externs that ghost needs
+extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
+
+
+void handleLagwarnCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  if (message[8] == ' ') {
+    const char *maxlag = message + 9;
+    clOptions->lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
+    sprintf(reply,"lagwarn is now %d ms",int(clOptions->lagwarnthresh * 1000 + 0.5));
+    sendMessage(ServerPlayer, t, reply, true);
+  }
+  else
+    {
+      sprintf(reply,"lagwarn is set to %d ms",int(clOptions->lagwarnthresh * 1000 +  0.5));
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+  return;
+}
+
+
+void handleLagstatsCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
+      sprintf(reply,"%-16s : %3dms (%d) +- %2dms %s", player[i].callSign,
+	      int(player[i].lagavg*1000), player[i].lagcount,
+	      int(player[i].jitteravg*1000),
+	      player[i].accessInfo.verified ? "(R)" : "");
+      if (player[i].packetslost>0)
+	sprintf(reply+strlen(reply), " %d lost/ooo", player[i].packetslost);
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+  }
+  return;
+}
+
+
+void handleIdlestatsCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  TimeKeeper now=TimeKeeper::getCurrent();
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
+      sprintf(reply,"%-16s : %4ds",player[i].callSign,
+	      int(now-player[i].lastupdate));
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+  }
+  return;
+}
+
+
+void handleFlaghistoryCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  for (int i = 0; i < curMaxPlayers; i++)
+    if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
+      char flag[MessageLen];
+      sprintf(reply,"%-16s : ",player[i].callSign );
+      std::vector<FlagDesc*>::iterator fhIt = player[i].flagHistory.begin();
+      
+      while (fhIt != player[i].flagHistory.end()) {
+	FlagDesc * fDesc = (FlagDesc*)(*fhIt);
+	if (fDesc->flagType == FlagNormal)
+	  sprintf(flag, "(*%c) ", fDesc->flagName[0] );
+	else
+	  sprintf(flag, "(%s) ", fDesc->flagAbbv );
+	strcat(reply, flag );
+	fhIt++;
+      }
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+  return;
+}
+
+
+void handlePlayerlistCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i].state > PlayerInLimbo) {
+      sprintf(reply,"[%d]%-16s: %s%s",i,player[i].callSign,
+	      player[i].peer.getDotNotation().c_str(),
+	      player[i].ulinkup ? " udp" : "");
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+  }
+  return;
+}
+
+
+void handleReportCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  if (strlen(message+1) < 8) {
+    sprintf(reply, "Nothing reported");
+  }
+  else {
+    time_t now = time(NULL);
+    char* timeStr = ctime(&now);
+    string reportStr;
+    reportStr = reportStr + timeStr + "Reported by " +
+      player[t].callSign + ": " + (message + 8);
+    if (clOptions->reportFile.size() > 0) {
+      ofstream ofs(clOptions->reportFile.c_str(), ios::out | ios::app);
+      ofs<<reportStr<<endl<<endl;
+    }
+    if (clOptions->reportPipe.size() > 0) {
+      FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
+      if (pipeWrite != NULL) {
+	fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
+      } else {
+	DEBUG1("Couldn't write report to the pipe\n");
+      }
+      pclose(pipeWrite);
+    }
+    if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0)
+      sprintf(reply, "The /report command is disabled on this server.");
+    else
+      sprintf(reply, "Your report has been filed. Thank you.");
+  }
+  sendMessage(ServerPlayer, t, reply, true);
+  return;
+}
+
+
+void handleHelpCmd(int t, const char *message)
+{
+  char reply[MessageLen] = {0};
+
+  if (strlen(message + 1) == 4) {
+    const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
+    sendMessage(ServerPlayer, t, "Available help pages (use /help <page>)");
+    for (int i = 0; i < (int) chunks.size(); i++) {
+      sendMessage(ServerPlayer, t, chunks[i].c_str());
+    }
+  } else {
+    bool foundChunk = false;
+    const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
+    for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
+      if (chunks[i] == (message +6)){
+	const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk((message + 6));
+	if (lines != NULL) {
+	  for (int j = 0; j < (int)lines->size(); j++) {
+	    sendMessage(ServerPlayer, t, (*lines)[j].c_str());
+	  }
+	  foundChunk = true;
+	  break;
+	}
+      }
+    }
+    if (!foundChunk){
+      sprintf(reply, "help command %s not found", message + 6);
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+  }
+  return;
+}
+
+
+void handleIdentifyCmd(int t, const char *message)
+{
+  // player is trying to send an ID
+  if (player[t].accessInfo.verified) {
+    sendMessage(ServerPlayer, t, "You have already identified");
+  } else if (player[t].accessInfo.loginAttempts >= 5) {
+    sendMessage(ServerPlayer, t, "You have attempted to identify too many times");
+    DEBUG1("Too Many Identifys %s\n",player[t].regName.c_str());
+  } else {
+    // get their info
+    if (!userExists(player[t].regName)) {
+      // not in DB, tell them to reg
+      sendMessage(ServerPlayer, t, "This callsign is not registered,"
+		  " please register it with a /register command");
+    } else {
+      if (verifyUserPassword(player[t].regName.c_str(), message + 10)) {
+	sendMessage(ServerPlayer, t, "Password Accepted, welcome back.");
+	player[t].accessInfo.verified = true;
+	
+	// get their real info
+	PlayerAccessInfo &info = getUserInfo(player[t].regName);
+	player[t].accessInfo.explicitAllows = info.explicitAllows;
+	player[t].accessInfo.explicitDenys = info.explicitDenys;
+	player[t].accessInfo.groups = info.groups;
+	
+	DEBUG1("Identify %s\n",player[t].regName.c_str());
+      } else {
+	player[t].accessInfo.loginAttempts++;
+	sendMessage(ServerPlayer, t, "Identify Failed, please make sure"
+		    " your password was correct");
+      }
+    }
+  }
+  return;
+}
+
+
+void handleRegisterCmd(int t, const char *message)
+{
+  if (player[t].accessInfo.verified) {
+    sendMessage(ServerPlayer, t, "You have allready registered and"
+		" identified this callsign");
+  } else {
+    if (userExists(player[t].regName)) {
+      sendMessage(ServerPlayer, t, "This callsign is allready registered,"
+		  " if it is yours /identify to login");
+    } else {
+      if (strlen(message) > 12) {
+	PlayerAccessInfo info;
+	info.groups.push_back("DEFAULT");
+	info.groups.push_back("REGISTERED");
+	std::string pass = message + 10;
+	setUserPassword(player[t].regName.c_str(), pass.c_str());
+	setUserInfo(player[t].regName, info);
+	DEBUG1("Register %s %s\n",player[t].regName.c_str(),pass.c_str());
+	
+	sendMessage(ServerPlayer, t, "Callsign registration confirmed,"
+		    " please /identify to login");
+	  updateDatabases();
+      } else {
+	  sendMessage(ServerPlayer, t, "your password must be 3 or more characters");
+      }
+    }
+  }
+  return;
+}
+
+
+void handleGhostCmd(int t, const char *message)
+{
+  char *p1 = strchr(message + 1, '\"');
+  char *p2 = 0;
+  if (p1) p2 = strchr(p1 + 1, '\"');
+  if (!p2) {
+    sendMessage(ServerPlayer, t, "not enough parameters, usage"
+		" /ghost \"CALLSIGN\" PASSWORD");
+  } else {
+    std::string ghostie(p1+1,p2-p1-1);
+    std::string ghostPass=p2+2;
+    
+    makeupper(ghostie);
+    
+    int user = getPlayerIDByRegName(ghostie);
+    if (user == -1) {
+      sendMessage(ServerPlayer, t, "There is no user logged in by that name");
+    } else {
+      if (!userExists(ghostie)) {
+	sendMessage(ServerPlayer, t, "That callsign is not registered");
+      } else {
+	if (!verifyUserPassword(ghostie, ghostPass)) {
+	  sendMessage(ServerPlayer, t, "Invalid Password");
+	} else {
+	  sendMessage(ServerPlayer, t, "Ghosting User");
+	  char temp[MessageLen];
+	  sprintf(temp, "Your Callsign is registered to another user,"
+		  " You have been ghosted by %s", player[t].callSign);
+	  sendMessage(ServerPlayer, user, temp, true);
+	  removePlayer(user, "Ghost");
+	}
+      }
+    }
+  }
+  return;
+}
+
+
+void handleDeregisterCmd(int t, const char *message)
+{
+  if (strlen(message) == 11) {
+    // removing own callsign
+    std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(player[t].regName);
+    std::map<std::string, PlayerAccessInfo>::iterator itr2 = userDatabase.find(player[t].regName);
+    passwordDatabase.erase(itr1);
+    userDatabase.erase(itr2);
+    updateDatabases();
+      sendMessage(ServerPlayer, t, "Your callsign has been deregistered");
+  } else if (strlen(message) > 12 && hasPerm(t, PlayerAccessInfo::setAll)) {
+    // removing someone else's
+    std::string name = message + 12;
+    makeupper(name);
+    if (userExists(name)) {
+      std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(name);
+      std::map<std::string, PlayerAccessInfo>::iterator itr2 = userDatabase.find(name);
+      passwordDatabase.erase(itr1);
+      userDatabase.erase(itr2);
+      updateDatabases();
+      char text[MessageLen];
+      sprintf(text, "%s has been deregistered", name.c_str());
+      sendMessage(ServerPlayer, t, text);
+    } else {
+      char text[MessageLen];
+      sprintf(text, "user %s does not exist", name.c_str());
+      sendMessage(ServerPlayer, t, text);
+    }
+  }
+  return;
+}
+
+
+void handleSetpassCmd(int t, const char *message)
+{
+  std::string pass;
+  if (strlen(message) < 9) {
+    sendMessage(ServerPlayer, t, "Not enough parameters: usage /setpass PASSWORD");
+  } else {
+    pass = message + 9;
+    setUserPassword(player[t].regName.c_str(), pass);
+    updateDatabases();
+    char text[MessageLen];
+    sprintf(text, "Your password is now set to \"%s\"", pass.c_str());
+    sendMessage(ServerPlayer, t, text, true);
+  }
+  return;
+}
+
+
+void handleGrouplistCmd(int t, const char *message)
+{
+  sendMessage(ServerPlayer, t, "Group List:");
+  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
+  while (itr != groupAccess.end()) {
+    sendMessage(ServerPlayer, t, itr->first.c_str());
+    itr++;
+  }
+  return;
+}
+
+
+void handleShowgroupCmd(int t, const char *message)
+{
+  std::string settie;
+  
+  if (strlen(message) == 10) {	 // show own groups
+    if (player[t].accessInfo.verified) {
+      settie = player[t].regName;
+    } else {
+      sendMessage(ServerPlayer, t, "You are not identified");
+    }
+  } else if (hasPerm(t, PlayerAccessInfo::showOthers)) { // show groups for other player
+    char *p1 = strchr(message + 1, '\"');
+    char *p2 = 0;
+    if (p1) p2 = strchr(p1 + 1, '\"');
+    if (p2) {
+      settie = string(p1+1, p2-p1-1);
+      makeupper(settie);
+    } else {
+      sendMessage(ServerPlayer, t, "wrong format, usage"
+		  " /showgroup  or  /showgroup \"CALLSIGN\"");
+    }
+  } else {
+    sendMessage(ServerPlayer, t, "No permission!");
+  }
+  
+  // something is wrong
+  if (settie!="") {
+    if (userExists(settie)) {
+      PlayerAccessInfo &info = getUserInfo(settie);
+      
+      std::string line = "Groups for ";
+      line += settie;
+      line += ", ";
+      std::vector<std::string>::iterator itr = info.groups.begin();
+      while (itr != info.groups.end()) {
+	line += *itr;
+	line += " ";
+	itr++;
+      }
+      // FIXME let's hope that line is not too long (> MessageLen)
+      sendMessage(ServerPlayer, t, line.c_str());
+    } else {
+      sendMessage(ServerPlayer, t, "There is no user by that name");
+    }
+  }
+  return;
+}
+
+
+void handleGrouppermsCmd(int t, const char *message)
+{
+  sendMessage(ServerPlayer, t, "Group List:");
+  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
+  std::string line;
+  while (itr != groupAccess.end()) {
+    line = itr->first + ":   ";
+    sendMessage(ServerPlayer, t, line.c_str());
+    
+    for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
+      if (itr->second.explicitAllows.test(i)) {
+	line = "     ";
+	line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
+	sendMessage(ServerPlayer, t, line.c_str());
+      }
+    }
+    itr++;
+  }
+  return;
+}
+
+
+void handleSetgroupCmd(int t, const char *message)
+{
+  char *p1 = strchr(message + 1, '\"');
+  char *p2 = 0;
+  if (p1) p2 = strchr(p1 + 1, '\"');
+  if (!p2) {
+    sendMessage(ServerPlayer, t, "not enough parameters, usage /setgroup \"CALLSIGN\" GROUP");
+  } else {
+    string settie(p1+1, p2-p1-1);
+    string group=p2+2;
+    
+    makeupper(settie);
+    makeupper(group);
+    
+    if (userExists(settie)) {
+      bool canset = true;
+      if (!hasPerm(t, PlayerAccessInfo::setAll))
+	canset = hasGroup(player[t].accessInfo, group.c_str());
+      if (!canset) {
+	sendMessage(ServerPlayer, t, "You do not have permission to set this group");
+      } else {
+	PlayerAccessInfo &info = getUserInfo(settie);
+	
+	if (addGroup(info, group)) {
+	  sendMessage(ServerPlayer, t, "Group Add successful");
+	  int getID = getPlayerIDByRegName(settie);
+	  if (getID != -1) {
+	    char temp[MessageLen];
+	    sprintf(temp, "you have been added to the %s group, by %s", group.c_str(), player[t].callSign);
+	    sendMessage(ServerPlayer, getID, temp, true);
+	    addGroup(player[getID].accessInfo, group);
+	  }
+	  updateDatabases();
+	} else {
+	  sendMessage(ServerPlayer, t, "Group Add failed (user may allready have that group)");
+	}
+      }
+    } else {
+      sendMessage(ServerPlayer, t, "There is no user by that name");
+    }
+  }
+  return;
+}
+
+
+void handleRemovegroupCmd(int t, const char *message)
+{
+  char *p1 = strchr(message + 1, '\"');
+  char *p2 = 0;
+  if (p1) p2 = strchr(p1 + 1, '\"');
+  if (!p2) {
+    sendMessage(ServerPlayer, t, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
+  } else {
+    string settie(p1+1, p2-p1-1);
+    string group=p2+2;
+
+    makeupper(settie);
+    makeupper(group);
+    if (userExists(settie)) {
+      bool canset = true;
+      if (!hasPerm(t, PlayerAccessInfo::setAll))
+	canset = hasGroup(player[t].accessInfo, group.c_str());
+      if (!canset) {
+	sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
+      } else {
+	PlayerAccessInfo &info = getUserInfo(settie);
+	
+	if (removeGroup(info, group)) {
+	  sendMessage(ServerPlayer, t, "Group Remove successful");
+	  int getID = getPlayerIDByRegName(settie);
+	  if (getID != -1) {
+	    char temp[MessageLen];
+	    sprintf(temp, "you have been removed from the %s group, by %s", group.c_str(), player[t].callSign);
+	    sendMessage(ServerPlayer, getID, temp, true);
+	    removeGroup(player[getID].accessInfo, group);
+	  }
+	  updateDatabases();
+	} else {
+	  sendMessage(ServerPlayer, t, "Group Remove failed ( user may not have had group)");
+	}
+      }
+    } else {
+      sendMessage(ServerPlayer, t, "There is no user by that name");
+    }
+  }
+  return;
+}
+
+void handleResetCmd(int t, const char *message)
+{
+  groupAccess.clear();
+  userDatabase.clear();
+  passwordDatabase.clear();
+  // reload the databases
+  if (groupsFile.size())
+    readGroupsFile(groupsFile);
+  // make sure that the 'admin' & 'default' groups exist
+  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find("DEFAULT");
+  if (itr == groupAccess.end()) {
+    PlayerAccessInfo info;
+    info.explicitAllows[PlayerAccessInfo::idleStats] = true;
+    info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+    info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
+    groupAccess["DEFAULT"] = info;
+  }
+  itr = groupAccess.find("REGISTERED");
+  if (itr == groupAccess.end()) {
+    PlayerAccessInfo info;
+    info.explicitAllows[PlayerAccessInfo::vote] = true;
+    info.explicitAllows[PlayerAccessInfo::poll] = true;
+    groupAccess["REGISTERED"] = info;
+  }
+  itr = groupAccess.find("ADMIN");
+  if (itr == groupAccess.end()) {
+    PlayerAccessInfo info;
+    for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
+      info.explicitAllows[i] = true;
+    groupAccess["ADMIN"] = info;
+  }
+  if (passFile.size())
+    readPassFile(passFile);
+  if (userDatabaseFile.size())
+    readPermsFile(userDatabaseFile);
+  for (int p = 0; p < curMaxPlayers; p++) {
+    if (player[p].accessInfo.verified && userExists(player[p].regName)) {
+      player[p].accessInfo = getUserInfo(player[p].regName);
+      player[p].accessInfo.verified = true;
+    }
+  }
+  sendMessage(ServerPlayer, t, "Databases reloaded");
+
+  return;
+}
 
 
 void handlePollCmd(int t, const char *message)

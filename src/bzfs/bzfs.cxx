@@ -105,9 +105,10 @@ static uint8_t rabbitIndex = NoPlayer;
 static WorldWeapons  wWeapons;
 
 
-static void removePlayer(int playerIndex, const char *reason, bool notify=true);
+void removePlayer(int playerIndex, const char *reason, bool notify=true);
 static void resetFlag(int flagIndex);
 static void dropFlag(int playerIndex, float pos[3]);
+
 
 // util functions
 int getPlayerIDByRegName(const std::string &regName)
@@ -118,6 +119,7 @@ int getPlayerIDByRegName(const std::string &regName)
   }
   return -1;
 }
+
 
 bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
 {
@@ -137,6 +139,7 @@ class WorldFileObject {
     virtual void write(WorldInfo*) const = 0;
 };
 
+
 class WorldFileObstacle : public WorldFileObject {
   public:
     WorldFileObstacle();
@@ -151,6 +154,7 @@ class WorldFileObstacle : public WorldFileObject {
 	bool flipZ;
 };
 
+
 WorldFileObstacle::WorldFileObstacle()
 {
   pos[0] = pos[1] = pos[2] = 0.0f;
@@ -160,6 +164,7 @@ WorldFileObstacle::WorldFileObstacle()
   shootThrough = false;
   flipZ = false;
 }
+
 
 bool WorldFileObstacle::read(const char *cmd, istream& input)
 {
@@ -187,11 +192,13 @@ bool WorldFileObstacle::read(const char *cmd, istream& input)
   return true;
 }
 
+
 class CustomBox : public WorldFileObstacle {
   public:
     CustomBox();
     virtual void write(WorldInfo*) const;
 };
+
 
 CustomBox::CustomBox()
 {
@@ -199,10 +206,12 @@ CustomBox::CustomBox()
   size[2] = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
 }
 
+
 void CustomBox::write(WorldInfo *world) const
 {
   world->addBox(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough);
 }
+
 
 class CustomPyramid : public WorldFileObstacle {
   public:
@@ -210,16 +219,19 @@ class CustomPyramid : public WorldFileObstacle {
     virtual void write(WorldInfo*) const;
 };
 
+
 CustomPyramid::CustomPyramid()
 {
   size[0] = size[1] = BZDB->eval(StateDatabase::BZDB_PYRBASE);
   size[2] = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
 }
 
+
 void CustomPyramid::write(WorldInfo *world) const
 {
   world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough,flipZ);
 }
+
 
 class CustomGate : public WorldFileObstacle {
   public:
@@ -231,6 +243,7 @@ class CustomGate : public WorldFileObstacle {
     float border;
 };
 
+
 CustomGate::CustomGate()
 {
   size[0] = 0.5f * TeleWidth;
@@ -238,6 +251,7 @@ CustomGate::CustomGate()
   size[2] = 2.0f * TeleHeight;
   border = TeleWidth;
 }
+
 
 bool CustomGate::read(const char *cmd, istream& input)
 {
@@ -248,10 +262,12 @@ bool CustomGate::read(const char *cmd, istream& input)
   return true;
 }
 
+
 void CustomGate::write(WorldInfo *world) const
 {
   world->addTeleporter(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2], border,driveThrough,shootThrough);
 }
+
 
 class CustomLink : public WorldFileObject {
   public:
@@ -264,11 +280,13 @@ class CustomLink : public WorldFileObject {
     int to;
 };
 
+
 CustomLink::CustomLink()
 {
   from = 0;
   to = 0;
 }
+
 
 bool CustomLink::read(const char *cmd, istream& input)
 {
@@ -281,10 +299,12 @@ bool CustomLink::read(const char *cmd, istream& input)
   return true;
 }
 
+
 void CustomLink::write(WorldInfo *world) const
 {
   world->addLink(from, to);
 }
+
 
 class CustomBase : public WorldFileObstacle {
   public:
@@ -296,12 +316,14 @@ class CustomBase : public WorldFileObstacle {
     int color;
 };
 
+
 CustomBase::CustomBase()
 {
   pos[0] = pos[1] = pos[2] = 0.0f;
   rotation = 0.0f;
   size[0] = size[1] = BaseSize;
 }
+
 
 bool CustomBase::read(const char *cmd, istream& input) {
   if (strcmp(cmd, "color") == 0) {
@@ -323,6 +345,7 @@ bool CustomBase::read(const char *cmd, istream& input) {
   return true;
 }
 
+
 void CustomBase::write(WorldInfo* world) const {
   basePos[color][0] = pos[0];
   basePos[color][1] = pos[1];
@@ -337,6 +360,7 @@ void CustomBase::write(WorldInfo* world) const {
   world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0.0) ? 1.0f : 0.0f,driveThrough,shootThrough);
 }
 
+
 class CustomWeapon : public WorldFileObstacle {
   public:
     CustomWeapon();
@@ -350,7 +374,9 @@ class CustomWeapon : public WorldFileObstacle {
     static TimeKeeper sync;
 };
 
+
 TimeKeeper CustomWeapon::sync = TimeKeeper::getCurrent();
+
 
 CustomWeapon::CustomWeapon()
 {
@@ -361,6 +387,7 @@ CustomWeapon::CustomWeapon()
   delay.push_back(10.0f);
   type = Flags::Null;
 }
+
 
 bool CustomWeapon::read(const char *cmd, istream& input) {
   if (strcmp(cmd, "initdelay") == 0) {
@@ -395,9 +422,11 @@ bool CustomWeapon::read(const char *cmd, istream& input) {
   return true;
 }
 
+
 void CustomWeapon::write(WorldInfo*) const {
   wWeapons.add(type, pos, rotation, initdelay, delay, sync);
 }
+
 
 class CustomWorld : public WorldFileObject {
   public:
@@ -410,11 +439,13 @@ class CustomWorld : public WorldFileObject {
     int fHeight;
 };
 
+
 CustomWorld::CustomWorld()
 {
   size = 800;
   fHeight = 0;
 }
+
 
 bool CustomWorld::read(const char *cmd, istream& input)
 {
@@ -430,10 +461,12 @@ bool CustomWorld::read(const char *cmd, istream& input)
   return true;
 }
 
+
 void CustomWorld::write(WorldInfo*) const
 {
   BZDB->set(StateDatabase::BZDB_FLAGHEIGHT, string_util::format("%f", fHeight));
 }
+
 
 static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
 {
@@ -442,6 +475,7 @@ static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
     delete wlist[i];
   wlist.clear();
 }
+
 
 // write an UDP packet down the link to the client
 static int puwrite(int playerIndex, const void *b, int l)
@@ -457,6 +491,7 @@ static int puwrite(int playerIndex, const void *b, int l)
   return 0;
 #endif
 }
+
 
 static int prealwrite(int playerIndex, const void *b, int l)
 {
@@ -490,6 +525,7 @@ static int prealwrite(int playerIndex, const void *b, int l)
   return n;
 }
 
+
 // try to write stuff from the output buffer
 static void pflush(int playerIndex)
 {
@@ -503,6 +539,7 @@ static void pflush(int playerIndex)
     p.outmsgSize   -= n;
   }
 }
+
 
 #ifdef NETWORK_STATS
 void initPlayerMessageStats(int playerIndex)
@@ -525,6 +562,7 @@ void initPlayerMessageStats(int playerIndex)
     player[playerIndex].perSecondMaxBytes[direction] = 0;
   }
 }
+
 
 int countMessage(int playerIndex, uint16_t code, int len, int direction)
 {
@@ -563,6 +601,7 @@ int countMessage(int playerIndex, uint16_t code, int len, int direction)
   return (msg[i].count);
 }
 
+
 void dumpPlayerMessageStats(int playerIndex)
 {
   int i;
@@ -589,6 +628,7 @@ void dumpPlayerMessageStats(int playerIndex)
   fflush(stdout);
 }
 #endif
+
 
 static void pwrite(int playerIndex, const void *b, int l)
 {
@@ -678,11 +718,13 @@ static void pwrite(int playerIndex, const void *b, int l)
   }
 }
 
+
 static char sMsgBuf[MaxPacketLen];
 char *getDirectMessageBuffer()
 {
   return &sMsgBuf[2*sizeof(short)];
 }
+
 
 // FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
@@ -701,6 +743,7 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
   pwrite(playerIndex, bufStart, len + 4);
 }
 
+
 void broadcastMessage(uint16_t code, int len, const void *msg)
 {
   // send message to everyone
@@ -708,6 +751,7 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
     if (player[i].state > PlayerInLimbo)
       directMessage(i, code, len, msg);
 }
+
 
 //
 // global variable callback
@@ -724,6 +768,7 @@ static void onGlobalChanged(const std::string& msg, void*)
   buf = nboPackString(buf, value.c_str(), value.length());
   broadcastMessage(MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
 }
+
 
 static void sendUDPupdate(int playerIndex)
 {
@@ -771,6 +816,7 @@ static void createUDPcon(int t, int remote_port) {
   return;
 }
 
+
 static int lookupPlayer(const PlayerId& id)
 {
   for (int i = 0; i < curMaxPlayers; i++)
@@ -778,6 +824,7 @@ static int lookupPlayer(const PlayerId& id)
       return i;
   return InvalidPlayer;
 }
+
 
 static void setNoDelay(int fd)
 {
@@ -792,6 +839,7 @@ static void setNoDelay(int fd)
     nerror("enabling TCP_NODELAY");
   }
 }
+
 
 // uread - interface to the UDP Receive routines
 static int uread(int *playerIndex, int *nopackets, int& n,
@@ -876,6 +924,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   return 0;
 }
 
+
 static int pread(int playerIndex, int l)
 {
   PlayerInfo& p = player[playerIndex];
@@ -916,6 +965,7 @@ static int pread(int playerIndex, int l)
 
   return e;
 }
+
 
 static void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 {
@@ -964,6 +1014,7 @@ static void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
   }
 }
 
+
 static void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1)
 {
   // If teamIndex1 is -1, send all teams
@@ -995,6 +1046,7 @@ static void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIn
     directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
+
 static void sendPlayerUpdate(int playerIndex, int index)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -1016,6 +1068,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
     directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
 }
 
+
 static void closeListServer(int index)
 {
   assert(index >= 0 && index < MaxListServers);
@@ -1032,11 +1085,13 @@ static void closeListServer(int index)
   }
 }
 
+
 static void closeListServers()
 {
   for (int i = 0; i < listServerLinksCount; ++i)
     closeListServer(i);
 }
+
 
 static void openListServer(int index)
 {
@@ -1086,6 +1141,7 @@ static void openListServer(int index)
   }
 }
 
+
 static void sendMessageToListServer(const char *msg)
 {
   // ignore if not publicizing
@@ -1104,6 +1160,7 @@ static void sendMessageToListServer(const char *msg)
       link.nextMessage = msg;
   }
 }
+
 
 static void sendMessageToListServerForReal(int index)
 {
@@ -1172,6 +1229,7 @@ static void sendMessageToListServerForReal(int index)
   closeListServer(index);
 }
 
+
 static void publicize()
 {
   // hangup any previous list server sockets
@@ -1223,6 +1281,7 @@ static void publicize()
     sendMessageToListServer("ADD");
   }
 }
+
 
 static bool serverStart()
 {
@@ -1355,6 +1414,7 @@ static bool serverStart()
   return true;
 }
 
+
 static void serverStop()
 {
   // shut down server
@@ -1420,6 +1480,7 @@ static void serverStop()
   closeListServers();
 }
 
+
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 {
   // relay packet to all players except origin
@@ -1427,6 +1488,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
     if (i != index && player[i].state > PlayerInLimbo)
       pwrite(i, rawbuf, len + 4);
 }
+
 
 static istream &readToken(istream& input, char *buffer, int n)
 {
@@ -1453,6 +1515,7 @@ static istream &readToken(istream& input, char *buffer, int n)
 
   return input;
 }
+
 
 static bool readWorldStream(istream& input, const char *location, std::vector<WorldFileObject*>& wlist)
 {
@@ -1548,6 +1611,7 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
   return true;
 }
 
+
 static WorldInfo *defineWorldFromFile(const char *filename)
 {
   // open file
@@ -1602,6 +1666,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   emptyWorldFileObjectList(list);
   return world;
 }
+
 
 static WorldInfo *defineTeamWorld()
 {
@@ -2049,6 +2114,7 @@ static WorldInfo *defineTeamWorld()
   }
 }
 
+
 static WorldInfo *defineRandomWorld()
 {
   world = new WorldInfo();
@@ -2140,6 +2206,7 @@ static WorldInfo *defineRandomWorld()
 
   return world;
 }
+
 
 static bool defineWorld()
 {
@@ -2242,6 +2309,7 @@ static bool defineWorld()
   return true;
 }
 
+
 static TeamColor whoseBase(float x, float y, float z)
 {
   if (!(clOptions->gameStyle & TeamFlagGameStyle))
@@ -2273,6 +2341,7 @@ static TeamColor whoseBase(float x, float y, float z)
     return TeamColor(highestteam);
 }
 
+
 #ifdef PRINTSCORE
 static void dumpScore()
 {
@@ -2294,6 +2363,7 @@ static void dumpScore()
   printf("#end\n");
 }
 #endif
+
 
 static void acceptClient()
 {
@@ -2392,6 +2462,7 @@ static void acceptClient()
   }
 }
 
+
 static void respondToPing()
 {
   // get and discard ping packet
@@ -2414,6 +2485,7 @@ static void respondToPing()
   pingReply.purpleCount = team[4].team.activeSize;
   pingReply.write(udpSocket, &addr);
 }
+
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer)
 {
@@ -2451,6 +2523,7 @@ static void rejectPlayer(int playerIndex, uint16_t code)
   directMessage(playerIndex, MsgReject, (char*)buf-(char*)bufStart, bufStart);
   return;
 }
+
 
 static void addPlayer(int playerIndex)
 {
@@ -2742,6 +2815,7 @@ static void addPlayer(int playerIndex)
   }
 }
 
+
 static void addFlag(int flagIndex)
 {
   if (flagIndex == -1) {
@@ -2769,6 +2843,7 @@ static void addFlag(int flagIndex)
   sendFlagUpdate(flagIndex);
 }
 
+
 static void randomFlag(int flagIndex)
 {
   // pick a random flag
@@ -2776,6 +2851,7 @@ static void randomFlag(int flagIndex)
   flag[flagIndex].flag.desc = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
   addFlag(flagIndex);
 }
+
 
 static void resetFlag(int flagIndex)
 {
@@ -2851,6 +2927,7 @@ static void resetFlag(int flagIndex)
   sendFlagUpdate(flagIndex);
 }
 
+
 static void zapFlag(int flagIndex)
 {
   // called when a flag must just disappear -- doesn't fly
@@ -2884,6 +2961,7 @@ static void zapFlag(int flagIndex)
   // reset flag status
   resetFlag(flagIndex);
 }
+
 
 static void anointNewRabbit()
 {
@@ -2925,6 +3003,7 @@ static void anointNewRabbit()
   }
 }
 
+
 static void pausePlayer(int playerIndex, bool paused)
 {
   player[playerIndex].paused = paused;
@@ -2943,7 +3022,8 @@ static void pausePlayer(int playerIndex, bool paused)
   broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void removePlayer(int playerIndex, const char *reason, bool notify)
+
+void removePlayer(int playerIndex, const char *reason, bool notify)
 {
   // player is signing off or sent a bad packet.  since the
   // bad packet can come before MsgEnter, we must be careful
@@ -4001,481 +4081,71 @@ static void parseCommand(const char *message, int t)
     else
       strcpy(reply, "no pattern removed");
     sendMessage(ServerPlayer, t, reply, true);
-  }
-  // /lagwarn - set maximum allowed lag
-  else if (hasPerm(t, PlayerAccessInfo::lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
-    if (message[8] == ' ') {
-      const char *maxlag = message + 9;
-      clOptions->lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
-      sprintf(reply,"lagwarn is now %d ms",int(clOptions->lagwarnthresh * 1000 + 0.5));
-      sendMessage(ServerPlayer, t, reply, true);
-    }
-    else
-    {
-      sprintf(reply,"lagwarn is set to %d ms",int(clOptions->lagwarnthresh * 1000 +  0.5));
-      sendMessage(ServerPlayer, t, reply, true);
-    }
-  }
-  // /lagstats gives simple statistics about players' lags
-  else if (hasPerm(t, PlayerAccessInfo::lagStats) && strncmp(message+1, "lagstats",8) == 0) {
-    for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-	sprintf(reply,"%-16s : %3dms (%d) +- %2dms %s", player[i].callSign,
-                int(player[i].lagavg*1000), player[i].lagcount,
-                int(player[i].jitteravg*1000),
-                player[i].accessInfo.verified ? "(R)" : "");
-	if (player[i].packetslost>0)
-	  sprintf(reply+strlen(reply), " %d lost/ooo", player[i].packetslost);
-	    sendMessage(ServerPlayer, t, reply, true);
-      }
-    }
-  }
-  // /idlestats gives a list of players' idle times
-  else if (hasPerm(t, PlayerAccessInfo::idleStats) && strncmp(message+1, "idlestats",9) == 0) {
-    TimeKeeper now=TimeKeeper::getCurrent();
-    for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-	sprintf(reply,"%-16s : %4ds",player[i].callSign,
-		int(now-player[i].lastupdate));
-	sendMessage(ServerPlayer, t, reply, true);
-      }
-    }
-  }
-  // /flaghistory gives history of what flags player has carried
-  else if (hasPerm(t, PlayerAccessInfo::flagHistory) && strncmp(message+1, "flaghistory", 11 ) == 0) {
-    for (int i = 0; i < curMaxPlayers; i++)
-      if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-	char flag[MessageLen];
-	sprintf(reply,"%-16s : ",player[i].callSign );
-	std::vector<FlagDesc*>::iterator fhIt = player[i].flagHistory.begin();
 
-	while (fhIt != player[i].flagHistory.end()) {
-	  FlagDesc * fDesc = (FlagDesc*)(*fhIt);
-	  if (fDesc->flagType == FlagNormal)
-	    sprintf(flag, "(*%c) ", fDesc->flagName[0] );
-	  else
-	    sprintf(flag, "(%s) ", fDesc->flagAbbv );
-	  strcat(reply, flag );
-	  fhIt++;
-	}
-	sendMessage(ServerPlayer, t, reply, true);
-      }
-  }
-  // /playerlist dumps a list of players with IPs etc.
-  else if (hasPerm(t, PlayerAccessInfo::playerList) && strncmp(message+1, "playerlist", 10) == 0) {
-    for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo) {
-	sprintf(reply,"[%d]%-16s: %s%s",i,player[i].callSign,
-	    player[i].peer.getDotNotation().c_str(),
-	    player[i].ulinkup ? " udp" : "");
-	sendMessage(ServerPlayer, t, reply, true);
-      }
-    }
-  }
-  // /report sends a message to the admin and/or stores it in a file
-  else if (strncmp(message+1, "report", 6) == 0) {
-    if (strlen(message+1) < 8) {
-      sprintf(reply, "Nothing reported");
-    }
-    else {
-      time_t now = time(NULL);
-      char* timeStr = ctime(&now);
-      string reportStr;
-      reportStr = reportStr + timeStr + "Reported by " +
-	player[t].callSign + ": " + (message + 8);
-      if (clOptions->reportFile.size() > 0) {
-	ofstream ofs(clOptions->reportFile.c_str(), ios::out | ios::app);
-	ofs<<reportStr<<endl<<endl;
-      }
-      if (clOptions->reportPipe.size() > 0) {
-	FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
-	if (pipeWrite != NULL) {
-	  fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
-	} else {
-	  DEBUG1("Couldn't write report to the pipe\n");
-	}
-	pclose(pipeWrite);
-      }
-      if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0)
-	sprintf(reply, "The /report command is disabled on this server.");
-      else
-	sprintf(reply, "Your report has been filed. Thank you.");
-    }
-    sendMessage(ServerPlayer, t, reply, true);
+  } else if (hasPerm(t, PlayerAccessInfo::lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
+    handleLagwarnCmd(t, message);
+
+  } else if (hasPerm(t, PlayerAccessInfo::lagStats) && strncmp(message+1, "lagstats",8) == 0) {
+    handleLagstatsCmd(t, message);
+
+  } else if (hasPerm(t, PlayerAccessInfo::idleStats) && strncmp(message+1, "idlestats",9) == 0) {
+    handleIdlestatsCmd(t, message);
+
+  } else if (hasPerm(t, PlayerAccessInfo::flagHistory) && strncmp(message+1, "flaghistory", 11 ) == 0) {
+    handleFlaghistoryCmd(t, message);
+
+  } else if (hasPerm(t, PlayerAccessInfo::playerList) && strncmp(message+1, "playerlist", 10) == 0) {
+    handlePlayerlistCmd(t, message);
+
+  } else if (strncmp(message+1, "report", 6) == 0) {
+    handleReportCmd(t, message);
+
   } else if (strncmp(message+1, "help", 4) == 0) {
-    if (strlen(message + 1) == 4) {
-      const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
-      sendMessage(ServerPlayer, t, "Available help pages (use /help <page>)");
-      for (int i = 0; i < (int) chunks.size(); i++) {
-	sendMessage(ServerPlayer, t, chunks[i].c_str());
-      }
-    } else {
-      bool foundChunk = false;
-      const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
-      for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
-	if (chunks[i] == (message +6)){
-	  const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk((message + 6));
-	  if (lines != NULL) {
-	    for (int j = 0; j < (int)lines->size(); j++) {
-	      sendMessage(ServerPlayer, t, (*lines)[j].c_str());
-	    }
-	    foundChunk = true;
-	    break;
-	  }
-	}
-      }
-      if (!foundChunk){
-	sprintf(reply, "help command %s not found", message + 6);
-	sendMessage(ServerPlayer, t, reply, true);
-      }
-    }
+    handleHelpCmd(t, message);
+
   } else if (strncmp(message + 1, "identify", 8) == 0) {
-    // player is trying to send an ID
-    if (player[t].accessInfo.verified) {
-      sendMessage(ServerPlayer, t, "You have already identified");
-    } else if (player[t].accessInfo.loginAttempts >= 5) {
-      sendMessage(ServerPlayer, t, "You have attempted to identify too many times");
-      DEBUG1("Too Many Identifys %s\n",player[t].regName.c_str());
-    } else {
-      // get their info
-      if (!userExists(player[t].regName)) {
-	// not in DB, tell them to reg
-	sendMessage(ServerPlayer, t, "This callsign is not registered,"
-		    " please register it with a /register command");
-      } else {
-	if (verifyUserPassword(player[t].regName.c_str(), message + 10)) {
-	  sendMessage(ServerPlayer, t, "Password Accepted, welcome back.");
-	  player[t].accessInfo.verified = true;
+    handleIdentifyCmd(t, message);
 
-	  // get their real info
-	  PlayerAccessInfo &info = getUserInfo(player[t].regName);
-	  player[t].accessInfo.explicitAllows = info.explicitAllows;
-	  player[t].accessInfo.explicitDenys = info.explicitDenys;
-	  player[t].accessInfo.groups = info.groups;
-
-	  DEBUG1("Identify %s\n",player[t].regName.c_str());
-	} else {
-	  player[t].accessInfo.loginAttempts++;
-	  sendMessage(ServerPlayer, t, "Identify Failed, please make sure"
-		      " your password was correct");
-	}
-      }
-    }
   } else if (strncmp(message + 1, "register", 8) == 0) {
-    if (player[t].accessInfo.verified) {
-      sendMessage(ServerPlayer, t, "You have allready registered and"
-		  " identified this callsign");
-    } else {
-      if (userExists(player[t].regName)) {
-	sendMessage(ServerPlayer, t, "This callsign is allready registered,"
-		    " if it is yours /identify to login");
-      } else {
-	if (strlen(message) > 12) {
-	  PlayerAccessInfo info;
-	  info.groups.push_back("DEFAULT");
-	  info.groups.push_back("REGISTERED");
-	  std::string pass = message + 10;
-	  setUserPassword(player[t].regName.c_str(), pass.c_str());
-	  setUserInfo(player[t].regName, info);
-	  DEBUG1("Register %s %s\n",player[t].regName.c_str(),pass.c_str());
+    handleRegisterCmd(t, message);
 
-	  sendMessage(ServerPlayer, t, "Callsign registration confirmed,"
-		      " please /identify to login");
-	  updateDatabases();
-	} else {
-	  sendMessage(ServerPlayer, t, "your password must be 3 or more characters");
-	}
-      }
-    }
   } else if (strncmp(message + 1, "ghost", 5) == 0) {
+    handleGhostCmd(t, message);
 
-    char *p1 = strchr(message + 1, '\"');
-    char *p2 = 0;
-    if (p1) p2 = strchr(p1 + 1, '\"');
-    if (!p2) {
-      sendMessage(ServerPlayer, t, "not enough parameters, usage"
-		  " /ghost \"CALLSIGN\" PASSWORD");
-    } else {
-      std::string ghostie(p1+1,p2-p1-1);
-      std::string ghostPass=p2+2;
-
-      makeupper(ghostie);
-
-      int user = getPlayerIDByRegName(ghostie);
-      if (user == -1) {
-	sendMessage(ServerPlayer, t, "There is no user logged in by that name");
-      } else {
-	if (!userExists(ghostie)) {
-	  sendMessage(ServerPlayer, t, "That callsign is not registered");
-	} else {
-	  if (!verifyUserPassword(ghostie, ghostPass)) {
-	    sendMessage(ServerPlayer, t, "Invalid Password");
-	  } else {
-	    sendMessage(ServerPlayer, t, "Ghosting User");
-	    char temp[MessageLen];
-	    sprintf(temp, "Your Callsign is registered to another user,"
-		    " You have been ghosted by %s", player[t].callSign);
-	    sendMessage(ServerPlayer, user, temp, true);
-	    removePlayer(user, "Ghost");
-	  }
-	}
-      }
-    }
   } else if (player[t].accessInfo.verified && strncmp(message + 1, "deregister", 10) == 0) {
-    if (strlen(message) == 11) {
-      // removing own callsign
-      std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(player[t].regName);
-      std::map<std::string, PlayerAccessInfo>::iterator itr2 = userDatabase.find(player[t].regName);
-      passwordDatabase.erase(itr1);
-      userDatabase.erase(itr2);
-      updateDatabases();
-      sendMessage(ServerPlayer, t, "Your callsign has been deregistered");
-    } else if (strlen(message) > 12 && hasPerm(t, PlayerAccessInfo::setAll)) {
-      // removing someone else's
-      std::string name = message + 12;
-      makeupper(name);
-      if (userExists(name)) {
-	std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(name);
-	std::map<std::string, PlayerAccessInfo>::iterator itr2 = userDatabase.find(name);
-	passwordDatabase.erase(itr1);
-	userDatabase.erase(itr2);
-        updateDatabases();
-        char text[MessageLen];
-        sprintf(text, "%s has been deregistered", name.c_str());
-        sendMessage(ServerPlayer, t, text);
-      } else {
-	char text[MessageLen];
-	sprintf(text, "user %s does not exist", name.c_str());
-	sendMessage(ServerPlayer, t, text);
-      }
-    }
+    handleDeregisterCmd(t, message);
+
   } else if (player[t].accessInfo.verified && strncmp(message + 1, "setpass", 7) == 0) {
-    std::string pass;
-    if (strlen(message) < 9) {
-      sendMessage(ServerPlayer, t, "Not enough parameters: usage /setpass PASSWORD");
-    } else {
-      pass = message + 9;
-      setUserPassword(player[t].regName.c_str(), pass);
-      updateDatabases();
-      char text[MessageLen];
-      sprintf(text, "Your password is now set to \"%s\"", pass.c_str());
-      sendMessage(ServerPlayer, t, text, true);
-    }
+    handleSetpassCmd(t, message);
+
   } else if (strncmp(message + 1, "grouplist", 9) == 0) {
-    sendMessage(ServerPlayer, t, "Group List:");
-    std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
-    while (itr != groupAccess.end()) {
-      sendMessage(ServerPlayer, t, itr->first.c_str());
-      itr++;
-    }
+    handleGrouplistCmd(t, message);
+
   } else if (strncmp(message + 1, "showgroup", 9) == 0) {
-    std::string settie;
+    handleShowgroupCmd(t, message);
 
-    if (strlen(message) == 10) {	 // show own groups
-      if (player[t].accessInfo.verified) {
-	settie = player[t].regName;
-      } else {
-	sendMessage(ServerPlayer, t, "You are not identified");
-      }
-    } else if (hasPerm(t, PlayerAccessInfo::showOthers)) { // show groups for other player
-      char *p1 = strchr(message + 1, '\"');
-      char *p2 = 0;
-      if (p1) p2 = strchr(p1 + 1, '\"');
-      if (p2) {
-	settie = string(p1+1, p2-p1-1);
-	makeupper(settie);
-      } else {
-	sendMessage(ServerPlayer, t, "wrong format, usage"
-		    " /showgroup  or  /showgroup \"CALLSIGN\"");
-      }
-    } else {
-      sendMessage(ServerPlayer, t, "No permission!");
-    }
-
-    // something is wrong
-    if (settie!="") {
-      if (userExists(settie)) {
-	PlayerAccessInfo &info = getUserInfo(settie);
-
-	std::string line = "Groups for ";
-	line += settie;
-	line += ", ";
-	std::vector<std::string>::iterator itr = info.groups.begin();
-	while (itr != info.groups.end()) {
-	  line += *itr;
-	  line += " ";
-	  itr++;
-	}
-	// FIXME let's hope that line is not too long (> MessageLen)
-	sendMessage(ServerPlayer, t, line.c_str());
-      } else {
-	sendMessage(ServerPlayer, t, "There is no user by that name");
-      }
-    }
   } else if (strncmp(message + 1, "groupperms", 10) == 0) {
-    sendMessage(ServerPlayer, t, "Group List:");
-    std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
-    std::string line;
-    while (itr != groupAccess.end()) {
-      line = itr->first + ":   ";
-      sendMessage(ServerPlayer, t, line.c_str());
+    handleGrouppermsCmd(t, message);
 
-      for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
-	if (itr->second.explicitAllows.test(i)) {
-	  line = "     ";
-	  line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
-	  sendMessage(ServerPlayer, t, line.c_str());
-	}
-      }
-      itr++;
-    }
-  }else if (strncmp(message + 1, "groupperms", 10) == 0) {
-    sendMessage(ServerPlayer, t, "Group List:");
-    std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
-    std::string line;
-    while (itr != groupAccess.end()) {
-      line = itr->first + ":   ";
-      sendMessage(ServerPlayer, t, line.c_str());
-
-      for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
-	if (itr->second.explicitAllows.test(i)) {
-	  line = "     ";
-	  line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
-	  sendMessage(ServerPlayer, t, line.c_str());
-	}
-      }
-      itr++;
-    }
   } else if ((hasPerm(t, PlayerAccessInfo::setPerms) || hasPerm(t, PlayerAccessInfo::setAll)) &&
 	     strncmp(message + 1, "setgroup", 8) == 0) {
-    char *p1 = strchr(message + 1, '\"');
-    char *p2 = 0;
-    if (p1) p2 = strchr(p1 + 1, '\"');
-    if (!p2) {
-      sendMessage(ServerPlayer, t, "not enough parameters, usage /setgroup \"CALLSIGN\" GROUP");
-    } else {
-      string settie(p1+1, p2-p1-1);
-      string group=p2+2;
-
-      makeupper(settie);
-      makeupper(group);
-
-      if (userExists(settie)) {
-	bool canset = true;
-	if (!hasPerm(t, PlayerAccessInfo::setAll))
-	  canset = hasGroup(player[t].accessInfo, group.c_str());
-	if (!canset) {
-	  sendMessage(ServerPlayer, t, "You do not have permission to set this group");
-	} else {
-	  PlayerAccessInfo &info = getUserInfo(settie);
-
-	  if (addGroup(info, group)) {
-	    sendMessage(ServerPlayer, t, "Group Add successful");
-	    int getID = getPlayerIDByRegName(settie);
-	    if (getID != -1) {
-	      char temp[MessageLen];
-	      sprintf(temp, "you have been added to the %s group, by %s", group.c_str(), player[t].callSign);
-	      sendMessage(ServerPlayer, getID, temp, true);
-	      addGroup(player[getID].accessInfo, group);
-	    }
-	    updateDatabases();
-	  } else {
-	    sendMessage(ServerPlayer, t, "Group Add failed (user may allready have that group)");
-	  }
-	}
-      } else {
-	sendMessage(ServerPlayer, t, "There is no user by that name");
-      }
-    }
+    handleSetgroupCmd(t, message);
   } else if ((hasPerm(t, PlayerAccessInfo::setPerms) || hasPerm(t, PlayerAccessInfo::setAll)) &&
 	     strncmp(message + 1, "removegroup", 11) == 0) {
-    char *p1 = strchr(message + 1, '\"');
-    char *p2 = 0;
-    if (p1) p2 = strchr(p1 + 1, '\"');
-    if (!p2) {
-      sendMessage(ServerPlayer, t, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
-    } else {
-      string settie(p1+1, p2-p1-1);
-      string group=p2+2;
+    handleRemovegroupCmd(t, message);
 
-      makeupper(settie);
-      makeupper(group);
-      if (userExists(settie)) {
-	bool canset = true;
-	if (!hasPerm(t, PlayerAccessInfo::setAll))
-	  canset = hasGroup(player[t].accessInfo, group.c_str());
-	if (!canset) {
-	  sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
-	} else {
-	  PlayerAccessInfo &info = getUserInfo(settie);
-
-	  if (removeGroup(info, group)) {
-	    sendMessage(ServerPlayer, t, "Group Remove successful");
-	    int getID = getPlayerIDByRegName(settie);
-	    if (getID != -1) {
-	      char temp[MessageLen];
-	      sprintf(temp, "you have been removed from the %s group, by %s", group.c_str(), player[t].callSign);
-	      sendMessage(ServerPlayer, getID, temp, true);
-	      removeGroup(player[getID].accessInfo, group);
-	    }
-	    updateDatabases();
-	  } else {
-	    sendMessage(ServerPlayer, t, "Group Remove failed ( user may not have had group)");
-	  }
-	}
-      } else {
-	sendMessage(ServerPlayer, t, "There is no user by that name");
-      }
-    }
   } else if (hasPerm(t, PlayerAccessInfo::setAll) && strncmp(message + 1, "reload", 6) == 0) {
-    groupAccess.clear();
-    userDatabase.clear();
-    passwordDatabase.clear();
-    // reload the databases
-    if (groupsFile.size())
-      readGroupsFile(groupsFile);
-    // make sure that the 'admin' & 'default' groups exist
-    std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find("DEFAULT");
-    if (itr == groupAccess.end()) {
-      PlayerAccessInfo info;
-      info.explicitAllows[PlayerAccessInfo::idleStats] = true;
-      info.explicitAllows[PlayerAccessInfo::lagStats] = true;
-      info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
-      groupAccess["DEFAULT"] = info;
-    }
-    itr = groupAccess.find("REGISTERED");
-    if (itr == groupAccess.end()) {
-      PlayerAccessInfo info;
-      info.explicitAllows[PlayerAccessInfo::vote] = true;
-      info.explicitAllows[PlayerAccessInfo::poll] = true;
-      groupAccess["REGISTERED"] = info;
-    }
-    itr = groupAccess.find("ADMIN");
-    if (itr == groupAccess.end()) {
-      PlayerAccessInfo info;
-      for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
-	info.explicitAllows[i] = true;
-      groupAccess["ADMIN"] = info;
-    }
-    if (passFile.size())
-      readPassFile(passFile);
-    if (userDatabaseFile.size())
-      readPermsFile(userDatabaseFile);
-    for (int p = 0; p < curMaxPlayers; p++) {
-      if (player[p].accessInfo.verified && userExists(player[p].regName)) {
-	player[p].accessInfo = getUserInfo(player[p].regName);
-	player[p].accessInfo.verified = true;
-      }
-    }
-    sendMessage(ServerPlayer, t, "Databases reloaded");
-
+    handleResetCmd(t, message);
 
   } else if (strncmp(message+1, "poll",4) == 0) {
     handlePollCmd(t, message);
+
   } else if (strncmp(message+1, "vote", 4) == 0) {
     handleVoteCmd(t, message);
+
   } else if (strncmp(message+1, "veto", 4) == 0) {
     handleVetoCmd(t, message);
+
   } else {
     sprintf(reply, "Unknown command [%s]", message+1);
     sendMessage(ServerPlayer, t, reply, true);
