@@ -1494,6 +1494,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
       Player* victimPlayer = getPlayerByIndex(victimIndex);
       Player* killerPlayer = getPlayerByIndex(killerIndex);
+	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
 #ifdef ROBOT
       if (victimPlayer == myTank) {
 	// uh oh, i'm dead
@@ -1562,15 +1563,57 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  addMessage(victimPlayer, "blew myself up");
 	else if (!killerPlayer)
 	  addMessage(victimPlayer, "destroyed by <unknown>");
-	else if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
-					killerPlayer->getTeam() != RogueTeam) {
-	  BzfString message("destroyed by teammate ");
-	  message += killerPlayer->getCallSign();
-	  addMessage(victimPlayer, message);
-	}
 	else {
-	  BzfString message("destroyed by ");
-	  message += killerPlayer->getCallSign();
+	  BzfString message("");
+	  BzfString teammate("");
+	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
+	      killerPlayer->getTeam() != RogueTeam)
+	    teammate += "teammate ";
+	  // Give more informative kill messages
+	  switch (shot->getFlag())
+	  {
+	  case LaserFlag:
+	    message += "was fried by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s laser";
+	    break;
+	  case GuidedMissileFlag:
+	    message += "was destroyed by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s guided missile";
+	    break;
+	  case ShockWaveFlag:
+	    message += "felt the effects of ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s shockwave";
+	    break;
+	  case InvisibleBulletFlag:
+	    message += "didn't see ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s bullet";
+	    break;
+	  case MachineGunFlag:
+	    message += "was turned into swiss cheese by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s machine gun";
+	    break;
+	  case SuperBulletFlag:
+	    message += "got skewered by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s super bullet";
+	    break;
+	  default:
+	    message += "got wrecked by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s blast";
+	  }
 	  addMessage(victimPlayer, message);
 	}
       }
