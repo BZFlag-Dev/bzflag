@@ -1472,7 +1472,7 @@ bool CustomWorld::read(const char *cmd, istream& input)
   return true;
 }
 
-void CustomWorld::write(WorldInfo * world) const
+void CustomWorld::write(WorldInfo* /* world*/) const
 {
   flagHeight = (float) fHeight;
   //world->addLink(from, to);
