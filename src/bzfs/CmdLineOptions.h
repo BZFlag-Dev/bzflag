@@ -13,13 +13,14 @@
 #ifndef __CMDLINEOPTIONS_H__
 #define __CMDLINEOPTIONS_H__
 
+/* bzflag special common - 1st one */
+#include "common.h"
+
 /* system headers */
 #include <string>
 #include <map>
 
 /* bzflag common headers */
-#include "config.h"
-#include "common.h"
 #include "Protocol.h"
 #include "Flag.h"
 #include "WordFilter.h"
