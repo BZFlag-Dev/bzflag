@@ -2241,7 +2241,8 @@ static void addPlayer(int playerIndex)
   }
 
   // automatically assign the player's team
-  if ((clOptions->autoTeam) || (t == AutomaticTeam)) {
+  if (((clOptions->autoTeam) && (t < (int)ObserverTeam)) ||
+      (t == AutomaticTeam)) {
     std::vector<TeamColor> minIndex;
     int sizeOfSmallestTeam = softmaxPlayers;
 
@@ -2265,7 +2266,7 @@ static void addPlayer(int playerIndex)
     }
 #endif
 
-    // reassign the team
+    // reassign the team if 
     if (minIndex.size() == 0) {
       // all teams are all full, try observer
       t = player[playerIndex].team = ObserverTeam;
