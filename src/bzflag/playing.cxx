@@ -4129,28 +4129,30 @@ static void		playingLoop()
     // move roaming camera
     if (roaming) {
       if (myTank) {
-	if (!shiftKeyStatus) {
+	bool control = shiftKeyStatus & BzfKeyEvent::ControlKey;
+	bool alt     = shiftKeyStatus & BzfKeyEvent::AltKey;
+	bool shift   = shiftKeyStatus & BzfKeyEvent::ShiftKey;
+	if (display->hasGetKeyMode())
+	  display->getModState (shift, control, alt);
+	roamDPos[0] = 0.0;
+	roamDPos[1] = 0.0;
+	roamDPos[2] = 0.0;
+	roamDTheta  = 0.0;
+	roamDTheta  = 0.0;
+	roamDPhi    = 0.0;
+	if (!control || !shift)
 	  roamDPos[0] = (float)(4 * myTank->getSpeed())
 	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-	  roamDPos[1] = 0.0;
-	  roamDPos[2] = 0.0;
-	  roamDTheta  = roamZoom * (float)myTank->getRotation();
-	  roamDPhi    = 0.0;
-	} else if (shiftKeyStatus & 1) {
-	  roamDPos[0] = 0.0;
-	  roamDPos[1] = 0.0;
-	  roamDPos[2] = 0.0;
-	  roamDTheta  = 0.0;
-	  roamDPhi    =  -2.0f * roamZoom / 3.0f * (float)myTank->getSpeed();
-	} else if (shiftKeyStatus & 2) {
-	  roamDPos[0] = 0.0;
+	if (alt)
 	  roamDPos[1] = (float)(4 * myTank->getRotation())
 	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-	  roamDPos[2] = (float)(4 * myTank->getSpeed())
+	else
+	  roamDTheta  = roamZoom * (float)myTank->getRotation();
+	if (control)
+	  roamDPhi    =  -2.0f * roamZoom / 3.0f * (float)myTank->getSpeed();
+	if (shift)
+	  roamDPos[2] = (float)(-4 * myTank->getSpeed())
 	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-	  roamDTheta  = 0.0;
-	  roamDPhi    = 0.0;
-	}
       }
       float c, s;
       c = cosf(roamTheta * M_PI / 180.0f);
