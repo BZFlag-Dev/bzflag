@@ -883,7 +883,7 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
     GameKeeper::Player *p = sortedPlayer[i];
     p->lagInfo.getLagStats(reply);
     if (reply[0])
-      sendMessage(ServerPlayer, t, reply, false;
+      sendMessage(ServerPlayer, t, reply, false);
   }
 }
 
