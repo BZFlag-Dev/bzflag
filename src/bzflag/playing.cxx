@@ -2567,8 +2567,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    break;
 	}
 	message += " from " + ip.getDotNotation();
-	message += " (" + Address::getHostByAddress(ip);
-	message += ")";
 
 	addMessage(tank, message);
 
