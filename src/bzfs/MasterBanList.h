@@ -25,3 +25,4 @@ protected:
 	std::string	data;
 };
 #endif //__MASTER_BAN_LIST_H__
+
