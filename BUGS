@@ -25,6 +25,7 @@ recent bugs
 
 - server can kick very bad players for speeding in handicapped style mode;
   it does some compensation for handicap, but obviously not enough/correct
+  *** hopefully fixed, someone test please
 
 - sometimes players will receive the message "So-and-so destroyed by server"
   instead of "So-and-so killed by such-and-such".  Appears to depend on
