@@ -11,12 +11,18 @@
  */
 
 #include "common.h"
+
+/* common implementation headers */
+#include "Protocol.h"
+#include "Flag.h"
+
+/* local implementation headers */
 #include "playing.h"
 #include "ShotPath.h"
 #include "ShotStrategy.h"
 #include "LocalPlayer.h"
-#include "Protocol.h"
-#include "Flag.h"
+#include "GuidedMissleStrategy.h"
+
 
 //
 // FiringInfo (with BaseLocalPlayer)

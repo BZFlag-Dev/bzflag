@@ -17,6 +17,8 @@ bzflag_SOURCES =			\
 	CommandsStandard.cxx		\
 	FormatMenu.cxx			\
 	FormatMenu.h			\
+	GuidedMissleStrategy.cxx	\
+	GuidedMissleStrategy.h		\
 	GUIOptionsMenu.cxx		\
 	GUIOptionsMenu.h		\
 	HelpMenu.cxx			\

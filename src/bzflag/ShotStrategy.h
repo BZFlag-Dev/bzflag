@@ -79,36 +79,6 @@ class ShotStrategy {
 #include "SegmentedShotStrategy.h"
 
 
-class GuidedMissileStrategy : public ShotStrategy {
-  public:
-			GuidedMissileStrategy(ShotPath*);
-			~GuidedMissileStrategy();
-
-    void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    void		sendUpdate(const FiringInfo&) const;
-    void		readUpdate(uint16_t, void*);
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		expire();
-    void		radarRender() const;
-
-  private:
-    float		checkBuildings(const Ray& ray);
-
-  private:
-    TimeKeeper		prevTime;
-    TimeKeeper		currentTime;
-    std::vector<ShotPathSegment>	segments;
-    int			renderTimes;
-    float		azimuth;
-    float		elevation;
-    float		nextPos[3];
-    BoltSceneNode*	ptSceneNode;
-
-    bool		needUpdate;
-    PlayerId		lastTarget;
-};
-
 class ShockWaveStrategy : public ShotStrategy {
   public:
 			ShockWaveStrategy(ShotPath*);
