@@ -356,8 +356,6 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   scoreLabelWidth = minorFont.getWidth(scoreSpacingLabel);
   killsLabelWidth = minorFont.getWidth(killLabel);
   teamScoreLabelWidth = minorFont.getWidth(teamScoreSpacingLabel);
-  flagHelpY = composeTypeIn->getFont().getSpacing() + 4.0f +
-      minorFont.getDescent() + window.getHeight() / 3;
 
   const float spacing = minorFont.getWidth("");
   scoreLabelWidth += spacing;
@@ -976,7 +974,8 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw flag help
   if (flagHelpClock.isOn()) {
     hudColor3fv(messageColor);
-    y = flagHelpY - (20 * minorFont.getDescent());
+    flagHelpY = (float) ((renderer.getWindow().getHeight() >> 1) - maxMotionSize);
+    y = flagHelpY - minorFont.getAscent();
     const char* flagHelpBase = flagHelp[flagHelpIndex].getString();
     for (i = 0; i < flagHelpLines; i++) {
       y -= minorFont.getSpacing();
