@@ -20,21 +20,10 @@
 
 #include "config.h"
 
-// which curses?
-#ifdef HAVE_CURSES_H
-#  define NOMACROS
-#  include <curses.h>
-#else
-#  ifdef HAVE_NCURSES_H
-#    include <ncurses.h>
-#  else
-#    include "pdcurses_adapter.h"
-#  endif
-#endif
-
 #include "Address.h"
 #include "AutoCompleter.h"
 #include "BZAdminUI.h"
+#include "curses_wrapper.h"
 #include "CursesMenu.h"
 #include "global.h"
 #include "UIMap.h"

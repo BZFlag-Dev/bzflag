@@ -102,7 +102,7 @@ esac
 
 AC_PATH_XTRA
 
-LDFLAGS=$X_LIBS
+LDFLAGS="$LDFLAGS $X_LIBS"
 case $host_os in
   solaris*)
     GLIBS="-lresolv -laudio $GLIBS";

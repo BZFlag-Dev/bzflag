@@ -18,21 +18,8 @@
 
 #include "BZAdminClient.h"
 #include "config.h"
+#include "curses_wrapper.h"
 #include "PlayerInfo.h"
-
-// which curses?
-#ifdef HAVE_CURSES_H
-#  define NOMACROS
-#  define bool int
-#  include <curses.h>
-#  undef bool
-#else
-#  ifdef HAVE_NCURSES_H
-#    include <ncurses.h>
-#  else
-#    include "pdcurses_adapter.h"
-#  endif
-#endif
 
 
 class CursesMenu;

@@ -42,7 +42,7 @@ bzadmin_SOURCES = \
 	UIMap.h \
 	UIMap.cxx \
 	bzadmin.cxx \
-	pdcurses_adapter.h
+	curses_wrapper.h
 
 ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
 	cp -pR @top_srcdir@/src/bzflag/ServerLink.cxx .
