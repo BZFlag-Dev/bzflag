@@ -95,6 +95,7 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("B"), std::string("toggle displayBinoculars")));
   defaultBinding.insert(std::make_pair(std::string("Pause"), std::string("pause")));
   defaultBinding.insert(std::make_pair(std::string("P"), std::string("pause")));
+  defaultBinding.insert(std::make_pair(std::string("F4"), std::string("iconify")));
 #ifdef SNAPPING
   defaultBinding.insert(std::make_pair(std::string("F5"), std::string("screenshot")));
 #endif

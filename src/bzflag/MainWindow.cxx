@@ -214,6 +214,11 @@ void			MainWindow::resizeCB(void* _self)
   self->resize();
 }
 
+void			MainWindow::iconify()
+{
+  window->iconify();
+}
+
 
 bool			MainWindow::joystick() const
 {

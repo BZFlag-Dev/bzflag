@@ -75,6 +75,7 @@ class SDLWindow : public BzfWindow {
   void  setPosition(int, int) {;};
   void  setMinSize(int, int) {;};
   void  setFullscreen();
+  void  iconify(void);
   void  warpMouse(int x, int y);
   void  getMouse(int& x, int& y) const;
   void  grabMouse();

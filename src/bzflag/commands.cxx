@@ -93,9 +93,18 @@ const struct CommandListItem commandList[] = {
   { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
   { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
   { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
+  { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" }
 };
 
+
+std::string cmdIconify(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: iconify";
+  mainWindow->iconify();
+  return std::string();
+}
 
 std::string cmdJump(const std::string&, const CommandManager::ArgList& args)
 {

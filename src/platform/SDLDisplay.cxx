@@ -390,6 +390,10 @@ void SDLWindow::setFullscreen() {
   ((SDLDisplay *)getDisplay())->setFullscreen();
 };
 
+void SDLWindow::iconify(void) {
+  SDL_WM_IconifyWindow();
+};
+
 void SDLWindow::warpMouse(int x, int y) {
   SDL_WarpMouse(x, y);
 };

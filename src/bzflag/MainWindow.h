@@ -53,6 +53,7 @@ class MainWindow {
     void		setMinSize(int width, int height);
     void		setFullView(bool);
     void		setFullscreen();
+    void		iconify(void);
     void		setNoMouseGrab();
 
     void		setZoomFactor(int);
