@@ -34,7 +34,7 @@ class Obstacle {
   public:
   			Obstacle();
 			Obstacle(const float* pos, float rotation,
-				float hwidth, float hbreadth, float height);
+				float hwidth, float hbreadth, float height, bool drive = false, bool shoot = false);
     virtual		~Obstacle();
 
     virtual std::string	getType() const = 0;
@@ -61,6 +61,9 @@ class Obstacle {
 
     virtual ObstacleSceneNodeGenerator*	newSceneNodeGenerator() const = 0;
 
+	bool isDriveThrough() const;
+	bool isShootThrough() const;
+
   protected:
     float		getHitNormal(
 				const float* pos1, float azimuth1,
@@ -76,6 +79,8 @@ class Obstacle {
     float		width;
     float		breadth;
     float		height;
+	bool		driveThrough;
+	bool		shootThrough;
 };
 
 class ObstacleSceneNodeGenerator {

@@ -162,11 +162,13 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<WallObstacle>::const_iterator it = walls.begin();
     while (it != walls.end()) {
       const WallObstacle& wall = *it;
+	  if (!wall.isShootThrough()){
       const float wallt = wall.intersect(ray);
       if (wallt > min && wallt < t) {
 	t = wallt;
 	closestObstacle = &wall;
-      }
+	  }
+	  }
       it++;
     }
   }
@@ -177,12 +179,14 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<Teleporter>::const_iterator it = teleporters.begin();
     while (it != teleporters.end()) {
       const Teleporter& teleporter = *it;
+	  if (!teleporter.isShootThrough()){
       const float telet = teleporter.intersect(ray);
       int face;
       if (telet > min && telet < t && teleporter.isTeleported(ray, face) < 0.0f) {
 	t = telet;
 	closestObstacle = &teleporter;
       }
+	  }
       it++;
     }
   }
@@ -193,11 +197,13 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<BoxBuilding>::const_iterator it = boxes.begin();
     while (it != boxes.end()) {
       const BoxBuilding& box = *it;
+	  if (!box.isShootThrough()){
       const float boxt = box.intersect(ray);
       if (boxt > min && boxt < t) {
 	t = boxt;
 	closestObstacle = &box;
       }
+	  }
       it++;
     }
   }
@@ -208,11 +214,13 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<BaseBuilding>::const_iterator it = bases.begin();
     while (it != bases.end()) {
       const BaseBuilding& base = *it;
+	  if (!base.isShootThrough()){
       const float baset = base.intersect(ray);
       if (baset > min && baset < t) {
 	t = baset;
 	closestObstacle = &base;
       }
+	  }
       it++;
     }
   }
@@ -223,11 +231,13 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<PyramidBuilding>::const_iterator it = pyramids.begin();
     while (it != pyramids.end()) {
       const PyramidBuilding& pyramid = *it;
+	  if (!pyramid.isShootThrough()){
       const float pyramidt = pyramid.intersect(ray);
       if (pyramidt > min && pyramidt < t) {
 	t = pyramidt;
 	closestObstacle = &pyramid;
       }
+	  }
       it++;
     }
   }

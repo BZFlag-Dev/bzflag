@@ -23,10 +23,12 @@ Obstacle::Obstacle()
   width = 0;
   breadth = 0;
   height = 0;
+  driveThrough = false;
+  shootThrough = false;
 }
 
 Obstacle::Obstacle(const float* _pos, float _angle,
-				float _width, float _breadth, float _height) :
+				float _width, float _breadth, float _height, bool drive, bool shoot) :
 				angle(_angle),
 				width(_width),
 				breadth(_breadth),
@@ -35,12 +37,27 @@ Obstacle::Obstacle(const float* _pos, float _angle,
   pos[0] = _pos[0];
   pos[1] = _pos[1];
   pos[2] = _pos[2];
+
+  driveThrough = drive;
+  shootThrough = shoot;
 }
 
 Obstacle::~Obstacle()
 {
   // do nothing
 }
+
+
+bool			Obstacle::isDriveThrough() const
+{
+	return driveThrough;	
+}
+
+bool			Obstacle::isShootThrough() const
+{
+	return shootThrough;
+}
+
 
 bool			Obstacle::isCrossing(const float*, float,
 						float, float, float*) const
@@ -163,3 +180,4 @@ ObstacleSceneNodeGenerator::~ObstacleSceneNodeGenerator()
   // do nothing
 }
 // ex: shiftwidth=2 tabstop=8
+

@@ -1064,11 +1064,13 @@ class WorldInfo {
     WorldInfo();
     ~WorldInfo();
 
-    void addWall(float x, float y, float z, float r, float w, float h);
-    void addBox(float x, float y, float z, float r, float w, float d, float h);
-    void addPyramid(float x, float y, float z, float r, float w, float d, float h);
-    void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b);
-    void addBase(float x, float y, float z, float r, float w, float d, float h);
+	void setSize ( float x, float y );
+   	void setGravity ( float g );
+	void addWall(float x, float y, float z, float r, float w, float h);
+    void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
+    void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
+    void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
+    void addBase(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
     void addLink(int from, int to);
     float getMaxWorldHeight();
     int packDatabase();
@@ -1084,6 +1086,8 @@ class WorldInfo {
 	float pos[3];
 	float rotation;
 	float size[3];
+	bool shootThrough;
+	bool driveThrough;
       ObstacleLocation &operator=(const ObstacleLocation &ol)
       {
 	memcpy(pos, ol.pos, sizeof(float) * 3);
@@ -1103,6 +1107,8 @@ class WorldInfo {
     bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
 
   private:
+	float size[2];
+	float gravity;
     int numWalls;
     int numBases;
     int numBoxes;
@@ -1252,6 +1258,8 @@ class WorldFileObstacle : public WorldFileObject {
     float pos[3];
     float rotation;
     float size[3];
+	bool driveThrough;
+	bool shootThrough;
 };
 
 WorldFileObstacle::WorldFileObstacle()
@@ -1259,18 +1267,24 @@ WorldFileObstacle::WorldFileObstacle()
   pos[0] = pos[1] = pos[2] = 0.0f;
   rotation = 0.0f;
   size[0] = size[1] = size[2] = 1.0f;
+  driveThrough = false;
+  shootThrough = false;
 }
 
 bool WorldFileObstacle::read(const char *cmd, istream& input)
 {
-  if (strcmp(cmd, "position") == 0)
+	if (strcasecmp(cmd, "position") == 0)
     input >> pos[0] >> pos[1] >> pos[2];
-  else if (strcmp(cmd, "rotation") == 0) {
+	else if (strcasecmp(cmd, "rotation") == 0) {
     input >> rotation;
     rotation = rotation * M_PI / 180.0f;
-  } else if (strcmp(cmd, "size") == 0)
+  } else if (strcasecmp(cmd, "size") == 0)
     input >> size[0] >> size[1] >> size[2];
-  else
+    else if (strcasecmp(cmd, "drivethrough") == 0)
+    driveThrough = true;
+    else if (strcasecmp(cmd, "shootthrough") == 0)
+    shootThrough = true;
+    else
     return false;
   return true;
 }
@@ -1289,7 +1303,7 @@ CustomBox::CustomBox()
 
 void CustomBox::write(WorldInfo *world) const
 {
-  world->addBox(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2]);
+  world->addBox(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough);
 }
 
 class CustomPyramid : public WorldFileObstacle {
@@ -1306,7 +1320,7 @@ CustomPyramid::CustomPyramid()
 
 void CustomPyramid::write(WorldInfo *world) const
 {
-  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2]);
+  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough);
 }
 
 class CustomGate : public WorldFileObstacle {
@@ -1338,7 +1352,7 @@ bool CustomGate::read(const char *cmd, istream& input)
 
 void CustomGate::write(WorldInfo *world) const
 {
-  world->addTeleporter(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2], border);
+  world->addTeleporter(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2], border,driveThrough,shootThrough);
 }
 
 class CustomLink : public WorldFileObject {
@@ -1422,7 +1436,7 @@ void CustomBase::write(WorldInfo* world) const {
   safetyBasePos[color][0] = 0;
   safetyBasePos[color][1] = 0;
   safetyBasePos[color][2] = 0;
-  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0.0) ? 1.0f : 0.0f);
+  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0.0) ? 1.0f : 0.0f,driveThrough,shootThrough);
 }
 
 class CustomWorld : public WorldFileObject {
@@ -1488,6 +1502,9 @@ WorldInfo::WorldInfo() :
     teleporters(NULL),
     database(NULL)
 {
+    size[0] = 400.0f;
+    size[1] = 400.0f;
+	gravity = -9.81f;
 }
 
 WorldInfo::~WorldInfo()
@@ -1521,7 +1538,7 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
   numWalls++;
 }
 
-void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, float h)
+void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -1537,10 +1554,12 @@ void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, flo
   boxes[numBoxes].size[0] = w;
   boxes[numBoxes].size[1] = d;
   boxes[numBoxes].size[2] = h;
+  boxes[numBoxes].driveThrough = drive;
+  boxes[numBoxes].shootThrough = shoot;
   numBoxes++;
 }
 
-void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h)
+void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -1556,10 +1575,12 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
   pyramids[numPyramids].size[0] = w;
   pyramids[numPyramids].size[1] = d;
   pyramids[numPyramids].size[2] = h;
-  numPyramids++;
+  pyramids[numPyramids].driveThrough = drive;
+  pyramids[numPyramids].shootThrough = shoot;
+numPyramids++;
 }
 
-void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b)
+void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive, bool shoot)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -1575,6 +1596,8 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   teleporters[numTeleporters].size[0] = w;
   teleporters[numTeleporters].size[1] = d;
   teleporters[numTeleporters].size[2] = h;
+  teleporters[numTeleporters].driveThrough = drive;
+  teleporters[numTeleporters].shootThrough = shoot;
   teleporters[numTeleporters].border = b;
   // default link through
   teleporters[numTeleporters].to[0] = numTeleporters * 2 + 1;
@@ -1582,7 +1605,7 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   numTeleporters++;
 }
 
-void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h)
+void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -1598,6 +1621,8 @@ void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, fl
   bases[numBases].size[0] = w;
   bases[numBases].size[1] = d;
   bases[numBases].size[2] = h;
+  bases[numBases].driveThrough = drive;
+  bases[numBases].shootThrough = shoot;
   numBases++;
 }
 
@@ -1705,10 +1730,10 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
 int WorldInfo::packDatabase()
 {
   databaseSize = (2 + 6 * 4) * numWalls +
-		(2 + 7 * 4) * numBoxes +
-		(2 + 7 * 4) * numPyramids +
-		(2 + 8 * 4) * numTeleporters +
-		(2 + 4) * 2 * numTeleporters;
+		(2 + 2 + 7 * 4) * numBoxes +
+		(2 + 2 + 7 * 4) * numPyramids +
+		(2 + 2 + 8 * 4) * numTeleporters +
+		(2 + 2 + 4) * 2 * numTeleporters;
   database = new char[databaseSize];
   void *databasePtr = database;
 
@@ -1733,7 +1758,9 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, pBox->pos);
     databasePtr = nboPackFloat(databasePtr, pBox->rotation);
     databasePtr = nboPackVector(databasePtr, pBox->size);
-  }
+    databasePtr = nboPackUByte(databasePtr, pBox->driveThrough);
+    databasePtr = nboPackUByte(databasePtr, pBox->shootThrough);
+ }
 
   // add pyramids
   ObstacleLocation *pPyramid;
@@ -1742,7 +1769,9 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, pPyramid->pos);
     databasePtr = nboPackFloat(databasePtr, pPyramid->rotation);
     databasePtr = nboPackVector(databasePtr, pPyramid->size);
-  }
+    databasePtr = nboPackUByte(databasePtr, pPyramid->driveThrough);
+    databasePtr = nboPackUByte(databasePtr, pPyramid->shootThrough);
+}
 
   // add teleporters
   Teleporter *pTeleporter;
@@ -1751,7 +1780,9 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, pTeleporter->pos);
     databasePtr = nboPackFloat(databasePtr, pTeleporter->rotation);
     databasePtr = nboPackVector(databasePtr, pTeleporter->size);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->border);
+    databasePtr = nboPackUByte(databasePtr, pTeleporter->driveThrough);
+    databasePtr = nboPackUByte(databasePtr, pTeleporter->shootThrough);
+	databasePtr = nboPackFloat(databasePtr, pTeleporter->border);
     // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
@@ -3163,7 +3194,7 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
       // ignore comment
     }
 
-    else if (strcmp(buffer, "end") == 0) {
+    else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
 	list.push_back(object);
 	object = NULL;
@@ -3173,32 +3204,32 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
 	return false;
       }
     }
-
-    else if (strcmp(buffer, "box") == 0)
+	
+    else if (strcasecmp(buffer, "box") == 0)
       newObject = new CustomBox;
 
-    else if (strcmp(buffer, "pyramid") == 0)
+    else if (strcasecmp(buffer, "pyramid") == 0)
       newObject = new CustomPyramid();
 
-    else if (strcmp(buffer, "teleporter") == 0)
+    else if (strcasecmp(buffer, "teleporter") == 0)
       newObject = new CustomGate();
 
-    else if (strcmp(buffer, "link") == 0)
+    else if (strcasecmp(buffer, "link") == 0)
       newObject = new CustomLink();
 
-    else if (strcmp(buffer, "base") == 0)
+    else if (strcasecmp(buffer, "base") == 0)
       newObject = new CustomBase;
 
     // FIXME - only load one object of the type CustomWorld!
-    else if (strcmp(buffer, "world") == 0)
+    else if (strcasecmp(buffer, "world") == 0)
       newObject = new CustomWorld();
 
     else if (object) {
       if (!object->read(buffer, input)) {
 	// unknown token
-	printf("%s(%d) : invalid object parameter \"%s\"\n", location, line, buffer);
-	delete object;
-	return false;
+	printf("%s(%d) : unknown object parameter \"%s\"-skipping\n", location, line, buffer);
+	//delete object;
+	//return false;
       }
     }
 
@@ -3804,7 +3835,10 @@ static WorldInfo *defineRandomWorld()
 static bool defineWorld()
 {
   // clean up old database
+  if (world)
   delete world;
+
+  if(worldDatabase)
   delete[] worldDatabase;
 
   // make world and add buildings
@@ -3833,7 +3867,10 @@ static bool defineWorld()
   worldDatabaseSize = 4 + 24 + world->getDatabaseSize() + 2;
   if (clOptions.gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + 9 * 4);
+
   worldDatabase = new char[worldDatabaseSize];
+  if(!worldDatabase)		// this should NOT happen but it does sometimes
+	  return false;
   memset( worldDatabase, 0, worldDatabaseSize );
 
   void *buf = worldDatabase;

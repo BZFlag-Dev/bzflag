@@ -228,8 +228,10 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
     const WallObstacle& wall = *wallScan;
+	if (!wall.isDriveThrough()){
     if (wall.isInside(pos, angle, dx, dy))
       return &wall;
+	}
     wallScan++;
   }
 
@@ -237,8 +239,10 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
     const Teleporter& teleporter = *teleporterScan;
+	if (!teleporter.isDriveThrough()){
     if (teleporter.isInside(pos, angle, dx, dy))
       return &teleporter;
+	}
     teleporterScan++;
   }
 
@@ -246,8 +250,10 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
   while (boxScan != boxes.end()) {
     const BoxBuilding& box = *boxScan;
+	if (!box.isDriveThrough()){
     if (box.isInside(pos, angle, dx, dy))
       return &box;
+	}
     boxScan++;
   }
 
@@ -255,8 +261,10 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
   while (pyramidScan != pyramids.end()) {
     const PyramidBuilding& pyramid = *pyramidScan;
+	if (!pyramid.isDriveThrough()){
     if (pyramid.isInside(pos, angle, dx, dy))
       return &pyramid;
+	}
     pyramidScan++;
   }
 
@@ -264,8 +272,10 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   std::vector<BaseBuilding>::const_iterator baseScan = basesR.begin();
   while (baseScan != basesR.end()) {
     const BaseBuilding &base = *baseScan;
+	if (!base.isDriveThrough()){
     if(base.isInside(pos, angle, dx, dy))
       return &base;
+	}
     baseScan++;
   }
   // strike four -- you're out
@@ -653,6 +663,7 @@ void*			WorldBuilder::unpack(void* buf)
     switch (code) {
       case WorldCodeBox: {
 	float data[7];
+	unsigned char tempflags[3];
 	memset(data, 0, sizeof(float) * 7);
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
@@ -661,12 +672,15 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
-	BoxBuilding box(data, data[3], data[4], data[5], data[6]);
+	buf = nboUnpackUByte(buf, tempflags[0]);
+	buf = nboUnpackUByte(buf, tempflags[1]);
+	BoxBuilding box(data, data[3], data[4], data[5], data[6],tempflags[0]!=0,tempflags[1]!=0);
 	append(box);
 	break;
       }
       case WorldCodePyramid: {
 	float data[7];
+	unsigned char tempflags[3];
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
 	buf = nboUnpackFloat(buf, data[2]);
@@ -674,12 +688,16 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
-	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6]);
+	buf = nboUnpackUByte(buf, tempflags[0]);
+	buf = nboUnpackUByte(buf, tempflags[1]);
+
+	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6],tempflags[0]!=0,tempflags[1]!=0);
 	append(pyr);
 	break;
       }
       case WorldCodeTeleporter: {
 	float data[8];
+	unsigned char tempflags[3];
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
 	buf = nboUnpackFloat(buf, data[2]);
@@ -687,8 +705,10 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
+	buf = nboUnpackUByte(buf, tempflags[0]);
+	buf = nboUnpackUByte(buf, tempflags[1]);
 	buf = nboUnpackFloat(buf, data[7]);
-	Teleporter tele(data, data[3], data[4], data[5], data[6], data[7]);
+	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],tempflags[0]!=0,tempflags[1]!=0);
 	append(tele);
 	break;
       }

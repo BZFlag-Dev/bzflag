@@ -23,7 +23,7 @@
 class PyramidBuilding : public Obstacle {
   public:
 			PyramidBuilding(const float* pos, float rotation,
-				float width, float breadth, float height);
+				float width, float breadth, float height, bool drive = false, bool shoot = false);
 			~PyramidBuilding();
 
     std::string		getType() const;

@@ -74,7 +74,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"../src/obstacle/obstacle.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\src\obsacle\Debug\obstacle.lib"
+# ADD LIB32 /nologo /out:"..\src\obstacle\Debug\obstacle.lib"
 
 !ENDIF 
 

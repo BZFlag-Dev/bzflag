@@ -24,7 +24,7 @@ class Teleporter : public Obstacle {
   public:
 			Teleporter(const float* pos, float rotation,
 				float width, float breadth, float height,
-				float borderSize);
+				float borderSize = 1.0f, bool drive = false, bool shoot = false);
 			~Teleporter();
 
     std::string		getType() const;

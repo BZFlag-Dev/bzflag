@@ -24,8 +24,8 @@ BoxBuilding::BoxBuilding() : Obstacle()
   // do nothing
 }
 
-BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h) :
-				Obstacle(p, a, w, b, h)
+BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h, bool drive, bool shoot) :
+				Obstacle(p, a, w, b, h,drive,shoot)
 {
   // do nothing
 }

@@ -24,7 +24,7 @@ class BoxBuilding : public Obstacle {
   public:
   			BoxBuilding();
 			BoxBuilding(const float* pos, float rotation,
-				float width, float breadth, float height);
+				float width, float breadth, float height, bool drive = false, bool shoot = false);
 			~BoxBuilding();
 
     std::string		getType() const;

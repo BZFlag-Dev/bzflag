@@ -21,8 +21,8 @@
 std::string		PyramidBuilding::typeName("PyramidBuilding");
 
 PyramidBuilding::PyramidBuilding(const float* p, float a,
-				float w, float b, float h) :
-				Obstacle(p, a, w, b, h)
+				float w, float b, float h, bool drive, bool shoot) :
+				Obstacle(p, a, w, b, h,drive,shoot)
 {
   // do nothing
 }

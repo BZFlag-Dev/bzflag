@@ -20,8 +20,8 @@
 std::string		Teleporter::typeName("Teleporter");
 
 Teleporter::Teleporter(const float* p, float a, float w,
-				float b, float h, float _border) :
-				Obstacle(p, a, w, b + 2 * _border, h + _border),
+				float b, float h,float _border, bool drive, bool shoot) :
+				Obstacle(p, a, w, b + 2 * _border, h + _border,drive,shoot),
 				border(_border)
 {
   // do nothing
