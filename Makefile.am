@@ -13,6 +13,7 @@ EXTRA_DIST = \
 	bzflag.spec \
 	DEVINFO \
 	PORTING \
+	README.BeOS \
 	README.IRIX \
 	README.Linux \
 	README.MINGW32 \
