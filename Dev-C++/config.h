@@ -16,7 +16,7 @@
 #define _DEVCPP_CONFIG
 
 /* Building regex */
-//#define BUILD_REGEX 1 //FIXME: it can't compile engine.c; undeclared types
+#define BUILD_REGEX 1
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */

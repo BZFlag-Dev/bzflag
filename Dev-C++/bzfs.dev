@@ -9,7 +9,7 @@ CppCompiler=-D__GNUWIN32__ -W -D_CONSOLE -DWIN32 -DNDEBUG -D_MBCS_@@_
 Includes=..\include;..\win32;.
 Linker=-lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=158
+UnitCount=157
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex"
 ObjFiles=
 PrivateResource=
@@ -1279,17 +1279,7 @@ BuildCmd=
 
 [Unit150]
 FileName=..\src\regex\regfree.c
-CompileCpp=1
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit151]
-FileName=..\src\regex\engine.c
-CompileCpp=1
+CompileCpp=0
 Folder=Source Files/regex
 Compile=1
 Link=1
@@ -1298,16 +1288,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit154]
-FileName=..\src\regex\regexec.c
-CompileCpp=1
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit155]
 FileName=..\src\regex\utils.h
 CompileCpp=1
 Folder=Header Files/regex
@@ -1317,7 +1297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit156]
+[Unit155]
 FileName=..\src\regex\cclass.h
 CompileCpp=1
 Folder=Header Files/regex
@@ -1327,8 +1307,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit157]
+[Unit156]
 FileName=..\src\regex\cname.h
+CompileCpp=1
+Folder=Header Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit157]
+FileName=..\src\regex\regex2.h
 CompileCpp=1
 Folder=Header Files/regex
 Compile=1
@@ -1708,8 +1698,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit152]
-FileName=..\src\regex\regcomp.c
-CompileCpp=1
+FileName=..\src\regex\regerror.c
+CompileCpp=0
 Folder=Source Files/regex
 Compile=1
 Link=1
@@ -1718,8 +1708,18 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit153]
-FileName=..\src\regex\regerror.c
-CompileCpp=1
+FileName=..\src\regex\regexec.c
+CompileCpp=0
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit151]
+FileName=..\src\regex\regcomp.c
+CompileCpp=0
 Folder=Source Files/regex
 Compile=1
 Link=1

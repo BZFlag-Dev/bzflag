@@ -9,7 +9,7 @@ CppCompiler=-D__GNUWIN32__ -W -D_WINDOWS -DWIN32 -D_MBCS_@@_
 Includes=..\include;..\win32;.\\
 Linker=-lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=309
+UnitCount=308
 Folders="Header Files","Header Files/regex","Resource Files","Source Files","Source Files/regex"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -2957,27 +2957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit301]
-FileName=..\src\regex\engine.c
-CompileCpp=1
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit302]
-FileName=..\src\regex\regcomp.c
-CompileCpp=1
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit303]
 FileName=..\src\regex\regerror.c
 CompileCpp=1
 Folder=Source Files/regex
@@ -2987,17 +2967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit305]
-FileName=..\src\regex\regfree.c
-CompileCpp=1
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit304]
+[Unit303]
 FileName=..\src\regex\regexec.c
 CompileCpp=1
 Folder=Source Files/regex
@@ -3007,7 +2977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit306]
+[Unit305]
 FileName=..\src\regex\utils.h
 CompileCpp=1
 Folder=Header Files/regex
@@ -3017,7 +2987,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit307]
+[Unit304]
+FileName=..\src\regex\regfree.c
+CompileCpp=1
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit306]
 FileName=..\src\regex\cclass.h
 CompileCpp=1
 Folder=Header Files/regex
@@ -3027,8 +3007,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit308]
+[Unit307]
 FileName=..\src\regex\cname.h
+CompileCpp=1
+Folder=Header Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit308]
+FileName=..\src\regex\regex2.h
 CompileCpp=1
 Folder=Header Files/regex
 Compile=1
@@ -3421,6 +3411,16 @@ BuildCmd=
 FileName=..\src\platform\WinJoystick.cxx
 CompileCpp=1
 Folder=Source Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit301]
+FileName=..\src\regex\regcomp.c
+CompileCpp=1
+Folder=Source Files/regex
 Compile=1
 Link=1
 Priority=1000
