@@ -39,7 +39,7 @@ public:
   virtual void removingPlayer(PlayerId) { }
   /** Get the current target (the player that messages should be sent to,
       or 0 for public messages). */
-  virtual PlayerId getTarget() const { return PlayerId(); }
+  virtual PlayerId getTarget() const { return AllPlayers; }
 
 };
 

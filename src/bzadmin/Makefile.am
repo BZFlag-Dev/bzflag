@@ -6,12 +6,17 @@ MAINTAINERCLEANFILES = \
 if BZADMIN_INCLUDED
 bin_PROGRAMS = bzadmin
 
+if HAVE_CURSES
+CURSES_SRC = CursesUI.h CursesUI.cxx
+else
+CURSES_SRC = 
+endif
+
 bzadmin_SOURCES = \
 	AutoCompleter.h \
 	AutoCompleter.cxx \
 	BZAdminUI.h \
-	CursesUI.h \
-	CursesUI.cxx \
+	$(CURSES_SRC) \
 	OptionParser.h \
 	OptionParser.cxx \
 	ServerLink.cxx \

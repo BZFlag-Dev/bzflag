@@ -218,8 +218,10 @@ AM_CONDITIONAL(BZADMIN_INCLUDED, test x$enable_bzadmin = xyes)
 if test x$enable_bzadmin = xyes; then
    MP_WITH_CURSES
    if test x$CURSES_LIB = x; then
-      AC_MSG_ERROR(could not find a curses library)
+      AC_MSG_WARN([could not find a curses library, will build bzadmin \
+                  without curses])
    fi
+   AM_CONDITIONAL(HAVE_CURSES, test x$CURSES_LIB != x)
    # ugly hack
    (cd src/bzadmin; rm ServerLink.cxx; $LN_S ../bzflag/ServerLink.cxx .)
 fi

@@ -20,7 +20,9 @@
 #include <curses.h>
 
 #include "BZAdminUI.h"
+#if (defined(HAVE_CURSES_H) || defined (HAVE_NCURSES_H))
 #include "CursesUI.h"
+#endif
 #include "ServerLink.h"
 #include "StdBothUI.h"
 #include "StdInUI.h"
@@ -133,8 +135,13 @@ int main(int argc, char** argv) {
     ui = new StdInUI;
   else if (clOptions.stdout)
     ui = new StdOutUI;
-  else
+  else {
+#if (defined(HAVE_CURSES_H) || defined(HAVE_NCURSES_H))
     ui = new CursesUI(players, sLink.getId());
+#else
+    ui = new StdBothUI;
+#endif
+  }
 
   // main loop
   string str;
