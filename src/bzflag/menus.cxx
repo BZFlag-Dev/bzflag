@@ -1640,6 +1640,10 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.push_back(createLabel("quit"));
   list.push_back(createLabel("scroll message log backward"));
   list.push_back(createLabel("scroll message log forward"));
+  list.push_back(createLabel("Slow Keyboard Motion"));
+  list.push_back(createLabel("Toggle Radar Flags"));
+  list.push_back(createLabel("Toggle Main Flags"));
+  list.push_back(createLabel("Silience/UnSilence"));
   list.push_back(createLabel("show/dismiss menu", "Esc:"));
 }
 
