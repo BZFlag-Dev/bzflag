@@ -101,7 +101,7 @@ const struct CommandListItem commandList[] = {
   { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
   { "messagepanel", &cmdMessagePanel,
-    "messagespanel {all|chat|server|misc}:  set message tab" },
+    "messagepanel {all|chat|server|misc}:  set message tab" },
   { "toggleFlags", &cmdToggleFlags, "toggleFlags {main|radar}:  turn off on field radar flags"}
 };
 
