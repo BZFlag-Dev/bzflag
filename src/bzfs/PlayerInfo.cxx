@@ -29,7 +29,6 @@ void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd) {
   state = PlayerInLimbo;
   peer = Address(taddr);
   tcplen = 0;
-  udplen = 0;
   assert(outmsg == NULL);
   outmsgSize = 0;
   outmsgOffset = 0;
@@ -121,7 +120,6 @@ void PlayerInfo::resetAccess() {
   udpin = false;
   udpout = false;
   toBeKicked = false;
-  udplen = 0;
 
   tcplen = 0;
 
@@ -303,8 +301,38 @@ int PlayerInfo::send(const void *buffer, size_t length) {
   return ::send(fd, (const char *)buffer, length, 0);
 };
 
-int PlayerInfo::receive(size_t lenght) {
-  return recv(fd, tcpmsg + tcplen, lenght, 0);
+RxStatus PlayerInfo::receive(size_t length) {
+  RxStatus returnValue;
+  if (fd == -1)
+    return ReadPart;
+  if ((int)length <= tcplen)
+    return ReadAll;
+  int size = recv(fd, tcpmsg + tcplen, length - tcplen, 0);
+  if (size > 0) {
+    tcplen += size;
+    if (tcplen == (int)length)
+      returnValue = ReadAll;
+    else
+      returnValue = ReadPart;
+  } else if (size < 0) {
+    // handle errors
+    // get error code
+    const int err = getErrno();
+
+    // ignore if it's one of these errors
+    if (err == EAGAIN || err == EINTR)
+      returnValue = ReadPart;
+
+    // if socket is closed then give up
+    if (err == ECONNRESET || err == EPIPE) {
+      returnValue = ReadReset;
+    } else {
+      returnValue = ReadError;
+    }
+  } else if (size == 0) {
+    returnValue = ReadDiscon;
+  }
+  return returnValue;
 };
 
 void PlayerInfo::resetComm() {
@@ -611,6 +639,7 @@ bool PlayerInfo::isARabbitKill(PlayerInfo &victim) {
 
 void PlayerInfo::resetFlag() {
   flag = -1;
+  lastFlagDropTime = TimeKeeper::getCurrent();
 };
 
 bool PlayerInfo::haveFlag() const {
@@ -665,6 +694,27 @@ bool PlayerInfo::scoreReached(int score) {
   return wins - losses >= score;
 };
 
+bool PlayerInfo::isFlagTransitSafe() {
+  return TimeKeeper::getCurrent() - lastFlagDropTime >= 2.0f;
+};
+
+void PlayerInfo::udpFillRead(void *buf, int len) {
+  if (len >= 1024)
+    len = 1023;
+  memcpy(udpmsg, buf, len);
+};
+
+void *PlayerInfo::getUdpBuffer() {
+  return udpmsg;
+};
+
+void *PlayerInfo::getTcpBuffer() {
+  return tcpmsg;
+};
+
+void PlayerInfo::cleanTcp() {
+  tcplen = 0;
+};
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

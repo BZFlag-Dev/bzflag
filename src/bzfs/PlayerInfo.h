@@ -48,6 +48,14 @@ enum ClientState {
   PlayerAlive
 };
 
+enum RxStatus {
+  ReadAll,
+  ReadPart,
+  ReadReset,
+  ReadError,
+  ReadDiscon
+};
+
 
 #ifdef DEBUG
 #define NETWORK_STATS
@@ -107,7 +115,7 @@ public:
 #endif
   bool        isConnected();
   int         send(const void *buffer, size_t length);
-  int         receive(size_t lenght);
+  RxStatus    receive(size_t length);
   void        resetComm();
   void        closeComm();
   void        dropUnconnected();
@@ -162,6 +170,11 @@ public:
   void        setOneMoreWin();
   void       *packScore(void *buf, int index);
   bool        scoreReached(int score);
+  bool        isFlagTransitSafe();
+  void        udpFillRead(void *buf, int len);
+  void       *getUdpBuffer();
+  void       *getTcpBuffer();
+  void        cleanTcp();
 private:
     // player access
     PlayerAccessInfo accessInfo;
@@ -199,7 +212,6 @@ private:
     // player's score
     int wins, losses, tks;
 
-public:
     TimeKeeper lastFlagDropTime;
 
     // input buffers
@@ -207,11 +219,10 @@ public:
     int tcplen;
     // current TCP msg
     char tcpmsg[MaxPacketLen];
-    // bytes read in current msg
-    int udplen;
     // current UDP msg
     char udpmsg[MaxPacketLen];
 
+public:
     // output buffer
     int outmsgOffset;
     int outmsgSize;

@@ -249,7 +249,6 @@ void handleFlagCmd(int t, const char *message)
 	buf = nboPackUShort(buf, uint16_t(i));
 	buf = flag[i].flag.pack(buf);
 	broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
-	player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
 
       }
       if ((playerIndex == -1) || (!onlyUnused))
@@ -271,7 +270,6 @@ void handleFlagCmd(int t, const char *message)
 	  buf = nboPackUShort(buf, uint16_t(i));
 	  buf = flag[i].flag.pack(buf);
 	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
-	  player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
 	}
 	flag[i].flag.status = FlagGoing;
 	if (!flag[i].required)

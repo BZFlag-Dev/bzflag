@@ -513,56 +513,35 @@ static int uread(int *playerIndex, int *nopackets, int& n,
 
   if (n > 0) {
     *nopackets = 1;
-    int clen = n;
-    if (clen < 1024) {
-      memcpy(pPlayerInfo->udpmsg,ubuf,clen);
-      pPlayerInfo->udplen = clen;
-    }
-    return pPlayerInfo->udplen;
+    pPlayerInfo->udpFillRead(ubuf, n);
+    return n;
   }
   return 0;
 }
 
 
-static int pread(int playerIndex, int l)
+static bool pread(int playerIndex, int l)
 {
   PlayerInfo& p = player[playerIndex];
-  //DEBUG1("pread,playerIndex,l %i %i\n",playerIndex,l);
-  if (!p.isConnected() || l == 0)
-    return 0;
 
   // read more data into player's message buffer
-  const int e = p.receive(l);
+  const RxStatus e = p.receive(l);
 
-  // accumulate bytes read
-  if (e > 0) {
-    p.tcplen += e;
-  } else if (e < 0) {
-    // handle errors
-    // get error code
-    const int err = getErrno();
-
-    // ignore if it's one of these errors
-    if (err == EAGAIN || err == EINTR)
-      return 0;
-
-    // if socket is closed then give up
-    if (err == ECONNRESET || err == EPIPE) {
-      removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
-      return -1;
-    }
-
-    // dump other errors and remove the player
-    nerror("error on read");
-    removePlayer(playerIndex, "Read error", false);
-    return -1;
+  if (e == ReadAll) {
+    return true;
   } else {
-    // disconnected
-    removePlayer(playerIndex, "Disconnected", false);
-    return -1;
+    if (e == ReadReset) {
+      removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
+    } else if (e == ReadError) {
+      // dump other errors and remove the player
+      nerror("error on read");
+      removePlayer(playerIndex, "Read error", false);
+    } else if (e == ReadDiscon) {
+      // disconnected
+      removePlayer(playerIndex, "Disconnected", false);
+    }
+    return false;
   }
-
-  return e;
 }
 
 
@@ -2249,7 +2228,6 @@ void zapFlag(int flagIndex)
     buf = nboPackUShort(buf, uint16_t(flagIndex));
     buf = flag[flagIndex].flag.pack(buf);
     broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
-    player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
   }
 
   // if flag was flying then it flies no more
@@ -3117,6 +3095,7 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].resetFlag();
+
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, uint16_t(flagIndex));
@@ -3126,7 +3105,6 @@ static void dropFlag(int playerIndex, float pos[3])
   // notify of new flag state
   sendFlagUpdate(flagIndex);
 
-  player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
 }
 
 static void captureFlag(int playerIndex, TeamColor teamCaptured)
@@ -3524,7 +3502,8 @@ static void parseCommand(const char *message, int t)
   }
 }
 
-static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
+static void handleCommand(int t, uint16_t code, uint16_t len,
+			  const void *rawbuf)
 {
   void *buf = (void*)((char*)rawbuf + 4);
 #ifdef NETWORK_STATS
@@ -3790,12 +3769,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	flag[flagIndex].flag.owner = to;
 	flag[flagIndex].player = to;
+	player[to].resetFlag();
 	player[to].setFlag(flagIndex);
 	player[from].resetFlag();
 	buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
-	player[from].lastFlagDropTime = TimeKeeper::getCurrent();
-	player[to].lastFlagDropTime = TimeKeeper::getCurrent();
 	break;
     }
 
@@ -3928,10 +3906,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  removePlayer(t, "Out of map bounds");
 	}
 
-	// Speed problems occur around flag drops, so don't check for a short period of time
-	// after player drops a flag. Currently 2 second, adjust as needed.
-
-	if (TimeKeeper::getCurrent() - player[t].lastFlagDropTime >= 2.0f) {
+	// Speed problems occur around flag drops, so don't check for
+	// a short period of time after player drops a flag. Currently
+	// 2 second, adjust as needed.
+	if (player[t].isFlagTransitSafe()) {
 	  // check for highspeed cheat; if inertia is enabled, skip test for now
 	  if (clOptions->linearAcceleration == 0.0f) {
 	    // Doesn't account for going fast backwards, or jumping/falling
@@ -4875,11 +4853,8 @@ int main(int argc, char **argv)
 	  if (result <= 0)
 	    break;
 
-	  // clear out message
-	  player[i].udplen = 0;
-
 	  // handle the command for UDP
-	  handleCommand(i, code, len, player[i].udpmsg);
+	  handleCommand(i, code, len, player[i].getUdpBuffer());
 
 	  // don't spend more than 250ms receiving udp
 	  if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
@@ -4897,17 +4872,13 @@ int main(int argc, char **argv)
 
 	if (player[i].exist() && player[i].fdIsSet(&read_set)) {
 	  // read header if we don't have it yet
-	  if (player[i].tcplen < 4) {
-	    pread(i, 4 - player[i].tcplen);
-
+	  if (!pread(i, 4))
 	    // if header not ready yet then skip the read of the body
-	    if (player[i].tcplen < 4)
-	      continue;
-	  }
+	    continue;
 
 	  // read body if we don't have it yet
 	  uint16_t len, code;
-	  void *buf = player[i].tcpmsg;
+	  void *buf = player[i].getTcpBuffer();
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
 	  if (len>MaxPacketLen) {
@@ -4915,16 +4886,12 @@ int main(int argc, char **argv)
 	    removePlayer(i, "large packet recvd", false);
 	    continue;
 	  }
-	  if (player[i].tcplen < 4 + (int)len) {
-	    pread(i, 4 + (int)len - player[i].tcplen);
-
-	    // if body not ready yet then skip the command handling
-	    if (player[i].tcplen < 4 + (int)len)
-	      continue;
-	  }
+	  // if body not ready yet then skip the command handling
+	  if (!pread(i, 4 + (int)len))
+	    continue;
 
 	  // clear out message
-	  player[i].tcplen = 0;
+	  player[i].cleanTcp();
 
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // he/she must not be using the UDP link
@@ -4945,7 +4912,7 @@ int main(int argc, char **argv)
 	  }
 
 	  // handle the command
-	  handleCommand(i, code, len, player[i].tcpmsg);
+	  handleCommand(i, code, len, player[i].getTcpBuffer());
 	}
       }
     } else if (nfound < 0) {
