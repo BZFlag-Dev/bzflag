@@ -16,7 +16,7 @@
 /** this file contains headers necessary for SDL */
 
 #ifdef HAVE_SDL
-#  ifdef _MSC_VER
+#  ifdef HAVE_SDL_SDL_H
 #    include <SDL/SDL.h>
 #    include <SDL/SDL_thread.h>
 #    include <SDL/SDL_getenv.h>
@@ -24,7 +24,7 @@
 #    include "SDL.h"
 #    include "SDL_thread.h"
 #    include "SDL_getenv.h"
-#  endif //_WIN32
+#  endif //HAVE_SDL_SDL_H
 #endif //HAVE_SDL
 
 #endif /* __BZFSDL_H__ */
