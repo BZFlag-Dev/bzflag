@@ -12,14 +12,15 @@
 
 #if !defined(_WIN32)
 
-#include "network.h"
 #include "ErrorHandler.h"
+#include "network.h"
 #include "Address.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+
 
 #if defined(_old_linux_)
 #define hstrerror(x) sys_errlist[x]
@@ -149,10 +150,23 @@ void			nerror(const char* msg)
       errmsg = netErrorCodes[i].msg;
       break;
     }
-  if (msg)
-    printError("%s: %s (%d)", msg, errmsg, err);
-  else
-    printError("%s (%d)", errmsg, err);
+  if (msg) {
+    char buf[50];
+    std::vector<std::string> args;
+    args.push_back(msg);
+    args.push_back(errmsg);
+    sprintf(buf, "%d", err);
+    args.push_back(buf);
+    printError("{1}: {2} ({3})", &args);
+  }
+  else {
+    char buf[50];
+    std::vector<std::string> args;
+    args.push_back(errmsg);
+    sprintf(buf, "%d", err);
+    args.push_back(buf);
+    printError("{1} ({2})", &args);
+  }
 }
 
 void			herror(const char* msg)

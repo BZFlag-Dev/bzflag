@@ -6,6 +6,8 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 
+Bundle *BundleMgr::currentBundle = NULL;
+
 BundleMgr::BundleMgr(const std::string &path, const std::string &name)
 {
   bundlePath = path;
@@ -47,6 +49,12 @@ Bundle *BundleMgr::getBundle(const std::string &locale)
 
   bundles.insert(std::pair<std::string,Bundle*>(locale, pB));
 
+  currentBundle = pB;
   return pB;
+}
+
+Bundle *BundleMgr::getCurrentBundle()
+{
+    return currentBundle;
 }
 // ex: shiftwidth=2 tabstop=8

@@ -796,7 +796,11 @@ void			ServerLink::sendUDPlinkRequest()
   localPort = ntohs(serv_addr.sin_port);
   memcpy((char *)&urecvaddr,(char *)&serv_addr, sizeof(serv_addr));
 
-  printError("Network: Created local UDP downlink port %d",localPort);
+  std::vector<std::string> args;
+  char lps[10];
+  sprintf(lps, "%d", localPort);
+  args.push_back(lps);
+  printError("Network: Created local UDP downlink port {1}", &args);
 
   buf = nboPackUShort(buf, uint16_t(localPort));
 
@@ -827,7 +831,14 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
   memcpy((unsigned char *)&usendaddr,(unsigned char *)&serv_addr, sizeof(serv_addr));
 
   printError("Server did send endpoint information, UDP connection up");
-  printError("More Info: [%s:%d:%d]", inet_ntoa(serv_addr.sin_addr), portno, urecvfd);
+  std::vector<std::string> args;
+  args.push_back(inet_ntoa(serv_addr.sin_addr));
+  char info[10];
+  sprintf(info,"%d", portno);
+  args.push_back(info);
+  sprintf(info,"%d", urecvfd);
+  args.push_back(info);
+  printError("More Info: [{1}:{2}:{3}]", &args);
 
   buf = nboPackUShort(buf, 0);  // empty
 

@@ -29,7 +29,7 @@ unsigned char*		getTextureImage(const std::string& file,
   if (file.length() == 0) return NULL;
   std::vector<std::string> args;
   args.push_back(file);
-  printError(bdl->formatMessage( "loading {1}", &args ).c_str());
+  printError("loading {1}", &args );
   return PlatformFactory::getMedia()->readImage(file, width, height, depth);
 }
 
@@ -41,7 +41,7 @@ unsigned char*		getTextImage(const std::string& file,
   if (file.length() == 0) return NULL;
   std::vector<std::string> args;
   args.push_back(file);
-  printError(bdl->formatMessage( "loading {1}", &args ).c_str());
+  printError("loading {1}", &args );
   int depth;
   unsigned char* image = PlatformFactory::getMedia()->
 			readImage(file, width, height, depth);
@@ -59,7 +59,9 @@ OpenGLTexture		getTexture(const std::string& file,
   int width, height, depth;
   unsigned char* image = getTextureImage(file, width, height, depth);
   if (!image) {
-    if (!noError) printError("cannot load texture: %s", file.c_str());
+    std::vector<std::string> args;
+    args.push_back(file);
+    if (!noError) printError("cannot load texture: {1}", &args);
     return OpenGLTexture();
   }
 

@@ -85,7 +85,9 @@ void			BzfWindow::removeResizeCallback(
 
 void			BzfWindow::initJoystick(const char* joystickName)
 {
-  printError("joystick '%s' not supported...", joystickName);
+  std::vector<std::string> args;
+  args.push_back(joystickName);
+  printError("joystick '{1}' not supported...", &args);
 }
 
 // ex: shiftwidth=2 tabstop=8

@@ -89,6 +89,8 @@ istream&		operator>>(istream& input, ResourceDatabase& db)
 {
   char lineBuffer[MaximumResourceLineLength + 1];
   int lineNumber = 0;
+  std::vector<std::string> args;
+  char buf[50];
 
   while (input) {
     // get next line
@@ -98,12 +100,16 @@ istream&		operator>>(istream& input, ResourceDatabase& db)
     // check for errors
     if (input.eof()) continue;
     if (input.fail()) {
-      if (input.bad())
-	printError("Configuration file:  "
-		"Error on line %d: Stream failure", lineNumber);
-      else
-	printError("Configuration file:  "
-		"Error on line %d: Line too long", lineNumber);
+      if (input.bad()) {
+	sprintf(buf, "%d", lineNumber);
+	args.push_back(buf);
+	printError("Configuration file:  Error on line {1}: Stream failure", &args);
+      }
+      else {
+	sprintf(buf, "%d", lineNumber);
+	args.push_back(buf);
+	printError("Configuration file:  Error on line {1}: Line too long", &args);
+      }
       continue;
     }
 

@@ -17,6 +17,8 @@
 #if defined(_WIN32)
 #include <windows.h>
 #endif
+#include "BundleMgr.h"
+#include "Bundle.h"
 
 static ErrorCallback	errorCallback = NULL;
 
@@ -27,18 +29,23 @@ ErrorCallback		setErrorCallback(ErrorCallback cb)
   return oldErrorCallback;
 }
 
-void			printError(const char* fmt, ...)
+void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 {
-  char buffer[1024];
-  va_list args;
-  va_start(args, fmt);
-  vsprintf(buffer, fmt, args);
-  va_end(args);
-  if (errorCallback) (*errorCallback)(buffer);
+  std::string msg;
+  Bundle *pBdl = BundleMgr::getCurrentBundle();
+  if (!pBdl)
+    return;
+
+  if ((parms != NULL) && (parms->size() > 0))
+    msg = pBdl->formatMessage(fmt, parms);
+  else
+    msg = pBdl->getLocalString(fmt);
+
+  if (errorCallback) (*errorCallback)(msg.c_str());
 #if defined(_WIN32)
-  else { OutputDebugString(buffer); OutputDebugString("\n"); }
+  else { OutputDebugString(msg.c_str()); OutputDebugString("\n"); }
 #else
-  else fprintf(stderr, "%s\n", buffer);
+  else fprintf(stderr, "%s\n", msg.c_str());
 #endif
 }
 // ex: shiftwidth=2 tabstop=8

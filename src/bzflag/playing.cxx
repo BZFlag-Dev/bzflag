@@ -1734,13 +1734,17 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
 static void		handleServerMessage(bool human, uint16_t code,
 						uint16_t, void* msg)
 {
+  std::vector<std::string> args;
+  char buf[50];
   bool checkScores = false;
   switch (code) {
 
     case MsgUDPLinkRequest:
       uint16_t portNo;
       msg = nboUnpackUShort(msg, portNo);
-	  printError("Server sent downlink endpoint information, port %d",portNo);
+	  sprintf(buf,"%d", portNo);
+	  args.push_back(buf);
+	  printError("Server sent downlink endpoint information, port {1}",&args);
 	  playerLink->setPortForUPD(portNo);
       break;
 
@@ -3805,7 +3809,11 @@ static bool		enterServer(ServerLink* serverLink, World* world,
     return false;
   }
   if (code != MsgAccept && code != MsgReject) {
-    printError("Communication error joining game [Wrong Code %04x].",code);
+    char buf[10];
+    std::vector<std::string> args;
+    sprintf(buf, "%04x", code);
+    args.push_back(buf);
+    printError("Communication error joining game [Wrong Code {1}].",&args);
     return false;
   }
   if (code == MsgReject) {

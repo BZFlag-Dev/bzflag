@@ -458,6 +458,72 @@ msgstr "M@X Pl4YeR $C0re: {1}"
 msgid "Page {1} of {2}"
 msgstr "p@g3 {1} 0f {2}"
 
+msgid "openBroadcast: No udp service {1}"
+msgstr "op3nbR04DC45T: NO udp 53rviCE {1}"
+
+msgid "openMulticast: No udp service {1}"
+msgstr "opEnmUL+1C4$+: NO UdP $3RviC3 {1}"
+
+msgid "openMulticast: Invalid port {1}"
+msgstr "Op3nmuLTiC4$T: 1nVAL1d p0R+ {1}"
+
+msgid "openMulticast: Can't get address of {1}"
+msgstr "0PENMuL+1c45t: C4n'T 9E+ @DDRe5$ 0pH {1}"
+
+msgid "joystick '{1}' not supported..."
+msgstr "j0Y5+ICk '{1}' N0+ 5UPp0rt3D..."
+
+msgid "Ignoring Finder argument '{1}'"
+msgstr "1gnORiNG PhINDEr 4rGuM3N+ '{1}'"
+
+msgid "Can't open list server: {1}"
+msgstr "C4n'+ 0p3n L15T s3rVer: {1}"
+
+msgid "Server sent downlink endpoint information, port {1}"
+msgstr "5erv3r 5En+ d0wnlInK 3ndPOiNt 1nf0rm@+IOn, P0RT {1}"
+
+msgid "Communication error joining game [Wrong Code {1}]."
+msgstr "C0Mmunic@T1ON 3rRoR j0Inin9 94m3 [wR0N9 c0D3 {1}]."
+
+msgid "Configuration file:  Error on line {1}: Stream failure"
+msgstr "COnf1GUR4TIon PHiLE: Err0R 0N l1n3 {1}: $+re@M pH4ILuR3"
+
+msgid "Configuration file:  Error on line {1}: Line too long"
+msgstr "C0nFIgUr4tiON F1LE: ERR0R On LiNe {1}: l1N3 To0 L0NG"
+
+msgid "Network: Created local UDP downlink port {1}"
+msgstr "n3TWOrK: Cr3AT3D LOC4L Udp dowNlink P0RT {1}"
+
+msgid "msgid "More Info: [{1}:{2}:{3}]"
+msgstr "M$9iD "m0RE 1NF0: [{1}:{2}:{3}]"
+
+msgid "cannot load texture: {1}"
+msgstr "c@NN0t lO4D +3X+UR3: {1}"
+
+msgid "Connection failed."
+msgstr "CoNnECTIoN f41LeD."
+
+msgid "Server forced a disconnect"
+msgstr "5eRvEr f0Rc3D 4 DiSc0NN3C+"
+
+msgid "Rogues not allowed.  Try another team."
+msgstr "rO9u35 n0T @llOW3d. TRY AnOTh3r T34M."
+
+msgid "This team is full.  Try another team."
+msgstr "+H15 +34m 15 fuLl. TRy @NOThER +EAm."
+
+msgid "This game is full.  Try again later."
+msgstr "+H15 G@M3 I$ pHuLL. +ry @G@1n LA+3R."
+
+msgid "Game is full or over.  Try again later."
+msgstr "G4M3 1$ fULL OR 0v3R. try 49@iN L4+er."
+
+msgid "Error connecting to server."
+msgstr "3RR0R c0NN3c+iNG T0 5ErveR. "
+
+msgid "Error downloading world database"
+msgstr "3Rr0r DOwnlo4d1ng W0rlD D4T48@53"
+
 # Super Flags
 
 msgid "High Speed"

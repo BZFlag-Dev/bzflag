@@ -584,7 +584,9 @@ static void		parse(int argc, char** argv,
       resources.addValue("focal", argv[i]);
     }
     else if (strncmp(argv[i], "-psn", 3) == 0) {
-	printError("Ignoring Finder argument \"%s\"\n", argv[i]);
+	std::vector<std::string> args;
+	args.push_back(argv[i]);
+	printError("Ignoring Finder argument \"{1}\"", &args);
 	// ignore process serial number argument for MacOS X
     }
     else if (i == argc-1) {

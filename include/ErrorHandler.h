@@ -17,10 +17,18 @@
 #ifndef BZF_ERROR_HANDLER_H
 #define	BZF_ERROR_HANDLER_H
 
+#ifdef _WIN32
+#pragma warning( 4: 4786 )
+#endif
+
+#include <vector>
+#include <string>
+#include "Bundle.h"
+
 typedef void		(*ErrorCallback)(const char*);
 
 ErrorCallback		setErrorCallback(ErrorCallback);
-void			printError(const char* fmt, ...);
+void			printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
 
 #endif // BZF_ERROR_HANDLER_H
 // ex: shiftwidth=2 tabstop=8

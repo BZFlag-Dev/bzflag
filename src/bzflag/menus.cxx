@@ -2699,8 +2699,11 @@ void			ServerMenu::checkEchos()
 
     // print urls we failed to open
     int i;
-    for (i = 0; i < failedURLs.size(); ++i)
-	printError("Can't open list server: %s", failedURLs[i].c_str());
+    for (i = 0; i < failedURLs.size(); ++i) {
+	std::vector<std::string> args;
+	args.push_back(failedURLs[i]);
+	printError("Can't open list server: {1}", &args);
+    }
 
     // check urls for validity
     numListServers = 0;
@@ -2712,7 +2715,9 @@ void			ServerMenu::checkEchos()
 	if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
 	    protocol != "bzflist" || port < 1 || port > 65535 ||
 	    (address = Address::getHostAddress(hostname.c_str())).isAny()) {
-	    printError("Can't open list server: %s", urls[i].c_str());
+	    std::vector<std::string> args;
+	    args.push_back(urls[i]);
+	    printError("Can't open list server: {1}", &args);
 	    continue;
 	}
 

@@ -38,7 +38,10 @@ int			openBroadcast(int port, const char* service,
     struct servent *sp = getservbyname(service, "udp");
     if (!sp) {
       if (port <= 0) {
-	printError("openBroadcast: No udp service %s", service);
+	std::vector<std::string> args;
+	args.push_back(service);
+
+	printError("openBroadcast: No udp service {1}", &args);
 	return -1;
       }
     }
@@ -47,7 +50,11 @@ int			openBroadcast(int port, const char* service,
     }
   }
   if (port <= 0) {
-    printError("openBroadcast: Invalid port %s", port);
+    std::vector<std::string> args;
+    char buf[10];
+    sprintf(buf,"%d", port);
+    args.push_back(buf);
+    printError("openBroadcast: Invalid port {1}", &args);
     return -1;
   }
 
@@ -196,7 +203,9 @@ int			openMulticast(const Address& address, int port,
     struct servent *sp = getservbyname(service, "udp");
     if (!sp) {
       if (port <= 0) {
-	printError("openMulticast: No udp service %s", service);
+	std::vector<std::string> args;
+	args.push_back(service);
+	printError("openMulticast: No udp service {1}", &args);
 	return -1;
       }
     }
@@ -205,7 +214,11 @@ int			openMulticast(const Address& address, int port,
     }
   }
   if (port <= 0) {
-    printError("openMulticast: Invalid port %s", port);
+    std::vector<std::string> args;
+    char buf[10];
+    sprintf(buf, "%d", port);
+    args.push_back(buf);
+    printError("openMulticast: Invalid port {1}", &args);
     return -1;
   }
 
@@ -229,7 +242,9 @@ int			openMulticast(const Address& address, int port,
     if (ifaddr.s_addr == (unsigned long)-1) {
       struct hostent* hp = gethostbyname(net_interface);
       if (!hp) {
-	printError("openMulticast: Can't get address of %s", net_interface);
+	std::vector<std::string> args;
+	args.push_back(net_interface);
+	printError("openMulticast: Can't get address of {1}", &args);
 	close(fd);
 	return -1;
       }

@@ -1,6 +1,5 @@
-# This is generic
+# This is generic Klingon
 
-# this is l337!
 msgid "Join Game"
 msgstr "Quj muv"
 
@@ -143,7 +142,7 @@ msgstr "tIn"
 #msgstr ""
 
 #msgid "Rogue" 
-#msgstr ""
+#msgstr "lotlhwI'"
 
 msgid "Red Team" 
 msgstr "wa'DIch boq"

@@ -18,6 +18,7 @@ public:
 	BundleMgr(const std::string &path, const std::string &bundleName);
 	BundleMgr::~BundleMgr();
 	Bundle *getBundle(const std::string &locale);
+	static Bundle *getCurrentBundle();
 private:
 	BundleMgr(const BundleMgr &xBundleMgr);
 	BundleMgr& operator=(const BundleMgr &xBundleMgr);
@@ -25,6 +26,8 @@ private:
 	std::string bundlePath;
 	std::string bundleName;
 	BundleMap bundles;
+
+	static Bundle *currentBundle;
 };
 
 #endif
