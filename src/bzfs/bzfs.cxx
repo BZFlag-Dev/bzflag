@@ -4566,7 +4566,7 @@ static void annointNewRabbit()
       }
     }
   }
-  if (rabbitIndex == oldRabbit) {
+  if (rabbitIndex == NoPlayer) {
     // nobody, or no other than old rabbit to choose from
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
