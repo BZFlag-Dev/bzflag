@@ -615,7 +615,8 @@ class KeyboardMapMenu : public HUDDialog {
       std::string key1;
       std::string key2;
     };
-    std::map<std::string, keymap>	mappable;
+    typedef std::map<std::string, keymap> KeyKeyMap;
+    KeyKeyMap				mappable;
     KeyboardMapMenuDefaultKey		defaultKey;
     HUDuiControl*			reset;
     int 				editing;
@@ -743,7 +744,7 @@ void			KeyboardMapMenu::setKey(const BzfKeyEvent& event)
 {
   if (editing == -1)
     return;
-  std::map<std::string, keymap>::iterator it;
+  KeyKeyMap::iterator it;
   for (it = mappable.begin(); it != mappable.end(); it++)
     if (it->second.index == editing)
       break;
@@ -765,7 +766,7 @@ void			KeyboardMapMenu::execute()
   else {
     // start editing
     std::vector<HUDuiControl*>& list = getControls();
-    std::map<std::string, keymap>::iterator it;
+    KeyKeyMap::iterator it;
     for (it = mappable.begin(); it != mappable.end(); it++) {
       if (list[it->second.index] == focus) {
 	editing = it->second.index;
@@ -845,7 +846,7 @@ void			KeyboardMapMenu::resize(int width, int height)
 
 void			KeyboardMapMenu::update()
 {
-  std::map<std::string, keymap>::iterator it;
+  KeyKeyMap::iterator it;
   // clear
   for (it = mappable.begin(); it != mappable.end(); it++) {
     it->second.key1 = "";
@@ -878,7 +879,7 @@ void			KeyboardMapMenu::onScan(const std::string& name, bool press,
 {
   if (!press)
     return;
-  std::map<std::string, keymap>::iterator it = mappable.find(cmd);
+  KeyKeyMap::iterator it = mappable.find(cmd);
   if (it == mappable.end())
     return;
   if (it->second.key1.empty())
@@ -2071,7 +2072,8 @@ class Help1Menu : public HelpMenu {
       std::string key1;
       std::string key2;
     };
-    std::map<std::string, keymap>	mappable;
+    typedef std::map<std::string, keymap> KeyKeyMap;
+    KeyKeyMap	mappable;
 };
 
 Help1Menu::Help1Menu() : HelpMenu("Controls")
@@ -2146,7 +2148,7 @@ void			Help1Menu::onScan(const std::string& name, bool press,
 {
   if (!press)
     return;
-  std::map<std::string, keymap>::iterator it = mappable.find(cmd);
+  KeyKeyMap::iterator it = mappable.find(cmd);
   if (it == mappable.end())
     return;
   if (it->second.key1.empty())
@@ -2176,7 +2178,7 @@ float			Help1Menu::getLeftSide(int width, int height)
 void			Help1Menu::resize(int width, int height)
 {
   // get current key mapping and set strings appropriately
-  std::map<std::string, keymap>::iterator it;
+  KeyKeyMap::iterator it;
   // clear
   for (it = mappable.begin(); it != mappable.end(); it++) {
     it->second.key1 = "";

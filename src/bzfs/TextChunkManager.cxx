@@ -31,7 +31,7 @@ bool TextChunkManager::parseFile(const std::string &fileName, const std::string 
   }
 
   if (strings.size() != 0) {
-    theChunks.insert(std::map<std::string, StringVector>::value_type(chunkName,strings));
+    theChunks.insert(StringChunkMap::value_type(chunkName,strings));
     chunkNames.push_back(chunkName);
   }
   return true;
@@ -39,7 +39,7 @@ bool TextChunkManager::parseFile(const std::string &fileName, const std::string 
 
 const std::vector<std::string>* TextChunkManager::getTextChunk(const std::string chunkName)
 {
-  std::map<std::string, StringVector>::const_iterator it;
+  StringChunkMap::const_iterator it;
   it =theChunks.find(chunkName);
   if (it != theChunks.end()){
     return &it->second.getVector();

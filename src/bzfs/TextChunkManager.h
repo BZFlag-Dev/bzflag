@@ -65,7 +65,8 @@ public:
   }
 
 private:
-  std::map<std::string, StringVector> theChunks; // a mapping of names of chunks to chunks
+  typedef std::map<std::string, StringVector> StringChunkMap;
+  StringChunkMap theChunks; // a mapping of names of chunks to chunks
   std::vector<std::string> chunkNames; // vector of all the names of the chunks
 };
 
