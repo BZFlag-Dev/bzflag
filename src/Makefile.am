@@ -39,13 +39,22 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 EXTRA_DIST = \
+	c-ares/CHANGES			\
+	c-ares/FILES			\
+	c-ares/Makefile.in		\
+	c-ares/NEWS			\
+	c-ares/README			\
+	c-ares/README.cares		\
 	c-ares/acinclude.m4		\
 	c-ares/aclocal.m4		\
 	c-ares/adig.c			\
 	c-ares/ahost.c			\
+	c-ares/ares.h			\
+	c-ares/ares__close_sockets.c	\
+	c-ares/ares__get_hostent.c	\
+	c-ares/ares__read_line.c	\
 	c-ares/ares_cancel.3		\
 	c-ares/ares_cancel.c		\
-	c-ares/ares__close_sockets.c	\
 	c-ares/ares_destroy.3		\
 	c-ares/ares_destroy.c		\
 	c-ares/ares_dns.h		\
@@ -63,8 +72,6 @@ EXTRA_DIST = \
 	c-ares/ares_gethostbyaddr.c	\
 	c-ares/ares_gethostbyname.3	\
 	c-ares/ares_gethostbyname.c	\
-	c-ares/ares__get_hostent.c	\
-	c-ares/ares.h			\
 	c-ares/ares_init.3		\
 	c-ares/ares_init.c		\
 	c-ares/ares_init_options.3	\
@@ -79,7 +86,6 @@ EXTRA_DIST = \
 	c-ares/ares_process.c		\
 	c-ares/ares_query.3		\
 	c-ares/ares_query.c		\
-	c-ares/ares__read_line.c	\
 	c-ares/ares_search.3		\
 	c-ares/ares_search.c		\
 	c-ares/ares_send.3		\
@@ -91,21 +97,14 @@ EXTRA_DIST = \
 	c-ares/ares_version.3		\
 	c-ares/ares_version.c		\
 	c-ares/ares_version.h		\
-	c-ares/CHANGES			\
 	c-ares/config.guess		\
 	c-ares/config.sub		\
 	c-ares/configure		\
 	c-ares/configure.ac		\
-	c-ares/FILES			\
 	c-ares/install-sh		\
-	c-ares/Makefile.in		\
 	c-ares/maketgz			\
 	c-ares/mkinstalldirs		\
 	c-ares/nameser.h		\
-	c-ares/NEWS			\
-	c-ares/README			\
-	c-ares/README.cares		\
-	c-ares/vc/vc.dsw		\
 	c-ares/vc/adig/adig.dep		\
 	c-ares/vc/adig/adig.dsp		\
 	c-ares/vc/adig/adig.mak		\
@@ -118,4 +117,5 @@ EXTRA_DIST = \
 	c-ares/vc/areslib/areslib.dsp	\
 	c-ares/vc/areslib/areslib.mak	\
 	c-ares/vc/areslib/areslib.plg	\
-	c-ares/windows_port.c		\
+	c-ares/vc/vc.dsw		\
+	c-ares/windows_port.c
