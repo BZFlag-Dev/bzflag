@@ -546,7 +546,7 @@ std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
 	char tempc;
 
 	dst.clear();
-	src.unsetf(ios::skipws);
+	src.unsetf(std::ios::skipws);
 	while (src.peek() != '\n') {
 		while (src.peek() == ' ' || src.peek() == '\t')
 			src >> tempc;
@@ -554,7 +554,7 @@ std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
 		dst.push_back(temp);
 	}
 	src >> tempc;
-	src.setf(ios::skipws);
+	src.setf(std::ios::skipws);
 	return src;
 }
 
@@ -624,7 +624,7 @@ StateDatabase::Expression StateDatabase::infixToPrefix(Expression infix) const
 
 float StateDatabase::evaluate(Expression e) const
 {
-	stack<ExpressionToken> evaluationStack;
+	std::stack<ExpressionToken> evaluationStack;
 	ExpressionToken tok, lvalue, rvalue;
 	bool unary;
 
