@@ -160,26 +160,17 @@ void			BzfWindow::getJoy(int& x, int& y) const
 
 unsigned long		BzfWindow::getJoyButtons() const
 {
-#ifdef HAVE_SDL
   unsigned long buttons = 0;
 
+#ifdef HAVE_SDL
   if (!joystickID)
     return 0;
 
   SDL_JoystickUpdate();
   for (int i = 0; i < joystickButtons; i++)
-    if (SDL_JoystickGetButton(joystickID, i) == 1)
-      if (i == 1)
-	buttons |= 1 << 9;
-      else
-	if ((i > 1) && (i < 10))
-	  buttons |= 1 << (i - 1);
-	else
-	  buttons |= 1 << i;  
-  return buttons;
-#else
-  return 0;
+    buttons |= SDL_JoystickGetButton(joystickID, i) << i;
 #endif
+  return buttons;
 }
 
 void                    BzfWindow::getJoyDevices(std::vector<std::string>
