@@ -30,10 +30,10 @@ recent bugs
   1.7: Player [0] accept() from 208.186.182.172:53470 on 7
        Player [0] shutdownAcceptClient: close(7)
 
-- team tag was added to shots to calculate team kills correctly when players 
+- team tag was added to shots to calculate team kills correctly when players
   change teams (rabbit mode); this does nto really seem to be used or thought through
   so far (apart from printing a different message when one gets shot); without
-  having digged any depper it looks like we would add team id inforamtion to 
+  having digged any depper it looks like we would add team id inforamtion to
   MsgKilled, too.
 
 older bugs in BZFlag

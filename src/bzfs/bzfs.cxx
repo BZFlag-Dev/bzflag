@@ -2217,36 +2217,30 @@ static bool defineWorld()
   delete[] worldDatabase;
 
   // make world and add buildings
-   if (clOptions->gameStyle & TeamFlagGameStyle)
-   {
-      world = defineTeamWorld();
-   }
-   else if (clOptions->worldFile)
-   {
-      world = defineWorldFromFile(clOptions->worldFile);
-   }
-   else
-   {
-      world = defineRandomWorld();
-   }
-   if (world == NULL)
-   {
-      return false;
-   }
+  if (clOptions->gameStyle & TeamFlagGameStyle) {
+    world = defineTeamWorld();
+  } else if (clOptions->worldFile) {
+    world = defineWorldFromFile(clOptions->worldFile);
+  } else {
+    world = defineRandomWorld();
+  }
 
-   maxWorldHeight = world->getMaxWorldHeight();
+  if (world == NULL)
+    return false;
 
-   // package up world
+  maxWorldHeight = world->getMaxWorldHeight();
+
+  // package up world
   world->packDatabase();
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + WorldCodeHeaderSize +
-			world->getDatabaseSize() +
-			4 + WorldCodeEndSize;
+      world->getDatabaseSize() + 4 + WorldCodeEndSize;
   if (clOptions->gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + WorldCodeBaseSize);
 
   worldDatabase = new char[worldDatabaseSize];
-  if(!worldDatabase)		// this should NOT happen but it does sometimes
+  // this should NOT happen but it does sometimes
+  if(!worldDatabase)
     return false;
   memset( worldDatabase, 0, worldDatabaseSize );
 
