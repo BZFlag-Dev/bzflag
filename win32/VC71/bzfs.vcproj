@@ -428,6 +428,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\FlagHistory.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\FlagInfo.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -478,6 +481,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\RejoinList.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.cxx">
@@ -663,6 +669,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\include\Flag.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\FlagHistory.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\FlagInfo.h">
 			</File>
 			<File
@@ -703,6 +712,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\RejoinList.h">
 			</File>
 			<File
 				RelativePath="..\include\ShotUpdate.h">
