@@ -169,27 +169,25 @@ void			TankSceneNode::move(const GLfloat pos[3],
 
 void			TankSceneNode::notifyStyleChange()
 {
-  sort = !BZDB.isTrue("zbuffer");
+  sort = !BZDBCache::zbuffer;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(BZDBCache::texture);
-  builder.enableMaterial(BZDB.isTrue("lighting"));
-  builder.setSmoothing(BZDB.isTrue("smooth"));
+  builder.enableMaterial(BZDBCache::lighting);
+  builder.setSmoothing(BZDBCache::smooth);
   if (BZDBCache::blend && transparent) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
-  }
-  else {
+  } else {
     builder.resetBlending();
     builder.setStipple(transparent ? 0.5f : 1.0f);
   }
   gstate = builder.getState();
 
   OpenGLGStateBuilder builder2(lightsGState);
-  if (BZDB.isTrue("smooth")) {
+  if (BZDBCache::smooth) {
     builder2.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder2.setSmoothing();
-  }
-  else {
+  } else {
     builder2.resetBlending();
     builder2.setSmoothing(false);
   }
