@@ -29,6 +29,7 @@
 #include "ObstacleMgr.h"
 #include "PhysicsDriver.h"
 #include "TrackMarks.h"
+#include "RenderNode.h"
 #include "sound.h"
 
 
@@ -772,6 +773,22 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     return; // don't draw anything
   }
   
+  // place the tank
+  tankNode->move(state.pos, forward);
+
+  // only use dimensions if we aren't at steady state.
+  // this is done because it's more expensive to use
+  // GL_NORMALIZE then to use precalculated normals.
+  if (useDimensions) {
+    tankNode->setDimensions(dimensionsScale);
+  } else {
+    if (flagType == Flags::Obesity) tankNode->setObese();
+    else if (flagType == Flags::Tiny) tankNode->setTiny();
+    else if (flagType == Flags::Narrow) tankNode->setNarrow();
+    else if (flagType == Flags::Thief) tankNode->setThief();
+    else tankNode->setNormal();
+  }
+
   // is this tank fully cloaked?
   const bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
   
@@ -799,24 +816,6 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   setVisualTeam(effectiveTeam);
   tankNode->setColor(color);
   
-  // place the tank
-  tankNode->move(state.pos, forward);
-
-  // only use dimensions if we aren't at steady state.
-  // this is done because it's more expensive to use
-  // GL_NORMALIZE then to use precalculated normals.
-  if (!useDimensions) {
-    tankNode->ignoreDimensions();
-    if (flagType == Flags::Obesity) tankNode->setObese();
-    else if (flagType == Flags::Tiny) tankNode->setTiny();
-    else if (flagType == Flags::Narrow) tankNode->setNarrow();
-    else if (flagType == Flags::Thief) tankNode->setThief();
-    else tankNode->setNormal();
-  }
-  else {
-    tankNode->setDimensions(dimensionsScale);
-  }
-
   tankNode->setInTheCockpit(inCockpit);
 
   // reset the clipping plane
@@ -1353,6 +1352,18 @@ void Player::setDeadReckoning()
     inputTurnCenter[1] = inputPos[1] - inputTurnVector[1];
   }
 
+  return;
+}
+
+
+void Player::renderRadar() const
+{
+  if (!isAlive() && !isExploding()) {
+    return; // don't draw anything
+  }
+  if (tankNode) {
+    ((TankSceneNode*)tankNode)->renderRadar();
+  }
   return;
 }
 

@@ -1038,8 +1038,10 @@ static void		doEvent(BzfDisplay* display)
       // paused because of an unmap (shouldn't happen), we're not
       // already counting down to pausing, we're alive, and we're not
       // already paused.
-      if (!pausedByUnmap && pauseCountdown == 0.0f &&
-	  myTank && myTank->isAlive() && !myTank->isPaused() && !myTank->isAutoPilot()) {
+      if (!pausedByUnmap && (pauseCountdown == 0.0f) &&
+	  myTank && myTank->isAlive() &&
+	  !myTank->isPaused() && !myTank->isAutoPilot() &&
+	  !BZDB.isTrue("noUnmapPause")) { // handy for testing
 	// get ready to pause (no cheating through instantaneous pausing)
 	pauseCountdown = 5.0f;
 
@@ -4287,7 +4289,8 @@ static void drawUI()
   // draw the radar
   if (radar) {
     const bool showBlankRadar = myTank && myTank->isPaused();
-    radar->render(*sceneRenderer, showBlankRadar);
+    const bool observer = myTank && (myTank->getTeam() == ObserverTeam);
+    radar->render(*sceneRenderer, showBlankRadar, observer);
   }
   // update the HUD (menus)
   renderDialog();
@@ -4536,11 +4539,10 @@ void drawFrame(const float dt)
 	    }
 	  }
 
-	  const bool following = roaming && !devDriving &&
+	  const bool inCockpit = roaming && !devDriving &&
 				 (roamView == roamViewFP) &&
 				 (roamTrackWinner == i);
-	  const bool showPlayer = !following || showTreads;
-	  const bool inCockpit = following && showTreads;
+	  const bool showPlayer = !inCockpit || showTreads;
 
 	  // add player tank if required
           player[i]->addToScene(scene, effectiveTeam,

@@ -111,21 +111,6 @@ void TankSceneNode::setColor(const GLfloat* rgba)
 }
 
 
-void TankSceneNode::setDimensions(const float dims[3])
-{
-  memcpy (dimensions, dims, sizeof(float[3]));
-  useDimensions = true;
-  return;
-}
-
-
-void TankSceneNode::ignoreDimensions()
-{
-  useDimensions = false;
-  return;
-}
-
-
 void TankSceneNode::setMaterial(const OpenGLMaterial& mat)
 {
   OpenGLGStateBuilder builder(gstate);
@@ -321,6 +306,7 @@ void TankSceneNode::setNormal()
 {
   tankSize = Normal;
   setRadius(baseRadius);
+  useDimensions = false;
 }
 
 
@@ -329,6 +315,7 @@ void TankSceneNode::setObese()
   tankSize = Obese;
   float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
   setRadius(factor*factor*baseRadius);
+  useDimensions = false;
 }
 
 
@@ -337,6 +324,7 @@ void TankSceneNode::setTiny()
   tankSize = Tiny;
   float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
   setRadius(factor*factor*baseRadius);
+  useDimensions = false;
 }
 
 
@@ -344,6 +332,7 @@ void TankSceneNode::setNarrow()
 {
   tankSize = Narrow;
   setRadius(baseRadius);
+  useDimensions = false;
 }
 
 
@@ -352,6 +341,16 @@ void TankSceneNode::setThief()
   tankSize = Thief;
   float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   setRadius(factor*factor*baseRadius);
+  useDimensions = false;
+}
+
+
+void TankSceneNode::setDimensions(const float dims[3])
+{
+  tankSize = Normal;
+  memcpy (dimensions, dims, sizeof(float[3]));
+  useDimensions = true;
+  return;
 }
 
 
@@ -455,6 +454,37 @@ void TankSceneNode::rebuildExplosion()
     vel[i][0] = 80.0f * ((float)bzfrand() - 0.5f);
     vel[i][1] = 80.0f * ((float)bzfrand() - 0.5f);
   }
+  return;
+}
+
+
+void TankSceneNode::renderRadar()
+{
+  const float angleCopy = azimuth; 
+  float posCopy[3];
+  memcpy(posCopy, getSphere(), sizeof(float[3]));
+  
+  const float origin[3] = { 0.0f, 0.0f, 0.0f };
+  setCenter(origin);
+  azimuth = 0.0f;
+
+  gstate.setState();
+
+  float oldAlpha = color[3];
+  if (color[3] < 0.15f) {
+    color[3] = 0.15f;
+  }
+    
+  tankRenderNode.setRadar(true);
+  tankRenderNode.sortOrder(true /* above */, false, false);
+  tankRenderNode.render();
+  tankRenderNode.setRadar(false);
+  
+  color[3] = oldAlpha;
+  
+  setCenter(posCopy);
+  azimuth = angleCopy;
+  
   return;
 }
 
@@ -748,12 +778,20 @@ TankSceneNode::TankRenderNode::TankRenderNode(const TankSceneNode* _sceneNode) :
   narrowWithDepth = false;
   drawLOD = LowTankLOD;
   drawSize = Normal;
+  isRadar = false;
   return;
 }
 
 
 TankSceneNode::TankRenderNode::~TankRenderNode()
 {
+  return;
+}
+
+
+void TankSceneNode::TankRenderNode::setRadar(bool radar)
+{
+  isRadar = radar;
   return;
 }
 
@@ -841,7 +879,19 @@ void TankSceneNode::TankRenderNode::render()
     RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
   }
 
-  if (!isShadow && (sceneNode->sort || sceneNode->transparent)) {
+  if (isRadar && !isExploding) {
+    if (BZDBCache::animatedTreads) {
+      renderPart(LeftTread);
+      renderPart(RightTread);
+    } else {
+      renderPart(LeftCasing);
+      renderPart(RightCasing);
+    }
+    renderPart(Body);
+    renderPart(Turret);
+    renderPart(Barrel);
+  }
+  else if (!isShadow && (sceneNode->sort || sceneNode->transparent)) {
     // draw is some sorted order
     if (sceneNode->explodeFraction == 0.0f) {
       // normal state
@@ -1099,7 +1149,8 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   // draw the part
   glCallList(list);
 
-  if (part == Turret && !isExploding && !isShadow) {
+  // draw the lights on the turret
+  if ((part == Turret) && !isExploding && !isShadow) {
     renderLights();
   }
 
@@ -1128,7 +1179,7 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
   if (BZDBCache::texture) {
     clr = white;
   }
-
+  
   switch (part) {
     case Body: {
       myColor4f(clr[0], clr[1], clr[2], alpha);
@@ -1237,6 +1288,7 @@ void TankSceneNode::TankRenderNode::renderLights()
   glBegin(GL_POINTS);
   {
     const float* scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
+
     myColor3fv(lights[0]);
     glVertex3f(lights[0][3] * scale[0],
 	       lights[0][4] * scale[1],

@@ -357,8 +357,8 @@ static MsgStringList listMsgBasics (PacketInfo *pi)
 static std::string strFlag (u16 id)
 {
   FlagListType::iterator it = FlagList.find (id);
-  std::string name;
-  if (it != PlayerList.end()) {
+  std::string name = "Invalid";
+  if (it != FlagList.end()) {
     name = (*it).second;
   }
   return TextUtils::format ("%-2s [%i]", name.c_str(), id);
@@ -659,15 +659,28 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
   u8 victim, killer;
   int16_t reason, shot;
   FlagType* flagType;
+  int phydrv;
   d = nboUnpackUByte(d, victim);
   d = nboUnpackUByte(d, killer);
   d = nboUnpackShort(d, reason);
   d = nboUnpackShort(d, shot);
   d = FlagType::unpack(d, flagType);
+  if (reason == PhysicsDriverDeath) {
+    d = nboUnpackInt(d, phydrv);
+  }
   listPush (list, 1, "victim: %s", strPlayer(victim).c_str());
   listPush (list, 1, "killer: %s", strPlayer(killer).c_str());
   listPush (list, 1, "reason: %s", strKillReason(reason).c_str());
   listPush (list, 1, "shotid: %i", shot);
+
+  if (flagType != Flags::Null) {
+    listPush (list, 1, "flag:   %s", flagType->flagAbbv);
+  } else {
+    listPush (list, 1, "flag:   Null");
+  }
+  if (reason == PhysicsDriverDeath) {
+    listPush (list, 1, "phydrv: %i", phydrv);
+  }
 
   return list;
 }

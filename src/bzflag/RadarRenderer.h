@@ -42,16 +42,14 @@ class RadarRenderer {
     void		setShape(int x, int y, int w, int h);
     void		setJammed(bool = true);
 
+    void		render(SceneRenderer&, bool blank, bool observer);
+
     void		renderFrame(SceneRenderer&);
     
-    void		render(SceneRenderer&, bool blank = false);
-
-    void		renderObstacles(bool smoothing,
-					bool fastRadar,
-					float range);
+    void		renderObstacles(bool fastRadar, float range);
     void		renderWalls();
-    void		renderBoxPyrMesh(bool smoothing);
-    void		renderBoxPyrMeshFast(bool smoothing, float range);
+    void		renderBoxPyrMesh();
+    void		renderBoxPyrMeshFast(float range);
     void		renderBasesAndTeles();
 
   private:
@@ -60,9 +58,11 @@ class RadarRenderer {
     RadarRenderer&	operator=(const RadarRenderer&);
 
     void		drawShot(const ShotPath*);
-    void		drawTank(float x, float y, float z, bool realSize);
-    void		drawFlag(float x, float y, float z);
-    void		drawFlagOnTank(float x, float y, float z);
+    void		drawTank(const float pos[3],
+                                 const class Player* player);
+    void		drawFancyTank(const class Player* player);
+    void		drawFlag(const float pos[3]);
+    void		drawFlagOnTank(const float pos[3]);
 
     static float	colorScale(const float z, const float h);
     static float	transScale(const float z, const float h);
@@ -73,10 +73,13 @@ class RadarRenderer {
     int			w, h;
     float		ps;
     float		range;
-    bool		smooth;
-    bool		jammed;
     double		decay;
     GLfloat		teamColor[3];
+    bool		smooth;
+    bool		jammed;
+    bool		multiSampled;
+    bool		useTankModels;
+    bool		useTankDimensions;
     static const float	colorFactor;
 };
 

@@ -121,12 +121,14 @@ public:
   void		disableLights(const float mins[3], const float maxs[3]);
   void		reenableLights();
 
+  void		setupSun(); // setup sun lighting params
+  void		enableSun(bool = true); // toggle light state
+
   void		setTimeOfDay(double julianDay);
   const GLfloat*	getSunColor() const;
   const GLfloat*	getSunScaledColor() const;
   GLfloat		getSunBrightness() const;
   const GLfloat*	getSunDirection() const;
-  void		enableSun(bool = true);
   const GLfloat*	getCelestialTransform() const;
 
   SceneDatabase*	getSceneDatabase() const;

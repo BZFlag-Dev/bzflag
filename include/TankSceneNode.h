@@ -84,15 +84,15 @@ class TankSceneNode : public SceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
     void		addLight(SceneRenderer&);
-
-    void		setDimensions(const float size[3]);
-    void		ignoreDimensions();
+    
+    void		renderRadar();
 
     void		setNormal();
     void		setObese();
     void		setTiny();
     void		setNarrow();
     void		setThief();
+    void		setDimensions(const float size[3]);
 
     void		setClipPlane(const GLfloat* plane);
     void		setExplodeFraction(float t);
@@ -113,6 +113,7 @@ class TankSceneNode : public SceneNode {
 			TankRenderNode(const TankSceneNode*);
 			~TankRenderNode();
 	void		setShadow();
+	void		setRadar(bool);
 	void		setTankLOD(TankGeometryEnums::TankLOD);
 	void		setTankSize(TankGeometryEnums::TankSize);
 	void		sortOrder(bool above, bool towards, bool left);
@@ -137,6 +138,7 @@ class TankSceneNode : public SceneNode {
 	TankGeometryEnums::TankSize drawSize;
 	const GLfloat*	color;
 	GLfloat		alpha;
+	bool		isRadar;
 	bool		isShadow;
 	bool		left;
 	bool		above;

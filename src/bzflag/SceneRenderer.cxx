@@ -279,9 +279,11 @@ void SceneRenderer::setQuality(int value)
   if (useQualityValue >= 2) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
   } else {
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
   }
 
   if (useQualityValue >= 3)
@@ -493,6 +495,14 @@ void SceneRenderer::enableSun(bool on)
 {
   if (BZDBCache::lighting && sunOrMoonUp) {
     theSun.enableLight(SunLight, on);
+  }
+}
+
+
+void SceneRenderer::setupSun()
+{
+  if (BZDBCache::lighting && sunOrMoonUp) {
+    theSun.execute(SunLight);
   }
 }
 
