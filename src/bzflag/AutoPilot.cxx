@@ -601,11 +601,6 @@ bool fireAtTank()
 	    player[t]->isAlive() && !player[t]->isPaused() &&
 	    !player[t]->isNotResponding()) {
 
-	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
-	      && (myTank->getFlag() != Flags::ShockWave)
-	      && (myTank->getFlag() != Flags::SuperBullet))
-	    continue;
-
 	  const float *tp = player[t]->getPosition();
 	  float enemyPos[3];
 	  //toss in some lag adjustment/future prediction - 300 millis
@@ -646,7 +641,8 @@ bool fireAtTank()
 	    !player[t]->isNotResponding() &&
 	    myTank->validTeamTarget(player[t])) {
 
-	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
+	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
+	      && (myTank->getFlag() != Flags::SuperBullet))
 	    continue;
 
 	  const float *tp = player[t]->getPosition();
