@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* move server cache stuff out of menus.cxx
+
 * describe rabbit hunt in man page (and in-game help?)
 
 * document headers with JavaDoc-style comments (for doxygen)
