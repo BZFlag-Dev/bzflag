@@ -280,8 +280,14 @@ void CTextToolView::OnFontSavefontfiles()
 
 	m_pFont->GetLogFont(&rLogFont);
 
-	CString	szFaceName;
-	szFaceName.Format("%s",rLogFont.lfFaceName);
+	CString	szFaceNameT;
+	CString szFaceName;
+	szFaceNameT.Format("%s",rLogFont.lfFaceName);
+
+	for (int i = 0; i < szFaceNameT.GetLength(); i++) {
+	  if (szFaceNameT[i] != ' ')
+	    szFaceName = szFaceName + szFaceNameT[i];
+	}
 
 	CString szType;
 
@@ -292,45 +298,45 @@ void CTextToolView::OnFontSavefontfiles()
 			break;
 
 		case FW_THIN:
-			szType = " Thin";
+			szType = "Thin";
 			break;
 		case FW_EXTRALIGHT:
-			szType = " ExtraLight";
+			szType = "ExtraLight";
 			break;
 			break;
 		case FW_LIGHT: 
-			szType = " Light";
+			szType = "Light";
 			break;
 		case FW_MEDIUM:
-			szType = " Medium";
+			szType = "Medium";
 			break;
 		case FW_SEMIBOLD: 
-			szType = " SemiBold";
+			szType = "SemiBold";
 			break;
 		case FW_BOLD:
-			szType = " Bold";
+			szType = "Bold";
 			break;
 		case FW_EXTRABOLD: 
-			szType = " ExtraBold";
+			szType = "ExtraBold";
 			break;
 		case FW_BLACK:
-			szType = " Black";
+			szType = "Black";
 			break;
 
 	}
 
 	if (rLogFont.lfItalic != 0)
-		szType += " Italic";
+		szType += "Italic";
 
 	if (rLogFont.lfUnderline != 0)
-		szType += " Underline";
+		szType += "Underline";
 
 	if (rLogFont.lfStrikeOut != 0)
-		szType += " Strike";
+		szType += "Strike";
 
 	CString	szSize;
 
-	szSize.Format("-%d",m_iFontPointSize);
+	szSize.Format("_%d",m_iFontPointSize);
 
 	CString	szFileName = szFaceName + szType + szSize;
  
