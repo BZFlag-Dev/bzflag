@@ -42,7 +42,7 @@
 /* #undef DEBUG_RENDERING */
 
 /* Uses Kerberos for authentication */
-//#define HAVE_KRB5 1
+#define HAVE_KRB5 1
 
 /* Use libcurl for the MOTD */
 #define HAVE_CURL 1
