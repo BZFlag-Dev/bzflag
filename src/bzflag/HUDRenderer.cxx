@@ -1546,9 +1546,20 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   // dim the font if we're dim
   std::string playerInfo = dim ? ColorStrings[DimColor] : "";
+  // color
   TeamColor teamIndex = player->getTeam();
   if (teamIndex < RogueTeam)
     teamIndex = RogueTeam;
+  playerInfo += ColorStrings[teamIndex];
+  // status
+  if (player->isAdmin())
+    playerInfo += '@';
+  else if (player->isVerified())
+    playerInfo += '+';
+  else if (player->isRegistered())
+    playerInfo += '-';
+  else
+    playerInfo += ' ';
   // callsign
   playerInfo += ColorStrings[teamIndex] + player->getCallSign();
   // email in parenthesis
