@@ -18,6 +18,7 @@ bzfs \- BZFlag game server
 [\fB\-g\fR]
 [\fB\-h\fR]
 [\fB\-help\fR]
+[\fB\-helpmsg \fIfile\fR \fIname\fR]
 [\fB\-i \fIinterface\fR]
 [\fB\-j\fR]
 [\fB\-lagdrop \fIwarn-count\fR]
@@ -123,6 +124,10 @@ Buildings are given random heights.
 .TP
 .B -help
 Shows a help page and lists all the valid flag id's.
+.TP
+\fB-helpmsg \fIfile\fR \fIname\fR
+Create a help message accessible by /help name, which prints the contents
+of file. Restricted to 10 lines per help message.
 .TP
 \fB-i\fI interface\fR
 Server will listen for and respond to ``pings'' (sent via multicast)
