@@ -45,7 +45,6 @@
 #include "RecordReplay.h"
 #include "LagInfo.h"
 #include "FlagHistory.h"
-#include "GameKeeper.h"
 #include "PackVars.h"
 #include "FlagInfo.h"
 
@@ -91,11 +90,9 @@ extern bool countdownActive;
 // externs that identify and password requires
 extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 
-void handlePasswordCmd(int t, const char *message)
+void handlePasswordCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (playerData->accessInfo.passwordAttemptsMax()) {
     DEBUG1("\"%s\" (%s) has attempted too many /password tries\n",
 	   playerData->player.getCallSign(),
@@ -114,11 +111,9 @@ void handlePasswordCmd(int t, const char *message)
 }
 
 
-void handleSetCmd(int t, const char *message)
+void handleSetCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   char message2[MessageLen];
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar)
       && !playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
@@ -137,11 +132,9 @@ void handleSetCmd(int t, const char *message)
 }
 
 
-void handleResetCmd(int t, const char *message)
+void handleResetCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar)
       && !playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the reset command");
@@ -156,11 +149,9 @@ void handleResetCmd(int t, const char *message)
 }
 
 
-void handleShutdownserverCmd(int t, const char *)
+void handleShutdownserverCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::shutdownServer)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
     return;
@@ -170,11 +161,9 @@ void handleShutdownserverCmd(int t, const char *)
 }
 
 
-void handleSuperkillCmd(int t, const char *)
+void handleSuperkillCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
     return;
@@ -188,11 +177,9 @@ void handleSuperkillCmd(int t, const char *)
 }
 
 
-void handleGameoverCmd(int t, const char *)
+void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::endGame)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the gameover command");
     return;
@@ -209,11 +196,9 @@ void handleGameoverCmd(int t, const char *)
 }
 
 
-void handleCountdownCmd(int t, const char *)
+void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::countdown)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the countdown command");
     return;
@@ -275,11 +260,9 @@ void handleCountdownCmd(int t, const char *)
 }
 
 
-void handleFlagCmd(int t, const char *message)
+void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMod)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the flag command");
     return;
@@ -362,11 +345,9 @@ int getTarget(const char *victimname) {
   return i;
 }
 
-void handleKickCmd(int t, const char *message)
+void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kick)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the kick command");
     return;
@@ -403,11 +384,9 @@ void handleKickCmd(int t, const char *message)
 }
 
 
-void handleBanlistCmd(int t, const char *)
+void handleBanlistCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the banlist command");
     return;
@@ -417,11 +396,9 @@ void handleBanlistCmd(int t, const char *)
 }
 
 
-void handleHostBanlistCmd(int t, const char *)
+void handleHostBanlistCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the banlist command");
     return;
@@ -431,11 +408,9 @@ void handleHostBanlistCmd(int t, const char *)
 }
 
 
-void handleBanCmd(int t, const char *message)
+void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
@@ -488,11 +463,9 @@ void handleBanCmd(int t, const char *message)
 }
 
 
-void handleHostBanCmd(int t, const char *message)
+void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
@@ -549,11 +522,9 @@ void handleHostBanCmd(int t, const char *message)
 }
 
 
-void handleUnbanCmd(int t, const char *message)
+void handleUnbanCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
     return;
@@ -570,11 +541,9 @@ void handleUnbanCmd(int t, const char *message)
   return;
 }
 
-void handleHostUnbanCmd(int t, const char *message)
+void handleHostUnbanCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
     return;
@@ -592,11 +561,9 @@ void handleHostUnbanCmd(int t, const char *message)
 }
 
 
-void handleLagwarnCmd(int t, const char *message)
+void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagwarn)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagwarn command");
     return;
@@ -617,11 +584,9 @@ void handleLagwarnCmd(int t, const char *message)
 }
 
 
-void handleLagstatsCmd(int t, const char *)
+void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagstats command");
     return;
@@ -642,11 +607,9 @@ void handleLagstatsCmd(int t, const char *)
 }
 
 
-void handleIdlestatsCmd(int t, const char *)
+void handleIdlestatsCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::idleStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the idlestats command");
     return;
@@ -666,11 +629,9 @@ void handleIdlestatsCmd(int t, const char *)
 }
 
 
-void handleFlaghistoryCmd(int t, const char *)
+void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagHistory)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the flaghistory command");
     return;
@@ -688,11 +649,9 @@ void handleFlaghistoryCmd(int t, const char *)
 }
 
 
-void handlePlayerlistCmd(int t, const char *)
+void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the playerlist command");
     return;
@@ -712,11 +671,9 @@ void handlePlayerlistCmd(int t, const char *)
 }
 
 
-void handleReportCmd(int t, const char *message)
+void handleReportCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   char reply[MessageLen] = {0};
 
   if (strlen(message + 1) < 8) {
@@ -753,8 +710,9 @@ void handleReportCmd(int t, const char *message)
 }
 
 
-void handleHelpCmd(int t, const char *message)
+void handleHelpCmd(GameKeeper::Player *playerData, const char *message)
 {
+  int t = playerData->getIndex();
   char reply[MessageLen] = {0};
 
   if (strlen(message + 1) == 4) {
@@ -787,11 +745,9 @@ void handleHelpCmd(int t, const char *message)
 }
 
 
-void handleIdentifyCmd(int t, const char *message)
+void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   // player is trying to send an ID
   if (playerData->accessInfo.isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You have already identified");
@@ -823,11 +779,9 @@ void handleIdentifyCmd(int t, const char *message)
 }
 
 
-void handleRegisterCmd(int t, const char *message)
+void handleRegisterCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (playerData->accessInfo.isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You have already registered and"
 		" identified this callsign");
@@ -849,12 +803,9 @@ void handleRegisterCmd(int t, const char *message)
 }
 
 
-void handleGhostCmd(int t, const char *message)
+void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
-
+  int t = playerData->getIndex();
   char *p1 = strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
@@ -892,11 +843,9 @@ void handleGhostCmd(int t, const char *message)
 }
 
 
-void handleDeregisterCmd(int t, const char *message)
+void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the deregister command");
     return;
@@ -939,11 +888,9 @@ void handleDeregisterCmd(int t, const char *message)
 }
 
 
-void handleSetpassCmd(int t, const char *message)
+void handleSetpassCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the setpass command");
     return;
@@ -966,8 +913,9 @@ void handleSetpassCmd(int t, const char *message)
 }
 
 
-void handleGrouplistCmd(int t, const char *)
+void handleGrouplistCmd(GameKeeper::Player *playerData, const char *)
 {
+  int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
   PlayerAccessMap::iterator itr = groupAccess.begin();
   while (itr != groupAccess.end()) {
@@ -978,11 +926,9 @@ void handleGrouplistCmd(int t, const char *)
 }
 
 
-void handleShowgroupCmd(int t, const char *message)
+void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   std::string settie;
 
   if (strlen(message) == 10) {	 // show own groups
@@ -1034,8 +980,9 @@ void handleShowgroupCmd(int t, const char *message)
 }
 
 
-void handleGrouppermsCmd(int t, const char *)
+void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
 {
+  int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
   PlayerAccessMap::iterator itr = groupAccess.begin();
   std::string line;
@@ -1056,11 +1003,9 @@ void handleGrouppermsCmd(int t, const char *)
 }
 
 
-void handleSetgroupCmd(int t, const char *message)
+void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   char *p1 = strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
@@ -1103,11 +1048,9 @@ void handleSetgroupCmd(int t, const char *message)
 }
 
 
-void handleRemovegroupCmd(int t, const char *message)
+void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   char *p1 = strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
@@ -1148,11 +1091,9 @@ void handleRemovegroupCmd(int t, const char *message)
   return;
 }
 
-void handleReloadCmd(int t, const char *)
+void handleReloadCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the reload command");
     return;
@@ -1201,11 +1142,9 @@ void handleReloadCmd(int t, const char *)
 }
 
 
-void handlePollCmd(int t, const char *message)
+void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   char reply[MessageLen] = {0};
   std::string callsign = std::string(playerData->player.getCallSign());
 
@@ -1416,13 +1355,13 @@ void handlePollCmd(int t, const char *message)
   } else if (cmd == "vote") {
     std::string voteCmd = "/vote ";
     voteCmd += arguments;
-    handleVoteCmd(t, voteCmd.c_str());
+    handleVoteCmd(playerData, voteCmd.c_str());
     return;
 
   } else if (cmd == "veto") {
     std::string vetoCmd = "/veto ";
     vetoCmd += arguments;
-    handleVetoCmd(t, vetoCmd.c_str());
+    handleVetoCmd(playerData, vetoCmd.c_str());
     return;
 
   } else {
@@ -1439,11 +1378,9 @@ void handlePollCmd(int t, const char *message)
 }
 
 
-void handleVoteCmd(int t, const char *message)
+void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   char reply[MessageLen] = {0};
   std::string callsign = std::string(playerData->player.getCallSign());
 
@@ -1561,11 +1498,9 @@ void handleVoteCmd(int t, const char *message)
 }
 
 
-void handleVetoCmd(int t, const char * /*message*/)
+void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message*/)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::veto)) {
     /* permission denied for /veto */
     sendMessage(ServerPlayer, t,
@@ -1609,11 +1544,9 @@ void handleVetoCmd(int t, const char * /*message*/)
   return;
 }
 
-void handleViewReportsCmd(int t, const char * /*message*/)
+void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   std::string line;
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::viewReports)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the viewreports command");
@@ -1633,11 +1566,9 @@ void handleViewReportsCmd(int t, const char * /*message*/)
 }
  
 
-void handleClientqueryCmd(int t, const char * /*message*/)
+void handleClientqueryCmd(GameKeeper::Player *playerData, const char *)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   DEBUG2("Clientquery requested by %s [%d]\n",
 	 playerData->player.getCallSign(), t);
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
@@ -1660,11 +1591,9 @@ void handleClientqueryCmd(int t, const char * /*message*/)
 }
 
 
-void handleRecordCmd(int t, const char * message)
+void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   const char *buf = message + 8;
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::record)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the /record command");
@@ -1748,11 +1677,9 @@ void handleRecordCmd(int t, const char * message)
 }
 
 
-void handleReplayCmd(int t, const char * message)
+void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
 {
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+  int t = playerData->getIndex();
   const char *buf = message + 7;
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::replay)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the /replay command");

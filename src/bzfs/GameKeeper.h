@@ -43,6 +43,7 @@ public:
     Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd);
     ~Player();
 
+    int            getIndex();
     static Player *getPlayerByIndex(int _playerIndex);
     static int     count();
     static void    updateLatency(float &waitTime);
@@ -79,6 +80,11 @@ public:
   class Flag {
   };
 };
+
+inline int GameKeeper::Player::getIndex()
+{
+  return playerIndex;
+}
 
 #endif
 

@@ -13,80 +13,83 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
+// implementation-specific bzflag headers
+#include "GameKeeper.h"
+
 
 /** password command hook function
  *
  * /password command allows player to become operator
  */
-void handlePasswordCmd(int t, const char *message);
+void handlePasswordCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** set command hook function
  *
  * /set sets a world configuration variable that gets sent to all clients
  */
-void handleSetCmd(int t, const char *message);
+void handleSetCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** reset command hook function
  */
-void handleResetCmd(int t, const char *message);
+void handleResetCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** shutdownserver command hook function
  *
  * /shutdownserver terminates the server
  */
-void handleShutdownserverCmd(int t, const char *);
+void handleShutdownserverCmd(GameKeeper::Player *playerData, const char *);
 
 
 /** superkill command hook function
  *
  * /superkill closes all player connections
  */
-void handleSuperkillCmd(int t, const char *);
+void handleSuperkillCmd(GameKeeper::Player *playerData, const char *);
 
 
 /** gameover command hook function
  *
  * /gameover command allows operator to end the game
  */
-void handleGameoverCmd(int t, const char *message);
+void handleGameoverCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** countdown command hook function
  *
  * /countdown command allows operator to end the game
  */
-void handleCountdownCmd(int t, const char *message);
+void handleCountdownCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** flag command hook function
  *
  * /flag command allows operator to control flags
  */
-void handleFlagCmd(int t, const char *message);
+void handleFlagCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** kick command hook function
  *
  * /kick command allows operator to remove players
  */
-void handleKickCmd(int t, const char *message);
+void handleKickCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** banlist command hook function
  *
  * /banlist command shows ips that are banned
  */
-void handleBanlistCmd(int t, const char *);
+void handleBanlistCmd(GameKeeper::Player *playerData, const char *);
 
 
 /** hostbanlist command hook function
  *
  * /hostbanlist command shows ips that are banned
  */
-void handleHostBanlistCmd(int t, const char *);
+void handleHostBanlistCmd(GameKeeper::Player *playerData, const char *);
 
 
 /** ban command hook function
@@ -95,7 +98,7 @@ void handleHostBanlistCmd(int t, const char *);
  * /ban <ip> [duration] ...
  * any text after duration is considered as the reason for banning.
  */
-void handleBanCmd(int t, const char *message);
+void handleBanCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** hostban command hook function
@@ -105,149 +108,149 @@ void handleBanCmd(int t, const char *message);
  * any text after duration is considered as the reason for banning.
  * <hostpat> may contain *'s as wildcards
  */
-void handleHostBanCmd(int t, const char *message);
+void handleHostBanCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** unban command hook function
  *
  * /unban command allows operator to remove ips from the banlist
  */
-void handleUnbanCmd(int t, const char *message);
+void handleUnbanCmd(GameKeeper::Player *playerData, const char *message);
 
 /** hostunban command hook function
  *
  * /hostunban command allows operator to remove host patterns from the banlist
  */
-void handleHostUnbanCmd(int t, const char *message);
+void handleHostUnbanCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** lagwarn command hook function
  *
  * /lagwarn - set maximum allowed lag
  */
-void handleLagwarnCmd(int t, const char *message);
+void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** lagstats command hook function
  *
  * /lagstats gives simple statistics about players' lags
  */
-void handleLagstatsCmd(int t, const char *message);
+void handleLagstatsCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** idlestats command hook function
  *
  * /idlestats gives a list of players' idle times
  */
-void handleIdlestatsCmd(int t, const char *message);
+void handleIdlestatsCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** flaghistory command hook function
  *
  * /flaghistory gives history of what flags player has carried
  */
-void handleFlaghistoryCmd(int t, const char *message);
+void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** playerlist command hook function
  *
  * /playerlist dumps a list of players with IPs etc.
  */
-void handlePlayerlistCmd(int t, const char *message);
+void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** report command hook function
  *
  * /report sends a message to the admin and/or stores it in a file
  */
-void handleReportCmd(int t, const char *message);
+void handleReportCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** help command hook function
  */
-void handleHelpCmd(int t, const char *message);
+void handleHelpCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** identify command hook function
  */
-void handleIdentifyCmd(int t, const char *message);
+void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** register command hook function
  */
-void handleRegisterCmd(int t, const char *message);
+void handleRegisterCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** ghost command hook function
  */
-void handleGhostCmd(int t, const char *message);
+void handleGhostCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** deregister command hook function
  */
-void handleDeregisterCmd(int t, const char *message);
+void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** setpass command hook function
  */
-void handleSetpassCmd(int t, const char *message);
+void handleSetpassCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** grouplist command hook function
  */
-void handleGrouplistCmd(int t, const char *message);
+void handleGrouplistCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** showgroup command hook function
  */
-void handleShowgroupCmd(int t, const char *message);
+void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** groupperms command hook function
  */
-void handleGrouppermsCmd(int t, const char *message);
+void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** setgroup command hook function
  */
-void handleSetgroupCmd(int i, const char *message);
+void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** removegroup command hook funciton
  */
-void handleRemovegroupCmd(int i, const char *message);
+void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** reset command hook function
  */
-void handleReloadCmd(int i, const char *message);
+void handleReloadCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** /poll command hook function
  */
-void handlePollCmd(int t, const char *message);
+void handlePollCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** /vote command hook function
  */
-void handleVoteCmd(int t, const char *message);
+void handleVoteCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** /veto command hook function
  */
-void handleVetoCmd(int t, const char *message);
+void handleVetoCmd(GameKeeper::Player *playerData, const char *message);
 
 /** viewreports command hook function
  *
  *  /viewreports - view report file
  */
-void handleViewReportsCmd(int t, const char *message);
+void handleViewReportsCmd(GameKeeper::Player *playerData, const char *message);
 
 /** /clientquery command hook function
  *
  *  /clientquery returns all attached clients' version strings
  */
-void handleClientqueryCmd(int t, const char *);
+void handleClientqueryCmd(GameKeeper::Player *playerData, const char *);
 
 
 /** /record command hook function
@@ -260,7 +263,7 @@ void handleClientqueryCmd(int t, const char *);
  *  /record file [filename]     # begin capturing straight to file, flush buffer
  *  /record save [filename]     # save buffer to file (or default filename)
  */
-void handleRecordCmd(int t, const char *);
+void handleRecordCmd(GameKeeper::Player *playerData, const char *);
 
 /** /replay command hook function
  *
@@ -269,7 +272,7 @@ void handleRecordCmd(int t, const char *);
  *  /replay play                # began playing
  *  /replay skip <secs>         # fast foward or rewind in time
  */
-void handleReplayCmd(int t, const char *);
+void handleReplayCmd(GameKeeper::Player *playerData, const char *);
 
 
 #endif
