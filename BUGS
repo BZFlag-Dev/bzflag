@@ -1,6 +1,8 @@
 recent bugs
 ------------
-- Tanks spawn-in multiple times, in rapid fire, sometimes
+- Tanks spawn-in multiple times, in rapid fire, sometimes.  see MAC, I'm not
+  always crazy -- I reencountered the psycho machine gun behavior again, if
+  that's what is meant by rapid fire.
 
 - Killed tanks continue drifting and leave tank bits floating around on the
   modified gravity ducati.  players seem to continue forwarding after landing
