@@ -661,7 +661,7 @@ void RadarRenderer::renderBoxPyrMeshFast(bool smoothingOn, float range)
   }
 
   // setup the texturing mapping
-  const float hf = 50.0f; // height factor, goes from 0.0 to 1.0 in texcoords
+  const float hf = 128.0f; // height factor, goes from 0.0 to 1.0 in texcoords
   const float vfz = RENDERER.getViewFrustum().getEye()[2];
   const GLfloat plane[4] =
     { 0.0f, 0.0f, (1.0f / hf), (((hf * 0.5f) - vfz) / hf) };
