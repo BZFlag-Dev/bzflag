@@ -179,10 +179,12 @@ if test $host_os = mingw32; then
   LIBS="-mwindows -lgdi32 -lws2_32 -ldsound -lwinmm $LIBS"
 fi
 
-AC_CHECK_LIB(ogg, ogg_stream_init, [ALIBS="-logg $ALIBS"], [], $ALIBS)
-AC_CHECK_LIB(vorbis, vorbis_info_init, [ALIBS="-lvorbis $ALIBS"], [], $ALIBS)
-AC_CHECK_LIB(vorbisfile, ov_open, [ALIBS="-lvorbisfile $ALIBS"], [], $ALIBS)
-AC_SUBST(ALIBS)
+# Remove ogg/vorbis dependencies until we actually need them.
+#
+# AC_CHECK_LIB(ogg, ogg_stream_init, [ALIBS="-logg $ALIBS"], [], $ALIBS)
+# AC_CHECK_LIB(vorbis, vorbis_info_init, [ALIBS="-lvorbis $ALIBS"], [], $ALIBS)
+# AC_CHECK_LIB(vorbisfile, ov_open, [ALIBS="-lvorbisfile $ALIBS"], [], $ALIBS)
+# AC_SUBST(ALIBS)
 
 case $host_os in
      macos|darwin*)
