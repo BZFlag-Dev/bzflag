@@ -21,6 +21,8 @@ endif
 bzadmin_SOURCES = \
 	AutoCompleter.h \
 	AutoCompleter.cxx \
+	BZAdminClient.h \
+	BZAdminClient.cxx \
 	BZAdminUI.h \
 	$(CURSES_SRC) \
 	OptionParser.h \
