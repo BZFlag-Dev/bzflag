@@ -189,7 +189,7 @@ case $host_os in
 	AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	CPPFLAGS="$CPPFLAGS -Wall -W"
 	CFLAGS="$CFLAGS -ansi";
-	CXXFLAGS="$CXXFLAGS -fno-exceptions";
+	CXXFLAGS="$CXXFLAGS";
 	case $host_vendor in
 	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
@@ -202,14 +202,14 @@ case $host_os in
 	AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu"
 	CFLAGS="$CFLAGS -ansi";
-	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
+	CXXFLAGS="$CXXFLAGS";;
      mingw32)
 	CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";
 	CFLAGS="$CFLAGS -ansi";
-	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
+	CXXFLAGS="$CXXFLAGS";;
      solaris*)
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
 	if test sun_wspro; then
@@ -217,7 +217,7 @@ case $host_os in
 	elif test sun_cc; then
 	   CPPFLAGS="$CPPFLAGS -fast"
 	elif test sun_gcc; then
-	   CXXFLAGS="$CXXFLAGS -fno-exceptions"
+	   CXXFLAGS="$CXXFLAGS"
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	fi;;
      macos|darwin*)
@@ -225,7 +225,7 @@ case $host_os in
 	AC_DEFINE(_BSD_SOCKLEN_T_, int, [BSD Socket Length])
 	CPPFLAGS="$CPPFLAGS -Wall -W";
 	CFLAGS="$CFLAGS -ansi";
-	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
+	CXXFLAGS="$CXXFLAGS";;
      windows**)
 	CPPFLAGS="$CPPFLAGS /D \"WIN32\" /D \"_MBCS\"";
 	CPPFLAGS="$CPPFLAGS /I \"\$(top_srcdir)/include\" /nologo /W3";;

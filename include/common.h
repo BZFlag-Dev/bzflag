@@ -209,6 +209,11 @@ class string_util {
     }
 };
 
+#ifdef countof
+#undef countof
+#endif
+#define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
+
 #endif // BZF_COMMON_H
 
 // ex: shiftwidth=2 tabstop=8

@@ -1,73 +1,75 @@
-noinst_HEADERS =	\
-	Address.h	\
-	BaseBuilding.h	\
-	BaseResources.h	\
+noinst_HEADERS =		\
+	Address.h		\
+	BaseBuilding.h		\
+	BaseResources.h		\
 	BillboardSceneNode.h	\
-	BoltSceneNode.h	\
-	BoxBuilding.h	\
+	BoltSceneNode.h		\
+	BoxBuilding.h		\
 	BSPSceneDatabase.h	\
-	Bundle.h	\
-	BundleMgr.h	\
-	BzfDisplay.h	\
-	BzfEvent.h	\
-	bzfgl.h	\
-	bzfio.h	\
-	BzfMedia.h	\
-	BzfVisual.h	\
-	BzfWindow.h	\
-	bzsignal.h	\
-	common.h	\
+	Bundle.h		\
+	BundleMgr.h		\
+	BzfDisplay.h		\
+	BzfEvent.h		\
+	bzfgl.h			\
+	bzfio.h			\
+	BzfMedia.h		\
+	BzfVisual.h		\
+	BzfWindow.h		\
+	bzsignal.h		\
+	CallbackList.h		\
+	common.h		\
 	EighthDBaseSceneNode.h	\
 	EighthDBoxSceneNode.h	\
 	EighthDimSceneNode.h	\
 	EighthDPyrSceneNode.h	\
-	ErrorHandler.h	\
-	Flag.h	\
-	FlagSceneNode.h	\
+	ErrorHandler.h		\
+	Flag.h			\
+	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
-	global.h	\
-	Intersect.h	\
+	global.h		\
+	Intersect.h		\
 	LaserSceneNode.h	\
-	md5.h	\
-	multicast.h	\
-	network.h	\
-	Obstacle.h	\
+	md5.h			\
+	multicast.h		\
+	network.h		\
+	Obstacle.h		\
 	OpenGLDisplayList.h	\
-	OpenGLGState.h	\
-	OpenGLLight.h	\
+	OpenGLGState.h		\
+	OpenGLLight.h		\
 	OpenGLMaterial.h	\
-	OpenGLTexFont.h	\
-	OpenGLTexture.h	\
-	Pack.h	\
-	Ping.h	\
+	OpenGLTexFont.h		\
+	OpenGLTexture.h		\
+	Pack.h			\
+	Ping.h			\
 	PlatformFactory.h	\
-	PlayerState.h	\
+	PlayerState.h		\
 	PolyWallSceneNode.h	\
-	Protocol.h	\
-	PTSceneNode.h	\
+	Protocol.h		\
+	PTSceneNode.h		\
 	PyramidBuilding.h	\
 	QuadWallSceneNode.h	\
-	Ray.h	\
-	RenderNode.h	\
-	resource.h	\
-	SceneDatabase.h	\
-	SceneNode.h	\
-	SceneRenderer.h	\
+	Ray.h			\
+	RenderNode.h		\
+	resource.h		\
+	SceneDatabase.h		\
+	SceneNode.h		\
+	SceneRenderer.h		\
 	ShellSceneNode.h	\
-	ShotSceneNode.h	\
-	ShotUpdate.h	\
+	ShotSceneNode.h		\
+	ShotUpdate.h		\
 	SphereSceneNode.h	\
-	TankSceneNode.h	\
-	Team.h	\
-	Teleporter.h	\
-	TimeBomb.h	\
-	TimeKeeper.h	\
+	StateDatabase.h		\
+	TankSceneNode.h		\
+	Team.h			\
+	Teleporter.h		\
+	TimeBomb.h		\
+	TimeKeeper.h		\
 	TracerSceneNode.h	\
 	TriWallSceneNode.h	\
-	udpnetwork.h	\
-	ViewFrustum.h	\
-	WallObstacle.h	\
-	WallSceneNode.h	\
+	udpnetwork.h		\
+	ViewFrustum.h		\
+	WallObstacle.h		\
+	WallSceneNode.h		\
 	ZSceneDatabase.h
 
 MAINTAINERCLEANFILES = \

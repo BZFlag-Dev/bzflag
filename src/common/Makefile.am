@@ -11,6 +11,7 @@ libCommon_a_SOURCES  =		 	\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
 	PlayerState.cxx			\
+	StateDatabase.cxx		\
 	bzsignal.c
 
 EXTRA_DIST = Ping.cxx 
