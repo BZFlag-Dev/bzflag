@@ -90,6 +90,10 @@ SOURCE=..\src\common\AList.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\bzsignal.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\BzfString.cxx
 # End Source File
 # Begin Source File
