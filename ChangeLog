@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Added /part command for disconnecting from server - bzgirl
 * Show status while trying to connect & download world - Daniel Remenak
 * Update old configs to avoid broken keybindings - Daniel Remenak
 * Config files are stored per-version, using older when needed - Jeff Myers
