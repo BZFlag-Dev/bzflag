@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stack>
+#include <set>
 #include <iostream>
 #include <math.h>
 
@@ -209,26 +210,28 @@ float			StateDatabase::eval(const std::string& name)
   if (cit != evalCache.end())
     return cit->second;
 
-  static std::vector<std::string> variables;
+  //this is to catch recursive definitions
+  static std::set<std::string> variables;
   // ugly hack, since gcc 2.95 doesn't have <limits>
   float NaN;
   memset(&NaN, 0xff, sizeof(float));
 
-  for (std::vector<std::string>::iterator i = variables.begin(); i != variables.end(); i++)
-    if (*i == name)
+  if (variables.find(name) != variables.end())
       return NaN;
 
-  variables.push_back(name);
+  std::set<std::string>::iterator ins_it = variables.insert(name).first;
 
   Map::const_iterator index = items.find(name);
-  if (index == items.end() || !index->second.isSet)
+  if (index == items.end() || !index->second.isSet) {
+    variables.erase(ins_it);
     return NaN;
+  }
   Expression pre, inf;
   std::string value = index->second.value;
   value >> inf;
   pre = infixToPrefix(inf);
   float retn = evaluate(pre);
-  variables.pop_back();
+  variables.erase(ins_it);
 
   evalCache[name] = retn;
   return retn;
