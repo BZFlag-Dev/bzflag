@@ -1204,8 +1204,10 @@ void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
 
       PasswordMap::iterator itr1 = passwordDatabase.find(name);
       PlayerAccessMap::iterator itr2 = userDatabase.find(name);
-      passwordDatabase.erase(itr1);
-      userDatabase.erase(itr2);
+      if (itr1 != passwordDatabase.end())
+				passwordDatabase.erase(itr1);
+			if (itr2 != userDatabase.end())
+			 userDatabase.erase(itr2);
       PlayerAccessInfo::updateDatabases();
 
       sprintf(reply, "%s has been deregistered", name.c_str());
