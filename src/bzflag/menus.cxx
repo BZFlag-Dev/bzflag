@@ -3257,38 +3257,22 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 
 void			ServerMenu::checkEchos()
 {
-  const StartupInfo* info = getStartupInfo();
   // lookup server list in phase 0
   if (phase == 0) {
-    // dereference URL
-    std::vector<std::string> urls, failedURLs;
-    urls.push_back(getStartupInfo()->listServerURL);
-    BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
-
-    // print urls we failed to open
     int i;
-    for (i = 0; i < (int)failedURLs.size(); ++i) {
-      std::vector<std::string> args;
-      args.push_back(failedURLs[i]);
-      printError("Can't open list server: {1}", &args);
 
-      // in all error cases we add the entire cache to the list
-      // but only one time
-      if (!addedCacheToList){
-	addedCacheToList = true;
-	addCacheToList();
-      }
-    }
+    std::vector<std::string> urls;
+    urls.push_back(getStartupInfo()->listServerURL);
 
     // check urls for validity
     numListServers = 0;
     for (i = 0; i < (int)urls.size(); ++i) {
 	// parse url
 	std::string protocol, hostname, path;
-	int port = ServerPort + 1;
+	int port = 80;
 	Address address;
 	if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
-	    protocol != "bzflist" || port < 1 || port > 65535 ||
+	    protocol != "http" || port < 1 || port > 65535 ||
 	    (address = Address::getHostAddress(hostname.c_str())).isAny()) {
 	    std::vector<std::string> args;
 	    args.push_back(urls[i]);
@@ -3434,12 +3418,12 @@ void			ServerMenu::checkEchos()
 #endif
 	  
 	  bool errorSending;
-	  if (info->http) {
+	  {
 	    char url[1024];
 #ifdef _WIN32
 	    _snprintf(url, sizeof(url), "GET http://%s%s?action=LIST\r\n",
-		     listServer.hostname.c_str(),
-		     listServer.pathname.c_str());
+		      listServer.hostname.c_str(),
+		      listServer.pathname.c_str());
 #else
 	    snprintf(url, sizeof(url), "GET http://%s%s?action=LIST\r\n",
 		     listServer.hostname.c_str(),
@@ -3447,10 +3431,6 @@ void			ServerMenu::checkEchos()
 #endif
 	    errorSending = send(listServer.socket, url, strlen(url), 0)
 	      != (int) strlen(url);
-	  } else {
-	    static const char* msg = "LIST\n\n";
-	    errorSending = send(listServer.socket, msg, strlen(msg), 0)
-	      != (int)strlen(msg);
 	  }
 	  if (errorSending) {
 	    // probably unable to connect to server
