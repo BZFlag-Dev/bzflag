@@ -557,7 +557,7 @@ void ServerMenu::updateStatus() {
   } else if (serversFound < serverList.size()) {
     std::vector<std::string> args;
     char buffer [80];
-    sprintf(buffer, "%d", serverList.size());
+    sprintf(buffer, "%d", (unsigned int)serverList.size());
     args.push_back(buffer);
     setStatus("Servers found: {1}", &args);
     pageLabel->setString("");
