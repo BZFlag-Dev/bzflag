@@ -150,7 +150,8 @@ static void		setTarget();
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static Player*		getPlayerByName( const char* name );
-static void		addMessage(const Player* player, const std::string& msg);
+static void		addMessage(const Player* player, const std::string& msg,
+                                   bool highlight=false);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 
 enum BlowedUpReason {
@@ -1756,16 +1757,27 @@ static ServerLink*	lookupServer(const Player* player)
 }
 
 static void		addMessage(const Player* player,
-				const std::string& msg)
+				const std::string& msg, bool highlight)
 {
   std::string fullMessage;
 
   if (player) {
+    if (highlight) {
+      if (killerHighlight == 0)
+	fullMessage += ColorStrings[BlinkColor];
+      else if (killerHighlight == 1)
+	fullMessage += ColorStrings[UnderlineColor];
+    }
+
     int color = player->getTeam();
     if (color < 0 || color > 4) color = 5;
 
     fullMessage += ColorStrings[player->getTeam()];
     fullMessage += player->getCallSign();
+
+    if (highlight)
+      fullMessage += ColorStrings[ResetColor];
+
 #ifdef BWSUPPORT
     fullMessage += " (";
     fullMessage += Team::getName(player->getTeam());
@@ -2328,7 +2340,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    message += "killed by ";
 	    message += playerStr;
 	  }
-	  addMessage(victimPlayer, message);
+	  addMessage(victimPlayer, message, killerPlayer==myTank);
 	}
       }
 
@@ -2677,6 +2689,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    fullMsg=text;
 	  }
 	  else {
+	    if (killerHighlight == 0)
+	      fullMsg += ColorStrings[BlinkColor];
+	    else if (killerHighlight == 1)
+	      fullMsg += ColorStrings[UnderlineColor];
 	    fullMsg += "[";
 	    if (srcPlayer == myTank) {
 	      fullMsg += "->";
@@ -2690,9 +2706,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      if (srcPlayer)
 		myTank->setRecipient(srcPlayer);
 	    }
-	    fullMsg += "] ";
+	    fullMsg += "]";
 	    fullMsg += ColorStrings[ResetColor];
-	    fullMsg += colorStr;
+	    fullMsg += " ";
+	    fullMsg += ColorStrings[CyanColor];
 	    fullMsg += text;
 	  }
 	}
@@ -2704,12 +2721,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    fullMsg += Team::getName(TeamColor(team));
 	    fullMsg += "] ";
 #else
-	    fullMsg = "[Team] ";
+	    fullMsg += "[Team] ";
 #endif
 	  }
 	  fullMsg += srcName;
 	  fullMsg += colorStr;
 	  fullMsg += ": ";
+	  fullMsg += ColorStrings[CyanColor];
 	  fullMsg += text;
 	}
 	addMessage(NULL, fullMsg);

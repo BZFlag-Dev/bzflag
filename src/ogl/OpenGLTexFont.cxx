@@ -526,7 +526,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
   bool textures = false;
   GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
   GLfloat grey_color[3]  = {0.5f, 0.5f, 0.5f};
-  GLfloat cyan_color[3]  = {0.0f, 1.0f, 1.0f};
+  GLfloat cyan_color[3]  = {0.5f, 0.8f, 0.85f};
   GLfloat blinkColor[3];
   GLfloat *color = white_color;
   float xpos = x;
