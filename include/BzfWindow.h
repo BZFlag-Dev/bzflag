@@ -10,19 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* BzfWindow:
- *	Abstract, platform independent base for OpenGL windows.
- */
-
-#ifndef BZF_WINDOW_H
-#define	BZF_WINDOW_H
-
-#if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
-#endif
+#ifndef __BZFWINDOW_H__
+#define	__BZFWINDOW_H__
 
 #include "common.h"
+
+/* system headers */
 #include <vector>
+
 
 class BzfDisplay;
 
@@ -32,6 +27,9 @@ class BzfWindowCB {
     void*		data;
 };
 
+/** BzfWindow:
+ *	Abstract, platform independent base for OpenGL windows.
+ */
 class BzfWindow {
   public:
 			BzfWindow(const BzfDisplay*);
@@ -87,13 +85,13 @@ class BzfWindow {
     std::vector<BzfWindowCB>	resizeCallbacks;
 };
 
-#endif // BZF_WINDOW_H
+
+#endif  /* __BZFWINDOW_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
