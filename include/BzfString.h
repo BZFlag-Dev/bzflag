@@ -11,23 +11,8 @@
  */
 
 /* BzfString:
- *	A simple string implementation with reference counting.
- *	Designed for efficient time behavior when editing.  Can
- *	waste some space.
+ *	An extension of std::string 
  *
- * Description of selected members:
- *   isNull() const					true iff null (zero-length) string
- *   compact()						Make space efficient
- *   operator+(const BzfString&) const	and ...
- *   operator+(const char*) const	Concatenate strings
- *   operator+=(const BzfString&)	and ...
- *   operator+=(const char*)		Append string
- *   operator<<(const BzfString&)	and ...
- *   operator<<(const char*)		Append string (op is evaluated left to
- *									right, so can append several strings)
- *   operator()(int)				Return substring (from `start to end
- *									of string)
- *   operator()(int, int)			Return substring
  */
 
 #ifndef BZF_STRING_H
@@ -36,71 +21,74 @@
 #include "common.h"
 #include "bzfio.h"
 #include <stdarg.h>
+#include <string>
 
-class BzfString {
+class BzfString : public std::string
+{
 public:
-	typedef unsigned int size_type;
+	BzfString()
+	{
+	}
 
-	BzfString();
-	BzfString(const BzfString&);
-	BzfString(const char*);
-	BzfString(const char*, size_type length);
-	~BzfString();
-	BzfString&			operator=(const BzfString&);
+	BzfString(const char *src)
+	{
+		assign(src);
+	}
 
-	bool				empty() const;
-	size_type			size() const;
-	const char*			c_str() const;
-	void				compact();
-	void				swap(BzfString&);
+	BzfString(const std::string &src)
+	{
+		assign(src);
+	}
 
-	BzfString			operator+(const BzfString&) const;
-	BzfString			operator+(const char*) const;
-	BzfString&			operator+=(const BzfString&);
-	BzfString&			operator+=(const char*);
-	BzfString&			operator+=(char);
-	BzfString&			operator<<(const BzfString&);
-	BzfString&			operator<<(const char*);
+	BzfString(const char* src, size_type length)
+	{
+		assign(src, 0, length );
+	}
 
-	BzfString			operator()(size_type start) const;
-	BzfString			operator()(size_type start, size_type length) const;
 
-	bool				operator==(const char*) const;
-	bool				operator!=(const char*) const;
-	bool				operator==(const BzfString&) const;
-	bool				operator!=(const BzfString&) const;
-	bool				operator<(const BzfString&) const;
-	bool				operator<=(const BzfString&) const;
-	bool				operator>(const BzfString&) const;
-	bool				operator>=(const BzfString&) const;
+	BzfString& operator=(const BzfString& src)
+	{
+		if (this != &src)
+			assign(src);
+		return *this;
+	}
 
-	friend ostream&		operator<<(ostream&, const BzfString&);
+	BzfString& truncate(int len)
+	{
+		resize(len);
+		return *this;
+	}
 
-	void				append(const char*, size_type length);
-	void				truncate(size_type length);
+	BzfString& operator+(const BzfString& src)
+	{
+		append(src);
+		return *this;
+	}
 
-	static BzfString	format(const char* fmt, ...);
-	static BzfString	vformat(const char* fmt, va_list);
+	BzfString operator()(size_type off, size_type count = npos) const
+	{
+		return BzfString(substr(off, count).c_str());
+	}
 
-private:
-	void				makeUnique();
-	void				ref();
-	bool				unref();
 
-private:
-	class Rep {
-	public:
-						Rep(const char*, size_type length);
-						Rep(const Rep*);
-						~Rep();
+	static BzfString	format(const char* fmt, ...)
+	{
+		va_list args;
+		va_start(args, fmt);
+		BzfString result = vformat(fmt, args);
+		va_end(args);
+		return result;
+	}
 
-	public:
-		int				refCount;				// reference count
-		size_type		length;					// length of string
-		size_type		size;					// size of string buffer
-		char*			string;
-	};
-	Rep*				rep;
+	static BzfString	vformat(const char* fmt, va_list args)
+	{
+		// FIXME -- should prevent buffer overflow in all cases
+		// not all platforms support vsnprintf so we'll use vsprintf and a
+		// big temporary buffer and hope for the best.
+		char buffer[8192];
+		vsprintf(buffer, fmt, args);
+		return BzfString(buffer);
+	}
 };
 
 #endif // BZF_STRING_H

@@ -672,10 +672,10 @@ bool					SceneNodeGStateReader::parse(XMLTree::iterator xml)
 
 	// gstate fields must be empty
 	if (xml.begin() != xml.end())
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, 
+								BzfString::format(
 								"field `%s' must be empty",
 								xml->value.c_str()));
-
 	return true;
 }
 
@@ -776,7 +776,8 @@ bool					SceneNodeGeometryReader::parse(
 		if (numItems == 0) {
 			// first bundle must have data
 			if (count == 1)
-				throw XMLIOException(xml->position, BzfString::format(
+				throw XMLIOException(xml->position, 
+								BzfString::format(
 								"missing data in `%s' field",
 								field->getName()));
 
@@ -789,11 +790,13 @@ bool					SceneNodeGeometryReader::parse(
 		if (count > 1) {
 			node->setBundle(0);
 			const unsigned int numItemsInFirst = getField()->getNum();
-			if (numItems != numItemsInFirst)
+			if (numItems != numItemsInFirst) {
 				throw XMLIOException(xml->position, BzfString::format(
 								"item count mismatch between bundles "
 									"(got %u, expected %u)",
 									numItems, numItemsInFirst));
+		
+			}
 		}
 	}
 
@@ -1074,7 +1077,8 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 		// find the named node
 		NodeMap::const_iterator index = namedNodes.find(id);
 		if (index == namedNodes.end())
-			throw XMLIOException(xml->position, BzfString::format(
+			throw XMLIOException(xml->position, 
+								BzfString::format(
 								"unknown node `%s'", id.c_str()));
 		SceneNode* refNode = index->second;
 
@@ -1201,7 +1205,8 @@ void					SceneReader::readEnum(
 		}
 
 	// not found
-	throw XMLIOException(xml->position, BzfString::format(
+	throw XMLIOException(xml->position, 
+								BzfString::format(
 								"unknown enumerant `%s'", value.c_str()));
 }
 

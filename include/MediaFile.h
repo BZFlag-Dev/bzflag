@@ -16,12 +16,12 @@
 #include "common.h"
 #include "bzfio.h"
 
-class BzfString;
-
 // if HALF_RATE_AUDIO defined then use half the normal audio sample
 // rate (and downsample the audio files to match).  this reduces the
 // demands on the system.
 // #define HALF_RATE_AUDIO
+
+class BzfString;
 
 class MediaFile {
 public:

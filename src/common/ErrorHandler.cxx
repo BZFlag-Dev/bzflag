@@ -26,6 +26,7 @@ ErrorCallback			setErrorCallback(ErrorCallback cb)
 	return oldErrorCallback;
 }
 
+
 void					printError(const char* fmt, ...)
 {
 	va_list args;
