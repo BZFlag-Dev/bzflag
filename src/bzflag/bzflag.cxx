@@ -509,8 +509,9 @@ static void		parse(int argc, char** argv)
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      if (strcmp(argv[i], "a") == 0 || !strcmp(argv[i], "auto")
-	  || !strcmp(argv[i], "automatic")) {
+      if ((strcmp(argv[i], "a") == 0) || 
+	  (strcmp(argv[i], "auto") == 0) || 
+	  (strcmp(argv[i], "automatic") == 0) {
 	startupInfo.team = AutomaticTeam;
       }	else if (strcmp(argv[i], "r") == 0 || strcmp(argv[i], "red") == 0) {
 	startupInfo.team = RedTeam;
