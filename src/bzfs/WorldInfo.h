@@ -25,6 +25,7 @@
 #include "BaseBuilding.h"
 #include "Teleporter.h"
 #include "WallObstacle.h"
+#include "CollisionManager.h"
 
 class WorldFileLocation;
 class CustomZone;
@@ -61,8 +62,9 @@ public:
 
 private:
 
-  bool rectHitCirc(float dx, float dy, const float *p, float r) const;
   void setTeleporterTarget(int src, int tgt);
+  bool rectHitCirc(float dx, float dy, const float *p, float r) const;
+  void loadCollisionManager();
 
 public:
 
@@ -71,12 +73,17 @@ public:
    * location will return a pointer to the world colliding object
    * Checking is quite raw
    */
-  InBuildingType inBuilding(Obstacle **obstacle,
+  InBuildingType inBuilding(const Obstacle **obstacle,
 			    float x, float y, float z,
 			    float radius, float height = 0.0f);
-  /** check collision between a rectangle and a circle
+  
+  /** see if the Collision Manager view of the world size
+   * matches that of BZDB. if not, reload the CollisionManager
    */
-  bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
+  void checkCollisionManager();
+
+  bool WorldInfo::inRect(const float *p1, float angle, const float *size,
+                         float x, float y, float r) const;
 
 private:
 
@@ -92,6 +99,8 @@ private:
 
   EntryZones	       entryZones;
   std::vector<int> teleportTargets;
+  
+  CollisionManager collisionManager;
 
   char *database;
   int databaseSize;

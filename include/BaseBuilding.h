@@ -26,7 +26,7 @@ class BaseBuilding : public Obstacle {
 				const float *size, int _team);
 			~BaseBuilding();
     std::string		getType() const;
-    std::string		getClassName(); // const
+    static std::string	getClassName(); // const
     float		intersect(const Ray &) const;
     void		getNormal(const float *p, float *n) const;
     void		get3DNormal(const float* p, float* n) const;

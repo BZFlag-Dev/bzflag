@@ -134,6 +134,22 @@ void WorldInfo::setTeleporterTarget(int src, int tgt)
   teleportTargets[src] = tgt;
 }
 
+void                    WorldInfo::loadCollisionManager()
+{
+  collisionManager.load(boxes, pyramids, teleporters, bases);
+  return;
+}
+
+void                    WorldInfo::checkCollisionManager()
+{
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  if (worldSize != collisionManager.getWorldSize()) {
+    // reload the collision grid
+    collisionManager.load(boxes, pyramids, teleporters, bases);
+  }
+  return;
+}
+
 bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
 {
   // Algorithm from Graphics Gems, pp51-53.
@@ -181,68 +197,61 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
-InBuildingType WorldInfo::inBuilding(Obstacle **location,
-				     float x, float y, float z, float r,
+InBuildingType WorldInfo::inBuilding(const Obstacle **location,
+				     float x, float y, float z, float radius,
 				     float height)
 {
-  if (height < Epsilon)
+  checkCollisionManager(); // FIXME - this is lame
+
+  if (height < Epsilon) {
     height = Epsilon;
-
-  for (std::vector<BaseBuilding>::iterator base_it = bases.begin();
-       base_it != bases.end(); ++base_it) {
-    BaseBuilding &base = *base_it;
-    if ((base.getPosition()[2] < (z + height))
-	&& ((base.getPosition()[2] + base.getHeight()) > z)
-	&& (inRect(base.getPosition(), base.getRotation(), base.getSize(), x, y, r))) {
-      if (location != NULL)
-	*location = &base;
-      return IN_BASE;
-    }
   }
-  for (std::vector<BoxBuilding>::iterator box_it = boxes.begin();
-       box_it != boxes.end(); ++box_it) {
-    BoxBuilding &box = *box_it;
-    if ((box.getPosition()[2] < (z + height))
-	&& ((box.getPosition()[2] + box.getHeight()) > z)
-	&& (inRect(box.getPosition(), box.getRotation(), box.getSize(), x, y, r))) {
-      if (location != NULL)
-	*location = &box;
-      if (box.isDriveThrough()) return IN_BOX_DRIVETHROUGH;
-      else return IN_BOX_NOTDRIVETHROUGH;
-    }
-  }
-  for (std::vector<PyramidBuilding>::iterator pyr_it = pyramids.begin();
-       pyr_it != pyramids.end(); ++pyr_it) {
-    PyramidBuilding &pyr = *pyr_it;
-    if ((pyr.getPosition()[2] < (z + height))
-	&& ((pyr.getPosition()[2] + pyr.getHeight()) > z)
-	&& (inRect(pyr.getPosition(), pyr.getRotation(), pyr.getSize(),x,y,r))) {
-      if (location != NULL)
-	*location = &pyr;
-      return IN_PYRAMID;
-    }
-  }
-  for (std::vector<Teleporter>::iterator tele_it = teleporters.begin();
-       tele_it != teleporters.end(); ++tele_it) {
-    Teleporter &tele = *tele_it;
-    if ((tele.getPosition()[2] < (z + height))
-	&& ((tele.getPosition()[2] + tele.getHeight()) > z)
-	&& (inRect(tele.getPosition(), tele.getRotation(), tele.getSize(), x, y, r))) {
-      if (location != NULL)
-        *location = &tele;      
-      return IN_TELEPORTER;
-    }
-  }
-
-  if (location != NULL)
-    *location = (Obstacle *)NULL;
     
-  return NOT_IN_BUILDING;
-}
+  *location = NULL;
+  
+  const float pos[3] = {x, y, z};
+
+  // check everything but walls
+  ObstacleList olist = collisionManager.getObstacles (pos, radius);
+  for (ObstacleList::const_iterator oit = olist.begin();
+       oit != olist.end(); oit++) {
+    const Obstacle* obs = *oit;
+    if (obs->inCylinder(pos, radius, height)) {
+      *location = obs;
+      break;
+    }
+  }
+  
+  if (*location == NULL) {
+    return NOT_IN_BUILDING;
+  }
+  else if ((*location)->getType() == BoxBuilding::getClassName()) {
+    if ((*location)->isDriveThrough()) {
+      return IN_BOX_DRIVETHROUGH;
+    }
+    else {
+      return IN_BOX_NOTDRIVETHROUGH;
+    }
+  }
+  else if ((*location)->getType() == PyramidBuilding::getClassName()) {
+    return IN_PYRAMID;
+  }
+  else if ((*location)->getType() == BaseBuilding::getClassName()) {
+    return IN_BASE;
+  }
+  else if ((*location)->getType() == Teleporter::getClassName()) {
+    return IN_TELEPORTER;
+  }
+  else {
+    // FIXME - choke here?
+    printf ("*** Unknown obstacle type in WorldInfo::inBuilding()\n");
+    return IN_BASE;
+  }
+} 
 
 bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
 {
-  Obstacle* loc;
+  const Obstacle* loc;
   InBuildingType type;
 
   if (!entryZones.getZonePoint(qualifier, pt))
@@ -258,7 +267,7 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
 
 bool WorldInfo::getSafetyPoint(const std::string &qualifier, const float *pos, float *pt)
 {
-  Obstacle *loc;
+  const Obstacle *loc;
   InBuildingType type;
 
   if (!entryZones.getSafetyPoint(qualifier, pos, pt))
@@ -275,6 +284,7 @@ bool WorldInfo::getSafetyPoint(const std::string &qualifier, const float *pos, f
 void WorldInfo::finishWorld()
 {
   entryZones.calculateQualifierLists();
+  loadCollisionManager ();
 }
 
 int WorldInfo::packDatabase()

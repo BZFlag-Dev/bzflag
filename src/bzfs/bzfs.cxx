@@ -1802,7 +1802,7 @@ void resetFlag(int flagIndex)
     float r = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
     if (pFlagInfo->flag.type == Flags::Obesity)
       r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    Obstacle *obj;
+    const Obstacle *obj;
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     if (!world->getZonePoint( std::string(pFlagInfo->flag.type->flagAbbv), pFlagInfo->flag.position)) {
       pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
@@ -2466,9 +2466,9 @@ static void dropFlag(int playerIndex, float pos[3])
     pos[2] = 0.0;
 
   assert(world != NULL);
-  Obstacle* container;
+  const Obstacle* container;
   int topmosttype = NOT_IN_BUILDING;
-  Obstacle* topmost = 0;
+  const Obstacle* topmost = 0;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
   const int flagIndex = playerData->player.getFlag();

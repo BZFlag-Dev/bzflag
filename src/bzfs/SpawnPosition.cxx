@@ -54,7 +54,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     safeDistance = tankRadius * 20; // FIXME: is this a good value?
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     const float maxWorldHeight = world->getMaxWorldHeight();
-    Obstacle *building = NULL;
+    const Obstacle *building = NULL;
 
     // keep track of how much time we spend searching for a location
     TimeKeeper start = TimeKeeper::getCurrent();
