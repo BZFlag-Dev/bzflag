@@ -47,6 +47,8 @@
 #include "ErrorHandler.h"
 #include "KeyMap.h"
 #include "TimeKeeper.h"
+#include "World.h"
+#include "Bundle.h"
 
 //
 // MenuDefaultKey
@@ -350,8 +352,7 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
   }
   else {
     HUDuiLabel* label = (HUDuiLabel*)(getControls()[NumReadouts - 3]);
-    label->setString("Press Enter to select and T to test a format."
-							"  Esc to exit.");
+    label->setString("Press Enter to select and T to test a format. Esc to exit.");
     setFocus(pageLabel);
   }
 }
@@ -1896,7 +1897,7 @@ Help5Menu::Help5Menu() : HelpMenu("Flags II")
   list.push_back(createLabel(
 	"tank becomes paper thin", "Narrow (N)"));
   list.push_back(createLabel(
-	"getting hit just drops the flag", "Shield(SH)"));
+	"getting hit just drops the flag", "Shield (SH)"));
   list.push_back(createLabel(
 	"destroy tanks by touching them", "Steamroller (SR)"));
   list.push_back(createLabel(

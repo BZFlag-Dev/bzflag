@@ -28,6 +28,7 @@
 #include "Flag.h"
 #include "Team.h"
 #include "EighthDimSceneNode.h"
+#include "BundleMgr.h"
 
 class Ray;
 class Player;
@@ -108,6 +109,12 @@ class World {
     static World*	getWorld();
     static void		setWorld(World*);
 
+    static BundleMgr*	getBundleMgr();
+    static void		setBundleMgr(BundleMgr *bundleMgr);
+
+    static std::string	getLocale();
+    static void		setLocale(std::string &locale);
+
     static void		init();
     static void		done();
     static void		setFlagTexture(FlagSceneNode*);
@@ -149,6 +156,8 @@ class World {
     EighthDimSceneNode** baseInsideNodes;
     static World*	playingField;
     static const int	maxDeadPlayers;
+    static BundleMgr	*bundleMgr;
+    static std::string	locale; 
 };
 
 class WorldBuilder {
@@ -382,6 +391,26 @@ inline const std::vector<Teleporter>&	World::getTeleporters() const
 inline World*		World::getWorld()
 {
   return playingField;
+}
+
+inline BundleMgr* World::getBundleMgr()
+{
+	return World::bundleMgr;
+}
+
+inline void World::setBundleMgr(BundleMgr *bundleMgr)
+{
+	World::bundleMgr = bundleMgr;
+}
+
+inline std::string World::getLocale()
+{
+	return locale;
+}
+
+inline void World::setLocale(std::string& locale)
+{
+	World::locale = locale;
 }
 
 #endif // BZF_WORLD_H

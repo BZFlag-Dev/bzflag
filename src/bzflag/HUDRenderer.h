@@ -211,6 +211,8 @@ class HUDRenderer {
 
     HUDuiTypeIn*	composeTypeIn;
 
+    Bundle		*bdl;
+
     static const float	altitudeOffset;
     static const GLfloat black[3];
     static std::string	headingLabel[36];

@@ -35,6 +35,8 @@ static OpenGLTexture*	flagTexture = NULL;
 
 World*			World::playingField = NULL;
 const int		World::maxDeadPlayers = 20;
+BundleMgr*		World::bundleMgr;
+std::string		World::locale("");
 
 World::World() : gameStyle(PlainGameStyle),
 				linearAcceleration(0.0f),

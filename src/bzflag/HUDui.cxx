@@ -14,6 +14,7 @@
 #include <ctype.h>
 #include "bzfgl.h"
 #include "HUDui.h"
+#include "World.h"
 #include "texture.h"
 
 static const char*	arrowFile = "ybolt";
@@ -104,6 +105,7 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
 				prev(this), next(this),
 				cb(NULL), userData(NULL)
 {
+  bdl = World::getBundleMgr()->getBundle(World::getLocale());
   if (totalCount == 0) {
     // load arrow texture
     arrow = new OpenGLTexture;
@@ -189,7 +191,8 @@ void			HUDuiControl::setLabelWidth(float labelWidth)
 
 void			HUDuiControl::setLabel(const std::string& _label)
 {
-  label = _label;
+
+  label = bdl->getLocalString(_label);
   if (font.isValid()) trueLabelWidth = font.getWidth(label);
 }
 
@@ -356,6 +359,8 @@ std::vector<std::string>&		HUDuiList::getList()
 
 void			HUDuiList::update()
 {
+  for (std::vector<std::string>::iterator it = list.begin(); it != list.end(); ++it)
+    (*it) = bdl->getLocalString(*it);
   setIndex(index);
 }
 
@@ -577,7 +582,7 @@ std::string		HUDuiLabel::getString() const
 
 void			HUDuiLabel::setString(const std::string& _string)
 {
-  string = _string;
+  string = bdl->getLocalString(_string);
   onSetFont();
 }
 

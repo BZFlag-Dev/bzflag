@@ -16,22 +16,28 @@
 #include "ErrorHandler.h"
 #include "PlatformFactory.h"
 #include "BzfMedia.h"
+#include "Bundle.h"
+#include "World.h"
 
 void			printFatalError(const char* fmt, ...);
 
 unsigned char*		getTextureImage(const std::string& file,
 				int& width, int& height, int& depth)
 {
+  Bundle *bdl = World::getBundleMgr()->getBundle(World::getLocale());
+
   if (file.length() == 0) return NULL;
-  printError("loading %s...", file.c_str());
+  printError(bdl->formatMessage( "loading", 1, &file ).c_str());
   return PlatformFactory::getMedia()->readImage(file, width, height, depth);
 }
 
 unsigned char*		getTextImage(const std::string& file,
 				int& width, int& height)
 {
+  Bundle *bdl = World::getBundleMgr()->getBundle(World::getLocale());
+
   if (file.length() == 0) return NULL;
-  printError("loading %s...", file.c_str());
+  printError(bdl->formatMessage( "loading", 1, &file ).c_str());
   int depth;
   unsigned char* image = PlatformFactory::getMedia()->
 			readImage(file, width, height, depth);

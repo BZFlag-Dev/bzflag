@@ -53,6 +53,10 @@ Section "BZFlag (required)"
 	File ..\..\..\data\*.*	
 	File ..\..\..\misc\hix.bzw	
 
+	; make the l10n dir
+	SetOutPath $INSTDIR\data\l10n
+	File ..\..\..\data\l10n\*.*	
+
 	; make the doc dir
 	SetOutPath $INSTDIR\doc
 	File ..\..\..\doc\*.*

@@ -21,6 +21,7 @@
 #include "RemotePlayer.h"
 #include "DeadPlayer.h"
 #include "World.h"
+#include "Bundle.h"
 #include "OpenGLGState.h"
 #include "texture.h"
 #if !defined(_MACOSX_)
@@ -171,6 +172,8 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				showCompose(false)
 {
   int i;
+
+  bdl = World::getBundleMgr()->getBundle(World::getLocale());
 
   // initialize colors
   hudColor[0] = 1.0f;
@@ -590,7 +593,7 @@ void			HUDRenderer::setMarkerColor(int index,
 void			HUDRenderer::setRestartKeyLabel(const std::string& label)
 {
   char buffer[250];
-  sprintf(buffer, restartLabelFormat.c_str(), label.c_str());
+  sprintf(buffer, bdl->getLocalString(restartLabelFormat).c_str(), label.c_str());
   restartLabel = buffer;
   restartLabelWidth = bigFont.getWidth(restartLabel);
 }
@@ -614,7 +617,8 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
   // and put them into a std::string separated by NUL's.
   const float maxWidth = (float)window.getWidth() * 0.85f;
   std::string msg;
-  const char* scan = help;
+  std::string text = bdl->getLocalString(help);
+  const char* scan = text.c_str();
   while (*scan) {
     // FIXME should break at previous space, not after word that passes maxWidth
     // find next blank (can only break lines at spaces)
@@ -789,7 +793,7 @@ void			HUDRenderer::renderStatus(void)
   if (!roaming) {
     switch (player->getFiringStatus()) {
       case LocalPlayer::Deceased:
-	strcat(buffer, "Dead");
+	strcat(buffer, bdl->getLocalString("Dead").c_str());
 	break;
   
       case LocalPlayer::Ready:
@@ -797,25 +801,25 @@ void			HUDRenderer::renderStatus(void)
 		  World::getWorld()->allowShakeTimeout()) {
 	  /* have a bad flag -- show time left 'til we shake it */
 	  statusColor = yellowColor;
-	  sprintf(buffer, "%.1f", player->getFlagShakingTime());
+	  sprintf(buffer, bdl->getLocalString("%.1f").c_str(), player->getFlagShakingTime());
 	}
 	else {
 	  statusColor = greenColor;
-	  strcat(buffer, "Ready");
+	  strcat(buffer, bdl->getLocalString("Ready").c_str());
 	}
 	break;
   
       case LocalPlayer::Loading:
 	statusColor = redColor;
-	sprintf(buffer, "Reloaded in %.1f", player->getReloadTime());
+	sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), player->getReloadTime());
 	break;
   
       case LocalPlayer::Sealed:
-	strcat(buffer, "Sealed");
+	strcat(buffer, bdl->getLocalString("Sealed").c_str());
 	break;
   
       case LocalPlayer::Zoned:
-	strcat(buffer, "Zoned");
+	strcat(buffer, bdl->getLocalString("Zoned").c_str());
 	break;
     }
   }

@@ -28,6 +28,7 @@
 #include "OpenGLTexFont.h"
 #include "OpenGLTexture.h"
 #include "TimeKeeper.h"
+#include "Bundle.h"
 #include <string>
 #include <vector>
 
@@ -107,6 +108,7 @@ class HUDuiControl {
     void		renderLabel();
 
     void		doCallback();
+    Bundle		*bdl;
 
   private:
     bool		showingFocus;

@@ -50,6 +50,8 @@
 #include "BzfWindow.h"
 #include "BzfMedia.h"
 #include "PlatformFactory.h"
+#include "BundleMgr.h"
+#include "World.h"
 
 const char*		argv0;
 static bool		anonymous = false;
@@ -248,6 +250,7 @@ static void		usage()
 	" [-joystickname <name>]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
 	" [-list <server-list-url>] [-nolist]"
+	" [-locale <locale>]"
 	" [-multisample]"
 	" [-mute]"
 	" [-port <server-port>]"
@@ -366,6 +369,13 @@ static void		parse(int argc, char** argv,
 	startupInfo.listServerURL = argv[i];
 	resources.addValue("list", argv[i]);
       }
+    }
+    else if (strcmp(argv[i], "-locale") == 0) {
+      if (++i == argc) {
+	printFatalError("Missing argument for %s.", argv[i-1]);
+	usage();
+      }
+      resources.addValue("locale", argv[i]);
     }
     else if (strcmp(argv[i], "-nolist") == 0) {
       startupInfo.listServerURL = "";
@@ -955,6 +965,13 @@ int			main(int argc, char** argv)
 #endif
 */
   // set window size (we do it here because the OpenGL context isn't yet bound)
+
+  BundleMgr *bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
+  World::setBundleMgr(bm);
+
+  if (db.hasValue("locale"))
+	  World::setLocale(db.getValue("locale"));
+
   bool setPosition = false, setSize = false;
   int x = 0, y = 0, w = 0, h = 0;
   if (db.hasValue("geometry")) {

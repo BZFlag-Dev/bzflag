@@ -440,6 +440,8 @@ struct PlayerInfo {
     char email[EmailLen];
     // player's team
     TeamColor team;
+    // Players prefered locale
+    std::string locale;
     // flag index player has
     int flag;
     // player's score
@@ -1667,6 +1669,7 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
     case MsgUDPLinkEstablished:
     case MsgUDPLinkRequest:
     case MsgLagPing:
+    case MsgSetLocale:
       // No changes required
       break;
       ;;
@@ -3571,6 +3574,7 @@ static void acceptClient()
   player[playerIndex].fd = fd;
   player[playerIndex].state = PlayerAccept;
   player[playerIndex].knowId = false;
+  player[playerIndex].locale = "";
 
   // send server version and which port to reconnect to
   char buffer[8 + sizeof(serverAddr.sin_port)];
@@ -5108,6 +5112,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgWantWHash:
       directMessage(t, MsgWantWHash, strlen(hexDigest)+1, hexDigest);
       break;
+
+    case MsgSetLocale: {
+      char locale[MessageLen];
+      buf = nboUnpackString(buf, locale, sizeof(locale));
+      player[t].locale = locale;
+      break;
+	}
 
     case MsgQueryGame:
       sendQueryGame(t);

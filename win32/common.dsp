@@ -86,6 +86,14 @@ LIB32=link.exe -lib
 # PROP Default_Filter "c;cxx"
 # Begin Source File
 
+SOURCE=..\src\common\Bundle.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\common\BundleMgr.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\bzsignal.c
 # End Source File
 # Begin Source File
@@ -123,6 +131,14 @@ SOURCE=..\include\Address.h
 # Begin Source File
 
 SOURCE=..\include\AList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Bundle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\BundleMgr.h
 # End Source File
 # Begin Source File
 

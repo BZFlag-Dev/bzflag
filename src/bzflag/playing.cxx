@@ -4022,6 +4022,12 @@ static bool		joinGame(const StartupInfo* info,
   // set tank textures
   Player::setTexture(*tankTexture);
 
+  // send locale
+  char localeBuffer[MessageLen];
+  memset(localeBuffer, 0, MessageLen);
+  nboPackString(localeBuffer, World::getLocale().c_str(), MessageLen);
+  serverLink->send( MsgSetLocale, MessageLen, localeBuffer );
+
   // create world
   world = makeWorld(serverLink);
   if (!world) {
