@@ -86,6 +86,7 @@ void ServerList::readServerList(int index)
 
     char* base = listServer.buffer;
     static char *tokenIdentifier = "TOKEN: ";
+    static char *noTokenIdentifier = "NOTOK: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
@@ -96,13 +97,21 @@ void ServerList::readServerList(int index)
       if (*scan != '\n') break;
       *scan++ = '\0';
 
-      // look for ^TOKEN: and save token if found
+      // look for TOKEN: and save token if found
+      // also look for NOTOK: and record "badtoken" into the token string and print an error
       if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
 	StartupInfo* info = getStartupInfo();
 	printError("got token:");
 	strncpy(info->token, (char *)(base + strlen(tokenIdentifier)), TokenLen);
 	printError(info->token);
-	base=scan;
+	base = scan;
+	continue;
+      } else if (strncmp(base, noTokenIdentifier, strlen(noTokenIdentifier)) == 0) {
+	StartupInfo* info = getStartupInfo();
+	printError("ERROR: did not get token:");
+	printError(base);
+	strcpy(info->token, "badtoken\0");
+	base = scan;
 	continue;
       }
       // parse server info

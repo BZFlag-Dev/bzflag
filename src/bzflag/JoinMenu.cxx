@@ -242,6 +242,10 @@ void JoinMenu::execute()
     // let user know we're trying
     setStatus("Trying...");
 
+    // don't let the bad token specifier slip through to the server, just erase it
+    if (strcmp(info->token, "badtoken") == 0)
+      info->token[0] = '\0';
+
     // schedule attempt to join game
     joinGame();
   }
