@@ -2138,13 +2138,23 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
   buf = nboPackUByte(buf, targetPlayer);
   buf = nboPackString(buf, message, MessageLen);
 
+  int len = (char*)buf - (char*)bufStart;
+
   if (targetPlayer <= LastRealPlayer) {
-    directMessage(targetPlayer, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
+    directMessage(targetPlayer, MsgMessage, len, bufStart);
     if (playerIndex <= LastRealPlayer && targetPlayer != playerIndex)
-      directMessage(playerIndex, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
+      directMessage(playerIndex, MsgMessage, len, bufStart);
+  }
+  // FIXME this teamcolor <-> player id conversion is in several files now
+  else if (targetPlayer >= 244 && targetPlayer <= 250) {
+    TeamColor team = TeamColor(250 - targetPlayer);
+    // send message to all team members only
+    for (int i = 0; i < curMaxPlayers; i++)
+      if (player[i].state > PlayerInLimbo && player[i].team == team)
+        directMessage(i, MsgMessage, len, bufStart);
   }
   else
-    broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
+    broadcastMessage(MsgMessage, len, bufStart);
 }
 
 
