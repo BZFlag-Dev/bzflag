@@ -7,6 +7,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   breaking protocol.  In particular -- fix the high priority (10) ones
   for 1.10.4 patch release.
 
+* Fix menu texture changes, they need to use the font size, silly scaling fonts.
+  but make the header immage keep the same aspect. JM
+
 THESE ARE LOWER PRIORITY
 
 * Fix the Windows version of bzadmin so that EOF quits the program, like
@@ -37,6 +40,8 @@ THESE ARE LOWER PRIORITY
   needs to be decoupled from identify and added to menu.
 
 * do ansi color in curses bzadmin
+
+* get a curses system working on windows.
 
 * server should track last reported player and shot positions
 
@@ -217,9 +222,13 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 * implement texture cache on client and have server offer
    new textures as part of the world.
 
-* allow loadable meshes as "tanks"
+* allow user specified textures for tanks.
 
-* supply tank "meshes" from the server
+* allow user specified textures for world.
+
+* allow user specified meshes as "tanks" ( this has LOTS of issues ).
+
+* supply tank meshes and textures from the server if client does not have.
 
 * allow client to choose a mesh from the server list
 
