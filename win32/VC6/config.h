@@ -65,11 +65,7 @@
 
 #if(1)
   #include "ATLbase.h"
-  #if defined(_MSC_VER) && (_MSC_VER == 1200)
-    inline void W32_DEBUG_TRACE (const char* buffer ) {ATLTRACE(buffer);}
-  #else ifdef(_MSC_VER) && (_MSC_VER == 1100)
-    inline void W32_DEBUG_TRACE (const char* buffer ) {ATLTRACE(buffer);}
-  #endif
+  inline void W32_DEBUG_TRACE (const char* buffer ) {ATLTRACE(buffer);}
 #else
   inline void W32_DEBUG_TRACE (const char* buffer){return;}
 #endif
