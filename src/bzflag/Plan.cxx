@@ -141,8 +141,63 @@ Plan *HuntPlayerPlan::createSubPlan()
 	}
 }
 
-void HuntPlayerPlan::execute( float &, float *)
+void HuntPlayerPlan::execute( float &, float &)
 {
 }
 
+/**
+ * HuntTeamFlagPlan
+ */
+
+HuntTeamFlagPlan::HuntTeamFlagPlan()
+:Plan(MAXFLOAT)
+{
+}
+
+bool HuntTeamFlagPlan::isValid()
+{
+	return false;
+}
+
+bool HuntTeamFlagPlan::usesSubPlan()
+{
+	return false;
+}
+
+Plan *HuntTeamFlagPlan::createSubPlan()
+{
+	return NULL;
+}
+
+void HuntTeamFlagPlan::execute( float &, float &)
+{
+}
+
+/**
+ * CaptureFlagPlan
+ */
+
+CaptureFlagPlan::CaptureFlagPlan()
+	:Plan(MAXFLOAT)
+{
+}
+
+bool CaptureFlagPlan::isValid()
+{
+	return false;
+}
+
+bool CaptureFlagPlan::usesSubPlan()
+{
+	return false;
+}
+
+Plan *CaptureFlagPlan::createSubPlan()
+{
+	return NULL;
+}
+
+void CaptureFlagPlan::execute( float &, float &)
+{
+}
 

@@ -94,10 +94,34 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan();
-	virtual void execute( float &, float *);
+	virtual void execute( float &, float &);
 
 private:
 	int playerID;
+};
+
+class HuntTeamFlagPlan : public Plan
+{
+public:
+	HuntTeamFlagPlan();
+
+	virtual bool isValid();
+	virtual bool usesSubPlan();
+	virtual Plan *createSubPlan();
+	virtual void execute( float &, float &);
+private:
+	int flagID;
+};
+
+class CaptureFlagPlan : public Plan
+{
+public:
+	CaptureFlagPlan();
+
+	virtual bool isValid();
+	virtual bool usesSubPlan();
+	virtual Plan *createSubPlan();
+	virtual void execute( float &, float &);
 };
 
 #endif
