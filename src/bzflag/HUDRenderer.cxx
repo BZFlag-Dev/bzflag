@@ -1001,7 +1001,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 		 pl->getPosition()[2], model, proj, view, &x, &y, &z);
       if (z >= 0.0 && z <= 1.0) {
 	FontManager &fm = FontManager::instance();
-	fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, name) / 2,
+	fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, name) / 2.0f,
 		      float(y) + offset - fm.getStrHeight(labelsFontFace, labelsFontSize, name),
 		      0, labelsFontFace, labelsFontSize, name);
         FlagType* flag = pl->getFlag();
@@ -1010,8 +1010,9 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
           flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
           flagStr += ")";
           const char *fname = flagStr.c_str();
-	  fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, fname) / 2,
-			float(y) + offset - fm.getStrHeight(labelsFontFace, labelsFontSize, fname),
+	  fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, fname) / 2.0f,
+			float(y) + offset - 
+			(2.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, fname)),
 			0, labelsFontFace, labelsFontSize, fname);
 	}
       }
