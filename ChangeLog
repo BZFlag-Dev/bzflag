@@ -4,6 +4,7 @@
 BZFlag 1.10.4
 -------------
 
+* Allow variable number of team flags per team thru +f B*{2} or +f team{3} - Dave Brosius
 * Added private and team chat sounds - Sean Morrison
 * Specify a world file on the Start Server menu gui - Sean Morrison
 * Server sends warning to privmsg sender to an invalid target - Lars Luthman
