@@ -115,7 +115,7 @@ bool CacheManager::addFile(CacheRecord& record, const void* data)
   }
 
   record.name = getLocalName(record.url);
-  std::ostream* out = FILEMGR.createDataOutStream(record.name);
+  std::ostream* out = FILEMGR.createDataOutStream(record.name, true /* binary*/);
   if (out == NULL) {
     return false;
   }
