@@ -4335,6 +4335,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
 	    else if (flag[player[t].flag].flag.type == Flags::Thief)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+ 	    else if (flag[player[t].flag].flag.type == Flags::Burrow)
+ 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD) * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	    else {
 	      // If player is moving vertically, or not alive the speed checks
 	      // seem to be problematic. If this happens, just log it for now,
