@@ -20,7 +20,7 @@
 #elif defined(XIJOYSTICK)
   #include "XIJoystick.h"
 #else
-  #include "BzfJoystick.h"
+  #include "EvdevJoystick.h"
 #endif
 
 PlatformFactory*	PlatformFactory::getInstance()
@@ -71,8 +71,8 @@ BzfJoystick*		LinuxPlatformFactory::createJoystick()
   // XInput Joystick
   return new XIJoystick;
 #else
-  // no joystick
-  return new BzfJoystick;
+  // Event device joystick
+  return new EvdevJoystick;
 #endif
 }
 
