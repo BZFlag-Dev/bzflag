@@ -44,12 +44,6 @@ recent bugs
   un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
   into situations where movement is out of control.
 
-- new list server takes way too long (3-5 seconds) to respond.
-  Taking some measurement from receiving request to sending result:
-  bzfls.pl on Tim's     : 1.8 sec
-  bzflsMy.php on brlcad : 0.3 sec
-  bzflsLite on brlcad   : 0.3 sec
-
 - os x client audio is very choppy when the user has a sound card installed
 
 - trouble remapping the "Identify/Respawn" key from "right mouse or i" to
