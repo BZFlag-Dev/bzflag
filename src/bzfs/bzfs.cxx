@@ -4450,10 +4450,22 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
   }
 }
 
+static void resetAllCallback(const std::string &name, void*)
+{
+  StateDatabase::Permission permission=BZDB->getPermission(name);
+  if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
+    BZDB->set(name, BZDB->getDefault(name), StateDatabase::Server);
+  }
+}
+
 static std::string cmdReset(const std::string&, const CommandManager::ArgList& args)
 {
   if (args.size() == 1) {
-    if (BZDB->isSet(args[0])) {
+    if (args[0] == "*") {
+      BZDB->iterate(resetAllCallback,NULL);
+      return "all variables reset";
+    }
+    else if (BZDB->isSet(args[0])) {
       StateDatabase::Permission permission=BZDB->getPermission(args[0]);
       if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	BZDB->set(args[0], BZDB->getDefault(args[0]), StateDatabase::Server);
