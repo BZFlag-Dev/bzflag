@@ -23,14 +23,6 @@
 #include "Flag.h"
 #include "OpenGLGState.h"
 
-
-
-//mgumz
-
-#define RTOD    57.295779513082320876798154814
-
-
-
 RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
 						const World& _world) :
 				world(_world),
@@ -50,14 +42,16 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
   background[3] = 1.0f;
   blend = renderer.useBlending();
   smooth = True;
- 
-
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
   GLint bits;
   glGetIntergerv(GL_SAMPLES_SGIS, &bits);
   if (bits > 0) smooth = False;
 #endif
-
+#ifdef GL_ABGR_EXT
+  noiseFormat = renderer.useABGR() ? GL_ABGR_EXT : GL_RGBA;
+#else
+  noiseFormat = GL_RGBA;
+#endif
   makeNoise();
 
   // watch for context recreation
@@ -77,7 +71,7 @@ void			RadarRenderer::setShape(int _x, int _y, int _w, int _h)
   y = _y;
   w = _w;
   h = _h;
-
+  makeNoise();
 }
 
 void			RadarRenderer::setRange(float _range)
@@ -100,15 +94,16 @@ void			RadarRenderer::freeList()
 
 void			RadarRenderer::makeNoise()
 {
-	delete[] noise;
-	int size_of_noise = 4* 64 *64;
-	noise = new unsigned char[size_of_noise];
-  for (int i = 0; i < size_of_noise; i++) {
+  delete[] noise;
+  const int size = 8 * w * h;
+  noise = new unsigned char[size + 4];
+  if (!noise) return;
+  for (int i = 0; i <= size; i += 4) {
     unsigned char n = (unsigned char)floor(256.0 * bzfrand());
-    noise[i] = n;
-//    noise[i-1] = n;
-//    noise[i-2] = n;
-//    noise[i-3] = n;
+    noise[i+0] = n;
+    noise[i+1] = n;
+    noise[i+2] = n;
+    noise[i+3] = n;
   }
 }
 
@@ -176,83 +171,16 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glDisable(GL_BLEND);
   }
 
-
-/* mgumz: improved noisecode :
-
-	glDrawPixels is using the processor memory and have to pass the 
-	bottleneck of the bus from processor ot the graficcard. this sucks, if
-	your pc is not very fast! the jamming is only for destroy your radarnd not
-	to slow your pc down. so ...
-	
-	i build a little recode of the noisething by using textures.
-	
-	i use a 4 x (64x64x1) array of char, fill it with random noise and use this 
-	as one textureobject. then i only swap the texturecoords everytime its needed.
-	the texturecoords swapping is realized by an array of them, sorted by
-	
-	lowerleftcorner x, lowerleftcorner y, upperrightcorner x, upperrightcorner y
-	
-	to create a nice sequenz you just had to add your corners and increment the
-	sequences to the number of lines.
-	
-	its damn fast :) you will love it ...
-	
-	results on my machine:
-	
-		e1 (without changes) :  100 fps (10 with jamming on)
-		e1 (with changes)    :  100 fps (100 with jamming on)
-	
-*/
-
+  // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && bzfrand() > decay) {
-
-
-
-			const int sequences = 9;			
-			float np[] = 
-			 { 0, 0, 0.5, 0.5,
-			   0.5 , 0.5, 1, 1,
-				 0.5 , 0, 1, 0.5,
-				 0, 0.5, 0.5, 1,
-				 1, 1, 0.5, 0.5,
-				 0.5, 0.5, 0, 0,
-				 0.5, 1, 0, 0.5,
-				 0.75, 0.75, 0.25, 0.25
- 				 0.25, 0.25, 0.75, 0.75,
-			 };
-			
-			int noise_pattern = 4 * int(floor(sequences * bzfrand()));
-
-					
-			glEnable(GL_TEXTURE_2D);
-  	  glBindTexture(GL_TEXTURE_2D, noise_tex);
-	//		glColor3ub(255,255,255);
-			glBegin(GL_QUADS);
-			
-				glTexCoord2f(np[noise_pattern+0],np[noise_pattern+1]);
-        glVertex2f(-range,-range);
-				glTexCoord2f(np[noise_pattern+2],np[noise_pattern+1]);
-				glVertex2f( range,-range);
-				glTexCoord2f(np[noise_pattern+2],np[noise_pattern+3]);
-				glVertex2f( range, range);
-				glTexCoord2f(np[noise_pattern+0],np[noise_pattern+3]);
-				glVertex2f(-range, range);
-					
-			glEnd();
-			glDisable(GL_TEXTURE_2D);
-			if (decay > 0.015f) decay *= 0.5f;
-
-
-
-/*    glRasterPos2f(-range, -range);
+    // pick a random pixel from the first half of noise and render
+    // a block pixels with it in the lower left corner.
+    int offset = 4 * int(floor(w * h * bzfrand()));
+    glRasterPos2f(-range, -range);
     glDrawPixels(w, h, noiseFormat, GL_UNSIGNED_BYTE,
 		(GLubyte*)(((unsigned long)noise & ~3) + 4) + offset);
-    
-*/
+    if (decay > 0.015f) decay *= 0.5f;
   }
-
-
-///
 
   // only draw if there's a local player
   else if (LocalPlayer::getMyTank()) {
@@ -271,7 +199,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     const float* pos = myTank->getPosition();
     float angle = myTank->getAngle();
     glPushMatrix();
-    glRotatef(90.0f - angle * RTOD, 0.0f, 0.0f, 1.0f);
+    glRotatef(90.0f - angle * 180.0f / M_PI, 0.0f, 0.0f, 1.0f);
     glPushMatrix();
     glTranslatef(-pos[0], -pos[1], 0.0f);
 
@@ -461,24 +389,6 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
 void			RadarRenderer::makeList(boolean smoothingOn)
 {
-
-
-// mgumz texture building
-
-  glGenTextures(1, &noise_tex);
-
-  glBindTexture(GL_TEXTURE_2D, noise_tex);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 64 * 4, 64, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, noise);
-  glBindTexture(GL_TEXTURE_2D, noise_tex);
-
-///
-
-
   // antialias if smoothing is on.
   if (smoothingOn) {
     glEnable(GL_BLEND);
