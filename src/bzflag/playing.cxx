@@ -4391,13 +4391,13 @@ static void		checkEnvironment(RobotPlayer* tank)
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
-	if (myTank->getFlag() != Flags::Null) {
-		serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
+	if (tank->getFlag() != Flags::Null) {
+		serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
 	}
 	stopShot = true;
     }
     else {
-        stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit->getShotId());
+        stopShot = gotBlowedUp(tank, GotShot, hit->getPlayer(), hit->getShotId());
     }
 
     if (stopShot || hit->isStoppedByHit()) {
