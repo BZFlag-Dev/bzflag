@@ -183,6 +183,21 @@
 						d.writeln("#Administrator's password<br/>");
 						d.writeln("-password \"" + mainform.password.value + "\"<br/><br/>");
 					}
+
+					if (mainform.passdb.value.length > 0) {
+						d.writeln("#File that stores user passwords<br/>");
+						d.writeln("-passdb \"" + mainform.passdb.value + "\"<br/><br>");
+					}
+
+					if (mainform.groupdb.value.length > 0) {
+						d.writeln("#File that stores group privileges<br/>");
+						d.writeln("-groupdb \"" + mainform.groupdb.value + "\"<br/><br>");
+					}
+
+					if (mainform.userdb.value.length > 0) {
+						d.writeln("#File that stores user privileges<br/>");
+						d.writeln("-userdb \"" + mainform.userdb.value + "\"<br/><br>");
+					}
 	
 					if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
 						d.writeln("#World file to load<br/>");
@@ -473,6 +488,17 @@
 						<td>Password</td>
 						<td><input type="text" name="password" size="30" title="Administrator's password"/></td>
 					</tr>
+					<tr>
+						<td>Password Database</td>
+						<td><input type="file" name="passdb" title="File that stores user passwords"/></td>
+						<td>Group Privilege Database</td>
+						<td><input type="file" name="groupdb" title="File that stores group privileges"/></td>
+					</tr>
+					<tr>
+						<td>User Privilege Database</td>
+						<td><input type="file" name="userdb" title="File that stores user privileges"/></td>
+					</tr>
+						
 				</table>
 			</fieldset>
 			<br/>
