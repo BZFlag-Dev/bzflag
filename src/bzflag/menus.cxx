@@ -3585,10 +3585,9 @@ void			ServerMenu::checkEchos()
 #else
 	    snprintf(url, sizeof(url),
 #endif
-		     "GET http://%s%s?action=LIST&version=%s\r\n",
-		     listServer.hostname.c_str(),
-		     listServer.pathname.c_str(),
-		     getServerVersion());
+		     "GET %s?action=LIST&version=%s HTTP/1.1\r\nHost: %s\r\n\r\n",
+		     listServer.pathname.c_str(), getServerVersion(),
+		     listServer.hostname.c_str());
 	    errorSending = send(listServer.socket, url, strlen(url), 0)
 	      != (int) strlen(url);
 	  }
