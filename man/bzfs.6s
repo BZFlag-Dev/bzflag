@@ -44,6 +44,7 @@ bzfs \- BZFlag game server
 [\fB\+s \fIflag-count\fR]
 [\fB\-s \fIflag-count\fR]
 [\fB\-sa\fR]
+[\fB\-sl \fIid num\fR]
 [\fB\-speedtol \fIfactor\fR]
 [\fB\-srvmsg \fImessage\fR]
 [\fB\-st \fItime\fR]
@@ -248,6 +249,9 @@ in the \fInum-flags\fR total.
 .TP
 .B -sa
 Antidote flags are provided for players with bad flags.
+.TP
+\fB-sl \fIid num\fR
+Restrict flag \fIid\fR to \fInum\R shots.
 .TP
 \fB\-speedtol \fIfactor\fR
 Override the default speed auto kick factor. The factor should not be less then 1.0.
