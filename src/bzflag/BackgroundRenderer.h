@@ -24,7 +24,6 @@
 #include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "OpenGLDisplayList.h"
-#include <string>
 
 class SceneRenderer;
 
