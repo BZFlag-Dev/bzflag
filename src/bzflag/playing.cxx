@@ -116,6 +116,8 @@ static const float			redColor[] = { 1.0f, 0.0f, 0.0f };
 static const float			greenColor[] = { 0.0f, 1.0f, 0.0f };
 static const float			yellowColor[] = { 1.0f, 1.0f, 0.0f };
 
+unsigned char				gammaTable[256];
+
 enum BlowedUpReason {
 							GotKilledMsg,
 							GotShot,
@@ -707,14 +709,11 @@ static std::string	cmdScreenshot(const std::string&,
 		// rawtoppm -rgb 640 480 bzfi0000.raw | pnmflip -tb | pnmtojpeg --quality=100 > test.jpg
 		unsigned char* b = new unsigned char[w * h * 3];
 		glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
-		// apply gamma correction (slow, but makes the image a true screenshot)
+		// apply gamma correction
 		unsigned char *ptr = b;
-		float gamma = atof(BZDB->get("renderGamma").c_str());
 		for(int i = 0; i < w * h * 3; i++) {
-			float lum = ((float) (*ptr)) / 256.0;
-			float lumadj = pow(lum, 1.0 / gamma);
-			(*ptr) = (unsigned char) (lumadj * 256);
-			ptr++;
+		  *ptr = gammaTable[*ptr];
+		  ptr++;
 		}
 		f.write(b, w * h * 3);
 		delete [] b;

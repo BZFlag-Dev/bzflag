@@ -52,6 +52,7 @@ static bool					echoToConsole = false;
 static bool					useFullscreen = false;
 static bool					allowResolutionChange = false;
 static const char*			commandPrompt = "> ";
+extern unsigned char		gammaTable[256];
 
 //
 // error handlers.  fatalErrorCallback() is used when the app is
@@ -152,8 +153,15 @@ static void				onConsole(const std::string& name, void*)
 
 static void				onGammaChanged(const std::string& name, void*)
 {
-	if (window != NULL && BZDB->isTrue("featuresGamma") && !BZDB->isEmpty(name))
-		window->setGamma((float)atof(BZDB->get(name).c_str()));
+	if (window != NULL && BZDB->isTrue("featuresGamma") && !BZDB->isEmpty(name)) {
+		float gamma = atof(BZDB->get(name).c_str());
+		window->setGamma(gamma);
+		for(int i = 0; i < 256; i++) {
+			float lum = ((float) i) / 256.0;
+			float lumadj = pow(lum, 1.0 / gamma);
+			gammaTable[i] = (char) (lumadj * 256);
+		}
+	}
 }
 
 static void				onResolutionChanged(const std::string& name, void*)
