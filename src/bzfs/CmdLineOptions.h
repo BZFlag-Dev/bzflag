@@ -103,7 +103,7 @@ struct CmdLineOptions
   std::string	publicizedAddress;
 
   bool			suppressMasterBanList;
-	std::string	masterBanListURL;
+  std::string		masterBanListURL;
   
   uint16_t		maxShots;
   int			maxTeamScore;
