@@ -3,6 +3,7 @@
 			     BZFlag release notes
 
 * Server side world parm (bzdb) file [clo] - Dave Brosius
+* MsgTeamUpdate, MsgFlagUpdate coalesced - Dave Brosius
 * Burrow Flag - Dave Brosius
 * Observer is a first class team - Dave Brosius
 * AutoPilot from 1.8 - Dave Brosius
