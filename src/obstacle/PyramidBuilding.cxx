@@ -215,22 +215,20 @@ bool			PyramidBuilding::getHitNormal(
 				float, float, float height,
 				float* normal) const
 {
-  // pyramids height, top, bottom and flipping
+  // pyramids height and flipping
+  // normalize height sign and report that in flip
   float oHeight = getHeight();
-  float oBottom = getPosition()[2];
-  float oTop    = oBottom;
   bool  flip    = getZFlip();
-  if (flip)
-    oHeight = -oHeight;
   if (oHeight < 0) {
     flip    = !flip;
     oHeight = -oHeight;
   }
-  if (flip)
-    oBottom += oHeight;
-  else
-    oTop    += oHeight;
 
+  // get Bottom and Top of building
+  float oBottom = getPosition()[2];
+  float oTop    = oBottom + oHeight;
+
+  // get higher and lower point of base of colliding object
   float objHigh = pos1[2];
   float objLow  = pos2[2];
   if (objHigh < objLow) {
@@ -240,10 +238,12 @@ bool			PyramidBuilding::getHitNormal(
   }
 
   normal[0] = normal[1] = 0;
-  if (objHigh > oTop) {
-      normal[2] = 1;
-      return true;
-  } else if (objLow + height < oBottom) {
+  if (flip && objHigh > oTop) {
+    // base of higher object is over the plateau
+    normal[2] = 1;
+    return true;
+  } else if (!flip && objLow + height < oBottom) {
+    // top of lower object is below the base
     normal[2] = -1;
     return true;
   }  
@@ -329,21 +329,28 @@ float			PyramidBuilding::shrinkFactor(float z,
 {
   float shrink;
 
+  // Normalize Height and flip to have height > 0
+  float oHeight = getHeight();
+  bool  flip    = getZFlip();
+  if (oHeight < 0) {
+    flip    = !flip;
+    oHeight = - oHeight;
+  }
+
  // Remove heights bias
   const float *pos = getPosition();
   z -= pos[2];
   // Normalize heights
-  z /= getHeight();
+  z /= oHeight;
 
   // if flipped the bigger intersection is at top of obiect
-  if (getZFlip()) {
+  if (flip) {
     // Normalize the object height, we have not done yet
-    height /= getHeight();
-    z += height;
+    z += height / oHeight;
   }
 
   // shrink is that
-  if (getZFlip()) {
+  if (flip) {
     shrink = z;
   } else {
     shrink = 1.0f - z;
