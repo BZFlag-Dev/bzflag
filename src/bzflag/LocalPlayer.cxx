@@ -1009,15 +1009,17 @@ void			LocalPlayer::jump()
   if (getPosition()[2] < 0.0f)
     return;
 
-  // can't jump unless on the ground or a building
-  if (location != OnGround && location != OnBuilding) {
+  if (getFlag() == Flags::Wings) {
+     if (wingsFlapCount <= 0) return;
+     wingsFlapCount--;
+  } else if (location != OnGround && location != OnBuilding) {
+     // can't jump unless on the ground or a building
      if (getFlag() != Flags::Wings)
         return;
      if (wingsFlapCount <= 0)
         return;
      wingsFlapCount--;
-  } else if ((getFlag() != Flags::Jumping && getFlag() != Flags::Wings &&
-              !World::getWorld()->allowJumping()) ||
+  } else if ((getFlag() != Flags::Jumping && !World::getWorld()->allowJumping()) ||
 	     (getFlag() == Flags::NoJumping))
      return;
 
