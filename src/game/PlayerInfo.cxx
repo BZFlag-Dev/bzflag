@@ -57,6 +57,7 @@ void PlayerInfo::initPlayer(int _playerIndex) {
   state = PlayerInLimbo;
   paused = false;
   pausedSince = TimeKeeper::getNullTime();
+  flag        = -1;
 }
 
 void PlayerInfo::resetPlayer(bool ctf) {
@@ -99,7 +100,6 @@ bool PlayerInfo::exist() {
 
 void PlayerInfo::signingOn() {
   state = PlayerDead;
-  flag = -1;
 };
 
 bool PlayerInfo::isAlive() {
