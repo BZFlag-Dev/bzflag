@@ -22,6 +22,9 @@ recent bugs
   change the setting during game.  the values do not appear to be persistent
   properly either (quit and return and it's displayed wrong).
 
+- resetting key map doesn't seem to fully erase the current bindings before
+  reapplying defaults (same bug as above?)
+
 - Observer controls get confused sometimes. To see, push control and arrows
   to spin. While keys are down, push alt. Now release all. You continue spinning
   un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
@@ -33,9 +36,6 @@ recent bugs
   direction - x/y flipped
   Actually i think sometimes the bullet misses the bounce against the ground
   and travels unabatted downward, making it look like an odd angle.
-
-- resetting key map doesn't seem to fully erase the current bindings before
-  reapplying defaults
 
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
