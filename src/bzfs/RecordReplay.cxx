@@ -53,6 +53,7 @@ typedef __int64 s64;
 
 // bzfs specific headers
 #include "CmdLineOptions.h"
+#include "GameKeeper.h"
 
 
 // Type Definitions
@@ -1379,12 +1380,15 @@ savePlayersState ()
   adminPtr = adminBuf + sizeof (unsigned char);
 
   for (i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
     if (player[i].isPlaying()) {
       // Complete MsgAddPlayer      
       PlayerInfo *pPlayer = &player[i];
       buf = nboPackUByte(bufStart, i);
       buf = pPlayer->packUpdate(buf);
-      buf = score[i]->pack(buf);
+      buf = playerData->score->pack(buf);
       buf = pPlayer->packId(buf);
       routePacket (MsgAddPlayer, 
                    (char*)buf - (char*)bufStart, bufStart, StatePacket);

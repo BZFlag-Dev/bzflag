@@ -49,8 +49,6 @@ PlayerState lastState[MaxPlayers  + ReplayObservers];
 DelayQueue delayq[MaxPlayers  + ReplayObservers];
 // FlagHistory
 FlagHistory flagHistory[MaxPlayers  + ReplayObservers];
-// Score
-Score *score[MaxPlayers  + ReplayObservers] = {NULL};
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -317,11 +315,16 @@ void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = 
 
 static void sendPlayerUpdate(int playerIndex, int index)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
   void *buf, *bufStart = getDirectMessageBuffer();
   PlayerInfo *pPlayer = &player[playerIndex];
   buf = nboPackUByte(bufStart, playerIndex);
   buf = pPlayer->packUpdate(buf);
-  buf = score[playerIndex]->pack(buf);
+  buf = playerData->score->pack(buf);
   buf = pPlayer->packId(buf);
   
   if (playerIndex == index) {
@@ -1243,12 +1246,7 @@ static void dumpScore()
   for (i = int(RedTeam); i < NumTeams; i++)
     std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' <<
     	         Team::getName(TeamColor(i));
-  std::cout << "\n#players\n";
-  for (i = 0; i < curMaxPlayers; i++)
-    if (player[i].isPlaying()) {
-      score[i]->dump();
-      std::cout << ' ' << player[i].getCallSign() << std::endl;
-    }
+  GameKeeper::Player::dumpScore();
   std::cout << "#end\n";
 }
 #endif
@@ -1967,8 +1965,6 @@ static void dropAssignedFlag(int playerIndex) {
 
 static void anointNewRabbit(int killerId = NoPlayer)
 {
-  float topRatio = -100000.0f;
-  int i;
   int oldRabbit = rabbitIndex;
   rabbitIndex = NoPlayer;
 
@@ -1978,33 +1974,11 @@ static void anointNewRabbit(int killerId = NoPlayer)
 	&& player[killerId].canBeRabbit())
       rabbitIndex = killerId;
   
-  if (rabbitIndex == NoPlayer) {
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (i != oldRabbit && player[i].canBeRabbit()) {
-	float ratio = score[i]->ranking();
-	if (ratio > topRatio) {
-	  topRatio = ratio;
-	  rabbitIndex = i;
-	  DEBUG3("rabbitIndex is set to %d\n", rabbitIndex);
-	}
-      }
-    }
-  }
-  if (rabbitIndex == NoPlayer) {
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i].canBeRabbit(true)) {
-	float ratio = score[i]->ranking();
-	if (ratio > topRatio) {
-	  topRatio = ratio;
-	  rabbitIndex = i;
-	  DEBUG3("rabbitIndex is set again to %d\n", rabbitIndex);
-	}
-      }
-    }
-    DEBUG3("nobody, or no other than old rabbit to choose from, rabbitIndex is %d\n", rabbitIndex);
-  }
+  if (rabbitIndex == NoPlayer)
+    rabbitIndex = GameKeeper::Player::anointRabbit(oldRabbit);
 
   if (rabbitIndex != oldRabbit) {
+    DEBUG3("rabbitIndex is set to %d\n", rabbitIndex);
     if (oldRabbit != NoPlayer) {
       player[oldRabbit].wasARabbit();
     }
@@ -2014,6 +1988,9 @@ static void anointNewRabbit(int killerId = NoPlayer)
       buf = nboPackUByte(bufStart, rabbitIndex);
       broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
     }
+  } else {
+    DEBUG3("no other than old rabbit to choose from, rabbitIndex is %d\n",
+	   rabbitIndex);
   }
 }
 
@@ -2311,8 +2288,14 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 static void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex)
 {
+  GameKeeper::Player *killerData = NULL;
+  GameKeeper::Player *victimData;
+
   if (!realPlayer(victimIndex))
     return;
+
+  if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
+    killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
 
   // aliases for convenience
   // Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer
@@ -2334,8 +2317,8 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   //update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
-    score[killerIndex]->tK();
-    if (score[killerIndex]->isTK()) {
+    killerData->score->tK();
+    if (killerData->score->isTK()) {
        char message[MessageLen];
        strcpy(message, "You have been automatically kicked for team killing" );
        sendMessage(ServerPlayer, killerIndex, message, true);
@@ -2365,37 +2348,39 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     }
   }
 
+  victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
   // change the player score
   bufStart = getDirectMessageBuffer();
-  score[victimIndex]->killedBy();
+  victimData->score->killedBy();
   if (killer) {
     if (victimIndex != killerIndex) {
       if (teamkill) {
         if (clOptions->teamKillerDies)
           playerKilled(killerIndex, killerIndex, reason, -1);
         else
-          score[killerIndex]->killedBy();
-      } else
-        score[killerIndex]->kill();
+          killerData->score->killedBy();
+      } else {
+        killerData->score->kill();
+      }
     }
 
     buf = nboPackUByte(bufStart, 2);
     buf = nboPackUByte(buf, killerIndex);
-    buf = score[killerIndex]->pack(buf);
+    buf = killerData->score->pack(buf);
   }
   else {
     buf = nboPackUByte(bufStart, 1);
   }
 
   buf = nboPackUByte(buf, victimIndex);
-  buf = score[victimIndex]->pack(buf);
+  buf = victimData->score->pack(buf);
   broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
   // see if the player reached the score limit
   if (clOptions->maxPlayerScore != 0
       && killerIndex != InvalidPlayer
       && killerIndex != ServerPlayer
-      && score[killerIndex]->reached()) {
+      && killerData->score->reached()) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, killerIndex);
     buf = nboPackUShort(buf, uint16_t(NoTeam));

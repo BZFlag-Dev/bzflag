@@ -19,14 +19,13 @@ extern PlayerAccessInfo accessInfo[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
 extern DelayQueue       delayq[PlayerSlot];
 extern FlagHistory      flagHistory[PlayerSlot];
-extern Score           *score[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
 GameKeeper::Player::Player(int _playerIndex):
   player(&::player[_playerIndex]), accessInfo(&::accessInfo[_playerIndex]),
   lastState(&::lastState[_playerIndex]), delayq(&::delayq[_playerIndex]),
-  flagHistory(&::flagHistory[_playerIndex]), score(NULL),
+  flagHistory(&::flagHistory[_playerIndex]), score(&_score),
   playerIndex(_playerIndex)
 {
   playerList[playerIndex] = this;
@@ -34,8 +33,6 @@ GameKeeper::Player::Player(int _playerIndex):
   player->initPlayer(playerIndex);
   lastState->order       = 0;
   lagInfo                = new LagInfo(player);
-  score                  = new Score();
-  ::score[playerIndex]   = score;
 }
 
 GameKeeper::Player::~Player()
@@ -45,8 +42,6 @@ GameKeeper::Player::~Player()
   delayq->dequeuePackets();
   flagHistory->clear();
   delete lagInfo;
-  delete score;
-  ::score[playerIndex]   = NULL;
   playerList[playerIndex] = NULL;
 }
 
@@ -62,6 +57,55 @@ void GameKeeper::Player::updateLatency(float &waitTime)
     if (playerList[p]) {
       playerList[p]->lagInfo->updateLatency(waitTime);
   }
+}
+
+void GameKeeper::Player::dumpScore()
+{
+  Player *playerData;
+
+  std::cout << "\n#players\n";
+  int p;
+  for (p = 0; p < PlayerSlot; p++) 
+    if ((playerData = playerList[p]) && playerData->player->isPlaying()) {
+      playerData->_score.dump();
+      std::cout << ' ' << playerData->player->getCallSign() << std::endl;
+    }
+}
+
+int GameKeeper::Player::anointRabbit(int oldRabbit)
+{
+  float topRatio    = -100000.0f;
+  int   rabbitIndex = NoPlayer;
+
+  Player *playerData;
+  int     i;
+  bool    goodRabbitSelected = false;
+
+  for (i = 0; i < PlayerSlot; i++)
+    if ((playerData = playerList[i]))
+      if (playerData->player->canBeRabbit(true)) {
+	bool  goodRabbit = i != oldRabbit && playerData->player->isAlive();
+	float ratio      = playerData->_score.ranking();
+	bool  select     = false;
+	if (goodRabbitSelected) {
+	  if (goodRabbit && (ratio > topRatio)) {
+	    select = true;
+	  }
+	} else {
+	  if (goodRabbit) {
+	    select             = true;
+	    goodRabbitSelected = true;
+	  } else {
+	    if (ratio > topRatio)
+	      select = true;
+	  }
+	}
+	if (select) {
+	  topRatio = ratio;
+	  rabbitIndex = i;
+	}
+      }
+  return rabbitIndex;
 }
 
 // Local Variables: ***

@@ -42,6 +42,8 @@ public:
 
     static Player *getPlayerByIndex(int _playerIndex);
     static void    updateLatency(float &waitTime);
+    static void    dumpScore();
+    static int     anointRabbit(int oldRabbit);
 
     // players 
     PlayerInfo       *player;
@@ -60,6 +62,7 @@ public:
   private:
     static Player *playerList[PlayerSlot];
     int    playerIndex;
+    Score            _score;
   };
   class Flag {
   };
