@@ -783,12 +783,12 @@ void CustomWorld::write(WorldInfo* /* world*/) const
   //world->addLink(from, to);
 }
 
-static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& list)
+static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
 {
-  const int n = list.size();
+  const int n = wlist.size();
   for (int i = 0; i < n; ++i)
-    delete list[i];
-  list.clear();
+    delete wlist[i];
+  wlist.clear();
 }
 
 // write an UDP packet down the link to the client
@@ -1843,7 +1843,7 @@ static istream &readToken(istream& input, char *buffer, int n)
   return input;
 }
 
-static bool readWorldStream(istream& input, const char *location, std::vector<WorldFileObject*>& list)
+static bool readWorldStream(istream& input, const char *location, std::vector<WorldFileObject*>& wlist)
 {
   int line = 1;
   char buffer[1024];
@@ -1873,7 +1873,7 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
 
     else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
-	list.push_back(object);
+	wlist.push_back(object);
 	object = NULL;
       }
       else {
@@ -6335,14 +6335,14 @@ int main(int argc, char **argv)
   clOptions = new CmdLineOptions();
 
   // set default DB entries
-  for (unsigned int i = 0; i < countof(globalDBItems); ++i) {
-    assert(globalDBItems[i].name != NULL);
-    if (globalDBItems[i].value != NULL) {
-      BZDB->set(globalDBItems[i].name, globalDBItems[i].value);
-      BZDB->setDefault(globalDBItems[i].name, globalDBItems[i].value);
+  for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
+    assert(globalDBItems[gi].name != NULL);
+    if (globalDBItems[gi].value != NULL) {
+      BZDB->set(globalDBItems[gi].name, globalDBItems[gi].value);
+      BZDB->setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
     }
-    BZDB->setPersistent(globalDBItems[i].name, globalDBItems[i].persistent);
-    BZDB->setPermission(globalDBItems[i].name, globalDBItems[i].permission);
+    BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
+    BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
     // FIXME: callback for resending on change
   }
 
