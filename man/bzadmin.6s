@@ -1,8 +1,6 @@
-.TH bzadmin 6
+.TH bzadmin 6 BUILD_DATE bzadmin-BUILD_VERSION BZFlag
 .SH NAME
 bzadmin \- a text based client for BZFlag
-.TP
-(Version BZFLAG_VERSION)
 .SH SYNOPSIS
 .sS
 .B bzadmin

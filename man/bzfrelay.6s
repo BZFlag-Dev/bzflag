@@ -1,8 +1,6 @@
-.TH bzfrelay 6
+.TH bzfrelay 6 BUILD_DATE bzfrelay-BUILD_VERSION BZFlag
 .SH NAME
 bzfrelay \- BZFlag game server firewall relay
-.TP
-(Version BZFLAG_VERSION)
 .SH SYNOPSIS
 .sS
 .B bzfrelay

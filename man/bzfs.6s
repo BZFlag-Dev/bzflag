@@ -1,8 +1,6 @@
-.TH bzfs 6
+.TH bzfs 6 BUILD_DATE bzfs-BUILD_VERSION BZFlag
 .SH NAME
 bzfs \- BZFlag game server 
-.TP
-(Version BZFLAG_VERSION)
 .SH SYNOPSIS
 .sS
 .B bzfs
