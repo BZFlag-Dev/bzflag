@@ -25,7 +25,7 @@
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
 				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG"
 				StringPooling="TRUE"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderFile=".\Release/bzfs.pch"
 				AssemblerListingLocation=".\Release/"
