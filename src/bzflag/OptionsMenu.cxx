@@ -40,9 +40,9 @@ StartupInfo* getStartupInfo();
 extern ControlPanel* controlPanel;
 
 
-OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
-			     inputMenu(NULL), audioMenu(NULL),
-			     displayMenu(NULL)
+OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
+                             saveWorldMenu(NULL), inputMenu(NULL),
+                             audioMenu(NULL), displayMenu(NULL)
 {
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
@@ -70,6 +70,11 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
   displaySetting = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Display Settings");
+  list.push_back(label);
+
+  effectsOptions = label = new HUDuiLabel;
+  label->setFontFace(fontFace);
+  label->setLabel("Effects Options");
   list.push_back(label);
 
   guiOptions = label = new HUDuiLabel;
@@ -126,6 +131,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
 OptionsMenu::~OptionsMenu()
 {
   delete guiOptionsMenu;
+  delete effectsMenu;
   delete saveWorldMenu;
   delete inputMenu;
   delete audioMenu;
@@ -138,6 +144,9 @@ void OptionsMenu::execute()
   if (focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
     HUDDialogStack::get()->push(guiOptionsMenu);
+  } else if (focus == effectsOptions) {
+    if (!effectsMenu) effectsMenu = new EffectsMenu;
+    HUDDialogStack::get()->push(effectsMenu);
   } else if (focus == clearCache) {
     if ((ServerListCache::get())->clearCache()){
       controlPanel->addMessage("Cache Cleared");
@@ -192,7 +201,7 @@ void OptionsMenu::resize(int width, int height)
 
   // load current settings
   {
-    int i = 6;
+    int i = 7;
 
     const StartupInfo* info = getStartupInfo();
 

@@ -28,7 +28,6 @@
 #include "MainWindow.h"
 #include "World.h"
 #include "SceneRenderer.h"
-#include "TrackMarks.h"
 #include "HUDDialogStack.h"
 #include "HUDuiControl.h"
 #include "HUDuiList.h"
@@ -226,27 +225,6 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->createSlider(9);
   option->update();
   list.push_back(option);
-  // Display Treads
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Display Treads:");
-  option->setCallback(callback, (void*)"T");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
-  // Track Mark Fading Scale
-  option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("TrackMarks:");
-  option->setCallback(callback, (void*)"m");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  option->createSlider(10);
-  option->update();
-  list.push_back(option);
-
 
   initNavigation(list, 1, list.size()-1);
 }
@@ -322,8 +300,6 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("killerhighlight")));
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseRate") * 5) - 1);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseDepth") * 10) - 1);
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(int((TrackMarks::getUserFade() * 10.0f) + 0.5f));
   }
 }
 
@@ -431,17 +407,6 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'd':
       {
 	BZDB.set("pulseDepth", TextUtils::format("%f", (float)(list->getIndex() + 1) / 10.0f));
-	break;
-      }
-    case 'T':
-      {
-	BZDB.set("showTreads", list->getIndex() ? "1" : "0");
-	break;
-      }
-    case 'm':
-      {
-	int fade = list->getIndex();
-	TrackMarks::setUserFade(float(fade) / 10.0f);
 	break;
       }
   }

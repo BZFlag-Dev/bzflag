@@ -686,7 +686,8 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   }
 
 
-  mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none");
+  mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
+           && BZDB.isTrue("userMirror");
 
   clearZbuffer = true;
   drawGround = true;

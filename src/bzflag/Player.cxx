@@ -1176,7 +1176,7 @@ void Player::doDeadReckoning()
     inputVel[2] = 0.0f;
   }
 
-  // setup remote players landing sounds and graphics, and jumping sounds
+  // setup remote players' landing sounds and graphics, and jumping sounds
   if (isAlive()) {
     // the importance level of the remote sounds
     const bool remoteImportant = false;

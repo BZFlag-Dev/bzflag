@@ -28,6 +28,8 @@ bzflag_SOURCES =			\
 	ControlPanel.h			\
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
+	EffectsMenu.cxx			\
+	EffectsMenu.h			\
 	EntryZone.h			\
 	FlashClock.cxx			\
 	FlashClock.h			\

@@ -19,6 +19,7 @@
 #include "HUDuiDefaultKey.h"
 #include "HUDuiControl.h"
 #include "GUIOptionsMenu.h"
+#include "EffectsMenu.h"
 #include "SaveWorldMenu.h"
 #include "InputMenu.h"
 #include "AudioMenu.h"
@@ -40,16 +41,18 @@ public:
 
 private:
   HUDuiControl*	guiOptions;
+  HUDuiControl*	effectsOptions;
   HUDuiControl*	clearCache;
   HUDuiControl*	saveWorld;
   HUDuiControl*	inputSetting;
   HUDuiControl*	audioSetting;
   HUDuiControl*	displaySetting;
   GUIOptionsMenu*	guiOptionsMenu;
+  EffectsMenu*		effectsMenu;
   SaveWorldMenu*	saveWorldMenu;
-  InputMenu*	    inputMenu;
-  AudioMenu*	    audioMenu;
-  DisplayMenu*	  displayMenu;
+  InputMenu*	    	inputMenu;
+  AudioMenu*	    	audioMenu;
+  DisplayMenu*	  	displayMenu;
 };
 
 

@@ -143,7 +143,9 @@ static DefaultDBItem	defaultDBItems[] = {
   { "pulseDepth",		"0.4",			true,	StateDatabase::ReadWrite,	NULL },
   { "pulseRate",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showTreads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "userMirror",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "userTrackFade",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "userRainScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "scrollPages",		"20",			true,	StateDatabase::ReadWrite,	NULL },
   { "remoteSounds",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
