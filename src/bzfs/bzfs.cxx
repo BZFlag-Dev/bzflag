@@ -2239,7 +2239,6 @@ static void addPlayer(int playerIndex)
 	player[i].team == ObserverTeam)
       numobservers++;
   }
-
   // automatically assign the player's team
   if (((clOptions->autoTeam) && (t < (int)ObserverTeam)) ||
       (t == AutomaticTeam)) {
@@ -2313,7 +2312,7 @@ static void addPlayer(int playerIndex)
      return;
    }
 
-
+  player[playerIndex].wasRabbit = false;
   player[playerIndex].toBeKicked = false;
   player[playerIndex].Admin = false;
   player[playerIndex].restartOnBase = (clOptions->gameStyle & TeamFlagGameStyle) != 0;
@@ -2694,8 +2693,10 @@ static void anointNewRabbit()
   }
 
   if (rabbitIndex != oldRabbit) {
-    if (oldRabbit != NoPlayer && player[oldRabbit].state != PlayerDead)
+    if (oldRabbit != NoPlayer) {
       player[oldRabbit].team = RogueTeam;
+      player[oldRabbit].wasRabbit = true;
+    }
     if (rabbitIndex != NoPlayer)
       player[rabbitIndex].team = RabbitTeam;
     void *buf, *bufStart = getDirectMessageBuffer();
@@ -3053,7 +3054,7 @@ static void playerAlive(int playerIndex)
   broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
-    player[playerIndex].team = RogueTeam;
+    player[playerIndex].wasRabbit = false;
     if (rabbitIndex == NoPlayer) {
       anointNewRabbit();
     }
@@ -3080,13 +3081,18 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 	player[victimIndex].state != PlayerAlive) return;
   player[victimIndex].state = PlayerDead;
 
-  bool tk = (player[victimIndex].team == player[killerIndex].team)
-    && (player[victimIndex].team != RabbitTeam)
-    && ((player[victimIndex].team != RogueTeam)
-	|| (clOptions->gameStyle & int(RabbitChaseGameStyle)));
+  const bool sameteam = player[victimIndex].team == player[killerIndex].team;
+  // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
+  const bool rabbitenvolved = player[killerIndex].wasRabbit ||
+                              player[victimIndex].team == RabbitTeam;
+  // a rogue is allowed to kill everything, except in rabbit style
+  const bool realrogue = player[killerIndex].team == RogueTeam &&
+                         !(clOptions->gameStyle & int(RabbitChaseGameStyle));
+
+  const bool teamkill = sameteam && !rabbitenvolved && !realrogue;
 
   //update tk-score
-  if ((victimIndex != killerIndex) && tk) {
+  if ((victimIndex != killerIndex) && teamkill) {
      player[killerIndex].tks++;
      if ((player[killerIndex].tks >= 3) && (clOptions->teamKillerKickRatio > 0) && // arbitrary 3
 	 ((player[killerIndex].wins == 0) ||
@@ -3126,7 +3132,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     player[victimIndex].losses++;
     if (killerIndex != InvalidPlayer) {
       if (victimIndex != killerIndex) {
-	if (tk) {
+	if (teamkill) {
 	  if (clOptions->teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, reason, -1);
 	  else

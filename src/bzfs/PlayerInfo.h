@@ -89,6 +89,8 @@ struct PlayerInfo {
     char email[EmailLen];
     // player's team
     TeamColor team;
+    // true for dead rabbit until respawn
+    bool wasRabbit;
     // flag index player has
     int flag;
     // player's score
