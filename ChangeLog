@@ -4,6 +4,7 @@
 BZFlag 1.10.4
 -------------
 
+* Add pause time to /idlestats - Sean Morrison
 * Notify players when reassigned to a different team on join - Sean Morrison
 * Allow multiple bases per team - Dave Brosius
 * Use cyan for observer messages in old console color mode - Frank Thilo
