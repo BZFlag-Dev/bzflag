@@ -542,7 +542,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
     for (int i = 0; i < numFlags; i++) {
       char message[MessageLen];
       FlagInfo::get(i)->getTextualInfo(message);
-      sendMessage(ServerPlayer, t, message);
+      sendMessage(ServerPlayer, t, message, false);
     }
   } else {
     sendMessage(ServerPlayer, t, "reset|show|up");
