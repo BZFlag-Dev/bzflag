@@ -11,9 +11,6 @@
  */
 
 #include <string.h>
-#ifdef __sun
-#include <strings.h>
-#endif
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>
@@ -45,29 +42,6 @@ static uint32_t		bytesSent;
 static uint32_t		bytesReceived;
 static uint32_t		packetsSent;
 static uint32_t		packetsReceived;
-#endif
-
-
-#ifdef _WIN32
-
-// BSD UNIX compat. functions
-
-void bzero(unsigned char *ptr, int len)
-{
-        memset(ptr,0,len);
-}
-            
-int bcmp(unsigned char *a1, unsigned char *a2, int length)
-{
-        int i;
-        for (i=0;i<length;i++) {
-                if (*a1 != *a2) return 1;
-                a1++;
-                a2++;
-        }
-        return 0;
-}                
-
 #endif
 
 #if !defined(_WIN32)
@@ -765,7 +739,7 @@ void			ServerLink::sendUDPlinkRequest()
 	return; // we cannot comply
   }
   for (int portno=17200; portno < 65000; portno++) {
-  	bzero((unsigned char *)&serv_addr, sizeof(serv_addr)); 
+  	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr)); 
   	serv_addr.sin_family = AF_INET;
   	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   	serv_addr.sin_port = htons(portno);
