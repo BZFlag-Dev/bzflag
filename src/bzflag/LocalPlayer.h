@@ -148,6 +148,7 @@ protected:
 private:
   Location		location;
   FiringStatus	firingStatus;
+  TimeKeeper	jamTime;
   float		flagShakingTime;
   int			flagShakingWins;
   float		flagAntidotePos[3];
@@ -166,7 +167,7 @@ private:
   bool		keyboardMoving;
   float		keyboardSpeed;
   float		keyboardAngVel;
-  int			keyButton;
+  int		keyButton;
   bool		keyPressed;
   bool		spawning;
 };
