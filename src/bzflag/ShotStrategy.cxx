@@ -799,7 +799,7 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= ThiefAdRate;
+  f.lifetime /= (ThiefAdShotVel * ThiefAdRate)/2.0f;
   f.shot.vel[0] *= ThiefAdShotVel;
   f.shot.vel[1] *= ThiefAdShotVel;
   f.shot.vel[2] *= ThiefAdShotVel;
