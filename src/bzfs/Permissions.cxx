@@ -18,7 +18,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include "Permissions.h"
-#include "MD5.h"
+#include "md5.h"
 
 std::map<std::string, PlayerAccessInfo>	groupAccess;
 std::map<std::string, PlayerAccessInfo>	userDatabase;
