@@ -42,7 +42,7 @@ Particle::Particle() :
 	normal->set(1, 1.0f);
 	normal->set(2, 0.0f);
 
-	index.set(0 + 0,  0);	// crs: 0 + 0 to work around bug in gcc 2.7.2
+	index.set((unsigned int)0,  (const unsigned int)0);	// timr: cast for gcc 2.7.2 bug
 	index.set(1,  1);
 	index.set(2,  2);
 	index.set(3,  3);
