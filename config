@@ -42,7 +42,9 @@ VERSIONBUILD = 9
 #
 # uncomment to enable debug render modes
 #
-#DEBUG_RENDERING = -DDEBUG_RENDERING
+ifdef DEBUG
+DEBUG_RENDERING = -DDEBUG_RENDERING
+endif
 
 #
 # uncomment to enable robot tanks
