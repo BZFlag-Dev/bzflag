@@ -266,11 +266,11 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
 
 int WorldInfo::packDatabase()
 {
-  databaseSize = (2 + 2 + 6 * 4) * numWalls +
-    (1 + 2 + 2 + 7 * 4) * numBoxes +
-    (1 + 2 + 2 + 7 * 4) * numPyramids +
-    (1 + 2 + 2 + 8 * 4) * numTeleporters +
-    (2 + 2 + 2 * 2) * 2 * numTeleporters;
+  databaseSize = (2 + 2 + WorldCodeWallSize) * numWalls +
+    (2 + 2 + WorldCodeBoxSize) * numBoxes +
+    (2 + 2 + WorldCodePyramidSize) * numPyramids +
+    (2 + 2 + WorldCodeTeleporterSize) * numTeleporters +
+    (2 + 2 + WorldCodeLinkSize) * 2 * numTeleporters;
   database = new char[databaseSize];
   void *databasePtr = database;
 

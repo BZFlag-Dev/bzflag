@@ -102,11 +102,12 @@ const uint16_t		WorldCodeTeleporter = 0x7465;		// 'te'
 const uint16_t		WorldCodeWall = 0x776c;			// 'wl'
 
 // world database sizes
-const uint16_t		WorldCodeBaseSize = 46;
+const uint16_t		MapHeaderSize = 30;
+const uint16_t		WorldCodeBaseSize = 38;
 const uint16_t		WorldCodeWallSize = 24;
 const uint16_t		WorldCodeBoxSize = 29;
-const uint16_t		WorldCodePyramidSize = 21;
-const uint16_t		WorldCodeTeleporterSize = 37;
+const uint16_t		WorldCodePyramidSize = 29;
+const uint16_t		WorldCodeTeleporterSize = 33;
 const uint16_t		WorldCodeLinkSize = 4;
 
 // ping packet sizes, codes and structure
