@@ -281,7 +281,7 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
   char messageBuffer[MessageLen];
   memset(messageBuffer, 0, MessageLen);
 
-  if (BZDB.isTrue("_disableBots")) {
+  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
     return std::string();
   }

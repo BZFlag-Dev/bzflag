@@ -32,6 +32,7 @@ class SphereSceneNode;
 
 
 const int PlayerUpdatePLen = PlayerIdPLen + 42;
+const int PlayerUpdateSmallPLen = PlayerUpdatePLen - 16;
 
 class Player {
 public:

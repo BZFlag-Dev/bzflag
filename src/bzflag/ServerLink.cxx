@@ -329,6 +329,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
       case MsgShotBegin:
       case MsgShotEnd:
       case MsgPlayerUpdate:
+      case MsgPlayerUpdateSmall:
       case MsgGMUpdate:
       case MsgAudio:
       case MsgVideo:
@@ -603,8 +604,12 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   buf = nboPackFloat(buf, timeStamp);
   buf = nboPackUByte(buf, player->getId());
   // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
+  int len = PlayerUpdatePLen;
   buf = player->pack(buf, code);
-  send(code, sizeof(msg), msg);
+  if (code == MsgPlayerUpdateSmall) {
+    len = PlayerUpdateSmallPLen;
+  }
+  send(code, len, msg);
 }
 #endif
 
