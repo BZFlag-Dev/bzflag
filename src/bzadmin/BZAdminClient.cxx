@@ -58,10 +58,8 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   }
   if (code != MsgAccept && code != MsgReject) {
     char buf[10];
-    std::vector<std::string> args;
     sprintf(buf, "%04x", code);
-    args.push_back(buf);
-    std::cerr << "Communication error joining game [Wrong Code {1}]." << std::endl;
+    std::cerr << "Communication error joining game [Wrong Code: " << buf << "]."<< std::endl;
     return;
   }
   if (code == MsgReject) {

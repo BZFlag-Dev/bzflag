@@ -1521,7 +1521,7 @@ static void addPlayer(int playerIndex)
     char buffer[MessageLen];
     DEBUG3 ("Rejoin wait %.1f seconds for %s\n",
             waitTime, player[playerIndex].getCallSign());
-    sprintf (buffer, "Can't rejoin for %.1f seconds\n", waitTime);
+    sprintf (buffer, "Can't rejoin for %.1f seconds.", waitTime);
     rejectPlayer(playerIndex, RejectRejoinWaitTime, buffer);
     return ;
   } else {
