@@ -162,7 +162,7 @@ void MacOneEvent () {
 
       case updateEvt:
   			BeginUpdate((WindowPtr)eventRec.message);
-        EndUpdate((WindowPtr)eventRec.message);
+	EndUpdate((WindowPtr)eventRec.message);
   		  break;
 
   		case osEvt:
@@ -174,11 +174,11 @@ void MacOneEvent () {
   				     gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;
   			    break;
     		}
-        break;
+	break;
 
       case kHighLevelEvent:
-        AEProcessAppleEvent(&eventRec);
-        break;
+	AEProcessAppleEvent(&eventRec);
+	break;
     }
 
     SIOUXHandleOneEvent (&eventRec);

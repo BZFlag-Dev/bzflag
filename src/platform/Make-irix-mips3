@@ -16,5 +16,4 @@ PCXXFILES =				\
 	XWindow.cxx			\
 	SGIDisplay.cxx			\
 	SGIMedia.cxx			\
-        $(NULL)
-
+	$(NULL)

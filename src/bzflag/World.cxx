@@ -190,7 +190,7 @@ const Obstacle*		World::inBuilding(const float* pos, float radius) const
       return &pyramid;
     pyramidScan->next();
   }
-  
+
   // check bases
   BaseBuildingsCIteratorPtr baseScan(basesR.newCIterator());
   while(!baseScan->isDone()) {

@@ -2750,8 +2750,8 @@ void			ServerMenu::readServerList(int index)
 	// store info
 	ServerItem serverInfo;
 	serverInfo.ping.unpackHex(info);
-        int dot[4] = {127,0,0,1};
-        if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
+	int dot[4] = {127,0,0,1};
+	if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
 	  if (dot[0] >= 0 && dot[0] <= 255 &&
 	      dot[1] >= 0 && dot[1] <= 255 &&
 	      dot[2] >= 0 && dot[2] <= 255 &&
@@ -2764,7 +2764,7 @@ void			ServerMenu::readServerList(int index)
 	    paddr[3] = (unsigned char)dot[3];
 	    serverInfo.ping.serverId.serverHost = addr;
 	  }
-        }
+	}
 	serverInfo.ping.serverId.port = htons((int16_t)port);
 	serverInfo.name = name;
 

@@ -12,7 +12,7 @@
 bool  gMouseGrabbed;
 
 MacWindow::MacWindow (const MacDisplay *display, MacVisual *visual) :
-                        BzfWindow (display)
+			BzfWindow (display)
 {
   GLboolean ok;
 
@@ -20,7 +20,7 @@ MacWindow::MacWindow (const MacDisplay *display, MacVisual *visual) :
 #ifndef USE_DSP
    SetRect (&rect, GLOBAL_OFFSET_X, GLOBAL_OFFSET_Y, 640 + GLOBAL_OFFSET_X, 480 + GLOBAL_OFFSET_Y);
    window = NewCWindow (NULL, &rect, "\pBZFlag", false,
-							           plainDBox, (WindowPtr) -1L, true, 0L);
+								   plainDBox, (WindowPtr) -1L, true, 0L);
 #else
 	window = dsSetupScreen (640, 480 );
 #endif
@@ -88,9 +88,9 @@ void MacWindow::showWindow (boolean show) {
     if (window == NULL)  return;
 
        if (show)
-        ShowWindow (window);
+	ShowWindow (window);
        else
-        HideWindow (window);
+	HideWindow (window);
 #endif
 }
 
@@ -177,7 +177,7 @@ void MacWindow::getMouse    (int &x, int &y) const {
     GetPort(&savedPort);
     SetPort(window);
     GetMouse (&tmpMouse);  // returns mouse location in coords of local
-                          // window which must be set
+			  // window which must be set
 
     x = tmpMouse.h;
     y = tmpMouse.v;

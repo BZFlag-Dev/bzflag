@@ -171,7 +171,7 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
   }
 
   BaseBuildingsCIteratorPtr baseScan(World::getWorld()->
-      	                             getBases().newCIterator());
+      				     getBases().newCIterator());
   while(!baseScan->isDone()) {
     const BaseBuilding &baseb = baseScan->getItem();
     const float baset = baseb.intersect(ray);
@@ -610,7 +610,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
       switch (e) {
-        case Stop:
+	case Stop:
 	  timeLeft = 0.0f;
 	  break;
 
@@ -627,7 +627,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	  reason = ShotPathSegment::Ricochet;
 	  break;
 
-        case Through:
+	case Through:
 	  assert(0);
 	}
       }

@@ -52,9 +52,9 @@ class MacDisplay : public BzfDisplay {
   	  // int     screen_depth;
 
 
-        boolean is_valid;
+	boolean is_valid;
 
-        static boolean pending;
+	static boolean pending;
 
 	    static CGrafPtr    window;
 	    static AGLContext  context;

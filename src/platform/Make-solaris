@@ -15,5 +15,4 @@ PCXXFILES =				\
 	XVisual.cxx			\
 	XWindow.cxx			\
 	SolarisMedia.cxx			\
-        $(NULL)
-
+	$(NULL)

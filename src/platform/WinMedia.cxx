@@ -424,7 +424,7 @@ void			WinMedia::audioSleep(
     do {
       // break if buffer has drained enough
       if (isAudioTooEmpty())
-        break;
+	break;
 
       // wait.  break if command was sent.
       if (WaitForSingleObject(audioCommandEvent, 1) == WAIT_OBJECT_0)

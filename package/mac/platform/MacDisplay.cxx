@@ -109,7 +109,7 @@ boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
   			case updateEvt:
   				bzf_event.type = BzfEvent::Redraw;
   				BeginUpdate((WindowPtr)eventRec.message);
-	        EndUpdate((WindowPtr)eventRec.message);
+		EndUpdate((WindowPtr)eventRec.message);
   			  break;
 
   			//case diskEvt:
@@ -126,14 +126,14 @@ boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
 				     gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;
 			       gMouseGrabbed = !gInBackground;
 			       if (!gInBackground)
-			        SetCursor (&qd.arrow);
+				SetCursor (&qd.arrow);
 			    break;
   		  }
   			break;
 
 	     case kHighLevelEvent:
-         AEProcessAppleEvent(&eventRec);
-         break;
+	 AEProcessAppleEvent(&eventRec);
+	 break;
 
 			}
 

@@ -43,7 +43,7 @@ class BzfKeyMap {
 			Quit,
 			ScrollBackward,
 			ScrollForward,
-                        SlowKeyboardMotion,
+			SlowKeyboardMotion,
 			LastKey
     };
 

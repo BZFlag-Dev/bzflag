@@ -526,13 +526,13 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
     case 1:
       if (offset>0)
 	   {
-        if (messagesOffset+offset < messages.getLength())
+	if (messagesOffset+offset < messages.getLength())
 	     messagesOffset+=offset;
 	   else messagesOffset=messages.getLength()-1;
 	   }
 	 else if (offset<0)
 	   {
-        if (messagesOffset+offset >= 0)
+	if (messagesOffset+offset >= 0)
 	     messagesOffset+=offset;
 	   else messagesOffset=0;
 	   }
@@ -540,9 +540,9 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
     case 2:
       if (offset<0)
 	   {
-        if (messages.getLength()-offset >= 0) messagesOffset+=offset;
+	if (messages.getLength()-offset >= 0) messagesOffset+=offset;
 	   else messagesOffset=0;
-        }
+	}
 	 break;
   }
   changedMessage = 2;

@@ -18,7 +18,7 @@
 BzfString		BaseBuilding::typeName("BaseBuilding");
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
-        const float *size, int _team) :
+	const float *size, int _team) :
 		Obstacle(p, rotation, size[0], size[1], size[2]),
 		team(_team)
 {
@@ -47,7 +47,7 @@ BzfString		BaseBuilding::getClassName()
 float			BaseBuilding::intersect(const Ray &r) const
 {
   return timeRayHitsBlock(r, getPosition(), getRotation(),
-                          getWidth(), getBreadth(), getHeight());
+			  getWidth(), getBreadth(), getHeight());
 }
 
 void			BaseBuilding::getNormal(const float *p, float *n) const

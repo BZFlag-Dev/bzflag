@@ -232,7 +232,7 @@ class WorldInfo {
     int packDatabase();
     void *getDatabase() const;
     int getDatabaseSize() const;
-    
+
   private:
     boolean inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
     boolean rectHitCirc(float dx, float dy, const float *p, float r) const;
@@ -821,7 +821,7 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
     }
   }
   for (i = 0; i < numBoxes; i++)
-    if ((inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] < 
+    if ((inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] <
 	(z + flagHeight)) && (boxes[i].pos[2] + boxes[i].size[2]) > z) {
       if (location != NULL)
 	*location = &boxes[i];
@@ -832,7 +832,7 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
     modSize[0] = pyramids[i].size[0] * ((z - pyramids[i].pos[2]) / pyramids[i].size[2]);
     modSize[1] = pyramids[i].size[1] * ((z - pyramids[i].pos[2]) / pyramids[i].size[2]);
     modSize[2] = pyramids[i].size[2];
-    if ((inRect(pyramids[i].pos, pyramids[i].rotation, modSize,x,y,r)) && 
+    if ((inRect(pyramids[i].pos, pyramids[i].rotation, modSize,x,y,r)) &&
 	pyramids[i].pos[2] < (z + flagHeight) && (pyramids[i].pos[2] + pyramids[i].size[2]) > z) {
       if (location != NULL)
 	*location = &pyramids[i];
@@ -3371,7 +3371,7 @@ static void resetFlag(int flagIndex)
       flag[flagIndex].flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
       flag[flagIndex].flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
       flag[flagIndex].flag.position[2] = 0.0f;
-    } while (world->inBuilding(NULL, flag[flagIndex].flag.position[0], flag[flagIndex].flag.position[1], 
+    } while (world->inBuilding(NULL, flag[flagIndex].flag.position[0], flag[flagIndex].flag.position[1],
 	flag[flagIndex].flag.position[2], r));
   }
 

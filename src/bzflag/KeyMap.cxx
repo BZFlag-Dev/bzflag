@@ -77,7 +77,7 @@ const char*		BzfKeyMap::keyName[] = {
 				"quitKey",
 				"scrollBackwardKey",
 				"scrollForwardKey",
-                                "slowKeyboardMotion",
+				"slowKeyboardMotion",
 			};
 
 const char*		BzfKeyMap::eventNames[] = {

@@ -770,7 +770,7 @@ int			main(int argc, char** argv)
   // read resources
   {
     #ifdef __MWERKS__
-        ifstream resourceStream(getConfigFileName(), ios::in);
+	ifstream resourceStream(getConfigFileName(), ios::in);
      #else
     ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
      #endif
@@ -913,9 +913,9 @@ int			main(int argc, char** argv)
       const char* username = pwent ? pwent->pw_name : NULL;
 #endif
       if (username && hostname) {
-        email = username;
-        email += "@";
-        email += hostname;
+	email = username;
+	email += "@";
+	email += hostname;
       }
     }
   }

@@ -388,7 +388,7 @@ void			BackgroundRenderer::setCelestial(
     glBegin(GL_TRIANGLE_STRIP);
       glVertex3f(2.0f * WorldSize, 0.0f, -moonRadius);
       for (int i = 0; i < 11; i++) {
-        const float angle = 0.5f * M_PI * float(i-5) / 6.0f;
+	const float angle = 0.5f * M_PI * float(i-5) / 6.0f;
 	glVertex3f(2.0f * WorldSize, coverage * moonRadius * cosf(angle),
 					moonRadius * sinf(angle));
 	glVertex3f(2.0f * WorldSize, moonRadius * cosf(angle),

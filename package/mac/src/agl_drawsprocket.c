@@ -60,15 +60,15 @@ CGrafPtr dsSetupScreen( int width, int height )
 	gDSpTheContextAttributes.reserved1					= 0;
 	gDSpTheContextAttributes.reserved2					= 0;
 	gDSpTheContextAttributes.colorTable				    = NULL;
-	gDSpTheContextAttributes.contextOptions 	        = 0;
+	gDSpTheContextAttributes.contextOptions 		= 0;
 	gDSpTheContextAttributes.gameMustConfirmSwitch	    = false;
 	gDSpTheContextAttributes.reserved3[0]				= 0;
 	gDSpTheContextAttributes.reserved3[1]				= 0;
 	gDSpTheContextAttributes.reserved3[2]				= 0;
 	gDSpTheContextAttributes.reserved3[3]				= 0;
 	gDSpTheContextAttributes.displayWidth			    = width;
-	gDSpTheContextAttributes.displayHeight		        = height;
-	gDSpTheContextAttributes.colorNeeds			        = kDSpColorNeeds_Require;
+	gDSpTheContextAttributes.displayHeight			= height;
+	gDSpTheContextAttributes.colorNeeds				= kDSpColorNeeds_Require;
 	gDSpTheContextAttributes.pageCount                  = 1;
 
 	theError = DSpFindBestContext( &gDSpTheContextAttributes, &gDSpTheContext );

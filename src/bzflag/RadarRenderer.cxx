@@ -192,19 +192,19 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const int sequences = 10;
 
       static float np[] =
-          { 0, 0, 1, 1,
-            1, 1, 0, 0,
-            0.5f, 0.5f, 1.5f, 1.5f,
-            1.5f, 1.5f, 0.5f, 0.5f,
-            0.25f, 0.25f, 1.25f, 1.25f,
-            1.25f, 1.25f, 0.25f, 0.25f,
-            0, 0.5f, 1, 1.5f,
-            1, 1.5f, 0, 0.5f,
-            0.5f, 0, 1.5f, 1,
-            1.4f, 1, 0.5f, 0,
-            0.75f, 0.75f, 1.75f, 1.75f,
-            1.75f, 1.75f, 0.75f, 0.75f,
-          };
+	  { 0, 0, 1, 1,
+	    1, 1, 0, 0,
+	    0.5f, 0.5f, 1.5f, 1.5f,
+	    1.5f, 1.5f, 0.5f, 0.5f,
+	    0.25f, 0.25f, 1.25f, 1.25f,
+	    1.25f, 1.25f, 0.25f, 0.25f,
+	    0, 0.5f, 1, 1.5f,
+	    1, 1.5f, 0, 0.5f,
+	    0.5f, 0, 1.5f, 1,
+	    1.4f, 1, 0.5f, 0,
+	    0.75f, 0.75f, 1.75f, 1.75f,
+	    1.75f, 1.75f, 0.75f, 0.75f,
+	  };
 
       int noisePattern = 4 * int(floor(sequences * bzfrand()));
 
@@ -212,14 +212,14 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       noiseTexture->execute();
       glBegin(GL_QUADS);
 
-        glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
-        glVertex2f(-range,-range);
-        glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
-        glVertex2f( range,-range);
-        glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
-        glVertex2f( range, range);
-        glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
-        glVertex2f(-range, range);
+	glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
+	glVertex2f(-range,-range);
+	glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
+	glVertex2f( range,-range);
+	glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
+	glVertex2f( range, range);
+	glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
+	glVertex2f(-range, range);
 
       glEnd();
       glDisable(GL_TEXTURE_2D);
@@ -231,14 +231,14 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       noiseTexture->execute();
       glBegin(GL_QUADS);
 
-        glTexCoord2f(0,0);
-        glVertex2f(-range,-range);
-        glTexCoord2f(1,0);
-        glVertex2f( range,-range);
-        glTexCoord2f(1,1);
-        glVertex2f( range, range);
-        glTexCoord2f(0,1);
-        glVertex2f(-range, range);
+	glTexCoord2f(0,0);
+	glVertex2f(-range,-range);
+	glTexCoord2f(1,0);
+	glVertex2f( range,-range);
+	glTexCoord2f(1,1);
+	glVertex2f( range, range);
+	glTexCoord2f(0,1);
+	glVertex2f(-range, range);
 
       glEnd();
       glDisable(GL_TEXTURE_2D);

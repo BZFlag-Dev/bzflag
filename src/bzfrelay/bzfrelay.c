@@ -1222,10 +1222,10 @@ int			main(int argc, char** argv)
       /* parse address */
       switch (parseAddress(&listenOn, argv[i + 1], BZFS_PORT, 1)) {
 	case 0:
-        case 1:
+	case 1:
 	  break;
 
-        case -1:
+	case -1:
 	  fprintf(stderr, "out of memory\n");
 	  return 2;
 
@@ -1256,7 +1256,7 @@ parseServerArg:
 	case 0:
 	  break;
 
-        case -1:
+	case -1:
 	  fprintf(stderr, "out of memory\n");
 	  return 2;
 

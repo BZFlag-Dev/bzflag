@@ -719,7 +719,7 @@ static boolean scheduleServerTest(Server* server)
       if (fd > maxFileDescriptor)
 	maxFileDescriptor = fd;
       if (testingList)
-        testingList->addAfter(new TestServer(fd, server));
+	testingList->addAfter(new TestServer(fd, server));
       else
 	testingList = new TestServer(fd, server);
       return True;

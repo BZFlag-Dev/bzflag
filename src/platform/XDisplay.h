@@ -52,17 +52,17 @@ class XDisplay : public BzfDisplay {
 	Window		getRootWindow() const;
 
 #ifdef XIJOYSTICK
-        XDeviceInfo*	getDevices() const { return devices; }
-        int		getNDevices() const { return ndevices; }
+	XDeviceInfo*	getDevices() const { return devices; }
+	int		getNDevices() const { return ndevices; }
 	void		setButtonPressType(int& type) {
-                          buttonPressType = type;
-                        }
-        void		setButtonReleaseType(int& type) {
-                          buttonReleaseType = type;
-                        }
+			  buttonPressType = type;
+			}
+	void		setButtonReleaseType(int& type) {
+			  buttonReleaseType = type;
+			}
 	int		getButtonPressType() const
 				{ return buttonPressType; }
-        int		getButtonReleaseType() const
+	int		getButtonReleaseType() const
 				{ return buttonReleaseType; }
 	int		mapButton(int button) const;
 #endif
@@ -73,9 +73,9 @@ class XDisplay : public BzfDisplay {
 	int		screen;
 #ifdef XIJOYSTICK
 	XDeviceInfo*	devices;
-        int		ndevices;
-        int		buttonPressType;
-        int		buttonReleaseType;
+	int		ndevices;
+	int		buttonPressType;
+	int		buttonReleaseType;
 #endif
     };
     Rep*		getRep() const { return rep; }

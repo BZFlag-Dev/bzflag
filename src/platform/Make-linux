@@ -17,5 +17,4 @@ PCXXFILES =				\
 	LinuxDisplay.cxx		\
 	LinuxMedia.cxx			\
 	usbjoy.cxx			\
-        $(NULL)
-
+	$(NULL)

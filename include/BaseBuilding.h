@@ -23,7 +23,7 @@
 class BaseBuilding : public Obstacle {
   public:
     			BaseBuilding(const float *pos, float rotation,
-			        const float *size, int _team);
+				const float *size, int _team);
 			~BaseBuilding();
     BzfString		getType() const;
     BzfString		getClassName(); // const

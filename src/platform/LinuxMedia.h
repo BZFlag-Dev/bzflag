@@ -57,7 +57,7 @@ class LinuxMedia : public BzfMedia {
 
   private:
     boolean		audioReady;
-    int		        audioOutputRate;
+    int			audioOutputRate;
     int			audioBufferSize;
     int			audioLowWaterMark;
     int			maxFd;

@@ -793,7 +793,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	   key.button >= BzfKeyEvent::F1 &&
 	   key.button <= BzfKeyEvent::F10 &&
 	   (key.shift & (BzfKeyEvent::ControlKey +
-	                 BzfKeyEvent::AltKey)) != 0) {
+			 BzfKeyEvent::AltKey)) != 0) {
     // [Ctrl]-[Fx] is message to team
     // [Alt]-[Fx] is message to all
     if (pressed) {
@@ -814,10 +814,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer,
-	        resources->getValue(name).getString(),
-	        MessageLen);
+		resources->getValue(name).getString(),
+		MessageLen);
 	nboPackString(messageMessage + PlayerIdPLen + 2,
-	              messageBuffer, MessageLen);
+		      messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
     }
@@ -897,17 +897,17 @@ static void		doMotion()
       mainWindow->getJoyPosition(mx, my);
 
       static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
-	                        BzfKeyEvent::MiddleMouse,
-	                        BzfKeyEvent::RightMouse,
-	                        BzfKeyEvent::F1,
-	                        BzfKeyEvent::F2,
-	                        BzfKeyEvent::F3,
-	                        BzfKeyEvent::F4,
-	                        BzfKeyEvent::F5,
-	                        BzfKeyEvent::F6,
-	                        BzfKeyEvent::F7,
-	                        BzfKeyEvent::F8,
-	                        BzfKeyEvent::F9
+				BzfKeyEvent::MiddleMouse,
+				BzfKeyEvent::RightMouse,
+				BzfKeyEvent::F1,
+				BzfKeyEvent::F2,
+				BzfKeyEvent::F3,
+				BzfKeyEvent::F4,
+				BzfKeyEvent::F5,
+				BzfKeyEvent::F6,
+				BzfKeyEvent::F7,
+				BzfKeyEvent::F8,
+				BzfKeyEvent::F9
       };
 
       static unsigned long old_buttons = 0;
@@ -1534,7 +1534,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
 	      killerLocal->getTeam() != RogueTeam) {
 	    if (killerLocal == myTank) {
-	         hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
+		 hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
 		 playLocalSound( SFX_KILL_TEAM );
 	    }
 	    // teammate
@@ -1620,7 +1620,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       tank->setFlag(world->getFlag(flagIndex).id);
       if (tank == myTank) {
 	// not allowed to grab it if not on the ground
-	if (myTank->getLocation() != LocalPlayer::OnGround && 
+	if (myTank->getLocation() != LocalPlayer::OnGround &&
 	  myTank->getLocation() != LocalPlayer::OnBuilding) {
 	  serverLink->sendDropFlag(myTank->getPosition());
 	}
@@ -1974,8 +1974,8 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       targetId.unpack(msg);
       Player* targetTank = lookupPlayer(targetId);
       if (targetTank && (targetTank == myTank)) {
-        static TimeKeeper lastLockMsg;
-        if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
+	static TimeKeeper lastLockMsg;
+	if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
   	  playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);
 	  lastLockMsg=TimeKeeper::getTick();
 	  addMessage(tank, "locked on me");
@@ -2031,7 +2031,7 @@ static void		doMessages()
 //
 
 static float		minSafeRange(float angleCosOffBoresight,
-	                             double fractionOfTries)
+				     double fractionOfTries)
 {
   // anything farther than this much from dead-center is okay to
   // place at MinRange
@@ -2421,7 +2421,7 @@ static void		checkEnvironment()
 	(int(flagId) != int(team) && base == team)))
       serverLink->sendCaptureFlag(base);
   }
-  else if (flagId == NoFlag && (myTank->getLocation() == LocalPlayer::OnGround || 
+  else if (flagId == NoFlag && (myTank->getLocation() == LocalPlayer::OnGround ||
       myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // Don't grab too fast
     static TimeKeeper lastGrabSent;

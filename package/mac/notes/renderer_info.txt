@@ -57,50 +57,30 @@ AGL_TEXTURE_MEMORY    :     0     :  6291456  :  8388608  :  12582912 :
 Device : 0
 
     Renderer : 0
-        AGL_RENDERER_ID     :
-        AGL_OFFSCREEN       : GL_FALSE
-        AGL_FULLSCREEN      : GL_TRUE
-        AGL_WINDOW          : GL_FALSE
-        AGL_ACCELERATED     : GL_TRUE
-        AGL_ROBUST          : GL_FALSE
-        AGL_BACKING_STORE   : GL_FALSE
-        AGL_MP_SAFE         : GL_FALSE
-        AGL_COMPLIANT       : GL_FALSE
-        AGL_MULTISCREEN     : GL_FALSE
-        AGL_BUFFER_MODES    : 0xD
-            AGL_MONOSCOPIC_BIT
-            AGL_SINGLEBUFFER_BIT
-            AGL_DOUBLEBUFFER_BIT
-        AGL_MIN_LEVEL       : 238
-        AGL_MAX_LEVEL       : -4370
-        AGL_COLOR_MODES     :
-            AGL_RGB565_BIT
-            AGL_RGB565_A8_BIT
-        AGL_ACCUM_MODES     : 0x0
-        AGL_DEPTH_MODES     : 0x401
-            AGL_0_BIT
-            AGL_16_BIT
-        AGL_STENCIL_MODES   : 0x0
-        AGL_MAX_AUX_BUFFERS : 0
-        AGL_VIDEO_MEMORY    : 4194304
-        AGL_TEXTURE_MEMORY  : 12582912
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	AGL_RENDERER_ID     :
+	AGL_OFFSCREEN       : GL_FALSE
+	AGL_FULLSCREEN      : GL_TRUE
+	AGL_WINDOW          : GL_FALSE
+	AGL_ACCELERATED     : GL_TRUE
+	AGL_ROBUST          : GL_FALSE
+	AGL_BACKING_STORE   : GL_FALSE
+	AGL_MP_SAFE         : GL_FALSE
+	AGL_COMPLIANT       : GL_FALSE
+	AGL_MULTISCREEN     : GL_FALSE
+	AGL_BUFFER_MODES    : 0xD
+	    AGL_MONOSCOPIC_BIT
+	    AGL_SINGLEBUFFER_BIT
+	    AGL_DOUBLEBUFFER_BIT
+	AGL_MIN_LEVEL       : 238
+	AGL_MAX_LEVEL       : -4370
+	AGL_COLOR_MODES     :
+	    AGL_RGB565_BIT
+	    AGL_RGB565_A8_BIT
+	AGL_ACCUM_MODES     : 0x0
+	AGL_DEPTH_MODES     : 0x401
+	    AGL_0_BIT
+	    AGL_16_BIT
+	AGL_STENCIL_MODES   : 0x0
+	AGL_MAX_AUX_BUFFERS : 0
+	AGL_VIDEO_MEMORY    : 4194304
+	AGL_TEXTURE_MEMORY  : 12582912
