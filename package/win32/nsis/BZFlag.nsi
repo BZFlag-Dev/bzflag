@@ -32,10 +32,10 @@ LicenseData ..\..\..\LICENSE
 InstallDirRegKey HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir"
 
 ; The text to prompt the user to enter a directory
-ComponentText "This will install the BZFLag ${VER_MAJOR}${VER_MINOR} game and server Files on your computer."
+ComponentText "This will install the BZFlag ${VER_MAJOR}${VER_MINOR} game and server Files on your computer."
 
 ; The text to prompt the user to enter a directory
-DirText "Please choose a directory to install in to:"
+DirText "Please choose a directory to install into:"
 
 CompletedText " Thank you for installing BZFlag${VER_MAJOR}${VER_MINOR}."
 ; The stuff to install
