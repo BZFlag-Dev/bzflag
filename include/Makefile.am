@@ -22,6 +22,7 @@ noinst_HEADERS =		\
 	ConfigFileManager.h	\
 	Country.h		\
 	DelayQueue.h		\
+	DirectoryNames.h	\
 	DisplayListManager.h	\
 	DrawablesManager.h	\
 	EighthDBaseSceneNode.h	\
@@ -33,7 +34,6 @@ noinst_HEADERS =		\
 	Flag.h			\
 	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
-	GetCacheDir.h		\
 	Intersect.h		\
 	KeyManager.h		\
 	Language.h		\

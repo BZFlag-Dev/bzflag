@@ -86,7 +86,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "FlashClock.h"
 #include "CommandsStandard.h"
 #include "commands.h"
-#include "GetCacheDir.h"
+#include "DirectoryNames.h"
 
 // versioning that makes us recompile every time
 #include "version.h"

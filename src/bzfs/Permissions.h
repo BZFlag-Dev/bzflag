@@ -61,8 +61,8 @@ public:
       requireIdentify,
       viewReports,
       adminMessages,
+      record,
       replay,
-      capture,
       lastPerm	// just so we know how many rights there
 		// are this dosn't do anything really, just
 		// make sure it's the last real right

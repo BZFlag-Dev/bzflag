@@ -11,7 +11,7 @@
  */
 #include "bzfs.h"
 #include "NetHandler.h"
-#include "CaptureReplay.h"
+#include "RecordReplay.h"
 
 const int udpBufSize = 128000;
 
@@ -76,7 +76,7 @@ static int listServerLinksCount = 0;
 
 // FIXME: should be static, but needed by SpawnPosition
 WorldInfo *world = NULL;
-// FIXME: should be static, but needed by CaptureReplay
+// FIXME: should be static, but needed by RecordReplay
 char *worldDatabase = NULL;
 uint32_t worldDatabaseSize = 0;
 
@@ -147,9 +147,9 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
     }
   }
   
-  // capture the packet
-  if (Capture::enabled()) {
-    Capture::addPacket (code, len, msg);
+  // record the packet
+  if (Record::enabled()) {
+    Record::addPacket (code, len, msg);
   }
   
   return;
@@ -316,8 +316,8 @@ static void sendPlayerUpdate(int playerIndex, int index)
 	directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
       }
     }
-    if (Capture::enabled()) {
-      Capture::addPacket (MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+    if (Record::enabled()) {
+      Record::addPacket (MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
     }
   }
   else {
@@ -357,8 +357,8 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
       directMessage(receivers[i], MsgAdminInfo,
 		    (char*)buf - (char*)bufStart, bufStart);
     }
-    if (Capture::enabled()) {
-      Capture::addPacket (MsgAdminInfo, (char*)buf - (char*)bufStart,
+    if (Record::enabled()) {
+      Record::addPacket (MsgAdminInfo, (char*)buf - (char*)bufStart,
                           bufStart, HiddenPacket);
     }
   }
@@ -546,8 +546,8 @@ static void serverStop()
 
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
 {
-  if (Capture::enabled()) {
-    Capture::addPacket (code, len, (char*)rawbuf + 4);
+  if (Record::enabled()) {
+    Record::addPacket (code, len, (char*)rawbuf + 4);
   }
     
   // relay packet to all players except origin
@@ -1396,8 +1396,8 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
     broadcast = true;
   }
     
-  if (Capture::enabled() && !broadcast) {
-    Capture::addPacket (MsgMessage, len, bufStart, HiddenPacket);
+  if (Record::enabled() && !broadcast) {
+    Record::addPacket (MsgMessage, len, bufStart, HiddenPacket);
   }
 }
 
@@ -2942,8 +2942,8 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "clientquery", 11) == 0) {
     handleClientqueryCmd(t, message);
 
-  } else if (strncmp(message + 1, "capture", 7) == 0) {
-    handleCaptureCmd(t, message);
+  } else if (strncmp(message + 1, "record", 6) == 0) {
+    handleRecordCmd(t, message);
 
   } else if (strncmp(message + 1, "replay", 6) == 0) {
     handleReplayCmd(t, message);
@@ -3167,8 +3167,8 @@ static void handleCommand(int t, const void *rawbuf)
 	  pos++;
 	}
 	parseCommand(message, t);
-	if (Capture::enabled()) {
-	  Capture::addPacket (MsgMessage, len, bufcopy, HiddenPacket);
+	if (Record::enabled()) {
+	  Record::addPacket (MsgMessage, len, bufcopy, HiddenPacket);
 	}
       } else if (targetPlayer == AdminPlayers
 		 && accessInfo[t].hasPerm(PlayerAccessInfo::adminMessages)) {
@@ -3531,7 +3531,7 @@ int main(int argc, char **argv)
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
   
-  Capture::init();
+  Record::init();
 
 
   // check time bomb
@@ -4364,7 +4364,7 @@ int main(int argc, char **argv)
   delete[] worldDatabase; worldDatabase = NULL;
   delete votingarbiter; votingarbiter = NULL;
   Replay::kill();
-  Capture::kill();
+  Record::kill();
   
 #if defined(_WIN32)
   WSACleanup();

@@ -16,7 +16,7 @@
 
 // interface header
 #include "commands.h"
-#include "CaptureReplay.h"
+#include "RecordReplay.h"
 
 // implementation-specific system headers
 #include <string>
@@ -1506,55 +1506,65 @@ void handleClientqueryCmd(int t, const char * /*message*/)
 }
 
 
-void handleCaptureCmd(int t, const char * message)
+void handleRecordCmd(int t, const char * message)
 {
   const char *buf = message + 8;
-  if (!accessInfo[t].hasPerm(PlayerAccessInfo::capture)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the capture command");
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::record)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the /record command");
     return;
   }
   while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
   if (strncmp (buf, "start", 5) == 0) {
-    Capture::start(t);
+    Record::start(t);
   }
   else if (strncmp (buf, "stop", 4) == 0) {
-    Capture::stop(t);
+    Record::stop(t);
   }
   else if (strncmp (buf, "size", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
     
     if (*buf == '\0') {
-      Capture::sendHelp (t);
+      Record::sendHelp (t);
       return;
     }
     int size = atoi (buf);
-    Capture::setSize (t, size);
+    Record::setSize (t, size);
   }
   else if (strncmp (buf, "rate", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
     if (*buf == '\0') {
-      Capture::sendHelp (t);
+      Record::sendHelp (t);
       return;
     }
     int seconds = atoi (buf);
-    Capture::setRate (t, seconds);
+    Record::setRate (t, seconds);
   }
   else if (strncmp (buf, "stats", 5) == 0) {
-    Capture::sendStats(t);
+    Record::sendStats(t);
   }
   else if (strncmp (buf, "save", 4) == 0) {
     buf = buf + 4;
+    char filename[MessageLen];
+
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-  
     if (*buf == '\0') {
-      Capture::sendHelp (t);
+      Record::sendHelp (t);
+    }
+
+    // get the filename
+    sscanf (buf, "%s", filename);
+    
+    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+
+    if (*buf == '\0') {
+      Record::saveBuffer (t, buf, 0);
     }
     else {
-      Capture::saveBuffer (t, buf);
+      Record::saveBuffer (t, filename, atoi(buf));
     }
   }
   else if (strncmp (buf, "file", 4) == 0) {
@@ -1562,14 +1572,14 @@ void handleCaptureCmd(int t, const char * message)
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
   
     if (*buf == '\0') {
-      Capture::sendHelp (t);
+      Record::sendHelp (t);
     }
     else {
-      Capture::saveFile (t, buf);
+      Record::saveFile (t, buf);
     }
   }
   else {
-    Capture::sendHelp (t);
+    Record::sendHelp (t);
   }
   
   return;
@@ -1580,7 +1590,7 @@ void handleReplayCmd(int t, const char * message)
 {
   const char *buf = message + 7;
   if (!accessInfo[t].hasPerm(PlayerAccessInfo::replay)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the replay command");
+    sendMessage(ServerPlayer, t, "You do not have permission to run the /replay command");
     return;
   }
   while ((*buf != '\0') && isspace (*buf)) { // eat whitespace

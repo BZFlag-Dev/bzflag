@@ -23,18 +23,18 @@ enum ReplayPacketMode {
   HiddenPacket = 2
 };
 
-namespace Capture {
+namespace Record {
   extern bool init ();
   extern bool kill ();
 
-  extern bool setCaptureDir (const char *dirname);
+  extern bool setRecordDir (const char *dirname);
 
   extern bool start (int playerIndex);
   extern bool stop (int playerIndex); 
   extern bool setSize (int playerIndex, int Mbytes);  // set max size, in Mbytes
   extern bool setRate (int playerIndex, int seconds); // set state update rate
   extern bool saveFile (int playerIndex, const char *filename); // unbuffered save
-  extern bool saveBuffer (int playerIndex, const char *filename);
+  extern bool saveBuffer (int playerIndex, const char *filename, int seconds);
   extern bool sendStats (int playerIndex);
   
   extern bool enabled ();
@@ -74,7 +74,7 @@ namespace Replay {
 // Some notes:
 //
 // - Any packets that get broadcast are buffered. Look for the 
-//   Capture::addPacket() hook in broadcastMessage(). For now,
+//   Record::addPacket() hook in broadcastMessage(). For now,
 //   it will not be mainting any information with regards to the
 //   state of the game during replay. It'll just be firing the
 //   packets back out the way that they came.

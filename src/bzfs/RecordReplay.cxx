@@ -11,8 +11,8 @@
  */
  
 #include "bzfs.h"
-#include "CaptureReplay.h"
-#include "GetCacheDir.h"
+#include "RecordReplay.h"
+#include "DirectoryNames.h"
 
 #ifndef _MSC_VER
 # include <dirent.h>
@@ -43,9 +43,9 @@ typedef uint16_t u16;
 typedef s64 CRtime;
 
 
-enum CaptureType {
+enum RecordType {
   StraightToFile  = 0,
-  BufferedCapture = 1
+  BufferedRecord = 1
 };
 
 typedef struct CRpacket {
@@ -70,11 +70,11 @@ typedef struct {
 } CRbuffer;
 
 typedef struct {
-  unsigned int magic;           // capture file type identifier
-  unsigned int version;         // capture file version
+  unsigned int magic;           // record file type identifier
+  unsigned int version;         // record file version
   unsigned int offset;          // length of the full header
   unsigned int seconds;         // number of seconds in the file
-  unsigned int player;          // player that saved this capture file
+  unsigned int player;          // player that saved this record file
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];         // player's email
   char serverVersion[8];        // BZFS protocol version
@@ -94,15 +94,15 @@ static const unsigned int ReplayVersion = 0x0001;
 static const int DefaultMaxBytes = (16 * 1024 * 1024); // 16 Mbytes
 static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
 
-static std::string CaptureDir;
+static std::string RecordDir;
 
 static bool Capturing = false;
-static CaptureType CaptureMode = BufferedCapture;
+static RecordType RecordMode = BufferedRecord;
 static CRtime UpdateTime = 0;
-static int CaptureMaxBytes = DefaultMaxBytes;
-static int CaptureFileBytes = 0;
-static int CaptureFilePackets = 0;
-static int CaptureFilePrevLen = 0;
+static int RecordMaxBytes = DefaultMaxBytes;
+static int RecordFileBytes = 0;
+static int RecordFilePackets = 0;
+static int RecordFilePrevLen = 0;
 
 static bool Replaying = false;
 static bool ReplayMode = false;
@@ -115,10 +115,10 @@ static unsigned int UpdateRate = DefaultUpdateRate;
 static TimeKeeper StartTime;
 
 static CRbuffer ReplayBuf = {0, 0, NULL, NULL}; // for replaying
-static CRbuffer CaptureBuf = {0, 0, NULL, NULL};  // for capturing
+static CRbuffer RecordBuf = {0, 0, NULL, NULL};  // for capturing
 
 static FILE *ReplayFile = NULL;
-static FILE *CaptureFile = NULL;
+static FILE *RecordFile = NULL;
 
 
 // Local Function Prototypes
@@ -173,22 +173,22 @@ extern void sendMessage(int playerIndex, PlayerId targetPlayer,
                         
 /****************************************************************************/
 
-// Capture Functions
+// Record Functions
 
-static bool captureReset ()
+static bool recordReset ()
 {
-  if (CaptureFile != NULL) {
-    fclose (CaptureFile);
-    CaptureFile = NULL;
+  if (RecordFile != NULL) {
+    fclose (RecordFile);
+    RecordFile = NULL;
   }
-  freeCRbuffer (&CaptureBuf);
+  freeCRbuffer (&RecordBuf);
 
   Capturing = false;
-  CaptureMode = BufferedCapture;
-  CaptureMaxBytes = DefaultMaxBytes; // FIXME - this doesn't seem right
-  CaptureFileBytes = 0;
-  CaptureFilePackets = 0;
-  CaptureFilePrevLen = 0;
+  RecordMode = BufferedRecord;
+  RecordMaxBytes = DefaultMaxBytes; // FIXME - this doesn't seem right
+  RecordFileBytes = 0;
+  RecordFilePackets = 0;
+  RecordFilePrevLen = 0;
   UpdateTime = 0;
   UpdateRate = DefaultUpdateRate;
   
@@ -196,22 +196,22 @@ static bool captureReset ()
 }
 
 
-bool Capture::init ()
+bool Record::init ()
 {
-  CaptureDir = getCaptureDirName();
-  captureReset();
+  RecordDir = getRecordDirName();
+  recordReset();
   return true;
 }
 
 
-bool Capture::kill ()
+bool Record::kill ()
 {
-  captureReset();
+  recordReset();
   return true;
 }
 
 
-bool Capture::start (int playerIndex)
+bool Record::start (int playerIndex)
 {
   if (ReplayMode) {
     sendMessage(ServerPlayer, playerIndex, "Couldn't start capturing");
@@ -219,13 +219,13 @@ bool Capture::start (int playerIndex)
   }
   Capturing = true;
   saveStates ();
-  sendMessage(ServerPlayer, playerIndex, "Capture started");
+  sendMessage(ServerPlayer, playerIndex, "Record started");
   
   return true;
 }
 
 
-bool Capture::stop (int playerIndex)
+bool Record::stop (int playerIndex)
 {
   if (Capturing == false) {
     sendMessage(ServerPlayer, playerIndex, "Couldn't stop capturing");
@@ -233,16 +233,16 @@ bool Capture::stop (int playerIndex)
   }
   
   Capturing = false;
-  if (CaptureMode == StraightToFile) {
-    Capture::init();
+  if (RecordMode == StraightToFile) {
+    Record::init();
   }
-  sendMessage(ServerPlayer, playerIndex, "Capture stopped");
+  sendMessage(ServerPlayer, playerIndex, "Record stopped");
 
   return true;
 }
 
 
-bool Capture::setCaptureDir (const char *dirname)
+bool Record::setRecordDir (const char *dirname)
 {
   if (dirname == NULL) {
   }
@@ -253,27 +253,27 @@ bool Capture::setCaptureDir (const char *dirname)
 }
 
 
-bool Capture::setSize (int playerIndex, int Mbytes)
+bool Record::setSize (int playerIndex, int Mbytes)
 {
   char buffer[MessageLen];
-  CaptureMaxBytes = Mbytes * (1024) * (1024);
-  snprintf (buffer, MessageLen, "Capture size set to %i", Mbytes);
+  RecordMaxBytes = Mbytes * (1024) * (1024);
+  snprintf (buffer, MessageLen, "Record size set to %i", Mbytes);
   sendMessage(ServerPlayer, playerIndex, buffer, true);    
   return true;
 }
 
 
-bool Capture::setRate (int playerIndex, int seconds)
+bool Record::setRate (int playerIndex, int seconds)
 {
   char buffer[MessageLen];
   UpdateRate = seconds * 1000000;
-  snprintf (buffer, MessageLen, "Capture rate set to %i", seconds);
+  snprintf (buffer, MessageLen, "Record rate set to %i", seconds);
   sendMessage(ServerPlayer, playerIndex, buffer, true);    
   return true;
 }
 
 
-bool Capture::sendStats (int playerIndex)
+bool Record::sendStats (int playerIndex)
 {
   char buffer[MessageLen];
   
@@ -284,13 +284,13 @@ bool Capture::sendStats (int playerIndex)
     sendMessage (ServerPlayer, playerIndex, "Capturing disabled");
   }
    
-  if (CaptureMode == BufferedCapture) {
+  if (RecordMode == BufferedRecord) {
     snprintf (buffer, MessageLen, "  buffered: %i bytes, %i packets, time = %i",
-             CaptureBuf.byteCount, CaptureBuf.packetCount, 0);
+             RecordBuf.byteCount, RecordBuf.packetCount, 0);
   }
   else {
     snprintf (buffer, MessageLen, "  saved: %i bytes, %i packets, time = %i",
-             CaptureFileBytes, CaptureFilePackets, 0);   
+             RecordFileBytes, RecordFilePackets, 0);   
   }
   sendMessage (ServerPlayer, playerIndex, buffer, true);
 
@@ -298,12 +298,12 @@ bool Capture::sendStats (int playerIndex)
 }
 
 
-bool Capture::saveFile (int playerIndex, const char *filename)
+bool Record::saveFile (int playerIndex, const char *filename)
 {
   char buffer[MessageLen];
   
   if (ReplayMode) {
-    sendMessage (ServerPlayer, playerIndex, "Can't capture in replay mode");
+    sendMessage (ServerPlayer, playerIndex, "Can't record in replay mode");
     return false;
   }
 
@@ -313,27 +313,27 @@ bool Capture::saveFile (int playerIndex, const char *filename)
     return false;
   }
   
-  Capture::init();
+  Record::init();
   Capturing = true;
-  CaptureMode = StraightToFile;
+  RecordMode = StraightToFile;
 
-  CaptureFile = openWriteFile (playerIndex, filename);
-  if (CaptureFile == NULL) {
-    Capture::init();
+  RecordFile = openWriteFile (playerIndex, filename);
+  if (RecordFile == NULL) {
+    Record::init();
     snprintf (buffer, MessageLen, "Could not open for writing: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
-  if (!saveHeader (playerIndex, CaptureFile)) {
-    Capture::init();
+  if (!saveHeader (playerIndex, RecordFile)) {
+    Record::init();
     snprintf (buffer, MessageLen, "Could not save header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveStates ()) {
-    Capture::init();
+    Record::init();
     snprintf (buffer, MessageLen, "Could not save states: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
@@ -346,17 +346,17 @@ bool Capture::saveFile (int playerIndex, const char *filename)
 }
 
 
-bool Capture::saveBuffer (int playerIndex, const char *filename)
+bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
 {
   CRpacket *p;
   char buffer[MessageLen];
   
   if (ReplayMode) {
-    sendMessage (ServerPlayer, playerIndex, "Can't capture in replay mode");
+    sendMessage (ServerPlayer, playerIndex, "Can't record in replay mode");
     return false;
   }
     
-  if (!Capturing || (CaptureMode != BufferedCapture)) { // FIXME - !Capturing ?
+  if (!Capturing || (RecordMode != BufferedRecord)) { // FIXME - !Capturing ?
     sendMessage (ServerPlayer, playerIndex, "No buffer to save");
     return false;
   }
@@ -367,34 +367,63 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
     return false;
   }
   
-  CaptureFile = openWriteFile (playerIndex, filename);
-  if (CaptureFile == NULL) {
-    Capture::init();
+  if (seconds != 0) { 
+    // start the first update that happened at least 'seconds' ago
+    p = RecordBuf.head;
+    while (p != NULL) {
+      if ((p->mode == FakePacket) && (p->code == MsgTeamUpdate)) {
+        CRtime diff = RecordBuf.head->timestamp - p->timestamp;
+        CRtime usecs = (CRtime)seconds * (CRtime)1000000;
+        if (diff >= usecs) {
+          break;
+        }
+      }
+      p = p->prev;
+    }
+  }
+
+  if ((seconds == 0) || (p == NULL)) {
+    // save the whole buffer from the first update
+    p = RecordBuf.tail;
+    while (!((p->mode == FakePacket) && (p->code == MsgTeamUpdate))) {
+      p = p->next;
+    }
+    
+    if (p == NULL) {
+      sendMessage (ServerPlayer, playerIndex, "No buffer to save");
+      return false;
+    }
+  }
+  
+  RecordFile = openWriteFile (playerIndex, filename);
+  if (RecordFile == NULL) {
+    Record::init();
     snprintf (buffer, MessageLen, "Could not open for writing: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
-  if (!saveHeader (playerIndex, CaptureFile)) {
-    Capture::init();
+  if (!saveHeader (playerIndex, RecordFile)) {
+    Record::init();
     snprintf (buffer, MessageLen, "Could not save header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
+
+  // Save the packets
   
-  p = CaptureBuf.tail;
   while (p != NULL) {
-    saveCRpacket (p, CaptureFile);
+    saveCRpacket (p, RecordFile);
     p = p->next;
   }
   
-  fclose (CaptureFile);
-  CaptureFile = NULL;
-  CaptureFileBytes = 0;
-  CaptureFilePackets = 0;
-  CaptureFilePrevLen = 0;
+  fclose (RecordFile);
+  RecordFile = NULL;
+  RecordFileBytes = 0;
+  RecordFilePackets = 0;
+  RecordFilePrevLen = 0;
   
-  snprintf (buffer, MessageLen, "Captured buffer saved to: %s", filename);
+  snprintf (buffer, MessageLen, "Recordd buffer saved to: %s", filename);
   sendMessage (ServerPlayer, playerIndex, buffer, true);
   
   return true;
@@ -408,17 +437,17 @@ routePacket (u16 code, int len, const void * data, u16 mode)
     return false;
   }
   
-  if (CaptureMode == BufferedCapture) {
+  if (RecordMode == BufferedRecord) {
     CRpacket *p = newCRpacket (mode, code, len, data);
     p->timestamp = getCRtime();
-    addCRpacket (&CaptureBuf, p);
+    addCRpacket (&RecordBuf, p);
     DEBUG4 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p->mode, p->len, print_msg_code (p->code), p->data);
 
-    if (CaptureBuf.byteCount > CaptureMaxBytes) {
+    if (RecordBuf.byteCount > RecordMaxBytes) {
       CRpacket *p;
       DEBUG4 ("routePacket: deleting until State Update\n");
-      while (((p = delCRpacket (&CaptureBuf)) != NULL) &&
+      while (((p = delCRpacket (&RecordBuf)) != NULL) &&
              !(p->mode && (p->code == MsgTeamUpdate))) {
         free (p->data);
         free (p);
@@ -429,7 +458,7 @@ routePacket (u16 code, int len, const void * data, u16 mode)
     CRpacket p;
     p.timestamp = getCRtime();
     initCRpacket (mode, code, len, data, &p);
-    saveCRpacket (&p, CaptureFile);
+    saveCRpacket (&p, RecordFile);
     DEBUG4 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p.mode, p.len, print_msg_code (p.code), p.data);
   }
@@ -439,7 +468,7 @@ routePacket (u16 code, int len, const void * data, u16 mode)
 
 
 bool 
-Capture::addPacket (u16 code, int len, const void * data, u16 mode)
+Record::addPacket (u16 code, int len, const void * data, u16 mode)
 {
   bool retval = false;
   
@@ -469,34 +498,34 @@ Capture::addPacket (u16 code, int len, const void * data, u16 mode)
 }
 
 
-bool Capture::enabled ()
+bool Record::enabled ()
 {
   return Capturing;
 }
 
 
-int Capture::getSize ()
+int Record::getSize ()
 {
-  return CaptureMaxBytes;
+  return RecordMaxBytes;
 }
 
 
-int Capture::getRate ()
+int Record::getRate ()
 {
   return (UpdateRate / 1000000);
 }
 
 
-void Capture::sendHelp (int playerIndex)
+void Record::sendHelp (int playerIndex)
 {
   sendMessage(ServerPlayer, playerIndex, "usage:");
-  sendMessage(ServerPlayer, playerIndex, "  /capture start");
-  sendMessage(ServerPlayer, playerIndex, "  /capture stop");
-  sendMessage(ServerPlayer, playerIndex, "  /capture size <Mbytes>");
-  sendMessage(ServerPlayer, playerIndex, "  /capture rate <seconds>");
-  sendMessage(ServerPlayer, playerIndex, "  /capture stats");
-  sendMessage(ServerPlayer, playerIndex, "  /capture file <filename>");
-  sendMessage(ServerPlayer, playerIndex, "  /capture save <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /record start");
+  sendMessage(ServerPlayer, playerIndex, "  /record stop");
+  sendMessage(ServerPlayer, playerIndex, "  /record size <Mbytes>");
+  sendMessage(ServerPlayer, playerIndex, "  /record rate <seconds>");
+  sendMessage(ServerPlayer, playerIndex, "  /record stats");
+  sendMessage(ServerPlayer, playerIndex, "  /record file <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /record save <filename>");
   return;
 }
                           
@@ -589,7 +618,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   // preload the buffer 
   // FIXME - this needs to be a moving window
-  while (ReplayBuf.byteCount < CaptureMaxBytes) {
+  while (ReplayBuf.byteCount < RecordMaxBytes) {
     p = loadCRpacket (ReplayFile);
     if (p == NULL) {
       break;
@@ -624,7 +653,7 @@ bool Replay::sendFileList(int playerIndex)
     return false;
   }
   
-  dir = opendir (CaptureDir.c_str());
+  dir = opendir (RecordDir.c_str());
   if (dir == NULL) {
     return false;
   }
@@ -1023,7 +1052,7 @@ saveCRpacket (CRpacket *p, FILE *f)
   buf = nboPackUShort (bufStart, p->mode);
   buf = nboPackUShort (buf, p->code);
   buf = nboPackUInt (buf, p->len);
-  buf = nboPackUInt (buf, CaptureFilePrevLen);
+  buf = nboPackUInt (buf, RecordFilePrevLen);
   buf = nboPackUInt (buf, (unsigned int) (p->timestamp >> 32));        // msb
   buf = nboPackUInt (buf, (unsigned int) (p->timestamp & 0xFFFFFFFF)); // lsb
 
@@ -1034,9 +1063,9 @@ saveCRpacket (CRpacket *p, FILE *f)
 
   fflush (f);//FIXME
   
-  CaptureFileBytes += p->len + CRpacketHdrLen;
-  CaptureFilePackets++;
-  CaptureFilePrevLen = p->len;
+  RecordFileBytes += p->len + CRpacketHdrLen;
+  RecordFilePackets++;
+  RecordFilePrevLen = p->len;
 
   return true;  
 }
@@ -1130,7 +1159,7 @@ saveHeader (int p, FILE *f)
     return false;
   }
   
-  CaptureFileBytes += hdrsize + worldDatabaseSize;
+  RecordFileBytes += hdrsize + worldDatabaseSize;
   
   return true;
 }
@@ -1177,7 +1206,7 @@ loadHeader (ReplayHeader *h, FILE *f)
 static FILE *
 openFile (const char *filename, const char *mode)
 {
-  std::string name = CaptureDir.c_str();
+  std::string name = RecordDir.c_str();
 #ifndef _WIN32  
   name += "/";
 #else
@@ -1222,9 +1251,9 @@ makeDirExist (int playerIndex)
 {
   struct stat statbuf;
 
-  if (osStat (CaptureDir.c_str(), &statbuf) < 0) {
+  if (osStat (RecordDir.c_str(), &statbuf) < 0) {
     // try to make the directory
-    if (osMkDir (CaptureDir.c_str(), 0755) < 0) {
+    if (osMkDir (RecordDir.c_str(), 0755) < 0) {
       sendMessage (ServerPlayer, playerIndex, 
                    "Could not create default directory");
       return false;
@@ -1273,7 +1302,7 @@ badFilename (const char *name)
 static void
 initCRpacket (u16 mode, u16 code, int len, const void *data, CRpacket *p)
 {
-  // CaptureFilePrevLen takes care of p->prev_len
+  // RecordFilePrevLen takes care of p->prev_len
   p->mode = mode;
   p->code = code;
   p->len = len;
@@ -1394,7 +1423,7 @@ getCRtime ()
 
 bool modifyWorldDatabase ()
 {
-  // for capture files, use a different MD5 hash.
+  // for record files, use a different MD5 hash.
   // data that is modified for replay mode is ignored.
   
   unsigned short max_players, num_flags;

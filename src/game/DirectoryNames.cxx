@@ -11,7 +11,7 @@
  */
 
 /* interface header */
-#include "GetCacheDir.h"
+#include "DirectoryNames.h"
 
 /* implementation system headers */
 #ifndef _WIN32
@@ -103,7 +103,7 @@ extern std::string		getCacheDirName()
 }
 
 
-extern std::string		getCaptureDirName()
+extern std::string		getRecordDirName()
 {
   std::string name = getConfigDirName();
   name += "captured";

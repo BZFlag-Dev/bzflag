@@ -37,7 +37,7 @@
 
 /* common implementation headers */
 #include "TextUtils.h"
-#include "GetCacheDir.h"
+#include "DirectoryNames.h"
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"

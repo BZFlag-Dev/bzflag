@@ -284,8 +284,8 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::listPerms: return "listPerms";
     case PlayerAccessInfo::showOthers: return "showOthers";
     case PlayerAccessInfo::removePerms: return "removePerms";
+    case PlayerAccessInfo::record: return "record";
     case PlayerAccessInfo::replay: return "replay";
-    case PlayerAccessInfo::capture: return "capture";
     case PlayerAccessInfo::setPassword: return "setPassword";
     case PlayerAccessInfo::setPerms: return "setPerms";
     case PlayerAccessInfo::setAll: return "setAll";

@@ -8,8 +8,6 @@ bzfs_SOURCES = \
 	AccessControlList.h \
 	BZWReader.cxx \
 	BZWReader.h \
-	CaptureReplay.cxx \
-	CaptureReplay.h \
 	CmdLineOptions.cxx \
 	CmdLineOptions.h \
 	CustomBase.cxx \
@@ -39,6 +37,8 @@ bzfs_SOURCES = \
 	Permissions.h \
 	Permissions.cxx \
 	PlayerInfo.cxx \
+	RecordReplay.cxx \
+	RecordReplay.h \
 	SpawnPosition.cxx \
 	SpawnPosition.h \
 	TeamBases.cxx \

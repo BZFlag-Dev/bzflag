@@ -7,7 +7,7 @@ libGame_a_SOURCES = \
 	CommandsStandard.cxx		\
 	NetHandler.cxx			\
 	VotingArbiter.cxx		\
-	GetCacheDir.cxx
+	DirectoryNames.cxx
 
 EXTRA_DIST = \
 	README

@@ -15,7 +15,7 @@
 #include "FileManager.h"
 #include "playing.h"
 #include "Protocol.h"
-#include "GetCacheDir.h"
+#include "DirectoryNames.h"
 
 // invoke persistent rebuilding for build versioning
 #include "version.h"

@@ -44,7 +44,7 @@
 #include "Team.h"
 #include "sound.h"
 #include "ConfigFileManager.h"
-#include "GetCacheDir.h"
+#include "DirectoryNames.h"
 #include "CommandsStandard.h"
 #include "BzfDisplay.h"
 #include "BzfVisual.h"

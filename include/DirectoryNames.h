@@ -10,23 +10,20 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __GET_CACHE_DIR_H__
-#define __GET_CACHE_DIR_H__
+#ifndef __DIRECTORY_NAMES_H__
+#define __DIRECTORY_NAMES_H__
 
 #include "common.h"
 
 /* interface system headers */
 #include <string>
 
-// FIXME - need to rename this file, and src/game/GetCacheDir.cxx
-//         to DirectoryNames.<c|h>[xx] or something
-
 extern std::string		getConfigDirName();
 extern std::string		getCacheDirName();
-extern std::string		getCaptureDirName();
+extern std::string		getRecordDirName();
 extern std::string		getScreenShotDirName();
 
-#endif  // __GET_CACHE_DIR_H__
+#endif  // __DIRECTORY_NAMES_H__
 
 
 // Local Variables: ***
