@@ -61,7 +61,6 @@ class RobotPlayer : public LocalPlayer {
     const Player*	target;
     std::vector<RegionPoint>	path;
     int			pathIndex;
-    float		timeSinceShot;
     float		timerForShot;
     bool                drivingForward;
     static std::vector<BzfRegion*>* obstacleList;
