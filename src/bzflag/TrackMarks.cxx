@@ -771,7 +771,7 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
   }
 
   // do not add track marks that are drawn by renderGroundTracks
-  std::list<TrackEntry>::iterator it;
+  //std::list<TrackEntry>::iterator it;
 
   // tread track marks on obstacles
   TrackEntry* ptr;
