@@ -10,16 +10,21 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifndef	BZF_GLOBAL_H
+#define	BZF_GLOBAL_H
+
 /*
  * Global constants
  */
 
-#ifndef	BZF_GLOBAL_H
-#define	BZF_GLOBAL_H
-
-#include <math.h>
 #include "common.h"
+
+/* system headers */
+#include <math.h>
+
+/* common headers */
 #include "StateDatabase.h"
+
 
 
 // values affecting struct and class layout
