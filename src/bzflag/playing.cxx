@@ -485,6 +485,16 @@ void printout(const std::string& name, void*)
   std::cout << name << " = " << BZDB->get(name) << std::endl;
 }
 
+void listSetVars(const std::string& name, void* userData)
+{
+  char message[100];
+
+  if (BZDB->getPermission(name) == StateDatabase::Permission::Locked) {
+    sprintf(message, "/set %s %f", name.c_str(), BZDB->eval(name));
+    addMessage(myTank, message, false, NULL);
+  }
+}
+
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
@@ -543,6 +553,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	    }
 	  }
 	}
+      } if (message == "/set") {
+	BZDB->iterate(listSetVars, NULL);
       } else {
 	int i, mhLen = messageHistory.size();
 	for (i = 0; i < mhLen; i++) {
