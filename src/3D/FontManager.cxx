@@ -400,7 +400,7 @@ float FontManager::getStrLength(int faceID, float size,	std::string text,
   if (!alreadyStripped)
     text = stripAnsiCodes(text);
 
-  return pFont->getStrLength(scale, text.c_str(), text.size());
+  return pFont->getStrLength(scale, text.c_str(), (int)text.size());
 }
 
 float FontManager::getStrLength(const std::string &face, float size,
