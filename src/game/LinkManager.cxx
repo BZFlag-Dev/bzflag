@@ -261,8 +261,7 @@ void LinkManager::findTelesByName(const std::string& name,
 
 int LinkManager::getTeleportTarget(int source) const
 {
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  assert(source < (int)(2 * teles.size()));
+  assert(source < (int)(2 * OBSTACLEMGR.getTeles().size()));
 
   const std::vector<int>& dstsList = linkNumbers[source].dsts;
 
@@ -282,8 +281,7 @@ int LinkManager::getTeleportTarget(int source) const
 
 int LinkManager::getTeleportTarget(int source, unsigned int seed) const
 {
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  assert(source < (int)(2 * teles.size()));
+  assert(source < (int)(2 * OBSTACLEMGR.getTeles().size()));
 
   const std::vector<int>& dstsList = linkNumbers[source].dsts;
 
