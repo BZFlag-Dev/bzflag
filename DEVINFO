@@ -95,6 +95,8 @@ but some rules:
         if (expr) {
         } else {
         }
+	*note that old code had the else on the next line,
+	 please clean this up wherever you may find it*
   4)  if *either* the if block or else block requires brackets then they both
       get brackets.  if neither require brackets then use brackets on both or
       neither at your discretion.
