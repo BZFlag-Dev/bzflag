@@ -501,7 +501,8 @@ struct PlayerInfo {
 #endif
 
     // idle kick
-    TimeKeeper lastupdate,lastmsg;
+    TimeKeeper lastupdate;
+    TimeKeeper lastmsg;
 
 #ifdef NETWORK_STATS
     // message stats bloat
@@ -5400,7 +5401,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     }
 
     // player is sending multicast data
-    case MsgPlayerUpdate: {// FIXME verify velocity etc.
+    case MsgPlayerUpdate: {
       player[t].lastupdate = TimeKeeper::getCurrent();
       PlayerId id;
       PlayerState state;
@@ -5409,6 +5410,23 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
 	strcpy( message, "Autokick: Out of world bounds, Jump too high, Update your client." );
+        sendMessage(t, player[t].id, player[t].team, message);
+	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
+	break;
+      }
+
+      // Doesn't account for going fast backwards, or jumping/falling
+      float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
+				state.velocity[1]*state.velocity[1];
+
+      float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
+
+      if (flag[player[t].flag].flag.id == VelocityFlag)
+	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
+      
+      if (curPlanarSpeedSqr > (1.0 + maxPlanarSpeedSqr)) {
+	char message[MessageLen];
+	strcpy( message, "Autokick: Tank moving to fast, Update your client." );
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
 	break;
