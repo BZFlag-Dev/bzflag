@@ -5117,9 +5117,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	std::map<FlagDesc*,bool> hasFlag;
 	std::set<FlagDesc*> missingFlags;
 	int i;
-	unsigned short numClientFlags;
-
-	buf = nboUnpackUShort(buf, numClientFlags);
+	unsigned short numClientFlags = len/2;
 
 	for (i = 0; i < numClientFlags; i++) {
 		FlagDesc *fDesc;
@@ -5138,7 +5136,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 
 	bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart,missingFlags.size());
 	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++it)
 	  buf = (*m_it)->pack(buf);
 	directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
