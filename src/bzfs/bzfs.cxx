@@ -2530,6 +2530,10 @@ static void acceptClient()
   } else { // full? reject by closing socket
     DEBUG1("all slots occupied, rejecting accept() from %s:%d on %i\n",
 	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
+
+    // send back 0xff before closing
+    send(fd, (const char*)buffer, sizeof(buffer), 0);
+
     close(fd);
     return;
   }
