@@ -14,7 +14,7 @@
 #include "GameKeeper.h"
 
 // players list FIXME should be resized based on maxPlayers
-extern PlayerInfo       player[PlayerSlot];
+PlayerInfo              player[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
