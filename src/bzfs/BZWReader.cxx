@@ -39,16 +39,21 @@
 #include "CustomSphere.h"
 #include "CustomWaterLevel.h"
 
-static const std::string urlProtocol("http://");
-
 BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
 {
+  static const std::string httpProtocol("http://");
+  static const std::string ftpProtocol("ftp://");
+  static const std::string fileProtocol("file:/");
+
   errorHandler = new BZWError(location);
-  if (filename.substr(0, urlProtocol.size()) != urlProtocol) {
-    input = new std::ifstream(filename.c_str(), std::ios::in);
-  } else {
+
+  if ((filename.substr(0, httpProtocol.size()) == httpProtocol)
+      || (filename.substr(0, ftpProtocol.size()) == ftpProtocol)
+      || (filename.substr(0, fileProtocol.size()) == fileProtocol)) {
     URLManager::instance().getURL(location, httpData);
     input = new std::istringstream(httpData);
+  } else {
+    input = new std::ifstream(filename.c_str(), std::ios::in);
   }
 
   if (input->peek() == EOF) {
