@@ -233,6 +233,10 @@ std::string cmdRestart(const std::string&, const CommandManager::ArgList& args)
     if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding()) {
       serverLink->sendAlive();
       myTank->setSpawning(true);
+	  CommandManager::ArgList zoomArgs;
+	  std::string resetArg = "reset";
+	  zoomArgs.push_back(resetArg);
+	  cmdViewZoom("", zoomArgs);
     }
 
   return std::string();
@@ -400,8 +404,11 @@ std::string cmdViewZoom(const std::string&,
     else
       fov = 15.0f;
     BZDB.setFloat("displayFOV", fov);
+  } else if (args[0] == "reset") {
+	fov = 60.0f;
+    BZDB.setFloat("displayFOV", fov);
   } else {
-    return "usage: viewZoom {in|out|toggle}";
+    return "usage: viewZoom {in|out|toggle|reset}";
   }
 
   return std::string();
