@@ -18,7 +18,7 @@ msgstr "Mannschaft:"
 msgid "Start Server"
 msgstr "Starte Server"
 
-msgid "msgid "Up/Down arrows to move, Enter to select, Esc to dismiss" 
+msgid "Up/Down arrows to move, Enter to select, Esc to dismiss" 
 msgstr "Bewegen: Cursor Hoch/Runter, Auswahl: Enter, Abbruch: Esc"
 
 msgid "Options" 

@@ -509,7 +509,7 @@ msgstr "Aveuglement"
 msgid "Jamming"
 msgstr "Brouillage Radar"
 
-msgid "Wide Angle
+msgid "Wide Angle"
 msgstr "Angle Large"
 
 # Flag help
@@ -1048,7 +1048,3 @@ msgstr "restant avant qu'un mauvais drapeau soit jeté (s'il y a une limite de te
 
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "D'autres informations peuvent ocasionnellement apparaître sur l'ATH."
-
-
-
-

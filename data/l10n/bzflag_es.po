@@ -172,7 +172,7 @@ msgid "Key Mapping"
 msgstr "Asociación de Teclas"
 
 msgid "Reset Defaults" 
-msgstr "Teclas por Defecto""
+msgstr "Teclas por Defecto"
 
 msgid "Fire shot:" 
 msgstr "Disparo:"
@@ -1048,9 +1048,3 @@ msgstr "tiempo que queda para dejar una bandera mala (si posee límite de tiempo)
   
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "Otros mensajes informativos pueden aparecer ocasionalmente en el HUD."
-
-
-
-
-
-

@@ -511,7 +511,7 @@ msgstr "8LINDNE$5"
 msgid "Jamming"
 msgstr "jAMMin9"
 
-msgid "Wide Angle
+msgid "Wide Angle"
 msgstr "WIde @NglE"
 
 # Flag help
@@ -1050,7 +1050,3 @@ msgstr "+iMe UN+1L 4 b@d PHL49 1$ drOpPEd (IPH +H3R3'5 @ +1ME L1miT)."
   
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "O+HER inPH0RM4+1ON@L M355@9e$ m@Y 0Cc4s10naLLY FL@$H 0N t3H HUD."
-
-
-
-
