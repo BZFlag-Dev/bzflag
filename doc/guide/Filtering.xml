@@ -323,9 +323,11 @@
 	  suffixes.  This means that words that only add a suffix or
 	  prefix are not necessary.</para>
 
-	  <para>repetitive identical letter expansions Example:
-	  <quote>dumb ass</quote> will match <quote>dumb
-	  asssss</quote> and <quote>duuumbb aasss</quote>, etc</para>
+	  <para>repetitive identical letter expansions</para>
+	  
+	  <para>Example: <quote>dumb ass</quote> will match
+	  <quote>dumb asssss</quote> and <quote>duuumbb aasss</quote>,
+	  etc</para>
 
 	  <para>It is common practice for people to intentionally and
 	  unintentionally repeat letters within a word.  No matter how
