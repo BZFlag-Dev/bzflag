@@ -459,7 +459,7 @@ bool			Player::isDeadReckoningWrong() const
   if (predictedPos[2] < groundLimit) return true;
 
   // client side throttling
-  const int throttleRate = BZDB->eval(StateDatabase::BZDB_UPDATETHROTTLERATE);
+  const int throttleRate = int(BZDB->eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
   const float minUpdateTime = throttleRate > 0 ? 1.0f / throttleRate : 0.0f;
   if (TimeKeeper::getTick() - inputTime < minUpdateTime) return false;
 
