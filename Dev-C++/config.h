@@ -19,6 +19,9 @@
 #define _WIN32
 #endif
 
+/* Currently builds with SDL */
+#define HAVE_SDL 1
+
 /* Building regex */
 #define BUILD_REGEX 1
 
