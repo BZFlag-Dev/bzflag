@@ -260,6 +260,11 @@
 						d.writeln("-cr<br/><br/>");
 					}
 
+					if (mainform.world_size.value != 400) {
+						d.writeln("#World size in meters<br/>");
+						d.writeln("-worldsize " + mainform.world_size.value + "<br/><br/>");
+					}
+
 					if (mainform.exit_one_game.checked) {
 						d.writeln("#Serve one game and exit<br/>");
 						d.writeln("-g<br/><br/>");
@@ -495,7 +500,7 @@
 							<td>Team Killer Kick Ratio</td>
 							<td><input type="text" name="team_killer_kick_ratio" value="0" size="30" title="Team killer to wins percentage (1-100) above which player is kicked"/></td>
 							<td> Excess Speed Kick Percent</td>
-							<td><input type="text" name="speed_kick" value="112.5" title="Percent over normal speed to auto kick"/></td>
+							<td><input type="text" name="speed_kick" value="112.5" size="30" title="Percent over normal speed to auto kick"/></td>
 						</tr>
 						<tr span="2">
 							<td>Advertisement Message</td>
@@ -556,19 +561,19 @@
 						</tr>
 						<tr>
 							<td>Vote Percent</td>
-							<td><input type="text" name="votepercent" value="50.1" title="Percentage of players required to affirm a poll"/></td>
+							<td><input type="text" name="votepercent" value="50.1" size="30" title="Percentage of players required to affirm a poll"/></td>
 							<td>Votes Required</td>
-							<td><input type="text" name="votesrequired" value="3" title="Minimum count of votes required to make a vote valid"/></td>
+							<td><input type="text" name="votesrequired" value="3" size="30" title="Minimum count of votes required to make a vote valid"/></td>
 						</tr>
 						<tr>
 							<td>Vote Time</td>
-							<td><input type="text" name="votetime" value="60" title="maximum amount of time a player has to vote on a poll in seconds"/></td>
+							<td><input type="text" name="votetime" value="60" size="30" title="maximum amount of time a player has to vote on a poll in seconds"/></td>
 							<td>Veto Time</td>
-							<td><input type="text" name="vetotime" value="20" title="Maximum seconds an authorized user has to cancel a poll"/></td>
+							<td><input type="text" name="vetotime" value="20" size="30" title="Maximum seconds an authorized user has to cancel a poll"/></td>
 						</tr>
 						<tr>
 							<td>Vote Repeat Time</td>
-							<td><input type="text" name="voterepeattime" value="300" title="Minimum seconds required before a player may request another vote"/></td>
+							<td><input type="text" name="voterepeattime" value="300" size="30" title="Minimum seconds required before a player may request another vote"/></td>
 						</tr>
 					</table>
 				</fieldset>
@@ -618,6 +623,10 @@
 							</td>
 						</tr>
 						<tr>
+							<td>World Size</td>
+							<td>
+								<input type="text" name="world_size" value="400" size="30" title="Size in meters of world"/>
+							</td>
 							<td>Exit after one game</td>
 							<td>
 								<input type="checkbox" name="exit_one_game" title="Whether or not the server shuts down after one game"/>
@@ -653,7 +662,7 @@
 						</tr>
 						<tr>
 							<td>Team flag zap timeout</td>
-							<td><input type="text" name="teamflagzap_timeout" value="30" title="Time to keep team flag after all members have left [s]"/></td>
+							<td><input type="text" name="teamflagzap_timeout" value="30" size="30" title="Time to keep team flag after all members have left [s]"/></td>
 							<td>World Property Variables file</td>
 							<td><input type="file" name="vars" title="File that stores world variable overrides"/></td>
 						</tr>
