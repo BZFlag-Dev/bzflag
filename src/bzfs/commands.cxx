@@ -1447,12 +1447,16 @@ void handleReloadCmd(GameKeeper::Player *playerData, const char *)
   if (groupsFile.size())
     PlayerAccessInfo::readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
+  // FIXME same code is in bzfs to init groups on start
   PlayerAccessMap::iterator itr = groupAccess.find("DEFAULT");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     info.explicitAllows[PlayerAccessInfo::idleStats] = true;
     info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+    info.explicitAllows[PlayerAccessInfo::date] = true;
     info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
+    info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
+    info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
     groupAccess["DEFAULT"] = info;
   }
   itr = groupAccess.find("VERIFIED");
@@ -1467,6 +1471,7 @@ void handleReloadCmd(GameKeeper::Player *playerData, const char *)
     PlayerAccessInfo info;
     for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
       info.explicitAllows[i] = true;
+    info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
     groupAccess["ADMIN"] = info;
   }
   if (passFile.size())
