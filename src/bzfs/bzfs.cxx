@@ -804,8 +804,8 @@ static WorldInfo *defineTeamWorld()
 	const float rotation = 2.0f * M_PI * (float)bzfrand();
 
 	// if too close to building then try again
-	const Obstacle* obs;
-	if (NOT_IN_BUILDING != world->cylinderInBuilding(&obs, x, y, 0,
+	Obstacle* obs;
+	if (NOT_IN_BUILDING != world->inCylinderNoOctree(&obs, x, y, 0,
 						 1.75f * teleBreadth, 1.0f))
 	  continue;
 	// if to close to a base then try again
@@ -1068,8 +1068,8 @@ static WorldInfo *defineRandomWorld()
       const float rotation = 2.0f * M_PI * (float)bzfrand();
 
       // if too close to building then try again
-	  const Obstacle* obs;
-      if (NOT_IN_BUILDING != world->cylinderInBuilding(&obs, x, y, 0,
+	  Obstacle* obs;
+      if (NOT_IN_BUILDING != world->inCylinderNoOctree(&obs, x, y, 0,
 					       1.75f * teleBreadth, 1.0f))
 	continue;
 

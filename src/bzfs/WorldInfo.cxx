@@ -215,6 +215,81 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
+
+InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
+                                             float x, float y, float z, float radius,
+                                             float height)
+{
+  if (height < Epsilon) {
+    height = Epsilon;
+  }
+  
+  float pos[3] = {x, y, z};
+
+  for (std::vector<BaseBuilding>::iterator base_it = bases.begin();
+       base_it != bases.end(); ++base_it) {
+    BaseBuilding &base = *base_it;
+    if (base.inCylinder(pos, radius, height)) {
+      if (location != NULL) {
+        *location = &base;
+      }
+      return IN_BASE;
+    }
+  }
+  for (std::vector<BoxBuilding>::iterator box_it = boxes.begin();
+       box_it != boxes.end(); ++box_it) {
+    BoxBuilding &box = *box_it;
+    if (box.inCylinder(pos, radius, height)) {
+      if (location != NULL) {
+        *location = &box;
+      }
+      if (box.isDriveThrough()) {
+        return IN_BOX_DRIVETHROUGH;
+      }
+      else {
+        return IN_BOX_NOTDRIVETHROUGH;
+      }
+    }
+  }
+  for (std::vector<PyramidBuilding>::iterator pyr_it = pyramids.begin();
+       pyr_it != pyramids.end(); ++pyr_it) {
+    PyramidBuilding &pyr = *pyr_it;
+    if (pyr.inCylinder(pos, radius, height)) {
+      if (location != NULL) {
+        *location = &pyr;
+      }
+      return IN_PYRAMID;
+    }
+  }
+  for (std::vector<TetraBuilding>::iterator tetra_it = tetras.begin();
+       tetra_it != tetras.end(); ++tetra_it) {
+    TetraBuilding &tetra = *tetra_it;
+    if (tetra.inCylinder(pos, radius, height)) {
+      if (location != NULL) {
+        *location = &tetra;
+      }
+      return IN_TETRA;
+    }
+  }
+  for (std::vector<Teleporter>::iterator tele_it = teleporters.begin();
+       tele_it != teleporters.end(); ++tele_it) {
+    Teleporter &tele = *tele_it;
+    if (tele.inCylinder(pos, radius, height)) {
+      if (location != NULL) {
+        *location = &tele;
+      }
+      return IN_TELEPORTER;
+    }
+  }
+
+  if (location != NULL) {
+    *location = (Obstacle *)NULL;
+  }
+    
+  return NOT_IN_BUILDING;
+}
+
+
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 				             const float* pos, float radius,
                                              float height)
