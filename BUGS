@@ -10,23 +10,6 @@ recent bugs
   the file, and some (binds) get written more than once. [I have two 
   bind lines for the same key]
 
-- PyramidBuilding::getHitNormal seems to handle flipz wrongly, specifically
-  if (flip)
-    oHeight = -oHeight;
-  if (oHeight < 0) {
-    flip    = !flip;
-    oHeight = -oHeight;
-  }
-  Given a Pyr with positive height, and flipz, causes flipz to be off, and the 
-  height to be positive. Which is incorrect.
-
-  It would seem we should completely revert the code to back when flipped pyrs where 
-  not considered. Then, if flipz, and the hit point is between the top and bottom, just 
-  reflect the point across the height, calculate the normal, and then flip the z.
-  (ie if pyr pos = 5 size = 10, and hit[z] = 7, then convert hit[z] = 13.
-  From that get normal, then normal[z] = -normal[z].
-  Does that seem right?
-
 - Rabbit selection is borken. Two things. A player often is Rabbit two times
   in a row, which was intended to be illegal, and high scoring tanks get bypassed.
   Was playing on ducati where a player was consistantly in #1 slot, but NEVER 
@@ -39,9 +22,6 @@ recent bugs
   Perhaps add sanity check for not overruning end of buffer.
 
 - Player kicked after getting V flag (and possibly TH) stolen by another thief.
-
-- if you jump up and hit a flipped pyramid you will stick to it until you
-  move again (see PyramidBuilding::getHitNormal above)
 
 - bzadmin seems to be less responsive over the network than bzflag - a 
   bzadmin client can get kicked from a very active game by the server 
