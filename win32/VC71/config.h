@@ -87,6 +87,9 @@
 /* Define to 1 if you have the `vsnprintf' function. */
 #define HAVE_VSNPRINTF 1
 
+/* Define to 1 if you have the <SDL/SDL.h> header file. */
+#define HAVE_SDL_SDL_H 1
+
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
 inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}

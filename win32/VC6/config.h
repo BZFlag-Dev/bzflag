@@ -119,4 +119,7 @@
 /* Define to 1 if you have the `_vsnprintf' function */
 #define HAVE__VSNPRINTF 1
 
+/* Define to 1 if you have the <SDL/SDL.h> header file. */
+#define HAVE_SDL_SDL_H 1
+
 #endif //_VC5_6_CONFIG
