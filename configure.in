@@ -7,7 +7,7 @@ MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d
 MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 
-CONF_DATE=`date +%Y%m%d`
+CONF_DATE=`date -u +%Y%m%d`
 echo "BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE"
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE)
@@ -533,7 +533,7 @@ case $host_os in
 	;;
 esac
 
-CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=\$\$(date +%Y%m%d)"
+CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=\$\$(date -u +%Y%m%d)"
 
 if test x$enable_debug = xyes; then
    CFLAGS="$CFLAGS -O0";
