@@ -15,7 +15,7 @@
 bool AccessControlList::convert(char *ip, in_addr &mask) {
   unsigned char b[4];
   char *pPeriod;
-  
+
   for (int i = 0; i < 3; i++) {
     pPeriod = strchr(ip, '.');
     if (pPeriod) {
@@ -34,7 +34,7 @@ bool AccessControlList::convert(char *ip, in_addr &mask) {
     b[3] = 255;
   else
     b[3] = atoi(ip);
-  
+
   mask.s_addr= htonl(((unsigned int)b[0] << 24) |
 		     ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3]);
   return true;
@@ -45,8 +45,9 @@ void AccessControlList::expire() {
   for (banList_t::iterator it = banList.begin(); it != banList.end();) {
     if (it->banEnd <= now) {
       it = banList.erase(it);
-    }
-    else
+    } else {
       ++it;
+    }
   }
 }
+// ex: shiftwidth=2 tabstop=8

@@ -27,24 +27,23 @@ extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *mess
 
 struct BanInfo
 {
-    BanInfo( in_addr &banAddr, int period = 0 ) {
-	memcpy( &addr, &banAddr, sizeof( in_addr ));
-	if (period == 0)
-	    banEnd = TimeKeeper::getSunExplodeTime();
-	else {
-	    banEnd = TimeKeeper::getCurrent();
-	    banEnd += period * 60.0f;
-	}
+  BanInfo( in_addr &banAddr, int period = 0 ) {
+    memcpy( &addr, &banAddr, sizeof( in_addr ));
+    if (period == 0) {
+      banEnd = TimeKeeper::getSunExplodeTime();
+    } else {
+      banEnd = TimeKeeper::getCurrent();
+      banEnd += period * 60.0f;
     }
-    // BanInfos with same IP are identical
-    bool operator==(const BanInfo &rhs) const {
-      return addr.s_addr == rhs.addr.s_addr;
-    }
+  }
+  // BanInfos with same IP are identical
+  bool operator==(const BanInfo &rhs) const {
+    return addr.s_addr == rhs.addr.s_addr;
+  }
 
-    in_addr	addr;
-    TimeKeeper	banEnd;
+  in_addr	addr;
+  TimeKeeper	banEnd;
 };
-
 
 /* FIXME the AccessControlList assumes that 255 is a wildcard. it "should"
  * include a cidr mask with each address. it's still useful as is, though
@@ -156,21 +155,21 @@ public:
       sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
       pMsg+=strlen(pMsg);
 
-      if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-	  strcat( pMsg, "*.*.*" );
-      else {
-	  sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
-	  pMsg+=strlen(pMsg);
-	  if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-	      strcat( pMsg, "*.*" );
-	  else {
-	      sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
-	      pMsg+=strlen(pMsg);
-	      if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-		  strcat( pMsg, "*" );
-	      else
-		  sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
-	  }
+      if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
+        strcat( pMsg, "*.*.*" );
+      } else {
+        sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
+        pMsg+=strlen(pMsg);
+        if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
+          strcat( pMsg, "*.*" );
+        } else {
+          sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+          pMsg+=strlen(pMsg);
+          if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+	    strcat( pMsg, "*" );
+          else
+	    sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
+        }
       }
       // print duration when < 1 year
       double duration = it->banEnd - TimeKeeper::getCurrent();
@@ -182,7 +181,6 @@ public:
   }
 
 private:
-  
   bool convert(char *ip, in_addr &mask);
 
   void expire();
@@ -194,4 +192,4 @@ private:
 #else
 class AccessControlList;
 #endif /* __ACCESSCONTROLLIST_H__ */
-
+// ex: shiftwidth=2 tabstop=8
