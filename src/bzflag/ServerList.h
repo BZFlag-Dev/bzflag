@@ -22,11 +22,11 @@
 #include "BzfEvent.h"
 #include "Protocol.h"
 #include "version.h"
+#include "ListServer.h"
 
 /* local interface headers */
 #include "ServerItem.h"
 #include "ServerListCache.h"
-#include "ListServer.h"
 
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
