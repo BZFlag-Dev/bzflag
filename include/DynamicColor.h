@@ -19,6 +19,17 @@
 #include <vector>
 #include <iostream>
 
+typedef struct {
+  float period;
+  float offset;
+  float weight;
+} sinusoidParams;
+
+typedef struct {
+  float period;
+  float offset;
+  float width;
+} clampParams;
 
 class DynamicColor {
   public:
@@ -41,23 +52,11 @@ class DynamicColor {
     int packSize();
     
     void print(std::ostream& out, int level);
-  
+
   private:
     static const float minPeriod;
   
     float color[4];
-    
-    typedef struct {
-      float period;
-      float offset;
-      float weight;
-    } sinusoidParams;
-
-    typedef struct {
-      float period;
-      float offset;
-      float width;
-    } clampParams;
     
     typedef struct {
       float minValue, maxValue;
