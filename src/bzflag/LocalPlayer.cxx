@@ -1079,7 +1079,7 @@ void LocalPlayer::forceReload(float time)
 {
   const int numShots = World::getWorld()->getMaxShots();
   int i;
-  FiringInfo firingInfo(*this, i + getSalt());
+  FiringInfo firingInfo(*this, getSalt());
   firingInfo.shot.team = getTeam();
   firingInfo.flagType = Flags::Null;
   firingInfo.lifetime = time;
