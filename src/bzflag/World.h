@@ -119,7 +119,7 @@ class World {
     static void		done();
     static void		setFlagTexture(FlagSceneNode*);
 
-    bool		writeWorld(std::string &filename);
+    bool		writeWorld(std::string filename);
 
 
   private:

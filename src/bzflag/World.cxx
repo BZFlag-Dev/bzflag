@@ -633,7 +633,7 @@ void			World::addFlags(SceneDatabase* scene)
   }
 }
 
-bool			World::writeWorld(std::string &filename)
+bool			World::writeWorld(std::string filename)
 {
   std::ofstream out(filename.c_str());
   if (!out)

@@ -1386,7 +1386,8 @@ void			SaveWorldMenu::resize(int width, int height)
   list[1]->setFontSize(fontWidth, fontHeight);
   const float h = list[1]->getFont().getHeight();
   const int count = list.size();
-  for (int i = 1; i < count-1; i++) {
+  int i;
+  for (i = 1; i < count-1; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
