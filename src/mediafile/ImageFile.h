@@ -39,7 +39,7 @@ public:
 	int					getHeight() const;
 
 protected:
-	ImageFile(istream*);
+	ImageFile(std::istream*);
 
 	// save info about the stream.  called by the derived c'tor.
 	// don't call this if the stream is not an audio file.

@@ -365,14 +365,14 @@ class WorldFileObject {
 		WorldFileObject() { }
 		virtual ~WorldFileObject() { }
 
-		virtual bool read(const char *cmd, istream&) = 0;
+		virtual bool read(const char *cmd, std::istream&) = 0;
 		virtual void write(WorldInfo*) const = 0;
 };
 
 class WorldFileObstacle : public WorldFileObject {
 	public:
 		WorldFileObstacle();
-		virtual bool read(const char *cmd, istream&);
+		virtual bool read(const char *cmd, std::istream&);
 
 	protected:
 		float pos[3];
@@ -387,7 +387,7 @@ WorldFileObstacle::WorldFileObstacle()
 	size[0] = size[1] = size[2] = 1.0f;
 }
 
-bool WorldFileObstacle::read(const char *cmd, istream& input)
+bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 {
 	if (strcmp(cmd, "position") == 0)
 		input >> pos[0] >> pos[1] >> pos[2];
@@ -438,7 +438,7 @@ void CustomPyramid::write(WorldInfo *world) const
 class CustomGate : public WorldFileObstacle {
 	public:
 		CustomGate();
-		virtual bool read(const char *cmd, istream&);
+		virtual bool read(const char *cmd, std::istream&);
 		virtual void write(WorldInfo*) const;
 
 	protected:
@@ -453,7 +453,7 @@ CustomGate::CustomGate()
 	border = TeleWidth;
 }
 
-bool CustomGate::read(const char *cmd, istream& input)
+bool CustomGate::read(const char *cmd, std::istream& input)
 {
 	if (strcmp(cmd, "border") == 0)
 		input >> border;
@@ -470,7 +470,7 @@ void CustomGate::write(WorldInfo *world) const
 class CustomLink : public WorldFileObject {
 	public:
 		CustomLink();
-		virtual bool read(const char *cmd, istream&);
+		virtual bool read(const char *cmd, std::istream&);
 		virtual void write(WorldInfo*) const;
 
 	protected:
@@ -484,7 +484,7 @@ CustomLink::CustomLink()
 	to = 0;
 }
 
-bool CustomLink::read(const char *cmd, istream& input)
+bool CustomLink::read(const char *cmd, std::istream& input)
 {
 	if (strcmp(cmd, "from") == 0)
 		input >> from;
@@ -503,7 +503,7 @@ void CustomLink::write(WorldInfo *world) const
 class CustomBase : public WorldFileObstacle {
 	public:
 		CustomBase();
-		virtual bool read(const char *cmd, istream&);
+		virtual bool read(const char *cmd, std::istream&);
 		virtual void write(WorldInfo*) const;
 
 	protected:
@@ -517,7 +517,7 @@ CustomBase::CustomBase()
 	size[0] = size[1] = BaseSize;
 }
 
-bool CustomBase::read(const char *cmd, istream& input) {
+bool CustomBase::read(const char *cmd, std::istream& input) {
 	if (strcmp(cmd, "color") == 0)
 		input >> color;
 	else {
@@ -547,7 +547,7 @@ void CustomBase::write(WorldInfo* world) const {
 class CustomWorld : public WorldFileObject {
 	public:
 		CustomWorld();
-		virtual bool read(const char *cmd, istream&);
+		virtual bool read(const char *cmd, std::istream&);
 		virtual void write(WorldInfo*) const;
 
 	protected:
@@ -561,7 +561,7 @@ CustomWorld::CustomWorld()
 	fHeight = 0;
 }
 
-bool CustomWorld::read(const char *cmd, istream& input)
+bool CustomWorld::read(const char *cmd, std::istream& input)
 {
 	if (strcmp(cmd, "size") == 0)
 		input >> size;
@@ -1999,7 +1999,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 			pwrite(i, rawbuf, len + 4);
 }
 
-static istream &readToken(istream& input, char *buffer, int n)
+static std::istream &readToken(std::istream& input, char *buffer, int n)
 {
 	int c = -1;
 
@@ -2025,7 +2025,7 @@ static istream &readToken(istream& input, char *buffer, int n)
 	return input;
 }
 
-static bool readWorldStream(istream& input, const char *location, WorldFileObjectList& list)
+static bool readWorldStream(std::istream& input, const char *location, WorldFileObjectList& list)
 {
 	int line = 1;
 	char buffer[1024];
@@ -3793,7 +3793,7 @@ static const char *usageString =
 "[-world <filename>]";
 
 
-static void printVersion(ostream& out)
+static void printVersion(std::ostream& out)
 {
 	out << copyright << std::endl;
 

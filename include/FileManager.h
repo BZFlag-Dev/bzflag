@@ -28,13 +28,13 @@ public:
 	// if filename is an absolute path then only that place is
 	// checked.  if the file cannot be found or isn't readable
 	// then NULL is returned.
-	istream*			createDataInStream(const std::string& filename,
+	std::istream*			createDataInStream(const std::string& filename,
 							bool binary = false) const;
 
 	// create an output stream in the data directory (or wherever
 	// indicated if filename is an absolute path).  if the file
 	// can be opened for writing then NULL is returned.
-	ostream*			createDataOutStream(const std::string& filename,
+	std::ostream*			createDataOutStream(const std::string& filename,
 							bool binary = false,
 							bool truncate = true) const;
 

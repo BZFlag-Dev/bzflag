@@ -18,7 +18,7 @@
 // SGIImageFile
 //
 
-SGIImageFile::SGIImageFile(istream* stream) : ImageFile(stream)
+SGIImageFile::SGIImageFile(std::istream* stream) : ImageFile(stream)
 {
 	unsigned char header[512];
 	readRaw(header, sizeof(header));

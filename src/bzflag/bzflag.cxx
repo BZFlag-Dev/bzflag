@@ -492,7 +492,7 @@ static void				parse(int argc, char** argv)
 // config file read callbacks
 //
 
-static void				readConfig(istream* stream, const std::string& filename)
+static void				readConfig(std::istream* stream, const std::string& filename)
 {
 	if (stream != NULL) {
 		try {
@@ -516,7 +516,7 @@ static void				readConfig(istream* stream, const std::string& filename)
 static void				writeDBEntry(const std::string& name, void* _stream)
 {
 	// write it
-	ostream* stream = reinterpret_cast<ostream*>(_stream);
+	std::ostream* stream = reinterpret_cast<std::ostream*>(_stream);
 	(*stream) << "\t<command>set " <<
 						XMLTree::escape(name) <<
 						" \"" << XMLTree::escape(BZDB->get(name)) << "\"" <<
@@ -526,7 +526,7 @@ static void				writeDBEntry(const std::string& name, void* _stream)
 static void				writeKeys(const std::string& name, bool press,
 								const std::string& cmd, void* _stream)
 {
-	ostream* stream = reinterpret_cast<ostream*>(_stream);
+	std::ostream* stream = reinterpret_cast<std::ostream*>(_stream);
 	(*stream) << "\t<command>bind " <<
 						"\"" << XMLTree::escape(name) << "\" " <<
 						(press ? "down" : "up") <<
@@ -743,7 +743,7 @@ int						main(int argc, char** argv)
 	// read the user configuration file
 	{
 		setErrorCallback(initializingErrorCallback);
-		istream* stream = PLATFORM->createConfigInStream();
+		std::istream* stream = PLATFORM->createConfigInStream();
 		readConfig(stream, "<config-file>");
 		delete stream;
 		setErrorCallback(fatalErrorCallback);
@@ -903,7 +903,7 @@ int						main(int argc, char** argv)
 
 	// read the configuration files (user.bzc if it exists, else config.bzc)
 	{
-		istream* stream = FILEMGR->createDataInStream("user.bzc");
+		std::istream* stream = FILEMGR->createDataInStream("user.bzc");
 		if (stream != NULL) {
 			readConfig(stream, "user.bzc");
 			delete stream;
@@ -928,7 +928,7 @@ int						main(int argc, char** argv)
 
 	// save resources
 	{
-		ostream* resourceStream = PLATFORM->createConfigOutStream();
+		std::ostream* resourceStream = PLATFORM->createConfigOutStream();
 		if (resourceStream != NULL) {
 			// open command section
 			(*resourceStream) << "<commands>" << std::endl;

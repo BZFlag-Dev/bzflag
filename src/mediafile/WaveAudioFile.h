@@ -17,7 +17,7 @@
 
 class WaveAudioFile : public AudioFile {
 public:
-	WaveAudioFile(istream*);
+	WaveAudioFile(std::istream*);
 	virtual ~WaveAudioFile();
 
 	static std::string	getExtension();

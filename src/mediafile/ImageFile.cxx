@@ -16,7 +16,7 @@
 // ImageFile
 //
 
-ImageFile::ImageFile(istream* _stream) : MediaFile(_stream), open(false)
+ImageFile::ImageFile(std::istream* _stream) : MediaFile(_stream), open(false)
 {
 	// do nothing
 }

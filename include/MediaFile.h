@@ -41,10 +41,10 @@ public:
 							int* numFrames, int* rate);
 
 protected:
-	MediaFile(istream*);
+	MediaFile(std::istream*);
 
 	// get the stream
-	istream*			getStream() const { return stream; }
+	std::istream*			getStream() const { return stream; }
 
 	// return true if the stream is in a readable state
 	bool				isOkay() const;
@@ -69,7 +69,7 @@ protected:
 	static uint32_t		swap32BE(uint32_t*);
 
 private:
-	istream*			stream;
+	std::istream*			stream;
 };
 
 #endif

@@ -17,7 +17,7 @@
 // MediaFile
 //
 
-MediaFile::MediaFile(istream* _stream) : stream(_stream)
+MediaFile::MediaFile(std::istream* _stream) : stream(_stream)
 {
 	// do nothing
 }
@@ -135,7 +135,7 @@ unsigned char*			MediaFile::readImage(
 								int* width, int* height)
 {
 	// try opening file as an image
-	istream* stream;
+	std::istream* stream;
 	ImageFile* file = NULL;
 	if (file == NULL)
 		OPENMEDIA(SGIImageFile);
@@ -219,7 +219,7 @@ float*					MediaFile::readSound(
 								int* _numFrames, int* rate)
 {
 	// try opening as an audio file
-	istream* stream;
+	std::istream* stream;
 	AudioFile* file = NULL;
 	if (file == NULL)
 		OPENMEDIA(WaveAudioFile);

@@ -17,7 +17,7 @@
 
 class SGIImageFile : public ImageFile {
 public:
-	SGIImageFile(istream*);
+	SGIImageFile(std::istream*);
 	virtual ~SGIImageFile();
 
 	static std::string	getExtension();

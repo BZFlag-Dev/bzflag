@@ -25,12 +25,5 @@
 
 #include <iosfwd>
 
-#ifdef WIN32
-using namespace std;
-#else
-typedef std::istream istream;
-typedef std::ostream ostream;
-#endif
-
 #endif
 

@@ -16,13 +16,6 @@
 #include <ctype.h>
 #include <fstream>
 
-#ifdef WIN32
-using namespace std;
-#else
-typedef std::ifstream ifstream;
-typedef std::ofstream ofstream;
-#endif
-
 //
 // FileManager
 //
@@ -46,7 +39,7 @@ FileManager*			FileManager::getInstance()
 	return mgr;
 }
 
-istream*				FileManager::createDataInStream(
+std::istream*				FileManager::createDataInStream(
 								const std::string& filename,
 								bool binary) const
 {
@@ -59,7 +52,7 @@ istream*				FileManager::createDataInStream(
 	if (relative) {
 		// try directory stored in DB
 		if (BZDB->isSet("directory")) {
-			ifstream* stream = new ifstream(catPath(BZDB->get("directory"),
+			std::ifstream* stream = new std::ifstream(catPath(BZDB->get("directory"),
 								filename).c_str(), mode);
 			if (stream && *stream)
 				return stream;
@@ -68,7 +61,7 @@ istream*				FileManager::createDataInStream(
 
 		// try data directory
 		{
-			ifstream* stream = new ifstream(catPath("data", filename).c_str(), mode);
+			std::ifstream* stream = new std::ifstream(catPath("data", filename).c_str(), mode);
 			if (stream && *stream)
 				return stream;
 			delete stream;
@@ -77,7 +70,7 @@ istream*				FileManager::createDataInStream(
 
 	// try current directory (or absolute path)
 	{
-		ifstream* stream = new ifstream(filename.c_str(), mode);
+		std::ifstream* stream = new std::ifstream(filename.c_str(), mode);
 		if (stream && *stream)
 			return stream;
 		delete stream;
@@ -86,7 +79,7 @@ istream*				FileManager::createDataInStream(
 	// try install directory
 #if defined(INSTALL_DATA_DIR)
 	if (relative) {
-		ifstream* stream = new ifstream(catPath(INSTALL_DATA_DIR,
+		std::ifstream* stream = new std::ifstream(catPath(INSTALL_DATA_DIR,
 								filename).c_str(), mode);
 		if (stream && *stream)
 			return stream;
@@ -97,7 +90,7 @@ istream*				FileManager::createDataInStream(
 	return NULL;
 }
 
-ostream*				FileManager::createDataOutStream(
+std::ostream*				FileManager::createDataOutStream(
 								const std::string& filename,
 								bool binary,
 								bool truncate) const
@@ -113,7 +106,7 @@ ostream*				FileManager::createDataOutStream(
 	if (relative) {
 		// try directory stored in DB
 		if (BZDB->isSet("directory")) {
-			ofstream* stream = new ofstream(catPath(BZDB->get("directory"),
+			std::ofstream* stream = new std::ofstream(catPath(BZDB->get("directory"),
 								filename).c_str(), mode);
 			if (stream && *stream)
 				return stream;
@@ -123,7 +116,7 @@ ostream*				FileManager::createDataOutStream(
 
 		// try data directory
 		{
-			ofstream* stream = new ofstream(catPath("data", filename).c_str(), mode);
+			std::ofstream* stream = new std::ofstream(catPath("data", filename).c_str(), mode);
 			if (stream && *stream)
 				return stream;
 			delete stream;
@@ -133,7 +126,7 @@ ostream*				FileManager::createDataOutStream(
 
 	// try absolute path
 	else {
-		ofstream* stream = new ofstream(filename.c_str(), mode);
+		std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
 		if (stream && *stream)
 			return stream;
 		delete stream;

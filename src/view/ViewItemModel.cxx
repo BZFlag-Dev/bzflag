@@ -122,7 +122,7 @@ View*					ViewItemModelReader::open(XMLTree::iterator xml)
 	// parse
 	std::string filename;
 	if (xml->getAttribute("filename", filename)) {
-		istream* stream = FILEMGR->createDataInStream(filename);
+		std::istream* stream = FILEMGR->createDataInStream(filename);
 		if (stream == NULL)
 			throw XMLIOException(xml->position,
 							string_util::format(

@@ -100,7 +100,7 @@ void					ConfigFileManager::parse(XMLTree::iterator xml)
 bool					ConfigFileManager::read(const std::string& filename)
 {
 	// try to open the file
-	istream* stream = FILEMGR->createDataInStream(filename);
+	std::istream* stream = FILEMGR->createDataInStream(filename);
 	if (stream == NULL)
 		return false;
 
@@ -116,12 +116,12 @@ bool					ConfigFileManager::read(const std::string& filename)
 	}
 }
 
-void					ConfigFileManager::read(istream& stream)
+void					ConfigFileManager::read(std::istream& stream)
 {
 	read(stream, XMLStreamPosition());
 }
 
-void					ConfigFileManager::read(istream& stream,
+void					ConfigFileManager::read(std::istream& stream,
 							const XMLStreamPosition& position)
 {
 	// syntactic parsing

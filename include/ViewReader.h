@@ -73,7 +73,7 @@ private:
 // handy function objects
 //
 
-class ViewSetSize_t : public unary_function<std::string, ViewSize&> {
+class ViewSetSize_t : public std::unary_function<std::string, ViewSize&> {
 public:
 	ViewSetSize_t(ViewSize& size_, bool* scaled_) :
 							size(size_), scaled(scaled_) { }

@@ -51,8 +51,8 @@ public:
 
 	// create input/output stream for configuration file (wherever
 	// it's supposed to go)
-	virtual istream*	createConfigInStream() const = 0;
-	virtual ostream*	createConfigOutStream() const = 0;
+	virtual std::istream*	createConfigInStream() const = 0;
+	virtual std::ostream*	createConfigOutStream() const = 0;
 
 	// create a console for text output and write to it (either
 	// normal or error text).  if possible stdout and stderr

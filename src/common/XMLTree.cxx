@@ -123,7 +123,7 @@ XMLStreamPosition		XMLNode::getAttributePosition(
 // XMLTree::XMLStream
 //
 
-XMLTree::XMLStream::XMLStream(istream* s) :
+XMLTree::XMLStream::XMLStream(std::istream* s) :
 								position(),
 								stream(s),
 								eofIsOkay(false)
@@ -131,7 +131,7 @@ XMLTree::XMLStream::XMLStream(istream* s) :
 	// do nothing
 }
 
-XMLTree::XMLStream::XMLStream(istream* s, const XMLStreamPosition& p) :
+XMLTree::XMLStream::XMLStream(std::istream* s, const XMLStreamPosition& p) :
 								position(p),
 								stream(s),
 								eofIsOkay(false)
@@ -207,12 +207,12 @@ void					XMLTree::XMLStream::setFail()
 	stream->setstate(std::ios::failbit);
 }
 
-void					XMLTree::XMLStream::push(istream* s)
+void					XMLTree::XMLStream::push(std::istream* s)
 {
 	push(s, XMLStreamPosition());
 }
 
-void					XMLTree::XMLStream::push(istream* stream_,
+void					XMLTree::XMLStream::push(std::istream* stream_,
 							const XMLStreamPosition& position_)
 {
 	// save current stream and position
@@ -584,7 +584,7 @@ void					XMLTree::readINCLUDE(XMLStream& stream)
 	eat(stream, "/>", "malformed INCLUDE");
 
 	// open the file
-	istream* included = FILEMGR->createDataInStream(filename);
+	std::istream* included = FILEMGR->createDataInStream(filename);
 	if (included == NULL)
 		throw XMLTreeIOException(stream,
 							string_util::format(
@@ -809,13 +809,13 @@ bool					XMLTree::isNameChar(char c)
 							c == '_' || c == ':');
 }
 
-istream&				XMLTree::read(istream& is,
+std::istream&				XMLTree::read(std::istream& is,
 							const XMLStreamPosition& position)
 {
 	return read(is, position, begin());
 }
 
-istream&				XMLTree::read(istream& is,
+std::istream&				XMLTree::read(std::istream& is,
 							const XMLStreamPosition& position,
 							XMLTree::iterator node)
 {
@@ -836,7 +836,7 @@ istream&				XMLTree::read(istream& is,
 	return is;
 }
 
-istream&				operator>>(istream& is, XMLTree& xml)
+std::istream&				operator>>(std::istream& is, XMLTree& xml)
 {
 	// construct stream wrapper
 	XMLTree::XMLStream stream(&is);

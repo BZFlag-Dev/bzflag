@@ -25,7 +25,7 @@
 #define	IBM_FORMAT_ALAW			(0x0102)
 #define	IBM_FORMAT_ADPCM        (0x0103)
 
-WaveAudioFile::WaveAudioFile(istream* stream) : AudioFile(stream)
+WaveAudioFile::WaveAudioFile(std::istream* stream) : AudioFile(stream)
 {
 	if (stream == NULL)
 		return;

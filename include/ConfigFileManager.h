@@ -44,8 +44,8 @@ public:
 	// to open the stream and returns false if the file cannot be
 	// opened.  they all call parse().
 	bool				read(const std::string& filename);
-	void				read(istream&);
-	void				read(istream&, const XMLStreamPosition&);
+	void				read(std::istream&);
+	void				read(std::istream&, const XMLStreamPosition&);
 
 	// get the singleton instance
 	static ConfigFileManager*	getInstance();

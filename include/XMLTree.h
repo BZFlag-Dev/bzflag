@@ -12,10 +12,9 @@
 
 #ifndef OLD_SGI_STL
 // egcs doesn't support std::foo<> (i.e. std namespace on a template).
-// we need std::unary_function<> so use unary_function and a macro.
-//#define std::unary_function unary_function
-//#define unary_function std::unary_function
-using namespace std;
+// we need std::std::unary_function<> so use std::unary_function and a macro.
+//#define std::std::unary_function std::unary_function
+//#define std::unary_function std::std::unary_function
 #endif
 
 class XMLStreamPosition {
@@ -113,10 +112,10 @@ public:
 	// stream are added as children of that iterator.  if the tree is
 	// empty then a dummy root node is created.  operator>>() removes
 	// all elements from the tree before reading.
-	istream&			read(istream&, const XMLStreamPosition&);
-	istream&			read(istream&, const XMLStreamPosition&,
+	std::istream&			read(std::istream&, const XMLStreamPosition&);
+	std::istream&			read(std::istream&, const XMLStreamPosition&,
 							XMLTree::iterator);
-	friend istream&		operator>>(istream&, XMLTree&);
+	friend std::istream&		operator>>(std::istream&, XMLTree&);
 //	friend ostream&		operator<<(ostream&, const XMLTree&);
 
 	// escape a string so it will be correctly read by read() and
@@ -135,8 +134,8 @@ private:
 
 	class XMLStream {
 	public:
-		XMLStream(istream*);
-		XMLStream(istream*, const XMLStreamPosition&);
+		XMLStream(std::istream*);
+		XMLStream(std::istream*, const XMLStreamPosition&);
 
 		// stream-like operations
 		char			get();
@@ -150,8 +149,8 @@ private:
 		void			setEOFIsOkay(bool on) { eofIsOkay = on; }
 
 		// push an included stream (stream is adopted)
-		void			push(istream*);
-		void			push(istream*, const XMLStreamPosition&);
+		void			push(std::istream*);
+		void			push(std::istream*, const XMLStreamPosition&);
 
 	private:
 		void			pop();
@@ -160,9 +159,9 @@ private:
 		XMLStreamPosition	position;
 
 	private:
-		typedef std::vector<std::pair<istream*, XMLStreamPosition> > StreamStack;
+		typedef std::vector<std::pair<std::istream*, XMLStreamPosition> > StreamStack;
 
-		istream*		stream;
+		std::istream*		stream;
 		StreamStack		streamStack;
 		bool			eofIsOkay;
 	};
@@ -205,7 +204,7 @@ private:
 //
 
 template <class T>
-class XMLSetVar_t : public unary_function<T, T> {
+class XMLSetVar_t : public std::unary_function<T, T> {
 public:
 	XMLSetVar_t(T* dst_) : dst(dst_) { }
 	T operator()(const T& arg) const
@@ -241,7 +240,7 @@ xmlSetVar(T& arg)
 #endif
 
 template <class Object, class Arg, class Result>
-class XMLSetMethod_t : public unary_function<Arg, XML_SET_METHOD_RESULT> {
+class XMLSetMethod_t : public std::unary_function<Arg, XML_SET_METHOD_RESULT> {
 public:
 	typedef Result (Object::*Member)(Arg);
 	XMLSetMethod_t(Object* object_, Member member_) :
@@ -266,7 +265,7 @@ xmlSetMethod(Object* object, Result (Object::*member)(Arg))
 }
 
 template <class Operation, class Function>
-class XMLStr2Num_t : public unary_function<std::string,
+class XMLStr2Num_t : public std::unary_function<std::string,
 										typename Operation::result_type> {
 public:
 	XMLStr2Num_t(const Operation& op_, Function func_) :
@@ -319,7 +318,7 @@ xmlStrToFloat(const Operation& op)
 }
 
 template <class T>
-class XMLMin_t : public unary_function<T, T> {
+class XMLMin_t : public std::unary_function<T, T> {
 public:
 	XMLMin_t(T x_) : x(x_) { }
 	T					operator()(T a) const
@@ -339,7 +338,7 @@ XMLMin_t<T> xmlMin(T x)
 }
 
 template <class T>
-class XMLMax_t : public unary_function<T, T> {
+class XMLMax_t : public std::unary_function<T, T> {
 public:
 	XMLMax_t(T x_) : x(x_) { }
 	T					operator()(T a) const
@@ -359,7 +358,7 @@ XMLMax_t<T> xmlMax(T x)
 }
 
 template <class Outer, class Inner>
-class XMLCompose_t : public unary_function<typename Inner::argument_type,
+class XMLCompose_t : public std::unary_function<typename Inner::argument_type,
 											typename Outer::result_type> {
 public:
 	XMLCompose_t(Outer outer_, Inner inner_) : outer(outer_), inner(inner_) { }
@@ -389,7 +388,7 @@ public:
 };
 
 template <class E, class Operation>
-class XMLParseEnum_t : public unary_function<std::string,
+class XMLParseEnum_t : public std::unary_function<std::string,
 										typename Operation::result_type> {
 public:
 	XMLParseEnum_t(const E* enumerants_, const Operation& op) :

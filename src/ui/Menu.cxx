@@ -21,11 +21,6 @@
 #include "TimeKeeper.h"
 #include "bzfgl.h"
 #include <sstream>
-#ifdef WIN32
-using namespace std;
-#else
-typedef std::istringstream istringstream;
-#endif
 //
 // Menu
 //
@@ -60,9 +55,9 @@ Menu::Menu() : active(0), x(0), y(0)
 		projection->type.set(SceneNodeTransform::Projection);
 
 		// FIXME -- fall back to built-in if error reading external model
-		istream* stream = FILEMGR->createDataInStream("menuptr.bzg");
+		std::istream* stream = FILEMGR->createDataInStream("menuptr.bzg");
 		if (stream == NULL)
-			stream = new istringstream(menuptr);
+			stream = new std::istringstream(menuptr);
 		if (stream != NULL) {
 			try {
 				// read XML

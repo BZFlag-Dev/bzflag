@@ -43,7 +43,7 @@ public:
 	int					getSampleWidth() const;
 
 protected:
-	AudioFile(istream*);
+	AudioFile(std::istream*);
 
 	// save info about the stream.  called by the derived c'tor.
 	// don't call this if the stream is not an audio file.

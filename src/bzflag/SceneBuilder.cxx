@@ -18,12 +18,6 @@
 #include "SceneReader.h"
 #include <sstream>
 
-#ifdef WIN32
-using namespace std;
-#else
-typedef std::istringstream istringstream;
-#endif
-
 //
 // SceneDatabaseBuilder
 //
@@ -41,7 +35,7 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 SceneNode*				SceneDatabaseBuilder::make(const World* world)
 {
 	std::string buffer(makeBuffer(world));
-	istringstream stream(buffer.c_str());
+	std::istringstream stream(buffer.c_str());
 
 	try {
 		// read XML

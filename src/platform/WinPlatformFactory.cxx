@@ -50,12 +50,12 @@ WinPlatformFactory::~WinPlatformFactory()
 	// do nothing
 }
 
-istream*				WinPlatformFactory::createConfigInStream() const
+std::istream*				WinPlatformFactory::createConfigInStream() const
 {
 	return FILEMGR->createDataInStream(getConfigFileName());
 }
 
-ostream*				WinPlatformFactory::createConfigOutStream() const
+std::ostream*				WinPlatformFactory::createConfigOutStream() const
 {
 	return FILEMGR->createDataOutStream(getConfigFileName());
 }

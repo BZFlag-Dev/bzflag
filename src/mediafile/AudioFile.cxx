@@ -16,7 +16,7 @@
 // AudioFile
 //
 
-AudioFile::AudioFile(istream* _stream) : MediaFile(_stream), open(false)
+AudioFile::AudioFile(std::istream* _stream) : MediaFile(_stream), open(false)
 {
 	// do nothing
 }

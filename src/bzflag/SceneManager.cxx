@@ -133,7 +133,7 @@ void					SceneManager::open()
 	clear();
 }
 
-void					SceneManager::read(istream* stream,
+void					SceneManager::read(std::istream* stream,
 								 const std::string& filename)
 {
 	// ignore streams we can't read

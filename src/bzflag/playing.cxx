@@ -2562,7 +2562,7 @@ static bool				joinGame(ServerLink* _serverLink)
 
 	// load default models
 	{
-		istream* stream = FILEMGR->createDataInStream("models.bzg");
+		std::istream* stream = FILEMGR->createDataInStream("models.bzg");
 		if (stream != NULL) {
 			SCENEMGR->read(stream, "models.bzg");
 			delete stream;
