@@ -84,7 +84,10 @@ class WallSceneNode : public SceneNode {
 				const GLfloat* plane,
 				GLfloat* p, GLfloat* uv); // const
 
+    static void		callback(const std::string &name, void *userData);
+
   private:
+    static int		maxLOD; // cache of BZDB value
     int			numLODs;
     float*		elementAreas;
     GLfloat		plane[4];	// unit normal, distance to origin
