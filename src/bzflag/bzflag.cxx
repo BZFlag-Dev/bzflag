@@ -61,7 +61,9 @@ static bool		noAudio = false;
 struct tm		userTime;
 static StartupInfo	startupInfo;
 bool			echoToConsole = false;
+bool			echoClean = false;
 ResourceDatabase	db;
+extern int		killerHighlight;
 
 static BzfDisplay*	display = NULL;
 
@@ -245,6 +247,7 @@ static void		usage()
 	" [-callsign <call-sign>]"
 	" [-directory <data-directory>]"
 	" [-echo]"
+	" [-echoClean]"
 	" [-geometry <geometry-spec>]"
 	" [-interface <interface>]"
 	" [-joystick {yes|no}]"
@@ -299,6 +302,10 @@ static void		parse(int argc, char** argv,
     }
     else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
+    }
+    else if (strcmp(argv[i], "-ec") == 0 || strcmp(argv[i], "-echoClean") == 0) {
+      echoToConsole = true;
+      echoClean = true;
     }
     else if (strcmp(argv[i], "-h") == 0 ||
 	     strcmp(argv[i], "-help") == 0 ||
@@ -716,6 +723,10 @@ void			dumpResources(BzfDisplay* display,
   db.addValue("mouseboxsize", buf);
 
   db.addValue("bigfont", renderer.useBigFont() ? "yes" : "no");
+  db.addValue("colorful", renderer.getConsoleColorization() ? "yes" : "no");
+  db.addValue("underline", OpenGLTexFont::getUnderlineColor());
+  char temp[2]; temp[1] = '\0'; temp[0] = killerHighlight + '0';
+  db.addValue("killerhighlight", temp);
 
   // don't save these configurations
   db.removeValue("window");
@@ -1189,6 +1200,12 @@ int			main(int argc, char** argv)
       renderer.setMaxMotionFactor(atoi(db.getValue("mouseboxsize").c_str()));
     if (db.hasValue("bigfont"))
       renderer.setBigFont(db.getValue("bigfont") == "yes");
+    if (db.hasValue("colorful"))
+      renderer.setConsoleColorization(db.getValue("colorful") == "yes");
+    if (db.hasValue("underline"))
+      OpenGLTexFont::setUnderlineColor(atoi(db.getValue("underline").c_str()));
+    if (db.hasValue("killerhighlight"))
+      killerHighlight = atoi(db.getValue("killerhighlight").c_str());
   }
 
   // grab the mouse only if allowed

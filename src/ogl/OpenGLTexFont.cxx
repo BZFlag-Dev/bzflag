@@ -14,6 +14,68 @@
 #include <string>
 #include <string.h>
 #include <math.h>
+#include "global.h"		// for TeamColor enum
+#include "Team.h"		// for TeamColor colors
+#include "TimeKeeper.h"	// for blinking timer
+#include "common.h"		// for bool type
+
+
+
+// ANSI (ISO 6429) colors codes (these are all used in BRIGHT mode)
+
+#define ANSI_STR_RESET		"\033[0;1m"	// reset & bright
+#define ANSI_STR_BRIGHT		"\033[1m"	// unimplemented
+#define ANSI_STR_DIM		"\033[2m"	// unimplemented
+#define ANSI_STR_UNDERLINE	"\033[4m"
+#define ANSI_STR_BLINK		"\033[5m"
+#define ANSI_STR_REVERSE	"\033[7m"	// unimplemented
+
+#define ANSI_STR_FG_BLACK 	"\033[30m"	// grey
+#define ANSI_STR_FG_RED 	"\033[31m"
+#define ANSI_STR_FG_GREEN	"\033[32m"
+#define ANSI_STR_FG_YELLOW	"\033[33m"
+#define ANSI_STR_FG_BLUE	"\033[34m"
+#define ANSI_STR_FG_MAGENTA	"\033[35m"	// purple
+#define ANSI_STR_FG_CYAN	"\033[36m"
+#define ANSI_STR_FG_WHITE	"\033[37m"
+
+
+// These enum values have to line up with those in OpenGLTexFont.h
+
+const char * ColorStrings[FONT_CODES] = {
+  ANSI_STR_FG_YELLOW,   // 0  Rogue     (yellow)
+  ANSI_STR_FG_RED,      // 1  Red
+  ANSI_STR_FG_GREEN,    // 2  Green
+  ANSI_STR_FG_BLUE,     // 3  Blue
+  ANSI_STR_FG_MAGENTA,  // 4  Purple
+  ANSI_STR_FG_WHITE,    // 5  White
+  ANSI_STR_FG_BLACK,    // 6  Grey      (bright black is grey)
+  ANSI_STR_FG_CYAN,     // 7  Cyan
+  ANSI_STR_RESET,       // 8  Reset
+  ANSI_STR_BLINK,       // 9  Blink
+  ANSI_STR_UNDERLINE    // 10 Underline
+};
+
+// This maps the ANSI LSB code to bzflag color numbers
+
+const int color_map [8] = {
+  6,  // ANSI BLACK   (30)
+  1,  // ANSI RED     (31)
+  2,  // ANSI GREEN   (32)
+  0,  // ANSI YELLOW  (33)
+  3,  // ANSI BLUE    (34)
+  4,  // ANSI MAGENTA (35)
+  7,  // ANSI CYAN    (36)
+  5   // ANSI WHITE   (37)
+};
+
+
+// Constant for blinking text  
+
+#define BLINK_DEPTH	(0.5f)
+#define BLINK_RATE	(0.25f)
+
+
 
 //
 // OpenGLTexFont::Rep
@@ -215,15 +277,37 @@ void			OpenGLTexFont::BitmapRep::draw(
 				const char* string, int length,
 				float x, float y, float z)
 {
+  char * tmpstr;
+
   gstate.setState();
   glRasterPos3f(x, y, z);
+
+  tmpstr = strdup (string);
+  length = stripAnsiCodes (tmpstr, length);
+
   for (int i = 0; i < length; i++) {
-    const unsigned int c = (unsigned int)string[i];
+    const unsigned int c = (unsigned int)tmpstr[i];
     if (c >= 32 && c < 127) {
       const Glyph& g = glyph[c - 32];
       glBitmap(g.width, g.height, g.xorig, g.yorig, g.xmove, g.ymove, g.bitmap);
     }
   }
+
+  delete[] tmpstr;
+}
+
+float OpenGLTexFont::BitmapRep::drawChar (char c)
+{
+  const Glyph& g = glyph[c - 32];
+  glBitmap (g.width, g.height, g.xorig, g.yorig, g.xmove, g.ymove, g.bitmap);
+
+  return g.xmove;
+}
+
+void OpenGLTexFont::BitmapRep::setState (void)
+{
+  gstate.setState();
+  return;
 }
 
 void			OpenGLTexFont::BitmapRep::createGlyph(int index)
@@ -303,6 +387,8 @@ void			OpenGLTexFont::BitmapRep::createGlyph(int index)
 //
 // OpenGLTexFont
 //
+
+int OpenGLTexFont::underlineColor = CyanColor;
 
 OpenGLTexFont::OpenGLTexFont() : bitmapRep(NULL), width(1.0f), height(1.0f)
 {
@@ -434,40 +520,309 @@ void			OpenGLTexFont::draw(const char* s,
 void			OpenGLTexFont::draw(const char* string, int length,
 				float x, float y, float z) const
 {
-  if (OpenGLTexture::getFilter() == OpenGLTexture::Off) {
+  TimeKeeper basetime;
+  bool blinking = false;
+  bool underline = false;
+  bool textures = false;
+  GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
+  GLfloat grey_color[3]  = {0.5f, 0.5f, 0.5f};
+  GLfloat cyan_color[3]  = {0.0f, 1.0f, 1.0f};
+  GLfloat blinkColor[3];
+  GLfloat *color = white_color;
+  float xpos = x;
+
+  if (OpenGLTexture::getFilter() != OpenGLTexture::Off) {
+    textures = true;
+    rep->gstate.setState();
+    glBegin(GL_QUADS);
+  }
+  else {
     if (!bitmapRep)
       ((OpenGLTexFont*)this)->bitmapRep =
 			BitmapRep::getBitmapRep(rep, (int)width, (int)height);
-    if (bitmapRep) {
-      bitmapRep->draw(string, length, x, y, z);
-      return;
-    }
+      OpenGLTexFont::BitmapRep::setState();
   }
 
-  rep->gstate.setState();
-  glBegin(GL_QUADS);
   for (int i = 0; i < length; i++) {
     const unsigned int c = (unsigned int)string[i];
-    if (c >= 32 && c < 127) {
-      const Glyph& g = rep->glyph[c - 32];
-      const float w = width * g.width;
-      const float h = height * g.height;
-      const float dx = width * g.su;
-      const float dy = -height * g.sv;
-      const float x0 = floorf(x + 0.5f + dx);
-      const float y0 = floorf(y + 0.5f + dy);
-      glTexCoord2f(g.u, g.v);
-      glVertex3f(x0, y0, z);
-      glTexCoord2f(g.u + g.du, g.v);
-      glVertex3f(x0 + w, y0, z);
-      glTexCoord2f(g.u + g.du, g.v + g.dv);
-      glVertex3f(x0 + w, y0 + h, z);
-      glTexCoord2f(g.u, g.v + g.dv);
-      glVertex3f(x0, y0 + h, z);
 
-      x += width * g.advance;
+    if (blinking) {
+      float	blinkFactor;
+
+      blinkFactor = TimeKeeper::getTick() - basetime;
+      blinkFactor = fmodf(blinkFactor, BLINK_RATE) - BLINK_RATE/2.0f;
+      blinkFactor = fabsf (blinkFactor) / (BLINK_RATE/2.0f);
+      blinkFactor = BLINK_DEPTH * blinkFactor + (1.0f - BLINK_DEPTH);
+
+      blinkColor[0] = color[0] * blinkFactor;
+      blinkColor[1] = color[1] * blinkFactor;
+      blinkColor[2] = color[2] * blinkFactor;
+
+      glColor3fv(blinkColor);
+    }
+
+    if (c >= 32 && c < 127) {
+      if (textures) {
+	const Glyph& g = rep->glyph[c - 32];
+	const float w = width * g.width;
+	const float h = height * g.height;
+	const float dx = width * g.su;
+	const float dy = -height * g.sv;
+	const float x0 = floorf(x + 0.5f + dx);
+	const float y0 = floorf(y + 0.5f + dy);
+
+	if (underline == true) {
+	  glEnd ();	// GL_QUADS
+
+	  OpenGLGState::resetState();   // FIXME -- full reset required?
+
+	  if (underlineColor == CyanColor) {
+	    glColor3fv (cyan_color);
+	  }
+	  else if (underlineColor == GreyColor) {
+	    glColor3fv (grey_color);
+	  }
+
+	  glBegin (GL_LINES);
+	  glVertex2f (x, y - 1.0);
+	  glVertex2f (x + width * g.advance + 1.0, y - 1.0);
+	  glEnd ();
+
+	  rep->gstate.setState();
+	  if (blinking)
+	    glColor3fv (blinkColor);
+	  else
+	    glColor3fv (color);
+	  glBegin (GL_QUADS);
+	}
+
+	glTexCoord2f(g.u, g.v);
+	glVertex3f(x0, y0, z);
+	glTexCoord2f(g.u + g.du, g.v);
+	glVertex3f(x0 + w, y0, z);
+	glTexCoord2f(g.u + g.du, g.v + g.dv);
+	glVertex3f(x0 + w, y0 + h, z);
+	glTexCoord2f(g.u, g.v + g.dv);
+	glVertex3f(x0, y0 + h, z);
+
+	x += width * g.advance;
+      }
+      else {
+	float xmove;
+
+	// FIXME -- RasterPos call required?
+	// this call seems to set the current raster color,
+	// straight calls to glColor don't do the trick.
+	// as well, the x and y coordinates seem off by -1.0
+	// compared to the texture mapped version
+
+	glRasterPos3f(xpos + 1.0f, y + 1.0f, z);
+	
+        xmove = bitmapRep->drawChar (c);
+
+	if (underline == true) {
+	  if (underlineColor == CyanColor) {
+	    glColor3fv (cyan_color);
+	  }
+	  else if (underlineColor == GreyColor) {
+	    glColor3fv (grey_color);
+	  }
+
+	  glBegin (GL_LINES);
+	  glVertex2f (xpos, y - 1.0);		// compared to textured, -1.0
+	  glVertex2f (xpos + xmove, y - 1.0);	// compared to textured, -1.0
+	  glEnd ();
+
+	  // because we've underlined first, reset the color
+	  if (blinking)
+	    glColor3fv (blinkColor);
+	  else
+	    glColor3fv (color);
+	}
+
+        xpos = xpos + xmove;
+      }
+    }
+    else if (c == ESC_CHAR) {          // process the ANSI color codes
+      i++;
+
+      if ((i < length) && (string[i] == '[')) {
+        int pos;
+        bool blink_tmp = blinking;
+        bool uline_tmp = underline;
+        int color_tmp = -1; // color
+
+        do {
+          i++;
+          pos = i;
+
+          while ((i < length) && (string[i] >= '0') && (string[i] <= '9'))
+            i++;
+
+          if ((i < length) && ((string[i] == ';') || (string[i] == 'm'))) {
+
+            // process the single digit codes
+
+            if ((i - pos) == 1) {
+              switch (string[pos]) {
+                case '0' : {
+                  // RESET
+                  blink_tmp = false;
+                  uline_tmp = false;
+                  color_tmp = DefaultColor;
+                  break;
+                }
+                case '4' : {
+                  // UNDERLINE
+                  uline_tmp = true;
+                  break;
+                }
+                case '5' : {
+                  // BLINK
+                  blink_tmp = true;
+                  break;
+                }
+                default : {
+                  // unknown or unused code
+                  break;
+                }
+              }     // end switch
+            }       // end (i - pos) == 1
+
+            // process the double-digit codes (colors)
+
+            else if (((i - pos) == 2) && (string[pos] == '3')) {
+              if ((string[pos + 1] >= '0') && (string[pos + 1] <= '7')) {
+                color_tmp = color_map[string[pos + 1] - '0'];
+              }
+            }
+          }
+          else {
+            break;	// not ';' or 'm'
+          }
+        } while (string[i] != 'm');
+
+
+        // the codes are only valid if terminated with a 'm'
+
+        if (string[i] == 'm') {
+
+          blinking = blink_tmp;
+          underline = uline_tmp;
+
+          if (color_tmp != -1) {
+            if (color_tmp < 5) {
+              color = Team::radarColor[color_tmp];
+            }
+            else if (color_tmp == GreyColor) {
+              color = grey_color;
+            }
+            else if (color_tmp == WhiteColor) {
+              color = white_color;
+            }
+            else if (color_tmp == CyanColor) {
+              color = cyan_color;
+            }
+          }
+          glColor3fv (color);
+        }
+        else {
+          // Bad Ending code
+        }
+      }
+      else {
+	// Bad Beginning code
+      }
+    } // IF (c == ESC_CHAR)
+  }
+
+  if (textures)
+    glEnd();
+}
+
+int OpenGLTexFont::stripAnsiCodes (char * string, int length)
+{
+  int i, j;
+
+  j=0;
+
+  for (i=0 ; i<length ; i++) {
+    if (string[i] == ESC_CHAR) {
+      i++;
+
+      if ((i < length) && (string[i] == '[')) {
+        i++;
+
+        while ((i < length) && ((string[i] == ';') ||
+               ((string[i] >= '0') && (string[i] <= '9')))) {
+          i++;
+        }
+      }
+    }
+    else {
+      string[j] = string[i];
+      j++;
     }
   }
-  glEnd();
+
+  string[j] = '\0';
+
+  return j;
 }
+
+int OpenGLTexFont::rawStrlen (const char * string, int length)
+{
+  int i, j;
+
+  j=0;
+
+  for (i=0 ; i<length ; i++) {
+    if (string[i] == ESC_CHAR) {
+      i++;
+
+      if ((i < length) && (string[i] == '[')) {
+        i++;
+
+        while ((i < length) && ((string[i] == ';') ||
+               ((string[i] >= '0') && (string[i] <= '9')))) {
+          i++;
+        }
+      }
+    }
+    else {
+      j++;
+    }
+  }
+
+  return j;
+}
+
+void OpenGLTexFont::setUnderlineColor (int code)
+{
+  switch (code) {
+    case 0 :
+      underlineColor = CyanColor;
+      break;
+    case 1 :
+      underlineColor = GreyColor;
+      break;
+    default:
+      underlineColor = -1;
+      break;
+  }
+  return;
+}
+
+std::string OpenGLTexFont::getUnderlineColor()
+{
+  switch (underlineColor) {
+    case CyanColor:
+      return "0";
+    case GreyColor:
+      return "1";
+    default:
+      return "2";
+  }
+}
+
 // ex: shiftwidth=2 tabstop=8

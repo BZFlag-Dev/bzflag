@@ -31,15 +31,10 @@ void			printFatalError(const char* fmt, ...);
 // ControlPanelMessage
 //
 
-ControlPanelMessage::ControlPanelMessage(const std::string& _string,
-				const GLfloat* _color) :
-				string(_string)
+ControlPanelMessage::ControlPanelMessage(const std::string& _string)
 {
-  static const GLfloat defaultColor[3] = { 1.0f, 1.0f, 1.0f };
-  if (!_color) _color = defaultColor;
-  color[0] = _color[0];
-  color[1] = _color[1];
-  color[2] = _color[2];
+  this->string = _string;
+  rawLength = OpenGLTexFont::rawStrlen(_string.c_str(), _string.length());
 }
 
 //
@@ -53,7 +48,8 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
 				resized(false),
 				numBuffers(2),
-				radarRenderer(NULL)
+				radarRenderer(NULL),
+				renderer(&renderer)
 {
   setControlColor();
   // make sure we're notified when MainWindow resizes or is exposed
@@ -162,24 +158,53 @@ void			ControlPanel::render(SceneRenderer& renderer)
       i=0;
   }
   for (j = 0; i>=0 && j<maxLines; i--) {
-    glColor3fv(messages[i].color);
+    GLfloat whiteColor[3] = {1.0f, 1.0f, 1.0f};
+    glColor3fv(whiteColor);
 
     // get message and its length
     const char* msg = messages[i].string.c_str();
     int lineLen = messages[i].string.length();
 
     // compute lines in message
-    const int numLines = (lineLen + lineCharWidth - 1) / lineCharWidth;
+    const int numLines = (messages[i].rawLength + lineCharWidth - 1) / lineCharWidth;
 
     // draw each line
     int msgy = numLines - 1;
     while (lineLen > 0) {
+      int n;
       assert(msgy >= 0);
 
       // how many characters will fit?
-      int n = lineLen;
-      if (n > lineCharWidth)
-        n = lineCharWidth;
+      // the unprinted ANSI codes don't count
+      if (lineLen <= lineCharWidth) {
+	n = lineLen;
+      }
+      else {
+	int r = 0;
+	n = 0;
+	while ((n < lineLen) && (r < lineCharWidth)) {
+	  if (msg[n] == ESC_CHAR) {
+	    n++;
+	    if ((n < lineLen) && (msg[n] == '[')) {
+	      n++;
+	      while ((n < lineLen) && ((msg[n] == ';') ||
+		    ((msg[n] >= '0') && (msg[n] <= '9')))) {
+		n++;
+	      }
+	      // ditch the terminating character too
+	      if (n < lineLen)
+	        n++;
+	    }
+	  }
+	  else if ((msg[n] >= 32) && (msg[n] < 127)) {
+	    n++;
+	    r++;
+	  }
+	  else {
+	    n++;
+	  }
+	}
+      }
 
       // only draw message if inside message area
       if (j + msgy < maxLines)
@@ -363,10 +388,19 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
   changedMessage = numBuffers;
 }
 
-void			ControlPanel::addMessage(const std::string& line,
-						const GLfloat* color)
+void			ControlPanel::addMessage(const std::string& line)
 {
-  ControlPanelMessage item(line, color);
+  std::string finalline;
+  if (!renderer->getConsoleColorization()) {
+    char *tmpstr;
+    tmpstr = strdup(line.c_str());
+    OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
+    finalline = tmpstr;
+    delete [] tmpstr;
+  }
+  else
+    finalline = line;
+  ControlPanelMessage item(finalline);
 
   if ((int)messages.size() < maxLines * maxScrollPages) {
     // not full yet so just append it
@@ -380,9 +414,21 @@ void			ControlPanel::addMessage(const std::string& line,
 
   // this stuff has no effect on win32 (there's no console)
   extern bool echoToConsole;
-  if (echoToConsole)
-    fprintf(stdout, "%s\n", line.c_str());
+  extern bool echoClean;
+  if (echoToConsole) {
+    if (echoClean) {
+      char *tmpstr;
+
+      tmpstr = strdup(line.c_str());
+      OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
+      fprintf(stdout, "%s\n", tmpstr);
+      delete [] tmpstr;
+    }
+    else {
+      fprintf(stdout, "%s%s\n", line.c_str(), ColorStrings[ResetColor]);
+    }
     fflush(stdout);
+  }
 
   changedMessage = numBuffers;
 }

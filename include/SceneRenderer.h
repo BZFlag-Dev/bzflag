@@ -82,6 +82,7 @@ class SceneRenderer {
     bool		isSameFrame() const;
     ViewType		getViewType() const;
     int			getMaxLOD() const;
+    bool		getConsoleColorization() const;
 
     void		setBlending(bool on);
     void		setSmoothing(bool on);
@@ -106,6 +107,7 @@ class SceneRenderer {
     void		setDim(bool on);
     void		setViewType(ViewType);
     void		setMaxLOD(int maxLOD);
+    void		setConsoleColorization(bool on);
 
     void		setExposed();
 
@@ -213,6 +215,7 @@ class SceneRenderer {
     bool		useStencilOn;
     ViewType		viewType;
     int			maxLOD;
+    bool		consoleColors;
     RenderNodeList	shadowList;
     RenderNodeGStateList orderedList;
     bool		inOrder;

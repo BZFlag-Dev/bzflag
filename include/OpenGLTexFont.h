@@ -22,6 +22,31 @@
 #include "OpenGLGState.h"
 #include <string>
 
+#define ESC_CHAR	((char) 0x1B)
+#define FONT_CODES	11
+
+typedef enum ColorCodes {
+  // the first 5 codes line up with the TeamColor enum from global.h
+  RogueColor		= 0,	// team (yellow)
+  RedColor		= 1,	// team
+  GreenColor		= 2,	// team
+  BlueColor		= 3,	// team
+  PurpleColor		= 4,	// team
+
+  WhiteColor		= 5,
+  GreyColor		= 6,
+  CyanColor		= 7,
+
+  ResetColor		= 8,
+  BlinkColor		= 9,
+  UnderlineColor	= 10,
+
+  YellowColor		= 0,
+  DefaultColor		= 6	// default to grey
+};
+
+extern const char * ColorStrings[FONT_CODES];
+
 class OpenGLTexFont {
   public:
 			OpenGLTexFont();
@@ -49,6 +74,10 @@ class OpenGLTexFont {
 				float x, float y, float z = 0.0f) const;
     void		draw(const char* string, int length,
 				float x, float y, float z = 0.0f) const;
+    static int		stripAnsiCodes (char* string, int length);
+    static int		rawStrlen (const char* string, int length);
+    static void		setUnderlineColor (int code);
+    static std::string	getUnderlineColor();
 
     class Glyph {
       public:
@@ -96,11 +125,13 @@ class OpenGLTexFont {
       public:
 	static BitmapRep* getBitmapRep(Rep*, int width, int height);
 	static BitmapRep* getBitmapRepIfExists(Rep*, int width, int height);
+	static void	setState();
 	void		ref();
 	void		unref();
 
 	void		draw(const char*, int length,
 				float x, float y, float z);
+	float		drawChar(const char);
 
 #if !defined(__linux__)	// shut off a brain dead warning in gcc/egcs
       private:
@@ -140,6 +171,7 @@ class OpenGLTexFont {
     Rep*		rep;
     BitmapRep*		bitmapRep;
     float		width, height;
+    static int		underlineColor;
 };
 
 #endif // BZF_OPENGLTEXFONT_H

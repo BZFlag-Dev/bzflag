@@ -47,6 +47,7 @@
 #include "MainWindow.h"
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
+#include "OpenGLTexFont.h"
 #include "ErrorHandler.h"
 #include "KeyMap.h"
 #include "TimeKeeper.h"
@@ -55,6 +56,7 @@
 #include "resources.h"
 
 extern ResourceDatabase db;	// bzflag.cxx
+extern int killerHighlight;	// playing.cxx
 
 //
 // MenuDefaultKey
@@ -970,6 +972,39 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   list.push_back(option);
 
+  // GUI coloring
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Control panel coloring:");
+  option->setCallback(callback, (void*)"c");
+  options = &option->getList();
+  options->push_back(std::string("off"));
+  options->push_back(std::string("on"));
+  option->update();
+  list.push_back(option);
+  // Underline color
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Underline color:");
+  option->setCallback(callback, (void*)"u");
+  options = &option->getList();
+  options->push_back(std::string("cyan"));
+  options->push_back(std::string("grey"));
+  options->push_back(std::string("text"));
+  option->update();
+  list.push_back(option);
+  // Killer Highlight
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Killer Highlight:");
+  option->setCallback(callback, (void*)"k");
+  options = &option->getList();
+  options->push_back(std::string("Blinking"));
+  options->push_back(std::string("Underline"));
+  options->push_back(std::string("None"));
+  option->update();
+  list.push_back(option);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -1022,6 +1057,10 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarShotLength());
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
+    i++; // locale
+    ((HUDuiList*)list[i++])->setIndex(renderer->getConsoleColorization());
+    ((HUDuiList*)list[i++])->setIndex(atoi(OpenGLTexFont::getUnderlineColor().c_str()));
+    ((HUDuiList*)list[i++])->setIndex(killerHighlight);
   }
 }
 
@@ -1062,6 +1101,24 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'M':
     {
       sceneRenderer->setMaxMotionFactor(list->getIndex());
+      break;
+    }
+
+    case 'c':
+    {
+      sceneRenderer->setConsoleColorization(list->getIndex());
+      break;
+    }
+
+    case 'u':
+    {
+      OpenGLTexFont::setUnderlineColor(list->getIndex());
+      break;
+    }
+
+    case 'k':
+    {
+      killerHighlight = list->getIndex();
       break;
     }
 

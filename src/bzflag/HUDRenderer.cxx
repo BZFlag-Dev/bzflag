@@ -459,10 +459,14 @@ void			HUDRenderer::setAlert(int index, const char* string,
     alertClock[index].setClock(0.0f);
   }
   else {
+    char *tmpstr;
+    tmpstr = strdup(string);
+    OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
     alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(string);
     alertLabelWidth[index] = alertFont.getWidth(alertLabel[index]);
     alertColor[index] = warning ? warningColor : messageColor;
     alertClock[index].setClock(duration);
+    delete [] tmpstr;
   }
 }
 
@@ -1510,7 +1514,18 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
-  minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
+  if ((flagid == ShockWaveFlag)   ||
+      (flagid == GenocideFlag)    ||
+      (flagid == LaserFlag)       ||
+      (flagid == GuidedMissileFlag)) {
+    GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
+    hudSColor3fv(white_color);
+    minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
+    hudSColor3fv(Team::getRadarColor(player->getTeam()));
+  }
+  else {
+    minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
+  }
   minorFont.draw(status, x3 + callSignWidth + flagWidth + emailWidth, y);
 }
 

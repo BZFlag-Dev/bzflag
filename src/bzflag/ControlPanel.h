@@ -26,10 +26,10 @@ class SceneRenderer;
 
 class ControlPanelMessage {
   public:
-			ControlPanelMessage(const std::string&, const GLfloat*);
+			ControlPanelMessage(const std::string&);
   public:
     std::string		string;
-    GLfloat		color[3];
+    int			rawLength;
 };
 
 class ControlPanel {
@@ -37,14 +37,14 @@ class ControlPanel {
 			ControlPanel(MainWindow&, SceneRenderer&);
 			~ControlPanel();
 
-	void		setControlColor(const GLfloat *color = NULL);
+    void		setControlColor(const GLfloat *color = NULL);
     void		render(SceneRenderer&);
     void		resize();
 
     void		setNumberOfFrameBuffers(int);
 
-    void		addMessage(const std::string&, const GLfloat* = NULL);
-	void		setMessagesOffset(int offset, int whence);
+    void		addMessage(const std::string&);
+    void		setMessagesOffset(int offset, int whence);
     void		setStatus(const char*);
     void		setRadarRenderer(RadarRenderer*);
 
@@ -67,6 +67,7 @@ class ControlPanel {
     int			exposed;
     int			changedMessage;
     RadarRenderer*	radarRenderer;
+    SceneRenderer*	renderer;
 
     OpenGLTexFont	messageFont;
     float		du, dv;

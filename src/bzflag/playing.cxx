@@ -133,6 +133,7 @@ static std::vector<BillboardSceneNode*>	explosions;
 static std::vector<BillboardSceneNode*>	prototypeExplosions;
 static int		savedVolume = -1;
 static bool		grabMouseAlways = false;
+int			killerHighlight = 0;
 
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
@@ -145,7 +146,7 @@ static void		setTarget();
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static Player*		getPlayerByName( const char* name );
-static void		addMessage(const Player* player, const std::string& msg, const GLfloat* color = NULL);
+static void		addMessage(const Player* player, const std::string& msg);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 
 enum BlowedUpReason {
@@ -1751,25 +1752,26 @@ static ServerLink*	lookupServer(const Player* player)
 }
 
 static void		addMessage(const Player* player,
-				const std::string& msg,
-				const GLfloat* color)
+				const std::string& msg)
 {
   std::string fullMessage;
+
   if (player) {
+    int color = player->getTeam();
+    if (color < 0 || color > 4) color = 5;
+
+    fullMessage += ColorStrings[player->getTeam()];
     fullMessage += player->getCallSign();
-#ifndef BWSUPPORT
-    if (color == NULL) {
+#ifdef BWSUPPORT
+    fullMessage += " (";
+    fullMessage += Team::getName(player->getTeam());
+    fullMessage += ")";
 #endif
-      fullMessage += " (";
-      fullMessage += Team::getName(player->getTeam());
-      fullMessage += ")";
-#ifndef BWSUPPORT
-    }
-#endif
+    fullMessage += ColorStrings[DefaultColor];
     fullMessage += ": ";
   }
   fullMessage += msg;
-  controlPanel->addMessage(fullMessage, color);
+  controlPanel->addMessage(fullMessage);
 }
 
 static void		updateNumPlayers()
@@ -1898,6 +1900,9 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
   msg = nboUnpackUShort(msg, losses);
   msg = nboUnpackString(msg, callsign, CallSignLen);
   msg = nboUnpackString(msg, email, EmailLen);
+
+  // Strip any ANSI color codes
+  OpenGLTexFont::stripAnsiCodes (callsign, strlen (callsign));
 
   // find empty player slot
   int i;
@@ -2233,12 +2238,16 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       // add message
       if (human && victimPlayer) {
-	if (killerPlayer == victimPlayer)
-	  addMessage(victimPlayer, "blew myself up");
+	if (killerPlayer == victimPlayer) {
+	  std::string message(ColorStrings[WhiteColor]);
+	  message += "blew myself up";
+	  addMessage(victimPlayer, message);
+	}
 	else if (!killerPlayer) {
 #ifdef DEBUG
 	  char message[41];
-	  sprintf(message, "destroyed by <%s:%d-%1x>",
+	  sprintf(message, "%sdestroyed by <%s:%d-%1x>",
+	      ColorStrings[WhiteColor],
 	      inet_ntoa(killer.serverHost),
 	      ntohs(killer.port),
 	      ntohs(killer.number));
@@ -2246,63 +2255,74 @@ static void		handleServerMessage(bool human, uint16_t code,
 #else
 	  addMessage(victimPlayer, "destroyed by <unknown>");
 #endif
-	} else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
-	  std::string message("destroyed by ");
+	}
+	else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
+	  std::string message(ColorStrings[WhiteColor]);
+	  message += "destroyed by ";
 	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	      killerPlayer->getTeam() != RogueTeam)
 	    message += "teammate ";
+	  message += ColorStrings[killerPlayer->getTeam()];
 	  message += killerPlayer->getCallSign();
 	  addMessage(victimPlayer, message);
-	} else {
+	}
+	else {
 	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	  std::string message;
-	  std::string teammate;
+	  std::string message (ColorStrings[WhiteColor]);
+	  std::string playerStr;
 	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	      killerPlayer->getTeam() != RogueTeam)
-	    teammate += "teammate ";
+	    playerStr += "teammate ";
+
+	  if (victimPlayer == myTank) {
+	    if (killerHighlight == 0)
+	      playerStr += ColorStrings[BlinkColor];
+	    else if (killerHighlight == 1)
+	      playerStr += ColorStrings[UnderlineColor];
+	  }
+	  playerStr += ColorStrings[killerPlayer->getTeam()];
+	  playerStr += killerPlayer->getCallSign();
+
+	  if (victimPlayer == myTank)
+	    playerStr += ColorStrings[ResetColor];
+	  playerStr += ColorStrings[WhiteColor];
+	  
 	  // Give more informative kill messages
 	  switch (shot->getFlag())
 	  {
 	  case LaserFlag:
 	    message += "was fried by ";
-	    message += teammate;
-	    message += killerPlayer->getCallSign();
+	    message += playerStr;
 	    message += "'s laser";
 	    break;
 	  case GuidedMissileFlag:
 	    message += "was destroyed by ";
-	    message += teammate;
-	    message += killerPlayer->getCallSign();
+	    message += playerStr;
 	    message += "'s guided missile";
 	    break;
 	  case ShockWaveFlag:
 	    message += "felt the effects of ";
-	    message += teammate;
-	    message += killerPlayer->getCallSign();
+	    message += playerStr;
 	    message += "'s shockwave";
 	    break;
 	  case InvisibleBulletFlag:
 	    message += "didn't see ";
-	    message += teammate;
-	    message += killerPlayer->getCallSign();
+	    message += playerStr;
 	    message += "'s bullet";
 	    break;
 	  case MachineGunFlag:
 	    message += "was turned into swiss cheese by ";
-	    message += teammate;
-	    message += killerPlayer->getCallSign();
+	    message += playerStr;
 	    message += "'s machine gun";
 	    break;
 	  case SuperBulletFlag:
 	    message += "got skewered by ";
-	    message += teammate;
-	    message += killerPlayer->getCallSign();
+	    message += playerStr;
 	    message += "'s super bullet";
 	    break;
 	  default:
 	    message += "killed by ";
-	    message += teammate;
-	    message += killerPlayer->getCallSign();
+	    message += playerStr;
 	  }
 	  addMessage(victimPlayer, message);
 	}
@@ -2624,9 +2644,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	else
 	  msgColor = Team::getRadarColor(srcPlayer->getTeam());
 
-	addMessage(srcPlayer,"[Sent versioninfo per request]", msgColor);
+	addMessage(srcPlayer,"[Sent versioninfo per request]");
 	break;
       }
+
+      OpenGLTexFont::stripAnsiCodes ((char*) msg, strlen ((char*) msg));
 
       std::string text = BundleMgr::getCurrentBundle()->getLocalString(std::string((char*)msg));
 
@@ -2635,24 +2657,38 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  int(team) == int(myTank->getTeam())))) {
 	// message is for me
 	std::string fullMsg;
+	std::string colorStr;
+
+	if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+	  colorStr += ColorStrings[srcPlayer->getTeam()];
+	else
+	  colorStr += ColorStrings[RogueTeam];
+	
+	fullMsg += colorStr;
 
 	// direct message to or from me
 	if (dstPlayer) {
 	  // talking to myself? that's strange
 	  if (dstPlayer==myTank && srcPlayer==myTank) {
 	    fullMsg=text;
-	  } else {
-	    fullMsg="[";
+	  }
+	  else {
+	    fullMsg += "[";
 	    if (srcPlayer == myTank) {
 	      fullMsg += "->";
 	      fullMsg += dstName;
-	    } else {
+	      fullMsg += colorStr;
+	    }
+	    else {
 	      fullMsg += srcName;
+	      fullMsg += colorStr;
 	      fullMsg += "->";
 	      if (srcPlayer)
 		myTank->setRecipient(srcPlayer);
 	    }
 	    fullMsg += "] ";
+	    fullMsg += ColorStrings[ResetColor];
+	    fullMsg += colorStr;
 	    fullMsg += text;
 	  }
 	}
@@ -2668,18 +2704,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 #endif
 	  }
 	  fullMsg += srcName;
+	  fullMsg += colorStr;
 	  fullMsg += ": ";
 	  fullMsg += text;
 	}
-	const GLfloat* msgColor;
-	if (srcPlayer && srcPlayer->getTeam()!=NoTeam)
-	  msgColor = Team::getRadarColor(srcPlayer->getTeam());
-	else
-	  msgColor = Team::getRadarColor(RogueTeam);
-	addMessage(NULL, fullMsg, msgColor);
+	addMessage(NULL, fullMsg);
 
 	if (!srcPlayer || srcPlayer!=myTank)
-	hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
+	  hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
       }
       break;
     }
@@ -3425,12 +3457,15 @@ static void		setTarget()
     else {
       msg += ")";
     }
-    addMessage(NULL, msg);
     hud->setAlert(1, msg.c_str(), 2.0f, 1);
+    msg = ColorStrings[DefaultColor] + msg;
+    addMessage(NULL, msg);
   }
   else if (myTank->getFlag() == ColorblindnessFlag) {
-    addMessage(NULL, "Looking at a tank");
-    hud->setAlert(1, "Looking at a tank", 2.0f, 0);
+    std::string msg("Looking at a tank");
+    hud->setAlert(1, msg.c_str(), 2.0f, 0);
+    msg = ColorStrings[DefaultColor] + msg;
+    addMessage(NULL, msg);
   }
   else {
     std::string msg("Looking at ");
@@ -3444,8 +3479,9 @@ static void		setTarget()
     else {
       msg += ")";
     }
-    addMessage(NULL, msg);
     hud->setAlert(1, msg.c_str(), 2.0f, 0);
+    msg = ColorStrings[DefaultColor] + msg;
+    addMessage(NULL, msg);
     myTank->setNemesis(bestTarget);
   }
 }
@@ -5751,6 +5787,8 @@ void			startPlaying(BzfDisplay* _display,
   // normal error callback (doesn't force a redraw)
   setErrorCallback(defaultErrorCallback);
 
+  std::string tmpString;
+
   // print version
   {
     char bombMessage[80];
@@ -5758,7 +5796,9 @@ void			startPlaying(BzfDisplay* _display,
 		(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
 		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
     controlPanel->addMessage("");
-    controlPanel->addMessage(bombMessage);
+    tmpString = ColorStrings[RedColor];
+    tmpString += (const char *) bombMessage;
+    controlPanel->addMessage(tmpString);
   }
 
   // print expiration
@@ -5769,12 +5809,21 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(bombMessage);
   }
 
-  // print copyright
-  controlPanel->addMessage(copyright);
-  controlPanel->addMessage("Author: Chris Schoeneman <crs23@bigfoot.com>");
-  controlPanel->addMessage("Maintainer: Tim Riker <Tim@Rikers.org>");
-  // print OpenGL renderer
-  controlPanel->addMessage((const char*)glGetString(GL_RENDERER));
+  tmpString = ColorStrings[RogueColor];
+  tmpString += copyright;
+  controlPanel->addMessage(tmpString);
+  // print author
+  tmpString = ColorStrings[GreenColor];
+  tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
+  controlPanel->addMessage(tmpString);
+  // print maintainer
+  tmpString = ColorStrings[BlueColor];
+  tmpString += "Maintainer: Tim Riker <Tim@Rikers.org>";
+  controlPanel->addMessage(tmpString);
+  // print GL renderer
+  tmpString = ColorStrings[PurpleColor];
+  tmpString += (const char*)glGetString(GL_RENDERER);
+  controlPanel->addMessage(tmpString);
 
   //inform user of silencePlayers on startup
   for (unsigned int j = 0; j < silencePlayers.size(); j ++){
