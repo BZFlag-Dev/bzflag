@@ -43,6 +43,7 @@ noinst_HEADERS =			\
 	EighthDimShellNode.h		\
 	EmptySceneNodeGenerator.h	\
 	ErrorHandler.h			\
+	Extents.h			\
 	FileManager.h			\
 	FontManager.h			\
 	Flag.h				\

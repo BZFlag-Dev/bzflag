@@ -38,8 +38,7 @@ class WallSceneNode : public SceneNode {
     const GLfloat*	getLightedColor() const;
     const GLfloat*	getLightedModulateColor() const;
     GLfloat		getDistance(const GLfloat*) const;
-    virtual void	getExtents (float* mins, float* maxs) const;
-    virtual bool	inAxisBox (const float* mins, const float* maxs) const;
+    virtual bool	inAxisBox (const Extents& exts) const;
 
     bool		isTranslucent() const;
 
@@ -61,6 +60,7 @@ class WallSceneNode : public SceneNode {
     void		setDynamicColor(const float* color);
     void		setBlending(bool);
     void		setSphereMap(bool);
+    void		setRadarColor(const float color[4]);
 
     void		setColor();
 
@@ -84,10 +84,6 @@ class WallSceneNode : public SceneNode {
 				const GLfloat3Array& vertices,
 				const GLfloat2Array& uvs,
 				SceneNode*& front, SceneNode*& back); // const
-
-  protected:
-    GLfloat	     mins[3]; // extents of the axis aligned bounding box
-    GLfloat	     maxs[3];
 
   private:
     static void splitEdge(float d1, float d2,

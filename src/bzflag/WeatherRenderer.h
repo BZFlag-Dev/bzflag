@@ -27,6 +27,7 @@
 
 /* common interface headers */
 #include "bzfgl.h"
+#include "Extents.h"
 #include "OpenGLGState.h"
 #include "OpenGLDisplayList.h"
 #include "SceneRenderer.h"
@@ -110,11 +111,15 @@ protected:
 	float				gridSize;
 	float				keyFactor;
 
+        typedef struct {
+          float mins[3];
+          float maxs[3];
+        } copyExtents;
+        
 	typedef struct  {
 		std::vector<rain>	drops;
-		float				bboxMin[3];
-		float				bboxMax[3];
-	}visibleChunk;
+		copyExtents		bbox;
+	} visibleChunk;
 
 	std::map<int,visibleChunk>	chunkMap;
 

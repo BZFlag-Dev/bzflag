@@ -32,6 +32,7 @@
 #include "bzfio.h"
 #include "OpenGLGState.h"
 #include "RenderNode.h"
+#include "Extents.h"
 
 #if !defined(_WIN32)
 // bonehead win32 cruft.  just make it go away on other platforms.
@@ -56,9 +57,9 @@ class SceneNode {
     virtual		~SceneNode();
 
     const GLfloat*	getSphere() const;
-    virtual void	getExtents(float* mins, float* maxs) const;
-    virtual bool	inAxisBox (const float* mins, const float* maxs) const;
-    virtual int	 getVertexCount () const;
+    const Extents&	getExtents() const;
+    virtual bool	inAxisBox (const Extents& exts) const;
+    virtual int		getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
     virtual bool	isTranslucent() const;
     virtual void	notifyStyleChange();
@@ -143,6 +144,7 @@ class SceneNode {
   protected:
     GLfloat		plane[4];	// unit normal, distance to origin
     bool		noPlane;
+    Extents		extents;
   private:
     GLfloat		sphere[4];
 #ifdef __MINGW32__
@@ -171,6 +173,11 @@ inline const GLfloat*   SceneNode::getPlaneRaw() const
 inline const GLfloat*	SceneNode::getSphere() const
 {
   return sphere;
+}
+
+inline const Extents&	SceneNode::getExtents() const
+{
+  return extents;
 }
 
 

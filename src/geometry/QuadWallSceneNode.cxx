@@ -309,21 +309,9 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
   }
 
   // record extents info
-  int i, j;
-  for (i = 0; i < 3; i++) {
-    mins[i] = +MAXFLOAT;
-    maxs[i] = -MAXFLOAT;
-  }
-  for (i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; i++) {
     const float* point = getVertex(i);
-    for (j = 0; j < 3; j++) {
-      if (point[j] < mins[j]) {
-	mins[j] = point[j];
-      }
-      if (point[j] > maxs[j]) {
-	maxs[j] = point[j];
-      }
-    }
+    extents.expandToPoint(point);
   }
 
   // record LOD info
@@ -372,19 +360,9 @@ void			QuadWallSceneNode::addShadowNodes(
   renderer.addShadowNode(shadowNode);
 }
 
-void		    QuadWallSceneNode::getExtents(float* _mins, float* _maxs) const
+bool		    QuadWallSceneNode::inAxisBox(const Extents& exts) const
 {
-  memcpy (_mins, mins, 3 * sizeof(float));
-  memcpy (_maxs, maxs, 3 * sizeof(float));
-  return;
-}
-
-bool		    QuadWallSceneNode::inAxisBox(const float* boxMins,
-						     const float* boxMaxs) const
-{
-  if ((mins[0] > boxMaxs[0]) || (maxs[0] < boxMins[0]) ||
-      (mins[1] > boxMaxs[1]) || (maxs[1] < boxMins[1]) ||
-      (mins[2] > boxMaxs[2]) || (maxs[2] < boxMins[2])) {
+  if (!extents.touches(exts)) {
     return false;
   }
 
@@ -395,7 +373,7 @@ bool		    QuadWallSceneNode::inAxisBox(const float* boxMins,
   memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
   memcpy (vertices[3], nodes[0]->getVertex(3), sizeof(float[3]));
 
-  return testPolygonInAxisBox (4, vertices, getPlane(), boxMins, boxMaxs);
+  return testPolygonInAxisBox (4, vertices, getPlane(), exts);
 }
 
 int		     QuadWallSceneNode::getVertexCount () const

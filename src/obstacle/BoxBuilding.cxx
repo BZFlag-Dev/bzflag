@@ -29,12 +29,19 @@ BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h,
 			 bool drive, bool shoot, bool invisible) :
   Obstacle(p, a, w, b, h,drive,shoot), noNodes(invisible)
 {
-  // do nothing
+  finalize();
+  return;
 }
 
 BoxBuilding::~BoxBuilding()
 {
   // do nothing
+}
+
+void BoxBuilding::finalize()
+{
+  Obstacle::setExtents();
+  return;
 }
 
 Obstacle* BoxBuilding::copyWithTransform(const MeshTransform& xform) const
@@ -237,6 +244,8 @@ void* BoxBuilding::unpack(void* buf)
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0;
+  
+  finalize();
 
   return buf;
 }

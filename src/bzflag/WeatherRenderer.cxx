@@ -412,9 +412,9 @@ void WeatherRenderer::set (void)
       std::map < int, visibleChunk >::iterator itr = chunkMap.begin ();
 
       while (itr != chunkMap.end ()) {
-	itr->second.bboxMin[2] =
+	itr->second.bbox.mins[2] =
 	    rainStartZ > rainEndZ ? rainEndZ : rainStartZ;
-	itr->second.bboxMax[2] =
+	itr->second.bbox.maxs[2] =
 	    rainStartZ > rainEndZ ? rainStartZ : rainEndZ;
 	itr++;
       }
@@ -534,8 +534,11 @@ void WeatherRenderer::draw (const SceneRenderer & sr)
     while (itr != chunkMap.end ()) {
       if (itr->second.drops.size ()) { // skip any empty chunks
 	// see if the chunk is visible
-	if (testAxisBoxInFrustum (itr->second.bboxMin,
-				  itr->second.bboxMax, frustum) != Outside) {
+	Extents exts; // FIXME - possible nasty slowdown
+	// Not using an Extents bbox directly because it is nice to
+	// block the Extents copy constructor to avoid passing by value.
+	exts.set(itr->second.bbox.mins, itr->second.bbox.maxs);
+	if (testAxisBoxInFrustum (exts, frustum) != Outside) {
 	  visibleChunks++;
 	  std::vector < rain >::iterator dropItr =
 	      itr->second.drops.begin ();
@@ -886,12 +889,12 @@ void WeatherRenderer::setChunkFromDrop (visibleChunk & chunk, rain & drop)
   int keyX = (int) (drop.pos[0] * keyFactor);
   int keyY = (int) (drop.pos[1] * keyFactor);
 
-  chunk.bboxMin[0] = keyX * gridSize;
-  chunk.bboxMin[1] = keyY * gridSize;
-  chunk.bboxMin[2] = rainStartZ > rainEndZ ? rainEndZ : rainStartZ;
-  chunk.bboxMax[0] = keyX * gridSize + gridSize;
-  chunk.bboxMax[1] = keyY * gridSize + gridSize;
-  chunk.bboxMax[2] = rainStartZ > rainEndZ ? rainStartZ : rainEndZ;
+  chunk.bbox.mins[0] = keyX * gridSize;
+  chunk.bbox.mins[1] = keyY * gridSize;
+  chunk.bbox.mins[2] = rainStartZ > rainEndZ ? rainEndZ : rainStartZ;
+  chunk.bbox.maxs[0] = keyX * gridSize + gridSize;
+  chunk.bbox.maxs[1] = keyY * gridSize + gridSize;
+  chunk.bbox.maxs[2] = rainStartZ > rainEndZ ? rainStartZ : rainEndZ;
 }
 
 

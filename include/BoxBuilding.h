@@ -68,6 +68,10 @@ class BoxBuilding : public Obstacle {
     void print(std::ostream& out, const std::string& indent) const;
 
     std::string	userTextures[2];
+
+  private:
+    void finalize();
+
  private:
    static const char*	typeName;
    bool noNodes;

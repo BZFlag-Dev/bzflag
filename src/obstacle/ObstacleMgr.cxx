@@ -417,24 +417,24 @@ static bool isContainer(int type)
 }
 
 
-static MeshObstacle* getContainedMesh(int type, const Obstacle* obs)
+static MeshObstacle* makeContainedMesh(int type, const Obstacle* obs)
 {
   MeshObstacle* mesh = NULL;
   switch (type) {
     case GroupDefinition::arcType: {
-      mesh = ((ArcObstacle*)obs)->getMesh();
+      mesh = ((ArcObstacle*)obs)->makeMesh();
       break;
     }
     case GroupDefinition::coneType: {
-      mesh = ((ConeObstacle*)obs)->getMesh();
+      mesh = ((ConeObstacle*)obs)->makeMesh();
       break;
     }
     case GroupDefinition::sphereType: {
-      mesh = ((SphereObstacle*)obs)->getMesh();
+      mesh = ((SphereObstacle*)obs)->makeMesh();
       break;
     }
     case GroupDefinition::tetraType: {
-      mesh = ((TetraBuilding*)obs)->getMesh();
+      mesh = ((TetraBuilding*)obs)->makeMesh();
       break;
     }
   }
@@ -472,7 +472,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
           OBSTACLEMGR.addWorldObstacle(obs);
         }
         // generate contained meshes
-        MeshObstacle* mesh = getContainedMesh(type, obs);
+        MeshObstacle* mesh = makeContainedMesh(type, obs);
         if ((mesh != NULL) && mesh->isValid()) {
           mesh->setSource(Obstacle::ContainerSource | groupDefBit);
           obsMod.execute(mesh);
@@ -638,18 +638,14 @@ int GroupDefinition::packSize() const
 }
 
 
-void GroupDefinition::print(std::ostream& out,
-			    const std::string& indent) const
+void GroupDefinition::printGrouped(std::ostream& out,
+                                   const std::string& indent) const
 {
   const bool isWorld = (this == OBSTACLEMGR.getWorld());
   const bool saveAsMeshes = BZDB.isTrue("saveAsMeshes");
-  const bool saveFlatFile = BZDB.isTrue("saveFlatFile");
-  
-  if (saveFlatFile && !isWorld) {
-    return;
-  }
-
   std::string myIndent = indent;
+  
+  // deal with indenting
   if (!isWorld) {
     myIndent += "  ";
     out << indent << "define " << name << std::endl;
@@ -660,19 +656,26 @@ void GroupDefinition::print(std::ostream& out,
     const ObstacleList& list = getList(type);
     for (unsigned int i = 0; i < list.size(); i++) {
       const Obstacle* obs = list[i];
-      DEBUG1 ("TYPE = %s\n", obs->getType()); // FIXME
-      DEBUG1 ("  isContainer     = %i\n", isContainer(type) ? 1 : 0);
-      DEBUG1 ("  isFromContainer = %i\n", obs->isFromContainer() ? 1 : 0);
-      DEBUG1 ("  isFromGroupDef  = %i\n", obs->isFromGroupDef() ? 1 : 0);
-      if ((isWorld && saveFlatFile) ||
-          !(isWorld && obs->isFromGroupDef())) {
-        if ((saveAsMeshes && !isContainer(type)) ||
-            (!saveAsMeshes && !obs->isFromContainer())) {
-          obs->print(out, myIndent);
-          DEBUG1 ("  PRINTING\n");
+
+      if (!obs->isFromGroupDef() && !obs->isFromContainer()) {
+        if (!saveAsMeshes) {
+          if (!obs->isFromContainer()) {
+            obs->print(out, myIndent);
+          }
         }
-      } 
-      DEBUG1 ("END\n");
+        else {
+          if (!isContainer(type)) {
+            obs->print(out, myIndent);
+          } else {
+            // rebuild the mesh  (ya, just to print it)
+            MeshObstacle* mesh = makeContainedMesh(type, obs);
+            if ((mesh != NULL) && (mesh->isValid())) {
+              mesh->print(out, myIndent);
+            }
+            delete mesh;
+          }
+        }
+      }
     }
   }
   
@@ -681,8 +684,36 @@ void GroupDefinition::print(std::ostream& out,
     groups[i]->print(out, myIndent);
   }
 
+  // deal with indenting
   if (!isWorld) {
     out << indent << "enddef" << std::endl << std::endl;
+  }
+
+  return;
+}
+
+
+void GroupDefinition::printFlatFile(std::ostream& out,
+                                    const std::string& indent) const
+{
+  const bool saveAsMeshes = BZDB.isTrue("saveAsMeshes");
+
+  // print the obstacles
+  for (int type = 0; type < ObstacleTypeCount; type++) {
+    const ObstacleList& list = getList(type);
+    for (unsigned int i = 0; i < list.size(); i++) {
+      const Obstacle* obs = list[i];
+
+      if (!saveAsMeshes) {
+        if (!obs->isFromContainer()) {
+          obs->print(out, indent);
+        }
+      } else {
+        if (!isContainer(type)) {
+          obs->print(out, indent);
+        }
+      }
+    }
   }
 
   return;
@@ -832,13 +863,20 @@ int GroupDefinitionMgr::packSize() const
 void GroupDefinitionMgr::print(std::ostream& out,
 			       const std::string& indent) const
 {
-  // print the group definitions
-  for (unsigned int i = 0; i < list.size(); i++) {
-    list[i]->print(out, indent);
-  }
+  const bool saveFlatFile = BZDB.isTrue("saveFlatFile");
 
-  // print the world
-  world.print(out, indent);
+  if (!saveFlatFile) {  
+    // print the group definitions
+    for (unsigned int i = 0; i < list.size(); i++) {
+      list[i]->printGrouped(out, indent);
+    }
+    // print the world
+    world.printGrouped(out, indent);
+  }
+  else {
+    // print the world
+    world.printFlatFile(out, indent);
+  }
 
   return;
 }

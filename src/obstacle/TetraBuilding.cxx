@@ -33,7 +33,6 @@ const char* TetraBuilding::typeName = "TetraBuilding";
 
 TetraBuilding::TetraBuilding()
 {
-  mesh = NULL;
   return;
 }
 
@@ -47,8 +46,6 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
 			     const BzMaterial* _materials[4],
 			     bool drive, bool shoot)
 {
-  mesh = NULL;
-
   // tetra specific parameters
   memcpy (vertices, _vertices, sizeof(vertices));
   memcpy (normals, _normals, sizeof(normals));
@@ -70,7 +67,6 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
 
 TetraBuilding::~TetraBuilding()
 {
-  delete mesh;
   return;
 }
 
@@ -90,6 +86,13 @@ Obstacle* TetraBuilding::copyWithTransform(const MeshTransform& xform) const
 
 void TetraBuilding::finalize()
 {
+  return;
+}
+
+
+MeshObstacle* TetraBuilding::makeMesh()
+{
+  MeshObstacle* mesh;
   checkVertexOrder();
 
   // setup the coordinates
@@ -138,19 +141,12 @@ void TetraBuilding::finalize()
   // wrap it up
   mesh->finalize();
 
-  // setup the common obstacle parameters
-  float mins[3], maxs[3];
-  mesh->getExtents(mins, maxs);
-  pos[0] = 0.5f * (maxs[0] + mins[0]);
-  pos[1] = 0.5f * (maxs[1] + mins[1]);
-  pos[2] = mins[2];
-  size[0] = 0.5f * (maxs[0] - mins[0]);
-  size[1] = 0.5f * (maxs[1] - mins[1]);
-  size[2] = maxs[2] - mins[2];
-  angle = 0.0f;
-  ZFlip = false;
-
-  return;
+  if (mesh->isValid()) {
+    return mesh;        
+  } else {
+    delete mesh;
+    return NULL;
+  }
 }
 
 
@@ -218,27 +214,7 @@ const char* TetraBuilding::getClassName() // const
 
 bool TetraBuilding::isValid() const
 {
-  return ((mesh != NULL) && mesh->isValid());
-}
-
-
-MeshObstacle* TetraBuilding::getMesh()
-{
-  return mesh;
-}
-
-
-void TetraBuilding::disownMesh()
-{
-  mesh = NULL;
-  return;
-}
-
-
-void TetraBuilding::getExtents(float*, float*) const
-{
-  assert(false);
-  return;
+  return true;
 }
 
 

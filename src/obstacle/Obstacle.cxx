@@ -66,26 +66,24 @@ Obstacle::~Obstacle()
 
 bool			Obstacle::isValid() const
 {
-  float mins[3], maxs[3];
-  getExtents (mins, maxs);
   for (int a = 0; a < 3; a++) {
-    if ((mins[a] < -maxExtent) || (maxs[a] > maxExtent)) {
+    if ((extents.mins[a] < -maxExtent) || (extents.maxs[a] > maxExtent)) {
       return false;
     }
   }
   return true;
 }
 
-void			Obstacle::getExtents(float* mins, float* maxs) const
+void			Obstacle::setExtents()
 {
   float xspan = (fabsf(cosf(angle)) * size[0]) + (fabsf(sinf(angle)) * size[1]);
   float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * size[0]);
-  mins[0] = pos[0] - xspan;
-  maxs[0] = pos[0] + xspan;
-  mins[1] = pos[1] - yspan;
-  maxs[1] = pos[1] + yspan;
-  mins[2] = pos[2];
-  maxs[2] = pos[2] + size[2];
+  extents.mins[0] = pos[0] - xspan;
+  extents.maxs[0] = pos[0] + xspan;
+  extents.mins[1] = pos[1] - yspan;
+  extents.maxs[1] = pos[1] + yspan;
+  extents.mins[2] = pos[2];
+  extents.maxs[2] = pos[2] + size[2];
   return;
 }
 

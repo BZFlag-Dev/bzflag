@@ -133,7 +133,8 @@ class GroupDefinition {
     void *pack(void*) const;
     void *unpack(void*);
 
-    void print(std::ostream& out, const std::string& indent) const;
+    void printGrouped(std::ostream& out, const std::string& indent) const;
+    void printFlatFile(std::ostream& out, const std::string& indent) const;
     
   public:
     static void clearDepthName();

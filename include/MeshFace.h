@@ -45,7 +45,6 @@ class MeshFace : public Obstacle {
     static const char* getClassName(); // const
     bool isValid() const;
     bool isFlatTop() const;
-    void getExtents(float* mins, float* maxs) const;
 
     float intersect(const Ray&) const;
     void getNormal(const float* p, float* n) const;
@@ -115,7 +114,6 @@ class MeshFace : public Obstacle {
     bool noclusters;
     int phydrv;
 
-    fvec3 mins, maxs;
     fvec4 plane;
     fvec4* edgePlanes;
 

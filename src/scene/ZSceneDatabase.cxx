@@ -37,14 +37,12 @@ static int compareZExtents(const void* a, const void* b)
 {
   const SceneNode* nodeA = *((const SceneNode**)a);
   const SceneNode* nodeB = *((const SceneNode**)b);
-  // FIXME: getExtents() really needs fixing, this is stupid
-  float dummy[3], maxsA[3], maxsB[3];
-  nodeA->getExtents(dummy, maxsA);
-  nodeB->getExtents(dummy, maxsB);
-  if (maxsA[2] > maxsB[2]) {
+  const Extents& eA = nodeA->getExtents();
+  const Extents& eB = nodeB->getExtents();
+  if (eA.maxs[2] > eB.maxs[2]) {
     return +1;
   }
-  else if (maxsB[2] > maxsA[2]) {
+  else if (eB.maxs[2] > eA.maxs[2]) {
     return -1;
   }
   else {
@@ -267,7 +265,8 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
     const Frustum* f = (const Frustum *) &vf;
     culledCount = octree->getRadarList (culledList, staticCount, f);
 
-    // FIXME: this helps the look of things, but it takes too much time
+    // FIXME: - this helps the look of things, but it takes too much time
+    //        * it may be reasonable now
     if (BZDB.isTrue("textureRadarSort")) {
       qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
     }
@@ -333,9 +332,8 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
     // if the Visibility culler tells us that we're
     // fully visible, then skip the extents test
     if (node->octreeState != SceneNode::OctreeVisible) {
-      float mins[3], maxs[3];
-      node->getExtents(mins, maxs);
-      if (testAxisBoxInFrustum(mins, maxs, frustumPtr) == Outside) {
+      const Extents& exts = node->getExtents();
+      if (testAxisBoxInFrustum(exts, frustumPtr) == Outside) {
         node->octreeState = SceneNode::OctreeCulled;
         continue;
       }

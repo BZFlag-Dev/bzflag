@@ -24,8 +24,13 @@
 #define	BZF_OBSTACLE_H
 
 #include "common.h"
+
+// system headers
 #include <string>
 #include <iostream>
+
+// common headers
+#include "Extents.h"
 
 class Ray;
 class SceneNode;
@@ -71,7 +76,10 @@ class Obstacle {
    */
   virtual const char* getType() const = 0;
 
-  /** This function returns true if the obstacle is valid */
+  /** This function calculates extents from pos, size, and rotation */
+  void setExtents();
+
+    /** This function returns true if the obstacle is valid */
   virtual bool isValid() const;
 
   /** This function returns true if the obstacle has a flat top */
@@ -90,6 +98,9 @@ class Obstacle {
   virtual void print(std::ostream& out, const std::string& indent) const = 0;
 
   /** This function returns the position of this obstacle. */
+  const Extents& getExtents() const;
+
+  /** This function returns the position of this obstacle. */
   const float* getPosition() const;
 
   /** This function returns the sizes of this obstacle. */
@@ -106,9 +117,6 @@ class Obstacle {
 
   /** This function returns the obstacle's full height. */
   float getHeight() const;
-
-  /** This function fills in the obstacle's x/y/z extents */
-  virtual void getExtents(float* mins, float* maxs) const;
 
   /** This function returns the time of intersection between the obstacle
       and a Ray object. If the ray does not intersect this obstacle -1 is
@@ -245,6 +253,7 @@ class Obstacle {
 		     float* normal) const;
 
   protected:
+    Extents extents;
     float pos[3];
     float size[3]; // width, breadth, height
     float angle;
@@ -262,6 +271,11 @@ class Obstacle {
 //
 // Obstacle
 //
+
+inline const Extents& Obstacle::getExtents() const
+{
+  return extents;
+}
 
 inline const float*	Obstacle::getPosition() const
 {

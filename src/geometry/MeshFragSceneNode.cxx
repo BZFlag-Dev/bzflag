@@ -58,7 +58,7 @@ void MeshFragSceneNode::Geometry::render()
   const bool switchLights = (sceneNode->arrayCount >= minLightDisabling)
 			    && BZDBCache::lighting;
   if (switchLights) {
-    RENDERER.disableLights(sceneNode->mins, sceneNode->maxs);
+    RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
   }
 
   // set the color
@@ -181,30 +181,20 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
   setNumLODs(0, NULL /* unused because LOD = 0 */);
 
   // record extents info
-  mins[0] = mins[1] = mins[2] = +MAXFLOAT;
-  maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
   for (i = 0; i < faceCount; i++) {
-    float faceMins[3], faceMaxs[3];
-    faces[i]->getExtents(faceMins, faceMaxs);
-    for (j = 0; j < 3; j++) {
-      if (faceMins[j] < mins[j]) {
-	mins[j] = faceMins[j];
-      }
-      if (faceMaxs[j] > maxs[j]) {
-	maxs[j] = faceMaxs[j];
-      }
-    }
+    const Extents& fExts = faces[i]->getExtents();
+    extents.expandToBox(fExts);
   }
 
   // setup sphere
   float diffs[3];
-  diffs[0] = maxs[0] - mins[0];
-  diffs[1] = maxs[1] - mins[1];
-  diffs[2] = maxs[2] - mins[2];
+  diffs[0] = extents.maxs[0] - extents.mins[0];
+  diffs[1] = extents.maxs[1] - extents.mins[1];
+  diffs[2] = extents.maxs[2] - extents.mins[2];
   float mySphere[4];
-  mySphere[0] = 0.5f * (maxs[0] + mins[0]);
-  mySphere[1] = 0.5f * (maxs[1] + mins[1]);
-  mySphere[2] = 0.5f * (maxs[2] + mins[2]);
+  mySphere[0] = 0.5f * (extents.maxs[0] + extents.mins[0]);
+  mySphere[1] = 0.5f * (extents.maxs[1] + extents.mins[1]);
+  mySphere[2] = 0.5f * (extents.maxs[2] + extents.mins[2]);
   mySphere[3] = 0.25f *
     ((diffs[0] * diffs[0]) + (diffs[1] * diffs[1]) + (diffs[2] * diffs[2]));
   setSphere(mySphere);
@@ -302,7 +292,7 @@ bool MeshFragSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(mins, maxs, f) == Outside) {
+  if (testAxisBoxInFrustum(extents, f) == Outside) {
     return true;
   }
 
@@ -311,27 +301,18 @@ bool MeshFragSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-void MeshFragSceneNode::getExtents (float* _mins, float* _maxs) const
-{
-  memcpy (_mins, mins, sizeof(float[3]));
-  memcpy (_maxs, maxs, sizeof(float[3]));
-  return;
-}
-
-
-bool MeshFragSceneNode::inAxisBox (const float* boxMins,
-				   const float* boxMaxs) const
+bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 {
   // NOTE: it should be OK to use the faces while building
 
   float pos[3];
-  pos[0] = 0.5f * (boxMaxs[0] + boxMins[0]);
-  pos[1] = 0.5f * (boxMaxs[1] + boxMins[1]);
-  pos[2] = boxMins[2];
+  pos[0] = 0.5f * (exts.maxs[0] + exts.mins[0]);
+  pos[1] = 0.5f * (exts.maxs[1] + exts.mins[1]);
+  pos[2] = exts.mins[2];
   float size[3];
-  size[0] = 0.5f * (boxMaxs[0] - boxMins[0]);
-  size[1] = 0.5f * (boxMaxs[1] - boxMins[1]);
-  size[2] = (boxMaxs[2] - boxMins[2]);
+  size[0] = 0.5f * (exts.maxs[0] - exts.mins[0]);
+  size[1] = 0.5f * (exts.maxs[1] - exts.mins[1]);
+  size[2] = (exts.maxs[2] - exts.mins[2]);
 
   for (int i = 0; i < faceCount; i++) {
     if (faces[i]->inBox(pos, 0.0f, size[0], size[1], size[2])) {

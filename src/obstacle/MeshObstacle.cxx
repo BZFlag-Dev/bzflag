@@ -134,7 +134,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     return false;
   }
 
-  // make sure the list lengths are sane
+  // make sure the list lengths are the same
   unsigned int i;
   unsigned int count = _vertices.size();
   if ((count < 3) ||
@@ -171,6 +171,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     t = new float*[count];
   }
   for (i = 0; i < count; i++) {
+    // invert the vertices if required
     int index = (inverted ? ((count - 1) - i) : i);
     v[index] = (float*)vertices[_vertices[i]];
     if (n != NULL) {
@@ -231,7 +232,7 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
   for (i = 0; i < checkCount; i++) {
     ctlist.push_back(checkTypes[i]);
   }
-  arrayToCfvec3List(checkPoints, checkCount, vlist);
+  arrayToCfvec3List(checkPoints, checkCount, clist);
   arrayToCfvec3List(vertices, vertexCount, vlist);
   arrayToCfvec3List(normals, normalCount, nlist);
   for (i = 0; i < texcoordCount; i++) {
@@ -293,26 +294,18 @@ void MeshObstacle::finalize()
   }
 
   // set the extents
-  mins[0] = mins[1] = mins[2] = +MAXFLOAT;
-  maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
   for (f = 0; f < faceCount; f++) {
-    for (int a = 0; a < 3; a++) {
-      if (faces[f]->mins[a] < mins[a]) {
-	mins[a] = faces[f]->mins[a];
-      }
-      if (faces[f]->maxs[a] > maxs[a]) {
-	maxs[a] = faces[f]->maxs[a];
-      }
-    }
+    const Extents& exts = faces[f]->getExtents();
+    extents.expandToBox(exts);
   }
 
   // setup fake obstacle parameters
-  pos[0] = (maxs[0] + mins[0]) / 2.0f;
-  pos[1] = (maxs[1] + mins[1]) / 2.0f;
-  pos[2] = mins[2];
-  size[0] = (maxs[0] - mins[0]) / 2.0f;
-  size[1] = (maxs[1] - mins[1]) / 2.0f;
-  size[2] = (maxs[2] - mins[2]);
+  pos[0] = (extents.maxs[0] + extents.mins[0]) / 2.0f;
+  pos[1] = (extents.maxs[1] + extents.mins[1]) / 2.0f;
+  pos[2] = extents.mins[2];
+  size[0] = (extents.maxs[0] - extents.mins[0]) / 2.0f;
+  size[1] = (extents.maxs[1] - extents.mins[1]) / 2.0f;
+  size[2] = (extents.maxs[2] - extents.mins[2]);
   angle = 0.0f;
   ZFlip = false;
 
@@ -353,14 +346,6 @@ bool MeshObstacle::isValid() const
   }
 
   return true;
-}
-
-
-void MeshObstacle::getExtents(float* _mins, float* _maxs) const
-{
-  memcpy (_mins, mins, sizeof(float[3]));
-  memcpy (_maxs, maxs, sizeof(float[3]));
-  return;
 }
 
 
@@ -645,8 +630,12 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   out << indent << "# vertices = " << vertexCount << std::endl;
   out << indent << "# normals = " << normalCount << std::endl;
   out << indent << "# texcoords = " << texcoordCount << std::endl;
-  out << indent << "# mins = " << mins[0] << " " << mins[1] << " " << mins[2] << std::endl;
-  out << indent << "# maxs = " << maxs[0] << " " << maxs[1] << " " << maxs[2] << std::endl;
+  out << indent << "# mins = " << extents.mins[0] << " "
+                               << extents.mins[1] << " "
+                               << extents.mins[2] << std::endl;
+  out << indent << "# maxs = " << extents.maxs[0] << " " 
+                               << extents.maxs[1] << " "
+                               << extents.maxs[2] << std::endl;
 
   if (noclusters) {
     out << indent << "  noclusters" << std::endl;

@@ -213,10 +213,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   const double xUnit = 2.0 * range / double(w);
   const double yUnit = 2.0 * range / double(h);
   if (textureRadar) {
-    const double maxHeight = (double) COLLISIONMGR.getMaxWorldHeight();
+    const double maxHeight = (double) COLLISIONMGR.getWorldExtents().maxs[2];
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
             -yCenter * yUnit, (ySize - yCenter) * yUnit,
-            -maxHeight, (maxHeight + 10.0));
+            -(maxHeight + 10.0), (maxHeight + 10.0));
   } else {
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
 	    -yCenter * yUnit, (ySize - yCenter) * yUnit, -1.0, +1.0);
@@ -226,12 +226,13 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glLoadIdentity();
   OpenGLGState::resetState();
 
-  TextureManager &tm = TextureManager::instance();
-  int noiseTexture = tm.getTextureID( "noise" );
 
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && (bzfrand() > decay)) {
 
+    TextureManager &tm = TextureManager::instance();
+    int noiseTexture = tm.getTextureID( "noise" );
+    
     glColor3f(1.0f, 1.0f, 1.0f);
 
     if ((noiseTexture >= 0) && (renderer.useQuality() > 0)) {
@@ -609,9 +610,9 @@ void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
   glEnd();
 
   if (smoothingOn) {
-    glDisable(GL_BLEND);
     glDisable(GL_LINE_SMOOTH);
-    glEnable(GL_POLYGON_SMOOTH);
+    glDisable(GL_BLEND);
+    glEnable(GL_POLYGON_SMOOTH); // NOTE: enabling polygon smoothing
   }
 
   // get the texture

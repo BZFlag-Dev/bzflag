@@ -30,11 +30,19 @@ BaseBuilding::BaseBuilding(const float *p, float rotation,
 		Obstacle(p, rotation, size[0], size[1], size[2]),
 		team(_team)
 {
+  finalize();
+  return;
 }
 
 BaseBuilding::~BaseBuilding()
 {
   // do nothing
+}
+
+void BaseBuilding::finalize()
+{
+  Obstacle::setExtents();
+  return;
 }
 
 Obstacle* BaseBuilding::copyWithTransform(const MeshTransform& xform) const
@@ -250,6 +258,8 @@ void* BaseBuilding::unpack(void* buf)
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0;
+  
+  finalize();
 
   return buf;
 }

@@ -28,7 +28,6 @@ const char* SphereObstacle::typeName = "SphereObstacle";
 
 SphereObstacle::SphereObstacle()
 {
-  mesh = NULL;
   return;
 }
 
@@ -40,8 +39,6 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
 			 int physics, bool bounce, bool drive, bool shoot)
 {
-  mesh = NULL;
-
   // common obstace parameters
   memcpy(pos, _pos, sizeof(pos));
   memcpy(size, _size, sizeof(size));
@@ -68,7 +65,6 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
 
 SphereObstacle::~SphereObstacle()
 {
-  delete mesh;
   return;
 }
 
@@ -100,25 +96,19 @@ const char* SphereObstacle::getClassName() // const
 
 bool SphereObstacle::isValid() const
 {
-  return ((mesh != NULL) && mesh->isValid());
-}
-
-
-MeshObstacle* SphereObstacle::getMesh()
-{
-  return mesh;
-}
-
-
-void SphereObstacle::disownMesh()
-{
-  mesh = NULL;
-  return;
+  return true;
 }
 
 
 void SphereObstacle::finalize()
 {
+  return;
+}
+
+
+MeshObstacle* SphereObstacle::makeMesh()
+{
+  MeshObstacle* mesh;
   int i, j, q;
   float sz[3], texsz[2];
   const float minSize = 1.0e-6f; // cheezy / lazy
@@ -154,7 +144,7 @@ void SphereObstacle::finalize()
   // validity checking
   if ((divisions < 1) || (texsz[0] < minSize) || (texsz[1] < minSize) ||
       (sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize)) {
-    return;
+    return NULL;
   }
 
   // setup the coordinates
@@ -431,15 +421,14 @@ void SphereObstacle::finalize()
   // wrap it up
   mesh->finalize();
 
-  return;
+  if (mesh->isValid()) {
+    return mesh;
+  } else {
+    delete mesh;
+    return NULL;
+  }
 }
 
-
-void SphereObstacle::getExtents(float*, float*) const
-{
-  assert(false);
-  return;
-}
 
 float SphereObstacle::intersect(const Ray&) const
 {

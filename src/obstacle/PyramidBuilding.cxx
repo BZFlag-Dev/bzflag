@@ -29,12 +29,19 @@ PyramidBuilding::PyramidBuilding(const float* p, float a,
 				float w, float b, float h, bool drive, bool shoot) :
 				Obstacle(p, a, w, b, h,drive,shoot)
 {
-  // do nothing
+  finalize();
+  return;
 }
 
 PyramidBuilding::~PyramidBuilding()
 {
   // do nothing
+}
+
+void PyramidBuilding::finalize()
+{
+  Obstacle::setExtents();
+  return;
 }
 
 Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
@@ -437,6 +444,8 @@ void* PyramidBuilding::unpack(void* buf)
   driveThrough = (stateByte & _DRIVE_THRU) != 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0;
   ZFlip = (stateByte & _FLIP_Z) != 0;
+  
+  finalize();
 
   return buf;
 }

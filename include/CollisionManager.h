@@ -15,8 +15,11 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <vector>
+
+// common headers
+#include "Extents.h"
 
 class Ray;
 class Obstacle;
@@ -68,12 +71,11 @@ class CollisionManager {
     // some basics
     bool needReload() const;	 // octree parameter has changed
     int getObstacleCount() const;    // total number of obstacles
-    float getMaxWorldHeight() const; // maximum Z level in the world
-    const float* getWorldExtents() const; // 3 mins, then 3 maxs
+    const Extents& getWorldExtents() const;
 
 
     // test against an axis aligned bounding box
-    const ObsList* axisBoxTest (const float *mins, const float* maxs) const;
+    const ObsList* axisBoxTest (const Extents& extents);
 
     // test against a cylinder
     const ObsList* cylinderTest (const float *pos,
@@ -104,10 +106,9 @@ class CollisionManager {
 
     class ColDetNode* root;   // the root of the octree
 
-    float mins[3]; // grid extents
-    float maxs[3]; // grid extents
-    float worldExtents[6];
-    float WorldSize;
+    float worldSize;
+    Extents gridExtents;
+    Extents worldExtents;
 };
 
 extern CollisionManager COLLISIONMGR;
@@ -115,9 +116,7 @@ extern CollisionManager COLLISIONMGR;
 
 class ColDetNode {
   public:
-    ColDetNode(unsigned char depth,
-	       const float* mins, const float* maxs,
-	       ObsList *fullList);
+    ColDetNode(unsigned char depth, const Extents& exts, ObsList *fullList);
     ~ColDetNode();
 
     int getCount() const;
@@ -126,7 +125,7 @@ class ColDetNode {
     float getOutTime() const;
 
     // these fill in the FullList return list
-    void axisBoxTest (const float* mins, const float* maxs) const;
+    void axisBoxTest (const Extents& extents) const;
     void boxTest (const float* pos, float angle, float dx, float dy, float dz) const;
     void rayTest (const Ray* ray, float timeLeft) const;
     void rayTestNodes (const Ray* ray, float timeLeft) const;
@@ -144,8 +143,7 @@ class ColDetNode {
 
     unsigned char depth;
     int count;
-    float mins[3];
-    float maxs[3];
+    Extents extents;
     unsigned char childCount;
     ColDetNode* children[8];
     ObsList fullList;
@@ -183,9 +181,9 @@ inline int CollisionManager::getObstacleCount() const
   }
 }
 
-inline float CollisionManager::getMaxWorldHeight() const
+inline const Extents& CollisionManager::getWorldExtents() const
 {
-  return worldExtents[5];
+  return worldExtents;
 }
 
 

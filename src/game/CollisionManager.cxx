@@ -101,17 +101,16 @@ static int compareZlevels (const void* a, const void* b)
 {
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
-  float amins[3], amaxs[3], bmins[3], bmaxs[3];
-  obsA->getExtents(amins, amaxs);
-  obsB->getExtents(bmins, bmaxs);
-  if (fabsf(amaxs[2] - bmaxs[2]) < 1.0e-3) {
-    if (amins[2] > bmins[2]) {
+  const Extents& eA = obsA->getExtents();
+  const Extents& eB = obsB->getExtents();
+  if (fabsf(eA.maxs[2] - eB.maxs[2]) < 1.0e-3) {
+    if (eA.mins[2] > eB.mins[2]) {
       return -1;
     } else {
       return +1;
     }
   }
-  else if (amaxs[2] > bmaxs[2]) {
+  else if (eA.maxs[2] > eB.maxs[2]) {
     return -1;
   }
   else {
@@ -146,13 +145,11 @@ void CollisionManager::clear ()
   delete root;
   root = NULL;
 
-  WorldSize = 0.0f;
+  worldSize = 0.0f;
 
   leafNodes = 0;
   totalNodes = 0;
   totalElements = 0;
-  mins[0] = mins[1] = mins[2] = +MAXFLOAT;
-  maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
 
   delete[] FullPad.list;
   delete[] FullList.list;
@@ -181,7 +178,7 @@ bool CollisionManager::needReload () const
   int newElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
   float newWorldSize = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
   if ((newDepth != maxDepth) || (newElements != minElements) ||
-      (newWorldSize != WorldSize)) {
+      (newWorldSize != worldSize)) {
     return true;
   } else {
     return false;
@@ -189,8 +186,7 @@ bool CollisionManager::needReload () const
 }
 
 
-const ObsList* CollisionManager::axisBoxTest (const float* _mins,
-					      const float* _maxs) const
+const ObsList* CollisionManager::axisBoxTest (const Extents& exts)
 {
   if (root == NULL) {
     return &EmptyList;
@@ -199,7 +195,7 @@ const ObsList* CollisionManager::axisBoxTest (const float* _mins,
   FullPad.count = 0;
 
   // get the list
-  root->axisBoxTest (_mins, _maxs);
+  root->axisBoxTest (exts);
 
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
@@ -228,7 +224,9 @@ const ObsList* CollisionManager::cylinderTest (const float *pos,
   FullPad.count = 0;
 
   // get the list
-  root->axisBoxTest (tmpMins, tmpMaxs);
+  Extents exts;
+  exts.set(tmpMins, tmpMaxs);
+  root->axisBoxTest (exts);
 
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
@@ -331,7 +329,7 @@ void CollisionManager::load ()
   clear();
 
   // setup the octree parameters
-  WorldSize = BZDBCache::worldSize;
+  worldSize = BZDBCache::worldSize;
   maxDepth = BZDB.evalInt (StateDatabase::BZDB_COLDETDEPTH);
   minElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
 
@@ -382,7 +380,7 @@ void CollisionManager::load ()
 
   // generate the octree
   setExtents (&FullList);
-  root = new ColDetNode (0, mins, maxs, &FullList);
+  root = new ColDetNode (0, gridExtents, &FullList);
 
 
   leafNodes = 0;
@@ -392,11 +390,12 @@ void CollisionManager::load ()
 
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
   for (int i = 0; i < 3; i++) {
-    DEBUG2 ("  grid extent[%i] = %f, %f\n", i, mins[i], maxs[i]);
+    DEBUG2 ("  grid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
+                                               gridExtents.maxs[i]);
   }
   for (int i = 0; i < 3; i++) {
     DEBUG2 ("  world extent[%i] = %f, %f\n", i,
-            worldExtents[i], worldExtents[i+3]);
+            worldExtents.mins[i], worldExtents.maxs[i+3]);
   }
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);
@@ -427,48 +426,36 @@ void CollisionManager::load ()
 void CollisionManager::setExtents (ObsList *list)
 {
   int i;
+  worldExtents.reset();
 
-  mins[0] = mins[1] = mins[2] = +MAXFLOAT;
-  maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
-
-  // find the real extents
+  // find the real world extents
   for (i = 0; i < list->count; i++) {
-    float obsMins[3], obsMaxs[3];
     const Obstacle* obs = list->list[i];
-    obs->getExtents (obsMins, obsMaxs);
-    for (int a = 0; a < 3; a++) {
-      if (obsMins[a] < mins[a]) {
-	mins[a] = obsMins[a];
-      }
-      if (obsMaxs[a] > maxs[a]) {
-	maxs[a] = obsMaxs[a];
-      }
-    }
+    const Extents& obsExts = obs->getExtents();
+    worldExtents.expandToBox(obsExts);
   }
-
-  // record the world extents
-  memcpy(worldExtents, mins, sizeof(float[3]));
-  memcpy(worldExtents + 3, maxs, sizeof(float[3]));
 
   // find the longest axis
   float width = -MAXFLOAT;
   for (i = 0; i < 3; i++) {
-    float axisWidth = maxs[i] - mins[i];
+    const float axisWidth = worldExtents.getWidth(i);
     if (axisWidth > width) {
       width = axisWidth;
     }
   }
+  
+  gridExtents.copy(worldExtents);
 
   // make it a cube, with Z on its minimum
   for (i = 0; i < 2; i++) {
-    const float axisWidth = maxs[i] - mins[i];
+    const float axisWidth = worldExtents.getWidth(i);
     if (axisWidth < width) {
       const float adjust = 0.5f * (width - axisWidth);
-      mins[i] = mins[i] - adjust;
-      maxs[i] = maxs[i] + adjust;
+      gridExtents.mins[i] = gridExtents.mins[i] - adjust;
+      gridExtents.maxs[i] = gridExtents.maxs[i] + adjust;
     }
   }
-  maxs[2] = mins[2] + width;
+  gridExtents.maxs[2] = gridExtents.mins[2] + width;
 
   return;
 }
@@ -489,7 +476,7 @@ void CollisionManager::draw (DrawLinesFunc drawLinesFunc)
 //
 
 ColDetNode::ColDetNode(unsigned char _depth,
-		       const float* _mins, const float* _maxs,
+		       const Extents& exts,
 		       ObsList *_list)
 {
   int i;
@@ -505,29 +492,25 @@ ColDetNode::ColDetNode(unsigned char _depth,
   const int listBytes = _list->count * sizeof (Obstacle*);
   fullList.list = (Obstacle**) malloc (listBytes);
 
-  // copy the extents, and make a slighty puffed up version
-  float testMins[3];
-  float testMaxs[3];
-  for (i = 0; i < 3; i++) {
-    mins[i] = _mins[i];
-    maxs[i] = _maxs[i];
-    testMins[i] = mins[i] - testFudge;
-    testMaxs[i] = maxs[i] + testFudge;
-  }
+  // copy the extents, and make the testing extents with margin
+  extents.copy(exts);
+  Extents testExts;
+  testExts.copy(exts);
+  testExts.addMargin(testFudge);
 
   // setup some test parameters
   float pos[3];
-  pos[0] = 0.5f * (testMaxs[0] + testMins[0]);
-  pos[1] = 0.5f * (testMaxs[1] + testMins[1]);
-  pos[2] = testMins[2];
+  pos[0] = 0.5f * (testExts.maxs[0] + testExts.mins[0]);
+  pos[1] = 0.5f * (testExts.maxs[1] + testExts.mins[1]);
+  pos[2] = testExts.mins[2];
   float size[3];
-  size[0] = 0.5f * (testMaxs[0] - testMins[0]);
-  size[1] = 0.5f * (testMaxs[1] - testMins[1]);
-  size[2] = (testMaxs[2] - testMins[2]);
+  size[0] = 0.5f * (testExts.maxs[0] - testExts.mins[0]);
+  size[1] = 0.5f * (testExts.maxs[1] - testExts.mins[1]);
+  size[2] = (testExts.maxs[2] - testExts.mins[2]);
   float point[3];
   point[0] = pos[0];
   point[1] = pos[1];
-  point[2] = 0.5f * (testMaxs[2] + testMins[2]);
+  point[2] = 0.5f * (testExts.maxs[2] + testExts.mins[2]);
 
   // find all of the intersecting nodes
   fullList.count = 0;
@@ -572,8 +555,8 @@ ColDetNode::ColDetNode(unsigned char _depth,
 
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (fullList.count <= minElements)) {
-    DEBUG4 ("COLDET LEAF NODE: depth = %d, items = %i\n", depth, count);
     resizeCell();
+    DEBUG4 ("COLDET LEAF NODE: depth = %d, items = %i\n", depth, count);
     return;
   }
 
@@ -611,17 +594,16 @@ ColDetNode::~ColDetNode()
 void ColDetNode::makeChildren ()
 {
   int side[3];    // the axis sides  (0 or 1)
-  float cmins[3];
-  float cmaxs[3];
   float center[3];
+  Extents exts;
 
   // setup the center point
   for (int i = 0; i < 3; i++) {
-    center[i] = 0.5f * (maxs[i] + mins[i]);
+    center[i] = 0.5f * (extents.maxs[i] + extents.mins[i]);
   }
 
   childCount = 0;
-  const float* extentSet[3] = { mins, center, maxs };
+  const float* extentSet[3] = { extents.mins, center, extents.maxs };
 
   for (side[0] = 0; side[0] < 2; side[0]++) {
     for (side[1] = 0; side[1] < 2; side[1]++) {
@@ -629,13 +611,13 @@ void ColDetNode::makeChildren ()
 
 	// calculate the child's extents
 	for (int a = 0; a < 3; a++) {
-	  cmins[a] = extentSet[side[a]+0][a];
-	  cmaxs[a] = extentSet[side[a]+1][a];
+	  exts.mins[a] = extentSet[side[a]+0][a];
+	  exts.maxs[a] = extentSet[side[a]+1][a];
 	}
 
 	int kid = side[0] + (2 * side[1]) + (4 * side[2]);
 
-	children[kid] = new ColDetNode (depth, cmins, cmaxs, &fullList);
+	children[kid] = new ColDetNode (depth, exts, &fullList);
 
 	if (children[kid]->getCount() == 0) {
 	  delete children[kid];
@@ -655,41 +637,30 @@ void ColDetNode::makeChildren ()
 void ColDetNode::resizeCell ()
 {
   int i;
-
-  // resize the cell
-  float absMins[3] = {+MAXFLOAT, +MAXFLOAT, +MAXFLOAT};
-  float absMaxs[3] = {-MAXFLOAT, -MAXFLOAT, -MAXFLOAT};
-  float tmpMins[3], tmpMaxs[3];
+  Extents absExts;
 
   for (i = 0; i < fullList.count; i++) {
     Obstacle* obs = fullList.list[i];
-    obs->getExtents (tmpMins, tmpMaxs);
-    for (int a = 0; a < 3; a++) {
-      if (tmpMins[a] < absMins[a])
-	absMins[a] = tmpMins[a];
-      if (tmpMaxs[a] > absMaxs[a])
-	absMaxs[a] = tmpMaxs[a];
-    }
+    const Extents& obsExts = obs->getExtents();
+    absExts.expandToBox(obsExts);
   }
 
   for (i = 0; i < 3; i++) {
-    if (absMins[i] > mins[i])
-      mins[i] = absMins[i];
-    if (absMaxs[i] < maxs[i])
-      maxs[i] = absMaxs[i];
+    if (absExts.mins[i] > extents.mins[i])
+      extents.mins[i] = absExts.mins[i];
+    if (absExts.maxs[i] < extents.maxs[i])
+      extents.maxs[i] = absExts.maxs[i];
   }
 
   return;
 }
 
 
-void ColDetNode::axisBoxTest (const float* _mins, const float* _maxs) const
+void ColDetNode::axisBoxTest (const Extents& exts) const
 {
   int i;
 
-  if ((_maxs[0] < mins[0]) || (_mins[0] > maxs[0]) ||
-      (_maxs[1] < mins[1]) || (_mins[1] > maxs[1]) ||
-      (_maxs[2] < mins[2]) || (_mins[2] > maxs[2])) {
+  if (!extents.touches(exts)) {
     return;
   }
 
@@ -704,7 +675,7 @@ void ColDetNode::axisBoxTest (const float* _mins, const float* _maxs) const
   }
   else {
     for (i = 0; i < childCount; i++) {
-      children[i]->axisBoxTest (_mins, _maxs);
+      children[i]->axisBoxTest (exts);
     }
   }
 
@@ -746,7 +717,7 @@ void ColDetNode::boxTest (const float* pos, float angle,
 
 void ColDetNode::rayTest (const Ray* ray, float timeLeft) const
 {
-  if (!testRayHitsAxisBox(ray, mins, maxs, &inTime) ||
+  if (!testRayHitsAxisBox(ray, extents, &inTime) ||
       (inTime > timeLeft)) {
     return;
   }
@@ -772,7 +743,7 @@ void ColDetNode::rayTest (const Ray* ray, float timeLeft) const
 
 void ColDetNode::rayTestNodes (const Ray* ray, float timeLeft) const
 {
-  if (!testRayHitsAxisBox(ray, mins, maxs, &inTime, &outTime) ||
+  if (!testRayHitsAxisBox(ray, extents, &inTime, &outTime) ||
       (inTime > timeLeft)) {
     return;
   }
@@ -782,7 +753,7 @@ void ColDetNode::rayTestNodes (const Ray* ray, float timeLeft) const
   }
   else {
     for (int i = 0; i < childCount; i++) {
-      children[i]->rayTestNodes (ray, timeLeft);
+      children[i]->rayTestNodes(ray, timeLeft);
     }
   }
 
@@ -822,7 +793,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
 {
   int x, y, z, c;
   float points[5][3];
-  const float* extents[2] = { mins, maxs };
+  const float* exts[2] = { extents.mins, extents.maxs };
 
   // pick a color
   int hasMeshObs = 0;
@@ -841,9 +812,9 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
     for (c = 0; c < 4; c++) {
       x = ((c + 0) % 4) / 2;
       y = ((c + 1) % 4) / 2;
-      points[c][0] = extents[x][0];
-      points[c][1] = extents[y][1];
-      points[c][2] = extents[z][2];
+      points[c][0] = exts[x][0];
+      points[c][1] = exts[y][1];
+      points[c][2] = exts[z][2];
     }
     memcpy (points[4], points[0], sizeof (points[4]));
     drawLinesFunc (5, points, color);
@@ -854,9 +825,9 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
     x = ((c + 0) % 4) / 2;
     y = ((c + 1) % 4) / 2;
     for (z = 0; z < 2; z++) {
-      points[z][0] = extents[x][0];
-      points[z][1] = extents[y][1];
-      points[z][2] = extents[z][2];
+      points[z][0] = exts[x][0];
+      points[z][1] = exts[y][1];
+      points[z][2] = exts[z][2];
     }
     drawLinesFunc (2, points, color);
   }

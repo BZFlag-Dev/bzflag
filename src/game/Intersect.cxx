@@ -13,6 +13,7 @@
 #include "common.h"
 #include <math.h>
 #include "Intersect.h"
+#include "Extents.h"
 
 
 // get angle of normal vector to axis aligned rect centered at origin by point p
@@ -657,8 +658,7 @@ bool testRectInRect(const float* p1, float angle1, float dx1, float dy1,
 }
 
 
-static inline void projectAxisBox(const float* dir,
-				  const float* mins, const float* maxs,
+static inline void projectAxisBox(const float* dir, const Extents& extents,
 				  float* minDist, float* maxDist)
 {
   static float i[3];
@@ -667,11 +667,11 @@ static inline void projectAxisBox(const float* dir,
   // find the extreme corners
   for (int t = 0; t < 3; t++) {
     if (dir[t] > 0.0f) {
-      i[t] = maxs[t];
-      o[t] = mins[t];
+      i[t] = extents.maxs[t];
+      o[t] = extents.mins[t];
     } else {
-      i[t] = mins[t];
-      o[t] = maxs[t];
+      i[t] = extents.mins[t];
+      o[t] = extents.maxs[t];
     }
   }
 
@@ -718,8 +718,7 @@ static inline void projectPolygon(const float* dir,
 // return true if polygon touches the axis aligned box
 // *** assumes that an extents test has already been done ***
 bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
-			  const float* plane,
-			  const float* boxMins, const float* boxMaxs)
+			  const float* plane, const Extents& extents)
 {
   int t;
   static float i[3]; // inside point  (assuming partial)
@@ -728,11 +727,11 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
   // test the plane
   for (t = 0; t < 3; t++) {
     if (plane[t] > 0.0f) {
-      i[t] = boxMaxs[t];
-      o[t] = boxMins[t];
+      i[t] = extents.maxs[t];
+      o[t] = extents.mins[t];
     } else {
-      i[t] = boxMins[t];
-      o[t] = boxMaxs[t];
+      i[t] = extents.mins[t];
+      o[t] = extents.maxs[t];
     }
   }
   const float icross = (plane[0] * i[0]) +
@@ -769,7 +768,7 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
       // find the projected distances
       float boxMinDist, boxMaxDist;
       float polyMinDist, polyMaxDist;
-      projectAxisBox(cross, boxMins, boxMaxs, &boxMinDist, &boxMaxDist);
+      projectAxisBox(cross, extents, &boxMinDist, &boxMaxDist);
       projectPolygon(cross, pointCount, points, &polyMinDist, &polyMaxDist);
       // check if this is a separation axis
       if ((boxMinDist > polyMaxDist) || (boxMaxDist < polyMinDist)) {
@@ -785,8 +784,7 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
 // return level of axis box intersection with Frumstum
 // possible values are Outside, Partial, and Contained.
 // the frustum plane normals point inwards
-IntersectLevel testAxisBoxInFrustum(const float* boxMins,
-				    const float* boxMaxs,
+IntersectLevel testAxisBoxInFrustum(const Extents& extents,
 				    const Frustum* frustum)
 {
   // FIXME - use a sphere vs. cone test first?
@@ -810,11 +808,11 @@ IntersectLevel testAxisBoxInFrustum(const float* boxMins,
     // on the normal vector for the plane
     for (t = 0; t < 3; t++) {
       if (p[t] > 0.0f) {
-	i[t] = boxMaxs[t];
-	o[t] = boxMins[t];
+	i[t] = extents.maxs[t];
+	o[t] = extents.mins[t];
       } else {
-	i[t] = boxMins[t];
-	o[t] = boxMaxs[t];
+	i[t] = extents.mins[t];
+	o[t] = extents.maxs[t];
       }
     }
     // check the inside length
@@ -837,10 +835,8 @@ IntersectLevel testAxisBoxInFrustum(const float* boxMins,
 // return true if the axis aligned bounding box
 // is contained within all of the planes.
 // the occluder plane normals point inwards
-IntersectLevel testAxisBoxOcclusion(const float* boxMins,
-				    const float* boxMaxs,
-				    const float (*planes)[4],
-				    int planeCount)
+IntersectLevel testAxisBoxOcclusion(const Extents& extents,
+				    const float (*planes)[4], int planeCount)
 {
   static int s, t;
   static float i[3]; // inside point  (assuming partial)
@@ -858,11 +854,11 @@ IntersectLevel testAxisBoxOcclusion(const float* boxMins,
     // on the normal vector for the plane
     for (t = 0; t < 3; t++) {
       if (p[t] > 0.0f) {
-	i[t] = boxMaxs[t];
-	o[t] = boxMins[t];
+	i[t] = extents.maxs[t];
+	o[t] = extents.mins[t];
       } else {
-	i[t] = boxMins[t];
-	o[t] = boxMaxs[t];
+	i[t] = extents.mins[t];
+	o[t] = extents.maxs[t];
       }
     }
 
@@ -889,27 +885,26 @@ IntersectLevel testAxisBoxOcclusion(const float* boxMins,
 
 // return true if the ray hits the box
 // if it does hit, set the inTime value
-bool testRayHitsAxisBox(const Ray* ray,
-			const float mins[3], const float maxs[3],
+bool testRayHitsAxisBox(const Ray* ray, const Extents& exts,
 			float* inTime)
 {
   int a;
   const float* const o = ray->getOrigin();
   const float* const v = ray->getDirection();
-  const float* extents[2] = { mins, maxs };
+  const float* extents[2] = { exts.mins, exts.maxs };
   int zone[3];
   bool inside = true;
 
   // setup the zones
   for (a = 0; a < 3; a++) {
-    if (o[a] < mins[a]) {
+    if (o[a] < exts.mins[a]) {
       if (v[a] <= 0.0f) {
 	return false;
       }
       zone[a] = 0;
       inside = false;
     }
-    else if (o[a] > maxs[a]) {
+    else if (o[a] > exts.maxs[a]) {
       if (v[a] >= 0.0f) {
 	return false;
       }
@@ -954,7 +949,7 @@ bool testRayHitsAxisBox(const Ray* ray,
     for (a = 0; a < 3; a++) {
       if (a != hitPlane) {
 	const float hitDist = o[a] + (useTime * v[a]);
-	if ((hitDist < mins[a]) || (hitDist > maxs[a])) {
+	if ((hitDist < exts.mins[a]) || (hitDist > exts.maxs[a])) {
 	  return false;
 	}
       }
@@ -968,11 +963,10 @@ bool testRayHitsAxisBox(const Ray* ray,
 
 // return true if the ray hits the box
 // if it does hit, set the inTime and outTime values
-bool testRayHitsAxisBox(const Ray* ray,
-			const float mins[3], const float maxs[3],
+bool testRayHitsAxisBox(const Ray* ray, const Extents& extents,
 			float* inTime, float* outTime)
 {
-  if (!testRayHitsAxisBox(ray, mins, maxs, inTime)) {
+  if (!testRayHitsAxisBox(ray, extents, inTime)) {
     return false;
   }
 
@@ -987,10 +981,10 @@ bool testRayHitsAxisBox(const Ray* ray,
       hitTime[a] = MAXFLOAT;
     }
     else if (v[a] < 0.0f) {
-      hitTime[a] = (mins[a] - o[a]) / v[a];
+      hitTime[a] = (extents.mins[a] - o[a]) / v[a];
     }
     else {
-      hitTime[a] = (maxs[a] - o[a]) / v[a];
+      hitTime[a] = (extents.maxs[a] - o[a]) / v[a];
     }
   }
 

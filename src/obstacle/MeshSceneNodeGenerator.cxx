@@ -102,9 +102,8 @@ static bool groundClippedFace(const MeshFace* face)
   const float* plane = face->getPlane();
   if (plane[2] < -0.9f) {
     // plane is facing downwards
-    float mins[3], maxs[3];
-    face->getExtents(mins, maxs);
-    if (maxs[2] < 0.001) {
+    const Extents& exts = face->getExtents();
+    if (exts.maxs[2] < 0.001) {
       // plane is on or below the ground, ditch it
       return true;
     }

@@ -63,7 +63,6 @@ class MeshObstacle : public Obstacle {
     const char* getType() const;
     static const char* getClassName(); // const
     bool isValid() const;
-    void getExtents(float* mins, float* maxs) const;
 
     float intersect(const Ray&) const;
     void getNormal(const float* p, float* n) const;
@@ -127,7 +126,7 @@ class MeshObstacle : public Obstacle {
 		   // edge tables are setup with bi-directional
 		   // ray-vs-face tests and parity counts.
 
-    fvec3 mins, maxs;
+    Extents extents;
 };
 
 inline const char *MeshObstacle::getCheckTypes() const

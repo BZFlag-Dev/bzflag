@@ -68,6 +68,21 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
 
 void Teleporter::finalize()
 {
+  // the same as the default Obstacle::getExtents(), except
+  // that we use the larger of the border half-width and size[0].
+  float sizeX = border * 0.5f;
+  if (size[0] > sizeX) {
+    sizeX = size[0];
+  }
+  float xspan = (fabsf(cosf(angle)) * sizeX) + (fabsf(sinf(angle)) * size[1]);
+  float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * sizeX);
+  extents.mins[0] = pos[0] - xspan;
+  extents.maxs[0] = pos[0] + xspan;
+  extents.mins[1] = pos[1] - yspan;
+  extents.maxs[1] = pos[1] + yspan;
+  extents.mins[2] = pos[2];
+  extents.maxs[2] = pos[2] + size[2];
+  
   origSize[0] = size[0];
   origSize[1] = size[1];
   origSize[2] = size[2];
@@ -198,26 +213,6 @@ bool Teleporter::isValid() const
     return false;
   }
   return Obstacle::isValid();
-}
-
-
-void Teleporter::getExtents(float* mins, float* maxs) const
-{
-  // the same as the default Obstacle::getExtents(), except
-  // that we use the larger of the border half-width and size[0].
-  float sizeX = border * 0.5f;
-  if (size[0] > sizeX) {
-    sizeX = size[0];
-  }
-  float xspan = (fabsf(cosf(angle)) * sizeX) + (fabsf(sinf(angle)) * size[1]);
-  float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * sizeX);
-  mins[0] = pos[0] - xspan;
-  maxs[0] = pos[0] + xspan;
-  mins[1] = pos[1] - yspan;
-  maxs[1] = pos[1] + yspan;
-  mins[2] = pos[2];
-  maxs[2] = pos[2] + size[2];
-  return;
 }
 
 

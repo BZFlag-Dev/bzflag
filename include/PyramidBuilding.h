@@ -66,7 +66,9 @@ class PyramidBuilding : public Obstacle {
 
     std::string		userTextures[1];
 
-  protected:
+  private:
+    void finalize();
+    
     // compute minimum shrinking for height between z and z + height
     float		shrinkFactor(float z, float height = 0.0) const;
 

@@ -30,8 +30,7 @@ class MeshPolySceneNode : public WallSceneNode {
     ~MeshPolySceneNode();
 
     bool cull(const ViewFrustum& frustum) const;
-    void getExtents (float* mins, float* maxs) const;
-    bool inAxisBox (const float* mins, const float* maxs) const;
+    bool inAxisBox (const Extents& exts) const;
     int getVertexCount () const;
     const GLfloat* getVertex (int vertex) const;
     const GLfloat (*getVertices() const)[3];
@@ -100,7 +99,6 @@ class MeshPolySceneNode : public WallSceneNode {
 		     GLfloat* p, GLfloat* uv) const;
 
     Geometry* node;
-    float mins[3], maxs[3];
 };
 
 inline const int MeshPolySceneNode::Geometry::getVertexCount() const

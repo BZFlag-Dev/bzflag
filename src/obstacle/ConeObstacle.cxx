@@ -28,7 +28,6 @@ const char* ConeObstacle::typeName = "ConeObstacle";
 
 ConeObstacle::ConeObstacle()
 {
-  mesh = NULL;
   return;
 }
 
@@ -40,8 +39,6 @@ ConeObstacle::ConeObstacle(const MeshTransform& xform,
 			   int _divisions, const BzMaterial* mats[MaterialCount],
 			   int physics, bool bounce, bool drive, bool shoot)
 {
-  mesh = NULL;
-
   // common obstace parameters
   memcpy(pos, _pos, sizeof(pos));
   memcpy(size, _size, sizeof(size));
@@ -68,7 +65,6 @@ ConeObstacle::ConeObstacle(const MeshTransform& xform,
 
 ConeObstacle::~ConeObstacle()
 {
-  delete mesh;
   return;
 }
 
@@ -101,25 +97,19 @@ const char* ConeObstacle::getClassName() // const
 
 bool ConeObstacle::isValid() const
 {
-  return ((mesh != NULL) && mesh->isValid());
-}
-
-
-MeshObstacle* ConeObstacle::getMesh()
-{
-  return mesh;
-}
-
-
-void ConeObstacle::disownMesh()
-{
-  mesh = NULL;
-  return;
+  return true;
 }
 
 
 void ConeObstacle::finalize()
 {
+  return;
+}
+
+
+MeshObstacle* ConeObstacle::makeMesh()
+{
+  MeshObstacle* mesh;
   bool isCircle = false; // angle of 360 degrees
   const float minSize = 1.0e-6f; // cheezy / lazy
 
@@ -132,7 +122,7 @@ void ConeObstacle::finalize()
   // validity checking
   if ((sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize) ||
       (fabs(texsize[0]) < minSize) || (fabs(texsize[1]) < minSize)) {
-    return;
+    return NULL;
   }
 
   // adjust the texture sizes
@@ -169,7 +159,7 @@ void ConeObstacle::finalize()
 
   // more validity checking
   if (divisions <= (int) ((a + minSize) / M_PI)) {
-    return;
+    return NULL;
   }
 
   if (fabsf ((float)M_PI - fmodf (a + (float)M_PI, (float)M_PI * 2.0f)) < minSize) {
@@ -347,15 +337,14 @@ void ConeObstacle::finalize()
   // wrap it up
   mesh->finalize();
 
-  return;
+  if (mesh->isValid()) {
+    return mesh;
+  } else {
+    delete mesh;
+    return NULL;
+  }
 }
 
-
-void ConeObstacle::getExtents(float*, float*) const
-{
-  assert(false);
-  return;
-}
 
 float ConeObstacle::intersect(const Ray&) const
 {

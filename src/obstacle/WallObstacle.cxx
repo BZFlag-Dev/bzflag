@@ -38,6 +38,8 @@ void WallObstacle::finalize()
   plane[1] = sinf(a);
   plane[2] = 0.0;
   plane[3] = -(p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2]);
+
+  return;  
 }
 
 WallObstacle::~WallObstacle()

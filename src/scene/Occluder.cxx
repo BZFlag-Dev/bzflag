@@ -79,15 +79,14 @@ void OccluderManager::setMaxOccluders(int size)
 }
 
 
-IntersectLevel OccluderManager::occlude(const float* mins,
-					const float* maxs,
-					unsigned int score)
+IntersectLevel OccluderManager::occlude(const Extents& exts,
+                                        unsigned int score)
 {
   IntersectLevel level = Outside;
 
   for (int i = 0; i < activeOccluders; i++) {
     Occluder* oc = occluders[i];
-    IntersectLevel tmp = oc->doCullAxisBox (mins, maxs);
+    IntersectLevel tmp = oc->doCullAxisBox (exts);
     if (tmp == Contained) {
       oc->addScore (score);
       return Contained;
@@ -103,7 +102,7 @@ IntersectLevel OccluderManager::occlude(const float* mins,
 }
 
 
-bool OccluderManager::occludePeek(const float* mins, const float* maxs)
+bool OccluderManager::occludePeek(const Extents& exts)
 {
   int i;
   bool result = false;
@@ -111,7 +110,7 @@ bool OccluderManager::occludePeek(const float* mins, const float* maxs)
   // doesn't adjust occluder scores
   for (i = 0; i < activeOccluders; i++) {
     Occluder* oc = occluders[i];
-    if (oc->doCullAxisBox (mins, maxs) == Contained) {
+    if (oc->doCullAxisBox (exts) == Contained) {
       result = true;
     }
   }
@@ -311,9 +310,9 @@ Occluder::~Occluder()
 }
 
 
-IntersectLevel Occluder::doCullAxisBox(const float* mins, const float* maxs)
+IntersectLevel Occluder::doCullAxisBox(const Extents& exts)
 {
-  return testAxisBoxOcclusion (mins, maxs, planes, planeCount);
+  return testAxisBoxOcclusion (exts, planes, planeCount);
 }
 
 

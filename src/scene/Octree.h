@@ -15,6 +15,7 @@
 
 #include "SceneNode.h"
 #include "Frustum.h"
+#include "Extents.h"
 
 
 class OctreeNode;
@@ -42,12 +43,11 @@ class Octree {
 
 
   private: // methods
-
-    void getExtents(float* mins, float* maxs,
-		    SceneNode** list, int listSize);
+    void getExtents(SceneNode** list, int listSize);
 
   private: // data
 
+    Extents extents;
     OctreeNode* root;
 };
 
@@ -57,8 +57,7 @@ class OctreeNode {
 
   public:
 
-    OctreeNode(unsigned char depth,
-	       const float* mins, const float* maxs,
+    OctreeNode(unsigned char depth, const Extents& exts,
 	       SceneNode** list, int listSize);
     ~OctreeNode();
 
@@ -73,7 +72,7 @@ class OctreeNode {
     int getChildren() const; // number of children
     int getListSize() const; // number of nodes in this node
     SceneNode** getList() const;     // list of nodes
-    void getExtents(float* mins, float* maxs) const;
+    const Extents& getExtents() const;
 
     void tallyStats();
     void draw ();
@@ -90,8 +89,7 @@ class OctreeNode {
     };
 
     unsigned char depth;
-    float mins[3];
-    float maxs[3];
+    Extents extents;
     unsigned char childCount;
     OctreeNode* children[8];
     int count;  // number of nodes in this and subnodes

@@ -46,8 +46,7 @@ class MeshFragSceneNode : public WallSceneNode {
     void addRenderNodes(SceneRenderer&);
 
     // virtual functions from WallSceneNode
-    void getExtents(float* mins, float* maxs) const;
-    bool inAxisBox(const float* mins, const float* maxs) const;
+    bool inAxisBox(const Extents& exts) const;
 
     int getRenderNodeCount() { return 1; }
     RenderNode*	getRenderNode(int) { return renderNode; }
@@ -83,8 +82,6 @@ class MeshFragSceneNode : public WallSceneNode {
     GLfloat* vertices;
     GLfloat* normals;
     GLfloat* texcoords;
-
-    float mins[3], maxs[3];
 
   friend class MeshFragSceneNode::Geometry;
 };

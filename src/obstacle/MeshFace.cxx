@@ -119,7 +119,7 @@ void MeshFace::finalize()
   plane[3] = -vec3dot(plane, vert);
 
   // see if the whole face is convex
-  int v, a;
+  int v;
   for (v = 0; v < vertexCount; v++) {
     float a[3], b[3], c[3];
     vec3sub(a, vertices[(v + 1) % vertexCount], vertices[(v + 0) % vertexCount]);
@@ -137,26 +137,17 @@ void MeshFace::finalize()
   }
 
   // setup extents
-  mins[0] = mins[1] = mins[2] = +MAXFLOAT;
-  maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
   for (v = 0; v < vertexCount; v++) {
-    for (a = 0; a < 3; a++) {
-      if (vertices[v][a] < mins[a]) {
-	mins[a] = vertices[v][a];
-      }
-      if (vertices[v][a] > maxs[a]) {
-	maxs[a] = vertices[v][a];
-      }
-    }
+    extents.expandToPoint(vertices[v]);
   }
 
   // setup fake obstacle parameters
-  pos[0] = (maxs[0] + mins[0]) / 2.0f;
-  pos[1] = (maxs[1] + mins[1]) / 2.0f;
-  pos[2] = mins[2];
-  size[0] = (maxs[0] - mins[0]) / 2.0f;
-  size[1] = (maxs[1] - mins[1]) / 2.0f;
-  size[2] = (maxs[2] - mins[2]);
+  pos[0] = (extents.maxs[0] + extents.mins[0]) / 2.0f;
+  pos[1] = (extents.maxs[1] + extents.mins[1]) / 2.0f;
+  pos[2] = extents.mins[2];
+  size[0] = (extents.maxs[0] - extents.mins[0]) / 2.0f;
+  size[1] = (extents.maxs[1] - extents.mins[1]) / 2.0f;
+  size[2] = (extents.maxs[2] - extents.mins[2]);
   angle = 0.0f;
   ZFlip = false;
 
@@ -247,14 +238,6 @@ bool MeshFace::isValid() const
 bool MeshFace::isFlatTop() const
 {
   return isUpPlane();
-}
-
-
-void MeshFace::getExtents(float* _mins, float* _maxs) const
-{
-  memcpy (_mins, mins, sizeof(fvec3));
-  memcpy (_maxs, maxs, sizeof(fvec3));
-  return;
 }
 
 
@@ -424,7 +407,7 @@ bool MeshFace::inBox(const float* p, float angle,
   int i;
 
   // Z axis separation test
-  if ((mins[2] > (p[2] + height)) || (maxs[2] < p[2])) {
+  if ((extents.mins[2] > (p[2] + height)) || (extents.maxs[2] < p[2])) {
     return false;
   }
 
@@ -489,16 +472,17 @@ bool MeshFace::inBox(const float* p, float angle,
   }
 
   // FIXME: do not use testPolygonInAxisBox()
-  float boxMins[3];
-  boxMins[0] = -dx;
-  boxMins[1] = -dy;
-  boxMins[2] = 0.0f;
-  float boxMaxs[3];
-  boxMaxs[0] = +dx;
-  boxMaxs[1] = +dy;
-  boxMaxs[2] = height;
-
-  bool hit = testPolygonInAxisBox(vertexCount, v, pln, boxMins, boxMaxs);
+  Extents box;
+  // mins
+  box.mins[0] = -dx;
+  box.mins[1] = -dy;
+  box.mins[2] = 0.0f;
+  // maxs
+  box.maxs[0] = +dx;
+  box.maxs[1] = +dy;
+  box.maxs[2] = height;
+  
+  bool hit = testPolygonInAxisBox(vertexCount, v, pln, box);
 
   delete[] v;
 

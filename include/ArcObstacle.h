@@ -49,14 +49,12 @@ class ArcObstacle : public Obstacle {
 
     Obstacle* copyWithTransform(const MeshTransform&) const;
 
-    MeshObstacle* getMesh();
-    void disownMesh();
+    MeshObstacle* makeMesh();
 
     const char* getType() const;
     static const char* getClassName(); // const
     bool isValid() const;
     bool isFlatTop() const;
-    void getExtents(float* mins, float* maxs) const;
 
     float intersect(const Ray&) const;
     void getNormal(const float* p, float* n) const;
@@ -85,15 +83,13 @@ class ArcObstacle : public Obstacle {
 
   private:
     void finalize();
-    void makePie(bool isCircle, float a, float r, float h,
-		 float radius, float squish, float texsz[4]);
-    void makeRing(bool isCircle, float a, float r, float h,
-		  float inrad, float outrad, float squish,
-		  float texsz[4]);
+    MeshObstacle* makePie(bool isCircle, float a, float r, float h,
+		          float radius, float squish, float texsz[4]);
+    MeshObstacle* makeRing(bool isCircle, float a, float r, float h,
+		           float inrad, float outrad, float squish,
+		           float texsz[4]);
   private:
     static const char* typeName;
-
-    MeshObstacle* mesh;
 
     MeshTransform transform;
     int divisions;

@@ -25,6 +25,7 @@
 #include "AutoCompleter.h"
 #include "BZDBCache.h"
 #include "AnsiCodes.h"
+#include "TextUtils.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -138,6 +139,20 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	}
       } else if (message == "/set") {
 	BZDB.iterate(listSetVars, NULL);
+#ifdef DEBUG	
+      } else if (strncmp(silence, "/localset", 9) == 0) {
+        std::string params = silence + 9;
+        std::vector<std::string> tokens =
+          TextUtils::tokenize(params, " ", 2);
+        if (tokens.size() == 2) {
+          if (!(BZDB.getPermission(tokens[0]) == StateDatabase::Server)) {
+            BZDB.setPersistent(tokens[0], BZDB.isPersistent(tokens[0]));
+            BZDB.set(tokens[0], tokens[1]);
+            std::string msg = "/localset " + tokens[0] + " " + tokens[1];
+            addMessage(NULL, msg);
+          }
+        }
+#endif        
       } else {
 	int i, mhLen = messageHistory.size();
 	for (i = 0; i < mhLen; i++) {

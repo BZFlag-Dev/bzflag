@@ -20,6 +20,7 @@
 #include "global.h"
 #include "Pack.h"
 #include "Protocol.h"
+#include "Extents.h"
 #include "Intersect.h"
 #include "CollisionManager.h"
 #include "DynamicColor.h"
@@ -490,7 +491,7 @@ void WorldInfo::finishWorld()
 
   loadCollisionManager();
 
-  maxHeight = COLLISIONMGR.getMaxWorldHeight();
+  maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   if (maxHeight < wallHeight) {
     maxHeight = wallHeight;

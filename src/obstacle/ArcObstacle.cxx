@@ -28,7 +28,6 @@ const char* ArcObstacle::typeName = "ArcObstacle";
 
 ArcObstacle::ArcObstacle()
 {
-  mesh = NULL;
   return;
 }
 
@@ -40,8 +39,6 @@ ArcObstacle::ArcObstacle(const MeshTransform& xform,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
 			 int physics, bool bounce, bool drive, bool shoot)
 {
-  mesh = NULL;
-
   // common obstace parameters
   memcpy(pos, _pos, sizeof(pos));
   memcpy(size, _size, sizeof(size));
@@ -69,7 +66,6 @@ ArcObstacle::ArcObstacle(const MeshTransform& xform,
 
 ArcObstacle::~ArcObstacle()
 {
-  delete mesh;
   return;
 }
 
@@ -102,7 +98,7 @@ const char* ArcObstacle::getClassName() // const
 
 bool ArcObstacle::isValid() const
 {
-  return ((mesh != NULL) && mesh->isValid());
+  return true;
 }
 
 
@@ -112,21 +108,16 @@ bool ArcObstacle::isFlatTop() const
 }
 
 
-MeshObstacle* ArcObstacle::getMesh()
+void ArcObstacle::finalize()
 {
-  return mesh;
-}
-
-
-void ArcObstacle::disownMesh()
-{
-  mesh = NULL;
   return;
 }
 
 
-void ArcObstacle::finalize()
+MeshObstacle* ArcObstacle::makeMesh()
 {
+  MeshObstacle* mesh;
+
   bool isPie = false;    // has no inside edge
   bool isCircle = false; // angle of 360 degrees
   const float minSize = 1.0e-6f; // cheezy / lazy
@@ -142,7 +133,7 @@ void ArcObstacle::finalize()
       (fabsf(texsize[0]) < minSize) || (fabsf(texsize[1]) < minSize) ||
       (fabsf(texsize[2]) < minSize) || (fabsf(texsize[3]) < minSize) ||
       (ratio < 0.0f) || (ratio > 1.0f)) {
-    return;
+    return NULL;
   }
 
   // adjust the texture sizes   FIXME: finish texsz[2] & texsz[3]
@@ -179,7 +170,7 @@ void ArcObstacle::finalize()
 
   // more validity checking
   if (divisions <= (int) ((a + minSize) / M_PI)) {
-    return;
+    return NULL;
   }
 
   if (fabsf ((float)M_PI - fmodf (a + (float)M_PI, (float)M_PI * 2.0f)) < minSize) {
@@ -195,7 +186,7 @@ void ArcObstacle::finalize()
     outrad = tmp;
   }
   if ((outrad < minSize) || ((outrad - inrad) < minSize)) {
-    return;
+    return NULL;
   }
   if (inrad < minSize) {
     isPie = true;
@@ -203,21 +194,28 @@ void ArcObstacle::finalize()
   const float squish = sz[1] / sz[0];
 
   if (isPie) {
-    makePie(isCircle, a, r, sz[2], outrad, squish, texsz);
+    mesh = makePie(isCircle, a, r, sz[2], outrad, squish, texsz);
   } else {
-    makeRing(isCircle, a, r, sz[2], inrad, outrad, squish, texsz);
+    mesh = makeRing(isCircle, a, r, sz[2], inrad, outrad, squish, texsz);
   }
 
   // wrap it up
   mesh->finalize();
 
-  return;
+  if (mesh->isValid()) {
+    return mesh;
+  } else {
+    delete mesh;
+    return NULL;
+  }
 }
 
 
-void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
-			  float radius, float squish, float texsz[4])
+MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
+                                   float h, float radius, float squish,
+                                   float texsz[4])
 {
+  MeshObstacle* mesh;
   int i;
 
   // setup the coordinates
@@ -381,14 +379,16 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
     addFace(mesh, vlist, nlist, tlist, materials[EndFace], phydrv);
   }
 
-  return;
+  return mesh;
 }
 
 
-void ArcObstacle::makeRing(bool isCircle, float a, float r, float h,
-			   float inrad, float outrad, float squish,
-			   float texsz[4])
+MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
+                                    float h, float inrad, float outrad,
+                                    float squish, float texsz[4])
 {
+  MeshObstacle* mesh;
+  
   // setup the coordinates
   std::vector<char> checkTypes;
   std::vector<cfvec3> checkPoints;
@@ -559,14 +559,7 @@ void ArcObstacle::makeRing(bool isCircle, float a, float r, float h,
     addFace(mesh, vlist, nlist, tlist, materials[EndFace], phydrv);
   }
 
-  return;
-}
-
-
-void ArcObstacle::getExtents(float*, float*) const
-{
-  assert(false);
-  return;
+  return mesh;
 }
 
 

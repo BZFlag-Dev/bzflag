@@ -21,6 +21,7 @@
 #include <math.h>
 
 // common implementation headers
+#include "Extents.h"
 #include "StateDatabase.h"
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)
@@ -49,6 +50,7 @@ SceneNode::SceneNode()
 
   noPlane = true;
   octreeState = OctreeCulled;
+  
   return;
 }
 
@@ -109,16 +111,6 @@ void			SceneNode::setColorOverride(bool on)
 #endif
     stipple  = &OpenGLGState::setStipple;
   }
-}
-
-void			SceneNode::getExtents(float* mins, float* maxs) const
-{
-  const float radius = sqrtf (sphere[3]);
-  for (int i = 0; i < 3; i++) {
-    mins[i] = sphere[i] - radius;
-    maxs[i] = sphere[i] + radius;
-  }
-  return;
 }
 
 bool			SceneNode::isTranslucent() const
@@ -201,15 +193,10 @@ bool			SceneNode::cull(const ViewFrustum& view) const
   return false;
 }
 
-bool SceneNode::inAxisBox (const float* mins, const float* maxs) const
+bool SceneNode::inAxisBox (const Extents& exts) const
 {
-  const GLfloat* sphere = getSphere();
-  const float radius = sqrtf (sphere[3]);
-  for (int i = 0; i < 3; i++) {
-    if (((float)sphere[i] + radius) < mins[i])
-      return false;
-    if (((float)sphere[i] - radius) > maxs[i])
-      return false;
+  if (!extents.touches(exts)) {
+    return false;
   }
   return true;
 }

@@ -565,17 +565,7 @@ void WallSceneNode::splitEdge(float d1, float d2,
 }
 
 
-void			WallSceneNode::getExtents (float* mins, float* maxs) const
-{
-  for (int i = 0; i < 3; i++) {
-    mins[i] = -1234.0f; // crazy numbers, it'd make this function pure
-    maxs[i] = +1234.0f; // virtual, except i'd have to fill in PolyWall, etc..
-  }
-  return;
-}
-
-
-bool			WallSceneNode::inAxisBox (const float*, const float*) const
+bool WallSceneNode::inAxisBox (const Extents& /*exts*/) const
 {
   // this should never happen, only the TriWallSceneNode
   // and QuadWallSceneNode version of this function will

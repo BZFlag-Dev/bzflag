@@ -2,13 +2,14 @@
 #include "SceneNode.h"
 #include "Frustum.h"
 #include "Intersect.h"
+#include "Extents.h"
 
 class Occluder {
   public:
     Occluder(SceneNode *node);
     ~Occluder();
     bool makePlanes(const Frustum* frustum);
-    IntersectLevel doCullAxisBox(const float* mins, const float* maxs);
+    IntersectLevel doCullAxisBox(const Extents& exts);
     bool doCullSceneNode(SceneNode* node);
     void addScore(unsigned int score);
     void divScore();
@@ -42,9 +43,8 @@ class OccluderManager {
     void update(const Frustum* frustum);
     void select(SceneNode** list, int listCount);
 
-    IntersectLevel occlude(const float* mins, const float* maxs,
-			   unsigned int score);
-    bool occludePeek(const float* mins, const float* maxs);
+    IntersectLevel occlude(const Extents& exts, unsigned int score);
+    bool occludePeek(const Extents& exts);
 
     int getOccluderCount () const;
     

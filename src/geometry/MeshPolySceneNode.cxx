@@ -223,18 +223,8 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   setSphere(sphere);
 
   // record extents info
-  mins[0] = mins[1] = mins[2] = +MAXFLOAT;
-  maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
   for (i = 0; i < count; i++) {
-    const float* point = vertices[i];
-    for (j = 0; j < 3; j++) {
-      if (point[j] < mins[j]) {
-	mins[j] = point[j];
-      }
-      if (point[j] > maxs[j]) {
-	maxs[j] = point[j];
-      }
-    }
+    extents.expandToPoint(vertices[i]);
   }
 
   return;
@@ -264,7 +254,7 @@ bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(mins, maxs, f) == Outside) {
+  if (testAxisBoxInFrustum(extents, f) == Outside) {
     return true;
   }
 
@@ -273,25 +263,14 @@ bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-void MeshPolySceneNode::getExtents (float* _mins, float* _maxs) const
+bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
 {
-  memcpy (_mins, mins, sizeof(float[3]));
-  memcpy (_maxs, maxs, sizeof(float[3]));
-  return;
-}
-
-
-bool MeshPolySceneNode::inAxisBox (const float* boxMins,
-				   const float* boxMaxs) const
-{
-  if ((mins[0] > boxMaxs[0]) || (maxs[0] < boxMins[0]) ||
-      (mins[1] > boxMaxs[1]) || (maxs[1] < boxMins[1]) ||
-      (mins[2] > boxMaxs[2]) || (maxs[2] < boxMins[2])) {
+  if (!extents.touches(exts)) {
     return false;
   }
 
-  return testPolygonInAxisBox (getVertexCount(), getVertices(), getPlane(),
-			       boxMins, boxMaxs);
+  return testPolygonInAxisBox (getVertexCount(), getVertices(),
+                               getPlane(), exts);
 }
 
 
