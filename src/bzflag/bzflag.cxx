@@ -973,8 +973,10 @@ int			main(int argc, char** argv)
   BundleMgr *bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
   World::setBundleMgr(bm);
 
-  if (db.hasValue("locale"))
-    World::setLocale(db.getValue("locale"));
+  if (db.hasValue("locale")) {
+    std::string locale = db.getValue("locale");
+    World::setLocale(locale);
+  }
 
   bool setPosition = false, setSize = false;
   int x = 0, y = 0, w = 0, h = 0;
