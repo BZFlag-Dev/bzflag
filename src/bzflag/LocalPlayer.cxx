@@ -372,7 +372,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (wantJump) {
     doJump();
     if (!wantJump) {
-      fireJumpJets();
       newVelocity[2] = oldVelocity[2];
       if ((lastObstacle != NULL) && !lastObstacle->isFlatTop()
 	  && BZDB.isTrue(StateDatabase::BZDB_NOCLIMB)) {
@@ -814,7 +813,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding))) {
     if (oldLocation != InAir) {
       if ((TimeKeeper::getCurrent() - bounceTime) > 0) {
-	this->doJump();
+	doJump();
       }
     }
     else {
@@ -1282,6 +1281,10 @@ void			LocalPlayer::doJump()
   setVelocity(newVelocity);
   location = InAir;
 
+  // setup the graphics
+  fireJumpJets();
+  
+  // setup the sound
   if (gettingSound) {
     if (flag == Flags::Wings) {
       playLocalSound(SFX_FLAP);
