@@ -22,6 +22,10 @@
 
 // FIXME - no tesselation is done on for shot lighting
 
+#ifndef GL_VERSION_1_1
+#warning OpenGL version 1.1 functionality is required by this file
+#endif
+
 
 //
 // MeshFragSceneNode::Geometry
