@@ -27,7 +27,7 @@
 #define VERSION "1.7g2"
 
 /* Bzflag internal version */
-#define BZVERSION 10707001
+#define BZVERSION 10707002
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
