@@ -830,18 +830,16 @@ int			main(int argc, char** argv)
   }
 
   // read resources
-  {
-    if (CFGMGR->read(getConfigFileName()))
-      startupInfo.hasConfiguration = true;
+  if (CFGMGR->read(getConfigFileName()))
+    startupInfo.hasConfiguration = true;
 
 #if !defined(_WIN32) & !defined(macintosh)
-    if (!startupInfo.hasConfiguration)
-      if (CFGMGR->read(getConfigFileName2()))
-        startupInfo.hasConfiguration = true;
+  if (!startupInfo.hasConfiguration)
+    if (CFGMGR->read(getConfigFileName2()))
+      startupInfo.hasConfiguration = true;
 #endif
-  }
 
-  (ServerListCache::get())->loadCache();
+  ServerListCache::get()->loadCache();
 
   // restore some configuration (command line overrides these)
   if (startupInfo.hasConfiguration) {
@@ -965,26 +963,25 @@ int			main(int argc, char** argv)
   // set data directory if user specified
   if (BZDB->isSet("directory"))
     PlatformFactory::getMedia()->setMediaDirectory(BZDB->get("directory"));
-
-    else
-    {
+  else
+  {
 #if defined(__APPLE__)
-	extern char *GetMacOSXDataPath(void);
-	PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
-	BZDB->set("directory", GetMacOSXDataPath());
-	BZDB->setPersistent("directory", false);
+    extern char *GetMacOSXDataPath(void);
+    PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
+    BZDB->set("directory", GetMacOSXDataPath());
+    BZDB->setPersistent("directory", false);
 #elif (defined(_WIN32) || defined(WIN32))
-	// What to put here?
+    // What to put here?
 #else
-	// It's only checking existence of l10n directory
-	DIR *localedir = opendir("data/l10n/");
-	if (localedir == NULL)
-	  PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
-	else {
-	  closedir(localedir);
-	}
-#endif
+    // It's only checking existence of l10n directory
+    DIR *localedir = opendir("data/l10n/");
+    if (localedir == NULL)
+      PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
+    else {
+      closedir(localedir);
     }
+#endif
+  }
 
   // set window size (we do it here because the OpenGL context isn't yet bound)
 
@@ -997,35 +994,35 @@ int			main(int argc, char** argv)
 
   bool setPosition = false, setSize = false;
   int x = 0, y = 0, w = 0, h = 0;
-  if (BZDB->isSet("geometry")) {
-    int count = 0;
-    char xs, ys;
-    std::string geometry = BZDB->get("geometry");
-    if (geometry == "default" ||
-	((count = sscanf(geometry.c_str(), "%dx%d%c%d%c%d",
-		&w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) ||
-	w < 0 || h < 0) {
-      BZDB->unset("geometry");
-    }
-    else if (count == 6 && ((xs != '-' && xs != '+') ||
-				(ys != '-' && ys != '+'))) {
-      BZDB->unset("geometry");
-    }
-    setSize = true;
-    if (w < 256)
-      w = 256;
-    if (h < 192)
-      h = 192;
-    if (count == 6) {
-      if (xs == '-')
-	x = display->getWidth() - x - w;
-      if (ys == '-')
-	y = display->getHeight() - y - h;
-      setPosition = true;
-    }
 
+  if (BZDB->isSet("geometry")) {
+    char xs, ys;
+    const std::string geometry = BZDB->get("geometry");
+    const int count = sscanf(geometry.c_str(), "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
+
+    if (geometry == "default" || (count != 6 && count != 2) || w < 0 || h < 0) {
+      BZDB->unset("geometry");
+    }
+    else if (count == 6 && ((xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
+      BZDB->unset("geometry");
+    }
+    else
+    {
+      setSize = true;
+      if (w < 256)
+        w = 256;
+      if (h < 192)
+        h = 192;
+      if (count == 6) {
+        if (xs == '-')
+          x = display->getWidth() - x - w;
+        if (ys == '-')
+          y = display->getHeight() - y - h;
+        setPosition = true;
+      }
       // must call this before setFullscreen() is called
       display->setPassthroughSize(w, h);
+    }
   }
 
   // set window size (we do it here because the OpenGL context isn't yet
