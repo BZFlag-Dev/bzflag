@@ -135,6 +135,7 @@ Address			Address::getHostAddress(const char* hname)
       return a;
   }
   else if (inet_aton(hname, &tempAddr) != 0) {
+    a.addr.clear();
     a.addr.push_back(tempAddr);
     return a;
   }
