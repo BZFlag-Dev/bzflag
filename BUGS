@@ -2,6 +2,8 @@ recent bugs
 ------------
 
 - world weapons seem to lag the server when there are many players joined.
+  might be related to a rapidly repeating world weapon as well (like once
+  a second).
 
 - SDL issues remaining are 1) pause on key-driving during spawn, 2)
   mouse-driving while windowed is flipped, 3) window flashes twice
