@@ -26,6 +26,7 @@
 #include "version.h"
 #include "TextUtils.h"
 #include "Protocol.h"
+#include "GameKeeper.h"
 
 extern Address serverAddress;
 extern PingPacket getTeamCounts();
@@ -253,12 +254,25 @@ void ListServerLink::addMe(PingPacket pingInfo,
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
   // TODO we probably should convert to a POST instead. List server now allows either
   // send ADD message (must send blank line)
-  msg = TextUtils::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s&title=%s HTTP/1.1\r\n"
-    "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
+  msg = TextUtils::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
     pathname.c_str(), publicizedAddress.c_str(),
     getServerVersion(), gameInfo,
-    getAppVersion(),
+    getAppVersion());
+// FIXME should be in a header someplace NOT an extern
+extern uint16_t curMaxPlayers;
+  msg += "&checktokens=";
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (playerData && strlen(playerData->player.getCallSign()) && strlen(playerData->player.getToken())) {
+      msg += TextUtils::format(playerData->player.getCallSign());
+      msg += "=";
+      msg += TextUtils::format(playerData->player.getToken());
+      msg += "%%0D%%0A";
+    }
+  }
+  msg += TextUtils::format("&title=%s HTTP/1.1\r\nUser-Agent: bzfs %s\r\nHost: %s\r\nCache-Control: no-cache\r\n\r\n",
     publicizedTitle.c_str(),
+    getAppVersion(),
     hostname.c_str());
   // TODO need to listen for user info replies and setup callsign for isAllowedToEnter()
   sendMessage(msg);
@@ -269,9 +283,10 @@ void ListServerLink::removeMe(std::string publicizedAddress)
   std::string msg;
   // send REMOVE (must send blank line)
   msg = TextUtils::format("GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
-    "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
+    "User-Agent: bzfs %s\r\nHost: %s\r\nCache-Control: no-cache\r\n\r\n",
     pathname.c_str(),
     publicizedAddress.c_str(),
+    getAppVersion(),
     hostname.c_str());
   sendMessage(msg);
 }
