@@ -940,11 +940,13 @@ static void		doAutoPilot(float &rotation, float &speed)
 		continue;
 
 #ifdef _MSC_VER
-	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
+	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
+		   || (myTank->getFlag()) == Flags::Wings))
 		  && (dist < (max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))
 		  && (myTank->getFlag() != Flags::NoJumping)) {
 #else
-	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
+	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
+		   || (myTank->getFlag()) == Flags::Wings))
 		  && (dist < (std::max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))
 		  && (myTank->getFlag() != Flags::NoJumping)) {
 #endif

@@ -330,7 +330,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       newVelocity[0] = movementMax * normalStuck[0];
       newVelocity[1] = movementMax * normalStuck[1];
-      if ((World::getWorld()->allowJumping() || (getFlag() == Flags::Jumping)) &&
+      if ((World::getWorld()->allowJumping() || (getFlag() == Flags::Jumping) || (getFlag() == Flags::Wings)) &&
 	  (getFlag() != Flags::NoJumping))
 	newVelocity[2] = movementMax * normalStuck[2];
       else
@@ -1009,7 +1009,7 @@ void			LocalPlayer::jump()
     return;
 
   // can only jump with a jumping flag or if jumping is allowed for all
-  if (getFlag() != Flags::Jumping && !World::getWorld()->allowJumping())
+  if (getFlag() != Flags::Jumping && getFlag() != Flags::Wings && !World::getWorld()->allowJumping())
     return;
   if (getFlag() == Flags::NoJumping)
     return;
