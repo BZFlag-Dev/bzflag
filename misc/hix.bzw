@@ -77,24 +77,24 @@ end
 
 # walls under crossbars
 box
-position 180.0 180.0 0.0
+position 180.0 180.0 15.0
 rotation 2.3561944875
-size     0.5 150.0 29.0
+size     0.5 150.0 14.0
 end
 box
-position -180.0 -180.0 0.0
+position -180.0 -180.0 15.0
 rotation 2.3561944875
-size     0.5 150.0 29.0
+size     0.5 150.0 14.0
 end
 box
-position 180.0 -180.0 0.0
+position 180.0 -180.0 15.0
 rotation 0.7853981625
-size     0.5 150.0 29.0
+size     0.5 150.0 14.0
 end
 box
-position -180.0 180.0 0.0
+position -180.0 180.0 15.0
 rotation 0.7853981625
-size     0.5 150.0 29.0
+size     0.5 150.0 14.0
 end
 # fat walls along base
 box
