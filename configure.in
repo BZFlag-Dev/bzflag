@@ -217,7 +217,24 @@ esac;
 
 
 # Check for functions
-AC_CHECK_FUNCS([getrlimit atexit])
+AC_CHECK_FUNCS(\
+	asinf \
+	atan2f \
+	atanf \
+	atexit \
+	cosf \
+	expf \
+	fabsf \
+	floorf \
+	fmodf \
+	getrlimit \
+	hypotf \
+	logf \
+	powf \
+	sinf \
+	sqrtf \
+	tanf \
+)
 
 
 # for BeOS - old network stack don't have those libs ( move it in the case switch ?)
