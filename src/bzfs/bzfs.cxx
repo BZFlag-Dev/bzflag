@@ -2708,6 +2708,7 @@ static void acceptClient()
   player[playerIndex].outmsgSize = 0;
   player[playerIndex].outmsgOffset = 0;
   player[playerIndex].outmsgCapacity = 0;
+  player[playerIndex].lastState.order = 0;
 #ifdef NETWORK_STATS
   initPlayerMessageStats(playerIndex);
 #endif
