@@ -63,14 +63,6 @@ public:
   virtual void		makeContext();
   virtual void		freeContext();
 
-
-  /*
-    virtual void		initJoystick(const char* joystickName);
-    virtual bool		joystick() const { return false; }
-    virtual void		getJoystick(float& x, float& y) const
-    { x = 0.0f; y = 0.0f; }
-    virtual unsigned long getJoyButtons() const { return 0; }
-  */
   /* other methods */
 
   //  bool				applyVisual(BeOSVisual* _visual);
