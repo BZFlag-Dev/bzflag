@@ -2444,6 +2444,8 @@ static void playerAlive(int playerIndex)
     sendMessage(ServerPlayer, playerIndex, "This server requires identification before you can join");
     sendMessage(ServerPlayer, playerIndex, "Please use /identify, or /register if you have not registerd your callsign or");
     sendMessage(ServerPlayer, playerIndex, "register on http://my.BZFlag.org/bb/ and use that callsign/password.");
+    // client won't send another enter so kick em =(
+    removePlayer(playerIndex, "unidentified");
     return;
   }
 
