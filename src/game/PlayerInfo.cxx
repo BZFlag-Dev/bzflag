@@ -60,10 +60,6 @@ void PlayerInfo::signingOn() {
   state = PlayerDead;
 };
 
-bool PlayerInfo::isAlive() {
-  return state == PlayerAlive;
-};
-
 void PlayerInfo::setAlive() {
   state = PlayerAlive;
   paused = false;

@@ -2488,7 +2488,7 @@ static void playerAlive(int playerIndex)
 
   // ignore multiple MsgAlive; also observer should not send MsgAlive;
   // diagnostic?
-  if (!playerData->player.isDead() || playerData->player.isObserver())
+  if (playerData->player.isAlive() || playerData->player.isObserver())
     return;
 
   // make sure the user identifies themselves if required.
@@ -2935,7 +2935,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   bool repack = false;
   const PlayerInfo &shooter = playerData->player;
-  if (shooter.isDead() || shooter.isObserver())
+  if (!shooter.isAlive() || shooter.isObserver())
     return;
   FiringInfo firingInfo;
   firingInfo.unpack(buf);
