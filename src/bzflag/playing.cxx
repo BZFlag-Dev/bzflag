@@ -666,8 +666,8 @@ class SilenceDefaultKey : public HUDuiDefaultKey {
 
 SilenceDefaultKey::SilenceDefaultKey()
 {
-
 }
+
 bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
