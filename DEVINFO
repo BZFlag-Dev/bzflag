@@ -146,6 +146,25 @@ the non-conformant code's style if following the rules would cause an ugly
 mess.
 
 
+Testing
+=======
+
+If you have rendering problems, you might want to try setting:
+
+LIBGL_ALWAYS_INDIRECT=1
+
+On many systems this will force software rendering.  It will greatly
+reduce the performance, but may assist in solving rendering issues.
+
+A debug build may be specified via:
+
+./configure --enable-debug
+
+A profile build is specified via:
+
+./configure --enable-profile
+
+
 Sounds
 ======
 Sounds are stored as 22.050KHz WAV files. We will likely move to OGG.
@@ -182,16 +201,19 @@ common.h	-- basic types and function declarations
 ErrorHandler	-- a central place for printing errors (using printError())
 TimeBomb	-- used for expiring development releases
 
+
 Details -- geometry
 ===================
 Intersect	-- 2D and 3D intersection functions
 Ray		-- a 3D ray
 ViewFrustum	-- a 3D viewing frustum
 
+
 Details -- net
 ==============
 Contains stuff for network handling.  This is in flux.  All platform specific
 network code should end up in here.
+
 
 Details -- obstacle
 ===================
@@ -199,6 +221,7 @@ Collision detection stuff.  Currently specific to BZFlag it handles boxes,
 pyramids, teleporters, etc.  This should be rewritten to do generic 3D
 collision detection on, at least, convex polyhedra.  It should also do
 collision response.
+
 
 Details -- ogl
 ==============
@@ -208,6 +231,7 @@ places outside this library where OpenGL is used, though.  Ideally all
 rendering library calls would go through a library agnostic interface.
 However, OpenGL has the widest support of any rendering library so this is
 pretty much a non-issue (unless someone wants to port to a game console).
+
 
 Details -- platform
 ===================
@@ -224,21 +248,24 @@ which handles:
   signal handling
 Configuration files are platform independent but their location is not.
 
+
 Details -- scene
 ================
 FIXME
+
 
 Details -- mediafile
 ====================
 Contains loaders for image and sound files
 
+
 Details -- zlib
 ===============
 zlib compression library for PNG decompression
 
-Details -- Version numbers
-===============
 
+Details -- Version numbers
+==========================
 The BZFlag versioning info is defined in:   include/version.h
 
 There are a number of #defines in that file that define the Major, Minor,
@@ -283,4 +310,60 @@ build.
 
 BuildDate represents the date of the build in the format YYYYMMDD.  This string
 is generated during runtime by the compiler's preprocessor __DATE__ macro.
+
+
+Making a Release
+================
+
+In order to make a release, there are handful of steps that need to be
+taken.  If any step fails to be completed successfully, the release
+cannot proceed.  A checklist of items to be completed follows:
+
+- All code is commited to CVS
+
+- ChangeLog includes a comment for all items added since the previous
+  release, preferably denoting who made what changes.
+
+- Version numbers are updated to the next expected release number.
+  This minimally includes updating README, configure.in, and
+  ChangeLog.  Other platform-specific README.* files should also be
+  verfied that all version numbers are up-to-date.
+
+- Perform a "make distcheck".  This will verify that a proper source
+  distribution can be made.
+
+- Tag the release.  Tag format should be consistent with the other
+  tags using the format of vMAJOR_MINOR_RELEASE 
+	e.g.cvs tag v1_10_2
+
+- Perform a "cvs export -r vMAJOR_MINOR_RELEASE" from somehwere else
+  in the filesystem to obtain a tagged version of the sources.
+
+- Perform a "make dist" of that export to generate a source release
+  tarball.
+
+- Verify that the source tarball can be expanded, builds, and runs.
+
+- Build platform-specific binaries from the source tarball.
+
+- Post the source tarball and platform-specific binaries to
+  SourceForge.
+
+- Increment and commit the version number in the CVS source
+  configure.in file so that later builds are immediately
+  distiguished..
+
+- Notify the following (at least):
+
+bzflag-users@lists.SourceForge.net
+news on http://BZFlag.org/
+news on http://sourceforge.net/projects/bzflag/
+http://slashdot.org/
+http://freshmeat.net/projects/bzflag/ (rank BZFlag here!)
+http://happypenguin.org/ (BZFlag is now #2 in the ratings!)
+news@linuxgames.com - http://LinuxGames.com/
+John Gowin <jgowin@linuxorbit.com> (thanx for the review!)
+jd@linuxgaming.co.uk
+updates@superdownloads.com.br
+mail -s add LSM@execpc.com < bzflag.lsm
 
