@@ -287,7 +287,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       // FIXME -- is 20kB too big?  too small?
       if (newCapacity >= 20 * 1024) {
 	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
-	    p.callSign, playerIndex, p.outmsgSize + l);
+	    p.getCallSign(), playerIndex, p.outmsgSize + l);
 	player[playerIndex].toBeKicked = true;
 	player[playerIndex].toBeKickedReason = "send queue too big";
 	return;
@@ -465,13 +465,15 @@ static int uread(int *playerIndex, int *nopackets, int& n,
       if ((pi <= curMaxPlayers) && !player[pi].udpin) {
 	if (memcmp(&player[pi].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
 	  DEBUG2("Player %s [%d] inbound UDP up %s:%d actual %d\n",
-	      player[pi].callSign, pi, inet_ntoa(player[pi].uaddr.sin_addr),
+	      player[pi].getCallSign(), pi,
+		 inet_ntoa(player[pi].uaddr.sin_addr),
 	      ntohs(player[pi].uaddr.sin_port),
 	      ntohs(uaddr.sin_port));
 	  createUDPcon(pi, ntohs(uaddr.sin_port));
 	} else {
 	  DEBUG2("Player %s [%d] inbound UDP rejected %s:%d different IP than %s:%d\n",
-	      player[pi].callSign, pi, inet_ntoa(player[pi].uaddr.sin_addr),
+		 player[pi].getCallSign(), pi,
+		 inet_ntoa(player[pi].uaddr.sin_addr),
 	      ntohs(player[pi].uaddr.sin_port),
 	      inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
 	  pi = (PlayerId)curMaxPlayers;
@@ -503,7 +505,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   *playerIndex = pi;
   pPlayerInfo = &player[pi];
   DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
-      pPlayerInfo->callSign, pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+      pPlayerInfo->getCallSign(), pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
       ntohs(pPlayerInfo->uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
       ntohs(uaddr.sin_port), udpSocket);
 
@@ -1576,7 +1578,7 @@ static void dumpScore()
   for (i = 0; i < curMaxPlayers; i++)
     if (player[i].isPlaying())
       std::cout << player[i].wins << '-' << player[i].losses << ' ' <<
-      		   player[i].callSign << std::endl;
+      		   player[i].getCallSign() << std::endl;
   std::cout << "#end\n";
 }
 #endif
@@ -1786,27 +1788,10 @@ static void fixTeamCount() {
 
 static void addPlayer(int playerIndex)
 {
-  // strip leading whitespace from callsign
-  char *sp = player[playerIndex].callSign;
-  char *tp = sp;
-  while (isspace(*sp))
-    sp++;
-
-  // strip any non-printable characters and ' and " from callsign
-  do {
-    if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
-      *tp++ = *sp;
-    }
-  } while (*++sp);
-  *tp = *sp;
-
-  // strip trailing whitespace from callsign
-  while (isspace(*--tp)) {
-    *tp=0;
-  }
+  player[playerIndex].cleanCallSign();
 
   // don't allow empty callsign
-  if (player[playerIndex].callSign[0] == '\0')
+  if (player[playerIndex].getCallSign()[0] == '\0')
     rejectPlayer(playerIndex, RejectBadCallsign);
 
   // look if there is as name clash, we won't allow this
@@ -1814,7 +1799,8 @@ static void addPlayer(int playerIndex)
   for (i = 0; i < curMaxPlayers; i++) {
     if (i == playerIndex || !player[i].isPlaying())
       continue;
-    if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0) {
+    if (strcasecmp(player[i].getCallSign(),
+		   player[playerIndex].getCallSign()) == 0) {
       rejectPlayer(playerIndex, RejectRepeatCallsign);
       return;
     }
@@ -1822,10 +1808,10 @@ static void addPlayer(int playerIndex)
 
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
-    DEBUG2("checking callsign: %s\n",player[playerIndex].callSign);
+    DEBUG2("checking callsign: %s\n",player[playerIndex].getCallSign());
     bool filtered = false;
     char cs[CallSignLen];
-    memcpy(cs, player[playerIndex].callSign, sizeof(char) * CallSignLen);
+    memcpy(cs, player[playerIndex].getCallSign(), sizeof(char) * CallSignLen);
     filtered = clOptions->filter.filter(cs, clOptions->filterSimple);
     if (filtered) {
       rejectPlayer(playerIndex, RejectBadCallsign);
@@ -1833,26 +1819,16 @@ static void addPlayer(int playerIndex)
     }
   }
 
-  // callsign readability filter, make sure there are more alphanum than non
-  // keep a count of alpha-numerics
-  int alnumCount = 0;
-  sp = player[playerIndex].callSign;
-  do {
-    if (isalnum(*sp)) {
-      alnumCount++;
-    }
-  } while (*++sp);
-  int callsignlen = strlen(player[playerIndex].callSign);
-  if ((callsignlen > 4) && 
-      ((((float)callsignlen - (float)alnumCount) / (float)callsignlen) > 0.5f)) {
-    DEBUG2("rejecting unreadable callsign: %s\n", player[playerIndex].callSign);
+  if (!player[playerIndex].isCallSignReadable()) {
+    DEBUG2("rejecting unreadable callsign: %s\n",
+	   player[playerIndex].getCallSign());
     rejectPlayer(playerIndex, RejectBadCallsign);
   }
 
 
   // strip leading whitespace from email
-  sp = player[playerIndex].email;
-  tp = sp;
+  char *sp = player[playerIndex].email;
+  char *tp = sp;
   while (isspace(*sp))
     sp++;
 
@@ -1893,7 +1869,7 @@ static void addPlayer(int playerIndex)
   if ((emaillen > 4) && 
       ((((float)emaillen - (float)emailAlnumCount) / (float)emaillen) > 0.5f)) {
     DEBUG2("rejecting unreadable player email: %s (%s)\n", 
-	   player[playerIndex].callSign,
+	   player[playerIndex].getCallSign(),
 	   player[playerIndex].email);
     rejectPlayer(playerIndex, RejectBadEmail);
   }
@@ -2453,7 +2429,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // if there is an active poll, cancel any vote this player may have made
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
   if ((arbiter != NULL) && (arbiter->knowsPoll())) {
-    arbiter->retractVote(std::string(player[playerIndex].callSign));
+    arbiter->retractVote(std::string(player[playerIndex].getCallSign()));
   }
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle))
@@ -2990,7 +2966,7 @@ static void grabFlag(int playerIndex, int flagIndex)
 
   if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
        DEBUG2("Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
-    player[playerIndex].callSign, playerIndex,
+    player[playerIndex].getCallSign(), playerIndex,
     tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
     return;
   }
@@ -3246,7 +3222,8 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify playerId
   if (shot.player != playerIndex) {
-    DEBUG2("Player %s [%d] shot playerid mismatch\n", shooter.callSign, playerIndex);
+    DEBUG2("Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
+	   playerIndex);
     return;
   }
 
@@ -3258,7 +3235,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify player flag
   if ((firingInfo.flagType != Flags::Null) && (firingInfo.flagType != flag[shooter.flag].flag.type)) {
-    DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.callSign,
+    DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
 	   playerIndex, firingInfo.flagType->flagAbbv, flag[shooter.flag].flag.type->flagAbbv);
     firingInfo.flagType = Flags::Null;
     firingInfo.shot.vel[0] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * cos(shooter.lastState.azimuth);
@@ -3268,7 +3245,8 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify shot number
   if ((shot.id & 0xff) > clOptions->maxShots - 1) {
-    DEBUG2("Player %s [%d] shot id out of range %d %d\n", shooter.callSign,
+    DEBUG2("Player %s [%d] shot id out of range %d %d\n",
+	   shooter.getCallSign(),
 	   playerIndex,	shot.id & 0xff, clOptions->maxShots);
     return;
   }
@@ -3300,14 +3278,15 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify lifetime
   if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
-    DEBUG2("Player %s [%d] shot lifetime mismatch %f %f\n", shooter.callSign,
+    DEBUG2("Player %s [%d] shot lifetime mismatch %f %f\n",
+	   shooter.getCallSign(),
 	   playerIndex, firingInfo.lifetime, lifetime);
     return;
   }
 
   // verify velocity
   if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f) {
-    DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.callSign,
+    DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(),
 	   playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
 	   shotSpeed);
     return;
@@ -3326,7 +3305,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   if (delta > (BZDB.eval(StateDatabase::BZDB_TANKSPEED) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD) + front) *
 	      (BZDB.eval(StateDatabase::BZDB_TANKSPEED) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD) + front)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
-	    shooter.callSign, playerIndex,
+	    shooter.getCallSign(), playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
 	    shooter.lastState.pos[0], shooter.lastState.pos[1],
 	    shooter.lastState.pos[2], sqrt(delta));
@@ -3681,7 +3660,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       delete[] versionString;
 
       DEBUG2("Player %s [%d] sent version string: %s\n", 
-	player[t].callSign, t, player[t].clientVersion.c_str());
+	player[t].getCallSign(), t, player[t].clientVersion.c_str());
       break;
     }
 
@@ -3775,7 +3754,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = nboUnpackUByte(buf, targetPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
-      DEBUG1("Player %s [%d]: %s\n",player[t].callSign, t, message);
+      DEBUG1("Player %s [%d]: %s\n",player[t].getCallSign(), t, message);
       // check for command
       if (message[0] == '/') {
 				/* make commands case insensitive for user-friendlyness */
@@ -3848,7 +3827,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     case MsgUDPLinkEstablished:
       player[t].udpout = true;
-      DEBUG2("Player %s [%d] outbound UDP up\n", player[t].callSign, t);
+      DEBUG2("Player %s [%d] outbound UDP up\n", player[t].getCallSign(), t);
       break;
 
     case MsgNewRabbit: {
@@ -3896,7 +3875,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  // Should check why!
 // 	  char message[MessageLen];
 	  DEBUG1("kicking Player %s [%d] Invalid Id %s [%d]\n",
-		 player[t].callSign, t, player[id].callSign, id);
+		 player[t].getCallSign(), t, player[id].getCallSign(), id);
 // 	  strcpy(message, "Autokick: Using invalid PlayerId, don't cheat.");
 // 	  sendMessage(ServerPlayer, t, message, true);
 // 	  removePlayer(t, "Using invalid PlayerId");
@@ -3941,7 +3920,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
 
 	  if (state.pos[2] > maxTankHeight) {
-	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n", player[t].callSign, t, maxTankHeight, state.pos[2]);
+	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n", player[t].getCallSign(), t, maxTankHeight, state.pos[2]);
 	    sendMessage(ServerPlayer, t, "Autokick: Player location was too high.", true);
 	    removePlayer(t, "too high");
 	    break;
@@ -3970,7 +3949,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	// kick em cus they are most likely cheating or using a buggy client
 	if (!InBounds)
 	{
-	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].callSign, t, state.pos[0], state.pos[1], state.pos[2]);
+	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].getCallSign(), t, state.pos[0], state.pos[1], state.pos[2]);
 	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.", true);
 	  removePlayer(t, "Out of map bounds");
 	}
@@ -4023,11 +4002,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	    if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	      if (logOnly) {
 		DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-		player[t].callSign, t,
+		player[t].getCallSign(), t,
 		sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	      } else {
 		DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-		       player[t].callSign, t,
+		       player[t].getCallSign(), t,
 		       sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 		sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.", true);
 		removePlayer(t, "too fast");
@@ -4515,7 +4494,8 @@ int main(int argc, char **argv)
           if (idletime >
 	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
 	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh)) {
-            DEBUG1("Kicking player %s [%d] idle %d\n", player[i].callSign, i, idletime);
+            DEBUG1("Kicking player %s [%d] idle %d\n", player[i].getCallSign(),
+		   i, idletime);
             char message[MessageLen] = "You were kicked because you were idle too long";
             sendMessage(ServerPlayer, i,  message, true);
             removePlayer(i, "idling");
@@ -4680,7 +4660,8 @@ int main(int argc, char **argv)
 		bool foundPlayer = false;
 		int v;
 		for (v = 0; v < curMaxPlayers; v++) {
-		  if (strncmp(player[v].callSign, target.c_str(), 256) == 0) {
+		  if (strncmp(player[v].getCallSign(),
+			      target.c_str(), 256) == 0) {
 		    foundPlayer = true;
 		    break;
 		  }

@@ -497,6 +497,45 @@ void PlayerInfo::getLagStats(char* msg) {
   }
 };
 
+const char *PlayerInfo::getCallSign() const {
+  return callSign;
+};
+
+void PlayerInfo::cleanCallSign() {
+  // strip leading whitespace from callsign
+  char *sp = callSign;
+  char *tp = sp;
+  while (isspace(*sp))
+    sp++;
+
+  // strip any non-printable characters and ' and " from callsign
+  do {
+    if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
+      *tp++ = *sp;
+    }
+  } while (*++sp);
+  *tp = *sp;
+
+  // strip trailing whitespace from callsign
+  while (isspace(*--tp)) {
+    *tp=0;
+  }
+};
+
+bool PlayerInfo::isCallSignReadable() {
+  // callsign readability filter, make sure there are more alphanum than non
+  // keep a count of alpha-numerics
+  int alnumCount = 0;
+  const char *sp = callSign;
+  do {
+    if (isalnum(*sp)) {
+      alnumCount++;
+    }
+  } while (*++sp);
+  int callsignlen = strlen(callSign);
+  return (callsignlen <= 4) || ((float)alnumCount / (float)callsignlen > 0.5f);
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -137,6 +137,9 @@ public:
   void       *packUpdate(void *buf);
   void       *unpackEnter(void *buf);
   void        getLagStats(char* msg);
+  const char *getCallSign() const;
+  void        cleanCallSign();
+  bool        isCallSignReadable();
 private:
     // player access
     PlayerAccessInfo accessInfo;
@@ -161,9 +164,9 @@ private:
     ClientState state;
     // type of player
     PlayerType type;
-public:
     // player's pseudonym
     char callSign[CallSignLen];
+public:
     // player's email address
     char email[EmailLen];
     // player's team

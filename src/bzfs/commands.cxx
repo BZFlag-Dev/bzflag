@@ -317,14 +317,16 @@ void handleKickCmd(int t, const char *message)
   const char *victimname = argv[1].c_str();
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isConnected() && strcasecmp(player[i].callSign, victimname) == 0) {
+    if (player[i].isConnected() && strcasecmp(player[i].getCallSign(),
+					      victimname) == 0) {
       break;
     }
   }
   
   if (i < curMaxPlayers) {
     char kickmessage[MessageLen];
-    sprintf(kickmessage, "You were kicked off the server by %s", player[t].callSign);
+    sprintf(kickmessage, "You were kicked off the server by %s",
+	    player[t].getCallSign());
     sendMessage(ServerPlayer, i, kickmessage, true);
     if (argv.size() > 2) {
       sprintf(kickmessage, " reason given : %s",argv[2].c_str());
@@ -389,14 +391,16 @@ void handleBanCmd(int t, const char *message)
     if (argv.size() == 4)
       reason = argv[3];
 
-    if (clOptions->acl.ban(ip, player[t].callSign, durationInt, reason.c_str())) {
+    if (clOptions->acl.ban(ip, player[t].getCallSign(), durationInt,
+			   reason.c_str())) {
       clOptions->acl.save();
       strcpy(reply, "IP pattern added to banlist");
       char kickmessage[MessageLen];
       for (int i = 0; i < curMaxPlayers; i++) {
 	if (player[i].isConnected()
 	    && !clOptions->acl.validate(player[i].taddr.sin_addr)) {
-	  sprintf(kickmessage,"You were banned from this server by %s", player[t].callSign);
+	  sprintf(kickmessage,"You were banned from this server by %s",
+		  player[t].getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage, true);
 	  if (reason.length() > 0) {
 	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
@@ -442,14 +446,16 @@ void handleHostBanCmd(int t, const char *message)
     if( argv.size() == 4 )
       reason = argv[3];
 
-    clOptions->acl.hostBan(hostpat, player[t].callSign, durationInt, reason.c_str());
+    clOptions->acl.hostBan(hostpat, player[t].getCallSign(), durationInt,
+			   reason.c_str());
     clOptions->acl.save();
 #ifdef HAVE_ADNS_H
     strcpy(reply, "Host pattern added to banlist");
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
       if ((player[i].fd != NotConnected) && player[i].hostname && (!clOptions->acl.hostValidate(player[i].hostname))) {
-	sprintf(kickmessage,"You were banned from this server by %s", player[t].callSign);
+	sprintf(kickmessage,"You were banned from this server by %s",
+		player[t].getCallSign());
 	sendMessage(ServerPlayer, i, kickmessage, true);
 	if( reason.length() > 0 ){
 	  sprintf(kickmessage,"Reason given: %s", reason.c_str());
@@ -556,7 +562,7 @@ void handleIdlestatsCmd(int t, const char *)
   std::string reply;
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isPlaying() && player[i].team != ObserverTeam) {
-      reply = string_util::format("%-16s : %4ds", player[i].callSign, 
+      reply = string_util::format("%-16s : %4ds", player[i].getCallSign(), 
 				  int(now - player[i].lastupdate));
       if (player[i].paused) {
 	reply += string_util::format("  paused %4ds",
@@ -581,7 +587,7 @@ void handleFlaghistoryCmd(int t, const char *)
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].isPlaying() && player[i].team != ObserverTeam) {
       char flag[MessageLen];
-      sprintf(reply,"%-16s : ", player[i].callSign );
+      sprintf(reply,"%-16s : ", player[i].getCallSign() );
       std::vector<FlagType*>::iterator fhIt = player[i].flagHistory.begin();
 
       while (fhIt != player[i].flagHistory.end()) {
@@ -629,7 +635,7 @@ void handleReportCmd(int t, const char *message)
     char* timeStr = ctime(&now);
     std::string reportStr;
     reportStr = reportStr + timeStr + "Reported by " +
-      player[t].callSign + ": " + (message + 8);
+      player[t].getCallSign() + ": " + (message + 8);
     if (clOptions->reportFile.size() > 0) {
       std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
       ofs << reportStr << std::endl << std::endl;
@@ -647,7 +653,8 @@ void handleReportCmd(int t, const char *message)
       sprintf(reply, "The /report command is disabled on this server.");
     } else {
       sprintf(reply, "Your report has been filed. Thank you.");
-      DEBUG1("Player %s [%d] has filed a report (time: %s).\n", player[t].callSign, t, timeStr);
+      DEBUG1("Player %s [%d] has filed a report (time: %s).\n",
+	     player[t].getCallSign(), t, timeStr);
     }
   }
   sendMessage(ServerPlayer, t, reply, true);
@@ -773,7 +780,7 @@ void handleGhostCmd(int t, const char *message)
 	  sendMessage(ServerPlayer, t, "Ghosting User");
 	  char temp[MessageLen];
 	  sprintf(temp, "Your Callsign is registered to another user,"
-		  " You have been ghosted by %s", player[t].callSign);
+		  " You have been ghosted by %s", player[t].getCallSign());
 	  sendMessage(ServerPlayer, user, temp, true);
 	  removePlayer(user, "Ghost");
 	}
@@ -961,7 +968,8 @@ void handleSetgroupCmd(int t, const char *message)
 	  int getID = getPlayerIDByRegName(settie);
 	  if (getID != -1) {
 	    char temp[MessageLen];
-	    sprintf(temp, "you have been added to the %s group, by %s", group.c_str(), player[t].callSign);
+	    sprintf(temp, "you have been added to the %s group, by %s",
+		    group.c_str(), player[t].getCallSign());
 	    sendMessage(ServerPlayer, getID, temp, true);
 	    player[getID].setGroup(group);
 	  }
@@ -1006,7 +1014,8 @@ void handleRemovegroupCmd(int t, const char *message)
 	  int getID = getPlayerIDByRegName(settie);
 	  if (getID != -1) {
 	    char temp[MessageLen];
-	    sprintf(temp, "You have been removed from the %s group, by %s", group.c_str(), player[t].callSign);
+	    sprintf(temp, "You have been removed from the %s group, by %s",
+		    group.c_str(), player[t].getCallSign());
 	    sendMessage(ServerPlayer, getID, temp, true);
 	    player[getID].resetGroup(group);
 	  }
@@ -1077,7 +1086,7 @@ void handleReloadCmd(int t, const char *)
 void handlePollCmd(int t, const char *message)
 {
   char reply[MessageLen] = {0};
-  std::string callsign = std::string(player[t].callSign);
+  std::string callsign = std::string(player[t].getCallSign());
 
   DEBUG2("Entered poll command handler (MessageLen is %d)\n", MessageLen);
 
@@ -1314,7 +1323,7 @@ void handlePollCmd(int t, const char *message)
 void handleVoteCmd(int t, const char *message)
 {
   char reply[MessageLen] = {0};
-  std::string callsign = std::string(player[t].callSign);
+  std::string callsign = std::string(player[t].getCallSign());
 
   if (!hasPerm(t, PlayerAccessInfo::vote)) {
     /* permission denied for /vote */
@@ -1434,7 +1443,10 @@ void handleVetoCmd(int t, const char * /*message*/)
 {
   if (!hasPerm(t, PlayerAccessInfo::veto)) {
     /* permission denied for /veto */
-    sendMessage(ServerPlayer, t, string_util::format("%s, you are presently not authorized to run /veto", player[t].callSign).c_str(), true);
+    sendMessage(ServerPlayer, t,
+		string_util::format
+		("%s, you are presently not authorized to run /veto",
+		 player[t].getCallSign()).c_str(), true);
     return;
   }
 
@@ -1449,16 +1461,26 @@ void handleVetoCmd(int t, const char * /*message*/)
 
   /* make sure there is an unexpired poll */
   if ((arbiter != NULL) && !arbiter->knowsPoll()) {
-    sendMessage(ServerPlayer, t, string_util::format("%s, there is presently no active poll to veto", player[t].callSign).c_str(), true);
+    sendMessage(ServerPlayer, t,
+		string_util::format
+		("%s, there is presently no active poll to veto",
+		 player[t].getCallSign()).c_str(), true);
     return;
   }
 
-  sendMessage(ServerPlayer, t, string_util::format("%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str()).c_str(), true);
+  sendMessage(ServerPlayer, t,
+	      string_util::format("%s, you have cancelled the poll to %s %s",
+				  player[t].getCallSign(),
+				  arbiter->getPollAction().c_str(),
+				  arbiter->getPollTarget().c_str()).c_str(),
+	      true);
 
   /* poof */
   arbiter->forgetPoll();
 
-  sendMessage(ServerPlayer, AllPlayers, string_util::format("The poll was cancelled by %s", player[t].callSign).c_str(), true);
+  sendMessage(ServerPlayer, AllPlayers,
+	      string_util::format("The poll was cancelled by %s",
+				  player[t].getCallSign()).c_str(), true);
 
   return;
 }
@@ -1482,7 +1504,7 @@ void handleViewReportsCmd(int t, const char * /*message*/)
 
 void handleClientqueryCmd(int t, const char * /*message*/)
 {
-  DEBUG2("Clientquery requested by %s [%d]\n", player[t].callSign, t);
+  DEBUG2("Clientquery requested by %s [%d]\n", player[t].getCallSign(), t);
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
   sendMessage(ServerPlayer, t, string_util::format("BZFS Version: %s", getAppVersion()).c_str());
