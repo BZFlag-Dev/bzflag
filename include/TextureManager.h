@@ -45,6 +45,8 @@ public:
   void addTexture( TextureType type, OpenGLTexture *texture );
   void addTexture( TextureType type, int variant, OpenGLTexture *texture );
   
+  static OpenGLTexture* noiseProc( ProcTextureInit &init );
+
 protected:
   friend class Singleton<TextureManager>;
   ~TextureManager();
@@ -55,6 +57,7 @@ private:
   TextureManager& operator=(const TextureManager &tm);
   
   OpenGLTexture* loadTexture( FileTextureInit &init );
+
   
   std::map<int, OpenGLTexture*> m_Textures;
 };

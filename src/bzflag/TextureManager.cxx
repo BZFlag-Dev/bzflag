@@ -56,11 +56,9 @@ FileTextureInit fileLoader[] =
 	{ TX_FLAG, NO_VARIANT, "flag", OpenGLTexture::Max },
 };
 
-OpenGLTexture *noiseProc(ProcTextureInit &init);
-
 ProcTextureInit procLoader[] = 
 {
-	{ TX_NOISE, NO_VARIANT, noiseProc, OpenGLTexture::Nearest },
+	{ TX_NOISE, NO_VARIANT, TextureManager::noiseProc, OpenGLTexture::Nearest },
 };
 
 
@@ -123,7 +121,7 @@ OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
 
 /* --- Procs --- */
 
-OpenGLTexture *noiseProc(ProcTextureInit &init)
+OpenGLTexture *TextureManager::noiseProc(ProcTextureInit &init)
 {
   const int size = 4 * 128 * 128;
   unsigned char* noise = new unsigned char[size];

@@ -126,6 +126,11 @@ class OpenGLTexture {
     static Filter	filter;
     static const char*	configFilterValues[];
     static Rep*		lastRep;
+
+    void* operator new(size_t s) { return ::operator new(s);}
+    void  operator delete(void *p) {::operator delete(p);}
+    friend class TextureManager;
+
 };
 
 //
