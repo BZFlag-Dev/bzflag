@@ -1019,7 +1019,7 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("password")) {
       strncpy(startupInfo.password, BZDB.get("password").c_str(),
 					sizeof(startupInfo.password) - 1);
-      startupInfo.callsign[sizeof(startupInfo.password) - 1] = '\0';
+      startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
     }
 
     if (BZDB.isSet("team")) {
