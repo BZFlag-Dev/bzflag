@@ -709,12 +709,12 @@ void			HUDRenderer::renderStatus(void)
 
   // print current position of tank
   if (BZDB.isTrue("showCoordinates")) {
-    y -= 1.5*h;
+    y -= float(1.5*h);
     sprintf(buffer, "[%d %d %d]", (int)player->getPosition()[0], 
      	    (int)player->getPosition()[1], (int)player->getPosition()[2]);
     x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
-    y += 1.5*h;
+    y += float(1.5*h);
   }
 
   // print status top-center
