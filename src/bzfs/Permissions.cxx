@@ -443,7 +443,7 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 		
 		// Operators are not allowed for userdb
 		if ( !info.groupState.test(PlayerAccessInfo::isGroup) && first != NULL){
-			DEBUG1("userdb: illegal permission string, operators are not allowed in udserdb\n");
+			DEBUG1("userdb: illegal permission string, operators are not allowed in userdb\n");
 			return;
 		}
 		
