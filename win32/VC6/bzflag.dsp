@@ -358,6 +358,10 @@ SOURCE=..\..\src\bzflag\ServerListCache.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ShockWaveStrategy.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\ShotPath.cxx
 # End Source File
 # Begin Source File
@@ -811,6 +815,10 @@ SOURCE=..\..\src\bzflag\ServerLink.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ServerListCache.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShockWaveStrategy.h
 # End Source File
 # Begin Source File
 
