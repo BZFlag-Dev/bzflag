@@ -183,13 +183,15 @@ void			Player::changeTeam(TeamColor _team)
 
   // get the texture each time, since it's just a refrence
   bool useColorTexture = false;
+  const bool hunter = World::getWorld()->allowRabbit() && team != RabbitTeam;
 
   TextureManager &tm = TextureManager::instance();
   std::string texName;
-  if (!World::getWorld()->allowRabbit() || team == RabbitTeam)
-    texName = Team::getImagePrefix(team);
-  else
+  if (hunter)
     texName = "h";
+  else
+    texName = Team::getImagePrefix(team);
+
   texName += "tank";
   tankTexture = tm.getTexture(texName.c_str());
   if (tankTexture && tankTexture->isValid())
@@ -205,15 +207,17 @@ void			Player::changeTeam(TeamColor _team)
     color[2] = 1.0f;
   }
   else {
-    if (!World::getWorld()->allowRabbit() || team == RabbitTeam) {
-      color[0] = _color[0];
-      color[1] = _color[1];
-      color[2] = _color[2];
-    }
-    else { // we are the hunter, we are orange.. TODO this is cheap, just untill a "hunter" team is made
+    // we are the hunter, we are orange..
+    // TODO this is cheap, just untill a "hunter" team is made
+    if (hunter) {
       color[0] = 1.0f;
       color[1] = 0.5f;
       color[2] = 0.0f;
+    }
+    else {
+      color[0] = _color[0];
+      color[1] = _color[1];
+      color[2] = _color[2];
     }
   }
   color[3] = 1.0f;
