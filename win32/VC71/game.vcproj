@@ -246,6 +246,9 @@
 				RelativePath="..\..\include\NetHandler.h">
 			</File>
 			<File
+				RelativePath="..\..\include\PlayerInfo.h">
+			</File>
+			<File
 				RelativePath="..\..\include\Ray.h">
 			</File>
 			<File
