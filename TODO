@@ -3,7 +3,8 @@ to do list for bzflag
 
 * remove -noudp option
 
-* move -synctime data to different Msg packet, or create new one
+* move -synctime data to different Msg packet, or create new one.
+  MsgSetVar (ala 1.8) would be a good one
 
 * server should pick client enter position
 
@@ -25,7 +26,8 @@ to do list for bzflag
   time
 
 * add caching to bzdb for integer/float values, so they don't
-  have to be atoi()'ed or eval()'ed all the time
+  have to be atoi()'ed or eval()'ed all the time. isTrue would
+  also be a good one to cache
 
 * move server cache stuff out of menus.cxx
 
