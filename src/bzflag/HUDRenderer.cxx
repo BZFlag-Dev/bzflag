@@ -1592,12 +1592,12 @@ void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
   minorFont.draw(score, x1, y);
 }
 
-/* ex: shiftwidth=2 tabstop=8
- * Local Variables: ***
+/* Local Variables: ***
  * mode:C++ ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***
  * indent-tabs-mode: t ***
  * End: ***
+ * ex: shiftwidth=2 tabstop=8
  */
 

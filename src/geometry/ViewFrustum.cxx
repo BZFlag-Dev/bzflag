@@ -245,12 +245,12 @@ void			ViewFrustum::makePlane(const GLfloat* v1,
 						eye[2] * plane[index][2]);
 }
 
-/* ex: shiftwidth=2 tabstop=8
- * Local Variables: ***
+/* Local Variables: ***
  * mode:C++ ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***
  * indent-tabs-mode: t ***
  * End: ***
+ * ex: shiftwidth=2 tabstop=8
  */
 

@@ -455,12 +455,12 @@ void			WallSceneNode::splitEdge(const GLfloat* p1,
   uv[1] = uv1[1] + t * (uv2[1] - uv1[1]);
 }
 
-/* ex: shiftwidth=2 tabstop=8
- * Local Variables: ***
+/* Local Variables: ***
  * mode:C++ ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***
  * indent-tabs-mode: t ***
  * End: ***
+ * ex: shiftwidth=2 tabstop=8
  */
 
