@@ -1368,10 +1368,12 @@ static bool savePlayersState()
 {
   int i, count = 0;
   char bufStart[MaxPacketLen];
+  char infoBuf[MaxPacketLen];
   char adminBuf[MaxPacketLen];
-  void *buf, *adminPtr;
+  void *buf, *infoPtr, *adminPtr;
 
-  // placeholder for the number of IPs
+  // placeholders for the player counts
+  infoPtr = infoBuf + sizeof(unsigned char);
   adminPtr = adminBuf + sizeof(unsigned char);
 
   for (i = 0; i < curMaxPlayers; i++) {
@@ -1388,6 +1390,8 @@ static bool savePlayersState()
       buf = pi->packId(buf);
       routePacket(MsgAddPlayer,
 		   (char*)buf - (char*)bufStart, bufStart, StatePacket);
+      // Part of MsgPlayerInfo
+      infoPtr = gkPlayer->packPlayerInfo(infoPtr);
       // Part of MsgAdminInfo
       adminPtr = gkPlayer->packAdminInfo(adminPtr);
 
@@ -1395,14 +1399,20 @@ static bool savePlayersState()
     }
   }
 
-  // As well as recording the original MsgAdminInfo message
-  // that gets sent out, we'll record the players' addresses
-  // here in case the record buffer has grown past the original
-  // packet.
+  // As well as recording the original messages sent out when a player
+  // first joins, we also resend the player and admin info during state
+  // updates. This way, the scoreboard is current for players that joined
+  // before an initializing state update.
+  if (infoPtr != (infoBuf + sizeof(unsigned char))) {
+    nboPackUByte(infoBuf, count);
+    routePacket(MsgPlayerInfo,
+		 (char*)infoPtr - (char*)infoBuf, infoBuf, StatePacket);
+  }
   if (adminPtr != (adminBuf + sizeof(unsigned char))) {
     nboPackUByte(adminBuf, count);
     routePacket(MsgAdminInfo,
 		 (char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
+    // use a hidden packet for the IPs
   }
 
   for (i = 0; i < curMaxPlayers; i++) {
