@@ -626,6 +626,8 @@ void*			WorldBuilder::unpack(void* buf)
   buf = tmpBuf;
   buf = nboUnpackUShort(buf, code);
   while (code != WorldCodeEnd) {
+    uint16_t length;
+    buf = nboUnpackUShort(buf, length);
     switch (code) {
       case WorldCodeBox: {
 	float data[7];
