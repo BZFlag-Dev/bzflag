@@ -4656,7 +4656,11 @@ static int lookupFlag(const char *code)
 {
   int f = atoi(code);
 
-  if (f == 0)
+  if (strcasecmp(code, "LT") == 0)
+    f = LeftTurnOnlyFlag;
+  else if (strcasecmp(code, "RT") == 0)
+    f = RightTurnOnlyFlag;
+  else if (f == 0)
     for (f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
       if (strcasecmp(code, Flag::getAbbreviation(FlagId(f))) == 0)
 	break;

@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* LT and RT command line aliases for shell impaired - Tim Riker
 * radar shade flags by altitude - Tim Riker (reworked from Jeremiah) 
 * different kill msgs - Sal Gonzalez, Tim Riker
 * brighter radar colors - Tim Riker with much input from others
