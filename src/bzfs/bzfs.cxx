@@ -3068,7 +3068,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 }
 
 // FIXME - needs extra checks for killerIndex=ServerPlayer (world weapons)
-// (was broken before)
+// (was broken before); it turns out that killerIndex=-1 for world weapon?
 static void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex)
 {
