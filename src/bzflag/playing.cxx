@@ -745,17 +745,15 @@ static void		doAutoPilot(float &rotation, float &speed)
   memcpy(pos, myTank->getPosition(), sizeof(pos));
 
   const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
-    myTank->getFlag() == Flags::PhantomZone;
-  bool expelled;
-  const Obstacle *obstacle = myTank->getHitBuilding(pos, myAzimuth, phased, expelled);
+    ((myTank->getFlag() == Flags::PhantomZone) && myTank->isFlagActive());
 
-  //If right next to a building, try to shake free, Roger's not too good at this tho, help
-  if (obstacle && !phased) {
-    float normal[3];
-    if (!myTank->getHitNormal(obstacle, pos, myAzimuth, pos, myAzimuth, normal))
-      obstacle->getNormal(pos,normal);
-
-    rotation = normal[1] - normal[0];
+  if (!phased && (TargetingUtils::getOpenDistance( pos, myAzimuth ) < 5.0f)) {
+    float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/6.0f));
+    float rightDistance = TargetingUtils::getOpenDistance( pos, myAzimuth - (M_PI/6.0f));
+    if (leftDistance > rightDistance)
+      rotation = 1.0f;
+    else
+      rotation = -1.0f;
     speed = -0.5f;
   }
   else { // Find the closest player to chase, kinda stupid huh
@@ -1020,6 +1018,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 		  rotation = rotation1;
 		  if (fabs(rotation1) < fabs(rotation2))
 		    speed = 1.0f;
+		  else if (dotProd > 0.98f)
+		    speed = -0.5f;
 		  else
 		    speed = 0.5f;
 		}
@@ -1027,6 +1027,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 		  rotation = rotation2;
 		  if (fabs(rotation2) < fabs(rotation1))
 		    speed = 1.0f;
+		  else if (dotProd > 0.98f)
+		    speed = -0.5f;
 		  else
 		    speed = 0.5f;
 		}

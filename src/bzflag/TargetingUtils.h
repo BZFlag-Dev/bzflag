@@ -23,6 +23,7 @@ public:
   static float getTargetRotation( const float startAzimuth, float targetAzimuth );
   static float getTargetAngleDifference( const float *src, float srcAzimuth, const float *target );
   static bool isLocationObscured( const float *src, const float *target );
+  static float getOpenDistance( const float *src, const float azimuth );
 };
 
 #endif

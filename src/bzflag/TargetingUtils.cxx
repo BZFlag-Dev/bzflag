@@ -9,6 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#include "common.h"
 #include <math.h>
 #include "TargetingUtils.h"
 #include "ShotStrategy.h"
@@ -77,4 +78,14 @@ bool TargetingUtils::isLocationObscured( const float *src, const float *target )
   float targetDistance = getTargetDistance(src, target);
   const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, targetDistance);
   return building != NULL;
+}
+
+float TargetingUtils::getOpenDistance( const float *src, const float azimuth )
+{
+  float t = MAXFLOAT; //Some constant?
+
+  float dir[3] = { cosf(azimuth), sinf(azimuth), 0.0f };
+  Ray tankRay( src, dir );
+  ShotStrategy::getFirstBuilding(tankRay, -0.5f, t);
+  return t;
 }
