@@ -211,7 +211,7 @@ void LinkManager::findTelesByName(const std::string& name,
   }
 
   // make the trailing face specification case-independent
-  const unsigned int last = glob.size() - 1;
+  const unsigned int last = (const unsigned int)glob.size() - 1;
   if ((glob[last] == 'F') || (glob[last] == 'B')) {
     glob[last] = tolower(glob[last]);
   }
