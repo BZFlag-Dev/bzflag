@@ -21,8 +21,8 @@
 			var flags = new Array(	"V", "A", "OO", "F", "MG", "GM", "L", "R", "SB",
 						"IB", "ST", "T", "N", "SH", "SR", "SW", "PZ", "G",
 						"JP", "ID", "CL", "US", "MQ", "SE", "TH", "BU", "WG",
-                                                "CB", "LT", "GT", "M", "B", "JM", "WA", "NJ",
-                                                "TR", "BY" );
+                                                "CB", "LT", "GT", "FO", "RO", "M", "B", "JM", "WA", "NJ",
+                                                "TR", "BY", "RC" );
 
 			function ableControls()
 			{
@@ -361,6 +361,11 @@
 					if (mainform.allow_jumping.checked) {
 						d.writeln("#Tanks can jump<br/>");
 						d.writeln("-j<br/><br/>");
+					}
+
+					if (mainform.allow_handicap.checked) {
+						d.writeln("#Weaker tanks are given a handicap advantage<br/>");
+						d.writeln("-handicap<br/><br/>");
 					}
 
 					if (mainform.allow_richochet.checked) {
@@ -849,6 +854,10 @@
 							<td>
 								<input type="checkbox" name="allow_richochet" title="Whether or not bullets richochet without a flag"/>
 							</td>
+							<td>Provide Handicap Advantage</td>
+							<td>
+								<input type="checkbox" name="allow_handicap" title="Whether or not weaker tanks are given a handicap advantage"/>
+							</td>
 						</tr>
 						<tr>
 							<td>Max Concurrent Shots</td>
@@ -938,6 +947,8 @@
 								<td align="right">(CB)</td><td><input type="text" name="cb_mand_flag" value="0" size="3" title="Colorblind"/></td>
 								<td align="right">(&lt;-)</td><td><input type="text" name="lt_mand_flag" value="0" size="3" title="Left turn only"/></td>
 								<td align="right">(-&gt;)</td><td><input type="text" name="gt_mand_flag" value="0" size="3" title="Right turn only"/></td>
+								<td align="right">(FO)</td><td><input type="text" name="fo_mand_flag" value="0" size="3" title="Forward only"/></td>
+								<td align="right">(RO)</td><td><input type="text" name="ro_mand_flag" value="0" size="3" title="Reverse only"/></td>
 								<td align="right">(M)</td><td><input type="text" name="m_mand_flag" value="0" size="3" title="Momentum"/></td>
 								<td align="right">(B)</td><td><input type="text" name="b_mand_flag" value="0" size="3" title="Blindness"/></td>
 								<td align="right">(JM)</td><td><input type="text" name="jm_mand_flag" value="0" size="3" title="Jamming"/></td>
@@ -947,6 +958,7 @@
 								<td align="right">(NJ)</td><td><input type="text" name="nj_mand_flag" value="0" size="3" title="No Jumping"/></td>
 								<td align="right">(TR)</td><td><input type="text" name="tr_mand_flag" value="0" size="3" title="Trigger Happy"/></td>
 								<td align="right">(BY)</td><td><input type="text" name="by_mand_flag" value="0" size="3" title="Bouncy"/></td>
+								<td align="right">(RC)</td><td><input type="text" name="rc_mand_flag" value="0" size="3" title="Reverse Controls"/></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -1001,6 +1013,8 @@
 								<td align="right">(CB)</td><td><input type="checkbox" name="cb_forbid_flag" title="Colorblind"/></td>
 								<td align="right">(&lt;-)</td><td><input type="checkbox" name="lt_forbid_flag" title="Left turn only"/></td>
 								<td align="right">(-&gt;)</td><td><input type="checkbox" name="gt_forbid_flag" title="Right turn only"/></td>
+								<td align="right">(FO)</td><td><input type="checkbox" name="fo_forbid_flag" title="Forward only"/></td>
+								<td align="right">(RO)</td><td><input type="checkbox" name="ro_forbid_flag" title="Reverse only"/></td>
 								<td align="right">(M)</td><td><input type="checkbox" name="m_forbid_flag" title="Momentum"/></td>
 								<td align="right">(B)</td><td><input type="checkbox" name="b_forbid_flag" title="Blindness"/></td>
 							</tr>
@@ -1010,6 +1024,7 @@
 								<td align="right">(NJ)</td><td><input type="checkbox" name="nj_forbid_flag" title="No Jumping"/></td>
 								<td align="right">(TR)</td><td><input type="checkbox" name="tr_forbid_flag" title="Trigger Happy"/></td>
 								<td align="right">(BY)</td><td><input type="checkbox" name="by_forbid_flag" title="Bouncy"/></td>
+								<td align="right">(RC)</td><td><input type="checkbox" name="rc_forbid_flag" title="Reverse Controls"/></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -1060,6 +1075,8 @@
 								<td align="right">(CB)</td><td><input type="text" size="5" name="cb_limit_flag" title="Colorblind"/></td>
 								<td align="right">(&lt;-)</td><td><input type="text" size="5" name="lt_limit_flag" title="Left turn only"/></td>
 								<td align="right">(-&gt;)</td><td><input type="text" size="5" name="gt_limit_flag" title="Right turn only"/></td>
+								<td align="right">(FO)</td><td><input type="text" size="5" name="fo_limit_flag" title="Forward only"/></td>
+								<td align="right">(RO)</td><td><input type="text" size="5" name="ro_limit_flag" title="Reverse only"/></td>
 								<td align="right">(M)</td><td><input type="text" size="5" name="m_limit_flag" title="Momentum"/></td>
 								<td align="right">(B)</td><td><input type="text" size="5" name="b_limit_flag" title="Blindness"/></td>
 							</tr>
@@ -1069,6 +1086,7 @@
 								<td align="right">(NJ)</td><td><input type="text" size="5" name="nj_limit_flag" title="No Jumping"/></td>
 								<td align="right">(TR)</td><td><input type="text" size="5" name="tr_limit_flag" title="Trigger Happy"/></td>
 								<td align="right">(BY)</td><td><input type="text" size="5" name="by_limit_flag" title="Bouncy"/></td>
+								<td align="right">(RC)</td><td><input type="text" size="5" name="rc_limit_flag" title="Reverse Controls"/></td>
 							</tr>
 						</table>
 					</fieldset>
