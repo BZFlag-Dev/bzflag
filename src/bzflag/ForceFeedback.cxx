@@ -15,6 +15,7 @@
 
 /* common interface headers */
 #include "BzfJoystick.h"
+#include "StateDatabase.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -22,7 +23,7 @@
 #include "playing.h"
 
 static BzfJoystick*     getJoystick();
-static bool             useForceFeedback();
+static bool             useForceFeedback(const char *type = "Rumble");
 
 
 static BzfJoystick*     getJoystick()
@@ -34,7 +35,7 @@ static BzfJoystick*     getJoystick()
     return NULL;
 }
 
-static bool             useForceFeedback()
+static bool             useForceFeedback(const char *type)
 {
   BzfJoystick* js = getJoystick();
 
@@ -48,7 +49,9 @@ static bool             useForceFeedback()
   if (LocalPlayer::getMyTank()->getInputMethod() != LocalPlayer::Joystick)
     return false;
 
-  /* FIXME: Let the user disable force feedback */
+  /* Did the user enable force feedback of this type? */
+  if (BZDB.get("forceFeedback") != type)
+    return false;
 
   return true;
 }

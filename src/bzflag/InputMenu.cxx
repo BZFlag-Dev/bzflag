@@ -91,13 +91,29 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   list.push_back(activeInput);
 
   option = new HUDuiList;
-  // set joystick Device
+  // force feedback
+  option->setFontFace(fontFace);
+  option->setLabel("Force feedback:");
+  option->setCallback(callback, (void*)"F");
+  options = &option->getList();
+  options->push_back(std::string("None"));
+  options->push_back(std::string("Rumble"));
+  for (i = 0; i < (int)options->size(); i++) {
+    std::string currentOption = (*options)[i];
+    if (BZDB.get("forceFeedback") == currentOption)
+      option->setIndex(i);
+  }
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  // confine mouse on/off
   option->setFontFace(fontFace);
   option->setLabel("Confine mouse:");
   option->setCallback(callback, (void*)"G");
   options = &option->getList();
-  options->push_back(std::string("yes"));
-  options->push_back(std::string("no"));
+  options->push_back(std::string("Yes"));
+  options->push_back(std::string("No"));
   if (getMainWindow()->isGrabEnabled())
     option->setIndex(0);
   else
@@ -127,10 +143,14 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
   std::vector<std::string> *options = &list->getList();
   std::string selectedOption = (*options)[list->getIndex()];
   switch (((const char*)data)[0]) {
+
+    /* Joystick name */
     case 'J':
       BZDB.set("joystickname", selectedOption);
       getMainWindow()->initJoystick(selectedOption);
       break;
+
+    /* Active input device */
     case 'A':
       {
 	LocalPlayer*   myTank = LocalPlayer::getMyTank();
@@ -147,14 +167,24 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
 	}
       }
       break;
+
+    /* Grab mouse */
     case 'G':
-      bool grabbing = (selectedOption == "yes");
-      if (grabbing)
-	BZDB.set("mousegrab", "true");
-      else
-	BZDB.set("mousegrab", "false");
-      getMainWindow()->enableGrabMouse(grabbing);
+      {
+	bool grabbing = (selectedOption == "Yes");
+	if (grabbing)
+	  BZDB.set("mousegrab", "true");
+	else
+	  BZDB.set("mousegrab", "false");
+	getMainWindow()->enableGrabMouse(grabbing);
+      }
       break;
+
+    /* Force feedback */
+    case 'F':
+      BZDB.set("forceFeedback", selectedOption);
+      break;
+
   }
 }
 
