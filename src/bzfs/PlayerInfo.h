@@ -158,6 +158,9 @@ struct PlayerInfo {
     // player played before countdown started
     bool playedEarly;
 
+    // player has autopilot on when server prohibits autopilot
+    bool quellRoger;
+
     // number of times they have tried to /password
     int passwordAttempts;
 
