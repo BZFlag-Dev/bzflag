@@ -38,12 +38,12 @@ void			nerror(const char* msg)
   if (msg) {
     args.push_back(msg);
     args.push_back(strerror(errno));
-    printError("%s: %s", &args);
+    printError("{1}: {2}", &args);
   }
   else
   {
     args.push_back(strerror(errno));
-    printError("%s", &args);
+    printError("{1}", &args);
   }
 }
 
@@ -53,11 +53,11 @@ void			bzfherror(const char* msg)
   if (msg) {
     args.push_back(msg);
     args.push_back(hstrerror(h_errno));
-    printError("%s: %s", &args);
+    printError("{1}: {2}", &args);
   }
   else {
     args.push_back(hstrerror(h_errno));
-    printError("%s", &args);
+    printError("{1}", &args);
   }
 }
 
