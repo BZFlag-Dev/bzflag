@@ -610,13 +610,15 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 static void		doKeyNotPlaying(const BzfKeyEvent& key, bool pressed)
 {
   // handle key
+  bool action = false;
   if (HUDDialogStack::get()->isActive()) {
-    if (pressed) HUDui::keyPress(key);
-    else HUDui::keyRelease(key);
+    if (pressed)
+      action = HUDui::keyPress(key);
+    else
+      action = HUDui::keyRelease(key);
   }
-  else {
+  if (!action)
     doKeyCommon(key, pressed);
-  }
 }
 
 static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
