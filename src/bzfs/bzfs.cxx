@@ -4616,6 +4616,7 @@ static void extraUsage(const char *pname)
   cout << "\t -noudp: never use the new UDP networking" << endl;
   cout << "\t -p: use alternative port (default is " <<
 					ServerPort << ")" << endl;
+  cout << "\t -pr <port>: use reconnect port" << endl;
 #ifdef PRINTSCORE
   cout << "\t -printscore: write score to stdout whenever it changes" << endl;
 #endif
