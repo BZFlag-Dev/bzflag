@@ -18,10 +18,12 @@
 -file ../../data/menuptr.bzg menuptr.bzg
 -file ../../data/models.bzg models.bzg
 -file ../../data/radar.bzg radar.bzg
+-file ../../data/rain.bzg rain.bzg
 -file ../../data/shot.bzg shot.bzg
 -file ../../data/shot-gm.bzg shot-gm.bzg
 -file ../../data/shot-l.bzg shot-l.bzg
 -file ../../data/shot-sw.bzg shot-sw.bzg
+-file ../../data/shot-t.bzg shot-t.bzg
 -file ../../data/stars.bzg stars.bzg
 -file ../../data/tank1.bzg tank1.bzg
 -file ../../data/tank2.bzg tank2.bzg
@@ -33,6 +35,7 @@
 -file ../../data/boxwall.png boxwall.png
 -file ../../data/caution.png caution.png
 -file ../../data/clouds.png clouds.png
+-file ../../data/droplet.png droplet.png
 -file ../../data/explode1.png explode1.png
 -file ../../data/fixedbr.png fixedbr.png
 -file ../../data/fixedmr.png fixedmr.png
@@ -42,6 +45,7 @@
 -file ../../data/ground.png ground.png
 -file ../../data/helvbi.png helvbi.png
 -file ../../data/helvbr.png helvbr.png
+-file ../../data/kbolt.png kbolt.png
 -file ../../data/laser.png laser.png
 -file ../../data/missile.png missile.png
 -file ../../data/mountain1.png mountain1.png
@@ -50,17 +54,18 @@
 -file ../../data/mountain4.png mountain4.png
 -file ../../data/mountain5.png mountain5.png
 -file ../../data/mountain6.png mountain6.png
--file ../../data/panel.png panel.png
 -file ../../data/pbolt.png pbolt.png
 -file ../../data/pyrwall.png pyrwall.png
 -file ../../data/rbolt.png rbolt.png
 -file ../../data/roof.png roof.png
+-file ../../data/thief.png thief.png
 -file ../../data/timesbi.png timesbi.png
 -file ../../data/timesbr.png timesbr.png
 -file ../../data/title.png title.png
 -file ../../data/wall.png wall.png
 -file ../../data/ybolt.png ybolt.png
 -file ../../data/boom.ogg boom.ogg
+-file ../../data/burrow.ogg burrow.ogg
 -file ../../data/explosion.ogg explosion.ogg
 -file ../../data/fire.ogg fire.ogg
 -file ../../data/flag_alert.ogg flag_alert.ogg
@@ -68,17 +73,19 @@
 -file ../../data/flag_grab.ogg flag_grab.ogg
 -file ../../data/flag_lost.ogg flag_lost.ogg
 -file ../../data/flag_won.ogg flag_won.ogg
+-file ../../data/jump.ogg jump.ogg
+-file ../../data/killteam.ogg killteam.ogg
+-file ../../data/land.ogg land.ogg
 -file ../../data/laser.ogg laser.ogg
+-file ../../data/lock.ogg lock.ogg
+-file ../../data/missile.ogg missile.ogg
+-file ../../data/phantom.ogg phantom.ogg
 -file ../../data/pop.ogg pop.ogg
+-file ../../data/rain.ogg rain.ogg
 -file ../../data/ricochet.ogg ricochet.ogg
 -file ../../data/shock.ogg shock.ogg
 -file ../../data/teleport.ogg teleport.ogg
--file ../../data/phantom.ogg phantom.ogg
--file ../../data/missile.ogg missile.ogg
--file ../../data/jump.ogg jump.ogg
--file ../../data/land.ogg land.ogg
--file ../../data/killteam.ogg killteam.ogg
--file ../../data/lock.ogg lock.ogg
+-file ../../data/thief.ogg thief.ogg
 -popdir
 -pushdir doc
 -file ../../LICENSE LICENSE
