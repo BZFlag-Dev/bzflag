@@ -1,6 +1,7 @@
 EXTRA_DIST =				\
 	3ds2bzw.c			\
 	bzbz.pl				\
+	bzflag.desktop.in		\
 	bzfquery.pl			\
 	bzfs.conf			\
 	bzfs_conf.html			\
@@ -29,6 +30,10 @@ EXTRA_DIST =				\
 	touchversion			\
 	vars.txt			\
 	ws.sh
+
+bzflag.desktop: bzflag.desktop.in
+	sed 's|\@DATADIR\@|$(DESTDIR)$(datadir)/bzflag/|' $< > $@
+desktop_DATA = bzflag.desktop
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

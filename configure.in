@@ -420,6 +420,8 @@ if test $prefix = NONE; then
 fi
 INSTALL_DATA_DIR=`eval echo $datadir/bzflag`
 AC_SUBST(INSTALL_DATA_DIR)
+desktopdir=`eval echo $datadir/applications`
+AC_SUBST(desktopdir)
 
 AC_ARG_ENABLE(threads, [  --enable-threads        build with thread])
 if test x$enable_threads = xyes; then
