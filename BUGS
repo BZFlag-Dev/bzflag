@@ -11,6 +11,12 @@ must fix for 1.10.4 patch release
 recent bugs
 ------------
 
+- reached assertion on either World::getTeleportTarget() or
+  World::getTeleporter() after getting killed while jumping towards a
+  teleporter (and landing in front of the teleporter, albeit dead).  i
+  didn't respawn, waited a couple sec (was chatting), then the assertion was 
+  raised.
+
 - Bots fall down if they spawn on an elevated base. This is because the bots
   don't have any collision detection at all and normally just move on the
   ground.
