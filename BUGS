@@ -1,5 +1,9 @@
 recent bugs
 ------------
+- The new explode code? LocalPlayer 1.9.8 (i think) is causing too high kicks
+  To dup: play in a completely empty world. (no buildings)
+  with no jumping. When you explode, you will be kicked
+
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
   bzfls.pl on Tim's     : 1.8 sec
