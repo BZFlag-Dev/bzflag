@@ -7,6 +7,8 @@ if CLIENT_INCLUDED
 noinst_LIBRARIES = libGeometry.a
 endif
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 libGeometry_a_SOURCES  =		\
 	ViewFrustum.cxx			\
 	SceneNode.cxx			\

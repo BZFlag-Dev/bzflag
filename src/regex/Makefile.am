@@ -2,6 +2,8 @@ if BUILD_REGEX
 noinst_LIBRARIES = libregex.a
 endif
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 libregex_a_SOURCES  =	\
 	cclass.h	\
 	cname.h		\

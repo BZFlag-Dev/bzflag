@@ -2,6 +2,8 @@ noinst_LIBRARIES = libCommon.a
 
 AM_CFLAGS = -D_XOPEN_SOURCE
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 libCommon_a_SOURCES  =			\
 	BZDBCache.cxx			\
 	Bundle.cxx			\

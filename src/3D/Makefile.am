@@ -5,6 +5,8 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 lib3D_a_SOURCES =		\
 	3DOptionsManager.cxx	\
 	DisplayListManager.cxx	\

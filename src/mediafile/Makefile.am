@@ -5,6 +5,8 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 libMediaFile_a_SOURCES =	\
 	ImageFile.cxx		\
 	ImageFile.h		\

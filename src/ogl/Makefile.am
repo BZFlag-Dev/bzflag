@@ -5,6 +5,8 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 libGLKit_a_SOURCES =			\
 	OpenGLGState.cxx		\
 	OpenGLLight.cxx			\

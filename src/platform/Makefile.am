@@ -242,7 +242,8 @@ EXTRA_libPlatform_a_SOURCES =		\
 	wave.cxx			\
 	wave.h
 
-AM_CPPFLAGS = $(SDL_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS)
+
 
 EXTRA_DIST = \
 	NewMedia.cxx \

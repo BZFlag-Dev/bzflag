@@ -173,7 +173,6 @@ case $host_os in
     beos*)
 	;;
     *)
-	CPPFLAGS=
 	if test x$no_x = x; then
 	  GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $GLIBS"
 	fi
@@ -369,7 +368,6 @@ fi
 AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
 [Data file directory])
 
-CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 case $host_os in
      linux-gnu)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])

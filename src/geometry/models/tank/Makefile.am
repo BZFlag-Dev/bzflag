@@ -5,6 +5,8 @@ if CLIENT_INCLUDED
 noinst_LIBRARIES =	libTank.a
 endif
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 libTank_a_SOURCES =	\
 	high_barrel.cxx		\
 	high_body.cxx		\

@@ -8,6 +8,8 @@ endif
 
 AM_CXXFLAGS = $(MIPSPRO_CXXFLAGS)
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
 

@@ -4,6 +4,8 @@ noinst_LIBRARIES = libObstacle.a
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 if CLIENT_INCLUDED
 libObstacle_a_SOURCES =			\
 	BaseSceneNodeGenerator.cxx	\
