@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* central authentication - Tim Riker
 * Hiding flags to cheat clients - Alfredo Tupone
 * Lag is computed only after entering game - Alfredo Tupone
 * Added strong authentication based on kerberos - Alfredo Tupone
@@ -25,16 +26,13 @@ BZFlag 1.12.0  (was 1.11.x)
 * Added tank squishiness - Anonymous, Dave Brosius
 * Added animated effects for T, N, TH, O, and CL flags - Anonymous
 * BZAdmin now tells more specific reasons why it could not connect - Ian Agar
-* Client shows a MessageOfTheDay from the master server on launch
-   for announcements and release notifications - Jeff Myers
+* Client shows a MessageOfTheDay from the master server on launch - Jeff Myers
 * Add generic URL retreval class - Jeff Myers, Alfredo Tupone
 * Windows Multimedia and DirectInput joystick support - Daniel Remenak
 * bzfs can now announce to multiple public list servers - Sean Morrison
-* Add shared public server bans via a master ban list - Jeff Myers and...
-	 - Alfredo Tupone, Daniel Remenak, Sean Morrison, Bryan Jennings
+* shared server bans via a master list - Jeff Myersm Alfredo Tupone, Daniel Remenak, Sean Morrison, Bryan Jennings
 * Linux event device joystick and force feedback support - Micah Dowty
-* Inform users when they are banned on login, and send the ban reason,
-	ban originator, and source of the ban to the client - Jeff Myers
+* Inform banned users of reason, originator, source on login, ban originator - Jeff Myers
 * Added the SHORTBAN bzfs priviledge - Anonymous, Daniel Leeds
 * Added /date and /time to request server date and time - Ian Agar
 * Added arc, cone, and sphere map objects - Anonymous
@@ -73,14 +71,13 @@ BZFlag 1.12.0  (was 1.11.x)
 * Added admin message sounds - Cameron Mandrake, Sean Morrison
 * Better shot reflections for non-square pyramids - Anonymous
 * Fixed collision detection impalement problem - Anonymous
-* Added anti perm for pollkick, pollban, kick, ban, deregister - Sean Morrison
-* Added antipoll bzfs anti perm to protect against poll kick/bans - Andrew Heyn
-* Server Start Menu now allows selection between Rabbit Chase styles - Ian Agar
+* anti perm for pollkick, pollban, kick, ban, deregister - Sean Morrison
+* antipoll bzfs anti perm to protect against poll kick/bans - Andrew Heyn
+* Server Start Menu now selects Rabbit Chase styles - Ian Agar
 * Tabbed Message Panel - Scott Wichser, Sean Morrison, Alfredo Tupone
 * Fonts settable via BZDB - Daniel Remenak
 * New font management system and fonts - Daniel Remenak, Jeff Myers
-* Reduce client and server network utilization via tolerance tweaking
-	- Alfredo Tupone, Sean Morrison
+* Reduce network utilization (tolerance) - Alfredo Tupone, Sean Morrison
 * WorldWeapons and EntryZones are saved client-side - Anonymous
 * Improved client map saves using map 'options' - Anonymous
 * Autopilot is now capable of playing CTF - Ian Agar
