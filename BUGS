@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- Flipped pyramids are not safe to walk on: getting stucked
+
 - bzadmin exits when the curses interface is used (both ncurses and pdcurses)
   and the terminal size is changed
 
