@@ -11,9 +11,14 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-#
-# contact a bzflag server and print the game status to stdout
-#
+=pod
+
+=head1 NAME
+
+bzfquery.pl - Contact a bzflag server and print the game status
+
+=cut
+
 use Socket;
 
 # get arguments:  server [port]
