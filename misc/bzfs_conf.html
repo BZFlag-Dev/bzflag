@@ -27,11 +27,12 @@
 			{
 				var mainform = document.forms["main"];
 				var freeForAll = (mainform.game_style.value == "ffa");
+				var rabbit = (mainform.game_style.value == "rc");
 				mainform.allow_teleporters.disabled = mainform.world_type.checked;
 				mainform.world_file.disabled = !mainform.world_type.checked;
 				mainform.randomly_orient_buildings.disabled = mainform.world_type.checked;
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
-				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || freeForAll;
+				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || freeForAll || rabbit;
 				mainform.allow_rogues.disabled = !freeForAll;
 
 				return true;
@@ -250,6 +251,10 @@
 					if (mainform.game_style.value == "ctf") {
 						d.writeln("#Capture the flag game style<br/>");
 						d.writeln("-c<br/><br/>");
+					}
+					else if (mainform.game_style.value == 'rc') {
+						d.writeln("#Rabbit chase game style<br/>");
+						d.writeln("-rabbit<br/><br/>");
 					}
 
 					if (mainform.flags_on_buildings.checked) {
@@ -655,6 +660,7 @@
 								<select name="game_style" value="ffa" onClick="return ableControls()" title="Free for all or Capture the flag game style">
 									<option value="ffa">Free for All</option>
 									<option value="ctf">Capture the Flag</option>
+									<option value="rc">Rabbit Chase</option>
 								</select>
 							</td>
 							<td>Flags on Buildings</td>
