@@ -90,8 +90,8 @@ class WordFilter
   /** structure containing the filter words and optional compiled version */
   typedef struct badWord {
     std::string word;
-    bool compiled;
     std::string expression;
+    bool compiled;
     regex_t *compiledWord;
   } badWord_t;
   
