@@ -4505,6 +4505,7 @@ static void releaseRadio(int playerIndex)
 // parse player comands (messages with leading /)
 static void parseCommand(const char *message, int t)
 {
+  int i;
   // /password command allows player to become operator
   if (strncmp(message + 1,"password ",9) == 0) {
     if (password && strncmp(message + 10, password, strlen(password)) == 0) {
@@ -4518,7 +4519,7 @@ static void parseCommand(const char *message, int t)
     done = True;
   // /superkill closes all player connections
   } else if (player[t].Admin && strncmp(message + 1, "superkill", 8) == 0) {
-    for (int i = 0; i < MaxPlayers; i++)
+    for (i = 0; i < MaxPlayers; i++)
       directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
     gameOver = True;
   // /gameover command allows operator to end the game
@@ -4541,7 +4542,7 @@ static void parseCommand(const char *message, int t)
       broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
     }
     // reset team scores
-    for (int i=RedTeam;i<=PurpleTeam;i++) {
+    for (i=RedTeam;i<=PurpleTeam;i++) {
       team[i].team.lost = team[i].team.won=0;
       sendTeamUpdate(i);
     }
