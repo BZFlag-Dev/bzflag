@@ -1598,8 +1598,6 @@ static void addPlayer(int playerIndex)
     sprintf (buffer, "Can't rejoin for %.1f seconds.", waitTime);
     rejectPlayer(playerIndex, RejectRejoinWaitTime, buffer);
     return ;
-  } else {
-    rejoinList.add (playerIndex);
   }
 
 
@@ -2096,6 +2094,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // send a super kill to be polite
   if (notify)
     directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
+
+  // make them wait from the time they left  
+  rejoinList.add (playerIndex);
 
   // if there is an active poll, cancel any vote this player may have made
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
