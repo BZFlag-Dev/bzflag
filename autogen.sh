@@ -1,6 +1,5 @@
 #!/bin/sh
 # script to prepare bzflag sources
-touch NEWS
 aclocal
 autoheader
 automake --add-missing
