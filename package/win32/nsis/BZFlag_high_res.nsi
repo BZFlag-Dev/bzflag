@@ -5,57 +5,80 @@
 ;
 ; It will install notepad.exe into a directory that the user selects,
 ;
+
 !define VER_MAJOR 1.11
 !define VER_MINOR .9
 ; Main Installer Options
+
 Name "BZFlag"
 Icon ..\..\..\win32\bzflag.ico
+
 WindowIcon On
 EnabledBitmap "EnableCheck.bmp"
 DisabledBitmap "DisableCheck.bmp"
+
 Caption "BZFlag ${VER_MAJOR}${VER_MINOR} High Res: - Setup"
+
 ; The file to write
 OutFile "..\..\..\dist\bzflag${VER_MAJOR}${VER_MINOR}_high_res.exe"
+
 ; The default installation directory
 InstallDir $PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}
+
 ; Show the lisense
 LicenseText "Please read our following license before installing:"
 LicenseData ..\..\..\COPYING
+
 ; Registry key to check for directory (so if you install again, it will
+
 ; overwrite the old one automatically)
 InstallDirRegKey HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir"
+
 ; The text to prompt the user to enter a directory
 ComponentText "This will install the BZFlag ${VER_MAJOR}${VER_MINOR} game and server files on your computer."
+
 ; The text to prompt the user to enter a directory
 DirText "Please choose a directory to install into:"
 CompletedText " Thank you for installing BZFlag ${VER_MAJOR}${VER_MINOR}."
+
 ; The stuff to install
 Section "BZFlag (required)"
+
 	; Set output path to the installation directory.
 	SetOutPath $INSTDIR
+
 	; Put file there
 	File ..\..\..\src\bzflag\bzflag.exe
 	File ..\..\..\src\bzadmin\bzadmin.exe
 	File ..\..\..\src\bzfs\bzfs.exe
+
 	; make the data dir
 	SetOutPath $INSTDIR\data
 	File ..\..\..\data\*.*
 	File ..\..\..\misc\hix.bzw
 	File ..\..\..\misc\bzfs.conf
 	File ..\..\..\misc\bzfs_conf.html
+
         ; make the alternate dir
 	SetOutPath $INSTDIR\data\alternate
 	File ..\..\..\data\alternate\*.*
+
 	; make the l10n dir
 	SetOutPath $INSTDIR\data\l10n
 	File ..\..\..\data\l10n\*.*
+
+	SetOutPath $INSTDIR\data\fonts
+	File ..\..\..\data\fonts\*.*
+
 	; make the doc dir
 	SetOutPath $INSTDIR\doc
 	File ..\..\..\doc\*.*
 	File ..\ReadMe.win32.html
 	File ..\..\..\COPYING
+
 	; Write the installation path into the registry
 	WriteRegStr HKLM SOFTWARE\BZFlag "Install_Dir" "$INSTDIR"
+
 	; Write the uninstall keys for Windows
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "DisplayName" "BZFlag(remove only)"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "UninstallString" '"$INSTDIR\uninstall.exe"'
@@ -107,6 +130,7 @@ Section "Uninstall"
 	Delete $INSTDIR\bzadmin.exe
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\alternate\*.*
+	Delete $INSTDIR\data\fonts\*.*
 	Delete $INSTDIR\data\l10n\*.*
 	Delete $INSTDIR\data\*.*	; MUST REMOVE UNINSTALLER, too
 	Delete $INSTDIR\uninstall.exe	; remove shortcuts, if any.	Delete "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\*.*"
@@ -118,6 +142,7 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}"
 	RMDir "$INSTDIR\data\alternate"
 	RMDir "$INSTDIR\data\l10n"
+	RMDir "$INSTDIR\data\fonts"
 	RMDir "$INSTDIR\data"
 	RMDir "$INSTDIR\doc"
 	RMDir "$INSTDIR"

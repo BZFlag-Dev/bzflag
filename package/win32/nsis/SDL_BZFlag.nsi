@@ -64,6 +64,9 @@ Section "BZFlag (required)"
 	SetOutPath $INSTDIR\data\l10n
 	File ..\..\..\data\l10n\*.*
 
+	SetOutPath $INSTDIR\data\fonts
+	File ..\..\..\data\fonts\*.*
+
 	; make the doc dir
 	SetOutPath $INSTDIR\doc
 	File ..\..\..\doc\*.*
@@ -135,6 +138,7 @@ Section "Uninstall"
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\*.*
 	Delete $INSTDIR\data\l10n\*.*
+	Delete $INSTDIR\data\fonts\*.*
 
 	; MUST REMOVE UNINSTALLER, too
 	Delete $INSTDIR\uninstall.exe
@@ -150,6 +154,7 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc"
 	RMDir "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}"
 	RMDir "$INSTDIR\data\l10n"
+	RMDir "$INSTDIR\data\fonts"
 	RMDir "$INSTDIR\data"
 	RMDir "$INSTDIR\doc"
 	RMDir "$INSTDIR"
