@@ -17,6 +17,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * .bzf/ on *ix should be a directory with db and cache/ entries
 
+* benchmark calls to BZDB to insure there are close to 0 per
+  frame redraw. Convert any existing to callbacks.
+
 THESE ARE LOWER PRIORITY
 
 * would be nice if LocalPlayer<->Robots wouldn't relayPackets (MsgPlayerUpdate) thru server
