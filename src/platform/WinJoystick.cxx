@@ -21,7 +21,7 @@
 #include "ErrorHandler.h"
 #include "TextUtils.h"
 
-WinJoystick::WinJoystick()
+WinJoystick::WinJoystick() : inited(false)
 {
 }
 
