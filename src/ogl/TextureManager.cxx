@@ -50,6 +50,10 @@ TextureInit loader[] =
 	{ TX_CLOUDS, NO_VARIANT, "clouds", OpenGLTexture::LinearMipmapLinear },
 	{ TX_MOUNTAIN, NO_VARIANT, "mountain", OpenGLTexture::LinearMipmapLinear },
 
+	{ TX_EXPLOSION, 1, "explode1", OpenGLTexture::Linear },
+	{ TX_EXPLOSION, 2, "explode2", OpenGLTexture::Linear },
+	{ TX_EXPLOSION, 3, "explode3", OpenGLTexture::Linear },
+	{ TX_EXPLOSION, 4, "explode4", OpenGLTexture::Linear },
 };
 
 

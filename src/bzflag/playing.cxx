@@ -6826,24 +6826,18 @@ void			startPlaying(BzfDisplay* _display,
     dumpResources(display, renderer);
   }
 
-  // load prototype explosions
-  static const char*	explosionNames[] = {
-    "explode1",
-    "explode2",
-    "explode3",
-    "explode4"
-  };
   static const GLfloat	zero[3] = { 0.0f, 0.0f, 0.0f };
-  for (i = 0; i < (int)(sizeof(explosionNames) /
-			sizeof(explosionNames[0])); i++) {
+
+  TextureManager *tm = TextureManager::getTextureManager();
+  for (i = 1; i <= 4; i++) {
     // try loading texture
-    OpenGLTexture tex = getTexture(explosionNames[i],
-				   OpenGLTexture::Linear, false, true);
-    if (!tex.isValid()) continue;
+    OpenGLTexture *tex = tm->getTexture( TX_EXPLOSION, i );
+
+    if (!tex->isValid()) continue;
 
     // make explosion scene node
     BillboardSceneNode* explosion = new BillboardSceneNode(zero);
-    explosion->setTexture(tex);
+    explosion->setTexture(*tex);
     explosion->setTextureAnimation(8, 8);
     explosion->setLight();
     explosion->setLightColor(1.0f, 0.8f, 0.5f);
