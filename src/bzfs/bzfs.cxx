@@ -1758,7 +1758,8 @@ static void addPlayer(int playerIndex)
     sendTeamUpdate(playerIndex);
     sendFlagUpdate(playerIndex);
     GameKeeper::Player *otherData;
-    for (int i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
+    for (int i = 0; i < curMaxPlayers
+	   && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
       if (i != playerIndex) {
 	otherData = GameKeeper::Player::getPlayerByIndex(i);
 	if (otherData)
@@ -1767,7 +1768,7 @@ static void addPlayer(int playerIndex)
   }
 
   // if new player connection was closed (because of an error) then stop here
-  if (!NetHandler::exists(playerIndex))
+  if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
     return;
 
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
@@ -1788,7 +1789,7 @@ static void addPlayer(int playerIndex)
   }
 
   // again check if player was disconnected
-  if (!NetHandler::exists(playerIndex))
+  if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
     return;
 
   // send time update to new player if we're counting down
@@ -1865,7 +1866,7 @@ static void addPlayer(int playerIndex)
 #endif
 
 
-  if (NetHandler::exists(playerIndex)
+  if (GameKeeper::Player::getPlayerByIndex(playerIndex)
       && playerData->accessInfo.isRegistered()) {
     // nick is in the DB send him a message to identify.
     if (playerData->accessInfo.isIdentifyRequired())
@@ -2315,7 +2316,8 @@ static void sendQueryPlayers(int playerIndex)
   // now send the teams and players
   sendTeamUpdate(playerIndex);
   GameKeeper::Player *otherData;
-  for (int i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++) {
+  for (int i = 0; i < curMaxPlayers
+	 && GameKeeper::Player::getPlayerByIndex(playerIndex); i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData)
       sendPlayerUpdate(otherData, playerIndex);
@@ -3181,12 +3183,10 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 
 static void handleCommand(int t, const void *rawbuf)
 {
-  NetHandler *handler = NetHandler::getHandler(t);
-  if (!handler)
-    return;
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
   if (!playerData)
     return;
+  NetHandler *handler = playerData->netHandler;
 
   uint16_t len, code;
   void *buf = (char *)rawbuf;
@@ -4695,15 +4695,18 @@ int main(int argc, char **argv)
       }
 
       // now check messages from connected players and send queued messages
+      GameKeeper::Player *playerData;
+      NetHandler *netPlayer;
       for (i = 0; i < curMaxPlayers; i++) {
 	// send whatever we have ... if any
-	NetHandler *netPlayer = NetHandler::getHandler(i);
-	if (netPlayer && netPlayer->pflush(&write_set) == -1) {
+	playerData = GameKeeper::Player::getPlayerByIndex(i);
+	if (playerData && playerData->netHandler->pflush(&write_set) == -1) {
 	  removePlayer(i, "ECONNRESET/EPIPE", false);
 	}
 
-	netPlayer = NetHandler::getHandler(i);
-	if (netPlayer && netPlayer->isFdSet(&read_set)) {
+	playerData = GameKeeper::Player::getPlayerByIndex(i);
+	if (playerData && playerData->netHandler->isFdSet(&read_set)) {
+	  netPlayer = playerData->netHandler;
 
 	  const RxStatus e = netPlayer->tcpReceive();
 	  if (e != ReadAll) {

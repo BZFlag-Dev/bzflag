@@ -701,16 +701,21 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, AllPlayers, "IP pattern added to banlist");
 
       char kickmessage[MessageLen];
+      GameKeeper::Player *otherPlayer;
       for (int i = 0; i < curMaxPlayers; i++) {
-	NetHandler *handler = NetHandler::getHandler(i);
-	if (handler && !clOptions->acl.validate(handler->getIPAddress())) {
+	otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
+	if (otherPlayer && !clOptions->acl.validate
+	    (otherPlayer->netHandler->getIPAddress())) {
 
 	  // admins can override antiperms
 	  if (!playerData->accessInfo.isAdmin()) {
 	    // make sure this player isn't protected
 	    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-	    if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
-	      sprintf(kickmessage, "%s is protected from being banned (skipped).", p->player.getCallSign());
+	    if ((p != NULL)
+		&& (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
+	      sprintf(kickmessage,
+		      "%s is protected from being banned (skipped).",
+		      p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, kickmessage);
 	      continue;
 	    }
@@ -1665,7 +1670,8 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	sendMessage(ServerPlayer, t, reply);
 	return;
       }
-      targetIP = NetHandler::getHandler(v)->getTargetIP();
+      targetIP = GameKeeper::Player::getPlayerByIndex(v)
+	->netHandler->getTargetIP();
 
       // admins can override antiperms
       if (!playerData->accessInfo.isAdmin()) {

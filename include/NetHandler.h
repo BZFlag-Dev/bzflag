@@ -61,12 +61,6 @@ public:
   */
   ~NetHandler();
 
-  /** General purpose function to get the Handler given the index, or
-      test its existence
-  */
-  static bool exists(int _playerIndex);
-  static NetHandler *getHandler(int _playerIndex);
-
   /** Class-Wide initialization and destruction
       Should be called before any other operation on any clas instance
       InitHandlers needs the addr structure filled to point to the local port
@@ -211,14 +205,6 @@ private:
   MessageCountMap msg[2];
 #endif
 };
-
-inline NetHandler *NetHandler::getHandler(int _playerIndex) {
-  if (_playerIndex < 0)
-    return NULL;
-  if (_playerIndex >= maxHandlers)
-    return NULL;
-  return netPlayer[_playerIndex];
-}
 
 #endif
 
