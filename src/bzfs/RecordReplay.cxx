@@ -1585,7 +1585,7 @@ loadPacket (FILE *f)
   void *buf;
 
   if (f == NULL) {
-    return false;
+    return NULL;
   }
 
   p = new RRpacket;
