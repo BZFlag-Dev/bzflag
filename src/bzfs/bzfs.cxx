@@ -4539,10 +4539,9 @@ int main(int argc, char **argv)
 	  clOptions->timeElapsed = 0.0f;
 
 	  // start client's clock
-	  char msg[4];
-	  void *buf = msg;
-	  nboPackInt(buf, (int32_t)(int)clOptions->timeLimit);
-	  broadcastMessage(MsgTimeUpdate, sizeof msg, msg);
+	  void *msg = getDirectMessageBuffer();
+	  nboPackInt(msg, (int32_t)(int)clOptions->timeLimit);
+	  broadcastMessage(MsgTimeUpdate, sizeof(int32_t), msg);
 
 	  // kill any players that are playing already
 	  GameKeeper::Player *player;
