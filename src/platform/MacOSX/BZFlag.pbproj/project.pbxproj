@@ -1151,50 +1151,50 @@
 		1401FD4904B6382500A80164 = {
 			isa = PBXFileReference;
 			name = libogg.0.4.0.dylib;
-			path = ../../../../../../../../usr/local/lib/libogg.0.4.0.dylib;
-			refType = 4;
+			path = /usr/local/lib/libogg.0.4.0.dylib;
+			refType = 0;
 		};
 		1401FD4A04B6382500A80164 = {
 			isa = PBXFileReference;
 			name = libogg.a;
-			path = ../../../../../../../../usr/local/lib/libogg.a;
-			refType = 4;
+			path = /usr/local/lib/libogg.a;
+			refType = 0;
 		};
 		1401FD4B04B6382500A80164 = {
 			isa = PBXFileReference;
 			name = libvorbis.0.2.0.dylib;
-			path = ../../../../../../../../usr/local/lib/libvorbis.0.2.0.dylib;
-			refType = 4;
+			path = /usr/local/lib/libvorbis.0.2.0.dylib;
+			refType = 0;
 		};
 		1401FD4C04B6382500A80164 = {
 			isa = PBXFileReference;
 			name = libvorbis.a;
-			path = ../../../../../../../../usr/local/lib/libvorbis.a;
-			refType = 4;
+			path = /usr/local/lib/libvorbis.a;
+			refType = 0;
 		};
 		1401FD4D04B6382500A80164 = {
 			isa = PBXFileReference;
 			name = libvorbisenc.2.0.0.dylib;
-			path = ../../../../../../../../usr/local/lib/libvorbisenc.2.0.0.dylib;
-			refType = 4;
+			path = /usr/local/lib/libvorbisenc.2.0.0.dylib;
+			refType = 0;
 		};
 		1401FD4E04B6382500A80164 = {
 			isa = PBXFileReference;
 			name = libvorbisenc.a;
-			path = ../../../../../../../../usr/local/lib/libvorbisenc.a;
-			refType = 4;
+			path = /usr/local/lib/libvorbisenc.a;
+			refType = 0;
 		};
 		1401FD4F04B6382500A80164 = {
 			isa = PBXFileReference;
 			name = libvorbisfile.3.0.0.dylib;
-			path = ../../../../../../../../usr/local/lib/libvorbisfile.3.0.0.dylib;
-			refType = 4;
+			path = /usr/local/lib/libvorbisfile.3.0.0.dylib;
+			refType = 0;
 		};
 		1401FD5004B6382500A80164 = {
 			isa = PBXFileReference;
 			name = libvorbisfile.a;
-			path = ../../../../../../../../usr/local/lib/libvorbisfile.a;
-			refType = 4;
+			path = /usr/local/lib/libvorbisfile.a;
+			refType = 0;
 		};
 		1401FD5204B6382500A80164 = {
 			fileRef = 1401FD4A04B6382500A80164;
@@ -1449,7 +1449,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -4725,9 +4724,8 @@
 				4E030C58048E70E70009E055,
 			);
 			isa = PBXGroup;
-			name = bzfs;
-			path = /Volumes/Home/Archive/BZ/bzflag/src/bzfs;
-			refType = 0;
+			path = bzfs;
+			refType = 4;
 		};
 		4E030C55048E70E70009E055 = {
 			fileEncoding = 30;
