@@ -150,10 +150,10 @@ bool VotingBooth::vote(std::string voter, vote_t id)
 
   /* add the voter to the list of voters */
   _voter[_voterCount] = voter;
-  _voterCount++;
-
   /* finally increment the dang vote */
   _vote[_voterCount] = id;
+
+  _voterCount++;
 
   return true;
 }
