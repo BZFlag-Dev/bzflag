@@ -203,10 +203,12 @@ void ActionBinding::associate(std::string key,
 };
 
 void ActionBinding::deassociate(std::string action) {
-  BindingTable::iterator index;
+  BindingTable::iterator index, next;
   for (index = bindingTable.begin();
        index != bindingTable.end();
-       index++) {
+       index = next) {
+    next = index;
+    ++next;
     if (index->second == action) {
       unbind(action, index->first);
       bindingTable.erase(index);
