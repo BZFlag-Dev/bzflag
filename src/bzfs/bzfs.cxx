@@ -6096,6 +6096,9 @@ static void parse(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+  setvbuf(stdout, (char *)NULL, _IOLBF, 0);
+  setvbuf(stderr, (char *)NULL, _IOLBF, 0);
+
   int nfound;
 
   // check time bomb
