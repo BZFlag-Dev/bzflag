@@ -17,11 +17,8 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
-#if (_MSC_VER)
-// turn off bogus `this used in base member initialization list'
-	#pragma warning(disable: 4786)
-	#pragma warning(disable: 4503)
-	#pragma warning(disable: 4355)
+#ifdef _WIN32
+#  include "win32.h"
 #endif
 
 #include <config.h>
@@ -155,33 +152,6 @@ typedef unsigned char	uint8_t;
     #define putenv(a)
   #endif
 #endif /* defined( macintosh ) || defined( __BEOS__ ) */
-
-#if defined(_WIN32)
-
-#ifndef __MINGW32__
-// missing float math functions
-#define	hypotf		(float)hypot
-#endif
-
-// missing constants
-#ifndef MAXFLOAT
-#define	MAXFLOAT	3.402823466e+38f
-#endif
-#ifndef M_PI
-#define	M_PI		3.14159265358979323846f
-#endif
-#ifndef M_SQRT1_2
-#define	M_SQRT1_2	0.70710678118654752440f
-#endif
-
-// missing types
-
-typedef signed short	int16_t;
-typedef unsigned short	uint16_t;
-typedef signed int	int32_t;
-typedef unsigned int	uint32_t;
-
-#endif /* !defined(_WIN32) */
 
 #ifdef countof
 #undef countof
