@@ -3976,7 +3976,7 @@ static void acceptClient()
   PlayerId playerIndex;
 
   // find open slot in players list
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
+  for (playerIndex = 1; playerIndex < maxPlayers; playerIndex++)
     if (player[playerIndex].state == PlayerNoExist)
       break;
 
