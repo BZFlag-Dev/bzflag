@@ -8,8 +8,12 @@ NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2001'
 # update copyright in all files
 #
 
-# top-level dir
-root=".."
+# bzflag top-level dir
+for root in . .. ; do
+    if [ -r $root/config ] ; then
+	break
+    fi
+done
 
 if [ -r ../bin/bzfs ] ; then
  echo "$0 should be run only after a make pristine!"
