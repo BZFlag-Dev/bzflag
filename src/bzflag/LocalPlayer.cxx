@@ -68,7 +68,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   if (BZDB.isTrue("allowInputChange")) {
     inputMethod = Mouse;
   } else {
-    setInputMethod(BZDB.get("forceInputDevice"));
+    setInputMethod(BZDB.get("activeInputDevice"));
   }
 }
 
