@@ -935,7 +935,7 @@ void *assembleSendPacket(int playerIndex, int *len)
 {
   struct PacketQueue *moving = player[playerIndex].uqueue;
   unsigned char *assemblybuffer;
-  int n = MaxPacketLen, packets = 0, startseq = (-1), endseq, noinqueue;
+  int n = MaxPacketLen, packets = 0, startseq = (-1), endseq = 0, noinqueue;
   unsigned char *buf;
 
   assemblybuffer = (unsigned char *)malloc(n);
@@ -1364,11 +1364,6 @@ static void setNoDelay(int fd)
   struct protoent *p = getprotobyname("tcp");
   if (p && setsockopt(fd, p->p_proto, TCP_NODELAY, (SSOType)&on, sizeof(on)) < 0) {
     nerror("enabling TCP_NODELAY");
-#if !defined(_WIN32)
-  int mode = fcntl(fd, F_GETFL, 0);
-  if (mode == -1 || fcntl(fd, F_SETFL, mode | O_NDELAY) < 0)
-    nerror("enabling O_NDELAY");
-#endif
   }
 }
 
@@ -1648,8 +1643,6 @@ static void sendMessageToListServer(const char *msg)
     ListServerLink& link = listServerLinks[i];
     if (strcmp(msg, "SETNUM") != 0 || strcmp(link.nextMessage, "ADD") != 0)
       link.nextMessage = msg;
-    else if (strcmp(msg, "SETNUM") != 0)
-          link.nextMessage = msg;
   }
 }
 
@@ -5002,10 +4995,10 @@ int main(int argc, char **argv)
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
     // lets start by waiting 0.25 sec
-    float waitTime = 0.25f;
+    float waitTime = 3.0f;
 #ifdef TIMELIMIT
     if (timeLimit > 0.0f)
-	waitTime = 0.125f;
+	waitTime = 1.0f;
 #endif
     if (numFlagsInAir > 0) {
       for (i = 0; i < numFlags; i++)
@@ -5018,11 +5011,7 @@ int main(int argc, char **argv)
 
     // minmal waitTime
     if (waitTime < 0.0f)
-      waitTime = 0.005f;
-    // maximal waitTime
-    if (waitTime > 0.25f)
-      waitTime = 0.15f;
-
+      waitTime = 0.0f;
 
     // we have no pending packets
     nfound = 0;
@@ -5034,7 +5023,6 @@ int main(int argc, char **argv)
     nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     //if (nfound)
     //  fprintf(stderr, "nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
-    waitTime = 0.05f;
 
     tm = TimeKeeper::getCurrent();
 
