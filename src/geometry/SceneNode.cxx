@@ -38,7 +38,7 @@ SceneNode::SceneNode() : octreeState(OctreeCulled), noPlane(true),
 
   setCenter(0.0f, 0.0f, 0.0f);
   setRadius(0.0f);
-  eyeDistance = 0;
+  eyeDistance = MAXFLOAT;
 }
 
 SceneNode::~SceneNode()
@@ -149,13 +149,13 @@ void			SceneNode::setSphere(const GLfloat _sphere[4])
 
 GLfloat	SceneNode::getPlaneDistance(const GLfloat*) const
 {
-  return 1.0;
+  return 1.0f;
 }
 
 void			SceneNode::getRenderNodes(SceneRenderer& renderer)
 {
   const float eyeMove = renderer.getViewFrustum().getEyeMove();
-  bool recompute      = false;
+  bool recompute = false;
   if (eyeDistance >= 0.0f) {
     eyeDistance -= eyeMove;
     if (eyeDistance < 0.0f)
