@@ -264,8 +264,8 @@ void			HUDuiControl::renderFocus()
 {
   float fh2 = 0;// = floorf(0.5f * fontHeight);
 
-  if (gstate->isTextured()) { // asumes there are w/h fames of animatin h x h in each image
-	float imageSize = arrow->getHeight();
+  if (gstate->isTextured()) { // asumes there are w/h fames of animation h x h in each image
+    float imageSize = arrow->getHeight();
     int uFrames = 1;
     if (imageSize != 0)
       uFrames = int(arrow->getWidth()/imageSize); // 4;
@@ -275,11 +275,11 @@ void			HUDuiControl::renderFocus()
 
     float u = (float)(arrowFrame % uFrames) / (float)uFrames;
     float v = (float)(arrowFrame / uFrames) / (float)vFrames;
-	fh2 = floorf(0.5f * fontHeight);	// this really should not scale the image based on the font,
-    gstate->setState();					// best would be to load an image for each size
+    fh2 = floorf(1.5f * fontHeight); // this really should not scale the image based on the font,
+    gstate->setState();	       	     // best would be to load an image for each size
     glColor3f(1.0f, 1.0f, 1.0f);
-	float imageXShift = -fh2+1;
-	float imageYShift = fh2 * 0.5f;
+    float imageXShift = 0.0f;
+    float imageYShift = -fh2 * 0.2f;
     float outputSize = fh2;
     glBegin(GL_QUADS);
       glTexCoord2f(u, v);
@@ -298,9 +298,8 @@ void			HUDuiControl::renderFocus()
       if (++arrowFrame == uFrames * vFrames) arrowFrame = 0;
     }
   }
-
   else {
-	fh2 = floorf(0.5f * fontHeight);
+    fh2 = floorf(0.5f * fontHeight);
     gstate->setState();
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLES);
