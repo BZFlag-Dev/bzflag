@@ -1,4 +1,10 @@
-bzflag (@VERSION@) unstable frozen; urgency=low
+bzflag (@VERSION@) unstable; urgency=low
+
+  * CVS Build
+
+ -- Tim Riker <Tim@Rikers.org>  @DATE@
+
+bzflag (1.7e4) unstable frozen; urgency=low
 
   * include ChangeLog Closes: Bug#113827
   * correct X depend Closes: Bug#104844
@@ -6,7 +12,7 @@ bzflag (@VERSION@) unstable frozen; urgency=low
   * remove explicit c++ depend Closes: Bug#105947
   * Release Manager: 113826, networking bug fixes for stable and woody
 
- -- Tim Riker <Tim@Rikers.org>  @DATE@
+ -- Tim Riker <Tim@Rikers.org>  Tue, 27 Nov 2001 03:51:09 -0700
 
 bzflag (1.7e2-1) unstable; urgency=low
 
