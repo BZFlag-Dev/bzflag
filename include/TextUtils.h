@@ -17,20 +17,7 @@
 #ifndef __TEXTUTILS_H__
 #define	__TEXTUTILS_H__
 
-#if (_MSC_VER)
-// turn off bogus `this used in base member initialization list'
-	#pragma warning(disable: 4786)
-	#pragma warning(disable: 4503)
-	#pragma warning(disable: 4355)
-#endif
-
-#include <config.h>
-
-#include <string>
-#include <sstream>
-#include <vector>
-#include <stdio.h>
-#include <stdarg.h>
+#include <common.h>
 
 /** The string utility class provides basic functionality to parse and
  * format strings
@@ -42,11 +29,7 @@ class string_util {
       // not all platforms support vsnprintf so we'll use vsprintf and a
       // big temporary buffer and hope for the best.
       char buffer[8192];
-#ifdef _WIN32
-      _vsnprintf(buffer,8192, fmt, args);
-#else
       vsnprintf(buffer, 8192, fmt, args);
-#endif
       return std::string(buffer);
     }
     static std::string format(const char* fmt, ...) {
