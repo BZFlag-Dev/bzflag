@@ -16,6 +16,9 @@
  *	hosts. Can be packed for transmission on the net.
  */
 
+#ifndef	BZF_SHOT_UPDATE_H
+#define	BZF_SHOT_UPDATE_H
+
 const int		ShotUpdatePLen = PlayerIdPLen + 30;
 const int		FiringInfoPLen = ShotUpdatePLen + 6;
 
@@ -32,3 +35,5 @@ struct ShotUpdate {
     float		dt;			// time shot has existed
 };
 
+#endif // BZF_SHOT_UPDATE_H
+// ex: shiftwidth=2 tabstop=8
