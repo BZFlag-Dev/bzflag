@@ -10,14 +10,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* Ray
- *	Encapsulates a semi-infinite ray.
- */
-
 #ifndef	BZF_RAY_H
 #define	BZF_RAY_H
 
 #include "common.h"
+
+/** Encapsulates a semi-infinite ray. */
 
 class Ray {
   public:

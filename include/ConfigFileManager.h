@@ -17,24 +17,40 @@
 
 void writeEntry(const std::string& name, void *stream);
 
+/**
+ Reads in the config file.
+ Opens up the file via FileManager, ships lines off to the
+ CommandManager and handles default values in BZDB,
+*/
+
 class ConfigFileManager {
 public:
   ConfigFileManager();
   ~ConfigFileManager();
 
-  // read a configuration file.  read(filename) uses FileManager
-  // to open the stream and returns false if the file cannot be
-  // opened.  they all call parse().
+  /** Read a configuration file.
+   read(filename) uses FileManager to open the stream and returns
+   false if the file cannot be opened.  they all call parse().
+  */
   bool				read(std::string filename);
+  /** Read a configuration file.
+   read(filename) uses FileManager to open the stream and returns
+   false if the file cannot be opened.  they all call parse().
+  */
   void				read(std::istream&);
 
-  // write out a configuration file
+  /** Write out a configuration file.
+   Writes to a format that the CommandManager can understand
+  */
   bool				write(std::string filename);
 
-  // adds default values to BZDB
+  /** adds default values to BZDB */
   static void			addDefaults();
 
-  // get the singleton instance
+  /** Get the singleton instance.
+   returns the existing singleton if available, if not, creates
+   an instance and returns it.
+  */
   static ConfigFileManager*	getInstance();
 
 private:
