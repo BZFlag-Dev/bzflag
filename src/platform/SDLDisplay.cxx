@@ -603,10 +603,10 @@ static float CalculateGammaFromRamp(Uint16 ramp[256]) {
      Gamedev list, March 4, 2000.
   */
   float sum = 0.0;
-  int i, count = 0;
+  int count = 0;
 
   float gamma = 1.0;
-  for (i = 1; i < 256; ++i) {
+  for (int i = 1; i < 256; ++i) {
     if ((ramp[i] != 0) && (ramp[i] != 65535)) {
       double B = (double)i / 256.0;
       double A = ramp[i] / 65535.0;
@@ -624,17 +624,14 @@ float SDLWindow::getGamma() const {
   Uint16 redRamp[256];
   Uint16 greenRamp[256];
   Uint16 blueRamp[256];
-  float red;
-  float green;
-  float blue;
   float gamma = 1.0;
   int result = SDL_GetGammaRamp(redRamp, greenRamp, blueRamp);
   if (result == -1) {
     printf("Could not get Gamma: %s.\n", SDL_GetError());
   } else {
-    red   = CalculateGammaFromRamp(redRamp);
-    green = CalculateGammaFromRamp(greenRamp);
-    blue  = CalculateGammaFromRamp(blueRamp);
+    float red   = CalculateGammaFromRamp(redRamp);
+    float green = CalculateGammaFromRamp(greenRamp);
+    float blue  = CalculateGammaFromRamp(blueRamp);
     gamma = (red + green + blue) / 3.0;
   }
   return gamma;
