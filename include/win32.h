@@ -46,11 +46,6 @@ typedef signed int	int32_t;
 typedef unsigned int	uint32_t;
 #endif
 
-// there is no sigpipe in Windows
-#ifndef SIGPIPE
-#define SIGPIPE 1
-#endif
-
 /* stuff specific to visual studio */
 #if (_MSC_VER)
 // turn off bogus `this used in base member initialization list'
