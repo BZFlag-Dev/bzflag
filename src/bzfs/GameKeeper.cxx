@@ -226,7 +226,7 @@ int GameKeeper::Player::getPlayerIDByName(const std::string &name)
   Player* playerData;
   for (int i = 0; i < PlayerSlot; i++)
     if ((playerData = playerList[i]) && !playerData->closed
-	&& (playerData->accessInfo.getName() == name))
+      && (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
       return i;
   return -1;
 }
