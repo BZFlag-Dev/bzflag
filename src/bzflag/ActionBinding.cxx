@@ -150,6 +150,8 @@ ActionBinding::ActionBinding() {
 				       std::string("scrollpanel up")));
   defaultBinding.insert(std::make_pair(std::string("Wheel Up"),
 				       std::string("scrollpanel up")));
+  defaultBinding.insert(std::make_pair(std::string("Page Down"),
+				       std::string("scrollpanel down")));
   defaultBinding.insert(std::make_pair(std::string("Wheel Down"),
 				       std::string("scrollpanel down")));
   defaultBinding.insert(std::make_pair(std::string("1"), std::string("set displayRadarRange 0.25")));
