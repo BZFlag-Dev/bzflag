@@ -691,6 +691,9 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       reason = argv[3];
     }
 
+	// reload the banlist in case anyone else has added
+	clOptions->acl.load();
+
     if (clOptions->acl.ban(ip, playerData->player.getCallSign(), durationInt,
 			   reason.c_str())) {
       clOptions->acl.save();

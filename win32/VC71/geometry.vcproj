@@ -200,6 +200,9 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
+				RelativePath="..\..\src\geometry\AnimatedTreads.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\geometry\BillboardSceneNode.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
