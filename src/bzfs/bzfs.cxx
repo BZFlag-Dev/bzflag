@@ -1466,6 +1466,7 @@ void dumpPlayerMessageStats(int playerIndex)
 		DEBUG1(" total:%u(%u)\n", total, player[playerIndex].bytes[direction]);
 		player[playerIndex].bytes[direction] = 0;
 	}
+	fflush(stdout);
 }
 #endif
 
