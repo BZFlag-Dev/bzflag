@@ -1735,6 +1735,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	      playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
 	    else if (firingInfo.flag == LaserFlag)
 	      playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
+	    else if (firingInfo.flag == GuidedMissileFlag)
+	      playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
 	    else
 	      playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
 	  }
@@ -1968,6 +1970,17 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       RemoteShotPath* shotPath =
 		(RemoteShotPath*)remoteTank->getShot(shot.id);
       if (shotPath) shotPath->update(shot, code, msg);
+      PlayerId targetId;
+      targetId.unpack(msg);
+      Player* targetTank = lookupPlayer(targetId);
+      if (targetTank && (targetTank == myTank)) {
+        static TimeKeeper lastLockMsg;
+        if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
+  	  playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);
+	  lastLockMsg=TimeKeeper::getTick();
+	  addMessage(tank, "locked on me");
+	}
+      }
       break;
     }
   }

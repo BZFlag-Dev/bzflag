@@ -39,6 +39,7 @@
 #define SFX_KILL_TEAM	17		/* shot a teammate */
 #define SFX_PHANTOM	18		/* Went into Phantom zone */
 #define SFX_MISSILE	19		/* guided missile fired */
+#define SFX_LOCK	20		/* missile locked on me */
 
 /* prepare sound effects generator and shut it down */
 void			openSound(const char* pname);

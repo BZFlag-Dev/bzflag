@@ -47,6 +47,7 @@
 -file ../../data/jump.wav jump.wav
 -file ../../data/land.wav land.wav
 -file ../../data/killteam.wav killteam.wav
+-file ../../data/lock.wav lock.wav
 -popdir
 -pushdir doc
 -file ../../LICENSE LICENSE
