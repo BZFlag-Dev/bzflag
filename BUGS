@@ -1,8 +1,6 @@
 recent bugs
 ------------
 
-- mountain background is broken for small or large worlds
-
 - OS X client gamma on a secondary display set as main display uses the wrong
   gamma (very very dark); brightness is set incorrectly.
 
