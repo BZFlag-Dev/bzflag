@@ -621,11 +621,13 @@ void			ServerLink::sendUDPlinkRequest()
   if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 	return; // we cannot comply
   }
-  for (int portno=17200; portno < 65000; portno++) {
+  // TODO try the tcp port we got first
+  // TODO then do this stuff
+  for (int port=17200; port < 65000; port++) {
 	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_addr.sin_port = htons(portno);
+	serv_addr.sin_port = htons(port);
 	if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0) {
 		break;
 	}
