@@ -1599,8 +1599,8 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 	(flagd == Flags::GuidedMissile)) {
       GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
       hudSColor3fv(white_color);
-    } else if (flagd->endurance == FlagNormal) {
-      hudSColor3fv(Team::getRadarColor(Team::getTeam(flagd->flagName)));
+    } else if (flagd->flagTeam != NoTeam) { // use team color for team flags
+      hudSColor3fv(Team::getRadarColor(flagd->flagTeam));
     }
     minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
     hudSColor3fv(Team::getRadarColor(player->getTeam()));
