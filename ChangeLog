@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Players without TALK can send to the Admin group - Sean Morrison
 * Fixed bzfs crash because poll kick/ban - Julio Jimenez
 * Allow additional group modify permission lines - Frank Evers
 * bzfs creates default groups before parsing groupdb file - Frank Evers
