@@ -1,0 +1,60 @@
+Welcome to the Linux version of BZFlag!
+
+BZFlag is a network multiplayer 3D tank battle game.  You can play
+against several other people anywhere on a TCP/IP based network,
+including the Internet.  BZFlag is free and open source;  please
+read the file COPYING in the bzflag-<version> directory off the
+standard doc directory (probably /usr/share/doc).
+
+Both software and hardware rendering is supported.  Note that
+software rendering is very slow -- this will not be fixed.
+Hardware rendering is through whatever hardware OpenGL support
+you have.  Matrox G200 and G400 cards are known to work, as
+are 3Dfx based boards.  Note that 3Dfx passthrough card users
+must use the `-3dfx' option to enable the 3Dfx card.  The usual
+glide access rules apply for 3Dfx users:  if you don't use
+/dev/3dfx you'll need to run bzflag as root.
+
+Most users will use Mesa for OpenGL support.  Mesa is available
+from www.mesa3d.org.  The glide libraries for 3Dfx users are
+available from www.3dfx.com.
+
+More information about bzflag is available in the man pages for
+bzflag, bzfs, bzfls, bzadmin, and bzfrelay.  Also check:
+
+  http://BZFlag.org/
+
+Known bugs in the Linux version:
+
+  * screen redraw problems when using accelerated glx.  normally
+    only happens, if at all, when you change video format.  the
+    workaround is to press ctrl+alt+'+' or ctrl+alt+'-' after exit
+    to change the video format.  restart the X server if that
+    doesn't work.  this appears to be a problem in glx.
+
+  * window sizing weirdness.  if you have a 3Dfx card and want
+    to use a resolution other than 640x480 then use the -3dfx
+    and -geometry options.  if you don't have a 3Dfx card then
+    try the -no3dfx option.
+
+Known issues:
+
+  * rpm may complain about missing libGL and/or libGLU.  just
+    use --nodeps and make sure you've got Mesa installed.  Mesa
+    3.1 provides these libraries while earlier versions provided
+    libMesaGL and libMesaGLU.  The earlier versions (starting
+    with version 2.6) will work as long as there is a symbolic
+    link from libGL to libMesaGL and from libGLU to libMesaGLU.
+
+  * if rendering is very slow on your hardware, try turning off
+    some rendering options.  in particular, turn off shadows
+    and smoothing as some hardware doesn't accelerate the
+    necessary OpenGL operations.
+
+  * some sound drivers don't support the SNDCTL_DSP_SETFORMAT
+    ioctl.  in this case bzflag uses SNDCTL_DSP_POST to flush
+    partial buffers which may not work well on some drivers.
+    use -mute to disable sound.
+
+Submit bug reports and comments on the SourceForge site
+http://sourceforge.net/projects/bzflag/
