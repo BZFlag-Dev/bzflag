@@ -4577,9 +4577,10 @@ int main(int argc, char **argv)
 	  waitTime = flag[i].dropDone - tm;
     }
 
+    int p;
     // get time for next lagping
     bool someoneIsConnected = false;
-    for (int p = 0; p < curMaxPlayers; p++) {
+    for (p = 0; p < curMaxPlayers; p++) {
       if (player[p].state >= PlayerDead &&
 	  player[p].type == TankPlayer &&
 	  player[p].nextping - tm < waitTime) {
@@ -4589,7 +4590,7 @@ int main(int argc, char **argv)
     }
 
     // get time for next delayed packet (Lag Flag)
-    for (int p = 0; p < curMaxPlayers; p++) {
+    for (p = 0; p < curMaxPlayers; p++) {
       if (player[p].state > PlayerInLimbo) {
         float nextTime = player[p].delayq.nextPacketTime();
         if (nextTime < waitTime) {
@@ -4642,7 +4643,7 @@ int main(int argc, char **argv)
 #endif
 
     // send delayed packets  ???
-    for (int p = 0; p < curMaxPlayers; p++) {
+    for (p = 0; p < curMaxPlayers; p++) {
       void *data;
       int length;
       if (player[p].delayq.getPacket(&length, &data)) {
