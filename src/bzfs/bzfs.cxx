@@ -2750,6 +2750,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     firingInfo.shot.vel[0] = shotSpeed * cos(lastState[playerIndex].azimuth);
     firingInfo.shot.vel[1] = shotSpeed * sin(lastState[playerIndex].azimuth);
     firingInfo.shot.vel[2] = 0.0f;
+    repack = true;
   }
 
   // verify shot number
