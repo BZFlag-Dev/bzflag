@@ -16,7 +16,7 @@
 #include "MediaFile.h"
 #include <string.h>
 
-BzfMedia::BzfMedia() : mediaDir("data") { }
+BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) { }
 BzfMedia::~BzfMedia() { }
 
 double			BzfMedia::stopwatch(bool start)
@@ -78,6 +78,48 @@ unsigned char*		BzfMedia::readImage(const std::string& filename,
   if (image) return image;
 #endif
 
+  // try data/filename
+  name = makePath(DEFAULT_MEDIA_DIR.c_str(), filename);
+  image = doReadImage(name.c_str(), width, height, depth);
+  if (image) return image;
+
+  // try data/filename with replaced extension
+  name = replaceExtension(makePath(DEFAULT_MEDIA_DIR.c_str(), filename), getImageExtension());
+  image = doReadImage(name.c_str(), width, height, depth);
+  if (image) return image;  
+
+  // try ../data/filename
+  name = "../";
+  name += DEFAULT_MEDIA_DIR;
+  name = makePath(name.c_str(), filename);
+  image = doReadImage(name.c_str(), width, height, depth);
+  if (image) return image;
+
+  // try ../data/filename with replaced extension
+  name = "../";
+  name += DEFAULT_MEDIA_DIR;
+  name = replaceExtension(makePath(name, filename), getImageExtension());
+  image = doReadImage(name.c_str(), width, height, depth);
+  if (image) return image;
+
+  // try ../../data/filename
+  name = "../../";
+  name += DEFAULT_MEDIA_DIR;
+  name = makePath(name.c_str(), filename);
+  image = doReadImage(name.c_str(), width, height, depth);
+  if (image) return image;
+
+  // try ../../data/filename with replaced extension
+  name = "../../";
+  name += DEFAULT_MEDIA_DIR;
+  name = replaceExtension(makePath(name, filename), getImageExtension());
+  image = doReadImage(name.c_str(), width, height, depth);
+  if (image) return image;
+
+#if DEBUG
+  std::cout << "Unable to locate [" << filename << "] image file (media dir is set to " << mediaDir << ")" << std::endl;
+#endif
+
   return NULL;
 }
 
@@ -118,6 +160,48 @@ float*			BzfMedia::readSound(const std::string& filename,
   if (sound) return sound;
 #endif
 
+  // try mediaDir/filename
+  name = makePath(DEFAULT_MEDIA_DIR.c_str(), filename);
+  sound = doReadSound(name.c_str(), numFrames, rate);
+  if (sound) return sound;
+
+  // try mediaDir/filename with replaced extension
+  name = replaceExtension(makePath(DEFAULT_MEDIA_DIR.c_str(), filename), getSoundExtension());
+  sound = doReadSound(name.c_str(), numFrames, rate);
+  if (sound) return sound;
+
+  // try mediaDir/filename
+  name = "../";
+  name += DEFAULT_MEDIA_DIR;
+  name = makePath(name.c_str(), filename);
+  sound = doReadSound(name.c_str(), numFrames, rate);
+  if (sound) return sound;
+
+  // try mediaDir/filename with replaced extension
+  name = "../";
+  name += DEFAULT_MEDIA_DIR;
+  name = replaceExtension(makePath(name.c_str(), filename), getSoundExtension());
+  sound = doReadSound(name.c_str(), numFrames, rate);
+  if (sound) return sound;
+
+  // try mediaDir/filename
+  name = "../../";
+  name += DEFAULT_MEDIA_DIR;
+  name = makePath(name.c_str(), filename);
+  sound = doReadSound(name.c_str(), numFrames, rate);
+  if (sound) return sound;
+
+  // try mediaDir/filename with replaced extension
+  name = "../../";
+  name += DEFAULT_MEDIA_DIR;
+  name = replaceExtension(makePath(name.c_str(), filename), getSoundExtension());
+  sound = doReadSound(name.c_str(), numFrames, rate);
+  if (sound) return sound;
+  
+#if DEBUG
+std::cout << "Unable to locate [" << filename << "] audio file (media dir is set to " << mediaDir << ")" << std::endl;
+#endif
+  
   return NULL;
 }
 
