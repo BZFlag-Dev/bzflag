@@ -150,6 +150,10 @@ SOURCE=..\..\src\game\DirectoryNames.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\LagInfo.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\NetHandler.cxx
 # End Source File
 # Begin Source File
@@ -175,6 +179,10 @@ SOURCE=..\..\include\DelayQueue.h
 # Begin Source File
 
 SOURCE=..\..\include\DirectoryNames.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\LagInfo.h
 # End Source File
 # Begin Source File
 

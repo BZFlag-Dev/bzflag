@@ -175,10 +175,6 @@ SOURCE=..\..\src\bzfs\GameKeeper.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\LagInfo.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzfs\ListServerConnection.cxx
 # End Source File
 # Begin Source File
@@ -355,7 +351,7 @@ SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\LagInfo.h
+SOURCE=..\..\include\LagInfo.h
 # End Source File
 # Begin Source File
 
