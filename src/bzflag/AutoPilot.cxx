@@ -347,7 +347,7 @@ bool chasePlayer( float &rotation, float &speed)
     Ray tankRay(pos, dir);
   
     building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
-    if (building) {
+    if (building && myTank->getFlag() != Flags::OscillationOverthruster) {
       //If roger can drive around it, just do that
       
       float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/6.0f));
