@@ -13,6 +13,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* make it so keys can be bound to multiple actions, and provide a way
+   to do global scoping on key actions
+
 * server should pick client enter position.
   - Server has no idea about players shots, this is a key to picking a safe
     entry location. This isn't a simple change.
