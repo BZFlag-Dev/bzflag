@@ -38,6 +38,7 @@ void removePlayingCallback(PlayingCallback, void* data);
 
 ServerList::ServerList() :
 	numListServers(0),
+	phase(-1),
 	serverCache(ServerListCache::get()),
 	pingBcastSocket(-1)
 {
@@ -48,7 +49,7 @@ ServerList::~ServerList() {
 }
 
 void ServerList::startServerPings() {
-	
+
   // schedule lookup of server list url.  dereference URL chain every
   // time instead of only first time just in case one of the pointers
   // has changed.
