@@ -28,19 +28,4 @@ libGeometry_a_SOURCES  =		\
 	FlagSceneNode.cxx		\
 	FlagWarpSceneNode.cxx		\
 	TankSceneNode.cxx		\
-	BillboardSceneNode.cxx	\
-	models/hightank/body.cxx		\
-	models/hightank/barel.cxx		\
-	models/hightank/turret.cxx		\
-	models/hightank/ltread.cxx		\
-	models/hightank/rtreadr.cxx		\
-	models/lowtank/body.cxx		\
-	models/lowtank/barel.cxx		\
-	models/lowtank/turret.cxx		\
-	models/lowtank/ltread.cxx		\
-	models/lowtank/rtreadr.cxx		\
-	models/medhtank/body.cxx		\
-	models/medhtank/barel.cxx		\
-	models/medhtank/turret.cxx		\
-	models/medhtank/ltread.cxx		\
-	models/medhtank/rtreadr.cxx		
+	BillboardSceneNode.cxx
