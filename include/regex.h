@@ -57,7 +57,7 @@
 /* types */
 
 /* ugly hack to make non-MS windows compilers work */
-#if defined(_WIN32) && !defined(_MSC_VER)
+#if defined(_WIN32) && !defined(_MSC_VER) && !defined(_OFF_T_)
 typedef long off_t;
 #endif
 
