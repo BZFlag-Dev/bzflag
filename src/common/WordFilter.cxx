@@ -65,11 +65,6 @@ bool WordFilter::simpleFilter(char *input) const
 } // end simpleFilter
 
 
-static inline int characterCount(const std::string &s, char c)
-{
-  return count(s.begin(), s.end(), c);
-}
-
 bool WordFilter::aggressiveFilter(char *input) const
 {
 #if HAVE_REGEX_H
@@ -93,8 +88,8 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   // get a list of characters that might be the start of a word
   char previousChar = 0;
-  for (unsigned int count = 0; count < inputLength; count++) {
-    char c = tolower(*(input + count));
+  for (unsigned int counter = 0; counter < inputLength; counter++) {
+    char c = tolower(*(input + counter));
     char c2[2] = {0};
 
     if (!isAlphanumeric(previousChar) && isVisible(c)) {
@@ -105,7 +100,8 @@ bool WordFilter::aggressiveFilter(char *input) const
         std::string puncChars = alphabeticSetFromCharacter(c);
 	for (unsigned int cnt = 0; cnt < puncChars.size(); cnt++) {
 	  char d = tolower(puncChars[cnt]);
-	  if (characterCount(wordIndices, d) == 0) {
+
+	  if (count(wordIndices.begin(), wordIndices.end(), d) == 0) {
 	    c2[0] = d;
 	    wordIndices.append(c2);
 	  }
@@ -113,7 +109,7 @@ bool WordFilter::aggressiveFilter(char *input) const
       }
 
       // add the character itself if not previously added
-      if (characterCount(wordIndices, c) == 0) {
+      if (count(wordIndices.begin(), wordIndices.end(), c) == 0) {
 	c2[0] = c;
 	wordIndices.append(c2);
       }
