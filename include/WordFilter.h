@@ -14,7 +14,7 @@
 #define __WORDFILTER_H__
 
 #ifdef _WIN32
-#  define HAVE_REGEX_H 0
+#  undef HAVE_REGEX_H
 #else
 #  define HAVE_REGEX_H 1
 #endif
@@ -31,7 +31,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 
-#if HAVE_REGEX_H
+#ifdef HAVE_REGEX_H
 #  include <regex.h>
 #else
 #  define regex_t void
