@@ -83,6 +83,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("/kill ");
   registerWord("/lagstats");
   registerWord("/lagwarn ");
+  registerWord("/mute ");
   registerWord("/password ");
   registerWord("/playerlist");
   registerWord("/poll ");
@@ -119,6 +120,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("/superkill");
   registerWord("/time");
   registerWord("/unban ");
+  registerWord("/unmute ");
   registerWord("/uptime");
   registerWord("/veto");
   registerWord("/viewreports");
