@@ -1465,19 +1465,6 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   if (key.ascii == 27) {
     if (pressed) HUDDialogStack::get()->push(mainMenu);
     return true;
-  } else if (keymap.isMappedTo(BzfKeyMap::Hunt, key)) {
-    if (pressed) {
-      if (hud->getHunting())
-	hud->setHunting(false);
-      else {
-        playLocalSound(SFX_HUNT);
-        hud->setHunt(!hud->getHunt());
-        hud->setHuntPosition(0);
-	if (!BZDB->isTrue("displayScore"))
-	  BZDB->set("displayScore", "1");
-      }
-    }
-    return true;
   } else if (hud->getHunt()) {
     if (key.button == BzfKeyEvent::Down ||
         keymap.isMappedTo(BzfKeyMap::Identify, key)) {
@@ -2169,6 +2156,22 @@ static std::string cmdScrollPanel(const std::string&, const CommandManager::ArgL
   return std::string();
 }
 
+static std::string cmdHunt(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: hunt";
+  if (hud->getHunting()) {
+    hud->setHunting(false);
+  } else {
+    playLocalSound(SFX_HUNT);
+    hud->setHunt(!hud->getHunt());
+    hud->setHuntPosition(0);
+    if (!BZDB->isTrue("displayScore"))
+      BZDB->set("displayScore", "1");
+  }
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2190,7 +2193,8 @@ static const CommandListItem commandList[] = {
   { "roam",	&cmdRoam,	"roam {rotate|translate|zoom|cycle} <args>:  roam around" },
   { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
   { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
-  { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" }
+  { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
+  { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" }
 };
 
 static void		doEvent(BzfDisplay* display)
