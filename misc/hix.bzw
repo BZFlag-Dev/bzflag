@@ -384,28 +384,28 @@ end
 
 # red team base
 base
-position -350.0 0.0 10.0
+position -340.0 0.0 29.0
 rotation 45.0
 size 35.0 35.0 0.0
 color 1
 end
 # green team base
 base
-position 350.0 0.0 10.0
+position 340.0 0.0 29.0
 rotation 45.0
 size 35.0 35.0 0.0
 color 2
 end
 # blue team base
 base
-position 0.0 -350.0 10.0
+position 0.0 -340.0 29.0
 rotation 45.0
 size 35.0 35.0 0.0
 color 3
 end
 # purple team base
 base
-position 0.0 350.0 10.0
+position 0.0 340.0 29.0
 rotation 45.0
 size 35.0 35.0 0.0
 color 4
@@ -413,85 +413,85 @@ end
 
 # pyramids around red base
 pyramid
-position -350.0 -40.0 0.0
+position -340.0 -45.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position -350.0 40.0 0.0
+position -340.0 45.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position -330.0 -20.0 0.0
+position -295.0 0.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position -330.0 20.0 0.0
+position -385.0 0.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 # pyramids around green base
 pyramid
-position 350.0 -40.0 0.0
+position 340.0 -45.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position 350.0 40.0 0.0
+position 340.0 45.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position 330.0 -20.0 0.0
+position 295.0 0.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position 330.0 20.0 0.0
+position 385.0 0.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 # pyramids around blue base
 pyramid
-position -40.0 -350.0 0.0
+position -45.0 -340.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position 40.0 -350.0 0.0
+position 45.0 -340.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position -20.0 -330.0 0.0
+position 0.0 -295.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position 20.0 -330.0 0.0
+position 0.0 -385.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 # pyramids around purple base
 pyramid
-position -40.0 350.0 0.0
+position -45.0 340.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position 40.0 350.0 0.0
+position 45.0 340.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position -20.0 330.0 0.0
+position 0.0 295.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
 pyramid
-position 20.0 330.0 0.0
+position 0.0 385.0 0.0
 rotation 0.0
-size     10.0 10.0 10.0
+size     10.0 10.0 29.0
 end
