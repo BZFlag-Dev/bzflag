@@ -5535,9 +5535,8 @@ static void		startupErrorCallback(const char* msg)
 
 
 void			startPlaying(BzfDisplay* _display,
-				     SceneRenderer& renderer,
-				     StartupInfo* _info)
-{
+				     SceneRenderer& renderer)
+			{
   // initalization
   display = _display;
   sceneRenderer = &renderer;
@@ -5586,7 +5585,7 @@ void			startPlaying(BzfDisplay* _display,
 
   // if no configuration, turn off fancy rendering so startup is fast,
   // even on a slow machine.
-  if (!_info->hasConfiguration) {
+  if (!startupInfo.hasConfiguration) {
     BZDB.set("blend", "0");
     BZDB.set("smooth", "0");
     BZDB.set("lighting", "0");
@@ -5722,7 +5721,7 @@ void			startPlaying(BzfDisplay* _display,
 
   // if no configuration file try to determine rendering settings
   // that yield reasonable performance.
-  if (!_info->hasConfiguration) {
+  if (!startupInfo.hasConfiguration) {
     printError("testing performance;  please wait...");
     findFastConfiguration();
     dumpResources(display, renderer);
@@ -5763,9 +5762,6 @@ void			startPlaying(BzfDisplay* _display,
 
   // prepare dialogs
   mainMenu = new MainMenu;
-
-  // initialize startup info with stuff provided from command line
-  startupInfo = *_info;
 
   // normal error callback (doesn't force a redraw)
   setErrorCallback(defaultErrorCallback);
@@ -5838,7 +5834,6 @@ void			startPlaying(BzfDisplay* _display,
   for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)
     delete prototypeExplosions[ext];
   prototypeExplosions.clear();
-  *_info = startupInfo;
   leaveGame();
   setErrorCallback(NULL);
   while (HUDDialogStack::get()->isActive())

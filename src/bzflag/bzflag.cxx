@@ -1542,7 +1542,7 @@ int			main(int argc, char** argv)
   }
 
   // start playing
-  startPlaying(display, RENDERER, &startupInfo);
+  startPlaying(display, RENDERER);
 
   // save resources
   dumpResources(display, RENDERER);
