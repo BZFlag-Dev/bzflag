@@ -89,13 +89,28 @@ int main(int argc, char** argv) {
   
   // check that we have callsign and host in the right format and extract them
   int atPos;
+  std::string name = "", host = "";
   if (!(op.getParameters().size() > 0 &&
 	(atPos = op.getParameters()[0].find('@')) > 0)) {
-    std::cerr<<"You have to specify callsign@host."<<std::endl;
-    return 1;
+    // input callsign and host interactively
+    std::cout << "No callsign@host specified.  Please input them" << std::endl;
+    std::cout << "Callsign: ";
+    std::cin >> name;
+    if (name.size() <= 1) {
+      std::cerr << "You must specify a callsign.  Exiting." << std::endl;
+      return 1;
+    }
+    std::cout << "Server to connect to: ";
+    std::cin >> host;
+    if (host.size() <= 1) {
+      std::cerr << "You must specify a host name to connect to.  Exiting." << std::endl;
+      return 1;
+    }
+  } else { // callsign/host on command line
+    name = op.getParameters()[0].substr(0, atPos);
+    host = op.getParameters()[0].substr(atPos + 1);
   }
-  std::string name = op.getParameters()[0].substr(0, atPos);
-  std::string host = op.getParameters()[0].substr(atPos + 1);
+  
   int port = ServerPort;
   int cPos = host.find(':');
   if (cPos != -1) {
