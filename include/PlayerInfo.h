@@ -70,7 +70,7 @@ public:
   bool	isPlaying();
   void	signingOn();
   bool	isAlive();
-  bool	isDead();
+  bool	isDead() const;
   void	setAlive();
   void	setDead();
   bool	isPaused();
@@ -222,7 +222,7 @@ inline void PlayerInfo::setLastMsg(std::string msg) {
   lastMsgTime = now;
 }
 
-inline bool PlayerInfo::isDead() {
+inline bool PlayerInfo::isDead() const {
   return state == PlayerDead;
 }
 

@@ -2935,7 +2935,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   bool repack = false;
   const PlayerInfo &shooter = playerData->player;
-  if (shooter.isObserver())
+  if (shooter.isDead() || shooter.isObserver())
     return;
   FiringInfo firingInfo;
   firingInfo.unpack(buf);
