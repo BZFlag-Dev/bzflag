@@ -4233,7 +4233,7 @@ int main(int argc, char **argv)
 	  }
 
 	  /* the poll either terminates by itself or via a veto command */
-	  if (0/*votingarbiter->isPollExpired()*/) {
+	  if (votingarbiter->isPollExpired()) {
 
 	    /* maybe successful, maybe not */
 	    if (votingarbiter->isPollSuccessful()) {
