@@ -1677,8 +1677,10 @@ static void addPlayer(int playerIndex)
   // no quick rejoining, make 'em wait
   // you can switch to observer immediately, or switch from observer
   // to regular player immediately, but only if last time time you
-  // were a regular player isn't in the rejoin list
-  if (playerData->player.getTeam() != ObserverTeam) {
+  // were a regular player isn't in the rejoin list. As well, this all
+  // only applies if the game isn't currently empty.
+  if ((playerData->player.getTeam() != ObserverTeam) &&
+      (GameKeeper::Player::count() > 0)) {
     float waitTime = rejoinList.waitTime (playerIndex);
     if (waitTime > 0.0f) {
       char buffer[MessageLen];
