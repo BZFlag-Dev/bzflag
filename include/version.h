@@ -50,37 +50,37 @@ extern char buildDate[];
 /* *nix should sed from `date +%Y%m%d` to a constant */
 inline int getBuildDate()
 {
-	int year = 1900,month = 0,day = 0;
-	char monthStr[512];
-	sscanf(buildDate,"%s %d %d",monthStr,&day,&year);
-
-	// we want it not as a name but a number
-	if (strcmp(monthStr,"Jan")==0)
-		month = 1;
-	else if (strcmp(monthStr,"Feb")==0)
-		month = 2;
-	else if (strcmp(monthStr,"Mar")==0)
-		month = 3;
-	else if (strcmp(monthStr,"Apr")==0)
-		month = 4;
-	else if (strcmp(monthStr,"May")==0)
-		month = 5;
-	else if (strcmp(monthStr,"Jun")==0)
-		month = 6;
-	else if (strcmp(monthStr,"Jul")==0)
-		month = 7;
-	else if (strcmp(monthStr,"Aug")==0)
-		month = 8;
-	else if (strcmp(monthStr,"Sep")==0)
-		month = 9;
-	else if (strcmp(monthStr,"Oct")==0)
-		month = 10;
-	else if (strcmp(monthStr,"Nov")==0)
-		month = 11;
-	else if (strcmp(monthStr,"Dec")==0)
-		month = 12;
-
-	return (year*10000) + (month*100)+ day;
+  int year = 1900, month = 0, day = 0;
+  char monthStr[512];
+  sscanf(buildDate,"%s %d %d", monthStr, &day, &year);
+  
+  // we want it not as a name but a number
+  if (strcmp(monthStr, "Jan") == 0)
+          month = 1;
+  else if (strcmp(monthStr, "Feb") == 0)
+          month = 2;
+  else if (strcmp(monthStr, "Mar") == 0)
+          month = 3;
+  else if (strcmp(monthStr, "Apr") == 0)
+          month = 4;
+  else if (strcmp(monthStr, "May") == 0)
+          month = 5;
+  else if (strcmp(monthStr, "Jun") == 0)
+          month = 6;
+  else if (strcmp(monthStr, "Jul") == 0)
+          month = 7;
+  else if (strcmp(monthStr, "Aug") == 0)
+          month = 8;
+  else if (strcmp(monthStr, "Sep") == 0)
+          month = 9;
+  else if (strcmp(monthStr, "Oct") == 0)
+          month = 10;
+  else if (strcmp(monthStr, "Nov") == 0)
+          month = 11;
+  else if (strcmp(monthStr, "Dec") == 0)
+          month = 12;
+  
+  return (year*10000) + (month*100)+ day;
 }
 #ifndef BZ_BUILD_DATE
 #define BZ_BUILD_DATE		getBuildDate()
