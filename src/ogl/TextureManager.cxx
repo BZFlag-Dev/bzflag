@@ -71,9 +71,11 @@ TextureManager* TextureManager::getTextureManager()
 
 void TextureManager::terminate()
 {
+#ifdef MEMORY_CORRUPTION_STILL_BOOSTED
   if (m_TM)
     delete m_TM;
   m_TM = NULL;
+#endif
 }
   
 TextureManager::TextureManager()
