@@ -30,7 +30,7 @@ class SceneRenderer;
 class ControlPanelMessage {
   public:
 			ControlPanelMessage(const std::string&);
-    void		breakLines(float maxLength, int fontFace, int fontSize);
+    void		breakLines(float maxLength, int fontFace, float fontSize);
 
     std::string		string;
     std::vector<std::string>	lines;

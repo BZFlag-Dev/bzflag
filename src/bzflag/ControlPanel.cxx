@@ -51,7 +51,7 @@ ControlPanelMessage::ControlPanelMessage(const std::string& _string)
   this->string = _string;
 }
 
-void ControlPanelMessage::breakLines(float maxLength, int fontFace, int fontSize)
+void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSize)
 {
   FontManager &fm = FontManager::instance();
 
@@ -73,13 +73,13 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, int fontSize
 
     // how many characters will fit?
     // the unprinted ANSI codes don't count
-    if (fm.getStrLength(fontFace, (float)fontSize, msg) <= maxLength) {
+    if (fm.getStrLength(fontFace, fontSize, msg) <= maxLength) {
       n = lineLen;
     } else {
       int r = 0;
       n = 0;
       while ((n < lineLen) &&
-	     (fm.getStrLength(fontFace, (float)fontSize, std::string(msg).substr(0, n)) < maxLength)) {
+	     (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
@@ -558,7 +558,7 @@ void			ControlPanel::resize()
   // rewrap all the lines
   for (int i = 0; i < MessageModeCount; i++) {
     for (int j = 0; j < (int)messages[i].size(); j++) {
-      messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin, fontFace, (int)fontSize);
+      messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
     }
   }
 
@@ -635,7 +635,7 @@ void			ControlPanel::addMessage(const std::string& line,
 						 const int mode)
 {
   ControlPanelMessage item(line);
-  item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, (int)fontSize);
+  item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
 
   // Add to "All" tab
   if ((int)messages[MessageAll].size() < maxLines * maxScrollPages) {
