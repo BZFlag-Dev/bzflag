@@ -322,6 +322,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::setVar: return "setVar";
     case PlayerAccessInfo::showOthers: return "showOthers";
     case PlayerAccessInfo::shutdownServer: return "shutdownServer";
+    case PlayerAccessInfo::spawn: return "spawn";
     case PlayerAccessInfo::superKill: return "superKill";
     case PlayerAccessInfo::unban: return "unban";
     case PlayerAccessInfo::veto: return "veto";
@@ -375,6 +376,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "SHORTBAN") return PlayerAccessInfo::shortBan;
   if (name == "SHOWOTHERS") return PlayerAccessInfo::showOthers;
   if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
+  if (name == "SPAWN") return PlayerAccessInfo::spawn;
   if (name == "SUPERKILL") return PlayerAccessInfo::superKill;
   if (name == "UNBAN") return PlayerAccessInfo::unban;
   if (name == "VETO") return PlayerAccessInfo::veto;

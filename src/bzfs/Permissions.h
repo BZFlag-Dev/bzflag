@@ -80,6 +80,7 @@ public:
       shortBan,
       showOthers,
       shutdownServer,
+      spawn,
       superKill,
       unban,
       veto,
