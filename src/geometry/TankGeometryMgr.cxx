@@ -82,7 +82,7 @@ TankGeometryMgr::TankGeometryMgr()
     }
   }
   callbacksInstalled = false;
-  OpenGLGState::registerContextInitializer (initContext, NULL);
+  OpenGLGState::registerContextInitializer (initContext, (void*)this);
   
   return;
 }
