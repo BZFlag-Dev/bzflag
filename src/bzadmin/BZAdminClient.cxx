@@ -195,11 +195,11 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       vbuf = nboUnpackUByte(vbuf, p);
       if (ui != NULL)
 	ui->removingPlayer(p);
-      players.erase(p);
       if (messageMask[MsgRemovePlayer]) {
 	lastMessage.first = std::string("*** '") + players[p].name + 
 	  "' left the game.";
       }
+      players.erase(p);
       break;
 
     case MsgAdminInfo: {
