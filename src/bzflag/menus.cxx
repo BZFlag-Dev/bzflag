@@ -1436,6 +1436,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.append(createLabel("toggle heads-up flag help"));
   list.append(createLabel("send message to teammates"));
   list.append(createLabel("send message to everybody"));
+  list.append(createLabel("send message to nemesis"));
   list.append(createLabel("toggle score sheet"));
   list.append(createLabel("set time of day backward"));
   list.append(createLabel("set time of day forward"));
