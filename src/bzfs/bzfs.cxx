@@ -6361,8 +6361,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       break;
     }
 
-    case MsgNewRabbit: 
-    {
+    case MsgNewRabbit: {
       if (t == rabbitIndex)
         annointNewRabbit();
       break;
@@ -6376,8 +6375,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgClientVersion:
       break;
 
-    case MsgLagPing:
-    {
+    case MsgLagPing: {
       uint16_t pingseqno;
       buf = nboUnpackUShort(buf, pingseqno);
       if (pingseqno == player[t].pingseqno)
