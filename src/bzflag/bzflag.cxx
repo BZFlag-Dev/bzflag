@@ -853,6 +853,8 @@ int			main(int argc, char** argv)
     }
 
     // check for reassigned team colors
+    if (db.hasValue("roguecolor"))
+      setTeamColor(RogueTeam, db.getValue("roguecolor"));
     if (db.hasValue("redcolor"))
       setTeamColor(RedTeam, db.getValue("redcolor"));
     if (db.hasValue("greencolor"))
@@ -863,6 +865,8 @@ int			main(int argc, char** argv)
       setTeamColor(PurpleTeam, db.getValue("purplecolor"));
 
     // check for reassigned radar colors
+    if (db.hasValue("rogueradar"))
+      setRadarColor(RogueTeam, db.getValue("rogueradar"));
     if (db.hasValue("redradar"))
       setRadarColor(RedTeam, db.getValue("redradar"));
     if (db.hasValue("greenradar"))
