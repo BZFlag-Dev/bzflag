@@ -46,6 +46,8 @@ bool WorldFileObstacle::read(const char *cmd, std::istream& input)
     driveThrough = true;
   else if (strcasecmp(cmd, "shootthrough") == 0)
     shootThrough = true;
+  else if (strcasecmp(cmd, "pasable") == 0)
+    driveThrough = shootThrough = true;
   else if (strcasecmp(cmd, "flipz") == 0)
     flipZ = true;
   else
