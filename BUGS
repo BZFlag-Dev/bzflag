@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- the octrees can be forced to build twice, because the BZDB vars come
+  in after the map has been processed?
+ 
 - in teleporter with (isValid() == false) can mess up the linking
 
 - sometimes players will recieve the message "So-and-so destroyed by server"
