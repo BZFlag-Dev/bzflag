@@ -1158,7 +1158,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     int i = 1;
     ((HUDuiList*)list[i++])->setIndex(BZDBCache::enhancedRadar ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("bigfont") ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex((int)round(10.0f * renderer->getPanelOpacity()));
+    ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
     ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("coloredradarshots") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("linedradarshots")));
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
