@@ -95,7 +95,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
 				udpLength(0)
 {
   int i;
-  char cServerVersion[128];
 
   struct protoent* p;
 #if defined(_WIN32)
@@ -207,8 +206,11 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   if (i < 8)
     goto done;
 
-  sprintf(cServerVersion,"Server version: '%8s'",version);
-  printError(cServerVersion);
+  if (debugLevel >= 1) {
+    char cServerVersion[128];
+    sprintf(cServerVersion,"Server version: '%8s'",version);
+    printError(cServerVersion);
+  }
 
   // FIXME is it ok to try UDP always?
   server_abilities |= CanDoUDP;
@@ -757,11 +759,13 @@ void			ServerLink::sendUDPlinkRequest()
   localPort = ntohs(serv_addr.sin_port);
   memcpy((char *)&urecvaddr,(char *)&serv_addr, sizeof(serv_addr));
 
-  std::vector<std::string> args;
-  char lps[10];
-  sprintf(lps, "%d", localPort);
-  args.push_back(lps);
-  printError("Network: Created local UDP downlink port {1}", &args);
+  if (debugLevel >= 1) {
+    std::vector<std::string> args;
+    char lps[10];
+    sprintf(lps, "%d", localPort);
+    args.push_back(lps);
+    printError("Network: Created local UDP downlink port {1}", &args);
+  }
 
   buf = nboPackUByte(buf, id);
 
@@ -776,7 +780,8 @@ void			ServerLink::sendUDPlinkRequest()
 void			ServerLink::enableOutboundUDP()
 {
   ulinkup = true;
-  printError("Server got our UDP, using UDP to server");
+  if (debugLevel >= 1)
+    printError("Server got our UDP, using UDP to server");
 }
 // confirm that server can send us UDP
 void			ServerLink::confirmIncomingUDP()
@@ -786,7 +791,8 @@ void			ServerLink::confirmIncomingUDP()
   // well start with udp as soon as we can
   ulinkup = true;
 
-  printError("Got server's UDP packet back, server using UDP");
+  if (debugLevel >= 1)
+    printError("Got server's UDP packet back, server using UDP");
   send(MsgUDPLinkEstablished, 0, NULL);
 }
 
