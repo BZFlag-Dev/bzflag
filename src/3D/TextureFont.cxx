@@ -57,8 +57,16 @@ const char* TextureFont::getFaceName()
 /* read values in Key: Value form from font metrics (.fmt) files */
 bool TextureFont::fmtRead(OSFile &file, std::string expectedLeft, std::string &retval)
 {
-  std::string tmpBuf;
+  static std::string workingFile;
   static int line = 0;
+
+  // reset line number if we've switched files
+  if (workingFile != file.getFileName()) {
+    workingFile = file.getFileName();
+    line = 0;
+  }
+
+  std::string tmpBuf;
 
   // allow for blank lines with native or foreign linebreaks, comment lines
   while (tmpBuf.size() == 0 || tmpBuf[0] == '#' || tmpBuf[0] == 10 || tmpBuf[0] == 13) {
