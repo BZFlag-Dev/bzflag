@@ -215,7 +215,7 @@ void Bundle::ensureNormalText(std::string &msg)
 	    || (c == '<') || (c == '>') || (c == '.')
 	    || (c == '(') || (c == ')') || (c == '%')
 	    || (c == '!') || (c == '+') || (c == '-')
-	    || (c == '$') || (c == ';'))
+	    || (c == '$') || (c == ';') || (c == '@'))
 	;
 	else {
 		msg = std::string("unsupported char:") + c;
