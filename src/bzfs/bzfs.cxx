@@ -5559,7 +5559,8 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
   switch (args.size()) {
     case 2:
       if (BZDB->isSet(args[0])) {
-	if (BZDB->getPermission(args[0]) == StateDatabase::ReadWrite) {
+	StateDatabase::Permission permission= BZDB->getPermission(args[0]);
+	if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	  BZDB->set(args[0], args[1], StateDatabase::Server);
 	  return args[0] + " set";
 	}
