@@ -60,7 +60,7 @@ protected:
 private:
   void		getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
   TextureFont*	getClosestSize(int faceID, float size);
-  float		getClosestRealSize(int faceID, float size);
+  TextureFont*	getClosestRealSize(int faceID, float desiredSize, float &actualSize);
   FontFaceMap	faceNames;
   FontFaceList  fontFaces;
 };

@@ -207,16 +207,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
     return;
   }
 
-  TextureFont* pFont = getClosestSize(faceID, size);
+  TextureFont* pFont = getClosestRealSize(faceID, size, size);
 
   if (!pFont) {
     DEBUG2("Could not find applicable font size for rendering; font face ID %d, "
 	   "requested size %f\n", faceID, size);
     return;
   }
-
-  // don't scale tiny fonts
-  size = getClosestRealSize(faceID, size);
 
   float scale = size / (float)pFont->getSize();
 
@@ -374,16 +371,13 @@ float FontManager::getStrLength(int faceID, float size, std::string text, bool a
     return 0;
   }
 
-  TextureFont* pFont = getClosestSize(faceID, size);
+  TextureFont* pFont = getClosestRealSize(faceID, size, size);
 
   if (!pFont) {
     DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
 	   "requested size %f\n", faceID, size);
     return 0;
   }
-
-  // don't scale tiny fonts
-  size = getClosestRealSize(faceID, size);
 
   float scale = size / (float)pFont->getSize();
 
@@ -411,7 +405,7 @@ float FontManager::getStrHeight(int faceID, float size, std::string text)
   }
 
   // don't scale tiny fonts
-  size = getClosestRealSize(faceID, size);
+  getClosestRealSize(faceID, size, size);
 
   return (lines * size * 1.5f);
 }
@@ -444,15 +438,16 @@ TextureFont* FontManager::getClosestSize(int faceID, float size)
   if (fontFaces[faceID].size() == 1)
     return fontFaces[faceID].begin()->second;
 
+  TextureFont*	pFont = NULL;
+
   // find the first one that is equal or bigger
   FontSizeMap::iterator itr = fontFaces[faceID].begin();
 
-  TextureFont*	pFont = NULL;
-
-  while (itr != fontFaces[faceID].end()) {
+  FontSizeMap::iterator lastFace = fontFaces[faceID].end();
+  while (itr != lastFace) {
     if (size <= itr->second->getSize()) {
       pFont = itr->second;
-      itr = fontFaces[faceID].end();
+      itr = lastFace;
     } else {
       itr++;
     }
@@ -464,25 +459,26 @@ TextureFont* FontManager::getClosestSize(int faceID, float size)
   return pFont;
 }
 
-float	    FontManager::getClosestRealSize(int faceID, float desiredSize)
+TextureFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, float &actualSize)
 {
   /*
    * tiny fonts scale poorly, this function will return the nearest unscaled size of a font
    * if the font is too tiny to scale, and a scaled size if it's big enough.
    */
 
+  TextureFont* font = getClosestSize(faceID, desiredSize);
   if (desiredSize < 14.0f) {
     // get the next biggest font size from requested
-    TextureFont* font = getClosestSize(faceID, desiredSize);
     if (!font) {
       DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
 	     "requested size %f\n", faceID, desiredSize);
       return 0;
     }
-    return (float)font->getSize();
+    actualSize = (float)font->getSize();
   } else {
-    return desiredSize;
+    actualSize = desiredSize;
   }
+  return font;
 }
 
 void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
