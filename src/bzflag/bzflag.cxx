@@ -1254,6 +1254,7 @@ int			main(int argc, char** argv)
   filter = NULL;
   display->setDefaultResolution();
   delete pmainWindow;
+  delete joystick;
   delete window;
   delete visual;
   closeSound();
