@@ -25,12 +25,14 @@
 #include "Ray.h"
 #include "Obstacle.h"
 #include "MeshFace.h"
+#include "MeshTransform.h"
 
 
 class MeshObstacle : public Obstacle {
   public:
     MeshObstacle();
-    MeshObstacle(const std::vector<char>& checkTypes,
+    MeshObstacle(const MeshTransform& transform,
+                 const std::vector<char>& checkTypes,
 		 const std::vector<cfvec3>& checkPoints,
 		 const std::vector<cfvec3>& vertices,
 		 const std::vector<cfvec3>& normals,
@@ -98,11 +100,11 @@ class MeshObstacle : public Obstacle {
     void setIsLocal(bool);
     bool getIsLocal() const;
 
-    void *pack(void*);
+    int packSize() const;
+    void *pack(void*) const;
     void *unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
 

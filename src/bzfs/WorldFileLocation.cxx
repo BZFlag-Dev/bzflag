@@ -20,19 +20,21 @@
 
 #include "WorldFileObject.h"
 #include "WorldFileLocation.h"
+#include "MeshTransform.h"
 
 WorldFileLocation::WorldFileLocation()
 {
   pos[0] = pos[1] = pos[2] = 0.0f;
   rotation = 0.0f;
   size[0] = size[1] = size[2] = 1.0f;
-  normal[0] = normal[1] = 0.0f;
-  normal[2] = 1.0f;
 }
 
 
 bool WorldFileLocation::read(const char *cmd, std::istream& input)
 {
+  //
+  // Position, Size, and Rotation
+  //
   if ((strcasecmp(cmd, "pos") == 0) ||
       (strcasecmp(cmd, "position") == 0)) {
     if (!(input >> pos[0] >> pos[1] >> pos[2])) {
@@ -45,30 +47,59 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
   }
   else if ((strcasecmp(cmd, "rot") == 0) ||
 	   (strcasecmp(cmd, "rotation") == 0)) {
-
-    std::string args;
-    std::getline(input, args);
-    std::istringstream parms(args);
-    input.putback('\n');
-
-    if (!(parms >> rotation)) {
+    if (!(input >> rotation)) {
       return false;
     }
     // convert to radians
     rotation = rotation * (M_PI / 180.0f);
+  }
 
-    // check if we have a rotation normal
-    std::string tmpStr;
-    if (parms >> tmpStr) {
-      if (tmpStr[0] == '#') {
-	return true;
-      } else {
-	normal[0] = (float)atof(tmpStr.c_str());
-      }
-
-      if (!((parms >> normal[1]) && (parms >> normal[2]))) {
-	return false;
-      }
+  //
+  // Shift, Scale, Shear, Spin, and MatrixMult
+  //
+  else if (strcasecmp ("shift", cmd) == 0) {
+    float data[3];
+    if (!(input >> data[0] >> data[1] >> data[2])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    transform.addShift(data);
+  }
+  else if (strcasecmp ("scale", cmd) == 0) {
+    float data[3];
+    if (!(input >> data[0] >> data[1] >> data[2])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    transform.addScale(data);
+  }
+  else if (strcasecmp ("shear", cmd) == 0) {
+    float data[3];
+    if (!(input >> data[0] >> data[1] >> data[2])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    transform.addShear(data);
+  }
+  else if (strcasecmp ("spin", cmd) == 0) {
+    float data[4];
+    if (!(input >> data[0] >> data[1] >> data[2] >> data[3])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    transform.addSpin(data[0], &data[1]);
+  }
+  else if (strcasecmp ("xform", cmd) == 0) {
+    std::string name;
+    if (!(input >> name)) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    int xform = TRANSFORMMGR.findTransform(name);
+    if (xform == -1) {
+      std::cout << "couldn't find Transform: " << name << std::endl;
+    } else {
+      transform.addReference(xform);
     }
   }
   else {

@@ -15,6 +15,7 @@ libGame_a_SOURCES =			\
 	Frustum.cxx			\
 	Intersect.cxx			\
 	LagInfo.cxx			\
+	MeshTransform.cxx		\
 	NetHandler.cxx			\
 	PhysicsDriver.cxx		\
 	PlayerInfo.cxx			\

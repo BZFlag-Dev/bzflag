@@ -19,6 +19,8 @@
 #include "CollisionManager.h"
 #include "Intersect.h"
 
+#include "MeshTransform.h"
+
 
 const char* MeshObstacle::typeName = "MeshObstacle";
 
@@ -54,7 +56,8 @@ static void cfvec3ListToArray(const std::vector<cfvec3>& list,
   return;
 }
 
-MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
+MeshObstacle::MeshObstacle(const MeshTransform& transform,
+                           const std::vector<char>& checkTypesL,
 			   const std::vector<cfvec3>& checkList,
 			   const std::vector<cfvec3>& verticeList,
 			   const std::vector<cfvec3>& normalList,
@@ -71,6 +74,19 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
   cfvec3ListToArray (checkList, checkCount, checkPoints);
   cfvec3ListToArray (verticeList, vertexCount, vertices);
   cfvec3ListToArray (normalList, normalCount, normals);
+  
+  // modify according to the transform
+  MeshTransform::Tool xformtool(transform);
+  int j;
+  for (j = 0; j < checkCount; j++) {
+    xformtool.modifyVertex(checkPoints[j]);
+  }
+  for (j = 0; j < vertexCount; j++) {
+    xformtool.modifyVertex(vertices[j]);
+  }
+  for (j = 0; j < normalCount; j++) {
+    xformtool.modifyNormal(normals[j]);
+  }
 
   texcoordCount = texcoordList.size();
   texcoords = new fvec2[texcoordCount];
@@ -413,7 +429,7 @@ bool MeshObstacle::isCrossing(const float* /*p*/, float /*angle*/,
 }
 
 
-void *MeshObstacle::pack(void *buf)
+void *MeshObstacle::pack(void *buf) const
 {
   if (isLocal) {
     return buf;
@@ -463,7 +479,7 @@ void *MeshObstacle::pack(void *buf)
 void *MeshObstacle::unpack(void *buf)
 {
   int i;
-
+  
   buf = nboUnpackInt(buf, checkCount);
   checkTypes = new char[checkCount];
   checkPoints = new fvec3[checkCount];
@@ -515,7 +531,7 @@ void *MeshObstacle::unpack(void *buf)
 }
 
 
-int MeshObstacle::packSize()
+int MeshObstacle::packSize() const
 {
   if (isLocal) {
     return 0;
@@ -544,38 +560,37 @@ static void outputFloat(std::ostream& out, float value)
 }
 
 
-void MeshObstacle::print(std::ostream& out, int level)
+void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 {
   out << "mesh" << std::endl;
-  if (level > 0) {
-    out << "# faces = " << faceCount << std::endl;
-    out << "# checks = " << checkCount << std::endl;
-    out << "# vertices = " << vertexCount << std::endl;
-    out << "# normals = " << normalCount << std::endl;
-    out << "# texcoords = " << texcoordCount << std::endl;
-    out << "# mins = " << mins[0] << " " << mins[1] << " " << mins[2] << std::endl;
-    out << "# maxs = " << maxs[0] << " " << maxs[1] << " " << maxs[2] << std::endl;
-  }
+
+  out << indent << "# faces = " << faceCount << std::endl;
+  out << indent << "# checks = " << checkCount << std::endl;
+  out << indent << "# vertices = " << vertexCount << std::endl;
+  out << indent << "# normals = " << normalCount << std::endl;
+  out << indent << "# texcoords = " << texcoordCount << std::endl;
+  out << indent << "# mins = " << mins[0] << " " << mins[1] << " " << mins[2] << std::endl;
+  out << indent << "# maxs = " << maxs[0] << " " << maxs[1] << " " << maxs[2] << std::endl;
 
   if (noclusters) {
-    out << "  noclusters" << std::endl;
+    out << indent << "  noclusters" << std::endl;
   }
   if (smoothBounce) {
-    out << "  smoothBounce" << std::endl;
+    out << indent << "  smoothBounce" << std::endl;
   }
   if (driveThrough) {
-    out << "  driveThrough" << std::endl;
+    out << indent << "  driveThrough" << std::endl;
   }
   if (shootThrough) {
-    out << "  shootThrough" << std::endl;
+    out << indent << "  shootThrough" << std::endl;
   }
 
   int i, j;
   for (i = 0; i < checkCount; i++) {
     if (checkTypes[i] == CheckInside) {
-      out << "  inside";
+      out << indent << "  inside";
     } else {
-      out << "  outside";
+      out << indent << "  outside";
     }
     for (j = 0; j < 3; j++) {
       outputFloat(out, checkPoints[i][j]);
@@ -583,21 +598,21 @@ void MeshObstacle::print(std::ostream& out, int level)
     out << std::endl;
   }
   for (i = 0; i < vertexCount; i++) {
-    out << "  vertex";
+    out << indent << "  vertex";
     for (j = 0; j < 3; j++) {
       outputFloat(out, vertices[i][j]);
     }
     out << std::endl;
   }
   for (i = 0; i < normalCount; i++) {
-    out << "  normal";
+    out << indent << "  normal";
     for (j = 0; j < 3; j++) {
       outputFloat(out, normals[i][j]);
     }
     out << std::endl;
   }
   for (i = 0; i < texcoordCount; i++) {
-    out << "  texcoord";
+    out << indent << "  texcoord";
     for (j = 0; j < 3; j++) {
       outputFloat(out, texcoords[i][j]);
     }
@@ -605,10 +620,10 @@ void MeshObstacle::print(std::ostream& out, int level)
   }
 
   for (int f = 0; f < faceCount; f++) {
-    faces[f]->print(out, level);
+    faces[f]->print(out, "");
   }
 
-  out << "end" << std::endl;
+  out << indent << "end" << std::endl;
 
   return;
 }

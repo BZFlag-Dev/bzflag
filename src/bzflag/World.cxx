@@ -29,6 +29,7 @@
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
 #include "PhysicsDriver.h"
+#include "MeshTransform.h"
 #include "FlagSceneNode.h"
 
 
@@ -311,7 +312,7 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   vel[1] = pos[1] - oldPos[1];
   vel[2] = pos[2] - oldPos[2];
 
-  bool goingDown = vel[2] <= 0.0f;
+  bool goingDown = (vel[2] <= 0.0f);
 
   // get the list of potential hits from the collision manager
   const ObsList* olist =
@@ -741,6 +742,8 @@ static void writeBZDBvar (const std::string& name, void *userData)
 
 bool			World::writeWorld(std::string filename)
 {
+  unsigned int i;
+  
   std::ostream *stream = FILEMGR.createDataOutStream(filename.c_str());
   if (stream == NULL) {
     return false;
@@ -762,8 +765,8 @@ bool			World::writeWorld(std::string filename)
     if (allowTeamFlags()) {
       out << "  -c" << std::endl;
       out << "  -mp 2,";
-      for (int i = RedTeam; i <= PurpleTeam; i++) {
-	if (getBase(i,0) != NULL)
+      for (int t = RedTeam; t <= PurpleTeam; t++) {
+	if (getBase(t, 0) != NULL)
 	  out << "2,";
 	else
 	  out << "0,";
@@ -815,16 +818,19 @@ bool			World::writeWorld(std::string filename)
   }
 
   // Write dynamic colors
-  DYNCOLORMGR.print(out, 1);
+  DYNCOLORMGR.print(out, "");
 
   // Write texture matrices
-  TEXMATRIXMGR.print(out, 1);
+  TEXMATRIXMGR.print(out, "");
 
   // Write materials
-  MATERIALMGR.print(out, 1);
+  MATERIALMGR.print(out, "");
 
-  // Write materials
-  PHYDRVMGR.print(out, 1);
+  // Write physics drivers
+  PHYDRVMGR.print(out, "");
+
+  // Write obstacle transforms
+  TRANSFORMMGR.print(out, "");
 
   // Write water level
   {
@@ -839,132 +845,77 @@ bool			World::writeWorld(std::string filename)
   }
 
   // Write mesh objects
-  unsigned int i;
 
   if (BZDB.isTrue("saveAsMeshes")) {
     // Write all of the meshes
     for (i = 0; i < meshes.size(); i++) {
       MeshObstacle* mesh = meshes[i];
-      mesh->print(out, 1);
+      mesh->print(out, "");
     }
   } else {
     // Write the non-local meshes
     for (i = 0; i < meshes.size(); i++) {
       MeshObstacle* mesh = meshes[i];
       if (!mesh->getIsLocal()) {
-	mesh->print(out, 1);
+	mesh->print(out, "");
       }
     }
 
     // Write arcs
     for (i = 0; i < arcs.size(); i++) {
       ArcObstacle* arc = arcs[i];
-      arc->print(out, 1);
+      arc->print(out, "");
     }
 
     // Write cones
     for (i = 0; i < cones.size(); i++) {
       ConeObstacle* cone = cones[i];
-      cone->print(out, 1);
+      cone->print(out, "");
     }
 
     // Write spheres
     for (i = 0; i < spheres.size(); i++) {
       SphereObstacle* sphere = spheres[i];
-      sphere->print(out, 1);
+      sphere->print(out, "");
     }
 
     // Write tetras
     for (i = 0; i < tetras.size(); i++) {
       TetraBuilding* tetra = tetras[i];
-      tetra->print(out, 1);
+      tetra->print(out, "");
     }
   }
 
 
   // Write bases
   {
-    for (std::vector<BaseBuilding*>::iterator it = basesR.begin(); it != basesR.end(); ++it) {
-      BaseBuilding base = **it;
-      out << "base" << std::endl;
-      const float *pos = base.getPosition();
-      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-      out << "\tsize " << base.getWidth() << " " << base.getBreadth() << " " << base.getHeight() << std::endl;
-      out << "\trotation " << ((base.getRotation() * 180.0) / M_PI) << std::endl;
-      out << "\tcolor " << base.getTeam() << std::endl;
-      if (base.isDriveThrough() && base.isShootThrough())
-	out << "\tpassable" << std::endl;
-      else{
-	if (base.isDriveThrough())
-	  out << "\tdrivethrough" << std::endl;
-	if (base.isShootThrough())
-	  out << "\tshootthrough" << std::endl;
-      }
-
-      out << "end" << std::endl << std::endl;
+    for (i = 0; i < basesR.size(); i++) {
+      BaseBuilding* base = basesR[i];
+      base->print(out, "");
     }
   }
 
   // Write boxes
   {
-    for (std::vector<BoxBuilding*>::iterator it = boxes.begin(); it != boxes.end(); ++it) {
-      BoxBuilding box = **it;
-      out << "box" << std::endl;
-      const float *pos = box.getPosition();
-      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-      out << "\tsize " << box.getWidth() << " " << box.getBreadth() << " " << box.getHeight() << std::endl;
-      out << "\trotation " << ((box.getRotation() * 180.0) / M_PI) << std::endl;
-      if (box.isDriveThrough() && box.isShootThrough())
-	out << "\tpassable" << std::endl;
-      else{
-	if (box.isDriveThrough())
-	  out << "\tdrivethrough" << std::endl;
-	if (box.isShootThrough())
-	  out << "\tshootthrough" << std::endl;
-      }
-      out << "end" << std::endl << std::endl;
+    for (i = 0; i < boxes.size(); i++) {
+      BoxBuilding* box = boxes[i];
+      box->print(out, "");
     }
   }
 
   // Write pyramids
   {
-    for (std::vector<PyramidBuilding*>::iterator it = pyramids.begin();
-	 it != pyramids.end(); ++it) {
-      PyramidBuilding pyr = **it;
-      out << "pyramid" << std::endl;
-      const float *pos = pyr.getPosition();
-      float height = pyr.getHeight();
-      if (pyr.getZFlip())
-	height = -height;
-      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2]
-	  << std::endl;
-      out << "\tsize " << pyr.getWidth() << " " << pyr.getBreadth() << " "
-	  << height << std::endl;
-      out << "\trotation " << ((pyr.getRotation() * 180.0) / M_PI)
-	  << std::endl;
-      if (pyr.isDriveThrough()&&pyr.isShootThrough())
-	out << "\tpassable" << std::endl;
-      else{
-	if (pyr.isDriveThrough())
-	  out << "\tdrivethrough" << std::endl;
-	if (pyr.isShootThrough())
-	  out << "\tshootthrough" << std::endl;
-      }
-      out << "end" << std::endl << std::endl;
+    for (i = 0; i < pyramids.size(); i++) {
+      PyramidBuilding* pyr = pyramids[i];
+      pyr->print(out, "");
     }
   }
 
   // Write Teleporters
   {
-    for (std::vector<Teleporter*>::iterator it = teleporters.begin(); it != teleporters.end(); ++it) {
-      Teleporter tele = **it;
-      out << "teleporter" << std::endl;
-      const float *pos = tele.getPosition();
-      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-      out << "\tsize " << tele.getWidth() << " " << tele.getBreadth() << " " << tele.getHeight() << std::endl;
-      out << "\trotation " << ((tele.getRotation() * 180.0) / M_PI) << std::endl;
-      out << "\tborder " << tele.getBorder() << std::endl;
-      out << "end" << std::endl << std::endl;
+    for (i = 0; i < teleporters.size(); i++) {
+      Teleporter* tele = teleporters[i];
+      tele->print(out, "");
     }
   }
 

@@ -28,7 +28,8 @@ libObstacle_a_SOURCES =			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\
-	WallObstacle.cxx
+	WallObstacle.cxx		\
+	ObstacleGroup.cxx
 else
 libObstacle_a_SOURCES =			\
 	ArcObstacle.cxx			\
@@ -42,7 +43,8 @@ libObstacle_a_SOURCES =			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\
-	WallObstacle.cxx
+	WallObstacle.cxx		\
+	ObstacleGroup.cxx
 endif
 
 EXTRA_DIST =	\

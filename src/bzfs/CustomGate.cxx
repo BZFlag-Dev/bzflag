@@ -17,6 +17,7 @@
 #include <math.h>
 
 /* common interface headers */
+#include "Teleporter.h"
 #include "StateDatabase.h"
 
 
@@ -44,8 +45,13 @@ bool CustomGate::read(const char *cmd, std::istream& input)
 
 void CustomGate::write(WorldInfo *world) const
 {
-  world->addTeleporter(pos[0], pos[1], pos[2], rotation, fabs(size[0]), fabs(size[1]), fabs(size[2]), border,horizontal, driveThrough,shootThrough);
+  Teleporter* tele =
+    new Teleporter(pos, rotation, 
+                   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+                   border,horizontal, driveThrough,shootThrough);
+  world->addTeleporter(tele);
 }
+
 
 // Local variables: ***
 // mode:C++ ***

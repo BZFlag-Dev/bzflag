@@ -142,10 +142,10 @@ int BzMaterialManager::packSize()
 }
 
 
-void BzMaterialManager::print(std::ostream& out, int level) const
+void BzMaterialManager::print(std::ostream& out, const std::string& indent) const
 {
   for (unsigned int i = 0; i < materials.size(); i++) {
-    materials[i]->print(out, level);
+    materials[i]->print(out, indent);
   }
   return;
 }
@@ -220,6 +220,7 @@ BzMaterial::~BzMaterial()
 {
   delete[] textures;
   delete[] shaders;
+  return;
 }
 
 
@@ -331,7 +332,7 @@ static void* unpack4Float(void *buf, float values[4])
 }
 
 
-void* BzMaterial::pack(void* buf)
+void* BzMaterial::pack(void* buf) const
 {
   int i;
 
@@ -422,7 +423,7 @@ void* BzMaterial::unpack(void* buf)
 }
 
 
-int BzMaterial::packSize()
+int BzMaterial::packSize() const
 {
   int i;
 
@@ -456,7 +457,7 @@ static void printColor(std::ostream& out, const char *name,
 }
 
 
-void BzMaterial::print(std::ostream& out, int /*level*/) const
+void BzMaterial::print(std::ostream& out, const std::string& /*indent*/) const
 {
   int i;
 

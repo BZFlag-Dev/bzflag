@@ -25,17 +25,19 @@
 #include "TeamBases.h"
 
 /* common implementation headers */
-#include "BzMaterial.h"
-#include "BoxBuilding.h"
-#include "PyramidBuilding.h"
-#include "BaseBuilding.h"
-#include "TetraBuilding.h"
-#include "Teleporter.h"
-#include "WallObstacle.h"
-#include "MeshObstacle.h"
-#include "ArcObstacle.h"
-#include "ConeObstacle.h"
-#include "SphereObstacle.h"
+
+class BzMaterial;
+class Obstacle;
+class BoxBuilding;
+class PyramidBuilding;
+class BaseBuilding;
+class TetraBuilding;
+class Teleporter;
+class WallObstacle;
+class MeshObstacle;
+class ArcObstacle;
+class ConeObstacle;
+class SphereObstacle;
 
 class WorldFileLocation;
 class CustomZone;
@@ -64,13 +66,14 @@ public:
 
   void setSize ( float x, float y );
   void setGravity ( float g );
+
   void addWall(float x, float y, float z, float r, float w, float h);
-  void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
-  void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
-  void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool horizontal, bool drive = false, bool shoot = false);
-  void addBase(float x, float y, float z, float r, float w, float d, float h,
-	       int color, bool drive = false, bool shoot = false);
   void addLink(int from, int to);
+
+  void addBox(BoxBuilding* box);
+  void addPyramid(PyramidBuilding* pyramid);
+  void addTeleporter(Teleporter* tele);
+  void addBase(BaseBuilding* base);
   void addMesh(MeshObstacle* mesh);
   void addArc(ArcObstacle* arc);
   void addCone(ConeObstacle* cone);
@@ -81,17 +84,32 @@ public:
   void addWeapon(const FlagType *type, const float *origin, float direction,
 		 float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
   void addWaterLevel (float level, const BzMaterial* matref);
+  
+  void addBox(float x, float y, float z, float r,
+              float w, float d, float h,
+              bool drive = false, bool shoot = false);
+  void addPyramid(float x, float y, float z, float r,
+                  float w, float d, float h,
+                  bool drive = false, bool shoot = false, bool flipZ = false);
+  void addTeleporter(float x, float y, float z, float r,
+                     float w, float d, float h, float b,
+                     bool horizontal, bool drive = false, bool shoot = false);
+  void addBase(float x, float y, float z, float r,
+               float w, float d, float h,
+	       int color, bool drive = false, bool shoot = false);
+
   float getWaterLevel() const;
   float getMaxWorldHeight() const;
   bool getZonePoint(const std::string &qualifier, float *pt) const;
   bool getSafetyPoint(const std::string &qualifier, const float *pos, float *pt) const;
-  void finishWorld();
-  int packDatabase(const BasesList* baseList);
   void *getDatabase() const;
   int getDatabaseSize() const;
   int getUncompressedSize() const;
   WorldWeapons& getWorldWeapons();
 
+  void finishWorld();
+  int packDatabase(const BasesList* baseList);
+  
 private:
 
   void setTeleporterTarget(int src, int tgt);

@@ -17,6 +17,7 @@
 
 // bzfs-specific headers
 #include "WorldFileObject.h"
+#include "MeshTransform.h"
 
 
 class WorldFileLocation : public WorldFileObject {
@@ -29,7 +30,7 @@ protected:
   float pos[3];
   float rotation;
   float size[3];
-  float normal[3]; // for rotation
+  MeshTransform transform;
 };
 
 inline void WorldFileLocation::write(WorldInfo*) const {}

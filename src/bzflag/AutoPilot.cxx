@@ -384,7 +384,8 @@ bool chasePlayer(float &rotation, float &speed)
 
       //Never did good in math, he should really see if he can reach the building
       //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
-      if ((d > 20.0f) && (d < 50.0f) && (building->getType() == BoxBuilding::typeName)) {
+      if ((d > 20.0f) && (d < 50.0f) &&
+          (building->getType() == BoxBuilding::getClassName())) {
 	float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
 	float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
 

@@ -977,17 +977,21 @@ must come before they are used). The list of world types consists of:
 .br
 .B	textureMatrix
 .br
+.B	physics
+.br
 .B	mesh
 .br
 .B	arc
 .br
+.B	cone
+.br
 .B	sphere
+.br
+.B	tetra
 .br
 .B	box
 .br
 .B	pyramid
-.br
-.B	tetra
 .br
 .B	teleporter
 .br
@@ -1017,16 +1021,18 @@ In the following examples, the values are the defaults.
 .B Material Properties
 
 Material properties may be set on several types of objects, including
-meshes, mesh faces, arcs, and spheres. Here are the properties:
+meshes, mesh faces, arcs, cones, spheres, and tetras. Here are the properties:
 .br
 
-\fB  texture\fR filename  # set working texture (without PNG extension)
+\fB  texture\fR filename     # set working texture (without PNG extension)
 .br
-\fB  notexture\fR         # specify that no texture is to be used
+\fB  addtexture\fR filename  # add texture (without PNG extension)
 .br
-\fB  notexcolor\fR        # the color is not applied to the texture
+\fB  notextures\fR           # specify that no textures are to be used
 .br
-\fB  notexalpha\fR        # don't use the texture's alpha channel
+\fB  notexcolor\fR           # the color is not applied to the texture
+.br
+\fB  notexalpha\fR           # don't use the texture's alpha channel
 .br
   # if a texture is specified, but not found, the default texture
 .br
@@ -1149,6 +1155,26 @@ Sets how high the water is, in a matter of units.
 .br
 
 
+.B The Physics Driver object
+
+\fBphysics\fR
+.br
+\fB  name\fR example_phydrv
+.br
+\fB  linear\fR 0.0 0.0 0.0  # x/y/z linear velocities
+.br
+\fB  angular\fR 0.0 0.0 0.0   # rotation freq, x/y coordinates
+.br
+\fB  slide\fR 0.0             # time until max velocity  (t > 0.0 for any sliding)
+.br
+\fB  death\fR Message goes here. 
+.br
+  # the 'death' property requires a non-blank message
+.br
+\fBend\fR
+.br
+
+
 .B The Mesh object
 
 \fBmesh\fR
@@ -1160,6 +1186,8 @@ Sets how high the water is, in a matter of units.
   # that follow the setting. Mesh faces will alter their own
 .br
   # properties with affecting the state of the mesh properties.
+.br
+  # The same pattern is used to apply physics drivers.
 .br
 \fB  inside\fR 5.5 4.5 1.2  # add an inside point  (\fBrepeatable\fR)
 .br
@@ -1197,9 +1225,33 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  divisions 16\fR  # number of subdivisions
 .br
+\fB  flatshading\fR   # flat shading  (smooth is default)
+.br
 \fB  angle 360\fR     # the sweep angle
 .br
 \fB  ratio 1\fR       # (outrad - inrad) / outrad
+.br
+\fB  position\fR 0.0 0.0 0.0
+.br
+\fB  size\fR 10 10 10 
+.br
+\fB  rotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+
+.B The Cone object
+
+\fBcone\fR
+.br
+\fB  name\fR example_cone
+.br
+\fB  divisions 16\fR  # number of subdivisions
+.br
+\fB  flatshading\fR   # flat shading  (smooth is default)
+.br
+\fB  angle 360\fR     # the sweep angle
 .br
 \fB  position\fR 0.0 0.0 0.0
 .br
@@ -1219,6 +1271,8 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  divisions 4\fR  # number of subdivisions
 .br
+\fB  flatshading\fR  # flat shading  (smooth is default)
+.br
 \fB  position\fR 0.0 0.0 10.0
 .br
 \fB  size\fR 10 10 10 
@@ -1226,6 +1280,32 @@ Sets how high the water is, in a matter of units.
 \fB  radius 10\fR    #  sets all size values to this value
 .br
 \fB  rotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+
+.B The Tetrahedron object
+
+\fBtetra\fR
+.br
+\fB  name\fR example_tetra
+.br
+# there must always be 4 vertices
+.br
+\fB  vertex\fR -10.0 -5.0 0.0
+.br
+\fB  vertex\fR +10.0 -5.0 0.0
+.br
+\fB  vertex\fR 0.0 10.0 0.0
+.br
+\fB  vertex\fR 0.0 5.0 10.0
+.br
+# defines the visible planes
+.br
+# planes are numbered according to their opposite vertex
+.br
+\fB  visible\fR 1 1 0 1
 .br
 \fBend\fR
 .br
@@ -1262,32 +1342,6 @@ Adds a triangular shaped object.
 \fB  size\fR 8.2 8.2 10.25
 .br
 \fB  rotation\fR 0.0
-.br
-\fBend\fR
-.br
-
-
-.B The Tetrahedron object
-
-\fBtetra\fR
-.br
-\fB  name\fR example_tetra
-.br
-# there must always be 4 vertices
-.br
-\fB  vertex\fR -10.0 -5.0 0.0
-.br
-\fB  vertex\fR +10.0 -5.0 0.0
-.br
-\fB  vertex\fR 0.0 10.0 0.0
-.br
-\fB  vertex\fR 0.0 5.0 10.0
-.br
-# defines the visible planes
-.br
-# planes are numbered according to their opposite vertex
-.br
-\fB  visible\fR 1 1 0 1
 .br
 \fBend\fR
 .br

@@ -121,7 +121,7 @@ void CustomSphere::write(WorldInfo *world) const
   for (i = 0; i < MaterialCount; i++) {
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
-  SphereObstacle* sphere = new SphereObstacle(pos, size, rotation, texsize,
+  SphereObstacle* sphere = new SphereObstacle(transform, pos, size, rotation, texsize,
 					      useNormals, hemisphere, divisions, mats,
 					      phydrv,
 					      smoothBounce, driveThrough, shootThrough);

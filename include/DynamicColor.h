@@ -48,11 +48,11 @@ class DynamicColor {
     const float* getColor() const;
     const std::string& getName() const;
 
-    void* pack(void*);
+    int packSize() const;
+    void* pack(void*) const;
     void* unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     static const float minPeriod;
@@ -93,11 +93,11 @@ class DynamicColorManager {
     int findColor(const std::string& name) const;
     const DynamicColor* getColor(int id) const;
 
-    void* pack(void*);
+    int packSize() const;
+    void* pack(void*) const;
     void* unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     std::vector<DynamicColor*> colors;

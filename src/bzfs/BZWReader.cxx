@@ -38,9 +38,10 @@
 #include "CustomSphere.h"
 #include "CustomWaterLevel.h"
 #include "CustomDynamicColor.h"
-#include "CustomPhysicsDriver.h"
 #include "CustomTextureMatrix.h"
 #include "CustomMaterial.h"
+#include "CustomPhysicsDriver.h"
+#include "CustomMeshTransform.h"
 
 BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
 {
@@ -131,6 +132,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	if (object != fakeObject) {
 	  if (object->writeImmediately()) {
 	    object->write(world);
+	    delete object;
 	  } else {
 	    wlist.push_back(object);
 	  }
@@ -155,9 +157,13 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     } else if (strcasecmp(buffer, "mesh") == 0) {
       newObject = new CustomMesh;
     } else if (strcasecmp(buffer, "arc") == 0) {
-      newObject = new CustomArc;
+      newObject = new CustomArc(false);
+    } else if (strcasecmp(buffer, "meshbox") == 0) {
+      newObject = new CustomArc(true);
     } else if (strcasecmp(buffer, "cone") == 0) {
-      newObject = new CustomCone;
+      newObject = new CustomCone(false);
+    } else if (strcasecmp(buffer, "meshpyr") == 0) {
+      newObject = new CustomCone(true);
     } else if (strcasecmp(buffer, "sphere") == 0) {
       newObject = new CustomSphere;
     } else if (strcasecmp(buffer, "weapon") == 0) {
@@ -173,14 +179,16 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       }
     } else if (strcasecmp(buffer, "waterLevel") == 0) {
       newObject = new CustomWaterLevel;
-    } else if (strcasecmp(buffer, "physics") == 0) {
-      newObject = new CustomPhysicsDriver;
     } else if (strcasecmp(buffer, "dynamicColor") == 0) {
       newObject = new CustomDynamicColor;
     } else if (strcasecmp(buffer, "textureMatrix") == 0) {
       newObject = new CustomTextureMatrix;
     } else if (strcasecmp(buffer, "material") == 0) {
       newObject = new CustomMaterial;
+    } else if (strcasecmp(buffer, "physics") == 0) {
+      newObject = new CustomPhysicsDriver;
+    } else if (strcasecmp(buffer, "transform") == 0) {
+      newObject = new CustomMeshTransform;
     } else if (strcasecmp(buffer, "options") == 0) {
       newObject = fakeObject;
     } else if (object) {

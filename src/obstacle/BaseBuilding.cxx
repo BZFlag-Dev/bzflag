@@ -12,11 +12,16 @@
 
 #include <math.h>
 #include "common.h"
-#include "BaseBuilding.h"
 #include "global.h"
+#include "Pack.h"
+#include "BaseBuilding.h"
 #include "Intersect.h"
 
 const char*		BaseBuilding::typeName = "BaseBuilding";
+
+BaseBuilding::BaseBuilding()
+{
+}
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
 	const float *size, int _team) :
@@ -193,6 +198,80 @@ int	BaseBuilding::getTeam() const {
 bool			BaseBuilding::isFlatTop() const
 {
   return true;
+}
+
+
+void* BaseBuilding::pack(void* buf) const
+{
+  buf = nboPackUShort(buf, (uint16_t) team);
+  
+  buf = nboPackVector(buf, pos);
+  buf = nboPackFloat(buf, angle);
+  buf = nboPackVector(buf, size);
+
+  unsigned char stateByte = 0;
+  stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
+  stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
+  buf = nboPackUByte(buf, stateByte);
+
+  return buf;
+}
+
+
+void* BaseBuilding::unpack(void* buf)
+{
+  uint16_t shortTeam;
+  buf = nboUnpackUShort(buf, shortTeam);
+  team = (int)shortTeam;
+  
+  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackFloat(buf, angle);
+  buf = nboUnpackVector(buf, size);
+
+  unsigned char stateByte;
+  buf = nboUnpackUByte(buf, stateByte);
+  driveThrough = (stateByte & _DRIVE_THRU) != 0;
+  shootThrough = (stateByte & _SHOOT_THRU) != 0;
+
+  return buf;
+}
+
+
+int BaseBuilding::packSize() const
+{
+  int fullSize = 0;
+  fullSize += sizeof(uint16_t); // team
+  fullSize += sizeof(float[3]); // pos
+  fullSize += sizeof(float);    // rotation
+  fullSize += sizeof(float[3]); // size
+  fullSize += sizeof(uint8_t);  // state bits
+  return fullSize;
+}
+
+
+void BaseBuilding::print(std::ostream& out, const std::string& indent) const
+{
+  out << indent << "base" << std::endl;
+  const float *pos = getPosition();
+  out << indent << "  position " << pos[0] << " " << pos[1] << " " 
+                                 << pos[2] << std::endl;
+  out << indent << "  size " << getWidth() << " " << getBreadth() 
+                             << " " << getHeight() << std::endl;
+  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
+                                 << std::endl;
+  out << indent << "  color " << getTeam() << std::endl;
+  if (isDriveThrough() && isShootThrough()) {
+    out << indent << "  passable" << std::endl;
+  } else {
+    if (isDriveThrough()) {
+      out << indent << "  drivethrough" << std::endl;
+    }
+    if (isShootThrough()) {
+      out << indent << "  shootthrough" << std::endl;
+    }
+  }
+  out << indent << "end" << std::endl << std::endl;
+  return;
 }
 
 

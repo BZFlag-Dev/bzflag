@@ -16,6 +16,7 @@
 #include "CustomTetra.h"
 
 /* common implementation headers */
+#include "TetraBuilding.h"
 #include "TextureMatrix.h"
 
 /* bzfs implementation headers */
@@ -126,7 +127,7 @@ void CustomTetra::write(WorldInfo *world) const
   for (int i = 0; i < 4; i++) {
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
-  TetraBuilding* tetra = new TetraBuilding(vertices, normals, texcoords,
+  TetraBuilding* tetra = new TetraBuilding(transform, vertices, normals, texcoords,
 					   useNormals, useTexcoords,
 					   mats, driveThrough, shootThrough);
   if (tetra->isValid()) {

@@ -105,7 +105,7 @@ void MeshFace::finalize()
     vertexCount = 0;
     DEBUG1("invalid mesh face\n");
     if (debugLevel >= 3) {
-      print(std::cerr, 3);
+      print(std::cerr, "");
     }
     return;
   }
@@ -130,7 +130,7 @@ void MeshFace::finalize()
       vertexCount = 0;
       DEBUG1("non-convex mesh face\n");
       if (debugLevel >= 3) {
-	print(std::cerr, 3);
+	print(std::cerr, "");
       }
       return;
     }
@@ -536,7 +536,7 @@ bool MeshFace::isCrossing(const float* /*p*/, float /*angle*/,
 }
 
 
-void *MeshFace::pack(void *buf)
+void *MeshFace::pack(void *buf) const
 {
   // state byte
   unsigned char stateByte = 0;
@@ -639,7 +639,7 @@ void *MeshFace::unpack(void *buf)
 }
 
 
-int MeshFace::packSize()
+int MeshFace::packSize() const
 {
   int fullSize = sizeof(unsigned char);
   fullSize += sizeof(int);
@@ -657,12 +657,12 @@ int MeshFace::packSize()
 }
 
 
-void MeshFace::print(std::ostream& out, int level)
+void MeshFace::print(std::ostream& out, const std::string& /*indent*/) const
 {
   int i;
   out << "  face" << std::endl;
 
-  if (level > 1) {
+  if (debugLevel >= 3) {
     out << "  # plane normal = " << plane[0] << " " << plane[1] << " "
 				 << plane[2] << " " << plane[3] << std::endl;
   }
@@ -672,7 +672,7 @@ void MeshFace::print(std::ostream& out, int level)
     int index = (fvec3*)vertices[i] - mesh->getVertices();
     out << " " << index;
   }
-  if (level > 1) {
+  if (debugLevel >= 3) {
     out << " #";
     for (i = 0; i < vertexCount; i++) {
       out << " " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2];
@@ -686,7 +686,7 @@ void MeshFace::print(std::ostream& out, int level)
       int index = (fvec3*)normals[i] - mesh->getNormals();
       out << " " << index;
     }
-    if (level > 1) {
+    if (debugLevel >= 3) {
       out << " #";
       for (i = 0; i < vertexCount; i++) {
 	out << " " << normals[i][0] <<  " " << normals[i][1] << " " << normals[i][2];
@@ -701,7 +701,7 @@ void MeshFace::print(std::ostream& out, int level)
       int index = (fvec2*)texcoords[i] - mesh->getTexcoords();
       out << " " << index;
     }
-    if (level > 1) {
+    if (debugLevel >= 3) {
       out << " #";
       for (i = 0; i < vertexCount; i++) {
 	out << " " << texcoords[i][0] <<  " " << texcoords[i][1];

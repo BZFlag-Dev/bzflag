@@ -19,6 +19,7 @@
 #include <math.h>
 
 /* common implementation headers */
+#include "PyramidBuilding.h"
 #include "StateDatabase.h"
 
 
@@ -42,9 +43,19 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
 void CustomPyramid::write(WorldInfo *world) const
 {
   bool flipit = flipZ;
-  if (size[2] < 0.0f)
+  if (size[2] < 0.0f) {
     flipit = true;
-  world->addPyramid(pos[0], pos[1], pos[2], rotation, fabs(size[0]), fabs(size[1]), fabs(size[2]),driveThrough,shootThrough,flipit);
+  }
+
+  PyramidBuilding* pyr =
+    new PyramidBuilding(pos, rotation,
+                        fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+                        driveThrough, shootThrough);
+  if (flipit) {
+    pyr->setZFlip();
+  }
+  
+  world->addPyramid(pyr);
 }
 
 // Local variables: ***

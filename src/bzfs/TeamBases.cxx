@@ -113,7 +113,7 @@ void *TeamBases::pack( void *buf ) const
     buf = nboPackVector(buf, it->position);
     buf = nboPackFloat(buf, it->rotation);
     buf = nboPackVector(buf, it->size);
-    buf = nboPackVector(buf, it->safetyZone);
+    buf = nboPackUByte(buf, 0); // state bits
   }
 
   return buf;

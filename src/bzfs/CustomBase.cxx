@@ -16,6 +16,9 @@
 /* local implementation headers */
 #include "TeamBases.h"
 
+/* common implementation headers */
+#include "BaseBuilding.h"
+
 /* FIXME - external dependancies */
 extern const int CtfTeams;
 extern BasesList bases;
@@ -45,13 +48,14 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
 
 void CustomBase::write(WorldInfo* world) const {
   float safety[] = { 0.0f, 0.0f, 0.0f };
-  if (bases.find( color ) == bases.end())
+  if (bases.find( color ) == bases.end()) {
     bases[color] = TeamBases((TeamColor)color);
+  }
   bases[color].addBase( pos, size, rotation, safety );
 
-  world->addBase(pos[0], pos[1], pos[2], rotation,
-		 fabs(size[0]), fabs(size[1]), fabs(size[2]), color,
-		 driveThrough, shootThrough);
+  float absSize[3] = { fabsf(size[0]), fabsf(size[1]), fabsf(size[2]) };
+  BaseBuilding* base = new BaseBuilding(pos, rotation, absSize, color);
+  world->addBase(base);
 }
 
 // Local variables: ***

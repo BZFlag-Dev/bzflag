@@ -639,7 +639,7 @@ void			ServerLink::sendKilled(const PlayerId& killer,
 #ifndef BUILDING_BZADMIN
 void			ServerLink::sendPlayerUpdate(Player* player)
 {
-  char msg[PlayerUpdatePLen + 3 * sizeof(short) + sizeof(int)];
+  char msg[PlayerUpdatePLenMax];
   // Send the time frozen at each start of scene iteration, as all
   // dead reckoning use that
   const float timeStamp = TimeKeeper::getTick() - TimeKeeper::getNullTime();
@@ -647,21 +647,13 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   uint16_t code;
   buf = nboPackFloat(buf, timeStamp);
   buf = nboPackUByte(buf, player->getId());
+
   // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
-  int len = PlayerUpdatePLen;
   buf = player->pack(buf, code);
-  if (code == MsgPlayerUpdateSmall) {
-    len = PlayerUpdateSmallPLen;
-  }
-  if ((player->getStatus() & PlayerState::JumpJets) != 0) {
-    len += sizeof(short);
-  }
-  if ((player->getStatus() & PlayerState::OnDriver) != 0) {
-    len += sizeof(int);
-  }
-  if ((player->getStatus() & PlayerState::UserInputs) != 0) {
-    len += (2 * sizeof(short));
-  }
+
+  // variable length
+  const int len = (char*)buf - (char*)msg;
+  
   send(code, len, msg);
 }
 #endif

@@ -26,6 +26,7 @@
 #include "common.h"
 #include "Ray.h"
 #include <string>
+#include <iostream>
 
 
 class SceneNode;
@@ -38,6 +39,7 @@ class SceneNode;
 
 class Obstacle {
   public:
+
   /** The default constructor. It sets all values to 0
       and is not very useful. */
   Obstacle();
@@ -71,6 +73,18 @@ class Obstacle {
    */
   virtual bool isFlatTop() const;
 
+  /** TThis function returns the network packed size in bytes */
+  virtual int packSize() const = 0;
+  
+  /** This function packs the obstacle into buf */
+  virtual void *pack(void* buf) const = 0;
+
+  /** This function unpacks the obstacle from buf */
+  virtual void *unpack(void* buf) = 0;
+            
+  /** This function prints the obstacle to the stream */
+  virtual void print(std::ostream& out, const std::string& indent) const = 0;
+            
   /** This function returns the position of this obstacle. */
   const float* getPosition() const;
 

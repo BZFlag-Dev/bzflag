@@ -90,11 +90,11 @@ class BzMaterial {
     // Utilities
     //
 
-    void *pack(void *);
+    int packSize() const;
+    void *pack(void *) const;
     void *unpack(void *);
-    int packSize();
 
-    void print(std::ostream& out, int level) const;
+    void print(std::ostream& out, const std::string& indent) const;
 
     static const BzMaterial* getDefault();
 
@@ -160,7 +160,7 @@ class BzMaterialManager {
     void* unpack(void*);
     int packSize();
 
-    void print(std::ostream& out, int level) const;
+    void print(std::ostream& out, const std::string& indent) const;
     void printReference(std::ostream& out, const BzMaterial* mat) const;
 
   private:

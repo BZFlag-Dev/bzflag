@@ -23,6 +23,7 @@
 // Common interface headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "Obstacle.h"
 #include "CollisionManager.h"
 #include "PhysicsDriver.h"
 #include "Ray.h"
@@ -355,7 +356,7 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
   if (driver == NULL) {
     te.phydrv = -1;
   } else {
-    const float* v = driver->getVelocity();
+    const float* v = driver->getLinearVel();
     const float av = driver->getAngularVel();
     if ((v[0] == 0.0f) && (v[1] == 0.0f) && (av == 0.0f)) {
       te.phydrv = -1;
@@ -451,7 +452,7 @@ static void updateList(TrackList& list, float dt)
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
     if (phydrv != NULL) {
 
-      const float* v = phydrv->getVelocity();
+      const float* v = phydrv->getLinearVel();
       te.pos[0] += (v[0] * dt);
       te.pos[1] += (v[1] * dt);
 

@@ -275,7 +275,7 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
 
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
   if (phydrv != NULL) {
-    const float* v = phydrv->getVelocity();
+    const float* v = phydrv->getLinearVel();
     const float av = phydrv->getAngularVel();
     const float* ap = phydrv->getAngularPos();
 
@@ -1050,7 +1050,7 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 	  predictedVel[1] += (+dx * pdAngVel);
 	}
 	// linear velocity adjustment
-	const float* pdVel = phydrv->getVelocity();
+	const float* pdVel = phydrv->getLinearVel();
 	predictedPos[0] += (dt * pdVel[0]);
 	predictedPos[1] += (dt * pdVel[1]);
 	predictedVel[0] += pdVel[0];

@@ -32,7 +32,8 @@ ArcObstacle::ArcObstacle()
 }
 
 
-ArcObstacle::ArcObstacle(const float* _pos, const float* _size,
+ArcObstacle::ArcObstacle(const MeshTransform& xform,
+                         const float* _pos, const float* _size,
 			 float _rotation, float _sweepAngle, float _ratio,
 			 const float _texsize[4], bool _useNormals,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
@@ -49,6 +50,7 @@ ArcObstacle::ArcObstacle(const float* _pos, const float* _size,
   shootThrough = shoot;
 
   // arc specific parameters
+  transform = xform;
   divisions = _divisions;
   sweepAngle = _sweepAngle;
   ratio = _ratio;
@@ -295,7 +297,7 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
     fcount = fcount + 2; // add the start and end faces
   }
 
-  mesh = new MeshObstacle(checkTypes, checkPoints,
+  mesh = new MeshObstacle(transform, checkTypes, checkPoints,
 			  vertices, normals, texcoords, fcount,
 			  false, smoothBounce, driveThrough, shootThrough);
 
@@ -473,7 +475,7 @@ void ArcObstacle::makeRing(bool isCircle, float a, float r, float h,
     fcount = fcount + 2; // add the start and end faces
   }
 
-  mesh = new MeshObstacle(checkTypes, checkPoints,
+  mesh = new MeshObstacle(transform, checkTypes, checkPoints,
 			  vertices, normals, texcoords, fcount,
 			  false, smoothBounce, driveThrough, shootThrough);
 
@@ -607,8 +609,9 @@ bool ArcObstacle::isCrossing(const float* /*p*/, float /*angle*/,
 }
 
 
-void *ArcObstacle::pack(void *buf)
+void* ArcObstacle::pack(void* buf) const
 {
+  buf = transform.pack(buf);
   buf = nboPackVector(buf, pos);
   buf = nboPackVector(buf, size);
   buf = nboPackFloat(buf, angle);
@@ -638,8 +641,9 @@ void *ArcObstacle::pack(void *buf)
 }
 
 
-void *ArcObstacle::unpack(void *buf)
+void* ArcObstacle::unpack(void* buf)
 {
+  buf = transform.unpack(buf);
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackVector(buf, size);
   buf = nboUnpackFloat(buf, angle);
@@ -672,9 +676,9 @@ void *ArcObstacle::unpack(void *buf)
 }
 
 
-int ArcObstacle::packSize()
+int ArcObstacle::packSize() const
 {
-  int fullSize = 0;
+  int fullSize = transform.packSize();
   fullSize += sizeof(float[3]);
   fullSize += sizeof(float[3]);
   fullSize += sizeof(float);
@@ -689,7 +693,7 @@ int ArcObstacle::packSize()
 }
 
 
-void ArcObstacle::print(std::ostream& out, int /*level*/)
+void ArcObstacle::print(std::ostream& out, const std::string& indent) const
 {
   int i;
 
@@ -701,6 +705,8 @@ void ArcObstacle::print(std::ostream& out, int /*level*/)
   out << "  angle " << sweepAngle << std::endl;
   out << "  ratio " << ratio << std::endl;
   out << "  divisions " << divisions << std::endl;
+  
+  transform.printTransforms(out, indent);
 
   out << "  texsize " << texsize[0] << " " << texsize[1] << " "
 		      << texsize[2] << " " << texsize[3] << std::endl;

@@ -21,6 +21,7 @@
 #include <string>
 #include "Obstacle.h"
 #include "MeshObstacle.h"
+#include "MeshTransform.h"
 #include "BzMaterial.h"
 
 
@@ -34,7 +35,8 @@ class SphereObstacle : public Obstacle {
     };
 
     SphereObstacle();
-    SphereObstacle(const float* _pos, const float* _size,
+    SphereObstacle(const MeshTransform& transform,
+                   const float* _pos, const float* _size,
 		   float _rotation, const float _texsize[2],
 		   bool _useNormals, bool hemisphere,
 		   int _divisions, const BzMaterial* mats[MaterialCount],
@@ -66,11 +68,11 @@ class SphereObstacle : public Obstacle {
 		      float halfWidth, float halfBreadth,
 		      float height, float* normal) const;
 
-    void *pack(void*);
+    int packSize() const;
+    void *pack(void*) const;
     void *unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     void finalize();
@@ -80,6 +82,7 @@ class SphereObstacle : public Obstacle {
 
     MeshObstacle* mesh;
 
+    MeshTransform transform;
     int divisions;
     bool hemisphere;
     int phydrv;

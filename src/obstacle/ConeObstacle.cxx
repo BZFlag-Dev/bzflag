@@ -32,11 +32,12 @@ ConeObstacle::ConeObstacle()
 }
 
 
-ConeObstacle::ConeObstacle(const float* _pos, const float* _size,
-			 float _rotation, float _sweepAngle,
-			 const float _texsize[2], bool _useNormals,
-			 int _divisions, const BzMaterial* mats[MaterialCount],
-			 int physics, bool bounce, bool drive, bool shoot)
+ConeObstacle::ConeObstacle(const MeshTransform& xform,
+                           const float* _pos, const float* _size,
+			   float _rotation, float _sweepAngle,
+			   const float _texsize[2], bool _useNormals,
+			   int _divisions, const BzMaterial* mats[MaterialCount],
+			   int physics, bool bounce, bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -49,6 +50,7 @@ ConeObstacle::ConeObstacle(const float* _pos, const float* _size,
   shootThrough = shoot;
 
   // arc specific parameters
+  transform = xform;
   divisions = _divisions;
   sweepAngle = _sweepAngle;
   phydrv = physics;
@@ -265,7 +267,7 @@ void ConeObstacle::finalize()
     fcount = fcount + 2; // add the start and end faces
   }
 
-  mesh = new MeshObstacle(checkTypes, checkPoints,
+  mesh = new MeshObstacle(transform, checkTypes, checkPoints,
 			  vertices, normals, texcoords, fcount,
 			  false, smoothBounce, driveThrough, shootThrough);
 
@@ -387,8 +389,9 @@ bool ConeObstacle::isCrossing(const float* /*p*/, float /*angle*/,
 }
 
 
-void *ConeObstacle::pack(void *buf)
+void *ConeObstacle::pack(void *buf) const
 {
+  buf = transform.pack(buf);
   buf = nboPackVector(buf, pos);
   buf = nboPackVector(buf, size);
   buf = nboPackFloat(buf, angle);
@@ -419,6 +422,7 @@ void *ConeObstacle::pack(void *buf)
 
 void *ConeObstacle::unpack(void *buf)
 {
+  buf = transform.unpack(buf);
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackVector(buf, size);
   buf = nboUnpackFloat(buf, angle);
@@ -450,9 +454,9 @@ void *ConeObstacle::unpack(void *buf)
 }
 
 
-int ConeObstacle::packSize()
+int ConeObstacle::packSize() const
 {
-  int fullSize = 0;
+  int fullSize = transform.packSize();
   fullSize += sizeof(float[3]);
   fullSize += sizeof(float[3]);
   fullSize += sizeof(float);
@@ -466,7 +470,7 @@ int ConeObstacle::packSize()
 }
 
 
-void ConeObstacle::print(std::ostream& out, int /*level*/)
+void ConeObstacle::print(std::ostream& out, const std::string& indent) const
 {
   int i;
 
@@ -477,6 +481,8 @@ void ConeObstacle::print(std::ostream& out, int /*level*/)
   out << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
   out << "  angle " << sweepAngle << std::endl;
   out << "  divisions " << divisions << std::endl;
+
+  transform.printTransforms(out, indent);
 
   out << "  texsize " << texsize[0] << " " << texsize[1] << std::endl;
 

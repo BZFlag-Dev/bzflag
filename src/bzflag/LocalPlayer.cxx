@@ -387,7 +387,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   const int driverId = getPhysicsDriver();
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
   if (phydrv != NULL) {
-    const float* v = phydrv->getVelocity();
+    const float* v = phydrv->getLinearVel();
 
     newVelocity[2] += v[2];
 
@@ -742,7 +742,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   }
   if (gettingSound) {
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(getPhysicsDriver());
-    if ((phydrv != NULL) && (phydrv->getVelocity()[2] > 0.0f)) {
+    if ((phydrv != NULL) && (phydrv->getLinearVel()[2] > 0.0f)) {
       playLocalSound(SFX_BOUNCE);
     }
     else if (justLanded && !entryDrop) {

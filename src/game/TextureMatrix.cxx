@@ -113,9 +113,9 @@ const TextureMatrix* TextureMatrixManager::getMatrix(int id) const
 }
 
 
-void * TextureMatrixManager::pack(void *buf)
+void * TextureMatrixManager::pack(void *buf) const
 {
-  std::vector<TextureMatrix*>::iterator it;
+  std::vector<TextureMatrix*>::const_iterator it;
   buf = nboPackUInt(buf, (unsigned int)matrices.size());
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
@@ -138,10 +138,10 @@ void * TextureMatrixManager::unpack(void *buf)
 }
 
 
-int TextureMatrixManager::packSize()
+int TextureMatrixManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
-  std::vector<TextureMatrix*>::iterator it;
+  std::vector<TextureMatrix*>::const_iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
     fullSize = fullSize + texmat->packSize();
@@ -150,12 +150,13 @@ int TextureMatrixManager::packSize()
 }
 
 
-void TextureMatrixManager::print(std::ostream& out, int level)
+void TextureMatrixManager::print(std::ostream& out,
+                                 const std::string& indent) const
 {
-  std::vector<TextureMatrix*>::iterator it;
+  std::vector<TextureMatrix*>::const_iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
-    texmat->print(out, level);
+    texmat->print(out, indent);
   }
   return;
 }
@@ -306,7 +307,7 @@ void TextureMatrix::update (float t)
 }
 
 
-void * TextureMatrix::pack(void *buf)
+void * TextureMatrix::pack(void *buf) const
 {
   buf = nboPackStdString (buf, name);
 
@@ -350,13 +351,13 @@ void * TextureMatrix::unpack(void *buf)
 }
 
 
-int TextureMatrix::packSize()
+int TextureMatrix::packSize() const
 {
   return (nboStdStringPackSize(name) + sizeof(float[11]));
 }
 
 
-void TextureMatrix::print(std::ostream& out, int /*level*/)
+void TextureMatrix::print(std::ostream& out, const std::string& /*indent*/) const
 {
   out << "textureMatrix" << std::endl;
 

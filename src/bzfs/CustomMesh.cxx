@@ -150,9 +150,10 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 
 void CustomMesh::write(WorldInfo *world) const
 {
-  MeshObstacle* mesh = new MeshObstacle(
-    checkTypes, checkPoints, vertices, normals, texcoords, faces.size(),
-    noclusters, smoothBounce, driveThrough, shootThrough);
+  MeshObstacle* mesh =
+    new MeshObstacle(transform, checkTypes, checkPoints,
+                     vertices, normals, texcoords, faces.size(),
+                     noclusters, smoothBounce, driveThrough, shootThrough);
 
   std::vector<CustomMeshFace*>::const_iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {

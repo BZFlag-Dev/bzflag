@@ -13,6 +13,7 @@
 #include <math.h>
 #include "common.h"
 #include "global.h"
+#include "Pack.h"
 #include "BoxBuilding.h"
 #include "Intersect.h"
 
@@ -190,6 +191,72 @@ void			BoxBuilding::getCorner(int index, float* pos) const
 bool			BoxBuilding::isFlatTop() const
 {
   return true;
+}
+
+
+void* BoxBuilding::pack(void* buf) const
+{
+  buf = nboPackVector(buf, pos);
+  buf = nboPackFloat(buf, angle);
+  buf = nboPackVector(buf, size);
+
+  unsigned char stateByte = 0;
+  stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
+  stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
+  buf = nboPackUByte(buf, stateByte);
+
+  return buf;
+}
+
+
+void* BoxBuilding::unpack(void* buf)
+{
+  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackFloat(buf, angle);
+  buf = nboUnpackVector(buf, size);
+
+  unsigned char stateByte;
+  buf = nboUnpackUByte(buf, stateByte);
+  driveThrough = (stateByte & _DRIVE_THRU) != 0;
+  shootThrough = (stateByte & _SHOOT_THRU) != 0;
+
+  return buf;
+}
+
+
+int BoxBuilding::packSize() const
+{
+  int fullSize = 0;
+  fullSize += sizeof(float[3]); // pos
+  fullSize += sizeof(float[3]); // size
+  fullSize += sizeof(float);    // rotation
+  fullSize += sizeof(uint8_t);  // state bits
+  return fullSize;
+}
+
+
+void BoxBuilding::print(std::ostream& out, const std::string& indent) const
+{
+  out << indent << "box" << std::endl;
+  const float *pos = getPosition();
+  out << indent << "  position " << pos[0] << " " << pos[1] << " " 
+                                 << pos[2] << std::endl;
+  out << indent << "  size " << getWidth() << " " << getBreadth() 
+                             << " " << getHeight() << std::endl;
+  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI) 
+                                 << std::endl;
+  if (isDriveThrough() && isShootThrough()) {
+    out << indent << "  passable" << std::endl;
+  } else {
+    if (isDriveThrough()) {
+      out << indent << "  drivethrough" << std::endl;
+    }
+    if (isShootThrough()) {
+      out << indent << "  shootthrough" << std::endl;
+    }
+  }
+  out << indent << "end" << std::endl << std::endl;
+  return;
 }
 
 

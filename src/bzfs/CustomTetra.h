@@ -22,6 +22,9 @@
 /* system header */
 #include <string>
 
+/* common interface header */
+#include "BzMaterial.h"
+
 class CustomTetra : public WorldFileObstacle {
   public:
     CustomTetra();

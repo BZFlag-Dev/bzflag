@@ -24,9 +24,11 @@
 
 class Teleporter : public Obstacle {
   public:
+			Teleporter();
 			Teleporter(const float* pos, float rotation,
 				float width, float breadth, float height,
-				float borderSize = 1.0f, bool horizontal = false, bool drive = false, bool shoot = false);
+				float borderSize = 1.0f, bool horizontal = false,
+				bool drive = false, bool shoot = false);
 			~Teleporter();
 
     const char*		getType() const;
@@ -69,7 +71,17 @@ class Teleporter : public Obstacle {
     const MeshFace* getBackLink() const;
     const MeshFace* getFrontLink() const;
 
+    int packSize() const;
+    void *pack(void*) const;
+    void *unpack(void*);
+    
+    void print(std::ostream& out, const std::string& indent) const;
+    
     std::string		userTextures[1];
+
+  private:
+    void finalize();
+  
   private:
     float		border;
 	bool		horizontal;

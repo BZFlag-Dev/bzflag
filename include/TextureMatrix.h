@@ -47,11 +47,11 @@ class TextureMatrix {
     void update(float time);
     const std::string& getName() const;
 
-    void* pack(void*);
+    int packSize() const;
+    void* pack(void*) const;
     void* unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     std::string name;
@@ -76,11 +76,11 @@ class TextureMatrixManager {
     int findMatrix(const std::string& name) const;
     const TextureMatrix* getMatrix(int id) const;
 
-    void* pack(void*);
+    int packSize() const;
+    void* pack(void*) const;
     void* unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     std::vector<TextureMatrix*> matrices;

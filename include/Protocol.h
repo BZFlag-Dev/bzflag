@@ -125,7 +125,7 @@ const uint16_t		WorldCodeZone = 0x7A6e;			// 'zn'
 // world database sizes
 const uint16_t		WorldSettingsSize = 28;
 const uint16_t		WorldCodeHeaderSize = 10;
-const uint16_t		WorldCodeBaseSize = 42;
+const uint16_t		WorldCodeBaseSize = 31;
 const uint16_t		WorldCodeWallSize = 24;
 const uint16_t		WorldCodeBoxSize = 29;
 const uint16_t		WorldCodeEndSize = 0;

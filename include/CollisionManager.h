@@ -18,14 +18,13 @@
 /* system interface headers */
 #include <vector>
 
-/* common interface headers */
-#include "Ray.h"
-#include "Obstacle.h"
-#include "MeshObstacle.h"
-#include "BoxBuilding.h"
-#include "PyramidBuilding.h"
-#include "BaseBuilding.h"
-#include "Teleporter.h"
+class Ray;
+class Obstacle;
+class MeshObstacle;
+class BoxBuilding;
+class PyramidBuilding;
+class BaseBuilding;
+class Teleporter;
 
 
 typedef struct {

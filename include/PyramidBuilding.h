@@ -23,6 +23,7 @@
 
 class PyramidBuilding : public Obstacle {
   public:
+			PyramidBuilding();
 			PyramidBuilding(const float* pos, float rotation,
 				float width, float breadth, float height, bool drive = false, bool shoot = false);
 			~PyramidBuilding();
@@ -54,6 +55,12 @@ class PyramidBuilding : public Obstacle {
 				float* normal) const;
 
     void		getCorner(int index, float* pos) const;
+
+    int packSize() const;
+    void *pack(void*) const;
+    void *unpack(void*);
+    
+    void print(std::ostream& out, const std::string& indent) const;
 
     std::string		userTextures[1];
 

@@ -10,34 +10,25 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
-/* interface header */
-#include "CustomBox.h"
-
-/* system implementation headers */
-#include <math.h>
-
-/* common implementation headers */
-#include "BoxBuilding.h"
-#include "StateDatabase.h"
+#ifndef __DROP_GEOMETRY_H__
+#define __DROP_GEOMETRY_H__
 
 
-CustomBox::CustomBox()
-{
-  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-  size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+class WorldInfo;
+
+
+namespace DropGeometry {
+
+  bool dropFlag (float pos[3], float minZ, float maxZ,
+                 const WorldInfo& world);
+  bool dropPlayer (float pos[3], float minZ, float maxZ,
+                   const WorldInfo& world);
+  bool dropTeamFlag (float pos[3], float minZ, float maxZ,
+                     const WorldInfo& world, int team);
 }
 
 
-void CustomBox::write(WorldInfo *world) const
-{
-  BoxBuilding* box =
-    new BoxBuilding(pos, rotation,
-                    fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-                    driveThrough, shootThrough);
-  world->addBox(box);
-}
+#endif  /* __DROP_GEOMETRY_H__ */
 
 // Local variables: ***
 // mode: C++ ***

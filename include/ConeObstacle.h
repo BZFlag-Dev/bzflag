@@ -21,6 +21,7 @@
 #include <string>
 #include "Obstacle.h"
 #include "MeshObstacle.h"
+#include "MeshTransform.h"
 #include "BzMaterial.h"
 
 
@@ -36,11 +37,12 @@ class ConeObstacle : public Obstacle {
     };
 
     ConeObstacle();
-    ConeObstacle(const float* _pos, const float* _size,
-		float _rotation, float _angle,
-		const float _texsize[2], bool _useNormals,
-		int _divisions, const BzMaterial* mats[MaterialCount],
-		int physics, bool bounce, bool drive, bool shoot);
+    ConeObstacle(const MeshTransform& transform,
+                 const float* _pos, const float* _size,
+		 float _rotation, float _angle,
+		 const float _texsize[2], bool _useNormals,
+		 int _divisions, const BzMaterial* mats[MaterialCount],
+		 int physics, bool bounce, bool drive, bool shoot);
     ~ConeObstacle();
     MeshObstacle* getMesh();
 
@@ -68,11 +70,11 @@ class ConeObstacle : public Obstacle {
 		      float halfWidth, float halfBreadth,
 		      float height, float* normal) const;
 
-    void *pack(void*);
+    int packSize() const;
+    void *pack(void*) const;
     void *unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     void finalize();
@@ -82,6 +84,7 @@ class ConeObstacle : public Obstacle {
 
     MeshObstacle* mesh;
 
+    MeshTransform transform;
     int divisions;
     float sweepAngle;
     int phydrv;

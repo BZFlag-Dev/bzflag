@@ -35,9 +35,8 @@ class TankIDLSceneNode;
 class SphereSceneNode;
 class Obstacle;
 
-const int PlayerUpdatePLen = PlayerIdPLen + 42;
-const int PlayerUpdateSmallPLen = PlayerUpdatePLen - 16;
-
+const int PlayerUpdatePLenMax = PlayerIdPLen + 42 +
+                                (3 * sizeof(short)) + sizeof(int);
 
 class Player {
 public:

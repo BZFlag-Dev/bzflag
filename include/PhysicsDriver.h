@@ -25,7 +25,7 @@ class PhysicsDriver {
     ~PhysicsDriver();
 
     bool setName(const std::string& name);
-    void setVelocity(const float vel[3]);
+    void setLinear(const float vel[3]);
     void setAngular(float angleVel, const float pos[2]);
     void setRadial(float radialVel, const float pos[2]);
     void setSlideTime(float slideTime);
@@ -35,7 +35,7 @@ class PhysicsDriver {
     void update(float time);
 
     const std::string& getName() const;
-    const float* getVelocity() const;
+    const float* getLinearVel() const;
     const float getAngularVel() const;
     const float* getAngularPos() const;
     const float getRadialVel() const;
@@ -45,17 +45,17 @@ class PhysicsDriver {
     const bool getIsDeath() const;
     const std::string& getDeathMsg() const;
 
-    void* pack(void*);
+    int packSize() const;
+    void* pack(void*) const;
     void* unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     static const float minPeriod;
 
     std::string name;
-    float velocity[3];
+    float linear[3];
     float angularVel;
     float angularPos[2];
     float radialVel;
@@ -66,9 +66,9 @@ class PhysicsDriver {
     std::string deathMsg;
 };
 
-inline const float* PhysicsDriver::getVelocity() const
+inline const float* PhysicsDriver::getLinearVel() const
 {
-  return velocity;
+  return linear;
 }
 inline const float PhysicsDriver::getAngularVel() const
 {
@@ -114,11 +114,11 @@ class PhysicsDriverManager {
     int findDriver(const std::string& name) const;
     const PhysicsDriver* getDriver(int id) const;
 
-    void* pack(void*);
+    int packSize() const;
+    void* pack(void*) const;
     void* unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     std::vector<PhysicsDriver*> drivers;

@@ -21,13 +21,15 @@
 #include <string>
 #include "Obstacle.h"
 #include "MeshObstacle.h"
+#include "MeshTransform.h"
 #include "BzMaterial.h"
 
 class TetraBuilding : public Obstacle {
   public:
 
     TetraBuilding();
-    TetraBuilding(const float vertices[4][3], const float normals[4][3][3],
+    TetraBuilding(const MeshTransform& transform,
+                  const float vertices[4][3], const float normals[4][3][3],
 		  const float texCoords[4][3][2], const bool useNormals[4],
 		  const bool useTexCoords[4], const BzMaterial* materials[4],
 		  bool drive = false, bool shoot = false);
@@ -64,11 +66,11 @@ class TetraBuilding : public Obstacle {
 
     void		getCorner(int index, float* pos) const;
 
-    void *pack(void*);
+    int packSize() const;
+    void *pack(void*) const;
     void *unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   private:
     void checkVertexOrder();
@@ -78,6 +80,7 @@ class TetraBuilding : public Obstacle {
 
     MeshObstacle* mesh;
 
+    MeshTransform transform;
     float vertices[4][3];
     float normals[4][3][3];
     float texcoords[4][3][2];

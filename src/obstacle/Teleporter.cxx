@@ -13,19 +13,29 @@
 #include <math.h>
 #include "common.h"
 #include "global.h"
+#include "Pack.h"
 #include "Teleporter.h"
 #include "Intersect.h"
 
+
 const char* Teleporter::typeName = "Teleporter";
+
+
+Teleporter::Teleporter()
+{
+  backLink = NULL;
+  frontLink = NULL;
+  return;
+}
+
 
 Teleporter::Teleporter(const float* p, float a, float w,
 		       float b, float h, float _border, bool _horizontal,
 		       bool drive, bool shoot) :
-		       Obstacle(p, a, w, _horizontal ? b : b + 2 * _border,
-				_horizontal ? h : h + _border,drive,shoot),
-		       border(_border), horizontal(_horizontal)
+		         Obstacle(p, a, w, b, h, drive, shoot),
+		         border(_border), horizontal(_horizontal)
 {
-  makeLinks();
+  finalize();
   return;
 }
 
@@ -38,15 +48,27 @@ Teleporter::~Teleporter()
 }
 
 
-const char* Teleporter::getType() const
+void Teleporter::finalize()
 {
-  return typeName;
-}
-
-
-const char* Teleporter::getClassName() // const
-{
-  return typeName;
+/*
+Teleporter::Teleporter(const float* p, float a, float w,
+		       float b, float h, float _border, bool _horizontal,
+		       bool drive, bool shoot) :
+		       Obstacle(p, a, w, _horizontal ? b : b + 2 * _border,
+				_horizontal ? h : h + _border,drive,shoot),
+		       border(_border), horizontal(_horizontal)
+*/		       
+  const float sizeCopy[3] = { size[0], size[1], size[2] };
+  if (!horizontal) {
+    size[1] = sizeCopy[1] + (border * 2.0f);
+    size[2] = sizeCopy[2] + border;
+  } else {
+    size[1] = border;
+  }
+  
+  makeLinks();
+  
+  return;
 }
 
 
@@ -144,6 +166,18 @@ void Teleporter::makeLinks()
   }
 
   return;
+}
+
+
+const char* Teleporter::getType() const
+{
+  return typeName;
+}
+
+
+const char* Teleporter::getClassName() // const
+{
+  return typeName;
 }
 
 
@@ -454,6 +488,77 @@ bool Teleporter::getHitNormal(const float* pos1, float azimuth1,
 			pos2, azimuth2, width, breadth,
 			getPosition(), getRotation(), getWidth(), getBreadth(),
 			getHeight(), normal) >= 0.0f;
+}
+
+
+
+void* Teleporter::pack(void* buf) const
+{
+  buf = nboPackVector(buf, pos);
+  buf = nboPackFloat(buf, angle);
+  buf = nboPackVector(buf, size);
+  buf = nboPackFloat(buf, border);
+
+  unsigned char horizontalByte = horizontal ? 1 : 0;
+  buf = nboPackUByte(buf, horizontalByte);
+  
+  unsigned char stateByte = 0;
+  stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
+  stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
+  buf = nboPackUByte(buf, stateByte);
+
+  return buf;
+}
+
+
+void* Teleporter::unpack(void* buf)
+{
+  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackFloat(buf, angle);
+  buf = nboUnpackVector(buf, size);
+  buf = nboUnpackFloat(buf, border);
+
+  unsigned char horizontalByte;
+  buf = nboUnpackUByte(buf, horizontalByte);
+  horizontal = (horizontalByte == 0) ? false : true;
+  
+  unsigned char stateByte;
+  buf = nboUnpackUByte(buf, stateByte);
+  driveThrough = (stateByte & _DRIVE_THRU) != 0;
+  shootThrough = (stateByte & _SHOOT_THRU) != 0;
+
+  finalize();
+  
+  return buf;
+}
+
+
+int Teleporter::packSize() const
+{
+  int fullSize = 0;
+  fullSize += sizeof(float[3]); // pos
+  fullSize += sizeof(float);    // rotation
+  fullSize += sizeof(float[3]); // size
+  fullSize += sizeof(float);    // border
+  fullSize += sizeof(uint8_t);  // horizontal
+  fullSize += sizeof(uint8_t);  // state bits
+  return fullSize;
+}
+
+
+void Teleporter::print(std::ostream& out, const std::string& indent) const
+{
+  out << indent << "teleporter" << std::endl;
+  const float *pos = getPosition();
+  out << indent << "  position " << pos[0] << " " << pos[1] << " "
+                                 << pos[2] << std::endl;
+  out << indent << "  size " << getWidth() << " " << getBreadth() << " "
+                             << getHeight() << std::endl;
+  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
+                                 << std::endl;
+  out << indent << "  border " << getBorder() << std::endl;
+  out << indent << "end" << std::endl << std::endl;
+  return;
 }
 
 

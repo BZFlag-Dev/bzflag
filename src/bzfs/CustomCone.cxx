@@ -22,6 +22,7 @@
 /* common implementation headers */
 #include "ConeObstacle.h"
 #include "PhysicsDriver.h"
+#include "StateDatabase.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
@@ -35,12 +36,12 @@ const char* CustomCone::sideNames[MaterialCount] = {
 };
 
 
-CustomCone::CustomCone()
+CustomCone::CustomCone(bool pyramid)
 {
   // default to a (radius=10, height=10) cylinder
   divisions = 16;
   size[0] = size[1] = size[2] = 10.0f;
-  texsize[0] = texsize[1] = -4.0f;
+  texsize[0] = texsize[1] = -8.0f;
   angle = 360.0f;
   phydrv = -1;
   useNormals = true;
@@ -51,6 +52,19 @@ CustomCone::CustomCone()
   materials[Bottom].setTexture("roof");
   materials[StartFace].setTexture("wall");
   materials[EndFace].setTexture("wall");
+
+  pyramidStyle = pyramid;
+  if (pyramidStyle) {
+    flipz = false;
+    divisions = 4;
+    useNormals = false;
+    size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+    size[2] = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+    materials[Edge].setTexture("pyrwall");
+    materials[Bottom].setTexture("pyrwall");
+    materials[StartFace].setTexture("pyrwall");
+    materials[EndFace].setTexture("pyrwall");
+  }
 
   return;
 }
@@ -110,6 +124,9 @@ bool CustomCone::read(const char *cmd, std::istream& input)
       return false;
     }
   }
+  else if (pyramidStyle && (strcasecmp(cmd, "flipz") == 0)) {
+    flipz = true;
+  }
   else {
     return WorldFileObstacle::read(cmd, input);
   }
@@ -125,10 +142,32 @@ void CustomCone::write(WorldInfo *world) const
   for (i = 0; i < MaterialCount; i++) {
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
-  ConeObstacle* cone = new ConeObstacle(pos, size, rotation, angle,
-					texsize, useNormals, divisions, mats,
-					phydrv,
-					smoothBounce, driveThrough, shootThrough);
+  ConeObstacle* cone;
+  if (!pyramidStyle) {
+    cone = new ConeObstacle(transform, pos, size, rotation, angle,
+                            texsize, useNormals, divisions, mats, phydrv,
+                            smoothBounce, driveThrough, shootThrough);
+  } else {
+    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+    const float origin[3] = {0.0f, 0.0f, 0.0f};
+    MeshTransform xform;
+    if (flipz) {
+      const float flipScale[3] = {1.0f, -1.0f, -1.0f};
+      const float flipShift[3] = {0.0f, 0.0f, size[2]};
+      xform.addScale(flipScale);
+      xform.addShift(flipShift);
+    }
+    xform.addSpin(rotation * (180.0f / M_PI), zAxis);
+    xform.addShift(pos);
+    xform.append(transform);
+    float newSize[3];
+    newSize[0] = size[0] * M_SQRT2;
+    newSize[1] = size[1] * M_SQRT2;
+    newSize[2] = size[2];
+    cone = new ConeObstacle(xform, origin, newSize, M_PI * 0.25f, angle,
+                            texsize, useNormals, divisions, mats, phydrv,
+                            smoothBounce, driveThrough, shootThrough);
+  }
 
   if (cone->isValid()) {
     cone->getMesh()->setIsLocal(true);

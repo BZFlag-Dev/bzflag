@@ -57,9 +57,15 @@ class BoxBuilding : public Obstacle {
 
     void		getCorner(int index, float* pos) const;
 
-    static const char*	typeName;
+    int packSize() const;
+    void *pack(void*) const;
+    void *unpack(void*);
+    
+    void print(std::ostream& out, const std::string& indent) const;
+    
     std::string	userTextures[2];
  private:
+   static const char*	typeName;
    bool noNodes;
 };
 

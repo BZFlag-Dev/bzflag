@@ -37,7 +37,8 @@ TetraBuilding::TetraBuilding()
 }
 
 
-TetraBuilding::TetraBuilding(const float _vertices[4][3],
+TetraBuilding::TetraBuilding(const MeshTransform& xform,
+                             const float _vertices[4][3],
 			     const float _normals[4][3][3],
 			     const float _texcoords[4][3][2],
 			     const bool _useNormals[4],
@@ -54,6 +55,7 @@ TetraBuilding::TetraBuilding(const float _vertices[4][3],
   memcpy (useNormals, _useNormals, sizeof(useNormals));
   memcpy (useTexcoords, _useTexcoords, sizeof(useTexcoords));
   memcpy (materials, _materials, sizeof(materials));
+  transform = xform;
 
   // common obstace parameters
   driveThrough = drive;
@@ -94,7 +96,8 @@ void TetraBuilding::finalize()
     verts.push_back(vertices[i]);
   }
 
-  mesh = new MeshObstacle(checkTypes, checkPoints, verts, norms, texcds,
+  mesh = new MeshObstacle(transform, 
+                          checkTypes, checkPoints, verts, norms, texcds,
 			  4, false, false, driveThrough, shootThrough);
 
   // add the faces to the mesh
@@ -310,7 +313,7 @@ static void unpack4Bools (unsigned char byte, bool bools[4])
 }
 
 
-void *TetraBuilding::pack(void* buf)
+void *TetraBuilding::pack(void* buf) const
 {
   int v;
 
@@ -320,6 +323,9 @@ void *TetraBuilding::pack(void* buf)
   stateByte |= isShootThrough() ? (1 << 1) : 0;
   buf = nboPackUByte(buf, stateByte);
 
+  // pack the transform
+  buf = transform.pack(buf);
+  
   // pack the vertices
   for (v = 0; v < 4; v++) {
     buf = nboPackVector(buf, vertices[v]);
@@ -370,6 +376,9 @@ void *TetraBuilding::unpack(void* buf)
   driveThrough = (stateByte & (1 << 0)) != 0;
   shootThrough = (stateByte & (1 << 1)) != 0;
 
+  // unpack the transform
+  buf = transform.unpack(buf);
+  
   // unpack the vertices
   for (v = 0; v < 4; v++) {
     buf = nboUnpackVector(buf, vertices[v]);
@@ -413,10 +422,10 @@ void *TetraBuilding::unpack(void* buf)
 }
 
 
-int TetraBuilding::packSize()
+int TetraBuilding::packSize() const
 {
   int v;
-  int fullSize = 0;
+  int fullSize = transform.packSize();
   // state byte
   fullSize = fullSize + sizeof(unsigned char);
   // vectors
@@ -442,12 +451,14 @@ int TetraBuilding::packSize()
 }
 
 
-void TetraBuilding::print(std::ostream& out, int /*level*/)
+void TetraBuilding::print(std::ostream& out, const std::string& /*indent*/) const
 {
   int i;
 
   out << "tetra" << std::endl;
 
+  transform.printTransforms(out, "");
+  
   // write the vertex information
   for (i = 0; i < 4; i++) {
     const float* vertex = vertices[i];

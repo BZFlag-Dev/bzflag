@@ -32,7 +32,8 @@ SphereObstacle::SphereObstacle()
 }
 
 
-SphereObstacle::SphereObstacle(const float* _pos, const float* _size,
+SphereObstacle::SphereObstacle(const MeshTransform& xform,
+                         const float* _pos, const float* _size,
 			 float _rotation, const float _texsize[2],
 			 bool _useNormals, bool _hemisphere,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
@@ -49,6 +50,7 @@ SphereObstacle::SphereObstacle(const float* _pos, const float* _size,
   shootThrough = shoot;
 
   // arc specific parameters
+  transform = xform;
   divisions = _divisions;
   hemisphere = _hemisphere;
   phydrv = physics;
@@ -276,7 +278,7 @@ void SphereObstacle::finalize()
 
   // make the mesh
   int faceCount = (divisions * divisions) * 8;
-  mesh = new MeshObstacle(checkTypes, checkPoints,
+  mesh = new MeshObstacle(transform, checkTypes, checkPoints,
 			  vertices, normals, texcoords, faceCount,
 			  false, smoothBounce, driveThrough, shootThrough);
 
@@ -472,8 +474,9 @@ bool SphereObstacle::isCrossing(const float* /*p*/, float /*angle*/,
 }
 
 
-void *SphereObstacle::pack(void *buf)
+void *SphereObstacle::pack(void *buf) const
 {
+  buf = transform.pack(buf);
   buf = nboPackVector(buf, pos);
   buf = nboPackVector(buf, size);
   buf = nboPackFloat(buf, angle);
@@ -504,6 +507,7 @@ void *SphereObstacle::pack(void *buf)
 
 void *SphereObstacle::unpack(void *buf)
 {
+  buf = transform.unpack(buf);
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackVector(buf, size);
   buf = nboUnpackFloat(buf, angle);
@@ -535,9 +539,9 @@ void *SphereObstacle::unpack(void *buf)
 }
 
 
-int SphereObstacle::packSize()
+int SphereObstacle::packSize() const
 {
-  int fullSize = 0;
+  int fullSize = transform.packSize();
   fullSize += sizeof(float[3]);
   fullSize += sizeof(float[3]);
   fullSize += sizeof(float);
@@ -550,12 +554,12 @@ int SphereObstacle::packSize()
 }
 
 
-void SphereObstacle::print(std::ostream& out, int /*level*/)
+void SphereObstacle::print(std::ostream& out, const std::string& indent) const
 {
   int i;
 
   out << "sphere" << std::endl;
-
+  
   out << "  position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
   out << "  size " << size[0] << " " << size[1] << " " << size[2] << std::endl;
   out << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
@@ -563,6 +567,8 @@ void SphereObstacle::print(std::ostream& out, int /*level*/)
   if (hemisphere) {
     out << "  hemisphere" << std::endl;
   }
+
+  transform.printTransforms(out, indent);
 
   out << "  texsize " << texsize[0] << " " << texsize[1] << std::endl;
 

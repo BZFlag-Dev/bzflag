@@ -12,15 +12,28 @@
 
 #include <math.h>
 #include "common.h"
+#include "Pack.h"
 #include "WallObstacle.h"
 #include "Intersect.h"
 
 const char*		WallObstacle::typeName = "WallObstacle";
 
+WallObstacle::WallObstacle()
+{
+  // do nothing
+}
+
 WallObstacle::WallObstacle(const float* p, float a, float b, float h) :
 				Obstacle(p, a, 0.0, b, h)
 {
+  finalize();
+}
+
+void WallObstacle::finalize()
+{
   // compute normal
+  const float* p = getPosition();
+  const float a = getRotation();
   plane[0] = cosf(a);
   plane[1] = sinf(a);
   plane[2] = 0.0;
@@ -110,6 +123,51 @@ bool			WallObstacle::getHitNormal(
   getNormal(NULL, normal);
   return true;
 }
+
+
+
+void* WallObstacle::pack(void* buf) const
+{
+  buf = nboPackVector(buf, pos);
+  buf = nboPackFloat(buf, angle);
+  buf = nboPackFloat(buf, size[1]);
+  buf = nboPackFloat(buf, size[2]);
+  
+  return buf;
+}
+
+
+void* WallObstacle::unpack(void* buf)
+{
+  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackFloat(buf, angle);
+  buf = nboUnpackFloat(buf, size[1]);
+  buf = nboUnpackFloat(buf, size[2]);
+  
+  finalize();
+  
+  return buf;
+}
+
+
+int WallObstacle::packSize() const
+{
+  int fullSize = 0;
+  fullSize += sizeof(float[3]); // pos
+  fullSize += sizeof(float);    // rotation
+  fullSize += sizeof(float);   // breadth
+  fullSize += sizeof(float);   // height
+  fullSize += sizeof(uint8_t);  // state bits
+  return fullSize;
+}
+
+
+void WallObstacle::print(std::ostream& /*out*/,
+                         const std::string& /*indent*/) const
+{
+  return;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

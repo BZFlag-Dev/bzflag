@@ -17,6 +17,7 @@
 #include <string>
 
 #include "SpawnPosition.h"
+#include "Obstacle.h"
 #include "FlagInfo.h"
 #include "TeamBases.h"
 #include "WorldInfo.h"

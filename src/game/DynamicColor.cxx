@@ -108,12 +108,12 @@ const DynamicColor* DynamicColorManager::getColor(int id) const
 }
 
 
-void * DynamicColorManager::pack(void *buf)
+void * DynamicColorManager::pack(void *buf) const
 {
-  std::vector<DynamicColor*>::iterator it;
+  std::vector<DynamicColor*>::const_iterator it;
   buf = nboPackUInt(buf, (int)colors.size());
   for (it = colors.begin(); it != colors.end(); it++) {
-    DynamicColor* color = *it;
+    const DynamicColor* color = *it;
     buf = color->pack(buf);
   }
   return buf;
@@ -133,10 +133,10 @@ void * DynamicColorManager::unpack(void *buf)
 }
 
 
-int DynamicColorManager::packSize()
+int DynamicColorManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
-  std::vector<DynamicColor*>::iterator it;
+  std::vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
     fullSize = fullSize + color->packSize();
@@ -145,12 +145,12 @@ int DynamicColorManager::packSize()
 }
 
 
-void DynamicColorManager::print(std::ostream& out, int level)
+void DynamicColorManager::print(std::ostream& out, const std::string& indent) const
 {
-  std::vector<DynamicColor*>::iterator it;
+  std::vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
-    color->print(out, level);
+    color->print(out, indent);
   }
   return;
 }
@@ -367,12 +367,12 @@ void DynamicColor::update (float t)
 }
 
 
-void * DynamicColor::pack(void *buf)
+void * DynamicColor::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
   for (int c = 0; c < 4; c++) {
-    ChannelParams& p = channels[c];
+    const ChannelParams& p = channels[c];
     unsigned int i;
 
     buf = nboPackFloat (buf, p.minValue);
@@ -448,7 +448,7 @@ void * DynamicColor::unpack(void *buf)
 }
 
 
-int DynamicColor::packSize()
+int DynamicColor::packSize() const
 {
   int fullSize = nboStdStringPackSize(name);
   for (int c = 0; c < 4; c++) {
@@ -464,7 +464,7 @@ int DynamicColor::packSize()
 }
 
 
-void DynamicColor::print(std::ostream& out, int /*level*/)
+void DynamicColor::print(std::ostream& out, const std::string& /*indent*/) const
 {
   const char *colorStrings[4] = { "red", "green", "blue", "alpha" };
 

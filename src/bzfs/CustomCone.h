@@ -25,7 +25,7 @@
 
 class CustomCone : public WorldFileObstacle {
   public:
-    CustomCone();
+    CustomCone(bool pyramidStyle);
     ~CustomCone();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
@@ -40,6 +40,8 @@ class CustomCone : public WorldFileObstacle {
     };
     static const char* sideNames[MaterialCount];
 
+    bool pyramidStyle;
+    bool flipz;
     int divisions;
     float angle;
     float texsize[2];

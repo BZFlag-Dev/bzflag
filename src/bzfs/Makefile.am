@@ -36,6 +36,8 @@ bzfs_SOURCES = \
 	CustomMesh.h \
 	CustomMeshFace.cxx \
 	CustomMeshFace.h \
+	CustomMeshTransform.cxx \
+	CustomMeshTransform.h \
 	CustomPhysicsDriver.cxx \
 	CustomPhysicsDriver.h \
 	CustomSphere.cxx \
@@ -79,6 +81,8 @@ bzfs_SOURCES = \
 	RejoinList.h \
 	Score.h	\
 	Score.cxx	\
+	DropGeometry.cxx \
+	DropGeometry.h \
 	SpawnPosition.cxx \
 	SpawnPosition.h \
 	TeamBases.cxx \

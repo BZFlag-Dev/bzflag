@@ -25,7 +25,7 @@
 
 class CustomArc : public WorldFileObstacle {
   public:
-    CustomArc();
+    CustomArc(bool boxStyle);
     ~CustomArc();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
@@ -48,6 +48,7 @@ class CustomArc : public WorldFileObstacle {
     };
     static const char* sideNames[MaterialCount];
 
+    bool boxStyle;
     int divisions;
     float angle;
     float ratio;

@@ -38,13 +38,13 @@ CustomPhysicsDriver::~CustomPhysicsDriver()
 
 bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp ("velocity", cmd) == 0) {
+  if (strcasecmp ("linear", cmd) == 0) {
     float vel[3];
     if (!(input >> vel[0] >> vel[1] >> vel[2])) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
-    driver->setVelocity(vel);
+    driver->setLinear(vel);
   }
   else if (strcasecmp ("angular", cmd) == 0) {
     float vel;

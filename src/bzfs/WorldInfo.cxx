@@ -23,6 +23,20 @@
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
 #include "PhysicsDriver.h"
+#include "MeshTransform.h"
+
+#include "Obstacle.h"
+#include "BoxBuilding.h"
+#include "PyramidBuilding.h"
+#include "BaseBuilding.h"
+#include "TetraBuilding.h"
+#include "Teleporter.h"
+#include "WallObstacle.h"
+#include "MeshObstacle.h"
+#include "ArcObstacle.h"
+#include "ConeObstacle.h"
+#include "SphereObstacle.h"
+
 
 /* compression library header */
 #include "../zlib/zlib.h"
@@ -77,6 +91,7 @@ WorldInfo::~WorldInfo()
   }
 }
 
+
 void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
 {
   if ((z + h) > maxHeight)
@@ -87,36 +102,33 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
   walls.push_back (wall);
 }
 
-void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
+void WorldInfo::addBox(BoxBuilding* box)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
-  const float pos[3] = {x, y, z};
-  BoxBuilding* box = new BoxBuilding(pos, r, w, d, h, drive, shoot, false);
+  float mins[3], maxs[3];
+  box->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
+  }
   boxes.push_back (box);
 }
 
-void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot, bool flipZ)
+void WorldInfo::addPyramid(PyramidBuilding* pyr)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
-  const float pos[3] = {x, y, z};
-  PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h, drive, shoot);
-  if (flipZ) {
-    pyr->setZFlip();
+  float mins[3], maxs[3];
+  pyr->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
   }
   pyramids.push_back (pyr);
 }
 
-void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool horizontal, bool drive, bool shoot)
+void WorldInfo::addTeleporter(Teleporter* tele)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
-  const float pos[3] = {x, y, z};
-  Teleporter* tele = new Teleporter(pos, r, w, d, h, b, horizontal, drive, shoot);
+  float mins[3], maxs[3];
+  tele->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
+  }
   teleporters.push_back (tele);
 
   // default to passthru linkage
@@ -125,16 +137,13 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   setTeleporterTarget ((index * 2), (index * 2) + 1);
 }
 
-void WorldInfo::addBase(float x, float y, float z, float r,
-			float w, float d, float h, int color,
-			bool /* drive */, bool /* shoot */)
+void WorldInfo::addBase(BaseBuilding* base)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
-  const float pos[3] = {x, y, z};
-  const float size[3] = {w, d, h};
-  BaseBuilding* base = new BaseBuilding(pos, r, size, color);
+  float mins[3], maxs[3];
+  base->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
+  }
   bases.push_back (base);
 }
 
@@ -224,6 +233,63 @@ void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
   waterLevel = level;
   waterMatRef = matref;
 }
+
+void WorldInfo::addBox(float x, float y, float z, float r,
+                       float w, float d, float h, bool drive, bool shoot)
+{
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
+  const float pos[3] = {x, y, z};
+  BoxBuilding* box = new BoxBuilding(pos, r, w, d, h, drive, shoot, false);
+  boxes.push_back (box);
+}
+
+void WorldInfo::addPyramid(float x, float y, float z, float r,
+                           float w, float d, float h,
+                           bool drive, bool shoot, bool flipZ)
+{
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
+  const float pos[3] = {x, y, z};
+  PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h, drive, shoot);
+  if (flipZ) {
+    pyr->setZFlip();
+  }
+  pyramids.push_back (pyr);
+}
+
+void WorldInfo::addTeleporter(float x, float y, float z, float r,
+                              float w, float d, float h, float b,
+                              bool horizontal, bool drive, bool shoot)
+{
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
+  const float pos[3] = {x, y, z};
+  Teleporter* tele = new Teleporter(pos, r, w, d, h, b, horizontal, drive, shoot);
+  teleporters.push_back (tele);
+
+  // default to passthru linkage
+  int index = teleporters.size() - 1;
+  setTeleporterTarget ((index * 2) + 1, (index * 2));
+  setTeleporterTarget ((index * 2), (index * 2) + 1);
+}
+
+void WorldInfo::addBase(float x, float y, float z, float r,
+			float w, float d, float h, int color,
+			bool /* drive */, bool /* shoot */)
+{
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
+  const float pos[3] = {x, y, z};
+  const float size[3] = {w, d, h};
+  BaseBuilding* base = new BaseBuilding(pos, r, size, color);
+  bases.push_back (base);
+}
+
 
 void WorldInfo::makeWaterMaterial()
 {
@@ -540,7 +606,7 @@ bool WorldInfo::getSafetyPoint(const std::string &qualifier,
 void WorldInfo::finishWorld()
 {
   entryZones.calculateQualifierLists();
-  loadCollisionManager ();
+  loadCollisionManager();
 }
 
 int WorldInfo::packDatabase(const BasesList* baseList)
@@ -567,37 +633,47 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     (2 + 2 + WorldCodeWallSize) * walls.size() +
     (2 + 2 + WorldCodeBoxSize) * boxes.size() +
     (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
-    (2 + 2 + WorldCodeArcSize) * arcs.size() +
-    (2 + 2 + WorldCodeConeSize) * cones.size() +
-    (2 + 2 + WorldCodeSphereSize) * spheres.size() +
     (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
     worldWeapons.packSize() + entryZones.packSize() +
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
-    MATERIALMGR.packSize() + PHYDRVMGR.packSize();
+    MATERIALMGR.packSize() + PHYDRVMGR.packSize() + TRANSFORMMGR.packSize();
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
     databaseSize += sizeof(int);
   }
-  // tetra sizes are variable
-  for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
-    TetraBuilding* tetra = *tetra_it;
-    databaseSize = databaseSize + (2 + 2);
-    databaseSize = databaseSize + tetra->packSize();
+  unsigned int i;
+  // arc sizes are variable
+  for (i = 0; i < arcs.size(); i++) {
+    ArcObstacle* arc = arcs[i];
+    databaseSize = databaseSize + (2 + 2) + arc->packSize();
   }
-  // meshes have variable sizes
-  for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
-    MeshObstacle &mesh = (**mesh_it);
-    if (!mesh.getIsLocal()) {
-      databaseSize += (2 + 2) + mesh.packSize();
+  // cone sizes are variable
+  for (i = 0; i < cones.size(); i++) {
+    ConeObstacle* cone = cones[i];
+    databaseSize = databaseSize + (2 + 2) + cone->packSize();
+  }
+  // sphere sizes are variable
+  for (i = 0; i < spheres.size(); i++) {
+    SphereObstacle* sphere = spheres[i];
+    databaseSize = databaseSize + (2 + 2) + sphere->packSize();
+  }
+  // tetra sizes are variable
+  for (i = 0; i < tetras.size(); i++) {
+    TetraBuilding* tetra = tetras[i];
+    databaseSize = databaseSize + (2 + 2) + tetra->packSize();
+  }
+  // mesh sizes are variable
+  for (i = 0; i < meshes.size(); i++) {
+    MeshObstacle* mesh = meshes[i];
+    if (!mesh->getIsLocal()) {
+      databaseSize += (2 + 2) + mesh->packSize();
     }
   }
 
   database = new char[databaseSize];
   void *databasePtr = database;
-
-  unsigned char	bitMask;
 
   // add dynamic colors
   databasePtr = DYNCOLORMGR.pack(databasePtr);
@@ -610,6 +686,9 @@ int WorldInfo::packDatabase(const BasesList* baseList)
 
   // add physics drivers
   databasePtr = PHYDRVMGR.pack(databasePtr);
+
+  // add obstacle transforms
+  databasePtr = TRANSFORMMGR.pack(databasePtr);
 
   // add water level
   databasePtr = nboPackFloat(databasePtr, waterLevel);
@@ -625,9 +704,6 @@ int WorldInfo::packDatabase(const BasesList* baseList)
       databasePtr = nboPackUShort(databasePtr, WorldCodeMeshSize); // dummy
       databasePtr = nboPackUShort(databasePtr, WorldCodeMesh);
       databasePtr = mesh.pack(databasePtr);
-      if (debugLevel > 3) {
-	mesh.print(std::cout, 3);
-      }
     }
   }
 
@@ -679,11 +755,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     WallObstacle& wall = **wall_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeWallSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-    databasePtr = nboPackVector(databasePtr, wall.getPosition());
-    databasePtr = nboPackFloat(databasePtr, wall.getRotation());
-    databasePtr = nboPackFloat(databasePtr, wall.getSize()[1]);
-    // walls have no depth
-    databasePtr = nboPackFloat(databasePtr, wall.getSize()[2]);
+    databasePtr = wall.pack(databasePtr);
   }
 
   // add boxes
@@ -692,15 +764,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     BoxBuilding& box = **box_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeBoxSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-    databasePtr = nboPackVector(databasePtr, box.getPosition());
-    databasePtr = nboPackFloat(databasePtr, box.getRotation());
-    databasePtr = nboPackVector(databasePtr, box.getSize());
-    bitMask = 0;
-    if (box.isDriveThrough())
-      bitMask |= _DRIVE_THRU;
-    if (box.isShootThrough())
-      bitMask |= _SHOOT_THRU;
-    databasePtr = nboPackUByte(databasePtr, bitMask);
+    databasePtr = box.pack(databasePtr);
   }
 
   // add pyramids
@@ -709,37 +773,17 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     PyramidBuilding& pyr = **pyr_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramidSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-    databasePtr = nboPackVector(databasePtr, pyr.getPosition());
-    databasePtr = nboPackFloat(databasePtr, pyr.getRotation());
-    databasePtr = nboPackVector(databasePtr, pyr.getSize());
-    bitMask = 0;
-    if (pyr.isDriveThrough())
-      bitMask |= _DRIVE_THRU;
-    if (pyr.isShootThrough())
-      bitMask |= _SHOOT_THRU;
-    if (pyr.getZFlip())
-      bitMask |= _FLIP_Z;
-    databasePtr = nboPackUByte(databasePtr, bitMask);
+    databasePtr = pyr.pack(databasePtr);
   }
 
   // add teleporters
-  int i = 0;
   for (std::vector<Teleporter*>::iterator tele_it = teleporters.begin();
        tele_it != teleporters.end(); ++tele_it, i++) {
     Teleporter& tele = **tele_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporterSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-    databasePtr = nboPackVector(databasePtr, tele.getPosition());
-    databasePtr = nboPackFloat(databasePtr, tele.getRotation());
-    databasePtr = nboPackVector(databasePtr, tele.getSize());
-    databasePtr = nboPackFloat(databasePtr, tele.getBorder());
-	databasePtr = nboPackUByte(databasePtr, tele.isHorizontal());
-    bitMask = 0;
-    if (tele.isDriveThrough())
-      bitMask |= _DRIVE_THRU;
-    if (tele.isShootThrough())
-      bitMask |= _SHOOT_THRU;
-    databasePtr = nboPackUByte(databasePtr, bitMask);
+    databasePtr = tele.pack(databasePtr);
+
     // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);

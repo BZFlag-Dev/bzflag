@@ -88,11 +88,11 @@ class MeshFace : public Obstacle {
     void setLink(const MeshFace* link);
     const MeshFace* getLink() const;
 
-    void *pack(void*);
+    int packSize() const;
+    void *pack(void*) const;
     void *unpack(void*);
-    int packSize();
 
-    void print(std::ostream& out, int level);
+    void print(std::ostream& out, const std::string& indent) const;
 
   public:
     mutable float scratchPad;

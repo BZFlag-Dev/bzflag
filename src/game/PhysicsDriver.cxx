@@ -100,9 +100,9 @@ int PhysicsDriverManager::findDriver(const std::string& dyncol) const
 }
 
 
-void * PhysicsDriverManager::pack(void *buf)
+void * PhysicsDriverManager::pack(void *buf) const
 {
-  std::vector<PhysicsDriver*>::iterator it;
+  std::vector<PhysicsDriver*>::const_iterator it;
   buf = nboPackUInt(buf, (int)drivers.size());
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;
@@ -125,10 +125,10 @@ void * PhysicsDriverManager::unpack(void *buf)
 }
 
 
-int PhysicsDriverManager::packSize()
+int PhysicsDriverManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
-  std::vector<PhysicsDriver*>::iterator it;
+  std::vector<PhysicsDriver*>::const_iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;
     fullSize = fullSize + driver->packSize();
@@ -137,12 +137,13 @@ int PhysicsDriverManager::packSize()
 }
 
 
-void PhysicsDriverManager::print(std::ostream& out, int level)
+void PhysicsDriverManager::print(std::ostream& out,
+                                 const std::string& indent) const
 {
-  std::vector<PhysicsDriver*>::iterator it;
+  std::vector<PhysicsDriver*>::const_iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
-    PhysicsDriver* driver = *it;
-    driver->print(out, level);
+    const PhysicsDriver* driver = *it;
+    driver->print(out, indent);
   }
   return;
 }
@@ -156,7 +157,7 @@ PhysicsDriver::PhysicsDriver()
 {
   // initialize
   name = "";
-  velocity[0] = velocity[1] = velocity[2] = 0.0f;
+  linear[0] = linear[1] = linear[2] = 0.0f;
   angularVel = 0.0f;
   angularPos[0] = angularPos[1] = 0.0f;
   slide = false;
@@ -210,9 +211,9 @@ const std::string& PhysicsDriver::getName() const
 }
 
 
-void PhysicsDriver::setVelocity(const float vel[3])
+void PhysicsDriver::setLinear(const float vel[3])
 {
-  memcpy (velocity, vel, sizeof(float[3]));
+  memcpy (linear, vel, sizeof(float[3]));
   return;
 }
 
@@ -271,11 +272,11 @@ void PhysicsDriver::update (float /*t*/)
 }
 
 
-void * PhysicsDriver::pack(void *buf)
+void * PhysicsDriver::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackVector (buf, velocity);
+  buf = nboPackVector (buf, linear);
   buf = nboPackFloat (buf, angularVel);
   buf = nboPackFloat (buf, angularPos[0]);
   buf = nboPackFloat (buf, angularPos[1]);
@@ -294,7 +295,7 @@ void * PhysicsDriver::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackVector (buf, velocity);
+  buf = nboUnpackVector (buf, linear);
   buf = nboUnpackFloat (buf, angularVel);
   buf = nboUnpackFloat (buf, angularPos[0]);
   buf = nboUnpackFloat (buf, angularPos[1]);
@@ -311,11 +312,11 @@ void * PhysicsDriver::unpack(void *buf)
 }
 
 
-int PhysicsDriver::packSize()
+int PhysicsDriver::packSize() const
 {
   int fullSize = nboStdStringPackSize(name);
 
-  fullSize += sizeof(float) * 3; // velocity
+  fullSize += sizeof(float) * 3; // linear velocity
   fullSize += sizeof(float) * 1; // angular velocity
   fullSize += sizeof(float) * 2; // angular position
   fullSize += sizeof(float) * 1; // radial velocity
@@ -328,7 +329,8 @@ int PhysicsDriver::packSize()
 }
 
 
-void PhysicsDriver::print(std::ostream& out, int /*level*/)
+void PhysicsDriver::print(std::ostream& out,
+                          const std::string& /*indent*/) const
 {
   out << "physics" << std::endl;
 
@@ -336,9 +338,9 @@ void PhysicsDriver::print(std::ostream& out, int /*level*/)
     out << "  name " << name << std::endl;
   }
 
-  const float* v = velocity;
+  const float* v = linear;
   if ((v[0] != 0.0f) || (v[1] != 0.0f) || (v[2] != 0.0f)) {
-    out << "  velocity " << v[0] << " " << v[1] << " " << v[2] << std::endl;
+    out << "  linear " << v[0] << " " << v[1] << " " << v[2] << std::endl;
   }
 
   if (angularVel != 0.0f) {

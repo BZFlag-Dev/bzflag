@@ -21,8 +21,14 @@
 /* common implementation headers */
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "Obstacle.h"
 #include "Intersect.h"
+#include "Ray.h"       
+#include "Obstacle.h"
+#include "MeshObstacle.h"
+#include "BoxBuilding.h" 
+#include "PyramidBuilding.h"
+#include "BaseBuilding.h"   
+#include "Teleporter.h"     
 
 
 /* static variables */

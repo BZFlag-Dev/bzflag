@@ -23,8 +23,9 @@
 
 class BaseBuilding : public Obstacle {
   public:
+			BaseBuilding();
 			BaseBuilding(const float *pos, float rotation,
-				const float *size, int _team);
+				     const float *size, int _team);
 			~BaseBuilding();
     const char*		getType() const;
     static const char*	getClassName(); // const
@@ -52,6 +53,13 @@ class BaseBuilding : public Obstacle {
 				float *normal) const;
     void		getCorner(int index, float *pos) const;
     int			getTeam() const;
+
+    int packSize() const;
+    void *pack(void*) const;
+    void *unpack(void*);
+    
+    void print(std::ostream& out, const std::string& indent) const;
+    
     std::string		userTextures[2];
  private:
     static const char*	typeName;

@@ -49,6 +49,11 @@
 #include "MasterBanList.h"
 #include "Filter.h"
 
+// common implementation headers
+#include "Obstacle.h"
+#include "BaseBuilding.h"
+
+
 const int udpBufSize = 128000;
 
 // (2000m / 2^16) = 3.05 cm resolution
@@ -3246,7 +3251,7 @@ static void adjustTolerances()
   int i = 0;
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(i);
   while (phydrv) {
-    const float* v = phydrv->getVelocity();
+    const float* v = phydrv->getLinearVel();
     const float av = phydrv->getAngularVel();
     if (!phydrv->getIsDeath()) {
       if (!phydrv->getIsSlide() &&

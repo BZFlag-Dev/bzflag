@@ -16,12 +16,14 @@
 #include "CustomArc.h"
 
 /* system headers */
+#include <math.h>
 #include <sstream>
 #include <vector>
 
 /* common implementation headers */
 #include "ArcObstacle.h"
 #include "PhysicsDriver.h"
+#include "StateDatabase.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
@@ -37,18 +39,25 @@ const char* CustomArc::sideNames[MaterialCount] = {
 };
 
 
-CustomArc::CustomArc()
+CustomArc::CustomArc(bool box)
 {
-  // default to a (radius=10, height=10) cylinder
   divisions = 16;
   size[0] = size[1] = size[2] = 10.0f;
   ratio = 1.0f;
   angle = 360.0f;
-  texsize[0] = texsize[1] = texsize[2] = texsize[3] = -4.0f;
+  texsize[0] = texsize[1] = texsize[2] = texsize[3] = -8.0f;
   phydrv = -1;
   useNormals = true;
   smoothBounce = false;
 
+  boxStyle = box;
+  if (boxStyle) {
+    divisions = 4;
+    useNormals = false;
+    size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+    size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+  }
+  
   // setup the default textures
   materials[Top].setTexture("roof");
   materials[Bottom].setTexture("roof");
@@ -135,10 +144,27 @@ void CustomArc::write(WorldInfo *world) const
   for (i = 0; i < MaterialCount; i++) {
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
-  ArcObstacle* arc = new ArcObstacle(pos, size, rotation, angle, ratio,
-				     texsize, useNormals, divisions, mats,
-				     phydrv,
-				     smoothBounce, driveThrough, shootThrough);
+  ArcObstacle* arc;
+  if (!boxStyle) {
+    arc = new ArcObstacle(transform, pos, size, rotation, angle, ratio,
+                          texsize, useNormals, divisions, mats, phydrv,
+                          smoothBounce, driveThrough, shootThrough);
+  } else {
+    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+    const float origin[3] = {0.0f, 0.0f, 0.0f};
+    MeshTransform xform;
+    xform.addSpin(rotation * (180.0f / M_PI), zAxis);
+    xform.addShift(pos);
+    xform.append(transform);
+    float newSize[3];
+    newSize[0] = size[0] * M_SQRT2;
+    newSize[1] = size[1] * M_SQRT2;
+    newSize[2] = size[2];
+    arc = new ArcObstacle(xform, origin, newSize, M_PI * 0.25f, angle, ratio,
+                          texsize, useNormals, divisions, mats, phydrv,
+                          smoothBounce, driveThrough, shootThrough);
+  }
+  
   if (arc->isValid()) {
     arc->getMesh()->setIsLocal(true);
     world->addArc(arc);
