@@ -294,6 +294,17 @@ Control-C.  Be careful with the Escape key;  pressing Escape once will
 cancel the message, pressing it again will show the main menu.  Backspace
 will delete the most recently typed character.  The Tab key doesn't add
 a tab to the message but instead causes the tank to jump (as usual).
+You can also send a direct message to a single player by pressing the
+.IR ,
+or
+.IR .
+keys. The
+.IR ,
+key will send your message to your 'nemesis', i.e. the last player who
+killed you or was killed by you. The
+.IR .
+key will send a private message to another player. You can choose the
+recipient by using the left and right arrow keys.
 .SS Scoring
 An individual's score is the difference between that player's wins and
 losses.  A win is scored for each enemy tank destroyed.  A loss is
@@ -524,6 +535,44 @@ Disables the radar but you can still see.
 .TP
 .B Wide Angle (WA)
 Gives the tank a fish eye lens that's rather disorienting.
+.SS Observing
+If a server is full or if you just want to watch a battle without interfering
+in it, you can use the observer mode. To join a server as an observer, use
+.IR @
+as the first letter of your callsign. The maximum number of observers can be
+restricted by the server admin, so you might still not be able to join a
+full server. 
+.PP
+When in observer mode, you can freely roam the world. Using the
+arrow keys you can rotate the camera in every direction. Holding shift and
+usign the arrow keys moves the camera left, right, forward or back. Pressing
+the up or down arrow while holding the the ALT key will change the camera's
+altitude. The
+.IR F9
+and
+.IR F10
+keys change the camera's focal lengths, giving a zoom effect. The
+.IR F11
+key will reset the zoom. 
+.PP
+Repeatedly pressing
+.IR F8
+cycles through different roaming modes: \fIfree\fR, \fItracking\fR,
+\ffollowing\fR, \fIfirst person\fR and \fItracking team flag\fR. The default 
+is \fIfree\fR mode where you can move your camera around. In \fItracking\fR
+mode, the camera will automatically look at a tank. You can cycle through
+available tanks with the
+.IR F6
+and
+.IR F7
+keys. In \fIfollow\fR mode, the camera is positioned right behind the
+targeted tank, whereas you actually look from within the tank when using
+\fIfirst person\fR mode. The last mode, \fItrack team flag\fR is only
+available in capture-the-flag games and will track the team flags. Again, use
+.IR F6
+and
+.IR F7
+to choose which flag to track.
 .RE
 .SH FILES
 .RS
