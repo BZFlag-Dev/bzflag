@@ -1469,8 +1469,6 @@ void BackgroundRenderer::doInitDisplayLists()
   // be wrong until setCelestial is called with the appropriate
   // arguments.
   //
-
-//  static const float up[3] = { 0.0f, 0.0f, 1.0f };
   makeCelestialLists(renderer, sunDirection, moonDirection);
 }
 
