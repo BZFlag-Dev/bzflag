@@ -199,10 +199,10 @@ void OptionsMenu::resize(int width, int height)
   int foundBreak = false;
   for (i = 1; i < count; i++) {
     HUDuiControl *ctl = list[i];
-	if (!foundBreak && (dynamic_cast<HUDuiList*>(ctl) != NULL)) {
-		y -= 1.0f * h;
-		foundBreak = true;
-	}
+    if (!foundBreak && (dynamic_cast<HUDuiList*>(ctl) != NULL)) {
+      y -= 1.0f * h;
+      foundBreak = true;
+    }
 
     ctl->setFontSize(fontSize);
     ctl->setPosition(x, y);
@@ -211,7 +211,7 @@ void OptionsMenu::resize(int width, int height)
 
   // load current settings
   {
-    int i = 7;
+    int i = 6;
 
     ((HUDuiList*)list[i++])->setIndex((int)BZDB.eval("saveIdentity"));
 
