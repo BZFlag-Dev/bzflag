@@ -3,7 +3,7 @@
 #include "strcasecmp.h"
 
 
-// This routine is a modified from  __ssgStringEqual()
+/* This routine is a modified from  __ssgStringEqual() */
 int strcasecmp ( const char *s1, const char *s2 )
 {
   char c1;

@@ -13,7 +13,7 @@ CGrafPtr dsSetupScreen( int width, int height )
 
 	CGrafPtr theFrontBuffer;
 
-	// Get the bit depth of the screen
+	/* Get the bit depth of the screen */
 	PixMapHandle pixMapHdl;
 	GDHandle deviceHdl;
 	int scrn_depth;
@@ -97,7 +97,7 @@ CGrafPtr dsSetupScreen( int width, int height )
 		DebugStr("\pUnable to fade the display!");
 
 	{
-		// create a window to draw into
+		/* create a window to draw into */
 		Rect r;
 		AuxWinHandle awh;
 		r.top = r.left = 0;
@@ -107,7 +107,7 @@ CGrafPtr dsSetupScreen( int width, int height )
 
 		theFrontBuffer = (CGrafPtr)NewCWindow (NULL, &r, "\p", 0, plainDBox, (WindowPtr)-1, 0, 0);
 
-		// set the content color of the window to black to avoid a white flash when the window appears.
+		/* set the content color of the window to black to avoid a white flash when the window appears */
 		if(GetAuxWin ((WindowPtr)theFrontBuffer, &awh)){
 			CTabHandle theColorTable;
 			OSErr err;
@@ -125,7 +125,7 @@ CGrafPtr dsSetupScreen( int width, int height )
 
 			CTabChanged(theColorTable);
 
-			// the color table will be disposed by the window manager when the window is disposed
+			/* the color table will be disposed by the window manager when the window is disposed */
 			SetWinColor((WindowPtr)theFrontBuffer, (WCTabHandle)theColorTable);
 
 		}

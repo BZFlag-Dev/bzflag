@@ -18,14 +18,14 @@
 #include <stdio.h>
 #include <console.h>
 
-// From GUSI
+/* From GUSI */
 #include <signal.h>
 
-// From MSL
+/* From MSL */
 #include <path2fss.h>
 
 #include "mac_funcs.h"
-#include "FinderLaunch.h" // borrowed from Apple
+#include "FinderLaunch.h" /* borrowed from Apple */
 
 #ifdef main
 #undef main
@@ -67,14 +67,14 @@ pascal OSErr MacAEQuit (AppleEvent *event, AppleEvent *reply, SInt32 handlerRef)
 
 
 
-// Tell finder to open server,  send args apple event
+/* Tell finder to open server,  send args apple event */
 void MacLaunchServer (int argc, const char **argv) {
 
- // AppleEvent msg, reply;
-//  AEDescList descList;
-//  AEAddressDesc address;
-//  TargetID targetID;
-//  LaunchParamBlockRec launchRecord;
+/* AppleEvent msg, reply; */
+/*  AEDescList descList; */
+/*  AEAddressDesc address; */
+/*  TargetID targetID; */
+/*  LaunchParamBlockRec launchRecord; */
 
   FSSpec server;
   int i;
@@ -92,7 +92,7 @@ void MacLaunchServer (int argc, const char **argv) {
 
 }
 
-// Wait for an apple event to send command-line args
+/* Wait for an apple event to send command-line args */
 void MacWaitForArgs () {
 
   int wait = 0;
@@ -100,7 +100,7 @@ void MacWaitForArgs () {
 
   Microseconds (&t0);
 
-  // Wait for 1 second
+  /* Wait for 1 second */
   while (wait < 1) {
 
     MacOneEvent ();
@@ -204,7 +204,7 @@ int main () {
 
 
 
-//  atexit (MyExit);
+/*  atexit (MyExit); */
 
 
   bzf_main (argc, argv);
