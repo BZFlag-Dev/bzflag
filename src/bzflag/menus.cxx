@@ -630,6 +630,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.append(createLabel(NULL, "Radar Long:"));
   controls.append(createLabel(NULL, "Send to All:"));
   controls.append(createLabel(NULL, "Send to Teammates:"));
+  controls.append(createLabel(NULL, "Send to Nemesis:"));
   controls.append(createLabel(NULL, "Jump:"));
   controls.append(createLabel(NULL, "Binoculars:"));
   controls.append(createLabel(NULL, "Toggle Score:"));
@@ -662,8 +663,9 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls[16]->setNext(controls[17]);
   controls[17]->setNext(controls[18]);
   controls[18]->setNext(controls[19]);
-  controls[19]->setNext(controls[1]);
-  controls[1]->setPrev(controls[19]);
+  controls[19]->setNext(controls[20]);
+  controls[20]->setNext(controls[1]);
+  controls[1]->setPrev(controls[20]);
   controls[2]->setPrev(controls[1]);
   controls[3]->setPrev(controls[2]);
   controls[4]->setPrev(controls[3]);
@@ -682,6 +684,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls[17]->setPrev(controls[16]);
   controls[18]->setPrev(controls[17]);
   controls[19]->setPrev(controls[18]);
+  controls[20]->setPrev(controls[19]);
   // set initial focus
   setFocus(controls[1]);
 }
@@ -755,8 +758,8 @@ void			KeyboardMapMenu::resize(int width, int height)
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 36.0f;
-  const float fontHeight = (float)height / 36.0f;
+  const float fontWidth = (float)height / 38.0f;
+  const float fontHeight = (float)height / 38.0f;
 
   // reposition title
   HUDuiControlList& list = getControls();
