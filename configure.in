@@ -23,7 +23,7 @@ else
 fi
 
 # check for kerberos option
-AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
+# AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
 
 # check for regex option (on means build our own)
 AC_ARG_WITH(regex, [  --with-regex		  Use bzflag regex lib])
