@@ -756,6 +756,7 @@ AC_OUTPUT(bzflag.info
 	tools/TextTool-W32/res/Makefile
 	tools/bzwtransform/Makefile
 	tools/modeltool/Makefile
+	tools/modeltool/vc71/Makefile
 	win32/Makefile
 	win32/VC6/Makefile
 	win32/VC71/Makefile)
