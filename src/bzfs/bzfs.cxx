@@ -2900,7 +2900,10 @@ static void parseCommand(const char *message, int t)
   if (!playerData)
     return;
 
-  if (strncmp(message + 1, "password", 8) == 0) {
+  if (strncmp(message + 1, "me ", 3) == 0) {
+    handleMeCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "password", 8) == 0) {
     handlePasswordCmd(playerData, message);
 
   } else if (strncmp(message + 1, "set ", 4) == 0) {
