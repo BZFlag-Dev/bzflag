@@ -1,0 +1,124 @@
+# bzflag
+# Copyright 1993-1999, Chris Schoeneman
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+#
+# configuration for generic platform
+#
+CONFIG  = config-win32
+
+#
+# tools
+#
+AR      = link.exe -lib
+CC	= cl.exe
+CXX	= cl.exe
+CD	= cd
+CP      = copy.exe
+ECHO	= echo
+LD	= link.exe
+MKDIR	= mkdir.exe
+NROFF   = 
+RC	= rc.exe
+RM      = del.exe /F /Q
+RMR     = del.exe /F /Q /S
+SHELL	= 
+
+#
+# compiler definitions
+#
+PCDEFS   = /D "WIN32" /D "_MBCS" # C compiler definitions
+PCXXDEFS = /D "WIN32" /D "_MBCS" # C++ compiler definitions
+# /nologo /D "_WINDOWS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+# /nologo /D "_WINDOWS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+
+# /nologo /D "_CONSOLE" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+# /nologo /D "_CONSOLE" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+
+# /nologo /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+# /nologo /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+
+#
+# compiler options
+#
+# /FD generates dependencies;  don't know where though
+# /Fd names pdb file   /Fd"$(INTDIR)\\"
+# /Fo names obj file   /Fo"$(INTDIR)\\"
+# /D "_WINDOWS" when building windows app
+# /D "_CONSOLE" when building console app
+# /D "_LIB"     when building libraries
+# /c to compile only
+PCOPTS   = /nologo /W3 # C compiler options
+PCXXOPTS = /nologo /W3 # C++ compiler options
+COPT     = /MT /O2 /D "NDEBUG"
+CXXOPT   = /MT /O2 /D "NDEBUG"
+CDEBUG   = /MDd /Gm /ZI /Od /GZ /D "DEBUG" /D "_DEBUG"
+CXXDEBUG = /MDd /Gm /ZI /Od /GZ /D "DEBUG" /D "_DEBUG"
+CWOFF    = # turn off bogus C compiler warnings
+CXXWOFF  = # turn off bogus C++ compiler warnings
+
+#
+# search paths
+#
+# FIXME -- move /I to Make-common?
+PCINCS   = /I "$(DEPTH)/include"
+PCXXINCS = /I "$(DEPTH)/include"
+
+# linker options
+#  /nologo /subsystem:console		for console apps only
+#  /nologo /subsystem:windows		for windows apps only
+#  /incremental:no			for release only
+#  /incremental:yes /debug		for debug only
+#  /pdb:"$(OUTDIR)\bzflag.pdb"
+#  /pdbtype:sept			???
+#  /machine:I386
+#  /out:"$(OUTDIR)\bzflag.exe"
+#  -lib					for making archive
+# linker libs:
+#  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
+#  shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+#
+# linker options
+#
+PLDOPTS  = # linker options
+PLDLIBS  = # required libraries
+
+#
+# dirt
+#
+PDIRT    = # files to be removed by clean
+
+#
+# libraries
+#
+# audio libraries
+AUDIO_LIBS =				\
+	$(NULL)
+
+# display resolution change libraries
+DISPLAY_LIBS =				\
+	$(NULL)
+
+# opengl libraries
+GL_LIBS =				\
+	$(NULL)
+
+# libraries for opening image files
+IMAGE_LIBS =				\
+	$(NULL)
+
+# libraries for network stuff
+NETWORK_LIBS =				\
+	$(NULL)
+
+# libraries for windowing
+WINDOW_LIBS =				\
+	$(NULL)
+

@@ -1,0 +1,96 @@
+# bzflag
+# Copyright 1993-1999, Chris Schoeneman
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# bzflag RPM spec file
+#   RPM is boneheaded in that it expects you to build and install
+#   a package as part of the packaging.  dumb!  we'll hard link the
+#   necessary files into an alternate root and have RPM look there.
+#   we can also get RPM to put files in an alternate location by
+#   using an external rpmrc file.
+#
+Name:		bzflag
+Version:	1.7c
+Release:	2
+Copyright:	Chris Schoeneman 1993-1999
+Group:		X11/Games/Video
+URL:		http://www.bigfoot.com/~bzflag
+Packager:	Chris Schoeneman <crs23@bigfoot.com>
+BuildRoot:	/var/tmp/bzflag
+Summary:	multiplayer 3D tank battle game
+
+%description
+bzflag is a networked multiplayer 3D tank battle game, combining
+both fast action and strategy.  Free-for-all and capture-the-flag
+styles are available.
+
+%prep
+# do nothing
+
+%build
+# do nothing
+
+%install
+# do nothing
+
+%clean
+# do nothing
+
+#
+# note -- bzflag must be setuid root to use 3Dfx drivers
+#
+%files
+%attr(-, root, root) %doc README
+%attr(-, root, root) %doc LICENSE
+%attr(04755, root, root) /usr/local/bzflag/bin/bzflag.real
+%attr(755, root, root) /usr/local/bzflag/bin/bzflag
+%attr(755, root, root) /usr/local/bzflag/bin/bzfs
+%attr(755, root, root) /usr/X11R6/bin/bzflag
+%attr(444, root, root) /usr/local/bzflag/data/bbolt.rgb
+%attr(444, root, root) /usr/local/bzflag/data/boom.wav
+%attr(444, root, root) /usr/local/bzflag/data/boxwall.rgb
+%attr(444, root, root) /usr/local/bzflag/data/caution.rgb
+%attr(444, root, root) /usr/local/bzflag/data/clouds.rgb
+%attr(444, root, root) /usr/local/bzflag/data/explode1.rgb
+%attr(444, root, root) /usr/local/bzflag/data/explosion.wav
+%attr(444, root, root) /usr/local/bzflag/data/fire.wav
+%attr(444, root, root) /usr/local/bzflag/data/fixedbr.rgb
+%attr(444, root, root) /usr/local/bzflag/data/fixedmr.rgb
+%attr(444, root, root) /usr/local/bzflag/data/flag.rgb
+%attr(444, root, root) /usr/local/bzflag/data/flag_alert.wav
+%attr(444, root, root) /usr/local/bzflag/data/flag_drop.wav
+%attr(444, root, root) /usr/local/bzflag/data/flag_grab.wav
+%attr(444, root, root) /usr/local/bzflag/data/flag_lost.wav
+%attr(444, root, root) /usr/local/bzflag/data/flag_won.wav
+%attr(444, root, root) /usr/local/bzflag/data/flage.rgb
+%attr(444, root, root) /usr/local/bzflag/data/gbolt.rgb
+%attr(444, root, root) /usr/local/bzflag/data/ground.rgb
+%attr(444, root, root) /usr/local/bzflag/data/helvbi.rgb
+%attr(444, root, root) /usr/local/bzflag/data/helvbr.rgb
+%attr(444, root, root) /usr/local/bzflag/data/laser.wav
+%attr(444, root, root) /usr/local/bzflag/data/laser.rgb
+%attr(444, root, root) /usr/local/bzflag/data/missile.rgb
+%attr(444, root, root) /usr/local/bzflag/data/mountain.rgb
+%attr(444, root, root) /usr/local/bzflag/data/panel.rgb
+%attr(444, root, root) /usr/local/bzflag/data/pbolt.rgb
+%attr(444, root, root) /usr/local/bzflag/data/pop.wav
+%attr(444, root, root) /usr/local/bzflag/data/pyrwall.rgb
+%attr(444, root, root) /usr/local/bzflag/data/rbolt.rgb
+%attr(444, root, root) /usr/local/bzflag/data/ricochet.wav
+%attr(444, root, root) /usr/local/bzflag/data/roof.rgb
+%attr(444, root, root) /usr/local/bzflag/data/shock.wav
+%attr(444, root, root) /usr/local/bzflag/data/teleport.wav
+%attr(444, root, root) /usr/local/bzflag/data/timesbi.rgb
+%attr(444, root, root) /usr/local/bzflag/data/timesbr.rgb
+%attr(444, root, root) /usr/local/bzflag/data/title.rgb
+%attr(444, root, root) /usr/local/bzflag/data/wall.rgb
+%attr(444, root, root) /usr/local/bzflag/data/ybolt.rgb
+%attr(444, root, root) /usr/local/man/man6/bzflag.6
+%attr(444, root, root) /usr/local/man/man6/bzfs.6

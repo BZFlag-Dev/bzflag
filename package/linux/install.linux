@@ -1,0 +1,212 @@
+#!/bin/sh
+
+echo "Welcome to the Linux bzflag installation program."
+echo "No files will be installed until after a final warning."
+echo
+
+#
+# Check for root
+#
+if [ $EUID != 0 ]; then
+	echo "You must run the bzflag install program as root."
+	exit 1
+fi
+
+#
+# Pick a destination
+#
+dest=/usr/local/bzflag
+echo -n "Where would you like bzflag installed? [$dest] "
+read ans
+if [ x$ans != "x" ]; then
+	dest=$ans
+fi
+
+#
+# See if Mesa is installed
+#
+echo
+echo "bzflag uses the Mesa libraries.  Versions of Mesa prior to"
+echo "2.6 Beta 3 will not work correctly with bzflag."
+installMesa=y
+ans=x
+while [ $ans != y -a $ans != n ]; do
+	echo -n "Do you want to install the Mesa libraries packaged with bzflag? [y] "
+	read ans
+	ans=`echo ${ans}y | sed -e 'y/YN/yn/' -e 's/^\(.\).*/\1/'`
+done
+if [ $ans = n ]; then
+	installMesa=n
+fi
+
+#
+# Where should Mesa go?
+#
+mesaDest=$dest/lib
+if [ $installMesa = y ]; then
+	echo
+	echo "Where would you like to install Mesa?  The directory"
+	echo -n "will be created if it doesn't exist. [$mesaDest] "
+	read ans
+	if [ x$ans != "x" ]; then
+		mesaDest=$ans
+	fi
+fi
+
+#
+# Check for 3Dfx board
+#
+use3Dfx=n
+if [ -f /usr/local/glide/lib/libglide2x.so ]; then
+	echo
+	echo "You appear to have the 3Dfx libraries installed."
+	ans=x
+	while [ $ans != y -a $ans != n ]; do
+		echo -n "Should bzflag try to use an installed 3Dfx board? [y] "
+		read ans
+		ans=`echo ${ans}y | sed -e 'y/YN/yn/' -e 's/^\(.\).*/\1/'`
+	done
+	if [ $ans = y ]; then
+		use3Dfx=y
+	fi
+fi
+
+#
+# warn about requiring root access for 3Dfx board
+#
+nonRoot3Dfx=n
+if [ $use3Dfx = y ]; then
+	echo
+	echo "Using the 3Dfx board requires that bzflag be run as superuser"
+	echo "(so the glide libraries can access the hardware).  Since"
+	echo "LD_LIBRARY_PATH is ignored for setuid programs, you must"
+	echo "either run bzflag as superuser or add the paths to the"
+	echo "Mesa and glide libraries to your ld.so.conf file.  This"
+	echo "installer can add those entries and make bzflag setuid root"
+	echo "so that regular users can run bzflag using the 3Dfx card."
+
+	ans=x
+	while [ $ans != y -a $ans != n ]; do
+		echo -n "Make bzflag with 3Dfx available to all users? [y] "
+		read ans
+		ans=`echo ${ans}y | sed -e 'y/YN/yn/' -e 's/^\(.\).*/\1/'`
+	done
+	if [ $ans = y ]; then
+		nonRoot3Dfx=y
+	fi
+fi
+
+#
+# about to install
+#
+echo
+echo -n "About to begin installation.  Press enter to proceed."
+read ans
+
+#
+# make directories
+#
+if [ ! -d $dest ]; then
+	mkdir -p $dest
+	if [ ! -d $dest ]; then
+		echo "Failed to make bzflag directory $dest"
+		exit 1
+	fi
+fi
+if [ ! -d $dest/bin ]; then
+	mkdir $dest/bin
+	if [ ! -d $dest/bin ]; then
+		echo "Failed to make bzflag bin directory $dest/bin"
+		exit 1
+	fi
+fi
+if [ ! -d $dest/data ]; then
+	mkdir $dest/data
+	if [ ! -d $dest/data ]; then
+		echo "Failed to make bzflag data directory $dest/data"
+		exit 1
+	fi
+fi
+if [ $installMesa = y -a ! -d $mesaDest ]; then
+	mkdir -p $mesaDest
+	if [ ! -d $mesaDest ]; then
+		echo "Failed to make Mesa directory $mesaDest"
+		exit 1
+	fi
+fi
+
+#
+# Install the binaries
+#
+cp bin/* $dest/bin
+
+#
+# Install the data
+#
+cp data/* $dest/data
+
+#
+# Install Mesa libs
+#
+if [ $installMesa = y ]; then
+	if [ $use3Dfx = y ]; then
+		cp lib/lib3DfxMesaGL.so.2 $mesaDest/libMesaGL.so.2
+	else
+		cp lib/libMesaGL.so.2 $mesaDest/libMesaGL.so.2
+	fi
+	cp lib/libMesaGLU.so.2 $mesaDest
+fi
+
+#
+# Add Glide and Mesa to system library path.  Just setting LD_LIBRARY_PATH
+# in the wrapper script won't work because that variable isn't used for
+# setuid executables.
+#
+ldConfig=n
+if [ $installMesa = y ]; then
+	egrep "^$dest/lib$" /etc/ld.so.conf >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo $dest/lib >> /etc/ld.so.conf
+		ldConfig=y
+	fi
+fi
+if [ $nonRoot3Dfx = y ]; then
+	egrep "^/usr/local/glide/lib$" /etc/ld.so.conf >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo /usr/local/glide/lib >> /etc/ld.so.conf
+		ldConfig=y
+	fi
+fi
+if [ $ldConfig = y ]; then
+	/sbin/ldconfig
+fi
+
+#
+# Make the wrapper scripts
+#
+if [ $use3Dfx = y ]; then
+	cat <<_EOS_ > $dest/bin/bzflag
+#!/bin/sh -f
+
+export LD_LIBRARY_PATH=${mesaDest}:/usr/local/glide/lib
+export MESA_GLX_FX=fullscreen
+$dest/bin/bzflag.real -directory $dest/data \$*
+
+_EOS_
+	if [ $nonRoot3Dfx = y ]; then
+		chown root $dest/bin/bzflag.real
+		chmod u+s $dest/bin/bzflag.real
+	fi
+else
+	cat <<_EOS_ > $dest/bin/bzflag
+#!/bin/sh -f
+
+export LD_LIBRARY_PATH=${mesaDest}
+$dest/bin/bzflag.real -directory $dest/data \$*
+
+_EOS_
+fi
+chmod +x $dest/bin/bzflag
+
+echo "Installation complete"
+

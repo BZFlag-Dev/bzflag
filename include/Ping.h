@@ -1,0 +1,66 @@
+/* bzflag
+ * Copyright 1993-1999, Chris Schoeneman
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named LICENSE that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/*
+ * PingPacket:
+ *	Encapsulates server `ping' info.
+ */
+
+#ifndef	BZF_PING_H
+#define	BZF_PING_H
+
+#include "Address.h"
+#include "Pack.h"
+#include "multicast.h"
+
+class PingPacket {
+  public:
+			PingPacket();
+			~PingPacket();
+
+    boolean		read(int fd, struct sockaddr_in*);
+    boolean		write(int fd, const struct sockaddr_in*) const;
+    boolean		waitForReply(int fd, const Address& from,
+				int millisecondsToBlock = 0);
+
+    static boolean	isRequest(int fd, struct sockaddr_in*,
+						int* minReplyTTL = NULL);
+    static boolean	sendRequest(int fd, const struct sockaddr_in*,
+						int minReplyTTL = 0);
+
+  public:
+    PlayerId		serverId;
+    Address		sourceAddr;
+    uint16_t		gameStyle;
+    uint16_t		maxPlayers;
+    uint16_t		maxShots;
+    uint16_t		rogueCount;
+    uint16_t		redCount;
+    uint16_t		greenCount;
+    uint16_t		blueCount;
+    uint16_t		purpleCount;
+    uint16_t		rogueMax;
+    uint16_t		redMax;
+    uint16_t		greenMax;
+    uint16_t		blueMax;
+    uint16_t		purpleMax;
+    uint16_t		shakeWins;
+    uint16_t		shakeTimeout;		// 1/10ths of second
+    uint16_t		maxPlayerScore;
+    uint16_t		maxTeamScore;
+    uint16_t		maxTime;		// seconds
+
+  private:
+    static const int	PacketSize;
+};
+
+#endif // BZF_PING_H

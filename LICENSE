@@ -1,0 +1,53 @@
+bzflag License
+Copyright (c) 1999 Chris Schoeneman
+
+Redistribution and use in source and binary forms are permitted provided
+that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+3. A reasonable fee may be charged to copy this software.  Any fee may
+   be charged to support this software.  This software may be
+   distributed as part of a larger (possibly commercial) software
+   distribution provided that no claim of ownership of this software
+   is made.  However, no fee may be charged for the software itself.
+
+Modifications are permitted provided that the following conditions are
+met:
+
+1. Each modified source file must include a prominent notice stating
+   how and when that file was changed.
+
+2. Modified object or executable code must be accompanied by the
+   modified source code and/or documentation clearly stating the
+   modifications.  Modified executables must be renamed to not
+   conflict with the standard names.
+
+3. Redistribution and use of modified source and binary forms are
+   permitted provided that at least one of the following conditions
+   are met:
+
+   A. Modifications are placed in the public domain or are
+      made available under this license, or permission to use
+      the modifications is granted to the Copyright Holder.
+
+   B. Use of the modified version is restricted to within
+      the corporation or organization that made the
+      modifications.
+
+   C. Other distribution arrangements are made with the
+      Copyright Holder.
+
+4. The name of the Copyright Holder may not be used to endorse or
+   promote products derived from this software without specific prior
+   written permission.
+
+THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+

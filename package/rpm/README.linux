@@ -1,0 +1,40 @@
+
+Welcome to the Linux version of BZFLAG!
+
+BZFLAG is a network multiplayer 3D tank battle game.  You can play
+against several other people anywhere on a TCP/IP based network,
+including the Internet.  Bzflag is freeware;  please read the
+LICENSE file in the bzflag-1.7c directory off the standard doc
+directory (probably /usr/doc).
+
+This version will work with X using software only rendering or with a
+3Dfx Voodoo Graphics board to do accelerated graphics.  The software
+only mode is known to be very slow -- this will not be fixed.  Future
+versions will support OpenGL cards when support is provided through
+the X server.
+
+To use bzflag you must have Mesa installed on your system.  If you
+don't have Mesa you can get it from:
+
+    ftp://iris.ssec.wisc.edu/pub/Mesa/
+
+To use the 3Dfx version of bzflag you must also have the 3Dfx Glide
+libraries.  Get them from:
+
+    http://glide.xxedgexx.com/3DfxRPMS.html
+
+The bzflag binary is installed setuid root for access to the 3Dfx
+hardware.  This can be removed if you also install the 3Dfx device
+driver software available from the above URL.
+
+More information about bzflag is available in the man pages for bzflag
+and bzfs.  Also check http://www.bigfoot.com/~bzflag/.
+
+Known bugs in the Linux version:
+
+  * playing sounds, while significantly improved over previous builds,
+    can still cause the framerate to drop significantly.  the
+    workaround is to disable sounds with the -mute command line option.
+
+Send bug reports and comments to bzflag@bigfoot.com.
+

@@ -1,0 +1,3 @@
+#!/bin/sh -f
+export MESA_GLX_FX=fullscreen
+/usr/local/bzflag/bin/bzflag.real -directory /usr/local/bzflag/data $*

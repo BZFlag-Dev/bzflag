@@ -1,0 +1,92 @@
+# bzflag
+# Copyright 1993-1999, Chris Schoeneman
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+#
+# configuration for generic linux
+#
+CONFIG  = linux
+
+#
+# tools
+#
+AR      = /usr/bin/ar cru
+CC	= /usr/bin/gcc
+CXX	= /usr/bin/g++
+CD	= cd
+CP      = /bin/cp
+LD	= /usr/bin/ld
+MKDIR	= /bin/mkdir
+NROFF   = /usr/bin/nroff
+RM      = /bin/rm -f
+RMR     = $(RM) -r
+SHELL	= /bin/sh
+ECHO	= echo
+
+#
+# compiler definitions
+#
+PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO -DNO_AUDIO_THREAD
+PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO -DNO_AUDIO_THREAD
+
+#
+# compiler options
+#
+PCOPTS   = -fPIC -ansi $(ACOPTS)
+PCXXOPTS = -fPIC -fno-exceptions -fno-rtti $(ACXXOPTS)
+COPT     = -DNDEBUG -O5
+CXXOPT   = -DNDEBUG -O5 -ffast-math -fomit-frame-pointer -fnonnull-objects \
+		-fexpensive-optimizations -funroll-loops
+CDEBUG   = -DDEBUG -g
+CXXDEBUG = -DDEBUG -g
+CWOFF    =
+CXXWOFF  =
+
+#
+# search paths
+#
+PCINCS   =
+PCXXINCS =
+
+#
+# linker options
+#
+PLDOPTS  = -L/usr/X11R6/lib
+
+#
+# dirt
+#
+PDIRT    = *.[eou] a.out core ar.tmp.*
+
+#
+# libraries
+#
+AUDIO_LIBS =				\
+	$(NULL)
+
+DISPLAY_LIBS =				\
+	$(NULL)
+
+GL_LIBS =				\
+	-lMesaGLU			\
+	-lMesaGL			\
+	$(NULL)
+
+IMAGE_LIBS =				\
+	$(NULL)
+
+NETWORK_LIBS =				\
+	$(NULL)
+
+WINDOW_LIBS =				\
+	-lXext				\
+	-lX11				\
+	$(NULL)
+

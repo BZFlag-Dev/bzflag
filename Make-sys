@@ -1,0 +1,47 @@
+# bzflag
+# Copyright 1993-1999, Chris Schoeneman
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+#
+# bzflag top level makefile that does the real work
+#
+
+DEPTH = .
+
+COMMONPREF = makesys
+include $(DEPTH)/Make-common
+
+targets:
+	-$(MKDIR) $(LIBDIR)
+	-$(MKDIR) $(TARGETDIR)
+	$(CD) src; $(MAKE) $(MFLAGS) $@
+
+man: $(_FORCE)
+	$(CD) man; $(MAKE) $(MFLAGS) targets
+
+package: $(_FORCE)
+	-$(MKDIR) $(PACKAGEDIR)
+	$(CD) package; $(MAKE) $(MFLAGS) targets
+
+clean:
+	$(RM) $(LIBDIR)/*
+	$(CD) src; $(MAKE) $(MFLAGS) $@
+	$(CD) man; $(MAKE) $(MFLAGS) $@
+	$(CD) package; $(MAKE) $(MFLAGS) $@
+
+clobber: $(COMMONPREF)clean
+	$(CD) src; $(MAKE) $(MFLAGS) $@
+	$(CD) man; $(MAKE) $(MFLAGS) $@
+
+pristine: clobber
+	$(CD) package; $(MAKE) $(MFLAGS) clobber
+	$(RMR) $(LIBDIR) $(TARGETDIR) $(PACKAGEDIR)
+	$(RM) config-sys
+
