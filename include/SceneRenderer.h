@@ -210,7 +210,7 @@ class SceneRenderer {
     boolean		sameFrame;
     FlareLightList	flareLightList;
     OpenGLGState	flareGState;
-	  boolean		showFlagHelp;
+    boolean		showFlagHelp;
     boolean		showScore;
 
     static SceneRenderer* instance;

@@ -88,9 +88,10 @@ const float		HUDRenderer::altitudeOffset = 20.0f;
 const GLfloat		HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
 BzfString		HUDRenderer::headingLabel[36];
 BzfString		HUDRenderer::altitudeLabel[20];
-BzfString		HUDRenderer::scoreSpacingLabel("888 (888-888) 888");
+BzfString		HUDRenderer::scoreSpacingLabel("888 (888-888)");
 BzfString		HUDRenderer::scoreLabel("Score");
 BzfString		HUDRenderer::killLabel("Kills");
+BzfString		HUDRenderer::teamScoreSpacingLabel("888 (888-888) 888");
 BzfString		HUDRenderer::teamScoreLabel("Team Score");
 BzfString		HUDRenderer::playerLabel("Player");
 BzfString		HUDRenderer::restartLabelFormat("Press %s to start");
@@ -346,13 +347,11 @@ void			HUDRenderer::setMinorFontSize(int, int height)
 
   scoreLabelWidth = minorFont.getWidth(scoreSpacingLabel);
   killsLabelWidth = minorFont.getWidth(killLabel);
-  teamScoreLabelWidth = minorFont.getWidth(teamScoreLabel);
-  if (scoreLabelWidth > teamScoreLabelWidth)
-    teamScoreLabelWidth = scoreLabelWidth;
-  flagHelpY = composeTypeIn->getFont().getSpacing() + 4.0f + minorFont.getDescent() +
-    window.getHeight() / 3;
+  teamScoreLabelWidth = minorFont.getWidth(teamScoreSpacingLabel);
+  flagHelpY = composeTypeIn->getFont().getSpacing() + 4.0f +
+      minorFont.getDescent() + window.getHeight() / 3;
 
-  const float spacing = minorFont.getWidth(" ");
+  const float spacing = minorFont.getWidth("");
   scoreLabelWidth += spacing;
   killsLabelWidth += spacing;
 
@@ -577,7 +576,7 @@ BzfString		HUDRenderer::makeHelpString(const char* help) const
 
   // find sections of string not more than maxWidth pixels wide
   // and put them into a BzfString separated by NUL's.
-  const float maxWidth = 3.0f * (float)maxMotionSize;
+  const float maxWidth = 4.0f * (float)maxMotionSize;
   BzfString msg;
   const char* scan = help;
   while (*scan) {
@@ -962,7 +961,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
     const char* flagHelpBase = flagHelp[flagHelpIndex].getString();
     for (i = 0; i < flagHelpLines; i++) {
       y -= minorFont.getSpacing();
-      minorFont.draw(flagHelpBase, (float)(centerx - 1.5f * maxMotionSize), y);
+      minorFont.draw(flagHelpBase, (float)(centerx - 2.0f * maxMotionSize), y);
       while (*flagHelpBase) flagHelpBase++;
       flagHelpBase++;
     }

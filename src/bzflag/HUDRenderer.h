@@ -214,6 +214,7 @@ class HUDRenderer {
     static BzfString	scoreLabel;
     static BzfString	killLabel;
     static BzfString	teamScoreLabel;
+    static BzfString	teamScoreSpacingLabel;
     static BzfString	playerLabel;
     static BzfString	restartLabelFormat;
     static BzfString	resumeLabel;
