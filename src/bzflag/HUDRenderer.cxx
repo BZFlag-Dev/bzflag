@@ -690,7 +690,7 @@ void			HUDRenderer::renderStatus(void)
       dater = (dater) ? false : true;
       lastTimeChange = time(NULL);
       if (dater)
-        sprintf(buffer, "%2d/%2d/%2d", userTime.tm_mday, userTime.tm_mon + 1, 1900 + userTime.tm_year);
+        sprintf(buffer, "%4d.%2d.%2d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday);
       else
         sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
     }
@@ -698,7 +698,7 @@ void			HUDRenderer::renderStatus(void)
       if (BZDB.eval("timedate") != 2)
         dater = (BZDB.eval("timedate") == 1) ? true : false;
       if (dater)
-        sprintf(buffer, "%2d/%2d/%2d", userTime.tm_mday, userTime.tm_mon + 1, 1900 + userTime.tm_year);
+        sprintf(buffer, "%4d.%2d.%2d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday);
       else
         sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
     }
