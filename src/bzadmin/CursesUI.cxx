@@ -68,7 +68,15 @@ CursesUI::CursesUI(BZAdminClient& c) :
   comp.registerWord("/ban ");
   comp.registerWord("/banlist");
   comp.registerWord("/capture");
+  comp.registerWord("start");
+  comp.registerWord("stop");
+  comp.registerWord("size");
+  comp.registerWord("rate");
+  comp.registerWord("stats");
+  comp.registerWord("file");
+  comp.registerWord("save");
   comp.registerWord("/countdown");
+  comp.registerWord("/clientquery");
   comp.registerWord("/deregister");
   comp.registerWord("/flag ");
   comp.registerWord("reset");
@@ -94,6 +102,10 @@ CursesUI::CursesUI(BZAdminClient& c) :
   comp.registerWord("/reload");
   comp.registerWord("/removegroup ");
   comp.registerWord("/replay ");
+  comp.registerWord("listfiles");
+  comp.registerWord("load");
+  comp.registerWord("play");
+  comp.registerWord("skip");
   comp.registerWord("/report ");
   comp.registerWord("/reset");
   comp.registerWord("/set");
