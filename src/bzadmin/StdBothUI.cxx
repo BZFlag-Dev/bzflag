@@ -11,9 +11,10 @@
  */
 
 #include <iostream>
-#include <sys/poll.h>
+#include <sys/select.h>
 
 #include "StdBothUI.h"
+#include "global.h"
 
 
 // add this UI to the map
@@ -26,11 +27,15 @@ void StdBothUI::outputMessage(const string& msg) {
 
 
 bool StdBothUI::checkCommand(string& str) {
-  static char buffer[256];
+  static char buffer[MessageLen + 1];
   static int pos = 0;
-  pollfd pfd = { 0, POLLIN, 0 };
-  int chars = poll(&pfd, 1, 0);
-  if (chars > 0) {
+  fd_set rfds;
+  timeval tv;
+  FD_ZERO(&rfds);
+  FD_SET(0, &rfds);
+  tv.tv_sec = 0;
+  tv.tv_usec = 0;
+  if (select(1, &rfds, NULL, NULL, &tv) > 0) {
     read(0, &buffer[pos], 1);
     if (buffer[pos] == '\n') {
       buffer[pos] = '\0';
