@@ -2115,11 +2115,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 
   // status message
+  std::string timeStamp = TimeKeeper::timestamp();
   DEBUG1("Player %s [%d] removed at %s: %s\n",
 	 playerData->player.getCallSign(), 
-	 playerIndex, 
-	 TimeKeeper::timestamp(), 
-	 reason);
+	 playerIndex, timeStamp.c_str(), reason);
   bool wasPlaying = playerData->player.isPlaying();
   playerData->netHandler->closing();
 
