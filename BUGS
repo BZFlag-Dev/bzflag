@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- if the display cannot initialize properly, it will start bzflag with a
+  black screen.  need to prevent this by either detecting if there is an
+  available mode that is possible, lowering memory usage, or reporting
+  an error and aborting.
+
 - server has been reported to segfault (gethostname fails?) when chrooted 
   and run as a private server (ask tegan for more details if needed)
 
@@ -30,12 +35,6 @@ recent bugs
 
 - bzfrelay is probably broken for current net protocol. Should be just
   forwarding TCP and UDP packets on a single port.
-
-- the aggressive filter will occasionally encounter a false-positive match
-  due to apostrophe's -- need to take then into consideration.  need a
-  a better way to handle localized pre/suffix matching too as a handful
-  of international words match incorrectly when an english-common suffix
-  is applied.
 
 - reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a
