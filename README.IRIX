@@ -28,45 +28,27 @@ If you try to boost the optimization to -O3, it is likely that the
 compiler will crash.  Some files will simply take a very long time to
 compile no matter what optimization level, so be patient. ;)
 
-The next hurdle to overcome will be a link error for 2 of then
-executables (bzfs & bzflag) that link against libraries that contain
-instantiated templates.  That is to say that the compile will fail
-with "Unresolved text symbol" errors when it tries to link the
-binaries.
-
-This issue is merely a problem of figuring out the proper compiler
-options, so if you know what is missing, please let one of the devs
-who deals with the IRIX build know.  The work-around is very easy.
-Replace the name of the libraries with the missing symbols
-(libCommon.a, libPlatform.a, and libGLKit.a for example) with all of
-the object files that comprised it.  When the build fails for linking
-bzfs, for example, do this:
-
-cd src/bzfs
-CC -O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -FE:template_in_elf_section -no_auto_include      -o bzfs ../date/buildDate.o AccessControlList.o CmdLineOptions.o  CustomBase.o CustomBox.o CustomGate.o  CustomLink.o CustomPyramid.o  CustomWeapon.o CustomWorld.o FlagInfo.o  Permissions.o TeamBases.o  TextChunkManager.o VotingArbiter.o  WorldFileObject.o WorldFileObstacle.o  WorldInfo.o WorldWeapons.o commands.o  bzfs.o ../net/*.o             ../common/*.o   ../regex/libregex.a -lm -lsocket 
-cd ../..
-make
-
-Basically copy-paste the link line that fails, and replace the
-libSomething.a names with *.o.  The pre-linker will kick in again and
-build some more, and the link should complete.  You should then be
-able to return to the top-level of the source tree and continue
-compiling.  You'll need to do this for both bzflag and bzfs.
+The -LANG:std, -ptused, and -prelink options are necessary for it to
+build properly.  Without them, there will be serious problems linking
+the binaries with the template instantiations.
 
 The last problem that you may encounter on older IRIX systems is a
-problem in the curses.h header.  The header uses a symbol name that is
-not valid with the CC C++ compiler:
+problem in the curses.h header.  This problem will cause bzadmin to
+fail to build properly.  If you have no need for bzadmin, you can
+ignore the failure.  Otherwise, the workaround is simple..  The header
+uses a symbol name that is not valid with the CC C++ compiler:
 
 cc-1084 CC: ERROR File = /usr/include/curses.h, Line = 611
   The indicated declaration has an invalid combination of type specifiers.
 
                 syncok(WINDOW *, int bool),
 
-Again there is a relatively simple work around, though this one
-involves actually editing a file.  Copy the /usr/include/curses.h file
-to the bzflag include/ directory.  Edit the file and replace "int
-bool" with "int b".  Save the file, and restart make and the build
-should succeed.  Best of luck.
+The relatively simple work around involves actually editing the
+curses.h file.  Copy the /usr/include/curses.h file to the bzflag
+include/ directory.  Edit the file and replace "int bool" with "int
+b".  The edited file should take precedence over the system header.
+Save the file, and restart make and the build should succeed.  Best of
+luck.
 
 See the generic install instructions in README for more details.
 
