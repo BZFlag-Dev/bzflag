@@ -660,13 +660,6 @@ void			dumpResources(BzfDisplay* display,
     BZDB.set(string_util::format("silencedPerson%d", i), list[i]);
   }
 
-  BZDB.set("email",startupInfo.email);
-  if (strlen(startupInfo.email) == 0){
-    BZDB.set("anonymous","1");
-  } else {
-    BZDB.set("anonymous","0");
-  }
-
   BZDB.set("serverCacheAge", string_util::format("%1d", (long)(ServerListCache::get())->getMaxCacheAge()));
 
   (ServerListCache::get())->saveCache();
@@ -920,7 +913,6 @@ int			main(int argc, char** argv)
   }
 
   // get email address if not anonymous
-  anonymous = BZDB.isTrue("anonymous");
   std::string email;
   if (!anonymous) {
     if (BZDB.isSet("email")) {
