@@ -112,7 +112,7 @@ SOURCE=..\src\bzflag\bzflag.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\bzflag.rc
+SOURCE=.\bzflag.rc
 # End Source File
 # Begin Source File
 
@@ -345,7 +345,7 @@ SOURCE=..\src\bzflag\WorldPlayer.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=..\src\bzflag\bzflag.ico
+SOURCE=.\bzflag.ico
 # End Source File
 # End Group
 # End Target

@@ -7,11 +7,11 @@
 ;
 
 !define VER_MAJOR 1.9
-!define VER_MINOR .4-BETA-20030930
+!define VER_MINOR .7
 
 ; Main Installer Options
 Name "BZFlag"
-Icon ..\..\..\src\bzflag\bzflag.ico
+Icon ..\..\..\win32\bzflag.ico
 WindowIcon On
 EnabledBitmap "EnableCheck.bmp"
 DisabledBitmap "DisableCheck.bmp"
