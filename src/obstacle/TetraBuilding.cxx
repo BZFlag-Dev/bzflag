@@ -19,6 +19,7 @@
 
 #include "TetraBuilding.h"
 #include "MeshUtils.h"
+#include "MeshTransform.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,12 +40,12 @@ TetraBuilding::TetraBuilding()
 
 TetraBuilding::TetraBuilding(const MeshTransform& xform,
                              const float _vertices[4][3],
-			     const float _normals[4][3][3],
-			     const float _texcoords[4][3][2],
-			     const bool _useNormals[4],
-			     const bool _useTexcoords[4],
-			     const BzMaterial* _materials[4],
-			     bool drive, bool shoot)
+                             const float _normals[4][3][3],
+                             const float _texcoords[4][3][2],
+                             const bool _useNormals[4],
+                             const bool _useTexcoords[4],
+                             const BzMaterial* _materials[4],
+                             bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -64,6 +65,26 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
   finalize();
 
   return;
+}
+
+
+TetraBuilding::~TetraBuilding()
+{
+  delete mesh;
+  return;
+}
+
+
+Obstacle* TetraBuilding::copyWithTransform(const MeshTransform& xform) const
+{
+  MeshTransform tmpXform = transform;
+  tmpXform.append(xform);
+
+  TetraBuilding* copy =
+    new TetraBuilding(tmpXform, vertices, normals, texcoords,
+                      useNormals, useTexcoords, (const BzMaterial**)materials,
+                      driveThrough, shootThrough);
+  return copy;
 }
 
 
@@ -115,7 +136,6 @@ void TetraBuilding::finalize()
   addFace(mesh, vlist, nlist, tlist, materials[3], -1);
 
   // wrap it up
-  mesh->setIsLocal(true);
   mesh->finalize();
 
   // setup the common obstacle parameters
@@ -180,13 +200,6 @@ void TetraBuilding::checkVertexOrder()
     materials[2] = tmpMat;
   }
 
-  return;
-}
-
-
-TetraBuilding::~TetraBuilding()
-{
-  delete mesh;
   return;
 }
 
@@ -451,31 +464,32 @@ int TetraBuilding::packSize() const
 }
 
 
-void TetraBuilding::print(std::ostream& out, const std::string& /*indent*/) const
+void TetraBuilding::print(std::ostream& out, const std::string& indent) const
 {
   int i;
 
-  out << "tetra" << std::endl;
+  out << indent << "tetra" << std::endl;
 
   transform.printTransforms(out, "");
   
   // write the vertex information
   for (i = 0; i < 4; i++) {
     const float* vertex = vertices[i];
-    out << "\tvertex " << vertex[0] << " " << vertex[1] << " "
-		       << vertex[2] << std::endl;
+    out << indent << "\tvertex " << vertex[0] << " " << vertex[1] << " "
+                                 << vertex[2] << std::endl;
     if (useNormals[i]) {
       for (int j = 0; j < 3; j++) {
 	const float* normal = normals[i][j];
-	out << "\tnormal " << normal[0] << " " << normal[1] << " "
-			   << normal[2] << std::endl;
+	out << indent << "\tnormal " << normal[0] << " " << normal[1] << " "
+                                     << normal[2] << std::endl;
       }
     }
     if (useTexcoords[i]) {
       for (int j = 0; j < 3; j++) {
 	const float* texcoord = texcoords[i][j];
-	out << "\tnormal " << texcoord[0] << " " << texcoord[1] << " "
-			   << texcoord[2] << std::endl;
+	out << indent << "\tnormal " << texcoord[0] << " "
+                                     << texcoord[1] << " "
+			             << texcoord[2] << std::endl;
       }
     }
     MATERIALMGR.printReference(out, materials[i]);
@@ -483,16 +497,16 @@ void TetraBuilding::print(std::ostream& out, const std::string& /*indent*/) cons
 
   // write the regular stuff
   if (isDriveThrough() && isShootThrough()) {
-    out << "\tpassable" << std::endl;
+    out << indent << "\tpassable" << std::endl;
   } else {
     if (isDriveThrough()) {
-      out << "\tdrivethrough" << std::endl;
+      out << indent << "\tdrivethrough" << std::endl;
     }
     if (isShootThrough()) {
-      out << "\tshootthrough" << std::endl;
+      out << indent << "\tshootthrough" << std::endl;
     }
   }
-  out << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

@@ -18,6 +18,7 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "Intersect.h"
+#include "ObstacleMgr.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -263,7 +264,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     if (target == randomTeleporter) {
       unsigned int tmp = getPath().getShotId();
       tmp = (tmp * 1103515245 + 12345) >> 8; // from POSIX rand() example
-      tmp = tmp % (2 * World::getWorld()->getTeleporters().size());
+      tmp = tmp % (2 * OBSTACLEMGR.getTeles().size());
       target = tmp;
     }
 

@@ -88,12 +88,6 @@ class World {
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
     const float*	getBase(int, int=0) const;
-    const std::vector<WallObstacle*>&    getWalls() const;
-    const std::vector<MeshObstacle*>&    getMeshes() const;
-    const std::vector<BoxBuilding*>&	 getBoxes() const;
-    const std::vector<PyramidBuilding*>& getPyramids() const;
-    const std::vector<BaseBuilding*>&    getBases() const;
-    const std::vector<Teleporter*>&	 getTeleporters() const;
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
     int			getTeleportTarget(int source) const;
@@ -171,19 +165,9 @@ class World {
     float		shakeTimeout;
     int			shakeWins;
     TeamBases		bases[NumTeams];
-    std::vector<BoxBuilding*>		boxes;
-    std::vector<PyramidBuilding*>	pyramids;
-    std::vector<BaseBuilding*>		basesR;
-    std::vector<TetraBuilding*>		tetras;
-    std::vector<WallObstacle*>		walls;
-    std::vector<Teleporter*>		teleporters;
-    std::vector<MeshObstacle*>		meshes;
-    std::vector<ArcObstacle*>		arcs;
-    std::vector<ConeObstacle*>		cones;
-    std::vector<SphereObstacle*>	spheres;
-    std::vector<Weapon>			weapons;
-    std::vector<EntryZone>		entryZones;
-    std::vector<int>			teleportTargets;
+    std::vector<int>	teleportTargets;
+    std::vector<Weapon>	weapons;
+    std::vector<EntryZone> entryZones;
     Team		team[NumTeams];
     RemotePlayer**	players;
     WorldPlayer*	worldWeapons;
@@ -368,36 +352,6 @@ inline const float*	World::getBase(int team, int base) const
     return NULL;
 
   return b[base].p;
-}
-
-inline const std::vector<WallObstacle*>& World::getWalls() const
-{
-  return walls;
-}
-
-inline const std::vector<MeshObstacle*>& World::getMeshes() const
-{
-  return meshes;
-}
-
-inline const std::vector<BaseBuilding*>& World::getBases() const
-{
-  return basesR;
-}
-
-inline const std::vector<BoxBuilding*>& World::getBoxes() const
-{
-  return boxes;
-}
-
-inline const std::vector<PyramidBuilding*>& World::getPyramids() const
-{
-  return pyramids;
-}
-
-inline const std::vector<Teleporter*>& World::getTeleporters() const
-{
-  return teleporters;
 }
 
 inline World*		World::getWorld()

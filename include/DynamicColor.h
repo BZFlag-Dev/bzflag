@@ -18,25 +18,21 @@
 #include <vector>
 #include <iostream>
 
-typedef struct {
-  float period;
-  float offset;
-  float weight;
-} sinusoidParams;
-
-typedef struct {
-  float period;
-  float offset;
-  float width;
-} clampParams;
-
 class DynamicColor {
   public:
     DynamicColor();
     ~DynamicColor();
+    
+    enum SequenceState {
+      colorMin = 0,
+      colorMid = 1,
+      colorMax = 2
+    };
 
     bool setName(const std::string& name);
     void setLimits(int channel, float min, float max);
+    void setSequence(int channel, float period, float offset,
+                     std::vector<char>& list);
     void addSinusoid(int channel, const float sinusoid[3]);
     void addClampUp(int channel, const float clampUp[3]);
     void addClampDown(int channel, const float clampDown[3]);
@@ -59,10 +55,29 @@ class DynamicColor {
 
     std::string name;
     float color[4];
+    
+    typedef struct sequenceList {
+      float period;
+      float offset;
+      std::vector<char> list;
+    } sequenceParams;
+
+    typedef struct {
+      float period;
+      float offset;
+      float weight;
+    } sinusoidParams;
+
+    typedef struct {
+      float period;
+      float offset;
+      float width;
+    } clampParams;
 
     typedef struct {
       float minValue, maxValue;
       float totalWeight; // tally of sinusoid weights
+      sequenceParams sequence;
       std::vector<sinusoidParams> sinusoids;
       std::vector<clampParams> clampUps;
       std::vector<clampParams> clampDowns;

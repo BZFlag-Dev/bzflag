@@ -30,6 +30,7 @@ bzflag_SOURCES =			\
 	DisplayMenu.h			\
 	EffectsMenu.cxx			\
 	EffectsMenu.h			\
+	EntryZone.cxx			\
 	EntryZone.h			\
 	FlashClock.cxx			\
 	FlashClock.h			\
@@ -144,6 +145,7 @@ bzflag_SOURCES =			\
 	TargetingUtils.h		\
 	TrackMarks.cxx			\
 	TrackMarks.h			\
+	Weapon.cxx			\
 	Weapon.h			\
 	WeatherRenderer.h		\
 	WeatherRenderer.cxx		\
@@ -196,8 +198,8 @@ LDADD =	\
 	../3D/lib3D.a			\
 	../net/libNet.a			\
 	../common/libCommon.a		\
-	../obstacle/libObstacle.a	\
 	../game/libGame.a		\
+	../obstacle/libObstacle.a	\
 	$(NACLIB)			\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\

@@ -61,7 +61,7 @@ bool CustomWaterLevel::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomWaterLevel::write(WorldInfo* world) const
+void CustomWaterLevel::writeToWorld(WorldInfo* world) const
 {
   if (modedMaterial) {
     const BzMaterial* matref = MATERIALMGR.addMaterial(&material);

@@ -23,6 +23,7 @@
 #include "FlagSceneNode.h"
 #include "CollisionManager.h"
 #include "PhysicsDriver.h"
+#include "ObstacleMgr.h"
 
 /* local implementation headers */
 #include "World.h"
@@ -696,7 +697,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       const int source = World::getWorld()->getTeleporter(teleporter, face);
       int target = World::getWorld()->getTeleportTarget(source);
       if (target == randomTeleporter) {
-        target = rand() % (2 * World::getWorld()->getTeleporters().size());
+        target = rand() % (2 * OBSTACLEMGR.getTeles().size());
       }
 
       int outFace;

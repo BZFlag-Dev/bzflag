@@ -20,17 +20,19 @@
 #include "EntryZones.h"
 
 class CustomZone : public WorldFileLocation {
-public:
-  CustomZone();
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void write(WorldInfo*) const;
+  public:
+    CustomZone();
+    virtual bool read(const char *cmd, std::istream&);
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual bool usesGroupDef() { return false; }
+    
+    const QualifierList &getQualifiers() const;
+    float getArea() const;
+    void getRandomPoint(float *pt) const;
+    float getDistToPoint (const float *pos) const;
 
-  const QualifierList &getQualifiers() const;
-  float getArea() const;
-  void getRandomPoint(float *pt) const;
-  float getDistToPoint (const float *pos) const;
-protected:
-  QualifierList qualifiers;
+  protected:
+    QualifierList qualifiers;
 };
 
 inline const QualifierList& CustomZone::getQualifiers() const

@@ -25,9 +25,13 @@ class BoxBuilding : public Obstacle {
   public:
 			BoxBuilding();
 			BoxBuilding(const float* pos, float rotation,
-				float width, float breadth, float height, bool drive = false, bool shoot = false, bool invisible = false);
+				        float width, float breadth, float height,
+				        bool drive = false, bool shoot = false,
+				        bool invisible = false);
 			~BoxBuilding();
-
+			
+    Obstacle* 		copyWithTransform(const MeshTransform&) const;
+    
     const char*		getType() const;
     static const char*	getClassName(); // const
 

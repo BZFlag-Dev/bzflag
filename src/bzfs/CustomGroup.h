@@ -10,34 +10,32 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __CUSTOMWORLD_H__
-#define __CUSTOMWORLD_H__
+#ifndef __CUSTOM_GROUP_H__
+#define __CUSTOM_GROUP_H__
 
 #include "common.h"
 
-/* interface header */
-#include "WorldFileObject.h"
-
 /* system interface headers */
+#include <string>
+#include <vector>
 #include <iostream>
 
 /* local interface headers */
 #include "WorldInfo.h"
+#include "WorldFileLocation.h"
 
 
-class CustomWorld : public WorldFileObject {
+class CustomGroup : public WorldFileLocation {
   public:
-    CustomWorld();
+    CustomGroup(const std::string& groupdef);
     virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
-    
+    virtual void writeToGroupDef(GroupDefinition*) const;
+
   protected:
-    double _size;
-    double _fHeight;
+    std::string groupdef;
 };
 
-#endif  /* __CUSTOMWORLD_H__ */
+#endif  /* __CUSTOM_GROUP_H__ */
 
 // Local variables: ***
 // mode: C++ ***

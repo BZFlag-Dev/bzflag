@@ -31,8 +31,7 @@
 #include "PhysicsDriver.h"
 #include "MeshTransform.h"
 #include "FlagSceneNode.h"
-
-#include "ObstacleGroup.h"
+#include "ObstacleMgr.h"
 
 
 //
@@ -43,6 +42,7 @@ World*			World::playingField = NULL;
 BundleMgr*		World::bundleMgr;
 std::string		World::locale("");
 int			World::flagTexture(-1);
+
 
 World::World() :
   gameStyle(PlainGameStyle),
@@ -63,6 +63,7 @@ World::World() :
   linkMaterial = NULL;
 }
 
+
 World::~World()
 {
   int i;
@@ -75,40 +76,7 @@ World::~World()
   for (i = 0; i < NumTeams; i++) {
     bases[i].clear();
   }
-  // delete the obstacles
-  unsigned int u;
-  for (u = 0; u < walls.size(); u++) {
-    delete walls[u];
-  }
-  for (u = 0; u < meshes.size(); u++) {
-    if (!meshes[u]->getIsLocal()) {
-      delete meshes[u];
-    }
-  }
-  for (u = 0; u < arcs.size(); u++) {
-    delete arcs[u];
-  }
-  for (u = 0; u < cones.size(); u++) {
-    delete cones[u];
-  }
-  for (u = 0; u < spheres.size(); u++) {
-    delete spheres[u];
-  }
-  for (u = 0; u < tetras.size(); u++) {
-    delete tetras[u];
-  }
-  for (u = 0; u < boxes.size(); u++) {
-    delete boxes[u];
-  }
-  for (u = 0; u < basesR.size(); u++) {
-    delete basesR[u];
-  }
-  for (u = 0; u < pyramids.size(); u++) {
-    delete pyramids[u];
-  }
-  for (u = 0; u < teleporters.size(); u++) {
-    delete teleporters[u];
-  }
+  OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
 }
 
@@ -126,7 +94,7 @@ void			World::done()
 
 void		    World::loadCollisionManager()
 {
-  COLLISIONMGR.load(meshes, boxes, basesR, pyramids, teleporters);
+  COLLISIONMGR.load();
   return;
 }
 
@@ -134,7 +102,7 @@ void		    World::checkCollisionManager()
 {
   if (COLLISIONMGR.needReload()) {
     // reload the collision grid
-    COLLISIONMGR.load(meshes, boxes, basesR, pyramids, teleporters);
+    COLLISIONMGR.load();
   }
   return;
 }
@@ -151,6 +119,7 @@ void			World::setWorld(World* _playingField)
 
 int			World::getTeleportTarget(int source) const
 {
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   assert(source >= 0 && source < (int)(2 * teleporters.size()));
   int target = teleportTargets[source];
   if ((target != randomTeleporter) && // random tag
@@ -165,18 +134,21 @@ int			World::getTeleporter(const Teleporter* teleporter,
 							int face) const
 {
   // search for teleporter
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   const int count = teleporters.size();
   for (int i = 0; i < count; i++)
-    if (teleporter == teleporters[i])
+    if (teleporter == (const Teleporter*)teleporters[i]) {
       return 2 * i + face;
+    }
   return -1;
 }
 
 const Teleporter*	World::getTeleporter(int source, int& face) const
 {
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   assert(source >= 0 && source < (int)(2 * teleporters.size()));
   face = (source & 1);
-  return teleporters[source / 2];
+  return ((const Teleporter*) teleporters[source / 2]);
 }
 
 
@@ -241,13 +213,12 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 					   float dx, float dy, float dz) const
 {
   // check walls
-  std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
-  while (wallScan != walls.end()) {
-    const WallObstacle& wall = **wallScan;
-    if (wall.inBox(pos, angle, dx, dy, dz)) {
-      return &wall;
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
+  for (unsigned int w = 0; w < walls.size(); w++) {
+    const WallObstacle* wall = (const WallObstacle*) walls[w];
+    if (wall->inBox(pos, angle, dx, dy, dz)) {
+      return wall;
     }
-    wallScan++;
   }
 
   // check everything else
@@ -300,13 +271,12 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 					   bool directional) const
 {
   // check walls
-  std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
-  while (wallScan != walls.end()) {
-    const WallObstacle& wall = **wallScan;
-    if (wall.inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
-      return &wall;
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
+  for (unsigned int w = 0; w < walls.size(); w++) {
+    const WallObstacle* wall = (const WallObstacle*) walls[w];
+    if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+      return wall;
     }
-    wallScan++;
   }
 
   float vel[3];
@@ -376,12 +346,12 @@ bool			World::crossingTeleporter(const float* pos,
 					float angle, float dx, float dy, float dz,
 					float* plane) const
 {
-  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
-  while (teleporterScan != teleporters.end()) {
-    const Teleporter* teleporter = *teleporterScan;
-    if (teleporter->isCrossing(pos, angle, dx, dy, dz, plane))
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+  for (unsigned int i = 0; i < teleporters.size(); i++) {
+    const Teleporter* teleporter = (const Teleporter*) teleporters[i];
+    if (teleporter->isCrossing(pos, angle, dx, dy, dz, plane)) {
       return true;
-    teleporterScan++;
+    }
   }
   return false;
 }
@@ -391,12 +361,12 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 						int& face) const
 {
   // check teleporters
-  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
-  while (teleporterScan != teleporters.end()) {
-    const Teleporter* teleporter = *teleporterScan;
-    if (teleporter->hasCrossed(oldPos, newPos, face))
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+  for (unsigned int i = 0; i < teleporters.size(); i++) {
+    const Teleporter* teleporter = (const Teleporter*) teleporters[i];
+    if (teleporter->hasCrossed(oldPos, newPos, face)) {
       return teleporter;
-    teleporterScan++;
+    }
   }
 
   // didn't cross
@@ -406,12 +376,12 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
 {
   // check teleporters
-  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
-  while (teleporterScan != teleporters.end()) {
-    const Teleporter* teleporter = *teleporterScan;
-    if (teleporter->isTeleported(r, face) > Epsilon)
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+  for (unsigned int i = 0; i < teleporters.size(); i++) {
+    const Teleporter* teleporter = (const Teleporter*) teleporters[i];
+    if (teleporter->isTeleported(r, face) > Epsilon) {
       return teleporter;
-    teleporterScan++;
+    }
   }
 
   // didn't cross
@@ -422,13 +392,13 @@ float			World::getProximity(const float* p, float r) const
 {
   // get maximum over all teleporters
   float bestProximity = 0.0;
-  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
-  while (teleporterScan != teleporters.end()) {
-    const Teleporter* teleporter = *teleporterScan;
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+  for (unsigned int i = 0; i < teleporters.size(); i++) {
+    const Teleporter* teleporter = (const Teleporter*) teleporters[i];
     const float proximity = teleporter->getProximity(p, r);
-    if (proximity > bestProximity)
+    if (proximity > bestProximity) {
       bestProximity = proximity;
-    teleporterScan++;
+    }
   }
   return bestProximity;
 }
@@ -454,29 +424,33 @@ void			World::freeInsideNodes() const
 {
   unsigned int i;
   int j;
+  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   for (i = 0; i < boxes.size(); i++) {
-    Obstacle* obs = (Obstacle*) boxes[i];
+    Obstacle* obs = boxes[i];
     for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
       delete obs->getInsideSceneNodeList()[j];
     }
     obs->freeInsideSceneNodeList();
   }
+  const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
   for (i = 0; i < pyramids.size(); i++) {
-    Obstacle* obs = (Obstacle*) pyramids[i];
+    Obstacle* obs = pyramids[i];
     for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
       delete obs->getInsideSceneNodeList()[j];
     }
     obs->freeInsideSceneNodeList();
   }
+  const ObstacleList& basesR = OBSTACLEMGR.getBases();
   for (i = 0; i < basesR.size(); i++) {
-    Obstacle* obs = (Obstacle*) basesR[i];
+    Obstacle* obs = basesR[i];
     for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
       delete obs->getInsideSceneNodeList()[j];
     }
     obs->freeInsideSceneNodeList();
   }
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   for (i = 0; i < meshes.size(); i++) {
-    Obstacle* obs = (Obstacle*) meshes[i];
+    Obstacle* obs = meshes[i];
     for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
       delete obs->getInsideSceneNodeList()[j];
     }
@@ -744,8 +718,6 @@ static void writeBZDBvar (const std::string& name, void *userData)
 
 bool			World::writeWorld(std::string filename)
 {
-  unsigned int i;
-  
   std::ostream *stream = FILEMGR.createDataOutStream(filename.c_str());
   if (stream == NULL) {
     return false;
@@ -846,79 +818,9 @@ bool			World::writeWorld(std::string filename)
     }
   }
 
-  // Write mesh objects
-
-  if (BZDB.isTrue("saveAsMeshes")) {
-    // Write all of the meshes
-    for (i = 0; i < meshes.size(); i++) {
-      MeshObstacle* mesh = meshes[i];
-      mesh->print(out, "");
-    }
-  } else {
-    // Write the non-local meshes
-    for (i = 0; i < meshes.size(); i++) {
-      MeshObstacle* mesh = meshes[i];
-      if (!mesh->getIsLocal()) {
-	mesh->print(out, "");
-      }
-    }
-
-    // Write arcs
-    for (i = 0; i < arcs.size(); i++) {
-      ArcObstacle* arc = arcs[i];
-      arc->print(out, "");
-    }
-
-    // Write cones
-    for (i = 0; i < cones.size(); i++) {
-      ConeObstacle* cone = cones[i];
-      cone->print(out, "");
-    }
-
-    // Write spheres
-    for (i = 0; i < spheres.size(); i++) {
-      SphereObstacle* sphere = spheres[i];
-      sphere->print(out, "");
-    }
-
-    // Write tetras
-    for (i = 0; i < tetras.size(); i++) {
-      TetraBuilding* tetra = tetras[i];
-      tetra->print(out, "");
-    }
-  }
-
-
-  // Write bases
+  // Write the world obstacles
   {
-    for (i = 0; i < basesR.size(); i++) {
-      BaseBuilding* base = basesR[i];
-      base->print(out, "");
-    }
-  }
-
-  // Write boxes
-  {
-    for (i = 0; i < boxes.size(); i++) {
-      BoxBuilding* box = boxes[i];
-      box->print(out, "");
-    }
-  }
-
-  // Write pyramids
-  {
-    for (i = 0; i < pyramids.size(); i++) {
-      PyramidBuilding* pyr = pyramids[i];
-      pyr->print(out, "");
-    }
-  }
-
-  // Write Teleporters
-  {
-    for (i = 0; i < teleporters.size(); i++) {
-      Teleporter* tele = teleporters[i];
-      tele->print(out, "");
-    }
+    OBSTACLEMGR.print(out, "");
   }
 
   // Write links

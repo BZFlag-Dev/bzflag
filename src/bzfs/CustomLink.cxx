@@ -47,7 +47,7 @@ bool CustomLink::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomLink::write(WorldInfo *world) const
+void CustomLink::writeToWorld(WorldInfo *world) const
 {
   world->addLink(from, to);
 }

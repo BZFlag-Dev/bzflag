@@ -33,7 +33,7 @@ libCommon_a_SOURCES  =			\
 	bzfio.cxx			\
 	bzsignal.c			\
 	global.cxx			\
-	md5.cxx			\
+	md5.cxx				\
 	URLManager.cxx
 
 MAINTAINERCLEANFILES = \

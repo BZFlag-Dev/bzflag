@@ -23,6 +23,7 @@
 #include "Obstacle.h"
 #include "WallObstacle.h"
 #include "BoxBuilding.h"
+#include "ObstacleMgr.h"
 
 /* local implementation headers */
 #include "World.h"
@@ -98,18 +99,16 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
   const Obstacle* closestObstacle = NULL;
 
   // check walls
-  const std::vector<WallObstacle*> &walls = World::getWorld()->getWalls();
-  std::vector<WallObstacle*>::const_iterator it = walls.begin();
-  while (it != walls.end()) {
-    const WallObstacle& wall = **it;
-    if (!wall.isShootThrough()) {
-      const float wallt = wall.intersect(ray);
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
+  for (unsigned int i = 0; i < walls.size(); i++) {
+    const WallObstacle* wall = (const WallObstacle*) walls[i];
+    if (!wall->isShootThrough()) {
+      const float wallt = wall->intersect(ray);
       if (wallt > min && wallt < t) {
 	t = wallt;
-	closestObstacle = &wall;
+	closestObstacle = wall;
       }
     }
-    it++;
   }
 
   //check everything else
@@ -168,24 +167,21 @@ void ShotStrategy::reflect(float* v, const float* n) // const
   return;
 }
 
-const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray,
-						   float min, float& t, int& f) const
+const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray, float min,
+                                                   float& t, int& f) const
 {
   const Teleporter* closestTeleporter = NULL;
   int face;
 
-  {
-    const std::vector<Teleporter*> &teleporters = World::getWorld()->getTeleporters();
-    std::vector<Teleporter*>::const_iterator it = teleporters.begin();
-    while (it != teleporters.end()) {
-      const Teleporter& teleporter = *(*it);
-      const float telet = teleporter.isTeleported(ray, face);
-      if (telet > min && telet < t) {
-	t = telet;
-	f = face;
-	closestTeleporter = &teleporter;
-      }
-      it++;
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  
+  for (unsigned int i = 0; i < teles.size(); i++) {
+    const Teleporter& tele = *((const Teleporter*) teles[i]);
+    const float telet = tele.isTeleported(ray, face);
+    if (telet > min && telet < t) {
+      t = telet;
+      f = face;
+      closestTeleporter = &tele;
     }
   }
 

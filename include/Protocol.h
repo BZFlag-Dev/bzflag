@@ -121,6 +121,9 @@ const uint16_t		WorldCodeTeleporter = 0x7465;		// 'te'
 const uint16_t		WorldCodeWall = 0x776c;			// 'wl'
 const uint16_t		WorldCodeWeapon = 0x7765;		// 'we'
 const uint16_t		WorldCodeZone = 0x7A6e;			// 'zn'
+const uint16_t		WorldCodeGroup = 0x6772;		// 'gr'
+const uint16_t		WorldCodeGroupDefStart = 0x6473;	// 'ds'
+const uint16_t		WorldCodeGroupDefEnd = 0x6465;		// 'de'
 
 // world database sizes
 const uint16_t		WorldSettingsSize = 28;

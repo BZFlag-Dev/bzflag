@@ -51,6 +51,7 @@
 
 // common implementation headers
 #include "Obstacle.h"
+#include "ObstacleMgr.h"
 #include "BaseBuilding.h"
 
 
@@ -1047,6 +1048,7 @@ static WorldInfo *defineTeamWorld()
     }
   }
 
+  OBSTACLEMGR.makeWorld();
   world->finishWorld();
 
   return world;
@@ -1148,6 +1150,7 @@ static WorldInfo *defineRandomWorld()
     delete[] linked;
   }
 
+  OBSTACLEMGR.makeWorld();
   world->finishWorld();
 
   return world;
@@ -1193,7 +1196,7 @@ static bool defineWorld()
   maxWorldHeight = world->getMaxWorldHeight();
 
   // package up world
-  world->packDatabase(&bases);
+  world->packDatabase();
 
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + WorldCodeHeaderSize +

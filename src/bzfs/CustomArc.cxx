@@ -24,6 +24,7 @@
 #include "ArcObstacle.h"
 #include "PhysicsDriver.h"
 #include "StateDatabase.h"
+#include "ObstacleMgr.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
@@ -137,7 +138,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomArc::write(WorldInfo *world) const
+void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
 {
   int i;
   const BzMaterial* mats[MaterialCount];
@@ -166,8 +167,7 @@ void CustomArc::write(WorldInfo *world) const
   }
   
   if (arc->isValid()) {
-    arc->getMesh()->setIsLocal(true);
-    world->addArc(arc);
+    groupdef->addObstacle(arc);
   } else {
     delete arc;
   }

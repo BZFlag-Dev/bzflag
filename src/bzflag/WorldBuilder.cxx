@@ -24,6 +24,7 @@
 #include "PhysicsDriver.h"
 #include "MeshTransform.h"
 #include "FlagSceneNode.h"
+#include "ObstacleMgr.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"
@@ -71,7 +72,14 @@ void* WorldBuilder::unpack(void* buf)
     DEBUG1 ("WorldBuilder::unpack() could not decompress\n");
     return NULL;
   }
+  char* uncompressedEnd = uncompressedWorld + uncompressedSize;;
+  
   buf = uncompressedWorld;
+  
+  // setup the buffer overrun checking
+  nboUseErrorChecking(true);
+  nboSetBufferLength(uncompressedSize);
+  nboClearBufferError();
 
   // unpack dynamic colors
   DYNCOLORMGR.clear();
@@ -93,6 +101,9 @@ void* WorldBuilder::unpack(void* buf)
   TRANSFORMMGR.clear();
   buf = TRANSFORMMGR.unpack(buf);
 
+  // unpack the obstacles
+  buf = OBSTACLEMGR.unpack(buf);
+
   // unpack water level
   buf = nboUnpackFloat(buf, world->waterLevel);
   if (world->waterLevel >= 0.0f) {
@@ -100,290 +111,77 @@ void* WorldBuilder::unpack(void* buf)
     buf = nboUnpackInt(buf, matindex);
     world->waterMaterial = MATERIALMGR.getMaterial(matindex);
   }
-
-  // read geometry
+  
+  uint32_t i, count;
+  
+  // unpack the weapons
+  buf = nboUnpackUInt(buf, count);
+  for (i = 0; i < count; i++) {
+    Weapon weapon;
+    buf = weapon.unpack(buf);
+    world->weapons.push_back(weapon);
+  }
+  
+  // unpack the entry zones
+  buf = nboUnpackUInt(buf, count);
+  for (i = 0; i < count; i++) {
+    EntryZone zone;
+    buf = zone.unpack(buf);
+    world->entryZones.push_back(zone);
+  }
+  
+  // unpack the teleporter links
+  buf = nboUnpackUInt(buf, count);
+  for (i = 0; i < count; i++) {
+    uint16_t data[2];
+    buf = nboUnpackUShort(buf, data[0]);
+    buf = nboUnpackUShort(buf, data[1]);
+    setTeleporterTarget(int(data[0]), int(data[1]));
+  }
+  
+  // check if the unpacking was successful
+  nboUseErrorChecking(false);
+  if (nboGetBufferError()) {
+    delete[] uncompressedWorld;
+    DEBUG1 ("WorldBuilder::unpack() overrun\n");
+    return NULL;
+  }
+  if ((char*)buf != uncompressedEnd) {
+    delete[] uncompressedWorld;
+    DEBUG1 ("WorldBuilder::unpack() ending mismatch (%i)\n",
+            (char*)buf - uncompressedEnd);
+    return NULL;
+  }
+ 
+  // switch back to the original buffer
+  buf = compressedWorld + compressedSize;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
-
-  while (code != WorldCodeEnd) {
-    switch (code) {
-
-      case WorldCodeMesh: {
-	if (len != WorldCodeMeshSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad mesh size\n");
-	  return NULL;
-	}
-	MeshObstacle* mesh = new MeshObstacle;
-	buf = mesh->unpack(buf);
-	if (mesh->isValid()) {
-	  world->meshes.push_back(mesh);
-	} else {
-	  delete mesh;
-	}
-	break;
-      }
-      case WorldCodeArc: {
-	if (len != WorldCodeArcSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad arc size\n");
-	  return NULL;
-	}
-	ArcObstacle* arc = new ArcObstacle;
-	buf = arc->unpack(buf);
-	if (arc->isValid()) {
-	  world->arcs.push_back(arc);
-	  world->meshes.push_back(arc->getMesh());
-	} else {
-	  delete arc;
-	}
-	break;
-      }
-      case WorldCodeCone: {
-	if (len != WorldCodeConeSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad cone size\n");
-	  return NULL;
-	}
-	ConeObstacle* cone = new ConeObstacle;
-	buf = cone->unpack(buf);
-	if (cone->isValid()) {
-	  world->cones.push_back(cone);
-	  world->meshes.push_back(cone->getMesh());
-	} else {
-	  delete cone;
-	}
-	break;
-      }
-      case WorldCodeSphere: {
-	if (len != WorldCodeSphereSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad sphere size\n");
-	  return NULL;
-	}
-	SphereObstacle* sphere = new SphereObstacle;
-	buf = sphere->unpack(buf);
-	if (sphere->isValid()) {
-	  world->spheres.push_back(sphere);
-	  world->meshes.push_back(sphere->getMesh());
-	} else {
-	  delete sphere;
-	}
-	break;
-      }
-      case WorldCodeTetra: {
-	if (len != WorldCodeTetraSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad tetra size\n");
-	  return NULL;
-	}
-	TetraBuilding* tetra = new TetraBuilding;
-	buf = tetra->unpack(buf);
-	if (tetra->isValid()) {
-	  world->tetras.push_back(tetra);
-	  world->meshes.push_back(tetra->getMesh());
-	} else {
-	  delete tetra;
-	}
-	break;
-      }
-      case WorldCodeBox: {
-	if (len != WorldCodeBoxSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad pyramid size\n");
-	  return NULL;
-	}
-	BoxBuilding* box = new BoxBuilding;
-	buf = box->unpack(buf);
-	if (box->isValid()) {
-	  world->boxes.push_back(box);
-	} else {
-	  delete box;
-	}
-	break;
-      }
-      case WorldCodePyramid: {
-	if (len != WorldCodePyramidSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad pyramid size\n");
-	  return NULL;
-	}
-	PyramidBuilding* pyr = new PyramidBuilding;
-	buf = pyr->unpack(buf);
-	if (pyr->isValid()) {
-	  world->pyramids.push_back(pyr);
-	} else {
-	  delete pyr;
-	}
-	break;
-      }
-      case WorldCodeWall: {
-	if (len != WorldCodeWallSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad wall size\n");
-	  return NULL;
-	}
-	WallObstacle* wall = new WallObstacle;
-	buf = wall->unpack(buf);
-	if (wall->isValid()) {
-	  world->walls.push_back(wall);
-	} else {
-	  delete wall;
-	}
-	break;
-      }
-      case WorldCodeBase: {
-
-	if (len != WorldCodeBaseSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad base size\n");
-	  return NULL;
-	}
-
-	BaseBuilding* base = new BaseBuilding;
-	buf = base->unpack(buf);
-	
-	if (world->gameStyle & TeamFlagGameStyle) {
-	  if (base->isValid()) {
-	    world->basesR.push_back(base);
-	    setBase((TeamColor)base->getTeam(),
-	            base->getPosition(), base->getRotation(),
-	            base->getWidth(), base->getBreadth(), base->getHeight());
-	  } else {
-	    delete base;
-	  }
-        } else {
-	  BoxBuilding* box =
-	    new BoxBuilding(base->getPosition(), base->getRotation(),
-	                    base->getWidth(), base->getBreadth(),
-	                    base->getHeight());
-          if (box->isValid()) {
-            world->boxes.push_back(box);
-          } else {
-            delete box;
-          }
-          delete base;
-	}
-	break;
-      }
-      case WorldCodeTeleporter: {
-	if (len != WorldCodeTeleporterSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad teleporter size\n");
-	  return NULL;
-	}
-	Teleporter* tele = new Teleporter;
-	buf = tele->unpack(buf);
-	if (tele->isValid()) {
-	  world->teleporters.push_back(tele);
-	} else {
-	  delete tele;
-	}
-	break;
-      }
-      case WorldCodeLink: {
-	uint16_t data[2];
-	if (len != WorldCodeLinkSize) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad link size\n");
-	  return NULL;
-	}
-	buf = nboUnpackUShort(buf, data[0]);
-	buf = nboUnpackUShort(buf, data[1]);
-	setTeleporterTarget(int(data[0]), int(data[1]));
-	break;
-      }
-      case WorldCodeWeapon: {
-	Weapon weapon;
-	uint16_t delays;
-
-	buf = FlagType::unpack(buf, weapon.type);
-	buf = nboUnpackFloat(buf, weapon.pos[0]);
-	buf = nboUnpackFloat(buf, weapon.pos[1]);
-	buf = nboUnpackFloat(buf, weapon.pos[2]);
-	buf = nboUnpackFloat(buf, weapon.dir);
-	buf = nboUnpackFloat(buf, weapon.initDelay);
-	buf = nboUnpackUShort(buf, delays);
-
-	uint16_t weapon_len = WorldCodeWeaponSize + (delays * sizeof(float));
-	if (len != weapon_len) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad weapon size\n");
-	  return NULL;
-	}
-
-	int i;
-	for (i = 0; i < delays; i++) {
-	  float delay;
-	  buf = nboUnpackFloat(buf, delay);
-	  weapon.delay.push_back(delay);
-	}
-	world->weapons.push_back(weapon);
-	break;
-      }
-      case WorldCodeZone: {
-	EntryZone zone;
-	uint16_t flags, teams, safety;
-
-	buf = nboUnpackFloat(buf, zone.pos[0]);
-	buf = nboUnpackFloat(buf, zone.pos[1]);
-	buf = nboUnpackFloat(buf, zone.pos[2]);
-	buf = nboUnpackFloat(buf, zone.size[0]);
-	buf = nboUnpackFloat(buf, zone.size[1]);
-	buf = nboUnpackFloat(buf, zone.size[2]);
-	buf = nboUnpackFloat(buf, zone.rot);
-	buf = nboUnpackUShort(buf, flags);
-	buf = nboUnpackUShort(buf, teams);
-	buf = nboUnpackUShort(buf, safety);
-
-	uint16_t zone_len = WorldCodeZoneSize;
-	zone_len += FlagType::packSize * flags;
-	zone_len += sizeof(uint16_t) * teams;
-	zone_len += sizeof(uint16_t) * safety;
-	if (len != zone_len) {
-	  delete[] uncompressedWorld;
-	  DEBUG1 ("WorldBuilder::unpack() bad zone size\n");
-	  return NULL;
-	}
-
-	int i;
-	for (i = 0; i < flags; i++) {
-	  FlagType *type;
-	  buf = FlagType::unpack (buf, type);
-	  zone.flags.push_back(type);
-	}
-	for (i = 0; i < teams; i++) {
-	  uint16_t team;
-	  buf = nboUnpackUShort(buf, team);
-	  zone.teams.push_back((TeamColor)team);
-	}
-	for (i = 0; i < safety; i++) {
-	  uint16_t safety;
-	  buf = nboUnpackUShort(buf, safety);
-	  zone.safety.push_back((TeamColor)safety);
-	}
-	world->entryZones.push_back(zone);
-	break;
-      }
-      default:
-	delete[] uncompressedWorld;
-	DEBUG1 ("WorldBuilder::unpack() unknown code (0x%04X) len (%i)\n",
-		code, len);
-	return NULL;
-    }
-
-    // switch back to the original buffer
-    // for the WorldCodeEnd stuff
-    if ((char*)buf >= (uncompressedWorld + uncompressedSize)) {
-      buf = compressedWorld + compressedSize;
-    }
-
-    buf = nboUnpackUShort(buf, len);
-    buf = nboUnpackUShort(buf, code);
+  if ((code != WorldCodeEnd) || (len != WorldCodeEndSize)) {
+    delete[] uncompressedWorld;
+    DEBUG1 ("WorldBuilder::unpack() bad ending\n");
+    return NULL;
   }
 
+  // delete the buffer
   delete[] uncompressedWorld;
 
+  // build the world obstacles
+  OBSTACLEMGR.makeWorld();
+
+  // make the team bases
+  if (world->gameStyle & TeamFlagGameStyle) {
+    const ObstacleList& bases = OBSTACLEMGR.getBases();
+    for (i = 0; i < bases.size(); i++) {  
+      const BaseBuilding* base = (const BaseBuilding*) bases[i];
+      setBase((TeamColor)base->getTeam(),
+              base->getPosition(), base->getRotation(),
+              base->getWidth(), base->getBreadth(), base->getHeight());  
+    }
+  } else {
+    OBSTACLEMGR.replaceBasesWithBoxes();
+  }
+  
   world->loadCollisionManager();
   world->makeLinkMaterial();
 

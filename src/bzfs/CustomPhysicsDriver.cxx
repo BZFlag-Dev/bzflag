@@ -90,9 +90,13 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomPhysicsDriver::write(WorldInfo * /*world*/) const
+void CustomPhysicsDriver::writeToManager() const
 {
   driver->setName(name);
+  if ((name.size() > 0) && (PHYDRVMGR.findDriver(name) >= 0)) {
+    std::cout << "warning: duplicate physics driver"
+              << " (" << name << ")" << std::endl;
+  }
   driver->finalize();
   PHYDRVMGR.addDriver(driver);
   driver = NULL;

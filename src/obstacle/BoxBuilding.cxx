@@ -16,6 +16,7 @@
 #include "Pack.h"
 #include "BoxBuilding.h"
 #include "Intersect.h"
+#include "MeshTransform.h"
 
 const char*		BoxBuilding::typeName = "BoxBuilding";
 
@@ -34,6 +35,22 @@ BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h,
 BoxBuilding::~BoxBuilding()
 {
   // do nothing
+}
+
+Obstacle* BoxBuilding::copyWithTransform(const MeshTransform& xform) const
+{
+  float newPos[3], newSize[3], newAngle;
+  memcpy(newPos, pos, sizeof(float[3]));
+  memcpy(newSize, size, sizeof(float[3]));
+  newAngle = angle;
+
+  MeshTransform::Tool tool(xform);
+  tool.modifyOldStyle(newPos, newSize, newAngle);
+  
+  BoxBuilding* copy =
+    new BoxBuilding(newPos, newAngle, newSize[0], newSize[1], newSize[2],
+                    driveThrough, shootThrough, noNodes);
+  return copy;
 }
 
 const char*		BoxBuilding::getType() const

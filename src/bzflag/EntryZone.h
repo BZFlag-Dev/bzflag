@@ -19,14 +19,10 @@
 
 class EntryZone {
   public:
-    EntryZone() {
-      pos[0] = pos[1] = pos[2] = 0.0f;
-      size[0] = size[1] = size[2] = 1.0f;
-      rot = 0.0f;
-      flags.clear();
-      teams.clear();
-      safety.clear();
-    }
+    EntryZone();
+    void* unpack(void*);
+
+  public:
     float pos[3];
     float size[3];
     float rot;

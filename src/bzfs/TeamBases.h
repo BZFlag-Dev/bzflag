@@ -44,7 +44,6 @@ public:
   int size() const;
   TeamColor getTeam() const;
   const float *getBasePosition( int base ) const;
-  void *pack( void *buf ) const;
   float findBaseZ( float x, float y, float z ) const;
   const TeamBase& getRandomBase( int id );
   void getSafetyZone( float &x, float &y, float &z ) const;

@@ -78,7 +78,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 }
 
 
-void CustomWeapon::write(WorldInfo* world) const {
+void CustomWeapon::writeToWorld(WorldInfo* world) const {
   world->addWeapon(type, pos, rotation, initdelay, delay, sync);
 }
 

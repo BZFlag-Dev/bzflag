@@ -37,7 +37,9 @@ bool parseMaterials(const char* cmd, std::istream& input,
     }
     const BzMaterial* matref = MATERIALMGR.findMaterial(name);
     if (matref == NULL) {
-      std::cout << "couldn't find reference material: " << name << std::endl;
+      if (name != "-1") {
+        std::cout << "couldn't find reference material: " << name << std::endl;
+      }
     } else {
       for (i = 0; i < materialCount; i++) {
 	materials[i] = *matref;
@@ -57,7 +59,9 @@ bool parseMaterials(const char* cmd, std::istream& input,
     }
     int dynamicColor = DYNCOLORMGR.findColor(dyncol);
     if (dynamicColor == -1) {
-      std::cout << "couldn't find dynamicColor: " << dyncol << std::endl;
+      if (dyncol != "-1") {
+        std::cout << "couldn't find dynamicColor: " << dyncol << std::endl;
+      }
     }
     for (i = 0; i < materialCount; i++) {
       materials[i].setDynamicColor(dynamicColor);
@@ -151,7 +155,9 @@ bool parseMaterials(const char* cmd, std::istream& input,
     }
     int textureMatrix = TEXMATRIXMGR.findMatrix(texmat);
     if (textureMatrix == -1) {
-      std::cout << "couldn't find textureMatrix: " << texmat << std::endl;
+      if (texmat != "-1") {
+        std::cout << "couldn't find textureMatrix: " << texmat << std::endl;
+      }
     }
     for (i = 0; i < materialCount; i++) {
       materials[i].setTextureMatrix(textureMatrix);

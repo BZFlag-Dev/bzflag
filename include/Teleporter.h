@@ -31,7 +31,9 @@ class Teleporter : public Obstacle {
 				bool drive = false, bool shoot = false);
 			~Teleporter();
 
-    const char*		getType() const;
+    Obstacle*	copyWithTransform(const MeshTransform&) const;
+
+    const char*	getType() const;
     static const char*	getClassName(); // const
     void		getExtents(float* mins, float* maxs) const;
 

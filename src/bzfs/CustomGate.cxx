@@ -19,6 +19,7 @@
 /* common interface headers */
 #include "Teleporter.h"
 #include "StateDatabase.h"
+#include "ObstacleMgr.h"
 
 
 CustomGate::CustomGate()
@@ -43,13 +44,13 @@ bool CustomGate::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomGate::write(WorldInfo *world) const
+void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
 {
   Teleporter* tele =
     new Teleporter(pos, rotation, 
                    fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
                    border, horizontal, driveThrough, shootThrough);
-  world->addTeleporter(tele);
+  groupdef->addObstacle(tele);
 }
 
 

@@ -21,8 +21,8 @@
 #include "Pack.h"
 
 
-// this applies to sinusoid and clamp functions
-const float DynamicColor::minPeriod = 0.1f;
+// this applies to all function periods
+const float DynamicColor::minPeriod = 0.01f;
 
 
 //
@@ -184,10 +184,12 @@ DynamicColor::~DynamicColor()
 
 void DynamicColor::finalize()
 {
+  // check if there might be translucency
   const ChannelParams& p = channels[3]; // the alpha channel
   if ((p.sinusoids.size() == 0) &&
       (p.clampUps.size() == 0) &&
-      (p.clampDowns.size() == 0)) {
+      (p.clampDowns.size() == 0) &&
+      (p.sequence.list.size() == 0)) {
     // not using any functions
     if (p.maxValue != 1.0f) {
       possibleAlpha = true;
@@ -202,6 +204,19 @@ void DynamicColor::finalize()
       possibleAlpha = false;
     }
   }
+  
+  // sanitize the sequence value
+  for (int i = 0; i < 4; i++) {
+    std::vector<char>& list = channels[i].sequence.list;
+    for (unsigned int j = 0; j < list.size(); j++) {
+      if (list[j] < colorMin) {
+        list[j] = colorMin;
+      } else if (list[j] > colorMax) {
+        list[j] = colorMax;
+      }
+    }
+  }
+  
   return;
 }
 
@@ -252,6 +267,22 @@ void DynamicColor::setLimits(int channel, float min, float max)
 }
 
 
+void DynamicColor::setSequence(int channel,float period, float offset,
+                                std::vector<char>& list)
+{
+  sequenceParams& seq = channels[channel].sequence;
+  if (period < minPeriod) {
+    seq.list.clear();
+  } else {
+    seq.period = period;
+    seq.offset = offset;
+    seq.list.clear();
+    seq.list = list;
+  }
+  return;
+}
+                               
+
 void DynamicColor::addSinusoid(int channel, const float sinusoid[3])
 {
   sinusoidParams params;
@@ -299,34 +330,55 @@ void DynamicColor::update (float t)
   for (int c = 0; c < 4; c++) {
     const ChannelParams& channel = channels[c];
     unsigned int i;
+
     bool clampUp = false;
     bool clampDown = false;
+    
+    // sequence rules over the clamps
+    const sequenceParams& seq = channel.sequence;
+    const unsigned int seqSize = seq.list.size();
+    if (seqSize > 0) {
+      const float fullPeriod = (float)seqSize * seq.period;
+      float indexTime = (t - seq.offset);
+      if (indexTime < 0.0f) {
+	indexTime -= fullPeriod * floorf(indexTime / fullPeriod);
+      }
+      indexTime = fmodf (indexTime, fullPeriod);
+      const unsigned int index = (unsigned int)(indexTime / seq.period);
+      if (seq.list[index] == colorMin) {
+        clampDown = true;
+      }
+      else if (seq.list[index] == colorMax) {
+        clampUp = true;
+      }
+    } 
+    else {
+      // check for active clampUp
+      for (i = 0; i < channel.clampUps.size(); i++) {
+        const clampParams& clamp = channel.clampUps[i];
+        float upTime = (t - clamp.offset);
+        if (upTime < 0.0f) {
+          upTime -= clamp.period * floorf(upTime / clamp.period);
+        }
+        upTime = fmodf (upTime, clamp.period);
+        if (upTime < clamp.width) {
+          clampUp = true;
+          break;
+        }
+      }
 
-    // check for active clampUp
-    for (i = 0; i < channel.clampUps.size(); i++) {
-      const clampParams& clamp = channel.clampUps[i];
-      float upTime = (t - clamp.offset);
-      if (upTime < 0.0f) {
-	upTime -= clamp.period * floorf(upTime / clamp.period);
-      }
-      upTime = fmodf (upTime, clamp.period);
-      if (upTime < clamp.width) {
-	clampUp = true;
-	break;
-      }
-    }
-
-    // check for active clampDown
-    for (i = 0; i < channel.clampDowns.size(); i++) {
-      const clampParams& clamp = channel.clampDowns[i];
-      float downTime = (t - clamp.offset);
-      if (downTime < 0.0f) {
-	downTime -= clamp.period * floorf(downTime / clamp.period);
-      }
-      downTime = fmodf (downTime, clamp.period);
-      if (downTime < clamp.width) {
-	clampDown = true;
-	break;
+      // check for active clampDown
+      for (i = 0; i < channel.clampDowns.size(); i++) {
+        const clampParams& clamp = channel.clampDowns[i];
+        float downTime = (t - clamp.offset);
+        if (downTime < 0.0f) {
+          downTime -= clamp.period * floorf(downTime / clamp.period);
+        }
+        downTime = fmodf (downTime, clamp.period);
+        if (downTime < clamp.width) {
+          clampDown = true;
+          break;
+        }
       }
     }
 
@@ -400,6 +452,16 @@ void * DynamicColor::pack(void *buf) const
       buf = nboPackFloat (buf, p.clampDowns[i].offset);
       buf = nboPackFloat (buf, p.clampDowns[i].width);
     }
+    // sequence
+    const unsigned int seqSize = p.sequence.list.size();
+    buf = nboPackUInt (buf, seqSize);
+    if (seqSize > 0) {
+      buf = nboPackFloat (buf, p.sequence.period);
+      buf = nboPackFloat (buf, p.sequence.offset);
+      for (i = 0; i < seqSize; i++) {
+        buf = nboPackUByte (buf, (uint8_t)p.sequence.list[i]);
+      }
+    }
   }
 
   return buf;
@@ -441,6 +503,20 @@ void * DynamicColor::unpack(void *buf)
       buf = nboUnpackFloat (buf, p.clampDowns[i].offset);
       buf = nboUnpackFloat (buf, p.clampDowns[i].width);
     }
+    // sequence
+    buf = nboUnpackUInt (buf, size);
+    p.sequence.list.resize(size);
+    if (size > 0) {
+      buf = nboUnpackFloat (buf, p.sequence.period);
+      buf = nboUnpackFloat (buf, p.sequence.offset);
+      for (i = 0; i < size; i++) {
+        uint8_t value;
+        buf = nboUnpackUByte (buf, value);
+        p.sequence.list[i] = value;
+      }
+    } else {
+      p.sequence.period = 0.0f;
+    }
   }
 
   finalize();
@@ -460,6 +536,11 @@ int DynamicColor::packSize() const
     fullSize += (int)(channels[c].clampUps.size() * (sizeof(clampParams)));
     fullSize += sizeof(unsigned int);
     fullSize += (int)(channels[c].clampDowns.size() * (sizeof(clampParams)));
+    fullSize += sizeof(unsigned int);
+    if (channels[c].sequence.list.size() > 0) {
+      fullSize += sizeof(float) * 2; // period and offset
+      fullSize += channels[c].sequence.list.size() * sizeof(char);
+    }
   }
   return fullSize;
 }
@@ -483,6 +564,14 @@ void DynamicColor::print(std::ostream& out, const std::string& /*indent*/) const
 	  << p.minValue << " " << p.maxValue << std::endl;
     }
     unsigned int i;
+    if (p.sequence.list.size() > 0) {
+      out << "  " << colorStr << " sequence " << p.sequence.period << " "
+                                              << p.sequence.offset;
+      for (i = 0; i < p.sequence.list.size(); i++) {
+        out << " " << (int)p.sequence.list[i];
+      }
+      out << std::endl;
+    }
     for (i = 0; i < p.sinusoids.size(); i++) {
       const sinusoidParams& f = p.sinusoids[i];
       out << "  " << colorStr << " sinusoid "

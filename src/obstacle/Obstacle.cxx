@@ -13,6 +13,7 @@
 #include "common.h"
 #include <math.h>
 #include <string.h>
+#include <iostream>
 #include "Obstacle.h"
 #include "Intersect.h"
 #include "StateDatabase.h"
@@ -29,18 +30,21 @@ Obstacle::Obstacle()
   angle = 0;
   driveThrough = false;
   shootThrough = false;
+  ZFlip = false;
+  source = WorldSource;
 
   insideNodeCount = 0;
   insideNodes = NULL;
 }
 
 Obstacle::Obstacle(const float* _pos, float _angle,
-				float _width, float _breadth, float _height, bool drive, bool shoot) :
-				angle(_angle)
+                   float _width, float _breadth, float _height,
+                   bool drive, bool shoot)
 {
   pos[0] = _pos[0];
   pos[1] = _pos[1];
   pos[2] = _pos[2];
+  angle = _angle;
   size[0] = _width;
   size[1] = _breadth;
   size[2] = _height;
@@ -48,6 +52,7 @@ Obstacle::Obstacle(const float* _pos, float _angle,
   driveThrough = drive;
   shootThrough = shoot;
   ZFlip = false;
+  source = WorldSource;
 
   insideNodeCount = 0;
   insideNodes = NULL;
@@ -251,6 +256,12 @@ int Obstacle::getInsideSceneNodeCount() const
 SceneNode** Obstacle::getInsideSceneNodeList() const
 {
   return insideNodes;
+}
+
+Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const
+{
+  std::cout << "ERROR: Obstacle::copyWithTransform()" << std::endl;
+  exit(1);
 }
 
 

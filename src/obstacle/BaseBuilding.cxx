@@ -16,6 +16,8 @@
 #include "Pack.h"
 #include "BaseBuilding.h"
 #include "Intersect.h"
+#include "MeshTransform.h"
+
 
 const char*		BaseBuilding::typeName = "BaseBuilding";
 
@@ -33,6 +35,21 @@ BaseBuilding::BaseBuilding(const float *p, float rotation,
 BaseBuilding::~BaseBuilding()
 {
   // do nothing
+}
+
+Obstacle* BaseBuilding::copyWithTransform(const MeshTransform& xform) const
+{
+  float newPos[3], newSize[3], newAngle;
+  memcpy(newPos, pos, sizeof(float[3]));
+  memcpy(newSize, size, sizeof(float[3]));
+  newAngle = angle;
+
+  MeshTransform::Tool tool(xform);
+  tool.modifyOldStyle(newPos, newSize, newAngle);
+  
+  BaseBuilding* copy = new BaseBuilding(newPos, newAngle, newSize, team);
+  
+  return copy;
 }
 
 const char*		BaseBuilding::getType() const

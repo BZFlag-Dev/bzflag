@@ -24,8 +24,8 @@ class CustomPhysicsDriver : public WorldFileObject {
     CustomPhysicsDriver();
     ~CustomPhysicsDriver();
     virtual bool read(const char *cmd, std::istream& input);
-    virtual void write(WorldInfo*) const;
-    bool writeImmediately() { return true; }
+    virtual void writeToManager() const;
+    bool usesManager() { return true; }
 
   private:
     mutable PhysicsDriver* driver;

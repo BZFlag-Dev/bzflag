@@ -18,6 +18,7 @@
 /* common implementation headers */
 #include "TetraBuilding.h"
 #include "TextureMatrix.h"
+#include "ObstacleMgr.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
@@ -115,7 +116,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomTetra::write(WorldInfo *world) const
+void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
 {
   if (vertexCount < 4) {
     std::cout << "Not creating tetrahedron, not enough vertices ("
@@ -131,8 +132,7 @@ void CustomTetra::write(WorldInfo *world) const
 					   useNormals, useTexcoords,
 					   mats, driveThrough, shootThrough);
   if (tetra->isValid()) {
-    tetra->getMesh()->setIsLocal(true);
-    world->addTetra(tetra);
+    groupdef->addObstacle(tetra);
   } else {
     std::cout << "Error generating tetra obstacle." << std::endl;
     delete tetra;

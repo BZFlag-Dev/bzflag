@@ -13,15 +13,10 @@
 /* interface header */
 #include "CustomBase.h"
 
-/* local implementation headers */
-#include "TeamBases.h"
-
 /* common implementation headers */
+#include "global.h" // for CtfTeams
 #include "BaseBuilding.h"
-
-/* FIXME - external dependancies */
-extern const int CtfTeams;
-extern BasesList bases;
+#include "ObstacleMgr.h"
 
 
 CustomBase::CustomBase()
@@ -46,16 +41,11 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
 }
 
 
-void CustomBase::write(WorldInfo* world) const {
-  float safety[] = { 0.0f, 0.0f, 0.0f };
-  if (bases.find( color ) == bases.end()) {
-    bases[color] = TeamBases((TeamColor)color);
-  }
-  bases[color].addBase( pos, size, rotation, safety );
-
+void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
+{
   float absSize[3] = { fabsf(size[0]), fabsf(size[1]), fabsf(size[2]) };
   BaseBuilding* base = new BaseBuilding(pos, rotation, absSize, color);
-  world->addBase(base);
+  groupdef->addObstacle(base);
 }
 
 // Local variables: ***

@@ -54,9 +54,13 @@ bool CustomMaterial::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMaterial::write(WorldInfo * /*world*/) const
+void CustomMaterial::writeToManager() const
 {
   material.setName(name);
+  if ((name.size() > 0) && (MATERIALMGR.findMaterial(name) != NULL)) {
+    std::cout << "warning: duplicate material"
+              << " (" << name << ")" << std::endl;
+  }
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
   int index = MATERIALMGR.getIndex(matref);
   if (index < 0) {

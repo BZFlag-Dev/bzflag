@@ -24,12 +24,12 @@
 #define	BZF_OBSTACLE_H
 
 #include "common.h"
-#include "Ray.h"
 #include <string>
 #include <iostream>
 
-
+class Ray;
 class SceneNode;
+class MeshTransform;
 
 /** This ABC represents a (normally) solid object in a world. It has pure
     virtual functions for getting information about it's size, checking ray
@@ -57,6 +57,9 @@ class Obstacle {
   */
   Obstacle(const float* pos, float rotation, float hwidth, float hbreadth,
 	   float height, bool drive = false, bool shoot = false);
+	   
+  /** This function makes a copy using the given transform */
+  virtual Obstacle* copyWithTransform(const MeshTransform&) const;
 
   /** A virtual destructor is needed to let subclasses do their cleanup. */
   virtual ~Obstacle();
@@ -65,12 +68,10 @@ class Obstacle {
    */
   virtual const char* getType() const = 0;
 
-  /** This function returns true if the obstacle is valid
-   */
+  /** This function returns true if the obstacle is valid */
   virtual bool isValid() const;
 
-  /** This function returns true if the obstacle has a flat top
-   */
+  /** This function returns true if the obstacle has a flat top */
   virtual bool isFlatTop() const;
 
   /** TThis function returns the network packed size in bytes */
@@ -184,6 +185,18 @@ class Obstacle {
   */
   bool getZFlip(void) const;
 
+  // where did the object come from?
+  enum SourceBits {
+    WorldSource     = 0,
+    GroupDefSource  = (1 << 0),
+    ContainerSource = (1 << 1)
+  };
+  void setSource(char);
+  char getSource() const;
+  bool isFromWorld() const;
+  bool isFromGroupDef() const;
+  bool isFromContainer() const;
+
   // inside sceneNodes
   void addInsideSceneNode(SceneNode* node);
   void freeInsideSceneNodeList();
@@ -235,10 +248,12 @@ class Obstacle {
     bool driveThrough;
     bool shootThrough;
     bool ZFlip;
+    char source;
 
   private:
     int insideNodeCount;
     SceneNode** insideNodes;
+    
 };
 
 //
@@ -279,6 +294,33 @@ inline void		Obstacle::get3DNormal(const float *p, float *n) const
 {
   getNormal(p, n);
 }
+
+inline void Obstacle::setSource(char _source)
+{
+  source = _source;
+  return;
+}
+
+inline char Obstacle::getSource() const
+{
+  return source;
+}
+
+inline bool Obstacle::isFromWorld() const
+{
+  return (source == WorldSource);
+}
+
+inline bool Obstacle::isFromGroupDef() const
+{
+  return ((source & GroupDefSource) != 0);
+}
+
+inline bool Obstacle::isFromContainer() const
+{
+  return ((source & ContainerSource) != 0);
+}
+
 
 #endif // BZF_OBSTACLE_H
 

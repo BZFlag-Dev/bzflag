@@ -26,7 +26,7 @@
 #include "Intersect.h"
 #include "PhysicsDriver.h"
 #include "WorldInfo.h"
-#include "ObstacleGroup.h"
+#include "ObstacleMgr.h"
 
 
 // prototypes

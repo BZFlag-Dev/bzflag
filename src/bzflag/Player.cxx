@@ -26,6 +26,7 @@
 #include "ShotStatistics.h"
 #include "CollisionManager.h"
 #include "Obstacle.h"
+#include "ObstacleMgr.h"
 #include "PhysicsDriver.h"
 #include "TrackMarks.h"
 #include "sound.h"
@@ -477,14 +478,12 @@ bool Player::hitObstacleResizing()
   // check walls
   const World* world = World::getWorld();
   if (world) {
-    const std::vector<WallObstacle*>& walls = world->getWalls();
-    std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
-    while (wallScan != walls.end()) {
-      const WallObstacle& wall = **wallScan;
-      if (wall.inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
+    const ObstacleList& walls = OBSTACLEMGR.getWalls();
+    for (unsigned int i = 0; i < walls.size(); i++) {
+      const WallObstacle* wall = (const WallObstacle*) walls[i];
+      if (wall->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
 	return true;
       }
-      wallScan++;
     }
   }
 

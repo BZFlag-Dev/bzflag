@@ -21,6 +21,7 @@
 /* common implementation headers */
 #include "PyramidBuilding.h"
 #include "StateDatabase.h"
+#include "ObstacleMgr.h"
 
 
 CustomPyramid::CustomPyramid()
@@ -40,7 +41,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomPyramid::write(WorldInfo *world) const
+void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 {
   bool flipit = flipZ;
   if (size[2] < 0.0f) {
@@ -55,7 +56,7 @@ void CustomPyramid::write(WorldInfo *world) const
     pyr->setZFlip();
   }
   
-  world->addPyramid(pyr);
+  groupdef->addObstacle(pyr);
 }
 
 // Local variables: ***

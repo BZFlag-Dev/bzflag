@@ -28,8 +28,8 @@
 class CustomBase : public WorldFileObstacle {
   public:
     CustomBase();
-  virtual bool read(const char *cmd, std::istream&);
-    virtual void write(WorldInfo*) const;
+    virtual bool read(const char *cmd, std::istream&);
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   protected:
     int color;

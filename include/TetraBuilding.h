@@ -34,6 +34,9 @@ class TetraBuilding : public Obstacle {
 		  const bool useTexCoords[4], const BzMaterial* materials[4],
 		  bool drive = false, bool shoot = false);
     ~TetraBuilding();
+
+    Obstacle* copyWithTransform(const MeshTransform&) const;
+    
     MeshObstacle* getMesh();
 
     void		finalize();

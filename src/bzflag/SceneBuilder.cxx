@@ -48,6 +48,7 @@
 #include "TextureManager.h"
 #include "BzMaterial.h"
 #include "DynamicColor.h"
+#include "ObstacleMgr.h"
 
 
 // uncomment for cheaper eighth dimension scene nodes
@@ -163,6 +164,7 @@ const GLfloat		SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
 				{ 0.0f, 0.0f, 0.0f, 0.5f }
 			};
 
+
 SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 				renderer(_renderer),
 				wallMaterial(black, black, 0.0f),
@@ -201,7 +203,7 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 }
 
 
-SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
+SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 {
   // set LOD flags
   wallLOD = BZDBCache::lighting && BZDBCache::zbuffer;
@@ -225,44 +227,41 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   // free any prior inside nodes
   world->freeInsideNodes();
 
+
+
   // add nodes to database
-  const std::vector<WallObstacle*> &walls = world->getWalls();
-  std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
-  while (wallScan != walls.end()) {
-    addWall(db, **wallScan);
-    ++wallScan;
+  unsigned int i;
+  
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
+  for (i = 0; i < walls.size(); i++) {
+    addWall(db, *((WallObstacle*) walls[i]));
   }
-  const std::vector<MeshObstacle*> &meshes = world->getMeshes();
-  std::vector<MeshObstacle*>::const_iterator meshScan = meshes.begin();
-  while (meshScan != meshes.end()) {
-    addMesh(db, *meshScan);
-    ++meshScan;
-  }
-  const std::vector<BoxBuilding*> &boxes = world->getBoxes();
-  std::vector<BoxBuilding*>::const_iterator boxScan = boxes.begin();
-  while (boxScan != boxes.end()) {
-    addBox(db, **boxScan);
-    ++boxScan;
-  }
-  const std::vector<Teleporter*> &teleporters = world->getTeleporters();
-  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
-  while (teleporterScan != teleporters.end()) {
-    addTeleporter(db, *(*teleporterScan), world);
-    ++teleporterScan;
-  }
-  const std::vector<PyramidBuilding*> &pyramids = world->getPyramids();
-  std::vector<PyramidBuilding*>::const_iterator pyramidScan = pyramids.begin();
-  while (pyramidScan != pyramids.end()) {
-    addPyramid(db, **pyramidScan);
-    ++pyramidScan;
-  }
-  const std::vector<BaseBuilding*> &baseBuildings = world->getBases();
-  std::vector<BaseBuilding*>::const_iterator baseScan = baseBuildings.begin();
-  while (baseScan != baseBuildings.end()) {
-    addBase(db, **baseScan);
-    ++baseScan;
+  
+  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
+  for (i = 0; i < boxes.size(); i++) {
+    addBox (db, *((BoxBuilding*) boxes[i]));
   }
 
+  const ObstacleList& bases = OBSTACLEMGR.getBases();
+  for (i = 0; i < bases.size(); i++) {
+    addBase (db, *((BaseBuilding*) bases[i]));
+  }
+
+  const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
+  for (i = 0; i < pyramids.size(); i++) {
+    addPyramid (db, *((PyramidBuilding*) pyramids[i]));
+  }
+
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  for (i = 0; i < teles.size(); i++) {
+    addTeleporter (db, *((Teleporter*) teles[i]), world);
+  }
+
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+  for (i = 0; i < meshes.size(); i++) {
+    addMesh (db, (MeshObstacle*) meshes[i]);
+  }
+  
   // add the water level node
   addWaterLevel(db, world);
 
@@ -306,8 +305,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 }
 
 
-void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
-						const WallObstacle& o)
+void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
 {
   int part = 0;
   WallSceneNode* node;
@@ -590,9 +588,9 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   delete nodeGen;
 }
 
-void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
-						const Teleporter& o,
-						const World* world)
+void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
+                                         const Teleporter& o,
+                                         const World* world)
 {
   // this assumes teleporters have fourteen parts:  12 border sides, 2 faces
   int part = 0;

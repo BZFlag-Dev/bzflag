@@ -48,6 +48,9 @@ class PlayerState
     float	userSpeed;	// user's deired angular velocity
     float	userAngVel;	// angular velocity of tank
     float	jumpJetsScale;	// angular velocity of tank
+
+    // used to avoid awkward remote bouncy sounds
+    uint8_t	jumpCounter;	// for keeping track of jumps
 };
 
 

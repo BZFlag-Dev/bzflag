@@ -10,9 +10,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "MeshTransform.h"
 #include "common.h"
 
+// implementation header
+#include "MeshTransform.h"
+
+// system headers
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
@@ -20,6 +23,7 @@
 #include <string>
 #include <vector>
 
+// common headers
 #include "Pack.h"
 
 
@@ -231,6 +235,14 @@ static void spin(float m[4][4], const float radians, const float normal[3])
 
 MeshTransform::Tool::Tool(const MeshTransform& xform)
 {
+  if (xform.transforms.size() > 0) {
+    empty = false;
+  } else {
+    empty = true;
+    inverted = false;
+    return;
+  }
+
   // load the identity matrices
   int i, j;
   for (i = 0; i < 4; i++) {
@@ -252,12 +264,8 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
     }
   }
 
-  // setup the full transform
-  MeshTransform fullXform = xform;
-  fullXform.append(globalTransform);
-  
   // setup the matrices
-  processTransforms(fullXform.transforms);
+  processTransforms(xform.transforms);
 
   // generate the normal matrix
   const float (*vm)[4] = vertexMatrix;
@@ -334,6 +342,10 @@ void MeshTransform::Tool::processTransforms(
 
 void MeshTransform::Tool::modifyVertex(float v[3]) const
 {
+  if (empty) {
+    return;
+  }
+  
   float t[3];
   const float (*vm)[4] = vertexMatrix;
   t[0] = (v[0] * vm[0][0]) + (v[1] * vm[0][1]) + (v[2] * vm[0][2]) + vm[0][3];
@@ -345,6 +357,10 @@ void MeshTransform::Tool::modifyVertex(float v[3]) const
 
 void MeshTransform::Tool::modifyNormal(float n[3]) const
 {
+  if (empty) {
+    return;
+  }
+  
   float t[3];
   const float (*nm)[3] = normalMatrix;
   t[0] = (n[0] * nm[0][0]) + (n[1] * nm[0][1]) + (n[2] * nm[0][2]);
@@ -365,13 +381,48 @@ void MeshTransform::Tool::modifyNormal(float n[3]) const
 }
 
 
+void MeshTransform::Tool::modifyOldStyle(float pos[3], float size[3],
+                                         float& angle) const
+{
+  if (empty) {
+    return;
+  }
+  
+  // straight transform
+  modifyVertex(pos);
+  
+  // transform the object's axis unit vectors
+  const float cos_val = cosf (angle);
+  const float sin_val = sinf (angle);
+  float x[3], y[3], z[3];
+  const float (*vm)[4] = vertexMatrix;
+  // NOTE - the translation (shift) elements are not used
+  x[0] = (+cos_val * vm[0][0]) + (+sin_val * vm[0][1]);
+  x[1] = (+cos_val * vm[1][0]) + (+sin_val * vm[1][1]);
+  x[2] = (+cos_val * vm[2][0]) + (+sin_val * vm[2][1]);
+  y[0] = (-sin_val * vm[0][0]) + (+cos_val * vm[0][1]);
+  y[1] = (-sin_val * vm[1][0]) + (+cos_val * vm[1][1]);
+  y[2] = (-sin_val * vm[2][0]) + (+cos_val * vm[2][1]);
+  z[0] = vm[0][2];
+  z[1] = vm[1][2];
+  z[2] = vm[2][2];
+  const float xlen = sqrtf ((x[0] * x[0]) + (x[1] * x[1]) + (x[2] * x[2]));
+  const float ylen = sqrtf ((y[0] * y[0]) + (y[1] * y[1]) + (y[2] * y[2]));
+  const float zlen = sqrtf ((z[0] * z[0]) + (z[1] * z[1]) + (z[2] * z[2]));
+  size[0] *= xlen;
+  size[1] *= ylen;
+  size[2] *= zlen;
+
+  // setup the angle
+  angle = atan2f (x[1], x[0]);
+
+  return;
+}
+
+        
 //
 // Mesh Transform
 //
-
-
-MeshTransform MeshTransform::globalTransform;
-
 
 MeshTransform::MeshTransform()
 {
@@ -385,20 +436,6 @@ MeshTransform::MeshTransform()
 MeshTransform::~MeshTransform()
 {
   return;
-}
-
-
-void MeshTransform::setGlobalTransform(const MeshTransform& transform)
-{
-  globalTransform = transform;
-  return;
-}
-
-
-void MeshTransform::resetGlobalTransform()
-{
-  globalTransform.transforms.clear();
-  return;  
 }
 
 
@@ -623,34 +660,37 @@ void MeshTransform::print(std::ostream& out, const std::string& indent) const
 
 
 void MeshTransform::printTransforms(std::ostream& out,
-                                    const std::string& /*indent*/) const
+                                    const std::string& indent) const
 {
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];
     const float* d = transform.data;
     switch (transform.type) {
       case ShiftTransform: {
-        out << "  shift " << d[0] << " " << d[1] << " " << d[2] << std::endl;
+        out << indent << "  shift "
+                      << d[0] << " " << d[1] << " " << d[2] << std::endl;
         break;
       }
       case ScaleTransform: {
-        out << "  scale " << d[0] << " " << d[1] << " " << d[2] << std::endl;
+        out << indent << "  scale "
+                      << d[0] << " " << d[1] << " " << d[2] << std::endl;
         break;
       }
       case ShearTransform: {
-        out << "  shear " << d[0] << " " << d[1] << " " << d[2] << std::endl;
+        out << indent << "  shear "
+                      << d[0] << " " << d[1] << " " << d[2] << std::endl;
         break;
       }
       case SpinTransform: {
         const float degrees = (float)(d[3] * (180.0 / M_PI));
-        out << "  spin " << degrees << " "
-                         << d[0] << " " << d[1] << " " << d[2] << std::endl;
+        out << indent << "  spin " << degrees << " "
+                      << d[0] << " " << d[1] << " " << d[2] << std::endl;
         break;
       }
       case IndexTransform: {
         const MeshTransform* xform = TRANSFORMMGR.getTransform(transform.index);
         if (xform != NULL) {
-          out << "  xform ";
+          out << indent << "  xform ";
           if (xform->getName().size() > 0) {
             out << xform->getName();
           } else {

@@ -101,7 +101,7 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
 }
 
 
-void CustomZone::write(WorldInfo* worldInfo) const
+void CustomZone::writeToWorld(WorldInfo* worldInfo) const
 {
   worldInfo->addZone( this );
 }

@@ -28,7 +28,7 @@ class CustomArc : public WorldFileObstacle {
     CustomArc(bool boxStyle);
     ~CustomArc();
     virtual bool read(const char* cmd, std::istream& input);
-    virtual void write(WorldInfo*) const;
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   private:
     void makePie(bool isCircle, float angle, float rot, float height,

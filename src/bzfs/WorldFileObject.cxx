@@ -29,6 +29,7 @@ WorldFileObject::WorldFileObject()
   name = "";
 }
 
+
 bool WorldFileObject::read(const char *cmd, std::istream& input)
 {
   if (strcasecmp(cmd, "name") == 0) {
@@ -39,8 +40,30 @@ bool WorldFileObject::read(const char *cmd, std::istream& input)
 }
 
 
+void WorldFileObject::writeToWorld(WorldInfo*) const
+{
+  std::cout << "ERROR: writeToWorld() called improperly" << std::endl;
+  return;
+}
+
+
+void WorldFileObject::writeToManager() const
+{
+  std::cout << "ERROR: writeToManager() called improperly" << std::endl;
+  return;
+}
+
+
+void WorldFileObject::writeToGroupDef(GroupDefinition*) const
+{
+  std::cout << "ERROR: writeToGroupDef() called improperly" << std::endl;
+  return;
+}
+
+
 /** delete all of the world file objects from a vector list
  */
+
 void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
 {
   const int n = wlist.size();

@@ -28,8 +28,8 @@
 class CustomGate : public WorldFileObstacle {
   public:
     CustomGate();
-  virtual bool read(const char *cmd, std::istream&);
-    virtual void write(WorldInfo*) const;
+    virtual bool read(const char *cmd, std::istream&);
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   protected:
     float border;

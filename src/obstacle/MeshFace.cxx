@@ -657,27 +657,27 @@ int MeshFace::packSize() const
 }
 
 
-void MeshFace::print(std::ostream& out, const std::string& /*indent*/) const
+void MeshFace::print(std::ostream& out, const std::string& indent) const
 {
   if (mesh == NULL) {
     return;
   }
   
   int i;
-  out << "  face" << std::endl;
+  out << indent << "  face" << std::endl;
 
   if (debugLevel >= 3) {
-    out << "  # plane normal = " << plane[0] << " " << plane[1] << " "
+    out << indent << "  # plane normal = " << plane[0] << " " << plane[1] << " "
 				 << plane[2] << " " << plane[3] << std::endl;
   }
 
-  out << "    vertices";
+  out << indent << "    vertices";
   for (i = 0; i < vertexCount; i++) {
     int index = (fvec3*)vertices[i] - mesh->getVertices();
     out << " " << index;
   }
   if (debugLevel >= 3) {
-    out << " #";
+    out << indent << " #";
     for (i = 0; i < vertexCount; i++) {
       out << " " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2];
     }
@@ -685,7 +685,7 @@ void MeshFace::print(std::ostream& out, const std::string& /*indent*/) const
   out << std::endl;
 
   if (normals != NULL) {
-    out << "    normals";
+    out << indent << "    normals";
     for (i = 0; i < vertexCount; i++) {
       int index = (fvec3*)normals[i] - mesh->getNormals();
       out << " " << index;
@@ -700,7 +700,7 @@ void MeshFace::print(std::ostream& out, const std::string& /*indent*/) const
   }
 
   if (texcoords != NULL) {
-    out << "    texcoords";
+    out << indent << "    texcoords";
     for (i = 0; i < vertexCount; i++) {
       int index = (fvec2*)texcoords[i] - mesh->getTexcoords();
       out << " " << index;
@@ -714,13 +714,13 @@ void MeshFace::print(std::ostream& out, const std::string& /*indent*/) const
     out << std::endl;
   }
 
-  out << "    matref ";
+  out << indent << "    matref ";
   MATERIALMGR.printReference(out, bzMaterial);
   out  << std::endl;
 
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
   if (driver != NULL) {
-    out << "  phydrv ";
+    out << indent << "    phydrv ";
     if (driver->getName().size() > 0) {
       out << driver->getName();
     } else {
@@ -730,19 +730,19 @@ void MeshFace::print(std::ostream& out, const std::string& /*indent*/) const
   }
 
   if (noclusters && !mesh->noClusters()) {
-    out << "    noclusters" << std::endl;
+    out << indent << "    noclusters" << std::endl;
   }
   if (smoothBounce && !mesh->useSmoothBounce()) {
-    out << "    smoothBounce" << std::endl;
+    out << indent << "    smoothBounce" << std::endl;
   }
   if (driveThrough && !mesh->isDriveThrough()) {
-    out << "    driveThrough" << std::endl;
+    out << indent << "    driveThrough" << std::endl;
   }
   if (shootThrough && !mesh->isShootThrough()) {
-    out << "    shootThrough" << std::endl;
+    out << indent << "    shootThrough" << std::endl;
   }
 
-  out << "  endface" << std::endl;
+  out << indent << "  endface" << std::endl;
 
   return;
 }

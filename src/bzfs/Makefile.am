@@ -28,6 +28,8 @@ bzfs_SOURCES = \
 	CustomDynamicColor.h \
 	CustomGate.cxx \
 	CustomGate.h \
+	CustomGroup.cxx \
+	CustomGroup.h \
 	CustomLink.cxx \
 	CustomLink.h \
 	CustomMaterial.h \

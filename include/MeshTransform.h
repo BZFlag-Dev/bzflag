@@ -47,10 +47,6 @@ class MeshTransform {
     void print(std::ostream& out, const std::string& indent) const;
     void printTransforms(std::ostream& out, const std::string& indent) const;
 
-  public:
-    static void setGlobalTransform(const MeshTransform& transform);
-    static void resetGlobalTransform();
-  
   private:
     enum TransformType {
       ShiftTransform = 0,
@@ -70,9 +66,6 @@ class MeshTransform {
     std::string name;
     std::vector<TransformData> transforms;
     
-  private:
-    static MeshTransform globalTransform;
-    
   public:
     class Tool {
       public:
@@ -82,14 +75,17 @@ class MeshTransform {
         bool getIsInverted() const;
         void modifyVertex(float vertex[3]) const;
         void modifyNormal(float normal[3]) const;
+        void modifyOldStyle(float pos[3], float size[3], float& angle) const;
 
       private:
         void processTransforms(const std::vector<TransformData>& transforms);
       
+        bool empty;
         bool inverted;
         float vertexMatrix[4][4];
         float normalMatrix[3][3];
     };
+    
   friend class MeshTransform::Tool;
 };
 

@@ -50,6 +50,9 @@ class MeshObstacle : public Obstacle {
 
     void finalize();
 
+    Obstacle* copyWithTransform(const MeshTransform&) const;
+    void copyFace(int face, MeshObstacle* mesh) const;
+        
     enum CheckType {
       CheckInside =  0,
       CheckOutside = 1,
@@ -97,9 +100,6 @@ class MeshObstacle : public Obstacle {
     bool useSmoothBounce() const;
     bool noClusters() const;
 
-    void setIsLocal(bool);
-    bool getIsLocal() const;
-
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
@@ -109,7 +109,6 @@ class MeshObstacle : public Obstacle {
   private:
 
     static const char* typeName;
-    bool isLocal; // generated on the client side
 
     int checkCount;
     char* checkTypes;
@@ -187,18 +186,6 @@ inline bool MeshObstacle::noClusters() const
 {
   return noclusters;
 }
-
-inline void MeshObstacle::setIsLocal(bool value)
-{
-  isLocal = value;
-  return;
-}
-
-inline bool MeshObstacle::getIsLocal() const
-{
-  return isLocal;
-}
-
 
 #endif // BZF_MESH_OBSTACLE_H
 

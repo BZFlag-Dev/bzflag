@@ -17,7 +17,9 @@
 #include <vector>
 #include <string>
 
+
 class WorldInfo;
+class GroupDefinition;
 
 
 class WorldFileObject {
@@ -26,8 +28,12 @@ class WorldFileObject {
     virtual ~WorldFileObject() { }
 
     virtual bool read(const char *cmd, std::istream&);
-    virtual void write(WorldInfo*) const = 0;
-    virtual bool writeImmediately() { return false; }
+
+    virtual bool usesManager() { return false; }
+    virtual bool usesGroupDef() { return true; }
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual void writeToManager() const;
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   protected:
     std::string name;

@@ -102,6 +102,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "FlagSceneNode.h"
 #include "PhysicsDriver.h"
 #include "FlagSceneNode.h"
+#include "ObstacleMgr.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -545,7 +546,7 @@ enum roamingView {
   roamViewCount
 } roamView = roamViewFP;
 #ifdef DEBUG
-static const bool devDriving = true;
+static const bool devDriving = false;
 #else
 static const bool devDriving = false;
 #endif
@@ -3416,32 +3417,34 @@ static void		makeObstacleList()
   gameArea[3][1] =  0.5f * worldSize - tankRadius;
   obstacleList.push_back(new BzfRegion(4, gameArea));
 
-  const std::vector<BoxBuilding*>& boxes = World::getWorld()->getBoxes();
+  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   const int numBoxes = boxes.size();
   for (i = 0; i < numBoxes; i++) {
     addObstacle(obstacleList, *boxes[i]);
   }
-  const std::vector<PyramidBuilding*>& pyramids = World::getWorld()->getPyramids();
+  const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
   const int numPyramids = pyramids.size();
   for (i = 0; i < numPyramids; i++) {
     addObstacle(obstacleList, *pyramids[i]);
   }
-  const std::vector<Teleporter*>& teleporters = World::getWorld()->getTeleporters();
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   const int numTeleporters = teleporters.size();
   for (i = 0; i < numTeleporters; i++) {
     addObstacle(obstacleList, *teleporters[i]);
   }
-  const std::vector<MeshObstacle*>& meshes = World::getWorld()->getMeshes();
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   const int numMeshes = meshes.size();
   for (i = 0; i < numMeshes; i++) {
     addObstacle(obstacleList, *meshes[i]);
   }
   if (World::getWorld()->allowTeamFlags()) {
-    const std::vector<BaseBuilding*>& bases = World::getWorld()->getBases();
+    const ObstacleList& bases = OBSTACLEMGR.getBases();
     const int numBases = bases.size();
     for (i = 0; i < numBases; i++) {
-      if ((bases[i]->getHeight() != 0.0f) || (bases[i]->getPosition()[2] != 0.0f))
-	addObstacle(obstacleList, *bases[i]);
+      const BaseBuilding* base = (const BaseBuilding*) bases[i];
+      if ((base->getHeight() != 0.0f) || (base->getPosition()[2] != 0.0f)) {
+	addObstacle(obstacleList, *base);
+      }
     }
   }
 }

@@ -69,9 +69,13 @@ bool CustomTextureMatrix::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomTextureMatrix::write(WorldInfo * /*world*/) const
+void CustomTextureMatrix::writeToManager() const
 {
   texmat->setName(name);
+  if ((name.size() > 0) && (TEXMATRIXMGR.findMatrix(name) >= 0)) {
+    std::cout << "warning: duplicate texture matrix" 
+              << " (" << name << ")" << std::endl;
+  }
   TEXMATRIXMGR.addMatrix (texmat);
   texmat = NULL;
   return;

@@ -20,6 +20,7 @@
 #include "ConeObstacle.h"
 #include "MeshUtils.h"
 #include "PhysicsDriver.h"
+#include "MeshTransform.h"
 
 
 const char* ConeObstacle::typeName = "ConeObstacle";
@@ -34,10 +35,10 @@ ConeObstacle::ConeObstacle()
 
 ConeObstacle::ConeObstacle(const MeshTransform& xform,
                            const float* _pos, const float* _size,
-			   float _rotation, float _sweepAngle,
-			   const float _texsize[2], bool _useNormals,
-			   int _divisions, const BzMaterial* mats[MaterialCount],
-			   int physics, bool bounce, bool drive, bool shoot)
+                           float _rotation, float _sweepAngle,
+                           const float _texsize[2], bool _useNormals,
+                           int _divisions, const BzMaterial* mats[MaterialCount],
+                           int physics, bool bounce, bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -69,6 +70,20 @@ ConeObstacle::~ConeObstacle()
 {
   delete mesh;
   return;
+}
+
+
+Obstacle* ConeObstacle::copyWithTransform(const MeshTransform& xform) const
+{
+  MeshTransform tmpXform = transform;
+  tmpXform.append(xform);
+
+  ConeObstacle* copy =
+    new ConeObstacle(tmpXform, pos, size, angle, sweepAngle,
+                    texsize, useNormals, divisions,
+                    (const BzMaterial**)materials, phydrv,
+                    smoothBounce, driveThrough, shootThrough);
+  return copy;
 }
 
 
@@ -323,7 +338,6 @@ void ConeObstacle::finalize()
   }
 
   // wrap it up
-  mesh->setIsLocal(true);
   mesh->finalize();
 
   return;
@@ -474,29 +488,32 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
 {
   int i;
 
-  out << "cone" << std::endl;
+  out << indent << "cone" << std::endl;
 
-  out << "  position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-  out << "  size " << size[0] << " " << size[1] << " " << size[2] << std::endl;
-  out << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
-  out << "  angle " << sweepAngle << std::endl;
-  out << "  divisions " << divisions << std::endl;
+  out << indent << "  position " << pos[0] << " " << pos[1] << " "
+                                 << pos[2] << std::endl;
+  out << indent << "  size " << size[0] << " " << size[1] << " "
+                             << size[2] << std::endl;
+  out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
+  out << indent << "  angle " << sweepAngle << std::endl;
+  out << indent << "  divisions " << divisions << std::endl;
 
   transform.printTransforms(out, indent);
 
-  out << "  texsize " << texsize[0] << " " << texsize[1] << std::endl;
+  out << indent << "  texsize " << texsize[0] << " "
+                                << texsize[1] << std::endl;
 
   const char* sideNames[MaterialCount] =
     { "edge", "bottom", "startside", "endside" };
   for (i = 0; i < MaterialCount; i++) {
-    out << "  " << sideNames[i] << " matref ";
+    out << indent << "  " << sideNames[i] << " matref ";
     MATERIALMGR.printReference(out, materials[i]);
     out << std::endl;
   }
 
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
   if (driver != NULL) {
-    out << "  phydrv ";
+    out << indent << "  phydrv ";
     if (driver->getName().size() > 0) {
       out << driver->getName();
     } else {
@@ -506,19 +523,19 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
   }
 
   if (smoothBounce) {
-    out << "  smoothBounce" << std::endl;
+    out << indent << "  smoothBounce" << std::endl;
   }
   if (driveThrough) {
-    out << "  driveThrough" << std::endl;
+    out << indent << "  driveThrough" << std::endl;
   }
   if (shootThrough) {
-    out << "  shootThrough" << std::endl;
+    out << indent << "  shootThrough" << std::endl;
   }
   if (!useNormals) {
-    out << "  flatshading" << std::endl;
+    out << indent << "  flatshading" << std::endl;
   }
 
-  out << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

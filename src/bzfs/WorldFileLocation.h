@@ -24,7 +24,7 @@ class WorldFileLocation : public WorldFileObject {
 public:
   WorldFileLocation();
   virtual bool read(const char *cmd, std::istream&);
-  virtual void write(WorldInfo*) const;
+  virtual void writeToWorld(WorldInfo*) const;
   void *pack(void *buf) const;
 protected:
   float pos[3];
@@ -33,7 +33,7 @@ protected:
   MeshTransform transform;
 };
 
-inline void WorldFileLocation::write(WorldInfo*) const {}
+inline void WorldFileLocation::writeToWorld(WorldInfo*) const {}
 
 #endif /* __WORLDFILELOCATION_H__ */
 

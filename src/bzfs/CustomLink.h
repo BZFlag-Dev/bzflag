@@ -28,9 +28,10 @@
 class CustomLink : public WorldFileObject {
   public:
     CustomLink();
-  virtual bool read(const char *cmd, std::istream& input);
-    virtual void write(WorldInfo*) const;
-
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual bool usesGroupDef() { return false; }
+    
   protected:
     int from;
     int to;

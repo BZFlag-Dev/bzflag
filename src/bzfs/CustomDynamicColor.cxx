@@ -17,6 +17,7 @@
 
 /* system implementation headers */
 #include <sstream>
+#include <vector>
 
 /* common implementation headers */
 #include "DynamicColor.h"
@@ -110,6 +111,20 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     }
     color->addClampDown(channel, data);
   }
+  else if (strcasecmp (command.c_str(), "sequence") == 0) {
+    float period, offset;
+    std::vector<char> list;
+    if (!(parms >> period >> offset)) {
+      std::cout << "missing sequence period for " << cmd << " channel"
+		<< std::endl;
+      return false;
+    }
+    int tmp;
+    while (parms >> tmp) {
+      list.push_back((char)tmp);
+    }
+    color->setSequence(channel, period, offset, list);
+  }
   else {
     return false;
   }
@@ -118,9 +133,13 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomDynamicColor::write(WorldInfo * /*world*/) const
+void CustomDynamicColor::writeToManager() const
 {
   color->setName(name);
+  if ((name.size() > 0) && (DYNCOLORMGR.findColor(name) >= 0)) {
+    std::cout << "warning: duplicate dynamic color"
+              << " (" << name << ")" << std::endl;
+  }
   color->finalize();
   DYNCOLORMGR.addColor (color);
   color = NULL;

@@ -27,6 +27,9 @@ class BaseBuilding : public Obstacle {
 			BaseBuilding(const float *pos, float rotation,
 				     const float *size, int _team);
 			~BaseBuilding();
+
+    Obstacle*	copyWithTransform(const MeshTransform&) const;
+			
     const char*		getType() const;
     static const char*	getClassName(); // const
 

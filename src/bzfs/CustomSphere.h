@@ -28,7 +28,7 @@ class CustomSphere : public WorldFileObstacle {
     CustomSphere();
     ~CustomSphere();
     virtual bool read(const char *cmd, std::istream& input);
-    virtual void write(WorldInfo*) const;
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   private:
     enum {

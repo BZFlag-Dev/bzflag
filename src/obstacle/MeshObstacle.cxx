@@ -40,7 +40,6 @@ MeshObstacle::MeshObstacle()
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
-  isLocal = false;
   return;
 }
 
@@ -55,6 +54,17 @@ static void cfvec3ListToArray(const std::vector<cfvec3>& list,
   }
   return;
 }
+
+static void arrayToCfvec3List(const fvec3* array, int count,
+                              std::vector<cfvec3>& list)
+{
+  list.clear();
+  for (int i = 0; i < count; i++) {
+    list.push_back(array[i]);
+  }
+  return;
+}
+
 
 MeshObstacle::MeshObstacle(const MeshTransform& transform,
                            const std::vector<char>& checkTypesL,
@@ -102,8 +112,6 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
-
-  isLocal = false;
 
   return;
 }
@@ -201,6 +209,67 @@ MeshObstacle::~MeshObstacle()
     delete faces[i];
   }
   delete[] faces;
+  return;
+}
+
+
+Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
+{
+  int i; 
+  std::vector<char> ctlist;
+  std::vector<cfvec3> clist;
+  std::vector<cfvec3> vlist;
+  std::vector<cfvec3> nlist;
+  std::vector<cfvec2> tlist;
+
+  for (i = 0; i < checkCount; i++) {
+    ctlist.push_back(checkTypes[i]);
+  }
+  arrayToCfvec3List(checkPoints, checkCount, vlist);
+  arrayToCfvec3List(vertices, vertexCount, vlist);
+  arrayToCfvec3List(normals, normalCount, nlist);
+  for (i = 0; i < texcoordCount; i++) {
+    tlist.push_back(texcoords[i]);
+  }
+  
+  MeshObstacle* copy =
+    new MeshObstacle(xform, ctlist, clist, vlist, nlist, tlist, faceCount, 
+		     noclusters, smoothBounce, driveThrough, shootThrough);
+  
+  for (i = 0; i < faceCount; i++) {
+    copyFace(i, copy);
+  }
+  
+  copy->finalize();
+  
+  return copy;
+}
+
+
+void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
+{
+  MeshFace* face = faces[f];
+  std::vector<int> vlist;
+  std::vector<int> nlist;
+  std::vector<int> tlist;
+  const int vcount = face->getVertexCount();
+  for (int i = 0; i < vcount; i++) {
+    int index;
+    index = ((fvec3*)face->getVertex(i)) - vertices;
+    vlist.push_back(index);
+    if (face->useNormals()) {
+      index = ((fvec3*)face->getNormal(i)) - normals;
+      nlist.push_back(index);
+    }
+    if (face->useTexcoords()) {
+      index = ((fvec2*)face->getTexcoord(i)) - texcoords;
+      tlist.push_back(index);
+    }
+  }
+  mesh->addFace(vlist, nlist, tlist, face->getMaterial(),
+                face->getPhysicsDriver(), face->noClusters(),
+                face->isSmoothBounce(),
+                face->isDriveThrough(), face->isShootThrough());
   return;
 }
 
@@ -431,10 +500,6 @@ bool MeshObstacle::isCrossing(const float* /*p*/, float /*angle*/,
 
 void *MeshObstacle::pack(void *buf) const
 {
-  if (isLocal) {
-    return buf;
-  }
-
   int i;
 
   buf = nboPackInt(buf, checkCount);
@@ -533,10 +598,6 @@ void *MeshObstacle::unpack(void *buf)
 
 int MeshObstacle::packSize() const
 {
-  if (isLocal) {
-    return 0;
-  }
-
   int fullSize = 5 * sizeof(int);
   fullSize += sizeof(char) * checkCount;
   fullSize += sizeof(fvec3) * checkCount;
@@ -562,7 +623,7 @@ static void outputFloat(std::ostream& out, float value)
 
 void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 {
-  out << "mesh" << std::endl;
+  out << indent << "mesh" << std::endl;
 
   out << indent << "# faces = " << faceCount << std::endl;
   out << indent << "# checks = " << checkCount << std::endl;
@@ -620,10 +681,10 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   }
 
   for (int f = 0; f < faceCount; f++) {
-    faces[f]->print(out, "");
+    faces[f]->print(out, indent);
   }
 
-  out << indent << "end" << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

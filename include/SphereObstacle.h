@@ -42,6 +42,9 @@ class SphereObstacle : public Obstacle {
 		   int _divisions, const BzMaterial* mats[MaterialCount],
 		   int physics, bool bounce, bool drive, bool shoot);
     ~SphereObstacle();
+
+    Obstacle* copyWithTransform(const MeshTransform&) const;
+    
     MeshObstacle* getMesh();
 
     const char* getType() const;

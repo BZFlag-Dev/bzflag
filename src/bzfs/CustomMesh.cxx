@@ -21,6 +21,7 @@
 
 /* common implementation headers */
 #include "PhysicsDriver.h"
+#include "ObstacleMgr.h"
 
 
 CustomMesh::CustomMesh()
@@ -148,10 +149,24 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMesh::write(WorldInfo *world) const
+void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 {
+  // include the old style parameters
+  MeshTransform xform;
+  if ((size[0] != 1.0f) || (size[1] != 1.0f) || (size[2] != 1.0f)) {
+    xform.addScale(size);
+  }
+  if (rotation != 0.0f) {
+    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+    xform.addSpin(rotation * (180.0f / M_PI), zAxis);
+  }  
+  if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f)) {
+    xform.addShift(pos);
+  }
+  xform.append(transform);
+  
   MeshObstacle* mesh =
-    new MeshObstacle(transform, checkTypes, checkPoints,
+    new MeshObstacle(xform, checkTypes, checkPoints,
                      vertices, normals, texcoords, faces.size(),
                      noclusters, smoothBounce, driveThrough, shootThrough);
 
@@ -163,7 +178,7 @@ void CustomMesh::write(WorldInfo *world) const
 
   mesh->finalize();
 
-  world->addMesh(mesh);
+  groupdef->addObstacle(mesh);
 
   return;
 }

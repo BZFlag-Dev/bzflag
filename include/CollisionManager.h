@@ -62,11 +62,7 @@ class CollisionManager {
     CollisionManager();
     ~CollisionManager();
 
-    void load (std::vector<MeshObstacle*>    &meshes,
-	       std::vector<BoxBuilding*>     &boxes,
-	       std::vector<BaseBuilding*>    &bases,
-	       std::vector<PyramidBuilding*> &pyrs,
-	       std::vector<Teleporter*>      &teles);
+    void load ();
     void clear ();
 
     // some basics
@@ -111,6 +107,7 @@ class CollisionManager {
     float maxs[3];
 
     float WorldSize;
+    float MaxHeight;
 };
 
 extern CollisionManager COLLISIONMGR;
@@ -188,7 +185,7 @@ inline int CollisionManager::getObstacleCount() const
 
 inline float CollisionManager::getMaxWorldHeight() const
 {
-  return maxs[2];
+  return MaxHeight;
 }
 
 

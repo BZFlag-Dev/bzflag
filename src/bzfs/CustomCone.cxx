@@ -25,6 +25,7 @@
 #include "ConeObstacle.h"
 #include "PhysicsDriver.h"
 #include "StateDatabase.h"
+#include "ObstacleMgr.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
@@ -137,7 +138,7 @@ bool CustomCone::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomCone::write(WorldInfo *world) const
+void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
 {
   int i;
   const BzMaterial* mats[MaterialCount];
@@ -172,8 +173,7 @@ void CustomCone::write(WorldInfo *world) const
   }
 
   if (cone->isValid()) {
-    cone->getMesh()->setIsLocal(true);
-    world->addCone(cone);
+    groupdef->addObstacle(cone);
   } else {
     delete cone;
   }

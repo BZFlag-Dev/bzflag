@@ -22,6 +22,7 @@
 /* common implementation headers */
 #include "SphereObstacle.h"
 #include "PhysicsDriver.h"
+#include "ObstacleMgr.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
@@ -114,7 +115,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomSphere::write(WorldInfo *world) const
+void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
 {
   int i;
   const BzMaterial* mats[MaterialCount];
@@ -127,8 +128,7 @@ void CustomSphere::write(WorldInfo *world) const
 					      smoothBounce, driveThrough, shootThrough);
 
   if (sphere->isValid()) {
-    sphere->getMesh()->setIsLocal(true);
-    world->addSphere(sphere);
+    groupdef->addObstacle(sphere);
   } else {
     delete sphere;
   }

@@ -24,8 +24,8 @@ class CustomWaterLevel : public WorldFileObject {
     CustomWaterLevel();
     ~CustomWaterLevel();
     virtual bool read(const char *cmd, std::istream& input);
-    virtual void write(WorldInfo*) const;
-
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual bool usesGroupDef() { return false; }
   private:
     float height;
     bool modedMaterial;

@@ -33,6 +33,7 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "PhysicsDriver.h"
+#include "ObstacleMgr.h"
 
 // local implementation headers
 #include "LocalPlayer.h"
@@ -557,13 +558,14 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   }
 
   // draw walls.  walls are flat so a line will do.
-  const std::vector<WallObstacle*>& walls = world.getWalls();
+              
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
   int count = walls.size();
   glColor3f(0.25f, 0.5f, 0.5f);
   glBegin(GL_LINES);
   int i;
   for (i = 0; i < count; i++) {
-    const WallObstacle& wall = *walls[i];
+    const WallObstacle& wall = *((const WallObstacle*) walls[i]);   
     const float w = wall.getBreadth();
     const float c = w * cosf(wall.getRotation());
     const float s = w * sinf(wall.getRotation());
@@ -577,11 +579,12 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   if (smoothingOn && BZDBCache::enhancedRadar == false) glDisable(GL_BLEND);
 
   // draw box buildings.
-  const std::vector<BoxBuilding*>& boxes = world.getBoxes();
+  
+  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   count = boxes.size();
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
-    const BoxBuilding& box = *boxes[i];
+    const BoxBuilding& box = *((const BoxBuilding*) boxes[i]);
     if (box.isInvisible())
       continue;
     const float z = box.getPosition()[2];
@@ -601,11 +604,11 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glEnd();
 
   // draw pyramid buildings
-  const std::vector<PyramidBuilding*>& pyramids = world.getPyramids();
+  const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
   count = pyramids.size();
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
-    const PyramidBuilding& pyr = *pyramids[i];
+    const PyramidBuilding& pyr = *((const PyramidBuilding*) pyramids[i]);
     const float z = pyr.getPosition()[2];
     const float h = pyr.getHeight();
     const float cs = colorScale(z, h);
@@ -623,10 +626,10 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glEnd();
 
   // draw mesh obstacles
-  const std::vector<MeshObstacle*>& meshes = world.getMeshes();
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   count = meshes.size();
   for (i = 0; i < count; i++) {
-    const MeshObstacle* mesh = meshes[i];
+    const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
     int faces = mesh->getFaceCount();
     
     for (int f = 0; f < faces; f++) {
@@ -659,7 +662,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
     glEnable(GL_BLEND);
     count = boxes.size();
     for (i = 0; i < count; i++) {
-      const BoxBuilding& box = *boxes[i];
+      const BoxBuilding& box = *((const BoxBuilding*) boxes[i]);
       if (box.isInvisible())
 	continue;
       const float z = box.getPosition()[2];
@@ -681,7 +684,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
 
     count = pyramids.size();
     for (i = 0; i < count; i++) {
-      const PyramidBuilding& pyr = *pyramids[i];
+      const PyramidBuilding& pyr = *((const PyramidBuilding*) pyramids[i]);
       const float z = pyr.getPosition()[2];
       const float h = pyr.getHeight();
       const float cs = colorScale(z, h);
@@ -730,50 +733,51 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   // filter the ends of line segments, we'll draw the line in each
   // direction (which degrades the antialiasing).  Newport graphics
   // is one system that doesn't do correct filtering.
-  const std::vector<Teleporter*>& teleporters = world.getTeleporters();
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   count = teleporters.size();
   glColor3f(1.0f, 1.0f, 0.25f);
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
-    const Teleporter& tele = *(teleporters[i]);
-	if (tele.isHorizontal()) {
-		const float z = tele.getPosition()[2];
-		const float h = tele.getHeight();
-		const float cs = colorScale(z, h);
-		glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, h));
-		const float c = cosf(tele.getRotation());
-		const float s = sinf(tele.getRotation());
-		const float wx = c * tele.getWidth(), wy = s * tele.getWidth();
-		const float hx = -s * tele.getBreadth(), hy = c * tele.getBreadth();
-		const float* pos = tele.getPosition();
-		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-		glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
+    const Teleporter & tele = *((const Teleporter *) teleporters[i]);
+    if (tele.isHorizontal ()) {
+      const float z = tele.getPosition ()[2];
+      const float h = tele.getHeight ();
+      const float cs = colorScale (z, h);
+      glColor4f (1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, h));
+      const float c = cosf (tele.getRotation ());
+      const float s = sinf (tele.getRotation ());
+      const float wx = c * tele.getWidth (), wy = s * tele.getWidth ();
+      const float hx = -s * tele.getBreadth (), hy = c * tele.getBreadth ();
+      const float *pos = tele.getPosition ();
+      glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
+      glVertex2f (pos[0] + wx - hx, pos[1] + wy - hy);
 
-		glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-		glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
+      glVertex2f (pos[0] + wx - hx, pos[1] + wy - hy);
+      glVertex2f (pos[0] + wx + hx, pos[1] + wy + hy);
 
-		glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
-		glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+      glVertex2f (pos[0] + wx + hx, pos[1] + wy + hy);
+      glVertex2f (pos[0] - wx + hx, pos[1] - wy + hy);
 
-		glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
-		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
+      glVertex2f (pos[0] - wx + hx, pos[1] - wy + hy);
+      glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
 
-		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-	} else {
-		const float z = tele.getPosition()[2];
-		const float h = tele.getHeight();
-		const float cs = colorScale(z, h);
-		glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, h));
-		const float w = tele.getBreadth();
-		const float c = w * cosf(tele.getRotation());
-		const float s = w * sinf(tele.getRotation());
-		const float* pos = tele.getPosition();
-		glVertex2f(pos[0] - s, pos[1] + c);
-		glVertex2f(pos[0] + s, pos[1] - c);
-		glVertex2f(pos[0] + s, pos[1] - c);
-		glVertex2f(pos[0] - s, pos[1] + c);
-	}
+      glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
+      glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
+    }
+    else {
+      const float z = tele.getPosition ()[2];
+      const float h = tele.getHeight ();
+      const float cs = colorScale (z, h);
+      glColor4f (1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, h));
+      const float w = tele.getBreadth ();
+      const float c = w * cosf (tele.getRotation ());
+      const float s = w * sinf (tele.getRotation ());
+      const float *pos = tele.getPosition ();
+      glVertex2f (pos[0] - s, pos[1] + c);
+      glVertex2f (pos[0] + s, pos[1] - c);
+      glVertex2f (pos[0] + s, pos[1] - c);
+      glVertex2f (pos[0] - s, pos[1] + c);
+    }
   }
   glEnd();
 

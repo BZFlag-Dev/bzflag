@@ -20,9 +20,9 @@
 
 
 class CustomBox : public WorldFileObstacle {
-public:
-  CustomBox();
-  virtual void write(WorldInfo*) const;
+  public:
+    CustomBox();
+    virtual void writeToGroupDef(GroupDefinition*) const;
 };
 
 #endif  /* __CUSTOMBOX_H__ */

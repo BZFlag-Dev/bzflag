@@ -92,9 +92,13 @@ bool CustomMeshTransform::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMeshTransform::write(WorldInfo * /*world*/) const
+void CustomMeshTransform::writeToManager() const
 {
   transform->setName(name);
+  if ((name.size() > 0) && (TRANSFORMMGR.findTransform(name) >= 0)) {
+    std::cout << "warning: duplicate transform"
+              << " (" << name << ")" << std::endl;
+  }
   transform->finalize();
   TRANSFORMMGR.addTransform(transform);
   transform = NULL;

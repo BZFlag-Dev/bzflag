@@ -21,6 +21,7 @@
 /* common implementation headers */
 #include "BoxBuilding.h"
 #include "StateDatabase.h"
+#include "ObstacleMgr.h"
 
 
 CustomBox::CustomBox()
@@ -30,13 +31,13 @@ CustomBox::CustomBox()
 }
 
 
-void CustomBox::write(WorldInfo *world) const
+void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
 {
   BoxBuilding* box =
     new BoxBuilding(pos, rotation,
                     fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
                     driveThrough, shootThrough);
-  world->addBox(box);
+  groupdef->addObstacle(box);
 }
 
 // Local variables: ***

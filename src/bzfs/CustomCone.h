@@ -28,7 +28,7 @@ class CustomCone : public WorldFileObstacle {
     CustomCone(bool pyramidStyle);
     ~CustomCone();
     virtual bool read(const char* cmd, std::istream& input);
-    virtual void write(WorldInfo*) const;
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   private:
     enum {

@@ -35,7 +35,7 @@ class CustomMesh : public WorldFileObstacle {
     CustomMesh();
     ~CustomMesh();
     virtual bool read(const char *cmd, std::istream& input);
-    virtual void write(WorldInfo*) const;
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   private:
 

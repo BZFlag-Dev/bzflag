@@ -177,38 +177,21 @@ void EntryZones::makeSplitLists (int zone,
   return;
 }
 
-int EntryZones::packSize() const
-{
-  int size = 0;
-  for (unsigned int i=0; i < zones.size(); i++) {
-    std::vector<FlagType*> flags;
-    std::vector<TeamColor> teams;
-    std::vector<TeamColor> safety;
-    makeSplitLists (i, flags, teams, safety);
-    size += 2 + 2 + WorldCodeZoneSize;
-    size += FlagType::packSize * flags.size();
-    size += 2 * teams.size();
-    size += 2 * safety.size();
-  }
-  return size;
-}
-
 void * EntryZones::pack(void *buf) const
 {
-  for (unsigned int i=0 ; i < zones.size(); i++) {
-    unsigned int j;
+  buf = nboPackUInt(buf, zones.size());
+  
+  for (unsigned int i = 0; i < zones.size(); i++) {
     const WorldFileLocation& z = (const WorldFileLocation) zones[i];
     std::vector<FlagType*> flags;
     std::vector<TeamColor> teams;
     std::vector<TeamColor> safety;
     makeSplitLists (i, flags, teams, safety);
-    void *bufStart = buf;
-    buf = nboPackUShort(buf, 0); // place-holder
-    buf = nboPackUShort(buf, WorldCodeZone);
-    buf = z.pack (buf);			 // 12 + 12 + 4
-    buf = nboPackUShort(buf, flags.size());     // 30
-    buf = nboPackUShort(buf, teams.size());     // 32
-    buf = nboPackUShort(buf, safety.size());    // 34
+    buf = z.pack (buf);
+    buf = nboPackUShort(buf, flags.size());
+    buf = nboPackUShort(buf, teams.size());
+    buf = nboPackUShort(buf, safety.size());
+    unsigned int j;
     for (j = 0; j < flags.size(); j++) {
       buf = flags[j]->pack(buf);
     }
@@ -218,9 +201,48 @@ void * EntryZones::pack(void *buf) const
     for (j = 0; j < safety.size(); j++) {
       buf = nboPackUShort(buf, safety[j]);
     }
-    uint16_t len = (char*)buf - (char*)bufStart;
-    nboPackUShort (bufStart, len - (2 * sizeof(uint16_t)));
   }
   return buf;
 }
 
+
+int EntryZones::packSize() const
+{
+  int fullSize = 0;
+
+  fullSize += sizeof(uint32_t); // zone count
+  
+  for (unsigned int i = 0; i < zones.size(); i++) {
+    std::vector<FlagType*> flags;
+    std::vector<TeamColor> teams;
+    std::vector<TeamColor> safety;
+    makeSplitLists (i, flags, teams, safety);
+    fullSize += sizeof(float[3]); // pos
+    fullSize += sizeof(float[3]); // size
+    fullSize += sizeof(float);    // angle
+    fullSize += sizeof(uint16_t); // flag count
+    fullSize += sizeof(uint16_t); // team count
+    fullSize += sizeof(uint16_t); // safety count
+    unsigned int j;
+    for (j = 0; j < flags.size(); j++) {
+      fullSize += FlagType::packSize;
+    }
+    for (j = 0; j < teams.size(); j++) {
+      fullSize += sizeof(uint16_t);
+    }
+    for (j = 0; j < safety.size(); j++) {
+      fullSize += sizeof(uint16_t);
+    }
+  }
+
+  return fullSize;
+}
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

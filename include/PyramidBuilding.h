@@ -27,7 +27,9 @@ class PyramidBuilding : public Obstacle {
 			PyramidBuilding(const float* pos, float rotation,
 				float width, float breadth, float height, bool drive = false, bool shoot = false);
 			~PyramidBuilding();
-
+			
+    virtual Obstacle*	copyWithTransform(const MeshTransform&) const;
+			
     const char*		getType() const;
     static const char*	getClassName(); // const
 

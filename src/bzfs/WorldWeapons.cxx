@@ -129,40 +129,51 @@ void WorldWeapons::add(const FlagType *type, const float *origin, float directio
   weapons.push_back(w);
 }
 
+
 unsigned int WorldWeapons::count(void)
 {
   return weapons.size();
 }
 
-int WorldWeapons::packSize(void) const
-{
-  int size = 0;
-  for (unsigned int i=0 ; i < weapons.size(); i++) {
-    size += 2 + 2 + WorldCodeWeaponSize;
-    size += weapons[i]->delay.size() * sizeof (float);
-  }
-  return size;
-}
 
 void * WorldWeapons::pack(void *buf) const
 {
+  buf = nboPackUInt(buf, weapons.size());
+
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
-    void *bufStart = buf;
-    buf = nboPackUShort(buf, 0); // place-holder
-    buf = nboPackUShort(buf, WorldCodeWeapon);
-    buf = w->type->pack (buf);		  //  2
-    buf = nboPackVector(buf, w->origin);	// 14
-    buf = nboPackFloat(buf, w->direction);      // 18
-    buf = nboPackFloat(buf, w->initDelay);      // 22
-    buf = nboPackUShort(buf, w->delay.size());  // 24
+    buf = w->type->pack (buf);
+    buf = nboPackVector(buf, w->origin);
+    buf = nboPackFloat(buf, w->direction);
+    buf = nboPackFloat(buf, w->initDelay);
+    buf = nboPackUShort(buf, w->delay.size());
     for (unsigned int j = 0; j < w->delay.size(); j++) {
       buf = nboPackFloat(buf, w->delay[j]);
     }
-    uint16_t len = (char*)buf - (char*)bufStart;
-    nboPackUShort (bufStart, len - (2 * sizeof(uint16_t)));
   }
   return buf;
+}
+
+
+int WorldWeapons::packSize(void) const
+{
+  int fullSize = 0;
+  
+  fullSize += sizeof(uint32_t);
+
+  for (unsigned int i=0 ; i < weapons.size(); i++) {
+    const Weapon *w = (const Weapon *) weapons[i];
+    fullSize += FlagType::packSize; // flag type
+    fullSize += sizeof(float[3]); // pos
+    fullSize += sizeof(float);    // direction
+    fullSize += sizeof(float);    // init delay
+    fullSize += sizeof(uint16_t); // delay count
+    for (unsigned int j = 0; j < w->delay.size(); j++) {
+      fullSize += sizeof(float);
+    }
+  }
+
+  return fullSize;
 }
 
 

@@ -20,6 +20,7 @@
 #include "ArcObstacle.h"
 #include "MeshUtils.h"
 #include "PhysicsDriver.h"
+#include "MeshTransform.h"
 
 
 const char* ArcObstacle::typeName = "ArcObstacle";
@@ -70,6 +71,20 @@ ArcObstacle::~ArcObstacle()
 {
   delete mesh;
   return;
+}
+
+
+Obstacle* ArcObstacle::copyWithTransform(const MeshTransform& xform) const
+{
+  MeshTransform tmpXform = transform;
+  tmpXform.append(xform);
+
+  ArcObstacle* copy =
+    new ArcObstacle(tmpXform, pos, size, angle, sweepAngle, ratio,
+                    texsize, useNormals, divisions,
+                    (const BzMaterial**)materials, phydrv,
+                    smoothBounce, driveThrough, shootThrough);
+  return copy;
 }
 
 
@@ -187,7 +202,6 @@ void ArcObstacle::finalize()
   }
 
   // wrap it up
-  mesh->setIsLocal(true);
   mesh->finalize();
 
   return;
@@ -697,31 +711,34 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
 {
   int i;
 
-  out << "arc" << std::endl;
+  out << indent << "arc" << std::endl;
 
-  out << "  position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-  out << "  size " << size[0] << " " << size[1] << " " << size[2] << std::endl;
-  out << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
-  out << "  angle " << sweepAngle << std::endl;
-  out << "  ratio " << ratio << std::endl;
-  out << "  divisions " << divisions << std::endl;
+  out << indent << "  position " << pos[0] << " "
+                                 << pos[1] << " " << pos[2] << std::endl;
+  out << indent << "  size " << size[0] << " "
+                             << size[1] << " " << size[2] << std::endl;
+  out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
+  out << indent << "  angle " << sweepAngle << std::endl;
+  out << indent << "  ratio " << ratio << std::endl;
+  out << indent << "  divisions " << divisions << std::endl;
   
   transform.printTransforms(out, indent);
 
-  out << "  texsize " << texsize[0] << " " << texsize[1] << " "
-		      << texsize[2] << " " << texsize[3] << std::endl;
+  out << indent << "  texsize " << texsize[0] << " " << texsize[1] << " "
+                                << texsize[2] << " " << texsize[3]
+                                << std::endl;
 
   const char* sideNames[MaterialCount] =
     { "top", "bottom", "inside", "outside", "startside", "endside" };
   for (i = 0; i < MaterialCount; i++) {
-    out << "  " << sideNames[i] << " matref ";
+    out << indent << "  " << sideNames[i] << " matref ";
     MATERIALMGR.printReference(out, materials[i]);
     out << std::endl;
   }
 
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
   if (driver != NULL) {
-    out << "  phydrv ";
+    out << indent << "  phydrv ";
     if (driver->getName().size() > 0) {
       out << driver->getName();
     } else {
@@ -731,19 +748,19 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
   }
 
   if (smoothBounce) {
-    out << "  smoothBounce" << std::endl;
+    out << indent << "  smoothBounce" << std::endl;
   }
   if (driveThrough) {
-    out << "  driveThrough" << std::endl;
+    out << indent << "  driveThrough" << std::endl;
   }
   if (shootThrough) {
-    out << "  shootThrough" << std::endl;
+    out << indent << "  shootThrough" << std::endl;
   }
   if (!useNormals) {
-    out << "  flatshading" << std::endl;
+    out << indent << "  flatshading" << std::endl;
   }
 
-  out << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

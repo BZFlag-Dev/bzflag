@@ -16,6 +16,7 @@
 #include "Pack.h"
 #include "PyramidBuilding.h"
 #include "Intersect.h"
+#include "MeshTransform.h"
 
 const char*		PyramidBuilding::typeName = "PyramidBuilding";
 
@@ -34,6 +35,26 @@ PyramidBuilding::PyramidBuilding(const float* p, float a,
 PyramidBuilding::~PyramidBuilding()
 {
   // do nothing
+}
+
+Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
+{
+  float newPos[3], newSize[3], newAngle;
+  memcpy(newPos, pos, sizeof(float[3]));
+  memcpy(newSize, size, sizeof(float[3]));
+  newAngle = angle;
+
+  MeshTransform::Tool tool(xform);
+  tool.modifyOldStyle(newPos, newSize, newAngle);
+  
+  PyramidBuilding* copy =
+    new PyramidBuilding(newPos, newAngle, newSize[0], newSize[1], newSize[2],
+                        driveThrough, shootThrough);
+  if (getZFlip()) {
+    copy->setZFlip();
+  }
+  
+  return copy;
 }
 
 const char*		PyramidBuilding::getType() const

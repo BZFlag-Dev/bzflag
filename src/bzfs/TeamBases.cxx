@@ -104,21 +104,6 @@ const float *TeamBases::getBasePosition( int base ) const
   return teamBases[base].position;
 }
 
-void *TeamBases::pack( void *buf ) const
-{
-  for (TeamBaseList::const_iterator it = teamBases.begin(); it != teamBases.end(); ++it) {
-    buf = nboPackUShort(buf, WorldCodeBaseSize);
-    buf = nboPackUShort(buf, WorldCodeBase);
-    buf = nboPackUShort(buf, uint16_t(color));
-    buf = nboPackVector(buf, it->position);
-    buf = nboPackFloat(buf, it->rotation);
-    buf = nboPackVector(buf, it->size);
-    buf = nboPackUByte(buf, 0); // state bits
-  }
-
-  return buf;
-}
-
 float TeamBases::findBaseZ( float x, float y, float z ) const
 {
   for (TeamBaseList::const_iterator it = teamBases.begin(); it != teamBases.end(); ++it) {

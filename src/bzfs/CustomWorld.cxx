@@ -46,7 +46,7 @@ bool CustomWorld::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomWorld::write(WorldInfo*) const
+void CustomWorld::writeToWorld(WorldInfo*) const
 {
 }
 

@@ -23,6 +23,7 @@
 #include "BZDBCache.h"
 #include "Intersect.h"
 #include "Ray.h"       
+#include "ObstacleMgr.h"
 #include "Obstacle.h"
 #include "MeshObstacle.h"
 #include "BoxBuilding.h" 
@@ -146,6 +147,8 @@ void CollisionManager::clear ()
   root = NULL;
 
   WorldSize = 0.0f;
+  MaxHeight = 0.0f;
+
   leafNodes = 0;
   totalNodes = 0;
   totalElements = 0;
@@ -314,12 +317,17 @@ const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
 }
 
 
-void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
-			     std::vector<BoxBuilding*>     &boxes,
-			     std::vector<BaseBuilding*>    &bases,
-			     std::vector<PyramidBuilding*> &pyrs,
-			     std::vector<Teleporter*>      &teles)
+void CollisionManager::load ()
 {
+  unsigned int i;
+
+  // get the lists  
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
+  const ObstacleList& pyrs = OBSTACLEMGR.getPyrs();
+  const ObstacleList& bases = OBSTACLEMGR.getBases();
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  
   // clean out the cell lists
   clear();
 
@@ -330,9 +338,8 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
 
   // determine the total number of obstacles
   int fullCount = 0;
-  std::vector<MeshObstacle*>::iterator it_mesh;
-  for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
-    MeshObstacle* mesh = *it_mesh;
+  for (i = 0; i < meshes.size(); i++) {
+    MeshObstacle* mesh = (MeshObstacle*) meshes[i];
     fullCount += mesh->getFaceCount() + 1; // one for the mesh itself
   }
   fullCount += (int)(boxes.size() + bases.size() +
@@ -344,27 +351,23 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   FullList.count = 0;
 
   // add everything to the full list
-  for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
-    MeshObstacle* mesh = *it_mesh;
+  for (i = 0; i < meshes.size(); i++) {
+    MeshObstacle* mesh = (MeshObstacle*) meshes[i];
     for (int f = 0; f < mesh->getFaceCount(); f++) {
       addToFullList((Obstacle*) mesh->getFace(f));
     }
   }
-  for (std::vector<BoxBuilding*>::iterator it_box = boxes.begin();
-       it_box != boxes.end(); it_box++) {
-    addToFullList((Obstacle*) (*it_box));
+  for (i = 0; i < boxes.size(); i++) {
+    addToFullList(boxes[i]);
   }
-  for (std::vector<BaseBuilding*>::iterator it_base = bases.begin();
-       it_base != bases.end(); it_base++) {
-    addToFullList((Obstacle*) (*it_base));
+  for (i = 0; i < pyrs.size(); i++) {
+    addToFullList(pyrs[i]);
   }
-  for (std::vector<PyramidBuilding*>::iterator it_pyr = pyrs.begin();
-       it_pyr != pyrs.end(); it_pyr++) {
-    addToFullList((Obstacle*) (*it_pyr));
+  for (i = 0; i < bases.size(); i++) {
+    addToFullList(bases[i]);
   }
-  for (std::vector<Teleporter*>::iterator it_tele = teles.begin();
-       it_tele != teles.end(); it_tele++) {
-    Teleporter* tele = *it_tele;
+  for (i = 0; i < teles.size(); i++) {
+    Teleporter* tele = (Teleporter*) teles[i];
     addToFullList((Obstacle*) tele);
     addToFullList((Obstacle*) tele->getBackLink());
     addToFullList((Obstacle*) tele->getFrontLink());
@@ -373,8 +376,8 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareZlevels);
 
   // add the mesh obstacles after the sorting
-  for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
-    addToFullList((Obstacle*) (*it_mesh));
+  for (i = 0; i < meshes.size(); i++) {
+    addToFullList(meshes[i]);
   }
 
 
@@ -387,11 +390,12 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   totalNodes = 0;
   totalElements = 0;
   root->tallyStats();
-
+  
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
   for (int i = 0; i < 3; i++) {
     DEBUG2 ("  extent[%i] = %f, %f\n", i, mins[i], maxs[i]);
   }
+  DEBUG2 ("  maxHeight = %f\n", MaxHeight);
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);
   DEBUG2 ("ColDet Octree total elements = %i\n", totalElements);
@@ -439,6 +443,9 @@ void CollisionManager::setExtents (ObsList *list)
       }
     }
   }
+  
+  // set the max height
+  MaxHeight = maxs[2];
 
   // find the longest axis
   float width = -MAXFLOAT;

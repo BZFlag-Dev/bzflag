@@ -70,15 +70,6 @@ public:
   void addWall(float x, float y, float z, float r, float w, float h);
   void addLink(int from, int to);
 
-  void addBox(BoxBuilding* box);
-  void addPyramid(PyramidBuilding* pyramid);
-  void addTeleporter(Teleporter* tele);
-  void addBase(BaseBuilding* base);
-  void addMesh(MeshObstacle* mesh);
-  void addArc(ArcObstacle* arc);
-  void addCone(ConeObstacle* cone);
-  void addSphere(SphereObstacle* sphere);
-  void addTetra(TetraBuilding *tetra);
   void addZone(const CustomZone *zone);
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
   void addWeapon(const FlagType *type, const float *origin, float direction,
@@ -108,7 +99,7 @@ public:
   WorldWeapons& getWorldWeapons();
 
   void finishWorld();
-  int packDatabase(const BasesList* baseList);
+  int packDatabase();
   
 private:
 
@@ -173,20 +164,9 @@ private:
   float waterLevel;
   const BzMaterial* waterMatRef;
 
-  std::vector<WallObstacle*>	walls;
-  std::vector<MeshObstacle*>	meshes;
-  std::vector<ArcObstacle*>	arcs;
-  std::vector<ConeObstacle*>	cones;
-  std::vector<SphereObstacle*>	spheres;
-  std::vector<TetraBuilding*>	tetras;
-  std::vector<BoxBuilding*>     boxes;
-  std::vector<BaseBuilding*>	bases;
-  std::vector<PyramidBuilding*> pyramids;
-  std::vector<Teleporter*>	teleporters;
-
-  EntryZones	       entryZones;
-  WorldWeapons	 worldWeapons;
-  std::vector<int> teleportTargets;
+  EntryZones		entryZones;
+  WorldWeapons		worldWeapons;
+  std::vector<int>	teleportTargets;
 
   char *database;
   int databaseSize;

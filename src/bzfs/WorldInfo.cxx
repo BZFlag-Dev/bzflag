@@ -25,6 +25,7 @@
 #include "PhysicsDriver.h"
 #include "MeshTransform.h"
 
+#include "ObstacleMgr.h"
 #include "Obstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
@@ -43,7 +44,7 @@
 
 
 WorldInfo::WorldInfo() :
-  maxHeight(0),
+  maxHeight(0.0f),
   database(NULL)
 {
   size[0] = 400.0f;
@@ -56,165 +57,28 @@ WorldInfo::WorldInfo() :
 WorldInfo::~WorldInfo()
 {
   delete[] database;
-  unsigned int i;
-  for (i = 0; i < walls.size(); i++) {
-    delete walls[i];
-  }
-  for (i = 0; i < meshes.size(); i++) {
-    if (!meshes[i]->getIsLocal()) {
-      delete meshes[i];
-    }
-  }
-  for (i = 0; i < arcs.size(); i++) {
-    delete arcs[i];
-  }
-  for (i = 0; i < cones.size(); i++) {
-    delete cones[i];
-  }
-  for (i = 0; i < spheres.size(); i++) {
-    delete spheres[i];
-  }
-  for (i = 0; i < tetras.size(); i++) {
-    delete tetras[i];
-  }
-  for (i = 0; i < boxes.size(); i++) {
-    delete boxes[i];
-  }
-  for (i = 0; i < bases.size(); i++) {
-    delete bases[i];
-  }
-  for (i = 0; i < pyramids.size(); i++) {
-    delete pyramids[i];
-  }
-  for (i = 0; i < teleporters.size(); i++) {
-    delete teleporters[i];
-  }
+  OBSTACLEMGR.clear(); 
 }
 
 
 void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
   const float pos[3] = {x, y, z};
   WallObstacle* wall = new WallObstacle(pos, r, w, h);
-  walls.push_back (wall);
-}
-
-void WorldInfo::addBox(BoxBuilding* box)
-{
-  float mins[3], maxs[3];
-  box->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  boxes.push_back (box);
-}
-
-void WorldInfo::addPyramid(PyramidBuilding* pyr)
-{
-  float mins[3], maxs[3];
-  pyr->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  pyramids.push_back (pyr);
-}
-
-void WorldInfo::addTeleporter(Teleporter* tele)
-{
-  float mins[3], maxs[3];
-  tele->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  teleporters.push_back (tele);
-
-  // default to passthru linkage
-  int index = teleporters.size() - 1;
-  setTeleporterTarget ((index * 2) + 1, (index * 2));
-  setTeleporterTarget ((index * 2), (index * 2) + 1);
-}
-
-void WorldInfo::addBase(BaseBuilding* base)
-{
-  float mins[3], maxs[3];
-  base->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  bases.push_back (base);
+  OBSTACLEMGR.addWorldObstacle(wall);
 }
 
 void WorldInfo::addLink(int from, int to)
 {
   // discard links to/from teleporters that don't exist
   // note that -1 "to" means the client picks one at random
-  if ((unsigned(from) > teleporters.size() * 2 + 1) ||
-     ((unsigned(to) > teleporters.size() * 2 + 1) && (to != -1))) {
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  if ((unsigned(from) >= (teles.size() * 2)) ||
+     ((unsigned(to) >= (teles.size() * 2)) && (to != -1))) {
     DEBUG1("Warning: bad teleporter link dropped from=%d to=%d\n", from, to);
   } else {
     setTeleporterTarget (from, to);
   }
-}
-
-void WorldInfo::addMesh(MeshObstacle* mesh)
-{
-  float mins[3], maxs[3];
-  mesh->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  meshes.push_back(mesh);
-}
-
-void WorldInfo::addArc(ArcObstacle* arc)
-{
-  float mins[3], maxs[3];
-  arc->getMesh()->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  arcs.push_back(arc);
-  arc->getMesh()->setIsLocal(true);
-  meshes.push_back(arc->getMesh());
-}
-
-void WorldInfo::addCone(ConeObstacle* cone)
-{
-  float mins[3], maxs[3];
-  cone->getMesh()->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  cones.push_back(cone);
-  cone->getMesh()->setIsLocal(true);
-  meshes.push_back(cone->getMesh());
-}
-
-void WorldInfo::addSphere(SphereObstacle* sphere)
-{
-  float mins[3], maxs[3];
-  sphere->getMesh()->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  spheres.push_back(sphere);
-  sphere->getMesh()->setIsLocal(true);
-  meshes.push_back(sphere->getMesh());
-}
-
-void WorldInfo::addTetra(TetraBuilding* tetra)
-{
-  float mins[3], maxs[3];
-  tetra->getMesh()->getExtents(mins, maxs);
-  if (maxs[2] > maxHeight) {
-    maxHeight = maxs[2];
-  }
-  tetras.push_back(tetra);
-  tetra->getMesh()->setIsLocal(true);
-  meshes.push_back(tetra->getMesh());
 }
 
 void WorldInfo::addZone(const CustomZone *zone)
@@ -237,42 +101,34 @@ void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
 void WorldInfo::addBox(float x, float y, float z, float r,
                        float w, float d, float h, bool drive, bool shoot)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
   const float pos[3] = {x, y, z};
   BoxBuilding* box = new BoxBuilding(pos, r, w, d, h, drive, shoot, false);
-  boxes.push_back (box);
+  OBSTACLEMGR.addWorldObstacle(box);
 }
 
 void WorldInfo::addPyramid(float x, float y, float z, float r,
                            float w, float d, float h,
                            bool drive, bool shoot, bool flipZ)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
   const float pos[3] = {x, y, z};
   PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h, drive, shoot);
   if (flipZ) {
     pyr->setZFlip();
   }
-  pyramids.push_back (pyr);
+  OBSTACLEMGR.addWorldObstacle(pyr);
 }
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r,
                               float w, float d, float h, float b,
                               bool horizontal, bool drive, bool shoot)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
   const float pos[3] = {x, y, z};
   Teleporter* tele = new Teleporter(pos, r, w, d, h, b, horizontal, drive, shoot);
-  teleporters.push_back (tele);
+  OBSTACLEMGR.addWorldObstacle(tele);
 
   // default to passthru linkage
-  int index = teleporters.size() - 1;
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  int index = teles.size() - 1;
   setTeleporterTarget ((index * 2) + 1, (index * 2));
   setTeleporterTarget ((index * 2), (index * 2) + 1);
 }
@@ -281,13 +137,11 @@ void WorldInfo::addBase(float x, float y, float z, float r,
 			float w, float d, float h, int color,
 			bool /* drive */, bool /* shoot */)
 {
-  if ((z + h) > maxHeight)
-    maxHeight = z+h;
-
   const float pos[3] = {x, y, z};
   const float size[3] = {w, d, h};
   BaseBuilding* base = new BaseBuilding(pos, r, size, color);
-  bases.push_back (base);
+  OBSTACLEMGR.addWorldObstacle(base);
+  //bases.push_back (base);
 }
 
 
@@ -327,8 +181,9 @@ float WorldInfo::getMaxWorldHeight() const
 
 void WorldInfo::setTeleporterTarget(int src, int tgt)
 {
-  if ((int)teleportTargets.size() < src+1)
-    teleportTargets.resize(((src/2)+1)*2);
+  if ((int)teleportTargets.size() < (src + 1)) {
+    teleportTargets.resize(((src / 2) + 1) * 2);
+  }
 
   // record target in source entry
   teleportTargets[src] = tgt;
@@ -341,7 +196,7 @@ WorldWeapons& WorldInfo::getWorldWeapons()
 
 void		    WorldInfo::loadCollisionManager()
 {
-  COLLISIONMGR.load(meshes, boxes, bases, pyramids, teleporters);
+  COLLISIONMGR.load();
   return;
 }
 
@@ -349,7 +204,7 @@ void		    WorldInfo::checkCollisionManager()
 {
   if (COLLISIONMGR.needReload()) {
     // reload the collision grid
-    COLLISIONMGR.load(meshes, boxes, bases, pyramids, teleporters);
+    COLLISIONMGR.load();
   }
   return;
 }
@@ -413,61 +268,18 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
 
   float pos[3] = {x, y, z};
 
-  for (std::vector<BaseBuilding*>::const_iterator base_it = bases.begin();
-       base_it != bases.end(); ++base_it) {
-    BaseBuilding* base = *base_it;
-    if (base->inCylinder(pos, radius, height)) {
-      if (location != NULL) {
-	*location = base;
-      }
-      return IN_BASE;
-    }
-  }
-  for (std::vector<BoxBuilding*>::const_iterator box_it = boxes.begin();
-       box_it != boxes.end(); ++box_it) {
-    BoxBuilding* box = *box_it;
-    if (box->inCylinder(pos, radius, height)) {
-      if (location != NULL) {
-	*location = box;
-      }
-      if (box->isDriveThrough()) {
-	return IN_BOX_DRIVETHROUGH;
-      }
-      else {
-	return IN_BOX_NOTDRIVETHROUGH;
+  for (int type = 0; type < GroupDefinition::ObstacleTypeCount; type++) {
+    const ObstacleList& list = OBSTACLEMGR.getWorld()->getList(type);
+    for (unsigned int i = 0; i < list.size(); i++) {
+      Obstacle* obs = list[i];
+      if (obs->inCylinder(pos, radius, height)) {
+        if (location != NULL) {
+          *location = obs;
+        }
+        return classifyHit(obs);
       }
     }
-  }
-  for (std::vector<PyramidBuilding*>::const_iterator pyr_it = pyramids.begin();
-       pyr_it != pyramids.end(); ++pyr_it) {
-    PyramidBuilding* pyr = *pyr_it;
-    if (pyr->inCylinder(pos, radius, height)) {
-      if (location != NULL) {
-	*location = pyr;
-      }
-      return IN_PYRAMID;
-    }
-  }
-  for (std::vector<TetraBuilding*>::const_iterator tetra_it = tetras.begin();
-       tetra_it != tetras.end(); ++tetra_it) {
-    TetraBuilding* tetra = *tetra_it;
-    if (tetra->inCylinder(pos, radius, height)) {
-      if (location != NULL) {
-	*location = tetra;
-      }
-      return IN_TETRA;
-    }
-  }
-  for (std::vector<Teleporter*>::const_iterator tele_it = teleporters.begin();
-       tele_it != teleporters.end(); ++tele_it) {
-    Teleporter* tele = *tele_it;
-    if (tele->inCylinder(pos, radius, height)) {
-      if (location != NULL) {
-	*location = tele;
-      }
-      return IN_TELEPORTER;
-    }
-  }
+  }  
 
   if (location != NULL) {
     *location = (Obstacle *)NULL;
@@ -500,6 +312,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
   return classifyHit (*location);
 }
 
+
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 					     float x, float y, float z, float radius,
 					     float height) const
@@ -507,6 +320,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
   const float pos[3] = {x, y, z};
   return cylinderInBuilding (location, pos, radius, height);
 }
+
 
 InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
 					const float* pos, float angle,
@@ -531,6 +345,7 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
 
   return classifyHit (*location);
 }
+
 
 InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 {
@@ -570,6 +385,7 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
   }
 }
 
+
 bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt) const
 {
   const Obstacle* loc;
@@ -585,6 +401,7 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt) const
     pt[2] = loc->getPosition()[2] + loc->getSize()[2];
   return true;
 }
+
 
 bool WorldInfo::getSafetyPoint(const std::string &qualifier,
 			       const float *pos, float *pt) const
@@ -603,14 +420,31 @@ bool WorldInfo::getSafetyPoint(const std::string &qualifier,
   return true;
 }
 
+
 void WorldInfo::finishWorld()
 {
   entryZones.calculateQualifierLists();
+  
   loadCollisionManager();
+  
+  maxHeight = COLLISIONMGR.getMaxWorldHeight();
+  const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+  if (maxHeight < wallHeight) {
+    maxHeight = wallHeight;
+  }
+  if (maxHeight < 0.0f) {
+    maxHeight = 0.0f;
+  }
+  
+  return;
 }
 
-int WorldInfo::packDatabase(const BasesList* baseList)
+
+int WorldInfo::packDatabase()
 {
+  unsigned int i;
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  
   // make default water material. we wait to make the default material
   // to avoid messing up any user indexing. this has to be done before
   // the texture matrices and materials are packed.
@@ -618,185 +452,68 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     makeWaterMaterial();
   }
 
-  std::vector<TetraBuilding*>::iterator tetra_it;
-  std::vector<MeshObstacle*>::iterator mesh_it;
-  int numBases = 0;
-  BasesList::const_iterator base_it;
-  if (baseList != NULL) {
-    for (base_it = baseList->begin(); base_it != baseList->end(); ++base_it) {
-      numBases += base_it->second.size();
-    }
-  }
-
+  // compute the database size
   databaseSize =
-    (2 + 2 + WorldCodeBaseSize) * numBases +
-    (2 + 2 + WorldCodeWallSize) * walls.size() +
-    (2 + 2 + WorldCodeBoxSize) * boxes.size() +
-    (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
-    (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
-    (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
-    worldWeapons.packSize() + entryZones.packSize() +
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
-    MATERIALMGR.packSize() + PHYDRVMGR.packSize() + TRANSFORMMGR.packSize();
+    MATERIALMGR.packSize() + PHYDRVMGR.packSize() + 
+    TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() +
+    worldWeapons.packSize() + entryZones.packSize() +
+    (sizeof(uint32_t) + (WorldCodeLinkSize * 2 * teles.size()));
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
     databaseSize += sizeof(int);
   }
-  unsigned int i;
-  // arc sizes are variable
-  for (i = 0; i < arcs.size(); i++) {
-    ArcObstacle* arc = arcs[i];
-    databaseSize = databaseSize + (2 + 2) + arc->packSize();
-  }
-  // cone sizes are variable
-  for (i = 0; i < cones.size(); i++) {
-    ConeObstacle* cone = cones[i];
-    databaseSize = databaseSize + (2 + 2) + cone->packSize();
-  }
-  // sphere sizes are variable
-  for (i = 0; i < spheres.size(); i++) {
-    SphereObstacle* sphere = spheres[i];
-    databaseSize = databaseSize + (2 + 2) + sphere->packSize();
-  }
-  // tetra sizes are variable
-  for (i = 0; i < tetras.size(); i++) {
-    TetraBuilding* tetra = tetras[i];
-    databaseSize = databaseSize + (2 + 2) + tetra->packSize();
-  }
-  // mesh sizes are variable
-  for (i = 0; i < meshes.size(); i++) {
-    MeshObstacle* mesh = meshes[i];
-    if (!mesh->getIsLocal()) {
-      databaseSize += (2 + 2) + mesh->packSize();
-    }
-  }
 
+
+  // allocate the buffer
   database = new char[databaseSize];
   void *databasePtr = database;
+  
 
-  // add dynamic colors
+  // pack dynamic colors
   databasePtr = DYNCOLORMGR.pack(databasePtr);
 
-  // add texture matrices
+  // pack texture matrices
   databasePtr = TEXMATRIXMGR.pack(databasePtr);
 
-  // add materials
+  // pack materials
   databasePtr = MATERIALMGR.pack(databasePtr);
 
-  // add physics drivers
+  // pack physics drivers
   databasePtr = PHYDRVMGR.pack(databasePtr);
 
-  // add obstacle transforms
+  // pack obstacle transforms
   databasePtr = TRANSFORMMGR.pack(databasePtr);
 
-  // add water level
+  // pack obstacles
+  databasePtr = OBSTACLEMGR.pack(databasePtr);
+
+  // pack water level
   databasePtr = nboPackFloat(databasePtr, waterLevel);
   if (waterLevel >= 0.0f) {
     int matindex = MATERIALMGR.getIndex(waterMatRef);
     databasePtr = nboPackInt(databasePtr, matindex);
   }
 
-  // add meshes
-  for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
-    MeshObstacle &mesh = **mesh_it;
-    if (!mesh.getIsLocal()) {
-      databasePtr = nboPackUShort(databasePtr, WorldCodeMeshSize); // dummy
-      databasePtr = nboPackUShort(databasePtr, WorldCodeMesh);
-      databasePtr = mesh.pack(databasePtr);
-    }
-  }
+  // pack weapons
+  databasePtr = worldWeapons.pack(databasePtr);
 
-  // add arcs
-  for (std::vector<ArcObstacle*>::iterator arc_it = arcs.begin();
-       arc_it != arcs.end(); ++arc_it) {
-    ArcObstacle& arc = **arc_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodeArcSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeArc);
-    databasePtr = arc.pack(databasePtr);
-  }
-
-  // add cones
-  for (std::vector<ConeObstacle*>::iterator cone_it = cones.begin();
-       cone_it != cones.end(); ++cone_it) {
-    ConeObstacle& cone = **cone_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodeConeSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeCone);
-    databasePtr = cone.pack(databasePtr);
-  }
-
-  // add spheres
-  for (std::vector<SphereObstacle*>::iterator sphere_it = spheres.begin();
-       sphere_it != spheres.end(); ++sphere_it) {
-    SphereObstacle& sphere = **sphere_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodeSphereSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeSphere);
-    databasePtr = sphere.pack(databasePtr);
-  }
-
-  // add tetras
-  for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
-    TetraBuilding& tetra = **tetra_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodeTetraSize); // dummy
-    databasePtr = nboPackUShort(databasePtr, WorldCodeTetra);
-    databasePtr = tetra.pack(databasePtr);
-  }
-
-  // add bases
-  if (baseList != NULL) {
-    for (base_it = baseList->begin(); base_it != baseList->end(); ++base_it) {
-      databasePtr = base_it->second.pack(databasePtr);
-    }
-  }
-
-  // add walls
-  for (std::vector<WallObstacle*>::iterator wall_it = walls.begin();
-       wall_it != walls.end(); ++wall_it) {
-    WallObstacle& wall = **wall_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodeWallSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-    databasePtr = wall.pack(databasePtr);
-  }
-
-  // add boxes
-  for (std::vector<BoxBuilding*>::iterator box_it = boxes.begin();
-       box_it != boxes.end(); ++box_it) {
-    BoxBuilding& box = **box_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodeBoxSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-    databasePtr = box.pack(databasePtr);
-  }
-
-  // add pyramids
-  for (std::vector<PyramidBuilding*>::iterator pyr_it = pyramids.begin();
-       pyr_it != pyramids.end(); ++pyr_it) {
-    PyramidBuilding& pyr = **pyr_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodePyramidSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-    databasePtr = pyr.pack(databasePtr);
-  }
-
-  // add teleporters
-  for (std::vector<Teleporter*>::iterator tele_it = teleporters.begin();
-       tele_it != teleporters.end(); ++tele_it, i++) {
-    Teleporter& tele = **tele_it;
-    databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporterSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-    databasePtr = tele.pack(databasePtr);
-
-    // and each link
-    databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
+  // pack entry zones
+  databasePtr = entryZones.pack(databasePtr);
+  
+  // pack teleporter links
+  uint32_t linkCount = 2 * teles.size();
+  databasePtr = nboPackUInt(databasePtr, linkCount);
+  for (i = 0; i < teles.size(); i++) {
+    // pack even link
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
     databasePtr = nboPackUShort(databasePtr, uint16_t(teleportTargets[i * 2]));
-    databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
+    // pack odd link
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
     databasePtr = nboPackUShort(databasePtr, uint16_t(teleportTargets[i * 2 + 1]));
   }
 
-  databasePtr = worldWeapons.pack (databasePtr);
-  databasePtr = entryZones.pack (databasePtr);
 
   // compress the map database
   uLongf gzDBlen = databaseSize + (databaseSize/512) + 12;

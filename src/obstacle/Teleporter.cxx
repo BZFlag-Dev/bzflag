@@ -16,6 +16,7 @@
 #include "Pack.h"
 #include "Teleporter.h"
 #include "Intersect.h"
+#include "MeshTransform.h"
 
 
 const char* Teleporter::typeName = "Teleporter";
@@ -47,6 +48,22 @@ Teleporter::~Teleporter()
   return;
 }
 
+
+Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
+{
+  float newPos[3], newSize[3], newAngle;
+  memcpy(newPos, pos, sizeof(float[3]));
+  memcpy(newSize, origSize, sizeof(float[3]));
+  newAngle = angle;
+
+  MeshTransform::Tool tool(xform);
+  tool.modifyOldStyle(newPos, newSize, newAngle);
+  
+  Teleporter* copy =
+    new Teleporter(newPos, newAngle, newSize[0], newSize[1], newSize[2],
+                   border, horizontal, driveThrough, shootThrough);
+  return copy;
+}
 
 void Teleporter::finalize()
 {

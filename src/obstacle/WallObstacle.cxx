@@ -155,9 +155,8 @@ int WallObstacle::packSize() const
   int fullSize = 0;
   fullSize += sizeof(float[3]); // pos
   fullSize += sizeof(float);    // rotation
-  fullSize += sizeof(float);   // breadth
-  fullSize += sizeof(float);   // height
-  fullSize += sizeof(uint8_t);  // state bits
+  fullSize += sizeof(float);	// breadth
+  fullSize += sizeof(float);	// height
   return fullSize;
 }
 

@@ -34,12 +34,12 @@ class MeshFace : public Obstacle {
 
   public:
     MeshFace(class MeshObstacle* mesh);
-    MeshFace(MeshObstacle* _mesh, int _vertexCount,
-	     float** _vertices, float** _normals, float** _texcoords,
-	     const BzMaterial* _bzMaterial, int physics,
+    MeshFace(MeshObstacle* mesh, int vertexCount,
+	     float** vertices, float** normals, float** texcoords,
+	     const BzMaterial* material, int physics,
 	     bool noclusters, bool smoothBounce, bool drive, bool shoot);
     ~MeshFace();
-
+    
     const char* getType() const;
     static const char* getClassName(); // const
     bool isValid() const;
@@ -76,6 +76,7 @@ class MeshFace : public Obstacle {
     const BzMaterial* getMaterial() const;
     int getPhysicsDriver() const;
     bool noClusters() const;
+    bool isSmoothBounce() const;
 
     bool isSpecial() const;
     bool isBaseFace() const;
@@ -135,8 +136,8 @@ class MeshFace : public Obstacle {
     enum {
       LinkToFace      = (1 << 0),
       LinkFromFace    = (1 << 1),
-      BaseFace	= (1 << 2),
-      IcyFace	 = (1 << 3),
+      BaseFace	      = (1 << 2),
+      IcyFace         = (1 << 3),
       StickyFace      = (1 << 5),
       DeathFace       = (1 << 6),
       PortalFace      = (1 << 7)
@@ -215,6 +216,11 @@ inline bool MeshFace::useTexcoords() const
 inline bool MeshFace::noClusters() const
 {
   return noclusters;
+}
+
+inline bool MeshFace::isSmoothBounce() const
+{
+  return smoothBounce;
 }
 
 inline bool MeshFace::isSpecial() const

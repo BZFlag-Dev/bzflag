@@ -26,6 +26,7 @@
 #include "Team.h"
 #include "WallObstacle.h"
 #include "BZDBCache.h"
+#include "ObstacleMgr.h"
 
 /* local implementation headers */
 #include "sound.h"
@@ -406,13 +407,13 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       if (target == randomTeleporter) {
 	unsigned int tmp = path.getShotId() + i;
 	tmp = (tmp * 1103515245 + 12345) >> 8; // from POSIX rand() example
-	tmp = tmp % (2 * World::getWorld()->getTeleporters().size());
+	tmp = tmp % (2 * OBSTACLEMGR.getTeles().size());
 	target = tmp;
       }
 
       int outFace;
       const Teleporter* outTeleporter =
-		    World::getWorld()->getTeleporter(target, outFace);
+		          World::getWorld()->getTeleporter(target, outFace);
       o[0] += t * d[0];
       o[1] += t * d[1];
       o[2] += t * d[2];
