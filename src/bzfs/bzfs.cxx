@@ -4035,6 +4035,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	buf = nboUnpackUByte(buf, from);
 	buf = nboUnpackUByte(buf, to);
 
+	if (to == ServerPlayer) {
+	  zapFlag (player[from].flag);
+	  return;
+	}
+
 	// Sanity check
 	if (from >= curMaxPlayers)
 	  return;
