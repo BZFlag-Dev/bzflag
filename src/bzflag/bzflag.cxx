@@ -1000,9 +1000,9 @@ int			main(int argc, char** argv)
   // get email address if not anonymous
   std::string email;
   if (!anonymous) {
-    if (db.hasValue("email"))
-      email = db.getValue("email");
-    else {
+    if (BZDB->isSet("email")) {
+      email = BZDB->get("email");
+    } else {
       email = anonymousName;
       const char* hostname = Address::getHostName();
 #if defined(_WIN32)
