@@ -137,6 +137,7 @@ void handleGameoverCmd(int t, const char *)
 void handleCountdownCmd(int t, const char *)
 {
 #ifdef TIMELIMIT
+  int i, j;
   // /countdown starts timed game, if start is manual, everyone is allowed to
   char reply[MessageLen] = {0};
   if (clOptions->timeLimit > 0.0f) {
@@ -150,7 +151,7 @@ void handleCountdownCmd(int t, const char *)
     broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
   }
   // reset team scores
-  for (int i=RedTeam;i<=PurpleTeam;i++) {
+  for (i=RedTeam;i<=PurpleTeam;i++) {
     team[i].team.lost = team[i].team.won=0;
   }
   sendTeamUpdate();
@@ -161,7 +162,6 @@ void handleCountdownCmd(int t, const char *)
   // CTF game -> simulate flag captures to return ppl to base
   if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
     // get someone to can do virtual capture
-    int j;
     for (j=0;j<curMaxPlayers;j++) {
       if (player[j].state > PlayerInLimbo)
 	break;
@@ -180,7 +180,7 @@ void handleCountdownCmd(int t, const char *)
     }
   }
   // reset all flags
-  for (int i = 0; i < numFlags; i++)
+  for (i = 0; i < numFlags; i++)
     zapFlag(i);
 #endif
   return;
