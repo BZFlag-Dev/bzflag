@@ -3676,7 +3676,7 @@ void			ServerMenu::playingCB(void* _self)
 // ServerStartMenu
 //
 
-char			ServerStartMenu::settings[] = "bfaaaaabaaacaa";
+char			ServerStartMenu::settings[] = "bfaaaaabaaaaa";
 
 ServerStartMenu::ServerStartMenu()
 {
@@ -3781,18 +3781,6 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
-  list = createList("Server Visibility:");
-  items = &list->getList();
-  items->push_back("local host only (ttl=0)");
-  items->push_back("subnet only (ttl=1)");
-  items->push_back("local area (ttl=8)");
-  items->push_back("site (ttl=32)");
-  items->push_back("organization (ttl=64)");
-  items->push_back("continent (ttl=128)");
-  items->push_back("world (ttl=255)");
-  list->update();
-  controls.push_back(list);
-
   list = createList("Game Over:");
   items = &list->getList();
   items->push_back("never");
@@ -3835,11 +3823,10 @@ ServerStartMenu::ServerStartMenu()
 void			ServerStartMenu::setSettings(const char* _settings)
 {
   // FIXME -- temporary to automatically upgrade old configurations
-  if (strlen(_settings) == 13) {
+  if (strlen(_settings) == 14) {
     strcpy(settings, _settings);
-    settings[14] = settings[13];
-    settings[13] = settings[12];
-    settings[12] = 'a';
+    settings[12] = settings[13];
+    settings[13] = settings[14];
     return;
   }
 
@@ -3874,7 +3861,7 @@ void			ServerStartMenu::execute()
 
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
-  if (focus == list[15]) {
+  if (focus == list[14]) {
     // start it up:
     //   without: -p, -i, -q, -a, +f, -synctime
     //   -b if -c
@@ -3970,11 +3957,6 @@ void			ServerStartMenu::execute()
       args[arg++] = shakingWins[((HUDuiList*)list[11])->getIndex()];
     }
 
-    // server visibility
-    static const char* serverTTL[] = { "0", "1", "8", "32", "64", "128", "255" };
-    args[arg++] = "-ttl";
-    args[arg++] = serverTTL[((HUDuiList*)list[12])->getIndex()];
-
     // game over
     static const char* gameOverArg[] = { "",
 				"-time", "-time", "-time", "-time",
@@ -3984,13 +3966,13 @@ void			ServerStartMenu::execute()
 				"300", "900", "3600", "10800",
 				"3", "10", "25",
 				"3", "10", "25", "100" };
-    if (((HUDuiList*)list[13])->getIndex() != 0) {
-      args[arg++] = gameOverArg[((HUDuiList*)list[13])->getIndex()];
-      args[arg++] = gameOverValue[((HUDuiList*)list[13])->getIndex()];
+    if (((HUDuiList*)list[12])->getIndex() != 0) {
+      args[arg++] = gameOverArg[((HUDuiList*)list[12])->getIndex()];
+      args[arg++] = gameOverValue[((HUDuiList*)list[12])->getIndex()];
     }
 
     // server reset
-    if (((HUDuiList*)list[14])->getIndex() == 0)
+    if (((HUDuiList*)list[13])->getIndex() == 0)
       args[arg++] = "-g";
 
     // no more arguments
