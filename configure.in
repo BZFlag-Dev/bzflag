@@ -418,13 +418,10 @@ case $host_os in
 esac
 
 if test x$enable_debug = xyes; then
-   CFLAGS="$CFLAGS -g";
-   CXXFLAGS="$CXXFLAGS -g";
+   CFLAGS="$CFLAGS -g -O";
+   CXXFLAGS="$CXXFLAGS -g -O";
    case $host_os in
      linux-gnu|cygwin|mingw32)
-	# Adding Optimization compatible with debugging
-	CFLAGS="$CFLAGS -O";
-	CXXFLAGS="$CXXFLAGS -O";
 	CPPFLAGS="$CPPFLAGS -Werror";
 	CXXFLAGS="$CXXFLAGS -Wno-deprecated";
 	if test x$enable_profiling = xyes; then
