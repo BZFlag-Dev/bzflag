@@ -6,6 +6,11 @@ recent bugs
 - SDL/X11 crashes on at least one configuration (Debian, MGA) when changing
   resolution or switching from fullscreen to window; this used to work in
   earlier 1.11 versions
+  This error goes away when the call to OpenGLGState::initContext() is removed
+  from MainWindow::resize(). SDL normally onyl creates the context once, so
+  it seems a context recreaton with SDL/X11 can cause a crash.
+  According to CVS commit comments by brlcad, the lien was introduced to fix
+  some resize problems on Macintosh.
 
 - sometimes players will recieve the message "So-and-so destroyed by server"
   instead of "So-and-so killed by such-and-such".  Appears to depend on
