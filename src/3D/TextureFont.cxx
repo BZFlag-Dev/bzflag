@@ -255,16 +255,9 @@ float TextureFont::getStrLength(float scale, const char *str, int len)
     charToUse -= 32;
 
     if (charToUse == 0) {
-      if (i == 0) {
-	totalLen += fontMetrics[charToUse].initialDist +
-		    fontMetrics[charToUse].charWidth +
-		    fontMetrics[charToUse].whiteSpaceDist;
-      } else {
-	totalLen += fontMetrics[lastCharacter].whiteSpaceDist +
-		    fontMetrics[charToUse].whiteSpaceDist +
-		    fontMetrics[charToUse].initialDist +
-		    fontMetrics[charToUse].charWidth;
-      }
+      totalLen += fontMetrics[charToUse].initialDist +
+		  fontMetrics[charToUse].charWidth +
+		  fontMetrics[charToUse].whiteSpaceDist;
     } else {
       totalLen += fontMetrics[charToUse].endX -
 		  fontMetrics[charToUse].startX +
@@ -321,16 +314,9 @@ void TextureFont::drawString(float scale, GLfloat color[3], const char *str,
     charToUse -= space;
 
     if (charToUse == 0) {
-      if (i == 0) {
-	glTranslatef((float)fontMetrics[charToUse].initialDist +
-		     (float)fontMetrics[charToUse].charWidth +
-		     (float)fontMetrics[charToUse].whiteSpaceDist, 0.0f, 0.0f);
-      } else {
-	glTranslatef((float)fontMetrics[lastCharacter].whiteSpaceDist +
-		     (float)fontMetrics[charToUse].whiteSpaceDist +
-		     (float)fontMetrics[charToUse].initialDist +
-		     (float)fontMetrics[charToUse].charWidth, 0.0f, 0.0f);
-      }
+      glTranslatef((float)fontMetrics[charToUse].initialDist +
+		   (float)fontMetrics[charToUse].charWidth +
+		   (float)fontMetrics[charToUse].whiteSpaceDist, 0.0f, 0.0f);
     } else {
       glCallList(listIDs[charToUse]);
     }
