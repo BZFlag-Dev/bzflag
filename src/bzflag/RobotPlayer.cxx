@@ -33,7 +33,8 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 				target(NULL),
 				pathIndex(0),
 				timeSinceShot(0.0f),
-				timerForShot(0.0f)
+				timerForShot(0.0f),
+				drivingForward(true)
 {
   gettingSound = false;
   server       = _server;
@@ -95,7 +96,8 @@ void			RobotPlayer::doUpdateMotion(float dt)
       v[1] = endPoint[1] - position[1];
       distance = hypotf(v[0], v[1]);
       float tankRadius = BZDBCache::tankRadius;
-      if (distance <= tankRadius)
+      // smooth path a little by turning early at corners, might get us stuck, though
+      if (distance <= 2.5f * tankRadius)
 	pathIndex++;
 
       float segmentAzimuth = atan2f(v[1], v[0]);
@@ -103,8 +105,12 @@ void			RobotPlayer::doUpdateMotion(float dt)
       if (azimuthDiff > M_PI) azimuthDiff -= 2.0f * M_PI;
       else if (azimuthDiff < -M_PI) azimuthDiff += 2.0f * M_PI;
       if (fabs(azimuthDiff) > 0.01f) {
-	// tank doesn't move forward while turning
-	setDesiredSpeed(0.0f);
+	// drive backward when target is behind, try to stick to last direction
+	if (drivingForward)
+	  drivingForward = fabs(azimuthDiff) < M_PI/2*0.9 ? true : false;
+	else
+	  drivingForward = fabs(azimuthDiff) < M_PI/2*0.3 ? true : false;
+	setDesiredSpeed(drivingForward ? 1.0f : -1.0f);
 	// set desired turn speed
 	if (azimuthDiff >= dt * tankAngVel) {
 	  setDesiredAngVel(1.0f);
@@ -114,6 +120,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
 	  setDesiredAngVel(azimuthDiff / dt / tankAngVel);
 	}
       } else {
+	drivingForward = true;
 	// tank doesn't turn while moving forward
 	setDesiredAngVel(0.0f);
 	// find how long it will take to get to next path segment
