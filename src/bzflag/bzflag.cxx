@@ -97,6 +97,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "bigfont",			"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "underline",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	setDepthBuffer },
   { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },

@@ -136,7 +136,7 @@ struct CmdLineOptions
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
   {
     int i;
-    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); 
+    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin();
 	 it != FlagDesc::getFlagMap().end(); ++it) {
 	flagCount[it->second] = 0;
 	flagLimit[it->second] = -1;
@@ -2481,7 +2481,7 @@ static bool defineWorld()
 
   worldDatabase = new char[worldDatabaseSize];
   if(!worldDatabase)		// this should NOT happen but it does sometimes
-	  return false;
+    return false;
   memset( worldDatabase, 0, worldDatabaseSize );
 
   void *buf = worldDatabase;

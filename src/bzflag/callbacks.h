@@ -12,5 +12,6 @@
 #include "StateDatabase.h"
 
 void setFlagHelp(const std::string& name, void*);
+void setDepthBuffer(const std::string& name, void*);
 
 // ex: shiftwidth=2 tabstop=8

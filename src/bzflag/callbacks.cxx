@@ -28,4 +28,19 @@ void setFlagHelp(const std::string& name, void*)
     hud->setFlagHelp(Flags::Null, 0.0);
 }
 
+void setDepthBuffer(const std::string& name, void*)
+{
+  if (BZDB->isTrue(name)) {
+    GLint value;
+    glGetIntegerv(GL_DEPTH_BITS, &value);
+    if (value == 0) {
+      // temporarily remove ourself
+      BZDB->removeCallback(name, setDepthBuffer, NULL);
+      BZDB->set(name, "0");
+      // add it again
+      BZDB->addCallback(name, setDepthBuffer, NULL);
+    }
+  }
+  std::cout << "depth buffer callback!\n";
+}
 // ex: shiftwidth=2 tabstop=8

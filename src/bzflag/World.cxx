@@ -598,7 +598,7 @@ void*			WorldBuilder::unpack(void* buf)
   buf = nboUnpackUShort(buf, serverMapVersion);
   if (serverMapVersion != mapVersion)
 	  return NULL;
-  
+
   buf = nboUnpackFloat(buf, WorldSize);
   buf = nboUnpackUShort(buf, gameStyle);
   setGameStyle(short(gameStyle));
@@ -610,7 +610,7 @@ void*			WorldBuilder::unpack(void* buf)
   setMaxFlags(int(maxFlags));
   buf = nboUnpackFloat(buf, world->linearAcceleration);
   buf = nboUnpackFloat(buf, world->angularAcceleration);
-  uint16_t shakeTimeout, shakeWins;
+  uint16_t shakeTimeout = 0, shakeWins;
   buf = nboUnpackUShort(buf, shakeTimeout);
   setShakeTimeout(0.1f * float(shakeTimeout));
   buf = nboUnpackUShort(buf, shakeWins);
