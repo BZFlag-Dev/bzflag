@@ -25,6 +25,8 @@ recent bugs
   'Killed by World Weapon (Rogue)'
   (Chestal) Easy to reproduce on ducati 59155. Just get shot by the single
   world weapon there.
+  Update: big HUD message says 'world weapon', but message area almost
+  always says 'unknown'.
 
 - Spawn code sometimes spawns you mid-air
 
