@@ -1,4 +1,4 @@
-SUBDIRS = English.lproj BZFlag.xcode
+SUBDIRS = English.lproj
 
 libMac_a_SOURCES =			\
 	MacPlatformFactory.cxx		\
