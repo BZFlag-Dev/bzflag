@@ -25,6 +25,7 @@
 #include "FileManager.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
+#include "FlagSceneNode.h"
 
 
 //

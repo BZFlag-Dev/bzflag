@@ -25,6 +25,7 @@
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "MeshMaterial.h"
+#include "FlagSceneNode.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"

@@ -20,6 +20,7 @@
 #include "CommandManager.h"
 #include "WallObstacle.h"
 #include "BZDBCache.h"
+#include "FlagSceneNode.h"
 
 /* local implementation headers */
 #include "World.h"

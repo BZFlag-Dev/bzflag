@@ -22,13 +22,13 @@
 /* common interface headers */
 #include "Obstacle.h"
 #include "TimeKeeper.h"
-#include "FlagSceneNode.h"
 #include "BzfEvent.h"
 
 /* local interface headers */
 #include "Player.h"
 #include "ServerLink.h"
 
+class FlagSceneNode;
 
 class LocalPlayer : public BaseLocalPlayer {
 public:

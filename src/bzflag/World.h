@@ -32,7 +32,6 @@
 #include "FlagWarpSceneNode.h"
 #include "Obstacle.h"
 #include "BundleMgr.h"
-#include "FlagSceneNode.h"
 #include "MeshMaterial.h"
 
 /* local interface headers */
@@ -42,6 +41,7 @@
 #include "EntryZone.h"
 #include "CollisionManager.h"
 
+class FlagSceneNode;
 
 /**
  * World:
