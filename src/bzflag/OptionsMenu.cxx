@@ -185,7 +185,7 @@ void OptionsMenu::resize(int width, int height)
 
   // load current settings
   {
-    int i = 1;
+    int i = 6;
 
     const StartupInfo* info = getStartupInfo();
 
