@@ -30,6 +30,10 @@
 #include "StartupInfo.h"
 #include "HUDDialogStack.h"
 
+#if !defined(_WIN32)
+#include <errno.h>
+#endif
+
 /* from playing.h */
 StartupInfo* getStartupInfo();
 typedef void (*PlayingCallback)(void*);
