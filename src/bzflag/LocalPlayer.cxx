@@ -320,6 +320,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   target(NULL),
   nemesis(NULL),
   recipient(NULL),
+  stuckingFrameCount(0),
   spawning(false)
 {
   // initialize shots array to no shots fired
@@ -553,7 +554,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // try to see if we are stuck on a building
   obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
 			    expelled);
-  if (obstacle && expelled) {
+  if (obstacle && expelled)
+    stuckingFrameCount++;
+  else
+    stuckingFrameCount = 0;
+
+  if (stuckingFrameCount > 100) {
+    stuckingFrameCount = 0;
     // we are using a maximum value on time for frame to avoid lagging problem
     setDesiredSpeed(0.25f);
     float deltaTime = dt > 0.1f ? 0.1f : dt;

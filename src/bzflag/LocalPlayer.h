@@ -169,6 +169,7 @@ private:
   float		keyboardAngVel;
   int		keyButton;
   bool		keyPressed;
+  int           stuckingFrameCount;
   bool		spawning;
 };
 
