@@ -907,25 +907,6 @@ const RenderNodeList&	SceneRenderer::getShadowList() const
   return shadowList;
 }
 
-void			SceneRenderer::addRenderNode(
-				RenderNode* node, const OpenGLGState* gstate)
-{
-  if (inOrder || gstate->isBlended()) {
-    // nodes will be drawn in the same order received
-    orderedList.append(node, gstate);
-  }
-
-  else {
-    // store node in gstate bucket
-    gstate->addRenderNode(node);
-  }
-}
-
-void			SceneRenderer::addShadowNode(RenderNode* node)
-{
-  shadowList.append(node);
-}
-
 void			SceneRenderer::doRender()
 {
   // NOTE -- this should go into a separate thread
