@@ -2155,7 +2155,7 @@ class ServerMenu : public HUDDialog {
     void		readServerList(int index);
     void		addToList(ServerItem&);
     void		addToListWithLookup(ServerItem&);
-    void		setStatus(const char*);
+    void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
     void		pick();
     int			getPlayerCount(int index) const;
     static void		playingCB(void*);
@@ -2394,8 +2394,13 @@ void			ServerMenu::pick()
     ((HUDuiLabel*)list[6])->setString("");
   }
 
-  sprintf(buf, "%d Shot%s", ping.maxShots, ping.maxShots == 1 ? "" : "s");
-  ((HUDuiLabel*)list[7])->setString(buf);
+
+  std::vector<std::string> args;
+  sprintf(buf, "%d", ping.maxShots);
+  args.push_back(buf);
+  args.push_back(ping.maxShots == 1 ? "" : "s");
+
+  ((HUDuiLabel*)list[7])->setString("{1} Shot{2}", &args );
 
   if (ping.gameStyle & TeamFlagGameStyle)
     ((HUDuiLabel*)list[8])->setString("Capture-the-Flag");
@@ -2413,16 +2418,21 @@ void			ServerMenu::pick()
     ((HUDuiLabel*)list[10])->setString("");
 
   if ((ping.gameStyle & ShakableGameStyle) && ping.shakeTimeout != 0) {
-    sprintf(buf, "%.1fsec To Drop Bad Flag", 0.1f * float(ping.shakeTimeout));
-    ((HUDuiLabel*)list[11])->setString(buf);
+    std::vector<std::string> args;
+    sprintf(buf, "%.1f", 0.1f * float(ping.shakeTimeout));
+    args.push_back(buf);
+    args.push_back(ping.shakeWins == 1 ? "" : "s");
+    ((HUDuiLabel*)list[11])->setString("{1} sec{2} To Drop Bad Flag", &args);
   }
   else
     ((HUDuiLabel*)list[11])->setString("");
 
   if ((ping.gameStyle & ShakableGameStyle) && ping.shakeWins != 0) {
-    sprintf(buf, "%d Win%s Drops Bad Flag", ping.shakeWins,
-					ping.shakeWins == 1 ? "" : "s");
-    ((HUDuiLabel*)list[12])->setString(buf);
+    std::vector<std::string> args;
+    sprintf(buf, "%d", ping.shakeWins);
+    args.push_back(buf);
+    args.push_back(ping.shakeWins == 1 ? "" : "s");
+    ((HUDuiLabel*)list[11])->setString("{1} Win{2} Drops Bad Flag", &args);
   }
   else
     ((HUDuiLabel*)list[12])->setString("");
@@ -2443,29 +2453,37 @@ void			ServerMenu::pick()
     ((HUDuiLabel*)list[15])->setString("");
 
   if (ping.maxTime != 0) {
+    std::vector<std::string> args;
     if (ping.maxTime >= 3600)
-      sprintf(buf, "Time limit: %d:%02d:%02d",
-		ping.maxTime / 3600, (ping.maxTime / 60) % 60, ping.maxTime % 60);
+      sprintf(buf, "%d:%02d:%02d", ping.maxTime / 3600, (ping.maxTime / 60) % 60, ping.maxTime % 60);
     else if (ping.maxTime >= 60)
-      sprintf(buf, "Time limit: %d:%02d", ping.maxTime / 60, ping.maxTime % 60);
+      sprintf(buf, "%d:%02d", ping.maxTime / 60, ping.maxTime % 60);
     else
-      sprintf(buf, "Time limit: 0:%02d", ping.maxTime);
-    ((HUDuiLabel*)list[16])->setString(buf);
+      sprintf(buf, "0:%02d", ping.maxTime);
+    args.push_back(buf);
+    ((HUDuiLabel*)list[16])->setString("Time limit: {1}", &args);
   }
   else
     ((HUDuiLabel*)list[16])->setString("");
 
-  if (ping.maxTeamScore != 0)
-    sprintf(buf, "Max team score: %d", ping.maxTeamScore);
-  else
-    strcpy(buf, "");
-  ((HUDuiLabel*)list[17])->setString(buf);
+  if (ping.maxTeamScore != 0) {
+    std::vector<std::string> args;
+    sprintf(buf, "%d", ping.maxTeamScore);
+    args.push_back(buf);
+    ((HUDuiLabel*)list[17])->setString("Max team score: {1}", &args);
+  }
+  else 
+    ((HUDuiLabel*)list[17])->setString("");
 
-  if (ping.maxPlayerScore != 0)
-    sprintf(buf, "Max player score: %d", ping.maxPlayerScore);
+
+  if (ping.maxPlayerScore != 0) {
+    std::vector<std::string> args;
+    sprintf(buf, "%d", ping.maxPlayerScore);
+    args.push_back(buf);
+    ((HUDuiLabel*)list[18])->setString("Max player score: {1}", &args);
+  }
   else
-    strcpy(buf, "");
-  ((HUDuiLabel*)list[18])->setString(buf);
+    ((HUDuiLabel*)list[18])->setString("");
 }
 
 void			ServerMenu::show()
@@ -2494,7 +2512,10 @@ void			ServerMenu::show()
   ((HUDuiLabel*)list[16])->setString("");
   ((HUDuiLabel*)list[17])->setString("");
   ((HUDuiLabel*)list[18])->setString("");
-  setStatus("Servers found: 0");
+  
+  std::vector<std::string> args;
+  args.push_back("0");
+  setStatus("Servers found: {1}", &args);
   pageLabel->setString("");
   selectedIndex = -1;
   setSelected(0);
@@ -2646,9 +2667,9 @@ void			ServerMenu::resize(int _width, int _height)
   }
 }
 
-void			ServerMenu::setStatus(const char* msg)
+void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
 {
-  status->setString(msg);
+  status->setString(msg, parms);
   const OpenGLTexFont& font = status->getFont();
   const float statusWidth = font.getWidth(status->getString());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
@@ -2977,9 +2998,11 @@ void			ServerMenu::addToList(ServerItem& info)
 
   // add if we don't already have it
   if (i == count) {
+    std::vector<std::string> args;
     char msg[50];
-    sprintf(msg, "Servers found: %d", count + 1);
-    setStatus(msg);
+    sprintf(msg, "%d", count + 1);
+    args.push_back(msg);
+    setStatus("Servers found: {1}", &args);
 
     // add to server list
     servers.push_back(info);
@@ -3376,9 +3399,9 @@ void			ServerStartMenu::execute()
   }
 }
 
-void			ServerStartMenu::setStatus(const char* msg)
+void			ServerStartMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
 {
-  status->setString(msg);
+  status->setString(msg, parms);
   const OpenGLTexFont& font = status->getFont();
   const float width = font.getWidth(status->getString());
   status->setPosition(center - 0.5f * width, status->getY());
@@ -3461,7 +3484,7 @@ class JoinMenu : public HUDDialog {
     static void		teamCallback(HUDuiControl*, void*);
     static void		joinGameCallback(bool, void*);
     static void		joinErrorCallback(const char* msg);
-    void		setStatus(const char*);
+    void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
     void		loadInfo();
 
   private:
@@ -3672,7 +3695,7 @@ void			JoinMenu::joinErrorCallback(const char* msg)
   if (self->oldErrorCallback) (*self->oldErrorCallback)(msg);
 }
 
-void			JoinMenu::setStatus(const char* msg)
+void			JoinMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
 {
   status->setString(msg);
   const OpenGLTexFont& font = status->getFont();

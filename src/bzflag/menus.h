@@ -77,7 +77,7 @@ class ServerStartMenu : public HUDDialog {
   private:
     HUDuiList*		createList(const char*);
     HUDuiLabel*		createLabel(const char*);
-    void		setStatus(const char*);
+    void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
     void		loadSettings();
 
   private:

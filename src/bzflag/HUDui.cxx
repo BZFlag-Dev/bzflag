@@ -580,9 +580,12 @@ std::string		HUDuiLabel::getString() const
   return string;
 }
 
-void			HUDuiLabel::setString(const std::string& _string)
+void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *parms)
 {
-  string = bdl->getLocalString(_string);
+  if (parms)
+    string = bdl->formatMessage(_string, parms);
+  else
+    string = bdl->getLocalString(_string);
   onSetFont();
 }
 

@@ -6,6 +6,7 @@
 #endif
 
 #include <string>
+#include <vector>
 #include <map>
 
 typedef std::map<std::string, std::string> BundleStringMap;
@@ -14,7 +15,7 @@ class Bundle
 {
 public:
 	std::string getLocalString(const std::string &key);
-	std::string formatMessage(const std::string &key, int parmCnt, const std::string *parms);
+	std::string formatMessage(const std::string &key, const std::vector<std::string> *parms);
 
 private:
 	typedef enum { tERROR, tCOMMENT, tMSGID, tMSGSTR, tAPPEND } TLineType;

@@ -242,11 +242,15 @@ void Bundle::ensureNormalText(std::string &msg)
 }
 
 
-std::string Bundle::formatMessage(const std::string &key, int parmCnt, const std::string *parms)
+std::string Bundle::formatMessage(const std::string &key, const std::vector<std::string> *parms)
 {
   std::string messageIn = getLocalString(key);
   std::string messageOut;
 
+  if (!parms || (parms->size() == 0))
+    return messageIn;
+
+  int parmCnt = parms->size();
   int startPos = 0;
   int lCurlyPos = messageIn.find_first_of("{");
 
@@ -264,7 +268,7 @@ std::string Bundle::formatMessage(const std::string &key, int parmCnt, const std
     else {
       num--;
       if ((num >= 0) && (num < parmCnt))
-        messageOut += parms[num];
+        messageOut += (*parms)[num];
     }
     startPos = rCurlyPos+1;
     lCurlyPos = messageIn.find_first_of("{", startPos);

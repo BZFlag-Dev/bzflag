@@ -425,6 +425,27 @@ msgstr "$EaL3d"
 msgid "Zoned"
 msgstr "z0Ned"
 
+msgid "Servers found: {1}"
+msgstr "5eRv3R5 PhOund: {1}"
+
+msgid "{1} Shot{2}"
+msgstr "{1} $H0T{2}"
+
+msgid "{1} sec{2} To Drop Bad Flag"
+msgstr "{1} 5eC{2} t0 DR0p 84D PHl4g"
+
+msgid "{1} Win{2} Drops Bad Flag"
+msgstr "{1} Win{2} DROP$ 84D pHL@G"
+
+msgid "Time limit: {1}"
+msgstr "t1ME L1m1+: {1}"
+
+msgid "Max team score: {1}"
+msgstr "m@x T34M 5c0r3: {1}"
+
+msgid "Max player score: {1}"
+msgstr "M@X Pl4YeR $C0re: {1}"
+
 # Super Flags
 
 msgid "High Speed"
