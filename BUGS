@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- Jumps can cause the bouncy sound if a delayed packet arrives
+  with a Z velocity higher then the predicted value after the
+  jump jets have turned off
+
 - Burrowed tank shadows should be ground clipped
   (the shadow perspective matrix messes with the clip plane?)
 
