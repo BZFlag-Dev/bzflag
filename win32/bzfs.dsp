@@ -101,6 +101,10 @@ PostBuild_Cmds=copy ..\src\bzfs\debug\*.pdb ..\*.pdb	copy ..\src\bzfs\debug\*.ex
 
 SOURCE=..\src\bzfs\bzfs.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\TextChunkManager.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -148,6 +152,10 @@ SOURCE=..\include\ShotUpdate.h
 # Begin Source File
 
 SOURCE=..\include\Team.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\TextChunkManager.h
 # End Source File
 # Begin Source File
 
