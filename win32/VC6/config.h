@@ -33,20 +33,20 @@
 
 // define our OS
 #ifndef BZ_BUILD_OS
- 	#if defined(_MSC_VER) && (_MSC_VER == 1100)
- 		#ifdef _DEBUG
- 			#define BZ_BUILD_OS			"W32VC5D"
- 		#else
- 			#define BZ_BUILD_OS			"W32VC5"
- 		#endif //_DEBUG
- 	#endif //_MSC_VER == 1100
- 	#if defined(_MSC_VER) && (_MSC_VER == 1200)
- 		#ifdef _DEBUG
- 			#define BZ_BUILD_OS			"W32VC6D"
- 		#else
- 			#define BZ_BUILD_OS			"W32VC6"
- 		#endif //_DEBUG
- 	#endif //_MSC_VER == 1200
+  #if defined(_MSC_VER) && (_MSC_VER == 1100)
+    #ifdef _DEBUG
+      #define BZ_BUILD_OS			"W32VC5D"
+    #else
+      #define BZ_BUILD_OS			"W32VC5"
+    #endif //_DEBUG
+  #endif //_MSC_VER == 1100
+  #if defined(_MSC_VER) && (_MSC_VER == 1200)
+    #ifdef _DEBUG
+      #define BZ_BUILD_OS			"W32VC6D"
+    #else
+      #define BZ_BUILD_OS			"W32VC6"
+    #endif //_DEBUG
+  #endif //_MSC_VER == 1200
 #endif
 
 #ifndef DEBUG
