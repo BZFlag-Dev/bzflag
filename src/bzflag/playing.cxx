@@ -4659,24 +4659,22 @@ static void markOld(std::string &fileName)
 
 static int negotiateFlags(ServerLink* serverLink)
 {
-  serverLink = serverLink;
-
-  /* FIXME */
-  /*
   uint16_t code, len;
   char msg[MaxPacketLen];
   char *buf = msg;
   std::map<std::string, FlagDesc*>::iterator i;
 
-  for (i = FlagDesc::flagMap.begin(); i < FlagDesc::flagMap.end(); i++) {
-    buf = (*i)->pack(buf);
+  /* Send MsgNegotiateFlags to the server with
+   * the abbreviations for all the flags we support.
+   */
+  for (i = FlagDesc::flagMap.begin(); i != FlagDesc::flagMap.end(); i++) {
+    buf = (char*) i->second->pack(buf);
   }
   serverLink->send( MsgNegotiateFlags, buf - msg, msg );
 
   if (serverLink->read(code, len, msg, 5000) <= 0) return MsgNull;
-  return code;
-  */
-  return MsgSuperKill;
+
+  return MsgNegotiateFlags;
 }
 
 //
