@@ -30,4 +30,19 @@ libGeometry_a_SOURCES  =		\
 	TankSceneNode.cxx		\
 	BillboardSceneNode.cxx
 
-libGeometry_a_LIBADD =	models/tank/libTank.a
+libGeometry_a_LIBADD =	\
+	models/tank/high_barrel.o	\
+	models/tank/high_body.o		\
+	models/tank/high_ltread.o	\
+	models/tank/high_rtread.o	\
+	models/tank/high_turret.o	\
+	models/tank/low_barrel.o	\
+	models/tank/low_body.o		\
+	models/tank/low_ltread.o	\
+	models/tank/low_rtread.o	\
+	models/tank/low_turret.o	\
+	models/tank/medium_barrel.o	\
+	models/tank/medium_body.o	\
+	models/tank/medium_ltread.o	\
+	models/tank/medium_rtread.o	\
+	models/tank/medium_turret.o
