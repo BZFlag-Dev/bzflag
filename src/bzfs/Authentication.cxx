@@ -49,6 +49,9 @@ void Authentication::cleanUp()
 {
   krb5_error_code retval;
 
+  if (!authentication)
+    return;
+
   if ((retval = krb5_cc_destroy(context, cc)))
     com_err("bzfs:", retval, "while destroying credential cache");
 }
