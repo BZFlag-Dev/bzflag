@@ -112,12 +112,21 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->setLabel("Confine mouse:");
   option->setCallback(callback, (void*)"G");
   options = &option->getList();
-  options->push_back(std::string("Yes"));
   options->push_back(std::string("No"));
-  if (getMainWindow()->isGrabEnabled())
-    option->setIndex(0);
-  else
-    option->setIndex(1);
+  options->push_back(std::string("Yes"));
+  option->setIndex(getMainWindow()->isGrabEnabled() ? 1 : 0);
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  // jump while typing on/off
+  option->setFontFace(fontFace);
+  option->setLabel("Jump while typing:");
+  option->setCallback(callback, (void*)"H");
+  options = &option->getList();
+  options->push_back(std::string("No"));
+  options->push_back(std::string("Yes"));
+  option->setIndex(BZDB.isTrue("jumpTyping") ? 1 : 0);
   option->update();
   list.push_back(option);
 
@@ -172,11 +181,16 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
     case 'G':
       {
 	bool grabbing = (selectedOption == "Yes");
-	if (grabbing)
-	  BZDB.set("mousegrab", "true");
-	else
-	  BZDB.set("mousegrab", "false");
+        BZDB.set("mousegrab", grabbing ? "true" : "false");
 	getMainWindow()->enableGrabMouse(grabbing);
+      }
+      break;
+
+    /* Jump while typing */
+    case 'H':
+      {
+        bool jump = (selectedOption == "Yes");
+        BZDB.setBool("jumpTyping", jump ? true : false);
       }
       break;
 

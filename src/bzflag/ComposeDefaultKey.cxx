@@ -75,9 +75,10 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 { 
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank && KEYMGR.get(key, true) == "jump") {
+  if (myTank && KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
     // jump while typing
     myTank->setJump();
+    return false;
   }
 
   if (!myTank || myTank->getInputMethod() != LocalPlayer::Keyboard) {
@@ -89,7 +90,6 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   switch (key.ascii) {
     case 3:	// ^C
     case 27: {	// escape
-      //    case 127:	// delete
       sendIt = false;			// finished composing -- don't send
       break;
     }
@@ -98,7 +98,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       sendIt = true;
       break;
     }
-    case 6: {	// ^F
+    case 6:     // ^F
+    case 9: {	// <tab>
       // auto completion
       std::string line1 = hud->getComposeString();
       int lastSpace = line1.find_last_of(" \t");
