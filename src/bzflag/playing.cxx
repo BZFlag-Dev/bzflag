@@ -77,6 +77,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "Intersect.h"
 #include "Ping.h"
 #include "OpenGLTexture.h"
+#include "BundleMgr.h"
+#include "Bundle.h"
 
 #define MAX_MESSAGE_HISTORY (10)
 
@@ -132,6 +134,8 @@ static std::vector<BillboardSceneNode*>	explosions;
 static std::vector<BillboardSceneNode*>	prototypeExplosions;
 static int		savedVolume = -1;
 static bool		grabMouseAlways = false;
+
+static Bundle		*bdl = NULL;
 
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
@@ -2335,7 +2339,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	dstName = dstPlayer->getCallSign();
 
       // CLIENTQUERY hack
-      if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
+      if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	sprintf(messageBuffer,"Version %d.%d%c%d",
@@ -2360,6 +2364,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	break;
       }
 
+      std::string text = bdl->getLocalString(std::string((char*)msg));
+
       if (srcPlayer == myTank || dstPlayer == myTank || (!dstPlayer &&
 	  (int(team) == int(RogueTeam) ||
 	  int(team) == int(myTank->getTeam())))) {
@@ -2370,7 +2376,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (dstPlayer) {
 	  // talking to myself? that's strange
 	  if (dstPlayer==myTank && srcPlayer==myTank) {
-	    fullMsg=(const char*)msg;
+	    fullMsg=text;
 	  } else {
 	    fullMsg="[";
 	    if (srcPlayer == myTank) {
@@ -2383,7 +2389,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 		myTank->setRecipient(srcPlayer);
 	    }
 	    fullMsg += "] ";
-	    fullMsg += (const char*)msg;
+	    fullMsg += text;
 	  }
 	}
 	else {
@@ -2399,7 +2405,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	  fullMsg += srcName;
 	  fullMsg += ": ";
-	  fullMsg += (const char*)msg;
+	  fullMsg += text;
 	}
 	const GLfloat* msgColor;
 	if (srcPlayer && srcPlayer->getTeam()!=NoTeam)
@@ -4044,12 +4050,6 @@ static bool		joinGame(const StartupInfo* info,
   // set tank textures
   Player::setTexture(*tankTexture);
 
-  // send locale
-  char localeBuffer[MessageLen];
-  memset(localeBuffer, 0, MessageLen);
-  nboPackString(localeBuffer, World::getLocale().c_str(), MessageLen);
-  serverLink->send( MsgSetLocale, MessageLen, localeBuffer );
-
   // create world
   world = makeWorld(serverLink);
   if (!world) {
@@ -5259,6 +5259,7 @@ void			startPlaying(BzfDisplay* _display,
 {
   int i;
 
+  bdl = World::getBundleMgr()->getBundle(World::getLocale());
   // initalization
   display = _display;
   sceneRenderer = &renderer;

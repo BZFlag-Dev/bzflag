@@ -1050,3 +1050,28 @@ msgstr "+iMe UN+1L 4 b@d PHL49 1$ drOpPEd (IPH +H3R3'5 @ +1ME L1miT)."
   
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "O+HER inPH0RM4+1ON@L M355@9e$ m@Y 0Cc4s10naLLY FL@$H 0N t3H HUD."
+
+# BZFS Messages
+
+msgid "You are now an administrator!"
+msgstr "J00 4rE N0W @N 4DMIni5tr@+or!"
+
+msgid "Wrong Password!"
+msgstr "wRONg pa55W0rD!"
+
+msgid "unknown command"
+msgstr "UNkn0WN cOmm4nd"
+
+msgid "Countdown started."
+msgstr "c0UN+Down $T@rT3D."
+
+msgid "IP pattern added to banlist"
+msgstr "1P P4++3RN 4dD3D t0 B4NlI$T"
+
+msgid "malformed address"
+msgstr "M@Lf0RMED 4Ddr3S$"
+
+msgid "removed IP pattern"
+msgstr "r3m0VeD 1P P4++3RN"
+
+
