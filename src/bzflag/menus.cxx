@@ -1843,7 +1843,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       sceneRenderer->setQuality(list->getIndex());
 
       int filter = 0;
-      if (list->getIndex()>=2)
+      if (list->getIndex()>=BZDB.eval("qualityForTexture"))
 	filter = 6;
 
       OpenGLTexture::setFilter((OpenGLTexture::Filter)filter);

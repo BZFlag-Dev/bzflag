@@ -229,10 +229,10 @@ void			SceneRenderer::setZBufferSplit(bool on)
 void			SceneRenderer::setQuality(int value)
 {
   if (value < 0) value = 0;
-  else if (value > 3) value = 3;
+  else if (value > BZDB.eval("maxQuality")) value = (int)BZDB.eval("maxQuality");
   useQualityValue = value;
   notifyStyleChange();
-  if (useQualityValue >= 2) {
+  if (useQualityValue >= BZDB.eval("qualityForNice")) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
   }

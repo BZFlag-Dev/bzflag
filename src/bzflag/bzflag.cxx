@@ -121,7 +121,10 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
   { "roamZoomMax",		"120",			false,	StateDatabase::ReadWrite,	NULL },
   { "roamZoomMin",		"15",			false,	StateDatabase::ReadWrite,	NULL },
-  { "altImageDir",		"alternate",		true,	StateDatabase::ReadWrite,	NULL },
+  { "maxQuality",		"3",			false,	StateDatabase::ReadWrite,	NULL },
+  { "qualityForNice",		"2",			false,	StateDatabase::ReadWrite,	NULL },
+  { "qualityForTexture",	"2",			false,	StateDatabase::ReadWrite,	NULL },
+ { "altImageDir",		"alternate",		true,	StateDatabase::ReadWrite,	NULL },
   { "groundTexRepeat",		"0.1",                  true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
