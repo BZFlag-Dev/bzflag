@@ -70,7 +70,7 @@ USERDEP__BZFLA="..\..\src\bzfs\bzfs.exe"	"..\..\src\bzflag\bzflag.exe"	"..\..\sr
 InputDir=\bz\bz_cvs\bzflag\package\win32\nsis
 InputPath=..\..\package\win32\nsis\BZFlag.nsi
 
-"..\..\dist\bzflag1.11.0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+"..\..\dist\bzflag2.0.0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd $(InputDir)
 	makensis $(InputDir)\BZFlag
 
@@ -83,7 +83,7 @@ USERDEP__BZFLA="..\..\src\bzfs\debug\bzfs.exe"	"..\..\src\bzflag\debug\bzflag.ex
 InputDir=\bz\bz_cvs\bzflag\package\win32\nsis
 InputPath=..\..\package\win32\nsis\BZFlag.nsi
 
-"..\..\dist\bzflag1.11.0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+"..\..\dist\bzflag2.0.0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd $(InputDir)
 	makensis $(InputDir)\BZFlag
 
