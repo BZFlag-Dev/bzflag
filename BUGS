@@ -7,11 +7,6 @@ recent bugs
   bzflsMy.php on brlcad : 0.3 sec
   bzflsLite on brlcad   : 0.3 sec
 
-- tanks may be squished from too high away.  i.e. tank carrying steamroller
-  can squish from high above as will a burrowed tank (on MAC's playground)
-  --steamroller is a weak flag without this leaway. Perhaps split SR radius a
-  and BU radius
-
 - os x client audio is very choppy when the user has a sound card installed
 
 - trouble remapping the "Identify/Respawn" key from "right mouse or i" to
