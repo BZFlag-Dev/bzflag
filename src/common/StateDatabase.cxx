@@ -128,6 +128,7 @@ const std::string StateDatabase::BZDB_THIEFADRATE       = std::string("_thiefAdR
 const std::string StateDatabase::BZDB_THIEFADSHOTVEL    = std::string("_thiefAdShotVel");
 const std::string StateDatabase::BZDB_THIEFTINYFACTOR   = std::string("_thiefTinyFactor");
 const std::string StateDatabase::BZDB_THIEFVELAD        = std::string("_thiefVelAd");
+const std::string StateDatabase::BZDB_THIEFDROPTIME     = std::string("_thiefDropTime");
 const std::string StateDatabase::BZDB_TINYFACTOR        = std::string("_tinyFactor");
 const std::string StateDatabase::BZDB_UPDATETHROTTLERATE= std::string("_updateThrottleRate");
 const std::string StateDatabase::BZDB_VELOCITYAD        = std::string("_velocityAd");
