@@ -49,7 +49,6 @@ Section "BZFlag (required)"
 	File ..\..\..\src\bzfs\bzfs.exe
 	File ..\..\..\libcurl.dll
 
-
 	; make the data dir
 	SetOutPath $INSTDIR\data
 	File ..\..\..\data\*.*
@@ -131,6 +130,7 @@ Section "Uninstall"
 	Delete $INSTDIR\bzflag.exe
 	Delete $INSTDIR\bzfs.exe
 	Delete $INSTDIR\bzadmin.exe
+	Delete $INSTDIR\libcurl.dll
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\fonts\*.*
 	Delete $INSTDIR\data\*.*
