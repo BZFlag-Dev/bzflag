@@ -4465,7 +4465,9 @@ int main(int argc, char **argv)
    * the main loop runs at approximately 2 iterations per 5 seconds
    * when there are no players on the field.  this can increase to
    * about 100 iterations per 5 seconds with a single player, though
-   * average is about 20-40 iterations per five seconds.
+   * average is about 20-40 iterations per five seconds.  Adding
+   * world weapons will increase the number of iterations
+   * substantially (about x10)
    **/
   int i;
   while (!done) {
@@ -4509,16 +4511,19 @@ int main(int argc, char **argv)
     }
 
     // get time for next lagping
+    bool someoneIsConnected = false;
     for (int p=0;p<curMaxPlayers;p++)
     {
       if (player[p].state >= PlayerDead &&
 	  player[p].type == TankPlayer &&
-	  player[p].nextping - tm < waitTime)
+	  player[p].nextping - tm < waitTime) {
 	waitTime = player[p].nextping - tm;
+	someoneIsConnected = true;
+      }
     }
 
     // if there are world weapons, update much more frequently
-    if (wWeapons.count() > 0) {
+    if (someoneIsConnected && wWeapons.count() > 0) {
       waitTime *= 0.1f;  // a tenth of what we would have waited
     }
 
