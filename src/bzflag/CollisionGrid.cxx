@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <vector>
+#include <math.h>
 
 /* common implementation headers */
 #include "StateDatabase.h"
@@ -122,7 +123,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
 
   // fake the tank dimensions to do cell detection
   float realTankHeight = BZDB.eval (StateDatabase::BZDB_TANKHEIGHT);
-  BZDB.setFloat (StateDatabase::BZDB_TANKHEIGHT, 1.0e30); //very tall
+  BZDB.setFloat (StateDatabase::BZDB_TANKHEIGHT, 1.0e30f); //very tall
 
   WorldSize = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
   Sx = WorldSize / float (GridSizeX);
