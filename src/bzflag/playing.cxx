@@ -2742,6 +2742,8 @@ static void		checkEnvironment()
   // see if i've been shot
   const ShotPath* hit = NULL;
   float minTime = Infinity;
+  float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+  
 
   if (myTank->getFlag() != Flags::Thief)
     myTank->checkHit(myTank, hit, minTime);
@@ -2781,7 +2783,7 @@ static void		checkEnvironment()
   }
 
   // if not dead yet, see if i've dropped below the death level
-  else if (myTank->getPosition()[2] <= BZDB.eval(StateDatabase::BZDB_DEADUNDER)) {
+  else if ((deadUnder > 0.0f) && (myTank->getPosition()[2] <= deadUnder)) {
     gotBlowedUp(myTank, SelfDestruct, ServerPlayer);
   }
 
