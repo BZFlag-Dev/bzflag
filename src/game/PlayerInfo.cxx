@@ -27,6 +27,9 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   spamWarns(0), lastMsgTime(TimeKeeper::getCurrent()), paused(false),
   pausedSince(TimeKeeper::getNullTime()), tracker(0)
 {
+  notResponding = false;
+  memset (email, 0, EmailLen);
+  memset (callSign, 0, CallSignLen);
 }
 
 std::string PlayerInfo::getLastMsg() {
