@@ -5994,7 +5994,7 @@ static void parseCommand(const char *message, int t)
 	sendMessage(t, player[t].id, player[t].team, "This callsign is allready registered,"
 		    " if it is yours /identify to login");
       } else {
-	if (strlen(message) > 10) {
+	if (strlen(message) > 12) {
 	  PlayerAccessInfo info;
 	  info.groups.push_back("DEFAULT");
 	  info.groups.push_back("REGISTERED");
