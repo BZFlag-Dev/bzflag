@@ -1732,9 +1732,9 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, "    or /poll ban playername");
     if (!clOptions->disableKick)
       sendMessage(ServerPlayer, t, "    or /poll kick playername");
-    if (!clOptions->disableSet) {
+    if (!clOptions->disableSet)
   		sendMessage(ServerPlayer, t, "    or /poll set variable value");
-    if (!clOptions->disableFlagReset) {
+    if (!clOptions->disableFlagReset)
       sendMessage(ServerPlayer, t, "    or /poll flagreset");
 
   } /* end handling of poll subcommands */
