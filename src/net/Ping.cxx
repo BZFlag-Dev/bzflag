@@ -30,7 +30,7 @@
 // PingPacket
 //
 
-const int		PingPacket::PacketSize = PlayerIdPLen + 52;
+const int		PingPacket::PacketSize = ServerIdPLen + 52;
 
 PingPacket::PingPacket() : gameStyle(PlainGameStyle),
 				maxPlayers(1),
