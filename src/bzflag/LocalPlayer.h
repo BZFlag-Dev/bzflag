@@ -133,7 +133,7 @@ private:
   Location	location;
   FiringStatus	firingStatus;
   TimeKeeper	jamTime;
-  TimeKeeper    bounceTime;
+  TimeKeeper	bounceTime;
   TimeKeeper	agilityTime;
   float		flagShakingTime;
   int		flagShakingWins;
@@ -151,15 +151,15 @@ private:
   static LocalPlayer*	mainPlayer;
   InputMethod	inputMethod;
   bool		inputChanged;
-  int	   stuckFrameCount;
+  int		stuckFrameCount;
   bool		spawning;
   int		wingsFlapCount;
   float		handicap;
-  bool	  left;
-  bool	  right;
-  bool	  up;
-  bool	  down;
-  bool	  entryDrop; // first drop since entering
+  bool		left;
+  bool		right;
+  bool		up;
+  bool		down;
+  bool		entryDrop; // first drop since entering
   bool		wantJump;
   bool		jumpPressed;
 };
