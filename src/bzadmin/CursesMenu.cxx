@@ -284,7 +284,7 @@ void CursesMenu::showMenu() {
   // always is visible
   int start = selection - LINES / 4 + 2;
   start = (start + LINES / 2  - 3> (signed)items.size() ? 
-	   items.size() - LINES / 2 + 3  : start);
+	   items.size() - LINES / 2 + 3 : start);
   start = (start < 0 ? 0 : start);
   int end = start + LINES / 2 - 3;
   end = ((unsigned)end > items.size() ? items.size() : end);
