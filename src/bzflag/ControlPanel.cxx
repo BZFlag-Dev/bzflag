@@ -372,7 +372,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
   if (messageMode >= 0) {
     i = messages[messageMode].size() - 1;
-    unRead[messageMode] = false;
   } else {
     i = -1;
   }
@@ -658,13 +657,18 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
       }
       break;
   }
-  changedMessage = numBuffers;
+  invalidate();
 }
 
 void			ControlPanel::setMessagesMode(int _messageMode)
 {
   messageMode = _messageMode;
-  changedMessage = numBuffers;
+  if (messageMode == MessageAll)
+    for (int i = 0; i < MessageModeCount; i++)
+      unRead[i] = false;
+  else
+    unRead[messageMode] = false;
+  invalidate();
 }
 
 void			ControlPanel::addMessage(const std::string& line,
@@ -699,7 +703,9 @@ void			ControlPanel::addMessage(const std::string& line,
       messages[mode].pop_front();
       messages[mode].push_back(item);
     }
-    if (messageMode != MessageAll) {
+    if (messageMode != MessageAll && messageMode != mode) {
+      if (!unRead[mode] && (int)BZDB.eval("showtabs") > 0)
+        invalidate();
       unRead[mode] = true;
     }
   }
@@ -718,7 +724,7 @@ void			ControlPanel::addMessage(const std::string& line,
 
   // need to refresh console if new msg is visible on current tab
   if (messageMode == MessageAll || messageMode == mode)
-    changedMessage = numBuffers;
+    invalidate();
 }
 
 void			ControlPanel::setRadarRenderer(RadarRenderer* rr)
