@@ -18,6 +18,7 @@
 /* implementation headers */
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 #include "bzfio.h"
 #include "version.h"
 #include "TextUtils.h"

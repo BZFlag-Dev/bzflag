@@ -14,6 +14,8 @@
 #pragma warning( 4: 4786 )
 #endif
 
+#include <math.h>
+
 #include "WorldFileObstacle.h"
 
 WorldFileObstacle::WorldFileObstacle()
