@@ -713,6 +713,16 @@ static void closeListServer()
   }
 }
 
+static void readListServer()
+{
+  ListServerLink& link = listServerLink;
+  if (link.socket != NotConnected) {
+    char    buf[256];
+    ssize_t byteCount = recv(link.socket, buf, sizeof(buf), 0);
+    if (byteCount == 0)
+      closeListServer();
+  }
+}
 
 static void openListServer()
 {
@@ -1054,14 +1064,15 @@ static void serverStop()
   // total.
   sendMessageToListServer(ListServerLink::REMOVE);
   TimeKeeper start = TimeKeeper::getCurrent();
-  if (!listServerLinksCount || listServerLink.socket == NotConnected)
+  if (!listServerLinksCount)
     return;
   do {
     // compute timeout
     float waitTime = 3.0f - (TimeKeeper::getCurrent() - start);
     if (waitTime <= 0.0f)
       break;
-
+    if (listServerLink.socket == NotConnected)
+      break;
     // check for list server socket connection
     int fdMax = -1;
     fd_set write_set;
@@ -1087,7 +1098,7 @@ static void serverStop()
     if (FD_ISSET(listServerLink.socket, &write_set))
       sendMessageToListServerForReal();
     else if (FD_ISSET(listServerLink.socket, &read_set))
-      break;
+      readListServer();
   } while (true);
 
   // stop list server communication
@@ -4930,7 +4941,7 @@ int main(int argc, char **argv)
 	  if (FD_ISSET(listServerLink.socket, &write_set))
 	    sendMessageToListServerForReal();
 	  else if (FD_ISSET(listServerLink.socket, &read_set)) 
-	    closeListServer();
+	    readListServer();
 
       // check if we have any UDP packets pending
       if (FD_ISSET(udpSocket, &read_set)) {
