@@ -935,7 +935,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 	// weave towards the player
 	const Player *target = myTank->getTarget();
-	if (distance > (BZDB.eval(StateDatabase::BZDB_SHOTSPEED) /2.0f)) {
+	if ((distance > (BZDB.eval(StateDatabase::BZDB_SHOTSPEED) /2.0f))
+	||  (myTank->getFiringStatus() != LocalPlayer::Ready)) {
 	  float enemyUnitVec[2] = { cos(enemyAzimuth), sin(enemyAzimuth) };
 	  float myUnitVec[2] = { cos(myAzimuth), sin(myAzimuth) };
 	  float dotProd = (myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]);
