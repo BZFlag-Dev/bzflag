@@ -4425,6 +4425,8 @@ static void cleanWorldCache()
   int totalSize = 0;
 
   do {
+    oldestFile = 0;
+    totalSize = 0;
 #ifdef _WIN32
 	  std::string pattern = worldPath + "/*.bwc";
 
@@ -4455,7 +4457,7 @@ static void cleanWorldCache()
 	    struct stat statbuf;
 	    time_t oldestTime = time(NULL);
 	    while ((contents = readdir(directory))) {
-	      stat(((worldPath + "/") + contents->d_name).c_str(), &statbuf);
+	      stat((worldPath + "/" + contents->d_name).c_str(), &statbuf);
 	      if (statbuf.st_atime < oldestTime) {
 		if (oldestFile)
 		  free(oldestFile);
@@ -4478,7 +4480,7 @@ static void cleanWorldCache()
 	  }
 
 	  if (oldestFile != NULL)
-	    remove(((getCacheDirectoryName() + "/") + oldestFile).c_str());
+	    remove((worldPath + "/" + oldestFile).c_str());
 
 	  if (oldestFile != NULL)
 	    free(oldestFile);
