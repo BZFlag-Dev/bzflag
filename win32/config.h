@@ -27,7 +27,7 @@
 #define VERSION "1.9a0"
 
 /* Bzflag internal version */
-#define BZVERSION 10900000
+#define BZVERSION 10901000
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
