@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- Mac OS X client outputs an Info.plist file with the permissions set
+  incorrectly if building an application bundle via XCode.
+
 - void			OpenGLTexFont::draw(const char* string, int length,
 				float x, float y, float z) const
   (OpenGLTexFont.cxx line 549)
