@@ -301,12 +301,25 @@ bool			RobotPlayer::checkHit(const Player* source,
 void			RobotPlayer::explodeTank()
 {
   // NOTE -- code taken directly from LocalPlayer
+  float gravity      = BZDB->eval(StateDatabase::BZDB_GRAVITY);
+  float explodeTime  = BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
+  float explodeTime2 = explodeTime * explodeTime;
+  float tMax2;
+  const float zMax  = 49.0;
   setExplode(TimeKeeper::getTick());
   const float* oldVelocity = getVelocity();
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
-  newVelocity[2] = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
+  if (gravity < 0) {
+    tMax2 = - 2.0 * zMax / gravity;
+    if (explodeTime2 > tMax2)
+      newVelocity[2] = - sqrtf(tMax2) * gravity;
+    else
+      newVelocity[2] = - 0.5 * gravity * explodeTime + zMax / explodeTime;
+  } else {
+    newVelocity[2] = oldVelocity[2];
+  }
   setVelocity(newVelocity);
   target = NULL;
   path.clear();
