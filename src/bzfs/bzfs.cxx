@@ -3719,6 +3719,14 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     }
   }
 
+  // Checking hostname resolution and ban player if has to
+  const char *hostname = playerData.netHandler->getHostname();
+  // check against ban lists
+  if (hostname && !clOptions->acl.hostValidate(hostname)) {
+    removePlayer(p, "bannedhost");
+    return;
+  }
+
   // update notResponding
   if (playerData.player.hasStartedToNotRespond()) {
     // if player is the rabbit, anoint a new one
@@ -4144,18 +4152,6 @@ int main(int argc, char **argv)
       if (!playerData)
 	continue;
       doStuffOnPlayer(*playerData);
-    }
-
-    int h;
-    for (h = 0; h < curMaxPlayers; h++) {
-      NetHandler *handler = NetHandler::getHandler(h);
-      if (handler) {
-	const char *hostname = handler->getHostname();
-	// check against ban lists
-	if (hostname && !clOptions->acl.hostValidate(hostname)) {
-	  removePlayer(h, "bannedhost");
-	}
-      }
     }
 
     // manage voting poll for collective kicks/bans/sets
