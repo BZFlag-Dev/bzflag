@@ -1412,6 +1412,90 @@
 			isa = PBXTargetDependency;
 			target = 14953626049CCA4100A80164;
 		};
+		1499D58D04F99AC300A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = bzfs.h;
+			refType = 4;
+		};
+		1499D58E04F99AC300A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = CmdLineOptions.cxx;
+			refType = 4;
+		};
+		1499D58F04F99AC300A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = CmdLineOptions.h;
+			refType = 4;
+		};
+		1499D59004F99AC300A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FlagInfo.cxx;
+			refType = 4;
+		};
+		1499D59104F99AC300A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FlagInfo.h;
+			refType = 4;
+		};
+		1499D59204F99AC300A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = VotingPoll.cxx;
+			refType = 4;
+		};
+		1499D59304F99AC300A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = VotingPoll.h;
+			refType = 4;
+		};
+		1499D59404F99AC300A80164 = {
+			fileRef = 1499D58D04F99AC300A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1499D59504F99AC300A80164 = {
+			fileRef = 1499D58E04F99AC300A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1499D59604F99AC300A80164 = {
+			fileRef = 1499D58F04F99AC300A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1499D59704F99AC300A80164 = {
+			fileRef = 1499D59004F99AC300A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1499D59804F99AC300A80164 = {
+			fileRef = 1499D59104F99AC300A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1499D59904F99AC300A80164 = {
+			fileRef = 1499D59204F99AC300A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1499D59A04F99AC300A80164 = {
+			fileRef = 1499D59304F99AC300A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		14ACDFBF04B665F900A80164 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -4914,6 +4998,7 @@
 		};
 		4E030C54048E70E70009E055 = {
 			children = (
+				1499D58D04F99AC300A80164,
 				4E030C55048E70E70009E055,
 				4E030C58048E70E70009E055,
 				14ACDFD604B6B05F00A80164,
@@ -4926,6 +5011,12 @@
 				7B79F0C604BA753400FEBA07,
 				14B98BB504E1CB7100A80164,
 				14B98BB604E1CB7100A80164,
+				1499D58E04F99AC300A80164,
+				1499D58F04F99AC300A80164,
+				1499D59004F99AC300A80164,
+				1499D59104F99AC300A80164,
+				1499D59204F99AC300A80164,
+				1499D59304F99AC300A80164,
 			);
 			isa = PBXGroup;
 			path = bzfs;
@@ -7460,6 +7551,10 @@
 				1404B12B04B8798200A80164,
 				7B79F0C804BA753400FEBA07,
 				14B98BB804E1CB7100A80164,
+				1499D59404F99AC300A80164,
+				1499D59604F99AC300A80164,
+				1499D59804F99AC300A80164,
+				1499D59A04F99AC300A80164,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7473,6 +7568,9 @@
 				1404B12A04B8798200A80164,
 				7B79F0C704BA753400FEBA07,
 				14B98BB704E1CB7100A80164,
+				1499D59504F99AC300A80164,
+				1499D59704F99AC300A80164,
+				1499D59904F99AC300A80164,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
