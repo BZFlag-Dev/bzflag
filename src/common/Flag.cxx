@@ -75,7 +75,7 @@ namespace Flags {
   FlagType *TriggerHappy;
   FlagType *ReverseControls;
   FlagType *Bouncy;
-  FlayType *Agility;
+  FlagType *Agility;
 
   void init()
   {
