@@ -365,14 +365,10 @@ match_object_name (const char *string, const char *objname)
   }
 
   if ((string[0] == MATCH_MULTI) && (string[1] == '\0')) {
-    DEBUG4 ("match_object_name --> %s || %s (instant match)\n",
-            string, objname);
     return 1;
   }
    
   while (*string != '\0') {
-    DEBUG4 ("match_object_name --> %s || %s\n", string, objname);
-
     if (*string == MATCH_MULTI) {
       string++;
       switch (match_multi (&string, &objname)) {
