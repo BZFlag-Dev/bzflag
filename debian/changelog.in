@@ -3,6 +3,14 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (1.10.0) unstable; urgency=medium
+
+  * Release Manager: see below, network api changed, stable/testing/unstable
+  * update to actual release number
+  * add missing -sb
+
+ -- Tim Riker <Tim@Rikers.org>  Tue, 09 Dec 2003 23:45:58 -0600
+
 bzflag (1.9.10) unstable; urgency=medium
 
   * Release Manager: networking changed. update needed in stable and testing

@@ -4,22 +4,20 @@ if [ -z "$1" -o ! -r configure.in ] ; then
  echo "$0 { cvs | release } - must be run in the project home directory"
  exit 1
 fi
-VERSIONID=`grep ^AM_INIT_AUTOMAKE configure.in | sed -e 's/.* //g' -e 's/)//g'`
-MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
-MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
-REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
-PKGVER=2
-date=`date --rfc-822`
-arch=$(dpkg-architecture -qDEB_HOST_ARCH)
-version=${MAJOR_VERSION}.${MINOR_VERSION}.${REV}
 if [ "$1" == "release" ] ; then
  if [ ! -r debian/changelog ] ; then
    echo "You must create debian/changelog to do a release"
    exit 1
  fi
- version=${version}-$PKGVER
+ version="version"
 else
- version=${version}.`date +%Y%m%d`-$PKGVER
+ VERSIONID=`grep ^AM_INIT_AUTOMAKE configure.in | sed -e 's/.* //g' -e 's/)//g'`
+ MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
+ MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
+ REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
+ PKGVER=2
+ date=`date --rfc-822`
+ version=${MAJOR_VERSION}.${MINOR_VERSION}.${REV}.`date +%Y%m%d`-$PKGVER
  sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
 fi
 echo "Starting on $date to build:"
@@ -35,6 +33,7 @@ head -n 1 debian/changelog
 chmod +x debian/rules misc/tar
 # cvs/non-cvs builds should conflict and replace each other.
 PATH=`pwd`/misc:$PATH dpkg-buildpackage -us -uc -rfakeroot
+arch=$(dpkg-architecture -qDEB_HOST_ARCH)
 echo "now do \"debsign\" and then a \"dupload ../bzflag_${version}_${arch}.changes\""
 if [ "$1" == "release" ] ; then
  echo "don't forget to copy new changelog entry to changelog.in"
