@@ -22,7 +22,7 @@
 #include "BzfWindow.h"
 #include "BzfEvent.h"
 #ifdef HAVE_SDL
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 class SDLDisplay : public BzfDisplay {
  public:
