@@ -47,9 +47,14 @@ class FlagSceneNode : public SceneNode {
 			FlagRenderNode(const FlagSceneNode*);
 			~FlagRenderNode();
 	void		render();
+	void		doWave();
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
       private:
 	const FlagSceneNode* sceneNode;
+        float                wave0[maxChunks];
+        float                wave1[maxChunks];
+        float                wave2[maxChunks];
+        bool                 recomputeWave;
     };
     friend class FlagRenderNode;
 
@@ -67,9 +72,6 @@ class FlagSceneNode : public SceneNode {
     static const float	RippleSpeed1;
     static const float	RippleSpeed2;
     static const float	DroopFactor;
-    float               wave0[maxChunks];
-    float               wave1[maxChunks];
-    float               wave2[maxChunks];
 };
 
 #endif // BZF_FLAG_SCENE_NODE_H

@@ -61,17 +61,7 @@ void			FlagSceneNode::waveFlag(float dt, float /*_droop*/)
   if (ripple1 >= 2.0f * M_PI) ripple1 -= 2.0f * M_PI;
   ripple2 += dt * RippleSpeed2;
   if (ripple2 >= 2.0f * M_PI) ripple2 -= 2.0f * M_PI;
-
-  for (int i = 0; i <= flagChunks; i++) {
-    const float x      = float(i) / float(flagChunks);
-    const float damp   = 0.1f * x;
-    const float angle1 = ripple1 - 4.0f * M_PI * x;
-
-    wave0[i] = damp * sinf(angle1);
-    wave1[i] = damp
-      * (sinf(angle1 - 0.28f * M_PI) + sinf(ripple2 + 1.16f * M_PI));
-    wave2[i] = wave0[i] + damp * sinf(ripple2);
-  }
+  renderNode.doWave();
 }
 
 void			FlagSceneNode::move(const GLfloat pos[3])
@@ -162,12 +152,17 @@ FlagSceneNode::FlagRenderNode::FlagRenderNode(
 				const FlagSceneNode* _sceneNode) :
 				sceneNode(_sceneNode)
 {
-  // do nothing
+  recomputeWave = true;
 }
 
 FlagSceneNode::FlagRenderNode::~FlagRenderNode()
 {
   // do nothing
+}
+
+void			FlagSceneNode::FlagRenderNode::doWave()
+{
+  recomputeWave = true;
 }
 
 void			FlagSceneNode::FlagRenderNode::render()
@@ -186,17 +181,32 @@ void			FlagSceneNode::FlagRenderNode::render()
       myStipple(sceneNode->color[3]);
 
     if (sceneNode->billboard) {
+      if (recomputeWave) {
+	float sinRipple2  = sinf(sceneNode->ripple2);
+	float sinRipple2S = sinf(sceneNode->ripple2 + 1.16f * M_PI);
+	for (int i = 0; i <= flagChunks; i++) {
+	  const float x      = float(i) / float(flagChunks);
+	  const float damp   = 0.1f * x;
+	  const float angle1 = sceneNode->ripple1 - 4.0f * M_PI * x;
+	  const float angle2 = angle1 - 0.28f * M_PI;
+
+	  wave0[i] = damp * sinf(angle1);
+	  wave1[i] = damp * (sinf(angle2) + sinRipple2S);
+	  wave2[i] = wave0[i] + damp * sinRipple2;
+	}
+	recomputeWave = false;
+      }
       RENDERER.getViewFrustum().executeBillboard();
       glBegin(GL_QUAD_STRIP);
 	for (int i = 0; i <= flagChunks; i++) {
 	  const float x = float(i) / float(flagChunks);
-	  const float shift1 = sceneNode->wave0[i];
+	  const float shift1 = wave0[i];
 	  GLfloat v1[3], v2[3];
 	  v1[0] = v2[0] = Width * x;
 	  v1[1] = base + Height - shift1;
 	  v2[1] = base - shift1;
-	  v1[2] = sceneNode->wave1[i];
-	  v2[2] = sceneNode->wave2[i];
+	  v1[2] = wave1[i];
+	  v2[2] = wave2[i];
 	  glTexCoord2f(x, 1.0f);
 	  glVertex3fv(v1);
 	  glTexCoord2f(x, 0.0f);
