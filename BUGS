@@ -26,7 +26,9 @@ recent bugs
   (Chestal) Easy to reproduce on ducati 59155. Just get shot by the single
   world weapon there.
   Update: big HUD message says 'world weapon', but message area almost
-  always says 'unknown'.
+  always says 'unknown'. I think this means that the shot has the right
+  player id, but MsgKilled msg from server has not (HUD msg is displayed
+  when player blows up, other msg when MsgKilled is received).
 
 - Spawn code sometimes spawns you mid-air
 
