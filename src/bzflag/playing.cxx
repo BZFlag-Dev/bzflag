@@ -4743,11 +4743,13 @@ static World*		makeWorld(ServerLink* serverLink)
 	  if (code != MsgGetWorld) return NULL;
 
 	  // get size of entire world database and make space
-	  void *buf = nboUnpackUInt(msg, size);
-	  worldDatabase = new char[size + len];
+	  uint32_t bytesLeft;
+	  void *buf = nboUnpackUInt(msg, bytesLeft);
+	  size = bytesLeft + len;
+	  worldDatabase = new char[size];
 
 	  // get world database
-	  uint32_t ptr = 0, bytesLeft = size;
+	  uint32_t ptr = 0;
 	  while (bytesLeft != 0) {
 		// add chunk to database so far
 		::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
