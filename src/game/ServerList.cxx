@@ -176,7 +176,7 @@ void ServerList::readServerList(int index, StartupInfo *info)
     }
 
     // remove parsed replies
-    listServer.bufferSize -= (base - listServer.buffer);
+    listServer.bufferSize -= int(base - listServer.buffer);
     memmove(listServer.buffer, base, listServer.bufferSize);
   } else if (n == 0) {
     // server hungup
@@ -317,7 +317,7 @@ void			ServerList::checkEchos(StartupInfo *info)
       ListServer& listServer = listServers[i];
 
       // create socket.  give up on failure.
-      listServer.socket = socket(AF_INET, SOCK_STREAM, 0);
+      listServer.socket = int(socket(AF_INET, SOCK_STREAM, 0));
       if (listServer.socket < 0) {
 	printError("Can't create list server socket");
 	listServer.socket = -1;
@@ -440,7 +440,7 @@ void			ServerList::checkEchos(StartupInfo *info)
 		     info->callsign, info->password,
 		     listServer.hostname.c_str());
 	    //printError(url);
-	    errorSending = send(listServer.socket, url, strlen(url), 0)
+	    errorSending = send(listServer.socket, url, int(strlen(url)), 0)
 	      != (int) strlen(url);
 	  }
 	  if (errorSending) {

@@ -28,13 +28,13 @@ void ServerItem::writeToFile(std::ostream& out) const
 
   // write out desc.
   memset(buffer,0,sizeof(buffer));
-  int copyLength = description.size() < MAX_STRING ? description.size(): MAX_STRING;
+  int copyLength = int(description.size() < MAX_STRING ? description.size(): MAX_STRING);
   strncpy(&buffer[0],description.c_str(),copyLength);
   out.write(buffer,sizeof(buffer));
 
   // write out name
   memset(buffer,0,sizeof(buffer));
-  copyLength = name.size() < MAX_STRING ? name.size(): MAX_STRING;
+  copyLength = int(name.size() < MAX_STRING ? name.size(): MAX_STRING);
   strncpy(&buffer[0],name.c_str(),copyLength);
   out.write(buffer,sizeof(buffer));
 
