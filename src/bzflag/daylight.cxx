@@ -13,6 +13,7 @@
 #include <math.h>
 #include "common.h"
 #include "daylight.h"
+#include "StateDatabase.h"
 
 static const double	radPerDeg = M_PI / 180.0;
 static const double	radPerHour = M_PI / 12.0;
@@ -278,6 +279,10 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
   static const GLfloat	sunrise1Color[3] = { 0.30f, 0.12f, 0.08f };
   static const GLfloat	sunrise2Color[3] = { 0.47f, 0.12f, 0.08f };
 
+  float skyDarknessFactor = 1;
+  if (BZDB.isSet("skyDarknessFactor"))
+	  skyDarknessFactor = BZDB.eval("skyDarknessFactor");
+
   // sky colors
   if (sunDir[2] < nightElevation) {
     // nighttime
@@ -348,6 +353,20 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
     sky[3][1] = horizonColor[1];
     sky[3][2] = horizonColor[2];
   }
+
+  // apply the darkness factor
+  sky[0][0]  *= skyDarknessFactor;
+  sky[0][1]  *= skyDarknessFactor;
+  sky[0][2]  *= skyDarknessFactor;
+  sky[1][0]  *= skyDarknessFactor;
+  sky[1][1]  *= skyDarknessFactor;
+  sky[1][2]  *= skyDarknessFactor;
+  sky[2][0]  *= skyDarknessFactor;
+  sky[2][1]  *= skyDarknessFactor;
+  sky[2][2]  *= skyDarknessFactor;
+  sky[3][0]  *= skyDarknessFactor;
+  sky[3][1]  *= skyDarknessFactor;
+  sky[3][2]  *= skyDarknessFactor;
 }
 
 bool			areShadowsCast(const float sunDir[3])
