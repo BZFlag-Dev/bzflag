@@ -377,14 +377,19 @@ void Player::updateTrackMarks()
       bool drawMark = true;
       float markPos[3];
       markPos[2] = state.pos[2];
+      // FIXME - again, this should be pulled for TankGeometryMgr
+      const float fullLength = 6.0f;
+      const float treadHeight = 1.2f;
+      const float dist = dimensions[0] * 
+                         ((fullLength - treadHeight) / fullLength);
       if (relativeSpeed > +0.001f) {
 	// draw the mark at the back of the treads
-	markPos[0] = state.pos[0] - (forward[0] * dimensions[0]);
-	markPos[1] = state.pos[1] - (forward[1] * dimensions[0]);
+	markPos[0] = state.pos[0] - (forward[0] * dist);
+	markPos[1] = state.pos[1] - (forward[1] * dist);
       } else if (relativeSpeed < -0.001f) {
 	// draw the mark at the front of the treads
-	markPos[0] = state.pos[0] + (forward[0] * dimensions[0]);
-	markPos[1] = state.pos[1] + (forward[1] * dimensions[0]);
+	markPos[0] = state.pos[0] + (forward[0] * dist);
+	markPos[1] = state.pos[1] + (forward[1] * dist);
       } else {
 	drawMark = false;
       }
