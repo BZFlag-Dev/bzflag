@@ -135,7 +135,7 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
   return texture;
 }
 
-int TextureManager::newTexture ( const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter )
+int TextureManager::newTexture ( const char* name, int /*x*/, int /*y*/, unsigned char* data, OpenGLTexture::Filter filter )
 {
   return addTexture(name,new OpenGLTexture(128,128,data,filter));
 }
