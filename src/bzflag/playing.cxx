@@ -1706,14 +1706,13 @@ static void		doMotion()
         if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
         rotation = atan2f(tp[1] - mp[1], tp[0] - mp[0]) - myTank->getAngle();
         if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
+        int period = int(TimeKeeper::getCurrent().getSeconds());
+        float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
+	rotation += bias;
         if (fabs(rotation) > M_PI / 2)
           speed = -0.5f;
         else
           speed = 1.0f;
-        int period = int(TimeKeeper::getCurrent().getSeconds());
-        float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
-	rotation += bias;
-        speed = 1.0f;
  
         //fire too, why not?
         TimeKeeper now = TimeKeeper::getCurrent();
@@ -1721,7 +1720,7 @@ static void		doMotion()
 	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)) {
 	    const float *vel = myTank->getVelocity();
 	    const float *pos = myTank->getPosition();
-	    float dir[3] = {vel[0] * cosf(azimuth), vel[1] * sinf(azimuth), 0.0f};
+	    float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
 	    Ray tankRay(pos, dir);
 	    distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
 	    const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
