@@ -29,6 +29,8 @@ public:
 	static bool  shadows;
 	static bool  zbuffer;
 	static bool  tesselation;
+        static bool  lighting;
+        static bool  smooth;
 
 	static float maxLOD;
 	static float tankHeight;
