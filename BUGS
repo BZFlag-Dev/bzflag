@@ -8,6 +8,11 @@ recent bugs
   (bzfs.cxx / line 2708) should the team flags always be allowed
   to land on any valid surface? (no -fb check, no -j check, etc)
 
+  Me (Tupone) like this way with -fb option: flag lands as without -fb. If it
+  is a team flag and flag lands on his base it is ok.
+  If it lands on any other object just let it disappear unless is a team flag
+  where it goes on safety point.
+
 - HUD roaming label flag isn't updated if "Following Winner"
   (check playing.cxx/setRoamingLabel(), never called with
    (force == true), except from clientCommands.cxx)
