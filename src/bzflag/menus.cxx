@@ -3989,20 +3989,20 @@ ServerStartMenu::ServerStartMenu()
    */
 #ifdef _WIN32
   /* add a list of .bzw files found in the current dir */
-  std::string pattern = BZDB.get("directory");
-  if (pattern.length() == 0) {
+  std::string searchDir = BZDB.get("directory");
+  if (searchDir.length() == 0) {
     long availDrives = GetLogicalDrives();
     for (int i = 2; i < 31; i++) {
       if (availDrives & (1 << i)) {
-	pattern = 'a' + i;
-	pattern += ":";
+	searchDir = 'a' + i;
+	searchDir += ":";
 	break;
       }
     }
   }
 
-
-  pattern += "\\";
+  searchDir += "\\";
+  std::string pattern = searchDir + "*.bzw";
   WIN32_FIND_DATA findData;
   HANDLE h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {
@@ -4010,25 +4010,20 @@ ServerStartMenu::ServerStartMenu()
     std::string suffix;
     while (FindNextFile(h, &findData)) {
       file = findData.cFileName;
-      if (file.length() > 4) {
-	suffix = file.substr(file.length() - 4, 4);
-	if (compare_nocase(suffix, ".bzw") == 0) {
-	  worldFiles[file] = pattern + file;
-	  items->push_back(file);
-	}
-      }
+      worldFiles[file] = searchDir + file;
+      items->push_back(file);
     }
   }
 
   /* add a list of .bzw files found in the config file dir */
-  pattern = "C:";
+  searchDir = "C:";
   char dir[MAX_PATH];
   ITEMIDLIST* idl;
   if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
     if (SHGetPathFromIDList(idl, dir)) {
       struct stat statbuf;
       if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
-	pattern = dir;
+	searchDir = dir;
     }
     IMalloc* shalloc;
     if (SUCCEEDED(SHGetMalloc(&shalloc))) {
@@ -4038,20 +4033,16 @@ ServerStartMenu::ServerStartMenu()
   }
   // yes it seems silly but the windows way is to have "my" in front of any folder you make in the my docs dir
   // todo: make this stuff go into the application data dir.
-  pattern += "\\My BZFlag Files\\";
+  searchDir += "\\My BZFlag Files\\";
+  pattern = searchDir + "*.bzw";
   h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {
     std::string file;
     std::string suffix;
     while (FindNextFile(h, &findData)) {
       file = findData.cFileName;
-      if (file.length() > 4) {
-	suffix = file.substr(file.length() - 4, 4);
-	if (compare_nocase(suffix, ".bzw") == 0) {
-	  worldFiles[file] = pattern + file;
-	  items->push_back(file);
-	}
-      }
+      worldFiles[file] = searchDir + file;
+      items->push_back(file);
     }
   }
 #else
