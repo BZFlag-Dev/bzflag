@@ -99,6 +99,23 @@ protected:
 	SceneNodeVFFloat delta;
 };
 
+class ParticleAffectorTankMovement : public ParticleAffector {
+public:
+						ParticleAffectorTankMovement();
+	virtual				~ParticleAffectorTankMovement();
+
+	virtual void		affectParticles(SceneNodeParticleSystem* system, Real time);
+	virtual void		parse(XMLTree::iterator);
+
+	virtual ParticleAffector*	clone();
+
+protected:
+	SceneNodeSFFloat	distance;
+
+	float oldEye[3];
+	float oldDirection[3];
+};
+
 class ParticleAffectorFactory {
 public:
 	ParticleAffector*	create(const std::string&) const;

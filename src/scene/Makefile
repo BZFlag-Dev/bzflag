@@ -42,6 +42,8 @@ CXXFILES =				\
 	SceneVisitorRender.cxx		\
 	SceneVisitorSimpleRender.cxx	\
 	SceneReader.cxx 		\
+	SceneManager.cxx		\
+	daylight.cxx			\
 	$(NULL)
 
 targets: $(TARGETS)

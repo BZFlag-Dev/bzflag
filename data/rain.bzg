@@ -31,6 +31,9 @@
 					<force>0 0 -4</force>
 					<application method="add"/>
 				</affector>
+				<affector type="tankmovement">
+					<distance>12</distance>
+				</affector>
 				<emitter type="box">
 					<position>0 0 4</position>
 					<rate>250</rate>

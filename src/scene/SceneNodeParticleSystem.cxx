@@ -15,6 +15,7 @@
 #include "SceneVisitorParams.h"
 #include "SceneReader.h"
 #include "SceneNodeFieldReader.h"
+#include "SceneManager.h"
 #include "math3D.h"
 #include <iostream>
 
@@ -182,9 +183,82 @@ void	ParticleAffectorLinearForce::parse(XMLTree::iterator xml)
 
 ParticleAffector* ParticleAffectorLinearForce::clone()
 {
-	ParticleAffector *newp = new ParticleAffectorLinearForce;
+	ParticleAffector* newp = new ParticleAffectorLinearForce;
 	((ParticleAffectorLinearForce*) newp)->application = application;
 	((ParticleAffectorLinearForce*) newp)->force.set(force);
+	return newp;
+}
+
+//
+// ParticleAffectorTankMovement
+//
+ParticleAffectorTankMovement::ParticleAffectorTankMovement() :
+							distance("distance")
+{
+	const float* eye = SCENEMGR->getView().getEye();
+	const float* direction = SCENEMGR->getView().getDirection();
+	for (unsigned int i = 0; i < 3; i++)
+		oldEye[i] = eye[i];
+	for (unsigned int i = 0; i < 3; i++)
+		oldDirection[i] = direction[i];
+}
+
+ParticleAffectorTankMovement::~ParticleAffectorTankMovement()
+{
+}
+
+void ParticleAffectorTankMovement::affectParticles(SceneNodeParticleSystem* system, Real)
+{
+	const float* eye = SCENEMGR->getView().getEye();
+	const float* direction = SCENEMGR->getView().getDirection();
+	SceneNodeParticleSystem::ParticleList::iterator it;
+	float positiond[3];
+	Vec3 dir, dird, north, pos, pos2, cross;
+	float angle, scale = -1.0, turn;
+	Matrix rot;
+
+	for (unsigned int i = 0; i < 3; i++) {
+		positiond[i] = eye[i] - oldEye[i];
+		dird[i] = direction[i] - oldDirection[i];
+		oldEye[i] = eye[i];
+		oldDirection[i] = direction[i];
+	}
+
+	dir.set(direction[0], direction[1], 0); dir.normalize();
+	north.set(0, -1, 0);
+	pos.set(positiond[0], positiond[1], positiond[2]);
+	angle = -acos(dir * north) * 180.0 / M_PI; // x / |A||B| = x / 1
+	cross = dird % north;
+	if(cross[2] > 0) {
+		scale = 1.0;
+	}
+	rot.zero(); rot.setRotate(0, 0, scale, -angle);
+	pos2 = pos.xformPoint(rot);
+	turn = distance.get() * (dird * north);
+
+	for (it = system->particles.begin(); it != system->particles.end(); it++) {
+		Particle* p = static_cast<Particle*> (*it);
+		for (unsigned int i = 0; i < 3; i++)
+			p->position[i] -= pos2[i] * 0.5;
+	}
+}
+
+void ParticleAffectorTankMovement::parse(XMLTree::iterator xml)
+{
+	if (xml->value == "distance") {
+		SceneNodeScalarReader<float> reader(&distance);
+		reader.parse(xml);
+	}
+}
+
+ParticleAffector* ParticleAffectorTankMovement::clone()
+{
+	ParticleAffector* newp = new ParticleAffectorTankMovement;
+	((ParticleAffectorTankMovement*) newp)->distance.set(distance.get());
+	for (unsigned int i = 0; i < 3; i++)
+		((ParticleAffectorTankMovement*) newp)->oldEye[i] = oldEye[i];
+	for (unsigned int i = 0; i < 3; i++)
+		((ParticleAffectorTankMovement*) newp)->oldDirection[i] = oldDirection[i];
 	return newp;
 }
 
@@ -195,6 +269,9 @@ ParticleAffector*	ParticleAffectorFactory::create(const std::string& typespecifi
 {
 	if (typespecifier == "linearforce") {
 		return new ParticleAffectorLinearForce();
+	}
+	else if(typespecifier == "tankmovement") {
+		return new ParticleAffectorTankMovement();
 	}
 	return NULL;
 }

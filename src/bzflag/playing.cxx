@@ -3175,10 +3175,19 @@ static void				playingLoop()
 			SceneNode* staticScene = NULL;
 			if (myTank != NULL && (myTank->isPaused() ||
 				myTank->getFlag() == BlindnessFlag)) {
+				SceneNodeGroup* dynamicGroup = new SceneNodeGroup;
+
+				// add weather effects
+				if (atoi(BZDB->get("renderQuality").c_str()) >= 2) {
+					world->addWeatherSceneNodes(dynamicGroup);
+				}
+
 				staticScene = SCENEMGR->getStaticScene();
 				SCENEMGR->setStatic(NULL);
 				SCENEMGR->openDynamic();
+				SCENEMGR->addDynamic(dynamicGroup);
 				SCENEMGR->closeDynamic();
+				dynamicGroup->unref();
 			}
 			else {
 				// add dynamic nodes
@@ -3199,7 +3208,9 @@ static void				playingLoop()
 					world->addFlagsSceneNodes(dynamicGroup);
 
 					// add weather effects
-					world->addWeatherSceneNodes(dynamicGroup);
+					if (atoi(BZDB->get("renderQuality").c_str()) >= 2) {
+						world->addWeatherSceneNodes(dynamicGroup);
+					}
 
 					// add other tanks and shells
 					const bool colorblind = (myTank->getFlag() == ColorblindnessFlag);

@@ -17,7 +17,6 @@ TARGETS = $(TARGETDIR)/bzflag
 CXXFILES =				\
 	CommandsSearch.cxx		\
 					\
-	SceneManager.cxx		\
 	HUDManager.cxx			\
 					\
 	ViewItems.cxx			\
@@ -37,7 +36,6 @@ CXXFILES =				\
 	RemotePlayer.cxx		\
 	DeadPlayer.cxx			\
 	ServerLink.cxx			\
-	daylight.cxx			\
 	sound.cxx			\
 	bzflag.cxx			\
 	$(NULL)

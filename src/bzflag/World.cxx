@@ -588,15 +588,15 @@ void					World::addDeadPlayer(Player* dyingPlayer)
 
 void					World::addWeatherSceneNodes(SceneNodeGroup* group)
 {
-	const float* eye = SCENEMGR->getView().getEye();
-	const float* direction = SCENEMGR->getView().getDirection();
-	float origin[3];
+	const Real* eye = SCENEMGR->getView().getEye();
+	const Real* direction = SCENEMGR->getView().getDirection();
+	Real origin[3];
 
 	// compute origin (draw 12m in front of tank)
 	origin[0] = eye[0] + (direction[0] * 12);
 	origin[1] = eye[1] + (direction[1] * 12);
 	origin[2] = eye[2] + (direction[2] * 12);
-	
+
 	if (BZDB->get("weather") == "raining") {
 		transformSceneNode->clearChildren();
 		transformSceneNode->translate.clear();
