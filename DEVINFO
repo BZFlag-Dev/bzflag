@@ -1,0 +1,571 @@
+Information for the BZFlag Developer
+====================================
+
+As of version 1.8, BZFlag the source code lives in the following
+directories:
+
+game independent, platform independent libraries
+------------------------------------------------
+common		- general utility
+mediafile	- image and audio file reading
+geometry	- geometric mathematics
+obstacle	- collision detection
+scene		- scene graph
+ogl		- wrapper classes for OpenGL
+ui		- user interface
+view		- laying out objects to display
+
+game independent, platform dependent libraries
+----------------------------------------------
+net		- networking
+platform	- non-windowing, non-audio utility
+mplatform	- windowing and audio utility
+
+game dependent, platform independent libraries
+----------------------------------------------
+game		- game classes used by more than one application
+
+applications
+------------
+bzflag		-- the BZFlag client
+bzfls		-- the BZFlag meta-server (i.e. the list of servers server)
+bzfs		-- the BZFlag server
+bzgview		-- a viewer for BZFlag 3D models
+
+Note that only a few directories contain code directly related to
+the game BZFlag.  In particular: game, bzflag, bzfls, and bzfs.
+(And obstacle, but that will hopefully be made more general soon.)
+The rest of the code could potentially be used in a different game.
+If your code is BZFlag specific then it should go into one of the
+above directories (game if used by more than one app, otherwise
+into the appropriate app directory).  If not then put it in one of
+the other directories or add a new directory.
+
+
+Coding conventions
+==================
+
+If you plan on contributing any source code to BZFlag, we would
+like you to follow these conventions.  Contributions that don't
+conform are likely to be rejected until they do.
+
+Code Organization
+-----------------
+Follow the above organization when introducing new files.  Any
+code that would potentially be useful in another game goes outside
+of the app directories and outside the game directory.  Platform
+dependent code normally goes into platform, mplatform, or net.
+
+Header files that are private to a library go into that library's
+directory.  Header files exported from a library go into the
+include off the top-level.  Header files for classes introduced
+in an application directory should never go into include.
+
+C++ features
+------------
+Earlier versions of BZFlag avoided certain features of C++ that
+have matured enough to be widely and well supported.  These
+features are now permitted and encouraged:
+  bool			-- the boolean type and True and False are gone
+  templates		-- use where appropriate
+  exceptions		-- use where appropriate
+  standard C++ library	-- use where appropriate (AList is gone)
+
+Exception handling is used in BZFlag in some places.  However,
+do not use exception specifications on function/method declarations.
+And be sure you don't leak any memory if exceptions are thrown.
+Using std::auto_ptr<> is discouraged because older VC++ compilers
+have a broken implementation.
+
+Run-time typing is strongly discouraged.  It's typically not
+necessary and shouldn't be introduced unless you've got a *really*
+good reason.
+
+Multiple inheritance is strongly discouraged unless in the Java
+style of single implementation inheritance and multiple interface
+inheritance.  Multiple inheritance otherwise can quickly lead to
+very hard to understand code.
+
+Formatting
+----------
+I don't care if you don't like the formatting style in BZFlag.
+Everybody has their own style and has things they don't like about
+any other style.  Well we can't have a zillion styles in the code.
+So follow the BZFlag if you want your contribution included.  The
+source code serves for examples but some rules:
+
+  1)  use tabs to indent; one tab per indentation level.  the
+      source looks best with tabs at every 4th column so using
+      that setting is strongly encouraged.
+  2)  the opening brace of all blocks goes on the same line as
+      the statement introducing it except for functions where it
+      goes on the following line.  the closing brace is indented
+      like the statement except for functions where it aligns
+      with the open brace.  for example:
+        void foo()
+        {
+          for (;;) {
+            if (expr) {
+            }
+          }
+        }
+  3)  an else clause goes on a new line:
+        if (expr) {
+        }
+        else {
+        }
+      do not use `} else {'.
+  4)  if *either* the if block or else block requires brackets
+      then they both get brackets.  if neither require brackets
+      then use brackets on both or neither at your discretion.
+  5)  use `if (ptr != NULL)' and `if (ptr == NULL)' rather than
+      `if (ptr)' and `if (!ptr)'.
+  6)  line up the `=' when assignments appear on sequential lines:
+         int a   = 5;
+         float x = 4.0f;
+  7)  when using `delete' or `delete[]' don't bother to test the
+      pointer if it's NULL first.  use new and delete rather than
+      malloc and free.
+  8)  function names and class member variables in class definitions
+      should generally be at the 6th tab stop.
+  9)  data members should be usually private unless making plain old
+      data.  separate methods from data in class definitions with
+      (possibly redundant) access specifiers.  public c'tors/d'tors
+      should be first, followed by public member functions, protected
+      member functions, private member functions, and data members.
+  10) macro names are all capitals, class names have the first letter
+      of each word capitalized, all other names have the first letter
+      of each word except the first capitalized.  only macros may use
+      underscores except a leading underscore in a method parameter
+      name is allowed to make it different from a member variable.
+        #define FOO bar
+        class MyClass {
+        public:
+            void        addStuff(int addMe, int _y) { y = addMe + y; }
+
+        private:
+            int         y;
+        };
+  11) put spaces after statements followed by expressions and
+      spaces around operators.  for example:
+        if (a == b)
+      not
+        if(a==b)
+
+Violations of these rules in the existing code are not excuses to 
+follow suit.  Non-conformant code may be fixed.  Patches to non-
+conformant code should follow the non-conformant code's style if
+following the rules would cause an ugly mess.
+
+
+Configuration Files
+===================
+Configuration files are now XML with minor extensions.  Scene graphs
+are also XML.  All XML file processing is performed using the same
+class:  XMLTree.  XMLTree syntatically parses XML files and stores
+the result in a tree data structure.  That tree is then passed to
+the appropriate semantic parser, which may pass off sub-trees to
+other semantic parsers.
+
+Configuration files use the suffix `bzc' (and scene graph files use
+`bzg').  During startup, bzflag does the following initialization:
+
+  * sets default configuration
+  * loads $(HOME)/.bzflag (the pathname depends on the user and platform)
+  * parses command line arguments
+  * creates the window, initializes audio, etc
+  * loads user.bzc if it exists, otherwise load config.bzc
+
+On exit, the configuration is written to $(HOME)/.bzflag to provide
+some persistence.  The initialization order allows the command line
+to override old configuration and old configuration to override
+defaults.  It also allows the user to hook in a replacement
+configuration file (user.bzc) for local changes that shouldn't be
+overwritten everytime bzflag exits.
+
+XMLTree supports:
+  nested tags
+  comments
+  CDATA sections
+  character references
+  processing instructions (which are just parsed and stored)
+
+XMLTree doesn't support:
+  prolog
+  DTD's (and related stuff)
+  any character encoding but ASCII
+
+XMLTree adds the following extensions:
+  <!INCLUDE "<filename>"/>
+    causes the named file to be included inline, replacing the
+    !INCLUDE tag.
+  multiple top-level tags
+    forcing a single top-level tag is rather annoying for the
+    configuration files, so this restriction is relaxed.
+
+ConfigFileManager stores configuration file readers along with the
+tag each handles.  It can parse files (or parsed XMLTree's) that
+contain those tags, automatically switching between readers as
+necessary.
+
+Sounds
+======
+Sounds are stored as 22.050KHz Ogg Vorbis files. To create, make an
+appropriate wav then oggenc with no arguments other than -o output.ogg
+Note that version 1.0rc3 of the ogg vorbis libraries has a significant
+bug regarding very small files (such as those used for sound effects).
+The version in xiph CVS works, and we are assured a new release is coming
+soon.
+
+The State Database
+==================
+BZFlag now uses a centralized database for storing many (most?)
+simple values.  The StateDatabase contains name/value pairs.  Names
+and values are strings but values can be interpreted as booleans,
+integers, or floats as necessary.  StateDatabase even has a method
+for a boolean truth test (isTrue()).  In the code, the StateDatabase
+is always accessed through the macro BZDB.
+
+Names in the database can be marked persistent.  Persistent values
+are written to the user's configuration file on exit.
+
+Names can be marked read-only, locked, and read-write.  The access
+control applies only to the end user and server, not to the
+programmer.  User commands to modify values respect the access
+control and only allow changes to read-write values.  This allows
+the program to expose values without allowing the user to change
+them.
+
+When the server is given the ability to get/set values on each
+client, the client will enforce access control.  The server will
+be able to write to locked and read-write values.  It will also
+be allowed to change the access control on locked and read-write
+names to either locked or read-write.  It will not be permitted
+to write to or change the access control on read-only values.
+This facility will allow the server to control the client to a
+certain extent.  Code already exists to allow the server to
+prevent the user from changing the time of day.
+
+See bzflag.cxx for a list of most built-in database entries.
+Others may be introduced elsewhere and it's difficult to keep a
+complete list.  The "set" command with no arguments will display
+all values that don't begin with an underscore.  A leading
+underscore indicates an internal value that the user probably
+isn't interested in, but the user can still them via the "print"
+command.
+
+
+Commands
+========
+
+Users now control the client almost exclusively through commands.
+Commands can be entered explicitly using the console.  Commands
+are also bound to keys and buttons and the user can add, remove,
+and change those bindings.  Even menus act through commands.
+
+The only interaction that isn't through commands is controlling
+motion which is done via polling the cursor or joystick position.
+That too should become a command.
+
+There are several standard commands and some BZFlag specific.
+The "help" command with no arguments will print a list of available
+commands.
+
+
+Key Bindings
+============
+
+Key bindings are now managed through KeyManager.  It can bind a key
+or button press or release to any command.  The only key binding
+that is hard coded is the escape key to show the main menu.  When
+visible, the menu or a message composer will get first crack at
+keys and may prevent the KeyManager from handling them.
+
+Default key bindings are set in bzflag.cxx but they are overridden
+by any bindings in the user's configuration file.  Of particular
+interest is the ` key which displays the console.  Escape dismisses
+the console.
+
+
+Details -- common
+=================
+common.h	-- basic types and function declarations
+BzfString	-- a simple ref counted string class (don't use std::string)
+CallbackList	-- template for lists of callback functions
+ConfigFileManager -- stores configuration file parsers and parses config files
+ErrorHandler	-- a central place for printing errors (using printError())
+FileManager	-- creates streams for I/O in the data directory
+StateDatabase	-- a name/value pair database
+TimeBomb	-- used for expiring development releases
+XMLTree		-- an XML parser for reading configuration files
+
+Details -- game
+===============
+Contains headers and source files specific to a particlar game, in this
+case BZFlag.
+
+Details -- geometry
+===================
+BoundingBox	-- represents a bounding box
+Intersect	-- 2D and 3D intersection functions
+Matrix		-- a 4x4 matrix for transforming homogeneous coordinates
+Ray		-- a 3D ray
+ViewFrustum	-- a 3D viewing frustum
+
+Details -- mediafile
+====================
+AudioFile	-- a generic audio file reader
+ImageFile	-- a generic image file reader
+MediaFile	-- static methods for reading media files of known types
+SGIImageFile	-- an SGI image format file reader
+WaveAudioFile	-- a WAV audio format file reader
+OggAudioFile	-- an Ogg Vorbis audio format file reader (uses libvorbisfile)
+
+Details -- mplatform
+====================
+Contains files to implement platform dependent versions of:
+  BzfDisplay	-- event handling, screen size, and video format changing
+  BzfVisual	-- wraps pixel format selection
+  BzfWindow	-- window management, gamma control, mouse & joystick stuff
+  PlatformMediaFactory	-- create the above, audio control
+
+Details -- net
+==============
+Contains stuff for network handling.  This is in flux.  All platform
+specific network code should end up in here.
+
+Details -- obstacle
+===================
+Collision detection stuff.  Currently specific to BZFlag it handles
+boxes, pyramids, teleporters, etc.  This should be rewritten to do
+generic 3D collision detection on, at least, convex polyhedra.  It
+should also do collision response.
+
+Details -- ogl
+==============
+Wraps rendering state, texture maps, and texture fonts.  Currently
+it is OpenGL specific but it could be made rendering library agnostic.
+There are a number of places outside this library where OpenGL is
+used, though.  Ideally all rendering library calls would go through
+a library agnostic interface.  However, OpenGL has the widest support
+of any rendering library so this is pretty much a non-issue (unless
+someone wants to port to a game console).
+
+Details -- platform
+===================
+Contains files to implement platform dependent versions of
+PlatformFactory, which handles:
+  configuration file I/O
+  text console output
+  time and timers
+  querying the user name
+  environment variables
+  signal handling
+Configuration files are platform independent but their location is
+not.
+
+Details -- scene
+================
+Implements a simple scene graph.  A scene graph describes a 3D model.
+The library supports simple animation by linearly interpolating values.
+Note that it's a directed graph, not a tree, so nodes can be referenced
+by different parents to reuse them.  Cycles are (usually) errors but
+they are not detected or prevented, so be careful.
+
+Nodes are reference counted.  SceneNodeGroup is the base class of all
+nodes that have children and it manages the ref counts of its children.
+The programmer is otherwise responsible for managing ref counts.
+
+scene has the following node types (these are not type names):
+  transforms	-- various linear transforms including billboarding
+  gstate	-- set renderer state (e.g. texture, blending function)
+  geometry	-- colors, normals, texture coordinates, and vertices
+  primitives	-- points, lines, and triangles
+  animation	-- adjusts and creates interpolation variables
+  selector	-- chooses certain children based on some criteria
+  lights	-- simple lights applied to children with normals
+  metadata	-- arbitrary string data
+Selectors are used to switch models for level-of-detail or to hide
+objects that shouldn't be visible.  They could also be used to
+terminate recursion in models the use cycles in the graph.
+
+The library supports the following actions (called visitors):
+  Find		-- find the first node with a given name
+  FindAll	-- find all named nodes
+  Render	-- full featured renderer
+  SimpleRender	-- simple renderer
+
+The Render (SceneVisitorRender) action traverses the scene graph,
+culls primitives outside the view frustum, sorts visible objects
+to minimize rendering state changes and to get blended objects in
+back-to-front order, then draws them.  SimpleRender just draws
+objects in the order they're found in the graph.
+
+SceneVisitorRender uses std::sort() to do the sorting.  If your
+std::sort() is quicksort then it's possible for the sort to take
+quadratic time (if the nodes are already sorted).  That's pretty
+unlikely but it's something to be aware of.  Some compilers use
+a standard library that implements introsort which is O(NlogN)
+in the worst case and otherwise just as fast as quicksort.
+
+To use a scene graph effectively you must understand how state is
+handled during traversal and how traversal is performed.  Traversal
+is depth first and children are traversed from first (index 0) to
+last.  When leaving a node, any rendering state it may have modified
+is restored to what it was before entering the node.  So the state
+at any particular node depends only on the path to that node, not on
+any other part of the scene graph.  That's an important feature:  it
+simplifies understanding of the graph and permits performance
+enhancements (because the graph can be easily rearranged).
+
+Rendering state is always pushed onto a stack when entering a node
+and popped when leaving it.  What is modified depends on the type of
+node:
+  transform	-- pushes a new matrix onto a matrix stack
+  gstate	-- pushes a new gstate
+  geometry	-- pushes *non-empty* colors, normals, texcoord, vertices
+  animation	-- pushes rendering parameters
+  light		-- pushes a new light
+Note that geometry can accumulate in a limited way:  an geometry node
+that doesn't specify, say, colors will inherit colors from earlier
+geometry nodes.  Transforms can base the new matrix on any matrix
+currently in the matrix stack.  Usually, they multiply with the top
+matrix.  Rendering parameters can be introduced or adjusted.  But
+gstates are always replaced in toto.
+
+Nodes animate by providing multiple values for some parameter and
+indicating the rendering parameter used to interpolate it (which
+normally defaults to "t").  For example, a SceneNodeTransform can
+animate a translation by specifying two or more translations:
+
+  <transform>
+    <translate>
+      0 0 0
+      1 0 0
+      1 1 0
+    </translate>
+  </transform>
+
+When t <= 0, the translation is (0 0 0).  When 0 <= t < 1 the
+translation linearly interpolates from (0 0 0) to (1 0 0).  When
+1 <= t < 2 it linearly interpolates from (1 0 0) to (1 1 0).  When
+t >= 2 the translation is (1 1 0).  Not all nodes support animation.
+Currently the following parameters can be animated:
+  SceneNodeChoice
+    mask
+  SceneNodeGeometry
+    color
+    normal
+    texcoord
+    vertex
+  SceneNodeLight
+    ambient
+    diffuse
+    specular
+    position
+    spotDirection
+    spotExponent
+    spotCutoff
+    attenuation
+  SceneNodeSphereTransform
+    translate
+    azimuth
+    altitude
+    twist
+    radius
+  SceneNodeTransform
+    translate
+    center
+    rotate
+    scaleOrientation
+    scale
+
+The SceneNodeAnimate node allows rendering parameters to be adjusted
+or created from existing parameters.  Animations can cycle or swing;
+cycle means that they restart from the beginning when they reach the
+end and swing means that when they reach the end they go backwards
+to the beginning then restart.  The number of cycles can be limited
+to any positive value, including fractions of a cycle.
+
+Given an input parameter x, an intermediate value y is computed:
+  y = (scale * (x + bias) - start) / (end - start)
+y is the normalized cycle parameter.  if the animation mode is swing
+then y is halved because it takes twice as long to complete one swing
+cycle (start to end to start) than a normal cycle (start to end).
+
+What happens next depends on if the number of cycles is limited.  If
+so then t is clamped to the range [0, cycles].  If cycles is an
+integer and the animation is cycling (not swinging) then y is clamped
+to the end of the cycle rather than the beginning since this is usually
+desired.
+
+The integer part of y is then discarded.  If y is negative then 1 is
+added;  this means, for example, -0.75 maps to 0.25 and that animations
+don't reverse direction when y passes through 0.
+
+Finally, the output parameter is computed from the adjusted y.  If
+swinging then [0,0.5) is mapped to [start,end) and [0.5,1) is mapped to
+[end,start).  If cycling then [0,1] is mapped to [start,end].  If there
+is a step size then the output parameter is forced to the closest step
+not greater than the current value (the step is counted from start, not
+from zero).
+
+SceneVisitorRender predefines "time" to be the wall clock time since
+the game started.  Scene graphs can use this as the input parameter
+for animations by using "time" as the src parameter and "t" as the
+dst parameter.
+
+The SceneNodeGState deserves a short description.  It controls how a
+primitive is drawn and there should be a gstate somewhere in the graph
+above every primitive.  A gstate node's parameters map directly to the
+methods in an OpenGLGStateBuilder.  In summary:
+  <texture filename="<filename>" rgba="true|false" repeat="true|false"
+	   filter="nearest|linear|
+                   nearestmipmapnearest|linearmipmapnearest|
+                   nearestmipmaplinear|linearmipmaplinear" />
+						use texture
+  <texenv mode="modulate|decal|replace" />	use tex env mode
+  <shading model="flat|smooth" />		use shade model
+  <blending src="0|1|sa|1-sa|da|1-da|dc|1-dc"
+            dst="0|1|sa|1-sa|da|1-da|sc|1-sc" /> use blending function
+  <alpha func="0|==|!=|<|<=|>|>=|1" ref={ref} /> use alpha function
+  <depth write="true|false" func="0|==|!=|<|<=|>|>=|1" />
+						use depth function
+  <smoothing smooth="true|false" />		use line/point smoothing or not
+  <culling cull="true|false" />			enable/disable culling
+  <dithering dither="true|false" />		enable/disable dithering
+  <point size="{s}" />				draw points of size s
+  <stipple alpha="{a}" />			set stipple with given opacity
+  <pass number="{n}" />				draw on pass n
+  <clipping clip="true|false" a="[0-9\.]*" b=[0-9\.]*" c="..." d="..." />
+  						set clipping plane
+You can also add `force="true|false"' to texture, blending, and smoothing.
+Using "true" forces the gstate to override globally disabled rendering
+state.  So, for example, if you absolutely have to have smoothing on
+your lines and points even if the user wants those turned off then
+use `<smoothing smooth="true" force="true" />'.  However, usually you
+should use a choice node to make separate models for each case.
+
+Details -- ui
+=============
+CommandManager	-- manages commands (name,function pairs)
+CommandsStandard-- the standard commands
+KeyManager	-- manages key bindings (key event,command pairs)
+Menu		-- a menu, made of menu controls
+MenuControls	-- various user interface elements for menus
+MenuManager	-- manages the known menus and the active menu stack
+MenuReader	-- reads menus from configuration files
+MessageBuffer	-- a buffer of timestamped message strings
+MessageManager	-- manages named message buffers
+
+Details -- view
+===============
+A view is a rectangular region where something gets displayed,
+including other views.  BZFlag uses views to layout the display.
+The view directory has several kinds of views and the bzflag
+directory contains other views specific to BZFlag.
+
+Named views are stored in data/views.bzc.  See that for examples.
+By default, bzflag uses the "normal" view but this can be changed
+at any time by setting "displayView" to the name of the desired
+view.
