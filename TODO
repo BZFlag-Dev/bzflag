@@ -2,12 +2,21 @@ to do list for bzflag
 ---------------------
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
-
 * version as strings as in 1.9.0-cvs20030604
   (apparently this needs a better explanation)
   ( put all calls to all version numbers into funcs
     from commom, version strings are now built up from
     sub vars in config.h. )
+  (just needs to be set up for automation in autogen now )
+
+* .bzf/ on *ix should be a directory with db and cache/ entries
+
+* benchmark calls to BZDB to insure there are close to 0 per
+  frame redraw. Convert any existing to callbacks.
+
+* shorten laser to like 1.25 normal shot
+
+THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE BUT NOONE WILL STEP UP FOR THEM
 
 * support gameinfo requests as one time udp packets (if udp)
   This should function like the old broadcast server locator
@@ -16,13 +25,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   from any udp address, not just a "connected" player.
   bzfls should use this udp to confirm server availability
   before falling back to tcp pipe for the same msgs.
-
-* .bzf/ on *ix should be a directory with db and cache/ entries
-
-* benchmark calls to BZDB to insure there are close to 0 per
-  frame redraw. Convert any existing to callbacks.
-
-* shorten laser to like 1.25 normal shot
+  Posibly make the server list have 2 modes, Internet and LAN
+  using the left and right arrow keys to change between them.
+  boroadcast for LAN servers only happens when on the LAN seting
+  to minimise trafic, and difirentiate the servers.
 
 THESE ARE LOWER PRIORITY
 
