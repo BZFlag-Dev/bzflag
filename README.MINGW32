@@ -64,13 +64,17 @@ with the Unix LF (0xA)" option in Global Preferences; in TortoiseCVS, use the
 If you get the bzflag files from a released source tarball, or using MSYS' own 
 cvs utility, they should already be in the correct format.
 
+It's easiest to check out BZFlag into a subdirectory of wherever you installed
+MSYS, such as <MSYS>/bzflag.
+
 *** Part IV: Compile and Install BZFlag
 
 Once you have the files checked out correctly, you should run this command
 
 sh autogen.sh
 
-from the top bzflag directory.
+from the top bzflag directory, from inside the MSYS shell (run msys.bat from
+the MSYS directory).
 
 You should have all the automake, autoconf, m4, perl stuff - they
 are in DTK kit.
