@@ -2,6 +2,9 @@
 	<head>
 		<title>BZFS Configuration Builder</title>
 		<script language="JavaScript">
+			var flags = new Array(	"V", "A", "OO", "F", "MG", "GM", "L", "R", "SB",
+						"IB", "ST", "T", "N", "SH", "SR", "SW", "PZ", "G",
+						"JP", "ID", "CL", "CB", "<-", "->", "M", "B", "JM", "WA" );
 
 			function ableControls()
 			{
@@ -246,7 +249,26 @@
 					d.writeln("#Bad Flag shake wins<br/>");
 					d.writeln("-sw " + mainform.bad_flag_shake_wins.value + "<br/>");
 				}
+
+				for (var i = 0; i < flags.length; i++) {
+					var el = flags[i].toLowerCase() + "_mand_flag";
+					var cnt = mainform.elements[el].value;
+					if (cnt > 0) {
+						d.write("+f " + flags[i]);
+						if (cnt > 1)
+							d.write("{"+cnt+"}");
+						d.write(" ");
+					}
+				}
+				d.writeln("");
 				
+				for (var i = 0; i < flags.length; i++) {
+					var el = flags[i].toLowerCase() + "_forbid_flag";
+					if (mainform.elements[el].checked) {
+						d.write("-f " + flags[i] + " ");
+					}
+				}
+				d.writeln("");
 
 
 				d.writeln("</p></body></html>");
@@ -498,7 +520,7 @@
 						</tr>
 						<tr>
 							<td align="right">(JP)</td><td><input type="text" name="jp_mand_flag" value="0" size="3"/></td>
-							<td align="right">(IB)</td><td><input type="text" name="ib_mand_flag" value="0" size="3"/></td>
+							<td align="right">(ID)</td><td><input type="text" name="id_mand_flag" value="0" size="3"/></td>
 							<td align="right">(CL)</td><td><input type="text" name="cl_mand_flag" value="0" size="3"/></td>
 						</tr>
 						<tr>
@@ -547,7 +569,7 @@
 						</tr>
 						<tr>
 							<td align="right">(JP)</td><td><input type="checkbox" name="jp_forbid_flag"/></td>
-							<td align="right">(IB)</td><td><input type="checkbox" name="ib_forbid_flag"/></td>
+							<td align="right">(ID)</td><td><input type="checkbox" name="id_forbid_flag"/></td>
 							<td align="right">(CL)</td><td><input type="checkbox" name="cl_forbid_flag"/></td>
 						</tr>
 						<tr>
