@@ -8,6 +8,7 @@ VERSIONID=`grep ^AM_INIT_AUTOMAKE configure.in | sed -e 's/.* //g' -e 's/)//g'`
 MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
 MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
 REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < include/version.h`
+PKGVER=2
 date=`date --rfc-822`
 arch=$(dpkg-architecture -qDEB_HOST_ARCH)
 version=${MAJOR_VERSION}.${MINOR_VERSION}.${REV}
@@ -16,9 +17,9 @@ if [ "$1" == "release" ] ; then
    echo "You must create debian/changelog to do a release"
    exit 1
  fi
- version=${version}-1
+ version=${version}-$PKGVER
 else
- version=${version}.`date +%Y%m%d`-1
+ version=${version}.`date +%Y%m%d`-$PKGVER
  sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
 fi
 echo "Starting on $date to build:"
