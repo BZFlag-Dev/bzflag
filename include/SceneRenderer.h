@@ -184,7 +184,6 @@ class SceneRenderer {
     bool		lastFrame;
     bool		sameFrame;
     std::vector<FlareLight>	flareLightList;
-    OpenGLGState	flareGState;
 
     static SceneRenderer* instance;
 };
