@@ -16,6 +16,7 @@
 #include <ctype.h>
 #include <fstream>
 
+
 //
 // FileManager
 //
@@ -44,7 +45,7 @@ std::istream*				FileManager::createDataInStream(
 								bool binary) const
 {
 	// choose open mode
-	int mode = std::ios::in;
+	std::ios::openmode mode = std::ios::in;
 	if (binary)
 		mode |= std::ios::binary;
 
@@ -96,7 +97,7 @@ std::ostream*				FileManager::createDataOutStream(
 								bool truncate) const
 {
 	// choose open mode
-	int mode = std::ios::out;
+	std::ios::openmode mode = std::ios::out;
 	if (binary)
 		mode |= std::ios::binary;
 	if (truncate)
