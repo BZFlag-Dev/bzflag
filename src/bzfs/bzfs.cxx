@@ -98,6 +98,9 @@ const int udpBufSize = 128000;
 #include "md5.h"
 #include "ShotUpdate.h"
 
+float	WorldSize = DEFAULT_WORLD;
+bool    gotWorld = false;
+
 void makeupper(std::string& str)
 {
   for (unsigned int i = 0; i < str.length(); i++)
@@ -1458,19 +1461,20 @@ CustomWorld::CustomWorld()
 
 bool CustomWorld::read(const char *cmd, istream& input)
 {
-  if (strcmp(cmd, "size") == 0)
+	if (strcmp(cmd, "size") == 0){
     input >> size;
-  else if (strcmp(cmd, "flagHeight") == 0)
+	WorldSize = size;
+	}
+	else if (strcmp(cmd, "flagHeight") == 0)
     input >> fHeight;
   else
     return false;
   return true;
 }
 
-void CustomWorld::write(WorldInfo * /*world*/) const
+void CustomWorld::write(WorldInfo * world) const
 {
   flagHeight = (float) fHeight;
-  //WorldSize = size;
   //world->addLink(from, to);
 }
 
@@ -3220,10 +3224,12 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
     else if (strcasecmp(buffer, "base") == 0)
       newObject = new CustomBase;
 
-    // FIXME - only load one object of the type CustomWorld!
-    else if (strcasecmp(buffer, "world") == 0)
-      newObject = new CustomWorld();
-
+    else if (strcasecmp(buffer, "world") == 0){
+		if (!gotWorld){
+			newObject = new CustomWorld();
+			gotWorld = true;
+		}
+	}
     else if (object) {
       if (!object->read(buffer, input)) {
 	// unknown token
@@ -3232,13 +3238,11 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
 	//return false;
       }
     }
-
-    // filling the current object
-    else {
+    else {// filling the current object
       // unknown token
-      printf("%s(%d) : invalid object type \"%s\"\n", location, line, buffer);
+      printf("%s(%d) : invalid object type \"%s\"-skipping\n", location, line, buffer);
       delete object;
-      return false;
+     // return false;
     }
 
     // discard remainder of line
@@ -3864,7 +3868,7 @@ static bool defineWorld()
    // package up world
   world->packDatabase();
   // now get world packaged for network transmission
-  worldDatabaseSize = 4 + 24 + world->getDatabaseSize() + 2;
+  worldDatabaseSize = 4 + 28 + world->getDatabaseSize() + 2;
   if (clOptions.gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + 9 * 4);
 
@@ -3875,7 +3879,8 @@ static bool defineWorld()
 
   void *buf = worldDatabase;
   buf = nboPackUShort(buf, WorldCodeStyle);
-  buf = nboPackUShort(buf, 24);
+  buf = nboPackUShort(buf, 28);// size of the header
+  buf = nboPackFloat(buf, WorldSize);
   buf = nboPackUShort(buf, clOptions.gameStyle);
   buf = nboPackUShort(buf, maxPlayers);
   buf = nboPackUShort(buf, clOptions.maxShots);

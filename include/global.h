@@ -53,10 +53,12 @@ enum TeamColor {
 const float		Epsilon =	1.0e-5f;	// arbitrary
 const float		Infinity =	MAXFLOAT;	// arbitrary
 
+#define	DEFAULT_GRAVITY	-9.81f
+#define DEFAULT_WORLD	800
 // universe info
-const float		Gravity =	-9.8f;		// meters/sec/sec
-const float		WorldSize =	800.0f;		// meters
-const float		BaseSize =	60.0f;		// meters
+const float	Gravity =	DEFAULT_GRAVITY;		// meters/sec/sec
+extern float	WorldSize;							// meters
+const float		BaseSize =	60.0f;					// meters
 
 // rough tank geometry
 const float		TankLength =	6.0f;		// meters

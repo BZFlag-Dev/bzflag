@@ -69,6 +69,9 @@ extern int		killerHighlight;
 
 static BzfDisplay*	display = NULL;
 
+float		WorldSize =	DEFAULT_WORLD;					// meters
+
+
 #ifdef ROBOT
 // ROBOT -- tidy up
 int numRobotTanks = 0;

@@ -637,6 +637,7 @@ void*			WorldBuilder::unpack(void* buf)
 
   // read style
   uint16_t gameStyle, maxPlayers, maxShots, maxFlags;
+  buf = nboUnpackFloat(buf, WorldSize);
   buf = nboUnpackUShort(buf, gameStyle);
   setGameStyle(short(gameStyle));
   buf = nboUnpackUShort(buf, maxPlayers);
