@@ -55,26 +55,26 @@ bool URLManager::getURL ( const std::string, std::string&)
 
 	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, 5);
 	if (result)
-	  DEBUG1("Something wrong with CURL; Error: %d",result);
+	  DEBUG1("Something wrong with CURL; Error: %d\n",result);
 
 	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
 	if (result) {
-		DEBUG1("Something wrong with CURL; Error:  %d",result);
+		DEBUG1("Something wrong with CURL; Error:  %d\n",result);
 		return false;
 	}
 
 	result = curl_easy_perform((CURL*)easyHandle);
 	if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
-		DEBUG1("Error: server reported: %d",result);
+		DEBUG1("Error: server reported: %d\n",result);
 		return false;
-	}else if (result) {
-		DEBUG1("Something wrong with CURL; Error: %d",result);
+	} else if (result) {
+		DEBUG1("Something wrong with CURL; Error: %d\n",result);
 		return false;
 	}
 
 	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, NULL);
 	if (result) {
-		DEBUG1("Something wrong with CURL; Error: %d",result);
+		DEBUG1("Something wrong with CURL; Error: %d\n",result);
 		return false;
 	}
 
@@ -114,25 +114,25 @@ bool URLManager::getURL (const std::string, void **, unsigned int&)
 
 	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, 60);
 	if (result)
-	  DEBUG1("Something wrong with CURL; Error: %d",result);
+	  DEBUG1("Something wrong with CURL; Error: %d\n",result);
 
 	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
 	if (result) {
-		DEBUG1("Something wrong with CURL; Error:  %d",result);
+		DEBUG1("Something wrong with CURL; Error:  %d\n",result);
 	}
 
 	result = curl_easy_perform((CURL*)easyHandle);
 	if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
-		DEBUG1("Error: server reported: %d",result);
+		DEBUG1("Error: server reported: %d\n",result);
 		return false;
-	}else if (result) {
-		DEBUG1("Something wrong with CURL; Error: %d",result);
+	} else if (result) {
+		DEBUG1("Something wrong with CURL; Error: %d\n",result);
 		return false;
 	}
 
 	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, NULL);
 	if (result) {
-		DEBUG1("Something wrong with CURL; Error: %d",result);
+		DEBUG1("Something wrong with CURL; Error: %d\n",result);
 		return false;
 	}
 
@@ -161,21 +161,21 @@ URLManager::URLManager()
 #ifdef HAVE_CURL
 	CURLcode curlResult;
 	if ((curlResult = curl_global_init(CURL_GLOBAL_NOTHING)))
-		DEBUG1("Unexpected error from libcurl; Error: %d",curlResult);
+		DEBUG1("Unexpected error from libcurl; Error: %d\n",curlResult);
 
 	easyHandle = curl_easy_init();
 	if (!easyHandle) {
-		DEBUG1("Something wrong with CURL");
+		DEBUG1("Something wrong with CURL\n");
 		return;
 	}
 
 	CURLcode result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_WRITEFUNCTION, writeFunction);
 	if (result)
-			DEBUG1("Something wrong with CURL; Error: %d",result);
+			DEBUG1("Something wrong with CURL; Error: %d\n",result);
 
 	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_FILE, this);
 	if (result)
-		DEBUG1("Something wrong with CURL; Error: %d",result);
+		DEBUG1("Something wrong with CURL; Error: %d\n",result);
 #endif
 }
 
