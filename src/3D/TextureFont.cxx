@@ -159,6 +159,10 @@ bool TextureFont::load(OSFile &file)
     if (!readKeyInt(file, "EndX", fontMetrics[i].endX)) return false;
     if (!readKeyInt(file, "StartY", fontMetrics[i].startY)) return false;
     if (!readKeyInt(file, "EndY", fontMetrics[i].endY)) return false;
+
+    fontMetrics[i].fullWidth = fontMetrics[i].initialDist +
+                               fontMetrics[i].charWidth +
+                               fontMetrics[i].whiteSpaceDist;
   }
 
   file.close();
@@ -201,8 +205,8 @@ void TextureFont::preLoadLists(void)
     {
       glTranslatef((float)fontMetrics[i].initialDist, 0, 0);
 
-      float fFontY = (float)fontMetrics[i].endY - fontMetrics[i].startY;
-      float fFontX = (float)fontMetrics[i].endX - fontMetrics[i].startX;
+      float fFontY = (float)(fontMetrics[i].endY - fontMetrics[i].startY);
+      float fFontX = (float)(fontMetrics[i].endX - fontMetrics[i].startX);
 
       glBegin(GL_QUADS);
 	glNormal3f(0.0f, 0.0f, 1.0f);
@@ -223,7 +227,11 @@ void TextureFont::preLoadLists(void)
 	glVertex3f(fFontX, fFontY, 0.0f);
       glEnd();
 
-      glTranslatef(fFontX, 0.0f, 0.0f);
+      // this plus the initial 'initialDist' equal 'fullWidth'
+      float fFontPostX = (float)(fontMetrics[i].charWidth +
+                                 fontMetrics[i].whiteSpaceDist);
+                            
+      glTranslatef(fFontPostX, 0.0f, 0.0f);
     }
     glEndList();
   }
@@ -255,15 +263,7 @@ float TextureFont::getStrLength(float scale, const char *str, int len)
 
     charToUse -= 32;
 
-    if (charToUse == 0) {
-      totalLen += fontMetrics[charToUse].initialDist +
-		  fontMetrics[charToUse].charWidth +
-		  fontMetrics[charToUse].whiteSpaceDist;
-    } else {
-      totalLen += fontMetrics[charToUse].endX -
-		  fontMetrics[charToUse].startX +
-		  fontMetrics[charToUse].initialDist;
-    }
+    totalLen += (float)(fontMetrics[charToUse].fullWidth);
   }
 
   return totalLen * scale;
@@ -315,9 +315,7 @@ void TextureFont::drawString(float scale, GLfloat color[3], const char *str,
     charToUse -= space;
 
     if (charToUse == 0) {
-      glTranslatef((float)fontMetrics[charToUse].initialDist +
-		   (float)fontMetrics[charToUse].charWidth +
-		   (float)fontMetrics[charToUse].whiteSpaceDist, 0.0f, 0.0f);
+      glTranslatef((float)(fontMetrics[charToUse].fullWidth), 0.0f, 0.0f);
     } else {
       glCallList(listIDs[charToUse]);
     }

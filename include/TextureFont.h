@@ -31,6 +31,7 @@ typedef struct {
   int initialDist;
   int charWidth;
   int whiteSpaceDist;
+  int fullWidth; // initialDist + charWidth + whiteSpaceDist
   int startX;
   int endX;
   int startY;
