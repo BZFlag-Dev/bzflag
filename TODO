@@ -28,8 +28,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * either disable server checks when -handicap mode is enabled, or
   incorporate the player's handicap value into the check calculations.
 
-* complete the tetra getHitNormal() collision code (trepan)
-
 * complete the mesh collision code (trepan)
 
 * speed up the radar rendering
