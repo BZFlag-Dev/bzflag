@@ -3798,11 +3798,18 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     // blow me up
     tank->explodeTank();
     if (tank == myTank) {
-      playLocalSound(SFX_DIE);
+      if (reason == GotRunOver)
+	playLocalSound( SFX_RUNOVER );
+      else
+        playLocalSound(SFX_DIE);
     }
     else {
       const float* pos = tank->getPosition();
-      playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2],
+      if (reason == GotRunOver)
+        playWorldSound(SFX_RUNOVER, pos[0], pos[1], pos[2],
+				getLocalPlayer(killer) == myTank);
+      else
+        playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2],
 				getLocalPlayer(killer) == myTank);
 
       float explodePos[3];
