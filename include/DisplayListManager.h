@@ -39,7 +39,7 @@ public:
   bool callList ( int list );
 
   void release( void );
-  void aquire ( void );
+  void acquire ( void );
 protected:
   friend class Singleton<DisplayListManager>;
 
@@ -48,6 +48,7 @@ private:
   DisplayListManager(const DisplayListManager &dm);
   DisplayListManager& operator=(const DisplayListManager &dm);
   ~DisplayListManager();
+  void rebuildLists();
   
   int               lastID;
   displayListMap    lists;

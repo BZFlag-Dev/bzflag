@@ -99,7 +99,7 @@ void DisplayListManager::release ( void )
   }
 }
 
-void DisplayListManager::aquire ( void )
+void DisplayListManager::acquire ( void )
 {
   displayListMap::iterator  it = lists.begin();
 
@@ -111,6 +111,10 @@ void DisplayListManager::aquire ( void )
     glEndList();
     it++;
   }
+}
+
+void DisplayListManager::rebuildLists()
+{
 }
 
 // Local Variables: ***
