@@ -97,8 +97,8 @@ extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 void handlePasswordCmd(int t, const char *message)
 {
   if (accessInfo[t].passwordAttemptsMax()) {
-    DEBUG1("%s has attempted too many /password tries\n",
-	   player[t].getCallSign());
+    DEBUG1("\"%s\" (%s) has attempted too many /password tries\n",
+	   player[t].getCallSign(), NetHandler::getHandler(t)->getTargetIP());
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
     if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0){
