@@ -20,6 +20,8 @@ public:
   virtual ~WorldObject() { };
 
   virtual std::string myToken() const = 0;
+  virtual std::string serialize() const = 0;
+//  virtual bool deserialize(TokenStream?) = 0;
   static std::istream& operator>>(std::istream& o, WorldObject&);
   static std::ostream& operator<<(std::ostream& o, const WorldObject&) const;
 }
