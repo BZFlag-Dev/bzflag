@@ -1,6 +1,13 @@
 recent bugs
 ------------
 
+- hit detection on pyramids computed it's not completely fixed: algorithms is:
+  normalize pyramid dimension and position to be with center at (0,0,0) 
+  range (-1 .. 1, -1 .. 1, 0 .. 1),
+  move starting ray position at inside of box (-1 .. 1, -1 .. 1, 0 .. 1),
+  compute ray intersect to pyramid planes and checking for what's earlier.
+  What is missing is the restriction of intersection actually being on pyramids
+
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
   bzfls.pl on Tim's     : 1.8 sec
@@ -55,8 +62,6 @@ http://SourceForge.net/tracker/?group_id=3248&atid=103248
 
 * same stipple on teleporters and phantom zone, making phatom
    tank behind teleporter virtually invisible when blending is off.
-
-* hit detection on pyramids computed at altitude of ray origin
 
 * not drawing back to front when depth buffer is on:
    flag edges can't be antialiased right
