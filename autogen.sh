@@ -2,7 +2,7 @@
 # script to prepare bzflag sources
 aclocal \
 && autoheader \
-&& automake --add-missing \
+&& automake --add-missing --copy \
 && autoconf \
 || exit 1
 
