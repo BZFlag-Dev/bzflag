@@ -44,7 +44,7 @@ bzfs \- BZFlag game server
 [\fB\-publiclist \fIurl\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
-[\fB\-rabbit \fBscore|\fBkiller\fBrandom\fR]
+[\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
 [\fB\-requireudp\fR]
@@ -266,7 +266,7 @@ especially if the \fB-p\fR option is also used.
 Makes most shots ricochet.
 Super bullets, shock waves, and guided missiles do not.
 .TP
-\fB-rabbit\fR {\fIscore\fR|\fIkiller\fR|\fIrandom\fR}
+\fB-rabbit\fR [\fIscore\fR|\fIkiller\fR|\fIrandom\fR]
 Enables the rabbit-hunt style game.  By default, the free-for-all
 style is used.  You must specify the algorithm used to pick a new
 rabbit when the old one dies.  The \fIscore\fR algorithm uses a modified
