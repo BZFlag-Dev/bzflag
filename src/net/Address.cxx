@@ -41,7 +41,7 @@ Address::Address()
 {
   InAddr tempAddr;
 
-  memset(&tempAddr, 0, sizeof(addr));
+  memset(&tempAddr, 0, sizeof(tempAddr));
   tempAddr.s_addr = htonl(INADDR_ANY);
   addr.push_back(tempAddr);
 }
