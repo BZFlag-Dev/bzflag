@@ -117,6 +117,9 @@ Q. When I run ./configure, sed dumps the contents of version.h, configure
 A. When checking out the bzflag sources from CVS, you must check them out with
    UNIX line breaks.  For instructions for TortoiseCVS or WinCVS, see Part IV.
    Alternatively, use mingw's or cygwin's built-in CVS to check out the files.
+   If you're using a source package, you need to use the tarball (.tar.bz2) not
+   the zip package.  You can extract it from within MSYS with "bunzip2 <file>"
+   and "tar -xvf <file>".
 
 Q. When I run make, it reports an error about not being able to find dsound.h.
 A. Follow the above directions to get the needed DirectX headers from the MS DX SDK,
