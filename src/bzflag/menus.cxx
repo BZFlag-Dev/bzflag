@@ -1290,7 +1290,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'e':
       sceneRenderer->setEnhancedRadar(list->getIndex() != 0);
-	  break;
+      break;
   }
 }
 

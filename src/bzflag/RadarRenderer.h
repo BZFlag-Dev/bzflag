@@ -57,6 +57,7 @@ class RadarRenderer {
     void		drawShot(const ShotPath*);
     void		drawTank(float x, float y, float z);
     void		drawFlag(float x, float y, float z);
+    void		drawFlagOnTank(float x, float y, float z);
 
     static float	colorScale(const float z, const float h, boolean enhanced);
     static float	transScale(const Obstacle& o);
@@ -68,6 +69,7 @@ class RadarRenderer {
     const World&	world;
     int			x, y;
     int			w, h;
+    float       ps;
     float		range;
     GLfloat		background[4];
     boolean		blend;
@@ -79,7 +81,6 @@ class RadarRenderer {
     unsigned char	*noise;
     OpenGLTexture	*noiseTexture;
     static const float	colorFactor;
-    static const float	transFactor;
 };
 
 //

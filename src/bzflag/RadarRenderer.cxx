@@ -25,8 +25,7 @@
 #include "Flag.h"
 #include "OpenGLGState.h"
 
-const float		RadarRenderer::colorFactor = 20.0f;
-const float		RadarRenderer::transFactor = 20.0f;
+const float		RadarRenderer::colorFactor = 40.0f;
 
 RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
 						const World& _world) :
@@ -134,8 +133,12 @@ void			RadarRenderer::drawShot(const ShotPath* shot)
 
 void RadarRenderer::drawTank(float x, float y, float z)
 {
+  // Does not change with height.
+  GLfloat s = TankRadius > 1.5f + 2.0f * ps ? TankRadius : 1.5 + 2.0f * ps;
+  glRectf(x - s, y - s, x + s, y + s);
+
   // Changes with height.
-  GLfloat s = TankRadius * 3.0f + (z + BoxHeight) * 2.0f / BoxHeight;
+  s = s * (z / 2.0f + BoxHeight) / BoxHeight;
 
   glBegin(GL_LINE_STRIP);
   glVertex2f(x - s, y);
@@ -144,15 +147,26 @@ void RadarRenderer::drawTank(float x, float y, float z)
   glVertex2f(x, y + s);
   glVertex2f(x - s, y);
   glEnd();
-
-  // Does not change with height.
-  s = TankRadius * 1.5f;
-  glRectf(x - s, y - s, x + s, y + s);
 }
 
-void RadarRenderer::drawFlag(float x, float y, float z)
+void RadarRenderer::drawFlag(float x, float y, float)
 {
-  GLfloat s = TankRadius * 3.0f + (z + BoxHeight) * 2.0f / BoxHeight;
+  GLfloat s = FlagRadius > 3.0f * ps ? FlagRadius : 3.0f * ps;
+  glBegin(GL_LINES);
+  glVertex2f(x - s, y);
+  glVertex2f(x + s, y);
+  glVertex2f(x + s, y);
+  glVertex2f(x - s, y);
+  glVertex2f(x, y - s);
+  glVertex2f(x, y + s);
+  glVertex2f(x, y + s);
+  glVertex2f(x, y - s);
+  glEnd();
+}
+
+void RadarRenderer::drawFlagOnTank(float x, float y, float)
+{
+  GLfloat s = 2.5f * TankRadius > 4.0f * ps ? 2.5f * TankRadius : 4.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(x - s, y);
   glVertex2f(x + s, y);
@@ -293,6 +307,9 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     if (decay <= 0.015f) decay = 1.0f;
     else decay *= 0.5f;
 
+    // get size of pixel in model space (assumes radar is square)
+    ps = 2.0f * range / GLfloat(w);
+
     // relative to my tank
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
     const float* pos = myTank->getPosition();
@@ -316,11 +333,15 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
     // draw my shots
     const int maxShots = world.getMaxShots();
-    glColor3f(1.0f, 1.0f, 1.0f);
     int i;
     for (i = 0; i < maxShots; i++) {
       const ShotPath* shot = myTank->getShot(i);
-      if (shot) shot->radarRender();
+      if (shot) {
+        const float cs = colorScale(shot->getPosition()[2],
+                                    MuzzleHeight, renderer.useEnhancedRadar());
+        glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+        shot->radarRender();
+      }
     }
 
     // draw other tanks (and any flags on them)
@@ -339,7 +360,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       GLfloat z = player->getPosition()[2];
       if (player->getFlag() != NoFlag) {
 	glColor3fv(Flag::getColor(player->getFlag()));
-	drawFlag(x, y, z);
+	drawFlagOnTank(x, y, z);
       }
 
       if (myTank->getFlag() == ColorblindnessFlag)
@@ -366,12 +387,16 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {
 	const ShotPath* shot = player->getShot(j);
-	if (shot && shot->getFlag() != InvisibleBulletFlag) {
-	  if (myTank->getFlag() == ColorblindnessFlag)
-	    glColor3fv(Team::getRadarColor(RogueTeam));
-	  else
-	    glColor3fv(Team::getRadarColor(player->getTeam()));
-	  shot->radarRender();
+        if (shot && shot->getFlag() != InvisibleBulletFlag) {
+	  const float *shotcolor;
+          if (myTank->getFlag() == ColorblindnessFlag)
+            shotcolor = Team::getRadarColor(RogueTeam);
+          else
+            shotcolor = Team::getRadarColor(player->getTeam());
+          const float cs = colorScale(shot->getPosition()[2],
+              MuzzleHeight, renderer.useEnhancedRadar());
+          glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
+          shot->radarRender();
 	}
       }
     }
@@ -444,7 +469,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     // my flag
     if (myTank->getFlag() != NoFlag) {
       glColor3fv(Flag::getColor(myTank->getFlag()));
-      drawFlag(0.0f, 0.0f, myTank->getPosition()[2]);
+      drawFlagOnTank(0.0f, 0.0f, myTank->getPosition()[2]);
     }
   }
 
@@ -468,9 +493,9 @@ float			RadarRenderer::colorScale(const float z, const float h, boolean enhanced
     else
       scaleColor = 1.0f;
 
-    // Can't get blacker than black!
-    if (scaleColor < 0.5f)
-      scaleColor = 0.5f;
+    // Don't fade all the way
+    if (scaleColor < 0.35f)
+      scaleColor = 0.35f;
   }
   else {
     scaleColor = 1.0f;
