@@ -2194,8 +2194,8 @@ static void addPlayer(int playerIndex)
   }
 
   // make sure the name is not obscene/filtered
-  std::cout << "checking callsign: " << player[playerIndex].callSign << std::endl;
   if (clOptions->filterCallsigns) {
+    DEBUG2("checking callsign: %s\n",player[playerIndex].callSign);
     bool filtered = false;
     char cs[CallSignLen];
     memcpy(cs, player[playerIndex].callSign, sizeof(char) * CallSignLen);
