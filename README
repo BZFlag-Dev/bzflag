@@ -39,6 +39,7 @@ directory:
   README	- this file
   README.*	- platform specific details
   BUGS		- a list of known bugs
+  BZFlag.xcode  - Mac OS X XCode project
   ChangeLog	- history of changes
   COPYING	- the license for BZFlag
   NEWS		- placeholder - see ChangeLog
@@ -47,9 +48,11 @@ directory:
   RELNOTES	- placeholder - see ChangeLog
   TODO		- incomplete list of things to do
   data/		- data files (sounds, images, etc.)
-  include/	- include files for libraries
+  debian/	- debian apt files
+  doc/		- partial documentation in doxygen format
+  include/	- include headers for libraries
   man/		- man pages
-  misc/		- miscellany
+  misc/		- miscellaneous goo
   package/	- stuff to build installable packages
   src/		- bzflag, bzfs, etc. source code
     3D/		  - 3D code including texture manager
@@ -66,6 +69,7 @@ directory:
       MacOSX/       - Mac OS X specific files, including PB project
     scene/	  - high level rendering algorithms
     zlib/	  - compression library
+  tools/	- various helper utilities
   win32/	- extra stuff for building on win32 platforms
 
 
