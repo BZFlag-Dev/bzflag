@@ -12,13 +12,17 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-$dbhost  = "localhost";
-$dbuname = "bzflag";
-$dbpass  = "";
-$dbname  = "bzflag";
+// define dbhost/dbuname/dbpass/dbname here
+include('serversettings.php');
+// $dbhost  = "localhost";
+// $dbname  = "bzflag";
+// $dbuname = "bzflag";
+// $dbpass  = "bzflag";
 
 # Common to all
 $action   = $_GET['action'];
+
+# For bzfs
 $nameport = $_GET['nameport'];
 
 # For ADD
@@ -26,6 +30,17 @@ $build    = $_GET['build'];
 $version  = $_GET['version'];
 $gameinfo = $_GET['gameinfo'];
 $title    = $_GET['title'];
+
+# For players
+$callsign = $_GET['callsign'];  # urlencoded
+$email    = $_GET['email'];     # urlencoded
+$password = $_GET['password'];  # urlencoded
+$conntime = $_GET['conntime'];
+
+# For karma
+$target   = $_GET['target'];    # urlencoded
+$karma    = $_GET['karma'];
+
 
 # where to send debug printing
 $enableDebug	= 0;
@@ -60,7 +75,8 @@ if ($enableDebug) {
 # ignore banned servers outright
 if ($banlist[$_SERVER['REMOTE_ADDR']] != "") {
   # reject the connection attempt
-  debug($debugFile, "Connection rejected from $_SERVER['REMOTE_ADDR]");
+  $remote_addr = $_SERVER['REMOTE_ADDR'];
+  debug($debugFile, "Connection rejected from $remote_addr");
   die("Connection attempt rejected.  See #bzflag on irc.freenode.net");
 }
 
@@ -92,6 +108,25 @@ if (!$result) {
     or die ("Could not create table: " . mysql_error());
 }
 
+# if the registered players table does not exist, create .
+$result = mysql_query("SELECT * FROM players", $link);
+if (!$result) {
+  debug($debugFile, "Registered players table did not exist, creating a new one");
+  
+  mysql_query("CREATE TABLE players " .
+              "(email varchar(64) NOT NULL, " .
+              " callsign varchar(32) NOT NULL, " .
+              " password varchar(16) NOT NULL, " .
+              " karma TINYINT NOT NULL DEFAULT '0', " .
+              " provisional BOOL NOT NULL DEFAULT '1', " .
+              " assignments TEXT, " .
+              " playtime BIGINT UNSIGNED NOT NULL DEFAULT '0', " .
+              " lastmod INT NOT NULL, " .
+              " randtext varchar(8), " .
+              " PRIMARY KEY (email))", $link)
+    or die ("Could not create players table: " . mysql_error());
+}
+    
 debug($debugFile, "Deleting inactive servers from list");
 
 # remove all inactive servers from the table
@@ -99,6 +134,18 @@ $timeout = 1800;    # timeout in seconds
 $staletime = time() - $timeout;
 mysql_query("DELETE FROM servers WHERE lastmod < $staletime", $link)
      or die("Could not drop old items" . mysql_error());
+
+# remove all inactive registered players from the table
+$timeout = 2592000; # timeout in seconds, defaults to 30d
+$staletime = time() - $timeout;
+mysql_query("DELETE FROM players WHERE lastmod < $staletime", $link)
+     or die ("Could not remove inactive players" . mysql_error());
+
+# remove all players who have not confirmed registration
+$timeout = 259200;  # timeout in seconds, defaults to 72h
+$staletime = time() - $timeout;
+mysql_query("DELETE FROM players WHERE lastmod < $staletime AND randtext != NULL", $link)
+     or die ("Could not remove inactive players" . mysql_error());
 
 
 header("Content-type: text/plain");
@@ -136,8 +183,8 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
   $pos = strpos($version, "BZFS");
   if ($pos === false || $pos > 0)
     return;
-# Test to see whether nameport is valid by attempting to establish a
-# connection to it
+  # Test to see whether nameport is valid by attempting to establish a
+  # connection to it
   $split = explode(":", $nameport);
   $servname = $split[0];
   if (array_key_exists(1, $split))
@@ -181,9 +228,9 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
 
     debug($debugFile, "Server already exists in database -- updating");
 
-# Server exists already, so update the table entry
-# ASSUMPTION: only the 'lastmod' column of table needs updating since all
-# else should remain the same as before
+    # Server exists already, so update the table entry
+    # ASSUMPTION: only the 'lastmod' column of table needs updating since all
+    # else should remain the same as before
     $result = mysql_query("UPDATE servers SET " .
 			  "build = '$build', " .
 			  "version = '$version', " .
@@ -197,7 +244,11 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
   debug($debugFile, "ADD complete");
 
   print "ADD complete\n";
-} elseif ($action == "REMOVE") {
+}
+
+#  -- REMOVE --
+# Server requests to be removed from the DB.
+elseif ($action == "REMOVE") {
   debug($debugFile, "REMOVE request from $nameport");
 
   $split = explode(":", $nameport);
@@ -215,12 +266,159 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
     die();
   }
 
-#  -- REMOVE --
-# Server requests to be removed from the DB.
   $result = mysql_query("DELETE FROM servers WHERE nameport = '$nameport'", $link)
     or die ("Invalid query: ". mysql_error());
+} 
 
-} else {
+#  -- REG --
+# Registers a player onto the players database.
+elseif ($action == "REG") {
+  # see if there is an existing entry
+  $result = mysql_query("SELECT * FROM players WHERE email = '$email'", $link)
+    or die ("Invalid query: ". mysql_error());
+  if ( mysql_num_rows($result) > 0 ) {
+    print("Registration FAILED: ");
+    print("A player has already registered with the email address: $email");
+    exit;
+  }
+  $result = mysql_query("SELECT * FROM players WHERE callsign = '$callsign'", $link)
+    or die ("Invalid query: ". mysql_error());
+  if ( mysql_num_rows($result) > 0 ) {
+    print("Registration FAILED: ");
+    print("A player has already registered with the callsign: $callsign");
+    exit;
+  }
+  
+  # no existing entry found - proceed to complete the registration
+  $alphanum = "abcdefghijklmnopqrstuvwxyz0123456789";
+  $randtext = "";
+  srand(microtime());
+  for ( $i = 0; $i < 8; $i++ )
+    $randtext .= $alphanum{rand(0,35)};
+  $to = urldecode($email);
+  mail($to, "BZFlag player registration",
+       "You have just registered a BZFlag player account with\n" .
+       "    callsign: $callsign\n" .
+       "    password: $password\n" .
+       "To activate this account, please go to the following URL:\n\n" .
+       "http://db.bzflag.org/bzflsMyTest.php?action=REG_CONF&email=$email&password=$randtext\n")
+    or die ("Could not send mail");
+  $result = mysql_query("INSERT INTO players "
+                      . "(email, callsign, password, lastmod, randtext) VALUES "
+                      . "('$email', '$callsign', '$password', '" . time() . "', "
+                      . "'$randtext')", $link)
+  or die ("Invalid query: ". mysql_error());
+  print("Registration SUCCESSFUL: ");
+  print("You will receive an email informing you on how to complete your account registration\n");
+} 
+
+#  -- REG_CONF --
+# Confirms a registration
+elseif ($action == "REG_CONF") {
+  $result = mysql_query("SELECT randtext FROM players WHERE email='$email'", $link)
+    or die ("Invalid query: " . mysql_error());
+  $row = mysql_fetch_row($result);
+  $randtext = $row[0];
+  if ( $randtext == NULL ) {
+    print("You have already confirmed your account registration");
+  } else {
+    if ( $password != $randtext ) {
+      print("Failed to confirm registration since generated key did not match");
+    } else {
+      $result = mysql_query("UPDATE players SET randtext=NULL " .
+                            "WHERE email='$email'", $link)
+        or die ("Invalid query: " . mysql_error());
+      print("Your account has been successfully activated");
+    }
+  }
+} 
+
+#  -- AUTH --
+# A player authenticates
+elseif ($action == "AUTH") {
+  $result = mysql_query("SELECT password FROM players WHERE callsign='$callsign'", $link)
+    or die ("Invalid query: " . mysql_error());
+  $row = mysql_fetch_row($result);
+  $pwd = $row[0];
+  if ( $pwd != $password ) {
+    print("Authentication FAILED: incorrect password");
+  } else {
+    setcookie("BZPlayerAuth", md5($pwd), time()+60);
+    print("Authentication SUCCESSFUL");
+  }
+} 
+
+#  -- JOIN --
+# Server to handle a joining player
+elseif ($action == "JOIN") {
+  $result = mysql_query("SELECT password FROM players WHERE callsign='$callsign'", $link)
+    or die ("Invalid query: " . mysql_error());
+  $row = mysql_fetch_row($result);
+  $pwd = $row[0];
+  if ( md5($pwd) != $password )
+    print ("OK");
+  else
+    print ("FAIL");
+} 
+
+#  -- QUIT --
+# Server to handle a disconnecting player
+elseif ($action == "QUIT") {
+  $result = mysql_query("UPDATE players SET lastmod=" . time() .
+                        ", playtime=playtime+$conntime WHERE callsign='$callsign'", $link)
+    or die ("Invalid query: " . mysql_error());
+} 
+
+#  -- KARMA_ADJ --
+# Set's a player's karma
+elseif ($action == "KARMA_ADJ") {
+  $result = mysql_query("SELECT assignments FROM players WHERE callsign='$callsign' " .
+                        "AND password='$password'", $link)
+    or die ("Invalid query: " . mysql_error());
+  if ( mysql_num_rows($result) == 0 ) {
+    print ("Karma adjustment FAILED: incorrect callsign/password");
+    exit;
+  } else {
+    $row = mysql_fetch_row($result);
+    $assignments = $row[0];
+    
+    $result = mysql_query("SELECT * FROM players WHERE callsign='$target'", $link)
+      or die ("Invalid query: " . mysql_error());
+    if ( mysql_num_rows($result) == 0 ) {
+      print ("Karma adjustment FAILED: target player is not registered");
+      exit;
+    } else {
+      $indv_assignments = explode(",", $assignments);
+      $found = 0;
+      for ( $i = 0; $i < count($indv_assignments); $i++ ) {
+        list($player, $kval) = explode("=", $indv_assignments[$i]);
+        if ( $player == $target ) {
+          $indv_assignments[$i] = "$target=$karma";
+          $found = 1;
+        }
+      }
+      if ( !found ) {
+        $indv_assignments[$i] = "$target=$karma";
+      }
+      $assignments = implode(",", $indv_assignments);
+      $result = mysql_query("UPDATE players SET assignments='$assignments' " .
+                            "WHERE callsign='$callsign'", $link)
+        or die ("Invalid query: " . mysql_error());
+      print ("Karma adjustment SUCCESSFUL");
+    }
+  }
+} 
+
+#  -- KARMA_LIST --
+# Views the karma for a particular player
+elseif ($action == "KARMA_LIST") {
+  $result = mysql_query("SELECT karma,provisional FROM players WHERE callsign='$callsign'", $link)
+    or die ("Invalid query: " . mysql_error());
+  $row = mysql_fetch_row($result);
+  print_r($row);
+} 
+
+else {
   print "Unknown command: '$action'\n";
 }
 
@@ -247,4 +445,5 @@ debug($debugFile, "End session");
 # indent-tabs-mode: t ***
 # End: ***
 # ex: shiftwidth=2 tabstop=8
+
 ?>
