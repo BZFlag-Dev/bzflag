@@ -574,8 +574,7 @@ Repeatedly pressing
 .IR F8
 cycles through different roaming modes: \fIfree\fR, \fItracking\fR,
 \fIfollowing\fR, \fIfirst person (driving with)\fR and \fItracking team flag\fR. 
-The default is \fIfree\fR mode where you can move your camera around. In \fItracking\fR
-mode, the camera will automatically look at a tank. You can cycle through
+In \fItracking\fR mode, the camera will automatically look at a tank. You can cycle through
 available tanks with the
 .IR F6
 and
@@ -590,7 +589,8 @@ and
 to choose which flag to track. One special option that can be used with \fIfollow\fR, \fItracking\fR,
 and \fIfirst person\fR modes is that you can choose to do it with the winning tank. 
 This is selected by cycling through the tanks until you see the \fRwinner\fR option. In this mode,
-you will always be engaged with whomever has the best score.
+you will always be engaged with whomever has the best score (and is alive).
+The default is \fIdrive with winner\fR mode. 
 .RE
 .SH User Commands
 .RS
