@@ -428,7 +428,7 @@ void CTextToolView::OnFontSavefontfiles()
 	  // IDAT chunk
 
 	  // fill buffer with black
-	  for (i = 0; i < blength; i++)
+	  for (i = 0; i < (long)blength; i++)
 	    b[i] = 0;
 	  // write image data over buffer
 	  for (int y = 0; y <= m_iMaxY - 1; y++) {
@@ -492,7 +492,7 @@ void CTextToolView::OnFontSavefontfiles()
 	  // delete(pDrawDC);
 	  ReleaseDC(pDC);
 
-	  FILE *fp = fopen(szMetricFileName,"wb");
+	  FILE *fp = fopen(szMetricFileName,"wt");
 	  if (!fp)
 		  return;
 
@@ -509,13 +509,15 @@ void CTextToolView::OnFontSavefontfiles()
 
 	  int iNumChars = '}' - ' ';
 
-	  fwrite(&iNumChars,sizeof(int),1,fp);
-	  fwrite(&m_iMaxTextureWidth,sizeof(int),1,fp);
-	  fwrite(&iPictureY,sizeof(int),1,fp);
-	  fwrite(&m_iTextureZStep,sizeof(int),1,fp);
+		fprintf(fp,"NumChars: %d\nTextureWidth: %d\nTextureHeight: %d\nTextZStep: %d\n\n",iNumChars,m_iMaxTextureWidth,iPictureY,m_iTextureZStep);
+	//  fwrite(&iNumChars,sizeof(int),1,fp);
+	//  fwrite(&m_iMaxTextureWidth,sizeof(int),1,fp);
+	//  fwrite(&iPictureY,sizeof(int),1,fp);
+	//  fwrite(&m_iTextureZStep,sizeof(int),1,fp);
 
 	  for (int iChar = 0; iChar <= iNumChars; iChar++)
 	  {
+
 		  rFontMetrics.iInitalDist = m_aWidths[iChar].abcA;
 		  rFontMetrics.iCharWidth = m_aWidths[iChar].abcB;
 		  rFontMetrics.iWhiteSpaceDist = m_aWidths[iChar].abcC;
@@ -524,7 +526,11 @@ void CTextToolView::OnFontSavefontfiles()
 		  rFontMetrics.iEndX = m_arGlyphExtents[iChar].iEndX;
 		  rFontMetrics.iStartY = m_arGlyphExtents[iChar].iStartY;
 		  rFontMetrics.iEndY = m_arGlyphExtents[iChar].iEndY;
-		  fwrite(&rFontMetrics,sizeof(rFontMetrics),1,fp);
+
+			fprintf(fp,"Char: %c\nInitalDist: %d\nWidth: %d\nWhitespace: %d\n",iChar,rFontMetrics.iInitalDist,rFontMetrics.iCharWidth,rFontMetrics.iWhiteSpaceDist);
+			fprintf(fp,"StartX: %d\nEndX: %d\nStartY: %d\nEndY: %d\n\n",rFontMetrics.iStartX,rFontMetrics.iEndX,rFontMetrics.iStartY,rFontMetrics.iEndY);
+
+		  //fwrite(&rFontMetrics,sizeof(rFontMetrics),1,fp);
 	  }
 	  fclose(fp);
 	}
