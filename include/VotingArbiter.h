@@ -79,7 +79,7 @@ private:
   /** see if a person is in the list of people waiting for a repoll
     * timeout.
     */
-  bool isPollerWaiting(std::string name) const;
+  bool isPollerWaiting(std::string &name) const;
 
 
  public:
@@ -132,17 +132,17 @@ private:
 
   /** attempt to activate/open a poll
    */
-  bool poll(std::string player, std::string playerRequesting, std::string action, std::string playerIP="");
+  bool poll(std::string &player, std::string &playerRequesting, std::string &action, std::string playerIP="");
 
   /** convenience method to attempt to start a kick poll
     */
-  bool pollToKick(std::string player, std::string playerRequesting);
+  bool pollToKick(std::string &player, std::string &playerRequesting);
   /** convenience method to attempt to start a ban poll
     */
-  bool pollToBan(std::string player, std::string playerRequesting, std::string playerIP);
+  bool pollToBan(std::string &player, std::string &playerRequesting, std::string &playerIP);
   /** convenience method to attempt to start a set poll
     */
-  bool pollToSet(std::string setting, std::string playerRequesting);
+  bool pollToSet(std::string &setting, std::string &playerRequesting);
 
   /** convenience method to attempt to reset flags that, at the time, are unused
     */
@@ -159,19 +159,19 @@ private:
 
   /** grant a player the right to vote
     */
-  bool grantSuffrage(std::string player);
+  bool grantSuffrage(std::string &player);
 
   /** returns whether truthfully whether a certain player is permitted
    * to vote; a player should check their right to vote before voting.
    */
-  bool hasSuffrage(std::string player) const;
+  bool hasSuffrage(std::string &player) const;
 
   /** apply a yes vote; returns true if the vote could be made
    */
-  bool voteYes(std::string player);
+  bool voteYes(std::string &player);
   /** apply a no vote; returns true if the vote could be made
    */
-  bool voteNo(std::string player);
+  bool voteNo(std::string &player);
 
   /** returns the number of yes votes received
    */
@@ -215,7 +215,7 @@ private:
 
   /** allow a player vote to be retracted (perhaps if a player leaves
    */
-  bool retractVote(std::string player);
+  bool retractVote(std::string &player);
 
 };
 
