@@ -186,8 +186,7 @@ bool BZDBCMItem::handleKey(int c, std::string& str, CursesMenu&) {
   case 13:
     editing = false;
     str = "/set ";
-    str += text + " ";
-    str += editString;
+    str += text + " \"" + editString + "\"";
     return true;
     
     // ESC - stop editing, don't touch the BZDB value
