@@ -28,7 +28,7 @@ class TankSceneNode;
 class TankIDLSceneNode;
 class SphereSceneNode;
 
-const int		PlayerUpdatePLen = PlayerIdPLen + 38;
+const int		PlayerUpdatePLen = PlayerIdPLen + 42;
 
 class Player {
   public:

@@ -503,7 +503,9 @@ void			ServerLink::sendKilled(const PlayerId& killer, int reason,
 void			ServerLink::sendPlayerUpdate(Player* player)
 {
   char msg[PlayerUpdatePLen];
+  const float timeStamp = TimeKeeper::getCurrent() - TimeKeeper::getNullTime();
   void* buf = msg;
+  buf = nboPackFloat(buf, timeStamp);
   buf = nboPackUByte(buf, player->getId());
   buf = player->pack(buf);
   send(MsgPlayerUpdate, sizeof(msg), msg);

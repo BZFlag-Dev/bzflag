@@ -131,21 +131,22 @@ struct PlayerInfo {
 
 
     // lag measurement
-    float lagavg,lagalpha;
-    int lagcount,laglastwarn,lagwarncount;
+    float lagavg, jitteravg, lagalpha, jitteralpha;
+    int lagcount, laglastwarn, lagwarncount;
     bool pingpending;
-    TimeKeeper nextping,lastping;
-    int pingseqno,pingslost,pingssent;
+    TimeKeeper nextping, lastping;
+    int pingseqno, packetslost, pingssent;
+
+    // idle kick + jitter measurement
+    float lasttimestamp;
+    TimeKeeper lastupdate;
+    TimeKeeper lastmsg;
 
     std::vector<FlagDesc*> flagHistory;
 #ifdef TIMELIMIT
     // player played before countdown started
     bool playedEarly;
 #endif
-
-    // idle kick
-    TimeKeeper lastupdate;
-    TimeKeeper lastmsg;
 
     // number of times they have tried to /password
     int passwordAttempts;
