@@ -59,6 +59,7 @@ DEPLIBS =				\
 	$(LIBDIR)/libObstacle.a		\
 	$(LIBDIR)/libGeometry.a		\
 	$(LIBDIR)/libCommon.a		\
+	$(LIBDIR)/libz.a		\
 	$(NULL)
 
 LLDLIBS =				\

@@ -20,6 +20,7 @@ CXXFILES =				\
 	WaveAudioFile.cxx		\
 	ImageFile.cxx			\
 	SGIImageFile.cxx		\
+	PNGImageFile.cxx		\
 	$(NULL)
 
 targets: $(TARGETS)

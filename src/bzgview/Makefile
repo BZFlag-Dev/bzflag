@@ -28,7 +28,9 @@ DEPLIBS =				\
 	$(LIBDIR)/libMediaFile.a	\
 	$(LIBDIR)/libGeometry.a		\
 	$(LIBDIR)/libPlatform.a		\
+	$(LIBDIR)/libNet.a		\
 	$(LIBDIR)/libCommon.a		\
+	$(LIBDIR)/libz.a		\
 	$(NULL)
 
 LLDLIBS =				\

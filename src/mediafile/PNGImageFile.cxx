@@ -13,11 +13,14 @@
 #include "PNGImageFile.h"
 #include <string>
 #include <iostream>
-#include "pack.h"
+#include "Pack.h"
+#include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
 #ifdef WIN32
 #include <winsock2.h>
+#else
+#include <netinet/in.h>
 #endif
 
 
@@ -323,7 +326,7 @@ bool PNGImageFile::expand()
 		{
 			if (colorDepth == 3) {
 				if (palette == NULL)
-					return FALSE;
+					return false;
 
 				for (int i = width-1; i >= 0; i--) {
 					PNGRGB &rgb = palette->get(*(pData+i));
@@ -358,7 +361,7 @@ bool PNGImageFile::filter()
 
 bool PNGImageFile::filter()
 {
-	int	len = lineBufferSize;
+	//int	len = lineBufferSize;
 	unsigned char *pData = getLineBuffer();
 
 	switch (*pData) {
