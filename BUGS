@@ -81,19 +81,6 @@ recent bugs
   for causing it to queue too many packages (there's a limit at 20kB, when I
   removed it the queue went up to at least 64kB)
 
-- Killed tanks continue drifting and leave tank bits floating around on the
-  modified gravity ducati.  players seem to continue forwarding after landing
-  until X time as if gravity was unchanged.
-  I think this only happens when the explosion time variable does not match
-  the time it takes for the tank to hit the ground again. This happens on
-  increased gravity worlds because the veritcal speed was limited (it
-  would normally calculate vz so it would take the exact amount of time).
-  ducati 5155 currently uses a gravity of -50, but I also decreased the
-  explosion time.
-  So it is not really a bug IMHO. If you think it is a bug, you have to
-  either autoadjust explosion time to gravity, give up the limit on vz, or
-  think of something clever :-)
-
 - os x client audio is very choppy when the user has a sound card installed
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
