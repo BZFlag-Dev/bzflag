@@ -14,6 +14,7 @@
 #include <string>
 #include <iostream>
 #include "pack.h"
+#include "../zlib/zlib.h"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -70,7 +71,6 @@ std::string				PNGImageFile::getExtension()
 bool					PNGImageFile::read(void* buffer)
 {
 	PNGChunk *c;
-	int		  bufferPos;
 	
 	c = PNGChunk::readChunk(getStream());
 	while ((c->getType() != PNGChunk::IDAT) && (c->getType() != PNGChunk::IEND)) {
@@ -80,12 +80,47 @@ bool					PNGImageFile::read(void* buffer)
 		c = PNGChunk::readChunk(getStream());
 	}
 
-	bufferPos = 0;
+	int lineLen = 4 * this->getWidth() + 1;
+	unsigned char *line = new unsigned char[lineLen];
+	int err;
+	z_stream stream;
+	stream.next_out = line;
+	stream.avail_out = lineLen;
+	stream.zalloc = (alloc_func)NULL;
+	stream.zfree = (free_func)NULL;
+
 	while (c->getType() == PNGChunk::IDAT) {
-		bufferPos = decodeData(buffer, bufferPos, c);
+
+		stream.next_in = c->getData();
+		stream.avail_in = c->getLength();
+
+		err = inflateInit(&stream);
+		if (err != Z_OK) {
+			delete[] line;
+			delete c;
+			return false;
+		}
+
+		err = inflate(&stream, Z_FINISH);
+		while (err == Z_BUF_ERROR) {
+			//Do something with line			
+
+			stream.next_out = line;
+			stream.avail_out = lineLen;
+			err = inflate(&stream, Z_FINISH);
+		}
+		if (err != Z_STREAM_END) {
+			delete[] line;
+			delete c;
+			return false;
+		}
+		inflateEnd(&stream);
+
 		delete c;
 		c = PNGChunk::readChunk(getStream());
 	}
+
+	delete[] line;
 
 
 	delete c;
