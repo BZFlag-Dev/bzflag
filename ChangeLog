@@ -3,7 +3,8 @@
 
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
-
+* Add retreval of master ban list from bzflag.org site for public servers
+	 - Jeff Myers, Alfredo Tupone, Daniel Remenak, Sean Morrison, Brian Jennings
 * Linux event device joystick and force feedback support - Micah Dowty
 * Inform users when they are banned on login, and send the ban reason,
 	ban originator, and source of the ban to the client - Jeff Myers
