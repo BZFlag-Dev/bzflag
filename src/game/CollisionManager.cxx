@@ -244,8 +244,8 @@ void CollisionManager::load (std::vector<WallObstacle>    &walls,
                   pyrs.size() + tetras.size() + teles.size();
                    
   // get the memory for the full list and the scratch pad
-  FullPad.list = new (Obstacle*)[fullCount];
-  FullList.list = new (Obstacle*)[fullCount];
+  FullPad.list = new Obstacle*[fullCount];
+  FullList.list = new Obstacle*[fullCount];
   FullList.count = 0;
   
   // add everything to the full list                   
@@ -318,7 +318,7 @@ void CollisionManager::setExtents (ObsList *list)
   maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
 
   // find the real extents
-  for (int i = 0; i < list->count; i++) {
+  for (i = 0; i < list->count; i++) {
     float obsMins[3], obsMaxs[3];
     const Obstacle* obs = list->list[i];
     obs->getExtents (obsMins, obsMaxs);
