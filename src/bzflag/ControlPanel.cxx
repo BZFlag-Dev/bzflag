@@ -296,6 +296,11 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
     std::vector<std::string> lines;
     int numLines = 0;
+    // in order for the new font engine to draw successive lines in the right
+    // color, it needs to be fed the right ansi codes at the beginning of each
+    // line.  FIXME - storing ALL the codes is wasteful, clear this string
+    // when we come across a RESET code.
+    std::string cumulativeANSICodes = "";
 
     // break lines
     while (lineLen > 0) {
@@ -313,16 +318,21 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	       (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) <
 	        (messageAreaPixels[2] - 2 * margin))) {
 	  if (msg[n] == ESC_CHAR) {
+	    cumulativeANSICodes += msg[n];
 	    n++;
 	    if ((n < lineLen) && (msg[n] == '[')) {
+  	      cumulativeANSICodes += msg[n];
 	      n++;
 	      while ((n < lineLen) && ((msg[n] == ';') ||
 		    ((msg[n] >= '0') && (msg[n] <= '9')))) {
+		cumulativeANSICodes += msg[n];
 		n++;
 	      }
 	      // ditch the terminating character too
-	      if (n < lineLen)
+	      if (n < lineLen) {
+		cumulativeANSICodes += msg[n];
 		n++;
+	      }
 	    }
 	  } else if ((msg[n] >= 32) && (msg[n] < 127)) {
 	    n++;
@@ -340,7 +350,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	n = lastWhitespace;
 
       // message
-      lines.push_back(std::string(msg).substr(0, n));
+      lines.push_back(cumulativeANSICodes + std::string(msg).substr(0, n));
       numLines++;
 
       // account for portion drawn (or skipped)
