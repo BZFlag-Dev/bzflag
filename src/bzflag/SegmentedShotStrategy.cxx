@@ -93,7 +93,7 @@ void			SegmentedShotStrategy::update(float dt)
 	    // play ricochet sound.  ricochet of local player's shots
 	    // are important, others are not.
 	    const float* pos = segments[segment].ray.getOrigin();
-	    playWorldSound(SFX_RICOCHET, pos[0], pos[1], pos[2],
+	    playWorldSound(SFX_RICOCHET, pos,
 		getPath().getPlayer() == LocalPlayer::getMyTank()->getId());
 	    break;
 	  }

@@ -63,9 +63,8 @@ void			moveSoundReceiver(float x, float y, float z, float t,
 void			speedSoundReceiver(float vx, float vy, float vz);
 
 /* sound effect event at given position in world */
-void			playWorldSound(int soundCode,
-				float x, float y, float z,
-				bool important = false);
+void			playWorldSound(int soundCode, const float pos[3],
+				       bool important = false);
 
 /* sound effect positioned at receiver */
 void			playLocalSound(int soundCode);

@@ -28,6 +28,7 @@
 #include "Obstacle.h"
 #include "PhysicsDriver.h"
 #include "TrackMarks.h"
+#include "sound.h"
 
 
 // for dead reckoning
@@ -890,7 +891,7 @@ void Player::setLandingSpeed(float velocity)
     // use a fixed decompression rate
     dimensionsRate[2] = 1.0f / squishTime;
   }
-
+  
   return;
 }
 
@@ -1168,16 +1169,48 @@ void Player::doDeadReckoning()
     inputVel[2] = 0.0f;
   }
 
+  const bool remoteImportant = false;
+
+  // check for a landing
   if (((oldStatus & PlayerState::Falling) != 0) &&
       ((inputStatus & PlayerState::Falling) == 0)) {
+    // setup the squish effect
     setLandingSpeed(oldZSpeed);
+    // setup the sound
+    if (BZDB.isTrue("remoteSounds")) {
+      if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {
+        playWorldSound(SFX_LAND, state.pos, remoteImportant);
+      } else  {
+        // probably never gets played
+        playWorldSound(SFX_BURROW,  state.pos, remoteImportant);
+      }
+    }
   }
+
+  // check for a jump
+  if (((oldStatus & PlayerState::Falling) == 0) &&
+      ((inputStatus & PlayerState::Falling) != 0) &&
+      (predictedVel[2] > 0.0f)) {
+    // setup the sound
+    if (BZDB.isTrue("remoteSounds")) {
+      if (state.jumpJetsScale > 0.0f) {
+        playWorldSound(SFX_JUMP, state.pos, remoteImportant);
+      } 
+      else if (getFlag() == Flags::Wings) {
+        playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+      } 
+      else {
+        playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
+      }
+    }
+  }
+  
+  // copy some old state
   oldZSpeed = inputVel[2];
   oldStatus = inputStatus;
 
   move(predictedPos, predictedAzimuth);
   setVelocity(predictedVel);
-  
   setRelativeMotion();
 
   return;

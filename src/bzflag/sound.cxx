@@ -377,8 +377,8 @@ void			speedSoundReceiver(float vx, float vy, float vz)
   sendSound(&s);
 }
 
-void			playWorldSound(int soundCode,
-				float x, float y, float z, bool important)
+void			playWorldSound(int soundCode, const float pos[3],
+				       bool important)
 {
   if (soundLevel <= 0) {
     return;
@@ -387,9 +387,9 @@ void			playWorldSound(int soundCode,
   if (soundSamples[soundCode].length == 0) return;
   s.cmd = important ? SQC_IWORLD_SFX : SQC_WORLD_SFX;
   s.code = soundCode;
-  s.data[0] = x;
-  s.data[1] = y;
-  s.data[2] = z;
+  s.data[0] = pos[0];
+  s.data[1] = pos[1];
+  s.data[2] = pos[2];
   s.data[3] = 0.0f;
   sendSound(&s);
 }

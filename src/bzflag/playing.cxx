@@ -1806,7 +1806,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playLocalSound(SFX_POP);
 	  myTank->setSpawning(false);
 	} else {
-	  playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
+	  playWorldSound(SFX_POP, pos, true);
 	}
       }
 
@@ -1847,9 +1847,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	victimPlayer->setExplode(TimeKeeper::getTick());
 	const float* pos = victimPlayer->getPosition();
 	if (reason == GotRunOver)
-	  playWorldSound(SFX_RUNOVER, pos[0], pos[1], pos[2], killerLocal == myTank);
+	  playWorldSound(SFX_RUNOVER, pos, killerLocal == myTank);
 	else
-	  playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], killerLocal == myTank);
+	  playWorldSound(SFX_EXPLOSION, pos, killerLocal == myTank);
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
@@ -2052,7 +2052,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	     && (Team::isColorTeam(myTank->getTeam()))) {
 	  hud->setAlert(1, "Team Grab!!!", 3.0f, false);
 	  const float* pos = tank->getPosition();
-	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
+	  playWorldSound(SFX_TEAMGRAB, pos, false);
 	}
       }
       std::string message("grabbed ");
@@ -2146,7 +2146,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    player[i]->isAlive() &&
 	    player[i]->getTeam() == capturedTeam) {
 	  const float* pos = player[i]->getPosition();
-	  playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], false);
+	  playWorldSound(SFX_EXPLOSION, pos, false);
 	  float explodePos[3];
 	  explodePos[0] = pos[0];
 	  explodePos[1] = pos[1];
@@ -2222,15 +2222,15 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (human) {
 	const float* pos = firingInfo.shot.pos;
 	if (firingInfo.flagType == Flags::ShockWave)
-	  playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
+	  playWorldSound(SFX_SHOCK, pos);
 	else if (firingInfo.flagType == Flags::Laser)
-	  playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
+	  playWorldSound(SFX_LASER, pos);
 	else if (firingInfo.flagType == Flags::GuidedMissile)
-	  playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
+	  playWorldSound(SFX_MISSILE, pos);
 	else if (firingInfo.flagType == Flags::Thief)
-	  playWorldSound(SFX_THIEF, pos[0], pos[1], pos[2]);
+	  playWorldSound(SFX_THIEF, pos);
 	else
-	  playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
+	  playWorldSound(SFX_FIRE, pos);
       }
       break;
     }
@@ -2292,7 +2292,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	const Teleporter* teleporter = world->getTeleporter(int(to), face);
 	const float* pos = teleporter->getPosition();
 	tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-	playWorldSound(SFX_TELEPORT, pos[0], pos[1], pos[2]);
+	playWorldSound(SFX_TELEPORT, pos);
       }
       break;
     }
@@ -2594,7 +2594,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       if (targetTank && (targetTank == myTank) && (myTank->isAlive())) {
 	static TimeKeeper lastLockMsg;
 	if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
-	  playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);
+	  playWorldSound(SFX_LOCK, shot.pos);
 	  lastLockMsg=TimeKeeper::getTick();
 	  addMessage(tank, "locked on me");
 	}
@@ -2732,7 +2732,7 @@ void			addShotExplosion(const float* pos)
 {
   // only play explosion sound if you see an explosion
   if (addExplosion(pos, 1.2f * BZDBCache::tankLength, 0.8f, false))
-    playWorldSound(SFX_SHOT_BOOM, pos[0], pos[1], pos[2]);
+    playWorldSound(SFX_SHOT_BOOM, pos);
 }
 
 void			addShotPuff(const float* pos)
@@ -2854,7 +2854,7 @@ static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
   const float *pos = toTank->getPosition();
   if (f.type->flagTeam != ::NoTeam) {
     if ((toTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam != myTank->getTeam()))
-      playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2]);
+      playWorldSound(SFX_TEAMGRAB, pos);
     else if ((fromTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam == myTank->getTeam())) {
       hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
       playLocalSound(SFX_ALERT);
@@ -2919,10 +2919,10 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     } else {
       const float* pos = tank->getPosition();
       if (reason == GotRunOver)
-	playWorldSound(SFX_RUNOVER, pos[0], pos[1], pos[2],
+	playWorldSound(SFX_RUNOVER, pos,
 		       getLocalPlayer(killer) == myTank);
       else
-	playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2],
+	playWorldSound(SFX_EXPLOSION, pos,
 		       getLocalPlayer(killer) == myTank);
 
       float explodePos[3];
@@ -3311,7 +3311,7 @@ static void		setHuntTarget()
     }
     if (!pulse.isOn()) {
       const float* bestTargetPosition = bestTarget->getPosition();
-      playWorldSound(SFX_HUNT, bestTargetPosition[0], bestTargetPosition[1], bestTargetPosition[2]);
+      playWorldSound(SFX_HUNT, bestTargetPosition);
       pulse.setClock(1.0f);
     }
   }
