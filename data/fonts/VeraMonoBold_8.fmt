@@ -3,7 +3,7 @@ TextureWidth: 512
 TextureHeight: 64
 TextZStep: 13
 
-Char:
+Char:  
 InitialDist: 0
 Width: 0
 Whitespace: 7
