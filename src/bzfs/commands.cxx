@@ -101,21 +101,6 @@ extern int countdownDelay;
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern void sendPlayerInfo(void);
 
-
-int getTarget(const char *victimname) {
-  GameKeeper::Player *targetData;
-  int i;
-  for (i = 0; i < curMaxPlayers; i++) {
-    targetData = GameKeeper::Player::getPlayerByIndex(i);
-    if (targetData && strncasecmp(targetData->player.getCallSign(),
-				  victimname, 256) == 0) {
-      break;
-    }
-  }
-  return i;
-}
-
-
 static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
 {
   float rawTime;
@@ -270,7 +255,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
       recipient = arguments.substr(callsignStart, callsignEnd - callsignStart);
       messageStart = callsignEnd;
 
-      to = getTarget(recipient.c_str());
+      to = GameKeeper::Player::getPlayerIDByName(recipient);
       if (to < curMaxPlayers) {
 	callsignEnd--;
 	foundCallsign = true;
@@ -279,7 +264,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   recipient = arguments.substr(callsignStart, callsignEnd - callsignStart + 1);
-  to = getTarget(recipient.c_str());
+  to = GameKeeper::Player::getPlayerIDByName(recipient);
 
   // valid callsign
   if (to >= curMaxPlayers) {
@@ -552,9 +537,7 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
     return;
   }
 
-  const char *victimname = argv[1].c_str();
-
-  i = getTarget(victimname);
+  i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
   if (i < curMaxPlayers) {
     char kickmessage[MessageLen];
@@ -580,7 +563,7 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
     removePlayer(i, "/kick");
   } else {
     char errormessage[MessageLen];
-    sprintf(errormessage, "player \"%s\" not found", victimname);
+    sprintf(errormessage, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, t, errormessage);
   }
   return;
@@ -1141,7 +1124,7 @@ static void handleDeregisterCmd(GameKeeper::Player *playerData, const char *mess
       // admins can override antiperms
       if (!playerData->accessInfo.isAdmin()) {
 	// make sure this player isn't protected
-	int v = getTarget(name.c_str());
+	int v = GameKeeper::Player::getPlayerIDByName(name);
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(v);
 	if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antideregister))) {
 	  sprintf(reply, "%s is protected from being deregistered.", p->player.getCallSign());
@@ -1239,7 +1222,7 @@ static void handleShowgroupCmd(GameKeeper::Player *playerData, const char *messa
 
   // something is wrong
   if (settie != "") {
-    int playerIndex = getTarget(settie.c_str());
+    int playerIndex = GameKeeper::Player::getPlayerIDByName(settie);
     // once for global groups
     if (playerIndex < curMaxPlayers) {
       GameKeeper::Player* target = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -1812,7 +1795,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       // all polls that are not set or flagreset polls take a player name
 
       /* make sure the requested player is actually here */
-      int v = getTarget(target.c_str());
+      int v = GameKeeper::Player::getPlayerIDByName(target);
       if (v >= curMaxPlayers) {
 	/* wrong name? */
 	sprintf(reply,

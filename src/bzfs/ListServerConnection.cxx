@@ -34,7 +34,6 @@
 // FIXME remove externs!
 extern PingPacket getTeamCounts();
 extern uint16_t curMaxPlayers;
-extern int getTarget(const char *victimname);
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 extern void sendPlayerInfo(void);
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
@@ -184,7 +183,7 @@ void ListServerLink::read()
 	group = callsign;
 	while (*group && (*group != ':')) group++;
 	while (*group && (*group == ':')) *group++ = 0;
-	int playerIndex = getTarget(callsign);
+	int playerIndex = GameKeeper::Player::getPlayerIDByName(callsign);
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  if (playerData != NULL) {
@@ -222,7 +221,7 @@ void ListServerLink::read()
       } else if (strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier)) == 0) {
 	char *callsign;
 	callsign = base + strlen(tokBadIdentifier);
-	int playerIndex = getTarget(callsign);
+	int playerIndex = GameKeeper::Player::getPlayerIDByName(callsign);
 	DEBUG3("Got: [%d] %s\n", playerIndex, base);
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
