@@ -834,7 +834,11 @@ static void sendMessageToListServerForReal()
       closeListServer();
     } else {
       // hangup
+#ifdef _WIN32
+      shutdown(link.socket, SD_SEND);
+#else
       shutdown(link.socket, SHUT_WR);
+#endif
       link.nextMessageType = ListServerLink::NONE;
       link.phase           = ListServerLink::WRITTEN;
     }
