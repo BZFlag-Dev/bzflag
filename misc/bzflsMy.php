@@ -54,7 +54,6 @@ debug($debugFile, "Connecting to the database");
 $link = mysql_pconnect($dbhost, $dbuname, $dbpass)
      or die("Could not connect: " . mysql_error());
 if (!mysql_select_db($dbname)) {
-	
   debug($debugFile, "Database did not exist, creating a new one");
 
   mysql_create_db($dbname) or die("Could not create db: " . mysql_error());
@@ -63,7 +62,6 @@ $result = mysql_query("SELECT * FROM servers", $link);
 
 # If the servers table does not exist, create it.
 if (!$result) {
-
   debug($debugFile, "Database table did not exist, creating a new one");
 
   mysql_query("CREATE TABLE servers " .
@@ -92,7 +90,6 @@ header("Content-type: text/plain");
 #  -- LIST --
 # Same as LIST in the old bzfls
 if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
-
   debug($debugFile, "Fetching LIST");
 
   if ($version)
@@ -152,7 +149,6 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
     or die ("Invalid query: ". mysql_error());
   $count = mysql_num_rows($result);
   if (!$count) {
-
     debug($debugFile, "Server does not already exist in database -- adding");
 
     # Server does not already exist in DB so insert into DB
@@ -164,7 +160,7 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
       or die ("Invalid query: ". mysql_error());
   } else {
 
-  debug($debugFile, "Server already exists in database -- updating");
+    debug($debugFile, "Server already exists in database -- updating");
 
 # Server exists already, so update the table entry
 # ASSUMPTION: only the 'lastmod' column of table needs updating since all
@@ -183,7 +179,6 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
 
   print "ADD complete\n";
 } elseif ($action == "REMOVE") {
-
   debug($debugFile, "REMOVE request from $nameport");
 
   $split = explode(":", $nameport);
@@ -223,7 +218,6 @@ if ($link) {
 }
 
 debug($debugFile, "End session");
-
 
 # Local Variables: ***
 # mode:php ***
