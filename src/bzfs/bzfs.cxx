@@ -4656,10 +4656,6 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
       stopPlayerPacketRelay();
   }
 
-  if (clOptions.gameStyle & int(RabbitChaseGameStyle))
-    if (playerIndex == rabbitIndex)
-      annointNewRabbit();
-
   // player is outta here.  if player never joined a team then
   // don't count as a player.
   if (player[playerIndex].state == PlayerInLimbo) {
@@ -4677,6 +4673,10 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
   }
 
   player[playerIndex].state = PlayerNoExist;
+
+  if (clOptions.gameStyle & int(RabbitChaseGameStyle))
+    if (playerIndex == rabbitIndex)
+      annointNewRabbit();
 
   if (player[playerIndex].team != NoTeam) {
     int flagid = player[playerIndex].flag;
