@@ -25,7 +25,7 @@ void AutoCompleter::registerWord(const std::string& str) {
 
 
 void AutoCompleter::unregisterWord(const std::string& str) {
-  std::vector<std::string>::iterator iter = lower_bound(words.begin(), words.end(), str);
+  std::vector<std::string>::iterator iter = std::lower_bound(words.begin(), words.end(), str);
   if (iter != words.end() && *iter == str)
     words.erase(iter);
 }
