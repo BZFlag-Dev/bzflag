@@ -338,12 +338,15 @@ void	warnAboutRadar()
     message += "To toggle the radar ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleRadar", true);
 
-    message += "hit \"" + ColorStrings[WhiteColor];
-    message += keys[0];
-    message += ColorStrings[YellowColor] + "\"";
+    if (keys.size() != 0) {
+      message += "hit \"" + ColorStrings[WhiteColor];
+      message += keys[0];
+      message += ColorStrings[YellowColor] + "\"";
+    } else {
+      message += " bind a key to Toggle Radar";
+    }
 
-    // can't use a console message for this one
-    hud->setAlert(3, message.c_str(), 2.0f, true);
+    addMessage(NULL, message);
   }
 }
 
@@ -354,9 +357,13 @@ void	warnAboutConsole()
     message += "To toggle the console ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleConsole", true);
 
-    message += "hit \"" + ColorStrings[WhiteColor];
-    message += keys[0];
-    message += ColorStrings[YellowColor] + "\"";
+    if (keys.size() != 0) {
+      message += "hit \"" + ColorStrings[WhiteColor];
+      message += keys[0];
+      message += ColorStrings[YellowColor] + "\"";
+    } else {
+      message += " bind a key to Toggle Console";
+    }
 
     // can't use a console message for this one
     hud->setAlert(3, message.c_str(), 2.0f, true);
