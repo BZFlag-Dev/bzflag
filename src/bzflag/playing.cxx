@@ -2399,29 +2399,33 @@ static void		checkEnvironment()
 
   FlagId flagId = myTank->getFlag();
   if (flagId != NoFlag && int(flagId) >= int(FirstTeamFlag) &&
-				int(flagId) <= int(LastTeamFlag)) {
+      int(flagId) <= int(LastTeamFlag)) {
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
     if ((base != NoTeam) &&
 	((int(flagId) == int(team) && base != team) ||
-	 (int(flagId) != int(team) && base == team)))
+	(int(flagId) != int(team) && base == team)))
       serverLink->sendCaptureFlag(base);
   }
   else if (flagId == NoFlag && (myTank->getLocation() == LocalPlayer::OnGround || 
-    myTank->getLocation() == LocalPlayer::OnBuilding)) {
-    // grab any and all flags i'm driving over
-    const float* tpos = myTank->getPosition();
-    const float radius = myTank->getRadius();
-    const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
-    for (int i = 0; i < numFlags; i++) {
-      if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
-	continue;
-      const float* fpos = world->getFlag(i).position;
-      if ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) + (tpos[2] - fpos[2]) * 
-		(tpos[2] - fpos[2]) < radius2) {
-	serverLink->sendGrabFlag(i);
+      myTank->getLocation() == LocalPlayer::OnBuilding)) {
+    // Don't grab too fast
+    static TimeKeeper lastGrabSent;
+    if (TimeKeeper::getTick()-lastGrabSent>0.2) {
+      // grab any and all flags i'm driving over
+      const float* tpos = myTank->getPosition();
+      const float radius = myTank->getRadius();
+      const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
+      for (int i = 0; i < numFlags; i++) {
+	if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
+	  continue;
+	const float* fpos = world->getFlag(i).position;
+	if ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2) {
+	  serverLink->sendGrabFlag(i);
+	  lastGrabSent=TimeKeeper::getTick();
+	}
       }
     }
   }
