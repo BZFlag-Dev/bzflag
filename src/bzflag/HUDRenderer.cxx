@@ -1578,7 +1578,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     strcpy(kills, "");
 
   // "Purple Team" is longest possible string for flag indicator
-  char flag[12]="";
+  char flag[64]="";
   FlagType* flagd = player->getFlag();
   if (flagd != Flags::Null) {
     sprintf(flag,"/%s",
