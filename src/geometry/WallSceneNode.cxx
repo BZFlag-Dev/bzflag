@@ -17,6 +17,7 @@
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
 #include "PolyWallSceneNode.h"
+#include "StateDatabase.h"
 
 WallSceneNode::WallSceneNode() : numLODs(0),
 				elementAreas(NULL),
@@ -264,7 +265,7 @@ void			WallSceneNode::notifyStyleChange(
 				const SceneRenderer& renderer)
 {
   float alpha;
-  bool lighted = (renderer.useLighting() && gstate.isLighted());
+  bool lighted = (BZDB->isTrue("lighting") && gstate.isLighted());
   OpenGLGStateBuilder builder(gstate);
   style = 0;
   if (lighted) {
@@ -274,7 +275,7 @@ void			WallSceneNode::notifyStyleChange(
   else {
     builder.setShading(GL_FLAT);
   }
-  if (renderer.useTexture() && gstate.isTextured()) {
+  if (BZDB->isTrue("texture") && gstate.isTextured()) {
     style += 2;
     builder.enableTexture(true);
     alpha = lighted ? lightedModulateColor[3] : modulateColor[3];
@@ -285,7 +286,7 @@ void			WallSceneNode::notifyStyleChange(
   }
   builder.enableTextureReplace(renderer.useTextureReplace());
   builder.enableMaterial(lighted);
-  if (renderer.useBlending() && alpha != 1.0f) {
+  if (BZDB->isTrue("blend") && alpha != 1.0f) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }

@@ -20,6 +20,7 @@
 #include "World.h"
 #include "WallSceneNode.h"
 #include "TankSceneNode.h"
+#include "StateDatabase.h"
 #include "playing.h"
 #include "texture.h"
 
@@ -186,15 +187,15 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
 {
   // set LOD flags
-  wallLOD = renderer->useLighting() && renderer->useZBuffer();
-  baseLOD = renderer->useLighting() && renderer->useZBuffer();
-  boxLOD = renderer->useLighting() && renderer->useZBuffer();
-  pyramidLOD = renderer->useLighting() && renderer->useZBuffer();
-  teleporterLOD = renderer->useLighting() && renderer->useZBuffer();
+  wallLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
+  baseLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
+  boxLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
+  pyramidLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
+  teleporterLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
 
   // pick type of database
   SceneDatabase* db;
-  if (renderer->useZBuffer())
+  if (BZDB->isTrue("zbuffer"))
     db = new ZSceneDatabase;
   else
     db = new BSPSceneDatabase;

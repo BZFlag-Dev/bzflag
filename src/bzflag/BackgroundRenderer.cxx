@@ -24,6 +24,7 @@
 #include "OpenGLMaterial.h"
 #include "OpenGLTexture.h"
 #include "ViewFrustum.h"
+#include "StateDatabase.h"
 #include <string.h>
 
 static const char*	groundFilename = "ground";
@@ -292,27 +293,27 @@ void			BackgroundRenderer::notifyStyleChange(
 {
   if (renderer.testAndSetStyle(style)) return;
 
-  if (renderer.useTexture())
-    if (renderer.useLighting())
+  if (BZDB->isTrue("texture"))
+    if (BZDB->isTrue("lighting"))
       styleIndex = 3;
     else
       styleIndex = 2;
   else
-    if (renderer.useLighting())
+    if (BZDB->isTrue("lighting"))
       styleIndex = 1;
     else
       styleIndex = 0;
 
   // some stuff is drawn only for certain states
-  cloudsVisible = (styleIndex>=2 && cloudsAvailable && renderer.useBlending());
+  cloudsVisible = (styleIndex>=2 && cloudsAvailable && BZDB->isTrue("blend"));
   mountainsVisible = (styleIndex >= 2 && mountainsAvailable);
-  shadowsVisible = renderer.useShadows();
-  starGStateIndex = (renderer.useSmoothing() ? 1 : 0);
+  shadowsVisible = BZDB->isTrue("shadows");
+  starGStateIndex = BZDB->isTrue("smooth");
 
   // fixup gstates
   OpenGLGStateBuilder gstate;
   gstate.reset();
-  if (renderer.useSmoothing()) {
+  if (BZDB->isTrue("smooth")) {
     gstate.setBlending();
     gstate.setSmoothing();
   }
@@ -467,7 +468,7 @@ void			BackgroundRenderer::renderSkyAndGround(
 
     // back to normal
     glPopAttrib();
-    if (renderer.useDithering()) glEnable(GL_DITHER);
+    if (BZDB->isTrue("dither")) glEnable(GL_DITHER);
   }
 }
 
@@ -488,7 +489,7 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
     // the ground gets illuminated).  this is necessary because lighting is
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
-    if (renderer.useBlending() && renderer.useLighting())
+    if (BZDB->isTrue("blend") && BZDB->isTrue("lighting"))
       drawGroundReceivers(renderer);
 
     if (renderer.useQuality() > 1) {

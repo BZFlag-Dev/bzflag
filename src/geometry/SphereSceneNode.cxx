@@ -15,6 +15,7 @@
 #include "SphereSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 //
 // SphereSceneNode
@@ -103,10 +104,10 @@ SceneNode**		SphereSceneNode::getParts(int& numParts)
 }
 
 void			SphereSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
-  blending = renderer.useBlending();
-  lighting = renderer.useLighting();
+  blending = BZDB->isTrue("blend");
+  lighting = BZDB->isTrue("lighting");
   OpenGLGStateBuilder builder(gstate);
   if (blending && transparent) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

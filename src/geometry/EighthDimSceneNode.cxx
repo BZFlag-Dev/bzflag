@@ -16,6 +16,7 @@
 #include "common.h"
 #include "EighthDimSceneNode.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 EighthDimSceneNode::EighthDimSceneNode(int numPolygons) :
 				renderNode(this, numPolygons)
@@ -35,11 +36,11 @@ bool			EighthDimSceneNode::cull(const ViewFrustum&) const
 }
 
 void			EighthDimSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
-  if (renderer.useBlending()) {
+  if (BZDB->isTrue("blend")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   else {

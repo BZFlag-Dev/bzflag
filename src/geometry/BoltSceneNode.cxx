@@ -17,6 +17,7 @@
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
+#include "StateDatabase.h"
 
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3]) :
 				drawFlares(false),
@@ -111,10 +112,10 @@ void			BoltSceneNode::addLight(
 }
 
 void			BoltSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
-  blending = renderer.useBlending();
-  texturing = renderer.useTexture() && blending;
+  blending = BZDB->isTrue("blend");
+  texturing = BZDB->isTrue("texture") && blending;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
   if (blending) {

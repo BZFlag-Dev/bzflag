@@ -15,6 +15,7 @@
 #include "common.h"
 #include "EighthDPyrSceneNode.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 const int		PyrPolygons = 20;
 
@@ -76,7 +77,7 @@ void			EighthDPyrSceneNode::notifyStyleChange(
   EighthDimSceneNode::notifyStyleChange(renderer);
 
   OpenGLGStateBuilder builder(gstate);
-  if (renderer.useSmoothing()) {
+  if (BZDB->isTrue("smooth")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setSmoothing();
   }

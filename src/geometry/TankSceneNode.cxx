@@ -18,6 +18,7 @@
 #include "TankSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
   //Modifiers for Normal, Obese. Tiny and Thin
 static const GLfloat styleFactors[4][3] = {
@@ -109,14 +110,14 @@ void			TankSceneNode::move(const GLfloat pos[3],
 }
 
 void			TankSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
-  sort = !renderer.useZBuffer();
-  blending = renderer.useBlending();
+  sort = !BZDB->isTrue("zbuffer");
+  blending = BZDB->isTrue("blend");
   OpenGLGStateBuilder builder(gstate);
-  builder.enableTexture(renderer.useTexture());
-  builder.enableMaterial(renderer.useLighting());
-  builder.setSmoothing(renderer.useSmoothing());
+  builder.enableTexture(BZDB->isTrue("texture"));
+  builder.enableMaterial(BZDB->isTrue("lighting"));
+  builder.setSmoothing(BZDB->isTrue("smooth"));
   if (blending && transparent) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
@@ -128,7 +129,7 @@ void			TankSceneNode::notifyStyleChange(
   gstate = builder.getState();
 
   OpenGLGStateBuilder builder2(lightsGState);
-  if (renderer.useSmoothing()) {
+  if (BZDB->isTrue("smooth")) {
     builder2.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder2.setSmoothing();
   }
@@ -285,10 +286,10 @@ void			TankIDLSceneNode::move(const GLfloat _plane[4])
 }
 
 void			TankIDLSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  if (renderer.useBlending()) {
+  if (BZDB->isTrue("blend")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }

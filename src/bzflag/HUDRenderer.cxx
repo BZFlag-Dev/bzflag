@@ -25,6 +25,7 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "OpenGLGState.h"
+#include "StateDatabase.h"
 #include "texture.h"
 #if !defined(__APPLE__)
 #include <malloc.h>
@@ -1082,7 +1083,7 @@ void			HUDRenderer::renderTimes(void)
   }
 }
 
-void			HUDRenderer::renderBox(SceneRenderer& renderer)
+void			HUDRenderer::renderBox(SceneRenderer&)
 {
   // get view metrics
   const int width = window.getWidth();
@@ -1096,7 +1097,7 @@ void			HUDRenderer::renderBox(SceneRenderer& renderer)
   float x, y;
 
   OpenGLGState::resetState();
-  const bool smooth = renderer.useSmoothing();
+  const bool smooth = BZDB->isTrue("smooth");
 
   // draw targeting box
   hudColor3fv(hudColor);

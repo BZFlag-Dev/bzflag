@@ -15,7 +15,7 @@
 #include "common.h"
 #include "EighthDBaseSceneNode.h"
 #include "SceneRenderer.h"
-
+#include "StateDatabase.h"
 
 const int		BasePolygons = 60;
 
@@ -73,7 +73,7 @@ void EighthDBaseSceneNode::notifyStyleChange(const SceneRenderer& renderer)
   EighthDimSceneNode::notifyStyleChange(renderer);
 
   OpenGLGStateBuilder builder(gstate);
-  if(renderer.useSmoothing()) {
+  if (BZDB->isTrue("smooth")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setSmoothing();
   } else {

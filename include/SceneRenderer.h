@@ -62,16 +62,9 @@ class SceneRenderer {
     MainWindow&		getWindow() const;
 
     bool		useABGR() const;
-    bool		useBlending() const;
-    bool		useSmoothing() const;
-    bool		useLighting() const;
-    bool		useTexture() const;
     bool		useTextureReplace() const;
-    bool		useZBuffer() const;
     bool		useStencil() const;
     int			useQuality() const;
-    bool		useShadows() const;
-    bool		useDithering() const;
     bool		useDepthComplexity() const;
     bool		useWireframe() const;
     bool		useHiddenLine() const;
@@ -88,16 +81,11 @@ class SceneRenderer {
     int			getMaxLOD() const;
     bool		getConsoleColorization() const;
 
-    void		setBlending(bool on);
     void		setSmoothing(bool on);
-    void		setLighting(bool on);
-    void		setTexture(bool on);
     void		setTextureReplace(bool on);
     void		setZBuffer(bool on);
     void		setZBufferSplit(bool on);
     void		setQuality(int value);
-    void		setShadows(bool on);
-    void		setDithering(bool on);
     void		setDepthComplexity(bool on);
     void		setWireframe(bool on);
     void		setHiddenLine(bool on);
@@ -196,14 +184,8 @@ class SceneRenderer {
     static const GLint	SunLight;
 
     bool		abgr;
-    bool		useBlendingOn;
-    bool		useSmoothingOn;
-    bool		useLightingOn;
-    bool		useTextureOn;
     bool		useTextureReplaceOn;
     int			useQualityValue;
-    bool		useShadowsOn;
-    bool		useDitheringOn;
     bool		useDepthComplexityOn;
     bool		useWireframeOn;
     bool		useHiddenLineOn;
@@ -215,7 +197,6 @@ class SceneRenderer {
     int			maxMotionFactor;
     bool		useBigFontOn;
     bool		useFogHack;
-    bool		useZBufferOn;
     bool		useStencilOn;
     ViewType		viewType;
     int			maxLOD;

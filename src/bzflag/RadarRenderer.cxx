@@ -26,13 +26,14 @@
 #include "Flag.h"
 #include "OpenGLGState.h"
 #include "HUDRenderer.h"
+#include "StateDatabase.h"
 
 FlashClock flashTank;
 static bool toggleTank = false;
 
 const float		RadarRenderer::colorFactor = 40.0f;
 
-RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
+RadarRenderer::RadarRenderer(const SceneRenderer&,
 			     const World& _world) :
 				world(_world),
 				x(0),
@@ -47,7 +48,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
 {
   setControlColor();
 
-  blend = renderer.useBlending();
+  blend = BZDB->isTrue("blend");
   showFlags = true;
   smooth = true;
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
@@ -186,7 +187,7 @@ void RadarRenderer::drawFlagOnTank(float x, float y, float)
 void			RadarRenderer::render(SceneRenderer& renderer,
 							bool blank)
 {
-  const bool smoothingOn = smooth && renderer.useSmoothing();
+  const bool smoothingOn = smooth && BZDB->isTrue("smooth");
 
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
@@ -196,11 +197,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
   
     // draw nice blended background
-    if(renderer.useBlending() && opacity < 1.0f)
+    if (BZDB->isTrue("blend") && opacity < 1.0f)
       glEnable(GL_BLEND);
     glColor4f(0.0f, 0.0f, 0.0f, opacity);
     glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
-    if(renderer.useBlending() && opacity < 1.0f)
+    if (BZDB->isTrue("blend") && opacity < 1.0f)
       glDisable(GL_BLEND);
   }
 
@@ -273,7 +274,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_TEXTURE_2D);
     }
 
-    else if (noiseTexture != 0 && renderer.useTexture()==true &&
+    else if (noiseTexture != 0 && BZDB->isTrue("texture") &&
 	renderer.useQuality()==0) {
       glEnable(GL_TEXTURE_2D);
       noiseTexture->execute();

@@ -16,6 +16,7 @@
 #include "PTSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 const GLfloat		PhotonTorpedoSceneNode::CoreSize = 0.125f;
 const GLfloat		PhotonTorpedoSceneNode::CoronaSize = 1.0f;
@@ -60,9 +61,9 @@ void			PhotonTorpedoSceneNode::addLight(
 }
 
 void			PhotonTorpedoSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
-  blending = renderer.useBlending();
+  blending = BZDB->isTrue("blend");
   OpenGLGStateBuilder builder(gstate);
   if (blending) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

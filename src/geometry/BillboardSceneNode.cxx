@@ -17,6 +17,7 @@
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
+#include "StateDatabase.h"
 
 BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
 				show(false),
@@ -267,10 +268,10 @@ void			BillboardSceneNode::addLight(
 }
 
 void			BillboardSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
-  show = hasTexture && renderer.useTexture() &&
-	(!hasAlpha || renderer.useBlending());
+  show = hasTexture && BZDB->isTrue("texture") &&
+  	(!hasAlpha || BZDB->isTrue("blend"));
   if (show) {
     OpenGLGStateBuilder builder(gstate);
     if (hasAlpha) {

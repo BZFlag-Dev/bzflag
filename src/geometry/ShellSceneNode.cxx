@@ -15,6 +15,7 @@
 #include "ShellSceneNode.h"
 #include "SceneRenderer.h"
 #include "OpenGLMaterial.h"
+#include "StateDatabase.h"
 
 #define	ShellRadius1_2	(M_SQRT1_2 * ShellRadius)
 
@@ -71,10 +72,10 @@ void			ShellSceneNode::move(const GLfloat pos[3],
 }
 
 void			ShellSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  const bool lighting = renderer.useLighting();
+  const bool lighting = BZDB->isTrue("lighting");
   builder.enableMaterial(lighting);
   builder.setShading(lighting ? GL_SMOOTH : GL_FLAT);
   renderNode.setLighting(lighting);

@@ -16,6 +16,7 @@
 #include "ShellSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 #define	ShellRadius1_2	(M_SQRT1_2 * ShellRadius)
 
@@ -72,10 +73,10 @@ void			TracerSceneNode::addLight(SceneRenderer& renderer)
 }
 
 void			TracerSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  if (renderer.useBlending()) {
+  if (BZDB->isTrue("blend")) {
     // add tail contribution instead of regular blend
     builder.setBlending(GL_SRC_ALPHA, GL_ONE);
     builder.setShading(GL_SMOOTH);

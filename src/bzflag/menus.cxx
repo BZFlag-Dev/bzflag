@@ -64,6 +64,7 @@
 #include "Bundle.h"
 #include "resources.h"
 #include "ControlPanel.h"
+#include "StateDatabase.h"
 
 #ifdef _WIN32
 #define PATH_MAX MAX_PATH
@@ -1508,14 +1509,14 @@ void			OptionsMenu::resize(int width, int height)
   if (renderer) {
     HUDuiList* tex;
     int i = 1;
-    ((HUDuiList*)list[i++])->setIndex(renderer->useDithering() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useBlending() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useSmoothing() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useLighting() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("dither"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("blend"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("smooth"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("lighting"));
     tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
-    ((HUDuiList*)list[i++])->setIndex(renderer->useShadows() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useZBuffer() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("shadows"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("zbuffer"));
 #if defined(DEBUG_RENDERING)
     ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
@@ -1539,7 +1540,7 @@ void			OptionsMenu::resize(int width, int height)
     // mind the ++i !
     ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
 
-    if (!renderer->useTexture())
+    if (!BZDB->isTrue("texture"))
       tex->setIndex(0);
     else
       tex->setIndex(OpenGLTexture::getFilter());
@@ -1571,51 +1572,48 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
   SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
     case '1':
-      sceneRenderer->setDithering(list->getIndex() != 0);
+      BZDB->set("dither", list->getIndex() ? "yes" : "no");
       break;
 
     case '2':
-      sceneRenderer->setBlending(list->getIndex() != 0);
+      BZDB->set("blend", list->getIndex() ? "yes" : "no");
       break;
 
     case '3':
-      sceneRenderer->setSmoothing(list->getIndex() != 0);
+      BZDB->set("smooth", list->getIndex() ? "yes" : "no");
       break;
 
     case '4':
-      sceneRenderer->setLighting(list->getIndex() != 0);
+      BZDB->set("lighting", list->getIndex() ? "yes" : "no");
 
-      sceneRenderer->setTextureReplace(!sceneRenderer->useLighting() &&
+      sceneRenderer->setTextureReplace(!BZDB->isTrue("lighting") &&
 					sceneRenderer->useQuality() < 2);
       break;
 
     case '5':
-      sceneRenderer->setTexture(list->getIndex() != 0);
       OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
+      BZDB->set("texture", OpenGLTexture::getFilterName());
       break;
 
     case '6':
       sceneRenderer->setQuality(list->getIndex());
 
-      sceneRenderer->setTextureReplace(!sceneRenderer->useLighting() &&
-					sceneRenderer->useQuality() < 2);
+      sceneRenderer->setTextureReplace(BZDB->isTrue("lighting") &&
+      					sceneRenderer->useQuality() < 2);
       break;
 
     case '7':
-      sceneRenderer->setShadows(list->getIndex() != 0);
+      BZDB->set("shadows", list->getIndex() ? "yes" : "no");
       break;
 
     case '8':
-      sceneRenderer->setZBuffer(list->getIndex() != 0);
-      if (sceneRenderer->useZBuffer() != (list->getIndex() != 0)) {
-	list->setIndex(sceneRenderer->useZBuffer() ? 1 : 0);
-      }
-      else {
-	setSceneDatabase();
-      }
+      BZDB->set("zbuffer", list->getIndex() ? "yes" : "no");
+      // FIXME - test for whether the z buffer will work
+      setSceneDatabase();
       break;
 
     case 's':
+      BZDB->set("volume", string_util::format("%d", list->getIndex()));
       setSoundVolume(list->getIndex());
       break;
 

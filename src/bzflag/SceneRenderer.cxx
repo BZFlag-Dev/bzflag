@@ -24,6 +24,7 @@
 #include "RenderNode.h"
 #include "BzfWindow.h"
 #include "TankSceneNode.h"
+#include "StateDatabase.h"
 #include "texture.h"
 #include <string.h>
 
@@ -75,14 +76,8 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				scene(NULL),
 				background(NULL),
 				abgr(false),
-				useBlendingOn(true),
-				useSmoothingOn(true),
-				useLightingOn(true),
-				useTextureOn(true),
 				useTextureReplaceOn(true),
 				useQualityValue(2),
-				useShadowsOn(true),
-				useDitheringOn(true),
 				useDepthComplexityOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
@@ -117,7 +112,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   window.getWindow()->makeCurrent();
   GLint bits;
   glGetIntegerv(GL_DEPTH_BITS, &bits);
-  useZBufferOn = (bits > 0);
+  BZDB->set("zbuffer", (bits > 0) ? "yes" : "no");
   glGetIntegerv(GL_STENCIL_BITS, &bits);
   useStencilOn = (bits > 0);
 
@@ -200,34 +195,9 @@ bool			SceneRenderer::useABGR() const
   return abgr;
 }
 
-bool			SceneRenderer::useBlending() const
-{
-  return useBlendingOn;
-}
-
-bool			SceneRenderer::useSmoothing() const
-{
-  return useSmoothingOn;
-}
-
-bool			SceneRenderer::useLighting() const
-{
-  return useLightingOn;
-}
-
-bool			SceneRenderer::useTexture() const
-{
-  return useTextureOn;
-}
-
 bool			SceneRenderer::useTextureReplace() const
 {
   return useTextureReplaceOn;
-}
-
-bool			SceneRenderer::useZBuffer() const
-{
-  return useZBufferOn;
 }
 
 bool			SceneRenderer::useStencil() const
@@ -238,16 +208,6 @@ bool			SceneRenderer::useStencil() const
 int			SceneRenderer::useQuality() const
 {
   return useQualityValue;
-}
-
-bool			SceneRenderer::useShadows() const
-{
-  return useShadowsOn;
-}
-
-bool			SceneRenderer::useDithering() const
-{
-  return useDitheringOn;
 }
 
 SceneRenderer::ViewType	SceneRenderer::getViewType() const
@@ -265,44 +225,10 @@ bool			SceneRenderer::getConsoleColorization() const
   return consoleColors;
 }
 
-void			SceneRenderer::setBlending(bool on)
-{
-  useBlendingOn = on;
-  notifyStyleChange();
-}
-
-void			SceneRenderer::setSmoothing(bool on)
-{
-  useSmoothingOn = on;
-  notifyStyleChange();
-}
-
-void			SceneRenderer::setLighting(bool on)
-{
-  useLightingOn = on;
-  notifyStyleChange();
-}
-
-void			SceneRenderer::setTexture(bool on)
-{
-  useTextureOn = on;
-  notifyStyleChange();
-}
-
 void			SceneRenderer::setTextureReplace(bool on)
 {
   useTextureReplaceOn = on;
   notifyStyleChange();
-}
-
-void			SceneRenderer::setZBuffer(bool on)
-{
-  if (on) {
-    GLint value;
-    glGetIntegerv(GL_DEPTH_BITS, &value);
-    if (value == 0) return;
-  }
-  useZBufferOn = on;
 }
 
 void			SceneRenderer::setZBufferSplit(bool on)
@@ -349,20 +275,6 @@ void			SceneRenderer::setQuality(int value)
     TankSceneNode::setMaxLOD(3);
   else
     TankSceneNode::setMaxLOD(2);
-}
-
-void			SceneRenderer::setShadows(bool on)
-{
-  useShadowsOn = on;
-  notifyStyleChange();
-}
-
-void			SceneRenderer::setDithering(bool on)
-{
-  useDitheringOn = on;
-  window.getWindow()->makeCurrent();
-  if (on) glEnable(GL_DITHER);
-  else glDisable(GL_DITHER);
 }
 
 bool			SceneRenderer::useDepthComplexity() const
@@ -423,7 +335,7 @@ void			SceneRenderer::setShowFlagHelp(bool _showFlagHelp)
 
 void			SceneRenderer::setHiddenLine(bool on)
 {
-  useHiddenLineOn = on && useZBuffer() && canUseHiddenLine;
+  useHiddenLineOn = on && BZDB->isTrue("zbuffer") && canUseHiddenLine;
   if (!useHiddenLineOn) { depthRange = 0; return; }
 #if defined(GL_VERSION_1_1)
   glPolygonOffset(1.0f, 2.0f);
@@ -591,7 +503,7 @@ void			SceneRenderer::enableLight(int index, bool on)
 
 void			SceneRenderer::enableSun(bool on)
 {
-  if (useLighting() && sunOrMoonUp)
+  if (BZDB->isTrue("lighting") && sunOrMoonUp)
     theSun.enableLight(SunLight, on);
 }
 
@@ -713,7 +625,7 @@ void			SceneRenderer::render(
   int numLights = 0;
   if (!sameFrame) {
     clearLights();
-    if (sceneIterator && !blank && useLighting()) {
+    if (sceneIterator && !blank && BZDB->isTrue("lighting")) {
       // add lights
       sceneIterator->reset();
       SceneNode* node;
@@ -770,7 +682,7 @@ void			SceneRenderer::render(
   frustum.executeView();
 
   // turn sunlight on -- the ground needs it
-  if (useLighting() && sunOrMoonUp) {
+  if (BZDB->isTrue("lighting") && sunOrMoonUp) {
     theSun.execute(SunLight);
     theSun.enableLight(SunLight);
   }
@@ -823,7 +735,7 @@ void			SceneRenderer::render(
   }
 
   // prepare z buffer
-  if (useZBuffer()) {
+  if (BZDB->isTrue("zbuffer")) {
     if (sameFrame && ++depthRange == numDepthRanges) depthRange = 0;
     if (exposed || useHiddenLineOn || --depthRange < 0) {
       depthRange = numDepthRanges - 1;
@@ -851,7 +763,7 @@ void			SceneRenderer::render(
 
   // prepare the other lights but don't turn them on yet --
   // we may need to turn them on when drawing the background.
-  if (useLighting()) {
+  if (BZDB->isTrue("lighting")) {
     for (i = 0; i < numLights; i++)
       lights[i]->execute(i + reservedLights);
   }
@@ -861,14 +773,14 @@ void			SceneRenderer::render(
     background->render(*this);
 
   if (!blank) {
-    if (useLighting()) {
+    if (BZDB->isTrue("lighting")) {
       // now turn on the remaining lights
       for (i = 0; i < numLights; i++)
 	OpenGLLight::enableLight(i + reservedLights);
     }
 
     frustum.executeProjection();
-    if (useZBuffer()) glEnable(GL_DEPTH_TEST);
+    if (BZDB->isTrue("zbuffer")) glEnable(GL_DEPTH_TEST);
 
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)
@@ -895,13 +807,13 @@ void			SceneRenderer::render(
     OpenGLGState::resetState();
 
     // shut off lights
-    if (useLighting()) {
+    if (BZDB->isTrue("lighting")) {
       theSun.enableLight(SunLight, false);
       for (i = 0; i < numLights; i++)
 	OpenGLLight::enableLight(i + reservedLights, false);
     }
 
-    if (useZBuffer()) glDisable(GL_DEPTH_TEST);
+    if (BZDB->isTrue("zbuffer")) glDisable(GL_DEPTH_TEST);
 
     // FIXME -- must do post-rendering: flare lights, etc.
     // flare lights are in world coordinates.  trace ray to that world
@@ -937,7 +849,7 @@ void			SceneRenderer::render(
       glColor4f(color[0], color[1], color[2], density);
 
       // if low quality then use stipple -- it's probably much faster
-      if (useBlendingOn && (useQualityValue >= 2)) {
+      if (BZDB->isTrue("blend") && (useQualityValue >= 2)) {
 	glEnable(GL_BLEND);
 	glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
 	glDisable(GL_BLEND);
@@ -983,16 +895,16 @@ void			SceneRenderer::notifyStyleChange()
 /* FIXME
   // fixup my gstates
   OpenGLGStateBuilder builder(flareGState);
-  builder.enableTexture(useTexture());
-  if (useSmoothing()) {
-    if (useTexture())
+  builder.enableTexture(BZDB->isTrue("texture"));
+  if (BZDB->isTrue("smooth")) {
+    if (BZDB->isTrue("texture"))
       builder.setBlending(GL_ONE, GL_ONE);
     else
       builder.setBlending();
     builder.setSmoothing();
   }
   else {
-    if (useTexture())
+    if (BZDB->isTrue("texture"))
       builder.setBlending(GL_ONE, GL_ONE);
     else
       builder.resetBlending();

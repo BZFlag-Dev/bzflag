@@ -21,6 +21,7 @@
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
+#include "StateDatabase.h"
 
 static const int	Chunks = 8;		// draw flag as 8 quads
 const float		FlagSceneNode::RippleSpeed1 = 2.4f * M_PI;
@@ -110,10 +111,10 @@ void			FlagSceneNode::setTexture(const OpenGLTexture& texture)
 }
 
 void			FlagSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
-  blending = renderer.useBlending();
-  texturing = renderer.useTexture() && blending;
+  blending = BZDB->isTrue("blend");
+  texturing = BZDB->isTrue("texture") && blending;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
   if (blending && (transparent || texturing)) {

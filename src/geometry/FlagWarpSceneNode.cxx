@@ -16,6 +16,7 @@
 #include "FlagWarpSceneNode.h"
 #include "SceneRenderer.h"
 #include "ViewFrustum.h"
+#include "StateDatabase.h"
 
 const float		FlagWarpSize =	7.5;		// meters
 const GLfloat		FlagWarpAlpha = 0.5f;
@@ -64,10 +65,10 @@ GLfloat			FlagWarpSceneNode::getDistance(const GLfloat* eye) const
 }
 
 void			FlagWarpSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  if (renderer.useBlending()) {
+  if (BZDB->isTrue("blend")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }

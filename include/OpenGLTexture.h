@@ -77,6 +77,8 @@ class OpenGLTexture {
     void		execute() const;
 
     static Filter	getFilter();
+    static std::string	getFilterName();
+    static void		setFilter(std::string name);
     static void		setFilter(Filter);
 
   private:
@@ -122,6 +124,7 @@ class OpenGLTexture {
   private:
     Rep*		rep;
     static Filter	filter;
+    static const char*	configFilterValues[];
     static Rep*		lastRep;
 };
 

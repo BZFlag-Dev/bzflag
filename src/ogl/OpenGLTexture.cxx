@@ -68,6 +68,15 @@ const GLenum		OpenGLTexture::Rep::magnifyFilter[] = {
 				GL_NEAREST,
 				GL_LINEAR
 			};
+const char*		OpenGLTexture::configFilterValues[] = {
+				"no",
+				"nearest",
+				"linear",
+				"nearestmipmapnearest",
+				"linearmipmapnearest",
+				"nearestmipmaplinear",
+				"linearmipmaplinear"
+};
 
 OpenGLTexture::Rep::Rep(int _width, int _height,
 				const GLvoid* pixels,
@@ -330,6 +339,19 @@ OpenGLTexture&		OpenGLTexture::operator=(const OpenGLTexture& t)
 OpenGLTexture::Filter	OpenGLTexture::getFilter()
 {
   return filter;
+}
+
+std::string		OpenGLTexture::getFilterName()
+{
+  return configFilterValues[static_cast<int>(filter)];
+}
+
+void			OpenGLTexture::setFilter(std::string name)
+{
+  for (unsigned int i = 0; i < (sizeof(configFilterValues) /
+				sizeof(configFilterValues[0])); i++)
+    if (name == configFilterValues[i])
+      setFilter(static_cast<Filter>(i));
 }
 
 void			OpenGLTexture::setFilter(Filter _filter)

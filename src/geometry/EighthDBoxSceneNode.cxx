@@ -15,6 +15,7 @@
 #include "common.h"
 #include "EighthDBoxSceneNode.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 const int		BoxPolygons = 60;
 
@@ -74,7 +75,7 @@ void			EighthDBoxSceneNode::notifyStyleChange(
   EighthDimSceneNode::notifyStyleChange(renderer);
 
   OpenGLGStateBuilder builder(gstate);
-  if (renderer.useSmoothing()) {
+  if (BZDB->isTrue("smooth")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setSmoothing();
   }

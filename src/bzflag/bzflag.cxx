@@ -56,6 +56,7 @@
 #include "PlatformFactory.h"
 #include "BundleMgr.h"
 #include "World.h"
+#include "StateDatabase.h"
 
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
@@ -113,15 +114,6 @@ static const char*	configViewValues[] = {
 				"stereo",
 				"stacked",
 				"three"
-			};
-static const char*	configFilterValues[] = {
-				"no",
-				"nearest",
-				"linear",
-				"nearestmipmapnearest",
-				"linearmipmapnearest",
-				"nearestmipmaplinear",
-				"linearmipmaplinear"
 			};
 
 static std::string	getConfigFileName()
@@ -378,11 +370,11 @@ static void		parse(int argc, char** argv,
 	usage();
       }
       if (strcmp(argv[i], "default") == 0) {
-	resources.removeValue("list");
+	BZDB->unset("list");
       }
       else {
 	startupInfo.listServerURL = argv[i];
-	resources.addValue("list", argv[i]);
+	BZDB->set("list", argv[i]);
       }
     }
     else if (strcmp(argv[i], "-locale") == 0) {
@@ -394,7 +386,7 @@ static void		parse(int argc, char** argv,
     }
     else if (strcmp(argv[i], "-nolist") == 0) {
       startupInfo.listServerURL = "";
-      resources.addValue("list", "");
+      BZDB->set("list", "");
     }
     else if (strcmp(argv[i], "-m") == 0 ||
 		strcmp(argv[i], "-mute") == 0) {
@@ -492,7 +484,7 @@ static void		parse(int argc, char** argv,
       exit(0);
     }
     else if (strcmp(argv[i], "-window") == 0) {
-      resources.addValue("window", "");
+      BZDB->set("_window", "yes");
     }
     else if (strcmp(argv[i], "-3dfx") == 0 || strcmp(argv[i], "-3Dfx") == 0) {
 #if !defined(__linux__)
@@ -640,44 +632,33 @@ void			dumpResources(BzfDisplay* display,
   }
   if (strlen(startupInfo.multicastInterface) != 0)
     db.addValue("interface", startupInfo.multicastInterface);
-  db.addValue("list", startupInfo.listServerURL);
+  BZDB->set("list", startupInfo.listServerURL);
   if (isSoundOpen()) {
-    char buf[20];
-    sprintf(buf, "%d", getSoundVolume());
-    db.addValue("volume", buf);
+    BZDB->set("volume", string_util::format("%d", getSoundVolume()));
   }
-  db.addValue("dither",   renderer.useDithering() ? "yes" : "no");
-  db.addValue("blend",    renderer.useBlending() ? "yes" : "no");
-  db.addValue("smooth",   renderer.useSmoothing() ? "yes" : "no");
-  db.addValue("lighting", renderer.useLighting() ? "yes" : "no");
-  db.addValue("texture",  renderer.useTexture() ?
-		configFilterValues[OpenGLTexture::getFilter()] : "no");
-  db.addValue("shadows",  renderer.useShadows() ? "yes" : "no");
-
   GLint value;
   glGetIntegerv(GL_DEPTH_BITS, &value);
-  if (value == 0)
-    db.addValue("zbuffer",  "disable");
-  else
-    db.addValue("zbuffer",  renderer.useZBuffer() ? "yes" : "no");
-
-  if (renderer.getWindow().getWindow()->hasGammaControl()) {
-    char buf[20];
-    sprintf(buf, "%f", renderer.getWindow().getWindow()->getGamma());
-    db.addValue("gamma", buf);
+  if (value == 0) {
+    BZDB->set("zbuffer", "no");
   }
 
+  if (renderer.getWindow().getWindow()->hasGammaControl()) {
+    BZDB->set("gamma", string_util::format("%f", renderer.getWindow().getWindow()->getGamma()));
+    db.addValue("gamma", string_util::format("%f", renderer.getWindow().getWindow()->getGamma()));
+  }
+
+  BZDB->set("quality", configQualityValues[renderer.useQuality()]);
   db.addValue("quality", configQualityValues[renderer.useQuality()]);
   if (display->getResolution() != -1 &&
-      display->getResolution(display->getResolution()))
-    db.addValue("resolution",
-	display->getResolution(display->getResolution())->name);
+      display->getResolution(display->getResolution())) {
+    BZDB->set("resolution", display->getResolution(display->getResolution())->name);
+    db.addValue("resolution", display->getResolution(display->getResolution())->name);
+  }
   {
-    char buf[20];
-    sprintf(buf, "%f", renderer.getLatitude());
-    db.addValue("latitude", buf);
-    sprintf(buf, "%f", renderer.getLongitude());
-    db.addValue("longitude", buf);
+    BZDB->set("latitude", string_util::format("%f", renderer.getLatitude()));
+    db.addValue("latitude", string_util::format("%f", renderer.getLatitude()));
+    BZDB->set("longitude", string_util::format("%f", renderer.getLongitude()));
+    db.addValue("longitude", string_util::format("%f", renderer.getLongitude()));
   }
   {
     BzfKeyMap& map = getBzfKeyMap();
@@ -699,40 +680,52 @@ void			dumpResources(BzfDisplay* display,
       db.addValue(name, value);
     }
   }
+  BZDB->set("startcode", ServerStartMenu::getSettings());
   db.addValue("startcode", ServerStartMenu::getSettings());
+  BZDB->set("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
   db.addValue("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
+  BZDB->set("showscore", renderer.getScore() ? "yes" : "no");
   db.addValue("showscore", renderer.getScore() ? "yes" : "no");
+  BZDB->set("showlabels", renderer.getLabels() ? "yes" : "no");
   db.addValue("showlabels", renderer.getLabels() ? "yes" : "no");
 
+  BZDB->set("joystick", startupInfo.joystick ? "yes" : "no");
   db.addValue("joystick", startupInfo.joystick ? "yes" : "no");
+  BZDB->set("joystickname", startupInfo.joystickName);
   db.addValue("joystickname", startupInfo.joystickName);
 
+  BZDB->set("enhancedradar", renderer.useEnhancedRadar() ? "yes" : "no");
   db.addValue("enhancedradar", renderer.useEnhancedRadar() ? "yes" : "no");
 
+  BZDB->set("coloredradarshots", renderer.useColoredShots() ? "yes" : "no");
   db.addValue("coloredradarshots", renderer.useColoredShots() ? "yes" : "no");
 
   int length = renderer.getRadarShotLength();
-  char buf[20];
-  sprintf(buf,"%d",length);
-  db.addValue("linedradarshots", buf);
+  BZDB->set("linedradarshots", string_util::format("%d", length));
+  db.addValue("linedradarshots", string_util::format("%d", length));
 
-  sprintf(buf, "%f", renderer.getPanelOpacity());
-  db.addValue("panelopacity", buf);
+  BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
+  db.addValue("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
 
-  sprintf(buf, "%d", renderer.getRadarSize());
-  db.addValue("radarsize", buf);
+  BZDB->set("radarsize", string_util::format("%f", renderer.getRadarSize()));
+  db.addValue("radarsize", string_util::format("%f", renderer.getRadarSize()));
 
-  sprintf(buf, "%d", renderer.getMaxMotionFactor());
-  db.addValue("mouseboxsize", buf);
+  BZDB->set("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
+  db.addValue("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
 
+  BZDB->set("bigfont", renderer.useBigFont() ? "yes" : "no");
   db.addValue("bigfont", renderer.useBigFont() ? "yes" : "no");
+  BZDB->set("colorful", renderer.getConsoleColorization() ? "yes" : "no");
   db.addValue("colorful", renderer.getConsoleColorization() ? "yes" : "no");
+  BZDB->set("underline", OpenGLTexFont::getUnderlineColor());
   db.addValue("underline", OpenGLTexFont::getUnderlineColor());
   char temp[2]; temp[1] = '\0'; temp[0] = killerHighlight + '0';
+  BZDB->set("killerhighlight", temp);
   db.addValue("killerhighlight", temp);
 
   // don't save these configurations
-  db.removeValue("window");
+  BZDB->setPersistent("_window", false);
+  BZDB->setPersistent("_multisample", false);
   db.removeValue("multisample");
 
   const std::vector<std::string> list = getSilenceList();
@@ -751,8 +744,8 @@ void			dumpResources(BzfDisplay* display,
     db.addValue(buffer, list[i]);	
   }
 
-  sprintf(buffer, "%ld", (long)ServerMenu::getMaxCacheAge());
-  db.addValue("serverCacheAge", buffer);
+  BZDB->set("serverCacheAge", string_util::format("%1d", (long)ServerMenu::getMaxCacheAge()));
+  db.addValue("serverCacheAge", string_util::format("%1d", (long)ServerMenu::getMaxCacheAge()));
 
   // save configuration
   {
@@ -767,7 +760,7 @@ void			dumpResources(BzfDisplay* display,
 static bool		needsFullscreen()
 {
   // fullscreen if not in a window
-  if (!db.hasValue("window")) return true;
+  if (!BZDB->isSet("_window")) return true;
 
   // not fullscreen if view is default (normal)
   if (!db.hasValue("view")) return false;
@@ -812,11 +805,13 @@ int			main(int argc, char** argv)
   bzfsrand(time(0));
 
   if (getenv("BZFLAGID")) {
+    BZDB->set("callsign", getenv("BZFLAGID"));
     strncpy(startupInfo.callsign, getenv("BZFLAGID"),
 					sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
   }
   else if (getenv("BZID")) {
+    BZDB->set("callsign", getenv("BZID"));
     strncpy(startupInfo.callsign, getenv("BZID"),
 					sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
@@ -941,7 +936,7 @@ int			main(int argc, char** argv)
 
 
     // ignore window name in config file (it's used internally)
-    db.removeValue("window");
+    BZDB->unset("_window");
     db.removeValue("multisample");
   }
 
@@ -1105,8 +1100,8 @@ int			main(int argc, char** argv)
   // DirectSound is a bonehead API.
   if (!noAudio) {
     openSound("bzflag");
-    if (startupInfo.hasConfiguration && db.hasValue("volume"))
-      setSoundVolume(atoi(db.getValue("volume").c_str()));
+    if (startupInfo.hasConfiguration && BZDB->isSet("volume"))
+      setSoundVolume(static_cast<int>(BZDB->eval("volume")));
   }
 
   // set main window's minimum size (arbitrary but should be big enough
@@ -1148,29 +1143,10 @@ int			main(int argc, char** argv)
 
   // restore rendering configuration
   if (startupInfo.hasConfiguration) {
-    if (db.hasValue("dither"))
-      renderer.setDithering(db.getValue("dither") == "yes");
-    if (db.hasValue("blend"))
-      renderer.setBlending(db.getValue("blend") == "yes");
-    if (db.hasValue("smooth"))
-      renderer.setSmoothing(db.getValue("smooth") == "yes");
-    if (db.hasValue("lighting"))
-      renderer.setLighting(db.getValue("lighting") == "yes");
-    if (db.hasValue("shadows"))
-      renderer.setShadows(db.getValue("shadows") == "yes");
-    if (db.hasValue("zbuffer"))
-      renderer.setZBuffer(db.getValue("zbuffer") == "yes");
     if (db.hasValue("zbuffersplit"))
       renderer.setZBufferSplit(db.getValue("zbuffersplit") == "yes");
-    if (db.hasValue("texture")) {
-      std::string value = db.getValue("texture");
-      for (int i = 0; i < (int)(sizeof(configFilterValues) /
-				sizeof(configFilterValues[0])); i++)
-	if (value == configFilterValues[i]) {
-	  OpenGLTexture::setFilter((OpenGLTexture::Filter)i);
-	  break;
-	}
-      renderer.setTexture(OpenGLTexture::getFilter() != OpenGLTexture::Off);
+    if (BZDB->isSet("texture")) {
+      OpenGLTexture::setFilter(BZDB->get("texture"));
     }
     if (db.hasValue("quality")) {
       std::string value = db.getValue("quality");
@@ -1181,7 +1157,7 @@ int			main(int argc, char** argv)
 	  break;
 	}
     }
-    renderer.setTextureReplace(!renderer.useLighting() &&
+    renderer.setTextureReplace(!BZDB->isTrue("lighting") &&
 				renderer.useQuality() < 2);
     if (db.hasValue("view")) {
       renderer.setViewType(SceneRenderer::Normal);
@@ -1248,8 +1224,8 @@ int			main(int argc, char** argv)
 #endif
 
   // set server list URL
-  if (db.hasValue("list"))
-    startupInfo.listServerURL = db.getValue("list");
+  if (BZDB->isSet("list"))
+    startupInfo.listServerURL = BZDB->get("list");
 
   // setup silence list
   std::vector<std::string>& list = getSilenceList();
