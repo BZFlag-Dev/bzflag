@@ -596,7 +596,7 @@ void NetHandler::udpSend(const void *b, size_t l) {
   } else {
     // Buffer new data
     memcpy(&udpOutputBuffer[udpOutputLen], (const char *)b, l);
-    udpOutputLen += l;
+    udpOutputLen += (int)l;
     // Send buffer if is almost full
     if (udpOutputLen > sizeLimit) {
       sendto(udpSocket, udpOutputBuffer, udpOutputLen, 0,
