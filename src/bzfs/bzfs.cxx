@@ -55,6 +55,7 @@
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
+#include "AnsiCodes.h"
 
 
 const int udpBufSize = 128000;
@@ -1389,17 +1390,20 @@ static void acceptClient()
 
     std::string rejectionMessage;
 
-    rejectionMessage = "REFUSED: ";
+    rejectionMessage = "REFUSED:";
     if (info.reason.size())
       rejectionMessage += info.reason;
     else
       rejectionMessage += "General Ban";
 
+    rejectionMessage += ColorStrings[WhiteColor];
     if (info.bannedBy.size()) {
       rejectionMessage += " by ";
+      rejectionMessage += ColorStrings[BlueColor];
       rejectionMessage += info.bannedBy;
     }
 
+    rejectionMessage += ColorStrings[GreenColor];
     if (info.fromMaster)
       rejectionMessage += " [you are on the master ban list]";
 

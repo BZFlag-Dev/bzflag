@@ -4126,9 +4126,21 @@ static void joinInternetGame()
 
 	// you got banned
       case ServerLink::Refused:{
-	std::string banMessage = "Server Refused connection due to ban: ";
-	banMessage += serverLink->getRejectionMessage();
-	HUDDialogStack::get()->setFailedMessage(banMessage.c_str());
+	const std::string& rejmsg = serverLink->getRejectionMessage();
+	
+	// add to the HUD
+        std::string msg = ColorStrings[RedColor];
+	msg += "You have been banned from this server";
+	HUDDialogStack::get()->setFailedMessage(msg.c_str());
+	
+	// add to the console
+        msg = ColorStrings[RedColor];
+	msg += "You have been banned from this server:";
+	addMessage(NULL, msg);
+        msg = ColorStrings[YellowColor];
+        msg += rejmsg;
+	addMessage(NULL, msg);
+	
 	break;
       }
 

@@ -58,7 +58,7 @@ class ServerLink {
 			~ServerLink();
 
     State		getState() const;
-		const std::string& getRejectionMessage ( void ) { return rejectionMessage;}
+    const std::string&	getRejectionMessage() { return rejectionMessage; }
     int			getSocket() const;	// file descriptor actually
     const PlayerId&	getId() const;
     const char*		getVersion() const;
