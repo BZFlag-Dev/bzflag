@@ -263,7 +263,7 @@ case $host_os in
 	AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
 
 	if test x$host_os = xlinux-gnu -o x$host_os = xlinux ; then
-gnu	  AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
+	  AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
 	  AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
 	fi
     ;;
