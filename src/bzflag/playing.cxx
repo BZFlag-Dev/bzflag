@@ -2176,6 +2176,7 @@ static std::string cmdSend(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
+#ifdef SNAPPING
 static std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args)
 {
   static int snap = 0;
@@ -2206,6 +2207,7 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
   }
   return std::string();
 }
+#endif
 
 static std::string cmdTime(const std::string&, const CommandManager::ArgList& args)
 {
@@ -2236,7 +2238,9 @@ static const CommandListItem commandList[] = {
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
   { "pause",	&cmdPause,	"pause:  pause/resume" },
   { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" },
+#ifdef SNAPPING
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
+#endif
   { "time",	&cmdTime,	"time {forward|backward}: adjust the current time" }
 };
 

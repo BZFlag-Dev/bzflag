@@ -122,7 +122,9 @@ static const char*	bindingList[] = {
   "bind S down \"toggle showscore\"",
   "bind Pause down pause",
   "bind P down pause",
+#ifdef SNAPPING
   "bind F5 down screenshot",
+#endif
   "bind - down \"time backward\"",
   "bind + down \"time forward\""
 };
