@@ -587,14 +587,15 @@ bool WordFilter::addToFilter(const std::string &word)
 
 
 /** loads a set of bad words from a specified file */
-void WordFilter::loadFromFile(const std::string &fileName, bool verbose)
+unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
 {
   char buffer[2048];
+  unsigned int totalAdded=0;
   std::ifstream filterStream(fileName.c_str());
   
   if (!filterStream) {
     std::cerr << "Warning: '" << fileName << "' bad word filter file not found" << std::endl;
-    return;
+    return 0;
   }
   
   while (filterStream.good()) {
@@ -644,12 +645,14 @@ void WordFilter::loadFromFile(const std::string &fileName, bool verbose)
 	std::cout << std::endl << "Word is already added: " << filterWord << std::endl;
       }
     }
+    totalAdded++;
     
   } // end iteration over input file
   if (verbose) {
     std::cout << std::endl;
   }  
 
+  return totalAdded;
 } // end loadFromFile
 
 

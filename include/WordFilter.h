@@ -254,7 +254,7 @@ class WordFilter
   ~WordFilter(void);
   
   /** loads a set of bad words from a specified file */
-  void loadFromFile(const std::string &fileName, bool verbose=false);
+  unsigned int loadFromFile(const std::string &fileName, bool verbose=false);
 
   /** adds a new filter to the existing filter list, and 
    * optionally recursively adds all combinations of
