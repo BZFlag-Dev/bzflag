@@ -27,9 +27,6 @@ my $version  = param("version");
 my $gameinfo = param("gameinfo");
 my $title    = param("title");
 
-# For SETNUM
-my $players  = param("players");
-
 ###############################################################################
 
 # Connect to the server database.
@@ -141,23 +138,6 @@ elsif ( $action eq "ADD" ) {
 # Server requests to be removed from the DB.
 elsif ( $action eq "REMOVE" ) {
   $servdb->do("DELETE FROM servers WHERE nameport = '$nameport'");
-}
-#  -- SETNUM --
-# Server is updating its player count.
-# $players should look like <rogue count>:<red count>:<greens>:<blues>:<purples>
-elsif ( $action eq "SETNUM" ) {
-  my ($rogues, $reds, $greens, $blues, $purples) = split /:/, $players;
-  my $curtime = time;
-  $servdb->do(
-    "UPDATE servers SET
-      rogues  = $rogues,
-      reds    = $reds,
-      greens  = $greens,
-      blues   = $blues,
-      purples = $purples,
-      lastmod = $curtime
-      WHERE nameport = '$nameport'"
-  );
 }
 # Unknown command ....
 else { print "Unknown command: '$action'\n"; }
