@@ -32,6 +32,15 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+/* near zero by some epsilon convenience define since relying on
+* the floating point unit for proper equivalence is not safe
+*/
+#define NEAR_ZERO(_value,_epsilon)  ( ((_value) > -_epsilon) && ((_value) < _epsilon) )
+
+// seven places of precision is pretty safe, so something less precise
+#define ZERO_TOLERANCE 0.000001f
+
+
 // Might we be BSDish? sys/param.h has BSD defined if so
 #if (defined(__unix__) || defined(unix) || defined(__APPLE__)) && !defined(USG)
 #include <sys/param.h>
