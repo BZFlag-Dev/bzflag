@@ -1846,7 +1846,9 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
 {
   // add controls
   HUDuiControlList& list = getControls();
-  list.append(createLabel("Chris Schoeneman", "Author:"));
+  list.append(createLabel("Tim Riker", "Maintainer:"));
+  list.append(createLabel("", ""));
+  list.append(createLabel("Chris Schoeneman", "Original Author:"));
   list.append(createLabel("", ""));
   list.append(createLabel("David Hoeferlin, Tom Hubina", "Code Contributors:"));
   list.append(createLabel("Dan Kartch, Jed Lengyel", ""));
@@ -1860,7 +1862,6 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.append(createLabel("Adam Rosen, Erin Shaw", ""));
   list.append(createLabel("Ben Trumbore, Don Greenberg", ""));
   list.append(createLabel("", ""));
-  list.append(createLabel("bzflag@bigfoot.com", "BZFLAG Email:"));
   list.append(createLabel("http://bzflag.sourceforge.net/",
 						"BZFLAG Home Page:"));
   list.append(createLabel("", ""));
