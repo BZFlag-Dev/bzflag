@@ -10,12 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "TankSceneNode.h"
+#include "TankGeometryMgr.h"
+using namespace TankGeometryUtils;
 
-#define	doVertex3f	doVertex3f
-#define	doNormal3f	doNormal3f
-
-void buildHighBarrel ( void )
+void TankGeometryUtils::buildHighBarrel ( void )
 {
       glShadeModel(GL_FLAT);
       glBegin(GL_TRIANGLE_FAN);

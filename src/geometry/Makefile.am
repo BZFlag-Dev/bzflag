@@ -30,7 +30,9 @@ libGeometry_a_SOURCES  =		\
 	SphereSceneNode.cxx		\
 	FlagSceneNode.cxx		\
 	FlagWarpSceneNode.cxx		\
+	AnimatedTreads.cxx		\
 	TankSceneNode.cxx		\
+	TankGeometryMgr.cxx		\
 	BillboardSceneNode.cxx
 
 libGeometry_a_LIBADD =	\

@@ -19,26 +19,7 @@
 
 #include "common.h"
 #include "SceneNode.h"
-
-// prototypes for tank geo
-// hightank
-void buildHighBody ( void );
-void buildHighTurret ( void );
-void buildHighLTread ( void );
-void buildHighRTread ( void );
-void buildHighBarrel ( void );
-// medtank
-void buildMedBody ( void );
-void buildMedTurret ( void );
-void buildMedLTread ( void );
-void buildMedRTread ( void );
-void buildMedBarrel ( void );
-// lowtank
-void buildLowBody ( void );
-void buildLowTurret ( void );
-void buildLowLTread ( void );
-void buildLowRTread ( void );
-void buildLowBarrel ( void );
+#include "TankGeometryMgr.h"
 
 class TankSceneNode;
 class OpenGLTexture;
@@ -125,45 +106,27 @@ class TankSceneNode : public SceneNode {
     static void		setMaxLOD(int maxLevel);
 
   protected:
+
     class TankRenderNode : public RenderNode {
       public:
-	enum Style {
-			Normal = 0,
-			Obese,
-			Tiny,
-			Narrow,
-			Thief,
-			lastStyle
-	};
-
 			TankRenderNode(const TankSceneNode*);
 			~TankRenderNode();
 	void		setShadow();
+	void		setTankLOD(TankGeometryEnums::TankLOD);
+	void		setTankSize(TankGeometryEnums::TankSize);
 	void		sortOrder(bool above, bool towards);
 	void		render();
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
-      protected:
-	enum Part {
-			Body = 0,
-			Barrel,
-			Turret,
-			LeftTread,
-			RightTread
-	};
 
-	virtual GLuint	getParts(Style) = 0;
-	virtual void	freeParts() = 0;
 	void		renderParts();
-	void		renderPart(Part);
+	void		renderPart(TankGeometryEnums::TankPart part);
 	void		renderLights();
-	void		prepStyle(Style);
-	void		doVertex3f(GLfloat x, GLfloat y, GLfloat z);
-	void		doNormal3f(GLfloat x, GLfloat y, GLfloat z);
-      private:
-	void		doInitContext();
-	static void	initContext(void*);
+        bool		setupTextureMatrix(TankGeometryEnums::TankPart part);
+    
       protected:
 	const TankSceneNode* sceneNode;
+	TankGeometryEnums::TankLOD drawLOD;
+	TankGeometryEnums::TankSize drawSize;
 	const GLfloat*	color;
 	GLfloat		alpha;
 	bool		isShadow;
@@ -171,60 +134,9 @@ class TankSceneNode : public SceneNode {
 	bool		towards;
 	bool		isExploding;
 	GLfloat		explodeFraction;
-	GLfloat		vel[5][2];
-	GLfloat		spin[5][4];
-	GLuint		base;
-	static const GLfloat	centerOfGravity[][3];	// of parts
-	static GLfloat		vertexScale[3];
-	static GLfloat		normalScale[3];
-    };
-    class LowTankRenderNode : public TankRenderNode {
-      public:
-			LowTankRenderNode(const TankSceneNode*);
-			~LowTankRenderNode();
-      protected:
-	GLuint		getParts(Style);
-	void		freeParts();
-	void		makeBody();
-	void		makeBarrel();
-	void		makeTurret();
-	void		makeLeftTread();
-	void		makeRightTread();
-      private:
-	static GLuint	parts[lastStyle];
-	friend class TankSceneNode;
-    };
-    class MedTankRenderNode : public TankRenderNode {
-      public:
-			MedTankRenderNode(const TankSceneNode*);
-			~MedTankRenderNode();
-      protected:
-	GLuint		getParts(Style);
-	void		freeParts();
-	void		makeBody();
-	void		makeBarrel();
-	void		makeTurret();
-	void		makeLeftTread();
-	void		makeRightTread();
-      private:
-	static GLuint	parts[lastStyle];
-	friend class TankSceneNode;
-    };
-    class HighTankRenderNode : public TankRenderNode {
-      public:
-			HighTankRenderNode(const TankSceneNode*);
-			~HighTankRenderNode();
-      protected:
-	GLuint		getParts(Style);
-	void		freeParts();
-	void		makeBody();
-	void		makeBarrel();
-	void		makeTurret();
-	void		makeLeftTread();
-	void		makeRightTread();
-      private:
-	static GLuint	parts[lastStyle];
-	friend class TankSceneNode;
+	GLfloat		vel[TankGeometryEnums::LastTankPart][2];
+	GLfloat		spin[TankGeometryEnums::LastTankPart][4];
+	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
     };
     friend class TankRenderNode;
 
@@ -234,6 +146,8 @@ class TankSceneNode : public SceneNode {
     float		dimensions[3]; // tank dimensions
     float		leftTreadOffset;
     float		rightTreadOffset;
+    float		leftWheelOffset;
+    float		rightWheelOffset;
     bool		useDimensions;
     bool		useOverride, hidden, cloaked;
     bool		transparent, sort;
@@ -242,23 +156,15 @@ class TankSceneNode : public SceneNode {
     GLfloat		colorOverride[4];
     GLfloat		color[4];
     GLdouble		clipPlane[4];
-    TankRenderNode::Style style;
     OpenGLGState	gstate;
     OpenGLGState	lightsGState;
-    LowTankRenderNode	lowRenderNode;
-    MedTankRenderNode	medRenderNode;
-    HighTankRenderNode	highRenderNode;
-    LowTankRenderNode	shadowRenderNode;
+    TankRenderNode	tankRenderNode;
+    TankRenderNode	shadowRenderNode;
+    TankGeometryEnums::TankSize tankSize;
 
     static int			maxLevel;
     static const int		numLOD;
 };
-
-extern float curVertScale[3]; /// for the really lame #def
-extern float curNormScale[3]; /// for the really lame #def
-
-void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
-void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
 
 
 #endif // BZF_TANK_SCENE_NODE_H

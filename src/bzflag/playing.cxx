@@ -93,6 +93,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "AnsiCodes.h"
 #include "TextureManager.h"
 #include "ForceFeedback.h"
+#include "TankGeometryMgr.h"
 #include "motd.h"
 
 // versioning that makes us recompile every time
@@ -4614,6 +4615,9 @@ static void		playingLoop()
   // start timing
   TimeKeeper::setTick();
   updateDaylight(epochOffset, *sceneRenderer);
+  
+  // rebuild the tank display lists
+  TANKGEOMMGR.rebuildLists();
 
   // main loop
   while (!CommandsStandard::isQuit()) {
