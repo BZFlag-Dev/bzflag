@@ -103,17 +103,23 @@ void Octree::clear ()
 
 void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 {
+  int i;
+  
   if (root) {
     clear();
   }
-
+  
+  // just in case
+  for (i = 0; i < listSize; i++) {
+    list[i]->octreeState = SceneNode::OctreeCulled;
+  }
+  
   maxDepth = depth;
   minElements = elements;
 
   CullList = list;
   CullListSize = listSize;
 
-  int i;
   float mins[3]; // minimum extents
   float maxs[3]; // maximum extents
 

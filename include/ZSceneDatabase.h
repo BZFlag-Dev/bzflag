@@ -29,14 +29,21 @@ class ZSceneDatabase : public SceneDatabase {
     void		addStaticNode(SceneNode*);
     void		addDynamicNode(SceneNode*);
     void		addDynamicSphere(SphereSceneNode*);
-    void		addShadowNodes(SceneRenderer &renderer);
     void		removeDynamicNodes();
     void		removeAllNodes();
     bool		isOrdered();
+
     void		updateNodeStyles();
+    void		addLights(SceneRenderer& renderer);
+    void		addShadowNodes(SceneRenderer &renderer);
+    void		addRenderNodes(SceneRenderer& renderer);
+    
+    void		drawCuller();
 
-    SceneIterator*	getRenderIterator();
-
+  private:
+    void		setupCullList(const ViewFrustum*);
+    void                makeCuller();
+    
   private:
     int			staticCount;
     int			staticSize;
@@ -46,32 +53,15 @@ class ZSceneDatabase : public SceneDatabase {
     int			dynamicSize;
     SceneNode**		dynamicList;
 
-};
-
-class ZSceneIterator : public SceneIterator {
-  public:
-			ZSceneIterator(const ZSceneDatabase*);
-    virtual		~ZSceneIterator();
-
-    void	resetFrustum(const ViewFrustum*);
-    void	reset();
-    SceneNode*	getNext();
-    SceneNode*	getNextLight();
-    void		drawCuller();
-
-  private:
-    const ZSceneDatabase* db;
-    bool		culledDone, dynamicDone;
-    int			culledIndex, dynamicIndex;
+    int			culledCount;
+    SceneNode**         culledList;
 
     class Octree*       octree;
-    SceneNode**         culledList;
-    int			culledCount;
     int			cullDepth;
     int			cullElements;
 
-    void                makeCuller();
 };
+
 
 #endif // BZF_Z_SCENE_DATABASE_H
 

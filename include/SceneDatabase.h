@@ -25,20 +25,9 @@ class SceneNode;
 class SphereSceneNode;
 class SceneRenderer;
 
+
 // NOTE -- SceneDatabase owns all static nodes added to it,
 //	dynamic nodes are the responsibility of the client.
-
-class SceneIterator {
-  public:
-			SceneIterator();
-    virtual		~SceneIterator();
-
-    virtual void	resetFrustum(const ViewFrustum*) = 0;
-    virtual void	reset() = 0;
-    virtual SceneNode*	getNext() = 0;
-    virtual SceneNode*	getNextLight() {return getNext();};
-    virtual void	drawCuller() = 0;
-};
 
 class SceneDatabase {
   public:
@@ -48,18 +37,22 @@ class SceneDatabase {
     virtual void	addStaticNode(SceneNode*) = 0;
     virtual void	addDynamicNode(SceneNode*) = 0;
     virtual void	addDynamicSphere(SphereSceneNode*) = 0;
-    virtual void	addShadowNodes(SceneRenderer &renderer) = 0;
     virtual void	removeDynamicNodes() = 0;
     virtual void	removeAllNodes() = 0;
     virtual bool	isOrdered() = 0;
-    virtual void	updateNodeStyles() = 0;
 
-    virtual SceneIterator*	getRenderIterator() = 0;
+    virtual void	updateNodeStyles() = 0;
+    virtual void	addLights(SceneRenderer& renderer) = 0;
+    virtual void	addShadowNodes(SceneRenderer &renderer) = 0;
+    virtual void	addRenderNodes(SceneRenderer& renderer) = 0;
+
+    virtual void	drawCuller() = 0;
 
   private:
 			SceneDatabase(const SceneDatabase&);
     SceneDatabase&	operator=(const SceneDatabase&);
 };
+
 
 #endif // BZF_SCENE_DATABASE_H
 

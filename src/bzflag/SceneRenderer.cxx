@@ -107,7 +107,6 @@ SceneRenderer::SceneRenderer() :
 				useFogHack(false),
 				viewType(Normal),
 				inOrder(false),
-				sceneIterator(NULL),
 				depthRange(0),
 				numDepthRanges(1),
 				depthRangeSize(1.0),
@@ -182,22 +181,12 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   // prepare sun
   setTimeOfDay(unixEpoch);
 
-/* FIXME
-  // load flare light texture
-  OpenGLGStateBuilder builder;
-  builder.setTexture(tm.getTextureID("flare", OpenGLTexture::Max));
-  flareGState = builder.getState();
-*/
-
   // force nodes to update their styles
   notifyStyleChange();
 }
 
 SceneRenderer::~SceneRenderer()
 {
-  // free scene iterator first
-  delete sceneIterator;
-
   // then free database
   delete scene;
 }
@@ -413,28 +402,16 @@ void			SceneRenderer::setExposed()
 
 void			SceneRenderer::setSceneDatabase(SceneDatabase* db)
 {
-  // free scene iterator first
-  delete sceneIterator;
+  // update the styles
+  needStyleUpdate = true;
 
-  // then free database
+  // free the current database
   delete scene;
 
   scene = db;
   if (scene) {
-    needStyleUpdate = true;
-    sceneIterator = scene->getRenderIterator();
     inOrder = scene->isOrdered();
-    if (sceneIterator) {
-      sceneIterator->resetFrustum(&frustum);
-      sceneIterator->reset();
-      SceneNode* node;
-      while ((node = sceneIterator->getNext()) != NULL) {
-	node->octreeState = SceneNode::OctreeCulled;
-      }
-    }
-  }
-  else {
-    sceneIterator = NULL;
+  } else {
     inOrder = false;
   }
 }
@@ -580,23 +557,14 @@ void			SceneRenderer::render(
   // avoid OpenGL calls as long as possible -- there's a good
   // chance we're waiting on the vertical retrace.
 
-  // set the view frustum
-  if (sceneIterator) {
-    sceneIterator->resetFrustum(&frustum);
-  }
-
   // get the important lights in the scene
   int i;
   int numLights = 0;
   if (!sameFrame) {
     clearLights();
-    if (sceneIterator && !blank && lighting) {
+    if (scene && !blank && lighting) {
       // add lights
-      sceneIterator->reset();
-      SceneNode* node;
-      while ((node = sceneIterator->getNextLight()) != NULL) {
-	node->addLight(*this);
-      }
+      scene->addLights(*this);
       numLights = lights.size();
 
       // pick maxLights most important light sources
@@ -629,30 +597,21 @@ void			SceneRenderer::render(
     flareLightList.clear();
 
     // make the lists of render nodes sorted in optimal rendering order
-    if (sceneIterator) {
-      sceneIterator->reset();
-      SceneNode* node;
-      while ((node = sceneIterator->getNext()) != NULL) {
-	node->getRenderNodes(*this);
-      }
+    if (scene) {
+      scene->addRenderNodes(*this);
     }
 
     // sort ordered list in reverse depth order
-    if (!inOrder)
+    if (!inOrder) {
       orderedList.sort(frustum.getEye());
-  }
-  else {
-    sceneIterator->reset();
-    SceneNode* node;
-    while ((node = sceneIterator->getNext()) != NULL) {
-      node->getRenderNodes(*this);
+    }
+
+    // add the shadow rendering nodes
+    if (scene && BZDBCache::shadows) {
+      scene->addShadowNodes(*this);
     }
   }
 
-  // add the shadow rendering nodes
-  if (!blank && BZDBCache::shadows && scene) {
-    scene->addShadowNodes(*this);
-  }
 
   // prepare transforms
   // note -- lights should not be positioned before view is set
@@ -772,10 +731,10 @@ void			SceneRenderer::render(
 #endif
     }
 
-    if (sceneIterator && useCullingTreeOn) {
-      sceneIterator->drawCuller();
+    if (scene && useCullingTreeOn) {
+      scene->drawCuller();
     }
-    if (sceneIterator && useCollisionTreeOn && (World::getWorld() != NULL)) {
+    if (scene && useCollisionTreeOn && (World::getWorld() != NULL)) {
       World::getWorld()->drawCollisionGrid();
     }
 
@@ -880,26 +839,7 @@ void			SceneRenderer::render(
 void			SceneRenderer::notifyStyleChange()
 {
   needStyleUpdate = true;
-/* FIXME
-  // fixup my gstates
-  OpenGLGStateBuilder builder(flareGState);
-  builder.enableTexture(BZDBCache::texture));
-  if (BZDB.isTrue("smooth")) {
-    if (BZDBCache::texture))
-      builder.setBlending(GL_ONE, GL_ONE);
-    else
-      builder.setBlending();
-    builder.setSmoothing();
-  }
-  else {
-    if (BZDBCache::texture)
-      builder.setBlending(GL_ONE, GL_ONE);
-    else
-      builder.resetBlending();
-    builder.setSmoothing(false);
-  }
-  flareGState = builder.getState();
-*/
+  return;
 }
 
 const RenderNodeList&	SceneRenderer::getShadowList() const

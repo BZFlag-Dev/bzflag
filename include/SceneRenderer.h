@@ -189,7 +189,6 @@ private:
   RenderNodeList	shadowList;
   RenderNodeGStateList orderedList;
   bool		inOrder;
-  SceneIterator*	sceneIterator;
   int			depthRange;
   int			numDepthRanges;
   double		depthRangeSize;
@@ -202,6 +201,7 @@ private:
   std::vector<FlareLight>	flareLightList;
 
 };
+
 
 //
 // SceneRenderer
@@ -287,25 +287,22 @@ inline bool			SceneRenderer::isSameFrame() const
   return sameFrame;
 }
 
-inline void			SceneRenderer::addRenderNode(
-				RenderNode* node, const OpenGLGState* gstate)
+inline void SceneRenderer::addRenderNode(RenderNode* node,
+                                         const OpenGLGState* gstate)
 {
   if (inOrder || gstate->isBlended()) {
     // nodes will be drawn in the same order received
     orderedList.append(node, gstate);
-  }
-
-  else {
+  } else {
     // store node in gstate bucket
     gstate->addRenderNode(node);
   }
 }
 
-inline void			SceneRenderer::addShadowNode(RenderNode* node)
+inline void SceneRenderer::addShadowNode(RenderNode* node)
 {
   shadowList.append(node);
 }
-
 
 
 #endif // BZF_SCENE_RENDERER_H

@@ -20,6 +20,8 @@
 #include "ViewFrustum.h"
 #include "SphereSceneNode.h"
 #include "WallSceneNode.h"
+#include "SceneRenderer.h"
+
 
 //
 // BSPSceneDatabase::Node
@@ -36,22 +38,6 @@ BSPSceneDatabase::Node::Node(bool _dynamic, SceneNode* _node):
 }
 
 
-void BSPSceneDatabase::Node::addShadowNodes(SceneRenderer& renderer)
-{
-  // dive into the child BSP nodes
-  if (front != NULL) {
-    front->addShadowNodes(renderer);
-  }
-  if (back != NULL) {
-    back->addShadowNodes(renderer);
-  }
-  // render the SceneNode's shadows
-  if (node != NULL) {
-    node->addShadowNodes(renderer);
-  }
-}
-
-
 //
 // BSPSceneDatabase
 //
@@ -60,6 +46,7 @@ BSPSceneDatabase::BSPSceneDatabase() :
 				root(NULL),
 				depth(0)
 {
+  
   memset(eye, 0, sizeof(GLfloat) * 3);
 }
 
@@ -110,12 +97,6 @@ void BSPSceneDatabase::addDynamicSphere(SphereSceneNode* n)
     for (int i = 0; i < numParts; i++)
       addDynamicNode(parts[i]);
   }
-}
-
-
-void BSPSceneDatabase::addShadowNodes(SceneRenderer& renderer)
-{
-  root->addShadowNodes(renderer);
 }
 
 
@@ -271,142 +252,154 @@ void BSPSceneDatabase::setDepth(int newDepth)
 }
 
 
-SceneIterator* BSPSceneDatabase::getRenderIterator()
+void BSPSceneDatabase::updateNodeStyles()
 {
-  return new BSPSceneIterator(this);
+  if (root) {
+    setNodeStyle(root);
+  }
+  return;
+}
+
+
+void BSPSceneDatabase::addLights(SceneRenderer& _renderer)
+{
+  if (root) {
+    renderer = &_renderer;
+    nodeAddLights(root);
+  }
+  return;
+}
+
+
+void BSPSceneDatabase::addShadowNodes(SceneRenderer& _renderer)
+{
+  if (root) {
+    renderer = &_renderer;
+    nodeAddShadowNodes(root);
+  }
+  return;
+}
+
+
+void BSPSceneDatabase::addRenderNodes(SceneRenderer& _renderer)
+{
+  if (root) {
+    renderer = &_renderer;
+    frustum = &renderer->getViewFrustum();
+    const GLfloat* _eye = frustum->getEye();
+    memcpy (eye, _eye, sizeof(GLfloat[3]));
+    nodeAddRenderNodes(root);
+  }
+  return;
 }
 
 
 void BSPSceneDatabase::setNodeStyle(Node *node)
 {
-  if (!node) {
-    return;
+  Node* back = node->back;
+  Node* front = node->front;
+  // dive into the child BSP nodes
+  if (front) {
+    setNodeStyle(node->front);
   }
-  SceneNode* sceneNode = node->node;
-  if (sceneNode) {
-    sceneNode->notifyStyleChange();
+  if (back) {
+    setNodeStyle(node->back);
   }
-  setNodeStyle(node->front);
-  setNodeStyle(node->back);
+  // add this node's style
+  node->node->notifyStyleChange();
   
   return;
 }
 
 
-void BSPSceneDatabase::updateNodeStyles()
+void BSPSceneDatabase::nodeAddLights(Node* node)
 {
-  setNodeStyle(root);
+  Node* back = node->back;
+  Node* front = node->front;
+  // dive into the child BSP nodes
+  if (front) {
+    nodeAddLights(node->front);
+  }
+  if (back) {
+    nodeAddLights(node->back);
+  }
+  // add this node's light, if it's dynamic
+  if (node->dynamic) {
+    node->node->addLight(*renderer);
+  }
   return;
 }
 
 
-//
-// BSPSceneIterator
-//
-
-BSPSceneIterator::BSPSceneIterator(const BSPSceneDatabase* _db) :
-				SceneIterator(),
-				db(_db)
+void BSPSceneDatabase::nodeAddShadowNodes(Node* node)
 {
-  eye[0] = 0.0f;
-  eye[1] = 0.0f;
-  eye[2] = 0.0f;
-}
-
-
-BSPSceneIterator::~BSPSceneIterator()
-{
-  // do nothing
-}
-
-
-void BSPSceneIterator::resetFrustum(
-				const ViewFrustum* frustum)
-{
-  const GLfloat* _eye = frustum->getEye();
-  eye[0] = _eye[0];
-  eye[1] = _eye[1];
-  eye[2] = _eye[2];
-}
-
-
-void BSPSceneIterator::reset()
-{
-  stack.clear();
-  if (db->root != NULL) {
-    stack.push_back(BSPSceneIteratorItem(db->root));
+  Node* back = node->back;
+  Node* front = node->front;
+  // dive into the child BSP nodes
+  if (front) {
+    nodeAddShadowNodes(node->front);
   }
+  if (back) {
+    nodeAddShadowNodes(node->back);
+  }
+  // add this node's shadows
+  node->node->addShadowNodes(*renderer);
+  return;
 }
 
 
-SceneNode* BSPSceneIterator::getNext()
+void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
 {
-restart:
-  if (stack.size() == 0) return NULL;
+  Node* back = node->back;
+  Node* front = node->front;
+  SceneNode* snode = node->node;
 
-  BSPSceneIteratorItem& item = stack[stack.size() - 1];
-  switch (item.side) {
-    case BSPSceneIteratorItem::None: {
-      // pick first part
-      const GLfloat* plane = item.node->node->getPlane();
-      if (plane) {
-	// has a split plane -- see which side eye is on
-	if (plane[0] * eye[0] + plane[1] * eye[1] +
-	    plane[2] * eye[2] + plane[3] >= 0.0f) {
-	  // eye is in front so render:  back, node, front
-	  item.side = BSPSceneIteratorItem::Back;
-	  if (item.node->back)
-	    stack.push_back(BSPSceneIteratorItem(item.node->back));
-	} else {
-	  // eye is in back so render:  front, node, back
-	  item.side = BSPSceneIteratorItem::Front;
-	  if (item.node->front)
-	    stack.push_back(BSPSceneIteratorItem(item.node->front));
-	}
-      } else {
-	// nodes without split planes should be rendered back, node, front
-	item.side = BSPSceneIteratorItem::Back;
-	if (item.node->back)
-	  stack.push_back(BSPSceneIteratorItem(item.node->back));
+  const GLfloat* plane = snode->getPlane();
+  if (plane) {
+    if (((plane[0] * eye[0]) + (plane[1] * eye[1]) +
+         (plane[2] * eye[2]) + plane[3]) >= 0.0f) {
+      // eye is in front so render:  back, node, front
+      if (back) {
+        nodeAddRenderNodes(back);
       }
-      goto restart;
+      if (!snode->cull(*frustum)) {
+        snode->addRenderNodes(*renderer);
+      }
+      if (front) {
+        nodeAddRenderNodes(front);
+      }
     }
-
-    case BSPSceneIteratorItem::Back:
-      // did back side;  now do node
-      item.side += BSPSceneIteratorItem::Center;
-      return item.node->node;
-
-    case BSPSceneIteratorItem::Front:
-      // did front side;  now do node
-      item.side += BSPSceneIteratorItem::Center;
-      return item.node->node;
-
-    case BSPSceneIteratorItem::Back + BSPSceneIteratorItem::Center: {
-      // did back and center;  now do front
-      BSPSceneDatabase::Node* front = item.node->front;
-      stack.pop_back();
-      if (front)
-	stack.push_back(BSPSceneIteratorItem(front));
-      goto restart;
-    }
-
-    case BSPSceneIteratorItem::Front + BSPSceneIteratorItem::Center: {
-      // did front and center;  now do back
-      BSPSceneDatabase::Node* back = item.node->back;
-      stack.pop_back();
-      if (back)
-	stack.push_back(BSPSceneIteratorItem(back));
-      goto restart;
+    else {
+      // eye is in back so render:  front, node, back
+      if (front) {
+        nodeAddRenderNodes(front);
+      }
+      if (!snode->cull(*frustum)) {
+        snode->addRenderNodes(*renderer);
+      }
+      if (back) {
+        nodeAddRenderNodes(back);
+      }
     }
   }
-
-  assert(0);
-  return NULL;
+  else {
+    // nodes without split planes should be rendered back, node, front
+    if (back) {
+      nodeAddRenderNodes(back);
+    }
+    if (!snode->cull(*frustum)) {
+      snode->addRenderNodes(*renderer);
+    }
+    if (front) {
+      nodeAddRenderNodes(front);
+    }
+  }
+	        
+  return;
 }
-
-
-void BSPSceneIterator::drawCuller()
+            
+            
+void BSPSceneDatabase::drawCuller()
 {
   return;
 }

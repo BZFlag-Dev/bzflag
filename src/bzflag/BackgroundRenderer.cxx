@@ -1163,6 +1163,15 @@ void			BackgroundRenderer::initDisplayLists(void* self)
   ((BackgroundRenderer*)self)->doInitDisplayLists();
 }
 
+const GLfloat*	BackgroundRenderer::getSunDirection() const
+{
+  if (areShadowsCast(sunDirection)) {
+    return sunDirection;
+  } else {
+    return NULL;
+  }
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

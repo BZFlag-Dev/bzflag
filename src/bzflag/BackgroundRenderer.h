@@ -45,12 +45,13 @@ class BackgroundRenderer {
     bool		getBlank() const;
     bool		getInvert() const;
     bool		getSimpleGround() const;
+    const GLfloat*	getSunDirection() const;
     void		setBlank(bool blank = true);
     void		setInvert(bool invert = true);
     void		setSimpleGround(bool simple = true);
     void		setCelestial(const SceneRenderer&,
-					const float sunDirection[3],
-					const float moonDirection[3]);
+                                     const float sunDirection[3],
+                                     const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
     void		notifyStyleChange();
 
@@ -183,6 +184,7 @@ inline void		BackgroundRenderer::setSimpleGround(bool _simple)
 {
   simpleGround = _simple;
 }
+
 
 #endif // BZF_BACKGROUND_RENDERER_H
 

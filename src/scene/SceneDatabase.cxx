@@ -31,19 +31,6 @@ SceneDatabase::~SceneDatabase()
   // do nothing
 }
 
-//
-// SceneIterator
-//
-
-SceneIterator::SceneIterator()
-{
-  // do nothing
-}
-
-SceneIterator::~SceneIterator()
-{
-  // do nothing
-}
 
 // Local Variables: ***
 // mode:C++ ***

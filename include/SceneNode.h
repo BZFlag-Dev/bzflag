@@ -67,12 +67,14 @@ class SceneNode {
     virtual void	notifyStyleChange();
 
     const GLfloat*      getPlane() const;
+    const GLfloat*      getPlaneRaw() const;
     virtual GLfloat	getDistance(const GLfloat* eye) const;
     virtual bool	cull(const ViewFrustum&) const;
     virtual void	addLight(SceneRenderer&);
     virtual int		split(const float* plane,
 				SceneNode*& front, SceneNode*& back) const;
     virtual void	addShadowNodes(SceneRenderer&);
+    virtual void	addRenderNodes(SceneRenderer&);
 
     static void		setColorOverride(bool = true);
     static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
@@ -118,7 +120,6 @@ class SceneNode {
     void		setCenter(const GLfloat center[3]);
     void		setCenter(GLfloat x, GLfloat y, GLfloat z);
     void		setSphere(const GLfloat sphere[4]);
-    virtual void	addRenderNodes(SceneRenderer&);
 
   private:
 			SceneNode(const SceneNode&);
@@ -154,6 +155,11 @@ inline const GLfloat*   SceneNode::getPlane() const
 {
   if (noPlane)
     return NULL;
+  return plane;
+}
+
+inline const GLfloat*   SceneNode::getPlaneRaw() const
+{
   return plane;
 }
 
