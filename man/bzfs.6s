@@ -1055,6 +1055,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 
 .B The World object
+.br
+Header for the world.
 
 \fBworld\fR
 .br
@@ -1068,6 +1070,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 .br
 
 .B The Options object
+.br
+A world file interface for setting command line options for BZFS.
 
 \fBoptions\fR
 .br
@@ -1082,6 +1086,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 
 .B The Water Level object
+.br
+Sets how high the water is, in a matter of units.
 
 \fBwaterLevel\fR
 .br
@@ -1226,6 +1232,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 
 .B The Box object
+.br
+Adds a simple block.
 
 \fBbox\fR
 .br
@@ -1242,6 +1250,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 
 .B The Pyramid object
+.br
+Adds a triangular shaped object.
 
 \fBpyramid\fR
 .br
@@ -1284,6 +1294,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 
 .B The Teleporter object
+.br
+Adds an object that places a tank at another teleporter in a different area when ran through.
 
 \fBteleporter\fR
 .br
@@ -1301,6 +1313,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 .br
 
 .B The Link object
+.br
+Adds a route to teleport a tank between two teleporters.
 
 \fBlink\fR
 .br
@@ -1317,6 +1331,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 
 .B The Base object
+.br
+Creates a team base where the corresponding team's flag is stored.
 
 \fBbase\fR
 .br
@@ -1335,6 +1351,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 
 .B The Weapon object
+.br
+Creates a world weapon, or a weapon fired automatically by the world.
 
 \fBweapon\fR
 .br
@@ -1355,6 +1373,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 
 .B The Zone object
+.br
+Specifies a certain range in the world, and what attributes that range has.
 
 \fBzone\fR
 .br
