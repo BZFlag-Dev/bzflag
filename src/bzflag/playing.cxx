@@ -1699,7 +1699,7 @@ static void		doMotion()
         // wander around aimlessly
         // FIXME should go flag hunting ;-)
         int period = int(TimeKeeper::getCurrent().getSeconds());
-        float bias = ((period % 10) < 5) ? M_PI/6.0f : -M_PI/6.0f;
+        float bias = ((period % 10) < 5) ? M_PI/6.0f : -M_PI/9.0f; //asymetrical on purpose
         rotation = bias + (bzfrand() - 0.5f) * M_PI/12.0f;
         speed = 1.0f;
       }

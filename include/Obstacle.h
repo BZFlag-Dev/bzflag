@@ -47,6 +47,7 @@ class Obstacle {
 
     virtual float	intersect(const Ray&) const = 0;
     virtual void	getNormal(const float* p, float* n) const = 0;
+    virtual void	get3DNormal(const float* p, float* n) const;
     virtual bool	isInside(const float* p, float radius) const = 0;
     virtual bool	isInside(const float* p, float angle,
 				float halfWidth, float halfBreadth) const = 0;
@@ -136,6 +137,11 @@ inline float		Obstacle::getBreadth() const
 inline float		Obstacle::getHeight() const
 {
   return height;
+}
+
+inline void		Obstacle::get3DNormal(const float *p, float *n) const
+{
+  getNormal(p, n);
 }
 
 //

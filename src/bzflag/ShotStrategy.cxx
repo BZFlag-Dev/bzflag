@@ -706,7 +706,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 
 	    // reflect direction about normal to building
 	    float normal[3];
-	    building->getNormal(o, normal);
+	    building->get3DNormal(o, normal);
 	    reflect(d, normal);
 	    reason = ShotPathSegment::Ricochet;
 	}

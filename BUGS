@@ -1,17 +1,6 @@
 recent bugs
 ------------
 
-- When driving into a building, and pushing up and down the wall
-  sometimes your tank will get moved to (NAN, NAN, 0), and effectively
-  lock you up. This happens from LocalPlayer::doUpdateMotion
-  calling move(). Here's the bad line
-	mag /= normal[0] * normal[0] + normal[1] * normal[1];
-  divide by zero
-  normal[0] and normal[1] are 0, because of the z bouncing bullet code
-  in BoxBuilding::getNormal.
-  Protected against this, but now tank doesn't slide nicely over the wall always.
-  Looking for a better solution, anyone?
-
 - thief gets kicked for speeding sometimes after stealing flag
 
 - sound still seems to be not working correctly sometimes, some sounds are
