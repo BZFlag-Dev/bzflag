@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- Sound is broken, at least when compiling in DEBUG mode. Not sure if that
+  really makes a difference. Tupone said using -ffast-math fixes it for him.
+  Symptom: Sounds are cut off, instead a clicking noise is heard now and
+  then
+
 - Shots that bounce off the ground occasionally reflect in the wrong
   direction - x/y flipped
 
