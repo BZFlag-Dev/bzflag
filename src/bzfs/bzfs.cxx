@@ -5670,6 +5670,7 @@ int main(int argc, char **argv)
     // override the default voter count to the max number of players possible
     votingarbiter->setAvailableVoters(maxplayers);
     BZDB->setPointer("poll", (void *)votingarbiter);
+    BZDB->setPermission("poll", StateDatabase::ReadOnly);
   }
 
   if (clOptions->pingInterface)
