@@ -18,7 +18,7 @@ DisabledBitmap "DisableCheck.bmp"
 Caption "BZFlag ${VER_MAJOR}${VER_MINOR}: - Setup"
 
 ; The file to write
-OutFile "..\..\..\bin\BZFlag_${VER_MAJOR}${VER_MINOR}.exe"
+OutFile "..\..\..\dist\BZFlag_${VER_MAJOR}${VER_MINOR}.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}
