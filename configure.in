@@ -323,10 +323,11 @@ fi
 
 AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
 [Data file directory])
+
+CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 case $host_os in
      linux-gnu)
 	CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE";
-	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	if test x$no_sdl = xyes; then
@@ -334,49 +335,36 @@ case $host_os in
 	fi
 	CPPFLAGS="$CPPFLAGS -Wall -W"
 	CFLAGS="$CFLAGS -ansi -fno-exceptions";
-	CXXFLAGS="$CXXFLAGS";
 	case $host_vendor in
 	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	esac;;
      cygwin)
 	CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE";
-	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	if test x$no_sdl = xyes; then
 	AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	fi
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu"
-	CFLAGS="$CFLAGS -ansi -fno-exceptions";
-	CXXFLAGS="$CXXFLAGS";;
+	CFLAGS="$CFLAGS -ansi -fno-exceptions";;
      mingw32)
 	CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
-	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";
-	CFLAGS="$CFLAGS -ansi -fno-exceptions";
-	CXXFLAGS="$CXXFLAGS";;
+	CFLAGS="$CFLAGS -ansi -fno-exceptions";;
      solaris*)
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
 	if $sun_wspro; then
 	   CPPFLAGS="$CPPFLAGS -KPIC"
 	elif $sun_cc; then
 	   CPPFLAGS="$CPPFLAGS -fast"
-	elif $sun_gcc; then
-	   CXXFLAGS="$CXXFLAGS"
-	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	fi;;
      macos|darwin*)
-	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	CPPFLAGS="$CPPFLAGS -pipe -ansi -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";
-	CFLAGS="$CFLAGS -pipe -ansi -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";
-	CXXFLAGS="$CXXFLAGS";;
-     windows**)
-	CPPFLAGS="$CPPFLAGS /D \"WIN32\" /D \"_MBCS\"";
-	CPPFLAGS="$CPPFLAGS /I \"\$(top_srcdir)/include\" /nologo /W3";;
+	CFLAGS="$CFLAGS -pipe -ansi -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";;
      irix)
-	CPPFLAGS="$CPPFLAGS -I$(ROOT)/usr/include -Wall";
+	CPPFLAGS="$CPPFLAGS -Wall";
 	if test x$host_cpu = xmips64; then
 	   CPPFLAGS="CPPFLAGS -march=mips3";
 	else
@@ -384,42 +372,24 @@ case $host_os in
 	fi;
 esac
 
-# /FD generates dependencies;  don't know where though
-# /Fd names pdb file   /Fd"$(INTDIR)\\"
-# /Fo names obj file   /Fo"$(INTDIR)\\"
-# /D "_WINDOWS" when building windows app
-# /D "_CONSOLE" when building console app
-# /D "_LIB"     when building libraries
-# /c to compile only
 if test x$enable_debug = xyes; then
+   CFLAGS="$CFLAGS -g";
+   CXXFLAGS="$CXXFLAGS -g";
    case $host_os in
      linux-gnu|cygwin|mingw32)
-	CFLAGS="$CFLAGS -g";
 	CPPFLAGS="$CPPFLAGS -Werror";
-	CXXFLAGS="$CXXFLAGS -g -Wno-deprecated";
+	CXXFLAGS="$CXXFLAGS -Wno-deprecated";
 	if test x$enable_profiling = xyes; then
 	  CFLAGS="$CFLAGS -pg";
 	  CXXFLAGS="$CXXFLAGS -pg";
 	fi;;
-     solaris*)
-	CFLAGS="$CFLAGS -g";
-	CXXFLAGS="$CXXFLAGS -g";;
      macos|darwin*)
-	CFLAGS="$CFLAGS -g";
-	CXXFLAGS="$CXXFLAGS -g";
 	if test x$enable_profiling = xyes; then
 	  CFLAGS="$CFLAGS -pg";
 	  CXXFLAGS="$CXXFLAGS -pg";
 	fi;;
-     windows**)
-	CPPFLAGS="$CPPFLAGS /MDd /Gm /ZI /Od /GZ /D \"_DEBUG\"";;
-     irix)
-	CFLAGS="$CFLAGS -g";
-	CXXFLAGS="$CXXFLAGS -g";;
      beos)
-	CFLAGS="$CFLAGS -g";
-	CPPFLAGS="$CPPFLAGS -Werror";
-	CXXFLAGS="$CXXFLAGS -g";;
+	CPPFLAGS="$CPPFLAGS -Werror";;
     esac;
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
@@ -441,8 +411,6 @@ else
 			CFLAGS="$CFLAGS -pg";
 			CXXFLAGS="$CXXFLAGS -pg";
 		fi;;
-	 windows**)
-		CPPFLAGS="$CPPFLAGS /MT /O2 ";;
 	 irix)
 		if test x$host_cpu = xmips64; then
 		   CFLAGS="$CFLAGS -O3";
