@@ -3627,6 +3627,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // change the player score
   if (victimIndex != InvalidPlayer) {
+    bufStart = getDirectMessageBuffer();
     player[victimIndex].losses++;
     if (killerIndex != InvalidPlayer) {
       if (victimIndex != killerIndex) {
@@ -3641,17 +3642,17 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 	  player[killerIndex].wins++;
       }
 
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, killerIndex);
+      buf = nboPackUByte(bufStart, 2); 
+      buf = nboPackUByte(buf, killerIndex);
       buf = nboPackUShort(buf, player[killerIndex].wins);
       buf = nboPackUShort(buf, player[killerIndex].losses);
       buf = nboPackUShort(buf, player[killerIndex].tks);
-      broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+    }
+    else {
+      buf = nboPackUByte(bufStart, 1); 
     }
 
-    //In the future we should send both (n) scores in one packet
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, victimIndex);
+    buf = nboPackUByte(buf, victimIndex);
     buf = nboPackUShort(buf, player[victimIndex].wins);
     buf = nboPackUShort(buf, player[victimIndex].losses);
     buf = nboPackUShort(buf, player[victimIndex].tks);

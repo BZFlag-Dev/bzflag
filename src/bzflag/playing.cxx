@@ -3238,18 +3238,23 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgScore: {
+      uint8_t numScores;
       PlayerId id;
       uint16_t wins, losses, tks;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, wins);
-      msg = nboUnpackUShort(msg, losses);
-      msg = nboUnpackUShort(msg, tks);
+      msg = nboUnpackUByte(msg, numScores);
 
-      int i = lookupPlayerIndex(id);
-      if (i >= 0)
-	player[i]->changeScore(wins - player[i]->getWins(),
-                               losses - player[i]->getLosses(),
-			       tks - player[i]->getTeamKills());
+      for (uint8_t s = 0; s < numScores; s++) {
+        msg = nboUnpackUByte(msg, id);
+        msg = nboUnpackUShort(msg, wins);
+        msg = nboUnpackUShort(msg, losses);
+        msg = nboUnpackUShort(msg, tks);
+
+        int i = lookupPlayerIndex(id);
+        if (i >= 0)
+	  player[i]->changeScore(wins - player[i]->getWins(),
+                                 losses - player[i]->getLosses(),
+			         tks - player[i]->getTeamKills());
+      }
       break;
     }
 
