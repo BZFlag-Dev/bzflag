@@ -19,6 +19,7 @@ critical bugs
   starts firing all the shots over and over. Seen on Mac and Windows.  Happens
   every time on the mac client.
 
+- Player kicked after getting V flag (and possibly TH) stolen by another thief.
 
 recent bugs
 ------------
@@ -40,8 +41,6 @@ recent bugs
   negative score, the formula does not work well then). Nope: Top player was
   44-31 or there abouts. HMM. I played again and the picking was fine. Could it
   be a cheat client, causing havoc?
-
-- Player kicked after getting V flag (and possibly TH) stolen by another thief.
 
 - bzadmin seems to be less responsive over the network than bzflag - a
   bzadmin client can get kicked from a very active game by the server
