@@ -24,7 +24,7 @@
 	#pragma warning(disable: 4355)
 #endif
 
-#include <config.h>
+#include "config.h"
 
 #include <string>
 #include <sstream>

@@ -2307,6 +2307,8 @@ Help5Menu::Help5Menu() : HelpMenu("Flags II")
   list.push_back(createLabel(
 	"tank invisible out the window", "Cloaking (CL)"));
   list.push_back(createLabel(
+	"tank has increased thrust acceleration", "Acceleration (D)"));
+  list.push_back(createLabel(
 	"shots invisible on radar", "Invisible Bullet (IB)"));
   list.push_back(createLabel(
 	"tank becomes smaller", "Tiny (T)"));

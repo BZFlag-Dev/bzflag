@@ -315,6 +315,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   desiredSpeed(0.0f),
   desiredAngVel(0.0f),
   lastSpeed(0.0f),
+  dodgeCount(0),
   insideBuilding(NULL),
   anyShotActive(false),
   target(NULL),
@@ -992,6 +993,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   location = (pos[2] > 0.0f) ? OnBuilding : OnGround;
   lastSpeed = 0.0f;
+  dodgeCount = 0;
   desiredSpeed = 0.0f;
   desiredAngVel = 0.0f;
   move(pos, _azimuth);
@@ -1013,25 +1015,46 @@ void			LocalPlayer::setTeam(TeamColor team)
 
 void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
+  float oldSpeed = desiredSpeed;
+  FlagType* flag = getFlag();
+
   // can't go faster forward than at top speed, and backward at half speed
   if (fracOfMaxSpeed > 1.0f) fracOfMaxSpeed = 1.0f;
   else if (fracOfMaxSpeed < -0.5f) fracOfMaxSpeed = -0.5f;
 
   // oscillation overthruster tank in building can't back up
   if (fracOfMaxSpeed < 0.0f && getLocation() == InBuilding &&
-      getFlag() == Flags::OscillationOverthruster)
+      flag == Flags::OscillationOverthruster) {
     fracOfMaxSpeed = 0.0f;
+  }
 
   // boost speed for certain flags
-  if (getFlag() == Flags::Velocity)
+  if (flag == Flags::Velocity) {
     fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
-  else if (getFlag() == Flags::Thief)
+  } else if (flag == Flags::Thief) {
     fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
-  else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f))
+  } else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
     fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_BURROWSPEEDAD);
+  }
 
   // set desired speed
   desiredSpeed = fracOfMaxSpeed * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+
+  // the acceleration/dodge flag gets to tweak the speed
+  if (flag == Flags::Acceleration) {
+    if (dodgeCount-- > 0) {
+      desiredSpeed *= BZDB->eval(StateDatabase::BZDB_DODGEVELAD);
+    } else {
+      float max = (fracOfMaxSpeed > 0.0f) ? 1.0f : 0.5f;
+      if (fabs(desiredSpeed - oldSpeed) > (BZDB->eval(StateDatabase::BZDB_DODGEVECDELTA) * max * BZDB->eval(StateDatabase::BZDB_TANKSPEED))) {
+	if ((desiredSpeed * oldSpeed <= 0.0f) || fabs(desiredSpeed) > fabs(oldSpeed)) {
+	  desiredSpeed *= BZDB->eval(StateDatabase::BZDB_DODGEVELAD);
+	  dodgeCount = int(BZDB->eval(StateDatabase::BZDB_DODGECOUNT));
+	}
+      }
+    }
+  }
+
 }
 
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)

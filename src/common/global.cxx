@@ -78,13 +78,16 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_thiefAdShotVel",		"8.0",				false, StateDatabase::Locked},
 	{ "_thiefTinyFactor",		"0.5",				false, StateDatabase::Locked},
 	{ "_thiefVelAd",		"1.67",				false, StateDatabase::Locked},
-	{ "_thiefDropTime",		"_reloadTime * 0.5",			false, StateDatabase::Locked},
+	{ "_thiefDropTime",		"_reloadTime * 0.5",		false, StateDatabase::Locked},
 	{ "_tinyFactor",		"0.4",				false, StateDatabase::Locked},
 	{ "_updateThrottleRate",	"30.0",				false, StateDatabase::Locked},
 	{ "_velocityAd",		"1.5",				false, StateDatabase::Locked},
 	{ "_wallHeight",		"3.0*_tankHeight",		false, StateDatabase::Locked},
 	{ "_wideAngleAng",		"1.745329", 			false, StateDatabase::Locked},
 	{ "_worldSize",			"800.0",			false, StateDatabase::Locked},
+	{ "_dodgeVelAd",		"0.0f",				false, StateDatabase::Locked},
+	{ "_dodgeVecDelta",		"0.4f",				false, StateDatabase::Locked},
+	{ "_dodgeCount",		"4.0",				false, StateDatabase::Locked}
 };
 
 // Local variables: ***

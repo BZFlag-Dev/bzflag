@@ -137,6 +137,9 @@ const std::string StateDatabase::BZDB_VELOCITYAD        = std::string("_velocity
 const std::string StateDatabase::BZDB_WALLHEIGHT        = std::string("_wallHeight");
 const std::string StateDatabase::BZDB_WIDEANGLEANG      = std::string("_wideAngleAng");
 const std::string StateDatabase::BZDB_WORLDSIZE         = std::string("_worldSize");
+const std::string StateDatabase::BZDB_DODGEVELAD        = std::string("_dodgeVelAd");
+const std::string StateDatabase::BZDB_DODGEVECDELTA     = std::string("_dodgeVecDelta");
+const std::string StateDatabase::BZDB_DODGECOUNT        = std::string("_dodgeCount");
 
 //
 // StateDatabase::Item

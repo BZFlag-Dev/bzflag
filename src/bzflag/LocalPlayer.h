@@ -151,6 +151,7 @@ private:
   float		desiredSpeed;
   float		desiredAngVel;
   float		lastSpeed;
+  int		dodgeCount;
   const Obstacle*	insideBuilding;
   GLfloat		crossingPlane[4];
   LocalShotPath**	shots;
