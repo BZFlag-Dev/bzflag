@@ -124,6 +124,11 @@ bool VotingArbiter::pollToSet(std::string setting, std::string playerRequesting)
   return (this->poll(setting, playerRequesting, "set"));
 }
 
+bool VotingArbiter::pollToResetFlags(std::string &playerRequesting)
+{
+  return (this->poll("flags", playerRequesting, "reset"));
+}
+
 bool VotingArbiter::closePoll(void)
 {
   if (this->isPollClosed()) {

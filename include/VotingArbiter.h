@@ -144,6 +144,10 @@ private:
     */
   bool pollToSet(std::string setting, std::string playerRequesting);
 
+  /** convenience method to attempt to reset flags that, at the time, are unused
+    */
+  bool pollToResetFlags(std::string &playerRequesting);
+
   /** halt/close the poll if it is open
    */
   bool closePoll(void);
