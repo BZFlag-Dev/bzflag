@@ -138,6 +138,11 @@ protected:
       static because it is used as a callback for StateDatabase::iterate(). */
   static void listSetVars(const std::string& name, void* thisObject);
 
+  /** Connects to the list server and gets a list of available servers
+   */
+  void outputServerList() const;
+
+
   PlayerIdMap players;
   TeamColor myTeam;
   ServerLink sLink;

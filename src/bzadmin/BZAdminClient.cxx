@@ -10,10 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786)
-#endif
+/* interface header */
+#include "BZAdminClient.h"
 
+/* system implementation headers */
 #ifdef HAVE_CMATH
 #  include <cmath>
 #else
@@ -22,12 +22,14 @@
 #include <iostream>
 #include <sstream>
 
-#include "BZAdminClient.h"
+/* common implementation headers */
 #include "BZAdminUI.h"
 #include "StateDatabase.h"
 #include "TextUtils.h"
 #include "version.h"
 #include "Team.h"
+#include "ServerList.h"
+#include "StartupInfo.h"
 
 
 BZAdminClient::BZAdminClient(std::string callsign, std::string host,
@@ -402,6 +404,42 @@ bool BZAdminClient::isValid() const {
   return valid;
 }
 
+void BZAdminClient::outputServerList() const {
+  if (!ui) {
+    return;
+  }
+
+  ui->outputMessage(std::string("Server List:"), Yellow);
+  ServerList serverList;
+  StartupInfo info;
+  serverList.startServerPings(&info);
+
+  // wait no more than 20 seconds for the list server
+  for (int i = 0; i < 20; i++) {
+    if (!serverList.searchActive() && serverList.serverFound()) {
+      break;
+    }
+    if (serverList.serverFound()) {
+      ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %d)", serverList.size()), Yellow);
+    } else {
+      ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
+    }
+    serverList.checkEchos(&info);
+    sleep(1);
+  }
+  // what is your final answer?
+  serverList.checkEchos(&info);
+  
+  std::vector<ServerItem> servers = serverList.getServers();
+  for (std::vector<ServerItem>::const_iterator server = servers.begin(); 
+       server != servers.end(); 
+       server++) {
+    ui->outputMessage(std::string("  ") + server->description, Yellow);
+  }
+  ui->outputMessage(std::string("End Server List."), Yellow);
+
+  return;
+}
 
 void BZAdminClient::runLoop() {
   std::string cmd;
@@ -435,6 +473,9 @@ void BZAdminClient::runLoop() {
 	  ui->outputMessage(std::string("--- Will now hide messages of the ")
 			    + "type " + cmd.substr(6), Yellow);
 	}
+      }
+      else if (cmd == "/list") {
+	outputServerList();
       }
       else if (cmd != "")
 	sendMessage(cmd, ui->getTarget());
