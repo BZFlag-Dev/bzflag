@@ -1430,6 +1430,8 @@ int countMessage(int playerIndex, uint16_t code, int len, int direction)
 	int i;
 	struct MessageCount *msg;
 
+	// add length of type and length
+	len += 4;
 	player[playerIndex].bytes[direction] += len;
 	msg = player[playerIndex].msg[direction];
 	for (i = 0; i < MessageTypes && msg[i].code != 0; i++)
