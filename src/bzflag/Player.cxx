@@ -1194,12 +1194,12 @@ void Player::doDeadReckoning()
     // setup the sound
     if (BZDB.isTrue("remoteSounds")) {
       if (state.jumpJetsScale > 0.0f) {
-        playWorldSound(SFX_JUMP, state.pos, remoteImportant);
-      } 
-      else if (getFlag() == Flags::Wings) {
-        playWorldSound(SFX_FLAP, state.pos, remoteImportant);
-      } 
-      else {
+        if (getFlag() == Flags::Wings) {
+          playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+        } else {
+          playWorldSound(SFX_JUMP, state.pos, remoteImportant);
+        }
+      } else {
         playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
       }
     }
