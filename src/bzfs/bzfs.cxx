@@ -2308,7 +2308,13 @@ static void directMessage(int playerIndex, uint16_t code, int len, const void *m
     return;
 
   // send message to one player
-  void *bufStart = (char *)msg - 2*sizeof(short);;
+  void *bufStart = (char *)msg - 2*sizeof(short);
+
+  if (bufStart != sMsgBuf) {
+    DEBUG1("PROGRAMMING ERROR: NOT USING DIRECT MESSAGE BUFFER");
+    memmove(getDirectMessageBuffer(), msg, len);
+    bufStart = sMsgBuf;
+  }
   void *buf = bufStart;
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
