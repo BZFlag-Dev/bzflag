@@ -149,6 +149,7 @@ int			savedVolume = -1;
 static bool		grabMouseAlways = false;
 FlashClock		pulse;
 static bool             wasRabbit = false;
+static bool		justJoined = false;
 
 MessageOfTheDay		motd;
 DefaultCompleter	completer;
@@ -1738,6 +1739,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  wasRabbit = tank->getTeam() == RabbitTeam;
 	  myTank->restart(pos, forward);
 	  firstLife = false;
+	  justJoined = false;
 	  if (!myTank->isAutoPilot())
 	    mainWindow->warpMouse();
 	  hud->setAltitudeTape(World::getWorld()->allowJumping());
@@ -4033,6 +4035,8 @@ static void joinInternetGame()
 
 static void joinInternetGame2()
 {
+  justJoined = true;
+
   ServerLink::setServer(serverLink);
   World::setWorld(world);
 
@@ -4335,7 +4339,7 @@ void			drawFrame(const float dt)
     hud->setDim(HUDDialogStack::get()->isActive());
     hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
     hud->setRoaming(roaming);
-    hud->setCracks(myTank && !firstLife && !myTank->isAlive());
+    hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
 
     // get frame start time
     if (showDrawTime) {
