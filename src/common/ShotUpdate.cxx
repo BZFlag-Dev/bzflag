@@ -20,7 +20,7 @@
 void*			ShotUpdate::pack(void* buf) const
 {
   buf = nboPackUByte(buf, player);
-  buf = flagnboPackUShort(buf, id);
+  buf = nboPackUShort(buf, id);
   buf = nboPackVector(buf, pos);
   buf = nboPackVector(buf, vel);
   buf = nboPackFloat(buf, dt);
@@ -49,17 +49,15 @@ FiringInfo::FiringInfo()
 void*			FiringInfo::pack(void* buf) const
 {
   buf = shot.pack(buf);
-  buf = nboPackUShort(buf, uint16_t(flag));
+  buf = flag->pack(buf);
   buf = nboPackFloat(buf, lifetime);
   return buf;
 }
 
 void*			FiringInfo::unpack(void* buf)
 {
-  uint16_t _flag;
   buf = shot.unpack(buf);
-  buf = nboUnpackUShort(buf, _flag);
-  flag = FlagId(_flag);
+  buf = FlagDesc::unpack(buf, flag);
   buf = nboUnpackFloat(buf, lifetime);
   return buf;
 }
