@@ -20,7 +20,8 @@ extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
-GameKeeper::Player::Player(int _playerIndex):
+GameKeeper::Player::Player(int _playerIndex,
+			   const struct sockaddr_in &clientAddr, int fd):
   player(&::player[_playerIndex]), accessInfo(&::accessInfo[_playerIndex]),
   lastState(&::lastState[_playerIndex]),
   playerIndex(_playerIndex)
@@ -32,14 +33,22 @@ GameKeeper::Player::Player(int _playerIndex):
   lagInfo                = new LagInfo(player);
   player->setLastMsg("");
   player->setSpamWarns();
+  netHandler             = new NetHandler(player, clientAddr, playerIndex, fd);
 }
 
 GameKeeper::Player::~Player()
 {
+  bool wasPlaying = player->isPlaying();
   accessInfo->removePlayer();
   player->removePlayer();
   flagHistory.clear();
   delete lagInfo;
+#ifdef NETWORK_STATS
+  if (wasPlaying)
+    netHandler->dumpMessageStats();
+#endif
+  delete netHandler;
+
   playerList[playerIndex] = NULL;
 }
 

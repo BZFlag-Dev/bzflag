@@ -28,6 +28,7 @@
 #include "LagInfo.h"
 #include "Score.h"
 #include "RecordReplay.h"
+#include "NetHandler.h"
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
@@ -39,7 +40,7 @@ class GameKeeper {
 public:
   class Player {
   public:
-    Player(int _playerIndex);
+    Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd);
     ~Player();
 
     static Player *getPlayerByIndex(int _playerIndex);
@@ -49,6 +50,8 @@ public:
 
     // players 
     PlayerInfo       *player;
+    // Net Handler
+    NetHandler       *netHandler;
     // player lag info
     LagInfo          *lagInfo;
     // player access

@@ -1419,9 +1419,7 @@ static void acceptClient()
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
-  new GameKeeper::Player(playerIndex);
-
-  new NetHandler(&player[playerIndex], clientAddr, playerIndex, fd);
+  new GameKeeper::Player(playerIndex, clientAddr, fd);
 
   // if game was over and this is the first player then game is on
   if (gameOver) {
@@ -2111,9 +2109,20 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // not to undo operations that haven't been done.
   // first shutdown connection
 
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
   // send a super kill to be polite
-  if (notify)
-    directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
+  if (notify) {
+    // send message to one player
+    // do not use directMessage as he can remove player
+    void *buf  = sMsgBuf;
+    buf        = nboPackUShort(buf, 0);
+    buf        = nboPackUShort(buf, MsgSuperKill);
+    playerData->netHandler->pwrite(sMsgBuf, 4);
+  }
 
   // make them wait from the time they left,
   // but only if they aren't already waiting
@@ -2124,73 +2133,61 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // if there is an active poll, cancel any vote this player may have made
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
   if ((arbiter != NULL) && (arbiter->knowsPoll())) {
-    arbiter->retractVote(std::string(player[playerIndex].getCallSign()));
+    arbiter->retractVote(std::string(playerData->player->getCallSign()));
   }
 
-  bool wasPlaying = false;
-  // check if we are called again for a dropped player!
-  if (NetHandler::exists(playerIndex)) {
-    // status message
-    DEBUG1("Player %s [%d] removed: %s\n",
-	   player[playerIndex].getCallSign(), playerIndex, reason);
-    wasPlaying = player[playerIndex].isPlaying();
-    delete GameKeeper::Player::getPlayerByIndex(playerIndex);
-    NetHandler *netPlayer = NetHandler::getHandler(playerIndex);
-#ifdef NETWORK_STATS
-    if (wasPlaying)
-      netPlayer->dumpMessageStats();
-#endif
-    delete netPlayer;
+  // status message
+  DEBUG1("Player %s [%d] removed: %s\n",
+	 playerData->player->getCallSign(), playerIndex, reason);
+  bool wasPlaying = playerData->player->isPlaying();
+  playerData->netHandler->closing();
+
+  playerData->player->setDead();
+  if (clOptions->gameStyle & int(RabbitChaseGameStyle))
+    if (playerIndex == rabbitIndex)
+      anointNewRabbit();
+
+  int flagid = playerData->player->getFlag();
+  if (flagid >= 0) {
+    // do not simply zap team flag
+    Flag &carriedflag = flag[flagid].flag;
+    if (carriedflag.type->flagTeam != ::NoTeam) {
+      dropFlag(playerIndex, playerData->lastState->pos);
+    } else {
+      zapFlag(flagid);
+    }
   }
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
 
   if (wasPlaying) {
+    // tell everyone player has left
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = nboPackUByte(bufStart, playerIndex);
+    broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
 
-    if (clOptions->gameStyle & int(RabbitChaseGameStyle))
-      if (playerIndex == rabbitIndex)
-	anointNewRabbit();
+    // decrease team size
+    int teamNum = int(playerData->player->getTeam());
+    --team[teamNum].team.size;
 
-    if (!player[playerIndex].isTeam(NoTeam)) {
-      int flagid = player[playerIndex].getFlag();
+    // if last active player on team then remove team's flag if no one
+    // is carrying it
+    if (Team::isColorTeam((TeamColor)teamNum)
+	&& team[teamNum].team.size == 0 &&
+	(clOptions->gameStyle & int(TeamFlagGameStyle))) {
+      int flagid = lookupFirstTeamFlag(teamNum);
       if (flagid >= 0) {
-	// do not simply zap team flag
-	Flag &carriedflag = flag[flagid].flag;
-	if (carriedflag.type->flagTeam != ::NoTeam) {
-	  dropFlag(playerIndex, lastState[playerIndex].pos);
-	} else {
-	  zapFlag(flagid);
+	for (int n = 0; n < clOptions->numTeamFlags[teamNum]; n++) {
+	  if (flag[flagid+n].player == -1
+	      || player[flag[flagid+n].player].isTeam((TeamColor)teamNum))
+	    zapFlag(flagid+n);
 	}
       }
-
-      // tell everyone player has left
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, playerIndex);
-      broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
-
-      // decrease team size
-      int teamNum = int(player[playerIndex].getTeam());
-      --team[teamNum].team.size;
-
-      // if last active player on team then remove team's flag if no one
-      // is carrying it
-      if (Team::isColorTeam(player[playerIndex].getTeam())
-	  && team[teamNum].team.size == 0 &&
-	  (clOptions->gameStyle & int(TeamFlagGameStyle))) {
-	int flagid = lookupFirstTeamFlag(teamNum);
-	if (flagid >= 0) {
-	  for (int n = 0; n < clOptions->numTeamFlags[teamNum]; n++) {
-	    if (flag[flagid+n].player == -1
-		|| player[flag[flagid+n].player].isTeam((TeamColor)teamNum))
-	      zapFlag(flagid+n);
-	  }
-	}
-      }
-
-      // send team update
-      sendTeamUpdate(-1, teamNum);
     }
+
+    // send team update
+    sendTeamUpdate(-1, teamNum);
 
     fixTeamCount();
 
@@ -2198,13 +2195,15 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     listServerLink->queueMessage(ListServerLink::ADD);
   }
 
-  while ((playerIndex >= 0)
-	 && (playerIndex+1 == curMaxPlayers)
-	 && !player[playerIndex].exist()
-	 && !NetHandler::exists(playerIndex))
-    {
-      playerIndex--;
+  delete playerData;
+
+  // recompute curMaxPlayers
+  if (playerIndex + 1 == curMaxPlayers)
+    while (true) {
       curMaxPlayers--;
+      if (curMaxPlayers <= 0
+	  || GameKeeper::Player::getPlayerByIndex(curMaxPlayers - 1))
+	break;
     }
 
   if (wasPlaying) {
