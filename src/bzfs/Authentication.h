@@ -28,7 +28,7 @@ class Authentication {
   static void init(const char *address, int port, const char *password);
   void        setPrincipalName(char *buf, int len);
   void        verifyCredential(char *buf, int len);
-  bool        isTrusted();
+  bool        isTrusted() {return trusted;};
 private:
 #ifdef HAVE_KRB5
   static krb5_context   context;
