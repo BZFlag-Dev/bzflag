@@ -286,6 +286,10 @@ SOURCE=..\..\src\bzflag\daylight.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\GuidedMissleStrategy.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\HUDRenderer.cxx
 # End Source File
 # Begin Source File
@@ -338,6 +342,10 @@ SOURCE=..\..\src\bzflag\SceneRenderer.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\SegmentedShotStrategy.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\ServerCommandKey.cxx
 # End Source File
 # Begin Source File
@@ -347,10 +355,6 @@ SOURCE=..\..\src\bzflag\ServerLink.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ServerListCache.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\SegmentedShotStrategy.cxx
 # End Source File
 # Begin Source File
 
@@ -631,6 +635,10 @@ SOURCE=..\..\include\FlagWarpSceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\GuidedMissleStrategy.h
 # End Source File
 # Begin Source File
 
