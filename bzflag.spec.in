@@ -12,7 +12,7 @@
 
 %define name	bzflag
 %define version	@VERSION@
-%define release	%{?CUSTOM_RELEASE} %{!?CUSTOM_RELEASE:%RELEASE}
+%define release	%{?CUSTOM_RELEASE} %{!?CUSTOM_RELEASE:0}
 
 %define prefix	/usr
 %define bzbindir	/usr/bin
@@ -69,8 +69,6 @@ make DESTDIR=$RPM_BUILD_ROOT install-strip
 %files
 %defattr(-,root,root)
 %dir %{bzdatadir}
-%dir %{bzdatadir}/*
 %{bzdatadir}/*
-%{bzdatadir}/l10n/*
 %doc %{bzmandir}/man6/*
 %attr(755,root,root) %{bzbindir}/*
