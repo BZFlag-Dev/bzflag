@@ -11,6 +11,7 @@
  */
 
 #include "common.h"
+#include "math.h"
 #include "PlayerState.h"
 #include "Pack.h"
 #include "Protocol.h"
