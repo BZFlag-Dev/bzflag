@@ -241,6 +241,14 @@ const char *extraUsageString =
 "\tvotesRequired: minimum number of additional votes required to make a\n"
 "\t\tvote valid (default is 2)\n"
 "\tvoteTime: maximum amount of time player has to vote, in seconds (default is 60)\n"
+"\tdisableKick: disable the /poll kick command\n"
+"\t\t(true = disabled, false = enabled; default is false)\n"
+"\tdisableBan: disable the /poll ban command\n"
+"\t\t(true = disabled, false = enabled; default is false)\n"
+"\tdisableSet: disable the /poll set command\n"
+"\t\t(true = disabled, false = enabled; default is false)\n"
+"\tdisableFlagReset: disable the /poll flagreset command\n"
+"\t\t(true = disabled, false = enabled; default is false)\n"
 "\n";
 
 
@@ -843,6 +851,34 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.votesRequired = (unsigned short int)atoi(args[1].c_str());
       } else if (compare_nocase(args[0], "votetime") == 0) {
 	options.voteTime = (unsigned short int)atoi(args[1].c_str());
+      } else if (compare_nocase(args[0], "disableKick") == 0) {
+	if (compare_nocase(args[1], "true") == 0) 
+	  options.disableKick = true;
+	else if (compare_nocase(args[1], "false") == 0) 
+	  options.disableKick = false;
+	else
+	  std::cerr << "-poll disablekick takes a boolean parameter (true|false).";
+      } else if (compare_nocase(args[0], "disableBan") == 0) {
+	if (compare_nocase(args[1], "true") == 0) 
+	  options.disableBan = true;
+	else if (compare_nocase(args[1], "false") == 0) 
+	  options.disableBan = false;
+	else
+	  std::cerr << "-poll disableban takes a boolean parameter (true|false).";
+      } else if (compare_nocase(args[0], "disableSet") == 0) {
+	if (compare_nocase(args[1], "true") == 0) 
+	  options.disableSet = true;
+	else if (compare_nocase(args[1], "false") == 0) 
+	  options.disableSet = false;
+	else
+	  std::cerr << "-poll disableset takes a boolean parameter (true|false).";
+      } else if (compare_nocase(args[0], "disableFlagReset") == 0) {
+	if (compare_nocase(args[1], "true") == 0) 
+	  options.disableFlagReset = true;
+	else if (compare_nocase(args[1], "false") == 0) 
+	  options.disableFlagReset = false;
+	else
+	  std::cerr << "-poll disableflagreset takes a boolean parameter (true|false).";
       } else {
 	std::cerr << "unknown variable for -poll, skipping";
       }
