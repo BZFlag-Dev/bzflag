@@ -1429,6 +1429,149 @@ static void fixTeamCount() {
   }
 }
 
+struct TeamSize {
+  TeamColor color;
+  int       current;
+  int       max;
+  const bool operator<(const TeamSize x) const { return x.current < current; }
+};
+
+static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
+{
+  if (teams.size() == 0)
+    return RogueTeam;
+
+  // see if the player's choice was a weak team
+  for (int i = 0; i < (int) teams.size(); i++)
+    if (teams[i].color == t)
+      return t;
+
+  return teams[rand() % teams.size()].color;
+}
+
+static TeamColor autoTeamSelect(TeamColor t)
+{
+  // Asking for Observer gives observer
+  if (t == ObserverTeam)
+    return ObserverTeam;
+  // When replaying, joining tank can only be observer
+  if (Replay::enabled())
+    return ObserverTeam;
+
+  // count current number of players
+  int numplayers = 0;
+  for (int i = 0; i < int(ObserverTeam); i++)
+    numplayers += team[i].team.size;
+
+  // if no player are available, join as Observer
+  if (numplayers == maxRealPlayers)
+    return ObserverTeam;
+
+  // If tank ask for rogues, and rogues are allowed, give it
+  if ((t == RogueTeam)
+      && team[RogueTeam].team.size < clOptions->maxTeam[RogueTeam])
+    return RogueTeam;
+
+  // If no auto-team, server or client, go back with client choise
+  if (!clOptions->autoTeam && t != AutomaticTeam)
+    return t;
+
+  // Fill a vector with teams status, not putting in not enabled teams
+  std::vector<TeamSize> teams;
+
+  for (int i = (int)RedTeam; i < (int)ObserverTeam; i++) {
+    TeamSize currTeam = {(TeamColor)i,
+			 team[i].team.size,
+			 clOptions->maxTeam[i]};
+    if (currTeam.max > 0)
+      teams.push_back(currTeam);
+  }
+  
+  // Give rogue if that is the only team
+  if (teams.size() == 0)
+    return RogueTeam;
+
+  // Sort it by current team number
+  sort(teams.begin(), teams.end());
+
+  // all teams are empty, select just one of them
+  if (teams[0].current == 0) {
+    return teamSelect(t, teams);
+  }
+
+  std::vector<TeamSize>::iterator it;
+
+  // if you come with a 1-1-x-x try to add a player to these 1 to have team
+  if ((teams[0].current == 1) && (teams[1].current == 1)) {
+    // remove teams full
+    it = teams.begin();
+    while (it < teams.end())
+      if (it->current == it->max) {
+	teams.erase(it);
+	it = teams.begin();
+      } else {
+	it++;
+      }
+    // if there is still a team with 1 player select all 1 tank team
+    // to choose from
+    if (teams.size() > 0)
+      if (teams[0].current == 1) {
+	it = teams.begin();
+	while (it < teams.end())
+	  if (it->current == 0) {
+	    teams.erase(it);
+	    it = teams.begin();
+	  } else {
+	    it++;
+	  }
+      }
+    return teamSelect(t, teams);
+  }
+
+  int maxTeamSize = teams[0].current;
+
+  // remove teams full
+  it = teams.begin();
+  while (it < teams.end())
+    if (it->current == it->max) {
+      teams.erase(it);
+      it = teams.begin();
+    } else {
+      it++;
+    }
+
+  // Looking for unbalanced team
+  bool unBalanced = false;
+  for (it = teams.begin(); it < teams.end(); it++)
+    if (it->current < maxTeamSize) {
+      unBalanced = true;
+      break;
+    }
+
+  if (unBalanced) {
+    // remove bigger teams
+    it = teams.begin();
+    while (it < teams.end())
+      if (it->current == maxTeamSize) {
+	teams.erase(it);
+	it = teams.begin();
+      } else {
+	it++;
+      }
+    // Search for the second biggest team to this and remove the lowers
+    int secondTeamSize = teams[0].current;
+    it = teams.begin();
+    while (it < teams.end())
+      if (it->current < secondTeamSize) {
+	teams.erase(it);
+	it = teams.begin();
+      } else {
+	it++;
+      }
+  }
+  return teamSelect(t, teams);
+}
+
 static void addPlayer(int playerIndex)
 {
   GameKeeper::Player *playerData
@@ -1463,67 +1606,14 @@ static void addPlayer(int playerIndex)
     }
   }
 
-  TeamColor t = playerData->player.getTeam();
+  TeamColor t = autoTeamSelect(playerData->player.getTeam());
+  playerData->player.setTeam(t);
 
   // count current number of players and players+observers
   int numplayers = 0;
   for (int i = 0; i < int(ObserverTeam); i++)
     numplayers += team[i].team.size;
   const int numplayersobs = numplayers + team[ObserverTeam].team.size;
-
-  // no player slots open -> try observer
-  if ((numplayers == maxRealPlayers) || Replay::enabled()) {
-    t = ObserverTeam;
-    playerData->player.setTeam(ObserverTeam);
-  } else {
-    // automatically assign the player's team
-    if (((clOptions->autoTeam && t < (int)ObserverTeam) || t == AutomaticTeam) &&
-        (t != RogueTeam || team[RogueTeam].team.size >= clOptions->maxTeam[RogueTeam])) {
-      std::vector<TeamColor> minIndex;
-      int sizeOfSmallestTeam = maxRealPlayers;
-
-      for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
-        const int teamsize = team[i].team.size;
-        // if the team is not full and the smallest
-        if (teamsize < clOptions->maxTeam[i] && teamsize <= sizeOfSmallestTeam &&
-            teamsize != 0) {
-          if (teamsize < sizeOfSmallestTeam) {
-            minIndex.clear();
-            sizeOfSmallestTeam = team[i].team.size;
-          }
-          minIndex.push_back((TeamColor)i);
-        }
-      } // end iteration over teams
-
-      // reassign the team if
-      if (minIndex.size() == 0) {
-        // all teams are all full, try observer
-	t = ObserverTeam;
-	playerData->player.setTeam(ObserverTeam);
-      } else if (minIndex.size() == 1) {
-        // only one team has a slot open anyways
-        t = minIndex[0];
-	playerData->player.setTeam(minIndex[0]);
-      } else {
-        // multiple equally unfilled teams, choose the one sucking most
-
-        // see if the player's choice was a weak team
-        bool foundTeam = false;
-        for (int i = 0; i < (int) minIndex.size(); i++) {
-          if (minIndex[i] == (TeamColor)t) {
-            foundTeam = true;
-            break;
-          }
-        }
-        if (!foundTeam) {
-          // FIXME -- should pick the team with the least average player kills
-          // for now, pick random
-          t = minIndex[rand() % minIndex.size()];
-          playerData->player.setTeam(t);
-        }
-      }
-    }
-  }
 
   // no quick rejoining, make 'em wait
   // you can switch to observer immediately, or switch from observer
