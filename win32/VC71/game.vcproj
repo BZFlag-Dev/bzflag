@@ -226,6 +226,9 @@
 				RelativePath="..\..\src\game\ServerListCache.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\StartupInfo.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\TextureMatrix.cxx">
 			</File>
 			<File
@@ -277,6 +280,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\ServerListCache.h">
+			</File>
+			<File
+				RelativePath="..\..\include\StartupInfo.h">
 			</File>
 			<File
 				RelativePath="..\..\include\VotingArbiter.h">
