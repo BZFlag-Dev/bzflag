@@ -489,7 +489,7 @@ void printout(const std::string& name, void*)
 
 void listSetVars(const std::string& name, void*)
 {
-  char message[100];
+  char message[MessageLen];
 
   if (BZDB->getPermission(name) == StateDatabase::Locked) {
     sprintf(message, "/set %s %f", name.c_str(), BZDB->eval(name));
