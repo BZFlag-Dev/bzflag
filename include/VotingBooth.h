@@ -30,35 +30,54 @@
 #include <fstream>
 #include <iostream>
 
+/* vote 0 is no; vote 1 is yes; */
+typedef unsigned short int vote_t;
+
+/* max number of potential poll options */
 static const unsigned short int MAX_VOTE_ANSWERS=255;
 
 /** VotingBooth is a means to create and track a vote.  A single booth
  * will track and allow voting on a poll.
  *
+ * By default, false and true (i.e. no and yes) are the respective first
+ * two default results of any poll if unspecified.
  */
 class VotingBooth
 {
  private:
 
-  /** results array contains integer counts for each vote response
+  /** question that is voted upon (optionally provided)
    */
-  int voteResults[MAX_VOTE_ANSWERS];
+  std::string _question;
 
-  /** question that is voted upon
+  /** array of potential poll responses; first two entries are "no" and
+   * "yes" respectively; additionally added options follow.
    */
-  std::string question;
+  std::string _option[MAX_VOTE_ANSWERS];
 
-  /** array of potential answers
+  /** how many options have been manually added
    */
-  std::string answer[MAX_VOTE_ANSWERS];
+  unsigned short int _optionsAdded;
 
  protected:
-
+  
  public:
   
   VotingBooth(void);
   ~VotingBooth(void);
-  
+
+  /** add an option to vote upon
+   */
+  vote_t addOption(std::string option);
+
+  /** lookup the id of a vote option
+   */
+  vote_t getOptionIDFromString(std::string name);
+
+  /** a given user id/name responds and votes to a particular poll
+   * option.
+   */
+  bool vote(std::string name, vote_t id);
 };
 
 
