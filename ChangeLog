@@ -32,6 +32,7 @@ BZFlag 1.7e3
 * missile sound effect - Dave Brosius
 * udp first then multicast, IRIX fix? (use -i <> for multicast) - Tim Riker
 * enhanced radar - Jeremiah
+* don't relay read in player read - Frank Thilo, Tim Riker
 
 
 BZFlag 1.7e2

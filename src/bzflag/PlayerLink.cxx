@@ -208,15 +208,15 @@ int			PlayerLink::read(uint16_t& code, uint16_t& len,
 
 // FIXME -- packet recording
     if (packetStream) {
-  long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
-  fwrite(&playerPacket, sizeof(playerPacket), 1, packetStream);
-  fwrite(&dt, sizeof(dt), 1, packetStream);
-  fwrite(buffer, msglen, 1, packetStream);
-  }
+      long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+      fwrite(&playerPacket, sizeof(playerPacket), 1, packetStream);
+      fwrite(&dt, sizeof(dt), 1, packetStream);
+      fwrite(buffer, msglen, 1, packetStream);
+    }
     return 1;
-  } else // not Multicasting
-  if (state == ServerRelay)
-    return relay->read(code, len, msg, blockTime);
+  } // not Multicasting
+//  else if (state == ServerRelay)
+//    return relay->read(code, len, msg, blockTime);
 
   return -1;
 }
