@@ -63,9 +63,14 @@ EXTRA_DIST = \
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-install-data-local:
+install-data-local: $(EXTRA_DIST)
 	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag
-	$(INSTALL_DATA) $(EXTRA_DIST) $(DESTDIR)$(datadir)/bzflag
+	@list='$(EXTRA_DIST)'; for p in $$list; do \
+	if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/$$f"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/$$f; \
+	done
 
 uninstall-local:
-	cd $(DESTDIR)$(datadir)/bzflag; rm -rf *
+	rm -rf $(DESTDIR)$(datadir)/bzflag/*
