@@ -18,7 +18,7 @@
 // This is a simple script that reports current public servers
 // and creates links to server stats.
 
-$listserver = 'http://db.bzflag.org/db/?action=LIST';
+$listserver = 'http://my.BZFlag.org/db/?action=LIST';
 
 $title="BZFlag Server List";
 

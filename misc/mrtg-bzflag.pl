@@ -57,7 +57,7 @@ if (-d $cacheFile && time() - stat($cacheFile)->mtime < 60) {
 } else {
   my $ua = new LWP::UserAgent;
   $ua->timeout(5);
-  my $req = HTTP::Request->new('GET', 'http://db.bzflag.org/db/?action=LIST');
+  my $req = HTTP::Request->new('GET', 'http://my.BZFlag.org/db/?action=LIST');
   my $res = $ua->request($req);
   @lines = split("\n",$res->content);
   open(CACHEFILE, ">$cacheFile") or die;
