@@ -201,6 +201,7 @@ public:
   static const std::string	BZDB_GMISSILEANG;
   static const std::string	BZDB_GMISSILEADLIFE;
   static const std::string	BZDB_GRAVITY;
+  static const std::string	BZDB_FRICTION;
   static const std::string	BZDB_IDENTIFYRANGE;
   static const std::string	BZDB_JUMPVELOCITY;
   static const std::string	BZDB_LASERADVEL;
@@ -213,6 +214,7 @@ public:
   static const std::string	BZDB_MAXLOD;
   static const std::string	BZDB_MOMENTUMLINACC;
   static const std::string	BZDB_MOMENTUMANGACC;
+  static const std::string	BZDB_MOMENTUMFRICTION;
   static const std::string	BZDB_MGUNADVEL;
   static const std::string	BZDB_MGUNADRATE;
   static const std::string	BZDB_MGUNADLIFE;

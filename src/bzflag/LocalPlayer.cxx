@@ -244,6 +244,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newAngVel = oldAngVel;
     }
 
+    // now friction, if any
+    doFriction(dt, oldVelocity, newVelocity);
+
     // now apply outside forces
     doForces(dt, newVelocity, newAngVel);
 
@@ -1065,6 +1068,24 @@ void			LocalPlayer::doMomentum(float dt,
     const float acc = (angVel - oldAngVel) / dt;
     if (acc > angularAcc) angVel = oldAngVel + dt * angularAcc;
     else if (acc < -angularAcc) angVel = oldAngVel - dt * angularAcc;
+  }
+}
+
+void			LocalPlayer::doFriction(float dt,
+						  const float *oldVelocity, float *newVelocity)
+{
+  const float friction = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) :
+    BZDB.eval(StateDatabase::BZDB_FRICTION);
+
+  if (friction > 0.0f) {
+    // limit xy acceleration
+    float acc = (newVelocity[0] - oldVelocity[0]) / dt;
+    if (acc > 20.0f * friction) newVelocity[0] = oldVelocity[0] + dt * 20.0f*friction;
+    else if (acc < -20.0f * friction) newVelocity[0] = oldVelocity[0] - dt * 20.0f*friction;
+
+    acc = (newVelocity[1] - oldVelocity[1]) / dt;
+    if (acc > 20.0f * friction) newVelocity[1] = oldVelocity[1] + dt * 20.0f*friction;
+    else if (acc < -20.0f * friction) newVelocity[1] = oldVelocity[1] - dt * 20.0f*friction;
   }
 }
 

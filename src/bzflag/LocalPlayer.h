@@ -126,6 +126,7 @@ protected:
   void		doUpdate(float dt);
   void		doUpdateMotion(float dt);
   void		doMomentum(float dt, float& speed, float& angVel);
+  void		doFriction(float dt, const float *oldVelocity, float *newVelocity);
   void		doForces(float dt, float* velocity, float& angVel);
   LocalShotPath**	shots;
   bool          gettingSound;
