@@ -134,7 +134,7 @@ static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
   char reply[MessageLen] = {0};
 
   rawTime = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
-  sprintf(reply, "%s.", TimeKeeper::printTime(rawTime).c_str());
+  snprintf(reply, MessageLen, "%s.", TimeKeeper::printTime(rawTime).c_str());
   sendMessage(ServerPlayer, t, reply);
 }
 
@@ -157,7 +157,7 @@ static void handlePartCmd(GameKeeper::Player *playerData, const char *message)
   if (strlen(message) > 5) {
     if (!TextUtils::isWhitespace(*(message+5))) {
       char reply[MessageLen] = {0};
-      sprintf(reply,"Unknown command [%s]", message);
+      snprintf(reply, MessageLen, "Unknown command [%s]", message);
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
       return;
     }
@@ -186,7 +186,7 @@ static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
   if (strlen(message) > 5) {
     if (!TextUtils::isWhitespace(*(message+5))) {
       char reply[MessageLen] = {0};
-      sprintf(reply,"Unknown command [%s]", message);
+      snprintf(reply, MessageLen, "Unknown command [%s]", message);
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
       return;
     }
@@ -218,7 +218,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::privateMessage)) {
     char reply[MessageLen] = {0};
-    sprintf(reply,"%s, you are not presently authorized to /msg people privately", playerData->player.getCallSign());
+    snprintf(reply, MessageLen, "%s, you are not presently authorized to /msg people privately", playerData->player.getCallSign());
     sendMessage(ServerPlayer, from, reply);
     return;
   }
@@ -563,25 +563,25 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
     if (!playerData->accessInfo.isAdmin()) {
       // otherwise make sure the player is not protected with an antiperm      
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
-	sprintf(kickmessage, "%s is protected from being kicked.", p->player.getCallSign());
+	snprintf(kickmessage, MessageLen, "%s is protected from being kicked.", p->player.getCallSign());
 	sendMessage(ServerPlayer, i, kickmessage);
 	return;
       }
     }
 
-    sprintf(kickmessage, "You were kicked off the server by %s",
+    snprintf(kickmessage, MessageLen, "You were kicked off the server by %s",
 	    playerData->player.getCallSign());
     sendMessage(ServerPlayer, i, kickmessage);
     if (argv.size() > 2) {
-      sprintf(kickmessage, " reason given : %s",argv[2].c_str());
+      snprintf(kickmessage, MessageLen, " reason given : %s",argv[2].c_str());
       sendMessage(ServerPlayer, i, kickmessage);
     }
-    sprintf(kickmessage, "%s kicked by %s, reason: %s", p->player.getCallSign(), playerData->player.getCallSign(),argv[2].c_str());
+    snprintf(kickmessage, MessageLen, "%s kicked by %s, reason: %s", p->player.getCallSign(), playerData->player.getCallSign(),argv[2].c_str());
     sendMessage(ServerPlayer, AdminPlayers, kickmessage);
     removePlayer(i, "/kick");
   } else {
     char errormessage[MessageLen];
-    sprintf(errormessage, "player \"%s\" not found", argv[1].c_str());
+    snprintf(errormessage, MessageLen, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, t, errormessage);
   }
   return;
@@ -613,17 +613,17 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
       // otherwise make sure the player is not protected with an antiperm
       GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) {
-	sprintf(killmessage, "%s is protected from being killed.", p->player.getCallSign());
+	snprintf(killmessage, MessageLen, "%s is protected from being killed.", p->player.getCallSign());
 	sendMessage(ServerPlayer, i, killmessage);
 	return;
       }
     }
 
-    sprintf(killmessage, "You were killed by %s",
+    snprintf(killmessage, MessageLen, "You were killed by %s",
 	    playerData->player.getCallSign());
     sendMessage(ServerPlayer, i, killmessage);
     if (argv.size() > 2) {
-      sprintf(killmessage, " reason given : %s",argv[2].c_str());
+      snprintf(killmessage, MessageLen, " reason given : %s",argv[2].c_str());
       sendMessage(ServerPlayer, i, killmessage);
     }
 
@@ -639,7 +639,7 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
 
   } else {
     char errormessage[MessageLen];
-    sprintf(errormessage, "player \"%s\" not found", argv[1].c_str());
+    snprintf(errormessage, MessageLen, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, t, errormessage);
   }
   return;
@@ -738,7 +738,7 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 	    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 	    if ((p != NULL)
 		&& (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
-	      sprintf(kickmessage,
+	      snprintf(kickmessage, MessageLen, 
 		      "%s is protected from being banned (skipped).",
 		      p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, kickmessage);
@@ -746,15 +746,15 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 	    }
 	  }
 
-	  sprintf(kickmessage,"You were banned from this server by %s",
+	  snprintf(kickmessage, MessageLen, "You were banned from this server by %s",
 		  playerData->player.getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage);
 	  if (reason.length() > 0) {
-	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
+	    snprintf(kickmessage, MessageLen, "Reason given: %s", reason.c_str());
 	    sendMessage(ServerPlayer, i, kickmessage);
 	  }
 	  if (otherPlayer) {
-	    sprintf(kickmessage, "%s banned by %s, reason: %s", otherPlayer->player.getCallSign(), playerData->player.getCallSign(),reason.c_str());
+	    snprintf(kickmessage, MessageLen, "%s banned by %s, reason: %s", otherPlayer->player.getCallSign(), playerData->player.getCallSign(),reason.c_str());
 	    sendMessage(ServerPlayer, AdminPlayers, kickmessage);
 	  }
 	  removePlayer(i, "/ban");
@@ -762,7 +762,7 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       }
     } else {
       char errormessage[MessageLen];
-      sprintf(errormessage, "Malformed address or invalid Player/Slot: %s", argv[1].c_str());
+      snprintf(errormessage, MessageLen, "Malformed address or invalid Player/Slot: %s", argv[1].c_str());
       sendMessage(ServerPlayer, t, errormessage);
     }
   }
@@ -873,9 +873,9 @@ static void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message
   if (message[8] == ' ') {
     const char *maxlag = message + 9;
     clOptions->lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
-    sprintf(reply,"lagwarn is now %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
+    snprintf(reply, MessageLen, "lagwarn is now %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
   } else {
-    sprintf(reply,"lagwarn is set to %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
+    snprintf(reply, MessageLen, "lagwarn is set to %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
   }
   sendMessage(ServerPlayer, t, reply);
   return;
@@ -949,7 +949,7 @@ static void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (playerData != NULL && playerData->player.isPlaying() && !playerData->player.isObserver()) {
-      sprintf(reply,"%-16s : ", playerData->player.getCallSign());
+      snprintf(reply, MessageLen, "%-16s : ", playerData->player.getCallSign());
       playerData->flagHistory.get(reply+strlen(reply));
       sendMessage(ServerPlayer, t, reply);
     }
@@ -1171,7 +1171,7 @@ static void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
 	} else {
 	  sendMessage(ServerPlayer, t, "Ghosting User");
 	  char temp[MessageLen];
-	  sprintf(temp, "Your Callsign is registered to another user,"
+	  snprintf(temp, MessageLen, "Your Callsign is registered to another user,"
 		  " You have been ghosted by %s",
 		  playerData->player.getCallSign());
 	  sendMessage(ServerPlayer, user, temp);
@@ -1217,7 +1217,7 @@ static void handleDeregisterCmd(GameKeeper::Player *playerData, const char *mess
 	int v = GameKeeper::Player::getPlayerIDByName(name);
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(v);
 	if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antideregister))) {
-	  sprintf(reply, "%s is protected from being deregistered.", p->player.getCallSign());
+	  snprintf(reply, MessageLen, "%s is protected from being deregistered.", p->player.getCallSign());
 	  sendMessage(ServerPlayer, t, reply);
 	  return;
 	}
@@ -1227,10 +1227,10 @@ static void handleDeregisterCmd(GameKeeper::Player *playerData, const char *mess
       userDatabase.erase(name);
       PlayerAccessInfo::updateDatabases();
 
-      sprintf(reply, "%s has been deregistered", name.c_str());
+      snprintf(reply, MessageLen, "%s has been deregistered", name.c_str());
       sendMessage(ServerPlayer, t, reply);
     } else {
-      sprintf(reply, "user %s does not exist", name.c_str());
+      snprintf(reply, MessageLen, "user %s does not exist", name.c_str());
       sendMessage(ServerPlayer, t, reply);
     }
   } else if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
@@ -1414,7 +1414,7 @@ static void handleSetgroupCmd(GameKeeper::Player *playerData, const char *messag
 	  int getID = GameKeeper::Player::getPlayerIDByName(settie);
 	  if (getID != -1) {
 	    char temp[MessageLen];
-	    sprintf(temp, "you have been added to the %s group, by %s",
+	    snprintf(temp, MessageLen, "you have been added to the %s group, by %s",
 		    group.c_str(), playerData->player.getCallSign());
 	    sendMessage(ServerPlayer, getID, temp);
 	    GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.
@@ -1462,7 +1462,7 @@ static void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *mes
 	  int getID = GameKeeper::Player::getPlayerIDByName(settie);
 	  if (getID != -1) {
 	    char temp[MessageLen];
-	    sprintf(temp, "You have been removed from the %s group, by %s",
+	    snprintf(temp, MessageLen, "You have been removed from the %s group, by %s",
 		    group.c_str(), playerData->player.getCallSign());
 	    sendMessage(ServerPlayer, getID, temp);
 	    GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.
@@ -1522,7 +1522,7 @@ static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
 	    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 	    if ((p != NULL)
 		&& (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
-	      sprintf(kickmessage,
+	      snprintf(kickmessage, MessageLen, 
 		    "%s is protected from being banned (skipped).",
 		    p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, kickmessage);
@@ -1530,11 +1530,11 @@ static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
 	    }
 	  }
 
-	  sprintf(kickmessage,"You were banned from this server by %s",
+	  snprintf(kickmessage, MessageLen, "You were banned from this server by %s",
 		  playerData->player.getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage);
 	  if (reason.length() > 0) {
-	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
+	    snprintf(kickmessage, MessageLen, "Reason given: %s", reason.c_str());
 	    sendMessage(ServerPlayer, i, kickmessage);
 	  }
 	  removePlayer(i, "/ban");
@@ -1552,7 +1552,7 @@ static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::vote)) {
     /* permission denied for /vote */
-    sprintf(reply,"%s, you are presently not authorized to run /vote", callsign.c_str());
+    snprintf(reply, MessageLen, "%s, you are presently not authorized to run /vote", callsign.c_str());
     sendMessage(ServerPlayer, t, reply);
     return;
   }
@@ -1632,21 +1632,21 @@ static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
   if (vote == 0) {
     if ((cast = arbiter->voteNo(callsign)) == true) {
       /* player voted no */
-      sprintf(reply,"%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
+      snprintf(reply, MessageLen, "%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
       sendMessage(ServerPlayer, t, reply);
     }
   } else if (vote == 1) {
     if ((cast = arbiter->voteYes(callsign)) == true) {
       /* player voted yes */
-      sprintf(reply,"%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
+      snprintf(reply, MessageLen, "%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
       sendMessage(ServerPlayer, t, reply);
     }
   } else {
     if (answer.length() == 0) {
-      sprintf(reply,"%s, you did not provide a vote answer", callsign.c_str());
+      snprintf(reply, MessageLen, "%s, you did not provide a vote answer", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
     } else {
-      sprintf(reply,"%s, you did not vote in favor or in opposition", callsign.c_str());
+      snprintf(reply, MessageLen, "%s, you did not vote in favor or in opposition", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
     }
     sendMessage(ServerPlayer, t, "Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
@@ -1655,14 +1655,14 @@ static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
 
   if (arbiter->hasVoted(callsign)) {
     /* player already voted */
-    sprintf(reply,"%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+    snprintf(reply, MessageLen, "%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
     return;
   }
 
   if (!cast){
     /* There was an error while voting, probably could send a less generic message */
-    sprintf(reply,"%s, there was an error while voting on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+    snprintf(reply, MessageLen, "%s, there was an error while voting on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
     return;
   }
@@ -1728,7 +1728,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
   /* make sure player has permission to request a poll */
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
-    sprintf(reply,"%s, you are presently not authorized to run /poll", callsign.c_str());
+    snprintf(reply, MessageLen, "%s, you are presently not authorized to run /poll", callsign.c_str());
     sendMessage(ServerPlayer, t, reply);
     return;
   }
@@ -1750,7 +1750,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
   /* make sure that there is not a poll active already */
   if (arbiter->knowsPoll()) {
-    sprintf(reply,"A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+    snprintf(reply, MessageLen, "A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
     sendMessage(ServerPlayer, t, "Unable to start a new poll until the current one is over");
     return;
@@ -1776,7 +1776,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
    */
   if (available - 1 < clOptions->votesRequired) {
     sendMessage(ServerPlayer, t, "Unable to initiate a new poll.  There are not enough registered players playing.");
-    sprintf(reply,"There needs to be at least %d other %s and only %d %s available.",
+    snprintf(reply, MessageLen, "There needs to be at least %d other %s and only %d %s available.",
 	    clOptions->votesRequired,
 	    clOptions->votesRequired - 1 == 1 ? "player" : "players",
 	    available - 1,
@@ -1859,41 +1859,41 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     DEBUG3("Target specified to vote upon is [%s]\n", target.c_str());
 
     if ((target.length() == 0) && (cmd != "flagreset")) {
-      sprintf(reply,"%s, no target was specified for the [%s] vote", callsign.c_str(), cmd.c_str());
+      snprintf(reply, MessageLen, "%s, no target was specified for the [%s] vote", callsign.c_str(), cmd.c_str());
       sendMessage(ServerPlayer, t, reply);
-      sprintf(reply,"Usage: /poll %s target", cmd.c_str());
+      snprintf(reply, MessageLen, "Usage: /poll %s target", cmd.c_str());
       sendMessage(ServerPlayer, t, reply);
       return;
     }
 
     // Make sure the specific poll type is allowed
     if ((cmd == "set") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollSet))) {
-      sprintf(reply, "%s, you may not /poll set on this server", callsign.c_str());
+      snprintf(reply, MessageLen, "%s, you may not /poll set on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll set\n", callsign.c_str());
       return;
     }
     if ((cmd == "flagreset") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))) {
-      sprintf(reply, "%s, you may not /poll flagreset on this server", callsign.c_str());
+      snprintf(reply, MessageLen, "%s, you may not /poll flagreset on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll flagreset\n", callsign.c_str());
       return;
     }
     if ((cmd == "ban") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollBan))) {
-      sprintf(reply, "%s, you may not /poll ban on this server", callsign.c_str());
+      snprintf(reply, MessageLen, "%s, you may not /poll ban on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll ban\n", callsign.c_str());
       return;
     }
     if ((cmd == "kick") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKick))) {
-      sprintf(reply, "%s, you may not /poll kick on this server", callsign.c_str());
+      snprintf(reply, MessageLen, "%s, you may not /poll kick on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll kick\n", callsign.c_str());
       return;
     }
 
     if ((cmd == "kill") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKill))) {
-      sprintf(reply, "%s, you may not /poll kill on this server", callsign.c_str());
+      snprintf(reply, MessageLen, "%s, you may not /poll kill on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll kill\n", callsign.c_str());
       return;
@@ -1906,7 +1906,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       int v = GameKeeper::Player::getPlayerIDByName(target);
       if (v >= curMaxPlayers) {
 	/* wrong name? */
-	sprintf(reply,
+	snprintf(reply, MessageLen, 
 		"The player specified for a %s vote is not here", cmd.c_str());
 	sendMessage(ServerPlayer, t, reply);
 	return;
@@ -1914,7 +1914,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       GameKeeper::Player* targetData = GameKeeper::Player::getPlayerByIndex(v);
       if (!targetData) {
 	/* wrong name? */
-	sprintf(reply, "The server has no information on %s.", cmd.c_str());
+	snprintf(reply, MessageLen, "The server has no information on %s.", cmd.c_str());
 	sendMessage(ServerPlayer, t, reply);
 	return;
       }
@@ -1926,25 +1926,25 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(v);
 	if (p != NULL) {
 	  if (p->accessInfo.hasPerm(PlayerAccessInfo::antipoll)) {
-	    sprintf(reply, "%s is protected from being polled against.", p->player.getCallSign());
+	    snprintf(reply, MessageLen, "%s is protected from being polled against.", p->player.getCallSign());
 	    sendMessage(ServerPlayer, t, reply);
 	    return;
 	  }
 	  if (cmd == "ban") {
 	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollban)) {
-	      sprintf(reply, "%s is protected from being poll banned.", p->player.getCallSign());
+	      snprintf(reply, MessageLen, "%s is protected from being poll banned.", p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, reply);
 	      return;
 	    }
 	  } else if (cmd == "kick") {
 	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollkick)) {
-	      sprintf(reply, "%s is protected from being poll kicked.", p->player.getCallSign());
+	      snprintf(reply, MessageLen, "%s is protected from being poll kicked.", p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, reply);
 	      return;
 	    }
 	  } else if (cmd == "kill") {
 	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollkill)) {
-	      sprintf(reply, "%s is protected from being poll killed.", p->player.getCallSign());
+	      snprintf(reply, MessageLen, "%s is protected from being poll killed.", p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, reply);
 	      return;
 	    }
@@ -1969,16 +1969,16 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     }
 
     if (!canDo) {
-      sprintf(reply,"You are not able to request a %s poll right now, %s", cmd.c_str(), callsign.c_str());
+      snprintf(reply, MessageLen, "You are not able to request a %s poll right now, %s", cmd.c_str(), callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       return;
     } else {
-      sprintf(reply,"A poll to %s %s has been requested by %s", cmd.c_str(), target.c_str(), callsign.c_str());
+      snprintf(reply, MessageLen, "A poll to %s %s has been requested by %s", cmd.c_str(), target.c_str(), callsign.c_str());
       sendMessage(ServerPlayer, AllPlayers, reply);
     }
 
     unsigned int necessaryToSucceed = (unsigned int)((clOptions->votePercentage / 100.0) * (double)available);
-    sprintf(reply, "%d player%s available, %d additional affirming vote%s required to pass the poll (%f %%)", available, available==1?" is":"s are", necessaryToSucceed, necessaryToSucceed==1?"":"s", clOptions->votePercentage);
+    snprintf(reply, MessageLen, "%d player%s available, %d additional affirming vote%s required to pass the poll (%f %%)", available, available==1?" is":"s are", necessaryToSucceed, necessaryToSucceed==1?"":"s", clOptions->votePercentage);
     sendMessage(ServerPlayer, AllPlayers, reply);
 
     // set the number of available voters
@@ -2260,7 +2260,7 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::say)) {
     char reply[MessageLen] = {0};
-    sprintf(reply,"%s, you do not have permission to run the /say command", playerData->player.getCallSign());
+    snprintf(reply, MessageLen, "%s, you do not have permission to run the /say command", playerData->player.getCallSign());
     sendMessage(ServerPlayer, t, reply);
     return;
   }
