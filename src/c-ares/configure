@@ -3120,7 +3120,6 @@ _ACEOF
 fi
 
 
-    CPPFLAGS="$CPPFLAGS -DCURLDEBUG -I../include"
     CFLAGS="$CFLAGS -g"
 
 
