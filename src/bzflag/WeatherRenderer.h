@@ -89,11 +89,14 @@ protected:
 
 	float						lastRainTime;
 
-	void buildDropList ( void );
-	void buildPuddleList ( void );
+	void buildDropList ( bool draw = false );
+	void buildPuddleList ( bool draw = false );
 
-	bool updateDrop ( std::vector<rain>::iterator &drop, float frameTime );
+	bool updateDrop ( std::vector<rain>::iterator &drop, float frameTime, std::vector<rain> &toAdd  );
 	bool updatePuddle ( std::vector<puddle>::iterator &splash, float frameTime );
+
+	void drawDrop ( rain &drop, const SceneRenderer& sr );
+	void drawPuddle ( puddle	&splash );
 
 	// some kinda culling
 	void addDrop ( rain & drop );
@@ -105,7 +108,8 @@ protected:
 
 	typedef struct  {
 		std::vector<rain>	drops;
-		float				bbox[4];
+		float				bboxMin[3];
+		float				bboxMax[3];
 	}visibleChunk;
 
 	std::map<int,visibleChunk>	chunkMap;
@@ -113,6 +117,9 @@ protected:
 	void setChunkFromDrop ( visibleChunk &chunk, rain & drop );
 
 	bool dbItemSet ( const char* name );
+
+	int	rainCount;
+	int	cellCount;
 };
 
 #endif // BZF_WEATHER_RENDERER_H

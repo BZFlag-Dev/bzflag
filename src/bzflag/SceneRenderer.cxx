@@ -897,16 +897,10 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
       World::getWorld()->drawCollisionGrid();
     }
 
-
-    ///////////////////////
+	///////////////////////
     // THE BIG RENDERING //
     ///////////////////////
     doRender();
-    
-
-    if (background) {
-      background->renderEnvironment(*this);
-    }
 
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)
@@ -1026,6 +1020,10 @@ void			SceneRenderer::doRender()
   // NOTE -- this should go into a separate thread
   // now draw each render node list
   OpenGLGState::renderLists();
+
+	if (background) {
+		background->renderEnvironment(*this);
+	} 
 
   // finally draw all the stuff in the ordered list.  turn
   // off depth buffer updates for potentially transparent stuff.

@@ -36,12 +36,15 @@
 
 // local impl headers
 #include "SceneRenderer.h"
+#include "Intersect.h"
+
+// for debug
+#define _CULLING_RAIN false
 
 void bzdbCallBack(const std::string& /*name*/, void* userData)
 {
 	((WeatherRenderer*)userData)->set();
 }
-
 
 WeatherRenderer::WeatherRenderer()
 {
@@ -68,9 +71,12 @@ WeatherRenderer::WeatherRenderer()
 
 	puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] = 1.0f;
 
-	gridSize = 100;
+	gridSize = 200;
 
 	keyFactor = 1.0f/gridSize;
+
+	rainCount = 0;
+	cellCount = 0;
 
 	// install callbacks
 	BZDB.addCallback("_rainType",bzdbCallBack,this);
@@ -153,7 +159,7 @@ void WeatherRenderer::set ( void )
 		rainSpeed = -100.0f;
 		rainSpeedMod = 50.0f;
 		doPuddles = true;
-		rainColor[0][0] = 0.75f;   rainColor[0][1] = 0.75f;   rainColor[0][2] = 0.75f;   rainColor[0][3] = 0.75f; 
+		rainColor[0][0] = 0.75f;   rainColor[0][1] = 0.75f;   rainColor[0][2] = 0.85f;   rainColor[0][3] = 0.75f; 
 		rainColor[1][0] = 0.0f;   rainColor[1][1] = 0.0f;   rainColor[1][2] = 0.0f;   rainColor[1][3] = 0.0f; 
 		rainSize[0] = rainSize[1] = 1.0f;
 		maxPuddleTime = 1.5F;
@@ -347,27 +353,48 @@ void WeatherRenderer::set ( void )
 
 		float rainHeightDelta = rainEndZ-rainStartZ;
 
-		if (raindrops.size() == 0)
+		int totalRain = rainCount;
+		if (!_CULLING_RAIN)
+			totalRain = raindrops.size();
+
+		if (totalRain < rainDensity)
 		{
-			for ( int drops = 0; drops< rainDensity; drops++)
+			for ( int drops = totalRain; drops< rainDensity; drops++)
 			{
 				rain drop;
 				drop.speed = rainSpeed + (((float)bzfrand()*2.0f -1.0f)*rainSpeedMod);
 				drop.pos[0] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
 				drop.pos[1] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
 				drop.pos[2] = rainStartZ+ (((float)bzfrand())*rainHeightDelta);
-				raindrops.push_back(drop);
+
+				if (_CULLING_RAIN)
+					addDrop(drop);
+				else
+					raindrops.push_back(drop);
 			}
 			lastRainTime = TimeKeeper::getCurrent().getSeconds();
 		}
 		// recompute the drops based on the posible new size
 		buildDropList();
+
+		if (_CULLING_RAIN)	// need to update the bbox depths on all the chunks
+		{
+			std::map<int,visibleChunk>::iterator itr = chunkMap.begin();
+
+			while (itr != chunkMap.end())
+			{
+				itr->second.bboxMin[2] = rainStartZ > rainEndZ ?  rainEndZ : rainStartZ;
+				itr->second.bboxMax[2] = rainStartZ > rainEndZ ?  rainStartZ : rainEndZ;
+				itr++;
+			}
+		}
 	}
 	else
 	{
 		raindrops.clear();
+		chunkMap.clear();
+		rainCount = 0;
 	}
-
 }
 
 void WeatherRenderer::update ( void )
@@ -376,15 +403,58 @@ void WeatherRenderer::update ( void )
 	float frameTime = TimeKeeper::getCurrent().getSeconds()-lastRainTime;
 	lastRainTime = TimeKeeper::getCurrent().getSeconds();
 
-	if (frameTime > 1.0f)
-		frameTime = 1.0f;
+	std::vector<rain> dropsToAdd;
 
-	// update all the drops in the world
-	std::vector<rain>::iterator itr = raindrops.begin();
-	while (itr != raindrops.end())
+	// clamp the update time
+	// its not an important sim so just keep it smooth
+	if (frameTime > 0.06f)
+		frameTime = 0.06f;
+
+	if (!_CULLING_RAIN)
 	{
-		if (updateDrop(itr,frameTime))
-			itr++;
+		// update all the drops in the world
+		std::vector<rain>::iterator itr = raindrops.begin();
+		while (itr != raindrops.end())
+		{
+			if (updateDrop(itr,frameTime,dropsToAdd))
+				itr++;
+		}
+	}
+	else
+	{
+		std::map<int,visibleChunk>::iterator itr = chunkMap.begin();
+		
+		while ( itr!= chunkMap.end() )
+		{
+			if ( !itr->second.drops.size() )	// kill any empty chunks
+			{
+				//cellCount--;
+				//itr == chunkMap.erase(itr);
+			}
+			else
+			{
+				std::vector<rain>::iterator dropItr = itr->second.drops.begin();
+				while (dropItr != itr->second.drops.end())
+				{
+					if (updateDrop(dropItr,frameTime,dropsToAdd))
+						dropItr++;
+					else
+					{
+						dropItr = itr->second.drops.erase(dropItr);
+						rainCount--;
+					}
+				}
+				itr++;
+			}
+		}
+
+		// add in any new drops
+		std::vector<rain>::iterator dropItr = dropsToAdd.begin();
+		while (dropItr != dropsToAdd.end())
+		{
+			addDrop(*dropItr);
+			dropItr++;
+		}
 	}
 
 	// update all the puddles
@@ -399,101 +469,91 @@ void WeatherRenderer::update ( void )
 
 void WeatherRenderer::draw ( const SceneRenderer& sr )
 {
-	if (!raindrops.size())
-		return;
+	if (!_CULLING_RAIN)	
+	{
+		if (!raindrops.size())
+			return;
+	}
+	else
+	{
+		if (!rainCount)
+			return;
+	}
 
+	int visibleChunks = 0;
+
+	glDisable(GL_CULL_FACE);
+	glMatrixMode(GL_MODELVIEW);
+	glColor4f(1,1,1,1.0f);
 	glDepthMask(0);
+	glDisable(GL_LIGHTING);
+
 	if (doLineRain)	// we are doing line rain
 	{
+		glEnable(GL_COLOR_MATERIAL);
 		rainGState.setState();
-		glMatrixMode(GL_MODELVIEW);
+
 		glPushMatrix();	
 		glBegin(GL_LINES);
-
-		std::vector<rain>::iterator itr = raindrops.begin();
-		while (itr != raindrops.end())
-		{
-			float alphaMod = 0;
-
-			if ( itr->pos[2] < 5.0f)
-				alphaMod = 1.0f - (5.0f/itr->pos[2]);
-
-			float alphaVal = rainColor[0][3]-alphaMod;
-			if (alphaVal < 0)
-				alphaVal = 0;
-
-			glColor4f(rainColor[0][0],rainColor[0][1],rainColor[0][2],alphaVal);
-			glVertex3fv(itr->pos);
-
-			alphaVal = rainColor[1][3]-alphaMod;
-			if (alphaVal < 0)
-				alphaVal = 0;
-
-			glColor4f(rainColor[1][0],rainColor[1][1],rainColor[1][2],alphaVal);
-			glVertex3f(itr->pos[0],itr->pos[1],itr->pos[2]+ (rainSize[1] - (itr->speed * 0.15f)));
-			itr++;
-		}
-		glEnd();
 	}
-	else // 3d rain
-	{
+	else
 		texturedRainState.setState();
-		glDisable(GL_CULL_FACE);
-		glMatrixMode(GL_MODELVIEW);
 
+	if (!_CULLING_RAIN)	// draw ALL the rain
+	{
 		std::vector<rain>::iterator itr = raindrops.begin();
 		while (itr != raindrops.end())
 		{
-			float alphaMod = 0;
-
-			if ( itr->pos[2] < 2.0f)
-				alphaMod = (2.0f - itr->pos[2])*0.5f;
-
-			glColor4f(1,1,1,1.0f - alphaMod);
-			glPushMatrix();
-			glTranslatef(itr->pos[0],itr->pos[1],itr->pos[2]);
-			if (doBillBoards)
-				sr.getViewFrustum().executeBillboard();
-
-			glRotatef(lastRainTime*10.0f * rainSpeed,0,0,1);
-
-			dropList.execute();
-
-			glPopMatrix();
+			drawDrop(*itr,sr);
 			itr++;
 		}
-		glEnable(GL_CULL_FACE);
 	}
+	else // do the smart thing and just draw the rain that is VISIBLE
+	{
+		std::map<int,visibleChunk>::iterator itr = chunkMap.begin();
+
+		const Frustum*	frustum = &sr.getViewFrustum();
+		while ( itr!= chunkMap.end() )
+		{
+			if ( itr->second.drops.size() )	// skip any empty chunks
+			{
+				if (testAxisBoxInFrustum(itr->second.bboxMin,itr->second.bboxMax,frustum) != Outside)	// see if the chunk is visible
+				{
+					visibleChunks++;
+					std::vector<rain>::iterator dropItr = itr->second.drops.begin();
+					while (dropItr != itr->second.drops.end())
+					{
+						drawDrop(*dropItr,sr);
+						dropItr++;
+					}
+				}
+			}	
+			itr++;
+		}
+	}
+
+	if (doLineRain)
+	{
+		glEnd();
+		glPopMatrix();
+		glDisable(GL_COLOR_MATERIAL);
+	}
+	
 	if (doPuddles)
 	{
 		std::vector<puddle>::iterator puddleItr = puddles.begin();
 
 		puddleState.setState();
-		glDisable(GL_CULL_FACE);
-		glMatrixMode(GL_MODELVIEW);
-		glColor4f(1,1,1,1.0f);
-
 		while(puddleItr != puddles.end())
 		{
-			glPushMatrix();
-			glTranslatef(puddleItr->pos[0],puddleItr->pos[1],puddleItr->pos[2]);
-
-			float scale = puddleItr->time * rainSpeed*0.035f*puddleSpeed;
-			float lifeTime = puddleItr->time/maxPuddleTime;
-
-			glColor4f(1,1,1,1.0f - lifeTime);
-
-			glScalef(scale,scale,scale);
-			puddleList.execute();
-
-			glPopMatrix();
-
+			drawPuddle(*puddleItr);
 			puddleItr++;
 		}
 	}
+
+	glEnable(GL_LIGHTING);
 	glEnable(GL_CULL_FACE);
 	glColor4f(1,1,1,1);
-	glPopMatrix();
 	glDepthMask(1);
 }
 
@@ -503,10 +563,10 @@ void WeatherRenderer::rebuildContext ( void )
 	buildDropList();
 }
 
-void WeatherRenderer::buildDropList ( void )
+void WeatherRenderer::buildDropList ( bool draw )
 {
-	dropList.begin();
-	glPushMatrix();
+	if (!draw)
+		dropList.begin();
 
 	if (doBillBoards)
 	{
@@ -526,6 +586,7 @@ void WeatherRenderer::buildDropList ( void )
 	}
 	else
 	{
+		glPushMatrix();
 		glBegin(GL_QUADS);
 		glTexCoord2f(0,0);
 		glVertex3f(-rainSize[0],0,-rainSize[1]);
@@ -571,34 +632,37 @@ void WeatherRenderer::buildDropList ( void )
 		glTexCoord2f(0,1);
 		glVertex3f(-rainSize[0],0,rainSize[1]);
 		glEnd();
+		glPopMatrix();
 	}
-	glPopMatrix();
-	dropList.end();
+	if (!draw)
+		dropList.end();
 }
 
-void WeatherRenderer::buildPuddleList ( void )
+void WeatherRenderer::buildPuddleList ( bool draw )
 {
 	float scale = 1;
-	puddleList.begin();
+	if (!draw)
+		puddleList.begin();
 
 	glBegin(GL_QUADS);
-	glTexCoord2f(0,0);
-	glVertex3f(-scale,-scale,0);
+		glTexCoord2f(0,0);
+		glVertex3f(-scale,-scale,0);
 
-	glTexCoord2f(1,0);
-	glVertex3f(scale,-scale,0);
+		glTexCoord2f(1,0);
+		glVertex3f(scale,-scale,0);
 
-	glTexCoord2f(1,1);
-	glVertex3f(scale,scale,0);
+		glTexCoord2f(1,1);
+		glVertex3f(scale,scale,0);
 
-	glTexCoord2f(0,1);
-	glVertex3f(-scale,scale,0);
+		glTexCoord2f(0,1);
+		glVertex3f(-scale,scale,0);
 	glEnd();
 
-	puddleList.end();
+	if (!draw)
+		puddleList.end();
 }
 
-bool WeatherRenderer::updateDrop ( std::vector<rain>::iterator &drop, float frameTime )
+bool WeatherRenderer::updateDrop ( std::vector<rain>::iterator &drop, float frameTime, std::vector<rain> &toAdd )
 {
 	drop->pos[2] += drop->speed * frameTime;
 
@@ -620,30 +684,37 @@ bool WeatherRenderer::updateDrop ( std::vector<rain>::iterator &drop, float fram
 			puddles.push_back(thePuddle);
 		}
 
-		if ( (int)(raindrops.size()) <= rainDensity)
+		if (!_CULLING_RAIN)
 		{
-			// reset this drop
-			drop->pos[2] = rainStartZ;
-			drop->speed = rainSpeed + ((float)(bzfrand()*2.0f -1.0f)*rainSpeedMod);
-			drop->pos[0] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
-			drop->pos[1] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
-
-			// we need more rain!!!
-			if ((int)(raindrops.size()) < rainDensity)
+			if ( (int)(raindrops.size()) <= rainDensity)
+			{
+				// reset this drop
+				drop->pos[2] = rainStartZ;
+				drop->speed = rainSpeed + ((float)(bzfrand()*2.0f -1.0f)*rainSpeedMod);
+				drop->pos[0] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
+				drop->pos[1] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
+				return true;
+			}
+			else	// we need less rain, so don't do this one
+			{
+				drop = raindrops.erase(drop);
+				return false;
+			}
+		}
+		else
+		{
+			if (rainCount <= rainDensity)
 			{
 				rain newDrop;
 				newDrop.pos[2] = rainStartZ;
 				newDrop.speed = rainSpeed + ((float)(bzfrand()*2.0f -1.0f)*rainSpeedMod);
 				newDrop.pos[0] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
 				newDrop.pos[1] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
-				raindrops.push_back(newDrop);
+
+				toAdd.push_back(newDrop);
 			}
-			return true;
-		}
-		else	// we need less rain, so don't do this one
-		{
-			drop = raindrops.erase(drop);
-			return false;
+				// kill the drop
+		return false;
 		}
 	}
 	return true;
@@ -660,11 +731,79 @@ bool WeatherRenderer::updatePuddle ( std::vector<puddle>::iterator &splash, floa
 	return true;
 }
 
+void WeatherRenderer::drawDrop ( rain &drop, const SceneRenderer& sr )
+{
+	if (doLineRain)
+	{
+		float alphaMod = 0;
+
+		if ( drop.pos[2] < 5.0f)
+			alphaMod = 1.0f - (5.0f/drop.pos[2]);
+
+		float alphaVal = rainColor[0][3]-alphaMod;
+		if (alphaVal < 0)
+			alphaVal = 0;
+
+		glColor4f(rainColor[0][0],rainColor[0][1],rainColor[0][2],alphaVal);
+		glVertex3fv(drop.pos);
+
+		alphaVal = rainColor[1][3]-alphaMod;
+		if (alphaVal < 0)
+			alphaVal = 0;
+
+		glColor4f(rainColor[1][0],rainColor[1][1],rainColor[1][2],alphaVal);
+		glVertex3f(drop.pos[0],drop.pos[1],drop.pos[2]+ (rainSize[1] - (drop.speed * 0.15f)));
+	}
+	else
+	{
+		float alphaMod = 0;
+
+		if ( drop.pos[2] < 2.0f)
+			alphaMod = (2.0f - drop.pos[2])*0.5f;
+
+		glColor4f(1,1,1,1.0f - alphaMod);
+		glPushMatrix();
+		glTranslatef(drop.pos[0],drop.pos[1],drop.pos[2]);
+		if (doBillBoards)
+			sr.getViewFrustum().executeBillboard();
+		else
+			glRotatef(lastRainTime*10.0f * rainSpeed*0.85f,0,1,0);
+
+		glRotatef(lastRainTime*10.0f * rainSpeed,0,0,1);
+
+		if (1)
+			dropList.execute();
+		else
+			buildDropList(true);
+		glPopMatrix();
+	}
+}
+
+void WeatherRenderer::drawPuddle ( puddle	&splash )
+{
+	glPushMatrix();
+	glTranslatef(splash.pos[0],splash.pos[1],splash.pos[2]);
+
+	float scale = fabs(splash.time * rainSpeed*0.035f*puddleSpeed);
+	float lifeTime = splash.time/maxPuddleTime;
+
+	glColor4f(1,1,1,1.0f - lifeTime);
+
+	glScalef(scale,scale,scale);
+	if (1)
+		puddleList.execute();
+	else
+		buildPuddleList(true);
+
+	glPopMatrix();
+}
+
 void WeatherRenderer::addDrop ( rain & drop )
 {
 	int key = keyFromPos(drop.pos[0],drop.pos[1]);
 
 	std::map<int,visibleChunk>::iterator itr = chunkMap.find(key);
+	rainCount++;
 	
 	if (itr != chunkMap.end())
 	{
@@ -678,6 +817,7 @@ void WeatherRenderer::addDrop ( rain & drop )
 
 	chunk.drops.push_back(drop);
 	chunkMap[key] = chunk;
+	cellCount++;
 }
 
 int WeatherRenderer::keyFromPos ( float x, float y )
@@ -699,10 +839,12 @@ void WeatherRenderer::setChunkFromDrop ( visibleChunk &chunk, rain & drop )
 	int keyX = (int)(drop.pos[0]*keyFactor);
 	int keyY = (int)(drop.pos[1]*keyFactor);
 
-	chunk.bbox[0] = keyX * gridSize;
-	chunk.bbox[1] = keyY * gridSize;
-	chunk.bbox[0] = keyX * gridSize + gridSize;
-	chunk.bbox[1] = keyY * gridSize + gridSize;
+	chunk.bboxMin[0] = keyX * gridSize;
+	chunk.bboxMin[1] = keyY * gridSize;
+	chunk.bboxMin[2] = rainStartZ > rainEndZ ?  rainEndZ : rainStartZ;
+	chunk.bboxMax[0] = keyX * gridSize + gridSize;
+	chunk.bboxMax[1] = keyY * gridSize + gridSize;
+	chunk.bboxMax[2] = rainStartZ > rainEndZ ?  rainStartZ : rainEndZ;
 }
 
 bool WeatherRenderer::dbItemSet ( const char* name )

@@ -314,7 +314,6 @@ void			BackgroundRenderer::notifyStyleChange()
 void                BackgroundRenderer::resize() {
   resizeSky();
   doInitDisplayLists();
-  weather.rebuildContext();
 }
 
 
@@ -417,8 +416,6 @@ void			BackgroundRenderer::setCelestial(
     glPopMatrix();
   starXFormList.end();
 
-  // rain stuff
-	weather.set();
 }
 
 void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
@@ -930,6 +927,8 @@ void			BackgroundRenderer::doInitDisplayLists()
 {
   int i, j;
   SceneRenderer& renderer = *(getSceneRenderer());
+
+	weather.rebuildContext();
 
   // need some workarounds on RIVA 128
   bool isRiva128 = (strncmp((const char*)glGetString(GL_RENDERER),
