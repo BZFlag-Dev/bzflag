@@ -50,6 +50,25 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 #endif
 }
 
+//
+// special error handler.  shows a message box on Windows.
+//
+
+void			printFatalError(const char* fmt, ...)
+{
+  char buffer[1024];
+  va_list args;
+  va_start(args, fmt);
+  vsprintf(buffer, fmt, args);
+  va_end(args);
+#if defined(_WIN32)
+  MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+#else
+  std::cerr << buffer << std::endl;
+#endif
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -195,25 +195,6 @@ const char*	defaultBindings[NUM_DEFAULT_BINDINGS] = {
 int numRobotTanks = 0;
 #endif
 
-//
-// special error handler.  shows a message box on Windows.
-//
-
-void			printFatalError(const char* fmt, ...)
-{
-  char buffer[1024];
-  va_list args;
-  va_start(args, fmt);
-  vsprintf(buffer, fmt, args);
-  va_end(args);
-#if defined(_WIN32)
-  MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-#else
-  std::cerr << buffer << std::endl;
-#endif
-  delete display;
-  display = NULL;
-}
 
 //
 // application initialization
@@ -381,6 +362,10 @@ static void		usage()
 	" [-window]"
 	" [-zoom <zoom-factor>]"
 	" server\n\nExiting.", argv0);
+  if (display != NULL) {
+    delete display;
+    display=NULL;
+  }
   exit(1);
 }
 
