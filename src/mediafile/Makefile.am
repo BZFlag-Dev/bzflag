@@ -18,4 +18,6 @@ libMediaFile_a_SOURCES =	\
 	WaveAudioFile.cxx
 
 EXTRA_DIST = \
+	OggAudioFile.cxx	\
+	OggAudioFile.h		\
 	README
