@@ -18,6 +18,9 @@
 #endif  // _MSC_VER
 
 
+
+
+
 // Type Definitions
 // ----------------
 
@@ -26,7 +29,15 @@ typedef uint16_t u16;
 #ifndef _WIN32
 typedef int64_t CRtime;
 #else
-typedef __int64 CRtime;
+	#include <time.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <stdio.h>
+	#include <direct.h>
+	typedef __int64 CRtime;
+	#ifndef S_ISDIR // for _WIN32
+		# define S_ISDIR(m) ((m) & _S_IFDIR)
+	#endif
 #endif
 
 typedef enum {
@@ -1134,25 +1145,32 @@ openWriteFile (int playerIndex, const char *filename)
   return openFile (filename, "wb");
 }
 
+int bzStat ( const char* dir, struct stat & buf )
+{
+#ifdef _WIN32
+	return _stat(dir, (struct _stat*)(&buf));
+#else
+	return stat (dir, &buf);
+#endif
+}
+
+int bzMKDir ( const char* dir, int mode )
+{
+	#ifdef _WIN32
+	return mkdir(dir);
+	#else
+	return mkdir (dir, mode);
+	#endif
+}
 
 static bool
 makeDirExist (int playerIndex)
 {
-#ifndef S_ISDIR // for _WIN32
-# define S_ISDIR(m) ((m) & _S_IFDIR)
-#endif
-
-#ifndef _WIN32
-# define MKDIR(name,mode) mkdir((name),(mode))
-#else
-# define MKDIR(name,mode) mkdir(name)
-#endif
-
   struct stat statbuf;
 
-  if (stat (ReplayDir, &statbuf) < 0) {
+	if (bzStat (ReplayDir, statbuf) < 0) {
     // try to make the directory
-    if (MKDIR (ReplayDir, 0755) < 0) {
+    if (bzMKDir (ReplayDir, 0755) < 0) {
       sendMessage (ServerPlayer, playerIndex, 
                    "Could not create default directory");
       return false;
