@@ -1266,13 +1266,10 @@ static void acceptClient()
     nerror("couldn't set keepalive");
   }
   // send server version and playerid
-  int verLen = strlen(getServerVersion());
-  char buffer[256];
-  // format here is length(char)version(string, length char)slot(char)NULL
-  sprintf(buffer, "%c%s%c%c", verLen, getServerVersion(), 0, 0);
-
+  char buffer[9];
+  memcpy(buffer, getServerVersion(), 8);
   // send 0xff if list is full
-  buffer[verLen + 1] = (char)0xff;
+  buffer[8] = (char)0xff;
 
   PlayerId playerIndex;
 
@@ -1299,14 +1296,14 @@ static void acceptClient()
 	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
 
     // send back 0xff before closing
-    send(fd, (const char*)buffer, verLen + 1, 0);
+    send(fd, (const char*)buffer, sizeof(buffer), 0);
 
     close(fd);
     return;
   }
 
-  buffer[verLen + 1] = (uint8_t)playerIndex;
-  send(fd, (const char*)buffer, verLen + 2, 0);
+  buffer[8] = (uint8_t)playerIndex;
+  send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
   new GameKeeper::Player(playerIndex, clientAddr, fd);

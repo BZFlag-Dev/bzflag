@@ -102,7 +102,7 @@ typedef struct {
   u32 worldSize;                // size of world database
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];         // player's email
-  char serverVersion[255];      // BZFS protocol version
+  char serverVersion[8];        // BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];            // hash of worldDatabase
   char *flags;                  // a list of the flags types
