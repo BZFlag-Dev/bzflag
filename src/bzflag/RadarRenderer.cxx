@@ -409,7 +409,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {
 	const ShotPath* shot = player->getShot(j);
-	if (shot && shot->getFlag() != Flags::InvisibleBullet) {
+	if ((shot && shot->getFlag() != Flags::InvisibleBullet ||
+ 			(myTank && (myTank->getFlag() == Flags::Seer)))) {
 	  const float *shotcolor;
 	  if (coloredShot) {
 	    if (myTank->getFlag() == Flags::Colorblindness)
