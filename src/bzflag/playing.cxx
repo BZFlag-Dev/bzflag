@@ -4957,6 +4957,7 @@ static World*		makeWorld(ServerLink* serverLink)
     worldPath += hexDigest;
     worldPath += ".bwc";
     cachedWorld = FILEMGR->createDataInStream(worldPath, true);
+    delete[] hexDigest;
   }
 
   char* worldDatabase;
