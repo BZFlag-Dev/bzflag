@@ -118,7 +118,7 @@ void			BzfWindow::initJoystick(const char* joystickName)
   }
   joystickButtons = SDL_JoystickNumButtons(joystickID);
 #else
-  if (strcmp(joystickName, "off")) {
+  if (strcmp(joystickName, "off") && strcmp(joystickName, "")) {
     std::vector<std::string> args;
     args.push_back(joystickName);
     printError("joystick '{1}' not supported...", &args);
