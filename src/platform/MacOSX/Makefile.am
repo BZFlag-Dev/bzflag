@@ -12,7 +12,7 @@ libMac_a_SOURCES =			\
 	SDLMain.h			\
 	SDLMain.m
 
-libMac_a_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
+AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
 
 if MACOS
 if CLIENT_INCLUDED
