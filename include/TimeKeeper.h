@@ -79,7 +79,7 @@ public:
   static const std::string	printTime(float diff);
 
   /** sleep for a given number of floating point seconds */
-  static void		sleep(float); //const
+  static void			TimeKeeper::sleep(float); //const
 
 private:
   double		seconds;
