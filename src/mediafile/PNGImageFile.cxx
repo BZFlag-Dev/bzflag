@@ -155,7 +155,7 @@ bool PNGImageFile::read(void* buffer)
 bool					PNGImageFile::read(void* buffer)
 {
 	PNGChunk *c;
-	int	bufferPos = 0;
+	int	bufferPos = getWidth() * getNumChannels() * (getHeight() - 1);
 	
 	c = PNGChunk::readChunk(getStream());
 	while ((c->getType() != PNGChunk::IDAT) && (c->getType() != PNGChunk::IEND)) {
@@ -196,7 +196,7 @@ bool					PNGImageFile::read(void* buffer)
 			}
 
 			memcpy(((unsigned char *)buffer)+bufferPos, line+1, realBufferSize-1);
-			bufferPos += realBufferSize-1;
+			bufferPos -= realBufferSize-1;
 
 			switchLineBuffers();
 			line = getLineBuffer();
