@@ -116,7 +116,6 @@ public:
 
 private:
 
-  void	cleanCallSign();
   void	cleanEMail();
   bool	isCallSignReadable();
   bool	isEMailReadable();

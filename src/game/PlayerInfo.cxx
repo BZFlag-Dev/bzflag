@@ -29,8 +29,9 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   pausedSince(TimeKeeper::getNullTime()), tracker(0)
 {
   notResponding = false;
-  memset (email, 0, EmailLen);
-  memset (callSign, 0, CallSignLen);
+  memset(email, 0, EmailLen);
+  memset(callSign, 0, CallSignLen);
+  memset(token, 0, TokenLen);
 }
 
 void PlayerInfo::resetPlayer(bool ctf) {
@@ -95,7 +96,6 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, callSign, CallSignLen);
   buf = nboUnpackString(buf, email, EmailLen);
   buf = nboUnpackString(buf, token, TokenLen);
-  cleanCallSign();
   cleanEMail();
 
   // spoof filter holds "SERVER" for robust name comparisons
@@ -103,23 +103,16 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     serverSpoofingFilter.addToFilter("SERVER", "");
   }
 
-  // don't allow empty callsign
-  if (callSign[0] == '\0') {
-    rejectCode   = RejectBadCallsign;
-    strcpy(rejectMsg, "The callsign was rejected.  Try a different callsign.");
-    return false;
-  }
-
-  // no spoofing the server name
-  if (serverSpoofingFilter.filter(callSign)) {
-    rejectCode   = RejectRepeatCallsign;
-    strcpy(rejectMsg, "The callsign specified is already in use.");
-    return false;
-  }
   if (!isCallSignReadable()) {
     DEBUG2("rejecting unreadable callsign: %s\n", callSign);
     rejectCode   = RejectBadCallsign;
     strcpy(rejectMsg, "The callsign was rejected.  Try a different callsign.");
+    return false;
+  }
+  // no spoofing the server name
+  if (serverSpoofingFilter.filter(callSign)) {
+    rejectCode   = RejectRepeatCallsign;
+    strcpy(rejectMsg, "The callsign specified is already in use.");
     return false;
   }
   if (!isEMailReadable()) {
@@ -135,45 +128,43 @@ const char *PlayerInfo::getCallSign() const {
   return callSign;
 };
 
-void PlayerInfo::cleanCallSign() {
-  char *sp = callSign;
-  char *tp = sp;
-
-  // strip leading whitespace from callsign
-  while (isspace(*sp)) {
-    sp++;
-  }
-
-  // strip any non-printable characters and ' and " from callsign
-  do {
-    if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
-      // override modified clients that might send non-space whitespace
-      if (isspace(*sp)) {
-	*sp = ' ';
-      }
-      *tp++ = *sp;
-    }
-  } while (*++sp);
-  *tp = *sp;
-
-  // strip trailing whitespace from callsign
-  while (isspace(*--tp)) {
-    *tp=0;
-  }
-};
-
 bool PlayerInfo::isCallSignReadable() {
   // callsign readability filter, make sure there are more alphanum than non
   // keep a count of alpha-numerics
+
+  int callsignlen = (int)strlen(callSign);
+  // reject less than 5 characters
+  if (callsignlen < 5)
+    return false;
+
+  // reject trailing space
+  if (isspace(callSign[strlen(callSign) - 1]))
+    return false;
+
+  // start with true to reject leading space
+  bool lastWasSpace = true;
   int alnumCount = 0;
   const char *sp = callSign;
   do {
-    if (isalnum(*sp)) {
-      alnumCount++;
+    // reject sequential spaces
+    if (lastWasSpace && isspace(*sp))
+      return false;
+
+    // reject ' and " and any nonprintable
+    if ((*sp == '\'') || (*sp == '"') || ((unsigned)*sp > 0x7f) || !isprint(*sp))
+	return false;
+    if (isspace(*sp)) {
+      // only space is valid, not tab etc.
+      if (*sp != ' ')
+	return false;
+      lastWasSpace = true;
+    } else {
+      lastWasSpace = false;
+      if (isalnum(*sp))
+	alnumCount++;
     }
   } while (*++sp);
-  int callsignlen = (int)strlen(callSign);
-  return (callsignlen <= 4) || ((float)alnumCount / (float)callsignlen > 0.5f);
+  return ((float)alnumCount / (float)callsignlen > 0.5f);
 };
 
 const char *PlayerInfo::getEMail() const {
