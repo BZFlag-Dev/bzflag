@@ -15,7 +15,7 @@ Icon ..\..\..\src\bzflag\bzflag.ico
 WindowIcon On
 EnabledBitmap "EnableCheck.bmp"
 DisabledBitmap "DisableCheck.bmp"
-Caption "BZFlag ${VER_MAJOR}${VER_MINOR}: Fighting Crush Vallkilry - Setup"
+Caption "BZFlag ${VER_MAJOR}${VER_MINOR}: - Setup"
 
 ; The file to write
 OutFile "..\..\..\bin\BZFlag_${VER_MAJOR}${VER_MINOR}.exe"
@@ -56,8 +56,8 @@ Section "BZFlag (required)"
 	; make the doc dir
 	SetOutPath $INSTDIR\doc
 	File ..\..\..\doc\*.*
-	File ReadMe.win32.html
-	File license.txt
+	File ..\ReadMe.win32.html
+	File ..\license.txt
 
 	; Write the installation path into the registry
 	WriteRegStr HKLM SOFTWARE\BZFlag1_7e8 "Install_Dir" "$INSTDIR"
