@@ -277,17 +277,17 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (pulsating)
       getPulseColor(color, color);
     // render text
-    if (endSend - startSend > 0) {
-			std::string testStr = text.substr(startSend, (endSend - startSend));
-      const char* tmpText = testStr.c_str();//text.substr(startSend, (endSend - startSend)).c_str();
+    int len = endSend - startSend;
+    if (len > 0) {
+      const char* tmpText = text.c_str();
       // get substr width, we may need it a couple times
-      width = pFont->getStrLength(scale, tmpText);
+      width = pFont->getStrLength(scale, &tmpText[startSend], len);
       glPushMatrix();
       glTranslatef(x, y, z);
       GLboolean depthMask;
       glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
       glDepthMask(0);
-      pFont->drawString(scale, color, tmpText);
+      pFont->drawString(scale, color, &tmpText[startSend], len);
       if (underline) {
 	OpenGLGState::resetState();  // FIXME - full reset required?
 	if (underlineColor[0] >= 0)
@@ -400,7 +400,7 @@ float FontManager::getStrLength(int faceID, float size,	std::string text,
   if (!alreadyStripped)
     text = stripAnsiCodes(text);
 
-  return pFont->getStrLength(scale, text.c_str());
+  return pFont->getStrLength(scale, text.c_str(), text.size());
 }
 
 float FontManager::getStrLength(const std::string &face, float size,

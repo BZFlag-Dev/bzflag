@@ -49,9 +49,9 @@ public:
 
   bool isBuilt(void) {return !(textureID == -1);};
 
-  void drawString(float scale, GLfloat color[3], const char *str);
+  void drawString(float scale, GLfloat color[3], const char *str, int len);
 
-  float getStrLength(float scale, const char *str);
+  float getStrLength(float scale, const char *str, int len);
 
   void free(void);
 

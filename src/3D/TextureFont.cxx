@@ -238,9 +238,8 @@ void TextureFont::preLoadLists(void)
   gstate = builder.getState();
 }
 
-float TextureFont::getStrLength(float scale, const char *str)
+float TextureFont::getStrLength(float scale, const char *str, int len)
 {
-  int len = (int)strlen(str);
   int charToUse = 0;
   int lastCharacter = 0;
 
@@ -282,7 +281,8 @@ void TextureFont::free(void)
   textureID = -1;
 }
 
-void TextureFont::drawString(float scale, GLfloat color[3], const char *str)
+void TextureFont::drawString(float scale, GLfloat color[3], const char *str,
+			     int len)
 {
   if (!str)
     return;
@@ -306,7 +306,6 @@ void TextureFont::drawString(float scale, GLfloat color[3], const char *str)
   glScalef(scale, scale, 1);
 
   glPushMatrix();
-  int len = (int)strlen(str);
   int charToUse = 0;
   int lastCharacter = 0;
   for (int i = 0; i < len; i++) {
