@@ -243,7 +243,7 @@ RxStatus NetHandler::receive(size_t length) {
   RxStatus returnValue;
   if ((int)length <= tcplen)
     return ReadAll;
-  int size = recv(fd, tcpmsg + tcplen, length - tcplen, 0);
+  int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
   if (size > 0) {
     tcplen += size;
     if (tcplen == (int)length)
