@@ -2561,6 +2561,7 @@ static void		setTarget()
     }
     addMessage(NULL, msg);
     hud->setAlert(1, msg, 2.0f, 0);
+    myTank->setNemesis(bestTarget);
   }
 }
 
