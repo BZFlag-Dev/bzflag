@@ -168,25 +168,25 @@ static void		addMessage(const Player* player, const std::string& msg,
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 
 enum BlowedUpReason {
-			GotKilledMsg,
-			GotShot,
-			GotRunOver,
-			GotCaptured,
-			GenocideEffect,
-			SelfDestruct
+  GotKilledMsg,
+  GotShot,
+  GotRunOver,
+  GotCaptured,
+  GenocideEffect,
+  SelfDestruct
 };
 static const char*	blowedUpMessage[] = {
-			  NULL,
-			  "Got shot by ",
-			  "Got flattened by ",
-			  "Team flag was captured by ",
-			  "Teammate hit with Genocide by ",
-			  "Tank Self Destructed",
-			};
+  NULL,
+  "Got shot by ",
+  "Got flattened by ",
+  "Team flag was captured by ",
+  "Teammate hit with Genocide by ",
+  "Tank Self Destructed",
+};
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
-					BlowedUpReason reason,
-					PlayerId killer,
-					const ShotPath *hit = NULL);
+				    BlowedUpReason reason,
+				    PlayerId killer,
+				    const ShotPath *hit = NULL);
 
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason);
@@ -199,11 +199,11 @@ extern struct tm	userTime;
 static double		userTimeEpochOffset;
 
 StartupInfo::StartupInfo() : hasConfiguration(false),
-				autoConnect(false),
-				serverPort(ServerPort),
-				team(RogueTeam),
-				listServerURL(DefaultListServerURL),
-				listServerPort(ServerPort + 1)
+			     autoConnect(false),
+			     serverPort(ServerPort),
+			     team(RogueTeam),
+			     listServerURL(DefaultListServerURL),
+			     listServerPort(ServerPort + 1)
 {
   strcpy(serverName, "");
   strcpy(callsign, "");
@@ -230,7 +230,7 @@ static void		setGrabMouse(bool grab)
 static bool		shouldGrabMouse()
 {
   return grabMouseAlways && !unmapped &&
-			(myTank == NULL || !myTank->isPaused() || myTank->isAutoPilot());
+    (myTank == NULL || !myTank->isPaused() || myTank->isAutoPilot());
 }
 
 //
@@ -424,9 +424,9 @@ static Player*		getPlayerByName(const char* name)
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
       return player[i];
-    WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
-    if (strcmp(worldWeapons->getCallSign(), name) == 0)
-	    return worldWeapons;
+  WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
+  if (strcmp(worldWeapons->getCallSign(), name) == 0)
+    return worldWeapons;
   return NULL;
 }
 
@@ -443,18 +443,18 @@ static BaseLocalPlayer*	getLocalPlayer(PlayerId id)
 
 static TeamColor	PlayerIdToTeam(PlayerId id)
 {
-	if (id >= 244 && id<=250)
-		return TeamColor(250 - id);
-	else
-		return NoTeam;
+  if (id >= 244 && id<=250)
+    return TeamColor(250 - id);
+  else
+    return NoTeam;
 }
 
 static PlayerId		TeamToPlayerId(TeamColor team)
 {
-	if (team == NoTeam)
-		return NoPlayer;
-	else
-		return 250-team;
+  if (team == NoTeam)
+    return NoPlayer;
+  else
+    return 250-team;
 }
 
 
@@ -475,9 +475,9 @@ static ServerLink*	lookupServer(const Player* player)
 //
 
 class ComposeDefaultKey : public HUDuiDefaultKey {
-  public:
-    bool		keyPress(const BzfKeyEvent&);
-    bool		keyRelease(const BzfKeyEvent&);
+public:
+  bool		keyPress(const BzfKeyEvent&);
+  bool		keyRelease(const BzfKeyEvent&);
 };
 
 void printout(const std::string& name, void*)
@@ -510,19 +510,19 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   switch (key.ascii) {
-    case 3:	// ^C
-    case 27:	// escape
-//    case 127:	// delete
-      sendIt = false;			// finished composing -- don't send
-      break;
+  case 3:	// ^C
+  case 27:	// escape
+    //    case 127:	// delete
+    sendIt = false;			// finished composing -- don't send
+    break;
 
-    case 4:	// ^D
-    case 13:	// return
-      sendIt = true;
-      break;
+  case 4:	// ^D
+  case 13:	// return
+    sendIt = true;
+    break;
 
-    default:
-      return false;
+  default:
+    return false;
   }
 
   if (sendIt) {
@@ -671,10 +671,10 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 // Choose person to silence
 
 class SilenceDefaultKey : public HUDuiDefaultKey {
-  public:
-    SilenceDefaultKey();
-	bool		keyPress(const BzfKeyEvent&);
-    bool		keyRelease(const BzfKeyEvent&);
+public:
+  SilenceDefaultKey();
+  bool		keyPress(const BzfKeyEvent&);
+  bool		keyRelease(const BzfKeyEvent&);
 };
 
 SilenceDefaultKey::SilenceDefaultKey()
@@ -699,19 +699,19 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   switch (key.ascii) {
-    case 3:	// ^C
-    case 27:	// escape
-//    case 127:	// delete
-      sendIt = false;			// finished composing -- don't send
-      break;
+  case 3:	// ^C
+  case 27:	// escape
+    //    case 127:	// delete
+    sendIt = false;			// finished composing -- don't send
+    break;
 
-    case 4:	// ^D
-    case 13:	// return
-      sendIt = true;
-      break;
+  case 4:	// ^D
+  case 13:	// return
+    sendIt = true;
+    break;
 
-    default:
-      return false;
+  default:
+    return false;
   }
 
   if (sendIt) {
@@ -803,7 +803,7 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
   if (!myTank->isKeyboardMoving()) {
 
     if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
-		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
+	||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
       // exclude robots from silence recipient list they don't talk
       selectNextRecipient(key.button == BzfKeyEvent::Up ||
 			  key.button == BzfKeyEvent::Right, false);
@@ -823,60 +823,60 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 }
 
 class ServerCommandKey : public HUDuiDefaultKey {
-  public:
-    ServerCommandKey();
-    bool		keyPress(const BzfKeyEvent&);
-    bool		keyRelease(const BzfKeyEvent&);
-    void		init();
-    void		adminInit();
-    void		nonAdminInit();
-  private:
-    std::string		makePattern(const InAddr& address);
-    void		updatePrompt();
+public:
+  ServerCommandKey();
+  bool		keyPress(const BzfKeyEvent&);
+  bool		keyRelease(const BzfKeyEvent&);
+  void		init();
+  void		adminInit();
+  void		nonAdminInit();
+private:
+  std::string		makePattern(const InAddr& address);
+  void		updatePrompt();
 
-  private:
-      enum Mode {
-      Kick,
-      BanIp,
-      Ban1,
-      Ban2,
-      Ban3,
-      Unban,
-      Showgroup,
-      Setgroup,
-      Removegroup,
-      Ghost,
-      Banlist,
-      Playerlist,
-      FlagReset,
-      FlagUnusedReset,
-      FlagUp,
-      FlagShow,
-      FlagHistory,
-      IdleStats,
-      LagStats,
-      Report,
-      LagWarn,
-      GameOver,
-      CountDown,
-      SuperKill,
-      Shutdown,
-      Register,
-      Identify,
-      Setpass,
-      Grouplist,
-      Groupperms,
-      Vote,
-      Poll,
-      Veto,
-      Password, // leave this as the last item
-    };
+private:
+  enum Mode {
+    Kick,
+    BanIp,
+    Ban1,
+    Ban2,
+    Ban3,
+    Unban,
+    Showgroup,
+    Setgroup,
+    Removegroup,
+    Ghost,
+    Banlist,
+    Playerlist,
+    FlagReset,
+    FlagUnusedReset,
+    FlagUp,
+    FlagShow,
+    FlagHistory,
+    IdleStats,
+    LagStats,
+    Report,
+    LagWarn,
+    GameOver,
+    CountDown,
+    SuperKill,
+    Shutdown,
+    Register,
+    Identify,
+    Setpass,
+    Grouplist,
+    Groupperms,
+    Vote,
+    Poll,
+    Veto,
+    Password, // leave this as the last item
+  };
 
-    Mode mode;
-    int startIndex;
-    const int numModes;
-    const int numNonAdminModes;
-    static const Mode nonAdminModes[7];
+  Mode mode;
+  int startIndex;
+  const int numModes;
+  const int numNonAdminModes;
+  static const Mode nonAdminModes[7];
 
 
 };
@@ -923,9 +923,9 @@ void			ServerCommandKey::updatePrompt()
 	// Set the prompt and enable editing/composing --> allows to enter ban time
 	/* FIXME FIXME FIXME
 	 * temporarily breaking bans for playerid->ubyte
-	banPattern = makePattern(recipient->id.serverHost);
-	composePrompt = "Ban " + banPattern + " -> " + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true);
+	 banPattern = makePattern(recipient->id.serverHost);
+	 composePrompt = "Ban " + banPattern + " -> " + recipient->getCallSign() + " :";
+	 hud->setComposing(composePrompt, true);
 	*/
 	break;
 
@@ -971,7 +971,7 @@ void			ServerCommandKey::updatePrompt()
 	break;
       case Showgroup: composePrompt = "Show players group :";
 	hud->setComposing(composePrompt, true);
-      break;
+	break;
 
       default: /* shouldn't happen */ break;
       }
@@ -1059,20 +1059,20 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
   }
 
   switch (key.ascii) {
-    case 3:	// ^C
-    case 27:	// escape
-//    case 127:	// delete
-      sendIt = false;			// finished composing -- don't send
-      break;
+  case 3:	// ^C
+  case 27:	// escape
+    //    case 127:	// delete
+    sendIt = false;			// finished composing -- don't send
+    break;
 
-    case 4:	// ^D
-    case 13:	// return
-      sendIt = true;
-      break;
+  case 4:	// ^D
+  case 13:	// return
+    sendIt = true;
+    break;
 
-    default:
+  default:
 
-      return false;
+    return false;
   }
 
   if (sendIt) {
@@ -1094,12 +1094,12 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
 	  /* FIXME FIXME FIXME
 	   * temporarily break ban-by-name for playerid->ubyte
-	  banPattern = makePattern(troll->id.serverHost);
-	  sendMsg="/ban " + banPattern;
+	   banPattern = makePattern(troll->id.serverHost);
+	   sendMsg="/ban " + banPattern;
 
-	  if (message != ""){ // add ban length if something is there
-	    sendMsg = sendMsg + " " + message;
-	  }
+	   if (message != ""){ // add ban length if something is there
+	   sendMsg = sendMsg + " " + message;
+	   }
 	  */
 	  break;
 
@@ -1127,46 +1127,46 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       } else { // no recipient -- editing mode
 
 	switch (mode){
-	  case Kick:  sendMsg="/kick"; break;
-	  case BanIp: sendMsg="/ban"; break;
-	  case Setgroup: sendMsg = "/setgroup"; break;
-	  case Removegroup: sendMsg = "/removegroup"; break;
-	  case Ghost: sendMsg = "/ghost"; break;
-	  case Showgroup: sendMsg = "/showgroup"; break;
+	case Kick:  sendMsg="/kick"; break;
+	case BanIp: sendMsg="/ban"; break;
+	case Setgroup: sendMsg = "/setgroup"; break;
+	case Removegroup: sendMsg = "/removegroup"; break;
+	case Ghost: sendMsg = "/ghost"; break;
+	case Showgroup: sendMsg = "/showgroup"; break;
 
-	  default: /* shouldn't happen */ break;
+	default: /* shouldn't happen */ break;
 	}
 	if (message != "") sendMsg = sendMsg + " " + message;
 
       }
     } else { // handle less complicated messages
       switch (mode){
-	case Unban: sendMsg="/unban " + message; break;
-	case Banlist: sendMsg="/banlist";  break;
-	case Playerlist: sendMsg="/playerlist";  break;
-	case FlagReset:  sendMsg="/flag reset"; break;
-	case FlagUnusedReset: sendMsg="/flag reset unused"; break;
-	case FlagUp: sendMsg="/flag up"; break;
-	case GameOver: sendMsg="/gameover"; break;
-	case CountDown: sendMsg="/countdown "+ message; break;
-	case FlagShow: sendMsg="/flag show"; break;
-	case Shutdown: sendMsg="/shutdownserver"; break;
-	case SuperKill: sendMsg="/superkill"; break;
-	case LagWarn: sendMsg="/lagwarn "+ message; break;
-	case IdleStats: sendMsg="/idlestats"; break;
-	case LagStats: sendMsg="/lagstats"; break;
-	case FlagHistory: sendMsg="/flaghistory"; break;
-	case Password: sendMsg = "/password "+ message; break;
-	case Report: sendMsg = "/report "+ message; break;
-	case Register: sendMsg = "/register "+ message; break;
-	case Identify: sendMsg = "/identify "+ message; break;
-	case Setpass: sendMsg = "/setpass "+ message; break;
-	case Grouplist: sendMsg = "/grouplist"; break;
-	case Groupperms: sendMsg = "/groupperms"; break;
-        case Vote: sendMsg = "/vote "+ message; break;
-        case Poll: sendMsg = "/poll "+ message; break;
-        case Veto: sendMsg = "/veto "+ message; break;
-	default: /* shouldn't happen */ break;
+      case Unban: sendMsg="/unban " + message; break;
+      case Banlist: sendMsg="/banlist";  break;
+      case Playerlist: sendMsg="/playerlist";  break;
+      case FlagReset:  sendMsg="/flag reset"; break;
+      case FlagUnusedReset: sendMsg="/flag reset unused"; break;
+      case FlagUp: sendMsg="/flag up"; break;
+      case GameOver: sendMsg="/gameover"; break;
+      case CountDown: sendMsg="/countdown "+ message; break;
+      case FlagShow: sendMsg="/flag show"; break;
+      case Shutdown: sendMsg="/shutdownserver"; break;
+      case SuperKill: sendMsg="/superkill"; break;
+      case LagWarn: sendMsg="/lagwarn "+ message; break;
+      case IdleStats: sendMsg="/idlestats"; break;
+      case LagStats: sendMsg="/lagstats"; break;
+      case FlagHistory: sendMsg="/flaghistory"; break;
+      case Password: sendMsg = "/password "+ message; break;
+      case Report: sendMsg = "/report "+ message; break;
+      case Register: sendMsg = "/register "+ message; break;
+      case Identify: sendMsg = "/identify "+ message; break;
+      case Setpass: sendMsg = "/setpass "+ message; break;
+      case Grouplist: sendMsg = "/grouplist"; break;
+      case Groupperms: sendMsg = "/groupperms"; break;
+      case Vote: sendMsg = "/vote "+ message; break;
+      case Poll: sendMsg = "/poll "+ message; break;
+      case Veto: sendMsg = "/veto "+ message; break;
+      default: /* shouldn't happen */ break;
       }
 
     }
@@ -1199,7 +1199,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
   if (!myTank->isKeyboardMoving()) {
 
     if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
-		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
+	||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
       if (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)
 	// robot stay on the recipient list - to ban eventually ??
 	selectNextRecipient(key.button == BzfKeyEvent::Right, true);
@@ -1286,7 +1286,7 @@ enum roamingView {
 } roamView = roamViewFP;
 static int		roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
 static float		roamPos[3] = { 0.0f, 0.0f, 1.57f },  /* MuzzleHeight */
-			roamDPos[3] = {0.0f, 0.0f, 0.0f};
+  roamDPos[3] = {0.0f, 0.0f, 0.0f};
 static float		roamTheta = 0.0f, roamDTheta = 0.0f;
 static float		roamPhi = 0.0f, roamDPhi = 0.0f;
 static float		roamZoom = 60.0f, roamDZoom = 0.0f;
@@ -1318,30 +1318,30 @@ static void setRoamingLabel(bool force)
   }
   if (player[roamTrackWinner]) {
     switch (roamView) {
-      case roamViewTrack:
-	hud->setRoamingLabel(std::string("Tracking ") + winner +
-			     player[roamTrackWinner]->getCallSign());
-	break;
+    case roamViewTrack:
+      hud->setRoamingLabel(std::string("Tracking ") + winner +
+			   player[roamTrackWinner]->getCallSign());
+      break;
 
-      case roamViewFollow:
-	hud->setRoamingLabel(std::string("Following ") + winner +
-			     player[roamTrackWinner]->getCallSign());
-	break;
+    case roamViewFollow:
+      hud->setRoamingLabel(std::string("Following ") + winner +
+			   player[roamTrackWinner]->getCallSign());
+      break;
 
-      case roamViewFP:
-	hud->setRoamingLabel(std::string("Driving with ") + winner +
-			     player[roamTrackWinner]->getCallSign());
-	break;
+    case roamViewFP:
+      hud->setRoamingLabel(std::string("Driving with ") + winner +
+			   player[roamTrackWinner]->getCallSign());
+      break;
 
-      case roamViewFlag:
-	hud->setRoamingLabel(std::string("Tracking ") +
-			     world->getFlag(roamTrackFlag).type->flagName +
-			     " Flag");
-	break;
+    case roamViewFlag:
+      hud->setRoamingLabel(std::string("Tracking ") +
+			   world->getFlag(roamTrackFlag).type->flagName +
+			   " Flag");
+      break;
 
-      default:
-	hud->setRoamingLabel(std::string("Roaming"));
-	break;
+    default:
+      hud->setRoamingLabel(std::string("Roaming"));
+      break;
     }
   }
   else
@@ -1397,59 +1397,59 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {
-      case 'T':
-      case 't':
-	// toggle frames-per-second display
-        if (pressed) {
-          showFPS = !showFPS;
-          if (!showFPS) hud->setFPS(-1.0);
-        }
-        return true;
+    case 'T':
+    case 't':
+      // toggle frames-per-second display
+      if (pressed) {
+	showFPS = !showFPS;
+	if (!showFPS) hud->setFPS(-1.0);
+      }
+      return true;
 
-      case 'Y':
-      case 'y':
-	// toggle milliseconds for drawing
-        if (pressed) {
-          showDrawTime = !showDrawTime;
-          if (!showDrawTime) hud->setDrawTime(-1.0);
-        }
-        return true;
+    case 'Y':
+    case 'y':
+      // toggle milliseconds for drawing
+      if (pressed) {
+	showDrawTime = !showDrawTime;
+	if (!showDrawTime) hud->setDrawTime(-1.0);
+      }
+      return true;
 
-/* XXX -- for testing forced recreation of OpenGL context
-      case 'o':
-	if (pressed) {
-	  // destroy OpenGL context
-	  getMainWindow()->getWindow()->freeContext();
+      /* XXX -- for testing forced recreation of OpenGL context
+	 case 'o':
+	 if (pressed) {
+	 // destroy OpenGL context
+	 getMainWindow()->getWindow()->freeContext();
 
-	  // recreate OpenGL context
-	  getMainWindow()->getWindow()->makeContext();
+	 // recreate OpenGL context
+	 getMainWindow()->getWindow()->makeContext();
 
-	  // force a redraw (mainly for control panel)
-	  getMainWindow()->getWindow()->callExposeCallbacks();
+	 // force a redraw (mainly for control panel)
+	 getMainWindow()->getWindow()->callExposeCallbacks();
 
-	  // cause sun/moon to be repositioned immediately
-	  lastEpochOffset = epochOffset - 5.0;
+	 // cause sun/moon to be repositioned immediately
+	 lastEpochOffset = epochOffset - 5.0;
 
-	  // reload display lists and textures and initialize other state
-	  OpenGLGState::initContext();
-	}
-	break;
-*/
+	 // reload display lists and textures and initialize other state
+	 OpenGLGState::initContext();
+	 }
+	 break;
+      */
 
-      case ']':
-      case '}':
-	// plus 30 seconds
-	if (pressed) clockAdjust += 30.0f;
-	return true;
+    case ']':
+    case '}':
+      // plus 30 seconds
+      if (pressed) clockAdjust += 30.0f;
+      return true;
 
-      case '[':
-      case '{':
-	// minus 30 seconds
-	if (pressed) clockAdjust -= 30.0f;
-	return true;
+    case '[':
+    case '{':
+      // minus 30 seconds
+      if (pressed) clockAdjust -= 30.0f;
+      return true;
 
-      default:
-	break;
+    default:
+      break;
     }
   }
   return false;
@@ -1488,10 +1488,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 #endif
 
   if (key.ascii == 0 &&
-	   key.button >= BzfKeyEvent::F1 &&
-	   key.button <= BzfKeyEvent::F10 &&
-	   (key.shift & (BzfKeyEvent::ControlKey +
-			 BzfKeyEvent::AltKey)) != 0) {
+      key.button >= BzfKeyEvent::F1 &&
+      key.button <= BzfKeyEvent::F10 &&
+      (key.shift & (BzfKeyEvent::ControlKey +
+		    BzfKeyEvent::AltKey)) != 0) {
     // [Ctrl]-[Fx] is message to team
     // [Alt]-[Fx] is message to all
     if (pressed) {
@@ -1520,15 +1520,15 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   else if (myTank->isAlive()) {
     if (!myTank->isKeyboardMoving() && pressed)
       switch (key.button)
-      {
-      case BzfKeyEvent::Left:
-      case BzfKeyEvent::Right:
-      case BzfKeyEvent::Up:
-      case BzfKeyEvent::Down:
-	myTank->setKeyboardMoving(true);
-	showKeyboardStatus();
-	break;
-      }
+	{
+	case BzfKeyEvent::Left:
+	case BzfKeyEvent::Right:
+	case BzfKeyEvent::Up:
+	case BzfKeyEvent::Down:
+	  myTank->setKeyboardMoving(true);
+	  showKeyboardStatus();
+	  break;
+	}
     if (myTank->isKeyboardMoving())
       myTank->setKey(key.button, pressed);
   }
@@ -1555,7 +1555,7 @@ static void		doAutoPilot(float &rotation, float &speed)
   memcpy(pos, myTank->getPosition(), sizeof(pos));
 
   const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
-                      myTank->getFlag() == Flags::PhantomZone;
+    myTank->getFlag() == Flags::PhantomZone;
   bool expelled;
   const Obstacle *obstacle = myTank->getHitBuilding(pos, myTank->getAngle(), phased, expelled);
 
@@ -1608,8 +1608,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  bool hasSWTarget = false;
 	  for (t = 0; t < curMaxPlayers; t++) {
 	    if (t != myTank->getId() && player[t] &&
-	      player[t]->isAlive() && !player[t]->isPaused() &&
-	      !player[t]->isNotResponding()) {
+		player[t]->isAlive() && !player[t]->isPaused() &&
+		!player[t]->isNotResponding()) {
 
 	      const float *tp = player[t]->getPosition();
 	      float dist = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
@@ -1639,9 +1639,9 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 	  for (t = 0; t < curMaxPlayers; t++) {
 	    if (t != myTank->getId() && player[t] &&
-	      player[t]->isAlive() && !player[t]->isPaused() &&
-	      !player[t]->isNotResponding() &&
-	      myTank->validTeamTarget(player[t])) {
+		player[t]->isAlive() && !player[t]->isPaused() &&
+		!player[t]->isNotResponding() &&
+		myTank->validTeamTarget(player[t])) {
 
 	      const float *tp = player[t]->getPosition();
 	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDBCache::tankHeight)) {
@@ -1652,7 +1652,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	        if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
 
 	        if ((fabs(targetRotation) < errorLimit)
-		||  ((distance < (2.0f * BZDB->eval(StateDatabase::BZDB_SHOTSPEED))) && (fabs(targetRotation) < closeErrorLimit))) {
+		    ||  ((distance < (2.0f * BZDB->eval(StateDatabase::BZDB_SHOTSPEED))) && (fabs(targetRotation) < closeErrorLimit))) {
 		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
 		  const Obstacle *building = NULL;
 		  if (myTank->getFlag() != Flags::SuperBullet)
@@ -1677,11 +1677,11 @@ static void		doAutoPilot(float &rotation, float &speed)
 	float minDist = Infinity;
 	for (int i = 0; i < numFlags; i++) {
 	  if (world->getFlag(i).type == Flags::Null ||
-	    world->getFlag(i).status != FlagOnGround) continue;
+	      world->getFlag(i).status != FlagOnGround) continue;
 	  const float* fpos = world->getFlag(i).position;
 	  if (fpos[2] == pos[2]) {
 	    const float dist = (pos[0] - fpos[0]) * (pos[0] - fpos[0]) +
-			       (pos[1] - fpos[1]) * (pos[1] - fpos[1]);
+	      (pos[1] - fpos[1]) * (pos[1] - fpos[1]);
 	    if ((dist < (5.0f * BZDBCache::flagRadius)) && (dist < minDist)) {
 	      minDist = dist;
 	      closestFlag = i;
@@ -1794,7 +1794,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	        continue;
 
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
-	      && (dist < (max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+		  && (dist < (max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
 	        myTank->jump();
 	        s = maxShots;
 	        t = curMaxPlayers;
@@ -1844,28 +1844,28 @@ static void		doMotion()
     speed = myTank->getKeyboardSpeed();
 
     switch (myTank->getKeyButton())
-    {
-    case BzfKeyEvent::Left:
-      if (pressed || rotation > 0.0f) {
-	rotation = getKeyValue(myTank->getKeyPressed());
+      {
+      case BzfKeyEvent::Left:
+	if (pressed || rotation > 0.0f) {
+	  rotation = getKeyValue(myTank->getKeyPressed());
+	}
+	break;
+      case BzfKeyEvent::Right:
+	if (pressed || rotation < 0.0f) {
+	  rotation = - getKeyValue(myTank->getKeyPressed());
+	}
+	break;
+      case BzfKeyEvent::Up:
+	if (pressed || speed > 0.0f) {
+	  speed = getKeyValue(myTank->getKeyPressed());
+	}
+	break;
+      case BzfKeyEvent::Down:
+	if (pressed || speed < 0.0f) {
+	  speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
+	}
+	break;
       }
-      break;
-    case BzfKeyEvent::Right:
-      if (pressed || rotation < 0.0f) {
-	rotation = - getKeyValue(myTank->getKeyPressed());
-      }
-      break;
-    case BzfKeyEvent::Up:
-      if (pressed || speed > 0.0f) {
-	speed = getKeyValue(myTank->getKeyPressed());
-      }
-      break;
-    case BzfKeyEvent::Down:
-      if (pressed || speed < 0.0f) {
-	speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
-      }
-      break;
-    }
 
     myTank->setKeyboardAngVel(rotation);
     myTank->setKeyboardSpeed(speed);
@@ -1883,24 +1883,24 @@ static void		doMotion()
       mainWindow->getJoyPosition(mx, my);
 
       static const BzfKeyEvent::Button button_map[] = {
-          BzfKeyEvent::LeftMouse,
-          BzfKeyEvent::MiddleMouse,
-          BzfKeyEvent::RightMouse,
-          BzfKeyEvent::BZ_Mouse_Button_4,
-          BzfKeyEvent::BZ_Mouse_Button_5,
-          BzfKeyEvent::BZ_Mouse_Button_6,
-          BzfKeyEvent::BZ_Mouse_Button_7,
-          BzfKeyEvent::BZ_Mouse_Button_8,
-          BzfKeyEvent::BZ_Mouse_Button_9,
-          BzfKeyEvent::F1,
-          BzfKeyEvent::F2,
-          BzfKeyEvent::F3,
-          BzfKeyEvent::F4,
-          BzfKeyEvent::F5,
-          BzfKeyEvent::F6,
-          BzfKeyEvent::F7,
-          BzfKeyEvent::F8,
-          BzfKeyEvent::F9
+	BzfKeyEvent::LeftMouse,
+	BzfKeyEvent::MiddleMouse,
+	BzfKeyEvent::RightMouse,
+	BzfKeyEvent::BZ_Mouse_Button_4,
+	BzfKeyEvent::BZ_Mouse_Button_5,
+	BzfKeyEvent::BZ_Mouse_Button_6,
+	BzfKeyEvent::BZ_Mouse_Button_7,
+	BzfKeyEvent::BZ_Mouse_Button_8,
+	BzfKeyEvent::BZ_Mouse_Button_9,
+	BzfKeyEvent::F1,
+	BzfKeyEvent::F2,
+	BzfKeyEvent::F3,
+	BzfKeyEvent::F4,
+	BzfKeyEvent::F5,
+	BzfKeyEvent::F6,
+	BzfKeyEvent::F7,
+	BzfKeyEvent::F8,
+	BzfKeyEvent::F9
       };
 
       static unsigned long old_buttons = 0;
@@ -1977,7 +1977,7 @@ static std::string cmdDrop(const std::string&, const CommandManager::ArgList& ar
         flag->endurance != FlagSticky &&
         !(flag == Flags::PhantomZone && myTank->isFlagActive()) &&
 	!(flag == Flags::OscillationOverthruster &&
-	myTank->getLocation() == LocalPlayer::InBuilding)) {
+	  myTank->getLocation() == LocalPlayer::InBuilding)) {
       serverLink->sendDropFlag(myTank->getPosition());
       // changed: on windows it may happen the MsgDropFlag
       // never comes back to us, so we drop it right away
@@ -2014,7 +2014,7 @@ static std::string cmdDestruct(const std::string&, const CommandManager::ArgList
   if (myTank != NULL) {
     if (destructCountdown > 0.0f) {
       destructCountdown = 0.0f;
-       hud->setAlert(1, "Self Destruct cancelled", 1.5f, true);
+      hud->setAlert(1, "Self Destruct cancelled", 1.5f, true);
     } else {
       destructCountdown = 5.0f;
       char msgBuf[40];
@@ -2059,23 +2059,23 @@ static std::string cmdPause(const std::string&, const CommandManager::ArgList& a
 static std::string	cmdAutoPilot(const std::string&, const CommandManager::ArgList& args)
 {
   if (args.size() != 0)
-	return "usage: autopilot";
+    return "usage: autopilot";
 
   if (myTank != NULL) {
-	if (myTank->isAutoPilot()) {
-		myTank->setAutoPilot(false);
-		hud->setAlert(0, "autopilot disabled", 1.0f, true);
+    if (myTank->isAutoPilot()) {
+      myTank->setAutoPilot(false);
+      hud->setAlert(0, "autopilot disabled", 1.0f, true);
 
-		// grab mouse
-		if (shouldGrabMouse()) mainWindow->grabMouse();
-	}
-	else {
-		myTank->setAutoPilot(true);
-		hud->setAlert(0, "autopilot enabled", 1.0f, true);
+      // grab mouse
+      if (shouldGrabMouse()) mainWindow->grabMouse();
+    }
+    else {
+      myTank->setAutoPilot(true);
+      hud->setAlert(0, "autopilot enabled", 1.0f, true);
 
-		// ungrab mouse
-		mainWindow->ungrabMouse();
-	}
+      // ungrab mouse
+      mainWindow->ungrabMouse();
+    }
   }
 
   return std::string();
@@ -2148,11 +2148,11 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     unsigned char* b = new unsigned char[w * h * 3];
     glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
     // apply gamma correction - FIXME
-/*    unsigned char *ptr = b;
-    for(int i = 0; i < w * h * 3; i++) {
-      *ptr = gammaTable[*ptr];
-      ptr++;
-    }*/
+    /*    unsigned char *ptr = b;
+	  for(int i = 0; i < w * h * 3; i++) {
+	  *ptr = gammaTable[*ptr];
+	  ptr++;
+	  }*/
     f.write(reinterpret_cast<char*>(b), w * h * 3);
     delete [] b;
     f.close();
@@ -2436,115 +2436,115 @@ static void		doEvent(BzfDisplay* display)
   if (!display->getEvent(event)) return;
 
   switch (event.type) {
-    case BzfEvent::Quit:
-      CommandsStandard::quit();
-      break;
+  case BzfEvent::Quit:
+    CommandsStandard::quit();
+    break;
 
-    case BzfEvent::Redraw:
-      mainWindow->getWindow()->callExposeCallbacks();
-      sceneRenderer->setExposed();
-      break;
+  case BzfEvent::Redraw:
+    mainWindow->getWindow()->callExposeCallbacks();
+    sceneRenderer->setExposed();
+    break;
 
-    case BzfEvent::Resize:
-      mainWindow->getWindow()->callResizeCallbacks();
-      break;
+  case BzfEvent::Resize:
+    mainWindow->getWindow()->callResizeCallbacks();
+    break;
 
-    case BzfEvent::Map:
-      // window has been mapped.  this normally occurs when the game
-      // is uniconified.  if the player was paused because of an unmap
-      // then resume.
-      if (pausedByUnmap) {
-	pausedByUnmap = false;
-	pauseCountdown = 0.0f;
-	if (myTank && myTank->isAlive() && myTank->isPaused()) {
-	  myTank->setPause(false);
-	  controlPanel->addMessage("Resumed");
-	}
+  case BzfEvent::Map:
+    // window has been mapped.  this normally occurs when the game
+    // is uniconified.  if the player was paused because of an unmap
+    // then resume.
+    if (pausedByUnmap) {
+      pausedByUnmap = false;
+      pauseCountdown = 0.0f;
+      if (myTank && myTank->isAlive() && myTank->isPaused()) {
+	myTank->setPause(false);
+	controlPanel->addMessage("Resumed");
       }
+    }
 
-      // restore the resolution we want if full screen
-      if (mainWindow->getFullscreen()) {
-	if (preUnmapFormat != -1) {
-	  display->setResolution(preUnmapFormat);
-	  mainWindow->warpMouse();
-	}
+    // restore the resolution we want if full screen
+    if (mainWindow->getFullscreen()) {
+      if (preUnmapFormat != -1) {
+	display->setResolution(preUnmapFormat);
+	mainWindow->warpMouse();
       }
+    }
 
-      // restore the sound
-      if (savedVolume != -1) {
-	setSoundVolume(savedVolume);
-	savedVolume = -1;
+    // restore the sound
+    if (savedVolume != -1) {
+      setSoundVolume(savedVolume);
+      savedVolume = -1;
+    }
+
+    unmapped = false;
+    if (shouldGrabMouse())
+      mainWindow->grabMouse();
+    break;
+
+  case BzfEvent::Unmap:
+    // begin pause countdown when unmapped if:  we're not already
+    // paused because of an unmap (shouldn't happen), we're not
+    // already counting down to pausing, we're alive, and we're not
+    // already paused.
+    if (!pausedByUnmap && pauseCountdown == 0.0f &&
+	myTank && myTank->isAlive() && !myTank->isPaused() && !myTank->isAutoPilot()) {
+      // get ready to pause (no cheating through instantaneous pausing)
+      pauseCountdown = 5.0f;
+
+      // set this even though we haven't really paused yet
+      pausedByUnmap = true;
+    }
+
+    // ungrab the mouse if we're running full screen
+    if (mainWindow->getFullscreen()) {
+      preUnmapFormat = -1;
+      if (display->getNumResolutions() > 1) {
+	preUnmapFormat = display->getResolution();
+	display->setDefaultResolution();
       }
+    }
 
-      unmapped = false;
-      if (shouldGrabMouse())
-	mainWindow->grabMouse();
-      break;
+    // turn off the sound
+    if (savedVolume == -1) {
+      savedVolume = getSoundVolume();
+      setSoundVolume(0);
+    }
 
-    case BzfEvent::Unmap:
-      // begin pause countdown when unmapped if:  we're not already
-      // paused because of an unmap (shouldn't happen), we're not
-      // already counting down to pausing, we're alive, and we're not
-      // already paused.
-      if (!pausedByUnmap && pauseCountdown == 0.0f &&
-	  myTank && myTank->isAlive() && !myTank->isPaused() && !myTank->isAutoPilot()) {
-	// get ready to pause (no cheating through instantaneous pausing)
-	pauseCountdown = 5.0f;
+    unmapped = true;
+    mainWindow->ungrabMouse();
+    break;
 
-	// set this even though we haven't really paused yet
-	pausedByUnmap = true;
-      }
+  case BzfEvent::KeyUp:
+    if (!myTank)
+      doKeyNotPlaying(event.keyDown, false);
+    else
+      doKeyPlaying(event.keyDown, false);
+    break;
 
-      // ungrab the mouse if we're running full screen
-      if (mainWindow->getFullscreen()) {
-	preUnmapFormat = -1;
-	if (display->getNumResolutions() > 1) {
-	  preUnmapFormat = display->getResolution();
-	  display->setDefaultResolution();
-	}
-      }
+  case BzfEvent::KeyDown:
+    if (!myTank) {
+      doKeyNotPlaying(event.keyUp, true);
+    } else {
+      doKeyPlaying(event.keyUp, true);
+    }
+    break;
 
-      // turn off the sound
-      if (savedVolume == -1) {
-	savedVolume = getSoundVolume();
-	setSoundVolume(0);
-      }
+  case BzfEvent::MouseMove:
+    if (myTank && myTank->isAlive() && myTank->isKeyboardMoving()) {
+      myTank->setKeyboardMoving(false);
+      showKeyboardStatus();
+    }
+    break;
 
-      unmapped = true;
-      mainWindow->ungrabMouse();
-      break;
-
-    case BzfEvent::KeyUp:
-      if (!myTank)
-	doKeyNotPlaying(event.keyDown, false);
-      else
-	doKeyPlaying(event.keyDown, false);
-      break;
-
-    case BzfEvent::KeyDown:
-      if (!myTank) {
-	doKeyNotPlaying(event.keyUp, true);
-      } else {
-	doKeyPlaying(event.keyUp, true);
-      }
-      break;
-
-    case BzfEvent::MouseMove:
-      if (myTank && myTank->isAlive() && myTank->isKeyboardMoving()) {
-	myTank->setKeyboardMoving(false);
-	showKeyboardStatus();
-      }
-      break;
-
-    default:
-      /* unset */
-      break;
+  default:
+    /* unset */
+    break;
   }
 }
 
 static void		addMessage(const Player* player,
-				const std::string& msg, bool highlight,
-				const char* oldColor)
+				   const std::string& msg, bool highlight,
+				   const char* oldColor)
 {
   std::string fullMessage;
 
@@ -2554,7 +2554,7 @@ static void		addMessage(const Player* player,
 	if (BZDB->get("killerhighlight") == "0")
           fullMessage += ColorStrings[BlinkColor];
 	else if (BZDB->get("killerhighlight") == "1")
-         fullMessage += ColorStrings[UnderlineColor];
+	  fullMessage += ColorStrings[UnderlineColor];
       }
       int color = player->getTeam();
       if (color < 0 || color > 4) color = 5;
@@ -2695,10 +2695,10 @@ static void		updateFlag(FlagType* flag)
 
   // enable/disable display of markers
   hud->setMarker(0, Team::isColorTeam(myTank->getTeam()) &&
-			flag->flagTeam != myTank->getTeam() &&
-			World::getWorld()->allowTeamFlags());
+		 flag->flagTeam != myTank->getTeam() &&
+		 World::getWorld()->allowTeamFlags());
   hud->setMarker(1, World::getWorld()->allowAntidote() &&
-			flag != Flags::Null && flag->endurance == FlagSticky);
+		 flag != Flags::Null && flag->endurance == FlagSticky);
 }
 
 
@@ -2786,15 +2786,15 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   if (showMessage) {
     std::string message("joining as a");
     switch (PlayerType(type)) {
-      case TankPlayer:
-	message += " tank";
-	break;
-      case ComputerPlayer:
-	message += " robot tank";
-	break;
-      default:
-	message += "n unknown type";
-	break;
+    case TankPlayer:
+      message += " tank";
+      break;
+    case ComputerPlayer:
+      message += " robot tank";
+      break;
+    default:
+      message += "n unknown type";
+      break;
     }
     if (!player[i]) {
       std::string name(callsign);
@@ -2809,7 +2809,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 }
 
 static void		handleServerMessage(bool human, uint16_t code,
-						uint16_t, void* msg)
+					    uint16_t, void* msg)
 {
   std::vector<std::string> args;
   bool checkScores = false;
@@ -2817,822 +2817,822 @@ static void		handleServerMessage(bool human, uint16_t code,
 
   switch (code) {
 
-    case MsgUDPLinkEstablished:
-      // server got our initial UDP packet
-      serverLink->enableOutboundUDP();
-      break;
+  case MsgUDPLinkEstablished:
+    // server got our initial UDP packet
+    serverLink->enableOutboundUDP();
+    break;
 
-    case MsgUDPLinkRequest:
-      // we got server's initial UDP packet
-      serverLink->confirmIncomingUDP();
-      break;
+  case MsgUDPLinkRequest:
+    // we got server's initial UDP packet
+    serverLink->confirmIncomingUDP();
+    break;
 
-    case MsgSuperKill:
-      printError("Server forced a disconnect");
-      serverError = true;
-      break;
+  case MsgSuperKill:
+    printError("Server forced a disconnect");
+    serverError = true;
+    break;
 
-    case MsgTimeUpdate: {
-      uint16_t timeLeft;
-      msg = nboUnpackUShort(msg, timeLeft);
-      hud->setTimeLeft(timeLeft);
-      if (timeLeft == 0) {
-	gameOver = true;
-	myTank->explodeTank();
-	controlPanel->addMessage("Time Expired");
-	hud->setAlert(0, "Time Expired", 10.0f, true);
-#ifdef ROBOT
-	for (int i = 0; i < numRobots; i++)
-	  robots[i]->explodeTank();
-#endif
-      }
-      break;
-    }
-
-    case MsgScoreOver: {
-      // unpack packet
-      PlayerId id;
-      uint16_t team;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, team);
-      Player* player = lookupPlayer(id);
-
-      // make a message
-      std::string msg2;
-      if (team == (uint16_t)NoTeam) {
-	// a player won
-	if (player) {
-	  msg2 = player->getCallSign();
-	  msg2 += " (";
-	  msg2 += Team::getName(player->getTeam());
-	  msg2 += ")";
-	}
-	else {
-	  msg2 = "[unknown player]";
-	}
-      }
-      else {
-	// a team won
-	msg2 = Team::getName(TeamColor(team));
-      }
-      msg2 += " won the game";
-
+  case MsgTimeUpdate: {
+    uint16_t timeLeft;
+    msg = nboUnpackUShort(msg, timeLeft);
+    hud->setTimeLeft(timeLeft);
+    if (timeLeft == 0) {
       gameOver = true;
-      hud->setTimeLeft(-1);
       myTank->explodeTank();
-      controlPanel->addMessage(msg2);
-      hud->setAlert(0, msg2.c_str(), 10.0f, true);
+      controlPanel->addMessage("Time Expired");
+      hud->setAlert(0, "Time Expired", 10.0f, true);
 #ifdef ROBOT
       for (int i = 0; i < numRobots; i++)
 	robots[i]->explodeTank();
 #endif
-      break;
     }
+    break;
+  }
 
-    case MsgAddPlayer: {
-      PlayerId id;
-      msg = nboUnpackUByte(msg, id);
+  case MsgScoreOver: {
+    // unpack packet
+    PlayerId id;
+    uint16_t team;
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUShort(msg, team);
+    Player* player = lookupPlayer(id);
+
+    // make a message
+    std::string msg2;
+    if (team == (uint16_t)NoTeam) {
+      // a player won
+      if (player) {
+	msg2 = player->getCallSign();
+	msg2 += " (";
+	msg2 += Team::getName(player->getTeam());
+	msg2 += ")";
+      }
+      else {
+	msg2 = "[unknown player]";
+      }
+    }
+    else {
+      // a team won
+      msg2 = Team::getName(TeamColor(team));
+    }
+    msg2 += " won the game";
+
+    gameOver = true;
+    hud->setTimeLeft(-1);
+    myTank->explodeTank();
+    controlPanel->addMessage(msg2);
+    hud->setAlert(0, msg2.c_str(), 10.0f, true);
+#ifdef ROBOT
+    for (int i = 0; i < numRobots; i++)
+      robots[i]->explodeTank();
+#endif
+    break;
+  }
+
+  case MsgAddPlayer: {
+    PlayerId id;
+    msg = nboUnpackUByte(msg, id);
 #if defined(FIXME) && defined(ROBOT)
-      for (int i = 0; i < numRobots; i++) {
-	void *tmpbuf = msg;
-	uint16_t team, type, wins, losses, tks;
-	char callsign[CallSignLen];
-	char email[EmailLen];
-	tmpbuf = nboUnpackUShort(tmpbuf, type);
-	tmpbuf = nboUnpackUShort(tmpbuf, team);
-	tmpbuf = nboUnpackUShort(tmpbuf, wins);
-	tmpbuf = nboUnpackUShort(tmpbuf, losses);
-	tmpbuf = nboUnpackUShort(tmpbuf, tks);
-	tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
-	tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
-	fprintf(stderr, "id %d:%u:%s %d:%u:%s\n",
-	    id.port,
-	    id.number,
-	    callsign,
-	    robots[i]->getId().port,
-	    robots[i]->getId().number,
-	    robots[i]->getCallSign());
-	if (strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
-	  // check for real robot id
-	  fprintf(stderr, "id test %p %p %p %8.8x %8.8x\n",
-	      robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
-	  if (tmpbuf < (char *)msg + len) {
-	    PlayerId id;
-	    tmpbuf = nboUnpackUByte(tmpbuf, id);
-	    robots[i]->id.serverHost = id.serverHost;
-	    robots[i]->id.port = id.port;
-	    robots[i]->id.number = id.number;
-	    robots[i]->server->send(MsgIdAck, 0, NULL);
-	  }
+    for (int i = 0; i < numRobots; i++) {
+      void *tmpbuf = msg;
+      uint16_t team, type, wins, losses, tks;
+      char callsign[CallSignLen];
+      char email[EmailLen];
+      tmpbuf = nboUnpackUShort(tmpbuf, type);
+      tmpbuf = nboUnpackUShort(tmpbuf, team);
+      tmpbuf = nboUnpackUShort(tmpbuf, wins);
+      tmpbuf = nboUnpackUShort(tmpbuf, losses);
+      tmpbuf = nboUnpackUShort(tmpbuf, tks);
+      tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
+      tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
+      fprintf(stderr, "id %d:%u:%s %d:%u:%s\n",
+	      id.port,
+	      id.number,
+	      callsign,
+	      robots[i]->getId().port,
+	      robots[i]->getId().number,
+	      robots[i]->getCallSign());
+      if (strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
+	// check for real robot id
+	fprintf(stderr, "id test %p %p %p %8.8x %8.8x\n",
+		robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
+	if (tmpbuf < (char *)msg + len) {
+	  PlayerId id;
+	  tmpbuf = nboUnpackUByte(tmpbuf, id);
+	  robots[i]->id.serverHost = id.serverHost;
+	  robots[i]->id.port = id.port;
+	  robots[i]->id.number = id.number;
+	  robots[i]->server->send(MsgIdAck, 0, NULL);
 	}
       }
-#endif
-      if (id == myTank->getId()) break;		// that's odd -- it's me!
-      addPlayer(id, msg, true);
-      updateNumPlayers();
-      checkScores = true;
-      break;
     }
+#endif
+    if (id == myTank->getId()) break;		// that's odd -- it's me!
+    addPlayer(id, msg, true);
+    updateNumPlayers();
+    checkScores = true;
+    break;
+  }
 
-    case MsgRemovePlayer: {
-      PlayerId id;
-      msg = nboUnpackUByte(msg, id);
-      int playerIndex = lookupPlayerIndex(id);
-      if (playerIndex >= 0) {
-	addMessage(player[playerIndex], "signing off");
-	if (myTank->getRecipient() == player[playerIndex])
-	  myTank->setRecipient(0);
-	if (myTank->getNemesis() == player[playerIndex])
-	  myTank->setNemesis(0);
-	delete player[playerIndex];
-	player[playerIndex] = NULL;
+  case MsgRemovePlayer: {
+    PlayerId id;
+    msg = nboUnpackUByte(msg, id);
+    int playerIndex = lookupPlayerIndex(id);
+    if (playerIndex >= 0) {
+      addMessage(player[playerIndex], "signing off");
+      if (myTank->getRecipient() == player[playerIndex])
+	myTank->setRecipient(0);
+      if (myTank->getNemesis() == player[playerIndex])
+	myTank->setNemesis(0);
+      delete player[playerIndex];
+      player[playerIndex] = NULL;
 
-	while ((playerIndex >= 0)
-	&&     (playerIndex+1 == curMaxPlayers)
-	&&     (player[playerIndex] == NULL))
+      while ((playerIndex >= 0)
+	     &&     (playerIndex+1 == curMaxPlayers)
+	     &&     (player[playerIndex] == NULL))
 	{
 	  playerIndex--;
 	  curMaxPlayers--;
 	}
-	World::getWorld()->setCurMaxPlayers(curMaxPlayers);
+      World::getWorld()->setCurMaxPlayers(curMaxPlayers);
 
-	updateNumPlayers();
-	checkScores = true;
-      }
-      break;
-    }
-
-    case MsgFlagUpdate: {
-      uint16_t count;
-      uint16_t flagIndex;
-      msg = nboUnpackUShort(msg, count);
-      for (int i = 0; i < count; i++) {
-        msg = nboUnpackUShort(msg, flagIndex);
-        msg = world->getFlag(int(flagIndex)).unpack(msg);
-        world->initFlag(int(flagIndex));
-      }
-      break;
-    }
-
-    case MsgTeamUpdate: {
-      uint8_t  numTeams;
-      uint16_t team;
-
-      msg = nboUnpackUByte(msg,numTeams);
-      for (int i = 0; i < numTeams; i++) {
-        msg = nboUnpackUShort(msg, team);
-        msg = teams[int(team)].unpack(msg);
-      }
       updateNumPlayers();
       checkScores = true;
-      break;
     }
+    break;
+  }
 
-    case MsgAlive: {
-      PlayerId id;
-      float pos[3], forward[3];
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackVector(msg, pos);
-      msg = nboUnpackVector(msg, forward);
-      int playerIndex = lookupPlayerIndex(id);
-      if (playerIndex >= 0) {
-	static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-	Player* tank = getPlayerByIndex(playerIndex);
-	tank->setStatus(PlayerState::Alive);
-	tank->move(pos, atan2f(forward[1], forward[0]));
-	tank->setVelocity(zero);
-	tank->setAngularVelocity(0.0f);
-	tank->setDeadReckoning();
-	playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
-      }
-      break;
+  case MsgFlagUpdate: {
+    uint16_t count;
+    uint16_t flagIndex;
+    msg = nboUnpackUShort(msg, count);
+    for (int i = 0; i < count; i++) {
+      msg = nboUnpackUShort(msg, flagIndex);
+      msg = world->getFlag(int(flagIndex)).unpack(msg);
+      world->initFlag(int(flagIndex));
     }
+    break;
+  }
 
-    case MsgKilled: {
-      PlayerId victim, killer;
-      int16_t shotId, reason;
-      msg = nboUnpackUByte(msg, victim);
-      msg = nboUnpackUByte(msg, killer);
-      msg = nboUnpackShort(msg, reason);
-      msg = nboUnpackShort(msg, shotId);
-      BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
-      BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
-      Player* victimPlayer = lookupPlayer(victim);
-      Player* killerPlayer = lookupPlayer(killer);
+  case MsgTeamUpdate: {
+    uint8_t  numTeams;
+    uint16_t team;
+
+    msg = nboUnpackUByte(msg,numTeams);
+    for (int i = 0; i < numTeams; i++) {
+      msg = nboUnpackUShort(msg, team);
+      msg = teams[int(team)].unpack(msg);
+    }
+    updateNumPlayers();
+    checkScores = true;
+    break;
+  }
+
+  case MsgAlive: {
+    PlayerId id;
+    float pos[3], forward[3];
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackVector(msg, pos);
+    msg = nboUnpackVector(msg, forward);
+    int playerIndex = lookupPlayerIndex(id);
+    if (playerIndex >= 0) {
+      static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+      Player* tank = getPlayerByIndex(playerIndex);
+      tank->setStatus(PlayerState::Alive);
+      tank->move(pos, atan2f(forward[1], forward[0]));
+      tank->setVelocity(zero);
+      tank->setAngularVelocity(0.0f);
+      tank->setDeadReckoning();
+      playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
+    }
+    break;
+  }
+
+  case MsgKilled: {
+    PlayerId victim, killer;
+    int16_t shotId, reason;
+    msg = nboUnpackUByte(msg, victim);
+    msg = nboUnpackUByte(msg, killer);
+    msg = nboUnpackShort(msg, reason);
+    msg = nboUnpackShort(msg, shotId);
+    BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
+    BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
+    Player* victimPlayer = lookupPlayer(victim);
+    Player* killerPlayer = lookupPlayer(killer);
 #ifdef ROBOT
-      if (victimPlayer == myTank) {
-	// uh oh, i'm dead
-	if (myTank->isAlive()) {
-	  serverLink->sendDropFlag(myTank->getPosition());
-	  handleMyTankKilled(reason);
-	}
+    if (victimPlayer == myTank) {
+      // uh oh, i'm dead
+      if (myTank->isAlive()) {
+	serverLink->sendDropFlag(myTank->getPosition());
+	handleMyTankKilled(reason);
       }
+    }
 #endif
-      if (victimLocal) {
-	// uh oh, local player is dead
-	if (victimLocal->isAlive()){
-	  gotBlowedUp(victimLocal, GotKilledMsg, killer);
-	}
+    if (victimLocal) {
+      // uh oh, local player is dead
+      if (victimLocal->isAlive()){
+	gotBlowedUp(victimLocal, GotKilledMsg, killer);
       }
-      else if (victimPlayer) {
-	victimPlayer->setExplode(TimeKeeper::getTick());
-	const float* pos = victimPlayer->getPosition();
-	if (reason == GotRunOver)
-	  playWorldSound(SFX_RUNOVER, pos[0], pos[1], pos[2], killerLocal == myTank);
+    }
+    else if (victimPlayer) {
+      victimPlayer->setExplode(TimeKeeper::getTick());
+      const float* pos = victimPlayer->getPosition();
+      if (reason == GotRunOver)
+	playWorldSound(SFX_RUNOVER, pos[0], pos[1], pos[2], killerLocal == myTank);
+      else
+	playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], killerLocal == myTank);
+      float explodePos[3];
+      explodePos[0] = pos[0];
+      explodePos[1] = pos[1];
+      explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      addTankExplosion(explodePos);
+    }
+    if (killerLocal) {
+      // local player did it
+      if (shotId >= 0) {
+	// terminate the shot
+	killerLocal->endShot(shotId, true);
+      }
+      if (victimPlayer && killerLocal != victimPlayer) {
+	if (victimPlayer->getTeam() == killerLocal->getTeam() &&
+	    ((killerLocal->getTeam() != RogueTeam) || (World::getWorld()->allowRabbit()))) {
+	  if (killerLocal == myTank) {
+	    hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
+	    playLocalSound( SFX_KILL_TEAM );
+	  }
+	  // teammate
+	  killerLocal->changeScore(0, 1, 1);
+	}
 	else
-	  playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], killerLocal == myTank);
+	  // enemy
+	  killerLocal->changeScore(1, 0, 0);
+      }
+    }
+
+    // handle my personal score against other players
+    if ((killerPlayer == myTank || victimPlayer == myTank) &&
+	!(killerPlayer == myTank && victimPlayer == myTank)) {
+      if (killerLocal == myTank) {
+	if (victimPlayer)
+	  victimPlayer->changeLocalScore(1, 0, 0);
+	myTank->setNemesis(victimPlayer);
+      }
+      else {
+	if (killerPlayer)
+	  killerPlayer->changeLocalScore(0, 1, killerPlayer->getTeam() == victimPlayer->getTeam() ? 1 : 0);
+	myTank->setNemesis(killerPlayer);
+      }
+    }
+
+    // add message
+    if (human && victimPlayer) {
+      if (killerPlayer == victimPlayer) {
+	std::string message(ColorStrings[WhiteColor]);
+	message += "blew myself up";
+	addMessage(victimPlayer, message);
+      }
+      else if (!killerPlayer) {
+	addMessage(victimPlayer, "destroyed by (UNKNOWN)");
+      }
+      else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
+	std::string message(ColorStrings[WhiteColor]);
+	message += "destroyed by ";
+	if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
+	    killerPlayer->getTeam() != RogueTeam)
+	  message += "teammate ";
+	message += ColorStrings[killerPlayer->getTeam()];
+	message += killerPlayer->getCallSign();
+	addMessage(victimPlayer, message);
+      }
+      else {
+	const ShotPath* shot = killerPlayer->getShot(int(shotId));
+	std::string message (ColorStrings[WhiteColor]);
+	std::string playerStr;
+	if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
+	    killerPlayer->getTeam() != RogueTeam)
+	  playerStr += "teammate ";
+
+	if (victimPlayer == myTank) {
+	  if (BZDB->get("killerhighlight") == "0")
+	    playerStr += ColorStrings[BlinkColor];
+	  else if (BZDB->get("killerhighlight") == "1")
+	    playerStr += ColorStrings[UnderlineColor];
+	}
+	playerStr += ColorStrings[killerPlayer->getTeam()];
+	playerStr += killerPlayer->getCallSign();
+
+	if (victimPlayer == myTank)
+	  playerStr += ColorStrings[ResetColor];
+	playerStr += ColorStrings[WhiteColor];
+
+	// Give more informative kill messages
+	FlagType* shotFlag = shot->getFlag();
+	if (shotFlag == Flags::Laser) {
+	  message += "was fried by ";
+	  message += playerStr;
+	  message += "'s laser";
+	}
+	else if (shotFlag == Flags::GuidedMissile) {
+	  message += "was destroyed by ";
+	  message += playerStr;
+	  message += "'s guided missile";
+	}
+	else if (shotFlag == Flags::ShockWave) {
+	  message += "felt the effects of ";
+	  message += playerStr;
+	  message += "'s shockwave";
+	}
+	else if (shotFlag == Flags::InvisibleBullet) {
+	  message += "didn't see ";
+	  message += playerStr;
+	  message += "'s bullet";
+	}
+	else if (shotFlag == Flags::MachineGun) {
+	  message += "was turned into swiss cheese by ";
+	  message += playerStr;
+	  message += "'s machine gun";
+	}
+	else if (shotFlag == Flags::SuperBullet) {
+	  message += "got skewered by ";
+	  message += playerStr;
+	  message += "'s super bullet";
+	}
+	else {
+	  message += "killed by ";
+	  message += playerStr;
+	}
+	addMessage(victimPlayer, message, killerPlayer==myTank);
+      }
+    }
+
+    // blow up if killer has genocide flag and i'm on same team as victim
+    // (and we're not rogues, unless in rabbit mode)
+    if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
+	victimPlayer->getTeam() == myTank->getTeam() &&
+	((myTank->getTeam() != RogueTeam) || World::getWorld()->allowRabbit()) && shotId >= 0) {
+      // now see if shot was fired with a GenocideFlag
+      const ShotPath* shot = killerPlayer->getShot(int(shotId));
+      if (shot && shot->getFlag() == Flags::Genocide) {
+	gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
+      }
+    }
+
+#ifdef ROBOT
+    // blow up robots on victim's team if shot was genocide
+    if (killerPlayer && victimPlayer && shotId >= 0) {
+      const ShotPath* shot = killerPlayer->getShot(int(shotId));
+      if (shot && shot->getFlag() == Flags::Genocide)
+	for (int i = 0; i < numRobots; i++)
+	  if (victimPlayer != robots[i] &&
+	      victimPlayer->getTeam() == robots[i]->getTeam() &&
+	      robots[i]->getTeam() != RogueTeam)
+	    gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+    }
+#endif
+
+    checkScores = true;
+    break;
+  }
+
+  case MsgGrabFlag: {
+    // ROBOT -- FIXME -- robots don't grab flag at the moment
+    PlayerId id;
+    uint16_t flagIndex;
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUShort(msg, flagIndex);
+    msg = world->getFlag(int(flagIndex)).unpack(msg);
+    Player* tank = lookupPlayer(id);
+    if (!tank) break;
+
+    // player now has flag
+    tank->setFlag(world->getFlag(flagIndex).type);
+    if (tank == myTank) {
+      // not allowed to grab it if not on the ground
+      if (myTank->getLocation() != LocalPlayer::OnGround &&
+	  myTank->getLocation() != LocalPlayer::OnBuilding) {
+	serverLink->sendDropFlag(myTank->getPosition());
+      }
+      else {
+	// grabbed flag
+	playLocalSound(myTank->getFlag()->endurance != FlagSticky ?
+		       SFX_GRAB_FLAG : SFX_GRAB_BAD);
+	updateFlag(myTank->getFlag());
+      }
+    }
+    else if (myTank->getTeam() != RabbitTeam && tank &&
+	     tank->getTeam() != myTank->getTeam() &&
+	     world->getFlag(flagIndex).type->flagTeam == myTank->getTeam()) {
+      hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
+      playLocalSound(SFX_ALERT);
+    }
+    else {
+      FlagType* fd = world->getFlag(flagIndex).type;
+      if ( fd->flagTeam != NoTeam
+	   && fd->flagTeam != tank->getTeam()
+	   && ((tank && (tank->getTeam() == myTank->getTeam())))
+	   && (Team::isColorTeam(myTank->getTeam()))) {
+	hud->setAlert(1, "Team Grab!!!", 3.0f, false);
+	const float* pos = tank->getPosition();
+	playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
+      }
+    }
+    std::string message("grabbed ");
+    message += tank->getFlag()->flagName;
+    message += " flag";
+    addMessage(tank, message);
+    break;
+  }
+
+  case MsgDropFlag: {
+    PlayerId id;
+    uint16_t flagIndex;
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUShort(msg, flagIndex);
+    msg = world->getFlag(int(flagIndex)).unpack(msg);
+    Player* tank = lookupPlayer(id);
+    if (!tank) break;
+    handleFlagDropped(tank);
+    break;
+  }
+
+  case MsgCaptureFlag: {
+    PlayerId id;
+    uint16_t flagIndex, team;
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUShort(msg, flagIndex);
+    msg = nboUnpackUShort(msg, team);
+    Player* capturer = lookupPlayer(id);
+    int capturedTeam = world->getFlag(int(flagIndex)).type->flagTeam;
+
+    // player no longer has flag
+    if (capturer) {
+      capturer->setFlag(Flags::Null);
+      if (capturer == myTank) {
+	updateFlag(Flags::Null);
+      }
+
+      // add message
+      if (int(capturer->getTeam()) == capturedTeam) {
+	std::string message("took my flag into ");
+	message += Team::getName(TeamColor(team));
+	message += " territory";
+	addMessage(capturer, message);
+      }
+      else {
+	std::string message("captured ");
+	message += Team::getName(TeamColor(capturedTeam));
+	message += "'s flag";
+	addMessage(capturer, message);
+      }
+    }
+
+    // play sound -- if my team is same as captured flag then my team lost,
+    // but if I'm on the same team as the capturer then my team won.
+    if (capturedTeam == int(myTank->getTeam()))
+      playLocalSound(SFX_LOSE);
+    else if (capturer->getTeam() == myTank->getTeam())
+      playLocalSound(SFX_CAPTURE);
+
+    // blow up if my team flag captured
+    if (capturedTeam == int(myTank->getTeam())) {
+      gotBlowedUp(myTank, GotCaptured, id);
+      myTank->restartOnBase = true;
+    }
+
+    //kill all my robots if they are on the captured team
+    for (int r = 0; r < numRobots; r++) {
+      if (robots[r]->getTeam() == capturedTeam) {
+	gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
+	robots[r]->restartOnBase = true;
+      }
+    }
+
+
+    // everybody who's alive on capture team will be blowing up
+    // but we're not going to get an individual notification for
+    // each of them, so add an explosion for each now.  don't
+    // include me, though;  I already blew myself up.
+    for (int i = 0; i < curMaxPlayers; i++) {
+      if (player[i] &&
+	  player[i]->isAlive() &&
+	  player[i]->getTeam() == capturedTeam) {
+	const float* pos = player[i]->getPosition();
+	playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], false);
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
 	explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 	addTankExplosion(explodePos);
       }
-      if (killerLocal) {
-	// local player did it
-	if (shotId >= 0) {
-	  // terminate the shot
-	  killerLocal->endShot(shotId, true);
-	}
-	if (victimPlayer && killerLocal != victimPlayer) {
-	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-		  ((killerLocal->getTeam() != RogueTeam) || (World::getWorld()->allowRabbit()))) {
-	    if (killerLocal == myTank) {
-		 hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
-		 playLocalSound( SFX_KILL_TEAM );
-	    }
-	    // teammate
-	    killerLocal->changeScore(0, 1, 1);
-	  }
-	  else
-	    // enemy
-	    killerLocal->changeScore(1, 0, 0);
-	}
-      }
+    }
 
-      // handle my personal score against other players
-      if ((killerPlayer == myTank || victimPlayer == myTank) &&
-	 !(killerPlayer == myTank && victimPlayer == myTank)) {
-	if (killerLocal == myTank) {
-	  if (victimPlayer)
-	    victimPlayer->changeLocalScore(1, 0, 0);
-	  myTank->setNemesis(victimPlayer);
-	}
+    checkScores = true;
+    break;
+  }
+
+  case MsgNewRabbit: {
+    PlayerId id;
+    msg = nboUnpackUByte(msg, id);
+    Player *rabbit = lookupPlayer(id);
+
+    for (int i = 0; i < curMaxPlayers; i++) {
+      if (player[i])
+	player[i]->setHunted(false);
+      if (i != id && player[i] && player[i]->getTeam() != RogueTeam
+	  && player[i]->getTeam() != ObserverTeam) {
+	player[i]->changeTeam(RogueTeam);
+      }
+    }
+
+    if (rabbit != NULL) {
+      rabbit->changeTeam(RabbitTeam);
+      if (rabbit == myTank) {
+	if (myTank->isPaused())
+	  serverLink->sendNewRabbit();
 	else {
-	  if (killerPlayer)
-	    killerPlayer->changeLocalScore(0, 1, killerPlayer->getTeam() == victimPlayer->getTeam() ? 1 : 0);
-	  myTank->setNemesis(killerPlayer);
+	  hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
+	  playLocalSound(SFX_HUNT_SELECT);
 	}
+	hud->setHunting(false);
+      } else if (myTank->getTeam() != ObserverTeam) {
+	myTank->changeTeam(RogueTeam);
+	rabbit->setHunted(true);
+	hud->setHunting(true);
       }
 
-      // add message
-      if (human && victimPlayer) {
-	if (killerPlayer == victimPlayer) {
-	  std::string message(ColorStrings[WhiteColor]);
-	  message += "blew myself up";
-	  addMessage(victimPlayer, message);
-	}
-	else if (!killerPlayer) {
-	  addMessage(victimPlayer, "destroyed by (UNKNOWN)");
-	}
-	else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
-	  std::string message(ColorStrings[WhiteColor]);
-	  message += "destroyed by ";
-	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
-	      killerPlayer->getTeam() != RogueTeam)
-	    message += "teammate ";
-	  message += ColorStrings[killerPlayer->getTeam()];
-	  message += killerPlayer->getCallSign();
-	  addMessage(victimPlayer, message);
-	}
-	else {
-	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	  std::string message (ColorStrings[WhiteColor]);
-	  std::string playerStr;
-	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
-	      killerPlayer->getTeam() != RogueTeam)
-	    playerStr += "teammate ";
-
-	  if (victimPlayer == myTank) {
-	    if (BZDB->get("killerhighlight") == "0")
-	      playerStr += ColorStrings[BlinkColor];
-	    else if (BZDB->get("killerhighlight") == "1")
-	      playerStr += ColorStrings[UnderlineColor];
-	  }
-	  playerStr += ColorStrings[killerPlayer->getTeam()];
-	  playerStr += killerPlayer->getCallSign();
-
-	  if (victimPlayer == myTank)
-	    playerStr += ColorStrings[ResetColor];
-	  playerStr += ColorStrings[WhiteColor];
-
-	  // Give more informative kill messages
-	  FlagType* shotFlag = shot->getFlag();
-	  if (shotFlag == Flags::Laser) {
-	    message += "was fried by ";
-	    message += playerStr;
-	    message += "'s laser";
-	  }
-	  else if (shotFlag == Flags::GuidedMissile) {
-	    message += "was destroyed by ";
-	    message += playerStr;
-	    message += "'s guided missile";
-	  }
-	  else if (shotFlag == Flags::ShockWave) {
-	    message += "felt the effects of ";
-	    message += playerStr;
-	    message += "'s shockwave";
-	  }
-	  else if (shotFlag == Flags::InvisibleBullet) {
-	    message += "didn't see ";
-	    message += playerStr;
-	    message += "'s bullet";
-	  }
-	  else if (shotFlag == Flags::MachineGun) {
-	    message += "was turned into swiss cheese by ";
-	    message += playerStr;
-	    message += "'s machine gun";
-	  }
-	  else if (shotFlag == Flags::SuperBullet) {
-	    message += "got skewered by ";
-	    message += playerStr;
-	    message += "'s super bullet";
-	  }
-	  else {
-	    message += "killed by ";
-	    message += playerStr;
-	  }
-	  addMessage(victimPlayer, message, killerPlayer==myTank);
-	}
-      }
-
-      // blow up if killer has genocide flag and i'm on same team as victim
-      // (and we're not rogues, unless in rabbit mode)
-      if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
-		victimPlayer->getTeam() == myTank->getTeam() &&
-		((myTank->getTeam() != RogueTeam) || World::getWorld()->allowRabbit()) && shotId >= 0) {
-	// now see if shot was fired with a GenocideFlag
-	const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	if (shot && shot->getFlag() == Flags::Genocide) {
-	  gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
-	}
-      }
+      addMessage(rabbit, "is now the rabbit", true);
+    }
 
 #ifdef ROBOT
-      // blow up robots on victim's team if shot was genocide
-      if (killerPlayer && victimPlayer && shotId >= 0) {
-	const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	if (shot && shot->getFlag() == Flags::Genocide)
-	  for (int i = 0; i < numRobots; i++)
-	    if (victimPlayer != robots[i] &&
-		victimPlayer->getTeam() == robots[i]->getTeam() &&
-		robots[i]->getTeam() != RogueTeam)
-	      gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
-      }
-#endif
-
-      checkScores = true;
-      break;
-    }
-
-    case MsgGrabFlag: {
-// ROBOT -- FIXME -- robots don't grab flag at the moment
-      PlayerId id;
-      uint16_t flagIndex;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, flagIndex);
-      msg = world->getFlag(int(flagIndex)).unpack(msg);
-      Player* tank = lookupPlayer(id);
-      if (!tank) break;
-
-      // player now has flag
-      tank->setFlag(world->getFlag(flagIndex).type);
-      if (tank == myTank) {
-	// not allowed to grab it if not on the ground
-	if (myTank->getLocation() != LocalPlayer::OnGround &&
-	  myTank->getLocation() != LocalPlayer::OnBuilding) {
-	  serverLink->sendDropFlag(myTank->getPosition());
-	}
-	else {
-	  // grabbed flag
-	  playLocalSound(myTank->getFlag()->endurance != FlagSticky ?
-	      SFX_GRAB_FLAG : SFX_GRAB_BAD);
-	  updateFlag(myTank->getFlag());
-	}
-      }
-      else if (myTank->getTeam() != RabbitTeam && tank &&
-	       tank->getTeam() != myTank->getTeam() &&
-	       world->getFlag(flagIndex).type->flagTeam == myTank->getTeam()) {
-	hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
-	playLocalSound(SFX_ALERT);
-      }
-      else {
-	FlagType* fd = world->getFlag(flagIndex).type;
-	if ( fd->flagTeam != NoTeam
-	     && fd->flagTeam != tank->getTeam()
-	     && ((tank && (tank->getTeam() == myTank->getTeam())))
-            && (Team::isColorTeam(myTank->getTeam()))) {
-	  hud->setAlert(1, "Team Grab!!!", 3.0f, false);
-	  const float* pos = tank->getPosition();
-	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
-	}
-      }
-      std::string message("grabbed ");
-      message += tank->getFlag()->flagName;
-      message += " flag";
-      addMessage(tank, message);
-      break;
-    }
-
-    case MsgDropFlag: {
-      PlayerId id;
-      uint16_t flagIndex;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, flagIndex);
-      msg = world->getFlag(int(flagIndex)).unpack(msg);
-      Player* tank = lookupPlayer(id);
-      if (!tank) break;
-      handleFlagDropped(tank);
-      break;
-    }
-
-    case MsgCaptureFlag: {
-      PlayerId id;
-      uint16_t flagIndex, team;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, flagIndex);
-      msg = nboUnpackUShort(msg, team);
-      Player* capturer = lookupPlayer(id);
-      int capturedTeam = world->getFlag(int(flagIndex)).type->flagTeam;
-
-      // player no longer has flag
-      if (capturer) {
-	capturer->setFlag(Flags::Null);
-	if (capturer == myTank) {
-	  updateFlag(Flags::Null);
-	}
-
-	// add message
-	if (int(capturer->getTeam()) == capturedTeam) {
-	  std::string message("took my flag into ");
-	  message += Team::getName(TeamColor(team));
-	  message += " territory";
-	  addMessage(capturer, message);
-	}
-	else {
-	  std::string message("captured ");
-	  message += Team::getName(TeamColor(capturedTeam));
-	  message += "'s flag";
-	  addMessage(capturer, message);
-	}
-      }
-
-      // play sound -- if my team is same as captured flag then my team lost,
-      // but if I'm on the same team as the capturer then my team won.
-      if (capturedTeam == int(myTank->getTeam()))
-	playLocalSound(SFX_LOSE);
-      else if (capturer->getTeam() == myTank->getTeam())
-	playLocalSound(SFX_CAPTURE);
-
-      // blow up if my team flag captured
-      if (capturedTeam == int(myTank->getTeam())) {
-	gotBlowedUp(myTank, GotCaptured, id);
-	myTank->restartOnBase = true;
-      }
-
-      //kill all my robots if they are on the captured team
-      for (int r = 0; r < numRobots; r++) {
-        if (robots[r]->getTeam() == capturedTeam) {
-	  gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
-	  robots[r]->restartOnBase = true;
-	}
-      }
-
-
-      // everybody who's alive on capture team will be blowing up
-      // but we're not going to get an individual notification for
-      // each of them, so add an explosion for each now.  don't
-      // include me, though;  I already blew myself up.
-      for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i] &&
-	    player[i]->isAlive() &&
-	    player[i]->getTeam() == capturedTeam) {
-	  const float* pos = player[i]->getPosition();
-	  playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], false);
-	  float explodePos[3];
-	  explodePos[0] = pos[0];
-	  explodePos[1] = pos[1];
-	  explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-	  addTankExplosion(explodePos);
-	}
-      }
-
-      checkScores = true;
-      break;
-    }
-
-    case MsgNewRabbit: {
-      PlayerId id;
-      msg = nboUnpackUByte(msg, id);
-      Player *rabbit = lookupPlayer(id);
-
-      for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i])
-	  player[i]->setHunted(false);
-        if (i != id && player[i] && player[i]->getTeam() != RogueTeam
-	    && player[i]->getTeam() != ObserverTeam) {
-	   player[i]->changeTeam(RogueTeam);
-	}
-      }
-
-      if (rabbit != NULL) {
-	rabbit->changeTeam(RabbitTeam);
-	if (rabbit == myTank) {
-	  if (myTank->isPaused())
-	    serverLink->sendNewRabbit();
-          else {
-            hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
-            playLocalSound(SFX_HUNT_SELECT);
-          }
-	  hud->setHunting(false);
-	} else if (myTank->getTeam() != ObserverTeam) {
-	  myTank->changeTeam(RogueTeam);
-	  rabbit->setHunted(true);
-	  hud->setHunting(true);
-	}
-
-	addMessage(rabbit, "is now the rabbit", true);
-      }
-
-#ifdef ROBOT
-      for (int r = 0; r < numRobots; r++)
-	if (robots[r]->getId() == id)
-	  robots[r]->changeTeam(RabbitTeam);
-	else
-	  robots[r]->changeTeam(RogueTeam);
-#endif
-      break;
-    }
-
-    case MsgShotBegin: {
-      FiringInfo firingInfo;
-      msg = firingInfo.unpack(msg);
-
-      const int shooterid = firingInfo.shot.player;
-      if (shooterid != ServerPlayer) {
-        if (player[shooterid] && player[shooterid]->getId() == shooterid)
-          player[shooterid]->addShot(firingInfo);
-        else
-	  break;
-      }
+    for (int r = 0; r < numRobots; r++)
+      if (robots[r]->getId() == id)
+	robots[r]->changeTeam(RabbitTeam);
       else
-	World::getWorld()->getWorldWeapons()->addShot(firingInfo);
+	robots[r]->changeTeam(RogueTeam);
+#endif
+    break;
+  }
 
-      if (human) {
-        const float* pos = firingInfo.shot.pos;
-        if (firingInfo.flagType == Flags::ShockWave)
-          playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
-        else if (firingInfo.flagType == Flags::Laser)
-          playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
-        else if (firingInfo.flagType == Flags::GuidedMissile)
-          playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
-        else if (firingInfo.flagType == Flags::Thief)
-          playWorldSound(SFX_THIEF, pos[0], pos[1], pos[2]);
-        else
-          playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
-      }
-      break;
+  case MsgShotBegin: {
+    FiringInfo firingInfo;
+    msg = firingInfo.unpack(msg);
+
+    const int shooterid = firingInfo.shot.player;
+    if (shooterid != ServerPlayer) {
+      if (player[shooterid] && player[shooterid]->getId() == shooterid)
+	player[shooterid]->addShot(firingInfo);
+      else
+	break;
     }
+    else
+      World::getWorld()->getWorldWeapons()->addShot(firingInfo);
 
-    case MsgShotEnd: {
-      PlayerId id;
-      int16_t shotId;
-      uint16_t reason;
+    if (human) {
+      const float* pos = firingInfo.shot.pos;
+      if (firingInfo.flagType == Flags::ShockWave)
+	playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
+      else if (firingInfo.flagType == Flags::Laser)
+	playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
+      else if (firingInfo.flagType == Flags::GuidedMissile)
+	playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
+      else if (firingInfo.flagType == Flags::Thief)
+	playWorldSound(SFX_THIEF, pos[0], pos[1], pos[2]);
+      else
+	playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
+    }
+    break;
+  }
+
+  case MsgShotEnd: {
+    PlayerId id;
+    int16_t shotId;
+    uint16_t reason;
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackShort(msg, shotId);
+    msg = nboUnpackUShort(msg, reason);
+    BaseLocalPlayer* localPlayer = getLocalPlayer(id);
+
+    if (localPlayer)
+      localPlayer->endShot(int(shotId), false, reason == 0);
+    else {
+      Player *pl = lookupPlayer(id);
+      if (pl)
+	pl->endShot(int(shotId), false, reason == 0);
+    }
+    break;
+  }
+
+  case MsgScore: {
+    uint8_t numScores;
+    PlayerId id;
+    uint16_t wins, losses, tks;
+    msg = nboUnpackUByte(msg, numScores);
+
+    for (uint8_t s = 0; s < numScores; s++) {
       msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackShort(msg, shotId);
-      msg = nboUnpackUShort(msg, reason);
-      BaseLocalPlayer* localPlayer = getLocalPlayer(id);
+      msg = nboUnpackUShort(msg, wins);
+      msg = nboUnpackUShort(msg, losses);
+      msg = nboUnpackUShort(msg, tks);
 
-      if (localPlayer)
-	localPlayer->endShot(int(shotId), false, reason == 0);
-      else {
-        Player *pl = lookupPlayer(id);
-        if (pl)
-	  pl->endShot(int(shotId), false, reason == 0);
-	}
-      break;
+      int i = lookupPlayerIndex(id);
+      if (i >= 0)
+	player[i]->changeScore(wins - player[i]->getWins(),
+			       losses - player[i]->getLosses(),
+			       tks - player[i]->getTeamKills());
     }
+    break;
+  }
 
-    case MsgScore: {
-      uint8_t numScores;
-      PlayerId id;
-      uint16_t wins, losses, tks;
-      msg = nboUnpackUByte(msg, numScores);
+  case MsgSetVar: {
+    msg = handleMsgSetVars(msg);
+    break;
+  }
 
-      for (uint8_t s = 0; s < numScores; s++) {
-        msg = nboUnpackUByte(msg, id);
-        msg = nboUnpackUShort(msg, wins);
-        msg = nboUnpackUShort(msg, losses);
-        msg = nboUnpackUShort(msg, tks);
-
-        int i = lookupPlayerIndex(id);
-        if (i >= 0)
-	  player[i]->changeScore(wins - player[i]->getWins(),
-                                 losses - player[i]->getLosses(),
-			         tks - player[i]->getTeamKills());
-      }
-      break;
+  case MsgTeleport: {
+    PlayerId id;
+    uint16_t from, to;
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUShort(msg, from);
+    msg = nboUnpackUShort(msg, to);
+    Player* tank = lookupPlayer(id);
+    if (tank && tank != myTank) {
+      int face;
+      const Teleporter* teleporter = world->getTeleporter(int(to), face);
+      const float* pos = teleporter->getPosition();
+      tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
+      playWorldSound(SFX_TELEPORT, pos[0], pos[1], pos[2]);
     }
+    break;
+  }
 
-    case MsgSetVar: {
-      msg = handleMsgSetVars(msg);
-      break;
-    }
-
-    case MsgTeleport: {
-      PlayerId id;
-      uint16_t from, to;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, from);
-      msg = nboUnpackUShort(msg, to);
-      Player* tank = lookupPlayer(id);
-      if (tank && tank != myTank) {
-	int face;
-	const Teleporter* teleporter = world->getTeleporter(int(to), face);
-	const float* pos = teleporter->getPosition();
-	tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-	playWorldSound(SFX_TELEPORT, pos[0], pos[1], pos[2]);
-      }
-      break;
-    }
-
-    case MsgTransferFlag:
+  case MsgTransferFlag:
     {
-	PlayerId fromId, toId;
-	unsigned short flagIndex;
-	msg = nboUnpackUByte(msg, fromId);
-	msg = nboUnpackUByte(msg, toId);
-	msg = nboUnpackUShort(msg, flagIndex);
-	msg = world->getFlag(int(flagIndex)).unpack(msg);
-	Player* fromTank = lookupPlayer(fromId);
-	Player* toTank = lookupPlayer(toId);
-	handleFlagTransferred( fromTank, toTank, flagIndex);
-	break;
+      PlayerId fromId, toId;
+      unsigned short flagIndex;
+      msg = nboUnpackUByte(msg, fromId);
+      msg = nboUnpackUByte(msg, toId);
+      msg = nboUnpackUShort(msg, flagIndex);
+      msg = world->getFlag(int(flagIndex)).unpack(msg);
+      Player* fromTank = lookupPlayer(fromId);
+      Player* toTank = lookupPlayer(toId);
+      handleFlagTransferred( fromTank, toTank, flagIndex);
+      break;
     }
 
 
-     case MsgMessage: {
-      PlayerId src;
-      PlayerId dst;
-      msg = nboUnpackUByte(msg, src);
-      msg = nboUnpackUByte(msg, dst);
-      Player* srcPlayer = lookupPlayer(src);
-      Player* dstPlayer = lookupPlayer(dst);
-      TeamColor dstTeam = PlayerIdToTeam(dst);
-      bool toAll = (dst == AllPlayers);
-      bool fromServer = (src == ServerPlayer);
+  case MsgMessage: {
+    PlayerId src;
+    PlayerId dst;
+    msg = nboUnpackUByte(msg, src);
+    msg = nboUnpackUByte(msg, dst);
+    Player* srcPlayer = lookupPlayer(src);
+    Player* dstPlayer = lookupPlayer(dst);
+    TeamColor dstTeam = PlayerIdToTeam(dst);
+    bool toAll = (dst == AllPlayers);
+    bool fromServer = (src == ServerPlayer);
 
-      const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
-      const std::string dstName = dstPlayer ?
-        dstPlayer->getCallSign() : "(UNKNOWN)";
+    const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
+    const std::string dstName = dstPlayer ?
+      dstPlayer->getCallSign() : "(UNKNOWN)";
 
-      std::string fullMsg;
+    std::string fullMsg;
 
-      bool ignore = false;
-      unsigned int i;
-      for (i = 0; i < silencePlayers.size(); i++) {
-	const std::string &silenceCallSign = silencePlayers[i];
-	if (srcName == silenceCallSign || "*" == silenceCallSign) {
-	  ignore = true;
-	  break;
-	}
-      }
-      if (ignore) {
-	// to verify working
-	std::string msg2 = "Ignored Msg";
-	if (silencePlayers[i] != "*") {
-	  msg2 = msg2 + " from " + silencePlayers[i];
-	} else {
-	  //if * just echo a generic Ignored
-	}
-	addMessage(NULL,msg2);
+    bool ignore = false;
+    unsigned int i;
+    for (i = 0; i < silencePlayers.size(); i++) {
+      const std::string &silenceCallSign = silencePlayers[i];
+      if (srcName == silenceCallSign || "*" == silenceCallSign) {
+	ignore = true;
 	break;
       }
-
-      // CLIENTQUERY hack
-      if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
-	char messageBuffer[MessageLen];
-	memset(messageBuffer, 0, MessageLen);
-	sprintf(messageBuffer,"Version %s", getAppVersion());
-	if (startupInfo.useUDPconnection)
-	  strcat(messageBuffer,"+UDP");
-
-	char response[PlayerIdPLen + MessageLen];
-	void* buf = response;
-	buf = nboPackUByte(buf, src);
-	nboPackString(buf, messageBuffer, MessageLen);
-	serverLink->send(MsgMessage, sizeof(response), response);
-	const char *oldcolor = NULL;
-        if (dstTeam == RogueTeam || srcPlayer->getTeam() == NoTeam)
-          oldcolor = ColorStrings[RogueTeam];
-        else
-          oldcolor = ColorStrings[srcPlayer->getTeam()];
-
-        addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
-	break;
+    }
+    if (ignore) {
+      // to verify working
+      std::string msg2 = "Ignored Msg";
+      if (silencePlayers[i] != "*") {
+	msg2 = msg2 + " from " + silencePlayers[i];
+      } else {
+	//if * just echo a generic Ignored
       }
+      addMessage(NULL,msg2);
+      break;
+    }
 
-      OpenGLTexFont::stripAnsiCodes((char*) msg, strlen ((char*) msg));
+    // CLIENTQUERY hack
+    if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
+      char messageBuffer[MessageLen];
+      memset(messageBuffer, 0, MessageLen);
+      sprintf(messageBuffer,"Version %s", getAppVersion());
+      if (startupInfo.useUDPconnection)
+	strcat(messageBuffer,"+UDP");
 
-      // if filtering is turned on, filter away the goo
-      if (wordfilter != NULL) {
-	wordfilter->filter((char *)msg);
-      }
+      char response[PlayerIdPLen + MessageLen];
+      void* buf = response;
+      buf = nboPackUByte(buf, src);
+      nboPackString(buf, messageBuffer, MessageLen);
+      serverLink->send(MsgMessage, sizeof(response), response);
+      const char *oldcolor = NULL;
+      if (dstTeam == RogueTeam || srcPlayer->getTeam() == NoTeam)
+	oldcolor = ColorStrings[RogueTeam];
+      else
+	oldcolor = ColorStrings[srcPlayer->getTeam()];
 
-      std::string text = BundleMgr::getCurrentBundle()->getLocalString(std::string((char*)msg));
+      addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
+      break;
+    }
 
-      if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
-          dstTeam == myTank->getTeam()) {
-	// message is for me
-	std::string colorStr;
+    OpenGLTexFont::stripAnsiCodes((char*) msg, strlen ((char*) msg));
 
-	if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-	  colorStr += ColorStrings[srcPlayer->getTeam()];
-	else
-	  colorStr += ColorStrings[RogueTeam];
+    // if filtering is turned on, filter away the goo
+    if (wordfilter != NULL) {
+      wordfilter->filter((char *)msg);
+    }
 
-	fullMsg += colorStr;
+    std::string text = BundleMgr::getCurrentBundle()->getLocalString(std::string((char*)msg));
 
-	// direct message to or from me
-        if (dstPlayer) {
-          if (fromServer && (text == "You are now an administrator!" || text == "Password Accepted, welcome back."))
-	      admin = true;
-	  // talking to myself? that's strange
-	  if (dstPlayer==myTank && srcPlayer==myTank) {
-	    fullMsg=text;
-	  }
-	  else {
-	    if (BZDB->get("killerhighlight") == "0")
-	      fullMsg += ColorStrings[BlinkColor];
-	    else if (BZDB->get("killerhighlight") == "1")
-	      fullMsg += ColorStrings[UnderlineColor];
-	    fullMsg += "[";
-	    if (srcPlayer == myTank) {
-	      fullMsg += "->";
-	      fullMsg += dstName;
-	      fullMsg += colorStr;
-	    }
-	    else {
-	      fullMsg += srcName;
-	      fullMsg += colorStr;
-	      fullMsg += "->";
-	      if (srcPlayer)
-		myTank->setRecipient(srcPlayer);
-	    }
-	    fullMsg += "]";
-	    fullMsg += ColorStrings[ResetColor];
-	    fullMsg += " ";
-	    fullMsg += ColorStrings[CyanColor];
-	    fullMsg += text;
-	  }
+    if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
+	dstTeam == myTank->getTeam()) {
+      // message is for me
+      std::string colorStr;
+
+      if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+	colorStr += ColorStrings[srcPlayer->getTeam()];
+      else
+	colorStr += ColorStrings[RogueTeam];
+
+      fullMsg += colorStr;
+
+      // direct message to or from me
+      if (dstPlayer) {
+	if (fromServer && (text == "You are now an administrator!" || text == "Password Accepted, welcome back."))
+	  admin = true;
+	// talking to myself? that's strange
+	if (dstPlayer==myTank && srcPlayer==myTank) {
+	  fullMsg=text;
 	}
 	else {
-	  // team message
-	  if (dstTeam != NoTeam) {
-#ifdef BWSUPPORT
-	    fullMsg = "[to ";
-	    fullMsg += Team::getName(TeamColor(dstTeam));
-	    fullMsg += "] ";
-#else
-	    fullMsg += "[Team] ";
-#endif
+	  if (BZDB->get("killerhighlight") == "0")
+	    fullMsg += ColorStrings[BlinkColor];
+	  else if (BZDB->get("killerhighlight") == "1")
+	    fullMsg += ColorStrings[UnderlineColor];
+	  fullMsg += "[";
+	  if (srcPlayer == myTank) {
+	    fullMsg += "->";
+	    fullMsg += dstName;
+	    fullMsg += colorStr;
 	  }
-	  fullMsg += srcName;
-	  fullMsg += colorStr;
-	  fullMsg += ": ";
+	  else {
+	    fullMsg += srcName;
+	    fullMsg += colorStr;
+	    fullMsg += "->";
+	    if (srcPlayer)
+	      myTank->setRecipient(srcPlayer);
+	  }
+	  fullMsg += "]";
+	  fullMsg += ColorStrings[ResetColor];
+	  fullMsg += " ";
 	  fullMsg += ColorStrings[CyanColor];
 	  fullMsg += text;
 	}
-        const char *oldcolor = NULL;
-        if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-          oldcolor = ColorStrings[srcPlayer->getTeam()];
-        else
-          oldcolor = ColorStrings[RogueTeam];
-        addMessage(NULL, fullMsg, false, oldcolor);
-
-	if (!srcPlayer || srcPlayer!=myTank)
-	  hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
       }
-      break;
+      else {
+	// team message
+	if (dstTeam != NoTeam) {
+#ifdef BWSUPPORT
+	  fullMsg = "[to ";
+	  fullMsg += Team::getName(TeamColor(dstTeam));
+	  fullMsg += "] ";
+#else
+	  fullMsg += "[Team] ";
+#endif
+	}
+	fullMsg += srcName;
+	fullMsg += colorStr;
+	fullMsg += ": ";
+	fullMsg += ColorStrings[CyanColor];
+	fullMsg += text;
+      }
+      const char *oldcolor = NULL;
+      if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+	oldcolor = ColorStrings[srcPlayer->getTeam()];
+      else
+	oldcolor = ColorStrings[RogueTeam];
+      addMessage(NULL, fullMsg, false, oldcolor);
+
+      if (!srcPlayer || srcPlayer!=myTank)
+	hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
     }
+    break;
+  }
 
     // inter-player relayed message
-    case MsgPlayerUpdate:
-    case MsgGMUpdate:
-    case MsgAudio:
-    case MsgVideo:
-    case MsgLagPing:
-      handlePlayerMessage(code, 0, msg);
-      break;
+  case MsgPlayerUpdate:
+  case MsgGMUpdate:
+  case MsgAudio:
+  case MsgVideo:
+  case MsgLagPing:
+    handlePlayerMessage(code, 0, msg);
+    break;
   }
 
   if (checkScores) updateHighScores();
@@ -3643,66 +3643,66 @@ static void		handleServerMessage(bool human, uint16_t code,
 //
 
 static void		handlePlayerMessage(uint16_t code, uint16_t,
-								void* msg)
+					    void* msg)
 {
   switch (code) {
-    case MsgPlayerUpdate: {
-      float timestamp; // could be used to enhance deadreckoning, but isn't for now
-      PlayerId id;
-      int32_t order;
-      msg = nboUnpackFloat(msg, timestamp);
-      msg = nboUnpackUByte(msg, id);
-      Player* tank = lookupPlayer(id);
-      if (!tank || tank == myTank) break;
-      nboUnpackInt(msg, order); // peek! don't update the msg pointer
-      if (order <= tank->getOrder()) break;
-      short oldStatus = tank->getStatus();
-      tank->unpack(msg);
-      short newStatus = tank->getStatus();
-      if ((oldStatus & short(PlayerState::Paused)) !=
-				(newStatus & short(PlayerState::Paused)))
-	addMessage(tank, (tank->getStatus() & PlayerState::Paused) ?
-						"Paused" : "Resumed");
-      if ((oldStatus & short(PlayerState::Exploding)) == 0 &&
-		(newStatus & short(PlayerState::Exploding)) != 0) {
-	// player has started exploding and we haven't gotten killed
-	// message yet -- set explosion now, play sound later (when we
-	// get killed message).  status is already !Alive so make player
-	// alive again, then call setExplode to kill him.
-	tank->setStatus(newStatus | short(PlayerState::Alive));
-	tank->setExplode(TimeKeeper::getTick());
-	// ROBOT -- play explosion now
-      }
-      break;
+  case MsgPlayerUpdate: {
+    float timestamp; // could be used to enhance deadreckoning, but isn't for now
+    PlayerId id;
+    int32_t order;
+    msg = nboUnpackFloat(msg, timestamp);
+    msg = nboUnpackUByte(msg, id);
+    Player* tank = lookupPlayer(id);
+    if (!tank || tank == myTank) break;
+    nboUnpackInt(msg, order); // peek! don't update the msg pointer
+    if (order <= tank->getOrder()) break;
+    short oldStatus = tank->getStatus();
+    tank->unpack(msg);
+    short newStatus = tank->getStatus();
+    if ((oldStatus & short(PlayerState::Paused)) !=
+	(newStatus & short(PlayerState::Paused)))
+      addMessage(tank, (tank->getStatus() & PlayerState::Paused) ?
+		 "Paused" : "Resumed");
+    if ((oldStatus & short(PlayerState::Exploding)) == 0 &&
+	(newStatus & short(PlayerState::Exploding)) != 0) {
+      // player has started exploding and we haven't gotten killed
+      // message yet -- set explosion now, play sound later (when we
+      // get killed message).  status is already !Alive so make player
+      // alive again, then call setExplode to kill him.
+      tank->setStatus(newStatus | short(PlayerState::Alive));
+      tank->setExplode(TimeKeeper::getTick());
+      // ROBOT -- play explosion now
     }
+    break;
+  }
 
-    case MsgGMUpdate: {
-      ShotUpdate shot;
-      msg = shot.unpack(msg);
-      Player* tank = lookupPlayer(shot.player);
-      if (!tank || tank == myTank) break;
-      RemotePlayer* remoteTank = (RemotePlayer*)tank;
-      RemoteShotPath* shotPath =
-		(RemoteShotPath*)remoteTank->getShot(shot.id);
-      if (shotPath) shotPath->update(shot, code, msg);
-      PlayerId targetId;
-      msg = nboUnpackUByte(msg, targetId);
-      Player* targetTank = lookupPlayer(targetId);
-      if (targetTank && (targetTank == myTank)) {
-	static TimeKeeper lastLockMsg;
-	if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
-	  playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);
-	  lastLockMsg=TimeKeeper::getTick();
-	  addMessage(tank, "locked on me");
-	}
+  case MsgGMUpdate: {
+    ShotUpdate shot;
+    msg = shot.unpack(msg);
+    Player* tank = lookupPlayer(shot.player);
+    if (!tank || tank == myTank) break;
+    RemotePlayer* remoteTank = (RemotePlayer*)tank;
+    RemoteShotPath* shotPath =
+      (RemoteShotPath*)remoteTank->getShot(shot.id);
+    if (shotPath) shotPath->update(shot, code, msg);
+    PlayerId targetId;
+    msg = nboUnpackUByte(msg, targetId);
+    Player* targetTank = lookupPlayer(targetId);
+    if (targetTank && (targetTank == myTank)) {
+      static TimeKeeper lastLockMsg;
+      if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
+	playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);
+	lastLockMsg=TimeKeeper::getTick();
+	addMessage(tank, "locked on me");
       }
-      break;
     }
+    break;
+  }
 
     // just echo lag ping message
-    case MsgLagPing:
-      serverLink->send(MsgLagPing,2,msg);
-      break;
+  case MsgLagPing:
+    serverLink->send(MsgLagPing,2,msg);
+    break;
   }
 }
 
@@ -3730,8 +3730,8 @@ static void		doMessages()
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++) {
     while ((e = robotServer[i]->read(code, len, msg, 0)) == 1);
-      if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
-	handleServerMessage(false, code, len, msg);
+    if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
+      handleServerMessage(false, code, len, msg);
   }
 #endif
 }
@@ -3776,7 +3776,7 @@ static void		updateFlags(float dt)
 }
 
 bool			addExplosion(const float* _pos,
-				float size, float duration)
+				     float size, float duration)
 {
   // ignore if no prototypes available;
   if (prototypeExplosions.size() == 0) return false;
@@ -3811,24 +3811,24 @@ bool			addExplosion(const float* _pos,
 
   int boom = (int) (bzfrand() * 8.0) + 3;
   while (boom--) {
-  // pick a random prototype explosion
-  const int index = (int)(bzfrand() * (float)prototypeExplosions.size());
+    // pick a random prototype explosion
+    const int index = (int)(bzfrand() * (float)prototypeExplosions.size());
 
-  // make a copy and initialize it
-  BillboardSceneNode* newExplosion = prototypeExplosions[index]->copy();
-  GLfloat pos[3];
-  pos[0] = _pos[0]+(float)(bzfrand()*12.0 - 6.0);
-  pos[1] = _pos[1]+(float)(bzfrand()*12.0 - 6.0);
-  pos[2] = _pos[2]+(float)(bzfrand()*10.0);
-  newExplosion->move(pos);
-  newExplosion->setSize(size);
-  newExplosion->setDuration(duration);
-  newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
-  newExplosion->setLightScaling(size / BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
-  newExplosion->setLightFadeStartTime(0.7f * duration);
+    // make a copy and initialize it
+    BillboardSceneNode* newExplosion = prototypeExplosions[index]->copy();
+    GLfloat pos[3];
+    pos[0] = _pos[0]+(float)(bzfrand()*12.0 - 6.0);
+    pos[1] = _pos[1]+(float)(bzfrand()*12.0 - 6.0);
+    pos[2] = _pos[2]+(float)(bzfrand()*10.0);
+    newExplosion->move(pos);
+    newExplosion->setSize(size);
+    newExplosion->setDuration(duration);
+    newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
+    newExplosion->setLightScaling(size / BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+    newExplosion->setLightFadeStartTime(0.7f * duration);
 
-  // add copy to list of current explosions
-  explosions.push_back(newExplosion);
+    // add copy to list of current explosions
+    explosions.push_back(newExplosion);
   }
 
   return true;
@@ -3891,9 +3891,9 @@ static void		handleMyTankKilled(int reason)
   // blow me up
   myTank->explodeTank();
   if (reason == GotRunOver)
-	playLocalSound(SFX_RUNOVER);
+    playLocalSound(SFX_RUNOVER);
   else
-	playLocalSound(SFX_DIE);
+    playLocalSound(SFX_DIE);
 
   // i lose a point
   myTank->changeScore(0, 1, 0);
@@ -3931,10 +3931,18 @@ static void		handleFlagDropped(Player* tank)
   if (tank->getFlag() == Flags::Null) return;
 
   if (tank == myTank) {
+
+    // make sure the player must reload after theft
+    if (tank->getFlag() == Flags::Thief) {
+      myTank->forceReload(BZDB->eval(StateDatabase::BZDB_THIEFDROPTIME));
+    }
+
     // update display and play sound effects
     playLocalSound(SFX_DROP_FLAG);
     updateFlag(Flags::Null);
+
   }
+
 
   // add message
   std::string message("dropped ");
@@ -3948,42 +3956,42 @@ static void		handleFlagDropped(Player* tank)
 
 static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex)
 {
-	Flag f = world->getFlag(flagIndex);
+  Flag f = world->getFlag(flagIndex);
 
-	fromTank->setFlag(Flags::Null);
-	toTank->setFlag(f.type);
+  fromTank->setFlag(Flags::Null);
+  toTank->setFlag(f.type);
 
-	if ((fromTank == myTank) || (toTank == myTank))
-		updateFlag(myTank->getFlag());
+  if ((fromTank == myTank) || (toTank == myTank))
+    updateFlag(myTank->getFlag());
 
-	const float *pos = toTank->getPosition();
-	if (f.type->flagTeam != ::NoTeam) {
-	  if ((toTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam != myTank->getTeam()))
-	    playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2]);
-	  else if ((fromTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam == myTank->getTeam())) {
-	    hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
-	    playLocalSound(SFX_ALERT);
-	  }
-	}
+  const float *pos = toTank->getPosition();
+  if (f.type->flagTeam != ::NoTeam) {
+    if ((toTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam != myTank->getTeam()))
+      playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2]);
+    else if ((fromTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam == myTank->getTeam())) {
+      hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
+      playLocalSound(SFX_ALERT);
+    }
+  }
 
-	std::string message(toTank->getCallSign());
-	message += " stole ";
-	message += fromTank->getCallSign();
-	message += "'s flag";
-	addMessage(toTank, message);
+  std::string message(toTank->getCallSign());
+  message += " stole ";
+  message += fromTank->getCallSign();
+  message += "'s flag";
+  addMessage(toTank, message);
 }
 
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
-					BlowedUpReason reason,
-					PlayerId killer,
-					const ShotPath* hit)
+				    BlowedUpReason reason,
+				    PlayerId killer,
+				    const ShotPath* hit)
 {
   if (tank->getTeam() == ObserverTeam || !tank->isAlive())
     return false;
 
   int shotId = -1;
   if(hit)
-	  shotId = hit->getShotId();
+    shotId = hit->getShotId();
 
   // you can't take it with you
   const FlagType* flag = tank->getFlag();
@@ -4022,10 +4030,10 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       const float* pos = tank->getPosition();
       if (reason == GotRunOver)
         playWorldSound(SFX_RUNOVER, pos[0], pos[1], pos[2],
-				getLocalPlayer(killer) == myTank);
+		       getLocalPlayer(killer) == myTank);
       else
         playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2],
-				getLocalPlayer(killer) == myTank);
+		       getLocalPlayer(killer) == myTank);
 
       float explodePos[3];
       explodePos[0] = pos[0];
@@ -4097,7 +4105,7 @@ static void		checkEnvironment()
       serverLink->sendCaptureFlag(base);
   }
   else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround ||
-      myTank->getLocation() == LocalPlayer::OnBuilding)) {
+				    myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // Don't grab too fast
     static TimeKeeper lastGrabSent;
     if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
@@ -4110,7 +4118,7 @@ static void		checkEnvironment()
 	  continue;
 	const float* fpos = world->getFlag(i).position;
 	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
+						 (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
 	  serverLink->sendGrabFlag(i);
 	  lastGrabSent=TimeKeeper::getTick();
 	}
@@ -4129,8 +4137,8 @@ static void		checkEnvironment()
 	  world->getFlag(i).status != FlagOnGround) continue;
       const float* fpos = world->getFlag(i).position;
       const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-			 (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) +
-			 (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
+	(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) +
+	(tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
       if (dist < minDist) {
 	minDist = dist;
 	closestFlag = i;
@@ -4171,7 +4179,7 @@ static void		checkEnvironment()
 
     if (killerFlag == Flags::Thief) {
       if (myTank->getFlag() != Flags::Null) {
-              serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
+	serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
       }
       stopShot = true;
     }
@@ -4196,7 +4204,7 @@ static void		checkEnvironment()
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
-		const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+	  const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius)
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 	}
@@ -4245,8 +4253,8 @@ static void		setTarget()
       lockedOn = true;
     }
     else if (a < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
-	((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
-	d < bestDistance && !lockedOn) {		// is it better?
+	     ((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
+	     d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
       bestDistance = d;
     }
@@ -4339,8 +4347,8 @@ static void		setHuntTarget()
       lockedOn = true;
     }
     else if (a < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
-	((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
-	d < bestDistance && !lockedOn) {		// is it better?
+	     ((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
+	     d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
       bestDistance = d;
     }
@@ -4360,7 +4368,7 @@ static void		setHuntTarget()
       } else {
         msg += ")";
       }
-    hud->setAlert(1, msg.c_str(), 2.0f, 0);
+      hud->setAlert(1, msg.c_str(), 2.0f, 0);
     }
     if (!pulse.isOn()) {
       const float* bestTargetPosition = bestTarget->getPosition();
@@ -4416,9 +4424,9 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
     BzfRegion* region = rgnList[k];
     int side[4];
     if ((side[0] = region->classify(p[0], p[1])) == 1 ||
-		(side[1] = region->classify(p[1], p[2])) == 1 ||
-		(side[2] = region->classify(p[2], p[3])) == 1 ||
-		(side[3] = region->classify(p[3], p[0])) == 1)
+	(side[1] = region->classify(p[1], p[2])) == 1 ||
+	(side[2] = region->classify(p[2], p[3])) == 1 ||
+	(side[3] = region->classify(p[3], p[0])) == 1)
       continue;
     if (side[0] == -1 && side[1] == -1 && side[2] == -1 && side[3] == -1) {
       rgnList[k] = rgnList[numRegions-1];
@@ -4568,13 +4576,13 @@ static void		checkEnvironment(RobotPlayer* tank)
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
-	if (tank->getFlag() != Flags::Null) {
-		serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
-	}
-	stopShot = true;
+      if (tank->getFlag() != Flags::Null) {
+	serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
+      }
+      stopShot = true;
     }
     else {
-        stopShot = gotBlowedUp(tank, GotShot, hit->getPlayer(), hit);
+      stopShot = gotBlowedUp(tank, GotShot, hit->getPlayer(), hit);
     }
 
     if (stopShot || hit->isStoppedByHit()) {
@@ -4601,13 +4609,13 @@ static void		checkEnvironment(RobotPlayer* tank)
     for (i = 0; !dead && i < curMaxPlayers; i++)
       if (player[i] && !player[i]->isPaused() &&
 	  ((player[i]->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
-	  const float* pos = player[i]->getPosition();
-	  if (pos[2] < 0.0f) continue;
-	  const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
-	    gotBlowedUp(tank, GotRunOver, player[i]->getId());
-	    dead = true;
-	  }
+	const float* pos = player[i]->getPosition();
+	if (pos[2] < 0.0f) continue;
+	const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+	if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
+	  gotBlowedUp(tank, GotRunOver, player[i]->getId());
+	  dead = true;
+	}
       }
   }
 }
@@ -4645,17 +4653,17 @@ static void		addRobots()
       robots[j]->setTeam(RogueTeam);
     else if (world->allowRogues())
       robots[j]->setTeam((TeamColor)((int)RogueTeam + (int)(bzfrand() *
-					(int)(PurpleTeam - RogueTeam + 1))));
+							    (int)(PurpleTeam - RogueTeam + 1))));
     else
       robots[j]->setTeam((TeamColor)((int)RedTeam + (int)(bzfrand() *
-					(int)(PurpleTeam - RedTeam + 1))));
+							  (int)(PurpleTeam - RedTeam + 1))));
 
     // decide how start for first time
     robots[j]->restartOnBase = world->allowTeamFlags()
       && Team::isColorTeam(robots[j]->getTeam());
 
     robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
-		robots[j]->getCallSign(), robots[j]->getEmailAddress());
+			      robots[j]->getCallSign(), robots[j]->getEmailAddress());
 
     // wait for response
     if (robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
@@ -4758,63 +4766,63 @@ static void cleanWorldCache()
     oldestFile = 0;
     totalSize = 0;
 #ifdef _WIN32
-	  std::string pattern = worldPath + "/*.bwc";
+    std::string pattern = worldPath + "/*.bwc";
 
-	  WIN32_FIND_DATA findData;
-	  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
-	  if (h != INVALID_HANDLE_VALUE) {
-	    FILETIME oldestTime = findData.ftLastAccessTime;
-	    oldestFile = strdup(findData.cFileName);
-	    oldestSize = findData.nFileSizeLow;
-	    totalSize = findData.nFileSizeLow;
+    WIN32_FIND_DATA findData;
+    HANDLE h = FindFirstFile(pattern.c_str(), &findData);
+    if (h != INVALID_HANDLE_VALUE) {
+      FILETIME oldestTime = findData.ftLastAccessTime;
+      oldestFile = strdup(findData.cFileName);
+      oldestSize = findData.nFileSizeLow;
+      totalSize = findData.nFileSizeLow;
 
-	    while (FindNextFile(h, &findData)) {
-		if (CompareFileTime( &oldestTime, &findData.ftLastAccessTime ) > 0) {
-		  oldestTime = findData.ftLastAccessTime;
-		  if (oldestFile)
-		    free(oldestFile);
-		  oldestFile = strdup(findData.cFileName);
-		  oldestSize = findData.nFileSizeLow;
-		}
-		totalSize += findData.nFileSizeLow;
-	    }
-	    FindClose(h);
-	  }
+      while (FindNextFile(h, &findData)) {
+	if (CompareFileTime( &oldestTime, &findData.ftLastAccessTime ) > 0) {
+	  oldestTime = findData.ftLastAccessTime;
+	  if (oldestFile)
+	    free(oldestFile);
+	  oldestFile = strdup(findData.cFileName);
+	  oldestSize = findData.nFileSizeLow;
+	}
+	totalSize += findData.nFileSizeLow;
+      }
+      FindClose(h);
+    }
 #else
-	  DIR *directory = opendir(worldPath.c_str());
-	  if (directory) {
-	    struct dirent* contents;
-	    struct stat statbuf;
-	    time_t oldestTime = time(NULL);
-	    while ((contents = readdir(directory))) {
-	      stat((worldPath + "/" + contents->d_name).c_str(), &statbuf);
-	      if (statbuf.st_atime < oldestTime) {
-		if (oldestFile)
-		  free(oldestFile);
-		oldestFile = strdup(contents->d_name);
-		oldestSize = statbuf.st_size;
-	      }
-	      totalSize += statbuf.st_size;
-	    }
-	    closedir(directory);
+    DIR *directory = opendir(worldPath.c_str());
+    if (directory) {
+      struct dirent* contents;
+      struct stat statbuf;
+      time_t oldestTime = time(NULL);
+      while ((contents = readdir(directory))) {
+	stat((worldPath + "/" + contents->d_name).c_str(), &statbuf);
+	if (statbuf.st_atime < oldestTime) {
+	  if (oldestFile)
+	    free(oldestFile);
+	  oldestFile = strdup(contents->d_name);
+	  oldestSize = statbuf.st_size;
+	}
+	totalSize += statbuf.st_size;
+      }
+      closedir(directory);
 
-	  }
+    }
 #endif
 
-	  if (totalSize < cacheLimit) {
-	    if (oldestFile != NULL) {
-		free(oldestFile);
-		oldestFile = NULL;
-	    }
-	    return;
-	  }
+    if (totalSize < cacheLimit) {
+      if (oldestFile != NULL) {
+	free(oldestFile);
+	oldestFile = NULL;
+      }
+      return;
+    }
 
-	  if (oldestFile != NULL)
-	    remove((worldPath + "/" + oldestFile).c_str());
+    if (oldestFile != NULL)
+      remove((worldPath + "/" + oldestFile).c_str());
 
-	  if (oldestFile != NULL)
-	    free(oldestFile);
-	  totalSize -= oldestSize;
+    if (oldestFile != NULL)
+      free(oldestFile);
+    totalSize -= oldestSize;
   } while (oldestFile && (totalSize > cacheLimit));
 }
 
@@ -4954,7 +4962,7 @@ static World*		makeWorld(ServerLink* serverLink)
       nboPackUInt(msg, ptr);
       serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
       if (serverLink->read(code, len, msg, 5000) < 0 ||
-      code == MsgNull || code == MsgSuperKill) {
+	  code == MsgNull || code == MsgSuperKill) {
         delete[] worldDatabase;
         return NULL;
       }
@@ -4977,13 +4985,13 @@ static World*		makeWorld(ServerLink* serverLink)
     }
   }
   else
-  {
-    cachedWorld->seekg(0, std::ios::end);
-    streampos size = cachedWorld->tellg();
-    cachedWorld->seekg(0);
-    worldDatabase = new char[size];
-    cachedWorld->read(worldDatabase, size);
-  }
+    {
+      cachedWorld->seekg(0, std::ios::end);
+      streampos size = cachedWorld->tellg();
+      cachedWorld->seekg(0);
+      worldDatabase = new char[size];
+      cachedWorld->read(worldDatabase, size);
+    }
 
   // make world
   WorldBuilder worldBuilder;
@@ -5000,7 +5008,7 @@ static World*		makeWorld(ServerLink* serverLink)
 }
 
 static bool		enterServer(ServerLink* serverLink, World* world,
-						LocalPlayer* myTank)
+				    LocalPlayer* myTank)
 {
 
   time_t timeout=time(0) + 15;  // give us 15 sec
@@ -5010,7 +5018,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
-		myTank->getCallSign(), myTank->getEmailAddress());
+			myTank->getCallSign(), myTank->getEmailAddress());
 
   roaming = (myTank->getTeam() == ObserverTeam);
 
@@ -5041,88 +5049,88 @@ static bool		enterServer(ServerLink* serverLink, World* world,
     uint16_t rejectCode;
     nboUnpackUShort(msg, rejectCode);
     switch (rejectCode) {
-      default:
-      case RejectBadRequest:
-      case RejectBadTeam:
-      case RejectBadType:
-	printError("Communication error joining game [Rejected].");
-	break;
+    default:
+    case RejectBadRequest:
+    case RejectBadTeam:
+    case RejectBadType:
+      printError("Communication error joining game [Rejected].");
+      break;
 
-      case RejectNoRogues:
-	printError("Rogues not allowed.  Try another team.");
-	break;
+    case RejectNoRogues:
+      printError("Rogues not allowed.  Try another team.");
+      break;
 
-      case RejectTeamFull:
-	printError("This team is full.  Try another team.");
-	break;
+    case RejectTeamFull:
+      printError("This team is full.  Try another team.");
+      break;
 
-      case RejectServerFull:
-	printError("This game is full.  Try again later.");
-	break;
+    case RejectServerFull:
+      printError("This game is full.  Try again later.");
+      break;
     }
     return false;
   }
 
   // get updates
   if (serverLink->read(code, len, msg, -1) < 0) {
-	goto failed;
+    goto failed;
   }
   while (code == MsgAddPlayer || code == MsgTeamUpdate ||
 	 code == MsgFlagUpdate || code == MsgUDPLinkRequest ||
 	 code == MsgSetVar) {
     void* buf = msg;
     switch (code) {
-      case MsgAddPlayer: {
-	PlayerId id;
-	buf = nboUnpackUByte(buf, id);
-        if (id == myTank->getId()) {
-	  // it's me!  end of updates
-	  // scan through flags and, for flags on
-	  // tanks, tell the tank about its flag.
-	  const int maxFlags = world->getMaxFlags();
-	  for (int i = 0; i < maxFlags; i++) {
-	    const Flag& flag = world->getFlag(i);
-	    if (flag.status == FlagOnTank)
-	      for (int j = 0; j < curMaxPlayers; j++)
-		if (player[j] && player[j]->getId() == flag.owner) {
-		  player[j]->setFlag(flag.type);
-		  break;
-		}
-	  }
-	  return true;
+    case MsgAddPlayer: {
+      PlayerId id;
+      buf = nboUnpackUByte(buf, id);
+      if (id == myTank->getId()) {
+	// it's me!  end of updates
+	// scan through flags and, for flags on
+	// tanks, tell the tank about its flag.
+	const int maxFlags = world->getMaxFlags();
+	for (int i = 0; i < maxFlags; i++) {
+	  const Flag& flag = world->getFlag(i);
+	  if (flag.status == FlagOnTank)
+	    for (int j = 0; j < curMaxPlayers; j++)
+	      if (player[j] && player[j]->getId() == flag.owner) {
+		player[j]->setFlag(flag.type);
+		break;
+	      }
 	}
-	addPlayer(id, buf, false);
-	break;
+	return true;
       }
-      case MsgTeamUpdate: {
-	uint8_t  numTeams;
-	uint16_t team;
-	buf = nboUnpackUByte(buf,numTeams);
-	for (int i = 0; i < numTeams; i++) {
-	  buf = nboUnpackUShort(buf, team);
-	  buf = teams[int(team)].unpack(buf);
-	}
-	break;
+      addPlayer(id, buf, false);
+      break;
+    }
+    case MsgTeamUpdate: {
+      uint8_t  numTeams;
+      uint16_t team;
+      buf = nboUnpackUByte(buf,numTeams);
+      for (int i = 0; i < numTeams; i++) {
+	buf = nboUnpackUShort(buf, team);
+	buf = teams[int(team)].unpack(buf);
       }
-      case MsgFlagUpdate: {
-	uint16_t count;
-	uint16_t flag;
-	buf = nboUnpackUShort(buf, count);
-	for (int i = 0; i < count; i++) {
-	  buf = nboUnpackUShort(buf, flag);
-	  buf = world->getFlag(int(flag)).unpack(buf);
-	  world->initFlag(int(flag));
-	}
-	break;
+      break;
+    }
+    case MsgFlagUpdate: {
+      uint16_t count;
+      uint16_t flag;
+      buf = nboUnpackUShort(buf, count);
+      for (int i = 0; i < count; i++) {
+	buf = nboUnpackUShort(buf, flag);
+	buf = world->getFlag(int(flag)).unpack(buf);
+	world->initFlag(int(flag));
       }
-      case MsgUDPLinkRequest:
-	printError("*** Received UDP Link Request");
-	// internally <- TimRiker says huh? what's "internally" mean?
-	break;
-      case MsgSetVar: {
-        buf = handleMsgSetVars(buf);
-	break;
-      }
+      break;
+    }
+    case MsgUDPLinkRequest:
+      printError("*** Received UDP Link Request");
+      // internally <- TimRiker says huh? what's "internally" mean?
+      break;
+    case MsgSetVar: {
+      buf = handleMsgSetVars(buf);
+      break;
+    }
     }
 
     if (time(0)>timeout) goto failed;
@@ -5130,7 +5138,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
     if (serverLink->read(code, len, msg, -1) < 0) goto failed;
   }
 
-failed:
+ failed:
   printError("Communication error joining game");
   return false;
 }
@@ -5217,8 +5225,8 @@ static void		leaveGame()
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
-      1.1f, 1.5f * worldSize, mainWindow->getWidth(),
-      mainWindow->getHeight(), mainWindow->getViewHeight());
+						1.1f, 1.5f * worldSize, mainWindow->getWidth(),
+						mainWindow->getHeight(), mainWindow->getViewHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // reset some flags
@@ -5228,7 +5236,7 @@ static void		leaveGame()
 }
 
 static bool		joinGame(const StartupInfo* info,
-				ServerLink* _serverLink)
+				 ServerLink* _serverLink)
 {
   // assume everything's okay for now
   serverDied = false;
@@ -5247,32 +5255,32 @@ static bool		joinGame(const StartupInfo* info,
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
-      case ServerLink::BadVersion: {
-	static char versionError[] = "Incompatible server version XXXXXXXX";
-	strncpy(versionError + strlen(versionError) - 8,
-					serverLink->getVersion(), 8);
-	printError(versionError);
-	break;
-      }
+    case ServerLink::BadVersion: {
+      static char versionError[] = "Incompatible server version XXXXXXXX";
+      strncpy(versionError + strlen(versionError) - 8,
+	      serverLink->getVersion(), 8);
+      printError(versionError);
+      break;
+    }
 
-      case ServerLink::Rejected:
-	// the server is probably full or the game is over.  if not then
-	// the server is having network problems.
-	printError("Game is full or over.  Try again later.");
-	break;
+    case ServerLink::Rejected:
+      // the server is probably full or the game is over.  if not then
+      // the server is having network problems.
+      printError("Game is full or over.  Try again later.");
+      break;
 
-      case ServerLink::SocketError:
-	printError("Error connecting to server.");
-	break;
+    case ServerLink::SocketError:
+      printError("Error connecting to server.");
+      break;
 
-      case ServerLink::CrippledVersion:
-	// can't connect to (otherwise compatible) non-crippled server
-	printError("Cannot connect to full version server.");
-	break;
+    case ServerLink::CrippledVersion:
+      // can't connect to (otherwise compatible) non-crippled server
+      printError("Cannot connect to full version server.");
+      break;
 
-      default:
-	printError("Internal error connecting to server.");
-	break;
+    default:
+      printError("Internal error connecting to server.");
+      break;
     }
 
     leaveGame();
@@ -5634,7 +5642,7 @@ static void		playingLoop()
 	mainWindow->ungrabMouse();
       }
       else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
-							!pausedByUnmap) {
+	       !pausedByUnmap) {
 	// update countdown alert
 	char msgBuf[40];
 	sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
@@ -5779,7 +5787,7 @@ static void		playingLoop()
 	    targetPoint[2] = targetFlag.position[2];
 	  }
 	  roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
-	      targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
+					 targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
 	}
 	// free Roaming
 	else {
@@ -5804,10 +5812,10 @@ static void		playingLoop()
       }
       float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
       sceneRenderer->getViewFrustum().setProjection(fov,
-	  1.1f, 1.5f * worldSize,
-	  mainWindow->getWidth(),
-	  mainWindow->getHeight(),
-	  mainWindow->getViewHeight());
+						    1.1f, 1.5f * worldSize,
+						    mainWindow->getWidth(),
+						    mainWindow->getHeight(),
+						    mainWindow->getViewHeight());
       sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
       // add dynamic nodes
@@ -5829,7 +5837,7 @@ static void		playingLoop()
 
 	//add server shells
 	if (world)
-	world->getWorldWeapons()->addShots(scene, false);
+	  world->getWorldWeapons()->addShots(scene, false);
 
 	// add antidote flag
 	myTank->addAntidote(scene);
@@ -5847,10 +5855,10 @@ static void		playingLoop()
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
 	    if (!colorblind && (player[i]->getFlag() == Flags::Masquerade) && (myTank->getFlag() != Flags::Seer)) {
-	       override = Team::getTankColor(myTank->getTeam());
+	      override = Team::getTankColor(myTank->getTeam());
 	    }
 	    else
-	       override = false;
+	      override = false;
 	    player[i]->addPlayer(scene, override, true);
 	    if ((player[i]->getFlag() == Flags::Cloaking) && (myTank->getFlag() != Flags::Seer))
 	      player[i]->setInvisible();
@@ -5870,15 +5878,15 @@ static void		playingLoop()
 
       // turn blanking and inversion on/off as appropriate
       sceneRenderer->setBlank(myTank && (myTank->isPaused() ||
-	  myTank->getFlag() == Flags::Blindness));
+					 myTank->getFlag() == Flags::Blindness));
       sceneRenderer->setInvert(myTank &&
-	  myTank->getFlag() == Flags::PhantomZone &&
-	  myTank->isFlagActive());
+			       myTank->getFlag() == Flags::PhantomZone &&
+			       myTank->isFlagActive());
 
       // turn on scene dimming when showing menu or when
       // we're dead and no longer exploding.
       sceneRenderer->setDim(HUDDialogStack::get()->isActive() ||
-	  (myTank && !roaming && !myTank->isAlive() && !myTank->isExploding()));
+			    (myTank && !roaming && !myTank->isAlive() && !myTank->isExploding()));
 
       // set hud state
       hud->setDim(HUDDialogStack::get()->isActive());
@@ -5944,42 +5952,42 @@ static void		playingLoop()
 	// back to center channel
 	mainWindow->setQuadrant(MainWindow::UpperRight);
       } else if (viewType == SceneRenderer::Stacked) {
-       static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
-       static float FocalPlane = BoxBase;
-       static bool init = false;
-       if (!init) {
-	 init = true;
-	 if (BZDB->isSet("eyesep"))
-	   EyeDisplacement = BZDB->eval("eyesep");
-	 if (BZDB->isSet("focal"))
-	   FocalPlane = BZDB->eval("focal");
-       }
+	static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+	static float FocalPlane = BoxBase;
+	static bool init = false;
+	if (!init) {
+	  init = true;
+	  if (BZDB->isSet("eyesep"))
+	    EyeDisplacement = BZDB->eval("eyesep");
+	  if (BZDB->isSet("focal"))
+	    FocalPlane = BZDB->eval("focal");
+	}
 
-       // setup view for left eye
-       sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
+	// setup view for left eye
+	sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
 
-       // draw left eye's view
-       sceneRenderer->render(false);
-       hud->render(*sceneRenderer);
-       renderDialog();
-       controlPanel->render(*sceneRenderer);
-       if (radar) radar->render(*sceneRenderer, blankRadar);
+	// draw left eye's view
+	sceneRenderer->render(false);
+	hud->render(*sceneRenderer);
+	renderDialog();
+	controlPanel->render(*sceneRenderer);
+	if (radar) radar->render(*sceneRenderer, blankRadar);
 
-       // set up view for right eye
-       mainWindow->setQuadrant(MainWindow::UpperHalf);
-       sceneRenderer->getViewFrustum().setOffset(-EyeDisplacement, FocalPlane);
+	// set up view for right eye
+	mainWindow->setQuadrant(MainWindow::UpperHalf);
+	sceneRenderer->getViewFrustum().setOffset(-EyeDisplacement, FocalPlane);
 
-       // draw right eye's view
-       sceneRenderer->render(true, true);
-       hud->render(*sceneRenderer);
-       renderDialog();
-       controlPanel->render(*sceneRenderer);
-       if (radar) radar->render(*sceneRenderer, blankRadar);
+	// draw right eye's view
+	sceneRenderer->render(true, true);
+	hud->render(*sceneRenderer);
+	renderDialog();
+	controlPanel->render(*sceneRenderer);
+	if (radar) radar->render(*sceneRenderer, blankRadar);
 
-       // draw common stuff
+	// draw common stuff
 
-       // back to left channel
-       mainWindow->setQuadrant(MainWindow::LowerHalf);
+	// back to left channel
+	mainWindow->setQuadrant(MainWindow::LowerHalf);
       } else if (viewType == SceneRenderer::Stereo) {
 	static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
 	static float FocalPlane = BoxBase;
@@ -6093,7 +6101,7 @@ static void		playingLoop()
 	  glMatrixMode(GL_PROJECTION);
 	  glLoadIdentity();
 	  glOrtho(-0.25, (GLdouble)mainWindow->getWidth() - 0.25,
-		-0.25, (GLdouble)mainWindow->getHeight() - 0.25, -1.0, 1.0);
+		  -0.25, (GLdouble)mainWindow->getHeight() - 0.25, -1.0, 1.0);
 	  glMatrixMode(GL_MODELVIEW);
 	  glPushMatrix();
 	  glLoadIdentity();
@@ -6199,14 +6207,14 @@ static void		playingLoop()
       hud->setHeading(myTank->getAngle());
       hud->setAltitude(myPos[2]);
       if (world->allowTeamFlags() &&
-		int(myTank->getFlag()) != int(myTank->getTeam())) {
+	  int(myTank->getFlag()) != int(myTank->getTeam())) {
 	// marker for my team flag
 	for (i = 0; i < numFlags; i++) {
 	  Flag& flag = world->getFlag(i);
 	  if (flag.type->flagTeam == myTank->getTeam()) {
 	    const float* flagPos = flag.position;
 	    hud->setMarkerHeading(0, atan2f(flagPos[1] - myPos[1],
-					flagPos[0] - myPos[0]));
+					    flagPos[0] - myPos[0]));
 	    break;
 	  }
 	}
@@ -6433,10 +6441,10 @@ static void		findFastConfiguration()
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
   float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
-					1.1f, 1.5f * worldSize,
-					mainWindow->getWidth(),
-					mainWindow->getHeight(),
-					mainWindow->getViewHeight());
+						1.1f, 1.5f * worldSize,
+						mainWindow->getWidth(),
+						mainWindow->getHeight(),
+						mainWindow->getViewHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // add a big wall in front of where we're looking.  this is important
@@ -6450,7 +6458,7 @@ static void		findFastConfiguration()
   static const GLfloat color[4] = { 1.0f, 1.0f, 1.0f, 0.5f };
   SceneDatabase* timingScene = new ZSceneDatabase;
   WallSceneNode* node = new QuadWallSceneNode(base,
-					sEdge, tEdge, 1.0f, 1.0f, true);
+					      sEdge, tEdge, 1.0f, 1.0f, true);
   node->setColor(color);
   node->setModulateColor(color);
   node->setLightedColor(color);
@@ -6482,8 +6490,8 @@ static void		startupErrorCallback(const char* msg)
 }
 
 void			startPlaying(BzfDisplay* _display,
-					SceneRenderer& renderer,
-					StartupInfo* _info)
+				     SceneRenderer& renderer,
+				     StartupInfo* _info)
 {
   int i;
 
@@ -6513,18 +6521,18 @@ void			startPlaying(BzfDisplay* _display,
   {
     int n = 3;	// assume triple buffering
     switch (sceneRenderer->getViewType()) {
-      case SceneRenderer::Stacked:
-      case SceneRenderer::Stereo:
+    case SceneRenderer::Stacked:
+    case SceneRenderer::Stereo:
 #ifndef USE_GL_STEREO
-	// control panel drawn twice per frame
-	n *= 2;
+      // control panel drawn twice per frame
+      n *= 2;
 #endif
-	break;
+      break;
 
-      case SceneRenderer::ThreeChannel:
-      default:
-	// only one copy of control panel visible
-	break;
+    case SceneRenderer::ThreeChannel:
+    default:
+      // only one copy of control panel visible
+      break;
     }
     controlPanel->setNumberOfFrameBuffers(n);
   }
@@ -6589,9 +6597,9 @@ void			startPlaying(BzfDisplay* _display,
   bzSignal(SIGHUP, SIG_IGN);
   if (bzSignal(SIGQUIT, SIG_IGN) != SIG_IGN)
     bzSignal(SIGQUIT, SIG_PF(dying));
-  #ifndef GUSI_20
+#ifndef GUSI_20
   bzSignal(SIGBUS, SIG_PF(dying));
-  #endif
+#endif
   bzSignal(SIGUSR1, SIG_IGN);
   bzSignal(SIGUSR2, SIG_IGN);
 #endif /* !defined(_WIN32) */
@@ -6610,7 +6618,7 @@ void			startPlaying(BzfDisplay* _display,
 	  int w, h, x, y, count;
 	  char xs, ys;
 	  count = sscanf(BZDB->get("geometry").c_str(),
-			"%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
+			 "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
 	  if (w < 256) w = 256;
 	  if (h < 192) h = 192;
 	  if (count == 6) {
@@ -6666,17 +6674,17 @@ void			startPlaying(BzfDisplay* _display,
 
   // load prototype explosions
   static const char*	explosionNames[] = {
-				"explode1",
-				"explode2",
-				"explode3",
-				"explode4"
-			};
+    "explode1",
+    "explode2",
+    "explode3",
+    "explode4"
+  };
   static const GLfloat	zero[3] = { 0.0f, 0.0f, 0.0f };
   for (i = 0; i < (int)(sizeof(explosionNames) /
-					sizeof(explosionNames[0])); i++) {
+			sizeof(explosionNames[0])); i++) {
     // try loading texture
     OpenGLTexture tex = getTexture(explosionNames[i],
-				OpenGLTexture::Linear, false, true);
+				   OpenGLTexture::Linear, false, true);
     if (!tex.isValid()) continue;
 
     // make explosion scene node
@@ -6697,7 +6705,7 @@ void			startPlaying(BzfDisplay* _display,
     int width, height;
     tankTexture = new OpenGLTexture;
     *tankTexture = getTexture(tankFilename, &width, &height,
-					OpenGLTexture::LinearMipmapLinear);
+			      OpenGLTexture::LinearMipmapLinear);
   }
 
   // let other stuff do initialization
@@ -6763,7 +6771,7 @@ void			startPlaying(BzfDisplay* _display,
   // enter game if we have all the info we need, otherwise
   // pop up main menu
   if (startupInfo.autoConnect &&
-	startupInfo.callsign[0] && startupInfo.serverName[0]) {
+      startupInfo.callsign[0] && startupInfo.serverName[0]) {
     joinGameCallback = &joinGameHandler;
     controlPanel->addMessage("Trying...");
   }
