@@ -645,52 +645,18 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.append(createLabel(NULL, "Slow Keyboard Motion:"));
 
   // set control order
+  const int count = controls.getLength();
   controls[0]->setNext(controls[0]);
   controls[0]->setPrev(controls[0]);
   controls[1]->setNext(controls[2]);
-  controls[2]->setNext(controls[3]);
-  controls[3]->setNext(controls[4]);
-  controls[4]->setNext(controls[5]);
-  controls[5]->setNext(controls[6]);
-  controls[6]->setNext(controls[7]);
-  controls[7]->setNext(controls[8]);
-  controls[8]->setNext(controls[9]);
-  controls[9]->setNext(controls[10]);
-  controls[10]->setNext(controls[11]);
-  controls[11]->setNext(controls[12]);
-  controls[12]->setNext(controls[13]);
-  controls[13]->setNext(controls[14]);
-  controls[14]->setNext(controls[15]);
-  controls[15]->setNext(controls[16]);
-  controls[16]->setNext(controls[17]);
-  controls[17]->setNext(controls[18]);
-  controls[18]->setNext(controls[19]);
-  controls[19]->setNext(controls[20]);
-  controls[20]->setNext(controls[21]);
-  controls[21]->setNext(controls[22]);
-  controls[22]->setNext(controls[1]);
-  controls[1]->setPrev(controls[21]);
-  controls[2]->setPrev(controls[1]);
-  controls[3]->setPrev(controls[2]);
-  controls[4]->setPrev(controls[3]);
-  controls[5]->setPrev(controls[4]);
-  controls[6]->setPrev(controls[5]);
-  controls[7]->setPrev(controls[6]);
-  controls[8]->setPrev(controls[7]);
-  controls[9]->setPrev(controls[8]);
-  controls[10]->setPrev(controls[9]);
-  controls[11]->setPrev(controls[10]);
-  controls[12]->setPrev(controls[11]);
-  controls[13]->setPrev(controls[12]);
-  controls[14]->setPrev(controls[13]);
-  controls[15]->setPrev(controls[14]);
-  controls[16]->setPrev(controls[15]);
-  controls[17]->setPrev(controls[16]);
-  controls[18]->setPrev(controls[17]);
-  controls[19]->setPrev(controls[18]);
-  controls[20]->setPrev(controls[19]);
-  controls[21]->setPrev(controls[20]);
-  controls[22]->setPrev(controls[21]);
+  controls[1]->setPrev(controls[count - 1]);
+  for (int i = 2; i < count - 1; i++) {
+    controls[i]->setNext(controls[i + 1]);
+    controls[i]->setPrev(controls[i - 1]);
+  }
+  controls[count - 1]->setNext(controls[1]);
+  controls[count - 1]->setPrev(controls[count - 2]);
+
   // set initial focus
   setFocus(controls[1]);
 }

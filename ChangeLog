@@ -1,6 +1,6 @@
 
 			     BZFlag release notes
-
+* Fix 'Change Key Mapping' arrowkeys - Andrew Greig 
 * add new updates here without heading until a release
 * show the time in upper right if no flag
 * opacity in config - Dave Brosius, Tim Riker
