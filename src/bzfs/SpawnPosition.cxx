@@ -42,7 +42,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     return;
 
   team = playerData->player.getTeam();
-  azimuth = (float)bzfrand() * 2.0f * M_PI;
+  azimuth = (float)(bzfrand() * 2.0 * M_PI);
 
   if (playerData->player.shouldRestartAtBase() &&
       (team >= RedTeam) && (team <= PurpleTeam) &&
@@ -155,7 +155,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 	  pos[0] = testPos[0];
 	  pos[1] = testPos[1];
 	  pos[2] = testPos[2];
-	  azimuth = fmod((enemyAngle + M_PI), 2.0f * M_PI);
+	  azimuth = fmod((float)(enemyAngle + M_PI), (float)(2.0 * M_PI));
 	}
 	if (bestDist < minProximity) { // not good enough, keep looking
 	  foundspot = false;
@@ -184,7 +184,7 @@ const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimu
   // now diff is between {-PI*2 and +PI*2}, and we're looking for values around
   // -PI or +PI, because that's when the enemy is facing the source.
   diff = fabsf (diff); // between {0 and +PI*2}
-  diff = fabsf (diff - M_PI);
+  diff = fabsf ((float)(diff - M_PI));
 
   if (diff < (deviation / 2.0f)) {
     return true;
@@ -209,7 +209,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
 	const FlagType *ftype = finfo->flag.type;
 	// FIXME: any more?
 	if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L
-	  if (isFacing(enemyPos, enemyAngle, M_PI / 9)) { // he's looking within 20 degrees of spawn point
+	  if (isFacing(enemyPos, enemyAngle, (float)(M_PI / 9.0))) { // he's looking within 20 degrees of spawn point
 	    return true;	// eek, don't spawn here
 	  }
 	} else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
@@ -220,7 +220,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
       }
       // don't spawn in the line of sight of a normal-shot tank within a certain distance
       if (distanceFrom(enemyPos) < safeDistance) { // within danger zone?
-	if (isFacing(enemyPos, enemyAngle, M_PI / 9)) { //and he's looking at me
+	if (isFacing(enemyPos, enemyAngle, (float)(M_PI / 9.0))) { //and he's looking at me
 	  return true;
 	}
       }
@@ -258,7 +258,7 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
     }
   }
   if (noEnemy)
-    enemyAngle = (float)bzfrand() * 2.0f * M_PI;
+    enemyAngle = (float)(bzfrand() * 2.0 * M_PI);
   return sqrtf(worstDist);
 }
 
