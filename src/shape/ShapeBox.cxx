@@ -24,14 +24,6 @@ ShapeBox::ShapeBox(Real x_, Real y_, Real z_) :
 								y(y_),
 								z(z_)
 {
-	static const Real s_minSize = R_(1.0e-5);
-
-	// no degenerate boxes
-	// FIXME -- throw instead of assert
-	assert(x > s_minSize);
-	assert(y > s_minSize);
-	assert(z > s_minSize);
-
 	// set vertices
 	for (unsigned int i = 0; i < 8; ++i) {
 		vertex[i][0] = (i & 1) ? x : -x;
@@ -68,6 +60,13 @@ void					ShapeBox::getInertia(Matrix& i) const
 	i[10] = s * (x * x + y * y);
 }
 
+bool					ShapeBox::isInside(const Vec3& p) const
+{
+	return (p[0] >= -x && p[0] <= x &&
+			p[1] >= -y && p[1] <= y &&
+			p[2] >= -z && p[2] <= z);
+}
+
 bool					ShapeBox::intersect(const Ray& r) const
 {
 	IntersectionPoint p;
@@ -88,34 +87,46 @@ bool					ShapeBox::intersect(
 	// -x face
 	vn = -r.getOrigin()[0] - x;
 	vd = -r.getDirection()[0];
-	t  = -vn / vd;
-	if (vd >= R_(0.0)) {
-		if (t >= R_(0.0) && t < t1) {
-			t1 = t;
-			f1 = 0;
-		}
+	if (vd == R_(0.0)) {
+		if (vn > R_(0.0))
+			return false;
 	}
 	else {
-		if (t > t0) {
-			t0 = t;
-			f0 = 0;
+		t  = -vn / vd;
+		if (vd >= R_(0.0)) {
+			if (t >= R_(0.0) && t < t1) {
+				t1 = t;
+				f1 = 0;
+			}
+		}
+		else {
+			if (t > t0) {
+				t0 = t;
+				f0 = 0;
+			}
 		}
 	}
 
 	// +x face
 	vn = r.getOrigin()[0] - x;
 	vd = r.getDirection()[0];
-	t  = -vn / vd;
-	if (vd >= R_(0.0)) {
-		if (t >= R_(0.0) && t < t1) {
-			t1 = t;
-			f1 = 0;
-		}
+	if (vd == R_(0.0)) {
+		if (vn > R_(0.0))
+			return false;
 	}
 	else {
-		if (t > t0) {
-			t0 = t;
-			f0 = 0;
+		t  = -vn / vd;
+		if (vd >= R_(0.0)) {
+			if (t >= R_(0.0) && t < t1) {
+				t1 = t;
+				f1 = 1;
+			}
+		}
+		else {
+			if (t > t0) {
+				t0 = t;
+				f0 = 1;
+			}
 		}
 	}
 	if (t1 < t0)
@@ -124,17 +135,23 @@ bool					ShapeBox::intersect(
 	// -y face
 	vn = -r.getOrigin()[1] - y;
 	vd = -r.getDirection()[1];
-	t  = -vn / vd;
-	if (vd >= R_(0.0)) {
-		if (t >= R_(0.0) && t < t1) {
-			t1 = t;
-			f1 = 0;
-		}
+	if (vd == R_(0.0)) {
+		if (vn > R_(0.0))
+			return false;
 	}
 	else {
-		if (t > t0) {
-			t0 = t;
-			f0 = 0;
+		t  = -vn / vd;
+		if (vd >= R_(0.0)) {
+			if (t >= R_(0.0) && t < t1) {
+				t1 = t;
+				f1 = 2;
+			}
+		}
+		else {
+			if (t > t0) {
+				t0 = t;
+				f0 = 2;
+			}
 		}
 	}
 	if (t1 < t0)
@@ -143,17 +160,23 @@ bool					ShapeBox::intersect(
 	// +y face
 	vn = r.getOrigin()[1] - y;
 	vd = r.getDirection()[1];
-	t  = -vn / vd;
-	if (vd >= R_(0.0)) {
-		if (t >= R_(0.0) && t < t1) {
-			t1 = t;
-			f1 = 0;
-		}
+	if (vd == R_(0.0)) {
+		if (vn > R_(0.0))
+			return false;
 	}
 	else {
-		if (t > t0) {
-			t0 = t;
-			f0 = 0;
+		t  = -vn / vd;
+		if (vd >= R_(0.0)) {
+			if (t >= R_(0.0) && t < t1) {
+				t1 = t;
+				f1 = 3;
+			}
+		}
+		else {
+			if (t > t0) {
+				t0 = t;
+				f0 = 3;
+			}
 		}
 	}
 	if (t1 < t0)
@@ -162,17 +185,23 @@ bool					ShapeBox::intersect(
 	// -z face
 	vn = -r.getOrigin()[2] - z;
 	vd = -r.getDirection()[2];
-	t  = -vn / vd;
-	if (vd >= R_(0.0)) {
-		if (t >= R_(0.0) && t < t1) {
-			t1 = t;
-			f1 = 0;
-		}
+	if (vd == R_(0.0)) {
+		if (vn > R_(0.0))
+			return false;
 	}
 	else {
-		if (t > t0) {
-			t0 = t;
-			f0 = 0;
+		t  = -vn / vd;
+		if (vd >= R_(0.0)) {
+			if (t >= R_(0.0) && t < t1) {
+				t1 = t;
+				f1 = 4;
+			}
+		}
+		else {
+			if (t > t0) {
+				t0 = t;
+				f0 = 4;
+			}
 		}
 	}
 	if (t1 < t0)
@@ -181,17 +210,23 @@ bool					ShapeBox::intersect(
 	// +z face
 	vn = r.getOrigin()[2] - z;
 	vd = r.getDirection()[2];
-	t  = -vn / vd;
-	if (vd >= R_(0.0)) {
-		if (t >= R_(0.0) && t < t1) {
-			t1 = t;
-			f1 = 0;
-		}
+	if (vd == R_(0.0)) {
+		if (vn > R_(0.0))
+			return false;
 	}
 	else {
-		if (t > t0) {
-			t0 = t;
-			f0 = 0;
+		t  = -vn / vd;
+		if (vd >= R_(0.0)) {
+			if (t >= R_(0.0) && t < t1) {
+				t1 = t;
+				f1 = 5;
+			}
+		}
+		else {
+			if (t > t0) {
+				t0 = t;
+				f0 = 5;
+			}
 		}
 	}
 	if (t1 < t0)
@@ -208,6 +243,13 @@ bool					ShapeBox::intersect(
 		p.normal = normal[f0];
 	}
 	return true;
+}
+
+void					ShapeBox::getRandomPoint(Vec3& p) const
+{
+	p[0] = x * (R_(2.0) * bzfrand() - R_(1.0));
+	p[1] = y * (R_(2.0) * bzfrand() - R_(1.0));
+	p[2] = z * (R_(2.0) * bzfrand() - R_(1.0));
 }
 
 void					ShapeBox::getSupportPoint(
@@ -375,8 +417,7 @@ const unsigned int*		ShapeBox::getAdjacentFaces(
 const unsigned int*		ShapeBox::getAdjacentFaces(
 								unsigned int index1, unsigned int index2) const
 {
-	// if edge is v1,v2 then let i = log2(v1 ^ v2).  the adjacent
-	// faces are s_edgeToFaceList[i][v1 & v2].  [6,6] means no face.
+	// vertex pair to adjacent face map.  [6,6] means no face.
 	static const unsigned int s_edgeToFaceList[8][8][2] = {
 							// impossible
 							{ { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 },

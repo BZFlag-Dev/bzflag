@@ -14,9 +14,11 @@
 #define BZF_BODY_H
 
 #include "ODESolver.h"
-#include "Shape.h"
+#include "TransformableShape.h"
 
-class Body {
+class TransformedShape;
+
+class Body : public TransformableShape {
 public:
 	Body(Shape* adopted, Real inverseDensity);
 	~Body();
@@ -41,8 +43,6 @@ public:
 	const Quaternion&	getOrientation() const;
 	// FIXME -- other state
 	const Vec3&			getOmega() const;
-	const Matrix&		getTransform() const;
-	const Matrix&		getInverseTransform() const;
 
 const Vec3& getForce() const { return force; }
 const Vec3& getTorque() const { return torque; }
@@ -77,20 +77,6 @@ const Vec3& getV() const { return v; }
 								const Vec3& direction,
 								const Vec3& position);
 
-	// get a support point of the shape.  input vector and output point
-	// are in world space.
-	void				getSupportPoint(SupportPoint&, const Vec3&) const;
-
-	// get collision surface for this body against the plane with a
-	// distance tolerance of epsilon (i.e. any point on the body
-	// within epsilon is considered to be in contact with the plane.
-	// simplex and plane are in world space.  the resulting surface
-	// is in the body's coordinate space.
-	void				getCollision(ContactSurface** surface,
-								const ContactSimplex& simplex,
-								const Plane& plane,
-								Real epsilon) const;
-
 	// marshall/unmarshall
 	void				marshall(VectorN&) const;
 	void				marshallDerivative(VectorN&) const;
@@ -100,11 +86,33 @@ const Vec3& getV() const { return v; }
 	// debugging
 	void				dump() const;
 
+	// Shape overrides
+	virtual Real		getVolume() const;
+	virtual void		getInertia(Matrix&) const;
+	virtual bool		isInside(const Vec3&) const;
+	virtual bool		intersect(const Ray&) const;
+	virtual bool		intersect(IntersectionPoint&, const Ray&) const;
+	virtual void		getRandomPoint(Vec3&) const;
+	virtual void		getSupportPoint(
+								SupportPoint& supportPoint,
+								const Vec3& vector) const;
+	virtual ContactSurface*
+						getCollision(const ContactSimplex&,
+								const Plane& separationPlane,
+								Real epsilon) const;
+
+	// TransformableShape overrides
+	virtual const Matrix&	getTransform() const;
+	virtual const Matrix&	getTransposeTransform() const;
+	virtual const Matrix&	getInverseTransform() const;
+	virtual const Matrix&	getInverseTransposeTransform() const;
+
 private:
 	void				computeDerivedState();
 
 private:
-	Shape*				shape;
+	TransformedShape*	shape;
+	Shape*				originalShape;
 
 	// constants
 	Real				invMass;
@@ -122,8 +130,6 @@ private:
 	Matrix				rT;				// transpose of r
 	Vec3				v;				// velocity
 	Vec3				omega;			// angular velocity
-	Matrix				transform;		// transform local->world space
-	Matrix				invTransform;	// transform world->local space
 
 	// external state
 	Vec3				force;

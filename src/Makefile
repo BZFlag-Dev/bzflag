@@ -27,6 +27,8 @@ SUBDIRS =				\
 	bzfls				\
 	math				\
 	shape				\
+	region				\
+	collision			\
 	bzfs				\
 	mediafile			\
 	geometry			\

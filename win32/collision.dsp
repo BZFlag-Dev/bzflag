@@ -63,8 +63,8 @@ LIB32=link.exe -lib
 # PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ  /c
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -111,10 +111,6 @@ SOURCE=..\src\collision\ContactSolverBaraffNoFriction.cxx
 
 SOURCE=..\src\collision\ContactSurfaceIntersector.cxx
 # End Source File
-# Begin Source File
-
-SOURCE=..\src\collision\Trackball.cxx
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -133,11 +129,11 @@ SOURCE=..\src\collision\BodyODEAssistant.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\collision\CollisionDetector.h
+SOURCE=..\include\CollisionDetector.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\collision\CollisionDetectorGJK.h
+SOURCE=..\include\CollisionDetectorGJK.h
 # End Source File
 # Begin Source File
 
@@ -158,14 +154,6 @@ SOURCE=..\src\collision\ContactSurfaceIntersector.h
 # Begin Source File
 
 SOURCE=..\src\collision\ContactSurfaceIntersectorPolygon.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\ms_minmax.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\collision\Trackball.h
 # End Source File
 # End Group
 # End Target

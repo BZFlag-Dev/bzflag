@@ -276,13 +276,13 @@ void					ViewItemScoreboard::onPostRender(
 
 	if (showTeams) {
 		// sort teams
-		int i, teams[NumTeams];
-		for (i = 0; i < NumTeams; ++i)
+		int teams[NumTeams];
+		for (unsigned int i = 0; i < NumTeams; ++i)
 			teams[i] = i;
 		qsort(teams, NumTeams, sizeof(int), teamScoreCompare);
 
 		// draw teams
-		for (i = 0; i < NumTeams; ++i) {
+		for (unsigned int i = 0; i < NumTeams; ++i) {
 			const Team* team = World::getWorld()->getTeams() + i;
 			if (team->activeSize == 0)
 				continue;

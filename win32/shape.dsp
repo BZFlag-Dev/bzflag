@@ -100,6 +100,22 @@ SOURCE=..\src\shape\ContactSurfacePolygon.cxx
 
 SOURCE=..\src\shape\ShapeBox.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\shape\ShapePoint.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\shape\ShapePyramid.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\shape\TransformableShape.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\shape\TransformedShape.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -127,6 +143,22 @@ SOURCE=..\include\Shape.h
 # Begin Source File
 
 SOURCE=..\include\ShapeBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ShapePoint.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ShapePyramid.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TransformableShape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TransformedShape.h
 # End Source File
 # End Group
 # End Target

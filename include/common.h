@@ -91,11 +91,6 @@ typedef unsigned char	uint8_t;
 // need some integer types
 #include <inttypes.h>
 
-// my own strcasecmp, missing in MSL
-#ifdef __MWERKS__
-	#include "strcasecmp.h"
-#endif
-
 #endif /* defined( macintosh ) */
 
 #if defined(_WIN32)
@@ -158,5 +153,27 @@ public:
 		return std::string(buffer);
 	}
 };
+
+#include <ctype.h>
+inline
+int strnocasecmp(const char* s1, const char* s2)
+{
+	while (tolower(*s1) == tolower(*s2) && *s1 != 0) {
+		++s1;
+		++s2;
+	}
+	return static_cast<int>(*s1) - static_cast<int>(*s2);
+}
+
+inline
+int strnnocasecmp(const char* s1, const char* s2, int n)
+{
+	while (n > 0 && tolower(*s1) == tolower(*s2) && *s1 != 0) {
+		++s1;
+		++s2;
+		--n;
+	}
+	return static_cast<int>(*s1) - static_cast<int>(*s2);
+}
 
 #endif // BZF_COMMON_H

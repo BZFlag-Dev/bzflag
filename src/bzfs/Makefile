@@ -14,24 +14,39 @@ include $(DEPTH)/Make-common
 
 TARGETS = $(TARGETDIR)/bzfs
 
-CXXFILES =				\
-	bzfs.cxx			\
+CXXFILES =							\
+	bzfs.cxx						\
+	RegionManagerFlagSpawn.cxx		\
+	RegionReaderFlagSpawn.cxx		\
+	RegionManagerObstacle.cxx		\
+	RegionReaderObstacle.cxx		\
+	RegionManagerBase.cxx			\
+	RegionReaderBase.cxx			\
+	WorldRegions.cxx	\
+	WorldInfo.cxx	\
+	WorldFile.cxx	\
+	WorldStandardTeam.cxx	\
+	WorldStandardRandom.cxx	\
 	$(NULL)
 
-LCXXINCS =				\
-	-I$(DEPTH)/src/game		\
+LCXXINCS =							\
+	-I$(DEPTH)/src/game				\
 	$(NULL)
 
-DEPLIBS =				\
-	$(LIBDIR)/libGame.a		\
-	$(LIBDIR)/libPlatform.a		\
-	$(LIBDIR)/libNet.a		\
-	$(LIBDIR)/libCommon.a		\
+DEPLIBS =							\
+	$(LIBDIR)/libCollide.a			\
+	$(LIBDIR)/libRegion.a			\
+	$(LIBDIR)/libShape.a			\
+	$(LIBDIR)/libGame.a				\
+	$(LIBDIR)/libPlatform.a			\
+	$(LIBDIR)/libNet.a				\
+	$(LIBDIR)/libMath.a				\
+	$(LIBDIR)/libCommon.a			\
 	$(NULL)
 
-LLDLIBS =				\
-	$(DEPLIBS)			\
-	-lm				\
+LLDLIBS =							\
+	$(DEPLIBS)						\
+	-lm								\
 	$(NULL)
 
 targets: $(TARGETS)

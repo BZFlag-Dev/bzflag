@@ -190,7 +190,7 @@ FlagType				Flag::getType(FlagId id)
 		case GreenFlag:
 		case BlueFlag:
 		case PurpleFlag:
-		return FlagNormal;
+			return FlagNormal;
 		case ColorblindnessFlag:
 		case ObesityFlag:
 		case LeftTurnOnlyFlag:
@@ -199,13 +199,13 @@ FlagType				Flag::getType(FlagId id)
 		case BlindnessFlag:
 		case JammingFlag:
 		case WideAngleFlag:
-		return FlagSticky;
+			return FlagSticky;
 		default:
-		return FlagUnstable;
+			return FlagUnstable;
 	}
 }
 
-const float*				Flag::getColor(FlagId id)
+const float*			Flag::getColor(FlagId id)
 {
 	static const float superColor[3] = { 1.0, 1.0, 1.0 };
 	switch (id) {
@@ -218,4 +218,22 @@ const float*				Flag::getColor(FlagId id)
 		default:
 			return superColor;
 	}
+}
+
+FlagId					Flag::getIDFromName(const char* name)
+{
+	// start at 1 because "Rogue" isn't a valid flag name
+	for (unsigned int i = 1; i < countof(flagName); ++i)
+		if (strnocasecmp(flagName[i], name) == 0)
+			return static_cast<FlagId>(i);
+	return NullFlag;
+}
+
+FlagId					Flag::getIDFromAbbreviation(const char* abbv)
+{
+	// start after teams because team flags don't have abbreviations
+	for (unsigned int i = FirstSuperFlag; i < countof(flagAbbv); ++i)
+		if (strnocasecmp(flagAbbv[i], abbv) == 0)
+			return static_cast<FlagId>(i);
+	return NullFlag;
 }

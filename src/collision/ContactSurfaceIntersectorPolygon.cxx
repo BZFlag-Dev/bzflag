@@ -21,7 +21,8 @@
 
 void					ContactSurfaceIntersectorPointPoint::doIntersect(
 								ContactPoints& contacts,
-								Body* aBody, Body* bBody,
+								Body* aBody,
+								Body* bBody,
 								const ContactSurfacePoint* a,
 								const ContactSurfacePoint* b) const
 {
@@ -45,7 +46,8 @@ p.distance = d.length();
 
 void					ContactSurfaceIntersectorPointEdge::doIntersect(
 								ContactPoints& contacts,
-								Body* aBody, Body* bBody,
+								Body* aBody,
+								Body* bBody,
 								const ContactSurfacePoint* a,
 								const ContactSurfaceEdge* /*b*/) const
 {
@@ -68,7 +70,8 @@ p.distance = R_(0.0); // FIXME
 
 void					ContactSurfaceIntersectorPointPolygon::doIntersect(
 								ContactPoints& contacts,
-								Body* aBody, Body* bBody,
+								Body* aBody,
+								Body* bBody,
 								const ContactSurfacePoint* a,
 								const ContactSurfacePolygon* b) const
 {
@@ -90,7 +93,8 @@ p.distance = b->getPlane().distance(p.point);
 
 void					ContactSurfaceIntersectorEdgeEdge::doIntersect(
 								ContactPoints& contacts,
-								Body* aBody, Body* bBody,
+								Body* aBody,
+								Body* bBody,
 								const ContactSurfaceEdge* a,
 								const ContactSurfaceEdge* b) const
 {
@@ -203,7 +207,8 @@ p.distance = d;
 
 void					ContactSurfaceIntersectorEdgePolygon::doIntersect(
 								ContactPoints& contacts,
-								Body* aBody, Body* bBody,
+								Body* aBody,
+								Body* bBody,
 								const ContactSurfaceEdge* a,
 								const ContactSurfacePolygon* b) const
 {
@@ -233,7 +238,8 @@ template <int x, int y>
 void					ContactSurfaceIntersectorEdgePolygon::
 							doIntersect2D(
 								ContactPoints& contacts,
-								Body* aBody, Body* bBody,
+								Body* aBody,
+								Body* bBody,
 								const ContactSurfaceEdge* a,
 								const ContactSurfacePolygon* b,
 								bool flip) const
@@ -346,7 +352,8 @@ p.distance = b->getPlane().distance(p.point);
 
 void					ContactSurfaceIntersectorPolygonPolygon::doIntersect(
 								ContactPoints& contacts,
-								Body* aBody, Body* bBody,
+								Body* aBody,
+								Body* bBody,
 								const ContactSurfacePolygon* a,
 								const ContactSurfacePolygon* b) const
 {
@@ -388,7 +395,8 @@ template <int x, int y>
 void					ContactSurfaceIntersectorPolygonPolygon::
 							doIntersect2D(
 								ContactPoints& contacts,
-								Body* aBody, Body* bBody,
+								Body* aBody,
+								Body* bBody,
 								const ContactSurfacePolygon* a,
 								const ContactSurfacePolygon* b,
 								bool flip) const

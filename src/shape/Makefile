@@ -18,7 +18,11 @@ CXXFILES =						\
 	ContactSurfacePoint.cxx		\
 	ContactSurfaceEdge.cxx		\
 	ContactSurfacePolygon.cxx	\
+	TransformableShape.cxx		\
+	TransformedShape.cxx		\
+	ShapePoint.cxx				\
 	ShapeBox.cxx				\
+	ShapePyramid.cxx			\
 	$(NULL)
 
 targets: $(TARGETS)

@@ -200,6 +200,8 @@ public:
 	Plane();	// +z half-space
 	Plane(const Vec3& normal, Real d);
 	Plane(const Vec3& normal, const Vec3& pointOnPlane);
+	// normal points out if v0,v1,v2 are CCW
+	Plane(const Vec3& v0, const Vec3& v1, const Vec3& v2);
 
 	// manipulators
 
@@ -207,6 +209,7 @@ public:
 
 	Plane&				set(const Vec3& normal, Real d);
 	Plane&				set(const Vec3& normal, const Vec3& pointOnPlane);
+	Plane&				set(const Vec3& v0, const Vec3& v1, const Vec3& v2);
 
 	// accessors
 
@@ -2117,6 +2120,14 @@ Plane::Plane(const Vec3& normal_, const Vec3& pointOnPlane) :
 }
 
 inline
+Plane::Plane(const Vec3& v0, const Vec3& v1, const Vec3& v2) :
+								normal((v1 - v0) % (v2 - v1))
+{
+	normal.normalize();
+	d = -(normal * v0);
+}
+
+inline
 Plane&					Plane::negate()
 {
 	normal.negate();
@@ -2138,6 +2149,16 @@ Plane&					Plane::set(const Vec3& normal_,
 {
 	normal = normal_;
 	d      = -(normal * pointOnPlane);
+	return *this;
+}
+
+inline
+Plane&					Plane::set(const Vec3& v0,
+								const Vec3& v1, const Vec3& v2)
+{
+	normal = (v1 - v0) % (v2 - v1);
+	normal.normalize();
+	d      = -(normal * v0);
 	return *this;
 }
 

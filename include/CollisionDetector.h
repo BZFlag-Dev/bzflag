@@ -15,9 +15,9 @@
 
 #include "mathr.h"
 
-class Body;
 class Plane;
 class ContactSurface;
+class TransformableShape;
 
 class CollisionDetector {
 public:
@@ -36,7 +36,8 @@ public:
 	// separate.
 	virtual Type		compare(Real intersectingTolerance,
 								Real contactingTolerance,
-								const Body* a, const Body* b) const = 0;
+								const TransformableShape* a,
+								const TransformableShape* b) const = 0;
 
 	// like compare() above except collision surfaces for each body and
 	// a separating plane passing through a are returned if the bodies
@@ -49,7 +50,8 @@ public:
 								ContactSurface** bSurface,
 								Real intersectingTolerance,
 								Real contactingTolerance,
-								const Body* a, const Body* b) const = 0;
+								const TransformableShape* a,
+								const TransformableShape* b) const = 0;
 };
 
 #endif

@@ -34,7 +34,8 @@ CollisionDetectorGJK::~CollisionDetectorGJK()
 CollisionDetector::Type	CollisionDetectorGJK::compare(
 								Real intersectingTolerance,
 								Real contactingTolerance,
-								const Body* a, const Body* b) const
+								const TransformableShape* a,
+								const TransformableShape* b) const
 {
 	// find closest points.  return if intersecting.
 	Vec3 aPoint, bPoint;
@@ -61,7 +62,8 @@ CollisionDetector::Type	CollisionDetectorGJK::compare(
 								ContactSurface** bSurface,
 								Real intersectingTolerance,
 								Real contactingTolerance,
-								const Body* a, const Body* b) const
+								const TransformableShape* a,
+								const TransformableShape* b) const
 {
 	assert(aSurface != NULL);
 	assert(bSurface != NULL);
@@ -98,9 +100,9 @@ CollisionDetector::Type	CollisionDetectorGJK::compare(
 		// outward pointing plane and increase the tolerance by
 		// distance to account for the known separation between b and
 		// the plane.
-		a->getCollision(aSurface, aSimplex, plane, contactingTolerance);
+		*aSurface = a->getCollision(aSimplex, plane, contactingTolerance);
 		plane.negate();
-		b->getCollision(bSurface, bSimplex, plane,
+		*bSurface = b->getCollision(bSimplex, plane,
 								distance + contactingTolerance);
 		plane.negate();
 
@@ -115,7 +117,8 @@ CollisionDetector::Type	CollisionDetectorGJK::getPoints(
 								Vec3& aPoint, Vec3& bPoint,
 								ContactSimplex* aSimplex,
 								ContactSimplex* bSimplex,
-								const Body* a, const Body* b) const
+								const TransformableShape* a,
+								const TransformableShape* b) const
 {
 	// we cache some stuff for convenience
 	CollisionDetectorGJK* self = const_cast<CollisionDetectorGJK*>(this);
@@ -128,7 +131,10 @@ CollisionDetector::Type	CollisionDetectorGJK::getPoints(
 
 	// compute v0 = center(A) - center(B).  initial guess.
 // FIXME -- provide method to pick arbitary point
-	Vec3 v = a->getPosition() - b->getPosition();
+	Vec3 aCenter, bCenter;
+	aCenter.xformPoint(a->getTransform());
+	bCenter.xformPoint(b->getTransform());
+	Vec3 v = aCenter - bCenter;
 
 	// find closest points.  return if intersecting.
 	Real aLambda[4], bLambda[4];
@@ -159,7 +165,8 @@ CollisionDetector::Type	CollisionDetectorGJK::gjk(
 								ContactSimplex& aSimplex,
 								ContactSimplex& bSimplex,
 								Real* aLambda, Real* bLambda,
-								const Body* a, const Body* b,
+								const TransformableShape* a,
+								const TransformableShape* b,
 								const Vec3& initialGuess)
 {
 	// put 4 vertices on each simplex.  (the next part of the
@@ -222,7 +229,8 @@ CollisionDetector::Type	CollisionDetectorGJK::gjk(
 								ContactSimplex& aSimplex,
 								ContactSimplex& bSimplex,
 								Real* lambda,
-								const Body* a, const Body* b,
+								const TransformableShape* a,
+								const TransformableShape* b,
 								const Vec3& initialGuess)
 {
 	static const unsigned int firstEmptySlot[] = {

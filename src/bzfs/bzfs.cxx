@@ -37,7 +37,6 @@ const int udpBufSize = 128000;
 
 #if defined(_WIN32)
 #include <windows.h>
-#define strcasecmp _stricmp
 #endif /* defined(_WIN32) */
 
 #include <stdio.h>
@@ -52,7 +51,6 @@ const int udpBufSize = 128000;
 #include <math.h>
 #include <vector>
 #include <iostream>
-#include <fstream>
 #include <iomanip>
 #include "PlatformFactory.h"
 #include <time.h>
@@ -66,6 +64,22 @@ const int udpBufSize = 128000;
 #include "Team.h"
 #include "Ping.h"
 #include "TimeBomb.h"
+#include "RegionManagerFlagSpawn.h"
+#include "RegionReaderFlagSpawn.h"
+#include "ConfigFileManager.h"
+#include <sstream>
+
+#include "WorldInfo.h"
+#include "WorldFile.h"
+#include "WorldStandardTeam.h"
+#include "WorldStandardRandom.h"
+
+#include "RegionManagerBase.h"
+#include "RegionManagerFlagSpawn.h"
+#include "RegionManagerObstacle.h"
+
+#include "TransformedShape.h"
+#include "ShapeBox.h"
 
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
@@ -80,12 +94,6 @@ static const float FlagHalfLife = 45.0f;
 static const int NotConnected = -1;
 static const PlayerId InvalidPlayer = 0xff;
 static const PlayerId ServerPlayer = 253; // FIXME - enum maybe?
-
-//The minimum height above ground an object must be in order
-//to have a flag appear beneath it
-static float flagHeight = FlagAltitude;
-// meters
-//float WorldSize = 800.0f;
 
 // custom server login message
 static char *servermsg = NULL;
@@ -211,54 +219,7 @@ struct TeamInfo {
 		Team team;
 };
 
-class WorldInfo {
-	public:
-		WorldInfo();
-		~WorldInfo();
-
-		void addWall(float x, float y, float z, float r, float w, float h);
-		void addBox(float x, float y, float z, float r, float w, float d, float h);
-		void addPyramid(float x, float y, float z, float r, float w, float d, float h);
-		void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b);
-		void addBase(float x, float y, float z, float r, float w, float d, float h);
-		void addLink(int from, int to);
-		int packDatabase();
-		void *getDatabase() const;
-		int getDatabaseSize() const;
-
-		struct ObstacleLocation {
-			public:
-				float pos[3];
-				float rotation;
-				float size[3];
-		};
-
-		struct Teleporter : public ObstacleLocation {
-			public:
-				float border;
-				int to[2];
-		};
-
-		int inBuilding(const ObstacleLocation **location, float x, float y, float z, float radius) const;
-
-	private:
-		typedef std::vector<ObstacleLocation> ObstacleList;
-		typedef std::vector<Teleporter> TeleporterList;
-
-		void addObstacle(ObstacleList&, float x, float y, float z,
-										float r, float w, float d, float h);
-		bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
-		bool rectHitCirc(float dx, float dy, const float *p, float r) const;
-
-	private:
-		ObstacleList	walls;
-		ObstacleList	boxes;
-		ObstacleList	bases;
-		ObstacleList	pyramids;
-		TeleporterList	teleporters;
-		char *database;
-		int databaseSize;
-};
+#include "WorldInfo.h"
 
 class ListServerLink {
 	public:
@@ -301,13 +262,11 @@ static bool done = false;
 static bool gameOver = true;
 static int exitCode = 0;
 // true if -b on cmd line
-static bool randomBoxes;
+bool randomBoxes;
 // true if -h on cmd line
-static bool randomHeights;
+bool randomHeights;
 // true if -t on cmd line
-static bool useTeleporters;
-// true if -fb on cmd line
-static bool flagsOnBuildings;
+bool useTeleporters;
 // true if -g on cmd line
 static bool oneGameOnly;
 static int gameStyle;
@@ -343,10 +302,10 @@ static int listServerLinksCount = 0;
 static WorldInfo *world = NULL;
 static char *worldDatabase = NULL;
 static int worldDatabaseSize = 0;
-static float basePos[NumTeams][3];
-static float baseRotation[NumTeams];
-static float baseSize[NumTeams][3];
-static float safetyBasePos[NumTeams][3];
+float basePos[NumTeams][3];
+float baseRotation[NumTeams];
+float baseSize[NumTeams][3];
+float safetyBasePos[NumTeams][3];
 static const char *worldFile = NULL;
 
 static float lagwarnthresh = -1.0;
@@ -355,467 +314,6 @@ static char *password = NULL;
 
 static void removePlayer(PlayerId playerId);
 static void resetFlag(int flagIndex);
-
-//
-// types for reading world files
-//
-
-class WorldFileObject {
-	public:
-		WorldFileObject() { }
-		virtual ~WorldFileObject() { }
-
-		virtual bool read(const char *cmd, std::istream&) = 0;
-		virtual void write(WorldInfo*) const = 0;
-};
-
-class WorldFileObstacle : public WorldFileObject {
-	public:
-		WorldFileObstacle();
-		virtual bool read(const char *cmd, std::istream&);
-
-	protected:
-		float pos[3];
-		float rotation;
-		float size[3];
-};
-
-WorldFileObstacle::WorldFileObstacle()
-{
-	pos[0] = pos[1] = pos[2] = 0.0f;
-	rotation = 0.0f;
-	size[0] = size[1] = size[2] = 1.0f;
-}
-
-bool WorldFileObstacle::read(const char *cmd, std::istream& input)
-{
-	if (strcmp(cmd, "position") == 0)
-		input >> pos[0] >> pos[1] >> pos[2];
-	else if (strcmp(cmd, "rotation") == 0) {
-		input >> rotation;
-		rotation = rotation * M_PI / 180.0f;
-	} else if (strcmp(cmd, "size") == 0)
-		input >> size[0] >> size[1] >> size[2];
-	else
-		return false;
-	return true;
-}
-
-class CustomBox : public WorldFileObstacle {
-	public:
-		CustomBox();
-		virtual void write(WorldInfo*) const;
-};
-
-CustomBox::CustomBox()
-{
-	size[0] = size[1] = BoxBase;
-	size[2] = BoxHeight;
-}
-
-void CustomBox::write(WorldInfo *world) const
-{
-	world->addBox(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2]);
-}
-
-class CustomPyramid : public WorldFileObstacle {
-	public:
-		CustomPyramid();
-		virtual void write(WorldInfo*) const;
-};
-
-CustomPyramid::CustomPyramid()
-{
-	size[0] = size[1] = PyrBase;
-	size[2] = PyrHeight;
-}
-
-void CustomPyramid::write(WorldInfo *world) const
-{
-	world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2]);
-}
-
-class CustomGate : public WorldFileObstacle {
-	public:
-		CustomGate();
-		virtual bool read(const char *cmd, std::istream&);
-		virtual void write(WorldInfo*) const;
-
-	protected:
-		float border;
-};
-
-CustomGate::CustomGate()
-{
-	size[0] = 0.5f * TeleWidth;
-	size[1] = TeleBreadth;
-	size[2] = 2.0f * TeleHeight;
-	border = TeleWidth;
-}
-
-bool CustomGate::read(const char *cmd, std::istream& input)
-{
-	if (strcmp(cmd, "border") == 0)
-		input >> border;
-	else
-		return WorldFileObstacle::read(cmd, input);
-	return true;
-}
-
-void CustomGate::write(WorldInfo *world) const
-{
-	world->addTeleporter(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2], border);
-}
-
-class CustomLink : public WorldFileObject {
-	public:
-		CustomLink();
-		virtual bool read(const char *cmd, std::istream&);
-		virtual void write(WorldInfo*) const;
-
-	protected:
-		int from;
-		int to;
-};
-
-CustomLink::CustomLink()
-{
-	from = 0;
-	to = 0;
-}
-
-bool CustomLink::read(const char *cmd, std::istream& input)
-{
-	if (strcmp(cmd, "from") == 0)
-		input >> from;
-	else if (strcmp(cmd, "to") == 0)
-		input >> to;
-	else
-		return false;
-	return true;
-}
-
-void CustomLink::write(WorldInfo *world) const
-{
-	world->addLink(from, to);
-}
-
-class CustomBase : public WorldFileObstacle {
-	public:
-		CustomBase();
-		virtual bool read(const char *cmd, std::istream&);
-		virtual void write(WorldInfo*) const;
-
-	protected:
-		int color;
-};
-
-CustomBase::CustomBase()
-{
-	pos[0] = pos[1] = pos[2] = 0.0f;
-	rotation = 0.0f;
-	size[0] = size[1] = BaseSize;
-}
-
-bool CustomBase::read(const char *cmd, std::istream& input) {
-	if (strcmp(cmd, "color") == 0)
-		input >> color;
-	else {
-		WorldFileObstacle::read(cmd, input);
-		if(!flagsOnBuildings && (pos[2] != 0)) {
-			std::cerr << "Dropping team base down to 0 because -fb not set" << std::endl;
-			pos[2] = 0;
-		}
-	}
-	return true;
-}
-
-void CustomBase::write(WorldInfo* world) const {
-	basePos[color][0] = pos[0];
-	basePos[color][1] = pos[1];
-	basePos[color][2] = pos[2];
-	baseRotation[color] = rotation;
-	baseSize[color][0] = size[0];
-	baseSize[color][1] = size[1];
-	baseSize[color][2] = size[2];
-	safetyBasePos[color][0] = 0;
-	safetyBasePos[color][1] = 0;
-	safetyBasePos[color][2] = 0;
-	world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0.0) ? 1.0f : 0.0f);
-}
-
-class CustomWorld : public WorldFileObject {
-	public:
-		CustomWorld();
-		virtual bool read(const char *cmd, std::istream&);
-		virtual void write(WorldInfo*) const;
-
-	protected:
-		int size;
-		int fHeight;
-};
-
-CustomWorld::CustomWorld()
-{
-	size = 800;
-	fHeight = 0;
-}
-
-bool CustomWorld::read(const char *cmd, std::istream& input)
-{
-	if (strcmp(cmd, "size") == 0)
-		input >> size;
-	else if (strcmp(cmd, "flagHeight") == 0)
-		input >> fHeight;
-	else
-		return false;
-	return true;
-}
-
-void CustomWorld::write(WorldInfo * /*world*/) const
-{
-	flagHeight = (float) fHeight;
-	//WorldSize = size;
-	//world->addLink(from, to);
-}
-
-// list of world file objects
-typedef std::vector<WorldFileObject*> WorldFileObjectList;
-
-static void emptyWorldFileObjectList(WorldFileObjectList& list)
-{
-	const int n = (int)list.size();
-	for (int i = 0; i < n; ++i)
-		delete list[i];
-	list.clear();
-}
-
-// WorldInfo
-WorldInfo::WorldInfo() : database(NULL)
-{
-	// do nothing
-}
-
-WorldInfo::~WorldInfo()
-{
-	delete[] database;
-}
-
-void WorldInfo::addObstacle(ObstacleList& list,
-								float x, float y, float z,
-								float r, float w, float d, float h)
-{
-	list.resize(list.size() + 1);
-	ObstacleLocation& o = list.back();
-	o.pos[0]   = x;
-	o.pos[1]   = y;
-	o.pos[2]   = z;
-	o.rotation = r;
-	o.size[0]  = w;
-	o.size[1]  = d;
-	o.size[2]  = h;
-}
-
-void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
-{
-	// no depth to walls
-	addObstacle(walls, x, y, z, r, w, 0.0f, h);
-}
-
-void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, float h)
-{
-	addObstacle(boxes, x, y, z, r, w, d, h);
-}
-
-void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h)
-{
-	addObstacle(pyramids, x, y, z, r, w, d, h);
-}
-
-void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b)
-{
-	int n = (int)teleporters.size();
-	teleporters.resize(teleporters.size() + 1);
-	Teleporter& o = teleporters.back();
-	o.pos[0]   = x;
-	o.pos[1]   = y;
-	o.pos[2]   = z;
-	o.rotation = r;
-	o.size[0]  = w;
-	o.size[1]  = d;
-	o.size[2]  = h;
-	o.border = b;
-	// default link through
-	o.to[0] = n * 2 + 1;
-	o.to[1] = n * 2;
-}
-
-void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h)
-{
-	addObstacle(bases, x, y, z, r, w, d, h);
-}
-
-void WorldInfo::addLink(int from, int to)
-{
-	// silently discard links from teleporters that don't exist
-	if (from <= (int)teleporters.size() * 2 + 1) {
-		teleporters[from / 2].to[from % 2] = to;
-	}
-}
-
-bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
-{
-	// Algorithm from Graphics Gems, pp51-53.
-	const float rr = r * r, rx = -p[0], ry = -p[1];
-	if (rx + dx < 0.0f) // west of rect
-		if (ry + dy < 0.0f) //  sw corner
-			return (rx + dx) * (rx + dx) + (ry + dy) * (ry + dy) < rr;
-		else if (ry - dy > 0.0f) //  nw corner
-			return (rx + dx) * (rx + dx) + (ry - dy) * (ry - dy) < rr;
-		else //  due west
-			return rx + dx > -r;
-
-	else if (rx - dx > 0.0f) // east of rect
-		if (ry + dy < 0.0f) //  se corner
-			return (rx - dx) * (rx - dx) + (ry + dy) * (ry + dy) < rr;
-		else if (ry - dy > 0.0f) //  ne corner
-			return (rx - dx) * (rx - dx) + (ry - dy) * (ry - dy) < rr;
-		else //  due east
-			return rx - dx < r;
-
-	else if (ry + dy < 0.0f) // due south
-		return ry + dy > -r;
-
-	else if (ry - dy > 0.0f) // due north
-		return ry - dy < r;
-
-	// circle origin in rect
-	return true;
-}
-
-bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x, float y, float r) const
-{
-	// translate origin
-	float pa[2];
-	pa[0] = x - p1[0];
-	pa[1] = y - p1[1];
-
-	// rotate
-	float pb[2];
-	const float c = cosf(-angle), s = sinf(-angle);
-	pb[0] = c * pa[0] - s * pa[1];
-	pb[1] = c * pa[1] + s * pa[0];
-
-	// do test
-	return rectHitCirc(size[0], size[1], pb, r);
-}
-
-int WorldInfo::inBuilding(const WorldInfo::ObstacleLocation **location, float x, float y, float z, float r) const
-{
-	unsigned int i;
-	for (i = 0; i < bases.size(); i++) {
-		if ((inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r) && bases[i].pos[2] <
-		(z + flagHeight)) && (bases[i].pos[2] + bases[i].size[2]) > z) {
-			if(location != NULL)
-				*location = &bases[i];
-			return 1;
-		}
-	}
-	for (i = 0; i < boxes.size(); i++)
-		if ((inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] <
-		(z + flagHeight)) && (boxes[i].pos[2] + boxes[i].size[2]) > z) {
-			if (location != NULL)
-				*location = &boxes[i];
-			return 2;
-		}
-	for (i = 0; i < pyramids.size(); i++) {
-		if ((inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r)) &&
-		pyramids[i].pos[2] < (z + flagHeight) && (pyramids[i].pos[2] + pyramids[i].size[2]) > z) {
-			if (location != NULL)
-				*location = &pyramids[i];
-			return 3;
-		}
-	}
-	for (i = 0; i < teleporters.size(); i++)
-		if (inRect(teleporters[i].pos, teleporters[i].rotation, teleporters[i].size, x, y, r) &&
-		teleporters[i].pos[2] < (z + flagHeight) &&
-		(teleporters[i].pos[2] + teleporters[i].size[2]) > z) {
-			if (location != NULL)
-				*location = &teleporters[i];
-			return 4;
-		}
-	if (location != NULL)
-		*location = (ObstacleLocation *)NULL;
-	return 0;
-}
-
-int WorldInfo::packDatabase()
-{
-	databaseSize = (2 + 6 * 4) * walls.size() +
-				(2 + 7 * 4) * boxes.size() +
-				(2 + 7 * 4) * pyramids.size() +
-				(2 + 8 * 4) * teleporters.size() +
-				(2 + 4) * 2 * teleporters.size();
-	database = new char[databaseSize];
-	void *databasePtr = database;
-
-	// add walls
-	ObstacleList::iterator index1;
-	for (index1 = walls.begin(); index1 != walls.end(); ++index1) {
-		databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-		databasePtr = nboPackVector(databasePtr, index1->pos);
-		databasePtr = nboPackFloat(databasePtr, index1->rotation);
-		databasePtr = nboPackFloat(databasePtr, index1->size[0]);
-		// walls have no depth
-		// databasePtr = nboPackFloat(databasePtr, index1->size[1]);
-		databasePtr = nboPackFloat(databasePtr, index1->size[2]);
-	}
-
-	// add boxes
-	for (index1 = boxes.begin(); index1 != boxes.end(); ++index1) {
-		databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-		databasePtr = nboPackVector(databasePtr, index1->pos);
-		databasePtr = nboPackFloat(databasePtr, index1->rotation);
-		databasePtr = nboPackVector(databasePtr, index1->size);
-	}
-
-	// add pyramids
-	for (index1 = pyramids.begin(); index1 != pyramids.end(); ++index1) {
-		databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-		databasePtr = nboPackVector(databasePtr, index1->pos);
-		databasePtr = nboPackFloat(databasePtr, index1->rotation);
-		databasePtr = nboPackVector(databasePtr, index1->size);
-	}
-
-	// add teleporters
-	TeleporterList::iterator index2;
-	for (index2 = teleporters.begin(); index2 != teleporters.end(); ++index2) {
-		databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-		databasePtr = nboPackVector(databasePtr, index2->pos);
-		databasePtr = nboPackFloat(databasePtr, index2->rotation);
-		databasePtr = nboPackVector(databasePtr, index2->size);
-		databasePtr = nboPackFloat(databasePtr, index2->border);
-		// and each link
-		unsigned int i = index2 - teleporters.begin();
-		databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
-		databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
-		databasePtr = nboPackUShort(databasePtr, uint16_t(index2->to[0]));
-		databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
-		databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
-		databasePtr = nboPackUShort(databasePtr, uint16_t(index2->to[1]));
-	}
-	return 1;
-}
-
-void *WorldInfo::getDatabase() const
-{
-	return database;
-}
-
-int WorldInfo::getDatabaseSize() const
-{
-	return databaseSize;
-}
 
 //
 // rest of server (no more classes, just functions)
@@ -1999,491 +1497,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 			pwrite(i, rawbuf, len + 4);
 }
 
-static std::istream &readToken(std::istream& input, char *buffer, int n)
-{
-	int c = -1;
-
-	// skip whitespace
-	while (input.good() && (c = input.get()) != -1 && isspace(c) && c != '\n')
-		;
-
-	// read up to whitespace or n - 1 characters into buffer
-	int i = 0;
-	if (c != -1 && c != '\n') {
-		buffer[i++] = c;
-		while (input.good() && i < n - 1 && (c = input.get()) != -1 && !isspace(c))
-			buffer[i++] = (char)c;
-	}
-
-	// terminate string
-	buffer[i] = 0;
-
-	// put back last character we didn't use
-	if (c != -1 && isspace(c))
-		input.putback(c);
-
-	return input;
-}
-
-static bool readWorldStream(std::istream& input, const char *location, WorldFileObjectList& list)
-{
-	int line = 1;
-	char buffer[1024];
-	WorldFileObject *object    = NULL;
-	WorldFileObject *newObject = NULL;
-	while (!input.eof())
-	{
-		// watch out for starting a new object when one is already in progress
-		if (newObject) {
-			if (object) {
-				std::cerr << location << "(" << line << ") : " << "discarding incomplete object" << std::endl;
-				delete object;
-			}
-			object = newObject;
-			newObject = NULL;
-		}
-
-		// read first token but do not skip newlines
-		readToken(input, buffer, sizeof(buffer));
-		if (strcmp(buffer, "") == 0) {
-			// ignore blank line
-		}
-
-		else if (buffer[0] == '#') {
-			// ignore comment
-		}
-
-		else if (strcmp(buffer, "end") == 0) {
-			if (object) {
-				list.push_back(object);
-				object = NULL;
-			}
-			else {
-				std::cerr << location << "(" << line << ") : " << "unexpected \"end\" token" << std::endl;
-				return false;
-			}
-		}
-
-		else if (strcmp(buffer, "box") == 0)
-			newObject = new CustomBox;
-
-		else if (strcmp(buffer, "pyramid") == 0)
-			newObject = new CustomPyramid();
-
-		else if (strcmp(buffer, "teleporter") == 0)
-			newObject = new CustomGate();
-
-		else if (strcmp(buffer, "link") == 0)
-			newObject = new CustomLink();
-
-		else if (strcmp(buffer, "base") == 0)
-			newObject = new CustomBase;
-
-		// FIXME - only load one object of the type CustomWorld!
-		else if (strcmp(buffer, "world") == 0)
-			newObject = new CustomWorld();
-
-		else if (object) {
-			if (!object->read(buffer, input)) {
-				// unknown token
-				std::cerr << location << "(" << line << ") : " <<
-						"invalid object parameter \"" << buffer << "\"" << std::endl;
-				delete object;
-				return false;
-			}
-		}
-
-		// filling the current object
-		else {
-			// unknown token
-			std::cerr << location << "(" << line << ") : " << "invalid object type \"" << buffer << "\"" << std::endl;
-			delete object;
-			return false;
-		}
-
-		// discard remainder of line
-		while (input.good() && input.peek() != '\n')
-			input.get(buffer, sizeof(buffer));
-		input.getline(buffer, sizeof(buffer));
-		++line;
-	}
-
-	if (object) {
-		std::cerr << location << "(" << line << ") : " << "missing \"end\" token" << std::endl;
-		delete object;
-		return false;
-	}
-
-	return true;
-}
-
-static WorldInfo *defineWorldFromFile(const char *filename)
-{
-	// open file
-	std::ifstream input(filename, std::ios::in);
-	if (!input) {
-		std::cerr << "could not find bzflag world file : " << filename << std::endl;
-		return NULL;
-	}
-
-	// create world object
-	world = new WorldInfo;
-	if (!world)
-		return NULL;
-
-	// read file
-	WorldFileObjectList list;
-	if (!readWorldStream(input, filename, list)) {
-		emptyWorldFileObjectList(list);
-		delete world;
-		return NULL;
-	}
-
-	// make walls
-	world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
-
-	// add objects
-	const int n = (int)list.size();
-	for (int i = 0; i < n; ++i)
-		list[i]->write(world);
-
-	// clean up
-	emptyWorldFileObjectList(list);
-	return world;
-}
-
-
-static WorldInfo *defineTeamWorld()
-{
-	if (!worldFile) {
-		world = new WorldInfo();
-		if (!world)
-			return NULL;
-
-		// set team base and team flag safety positions
-		basePos[0][0] = 0.0f;
-		basePos[0][1] = 0.0f;
-		basePos[0][2] = 0.0f;
-		baseRotation[0] = 0.0f;
-		baseSize[0][0] = 0.0f;
-		baseSize[0][1] = 0.0f;
-		basePos[1][0] = (-WorldSize + BaseSize) / 2.0f;
-		basePos[1][1] = 0.0f;
-		basePos[1][2] = 0.0f;
-		baseRotation[1] = 0.0f;
-		baseSize[1][0] = BaseSize / 2.0f;
-		baseSize[1][1] = BaseSize / 2.0f;
-		basePos[2][0] = (WorldSize - BaseSize) / 2.0f;
-		basePos[2][1] = 0.0f;
-		basePos[2][2] = 0.0f;
-		baseRotation[2] = 0.0f;
-		baseSize[2][0] = BaseSize / 2.0f;
-		baseSize[2][1] = BaseSize / 2.0f;
-		basePos[3][0] = 0.0f;
-		basePos[3][1] = (-WorldSize + BaseSize) / 2.0f;
-		basePos[3][2] = 0.0f;
-		baseRotation[3] = 0.0f;
-		baseSize[3][0] = BaseSize / 2.0f;
-		baseSize[3][1] = BaseSize / 2.0f;
-		basePos[4][0] = 0.0f;
-		basePos[4][1] = (WorldSize - BaseSize) / 2.0f;
-		basePos[4][2] = 0.0f;
-		baseRotation[4] = 0.0f;
-		baseSize[4][0] = BaseSize / 2.0f;
-		baseSize[4][1] = BaseSize / 2.0f;
-		safetyBasePos[0][0] = basePos[0][0];
-		safetyBasePos[0][1] = basePos[0][1];
-		safetyBasePos[0][2] = basePos[0][2];
-		safetyBasePos[1][0] = basePos[1][0] + 0.5f * BaseSize + PyrBase;
-		safetyBasePos[1][1] = basePos[1][1] + 0.5f * BaseSize + PyrBase;
-		safetyBasePos[1][2] = basePos[1][2];
-		safetyBasePos[2][0] = basePos[2][0] - 0.5f * BaseSize - PyrBase;
-		safetyBasePos[2][1] = basePos[2][1] - 0.5f * BaseSize - PyrBase;
-		safetyBasePos[2][2] = basePos[2][2];
-		safetyBasePos[3][0] = basePos[3][0] - 0.5f * BaseSize - PyrBase;
-		safetyBasePos[3][1] = basePos[3][1] + 0.5f * BaseSize + PyrBase;
-		safetyBasePos[3][2] = basePos[3][2];
-		safetyBasePos[4][0] = basePos[4][0] + 0.5f * BaseSize + PyrBase;
-		safetyBasePos[4][1] = basePos[4][1] - 0.5f * BaseSize - PyrBase;
-		safetyBasePos[4][2] = basePos[4][2];
-
-		// make walls
-		world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
-		world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, WallHeight);
-		world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
-		world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
-
-		// make pyramids
-		// around red base
-		world->addPyramid(
-		basePos[1][0] + 0.5f * BaseSize - PyrBase,
-		basePos[1][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[1][0] + 0.5f * BaseSize + PyrBase,
-		basePos[1][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[1][0] + 0.5f * BaseSize + PyrBase,
-		basePos[1][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[1][0] + 0.5f * BaseSize - PyrBase,
-		basePos[1][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-
-		// around green base
-		world->addPyramid(
-		basePos[2][0] - 0.5f * BaseSize + PyrBase,
-		basePos[2][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[2][0] - 0.5f * BaseSize - PyrBase,
-		basePos[2][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[2][0] - 0.5f * BaseSize - PyrBase,
-		basePos[2][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[2][0] - 0.5f * BaseSize + PyrBase,
-		basePos[2][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-
-		// around blue base
-		world->addPyramid(
-		basePos[3][0] - 0.5f * BaseSize - PyrBase,
-		basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[3][0] - 0.5f * BaseSize + PyrBase,
-		basePos[3][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[3][0] + 0.5f * BaseSize - PyrBase,
-		basePos[3][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[3][0] + 0.5f * BaseSize + PyrBase,
-		basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-
-		// around purple base
-		world->addPyramid(
-		basePos[4][0] - 0.5f * BaseSize - PyrBase,
-		basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[4][0] - 0.5f * BaseSize + PyrBase,
-		basePos[4][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[4][0] + 0.5f * BaseSize - PyrBase,
-		basePos[4][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		basePos[4][0] + 0.5f * BaseSize + PyrBase,
-		basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-
-		// in center
-		world->addPyramid(
-		-(BoxBase + 0.25f * AvenueSize),
-		-(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		(BoxBase + 0.25f * AvenueSize),
-		-(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		-(BoxBase + 0.25f * AvenueSize),
-		(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(
-		(BoxBase + 0.25f * AvenueSize),
-		(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(0.0f, -(BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(0.0f,  (BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(-(BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid( (BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-
-		// halfway out from city center
-		world->addPyramid(0.0f, -(3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(0.0f,  (3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid(-(3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-		world->addPyramid( (3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-		PyrBase, PyrBase, PyrHeight);
-
-		// add boxes, four at once with same height so no team has an advantage
-		const float xmin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
-		const float ymin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
-		for (int j = 0; j <= CitySize/2; j++)
-			for (int i = 0; i < CitySize/2; i++)
-				if (i != CitySize/2 || j != CitySize/2) {
-					float h = BoxHeight;
-					if (randomHeights)
-						h *= 2.0f * (float)bzfrand() + 0.5f;
-					world->addBox(
-							xmin + float(i) * (2.0f * BoxBase + AvenueSize),
-							ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
-							randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-							BoxBase, BoxBase, h);
-					world->addBox(
-							-1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
-							-1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-							randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-							BoxBase, BoxBase, h);
-					world->addBox(
-							-1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
-							xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
-							randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-							BoxBase, BoxBase, h);
-					world->addBox(
-							ymin + float(j) * (2.0f * BoxBase + AvenueSize),
-							-1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-							randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-							BoxBase, BoxBase, h);
-				}
-
-		// add teleporters
-		if (useTeleporters) {
-			const float xoff = BoxBase + 0.5f * AvenueSize;
-			const float yoff = BoxBase + 0.5f * AvenueSize;
-			world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
-					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-			world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
-					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-			world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
-					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-			world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
-					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-			world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
-					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-			world->addTeleporter(-3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.75f * M_PI,
-					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-			world->addTeleporter( 3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.75f * M_PI,
-					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-			world->addTeleporter( 3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.25f * M_PI,
-					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-
-			world->addLink(0, 14);
-			world->addLink(1, 7);
-			world->addLink(2, 12);
-			world->addLink(3, 5);
-			world->addLink(4, 10);
-			world->addLink(5, 3);
-			world->addLink(6, 8);
-			world->addLink(7, 1);
-			world->addLink(8, 6);
-			world->addLink(9, 0);
-			world->addLink(10, 4);
-			world->addLink(11, 2);
-			world->addLink(12, 2);
-			world->addLink(13, 4);
-			world->addLink(14, 0);
-			world->addLink(15, 6);
-		}
-
-		return world;
-	} else {
-		return defineWorldFromFile(worldFile);
-	}
-}
-
-static WorldInfo *defineRandomWorld()
-{
-	const int numTeleporters = 8 + int(8 * (float)bzfrand());
-	world = new WorldInfo();
-	if (!world)
-		return NULL;
-
-	// make walls
-	world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
-
-	// make boxes
-	int i;
-	float h = BoxHeight;
-	for (i = 0; i < CitySize * CitySize; i++) {
-		if (randomHeights)
-			h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f );
-		world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
-				WorldSize * ((float)bzfrand() - 0.5f),
-				0.0f, 2.0f * M_PI * (float)bzfrand(),
-				BoxBase, BoxBase, h);
-	}
-
-	// make pyramids
-	h = PyrHeight;
-	for (i = 0; i < CitySize * CitySize; i++) {
-		if (randomHeights)
-			h = PyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-		world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
-				WorldSize * ((float)bzfrand() - 0.5f),
-				0.0f, 2.0f * M_PI * (float)bzfrand(),
-				PyrBase, PyrBase, h);
-	}
-
-	if (useTeleporters) {
-		// make teleporters
-		int (*linked)[2] = (int(*)[2])new int[2 * numTeleporters];
-		for (i = 0; i < numTeleporters;) {
-			const float x = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-			const float y = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-			const float rotation = 2.0f * M_PI * (float)bzfrand();
-
-			// if too close to building then try again
-			if (world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
-				continue;
-
-			world->addTeleporter(x, y, 0.0f, rotation,
-					0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight, TeleWidth);
-			linked[i][0] = linked[i][1] = 0;
-			i++;
-		}
-
-		// make teleporter links
-		int numUnlinked = 2 * numTeleporters;
-		for (i = 0; i < numTeleporters; i++)
-			for (int j = 0; j < 2; j++) {
-				int a = (int)(numUnlinked * (float)bzfrand());
-				if (linked[i][j])
-					continue;
-				for (int k = 0, i2 = i; i2 < numTeleporters; ++i2)
-					for (int j2 = ((i2 == i) ? j : 0); j2 < 2; ++j2) {
-						if (linked[i2][j2])
-							continue;
-						if (k++ == a) {
-							world->addLink(2 * i + j, 2 * i2 + j2);
-							linked[i][j] = 1;
-							numUnlinked--;
-							if (i != i2 || j != j2) {
-								world->addLink(2 * i2 + j2, 2 * i + j);
-								linked[i2][j2] = 1;
-								numUnlinked--;
-							}
-						}
-					}
-			}
-		delete[] linked;
-	}
-
-	return world;
-}
-
+#include "WorldRegions.h"
 static bool defineWorld()
 {
 	// clean up old database
@@ -2491,14 +1505,17 @@ static bool defineWorld()
 	delete[] worldDatabase;
 
 	// make world and add buildings
-	if (gameStyle & TeamFlagGameStyle)
-		world = defineTeamWorld();
-	else if (worldFile)
+	if (worldFile)
 		world = defineWorldFromFile(worldFile);
+	else if (gameStyle & TeamFlagGameStyle)
+		world = defineTeamWorld();
 	else
 		world = defineRandomWorld();
 	if (world == NULL)
 		return false;
+
+	// set regions
+	defineWorldRegions(world);
 
 	// package up world
 	world->packDatabase();
@@ -2521,61 +1538,32 @@ static bool defineWorld()
 	// time-of-day will go here
 	buf = nboPackUInt(buf, 0);
 	if (gameStyle & TeamFlagGameStyle) {
-		for (int i = 1; i < NumTeams; i++) {
+		for (unsigned int i = 1; i < NumTeams; i++) {
 			buf = nboPackUShort(buf, WorldCodeBase);
 			buf = nboPackUShort(buf, uint16_t(i));
 			buf = nboPackVector(buf, basePos[i]);
 			buf = nboPackFloat(buf, baseRotation[i]);
 			buf = nboPackFloat(buf, baseSize[i][0]);
 			buf = nboPackFloat(buf, baseSize[i][1]);
-			buf = nboPackVector(buf, safetyBasePos[i]);
+			buf = nboPackVector(buf, RGNMGR_BASE->getSafety(
+								static_cast<TeamColor>(i)).get());
 		}
 	}
 	buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
 	buf = nboPackUShort(buf, WorldCodeEnd);
 
 	// reset other stuff
-	int i;
-	for (i = 0; i < NumTeams; i++) {
+	for (unsigned int i = 0; i < NumTeams; i++) {
 		team[i].team.size = 0;
 		team[i].team.activeSize = 0;
 		team[i].team.won = 0;
 		team[i].team.lost = 0;
 	}
 	numFlagsInAir = 0;
-	for (i = 0; i < numFlags; i++)
+	for (int i = 0; i < numFlags; i++)
 		resetFlag(i);
 
 	return true;
-}
-
-static TeamColor whoseBase(float x, float y, float z)
-{
-	if (!(gameStyle & TeamFlagGameStyle))
-		return NoTeam;
-
-	float highest = -1;
-	int highestteam = -1;
-	//Skip Rogue
-	for (int i = 1; i < NumTeams; i++) {
-		float nx = x - basePos[i][0];
-		float ny = y - basePos[i][1];
-		if (nx == 0.0f) nx = 1.0f;
-		float rx = (float)(cosf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx)));
-		float ry = (float)(sinf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx)));
-		if (fabsf(rx) < baseSize[i][0] &&
-				fabsf(ry) < baseSize[i][1] &&
-				basePos[i][2] <= z) {
-			if(basePos[i][2] > highest) {
-				highest = basePos[i][2];
-				highestteam = i;
-			}
-		}
-	}
-	if(highestteam == -1)
-		return NoTeam;
-	else
-		return TeamColor(highestteam);
 }
 
 #ifdef PRINTSCORE
@@ -2703,7 +1691,7 @@ static void addPlayer(PlayerId playerId)
 	{
 		if (i == playerId)
 			continue;
-		if (strcasecmp(player[i].callSign,player[playerId].callSign) == 0)
+		if (strnocasecmp(player[i].callSign,player[playerId].callSign) == 0)
 			break;
 	}
 	if (i < maxPlayers)
@@ -2728,7 +1716,7 @@ static void addPlayer(PlayerId playerId)
 		else if (team[int(t)].team.activeSize >= maxTeam[int(t)]) {
 			// if team is full then check if server is full
 			code = RejectServerFull;
-			for (int i = RogueTeam; i < NumTeams; i++)
+			for (unsigned int i = RogueTeam; i < NumTeams; i++)
 				if (team[i].team.activeSize < maxTeam[i]) {
 					code = RejectTeamFull;
 					break;
@@ -2791,8 +1779,9 @@ static void addPlayer(PlayerId playerId)
 
 	// send new player updates on each player, all existing flags, and all teams.
 	// watch out for connection being closed because of an error.
-	for (i = 0; i < NumTeams && player[playerId].fd != NotConnected; i++)
-		sendTeamUpdate(i, playerId);
+	for (unsigned int j = 0; j < NumTeams &&
+								player[playerId].fd != NotConnected; j++)
+		sendTeamUpdate(j, playerId);
 	for (i = 0; i < numFlags && player[playerId].fd != NotConnected; i++)
 		if (flag[i].flag.status != FlagNoExist)
 			sendFlagUpdate(i, playerId);
@@ -2853,12 +1842,80 @@ static void addPlayer(PlayerId playerId)
 #endif
 }
 
-static void addFlag(int flagIndex)
+static Real getSafeFlagRadius(FlagId id)
 {
-	if (flagIndex == -1) {
-		// invalid flag
-		return;
-	}
+	// compute safety radius.  flag should not be within this distance
+	// of any building.
+	Real r = TankRadius;
+	if (id == ObesityFlag)
+		r *= R_(2.0) * ObeseFactor;
+	return r;
+}
+
+static bool getLandingPosition(Vec3& p, Real r)
+{
+	// intersect ray from flag position downwards
+	static const Vec3 down(0.0, 0.0, -1.0);
+	IntersectionPoint hit;
+	const RegionPrimitive* region =
+							RGNMGR_OBSTACLE->intersect(hit, Ray(p, down));
+
+	// compute the landing position.  this is the intersection or
+	// the spot on the ground under pos if there was no intersection.
+	if (region == NULL)
+		hit.t = p[2];
+	p = p + hit.t * down;
+
+	// no good if jumping is off and flag is above a building
+	if ((gameStyle & JumpingGameStyle) == 0 && region != NULL)
+		return false;
+
+	// FIXME -- this is hopefully temporary.  it's too hard to grab a
+	// flag that's on a pyramid because you can't drive well on one.
+	// no good if surface isn't horizontal
+	if (region != NULL && hit.normal[2] < R_(0.99999))
+		return false;
+
+	// see if landing position is too close to a building
+	return !RGNMGR_OBSTACLE->isNear(p, r, region);
+}
+
+static bool isGoodFlagSpawn(Vec3& p, Real r)
+{
+	// no good if point is in a building
+	if (RGNMGR_OBSTACLE->isInside(p))
+		return false;
+
+	// compute landing position and see if it's okay
+	return getLandingPosition(p, r);
+}
+
+static bool repositionFlag(int flagIndex)
+{
+	FlagInfo *pFlagInfo = &flag[flagIndex];
+	assert(pFlagInfo->flag.id != NullFlag);
+
+	// pick a valid random position for the flag.  if there are no
+	// valid positions for the flag then return false.
+	Vec3 p;
+	const Real r = getSafeFlagRadius(pFlagInfo->flag.id);
+	do {
+		if (!RGNMGR_FLAG_SPAWN->spawn(p, pFlagInfo->flag.id))
+			return false;
+	} while (!isGoodFlagSpawn(p, r));
+
+	// save it
+	pFlagInfo->flag.position[0] = p[0];
+	pFlagInfo->flag.position[1] = p[1];
+	pFlagInfo->flag.position[2] = p[2];
+
+	return true;
+}
+
+static bool addFlag(int flagIndex)
+{
+	assert(flagIndex >= 0);
+	assert(flag[flagIndex].flag.id != NullFlag);
 
 	// flag in now entering game
 	flag[flagIndex].flag.status = FlagComing;
@@ -2872,30 +1929,37 @@ static void addFlag(int flagIndex)
 	flag[flagIndex].dropDone = TimeKeeper::getCurrent();
 	flag[flagIndex].dropDone += flightTime;
 
-	// how times will it stick around
+	// how many times will it stick around
 	if (flag[flagIndex].flag.type == FlagSticky)
 		flag[flagIndex].grabs = 1;
 	else
 		flag[flagIndex].grabs = int(floor(4.0f * (float)bzfrand())) + 1;
-	sendFlagUpdate(flagIndex);
+
+	// pick a spot for the flag
+	return repositionFlag(flagIndex);
 }
 
-static void randomFlag(int flagIndex)
+static bool randomFlag(int flagIndex)
 {
+	assert(flagIndex >= 0);
+	assert(flag[flagIndex].flag.id == NullFlag);
+
 	// pick a random flag
 	flag[flagIndex].flag.id = allowedFlags[int(numAllowedFlags * (float)bzfrand())];
 	flag[flagIndex].flag.type = Flag::getType(flag[flagIndex].flag.id);
-	addFlag(flagIndex);
+	if (!addFlag(flagIndex)) {
+		flag[flagIndex].flag.id = NullFlag;
+		return false;
+	}
+
+	return true;
 }
 
 static void resetFlag(int flagIndex)
 {
 	// NOTE -- must not be called until world is defined
 	assert(world != NULL);
-	if (flagIndex == -1) {
-		// invalid flag
-		return;
-	}
+	assert(flagIndex >= 0);
 
 	FlagInfo *pFlagInfo = &flag[flagIndex];
 	// reset a flag's info
@@ -2906,42 +1970,30 @@ static void resetFlag(int flagIndex)
 	if (flagIndex >= numFlags - numExtraFlags)
 		pFlagInfo->flag.id = NullFlag;
 
-	// reposition flag
-	if (int(pFlagInfo->flag.id) >= int(FirstTeamFlag) &&
-		int(pFlagInfo->flag.id) <= int(LastTeamFlag)) {
-		int teamIndex = int(pFlagInfo->flag.id);
-		pFlagInfo->flag.position[0] = basePos[teamIndex][0];
-		pFlagInfo->flag.position[1] = basePos[teamIndex][1];
-		pFlagInfo->flag.position[2] = basePos[teamIndex][2];
-		if(basePos[teamIndex][2] > 0) {
-			pFlagInfo->flag.position[2] += 1;
-		}
-	}
-	else {
-		// random position (not in a building)
-		float r = TankRadius;
-		if (pFlagInfo->flag.id == ObesityFlag)
-			r *= 2.0f * ObeseFactor;
-		do {
-			pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-			pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-			pFlagInfo->flag.position[2] = 0.0f;
-		} while (world->inBuilding(NULL, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1],
-		pFlagInfo->flag.position[2], r));
-	}
-
 	// required flags mustn't just disappear
 	if (pFlagInfo->required) {
 		if (int(pFlagInfo->flag.id) >= FirstTeamFlag &&
-		int(pFlagInfo->flag.id) <= LastTeamFlag)
-			if (team[int(pFlagInfo->flag.id)].team.activeSize == 0)
+			int(pFlagInfo->flag.id) <= LastTeamFlag) {
+			if (team[int(pFlagInfo->flag.id)].team.activeSize == 0) {
 				pFlagInfo->flag.status = FlagNoExist;
-			else
+			}
+			else {
+				if (!repositionFlag(flagIndex)) {
+					// FIXME -- no spawn area for team flag.  report error.
+				}
 				pFlagInfo->flag.status = FlagOnGround;
-		else if (pFlagInfo->flag.id == NullFlag)
-			randomFlag(flagIndex);
-		else
-			addFlag(flagIndex);
+			}
+		}
+		else if (pFlagInfo->flag.id == NullFlag) {
+			// if no spawn area for flag then bail
+			if (!randomFlag(flagIndex))
+				return;
+		}
+		else {
+			// if no spawn area for flag then bail
+			if (!addFlag(flagIndex))
+				return;
+		}
 	}
 
 	sendFlagUpdate(flagIndex);
@@ -2951,10 +2003,7 @@ static void zapFlag(int flagIndex)
 {
 	// called when a flag must just disappear -- doesn't fly
 	// into air, just *poof* vanishes.
-	if (flagIndex == -1) {
-		// invalid flag
-		return;
-	}
+	assert(flagIndex >= 0);
 
 	// see if someone had grabbed flag.  tell 'em to drop it.
 	const PlayerId playerId = flag[flagIndex].playerId;
@@ -3170,7 +2219,8 @@ static void playerKilled(int victimIndex, int killerIndex,
 
 	// zap flag player was carrying.  clients should send a drop flag
 	// message before sending a killed message, so this shouldn't happen.
-	zapFlag(player[victimIndex].flag);
+	if (player[victimIndex].flag != -1)
+		zapFlag(player[victimIndex].flag);
 
 	// change the team scores -- rogues don't have team scores.  don't
 	// change team scores for individual player's kills in capture the
@@ -3226,9 +2276,6 @@ static void grabFlag(PlayerId playerId, int flagIndex)
 static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 {
 	assert(world != NULL);
-	const WorldInfo::ObstacleLocation* container;
-	const WorldInfo::ObstacleLocation* topmost = NULL;
-	int topmosttype = 0;
 
 	// player wants to drop flag.  we trust that the client won't tell
 	// us to drop a sticky flag until the requirements are satisfied.
@@ -3245,63 +2292,82 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 		pFlagInfo->flag.status = FlagGoing;
 	numFlagsInAir++;
 
-	for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
-		topmosttype = world->inBuilding(&container, pos[0], pos[1], i, 0);
-		if (topmosttype) {
-			topmost = container;
-			break;
-		}
-	}
+	// flags are dropped from the top of the tank
+	pos[2] += TankHeight;
+
+	// get landing position
+	Vec3 landingPos = pos;
+	const FlagId flagId = pFlagInfo->flag.id;
+	bool okay = getLandingPosition(landingPos, getSafeFlagRadius(flagId));
 
 	// figure out landing spot -- if flag in a Bad Place
 	// when dropped, move to safety position or make it going
-	TeamColor teamBase = whoseBase(pos[0], pos[1], pos[2]);
-	FlagId flagId = pFlagInfo->flag.id;
+	TeamColor teamBase = RGNMGR_BASE->isInside(landingPos);
 	bool isTeamFlag = (flagId >= FirstTeamFlag) && (flagId <= LastTeamFlag);
-
 	if (pFlagInfo->flag.status == FlagGoing) {
 		pFlagInfo->flag.landingPosition[0] = pos[0];
 		pFlagInfo->flag.landingPosition[1] = pos[1];
 		pFlagInfo->flag.landingPosition[2] = pos[2];
 	}
-	else if (isTeamFlag && ((FlagId)teamBase == flagId) && (topmosttype == 1)) {
-		pFlagInfo->flag.landingPosition[0] = pos[0];
-		pFlagInfo->flag.landingPosition[1] = pos[1];
-		pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
-	}
-	else if (isTeamFlag && (teamBase != NoTeam) && ((FlagId)teamBase != flagId)) {
-		pFlagInfo->flag.landingPosition[0] = safetyBasePos[int(teamBase)][0];
-		pFlagInfo->flag.landingPosition[1] = safetyBasePos[int(teamBase)][1];
-		pFlagInfo->flag.landingPosition[2] = safetyBasePos[int(teamBase)][2];
-	}
-	else if (topmosttype == 0) {
-		pFlagInfo->flag.landingPosition[0] = pos[0];
-		pFlagInfo->flag.landingPosition[1] = pos[1];
-		pFlagInfo->flag.landingPosition[2] = 0.0f;
-	}
-	else if (flagsOnBuildings && (topmosttype == 2 || topmosttype == 1)) {
-		pFlagInfo->flag.landingPosition[0] = pos[0];
-		pFlagInfo->flag.landingPosition[1] = pos[1];
-		pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
-	}
-	else if (isTeamFlag) {
-		// people were cheating by dropping their flag above the nearest
-		// convenient building which makes it fly all the way back to
-		// your own base.  make it fly to the center of the board.
-		topmosttype = world->inBuilding(&container, 0.0f, 0.0f, 0.0f, TankRadius);
-		if (topmosttype == 0) {
-		pFlagInfo->flag.landingPosition[0] = 0.0f;
-		pFlagInfo->flag.landingPosition[1] = 0.0f;
-		pFlagInfo->flag.landingPosition[2] = 0.0f;
+	else if (isTeamFlag && teamBase != NoTeam) {
+		// team flag landing on a team base.  if it's the flag's
+		// base, fine.  if not then use the safety position.
+		if ((TeamColor)flagId == teamBase) {
+			pFlagInfo->flag.landingPosition[0] = landingPos[0];
+			pFlagInfo->flag.landingPosition[1] = landingPos[1];
+			pFlagInfo->flag.landingPosition[2] = landingPos[2];
 		}
-		else {// oh well, whatcha gonna do?
-		pFlagInfo->flag.landingPosition[0] = basePos[flagId][0];
-		pFlagInfo->flag.landingPosition[1] = basePos[flagId][1];
-		pFlagInfo->flag.landingPosition[2] = basePos[flagId][2];
+		else {
+			const Vec3& p = RGNMGR_BASE->getSafety(teamBase);
+			pFlagInfo->flag.landingPosition[0] = p[0];
+			pFlagInfo->flag.landingPosition[1] = p[1];
+			pFlagInfo->flag.landingPosition[2] = p[2];
 		}
 	}
-	else
-		pFlagInfo->flag.status = FlagGoing;
+	else {
+		// flag is falling onto a building or the ground.  we need to
+		// make sure it's not falling too close to a building.
+		if (okay) {
+			// position was fine
+			pFlagInfo->flag.landingPosition[0] = landingPos[0];
+			pFlagInfo->flag.landingPosition[1] = landingPos[1];
+			pFlagInfo->flag.landingPosition[2] = landingPos[2];
+		}
+		else if (isTeamFlag) {
+			// can't find a good position and it's a team flag,
+			// which must not disappear.  try around center of
+			// the game board.
+			Matrix xform;
+			xform.setTranslate(0.0, 0.0, 100.0);
+			TransformedShape tmp(new ShapeBox(10.0, 10.0, 100.0), xform);
+			Vec3 p;
+			bool okay = false;
+			static const unsigned int NumRetries = 100;
+			for (unsigned int i = 0; !okay && i < NumRetries; ++i) {
+				tmp.getRandomPoint(p);
+				okay = isGoodFlagSpawn(p, getSafeFlagRadius(flagId));
+			}
+
+			// if we found a good spot then use it, otherwise use
+			// the team flag spawn region.
+			if (okay) {
+				pFlagInfo->flag.landingPosition[0] = p[0];
+				pFlagInfo->flag.landingPosition[1] = p[1];
+				pFlagInfo->flag.landingPosition[2] = p[2];
+			}
+			else if (!repositionFlag(flagIndex)) {
+				// uh oh, can't find a place for the flag!
+				// FIXME -- do something!
+			}
+		}
+		else {
+			// can't find a good place.  make the flag go away.
+			pFlagInfo->flag.status             = FlagGoing;
+			pFlagInfo->flag.landingPosition[0] = pos[0];
+			pFlagInfo->flag.landingPosition[1] = pos[1];
+			pFlagInfo->flag.landingPosition[2] = pos[2];
+		}
+	}
 
 	pFlagInfo->flag.position[0] = pFlagInfo->flag.landingPosition[0];
 	pFlagInfo->flag.position[1] = pFlagInfo->flag.landingPosition[1];
@@ -3313,10 +2379,11 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	// compute flight info -- flight time depends depends on start and end
 	// altitudes and desired height above start altitude.
 	const float thrownAltitude = (pFlagInfo->flag.id == ShieldFlag) ?
-			ShieldFlight * FlagAltitude : FlagAltitude;
+								ShieldFlight * FlagAltitude : FlagAltitude;
 	const float maxAltitude = pos[2] + thrownAltitude;
 	const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
-	const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / Gravity);
+	const float downTime = sqrtf(-2.0f * (maxAltitude -
+								pFlagInfo->flag.landingPosition[2]) / Gravity);
 	const float flightTime = upTime + downTime;
 
 	// set flight info
@@ -3364,8 +2431,8 @@ static void captureFlag(PlayerId playerId, float pos[3])
 	// everyone on losing team is dead
 	for (PlayerId i = 0; i < maxPlayers; i++)
 		if (player[i].fd != NotConnected &&
-		int(flag[flagIndex].flag.id) == int(player[i].team) &&
-		player[i].state == PlayerAlive) {
+			int(flag[flagIndex].flag.id) == int(player[i].team) &&
+			player[i].state == PlayerAlive) {
 			player[i].state = PlayerDead;
 		}
 
@@ -3823,7 +2890,6 @@ static void extraUsage(const char *pname)
 //  std::cout << "\t -d: increase debugging level" << std::endl;
 	std::cout << "\t +f: always have flag <id> available" << std::endl;
 	std::cout << "\t -f: never randomly generate flag <id>" << std::endl;
-	std::cout << "\t -fb: allow flags on box buildings" << std::endl;
 	std::cout << "\t -g: serve one game and then exit" << std::endl;
 	std::cout << "\t -h: use random building heights" << std::endl;
 	std::cout << "\t -i: listen on <interface>" << std::endl;
@@ -3872,7 +2938,7 @@ static int lookupFlag(const char *code)
 
 	if (f == 0)
 		for (f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
-			if (strcasecmp(code, Flag::getAbbreviation(FlagId(f))) == 0)
+			if (strnocasecmp(code, Flag::getAbbreviation(FlagId(f))) == 0)
 				break;
 	if (f < int(FirstSuperFlag) || f > int(LastSuperFlag))
 		f = int(NoFlag);
@@ -3897,17 +2963,16 @@ static bool parsePlayerCount(const char *argv)
 		}
 
 		// reset the counts
-		int i;
 		// no limits by default
-		for (i = 0; i < NumTeams; i++)
+		for (unsigned int i = 0; i < NumTeams; i++)
 			maxTeam[i] = MaxPlayers;
 
 		// now get the new counts
 
 		// number of counts given
-		int countCount = 0;
+		unsigned int countCount = 0;
 		scan = argv;
-		for (i = 0; i < NumTeams; i++) {
+		for (unsigned int i = 0; i < NumTeams; i++) {
 			char *tail;
 			long count = strtol(scan, &tail, 10);
 			if (tail != scan) {
@@ -3932,7 +2997,7 @@ static bool parsePlayerCount(const char *argv)
 		// if all counts explicitly listed then add 'em up and set maxPlayers
 		if (countCount == NumTeams) {
 			maxPlayers = 0;
-			for (i = 0; i < NumTeams; i++)
+			for (unsigned int i = 0; i < NumTeams; i++)
 				maxPlayers += maxTeam[i];
 		}
 	}
@@ -3968,7 +3033,6 @@ static void parse(int argc, char **argv)
 	randomBoxes = false;
 	randomHeights = false;
 	useTeleporters = false;
-	flagsOnBuildings = false;
 	oneGameOnly = false;
 	numExtraFlags = 0;
 	maxShots = 1;
@@ -3979,9 +3043,9 @@ static void parse(int argc, char **argv)
 	delete[] allowedFlags;  allowedFlags = NULL;
 
 	// prepare flag counts
-	int f, i, flagCount[LastFlag + 1];
+	int f, flagCount[LastFlag + 1];
 	bool flagDisallowed[LastFlag + 1];
-	for (i = int(FirstFlag); i <= int(LastFlag); i++) {
+	for (int i = int(FirstFlag); i <= int(LastFlag); i++) {
 		flagCount[i] = 0;
 		flagDisallowed[i] = false;
 	}
@@ -3989,12 +3053,12 @@ static void parse(int argc, char **argv)
 
 	// prepare team max counts
 	// no limits by default
-	for (i = 0; i < NumTeams; i++)
+	for (unsigned int i = 0; i < NumTeams; i++)
 		maxTeam[i] = MaxPlayers;
 
 	// parse command line
 	int playerCountArg = 0;
-	for (i = 1; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-srvmsg") == 0) {
 			if (++i == argc) {
 				std::cerr << "argument expected for -srvmsg" << std::endl;
@@ -4094,10 +3158,6 @@ static void parse(int argc, char **argv)
 				usage(argv[0]);
 			}
 			debug += count;
-		}
-		else if (strcmp(argv[i], "-fb") == 0) {
-			// flags on buildings
-			flagsOnBuildings = true;
 		}
 		else if (strcmp(argv[i], "-f") == 0) {
 			// disallow given flag
@@ -4357,11 +3417,6 @@ static void parse(int argc, char **argv)
 		}
 	}
 
-	if (flagsOnBuildings && !(gameStyle & JumpingGameStyle)) {
-		std::cerr << "flags on boxes requires jumping" << std::endl;
-		usage(argv[0]);
-	}
-
 	// get player counts.  done after other arguments because we need
 	// to ignore counts for rogues if rogues aren't allowed.
 	if (playerCountArg > 0 && !parsePlayerCount(argv[playerCountArg]))
@@ -4380,7 +3435,7 @@ static void parse(int argc, char **argv)
 			flagDisallowed[PhantomZoneFlag] = true;
 
 		// now count how many aren't disallowed
-		for (i = FirstSuperFlag; i <= LastSuperFlag; i++)
+		for (int i = FirstSuperFlag; i <= LastSuperFlag; i++)
 			if (!flagDisallowed[i])
 				numAllowedFlags++;
 
@@ -4393,7 +3448,7 @@ static void parse(int argc, char **argv)
 		else {
 			allowedFlags = new FlagId[numAllowedFlags];
 			int j = 0;
-			for (i = FirstSuperFlag; i <= LastSuperFlag; i++)
+			for (int i = FirstSuperFlag; i <= LastSuperFlag; i++)
 				if (!flagDisallowed[i])
 					allowedFlags[j++] = FlagId(i);
 		}
@@ -4404,12 +3459,12 @@ static void parse(int argc, char **argv)
 	// rogues don't get a flag
 	if (gameStyle & TeamFlagGameStyle)
 		numFlags += NumTeams - 1;
-	for (i = FirstFlag; i <= LastFlag; i++)
+	for (int i = FirstFlag; i <= LastFlag; i++)
 		numFlags += flagCount[i];
 	flag = new FlagInfo[numFlags];
 
 	// prep flags
-	for (i = 0; i < numFlags; i++) {
+	for (int i = 0; i < numFlags; i++) {
 		flag[i].flag.id = NullFlag;
 		flag[i].flag.status = FlagNoExist;
 		flag[i].flag.type = FlagNormal;
@@ -4446,7 +3501,7 @@ static void parse(int argc, char **argv)
 		flag[3].flag.type = FlagNormal;
 		f = 4;
 	}
-	for (i = 1; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "+f") == 0) {
 			i++;
 			if (strcmp(argv[i], "good") == 0) {
@@ -4745,11 +3800,14 @@ int main(int argc, char **argv)
 			float t = expf(-flagExp * (tm - lastSuperFlagInsertion));
 			if ((float)bzfrand() > t) {
 				// find an empty slot for an extra flag
+				assert(numFlags >= numExtraFlags);
 				for (i = numFlags - numExtraFlags; i < numFlags; i++)
 					if (flag[i].flag.id == NullFlag)
 						break;
-				if (i != numFlags)
-					randomFlag(i);
+				if (i != numFlags) {
+					if (randomFlag(i))
+						sendFlagUpdate(i);
+				}
 				lastSuperFlagInsertion = tm;
 			}
 		}

@@ -83,6 +83,15 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name math
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name collision
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name region
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name shape
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -250,6 +259,18 @@ Package=<4>
 ###############################################################################
 
 Project: "platform"=.\platform.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "region"=.\region.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

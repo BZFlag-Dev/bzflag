@@ -33,7 +33,8 @@ ConfigFileManager::~ConfigFileManager()
 							index != readers.end(); ++index)
 		delete index->second;
 	readers.clear();
-	mgr = NULL;
+	if (mgr == this)
+		mgr = NULL;
 }
 
 ConfigFileManager*		ConfigFileManager::getInstance()

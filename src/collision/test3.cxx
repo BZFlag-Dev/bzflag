@@ -10,6 +10,7 @@
 #include <GL/glut.h>
 #include "Trackball2.h"
 #include "ShapeBox.h"
+#include "ShapePyramid.h"
 #include "Body.h"
 #include "CollisionDetectorGJK.h"
 
@@ -57,7 +58,7 @@ static void		drawBox(Body* body)
 {
     ShapeBox* box = (ShapeBox*)body->getShape();
     glPushMatrix();
-    R_gl(glMultMatrix)(body->getTransform());
+    glMultMatrixr(body->getTransform().get());
     Real x = box->getX();
     Real y = box->getY();
     Real z = box->getZ();
@@ -97,6 +98,46 @@ static void		drawBox(Body* body)
 	glVertex3f( x,  y, -z);
 	glVertex3f( x, -y, -z);
 	glVertex3f(-x, -y, -z);
+    glEnd();
+    glPopMatrix();
+}
+
+static void		drawPyramid(Body* body)
+{
+    ShapePyramid* p = (ShapePyramid*)body->getShape();
+    glPushMatrix();
+    glMultMatrixr(body->getTransform().get());
+    Real x = p->getX();
+    Real y = p->getY();
+    Real z = p->getZ();
+    glBegin(GL_TRIANGLES);
+	glNormal3f( 1.0f,  0.0f,  0.0f);
+	glVertex3f(-x, -y, R_(-0.25) * z);
+	glVertex3f( R_(0.0), R_(0.0), R_(0.75) * z);
+	glVertex3f(-x,  y, R_(-0.25) * z);
+
+	glNormal3f(-1.0f,  0.0f,  0.0f);
+	glVertex3f( x, -y, R_(-0.25) * z);
+	glVertex3f( x,  y, R_(-0.25) * z);
+	glVertex3f( R_(0.0), R_(0.0), R_(0.75) * z);
+
+	glNormal3f( 0.0f,  1.0f,  0.0f);
+	glVertex3f(-x, -y, R_(-0.25) * z);
+	glVertex3f( x, -y, R_(-0.25) * z);
+	glVertex3f( R_(0.0), R_(0.0), R_(0.75) * z);
+
+	glNormal3f( 0.0f, -1.0f,  0.0f);
+	glVertex3f(-x,  y, R_(-0.25) * z);
+	glVertex3f( R_(0.0), R_(0.0), R_(0.75) * z);
+	glVertex3f( x,  y, R_(-0.25) * z);
+    glEnd();
+
+    glBegin(GL_QUADS);
+	glNormal3f( 0.0f,  0.0f, -1.0f);
+	glVertex3f(-x,  y, R_(-0.25) * z);
+	glVertex3f( x,  y, R_(-0.25) * z);
+	glVertex3f( x, -y, R_(-0.25) * z);
+	glVertex3f(-x, -y, R_(-0.25) * z);
     glEnd();
     glPopMatrix();
 }
@@ -147,7 +188,7 @@ static void		drawDot(const Vec3& v, int icon)
     if (icon < 0) icon = 4;
     else if (icon > 3) icon = 3;
 
-    R_glv(glRasterPos3)(v);
+    R_glv(glRasterPos3)(v.get());
     glBitmap(15, 7, 3, 3, 0, 0, bitmap + 28 * icon);
 }
 
@@ -157,7 +198,7 @@ static void		redraw(void)
 
     Matrix tmp(viewRotation);
     glPushMatrix();
-    R_gl(glMultMatrix)(tmp);
+    glMultMatrixr(tmp.get());
 
     static float lightPos1[4] = { 1.0, 2.0, 3.0, 0.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos1);
@@ -189,8 +230,8 @@ fprintf(stderr, "distance: %g\n", distance);
     else /*if (state == CollisionDetector::Contacting)*/ {
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glBegin(GL_LINES);
-	R_glv(glVertex3)(p0);
-	R_glv(glVertex3)(p1);
+	R_glv(glVertex3)(p0.get());
+	R_glv(glVertex3)(p1.get());
 	glEnd();
 
 	unsigned int i;
@@ -381,6 +422,7 @@ int			main(int argc, char** argv)
 {
   glutInit(&argc, argv);
 
+/*
   objects[0].body = new Body(new ShapeBox(0.5, 0.2, 0.3), 1.0);
   objects[0].draw = drawBox;
   objects[1].body = new Body(new ShapeBox(1.0, 1.0, 0.1), 1.0);
@@ -395,6 +437,7 @@ int			main(int argc, char** argv)
   objects[0].body->setOrientation(Quaternion(0.7038593290, 0.7008316341, 0.0815694967, 0.0822403969));
   objects[1].body->setPosition(Vec3(0.0, 0.0, -1.0));
 objects[0].body->dump();
+*/
 /*
   objects[0].body = new Body(new ShapeBox(0.5, 0.5, 0.5), 1.0);
   objects[0].draw = drawBox;
@@ -410,6 +453,12 @@ objects[0].body->dump();
   objects[1]->setTranslation(Vec3(-1.0, 0.4, 0.0));
   objects[1]->setRotation(Quaternion(Vec3(0.0, 0.0, 1.0), 45.0));
 */
+  objects[0].body = new Body(new ShapeBox(0.5, 0.5, 0.5), 1.0);
+  objects[0].draw = drawBox;
+  objects[0].body->setPosition(Vec3(0.7, 0.0, 0.0));
+  objects[1].body = new Body(new ShapePyramid(0.33, 0.33, 0.33), 1.0);
+  objects[1].draw = drawPyramid;
+  objects[1].body->setPosition(Vec3(-1.0, 0.0, 0.0));
   numObjects = 2;
   pickedObject = 0;
 

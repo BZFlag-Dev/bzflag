@@ -28,11 +28,13 @@ public:
 	Real				getY() const { return y; }
 	Real				getZ() const { return z; }
 
-	// CollisionShape overrides
+	// Shape overrides
 	virtual Real		getVolume() const;
 	virtual void		getInertia(Matrix&) const;
+	virtual bool		isInside(const Vec3&) const;
 	virtual bool		intersect(const Ray&) const;
 	virtual bool		intersect(IntersectionPoint&, const Ray&) const;
+	virtual void		getRandomPoint(Vec3&) const;
 	virtual void		getSupportPoint(SupportPoint&, const Vec3&) const;
 	virtual ContactSurface*
 						getCollision(const ContactSimplex&,

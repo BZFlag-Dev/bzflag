@@ -56,6 +56,8 @@ public:
 	static const char*	getHelp(FlagId);
 	static FlagType		getType(FlagId);
 	static const float*	getColor(FlagId);
+	static FlagId		getIDFromName(const char*);
+	static FlagId		getIDFromAbbreviation(const char*);
 
 public:
 	FlagId				id;

@@ -22,6 +22,7 @@ class ConfigFileReader;
 
 class ConfigFileManager {
 public:
+	ConfigFileManager();
 	~ConfigFileManager();
 
 	// add/remove configuration file reader.  the reader is adopted
@@ -49,11 +50,6 @@ public:
 
 	// get the singleton instance
 	static ConfigFileManager*	getInstance();
-
-private:
-	ConfigFileManager();
-
-	void				topLevelParse(XMLTree::iterator);
 
 private:
 	typedef std::map<std::string, ConfigFileReader*> Readers;

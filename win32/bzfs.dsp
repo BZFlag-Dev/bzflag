@@ -90,10 +90,98 @@ LINK32=link.exe
 
 SOURCE=..\src\bzfs\bzfs.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerBase.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerFlagSpawn.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerObstacle.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderBase.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderFlagSpawn.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderObstacle.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldFile.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldInfo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldRegions.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldStandardRandom.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldStandardTeam.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerBase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerFlagSpawn.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderBase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderFlagSpawn.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldRegions.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldStandardRandom.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldStandardTeam.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 

@@ -41,7 +41,8 @@ public:
 	//   * 1 contact point when a and b are 1 dimensional and non-parallel;
 	//   * otherwise min(dim(a), dim(b)) + 1 contact points.
 	virtual void		intersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurface* aSurface,
 								const ContactSurface* bSurface) const = 0;
 };
@@ -51,7 +52,8 @@ template <class A, class B>
 class ContactSurfaceIntersector : public ContactSurfaceIntersectorBase {
 public:
 	virtual void		intersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurface* aSurface,
 								const ContactSurface* bSurface) const
 	{
@@ -61,7 +63,8 @@ public:
 
 protected:
 	virtual void		doIntersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const A* aSurface,
 								const B* bSurface) const = 0;
 };
@@ -82,22 +85,14 @@ public:
 						get(const void* typeA, const void* typeB) const;
 
 	// compute the contact points between two surfaces, which should
-	// both be in aSurface's coordinate space.  returns false iff
-	// there is no intersector for (typeA,typeB).  contact points are
-	// in aSurface's coordinate space.
+	// both be in the world coordinate space.  returns false iff
+	// there is no intersector for (typeA,typeB) or (typeB,typeA).
+	// contact points are returned in world space.  the coordinate
+	// space of the surfaces are indeterminate after a call that
+	// returns true.
 	bool				intersect(ContactPoints& contacts,
-								Body* a, Body* b,
-								const ContactSurface* aSurface,
-								const ContactSurface* bSurface) const;
-
-	// same as intersect() above except on input aSurface and bSurface
-	// should be in their own coordinate systems and returns true if
-	// an intersector exists for either (typeA,typeB) or (typeB,typeA).
-	// in either case, contact points are in world space.  the coordinate
-	// space of the surfaces are indeterminate after a call that returns
-	// true.
-	bool				intersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								ContactSurface* aSurface,
 								ContactSurface* bSurface) const;
 

@@ -12,20 +12,28 @@
 
 #include <assert.h>
 #include "Body.h"
+#include "TransformedShape.h"
+#include "ContactSurface.h"
 
 //
 // Body
 //
 
-Body::Body(Shape* shape_, Real inverseDensity) : shape(shape_)
+Body::Body(Shape* shape_, Real inverseDensity) :
+								originalShape(shape_)
 {
-	assert(shape != NULL);
+	assert(originalShape != NULL);
 
 	// compute inverse of mass and inertia tensor
-	shape->getInertia(invInertia);
+	originalShape->getInertia(invInertia);
 	invInertia.invert();
 	invInertia *= inverseDensity;
-	invMass     = inverseDensity / shape->getVolume();
+	invMass     = inverseDensity / originalShape->getVolume();
+
+	// create the transformed shape
+	Matrix xform;
+	shape = new TransformedShape(originalShape, xform);
+	computeDerivedState();
 }
 
 Body::~Body()
@@ -66,7 +74,7 @@ void					Body::setAngularVelocity(const Vec3& omega_)
 
 Shape*					Body::getShape() const
 {
-	return shape;
+	return originalShape;
 }
 
 Real					Body::getInverseMass() const
@@ -97,16 +105,6 @@ const Quaternion&		Body::getOrientation() const
 const Vec3&				Body::getOmega() const
 {
 	return omega;
-}
-
-const Matrix&			Body::getTransform() const
-{
-	return transform;
-}
-
-const Matrix&			Body::getInverseTransform() const
-{
-	return invTransform;
 }
 
 void					Body::getPointVelocity(Vec3& wv, const Vec3& wx) const
@@ -169,46 +167,6 @@ void					Body::applyForce(Real magnitude,
 {
 	force  += magnitude * direction;
 	torque += magnitude * ((position - x) % direction);
-}
-
-void					Body::getSupportPoint(
-								SupportPoint& point,
-								const Vec3& vector) const
-{
-	// get the support point.
-	// transform vector from world to local coordinate space.  the
-	// vector transforms like a normal, which means using the
-	// inverse transpose of the transform.  however, we're going
-	// from world to local space and the transform goes from local
-	// to world, so we need the inverse transform.  together we
-	// need the inverse of the inverse of the transpose, which is
-	// just the transpose.
-	shape->getSupportPoint(point, rT * vector);
-
-	// and transform the point to world space
-	point.point = r * point.point + x;
-}
-
-void					Body::getCollision(
-								ContactSurface** surface,
-								const ContactSimplex& simplex,
-								const Plane& plane,
-								Real epsilon) const
-{
-// FIXME -- maybe pass transforms down to shape->getCollision()
-// to avoid transforming when unnecessary.
-	// transform plane to local space.  see comment in getSupportPoint()
-	// for why we use the transpose of the rotation.
-	Plane localPlane(rT * plane.getNormal(), plane.distance(x));
-
-	// transform simplex to local space
-// FIXME -- allow modification of simplex to avoid copy
-	ContactSimplex tSimplex = simplex;
-	for (unsigned int i = 0; i < tSimplex.size(); ++i)
-		tSimplex[i].point.xformPoint(invTransform);
-
-	// get the surface
-	*surface = shape->getCollision(tSimplex, localPlane, epsilon);
 }
 
 void					Body::marshall(VectorN& y) const
@@ -278,6 +236,104 @@ VectorN::const_iterator	Body::unmarshall(VectorN::const_iterator index)
 	return ++index;
 }
 
+Real					Body::getVolume() const
+{
+	return shape->getVolume();
+}
+
+void					Body::getInertia(Matrix& m) const
+{
+	m = invInertiaWorld;
+	m.invert();
+}
+
+bool					Body::isInside(const Vec3& p) const
+{
+	return shape->isInside(p);
+}
+
+bool					Body::intersect(const Ray& ray) const
+{
+	return shape->intersect(ray);
+}
+
+bool					Body::intersect(
+								IntersectionPoint& p, const Ray& ray) const
+{
+	return shape->intersect(p, ray);
+}
+
+void					Body::getRandomPoint(Vec3& p) const
+{
+	shape->getRandomPoint(p);
+}
+
+void					Body::getSupportPoint(
+								SupportPoint& point,
+								const Vec3& vector) const
+{
+	// get the support point.
+	// transform vector from world to local coordinate space.  the
+	// vector transforms like a normal, which means using the
+	// inverse transpose of the transform.  however, we're going
+	// from world to local space and the transform goes from local
+	// to world, so we need the inverse transform.  together we
+	// need the inverse of the inverse of the transpose, which is
+	// just the transpose.
+	originalShape->getSupportPoint(point, rT * vector);
+
+	// and transform the point to world space
+	point.point = r * point.point + x;
+}
+
+ContactSurface*			Body::getCollision(
+								const ContactSimplex& simplex,
+								const Plane& plane,
+								Real epsilon) const
+{
+// FIXME -- maybe pass transforms down to shape->getCollision()
+// to avoid transforming when unnecessary.
+	// transform plane to local space.  see comment in getSupportPoint()
+	// for why we use the transpose of the rotation.
+	Plane localPlane(rT * plane.getNormal(), plane.distance(x));
+
+	// transform simplex to local space
+// FIXME -- allow modification of simplex to avoid copy
+	ContactSimplex tSimplex = simplex;
+	for (unsigned int i = 0; i < tSimplex.size(); ++i)
+		tSimplex[i].point.xformPoint(getInverseTransform());
+
+	// get the surface
+	ContactSurface* s = originalShape->getCollision(
+								tSimplex, localPlane, epsilon);
+
+	// transform to world
+	if (s != NULL)
+		s->transform(getTransform());
+
+	return s;
+}
+
+const Matrix&			Body::getTransform() const
+{
+	return shape->getTransform();
+}
+
+const Matrix&			Body::getTransposeTransform() const
+{
+	return shape->getTransposeTransform();
+}
+
+const Matrix&			Body::getInverseTransform() const
+{
+	return shape->getInverseTransform();
+}
+
+const Matrix&			Body::getInverseTransposeTransform() const
+{
+	return shape->getInverseTransposeTransform();
+}
+
 void					Body::computeDerivedState()
 {
 	// orientation
@@ -294,12 +350,13 @@ void					Body::computeDerivedState()
 	omega = invInertiaWorld * L;
 
 	// compute transform and invTransform
-	Matrix tmp;
+	Matrix transform, tmp;
 	tmp.setTranslate(-x[0], -x[1], -x[2]);
 	transform.setTranslate(x[0], x[1], x[2]);
 	transform    *= r;
-	invTransform  = rT;
+	Matrix invTransform = rT;
 	invTransform *= tmp;
+	shape->setTransform(transform, invTransform);
 }
 
 #include <stdio.h>
@@ -339,7 +396,7 @@ void					Body::dump() const
 		Vec3 p = *index, v, a;
 		fprintf(stderr, "  p[% 2d]: % 11g % 11g % 11g\n",
 								index - points.begin(), p[0], p[1], p[2]);
-		p.xformPoint(transform);
+		p.xformPoint(getTransform());
 		getPointVelocity(v, p);
 		getPointAcceleration(a, p);
 		fprintf(stderr, "      x: % 11g % 11g % 11g\n", p[0], p[1], p[2]);

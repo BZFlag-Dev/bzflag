@@ -31,6 +31,7 @@ public:
 
 	static void			init();
 	static std::string	getName(TeamColor);
+	static std::string	getEnumName(TeamColor);
 	static TeamColor	getEnum(const std::string& name);
 	static const float*	getTankColor(TeamColor);
 	static const float*	getRadarColor(TeamColor);

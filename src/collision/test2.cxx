@@ -22,6 +22,7 @@
 #include "ODESolverRungeKutta.h"
 #include "BodyODEAssistant.h"
 #include "ShapeBox.h"
+#include "ShapePyramid.h"
 #include "Body.h"
 #include "BodyManager.h"
 
@@ -378,6 +379,63 @@ static SceneNode* createBoxSceneNode(Real x, Real y, Real z)
 	return parse(model);
 }
 
+static SceneNode* createPyramidSceneNode(Real x, Real y, Real z)
+{
+	static const float s_normal[][3] = {
+								{  0.0f,  0.0f,  1.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{  0.0f, -1.0f,  0.0f },
+								{  0.0f,  1.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f }
+						};
+	static const float s_vertex[][3] = {
+								{  0.0f,  0.0f,  0.75f },
+								{ -1.0f, -1.0f, -0.25f },
+								{  1.0f, -1.0f, -0.25f },
+								{ -1.0f,  1.0f, -0.25f },
+								{  1.0f,  1.0f, -0.25f },
+
+								{ -1.0f, -1.0f, -0.25f },
+								{  1.0f, -1.0f, -0.25f },
+								{ -1.0f,  1.0f, -0.25f },
+								{  1.0f,  1.0f, -0.25f }
+						};
+
+	std::string model;
+	model +=	"<gstate>\n";
+	model +=	"  <shading model=\"flat\"/>\n";
+	model +=	"<geometry>\n";
+	model +=	"  <color>1 1 1 1</color>\n";
+	model +=	"  <normal>\n";
+	for (unsigned int i = 0; i < countof(s_normal); ++i)
+		model += string_util::format("%f %f %f\n",
+							s_normal[i][0], s_normal[i][1], s_normal[i][2]);
+	model +=	"  </normal>\n";
+	model +=	"  <vertex>\n";
+	for (unsigned int i = 0; i < countof(s_vertex); ++i)
+		model += string_util::format("%f %f %f\n",
+							x * s_vertex[i][0],
+							y * s_vertex[i][1],
+							z * s_vertex[i][2]);
+	model +=	"  </vertex>\n";
+
+	model +=	"  <primitive type=\"tfan\"><index>"
+								"0 1 2 4 3 1"
+								"</index></primitive>\n";
+	model +=	"  <primitive type=\"tstrip\"><index>"
+								"6 5 8 7"
+								"</index></primitive>\n";
+	model +=	"</geometry>\n";
+	model +=	"</gstate>\n";
+
+	return parse(model);
+}
+
 static Body* addBox(SceneNodeGroup* group,
 						Real sx, Real sy, Real sz, Real invDensity)
 {
@@ -392,24 +450,23 @@ static Body* addBox(SceneNodeGroup* group,
 	info.xform->unref();
 	box->unref();
 
-	// initialize body
-/*
-	Real x, y, z;
-	x = 2.0 * bzfrand() - 1.0;
-	y = 2.0 * bzfrand() - 1.0;
-	z = 2.0 * bzfrand() - 1.0;
-	info.body->setPosition(Vec3(x, y, z));
+	BODYMGR->add(info.body);
+	return info.body;
+}
 
-	x = 0.2 * (2.0 * bzfrand() - 1.0);
-	y = 0.2 * (2.0 * bzfrand() - 1.0);
-	z = 0.2 * (2.0 * bzfrand() - 1.0);
-	info.body->setVelocity(Vec3(x, y, z));
+static Body* addPyramid(SceneNodeGroup* group,
+						Real sx, Real sy, Real sz, Real invDensity)
+{
+	BodyInfo info;
+	info.body = new Body(new ShapePyramid(sx, sy, sz), invDensity);
+	info.xform = new SceneNodeMatrixTransform;
+	bodies.push_back(info);
 
-	x = 3.0 * (2.0 * bzfrand() - 1.0);
-	y = 3.0 * (2.0 * bzfrand() - 1.0);
-	z = 3.0 * (2.0 * bzfrand() - 1.0);
-	info.body->setAngularVelocity(Vec3(x, y, z));
-*/
+	SceneNode* box = createPyramidSceneNode(sx, sy, sz);
+	info.xform->pushChild(box);
+	group->pushChild(info.xform);
+	info.xform->unref();
+	box->unref();
 
 	BODYMGR->add(info.body);
 	return info.body;
@@ -420,10 +477,12 @@ static SceneNode* createScene()
 	SceneNodeGroup* group = new SceneNodeGroup;
 
 	Body* body;
-	body = addBox(group, 0.5, 0.2, 0.3, R_(1.0) / R_(1000.0));
+//	body = addBox(group, 0.5, 0.2, 0.3, R_(1.0) / R_(1000.0));
+	body = addPyramid(group, 0.5, 0.2, 0.3, R_(1.0) / R_(1000.0));
 	body->setPosition(Vec3(0.0, 0.0, 0.5));
 	body->setVelocity(Vec3( 0.1, 0.0, 0.0));
-	body->setAngularVelocity(Vec3(1.0, 1.0, 20.0));
+	body->setAngularVelocity(Vec3(1.0, 1.0, 2.0));
+//	body->setAngularVelocity(Vec3(1.0, 1.0, 20.0));
 	body->setOrientation(Quaternion(Vec3(0.0, 0.0, 1.0), 30.0));
 
 	body = addBox(group, 1.0, 1.0, 0.1, R_(0.0));
@@ -609,7 +668,7 @@ int main(int /*argc*/, char** /*argv*/)
 		frame += 1.0f;
 
 		// update simulation
-dt = 0.02;
+dt = 0.002;
 if (!pause) {
 		solver->solve(y, t, dt, solverAssistant);
  solverAssistant->drive(t, ODEAssistant::Normal);

@@ -52,13 +52,14 @@ public:
 	Shape() { }
 	virtual ~Shape() { }
 
-	// FIXME -- intersection against Ray?
-
 	// get the volume of the shape
 	virtual Real		getVolume() const = 0;
 
 	// get the inertia tensor assuming unit density
 	virtual void		getInertia(Matrix&) const = 0;
+
+	// return true iff the point (in the shape's space) is inside the shape
+	virtual bool		isInside(const Vec3&) const = 0;
 
 	// intersect shape with a ray.  the first form just tests if there
 	// is an intersection or not.  the second form returns true if
@@ -67,9 +68,14 @@ public:
 	// intersection then it returns false and the contents of the
 	// intersection point are unchanged.  for both methods, the ray
 	// must be in the shape's space.  the normal is in the shape's
-	// space.
+	// space and should have unit length.
 	virtual bool		intersect(const Ray&) const = 0;
 	virtual bool		intersect(IntersectionPoint&, const Ray&) const = 0;
+
+	// choose a point in the volume at random.  ideally, every point
+	// in the volume will have equal probability of being chosen.
+	// the point is in the shape's space.
+	virtual void		getRandomPoint(Vec3&) const = 0;
 
 	// return the support point for the given vector.  the vector
 	// must be in the shape's space.  note that the vector transforms

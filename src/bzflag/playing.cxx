@@ -1022,10 +1022,10 @@ static void				addMessage(const Player* player,
 
 static void				updateNumPlayers()
 {
-	int i, numPlayers[NumTeams];
-	for (i = 0; i < NumTeams; i++)
+	int numPlayers[NumTeams];
+	for (unsigned int i = 0; i < NumTeams; i++)
 		numPlayers[i] = 0;
-	for (i = 0; i < maxPlayers; i++)
+	for (int i = 0; i < maxPlayers; i++)
 		if (player[i])
 			numPlayers[player[i]->getTeam()]++;
 	if (myTank)
@@ -1069,8 +1069,8 @@ static void				updateHighScores()
 		const Team& myTeam = World::getWorld()->getTeam(int(myTank->getTeam()));
 		bestScore = myTeam.won - myTeam.lost;
 		haveBest = true;
-		for (i = 0; i < NumTeams; i++) {
-			if (i == int(myTank->getTeam())) continue;
+		for (unsigned int i = 0; i < NumTeams; i++) {
+			if (i == static_cast<unsigned int>(myTank->getTeam())) continue;
 			const Team& team = World::getWorld()->getTeam(i);
 			if (team.activeSize > 0 && team.won - team.lost >= bestScore) {
 				haveBest = false;

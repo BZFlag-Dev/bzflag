@@ -23,7 +23,8 @@ class ContactSurfaceIntersectorPointPoint: public
 ContactSurfaceIntersector<ContactSurfacePoint, ContactSurfacePoint> {
 protected:
 	void				doIntersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurfacePoint* aSurface,
 								const ContactSurfacePoint* bSurface) const;
 };
@@ -32,7 +33,8 @@ class ContactSurfaceIntersectorPointEdge: public
 ContactSurfaceIntersector<ContactSurfacePoint, ContactSurfaceEdge> {
 protected:
 	void				doIntersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurfacePoint* aSurface,
 								const ContactSurfaceEdge* bSurface) const;
 };
@@ -41,7 +43,8 @@ class ContactSurfaceIntersectorPointPolygon: public
 ContactSurfaceIntersector<ContactSurfacePoint, ContactSurfacePolygon> {
 protected:
 	void				doIntersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurfacePoint* aSurface,
 								const ContactSurfacePolygon* bSurface) const;
 };
@@ -50,7 +53,8 @@ class ContactSurfaceIntersectorEdgeEdge : public
 ContactSurfaceIntersector<ContactSurfaceEdge, ContactSurfaceEdge> {
 protected:
 	void				doIntersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurfaceEdge* aSurface,
 								const ContactSurfaceEdge* bSurface) const;
 };
@@ -59,14 +63,16 @@ class ContactSurfaceIntersectorEdgePolygon : public
 ContactSurfaceIntersector<ContactSurfaceEdge, ContactSurfacePolygon> {
 protected:
 	void				doIntersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurfaceEdge* aSurface,
 								const ContactSurfacePolygon* bSurface) const;
 
 private:
 	template <int x, int y>
 	void				doIntersect2D(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurfaceEdge* aSurface,
 								const ContactSurfacePolygon* bSurface,
 								bool flip) const;
@@ -76,14 +82,16 @@ class ContactSurfaceIntersectorPolygonPolygon : public
 ContactSurfaceIntersector<ContactSurfacePolygon, ContactSurfacePolygon> {
 protected:
 	void				doIntersect(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurfacePolygon* aSurface,
 								const ContactSurfacePolygon* bSurface) const;
 
 private:
 	template <int x, int y>
 	void				doIntersect2D(ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								const ContactSurfacePolygon* aSurface,
 								const ContactSurfacePolygon* bSurface,
 								bool flip) const;

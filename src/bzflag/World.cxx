@@ -48,8 +48,7 @@ World::World() : gameStyle(PlainGameStyle),
 								flags(NULL),
 								flagNodes(NULL)
 {
-	int i;
-	for (i = 0; i < NumTeams; i++) {
+	for (unsigned int i = 0; i < NumTeams; i++) {
 		bases[i][0] = 0.0f;
 		bases[i][1] = 0.0f;
 		bases[i][2] = 0.0f;
@@ -61,7 +60,7 @@ World::World() : gameStyle(PlainGameStyle),
 		bases[i][8] = 0.0f;
 	}
 	deadPlayers = new DeadPlayer*[maxDeadPlayers];
-	for (i = 0; i < maxDeadPlayers; i++)
+	for (int i = 0; i < maxDeadPlayers; i++)
 		deadPlayers[i] = NULL;
 }
 
@@ -135,7 +134,7 @@ TeamColor				World::whoseBase(const float* pos) const
 	if (!(gameStyle & TeamFlagGameStyle))
 		return NoTeam;
 
-	for (int i = 1; i < NumTeams; i++) {
+	for (unsigned int i = 1; i < NumTeams; i++) {
 		float nx = pos[0] - bases[i][0];
 		float ny = pos[1] - bases[i][1];
 		float rx = (float) (cosf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
@@ -365,7 +364,7 @@ void					World::initFlag(int index)
 		pos[0] = flag.position[0];
 		pos[1] = flag.position[1];
 		pos[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-		0.25f * Gravity * flag.flightEnd) + flag.position[2];
+					0.25f * Gravity * flag.flightEnd) + flag.launchPosition[2];
 		// FIXME -- translate to pos, scale to 0.0
 	}
 }
@@ -407,10 +406,9 @@ void					World::updateFlag(int index, float dt)
 								t * flag.landingPosition[0];
 				flag.position[1] = (1.0f - t) * flag.launchPosition[1] +
 								t * flag.landingPosition[1];
-				flag.position[2] = (1.0f - t) * flag.launchPosition[2] +
-								t * flag.landingPosition[2] +
-								flag.flightTime * (flag.initialVelocity +
-										0.5f * Gravity * flag.flightTime);
+				flag.position[2] = flag.flightTime * (flag.initialVelocity +
+										0.5f * Gravity * flag.flightTime) +
+										flag.launchPosition[2];
 			}
 			break;
 
@@ -419,7 +417,9 @@ void					World::updateFlag(int index, float dt)
 			if (flag.flightTime >= flag.flightEnd) {
 				// touchdown
 				flag.status = FlagOnGround;
-				flag.position[2] = 0.0f;
+				flag.position[0] = flag.landingPosition[0];
+				flag.position[1] = flag.landingPosition[1];
+				flag.position[2] = flag.landingPosition[2];
 				alpha = 1.0f;
 			}
 			else if (flag.flightTime >= 0.5f * flag.flightEnd) {

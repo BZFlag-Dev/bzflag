@@ -95,6 +95,18 @@ std::string				Team::getName(TeamColor team) // const
 	}
 }
 
+std::string				Team::getEnumName(TeamColor team) // const
+{
+	switch (team) {
+		case RogueTeam: return "rogue";
+		case RedTeam: return "red";
+		case GreenTeam: return "green";
+		case BlueTeam: return "blue";
+		case PurpleTeam: return "purple";
+		default: return "invalid";
+	}
+}
+
 TeamColor				Team::getEnum(const std::string& name)
 {
 	if (name == "rogue")

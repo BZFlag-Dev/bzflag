@@ -33,7 +33,7 @@ enum PlayerType {
 };
 
 // team info
-const int				NumTeams = 5;
+const unsigned int		NumTeams = 5;
 enum TeamColor {
 						NoTeam = -1,
 						RogueTeam = 0,

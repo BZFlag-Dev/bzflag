@@ -146,6 +146,10 @@ SOURCE=..\include\mathr.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\ms_minmax.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\StateDatabase.h
 # End Source File
 # Begin Source File

@@ -106,24 +106,8 @@ const ContactSurfaceIntersectorBase*
 
 bool					ContactSurfaceIntersectorManager::intersect(
 								ContactPoints& contacts,
-								Body* a, Body* b,
-								const ContactSurface* aSurface,
-								const ContactSurface* bSurface) const
-{
-	// get the intersector that matches the types
-	const ContactSurfaceIntersectorBase* intersector =
-								get(aSurface->getType(), bSurface->getType());
-	if (intersector == NULL)
-		return false;
-
-	// intersect
-	intersector->intersect(contacts, a, b, aSurface, bSurface);
-	return true;
-}
-
-bool					ContactSurfaceIntersectorManager::intersect(
-								ContactPoints& contacts,
-								Body* a, Body* b,
+								Body* a,
+								Body* b,
 								ContactSurface* aSurface,
 								ContactSurface* bSurface) const
 {
@@ -133,8 +117,8 @@ bool					ContactSurfaceIntersectorManager::intersect(
 	const ContactSurfaceIntersectorBase* intersector =
 								get(aSurface->getType(), bSurface->getType());
 	if (intersector != NULL) {
-		// transform bSurface to a's coordinate system.
-		bSurface->transform(b->getTransform());
+		// transform surfaces to a's coordinate system.
+		aSurface->transform(a->getInverseTransform());
 		bSurface->transform(a->getInverseTransform());
 
 		// intersect (a,b)
@@ -142,8 +126,7 @@ bool					ContactSurfaceIntersectorManager::intersect(
 
 		// transform to world space and set a and b
 		const Matrix& pXForm = a->getTransform();
-		Matrix nXForm(a->getInverseTransform());
-		nXForm.transpose();
+		const Matrix& nXForm = a->getInverseTransposeTransform();
 		const unsigned int end = contacts.size();
 		for (unsigned int i = start; i < end; ++i) {
 			contacts[i].point.xformPoint(pXForm);
@@ -156,17 +139,16 @@ bool					ContactSurfaceIntersectorManager::intersect(
 	// try swapping the surfaces
 	intersector = get(bSurface->getType(), aSurface->getType());
 	if (intersector != NULL) {
-		// transform aSurfaces to b's coordinate system.
-		aSurface->transform(a->getTransform());
+		// transform surfaces to b's coordinate system.
 		aSurface->transform(b->getInverseTransform());
+		bSurface->transform(b->getInverseTransform());
 
 		// intersect (b,a)
 		intersector->intersect(contacts, b, a, bSurface, aSurface);
 
 		// flip normals and transform to world space and set a and b
 		const Matrix& pXForm = b->getTransform();
-		Matrix nXForm(b->getInverseTransform());
-		nXForm.transpose();
+		const Matrix& nXForm = b->getInverseTransposeTransform();
 		const unsigned int end = contacts.size();
 		for (unsigned int i = start; i < end; ++i) {
 			contacts[i].point.xformPoint(pXForm);
