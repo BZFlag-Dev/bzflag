@@ -44,7 +44,6 @@
 #include "TimeBomb.h"
 #include "Team.h"
 #include "sound.h"
-#include "KeyMap.h"
 #include "menus.h"
 #include "ConfigFileManager.h"
 #include "CommandsStandard.h"
@@ -751,26 +750,6 @@ void			dumpResources(BzfDisplay* display,
       display->getResolution(display->getResolution())) {
     BZDB->set("resolution", display->getResolution(display->getResolution())->name);
   }
-  {
-    BzfKeyMap& map = getBzfKeyMap();
-    for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
-      // get value string
-      const BzfKeyEvent& key1 = map.get((BzfKeyMap::Key)i);
-      std::string value;
-      if (key1.ascii != 0 || key1.button != 0) {
-	value = BzfKeyMap::getKeyEventString(key1);
-	const BzfKeyEvent& key2 = map.getAlternate((BzfKeyMap::Key)i);
-	if (key2.ascii != 0 || key2.button != 0) {
-	  value += "/";
-	  value += BzfKeyMap::getKeyEventString(key2);
-	}
-      }
-
-      // add it
-      const std::string name = BzfKeyMap::getKeyName((BzfKeyMap::Key)i);
-      db.addValue(name, value);
-    }
-  }
   BZDB->set("startcode", ServerStartMenu::getSettings());
 
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
@@ -946,35 +925,6 @@ int			main(int argc, char** argv)
       strncpy(startupInfo.multicastInterface, BZDB->get("interface").c_str(),
 				sizeof(startupInfo.multicastInterface) - 1);
       startupInfo.multicastInterface[sizeof(startupInfo.multicastInterface) - 1] = '\0';
-    }
-
-    // key mapping
-    BzfKeyMap& map = getBzfKeyMap();
-    for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
-      BzfKeyMap::Key key = (BzfKeyMap::Key)i;
-      const std::string name = BzfKeyMap::getKeyName(key);
-      if (db.hasValue(name)) {
-	// get saved value
-	const std::string value = db.getValue(name);
-	const char* const charValue = value.c_str();
-
-	// find separator (forward slash) and get first and second values
-	const char* const sep = strchr(charValue + 1, '/');
-	const std::string value1 = sep ? value.substr(0, sep - charValue) : value;
-	const std::string value2 = sep ? value.substr(sep - charValue + 1).c_str() : "";
-
-	// lookup values
-	BzfKeyEvent event1, event2;
-	const bool okay1 = BzfKeyMap::translateStringToEvent(value1, event1);
-	const bool okay2 = BzfKeyMap::translateStringToEvent(value2, event2);
-
-	// set values
-	if (okay1 || okay2) {
-	  map.clear(key);
-	  if (okay1) map.set(key, event1);
-	  if (okay2) map.set(key, event2);
-	}
-      }
     }
 
     // check for reassigned team colors

@@ -89,7 +89,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "ZSceneDatabase.h"
 #include "QuadWallSceneNode.h"
 #include "BillboardSceneNode.h"
-#include "KeyMap.h"
 #include "Intersect.h"
 #include "Ping.h"
 #include "OpenGLTexture.h"
@@ -102,7 +101,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 static const float	FlagHelpDuration = 60.0f;
 
 static StartupInfo	startupInfo;
-static BzfKeyMap	keymap;
 static MainMenu*	mainMenu;
 static ServerLink*	serverLink = NULL;
 static PlayerLink*	playerLink = NULL;
@@ -268,11 +266,6 @@ void			setSceneDatabase()
 StartupInfo*		getStartupInfo()
 {
   return &startupInfo;
-}
-
-BzfKeyMap&			getBzfKeyMap()
-{
-  return keymap;
 }
 
 bool			setVideoFormat(int index, bool test)

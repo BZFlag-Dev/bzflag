@@ -28,7 +28,6 @@
 #include "Address.h"
 
 class SceneRenderer;
-class BzfKeyMap;
 
 struct StartupInfo {
   public:
@@ -70,7 +69,6 @@ MainWindow*		getMainWindow();
 SceneRenderer*		getSceneRenderer();
 void			setSceneDatabase();
 StartupInfo*		getStartupInfo();
-BzfKeyMap&			getBzfKeyMap();
 void			notifyBzfKeyMapChanged();
 bool			setVideoFormat(int, bool test = false);
 Player*			lookupPlayer(PlayerId id);

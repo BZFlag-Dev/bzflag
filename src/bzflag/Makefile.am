@@ -45,8 +45,6 @@ bzflag_SOURCES =			\
 	ServerLink.h			\
 	PlayerLink.cxx			\
 	PlayerLink.h			\
-	KeyMap.cxx			\
-	KeyMap.h			\
 	callbacks.h			\
 	callbacks.cxx			\
 	daylight.cxx			\

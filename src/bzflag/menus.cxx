@@ -58,7 +58,6 @@
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
 #include "ErrorHandler.h"
-#include "KeyMap.h"
 #include "TimeKeeper.h"
 #include "World.h"
 #include "Bundle.h"
@@ -650,7 +649,7 @@ bool			KeyboardMapMenuDefaultKey::keyRelease(
   return true;
 }
 
-KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKey)
+KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1)
 {
   // add controls
   std::vector<HUDuiControl*>& controls = getControls();
@@ -717,8 +716,6 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   initkeymap("silence", 27);
   initkeymap("servercommand", 28);
   initkeymap("hunt", 29);
-
-  editing = -1;
 }
 
 void			KeyboardMapMenu::initkeymap(const std::string& name, int index)
