@@ -789,7 +789,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	  (hud->getTabCompletionRotation() != c)) {
 	found = true;
 	break;
-      }
+    }
     if (found) {
       hud->setTabCompletionRotation(c);
       std::string line = std::string("");
@@ -1571,7 +1571,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  serverLink->sendDropFlag(myTank->getPosition());
 	  handleMyTankKilled(reason);
 	}
-
       }
 #endif
       if (victimLocal) {
@@ -5453,10 +5452,11 @@ void			startPlaying(BzfDisplay* _display,
   tmpString += (const char*)glGetString(GL_RENDERER);
   controlPanel->addMessage(tmpString);
 
-	// get the MOTD
-	MessageOfTheDay	motd;
-	controlPanel->addMessage("MOTD: "+motd.get("http://bzflag.org/motd.php"));
-
+  {
+    // get the MOTD
+    MessageOfTheDay	motd;
+    controlPanel->addMessage("MOTD: "+motd.get("http://bzflag.org/motd.php"));
+  }
   //inform user of silencePlayers on startup
   for (unsigned int j = 0; j < silencePlayers.size(); j ++){
     std::string aString = silencePlayers[j];
