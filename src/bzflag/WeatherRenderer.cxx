@@ -360,10 +360,14 @@ void WeatherRenderer::set ( void )
 			}
 			lastRainTime = TimeKeeper::getCurrent().getSeconds();
 		}
+		// recompute the drops based on the posible new size
+		buildDropList();
+	}
+	else
+	{
+		raindrops.clear();
 	}
 
-	// recompute the drops based on the posible new size
-	buildDropList();
 }
 
 void WeatherRenderer::update ( void )
@@ -395,6 +399,9 @@ void WeatherRenderer::update ( void )
 
 void WeatherRenderer::draw ( const SceneRenderer& sr )
 {
+	if (!raindrops.size())
+		return;
+
 	glDepthMask(0);
 	if (doLineRain)	// we are doing line rain
 	{
