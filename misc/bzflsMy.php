@@ -12,6 +12,10 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+# where to send debug printing (might override below)
+$enableDebug	= 0;
+$debugFile 	= "/dev/null";
+
 // define dbhost/dbuname/dbpass/dbname here
 include('serversettings.php');
 // $dbhost  = "localhost";
@@ -40,10 +44,6 @@ $conntime = $_GET['conntime'];
 # For karma
 $target   = $_GET['target'];    # urlencoded
 $karma    = $_GET['karma'];
-
-# where to send debug printing
-$enableDebug	= 0;
-$debugFile 	= "/dev/null";
 
 # for banning.  provide key => value pairs where the key is an
 # ip address. value is not used at present.
@@ -233,7 +233,12 @@ if ($action == "LIST" ) {
     $servport = 5154;
   $servip = gethostbyname($servname);
 
-  if ($_SERVER['REMOTE_ADDR'] != $servip) {
+  if ($servip == "0.0.0.0") {
+    debug($debugFile, "Changed " . $servip . " to requesting address: "
+        . $_SERVER['REMOTE_ADDR'] );
+    $servip =  $_SERVER['REMOTE_ADDR'];
+    $nameport = $servip . ":" . $servport;
+  }elseif ($_SERVER['REMOTE_ADDR'] != $servip) {
     debug($debugFile, "Requesting address is " . $_SERVER['REMOTE_ADDR']
         . " while server is at " . $servip );
     print("Requesting address is " . $_SERVER['REMOTE_ADDR']
@@ -296,7 +301,12 @@ if ($action == "LIST" ) {
   else
     $servport = 5154;
   $servip = gethostbyname($servname);
-  if ($_SERVER['REMOTE_ADDR'] != $servip) {
+  if ($servip == "0.0.0.0") {
+    debug($debugFile, "Changed " . $servip . " to requesting address: "
+        . $_SERVER['REMOTE_ADDR'] );
+    $servip =  $_SERVER['REMOTE_ADDR'];
+    $nameport = $servip . ":" . $servport;
+  } elseif ($_SERVER['REMOTE_ADDR'] != $servip) {
     debug($debugFile, "Requesting address is " . $_SERVER['REMOTE_ADDR']
                       . " while server is at " . $servip );
     print("Requesting address is " . $_SERVER['REMOTE_ADDR']
