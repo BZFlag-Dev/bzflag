@@ -5595,7 +5595,7 @@ static void		findFastConfiguration()
   // this, of course, is only a rough estimate since we're not drawing
   // a normal frame (no radar, no HUD, no buildings, etc.).  the user
   // can always turn stuff on later and the settings are remembered
-  // across invokations.
+  // across invocations.
 
   // setup projection
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
