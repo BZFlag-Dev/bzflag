@@ -68,6 +68,7 @@ public:
   short		getTeamKills() const;
   short		getScore() const;
   const float*	getDimensions() const;
+  const float*	getOldDimensions() const;
   short		getRabbitScore() const;
   short		getLocalWins() const;
   short		getLocalLosses() const;
@@ -85,6 +86,8 @@ public:
   void		addToScene(SceneDatabase*, TeamColor effectiveTeam,
                            bool inCockpit, bool showIDL);
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
+  void		setLandingSpeed(float velocity);
+  void		spawnEffect();
   bool		needsToBeRendered(bool cloaked, bool showTreads);
 
   bool		isAlive() const;
@@ -147,6 +150,8 @@ private:
 				 float* predictedAzimuth,
 				 float* predictedVel) const;
   void setVisualTeam (TeamColor team );
+  void setupTreads(float dt);
+  void updateFlagEffect(FlagType* flag);
 private:
   // data not communicated with other players
   bool			notResponding;
@@ -174,6 +179,14 @@ private:
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
   float			dimensions[3];		// current tank dimensions
+  float			oldDimensions[3];	// old tank dimensions
+  float			dimensionsScale[3];	// use to scale the dimensions
+  float			dimensionsRate[3];	 // relative to scale
+  float			dimensionsTarget[3]; // relative to scale
+  bool			useDimensions;		// use the varying dimensions for gfx
+  float			alpha;			// current tank translucency
+  float			alphaRate;		// current tank translucency
+  float			alphaTarget;	// current tank translucency
   TimeKeeper		explodeTime;		// time I started exploding
   TimeKeeper		teleportTime;		// time I started teleporting
   short			fromTeleporter;		// teleporter I entered
@@ -280,6 +293,11 @@ inline float		Player::getAngle() const
 inline const float*	Player::getDimensions() const
 {
   return dimensions;
+}
+
+inline const float*	Player::getOldDimensions() const
+{
+  return oldDimensions;
 }
 
 inline const float*	Player::getForward() const

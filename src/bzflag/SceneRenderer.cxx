@@ -29,6 +29,8 @@
 #include "MainWindow.h"
 #include "OpenGLGState.h"
 #include "RenderNode.h"
+#include "DynamicColor.h"
+#include "TextureMatrix.h"
 #include "BzfWindow.h"
 #include "TankSceneNode.h"
 #include "StateDatabase.h"
@@ -95,6 +97,8 @@ SceneRenderer::SceneRenderer() :
 				abgr(false),
 				useQualityValue(2),
 				useDepthComplexityOn(false),
+				useCullingTreeOn(false),
+				useCollisionTreeOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
 				panelOpacity(0.3f),
@@ -276,6 +280,16 @@ bool			SceneRenderer::useDepthComplexity() const
   return useDepthComplexityOn;
 }
 
+bool			SceneRenderer::useCullingTree() const
+{
+  return useCullingTreeOn;
+}
+
+bool			SceneRenderer::useCollisionTree() const
+{
+  return useCollisionTreeOn;
+}
+
 void			SceneRenderer::setDepthComplexity(bool on)
 {
   if (on) {
@@ -284,6 +298,16 @@ void			SceneRenderer::setDepthComplexity(bool on)
     if (bits < 3) return;
   }
   useDepthComplexityOn = on;
+}
+
+void			SceneRenderer::setCullingTree(bool on)
+{
+  useCullingTreeOn = on;
+}
+
+void			SceneRenderer::setCollisionTree(bool on)
+{
+  useCollisionTreeOn = on;
 }
 
 
@@ -530,6 +554,12 @@ void			SceneRenderer::render(
     needStyleUpdate = false;
   }
 
+  // update the dynamic colors
+  DYNCOLORMGR.update();
+
+  // update the texture matrices
+  TEXMATRIXMGR.update();
+
   // make sure there is something to render on
   if (!window) return;
 
@@ -708,6 +738,13 @@ void			SceneRenderer::render(
 #elif defined(GL_EXT_polygon_offset)
       glEnable(GL_POLYGON_OFFSET_EXT);
 #endif
+    }
+
+    if (scene && useCullingTreeOn) {
+      scene->drawCuller();
+    }
+    if (scene && useCollisionTreeOn && (World::getWorld() != NULL)) {
+      World::getWorld()->drawCollisionGrid();
     }
 
     doRender();

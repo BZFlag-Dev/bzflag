@@ -13,21 +13,35 @@ libObstacle_a_SOURCES =			\
 	EmptySceneNodeGenerator.cxx	\
 	ObstacleSceneNodeGenerator.cxx  \
 	PyramidSceneNodeGenerator.cxx	\
+	TetraSceneNodeGenerator.cxx	\
 	TeleporterSceneNodeGenerator.cxx\
 	WallSceneNodeGenerator.cxx	\
+	MeshSceneNodeGenerator.cxx	\
+	ArcObstacle.cxx			\
+	ConeObstacle.cxx		\
+	SphereObstacle.cxx		\
 	BaseBuilding.cxx		\
 	BoxBuilding.cxx			\
+	MeshFace.cxx			\
+	MeshObstacle.cxx		\
 	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
+	TetraBuilding.cxx		\
 	WallObstacle.cxx
 else
 libObstacle_a_SOURCES =			\
+	ArcObstacle.cxx			\
+	ConeObstacle.cxx		\
+	SphereObstacle.cxx		\
 	BaseBuilding.cxx		\
 	BoxBuilding.cxx			\
+	MeshFace.cxx			\
+	MeshObstacle.cxx		\
 	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
+	TetraBuilding.cxx		\
 	WallObstacle.cxx
 endif
 

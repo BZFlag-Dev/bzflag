@@ -20,10 +20,12 @@
 
 /* common interface headers */
 #include "WallObstacle.h"
+#include "MeshObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
 #include "Teleporter.h"
+#include "TetraBuilding.h"
 
 /* local interface headers */
 #include "World.h"

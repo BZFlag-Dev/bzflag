@@ -66,8 +66,8 @@ struct CmdLineOptions
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
     useTeleporters(false), teamKillerDies(true), printScore(false),
-    publicizeServer(false), filterFilename(""), filterCallsigns(false),
-    filterChat(false), filterSimple(false),
+    publicizeServer(false), replayServer(false), startRecording(false),
+    filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300), disableSet(false),
     disableFlagReset(false), disableBan(false), disableKick(false),
@@ -145,6 +145,8 @@ struct CmdLineOptions
   bool			teamKillerDies;
   bool			printScore;
   bool			publicizeServer;
+  bool			replayServer;
+  bool			startRecording;
 
   uint16_t		maxTeam[NumTeams];
   FlagNumberMap		flagCount;

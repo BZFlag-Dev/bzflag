@@ -202,8 +202,14 @@ public:
   static const std::string	BZDB_BURROWDEPTH;
   static const std::string	BZDB_BURROWSPEEDAD;
   static const std::string	BZDB_BURROWANGULARAD;
+  static const std::string	BZDB_COLDETDEPTH;
+  static const std::string	BZDB_COLDETELEMENTS;
+  static const std::string	BZDB_CULLDEPTH;
+  static const std::string	BZDB_CULLELEMENTS;
+  static const std::string	BZDB_CULLOCCLUDERS;
   static const std::string	BZDB_DISABLEBOTS;
   static const std::string	BZDB_EXPLODETIME;
+  static const std::string	BZDB_FAKELAG;
   static const std::string	BZDB_FLAGALTITUDE;
   static const std::string	BZDB_FLAGEFFECTTIME;
   static const std::string	BZDB_FLAGHEIGHT;
@@ -256,6 +262,8 @@ public:
   static const std::string	BZDB_SHOTRANGE;
   static const std::string	BZDB_SHOTTAILLENGTH;
   static const std::string	BZDB_SHOTSKEEPVERTICALV;
+  static const std::string	BZDB_SQUISHFACTOR;
+  static const std::string	BZDB_SQUISHTIME;
   static const std::string	BZDB_SRRADIUSMULT;
   static const std::string	BZDB_SYNCLOCATION;
   static const std::string	BZDB_SYNCTIME;

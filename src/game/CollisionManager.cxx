@@ -141,8 +141,8 @@ void CollisionManager::clear ()
 
 bool CollisionManager::needReload () const
 {
-  int newDepth = 6;
-  int newElements = 12;
+  int newDepth = BZDB.evalInt (StateDatabase::BZDB_COLDETDEPTH);
+  int newElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
   float newWorldSize = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
   if ((newDepth != maxDepth) || (newElements != minElements) ||
       (newWorldSize != WorldSize)) {
@@ -270,9 +270,11 @@ const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
 }
 
 
-void CollisionManager::load (std::vector<BoxBuilding*>     &boxes,
+void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
+                             std::vector<BoxBuilding*>     &boxes,
                              std::vector<BaseBuilding*>    &bases,
                              std::vector<PyramidBuilding*> &pyrs,
+                             std::vector<TetraBuilding*>   &tetras,
                              std::vector<Teleporter*>      &teles)
 {
   // clean out the cell lists
@@ -280,12 +282,19 @@ void CollisionManager::load (std::vector<BoxBuilding*>     &boxes,
 
   // setup the octree parameters
   WorldSize = BZDBCache::worldSize;
-  maxDepth = 6;
-  minElements = 12;
+  maxDepth = BZDB.evalInt (StateDatabase::BZDB_COLDETDEPTH);
+  minElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
 
   // determine the total number of obstacles
-  int fullCount = (int)(boxes.size() + bases.size() +
-                        pyrs.size() + teles.size());
+  int fullCount = 0;
+  std::vector<MeshObstacle*>::iterator it_mesh;
+  for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
+    MeshObstacle* mesh = *it_mesh;
+    fullCount = fullCount + mesh->getFaceCount();
+  }
+  fullCount = fullCount + (int)(boxes.size() + bases.size() +
+                                pyrs.size() + tetras.size() +
+                                (teles.size() * 3)); // 2 MeshFace links
 
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -293,6 +302,12 @@ void CollisionManager::load (std::vector<BoxBuilding*>     &boxes,
   FullList.count = 0;
 
   // add everything to the full list
+  for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
+    MeshObstacle* mesh = *it_mesh;
+    for (int f = 0; f < mesh->getFaceCount(); f++) {
+      addToFullList((Obstacle*) mesh->getFace(f));
+    }
+  }
   for (std::vector<BoxBuilding*>::iterator it_box = boxes.begin();
        it_box != boxes.end(); it_box++) {
     addToFullList((Obstacle*) (*it_box));
@@ -305,9 +320,16 @@ void CollisionManager::load (std::vector<BoxBuilding*>     &boxes,
        it_pyr != pyrs.end(); it_pyr++) {
     addToFullList((Obstacle*) (*it_pyr));
   }
+  for (std::vector<TetraBuilding*>::iterator it_tetra = tetras.begin();
+       it_tetra != tetras.end(); it_tetra++) {
+    addToFullList((Obstacle*) (*it_tetra));
+  }
   for (std::vector<Teleporter*>::iterator it_tele = teles.begin();
        it_tele != teles.end(); it_tele++) {
-    addToFullList((Obstacle*) (*it_tele));
+    Teleporter* tele = *it_tele;
+    addToFullList((Obstacle*) tele);
+    addToFullList((Obstacle*) tele->getBackLink());
+    addToFullList((Obstacle*) tele->getFrontLink());
   }
 
   // generate the octree
@@ -342,6 +364,9 @@ void CollisionManager::load (std::vector<BoxBuilding*>     &boxes,
   SplitList.named.pyrs.list = listPtr;
   SplitList.named.pyrs.count = (int)pyrs.size();
   listPtr = listPtr + pyrs.size();
+  SplitList.named.tetras.list = listPtr;
+  SplitList.named.tetras.count = (int)tetras.size();
+  listPtr = listPtr + tetras.size();
   SplitList.named.teles.list = listPtr;
   SplitList.named.teles.count = (int)teles.size();
 

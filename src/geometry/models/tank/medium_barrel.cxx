@@ -9,12 +9,10 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#include "TankSceneNode.h"
+#include "TankGeometryMgr.h"
+using namespace TankGeometryUtils;
 
-#define	doVertex3f	doVertex3f
-#define	doNormal3f	doNormal3f
-
-void buildMedBarrel ( void )
+void TankGeometryUtils::buildMedBarrel ( void )
 {
       glShadeModel(GL_SMOOTH);
       glBegin(GL_TRIANGLE_STRIP);

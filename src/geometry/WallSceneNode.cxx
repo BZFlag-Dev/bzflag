@@ -26,6 +26,7 @@ WallSceneNode::WallSceneNode() : numLODs(0),
 				style(0)
 {
   noPlane      = false;
+  dynamicColor = NULL;
   color[3] = 1.0f;
   modulateColor[3] = 1.0f;
   lightedColor[3] = 1.0f;
@@ -40,6 +41,7 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   useColorTexture = false;
   isBlended = false;
   wantBlending = false;
+  wantSphereMap = false;
   return;
 }
 
@@ -184,9 +186,21 @@ void			WallSceneNode::setColor(
   color[3] = a;
 }
 
+void			WallSceneNode::setDynamicColor(const GLfloat* rgba)
+{
+  dynamicColor = rgba;
+  return;
+}
+
 void			WallSceneNode::setBlending(bool blend)
 {
   wantBlending = blend;
+  return;
+}
+
+void			WallSceneNode::setSphereMap(bool sphereMapping)
+{
+  wantSphereMap = sphereMapping;
   return;
 }
 
@@ -269,6 +283,13 @@ void			WallSceneNode::setTexture(const int tex)
   gstate = builder.getState();
 }
 
+void			WallSceneNode::setTextureMatrix(const int texmat)
+{
+  OpenGLGStateBuilder builder(gstate);
+  builder.setTextureMatrix(texmat);
+  gstate = builder.getState();
+}
+
 void			WallSceneNode::notifyStyleChange()
 {
   float alpha;
@@ -285,10 +306,12 @@ void			WallSceneNode::notifyStyleChange()
   if (BZDBCache::texture && gstate.isTextured()) {
     style += 2;
     builder.enableTexture(true);
+    builder.enableTextureMatrix(true);
     alpha = lighted ? lightedModulateColor[3] : modulateColor[3];
   }
   else {
     builder.enableTexture(false);
+    builder.enableTextureMatrix(false);
     alpha = lighted ? lightedColor[3] : color[3];
   }
   builder.enableTextureReplace(BZDB.isTrue("_texturereplace"));
@@ -302,6 +325,9 @@ void			WallSceneNode::notifyStyleChange()
     builder.setStipple(alpha);
   }
   isBlended = wantBlending || (alpha != 1.0f);
+  if (wantSphereMap) {
+    builder.enableSphereMap(true);
+  }
   gstate = builder.getState();
 }
 
@@ -309,18 +335,23 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
 {
   gstate = node->gstate;
   useColorTexture = node->useColorTexture;
+  dynamicColor = node->dynamicColor;
   setColor(node->color);
   setModulateColor(node->modulateColor);
   setLightedColor(node->lightedColor);
   setLightedModulateColor(node->lightedModulateColor);
   isBlended = node->isBlended;
   wantBlending = node->wantBlending;
+  wantSphereMap = node->wantSphereMap;
 }
 
 void			WallSceneNode::setColor()
 {
   if (BZDBCache::texture && useColorTexture) {
     glColor4f(1,1,1,1);
+  }
+  else if (dynamicColor != NULL) {
+    myColor4fv(dynamicColor);
   }
   else {
     switch (style) {

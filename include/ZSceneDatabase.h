@@ -38,6 +38,12 @@ class ZSceneDatabase : public SceneDatabase {
     void		addShadowNodes(SceneRenderer &renderer);
     void		addRenderNodes(SceneRenderer& renderer);
     
+    void		drawCuller();
+
+  private:
+    void		setupCullList();
+    void                makeCuller();
+    
   private:
     int			staticCount;
     int			staticSize;
@@ -46,6 +52,14 @@ class ZSceneDatabase : public SceneDatabase {
     int			dynamicCount;
     int			dynamicSize;
     SceneNode**		dynamicList;
+
+    int			culledCount;
+    SceneNode**         culledList;
+
+    class Octree*       octree;
+    int			cullDepth;
+    int			cullElements;
+
 };
 
 

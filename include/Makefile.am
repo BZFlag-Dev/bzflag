@@ -16,6 +16,7 @@ noinst_HEADERS =			\
 	BoxBuilding.h			\
 	Bundle.h			\
 	BundleMgr.h			\
+	BzMaterial.h			\
 	BzfDisplay.h			\
 	BzfEvent.h			\
 	BzfJoystick.h			\
@@ -28,12 +29,14 @@ noinst_HEADERS =			\
 	CommandsStandard.h		\
 	ConfigFileManager.h		\
 	Country.h			\
+	DelayQueue.h			\
 	DirectoryNames.h		\
 	DisplayListManager.h		\
 	DrawablesManager.h		\
 	EighthDBaseSceneNode.h		\
 	EighthDBoxSceneNode.h		\
 	EighthDPyrSceneNode.h		\
+	EighthDTetraSceneNode.h		\
 	EighthDimSceneNode.h		\
 	EmptySceneNodeGenerator.h	\
 	ErrorHandler.h			\
@@ -50,6 +53,10 @@ noinst_HEADERS =			\
 	LaserSceneNode.h		\
 	MathUtils.h			\
 	MediaFile.h			\
+	MeshFace.h			\
+	MeshObstacle.h			\
+	MeshPolySceneNode.h		\
+	MeshSceneNodeGenerator.h	\
 	NetHandler.h			\
 	Obstacle.h			\
 	ObstacleSceneNodeGenerator.h	\
@@ -82,12 +89,16 @@ noinst_HEADERS =			\
 	Singleton.h			\
 	SphereSceneNode.h		\
 	StateDatabase.h			\
+	TankGeometryMgr.h		\
 	TankSceneNode.h			\
 	Team.h				\
 	Teleporter.h			\
 	TeleporterSceneNodeGenerator.h	\
+	TetraBuilding.h			\
+	TetraSceneNodeGenerator.h	\
 	TextUtils.h			\
 	TextureManager.h		\
+	TextureMatrix.h			\
 	TextureFont.h			\
 	TimeBomb.h			\
 	TimeKeeper.h			\

@@ -394,6 +394,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
     if ((oldLocation != InAir)
     &&  (obstacle->getType() != WallObstacle::getClassName())
+    &&  (obstacle->getType() != TetraBuilding::getClassName())
     &&  (obstacle->getType() != PyramidBuilding::getClassName())
     &&  (obstacleTop != tmpPos[2]) && 
         (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
@@ -571,6 +572,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // teleport
       const int source = World::getWorld()->getTeleporter(teleporter, face);
       int target = World::getWorld()->getTeleportTarget(source);
+      if (target == randomTeleporter) {
+        target = rand() % (2 * World::getWorld()->getTeleporters().size());
+      }
 
       int outFace;
       const Teleporter* outPort = World::getWorld()->
@@ -601,6 +605,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
     const bool justLanded =
       (oldLocation == InAir && (location == OnGround || location == OnBuilding));
 
+    if (justLanded) {
+      setLandingSpeed(oldVelocity[2]);
+    }
     if (gettingSound) {
       // play landing sound if we weren't on something and now we are
       if (justLanded) {

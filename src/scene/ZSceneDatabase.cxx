@@ -16,6 +16,7 @@
 #include "WallSceneNode.h"
 #include "ZSceneDatabase.h"
 #include "SphereSceneNode.h"
+#include "Octree.h"
 #include "StateDatabase.h"
 #include "SceneRenderer.h"
 #include "TimeKeeper.h"
@@ -26,7 +27,10 @@ ZSceneDatabase::ZSceneDatabase()
 {
   staticCount = staticSize = 0;
   dynamicCount = dynamicSize = 0;
-  staticList = dynamicList = NULL;
+  staticList = dynamicList = culledList = NULL;
+  culledCount = 0;
+  cullDepth = cullElements = 0;
+  octree = NULL;
   return;
 }
 
@@ -41,6 +45,12 @@ ZSceneDatabase::~ZSceneDatabase()
   // free lists
   delete[] staticList;
   delete[] dynamicList;
+  if (culledList != staticList) {
+    delete[] culledList;
+  }
+
+  // delete the octree
+  delete octree;
 }
 
 
@@ -110,6 +120,57 @@ void ZSceneDatabase::updateNodeStyles()
 }
 
 
+void ZSceneDatabase::setupCullList()
+
+{
+  const int currentDepth = BZDB.evalInt(StateDatabase::BZDB_CULLDEPTH);
+  const int currentElements = BZDB.evalInt(StateDatabase::BZDB_CULLELEMENTS);
+  
+  if ((culledList == NULL) || 
+      (currentDepth != cullDepth) || (currentElements != cullElements)) {
+
+    cullDepth = currentDepth;
+    cullElements = currentElements;
+
+    delete octree;
+    octree = NULL;
+
+    if (cullDepth > 0) {
+      makeCuller();
+    }
+    else {
+      if (culledList != staticList) {
+        delete culledList;
+      }
+      culledList = staticList;
+      culledCount = staticCount;
+    }
+  }
+  
+  return;
+}
+
+
+void ZSceneDatabase::makeCuller()
+{
+  delete octree;
+  octree = new Octree;
+
+  TimeKeeper startTime = TimeKeeper::getCurrent();
+
+  octree->addNodes (staticList, staticCount, cullDepth, cullElements);
+
+  float elapsed = TimeKeeper::getCurrent() - startTime;
+  DEBUG2 ("Octree processed in %.3f seconds.\n", elapsed);
+
+  if (culledList != staticList) {
+    delete culledList;
+  }
+  // make scratch pad for the culler
+  culledList = new SceneNode*[staticCount];
+}
+
+
 void ZSceneDatabase::addLights(SceneRenderer& renderer)
 {
   // add the lights from the dynamic nodes
@@ -131,10 +192,22 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
     return;
   }
 
+  // see if we need an octree, or if it needs to be rebuilt  
+  setupCullList();
+  
+  // cull if we're supposed to
+  if (octree) {
+    const ViewFrustum& vf = renderer.getViewFrustum();
+    const Frustum* frustum = (const Frustum*) &vf;
+    culledCount = octree->getShadowList (culledList, staticCount,
+                                         frustum, sunDir);
+  }
+  
   // add the static nodes
-  for (i = 0; i < staticCount; i++) {
-    SceneNode* node = staticList[i];
+  for (i = 0; i < culledCount; i++) {
+    SceneNode* node = culledList[i];
     node->addShadowNodes(renderer);
+    node->octreeState = SceneNode::OctreeCulled;
   }
   
   // add the dynamic nodes
@@ -152,37 +225,51 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
   const ViewFrustum& frustum = renderer.getViewFrustum();
   const float* eye = frustum.getEye();
 
+  // see if we need an octree, or if it needs to be rebuilt  
+  setupCullList();
+  
+  // cull if we're supposed to
+  if (octree) {
+    culledCount = octree->getFrustumList (
+                    culledList, staticCount, (const Frustum *) &frustum);
+  }
+  
   // add the static nodes
-  for (i = 0; i < staticCount; i++) {
+  for (i = 0; i < culledCount; i++) {
     // NOTE: you can run about 5% faster if you assume that
     //       all static nodes are WallSceneNodes. You can
     //       then use getPlaneRaw(), and skip the 'if (plane)'
     //       test.
-    WallSceneNode* node = (WallSceneNode*) staticList[i];
+    WallSceneNode* node = (WallSceneNode*) culledList[i];
     
     const float* plane = node->getPlane();
     if (plane) {
       if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
            plane[3]) <= 0.0f) {
+        node->octreeState = SceneNode::OctreeCulled;
         continue;
       }
 
       // if the Visibility culler tells us that we're
       // fully visible, then skip the rest of these tests
-      const Frustum* f = (const Frustum *) &frustum;
-      float mins[3], maxs[3];
-      node->getExtents(mins, maxs);
-      if (testAxisBoxInFrustum(mins, maxs, f) == Outside) {
-        continue;
+      if (node->octreeState != SceneNode::OctreeVisible) {
+        const Frustum* f = (const Frustum *) &frustum;
+        float mins[3], maxs[3];
+        node->getExtents(mins, maxs);
+        if (testAxisBoxInFrustum(mins, maxs, f) == Outside) {
+          node->octreeState = SceneNode::OctreeCulled;
+          continue;
+        }
       }
 
       node->addRenderNodes(renderer);
-    } 
-    else {
+    } else {
       if (!node->cull(frustum)) {
         node->addRenderNodes(renderer);
       }
     }
+      
+    node->octreeState = SceneNode::OctreeCulled;
   }
   
   // add the dynamic nodes
@@ -193,6 +280,15 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
     }
   }
   
+  return;
+}
+
+
+void ZSceneDatabase::drawCuller()
+{
+  if (octree) {
+    octree->draw ();
+  }
   return;
 }
 

@@ -94,6 +94,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "AnsiCodes.h"
 #include "TextureManager.h"
 #include "ForceFeedback.h"
+#include "TankGeometryMgr.h"
 #include "motd.h"
 #include "URLManager.h"
 #include "md5.h"
@@ -177,7 +178,8 @@ enum BlowedUpReason {
   GotRunOver,
   GotCaptured,
   GenocideEffect,
-  SelfDestruct
+  SelfDestruct,
+  WaterDeath
 };
 static const char*	blowedUpMessage[] = {
   NULL,
@@ -1555,6 +1557,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	tank->setVelocity(zero);
 	tank->setAngularVelocity(0.0f);
 	tank->setDeadReckoning();
+	tank->spawnEffect();
 	if (tank == myTank) {
 	  playLocalSound(SFX_POP);
 	  myTank->setSpawning(false);
@@ -1678,6 +1681,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	else if (!killerPlayer) {
 	  addMessage(victimPlayer, "destroyed by (UNKNOWN)");
+	}
+	else if (reason == WaterDeath) {
+	  message += "fell in the water";
+	  addMessage(victimPlayer, message);
 	}
 	else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
 	  message += "destroyed by ";
@@ -2238,7 +2245,30 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-    // inter-player relayed message
+    case MsgReplayReset: {
+      int i;
+      unsigned char lastPlayer;
+      msg = nboUnpackUByte(msg, lastPlayer);
+
+      // remove players up to 'lastPlayer'
+      // any PlayerId above lastPlayer is a replay observers
+      for (i=0 ; i<lastPlayer ; i++) {
+	if (removePlayer (i)) {
+	  checkScores = true;
+	}
+      }
+
+      // remove all of the flags
+      for (i=0 ; i<numFlags; i++) {
+	Flag& flag = world->getFlag(i);
+	flag.owner = (PlayerId) -1;
+	flag.status = FlagNoExist;
+	world->initFlag (i);
+      }
+      break;
+    }
+
+      // inter-player relayed message
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall:
     case MsgGMUpdate:
@@ -2642,7 +2672,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
     // tell server I'm dead in case it doesn't already know
     if (reason == GotShot || reason == GotRunOver ||
-        reason == GenocideEffect || reason == SelfDestruct)
+        reason == GenocideEffect || reason == SelfDestruct ||
+        reason == WaterDeath)
       lookupServer(tank)->sendKilled(killer, reason, shotId);
   }
 
@@ -2770,6 +2801,9 @@ static void		checkEnvironment()
   // Check Server Shots
   myTank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
 
+  // used later
+  float waterLevel = World::getWorld()->getWaterLevel();
+
   if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
     // force shot to terminate locally immediately (no server round trip);
@@ -2795,6 +2829,10 @@ static void		checkEnvironment()
       Player* hitter = lookupPlayer(hit->getPlayer());
       if (hitter) hitter->endShot(hit->getShotId());
     }
+  }
+  // if not dead yet, see if i've dropped below the death level
+  else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel)) {
+    gotBlowedUp(myTank, WaterDeath, ServerPlayer);
   }
   // if not dead yet, see if i got run over by the steamroller
   else {
@@ -3101,6 +3139,16 @@ static void		makeObstacleList()
   for (i = 0; i < numTeleporters; i++) {
     addObstacle(obstacleList, *teleporters[i]);
   }
+  const std::vector<TetraBuilding*>& tetras = World::getWorld()->getTetras();
+  const int numTetras = tetras.size();
+  for (i = 0; i < numTetras; i++) {
+    addObstacle(obstacleList, *tetras[i]);
+  }
+  const std::vector<MeshObstacle*>& meshes = World::getWorld()->getMeshes();
+  const int numMeshes = meshes.size();
+  for (i = 0; i < numMeshes; i++) {
+    addObstacle(obstacleList, *meshes[i]);
+  }
   if (World::getWorld()->allowTeamFlags()) {
     const std::vector<BaseBuilding*>& bases = World::getWorld()->getBases();
     const int numBases = bases.size();
@@ -3202,6 +3250,8 @@ static void		checkEnvironment(RobotPlayer* tank)
   // Check Server Shots
   tank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
 
+  float waterLevel = World::getWorld()->getWaterLevel();
+
   if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
     // force shot to terminate locally immediately (no server round trip);
@@ -3227,6 +3277,11 @@ static void		checkEnvironment(RobotPlayer* tank)
       Player* hitter = lookupPlayer(hit->getPlayer());
       if (hitter) hitter->endShot(hit->getShotId());
     }
+  }
+
+  // if not dead yet, see if the robot dropped below the death level
+  else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
+    gotBlowedUp(tank, WaterDeath, ServerPlayer);
   }
 
   // if not dead yet, see if i got run over by the steamroller
@@ -4238,9 +4293,10 @@ void			drawFrame(const float dt)
     if (scene && myTank) {
 
       // add my tank if required
+      const bool showTreads = BZDB.isTrue("showTreads");
       const bool cloaked = myTank->getFlag() == Flags::Cloaking;
-      if (myTank->needsToBeRendered(cloaked, false)) {
-        myTank->addToScene(scene, myTank->getTeam(), false, true);
+      if (myTank->needsToBeRendered(cloaked, showTreads)) {
+        myTank->addToScene(scene, myTank->getTeam(), true, showTreads);
       }
 
       // add my shells
@@ -4279,11 +4335,12 @@ void			drawFrame(const float dt)
                                (myTank->getFlag() != Flags::Seer);
           const bool following = roaming && (roamView == roamViewFP) && 
                                  (roamTrackWinner == i);
-          const bool showPlayer = !following;
+          const bool showPlayer = !following || showTreads;
+          const bool inCockpit = following && showTreads;
                                
           // add player tank if required
           if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
-            player[i]->addToScene(scene, effectiveTeam, false, showPlayer);
+            player[i]->addToScene(scene, effectiveTeam, inCockpit, showPlayer);
           }
         }
       }
@@ -5461,6 +5518,10 @@ void			startPlaying(BzfDisplay* _display,
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
   World::init();
+
+  // initialize and build the tank display lists
+  TankGeometryMgr::init();
+  TankGeometryMgr::buildLists();
 
   // prepare dialogs
   mainMenu = new MainMenu;

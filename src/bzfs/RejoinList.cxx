@@ -19,7 +19,8 @@
 #include "StateDatabase.h"  // for StateDatabase::BZDB_REJOINTIME
 
 // bzfs specific headers
-#include "CmdLineOptions.h" // for MaxPlayers
+#include "CmdLineOptions.h" // for MaxPlayers & ReplayObservers
+#include "RecordReplay.h"
 #include "GameKeeper.h"
 
 // it's loathsome to expose private structure in a header

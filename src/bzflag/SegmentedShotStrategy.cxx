@@ -397,6 +397,12 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       // entered teleporter -- teleport it
       int source = World::getWorld()->getTeleporter(teleporter, face);
       int target = World::getWorld()->getTeleportTarget(source);
+      if (target == randomTeleporter) {
+        unsigned int tmp = path.getShotId() + i;
+        tmp = (tmp * 1103515245 + 12345) >> 8; // from POSIX rand() example
+        tmp = tmp % (2 * World::getWorld()->getTeleporters().size());
+        target = tmp;
+      }
 
       int outFace;
       const Teleporter* outTeleporter =

@@ -24,6 +24,7 @@
 #endif
 
 // common interface headers
+#include "DelayQueue.h"
 #include "PlayerInfo.h"
 #include "PlayerState.h"
 
@@ -33,10 +34,11 @@
 #include "Permissions.h"
 #include "LagInfo.h"
 #include "Score.h"
+#include "RecordReplay.h"
 #include "NetHandler.h"
 #include "Authentication.h"
 
-const int PlayerSlot = MaxPlayers;
+const int PlayerSlot = MaxPlayers + ReplayObservers;
 
 typedef void (*tcpCallback)(NetHandler &netPlayer, int i, const RxStatus e);
 
@@ -89,6 +91,8 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState      *lastState;
+    // DelayQueue for "Lag Flag"
+    DelayQueue        delayq;
     // FlagHistory
     FlagHistory       flagHistory;
     // Score

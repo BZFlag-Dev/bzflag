@@ -23,6 +23,9 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "FileManager.h"
+#include "DynamicColor.h"
+#include "TextureMatrix.h"
+#include "BzMaterial.h"
 #include "FlagSceneNode.h"
 
 
@@ -37,6 +40,7 @@ int			World::flagTexture(-1);
 
 World::World() :
   gameStyle(PlainGameStyle),
+  waterLevel(-1.0f),
   linearAcceleration(0.0f),
   angularAcceleration(0.0f),
   maxPlayers(0),
@@ -48,6 +52,7 @@ World::World() :
   flagNodes(NULL),
   flagWarpNodes(NULL),
   boxInsideNodes(NULL),
+  tetraInsideNodes(NULL),
   pyramidInsideNodes(NULL),
   baseInsideNodes(NULL)
 {
@@ -71,6 +76,14 @@ World::~World()
   for (u = 0; u < walls.size(); u++) {
     delete walls[u];
   }
+  for (u = 0; u < meshes.size(); u++) {
+    if (!meshes[u]->getIsLocal()) {
+      delete meshes[u];
+    }
+  }
+  for (u = 0; u < tetras.size(); u++) {
+    delete tetras[u];
+  }
   for (u = 0; u < boxes.size(); u++) {
     delete boxes[u];
   }
@@ -82,6 +95,15 @@ World::~World()
   }
   for (u = 0; u < teleporters.size(); u++) {
     delete teleporters[u];
+  }
+  for (u = 0; u < arcs.size(); u++) {
+    delete arcs[u];
+  }
+  for (u = 0; u < cones.size(); u++) {
+    delete cones[u];
+  }
+  for (u = 0; u < spheres.size(); u++) {
+    delete spheres[u];
   }
 }
 
@@ -99,7 +121,7 @@ void			World::done()
 
 void                    World::loadCollisionManager()
 {
-  collisionManager.load(boxes, basesR, pyramids, teleporters);
+  collisionManager.load(meshes, boxes, basesR, pyramids, tetras, teleporters);
   return;
 }
 
@@ -107,7 +129,7 @@ void                    World::checkCollisionManager()
 {
   if (collisionManager.needReload()) {
     // reload the collision grid
-    collisionManager.load(boxes, basesR, pyramids, teleporters);
+    collisionManager.load(meshes, boxes, basesR, pyramids, tetras, teleporters);
   }
   return;
 }
@@ -125,7 +147,13 @@ void			World::setWorld(World* _playingField)
 int			World::getTeleportTarget(int source) const
 {
   assert(source >= 0 && source < (int)(2 * teleporters.size()));
-  return teleportTargets[source];
+  int target = teleportTargets[source];
+  if ((target != randomTeleporter) && // random tag
+      (target >= (int)(2 * teleporters.size()))) {
+    // the other side of the teleporter
+    target = ((source / 2) * 2) + (1 - (source % 2));
+  }
+  return target;
 }
 
 int			World::getTeleporter(const Teleporter* teleporter,
@@ -163,6 +191,10 @@ EighthDimSceneNode*	World::getInsideSceneNode(const Obstacle* o) const
   for (i = 0; i < numPyramids; i++)
     if (pyramids[i] == o)
       return pyramidInsideNodes[i];
+  const int numTetras = tetras.size();
+  for (i = 0; i < numTetras; i++)
+    if (tetras[i] == o)
+      return tetraInsideNodes[i];
   return NULL;
 }
 
@@ -353,6 +385,13 @@ void			World::freeInsideNodes()
       delete pyramidInsideNodes[i];
     delete[] pyramidInsideNodes;
     pyramidInsideNodes = NULL;
+  }
+  if (tetraInsideNodes) {
+    const int numTetras = tetras.size();
+    for (int i = 0; i < numTetras; i++)
+      delete tetraInsideNodes[i];
+    delete[] tetraInsideNodes;
+    tetraInsideNodes = NULL;
   }
   if (baseInsideNodes) {
     const int numBases = basesR.size();
@@ -641,6 +680,59 @@ bool			World::writeWorld(std::string filename)
     }
   }
 
+  // Write dynamic colors
+  DYNCOLORMGR.print(out, 1);
+
+  // Write texture matrices
+  TEXMATRIXMGR.print(out, 1);
+
+  // Write materials
+  MATERIALMGR.print(out, 1);
+
+  // Write water level
+  {
+    if (waterLevel >= 0.0f) {
+      out << "waterLevel" << std::endl;
+      out << "  height " << waterLevel << std::endl;
+      out << "  refmat ";
+      MATERIALMGR.printReference(out, waterMaterial);
+      out << std::endl;
+      out << "end" << std::endl << std::endl;
+    }
+  }
+
+  // Write meshs
+  {
+    for (std::vector<MeshObstacle*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
+      MeshObstacle* mesh = *it;
+      mesh->print(out, 1);
+    }
+  }
+
+  // Write arcs
+  {
+    for (std::vector<ArcObstacle*>::iterator it = arcs.begin(); it != arcs.end(); ++it) {
+      ArcObstacle* arc = *it;
+      arc->print(out, 1);
+    }
+  }
+
+  // Write cones
+  {
+    for (std::vector<ConeObstacle*>::iterator it = cones.begin(); it != cones.end(); ++it) {
+      ConeObstacle* cone = *it;
+      cone->print(out, 1);
+    }
+  }
+
+  // Write spheres
+  {
+    for (std::vector<SphereObstacle*>::iterator it = spheres.begin(); it != spheres.end(); ++it) {
+      SphereObstacle* sphere = *it;
+      sphere->print(out, 1);
+    }
+  }
+
   // Write bases
   {
     for (std::vector<BaseBuilding*>::iterator it = basesR.begin(); it != basesR.end(); ++it) {
@@ -713,6 +805,59 @@ bool			World::writeWorld(std::string filename)
     }
   }
 
+  // Write tetrahedrons
+  {
+    for (std::vector<TetraBuilding*>::iterator it = tetras.begin();
+	 it != tetras.end(); ++it) {
+      TetraBuilding tetra  = **it;
+      out << "tetra" << std::endl;
+      // write the vertices
+      for (int v = 0; v < 4; v++) {
+        const float* vertex = tetra.getVertex(v);
+        out << "\tvertex " << vertex[0] << " " << vertex[1] << " " << vertex[2] << std::endl;
+        if (tetra.isColoredPlane (v)) {
+          const float* color = tetra.getPlaneColor(v);
+          unsigned int bytecolor[4];
+          for (int c = 0; c < 4; c++) {
+            bytecolor[c] = (unsigned char)(color[c] * 255.5f);
+          }
+          out << "\tcolor " << bytecolor[0] << " " << bytecolor[1] << " "
+                            << bytecolor[2] << " " << bytecolor[3] << std::endl;
+        }
+      }
+      // write the plane visibility
+      int p;
+      bool allVisible = true;
+      for (p = 0; p < 4; p++) {
+        if (!tetra.isVisiblePlane(p)) {
+          allVisible = false;
+          break;
+        }
+      }
+      if (!allVisible) {
+        out << "\tvisible";
+        for (p = 0; p < 4; p++) {
+          if (tetra.isVisiblePlane(p)) {
+            out << " 1";
+          } else {
+            out << " 0";
+          }
+        }
+        out << std::endl;
+      }
+      // write the regular stuff
+      if (tetra.isDriveThrough() && tetra.isShootThrough())
+        out << "\tpassable" << std::endl;
+      else{
+        if (tetra.isDriveThrough())
+	  out << "\tdrivethrough" << std::endl;
+        if (tetra.isShootThrough())
+	  out << "\tshootthrough" << std::endl;
+      }
+      out << "end" << std::endl << std::endl;
+    }
+  }
+
   // Write Teleporters
   {
     for (std::vector<Teleporter*>::iterator it = teleporters.begin(); it != teleporters.end(); ++it) {
@@ -734,7 +879,12 @@ bool			World::writeWorld(std::string filename)
       int to = *it;
       out << "link" << std::endl;
       out << "\tfrom " << from << std::endl;
-      out << "\tto " << to << std::endl;
+      if (to == randomTeleporter) {
+        out << "\tto random" << std::endl;
+      }
+      else {
+        out << "\tto " << to << std::endl;
+      }
       out << "end" << std::endl << std::endl;
     }
   }
@@ -802,6 +952,33 @@ bool			World::writeWorld(std::string filename)
   return true;
 }
 
+static void drawLines (int count, const float (*vertices)[3])
+{
+  glBegin (GL_LINE_STRIP);
+  for (int i = 0; i < count; i++) {
+    glVertex3fv (vertices[i]);
+  }
+  glEnd ();
+  return;
+}
+
+void			World::drawCollisionGrid()
+{
+  float color[4] = { 0.25f, 0.0f, 0.25f, 0.8f };
+  GLboolean usingTextures;
+  
+  glGetBooleanv (GL_TEXTURE_2D, &usingTextures);
+  glDisable (GL_TEXTURE_2D);
+  
+  glColor4fv (color);
+  collisionManager.draw (drawLines);
+  
+  if (usingTextures) {
+    glEnable (GL_TEXTURE_2D);
+  }
+  
+  return;
+}
 
 // Local Variables: ***
 // mode: C++ ***

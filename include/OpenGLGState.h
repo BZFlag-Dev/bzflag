@@ -39,6 +39,8 @@ class OpenGLGState {
     bool		isBlended() const;
     bool		isTextured() const;
     bool		isTextureReplace() const;
+    bool		isTextureMatrix() const;
+    bool		isSphereMap() const;
     bool		isLighted() const;
     void		addRenderNode(RenderNode* node) const;
     static void		resetState();
@@ -105,11 +107,14 @@ class OpenGLGStateBuilder {
     void		reset();
     void		enableTexture(bool = true);
     void		enableTextureReplace(bool = true);
+    void		enableTextureMatrix(bool = true);
+    void		enableSphereMap(bool = true);
     void		enableMaterial(bool = true);
     void		resetBlending();
     void		resetSmoothing();
     void		resetAlphaFunc();
     void		setTexture(const int texture);
+    void		setTextureMatrix(const int textureMatrix);
     void		setMaterial(const OpenGLMaterial& material);
     void		setBlending(GLenum sFactor = GL_SRC_ALPHA,
 				    GLenum dFactor = GL_ONE_MINUS_SRC_ALPHA);

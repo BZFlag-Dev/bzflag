@@ -81,13 +81,19 @@ void GameKeeper::Player::updateLatency(float &waitTime)
   Player* playerData;
   int p;
 
-  for (p = 0; p < PlayerSlot; p++) {
+  for (p = 0; p < PlayerSlot; p++)
     if ((playerData = playerList[p]) && !playerData->closed) {
 
       // get time for next lagping
       playerData->lagInfo.updateLatency(waitTime);
+
+      // get time for next delayed packet (Lag Flag)
+      float nextTime = playerData->delayq.nextPacketTime();
+      if (nextTime < waitTime) {
+	waitTime = nextTime;
+      }
+
     }
-  }
 }
 
 void GameKeeper::Player::dumpScore()

@@ -38,6 +38,12 @@ enum ClientState {
   PlayerAlive
 };
 
+enum PlayerReplayState {
+  ReplayNone,
+  ReplayReceiving,
+  ReplayStateful
+};
+
 #define SEND 1
 #define RECEIVE 0
 
@@ -98,7 +104,9 @@ public:
   void        hasSent(char message[]);
   bool        hasPlayedEarly();
   void        setPlayedEarly(bool early = true);
+  void        setReplayState(PlayerReplayState state);
   void        updateIdleTime();
+  PlayerReplayState getReplayState();
   static void setCurrentTime(TimeKeeper tm);
 
   void setTrackerID(unsigned short int t);
@@ -144,6 +152,9 @@ private:
   TimeKeeper pausedSince;
 
   bool notResponding;
+
+  // Has the player been sent any replay 'faked' state
+  PlayerReplayState replayState;
 
   // idle kick
   TimeKeeper lastmsg;

@@ -28,6 +28,12 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * either disable server checks when -handicap mode is enabled, or
   incorporate the player's handicap value into the check calculations.
 
+* complete the tetra getHitNormal() collision code (trepan)
+
+* complete the mesh collision code (trepan)
+
+* speed up the radar rendering
+
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
 
@@ -44,6 +50,14 @@ THESE ARE LOWER PRIORITY
   Client should use that Z and not let the tank go over it.
   Server needs to resend max when ever gravity changes.
   This way only real cheaters hit the cheat test.
+
+* separate the map from the game configuration parameters in the
+  world database such that a game configuration change doesn't
+  necessitate a full world download. it's probably easiest to always
+  download the game config and the map hash, and then download the
+  map as required.
+
+* Iterative octree cell shot collision detection
 
 * instead of kicking laggy players, they should be made observers
   unless there are no observer slots left (then kick).

@@ -31,6 +31,15 @@
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
 #include "CustomZone.h"
+#include "CustomTetra.h"
+#include "CustomDynamicColor.h"
+#include "CustomTextureMatrix.h"
+#include "CustomMaterial.h"
+#include "CustomMesh.h"
+#include "CustomArc.h"
+#include "CustomCone.h"
+#include "CustomSphere.h"
+#include "CustomWaterLevel.h"
 
 BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
 {
@@ -134,12 +143,22 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       newObject = new CustomBox;
     } else if (strcasecmp(buffer, "pyramid") == 0) {
       newObject = new CustomPyramid();
+    } else if (strcasecmp(buffer, "tetra") == 0) {
+      newObject = new CustomTetra();
     } else if (strcasecmp(buffer, "teleporter") == 0) {
       newObject = new CustomGate();
     } else if (strcasecmp(buffer, "link") == 0) {
       newObject = new CustomLink();
     } else if (strcasecmp(buffer, "base") == 0) {
       newObject = new CustomBase;
+    } else if (strcasecmp(buffer, "mesh") == 0) {
+      newObject = new CustomMesh;
+    } else if (strcasecmp(buffer, "arc") == 0) {
+      newObject = new CustomArc;
+    } else if (strcasecmp(buffer, "cone") == 0) {
+      newObject = new CustomCone;
+    } else if (strcasecmp(buffer, "sphere") == 0) {
+      newObject = new CustomSphere;
     } else if (strcasecmp(buffer, "weapon") == 0) {
       newObject = new CustomWeapon;
     } else if (strcasecmp(buffer, "zone") == 0) {
@@ -151,6 +170,14 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       } else {
 	errorHandler->warning(std::string("multiple \"world\" sections found"), line);
       }
+    } else if (strcasecmp(buffer, "waterLevel") == 0) {
+      newObject = new CustomWaterLevel;
+    } else if (strcasecmp(buffer, "dynamicColor") == 0) {
+      newObject = new CustomDynamicColor;
+    } else if (strcasecmp(buffer, "textureMatrix") == 0) {
+      newObject = new CustomTextureMatrix;
+    } else if (strcasecmp(buffer, "material") == 0) {
+      newObject = new CustomMaterial;
     } else if (strcasecmp(buffer, "options") == 0) {
       newObject = fakeObject;
     } else if (object) {

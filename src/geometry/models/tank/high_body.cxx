@@ -10,11 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "TankSceneNode.h"
-
-#define	doVertex3f	doVertex3f
-#define	doNormal3f	doNormal3f
-
+#include "TankGeometryMgr.h"
+using namespace TankGeometryUtils;
 
 float sideVerts[][3] = {  {2.800000f, 0.878000f, 0.829000f},
                           {2.820000f, 0.878000f, 0.716000f},
@@ -70,15 +67,15 @@ float sideNormals[][3] ={{-0.006338f, 0.999979f, -0.001652f},
 void DrawOBJIndexFace ( int v1,int t1,int n1,int v2,int t2,int n2,int v3,int t3,int n3)
 {
   doNormal3f(sideNormals[n1-1][0], sideNormals[n1-1][1],sideNormals[n1-1][2]);
-  glTexCoord2f(sideUVs[t1-1][0],sideUVs[t1-1][1]);
+  doTexCoord2f(sideUVs[t1-1][0],sideUVs[t1-1][1]);
   doVertex3f(sideVerts[v1-1][0], sideVerts[v1-1][1], sideVerts[v1-1][2]);
-  
+
   doNormal3f(sideNormals[n2-1][0], sideNormals[n2-1][1],sideNormals[n2-1][2]);
-  glTexCoord2f(sideUVs[t2-1][0],sideUVs[t2-1][1]);
+  doTexCoord2f(sideUVs[t2-1][0],sideUVs[t2-1][1]);
   doVertex3f(sideVerts[v2-1][0], sideVerts[v2-1][1], sideVerts[v2-1][2]);
 
   doNormal3f(sideNormals[n3-1][0], sideNormals[n3-1][1],sideNormals[n3-1][2]);
-  glTexCoord2f(sideUVs[t3-1][0],sideUVs[t3-1][1]);
+  doTexCoord2f(sideUVs[t3-1][0],sideUVs[t3-1][1]);
   doVertex3f(sideVerts[v3-1][0], sideVerts[v3-1][1], sideVerts[v3-1][2]);
 }
 
@@ -117,68 +114,68 @@ void DrawCentralBody( void )
   // draw the outer loop
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.984696f, 0.000000f, 0.174282f);
-    glTexCoord2f(1.210f, 2.290f);
+    doTexCoord2f(1.210f, 2.290f);
     doVertex3f(2.820f, -0.877f, 0.716f);
-    glTexCoord2f(0.669f, 2.040f);
+    doTexCoord2f(0.669f, 2.040f);
     doVertex3f(2.820f, 0.878f, 0.716f);
-    glTexCoord2f(1.210f, 2.280f);
+    doTexCoord2f(1.210f, 2.280f);
     doVertex3f(2.800f, -0.876f, 0.829f);
-    glTexCoord2f(0.672f, 2.030f);
+    doTexCoord2f(0.672f, 2.030f);
     doVertex3f(2.800f, 0.878f, 0.829f);
     doNormal3f(0.573462f, 0.000000f, 0.819232f);
-    glTexCoord2f(1.240f, 2.210f);
+    doTexCoord2f(1.240f, 2.210f);
     doVertex3f(2.570f, -0.877f, 0.990f);
-    glTexCoord2f(0.705f, 1.960f);
+    doTexCoord2f(0.705f, 1.960f);
     doVertex3f(2.570f, 0.877f, 0.990f);
     doNormal3f(0.049938f, 0.000000f, 0.998752f);
-    glTexCoord2f(1.300f, 2.090f);
+    doTexCoord2f(1.300f, 2.090f);
     doVertex3f(2.170f, -0.877f, 1.010f);
-    glTexCoord2f(0.763f, 1.840f);
+    doTexCoord2f(0.763f, 1.840f);
     doVertex3f(2.170f, 0.877f, 1.010f);
     doNormal3f(0.280899f, 0.000000f, 0.959737f);
-    glTexCoord2f(1.360f, 1.970f);
+    doTexCoord2f(1.360f, 1.970f);
     doVertex3f(1.760f, -0.877f, 1.130f);
-    glTexCoord2f(0.822f, 1.710f);
+    doTexCoord2f(0.822f, 1.710f);
     doVertex3f(1.760f, 0.877f, 1.130f);
     doNormal3f(0.000000f, 0.000000f, 1.000000f);
-    glTexCoord2f(1.820f, 0.981f);
+    doTexCoord2f(1.820f, 0.981f);
     doVertex3f(-1.460f, -0.877f, 1.130f);
-    glTexCoord2f(1.280f, 0.729f);
+    doTexCoord2f(1.280f, 0.729f);
     doVertex3f(-1.460f, 0.877f, 1.130f);
     doNormal3f(0.076167f, 0.000000f, 0.997095f);
-    glTexCoord2f(2.030f, 0.541f);
+    doTexCoord2f(2.030f, 0.541f);
     doVertex3f(-2.900f, -0.877f, 1.240f);
-    glTexCoord2f(1.490f, 0.289f);
+    doTexCoord2f(1.490f, 0.289f);
     doVertex3f(-2.900f, 0.877f, 1.240f);
     doNormal3f(-0.975668f, 0.000000f, -0.219251f);
-    glTexCoord2f(2.000f, 0.590f);
+    doTexCoord2f(2.000f, 0.590f);
     doVertex3f(-2.740f, -0.877f, 0.528f);
-    glTexCoord2f(1.470f, 0.338f);
+    doTexCoord2f(1.470f, 0.338f);
     doVertex3f(-2.740f, 0.877f, 0.528f);
     doNormal3f(-0.426419f, 0.000000f, -0.904526f);
-    glTexCoord2f(1.840f, 0.932f);
+    doTexCoord2f(1.840f, 0.932f);
     doVertex3f(-1.620f, -0.877f, 0.250f);
-    glTexCoord2f(1.310f, 0.680f);
+    doTexCoord2f(1.310f, 0.680f);
     doVertex3f(-1.620f, 0.877f, 0.250f);
     doNormal3f(0.000000f, 0.000000f, -1.000000f);
-    glTexCoord2f(1.350f, 1.980f);
+    doTexCoord2f(1.350f, 1.980f);
     doVertex3f(1.810f, -0.877f, 0.250f);
-    glTexCoord2f(0.815f, 1.730f);
+    doTexCoord2f(0.815f, 1.730f);
     doVertex3f(1.810f, 0.877f, 0.250f);
     doNormal3f(0.454326f, 0.000000f, -0.890835f);
-    glTexCoord2f(1.240f, 2.230f);
+    doTexCoord2f(1.240f, 2.230f);
     doVertex3f(2.610f, -0.877f, 0.408f);
-    glTexCoord2f(0.700f, 1.970f);
+    doTexCoord2f(0.700f, 1.970f);
     doVertex3f(2.610f, 0.877f, 0.408f);
     doNormal3f(0.969310f, 0.000000f, -0.245840f);
-    glTexCoord2f(1.230f, 2.250f);
+    doTexCoord2f(1.230f, 2.250f);
     doVertex3f(2.680f, -0.877f, 0.684f);
-    glTexCoord2f(0.690f, 2.000f);
+    doTexCoord2f(0.690f, 2.000f);
     doVertex3f(2.680f, 0.877f, 0.684f);
     doNormal3f(0.222825f, 0.000000f, -0.974858f);
-    glTexCoord2f(1.210f, 2.290f);
+    doTexCoord2f(1.210f, 2.290f);
     doVertex3f(2.820f, -0.877f, 0.716f);
-    glTexCoord2f(0.669f, 2.040f);
+    doTexCoord2f(0.669f, 2.040f);
     doVertex3f(2.820f, 0.878f, 0.716f);
   glEnd();
 }
@@ -187,40 +184,40 @@ void DrawRightRearExaust ( void )
 {
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
-    glTexCoord2f(1.540f, 0.341f);
+    doTexCoord2f(1.540f, 0.341f);
     doVertex3f(-2.820f, 0.686f, 1.070f);
-    glTexCoord2f(1.580f, 0.261f);
+    doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.070f);
-    glTexCoord2f(1.540f, 0.341f);
+    doTexCoord2f(1.540f, 0.341f);
     doVertex3f(-2.820f, 0.686f, 1.170f);
-    glTexCoord2f(1.580f, 0.261f);
+    doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.170f);
     doNormal3f(0.000000f, 0.000000f, 1.000000f);
-    glTexCoord2f(1.640f, 0.387f);
+    doTexCoord2f(1.640f, 0.387f);
     doVertex3f(-2.820f, 0.367f, 1.170f);
-    glTexCoord2f(1.670f, 0.307f);
+    doTexCoord2f(1.670f, 0.307f);
     doVertex3f(-3.080f, 0.367f, 1.170f);
     doNormal3f(0.000000f, -1.000000f, 0.000000f);
-    glTexCoord2f(1.640f, 0.387f);
+    doTexCoord2f(1.640f, 0.387f);
     doVertex3f(-2.820f, 0.367f, 1.070f);
-    glTexCoord2f(1.670f, 0.307f);
+    doTexCoord2f(1.670f, 0.307f);
     doVertex3f(-3.080f, 0.367f, 1.070f);
     doNormal3f(0.000000f, 0.000000f, -1.000000f);
-    glTexCoord2f(1.540f, 0.341f);
+    doTexCoord2f(1.540f, 0.341f);
     doVertex3f(-2.820f, 0.686f, 1.070f);
-    glTexCoord2f(1.580f, 0.261f);
+    doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.070f);
   glEnd();
 
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-1.000000f, 0.000000f, 0.000000f);
-    glTexCoord2f(1.580f, 0.261f);
+    doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.170f);
-    glTexCoord2f(1.580f, 0.261f);
+    doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.070f);
-    glTexCoord2f(1.670f, 0.307f);
+    doTexCoord2f(1.670f, 0.307f);
     doVertex3f(-3.080f, 0.367f, 1.170f);
-    glTexCoord2f(1.670f, 0.307f);
+    doTexCoord2f(1.670f, 0.307f);
     doVertex3f(-3.080f, 0.367f, 1.070f);
   glEnd();
 }
@@ -229,43 +226,43 @@ void DrawLeftRearExaust ( void )
 {
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
-    glTexCoord2f(1.780f, 0.445f);
+    doTexCoord2f(1.780f, 0.445f);
     doVertex3f(-2.840f, -0.084f, 1.070f);
-    glTexCoord2f(1.810f, 0.366f);
+    doTexCoord2f(1.810f, 0.366f);
     doVertex3f(-3.100f, -0.084f, 1.070f);
-    glTexCoord2f(1.780f, 0.445f);
+    doTexCoord2f(1.780f, 0.445f);
     doVertex3f(-2.840f, -0.084f, 1.170f);
-    glTexCoord2f(1.810f, 0.366f);
+    doTexCoord2f(1.810f, 0.366f);
     doVertex3f(-3.100f, -0.084f, 1.170f);
     doNormal3f(0.000000f, 0.000000f, 1.000000f);
-    glTexCoord2f(2.020f, 0.559f);
+    doTexCoord2f(2.020f, 0.559f);
     doVertex3f(-2.840f, -0.877f, 1.170f);
-    glTexCoord2f(2.060f, 0.480f);
+    doTexCoord2f(2.060f, 0.480f);
     doVertex3f(-3.100f, -0.877f, 1.170f);
     doNormal3f(0.000000f, -1.000000f, 0.000000f);
-    glTexCoord2f(2.020f, 0.559f);
+    doTexCoord2f(2.020f, 0.559f);
     doVertex3f(-2.840f, -0.877f, 1.070f);
-    glTexCoord2f(2.060f, 0.480f);
+    doTexCoord2f(2.060f, 0.480f);
     doVertex3f(-3.100f, -0.877f, 1.070f);
     doNormal3f(0.000000f, 0.000000f, -1.000000f);
-    glTexCoord2f(1.780f, 0.445f);
+    doTexCoord2f(1.780f, 0.445f);
     doVertex3f(-2.840f, -0.084f, 1.070f);
-    glTexCoord2f(1.810f, 0.366f);
+    doTexCoord2f(1.810f, 0.366f);
     doVertex3f(-3.100f, -0.084f, 1.070f);
   glEnd();
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-1.000000f, 0.000000f, 0.000000f);
-    glTexCoord2f(1.810f, 0.366f);
+    doTexCoord2f(1.810f, 0.366f);
     doVertex3f(-3.100f, -0.084f, 1.170f);
-    glTexCoord2f(1.810f, 0.366f);
+    doTexCoord2f(1.810f, 0.366f);
     doVertex3f(-3.100f, -0.084f, 1.070f);
-    glTexCoord2f(2.060f, 0.480f);
+    doTexCoord2f(2.060f, 0.480f);
     doVertex3f(-3.100f, -0.877f, 1.170f);
-    glTexCoord2f(2.060f, 0.480f);
+    doTexCoord2f(2.060f, 0.480f);
     doVertex3f(-3.100f, -0.877f, 1.070f);
   glEnd();
 }
-void buildHighBody ( void )
+void TankGeometryUtils::buildHighBody ( void )
 {
   DrawCentralBody();
   DrawRightRearExaust();

@@ -77,6 +77,7 @@ namespace Flags {
   FlagType *TriggerHappy;
   FlagType *ReverseControls;
   FlagType *Bouncy;
+  FlagType *Lag;
   FlagType *Agility;
 
   void init()
@@ -174,6 +175,8 @@ namespace Flags {
 					    "Tank can't stop firing.");
     Bouncy                  = new FlagType( "Bouncy", "BY", FlagSticky, NormalShot, FlagBad, NoTeam,
 					    "Tank can't stop bouncing.");
+    Lag                     = new FlagType( "Lag", "LG", FlagSticky, NormalShot, FlagBad, NoTeam,
+					    "Player sees extra lag.");
   }
 }
 

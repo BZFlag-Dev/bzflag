@@ -88,6 +88,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("ban");
   registerWord("kick");
   registerWord("/quit");
+  registerWord("/record");
   registerWord("start");
   registerWord("stop");
   registerWord("size");
@@ -97,11 +98,15 @@ void DefaultCompleter::setDefaults() {
   registerWord("save");
   registerWord("/register ");
   registerWord("/reload");
-  registerWord("/masterban");
-  registerWord("list");
+  registerWord("/masterban"); // also uses list
   registerWord("reload");
   registerWord("flush");
   registerWord("/removegroup ");
+  registerWord("/replay ");
+  registerWord("list");
+  registerWord("load");
+  registerWord("play");
+  registerWord("skip");
   registerWord("/report ");
   registerWord("/reset");
   registerWord("/set");

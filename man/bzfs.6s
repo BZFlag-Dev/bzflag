@@ -52,6 +52,9 @@ bzfs \- BZFlag game server
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]
+[\fB\-recbuf \fIsize\fR]
+[\fB\-recdir \fIdirectory\fR]
+[\fB\-replay\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
 [\fB\-requireudp\fR]
@@ -323,6 +326,15 @@ whoever kills the rabbit becomes the new rabbit.  The \fIrandom\fR
 algorithm randomly picks a new rabbit without regard to score.  (The
 \fIscore\fR algorithm is the original behavior.)
 .TP
+.B -recbuf\fI size\fR
+Start with the recording buffer active, with the specified size (in megabytes).
+.TP
+.B -recdir\fI directory\fR
+Specify the directory for record and replay files.
+.TP
+.B -replay
+Start the server in replay mode.
+.TP
 .B -reportfile\fI filename\fR
 Write messages to the server admin written using the \fB/report\fR command to
 this file. If neither \fB-reportfile\fR or \fB-reportpipe\fR is used the
@@ -589,6 +601,51 @@ Leave the game with a goodbye message (similar to IRC's /part)
 .TP
 .B /viewreports
 View the server's report file.
+.BR
+
+.TP
+.B /record list
+List all files in the recordings directory
+.TP
+.B /record start
+Start recording into the memory buffer
+.TP
+.B /record stop
+Stop recording into the memory buffer
+.TP
+.B /record size <megabytes>
+Set the size of the recording memory buffer
+.TP
+.B /record rate <seconds>
+Set the time between game state updates stored in the recording. This will affect
+the granularity of the 'skips' you can do while replaying a file. It will also
+make the recording files bigger if it is set to a faster update rate.
+.TP
+.B /record stats
+Display the statistics for the current recording (file or buffered)
+.TP
+.B /record file <filename>
+Start recording directly to a file
+.TP
+.B /record save <filename> [seconds]
+Save the recording buffer into a file. If seconds is specified, then only save
+that many previous seconds into the file.
+.BR
+
+.TP
+.B /replay list
+List all files in the recordings directory
+.TP
+.B /replay load <filename>
+Load the specified recording file
+.TP
+.B /replay play
+Start playing the recording. This will oftentimes require that all players connected
+to the server rejoin  (to reload the map, etc...)
+.TP
+.B /replay skip [+/- seconds]
+If seconds is specified, then skip that amount of time in the recording.
+Otherwise, skip forwards until there is activity.
 .BR
 
 .TP
@@ -908,9 +965,23 @@ must come before they are used). The list of world types consists of:
 .br
 .B	options
 .br
+.B	waterLevel
+.br
+.B	dynamicColor
+.br
+.B	textureMatrix
+.br
+.B	mesh
+.br
+.B	arc
+.br
+.B	sphere
+.br
 .B	box
 .br
 .B	pyramid
+.br
+.B	tetra
 .br
 .B	teleporter
 .br
@@ -929,12 +1000,52 @@ any order. Attributes have default values, and if that is good enough, the attri
 be listed. Words are always specified in lowercase. Line comments can be specified by placing a
 # sign at the start of the line. For documentation purposes, you can tag each object by adding
 a name attribute. There is no set limit to the number of times you may use any of the objects
-except for the world and options objects, they can only be specified once. The options object
-contains command line arguments that are used to configure the server's game mode, but can not
-contain server specific options such as -p, -passwd, and -conf.
+except for the world, options, and waterLevel objects, they can only be specified once. The
+options object contains command line arguments that are used to configure the server's game mode,
+but can not contain server specific options such as -p, -passwd, and -conf.
 
 .br
 In the following examples, the values are the defaults.
+
+
+.B Material Properties
+
+Material properties may be set on several types of objects, including
+meshes, mesh faces, arcs, and spheres. Here are the properties:
+.br
+
+\fB  texture\fR filename  # set working texture (without PNG extension)
+.br
+\fB  notexture\fR         # specify that no texture is to be used
+.br
+\fB  notexcolor\fR        # the color is not applied to the texture
+.br
+\fB  notexalpha\fR        # don't use the texture's alpha channel
+.br
+  # if a texture is specified, but not found, the default texture
+.br
+  # will be used. if the default texture is also not available, then
+.br
+  # the color will be used (untextured)
+.br
+\fB  texmat\fR -1                 # texture matrix  (-1 for none)
+.br
+\fB  dyncol\fR -1                 # dynamic color  (-1 for none)
+.br
+\fB  ambient\fR  0.2 0.2 0.2 1.0  # ambient color
+.br
+\fB  diffuse\fR  0.8 0.8 0.8 1.0  # diffuse color (\fBmain color\fR)
+.br
+\fB  color\fR    0.8 0.8 0.8 1.0  # synonym for 'diffuse'
+.br
+\fB  specular\fR 0.0 0.0 0.0 1.0  # specular color
+.br
+\fB  emission\fR 0.0 0.0 0.0 1.0  # emission color
+.br
+\fB  shininess\fR 0.0             # shininess
+.br
+\fB  resetmat\fR                  # restore default values
+.br
 
 
 .B The World object
@@ -959,6 +1070,150 @@ In the following examples, the values are the defaults.
   -j +r -ms 3
 .br
   +f GM{5} +f SW{5}
+.br
+\fBend\fR
+.br
+
+
+.B The Water Level object
+
+\fBwaterLevel\fR
+.br
+\fB  name\fR example_waterlevel
+.br
+\fB  height\fR -1 # anything below 0 turns it off
+.br
+\fBend\fR
+.br
+
+
+.B The Dynamic Color object
+
+\fBdynamicColor\fR
+.br
+\fB  name\fR example_dyncol
+.br
+  # there are 4 channels that can be modified:
+.br
+  #   \fBred\fR, \fBgreen\fR, \fBblue\fR, \fBalpha\fR
+.br
+  # there are 4 types of commands per channel:
+.br
+  #   \fBlimits\fR, \fBsinusoid\fR, \fBclampUp\fR, \fBclampDown\fR
+.br
+  # except for "limits", the commands are \fBrepeatable\fR
+.br
+  # if both clampUp and clampDown are active, the value is (min+max)/2
+.br
+  # the sinusoid function starts at the max value
+.br
+  # the sum of a channel's sinusoids is clamped between 0 and 1
+.br
+\fB  red limits\fR 0 1               # min/max limits
+.br
+\fB  green sinusoid\fR 0.1 0 0.25    # period, offset, weight
+.br
+\fB  blue clampUp\fR 0.1 0 0.75      # period, offset, width
+.br
+\fB  alpha clampDown\fR 0.2 0.5 0.5  # period, offset, width
+.br
+\fBend\fR
+.br
+
+
+.B The Texture Matrix object
+
+\fBtextureMatrix\fR
+.br
+\fB  name\fR example_texmat
+.br
+\fB  shift\fR 0.1 0.2              # u/v freqs
+.br
+\fB  rotate\fR 0.2 0.5 0.5         # rotation freq, u/v centers
+.br
+\fB  scale\fR 0.1 0.2 2 3 0.5 0.5  # u/v freqs, u/v scales, u/v centers
+.br
+\fBend\fR
+.br
+
+
+.B The Mesh object
+
+\fBmesh\fR
+.br
+\fB  name\fR example_mesh
+.br
+  # Material properties applied to a mesh apply to all faces 
+.br
+  # that follow the setting. Mesh faces will alter their own
+.br
+  # properties with affecting the state of the mesh properties.
+.br
+\fB  inside\fR 5.5 4.5 1.2  # add an inside point  (\fBrepeatable\fR)
+.br
+\fB  outside\fR 0 0 1000  # add an outside point  (\fBrepeatable\fR)
+.br
+\fB  vertex\fR 100 200 300  # add a vertex  (\fBrepeatable\fR)
+.br
+\fB  normal\fR 1.0 0 0  # add a normal  (\fBrepeatable\fR)
+.br
+\fB  texcoord\fR 0.1 0.75  # add a texture coordinate  (\fBrepeatable\fR)
+.br
+\fB  reset\fR  # restore default values
+.br
+\fB  face\fR  # start a face  (\fBrepeatable\fR)
+.br
+    # faces must be convex polygons
+.br
+\fB    vertices\fR 1 2 4 3 5  # list of vertices
+.br
+\fB    normals\fR 3 5 4 6 7  # list of normals
+.br
+\fB    texcoords\fR 10 3 2 4 9  # list of texture coordinates
+.br
+\fB  endface\fR  # end the face
+.br
+\fBend\fR
+.br
+
+
+.B The Arc object
+
+\fBarc\fR
+.br
+\fB  name\fR example_arc
+.br
+\fB  divisions 16\fR  # number of subdivisions
+.br
+\fB  angle 360\fR     # the sweep angle
+.br
+\fB  ratio 1\fR       # (outrad - inrad) / outrad
+.br
+\fB  position\fR 0.0 0.0 0.0
+.br
+\fB  size\fR 10 10 10 
+.br
+\fB  rotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+
+.B The Sphere object
+
+\fBsphere\fR
+.br
+\fB  name\fR example_sphere
+.br
+\fB  divisions 4\fR  # number of subdivisions
+.br
+\fB  position\fR 0.0 0.0 10.0
+.br
+\fB  size\fR 10 10 10 
+.br
+\fB  radius 10\fR    #  sets all size values to this value
+.br
+\fB  rotation\fR 0.0
 .br
 \fBend\fR
 .br
@@ -991,6 +1246,32 @@ In the following examples, the values are the defaults.
 \fB  size\fR 8.2 8.2 10.25
 .br
 \fB  rotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+
+.B The Tetrahedron object
+
+\fBtetra\fR
+.br
+\fB  name\fR example_tetra
+.br
+# there must always be 4 vertices
+.br
+\fB  vertex\fR -10.0 -5.0 0.0
+.br
+\fB  vertex\fR +10.0 -5.0 0.0
+.br
+\fB  vertex\fR 0.0 10.0 0.0
+.br
+\fB  vertex\fR 0.0 5.0 10.0
+.br
+# defines the visible planes
+.br
+# planes are numbered according to their opposite vertex
+.br
+\fB  visible\fR 1 1 0 1
 .br
 \fBend\fR
 .br

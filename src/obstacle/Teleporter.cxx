@@ -25,12 +25,15 @@ Teleporter::Teleporter(const float* p, float a, float w,
 		                horizontal ? h : h + _border,drive,shoot),
 		       border(_border), horizontal(_horizontal)
 {
+  makeLinks();
   return;
 }
 
 
 Teleporter::~Teleporter()
 {
+  delete backLink;
+  delete frontLink;
   return;  
 }
 
@@ -47,8 +50,87 @@ const char* Teleporter::getClassName() // const
 }
 
 
+void Teleporter::makeLinks()
+{
+  int i;
+  float **fvrts = new float*[4];
+  float **bvrts = new float*[4];
+  for (i = 0; i < 4; i++) {
+    fvrts[i] = fvertices[i];
+    bvrts[i] = bvertices[i];
+  }
+  
+  const float* p = getPosition();
+  const float a = getRotation();
+  const float w = getWidth();
+  const float b = getBreadth();
+  const float br = getBorder();
+  const float h = getHeight();
+
+  const float cos_val = cos(a);
+  const float sin_val = sin(a);
+  
+  if (!horizontal) {
+    const float params[4][2] = 
+      {{-1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {-1.0f, 1.0f}};
+    float wlen[2] = { (cos_val * w), (sin_val * w) };
+    float blen[2] = { (-sin_val * (b - br)), (cos_val * (b - br)) };
+
+    for (i = 0; i < 4 ;i++) {
+      bvrts[i][0] = p[0] + (wlen[0] + (blen[0] * params[i][0]));
+      bvrts[i][1] = p[1] + (wlen[1] + (blen[1] * params[i][0]));
+      bvrts[i][2] = p[2] + ((h - br) * params[i][1]);
+    }
+    backLink =
+      new MeshFace(NULL, 4, bvrts, NULL, NULL, NULL, false, true, true);
+    backLink->finalize();  
+
+    for (i = 0; i < 4 ;i++) {
+      fvrts[i][0] = p[0] - (wlen[0] + (blen[0] * params[i][0]));
+      fvrts[i][1] = p[1] - (wlen[1] + (blen[1] * params[i][0]));
+      fvrts[i][2] = p[2] + ((h - br) * params[i][1]);
+    }
+    frontLink =
+      new MeshFace(NULL, 4, fvrts, NULL, NULL, NULL, false, true, true);
+    frontLink->finalize();  
+  }
+  else {
+    float xlen = w - br;
+    float ylen = b - br;
+    bvrts[0][0] = p[0] + ((cos_val * xlen) - (sin_val * ylen));
+    bvrts[0][1] = p[1] + ((cos_val * ylen) + (sin_val * xlen));
+    bvrts[0][2] = p[2] + h - br;
+    bvrts[1][0] = p[0] + ((cos_val * xlen) - (sin_val * -ylen));
+    bvrts[1][1] = p[1] + ((cos_val * -ylen) + (sin_val * xlen));
+    bvrts[1][2] = p[2] + h - br;
+    bvrts[2][0] = p[0] + ((cos_val * -xlen) - (sin_val * -ylen));
+    bvrts[2][1] = p[1] + ((cos_val * -ylen) + (sin_val * -xlen));
+    bvrts[2][2] = p[2] + h - br;
+    bvrts[3][0] = p[0] + ((cos_val * -xlen) - (sin_val * ylen));
+    bvrts[3][1] = p[1] + ((cos_val * ylen) + (sin_val * -xlen));
+    bvrts[3][2] = p[2] + h - br;
+    backLink =
+      new MeshFace(NULL, 4, bvrts, NULL, NULL, NULL, false, true, true);
+    backLink->finalize();
+    
+    for (i = 0; i < 4; i++) {
+      memcpy(fvrts[i], bvrts[3 - i], sizeof(float[3])); // reverse order
+      fvrts[i][2] = p[2] + h; // change the height
+    }
+    frontLink =
+      new MeshFace(NULL, 4, fvrts, NULL, NULL, NULL, false, true, true);
+    frontLink->finalize();  
+  }
+  
+  return;  
+}
+
+
 bool Teleporter::isValid() const
 {
+  if (!backLink->isValid() || !frontLink->isValid()) {
+    return false;
+  }
   return Obstacle::isValid();
 }
 

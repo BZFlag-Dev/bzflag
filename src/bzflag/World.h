@@ -22,14 +22,20 @@
 /* common interface headers */
 #include "Team.h"
 #include "WallObstacle.h"
+#include "MeshObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
+#include "TetraBuilding.h"
 #include "Teleporter.h"
 #include "EighthDimSceneNode.h"
 #include "FlagWarpSceneNode.h"
+#include "ArcObstacle.h"
+#include "ConeObstacle.h"
+#include "SphereObstacle.h"
 #include "Obstacle.h"
 #include "BundleMgr.h"
+#include "BzMaterial.h"
 
 /* local interface headers */
 #include "RemotePlayer.h"
@@ -60,6 +66,8 @@ class World {
     bool		allowShakeWins() const;
     bool		allowRabbit() const;
     bool		allowHandicap() const;
+    float		getWaterLevel() const;
+    const BzMaterial*	getWaterMaterial() const;
     float		getLinearAcceleration() const;
     float		getAngularAcceleration() const;
     float		getFlagShakeTimeout() const;
@@ -82,9 +90,11 @@ class World {
     Flag&		getFlag(int index) const;
     const float*	getBase(int, int=0) const;
     const std::vector<WallObstacle*>&    getWalls() const;
+    const std::vector<MeshObstacle*>&    getMeshes() const;
     const std::vector<BoxBuilding*>&	 getBoxes() const;
     const std::vector<PyramidBuilding*>& getPyramids() const;
     const std::vector<BaseBuilding*>&    getBases() const;
+    const std::vector<TetraBuilding*>&   getTetras() const;
     const std::vector<Teleporter*>&	 getTeleporters() const;
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
@@ -133,6 +143,8 @@ class World {
 
     bool		writeWorld(std::string filename);
 
+    void		drawCollisionGrid();
+
 
   private:
     // disallow copy and assignment
@@ -146,6 +158,8 @@ class World {
     typedef struct { float p[7]; } BaseParms;
     typedef std::vector<BaseParms> TeamBases;
     short		gameStyle;
+    float		waterLevel;
+    const BzMaterial*	waterMaterial;
     float		linearAcceleration;
     float		angularAcceleration;
     int			maxPlayers;
@@ -159,8 +173,13 @@ class World {
     std::vector<BoxBuilding*>		boxes;
     std::vector<PyramidBuilding*>	pyramids;
     std::vector<BaseBuilding*>		basesR;
+    std::vector<TetraBuilding*>		tetras;
     std::vector<WallObstacle*>		walls;
     std::vector<Teleporter*>		teleporters;
+    std::vector<MeshObstacle*>		meshes;
+    std::vector<ArcObstacle*>		arcs;
+    std::vector<ConeObstacle*>		cones;
+    std::vector<SphereObstacle*>	spheres;
     std::vector<Weapon>		        weapons;
     std::vector<EntryZone>		entryZones;
     std::vector<int>			teleportTargets;
@@ -172,6 +191,7 @@ class World {
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
     EighthDimSceneNode** boxInsideNodes;
+    EighthDimSceneNode** tetraInsideNodes;
     EighthDimSceneNode** pyramidInsideNodes;
     EighthDimSceneNode** baseInsideNodes;
     static World*	playingField;
@@ -233,6 +253,16 @@ inline bool		World::allowRabbit() const
 inline bool		World::allowHandicap() const
 {
   return (gameStyle & short(HandicapGameStyle)) != 0;
+}
+
+inline float		World::getWaterLevel() const
+{
+  return waterLevel;
+}
+
+inline const BzMaterial*	World::getWaterMaterial() const
+{
+  return waterMaterial;
 }
 
 inline float		World::getLinearAcceleration() const
@@ -349,6 +379,11 @@ inline const std::vector<WallObstacle*>& World::getWalls() const
   return walls;
 }
 
+inline const std::vector<MeshObstacle*>& World::getMeshes() const
+{
+  return meshes;
+}
+
 inline const std::vector<BaseBuilding*>& World::getBases() const
 {
   return basesR;
@@ -362,6 +397,11 @@ inline const std::vector<BoxBuilding*>& World::getBoxes() const
 inline const std::vector<PyramidBuilding*>& World::getPyramids() const
 {
   return pyramids;
+}
+
+inline const std::vector<TetraBuilding*>& World::getTetras() const
+{
+  return tetras;
 }
 
 inline const std::vector<Teleporter*>& World::getTeleporters() const

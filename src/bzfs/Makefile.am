@@ -16,16 +16,36 @@ bzfs_SOURCES = \
 	BZWReader.h \
 	CmdLineOptions.cxx \
 	CmdLineOptions.h \
+	CustomArc.cxx \
+	CustomArc.h \
 	CustomBase.cxx \
 	CustomBase.h \
 	CustomBox.cxx \
 	CustomBox.h \
+	CustomCone.cxx \
+	CustomCone.h \
+	CustomDynamicColor.cxx \
+	CustomDynamicColor.h \
 	CustomGate.cxx \
 	CustomGate.h \
 	CustomLink.cxx \
 	CustomLink.h \
+	CustomMaterial.h \
+	CustomMaterial.cxx \
+	CustomMesh.cxx \
+	CustomMesh.h \
+	CustomMeshFace.cxx \
+	CustomMeshFace.h \
+	CustomSphere.cxx \
+	CustomSphere.h \
+	CustomTextureMatrix.cxx \
+	CustomTextureMatrix.h \
 	CustomPyramid.cxx \
 	CustomPyramid.h \
+	CustomTetra.cxx \
+	CustomTetra.h \
+	CustomWaterLevel.cxx \
+	CustomWaterLevel.h \
 	CustomWeapon.cxx \
 	CustomWeapon.h \
 	CustomWorld.cxx \
@@ -45,8 +65,12 @@ bzfs_SOURCES = \
 	MasterBanList.cxx \
 	MasterBanList.h \
 	PackVars.h \
+	ParseMaterial.cxx \
+	ParseMaterial.h \
 	Permissions.h \
 	Permissions.cxx \
+	RecordReplay.cxx \
+	RecordReplay.h \
 	RejoinList.cxx \
 	RejoinList.h \
 	Score.h	\

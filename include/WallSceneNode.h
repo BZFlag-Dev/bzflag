@@ -56,7 +56,10 @@ class WallSceneNode : public SceneNode {
     void		setLightedModulateColor(const GLfloat* rgba);
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
+    void		setTextureMatrix(const int);
+    void		setDynamicColor(const float* color);
     void		setBlending(bool);
+    void		setSphereMap(bool);
 
     void		setColor();
 
@@ -93,6 +96,7 @@ class WallSceneNode : public SceneNode {
   private:
     int			numLODs;
     float*		elementAreas;
+    const GLfloat*	dynamicColor;
     GLfloat		color[4];
     GLfloat		modulateColor[4];
     GLfloat		lightedColor[4];
@@ -100,6 +104,7 @@ class WallSceneNode : public SceneNode {
     int			style;
     bool		isBlended;
     bool		wantBlending;
+    bool		wantSphereMap;
     OpenGLGState	gstate;
     bool                useColorTexture;
 };
