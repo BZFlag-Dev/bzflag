@@ -63,12 +63,12 @@ void*			Team::unpack(void* buf)
 const char*  Team::getImagePrefix(TeamColor team)
 {
   switch (team) {
-  case RedTeam: return "r";
-  case GreenTeam: return "g";
-  case BlueTeam: return "b";
-  case PurpleTeam: return "p";
-  case RabbitTeam: return "w";
-  default: return "y";
+  case RedTeam: return "red_";
+  case GreenTeam: return "green_";
+  case BlueTeam: return "blue_";
+  case PurpleTeam: return "purple_";
+  case RabbitTeam: return "rabbit_";
+  default: return "rouge_";
   }
 }
 

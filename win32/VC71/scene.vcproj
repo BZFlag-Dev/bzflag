@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\lib\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="..\..\src\scene\Debug\"
+			IntermediateDirectory="..\..\src\scene\Debug\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -62,8 +62,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\lib\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="..\..\src\scene\"
+			IntermediateDirectory="..\..\src\scene\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"

@@ -105,7 +105,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // ground
   {
     // load texture for normal ground
-    OpenGLTexture *groundTexture = tm.getTexture( "std.ground",false );
+    OpenGLTexture *groundTexture = tm.getTexture( "std_ground",false );
 
 	if (!groundTexture || !groundTexture->isValid())
 		groundTexture = tm.getTexture( "ground" );
@@ -127,7 +127,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     groundGState[3] = gstate.getState();
 
 	// load texture for inverted ground
-    groundTexture = tm.getTexture( "zone.ground",false );
+    groundTexture = tm.getTexture( "zone_ground",false );
 
 	if (!groundTexture || !groundTexture->isValid())
 		groundTexture = tm.getTexture( "ground" );

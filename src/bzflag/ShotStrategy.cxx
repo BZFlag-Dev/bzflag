@@ -344,7 +344,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) 
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(team);
   if (transparent)
-	  imageName += "t";
+	  imageName += "super_";
   imageName +="bolt";
 
   OpenGLTexture *texture = tm.getTexture(imageName.c_str());

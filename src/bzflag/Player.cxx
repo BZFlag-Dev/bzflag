@@ -188,7 +188,7 @@ void			Player::changeTeam(TeamColor _team)
   TextureManager &tm = TextureManager::instance();
   std::string texName;
   if (hunter)
-    texName = "h";
+    texName = "hunter_";
   else
     texName = Team::getImagePrefix(team);
 
