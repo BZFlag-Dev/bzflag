@@ -293,7 +293,6 @@ AC_OUTPUT(Makefile
           bzwtransform/Makefile
           debian/Makefile
           misc/Makefile
-          win32/Makefile
           include/Makefile
           package/linux/Makefile
           package/rpm/Makefile
