@@ -3739,7 +3739,7 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.flag.position[2] = drpFlag.flag.landingPosition[2];
   drpFlag.flag.launchPosition[0] = pos[0];
   drpFlag.flag.launchPosition[1] = pos[1];
-  drpFlag.flag.launchPosition[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+  drpFlag.flag.launchPosition[2] = pos[2] + BZDBCache::tankHeight;
 
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude
@@ -5654,6 +5654,8 @@ int main(int argc, char **argv)
     BZDB->addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
   CMDMGR->add("set", cmdSet, "set [<name> <value>]");
+
+  BZDBCache::init();
 
   // parse arguments
   parse(argc, argv, *clOptions);

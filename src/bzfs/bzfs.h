@@ -88,6 +88,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "WordFilter.h"
 #include "ConfigFileManager.h"
 #include "CommandManager.h"
+#include "BZDBCache.h"
 
 /* bzfs class specific headers */
 #include "TextChunkManager.h"

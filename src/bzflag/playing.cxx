@@ -95,6 +95,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "CommandsStandard.h"
+#include "BZDBCache.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 
@@ -1635,7 +1636,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	      myTank->validTeamTarget(player[t])) {
 
 	      const float *tp = player[t]->getPosition();
-	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))) {
+	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDBCache::tankHeight)) {
 
 	        float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
 	        float targetRotation = targetAngle - myTank->getAngle();
@@ -1744,7 +1745,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    if (!shot)
 	      continue;
 	    const float* shotPos = shot->getPosition();
-	    if (fabs(shotPos[2] - pos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
+	    if (fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight)
 	      continue;
 	    const float dist = hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
 	    if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
@@ -3753,7 +3754,6 @@ static void		restartPlaying()
       const int maxShots = World::getWorld()->getMaxShots();
       float tankLength = BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
       float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
-      float tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
       for (int j = 0; j < maxShots; j++) {
 	// get shot and ignore non-existent ones
 	ShotPath* shot = player[i]->getShot(j);
@@ -3765,7 +3765,7 @@ static void		restartPlaying()
 	const Ray ray(shot->getPosition(), shot->getVelocity());
 	const float t = timeRayHitsBlock(ray, startPoint, startAzimuth,
 				4.0f * tankLength, 4.0f * tankWidth,
-				2.0f * tankHeight);
+				2.0f * BZDBCache::tankHeight);
 	if (t >= 0.0f && t < MinShotImpact) {
 	  located = false;
 	  break;
@@ -3837,7 +3837,6 @@ static void		restartPlaying()
 
 static void		updateFlags(float dt)
 {
-  float tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
   for (int i = 0; i < numFlags; i++) {
     Flag& flag = world->getFlag(i);
     if (flag.status == FlagOnTank) {
@@ -3847,7 +3846,7 @@ static void		updateFlags(float dt)
 	const float* pos = tank->getPosition();
 	flag.position[0] = pos[0];
 	flag.position[1] = pos[1];
-	flag.position[2] = pos[2] + tankHeight;
+	flag.position[2] = pos[2] + BZDBCache::tankHeight;
       }
     }
     world->updateFlag(i, dt);
@@ -4438,10 +4437,9 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
 {
   float p[4][2];
   const float* c = obstacle.getPosition();
-  const float tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
   const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
 
-  if (tankHeight < c[2])
+  if (BZDBCache::tankHeight < c[2])
     return;
 
   const float a = obstacle.getRotation();

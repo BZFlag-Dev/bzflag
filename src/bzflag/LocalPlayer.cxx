@@ -24,6 +24,7 @@
 #include "BzfEvent.h"
 #include "StateDatabase.h"
 #include "CommandManager.h"
+#include "BZDBCache.h"
 
 //
 // BaseLocalPlayer
@@ -95,7 +96,7 @@ void			BaseLocalPlayer::update()
   bbox[1][0] += size;
   bbox[0][1] -= size;
   bbox[1][1] += size;
-  bbox[1][2] += BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+  bbox[1][2] += BZDBCache::tankHeight;
 
   // do remaining update stuff
   doUpdate(dt);

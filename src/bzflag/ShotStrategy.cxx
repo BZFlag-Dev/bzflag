@@ -28,6 +28,7 @@
 #include "Team.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 static OpenGLTexture*	boltTexture[NumTeams];
 static OpenGLTexture*	tboltTexture[NumTeams];
@@ -499,7 +500,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   float lastTankPositionRaw[3];
   lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
   lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDBCache::tankHeight;
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
@@ -539,7 +540,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
 			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 
 			ShotRadius, 
-			BZDB->eval(StateDatabase::BZDB_TANKHEIGHT));
+			BZDBCache::tankHeight);
     }
     else {
       // find time when shot hits sphere around tank
@@ -1330,7 +1331,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
   float lastTankPositionRaw[3];
   lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
   lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDBCache::tankHeight;
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // check each segment
@@ -1364,7 +1365,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
 		      0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 
 		      ShotRadius, 
-		      BZDB->eval(StateDatabase::BZDB_TANKHEIGHT));
+		      BZDBCache::tankHeight);
     }
     else {
       // find time when shot hits sphere around tank
