@@ -100,7 +100,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
 				OutputFile=".\..\..\src\bzfs\debug/bzfs.exe"
-				LinkIncremental="1"
+				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzfs\debug/bzfs.pdb"

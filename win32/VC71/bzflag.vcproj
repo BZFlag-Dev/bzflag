@@ -39,7 +39,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib"
 				OutputFile=".\..\..\src\bzflag\debug/bzflag.exe"
-				LinkIncremental="1"
+				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzflag\debug/bzflag.pdb"
@@ -55,8 +55,8 @@
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\src\bzflag\debug\*.exe ..\..\*.exe
-copy ..\..\..\src\bzflag\debug\*.pdb ..\..\*.pdb
+				CommandLine="copy..\..\src\bzflag\debug\*.exe ..\..\*.exe
+copy ..\..\src\bzflag\debug\*.pdb ..\..\*.pdb
 copy debug\*.pdb ..\..\*.pdb
 "/>
 			<Tool
