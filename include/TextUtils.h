@@ -219,6 +219,10 @@ namespace TextUtils {
     }
 
     int i = 0;
+
+    if(max > input.length())
+      max = (unsigned short)input.length();
+
     while (!isAlphanumeric(input[i]) && (i < max)) {
       i++;
     }
@@ -236,6 +240,10 @@ namespace TextUtils {
     }
 
     int i = 0;
+
+    if(max > input.length())
+      max = (unsigned short)input.length();
+
     while (isAlphanumeric(input[i]) && (i < max)) {
       i++;
     }
@@ -253,6 +261,10 @@ namespace TextUtils {
     }
 
     int i = 0;
+
+    if(max > input.length())
+      max = (unsigned short)input.length();
+
     while (!isPrintable(input[i]) && (i < max)) {
       i++;
     }
@@ -270,6 +282,10 @@ namespace TextUtils {
     }
 
     int i = 0;
+
+    if(max > input.length())
+      max = (unsigned short)input.length();
+
     while (isPrintable(input[i]) && (i < max)) {
       i++;
     }
@@ -287,6 +303,10 @@ namespace TextUtils {
     }
 
     int i = 0;
+
+    if(max > input.length())
+      max = (unsigned short)input.length();
+
     while (!isVisible(input[i]) && (i < max)) {
       i++;
     }
@@ -305,7 +325,11 @@ namespace TextUtils {
     }
 
     int i = 0;
-    while (isVisible(input[i]) && (i < max)) {
+
+    if(max > input.length())
+      max = (unsigned short)input.length();
+
+   while (isVisible(input[i]) && (i < max)) {
       i++;
     }
     return i;
@@ -323,6 +347,10 @@ namespace TextUtils {
     }
 
     int i = 0;
+
+    if(max > input.length())
+      max = (unsigned short)input.length();
+
     while (!isAlphabetic(input[i]) && (i < max)) {
       i++;
     }
@@ -340,7 +368,11 @@ namespace TextUtils {
     }
 
     int i = 0;
-    while (isAlphabetic(input[i]) && (i < max)) {
+
+    if(max > input.length())
+      max = (unsigned short)input.length();
+
+   while (isAlphabetic(input[i]) && (i < max)) {
       i++;
     }
     return i;
