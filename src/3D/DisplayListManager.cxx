@@ -51,18 +51,14 @@ DisplayListManager::~DisplayListManager()
   lists.clear();
 }
 
-int DisplayListManager::newList ( DisplayListBuilder *builder )
+int DisplayListManager::newList ( )
 {
-  if (!builder)
-    return -1;
 
   displayListItem newItem;
-  newItem.builder = builder;
   newItem.list = glGenLists(1);
   int id = ++lastID;
   lists[id] = newItem;
   glNewList(newItem.list,GL_COMPILE);
-    builder->build();
   glEndList();
   return id;
 }
@@ -110,7 +106,6 @@ void DisplayListManager::acquire ( void )
   {
     it->second.list = glGenLists(1);
     glNewList(it->second.list,GL_COMPILE);
-     it->second.builder->build();
     glEndList();
     it++;
   }

@@ -17,16 +17,9 @@
 #include <map>
 #include "bzfgl.h"
 
-class DisplayListBuilder
-{
-public:
-  virtual bool build ( void ){return false;}
-};
-
 typedef struct
 {
   GLuint  list;
-  DisplayListBuilder *builder;
 } displayListItem;
 
 typedef std::map<int, displayListItem> displayListMap;
@@ -34,7 +27,7 @@ typedef std::map<int, displayListItem> displayListMap;
 class DisplayListManager : public Singleton<DisplayListManager>
 {
 public:
-  int newList ( DisplayListBuilder *builder );
+  int newList ( );
   void freeList ( int list );
   bool callList ( int list );
 
