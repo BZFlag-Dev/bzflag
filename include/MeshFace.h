@@ -40,8 +40,6 @@ class MeshFace : public Obstacle {
 	     bool noclusters, bool smoothBounce, bool drive, bool shoot);
     ~MeshFace();
 
-    void finalize();
-
     const char* getType() const;
     static const char* getClassName(); // const
     bool isValid() const;
@@ -98,6 +96,9 @@ class MeshFace : public Obstacle {
 
   public:
     mutable float scratchPad;
+
+  private:
+    void finalize();
 
   private:
     static const char* typeName;
