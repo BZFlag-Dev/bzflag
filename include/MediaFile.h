@@ -37,8 +37,8 @@ public:
 	// read a sound file.  use delete[] to release the returned
 	// audio.  returns NULL on failure.  sounds are stored
 	// left/right.
-	static float*		readSound(const std::string& filename,
-							int* numFrames, int* rate);
+//	static float*		readSound(const std::string& filename,
+//							int* numFrames, int* rate);
 
 protected:
 	MediaFile(std::istream*);

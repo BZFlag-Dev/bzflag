@@ -211,6 +211,7 @@ unsigned char*		MediaFile::readImage(
   return image;
 }
 
+/*
 float*		MediaFile::readSound(
 			const std::string& filename,
 			int* _numFrames, int* rate)
@@ -292,4 +293,5 @@ float*		MediaFile::readSound(
 
   return audio;
 }
+*/
 // ex: shiftwidth=2 tabstop=8
