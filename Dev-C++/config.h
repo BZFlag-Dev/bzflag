@@ -97,6 +97,11 @@
             #define BZ_BUILD_OS			"W32-DevC++-CygwinD"
         #else
             #define BZ_BUILD_OS			"W32-DevC++-Cygwin"
+    #else
+        #ifdef DEBUG
+            #define BZ_BUILD_OS			"W32-DevC++"
+        #else
+            #define BZ_BUILD_OS			"W32-DevC++"
     #endif
   #endif //__linux
 #endif
