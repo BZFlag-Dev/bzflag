@@ -20,16 +20,15 @@ GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
 GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd):
-  player(&_player),
+  player(_playerIndex),
   lastState(&::lastState[_playerIndex]),
-  playerIndex(_playerIndex),
-  _player(_playerIndex)
+  playerIndex(_playerIndex)
 {
   playerList[playerIndex] = this;
 
-  lastState->order       = 0;
-  lagInfo                = new LagInfo(player);
-  netHandler             = new NetHandler(player, clientAddr, playerIndex, fd);
+  lastState->order = 0;
+  lagInfo          = new LagInfo(&player);
+  netHandler       = new NetHandler(&player, clientAddr, playerIndex, fd);
 }
 
 GameKeeper::Player::~Player()
@@ -54,7 +53,7 @@ int GameKeeper::Player::count()
   int     count = 0;
 
   for (int i = 0; i < PlayerSlot; i++) 
-    if ((playerData = playerList[i]) && playerData->player->isPlaying())
+    if ((playerData = playerList[i]) && playerData->player.isPlaying())
       count++;
   return count;
 }
@@ -86,9 +85,9 @@ void GameKeeper::Player::dumpScore()
   std::cout << "\n#players\n";
   int p;
   for (p = 0; p < PlayerSlot; p++) 
-    if ((playerData = playerList[p]) && playerData->player->isPlaying()) {
+    if ((playerData = playerList[p]) && playerData->player.isPlaying()) {
       playerData->score.dump();
-      std::cout << ' ' << playerData->player->getCallSign() << std::endl;
+      std::cout << ' ' << playerData->player.getCallSign() << std::endl;
     }
 }
 
@@ -103,8 +102,8 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
 
   for (i = 0; i < PlayerSlot; i++)
     if ((playerData = playerList[i]))
-      if (playerData->player->canBeRabbit(true)) {
-	bool  goodRabbit = i != oldRabbit && playerData->player->isAlive();
+      if (playerData->player.canBeRabbit(true)) {
+	bool  goodRabbit = i != oldRabbit && playerData->player.isAlive();
 	float ratio      = playerData->score.ranking();
 	bool  select     = false;
 	if (goodRabbitSelected) {
@@ -160,9 +159,9 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm
 
 void GameKeeper::Player::signingOn(bool ctf)
 {
-  accessInfo.setName(player->getCallSign());
-  player->resetPlayer(ctf);
-  player->signingOn();
+  accessInfo.setName(player.getCallSign());
+  player.resetPlayer(ctf);
+  player.signingOn();
 }
 
 int GameKeeper::Player::getPlayerIDByName(const std::string &name)

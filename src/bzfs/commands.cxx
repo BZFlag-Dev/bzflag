@@ -98,7 +98,7 @@ void handlePasswordCmd(int t, const char *message)
     return;
   if (playerData->accessInfo.passwordAttemptsMax()) {
     DEBUG1("\"%s\" (%s) has attempted too many /password tries\n",
-	   playerData->player->getCallSign(),
+	   playerData->player.getCallSign(),
 	   playerData->netHandler->getTargetIP());
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
@@ -131,7 +131,7 @@ void handleSetCmd(int t, const char *message)
   }
   sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
   snprintf(message2, MessageLen, "Variable Modification Notice by %s of %s",
-	   playerData->player->getCallSign(), message+1); 
+	   playerData->player.getCallSign(), message+1); 
   sendMessage(ServerPlayer, AllPlayers, message2);
   return;
 }
@@ -250,16 +250,16 @@ void handleCountdownCmd(int t, const char *)
     // get someone to can do virtual capture
     for (j = 0; j < curMaxPlayers; j++) {
       otherData = GameKeeper::Player::getPlayerByIndex(j);
-      if (otherData && otherData->player->isPlaying())
+      if (otherData && otherData->player.isPlaying())
 	break;
     }
     if (j < curMaxPlayers) {
       for (int i = 0; i < curMaxPlayers; i++) {
 	otherData = GameKeeper::Player::getPlayerByIndex(i);
-	if (otherData && otherData->player->hasPlayedEarly()) {
+	if (otherData && otherData->player.hasPlayedEarly()) {
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUByte(bufStart, j);
-	  buf = otherData->player->packVirtualFlagCapture(buf);
+	  buf = otherData->player.packVirtualFlagCapture(buf);
 	  directMessage(i, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
 	}
       }
@@ -295,7 +295,7 @@ void handleFlagCmd(int t, const char *message)
 	// tell 'em to drop it.
 	flag[i].player = -1;
 	flag[i].flag.status = FlagNoExist;
-	otherData->player->resetFlag();
+	otherData->player.resetFlag();
 
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerIndex);
@@ -317,7 +317,7 @@ void handleFlagCmd(int t, const char *message)
 	if (otherData) {
 	  flag[i].player = -1;
 	  flag[i].flag.status = FlagNoExist;
-	  otherData->player->resetFlag();
+	  otherData->player.resetFlag();
 
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUByte(bufStart, playerIndex);
@@ -354,7 +354,7 @@ int getTarget(const char *victimname) {
   int i;
   for (i = 0; i < curMaxPlayers; i++) {
     targetData = GameKeeper::Player::getPlayerByIndex(i);
-    if (targetData && strncasecmp(targetData->player->getCallSign(),
+    if (targetData && strncasecmp(targetData->player.getCallSign(),
 				  victimname, 256) == 0) {
       break;
     }
@@ -387,7 +387,7 @@ void handleKickCmd(int t, const char *message)
   if (i < curMaxPlayers) {
     char kickmessage[MessageLen];
     sprintf(kickmessage, "You were kicked off the server by %s",
-	    playerData->player->getCallSign());
+	    playerData->player.getCallSign());
     sendMessage(ServerPlayer, i, kickmessage);
     if (argv.size() > 2) {
       sprintf(kickmessage, " reason given : %s",argv[2].c_str());
@@ -461,7 +461,7 @@ void handleBanCmd(int t, const char *message)
     if (argv.size() == 4)
       reason = argv[3];
 
-    if (clOptions->acl.ban(ip, playerData->player->getCallSign(), durationInt,
+    if (clOptions->acl.ban(ip, playerData->player.getCallSign(), durationInt,
 			   reason.c_str())) {
       clOptions->acl.save();
       strcpy(reply, "IP pattern added to banlist");
@@ -470,7 +470,7 @@ void handleBanCmd(int t, const char *message)
 	NetHandler *handler = NetHandler::getHandler(i);
 	if (handler && !clOptions->acl.validate(handler->getIPAddress())) {
 	  sprintf(kickmessage,"You were banned from this server by %s",
-		  playerData->player->getCallSign());
+		  playerData->player.getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage);
 	  if (reason.length() > 0) {
 	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
@@ -519,7 +519,7 @@ void handleHostBanCmd(int t, const char *message)
     if( argv.size() == 4 )
       reason = argv[3];
 
-    clOptions->acl.hostBan(hostpat, playerData->player->getCallSign(),
+    clOptions->acl.hostBan(hostpat, playerData->player.getCallSign(),
 			   durationInt,
 			   reason.c_str());
     clOptions->acl.save();
@@ -531,7 +531,7 @@ void handleHostBanCmd(int t, const char *message)
       if (netHandler && netHandler->getHostname()
 	  && (!clOptions->acl.hostValidate(netHandler->getHostname()))) {
 	sprintf(kickmessage,"You were banned from this server by %s",
-		playerData->player->getCallSign());
+		playerData->player.getCallSign());
 	sendMessage(ServerPlayer, i, kickmessage);
 	if( reason.length() > 0 ){
 	  sprintf(kickmessage,"Reason given: %s", reason.c_str());
@@ -658,7 +658,7 @@ void handleIdlestatsCmd(int t, const char *)
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (!otherData)
       continue;
-    reply = otherData->player->getIdleStat();
+    reply = otherData->player.getIdleStat();
     if (reply != "")
       sendMessage(ServerPlayer, t, reply.c_str());
   }
@@ -679,8 +679,8 @@ void handleFlaghistoryCmd(int t, const char *)
   char reply[MessageLen];
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (playerData->player->isPlaying() && !playerData->player->isObserver()) {
-      sprintf(reply,"%-16s : ", playerData->player->getCallSign());
+    if (playerData->player.isPlaying() && !playerData->player.isObserver()) {
+      sprintf(reply,"%-16s : ", playerData->player.getCallSign());
       playerData->flagHistory.get(reply+strlen(reply));
       sendMessage(ServerPlayer, t, reply);
     }
@@ -703,7 +703,7 @@ void handlePlayerlistCmd(int t, const char *)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->player->isPlaying()) {
+    if (otherData && otherData->player.isPlaying()) {
       otherData->netHandler->getPlayerList(reply);
       sendMessage(ServerPlayer, t, reply);
     }
@@ -726,7 +726,7 @@ void handleReportCmd(int t, const char *message)
     char* timeStr = ctime(&now);
     std::string reportStr;
     reportStr = reportStr + timeStr + "Reported by " +
-      playerData->player->getCallSign() + ": " + (message + 8);
+      playerData->player.getCallSign() + ": " + (message + 8);
     if (clOptions->reportFile.size() > 0) {
       std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
       ofs << reportStr << std::endl << std::endl;
@@ -745,7 +745,7 @@ void handleReportCmd(int t, const char *message)
     } else {
       sprintf(reply, "Your report has been filed. Thank you.");
       DEBUG1("Player %s [%d] has filed a report (time: %s).\n",
-	     playerData->player->getCallSign(), t, timeStr);
+	     playerData->player.getCallSign(), t, timeStr);
     }
   }
   sendMessage(ServerPlayer, t, reply);
@@ -881,7 +881,7 @@ void handleGhostCmd(int t, const char *message)
 	  char temp[MessageLen];
 	  sprintf(temp, "Your Callsign is registered to another user,"
 		  " You have been ghosted by %s",
-		  playerData->player->getCallSign());
+		  playerData->player.getCallSign());
 	  sendMessage(ServerPlayer, user, temp);
 	  removePlayer(user, "Ghost");
 	}
@@ -1085,7 +1085,7 @@ void handleSetgroupCmd(int t, const char *message)
 	  if (getID != -1) {
 	    char temp[MessageLen];
 	    sprintf(temp, "you have been added to the %s group, by %s",
-		    group.c_str(), playerData->player->getCallSign());
+		    group.c_str(), playerData->player.getCallSign());
 	    sendMessage(ServerPlayer, getID, temp);
 	    GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.
 	      addGroup(group);
@@ -1131,7 +1131,7 @@ void handleRemovegroupCmd(int t, const char *message)
 	  if (getID != -1) {
 	    char temp[MessageLen];
 	    sprintf(temp, "You have been removed from the %s group, by %s",
-		    group.c_str(), playerData->player->getCallSign());
+		    group.c_str(), playerData->player.getCallSign());
 	    sendMessage(ServerPlayer, getID, temp);
 	    GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.
 	      removeGroup(group);
@@ -1207,7 +1207,7 @@ void handlePollCmd(int t, const char *message)
   if (!playerData)
     return;
   char reply[MessageLen] = {0};
-  std::string callsign = std::string(playerData->player->getCallSign());
+  std::string callsign = std::string(playerData->player.getCallSign());
 
   DEBUG2("Entered poll command handler (MessageLen is %d)\n", MessageLen);
 
@@ -1400,7 +1400,7 @@ void handlePollCmd(int t, const char *message)
       // observers) are eligible to vote
       GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(j);
       if (playerData && playerData->accessInfo.exists()) {
-	arbiter->grantSuffrage(playerData->player->getCallSign());
+	arbiter->grantSuffrage(playerData->player.getCallSign());
       }
     }
 
@@ -1445,7 +1445,7 @@ void handleVoteCmd(int t, const char *message)
   if (!playerData)
     return;
   char reply[MessageLen] = {0};
-  std::string callsign = std::string(playerData->player->getCallSign());
+  std::string callsign = std::string(playerData->player.getCallSign());
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::vote)) {
     /* permission denied for /vote */
@@ -1571,7 +1571,7 @@ void handleVetoCmd(int t, const char * /*message*/)
     sendMessage(ServerPlayer, t,
 		string_util::format
 		("%s, you are presently not authorized to run /veto",
-		 playerData->player->getCallSign()).c_str());
+		 playerData->player.getCallSign()).c_str());
     return;
   }
 
@@ -1589,13 +1589,13 @@ void handleVetoCmd(int t, const char * /*message*/)
     sendMessage(ServerPlayer, t,
 		string_util::format
 		("%s, there is presently no active poll to veto",
-		 playerData->player->getCallSign()).c_str());
+		 playerData->player.getCallSign()).c_str());
     return;
   }
 
   sendMessage(ServerPlayer, t,
 	      string_util::format("%s, you have cancelled the poll to %s %s",
-				  playerData->player->getCallSign(),
+				  playerData->player.getCallSign(),
 				  arbiter->getPollAction().c_str(),
 				  arbiter->getPollTarget().c_str()).c_str());
 
@@ -1604,7 +1604,7 @@ void handleVetoCmd(int t, const char * /*message*/)
 
   sendMessage(ServerPlayer, AllPlayers,
 	      string_util::format("The poll was cancelled by %s",
-				  playerData->player->getCallSign()).c_str());
+				  playerData->player.getCallSign()).c_str());
 
   return;
 }
@@ -1635,7 +1635,7 @@ void handleClientqueryCmd(int t, const char * /*message*/)
   if (!playerData)
     return;
   DEBUG2("Clientquery requested by %s [%d]\n",
-	 playerData->player->getCallSign(), t);
+	 playerData->player.getCallSign(), t);
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
   sendMessage(ServerPlayer, t, 
@@ -1646,10 +1646,10 @@ void handleClientqueryCmd(int t, const char * /*message*/)
   GameKeeper::Player *otherData;
   for (int i = 0; i < curMaxPlayers;i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->player->isPlaying()) {
+    if (otherData && otherData->player.isPlaying()) {
       sendMessage(i, t, string_util::format
 		  ("Version: %s",
-		   otherData->player->getClientVersion()).c_str());
+		   otherData->player.getClientVersion()).c_str());
     }
   }
   return;

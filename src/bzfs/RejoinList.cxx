@@ -52,7 +52,7 @@ bool RejoinList::add (int playerIndex)
   if (!playerData)
     return true;
   RejoinNode* rn = new RejoinNode;
-  strcpy (rn->callsign, playerData->player->getCallSign());
+  strcpy (rn->callsign, playerData->player.getCallSign());
   rn->joinTime = TimeKeeper::getCurrent();
   queue.push_back (rn);
   return true;
@@ -81,7 +81,7 @@ float RejoinList::waitTime (int playerIndex)
     it++;
   }
 
-  const char *callsign = playerData->player->getCallSign();
+  const char *callsign = playerData->player.getCallSign();
   float value = 0.0f;
   it = queue.begin();
   while (it != queue.end()) {

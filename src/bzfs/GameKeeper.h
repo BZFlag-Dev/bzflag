@@ -57,7 +57,7 @@ public:
     void           signingOn(bool ctf);
 
     // players 
-    PlayerInfo       *player;
+    PlayerInfo        player;
     // Net Handler
     NetHandler       *netHandler;
     // player lag info
@@ -75,7 +75,6 @@ public:
   private:
     static Player *playerList[PlayerSlot];
     int    playerIndex;
-    PlayerInfo     _player;
   };
   class Flag {
   };

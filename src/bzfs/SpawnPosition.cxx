@@ -37,16 +37,16 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
   if (!playerData)
     return;
 
-  team = playerData->player->getTeam();
+  team = playerData->player.getTeam();
   azimuth = (float)bzfrand() * 2.0f * M_PI;
 
-  if (playerData->player->shouldRestartAtBase() &&
+  if (playerData->player.shouldRestartAtBase() &&
       (team >= RedTeam) && (team <= PurpleTeam) && 
       (bases.find(team) != bases.end())) {
     TeamBases &teamBases = bases[team];
     const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
     base.getRandomPosition(pos[0], pos[1], pos[2]);
-    playerData->player->setRestartOnBase(false);
+    playerData->player.setRestartOnBase(false);
   } else {
     const float tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
     const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
@@ -186,12 +186,12 @@ const bool SpawnPosition::isImminentlyDangerous() const
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
-    if (playerData->player->isAlive()) {
+    if (playerData->player.isAlive()) {
       float *enemyPos = lastState[i].pos;
       float enemyAngle = lastState[i].azimuth;
-      if (playerData->player->getFlag() >= 0) {
+      if (playerData->player.getFlag() >= 0) {
 	// check for dangerous flags
-      	const FlagInfo *finfo =&flag[playerData->player->getFlag()];
+      	const FlagInfo *finfo =&flag[playerData->player.getFlag()];
       	const FlagType *ftype = finfo->flag.type;
   	// FIXME: any more?
       	if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L
@@ -228,8 +228,8 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
-    if (playerData->player->isAlive()
-	&& areFoes(playerData->player->getTeam(), team)) {
+    if (playerData->player.isAlive()
+	&& areFoes(playerData->player.getTeam(), team)) {
       float *enemyPos = lastState[i].pos;
       if (fabs(enemyPos[2] - testPos[2]) < 1.0f) {
         float x = enemyPos[0] - testPos[0];

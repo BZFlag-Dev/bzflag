@@ -638,7 +638,7 @@ static bool replayReset()
   for (int i = MaxPlayers; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if (gkPlayer != NULL) {
-      gkPlayer->player->setReplayState (ReplayNone);
+      gkPlayer->player.setReplayState (ReplayNone);
     }
   }
   
@@ -1026,7 +1026,7 @@ bool Replay::sendPackets ()
           continue;
         }
         
-        PlayerInfo *pi = gkPlayer->player;
+        PlayerInfo *pi = &gkPlayer->player;
         
         if (pi->isPlaying()) {
           // State machine for State Updates
@@ -1390,7 +1390,7 @@ savePlayersState ()
     if (gkPlayer == NULL) {
       continue;
     }
-    PlayerInfo *pi = gkPlayer->player;
+    PlayerInfo *pi = &gkPlayer->player;
     if (pi->isPlaying()) {
       // Complete MsgAddPlayer      
       buf = nboPackUByte(bufStart, i);
@@ -1421,7 +1421,7 @@ savePlayersState ()
     if (gkPlayer == NULL) {
       continue;
     }
-    PlayerInfo *pi = gkPlayer->player;
+    PlayerInfo *pi = &gkPlayer->player;
     if (pi->isAlive()) {
       float pos[3] = {0.0f, 0.0f, 0.0f};
       // Complete MsgAlive
@@ -1507,7 +1507,7 @@ resetStates ()
     if (gkPlayer == NULL) {
       continue;
     }
-    if (gkPlayer->player->isPlaying()) {
+    if (gkPlayer->player.isPlaying()) {
       directMessage(i, MsgTeamUpdate, (char*)buf-(char*)bufStart, bufStart);
     }
   }
@@ -1519,7 +1519,7 @@ resetStates ()
     if (gkPlayer == NULL) {
       continue;
     }
-    if (gkPlayer->player->isPlaying()) {
+    if (gkPlayer->player.isPlaying()) {
       directMessage(i, MsgReplayReset, (char*)buf-(char*)bufStart, bufStart);
     }
   }
@@ -1530,7 +1530,7 @@ resetStates ()
     if (gkPlayer == NULL) {
       continue;
     }
-    gkPlayer->player->setReplayState (ReplayNone);
+    gkPlayer->player.setReplayState (ReplayNone);
   }
 
   return true;
@@ -1750,7 +1750,7 @@ saveHeader (int p, RRtime filetime, FILE *f)
   if (gkPlayer == NULL) {
     return false;
   }
-  PlayerInfo *pi = gkPlayer->player;
+  PlayerInfo *pi = &gkPlayer->player;
 
   // setup the data  
   memset (&hdr, 0, sizeof (hdr));
