@@ -43,6 +43,7 @@ GCDEFS  =						\
 	-DVERSION=$(VERSION)				\
 	$(RELEASEDEF)					\
 	$(TIMEBOMB)					\
+	$(DEBUG_RENDERING)				\
 	$(ROBOTS)					\
 	-DINSTALL_DATA_DIR=\"$(INSTALL_DATA_DIR)\"	\
 	$(NULL)
@@ -61,6 +62,7 @@ GCXXDEFS  =						\
 	-DVERSION=$(VERSION)				\
 	$(RELEASEDEF)					\
 	$(TIMEBOMB)					\
+	$(DEBUG_RENDERING)				\
 	$(ROBOTS)					\
 	-DINSTALL_DATA_DIR=\"$(INSTALL_DATA_DIR)\"	\
 	$(NULL)
@@ -167,8 +169,13 @@ $(COMMONPREF)clobber: clean $(_FORCE)
 #
 # default to optimized build
 #
+ifdef DEBUG
+COPTIMIZER    = $(CDEBUG)
+CXXOPTIMIZER  = $(CXXDEBUG)
+else
 COPTIMIZER    = $(COPT)
 CXXOPTIMIZER  = $(CXXOPT)
+endif
 
 #
 # slurp up configuration
