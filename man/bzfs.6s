@@ -185,7 +185,7 @@ Sets the maximum number of observers; defaults to 3
 Sets the maximum number of players, total or per team.  A single value sets
 the total number of players allowed.  Five comma separated values set the
 maximum for each team.  If a count is left blank then no limit is set for
-that team, except for the limit on the total number of players.  Boths forms
+that team, except for the limit on the total number of players.  Both forms
 may be provided.
 .TP
 \fB\-mps\fI max-score\fR
@@ -292,7 +292,7 @@ Antidote flags are provided for players with bad flags.
 Restrict flag \fIid\fR to \fInum\fR shots.
 .TP
 \fB\-speedtol \fIfactor\fR
-Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplyer.
+Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplier.
 .TP
 \fB\-srvmsg \fImessage\fR
 Define a server welcome message.
@@ -581,7 +581,7 @@ Dynamic change the maximum allowed lag time. Example:
 .SH USER MANAGEMENT
 
 Generally, you start with empty files for the user and password databases.
-These are maintained by the server, and modifyable through server commands.
+These are maintained by the server, and modifiable through server commands.
 You will want to specify a groups file that has whatever specific groups you
 care to have on your server. These are laid out with one line in the file
 per group, using the following format:
@@ -730,7 +730,7 @@ to request and vote on a poll.
 .B /vote yes|no
 
 If there is a poll active, this command will place a vote in favor or in
-opposition to the poll.  Multiple languages are supported as a vote arguement
+opposition to the poll.  Multiple languages are supported as a vote argument
 in addition to "yes" and "no".  By default, you must be registered to vote on
 a poll.
 

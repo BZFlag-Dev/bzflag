@@ -95,7 +95,7 @@ server acts as a backup for the others.  Any number of URLs may
 be given, but only a certain number of bzflist URLs will be
 used (the exact number is compiled into bzflag and bzfs).
 .SS Protocol
-The bzfls protcol is very simple, with just 5 messages.  See
+The bzfls protocol is very simple, with just 5 messages.  See
 the source code for details.  One message worth noting here is
 \fBGET\fR.  You can request the server list from a bzfls server
 using a protocol similar to HTTP.  Sending a message with the
