@@ -59,6 +59,7 @@ const int udpBufSize = 128000;
 #endif
 #include <set>
 #include <vector>
+#include <map>
 #include <algorithm>
 #include <stdlib.h>
 #include <string.h>
@@ -138,6 +139,75 @@ struct BanInfo
 
     in_addr	addr;
     TimeKeeper	banEnd;
+};
+
+// maintains a list of lists of strings, more or less a bunch
+// of files that can be read into and managed by this class.
+// chunkname is the name that is used to index into this list.
+// note that there is no delete function as of yet.
+class TextChunkManager
+{
+  // wrapper to avoid compile issues on VC++
+  class StringVector
+  {
+    public:
+      size_t size() const
+      {
+       return theVector.size();
+      }
+      void push_back(std::string x)
+      {
+       theVector.push_back(x);
+      }
+      const std::vector<std::string>& getVector() const{ // get the real vector
+       return theVector;
+      }
+    private:
+      std::vector<std::string> theVector;
+  };
+
+  public:
+  // load the file fileName into the chunk specified by chunkname
+  // if the chunkname is already taken it will *not* be replaced
+  bool parseFile(const std::string &fileName, const std::string &chunkName)
+  {
+    char buffer[MessageLen];
+    ifstream in(fileName.c_str());
+    if (!in) return false;
+
+    StringVector strings;
+    for(int i = 0; i < 20 && in.good(); i++) {
+      in.getline(buffer,MessageLen);
+      if(!in.fail()){ // really read something
+       strings.push_back(buffer);
+      }
+    }
+
+    if (strings.size() != 0){
+      theChunks.insert(std::map<std::string, StringVector>::value_type(chunkName,strings));
+      chunkNames.push_back(chunkName);
+    }
+    return true;
+  }
+  // get a chunk given a name of the chunk returns null if it
+  // can't find it
+  const std::vector<std::string>* getTextChunk(const std::string chunkName)
+  {
+    std::map<std::string, StringVector>::const_iterator it;
+    it =theChunks.find(chunkName);
+    if (it != theChunks.end()){
+      return &it->second.getVector();
+    } else {
+      return NULL;
+    }
+  }
+  const std::vector<std::string>& getChunkNames()
+  {
+    return chunkNames;
+  }
+private:
+  std::map<std::string, StringVector> theChunks; // a mapping of names of chunks to chunks
+  std::vector<std::string> chunkNames; // vector of all the names of the chunks
 };
 
 class AccessControlList
@@ -447,6 +517,7 @@ struct CmdLineOptions
   int			flagLimit[LastFlag + 1]; // # shots allowed / flag
   bool			flagDisallowed[LastFlag + 1];//
   AccessControlList	acl;
+  TextChunkManager	textChunker;
   BadWordList		bwl;
   
   std::string           reportFile;
@@ -4112,6 +4183,15 @@ static void addPlayer(int playerIndex)
     sendMessage(playerIndex, player[playerIndex].id, 
 		player[playerIndex].team, message);
   }
+
+  // look for a startup message -- from a file
+  static const std::vector<std::string>* lines = clOptions.textChunker.getTextChunk("srvmsg");
+  if (lines != NULL){
+    for (int i = 0; i < (int)lines->size(); i ++){
+      sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, (*lines)[i].c_str());
+    }
+  }
+  
   if (player[playerIndex].Observer)
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,"You are in observer mode.");
 #endif
@@ -5417,6 +5497,36 @@ static void parseCommand(const char *message, int t)
     }
     sendMessage(t, player[t].id, player[t].team, reply, true);
   }
+  else if (strncmp(message+1, "help", 4) == 0) {
+    if (strlen(message + 1) == 4) {
+      const std::vector<std::string>& chunks = clOptions.textChunker.getChunkNames();
+      sendMessage(t, player[t].id, player[t].team, "Available help pages (use /help <page>)");
+      for (int i = 0; i < (int) chunks.size(); i++) {
+	sendMessage(t, player[t].id, player[t].team, chunks[i].c_str());
+      }
+    }
+    else {
+      bool foundChunk = false;
+      const std::vector<std::string>& chunks = clOptions.textChunker.getChunkNames();
+      for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
+        if (chunks[i] == (message +6)){
+	  const std::vector<std::string>* lines = clOptions.textChunker.getTextChunk((message + 6));
+	  if (lines != NULL){
+	    for (int j = 0; j < (int)lines->size(); j++) {
+	      sendMessage(t,player[t].id,player[t].team, (*lines)[j].c_str());
+	    }
+	    foundChunk = true;
+	    break;
+  	  }
+        }
+      }
+      if (!foundChunk){
+        char reply[MessageLen];
+        sprintf(reply, "help command %s not found", message + 6);
+        sendMessage(t,player[t].id,player[t].team,reply);
+      }
+    }
+  }
   else {
     sendMessage(t,player[t].id,player[t].team,"unknown command");
   }
@@ -5826,6 +5936,7 @@ static const char *usageString =
 "[-fb] "
 "[-g] "
 "[-h] "
+"[-helpmsg <file> <name>]"
 "[-i interface] "
 "[-j] "
 "[-lagdrop <num>] "
@@ -5887,6 +5998,7 @@ static const char *extraUsageString =
 "\t-fb: allow flags on box buildings\n"
 "\t-g: serve one game and then exit\n"
 "\t-h: use random building heights\n"
+"\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
@@ -6363,6 +6475,20 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	  usage(argv[0]);
 	}
 	options.flagDisallowed[f] = true;
+      }
+    }
+    else if (strcmp(argv[i], "-helpmsg") == 0) {
+      if (i+2 >= argc) {
+	fprintf(stderr, "2 arguments expected for -filemsg\n");
+	usage(argv[0]);
+      }
+      else {
+	i++;
+	if (!options.textChunker.parseFile(argv[i], argv[i+1])){
+	  fprintf(stderr,"couldn't read file %s\n",argv[i]);
+	  usage(argv[0]);
+	}
+	i++;
       }
     }
     else if (strcmp(argv[i], "-g") == 0) {
@@ -7098,31 +7224,41 @@ int main(int argc, char **argv)
     }
 
     // periodic advertising broadcast
-    if (clOptions.advertisemsg)
-    {
+    static const std::vector<std::string>* adLines = clOptions.textChunker.getTextChunk("admsg");
+    if (clOptions.advertisemsg || adLines != NULL) {
       static TimeKeeper lastbroadcast = TimeKeeper::getCurrent();
-      if (TimeKeeper::getCurrent() - lastbroadcast > 900) // every 15 minutes
-      {
+      if (TimeKeeper::getCurrent() - lastbroadcast > 900) {
+	// every 15 minutes
 	char message[MessageLen];
-	
-	// split the admsg into several lines if it contains '\n'
-	const char* c = clOptions.advertisemsg;
-	const char* j;
-	while ((j = strstr(c, "\\n")) != NULL) {
-	  int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
-	  strncpy(message, c, l);
-	  message[l] = '\0';
+	if (clOptions.advertisemsg != NULL){
+          // split the admsg into several lines if it contains '\n'
+          const char* c = clOptions.advertisemsg;
+          const char* j;
+          while ((j = strstr(c, "\\n")) != NULL) {
+            int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
+            strncpy(message, c, l);
+            message[l] = '\0';
+            for (int i=0; i<curMaxPlayers; i++)
+              if (player[i].state > PlayerInLimbo)
+                sendMessage(i, player[i].id, player[i].team, message, true);
+            c = j + 2;
+          }
+          strncpy(message, c, MessageLen - 1);
+          message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
 	  for (int i=0; i<curMaxPlayers; i++)
 	    if (player[i].state > PlayerInLimbo)
 	      sendMessage(i, player[i].id, player[i].team, message, true);
-	  c = j + 2;
 	}
-	strncpy(message, c, MessageLen - 1);
-	message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
-	for (int i=0; i<curMaxPlayers; i++)
-	  if (player[i].state > PlayerInLimbo)
-	    sendMessage(i, player[i].id, player[i].team, message, true);
-	
+	// multi line from file advert
+        if (adLines != NULL){
+          for (int j = 0; j < (int)adLines->size(); j ++){
+            for (int i=0; i<curMaxPlayers; i++){
+              if (player[i].state > PlayerInLimbo){
+                sendMessage(i, player[i].id, player[i].team, (*adLines)[j].c_str());
+              }
+            }
+          }
+        }
 	lastbroadcast = TimeKeeper::getCurrent();
       }
     }
