@@ -22,7 +22,6 @@
 #include "BZAdminClient.h"
 #include "BZAdminUI.h"
 #include "OptionParser.h"
-#include "ServerLink.h"
 #include "UIMap.h"
 
 // causes persistent rebuilding to obtain build versioning
