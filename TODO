@@ -12,8 +12,6 @@ These should happen before the next release:
 
 * describe rabbit hunt in man page (and in-game help?)
 
-* add byte lengths to each world component
-
 * support gameinfo requests as one time udp packets (if udp)
 
 These are lower priority
