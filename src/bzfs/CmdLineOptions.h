@@ -32,7 +32,7 @@
 
 /* constants provided for general consumption */
 const int MaxPlayers = 200;
-const int MaxShots = 10;
+const int MaxShots = 20;
 
 // rabbit selection algorithms
 enum RabbitSelection {
