@@ -144,11 +144,7 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
 {
   clear(); // clean out the cell lists
 
-  // fake the tank dimensions to do cell detection
-  std::string realTankHeight = BZDB.get (StateDatabase::BZDB_TANKHEIGHT);
-  BZDB.setFloat (StateDatabase::BZDB_TANKHEIGHT, 1.0e30f); //very tall
-  
-  const float Heaven = 1.0e30f;
+  const float Heaven = 1.0e30f; // very tall
 
   WorldSize = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
   Sx = WorldSize / float (GridSizeX);
@@ -243,9 +239,8 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
               Cells[x][y].pos[0], Cells[x][y].pos[1], Cells[x][y].pos[2]);
     }
   }
-
-  // put the Tank Height back to normal
-  BZDB.set (StateDatabase::BZDB_TANKHEIGHT, realTankHeight);
+  
+  return;
 }
 
 

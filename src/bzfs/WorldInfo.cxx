@@ -197,9 +197,9 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
-InBuildingType WorldInfo::inBuilding(const Obstacle **location,
-				     float x, float y, float z, float radius,
-				     float height)
+InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
+				             float x, float y, float z, float radius,
+                                             float height)
 {
   checkCollisionManager(); // FIXME - this is lame
 
@@ -221,30 +221,63 @@ InBuildingType WorldInfo::inBuilding(const Obstacle **location,
       break;
     }
   }
+
+  return classifyHit (*location);
+} 
+
+InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
+				        float x, float y, float z, float angle,
+				        float width, float breadth, float height)
+{
+  checkCollisionManager(); // FIXME - this is lame
+
+  if (height < Epsilon) {
+    height = Epsilon;
+  }
+    
+  *location = NULL;
   
-  if (*location == NULL) {
+  const float pos[3] = {x, y, z};
+
+  // check everything but walls
+  ObstacleList olist = collisionManager.getObstacles (pos, angle, width, breadth);
+  for (ObstacleList::const_iterator oit = olist.begin();
+       oit != olist.end(); oit++) {
+    const Obstacle* obs = *oit;
+    if (obs->inBox(pos, angle, width, breadth, height)) {
+      *location = obs;
+      break;
+    }
+  }
+  
+  return classifyHit (*location);
+}
+  
+InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle)
+{
+  if (obstacle == NULL) {
     return NOT_IN_BUILDING;
   }
-  else if ((*location)->getType() == BoxBuilding::getClassName()) {
-    if ((*location)->isDriveThrough()) {
+  else if (obstacle->getType() == BoxBuilding::getClassName()) {
+    if (obstacle->isDriveThrough()) {
       return IN_BOX_DRIVETHROUGH;
     }
     else {
       return IN_BOX_NOTDRIVETHROUGH;
     }
   }
-  else if ((*location)->getType() == PyramidBuilding::getClassName()) {
+  else if (obstacle->getType() == PyramidBuilding::getClassName()) {
     return IN_PYRAMID;
   }
-  else if ((*location)->getType() == BaseBuilding::getClassName()) {
+  else if (obstacle->getType() == BaseBuilding::getClassName()) {
     return IN_BASE;
   }
-  else if ((*location)->getType() == Teleporter::getClassName()) {
+  else if (obstacle->getType() == Teleporter::getClassName()) {
     return IN_TELEPORTER;
   }
   else {
     // FIXME - choke here?
-    printf ("*** Unknown obstacle type in WorldInfo::inBuilding()\n");
+    printf ("*** Unknown obstacle type in WorldInfo::boxInBuilding()\n");
     return IN_BASE;
   }
 } 
@@ -257,7 +290,7 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
   if (!entryZones.getZonePoint(qualifier, pt))
     return false;
 
-  type = inBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
+  type = cylinderInBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
   if (type == NOT_IN_BUILDING)
     pt[2] = 0.0f;
   else
@@ -273,7 +306,7 @@ bool WorldInfo::getSafetyPoint(const std::string &qualifier, const float *pos, f
   if (!entryZones.getSafetyPoint(qualifier, pos, pt))
     return false;
 
-  type = inBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
+  type = cylinderInBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
   if (type == NOT_IN_BUILDING)
     pt[2] = 0.0f;
   else

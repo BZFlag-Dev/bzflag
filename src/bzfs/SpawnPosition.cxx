@@ -48,8 +48,10 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     base.getRandomPosition(pos[0], pos[1], pos[2]);
     playerData->player.setRestartOnBase(false);
   } else {
-    const float tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
     const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+    const float tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH) / 2.0f;
+    const float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH) / 2.0f;
+    const float tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
     safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDB.eval(StateDatabase::BZDB_TANKRADIUS)) * 1.5);
     safeDistance = tankRadius * 20; // FIXME: is this a good value?
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
@@ -78,8 +80,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       }
       tries++;
 
-      int type = world->inBuilding(&building, testPos[0], testPos[1], testPos[2],
-                                   tankRadius, tankHeight);
+      int type = world->boxInBuilding(&building, testPos[0], testPos[1], testPos[2],
+                                      azimuth, tankWidth, tankLength, tankHeight);
 
       if (onGroundOnly) {
         if (type == NOT_IN_BUILDING)
@@ -88,8 +90,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
         if ((type == NOT_IN_BUILDING) && (testPos[2] > 0.0f)) {
           testPos[2] = 0.0f;
           //Find any intersection regardless of z
-          type = world->inBuilding(&building, testPos[0], testPos[1], testPos[2],
-                                   tankRadius, maxWorldHeight);
+          type = world->boxInBuilding(&building, testPos[0], testPos[1], testPos[2],
+                                      azimuth, tankWidth, tankLength, maxWorldHeight);
         }
 
         // in a building? try climbing on roof until on top
@@ -99,8 +101,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
           testPos[2] = building->getPosition()[2] + building->getHeight() + 0.0001f;
           tries++;
           lastType = type;
-          type = world->inBuilding(&building, testPos[0], testPos[1], testPos[2],
-                                   tankRadius, tankHeight);
+          type = world->boxInBuilding(&building, testPos[0], testPos[1], testPos[2],
+                                      azimuth, tankWidth, tankLength, tankHeight);
 	  if (--retriesRemaining <= 0) {
 	    DEBUG1("Warning: getSpawnLocation had to climb too many buildings\n");
 	    break;

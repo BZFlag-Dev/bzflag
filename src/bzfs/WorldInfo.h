@@ -65,6 +65,7 @@ private:
   void setTeleporterTarget(int src, int tgt);
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
   void loadCollisionManager();
+  InBuildingType classifyHit (const Obstacle* obstacle);
 
 public:
 
@@ -73,11 +74,19 @@ public:
    * location will return a pointer to the world colliding object
    * Checking is quite raw
    */
-  InBuildingType inBuilding(const Obstacle **obstacle,
-			    float x, float y, float z,
-			    float radius, float height = 0.0f);
+  InBuildingType cylinderInBuilding(const Obstacle **obstacle,
+			            float x, float y, float z,
+			            float radius, float height = 0.0f);
   
-  /** see if the Collision Manager view of the world size
+  /** check collision between world object and a Z-axis aligned box.
+   * return value is kind of collision.
+   * location will return a pointer to the world colliding object
+   */
+  InBuildingType boxInBuilding(const Obstacle **obstacle,
+			       float x, float y, float z, float angle,
+			       float width, float breadth, float height);
+  
+  /** see if the CollisionManager's view of the world size
    * matches that of BZDB. if not, reload the CollisionManager
    */
   void checkCollisionManager();
