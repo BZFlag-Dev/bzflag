@@ -366,6 +366,10 @@ SOURCE=..\..\src\bzflag\MainWindow.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\motd.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\Player.cxx
 # End Source File
 # Begin Source File
@@ -823,6 +827,10 @@ SOURCE=..\..\src\bzflag\MainWindow.h
 # Begin Source File
 
 SOURCE=..\..\include\MediaFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\motd.h
 # End Source File
 # Begin Source File
 
