@@ -77,7 +77,8 @@ extern World* world;
 void setRoamingLabel(bool force);
 extern void warnAboutMainFlags();
 extern void warnAboutRadarFlags();
-extern void warnAboutConsoleAndRadar();
+extern void warnAboutRadar();
+extern void warnAboutConsole();
 
 
 const struct CommandListItem commandList[] = {
@@ -105,7 +106,8 @@ const struct CommandListItem commandList[] = {
   { "viewZoom",  &cmdViewZoom,  "viewZoom {in/out/toggle}: change view angle"},
   { "messagepanel", &cmdMessagePanel,
     "messagepanel {all|chat|server|misc}:  set message tab" },
-  { "toggleConsoleAndRadar", &cmdToggleConsoleAndRadar, "toggleConsoleAndRadar:  turn off/on radar and console"},
+  { "toggleRadar", &cmdToggleRadar, "toggleRadar:  toggle radar visibility"},
+  { "toggleConsole", &cmdToggleConsole, "toggleConsole:  toggle console visibility"},
   { "toggleFlags", &cmdToggleFlags, "toggleFlags {main|radar}:  turn off/on field radar flags"}
 };
 
@@ -155,17 +157,33 @@ CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdToggleConsoleAndRadar (const std::string&, const
+std::string cmdToggleRadar (const std::string&, const
 CommandManager::ArgList& args)
 {
-  if (args.size() != 0)
-    return "usage: toggleConsoleAndRadar";
-  CMDMGR.run("toggle displayConsoleAndRadar");
-  warnAboutConsoleAndRadar();
+  if (args.size() != 0) {
+    return "usage: toggleRadar";
+  }
+  
+  CMDMGR.run("toggle displayRadar");
+  
+  warnAboutRadar();
 
   return std::string();
 }
 
+std::string cmdToggleConsole (const std::string&, const
+CommandManager::ArgList& args)
+{
+  if (args.size() != 0) {
+    return "usage: toggleConsole";
+  }
+
+  CMDMGR.run("toggle displayConsole");
+
+  warnAboutConsole();
+
+  return std::string();
+}
 
 
 std::string cmdFire(const std::string&, const CommandManager::ArgList& args)

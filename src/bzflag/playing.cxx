@@ -331,12 +331,12 @@ void	warnAboutRadarFlags()
   }
 }
 
-void	warnAboutConsoleAndRadar()
+void	warnAboutRadar()
 {
-  if (!BZDB.isTrue("displayConsoleAndRadar")){
+  if (!BZDB.isTrue("displayRadar")) {
     std::string message = ColorStrings[YellowColor];
-    message += "To show the console and radar ";
-    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleConsoleAndRadar", true);
+    message += "To toggle the radar ";
+    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleRadar", true);
 
     message += "hit \"" + ColorStrings[WhiteColor];
     message += keys[0];
@@ -346,6 +346,23 @@ void	warnAboutConsoleAndRadar()
     hud->setAlert(3, message.c_str(), 2.0f, true);
   }
 }
+
+void	warnAboutConsole()
+{
+  if (!BZDB.isTrue("displayConsole")) {
+    std::string message = ColorStrings[YellowColor];
+    message += "To toggle the console ";
+    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleConsole", true);
+
+    message += "hit \"" + ColorStrings[WhiteColor];
+    message += keys[0];
+    message += ColorStrings[YellowColor] + "\"";
+
+    // can't use a console message for this one
+    hud->setAlert(3, message.c_str(), 2.0f, true);
+  }
+}
+
 
 BzfDisplay*		getDisplay()
 {
@@ -3788,7 +3805,8 @@ static void enteringServer(void *buf)
 
   BZDB.setBool("displayMainFlags", true);
   BZDB.setBool("displayRadarFlags", true);
-  BZDB.setBool("displayConsoleAndRadar", true);
+  BZDB.setBool("displayRadar", true);
+  BZDB.setBool("displayConsole", true);
 
   entered = true;
 }

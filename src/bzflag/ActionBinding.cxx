@@ -113,7 +113,8 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Pause", "pause"));
   defaultBinding.insert(BindingTable::value_type("P", "pause"));
   defaultBinding.insert(BindingTable::value_type("F1", "fullscreen"));
-  defaultBinding.insert(BindingTable::value_type("F3", "toggleConsoleAndRadar"));
+  defaultBinding.insert(BindingTable::value_type("Q", "toggleRadar"));
+  defaultBinding.insert(BindingTable::value_type("W", "toggleConsole"));
   defaultBinding.insert(BindingTable::value_type("F4", "iconify"));
 #ifdef SNAPPING
   defaultBinding.insert(BindingTable::value_type("F5", "screenshot"));

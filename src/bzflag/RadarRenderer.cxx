@@ -151,25 +151,51 @@ void RadarRenderer::drawFlagOnTank(float x, float y, float)
   glEnd();
 }
 
-void			RadarRenderer::render(SceneRenderer& renderer,
-							bool blank)
+
+void RadarRenderer::renderFrame(SceneRenderer& renderer)
 {
-  const float radarLimit = BZDBCache::radarLimit;
-  if (!BZDB.isTrue("displayConsoleAndRadar") || (radarLimit <= 0.0f)) {
-    return;
-  }
+  const MainWindow& window = renderer.getWindow();
+  
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0.0, window.getWidth(), 0.0, window.getHeight(), -1.0, 1.0);
 
-  const bool smoothingOn = smooth && BZDBCache::smooth;
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  
+  OpenGLGState::resetState();
 
-  const bool fastRadar = ((BZDBCache::radarStyle == 1) && BZDBCache::zbuffer);
+  const int ox = window.getOriginX();
+  const int oy = window.getOriginY();
 
-  const int ox = renderer.getWindow().getOriginX();
-  const int oy = renderer.getWindow().getOriginY();
-  float opacity = renderer.getPanelOpacity();
+  glScissor(ox + x - 1, oy + y - 1, w + 2, h + 2);
 
+  const float left = float(ox + x) - 0.5f;
+  const float right = float(ox + x + w) + 0.5f;
+  const float top = float(oy + y) - 0.5f;
+  const float bottom = float(oy + y + h) + 0.5f;
+  
+  glColor3fv(teamColor);
+  
+  glBegin(GL_LINE_LOOP); {
+    glVertex2f(left, top);
+    glVertex2f(right, top);
+    glVertex2f(right, bottom);
+    glVertex2f(left, bottom);
+  } glEnd();
+  
+  glBegin(GL_POINTS); {
+    glVertex2f(left, top);
+    glVertex2f(right, top);
+    glVertex2f(right, bottom);
+    glVertex2f(left, bottom);
+  } glEnd();
+
+  const float opacity = renderer.getPanelOpacity();
   if ((opacity < 1.0f) && (opacity > 0.0f)) {
     glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
-
     // draw nice blended background
     if (BZDBCache::blend && opacity < 1.0f)
       glEnable(GL_BLEND);
@@ -179,17 +205,41 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_BLEND);
   }
 
+  // note that this scissor setup is used for the reset of the rendering
   glScissor(ox + x, oy + y, w, h);
-
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-
+  
   if (opacity == 1.0f) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
   }
+  
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+  
+  return;
+}
 
-  if (blank)
+
+void RadarRenderer::render(SceneRenderer& renderer, bool blank)
+{
+  const float radarLimit = BZDBCache::radarLimit;
+  if (!BZDB.isTrue("displayRadar") || (radarLimit <= 0.0f)) {
     return;
+  }
+
+  // render the frame
+  renderFrame(renderer);
+  
+  if (blank) {
+    return;
+  }
+  
+  const bool smoothingOn = smooth && BZDBCache::smooth;
+  const bool fastRadar = ((BZDBCache::radarStyle == 1) && BZDBCache::zbuffer);
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
 
   // setup the radar range
   float range = BZDB.eval("displayRadarRange") * radarLimit;
@@ -203,12 +253,13 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     range = maxRange;
     BZDB.set("displayRadarRange", "1.0");
   }
-
-  // prepare transforms
+  
+  // prepare projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  const int xSize = renderer.getWindow().getWidth();
-  const int ySize = renderer.getWindow().getHeight();
+  const MainWindow& window = renderer.getWindow();
+  const int xSize = window.getWidth();
+  const int ySize = window.getHeight();
   const double xCenter = double(x) + 0.5 * double(w);
   const double yCenter = double(y) + 0.5 * double(h);
   const double xUnit = 2.0 * range / double(w);
@@ -222,11 +273,13 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
 	    -yCenter * yUnit, (ySize - yCenter) * yUnit, -1.0, +1.0);
   }
+
+  // prepare modelview matrix
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
+  
   OpenGLGState::resetState();
-
 
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && (bzfrand() > decay)) {

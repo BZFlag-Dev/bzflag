@@ -84,7 +84,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	(key.button == BzfKeyEvent::Down))
       return true;
   }
-
+  
   switch (key.ascii) {
   case 3:	// ^C
   case 27:	// escape
@@ -95,6 +95,14 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   case 4:	// ^D
   case 13:	// return
     sendIt = true;
+    break;
+
+  case 6:	// ^F
+    if (key.shift == BzfKeyEvent::ControlKey) {
+      return true;
+    } else {
+      return false;
+    }
     break;
 
   default:
@@ -222,7 +230,9 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       }
       return false;
     }
-    else if (key.shift == 0 && key.button == BzfKeyEvent::F2) {  // auto completion
+    else if (((key.shift == 0) && (key.button == BzfKeyEvent::F2)) ||
+             ((key.shift == BzfKeyEvent::ControlKey) && (key.ascii == 6))) {
+      // auto completion  (F2 or ^F)
       std::string line1 = hud->getComposeString();
       int lastSpace = line1.find_last_of(" \t");
       std::string line2 = line1.substr(0, lastSpace+1);

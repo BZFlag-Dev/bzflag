@@ -42,6 +42,8 @@ class RadarRenderer {
     void		setShape(int x, int y, int w, int h);
     void		setJammed(bool = true);
 
+    void		renderFrame(SceneRenderer&);
+    
     void		render(SceneRenderer&, bool blank = false);
 
     void		renderObstacles(bool smoothing,
