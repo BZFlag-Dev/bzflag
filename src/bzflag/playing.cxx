@@ -1770,7 +1770,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    if (!shot || shot->isExpired())
 	      continue;
 	    const float* shotPos = shot->getPosition();
-	    if (fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight)
+	    if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
 	      continue;
 	    const float dist = hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
 	    if (dist < 100.0f) {
