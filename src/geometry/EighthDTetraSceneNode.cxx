@@ -29,7 +29,7 @@ static void getRandomPoint (const float* center,
   memcpy (point, center, sizeof(float[3]));
   float factor = 1.0f;
   for (int i = 0; i < 4; i++) {
-    float f = factor * bzfrand();
+    float f = (float)(factor * bzfrand());
     const float* dirvec = out[dir];
     factor = factor - f;
     point[0] = point[0] + (dirvec[0] * f);
