@@ -3386,7 +3386,7 @@ static void cleanWorldCache()
       totalSize = findData.nFileSizeLow;
 
       while (FindNextFile(h, &findData)) {
-	if (CompareFileTime( &oldestTime, &findData.ftLastAccessTime ) > 0) {
+	if (CompareFileTime(&oldestTime, &findData.ftLastAccessTime) > 0) {
 	  oldestTime = findData.ftLastAccessTime;
 	  if (oldestFile)
 	    free(oldestFile);
@@ -3414,7 +3414,6 @@ static void cleanWorldCache()
 	totalSize += statbuf.st_size;
       }
       closedir(directory);
-
     }
 #endif
 
@@ -3441,13 +3440,12 @@ static void markOld(std::string &fileName)
   FILETIME ft;
   HANDLE h = CreateFile(fileName.c_str(), FILE_WRITE_ATTRIBUTES|FILE_WRITE_EA, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
   if (h != INVALID_HANDLE_VALUE) {
-
     SYSTEMTIME st;
-    memset( &st, 0, sizeof(st));
+    memset(&st, 0, sizeof(st));
     st.wYear = 1900;
     st.wMonth = 1;
     st.wDay = 1;
-    SystemTimeToFileTime( &st, &ft );
+    SystemTimeToFileTime(&st, &ft);
     SetFileTime(h, &ft, &ft, &ft);
     GetLastError();
     CloseHandle(h);
@@ -3474,13 +3472,13 @@ static bool negotiateFlags(ServerLink* serverLink)
        i != FlagType::getFlagMap().end(); i++) {
     buf = (char*) i->second->pack(buf);
   }
-  serverLink->send( MsgNegotiateFlags, buf - msg, msg );
+  serverLink->send(MsgNegotiateFlags, buf - msg, msg);
 
   /* Response should always be a MsgNegotiateFlags. If not, assume the server
    * is too old or new to understand our flag system.
    */
-  if (serverLink->read(code, len, msg, 5000)<=0 || code != MsgNegotiateFlags) {
-    printError("Unsupported response from server during flag negotiation");
+  if (serverLink->read(code, len, msg, 5000) <= 0 || code != MsgNegotiateFlags) {
+    printError("Unsupported response from server during flag negotiation.");
     return false;
   }
 
@@ -3493,7 +3491,7 @@ static bool negotiateFlags(ServerLink* serverLink)
     std::string flags;
     buf = msg;
 
-    for (i=0; i<numFlags; i++) {
+    for (i = 0; i < numFlags; i++) {
       /* We can't use FlagType::unpack() here, since it counts on the
        * flags existing in our flag database.
        */
@@ -3529,12 +3527,12 @@ static World*		makeWorld(ServerLink* serverLink)
   bool isTemp = false;
 
   //ask for the hash of the world (ignoring all other messages)
-  serverLink->send( MsgWantWHash, 0, NULL );
+  serverLink->send(MsgWantWHash, 0, NULL);
   if (serverLink->read(code, len, msg, 5000) > 0) {
     if (code != MsgWantWHash) return NULL;
 
     char *hexDigest = new char[len];
-    nboUnpackString( msg, hexDigest, len );
+    nboUnpackString(msg, hexDigest, len);
     isTemp = hexDigest[0] == 't';
 
     worldPath = getCacheDirName();
@@ -3578,7 +3576,7 @@ static World*		makeWorld(ServerLink* serverLink)
       // get bytes left
       buf = nboUnpackUInt(msg, bytesLeft);
     }
-    //add final chunk
+    // add final chunk
     ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
 
     if (worldPath.length() > 0) {
@@ -3591,16 +3589,14 @@ static World*		makeWorld(ServerLink* serverLink)
 	  markOld(worldPath);
       }
     }
+  } else {
+    cachedWorld->seekg(0, std::ios::end);
+    std::streampos size = cachedWorld->tellg();
+    unsigned long charSize = std::streamoff(size);
+    cachedWorld->seekg(0);
+    worldDatabase = new char[charSize];
+    cachedWorld->read(worldDatabase, charSize);
   }
-  else
-    {
-      cachedWorld->seekg(0, std::ios::end);
-      std::streampos size = cachedWorld->tellg();
-      unsigned long charSize = std::streamoff(size);
-      cachedWorld->seekg(0);
-      worldDatabase = new char[charSize];
-      cachedWorld->read(worldDatabase, charSize);
-    }
 
   // make world
   WorldBuilder worldBuilder;
@@ -3676,7 +3672,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	  if ((TeamColor)team == ObserverTeam) {
 	    teamMsg = "You were joined as an observer";
 	  } else {
-            if ( team != RogueTeam)
+            if (team != RogueTeam)
 	      teamMsg = string_util::format("You joined the %s",Team::getName((TeamColor)team));
             else
               teamMsg = string_util::format("You joined as a %s",Team::getName((TeamColor)team));
@@ -3696,12 +3692,14 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	const int maxFlags = world->getMaxFlags();
 	for (int i = 0; i < maxFlags; i++) {
 	  const Flag& flag = world->getFlag(i);
-	  if (flag.status == FlagOnTank)
-	    for (int j = 0; j < curMaxPlayers; j++)
+	  if (flag.status == FlagOnTank) {
+	    for (int j = 0; j < curMaxPlayers; j++) {
 	      if (player[j] && player[j]->getId() == flag.owner) {
 		player[j]->setFlag(flag.type);
 		break;
 	      }
+	    }
+	  }
 	}
 	return true;
       }
@@ -3850,7 +3848,7 @@ static bool		joinGame(const StartupInfo* info,
     leaveGame();
     return false;
   }
-//
+
   // printError("Join Game");
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
@@ -3895,7 +3893,7 @@ static bool		joinGame(const StartupInfo* info,
   // create world
   world = makeWorld(serverLink);
   if (!world) {
-    printError("Error downloading world database");
+    printError("Error downloading world database.");
     leaveGame();
     return false;
   }
@@ -3956,8 +3954,7 @@ static bool		joinGame(const StartupInfo* info,
   sceneRenderer->getBackground()->resize();
   if (!BZDB.isTrue(StateDatabase::BZDB_SYNCTIME)) {
     updateDaylight(epochOffset, *sceneRenderer);
-  }
-  else {
+  } else {
     epochOffset = double(world->getEpochOffset());
     updateDaylight(epochOffset, *sceneRenderer);
     lastEpochOffset = epochOffset;
@@ -3979,10 +3976,9 @@ static bool		joinGame(const StartupInfo* info,
   fireButton = false;
   firstLife = true;
 
-
-  BZDB.setBool ("displayMainFlags", true);
-  BZDB.setBool ("displayRadarFlags", true);
-  BZDB.setBool ("displayConsoleAndRadar", true);
+  BZDB.setBool("displayMainFlags", true);
+  BZDB.setBool("displayRadarFlags", true);
+  BZDB.setBool("displayConsoleAndRadar", true);
 
   return true;
 }
