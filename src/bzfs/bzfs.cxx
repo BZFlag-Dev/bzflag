@@ -2864,6 +2864,15 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
     broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
 }
 
+
+static void rejectPlayer(int playerIndex, uint16_t code)
+{
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUShort(bufStart, code);
+  directMessage(playerIndex, MsgReject, (char*)buf-(char*)bufStart, bufStart);
+  return;
+}
+
 static void addPlayer(int playerIndex)
 {
   // find out if we're the first player to join
@@ -2902,9 +2911,12 @@ static void addPlayer(int playerIndex)
   }
   if (i < curMaxPlayers)
   {
-    // this is a hack; would better add a new reject type
-    player[playerIndex].team = NoTeam;
+    return rejectPlayer(playerIndex, RejectRepeatCallsign);
   }
+
+  // make sure the name is not obscene/filtered
+  std::cout << "checking callsign: " << player[playerIndex].callSign << std::endl;
+
 
   TeamColor t = player[playerIndex].team;
 
@@ -2923,33 +2935,24 @@ static void addPlayer(int playerIndex)
 
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full.
-
-   uint16_t code = RejectBadRequest;
    if (player[playerIndex].type != TankPlayer &&
-       player[playerIndex].type != ComputerPlayer)
-       code = RejectBadType;
-   else if (t == NoTeam)
-       code = RejectBadTeam;
-   else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle))
-       code = RejectNoRogues;
-   else if (t != ObserverTeam && numplayers >= softmaxPlayers ||
-           (t == ObserverTeam) && numobservers >= clOptions->maxObservers)
-       code = RejectServerFull;
-   else if (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)]) {
-   // if team is full then check if server is full
-       code = RejectServerFull;
-       for (int i = RogueTeam; i < NumTeams; i++)
+       player[playerIndex].type != ComputerPlayer) {
+     return rejectPlayer(playerIndex, RejectBadType);
+   } else if (t == NoTeam) {
+     return rejectPlayer(playerIndex, RejectBadTeam);
+   } else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle)) {
+     return rejectPlayer(playerIndex, RejectNoRogues);
+   } else if (t != ObserverTeam && numplayers >= softmaxPlayers ||
+	      (t == ObserverTeam) && numobservers >= clOptions->maxObservers) {
+     return rejectPlayer(playerIndex, RejectServerFull);
+   } else if (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)]) {
+     for (int i = RogueTeam; i < NumTeams; i++) {
        if (team[i].team.activeSize < clOptions->maxTeam[i]) {
-           code = RejectTeamFull;
-           break;
+	 return rejectPlayer(playerIndex, RejectTeamFull);
        }
-   }
-
-   if (code != RejectBadRequest) {
-     void *buf, *bufStart = getDirectMessageBuffer();
-     buf = nboPackUShort(bufStart, code);
-     directMessage(playerIndex, MsgReject, (char*)buf-(char*)bufStart, bufStart);
-     return;
+     }
+     // if team is full then check if server is full
+     return rejectPlayer(playerIndex, RejectServerFull);
    }
 
 
