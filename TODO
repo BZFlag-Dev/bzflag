@@ -7,8 +7,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * server should pick client enter position
 
-* describe rabbit hunt in man page (and in-game help?)
-
 * support gameinfo requests as one time udp packets (if udp)
   This should function like the old broadcast server locator
   and include all the same information that bzfls tracks.
