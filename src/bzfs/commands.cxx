@@ -119,10 +119,10 @@ void handleMeCmd(GameKeeper::Player *playerData, const char *message)
     return;
   }
 
-  /* wrap the action using *\t(.*)\t* for effect. the \t is converted
-   * to a space, but allows new clients to display differently.
+  /* wrap the action using "* blah\t*" for effect.  the \t prevents
+   * unauthoized players from using the command or spoofing actions.
    */
-  message2 = string_util::format("*\t%s %s\t*", playerData->player.getCallSign(), message + 4);
+  message2 = string_util::format("* %s %s\t*", playerData->player.getCallSign(), message + 4);
   sendMessage(t, AllPlayers, message2.c_str());
 }
 
