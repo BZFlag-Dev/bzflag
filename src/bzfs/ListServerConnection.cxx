@@ -157,6 +157,7 @@ void ListServerLink::read()
     buf[bytes]=0;
     char* base = buf;
     static char *tokGoodIdentifier = "TOKGOOD: ";
+    static char *tokBadIdentifier = "TOKBAD: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
@@ -168,13 +169,13 @@ void ListServerLink::read()
       DEBUG4("Got line: \"%s\"\n", base);
       // TODO don't do this if we don't want central logins
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
-	DEBUG3("Got: [%d] %s\n", getTarget(base), base);
 	char *callsign, *group;
 	callsign = (char *)(base + strlen(tokGoodIdentifier));
+	int playerIndex = getTarget(callsign);
+	DEBUG3("Got: [%d] %s\n", playerIndex, base);
 	group = callsign;
 	while (*group && (*group != ':')) group++;
 	while (*group && (*group == ':')) *group++ = 0;
-	int playerIndex = getTarget(callsign);
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  if (!playerData->accessInfo.isRegistered())
@@ -188,12 +189,21 @@ void ListServerLink::read()
 	    //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
 	    group = nextgroup;
 	  }
-	  if (!playerData->recvdGlobalLoginMsg) {
-	    sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-	    playerData->recvdGlobalLoginMsg = true;
-	  }
+	  sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+	  playerData->player.clearToken();
+	}
+      } else if (strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier)) == 0) {
+	char *callsign;
+	callsign = (char *)(base + strlen(tokBadIdentifier));
+	int playerIndex = getTarget(callsign);
+	DEBUG3("Got: [%d] %s\n", playerIndex, base);
+	if (playerIndex < curMaxPlayers) {
+	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	  sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
+	  playerData->player.clearToken();
 	}
       }
+
       // next reply
       base = scan;
     }

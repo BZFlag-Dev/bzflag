@@ -221,6 +221,10 @@ const char *PlayerInfo::getToken() const {
   return token;
 };
 
+void PlayerInfo::clearToken() {
+  token[0] = '\0';
+};
+
 void *PlayerInfo::packVirtualFlagCapture(void *buf) {
   buf = nboPackUShort(buf, uint16_t(int(team) - 1));
   buf = nboPackUShort(buf, uint16_t(1 + (int(team) % 4)));

@@ -82,6 +82,7 @@ public:
   const char *getCallSign() const;
   const char *getEMail() const;
   const char *getToken() const;
+  void	clearToken();
   void       *packVirtualFlagCapture(void *buf);
   bool	isTeam(TeamColor team) const;
   bool	isObserver() const;
