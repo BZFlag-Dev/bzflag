@@ -35,6 +35,7 @@ noinst_HEADERS =		\
 	Flag.h			\
 	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
+	GLCollect.h		\
 	Intersect.h		\
 	KeyManager.h		\
 	Language.h		\
@@ -49,6 +50,7 @@ noinst_HEADERS =		\
 	OpenGLMaterial.h	\
 	OpenGLTexFont.h		\
 	OpenGLTexture.h		\
+	OSFile.h		\
 	PTSceneNode.h		\
 	Pack.h			\
 	Ping.h			\
@@ -100,7 +102,8 @@ noinst_HEADERS =		\
 	resource.h		\
 	texture.h		\
 	udpnetwork.h		\
-	version.h
+	version.h		\
+	win32.h
 
 MAINTAINERCLEANFILES = \
 	config.h.in \
