@@ -5,5 +5,5 @@ package: FORCE
 
 FORCE:
 
-EXTRA_DIST = BUGS bzflag.lsm DEVINFO LICENSE PORTING $(wildcard README.*) \
+EXTRA_DIST = acconfig.h BUGS bzflag.lsm DEVINFO PORTING $(wildcard README.*) \
 	RELNOTES TODO
