@@ -186,7 +186,7 @@ void			TankSceneNode::move(const GLfloat pos[3],
 void			TankSceneNode::addTreadOffsets(float left, float right)
 {
   leftTreadOffset = fmodf (leftTreadOffset + left, 1.0f);
-  rightTreadOffset = fmodf (rightTreadOffset - right, 1.0f);
+  rightTreadOffset = fmodf (rightTreadOffset + right, 1.0f);
   return;
 }
 
