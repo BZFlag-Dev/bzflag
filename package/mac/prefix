@@ -1,0 +1,23 @@
+// tells us we are building with GUSI 2.0
+#define GUSI_20
+
+/*
+  version number: aabbccddd, aa=major, bb=minor, cc=revision, ddd=build.
+  increase build number for every potentially released build.
+*/
+#define VERSION 10704002
+
+#define ALPHA_RELEASE
+
+// #define BETA_RELEASE
+
+//#define TIME_BOMB "3/13/1998"
+
+//#define DEBUG_RENDERING
+
+//#define ROBOT
+
+// fixes msl problem
+#define __NO_WIDE_CHAR    // Fixes msl problem. Is msl is screwed ?
+
+#define main(x,y) bzf_main(x,y)

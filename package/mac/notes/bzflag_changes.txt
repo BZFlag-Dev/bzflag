@@ -1,0 +1,341 @@
+****************************
+global changes
+****************************
+
+Changed type KeyMap to BzfKeyMap in all occurences.
+KeyMap is a built-in MacOS type.
+
+************
+Address.cxx
+************
+
+// don't want this to get called before GUSI is loaded
+#ifndef GUSI_20 
+  Address			Address::localAddress("");
+#endif
+
+***********
+bzflag.cxx
+***********
+
+19:
+
+#if defined(_WIN32)
+#define _WINSOCKAPI_
+#include <windows.h>
+#elif !defined (macintosh)
+#include <pwd.h>
+#endif /* defined(_WIN32) !defined(macintosh)*/
+
+
+111:
+
+static BzfString	getConfigFileName()
+{
+#if !defined(_WIN32) & !defined(macintosh)
+
+  BzfString name;
+  struct passwd* pwent = getpwuid(getuid());
+  if (pwent && pwent->pw_dir) {
+    name += BzfString(pwent->pw_dir);
+    name += "/";
+  }
+  name += ".bzflag";
+
+  // add in hostname on UNIX
+  if (getenv("HOST")) {
+    name += ".";
+    name += getenv("HOST");
+  }
+
+  return name;
+
+#elif defined(_WIN32) /* !defined(_WIN32) */
+
+  BzfString name;
+  char dir[MAX_PATH];
+  if (GetWindowsDirectory(dir, sizeof(dir)) != 0) {
+    name = dir;
+    DWORD len = sizeof(dir);
+    if (GetUserName(dir, &len)) {
+      name += "\\Profiles\\";
+      name += dir;
+    }
+  }
+  else {
+    name = "C:";
+  }
+
+  name += "\\bzflag.bzc";
+  return name;
+
+#elif defined(macintosh)
+  return "bzflag.bzc";
+#endif /* !defined(_WIN32) & !defined(macintosh) */
+}
+
+
+155:
+
+#if !defined(_WIN32) & !defined(macintosh)
+static BzfString	getConfigFileName2()
+{
+
+
+749: we don't have ios::nocreate
+
+#ifdef __MWERKS__
+  ifstream resourceStream(getConfigFileName(), ios::in);
+#else
+  ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
+#endif
+
+759:
+
+#if !defined(_WIN32) & !defined(macintosh)
+
+861: reformatted #if block
+
+#if !defined(_WIN32) & !defined(macintosh)
+    struct passwd* pwent = getpwuid(getuid());
+    const char* username = pwent ? pwent->pw_name : NULL;
+#elif defined(_WIN32)
+    char username[256];
+    DWORD usernameLen = sizeof(username);
+    GetUserName(username, &usernameLen);
+#elif defined(macintosh)
+    const char *username = "mac_user";
+#endif /* !defined(_WIN32) */
+
+************
+BzfString.h
+************
+
+42: changed class ostream; to
+
+#if defined(sun) || defined(__MWERKS__)
+
+*************
+common.h
+*************
+
+77: #if !defined(_WIN32) & !defined(macintosh)
+
+added our own definition block:
+
+#if defined( macintosh )
+
+// missing constants
+
+  #ifndef MAXFLOAT
+    #define	MAXFLOAT	3.402823466e+38f
+  #endif
+
+  #ifndef M_PI
+    #define	M_PI		  3.14159265358979323846f
+  #endif
+
+  #ifndef M_SQRT1_2
+    #define	M_SQRT1_2	0.70710678118654752440f
+  #endif
+
+// need some integer types
+  #include <inttypes.h>
+
+// my own strcasecmp, missing in MSL
+// maybe this should be in BzfString.h ?
+  #ifdef __MWERKS__
+    #include "strcasecmp.h"
+  #endif
+
+  #ifndef setenv
+    #define setenv(a,b,c)
+  #endif
+  
+  #ifndef putenv
+    #define putenv(a)
+  #endif
+#endif /* defined( macintosh ) */
+
+#define exit(x) Debugger()
+
+************
+ControlPanel.cxx
+************
+
+138: why isn't GL_ABGR_EXT commented out here?
+
+#endif  // GL_ABGR_EXT
+
+**************
+LocalPlayer.h
+**************
+
+32: changed function prototype (removed inner const)
+
+#ifdef __MWERKS__
+    const float	(*getLastMotionBBox() )[3] const; 
+#else
+    const float		(*getLastMotionBBox() const)[3];
+#endif
+
+****************
+LocalPlayer.cxx
+****************
+
+102: changed function signature (removed inner const)
+
+#ifdef __MWERKS__
+  const float		(*BaseLocalPlayer::getLastMotionBBox() )[3] const
+#else
+  const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
+#endif
+
+
+**************
+menus.cxx
+**************
+
+23:
+
+#ifndef GUSI_20
+  #include <sys/wait.h>
+#endif
+
+
+3197: I haven't figured out a way to start up the server yet.
+
+#elif defined(macintosh)
+    
+    setStatus ("Server cannot start, this function is not implemented.");
+    
+#else /* defined(_WIN32) */
+
+    // UNIX
+
+
+**************
+multicast.cxx
+**************
+
+77 : should be #elif rather than #else if
+331: ditto
+
+**********
+network.h
+**********
+
+// The sockets library, GUSI 2.0, doesn't have sys/param.h
+30:
+
+#ifndef GUSI_20
+  #include <sys/param.h>
+#endif
+
+45:
+
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(macintosh))
+
+// add our own def block
+#if defined (macintosh)
+
+  #ifdef GUSI_20
+    #define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
+    #define accept(a,b,c)            accept(a,b,(unsigned int *)c)
+    #define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
+  
+    #define MAXHOSTNAMELEN 255
+  #endif
+    
+#endif
+
+*************
+network.cxx
+*************
+
+13:
+
+#if !defined(_WIN32) & !defined(macintosh)
+
+
+291:
+
+#if defined(_WIN32) || defined(__linux__) || defined(GUSI_20)
+
+/*25:
+
+
+#define hstrerror(x) sys_errlist[x]
+#elif defined(sun)
+#define hstrerror(x) "<network error>"
+#elif defined(macintosh)
+#define hstrerror(x) "<network error>"
+#endif
+*/
+
+************
+playing.cxx
+************
+
+1384: ROBOT is undefined, so
+
+      #ifdef ROBOT
+      // blow up robots on victim's team if shot was genocide
+      if (killerPlayer && victimPlayer && shotId >= 0) {
+	      const ShotPath* shot = killerPlayer->getShot(int(shotId));
+	      if (shot && shot->getFlag() == GenocideFlag)
+	        for (int i = 0; i < numRobots; i++)
+	          if (victimPlayer != robots[i] &&
+		          victimPlayer->getTeam() == robots[i]->getTeam() &&
+		          robots[i]->getTeam() != RogueTeam)
+	              gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+      }
+      #endif
+
+
+3193:
+
+#ifndef macintosh    
+    while (!mainWindow->getQuit() && display->isEventPending())
+      doEvent(display);
+
+#else
+     doEvent(display);
+#endif
+
+***************
+ServerLink.cxx
+***************
+
+123: if I don't wait after connect, it will fail
+
+  err = connect(fd, (CNCTType*)&addr, sizeof(addr));
+
+  printf ("waiting...");
+  int wait = 100000000;
+  while (wait > 0) wait--;
+  printf ("done\n");
+
+
+
+4040: GUSI 2 doesn't have SIGBUS
+
+  #ifndef GUSI_20
+    signal(SIGBUS, SIG_PF(dying));
+  #endif
+
+************
+resources.h
+************
+
+23:
+
+#if defined(sun) || defined(macintosh)
+
+************
+BzfMedia.cxx
+*************
+
+18: Shouldn't this be here???
+
+return image;

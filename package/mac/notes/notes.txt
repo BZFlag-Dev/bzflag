@@ -1,0 +1,13 @@
+Using GUSI 2.0...
+
+1. Trying to compile network code.
+	Have to remove conflicting MSL headers for now...
+	Had to remove signal.h and csignal
+	Added my own strcasecmp
+	Found missing errno.... EBADMSG
+	Dang MSL... added to prefix #define __NO_WIDE_CHAR
+	Compiled bzfs!!!
+	
+2. Added to prefix #define ROBOTS - had to for undefined vars
+
+3. GUSISignal.cp 413 put in debugger break when exit is called

@@ -1,0 +1,76 @@
+1  ABOUT BZFlag:
+
+   For everything not specific to the Mac port, visit the BZFlag homepage.
+   http://BZFlag.org/
+
+2   SYSTEM REQUIREMENTS:
+    Any PowerPC
+    MacOS 8.1 or later
+    32MB Available RAM
+    10MB Free disk space
+
+    Apple's OpenGL libraries: www.apple.com/opengl
+    SoundManager 3.2: Now a part of QuickTime: www.apple.com/quicktime
+    3-D Accelerator Hardware _highly_ recommended
+
+3  KNOWN BUGS:
+
+    ¥ Trouble connecting : you may have to try many times to get it to connect
+
+    ¥ Disappearing triangles on walls when lighting is disabled, may be graphics
+      driver issue (on my ATI Rage Pro).
+
+    ¥ bzflag or bzfs may not quit properly, hit cmd-. until it does.
+
+4  Controls:
+
+  3-button mouse emulation:
+
+  Right mouse   - same as mouse button
+  Left mouse    - option-click
+  Middle mouse  - control-click
+
+4  BUG REPORTS:
+
+    Darrell Walisser: dwaliss1@purdue.edu
+
+5  RELEASE NOTES:
+
+Version 1.7d build 9 Alpha
+
+  First Release
+
+6  CREDITS:
+
+Thanks to Matthias Neeracher for his awesome sockets library, GUSI 2.0. Matthias is very good about chasing bugs and it seems like he has things fixed the instant after I report the problem. Way to go, Matthias!
+
+Thank you Iconfactory for the cool tank icon.
+
+*********** Alpha Release ************
+
+The purpose of this release is to chase bugs! If you find a problem, report it to me:
+dwaliss1@purdue.edu. The source code as of this version, with CodeWarrior project is
+available! If you can't find it, e-mail me!
+
+bzflag   - same as bzflag_d with compiler optimizations
+bzflag_d - debug version, no compiler optimizations
+
+Here is a short list of major bugs that I can think of:
+
+    ¥ Trouble connecting : you may have to try many times to get it to connect
+
+    ¥ Disappearing triangles on walls when lighting is disabled, may be graphics
+      driver issue (on my ATI Rage Pro).
+
+    ¥ bzflag or bzfs may not quit properly, hit cmd-. until it does.
+
+    ¥ sound breaks up sometimes
+
+    ¥ small memory leak will cause it to crash after a long time (watch memory usage
+      in "About this Macintosh"
+
+    ¥ stuck in 640x480 in-a-window mode
+
+    ¥ fonts are a little messed up
+
+    ¥ others... find them!

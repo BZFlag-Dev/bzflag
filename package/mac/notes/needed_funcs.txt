@@ -1,0 +1,111 @@
+Link Error   : undefined 'BzfWindow::removeExposeCallback(void (*)(void*),void*)' (code)
+Referenced from 'ControlPanel::~ControlPanel()' in ControlPanel.cxx
+
+Link Error   : undefined 'BzfWindow::callExposeCallbacks() const' (code)
+Referenced from 'doEvent(BzfDisplay*)' in playing.cxx
+
+Link Error   : undefined 'BzfDisplay::getNumResolutions() const' (code)
+Referenced from 'doEvent(BzfDisplay*)' in playing.cxx
+Referenced from 'OptionsMenu::OptionsMenu()' in menus.cxx
+Referenced from 'FormatMenu::FormatMenu()' in menus.cxx
+
+Link Error   : undefined 'BzfWindow::removeResizeCallback(void (*)(void*),void*)' (code)
+Referenced from 'HUDDialogStack::~HUDDialogStack()' in HUDDialog.cxx
+Referenced from 'MainWindow::~MainWindow()' in MainWindow.cxx
+Referenced from 'ControlPanel::~ControlPanel()' in ControlPanel.cxx
+Referenced from 'HUDRenderer::~HUDRenderer()' in HUDRenderer.cxx
+Referenced from 'HUDDialogStack::pop()' in HUDDialog.cxx
+
+Link Error   : undefined 'BzfDisplay::getResolution(int) const' (code)
+Referenced from 'FormatMenu::FormatMenu()' in menus.cxx
+Referenced from 'FormatMenu::setFormat(unsigned char)' in menus.cxx
+Referenced from 'dumpResources(BzfDisplay*,SceneRenderer&)' in bzflag.cxx
+
+Link Error   : undefined 'BzfWindow::callResizeCallbacks() const' (code)
+Referenced from 'doEvent(BzfDisplay*)' in playing.cxx
+Referenced from 'setVideoFormat(int,unsigned char)' in playing.cxx
+Referenced from 'startPlaying(BzfDisplay*,SceneRenderer&,ResourceDatabase&,StartupInfo*)' in playing.cxx
+
+Link Error   : undefined 'BzfDisplay::getResolution() const' (code)
+Referenced from 'doEvent(BzfDisplay*)' in playing.cxx
+Referenced from 'FormatMenu::FormatMenu()' in menus.cxx
+Referenced from 'FormatMenu::setFormat(unsigned char)' in menus.cxx
+Referenced from 'setVideoFormat(int,unsigned char)' in playing.cxx
+Referenced from 'dumpResources(BzfDisplay*,SceneRenderer&)' in bzflag.cxx
+Referenced from 'startPlaying(BzfDisplay*,SceneRenderer&,ResourceDatabase&,StartupInfo*)' in playing.cxx
+
+Link Error   : undefined 'BzfDisplay::isValidResolution(int) const' (code)
+Referenced from 'setVideoFormat(int,unsigned char)' in playing.cxx
+Referenced from 'startPlaying(BzfDisplay*,SceneRenderer&,ResourceDatabase&,StartupInfo*)' in playing.cxx
+
+Link Error   : undefined 'BzfDisplay::findResolution(const char*) const' (code)
+Referenced from 'startPlaying(BzfDisplay*,SceneRenderer&,ResourceDatabase&,StartupInfo*)' in playing.cxx
+
+Link Error   : undefined 'BzfMedia::readImage(const BzfString&,int&,int&,int&) const' (code)
+Referenced from 'getTextureImage(const BzfString&,int&,int&,int&)' in texture.cxx
+Referenced from 'getTextImage(const BzfString&,int&,int&)' in texture.cxx
+
+Link Error   : undefined 'BzfWindow::addExposeCallback(void (*)(void*),void*)' (code)
+Referenced from 'ControlPanel::ControlPanel(MainWindow&,SceneRenderer&)' in ControlPanel.cxx
+
+Link Error   : undefined 'BzfDisplay::setResolution(int)' (code)
+Referenced from 'doEvent(BzfDisplay*)' in playing.cxx
+Referenced from 'setVideoFormat(int,unsigned char)' in playing.cxx
+Referenced from 'startPlaying(BzfDisplay*,SceneRenderer&,ResourceDatabase&,StartupInfo*)' in playing.cxx
+Referenced from 'dying(int)' in playing.cxx
+
+Link Error   : undefined 'BzfDisplay::getDefaultResolution() const' (code)
+Referenced from 'doEvent(BzfDisplay*)' in playing.cxx
+Referenced from 'setVideoFormat(int,unsigned char)' in playing.cxx
+Referenced from 'startPlaying(BzfDisplay*,SceneRenderer&,ResourceDatabase&,StartupInfo*)' in playing.cxx
+Referenced from 'dying(int)' in playing.cxx
+
+Link Error   : undefined 'BzfMedia::readSound(const BzfString&,int&,int&) const' (code)
+Referenced from 'allocAudioSamples()' in sound.cxx
+
+Link Error   : undefined 'BzfWindow::addResizeCallback(void (*)(void*),void*)' (code)
+Referenced from 'HUDDialogStack::push(HUDDialog*)' in HUDDialog.cxx
+Referenced from 'HUDRenderer::HUDRenderer(const BzfDisplay*,const SceneRenderer&)' in HUDRenderer.cxx
+Referenced from 'ControlPanel::ControlPanel(MainWindow&,SceneRenderer&)' in ControlPanel.cxx
+Referenced from 'MainWindow::MainWindow(BzfWindow*)' in MainWindow.cxx
+
+Link Error   : undefined 'BzfDisplay::getHeight() const' (code)
+Referenced from 'startPlaying(BzfDisplay*,SceneRenderer&,ResourceDatabase&,StartupInfo*)' in playing.cxx
+Referenced from 'main' in bzflag.cxx
+
+Link Error   : undefined 'BzfDisplay::getWidth() const' (code)
+Referenced from 'startPlaying(BzfDisplay*,SceneRenderer&,ResourceDatabase&,StartupInfo*)' in playing.cxx
+Referenced from 'main' in bzflag.cxx
+
+Link Error   : undefined 'BzfMedia::setMediaDirectory(const BzfString&)' (code)
+Referenced from 'main' in bzflag.cxx
+
+Link Error   : undefined 'PlatformFactory::getMedia()' (code)
+Referenced from 'closeSound()' in sound.cxx
+Referenced from 'playingLoop()' in playing.cxx
+Referenced from 'getTextureImage(const BzfString&,int&,int&,int&)' in texture.cxx
+Referenced from 'getTextImage(const BzfString&,int&,int&)' in texture.cxx
+Referenced from 'sendSound(SoundCommand*)' in sound.cxx
+Referenced from 'recalcEventIgnoring(SoundEvent*)' in sound.cxx
+Referenced from 'audioLoop(void*)' in sound.cxx
+Referenced from 'resampleAudio(const float*,int,int,AudioSamples*)' in sound.cxx
+Referenced from 'allocAudioSamples()' in sound.cxx
+Referenced from 'openSound(const char*)' in sound.cxx
+Referenced from 'main' in bzflag.cxx
+
+Link Error   : undefined 'PlatformFactory::getInstance()' (code)
+Referenced from 'main' in bzflag.cxx
+
+Link Error   : undefined 'GUSIwithPPCSockets' (code)
+Referenced from 'GUSISetupFactories' in gusi.c
+
+Link Error   : undefined 'GUSIwithLocalSockets' (code)
+Referenced from 'GUSISetupFactories' in gusi.c
+
+Link Error   : undefined 'PLstrcpy' (code)
+Referenced from 'GUSIFileSpec::GUSIFileSpec(const GUSIFileSpec&)' in GUSI_Core.PPC.Lib
+Referenced from 'GUSIFileSpec::SetName(const unsigned char*)' in GUSI_Core.PPC.Lib
+
+Link Error   : undefined 'GUSISetThreadSwitcher' (code)
+Referenced from 'SetThreadSwitcher' in GUSI_ForeignThreads.PPC.Lib
+

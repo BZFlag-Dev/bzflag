@@ -1,0 +1,102 @@
+*************
+common.h
+*************
+
+77: #if !defined(_WIN32) & !defined(macintosh)
+
+added our own definition block:
+
+#if defined( macintosh )
+
+// missing constants
+
+  #ifndef MAXFLOAT
+    #define	MAXFLOAT	3.402823466e+38f
+  #endif
+
+  #ifndef M_PI
+    #define	M_PI		  3.14159265358979323846f
+  #endif
+
+  #ifndef M_SQRT1_2
+    #define	M_SQRT1_2	0.70710678118654752440f
+  #endif
+
+// need some integer types
+  #include <inttypes.h>
+
+// my own strcasecmp, missing in MSL
+  #ifdef __MWERKS__
+    #include "strcasecmp.h"
+  #endif
+#endif /* defined( macintosh ) */
+
+
+**********
+network.h
+**********
+
+// The sockets library, GUSI 2.0, doesn't have sys/param.h
+30:
+
+#ifndef GUSI_20
+  #include <sys/param.h>
+#endif
+
+45:
+
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(macintosh))
+
+// add our own def block
+#if defined (macintosh)
+
+  #ifdef GUSI_20
+    #define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
+    #define accept(a,b,c)            accept(a,b,(unsigned int *)c)
+    #define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
+  #endif
+
+#endif
+
+
+
+************
+BzfString.h
+************
+
+42: changed class ostream; to
+
+#ifdef __MWERKS__
+  #include <iostream>
+  using std::ostream;
+#else
+  class ostream;
+#endif
+
+************
+Address.cxx
+************
+
+// don't want this to get called before GUSI is loaded
+#ifndef GUSI_20 
+  Address			Address::localAddress("");
+#endif
+
+*************
+network.cxx
+*************
+25:
+
+#define hstrerror(x) sys_errlist[x]
+#elif defined(sun)
+#define hstrerror(x) "<network error>"
+#elif defined(macintosh)
+#define hstrerror(x) "<network error>"
+#endif
+
+**************
+multicast.cxx
+**************
+
+77 : should be #elif rather than #else if
+331: ditto
