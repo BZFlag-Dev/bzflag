@@ -5319,12 +5319,12 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	// if server assigns us a different team, display a message
 	std::string teamMsg;
 	if (myTank->getTeam() != AutomaticTeam) {
-	  teamMsg = string_util::format("%s team was unavailable, you were joined to ",
+	  teamMsg = string_util::format("%s team was unavailable, you were joined ",
 					Team::getName(myTank->getTeam()));
 	  if ((TeamColor)team == ObserverTeam) {
 	    teamMsg += "as an Observer";
 	  } else {
-	    teamMsg += string_util::format("the %s", 
+	    teamMsg += string_util::format("to the %s", 
 					   Team::getName((TeamColor)team));
 	  }
 	} else {
