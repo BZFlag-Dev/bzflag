@@ -431,7 +431,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.7</string>
+	<string>1.9</string>
 	<key>CFBundleSignature</key>
 	<string>BZfl</string>
 	<key>CFBundleVersion</key>
@@ -519,6 +519,13 @@
 				4EDCB30D04998E31001DADFE,
 				4EDCB30E04998E37001DADFE,
 				4EDCB30F04998E3C001DADFE,
+				4EC93EAA04AD26800090910D,
+				4EC93EAB04AD26800090910D,
+				4EC93EAC04AD268E0090910D,
+				4EC93EB104AD26B80090910D,
+				4EC93EB204AD26B80090910D,
+				4EC93EB304AD26B80090910D,
+				4EC93EB404AD26B80090910D,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -784,10 +791,15 @@
 				4E030B1C048E70E70009E055,
 				4EDCB2A904990EB9001DADFE,
 				4EDCB2AF04990EB9001DADFE,
-				4EDCB2C104990EB9001DADFE,
 				4EDCB2C204990EB9001DADFE,
 				4EDCB2C304990EB9001DADFE,
 				4EDCB2C404990EB9001DADFE,
+				4EC93EA804AD26800090910D,
+				4EC93EA904AD26800090910D,
+				4EC93EAD04AD26B80090910D,
+				4EC93EAE04AD26B80090910D,
+				4EC93EAF04AD26B80090910D,
+				4EC93EB004AD26B80090910D,
 			);
 			isa = PBXGroup;
 			name = data;
@@ -6606,6 +6618,78 @@
 			settings = {
 			};
 		};
+		4EC93EA804AD26800090910D = {
+			isa = PBXFileReference;
+			path = hunt_select.wav;
+			refType = 4;
+		};
+		4EC93EA904AD26800090910D = {
+			isa = PBXFileReference;
+			path = hunt.wav;
+			refType = 4;
+		};
+		4EC93EAA04AD26800090910D = {
+			fileRef = 4EC93EA804AD26800090910D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		4EC93EAB04AD26800090910D = {
+			fileRef = 4EC93EA904AD26800090910D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		4EC93EAC04AD268E0090910D = {
+			fileRef = 4E030B0A048E70E60009E055;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		4EC93EAD04AD26B80090910D = {
+			isa = PBXFileReference;
+			path = steamroller.wav;
+			refType = 4;
+		};
+		4EC93EAE04AD26B80090910D = {
+			isa = PBXFileReference;
+			path = wbolt.rgb;
+			refType = 4;
+		};
+		4EC93EAF04AD26B80090910D = {
+			isa = PBXFileReference;
+			path = wlaser.rgb;
+			refType = 4;
+		};
+		4EC93EB004AD26B80090910D = {
+			isa = PBXFileReference;
+			path = wtbolt.rgb;
+			refType = 4;
+		};
+		4EC93EB104AD26B80090910D = {
+			fileRef = 4EC93EAD04AD26B80090910D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		4EC93EB204AD26B80090910D = {
+			fileRef = 4EC93EAE04AD26B80090910D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		4EC93EB304AD26B80090910D = {
+			fileRef = 4EC93EAF04AD26B80090910D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		4EC93EB404AD26B80090910D = {
+			fileRef = 4EC93EB004AD26B80090910D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		4ED18FFE04953171000CE899 = {
 			isa = PBXTargetDependency;
 			target = 4E030D55048E83C60009E055;
@@ -6638,12 +6722,6 @@
 		4EDCB2AF04990EB9001DADFE = {
 			isa = PBXFileReference;
 			path = gtbolt.rgb;
-			refType = 4;
-		};
-		4EDCB2C104990EB9001DADFE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile.in;
 			refType = 4;
 		};
 		4EDCB2C204990EB9001DADFE = {
