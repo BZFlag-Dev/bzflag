@@ -388,7 +388,7 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 					break;
 
 					case IN_POSITION2:
-						position[1] = atof(token.c_str());
+						position[2] = atof(token.c_str());
 						state = stateStack.top();
 						stateStack.pop();
 					break;
