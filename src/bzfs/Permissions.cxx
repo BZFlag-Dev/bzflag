@@ -411,6 +411,8 @@ void parsePermissionString(const std::string &permissionString, std::bitset<Play
             perms.set(perm);
           }
         }
+      } else {
+        DEBUG1("WARNING: unknown group \"%s\" was referenced\n", refname.c_str());
       }
     }
   }
@@ -461,8 +463,10 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
   if (!in)
     return false;
 
+  int linenum = 0;
   std::string line;
   while (std::getline(in, line)) {
+    linenum++;
 
     // check for a comment string
     bool skip = true;
@@ -486,6 +490,8 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
       parsePermissionString(perm, info.explicitAllows);
       info.verified = true;
       groupAccess[name] = info;
+    } else {
+      DEBUG1("WARNING: bad groupdb line (%i)\n", linenum);
     }
   }
 
