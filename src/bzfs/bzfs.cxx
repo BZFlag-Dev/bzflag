@@ -3485,7 +3485,7 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.numShots = 0;
   if ((drpFlag.flag.endurance == FlagNormal) || (drpFlag.flag.endurance == FlagSticky)) {
     // note: sticky/bad flags should always have grabs=1
-    if (--drpFlag.grabs > 0)
+    if ((drpFlag.flag.type->flagTeam != NoTeam) || (--drpFlag.grabs > 0))
       drpFlag.flag.status = FlagInAir;
     else
       drpFlag.flag.status = FlagGoing;
