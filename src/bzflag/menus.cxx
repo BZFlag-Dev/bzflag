@@ -62,7 +62,6 @@
 #include "TimeKeeper.h"
 #include "World.h"
 #include "Bundle.h"
-#include "resources.h"
 #include "ControlPanel.h"
 #include "StateDatabase.h"
 #include "CommandsStandard.h"
@@ -71,7 +70,6 @@
 #define PATH_MAX MAX_PATH
 #endif
 
-extern ResourceDatabase db;	// bzflag.cxx
 extern ControlPanel* controlPanel; // playing.cxx
 
 //
