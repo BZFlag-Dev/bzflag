@@ -46,6 +46,8 @@
 #include "sound.h"
 #include "KeyMap.h"
 #include "menus.h"
+#include "ConfigFileManager.h"
+#include "CommandsStandard.h"
 
 #include "BzfDisplay.h"
 #include "BzfVisual.h"
@@ -824,12 +826,15 @@ int			main(int argc, char** argv)
   time(&timeNow);
   userTime = *localtime(&timeNow);
 
+  CommandsStandard::add();
+
   // read resources
   {
     ifstream resourceStream(getConfigFileName().c_str(), ios::in);
     if (resourceStream) {
       startupInfo.hasConfiguration = true;
       resourceStream >> db;
+      CFGMGR->read(getConfigFileName());
     }
 
 #if !defined(_WIN32) & !defined(macintosh)
@@ -838,6 +843,7 @@ int			main(int argc, char** argv)
       if (resourceStream2) {
 	startupInfo.hasConfiguration = true;
 	resourceStream2 >> db;
+        CFGMGR->read(getConfigFileName2());
       }
     }
 #endif

@@ -77,6 +77,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "MainWindow.h"
 #include "ControlPanel.h"
 #include "ShotStrategy.h"
+#include "StateDatabase.h"
 #include "daylight.h"
 #include "sound.h"
 #include "TimeBomb.h"
@@ -518,8 +519,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  message += (silence + 8);
 	  addMessage(NULL, message);
 	}
-      }
-      else if (strncmp(silence, "UNSILENCE", 9) == 0) {
+      } else if (strncmp(silence, "UNSILENCE", 9) == 0) {
 	Player *loudmouth = getPlayerByName(silence + 10);
 	if (loudmouth) {
 	  std::vector<std::string>::iterator it = silencePlayers.begin();
@@ -532,29 +532,28 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	    break;
 	    }
 	  }
-	}
-      }
-      else {
-	int i, mhLen = messageHistory.size();
-	for (i = 0; i < mhLen; i++) {
-	  if (messageHistory[i] == message) {
-	    messageHistory.erase(messageHistory.begin() + i);
+	} else {
+	  int i, mhLen = messageHistory.size();
+	  for (i = 0; i < mhLen; i++) {
+	    if (messageHistory[i] == message) {
+	      messageHistory.erase(messageHistory.begin() + i);
+	      messageHistory.push_front(message);
+	      break;
+	    }
+	  }
+	  if (i == mhLen) {
+	    if (mhLen >= MAX_MESSAGE_HISTORY) {
+	      messageHistory.pop_back();
+	    }
 	    messageHistory.push_front(message);
-	    break;
 	  }
-	}
-	if (i == mhLen) {
-	  if (mhLen >= MAX_MESSAGE_HISTORY) {
-	    messageHistory.pop_back();
-	  }
-	  messageHistory.push_front(message);
-	}
 
-	char messageBuffer[MessageLen];
-	memset(messageBuffer, 0, MessageLen);
-	strncpy(messageBuffer, message.c_str(), MessageLen);
-	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	  char messageBuffer[MessageLen];
+	  memset(messageBuffer, 0, MessageLen);
+	  strncpy(messageBuffer, message.c_str(), MessageLen);
+	  nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
+	  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	}
       }
     }
   }

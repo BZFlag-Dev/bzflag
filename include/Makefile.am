@@ -20,6 +20,7 @@ noinst_HEADERS =		\
 	CommandManager.h	\
 	CommandsStandard.h	\
 	common.h		\
+	ConfigFileManager.h	\
 	EighthDBaseSceneNode.h	\
 	EighthDBoxSceneNode.h	\
 	EighthDimSceneNode.h	\
