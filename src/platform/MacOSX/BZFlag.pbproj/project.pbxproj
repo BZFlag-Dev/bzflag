@@ -133,7 +133,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f \"${TEMP_FILES_DIR}/include/config.h\" ] ; then\n    # already ran configure, so don't bother\n    echo \"config.h already generated, skipping\"\n    exit 0\nfi\necho \"generating config.h\"\ncd ${TARGET_BUILD_DIR}/../../../..\n./autogen.sh\ncd ${TEMP_FILES_DIR}\n../../../../../../configure --enable-robots\nif [ -f \"include/config.h\" ] ; then\n    cp include/config.h ${TARGET_BUILD_DIR}\nelse\n    echo \"Error: Unable to genearte config.h\"\n    exit 1\nfi\nexit 0";
+			shellScript = "if [ -f \"${TEMP_FILES_DIR}/include/config.h\" ] ; then\n    # already ran configure, so don't bother\n    echo \"config.h already generated, skipping\"\n    exit 0\nfi\necho \"GENERATING CONFIG.H\"\ncd ${TARGET_BUILD_DIR}/../../../..\necho \"running autoconf\"\n./autogen.sh > /dev/null 2>&1 \nif [ $? -gt 0 ] ; then\n    echo \"perperation for configure failed\"\n    exit 1\nfi\ncd ${TEMP_FILES_DIR}\necho \"running configure\"\n../../../../../../configure --enable-robots 2>&1\nif [ -f \"include/config.h\" ] ; then\n    cp include/config.h ${TARGET_BUILD_DIR}\nelse\n    echo \"Error: Unable to genearte config.h\"\n    exit 1\nfi\necho \"done\"\nexit 0";
 		};
 		1495362A049CEBF900A80164 = {
 			fileRef = 14953627049CCA4100A80164;
@@ -616,6 +616,7 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				OPTIMIZATION_CFLAGS = "-O3 -ffast-math -fexpensive-optimizations";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
