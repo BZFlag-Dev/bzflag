@@ -105,6 +105,26 @@ static DefaultDBItem	defaultDBItems[] = {
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL }
 };
 
+// default key bindings
+static const char*	bindingList[] = {
+  "bind F12 down quit",
+  "bind \"Left Mouse\" down fire",
+  "bind Enter down fire",
+  "bind \"Middle Mouse\" down drop",
+  "bind Space down drop",
+  "bind \"Right Mouse\" down identify",
+  "bind I down identify",
+  "bind Tab down jump",
+  "bind N down \"send all\"",
+  "bind M down \"send team\"",
+  "bind , down \"send nemesis\"",
+  "bind . down \"send recipient\"",
+  "bind S down \"toggle showscore\"",
+  "bind Pause down pause",
+  "bind P down pause",
+  "bind F5 down screenshot"
+};
+
 #ifdef ROBOT
 // ROBOT -- tidy up
 int numRobotTanks = 0;
@@ -806,9 +826,15 @@ int			main(int argc, char** argv)
   userTime = *localtime(&timeNow);
 
   CommandsStandard::add();
+  unsigned int i;
+
+  // bind default keys
+  for (i = 0; i < countof(bindingList); ++i) {
+    CMDMGR->run(bindingList[i]);
+  }
 
   // prepare DB entries
-  for (unsigned int i = 0; i < countof(defaultDBItems); ++i) {
+  for (i = 0; i < countof(defaultDBItems); ++i) {
     assert(defaultDBItems[i].name != NULL);
     if (defaultDBItems[i].value != NULL) {
       BZDB->set(defaultDBItems[i].name, defaultDBItems[i].value);
