@@ -61,7 +61,8 @@ void    MacMedia::closeAudio() {
     SndDisposeChannel (channel, true);
 
   if (buffer)
-    free(buffer);
+    delete buffer;
+  buffer = (SInt16*)NULL;
 }
 
 bool MacMedia::isAudioBrainDead() const {
@@ -151,7 +152,8 @@ bool MacMedia::readSoundCommand  (void *data, int length) {
     char *temp = command_queue.front();
     memcpy (data, temp, length);
     command_queue.pop();
-    free(temp);
+    delete temp;
+    temp = (char*)NULL;
     return true;
   }
   else
