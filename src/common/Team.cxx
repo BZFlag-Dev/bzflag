@@ -88,6 +88,19 @@ const char*		Team::getName(TeamColor team) // const
   }
 }
 
+const TeamColor	Team::getTeam(const std::string name) // const
+{
+  if (name == Team::getName(AutomaticTeam)) {
+    return AutomaticTeam;
+  }
+  for (int i = 0; i < NumTeams; i++) {
+    if (name == Team::getName((TeamColor)i)) {
+      return (TeamColor)i;
+    }
+  }
+  return NoTeam;
+}
+
 const float*		Team::getTankColor(TeamColor team) // const
 {
   if (int(team) < 0) {
