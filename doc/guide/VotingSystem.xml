@@ -286,7 +286,7 @@
 
       <para>Each of the voting system commands have a corresponding
       bzflag permission identifier.  They are POLL, VOTE, and VETO.
-      By default, POLL and VOTE are in the REGISTERED group and VETO
+      By default, POLL and VOTE are in the VERIFIED group and VETO
       is in the ADMIN group.  Some servers may choose to <quote>open
       up</quote> the voting system to unregistered players; this may
       be done by placing the POLL and VOTE permissions into the

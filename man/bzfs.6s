@@ -776,15 +776,15 @@ This would be a sample line defining a "cop" group:
 COPS:KICK BAN BANLIST UNBAN INFO
 
 The server will automatically create three groups if they are not specified in
-the groups file: DEFAULT, REGISTERED, and ADMIN. ADMIN has every permission
-possible (similar to granting admin powers via /password). REGISTERED presently
+the groups file: DEFAULT, VERIFIED, and ADMIN. ADMIN has every permission
+possible (similar to granting admin powers via /password). VERIFIED presently
 allows access to the voting system's /poll and /vote commands.  DEFAULT allows
 /lagstats, /idlestats, /flaghistory and /report.
 
 Once the server is running, users can register their callsigns and admins can
 set their group memberships. Users can use any command that their permissions
 allow. Every user, registered or not, is part of the DEFAULT group. When a
-user identifies, they become part of the REGISTERED group.
+user identifies, they become part of the VERIFIED group.
 
 The available permissions are as follows:
 

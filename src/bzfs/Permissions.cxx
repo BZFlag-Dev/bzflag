@@ -125,7 +125,7 @@ bool PlayerAccessInfo::isAllowedToEnter() {
 
 void PlayerAccessInfo::storeInfo(const char* pwd) {
   PlayerAccessInfo info;
-  info.addGroup("REGISTERED");
+  info.addGroup("VERIFIED");
 
   if (pwd == NULL) {
     setUserPassword(regName.c_str(), "");

@@ -4453,12 +4453,12 @@ int main(int argc, char **argv)
     info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
     groupAccess["DEFAULT"] = info;
   }
-  itr = groupAccess.find("REGISTERED");
+  itr = groupAccess.find("VERIFIED");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     info.explicitAllows[PlayerAccessInfo::vote] = true;
     info.explicitAllows[PlayerAccessInfo::poll] = true;
-    groupAccess["REGISTERED"] = info;
+    groupAccess["VERIFIED"] = info;
   }
   itr = groupAccess.find("ADMIN");
   if (itr == groupAccess.end()) {
