@@ -30,7 +30,8 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 				server(_server),
 				target(NULL),
 				pathIndex(0),
-				timeSinceShot(0.0f)
+				timeSinceShot(0.0f),
+				timerForShot(0.0f)
 {
   // NOTE -- code taken directly from LocalPlayer
   // initialize shots array to no shots fired
@@ -117,10 +118,34 @@ void			RobotPlayer::doUpdate(float dt)
 #if !defined(SHOOTING_FIX)
   timeSinceShot += reloadTime / numShots;
 #endif
-  if (isAlive() && timeSinceShot > reloadTime / numShots) {
+  // separate shot by at least 0.4 sec
+  timerForShot  -= dt;
+  if (timerForShot < 0.0f)
+    timerForShot = 0.0f;
+  bool        shoot   = true;
+  const float azimuth = getAngle();
+  // Allow shooting only if angle is near and timer has elapsed
+  if ((int)path.size() == 0 || timerForShot > 0.0f)
+    shoot = false;
+  else
+    for (i = pathIndex; i < (int)path.size(); i++) {
+      float azimuthDiff = pathAzimuth[i] - azimuth;
+      if (azimuthDiff > M_PI)
+	azimuthDiff -= 2.0f * M_PI;
+      else
+	if (azimuthDiff < -M_PI)
+	  azimuthDiff += 2.0f * M_PI;
+      if (fabs(azimuthDiff) > 0.01f) {
+	shoot = false;
+	break;
+      }
+    }
+  if (isAlive() && timeSinceShot > reloadTime / numShots && shoot) {
     timeSinceShot -= reloadTime / numShots;
     for (i = 0; i < numShots; i++)
       if (!shots[i]) {
+	// separate shot by 0.4 sec (experimental value)
+	timerForShot = 0.4f;
 	FiringInfo firingInfo(*this, i + getSalt());
 	firingInfo.shot.vel[2] = 0.0f;
 	shots[i] = new LocalShotPath(firingInfo);

@@ -70,6 +70,7 @@ class RobotPlayer : public BaseLocalPlayer {
     std::vector<float>	pathAzimuth;
     int			pathIndex;
     float		timeSinceShot;
+    float		timerForShot;
 };
 
 #endif // BZF_ROBOT_PLAYER_H
