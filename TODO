@@ -202,9 +202,6 @@ THESE ARE LOWER PRIORITY
 
 THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
-* move -synctime data to different Msg packet, or create new one.
-  MsgSetVar (ala 1.8) would be a good one
-
 * flags should all be nullflags from client view until
   a) you pick one up
   b) you get the identify flag (send updates for all flags?)
