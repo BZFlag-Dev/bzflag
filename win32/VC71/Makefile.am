@@ -1,5 +1,6 @@
 EXTRA_DIST =	\
 	bzflag.sln	\
+	3D.vcproj	\
 	bzflag.vcproj	\
 	bzadmin.vcproj	\
 	bzfs.vcproj	\

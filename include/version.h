@@ -28,7 +28,7 @@
  */
 // TODO make this sucker an int when we change BZFS stuff
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"1910"
+#define BZ_PROTO_VERSION	"1110"
 #endif
 
 #ifndef BZ_MAJOR_VERSION
@@ -44,8 +44,8 @@
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"DEVELOPER"
-#endif
+#define BZ_BUILD_TYPE		"DEVELOPMENT"
+
 
 // Build Date will be defined at link time, can be different for each exe
 extern char buildDate[];

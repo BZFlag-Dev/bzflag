@@ -46,7 +46,6 @@ bzflag_SOURCES =			\
 	ShotStrategy.h			\
 	TargetingUtils.cxx		\
 	TargetingUtils.h		\
-	TextureManager.cxx		\
 	World.cxx			\
 	World.h				\
 	WorldPlayer.cxx			\

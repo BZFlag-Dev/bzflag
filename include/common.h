@@ -33,6 +33,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "config.h"
 #include "bzfio.h"
 
 extern int debugLevel;

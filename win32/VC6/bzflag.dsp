@@ -225,10 +225,6 @@ SOURCE=..\..\src\bzflag\texture.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\TextureManager.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\World.cxx
 # End Source File
 # Begin Source File
@@ -598,10 +594,6 @@ SOURCE=..\..\include\Teleporter.h
 # Begin Source File
 
 SOURCE=..\..\include\texture.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\TextureManager.h
 # End Source File
 # Begin Source File
 

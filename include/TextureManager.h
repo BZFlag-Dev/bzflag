@@ -13,10 +13,8 @@
 #include <string>
 #include <map>
 
-#include "TextUtils.h"
 #include "OpenGLTexture.h"
 #include "Singleton.h"
-
 
 struct FileTextureInit
 {
@@ -24,11 +22,14 @@ struct FileTextureInit
   OpenGLTexture::Filter	filter;
 };
 
+class TextureManager;
+
 struct ProcTextureInit
 {
-  std::string		name;
-  OpenGLTexture*	(*proc)(ProcTextureInit &init);
-  OpenGLTexture::Filter	filter;
+  std::string		        name;
+  int	(*proc)(ProcTextureInit &init);
+  TextureManager                *manager;
+  OpenGLTexture::Filter	        filter;
 };
 
 
@@ -38,10 +39,9 @@ class TextureManager : public Singleton<TextureManager>
 {
 public:
   OpenGLTexture* getTexture( const char* name, bool reportFail = true );
-  void addTexture( const char*, OpenGLTexture *texture );
+  int addTexture( const char*, OpenGLTexture *texture );
 
-  static OpenGLTexture* noiseProc( ProcTextureInit &init );
-
+  int newTexture ( const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter );
 protected:
   friend class Singleton<TextureManager>;
 

@@ -1,4 +1,4 @@
-SUBDIRS = date bzfrelay common net bzfs geometry \
+SUBDIRS = 3D date bzfrelay common net bzfs geometry \
 	obstacle ogl scene platform zlib mediafile bzflag bzadmin
 
 MAINTAINERCLEANFILES = \

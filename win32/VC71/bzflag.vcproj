@@ -37,10 +37,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				IgnoreImportLibrary="FALSE"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib"
 				OutputFile="..\..\src\bzflag\debug\bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\src\3D\debug"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzflag\debug/bzflag.pdb"
 				SubSystem="2"
@@ -577,9 +579,6 @@ copy debug\*.pdb ..\..\*.pdb
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\TextureManager.cxx">
 				</File>
 			</Filter>
 			<Filter
