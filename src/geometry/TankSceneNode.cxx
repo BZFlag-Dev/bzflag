@@ -748,9 +748,9 @@ void TankSceneNode::TankRenderNode::render()
     }
     else {
       // exploding -- draw back facing stuff first then draw front facing stuff
-      glCullFace(GL_FRONT);
+      OpenGLGState::setCullFace(GL_FRONT);
       renderParts();
-      glCullFace(GL_BACK);
+      OpenGLGState::setCullFace(GL_BACK);
       renderParts();
     }
   }

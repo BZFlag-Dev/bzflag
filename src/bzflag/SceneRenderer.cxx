@@ -596,17 +596,12 @@ static int sortLights (const void* a, const void* b)
   }
 }
 
-void			SceneRenderer::render(
-				bool _lastFrame,
-				bool _sameFrame,
-				bool fullWindow)
-{
-  int i;
-  static const GLfloat blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
-  static const GLfloat dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  static const float dimDensity = 0.75f;
-  bool               lighting   = BZDBCache::lighting;
+static bool clearZbuffer;
+static bool drawGround;
 
+void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
+                           bool fullWindow)
+{
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
   
@@ -631,6 +626,47 @@ void			SceneRenderer::render(
   if (!window) {
     return;
   }
+
+  const bool mirror = BZDB.isTrue(StateDatabase::BZDB_MIRROR);
+
+  clearZbuffer = true;
+  drawGround = true;
+  
+  if (mirror) {
+    drawGround = false;
+    
+    frustum.flipVertical();
+    OpenGLGState::setInvertCull(true);
+  
+    const bool oldDimming = useDimming;
+    useDimming = true;
+    
+    // the reflected scene
+    renderScene(_lastFrame, _sameFrame, fullWindow);
+
+    useDimming = oldDimming;
+
+    frustum.flipVertical();
+    OpenGLGState::setInvertCull(false);
+
+    clearZbuffer = false;
+  }
+  
+  // the real scene
+  renderScene(_lastFrame, _sameFrame, fullWindow);
+  
+  return;
+}
+
+
+void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
+                                bool fullWindow)
+{
+  int i;
+  static const GLfloat blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
+  static const GLfloat dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  static const float dimDensity = 0.75f;
+  const bool lighting = BZDBCache::lighting;
 
   // avoid OpenGL calls as long as possible -- there's a good
   // chance we're waiting on the vertical retrace.
@@ -722,6 +758,7 @@ void			SceneRenderer::render(
 
   float worldSize = BZDBCache::worldSize;
   bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
+       
   if (reallyUseFogHack) {
     if (useDimming) {
       const float density = dimDensity;
@@ -732,8 +769,8 @@ void			SceneRenderer::render(
       glEnable(GL_FOG);
     }
     else if (teleporterProximity > 0.0f && useFogHack) {
-      const float density = (teleporterProximity > 0.75f) ?
-				1.0f : teleporterProximity / 0.75f;
+      const float density = (teleporterProximity > 0.75f) ? 1.0f 
+                            : (teleporterProximity / 0.75f);
       glFogi(GL_FOG_MODE, GL_LINEAR);
       glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
       glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
@@ -769,7 +806,9 @@ void			SceneRenderer::render(
     if (sameFrame && ++depthRange == numDepthRanges) depthRange = 0;
     if (exposed || useHiddenLineOn || --depthRange < 0) {
       depthRange = numDepthRanges - 1;
-      glClear(GL_DEPTH_BUFFER_BIT);
+      if (clearZbuffer) {
+        glClear(GL_DEPTH_BUFFER_BIT);
+      }
       exposed = false;
     }
     if (!sameFrame && numDepthRanges != 1) {
@@ -788,7 +827,10 @@ void			SceneRenderer::render(
   if (background) {
     background->setBlank(blank);
     background->setInvert(invert);
-    background->renderSkyAndGround(*this, fullWindow);
+    background->renderSky(*this, fullWindow);
+    if (drawGround) {
+      background->renderGround(*this, fullWindow);
+    }
   }
 
   // prepare the other lights but don't turn them on yet --
@@ -800,8 +842,9 @@ void			SceneRenderer::render(
   }
 
   // draw rest of background
+  // (ground grid, shadows, fake shot lights, clouds)
   if (background) {
-    background->render(*this);
+    background->renderGroundEffects(*this);
   }
 
   if (!blank) {
@@ -833,10 +876,16 @@ void			SceneRenderer::render(
       World::getWorld()->drawCollisionGrid();
     }
 
-    doRender();
 
-	if (background)
-		background->renderEnvironment(*this);
+    ///////////////////////
+    // THE BIG RENDERING //
+    ///////////////////////
+    doRender();
+    
+
+    if (background) {
+      background->renderEnvironment(*this);
+    }
 
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)

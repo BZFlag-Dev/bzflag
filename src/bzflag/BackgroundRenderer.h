@@ -37,9 +37,10 @@ class BackgroundRenderer {
 			BackgroundRenderer(const SceneRenderer&);
 			~BackgroundRenderer();
 
-    void		renderSkyAndGround(SceneRenderer&, bool fullWindow);
-    void		render(SceneRenderer&);
-	void		renderEnvironment(SceneRenderer&);
+    void		renderSky(SceneRenderer&, bool fullWindow);
+    void		renderGround(SceneRenderer&, bool fullWindow);
+    void		renderGroundEffects(SceneRenderer&);
+    void		renderEnvironment(SceneRenderer&);
 
     void                resize();
 
@@ -61,7 +62,6 @@ class BackgroundRenderer {
     void		drawSky(SceneRenderer&);
     void		drawGround(void);
     void		drawGroundGrid(SceneRenderer&);
-    void		drawTeamBases(void);
     void		drawGroundShadows(SceneRenderer&);
     void		drawGroundReceivers(SceneRenderer&);
     void		drawMountains(void);
@@ -92,11 +92,6 @@ class BackgroundRenderer {
     GLfloat		gridSpacing;
     GLfloat		gridCount;
     OpenGLGState	gridGState;
-
-    // stuff for team bases
-    bool		doTeamBases;
-    OpenGLGState	teamBasesGState;
-    OpenGLDisplayList	teamBasesList;
 
     // stuff for ground receivers
     OpenGLGState	receiverGState;

@@ -46,12 +46,15 @@ float			Frustum::getEyeDepth(const float* p) const
 }
 
 void			Frustum::setView(const float* _eye,
-						const float* target)
+                                         const float* _target)
 {
-  // set eye point
+  // set eye and target points
   eye[0] = _eye[0];
   eye[1] = _eye[1];
   eye[2] = _eye[2];
+  target[0] = _target[0];
+  target[1] = _target[1];
+  target[2] = _target[2];
 
   // compute forward vector and normalize
   plane[0][0] = target[0] - eye[0];
@@ -117,8 +120,8 @@ void			Frustum::setView(const float* _eye,
   billboardMatrix[10] = viewMatrix[10];
 
   // compute vectors of frustum edges
-  const float xs = 1.0f / projectionMatrix[0];
-  const float ys = 1.0f / projectionMatrix[5];
+  const float xs = fabsf(1.0f / projectionMatrix[0]);
+  const float ys = fabsf(1.0f / projectionMatrix[5]);
   float edge[4][3];
   edge[0][0] = plane[0][0] - xs * right[0] - ys * up[0];
   edge[0][1] = plane[0][1] - xs * right[1] - ys * up[1];
@@ -212,6 +215,29 @@ void			Frustum::makePlane(const float* v1,
   plane[index][2] = d * n[2];
   plane[index][3] = -(eye[0] * plane[index][0] + eye[1] * plane[index][1] +
 						eye[2] * plane[index][2]);
+}
+
+// these next two functions should be more generic
+// flipX, flipY, flipZ, all with and offset along the axis
+void			Frustum::flipVertical()
+{
+  eye[2] = -eye[2];
+  target[2] = -target[2];
+  setView(eye, target);
+  projectionMatrix[5] = -projectionMatrix[5];
+  deepProjectionMatrix[5] = -deepProjectionMatrix[5];
+  
+  return;
+}
+
+void			Frustum::flipHorizontal()
+{
+  eye[0] = -eye[0];
+  target[0] = -target[0];
+  setView(eye, target);
+  projectionMatrix[0] = -projectionMatrix[0];
+  deepProjectionMatrix[0] = -deepProjectionMatrix[0];
+  return;
 }
 
 // Local Variables: ***

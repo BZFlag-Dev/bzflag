@@ -122,6 +122,7 @@ const std::string StateDatabase::BZDB_LRADRATE	= std::string("_lRAdRate");
 const std::string StateDatabase::BZDB_MAXBUMPHEIGHT     = std::string("_maxBumpHeight");
 const std::string StateDatabase::BZDB_MAXFLAGGRABS      = std::string("_maxFlagGrabs");
 const std::string StateDatabase::BZDB_MAXLOD		= std::string("_maxLOD");
+const std::string StateDatabase::BZDB_MIRROR		= std::string("_mirror");
 const std::string StateDatabase::BZDB_MOMENTUMLINACC	= std::string("_momentumLinAcc");
 const std::string StateDatabase::BZDB_MOMENTUMANGACC	= std::string("_momentumAngAcc");
 const std::string StateDatabase::BZDB_MOMENTUMFRICTION	= std::string("_momentumFriction");

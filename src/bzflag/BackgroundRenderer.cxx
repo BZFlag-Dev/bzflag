@@ -59,7 +59,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 				style(0),
 				gridSpacing(60.0f),	// meters
 				gridCount(4.0f),
-				doTeamBases(true),
 				mountainsAvailable(false),
 				numMountainTextures(0),
 				mountainsGState(NULL),
@@ -208,8 +207,8 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   gstate.setTexture(tm.getTextureID("snowflake"));
   texturedRainState = gstate.getState();
 
-	gstate.setTexture(tm.getTextureID("puddle"));
-	puddleState = gstate.getState();
+  gstate.setTexture(tm.getTextureID("puddle"));
+  puddleState = gstate.getState();
 
   // make mountain stuff
   mountainsAvailable = false;
@@ -513,11 +512,55 @@ void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
   else if (cloudDriftV < 0.0f) cloudDriftV += 1.0f;
 }
 
-void			BackgroundRenderer::renderSkyAndGround(
+void			BackgroundRenderer::renderSky(
 				SceneRenderer& renderer, bool fullWindow)
 {
   if (renderer.useQuality() > 0) {
     drawSky(renderer);
+  } else {
+    // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
+    // to draw solid color sky and ground.
+    MainWindow& window = renderer.getWindow();
+    const int x = window.getOriginX();
+    const int y = window.getOriginY();
+    const int width = window.getWidth();
+    const int height = window.getHeight();
+    const int viewHeight = window.getViewHeight();
+    const SceneRenderer::ViewType viewType = renderer.getViewType();
+
+    // draw sky
+    glDisable(GL_DITHER);
+    glPushAttrib(GL_SCISSOR_BIT);
+    glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
+    glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // draw ground -- first get the color (assume it's all green)
+    GLfloat groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
+    if (fullWindow && viewType == SceneRenderer::ThreeChannel)
+      glScissor(x, y, width, height >> 1);
+    else if (fullWindow && viewType == SceneRenderer::Stacked)
+      glScissor(x, y, width, height >> 1);
+#ifndef USE_GL_STEREO
+    else if (fullWindow && viewType == SceneRenderer::Stereo)
+      glScissor(x, y, width, height >> 1);
+#endif
+    else
+      glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
+    if (invert) glClearColor(groundColor, 0.0f, groundColor, 0.0f);
+    else glClearColor(0.0f, groundColor, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // back to normal
+    glPopAttrib();
+    if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
+  }
+}
+
+void			BackgroundRenderer::renderGround(
+				SceneRenderer& renderer, bool fullWindow)
+{
+  if (renderer.useQuality() > 0) {
     drawGround();
   } else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
@@ -559,19 +602,20 @@ void			BackgroundRenderer::renderSkyAndGround(
   }
 }
 
-void			BackgroundRenderer::render(SceneRenderer& renderer)
+void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer)
 {
   // zbuffer should be disabled.  either everything is coplanar with
   // the ground or is drawn back to front and is occluded by everything
   // drawn after it.  also use projection with very far clipping plane.
 
-  if (renderer.useQuality() < 3)
+  if (renderer.useQuality() < 3) {
     drawGroundGrid(renderer);
+  }
 
   if (!blank) {
-    if (doTeamBases) drawTeamBases();
-
-    if (doShadows && shadowsVisible) drawGroundShadows(renderer);
+    if (doShadows && shadowsVisible) {
+      drawGroundShadows(renderer);
+    }
 
     // draw light receivers on ground (little meshes under light sources so
     // the ground gets illuminated).  this is necessary because lighting is
@@ -589,14 +633,14 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
 
       // draw clouds
       if (cloudsVisible) {
-	cloudsGState.setState();
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
-	cloudsList.execute();
-	glLoadIdentity();	// maybe works around bug in some systems
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
+        cloudsGState.setState();
+        glMatrixMode(GL_TEXTURE);
+        glPushMatrix();
+        glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
+        cloudsList.execute();
+        glLoadIdentity();	// maybe works around bug in some systems
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
       }
     }
   }
@@ -607,7 +651,7 @@ void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 	if (renderer.useQuality() < 3)
 		return;
 
-	float puddleZ = 0.1f;
+	float puddleZ = 0.0f;
 
 	if (!blank && rainDensity != 0) {
 
@@ -981,12 +1025,6 @@ void			BackgroundRenderer::drawGroundGrid(
       glVertex2f(x0 + xhalf, y0 + i);
     }
   glEnd();
-}
-
-void			BackgroundRenderer::drawTeamBases(void)
-{
-  teamBasesGState.setState();
-  teamBasesList.execute();
 }
 
 void			BackgroundRenderer::drawGroundShadows(

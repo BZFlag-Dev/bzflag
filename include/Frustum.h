@@ -46,12 +46,15 @@ class Frustum {
     void		setProjection(float fov, float m_near, float m_far,
 				      int width, int height, int viewHeight);
     void		setOffset(float eyeOffset, float focalPlane);
+    void		flipVertical();
+    void		flipHorizontal();
 
   protected:
     void		makePlane(const float* v1, const float* v2, int);
 
   protected:
     float		eye[3];
+    float		target[3];
     float		right[3], up[3];
     float		plane[5][4];		// pointing in
     float		farCorner[4][3];
