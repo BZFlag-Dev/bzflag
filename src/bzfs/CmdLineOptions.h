@@ -133,7 +133,7 @@ struct CmdLineOptions
 
   bool			useGivenPort;
   bool			useFallbackPort;
-  bool			requireUDP; // true if only new clients allowed
+  bool			requireUDP;
   bool			requireIdentify;
   bool			randomBoxes;
   bool			randomCTF;
