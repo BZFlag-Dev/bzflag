@@ -54,12 +54,12 @@ float			BoxBuilding::intersect(const Ray& r) const
 void			BoxBuilding::getNormal(const float* p, float* n) const
 {
   // This bit of cruft causes bullets to bounce of buildings in the z direction
-  if (p[2] == getPosition()[2]) {
+  if (abs(p[2] - getPosition()[2]) < Epsilon) {
     n[0] = 0.0f;
     n[1] = 0.0f;
     n[2] = -1.0f;
   }
-  else if (p[2] == getPosition()[2] + getHeight()) {
+  else if (abs(p[2] - (getPosition()[2] + getHeight())) < Epsilon) {
     n[0] = 0.0f;
     n[1] = 0.0f;
     n[2] = 1.0f;
