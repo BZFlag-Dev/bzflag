@@ -184,7 +184,7 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
 
 
 int Octree::getShadowList (SceneNode** list, int listSize,
-                           const Frustum* frustum, const float* sun) const
+                           const Frustum* frustum, const float* sunDir) const
 {
   if (!root) {
     return 0;
@@ -215,25 +215,25 @@ int Octree::getShadowList (SceneNode** list, int listSize,
     // left edge
     edge[0] = -frustum->getSide(1)[1];
     edge[1] = +frustum->getSide(1)[0];
-    planes[0][0] =  (edge[1] * sun[2]);
-    planes[0][1] = -(edge[0] * sun[2]);
-    planes[0][2] =  (edge[0] * sun[1]) - (edge[1] * sun[0]);
+    planes[0][0] =  (edge[1] * sunDir[2]);
+    planes[0][1] = -(edge[0] * sunDir[2]);
+    planes[0][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
     planes[0][3] = -((planes[0][0] * eye[0]) + (planes[0][1] * eye[1]));
     // right edge
     edge[0] = -frustum->getSide(2)[1];
     edge[1] = +frustum->getSide(2)[0];
-    planes[1][0] =  (edge[1] * sun[2]);
-    planes[1][1] = -(edge[0] * sun[2]);
-    planes[1][2] =  (edge[0] * sun[1]) - (edge[1] * sun[0]);
+    planes[1][0] =  (edge[1] * sunDir[2]);
+    planes[1][1] = -(edge[0] * sunDir[2]);
+    planes[1][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
     planes[1][3] = -((planes[1][0] * eye[0]) + (planes[1][1] * eye[1]));
     // only use the bottom edge if we have some height (about one jump's worth)
     if (eye[2] > 20.0f) {
       // bottom edge
       edge[0] = -frustum->getSide(3)[1];
       edge[1] = +frustum->getSide(3)[0];
-      planes[2][0] =  (edge[1] * sun[2]);
-      planes[2][1] = -(edge[0] * sun[2]);
-      planes[2][2] =  (edge[0] * sun[1]) - (edge[1] * sun[0]);
+      planes[2][0] =  (edge[1] * sunDir[2]);
+      planes[2][1] = -(edge[0] * sunDir[2]);
+      planes[2][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
       const float hlen = sqrtf ((frustum->getSide(3)[0] * frustum->getSide(3)[0]) +
                                 (frustum->getSide(3)[1] * frustum->getSide(3)[1]));
       const float slope = frustum->getSide(3)[2] / hlen;
