@@ -24,10 +24,10 @@ using namespace std;
 /** This class is an abstract base class for all bzadmin interfaces. */
 class BZAdminUI {
 public:
-  
+
   /** Need a virtual destructor so subclasses get to do their cleanups. */
   virtual ~BZAdminUI() { }
-  
+
   /** This function prints a message in the main window. */
   virtual void outputMessage(const string&) { }
   /** See if the user has entered a command, if it has, store it in str and

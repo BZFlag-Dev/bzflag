@@ -53,7 +53,7 @@ SRV_STR_MAP::iterator ServerListCache::find(std::string serverAddress)
 // a wrapper that allows access to the maps begin method
 SRV_STR_MAP::iterator ServerListCache::begin()
 {
-  return serverCache.begin();  
+  return serverCache.begin();
 }
 
 // a wrapper that allows access to the maps end method
@@ -95,7 +95,7 @@ void			ServerListCache::saveCache()
       lenCpy = (iter->first).size() < MAX_STRING ? (iter->first).size() : MAX_STRING;
       strncpy(&buffer[0],(iter->first.c_str()),lenCpy);
       outFile.write(buffer,sizeof(buffer));
-      
+
       ServerItem x = iter->second;
       // write out the serverinfo -- which is mapped by index
       (iter->second).writeToFile(outFile);
@@ -153,7 +153,7 @@ bool			ServerListCache::clearCache()
   if (serverCache.size() > 0){
     serverCache.clear();
     return true;
- 
+
   } else {
     return false;
   }

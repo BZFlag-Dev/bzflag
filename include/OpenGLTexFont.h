@@ -80,7 +80,7 @@ class OpenGLTexFont {
 				float x, float y, float z = 0.0f) const;
     void		draw(const char* string, int length,
 				float x, float y, float z = 0.0f) const;
-    
+
 
     /** Strips all ansi control codes from a string.
      strips the ansi codes from an input string for

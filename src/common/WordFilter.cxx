@@ -25,7 +25,7 @@ bool WordFilter::simpleFilter(char *input) const
 {
   bool filtered = false;
   filter_t findWord;
-  
+
   std::string line = input;
   int startPosition = line.find_first_of(alphabet);
 
@@ -47,7 +47,7 @@ bool WordFilter::simpleFilter(char *input) const
 
       /* fill with asterisks */
       //      memset(input+startPosition,'*', endPosition-startPosition);
-      
+
       /* fill with random filter chars */
       if (filterCharacters(input, startPosition, endPosition-startPosition, true) > 0) {
 	filtered=true;
@@ -65,14 +65,14 @@ bool WordFilter::aggressiveFilter(char *input) const
   bool filtered = false;
   static regmatch_t match[1];
   char errorBuffer[512];
-  
+
   /* implicit limit of only match up to 256 words per input */
   /* !!! make dynamic */
   int matchPair[MAX_WORDS * 2];
   int matchCount = 0;
-  
+
   int regCode;
-  
+
   int startPosition = firstAlphanumeric(input);
   if (startPosition < 0) {
     return false;
@@ -88,7 +88,7 @@ bool WordFilter::aggressiveFilter(char *input) const
   int endPosition;
   char wordIndices[MAX_WORDS];
   unsigned int wordIndexLength=0;
-  
+
   char characterIndex;
 
   /* clear memory for arrays */
@@ -154,14 +154,14 @@ bool WordFilter::aggressiveFilter(char *input) const
   int startMatchPos;
   for (unsigned int j = 0; j < wordIndexLength; j++) {
     for (std::set<filter_t, expressionCompare>::iterator i = filters[wordIndices[j]].begin(); \
-	 i != filters[wordIndices[j]].end(); 
+	 i != filters[wordIndices[j]].end();
 	 ++i) {
-    
+
       startMatchPos = 0;
       while (startMatchPos >=0) {
 	regCode = regexec(i->compiled, input + startMatchPos, 1, match, 0);
 	counter++;
-      
+
 	if ( regCode == 0 ) {
 
 	  /* make sure we only match on word boundaries */
@@ -180,7 +180,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 	  matchPair[(matchCount * 2) + 1] = (match[0].rm_eo - match[0].rm_so) + startMatchPos; /* length */
 	  matchCount++;
 	  filtered = true;
-	  
+
 	  startMatchPos += match[0].rm_eo;
 
 	} else if ( regCode == REG_NOMATCH ) {
@@ -197,7 +197,7 @@ bool WordFilter::aggressiveFilter(char *input) const
     } /* iterate over words in a particular character bin */
   } /* iterate over characters */
 
-  
+
   /*
     std::cout << "searched " << counter << " words" << std::endl;
   */
@@ -205,14 +205,14 @@ bool WordFilter::aggressiveFilter(char *input) const
   /* finally filter the input.  only filter actual alphanumerics. */
   for (int i=0; i < matchCount; i++) {
     //			std::cout << "i: " << i << "  " << matchPair[i*2] << " for " << matchPair[(i*2)+1] << std::endl;
-    
+
     if (filterCharacters(input, matchPair[i*2], matchPair[(i*2)+1]) <= 0) {
       // XXX with multiple matching, we will be unable to filter overlapping matches
       //      std::cerr << "Unable to filter characters" << std::endl;
     }
   }
-  
-  
+
+
   return filtered;
 
 #else /* HAVE_REGEX_H */
@@ -228,16 +228,16 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 {
 #if HAVE_REGEX_H
   regex_t *compiledReg;
-  
+
   /* XXX need to convert this to use new/delete */
   if ( (compiledReg = (regex_t *)calloc(1, sizeof(regex_t))) == NULL ) {
-    
+
     perror("calloc failed");
     std::cerr << "Warning: unable to allocate memory for compiled regular expression";
     return (regex_t *)NULL;
-    
+
   }
-  
+
   if ( regcomp(compiledReg, word.c_str(), REG_EXTENDED | REG_ICASE) != 0 ) {
     std::cerr << "Warning: unable to compile regular expression for [" << word << "]" << std::endl;
     return (regex_t *)NULL;
@@ -257,13 +257,13 @@ std::string WordFilter::expressionFromString(const std::string &word) const
   std::string expression;
   unsigned int length = word.length();
   char c[8];
-  
+
   /* individual characters expand into a potential set of matchable characters */
   for (unsigned int i = 0; i < length; i++) {
     c[0] = c[1] = c[2] = c[3] = c[4] = c[5] = c[6] = c[7] = 0;
     // convert to lowercase for simplicity and speed
     c[0] = tolower(word[i]);
-    
+
     /* we specifically will create a regular expression that should at least
      * match exactly the given input, including any spaces or special
      * characters.  including spaces or other characters in the input will
@@ -315,7 +315,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
       c[1] = 's';
     }
     // need to handle 'f' special for f=>(f|ph)
-    
+
     /* append multi-letter expansions */
     if (c[0] == 'f') {
       /* ensure we don't capture non-printables after end of word */
@@ -343,11 +343,11 @@ std::string WordFilter::expressionFromString(const std::string &word) const
       } else {
 	expression.append("+");
       }
-      
+
     } // end test for multi-letter expansions
-    
+
   } // end iteration over word letters
-  
+
   //  std::cout << "[" <<  expression << "]" << std::endl;
 
   return expression;
@@ -362,10 +362,10 @@ WordFilter::WordFilter()
 
   /* set up the alphabet for simple filtering */
   alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  
+
   /* filter characters randomly used to replace filtered text */
   filterChars = "!@#$%^&*";
-  
+
   /* SUFFIXES */
 
 #if 1
@@ -400,7 +400,7 @@ WordFilter::WordFilter()
   fix.word = "or";
   fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
-  fix.word = "ist";  
+  fix.word = "ist";
   fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // adjective
@@ -447,11 +447,11 @@ WordFilter::WordFilter()
   fix.word = "fy";
   fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
-  fix.word = "ed";  
+  fix.word = "ed";
   fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // adverb
-  fix.word = "ly";  
+  fix.word = "ly";
   fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // slang
@@ -524,7 +524,7 @@ WordFilter::WordFilter()
 
 #if 1
   /* XXX adding prefixes _significantly_ increases the expression count
-   * and is rather expensive (slow, XN+N extra checks for N words) 
+   * and is rather expensive (slow, XN+N extra checks for N words)
    */
   fix.word = "bz";
   fix.expression = expressionFromString(fix.word);
@@ -541,7 +541,7 @@ WordFilter::WordFilter()
   fix.word = "you";
   fix.expression = expressionFromString(fix.word);
   prefixes.insert(fix);
-  
+
 
 #endif
 
@@ -549,11 +549,11 @@ WordFilter::WordFilter()
 }
 
 /** destructor releases the compiled bad words */
-WordFilter::~WordFilter(void) 
+WordFilter::~WordFilter(void)
 {
   for (int j = 0; j < MAX_FILTERS; ++j) {
-    for (std::set<filter_t, expressionCompare>::iterator i = filters[j].begin(); 
-	 i != filters[j].end(); 
+    for (std::set<filter_t, expressionCompare>::iterator i = filters[j].begin();
+	 i != filters[j].end();
 	 ++i) {
       free(i->compiled);
     }
@@ -567,7 +567,7 @@ WordFilter::~WordFilter(void)
 // adds an individual word to the filter list
 bool WordFilter::addToFilter(const std::string &word, const std::string &expression, bool append)
 {
-  long int length = (long int)word.length();  
+  long int length = (long int)word.length();
   if (0 >= length) {
     std::cerr << "Someone tried to add an empty word to the filter" << std::endl;
     return false;
@@ -599,7 +599,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
       addToFilter(word + i->word, expression + i->expression, false);
     }
 #endif /* suffixes */
-    
+
     /* add words with all prefixes prepended */
 #if 0
     std::string fullPrefix = "((";
@@ -616,14 +616,14 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     for (i = prefixes.begin();
 	 i != prefixes.end(); ++i) {
       addToFilter(i->word + word, i->expression + expression, false);
-      
+
       /* add words with prefix and suffix appended */
       for (std::set<filter_t, expressionCompare>::iterator j = suffixes.begin();
 	   j != suffixes.end(); ++j) {
-	addToFilter(i->word + word + j->word, 
-		    i->expression + expression + j->expression, 
+	addToFilter(i->word + word + j->word,
+		    i->expression + expression + j->expression,
 		    false);
-      }      
+      }
     }
 #endif  /* prefixes */
 
@@ -636,11 +636,11 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     newFilter.word = word;
     newFilter.expression = expression;
     newFilter.compiled = getCompiledExpression(expression);
-    
+
     /* check if the word is already added */
     if (filters[tolower(word[0])].find(newFilter) != \
 	filters[word[0]].end()) {
-      return false;      
+      return false;
     } else {
       filters[tolower(word[0])].insert(newFilter);
     }
@@ -668,35 +668,35 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
   char buffer[2048];
   unsigned int totalAdded=0;
   std::ifstream filterStream(fileName.c_str());
-  
+
   if (!filterStream) {
     std::cerr << "Warning: '" << fileName << "' bad word filter file not found" << std::endl;
     return 0;
   }
-  
+
   while (filterStream.good()) {
     filterStream.getline(buffer,2048);
-    
+
     std::string filterWord = buffer;
-    
+
     int position = filterWord.find_first_not_of("\r\n\t ");
-    
+
     // trim leading whitespace
     if (position > 0) {
       filterWord = filterWord.substr(position);
     }
-    
+
     position = filterWord.find_first_of("#\r\n");
-    
+
     // trim trailing comments
     if ((position >= 0) && (position < (int)filterWord.length())) {
       filterWord = filterWord.substr(0, position);
     }
-    
+
     position = filterWord.find_last_not_of(" \t\n\r");
     // first whitespace is at next character position
     position += 1;
-    
+
     // trim trailing whitespace
     if ((position >=0) && (position < (int)filterWord.length())) {
       filterWord = filterWord.substr(0, position);
@@ -706,7 +706,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
     if (filterWord.length() == 0) {
       continue;
     }
-    
+
     /*
       std::cout << "[[[" <<	 filterWord << "]]]" << std::endl;
     */
@@ -714,7 +714,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
     if (verbose) {
       std::cout << ".";
     }
-    
+
     bool added = addToFilter(filterWord, "", true);
     if (!added) {
       if (verbose) {
@@ -722,11 +722,11 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
       }
     }
     totalAdded++;
-    
+
   } // end iteration over input file
   if (verbose) {
     std::cout << std::endl;
-  }  
+  }
 
   return totalAdded;
 } // end loadFromFile
@@ -755,7 +755,7 @@ void WordFilter::outputFilter(void) const
       std::cout << "    " << j->expression << std::endl;
     }
   }
-  
+
 }
 void WordFilter::outputWords(void) const
 {
@@ -768,7 +768,7 @@ void WordFilter::outputWords(void) const
       std::cout << "[" << i << "] " << count++ << ": " << j->word << std::endl;
     }
   }
-  
+
 }
 unsigned long int WordFilter::wordCount(void) const
 {
@@ -791,7 +791,7 @@ int main (int argc, char *argv[])
     std::cerr << "missing filename" << std::endl;
     return -1;
   }
-  
+
   WordFilter filter;
   //  filter.addToFilter("fuck", true);
   filter.addToFilter("test", false);
@@ -857,7 +857,7 @@ int main (int argc, char *argv[])
   std::cout << "PRE  AGGRESSIVE " << message4 << std::endl;
   filter.filter(message4);
   std::cout << "POST AGGRESSIVE " << message4 << std::endl;
-  
+
   std::cout << "PRE  AGGRESSIVE " << message5 << std::endl;
   filter.filter(message5);
   std::cout << "POST AGGRESSIVE " << message5 << std::endl;

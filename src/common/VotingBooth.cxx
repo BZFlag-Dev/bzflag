@@ -25,7 +25,7 @@
 
 /* public: */
 
-VotingBooth::VotingBooth(std::string question, bool requireUnique) 
+VotingBooth::VotingBooth(std::string question, bool requireUnique)
   : _question(question),
     _responseCount(0),
     _voterCount(0),
@@ -34,7 +34,7 @@ VotingBooth::VotingBooth(std::string question, bool requireUnique)
   return;
 }
 
-VotingBooth::~VotingBooth(void) 
+VotingBooth::~VotingBooth(void)
 {
   return;
 }
@@ -172,11 +172,11 @@ int main (int argc, char *argv[])
   std::cout << "responseID for no is " << poll->getResponseIDFromString("no") << std::endl;
   std::cout << "responseID for yes is " << poll->getResponseIDFromString("yes") << std::endl;
   std::cout << "responseID for maybe is " << poll->getResponseIDFromString("maybe") << std::endl;
-  
+
   std::string *response;
   for (int i=0; i < 9; i++) {
-    std::cout << "response #" << i << " is " << poll->getStringFromResponseID(i) << std::endl;    
-    std::cout << "  vote count is " << poll->getVoteCount(i) << std::endl;    
+    std::cout << "response #" << i << " is " << poll->getStringFromResponseID(i) << std::endl;
+    std::cout << "  vote count is " << poll->getVoteCount(i) << std::endl;
   }
 
   std::cout << "total votes is " << poll->getTotalVotes() << std::endl;

@@ -25,9 +25,9 @@ typedef std::map<std::string, ServerItem> SRV_STR_MAP;
 
 class ServerListCache {
 
-		
+
 public:
- 
+
   ServerListCache();
   ~ServerListCache();
   static ServerListCache* get();

@@ -142,7 +142,7 @@ struct CmdLineOptions
   unsigned short int votesRequired;
   float votePercentage;
   unsigned short int voteRepeatTime;
-    
+
   std::string		reportFile;
   std::string		reportPipe;
 

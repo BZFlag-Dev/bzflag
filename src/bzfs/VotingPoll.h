@@ -35,16 +35,16 @@ class VotingPoll
   unsigned short int _votesRequired;
   float _votePercentage;
   unsigned short int _voteRepeatTime;
-   
+
 
  protected:
-  
+
  public:
-  
+
   VotingPoll(unsigned short int voteTime=60, unsigned short int vetoTime=20,
 	     unsigned short int votesRequired=3, float votePercentage=50.1,
-	     unsigned short int voteRepeatTime=300) 
-    : _voteTime(voteTime), 
+	     unsigned short int voteRepeatTime=300)
+    : _voteTime(voteTime),
       _vetoTime(vetoTime),
       _votesRequired(votesRequired),
       _votePercentage(votePercentage),
@@ -52,8 +52,8 @@ class VotingPoll
   {
     return;
   }
-  
-  ~VotingPoll(void) 
+
+  ~VotingPoll(void)
   {
     if (_votingBooth != NULL) {
       delete _votingBooth;

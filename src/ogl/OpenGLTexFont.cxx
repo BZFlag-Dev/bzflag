@@ -288,7 +288,7 @@ void			OpenGLTexFont::BitmapRep::draw(
 
   gstate.setState();
   glRasterPos3f(x, y, z);
- 
+
   length = rawStrlen(string, length);
 
   for (int i = 0; i < length; i++) {
@@ -400,7 +400,7 @@ OpenGLTexFont::OpenGLTexFont() : bitmapRep(NULL), width(1.0f), height(1.0f)
 
   rep = new Rep;
 
-  for (unsigned int i=0; i < STORED_COLORS; i++) {    
+  for (unsigned int i=0; i < STORED_COLORS; i++) {
     setColor(i, color);
   }
 }
@@ -412,7 +412,7 @@ OpenGLTexFont::OpenGLTexFont(int dx, int dy, const unsigned char* pixels) :
 
   rep = new Rep(dx, dy, pixels);
 
-  for (unsigned int i=0; i < STORED_COLORS; i++) {    
+  for (unsigned int i=0; i < STORED_COLORS; i++) {
     setColor(i, color);
   }
 }
@@ -428,7 +428,7 @@ OpenGLTexFont::OpenGLTexFont(const OpenGLTexFont& f)
   width = f.width;
   height = f.height;
 
-  for (unsigned int i=0; i < STORED_COLORS; i++) {    
+  for (unsigned int i=0; i < STORED_COLORS; i++) {
     setColor(i, color);
   }
 }

@@ -47,13 +47,13 @@
 #include "common.h"
 
 
-/** utility function returns truthfully whether 
+/** utility function returns truthfully whether
  * given character is an alphanumeric
  */
 inline bool isAlphanumeric(const char c)
 {
-  if (  ( c > 96 && c < 123 ) || 
-	( c > 64  && c < 91 ) || 
+  if (  ( c > 96 && c < 123 ) ||
+	( c > 64  && c < 91 ) ||
 	( c > 47 && c < 58 )) {
     return true;
   }
@@ -77,7 +77,7 @@ inline bool isPrintable(const char c)
 #if defined (UINT8_MAX)
 static const unsigned short int MAX_FILTERS = UINT8_MAX;
 #else
-static const unsigned short int MAX_FILTERS = 2048;  
+static const unsigned short int MAX_FILTERS = 2048;
 #endif
 
 static const unsigned short int MAX_WORDS = 256;
@@ -135,10 +135,10 @@ class WordFilter
 {
 
  private:
-  
+
   /** used by the simple filter */
   std::string alphabet;
-  
+
   /** set of characters used to replace filtered content */
   std::string filterChars;
 
@@ -151,7 +151,7 @@ class WordFilter
     std::string expression;
     regex_t *compiled;
   } filter_t;
-  
+
   /** word expressions to be filtered including compiled regexp versions */
   struct expressionCompare {
     bool operator () (const filter_t& word1, const filter_t& word2) const {
@@ -162,7 +162,7 @@ class WordFilter
 
   /** main collection of what to filter.  items are stored into
    * the array indexed by the first character of the filter word.
-   * this means a sparse array, but it's a small price for 
+   * this means a sparse array, but it's a small price for
    * minimal hashing and rather fast lookups.
    */
   // XXX consider making a numeric hash to avoid array overflows
@@ -176,7 +176,7 @@ class WordFilter
   std::set<filter_t, expressionCompare> prefixes;
 
 
-  /** utility method that returns the position of the 
+  /** utility method that returns the position of the
    * first printable character from a string
    */
   inline int firstAlphanumeric(const std::string &input) const
@@ -194,7 +194,7 @@ class WordFilter
   }
 
 
-  /** utility method that returns the position of the 
+  /** utility method that returns the position of the
    * first printable character from a string
    */
   inline int firstNonalphanumeric(const std::string &input) const
@@ -210,9 +210,9 @@ class WordFilter
     }
     return i;
   }
-  
 
-  /** utility method that returns the position of the 
+
+  /** utility method that returns the position of the
    * first printable character from a string
    */
   inline int firstPrintable(const std::string &input) const
@@ -228,7 +228,7 @@ class WordFilter
     }
     return i;
   }
-  
+
   /** utility method that returns the position of the
    * first non-printable character from a string
    */
@@ -248,7 +248,7 @@ class WordFilter
 
   /** utility method performs an actual replacement of
    * characters in an input character ray within a specified
-   * range.  
+   * range.
    */
   int filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces=false) const
   {
@@ -267,15 +267,15 @@ class WordFilter
     int count=0;
     for (unsigned int j=0; j < (unsigned int)length; j++) {
       char c = input[start + j];
-      
+
       // don't repeat random chars
       do {
 	randomCharPos = (int)((float)maxFilterChar * (float)bzfrand());
       } while (randomCharPos == previousCharPos);
       previousCharPos = randomCharPos;
-      
+
       /* when filterspaces is true, we filter everything.
-       * otherise the ascii character code ranges for a-z, A-Z, and 0-9 
+       * otherise the ascii character code ranges for a-z, A-Z, and 0-9
        * are filtered.
        */
       if (filterSpaces) {
@@ -285,27 +285,27 @@ class WordFilter
 	input[start + j] = filterChars[randomCharPos];
 	count++;
       } /* else it is non-letters so we can ignore */
-      
+
     }
     return count;
   }
-  
+
  protected:
 
   /** This filter does a simple case-insensitive
-   * word comparison that compares all filter 
+   * word comparison that compares all filter
    * words with all alphabetic string sets in the
    * input string. If test is a filter word, then
    * input strings "test", "testy", and "test;"
-   * will get filtered to "****", "testy", and 
+   * will get filtered to "****", "testy", and
    * "****;" respectively.
    */
   bool simpleFilter(char *input) const;
-  
-  
+
+
   /** This filter will take a filter word and
    * create a rather complex regular expression
-   * that catches a variety of variations on a 
+   * that catches a variety of variations on a
    * word.  Variations include automatic internal
    * expansion, optional punctuation and
    * whitespace, suffix matching (including
@@ -314,7 +314,7 @@ class WordFilter
    * filter should be the default.
    */
   bool aggressiveFilter(char *input) const;
-  
+
   /** provides a pointer to a fresh compiled
    * expression for some given expression
    */
@@ -325,16 +325,16 @@ class WordFilter
    */
   std::string expressionFromString(const std::string &word) const;
 
-  
+
  public:
-  
+
   WordFilter(void);
   ~WordFilter(void);
-  
+
   /** loads a set of bad words from a specified file */
   unsigned int loadFromFile(const std::string &fileName, bool verbose=false);
 
-  /** adds a new filter to the existing filter list, and 
+  /** adds a new filter to the existing filter list, and
    * optionally recursively adds all combinations of
    * available suffixes and prefixes.
    */
@@ -342,7 +342,7 @@ class WordFilter
   bool addToFilter(const std::string &word, bool append);
   bool addToFilter(const std::string &word, const std::string &expression);
   bool addToFilter(const std::string &word, const std::string &expression, bool append);
-  
+
   /** given an input string, filter the input
    * using either the simple or agressive filter
    */

@@ -1,14 +1,14 @@
-# Simple Swear List 
+# Simple Swear List
 #
 # Here is a simplified list of words that are obscene for the memory/cpu
 # conservative, or those who simply don't want to match against words that
 # are rude and obscene, yet not vulgar.  This list should contain only the
 # worst of the worst.
-# 
+#
 # This list follows the same rules as the multilingual swear list.
 #
 
-# English 
+# English
 analfuck
 arsefuck
 arsephuck
@@ -21,9 +21,9 @@ bltch
 buttfuc
 buttfuck
 buttfuk
-cunt    
-dick     
-fuck     
+cunt
+dick
+fuck
 fuckboy
 fuckcoons
 fuckedsideway
@@ -49,7 +49,7 @@ fucku
 fuckubitch
 fuckup
 fuckymamma
-fuckyou 
+fuckyou
 fuckyoucock
 fuckyoucunt
 fuckyougm
@@ -57,7 +57,7 @@ fuckyouii
 fukc
 motherfuck
 nigger
-shit     
+shit
 
 # Afrikaans
 dom doos                # af - dumb pussy
@@ -67,7 +67,7 @@ tief                    # af - bitch
 
 # Arabic
 gaeheba                 # ar - bitch
-kanith                  # ar - fucker  
+kanith                  # ar - fucker
 koos                    # ar - cunt.
 mara                    # ar - bitch (egypt only)
 mos zibby!              # ar - suck my dick!

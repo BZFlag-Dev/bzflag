@@ -577,7 +577,7 @@ void			SceneRenderer::render(
   }
 
   // set scissor
-  
+
   glScissor(window.getOriginX(), window.getOriginY() + window.getHeight() - window.getViewHeight(),
       window.getWidth(), window.getViewHeight());
 

@@ -57,7 +57,7 @@ class VotingBooth
    */
   unsigned short int _responseCount;
 
-  /** counts of the vote responses 
+  /** counts of the vote responses
    */
   unsigned long int _vote[MAX_VOTE_RESPONSES];
 
@@ -93,9 +93,9 @@ class VotingBooth
     }
     return (s2.size() == s1.size()) ? 0 : (s1.size() < s2.size()) ? -1 : 1; // size is unsigned
   }
-  
+
  public:
-  
+
   VotingBooth(std::string question = "", bool requireUnique = true);
   ~VotingBooth(void);
 
@@ -109,7 +109,7 @@ class VotingBooth
   const std::string getStringFromResponseID(vote_t id) const;
 
   /** a given user id/name responds and votes to a particular poll
-   * response.  
+   * response.
    */
   bool vote(const std::string name, vote_t id);
 

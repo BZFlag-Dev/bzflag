@@ -79,7 +79,7 @@ const int		FlagPLen = 6 + PlayerIdPLen + 48;
 
 class FlagDesc {
   public:
-    FlagDesc( const char* name, const char* abbv, FlagType fType, 
+    FlagDesc( const char* name, const char* abbv, FlagType fType,
 	      ShotType sType, FlagQuality quality, TeamColor team, const char* help ) {
       flagName = name;
       flagAbbv = abbv;
@@ -88,7 +88,7 @@ class FlagDesc {
       flagQuality = quality;
       flagHelp = help;
       flagTeam = team;
-      
+
       flagSets[flagQuality].insert(this);
       getFlagMap()[flagAbbv] = this;
       flagCount++;
@@ -146,14 +146,14 @@ class Flag {
 // instances are created.
 //
 namespace Flags {
-  extern FlagDesc 
+  extern FlagDesc
     *Null,
     *RedTeam, *GreenTeam, *BlueTeam, *PurpleTeam, *Velocity, *QuickTurn,
     *OscillationOverthruster, *RapidFire, *MachineGun, *GuidedMissile, *Laser,
     *Ricochet, *SuperBullet, *InvisibleBullet, *Stealth, *Tiny, *Narrow,
     *Shield, *Steamroller, *ShockWave, *PhantomZone, *Genocide, *Jumping,
-    *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Burrow, 
-    *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, *Blindness, 
+    *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Burrow,
+    *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, *Blindness,
     *Jamming, *WideAngle;
 }
 

@@ -1,8 +1,8 @@
-# Multilingual Swear List 
-#  
+# Multilingual Swear List
+#
 # Here is a list of bad words, sorted in alphabetical order.  The words and
 # phrases have been compiled from a variety of sources over time.  This list
-# is in the public domain.  Corrections, additions, and deletions should be 
+# is in the public domain.  Corrections, additions, and deletions should be
 # referred to learner@brlcad.org
 #
 # Swear words are rather subjective.  As such, only very obscene, vulgar, or
@@ -10,7 +10,7 @@
 # list.  Words that are simply "rude" should not be added.
 #
 # They are sorted in alphabetical order with one word/phrase per line.  Words
-# are case insensitive; punctuation and white-space are irrelevant (it's okay 
+# are case insensitive; punctuation and white-space are irrelevant (it's okay
 # if punctuation is listed below, but it will be required during matching).
 #
 # e.g. "dumb ass" should match "dumbass!", "DUMB a s s", "d_u_m_b! a_S_S", etc
@@ -41,12 +41,12 @@
 #
 ###
 #
-# Since all of the above matchings are done for free, they should NOT be 
+# Since all of the above matchings are done for free, they should NOT be
 # explicitly listed below.  Only root words are necessary.  For foreign
 # languages, it may be necessary to list all tenses of certain verbs, unless
 # the rules can be strictly and simply quantified.
 #
-# There are certain foreign words which are simply too common or likely to 
+# There are certain foreign words which are simply too common or likely to
 # include, and they are commented out below (e.g. "um" in Turkish).
 #
 # Strings will roughly be expanded to the following modifications and
@@ -59,7 +59,7 @@
 #    (n+[e3]+s+s+)|(a+n+c+[e3]+)|([e3]+n+c+[e3]+)|([e3]+r+)|([o0]+r+)|\
 #    ([i1]+s+t+)|([i1]+v+[e3]+)|([e3]+n+)|([i1]+c+)|([a@]+[l1]+)|\
 #    ([a@]+b+[l1]+[e3]+)|(y+)|([o0]+u+s+)| .... and so on
-# 
+#
 # Additionally, between every letter is the optional non-alphanumerics:
 #   [^[:alnum:]]*
 #
@@ -82,12 +82,12 @@
 # ab Abkhazian
 # ae Avestan
 # af Afrikaans
-# ak Akan 
+# ak Akan
 # am Amharic
 # an Argonese
 # ar Arabic
 # as Assamese
-# av Avaric 
+# av Avaric
 # ay Aymara
 # az Azerbaijani
 # ba Bashkir
@@ -95,7 +95,7 @@
 # bg Bulgarian
 # bh Bihari
 # bi Bislama
-# bm Bambara 
+# bm Bambara
 # bn Bengali, Bangla
 # bo Tibetan
 # br Breton
@@ -104,16 +104,16 @@
 # ce Chechen
 # ch Chamorro
 # co Corsican
-# cr Cree 
+# cr Cree
 # cs Czech
-# cu Church Slavic, Old Bulgarian 
+# cu Church Slavic, Old Bulgarian
 # cv Chuvash
 # cy Welsh
 # da Danish
 # de German
-# dv Divehi 
+# dv Divehi
 # dz Bhutani
-# ee Ewe 
+# ee Ewe
 # el Greek
 # en English
 # eo Esperanto
@@ -121,7 +121,7 @@
 # et Estonian
 # eu Basque
 # fa Persian
-# ff Fulah 
+# ff Fulah
 # fi Finnish
 # fj Fiji
 # fo Faroese
@@ -132,7 +132,7 @@
 # gl Galician
 # gn Guarani
 # gu Gujarati
-# gv Manx 
+# gv Manx
 # ha Hausa
 # he Hebrew (formerly iw)
 # hi Hindi
@@ -145,42 +145,42 @@
 # ia Interlingua
 # id Indonesian (formerly in)
 # ie Interlingue
-# ig Igbo 
+# ig Igbo
 # ii Sichuan Yi
 # ik Inupiak
 # io Ido
 # is Icelandic
 # it Italian
 # iu Inuktitut
-# iu Inuktitut 
+# iu Inuktitut
 # ja Japanese
 # jv Javanese
 # ka Georgian
-# kg Kongo 
+# kg Kongo
 # ki Kikuyo, Gikuyu
-# kj Kuanyama, Kwanyama 
+# kj Kuanyama, Kwanyama
 # kk Kazakh
 # kl Greenlandic
 # km Cambodian
 # kn Kannada
 # ko Korean
-# kr Kanuri 
+# kr Kanuri
 # ks Kashmiri
 # ku Kurdish
-# kv Komi 
-# kw Cornish 
+# kv Komi
+# kw Cornish
 # ky Kirghiz
 # la Latin
-# lb Luxembourgish, Letzeburgesch 
-# lg Ganda 
-# li Limburgish, Limburger, Limburgan 
+# lb Luxembourgish, Letzeburgesch
+# lg Ganda
+# li Limburgish, Limburger, Limburgan
 # ln Lingala
 # lo Laothian
 # lt Lithuanian
-# lu Luba-Katanga 
+# lu Luba-Katanga
 # lv Latvian, Lettish
 # mg Malagasy
-# mh Marshallese 
+# mh Marshallese
 # mi Maori
 # mk Macedonian
 # ml Malayalam
@@ -191,24 +191,24 @@
 # mt Maltese
 # my Burmese
 # na Nauru
-# nb Norwegian Bokmal 
-# nd North Ndebele 
+# nb Norwegian Bokmal
+# nd North Ndebele
 # ne Nepali
-# ng Ndonga 
+# ng Ndonga
 # nl Dutch
-# nn Norwegian Nynorsk 
+# nn Norwegian Nynorsk
 # no Norwegian
-# nr South Ndebele 
-# nv Navajo, Navaho 
-# ny Chichewa, Chewa, Nyanja 
+# nr South Ndebele
+# nv Navajo, Navaho
+# ny Chichewa, Chewa, Nyanja
 # oc Occitan
-# oc Occitan (post 1500), Provencal 
-# oj Ojibwa 
+# oc Occitan (post 1500), Provencal
+# oj Ojibwa
 # om (Afan) Oromo
 # or Oriya
-# os Ossetian, Ossetic 
+# os Ossetian, Ossetic
 # pa Punjabi
-# pi Pali 
+# pi Pali
 # pl Polish
 # ps Pashto, Pushto
 # pt Portuguese
@@ -219,9 +219,9 @@
 # ru Russian
 # rw Kinyarwanda
 # sa Sanskrit
-# sc Sardinian 
+# sc Sardinian
 # sd Sindhi
-# se Northern Sami 
+# se Northern Sami
 # sg Sangho
 # sh Serbo-Croatian
 # si Sinhalese
@@ -250,29 +250,29 @@
 # ts Tsonga
 # tt Tatar
 # tw Twi
-# ty Tahitian 
+# ty Tahitian
 # ug Uighur
-# ug Uighur 
+# ug Uighur
 # uk Ukrainian
 # ur Urdu
 # uz Uzbek
-# ve Venda 
+# ve Venda
 # vi Vietnamese
 # vo Volapuk
 # wa Walloon
 # wo Wolof
 # xh Xhosa
-# yi Yiddish 
+# yi Yiddish
 # yo Yoruba
 # za Zhuang
-# za Zhuang, Chuang 
+# za Zhuang, Chuang
 # zh Chinese
 # zu Zulu
-# 
+#
 ###
 
 
-# English 
+# English
 adolph hitler
 anal
 analbleed
@@ -285,14 +285,14 @@ analinvade
 analjuice
 analleakage
 anallovin
-anallyretentivepubiclouse   
+anallyretentivepubiclouse
 analmunch
 analorafice
 analorgy
 analpirate
 analprobe
 analrape
-analretentivepubiclouse     
+analretentivepubiclouse
 analsex
 analspew
 analspray
@@ -314,7 +314,7 @@ arsepiece
 arsestab
 arsewipe
 asphinct
-ass                            
+ass
 assbandit
 assbeat
 assbite
@@ -402,7 +402,7 @@ assynip
 assyniple
 asszila
 badass
-bastard                        
+bastard
 basterd
 bastid
 biach
@@ -538,7 +538,7 @@ clitlick
 clitoral
 clitorious
 clitoris
-cock                           
+cock
 cockandball
 cockbite
 cockboy
@@ -566,7 +566,7 @@ creamypant
 crotchsniff
 crotchwatch
 cuckmysock
-cum                            
+cum
 cumbubble
 cumbucket
 cumburp
@@ -582,7 +582,7 @@ cumonu
 cumquat
 cumsalot
 cumshot
-cumslut  
+cumslut
 cumstain
 cumswallow
 cunalingus
@@ -590,7 +590,7 @@ cungalingus
 cunnilingus
 cunningilus
 cunny
-cunt    
+cunt
 cuntface
 cunthead
 cuntlick
@@ -600,7 +600,7 @@ dasskick
 dicckweed
 dicface
 dichead
-dick     
+dick
 dickbrain
 dickforabrain
 dickhead
@@ -615,8 +615,8 @@ dlldo
 doggystyle
 douchebag
 dumbass
-fag      
-faggot   
+fag
+faggot
 fannybatter
 fannycream
 fannyfart
@@ -635,7 +635,7 @@ fuccwitme
 fucd
 fucface
 fuchead
-fuck     
+fuck
 fuckboy
 fuckcoons
 fuckedsideway
@@ -661,7 +661,7 @@ fucku
 fuckubitch
 fuckup
 fuckymamma
-fuckyou 
+fuckyou
 fuckyoucock
 fuckyoucunt
 fuckyougm
@@ -781,8 +781,8 @@ fuxjoo
 fuxkyou
 fuxyou
 fyuocuk
-gangbang 
-gangrape 
+gangbang
+gangrape
 gayrape
 gaywad
 goatfuck
@@ -812,7 +812,7 @@ iloveboobs
 japhate
 japkill
 japkillerusa
-jerkoff  
+jerkoff
 jewbag
 jewboy
 jewboynigger
@@ -888,13 +888,13 @@ nipplelicker
 penis
 pinktaco
 pootang
-prick    
+prick
 punkass
 pussie
-pussy    
+pussy
 pussyhole
 pussylick
-pussylip 
+pussylip
 pussypound
 pyropussy
 queer
@@ -902,16 +902,16 @@ raghead
 rape
 rapeme
 rectalprobe
-rectum 
+rectum
 schit
 schithead
 schitngrin
 schitzngrin
 scrotum
-semen    
+semen
 shiet
-shit     
-shite    
+shit
+shite
 shiteat
 shithead
 shitman
@@ -921,26 +921,26 @@ slut
 slutass
 slutznwhore
 snatch
-sperm    
+sperm
 spermburp
 spermpants
 spick
 spooge
-spoogebob 
-suckme   
+spoogebob
+suckme
 suckmydick
 sucmybawl
 supabiatch
-tit         
+tit
 twat
 vageyenuh
-vagina      
-vaginal     
+vagina
+vaginal
 vaginallip
 vaginuh
 vagiskin
-wellhung 
-whore       
+wellhung
+whore
 
 
 # Afrikaans
@@ -964,7 +964,7 @@ ebn el metanaka         # ar - son of a bitch (lit. son of a dirty one)
 elif   			# ar - dick
 gaeheba                 # ar - bitch
 haygana       		# ar - horny
-kanith                  # ar - fucker  
+kanith                  # ar - fucker
 kelbeh                  # ar - bitch (lit a female dog)
 khara                   # ar - shit
 khawal                  # ar - gay
@@ -1051,7 +1051,7 @@ fei hai                 # zh - fat cunt
 hai-paw                 # zh - cunty woman
 hamsap                  # zh - horny person (not a swear word actually, just an insult)
 hum kah chan            # zh - death to your family!
-jhew lun dou            # zh - pig cock scrotum 
+jhew lun dou            # zh - pig cock scrotum
 lay da yuen fay gay mm sai sou 		# zh - you jack off and never wash hands
 lok chat                # zh - dick
 lun-yeung		# zh - dick face
@@ -1109,7 +1109,7 @@ godverdomme             # nl - damn
 #hoer                    # nl - hooker/hoar
 hoerenzoon              # nl - son of a prostitute
 hoerezoon               # nl - son of a prostitute
-# kak                     # nl - shit 
+# kak                     # nl - shit
 klootzak                # nl - dick
 kloten                  # nl - balls
 # kut                     # nl - cunt
@@ -1171,7 +1171,7 @@ embrasse mon derriere   # fr - kiss my ass
 encule                  # fr - fuck you (anal style!?)
 fils de pute            # fr - son of a bitch
 fils du chienne         # fr - son of a bitch
-fous la camp            # fr - 
+fous la camp            # fr -
 il est becheur          # fr - pompous ass
 la chatte               # fr - cunt
 la conasse              # fr - cunt
@@ -1191,11 +1191,11 @@ pute                    # fr - whore
 salope                  # fr - bitch
 ta mere est une cheinne # fr - your mother is a bitch
 tapette                 # fr - faggot
-te faire voir chez lez grecs 	 # fr - 
+te faire voir chez lez grecs 	 # fr -
 tete moi le dard        # fr - suck my dick
 tu m'emmerdes           # fr - you're pissing me off (lit. you're shitting on me)
 tu mangeras le tas      # fr - you can eat the pile (usually an answer to "va chier"s)
-tu me fais chier        # fr - you are pissing me off 
+tu me fais chier        # fr - you are pissing me off
 tu t`emmerdes           # fr - fuck yourself!
 tu vache                # fr - (lit. you cow)
 une vieille bique				# fr - an old bitch
@@ -1204,8 +1204,8 @@ va briccole avec toi    # fr - go tinker with yourself
 va chier calisse        # fr - go shit
 va chier                # fr - go shit
 va jouer avec toi       # fr - go play with yourself
-va te faire cuire un oeuf 	 # fr - 
-va te faire voir				# fr - 
+va te faire cuire un oeuf 	 # fr -
+va te faire voir				# fr -
 va faire foutre a la vache            # fr - go fuck a cow.
 vas faire foutre a la vache           # fr - go fuck a cow.
 va pisser dans les fleurs 	 # fr - fuck off (lit: go piss in the flowers)
@@ -1655,7 +1655,7 @@ jebo te sveti ilija.    # sr - the saint ilija fucks you.
 jebo ti pas mater!      # sr - may a dog fuck your mother!
 moi te kara is ormara.  # sr - my dick is fucking you from an closet.
 peechka                 # sr - pussy.
-peecko smrdlyeeva       # sr - you smelly pussy. 
+peecko smrdlyeeva       # sr - you smelly pussy.
 picka ti se ogadila.    # sr - i beg the god that pussy will not exist for you anymore. very important to say to somebody who can't live without pussy.
 popoosheesh me quratz krusnee 		# sr - suck my lovely dick!
 popusis mi kurac krasni # sr - suck my lovely dick!

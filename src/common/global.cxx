@@ -57,7 +57,7 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_thiefVelAd",		"1.67",				false, StateDatabase::Locked},
 	{ "_thiefTinyFactor",		"0.5",				false, StateDatabase::Locked},
 	{ "_thiefAdShotVel",		"100.0",			false, StateDatabase::Locked},
-	{ "_thiefAdLife",               "0.005",			false, StateDatabase::Locked},                         
+	{ "_thiefAdLife",               "0.005",			false, StateDatabase::Locked},
 	{ "_thiefAdRate",		"10.0",				false, StateDatabase::Locked},
 	{ "_momentumLinAcc",		"1.0",				false, StateDatabase::Locked},
 	{ "_momentumAngAcc",		"1.0",				false, StateDatabase::Locked},

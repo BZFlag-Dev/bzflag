@@ -28,7 +28,7 @@ public:
   /** Since the individual parsers are allocated dynamically we need a
       destructor that deletes them. */
   ~OptionParser();
-  
+
   /** This function returns the latest error message. */
   const string& getError() const;
   /** This function returns a vector of unknown parameters in the parsed
@@ -46,7 +46,7 @@ public:
   bool registerVariable(const string& option, T& variable);
 
 protected:
-  
+
   /** This is an abstract base class for all different option types. */
   class Parser {
   public:
@@ -68,7 +68,7 @@ protected:
   protected:
     T& var;
   };
-  
+
   map<string, Parser*> parsers;
   vector<string> parameters;
   string error;

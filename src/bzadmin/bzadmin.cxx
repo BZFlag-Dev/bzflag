@@ -41,7 +41,7 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui);
 void sendMessage(ServerLink& sLink, const string& msg, PlayerId target);
 
 /** Formats an incoming message. */
-string formatMessage(const string& msg, PlayerId src, 
+string formatMessage(const string& msg, PlayerId src,
 		     PlayerId dst, TeamColor dstTeam, PlayerId me);
 
 
@@ -49,7 +49,7 @@ string formatMessage(const string& msg, PlayerId src,
 map<PlayerId, string> players;
 TeamColor myTeam;
 struct CLOptions {
-  CLOptions() 
+  CLOptions()
     : team("green"), stdin(false), stdout(false) { }
   string team;
   bool stdboth;
@@ -60,7 +60,7 @@ struct CLOptions {
 
 // Here we go.
 int main(int argc, char** argv) {
-  
+
   // parse command line arguments
   OptionParser op;
   op.registerVariable("team", clOptions.team);
@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
     port = atoi(host.substr(cPos + 1).c_str());
     host = host.substr(0, cPos);
   }
-  
+
   // connect to the server
   Address a(host);
   ServerLink sLink(a, port);
@@ -119,14 +119,14 @@ int main(int argc, char** argv) {
     cerr<<"Rejected."<<endl;
     return 0;
   }
-  
+
   // if we got commands as arguments, send them and exit
   if (op.getParameters().size() > 1) {
     for (unsigned int i = 1; i < op.getParameters().size(); ++i)
       sendMessage(sLink, op.getParameters()[i], AllPlayers);
     return 0;
   }
-  
+
   // choose UI
   BZAdminUI* ui;
   if (clOptions.stdboth)
@@ -159,7 +159,7 @@ int main(int argc, char** argv) {
     }
   }
   delete ui;
-  
+
   return 0;
 }
 
@@ -170,18 +170,18 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
   int e;
   std::string dstName, srcName;
   str = "";
-  
+
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
   while ((e = sLink.read(code, len, inbuf, 100)) == 1) {
     void* vbuf = inbuf;
     PlayerId p;
     switch (code) {
-      
+
     case MsgAddPlayer:
-      
+
       vbuf = nboUnpackUByte(vbuf, p);
-      
+
       uint16_t team, type, wins, losses, tks;
       char callsign[CallSignLen];
       char email[EmailLen];
@@ -197,38 +197,38 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
 	ui.addedPlayer(p);
       str = str + "*** '" + callsign + "' joined the game.";
       return true;
-      
+
     case MsgRemovePlayer:
       vbuf = nboUnpackUByte(vbuf, p);
       str = str + "*** '" + players[p] + "' left the game.";
       ui.removingPlayer(p);
       players.erase(p);
       return true;
-      
+
     case MsgMessage:
-      
+
       // unpack the message header
       PlayerId src;
       PlayerId dst;
       PlayerId me = sLink.getId();
       vbuf = nboUnpackUByte(vbuf, src);
       vbuf = nboUnpackUByte(vbuf, dst);
-      
+
       // is the message for me?
-      TeamColor dstTeam = (dst >= 244 && dst <= 250 ? 
+      TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
       if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
 	str = formatMessage((char*)vbuf, src, dst, dstTeam, me);
 	return true;
       }
     }
-    
+
     if (e == -2) {
       cerr<<"Server communication error!"<<endl;
       exit(0);
     }
   }
-  
+
   return false;
 }
 
@@ -237,7 +237,7 @@ void sendMessage(ServerLink& sLink, const string& msg, PlayerId target) {
   char buffer[MessageLen];
   char buffer2[1 + MessageLen];
   void* buf = buffer2;
-  
+
   buf = nboPackUByte(buf, target);
   memset(buffer, 0, MessageLen);
   strncpy(buffer, msg.c_str(), MessageLen);
@@ -246,15 +246,15 @@ void sendMessage(ServerLink& sLink, const string& msg, PlayerId target) {
 }
 
 
-string formatMessage(const string& msg, PlayerId src, 
+string formatMessage(const string& msg, PlayerId src,
 		     PlayerId dst, TeamColor dstTeam, PlayerId me) {
   string formatted = "    ";
-  
+
   // get sender and receiver
-  const string srcName = (src == ServerPlayer ? "SERVER" : 
+  const string srcName = (src == ServerPlayer ? "SERVER" :
 			  (players.count(src) ? players[src] : "(UNKNOWN)"));
   const string dstName = (players.count(dst) ? players[dst] : "(UNKNOWN)");
-  
+
   // direct message to or from me
   if (dst == me || players.count(dst)) {
     if (!(src == me && dst == me)) {
@@ -271,7 +271,7 @@ string formatMessage(const string& msg, PlayerId src,
     }
     formatted += msg;
   }
-  
+
   // public or team message
   else {
     if (dstTeam != NoTeam)
@@ -280,6 +280,6 @@ string formatMessage(const string& msg, PlayerId src,
     formatted += ": ";
     formatted += msg;
   }
-  
+
   return formatted;
 }
