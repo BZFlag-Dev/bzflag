@@ -4033,9 +4033,20 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       //Don't kick players up to 10 seconds after a world parm has changed,
       static const float heightFudge = 1.1f; /* 10% */
       if (now - lastWorldParmChange > 10.0f) {
-	float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+	float gravity;
+	
+	if (flag[player[t].flag].flag.type == Flags::Wings)
+          gravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
+	else
+	  gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+
 	if (gravity < 0.0f) {
-	  float maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*(1+BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT))) / (2.0f * -gravity));
+	  float maxTankHeight;
+	  
+	  if (flag[player[t].flag].flag.type == Flags::Wings)
+	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)*(1+BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT))) / (2.0f * -gravity));
+          else
+	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
 
 	  if (state.pos[2] > maxTankHeight) {
 	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n", player[t].callSign, t, maxTankHeight, state.pos[2]);
