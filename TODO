@@ -13,6 +13,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* require an email contact name for public servers. Perhaps
+  unpublished by default
+
 * Add ban voting.  Players can initiate a request to ban a
   particular player.  This requires /requestVote and /vote
   commands for the client, and server configurability to allow
