@@ -3296,9 +3296,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       bool toAll = (dst == AllPlayers);
       bool fromServer = (src == ServerPlayer);
 
-      const std::string srcName = srcPlayer ?
-        srcPlayer->getCallSign() :
-        fromServer ? "SERVER" : "(UNKNOWN)";
+      const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
       const std::string dstName = dstPlayer ?
         dstPlayer->getCallSign() : "(UNKNOWN)";
 
