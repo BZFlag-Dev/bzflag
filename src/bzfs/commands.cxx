@@ -451,6 +451,12 @@ void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
   return;
 }
 
+static void zapAllFlags()
+{
+  // reset all flags
+  for (int i = 0; i < numFlags; i++)
+    zapFlag(FlagInfo::flagList[i]);
+}
 
 void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
 {
@@ -506,9 +512,7 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
       }
     }
   }
-  // reset all flags
-  for (i = 0; i < numFlags; i++)
-    zapFlag(FlagInfo::flagList[i]);
+  zapAllFlags();
 
 #endif // end TIMELIMIT
 
@@ -526,29 +530,17 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
   GameKeeper::Player *otherData;
   if (strncmp(message + 6, "reset", 5) == 0) {
     bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
-    for (int i = 0; i < numFlags; i++) {
-      FlagInfo &flag = FlagInfo::flagList[i];
-      // see if someone had grabbed flag,
-      const int playerIndex = flag.player;
-      if (!onlyUnused) {
-	otherData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	if (otherData) {
-	  // tell 'em to drop it.
-	  flag.player = -1;
-	  flag.flag.status = FlagNoExist;
-	  otherData->player.resetFlag();
-
-	  void *buf, *bufStart = getDirectMessageBuffer();
-	  buf = nboPackUByte(bufStart, playerIndex);
-	  buf = FlagInfo::flagList[i].pack(buf);
-	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart,
-			   bufStart);
+    if (onlyUnused)
+      for (int i = 0; i < numFlags; i++) {
+	FlagInfo &flag = FlagInfo::flagList[i];
+	// see if someone had grabbed flag,
+	const int playerIndex = flag.player;
+	if (playerIndex == -1) {
+	  resetFlag(flag);
 	}
-	resetFlag(flag);
-      } else if (playerIndex == -1) {
-	resetFlag(flag);
       }
-    }
+    else
+      zapAllFlags();
   } else if (strncmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
       if (FlagInfo::flagList[i].flag.type->flagTeam != ::NoTeam) {
