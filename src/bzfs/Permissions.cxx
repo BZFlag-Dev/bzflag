@@ -22,7 +22,7 @@
 
 PlayerAccessMap	groupAccess;
 PlayerAccessMap	userDatabase;
-std::map<std::string, std::string>	passwordDatabase;
+PasswordMap	passwordDatabase;
 
 bool hasGroup(PlayerAccessInfo& info, const std::string &group)
 {
@@ -122,7 +122,7 @@ bool verifyUserPassword(const std::string &nick, const std::string &pass)
 {
   std::string str1 = nick;
   makeupper(str1);
-  std::map<std::string, std::string>::iterator itr = passwordDatabase.find(str1);
+  PasswordMap::iterator itr = passwordDatabase.find(str1);
   if (itr == passwordDatabase.end())
     return false;
   return itr->second == MD5(pass).hexdigest();
@@ -242,7 +242,7 @@ bool writePassFile(const std::string &filename)
   std::ofstream out(filename.c_str());
   if (!out)
     return false;
-  std::map<std::string, std::string>::iterator itr = passwordDatabase.begin();
+  PasswordMap::iterator itr = passwordDatabase.begin();
   while (itr != passwordDatabase.end()) {
     out << itr->first << ':' << itr->second << std::endl;
     itr++;

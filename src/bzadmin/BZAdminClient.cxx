@@ -68,7 +68,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 
     void* vbuf = inbuf;
     PlayerId p;
-    std::map<PlayerId, std::string>::const_iterator it;
+    PlayerIdMap::const_iterator it;
     std::string victimName, killerName;
 
     switch (code) {
@@ -196,7 +196,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 }
 
 
-std::map<PlayerId, std::string>& BZAdminClient::getPlayers() {
+PlayerIdMap& BZAdminClient::getPlayers() {
   return players;
 }
 

@@ -18,7 +18,7 @@
 
 #include "BZAdminUI.h"
 #include "ServerLink.h"
-
+#include "UIMap.h"
 
 /** This class is a client that connects to a BZFlag server and has
     functions for sending and receiving messages. If you give it
@@ -49,9 +49,9 @@ public:
   /** Return the PlayerId that this client has been assigned by the server. */
   PlayerId getMyId();
 
-  /** Returns a reference to a @c map<PlayerId,string> containing the players
+  /** Returns a reference to a @c PlayerIdMap containing the players
       in the game. */
-  std::map<PlayerId, std::string>& getPlayers();
+  PlayerIdMap& getPlayers();
 
   /** Checks for new packets from the server, ignores them or stores a
       text message in @c str. Tells @c ui about new or removed players. Returns
@@ -107,7 +107,7 @@ protected:
       static because it is used as a callback for StateDatabase::iterate(). */
   static void listSetVars(const std::string& name, void* thisObject);
 
-  std::map<PlayerId, std::string> players;
+  PlayerIdMap players;
   TeamColor myTeam;
   ServerLink sLink;
   bool valid;

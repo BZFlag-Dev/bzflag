@@ -730,7 +730,7 @@ void handleDeregisterCmd(int t, const char *message)
 
   if (strlen(message) == 11) {
     // removing own callsign
-    std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(player[t].regName);
+    PasswordMap::iterator itr1 = passwordDatabase.find(player[t].regName);
     PlayerAccessMap::iterator itr2 = userDatabase.find(player[t].regName);
     passwordDatabase.erase(itr1);
     userDatabase.erase(itr2);
@@ -741,7 +741,7 @@ void handleDeregisterCmd(int t, const char *message)
     std::string name = message + 12;
     makeupper(name);
     if (userExists(name)) {
-      std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(name);
+      PasswordMap::iterator itr1 = passwordDatabase.find(name);
       PlayerAccessMap::iterator itr2 = userDatabase.find(name);
       passwordDatabase.erase(itr1);
       userDatabase.erase(itr2);

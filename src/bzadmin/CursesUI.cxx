@@ -21,7 +21,7 @@
 UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 
-CursesUI::CursesUI(const std::map<PlayerId, std::string>& p, PlayerId m) :
+CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
   players(p), me(m), maxHistory(20), currentHistory(0) {
 
   // initialize ncurses
@@ -219,7 +219,7 @@ bool CursesUI::checkCommand(std::string& str) {
 
 
 void CursesUI::addedPlayer(PlayerId p) {
-  std::map<PlayerId, std::string>::const_iterator iter = players.find(p);
+  PlayerIdMap::const_iterator iter = players.find(p);
   comp.registerWord(iter->second);
   if (p == me)
     targetIter = iter;
@@ -276,7 +276,7 @@ void CursesUI::updateCmdWin() {
 }
 
 
-BZAdminUI* CursesUI::creator(const std::map<PlayerId, std::string>& players,
+BZAdminUI* CursesUI::creator(const PlayerIdMap& players,
 			     PlayerId me) {
   return new CursesUI(players, me);
 }

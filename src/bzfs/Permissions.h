@@ -73,10 +73,11 @@ struct PlayerAccessInfo
 };
 
 typedef std::map<std::string, PlayerAccessInfo> PlayerAccessMap;
+typedef std::map<std::string, std::string> PasswordMap;
 
 extern PlayerAccessMap	groupAccess;
 extern PlayerAccessMap	userDatabase;
-extern std::map<std::string, std::string>	passwordDatabase;
+extern PasswordMap	passwordDatabase;
 
 extern std::string		groupsFile;
 extern std::string		passFile;

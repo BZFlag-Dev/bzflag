@@ -112,7 +112,7 @@ bool StdBothUI::checkCommand(std::string& str) {
 #endif
 
 
-BZAdminUI* StdBothUI::creator(const std::map<PlayerId, std::string>&, PlayerId) {
+BZAdminUI* StdBothUI::creator(const PlayerIdMap&, PlayerId) {
   return new StdBothUI();
 }
 

@@ -45,7 +45,7 @@ protected:
 
   /** The parameters to this constructor are a map of all players and the
       local player's PlayerId. */
-  CursesUI(const std::map<PlayerId, std::string>& p, PlayerId m);
+  CursesUI(const PlayerIdMap& p, PlayerId m);
 
 public:
 
@@ -70,7 +70,7 @@ public:
 
   /** This function returns a pointer to a dynamically allocated
       CursesUI object. */
-  static BZAdminUI* creator(const std::map<PlayerId, std::string>& players, PlayerId me);
+  static BZAdminUI* creator(const PlayerIdMap& players, PlayerId me);
 
 protected:
 
@@ -90,8 +90,8 @@ protected:
   WINDOW* targetWin;
   WINDOW* cmdWin;
   std::string cmd;
-  const std::map<PlayerId, std::string>& players;
-  std::map<PlayerId, std::string>::const_iterator targetIter;
+  const PlayerIdMap& players;
+  PlayerIdMap::const_iterator targetIter;
   PlayerId me;
   AutoCompleter comp;
   std::vector<std::string> history;

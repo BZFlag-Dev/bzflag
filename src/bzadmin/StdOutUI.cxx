@@ -28,7 +28,7 @@ void StdOutUI::outputMessage(const std::string& msg) {
 }
 
 
-BZAdminUI* StdOutUI::creator(const std::map<PlayerId, std::string>&, PlayerId) {
+BZAdminUI* StdOutUI::creator(const PlayerIdMap&, PlayerId) {
   return new StdOutUI();
 }
 

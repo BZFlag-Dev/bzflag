@@ -29,7 +29,7 @@ public:
 
   /** This function returns a pointer to a dynamically allocated
       StdOutUI object. */
-  static BZAdminUI* creator(const std::map<PlayerId, std::string>& players, PlayerId me);
+  static BZAdminUI* creator(const PlayerIdMap& players, PlayerId me);
 
 protected:
 

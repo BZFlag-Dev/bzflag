@@ -35,7 +35,7 @@ bool StdInUI::checkCommand(std::string& str) {
 }
 
 
-BZAdminUI* StdInUI::creator(const std::map<PlayerId, std::string>&, PlayerId) {
+BZAdminUI* StdInUI::creator(const PlayerIdMap&, PlayerId) {
   return new StdInUI();
 }
 

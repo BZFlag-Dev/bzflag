@@ -20,8 +20,11 @@
 #include "Singleton.h"
 
 
+typedef std::map<PlayerId, std::string> PlayerIdMap;
+
+
 /** The function type that creates interface objects. */
-typedef BZAdminUI* (*UICreator)(const std::map<PlayerId, std::string>& players,
+typedef BZAdminUI* (*UICreator)(const PlayerIdMap& players,
 				PlayerId me);
 
 
