@@ -178,7 +178,7 @@ case $host_os in
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	esac;;
      cygwin)
-        CPPFLAGS="$CPPFLAGS -I/usr/include -D_BSD_SOURCE -D_POSIX_SOURCE";
+	CPPFLAGS="$CPPFLAGS -I/usr/include -D_BSD_SOURCE -D_POSIX_SOURCE";
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
@@ -187,7 +187,7 @@ case $host_os in
 	CFLAGS="$CFLAGS -ansi";
 	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
      mingw32)
-        CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
+	CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";
@@ -284,40 +284,40 @@ LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
 AC_OUTPUT(Makefile
-          src/Makefile
-          src/bzfrelay/Makefile
-          src/common/Makefile
-          src/net/Makefile
-          src/bzfs/Makefile
-          src/bzfls/Makefile
-          src/geometry/Makefile
-	  src/geometry/models/Makefile
-	  src/geometry/models/hitank/Makefile
-	  src/geometry/models/medtank/Makefile
-	  src/geometry/models/lowtank/Makefile
-          src/obstacle/Makefile
-          src/ogl/Makefile
-          src/scene/Makefile
-          src/platform/Makefile
-          src/bzflag/Makefile
-          data/Makefile
-          data/l10n/Makefile
-          debian/Makefile
-          include/Makefile
-          misc/Makefile
-          man/Makefile
-          package/Makefile
-          package/linux/Makefile
-          package/rpm/Makefile
-          package/irix/Makefile
-          package/mac/Makefile
-          package/mac/notes/Makefile
-          package/mac/platform/Makefile
-          package/mac/src/Makefile
-          package/win32/Makefile
-          package/win32/include/Makefile
-          package/win32/nsis/Makefile
-          package/win32/src/Makefile
-          package/win32/src/bzfinst/Makefile
-          package/win32/src/bzfuinst/Makefile
-          package/win32/src/makedb/Makefile)
+	src/Makefile
+	src/bzfrelay/Makefile
+	src/common/Makefile
+	src/net/Makefile
+	src/bzfs/Makefile
+	src/bzfls/Makefile
+	src/geometry/Makefile
+	src/geometry/models/Makefile
+	src/geometry/models/hitank/Makefile
+	src/geometry/models/medtank/Makefile
+	src/geometry/models/lowtank/Makefile
+	src/obstacle/Makefile
+	src/ogl/Makefile
+	src/scene/Makefile
+	src/platform/Makefile
+	src/bzflag/Makefile
+	data/Makefile
+	data/l10n/Makefile
+	debian/Makefile
+	include/Makefile
+	misc/Makefile
+	man/Makefile
+	package/Makefile
+	package/linux/Makefile
+	package/rpm/Makefile
+	package/irix/Makefile
+	package/mac/Makefile
+	package/mac/notes/Makefile
+	package/mac/platform/Makefile
+	package/mac/src/Makefile
+	package/win32/Makefile
+	package/win32/include/Makefile
+	package/win32/nsis/Makefile
+	package/win32/src/Makefile
+	package/win32/src/bzfinst/Makefile
+	package/win32/src/bzfuinst/Makefile
+	package/win32/src/makedb/Makefile)
