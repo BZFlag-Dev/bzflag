@@ -38,6 +38,8 @@ bzfs \- BZFlag game server
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-r\fR]
+[\fB\-reportfile \fIfilename\fR]
+[\fB\-reportpipe \fIcommand\fR]
 [\fB\-requireudp\fR]
 [\fB\+s \fIflag-count\fR]
 [\fB\-s \fIflag-count\fR]
@@ -218,6 +220,15 @@ Super bullets, shock waves, and guided missiles do not.
 .B -r
 Allows rogues to join the game.  By default, no rogue players are allowed.
 .TP
+.B -reportfile\fI filename\fR
+Write messages to the server admin written using the \fB/report\fR command to
+this file. If neither \fB-reportfile\fR or \fB-reportpipe\fR is used the 
+\fB/report\fR command will be disabled.
+.TP
+.B -reportpipe\fI command\fR
+Pipe messages to the server admin written using the \fB/report\fR command to
+this program or shell command. See \fB-reportfile\fR.
+.TP
 .B -requireudp
 Require clients to use parallel UDP. If players fire before opening a
 UDP channel, kick them off the server.
@@ -395,6 +406,15 @@ Attempt to gain administrator status Example:
 .ne 2
 /password supersecretpassword
 You are now an administrator!
+.ft R
+
+.TP
+.B /report {message}
+Write a message to the server administrator. Example:
+.ft CW
+.nf
+.ne 2
+/report I like this map!
 .ft R
 
 .SH SERVER ADMINISTRATIVE COMMANDS

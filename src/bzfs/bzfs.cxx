@@ -48,6 +48,8 @@ const int udpBufSize = 128000;
 #if defined(_WIN32)
 #include <windows.h>
 #define strcasecmp _stricmp
+#define popen _popen
+#define pclose _pclose
 #define sleep(_x) Sleep(1000 * (_x))
 #endif /* defined(_WIN32) */
 
@@ -444,6 +446,9 @@ struct CmdLineOptions
   bool			flagDisallowed[LastFlag + 1];//
   AccessControlList	acl;
   BadWordList		bwl;
+  
+  std::string           reportFile;
+  std::string           reportPipe;
 };
 
 enum ClientState {
@@ -5317,6 +5322,39 @@ static void parseCommand(const char *message, int t)
       }
     }
   }
+  // /report sends a message to the admin and/or stores it in a file
+  else if (strncmp(message+1, "report", 6) == 0) {
+    char reply[MessageLen];
+    if (strlen(message+1) < 8) {
+      sprintf(reply, "Nothing reported");
+    }
+    else {
+      time_t now = time(NULL);
+      char* timeStr = ctime(&now);
+      string reportStr;
+      reportStr = reportStr + timeStr + "Reported by " +
+      	player[t].callSign + ": " + (message + 8);
+      if (clOptions.reportFile.size() > 0) {
+	ofstream ofs(clOptions.reportFile.c_str(), ios::out | ios::app);
+	ofs<<reportStr<<endl<<endl;
+      }
+      if (clOptions.reportPipe.size() > 0) {
+	FILE* pipeWrite = popen(clOptions.reportPipe.c_str(), "w");
+	if (pipeWrite != NULL) {
+	  fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
+	}
+	else {
+	  DEBUG1("Couldn't write report to the pipe");
+	}
+	pclose(pipeWrite);
+      }
+      if (clOptions.reportFile.size() == 0 && clOptions.reportPipe.size() == 0)
+	sprintf(reply, "The /report command is disabled on this server.");
+      else
+	sprintf(reply, "Your report has been filed. Thank you.");
+    }
+    sendMessage(t, player[t].id, player[t].team, reply);
+  }
   else {
     sendMessage(t,player[t].id,player[t].team,"unknown command");
   }
@@ -5739,6 +5777,8 @@ static const char *usageString =
 "[-q] "
 "[+r] "
 "[-r] "
+"[-reportfile <filename>] "
+"[-reportpipe <filename>] "
 "[-requireudp] "
 "[{+s|-s} [<num>]] "
 "[-sa] "
@@ -5797,6 +5837,8 @@ static const char *extraUsageString =
 "\t-q: don't listen for or respond to pings\n"
 "\t+r: all shots ricochet\n"
 "\t-r: allow rogue tanks\n"
+"\t-reportfile <filename>: the file to store reports in\n" 
+"\t-reportpipe <filename>: the program to pipe reports through\n" 
 "\t-requireudp: require clients to use udp\n"
 "\t+s: always have <num> super flags (default=16)\n"
 "\t-s: allow up to <num> super flags (default=16)\n"
@@ -6398,6 +6440,20 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     else if (strcmp(argv[i], "-r") == 0) {
       // allow rogues
       options.gameStyle |= int(RoguesGameStyle);
+    }
+    else if (strcmp(argv[i], "-reportfile") == 0) {
+      if (++i == argc) {
+	fprintf(stderr, "argument expected for -reportfile\n");
+	usage(argv[0]);
+      }
+      options.reportFile = argv[i];
+    }
+    else if (strcmp(argv[i], "-reportpipe") == 0) {
+      if (++i == argc) {
+	fprintf(stderr, "argument expected for -reportpipe\n");
+	usage(argv[0]);
+      }
+      options.reportPipe = argv[i];
     }
     else if (strcmp(argv[i], "-s") == 0) {
       // allow up to given number of random flags
