@@ -135,8 +135,8 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\..\..\src\bzadmin\krb5_debug"
+			IntermediateDirectory=".\..\..\src\bzadmin\krb5_debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -162,7 +162,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
-				OutputFile=".\..\..\src\bzadmin\Debug/bzadmin.exe"
+				OutputFile=".\..\..\src\bzadmin\krb5_debug/bzadmin.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"

@@ -113,8 +113,8 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="..\..\src\platform\krb5_debug\"
+			IntermediateDirectory="..\..\src\platform\krb5_debug\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -138,7 +138,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\platform\Debug\platform.lib"
+				OutputFile="..\..\src\platform\krb5_debug\platform.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>

@@ -93,8 +93,8 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="..\..\src\regex\krb5_debug\"
+			IntermediateDirectory="..\..\src\regex\krb5_debug\"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -113,7 +113,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/regex/debug/regex.lib"/>
+				OutputFile="../../src/regex/krb5_debug/regex.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

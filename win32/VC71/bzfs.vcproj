@@ -138,8 +138,8 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 		</Configuration>
 		<Configuration
 			Name="KRB5 Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\..\..\src\bzfs\krb5_debug"
+			IntermediateDirectory=".\..\..\src\bzfs\krb5_debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"

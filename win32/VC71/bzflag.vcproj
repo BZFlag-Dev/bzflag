@@ -147,8 +147,8 @@ copy debug\*.pdb ..\..\*.pdb
 		</Configuration>
 		<Configuration
 			Name="KRB5 Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\..\..\src\bzflag\krb5_debug"
+			IntermediateDirectory=".\..\..\src\bzflag\krb5_debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -174,7 +174,7 @@ copy debug\*.pdb ..\..\*.pdb
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="FALSE"
 				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib libcurl.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib krb5_32.lib comerr32.lib"
-				OutputFile="..\..\src\bzflag\debug\bzflag.exe"
+				OutputFile="..\..\src\bzflag\krb5_debug\bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\src\3D\debug"
@@ -192,9 +192,8 @@ copy debug\*.pdb ..\..\*.pdb
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy..\..\src\bzflag\debug\*.exe ..\..\*.exe
-copy ..\..\src\bzflag\debug\*.pdb ..\..\*.pdb
-copy debug\*.pdb ..\..\*.pdb
+				CommandLine="copy $(ConfigurationName)\*.exe ..\..\*.exe
+
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

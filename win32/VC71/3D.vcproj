@@ -95,8 +95,8 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\..\..\src\3d\krb5_debug"
+			IntermediateDirectory=".\..\..\src\3d\krb5_debug"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			CharacterSet="2">
@@ -116,7 +116,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/3D/debug/3D.lib"
+				OutputFile="../../src/3D/krb5_debug/3D.lib"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>

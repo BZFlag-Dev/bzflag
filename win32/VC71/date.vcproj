@@ -117,8 +117,8 @@ del __bd.cxx
 		</Configuration>
 		<Configuration
 			Name="KRB5 Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\..\..\src\date\krb5_debug"
+			IntermediateDirectory=".\..\..\src\date\krb5_debug"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -141,7 +141,7 @@ del __bd.cxx
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\date\Debug\date.lib"
+				OutputFile="..\..\src\date\krb5_Debug\date.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
