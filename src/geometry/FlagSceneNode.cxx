@@ -61,6 +61,17 @@ void			FlagSceneNode::waveFlag(float dt, float /*_droop*/)
   if (ripple1 >= 2.0f * M_PI) ripple1 -= 2.0f * M_PI;
   ripple2 += dt * RippleSpeed2;
   if (ripple2 >= 2.0f * M_PI) ripple2 -= 2.0f * M_PI;
+
+  for (int i = 0; i <= flagChunks; i++) {
+    const float x      = float(i) / float(flagChunks);
+    const float damp   = 0.1f * x;
+    const float angle1 = ripple1 - 4.0f * M_PI * x;
+
+    wave0[i] = damp * sinf(angle1);
+    wave1[i] = damp
+      * (sinf(angle1 - 0.28f * M_PI) + sinf(ripple2 + 1.16f * M_PI));
+    wave2[i] = wave0[i] + damp * sinf(ripple2);
+  }
 }
 
 void			FlagSceneNode::move(const GLfloat pos[3])
@@ -133,6 +144,8 @@ void			FlagSceneNode::notifyStyleChange(
   gstate = builder.getState();
 
   flagChunks = (int)BZDB.eval("flagChunks");
+  if (flagChunks >= maxChunks)
+    flagChunks = maxChunks - 1;
   geoPole = (int)BZDB.eval("useQuality") > 2.0f;
 }
 
@@ -184,16 +197,13 @@ void			FlagSceneNode::FlagRenderNode::render()
       glBegin(GL_QUAD_STRIP);
 	for (int i = 0; i <= flagChunks; i++) {
 	  const float x = float(i) / float(flagChunks);
-	  const float angle1 = sceneNode->ripple1 - 4.0f * M_PI * x;
-	  const float damp = 0.1f * x;
-	  const float shift1 = damp * sinf(angle1);
+	  const float shift1 = sceneNode->wave0[i];
 	  GLfloat v1[3], v2[3];
 	  v1[0] = v2[0] = Width * x;
 	  v1[1] = base + Height - shift1;
 	  v2[1] = base - shift1;
-	  v1[2] = damp * (sinf(angle1 - 0.28f * M_PI) +
-				sinf(sceneNode->ripple2 + 1.16f * M_PI));
-	  v2[2] = shift1 + damp * sinf(sceneNode->ripple2);
+	  v1[2] = sceneNode->wave1[i];
+	  v2[2] = sceneNode->wave2[i];
 	  glTexCoord2f(x, 1.0f);
 	  glVertex3fv(v1);
 	  glTexCoord2f(x, 0.0f);

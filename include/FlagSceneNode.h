@@ -20,6 +20,7 @@
 #include "common.h"
 #include "SceneNode.h"
 
+const int maxChunks = 20;
 class FlagSceneNode : public SceneNode {
   public:
 			FlagSceneNode(const GLfloat pos[3]);
@@ -66,6 +67,9 @@ class FlagSceneNode : public SceneNode {
     static const float	RippleSpeed1;
     static const float	RippleSpeed2;
     static const float	DroopFactor;
+    float               wave0[maxChunks];
+    float               wave1[maxChunks];
+    float               wave2[maxChunks];
 };
 
 #endif // BZF_FLAG_SCENE_NODE_H
