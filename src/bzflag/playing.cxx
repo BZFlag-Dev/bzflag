@@ -747,28 +747,30 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       key.button == BzfKeyEvent::F2 &&
       (key.shift & (BzfKeyEvent::ControlKey +
 		    BzfKeyEvent::AltKey)) == 0 && !haveBinding) {
-    if (!hud->getComposing())
+    if (!hud->getComposing() || !pressed)
       return;
-    std::string temp = hud->getComposeString(), name;
-    if (isspace(temp[temp.size() - 1]))
-      return;;
-    int d = temp.size() - 1;
-    while (!isspace(temp[d]) && d >= 0) //get the pos of the start of the seed callsign
-      --d;
-    while (d != (int)temp.size()) { //now just load the seed callsign, which finishes the string
-      name += temp[d];
-      ++d;
-    }
+    if (isspace(hud->getComposeString()[hud->getComposeString().size() - 1]))
+      return;
+    std::vector<std::string> tokens = string_util::tokenize(hud->getComposeString(), " ");
+    std::string name = tokens.at(tokens.size() - 1); //the last token is the seed
     int c;
+    bool found = false;
     for (c = 0;c <= curMaxPlayers;c++)
       if (player[c] &&
-	  (strncmp(player[c]->getCallSign(), name.c_str(), name.size()) == 0) &&
-	  (hud->getTabCompletionRotation() != c))
+	  (strncmp(name.c_str(), player[c]->getCallSign(), name.size()) == 0) &&
+	  (hud->getTabCompletionRotation() != c)) {
+  found = true;
 	break;
-    if (c <= curMaxPlayers) {
-      hud->setTabCompletionRotation(c);
-      hud->setComposeString((temp + player[c]->getCallSign()));
     }
+    if (found) {
+      hud->setTabCompletionRotation(c);
+      std::string line = std::string("");
+      for (int d = 0;d <= tokens.size() - 2;d++) //reassemble the string
+        line += tokens[d] + " ";
+      hud->setComposeString((line + player[c]->getCallSign()));
+    }
+    else if (hud->getTabCompletionRotation() != -1) //can't lock up a callsign forever
+      hud->setTabCompletionRotation(-1);
   }
   else if (key.ascii == 0 &&
 	   key.button >= BzfKeyEvent::F1 &&
