@@ -1050,8 +1050,8 @@ void handlePollCmd(int t, const char *message)
   // get available voter count
   unsigned short int available = 0;
   for (int i=0; i < curMaxPlayers; i++) {
-    // anyone on the server (even observers) are eligible to vote
-    if (player[i].fd != NotConnected) {
+    // any registered/known users on the server (including observers) are eligible to vote
+    if ((player[i].fd != NotConnected) && userExists(player[i].regName)) {
       available++;
     }
   }
@@ -1062,7 +1062,7 @@ void handlePollCmd(int t, const char *message)
    * of succeeding (not counting the person being acted upon)
    */
   if (available - 1 < clOptions->votesRequired) {
-    sendMessage(ServerPlayer, t, "Unable to initiate a new poll.  There are not enough players.", true);
+    sendMessage(ServerPlayer, t, "Unable to initiate a new poll.  There are not enough regsitered players playing.", true);
     sprintf(reply,"There needs to be at least %d other %s and only %d %s available.",
 	    clOptions->votesRequired,
 	    clOptions->votesRequired - 1 == 1 ? "player" : "players",
@@ -1200,8 +1200,8 @@ void handlePollCmd(int t, const char *message)
 
     // keep track of who is allowed to vote
     for (int j=0; j < curMaxPlayers; j++) {
-      // anyone on the server (even observers) are eligible to vote
-      if (player[j].fd != NotConnected) {
+      // any registered/known users on the server (including observers) are eligible to vote
+      if ((player[j].fd != NotConnected) && userExists(player[j].regName)) {
 	arbiter->grantSuffrage(player[j].callSign);
       }
     }
@@ -1212,7 +1212,6 @@ void handlePollCmd(int t, const char *message)
     bool voted = arbiter->voteYes(player[t].callSign);
     if (!voted) {
       sendMessage(ServerPlayer, t, "Unable to automatically place your vote for some unknown reason", true);
-
       DEBUG2("Unable to  to automatically place a vote for [%s]\n", player[t].callSign);
     }
 
