@@ -3420,9 +3420,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       bool ignore = false;
       unsigned int i;
       for (i = 0; i < silencePlayers.size(); i++) {
-	const char *silenceCallSign = silencePlayers[i].c_str();
-	if ((strcmp(srcName.c_str(), silenceCallSign) == 0)
-	    || (strcmp( "*", silenceCallSign) == 0)) {
+	const std::string &silenceCallSign = silencePlayers[i];
+	if (srcName == silenceCallSign || "*" == silenceCallSign) {
 	  ignore = true;
 	  break;
 	}
