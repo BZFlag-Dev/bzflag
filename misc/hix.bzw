@@ -1,0 +1,285 @@
+# HiX experimental world
+# by Tim Riker <Tim@Rikers.org
+#
+# This is intended to be a team play world
+# but I need to add server support for ctf
+# and -world to be used together.
+
+# Typical Teleporter
+#
+# TeleUnit     1.12
+# TeleWidth    1.12
+# TeleBreadth  4.48
+# TeleHeight  10.08
+#
+# teleporter
+# position     x     y     0.0
+# rotation     rad
+# size         0.56  4.48  20.16
+# border       1.12
+# end
+
+# Typical link
+#
+# link
+# from from
+# to to
+# end
+
+# Typical Box
+#
+# BoxBase     30.0
+# BoxHeight    9.42
+#
+# box
+# position     x     y     0.0
+# rotation     rad
+# size         30.0  30.0  9.42
+# end
+
+# Typical pyramid
+#
+# PyrBase      8.20
+# PyrHeight   10.25
+#
+# box
+# position     x     y     0.0
+# rotation     rad
+# size         8.20  8.20  10.25
+# end
+
+# Minimal world
+
+# pyramid
+# position -200.0 -200.0 0.0
+# rotation 2.0
+# size     5.0 7.0 10.0
+# end
+
+# top of the world
+box
+position 0.0 0.0 30.0
+rotation 0.7853981625
+size     7.5 7.5 15.0
+end
+
+# cross bars
+box
+position 0.0 0.0 29.0
+rotation 0.7853981625
+size     7.5 550.0 1.0
+end
+box
+position 0.0 0.0 29.0
+rotation 2.3561944875
+size     7.5 550.0 1.0
+end
+
+# walls under crossbars
+box
+position 180.0 180.0 0.0
+rotation 2.3561944875
+size     0.5 150.0 29.0
+end
+box
+position -180.0 -180.0 0.0
+rotation 2.3561944875
+size     0.5 150.0 29.0
+end
+box
+position 180.0 -180.0 0.0
+rotation 0.7853981625
+size     0.5 150.0 29.0
+end
+box
+position -180.0 180.0 0.0
+rotation 0.7853981625
+size     0.5 150.0 29.0
+end
+# fat walls along base
+box
+position 180.0 180.0 0.0
+rotation 2.3561944875
+size     6.0 150.0 15.0
+end
+box
+position -180.0 -180.0 0.0
+rotation 2.3561944875
+size     6.0 150.0 15.0
+end
+box
+position 180.0 -180.0 0.0
+rotation 0.7853981625
+size     6.0 150.0 15.0
+end
+box
+position -180.0 180.0 0.0
+rotation 0.7853981625
+size     6.0 150.0 15.0
+end
+
+# boxes at wall ends for access
+box
+position 80.0 80.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position 280.0 280.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position -80.0 -80.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position -280.0 -280.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position -80.0 80.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position -280.0 280.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position 80.0 -80.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position 280.0 -280.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+
+# base guard posts
+box
+position 392.5 0.0 30.0
+rotation 0.0
+size     7.5 7.5 15.0
+end
+box
+position -392.5 0.0 30.0
+rotation 0.0
+size     7.5 7.5 15.0
+end
+box
+position 0.0 392.5 30.0
+rotation 0.0
+size     7.5 7.5 15.0
+end
+box
+position 0.0 -392.5 30.0
+rotation 0.0
+size     7.5 7.5 15.0
+end
+
+# walkways on edges
+box
+position 392.5 0.0 29.0
+rotation 0.0
+size     7.5 400.0 1.0
+end
+box
+position -392.5 0.0 29.0
+rotation 0.0
+size     7.5 400.0 1.0
+end
+box
+position 0.0 392.5 29.0
+rotation 1.570796325
+size     7.5 400.0 1.0
+end
+box
+position 0.0 -392.5 29.0
+rotation 1.570796325
+size     7.5 400.0 1.0
+end
+# boxes for access
+box
+position 400.0 180.0 0.0
+rotation 0.7853981625
+size     30.0 30.0 15.0
+end
+box
+position 400.0 -180.0 0.0
+rotation 0.7853981625
+size     30.0 30.0 15.0
+end
+box
+position -400.0 180.0 0.0
+rotation 0.7853981625
+size     30.0 30.0 15.0
+end
+box
+position -400.0 -180.0 0.0
+rotation 0.7853981625
+size     30.0 30.0 15.0
+end
+box
+position 180.0 400.0 0.0
+rotation 0.7853981625
+size     30.0 30.0 15.0
+end
+box
+position -180.0 400.0 0.0
+rotation 0.7853981625
+size     30.0 30.0 15.0
+end
+box
+position 180.0 -400.0 0.0
+rotation 0.7853981625
+size     30.0 30.0 15.0
+end
+box
+position -180.0 -400.0 0.0
+rotation 0.7853981625
+size     30.0 30.0 15.0
+end
+
+# boxes in the middle in front of bases
+box
+position 200.0 0.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position -200.0 0.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position 0.0 200.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+box
+position 0.0 -200.0 0.0
+rotation 0.0
+size     30.0 30.0 15.0
+end
+
+# teleporter
+# position     100.0     100.0     0.0
+# rotation     1.0
+# size         0.56 20.16 7.75
+# border       1.12
+# end
+
+# link
+# from 0
+# to 0
+# end
+
+# link
+# from 1
+# to 1
+# end
