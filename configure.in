@@ -20,9 +20,7 @@ AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
-CFLAGS=
 AC_PROG_CXX
-CXXFLAGS=
 AC_PROG_LN_S
 AC_PROG_RANLIB
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
