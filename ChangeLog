@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* MsgEnter should not be patched for ID - Frank Thilo
 * Removed superfluous buffer copies in bzfs buffer sends - Dave Brosius
 * Better pack/unpack code for vectors [3] - Dave Brosius
 * Fix Teamflag drop over building when building at 0,0,0 - Dave Brosius
