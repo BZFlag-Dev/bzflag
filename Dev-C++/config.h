@@ -133,4 +133,7 @@
 /* Define to 1 if you have the `wglGetCurrentContext' function. */
 #define HAVE_WGLGETCURRENTCONTEXT 1
 
+/* Define to 1 if you have the `vsnprintf' function. */
+#define HAVE_VSNPRINTF 1
+
 #endif
