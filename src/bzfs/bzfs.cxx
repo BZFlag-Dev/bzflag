@@ -3330,12 +3330,13 @@ static void handleCommand(int t, const void *rawbuf)
 	              "You do not have permission to speak on the admin channel.");
         }
       }
-      else if (realPlayer(targetPlayer) || (targetPlayer == AllPlayers)) {
-        // most messages should come here
-	sendMessage(t, targetPlayer, message);
+      else if ((targetPlayer < LastRealPlayer) && !realPlayer(targetPlayer)) {
+        // check for bogus targets
+	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
       }
       else {
-	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
+        // most messages should come here
+	sendMessage(t, targetPlayer, message);
       }
       break;
     }
