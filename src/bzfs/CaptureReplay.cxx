@@ -139,7 +139,7 @@ extern FlagInfo *flag;
 extern PlayerInfo player[MaxPlayers];
 extern uint16_t curMaxPlayers;
 extern TeamInfo team[NumTeams];
-extern void *getDirectMessageBuffer(void);
+extern char *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code, 
                           int len, const void *msg);
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, 
@@ -841,7 +841,7 @@ initCRpacket (u16 fake, u16 code, int len, const void *data, CRpacket *p)
   p->fake = fake;
   p->code = code;
   p->len = len;
-  (const void *) p->data = data; // dirty little trick
+  p->data = (void*) data; // dirty little trick
 }
 
 
