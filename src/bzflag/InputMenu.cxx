@@ -163,9 +163,8 @@ void			InputMenu::resize(int width, int height)
   }
 
   // load current settings
-  // FIXME - hardcoded upper bound is ugly
   std::vector<std::string> *options = &forceInput->getList();
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < options->size(); i++) {
     std::string currentOption = (*options)[i];
     if (BZDB.get("forceInputDevice") == currentOption) 
       forceInput->setIndex(i);
