@@ -2863,9 +2863,10 @@ static bool areFoes(TeamColor team1, TeamColor team2)
          (team1==RogueTeam && !(clOptions->gameStyle & int(RabbitChaseGameStyle)));
 }
 
-static bool enemyProximityCheck(TeamColor team, float *pos, float safeDist)
+static float enemyProximityCheck(TeamColor team, float *pos)
 {
-  safeDist*= safeDist;
+  float worstDist = 1e12f; // huge number
+
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].state == PlayerAlive && areFoes(player[i].team, team)) {
       float *enemyPos = player[i].lastState.pos;
@@ -2873,25 +2874,25 @@ static bool enemyProximityCheck(TeamColor team, float *pos, float safeDist)
         float x = enemyPos[0] - pos[0];
         float y = enemyPos[1] - pos[1];
         float distSq = x * x + y * y;
-        if (distSq < safeDist)
-	  return true;
+        if (distSq < worstDist)
+          worstDist = distSq;
       }
     }
   }
 
-  return false;
+  return sqrtf(worstDist);
 }
 
-static void getSpawnLocation(int playerId, float* pos, float *azimuth)
+static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
 {
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
   if (player[playerId].restartOnBase && team <= PurpleTeam) {
     float x = (baseSize[team][0] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
     float y = (baseSize[team][1] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-    pos[0] = basePos[team][0] + x * cosf(baseRotation[team]) - y * sinf(baseRotation[team]);
-    pos[1] = basePos[team][1] + x * sinf(baseRotation[team]) + y * cosf(baseRotation[team]);
-    pos[2] = basePos[team][2] + baseSize[team][2];
+    spawnpos[0] = basePos[team][0] + x * cosf(baseRotation[team]) - y * sinf(baseRotation[team]);
+    spawnpos[1] = basePos[team][1] + x * sinf(baseRotation[team]) + y * cosf(baseRotation[team]);
+    spawnpos[2] = basePos[team][2] + baseSize[team][2];
     player[playerId].restartOnBase = false;
   }
   else {
@@ -2900,11 +2901,13 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
     WorldInfo::ObstacleLocation *building;
 
     // keep track of how much time we spend searching for a location
-    TimeKeeper start=TimeKeeper::getCurrent();
+    TimeKeeper start = TimeKeeper::getCurrent();
 
     int inAirAttempts = 50;
     int tries = 0;
     float minProximity = size / 3.0f;
+    float bestDist = -1.0f;
+    float pos[3];
     bool foundspot = false;
     while (!foundspot) {
       pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
@@ -2945,32 +2948,43 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
         if (lastType != IN_PYRAMID  &&  lastType != IN_TELEPORTER) {
           foundspot = true;
         }
-      }
-
-      // only try up in the sky so many times
-      if (--inAirAttempts <= 0) {
-	onGroundOnly = true;
+        // only try up in the sky so many times
+        if (--inAirAttempts <= 0) {
+          onGroundOnly = true;
+        }
       }
 
       // check every now and then if we have already used up 10ms of time
       if (tries >= 50) {
         tries=0;
-	if (TimeKeeper::getCurrent() - start > 0.01f){
-          //Just drop the sucka in, and pray
-	  DEBUG1("Warning: getSpawnLocation ran out of time, just dropping the sucker in\n");
-          pos[2] = maxWorldHeight;
+        if (TimeKeeper::getCurrent() - start > 0.01f) {
+          if (bestDist < 0.0f) { // haven't found a single spot
+            //Just drop the sucka in, and pray
+            spawnpos[0] = pos[0];
+            spawnpos[1] = pos[1];
+            spawnpos[2] = maxWorldHeight;
+	    DEBUG1("Warning: getSpawnLocation ran out of time, just dropping the sucker in\n");
+          }
           break;
         }
       }
 
       // check if spot is safe enough
-      if (foundspot && enemyProximityCheck(team, pos, minProximity)) {
-        foundspot = false;
-        minProximity *= 0.99f;
+      if (foundspot) {
+        float dist = enemyProximityCheck(team, pos);
+        if (dist > bestDist) { // best so far
+          bestDist = dist;
+          spawnpos[0] = pos[0];
+          spawnpos[1] = pos[1];
+          spawnpos[2] = pos[2];
+        }
+        if (bestDist < minProximity) { // not good enough, keep looking
+          foundspot = false;
+          minProximity *= 0.99f; // relax requirements a little
+        }
       }
     }
   }
-
   *azimuth = (float)bzfrand() * 2.0f * M_PI;
 }
 
