@@ -4221,7 +4221,19 @@ int main(int argc, char **argv)
     if (countdownActive && clOptions->timeLimit > 0.0f) {
 	waitTime = 1.0f;
     }
-    float dropTime = FlagInfo::getNextDrop(tm);
+
+    // get time for next flag drop
+    float dropTime;
+    while ((dropTime = FlagInfo::getNextDrop(tm)) <= 0.0f)
+      // if any flags were in the air, see if they've landed
+      for (i = 0; i < numFlags; i++) {
+	FlagInfo &flag = *FlagInfo::get(i);
+	if (flag.landing(tm))
+	  if (flag.flag.status == FlagOnGround)
+	    sendFlagUpdate(flag);
+	  else
+	    resetFlag(flag);
+      }
     if (dropTime < waitTime) {
       waitTime = dropTime;
     }
@@ -4239,10 +4251,13 @@ int main(int argc, char **argv)
 
     // get time for the next replay packet (if active)
     if (Replay::enabled()) {
-      float nextTime = Replay::nextTime ();
-      if (nextTime < waitTime) {
-        waitTime = nextTime;
-      }
+      float nextTime;
+      while ((nextTime = Replay::nextTime()) <= 0.0f)
+	// send replay packets
+	if (Replay::playing())
+	  Replay::sendPackets();
+      if (nextTime < waitTime)
+	waitTime = nextTime;
     }
 
     // minmal waitTime
@@ -4285,12 +4300,6 @@ int main(int argc, char **argv)
 	}
       }
     }
-
-    // send replay packets
-    if (Replay::playing()) {
-      Replay::sendPackets ();
-    }
-
 
     for (int p = 0; p < curMaxPlayers; p++) {
       GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
@@ -4506,16 +4515,6 @@ int main(int argc, char **argv)
 	}
 	lastbroadcast = TimeKeeper::getCurrent();
       }
-    }
-
-    // if any flags were in the air, see if they've landed
-    for (i = 0; i < numFlags; i++) {
-      FlagInfo &flag = *FlagInfo::get(i);
-      if (flag.landing(tm))
-	if (flag.flag.status == FlagOnGround)
-	  sendFlagUpdate(flag);
-	else
-	  resetFlag(flag);
     }
 
     // check team flag timeouts
