@@ -3511,7 +3511,7 @@ void			ServerMenu::readServerList(int index)
       }
 
       // check info
-      if (strncmp(version, getServerVersion(), 7) == 0 &&
+      if (strcmp(version, getServerVersion()) == 0 &&
 	  (int)strlen(info) == PingPacketHexPackedSize &&
 	  port >= 1 && port <= 65535) {
 	// store info

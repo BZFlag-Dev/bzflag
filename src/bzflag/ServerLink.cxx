@@ -28,10 +28,6 @@
 // invoke persistent rebuilding for current version dates
 #include "version.h"
 
-// FIXME this should not be here! gag!
-// oversight on Tim's part when checking in patches
-#define INTERNALVERSION 0x17a0
-
 #if !defined(_WIN32)
 #include <unistd.h>
 #endif
@@ -180,7 +176,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
 
   // FIXME is it ok to try UDP always?
   server_abilities |= CanDoUDP;
-  if (strncmp(version, getServerVersion(), 7) != 0) {
+  if (strcmp(version, getServerVersion()) != 0) {
     state = BadVersion;
     goto done;
   }
