@@ -1578,8 +1578,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     // add message
     if (human && victimPlayer) {
+	    std::string message(ColorStrings[WhiteColor]);
       if (killerPlayer == victimPlayer) {
-	std::string message(ColorStrings[WhiteColor]);
 	message += "blew myself up";
 	addMessage(victimPlayer, message);
       }
@@ -1587,12 +1587,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	addMessage(victimPlayer, "destroyed by (UNKNOWN)");
       }
       else if (reason == DeadUnderDeath) {
-	std::string message(ColorStrings[WhiteColor]);
 	message += "fell in the water";
 	addMessage(victimPlayer, message);
       }
       else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
-	std::string message(ColorStrings[WhiteColor]);
 	message += "destroyed by ";
 	if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	    killerPlayer->getTeam() != RogueTeam)
@@ -1603,7 +1601,6 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
       else {
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	std::string message (ColorStrings[WhiteColor]);
 	std::string playerStr;
 	if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	    killerPlayer->getTeam() != RogueTeam)
@@ -1624,40 +1621,20 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	// Give more informative kill messages
 	FlagType* shotFlag = shot->getFlag();
-	if (shotFlag == Flags::Laser) {
-	  message += "was fried by ";
-	  message += playerStr;
-	  message += "'s laser";
-	}
-	else if (shotFlag == Flags::GuidedMissile) {
-	  message += "was destroyed by ";
-	  message += playerStr;
-	  message += "'s guided missile";
-	}
-	else if (shotFlag == Flags::ShockWave) {
-	  message += "felt the effects of ";
-	  message += playerStr;
-	  message += "'s shockwave";
-	}
-	else if (shotFlag == Flags::InvisibleBullet) {
-	  message += "didn't see ";
-	  message += playerStr;
-	  message += "'s bullet";
-	}
-	else if (shotFlag == Flags::MachineGun) {
-	  message += "was turned into swiss cheese by ";
-	  message += playerStr;
-	  message += "'s machine gun";
-	}
-	else if (shotFlag == Flags::SuperBullet) {
-	  message += "got skewered by ";
-	  message += playerStr;
-	  message += "'s super bullet";
-	}
-	else {
-	  message += "killed by ";
-	  message += playerStr;
-	}
+	if (shotFlag == Flags::Laser)
+    message += "was fried by " + playerStr + "'s laser";
+	else if (shotFlag == Flags::GuidedMissile)
+	  message += "was destroyed by " + playerStr + "'s guided missile";
+	else if (shotFlag == Flags::ShockWave)
+	  message += "felt the effects of " + playerStr + "'s shockwave";
+	else if (shotFlag == Flags::InvisibleBullet)
+	  message += "didn't see " + playerStr + "'s bullet";
+	else if (shotFlag == Flags::MachineGun)
+	  message += "was turned into swiss cheese by " + playerStr + "'s machine gun";
+	else if (shotFlag == Flags::SuperBullet)
+	  message += "got skewered by " + playerStr + "'s super bullet";
+	else
+    message += "killed by " + playerStr;
 	addMessage(victimPlayer, message, 3, killerPlayer==myTank);
       }
     }
@@ -2022,7 +1999,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       // to verify working
       std::string msg2 = "Ignored Msg";
       if (silencePlayers[i] != "*") {
-	msg2 = msg2 + " from " + silencePlayers[i];
+	msg2 += " from " + silencePlayers[i];
       } else {
 	//if * just echo a generic Ignored
       }
