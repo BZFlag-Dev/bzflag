@@ -1046,12 +1046,6 @@
 				1401FD3904B62E9100A80164,
 				1401FD3B04B62E9200A80164,
 				1401FD3D04B62E9300A80164,
-				1401FD5904B6384500A80164,
-				1401FD5A04B6384700A80164,
-				1401FD5B04B6384800A80164,
-				1401FD5C04B6384A00A80164,
-				1401FD5D04B6384A00A80164,
-				1401FD5E04B6384B00A80164,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1400,42 +1394,6 @@
 			path = /usr/local/lib/libvorbisfile.a;
 			refType = 0;
 			sourceTree = "<absolute>";
-		};
-		1401FD5904B6384500A80164 = {
-			fileRef = 1401FD4004B6377C00A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1401FD5A04B6384700A80164 = {
-			fileRef = 1401FD3F04B6377C00A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1401FD5B04B6384800A80164 = {
-			fileRef = 1401FD4104B6377C00A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1401FD5C04B6384A00A80164 = {
-			fileRef = 1401FD4304B6377C00A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1401FD5D04B6384A00A80164 = {
-			fileRef = 1401FD4404B6377C00A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1401FD5E04B6384B00A80164 = {
-			fileRef = 1401FD4504B6377C00A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		14043CA80586E0240064F048 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -3574,7 +3532,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-seg1addr 0x10000000";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -9142,7 +9099,6 @@
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = ../../../include;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-seg1addr 0x20000000";
 				OTHER_LIBTOOL_FLAGS = "";
