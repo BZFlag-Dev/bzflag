@@ -5,9 +5,11 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-lib3D_a_SOURCES =			\
+lib3D_a_SOURCES =		\
 	TextureManager.cxx	\
 	DisplayListManager.cxx	\
 	DrawablesManager.cxx	\
 	3DOptionsManager.cxx
-		
+
+EXTRA_DIST = \
+	README

@@ -13,3 +13,6 @@ libGLKit_a_SOURCES =			\
 	OpenGLTexFont.cxx		\
 	OpenGLDisplayList.cxx		\
 	RenderNode.cxx
+
+EXTRA_DIST = \
+	README

@@ -10,3 +10,6 @@ libNet_a_SOURCES =			\
 	multicast.cxx			\
 	udpnetwork.cxx			\
 	network.cxx
+
+EXTRA_DIST = \
+	README

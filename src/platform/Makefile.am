@@ -177,7 +177,10 @@ EXTRA_libPlatform_a_SOURCES =		\
 
 AM_CPPFLAGS = $(SDL_CFLAGS)
 
-EXTRA_DIST = NewMedia.cxx NewMedia.h
+EXTRA_DIST = \
+	NewMedia.cxx \
+	NewMedia.h \
+	README
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

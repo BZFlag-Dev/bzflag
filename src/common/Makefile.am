@@ -28,3 +28,6 @@ libCommon_a_SOURCES  =			\
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+EXTRA_DIST = \
+	README

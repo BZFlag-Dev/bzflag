@@ -16,3 +16,6 @@ libMediaFile_a_SOURCES =	\
 	AudioFile.h		\
 	WaveAudioFile.h		\
 	WaveAudioFile.cxx
+
+EXTRA_DIST = \
+	README

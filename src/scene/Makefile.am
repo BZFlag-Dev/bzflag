@@ -8,3 +8,6 @@ libSceneDB_a_SOURCES =			\
 	BSPSceneDatabase.cxx    
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+EXTRA_DIST = /
+	README

@@ -31,4 +31,6 @@ libz_a_SOURCES =	\
 	zutil.c		\
 	zutil.h
 
-EXTRA_DIST = zlib.html
+EXTRA_DIST = \
+	README \
+	zlib.html 

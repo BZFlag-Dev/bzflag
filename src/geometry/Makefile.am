@@ -46,3 +46,6 @@ libGeometry_a_LIBADD =	\
 	models/tank/medium_ltread.o	\
 	models/tank/medium_rtread.o	\
 	models/tank/medium_turret.o
+
+EXTRA_DIST = \
+	README

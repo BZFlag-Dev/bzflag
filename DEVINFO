@@ -60,7 +60,9 @@ Follow the above organization when introducing new files.  Any code
 that would potentially be useful in another game goes outside of the
 app directories and outside the game directory.  Platform dependent
 code normally goes into platform, net.  Code that is specific to
-bzflag should go into the game directory.
+bzflag should go into the game directory.  There are README files in
+most all of the source directories that describe what belongs in those
+directories
 
 Header files that are private to a library go into that library's
 directory.  Header files exported from a library go into the include
@@ -255,64 +257,8 @@ server), use BZDB. If you wanted an object broker, use a freakin'
 global.
 
 
-Details
-=======
-See the source directory for more details on what belongs and is in
-each directory.
-
-
-Details -- obstacle
-===================
-Collision detection stuff.  Currently specific to BZFlag it handles
-boxes, pyramids, teleporters, etc.  This should be rewritten to do
-generic 3D collision detection on, at least, convex polyhedra.  It
-should also do collision response.
-
-
-Details -- ogl
-==============
-Wraps rendering state, texture maps, and texture fonts.  Currently it
-is OpenGL specific but it could be made rendering library
-agnostic. There are a number of places outside this library where
-OpenGL is used, though.  Ideally all rendering library calls would go
-through a library agnostic interface.  However, OpenGL has the widest
-support of any rendering library so this is pretty much a non-issue
-(unless someone wants to port to a game console).
-
-
-Details -- platform
-===================
-Contains files to implement platform dependent versions of:
-  BzfDisplay	-- event handling, screen size, and video format changing
-  BzfVisual	-- wraps pixel format selection
-  BzfWindow	-- window management, gamma control, mouse & joystick stuff
-which handles:
-  configuration file I/O
-  text console output
-  time and timers
-  querying the user name
-  environment variables
-  signal handling
-Configuration files are platform independent but their location is not.
-
-
-Details -- scene
-================
-FIXME
-
-
-Details -- mediafile
-====================
-Contains loaders for image and sound files
-
-
-Details -- zlib
+Version numbers
 ===============
-zlib compression library for PNG decompression
-
-
-Details -- Version numbers
-==========================
 The BZFlag versioning info is defined in:   include/version.h
 
 There are a number of #defines in that file that define the Major,

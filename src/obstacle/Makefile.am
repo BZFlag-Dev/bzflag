@@ -13,3 +13,6 @@ libObstacle_a_SOURCES =			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	WallObstacle.cxx
+
+EXTRA_DIST = \
+	README

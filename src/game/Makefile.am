@@ -7,3 +7,6 @@ MAINTAINERCLEANFILES = \
 
 libGame_a_SOURCES = \
 	VotingArbiter.cxx
+
+EXTRA_DIST = \
+	README
