@@ -799,16 +799,19 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime /= (ThiefAdShotVel * ThiefAdRate)/3.0f;
-  f.shot.vel[0] *= ThiefAdShotVel;
-  f.shot.vel[1] *= ThiefAdShotVel;
-  f.shot.vel[2] *= ThiefAdShotVel;
   setReloadTime(path->getReloadTime() / ThiefAdRate);
 
   // make segments
+  f.shot.vel[0] /= 4.0f;
+  f.shot.vel[1] /= 4.0f;
+  f.shot.vel[2] /= 4.0f;
+
   makeSegments(Stop);
+  f.shot.vel[0] *= 4.0f * ThiefAdShotVel;
+  f.shot.vel[1] *= 4.0f * ThiefAdShotVel;
+  f.shot.vel[2] *= 4.0f * ThiefAdShotVel;
   setCurrentTime(getLastTime());
-  endTime = f.lifetime * (ThiefAdShotVel * ThiefAdRate)/3.0f;
+  endTime = f.lifetime;
 
   // make thief scene nodes
   const int numSegments = getSegments().size();
