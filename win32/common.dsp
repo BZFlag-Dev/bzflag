@@ -98,7 +98,15 @@ SOURCE=..\src\common\bzsignal.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\ConfigFileManager.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\ErrorHandler.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\common\FileManager.cxx
 # End Source File
 # Begin Source File
 
@@ -107,6 +115,10 @@ SOURCE=..\src\common\Flag.cxx
 # Begin Source File
 
 SOURCE=..\src\common\md5.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\common\Ping.cxx
 # End Source File
 # Begin Source File
 
@@ -171,6 +183,10 @@ SOURCE=..\include\common.h
 # Begin Source File
 
 SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ConfigFileManager.h
 # End Source File
 # Begin Source File
 

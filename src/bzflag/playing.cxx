@@ -4160,7 +4160,7 @@ static void		updateDaylight(double offset, SceneRenderer& renderer)
 
 static std::vector<BzfRegion*>	obstacleList;
 
-static void		addObstacle(std::vector<BzfRegion*>& list, const Obstacle& obstacle)
+static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obstacle)
 {
   float p[4][2];
   const float* c = obstacle.getPosition();
@@ -4184,9 +4184,9 @@ static void		addObstacle(std::vector<BzfRegion*>& list, const Obstacle& obstacle
   p[3][0] = c[0] - xx + yx;
   p[3][1] = c[1] - xy + yy;
 
-  int numRegions = list.size();
+  int numRegions = rgnList.size();
   for (int k = 0; k < numRegions; k++) {
-    BzfRegion* region = list[k];
+    BzfRegion* region = rgnList[k];
     int side[4];
     if ((side[0] = region->classify(p[0], p[1])) == 1 ||
 		(side[1] = region->classify(p[1], p[2])) == 1 ||
@@ -4194,13 +4194,13 @@ static void		addObstacle(std::vector<BzfRegion*>& list, const Obstacle& obstacle
 		(side[3] = region->classify(p[3], p[0])) == 1)
       continue;
     if (side[0] == -1 && side[1] == -1 && side[2] == -1 && side[3] == -1) {
-      BzfRegion* temp = list[k];
-      list[k] = list[numRegions-1];
-      list[numRegions-1] = temp;
-      temp = list[numRegions-1];
-      list[numRegions-1] = list[list.size()-1];
-      list[list.size()-1] = temp;
-      list.pop_back();
+      BzfRegion* temp = rgnList[k];
+      rgnList[k] = rgnList[numRegions-1];
+      rgnList[numRegions-1] = temp;
+      temp = rgnList[numRegions-1];
+      rgnList[numRegions-1] = rgnList[rgnList.size()-1];
+      rgnList[rgnList.size()-1] = temp;
+      rgnList.pop_back();
       numRegions--;
       k--;
       delete region;
@@ -4213,10 +4213,10 @@ static void		addObstacle(std::vector<BzfRegion*>& list, const Obstacle& obstacle
       const float* p2 = p[(j+1)&3];
       BzfRegion* newRegion = region->orphanSplitRegion(p2, p1);
       if (!newRegion) continue;		// no split
-      if (region != list[k]) list.push_back(region);
+      if (region != rgnList[k]) rgnList.push_back(region);
       region = newRegion;
     }
-    if (region != list[k]) delete region;
+    if (region != rgnList[k]) delete region;
   }
 }
 
