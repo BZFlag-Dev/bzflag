@@ -137,6 +137,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "boxWallHighResTexRepeat",	"5.0",                  true,	StateDatabase::ReadWrite,	NULL },
   { "pyrWallTexRepeat",		"3.0",                  true,	StateDatabase::ReadWrite,	NULL },
   { "pyrWallHighResTexRepeat",	"8.0",                  true,	StateDatabase::ReadWrite,	NULL },
+  { "tetraWallTexRepeat",	"3.0",                  true,	StateDatabase::ReadWrite,	NULL },
+  { "tetraWallHighResTexRepeat","8.0",                  true,	StateDatabase::ReadWrite,	NULL },
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
@@ -145,6 +147,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "boxWallTexture",	        "boxwall",              true,	StateDatabase::ReadWrite,	NULL },
   { "boxTopTexture",	        "roof",                 true,	StateDatabase::ReadWrite,	NULL },
   { "pyrWallTexture",	        "pyrwall",              true,	StateDatabase::ReadWrite,	NULL },
+  { "tetraWallTexture",	        "tetrawall",            true,	StateDatabase::ReadWrite,	NULL },
   { "cautionTexture",	        "caution",              true,	StateDatabase::ReadWrite,	NULL },
   { "deadUnderTexture",	        "deadunder",            true,	StateDatabase::ReadWrite,	NULL },
 

@@ -6,16 +6,16 @@ Notes on the Octree  (trepan)
 2. The occluders will be also be used for scene node culling
 3. The occluder selection algorithm will be improved. The easier (and
    possibly best way), to do this is to use the GL_ARB_occlusion_query
-   or GL_NV_occlusion_query extensions. If those aren't avaible, plane
+   or GL_NV_occlusion_query extensions. If those aren't available, plane
    area, distance from the eye, and angle towards the eye can all be useful.
-4. The occluders will be more useful if they are merged into larger convex
-   polygons before using them. Otherwise, the seems between adjacent
+4. The occluders can be improved by merging them into larger convex
+   polygons before using them. Otherwise, the seams between adjacent
    occluders cause culling leaks.
 5. The testTriPlaneInAxisBox() function is junk. It'll be fixed using a
-   separation axis type test (pretty quick).
+   separation axis type test.
 6. Some of the scene node culling might be better done with axis aligned
    bounding boxes.
 7. All static scene nodes will be tested for culling before being send out
    of the ZSceneDatabase.
 8. Sort the scene nodes by area before inserting into the octree
-9. Frustum culling could be done using a proximal decent, 1-3-3-1 cube
+9. Frustum culling could be done using a proximal descent, 1-3-3-1 cube.

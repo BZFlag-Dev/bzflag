@@ -176,17 +176,6 @@ void OccluderManager::select(SceneNode** list, int listCount)
   }
 
   // remove the useless occluders
-/*  
-  for (int end = (activeOccluders - 1); end >= 0; end--) {
-    if ((occluders[end]->getScore() <= 0) || 
-        (end == (allowedOccluders - 1))) { // always have a spare
-      delete occluders[end];
-      activeOccluders--;
-      occluders[end] = occluders[activeOccluders];
-      occluders[activeOccluders] = NULL;
-    }
-  }
-*/
   for (oc = 0; oc < activeOccluders; oc++) {
     if ((occluders[oc]->getScore() <= 0) || 
         (oc == (allowedOccluders - 1))) { // always have a spare

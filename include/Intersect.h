@@ -58,6 +58,13 @@ float			timeRayHitsPyramids(const Ray& r,
 					    float dx, float dy, float dz,
 					    bool flipZ);
 
+// return t at which ray intersects tetra (size 2dx x 2dy x dz)
+// (-1 if never, 0 if starts inside).
+float			timeRayHitsTetra(const Ray& r,
+					 const float (*vertices)[4][3],
+					 const float (*planes)[4][4],
+					 const float* mins, const float *maxs);
+
 // true if rectangles intersect (in z = const plane)
 bool			testRectRect(const float* p1, float angle1,
 					float dx1, float dy1,

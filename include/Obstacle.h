@@ -103,7 +103,7 @@ class Obstacle {
       Z axis, intersects this obstacle. It also factors in the difference 
       between the old Z location and the new Z location */
   virtual bool inMovingBox(const float* oldP, float oldAngle,
-                           const float *newP, float newAngle,
+                           const float* newP, float newAngle,
                            float halfWidth, float halfBreadth, float height) const = 0;
 			            
   /** This function checks if a horizontal rectangle crosses the surface of

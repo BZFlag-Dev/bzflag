@@ -37,6 +37,7 @@
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
 #include "CustomZone.h"
+#include "CustomTetra.h"
 
 extern CmdLineOptions *clOptions;
 extern BasesList bases;
@@ -126,6 +127,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
       newObject = new CustomBox;
     } else if (strcasecmp(buffer, "pyramid") == 0) {
       newObject = new CustomPyramid();
+    } else if (strcasecmp(buffer, "tetra") == 0) {
+      newObject = new CustomTetra();
     } else if (strcasecmp(buffer, "teleporter") == 0) {
       newObject = new CustomGate();
     } else if (strcasecmp(buffer, "link") == 0) {

@@ -67,6 +67,13 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
   pyramids.push_back (pyr);
 }
 
+void WorldInfo::addTetra(const float (*vertices)[3], const bool *visible,
+                         bool drive, bool shoot)
+{
+  TetraBuilding tetra (vertices, visible, drive, shoot);
+  tetras.push_back (tetra);
+}
+
 void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive, bool shoot)
 {
   if ((z + h) > maxHeight)
@@ -139,7 +146,7 @@ WorldWeapons& WorldInfo::getWorldWeapons()
 
 void                    WorldInfo::loadCollisionManager()
 {
-  collisionManager.load(boxes, pyramids, teleporters, bases);
+  collisionManager.load(boxes, pyramids, tetras, teleporters, bases);
   return;
 }
 
@@ -148,7 +155,7 @@ void                    WorldInfo::checkCollisionManager()
   float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   if (worldSize != collisionManager.getWorldSize()) {
     // reload the collision grid
-    collisionManager.load(boxes, pyramids, teleporters, bases);
+    collisionManager.load(boxes, pyramids, tetras, teleporters, bases);
   }
   return;
 }
@@ -276,6 +283,9 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle)
   else if (obstacle->getType() == PyramidBuilding::getClassName()) {
     return IN_PYRAMID;
   }
+  else if (obstacle->getType() == TetraBuilding::getClassName()) {
+    return IN_TETRA;
+  }
   else if (obstacle->getType() == BaseBuilding::getClassName()) {
     return IN_BASE;
   }
@@ -333,6 +343,7 @@ int WorldInfo::packDatabase()
     (2 + 2 + WorldCodeWallSize) * walls.size() +
     (2 + 2 + WorldCodeBoxSize) * boxes.size() +
     (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
+    (2 + 2 + WorldCodeTetraSize) * tetras.size() +
     (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
     worldWeapons.packSize() + entryZones.packSize();
@@ -387,6 +398,32 @@ int WorldInfo::packDatabase()
       bitMask |= _SHOOT_THRU;
     if (pyr.getZFlip())
       bitMask |= _FLIP_Z;
+    databasePtr = nboPackUByte(databasePtr, bitMask);
+  }
+
+  // add tetras
+  for (std::vector<TetraBuilding>::iterator tetra_it = tetras.begin();
+       tetra_it != tetras.end(); ++tetra_it) {
+    TetraBuilding &tetra = *tetra_it;
+    unsigned char visible = 0;
+    // bit 0 is for plane 0, etc...
+    for (int v = 0; v < 4; v++) {
+      if (tetra.getVisibility(v)) {
+        visible = visible | (1 << v);
+      }
+    }
+    databasePtr = nboPackUShort(databasePtr, WorldCodeTetraSize);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeTetra);
+    databasePtr = nboPackVector(databasePtr, tetra.getVertex(0));
+    databasePtr = nboPackVector(databasePtr, tetra.getVertex(1));
+    databasePtr = nboPackVector(databasePtr, tetra.getVertex(2));
+    databasePtr = nboPackVector(databasePtr, tetra.getVertex(3));
+    databasePtr = nboPackUByte(databasePtr, visible);
+    bitMask = 0;
+    if (tetra.isDriveThrough())
+      bitMask |= _DRIVE_THRU;
+    if (tetra.isShootThrough())
+      bitMask |= _SHOOT_THRU;
     databasePtr = nboPackUByte(databasePtr, bitMask);
   }
 

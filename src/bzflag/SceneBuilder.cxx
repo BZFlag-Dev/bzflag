@@ -33,6 +33,7 @@
 #include "BoxSceneNodeGenerator.h"
 #include "PyramidSceneNodeGenerator.h"
 #include "BaseSceneNodeGenerator.h"
+#include "TetraSceneNodeGenerator.h"
 #include "TeleporterSceneNodeGenerator.h"
 #include "WallSceneNodeGenerator.h"
 
@@ -101,6 +102,7 @@ const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] = {
 				{ 0.375f, 0.375f, 0.75f, 1.0f },
 				{ 0.175f, 0.175f, 0.35f, 1.0f }
 			};
+
 const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.13f, 0.13f, 0.51f, 1.0f },
@@ -117,6 +119,31 @@ const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
 			};
 const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f }
+			};
+
+const GLfloat		SceneDatabaseBuilder::tetraColors[4][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.13f, 0.13f, 0.51f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.375f, 0.375f, 0.75f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::tetraModulateColors[4][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.13f, 0.13f, 0.51f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.375f, 0.375f, 0.75f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::tetraLightedColors[4][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::tetraLightedModulateColors[4][4] = {
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
@@ -187,6 +214,7 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   baseLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
   boxLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
   pyramidLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
+  tetraLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
   teleporterLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
 
   // pick type of database
@@ -221,6 +249,12 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   while (pyramidScan != pyramids.end()) {
     addPyramid(db, *pyramidScan);
     ++pyramidScan;
+  }
+  const std::vector<TetraBuilding> &tetras = world->getTetras();
+  std::vector<TetraBuilding>::const_iterator tetraScan = tetras.begin();
+  while (tetraScan != tetras.end()) {
+    addTetra(db, *tetraScan);
+    ++tetraScan;
   }
   const std::vector<BaseBuilding> &baseBuildings = world->getBases();
   std::vector<BaseBuilding>::const_iterator baseScan = baseBuildings.begin();
@@ -366,6 +400,48 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
 
     db->addStaticNode(node);
     part = (part + 1) % 5;
+  }
+  delete nodeGen;
+}
+
+void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
+						const TetraBuilding& o)
+{
+  // this assumes tetras have four parts:  four sides
+  int part = 0;
+  WallSceneNode* node;
+  ObstacleSceneNodeGenerator* nodeGen = new TetraSceneNodeGenerator(&o);
+
+  TextureManager &tm = TextureManager::instance();
+  int tetraTexture = -1;
+
+  bool useColorTexture = false;
+  // try object, standard, then default
+  if (o.userTextures[0].size())
+    tetraTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (tetraTexture < 0)
+    tetraTexture = tm.getTextureID(BZDB.get("tetraWallTexture").c_str(),false);
+
+  useColorTexture = tetraTexture >= 0;
+
+  // Using boxTexHeight since it's (currently) the same and it's already available
+  float textureFactor = BZDB.eval("tetraWallTexRepeat");
+  if (BZDB.eval("useQuality")>=3)
+    textureFactor = BZDB.eval("tetraWallHighResTexRepeat");
+
+  while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
+				-textureFactor * boxTexHeight,
+				tetraLOD))) {
+    node->setColor(tetraColors[part]);
+    node->setModulateColor(tetraModulateColors[part]);
+    node->setLightedColor(tetraLightedColors[part]);
+    node->setLightedModulateColor(tetraLightedModulateColors[part]);
+    node->setMaterial(tetraMaterial);
+    node->setTexture(tetraTexture);
+    node->setUseColorTexture(useColorTexture);
+
+    db->addStaticNode(node);
+    part = (part + 1) % 4;
   }
   delete nodeGen;
 }

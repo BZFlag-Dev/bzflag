@@ -22,6 +22,7 @@
 #include "WallObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
+#include "TetraBuilding.h"
 #include "BaseBuilding.h"
 #include "Teleporter.h"
 #include "Obstacle.h"
@@ -43,6 +44,7 @@ class CollisionManager {
     
     void load (std::vector<BoxBuilding>     &boxes,
                std::vector<PyramidBuilding> &pyrs,
+               std::vector<TetraBuilding>   &tetras,
                std::vector<Teleporter>      &teles,
                std::vector<BaseBuilding>    &bases);
     

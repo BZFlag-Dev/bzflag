@@ -25,6 +25,7 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
+#include "TetraBuilding.h"
 #include "Teleporter.h"
 #include "EighthDimSceneNode.h"
 #include "FlagWarpSceneNode.h"
@@ -85,6 +86,7 @@ class World {
     const std::vector<BoxBuilding>&	getBoxes() const;
     const std::vector<PyramidBuilding>& getPyramids() const;
     const std::vector<BaseBuilding> &getBases() const;
+    const std::vector<TetraBuilding> &getTetras() const;
     const std::vector<Teleporter>&	getTeleporters() const;
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
@@ -156,6 +158,7 @@ class World {
     std::vector<BoxBuilding>		boxes;
     std::vector<PyramidBuilding>	pyramids;
     std::vector<BaseBuilding>		basesR;
+    std::vector<TetraBuilding>		tetras;
     std::vector<Teleporter>		teleporters;
     std::vector<WallObstacle>		walls;
     std::vector<Weapon>		        weapons;
@@ -169,6 +172,7 @@ class World {
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
     EighthDimSceneNode** boxInsideNodes;
+    EighthDimSceneNode** tetraInsideNodes;
     EighthDimSceneNode** pyramidInsideNodes;
     EighthDimSceneNode** baseInsideNodes;
     static World*	playingField;
@@ -359,6 +363,11 @@ inline const std::vector<BoxBuilding>&	World::getBoxes() const
 inline const std::vector<PyramidBuilding>& World::getPyramids() const
 {
   return pyramids;
+}
+
+inline const std::vector<TetraBuilding>& World::getTetras() const
+{
+  return tetras;
 }
 
 inline const std::vector<Teleporter>&	World::getTeleporters() const

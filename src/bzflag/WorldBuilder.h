@@ -53,6 +53,7 @@ class WorldBuilder {
     void		append(const BoxBuilding&);
     void		append(const PyramidBuilding&);
     void		append(const BaseBuilding&);
+    void		append(const TetraBuilding&);
     void		append(const Teleporter&);
     void		append(const Weapon&);
     void		append(const EntryZone&);

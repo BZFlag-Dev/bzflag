@@ -24,6 +24,7 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
+#include "TetraBuilding.h"
 #include "Teleporter.h"
 #include "WallObstacle.h"
 #include "CollisionManager.h"
@@ -33,7 +34,8 @@ class CustomZone;
 
 typedef std::vector<std::string> QualifierList;
 
-typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX_NOTDRIVETHROUGH, IN_BOX_DRIVETHROUGH, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
+typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX_NOTDRIVETHROUGH, IN_BOX_DRIVETHROUGH, 
+               IN_PYRAMID, IN_TETRA, IN_TELEPORTER } InBuildingType;
 
 
 class WorldInfo {
@@ -49,6 +51,7 @@ public:
   void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
   void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
   void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
+  void addTetra(const float (*vertices)[3], const bool *visible, bool drive = false, bool shoot = false);
   void addBase(float x, float y, float z, float r, float w, float d, float h,
 	       int color, bool drive = false, bool shoot = false);
   void addLink(int from, int to);
@@ -117,6 +120,7 @@ private:
   std::vector<BoxBuilding> boxes;
   std::vector<BaseBuilding> bases;
   std::vector<PyramidBuilding> pyramids;
+  std::vector<TetraBuilding> tetras;
   std::vector<WallObstacle> walls;
   std::vector<Teleporter> teleporters;
 

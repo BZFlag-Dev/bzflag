@@ -622,6 +622,23 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   }
   glEnd();
 
+  // draw tetrahedron buildings (FIXME, junk)
+  const std::vector<TetraBuilding>& tetras = world.getTetras();
+  count = tetras.size();
+  glBegin(GL_TRIANGLES);
+  for (i = 0; i < count; i++) {
+    const TetraBuilding& tetra = tetras[i];
+    const float cs = 0.9f; //colorScale(pyr.getPosition()[2], pyr.getHeight(), BZDBCache::enhancedRadar);
+    glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, 0.75f); //transScale(pyr));
+    const float (*vertices)[3] = tetra.getVertices();
+    for (int t = 0; t < 4; t++) {
+      glVertex2f(vertices[(t + 0) % 4][0], vertices[(t + 0) % 4][1]);
+      glVertex2f(vertices[(t + 1) % 4][0], vertices[(t + 1) % 4][1]);
+      glVertex2f(vertices[(t + 2) % 4][0], vertices[(t + 2) % 4][1]);
+    }
+  }
+  glEnd();
+
   // now draw antialiased outlines around the polygons
   if (smoothingOn) {
     glEnable(GL_BLEND);

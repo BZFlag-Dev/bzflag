@@ -151,6 +151,7 @@ ObstacleList CollisionManager::getObstacles (const float* oldPos, float oldAngle
 
 void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
                              std::vector<PyramidBuilding> &pyrs,
+                             std::vector<TetraBuilding>   &tetras,
                              std::vector<Teleporter>      &teles,
                              std::vector<BaseBuilding>    &bases)
 {
@@ -209,6 +210,23 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
       GridCell* cell = (GridCell*) (*cit);
       if (pyr->inBox(cell->pos, 0.0f, Hx, Hy, Heaven)) {
         cell->objs.push_back( &(*it_pyr) );
+      }
+    }
+  }
+  
+  // Tetrahedrons  
+  for (std::vector<TetraBuilding>::iterator it_tetra = tetras.begin();
+       it_tetra != tetras.end(); it_tetra++) {
+    TetraBuilding* tetra = (TetraBuilding *) &(*it_tetra);
+    tetra->collisionState = false;
+    float dx = tetra->getWidth();
+    float dy = tetra->getBreadth();
+    float radius = sqrtf (dx*dx + dy*dy);
+    CellList list = getCells (tetra->getPosition(), radius);
+    for (cit = list.begin(); cit != list.end(); cit++) {
+      GridCell* cell = (GridCell*) (*cit);
+      if (tetra->inBox(cell->pos, 0.0f, Hx, Hy, Heaven)) {
+        cell->objs.push_back( &(*it_tetra) );
       }
     }
   }

@@ -28,6 +28,7 @@ class WallObstacle;
 class BoxBuilding;
 class PyramidBuilding;
 class BaseBuilding;
+class TetraBuilding;
 class Teleporter;
 class World;
 
@@ -43,6 +44,7 @@ class SceneDatabaseBuilder {
     void		addBox(SceneDatabase*, const BoxBuilding&);
     void		addPyramid(SceneDatabase*, const PyramidBuilding&);
     void		addBase(SceneDatabase*, const BaseBuilding&);
+    void		addTetra(SceneDatabase*, const TetraBuilding&);
     void		addTeleporter(SceneDatabase*, const Teleporter&);
 
   private:
@@ -64,6 +66,9 @@ class SceneDatabaseBuilder {
     OpenGLMaterial	pyramidMaterial;
     bool		pyramidLOD;
 
+    OpenGLMaterial	tetraMaterial;
+    bool		tetraLOD;
+
     bool		baseLOD;
 
     OpenGLMaterial	teleporterMaterial;
@@ -81,6 +86,10 @@ class SceneDatabaseBuilder {
     static const GLfloat pyramidModulateColors[5][4];
     static const GLfloat pyramidLightedColors[5][4];
     static const GLfloat pyramidLightedModulateColors[5][4];
+    static const GLfloat tetraColors[4][4];
+    static const GLfloat tetraModulateColors[4][4];
+    static const GLfloat tetraLightedColors[4][4];
+    static const GLfloat tetraLightedModulateColors[4][4];
     static const GLfloat teleporterColors[3][4];
     static const GLfloat teleporterModulateColors[3][4];
     static const GLfloat teleporterLightedColors[3][4];

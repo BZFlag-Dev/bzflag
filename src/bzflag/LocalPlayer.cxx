@@ -392,6 +392,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
     if ((oldLocation != InAir) 
     &&  (obstacle->getType() != WallObstacle::getClassName())
+    &&  (obstacle->getType() != TetraBuilding::getClassName())
     &&  (obstacle->getType() != PyramidBuilding::getClassName())
     &&  (obstacleTop != tmpPos[2]) && obstacleTop < (tmpPos[2] + BZDB.eval( StateDatabase::BZDB_MAXBUMPHEIGHT))) {
       newPos[0] = oldPosition[0];
@@ -467,13 +468,15 @@ void			LocalPlayer::doUpdateMotion(float dt)
     // no intersection but we're expecting one so, in that case, fall
     // back to simple normal calculation.
     float normal[3];
-    if (!getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal))
+    if (!getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal)) {
       obstacle->getNormal(newPos, normal);
+    }
 
     // check for being on a building
     if (newPos[2] > 0.0 && normal[2] > 0.001f) {
-      if (location != Dead && location != Exploding && expelled)
+      if (location != Dead && location != Exploding && expelled) {
 	location = OnBuilding;
+      }
       newVelocity[2] = 0.0f;
     } else {
       // get component of velocity in normal direction (in horizontal plane)
@@ -483,13 +486,15 @@ void			LocalPlayer::doUpdateMotion(float dt)
       if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE)) {
 	// if going down then stop falling
 	if (newVelocity[2] < 0.0f && newVelocity[2] -
-	    (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
+	    (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f) {
 	  newVelocity[2] = 0.0f;
+        }
 
 	// normalize force magnitude in horizontal plane
 	float horNormal = normal[0] * normal[0] + normal[1] * normal[1];
-	if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE))
+	if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE)) {
 	  mag /= horNormal;
+        }
       }
 
       // cancel out component in normal direction (if velocity and

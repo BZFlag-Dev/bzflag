@@ -22,6 +22,8 @@ bzfs_SOURCES = \
 	CustomLink.h \
 	CustomPyramid.cxx \
 	CustomPyramid.h \
+	CustomTetra.cxx \
+	CustomTetra.h \
 	CustomWeapon.cxx \
 	CustomWeapon.h \
 	CustomWorld.cxx \

@@ -936,10 +936,10 @@ and a list of attributes for that object, one per line, inbetween. Attributes ma
 any order. Attributes have default values, and if that is good enough, the attribute need not
 be listed. Words are always specified in lowercase. Line comments can be specified by placing a
 # sign at the start of the line. For documentation purposes, you can tag each object by adding
-a name attribute. There is no set limit to the number of times you may use box, pyramid, teleporter,
-link, base, weapon, and zone objects. You may only supply one world object and one options object.
-The options object contains command line arguments that are used to configure the server's game
-mode, but can not contain server specific options such as -p, -passwd, and -conf.
+a name attribute. There is no set limit to the number of times you may use box, pyramid, tetra,
+teleporter, link, base, weapon, and zone objects. You may only supply one world object and one
+options object. The options object contains command line arguments that are used to configure the
+server's game mode, but can not contain server specific options such as -p, -passwd, and -conf.
 
 .br
 In the following examples, the values are the defaults.
@@ -971,6 +971,31 @@ In the following examples, the values are the defaults.
 \fB  size\fR 8.2 8.2 10.25
 .br
 \fB  rotation\fR 0.0
+.br
+\fBend\fR
+.br
+
+.B The Tetrahedron object
+
+\fBtetra\fR
+.br
+\fB  name\fR example_tetra
+.br
+# there must always be 4 vertices
+.br
+\fB  vertex\fR -10.0 -5.0 0.0
+.br
+\fB  vertex\fR +10.0 -5.0 0.0
+.br
+\fB  vertex\fR 0.0 10.0 0.0
+.br
+\fB  vertex\fR 0.0 5.0 10.0
+.br
+# defines the visible planes
+.br
+# planes are numbered according to their opposite vertex
+.br
+\fB  visible\fR 1 1 0 1
 .br
 \fBend\fR
 .br

@@ -21,6 +21,8 @@
 #include "EighthDBoxSceneNode.h"
 #include "EighthDPyrSceneNode.h"
 #include "EighthDBaseSceneNode.h"
+#include "EighthDTetraSceneNode.h"
+#include "TetraBuilding.h"
 
 WorldBuilder::WorldBuilder()
 {
@@ -118,6 +120,35 @@ void* WorldBuilder::unpack(void* buf)
 	  pyr.setZFlip();
 
 	append(pyr);
+	break;
+      }
+      case WorldCodeTetra: {
+        float vertices[4][3];
+        bool visible[4];
+	unsigned char planeflags, tempflags;
+
+	if (len != WorldCodeTetraSize)
+	  return NULL;
+
+        buf = nboUnpackVector(buf, vertices[0]);
+        buf = nboUnpackVector(buf, vertices[1]);
+        buf = nboUnpackVector(buf, vertices[2]);
+        buf = nboUnpackVector(buf, vertices[3]);
+	buf = nboUnpackUByte(buf, planeflags);
+	buf = nboUnpackUByte(buf, tempflags);
+	
+	for (int p = 0; p < 4; p++) {
+	  if (planeflags & (1 << p)) {
+            visible[p] = true;
+          } else {
+            visible[p] = false;
+          }
+        }
+          
+	TetraBuilding tetra(vertices, visible,
+			    (tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
+
+	append(tetra);
 	break;
       }
       case WorldCodeTeleporter: {
@@ -323,6 +354,13 @@ void WorldBuilder::preGetWorld()
     world->pyramidInsideNodes[i] = new EighthDPyrSceneNode(o.getPosition(),
 							   obstacleSize, o.getRotation());
   }
+  const int numTetras = world->tetras.size();
+  world->tetraInsideNodes = new EighthDimSceneNode*[numTetras];
+  for (i = 0; i < numTetras; i++) {
+    const TetraBuilding& o = world->tetras[i];
+    world->tetraInsideNodes[i] = new EighthDTetraSceneNode(o.getVertices(),
+                                                           o.getPlanes());
+  }
   const int numBases = world->basesR.size();
   world->baseInsideNodes = new EighthDimSceneNode*[numBases];
   for (i = 0; i < numBases; i++) {
@@ -409,6 +447,11 @@ void WorldBuilder::append(const PyramidBuilding& pyramid)
 void WorldBuilder::append(const BaseBuilding& base)
 {
   world->basesR.push_back(base);
+}
+
+void WorldBuilder::append(const TetraBuilding& tetra)
+{
+  world->tetras.push_back(tetra);
 }
 
 void WorldBuilder::append(const Teleporter& teleporter)
