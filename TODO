@@ -13,6 +13,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
       into account when calculating the maximum allowed height (probably 
       tricky).
 
+    - players can get autokicked for speeding if a theif steals their flag
+    
 
 THESE ARE LOWER PRIORITY
 
