@@ -1718,7 +1718,7 @@ static void		doMotion()
         TimeKeeper now = TimeKeeper::getCurrent();
 	if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
 	  if ((fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
-	  ||  (distance < 50.0f)) {
+	  ||  ((distance < 50.0f) && (fabs(rotation) < 2.0f*BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
 	    float dir[3] = {cosf(playerAngle), sinf(playerAngle), 0.0f};
 	    pos[2] += BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 	    Ray tankRay(pos, dir);
@@ -1726,11 +1726,13 @@ static void		doMotion()
 	    distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
 	    const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
 	    if (!building) {
-	       myTank->fireShot();
-	       lastShot = now;
-	       shotFired = true;
+	      if (fabs(pos[2] - tp[2]) < 2.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT)) {
+	        myTank->fireShot();
+	        lastShot = now;
+	        shotFired = true;
+	      }
 	    }
-	    else if ((distance > 15.f) && (distance < 40.0f) 
+	    else if ((distance > 20.f) && (distance < 50.0f) 
 		 && (building->getType() == BoxBuilding::typeName)
 		 && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
 	       myTank->jump();
