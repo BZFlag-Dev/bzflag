@@ -48,3 +48,24 @@ transform
 	end
 	count	36
 end
+
+#A simple translation
+
+transform
+	box
+		position -400 -400 0
+		size 8 8 5
+		rotation 0
+	end
+	
+	matrix
+		position
+			translate 25 25 5
+		end
+		size
+			scale 1.0 1.0 1.0
+		end
+		rotation 10
+	end
+	count	32
+end
