@@ -2,6 +2,8 @@ recent bugs
 ------------
 
 - After dropping thief flag, a player still looks tiny in main view.
+  OK, This is just a visual, tank speed is normal, as is munition
+  In fact, shadow is correct (big) size.
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
