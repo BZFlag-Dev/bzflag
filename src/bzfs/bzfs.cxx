@@ -121,8 +121,7 @@ struct TeamInfo {
 
 class WorldInfo {
   public:
-			WorldInfo(int walls, int numBoxes,
-					int numPyramids, int numTeleporters);
+			WorldInfo();
 			~WorldInfo();
 
     void		addWall(float x, float y, float z, float r,
@@ -135,6 +134,7 @@ class WorldInfo {
 				float w, float d, float h, float b);
     void		addLink(int from, int to);
     boolean		inBuilding(float x, float y, float radius) const;
+    int			packDatabase();
     void*		getDatabase() const;
     int			getDatabaseSize() const;
 
@@ -151,21 +151,25 @@ class WorldInfo {
 	float		size[3];
     };
 
+    struct Teleporter {
+      public:
+	float		pos[3];
+	float		rotation;
+	float		size[3];
+	float		border;
+	int		to[2];
+    };
+
   private:
     int			numWalls;
     int			numBoxes;
     int			numPyramids;
     int			numTeleporters;
-    int			wallIndex;
-    int			boxIndex;
-    int			pyramidIndex;
-    int			teleporterIndex;
-    int			linkIndex;
+    Obstacle*		walls;
     Obstacle*		boxes;
     Obstacle*		pyramids;
-    Obstacle*		teleporters;
+    Teleporter*		teleporters;
     char*		database;
-    void*		databasePtr;
     int			databaseSize;
 };
 
@@ -258,128 +262,94 @@ static void		releaseRadio(int playerIndex);
 // WorldInfo
 //
 
-WorldInfo::WorldInfo(int _numWalls, int _numBoxes,
-			int _numPyramids, int _numTeleporters) :
-				numWalls(_numWalls),
-				numBoxes(_numBoxes),
-				numPyramids(_numPyramids),
-				numTeleporters(_numTeleporters),
-				wallIndex(0),
-				boxIndex(0),
-				pyramidIndex(0),
-				teleporterIndex(0),
-				linkIndex(0)
+WorldInfo::WorldInfo() :
+				numWalls(0),
+				numBoxes(0),
+				numPyramids(0),
+				numTeleporters(0),
+				walls(NULL),
+				boxes(NULL),
+				pyramids(NULL),
+				teleporters(NULL),
+				database(NULL)
 {
-  boxes = new Obstacle[numBoxes];
-  pyramids = new Obstacle[numPyramids];
-  teleporters = new Obstacle[numTeleporters];
-  databaseSize = (2 + 6 * 4) * numWalls +
-		(2 + 7 * 4) * numBoxes +
-		(2 + 7 * 4) * numPyramids +
-		(2 + 8 * 4) * numTeleporters +
-		(2 + 4) * 2 * numTeleporters;
-  database = new char[databaseSize];
-  databasePtr = database;
 }
 
 WorldInfo::~WorldInfo()
 {
-  delete[] boxes;
-  delete[] pyramids;
-  delete[] teleporters;
+  free(walls);
+  free(boxes);
+  free(pyramids);
+  free(teleporters);
   delete[] database;
 }
 
 void			WorldInfo::addWall(float x, float y, float z,
 						float r, float w, float h)
 {
-  // add to packed database
-  databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-  databasePtr = nboPackFloat(databasePtr, x);
-  databasePtr = nboPackFloat(databasePtr, y);
-  databasePtr = nboPackFloat(databasePtr, z);
-  databasePtr = nboPackFloat(databasePtr, r);
-  databasePtr = nboPackFloat(databasePtr, w);
-  databasePtr = nboPackFloat(databasePtr, h);
+  walls = (Obstacle *)realloc(walls, sizeof(Obstacle) * (numWalls + 1));
+  walls[numWalls].pos[0] = x;
+  walls[numWalls].pos[1] = y;
+  walls[numWalls].pos[2] = z;
+  walls[numWalls].rotation = r;
+  walls[numWalls].size[0] = w;
+  walls[numWalls].size[1] = 0.0f; // no depth to walls
+  walls[numWalls].size[2] = h;
+  numWalls++;
 }
 
 void			WorldInfo::addBox(float x, float y, float z, float r,
 					float w, float d, float h)
 {
-  boxes[boxIndex].pos[0] = x;
-  boxes[boxIndex].pos[1] = y;
-  boxes[boxIndex].pos[2] = z;
-  boxes[boxIndex].rotation = r;
-  boxes[boxIndex].size[0] = w;
-  boxes[boxIndex].size[1] = d;
-  boxes[boxIndex].size[2] = h;
-  boxIndex++;
-
-  // add to packed database
-  databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-  databasePtr = nboPackFloat(databasePtr, x);
-  databasePtr = nboPackFloat(databasePtr, y);
-  databasePtr = nboPackFloat(databasePtr, z);
-  databasePtr = nboPackFloat(databasePtr, r);
-  databasePtr = nboPackFloat(databasePtr, w);
-  databasePtr = nboPackFloat(databasePtr, d);
-  databasePtr = nboPackFloat(databasePtr, h);
+  boxes = (Obstacle *)realloc(boxes, sizeof(Obstacle) * (numBoxes + 1));
+  boxes[numBoxes].pos[0] = x;
+  boxes[numBoxes].pos[1] = y;
+  boxes[numBoxes].pos[2] = z;
+  boxes[numBoxes].rotation = r;
+  boxes[numBoxes].size[0] = w;
+  boxes[numBoxes].size[1] = d;
+  boxes[numBoxes].size[2] = h;
+  numBoxes++;
 }
 
 void			WorldInfo::addPyramid(float x, float y, float z,
 					float r, float w, float d, float h)
 {
-  pyramids[pyramidIndex].pos[0] = x;
-  pyramids[pyramidIndex].pos[1] = y;
-  pyramids[pyramidIndex].pos[2] = z;
-  pyramids[pyramidIndex].rotation = r;
-  pyramids[pyramidIndex].size[0] = w;
-  pyramids[pyramidIndex].size[1] = d;
-  pyramids[pyramidIndex].size[2] = h;
-  pyramidIndex++;
-
-  // add to packed database
-  databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-  databasePtr = nboPackFloat(databasePtr, x);
-  databasePtr = nboPackFloat(databasePtr, y);
-  databasePtr = nboPackFloat(databasePtr, z);
-  databasePtr = nboPackFloat(databasePtr, r);
-  databasePtr = nboPackFloat(databasePtr, w);
-  databasePtr = nboPackFloat(databasePtr, d);
-  databasePtr = nboPackFloat(databasePtr, h);
+  pyramids = (Obstacle *)realloc(pyramids, sizeof(Obstacle) * (numPyramids + 1));
+  pyramids[numPyramids].pos[0] = x;
+  pyramids[numPyramids].pos[1] = y;
+  pyramids[numPyramids].pos[2] = z;
+  pyramids[numPyramids].rotation = r;
+  pyramids[numPyramids].size[0] = w;
+  pyramids[numPyramids].size[1] = d;
+  pyramids[numPyramids].size[2] = h;
+  numPyramids++;
 }
 
 void			WorldInfo::addTeleporter(float x, float y, float z,
 				float r, float w, float d, float h, float b)
 {
-  teleporters[teleporterIndex].pos[0] = x;
-  teleporters[teleporterIndex].pos[1] = y;
-  teleporters[teleporterIndex].pos[2] = z;
-  teleporters[teleporterIndex].rotation = r;
-  teleporters[teleporterIndex].size[0] = w;
-  teleporters[teleporterIndex].size[1] = d;
-  teleporters[teleporterIndex].size[2] = h;
-  teleporterIndex++;
-
-  // add to packed database
-  databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-  databasePtr = nboPackFloat(databasePtr, x);
-  databasePtr = nboPackFloat(databasePtr, y);
-  databasePtr = nboPackFloat(databasePtr, z);
-  databasePtr = nboPackFloat(databasePtr, r);
-  databasePtr = nboPackFloat(databasePtr, w);
-  databasePtr = nboPackFloat(databasePtr, d);
-  databasePtr = nboPackFloat(databasePtr, h);
-  databasePtr = nboPackFloat(databasePtr, b);
+  teleporters = (Teleporter *)realloc(teleporters, sizeof(Teleporter) * (numTeleporters + 1));
+  teleporters[numTeleporters].pos[0] = x;
+  teleporters[numTeleporters].pos[1] = y;
+  teleporters[numTeleporters].pos[2] = z;
+  teleporters[numTeleporters].rotation = r;
+  teleporters[numTeleporters].size[0] = w;
+  teleporters[numTeleporters].size[1] = d;
+  teleporters[numTeleporters].size[2] = h;
+  teleporters[numTeleporters].border = b;
+  // default link through
+  teleporters[numTeleporters].to[0] = numTeleporters * 2 + 1;
+  teleporters[numTeleporters].to[1] = numTeleporters * 2;
+  numTeleporters++;
 }
 
 void			WorldInfo::addLink(int from, int to)
 {
-  linkIndex++;
-  // add to packed database
-  databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
-  databasePtr = nboPackUShort(databasePtr, uint16_t(from));
-  databasePtr = nboPackUShort(databasePtr, uint16_t(to));
+  // silently discard links from teleporters that don't exist
+  if (from <= numTeleporters * 2 + 1) {
+    teleporters[from / 2].to[from % 2] = to;
+  }
 }
 
 boolean			WorldInfo::rectHitCirc(float dx, float dy,
@@ -434,17 +404,85 @@ boolean			WorldInfo::inRect(const float* p1, float angle,
 boolean			WorldInfo::inBuilding(float x, float y, float r) const
 {
   int i;
-  for (i = 0; i < pyramidIndex; i++)
+  for (i = 0; i < numPyramids; i++)
     if (inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r))
       return True;
-  for (i = 0; i < boxIndex; i++)
+  for (i = 0; i < numBoxes; i++)
     if (inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r))
       return True;
-  for (i = 0; i < teleporterIndex; i++)
+  for (i = 0; i < numTeleporters; i++)
     if (inRect(teleporters[i].pos, teleporters[i].rotation,
 					teleporters[i].size, x, y, r))
       return True;
   return False;
+}
+
+int			WorldInfo::packDatabase()
+{
+  databaseSize = (2 + 6 * 4) * numWalls +
+		(2 + 7 * 4) * numBoxes +
+		(2 + 7 * 4) * numPyramids +
+		(2 + 8 * 4) * numTeleporters +
+		(2 + 4) * 2 * numTeleporters;
+  database = new char[databaseSize];
+  void*	databasePtr = database;
+
+  // add walls
+  for (int i = 0 ; i < numWalls ; i++ ) {
+    databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
+    databasePtr = nboPackFloat(databasePtr, walls[i].pos[0]);
+    databasePtr = nboPackFloat(databasePtr, walls[i].pos[1]);
+    databasePtr = nboPackFloat(databasePtr, walls[i].pos[2]);
+    databasePtr = nboPackFloat(databasePtr, walls[i].rotation);
+    databasePtr = nboPackFloat(databasePtr, walls[i].size[0]);
+    // databasePtr = nboPackFloat(databasePtr, walls[i].size[1]); // walls have no depth
+    databasePtr = nboPackFloat(databasePtr, walls[i].size[2]);
+  }
+
+  // add boxes
+  for (int i = 0 ; i < numBoxes ; i++ ) {
+    databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
+    databasePtr = nboPackFloat(databasePtr, boxes[i].pos[0]);
+    databasePtr = nboPackFloat(databasePtr, boxes[i].pos[1]);
+    databasePtr = nboPackFloat(databasePtr, boxes[i].pos[2]);
+    databasePtr = nboPackFloat(databasePtr, boxes[i].rotation);
+    databasePtr = nboPackFloat(databasePtr, boxes[i].size[0]);
+    databasePtr = nboPackFloat(databasePtr, boxes[i].size[1]);
+    databasePtr = nboPackFloat(databasePtr, boxes[i].size[2]);
+  }
+
+  // add pyramids
+  for (int i = 0 ; i < numPyramids ; i++ ) {
+    databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
+    databasePtr = nboPackFloat(databasePtr, pyramids[i].pos[0]);
+    databasePtr = nboPackFloat(databasePtr, pyramids[i].pos[1]);
+    databasePtr = nboPackFloat(databasePtr, pyramids[i].pos[2]);
+    databasePtr = nboPackFloat(databasePtr, pyramids[i].rotation);
+    databasePtr = nboPackFloat(databasePtr, pyramids[i].size[0]);
+    databasePtr = nboPackFloat(databasePtr, pyramids[i].size[1]);
+    databasePtr = nboPackFloat(databasePtr, pyramids[i].size[2]);
+  }
+
+  // add teleporters
+  for (int i = 0 ; i < numTeleporters ; i++ ) {
+    databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
+    databasePtr = nboPackFloat(databasePtr, teleporters[i].pos[0]);
+    databasePtr = nboPackFloat(databasePtr, teleporters[i].pos[1]);
+    databasePtr = nboPackFloat(databasePtr, teleporters[i].pos[2]);
+    databasePtr = nboPackFloat(databasePtr, teleporters[i].rotation);
+    databasePtr = nboPackFloat(databasePtr, teleporters[i].size[0]);
+    databasePtr = nboPackFloat(databasePtr, teleporters[i].size[1]);
+    databasePtr = nboPackFloat(databasePtr, teleporters[i].size[2]);
+    databasePtr = nboPackFloat(databasePtr, teleporters[i].border);
+    // and each link
+    databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
+    databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
+    databasePtr = nboPackUShort(databasePtr, uint16_t(teleporters[i].to[0]));
+    databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
+    databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
+    databasePtr = nboPackUShort(databasePtr, uint16_t(teleporters[i].to[1]));
+  }
+  return 1;
 }
 
 void*			WorldInfo::getDatabase() const
@@ -454,7 +492,7 @@ void*			WorldInfo::getDatabase() const
 
 int			WorldInfo::getDatabaseSize() const
 {
-  return (char*)databasePtr - database;
+  return databaseSize;
 }
 
 //
@@ -1107,7 +1145,7 @@ static void		relayPlayerPacket(int index,
 
 static WorldInfo*	defineTeamWorld()
 {
-  world = new WorldInfo(4, CitySize * CitySize - 1, 4 * (NumTeams - 1) + 12, 8);
+  world = new WorldInfo();
   if (!world) return NULL;
 
   // set team base and team flag safety positions
@@ -1317,10 +1355,8 @@ static WorldInfo*	defineTeamWorld()
 
 static WorldInfo*	defineRandomWorld()
 {
-  const int numBoxes = CitySize * CitySize;
-  const int numPyramids = CitySize * CitySize;
   const int numTeleporters = 8 + int(8 * (float)bzfrand());
-  world = new WorldInfo(4, numBoxes, numPyramids, numTeleporters);
+  world = new WorldInfo();
   if (!world) return NULL;
 
   // make walls
@@ -1335,7 +1371,7 @@ static WorldInfo*	defineRandomWorld()
 
   // make boxes
   int i;
-  for (i = 0; i < numBoxes; i++) {
+  for (i = 0; i < CitySize * CitySize; i++) {
     float h = BoxHeight;
     if (randomHeights) h *= 2.0f * (float)bzfrand() + 0.5f;
     world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
@@ -1345,7 +1381,7 @@ static WorldInfo*	defineRandomWorld()
   }
 
   // make pyramids
-  for (i = 0; i < numPyramids; i++)
+  for (i = 0; i < CitySize * CitySize; i++)
     world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
 			WorldSize * ((float)bzfrand() - 0.5f),
 			0.0f, 2.0f * M_PI * (float)bzfrand(),
@@ -1409,6 +1445,8 @@ static boolean		defineWorld()
     world = defineRandomWorld();
   if (!world) return False;
 
+  // package up world
+  world->packDatabase();
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + 24 + world->getDatabaseSize() + 2;
   if (gameStyle & TeamFlagGameStyle) worldDatabaseSize += 4 * (4 + 9 * 4);
