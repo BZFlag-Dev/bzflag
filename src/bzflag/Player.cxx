@@ -33,8 +33,8 @@ int			Player::totalCount = 0;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
 		const char* name, const char* _email) :
-				notResponding(False),
 				id(_id),
+				notResponding(False),
 				team(_team),
 				flag(NoFlag),
 				fromTeleporter(0),
@@ -455,6 +455,11 @@ boolean			Player::isDeadReckoningWrong() const
 
   // always send a new packet on reckoned touchdown
   if (predictedPos[2] < 0.0f) return True;
+
+  // client side throttling
+  const int throttleRate = 30; // should be configurable
+  const float minUpdateTime = throttleRate > 0 ? 1.0f / throttleRate : 0.0f;
+  if (TimeKeeper::getTick() - inputTime < minUpdateTime) return False;
 
   // see if position and azimuth are close enough
   if (fabsf(pos[0] - predictedPos[0]) > PositionTolerance) return True;
