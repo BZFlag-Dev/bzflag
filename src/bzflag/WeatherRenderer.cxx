@@ -10,21 +10,31 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+// bzflag global common header
 #include "common.h"
 #include "global.h"
-#include "OpenGLMaterial.h"
-#include "OpenGLTexture.h"
+
+// interface header
 #include "WeatherRenderer.h"
-#include "stars.h"
+
+// system headers
+#include <assert.h>
+#include <string>
+#include <vector>
+
+// common impl headers
+#include "bzfgl.h"
+#include "OpenGLGState.h"
+#include "OpenGLDisplayList.h"
+#include "OpenGLMaterial.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
-#include "SceneRenderer.h"
 #include "BZDBCache.h"
-#include "daylight.h"
-#include "MainWindow.h"
-#include "SceneNode.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
+
+// local impl headers
+#include "SceneRenderer.h"
 
 WeatherRenderer::WeatherRenderer()
 {

@@ -10,21 +10,34 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common headers
 #include "common.h"
 #include "global.h"
-#include "OpenGLMaterial.h"
-#include "OpenGLTexture.h"
+
+// interface header
 #include "BackgroundRenderer.h"
-#include "stars.h"
+
+// system impl headers
+#include <stdio.h>
+#include <math.h>
+#include <string>
+
+// common impl headers
+#include "bzfgl.h"
+#include "OpenGLGState.h"
+#include "OpenGLDisplayList.h"
+#include "OpenGLMaterial.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
-#include "SceneRenderer.h"
 #include "BZDBCache.h"
+
+// local impl headers
 #include "daylight.h"
+#include "stars.h"
 #include "MainWindow.h"
 #include "SceneNode.h"
-#include "TimeKeeper.h"
-#include "TextUtils.h"
+#include "SceneRenderer.h"
+#include "WeatherRenderer.h"
 
 //static     bool         useMoonTexture = false;
 
@@ -86,7 +99,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // ground
   {
     // load texture for normal ground
-    // OpenGLTexture *groundTexture = NULL;
     int groundTextureID = -1;
 
     if (userTextures[0].size())

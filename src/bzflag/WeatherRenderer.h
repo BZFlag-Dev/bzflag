@@ -23,6 +23,7 @@
 
 /* system headers */
 #include <string>
+#include <vector>
 
 /* common interface headers */
 #include "bzfgl.h"

@@ -111,7 +111,8 @@ class BackgroundRenderer {
     OpenGLGState	cloudsGState;
     OpenGLDisplayList	cloudsList;
 
-		WeatherRenderer				weather;
+    // weather
+    WeatherRenderer	weather;
 
     // stuff for sun shadows
     bool		doShadows;
