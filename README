@@ -71,20 +71,24 @@ files in the new bzflag directory:
 Compiling and Installation
 ==========================
 
-To build sources checked out directly from CVS you need to start by running
-these commands inside the CVS directory:
+To build sources checked out directly from CVS you need to create a configure
+script. You can skip this step if you grab an archive that already has a
+./configure script in it. Create the ./configure script by running these
+commands inside the CVS directory:
 
   % aclocal
   % autoheader
   % automake --add-missing
   % autoconf
 
-These commands are in the autogen.sh file, so you can just run
+These commands are in the autogen.sh file, so you can just run that script.
+(again this is only required to create the configure script which might already
+be present)
 
   % sh autogen.sh
 
-After doing this, create a work directory parallel to the one you just
-downloaded and autoconfigured:
+Now that you have a configure scrupt, create a work directory parallel to the
+one you just downloaded and autoconfigured:
 
   % mkdir ../work
 
