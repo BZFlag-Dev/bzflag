@@ -16,21 +16,21 @@ bzflag@bigfoot.com
 Introduction
 ============
 
-This is the readme file for the bzflag source tree.  It includes
+This is the readme file for the BZFlag source tree.  It includes
 a manifest, simple build instructions, and other information for
 bzflag development.
 
 
-bzflag Home Page
+BZFlag Home Page
 ================
 
 The bzflag home page is at:  http://bzflag.sourceforge.net/
 
 
-Getting bzflag
+Getting BZFlag
 ==============
 
-The home page provides access to the primary bzflag download
+The home page provides access to the primary BZFlag download
 site.  This web site includes pages for downloading the compiled
 and source code versions.  Compiled versions are distributed
 as installable packages.  Source code is archived in various
@@ -71,7 +71,7 @@ in the new bzflag directory:
 Compiling and Installation
 ==========================
 
-Building bzflag for a supported platform normally requires two
+Building BZFlag for a supported platform normally requires two
 steps:
 
   % make <platform>
@@ -89,7 +89,7 @@ appropriate to your system for more information:
   Platform			README file
   --------			-----------
   UNIX, Linux			README.UNIX
-  Solaris			README.SOLARIS
+  Solaris				README.SOLARIS
   Windows 95/98/NT		README.WIN32
 
 
@@ -106,10 +106,10 @@ bzflag is built into ./bin;  ./bin/bzflag runs bzflag and
 it will automatically look in ./data for the data files.
 
 ** IMPORTANT **
-Bzflag will look for the data files in . and ./data.  If
-you run bzflag from the bin directory, it will fail to
+BZFlag will look for the data files in . and ./data.  If
+you run BZFlag from the bin directory, it will fail to
 find the files and die with `cannot continue without
-font fixedbr'.  Either run bzflag as indicated above
+font fixedbr'.  Either run BZFlag as indicated above
 or use the `-directory <data-directory>' command line
 option to explicitly name the data directory.
 
@@ -129,7 +129,7 @@ does and also packages, directories created during the build,
 and the platform configuration;  this should get the source
 tree back to its original state.
 
-To build bzflag for an unsupported platform, see PORTING.
+To build BZFlag for an unsupported platform, see PORTING.
 
 The ./config file has a number of build options that you
 may find interesting.
@@ -138,12 +138,12 @@ may find interesting.
 Mailing Lists
 =============
 
-There are two bzflag mailing lists, a user list and a
-developer's list.  The former is for general bzflag
+There are two BZFlag mailing lists, a user list and a
+developer's list.  The former is for general BZFlag
 discussion and annoucements.  The latter is for coding and
 development discussion only.
 
-To join a mailing list, go to http://bzflag.sourceforge.net, and click
+To join a mailing list, go to http://bzflag.sourceforge.net/, and click
 on the link on the left that says "SourceForge."  On the web page this 
 takes you to there is a link called "Mailing Lists,"  click on this.  You
 are now at a page listing the two lists.  Click on the "subscribe/unsubscribe/
@@ -152,23 +152,22 @@ preferences" button to subscribe to that mailing list.
 Contributions
 =============
 
-Send mail to either the bzflag development mailing list, or
-TimRikers@users.sourceforge.net(development mailing list prefered) to 
-discuss contributions to the official bzflag source code.  Small changes 
-can be attached to the mail in 'cvs diff' format.
+Send mail to either the BZFlag development mailing list, or
+Tim@Rikers.org(the development mailing list is prefered) to discuess 
+contributions to the official BZFlag source code.  Small changes can be 
+attached to the mail in 'cvs diff' format.
 
 
 Bug Reports
 ===========
 
-For bug reports please go to http://bzflag.sourceforge.net, and click on the 
+For bug reports please go to http://bzflag.sourceforge.net/, and click on the 
 link on the left that says "SourceForge. On the web page this takes
 you to there is a link called "Bug Tracking," click on this. You are now
 at a page that lists current bugs, and near the top there is a list of things
 you can do.  The first option is "Submit."  Select this to submit a bug to
-BZFlag
-Alternatively, you can email bug reports to TimRiker@users.sourceforge.net,
-but the web based method is the prefered way to submit bugs.
+BZFlag. Alternatively, you can email bug reports to Tim@Rikers.org but the web
+based method is the prefered way to submit bugs.
 
 
 Known Bugs
@@ -180,7 +179,7 @@ See BUGS.
 Contributors
 ============
 
-Bzflag was written mainly by Chris Schoeneman.  Several others
+BZFlag was written mainly by Chris Schoeneman.  Several others
 deserve mention for their contributions:
 
   Bjorn Augustsson
