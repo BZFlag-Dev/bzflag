@@ -55,11 +55,22 @@ ______bin_bzflag_SOURCES = 		\
 	HUDDialog.cxx			\
 	HUDDialog.h			\
 	menus.cxx			\
-	menus.h
+	menus.h				\
+	bzflag.rc			\
+	bzflag.ico
 
 noinst_HEADERS = \
 	stars.cxx
-
+if WIN32
+LDADD = $(LIBDIR)/libNet.a		\
+	$(LIBDIR)/libCommon.a		\
+	$(LIBDIR)/libObstacle.a		\
+	$(LIBDIR)/libPlatform.a		\
+	$(LIBDIR)/libGLKit.a		\
+	$(LIBDIR)/libSceneDB.a		\
+	$(LIBDIR)/libGeometry.a		\
+	bzflag.res
+else
 LDADD = $(LIBDIR)/libNet.a		\
 	$(LIBDIR)/libCommon.a		\
 	$(LIBDIR)/libObstacle.a		\
@@ -67,5 +78,8 @@ LDADD = $(LIBDIR)/libNet.a		\
 	$(LIBDIR)/libGLKit.a		\
 	$(LIBDIR)/libSceneDB.a		\
 	$(LIBDIR)/libGeometry.a
+endif
+EXTRA_DIST = bzflag.bmp
 
-EXTRA_DIST = bzflag.bmp bzflag.ico bzflag.rc
+bzflag.res: bzflag.rc bzflag.ico
+	windres -i bzflag.rc -o bzflag.res -O coff

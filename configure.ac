@@ -90,7 +90,7 @@ esac;
 
 AC_CHECK_LIB(m, sqrtf)
 
-if test !$X_DISPLAY_MISSING; then
+if test x$X_DISPLAY_MISSING != x; then
 if test "x$EXTRA_LIBS" != x; then
    LIBS="$EXTRA_LIBS $LIBS";
 fi
@@ -107,8 +107,12 @@ if test $host_os = linux-gnu; then
    AC_CHECK_LIB(Xi, XListInputDevices)
 fi
 
-AC_CHECK_LIB(GL, glBegin)
-AC_CHECK_LIB(GLU, gluScaleImage)
+if test $host_os = mingw32; then
+   LIBS="-mwindows -lgdi32 -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 $LIBS"
+else
+   AC_CHECK_LIB(GL, glBegin)
+   AC_CHECK_LIB(GLU, gluScaleImage)
+fi
 
 case $host_os in
      solaris*)
@@ -166,6 +170,17 @@ case $host_os in
 	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=i486";;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=603";;
 	esac;;
+     cygwin)
+        CPPFLAGS="$CPPFLAGS -I/usr/include -D_BSD_SOURCE -D_POSIX_SOURCE";
+        CPPFLAGS="$CPPFLAGS -DHALF_RATE_AUDIO -DXF86VIDMODE_EXT -DXIJOYSTICK";
+	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=i486"
+	CFLAGS="$CFLAGS -ansi";
+	CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti";;
+     mingw32)
+        CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
+	CPPFLAGS="$CPPFLAGS -DHALF_RATE_AUDIO -Wall -W -mcpu=i486";
+	CFLAGS="$CFLAGS -ansi";
+	CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti";;
      solaris*)
 	CPPFLAGS="$CPPFLAGS -DSUN_OGL_NO_VERTEX_MACROS";
 	if test sun_wspro; then
@@ -180,7 +195,7 @@ case $host_os in
 	CPPFLAGS="$CPPFLAGS -Wall -W";
 	CFLAGS="$CFLAGS -ansi";
 	CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti";;
-     cygwin|mingw32|windows**)
+     windows**)
 	CPPFLAGS="$CPPFLAGS /D \"WIN32\" /D \"_MBCS\"";
 	CPPFLAGS="$CPPFLAGS /I \"$(top_srcdir)/include\" /nologo /W3";;
      irix)
@@ -201,7 +216,7 @@ esac
 # /c to compile only
 if test x$enable_debug = xyes; then
    case $host_os in
-     linux-gnu)
+     linux-gnu|cygwin|mingw32)
 	CFLAGS="$CFLAGS -g";
 	CPPFLAGS="$CPPFLAGS -DDEBUG -Werror";
 	CXXFLAGS="$CXXFLAGS -g -Wno-deprecated";;
@@ -213,7 +228,7 @@ if test x$enable_debug = xyes; then
 	CFLAGS="$CFLAGS -g";
 	CXXFLAGS="$CXXFLAGS -g";
 	CPPFLAGS="$CPPFLAGS -DDEBUG";;
-     cygwin|mingw32|windows**)
+     windows**)
 	CPPFLAGS="$CPPFLAGS /MDd /Gm /ZI /Od /GZ /D \"DEBUG\" /D \"_DEBUG\"";;
      irix)
 	CFLAGS="$CFLAGS -g";
@@ -222,7 +237,7 @@ if test x$enable_debug = xyes; then
     esac;
 else
     case $host_os in
-	linux-gnu)
+	linux-gnu|cygwin|mingw32)
 		CFLAGS="$CFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -O2";
 		CPPFLAGS="$CPPFLAGS -DNDEBUG";
@@ -238,7 +253,7 @@ else
 		CPPFLAGS="$CPPFLAGS -DNDEBUG";
 		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
 		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations";;
-	 cygwin|mingw32|windows**)
+	 windows**)
 		CPPFLAGS="$CPPFLAGS /MT /O2 /D \"NDEBUG\"";;
 	 irix)
 		if test x$host_cpu = xmips64; then

@@ -63,13 +63,29 @@ class SceneNode {
 
     static void		setColorOverride(bool = true);
     static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
+#ifdef __MINGW32__
+      {if (!colorOverride) ::glColor3f(r, g, b); };
+#else
 				{ (*color3f)(r, g, b); }
+#endif
     static void		glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+#ifdef __MINGW32__
+      {if (!colorOverride) ::glColor4f(r, g, b, a); };
+#else
 				{ (*color4f)(r, g, b, a); }
+#endif
     static void		glColor3fv(const GLfloat* rgb)
+#ifdef __MINGW32__
+      {if (!colorOverride) ::glColor3fv(rgb); };
+#else
 				{ (*color3fv)(rgb); }
+#endif
     static void		glColor4fv(const GLfloat* rgba)
+#ifdef __MINGW32__
+     {if (!colorOverride) ::glColor4fv(rgba); };
+#else
 				{ (*color4fv)(rgba); }
+#endif
     static void		setStipple(GLfloat alpha)
 				{ (*stipple)(alpha); }
 
@@ -87,19 +103,25 @@ class SceneNode {
 			SceneNode(const SceneNode&);
     SceneNode&		operator=(const SceneNode&);
 
+#ifndef __MINGW32__
     static void __stdcall	noColor3f(GLfloat, GLfloat, GLfloat);
     static void __stdcall	noColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
     static void __stdcall	noColor3fv(const GLfloat*);
     static void __stdcall	noColor4fv(const GLfloat*);
+#endif
     static void			noStipple(GLfloat);
 
   private:
     int			styleMailbox;
     GLfloat		sphere[4];
+#ifdef __MINGW32__
+    static bool         colorOverride;
+#else
     static void		(__stdcall *color3f)(GLfloat, GLfloat, GLfloat);
     static void		(__stdcall *color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
     static void		(__stdcall *color3fv)(const GLfloat*);
     static void		(__stdcall *color4fv)(const GLfloat*);
+#endif
     static void		(*stipple)(GLfloat);
 };
 

@@ -1,30 +1,5 @@
 SUBDIRS = MacBZFlag.pbproj
 
-X11_XTRA = XDisplay.$(OBJEXT) XVisual.$(OBJEXT)	XWindow.$(OBJEXT)
-
-LINUX_XTRA = \
-	LinuxPlatformFactory.$(OBJEXT)	\
-	LinuxDisplay.$(OBJEXT)		\
-	LinuxMedia.$(OBJEXT)		\
-	usbjoy.$(OBJEXT)
-
-SOLARIS_XTRA = \
-	SolarisPlatformFactory.$(OBJEXT)\
-	SolarisMedia.$(OBJEXT)
-
-IRIX_XTRA = \
-	SGIPlatformFactory.$(OBJEXT)	\
-	SGIDisplay.$(OBJEXT)		\
-	SGIMedia.$(OBJEXT)
-
-MAC_XTRA = \
-	MacPlatformFactory.$(OBJEXT) 	\
-	MacDisplay.$(OBJEXT)		\
-	MacVisual.$(OBJEXT)		\
-	MacWindow.$(OBJEXT)		\
-	MacMedia.$(OBJEXT)
-
-
 if LINUX
 ______lib_libPlatform_a_LIBADD = \
 	LinuxPlatformFactory.$(OBJEXT)	\
@@ -59,6 +34,15 @@ ______lib_libPlatform_a_LIBADD =	\
 	MacVisual.$(OBJEXT)		\
 	MacWindow.$(OBJEXT)		\
 	MacMedia.$(OBJEXT)
+else
+if WIN32
+______lib_libPlatform_a_LIBADD =	\
+	WinPlatformFactory.$(OBJEXT) 	\
+	WinDisplay.$(OBJEXT)		\
+	WinVisual.$(OBJEXT)		\
+	WinWindow.$(OBJEXT)		\
+	WinMedia.$(OBJEXT)
+endif
 endif
 endif
 endif
@@ -108,9 +92,17 @@ EXTRA_______lib_libPlatform_a_SOURCES = \
 	MacWindow.cxx			\
 	MacWindow.h			\
 	MacMedia.cxx			\
-	MacMedia.h
+	MacMedia.h			\
+	WinPlatformFactory.cxx 		\
+	WinPlatformFactory.h 		\
+	WinDisplay.cxx			\
+	WinDisplay.h			\
+	WinVisual.cxx			\
+	WinVisual.h			\
+	WinWindow.cxx			\
+	WinWindow.h			\
+	WinMedia.cxx			\
+	WinMedia.h
 
 EXTRA_DIST = MacBZFlag.icns MacBZFlag-prefix.h NewMedia.cxx NewMedia.h \
-	WinDisplay.cxx WinDisplay.h WinMedia.cxx WinMedia.h \
-	WinPlatformFactory.cxx WinPlatformFactory.h WinVisual.cxx WinVisual.h \
-	WinWindow.cxx WinWindow.h
+	dsound.h ddraw.h d3dtypes.h

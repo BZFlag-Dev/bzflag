@@ -14,10 +14,12 @@
 #include "SceneNode.h"
 #include "SceneRenderer.h"
 
+#ifndef __MINGW32__
 void			(__stdcall *SceneNode::color3f)(GLfloat, GLfloat, GLfloat);
 void			(__stdcall *SceneNode::color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
 void			(__stdcall *SceneNode::color3fv)(const GLfloat*);
 void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
+#endif
 void			(*SceneNode::stipple)(GLfloat);
 
 SceneNode::SceneNode() : styleMailbox(0)
@@ -48,20 +50,29 @@ static void __stdcall	oglColor4fv(const GLfloat* v)
 				{ glColor4fv(v); }
 #endif
 
+#ifdef __MINGW32__
+bool			SceneNode::colorOverride = true;
+#else
 void __stdcall		SceneNode::noColor3f(GLfloat, GLfloat, GLfloat) { }
 void __stdcall		SceneNode::noColor4f(
 				GLfloat, GLfloat, GLfloat, GLfloat) { }
 void __stdcall		SceneNode::noColor3fv(const GLfloat*) { }
 void __stdcall		SceneNode::noColor4fv(const GLfloat*) { }
+#endif
 void			SceneNode::noStipple(GLfloat) { }
 
 void			SceneNode::setColorOverride(bool on)
 {
+#ifdef __MINGW32__
+  colorOverride = on;
+#endif
   if (on) {
+#ifndef __MINGW32__
     color3f  = &noColor3f;
     color4f  = &noColor4f;
     color3fv = &noColor3fv;
     color4fv = &noColor4fv;
+#endif
     stipple  = &noStipple;
   }
   else {
@@ -71,10 +82,12 @@ void			SceneNode::setColorOverride(bool on)
     color3fv = &oglColor3fv;
     color4fv = &oglColor4fv;
 #else
+#ifndef __MINGW32__
     color3f  = &::glColor3f;
     color4f  = &::glColor4f;
     color3fv = &::glColor3fv;
     color4fv = &::glColor4fv;
+#endif
 #endif
     stipple  = &OpenGLGState::setStipple;
   }

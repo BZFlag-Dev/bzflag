@@ -115,8 +115,10 @@ typedef uint_t		uint32_t;
 
 #if defined(_WIN32)
 
+#ifndef __MINGW32__
 // missing float math functions
 #define	hypotf		(float)hypot
+#endif
 
 // missing constants
 #ifndef MAXFLOAT
