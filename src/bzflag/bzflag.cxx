@@ -1006,6 +1006,8 @@ int			main(int argc, char** argv)
 #if defined(__APPLE__)
 	extern char *GetMacOSXDataPath(void);
 	PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
+	BZDB->set("directory", GetMacOSXDataPath());
+	BZDB->setPersistent("directory", false);
 #elif (defined(_WIN32) || defined(WIN32))
 	// What to put here?
 #else
