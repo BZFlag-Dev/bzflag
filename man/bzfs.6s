@@ -22,6 +22,7 @@ bzfs \- BZFlag game server
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR{\fImax-score\fR}]
 [\fB\-p \fIport\fR]
+[\fB\-pr \fIport\fR]
 [\fB\-noudp\fR]
 [\fB\-passwd \fIpassword\fR]
 [\fB\-public \fIdescription\fR]
@@ -125,6 +126,12 @@ declared the winner and the game is over.
 \fB-p\fI port\fR
 Listen for game connections on \fIport\fR instead of the default port.
 Use \fB-help\fR to print the default port.
+.TP
+\fB-pr\fI port\fR
+Listen for reconnects on \fIport\fR. The current bzflag protocol is a little
+braindead in that it requires clients to reconnect to another port after
+having registered on the main port. Both this and the main port must be open
+for incoming TCP connections.
 .TP
 .B -noudp
 Do not use a parallel UDP channel for player communication.
