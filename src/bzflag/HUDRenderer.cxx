@@ -767,12 +767,12 @@ int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
 
 void		HUDRenderer::setHuntPosition(int _huntPosition)
 {
-	huntPosition = _huntPosition;
+  huntPosition = _huntPosition;
 }
 
 int			HUDRenderer::getHuntPosition() const
 {
-	return huntPosition;
+  return huntPosition;
 }
 
 bool			HUDRenderer::getHuntSelection() const
