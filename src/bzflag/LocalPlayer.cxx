@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 #include "common.h"
 #include "StateDatabase.h"
 #include "LocalPlayer.h"
@@ -417,7 +418,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	  newVelocity[2] = 0.0f;
 
 	// normalize force magnitude in horizontal plane
-	mag /= normal[0] * normal[0] + normal[1] * normal[1];
+	float horNormal = normal[0] * normal[0] + normal[1] * normal[1];
+	if (horNormal != 0.0f)
+	  mag /= horNormal;
       }
 
       // cancel out component in normal direction (if velocity and
