@@ -75,8 +75,6 @@ PlayerInfo player[MaxPlayers + ReplayObservers];
 PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 // Last known position, vel, etc
 PlayerState lastState[MaxPlayers  + ReplayObservers];
-// DelayQueue for "Lag Flag"
-DelayQueue delayq[MaxPlayers  + ReplayObservers];
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -659,16 +657,18 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
     
   // relay packet to all players except origin
   for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
     PlayerInfo& pi = player[i];
     
     if (i != index && pi.isPlaying()) {
       if (((code == MsgPlayerUpdate) ||(code == MsgPlayerUpdateSmall))
           && pi.haveFlag() && (flag[pi.getFlag()].flag.type == Flags::Lag)) {
         // delay sending to this player
-	delayq[i].addPacket(len+4, rawbuf,
-			    BZDB.eval(StateDatabase::BZDB_FAKELAG));
-      } 
-      else {
+	playerData->delayq.addPacket(len+4, rawbuf,
+				     BZDB.eval(StateDatabase::BZDB_FAKELAG));
+      } else {
         // send immediately
         pwrite(i, rawbuf, len + 4);
       }
@@ -1706,7 +1706,6 @@ static void addPlayer(int playerIndex)
   accessInfo[playerIndex].reset(player[playerIndex].getCallSign());
   player[playerIndex].resetPlayer
     ((clOptions->gameStyle & TeamFlagGameStyle) != 0);
-  delayq[playerIndex].dequeuePackets();
 
 
   // accept player
@@ -1724,8 +1723,6 @@ static void addPlayer(int playerIndex)
   if (!NetHandler::exists(playerIndex))
     return;
 
-  player[playerIndex].setLastMsg("");
-  player[playerIndex].setSpamWarns();
   // player is signing on (has already connected via addClient).
   player[playerIndex].signingOn();
   // update team state and if first player on team,
@@ -2576,6 +2573,11 @@ static void grabFlag(int playerIndex, int flagIndex)
 
 static void dropFlag(int playerIndex, float pos[3])
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
   const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   if (pos[0] < -size || pos[0] > size)
     pos[0] = 0.0;
@@ -2752,7 +2754,7 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.flag.initialVelocity = -BZDB.eval(StateDatabase::BZDB_GRAVITY) * upTime;
   
   // removed any delayed packets (in case it was a "Lag Flag")
-  delayq[playerIndex].dequeuePackets();
+  playerData->delayq.dequeuePackets();
 
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].resetFlag();
@@ -4065,19 +4067,9 @@ int main(int argc, char **argv)
     }
 
     int p;
-    // get time for next lagping
+    // get time for next Player internal action
     GameKeeper::Player::updateLatency(waitTime);
 
-    // get time for next delayed packet (Lag Flag)
-    for (p = 0; p < curMaxPlayers; p++) {
-      if (player[p].isPlaying()) {
-        float nextTime = delayq[p].nextPacketTime();
-        if (nextTime < waitTime) {
-          waitTime = nextTime;
-        }
-      }
-    }
-    
     // get time for the next world weapons shot
     if (wWeapons.count() > 0) {
       float nextTime = wWeapons.nextTime ();
@@ -4135,9 +4127,13 @@ int main(int argc, char **argv)
 
     // send delayed packets
     for (p = 0; p < curMaxPlayers; p++) {
+      GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
+      if (!playerData)
+	continue;
+
       void *data;
       int length;
-      if (delayq[p].getPacket(&length, &data)) {
+      if (playerData->delayq.getPacket(&length, &data)) {
         pwrite (p, data, length);
         free (data);
       }

@@ -56,7 +56,7 @@ public:
     // Last known position, vel, etc
     PlayerState      *lastState;
     // DelayQueue for "Lag Flag"
-    DelayQueue       *delayq;
+    DelayQueue        delayq;
     // FlagHistory
     FlagHistory       flagHistory;
     // Score

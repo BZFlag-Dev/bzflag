@@ -17,13 +17,12 @@ extern PlayerInfo       player[PlayerSlot];
 // player lag info
 extern PlayerAccessInfo accessInfo[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
-extern DelayQueue       delayq[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
 GameKeeper::Player::Player(int _playerIndex):
   player(&::player[_playerIndex]), accessInfo(&::accessInfo[_playerIndex]),
-  lastState(&::lastState[_playerIndex]), delayq(&::delayq[_playerIndex]),
+  lastState(&::lastState[_playerIndex]),
   playerIndex(_playerIndex)
 {
   playerList[playerIndex] = this;
@@ -31,13 +30,14 @@ GameKeeper::Player::Player(int _playerIndex):
   player->initPlayer(playerIndex);
   lastState->order       = 0;
   lagInfo                = new LagInfo(player);
+  player->setLastMsg("");
+  player->setSpamWarns();
 }
 
 GameKeeper::Player::~Player()
 {
   accessInfo->removePlayer();
   player->removePlayer();
-  delayq->dequeuePackets();
   flagHistory.clear();
   delete lagInfo;
   playerList[playerIndex] = NULL;
@@ -50,11 +50,22 @@ GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int _playerIndex)
 
 void GameKeeper::Player::updateLatency(float &waitTime)
 {
+  Player* playerData;
   int p;
+
   for (p = 0; p < PlayerSlot; p++)
-    if (playerList[p]) {
-      playerList[p]->lagInfo->updateLatency(waitTime);
-  }
+    if ((playerData = playerList[p])) {
+
+      // get time for next lagping
+      playerData->lagInfo->updateLatency(waitTime);
+
+      // get time for next delayed packet (Lag Flag)
+      float nextTime = playerData->delayq.nextPacketTime();
+      if (nextTime < waitTime) {
+	waitTime = nextTime;
+      }
+
+    }
 }
 
 void GameKeeper::Player::dumpScore()
