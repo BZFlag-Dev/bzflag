@@ -1,0 +1,4 @@
+EXTRA_DIST =
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
