@@ -125,7 +125,8 @@ bool PlayerAccessInfo::isAllowedToEnter() {
 
 void PlayerAccessInfo::storeInfo(const char* pwd) {
   PlayerAccessInfo info;
-  info.groups.push_back("REGISTERED");
+  info.addGroup("REGISTERED");
+
   if (pwd == NULL) {
     setUserPassword(regName.c_str(), "");
     DEBUG1("Global Temp Register %s\n", regName.c_str());
@@ -446,9 +447,7 @@ bool PlayerAccessInfo::readPermsFile(const std::string &filename)
     std::istringstream groupstream(groupline);
     std::string group;
     while (groupstream >> group) {
-      if (!info.hasGroup(group)) {
-	info.groups.push_back(group);
-      }
+      info.addGroup(group);
     }
 
     // 3rd line - allows
