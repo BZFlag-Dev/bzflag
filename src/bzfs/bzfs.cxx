@@ -2147,18 +2147,17 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
     // send team update
     sendTeamUpdate(-1, teamNum);
+  }
 
-    // delete this player before 'fixing' the count
-    delete playerData;
-    playerData = NULL;
+  delete playerData;
 
+  if (wasPlaying) {
+    // 'fixing' the count after deleting player 
     fixTeamCount();
 
     // tell the list server the new number of players
     listServerLink->queueMessage(ListServerLink::ADD);
   }
-
-  delete playerData;
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle))
     if (playerIndex == rabbitIndex)

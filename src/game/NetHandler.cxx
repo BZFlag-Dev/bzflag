@@ -440,7 +440,7 @@ RxStatus NetHandler::tcpReceive() {
     DEBUG2("Player %s [%d] outbound UDP up\n", info->getCallSign(),
 	   playerIndex);
   }
-  return e;
+  return ReadAll;
 }
 
 RxStatus NetHandler::receive(size_t length) {
