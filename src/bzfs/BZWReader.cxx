@@ -411,8 +411,8 @@ WorldInfo* BZWReader::defineWorldFromFile()
   }
 
   // add objects
-  const int n = list.size();
-  for (int i = 0; i < n; ++i) {
+  const unsigned int n = list.size();
+  for (i = 0; i < n; ++i) {
     list[i]->writeToWorld(world);
   }
 
