@@ -1860,7 +1860,7 @@ loadHeader (ReplayHeader *h, FILE *f)
     sendMessage (ServerPlayer, AllPlayers,
                  "Please rejoin or face the consequences (client crashes)");
   }
-  /* FIXME
+  /* FIXME -- having to rejoin when replay files are loaded
    *
    * Ok, this is where it gets a bit borked. The bzflag client
    * has dynamic arrays for some of its objects (players, flags,

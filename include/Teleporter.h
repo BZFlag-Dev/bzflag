@@ -79,6 +79,7 @@ class Teleporter : public Obstacle {
     MeshFace* frontLink;
     float fvertices[4][3]; // front vertices
     float bvertices[4][3]; // back vertices
+    float texcoords[4][2]; // shared texture coordinates
 };
 
 const int randomTeleporter = (unsigned short)(-1);

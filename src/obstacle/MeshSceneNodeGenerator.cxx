@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <math.h>
 #include "vectors.h"
 #include "MeshSceneNodeGenerator.h"
 #include "MeshObstacle.h"
@@ -377,7 +378,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
 
   float len = vec3dot(x, x);
   if (len > 0.0f) {
-    len = 1 / len;
+    len = 1.0f / sqrtf(len);
     x[0] = x[0] * len;
     x[1] = x[1] * len;
     x[2] = x[2] * len;
@@ -387,7 +388,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
 
   len = vec3dot(y, y);
   if (len > 0.0f) {
-    len = 1 / len;
+    len = 1.0f / sqrtf(len);
     y[0] = y[0] * len;
     y[1] = y[1] * len;
     y[2] = y[2] * len;
@@ -395,7 +396,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
     return false;
   }
 
-  const float uvScale = 4.0f;
+  const float uvScale = 8.0f;
 
   texcoords[0][0] = 0.0f;
   texcoords[0][1] = 0.0f;
@@ -406,7 +407,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
     texcoords[i][0] = vec3dot(delta, x) / uvScale;
     texcoords[i][1] = vec3dot(delta, y) / uvScale;
   }
-
+  
   return true;
 }
 

@@ -53,13 +53,21 @@ const char* Teleporter::getClassName() // const
 void Teleporter::makeLinks()
 {
   int i;
+  
+  // make the new pointers to floats,
+  // the MeshFace will delete[] them 
   float **fvrts = new float*[4];
   float **bvrts = new float*[4];
+  float **ftxcds = new float*[4];
+  float **btxcds = new float*[4];
   for (i = 0; i < 4; i++) {
     fvrts[i] = fvertices[i];
     bvrts[i] = bvertices[i];
+    ftxcds[i] = texcoords[i];
+    btxcds[i] = texcoords[i];
   }
-  
+
+  // get the basics  
   const float* p = getPosition();
   const float a = getRotation();
   const float w = getWidth();
@@ -67,6 +75,24 @@ void Teleporter::makeLinks()
   const float br = getBorder();
   const float h = getHeight();
 
+  // setup the texcoord coordinates
+  const float xtxcd = 1.0f;
+  float ytxcd;
+  if ((b - br) > 0.0f) {
+    ytxcd = h / (2.0f * (b - br));
+  } else {
+    ytxcd = 1.0f;
+  }
+  printf ("w = %f, b = %f, h = %f, br = %f, ytxcd = %f\n", w, b, h, br, ytxcd);
+  texcoords[0][0] = 0.0f;
+  texcoords[0][1] = 0.0f;
+  texcoords[1][0] = xtxcd;
+  texcoords[1][1] = 0.0f;
+  texcoords[2][0] = xtxcd;
+  texcoords[2][1] = ytxcd;
+  texcoords[3][0] = 0.0f;
+  texcoords[3][1] = ytxcd;
+  
   const float cos_val = cos(a);
   const float sin_val = sin(a);
   
@@ -82,7 +108,7 @@ void Teleporter::makeLinks()
       bvrts[i][2] = p[2] + ((h - br) * params[i][1]);
     }
     backLink =
-      new MeshFace(NULL, 4, bvrts, NULL, NULL, NULL, false, true, true);
+      new MeshFace(NULL, 4, bvrts, NULL, btxcds, NULL, false, true, true);
     backLink->finalize();  
 
     for (i = 0; i < 4 ;i++) {
@@ -91,7 +117,7 @@ void Teleporter::makeLinks()
       fvrts[i][2] = p[2] + ((h - br) * params[i][1]);
     }
     frontLink =
-      new MeshFace(NULL, 4, fvrts, NULL, NULL, NULL, false, true, true);
+      new MeshFace(NULL, 4, fvrts, NULL, ftxcds, NULL, false, true, true);
     frontLink->finalize();  
   }
   else {
@@ -110,7 +136,7 @@ void Teleporter::makeLinks()
     bvrts[3][1] = p[1] + ((cos_val * ylen) + (sin_val * -xlen));
     bvrts[3][2] = p[2] + h - br;
     backLink =
-      new MeshFace(NULL, 4, bvrts, NULL, NULL, NULL, false, true, true);
+      new MeshFace(NULL, 4, bvrts, NULL, btxcds, NULL, false, true, true);
     backLink->finalize();
     
     for (i = 0; i < 4; i++) {
@@ -118,7 +144,7 @@ void Teleporter::makeLinks()
       fvrts[i][2] = p[2] + h; // change the height
     }
     frontLink =
-      new MeshFace(NULL, 4, fvrts, NULL, NULL, NULL, false, true, true);
+      new MeshFace(NULL, 4, fvrts, NULL, ftxcds, NULL, false, true, true);
     frontLink->finalize();  
   }
   

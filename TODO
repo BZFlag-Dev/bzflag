@@ -49,12 +49,6 @@ THESE ARE LOWER PRIORITY
   Server needs to resend max when ever gravity changes.
   This way only real cheaters hit the cheat test.
 
-* separate the map from the game configuration parameters in the
-  world database such that a game configuration change doesn't
-  necessitate a full world download. it's probably easiest to always
-  download the game config and the map hash, and then download the
-  map as required.
-
 * Iterative octree cell shot collision detection
 
 * instead of kicking laggy players, they should be made observers
