@@ -19,6 +19,8 @@ bzflag_SOURCES =			\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
 	CommandsStandard.cxx		\
+	FlashClock.cxx			\
+	FlashClock.h			\
 	FormatMenu.cxx			\
 	FormatMenu.h			\
 	GuidedMissleStrategy.cxx	\
