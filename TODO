@@ -10,8 +10,10 @@ THESE ARE LOWER PRIORITY
 
 * look closely at how local and global logins / groups interact:
   - add option for non-public servers to use global logins? (match servers)
-  - add option for public-servers to not use global logins? or only
-    use global logins (no /register)?
+  - add option for public-servers to not use global logins?
+    (if no passwd, then they only use global logins ie: no /register)
+
+* add SPAWN permission which EVERYONE has by default
 
 * bzbb login names are used for global authentication. If the user changes
   bzbb login names (which is possible), this can cause problems Another user
