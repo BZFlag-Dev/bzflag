@@ -182,7 +182,7 @@ public:
     					     ExpressionToken& dst);
     friend std::ostream&	operator << (std::ostream& dst,
     					     ExpressionToken& src);
-  private:
+	private:
     Type tokenType;
     Contents tokenContents;
   };

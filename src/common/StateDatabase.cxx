@@ -491,7 +491,7 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
 
 std::ostream& operator << (std::ostream& dst, StateDatabase::ExpressionToken& src)
 {
-  switch (src.tokenType) {
+  switch (src.getTokenType()) {
     case StateDatabase::ExpressionToken::number:
       dst << src.getNumber();
       break;

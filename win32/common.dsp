@@ -206,6 +206,10 @@ SOURCE=..\include\ShotUpdate.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\Team.h
 # End Source File
 # Begin Source File
