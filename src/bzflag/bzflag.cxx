@@ -140,6 +140,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "boxTopTexture",	        "roof",                 true,	StateDatabase::ReadWrite,	NULL },
   { "pyrWallTexture",	        "pyrwall",              true,	StateDatabase::ReadWrite,	NULL },
   { "cautionTexture",	        "caution",              true,	StateDatabase::ReadWrite,	NULL },
+  { "deadUnderTexture",	        "deadunder",            true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes
   { "tankTexture",	        "tank",                 true,	StateDatabase::ReadWrite,	NULL },

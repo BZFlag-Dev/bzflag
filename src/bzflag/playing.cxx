@@ -2405,6 +2405,53 @@ static void		addExplosions(SceneDatabase* scene)
     scene->addDynamicNode(explosions[i]);
 }
 
+void addDeadUnder (SceneDatabase *db, float dt)
+{
+  static float texShift = 0.0f;
+  static GLfloat black[3] = {0.0f, 0.0f, 0.0f};
+  static OpenGLMaterial material(black, black, 0.0f);
+  
+  float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+  if (deadUnder < 0.0f) {
+    return;
+  }
+  
+  float size = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
+  GLfloat base[3] =  {-size/2.0f, -size/2.0f, deadUnder};
+  GLfloat sEdge[3] = {0.0f, size, 0.0f};
+  GLfloat tEdge[3] = {size, 0.0f, 0.0f};
+
+  texShift = fmodf (texShift + (dt / 20.0f), 1.0f);
+  QuadWallSceneNode* node = new QuadWallSceneNode (base, tEdge, sEdge, 
+                                                   texShift, 0.0f, 2.0, 2.0, false);
+
+  TextureManager &tm = TextureManager::instance();
+  int texture = tm.getTextureID(BZDB.get("deadUnderTexture").c_str(),true);
+
+  GLfloat color[4] = {1.0f, 1.0f, 1.0f, 0.94f};
+  if ((!BZDBCache::texture) || (texture < 0)) {
+    color[0] = 0.65f;
+    color[1] = 1.0f;
+    color[2] = 0.5f;
+  }
+  if (BZDB.isTrue("lighting")) {
+    // needs a little tweak
+    color[3] = 0.9f;
+  }
+
+  node->setColor(color);
+  node->setModulateColor(color);
+  node->setLightedColor(color);
+  node->setLightedModulateColor(color);
+  node->setMaterial(material);
+  node->setTexture(texture);
+  node->setUseColorTexture(false);
+
+  db->addDynamicNode(node);
+  
+  return;
+} 
+
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason)
 {
@@ -4430,6 +4477,9 @@ static void		playingLoop()
 
 	// add explosions
 	addExplosions(scene);
+	
+	// add water-like graphics for the deadUnder line
+	addDeadUnder (scene, dt);
 
 	// if i'm inside a building then add eighth dimension scene node.
 	if (myTank->getContainingBuilding()) {
