@@ -101,8 +101,9 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 ServerMenu::ServerMenu() : defaultKey(this),
 				pingBcastSocket(-1),
 				selectedIndex(0),
-				numListServers(0),
-				serverCache(ServerListCache::get())
+			   serverCache(ServerListCache::get()),
+			   multiHandle(curl_multi_init()),
+			   easyHandle(NULL)
 {
   // add controls
   addLabel("Servers", "");
@@ -140,6 +141,13 @@ ServerMenu::ServerMenu() : defaultKey(this),
   setFocus(status);
 }
 
+ServerMenu::~ServerMenu() {
+  if (multiHandle) {
+    CURLMcode result = curl_multi_cleanup(multiHandle);
+    if (result)
+      printFatalError("Curl multi cleaning reports error %d\n", result);
+  }
+};
 
 
 void ServerMenu::addLabel(const char* msg, const char* _label)
@@ -401,6 +409,11 @@ void ServerMenu::pick()
   }
 }
 
+extern "C" size_t curlReaderWrapper (void *ptr, size_t size, size_t nmemb,
+				     void *stream) {
+  return ((ServerMenu *)stream)->curlReader(ptr, size, nmemb);
+}
+
 void			ServerMenu::show()
 {
   // clear server list
@@ -461,15 +474,39 @@ void			ServerMenu::show()
   // time instead of only first time just in case one of the pointers
   // has changed.
   const StartupInfo* info = getStartupInfo();
-  if (info->listServerURL.size() == 0)
-    phase = -1;
-  else
-    phase = 0;
 
   // also try broadcast
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
   if (pingBcastSocket != -1)
     PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr);
+
+  if (info->listServerURL.size() > 0) {
+    listServers[0].bufferSize = 0;
+    easyHandle = curl_easy_init();
+    if (easyHandle) {
+      completeUrl  = info->listServerURL;
+      completeUrl += "?action=LIST&version=";
+      completeUrl += getServerVersion();
+      CURLcode curlResult = curl_easy_setopt (easyHandle, CURLOPT_URL,
+					      completeUrl.c_str());
+      if (curlResult)
+	printFatalError("Curl setting url reports error %d\n", curlResult);
+      curlResult = curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION,
+				    curlReaderWrapper);
+      if (curlResult)
+	printFatalError("Curl setting callback reports error %d\n",
+			curlResult);
+      curlResult = curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
+      if (curlResult)
+	printFatalError("Curl setting callback reports error %d\n",
+			curlResult);
+      CURLMcode curlmResult
+	= curl_multi_add_handle(multiHandle, easyHandle);
+      if (curlmResult != CURLM_CALL_MULTI_PERFORM && curlmResult != CURLM_OK)
+	printFatalError("Curl adding to multi reports error %d\n",
+			curlmResult);
+    }
+  }
 
   // listen for echos
   addPlayingCallback(&playingCB, this);
@@ -495,13 +532,13 @@ void			ServerMenu::dismiss()
   // no more callbacks
   removePlayingCallback(&playingCB, this);
 
-  // close server list sockets
-  for (int i = 0; i < numListServers; i++)
-    if (listServers[i].socket != -1) {
-      close(listServers[i].socket);
-      listServers[i].socket = -1;
-    }
-  numListServers = 0;
+  if (easyHandle) {
+    CURLMcode curlmResult = curl_multi_remove_handle(multiHandle, easyHandle);
+    if (curlmResult)
+      printFatalError("Curl removing to multi reports error %d\n",
+		      curlmResult);
+    curl_easy_cleanup(easyHandle);
+  }
 
   // close input multicast socket
   closeMulticast(pingBcastSocket);
@@ -588,6 +625,12 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 void			ServerMenu::checkEchos()
 {
 
+  // Actually execute http transfer, calling curlReader when data are available
+  int runningTransfer;
+  CURLMcode curlmResult = curl_multi_perform(multiHandle, &runningTransfer);
+  if (curlmResult != CURLM_CALL_MULTI_PERFORM && curlmResult != CURLM_OK)
+    printFatalError("Curl multi perform reports error %d\n", curlmResult);
+
   // counter used to print a status spinner
   static int counter=0;
   // how frequent to update spinner
@@ -595,137 +638,22 @@ void			ServerMenu::checkEchos()
   // timer used to track the spinner update frequency
   static TimeKeeper lastUpdate = TimeKeeper::getCurrent();
 
-  // print a spinning status message that updates periodically until we are 
-  // actually receiving data from a list server (phase 3).  the loop below
-  // is not entered until later -- so update the spinning status here too
-  if (phase < 2) {
-    if (TimeKeeper::getCurrent() - lastUpdate > STATUS_UPDATE_FREQUENCY) {
-      /* a space trailing the spinning status icon adjusts for the
-       * variable width font -- would be better to actually print
-       * a status icon elsewhere or print spinning icon separate
-       * from the text (and as a cool graphic).
-       */
-      setStatus(string_util::format("%s Searching", (counter%4==0)?"-":(counter%4==1)?" \\":(counter%4==2)?" |":" /").c_str());
-      counter++;
-      lastUpdate = TimeKeeper::getCurrent();
-    }
-  }
-
-  // lookup server list in phase 0
-  if (phase == 0) {
-    int i;
-
-    std::vector<std::string> urls;
-    urls.push_back(getStartupInfo()->listServerURL);
-
-    // check urls for validity
-    numListServers = 0;
-    for (i = 0; i < (int)urls.size(); ++i) {
-	// parse url
-	std::string protocol, hostname, path;
-	int port = 80;
-	Address address;
-	if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
-	    protocol != "http" || port < 1 || port > 65535 ||
-	    (address = Address::getHostAddress(hostname.c_str())).isAny()) {
-	    std::vector<std::string> args;
-	    args.push_back(urls[i]);
-	    printError("Can't open list server: {1}", &args);
-	    if (!addedCacheToList) {
-	      addedCacheToList = true;
-	      addCacheToList();
-	    }
-	    continue;
-	}
-
-	// add to list
-	listServers[numListServers].address = address;
-	listServers[numListServers].hostname = hostname;
-	listServers[numListServers].pathname = path;
-	listServers[numListServers].port    = port;
-	listServers[numListServers].socket  = -1;
-	listServers[numListServers].phase   = 2;
-	numListServers++;
-    }
-
-    // do phase 1 only if we found a valid list server url
-    if (numListServers > 0)
-      phase = 1;
-    else
-      phase = -1;
-  }
-
-  // connect to list servers in phase 1
-  else if (phase == 1) {
-    phase = -1;
-    for (int i = 0; i < numListServers; i++) {
-      ListServer& listServer = listServers[i];
-
-      // create socket.  give up on failure.
-      listServer.socket = socket(AF_INET, SOCK_STREAM, 0);
-      if (listServer.socket < 0) {
-	printError("Can't create list server socket");
-	listServer.socket = -1;
-	if (!addedCacheToList) {
-	  addedCacheToList = true;
-	  addCacheToList();
-	}
-	continue;
-      }
-
-      // set to non-blocking.  we don't want to wait for the connection.
-      if (BzfNetwork::setNonBlocking(listServer.socket) < 0) {
-	printError("Error with list server socket");
-	close(listServer.socket);
-	listServer.socket = -1;
-	if (!addedCacheToList){
-	  addedCacheToList = true;
-	  addCacheToList();
-	}
-	continue;
-      }
-
-      // start connection
-      struct sockaddr_in addr;
-      addr.sin_family = AF_INET;
-      addr.sin_port = htons(listServer.port);
-      addr.sin_addr = listServer.address;
-      if (connect(listServer.socket, (CNCTType*)&addr, sizeof(addr)) < 0) {
-#if defined(_WIN32)
-#undef EINPROGRESS
-#define EINPROGRESS EWOULDBLOCK
-#endif
-	if (getErrno() != EINPROGRESS) {
-	  printError("Can't connect list server socket");
-	  close(listServer.socket);
-	  listServer.socket = -1;
-	  if (!addedCacheToList){
-	    addedCacheToList = true;
-	    addCacheToList();
-	  }
-	  continue;
-	}
-      }
-
-      // at least this socket is okay so proceed to phase 2
-      phase = 2;
-    }
-  }
-
   // get echo messages
   while (1) {
-    int i;
 
     // print a spinning status message that updates periodically until we are 
-    // actually receiving data from a list server (phase 3).
-    if (phase < 2) {
+    // actually receiving data from a list server 
+    if (runningTransfer > 0) {
       if (TimeKeeper::getCurrent() - lastUpdate > STATUS_UPDATE_FREQUENCY) {
 	/* a space trailing the spinning status icon adjusts for the
 	 * variable width font -- would be better to actually print
 	 * a status icon elsewhere or print spinning icon separate
 	 * from the text. (and as a cool graphic)
 	 */
-	setStatus(string_util::format("%s Searching", (counter%4==0)?"-":(counter%4==1)?" \\":(counter%4==2)?" |":" /").c_str());
+	setStatus(string_util::format
+		  ("%s Searching",
+		   (counter%4==0)?"-":(counter%4==1)?" \\":(counter%4==2)?
+		   " |":" /").c_str());
 	counter++;
 	lastUpdate = TimeKeeper::getCurrent();
       }
@@ -740,21 +668,6 @@ void			ServerMenu::checkEchos()
     FD_ZERO(&write_set);
     if (pingBcastSocket != -1) _FD_SET(pingBcastSocket, &read_set);
     int fdMax = pingBcastSocket;
-
-    // check for list server connection or data
-    for (i = 0; i < numListServers; i++) {
-      ListServer& listServer = listServers[i];
-      if (listServer.socket != -1) {
-	if (listServer.phase == 2) {
-	  _FD_SET(listServer.socket, &write_set);
-	} else if (listServer.phase == 3) {
-	  _FD_SET(listServer.socket, &read_set);
-	}
-	if (listServer.socket > fdMax) {
-	  fdMax = listServer.socket;
-	}
-      }
-    }
 
     const int nfound = select(fdMax+1, (fd_set*)&read_set,
 					(fd_set*)&write_set, 0, &timeout);
@@ -773,66 +686,20 @@ void			ServerMenu::checkEchos()
 	addToListWithLookup(serverInfo);
       }
     }
-
-    // check list servers
-    for (i = 0; i < numListServers; i++) {
-      ListServer& listServer = listServers[i];
-      if (listServer.socket != -1) {
-	// read more data from server
-	if (FD_ISSET(listServer.socket, &read_set)) {
-	  readServerList(i);
-	}
-
-	// send list request
-	else if (FD_ISSET(listServer.socket, &write_set)) {
-#if !defined(_WIN32)
-	  // ignore SIGPIPE for this send
-	  SIG_PF oldPipeHandler = bzSignal(SIGPIPE, SIG_IGN);
-#endif
-	  bool errorSending;
-	  {
-	    char url[1024];
-#ifdef _WIN32
-	    _snprintf(url, sizeof(url),
-#else
-	    snprintf(url, sizeof(url),
-#endif
-		     "GET %s?action=LIST&version=%s HTTP/1.1\r\nHost: %s\r\nCache-control: no-cache\r\n\r\n",
-		     listServer.pathname.c_str(), getServerVersion(),
-		     listServer.hostname.c_str());
-	    errorSending = send(listServer.socket, url, strlen(url), 0)
-	      != (int) strlen(url);
-	  }
-	  if (errorSending) {
-	    // probably unable to connect to server
-	    close(listServer.socket);
-	    listServer.socket = -1;
-	    if (!addedCacheToList){
-	      addedCacheToList = true;
-	      addCacheToList();
-	     }
-	  }
-	  else {
-	    listServer.phase = 3;
-	    listServer.bufferSize = 0;
-	  }
-#if !defined(_WIN32)
-	  bzSignal(SIGPIPE, oldPipeHandler);
-#endif
-	}
-      }
-    }
   }
 }
 
-void			ServerMenu::readServerList(int index)
-{
-  ListServer& listServer = listServers[index];
+size_t ServerMenu::curlReader(void *ptr, size_t size, size_t nmemb) {
+  ListServer& listServer = listServers[0];
+  int n     = size * nmemb;
+  int avail = sizeof(listServer.buffer) - listServer.bufferSize - 1;
 
-  // read more data into server list buffer
-  int n = recv(listServer.socket, listServer.buffer + listServer.bufferSize,
-				sizeof(listServer.buffer) -
-					listServer.bufferSize - 1, 0);
+  if (n > avail)
+    n = avail;
+
+  // More data into server list buffer
+  memcpy(listServer.buffer + listServer.bufferSize, ptr, n);
+
   if (n > 0) {
     listServer.bufferSize += n;
     listServer.buffer[listServer.bufferSize] = 0;
@@ -922,17 +789,7 @@ void			ServerMenu::readServerList(int index)
     listServer.bufferSize -= (base - listServer.buffer);
     memmove(listServer.buffer, base, listServer.bufferSize);
   }
-  else if (n == 0) {
-    // server hungup
-    close(listServer.socket);
-    listServer.socket = -1;
-    listServer.phase = 4;
-  }
-  else if (n < 0) {
-    close(listServer.socket);
-    listServer.socket = -1;
-    listServer.phase = -1;
-  }
+  return n;
 }
 
 void			ServerMenu::addToListWithLookup(ServerItem& info)

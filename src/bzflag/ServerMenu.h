@@ -46,7 +46,7 @@ private:
 class ServerMenu : public HUDDialog {
 public:
   ServerMenu();
-  ~ServerMenu() { }
+  ~ServerMenu();
 
   HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
   int getSelected() const;
@@ -55,6 +55,7 @@ public:
   void execute();
   void dismiss();
   void resize(int width, int height);
+  size_t curlReader(void *ptr, size_t size, size_t nmemb);
 
   static const int NumItems;
 
@@ -73,7 +74,6 @@ private:
 private:
   ServerMenuDefaultKey	defaultKey;
   std::vector<ServerItem> servers;
-  struct sockaddr_in pingInAddr;
   int pingBcastSocket;
   struct sockaddr_in pingBcastAddr;
   HUDuiLabel* status;
@@ -81,13 +81,16 @@ private:
   HUDuiLabel* pageLabel;
   int selectedIndex;
 
-  int phase;
   ListServer listServers[MaxListServers];
-  int numListServers;
   ServerListCache* serverCache;
   bool addedCacheToList;
 
   static const int NumReadouts;
+
+  CURLM *multiHandle;
+  CURL  *easyHandle;
+
+  std::string completeUrl;
 };
 
 

@@ -31,7 +31,7 @@ class ListServer {
     std::string         hostname;
     std::string         pathname;
     int			bufferSize;
-    char		buffer[CURL_MAX_WRITE_SIZE];
+    char		buffer[CURL_MAX_WRITE_SIZE + 1];
 };
 
 
