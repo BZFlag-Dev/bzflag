@@ -47,6 +47,7 @@ World::World() :
   flagNodes(NULL),
   flagWarpNodes(NULL),
   boxInsideNodes(NULL),
+  tetraInsideNodes(NULL),
   pyramidInsideNodes(NULL),
   baseInsideNodes(NULL)
 {
