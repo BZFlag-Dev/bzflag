@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- Player kicked after getting V flag (and possibly TH) stolen by another thief.
+
 - if you jump up and hit a flipped pyramid you will stick to it until you
   move again
 
