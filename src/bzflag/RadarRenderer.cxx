@@ -335,7 +335,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const ShotPath* shot = myTank->getShot(i);
       if (shot) {
         const float cs = colorScale(shot->getPosition()[2],
-                                    MuzzleHeight, renderer.useEnhancedRadar());
+				    MuzzleHeight, BZDB->isTrue("enhancedradar"));
         glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
         shot->radarRender();
       }
@@ -401,13 +401,13 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	const ShotPath* shot = player->getShot(j);
         if (shot && shot->getFlag() != InvisibleBulletFlag) {
           const float *shotcolor;
-          if ( renderer.useColoredShots() ) {
+	  if (BZDB->isTrue("coloredradarshots")) {
             if (myTank->getFlag() == ColorblindnessFlag)
               shotcolor = Team::getRadarColor(RogueTeam);
             else
               shotcolor = Team::getRadarColor(player->getTeam());
             const float cs = colorScale(shot->getPosition()[2],
-                MuzzleHeight, renderer.useEnhancedRadar());
+	        MuzzleHeight, BZDB->isTrue("enhancedradar"));
             glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
           }
           else
@@ -424,7 +424,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	continue;
       // Flags change color by height
-      const float cs = colorScale(flag.position[2], MuzzleHeight, renderer.useEnhancedRadar());
+      const float cs = colorScale(flag.position[2], MuzzleHeight, BZDB->isTrue("enhancedradar"));
       const float *flagcolor = Flag::getColor(flag.id);
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       // always draw team flags
@@ -544,9 +544,9 @@ float			RadarRenderer::transScale(const Obstacle& o)
   return scaleColor;
 }
 
-void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer& renderer)
+void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
 {
-  const bool enhancedRadar = renderer.useEnhancedRadar();
+  const bool enhancedRadar = BZDB->isTrue("enhancedradar");
 
   // antialias if smoothing is on.
   if (smoothingOn) {

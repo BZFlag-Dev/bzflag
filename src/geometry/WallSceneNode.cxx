@@ -262,7 +262,7 @@ void			WallSceneNode::setTexture(const OpenGLTexture& tex)
 }
 
 void			WallSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+				const SceneRenderer&)
 {
   float alpha;
   bool lighted = (BZDB->isTrue("lighting") && gstate.isLighted());
@@ -284,7 +284,7 @@ void			WallSceneNode::notifyStyleChange(
     builder.enableTexture(false);
     alpha = lighted ? lightedColor[3] : color[3];
   }
-  builder.enableTextureReplace(renderer.useTextureReplace());
+  builder.enableTextureReplace(BZDB->isTrue("_texturereplace"));
   builder.enableMaterial(lighted);
   if (BZDB->isTrue("blend") && alpha != 1.0f) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

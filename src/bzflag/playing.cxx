@@ -149,7 +149,6 @@ static std::vector<BillboardSceneNode*>	explosions;
 static std::vector<BillboardSceneNode*>	prototypeExplosions;
 static int		savedVolume = -1;
 static bool		grabMouseAlways = false;
-int			killerHighlight = 0;
 FlashClock		pulse;
 
 static char		messageMessage[PlayerIdPLen + MessageLen];
@@ -2306,9 +2305,9 @@ static void		addMessage(const Player* player,
   if (sceneRenderer->getConsoleColorization()) {
     if (player) {
       if (highlight) {
-        if (killerHighlight == 0)
+	if (BZDB->get("killerhighlight") == "0")
           fullMessage += ColorStrings[BlinkColor];
-        else if (killerHighlight == 1)
+	else if (BZDB->get("killerhighlight") == "1")
          fullMessage += ColorStrings[UnderlineColor];
       }
       int color = player->getTeam();
@@ -2848,9 +2847,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    playerStr += "teammate ";
 
 	  if (victimPlayer == myTank) {
-	    if (killerHighlight == 0)
+	    if (BZDB->get("killerhighlight") == "0")
 	      playerStr += ColorStrings[BlinkColor];
-	    else if (killerHighlight == 1)
+	    else if (BZDB->get("killerhighlight") == "1")
 	      playerStr += ColorStrings[UnderlineColor];
 	  }
 	  playerStr += ColorStrings[killerPlayer->getTeam()];
@@ -3254,9 +3253,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    fullMsg=text;
 	  }
 	  else {
-	    if (killerHighlight == 0)
+	    if (BZDB->get("kilerhighlight") == "0")
 	      fullMsg += ColorStrings[BlinkColor];
-	    else if (killerHighlight == 1)
+	    else if (BZDB->get("killerhighlight") == "1")
 	      fullMsg += ColorStrings[UnderlineColor];
 	    fullMsg += "[";
 	    if (srcPlayer == myTank) {
@@ -6055,7 +6054,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(0);
   BZDB->set("dither", "yes");
   BZDB->set("shadows", "no");
-  sceneRenderer->setEnhancedRadar(false);
+  BZDB->set("enhancedradar", "no");
   OpenGLTexture::setFilter(OpenGLTexture::Off);
   timeConfiguration(true);
 
@@ -6126,7 +6125,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(2);
   BZDB->set("dither", "yes");
   BZDB->set("shadows", "yes");
-  sceneRenderer->setEnhancedRadar(true);
+  BZDB->set("enhancedradar", "yes");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
@@ -6301,7 +6300,7 @@ void			startPlaying(BzfDisplay* _display,
     sceneRenderer->setQuality(0);
     BZDB->set("dither", "no");
     BZDB->set("shadows", "no");
-    sceneRenderer->setEnhancedRadar(false);
+    BZDB->set("enhancedradar", "no");
     OpenGLTexture::setFilter(OpenGLTexture::Off);
   }
 

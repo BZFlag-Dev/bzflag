@@ -74,13 +74,10 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				scene(NULL),
 				background(NULL),
 				abgr(false),
-				useTextureReplaceOn(true),
 				useQualityValue(2),
 				useDepthComplexityOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
-				useEnhancedRadarOn(true),
-				useColoredShotsOn(true),
 				radarShotLength(0),
 				panelOpacity(0.3f),
 				radarSize(4),
@@ -193,11 +190,6 @@ bool			SceneRenderer::useABGR() const
   return abgr;
 }
 
-bool			SceneRenderer::useTextureReplace() const
-{
-  return useTextureReplaceOn;
-}
-
 bool			SceneRenderer::useStencil() const
 {
   return useStencilOn;
@@ -221,12 +213,6 @@ int			SceneRenderer::getMaxLOD() const
 bool			SceneRenderer::getConsoleColorization() const
 {
   return consoleColors;
-}
-
-void			SceneRenderer::setTextureReplace(bool on)
-{
-  useTextureReplaceOn = on;
-  notifyStyleChange();
 }
 
 void			SceneRenderer::setZBufferSplit(bool on)
@@ -347,17 +333,6 @@ bool			SceneRenderer::useHiddenLine() const
   return useHiddenLineOn;
 }
 
-void			SceneRenderer::setEnhancedRadar(bool _setEnhancedRadar)
-{
-  useEnhancedRadarOn = _setEnhancedRadar;
-  notifyStyleChange();
-}
-
-bool			SceneRenderer::useEnhancedRadar() const
-{
-    return useEnhancedRadarOn;
-}
-
 void			SceneRenderer::setPanelOpacity(float opacity)
 {
   bool needtoresize = opacity == 1.0f || panelOpacity == 1.0f;
@@ -397,17 +372,6 @@ void			SceneRenderer::setMaxMotionFactor(int factor)
 int			SceneRenderer::getMaxMotionFactor() const
 {
   return maxMotionFactor;
-}
-
-void			SceneRenderer::setColoredShots(bool _setColoredShots)
-{
-    useColoredShotsOn = _setColoredShots;
-    notifyStyleChange();
-}
-
-bool		SceneRenderer::useColoredShots() const
-{
-    return useColoredShotsOn;
 }
 
 void			SceneRenderer::setRadarShotLength(int length)

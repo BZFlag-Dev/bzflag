@@ -68,7 +68,6 @@ static StartupInfo	startupInfo;
 bool			echoToConsole = false;
 bool			echoClean = false;
 ResourceDatabase	db;
-extern int		killerHighlight;
 
 static BzfDisplay*	display = NULL;
 
@@ -688,12 +687,6 @@ void			dumpResources(BzfDisplay* display,
   BZDB->set("joystickname", startupInfo.joystickName);
   db.addValue("joystickname", startupInfo.joystickName);
 
-  BZDB->set("enhancedradar", renderer.useEnhancedRadar() ? "yes" : "no");
-  db.addValue("enhancedradar", renderer.useEnhancedRadar() ? "yes" : "no");
-
-  BZDB->set("coloredradarshots", renderer.useColoredShots() ? "yes" : "no");
-  db.addValue("coloredradarshots", renderer.useColoredShots() ? "yes" : "no");
-
   int length = renderer.getRadarShotLength();
   BZDB->set("linedradarshots", string_util::format("%d", length));
   db.addValue("linedradarshots", string_util::format("%d", length));
@@ -713,9 +706,6 @@ void			dumpResources(BzfDisplay* display,
   db.addValue("colorful", renderer.getConsoleColorization() ? "yes" : "no");
   BZDB->set("underline", OpenGLTexFont::getUnderlineColor());
   db.addValue("underline", OpenGLTexFont::getUnderlineColor());
-  char temp[2]; temp[1] = '\0'; temp[0] = killerHighlight + '0';
-  BZDB->set("killerhighlight", temp);
-  db.addValue("killerhighlight", temp);
 
   // don't save these configurations
   BZDB->setPersistent("_window", false);
@@ -1151,8 +1141,8 @@ int			main(int argc, char** argv)
 	  break;
 	}
     }
-    renderer.setTextureReplace(!BZDB->isTrue("lighting") &&
-				renderer.useQuality() < 2);
+    BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
+    	      renderer.useQuality() < 2) ? "yes" : "no");
     if (db.hasValue("view")) {
       renderer.setViewType(SceneRenderer::Normal);
       std::string value = db.getValue("view");
@@ -1176,10 +1166,6 @@ int			main(int argc, char** argv)
     if (db.hasValue("showscore"))
       renderer.setLabels(db.getValue("showlabels") == "yes");
 
-    if (db.hasValue("enhancedradar"))
-      renderer.setEnhancedRadar(db.getValue("enhancedradar") == "yes");
-    if (db.hasValue("coloredradarshots"))
-      renderer.setColoredShots(db.getValue("coloredradarshots") == "yes");
     if (db.hasValue("linedradarshots"))
       renderer.setRadarShotLength(atoi(db.getValue("linedradarshots").c_str()));
     if (db.hasValue("panelopacity"))
@@ -1194,8 +1180,6 @@ int			main(int argc, char** argv)
       renderer.setConsoleColorization(db.getValue("colorful") == "yes");
     if (db.hasValue("underline"))
       OpenGLTexFont::setUnderlineColor(atoi(db.getValue("underline").c_str()));
-    if (db.hasValue("killerhighlight"))
-      killerHighlight = atoi(db.getValue("killerhighlight").c_str());
   }
 
   // grab the mouse only if allowed

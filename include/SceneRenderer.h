@@ -62,14 +62,11 @@ class SceneRenderer {
     MainWindow&		getWindow() const;
 
     bool		useABGR() const;
-    bool		useTextureReplace() const;
     bool		useStencil() const;
     int			useQuality() const;
     bool		useDepthComplexity() const;
     bool		useWireframe() const;
     bool		useHiddenLine() const;
-    bool		useEnhancedRadar() const;
-    bool		useColoredShots() const;
     int			getRadarShotLength() const;
     float		getPanelOpacity() const;
     int			getRadarSize() const;
@@ -82,15 +79,12 @@ class SceneRenderer {
     bool		getConsoleColorization() const;
 
     void		setSmoothing(bool on);
-    void		setTextureReplace(bool on);
     void		setZBuffer(bool on);
     void		setZBufferSplit(bool on);
     void		setQuality(int value);
     void		setDepthComplexity(bool on);
     void		setWireframe(bool on);
     void		setHiddenLine(bool on);
-    void		setEnhancedRadar(bool on);
-    void		setColoredShots(bool on);
     void		setRadarShotLength(int l);
     void		setPanelOpacity(float opacity);
     void		setRadarSize(int size);
@@ -179,13 +173,10 @@ class SceneRenderer {
     static const GLint	SunLight;
 
     bool		abgr;
-    bool		useTextureReplaceOn;
     int			useQualityValue;
     bool		useDepthComplexityOn;
     bool		useWireframeOn;
     bool		useHiddenLineOn;
-    bool		useEnhancedRadarOn;
-    bool		useColoredShotsOn;
     int			radarShotLength;
     float		panelOpacity;
     int			radarSize;

@@ -71,7 +71,6 @@
 #endif
 
 extern ResourceDatabase db;	// bzflag.cxx
-extern int killerHighlight;	// playing.cxx
 extern ControlPanel* controlPanel; // playing.cxx
 
 //
@@ -1068,17 +1067,17 @@ void			GUIOptionsMenu::resize(int width, int height)
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
     int i = 1;
-    ((HUDuiList*)list[i++])->setIndex(renderer->useEnhancedRadar() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("enhancedradar") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useBigFont() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity()));
-    ((HUDuiList*)list[i++])->setIndex(renderer->useColoredShots() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("coloredradarshots") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarShotLength());
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
     ((HUDuiList*)list[i++])->setIndex(renderer->getConsoleColorization());
     ((HUDuiList*)list[i++])->setIndex(atoi(OpenGLTexFont::getUnderlineColor().c_str()));
-    ((HUDuiList*)list[i++])->setIndex(killerHighlight);
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("killerhighlight")));
   }
 }
 
@@ -1089,7 +1088,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
   SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
     case 'e':
-      sceneRenderer->setEnhancedRadar(list->getIndex() != 0);
+      BZDB->set("enhancedradar", list->getIndex() ? "yes" : "no");
       break;
 
     case 'w':
@@ -1103,7 +1102,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     }
 
     case 'z':
-      sceneRenderer->setColoredShots(list->getIndex() != 0);
+      BZDB->set("coloredradarshots", list->getIndex() ? "yes" : "no");
       break;
 
     case 'l':
@@ -1136,7 +1135,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'k':
     {
-      killerHighlight = list->getIndex();
+      BZDB->set("killerhighlight", string_util::format("%d", list->getIndex()));
       break;
     }
 
@@ -1586,8 +1585,9 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
     case '4':
       BZDB->set("lighting", list->getIndex() ? "yes" : "no");
 
-      sceneRenderer->setTextureReplace(!BZDB->isTrue("lighting") &&
-					sceneRenderer->useQuality() < 2);
+      BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
+      		sceneRenderer->useQuality() < 2) ? "yes" : "no");
+      BZDB->setPersistent("_texturereplace", false);
       break;
 
     case '5':
@@ -1598,8 +1598,9 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
     case '6':
       sceneRenderer->setQuality(list->getIndex());
 
-      sceneRenderer->setTextureReplace(BZDB->isTrue("lighting") &&
-      					sceneRenderer->useQuality() < 2);
+      BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
+      		sceneRenderer->useQuality() < 2) ? "yes" : "no");
+      BZDB->setPersistent("_texturereplace", false);
       break;
 
     case '7':
