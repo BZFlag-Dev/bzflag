@@ -41,6 +41,9 @@
 #define BZ_BUILD_TYPE		"ALPHA"
 #endif
 
+// Build Date will be defined at link time, can be different for each exe
+extern char buildDate[];
+
 /* to get the version in the right format YYYYMMDD */
 /* yes this is horible but it needs to be done to get it right */
 /* windows should pull from a resouce */
@@ -49,7 +52,7 @@ inline int getBuildDate()
 {
 	int year = 1900,month = 0,day = 0;
 	char monthStr[512];
-	sscanf(__DATE__,"%s %d %d",monthStr,&day,&year);
+	sscanf(buildDate,"%s %d %d",monthStr,&day,&year);
 
 	// we want it not as a name but a number
 	if (strcmp(monthStr,"Jan")==0)

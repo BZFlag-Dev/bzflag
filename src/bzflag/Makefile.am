@@ -63,6 +63,7 @@ bzflag_SOURCES =			\
 	bzflag.ico
 
 noinst_HEADERS = \
+	buildDate.cc	\
 	stars.cxx
 
 if WIN32
@@ -109,3 +110,9 @@ AM_CPPFLAGS = $(X_CFLAGS)
 
 bzflag.res: bzflag.rc bzflag.ico
 	windres -i bzflag.rc -o bzflag.res -O coff
+
+bzflag$(EXEEXT): $(bzflag_OBJECTS) $(bzflag_DEPENDENCIES) 
+	@rm -f bzflag$(EXEEXT)
+	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cc
+	$(CXXLINK) $(bzflag_LDFLAGS) $(bzflag_OBJECTS) buildDate.o \
+	$(bzflag_LDADD) $(LIBS)

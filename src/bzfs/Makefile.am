@@ -23,4 +23,13 @@ bzfs_SOURCES = \
 	bzfs.cxx \
 	bzfs.h
 
+noinst_HEADERS = \
+	buildDate.cc
+
 LDADD = ../net/libNet.a ../common/libCommon.a
+
+bzfs$(EXEEXT): $(bzfs_OBJECTS) $(bzfs_DEPENDENCIES) 
+	@rm -f bzfs$(EXEEXT)
+	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cc
+	$(CXXLINK) $(bzfs_LDFLAGS) $(bzfs_OBJECTS) buildDate.o \
+	$(bzfs_LDADD) $(LIBS)

@@ -87,6 +87,3 @@ MAINTAINERCLEANFILES = \
 	config.h.in \
 	stamp-h.in \
 	Makefile.in
-
-all-local:
-	touch ${srcdir}/version.h
