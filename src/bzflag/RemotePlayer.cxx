@@ -52,7 +52,7 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   }
   // shot origin is muzzle for other shots
   else {
-	  float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
+    float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
     if (info.flagType == Flags::Obesity) front *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     else if (info.flagType == Flags::Tiny) front *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
     else if (info.flagType == Flags::Thief) front *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
@@ -60,6 +60,7 @@ void			RemotePlayer::addShot(const FiringInfo& info)
     newpos[1] = info.shot.pos[1]-(front * f[1]);
     newpos[2] = info.shot.pos[2]-(front * f[2])-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   }
+  shotStatistics.recordFire(info.flagType);
   move(newpos, getAngle());
   setDeadReckoning();
 }
@@ -96,6 +97,9 @@ bool			RemotePlayer::doEndShot(
   // so we can identify an old shot from a new one.
   if (salt != ((shots[index]->getShotId() >> 8) & 127))
     return false;
+
+  // keep statistics
+  shotStatistics.recordHit(shots[index]->getFlag());
 
   // don't stop if it's because were hitting something and we don't stop
   // when we hit something.

@@ -81,6 +81,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TextUtils.h"
 #include "TargetingUtils.h"
 #include "MainMenu.h"
+#include "ShotStats.h"
 #include "ComposeDefaultKey.h"
 #include "SilenceDefaultKey.h"
 #include "ServerCommandKey.h"
@@ -648,7 +649,6 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     }
     return true;
   } else {
-    
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {
       case 'T':
@@ -705,6 +705,11 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       default:
 	break;
     } // end switch on key
+    // Shot/Accuracy Statistics display
+    if (key.button == BzfKeyEvent::Home && pressed) {
+      HUDDialogStack::get()->push(new ShotStats);
+      return true;
+    }
   } // end key handle
   return false;
 }

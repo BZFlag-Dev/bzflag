@@ -4,6 +4,8 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Dev-C++ project files - Ian Agar, Daniel Remenak, Jeff Myers
+* Shot accuracy statistics dialog - Daniel Remenak
 * Faster zbuffer graphics using octree and dynamic occluders - Dave Rodgers
 * Faster startup times by making the SceneDatabase on the fly - Dave Rodgers
 * Faster collision detection using a precalculated  grid - Dave Rodgers

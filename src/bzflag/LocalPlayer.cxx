@@ -1001,17 +1001,19 @@ bool			LocalPlayer::fireShot()
 
   server->sendBeginShot(firingInfo);
   if (gettingSound) {
-  if (firingInfo.flagType == Flags::ShockWave)
-    playLocalSound(SFX_SHOCK);
-  else if (firingInfo.flagType == Flags::Laser)
-    playLocalSound(SFX_LASER);
-  else if (firingInfo.flagType == Flags::GuidedMissile)
-    playLocalSound(SFX_MISSILE);
-  else if (firingInfo.flagType == Flags::Thief)
-    playLocalSound(SFX_THIEF);
-  else
-    playLocalSound(SFX_FIRE);
+    if (firingInfo.flagType == Flags::ShockWave)
+      playLocalSound(SFX_SHOCK);
+    else if (firingInfo.flagType == Flags::Laser)
+      playLocalSound(SFX_LASER);
+    else if (firingInfo.flagType == Flags::GuidedMissile)
+      playLocalSound(SFX_MISSILE);
+    else if (firingInfo.flagType == Flags::Thief)
+      playLocalSound(SFX_THIEF);
+    else
+      playLocalSound(SFX_FIRE);
   }
+
+  shotStatistics.recordFire(firingInfo.flagType);
 
   if (getFlag() == Flags::TriggerHappy) {
     // make sure all the shots don't go off at once
@@ -1051,6 +1053,9 @@ bool			LocalPlayer::doEndShot(int id, bool isHit, float* pos)
   // so we can identify an old shot from a new one.
   if (salt != ((shots[index]->getShotId() >> 8) & 127))
     return false;
+
+  // keep shot statistics
+  shotStatistics.recordHit(shots[index]->getFlag());
 
   // don't stop if it's because were hitting something and we don't stop
   // when we hit something.

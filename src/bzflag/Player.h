@@ -25,6 +25,7 @@
 #include "OpenGLTexture.h"
 #include "Flag.h"
 #include "PlayerState.h"
+#include "ShotStatistics.h"
 
 /* local interface headers */
 class ShotPath;
@@ -32,7 +33,6 @@ class SceneDatabase;
 class TankSceneNode;
 class TankIDLSceneNode;
 class SphereSceneNode;
-
 
 const int PlayerUpdatePLen = PlayerIdPLen + 42;
 const int PlayerUpdateSmallPLen = PlayerUpdatePLen - 16;
@@ -75,6 +75,8 @@ public:
   float		getTeleporterProximity() const;
   virtual int		getMaxShots() const;
   virtual ShotPath*	getShot(int index) const = 0;
+
+  const ShotStatistics*	getShotStatistics() const;
 
   void		addToScene(SceneDatabase*, TeamColor efectiveTeam, bool showIDL);
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
@@ -125,6 +127,11 @@ public:
   void		setDeadReckoning(float timestamp);
 
   void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
+
+protected:
+  // shot statistics
+  ShotStatistics	shotStatistics;
+
 private:
   // return true if the shot had to be terminated or false if it
   // was already terminated.  position must be set to the shot's
@@ -335,6 +342,11 @@ inline short		Player::getToTeleporter() const
 inline float		Player::getTeleporterProximity() const
 {
   return teleporterProximity;
+}
+
+inline const ShotStatistics*  Player::getShotStatistics() const
+{
+  return &shotStatistics;
 }
 
 inline bool		Player::isAlive() const

@@ -23,6 +23,7 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "ShotPath.h"
+#include "ShotStatistics.h"
 
 
 // for dead reckoning
