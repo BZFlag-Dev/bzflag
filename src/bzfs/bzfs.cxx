@@ -5262,6 +5262,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       char message[MessageLen];
       buf = nboUnpackUByte(buf, targetPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
+      message[MessageLen - 1] = '\0';
       DEBUG1("Player %s [%d]: %s\n",player[t].callSign, t, message);
       // check for command
       if (message[0] == '/') {

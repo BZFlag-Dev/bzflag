@@ -147,7 +147,6 @@ void*			nboUnpackString(void* b, void* m, int len)
 {
   if (!m || len == 0) return b;
   ::memcpy(m, b, len);
-  static_cast<char*>(m)[len - 1] = '\0';
   return (void*)((char*)b + len);
 }
 // ex: shiftwidth=2 tabstop=8
