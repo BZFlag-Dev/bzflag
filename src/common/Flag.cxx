@@ -168,7 +168,7 @@ void* FlagType::unpack(void* buf, FlagType* &type)
 }
 
   FlagTypeMap& FlagType::getFlagMap() {
-  static FlagType*> flagMap;
+  static FlagTypeMap flagMap;
   return flagMap;
 }
 
