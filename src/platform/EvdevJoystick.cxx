@@ -338,19 +338,30 @@ void                    EvdevJoystick::ffRumble(int count,
   if (!ffHasRumble())
     return;
 
-  /* Download an updated effect */
-  ff_rumble.u.rumble.strong_magnitude = (int) (0xFFFF * strong_motor + 0.5);
-  ff_rumble.u.rumble.weak_magnitude = (int) (0xFFFF * weak_motor + 0.5);
-  ff_rumble.replay.length = (int) (duration * 1000 + 0.5);
-  ff_rumble.replay.delay = (int) (delay * 1000 + 0.5);
-  ioctl(joystickfd, EVIOCSFF, &ff_rumble);
+  /* Stop the previous effect we were playing, if any */
+  if (ff_rumble.id != -1) {
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble.id;
+    event.value = 0;
+    write(joystickfd, &event, sizeof(event));
+  }
 
-  /* Play it the indicated number of times */
-  struct input_event event;
-  event.type = EV_FF;
-  event.code = ff_rumble.id;
-  event.value = count;
-  write(joystickfd, &event, sizeof(event));
+  if (count > 0) {
+    /* Download an updated effect */
+    ff_rumble.u.rumble.strong_magnitude = (int) (0xFFFF * strong_motor + 0.5);
+    ff_rumble.u.rumble.weak_magnitude = (int) (0xFFFF * weak_motor + 0.5);
+    ff_rumble.replay.length = (int) (duration * 1000 + 0.5);
+    ff_rumble.replay.delay = (int) (delay * 1000 + 0.5);
+    ioctl(joystickfd, EVIOCSFF, &ff_rumble);
+
+    /* Play it the indicated number of times */
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble.id;
+    event.value = count;
+    write(joystickfd, &event, sizeof(event));
+  }
 }
 
 // Local Variables: ***
