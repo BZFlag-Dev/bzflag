@@ -4,7 +4,8 @@ to do list for bzflag
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * .bzf/ on *ix should be a directory with db and cache/ entries
-
+  ( larsl is doing this )
+  
 * Make world filter work on client side as well as server side
   using a local world filter, search user dir for word filter first.
   then search app dir for global filter. This will help people who 
