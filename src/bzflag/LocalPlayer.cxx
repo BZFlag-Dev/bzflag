@@ -129,7 +129,6 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
 				lastSpeed(0.0f),
 				insideBuilding(NULL),
 				anyShotActive(false),
-				magnify(0),
 				target(NULL),
 				nemesis(NULL),
 				recipient(NULL)
@@ -843,11 +842,6 @@ void			LocalPlayer::jump()
   setVelocity(newVelocity);
   location = InAir;
   playLocalSound(SFX_JUMP);
-}
-
-void			LocalPlayer::setMagnify(int zoom)
-{
-  magnify = zoom;
 }
 
 void			LocalPlayer::setTarget(const Player* _target)

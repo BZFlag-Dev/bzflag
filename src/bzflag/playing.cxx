@@ -1710,14 +1710,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
   //  else
 
-  if (keymap.isMappedTo(BzfKeyMap::Binoculars, key)) {
-    if (pressed) {
-      if (myTank->getFlag() != WideAngleFlag)
-	myTank->setMagnify(1 - myTank->getMagnify());
-    }
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::ChooseSilence, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::ChooseSilence, key)) {
     if (pressed) {
       messageHistoryIndex = 0;
       hud->setComposing("[Un]Silence  :");
@@ -1872,7 +1865,7 @@ static void		doMotion()
     myTank->setKeyboardSpeed(speed);
     myTank->resetKey();
 
-    if (myTank->getMagnify())
+    if (BZDB->isTrue("displayBinoculars"))
       rotation *= 0.2f;
     if (myTank->hasSlowKeyboard()) {
       rotation /= 2.0f;
@@ -5576,11 +5569,11 @@ static void		playingLoop()
 
 	if (viewType == SceneRenderer::ThreeChannel) {
 	  if (myTank->getFlag() == WideAngleFlag) fov = 90.0f;
-	  else fov = (myTank->getMagnify() == 1 ? 12.0f : 45.0f);
+	  else fov = (BZDB->isTrue("displayBinoculars") ? 12.0f : 45.0f);
 	}
 	else {
 	  if (myTank->getFlag() == WideAngleFlag) fov = 120.0f;
-	  else fov = (myTank->getMagnify() == 1 ? 15.0f : 60.0f);
+	  else fov = (BZDB->isTrue("displayBinoculars") ? 15.0f : 45.0f);
 	}
       }
       fov *= M_PI / 180.0f;

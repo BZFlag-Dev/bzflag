@@ -104,7 +104,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarFlags",	"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayMainFlags",		"1",			true,	StateDatabase::ReadWrite,	NULL }
+  { "displayMainFlags",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "displayBinoculars",	"0",			false,	StateDatabase::ReadWrite,	NULL }
 };
 
 // default key bindings
@@ -122,6 +123,7 @@ static const char*	bindingList[] = {
   "bind , down \"send nemesis\"",
   "bind . down \"send recipient\"",
   "bind S down \"toggle showscore\"",
+  "bind B down \"toggle displayBinoculars\"",
   "bind Pause down pause",
   "bind P down pause",
 #ifdef SNAPPING

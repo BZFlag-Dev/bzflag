@@ -84,7 +84,6 @@ class LocalPlayer : public BaseLocalPlayer {
     int			getFlagShakingWins() const;
     const GLfloat*	getAntidoteLocation() const;
     ShotPath*		getShot(int index) const;
-    int			getMagnify() const;
     const Player*	getTarget() const;
     const Obstacle*	getContainingBuilding() const;
 
@@ -95,7 +94,6 @@ class LocalPlayer : public BaseLocalPlayer {
     bool		fireShot();
     void		explodeTank();
     void		jump();
-    void		setMagnify(int zoom);
     void		setTarget(const Player*);
 
     void		setNemesis(const Player*);
@@ -156,7 +154,6 @@ class LocalPlayer : public BaseLocalPlayer {
     GLfloat		crossingPlane[4];
     LocalShotPath**	shots;
     bool		anyShotActive;
-    int			magnify;
     const Player*	target;
     const Player*	nemesis;
     const Player*	recipient;
@@ -181,11 +178,6 @@ inline LocalPlayer::Location		LocalPlayer::getLocation() const
 inline LocalPlayer::FiringStatus	LocalPlayer::getFiringStatus() const
 {
   return firingStatus;
-}
-
-inline int		LocalPlayer::getMagnify() const
-{
-  return magnify;
 }
 
 inline const Player*	LocalPlayer::getTarget() const
