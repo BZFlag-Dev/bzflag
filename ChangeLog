@@ -63,6 +63,8 @@ BZFlag 1.10.4
 * Increase moon segments for exp. quality - Jeff Myers
 * Replace flag texture with one from pyBZFlag - Jeff Myers
 * Use a geometry based flagpole in exp. quality with a setable width from BZDB - Jeff Myers
+* Don't do teleporter fog when roaming as an observer - Jeff Myers
+* Pull many world textures from pyBZFlag - Jeff Myers
 
 BZFlag 1.10.2
 -------------
