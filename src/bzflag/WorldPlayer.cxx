@@ -46,6 +46,7 @@ void			WorldPlayer::addShot(const FiringInfo& info)
 
 ShotPath*		WorldPlayer::getShot(int index) const
 {
+  if (index & 255 >= (int)shots.size()) return NULL;
   return shots[index & 255];
 }
 
