@@ -130,12 +130,8 @@ void FontManager::loadAll(std::string directory)
   if (directory.size() == 0)
     return;
 
-  /* FIXME: this needs to go away when the problem detailed in
-   * FontManager::rebuild() is fixed.
-   */
-  {
-    fontDirectory = directory;
-  }
+  // save this in case we have to rebuild
+  fontDirectory = directory;
 
   OSFile file;
 

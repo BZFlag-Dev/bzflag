@@ -72,9 +72,6 @@ private:
   FontFaceMap	faceNames;
   FontFaceList  fontFaces;
 
-  /* FIXME: this string needs to go away when the problem detailed in
-   * FontManager::rebuild() is fixed.
-   */
   std::string	fontDirectory;
 
   static void	callback(const std::string& name, void *);
