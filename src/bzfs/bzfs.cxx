@@ -1446,21 +1446,7 @@ static void addPlayer(int playerIndex)
   if (!playerData)
     return;
 
-  GameKeeper::Player *otherData;
-  // look if there is as name clash, we won't allow this
   int i;
-  for (i = 0; i < curMaxPlayers; i++) {
-    if (i == playerIndex
-	|| !(otherData = GameKeeper::Player::getPlayerByIndex(i))
-	|| !otherData->player.isPlaying())
-      continue;
-    if (strcasecmp(otherData->player.getCallSign(),
-		   playerData->player.getCallSign()) == 0) {
-      rejectPlayer(playerIndex, RejectRepeatCallsign,
-                   "The callsign specified is already in use.");
-      return;
-    }
-  }
   
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
@@ -3087,7 +3073,7 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgEnter: {
       uint16_t rejectCode;
       char     rejectMsg[128];
-      bool result = playerData->player.unpackEnter(buf, rejectCode, rejectMsg);
+      bool result = playerData->loadEnterData(buf, rejectCode, rejectMsg);
       DEBUG1("Player %s [%d] has joined from %s\n",
 	     playerData->player.getCallSign(), t, handler->getTargetIP());
       if (result) {

@@ -54,6 +54,9 @@ public:
     static int     getPlayerIDByName(const std::string &name);
     static void    reloadAccessDatabase();
 
+    bool           loadEnterData(void *buf,
+				 uint16_t &rejectCode,
+				 char *rejectMsg);
     void          *packAdminInfo(void *buf);
     void           signingOn(bool ctf);
 
