@@ -13,6 +13,9 @@
 #ifndef	__HUDDIALOGSTACK_H__
 #define	__HUDDIALOGSTACK_H__
 
+/* common header */
+#include "common.h"
+
 /* system interface headers */
 #include <vector>
 

@@ -14,10 +14,12 @@
 #pragma warning( 4: 4786)
 #endif
 
+// interface header
+#include "motd.h"
+
 #include <vector>
 #include <string>
 
-#include "motd.h"
 #include "URLManager.h"
 #include "TextUtils.h"
 

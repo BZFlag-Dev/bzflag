@@ -18,8 +18,13 @@
 #ifndef	__HUDUICONTROL_H__
 #define	__HUDUICONTROL_H__
 
+/* common header */
+#include "common.h"
+
+/* system headers */
 #include <string>
 
+// common interface headers
 #include "BzfEvent.h"
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"

@@ -10,14 +10,19 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// interface header
+#include "SilenceDefaultKey.h"
+
+// system headers
 #include <string>
 
-#include "SilenceDefaultKey.h"
+// common implementation headers
 #include "KeyManager.h"
+
+// local implementation headers
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 #include "Roster.h"
-
 #include "playing.h" // THIS IS TEMPORARY..TO BE REMOVED..BABY STEPS
 
 //

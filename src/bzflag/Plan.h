@@ -13,6 +13,9 @@
 #ifndef	PLAN_H
 #define	PLAN_H
 
+// bzflag global header
+#include "common.h"
+
 #include <vector>
 #include <stack>
 #include "TimeKeeper.h"

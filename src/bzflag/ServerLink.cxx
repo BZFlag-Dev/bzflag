@@ -13,39 +13,45 @@
   #pragma warning(disable: 4786)
 #endif
 
-#include <string.h>
-#include <sys/types.h>
-#include <ctype.h>
-#include <time.h>
-#include <vector>
-
-#include "network.h"
+// interface header
 #include "ServerLink.h"
-#include "Pack.h"
-#include "LocalPlayer.h"
-#include "ErrorHandler.h"
-#include "common.h"
-
-// invoke persistent rebuilding for current version dates
-#include "version.h"
-
-#if !defined(_WIN32)
-#include <unistd.h>
-#include <errno.h>
-#endif
-
-#include "bzsignal.h"
-
-#define UDEBUG if (UDEBUGMSG) printf
-#define UDEBUGMSG false
 
 #if defined(DEBUG)
 #define NETWORK_STATS
 #endif
 
+// system headers
+#include <string.h>
+#include <sys/types.h>
+#include <ctype.h>
+#include <time.h>
+#include <vector>
+#if !defined(_WIN32)
+#include <unistd.h>
+#include <errno.h>
+#endif
+#include <stdio.h>
+#include <stdlib.h>
+
+// common implementation headers
+#include "network.h"
+#include "Pack.h"
+#include "ErrorHandler.h"
+// invoke persistent rebuilding for current version dates
+#include "version.h"
+#include "bzsignal.h"
 #if defined(NETWORK_STATS)
 #include "bzfio.h"
+#endif
 #include "TimeKeeper.h"
+
+// local implementation headers
+#include "LocalPlayer.h"
+
+#define UDEBUG if (UDEBUGMSG) printf
+#define UDEBUGMSG false
+
+#if defined(NETWORK_STATS)
 static TimeKeeper	startTime;
 static uint32_t		bytesSent;
 static uint32_t		bytesReceived;
@@ -79,9 +85,6 @@ DWORD WINAPI ThreadConnect(LPVOID params)
 #endif // !defined(_WIN32)
 
 // FIXME -- packet recording
-#include <stdio.h>
-#include <stdlib.h>
-#include "TimeKeeper.h"
 FILE* packetStream = NULL;
 TimeKeeper packetStartTime;
 static const unsigned long serverPacket = 1;
