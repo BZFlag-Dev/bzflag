@@ -271,9 +271,15 @@ int NetHandler::send(const void *buffer, size_t length) {
   // just try again later if it's one of these errors
   if (err != EAGAIN && err != EINTR) {
     // dump other errors and remove the player
-    nerror("error on write");
     toBeKicked = true;
-    toBeKickedReason = "Write error";
+    if (err != EAGAIN ) {
+      nerror("error on write EAGAIN");
+      toBeKickedReason = "Write error EAGAIN";
+    }
+    else {
+      nerror("error on write EINTR");
+      toBeKickedReason = "Write error EINTR";
+    }
   }
   return 0;
 }

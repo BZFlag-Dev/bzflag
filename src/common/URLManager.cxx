@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "bzfio.h"
+#include "StateDatabase.h"
 
 #ifdef _MSC_VER
 #pragma warning( 4: 4786)
@@ -113,7 +114,11 @@ bool URLManager::getURL (const std::string, void **, unsigned int&)
 		return false;
 	}
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, 60);
+	float timeout = 15;
+	if (BZDB.isSet("httpTimeout"))
+		timeout = BZDB.eval("httpTimeout");
+
+	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, timeout);
 	if (result)
 	  DEBUG1("Something wrong with CURL; Error: %d\n",result);
 

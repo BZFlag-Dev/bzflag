@@ -197,7 +197,11 @@ static DefaultDBItem	defaultDBItems[] = {
   { "rogueTeamPrefix",		"rogue_",		true,	StateDatabase::ReadWrite,	NULL },
 
   // type prefixes
-  { "superPrefix",		"super_",		true,	StateDatabase::ReadWrite,	NULL }
+  { "superPrefix",		"super_",		true,	StateDatabase::ReadWrite,	NULL },
+
+  // URL timeouts
+  { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL }
+
 
 };
 
