@@ -112,8 +112,6 @@ public:
   bool        hasStartedToNotRespond();
   void        hasSent(char message[]);
   void        addFlagToHistory();
-  void        handleFlagHistory(char message[]);
-  void        addFlagToHistory(FlagType* type);
   bool        hasPlayedEarly();
   void        setPlayedEarly();
   void        setReplayState(PlayerReplayState state);
@@ -159,8 +157,6 @@ private:
     // idle kick
     TimeKeeper lastmsg;
     TimeKeeper lastupdate;
-
-    std::vector<FlagType*> flagHistory;
 
     // player played before countdown started
     bool playedEarly;

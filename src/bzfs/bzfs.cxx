@@ -13,6 +13,7 @@
 #include "NetHandler.h"
 #include "LagInfo.h"
 #include "DelayQueue.h"
+#include "FlagHistory.h"
 
 const int udpBufSize = 128000;
 
@@ -49,6 +50,8 @@ PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 PlayerState lastState[MaxPlayers  + ReplayObservers];
 // DelayQueue for "Lag Flag"
 DelayQueue delayq[MaxPlayers  + ReplayObservers];
+// FlagHistory
+FlagHistory flagHistory[MaxPlayers  + ReplayObservers];
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -2028,6 +2031,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	   player[playerIndex].getCallSign(), playerIndex, reason);
     accessInfo[playerIndex].removePlayer();
     wasPlaying = player[playerIndex].removePlayer();
+    flagHistory[playerIndex].clear();
     delayq[playerIndex].dequeuePackets();
     NetHandler *netPlayer = NetHandler::getHandler(playerIndex);
 #ifdef NETWORK_STATS
@@ -2448,7 +2452,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  player[playerIndex].addFlagToHistory(flag[flagIndex].flag.type);
+  flagHistory[playerIndex].add(flag[flagIndex].flag.type);
 }
 
 static void dropFlag(int playerIndex, float pos[3])

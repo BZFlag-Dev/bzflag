@@ -42,6 +42,7 @@
 #include "NetHandler.h"
 #include "RecordReplay.h"
 #include "LagInfo.h"
+#include "FlagHistory.h"
 
 // FIXME -- need to pull communication out of bzfs.cxx...
 
@@ -50,6 +51,7 @@ extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *mess
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
 extern LagInfo *lagInfo[MaxPlayers + ReplayObservers];
 extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
+extern FlagHistory flagHistory[MaxPlayers  + ReplayObservers];
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
@@ -606,9 +608,11 @@ void handleFlaghistoryCmd(int t, const char *)
 
   char reply[MessageLen];
   for (int i = 0; i < curMaxPlayers; i++) {
-    player[i].handleFlagHistory(reply);
-    if (strlen(reply))
+    if (player[i].isPlaying() && !player[i].isObserver()) {
+      sprintf(reply,"%-16s : ", player[i].getCallSign());
+      flagHistory[i].get(reply+strlen(reply));
       sendMessage(ServerPlayer, t, reply, true);
+    }
   }
 }
 

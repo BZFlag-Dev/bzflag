@@ -31,6 +31,8 @@ bzfs_SOURCES = \
 	DelayQueue.cxx \
 	EntryZones.cxx \
 	EntryZones.h \
+	FlagHistory.cxx	\
+	FlagHistory.h	\
 	FlagInfo.cxx \
 	FlagInfo.h \
 	LagInfo.h	\

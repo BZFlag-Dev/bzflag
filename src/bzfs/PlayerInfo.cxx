@@ -22,8 +22,6 @@
 // implementation-specific bzflag headers
 #include "TextUtils.h"
 
-#define MAX_FLAG_HISTORY (10)
-
 PlayerInfo::PlayerInfo() {
   state = PlayerNoExist;
 }
@@ -56,8 +54,6 @@ bool PlayerInfo::removePlayer() {
   bool wasPlaying = state > PlayerInLimbo;
 
   callSign[0] = 0;
-
-  flagHistory.clear();
 
   state = PlayerNoExist;
 
@@ -382,31 +378,6 @@ bool PlayerInfo::hasStartedToNotRespond() {
 void PlayerInfo::hasSent(char message[]) {
   lastmsg = TimeKeeper::getCurrent();
   DEBUG1("Player %s [%d]: %s\n", callSign, playerIndex, message);
-};
-
-void PlayerInfo::handleFlagHistory(char message[]) {
-  message[0] = 0;
-  if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    char flag[MessageLen];
-    sprintf(message,"%-16s : ", callSign);
-    std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
-
-    while (fhIt != flagHistory.end()) {
-      FlagType * fDesc = (FlagType*)(*fhIt);
-      if (fDesc->endurance == FlagNormal)
-	sprintf(flag, "(*%c) ", fDesc->flagName[0]);
-      else
-	sprintf(flag, "(%s) ", fDesc->flagAbbv);
-      strcat(message, flag);
-      fhIt++;
-    }
-  }
-};
-
-void PlayerInfo::addFlagToHistory(FlagType* type) {
-  if (flagHistory.size() >= MAX_FLAG_HISTORY)
-    flagHistory.erase(flagHistory.begin());
-  flagHistory.push_back(type);
 };
 
 bool PlayerInfo::hasPlayedEarly() {
