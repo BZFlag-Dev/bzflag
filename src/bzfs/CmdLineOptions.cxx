@@ -63,7 +63,7 @@ const char *usageString =
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
 "[-maxidle <time/s>] "
-"[-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>],[<count>]}] "
+"[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
 "[-mps <score>] "
 "[-ms <shots>] "
 "[-mts <score>] "
