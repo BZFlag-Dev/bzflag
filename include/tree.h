@@ -92,7 +92,6 @@ public:
 
 #endif
 
-#if defined(_MSC_VER) || defined(__BCPLUSPLUS__) // these do not have HP style construct/destroy 
 template <class T1, class T2>
 inline void constructor(T1* p, const T2& val) // crs -- added const
 	{
@@ -110,11 +109,6 @@ inline void destructor(T1* p)
 	{
 	p->~T1();
 	}
-#else
-   #define constructor std::construct
-   #define destructor  std::destroy
-#endif
-
 
 
 template<class T>
