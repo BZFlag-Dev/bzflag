@@ -218,8 +218,8 @@ static std::vector<std::string> tokenize(const std::string& in, const std::strin
  */
 inline static int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
 {
-std::string::const_iterator p1 = s1.begin();
-std::string::const_iterator p2 = s2.begin();
+  std::string::const_iterator p1 = s1.begin();
+  std::string::const_iterator p2 = s2.begin();
   int i=0;
   while (p1 != s1.end() && p2 != s2.end()) {
     if (i >= maxlength) {
