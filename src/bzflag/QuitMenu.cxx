@@ -63,16 +63,6 @@ QuitMenu::~QuitMenu()
 {
 }
 
-HUDuiControl* QuitMenu::createLabel(const char* string,
-				const char* label)
-{
-  HUDuiLabel* control = new HUDuiLabel;
-  control->setFont(MainMenu::getFont());
-  control->setString(string);
-  if (label) control->setLabel(label);
-  return control;
-}
-
 void QuitMenu::resize(int width, int height)
 {
   HUDDialog::resize(width, height);

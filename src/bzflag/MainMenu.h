@@ -42,10 +42,19 @@ public:
 
 private:
   OpenGLTexFont	font;
-  JoinMenu* joinMenu;
-  OptionsMenu*	optionsMenu;
-  QuitMenu* quitMenu;
   static OpenGLTexFont* mainFont;
+
+  HUDuiControl* createLabel(const char* string);
+
+  HUDuiControl*	join;
+  HUDuiControl*	options;
+  HUDuiControl*	help;
+  HUDuiControl*	leave;
+  HUDuiControl*	quit;
+
+  JoinMenu*	joinMenu;
+  OptionsMenu*	optionsMenu;
+  QuitMenu*	quitMenu;
 };
 
 

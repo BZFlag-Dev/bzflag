@@ -111,7 +111,7 @@ static float minSafeRange(float angleCosOffBoresight)
 {
   // anything farther than this much from dead-center is okay to
   // place at MinRange
-  static const float	SafeAngle = 0.5f;		// cos(angle)
+  static const float	SafeAngle = 0.5f;	// cos(angle)
 
   const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   // don't ever place within this range

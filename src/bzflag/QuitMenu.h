@@ -45,8 +45,6 @@ public:
   void execute() { CommandsStandard::quit(); }
   void resize(int width, int height);
 
-  HUDuiControl* createLabel(const char*, const char* = NULL);
-
 private:
   QuitMenuDefaultKey defaultKey;
 

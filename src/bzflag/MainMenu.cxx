@@ -46,7 +46,7 @@ void	  MainMenu::createControls()
 {
   TextureManager &tm = TextureManager::instance();
   std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* label;
+  HUDuiControl* label;
   HUDuiTextureLabel* textureLabel;
 
   // clear controls
@@ -62,44 +62,42 @@ void	  MainMenu::createControls()
   textureLabel->setString("BZFlag");
   list.push_back(textureLabel);
 
-  label = new HUDuiLabel;
-  label->setFont(font);
-  label->setString("Up/Down arrows to move, Enter to select, Esc to dismiss");
+  label = createLabel("Up/Down arrows to move, Enter to select, Esc to dismiss");
   list.push_back(label);
 
-  label = new HUDuiLabel;
-  label->setFont(font);
-  label->setString("Join Game");
-  list.push_back(label);
+  join = createLabel("Join");
+  list.push_back(join);
 
-  label = new HUDuiLabel;
-  label->setFont(font);
-  label->setString("Options");
-  list.push_back(label);
+  options = createLabel("Options");
+  list.push_back(options);
 
-  label = new HUDuiLabel;
-  label->setFont(font);
-  label->setString("Help");
-  list.push_back(label);
+  help = createLabel("Help");
+  list.push_back(help);
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!(myTank == NULL)) {
-    label = new HUDuiLabel;
-    label->setFont(font);
-    label->setString("Leave Game");
-    list.push_back(label);
+    leave = createLabel("Leave Game");
+    list.push_back(leave);
+  } else {
+    leave = NULL;
   }
 
-  label = new HUDuiLabel;
-  label->setFont(font);
-  label->setString("Quit");
-  list.push_back(label);
+  quit = createLabel("Quit");
+  list.push_back(quit);
 
   resize(HUDDialog::getWidth(), HUDDialog::getHeight());
   initNavigation(list, 2, list.size() - 1);
 
   // set focus back at the top in case the item we had selected does not exist anymore
   list[2]->setFocus();
+}
+
+HUDuiControl* MainMenu::createLabel(const char* string)
+{
+  HUDuiLabel* control = new HUDuiLabel;
+  control->setFont(font);
+  control->setString(string);
+  return control;
 }
 
 MainMenu::~MainMenu()
@@ -125,25 +123,23 @@ void			MainMenu::execute()
 {
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
-  LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if (focus == list[2]) {
+  if (focus == join) {
     if (!joinMenu) joinMenu = new JoinMenu;
     HUDDialogStack::get()->push(joinMenu);
   }
-  else if (focus == list[3]) {
+  else if (focus == options) {
     if (!optionsMenu) optionsMenu = new OptionsMenu;
     HUDDialogStack::get()->push(optionsMenu);
   }
-  else if (focus == list[4]) {
+  else if (focus == help) {
     HUDDialogStack::get()->push(HelpMenu::getHelpMenu());
   }
-  // this menu item only exists if you're connected to a game
-  else if ((focus == list[5]) && (myTank != NULL)) {
+  else if (focus == leave) {
     leaveGame();
     // myTank should be NULL now, recreate menu
     createControls();
   }
-  else if (focus == list[list.size() - 1]) {
+  else if (focus == quit) {
     if (!quitMenu) quitMenu = new QuitMenu;
     HUDDialogStack::get()->push(quitMenu);
   }
@@ -172,12 +168,12 @@ void			MainMenu::resize(int width, int height)
   title->setPosition(x, y);
 
   // reposition instructions
-  HUDuiLabel* help = (HUDuiLabel*)list[1];
-  help->setFontSize(tinyFontWidth, tinyFontHeight);
-  const OpenGLTexFont& helpFont = help->getFont();
-  const float helpWidth = helpFont.getWidth(help->getString());
+  HUDuiLabel* hint = (HUDuiLabel*)list[1];
+  hint->setFontSize(tinyFontWidth, tinyFontHeight);
+  const OpenGLTexFont& hintFont = hint->getFont();
+  const float hintWidth = hintFont.getWidth(hint->getString());
   y -= 1.25f * tinyFontHeight;
-  help->setPosition(0.5f * ((float)width - helpWidth), y);
+  hint->setPosition(0.5f * ((float)width - hintWidth), y);
   y -= 1.5f * fontHeight;
 
   // reposition menu items
