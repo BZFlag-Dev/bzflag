@@ -93,7 +93,7 @@ bool TextureFont::load(OSFile &file)
   if (extension)
     faceName.erase(faceName.size() - sizeof(extension), faceName.size());
 
-  temp = strrchr(faceName.c_str(), '-');
+  temp = strrchr(faceName.c_str(), '_');
 
   if (temp) {
     size = atoi(temp+1);
@@ -122,7 +122,8 @@ void TextureFont::preLoadLists(void)
 
   // load up the texture
   TextureManager &tm = TextureManager::instance();
-  textureID = tm.getTextureID(texture.c_str());
+  std::string textureAndDir = "fonts/" + texture;
+  textureID = tm.getTextureID(textureAndDir.c_str());
 
   DEBUG4("Font %s (face %s) has texture ID %d\n", texture.c_str(), faceName.c_str(), textureID);
   
