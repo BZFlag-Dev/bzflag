@@ -1175,7 +1175,7 @@ static void dumpServerList(int /*sig*/)
 #endif
 
   // open a file to receive server list
-  FILE* file = fopen("/tmp/bzfls.lst", "w");
+  FILE* file = fopen("bzfls.lst", "w");
   if (file == NULL)
     return;
 
@@ -1203,7 +1203,7 @@ static void dumpTraffic(int /*sig*/)
 #endif
 
   // open a file to receive traffic counts
-  FILE* file = fopen("/tmp/bzfls.cnt", "w");
+  FILE* file = fopen("bzfls.cnt", "w");
   if (file == NULL)
     return;
 
