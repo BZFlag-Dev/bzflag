@@ -1,25 +1,6 @@
 recent bugs
 ------------
 
-- shake time isn't sent properly. it appears to be packed and unpacked correctly,
-  but a randomish value gets sent over the wire. my only conclusion is that its
-  become haunted. Perhaps the easiest way to fix is just to refactor the world
-  packing code into something non-gross.
-
-  bzfs -st 10
-
-  Sent
-
-73 74 00 1E 00 01 44 48 00 00 00 40 00 C8 00 01
-00 00 00 00 00 00 00 00 00 00 00 64
-
-
-Received
-
-73 74 00 1E 00 01 44 48 00 00 00 40 00 C8 00 01
-00 00 00 00 00 00 00 00 3F 1C CA 76 
-
-
 - README.UNIX is out of date
 
 - resetting key map is not implemented
