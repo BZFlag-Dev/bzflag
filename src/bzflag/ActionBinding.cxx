@@ -13,10 +13,6 @@
 /* bzflag special common - 1st one */
 #include "common.h"
 
-#ifdef _MSC_VER
-#pragma warning(4:4786)
-#endif
-
 #include <iostream>
 
 #include "ActionBinding.h"

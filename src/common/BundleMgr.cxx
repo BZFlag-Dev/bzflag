@@ -10,17 +10,13 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning(4:4786)
-#endif
+#include "common.h"
 
 #if (!defined(_WIN32) && !defined(WIN32))
 #include <sys/types.h>
 #include <dirent.h>
 #endif
 
-#include <string>
-#include "common.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 

@@ -18,10 +18,6 @@
 #ifndef	BZF_HUD_UI_H
 #define	BZF_HUD_UI_H
 
-#ifdef _MSC_VER
-#pragma warning( 4:4786 )
-#endif
-
 #include "common.h"
 #include "BzfEvent.h"
 #include "OpenGLGState.h"
@@ -29,8 +25,6 @@
 #include "OpenGLTexture.h"
 #include "TimeKeeper.h"
 #include "Bundle.h"
-#include <string>
-#include <vector>
 
 class HUDuiControl;
 class HUDuiDefaultKey;

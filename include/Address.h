@@ -22,7 +22,6 @@
 #define	BZF_INET_ADDR_H
 
 #include <sys/types.h>
-#include <string>
 #include "common.h"
 #include "network.h"
 #include "Pack.h"

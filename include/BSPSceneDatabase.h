@@ -17,14 +17,8 @@
 #ifndef	BZF_BSP_SCENE_DATABASE_H
 #define	BZF_BSP_SCENE_DATABASE_H
 
-#ifdef _MSC_VER
-#pragma warning( 4:4786 )
-#endif
-
-#include <vector>
 #include "common.h"
 #include "bzfgl.h"
-#include "common.h"
 #include "SceneDatabase.h"
 
 class BSPSceneDatabase : public SceneDatabase {

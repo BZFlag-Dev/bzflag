@@ -19,13 +19,7 @@
 #ifndef	BZF_NETWORK_H
 #define	BZF_NETWORK_H
 
-#if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
-#endif
-
 #include "common.h"
-#include <string>
-#include <vector>
 
 #if !defined(_WIN32)
 

@@ -29,6 +29,7 @@
 #include <vector>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "bzfio.h"
 
@@ -86,7 +87,6 @@ extern int debugLevel;
 #endif
 
 // random number stuff
-#include <stdlib.h>
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)
 

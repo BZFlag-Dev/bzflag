@@ -13,10 +13,6 @@
 #ifndef BZF_FILE_MANAGER_H
 #define BZF_FILE_MANAGER_H
 
-#ifdef _MSC_VER
-#pragma warning(4:4786)
-#endif
-
 #include "common.h"
 #include "bzfio.h"
 #include "Singleton.h"

@@ -18,17 +18,10 @@
 #ifndef	BZF_MENUS_H
 #define	BZF_MENUS_H
 
-#ifdef _MSC_VER
-#pragma warning( 4 : 4786 )
-#endif
-
-#include <string>
 #include "common.h"
 #include "HUDDialog.h"
 #include "OpenGLTexFont.h"
 #include "Ping.h"
-//#include "playing.h" // delete me
-//#include "Protocol.h" // delete me
 
 class JoinMenu;
 class OptionsMenu;

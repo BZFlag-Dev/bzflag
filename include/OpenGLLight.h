@@ -17,11 +17,6 @@
 #ifndef	BZF_OPENGL_LIGHT_H
 #define	BZF_OPENGL_LIGHT_H
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
-#include <vector>
 #include "common.h"
 #include "bzfgl.h"
 

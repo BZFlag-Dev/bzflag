@@ -11,13 +11,12 @@
  */
 // todo make this turn off for .net
 #if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
+  #pragma warning(disable: 4786)
 #endif
 
 #ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
-
 #endif
 
 
@@ -123,14 +122,7 @@ bool			PingPacket::waitForReply(int fd,
     // wait for input
     fd_set read_set;
     FD_ZERO(&read_set);
-// turn off == signed/unsigned mismatch on win32
-#if defined(_MSC_VER)
-#pragma warning(disable: 4018)
-#endif
     FD_SET(fd, &read_set);
-#if defined(_MSC_VER)
-#pragma warning(default: 4018)
-#endif
     int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, &timeout);
 
     // if got a message read it.  if a ping packet and from right
@@ -416,7 +408,6 @@ bool			 PingPacket::readFromFile(std::istream& in)
   // client-side changes.
   return (strncmp(serverVersion, getServerVersion(), 7) == 0);
 }
-
 
 // Local Variables: ***
 // mode: C++ ***

@@ -18,16 +18,11 @@
 #ifndef	BZF_PING_H
 #define	BZF_PING_H
 
-#if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
-#endif
-
 #include <fstream>
 #include "common.h"
 #include "Address.h"
 #include "Pack.h"
 #include "multicast.h"
-#include "bzfio.h"
 
 // 4 uint16's and 13 uint8's hex encoded
 static const int	PingPacketHexPackedSize = 4 * 7 + 2 * 13;

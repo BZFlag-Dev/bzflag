@@ -10,28 +10,27 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
+#ifdef _WIN32
+# if defined(_MSC_VER)
+#   pragma warning(disable: 4786)
+# endif
+# include <winsock2.h>
+# include <ws2tcpip.h>
 #endif
 
-#ifdef _WIN32
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#endif
+//Includes common to all platforms
+#include "common.h"
+#include "network.h"
+#include "ErrorHandler.h"
+#include "Address.h"
+#include <stdio.h>
+#include <string.h>
 
 #if !defined(WIN32)
 
-#include <stdio.h>
 #include <fcntl.h>
-#include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include <vector>
-#include <string>
-#include "common.h"
-#include "ErrorHandler.h"
-#include "network.h"
-#include "Address.h"
 
 #if defined(_old_linux_)
 #define hstrerror(x) sys_errlist[x]
@@ -99,16 +98,6 @@ int			BzfNetwork::setBlocking(int fd)
 }
 
 #else /* defined(_WIN32) */
-
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
-#include "network.h"
-#include "ErrorHandler.h"
-#include "Address.h"
-#include <stdio.h>
-#include <string.h>
 
 extern "C" {
 

@@ -13,12 +13,6 @@
 #ifndef	BZF_BUNDLEMGR_H
 #define	BZF_BUNDLEMGR_H
 
-#ifdef _MSC_VER
-#pragma warning(4:4786)
-#endif
-
-#include <string>
-#include <vector>
 #include <map>
 #include "common.h"
 

@@ -12,17 +12,11 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 
-#ifdef _MSC_VER
-#pragma warning( 4 : 4786 )
-#endif
-
 #include "common.h"
 
 // system includes
 #include <iostream>
 #include <deque>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>

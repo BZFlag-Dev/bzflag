@@ -17,11 +17,6 @@
 #define _OSFILE_H_
 
 
-
-#ifdef _MSC_VER
-  #pragma warning( disable : 4786 )  // Disable warning message
-#endif
-
 #ifdef _WIN32
   #include <io.h>
   #include <direct.h>

@@ -17,13 +17,7 @@
 #ifndef BZF_BASE_RESOURCES_H
 #define	BZF_BASE_RESOURCES_H
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
 #include "common.h"
-#include <string>
-#include <vector>
 
 class std::ostream;
 

@@ -17,12 +17,6 @@
 #ifndef BZF_ERROR_HANDLER_H
 #define	BZF_ERROR_HANDLER_H
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
-#include <vector>
-#include <string>
 #include "common.h"
 #include "Bundle.h"
 
