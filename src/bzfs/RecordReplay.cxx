@@ -143,8 +143,9 @@ static bool saveHeader (int playerIndex, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
 static FILE *openFile (const char *filename, const char *mode);
 static FILE *openWriteFile (int playerIndex, const char *filename);
-static bool makeDirExist (int playerIndex);
 static bool badFilename (const char *name);
+static bool makeDirExist (const char *dirname);
+static bool makeDirExistMsg (const char *dirname, int playerIndex);
 
 static RRtime getRRtime ();
 
@@ -218,6 +219,9 @@ bool Record::start (int playerIndex)
     sendMessage(ServerPlayer, playerIndex, "Couldn't start capturing");
     return false;
   }
+  if (makeDirExistMsg (RecordDir.c_str(), playerIndex) == false) {
+    return false;
+  }    
   Recording = true;
   saveStates ();
   sendMessage(ServerPlayer, playerIndex, "Record started");
@@ -244,13 +248,16 @@ bool Record::stop (int playerIndex)
 }
 
 
-bool Record::setRecordDir (const char *dirname)
+bool Record::setDirectory (const char *dirname)
 {
-  if (dirname == NULL) {
+  RecordDir = dirname;
+  
+  if (makeDirExist (RecordDir.c_str()) == false) {
+    // you've been warned, leave it at that
+    printf ("Could not open or create record directory: %s\n",
+            RecordDir.c_str());
+    return false;
   }
-  else {
-  }
-
   return true;
 }
 
@@ -451,7 +458,6 @@ Record::addPacket (u16 code, int len, const void * data, u16 mode)
   // but it's nice to be able to see the trigger message.
   
   if (code == MsgAddPlayer) {
-
     retval = routePacket (code, len, data, mode);
   }
   
@@ -661,7 +667,7 @@ bool Replay::sendFileList(int playerIndex)
   DIR *dir;
   struct dirent *de;
   
-  if (!makeDirExist(playerIndex)) {
+  if (makeDirExistMsg (RecordDir.c_str(), playerIndex) == false) {
     return false;
   }
   
@@ -1257,7 +1263,7 @@ openFile (const char *filename, const char *mode)
 static FILE *
 openWriteFile (int playerIndex, const char *filename)
 {
-  if (!makeDirExist(playerIndex)) {
+  if (makeDirExistMsg (RecordDir.c_str(), playerIndex) == false) {
     return NULL;
   }
   
@@ -1283,29 +1289,38 @@ static inline int osMkDir (const char *dir, int mode)
 }
 
 static bool
-makeDirExist (int playerIndex)
+makeDirExist (const char *dirname)
 {
   struct stat statbuf;
 
-  if (osStat (RecordDir.c_str(), &statbuf) < 0) {
+  // does the file exist?
+  if (osStat (dirname, &statbuf) < 0) {
     // try to make the directory
-    if (osMkDir (RecordDir.c_str(), 0755) < 0) {
-      sendMessage (ServerPlayer, playerIndex, 
-                   "Could not create default directory");
+    if (osMkDir (dirname, 0755) < 0) {
       return false;
     }
-    else {
-      sendMessage (ServerPlayer, playerIndex, "Created default directory");
-    }
   }
+  // is it a directory?
   else if (!S_ISDIR (statbuf.st_mode)) {
-    // is it really a directory
-    sendMessage (ServerPlayer, playerIndex, 
-                 "Could not create default directory");
     return false;
   }
 
   return true;  
+}
+
+
+static bool
+makeDirExistMsg (const char *dirname, int playerIndex)
+{
+  if (makeDirExist (dirname) == false) {
+    char buffer[MessageLen];
+    sendMessage (ServerPlayer, playerIndex,
+                 "Could not open or create record directory:");
+    snprintf (buffer, MessageLen, "  %s", RecordDir.c_str());
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    return false;
+  }    
+  return true;
 }
 
 

@@ -84,6 +84,7 @@ const char *usageString =
 "[-q] "
 "[+r] "
 "[-rabbit [score|killer|random]] "
+"[-recdir <dirname>] "
 "[-replay] "
 "[-reportfile <filename>] "
 "[-reportpipe <filename>] "
@@ -163,6 +164,7 @@ const char *extraUsageString =
 "\t-q: don't listen for or respond to pings\n"
 "\t+r: all shots ricochet\n"
 "\t-rabbit [score|killer|random]: rabbit chase style\n"
+"\t-recdir <dirname>: specify the directory for recorded file\n"
 "\t-replay: setup the server to replay a previously saved game\n"
 "\t-reportfile <filename>: the file to store reports in\n"
 "\t-reportpipe <filename>: the program to pipe reports through\n"
@@ -716,6 +718,9 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	  i++;
 	}
       }
+    } else if (strcmp(argv[i], "-recdir") == 0) {
+      checkArgc("", i, argc, argv[i]);
+      Record::setDirectory (argv[i]);
     } else if (strcmp(argv[i], "-replay") == 0) {
       Replay::init ();
     } else if (strcmp(argv[i], "-reportfile") == 0) {

@@ -3166,10 +3166,10 @@ static void handleCommand(int t, const void *rawbuf)
 	  message[pos] = tolower((int)message[pos]);
 	  pos++;
 	}
-	parseCommand(message, t);
 	if (Record::enabled()) {
 	  Record::addPacket (MsgMessage, len, bufcopy, HiddenPacket);
 	}
+	parseCommand(message, t);
       } else if (targetPlayer == AdminPlayers
 		 && accessInfo[t].hasPerm(PlayerAccessInfo::adminMessages)) {
 	sendMessage (t, AdminPlayers, message, true);			

@@ -27,7 +27,7 @@ namespace Record {
   extern bool init ();
   extern bool kill ();
 
-  extern bool setRecordDir (const char *dirname);
+  extern bool setDirectory (const char *dirname);
 
   extern bool start (int playerIndex);
   extern bool stop (int playerIndex); 
