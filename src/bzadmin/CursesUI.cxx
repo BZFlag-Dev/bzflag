@@ -31,14 +31,14 @@ CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
 #ifdef HAVE_NCURSES_H
   use_default_colors();
 #endif
-  init_pair(Default, -1, -1);
-  init_pair(White, COLOR_WHITE, -1);
-  init_pair(Red, COLOR_RED, -1);
-  init_pair(Green, COLOR_GREEN, -1);
-  init_pair(Blue, COLOR_BLUE, -1);
-  init_pair(Purple, COLOR_MAGENTA, -1);
-  init_pair(Yellow, COLOR_YELLOW, -1);
-  init_pair(Cyan, COLOR_CYAN, -1);
+  init_pair(Default, COLOR_FGDEFAULT, COLOR_BGDEFAULT);
+  init_pair(White, COLOR_WHITE, COLOR_BGDEFAULT);
+  init_pair(Red, COLOR_RED, COLOR_BGDEFAULT);
+  init_pair(Green, COLOR_GREEN, COLOR_BGDEFAULT);
+  init_pair(Blue, COLOR_BLUE, COLOR_BGDEFAULT);
+  init_pair(Purple, COLOR_MAGENTA, COLOR_BGDEFAULT);
+  init_pair(Yellow, COLOR_YELLOW, COLOR_BGDEFAULT);
+  init_pair(Cyan, COLOR_CYAN, COLOR_BGDEFAULT);
   nonl();
   cbreak();
   noecho();

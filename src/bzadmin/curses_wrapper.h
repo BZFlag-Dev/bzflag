@@ -31,6 +31,8 @@
 // if we have ncurses.h, just include it
 #ifdef HAVE_NCURSES_H
 #include <ncurses.h>
+#define COLOR_BGDEFAULT -1
+#define COLOR_FGDEFAULT -1
 #endif // ncurses
 
 
@@ -41,6 +43,8 @@
 #include <curses.h>
 
 #define KEY_RESIZE (KEY_MAX + 1)
+#define COLOR_BGDEFAULT COLOR_BLACK
+#define COLOR_FGDEFAULT COLOR_WHITE
 
 inline int use_default_colors() {
   return ERR;
@@ -75,6 +79,9 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 #else
 #  include <curses.h>
 #endif
+
+#define COLOR_BGDEFAULT COLOR_BLACK
+#define COLOR_FGDEFAULT COLOR_WHITE
 
 // stop ugly macros from polluting our namespace (pdcurses doesn't use
 // the NOMACROS preprocessor variable)
