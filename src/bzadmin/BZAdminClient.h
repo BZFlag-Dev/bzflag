@@ -13,11 +13,15 @@
 #ifndef BZADMINCLIENT_H
 #define BZADMINCLIENT_H
 
+/* global interface headers */
+#include "common.h"
+
+/* system interface headers */
 #include <map>
 #include <string>
 
-#include "colors.h"
 #include "PlayerInfo.h"
+#include "colors.h"
 #include "ServerLink.h"
 #include "UIMap.h"
 #include "StartupInfo.h"

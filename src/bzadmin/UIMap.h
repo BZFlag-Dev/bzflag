@@ -13,6 +13,10 @@
 #ifndef UIMAP_H
 #define UIMAP_H
 
+/* global interface headers */
+#include "common.h"
+
+/* system interface headers */
 #include <map>
 #include <string>
 
