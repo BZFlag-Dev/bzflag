@@ -18,6 +18,7 @@
 #include <assert.h>
 #ifdef HAVE_KRB5
 #include <com_err.h>
+#define err(x,y,z) if (debugLevel >= 1) com_err(x,y,z)
 #endif
 
 #ifdef HAVE_KRB5
@@ -42,18 +43,18 @@ void ClientAuthentication::init()
   krb5_error_code retval;
   // Initializing kerberos library
   if ((retval = krb5_init_context(&context)))
-    com_err("bzflag:", retval, "while initializing krb5");
+    err("bzflag:", retval, "while initializing krb5");
   // Getting credential cache 
   if (context && (retval = krb5_cc_default(context, &cc)))
-    com_err("bzflag:", retval, "getting credentials cache");
+    err("bzflag:", retval, "getting credentials cache");
   if (cc && (retval = krb5_cc_get_principal(context, cc, &client)))
-    com_err("bzflag:", retval, "getting principal name");
+    err("bzflag:", retval, "getting principal name");
   if (!retval && (retval = krb5_unparse_name(context, client, &principalName)))
-    com_err("bzflag:", retval, "unparsing principal name");
+    err("bzflag:", retval, "unparsing principal name");
   if (context && (retval = krb5_parse_name(context,
 					   "krbtgt/BZFLAG.ORG@BZFLAG.ORG",
 					   &server)))
-    com_err("bzflag:", retval, "setting up tgt server name");
+    err("bzflag:", retval, "setting up tgt server name");
   authentication = (retval == 0);
 #endif
 }
@@ -79,7 +80,7 @@ void ClientAuthentication::sendCredential(ServerLink&)
   /* Get credentials for server */
   if ((retval = krb5_get_credentials(context, KRB5_GC_CACHED, cc, &creds,
 				     &new_creds)))
-    com_err("bzflag:", retval, "getting TGT");
+    err("bzflag:", retval, "getting TGT");
   if (!retval) {
     serverLink.sendKerberosTicket(principalName, &new_creds->ticket);
   }
