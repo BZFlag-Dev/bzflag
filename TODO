@@ -14,19 +14,19 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   prevent the action properly (e.g. you cannot get banned if you have
   antiban -- even from master ban list).
 
-* sdl build does not set the application icon .. kinda important for
-  the folks with icons
-
-* fix the menu font garbage above some letters on some fonts
-
-* fix the misalignment between the selected server and the one that
-  is joined when the Server List Cache is enabled.
-
 * integrate motd.php into mysql on db and make it use version= so next
   version can have it's own MOTD
 
 
 THESE ARE LOWER PRIORITY
+
+* fix the misalignment between the selected server and the one that
+  is joined when the Server List Cache is enabled.
+
+* sdl build does not set the application icon .. kinda important for
+  the folks with icons
+
+* fix the menu font garbage above some letters on some fonts
 
 * fix the corners and edges on the tabbed panels (corner pixels are
   missing)
