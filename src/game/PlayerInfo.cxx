@@ -66,6 +66,7 @@ bool PlayerInfo::isAlive() {
 
 void PlayerInfo::setAlive() {
   state = PlayerAlive;
+  paused = false;
   flag = -1;
 };
 
