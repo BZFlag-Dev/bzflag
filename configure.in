@@ -59,6 +59,8 @@ then
   OBJC="ccache $OBJC"
 fi
 
+AC_CHECK_TOOL(WINDRES, windres, :)
+
 dnl On SGI systems, figure out if we are using MIPSPro compiler
 using_mipspro=no
 if test "$build_vendor" = "sgi" ; then
@@ -214,7 +216,7 @@ AM_CONDITIONAL(IRIX, $irix)
 AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 
 case $host_os in
-     cygwin|mingw32|windows**) win32=true;;
+     cygwin|mingw32*|windows**) win32=true;;
      *) win32=false;;
 esac
 AM_CONDITIONAL(WIN32, $win32)
@@ -349,7 +351,8 @@ fi
 LIBS=$ac_func_search_save_LIBS
 AC_SUBST(GLIBS)
 
-if test $host_os = mingw32; then
+case $host_os in
+  mingw32*)
   LIBS="-lwinmm -lws2_32 $LIBS"
   GLIBS="-mwindows -lgdi32 -ldxguid -ldsound -ldinput $GLIBS"
   # MingW does some funny stuff with DirectX.
@@ -364,7 +367,8 @@ if test $host_os = mingw32; then
                     IID_IDirectInput7, (void**)&directInput, NULL);
   ], [],
   [AC_DEFINE(BROKEN_DINPUT, 1, [Define to 1 if your DirectInput headers and libraries are broken or mismatched.])])
-fi
+  ;;
+esac
 
 # Remove ogg/vorbis dependencies until we actually need them.
 #
@@ -534,7 +538,7 @@ case $host_os in
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";;
-     mingw32)
+     mingw32*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";;
      solaris*)
@@ -566,7 +570,7 @@ if test x$enable_debug = xyes; then
    CFLAGS="$CFLAGS -O0";
    CXXFLAGS="$CXXFLAGS -O0";
    case $host_os in
-     linux*|cygwin|mingw32)
+     linux*|cygwin|mingw32*)
 	CPPFLAGS="$CPPFLAGS -Werror";
 	CXXFLAGS="$CXXFLAGS -Wno-deprecated -fsigned-char";
 	if test x$enable_profiling = xyes; then
@@ -584,7 +588,7 @@ if test x$enable_debug = xyes; then
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     case $host_os in
-	 linux*|cygwin|mingw32)
+	 linux*|cygwin|mingw32*)
 		CXXFLAGS="$CXXFLAGS -ffast-math -fno-exceptions -fsigned-char";;
 	 solaris*)
 		CFLAGS="$CFLAGS -O";
