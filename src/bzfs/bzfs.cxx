@@ -3042,6 +3042,12 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 static void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex)
 {
+  // Sanity check
+  if (killerIndex < 0 || killerIndex >= curMaxPlayers)
+    return;
+  if (shotIndex < -1 || shotIndex > clOptions->maxShots)
+    return;
+
   // victim has been destroyed.  keep score.
   if (killerIndex == InvalidPlayer ||
 	player[victimIndex].state != PlayerAlive) return;
@@ -3178,6 +3184,10 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
 static void grabFlag(int playerIndex, int flagIndex)
 {
+  // Sanity check
+  if (flagIndex < -1 || flagIndex >= numFlags)
+    return;
+
   // player wants to take possession of flag
   if (player[playerIndex].team == ObserverTeam ||
       player[playerIndex].state != PlayerAlive ||
@@ -3223,6 +3233,14 @@ static void grabFlag(int playerIndex, int flagIndex)
 
 static void dropFlag(int playerIndex, float pos[3])
 {
+  const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  if (pos[0] < -size || pos[0] > size)
+    pos[0] = 0.0;
+  if (pos[1] < -size || pos[1] > size)
+    pos[1] = 0.0;
+  if (pos[2] > maxWorldHeight)
+    pos[2] = 0.0;
+
   assert(world != NULL);
   WorldInfo::ObstacleLocation* container;
   int topmosttype = NOT_IN_BUILDING;
@@ -3378,6 +3396,10 @@ static void dropFlag(int playerIndex, float pos[3])
 
 static void captureFlag(int playerIndex, TeamColor teamCaptured)
 {
+  // Sanity check
+  if (teamCaptured < RedTeam || teamCaptured > PurpleTeam)
+    return;
+
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
   int flagIndex = int(player[playerIndex].flag);
@@ -3900,7 +3922,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // shot fired
     case MsgShotBegin:
-      shotFired(t, buf, int(len));
+      // Sanity check
+      if (len == 39)
+	shotFired(t, buf, int(len));
       break;
 
     // shot ended prematurely
@@ -3969,8 +3993,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	buf = nboUnpackUByte(buf, from);
 	buf = nboUnpackUByte(buf, to);
 
-	if ((from == InvalidPlayer) || (to == InvalidPlayer))
-		break;
+	// Sanity check
+	if (from >= curMaxPlayers)
+	  return;
+	if (to >= curMaxPlayers)
+	  return;
 
 	int flagIndex = player[from].flag;
 	if (flagIndex == -1)
