@@ -450,6 +450,9 @@ struct PlayerInfo {
     // if player can't multicast
     bool multicastRelay;
 
+    // Last known position, vel, etc
+    PlayerState lastState;
+
     // input buffers
     // bytes read in current msg
     int tcplen;
@@ -5422,8 +5425,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
 
-/*      // if tank not on ground cannot be sure if it didn't have HighSpeed before
-      if (flag[player[t].flag].flag.id == VelocityFlag || state.pos[2] > 0.0f)
+      // if tank is not driving cannot be sure it didn't toss flag in flight
+      if ((flag[player[t].flag].flag.id == VelocityFlag) || (player[t].lastState.pos[2] != state.pos[2]))
 	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
       
       if (curPlanarSpeedSqr > (1.0 + maxPlanarSpeedSqr)) {
@@ -5433,7 +5436,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
 	break;
-      }*/
+      }
+
+      player[t].lastState = state;
     }
     //Fall thru
     case MsgGMUpdate:
