@@ -7,6 +7,8 @@
 #  define EXTERN_C_END   }
 #endif
 
+#include <iostream>
+
 EXTERN_C_BEGIN
 extern WindowRef GetWindowRefFromNativeWindow(void * nativeWindow);
 EXTERN_C_END
@@ -21,6 +23,17 @@ struct Settings
   bool VBL_Synch;
   int depth;
 
+  CGGammaValue redMin;
+  CGGammaValue redMax;
+  CGGammaValue redGamma;
+  CGGammaValue greenMin;
+  CGGammaValue greenMax;
+  CGGammaValue greenGamma;
+  CGGammaValue blueMin;
+  CGGammaValue blueMax;
+  CGGammaValue blueGamma;
+  double gamma;
+  
   Settings() {
     Use_Main_Display = true;
     Capture_Display = true;
@@ -329,9 +342,9 @@ public:
     if (display_num >= num_displays)
       return;
 
-    CFArrayRef display_modes = CGDisplayAvailableModes(display_ids[display_num]);
+//    CFArrayRef display_modes = CGDisplayAvailableModes(display_ids[display_num]);
 
-    CFIndex num_modes = CFArrayGetCount(display_modes);
+//    CFIndex num_modes = CFArrayGetCount(display_modes);
   }
 
   bool SetDisplayMode(CGDisplayCount display_num, const CGSize& size, size_t bpp, CGRefreshRate hz) {
@@ -340,7 +353,7 @@ public:
 
     CFDictionaryRef display_mode_values = CGDisplayBestModeForParametersAndRefreshRate(display_ids[display_num], bpp, (size_t) size.width, (size_t) size.height, hz, NULL);
 
-    int display_hz = get_value(display_mode_values,  kCGDisplayRefreshRate);
+//    int display_hz = get_value(display_mode_values,  kCGDisplayRefreshRate);
 
     CGDisplayErr err = CGDisplaySwitchToMode(display_ids[display_num], display_mode_values);
 
@@ -370,9 +383,9 @@ void Display(void)
 MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
 			BzfWindow(display)
 {
-  GLboolean ok;
-  int argc = 0;
-  char **argv = {NULL};
+//  GLboolean ok;
+//  int argc = 0;
+//  char **argv = {NULL};
 
   int num_displays = displays.Init();
 
@@ -419,6 +432,16 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
 
   makeCurrent();
 
+  CGGetDisplayTransferByFormula(kCGDirectMainDisplay,
+			       &settings.redMin, &settings.redMax, &settings.redGamma,
+			       &settings.greenMin, &settings.greenMax, &settings.greenGamma,
+			       &settings.blueMin, &settings.blueMax, &settings.blueGamma);
+  settings.gamma = (settings.redGamma + settings.greenGamma + settings.blueGamma) / 3.0;
+
+#if DEBUG
+  std::cout << "Initial gamma settings: " << settings.gamma << " for (" << settings.redGamma << "," << settings.greenGamma << "," <<settings.blueGamma << std::endl;
+#endif
+  
   //hideMouse();
 }
 
@@ -429,6 +452,7 @@ MacWindow::~MacWindow() {
   showMouse();
   gl_context.Reset();
   displays.Release();
+  CGDisplayRestoreColorSyncSettings(); 
 }
 
 bool MacWindow::isValid() const { return true; }
@@ -495,9 +519,22 @@ void MacWindow::ungrabMouse()
 void MacWindow::showMouse() { ShowCursor(); }
 void MacWindow::hideMouse() { HideCursor(); }
 
-void MacWindow::setGamma(float)         {}
-float MacWindow::getGamma()        const { return 0.0;   }
-bool MacWindow::hasGammaControl() const { return false; }
+void MacWindow::setGamma(float value)  
+{
+  CGDisplayErr err;
+
+  settings.gamma = value;
+
+#if DEBUG
+  std::cout << "Setting Gamma to " << value << std::endl;
+#endif
+  err = CGSetDisplayTransferByFormula( kCGDirectMainDisplay,
+				       settings.redMin, settings.redMax, 1.0 / value, //red
+				       settings.greenMin, settings.greenMax, 1.0 / value, //green
+				       settings.blueMin, settings.blueMax, 1.0 / value); //blue
+}
+float MacWindow::getGamma()        const { return settings.gamma;   }
+bool MacWindow::hasGammaControl() const { return true; }
 
 void MacWindow::makeContext() {}
 void MacWindow::freeContext() {}
@@ -514,4 +551,3 @@ void MacWindow::swapBuffers() {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
