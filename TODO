@@ -12,9 +12,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
       eg. gravity is at -1, player jumps, admin sets to -9.8
           --most of the prior gravity bug was fixed as of 9/27--
 
-    - players can get autokicked for speeding if a theif steals their flag
-	  --this could be fixed as of 9/26--
-
 
 THESE ARE LOWER PRIORITY
 
