@@ -799,8 +799,6 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   minorFont.draw(teamScoreLabel, x5, y0);
   const float dy = minorFont.getSpacing();
   int y = (int)(y0 - dy);
-  drawPlayerScore(myTank, x1, x2, x3, (float)y);
-  y -= (int)dy;
 
   // print players sorted by score
   int plrCount = 0;
@@ -813,10 +811,22 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
 
   qsort(players, plrCount, sizeof(int), tankScoreCompare);
 
+  bool drewMyScore = false;
   for (i = 0; i < plrCount; i++) {
     RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
+    if (!drewMyScore && myTank->getScore() > player->getScore()) {
+      // if i have greater score than remote player draw my name first
+      drawPlayerScore(myTank, x1, x2, x3, (float)y);
+      y -= (int)dy;
+      drewMyScore = true;
+    }
+    drawPlayerScore(player, x1, x2, x3, (float)y);//then draw the remote player
     y -= (int)dy;
-    drawPlayerScore(player, x1, x2, x3, (float)y);
+  }
+  if (!drewMyScore) {
+    // if my score is smaller or equal to last remote player draw my score 
+    y -= (int)dy;
+    drawPlayerScore(myTank, x1, x2, x3, (float)y);
   }
   delete[] players;
 
