@@ -1241,6 +1241,7 @@ void handlePollCmd(int t, const char *message)
   } else {
     sendMessage(ServerPlayer, t, "Invalid option to the poll command", true);
     sendMessage(ServerPlayer, t, "Usage: /poll ban|kick playername", true);
+    sendMessage(ServerPlayer, t, "    or /poll set variable value", true);
     sendMessage(ServerPlayer, t, "    or /poll vote yes|no", true);
     sendMessage(ServerPlayer, t, "    or /poll veto", true);
 
