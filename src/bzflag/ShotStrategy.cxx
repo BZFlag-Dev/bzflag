@@ -1114,7 +1114,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   prevTime = currentTime;
 
   // no last target
-  lastTarget = 0;
+  lastTarget = NoPlayer;
 }
 
 GuidedMissileStrategy::~GuidedMissileStrategy()
@@ -1150,7 +1150,7 @@ void			GuidedMissileStrategy::update(float dt)
   // get target
   const Player* target = NULL;
   if (isRemote) {
-    if (lastTarget != 0)
+    if (lastTarget != NoPlayer)
       target = lookupPlayer(lastTarget);
   }
   else {
@@ -1165,16 +1165,16 @@ void			GuidedMissileStrategy::update(float dt)
       }
     }
     else {
-      if (lastTarget != 0) {
+      if (lastTarget != NoPlayer) {
 	needUpdate = true;
-	lastTarget = 0;
+	lastTarget = NoPlayer;
       }
     }
   }
 
   if ((target != NULL) && (target->getFlag() == Flags::Stealth)) {
     target = NULL;
-    lastTarget = 0;
+    lastTarget = NoPlayer;
     needUpdate = true;
   }
 
