@@ -69,6 +69,7 @@ noinst_HEADERS =		\
 	TankSceneNode.h		\
 	Team.h			\
 	Teleporter.h		\
+	TextUtils.h		\
 	TimeBomb.h		\
 	TimeKeeper.h		\
 	TracerSceneNode.h	\
