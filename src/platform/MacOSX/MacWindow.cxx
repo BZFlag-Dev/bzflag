@@ -387,30 +387,12 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
 //  int argc = 0;
 //  char **argv = {NULL};
 
-  int num_displays = displays.Init();
+  /* set the size of the window to the default (existing resolution). this
+   * includes initializing the opengl context to the correct aspect ratio.
+   */
+  setSize(settings.Window_Size.width, settings.Window_Size.height);
 
-  if (num_displays == 0)
-    return;
-
-  int display_index = settings.Use_Main_Display ? 0 : num_displays-1;
-
-  u_int32_t display_id = displays.GetOpenGLDisplayID(display_index);
-
-
-  if (settings.Capture_Display)
-    displays.Capture(display_index);
-
-  if (settings.Switch_Display)
-    if (displays.SetDisplayMode(display_index, settings.Window_Size, settings.depth, settings.Display_Hz))
-      displays.DumpCurrentDisplayMode(display_index);
-
-  CGRect window_rect = CGRectMake(0,0, settings.Window_Size.width, settings.Window_Size.height);
-
-  if (!settings.Switch_Display)
-    window_rect.origin = CGPointMake(32,32);
-
-  if (!gl_context.Init(display_id, window_rect))
-    return;
+  display->setContext(gl_context.GetGLContext());
 
 #ifdef USE_DSP
   display->setWindow(window);
@@ -427,8 +409,6 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
   //visual->addAttribute1(AGL_FULLSCREEN);
 
   visual->build();
-
-  display->setContext(gl_context.GetGLContext());
 
   makeCurrent();
 
@@ -465,11 +445,46 @@ void MacWindow::getSize(int &width, int &height) const {
 
   width = CGDisplayPixelsWide(kCGDirectMainDisplay);
   height = CGDisplayPixelsHigh(kCGDirectMainDisplay);
+  // width = settings.Window_Size.width;
+  // width = settings.Window_Size.height;
 }
 
 void MacWindow::setTitle(const char *title) {}
 void MacWindow::setPosition(int x, int y) {}
-void MacWindow::setSize(int width, int height) {}
+void MacWindow::setSize(int width, int height) 
+{
+  settings.Window_Size.width = width;
+  settings.Window_Size.height = height;
+
+  std::cout << "setSize was called with " << width << " x " << height << std::endl;
+
+  int num_displays = displays.Init();
+  if (num_displays == 0) {
+    return;
+  }
+  int display_index = settings.Use_Main_Display ? 0 : num_displays-1;
+  u_int32_t display_id = displays.GetOpenGLDisplayID(display_index);
+
+  if (settings.Capture_Display) {
+    displays.Capture(display_index);
+  }
+
+  if (settings.Switch_Display) {
+    if (displays.SetDisplayMode(display_index, settings.Window_Size, settings.depth, settings.Display_Hz)) {
+      displays.DumpCurrentDisplayMode(display_index);
+    }
+  }
+
+  CGRect window_rect = CGRectMake(0,0, settings.Window_Size.width, settings.Window_Size.height);
+  if (!settings.Switch_Display) {
+    window_rect.origin = CGPointMake(32,32);
+  }
+
+  if (!gl_context.Init(display_id, window_rect)) {
+    return;
+  }
+
+}
 
 void MacWindow::setMinSize(int width, int height) {
 #ifndef USE_DSP
