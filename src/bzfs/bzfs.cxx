@@ -4340,12 +4340,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
  	    else if ((flag[player[t].flag].flag.type == Flags::Burrow) &&
 	      (player[t].lastState.pos[2] == state.pos[2]) && 
-	      (player[t].lastState.velocity[2] == state.velocity[2]))
+	      (player[t].lastState.velocity[2] == state.velocity[2]) &&
+	      (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
 	      // if we have burrow and are not actively burrowing
-	      /* FIXME: it would be better to keep track of the time the
-	      flag was grabbed, then calculate (from gravity) the time it 
-	      should take to burrow, and only exclude checks for that time,
-	      to avoid bouncing burrow cheats */
  	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD) * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	    else {
 	      // If player is moving vertically, or not alive the speed checks
