@@ -5946,18 +5946,26 @@ static void parse(int argc, char **argv)
       playerCountArg2 > 0 && !parsePlayerCount(argv[playerCountArg2])))
     usage(argv[0]);
 
+  // first disallow flags inconsistent with game style
+  if (gameStyle & InertiaGameStyle) {
+    flagCount[int(MomentumFlag)] = 0;
+    flagDisallowed[int(MomentumFlag)] = True;
+  }
+  if (gameStyle & JumpingGameStyle) {
+    flagCount[int(JumpingFlag)] = 0;
+    flagDisallowed[int(JumpingFlag)] = True;
+  }
+  if (gameStyle & RicochetGameStyle) {
+    flagCount[int(RicochetFlag)] = 0;
+    flagDisallowed[int(RicochetFlag)] = True;
+  }
+  if (!useTeleporters) {
+    flagCount[int(PhantomZoneFlag)] = 0;
+    flagDisallowed[int(PhantomZoneFlag)] = True;
+  }
+
   // make table of allowed extra flags
   if (numExtraFlags > 0) {
-    // first disallow flags inconsistent with game style
-    if (gameStyle & InertiaGameStyle)
-      flagDisallowed[int(MomentumFlag)] = True;
-    if (gameStyle & JumpingGameStyle)
-      flagDisallowed[int(JumpingFlag)] = True;
-    if (gameStyle & RicochetGameStyle)
-      flagDisallowed[int(RicochetFlag)] = True;
-    if (!useTeleporters)
-      flagDisallowed[int(PhantomZoneFlag)] = True;
-
     // now count how many aren't disallowed
     for (i = int(FirstSuperFlag); i <= int(LastSuperFlag); i++)
       if (!flagDisallowed[i])
@@ -6027,60 +6035,14 @@ static void parse(int argc, char **argv)
     flag[3].flag.type = FlagNormal;
     f = 4;
   }
-  for (i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "+f") == 0) {
-      i++;
-      if (strcmp(argv[i], "good") == 0) {
-	if (setRequiredFlag(flag[f], VelocityFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], QuickTurnFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], OscOverthrusterFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], RapidFireFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], MachineGunFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], GuidedMissileFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], LaserFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], RicochetFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], SuperBulletFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], InvisibleBulletFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], StealthFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], TinyFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], NarrowFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], ShieldFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], SteamrollerFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], ShockWaveFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], PhantomZoneFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], GenocideFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], JumpingFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], IdentifyFlag))
-	  f++;
-	if (setRequiredFlag(flag[f], CloakingFlag))
-	  f++;
-      }
-      else {
-	flag[f].flag.id = FlagId(lookupFlag(argv[i]));
-	flag[f].required = True;
-	flag[f].flag.type = Flag::getType(flag[f].flag.id);
-	f++;
-      }
-      gameStyle |= int(SuperFlagGameStyle);
+
+  for (i = int(FirstFlag); i <= int(LastFlag); i++) {
+    if (flagCount[i] > 0) {
+	  for (int j = 0; j < flagCount[i]; j++) {
+		  if (setRequiredFlag(flag[f], (FlagId)i))
+			f++;
+	  }
+	  gameStyle |= int(SuperFlagGameStyle);
     }
   }
   for (; f < numFlags; f++) {

@@ -1,6 +1,7 @@
 
 			     BZFlag release notes
 * add new updates here without heading until a release
+* disallow dud flags (eg jump in a jump world) - Dave Brosius
 * self destruct key, for stuck tanks - Dave Brosius
 * team killers die - Tim Riker
 * increase max player and robot counts - Tim Riker
