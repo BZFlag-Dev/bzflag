@@ -1,3 +1,6 @@
+#include "common.h"
+
+/* system headers */
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -8,8 +11,13 @@
 
 typedef int foo;
 
-#define PI (3.1415926535897932384626433832795f)
-#define TWO_PI (2.0f*PI)
+#ifndef PI
+#  define PI (3.1415926535897932384626433832795f)
+#endif
+#ifndef TWO_PI
+#  define TWO_PI (2.0f*PI)
+#endif
+
 
 class Matrix3D
 {
@@ -567,7 +575,7 @@ int main( int argc, char **argv )
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
