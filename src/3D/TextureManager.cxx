@@ -177,7 +177,7 @@ void TextureManager::setMaxFilter ( eTextureFilter filter )
   }
 
   // rebuild proc textures
-  for (int i = 0; i < countof(procLoader); i++) {
+  for (int i = 0; i < (int)countof(procLoader); i++) {
     procLoader[i].manager = this;
     procLoader[i].proc(procLoader[i]);
   }
