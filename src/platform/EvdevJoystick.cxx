@@ -42,8 +42,13 @@ bool             EvdevJoystick::isEvdevAvailable()
 {
   /* Test whether this driver should be used without actually
    * loading it. Will return false if no event devices can be
-   * located
+   * located, or if it has been specifically disabled by setting
+   * the environment variable BZFLAG_ENABLE_EVDEV=0
    */
+
+  char *envvar = getenv("BZFLAG_ENABLE_EVDEV");
+  if (envvar)
+    return atoi(envvar) != 0;
 
   std::map<std::string,EvdevJoystickInfo> joysticks;
   scanForJoysticks(joysticks);
