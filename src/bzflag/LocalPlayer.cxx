@@ -913,6 +913,7 @@ void			LocalPlayer::setTarget(const Player* _target)
 
 void			LocalPlayer::setNemesis(const Player* _nemesis)
 {
+  if ((_nemesis == NULL) || _nemesis->getPlayerType() == TankPlayer)
 	nemesis = _nemesis;
 }
 
