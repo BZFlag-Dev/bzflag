@@ -617,7 +617,7 @@ void			dumpResources(BzfDisplay* display,
 				SceneRenderer& renderer)
 {
   // collect new configuration
-  db.addValue("callsign", startupInfo.callsign);
+  BZDB->set("callsign", startupInfo.callsign);
   BZDB->set("team", Team::getName(startupInfo.team));
   BZDB->set("server", startupInfo.serverName);
   if (startupInfo.serverPort != ServerPort) {
@@ -819,8 +819,8 @@ int			main(int argc, char** argv)
 
   // restore some configuration (command line overrides these)
   if (startupInfo.hasConfiguration) {
-    if (db.hasValue("callsign")) {
-      strncpy(startupInfo.callsign, db.getValue("callsign").c_str(),
+    if (BZDB->isSet("callsign")) {
+      strncpy(startupInfo.callsign, BZDB->get("callsign").c_str(),
 					sizeof(startupInfo.callsign) - 1);
       startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
     }
