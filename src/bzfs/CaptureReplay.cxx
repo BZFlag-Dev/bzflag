@@ -90,6 +90,7 @@ static int CaptureFilePrevLen = 0;
 static bool Replaying = false;
 static bool ReplayMode = false;
 static CRtime ReplayOffset = 0;
+static CRpacket *ReplayPos = NULL;
 
 static unsigned int UpdateRate = DefaultUpdateRate;
 
@@ -460,6 +461,7 @@ bool Replay::init()
   ReplayMode = true;
   Replaying = false;
   ReplayOffset = 0;
+  ReplayPos = NULL;
 
   return true;
 }
@@ -563,15 +565,20 @@ bool Replay::sendFileList(int playerIndex)
 
 bool Replay::play(int playerIndex)
 {
-  if (!ReplayMode || (ReplayFile == NULL)) {
-    sendMessage (ServerPlayer, playerIndex,
-                 "Server is not in replay mode, or no file loaded");
+  if (!ReplayMode) {
+    sendMessage (ServerPlayer, playerIndex, "Server is not in replay mode");
+    return false;
+  }
+
+  if (ReplayFile == NULL) {
+    sendMessage (ServerPlayer, playerIndex, "No replay file loaded");
     return false;
   }
 
   DEBUG3 ("Replay::play()\n");
   
   Replaying = true;
+  ReplayPos = ReplayBuf.tail;
   ReplayOffset = getCRtime () - ReplayBuf.tail->timestamp;
 
   // reset the replay observers' view of state  
@@ -586,34 +593,62 @@ bool Replay::play(int playerIndex)
 }
 
 
-bool Replay::skip(int playerIndex)
+bool Replay::skip(int playerIndex, int seconds)
 {
+  CRpacket *p;
+
   if (!ReplayMode || (ReplayFile == NULL)) {
     sendMessage (ServerPlayer, playerIndex,
                  "Server is not in replay mode, or no file loaded");
     return false;
   }
 
-  if (ReplayBuf.tail == NULL) {
-    sendMessage (ServerPlayer, playerIndex, "can't skip, no more data");
+  p = ReplayPos;
+
+  if (seconds != 0) {
+    CRtime target = (getCRtime() - ReplayOffset) + 
+                    ((CRtime)seconds * (CRtime)1000000);
+
+    if (seconds > 0) {
+      while (p != NULL) {
+        if ((p->timestamp >= target) && ((p == ReplayPos) || 
+            (p->fake && (p->code == MsgTeamUpdate)))) { // start on an update
+          break;
+        }
+        p = p->next;
+      }
+    }
+    else {
+      while (p != ReplayBuf.tail) {
+        if ((p->timestamp <= target) && 
+            (p->fake && (p->code == MsgTeamUpdate))) { // start on an update
+          break;
+        }
+        p = p->prev;
+      }
+    }
+  }
+   
+  if (p == NULL) {
+    sendMessage (ServerPlayer, playerIndex, "can't skip, no data available");
     return false;
   }
   
-  // FIXME - just jump to the next packet for now
-  //         no need for a resetStates(), yet
+  if (p != ReplayPos) {
+    // reset the replay observers' view of state  
+    resetStates();
+    for (int i = MaxPlayers; i < curMaxPlayers; i++) {
+      player[i].setReplayState (ReplayNone);
+    }
+  }
   
-  // reset the replay observers' view of state  
-//  resetStates();
-//  for (int i = MaxPlayers; i < curMaxPlayers; i++) {
-//    player[i].setReplayState (ReplayNone);
-//  }
-  
-  CRtime newOffset = getCRtime() - ReplayBuf.tail->timestamp;
+  CRtime newOffset = getCRtime() - p->timestamp;
   CRtime diff = ReplayOffset - newOffset;
   ReplayOffset = newOffset;
+  ReplayPos = p;
   
   char buffer[256];
-  sprintf (buffer, "Skipping %f seconds", (float)diff/1000000.0f);
+  sprintf (buffer, "Skipping %f seconds (asked %i)", (float)diff/1000000.0f, seconds);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -630,14 +665,16 @@ bool Replay::sendPackets () {
     CRpacket *p;
     int i;
 
-    p = delCRpacket (&ReplayBuf);
+    p = ReplayPos;
     
     if (p == NULL) {
-      Replay::init();
       resetStates ();
+      Replaying = false;
       sendMessage (ServerPlayer, AllPlayers, "Replay Finished");
       return false;
     }
+    
+    ReplayPos = p->next;
 
     DEBUG3 ("sendPackets(): len = %4i, code = %s, data = %p\n",
             p->len, print_msg_code (p->code), p->data);
@@ -680,15 +717,12 @@ bool Replay::sendPackets () {
       }
       
     } // for loop
-    
-    free (p->data);
-    free (p);
-    
   } // while loop
 
-  if (ReplayBuf.tail == NULL) {
-    Replay::init();
-    sendMessage (ServerPlayer, AllPlayers, "Replay Complete");
+  if (ReplayPos == NULL) {
+    resetStates ();
+    Replaying = false;
+    sendMessage (ServerPlayer, AllPlayers, "Replay Finished");
     return false;
   }
     
@@ -702,11 +736,11 @@ float Replay::nextTime()
   return 1000.0f;
 #endif
 
-  if (!ReplayMode || !Replaying || (ReplayBuf.tail == NULL)) {
+  if (!ReplayMode || !Replaying || (ReplayPos == NULL)) {
     return 1000.0f;
   }
   else {
-    CRtime diff = (ReplayBuf.tail->timestamp + ReplayOffset) - getCRtime();
+    CRtime diff = (ReplayPos->timestamp + ReplayOffset) - getCRtime();
     return (float)diff / 1000000.0f;
   }
 }
@@ -899,7 +933,7 @@ saveCRpacket (CRpacket *p, FILE *f)
 }
 
 
-static CRpacket * //FIXME - totally botched
+static CRpacket *
 loadCRpacket (FILE *f)
 {
   CRpacket *p;
@@ -928,7 +962,7 @@ loadCRpacket (FILE *f)
   }
   
   if (p->len > MaxPacketLen) {
-    printf ("loadCRpacket: ERROR, packtlen = %i\n", p->len);
+    fprintf (stderr, "loadCRpacket: ERROR, packtlen = %i\n", p->len);
     free (p);
     Replay::init();
     return NULL;
