@@ -5105,15 +5105,18 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (t != id) {
 	// Should be a Robot or a cheater
 	if ((id >= curMaxPlayers) || (player[id].type != ComputerPlayer)) {
-	  char message[MessageLen];
+	  // Commented out autokick occasionally being kicked
+	  // out with Robot
+	  // Should check why!
+// 	  char message[MessageLen];
 	  DEBUG1("kicking Player %s [%d]: Invalid Id %s [%d]\n",
 		 player[t].callSign, t, player[id].callSign, id);
-	  strcpy(message, "Autokick: Using invalid PlayerId, don't cheat.");
-	  sendMessage(ServerPlayer, t, message, true);
-	  removePlayer(t, "Using invalid PlayerId");
-	  break;
-	}
-	t = id;
+// 	  strcpy(message, "Autokick: Using invalid PlayerId, don't cheat.");
+// 	  sendMessage(ServerPlayer, t, message, true);
+// 	  removePlayer(t, "Using invalid PlayerId");
+// 	  break;
+	} else
+	  t = id;
       }
 
       player[t].lastupdate = TimeKeeper::getCurrent();
