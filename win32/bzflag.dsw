@@ -32,9 +32,6 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name scene
     End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name makehtml
-    End Project Dependency
 }}}
 
 ###############################################################################
@@ -119,6 +116,30 @@ Package=<5>
 
 Package=<4>
 {{{
+}}}
+
+###############################################################################
+
+Project: "installer"=.\installer.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name bzfls
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name bzfs
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name bzflag
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name makehtml
+    End Project Dependency
 }}}
 
 ###############################################################################
