@@ -182,40 +182,6 @@ noinst_LIBRARIES = libPlatform.a
 endif
 
 EXTRA_libPlatform_a_SOURCES =		\
-	XDisplay.cxx			\
-	XDisplay.h			\
-	XIJoystick.cxx			\
-	XIJoystick.h			\
-	XVisual.cxx			\
-	XVisual.h			\
-	XWindow.cxx			\
-	XWindow.h			\
-	LinuxPlatformFactory.cxx	\
-	LinuxPlatformFactory.h		\
-	LinuxDisplay.cxx		\
-	LinuxDisplay.h			\
-	LinuxMedia.cxx			\
-	LinuxMedia.h			\
-	USBJoystick.cxx			\
-	USBJoystick.h			\
-	SDLJoystick.cxx			\
-	SDLJoystick.h			\
-	SDLPlatformFactory.cxx		\
-	SDLPlatformFactory.h		\
-	SDLMedia.cxx			\
-	SDLMedia.h			\
-	SDLDisplay.h			\
-	SDLDisplay.cxx			\
-	SolarisPlatformFactory.cxx	\
-	SolarisPlatformFactory.h	\
-	SolarisMedia.cxx		\
-	SolarisMedia.h			\
-	SGIPlatformFactory.cxx		\
-	SGIPlatformFactory.h		\
-	SGIDisplay.cxx			\
-	SGIDisplay.h			\
-	SGIMedia.cxx			\
-	SGIMedia.h			\
 	BeOSPlatformFactory.cxx		\
 	BeOSPlatformFactory.h		\
 	BeOSDisplay.cxx			\
@@ -224,10 +190,35 @@ EXTRA_libPlatform_a_SOURCES =		\
 	BeOSVisual.h			\
 	BeOSWindow.cxx			\
 	BeOSWindow.h			\
+	BeOSWindow2.cxx			\
 	BeOSMedia.cxx			\
 	BeOSMedia.h			\
-	wave.cxx			\
-	wave.h				\
+	LinuxPlatformFactory.cxx	\
+	LinuxPlatformFactory.h		\
+	LinuxDisplay.cxx		\
+	LinuxDisplay.h			\
+	LinuxMedia.cxx			\
+	LinuxMedia.h			\
+	SDLJoystick.cxx			\
+	SDLJoystick.h			\
+	SDLPlatformFactory.cxx		\
+	SDLPlatformFactory.h		\
+	SDLMedia.cxx			\
+	SDLMedia.h			\
+	SDLDisplay.h			\
+	SDLDisplay.cxx			\
+	SGIPlatformFactory.cxx		\
+	SGIPlatformFactory.h		\
+	SGIDisplay.cxx			\
+	SGIDisplay.h			\
+	SGIMedia.cxx			\
+	SGIMedia.h			\
+	SolarisPlatformFactory.cxx	\
+	SolarisPlatformFactory.h	\
+	SolarisMedia.cxx		\
+	SolarisMedia.h			\
+	USBJoystick.cxx			\
+	USBJoystick.h			\
 	WinPlatformFactory.cxx		\
 	WinPlatformFactory.h		\
 	WinDisplay.cxx			\
@@ -239,7 +230,17 @@ EXTRA_libPlatform_a_SOURCES =		\
 	WinWindow.cxx			\
 	WinWindow.h			\
 	WinMedia.cxx			\
-	WinMedia.h
+	WinMedia.h			\
+	XDisplay.cxx			\
+	XDisplay.h			\
+	XIJoystick.cxx			\
+	XIJoystick.h			\
+	XVisual.cxx			\
+	XVisual.h			\
+	XWindow.cxx			\
+	XWindow.h			\
+	wave.cxx			\
+	wave.h
 
 AM_CPPFLAGS = $(SDL_CFLAGS)
 
