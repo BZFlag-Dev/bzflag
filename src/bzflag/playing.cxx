@@ -3189,6 +3189,8 @@ static void		checkEnvironment(RobotPlayer* tank)
   // Check Server Shots
   tank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
 
+  float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+  
   if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
     // force shot to terminate locally immediately (no server round trip);
@@ -3216,6 +3218,11 @@ static void		checkEnvironment(RobotPlayer* tank)
     }
   }
 
+  // if not dead yet, see if the robot dropped below the death level
+  else if ((deadUnder > 0.0f) && (tank->getPosition()[2] <= deadUnder)) {
+    gotBlowedUp(tank, SelfDestruct, ServerPlayer);
+  }
+
   // if not dead yet, see if i got run over by the steamroller
   else {
     bool dead = false;
@@ -3233,7 +3240,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 	}
       }
     }
-    for (i = 0; !dead && i < curMaxPlayers; i++)
+    for (i = 0; !dead && i < curMaxPlayers; i++) {
       if (player[i] && !player[i]->isPaused() &&
 	  ((player[i]->getFlag() == Flags::Steamroller) ||
 	   ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()) &&
@@ -3246,6 +3253,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 	  dead = true;
 	}
       }
+    }
   }
 }
 
