@@ -1,4 +1,4 @@
-Building BZFlag and its associated projects in Dev-C++ on Windows
+Building BZFlag and its associated projects in Dev-C++ on Windows or Linux
 is quite easy.
 
 1. Open up the corresponding project files, included in the "Dev-C++"
@@ -16,10 +16,12 @@ than DirectX SDK, and is available from:
     www.libsdl.org
     
 It is only a few megabytes, and is cross-platform. Remeber to download the
-one for MinGW32 so it works nicely (however, a VC++ one may also work). Place
+one for MinGW32 so it works nicely (however, a VC++ one may also work), if you
+are on Windows, otherwise download the one for GCC on Linux. Place
 the .a files in your "/lib/" directory of Dev-C++, and the headers in "/include/".
-Also, make sure you put "SDL.dll" somewhere in your PATH environment variable, such
-as "c:\WINDOWS\".
+Also, make sure you put the dynamic library for SDL (i.e., "SDL.dll" on Windows)
+somewhere in your PATH environment variable (on Windows), such as "c:\WINDOWS\".
+On Linux, place it in a directory that it knows to look in.
 
 The outputed executables should be stripped already by "ld" (command line option "-s"),
 so there is no need to use "strip" or take away any further symbol/debug tables.
