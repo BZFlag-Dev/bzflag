@@ -95,6 +95,45 @@ bool			BzfRegion::isInside(const float p[2]) const
   return inside;
 }
 
+float			BzfRegion::getDistance(const float p[2]) const
+{
+  // compute distance from any corner
+  const int count = corners.size();
+  float currentDistance = maxDistance;
+  float pointDistance;
+  for (int i = 0; i < count; i++) {
+    const float* p1 = corners[i].get();
+    pointDistance = hypotf(p[0] - p1[0], p[1] - p1[1]);
+    if (pointDistance < currentDistance)
+      currentDistance = pointDistance;
+  }
+
+  //compute distance from any edge
+  const float* p1 = corners[count - 1].get();
+  const float* p2 = NULL;
+  float        d[2];
+  float        m[2];
+  float        t;
+  float        edgeSquareDist;
+  for (int i = 0; i < count; i++) {
+    p2   = corners[i].get();
+    d[0] = p2[1] - p1[0];
+    d[1] = p2[1] - p1[1];
+    m[0] = p[0]  - p1[0];
+    m[1] = p[1]  - p1[1];
+    edgeSquareDist = d[0] * d[0] + d[1] * d[1];
+    t = (m[0] * d[0] + m[1] * d[1]) / edgeSquareDist;
+    p1 = p2;
+    // t must be within 0..1 to get point - segment distance
+    if ((t <= 0) && (t >= 1))
+      continue;
+    pointDistance = hypotf(m[0] - t * d[0], m[1] - t * d[1]);
+    if (pointDistance < currentDistance)
+      currentDistance = pointDistance;
+  }
+  return currentDistance;
+}
+
 int			BzfRegion::classify(const float e1[2],
 						const float e2[2]) const
 {

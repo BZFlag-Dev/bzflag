@@ -36,12 +36,16 @@ class RegionPoint {
     float		p[2];
 };
 
+const float             maxDistance = 1.0e6;
+
 class BzfRegion {
   public:
 			BzfRegion(int sides, const float p[][2]);
 			~BzfRegion();
 
     bool		isInside(const float p[2]) const;
+    // get point distance from Region. Point should be outside Region!
+    float		getDistance(const float p[2]) const;
     int			classify(const float p1[2], const float p2[2]) const;
     BzfRegion*		orphanSplitRegion(const float p1[2], const float p2[2]);
 
