@@ -350,8 +350,13 @@ void					BeOSMedia::audioThreadInit(void*)
 void					BeOSMedia::writeSoundCommand(const void* cmd, int len)
 {
   DBG(("BeOSMedia::writeSoundCommand(, %d)\n", len));
-  if (port_count(audioQueuePort) + 2 < audioQueueMaxCmds) /* we don't want to block */
+  if (port_count(audioQueuePort) + 2 < audioQueueMaxCmds) { /* we don't want to block */
     write_port(audioQueuePort, 'SndC', cmd, len);
+    int32 semcnt = 0;
+    get_sem_count(lowWaterSem, &semcnt);
+    if (semcnt < 0)
+      release_sem(lowWaterSem);
+  }
 }
 
 bool					BeOSMedia::readSoundCommand(void* cmd, int len)
@@ -538,7 +543,7 @@ void					BeOSMedia::sleep(float timeInSeconds)
 
 double					BeOSMedia::stopwatch(bool start)
 {
-  //return BzfMedia::stopwatch(start);
+  return BzfMedia::stopwatch(start); // not better
   if (start) {
     stopWatchStart = system_time();
     return 0.0;
