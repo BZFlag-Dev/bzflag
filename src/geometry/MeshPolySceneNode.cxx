@@ -272,13 +272,8 @@ bool MeshPolySceneNode::inAxisBox (const float* boxMins,
     return false;
   }
 
-  // FIXME: not inefficient, or correct
-  float vertexArray[3][3];
-  memcpy (vertexArray[0], getVertex(0), sizeof(float[3]));
-  memcpy (vertexArray[1], getVertex(1), sizeof(float[3]));
-  memcpy (vertexArray[2], getVertex(2), sizeof(float[3]));
-
-  return testPolygonInAxisBox (3, vertexArray, getPlane(), boxMins, boxMaxs);
+  return testPolygonInAxisBox (getVertexCount(), getVertices(), getPlane(),
+                               boxMins, boxMaxs);
 }
 
 

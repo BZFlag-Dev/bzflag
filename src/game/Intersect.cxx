@@ -657,20 +657,123 @@ bool testRectInRect(const float* p1, float angle1, float dx1, float dy1,
 }
 
 
-// FIXME - there's no really good reason to finish this,
-//         but I will anyways, might make the culling
-//         0.05% more efficent.
+static inline void projectAxisBox(const float* dir,
+                                  const float* mins, const float* maxs,
+                                  float* minDist, float* maxDist)
+{
+  static float i[3]; 
+  static float o[3];
+
+  // find the extreme corners
+  for (int t = 0; t < 3; t++) {
+    if (dir[t] > 0.0f) {
+      i[t] = maxs[t];
+      o[t] = mins[t];
+    } else {
+      i[t] = mins[t];
+      o[t] = maxs[t];
+    }
+  }
+  
+  float idist = (i[0] * dir[0]) + (i[1] * dir[1]) + (i[2] * dir[2]); 
+  float odist = (o[0] * dir[0]) + (o[1] * dir[1]) + (o[2] * dir[2]); 
+  
+  if (idist < odist) {
+    *minDist = idist;
+    *maxDist = odist;
+  } else {
+    *minDist = odist;
+    *maxDist = idist;
+  }
+  
+  return;
+}
+
+
+static inline void projectPolygon(const float* dir,      
+                                  int count, const float (*points)[3],
+                                  float* minDist, float* maxDist)
+{
+  float mind = MAXFLOAT;
+  float maxd = -MAXFLOAT;
+
+  for (int i = 0; i < count; i++) {
+    const float* p = points[i];
+    float dist = (p[0] * dir[0]) + (p[1] * dir[1]) + (p[2] * dir[2]);
+    if (dist < mind) {
+      mind = dist;
+    }
+    if (dist > maxd) {
+      maxd = dist;
+    }
+  }
+
+  *minDist = mind;
+  *maxDist = maxd;
+  
+  return;
+}
+
+
 // return true if polygon touches the axis aligned box
+// *** assumes that an extents test has already been done ***
 bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
                           const float* plane,
                           const float* boxMins, const float* boxMaxs)
 {
+  int t;
+  static float i[3]; // inside point  (assuming partial)
+  static float o[3]; // outside point (assuming partial)
+
+  // test the plane
+  for (t = 0; t < 3; t++) {
+    if (plane[t] > 0.0f) {
+      i[t] = boxMaxs[t];
+      o[t] = boxMins[t];
+    } else {
+      i[t] = boxMins[t];
+      o[t] = boxMaxs[t];
+    }
+  }
+  const float icross = (plane[0] * i[0]) + 
+                       (plane[1] * i[1]) +
+                       (plane[2] * i[2]) + plane[3];
+  const float ocross = (plane[0] * o[0]) + 
+                       (plane[1] * o[1]) +
+                       (plane[2] * o[2]) + plane[3];
+  if ((icross * ocross) > 0.0f) { 
+    // same polarity means that the plane doesn't cut the box
+    return false;
+  }
+  
+  // test the edges
+  const float axisNormals[3][3] =
+    {{1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}};
+  for (t = 0; t < pointCount; t++) {
+    int next = (t + 1) % pointCount;
+    float edge[3];
+    edge[0] = points[next][0] - points[t][0];
+    edge[1] = points[next][0] - points[t][1];
+    edge[2] = points[next][0] - points[t][2];
+    for (int a = 0; a < 3; a++) {
+      float cross[3];
+      const float* axis = axisNormals[a];
+      cross[0] = (edge[1] * axis[2]) - (edge[2] * axis[1]);
+      cross[1] = (edge[2] * axis[0]) - (edge[0] * axis[2]);
+      cross[2] = (edge[0] * axis[1]) - (edge[1] * axis[0]);
+      // find the projected distances
+      float boxMinDist, boxMaxDist;
+      float polyMinDist, polyMaxDist;
+      projectAxisBox(cross, boxMins, boxMaxs, &boxMinDist, &boxMaxDist);
+      projectPolygon(cross, pointCount, points, &polyMinDist, &polyMaxDist);
+      // check if this is a separation axis
+      if ((boxMinDist > polyMaxDist) || (boxMaxDist < polyMinDist)) {
+        return false;
+      }
+    }
+  }
+  
   return true;
-  points = points;
-  plane = plane;
-  boxMins = boxMins;
-  boxMaxs = boxMaxs;
-  pointCount = pointCount;
 }
 
 

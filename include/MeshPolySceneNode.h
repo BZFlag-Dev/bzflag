@@ -34,6 +34,7 @@ class MeshPolySceneNode : public WallSceneNode {
     bool inAxisBox (const float* mins, const float* maxs) const;
     int getVertexCount () const;
     const GLfloat* getVertex (int vertex) const;
+    const GLfloat (*getVertices() const)[3];
 
     int split(const float* plane, SceneNode*&, SceneNode*&) const;
 
@@ -52,6 +53,7 @@ class MeshPolySceneNode : public WallSceneNode {
 	void setStyle(int _style) { style = _style; }
 	void render();
 	const GLfloat* getVertex(int i) const;
+        const GLfloat (*getVertices() const)[3];
 	const int getVertexCount() const;
 	const GLfloat* getPosition() { return wall->getSphere(); }
       private:
@@ -112,9 +114,19 @@ inline const GLfloat* MeshPolySceneNode::Geometry::getVertex(int i) const
   return vertices[i];
 }
 
+inline const GLfloat (*MeshPolySceneNode::Geometry::getVertices() const)[3]
+{
+  return vertices.getArray();
+}
+
 inline const GLfloat* MeshPolySceneNode::getVertex(int i) const
 {
   return node->getVertex(i);
+}
+
+inline const GLfloat (*MeshPolySceneNode::getVertices() const)[3]
+{
+  return node->getVertices();
 }
 
 

@@ -182,6 +182,7 @@ class GLfloat2Array {
     GLfloat*		operator[](int i) { return data[i]; }
     const GLfloat*	operator[](int i) const { return data[i]; }
     int			getSize() const { return size; }
+    const GLfloat2*	getArray() const { return data; }
 
   private:
     int			size;
@@ -198,6 +199,7 @@ class GLfloat3Array {
     GLfloat*		operator[](int i) { return data[i]; }
     const GLfloat*	operator[](int i) const { return data[i]; }
     int			getSize() const { return size; }
+    const GLfloat3*	getArray() const { return data; }
 
   private:
     int			size;
