@@ -36,8 +36,8 @@ private:
 	void				drawSmoothObstacles(bool enhanced);
 	void				drawObstacle(const Obstacle&,
 								const float* color, bool enhanced);
-	void				drawTank(float x, float y, float z);
-	void				drawFlag(float x, float y, float z);
+	void				drawTank(float x, float y, float z, float minsize);
+	void				drawFlag(float x, float y, float z, float minsize);
 
 	static float		colorScale(const Obstacle& o, bool enhanced);
 	static float		transScale(const Obstacle& o);

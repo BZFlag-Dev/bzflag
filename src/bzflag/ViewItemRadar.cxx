@@ -72,6 +72,9 @@ void					ViewItemRadar::onPostRender(
 		range = 0.5;
 	range *= WorldSize;
 
+	// estimate pixel size
+	GLfloat ps = 2.0*range/w;
+
 	// FIXME -- should be using OpenGLGState objects
 	OpenGLGState::resetState();
 
@@ -93,27 +96,27 @@ void					ViewItemRadar::onPostRender(
 								{ 0.75f, 0.75f, 1.75f, 1.75f },
 								{ 1.75f, 1.75f, 0.75f, 0.75f }
 						};
-      static const int sequences = countof(np);
+	  static const int sequences = countof(np);
 
-      const float* noisePattern = np[(int)floor(sequences * bzfrand())];
-      noiseTexture->execute();
-      glEnable(GL_TEXTURE_2D);
-      glColor3f(1.0f, 1.0f, 1.0f);
-      glBegin(GL_QUADS);
+	  const float* noisePattern = np[(int)floor(sequences * bzfrand())];
+	  noiseTexture->execute();
+	  glEnable(GL_TEXTURE_2D);
+	  glColor3f(1.0f, 1.0f, 1.0f);
+	  glBegin(GL_QUADS);
 		glTexCoord2f(noisePattern[0], noisePattern[1]);
 		glVertex2f(0.0f, 0.0f);
 		glTexCoord2f(noisePattern[2], noisePattern[1]);
 		glVertex2f(   w, 0.0f);
 		glTexCoord2f(noisePattern[2], noisePattern[3]);
-		glVertex2f(   w,    h);
+		glVertex2f(   w,	h);
 		glTexCoord2f(noisePattern[0], noisePattern[3]);
-		glVertex2f(0.0f,    h);
-      glEnd();
-      glDisable(GL_TEXTURE_2D);
-    }
+		glVertex2f(0.0f,	h);
+	  glEnd();
+	  glDisable(GL_TEXTURE_2D);
+	}
 
-    if (decay > 0.015f)
-      decay *= 0.5f;
+	if (decay > 0.015f)
+	  decay *= 0.5f;
 	}
 
 	else {
@@ -169,14 +172,14 @@ void					ViewItemRadar::onPostRender(
 			if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 				continue;
 			glColor3fv(Flag::getColor(flag.id));
-			drawFlag(flag.position[0], flag.position[1], flag.position[2]);
+			drawFlag(flag.position[0], flag.position[1], flag.position[2],2.5*ps);
 		}
 
 		// draw antidote flag
 		const float* antidotePos = myTank->getAntidoteLocation();
 		if (antidotePos) {
 			glColor3f(1.0f, 1.0f, 0.0f);
-			drawFlag(antidotePos[0], antidotePos[1], antidotePos[2]);
+			drawFlag(antidotePos[0], antidotePos[1], antidotePos[2],2.5*ps);
 		}
 
 		// draw other tanks' shells
@@ -225,13 +228,13 @@ void					ViewItemRadar::onPostRender(
 			// draw tank symbol
 			const float* pos = player->getPosition();
 			glColor3f(scale * color[0], scale * color[1], scale * color[2]);
-			drawTank(pos[0], pos[1], pos[2]);
+			drawTank(pos[0], pos[1], pos[2],2.5*ps);
 
 			// draw flag on tank
 			if (player->getFlag() != NoFlag) {
 				color = Flag::getColor(player->getFlag());
 				glColor3f(scale * color[0], scale * color[1], scale * color[2]);
-				drawFlag(pos[0], pos[1], pos[2]);
+				drawFlag(pos[0], pos[1], pos[2],4*ps);
 			}
 		}
 
@@ -253,12 +256,12 @@ void					ViewItemRadar::onPostRender(
 
 		// my tank
 		glColor3f(1.0f, 1.0f, 1.0f);
-		drawTank(0.0f, 0.0f, myTank->getPosition()[2]);
+		drawTank(0.0f, 0.0f, myTank->getPosition()[2],2.5*ps);
 
 		// my flag
 		if (myTank->getFlag() != NoFlag) {
 			glColor3fv(Flag::getColor(myTank->getFlag()));
-			drawFlag(0.0f, 0.0f, myTank->getPosition()[2]);
+			drawFlag(0.0f, 0.0f, myTank->getPosition()[2],4*ps);
 		}
 
 		// get size of pixel in model space (assumes radar is square)
@@ -317,28 +320,32 @@ void					ViewItemRadar::makeNoiseTexture()
 	noiseTexture = new OpenGLTexture(128, 128, noise, OpenGLTexture::Nearest);
 }
 
-void					ViewItemRadar::drawTank(float x, float y, float z)
+void					ViewItemRadar::drawTank(float x, float y, float z, float minsize)
 {
 	// Changes with height.
-	GLfloat s = TankRadius * 3.0f + (z + BoxHeight) * 2.0f / BoxHeight;
+	GLfloat s = TankRadius * 3.0 + (z + BoxHeight) * 2.0f / BoxHeight;
 
-	glBegin(GL_LINE_LOOP);
-		glVertex2f(x - s, y);
-		glVertex2f(x, y - s);
-		glVertex2f(x + s, y);
-		glVertex2f(x, y + s);
-	glEnd();
+	if (z > 0.0f) {
+		glBegin(GL_LINE_LOOP);
+			glVertex2f(x - s, y);
+			glVertex2f(x, y - s);
+			glVertex2f(x + s, y);
+			glVertex2f(x, y + s);
+		glEnd();
+	}
 
 	// Does not change with height.
-	s = TankRadius * 1.5;
+	s = max(TankRadius, minsize);
 	glRectf(x - s, y - s, x + s, y + s);
 }
 
-void					ViewItemRadar::drawFlag(float x, float y, float z)
+void					ViewItemRadar::drawFlag(float x, float y, float z, float minsize)
 {
 	// draw edges both ways for systems that don't filter line ends
 	// correctly.  this degrades the smoothing, unfortunately.
-	GLfloat s = TankRadius * 3.0 + (z + BoxHeight) * 2.0f / BoxHeight;
+	GLfloat s = TankRadius / 2.0 + (z + BoxHeight) * 2.0f / BoxHeight;
+	if (s < minsize)
+		s = minsize;
 
 	glBegin(GL_LINES);
 		glVertex2f(x - s, y);
