@@ -123,15 +123,31 @@ void Bundle::ensureNormalText(std::string &msg)
   for (int i = 0; i < length; i++) {
     char c = msg.at(i);
     switch (c) {
+      case 'â':
+      case 'ä':
+      case 'à':
+	msg[i] = 'a';
+      break;
       case 'é':
       case 'è':
+      case 'ê':
+      case 'ë':
 	msg[i] = 'e';
+      break;
+      case 'î':
+      case 'ï':
+	msg[i] = 'i';
       break;
       case 'ô':
 	msg[i] = 'o';
       break;
-      case 'à':
-	msg[i] = 'a';
+      case 'Ö':
+	msg[i] = 'O';
+      break;
+      case 'û':
+      case 'ü':
+      case 'ù':
+	msg[i] = 'u';
       break;
     }
   }
