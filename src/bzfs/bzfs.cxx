@@ -45,7 +45,7 @@ const int udpBufSize = 128000;
 #include <iomanip>
 
 #if defined(_WIN32)
-	#pragma warning(disable: 4786)
+  #pragma warning(disable: 4786)
 #endif
 
 
@@ -809,21 +809,21 @@ CustomWorld::CustomWorld()
 
 bool CustomWorld::read(const char *cmd, istream& input)
 {
-	if (strcmp(cmd, "size") == 0){
+  if (strcmp(cmd, "size") == 0) {
     input >> size;
-	WorldSize = size;
-	}
-	else if (strcmp(cmd, "flagHeight") == 0)
+    WorldSize = size;
+  }
+  else if (strcmp(cmd, "flagHeight") == 0)
     input >> fHeight;
   else
     return false;
   return true;
 }
 
-void CustomWorld::write(WorldInfo* /* world*/) const
+void CustomWorld::write(WorldInfo*) const
 {
   char buffer[50];
-  sprintf(buffer, "set %s %f", StateDatabase::BZDB_FLAGHEIGHT, fHeight);
+  sprintf(buffer, "set %s %f", StateDatabase::BZDB_FLAGHEIGHT.c_str(), fHeight);
   CMDMGR->run(buffer);
 }
 
@@ -977,7 +977,6 @@ void dumpPlayerMessageStats(int playerIndex)
     DEBUG1("max msgs/bytes per second: %u/%u\n",
 	player[playerIndex].perSecondMaxMsg[direction],
 	player[playerIndex].perSecondMaxBytes[direction]);
-
   }
   fflush(stdout);
 }
