@@ -667,7 +667,7 @@ void			ServerLink::sendUDPlinkRequest()
 // This concludes an UDP network endpoint setup
 void			ServerLink::setUDPRemotePort()
 {
-  struct sockaddr_in serv_addr, existing_addr;
+  struct sockaddr_in existing_addr;
   AddrLen addr_len = sizeof(existing_addr);
 
   if (getsockname(fd, (struct sockaddr*)&existing_addr, (socklen_t*) &addr_len) < 0) {
@@ -676,9 +676,9 @@ void			ServerLink::setUDPRemotePort()
   }
 
   std::vector<std::string> args;
-  args.push_back(inet_ntoa(serv_addr.sin_addr));
+  args.push_back(inet_ntoa(existing_addr.sin_addr));
   char info[10];
-  sprintf(info,"%d", ntohs(serv_addr.sin_port));
+  sprintf(info,"%d", ntohs(existing_addr.sin_port));
   args.push_back(info);
   sprintf(info,"%d", urecvfd);
   args.push_back(info);
