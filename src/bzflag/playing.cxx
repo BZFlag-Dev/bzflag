@@ -2313,7 +2313,7 @@ static void		addMessage(const Player* player,
     tmpstr = strdup(msg.c_str());
     OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
     cleanMsg = tmpstr;
-    delete [] tmpstr;
+    free(tmpstr);
 
     if (oldColor != NULL)
       fullMessage = oldColor;
