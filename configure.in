@@ -516,7 +516,10 @@ case $host_os in
 	   CPPFLAGS="CPPFLAGS -march=mips3";
 	else
 	   CPPFLAGS="CPPFLAGS -march=mips2";
-	fi;
+	fi;;
+     beos*)
+	AC_DEFINE(HAVE_DEFINED_TOLOWER, 1, [tolower and toupper are not functions])
+	;;
 esac
 
 if test x$enable_debug = xyes; then

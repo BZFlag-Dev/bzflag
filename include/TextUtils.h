@@ -22,6 +22,10 @@
 /* system interface headers */
 #include <algorithm>
 #include <ctype.h>
+#ifdef HAVE_DEFINED_TOLOWER
+#undef tolower
+#undef toupper
+#endif
 #include <string>
 #include <stdarg.h>
 #include <vector>
