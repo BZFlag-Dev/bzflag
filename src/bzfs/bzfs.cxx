@@ -2884,7 +2884,7 @@ static bool enemyProximityCheck(TeamColor team, float *pos, float safeDist)
 
 static void getSpawnLocation(int playerId, float* pos, float *azimuth)
 {
-  TimeKeeper start=TimeKeeper::getCurrent();
+  TimeKeeper start = TimeKeeper::getCurrent();
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
   if (player[playerId].restartOnBase && team <= PurpleTeam) {
@@ -2901,13 +2901,14 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
     WorldInfo::ObstacleLocation *building;
 
     int inAirAttempts = 20;
-    int failSafeLimit = 100;
+    int tries = 0;
     float minProximity = size / 3.0f;
     bool foundspot = false;
     while (!foundspot) {
       pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
       pos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
       pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
+      tries++;
 
       int type = world->inBuilding(&building, pos[0], pos[1], pos[2],
                                    tankRadius, BZDBCache::tankHeight);
@@ -2929,6 +2930,7 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
 	int retriesRemaining = 50; // don't climb forever
         while (type != NOT_IN_BUILDING) {
           pos[2] = building->pos[2] + building->size[2];
+          tries++;
           lastType = type;
           type = world->inBuilding(&building, pos[0], pos[1], pos[2],
                                    tankRadius, BZDBCache::tankHeight);
@@ -2948,11 +2950,14 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
 	onGroundOnly = true;
       }
 
-      // simple check for a hanging server
-      if (--failSafeLimit <= 0) {
-	//Just drop the sucka in, and pray
-        pos[2] = maxWorldHeight;
-        break;
+      // check every now and then if we have already used up 10ms of time
+      if (tries >= 50) {
+        tries=0;
+        if (TimeKeeper::getCurrent() - start > 0.01f) {
+          //Just drop the sucka in, and pray
+          pos[2] = maxWorldHeight;
+          break;
+        }
       }
 
       // check if spot is safe enough
