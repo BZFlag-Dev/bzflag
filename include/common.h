@@ -108,6 +108,8 @@ typedef unsigned short	uint16_t;
 typedef signed int		int32_t;
 typedef unsigned int	uint32_t;
 
+#define snprintf	_snprintf
+
 #endif /* !defined(_WIN32) */
 
 #ifdef countof

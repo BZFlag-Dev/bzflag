@@ -702,7 +702,7 @@ static std::string	cmdScreenshot(const std::string&,
 	snprintf(filename, 80, "bzfi%04d.raw", snap++);
 	fstream f;
 	f.open(filename, ios::out);
-	if (f) {
+	if (f.is_open()) {
 		int w, h;
 		mainWindow->getSize(w, h);
 		// use something like netpbm and the following command to get usable images
@@ -2823,7 +2823,7 @@ static bool				joinGame(ServerLink* _serverLink)
 
 		case GreenTeam:
 			ViewColor::setMyTeam(ViewColor::Green);
-			break;
+			break; 
 
 		case BlueTeam:
 			ViewColor::setMyTeam(ViewColor::Blue);
