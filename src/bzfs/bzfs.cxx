@@ -311,7 +311,7 @@ static int wksSocket;
 static boolean useGivenPort = False;
 static boolean useFallbackPort = False;
 // reconnectSocket should also be on serverAddress
-static int reconnectPort = 0; // default to only new clients
+static int reconnectPort = ServerPort + 1;
 static int reconnectSocket;
 // udpSocket should also be on serverAddress
 static int udpSocket;
