@@ -2993,6 +2993,9 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "part ", 5) == 0) {
     handlePartCmd(playerData, message);
 
+  } else if (strncmp(message + 1, "uptime", 6) == 0) {
+    handleUptimeCmd(playerData, message);
+
   } else if (strncmp(message + 1, "password", 8) == 0) {
     handlePasswordCmd(playerData, message);
 

@@ -17,6 +17,14 @@
 #include "GameKeeper.h"
 
 
+/* uptime command hook function
+ *
+ * /uptime prints current server running time.
+ */
+
+void handleUptimeCmd(GameKeeper::Player *playerData, const char *);
+
+
 /** part command hook function
  *
  * /part <message> quits game with a goodbye message

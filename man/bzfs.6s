@@ -549,11 +549,16 @@ captain_macgyver: (SB) (SW)
 
 .TP
 .B /time, /date
-Responds with the current server time. /date and /time are the exact same. Example:
+Responds with the current server local time. /date and /time are the exact same. Example:
 .ft CW
 .nf
 .ne 1
 Tuesday September 08 06:45:54 2004
+.ft R
+
+.TP
+.B /uptime
+Prints server's current running time in days, hours, mins and secs.
 .ft R
 
 .TP
@@ -593,7 +598,6 @@ Leave the game with a goodbye message (similar to IRC's /part)
 .ne 2
 /part Gotta go! bye everyone!
 .ft R
-
 
 .SH SERVER ADMINISTRATIVE COMMANDS
 
