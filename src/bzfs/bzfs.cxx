@@ -3781,11 +3781,15 @@ static void shotFired(int playerIndex, void *buf, int len)
   if ((firingInfo.flagType != Flags::Null) && (firingInfo.flagType != flag[shooter.flag].flag.type)) {
     DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.callSign,
 	   playerIndex, firingInfo.flagType->flagAbbv, flag[shooter.flag].flag.type->flagAbbv);
-    firingInfo.flagType = Flags::Null;
-    firingInfo.shot.vel[0] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * cos(shooter.lastState.azimuth);
-    firingInfo.shot.vel[1] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * sin(shooter.lastState.azimuth);
-    firingInfo.shot.vel[2] = 0.0f;
-    repack = true;
+
+    if (firingInfo.flagType != Flags::Thief) {
+      DEBUG1("Kicking Player %s [%d] Player using wrong shots\n", shooter.callSign, playerIndex);
+      sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots do not to match the expected shot type.");
+      removePlayer(playerIndex, "Player shot mismatch");
+    }
+
+    // probably a cheater so just ignore the shot
+    return;
   }
 
   // verify shot number
@@ -4308,8 +4312,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // check if the target player is invalid
       else if (targetPlayer < LastRealPlayer &&
 	       player[targetPlayer].state <= PlayerInLimbo) {
-	sendMessage(ServerPlayer, t, "The player you tried to talk to does "
-		    "not exist!");
+	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
       } else {
 	if (clOptions->filterChat) {
 	  if (clOptions->filterSimple) {
@@ -4450,7 +4453,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	  if (state.pos[2] > maxTankHeight) {
 	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n", player[t].callSign, t, maxTankHeight, state.pos[2]);
-	    sendMessage(ServerPlayer, t, "Autokick: Player location was too high.", true);
+	    sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
 	    removePlayer(t, "too high");
 	    break;
 	  }
@@ -4479,7 +4482,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	if (!InBounds)
 	{
 	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].callSign, t, state.pos[0], state.pos[1], state.pos[2]);
-	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.", true);
+	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.");
 	  removePlayer(t, "Out of map bounds");
 	}
 
@@ -4536,7 +4539,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
 		       player[t].callSign, t,
 		       sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.", true);
+		sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
 		removePlayer(t, "too fast");
 	      }
 	      break;
