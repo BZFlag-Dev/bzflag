@@ -92,7 +92,7 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
   buf = unpack(buf, serverVersion);
 
   // compare protocol version against my protocol version.
-  return (strcmp(serverVersion, getServerVersion()) == 0);
+  return (strncmp(serverVersion, getServerVersion(), 8) == 0);
 }
 
 bool			PingPacket::waitForReply(int fd,
@@ -397,7 +397,7 @@ bool			 PingPacket::readFromFile(std::istream& in)
   buf = unpack(buf, serverVersion);
 
   // compare protocol version against my protocol version.
-  return (strcmp(serverVersion, getServerVersion()) == 0);
+  return (strncmp(serverVersion, getServerVersion(), 8) == 0);
 }
 
 // Local Variables: ***
