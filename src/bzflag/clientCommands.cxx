@@ -282,26 +282,40 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
   memset(messageBuffer, 0, MessageLen);
 
   if (BZDB.isTrue("_disableBots")) {
-	  hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
-	  return std::string();
+    hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
+    return std::string();
   }
 
   if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
     if (myTank->isAutoPilot()) {
+
       myTank->setAutoPilot(false);
       hud->setAlert(0, "autopilot disabled", 1.0f, true);
       strcpy(messageBuffer, "[ROGER] Releasing Controls of " );
 
       // grab mouse
       if (shouldGrabMouse()) mainWindow->grabMouse();
-    }
-    else {
-      myTank->setAutoPilot(true);
-      hud->setAlert(0, "autopilot enabled", 1.0f, true);
-      strcpy(messageBuffer, "[ROGER] Taking Controls of " );
 
-      // ungrab mouse
-      mainWindow->ungrabMouse();
+    } else {
+
+      // don't enable the AutoPilot if you have within the last 5 secs
+      static TimeKeeper LastAutoPilotEnable;
+      if ((TimeKeeper::getCurrent() - LastAutoPilotEnable) > 5) {
+	// reset timer
+	LastAutoPilotEnable = TimeKeeper::getCurrent();
+
+	// enable autopilot
+	myTank->setAutoPilot(true);
+	hud->setAlert(0, "autopilot enabled", 1.0f, true);
+	strcpy(messageBuffer, "[ROGER] Taking Controls of " );
+
+	// ungrab mouse
+	mainWindow->ungrabMouse();
+      } else {
+	controlPanel->addMessage("You may not enable the Autopilot more than once every five seconds.");
+	return std::string();
+      }
+
     }
 
     strcat(messageBuffer, myTank->getCallSign());
@@ -342,10 +356,10 @@ std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
     const Player* recipient = myTank->getRecipient();
     if (!recipient) {
       for (int i = 0; i < curMaxPlayers; i++) {
-				if (player[i]) {
-				 myTank->setRecipient(player[i]);
-				 break;
-				}
+	if (player[i]) {
+	  myTank->setRecipient(player[i]);
+	  break;
+	}
       }
     }
     recipient = myTank->getRecipient();
@@ -361,7 +375,7 @@ std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
     buf = nboPackUByte(buf, AdminPlayers);
     composePrompt = "Send to Admin : ";
 		
-	} else { 
+  } else { 
     return "usage: send {all|team|nemesis|recipient|admin}";
   }
   messageHistoryIndex = 0;
