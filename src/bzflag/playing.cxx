@@ -2641,6 +2641,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (playerIndex >= 0) {
 	addMessage(player[playerIndex], "signing off");
 	world->addDeadPlayer(player[playerIndex]);
+	if (myTank->getRecipient() == player[playerIndex])
+	  myTank->setRecipient(0);
+	if (myTank->getNemesis() == player[playerIndex])
+	  myTank->setNemesis(0);
 	delete player[playerIndex];
 	player[playerIndex] = NULL;
 
