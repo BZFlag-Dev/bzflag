@@ -26,6 +26,7 @@ bool  BZDBCache::zbuffer;
 bool  BZDBCache::tesselation;
 bool  BZDBCache::lighting;
 bool  BZDBCache::smooth;
+bool  BZDBCache::colorful;
 
 float BZDBCache::flagPoleSize;
 float BZDBCache::flagPoleWidth;
@@ -47,6 +48,7 @@ void BZDBCache::init()
   BZDB.addCallback("tesselation", clientCallback, NULL);
   BZDB.addCallback("lighting", clientCallback, NULL);
   BZDB.addCallback("smooth", clientCallback, NULL);
+  BZDB.addCallback("colorful", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
@@ -82,6 +84,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     lighting    = BZDB.isTrue("lighting");
   else if (name == "smooth")
     smooth      = BZDB.isTrue("smooth");
+  else if (name == "colorful")
+    colorful    = BZDB.isTrue("colorful");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)
