@@ -26,7 +26,7 @@ using namespace std;
     systems. It should work on most UNIX-like systems though. */
 class StdBothUI : public BZAdminUI {
 public:
-
+  StdBothUI();
   virtual void outputMessage(const string& msg);
   virtual bool checkCommand(string& str);
 
@@ -37,6 +37,9 @@ public:
  protected:
 
   static UIAdder uiAdder;
+#ifdef _WIN32
+  HANDLE console;
+#endif
 };
 
 #endif

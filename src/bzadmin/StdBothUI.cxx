@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <wincon.h>
 #else
 #include <sys/select.h>
 #endif
@@ -29,6 +30,17 @@
 // add this UI to the map
 UIAdder StdBothUI::uiAdder("stdboth", &StdBothUI::creator);
 
+StdBothUI::StdBothUI()
+{
+#ifdef _WIN32
+  unsigned long oldMode, newMode;
+  console = GetStdHandle(STD_INPUT_HANDLE);
+  GetConsoleMode(console, &oldMode);
+  newMode = oldMode & ~ENABLE_LINE_INPUT;
+  SetConsoleMode(console, newMode);
+
+#endif
+}
 
 void StdBothUI::outputMessage(const string& msg) {
   std::cout<<msg<<endl;
@@ -38,6 +50,12 @@ void StdBothUI::outputMessage(const string& msg) {
 bool StdBothUI::checkCommand(string& str) {
   static char buffer[MessageLen + 1];
   static int pos = 0;
+  bool gotChar = false;
+
+#ifdef _WIN32
+  unsigned long numRead = 0;
+  gotChar = 0 != ReadFile(console, &buffer[pos], 1, &numRead, NULL);
+#else
   fd_set rfds;
   timeval tv;
   FD_ZERO(&rfds);
@@ -45,11 +63,12 @@ bool StdBothUI::checkCommand(string& str) {
   tv.tv_sec = 0;
   tv.tv_usec = 0;
   if (select(1, &rfds, NULL, NULL, &tv) > 0) {
-#ifdef _WIN32
-    std::cin >> buffer[pos];
-#else
     read(0, &buffer[pos], 1);
+    gotChar = true;
+  }
 #endif
+
+  if (gotChar) {
     if (buffer[pos] == '\n' || pos == MessageLen - 1) {
       buffer[pos] = '\0';
       str = buffer;
