@@ -205,10 +205,14 @@ void OccluderManager::select(SceneNode** list, int listCount)
     target = listCount;
   }
   while (activeOccluders < target) {
-    occluders[activeOccluders] = new Occluder(list[rand() % listCount]);
+    SceneNode* sceneNode = list[rand() % listCount];
+    occluders[activeOccluders] = new Occluder(sceneNode);
     if (occluders[activeOccluders]->getVertexCount() == 0) {
       delete occluders[activeOccluders];
       occluders[activeOccluders] = NULL;
+      target--; // protect against a list full of nonvalid occluders.
+                // could also tally the valid occluder sceneNodes, but
+                // that would eat up CPU time in a large list
     }
     else {
       activeOccluders++;
