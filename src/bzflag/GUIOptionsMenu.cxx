@@ -303,8 +303,8 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("showtabs")));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
 
     // underline color - does this HAVE to be so complicated?
     std::vector<std::string>* options = &((HUDuiList*)list[i++])->getList();
