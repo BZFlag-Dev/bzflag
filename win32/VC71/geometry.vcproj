@@ -302,6 +302,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\geometry\MeshPolySceneNode.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\geometry\PolyWallSceneNode.cxx">
 				<FileConfiguration
 					Name="Release|Win32">

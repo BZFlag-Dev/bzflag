@@ -285,6 +285,12 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomDynamicColor.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomDynamicColor.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomGate.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -325,6 +331,18 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomMesh.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomMesh.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomMeshFace.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomMeshFace.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomPyramid.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -346,6 +364,12 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomTetra.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomTextureMatrix.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomTextureMatrix.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomWeapon.cxx">

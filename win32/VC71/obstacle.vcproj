@@ -159,6 +159,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\obstacle\MeshFace.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\MeshObstacle.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\MeshSceneNodeGenerator.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\obstacle\Obstacle.cxx">
 				<FileConfiguration
 					Name="Release|Win32">

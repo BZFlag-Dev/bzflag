@@ -107,7 +107,13 @@
 				RelativePath="..\..\src\game\CommandsStandard.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\DelayQueue.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\DirectoryNames.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\game\DynamicColor.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\game\Frustum.cxx">
@@ -119,10 +125,19 @@
 				RelativePath="..\..\src\game\LagInfo.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\MeshMaterial.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\NetHandler.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\PlayerInfo.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\Ray.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\game\TextureMatrix.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\game\VotingArbiter.cxx">
