@@ -6,6 +6,7 @@ BZFlag 1.7e2
 
 * wait loop removal - chestal/timr
 * limbo flag bugfix - chestal
+* *bsd cleanups from new ports maintainer - Nick Sayer
 
 BZFlag 1.7e1
 ------------

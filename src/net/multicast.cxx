@@ -21,10 +21,8 @@ int			openBroadcast(int port, const char* service,
 {
 #if defined(_WIN32)
   const BOOL optOn = TRUE;
-  BOOL opt = optOn;
 #else
   const int optOn = 1;
-  int opt = optOn;
 #endif
   int fd;
 
@@ -67,18 +65,16 @@ int			openBroadcast(int port, const char* service,
 
 #if defined(SO_REUSEPORT)
   /* set reuse port */
-  opt = optOn;
   if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT,
-				(SSOType)&opt, sizeof(opt)) < 0) {
+				(SSOType)&optOn, sizeof(optOn)) < 0) {
     nerror("openBroadcast: setsockopt SO_REUSEPORT");
     close(fd);
     return -1;
   }
 #elif defined(SO_REUSEADDR)
   /* set reuse address */
-  opt = optOn;
   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
-				(SSOType)&opt, sizeof(opt)) < 0) {
+				(SSOType)&optOn, sizeof(optOn)) < 0) {
     nerror("openBroadcast: setsockopt SO_REUSEADDR");
     close(fd);
     return -1;
@@ -93,9 +89,8 @@ int			openBroadcast(int port, const char* service,
   }
 
   /* make broadcast */
-  opt = optOn;
   if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST,
-				(SSOType)&opt, sizeof(opt)) < 0) {
+				(SSOType)&optOn, sizeof(optOn)) < 0) {
     nerror("openBroadcast: setsockopt SO_BROADCAST");
     close(fd);
     return -1;
@@ -174,6 +169,11 @@ int			openMulticast(const Address& address, int port,
   struct ip_mreq mreq;
   struct in_addr ifaddr;
   int fd;
+#if defined(_WIN32)
+  const BOOL optOn = TRUE;
+#else
+  const int optOn = 1;
+#endif
 
   /* check parameters */
   if (!addr) {
@@ -322,9 +322,8 @@ int			openMulticast(const Address& address, int port,
   else {
 #if defined(SO_REUSEPORT)
     /* set reuse port */
-    int opt = 1;
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT,
-				(SSOType)&opt, sizeof(opt)) < 0) {
+				(SSOType)&optOn, sizeof(optOn)) < 0) {
       nerror("WARNING: openMulticast: setsockopt SO_REUSEPORT");
       close(fd);
       return -1;
@@ -332,13 +331,8 @@ int			openMulticast(const Address& address, int port,
 #endif
 #if defined(SO_REUSEADDR)
     /* set reuse address */
-#if defined(_WIN32)
-    BOOL opt = TRUE;
-#else
-    int opt = 1;
-#endif
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
-				(SSOType)&opt, sizeof(opt)) < 0) {
+				(SSOType)&optOn, sizeof(optOn)) < 0) {
       nerror("WARNING: openMulticast: setsockopt SO_REUSEADDR");
       close(fd);
       return -1;

@@ -17,6 +17,11 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
+// Might we be BSDish? sys/param.h has BSD defined if so
+#if (defined(__unix__) || defined(unix)) && !defined(USG)
+#include <sys/param.h>
+#endif
+
 #if defined(_WIN32)
 // turn off bogus `this used in base member initialization list'
 #pragma warning(disable: 4355)
@@ -77,7 +82,7 @@ const boolean		True = !False;
 
 #if !defined(_WIN32) & !defined(macintosh)
 
-#ifndef __FreeBSD__
+#ifndef BSD
 #include <values.h>
 #endif
 #include <sys/types.h>

@@ -13,7 +13,7 @@
 #include "LinuxMedia.h"
 #include <math.h>
 #include <fcntl.h>
-#ifdef __FreeBSD__
+#ifdef BSD
 #include <machine/endian.h>
 #else
 #include <endian.h>

@@ -13,7 +13,7 @@
 #include "XWindow.h"
 #include "XVisual.h"
 #include "OpenGLGState.h"
-#if defined(__linux__) && defined(XF86VIDMODE_EXT)
+#if defined(XF86VIDMODE_EXT)
 #  define USE_XF86VIDMODE_EXT
 #  define private c_private
 #  include <X11/extensions/xf86vmode.h>
@@ -362,6 +362,23 @@ void			XWindow::setFullscreen()
   xsh.base_height = getDisplay()->getHeight();
   xsh.flags |= USPosition | PPosition | PBaseSize;
 
+#if defined(USE_XF86VIDMODE_EXT)
+  {
+    int eventbase, errorbase;
+    // Check if we have the XF86 vidmode extension, for virtual roots
+    if (XF86VidModeQueryExtension(display->getDisplay(), &eventbase, &errorbase)) {
+      int dotclock;
+      XF86VidModeModeLine modeline;
+	
+      XF86VidModeGetModeLine(display->getDisplay(), display->getScreen(), &dotclock, &modeline);
+      xsh.base_width=modeline.hdisplay;
+      xsh.base_height=modeline.vdisplay;
+      if (modeline.c_private)
+	XFree(modeline.c_private);
+    }
+  }
+#endif
+// this might want to be used on non-linux too?
 #ifdef __linux__
   {
     char *env;
@@ -371,23 +388,6 @@ void			XWindow::setFullscreen()
       xsh.base_width=getDisplay()->getPassthroughWidth();
       xsh.base_height=getDisplay()->getPassthroughHeight();
     }
-#if defined(USE_XF86VIDMODE_EXT)
-    else {
-      int eventbase, errorbase;
-      // Check if we have the XF86 vidmode extension, for virtual roots
-      if (XF86VidModeQueryExtension(display->getDisplay(), &eventbase,
-				    &errorbase)) {
-	int dotclock;
-	XF86VidModeModeLine modeline;
-	
-	XF86VidModeGetModeLine(display->getDisplay(), display->getScreen(),
-			       &dotclock, &modeline);
-	xsh.base_width=modeline.hdisplay;
-	xsh.base_height=modeline.vdisplay;
-	if (modeline.c_private) XFree(modeline.c_private);
-      }
-    }
-#endif
   }
 #endif
 
