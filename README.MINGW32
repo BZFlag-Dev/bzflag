@@ -29,7 +29,8 @@ The files in question are dsound.h, d3dtypes.h and ddraw.h.
 
 Note that we cannot redistribute these files separate of the entire SDK.
 
-If you get bzflag files from CVS you should run this command
+If you get bzflag files from CVS be sure to check them out with UNIX linebreaks,
+or MSYS will choke.  You should run this command
 
 sh autogen.sh
 
