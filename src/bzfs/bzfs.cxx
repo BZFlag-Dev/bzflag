@@ -345,11 +345,11 @@ public:
     for (int i = 0; i < numBans; i++) {
       in_addr mask = banList[i];
       if (ntohl(mask.s_addr) & 0x00ffffff == 0x00ffffff)
-        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) | 0xff000000));
+        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
 	  else if (ntohl(mask.s_addr) & 0x0000ffff == 0x0000ffff)
-        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) | 0xffff0000));
+        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) & 0x0000ffff));
 	  else if (ntohl(mask.s_addr) & 0x000000ff == 0x000000ff)
-        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) | 0xffffff00));
+        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
 
       if (mask.s_addr == ipAddr.s_addr)
         return false;
