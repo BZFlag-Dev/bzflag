@@ -144,10 +144,6 @@ SOURCE=..\src\bzflag\HUDui.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\KeyMap.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\LocalPlayer.cxx
 # End Source File
 # Begin Source File
@@ -185,10 +181,6 @@ SOURCE=..\src\bzflag\RemotePlayer.cxx
 # Begin Source File
 
 SOURCE=..\src\bzflag\RenderNode.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\resources.cxx
 # End Source File
 # Begin Source File
 
@@ -269,10 +261,6 @@ SOURCE=..\src\bzflag\HUDui.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\KeyMap.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\LocalPlayer.h
 # End Source File
 # Begin Source File
@@ -306,10 +294,6 @@ SOURCE=..\src\bzflag\Region.h
 # Begin Source File
 
 SOURCE=..\src\bzflag\RemotePlayer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\resources.h
 # End Source File
 # Begin Source File
 
