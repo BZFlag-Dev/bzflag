@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* Persistent bans with -banfile <filename> - Lars Luthman
 * Stream Rolling collision detection is now compressed in height - Alfredo Tupone
 * Rendering options are actuated immediately - Alfredo Tupone
 * Height of base goes through the wire (base thickness defined on world files) - Alfredo Tupone

@@ -312,6 +312,7 @@ void handleBanCmd(int t, const char *message)
       reason = argv[3];
 
     if (clOptions->acl.ban(ip, player[t].callSign, durationInt, reason.c_str())){
+      clOptions->acl.save();
       strcpy(reply, "IP pattern added to banlist");
       char kickmessage[MessageLen];
       for (int i = 0; i < curMaxPlayers; i++) {
@@ -339,8 +340,10 @@ void handleUnbanCmd(int t, const char *message)
 {
   char reply[MessageLen] = {0};
 
-  if (clOptions->acl.unban(message + 7))
+  if (clOptions->acl.unban(message + 7)) {
     strcpy(reply, "removed IP pattern");
+    clOptions->acl.save();
+  }
   else
     strcpy(reply, "no pattern removed");
   sendMessage(ServerPlayer, t, reply, true);

@@ -149,10 +149,10 @@ struct CmdLineOptions
   std::string		reportPipe;
 
   std::string		bzdbVars;
-
+  
   /* team balancing options */
   bool			autoTeam;
-
+  
   int			debug;
 };
 

@@ -44,6 +44,7 @@ const char *usageString =
 "[-b] "
 "[-badwords <filename>] "
 "[-ban ip{,ip}*] "
+"[-banfile <filename>] "
 "[-c] "
 "[-conf <filename>] "
 "[-cr] "
@@ -117,6 +118,7 @@ const char *extraUsageString =
 "\t-b: randomly oriented buildings\n"
 "\t-badwords: bad-world file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
+"\t-banfile: specify a file to load and store the banlist in\n"
 "\t-c: capture-the-flag style game\n"
 "\t-conf: configuration file\n"
 "\t-cr: capture-the-flag style game with random world\n"
@@ -413,6 +415,18 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
       else
 	options.acl.ban(argv[i]);
+    } else if (strcmp(argv[i], "-banfile") == 0) {
+      if (++i == argc) {
+	fprintf(stderr, "argument expected for -banfile\n");
+	usage(argv[0]);
+      }
+      else {
+	options.acl.setBanFile(argv[i]);
+	if (!options.acl.load()) {
+	  fprintf(stderr, "could not load banfile \"%s\"", argv[i]);
+	  usage(argv[0]);
+	}
+      }
     } else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
       options.gameStyle |= int(TeamFlagGameStyle);
