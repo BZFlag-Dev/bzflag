@@ -21,6 +21,7 @@ bzflag_SOURCES =			\
 	ControlPanel.h			\
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
+	EntryZone.h			\
 	FlashClock.cxx			\
 	FlashClock.h			\
 	FormatMenu.cxx			\
@@ -108,6 +109,7 @@ bzflag_SOURCES =			\
 	StartupInfo.h			\
 	TargetingUtils.cxx		\
 	TargetingUtils.h		\
+	Weapon.h			\
 	World.cxx			\
 	World.h				\
 	WorldBuilder.cxx		\
@@ -117,7 +119,7 @@ bzflag_SOURCES =			\
 	bzflag.cxx			\
 	callbacks.cxx			\
 	callbacks.h			\
-	clientCommands.cxx			\
+	clientCommands.cxx		\
 	commands.h			\
 	daylight.cxx			\
 	daylight.h			\
