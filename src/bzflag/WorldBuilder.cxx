@@ -351,7 +351,7 @@ void WorldBuilder::append(const Teleporter& teleporter)
 void WorldBuilder::setTeleporterTarget(int src, int tgt)
 {
   if ((int)teleportTargets.size() < src+1)
-    teleportTargets.resize(src+10);
+    teleportTargets.resize(((src/2)+1)*2);
 
   // record target in source entry
   teleportTargets[src] = tgt;
