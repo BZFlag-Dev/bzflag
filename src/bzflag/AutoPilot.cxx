@@ -433,11 +433,14 @@ bool lookForFlag(float &rotation, float &speed)
     return false;
 
   float minDist = Infinity;
+	int teamFlag = -1;
   for (int i = 0; i < numFlags; i++) {
     if ((world->getFlag(i).type == Flags::Null) 
      || (world->getFlag(i).status != FlagOnGround))
       continue;
 
+		if (world->getFlag(i).type->flagTeam != NoTeam)
+			teamFlag = i;
     const float* fpos = world->getFlag(i).position;
     if (fpos[2] == pos[2]) {
       float dist = TargetingUtils::getTargetDistance(pos, fpos);
@@ -452,8 +455,10 @@ bool lookForFlag(float &rotation, float &speed)
     }
   }
 
+	if (teamFlag != -1 && (minDist < 10.0f || closestFlag == -1))
+		closestFlag = teamFlag; //FIXME: should a team flag be more significant than a closer flag?
   if (closestFlag != -1) {
-    if (minDist < 10.0f) {
+    if (minDist < 10.0f || teamFlag != -1) {
       if (myTank->getFlag() != Flags::Null) {
 	serverLink->sendDropFlag(myTank->getPosition());
 	handleFlagDropped(myTank);
