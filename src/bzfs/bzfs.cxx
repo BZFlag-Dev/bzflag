@@ -767,13 +767,11 @@ static void		sendMessageToListServerForReal(int index)
 				ServerVersion,
 				PingPacketHexPackedSize, gameInfo,
 				publicizedTitle);
-    send(link.socket, msg, strlen(msg), 0);
   }
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
     sprintf(msg, "%s %s\n\n", link.nextMessage,
 				(const char*)publicizedAddress);
-    send(link.socket, msg, strlen(msg), 0);
   }
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
     // pretend there are no players if the game is over
@@ -789,9 +787,11 @@ static void		sendMessageToListServerForReal(int index)
 				team[3].team.activeSize,
 				team[4].team.activeSize);
 
-    // send SETNUM
-    send(link.socket, msg, strlen(msg), 0);
+  } 
+  if (debug >= 3) {
+      cerr << msg;
   }
+  send(link.socket, msg, strlen(msg), 0);
 
   // hangup (we don't care about replies)
   closeListServer(index);
