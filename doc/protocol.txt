@@ -9,24 +9,29 @@ FIXME FIXME FIXME FIXME
 
 Tim Riker <Tim@Rikers.org> is working on this. Some open items:
 
-1) position, velocity, azimuth, time were all floats, they have been changed to
+* position, velocity, azimuth, time were all floats, they have been changed to
 ints. Bounds will have to be considered, times for flag motion etc will likely
 be milliseconds where as remaining game time would likely be seconds? 16 bit
 values would be preferred.
 
-2) world format has been removed. an XML format should be devised.
+* world format has been removed. an XML format should be devised.
 
-3) player ids are now in lockstep on server and all clients.
+* player ids are now in lockstep on server and all clients.
 
-4) special player numbers. 0 = server, 255 = everyone, 254 = rogue team,
+* special player numbers. 0 = server, 255 = everyone, 254 = rogue team,
 250-253 = colored teams, 1-maxplayers = normal players. Note that maxplayers in
 this context includes observers as well as proper players.
 
-5) should msgtype just be a u8 ? the 2 char format is not very useful if the
+* should msgtype just be a u8 ? the 2 char format is not very useful if the
 rest is binary.
 
-6) what about flag id? there would still be a short name here, but it does not
+* what about flag id? there would still be a short name here, but it does not
 need to be in the protocol and hence could be a few letters longer if needed.
+
+* MsgCaptureFlag is gone as MsgDropFlag now has a reason.
+
+* MsgShotEnd is implied by a MsgKilled so MsgShotEnd only happens for GM like
+shots.
 
 layers
 ------
@@ -395,8 +400,8 @@ Sent by the server when a player is killed by itself or another player. The
 victim id is the player that was destroyed and the killer id is the player
 credited with the kill.  Shot id identifies which of the killer's shots hit the
 victim;  if the shot isn't a laser or shockwave, other players may assume the
-shot has stopped and needn't check themselves against the shot (or they can
-wait until the MsgShotEnd message arrives).
+shot has stopped and needn't check themselves against the shot (there will be no
+MsgShotEnd).
 
   -->   MsgGrabFlag
 	u16 length
@@ -435,21 +440,11 @@ been met (i.e. the flag can be dropped at any time, or the player got the
 antidote flag, etc.)  The player must not assume it has dropped the flag until
 it receives a MsgDropFlag in response.
 
-The launch point for flag drop animation is determined by the position of the
-player. The player should insure that is has sent a position update for it's
-current position.
-
-"Reason" is one of:
-
-	DropReasonTimeout
-	DropReasonScore
-	DropReasonCaptured
-	DropReasonDropped
-	DropReasonKilled
-
-Where timeout and score are reasons for dropping a bad flag. "captured" for a
-team flag. "dropped" for good or team flag. "killed" for any. FIXME is
-MsgCaptureFlag should probably be removed.
+A player should send a DropReasonCaptured message only when 1) its tank is at
+least halfway inside a team base, 2) the tank is on the base surface, and 3)
+the player has its own team flag in an enemy base or the player has another
+team's flag in its own base.  Note that the server might not enforce any of
+these requirements.
 
   <--   MsgDropFlag
 	u16 length
@@ -465,33 +460,28 @@ MsgCaptureFlag should probably be removed.
 
 Sent by the server when a player is allowed to drop a flag.  This is both the
 notice to the player trying to drop the flag that it succeeded and the notice
-to all other players that the flag was dropped.  
+to all other players that the flag was dropped.  Note that the player who
+captures a flag may be on the team that was captured.
 
-  -->   MsgCaptureFlag - FIXME DropReasonCaptured should replace this.
-  <--   u16 length
-	u16 0x6366
-	u8 capturer id
-	u16 flag num
+The launch point for flag drop animation is determined by the position of the
+player. The player should insure that is has sent a position update for it's
+current position.
 
-Sent by a player when it captures a team flag.  `Flag num' is the number of a
-team flag of the team who's flag was captured.  The player should wait until
-the server sends back the MsgCaptureFlag response before assuming the capture
-was successful.  A player should send this message only when 1) its tank is at
-least halfway inside a team base, 2) the tank is on the base surface, and 3)
-the player has its own team flag in an enemy base or the player has another
-team's flag in its own base.  Note that the server may not enforce any of these
-requirements. This message implies a client MsgDropFlag request for the flag in
-question. The server ignores and overwrites capturer.
+"Reason" is one of:
 
-Sent by the server when a team's flag has been captured.  `Capturer id' is the
-player who captured the flag.  `Flag num' is the index of the team flag of the
-team who's flag was captured.  Note that the player who captures the flag may
-be on the team that was captured.
+	DropReasonTimeout
+	DropReasonScore
+	DropReasonCaptured
+	DropReasonDropped
+	DropReasonKilled
 
-This message implies a MsgKilled for each player on the team who's flag was
-captured. The server makes all players on the captured team dead.  This message
-is the only notice that the players are now dead so clients should act
-accordingly. This also should be treated as a MsgDropFlag for the capturer.
+Where timeout and score are reasons for dropping a bad flag. "captured" for a
+team flag. "dropped" for good or team flag. "killed" for any.
+
+A DropReasonCaptured implies a MsgKilled for each player on the team who's flag
+was captured. The server makes all players on the captured team dead.  This
+message is the only notice that the players are now dead so clients should act
+accordingly.
 
   -->   MsgShotBegin
   <--   u16 length
@@ -538,23 +528,23 @@ particularly important when testing against a tank with the narrow flag.
 Ideally, the shot would be exactly tested against the tank geometry.  However,
 that's more work than realistically necessary.
 
-  -->   MsgShotEnd - FIXME - is MsgKilled enough? should this die for non GM?
+  -->   MsgShotEnd
   <--   u16 length
 	u16 0x7365
 	u8 shooter player id
 	u8 shot id
 	u8 reason
 	
-Sent by a player to elminate a shot, presumably because the shot hit the
-player. Sent by the server when a shot has been terminated before its lifetime
-has expired.  The server might not verify that the player has or has not been
-hit.  This message is also sent by the player that fired a guided missile when
-the shot hits the ground or a building (note that guided missiles don't
-ricochet).
+Sent to elminate one of a player's shots. Sent by the server when a shot has
+been terminated before its lifetime has expired. This message is only sent by
+the player that fired a guided missile when the shot hits the ground or a
+building (note that guided missiles don't ricochet).
 
 `Shooter id' identifies the player that fired the shot and `shot id' is the
-same as in the MsgShotBegin message for the shot.  `Reason' is one if the other
-players should show an explosion for the shot and zero otherwise.
+same as in the MsgShotBegin message for the shot.  `Reason' is one players
+should show an explosion for the shot and zero otherwise.
+
+The server ignores and overwrites shooter.
 
   -->   MsgScore
   <--   u16 length
