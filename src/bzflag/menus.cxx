@@ -1075,7 +1075,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
-    ((HUDuiList*)list[i++])->setIndex(renderer->getConsoleColorization());
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("colorful") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(atoi(OpenGLTexFont::getUnderlineColor().c_str()));
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("killerhighlight")));
   }
@@ -1123,7 +1123,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'c':
     {
-      sceneRenderer->setConsoleColorization(list->getIndex() != 0);
+      BZDB->set("colorful", list->getIndex() ? "yes" : "no");
       break;
     }
 

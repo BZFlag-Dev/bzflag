@@ -84,7 +84,6 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				useFogHack(false),
 				viewType(Normal),
 				maxLOD(32767),
-				consoleColors(true),
 				inOrder(false),
 				style(0),
 				sceneIterator(NULL),
@@ -206,11 +205,6 @@ SceneRenderer::ViewType	SceneRenderer::getViewType() const
 int			SceneRenderer::getMaxLOD() const
 {
   return maxLOD;
-}
-
-bool			SceneRenderer::getConsoleColorization() const
-{
-  return consoleColors;
 }
 
 void			SceneRenderer::setZBufferSplit(bool on)
@@ -386,11 +380,6 @@ void			SceneRenderer::setMaxLOD(int _maxLOD)
 {
   if (_maxLOD < 0) maxLOD = 0;
   else maxLOD = _maxLOD;
-}
-
-void			SceneRenderer::setConsoleColorization(bool on)
-{
-  consoleColors = on;
 }
 
 void			SceneRenderer::setExposed()

@@ -2309,7 +2309,7 @@ static void		addMessage(const Player* player,
 {
   std::string fullMessage;
 
-  if (sceneRenderer->getConsoleColorization()) {
+  if (BZDB->isTrue("colorful")) {
     if (player) {
       if (highlight) {
 	if (BZDB->get("killerhighlight") == "0")
