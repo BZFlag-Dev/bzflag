@@ -285,28 +285,28 @@ AC_SUBST(LIBDIR)
 
 AC_OUTPUT(Makefile
           src/Makefile
-          src/net/Makefile
+          src/bzfrelay/Makefile
           src/common/Makefile
-          src/obstacle/Makefile
-          src/platform/Makefile
-          src/ogl/Makefile
-          src/scene/Makefile
+          src/net/Makefile
+          src/bzfs/Makefile
+          src/bzfls/Makefile
           src/geometry/Makefile
 	  src/geometry/models/Makefile
 	  src/geometry/models/hitank/Makefile
 	  src/geometry/models/medtank/Makefile
 	  src/geometry/models/lowtank/Makefile
+          src/obstacle/Makefile
+          src/ogl/Makefile
+          src/scene/Makefile
+          src/platform/Makefile
           src/bzflag/Makefile
-          src/bzfs/Makefile
-          src/bzfls/Makefile
-          src/bzfrelay/Makefile
-          man/Makefile
-          package/Makefile
           data/Makefile
           data/l10n/Makefile
           debian/Makefile
-          misc/Makefile
           include/Makefile
+          misc/Makefile
+          man/Makefile
+          package/Makefile
           package/linux/Makefile
           package/rpm/Makefile
           package/irix/Makefile
