@@ -1,6 +1,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/bzflag/bzflag.cxx)
+AC_PREREQ(2.14)
+
+#
+# Package Information
+#
 
 # sed magic to get version numbers from include/version.h
 MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
@@ -20,6 +25,7 @@ AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
 #
 # Check for programs.
 #
+
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CPP
@@ -30,9 +36,22 @@ AC_PROG_RANLIB
 CFLAGS=
 CXXFLAGS=
 
+
+#
+# Check for libraries. 
+#
+
+# for BeOS - old network stack don't have those libs ( move it in the case switch ?)
+AC_CHECK_LIB(socket, socket)
+AC_CHECK_LIB(bind, gethostent)
+
+AC_CHECK_LIB(m, sqrtf)
+
+
 #
 # Check for headers.
 #
+
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_HEADER_DIRENT
@@ -53,16 +72,33 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h float.h langinfo.h limits.h locale.h \
 
 
 #
-# Checks for types.
+# Checks for types and structures.
 #
-AC_CHECK_TYPE(int8_t, signed char)
-AC_CHECK_TYPE(int16_t, signed short)
-AC_CHECK_TYPE(int32_t, signed long)
-AC_CHECK_TYPE(int64_t, signed long long)
-AC_CHECK_TYPE(uint8_t, unsigned char)
-AC_CHECK_TYPE(uint16_t, unsigned short)
-AC_CHECK_TYPE(uint32_t, unsigned long)
-AC_CHECK_TYPE(uint64_t, unsigned long long)
+
+AC_CHECK_TYPE(int8_t,, 
+	      [AC_DEFINE_UNQUOTED(int8_t, signed char, 
+	      [Define to `signed char' if <sys/types.h> does not define.])])
+AC_CHECK_TYPE(int16_t,, 
+	      [AC_DEFINE_UNQUOTED(int16_t, signed short, 
+	      [Define to `signed short' if <sys/types.h> does not define.])])
+AC_CHECK_TYPE(int32_t,, 
+	      [AC_DEFINE_UNQUOTED(int32_t, signed long, 
+	      [Define to `signed long' if <sys/types.h> does not define.])])
+AC_CHECK_TYPE(int64_t,, 
+	      [AC_DEFINE_UNQUOTED(int64_t, signed long long, 
+	      [Define to `signed long long' if <sys/types.h> does not define.])])
+AC_CHECK_TYPE(uint8_t,, 
+	      [AC_DEFINE_UNQUOTED(uint8_t, unsigned char, 
+	      [Define to `unsigned char' if <sys/types.h> does not define.])])
+AC_CHECK_TYPE(uint16_t,, 
+	      [AC_DEFINE_UNQUOTED(uint16_t, unsigned short, 
+	      [Define to `unsigned short' if <sys/types.h> does not define.])])
+AC_CHECK_TYPE(uint32_t,, 
+	      [AC_DEFINE_UNQUOTED(uint32_t, unsigned long, 
+	      [Define to `unsigned long' if <sys/types.h> does not define.])])
+AC_CHECK_TYPE(uint64_t,, 
+	      [AC_DEFINE_UNQUOTED(uint64_t, unsigned long long, 
+	      [Define to `unsigned long long' if <sys/types.h> does not define.])])
 
 #AM_CHECK_TYPES(socklen_t)
 #AC_CHECK_TYPES(socklen_t)
@@ -80,10 +116,13 @@ fi
 
 
 #
-# Check for functions.
+# Check for compiler characteristics.
 #
+
 AC_CHECK_FUNC(getrlimit)
 
+# FIXME - all of the host and os conditional checks below really need to
+# be minimized or eliminated.  Try not to use for new checks.
 
 AM_CONDITIONAL(LINUX, test x$host_os = xlinux-gnu)
 AM_CONDITIONAL(BEOS, test x$host_os = xbeos)
@@ -162,12 +201,6 @@ case $host_os in
 #    LIBS="-lbind -lsocket -lbe";;
     LIBS="-lbe";;
 esac;
-
-# for BeOS - old network stack don't have those libs ( move it in the case switch ?)
-AC_CHECK_LIB(socket, socket)
-AC_CHECK_LIB(bind, gethostent)
-
-AC_CHECK_LIB(m, sqrtf)
 
 # avoid using X11 in BeOS
 if test $host_os != beos; then
@@ -453,6 +486,10 @@ fi;
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
+
+#
+# Output files.
+# 
 
 AC_OUTPUT(bzflag.spec
 	bzflag.lsm
