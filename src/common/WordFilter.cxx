@@ -76,8 +76,7 @@ bool WordFilter::aggressiveFilter(char *input) const
   int inputLength = strlen(input);
 
   // a buffer to destroy during matching (includes terminating null)
-  char *sInput = new char(inputLength + 1);
-  memcpy(sInput, input, inputLength + 1);
+  std::string sInput = input;
   
   /* maintain an array of match indices of the input; values are in
    * pairs.  the first number is the start position, the second is
@@ -100,7 +99,7 @@ bool WordFilter::aggressiveFilter(char *input) const
    */
   char previousChar = 0;
   for (int counter = 0; counter < inputLength; counter++) {
-    char c = tolower(*(sInput + counter));
+    char c = tolower(sInput[counter]);
 
     if (!isAlphabetic(previousChar) && isVisible(c)) {
 
@@ -125,21 +124,20 @@ bool WordFilter::aggressiveFilter(char *input) const
    * as a bin to check for during matching.
    */
   for (std::set<filter_t, expressionCompare>::iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
-    if (regexec(i->compiled, input, 1, match, 0) == 0) {
-      if ( (match[0].rm_eo < inputLength) && isAlphabetic(input[match[0].rm_eo]) ) {
+    if (regexec(i->compiled, sInput.c_str(), 1, match, 0) == 0) {
+      if ( (match[0].rm_eo < inputLength) && isAlphabetic(sInput[match[0].rm_eo]) ) {
 	/* do not forget to make sure this is a true prefix */
-	if ( (match[0].rm_so > 0) && isAlphabetic(input[match[0].rm_so - 1]) ) {
+	if ( (match[0].rm_so > 0) && isAlphabetic(sInput[match[0].rm_so - 1]) ) {
 	  continue;
 	}
 
 	/* we found a prefix -- add the letter that follows */
-	appendUniqueChar(wordIndices, tolower(input[match[0].rm_eo]));
+	appendUniqueChar(wordIndices, tolower(sInput[match[0].rm_eo]));
       }
     }
   }
 
   
-
 //std::cout << "WordIndexLetters are [" << wordIndices << "]" << std::endl;
   // now we have a record of all potential word boundary positions
 
@@ -159,7 +157,7 @@ bool WordFilter::aggressiveFilter(char *input) const
       while (matched) {
 	matched = false;
 
-	regCode = regexec(i->compiled, sInput, 1, match, 0);
+	regCode = regexec(i->compiled, sInput.c_str(), 1, match, 0);
 
 //std::cout << "input is [" << sInput << "]" << std::endl;
 
@@ -170,7 +168,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 //std::cout << "We matched ... ";
 
 	  /* make sure we only match on word boundaries */
-	  if ( (startOffset>1) && (isAlphabetic(input[startOffset-1])) ) {
+	  if ( (startOffset>1) && (isAlphabetic(sInput[startOffset-1])) ) {
 
 //std::cout << "but didn't match a word beginning" << std::endl;
 
@@ -178,11 +176,11 @@ bool WordFilter::aggressiveFilter(char *input) const
 	    bool foundit =  false;
 	    for (std::set<filter_t, expressionCompare>::iterator j = prefixes.begin();
 		 j != prefixes.end(); ++j) {
-	      if (regexec(j->compiled, input, 1, match, 0) == 0) {
+	      if (regexec(j->compiled, sInput.c_str(), 1, match, 0) == 0) {
 
 //std::cout << "checking prefix: " << j->word << std::endl;
 
-		if ( (match[0].rm_so > 1) && (isAlphabetic(input[match[0].rm_so - 1])) ) {
+		if ( (match[0].rm_so > 1) && (isAlphabetic(sInput[match[0].rm_so - 1])) ) {
 		  /* we matched, but we are still in the middle of a word */
 		  continue;
 		}
@@ -205,7 +203,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 //std::cout << "is endoffset alphabetic: " << input[endOffset] << std::endl;
 
-	  if ( (endOffset<inputLength-1) && (isAlphabetic(input[endOffset])) ) {
+	  if ( (endOffset<inputLength-1) && (isAlphabetic(sInput[endOffset])) ) {
 
 //std::cout << "but didn't match a word ending" << std::endl;
 
@@ -215,14 +213,14 @@ bool WordFilter::aggressiveFilter(char *input) const
 	         j != suffixes.end(); ++j) {
 //std::cout << "checking " << j->word << " against [" << input + endOffset << "]" << std::endl;
 
-	      if (regexec(j->compiled, input + endOffset, 1, match, 0) == 0) {
+	      if (regexec(j->compiled, sInput.c_str() + endOffset, 1, match, 0) == 0) {
 
 //std::cout << "is " << match[0].rm_eo << " less than " << inputLength - endOffset << std::endl;	      
 //std::cout << "is alpha =?= " << input[endOffset + match[0].rm_eo + 1] << std::endl;
 
 		/* again, make sure we are now at a word end */
 		if ( (match[0].rm_eo < inputLength - endOffset) &&
-                     (isAlphabetic(input[endOffset + match[0].rm_eo])) ) {
+                     (isAlphabetic(sInput[endOffset + match[0].rm_eo])) ) {
 		  /* we matched, but we are still in the middle of a word */
 		  continue;
 		}
@@ -255,8 +253,10 @@ bool WordFilter::aggressiveFilter(char *input) const
 	  matched = true;
 	  // zappo! .. erase stuff that has been filtered to speed up future checks
 	  // fill with some non-whitespace alpha that is not the start/end of a suffix to prevent rematch
-	  memset(sInput + startOffset, 'W', endOffset - startOffset);
-
+          std::string filler;
+	  filler.assign(endOffset - startOffset, 'W');
+	  sInput.replace(startOffset, endOffset - startOffset, filler);
+	  
 	} else if ( regCode == REG_NOMATCH ) {
 	  // do nothing
 	  continue;
@@ -290,7 +290,6 @@ bool WordFilter::aggressiveFilter(char *input) const
     }
   }
 
-  delete sInput;
 
   return filtered;
 
