@@ -67,6 +67,10 @@ int LagInfo::updatePingLag(void *buf, bool &warn, bool &kick) {
     lag      = int(lagavg * 1000);
     lagcount++;
 
+    // if lag has been good for some time, forget old warnings
+    if (lagavg < threshold && lagcount - laglastwarn >= 20)
+      lagwarncount = 0;
+
     // warn players from time to time whose lag is > threshold (-lagwarn)
     if (!info->isObserver() && (threshold > 0) && lagavg > threshold
 	&& lagcount - laglastwarn > 2 * lagwarncount) {
@@ -117,7 +121,7 @@ int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
   if (!info->isPlaying() || !info->isHuman())
     return -1;
 
-  if (nextping - info->now >= 0)
+  if (info->now <= nextping)
     // no time for pinging
     return -1;
 
