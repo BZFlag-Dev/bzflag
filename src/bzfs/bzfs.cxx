@@ -3854,7 +3854,7 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 static void parseCommand(const char *message, int t)
 {
   if (strncmp(message + 1, "password", 8) == 0) {
-    handleSetCmd(t, message);
+    handlePasswordCmd(t, message);
 
   } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "set", 3) == 0) {
     handleSetCmd(t, message);
