@@ -20,6 +20,7 @@
 /* system implementation headers */
 #include <string>
 #include <fstream>
+#include <algorithm>
 #include <sstream>
 #include <stdlib.h>
 
@@ -158,13 +159,7 @@ bool PlayerAccessInfo::hasGroup(const std::string &group)
   std::string str = group;
   makeupper(str);
 
-  std::vector<std::string>::iterator itr = groups.begin();
-  while (itr != groups.end()) {
-    if ((*itr) == str)
-      return true;
-    itr++;
-  }
-  return false;
+  return find(groups.begin(), groups.end(), str) != groups.end();
 }
 
 bool PlayerAccessInfo::addGroup(const std::string &group)
@@ -187,15 +182,8 @@ bool PlayerAccessInfo::removeGroup(const std::string &group)
   std::string str = group;
   makeupper(str);
 
-  std::vector<std::string>::iterator itr = groups.begin();
-  while (itr != groups.end()) {
-    if ((*itr) == str) {
-      itr = groups.erase(itr);
-      return true;
-    } else
-      itr++;
-  }
-  return false;
+  groups.erase(find(groups.begin(), groups.end(), str));
+  return true;
 }
 
 bool PlayerAccessInfo::canSet(const std::string& group) {
@@ -211,14 +199,12 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) {
     return false;
   if (explicitAllows.test(right))
     return true;
-  std::vector<std::string>::iterator itr = groups.begin();
-  PlayerAccessMap::iterator group;
-  while (itr != groups.end()) {
-    group = groupAccess.find(*itr);
-    if (group != groupAccess.end())
-      if (group->second.explicitAllows.test(right))
-	return true;
-    itr++;
+
+  for (groups_t::iterator itr=groups.begin(), end=groups.end();
+       itr!=end; ++itr) {
+    PlayerAccessMap::iterator group = groupAccess.find(*itr);
+    if (group != groupAccess.end() && group->second.explicitAllows.test(right))
+      return true;
   }
   return false;
 }
@@ -471,7 +457,7 @@ bool PlayerAccessInfo::writePermsFile(const std::string &filename)
   if (!out)
     return false;
   PlayerAccessMap::iterator itr = userDatabase.begin();
-  std::vector<std::string>::iterator group;
+  groups_t::iterator group;
   while (itr != userDatabase.end()) {
     out << itr->first << std::endl;
     group = itr->second.groups.begin();
