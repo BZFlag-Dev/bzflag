@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- player score doesn't seem to match the server's score when relaying to 
+  other players.  i.e. the local client see's their own player score that
+  is different from what others see (due to differences in tk).  seems like
+  tk is not included in score locally, but is in the server.
+
 - dropping a team flag, when the related team is empty, start a timeout.
   The related code does not take into account that we can have now
   multiple team flags.
