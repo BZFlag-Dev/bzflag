@@ -192,7 +192,7 @@ void			Player::changeTeam(TeamColor _team)
 	texName = "h";
   texName += "tank";
   tankTexture = tm.getTexture(texName.c_str());
-  if (tankTexture || !tankTexture->isValid())
+  if (tankTexture && tankTexture->isValid())
     useColorTexture = true;
   else
     tankTexture = tm.getTexture("tank");
