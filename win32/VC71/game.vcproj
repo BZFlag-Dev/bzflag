@@ -116,6 +116,9 @@
 				RelativePath="..\..\src\game\NetHandler.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\Ray.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\VotingArbiter.cxx">
 			</File>
 		</Filter>
@@ -137,6 +140,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\NetHandler.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Ray.h">
 			</File>
 			<File
 				RelativePath="..\..\include\VotingArbiter.h">
