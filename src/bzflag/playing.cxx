@@ -72,7 +72,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TimeBomb.h"
 #include "HUDDialog.h"
 #include "HUDDialogStack.h"
-#include "menus.h"
 #include "texture.h"
 #include "ErrorHandler.h"
 #include "ZSceneDatabase.h"
@@ -89,6 +88,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TextUtils.h"
 #include "TextureManager.h"
 #include "TargetingUtils.h"
+#include "MainMenu.h"
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
