@@ -805,6 +805,8 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   // make laser scene nodes
   const int numSegments = getSegments().getLength();
   laserNodes = new LaserSceneNode*[numSegments];
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
+  TeamColor tmpTeam = (myTank->getFlag() == ColorblindnessFlag) ? RogueTeam : team;
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
     const float t = segment.end - segment.start;
@@ -815,8 +817,8 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
     dir[1] = t * rawdir[1];
     dir[2] = t * rawdir[2];
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (laserTexture[team] && laserTexture[team]->isValid())
-      laserNodes[i]->setTexture(*laserTexture[team]);
+    if (laserTexture[tmpTeam] && laserTexture[tmpTeam]->isValid())
+      laserNodes[i]->setTexture(*laserTexture[tmpTeam]);
   }
   setCurrentSegment(numSegments - 1);
 }
@@ -1317,7 +1319,8 @@ void			ShockWaveStrategy::update(float dt)
 			(ShockOutRadius - ShockInRadius);
   shockNode->move(getPath().getPosition(), radius);
   Player* p = lookupPlayer(getPath().getPlayer());
-  TeamColor team = p ? p->getTeam() : RogueTeam;
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
+  TeamColor team = p && !(myTank->getFlag() == ColorblindnessFlag) ? p->getTeam() : RogueTeam;
   const float* c = Team::getRadarColor(team);
   shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
 
