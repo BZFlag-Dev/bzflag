@@ -22,6 +22,12 @@ values would be preferred.
 250-253 = colored teams, 1-maxplayers = normal players. Note that maxplayers in
 this context includes observers as well as proper players.
 
+5) should msgtype just be a u8 ? the 2 char format is not very useful if the
+rest is binary.
+
+6) what about flag id? there would still be a short name here, but it does not
+need to be in the protocol and hence could be a few letters longer if needed.
+
 layers
 ------
 
