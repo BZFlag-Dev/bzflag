@@ -1531,194 +1531,194 @@ static float getKeyValue(bool pressed)
 
 static void		doAutoPilot(float &rotation, float &speed)
 {
-    //FIXME bot motion
-    static TimeKeeper lastShot;
-    PlayerId t;
-    PlayerId target = curMaxPlayers;
+  //FIXME bot motion
+  static TimeKeeper lastShot;
+  PlayerId t;
+  PlayerId target = curMaxPlayers;
 
-    float pos[3];
+  float pos[3];
 
-    memcpy(pos, myTank->getPosition(), sizeof(pos));
+  memcpy(pos, myTank->getPosition(), sizeof(pos));
 
-    const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
-                        myTank->getFlag() == Flags::PhantomZone;
-    bool expelled;
-    const Obstacle *obstacle = myTank->getHitBuilding(pos, myTank->getAngle(), phased, expelled);
+  const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
+                      myTank->getFlag() == Flags::PhantomZone;
+  bool expelled;
+  const Obstacle *obstacle = myTank->getHitBuilding(pos, myTank->getAngle(), phased, expelled);
 
-    //If right next to a building, try to shake free, Roger's not too good at this tho, help
-    if (obstacle && !phased) {
-      float normal[3];
-      if (!myTank->getHitNormal(obstacle, pos, myTank->getAngle(), pos, myTank->getAngle(), normal))
-	obstacle->getNormal(pos,normal);
+  //If right next to a building, try to shake free, Roger's not too good at this tho, help
+  if (obstacle && !phased) {
+    float normal[3];
+    if (!myTank->getHitNormal(obstacle, pos, myTank->getAngle(), pos, myTank->getAngle(), normal))
+      obstacle->getNormal(pos,normal);
 
-      rotation = normal[1] - normal[0];
-      speed = -0.5f;
+    rotation = normal[1] - normal[0];
+    speed = -0.5f;
+  }
+  else { // Find the closest player to chase, kinda stupid huh
+    float distance = Infinity;
+    for (t = 0; t < curMaxPlayers; t++) {
+      if (t != myTank->getId() && player[t] &&
+          player[t]->isAlive() && !player[t]->isPaused() &&
+          !player[t]->isNotResponding() &&
+          myTank->validTeamTarget(player[t])) {
+        const float *tp = player[t]->getPosition();
+        float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
+        if (d < distance) {
+          target = t;
+          distance = d;
+        }
+      }
     }
-    else { // Find the closest player to chase, kinda stupid huh
-      float distance = Infinity;
-      for (t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding() &&
-	    myTank->validTeamTarget(player[t])) {
-	  const float *tp = player[t]->getPosition();
-	  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
-	  if (d < distance) {
-	    target = t;
-	    distance = d;
-	  }
-	}
-      }
 
-      if (target == curMaxPlayers) {
-        // wander around aimlessly
-        // FIXME should go flag hunting ;-)
-        int period = int(TimeKeeper::getCurrent().getSeconds());
-        float bias = ((period % 10) < 5) ? M_PI/6.0f : -M_PI/9.0f; //asymetrical on purpose
-        rotation = bias + (bzfrand() - 0.5f) * M_PI/12.0f;
-        speed = 1.0f;
-      }
-      else { // See if anyone is shootable, if so do so. Then figure out how to chase my target
-        myTank->setTarget(player[target]);
+    if (target == curMaxPlayers) {
+      // wander around aimlessly
+      // FIXME should go flag hunting ;-)
+      int period = int(TimeKeeper::getCurrent().getSeconds());
+      float bias = ((period % 10) < 5) ? M_PI/6.0f : -M_PI/9.0f; //asymetrical on purpose
+      rotation = bias + (bzfrand() - 0.5f) * M_PI/12.0f;
+      speed = 1.0f;
+    }
+    else { // See if anyone is shootable, if so do so. Then figure out how to chase my target
+      myTank->setTarget(player[target]);
 
-	bool shotFired = false;
+      bool shotFired = false;
 
-        float dir[3] = {cosf(myTank->getAngle()), sinf(myTank->getAngle()), 0.0f};
-        pos[2] += BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-        Ray tankRay(pos, dir);
-        pos[2] -= BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      float dir[3] = {cosf(myTank->getAngle()), sinf(myTank->getAngle()), 0.0f};
+      pos[2] += BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      Ray tankRay(pos, dir);
+      pos[2] -= BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 
-	TimeKeeper now = TimeKeeper::getCurrent();
-	if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+      TimeKeeper now = TimeKeeper::getCurrent();
+      if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
 
-	  for (t = 0; t < curMaxPlayers; t++) {
-	    if (t != myTank->getId() && player[t] &&
-	        player[t]->isAlive() && !player[t]->isPaused() &&
-	        !player[t]->isNotResponding() &&
-	        myTank->validTeamTarget(player[t])) {
+	for (t = 0; t < curMaxPlayers; t++) {
+	  if (t != myTank->getId() && player[t] &&
+	      player[t]->isAlive() && !player[t]->isPaused() &&
+	      !player[t]->isNotResponding() &&
+	      myTank->validTeamTarget(player[t])) {
 
-	      const float *tp = player[t]->getPosition();
-	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))) {
+	    const float *tp = player[t]->getPosition();
+	    if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))) {
 
-	        float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
-	        float targetRotation = targetAngle - myTank->getAngle();
-	        if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
-		if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
+	      float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
+	      float targetRotation = targetAngle - myTank->getAngle();
+	      if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
+	      if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
 
-	      
-	        if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
-	        ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
-		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
-		  const Obstacle *building = NULL;
-		  if (myTank->getFlag() != Flags::SuperBullet)
-	            building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
+	    
+	      if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
+	      ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
+		float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
+		const Obstacle *building = NULL;
+		if (myTank->getFlag() != Flags::SuperBullet)
+		  building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
 
-	          if (!building) {
-	            myTank->fireShot();
-	            lastShot = now;
-	            shotFired = true;
-		    t = curMaxPlayers;
-		  }	
-		}
+		if (!building) {
+		  myTank->fireShot();
+		  lastShot = now;
+		  shotFired = true;
+		  t = curMaxPlayers;
+		}	
 	      }
 	    }
 	  }
 	}
+      }
 
-	// If relatively safe and have no flag, see if a flag is close
-        int closestFlag = -1;
-	if ((distance > 200.0f) && (myTank->getFlag() == Flags::Null)) {
-	  float minDist = Infinity;
-          for (int i = 0; i < numFlags; i++) {
-            if (world->getFlag(i).desc == Flags::Null ||
-	      world->getFlag(i).status != FlagOnGround) continue;
-            const float* fpos = world->getFlag(i).position;
-	    if (fpos[2] == pos[2]) {
-              const float dist = (pos[0] - fpos[0]) * (pos[0] - fpos[0]) +
-			         (pos[1] - fpos[1]) * (pos[1] - fpos[1]);
-              if ((dist < 2000.0f) && (dist < minDist)) {
-	        minDist = dist;
-	        closestFlag = i;
-	      }
+      // If relatively safe and have no flag, see if a flag is close
+      int closestFlag = -1;
+      if ((distance > 200.0f) && (myTank->getFlag() == Flags::Null)) {
+	float minDist = Infinity;
+	for (int i = 0; i < numFlags; i++) {
+	  if (world->getFlag(i).desc == Flags::Null ||
+	    world->getFlag(i).status != FlagOnGround) continue;
+	  const float* fpos = world->getFlag(i).position;
+	  if (fpos[2] == pos[2]) {
+	    const float dist = (pos[0] - fpos[0]) * (pos[0] - fpos[0]) +
+			       (pos[1] - fpos[1]) * (pos[1] - fpos[1]);
+	    if ((dist < 2000.0f) && (dist < minDist)) {
+	      minDist = dist;
+	      closestFlag = i;
 	    }
 	  }
 	}
-	else if (myTank->getFlag() == Flags::Useless) {
-	  serverLink->sendDropFlag(myTank->getPosition());
-          handleFlagDropped(myTank);
+      }
+      else if (myTank->getFlag() == Flags::Useless) {
+	serverLink->sendDropFlag(myTank->getPosition());
+	handleFlagDropped(myTank);
+      }
+
+      if (closestFlag != -1) {
+	const float *fpos = world->getFlag(closestFlag).position;
+	float azimuth = atan2f(fpos[1] - pos[1], fpos[0] - pos[0]);
+	rotation = azimuth - myTank->getAngle();
+	if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
+	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+	speed = M_PI/2.0f - fabs(rotation);
+      }
+      else {
+	//figure out my rotation to my target
+	const float *tp = player[target]->getPosition();
+	float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
+	rotation = azimuth - myTank->getAngle();
+	if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
+	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+
+	//If we are driving relatively towards our target and a building pops up jump over it
+	if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
+	  const Obstacle *building = NULL;
+	  float d = distance - 5.0f; //Make sure building is REALLY in front of player (-5)
+
+	  const float *velocity = myTank->getVelocity();
+
+	  if ((myTank->getFlag() != Flags::SuperBullet) && (velocity[0] > 3.0f) || (velocity[1] > 3.0f))
+	    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
+	  if (building) {
+	    if ((d > 20.f) && (d < 50.0f) 
+	       && (building->getType() == BoxBuilding::typeName)
+	       && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
+	   
+	     myTank->jump();
+	    }
+	  }
 	}
 
-	if (closestFlag != -1) {
-	  const float *fpos = world->getFlag(closestFlag).position;
-	  float azimuth = atan2f(fpos[1] - pos[1], fpos[0] - pos[0]);
-	  rotation = azimuth - myTank->getAngle();
-          if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
+	// weave towards the player
+	if (distance > 20.0f) {
+	  int period = int(TimeKeeper::getCurrent().getSeconds());
+	  float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
+	  rotation += bias;
+	  if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
 	  if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
 	  speed = M_PI/2.0f - fabs(rotation);
 	}
-	else {
-	  //figure out my rotation to my target
-	  const float *tp = player[target]->getPosition();
-          float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
-          rotation = azimuth - myTank->getAngle();
-          if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
-	  if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+	else
+	  speed = -0.5f;
+      }
 
-	  //If we are driving relatively towards our target and a building pops up jump over it
-	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
-	    const Obstacle *building = NULL;
-	    float d = distance - 5.0f; //Make sure building is REALLY in front of player (-5)
-
-	    const float *velocity = myTank->getVelocity();
-
-	    if ((myTank->getFlag() != Flags::SuperBullet) && (velocity[0] > 3.0f) || (velocity[1] > 3.0f))
-	      building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
-	    if (building) {
-	      if ((d > 20.f) && (d < 50.0f) 
-	         && (building->getType() == BoxBuilding::typeName)
-	         && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
-	     
-	       myTank->jump();
-	      }
-	    }
-	  }
-
-	  // weave towards the player
-	  if (distance > 20.0f) {
-            int period = int(TimeKeeper::getCurrent().getSeconds());
-            float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
-	    rotation += bias;
-            if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
-	    if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
-	    speed = M_PI/2.0f - fabs(rotation);
-	  }
-	  else
-	    speed = -0.5f;
-	}
-
-	if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
-	//teach autopilot bad habits
-	  for (t = 0; t < curMaxPlayers; t++) {
-	    if (t == myTank->getId() || !player[t])
+      if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
+      //teach autopilot bad habits
+	for (t = 0; t < curMaxPlayers; t++) {
+	  if (t == myTank->getId() || !player[t])
+	    continue;
+	  const int maxShots = player[t]->getMaxShots();
+	  for (int s = 0; s < maxShots; s++) {
+	    ShotPath* shot = player[t]->getShot(s);
+	    if (!shot)
 	      continue;
-	    const int maxShots = player[t]->getMaxShots();
-	    for (int s = 0; s < maxShots; s++) {
-	      ShotPath* shot = player[t]->getShot(s);
-	      if (!shot)
-	        continue;
-	      const float* shotPos = shot->getPosition();
-	      if (fabs(shotPos[2] - pos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
-	        continue;
-	      const float dist = hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
-	      if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
-	        myTank->jump();
-		s = maxShots;
-		t = curMaxPlayers;
-	      }
+	    const float* shotPos = shot->getPosition();
+	    if (fabs(shotPos[2] - pos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
+	      continue;
+	    const float dist = hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
+	    if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
+	      myTank->jump();
+	      s = maxShots;
+	      t = curMaxPlayers;
 	    }
 	  }
 	}
       }
+    }
   }
 }
 
