@@ -21,9 +21,12 @@
  * avoid #define'ing it in common.h */
 
 #ifndef IPV6_HDRINCL	// use this to see if we have the new TCP headers that include socket len or no
-//	#define socklen_t int //upgrade to the latest SDK
-#endif
+	// #define socklen_t int //upgrade to the latest SDK
 
+	#if defined(_MSC_VER) && (_MSC_VER == 1100)
+		#define socklen_t int	//VC5 needs this
+	#endif //_MSC_VER == 1100
+#endif //IPV6_HDRINCL
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
@@ -42,10 +45,18 @@
 
 // define our OS
 #ifndef BZ_BUILD_OS
-	#ifdef _DEBUG
-		#define BZ_BUILD_OS			"W32VC6D"
-	#else
-		#define BZ_BUILD_OS			"W32VC6"
-	#endif //_DEBUG
-#endif //BZ_BUILD_OS
-
+ 	#if defined(_MSC_VER) && (_MSC_VER == 1100)
+ 		#ifdef _DEBUG
+ 			#define BZ_BUILD_OS			"W32VC5D"
+ 		#else
+ 			#define BZ_BUILD_OS			"W32VC5"
+ 		#endif //_DEBUG
+ 	#endif //_MSC_VER == 1100
+ 	#if defined(_MSC_VER) && (_MSC_VER == 1200)
+ 		#ifdef _DEBUG
+ 			#define BZ_BUILD_OS			"W32VC6D"
+ 		#else
+ 			#define BZ_BUILD_OS			"W32VC6"
+ 		#endif //_DEBUG
+ 	#endif //_MSC_VER == 1200
+#endif

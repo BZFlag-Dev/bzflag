@@ -64,18 +64,18 @@ KeyManager::KeyManager()
   key.shift  = 0;
   for (i = BzfKeyEvent::Pause; i <= BzfKeyEvent::RightMouse; ++i) {
     key.button = static_cast<BzfKeyEvent::Button>(i);
-    stringToEvent.insert(std::make_pair(buttonNames[i], key));
+    stringToEvent.insert(std::make_pair(std::string(buttonNames[i]), key));
   }
   key.button = BzfKeyEvent::NoButton;
   for (i = 0; i < countof(asciiNames); ++i) {
     key.ascii = asciiNames[i][1][0];
-    stringToEvent.insert(std::make_pair(asciiNames[i][0], key));
+    stringToEvent.insert(std::make_pair(std::string(asciiNames[i][0]), key));
   }
   char buffer[2];
   buffer[1] = 0;
   for (i = 0x21; i < 0x7f; ++i) {
     buffer[0] = key.ascii = static_cast<char>(i);
-    stringToEvent.insert(std::make_pair(static_cast<char*>(buffer), key));
+    stringToEvent.insert(std::make_pair(std::string(buffer), key));
   }
 }
 
