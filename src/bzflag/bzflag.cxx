@@ -223,7 +223,7 @@ static std::string	getOldConfigFileName()
   // the closest thing to a home directory on windows.  use root of
   // C drive as a default in case we can't get the path or it doesn't
   // exist.
-	std::string oldConfigName = "bzflag19.bzc";
+  std::string oldConfigName = "bzflag19.bzc";
   std::string name = getConfigDirName();
   name += oldConfigName;
   return name;
@@ -236,7 +236,7 @@ static std::string	getOldConfigFileName()
 }
 
 #if !defined(_WIN32) & !defined(macintosh)		// who uses this sucker any more?
-static std::string	getRealyOldConfigFileName()
+static std::string	getReallyOldConfigFileName()
 {
   std::string name = getConfigDirName();
   name += "config";
@@ -246,124 +246,119 @@ static std::string	getRealyOldConfigFileName()
 
 std::string getCurrentConfigFileName ( void )
 {
-	std::string configFile = BZ_CONFIG_FILE_NAME;
+  std::string configFile = BZ_CONFIG_FILE_NAME;
 
-	std::string name = getConfigDirName(BZ_CONFIG_DIR_VERSION);
-	name += configFile;
+  std::string name = getConfigDirName(BZ_CONFIG_DIR_VERSION);
+  name += configFile;
 
 #if !defined(_WIN32) & !defined(macintosh)
-	// add in hostname on UNIX
-	if (getenv("HOST")) {
-		name += ".";
-		name += getenv("HOST");
-	}
-#endif//
-	return name;
+  // add in hostname on UNIX
+  if (getenv("HOST")) {
+    name += ".";
+    name += getenv("HOST");
+  }
+#endif
+  return name;
 }
 
 // this function will look for the config, if it's not there, 
 // it will TRY and find an old one and copy it
 // so that the update function can upgrade it to the current version
 // the asumtion is that there is a unique config per version
-void findConfigFile ( void )
+void findConfigFile(void)
 {
-	// look for the current file
-	std::string configName = getCurrentConfigFileName();
-	FILE *fp = fopen(configName.c_str(),"rb");
-	if (fp)
-	{
-		// we found the current file, nothing to do, just return
-		fclose(fp);	
-		return;
-	}
+  // look for the current file
+  std::string configName = getCurrentConfigFileName();
+  FILE *fp = fopen(configName.c_str(), "rb");
+  if (fp) {
+    // we found the current file, nothing to do, just return
+    fclose(fp);	
+    return;
+  }
 
-	// try and find the old file
-	std::string oldConfigName = getOldConfigFileName();
-	fp = fopen(oldConfigName.c_str(),"rb");
-	if (fp)
-	{	
-		// there is an old config so lets copy it to the new dir and let the update take care of it.
+  // try and find the old file
+  std::string oldConfigName = getOldConfigFileName();
+  fp = fopen(oldConfigName.c_str(), "rb");
+  if (fp) {
+    // there is an old config so lets copy it to the new dir and let the update take care of it.
 #if defined(_WIN32)
-		fclose(fp);
-		// make the dir if we need to
-		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str());
-		// copy the old config to the new dir location with the new name
-		CopyFile(oldConfigName.c_str(),configName.c_str(),true);
+    fclose(fp);
+    // make the dir if we need to
+    mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str());
+    // copy the old config to the new dir location with the new name
+    CopyFile(oldConfigName.c_str(), configName.c_str(),true);
 
 //#elif defined(macintosh) // for the 'tosh
 #else	// the other OSs should do what they need to do
-		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
+    mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
 
-		FILE *newFile = fopen(configName.c_str(),"wb");
-		if (newFile)
-		{
-			fseek(fp,0,SEEK_END);
-			int len = ftell(fp);
-			fseek(fp,0,SEEK_SET);
+    FILE *newFile = fopen(configName.c_str(),"wb");
+    if (newFile) {
+      fseek(fp, 0, SEEK_END);
+      int len = ftell(fp);
+      fseek(fp, 0, SEEK_SET);
 
-			unsigned char* temp = (unsigned char*) malloc(len);
+      unsigned char* temp = (unsigned char*) malloc(len);
 
-			fread(temp,len,1,fp);
-			fwrite(temp,len,1,newFile);
-			
-			free(temp);
+      fread(temp, len, 1, fp);
+      fwrite(temp, len, 1, newFile);
+  
+      free(temp);
 
-			fclose(newFile);
-			fclose(fp);
-		}
+      fclose(newFile);
+      fclose(fp);
+    }
 #endif
-	}
+  }
 
-	// try and find the REALY old file
-	// who uses this sucker any more?
+  // try and find the REALLY old file
+  // who uses this sucker any more?
 #if !defined(_WIN32) & !defined(macintosh)		
-	std::string realyOldConfigName = getRealyOldConfigFileName();
-	fp = fopen(realyOldConfigName.c_str(),"rb");
-	if (fp)
-	{	
-		// there is an old config so lets copy it to the new dir and let the update take care of it.
-		// aperanly only linux needs this so do the magic
-		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
+  std::string realyOldConfigName = getReallyOldConfigFileName();
+  fp = fopen(realyOldConfigName.c_str(), "rb");
+  if (fp) {	
+    // there is an old config so lets copy it to the new dir and let the update take care of it.
+    // apparently only linux needs this so do the magic
+    mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
 
-		FILE *newFile = fopen(configName.c_str(),"wb");
-		if (newFile)
-		{
-			fseek(fp,0,SEEK_END);
-			int len = ftell(fp);
-			fseek(fp,0,SEEK_SET);
+    FILE *newFile = fopen(configName.c_str(),"wb");
+    if (newFile) {
+      fseek(fp, 0, SEEK_END);
+      int len = ftell(fp);
+      fseek(fp, 0, SEEK_SET);
 
-			unsigned char* temp = (unsigned char*) malloc(len);
+      unsigned char* temp = (unsigned char*) malloc(len);
 
-			fread(temp,len,1,fp);
-			fwrite(temp,len,1,newFile);
+      fread(temp, len, 1, fp);
+      fwrite(temp, len, 1, newFile);
 
-			free(temp);
-			fclose(newFile);
-			fclose(fp);
-		}
-	}
-#endif//
+      free(temp);
+      fclose(newFile);
+      fclose(fp);
+    }
+  }
+#endif
 }
+
 void updateConfigFile ( void )
 {
-	int		configVersion = 0;
-	if (BZDB.isSet("config_version"))
-		configVersion = (int)BZDB.eval("config_version");
+  int		configVersion = 0;
+  if (BZDB.isSet("config_version"))
+    configVersion = (int)BZDB.eval("config_version");
 
-	switch (configVersion)
-	{
-	case 0:
-			// update from old unversoned config
-			// TODO, update the roaming keys and stuff
-			// or reset them to defaults
+  switch (configVersion) {
+  case 0: // 1.10-1.12
+    // update from old unversioned config
+    // TODO - roaming fixes - remove keys bound to "roam translate *" and "roam rotate *"
+    // TODO - any other breaking changes from 1.10 to 1.11
 
-		case 1:// no action, current version
-			break;
-	}
+  case 1: // 1.12
+    break; // no action, current version
+  }
 
-	// set us as the updated version
-	configVersion = BZ_CONFIG_FILE_VERSION;
-	BZDB.setInt("config_version",configVersion);
+  // set us as the updated version
+  configVersion = BZ_CONFIG_FILE_VERSION;
+  BZDB.setInt("config_version", configVersion);
 }
 
 static void		setTeamColor(TeamColor team, const std::string& value)
