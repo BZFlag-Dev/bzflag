@@ -274,9 +274,9 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
 	  isSquare = false;
       break;
     case 5:
-      pyramid->getCorner(1, base);
-      pyramid->getCorner(3, sCorner);
-      pyramid->getCorner(0, tCorner);
+      pyramid->getCorner(0, base);
+      pyramid->getCorner(1, sCorner);
+      pyramid->getCorner(3, tCorner);
 	  isSquare = true;
       break;
   }
