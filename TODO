@@ -8,35 +8,37 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
     - voting system doesn't start a poll (doesn't parse player name properly)
 
     - players can get autokicked for jumping too high when the admin changes
-      the gravity or when the gravity is positive. Some possible fixes: relax 
+      the gravity or when the gravity is positive. Some possible fixes: relax
       or remove the check (maybe optionally), make it take past gravity changes
-      into account when calculating the maximum allowed height (probably 
+      into account when calculating the maximum allowed height (probably
       tricky).
 
     - players can get autokicked for speeding if a theif steals their flag
-    
+
 
 THESE ARE LOWER PRIORITY
 
-* shorten laser to like 1.25 normal shot
-  This is needed for larger maps so we can so sparse player updates.
+* move version functions to buildDate.cxx
 
-* create src/common/version.c that actually includes the version functions and
-  is the only file touched and rebuilt on every make. apps still need to be
-  relinked with it on every make
+* split -public <desc> into -public, -description <desc>, and -email <contact>
 
 * support gameinfo requests as one time udp packets and include all the
   same information that bzfls tracks.  We should allow server info, player and
   score lists over udp from any udp address, not just a "connected" player.
   bzfls should use this udp to confirm server availability before falling back
-  to tcp pipe for the same msgs.  Possibly make the server list have 2 modes,
-  Internet and LAN using the left and right arrow keys to change between them.
-  broadcast for LAN servers only happens when on the LAN setting to minimize
-  traffic, and differentiate the servers.
+  to tcp pipe for the same msgs.  Make bcast traffic and serverlist traffic less
+  blocking.
+
+* listen all the time on udp for bcast game info replies when in Find Servers
+
+* shorten laser to like 1.25 normal shot
+  This is needed for larger maps so we can send sparse player updates.
 
 * server should send less frequent updates for "distant" players
 
-* server should pick client enter position
+* server should track last reported player and shot positions
+
+* server should pick client enter position.
   ## Server has no idea about players shots, this is a
      key to picking a safe entry location. This isn't
      a simple change. ##
@@ -47,7 +49,11 @@ THESE ARE LOWER PRIORITY
   only send one MsgUpdate to the master, who will relay to the
   connected players/bots. This will allow multiple players
   behind one slow net connection to play multiple players
-  behind another slow connection. (for example)
+  behind another slow connection. (for example) ie: -relay
+
+* bzflag -relay should attempt to listen and reply on udp, resending server
+  info for which ever server it is connected to.  Descriptions should begin
+  with "relay:" in this case. -solo <n> should enable this behavior.
 
 * rework the BZDB->eval() caching to support expression
   dependencies - if a variable changes, all the expressions
