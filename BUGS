@@ -1,5 +1,7 @@
 recent bugs
 ------------
+- Team flags are now floating above the base, too high to grab
+  due to new base height changes?
 
   Tank/base stuck problem has reappeared with server spawning.
   LocalPlayer::doUpdateMotion is foobared.
