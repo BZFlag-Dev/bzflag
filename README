@@ -1,7 +1,14 @@
 
-                                    bzflag 1.7d
+                                    bzflag 1.7d.9
 
                         Copyright 1993-1999 Chris Schoeneman
+
+Maintainer
+=========
+
+Tim Riker
+http://rikers.org/
+Tim@Rikers.org
 
 Author
 ======
@@ -153,7 +160,7 @@ Contributions
 =============
 
 Send mail to either the BZFlag development mailing list, or
-Tim@Rikers.org(the development mailing list is prefered) to discuess 
+Tim@Rikers.org (the development mailing list is prefered) to discuess 
 contributions to the official BZFlag source code.  Small changes can be 
 attached to the mail in 'cvs diff' format.
 

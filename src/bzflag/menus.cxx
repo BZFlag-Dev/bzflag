@@ -1861,7 +1861,7 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.append(createLabel("Ben Trumbore, Don Greenberg", ""));
   list.append(createLabel("", ""));
   list.append(createLabel("bzflag@bigfoot.com", "BZFLAG Email:"));
-  list.append(createLabel("http://www.bigfoot.com/~bzflag",
+  list.append(createLabel("http://bzflag.sourceforge.net/",
 						"BZFLAG Home Page:"));
   list.append(createLabel("", ""));
   list.append(createLabel("Chris Schoeneman", "Copyright 1993-1999"));

@@ -16,12 +16,12 @@
 #   we can also get RPM to put files in an alternate location by
 #   using an external rpmrc file.
 #
-# thanks to Tim Riker (TimR@CalderaSystems.com) for improvements
+# thanks to Tim Riker <Tim@Rikers.org> for improvements
 # to this spec file.
 #
 
 %define name bzflag
-%define version 1.7d.6
+%define version 1.7d.9
 %define release 1
 
 %define bzbasedir	/usr/X11R6/lib/X11/bzflag
@@ -36,9 +36,9 @@ release:	%{release}
 group:		Recreation/Action
 copyright:	Chris Schoeneman 1993-1999
 packager:	Chris Schoeneman <crs23@bigfoot.com>
-url:		http://www.bigfoot.com/~bzflag/
+url:		http://bzflag.sourceforge.net/
 summary:	multiplayer 3D tank battle game
-source:		http://www.bigfoot.com/~bzflag/packages/src/%{name}-%{version}.src.tar.gz
+source:		http://download.sourceforge.net/bzflag/%{name}-%{version}.src.tar.gz
 buildroot:	/var/tmp/%{name}-%{version}-%{release}-root
 
 # all we want here is to remove glide, but RPM does not provide a way. ;-(
