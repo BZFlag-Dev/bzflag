@@ -165,6 +165,7 @@ void			LocalPlayer::doUpdate(float dt)
 
 void			LocalPlayer::doUpdateMotion(float dt)
 {
+  static bool physicsDriverLast = false; // for keyboard players
   static const float MinSearchStep = 0.0001f;
   static const int MaxSearchSteps = 7;
   static const int MaxSteps = 4;
@@ -223,7 +224,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // full control
       float speed = desiredSpeed;
 
-      if (inputMethod == Keyboard) {
+      if ((inputMethod == Keyboard) && !physicsDriverLast) {
 	/* the larger the oldAngVel contribution, the more slowly an
 	 * angular velocity converges to the desired "max" velocity; the
 	 * contribution of the desired and old velocity should add up to
@@ -266,7 +267,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // can't control motion in air unless have wings
       if (getFlag() == Flags::Wings) {
         float speed = desiredSpeed;
-        if (inputMethod == Keyboard) {
+        if ((inputMethod == Keyboard) && !physicsDriverLast) {
 	  /* the larger the oldAngVel contribution, the more slowly an
 	   * angular velocity converges to the desired "max" velocity; the
 	   * contribution of the desired and old velocity should add up to
@@ -316,6 +317,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   }
   
   // do the physics driver stuff
+  physicsDriverLast = false;
   if ((lastObstacle != NULL) && 
       (lastObstacle->getType() == MeshFace::getClassName())) {
     const MeshFace* face = (const MeshFace*) lastObstacle;
@@ -345,6 +347,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
         newVelocity[0] -= angvel * dy;
         newVelocity[1] += angvel * dx;
       }
+
+      physicsDriverLast = true; // for the keyboard players
     }
   }
   lastObstacle = NULL;
