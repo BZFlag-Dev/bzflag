@@ -22,7 +22,7 @@
 #include "ErrorHandler.h"
 #include "bzfSDL.h"
 
-SDLJoystick::SDLJoystick()
+SDLJoystick::SDLJoystick() : joystickID(NULL)
 {
   if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
     std::vector<std::string> args;
@@ -39,7 +39,10 @@ SDLJoystick::~SDLJoystick()
 void			SDLJoystick::initJoystick(const char* joystickName)
 {
   if (!strcmp(joystickName, "off") || !strcmp(joystickName, "")) {
-    joystickID = NULL;
+    if (joystickID != NULL) {
+      SDL_JoystickClose(joystickID);
+      joystickID = NULL;
+    }
     return;
   }
   int numJoystick = SDL_NumJoysticks();
