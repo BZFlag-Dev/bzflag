@@ -4175,6 +4175,8 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   team->setLabel("Team:");
   team->setCallback(teamCallback, NULL);
   std::vector<std::string>& teams = team->getList();
+  // these do not need to be in enum order
+  teams.push_back(std::string(Team::getName(AutomaticTeam)));
   teams.push_back(std::string(Team::getName(RogueTeam)));
   teams.push_back(std::string(Team::getName(RedTeam)));
   teams.push_back(std::string(Team::getName(GreenTeam)));
@@ -4234,6 +4236,7 @@ void			JoinMenu::show()
   // set fields
   callsign->setString(info->callsign);
   team->setIndex((int)info->team);
+
   server->setString(info->serverName);
   char buffer[10];
   sprintf(buffer, "%d", info->serverPort);
@@ -4256,6 +4259,7 @@ void			JoinMenu::loadInfo()
   StartupInfo* info = getStartupInfo();
   strcpy(info->callsign, callsign->getString().c_str());
   info->team = (TeamColor)team->getIndex();
+
   strcpy(info->serverName, server->getString().c_str());
   info->serverPort = atoi(port->getString().c_str());
 }
