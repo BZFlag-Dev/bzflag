@@ -112,58 +112,60 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
       id = pi;
       break;
     }
-  if (id == -1) {
-    if ((len == 1) && (code == MsgUDPLinkRequest)) {
-      // It is a UDP lInk Request ... try to match it
-      uint8_t index;
-      buf = nboUnpackUByte(buf, index);
-      if ((index < maxHandlers) && netPlayer[index]
-	  && !netPlayer[index]->udpin)
-	if (!memcmp(&netPlayer[index]->uaddr.sin_addr, &uaddr->sin_addr,
-		    sizeof(uaddr->sin_addr))) {
-	  id = index;
-	  if (uaddr->sin_port)
-	    netPlayer[index]->uaddr.sin_port = uaddr->sin_port;
-	  netPlayer[index]->udpin = true;
-	  udpLinkRequest = true;
-	  DEBUG2("Player %s [%d] inbound UDP up %s:%d actual %d\n",
-		 netPlayer[index]->info->getCallSign(), index,
-		 inet_ntoa(uaddr->sin_addr),
-		 ntohs(netPlayer[index]->uaddr.sin_port),
-		 ntohs(uaddr->sin_port));
-	} else {
-	  DEBUG2
-	    ("Player %s [%d] inbound UDP rejected %s:%d different IP \
+  if (id == -1 && (len == 1) && (code == MsgUDPLinkRequest)) {
+    // It is a UDP lInk Request ... try to match it
+    uint8_t index;
+    buf = nboUnpackUByte(buf, index);
+    if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->udpin)
+      if (!memcmp(&netPlayer[index]->uaddr.sin_addr, &uaddr->sin_addr,
+		  sizeof(uaddr->sin_addr))) {
+	id = index;
+	if (uaddr->sin_port)
+	  netPlayer[index]->uaddr.sin_port = uaddr->sin_port;
+	netPlayer[index]->udpin = true;
+	udpLinkRequest = true;
+	DEBUG2("Player %s [%d] inbound UDP up %s:%d actual %d\n",
+	       netPlayer[index]->info->getCallSign(), index,
+	       inet_ntoa(uaddr->sin_addr),
+	       ntohs(netPlayer[index]->uaddr.sin_port),
+	       ntohs(uaddr->sin_port));
+      } else {
+	DEBUG2
+	  ("Player %s [%d] inbound UDP rejected %s:%d different IP \
 than %s:%d\n",
-	     netPlayer[index]->info->getCallSign(), index,
-	     inet_ntoa(netPlayer[index]->uaddr.sin_addr),
-	     ntohs(netPlayer[index]->uaddr.sin_port),
-	     inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
-	}
-    }
-
-    if (id == -1) {
-      // no match, discard packet
-      DEBUG2("uread() discard packet! %s:%d choices p(l) h:p",
-	     inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
-      for (pi = 0; pi < maxHandlers; pi++) {
-	if (netPlayer[pi])
-	  DEBUG3(" %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,
-		 netPlayer[pi]->udpout,
-		 inet_ntoa(netPlayer[pi]->uaddr.sin_addr),
-		 ntohs(netPlayer[pi]->uaddr.sin_port));
+	   netPlayer[index]->info->getCallSign(), index,
+	   inet_ntoa(netPlayer[index]->uaddr.sin_addr),
+	   ntohs(netPlayer[index]->uaddr.sin_port),
+	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
       }
-      DEBUG2("\n");
-    } else {
-      DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
-	     netPlayer[id]->info->getCallSign(), id,
-	     inet_ntoa(netPlayer[id]->uaddr.sin_addr),
-	     ntohs(netPlayer[id]->uaddr.sin_port), n,
-	     inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port),
-	     udpSocket);
+  }
+
+  if (id == -1) {
+    // no match, discard packet
+    DEBUG2("uread() discard packet! %s:%d choices p(l) h:p",
+	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
+    for (pi = 0; pi < maxHandlers; pi++) {
+      if (netPlayer[pi])
+	DEBUG3(" %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,
+	       netPlayer[pi]->udpout,
+	       inet_ntoa(netPlayer[pi]->uaddr.sin_addr),
+	       ntohs(netPlayer[pi]->uaddr.sin_port));
+    }
+    DEBUG2("\n");
+  } else {
+    DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
+	   netPlayer[id]->info->getCallSign(), id,
+	   inet_ntoa(netPlayer[id]->uaddr.sin_addr),
+	   ntohs(netPlayer[id]->uaddr.sin_port), n,
+	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port),
+	   udpSocket);
 #ifdef NETWORK_STATS
-      netPlayer[id]->countMessage(code, len, 0);
+    netPlayer[id]->countMessage(code, len, 0);
 #endif
+    if (code == MsgUDPLinkEstablished) {
+      netPlayer[id]->udpout = true;
+      DEBUG2("Player %s [%d] outbound UDP up\n",
+	     netPlayer[id]->info->getCallSign(), id);
     }
   }
   return id;
@@ -264,11 +266,6 @@ int NetHandler::send(const void *buffer, size_t length) {
     toBeKickedReason = "Write error";
   }
   return 0;
-}
-
-void NetHandler::setUdpOut() {
-  udpout = true;
-  DEBUG2("Player %s [%d] outbound UDP up\n", info->getCallSign(), playerIndex);
 }
 
 int NetHandler::bufferedSend(const void *buffer, size_t length) {
@@ -386,6 +383,43 @@ int NetHandler::pflush(fd_set *set) {
     return 0;
 }
 
+RxStatus NetHandler::tcpReceive() {
+  // read more data into player's message buffer
+
+  // read header if we don't have it yet
+  RxStatus e = receive(4);
+  if (e != ReadAll)
+    // if header not ready yet then skip the read of the body
+    return e;
+
+  // read body if we don't have it yet
+  uint16_t len, code;
+  void *buf = tcpmsg;
+  buf = nboUnpackUShort(buf, len);
+  buf = nboUnpackUShort(buf, code);
+  if (len > MaxPacketLen) {
+    DEBUG1("Player [%d] sent huge packet length (len=%d), possible attack\n",
+	   playerIndex, len);
+    return ReadHuge;
+  }
+  e = receive(4 + (int) len);
+  if (e != ReadAll)
+    // if body not ready yet then skip the command handling
+    return e;
+
+  // clear out message
+  tcplen = 0;
+#ifdef NETWORK_STATS
+  countMessage(code, len, 0);
+#endif
+  if (code == MsgUDPLinkEstablished) {
+    udpout = true;
+    DEBUG2("Player %s [%d] outbound UDP up\n", info->getCallSign(),
+	   playerIndex);
+  }
+  return e;
+}
+
 RxStatus NetHandler::receive(size_t length) {
   RxStatus returnValue;
   if ((int)length <= tcplen)
@@ -420,10 +454,6 @@ RxStatus NetHandler::receive(size_t length) {
 
 void *NetHandler::getTcpBuffer() {
   return tcpmsg;
-};
-
-void NetHandler::cleanTcp() {
-  tcplen = 0;
 };
 
 std::string NetHandler::reasonToKick() {

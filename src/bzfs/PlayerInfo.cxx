@@ -279,12 +279,6 @@ bool PlayerInfo::isAtIP(const std::string& IP) {
   return strcmp(peer.getDotNotation().c_str(), IP.c_str()) == 0;
 };
 
-void PlayerInfo::debugHugePacket(int length) {
-  DEBUG1("Player [%d] sent huge packet length (len=%d), \
-possible attack from %s\n",
-	 playerIndex, length, peer.getDotNotation().c_str());
-};
-
 bool PlayerInfo::isPlaying() {
   return state > PlayerInLimbo;
 };

@@ -223,32 +223,6 @@ static void setNoDelay(int fd)
 }
 
 
-static bool pread(int playerIndex, int l)
-{
-  if (!NetHandler::exists(playerIndex))
-    return false;
-
-  // read more data into player's message buffer
-  const RxStatus e = NetHandler::getHandler(playerIndex)->receive(l);
-
-  if (e == ReadAll) {
-    return true;
-  } else {
-    if (e == ReadReset) {
-      removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
-    } else if (e == ReadError) {
-      // dump other errors and remove the player
-      nerror("error on read");
-      removePlayer(playerIndex, "Read error", false);
-    } else if (e == ReadDiscon) {
-      // disconnected
-      removePlayer(playerIndex, "Disconnected", false);
-    }
-    return false;
-  }
-}
-
-
 void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -2933,11 +2907,13 @@ static void parseCommand(const char *message, int t)
   }
 }
 
-static void handleCommand(int t, uint16_t code, uint16_t len,
-			  const void *rawbuf)
+static void handleCommand(int t, const void *rawbuf)
 {
-  NetHandler *netPlayer = NetHandler::getHandler(t);
-  void *buf = (void*)((char*)rawbuf + 4);
+  uint16_t len, code;
+  void *buf = (char *)rawbuf;
+  buf = nboUnpackUShort(buf, len);
+  buf = nboUnpackUShort(buf, code);
+
   switch (code) {
     // player joining
     case MsgEnter: {
@@ -3199,7 +3175,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
     }
 
     case MsgUDPLinkEstablished:
-      netPlayer->setUdpOut();
       break;
 
     case MsgNewRabbit: {
@@ -4209,13 +4184,8 @@ int main(int argc, char **argv)
 	      // send client the message that we are ready for him
 	      sendUDPupdate(id);
 
-	    uint16_t len, code;
-	    void *buf = ubuf;
-	    buf = nboUnpackUShort(buf, len);
-	    buf = nboUnpackUShort(buf, code);
-
 	    // handle the command for UDP
-	    handleCommand(id, code, len, ubuf);
+	    handleCommand(id, ubuf);
 
 	    // don't spend more than 250ms receiving udp
 	    if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
@@ -4236,27 +4206,28 @@ int main(int argc, char **argv)
 
 	netPlayer = NetHandler::getHandler(i);
 	if (netPlayer && netPlayer->fdIsSet(&read_set)) {
-	  // read header if we don't have it yet
-	  if (!pread(i, 4))
-	    // if header not ready yet then skip the read of the body
-	    continue;
 
-	  // read body if we don't have it yet
-	  uint16_t len, code;
-	  void *buf = NetHandler::getHandler(i)->getTcpBuffer();
-	  buf = nboUnpackUShort(buf, len);
-	  buf = nboUnpackUShort(buf, code);
-	  if (len>MaxPacketLen) {
-	    player[i].debugHugePacket(len);
-	    removePlayer(i, "large packet recvd", false);
+	  const RxStatus e = netPlayer->tcpReceive();
+	  if (e != ReadAll) {
+	    if (e == ReadReset) {
+	      removePlayer(i, "ECONNRESET/EPIPE", false);
+	    } else if (e == ReadError) {
+	      // dump other errors and remove the player
+	      nerror("error on read");
+	      removePlayer(i, "Read error", false);
+	    } else if (e == ReadDiscon) {
+	      // disconnected
+	      removePlayer(i, "Disconnected", false);
+	    } else if (e == ReadHuge) {
+	      removePlayer(i, "large packet recvd", false);
+	    }
 	    continue;
 	  }
-	  // if body not ready yet then skip the command handling
-	  if (!pread(i, 4 + (int)len))
-	    continue;
-
-	  // clear out message
-	  NetHandler::getHandler(i)->cleanTcp();
+	  
+	  uint16_t len, code;
+	  void *buf = netPlayer->getTcpBuffer();
+	  buf = nboUnpackUShort(buf, len);
+	  buf = nboUnpackUShort(buf, code);
 
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // he/she must not be using the UDP link
@@ -4277,11 +4248,7 @@ int main(int argc, char **argv)
 	  }
 
 	  // handle the command
-#ifdef NETWORK_STATS
-	  NetHandler::getHandler(i)->countMessage(code, len, 0);
-#endif
-	  handleCommand(i, code, len,
-			NetHandler::getHandler(i)->getTcpBuffer());
+	  handleCommand(i, netPlayer->getTcpBuffer());
 	}
       }
     } else if (nfound < 0) {

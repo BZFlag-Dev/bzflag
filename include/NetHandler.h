@@ -19,6 +19,7 @@
 enum RxStatus {
   ReadAll,
   ReadPart,
+  ReadHuge,
   ReadReset,
   ReadError,
   ReadDiscon
@@ -97,16 +98,24 @@ public:
   static int  udpReceive(char *buffer, struct sockaddr_in *uaddr,
 			 bool &udpLinkRequest);
 
-  void        setUdpOut();
+  /**
+     tcpReceive try to get a message from the tcp connection
+     the message can be accessed by using the getTcpBuffer methods
+     result value indicates:
+     ReadAll    : was successfully received a full message
+     ReadPart   : only part of a message has been retrieved
+     ReadHuge   : length of the message is too long
+     ReadReset  : a reset of the connection has been detected
+     ReadError  : Error detected on the tcp connection
+     ReadDiscon : Peer has closed the connection
+  */
+  RxStatus    tcpReceive();
+  void       *getTcpBuffer();
 
   int         pwrite(const void *b, int l);
-  RxStatus    receive(size_t length);
-  void       *getTcpBuffer();
-  void        cleanTcp();
   int         pflush(fd_set *set);
   std::string reasonToKick();
 #ifdef NETWORK_STATS
-  void        countMessage(uint16_t code, int len, int direction);
   void        dumpMessageStats();
 #endif
   void        getPlayerList(char *list); 
@@ -115,6 +124,10 @@ private:
   void udpSend(const void *b, size_t l);
   int  bufferedSend(const void *buffer, size_t length);
   bool isMyUdpAddrPort(struct sockaddr_in uaddr);
+  RxStatus    receive(size_t length);
+#ifdef NETWORK_STATS
+  void        countMessage(uint16_t code, int len, int direction);
+#endif
 
   static int                udpSocket;
   static NetHandler        *netPlayer[maxHandlers];

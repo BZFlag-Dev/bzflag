@@ -97,7 +97,6 @@ public:
   void       *packAdminInfo(void *buf);
   void        debugUnknownPacket(int code);
   bool        isAtIP(const std::string& IP);
-  void        debugHugePacket(int length);
   bool        isPlaying();
   bool        exist();
   void        signingOn();
