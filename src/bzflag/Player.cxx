@@ -582,7 +582,8 @@ void			Player::doDeadReckoning()
 }
 
 // How long does the filter takes to be considered "initialized"
-const int DRStateStable = 10;
+const int   DRStateStable      = 10;
+const float maxToleratedJitter = 1.0f;
 
 void			Player::setDeadReckoning(float timestamp)
 {
@@ -590,22 +591,27 @@ void			Player::setDeadReckoning(float timestamp)
   offset = timestamp - (TimeKeeper::getTick() - TimeKeeper::getNullTime())
     - deltaTime;
 
-  float alpha;
-  if (deadReckoningState < DRStateStable) {
-    // Initialization
-    alpha = 1.0f / float(deadReckoningState + 1);
-  } else if (fabs(offset) > 1.0f) {
-    // Just discard too much untimed measurement
-    return;
-  } else if (offset > 0) {
-    // fast alignment to the packet that take less travel time
-    alpha = 1.0f;
-  } else {
-    // Stable
-    alpha = 0.01f;
+  bool discardUpdate = false;
+  // at first stage, Delta time is computed as the average of the last
+  // differences in time (local & remote) the values is then updated
+  // with the new samples, smoothed with the old values
+  float alpha = 1.0f / float(deadReckoningState + 1);
+  if (deadReckoningState >= DRStateStable) {
+    if (fabs(offset) > maxToleratedJitter) {
+      // Put a threshold on untimed measurement
+      offset = (offset > 0) ? maxToleratedJitter : -maxToleratedJitter;
+      // and discard, but before adjust delta a little
+      discardUpdate = true;
+    } else if (offset > 0) {
+      // fast alignment to the packet that take less travel time
+      // that's for trying to have less lag
+      alpha = 1.0f;
+    }
   }
   // alpha filtering
   deltaTime = deltaTime + offset * alpha;
+  if (discardUpdate)
+    return;
   // when alpha is 1, that really means we are re-initializing deltaTime
   // so offset should be zero
   if (alpha == 1.0f)
