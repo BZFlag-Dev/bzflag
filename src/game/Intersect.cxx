@@ -753,8 +753,8 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
     int next = (t + 1) % pointCount;
     float edge[3];
     edge[0] = points[next][0] - points[t][0];
-    edge[1] = points[next][0] - points[t][1];
-    edge[2] = points[next][0] - points[t][2];
+    edge[1] = points[next][1] - points[t][1];
+    edge[2] = points[next][2] - points[t][2];
     for (int a = 0; a < 3; a++) {
       float cross[3];
       const float* axis = axisNormals[a];

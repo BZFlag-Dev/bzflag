@@ -82,8 +82,9 @@ typedef struct RRpacket {
   RRtime timestamp;
   char *data;
 } RRpacket;
-static const int RRpacketHdrSize = sizeof(RRpacket) -
-                                   (2 * sizeof(RRpacket*) - sizeof(char*));
+static const unsigned int RRpacketHdrSize =
+  sizeof(RRpacket) - (2 * sizeof(RRpacket*) - sizeof(char*));
+  
 typedef struct {
   u32 byteCount;
   u32 packetCount;
@@ -99,18 +100,18 @@ typedef struct {
   RRtime filetime;              // amount of time in the file
   u32 player;                   // player that saved this record file
   u32 flagsSize;                // size of the flags data
-  u32 settingsSize;             // size of the game settings
   u32 worldSize;                // size of world database
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];         // player's email
   char serverVersion[8];        // BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];            // hash of worldDatabase
+  char worldSettings[4 + WorldSettingsSize]; // the game settings
   char *flags;                  // a list of the flags types
-  char *settings;               // the game settings
   char *world;                  // the world
 } ReplayHeader;
-static const int ReplayHeaderSize = sizeof(ReplayHeader) - (3 * sizeof(char*));
+static const unsigned int ReplayHeaderSize =
+  sizeof(ReplayHeader) - (2 * sizeof(char*));
 
 
 // Local Variables
@@ -180,6 +181,7 @@ static bool loadHeader (ReplayHeader *h, FILE *f);
 static bool saveFileTime (RRtime filetime, FILE *f);
 static bool loadFileTime (RRtime *filetime, FILE *f);
 static bool replaceFlagTypes (ReplayHeader *h);
+static bool replaceSettings (ReplayHeader *h);
 static bool replaceWorldDatabase (ReplayHeader *h);
 static bool flagIsActive (FlagType *type);
 static bool packFlagTypes (char *flags, u32 *flagsSize);
@@ -215,6 +217,7 @@ extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
 extern u32 worldDatabaseSize;
+extern char worldSettings[4 + WorldSettingsSize];
 extern uint8_t rabbitIndex;
 extern CmdLineOptions *clOptions;
 
@@ -224,11 +227,6 @@ extern void directMessage(int playerIndex, u16 code,
 extern void sendMessage(int playerIndex, PlayerId targetPlayer,
                         const char *message);
                         
-extern char* getWorldDatabase();
-extern void setWorldDatabase(char* db);
-extern char* getGameSettings();                        
-extern void setGameSettings(char* db);                        
-
 
 /****************************************************************************/
 
@@ -795,7 +793,7 @@ getRecordFile (const char *filename)
     return NULL;
   }
 
-  if (fread (buffer, sizeof(magic), 1, file) != sizeof(magic)) {
+  if (fread (buffer, sizeof(magic), 1, file) != 1) {
     fclose (file);
     return NULL;
   }
@@ -1570,11 +1568,11 @@ savePacket (RRpacket *p, FILE *f)
   buf = nboPackUInt (buf, RecordFilePrevPos);
   buf = nboPackRRtime (buf, p->timestamp);
 
-  if (fwrite (bufStart, RRpacketHdrSize, 1, f) == 0) {
+  if (fwrite (bufStart, RRpacketHdrSize, 1, f) != 1) {
     return false;
   }
 
-  if ((p->len != 0) && (fwrite (p->data, p->len, 1, f) == 0)) {
+  if ((p->len != 0) && (fwrite (p->data, p->len, 1, f) != 1)) {
     return false;
   }
 
@@ -1599,7 +1597,7 @@ loadPacket (FILE *f)
 
   p = new RRpacket;
 
-  if (fread (bufStart, RRpacketHdrSize, 1, f) <= 0) {
+  if (fread (bufStart, RRpacketHdrSize, 1, f) != 1) {
     delete p;
     return NULL;
   }
@@ -1622,7 +1620,7 @@ loadPacket (FILE *f)
   }
   else {
     p->data = new char [p->len];
-    if (fread (p->data, p->len, 1, f) <= 0) {
+    if (fread (p->data, p->len, 1, f) != 1) {
       delete[] p->data;
       delete p;
       return NULL;
@@ -1782,17 +1780,18 @@ saveHeader (int p, RRtime filetime, FILE *f)
   buf = nboPackString (buf, hdr.serverVersion, sizeof (hdr.serverVersion));
   buf = nboPackString (buf, hdr.appVersion, sizeof (hdr.appVersion));
   buf = nboPackString (buf, hdr.realHash, sizeof (hdr.realHash));
+  buf = nboPackString (buf, worldSettings, sizeof (worldSettings));
 
   // store the data
-  if (fwrite (buffer, ReplayHeaderSize, 1, f) == 0) {
+  if (fwrite (buffer, ReplayHeaderSize, 1, f) != 1) {
     return false;
   }
   if (hdr.flagsSize > 0) {
-    if (fwrite (hdr.flags, hdr.flagsSize, 1, f) == 0) {
+    if (fwrite (hdr.flags, hdr.flagsSize, 1, f) != 1) {
       return false;
     }
   }
-  if (fwrite (worldDatabase, worldDatabaseSize, 1, f) == 0) {
+  if (fwrite (worldDatabase, worldDatabaseSize, 1, f) != 1) {
     return false;
   }
 
@@ -1808,7 +1807,7 @@ loadHeader (ReplayHeader *h, FILE *f)
   char buffer[ReplayHeaderSize];
   void *buf;
 
-  if (fread (buffer, ReplayHeaderSize, 1, f) <= 0) {
+  if (fread (buffer, ReplayHeaderSize, 1, f) != 1) {
     return false;
   }
 
@@ -1824,11 +1823,12 @@ loadHeader (ReplayHeader *h, FILE *f)
   buf = nboUnpackString (buf, h->serverVersion, sizeof (h->serverVersion));
   buf = nboUnpackString (buf, h->appVersion, sizeof (h->appVersion));
   buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
+  buf = nboUnpackString (buf, h->worldSettings, sizeof (h->worldSettings));
 
   // load the flags, if there are any
   if (h->flagsSize > 0) {
     h->flags = new char [h->flagsSize];
-    if (fread (h->flags, h->flagsSize, 1, f) == 0) {
+    if (fread (h->flags, h->flagsSize, 1, f) != 1) {
       return false;
     }
   }
@@ -1838,19 +1838,25 @@ loadHeader (ReplayHeader *h, FILE *f)
 
   // load the world database
   h->world = new char [h->worldSize];
-  if (fread (h->world, h->worldSize, 1, f) == 0) {
+  if (fread (h->world, h->worldSize, 1, f) != 1) {
     return false;
   }
-
+  
   // remember where the header ends
   ReplayFileStart = ftell (f);
 
   // do the worldDatabase or flagTypes need to be replaced?
   bool replaced = false;
   if (replaceFlagTypes (h)) {
+    DEBUG1 ("Replay: replaced flags\n");
+    replaced = true;
+  }
+  if (replaceSettings (h)) {
+    DEBUG1 ("Replay: replaced settings\n");
     replaced = true;
   }
   if (replaceWorldDatabase (h)) {
+    DEBUG1 ("Replay: replaced world database\n");
     replaced = true;
   }
 
@@ -1924,7 +1930,7 @@ saveFileTime (RRtime filetime, FILE *f)
   }
   char buffer[sizeof(RRtime)];
   nboPackRRtime (buffer, filetime);
-  if (fwrite (buffer, sizeof(RRtime), 1, f) == 0) {
+  if (fwrite (buffer, sizeof(RRtime), 1, f) != 1) {
     return false;
   }
   return true;
@@ -1939,7 +1945,7 @@ loadFileTime (RRtime *filetime, FILE *f)
     return false;
   }
   char buffer[sizeof(RRtime)];
-  if (fread (buffer, sizeof(RRtime), 1, f) == 0) {
+  if (fread (buffer, sizeof(RRtime), 1, f) != 1) {
     return false;
   }
   nboUnpackRRtime (buffer, *filetime);
@@ -1998,28 +2004,39 @@ replaceFlagTypes (ReplayHeader *h)
 
 
 static bool
+replaceSettings (ReplayHeader *h)
+{
+  bool replaced = true;
+  const unsigned int length = sizeof(worldSettings);
+
+  // change the settings maxPlayer size to the current value
+  const int maxPlayersOffset = 
+    sizeof(uint16_t) + // packet len
+    sizeof(uint16_t) + // packet code
+    sizeof(float)    + // world size
+    sizeof(uint16_t);  // gamestyle
+  char *hdrMaxPlayersPtr = h->worldSettings + maxPlayersOffset;
+  nboPackUShort (hdrMaxPlayersPtr, MaxPlayers + ReplayObservers);
+  
+
+  // compare the settings (now that maxPlayer has been adjusted)
+  if (memcmp (worldSettings, h->worldSettings, length) == 0) {
+    replaced = false;
+  }
+
+  // replace the world settings  
+  memcpy (worldSettings, h->worldSettings, length);
+  
+  return replaced;
+}
+
+
+static bool
 replaceWorldDatabase (ReplayHeader *h)
 {
-  const int timeStampOffset = sizeof(unsigned short)*9 + sizeof(float)*3;
-  const int maxPlayersOffset = sizeof(unsigned short)*4 + sizeof(float)*1;
-  char *hdrTimeStampPtr = h->world + timeStampOffset;
-  char *hdrMaxPlayersPtr = h->world + maxPlayersOffset;
-  char *nowTimeStampPtr = worldDatabase + timeStampOffset;
-  unsigned int nowTimeStamp, hdrTimeStamp;
-
-  // save the originals timeStamps
-  nboUnpackUInt (nowTimeStampPtr, nowTimeStamp);
-  nboUnpackUInt (hdrTimeStampPtr, hdrTimeStamp);
-
-  // setup the header timeStamp and maxPlayers to compare
-  nboPackUShort (hdrMaxPlayersPtr, MaxPlayers + ReplayObservers);
-  nboPackUInt (hdrTimeStampPtr, nowTimeStamp);
-
   if ((h->worldSize != worldDatabaseSize) ||
       (memcmp (h->world, worldDatabase, h->worldSize) != 0)) {
-    //
     // they don't match, replace the world
-    //
 
     DEBUG3 ("Replay: replacing World Database\n");
 
@@ -2027,18 +2044,12 @@ replaceWorldDatabase (ReplayHeader *h)
     worldDatabase = h->world;
     worldDatabaseSize = h->worldSize;
 
-    // setup for the hash
-    nboPackUInt (hdrTimeStampPtr, 0);
-
     MD5 md5;
     md5.update ((unsigned char *)worldDatabase, worldDatabaseSize);
     md5.finalize();
     std::string hash = md5.hexdigest();
     hexDigest[0] = h->realHash[0];
     strncpy (hexDigest + 1, hash.c_str(), sizeof (hexDigest) - 1);
-
-    // revert to the header timeStamp
-    nboPackUInt (hdrTimeStampPtr, hdrTimeStamp);
 
     delete[] oldWorld;
     return true;   // the world was replaced

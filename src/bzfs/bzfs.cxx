@@ -110,6 +110,7 @@ WorldInfo *world = NULL;
 // FIXME: should be static, but needed by RecordReplay
 char *worldDatabase = NULL;
 uint32_t worldDatabaseSize = 0;
+char worldSettings[4 + WorldSettingsSize];
 
 Filter   filter;
 
@@ -2231,6 +2232,7 @@ bool areFoes(TeamColor team1, TeamColor team2)
          (team1==RogueTeam && !(clOptions->gameStyle & int(RabbitChaseGameStyle)));
 }
 
+
 static void sendWorld(int playerIndex, uint32_t ptr)
 {
   // send another small chunk of the world database
@@ -2250,24 +2252,44 @@ static void sendWorld(int playerIndex, uint32_t ptr)
   directMessage(playerIndex, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
 }
 
+
+static void makeGameSettings()
+{
+  void* buf = worldSettings;
+
+  // the header
+  buf = nboPackUShort (buf, WorldSettingsSize); // length
+  buf = nboPackUShort (buf, MsgGameSettings);   // code
+
+  // the settings
+  buf = nboPackFloat  (buf, BZDBCache::worldSize);
+  buf = nboPackUShort (buf, clOptions->gameStyle);
+  buf = nboPackUShort (buf, maxPlayers);
+  buf = nboPackUShort (buf, clOptions->maxShots);
+  buf = nboPackUShort (buf, numFlags);
+  buf = nboPackFloat  (buf, clOptions->linearAcceleration);
+  buf = nboPackFloat  (buf, clOptions->angularAcceleration);
+  buf = nboPackUShort (buf, clOptions->shakeTimeout);
+  buf = nboPackUShort (buf, clOptions->shakeWins);
+  buf = nboPackUInt   (buf, 0); // FIXME - used to be sync time
+  
+  return;
+}
+
+
 static void sendGameSettings(int playerIndex)
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackFloat(bufStart, BZDBCache::worldSize);
-  buf = nboPackUShort(buf, clOptions->gameStyle);
-  buf = nboPackUShort(buf, maxPlayers);
-  buf = nboPackUShort(buf, clOptions->maxShots);
-  buf = nboPackUShort(buf, numFlags);
-  buf = nboPackFloat(buf, clOptions->linearAcceleration);
-  buf = nboPackFloat(buf, clOptions->angularAcceleration);
-  buf = nboPackUShort(buf, clOptions->shakeTimeout);
-  buf = nboPackUShort(buf, clOptions->shakeWins);
-  buf = nboPackUInt(buf, 0); // FIXME - used to be sync time
-
-  // send it
-  directMessage(playerIndex, MsgGameSettings, (char*)buf-(char*)bufStart,
-		bufStart);
+  GameKeeper::Player *playerData;
+  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (playerData == NULL) {
+    return;
+  }
+  
+  pwrite (*playerData, worldSettings, 4 + WorldSettingsSize);
+  
+  return;
 }
+
 
 static void sendQueryGame(int playerIndex)
 {
@@ -4287,6 +4309,9 @@ int main(int argc, char **argv)
     }
     done = true;
   }
+  
+  // setup the game settings
+  makeGameSettings();
 
   // no original world weapons in replay mode
   if (Replay::enabled()) {
