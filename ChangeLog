@@ -4,6 +4,7 @@
 BZFlag 2.0.0  "Falcor's Despair"
 --------------------------------
 
+* Tool for converting obj to bzw - Jeff Myers
 * Addition of converted ProFont font - Andrew Keyser
 * Added a file syntax section to bzw.5 - Fred Cods
 * Added a bzw.5 manpage to document world file format - Sean Morrison
