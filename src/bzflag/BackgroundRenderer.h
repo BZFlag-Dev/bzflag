@@ -119,6 +119,7 @@ class BackgroundRenderer {
 	// stuff for rain
 	OpenGLGState				rainGState;
 	OpenGLGState				texturedRainState;
+	OpenGLGState				puddleState;
 	std::vector<std::string>	rainTextures;
 	float						rainColor[4][2];
 	float						rainSize[2];
@@ -132,7 +133,14 @@ class BackgroundRenderer {
 		int		 texture;
 	}rain;
 	std::vector<rain>			raindrops;
-	float						lastRainTime;
+	bool									doPuddles;
+	typedef struct {
+		float			pos[3];
+		float			time;
+		int				texture;
+	}puddle;
+	std::vector<puddle>			puddles;
+	float									lastRainTime;
 
     // stuff for sun shadows
     bool		doShadows;
