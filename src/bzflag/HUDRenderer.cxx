@@ -1600,8 +1600,8 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 	coloredFlag = true;
       }
     }
-    playerInfo += std::string("/")
-	       + (flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv);
+    playerInfo += "/";
+    playerInfo += (flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv);
     // back to original color
     if (coloredFlag) {
       playerInfo += ColorStrings[teamIndex];
