@@ -24,7 +24,8 @@
 class BaseDrawable
 {
 public:
-  virtual bool draw ( int texture, int pass, int priority, void* param ){return false;}
+  // virtual bool draw ( int texture, int pass, int priority, void* param ){return false;}
+  virtual bool draw (int, int, int, void*){return false;}
 };
 
 // items for sorted list
