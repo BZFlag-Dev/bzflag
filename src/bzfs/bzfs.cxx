@@ -2675,7 +2675,7 @@ void zapFlag(int flagIndex)
 // Try to penalize winning casuality 
 static float rabbitRank (PlayerInfo& player) {
   if (clOptions->rabbitSelection == RandomRabbitSelection)
-    return bzfrand();
+    return (float)bzfrand();
   
   // otherwise do score-based ranking
   int sum = player.wins + player.losses;
