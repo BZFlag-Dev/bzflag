@@ -335,7 +335,7 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   for (std::vector<Teleporter*>::iterator it_tele = teles.begin();
        it_tele != teles.end(); it_tele++) {
     Teleporter* tele = *it_tele;
-    //TREPAN addToFullList((Obstacle*) tele);
+    addToFullList((Obstacle*) tele);
     addToFullList((Obstacle*) tele->getBackLink());
     addToFullList((Obstacle*) tele->getFrontLink());
   }
