@@ -1580,8 +1580,11 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   // callsign
   playerInfo += player->getCallSign();
   // email in parenthesis
-  if (player->getEmailAddress()[0] != '\0')
-    playerInfo += (std::string(" (") + player->getEmailAddress()) + ")";
+  if (player->getEmailAddress()[0] != '\0') {
+    playerInfo += " (";
+    playerInfo += player->getEmailAddress();
+    playerInfo += ")";
+  }
   // carried flag
   bool coloredFlag = false;
   FlagType* flagd = player->getFlag();
@@ -1593,12 +1596,11 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 	  (flagd == Flags::Laser)       ||
 	  (flagd == Flags::GuidedMissile)) {
 	playerInfo += ColorStrings[WhiteColor];
-	coloredFlag = true;
       } else if (flagd->flagTeam != NoTeam) {
 	// use team color for team flags
 	playerInfo += ColorStrings[flagd->flagTeam];
-	coloredFlag = true;
       }
+      coloredFlag = true;
     }
     playerInfo += "/";
     playerInfo += (flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv);
@@ -1627,6 +1629,9 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);
   if (statusInfo.size() > 0) {
     fm.drawString(xs, y, 0, minorFontFace, minorFontSize, statusInfo);
+  }
+  if (BZDB.isTrue("debugHud")) {
+    printf ("playerInfo: %s\n", playerInfo.c_str()); //FIXME
   }
 
   // draw hunting status

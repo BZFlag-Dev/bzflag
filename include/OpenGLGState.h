@@ -52,6 +52,7 @@ class OpenGLGState {
     static int		getOpaqueStippleIndex();
 
     static void		init();
+    static bool		haveGLContext();
 
     // these are in OpenGLGState for lack of a better place.  register...
     // is for clients to add a function to call when the OpenGL context

@@ -496,6 +496,11 @@ bool SDLDisplay::createWindow() {
     return false;
   } else {
     // init opengl context
+    if (OpenGLGState::haveGLContext()) {
+      printf ("del:CONTEXT: yes\n");
+    } else {
+      printf ("del:CONTEXT: no\n");
+    }
     OpenGLGState::initContext();
     return true;
   }

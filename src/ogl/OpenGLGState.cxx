@@ -1122,6 +1122,11 @@ void OpenGLGState::freeStipple(void*)
 
 void OpenGLGState::init()
 {
+  if (!haveGLContext()) {
+    DEBUG1("OpenGLGState::init(), no context\n");
+    return;
+  }
+
   // initialize GL state to what we expect
   initGLState();
 
@@ -1162,6 +1167,10 @@ void OpenGLGState::unregisterContextInitializer(
 
 void OpenGLGState::initContext()
 {
+  if (!haveGLContext()) {
+    DEBUG1("OpenGLGState::initContext(), no context\n");
+    return;
+  }
 
   // call all of the freeing functions first
   DEBUG1("ContextInitializer::executeFreeFuncs() start\n");
@@ -1387,7 +1396,11 @@ void bzDeleteLists(GLuint base, GLsizei count)
   if (OpenGLGState::getExecutingInitFuncs()) {
     contextInitError ("bzDeleteLists() is having issues");
   }
-  glDeleteLists(base, count);
+  if (OpenGLGState::haveGLContext()) {
+    glDeleteLists(base, count);
+  } else {
+    DEBUG1 ("bzDeleteLists(), no context\n");
+  }
 }
 
 
@@ -1406,8 +1419,34 @@ void bzDeleteTextures(GLsizei count, const GLuint *textures)
   if (OpenGLGState::getExecutingInitFuncs()) {
     contextInitError ("bzDeleteTextures() is having issues");
   }
-  glDeleteTextures(count, textures);
+  if (OpenGLGState::haveGLContext()) {
+    glDeleteTextures(count, textures);
+  } else {
+    DEBUG1 ("bzDeleteTextures(), no context\n");
+  }
 }
+
+
+#ifndef _WIN32
+#include <X11/Xlib.h>
+#include <GL/glx.h>
+bool OpenGLGState::haveGLContext()
+{
+  if (glXGetCurrentContext() != NULL) {
+    return true;
+  } else {
+    return false;
+  }
+}
+#else
+bool OpenGLGState::haveGLContext()
+  if (wglGetCurrentContext() != NULL) {
+    return true;
+  } else {
+    return false;
+  }
+}
+#endif
 
 
 // Local Variables: ***
