@@ -4126,7 +4126,7 @@ static void		playingLoop()
 	targetPoint[1] = eyePoint[1] + myTankDir[1];
 	targetPoint[2] = eyePoint[2] + myTankDir[2];
 #else
-	if (player[roamTrackTank] && (roamView != roamViewFree)) {
+	if ((roamView != roamViewFree) && player[roamTrackTank]) {
 	  RemotePlayer *target = player[roamTrackTank];
 	  const float *targetTankDir = target->getForward();
 	  // fixed camera tracking target
