@@ -2846,9 +2846,9 @@ static bool defineWorld()
   memset( worldDatabase, 0, worldDatabaseSize );
 
   void *buf = worldDatabase;
-  buf = nboPackUShort(buf, mapVersion);
   buf = nboPackUShort(buf, WorldCodeStyle);
   buf = nboPackUShort(buf, 28);// size of the header
+  buf = nboPackUShort(buf, mapVersion);
   buf = nboPackFloat(buf, WorldSize);
   buf = nboPackUShort(buf, clOptions.gameStyle);
   buf = nboPackUShort(buf, maxPlayers);
