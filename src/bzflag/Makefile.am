@@ -24,6 +24,8 @@ bzflag_SOURCES =			\
 	EntryZone.h			\
 	FlashClock.cxx			\
 	FlashClock.h			\
+	ForceFeedback.cxx		\
+	ForceFeedback.h			\
 	FormatMenu.cxx			\
 	FormatMenu.h			\
 	GuidedMissleStrategy.cxx	\

@@ -92,6 +92,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "DirectoryNames.h"
 #include "AnsiCodes.h"
 #include "TextureManager.h"
+#include "ForceFeedback.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -2632,6 +2633,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	playLocalSound(SFX_RUNOVER);
       else
 	playLocalSound(SFX_DIE);
+      ForceFeedback::death();
     } else {
       const float* pos = tank->getPosition();
       if (reason == GotRunOver)
