@@ -155,5 +155,4 @@ EXTRA_libPlatform_a_SOURCES = 		\
  	WinMedia.cxx			\
  	WinMedia.h
 
-EXTRA_DIST = MacBZFlag.icns MacBZFlag-prefix.h NewMedia.cxx NewMedia.h \
-	dsound.h ddraw.h d3dtypes.h
+EXTRA_DIST = MacBZFlag.icns MacBZFlag-prefix.h NewMedia.cxx NewMedia.h

@@ -281,6 +281,10 @@ AC_OUTPUT(Makefile
           src/ogl/Makefile
           src/scene/Makefile
           src/geometry/Makefile
+	  src/geometry/models/Makefile
+	  src/geometry/models/hitank/Makefile
+	  src/geometry/models/medtank/Makefile
+	  src/geometry/models/lowtank/Makefile
           src/bzflag/Makefile
           src/bzfs/Makefile
           src/bzfls/Makefile
