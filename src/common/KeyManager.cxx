@@ -14,9 +14,6 @@
 #pragma warning(4:4503)
 #endif
 
-// BZFlag common header
-#include "common.h"
-
 // interface header
 #include "KeyManager.h"
 
