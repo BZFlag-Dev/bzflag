@@ -494,13 +494,13 @@ static char **parseWorldOptions (const char *file, int &ac)
     }
   }
 
-  const char **av = new const char*[tokens.size()+1];
+  char **av = new char*[tokens.size()+1];
   av[0] = strdup("bzfs");
   ac = 1;
   for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it)
     av[ac++] = strdup((*it).c_str());
 
-  return (char **)av;
+  return av;
 }
 
 
