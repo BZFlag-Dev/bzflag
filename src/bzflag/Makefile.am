@@ -31,6 +31,8 @@ bzflag_SOURCES =			\
 	HUDui.h				\
 	JoinMenu.cxx			\
 	JoinMenu.h			\
+	InputMenu.cxx			\
+	InputMenu.h			\
 	KeyboardMapMenu.cxx		\
 	KeyboardMapMenu.h		\
 	LiserServer.h			\

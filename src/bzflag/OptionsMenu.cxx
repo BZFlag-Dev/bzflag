@@ -46,7 +46,8 @@ extern ControlPanel* controlPanel;
 
 
 OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
-			     guiOptionsMenu(NULL), saveWorldMenu(NULL)
+			     guiOptionsMenu(NULL), saveWorldMenu(NULL),
+			     inputMenu(NULL)
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
@@ -281,6 +282,11 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   label->setLabel("Save World");
   list.push_back(label);
 
+  inputSetting = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Input Setting");
+  list.push_back(label);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -290,6 +296,7 @@ OptionsMenu::~OptionsMenu()
   delete keyboardMapMenu;
   delete guiOptionsMenu;
   delete saveWorldMenu;
+  delete inputMenu;
 }
 
 void OptionsMenu::execute()
@@ -317,6 +324,10 @@ void OptionsMenu::execute()
   else if (focus == saveWorld) {
     if (!saveWorldMenu) saveWorldMenu = new SaveWorldMenu;
     HUDDialogStack::get()->push(saveWorldMenu);
+  }
+  else if (focus == inputSetting) {
+    if (!inputMenu) inputMenu = new InputMenu;
+    HUDDialogStack::get()->push(inputMenu);
   }
 }
 
