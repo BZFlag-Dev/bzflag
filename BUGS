@@ -55,8 +55,6 @@ recent bugs
   might be related to a rapidly repeating world weapon as well (like once
   a second).
 
-- sending bzfs a single byte udp packet sends bzfs into lala land. (trepan)
-
 - bzfrelay is broken for current net protocol. Should be just forwarding TCP
   and UDP packets on a single port.  Could likely just be removed as there are
   other apps that do bare forwarding and that is all that is needed now.
