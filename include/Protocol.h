@@ -14,7 +14,7 @@
  * Communication protocol constants
  */
 
-#ifndef BZF_PROTOCOL_H
+#ifndef	BZF_PROTOCOL_H
 #define	BZF_PROTOCOL_H
 
 #include "common.h"
@@ -28,9 +28,9 @@
 // changes that make the new version incompatible with older servers
 // or clients.  The revision should be incremented for minor changes
 // that don't cause incompatibility.
-// adding new flags or changing the communication protocol require
+// adding new flags or changing the communication protocol requires
 // minor release number changes.  adding new graphics effects normally
-// only require incrementing the revision number.
+// only requires incrementing the revision number.
 
 // well known service port number for bzflag server
 const int		ServerPort = 5154;
@@ -67,7 +67,7 @@ const uint16_t		MsgAlive = 0x616c;			// 'al'
 const uint16_t		MsgAddPlayer = 0x6170;			// 'ap'
 const uint16_t		MsgAudio = 0x6175;			// 'au'
 const uint16_t		MsgCaptureFlag = 0x6366;		// 'cf'
-const uint16_t	  MsgCacheURL = 0x6375;		   // 'cu'
+const uint16_t		MsgCacheURL = 0x6375;			// 'cu'
 const uint16_t		MsgDropFlag = 0x6466;			// 'df'
 const uint16_t		MsgEnter = 0x656e;			// 'en'
 const uint16_t		MsgExit = 0x6578;			// 'ex'
