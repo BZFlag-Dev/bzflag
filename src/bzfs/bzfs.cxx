@@ -383,7 +383,7 @@ private:
       b[3] = atoi(ip);
 
 	mask.s_addr= ((unsigned int)b[0] << 24) |
-        ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | b[3];
+        ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3];
     return true;
   }
 
