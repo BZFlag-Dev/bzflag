@@ -99,6 +99,10 @@ SOURCE=..\..\src\bzadmin\BZAdminClient.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzadmin\BZAdminUI.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzadmin\OptionParser.cxx
 # End Source File
 # Begin Source File
