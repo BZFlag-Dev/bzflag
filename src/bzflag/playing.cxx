@@ -4471,12 +4471,8 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
 		(side[3] = region->classify(p[3], p[0])) == 1)
       continue;
     if (side[0] == -1 && side[1] == -1 && side[2] == -1 && side[3] == -1) {
-      BzfRegion* temp = rgnList[k];
       rgnList[k] = rgnList[numRegions-1];
-      rgnList[numRegions-1] = temp;
-      temp = rgnList[numRegions-1];
       rgnList[numRegions-1] = rgnList[rgnList.size()-1];
-      rgnList[rgnList.size()-1] = temp;
       rgnList.pop_back();
       numRegions--;
       k--;
