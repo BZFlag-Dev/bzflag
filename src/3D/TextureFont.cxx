@@ -60,14 +60,11 @@ bool TextureFont::fmtRead(OSFile &file, std::string expectedLeft, std::string &r
   std::string tmpBuf;
   static int line = 0;
 
-  DEBUG2("Looking for %s\n",expectedLeft.c_str());
-
   // allow for blank lines with native or foreign linebreaks, comment lines
   while (tmpBuf.size() == 0 || tmpBuf[0] == '#' || tmpBuf[0] == 10 || tmpBuf[0] == 13) {
     tmpBuf = file.readLine();
     // keep a line counter
     line++;
-    DEBUG2("Got %s, line %d\n",tmpBuf.c_str(), line);
   }
 
   if (tmpBuf.substr(0, tmpBuf.find(":")) == expectedLeft) {
