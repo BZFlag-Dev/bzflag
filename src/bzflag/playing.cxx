@@ -1777,11 +1777,11 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
         sprintf(name, "quickMessage%d", msgno);
         buf = nboPackUByte(buf, AllPlayers);
       }
-      if (resources->hasValue(name)) {
+      if (BZDB->isSet(name)) {
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer,
-		resources->getValue(name).c_str(),
+		BZDB->get(name).c_str(),
 		MessageLen);
 	nboPackString(buf, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
@@ -6334,7 +6334,7 @@ void			startPlaying(BzfDisplay* _display,
   sceneRenderer = &renderer;
   resources = &_resources;
   mainWindow = &sceneRenderer->getWindow();
-  
+
   // register some commands
   for (unsigned int c = 0; c < countof(commandList); ++c) {
     CMDMGR->add(commandList[c].name, commandList[c].func, commandList[c].help);
