@@ -195,7 +195,7 @@ public:
   // callback forwarder
   static void packIt(const std::string &key, void *pv)
   {
-     reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
+    reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
   }
 
   void sendPackVars(const std::string &key)
