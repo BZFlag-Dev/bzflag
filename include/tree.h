@@ -120,7 +120,7 @@ inline void destructor(T1* p)
 template<class T>
 struct tree_node_ {
 		tree_node_<T> *parent;
-	   tree_node_<T> *first_child, *last_child;
+		tree_node_<T> *first_child, *last_child;
 		tree_node_<T> *prev_sibling, *next_sibling;
 		T data;
 };

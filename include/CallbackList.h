@@ -41,7 +41,7 @@ private:
 private:
 	typedef std::pair<F, void*> Item;
 	typedef std::list<Item> ItemList;
-	typedef std::map<Item, ItemList::iterator> ItemMap;
+	typedef std::map<Item, typename ItemList::iterator> ItemMap;
 
 	ItemList			items;
 	ItemMap				itemMap;
@@ -68,7 +68,7 @@ void					CallbackList<F>::add(F callback, void* userData)
 {
 	Item item = std::make_pair(callback, userData);
 	if (itemMap.find(item) == itemMap.end()) {
-		ItemList::iterator index = items.insert(items.end(), item);
+		typename ItemList::iterator index = items.insert(items.end(), item);
 		itemMap.insert(std::make_pair(item, index));
 	}
 }
@@ -77,7 +77,7 @@ template <class F>
 void					CallbackList<F>::remove(F callback, void* userData)
 {
 	Item item = std::make_pair(callback, userData);
-	ItemMap::iterator index = itemMap.find(item);
+	typename ItemMap::iterator index = itemMap.find(item);
 	if (index != itemMap.end()) {
 		items.erase(index->second);
 		itemMap.erase(index);
@@ -101,10 +101,10 @@ void					CallbackList<F>::doIterate(
 	// occur to the list.  as we invoke each callback we move the
 	// dummy item forward.
 	Item dummyItem = std::make_pair((F)NULL, (void*)NULL);
-	ItemList::iterator dummyIndex = items.insert(items.begin(), dummyItem);
+	typename ItemList::iterator dummyIndex = items.insert(items.begin(), dummyItem);
 
 	// now invoke each callback
-	ItemList::iterator index = dummyIndex;
+	typename ItemList::iterator index = dummyIndex;
 	for (; ++index != items.end(); index = dummyIndex) {
 		// move dummy past the item we're about to invoke
 		items.splice(dummyIndex, items, index);
