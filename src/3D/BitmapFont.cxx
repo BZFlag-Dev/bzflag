@@ -160,8 +160,6 @@ void BitmapFont::drawString(float scale, GLfloat color[3], const char *str,
       glBitmap(w, h, float(-fontMetrics[charToUse].initialDist), 0, dx, 0, bitmaps[charToUse]);
     }
   }
-  if (color[0] >= 0)
-    glColor4f(1, 1, 1, 1);
 }
 
 
