@@ -63,7 +63,7 @@ void			StateDatabase::set(const std::string& name,
     index->second.value  = value;
     index->second.isSet  = true;
     index->second.isTrue = (index->second.value != "0" &&
-			    index->second.value != "false" &&
+			    index->second.value != "False" &&
 			    index->second.value != "false" &&
 			    index->second.value != "FALSE" &&
 			    index->second.value != "no" &&
