@@ -21,6 +21,8 @@ BZFlag 1.7e3
 * warnings - Dave Brosius
 * saver placement - Frank Thilo
 * don't color shots when CB - Valery Fouques
+* jump while typing - Valery Fouques
+* don't lock on paused or not responding - Valery Fouques
 
 BZFlag 1.7e2
 ------------

@@ -343,6 +343,10 @@ class ComposeDefaultKey : public HUDuiDefaultKey {
 boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   boolean sendIt;
+  if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
+    // jump while typing
+    myTank->jump();
+  }
   switch (key.ascii) {
     case 3:	// ^C
     case 27:	// escape
@@ -2493,6 +2497,8 @@ static void		setTarget()
     if (a < 0.15f &&					// about 8.5 degrees
 	myTank->getFlag() == GuidedMissileFlag &&	// am i locking on?
 	player[i]->getFlag() != StealthFlag &&		// can't lock on stealth
+	!player[i]->isPaused() &&			// can't lock on paused
+	!player[i]->isNotResponding() &&		// can't lock on not responding
 	d < bestDistance) {				// is it better?
       bestTarget = player[i];
       bestDistance = d;
