@@ -681,9 +681,6 @@ void			SceneRenderer::render(
 
     doRender();
 
-	if (background)
-		background->renderEnvironment(*this);
-
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)
       glDisable(GL_POLYGON_OFFSET_FILL);
@@ -835,6 +832,10 @@ void			SceneRenderer::doRender()
   // NOTE -- this should go into a separate thread
   // now draw each render node list
   OpenGLGState::renderLists();
+
+  // draw the environment now so it's behind transperant things
+  if (background)
+	  background->renderEnvironment(*this);
 
   // finally draw all the stuff in the ordered list.  turn
   // off depth buffer updates for potentially transparent stuff.
