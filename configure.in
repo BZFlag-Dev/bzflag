@@ -112,7 +112,7 @@ LDFLAGS="$LDFLAGS $X_LIBS"
 AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 case $host_os in
   solaris*)
-    GLIBS="-lresolv -laudio $GLIBS"
+    GLIBS="-lresolv $GLIBS"
     LIBS="-lsocket -lnsl -lresolv"
     LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
     ;;
@@ -173,43 +173,11 @@ AC_TRY_LINK([
 [AC_MSG_WARN([adns seems to not be available on your system.  See http://www.chiark.greenend.org.uk/~ian/adns/ if you want to be able to use hostmask based bans.])])
 
 ac_cv_search_glBegin=no
-ac_cv_search_gluScaleImage=no
-ac_func_search_save_LIBS=$LIBS
+ac_cv_search_gluScaleImage=yes
 
-LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
-AC_TRY_LINK([#include <OpenGL/gl.h>],
-            [glBegin(GL_POINTS)],
-            [ac_cv_search_glBegin="-framework OpenGL"])
-for ac_lib in opengl32 GL2 GL; do
-  LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-  AC_TRY_LINK([#include <GL/gl.h>],
-              [glBegin(GL_POINTS)],
-              [ac_cv_search_glBegin="-l$ac_lib"
-               break])
-done
-if test "$ac_cv_search_glBegin" != no; then
-  GLIBS="$ac_cv_search_glBegin $GLIBS"
-  if test "$ac_cv_search_glBegin" = -lGL2; then
-    AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
-  fi
+LIBS="-lgl -lglu $LIBS"
+GLIBS="-lgl -lglu $GLIBS"
 
-  LIBS="-framework OpenGL $ac_func_search_save_LIBS"
-  AC_TRY_LINK([#include <OpenGL/glu.h>],
-              [gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)],
-              [ac_cv_search_gluScaleImage="-framework OpenGL"])
-  for ac_lib in glu32 GLU; do
-    LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-    AC_TRY_LINK([#include <GL/glu.h>],
-                [gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)],
-		[ac_cv_search_gluScaleImage="-l$ac_lib"
-		 break])
-  done
-  if test "$ac_cv_search_gluScaleImage" != no; then
-    GLIBS="$ac_cv_search_gluScaleImage $GLIBS"
-  fi
-fi
-
-LIBS=$ac_func_search_save_LIBS
 AC_SUBST(GLIBS)
 
 if test $host_os = mingw32; then
@@ -441,10 +409,9 @@ fi;
 # do we want to build our own regex lib
 AC_ARG_WITH(regex, [  --with-regex            Use bzflag regex lib])
 if test x$with_regex != xno ; then
-   AM_CONDITIONAL(BUILD_REGEX, true)
    AC_DEFINE(BUILD_REGEX, 1, [Building regex])
 fi;
-
+AM_CONDITIONAL(BUILD_REGEX, test "x$with_regex" != "xno")
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
