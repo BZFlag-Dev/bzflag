@@ -751,9 +751,22 @@ static void openListServer()
       return;
     }
 
+    // Make our connection come from our serverAddress in case we have
+    // multiple/masked IPs so the list server can verify us.
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr = serverAddress;
+
+    // assign the address to the socket
+    if (bind(link.socket, (CNCTType*)&addr, sizeof(addr)) < 0) {
+      closeListServer();
+      return;
+    }
+
     // connect.  this should fail with EINPROGRESS but check for
     // success just in case.
-    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port   = htons(link.port);
     addr.sin_addr   = link.address;
