@@ -225,6 +225,9 @@ public:
       CursesMenuItem objects. */
   ~CursesMenu();
   
+  /** This function changes the menu header. */
+  void setHeader(const std::string& newHeader);
+  
   /** This function adds an item to the menu. The item has to be 
       dynamically allocated, and this CursesMenu object will delete the
       item when it's no longer used. */
@@ -256,6 +259,7 @@ public:
   
 protected:
 
+  std::string header;
   std::vector<CursesMenuItem*> items;
   int selection;
   WINDOW* window;

@@ -387,6 +387,7 @@ void CursesUI::toggleMenu() {
 
 
 void CursesUI::initMainMenu(CursesMenu& menu) {
+  menu.setHeader("MAIN MENU");
   menu.clear();
   menu.addItem(new SubmenuCMItem("Show players",
 				  &CursesUI::initPlayerMenu));
@@ -400,6 +401,7 @@ void CursesUI::initMainMenu(CursesMenu& menu) {
 
 
 void CursesUI::initPlayerMenu(CursesMenu& menu) {
+  menu.setHeader("PLAYERLIST");
   menu.clear();
   PlayerIdMap::const_iterator it;
   for (it = menu.players.begin(); it != menu.players.end(); ++it)
@@ -411,6 +413,7 @@ void CursesUI::initPlayerMenu(CursesMenu& menu) {
 
 
 void CursesUI::initBanMenu(CursesMenu& menu) {
+  menu.setHeader("BANLIST");
   menu.clear();
   menu.addItem(new SubmenuCMItem("Not implemented - go back",
 				  &CursesUI::initMainMenu));
@@ -418,6 +421,7 @@ void CursesUI::initBanMenu(CursesMenu& menu) {
 
 
 void CursesUI::initServerVarMenu(CursesMenu& menu) {
+  menu.setHeader("SERVER VARIABLE EDITOR");
   menu.clear();
   BZDB.iterate(&CursesUI::addBZDBCMItem, &menu);
   menu.addItem(new SubmenuCMItem("Back to main menu",
@@ -431,6 +435,7 @@ void CursesUI::addBZDBCMItem(const std::string& name, void* menu) {
 
 
 void CursesUI::initFilterMenu(CursesMenu& menu) {
+  menu.setHeader("MESSAGE FILTER EDITOR");
   menu.clear();
   menu.addItem(new SubmenuCMItem("Not implemented - go back",
 				  &CursesUI::initMainMenu));

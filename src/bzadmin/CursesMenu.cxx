@@ -259,6 +259,11 @@ CursesMenu::~CursesMenu() {
 }
 
 
+void CursesMenu::setHeader(const std::string& newHeader) {
+  header = newHeader;
+}
+
+
 void CursesMenu::addItem(CursesMenuItem* item) {
   items.push_back(item);
 }
@@ -287,18 +292,21 @@ void CursesMenu::showMenu() {
   w = x2 - x1;
   h = y2 - y1;
   
+  wmove(window, 0, w / 2 - header.size() / 2);
+  waddstr(window, header.c_str());
+  
   // this magic should scroll the menu so that the selected menu item
   // always is visible
-  int start = selection - (h / 2 - 1);
-  start = (start + (h - 2) > (signed)items.size() ? 
-	   items.size() - (h - 2) : start);
+  int start = selection - (h / 2 - 2);
+  start = (start + (h - 3) > (signed)items.size() ? 
+	   items.size() - (h - 3) : start);
   start = (start < 0 ? 0 : start);
-  int end = start + (h - 2);
+  int end = start + (h - 3);
   end = ((unsigned)end > items.size() ? items.size() : end);
   
   // show the menu items
   for (int i = start; i < end; ++i)
-    items[i]->showItem(window, 1 + (i - start), 10, w - 20, i == selection);
+    items[i]->showItem(window, 2 + (i - start), 10, w - 20, i == selection);
   
   // draw a line at the bottom of the menu window
   wmove(window, h - 1, 0);
