@@ -46,8 +46,8 @@ void WorldWeapons::fire()
       firingInfo.lifetime = ReloadTime;
       firingInfo.shot.player = ServerPlayer;
       memmove(firingInfo.shot.pos, w->origin, 3 * sizeof(float));
-      firingInfo.shot.vel[0] = ShotSpeed*cos(w->direction) - ShotSpeed*sin(w->direction);
-      firingInfo.shot.vel[1] = ShotSpeed*sin(w->direction) + ShotSpeed*cos(w->direction);
+      firingInfo.shot.vel[0] = ShotSpeed*cos(w->direction);
+      firingInfo.shot.vel[1] = ShotSpeed*sin(w->direction);
       firingInfo.shot.vel[2] = 0.0f;
       firingInfo.shot.id = worldShotId++;
       if (worldShotId > 30) // Maximum of 30 world shots
