@@ -29,7 +29,7 @@
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
 #ifdef HAVE_SDL
-#include <SDL/SDL.h>
+#include "SDL.h"
 #endif
 #include "bzfio.h"
 #include <fstream>
@@ -1198,7 +1198,10 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("zbuffersplit"))
       renderer.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
     if (BZDB.isSet("texture")) {
+#ifdef _MSC_VER
+            // Suppose Pat want to remind himself
 	    { int patlabor_get_tm_to_set_texture; }
+#endif
 
 //      OpenGLTexture::setFilter(BZDB.get("texture"));
     }
