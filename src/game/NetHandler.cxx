@@ -69,7 +69,7 @@ int NetHandler::fdIsSet(fd_set *set) {
 
 int NetHandler::send(const void *buffer, size_t length) {
 
-  int n = ::send(fd, (const char *)buffer, length, 0);
+  int n = ::send(fd, (const char *)buffer, (int)length, 0);
   if (n >= 0) 
     return n;
 
@@ -187,7 +187,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
 
     // append data
     memmove(outmsg + outmsgOffset + outmsgSize, buffer, length);
-    outmsgSize += length;
+    outmsgSize += (int)length;
   }
   return 0;
 }
@@ -310,7 +310,7 @@ void NetHandler::udpSend(int udpSocket, const void *b, size_t l) {
     return;
   }
 #endif
-  sendto(udpSocket, (const char *)b, l, 0, (struct sockaddr*)&uaddr,
+  sendto(udpSocket, (const char *)b, (int)l, 0, (struct sockaddr*)&uaddr,
 	 sizeof(uaddr));
 }
 

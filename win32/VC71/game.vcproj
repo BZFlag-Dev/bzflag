@@ -104,6 +104,9 @@
 				RelativePath="..\..\src\game\CommandsStandard.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\NetHandler.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\VotingArbiter.cxx">
 			</File>
 		</Filter>
@@ -113,6 +116,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\include\CommandsStandard.h">
+			</File>
+			<File
+				RelativePath="..\..\include\NetHandler.h">
 			</File>
 			<File
 				RelativePath="..\..\include\VotingArbiter.h">
