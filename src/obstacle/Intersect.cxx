@@ -14,25 +14,6 @@
 #include "common.h"
 #include "Intersect.h"
 
-bool			testCircleCircle(const float* o1, float r1,
-					const float* o2, float r2)
-{
-  const float x = o1[0] - o2[0];
-  const float y = o1[1] - o2[1];
-  const float r = r1 + r2;
-  return (x * x + y * y <= r * r);
-}
-
-bool			testSphereSphere(const float* o1, float r1,
-					const float* o2, float r2)
-{
-  const float x = o1[0] - o2[0];
-  const float y = o1[1] - o2[1];
-  const float z = o1[2] - o2[2];
-  const float r = r1 + r2;
-  return (x * x + y * y + z * z <= r * r);
-}
-
 // get angle of normal vector to axis aligned rect centered at origin by point p
 static float		getNormalOrigRect(const float* p, float dx, float dy)
 {
@@ -176,16 +157,6 @@ Ray			rayMinusRay(const Ray& r1, float t1,
   d[1] = r1.getDirection()[1] - r2.getDirection()[1];
   d[2] = r1.getDirection()[2] - r2.getDirection()[2];
   return Ray(p, d);
-}
-
-float			rayClosestToOrigin(const Ray& r)
-{
-  const float* d = r.getDirection();
-  if (d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0) return 0.0;
-
-  const float* p = r.getOrigin();
-  return -(p[0] * d[0] + p[1] * d[1] + p[2] * d[2]) /
-		(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
 }
 
 float			rayAtDistanceFromOrigin(const Ray& r, float radius)

@@ -20,14 +20,6 @@
 #include "common.h"
 #include "Ray.h"
 
-// true iff circles (in z = const plane) intersect
-bool			testCircleCircle(const float* o1, float r1,
-					const float* o2, float r2);
-
-// true iff spheres intersect
-bool			testSphereSphere(const float* o1, float r1,
-					const float* o2, float r2);
-
 // returns normal to 2d rect (size 2dx x 2dy) by point p
 void			getNormalRect(const float* p, const float* boxPos,
 					float boxAngle, float dx,
@@ -41,9 +33,6 @@ bool			testRectCircle(const float* boxPos, float boxAngle,
 // ray r1 started at time t1 minus ray r2 started at time t2
 Ray			rayMinusRay(const Ray& r1, float t1,
 					const Ray& r2, float t2);
-
-// return t at which ray passes closest to origin
-float			rayClosestToOrigin(const Ray& r);
 
 // return t at which ray passes through sphere at origin of given radius
 float			rayAtDistanceFromOrigin(const Ray& r, float radius);
