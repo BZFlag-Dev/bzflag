@@ -17,6 +17,8 @@
 #include "VotingBooth.h"
 
 
+const short int VotingBooth::RETRACTED_VOTE=-2;
+
 /* private */
 
 /* protected */

@@ -111,6 +111,10 @@ SOURCE=..\src\bzfs\CmdLineOptions.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\commands.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzfs\FlagInfo.cxx
 # End Source File
 # Begin Source File
@@ -167,6 +171,10 @@ SOURCE=..\src\bzfs\CmdLineOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\commands.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
@@ -200,6 +208,10 @@ SOURCE=..\src\bzfs\Permissions.h
 # Begin Source File
 
 SOURCE=..\include\Ping.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\PlayerInfo.h
 # End Source File
 # Begin Source File
 

@@ -40,7 +40,7 @@ class VotingBooth
 {
  private:
 
-  static const short int RETRACTED_VOTE=-2;
+  static const short int RETRACTED_VOTE;
 
   /** question that is voted upon (optionally provided)
    */

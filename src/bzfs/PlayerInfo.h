@@ -15,8 +15,10 @@
 
 // system headers
 #include <string>
+#ifndef _WIN32
 #include <unistd.h>
 #include <sys/socket.h>
+#endif
 
 // bzflag library headers
 #include "global.h"
