@@ -54,9 +54,14 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
   }
   else if (lastTime != 0) {
     unsigned int now = (unsigned int)timeGetTime();
-    unsigned int diff = now - lastTime;
-    if (diff < 0) diff = 0;			// sanity checks
-    else if (diff > 10000) diff = 10000;
+    unsigned int diff;
+    if (now <= lastTime) {
+      diff = 0;
+    } else {
+      diff = now - lastTime;
+      if (diff > 10000)
+        diff = 10000;
+    }
     currentTime += 1.0e-3f * (float)diff;
     lastTime = now;
   }
