@@ -58,7 +58,7 @@ class Address {
 };
 
 typedef uint8_t		PlayerId;
-const int		PlayerIdPLen = sizeof(PlayerId);
+const int		PlayerIdPLen = 8;
 
 // FIXME - enum maybe? put into namespace or class cage?
 const PlayerId		NoPlayer = 255;
