@@ -4151,29 +4151,29 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      if ((player[t].lastState.pos[2] != state.pos[2])
 	      ||  (player[t].lastState.velocity[2] != state.velocity[2])
 	      ||  ((state.status & PlayerState::Alive) == 0)) {
-   		logOnly = true;
+		logOnly = true;
 	      }
 	    }
 
 	    // allow a 5% tolerance level for speed
-	    float realtol=1.0f;
-	    if(speedTolerance>1.0f)
-	    realtol = speedTolerance;
+	    float realtol = 1.0f;
+	    if (speedTolerance > 1.0f)
+	      realtol = speedTolerance;
 	    maxPlanarSpeedSqr *= realtol;
 	    if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	      if (logOnly) {
-		   DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-		   player[t].callSign, t,
-		   sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+		player[t].callSign, t,
+		sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	      }
 	      else {
-		   char message[MessageLen];
-		   DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-		   player[t].callSign, t,
-		   sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		   strcpy(message, "Autokick: Tank moving too fast, Update your client." );
-		   sendMessage(ServerPlayer, t, message, true);
-		   removePlayer(t, "too fast");
+		char message[MessageLen];
+		DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+		player[t].callSign, t,
+		sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		strcpy(message, "Autokick: Tank moving too fast, Update your client." );
+		sendMessage(ServerPlayer, t, message, true);
+		removePlayer(t, "too fast");
 	      }
 	      break;
 	    }
