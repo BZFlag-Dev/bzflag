@@ -26,6 +26,8 @@ namespace TrackMarks {
 
   void setUserFade(float);
   float getUserFade();
+  
+  const float updateTime = (1.0f / 20.0f);
 }
 
 

@@ -26,6 +26,7 @@
 #include "TimeKeeper.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "Ray.h"
 #include "CollisionManager.h"
 #include "PhysicsDriver.h"
 #include "bzfgl.h"
@@ -42,10 +43,17 @@ enum TrackType {
   puddle = 1
 };
 
+enum TrackSides {
+  LeftTread =  (1 << 0),
+  RightTread = (1 << 1),
+  BothTreads = (LeftTread | RightTread)
+};
+
 typedef struct {
   float pos[3];
   float angle;
   float scale;
+  char sides;
   int phydrv;
   TimeKeeper startTime;
 } TrackEntry;
@@ -81,6 +89,7 @@ static void setup();
 static void initContext(void* data);
 static void drawPuddle(const TrackEntry& te, float lifetime);
 static void drawTreads(const TrackEntry& te, float lifetime);
+static bool onBuilding(const float pos[3]);
 
 
 void TrackMarks::init()
@@ -149,12 +158,15 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
   }
 
   te.startTime = TimeKeeper::getCurrent();
+  te.pos[0] = pos[0];
+  te.pos[1] = pos[1];
+  te.pos[2] = pos[2] + TextureHeightOffset;
   memcpy (te.pos, pos, sizeof(float[3]));
   if (pos[2] > 0.0f) {
     te.pos[2] += TextureHeightOffset;
   }
   te.scale = scale;
-  te.angle = angle * (180.0f / M_PI) ;
+  te.angle = angle * (180.0f / M_PI); // in degress, for glRotatef()
   
   // only use the physics driver if it matters
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
@@ -170,13 +182,71 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
     }
   }
 
-  if (type == treads) {
-    TreadsList.push_back(te);
-  } else {
+  if (type == puddle) {
+    // Puddle track marks
     PuddleList.push_back(te);
+  }
+  else {
+    // Treads track marks
+    if (UserFadeScale < 1.0f) {
+      // do not cull the air marks
+      te.sides = BothTreads;
+      TreadsList.push_back(te);
+    } 
+    else if (pos[2] == 0.0f) {
+      // no culling required
+      te.sides = BothTreads;
+      TreadsList.push_back(te);
+    }
+    else {
+      // this user wants it all, cull the air marks
+      te.sides = 0;
+      float markPos[3];
+      markPos[2] = pos[2] - TextureHeightOffset;
+      const float dx = -sinf(angle) * TreadMiddle;
+      const float dy = +cosf(angle) * TreadMiddle;
+      // left tread
+      markPos[0] = pos[0] + dx;
+      markPos[1] = pos[1] + dy;
+      if (onBuilding(markPos)) {
+        te.sides |= LeftTread;
+      }
+      // right tread
+      markPos[0] = pos[0] - dx;
+      markPos[1] = pos[1] - dy;
+      if (onBuilding(markPos)) {
+        te.sides |= RightTread;
+      }
+      // add if required
+      if (te.sides != 0) {
+        TreadsList.push_back(te);
+      } else {
+        return false;
+      }
+    }
   }
   
   return true;
+}
+
+
+static bool onBuilding(const float pos[3])
+{
+  const float dir[3] = {0.0f, 0.0f, -1.0f};
+  const float org[3] = {pos[0], pos[1], pos[2] + 0.1f};
+  Ray ray(org, dir);
+  const ObsList* olist = COLLISIONMGR.rayTest (&ray, 0.5f);
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    const float top = obs->getPosition()[2] + obs->getHeight();
+    if (fabsf(top - pos[2]) < 0.2f) {
+      const float hitTime = obs->intersect(ray);
+      if (hitTime >= 0.0f) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 
@@ -374,19 +444,12 @@ static void drawTreads(const TrackEntry& te, float lifetime)
 
     const float halfWidth = 0.5f * TreadMarkWidth;
 
-    glBegin(GL_QUADS);
-    {
-      // glRectf() if no texturing ...
-      glVertex3f(-halfWidth, +TreadOutside, 0.0f);
-      glVertex3f(-halfWidth, +TreadInside, 0.0f);
-      glVertex3f(+halfWidth, +TreadInside, 0.0f);
-      glVertex3f(+halfWidth, +TreadOutside, 0.0f);
-      glVertex3f(-halfWidth, -TreadInside, 0.0f);
-      glVertex3f(-halfWidth, -TreadOutside, 0.0f);
-      glVertex3f(+halfWidth, -TreadOutside, 0.0f);
-      glVertex3f(+halfWidth, -TreadInside, 0.0f);
+    if ((te.sides & LeftTread) != 0) {
+      glRectf(-halfWidth, +TreadInside, +halfWidth, +TreadOutside);
     }
-    glEnd();
+    if ((te.sides & RightTread) != 0) {
+      glRectf(-halfWidth, -TreadOutside, +halfWidth, -TreadInside);
+    }
   }
   glPopMatrix();
 

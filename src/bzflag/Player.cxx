@@ -368,7 +368,8 @@ void Player::updateJumpJets(float dt)
 void Player::updateTrackMarks()
 {
   if (isAlive() && ((state.status & PlayerState::Falling) == 0)) {
-    if ((TimeKeeper::getCurrent() - lastTrackDraw) > 0.050f) {
+    const float lifeTime = TimeKeeper::getCurrent() - lastTrackDraw;
+    if (lifeTime > TrackMarks::updateTime) {
       bool drawMark = true;
       float markPos[3];
       markPos[2] = state.pos[2];
