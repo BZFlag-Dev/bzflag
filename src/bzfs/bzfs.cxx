@@ -5023,7 +5023,8 @@ int main(int argc, char **argv)
 		pollAction = "kicked.";
 	      else
 		pollAction = action;
-	      sprintf(message, "%s has been %s", target.c_str(), pollAction);
+	      sprintf(message, "%s has been %s", target.c_str(),
+		      pollAction.c_str());
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 
 	      /* regardless of whether or not the player was found, if the poll
