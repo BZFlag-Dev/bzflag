@@ -67,6 +67,7 @@ void FlagInfo::setSize(int _numFlags)
   if (_numFlags > 1000000) {
     std::cerr << "WARNING: FlagInfo::setSize was given an insane flag count of " << _numFlags << std::endl;
     std::cerr << "clamping to 1000000 flags just for kicks" << std::endl;
+    _numFlags = 100000;
   }
 
   numFlags = _numFlags;
