@@ -4670,9 +4670,11 @@ static void shotFired(int playerIndex, void *buf, int len)
     repack = true;
   }
 
-  // FIXME, wrong byte order? verify shot number
-  //if (firingInfo.shot.id > clOptions.maxShots) {
-  //  return;
+  // verify shot number
+  if ((firingInfo.shot.id & 0xff) > clOptions.maxShots - 1) {
+    DEBUG2("shot id out of range %d %d\n", firingInfo.shot.id & 0xff, clOptions.maxShots);
+    return;
+  }
 
   float shotSpeed = ShotSpeed;
   float tankSpeed = TankSpeed;
