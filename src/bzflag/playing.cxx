@@ -2921,10 +2921,18 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 
   // id is slot, check if it's empty
   const int i = id;
+
+  // sanity check
+  if (i < 0) {
+    printError(string_util::format("Invalid player identification (%d)", i));
+    fprintf(stderr, "WARNING: invalid player identification when adding player (id is %d)\n", i);
+    return NULL;
+  }
+
   if (player[i]) {
-    // we're not in synch with server -> help!
-    printError("Server error when adding player");
-    serverError = true;
+    // we're not in synch with server -> help!  not a good sign, but not fatal.
+    printError("Server error when adding player, player already added");
+    fprintf(stderr, "WARNING: player already exists at location with id %d\n", i);
     return NULL;
   }
 
@@ -3092,7 +3100,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
     }
 #endif
-    if (id == myTank->getId()) break;		// that's odd -- it's me!
+    if (id == myTank->getId()) {
+      fprintf(stderr, "WARNING: found my own id in MsgAddPlayer packet\n");
+      break;		// that's odd -- it's me!
+    }
     addPlayer(id, msg, true);
     updateNumPlayers();
     checkScores = true;
