@@ -8,9 +8,9 @@ aclocal \
 
 if [ -z "$1" ] ; then
  echo BZFlag sources are now prepared. To build here, run:
- echo " ./configure --enable-robots"
+ echo " ./configure"
  echo " make"
 else
- ./configure --enable-robots
+ ./configure
  make
 fi

@@ -145,17 +145,13 @@ fi
 
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
 AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
-
 if test x$enable_debug = xyes; then
    AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
 fi
 
-#
-# comment to disable robot tanks
-#
-AC_ARG_ENABLE(robots, [  --enable-robots         enable robots], [], enable_robots=yes)
-if test x$enable_robots = xyes; then
-   AC_DEFINE(ROBOT, 1, [Enabling Robots])
+AC_ARG_ENABLE(robots, [  --disable-robots        disable robots], disable_robots=yes, [])
+if test x$disable_robots != xyes; then
+  AC_DEFINE(ROBOT, 1, [Enabling Robots])
 fi
 
 AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR", 
