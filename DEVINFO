@@ -162,7 +162,9 @@ code serves for examples but some rules:
 
   4)  if *either* the if block or else block requires brackets then
       they both get brackets.  if neither requires brackets then use
-      brackets on both or neither at your discretion.
+      brackets on both or neither at your discretion. In case both
+      styles are allowed, don't change the existing code just because
+      it is not coded like you prefer.
 
   5)  when using `delete' or `delete[]' don't bother to test the
       pointer if it's NULL first.  use new and delete rather than
@@ -204,6 +206,15 @@ follow suit.  Non-conformant code may be fixed.  Patches to
 non-conformant code should follow the non-conformant code's style if
 following the rules would cause an ugly mess.
 
+
+CVS commit
+=======
+
+Make atomic changes in a way that a system will be working, or at
+least will be buildable, before and after the commit.
+(CVS does not enforce atomic changes)
+Try to separate big commit, involving multiple functionality changes,
+in smaller coherent chunk; in case of bug, they can be simply undone.
 
 Testing
 =======
