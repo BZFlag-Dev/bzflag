@@ -20,7 +20,7 @@ endif
 
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_CPPFLAGS = $(SDL_CFLAGS)
+AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
 
 EXTRA_DIST =				\
 	BZFlag_Prefix.h			\
