@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- players gets stuck for no reason, can move or turn, but can shoot
+  so far only seen it in ctf mode, happened twice on pop in at base
+  xmission
+
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
 - OS X client gamma on a secondary display set as main display uses the wrong
