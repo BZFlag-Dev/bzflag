@@ -320,7 +320,7 @@ inline int			SceneRenderer::useQuality() const
 inline void SceneRenderer::addRenderNode(RenderNode* node,
 					 const OpenGLGState* gstate)
 {
-  if (inOrder || gstate->isBlended()) {
+  if (inOrder || gstate->getNeedsSorting()) {
     // nodes will be drawn in the same order received
     orderedList.append(node, gstate);
   } else {

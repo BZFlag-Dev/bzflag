@@ -60,6 +60,9 @@ class WallSceneNode : public SceneNode {
     void		setDynamicColor(const float* color);
     void		setBlending(bool);
     void		setSphereMap(bool);
+    void		setNoCulling(bool);
+    void		setNoSorting(bool);
+    void		setAlphaThreshold(float);
     void		setRadarColor(const float color[4]);
 
     void		setColor();
@@ -99,7 +102,10 @@ class WallSceneNode : public SceneNode {
     GLfloat		modulateColor[4];
     GLfloat		lightedColor[4];
     GLfloat		lightedModulateColor[4];
+    float		alphaThreshold;
     int			style;
+    bool		noCulling;
+    bool		noSorting;
     bool		isBlended;
     bool		wantBlending;
     bool		wantSphereMap;

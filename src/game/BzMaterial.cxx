@@ -195,6 +195,9 @@ void BzMaterial::reset()
   memcpy (specular, defSpecular, sizeof(specular));
   memcpy (emission, defEmission, sizeof(emission));
   shininess = 0.0f;
+  alphaThreshold = 0.0f;
+  noCulling = false;
+  noSorting = false;
 
   delete[] textures;
   textures = NULL;
@@ -246,6 +249,9 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   memcpy (specular, m.specular, sizeof(specular));
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
+  alphaThreshold = m.alphaThreshold;
+  noCulling = m.noCulling;
+  noSorting = m.noSorting;
 
   delete[] textures;
   textureCount = m.textureCount;
@@ -282,7 +288,9 @@ bool BzMaterial::operator==(const BzMaterial& m) const
       (memcmp (diffuse, m.diffuse, sizeof(float[4])) != 0) ||
       (memcmp (specular, m.specular, sizeof(float[4])) != 0) ||
       (memcmp (emission, m.emission, sizeof(float[4])) != 0) ||
-      (shininess != m.shininess)) {
+      (shininess != m.shininess) ||
+      (alphaThreshold != m.alphaThreshold) ||
+      (noCulling != m.noCulling) || (noSorting != m.noSorting)) {
     return false;
   }
 
@@ -338,6 +346,11 @@ void* BzMaterial::pack(void* buf) const
   int i;
 
   buf = nboPackStdString(buf, name);
+  
+  uint8_t modeByte = 0;
+  if (noCulling) modeByte |= (1 << 0);
+  if (noSorting) modeByte |= (1 << 1);
+  buf = nboPackUByte(buf, modeByte);
 
   buf = nboPackInt(buf, dynamicColor);
   buf = pack4Float(buf, ambient);
@@ -345,6 +358,7 @@ void* BzMaterial::pack(void* buf) const
   buf = pack4Float(buf, specular);
   buf = pack4Float(buf, emission);
   buf = nboPackFloat(buf, shininess);
+  buf = nboPackFloat(buf, alphaThreshold);
 
   buf = nboPackUByte(buf, textureCount);
   for (i = 0; i < textureCount; i++) {
@@ -381,6 +395,11 @@ void* BzMaterial::unpack(void* buf)
 
   buf = nboUnpackStdString(buf, name);
 
+  uint8_t modeByte;
+  buf = nboUnpackUByte(buf, modeByte);
+  noCulling = (modeByte & (1 << 0)) != 0;
+  noSorting = (modeByte & (1 << 1)) != 0;
+
   buf = nboUnpackInt(buf, inTmp);
   dynamicColor = int(inTmp);
   buf = unpack4Float(buf, ambient);
@@ -388,6 +407,7 @@ void* BzMaterial::unpack(void* buf)
   buf = unpack4Float(buf, specular);
   buf = unpack4Float(buf, emission);
   buf = nboUnpackFloat(buf, shininess);
+  buf = nboUnpackFloat(buf, alphaThreshold);
 
   unsigned char tCount;
   buf = nboUnpackUByte(buf, tCount);
@@ -431,9 +451,12 @@ void* BzMaterial::unpack(void* buf)
 int BzMaterial::packSize() const
 {
   int i;
+  
+  const int modeSize = sizeof(uint8_t);
 
-  const int colorSize = sizeof(int32_t) + (4 * sizeof(float[4])) + sizeof(float);
-
+  const int colorSize = sizeof(int32_t) + (4 * sizeof(float[4])) +
+                        sizeof(float) + sizeof(float);
+  
   int textureSize = sizeof(unsigned char);
   for (i = 0; i < textureCount; i++) {
     textureSize += nboStdStringPackSize(textures[i].name);
@@ -447,7 +470,7 @@ int BzMaterial::packSize() const
     shaderSize += nboStdStringPackSize(shaders[i].name);
   }
 
-  return nboStdStringPackSize(name) + colorSize + textureSize + shaderSize;
+  return nboStdStringPackSize(name) + modeSize + colorSize + textureSize + shaderSize;
 }
 
 
@@ -488,6 +511,15 @@ void BzMaterial::print(std::ostream& out, const std::string& /*indent*/) const
   printColor(out, "  emission ", emission, defaultMaterial.emission);
   if (shininess != defaultMaterial.shininess) {
     out << "  shininess " << shininess << std::endl;
+  }
+  if (alphaThreshold != defaultMaterial.alphaThreshold) {
+    out << "  alphathresh " << alphaThreshold << std::endl;
+  }
+  if (noCulling) {
+    out << "  noculling" << std::endl;
+  }
+  if (noSorting) {
+    out << "  nosorting" << std::endl;
   }
 
   for (i = 0; i < textureCount; i++) {
@@ -580,6 +612,24 @@ void BzMaterial::setEmission(const float color[4])
 void BzMaterial::setShininess(const float shine)
 {
   shininess = shine;
+  return;
+}
+
+void BzMaterial::setAlphaThreshold(const float thresh)
+{
+  alphaThreshold = thresh;
+  return;
+}
+
+void BzMaterial::setNoCulling(bool value)
+{
+  noCulling = value;
+  return;
+}
+
+void BzMaterial::setNoSorting(bool value)
+{
+  noSorting = value;
   return;
 }
 
@@ -738,6 +788,21 @@ const float* BzMaterial::getEmission() const
 float BzMaterial::getShininess() const
 {
   return shininess;
+}
+
+float BzMaterial::getAlphaThreshold() const
+{
+  return alphaThreshold;
+}
+
+bool BzMaterial::getNoCulling() const
+{
+  return noCulling;
+}
+
+bool BzMaterial::getNoSorting() const
+{
+  return noSorting;
 }
 
 

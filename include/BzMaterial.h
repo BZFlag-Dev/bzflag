@@ -48,6 +48,10 @@ class BzMaterial {
     void setEmission(const float[4]);
     void setShininess(const float);
 
+    void setNoCulling(bool);
+    void setNoSorting(bool);
+    void setAlphaThreshold(const float);
+
     // the following set()'s operate on the last added texture
     void addTexture(const std::string&);
     void setTexture(const std::string&);
@@ -74,6 +78,10 @@ class BzMaterial {
     const float* getSpecular() const;
     const float* getEmission() const;
     float getShininess() const;
+
+    bool getNoCulling() const;
+    bool getNoSorting() const;
+    float getAlphaThreshold() const;
 
     int getTextureCount() const;
     const std::string& getTexture(int) const;
@@ -108,6 +116,10 @@ class BzMaterial {
     float specular[4];
     float emission[4];
     float shininess;
+
+    bool noCulling;
+    bool noSorting;
+    float alphaThreshold;
 
     enum CombineModes {
       replace = 0,

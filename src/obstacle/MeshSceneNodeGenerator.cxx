@@ -176,7 +176,8 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
     const BzMaterial* firstMat = firstFace->getMaterial();
 
     // see if this face needs to be drawn individually
-    if (translucentMaterial(firstMat) || firstFace->noClusters()) {
+    if (firstFace->noClusters() ||
+        (translucentMaterial(firstMat) && !firstMat->getNoSorting())) {
       MeshNode mn;
       mn.isFace = true;
       mn.faces.push_back(firstFace);
@@ -383,6 +384,10 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
       node->setLightedModulateColor(color);
     }
   }
+  
+  node->setAlphaThreshold(mat->getAlphaThreshold());
+  node->setNoCulling(mat->getNoCulling());
+  node->setNoSorting(mat->getNoSorting());
 }
 
 

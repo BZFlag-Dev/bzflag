@@ -50,9 +50,12 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   setLightedColor(1.0f, 1.0f, 1.0f);
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
   useColorTexture = false;
+  noCulling = false;
+  noSorting = false;
   isBlended = false;
   wantBlending = false;
   wantSphereMap = false;
+  alphaThreshold = 0.0f;
   return;
 }
 
@@ -275,6 +278,21 @@ void			WallSceneNode::setLightedModulateColor(
   lightedModulateColor[3] = rgba[3];
 }
 
+void			WallSceneNode::setAlphaThreshold(float thresh)
+{
+  alphaThreshold = thresh;
+}
+
+void			WallSceneNode::setNoCulling(bool value)
+{
+  noCulling = value;
+}
+
+void			WallSceneNode::setNoSorting(bool value)
+{
+  noSorting = value;
+}
+
 bool			WallSceneNode::isTranslucent() const
 {
   return isBlended;
@@ -336,6 +354,15 @@ void			WallSceneNode::notifyStyleChange()
     builder.setStipple(alpha);
   }
   isBlended = wantBlending || (alpha != 1.0f);
+  if (alphaThreshold != 0.0f) {
+    builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
+  }
+  if (noCulling) {
+    builder.setCulling(GL_NONE);
+  }
+  if (noSorting) {
+    builder.setNeedsSorting(false);
+  }
   if (wantSphereMap) {
     builder.enableSphereMap(true);
   }

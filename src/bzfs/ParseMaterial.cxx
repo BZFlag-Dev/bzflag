@@ -121,6 +121,26 @@ bool parseMaterials(const char* cmd, std::istream& input,
       materials[i].setShininess(shininess);
     }
   }
+  else if (strcasecmp(cmd, "alphathresh") == 0) {
+    float alphaThresh;
+    if (!(input >> alphaThresh)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
+      error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setAlphaThreshold(alphaThresh);
+    }
+  }
+  else if (strcasecmp(cmd, "noculling") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setNoCulling(true);
+    }
+  }
+  else if (strcasecmp(cmd, "nosorting") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setNoSorting(true);
+    }
+  }
   else if (strcasecmp(cmd, "texture") == 0) {
     std::string name;
     if (!(input >> name)) {

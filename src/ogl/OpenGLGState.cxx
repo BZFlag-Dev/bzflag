@@ -59,7 +59,10 @@ class OpenGLGStateState {
     void		setCulling(GLenum culling);
     void		setShading(GLenum);
     void		setAlphaFunc(GLenum func, GLclampf ref);
+    void		setNeedsSorting(bool value);
 
+    bool		getNeedsSorting() const
+				{ return unsorted.needsSorting; }
     bool		isBlended() const
 				{ return unsorted.hasBlending; }
     bool		isTextured() const
@@ -105,6 +108,7 @@ class OpenGLGStateState {
 	void		reset();
 
       public:
+	bool		needsSorting;
 	bool		hasBlending;
 	bool		hasStipple;
 	bool		hasSmoothing;
@@ -134,6 +138,7 @@ class OpenGLGStateRep {
 			OpenGLGStateRep(const OpenGLGStateState&);
 			~OpenGLGStateRep();
 
+    bool		getNeedsSorting() { return state.getNeedsSorting(); }
     bool		isBlended() { return state.isBlended(); }
     bool		isTextured() { return state.isTextured(); }
     bool		isTextureReplace() { return state.isTextureReplace(); }
@@ -241,6 +246,7 @@ bool			OpenGLGStateState::Sorted::operator<(
 }
 
 OpenGLGStateState::Unsorted::Unsorted() :
+				needsSorting(false),
 				hasBlending(false),
 				hasStipple(false),
 				hasSmoothing(false),
@@ -264,6 +270,7 @@ OpenGLGStateState::Unsorted::~Unsorted()
 
 void			OpenGLGStateState::Unsorted::reset()
 {
+  needsSorting = false;
   hasBlending = false;
   hasStipple = false;
   hasSmoothing = false;
@@ -350,6 +357,7 @@ void			OpenGLGStateState::setBlending(
 					GLenum sFactor, GLenum dFactor)
 {
   unsorted.hasBlending = (sFactor != GL_ONE || dFactor != GL_ZERO);
+  unsorted.needsSorting = unsorted.hasBlending;
   unsorted.blendSFactor = sFactor;
   unsorted.blendDFactor = dFactor;
 }
@@ -383,6 +391,11 @@ void			OpenGLGStateState::setAlphaFunc(
   unsorted.hasAlphaFunc = (func != GL_ALWAYS);
   unsorted.alphaFunc = func;
   unsorted.alphaRef = ref;
+}
+
+void			OpenGLGStateState::setNeedsSorting(bool value)
+{
+  unsorted.needsSorting = value;
 }
 
 void			OpenGLGStateState::resetOpenGLState() const
@@ -1023,6 +1036,11 @@ bool			OpenGLGState::isBlended() const
   return rep->isBlended();
 }
 
+bool			OpenGLGState::getNeedsSorting() const
+{
+  return rep->getNeedsSorting();
+}
+
 bool			OpenGLGState::isTextured() const
 {
   return rep->isTextured();
@@ -1358,6 +1376,11 @@ void			OpenGLGStateBuilder::setAlphaFunc(
 					GLenum func, GLclampf ref)
 {
   state->setAlphaFunc(func, ref);
+}
+
+void			OpenGLGStateBuilder::setNeedsSorting(bool value)
+{
+  state->setNeedsSorting(value);
 }
 
 OpenGLGState		OpenGLGStateBuilder::getState() const

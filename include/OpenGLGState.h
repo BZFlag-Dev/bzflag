@@ -37,6 +37,7 @@ class OpenGLGState {
 			~OpenGLGState();
     OpenGLGState&	operator=(const OpenGLGState& state);
     void		setState() const;
+    bool		getNeedsSorting() const;
     bool		isBlended() const;
     bool		isTextured() const;
     bool		isTextureReplace() const;
@@ -169,6 +170,7 @@ class OpenGLGStateBuilder {
     void		setShading(GLenum shading = GL_SMOOTH);
     void		setAlphaFunc(GLenum func = GL_GEQUAL,
 				     GLclampf ref = 0.1f);
+    void		setNeedsSorting(bool);
     OpenGLGState	getState() const;
 
   private:
