@@ -37,7 +37,7 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV                  15
+#define BZ_REV                  16
 #endif
 
 #ifndef BZ_CONFIG_DIR_VERSION

@@ -41,7 +41,7 @@ const char* const	BroadcastAddress = "224.0.1.2";
 const int		BroadcastPort = 5154;
 
 // URL for default list server
-const char* const	DefaultListServerURL = "http://db.bzflag.org/db/";
+const char* const	DefaultListServerURL = "http://list.bzflag.bz/db/";
 const char* const	DefaultMasterBanURL = "http://bzflag.org/master-bans.txt";
 
 // multicast ttl's

@@ -7,14 +7,14 @@
 ;
 
 !define VER_MAJOR 1.11
-!define VER_MINOR .15
+!define VER_MINOR .16
 
 ; Main Installer Options
 Name "BZFlag"
-Icon ..\..\..\win32\bzflag.ico
+;Icon ..\..\..\win32\bzflag.ico
 WindowIcon On
-EnabledBitmap "EnableCheck.bmp"
-DisabledBitmap "DisableCheck.bmp"
+;EnabledBitmap "EnableCheck.bmp"
+;DisabledBitmap "DisableCheck.bmp"
 Caption "BZFlag ${VER_MAJOR}${VER_MINOR}: - Setup"
 
 ; The file to write
