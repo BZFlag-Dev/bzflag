@@ -4214,7 +4214,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       // Player might already be dead and did not know it yet (e.g. teamkill)
       // do not propogate
-      if (player[t].state != PlayerAlive)
+      if (player[t].state != PlayerAlive && (state.status & short(PlayerState::Alive)))
         break;
     }
 
