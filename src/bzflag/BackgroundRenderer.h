@@ -61,6 +61,7 @@ class BackgroundRenderer {
   protected:
     void		drawSky(SceneRenderer&, bool mirror);
     void		drawGround(void);
+    void		drawGroundCentered(void);
     void		drawGroundGrid(SceneRenderer&);
     void		drawGroundShadows(SceneRenderer&);
     void		drawGroundReceivers(SceneRenderer&);
