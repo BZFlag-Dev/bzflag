@@ -3121,10 +3121,10 @@ static void		makeObstacleList()
   for (i = 0; i < numPyramids; i++) {
     addObstacle(obstacleList, pyramids[i]);
   }
-  const std::vector<Teleporter>& teleporters = World::getWorld()->getTeleporters();
+  const std::vector<Teleporter*>& teleporters = World::getWorld()->getTeleporters();
   const int numTeleporters = teleporters.size();
   for (i = 0; i < numTeleporters; i++) {
-    addObstacle(obstacleList, teleporters[i]);
+    addObstacle(obstacleList, *teleporters[i]);
   }
   const std::vector<TetraBuilding>& tetras = World::getWorld()->getTetras();
   const int numTetras = tetras.size();

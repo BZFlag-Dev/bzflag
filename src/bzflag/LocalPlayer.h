@@ -149,7 +149,7 @@ private:
   static LocalPlayer*	mainPlayer;
   InputMethod	inputMethod;
   bool		inputChanged;
-  int           stuckingFrameCount;
+  int           stuckFrameCount;
   bool		spawning;
   int		wingsFlapCount;
   float		handicap;

@@ -283,7 +283,7 @@ void CollisionManager::load (std::vector<MeshObstacle*>   &meshes,
                              std::vector<BaseBuilding>    &bases,
                              std::vector<PyramidBuilding> &pyrs,
                              std::vector<TetraBuilding>   &tetras,
-                             std::vector<Teleporter>      &teles)
+                             std::vector<Teleporter*>     &teles)
 {
   // clean out the cell lists
   clear();
@@ -332,9 +332,9 @@ void CollisionManager::load (std::vector<MeshObstacle*>   &meshes,
        it_tetra != tetras.end(); it_tetra++) {
     addToFullList((Obstacle*) &(*it_tetra));
   }
-  for (std::vector<Teleporter>::iterator it_tele = teles.begin();
+  for (std::vector<Teleporter*>::iterator it_tele = teles.begin();
        it_tele != teles.end(); it_tele++) {
-    addToFullList((Obstacle*) &(*it_tele));
+    addToFullList((Obstacle*) (*it_tele));
   }
 
   // generate the octree

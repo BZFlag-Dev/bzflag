@@ -256,10 +256,10 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     addBox(db, *boxScan);
     ++boxScan;
   }
-  const std::vector<Teleporter> &teleporters = world->getTeleporters();
-  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  const std::vector<Teleporter*> &teleporters = world->getTeleporters();
+  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
-    addTeleporter(db, *teleporterScan);
+    addTeleporter(db, *(*teleporterScan));
     ++teleporterScan;
   }
   const std::vector<PyramidBuilding> &pyramids = world->getPyramids();
@@ -631,47 +631,55 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
 							teleporterLOD))) {
-	if (o.isHorizontal()) {
-		if (part >= 0 && part <= 15) {
-			node->setColor(teleporterColors[0]);
-			node->setModulateColor(teleporterModulateColors[0]);
-			node->setLightedColor(teleporterLightedColors[0]);
-			node->setLightedModulateColor(teleporterLightedModulateColors[0]);
-			node->setMaterial(teleporterMaterial);
-			node->setTexture(teleporterTexture);
-			node->setUseColorTexture(useColorTexture);
-		} else {
-			node->setColor(teleporterColors[2]);
-			node->setLightedColor(teleporterLightedColors[2]);
-			node->setTexture(-1); // disable texturing
-		}
-	} else {
-		if (part >= 0 && part <= 1) {
-			node->setColor(teleporterColors[0]);
-			node->setModulateColor(teleporterModulateColors[0]);
-			node->setLightedColor(teleporterLightedColors[0]);
-			node->setLightedModulateColor(teleporterLightedModulateColors[0]);
-			node->setMaterial(teleporterMaterial);
-			node->setTexture(teleporterTexture);
-			node->setUseColorTexture(useColorTexture);
-		} else if (part >= 2 && part <= 11) {
-			node->setColor(teleporterColors[1]);
-			node->setModulateColor(teleporterModulateColors[1]);
-			node->setLightedColor(teleporterLightedColors[1]);
-			node->setLightedModulateColor(teleporterLightedModulateColors[1]);
-			node->setMaterial(teleporterMaterial);
-			node->setTexture(teleporterTexture);
-			node->setUseColorTexture(useColorTexture);
-		} else {
-			node->setColor(teleporterColors[2]);
-			node->setLightedColor(teleporterLightedColors[2]);
-			node->setTexture(-1); // disable texturing
-		}
-	}
+    if (o.isHorizontal ()) {
+      if (part >= 0 && part <= 15) {
+        node->setColor (teleporterColors[0]);
+        node->setModulateColor (teleporterModulateColors[0]);
+        node->setLightedColor (teleporterLightedColors[0]);
+        node->setLightedModulateColor (teleporterLightedModulateColors[0]);
+        node->setMaterial (teleporterMaterial);
+        node->setTexture (teleporterTexture);
+        node->setUseColorTexture (useColorTexture);
+      }
+    }
+    else {
+      if (part >= 0 && part <= 1) {
+        node->setColor (teleporterColors[0]);
+        node->setModulateColor (teleporterModulateColors[0]);
+        node->setLightedColor (teleporterLightedColors[0]);
+        node->setLightedModulateColor (teleporterLightedModulateColors[0]);
+        node->setMaterial (teleporterMaterial);
+        node->setTexture (teleporterTexture);
+        node->setUseColorTexture (useColorTexture);
+      }
+      else if (part >= 2 && part <= 11) {
+        node->setColor (teleporterColors[1]);
+        node->setModulateColor (teleporterModulateColors[1]);
+        node->setLightedColor (teleporterLightedColors[1]);
+        node->setLightedModulateColor (teleporterLightedModulateColors[1]);
+        node->setMaterial (teleporterMaterial);
+        node->setTexture (teleporterTexture);
+        node->setUseColorTexture (useColorTexture);
+      }
+    }
 
     db->addStaticNode(node);
     part = (part + 1) % numParts;
   }
+
+  MeshMaterial material;
+  material.useTexture = false;
+  memcpy (material.diffuse, teleporterLightedColors[2], sizeof(float[4]));
+  MeshPolySceneNode* linkNode;
+
+  linkNode = MeshSceneNodeGenerator::getSceneNode(o.getBackLink());
+  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, &material);
+  db->addStaticNode(linkNode);
+  
+  linkNode = MeshSceneNodeGenerator::getSceneNode(o.getFrontLink());
+  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, &material);
+  db->addStaticNode(linkNode);
+  
   delete nodeGen;
 }
 

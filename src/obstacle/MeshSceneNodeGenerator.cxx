@@ -40,7 +40,6 @@ MeshSceneNodeGenerator::~MeshSceneNodeGenerator()
 
 WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
 {
-  int i;
   const MeshFace* face;
   const MeshMaterial* mat;
 
@@ -80,16 +79,21 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
   memcpy (base, face->getVertex(0), sizeof(float[3]));
   memcpy (sCorner, face->getVertex(1), sizeof(float[3]));
   memcpy (tCorner, face->getVertex(2), sizeof(float[3]));
+  
+  MeshPolySceneNode* node = getSceneNode(face);
 
-  GLfloat sEdge[3];
-  GLfloat tEdge[3];
-  sEdge[0] = sCorner[0] - base[0];
-  sEdge[1] = sCorner[1] - base[1];
-  sEdge[2] = sCorner[2] - base[2];
-  tEdge[0] = tCorner[0] - base[0];
-  tEdge[1] = tCorner[1] - base[1];
-  tEdge[2] = tCorner[2] - base[2];
+  setupNodeMaterial(node, mat);
 
+  faceNumber++;
+
+  return node;
+}
+
+
+MeshPolySceneNode* MeshSceneNodeGenerator::getSceneNode(const MeshFace* face)
+{
+  int i;
+  
   // vertices
   const int vertexCount = face->getVertexCount();
   GLfloat3Array vertices(vertexCount);
@@ -119,11 +123,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
 
   MeshPolySceneNode* node =
     new MeshPolySceneNode(face->getPlane(), vertices, normals, texcoords);
-
-  setupNodeMaterial(node, mat);
-
-  faceNumber++;
-
+    
   return node;
 }
 

@@ -180,10 +180,10 @@ const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray,
   int face;
 
   {
-    const std::vector<Teleporter> &teleporters = World::getWorld()->getTeleporters();
-    std::vector<Teleporter>::const_iterator it = teleporters.begin();
+    const std::vector<Teleporter*> &teleporters = World::getWorld()->getTeleporters();
+    std::vector<Teleporter*>::const_iterator it = teleporters.begin();
     while (it != teleporters.end()) {
-      const Teleporter& teleporter = *it;
+      const Teleporter& teleporter = *(*it);
       const float telet = teleporter.isTeleported(ray, face);
       if (telet > min && telet < t) {
 	t = telet;

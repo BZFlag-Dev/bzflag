@@ -13,8 +13,9 @@
 #ifndef __MESHSCENENODEGENERATOR_H__
 #define __MESHSCENENODEGENERATOR_H__
 
-#include "MeshObstacle.h"
 #include "SceneNode.h"
+#include "MeshFace.h"
+#include "MeshObstacle.h"
 #include "MeshMaterial.h"
 
 class WallSceneNode;
@@ -29,13 +30,15 @@ class MeshSceneNodeGenerator {
     WallSceneNode* getNextNode(bool lod);
     static void setupNodeMaterial(MeshPolySceneNode* node,
                                   const MeshMaterial* mat);
+    static MeshPolySceneNode* getSceneNode(const MeshFace* face);
+      
   protected:
     MeshSceneNodeGenerator(const MeshObstacle*);
 
   private:
-    bool makeTexcoords(const float* plane,
-                       const GLfloat3Array& vertices,
-                       GLfloat2Array& texcoords);
+    static bool makeTexcoords(const float* plane,
+                              const GLfloat3Array& vertices,
+                              GLfloat2Array& texcoords);
     int faceNumber;
     const MeshObstacle* mesh;
 };

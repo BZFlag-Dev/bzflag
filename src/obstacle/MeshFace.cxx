@@ -54,6 +54,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
+  edgePlanes = NULL;
 
   finalize();
 

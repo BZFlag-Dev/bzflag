@@ -38,10 +38,15 @@ WorldInfo::WorldInfo() :
 WorldInfo::~WorldInfo()
 {
   delete[] database;
-  std::vector<MeshObstacle*>::iterator it;
-  for (it = meshes.begin(); it != meshes.end(); it++) {
-    MeshObstacle* mesh = *it;
+  std::vector<MeshObstacle*>::iterator mesh_it;
+  for (mesh_it = meshes.begin(); mesh_it != meshes.end(); mesh_it++) {
+    MeshObstacle* mesh = *mesh_it;
     delete mesh;
+  }
+  std::vector<Teleporter*>::iterator tele_it;
+  for (tele_it = teleporters.begin(); tele_it != teleporters.end(); tele_it++) {
+    Teleporter* tele = *tele_it;
+    delete tele;
   }
 }
 
@@ -102,7 +107,7 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
     maxHeight = z+h;
 
   const float pos[3] = {x, y, z};
-  Teleporter tele (pos, r, w, d, h, b, horizontal, drive, shoot);
+  Teleporter* tele = new Teleporter(pos, r, w, d, h, b, horizontal, drive, shoot);
   teleporters.push_back (tele);
 
   // default to passthru linkage
@@ -305,12 +310,12 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
       return IN_TETRA;
     }
   }
-  for (std::vector<Teleporter>::iterator tele_it = teleporters.begin();
+  for (std::vector<Teleporter*>::iterator tele_it = teleporters.begin();
        tele_it != teleporters.end(); ++tele_it) {
-    Teleporter &tele = *tele_it;
-    if (tele.inCylinder(pos, radius, height)) {
+    Teleporter* tele = *tele_it;
+    if (tele->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = &tele;
+        *location = tele;
       }
       return IN_TELEPORTER;
     }
@@ -593,9 +598,9 @@ int WorldInfo::packDatabase(const BasesList* baseList)
 
   // add teleporters
   int i = 0;
-  for (std::vector<Teleporter>::iterator tele_it = teleporters.begin();
+  for (std::vector<Teleporter*>::iterator tele_it = teleporters.begin();
        tele_it != teleporters.end(); ++tele_it, i++) {
-    Teleporter &tele = *tele_it;
+    Teleporter& tele = *(*tele_it);
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporterSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
     databasePtr = nboPackVector(databasePtr, tele.getPosition());

@@ -51,13 +51,13 @@ class WorldBuilder {
     void		setShakeTimeout(float timeout) const;
     void		setShakeWins(int wins) const;
     void		setEpochOffset(uint32_t seconds) const;
-    void		append(const WallObstacle&);
     void		append(MeshObstacle*);
+    void		append(Teleporter*);
+    void		append(const WallObstacle&);
     void		append(const BoxBuilding&);
     void		append(const PyramidBuilding&);
     void		append(const BaseBuilding&);
     void		append(const TetraBuilding&);
-    void		append(const Teleporter&);
     void		append(const Weapon&);
     void		append(const EntryZone&);
     void		setTeleporterTarget(int source, int target);

@@ -50,7 +50,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   nemesis(NULL),
   recipient(NULL),
   inputChanged(false),
-  stuckingFrameCount(0),
+  stuckFrameCount(0),
   spawning(false),
   wingsFlapCount(0),
   handicap(0.0f),
@@ -318,25 +318,25 @@ void			LocalPlayer::doUpdateMotion(float dt)
   bool expelled;
   const Obstacle* obstacle;
   float timeStep = dt;
-  int   stucked  = false;
+  int stuck = false;
   if (location != Dead && location != Exploding) {
     location = OnGround;
 
     // anti-stuck code is useful only when alive
-    // then only any 100 frames while stucked, take an action
+    // then only any 100 frames while stuck, take an action
 
     // try to see if we are stuck on a building
     obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
 			      expelled);
     if (obstacle && expelled) {
-      stuckingFrameCount++;
-      stucked = true;
+      stuckFrameCount++;
+      stuck = true;
     } else {
-      stuckingFrameCount = 0;
+      stuckFrameCount = 0;
     }
 
-    if (stuckingFrameCount > 100) {
-      stuckingFrameCount = 0;
+    if (stuckFrameCount > 100) {
+      stuckFrameCount = 0;
       // we are using a maximum value on time for frame to avoid lagging problem
       setDesiredSpeed(0.25f);
       float deltaTime = dt > 0.1f ? 0.1f : dt;
@@ -523,7 +523,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // pick new location if we haven't already done so
   if (location == OnGround) {
-    if (obstacle && (!expelled || stucked)) {
+    if (obstacle && (!expelled || stuck)) {
       location = InBuilding;
     }
     else if (newPos[2] > 0.0f) {

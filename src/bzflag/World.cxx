@@ -73,10 +73,15 @@ World::~World()
   for (i = 0; i < NumTeams; i++) {
     bases[i].clear();
   }
-  std::vector<MeshObstacle*>::iterator it;
-  for (it = meshes.begin(); it != meshes.end(); it++) {
-    MeshObstacle* mesh = *it;
+  std::vector<MeshObstacle*>::iterator mesh_it;
+  for (mesh_it = meshes.begin(); mesh_it != meshes.end(); mesh_it++) {
+    MeshObstacle* mesh = *mesh_it;
     delete mesh;
+  }
+  std::vector<Teleporter*>::iterator tele_it;
+  for (tele_it = teleporters.begin(); tele_it != teleporters.end(); tele_it++) {
+    Teleporter* tele = *tele_it;
+    delete tele;
   }
 }
 
@@ -134,7 +139,7 @@ int			World::getTeleporter(const Teleporter* teleporter,
   // search for teleporter
   const int count = teleporters.size();
   for (int i = 0; i < count; i++)
-    if (teleporter == &teleporters[i])
+    if (teleporter == teleporters[i])
       return 2 * i + face;
   return -1;
 }
@@ -143,7 +148,7 @@ const Teleporter*	World::getTeleporter(int source, int& face) const
 {
   assert(source >= 0 && source < (int)(2 * teleporters.size()));
   face = (source & 1);
-  return &teleporters[source / 2];
+  return teleporters[source / 2];
 }
 
 EighthDimSceneNode*	World::getInsideSceneNode(const Obstacle* o) const
@@ -267,10 +272,10 @@ bool			World::crossingTeleporter(const float* pos,
 					float angle, float dx, float dy, float dz,
 					float* plane) const
 {
-  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
-    const Teleporter& teleporter = *teleporterScan;
-    if (teleporter.isCrossing(pos, angle, dx, dy, dz, plane))
+    const Teleporter* teleporter = *teleporterScan;
+    if (teleporter->isCrossing(pos, angle, dx, dy, dz, plane))
       return true;
     teleporterScan++;
   }
@@ -282,11 +287,11 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 						int& face) const
 {
   // check teleporters
-  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
-    const Teleporter& teleporter = *teleporterScan;
-    if (teleporter.hasCrossed(oldPos, newPos, face))
-      return &teleporter;
+    const Teleporter* teleporter = *teleporterScan;
+    if (teleporter->hasCrossed(oldPos, newPos, face))
+      return teleporter;
     teleporterScan++;
   }
 
@@ -297,11 +302,11 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
 {
   // check teleporters
-  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
-    const Teleporter& teleporter = *teleporterScan;
-    if (teleporter.isTeleported(r, face) > Epsilon)
-      return &teleporter;
+    const Teleporter* teleporter = *teleporterScan;
+    if (teleporter->isTeleported(r, face) > Epsilon)
+      return teleporter;
     teleporterScan++;
   }
 
@@ -313,9 +318,10 @@ float			World::getProximity(const float* p, float r) const
 {
   // get maximum over all teleporters
   float bestProximity = 0.0;
-  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
-    const float proximity = teleporterScan->getProximity(p, r);
+    const Teleporter* teleporter = *teleporterScan;
+    const float proximity = teleporter->getProximity(p, r);
     if (proximity > bestProximity)
       bestProximity = proximity;
     teleporterScan++;
@@ -802,8 +808,8 @@ bool			World::writeWorld(std::string filename)
 
   // Write Teleporters
   {
-    for (std::vector<Teleporter>::iterator it = teleporters.begin(); it != teleporters.end(); ++it) {
-      Teleporter tele = *it;
+    for (std::vector<Teleporter*>::iterator it = teleporters.begin(); it != teleporters.end(); ++it) {
+      Teleporter tele = *(*it);
       out << "teleporter" << std::endl;
       const float *pos = tele.getPosition();
       out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;

@@ -226,10 +226,15 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[7]);
 	buf = nboUnpackUByte(buf, horizontal);
 	buf = nboUnpackUByte(buf, tempflags);
-	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],horizontal != 0,
-			(tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
-        if (tele.isValid()) {
+
+	Teleporter* tele = 
+	  new Teleporter(data, data[3], data[4], data[5], data[6],data[7],
+	                 horizontal != 0, (tempflags & _DRIVE_THRU)!=0,
+	                 (tempflags & _SHOOT_THRU)!=0);
+        if (tele->isValid()) {
 	  append(tele);
+        } else {
+          delete tele;
         }
 	break;
       }
@@ -548,7 +553,7 @@ void WorldBuilder::append(const TetraBuilding& tetra)
   world->tetras.push_back(tetra);
 }
 
-void WorldBuilder::append(const Teleporter& teleporter)
+void WorldBuilder::append(Teleporter* teleporter)
 {
   // save teleporter
   world->teleporters.push_back(teleporter);

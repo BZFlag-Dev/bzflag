@@ -67,7 +67,7 @@ class CollisionManager {
                std::vector<BaseBuilding>    &bases,
                std::vector<PyramidBuilding> &pyrs,
                std::vector<TetraBuilding>   &tetras,
-               std::vector<Teleporter>      &teles);
+               std::vector<Teleporter*>     &teles);
 
     // some basics
     bool needReload() const;         // octree parameter has changed

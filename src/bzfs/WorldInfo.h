@@ -159,7 +159,7 @@ private:
   std::vector<TetraBuilding> tetras;
   std::vector<WallObstacle> walls;
   std::vector<MeshObstacle*> meshes;
-  std::vector<Teleporter> teleporters;
+  std::vector<Teleporter*> teleporters;
 
   EntryZones	       entryZones;
   WorldWeapons         worldWeapons;

@@ -16,32 +16,127 @@
 #include "Teleporter.h"
 #include "Intersect.h"
 
-const char*		Teleporter::typeName = "Teleporter";
+const char* Teleporter::typeName = "Teleporter";
 
 Teleporter::Teleporter(const float* p, float a, float w,
-				float b, float h,float _border, bool _horizontal, bool drive, bool shoot) :
-				Obstacle(p, a, w, horizontal ? b : b + 2 * _border, horizontal ? h : h + _border,drive,shoot),
-				border(_border), horizontal(_horizontal)
+		       float b, float h,float _border, bool _horizontal,
+		       bool drive, bool shoot) :
+		       Obstacle(p, a, w, horizontal ? b : b + 2 * _border,
+		                horizontal ? h : h + _border,drive,shoot),
+		       border(_border), horizontal(_horizontal)
 {
-  // do nothing
+  makeLinks();
+  return;
 }
+
 
 Teleporter::~Teleporter()
 {
-  // do nothing
+  delete backLink;
+  delete frontLink;
+  return;  
 }
 
-const char*		Teleporter::getType() const
+
+const char* Teleporter::getType() const
 {
   return typeName;
 }
 
-const char*		Teleporter::getClassName() // const
+
+const char* Teleporter::getClassName() // const
 {
   return typeName;
 }
 
-void                    Teleporter::getExtents(float* mins, float* maxs) const
+
+void Teleporter::makeLinks()
+{
+  int i;
+  float **fvrts = new float*[4];
+  float **bvrts = new float*[4];
+  for (i = 0; i < 4; i++) {
+    fvrts[i] = fvertices[i];
+    bvrts[i] = bvertices[i];
+  }
+  MeshMaterial material; // this is overriden in SceneBuilder.cxx
+  
+  const float* p = getPosition();
+  const float a = getRotation();
+  const float w = getWidth();
+  const float b = getBreadth();
+  const float br = getBorder();
+  const float h = getHeight();
+
+  const float cos_val = cos(a);
+  const float sin_val = sin(a);
+  
+  if (!horizontal) {
+    const float params[4][2] = 
+      {{-1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {-1.0f, 1.0f}};
+    float wlen[2] = { (cos_val * w), (sin_val * w) };
+    float blen[2] = { (-sin_val * (b - br)), (cos_val * (b - br)) };
+
+    for (i = 0; i < 4 ;i++) {
+      bvrts[i][0] = p[0] + (wlen[0] + (blen[0] * params[i][0]));
+      bvrts[i][1] = p[1] + (wlen[1] + (blen[1] * params[i][0]));
+      bvrts[i][2] = p[2] + ((h - br) * params[i][1]);
+    }
+    backLink =
+      new MeshFace(NULL, 4, bvrts, NULL, NULL, material, false, true, true);
+    backLink->finalize();  
+
+    for (i = 0; i < 4 ;i++) {
+      fvrts[i][0] = p[0] - (wlen[0] + (blen[0] * params[i][0]));
+      fvrts[i][1] = p[1] - (wlen[1] + (blen[1] * params[i][0]));
+      fvrts[i][2] = p[2] + ((h - br) * params[i][1]);
+    }
+    frontLink =
+      new MeshFace(NULL, 4, fvrts, NULL, NULL, material, false, true, true);
+    frontLink->finalize();  
+  }
+  else {
+    float xlen = w - br;
+    float ylen = b - br;
+    bvrts[0][0] = p[0] + ((cos_val * xlen) - (sin_val * ylen));
+    bvrts[0][1] = p[1] + ((cos_val * ylen) + (sin_val * xlen));
+    bvrts[0][2] = p[2] + h - br;
+    bvrts[1][0] = p[0] + ((cos_val * xlen) - (sin_val * -ylen));
+    bvrts[1][1] = p[1] + ((cos_val * -ylen) + (sin_val * xlen));
+    bvrts[1][2] = p[2] + h - br;
+    bvrts[2][0] = p[0] + ((cos_val * -xlen) - (sin_val * -ylen));
+    bvrts[2][1] = p[1] + ((cos_val * -ylen) + (sin_val * -xlen));
+    bvrts[2][2] = p[2] + h - br;
+    bvrts[3][0] = p[0] + ((cos_val * -xlen) - (sin_val * ylen));
+    bvrts[3][1] = p[1] + ((cos_val * ylen) + (sin_val * -xlen));
+    bvrts[3][2] = p[2] + h - br;
+    backLink =
+      new MeshFace(NULL, 4, bvrts, NULL, NULL, material, false, true, true);
+    backLink->finalize();
+    
+    for (i = 0; i < 4; i++) {
+      memcpy(fvrts[i], bvrts[3 - i], sizeof(float[3])); // reverse order
+      fvrts[i][2] = p[2] + h; // change the height
+    }
+    frontLink =
+      new MeshFace(NULL, 4, fvrts, NULL, NULL, material, false, true, true);
+    frontLink->finalize();  
+  }
+  
+  return;  
+}
+
+
+bool Teleporter::isValid() const
+{
+  if (!backLink->isValid() || !frontLink->isValid()) {
+    return false;
+  }
+  return Obstacle::isValid();
+}
+
+
+void Teleporter::getExtents(float* mins, float* maxs) const
 {
   // the same as the default Obstacle::getExtents(), except that we
   // use the border width instead of size[0] (which for teleporters
@@ -58,14 +153,16 @@ void                    Teleporter::getExtents(float* mins, float* maxs) const
   return;
 }
 
-float			Teleporter::intersect(const Ray& r) const
+
+float Teleporter::intersect(const Ray& r) const
 {
   // expand to include border
   return timeRayHitsBlock(r, getPosition(), getRotation(),
 			getWidth(), getBreadth(), getHeight());
 }
 
-void			Teleporter::getNormal(const float* p1, float* n) const
+
+void Teleporter::getNormal(const float* p1, float* n) const
 {
   // get normal to closest border column (assume column is circular)
   const float* p2 = getPosition();
@@ -79,16 +176,18 @@ void			Teleporter::getNormal(const float* p1, float* n) const
   getNormalRect(p1, cc, getRotation(), b, b, n);
 }
 
-bool			Teleporter::inCylinder(const float* p, float radius, float height) const
+
+bool Teleporter::inCylinder(const float* p, float radius, float height) const
 {
   return (p[2]+height) >= getPosition()[2] &&
-	p[2] <= getPosition()[2] + getHeight() &&
-	testRectCircle(getPosition(), getRotation(),
-			getWidth(), getBreadth(), p, radius);
+	  p[2] <= getPosition()[2] + getHeight() &&
+	  testRectCircle(getPosition(), getRotation(),
+			 getWidth(), getBreadth(), p, radius);
 }
 
-bool			Teleporter::inBox(const float* p, float a,
-					  float dx, float dy, float dz) const
+
+bool Teleporter::inBox(const float* p, float a,
+                       float dx, float dy, float dz) const
 {
   if ((p[2] < getHeight() + getPosition()[2] - getBorder())
 	  && (p[2]+dz) >= getPosition()[2]) {
@@ -115,15 +214,17 @@ bool			Teleporter::inBox(const float* p, float a,
   return false;
 }
 
-bool			Teleporter::inMovingBox(const float* /* oldP */, float /*oldAngle */,
-                                                const float* p, float a,
-						float dx, float dy, float dz) const
+
+bool Teleporter::inMovingBox(const float* /* oldP */, float /*oldAngle */,
+                             const float* p, float a,
+			     float dx, float dy, float dz) const
 {
   return inBox (p, a, dx, dy, dz);
 }
 
-bool			Teleporter::isCrossing(const float* p, float a,
-					float dx, float dy, float /* dz */, float* plane) const
+
+bool Teleporter::isCrossing(const float* p, float a,
+			    float dx, float dy, float /* dz */, float* plane) const
 {
   // if not inside or contained then not crossing
   const float* p2 = getPosition();
@@ -151,8 +252,9 @@ bool			Teleporter::isCrossing(const float* p, float a,
   return true;
 }
 
+
 // return true iff ray goes through teleporting part
-float			Teleporter::isTeleported(const Ray& r, int& face) const
+float Teleporter::isTeleported(const Ray& r, int& face) const
 {
   // get t's for teleporter with and without border
   const float tb = intersect(r);
@@ -180,8 +282,8 @@ float			Teleporter::isTeleported(const Ray& r, int& face) const
   return t;
 }
 
-float			Teleporter::getProximity(const float* p,
-							float radius) const
+
+float Teleporter::getProximity(const float* p, float radius) const
 {
   // make sure tank is sufficiently close
   if (!testRectCircle(getPosition(), getRotation(),
@@ -226,8 +328,8 @@ float			Teleporter::getProximity(const float* p,
   return t > 0.0f ? (t > 1.0f ? 1.0f : t) : 0.0f;
 }
 
-bool			Teleporter::hasCrossed(const float* p1,
-						const float* p2, int& f) const
+
+bool Teleporter::hasCrossed(const float* p1, const float* p2, int& f) const
 {
   // check above/below teleporter
   const float* p = getPosition();
@@ -247,11 +349,10 @@ bool			Teleporter::hasCrossed(const float* p1,
   return false;
 }
 
-void			Teleporter::getPointWRT(const Teleporter& t2,
-					int face1, int face2,
-					const float* pIn, const float* dIn,
-					float aIn, float* pOut, float* dOut,
-					float* aOut) const
+
+void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
+			     const float* pIn, const float* dIn, float aIn,
+			     float* pOut, float* dOut, float* aOut) const
 {
   const float x1 = pIn[0] - getPosition()[0];
   const float y1 = pIn[1] - getPosition()[1];
@@ -321,17 +422,18 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   }
 }
 
-bool			Teleporter::getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float width, float breadth, float,
-				float* normal) const
+
+bool Teleporter::getHitNormal(const float* pos1, float azimuth1,
+			      const float* pos2, float azimuth2,
+			      float width, float breadth, float,
+			      float* normal) const
 {
   return Obstacle::getHitNormal(pos1, azimuth1,
 			pos2, azimuth2, width, breadth,
 			getPosition(), getRotation(), getWidth(), getBreadth(),
 			getHeight(), normal) >= 0.0f;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***

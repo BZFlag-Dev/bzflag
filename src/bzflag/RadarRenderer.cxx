@@ -737,12 +737,12 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   // filter the ends of line segments, we'll draw the line in each
   // direction (which degrades the antialiasing).  Newport graphics
   // is one system that doesn't do correct filtering.
-  const std::vector<Teleporter>& teleporters = world.getTeleporters();
+  const std::vector<Teleporter*>& teleporters = world.getTeleporters();
   count = teleporters.size();
   glColor3f(1.0f, 1.0f, 0.25f);
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
-    const Teleporter& tele = teleporters[i];
+    const Teleporter& tele = *(teleporters[i]);
 	if (tele.isHorizontal()) {
 		const float z = tele.getPosition()[2];
 		const float h = tele.getHeight();
