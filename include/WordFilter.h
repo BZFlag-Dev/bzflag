@@ -27,7 +27,6 @@
 #include <iostream>
 
 #include <sys/types.h>
-#include <stdint.h>
 
 #if HAVE_REGEX_H
 #  include <regex.h>
