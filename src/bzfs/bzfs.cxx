@@ -1786,21 +1786,22 @@ static void fixTeamCount() {
 
 static void addPlayer(int playerIndex)
 {
-  // strip leading blanks
-  char *sp = player[playerIndex].callSign, *tp = sp;
-  while (*sp==' ')
+  // strip leading whitespace from callsign
+  char *sp = player[playerIndex].callSign;
+  char *tp = sp;
+  while (isspace(*sp))
     sp++;
 
-  // strip any non-printable characters and ', and " from callsign
+  // strip any non-printable characters and ' and " from callsign
   do {
-    if (isprint(*sp) && (*sp != '\'') && (*sp != '"'))
+    if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
       *tp++ = *sp;
+    }
   } while (*++sp);
   *tp = *sp;
 
-
-  // strip trailing blanks
-  while (*--tp==' ') {
+  // strip trailing whitespace from callsign
+  while (isspace(*--tp)) {
     *tp=0;
   }
 
@@ -1812,7 +1813,7 @@ static void addPlayer(int playerIndex)
   int i;
   for (i = 0; i < curMaxPlayers; i++)
   {
-    if (i == playerIndex || !player[i].isPlaying())
+    if (i == playerIndex || player[i].state <= PlayerInLimbo)
       continue;
     if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0) {
       rejectPlayer(playerIndex, RejectRepeatCallsign);
@@ -1820,24 +1821,84 @@ static void addPlayer(int playerIndex)
     }
   }
 
-  // make sure the name is not obscene/filtered
+  // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
     DEBUG2("checking callsign: %s\n",player[playerIndex].callSign);
     bool filtered = false;
     char cs[CallSignLen];
     memcpy(cs, player[playerIndex].callSign, sizeof(char) * CallSignLen);
     filtered = clOptions->filter.filter(cs, clOptions->filterSimple);
-    if (!filtered) {
-      DEBUG2("checking email: %s\n",player[playerIndex].email);
-      char em[EmailLen];
-      memcpy(em, player[playerIndex].email, sizeof(char) * EmailLen);
-      filtered = clOptions->filter.filter(em, clOptions->filterSimple);
-    }
     if (filtered) {
       rejectPlayer(playerIndex, RejectBadCallsign);
       return ;
     }
   }
+
+  // callsign readability filter, make sure there are more alphanum than non
+  // keep a count of alpha-numerics
+  int alnumCount = 0;
+  sp = player[playerIndex].callSign;
+  do {
+    if (isalnum(*sp)) {
+      alnumCount++;
+    }
+  } while (*++sp);
+  int callsignlen = strlen(player[playerIndex].callSign);
+  if ((callsignlen > 4) && 
+      ((((float)callsignlen - (float)alnumCount) / (float)callsignlen) > 0.5f)) {
+    DEBUG2("rejecting unreadable callsign: %s\n", player[playerIndex].callSign);
+    rejectPlayer(playerIndex, RejectBadCallsign);
+  }
+
+
+  // strip leading whitespace from email
+  sp = player[playerIndex].email;
+  tp = sp;
+  while (isspace(*sp))
+    sp++;
+
+  // strip any non-printable characters and ' and " from email
+  do {
+    if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
+      *tp++ = *sp;
+    }
+  } while (*++sp);
+  *tp = *sp;
+
+  // strip trailing whitespace from email
+  while (isspace(*--tp)) {
+    *tp=0;
+  }
+
+  // make sure the email is not obscene/filtered
+  if (clOptions->filterCallsigns) {
+    DEBUG2("checking email: %s\n",player[playerIndex].email);
+    char em[EmailLen];
+    memcpy(em, player[playerIndex].email, sizeof(char) * EmailLen);
+    bool filtered = clOptions->filter.filter(em, clOptions->filterSimple);
+    if (filtered) {
+      rejectPlayer(playerIndex, RejectBadEmail);
+      return ;
+    }
+  }
+
+  // email/"team" readability filter, make sure there are more alphanum than non
+  int emailAlnumCount = 0;
+  sp = player[playerIndex].email;
+  do {
+    if (isalnum(*sp)) {
+      emailAlnumCount++;
+    }
+  } while (*++sp);
+  int emaillen = strlen(player[playerIndex].email);
+  if ((emaillen > 4) && 
+      ((((float)emaillen - (float)emailAlnumCount) / (float)emaillen) > 0.5f)) {
+    DEBUG2("rejecting unreadable player email: %s (%s)\n", 
+	   player[playerIndex].callSign,
+	   player[playerIndex].email);
+    rejectPlayer(playerIndex, RejectBadEmail);
+  }
+
 
   TeamColor t = player[playerIndex].team;
 
