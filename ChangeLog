@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Throw away bad or early links in world files - Tim Riker
 * Record/Replay feature - Dave Rodgers
 * Random teleporter destinations - Dave Rodgers
 * Added Lag bad flag - Dave Rodgers
