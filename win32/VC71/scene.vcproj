@@ -195,7 +195,7 @@
 				RelativePath="..\include\common.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Octree.h">
+				RelativePath="..\..\src\scene\Octree.h">
 			</File>
 			<File
 				RelativePath="..\include\OpenGLGState.h">
