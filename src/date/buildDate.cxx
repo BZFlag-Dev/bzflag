@@ -31,20 +31,20 @@
 //  tools/TextTool-W32/TextTool.rc
 //  win32/VC6/installer.dsp
 #ifndef BZ_MAJOR_VERSION
-#define BZ_MAJOR_VERSION	1
+#define BZ_MAJOR_VERSION	2
 #endif
 
 #ifndef BZ_MINOR_VERSION
-#define BZ_MINOR_VERSION	11
+#define BZ_MINOR_VERSION	0
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV			40
+#define BZ_REV			0
 #endif
 
 // DEVEL | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"DEVEL"
+#define BZ_BUILD_TYPE		"STABLE"
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993 - 2005 Tim Riker";
