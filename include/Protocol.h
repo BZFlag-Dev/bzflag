@@ -50,6 +50,13 @@ const int		MaximumTTL = 255;
 // maximum size of any message (including header and length fields)
 const int		MaxPacketLen = 1024;
 
+// player attributes for the MsgAdminInfo message
+enum PlayerAttribute {
+  IsRegistered = 1 << 0,
+  IsIdentified = 1 << 1,
+  IsAdmin      = 1 << 2
+};
+
 // null message code -- should never be sent
 const uint16_t		MsgNull = 0x0000;
 
@@ -214,7 +221,7 @@ server to player messages:
 			<== id
   MsgAdminInfo		update of players' IP addresses and some other 
                         properties, only sent to players with the PLAYERLIST
-                        permission
+                        permission.
 			<-- count, [chunklen, id, bitfield, address]*
   MsgFlagUpdate		update of flag info
 			<== count, [flag, flag-info]*

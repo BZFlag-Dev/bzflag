@@ -190,13 +190,13 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 
     case MsgAdminInfo: {
       uint8_t numIPs;
-      uint8_t dummy;
+      uint8_t tmp;
       vbuf = nboUnpackUByte(vbuf, numIPs);
       for (int i = 0; i < numIPs; ++i) {
-	vbuf = nboUnpackUByte(vbuf, dummy);
+	vbuf = nboUnpackUByte(vbuf, tmp);
 	vbuf = nboUnpackUByte(vbuf, p);
 	// FIXME - actually parse the bitfield
-	vbuf = nboUnpackUByte(vbuf, dummy);
+	vbuf = nboUnpackUByte(vbuf, tmp);
 	vbuf = a.unpack(vbuf);
 	players[p].ip = a.getDotNotation();
       }

@@ -723,6 +723,18 @@ static void sendPlayerUpdate(int playerIndex, int index)
 }
 
 
+uint8_t getPlayerProperties(const PlayerInfo& pi) {
+  uint8_t result = 0;
+  if (userExists(pi.regName))
+    result |= IsRegistered;
+  if (pi.accessInfo.verified)
+    result |= IsIdentified;
+  if (pi.Admin)
+    result |= IsAdmin;
+  return result;
+}
+
+
 void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
   // targetPlayer = -1: send to all players with the PLAYERLIST permission
   // playerIndex = -1: send info about all players
@@ -741,10 +753,6 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     }
   }
 
-  // FIXME - the 'bitfield' should contain boolean values for different
-  // player properties (player is admin, player is registered, 
-  // player has identified etc).
-  
   // pack and send the message(s)
   void *buf, *bufStart = getDirectMessageBuffer();
   if (playerIndex != -1) {
@@ -752,7 +760,7 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     buf = nboPackUByte(buf, (player[playerIndex].peer.getIPVersion() == 4 ?
 			     8 : 20)); // 8 for IPv4, 20 for IPv6
     buf = nboPackUByte(buf, playerIndex);
-    buf = nboPackUByte(buf, 0); // put bitfield here
+    buf = nboPackUByte(buf, getPlayerProperties(player[playerIndex]));
     buf = player[playerIndex].peer.pack(buf);
     for (unsigned int i = 0; i < receivers.size(); ++i) {
       directMessage(receivers[i], MsgAdminInfo,
@@ -770,7 +778,7 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
       if (player[i].state > PlayerInLimbo) {
 	buf = nboPackUByte(buf, (player[i].peer.getIPVersion() == 4 ? 8 : 20));
 	buf = nboPackUByte(buf, i);
-	buf = nboPackUByte(buf, 5); // put bitfield here
+	buf = nboPackUByte(buf, getPlayerProperties(player[i]));
 	buf = player[i].peer.pack(buf);
 	++c;
       }
@@ -781,7 +789,6 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
 	for (unsigned int j = 0; j < receivers.size(); ++j)
 	  directMessage(receivers[j], MsgAdminInfo, size, bufStart);
       }
-
     }
   }
 }
