@@ -78,7 +78,7 @@ namespace TextUtils
 
   std::string no_whitespace(const std::string &s)
   {
-    const int sourcesize = s.size();
+    const int sourcesize = (int)s.size();
 
     int count = 0, i = 0, j = 0;
     for (i = 0; i < sourcesize; i++)
