@@ -17,17 +17,13 @@ your preference.  You will need to set and export two environment
 variables:
 
 # for a bourne-shell environment:
-CC=cc
-CXX=CC
-export CC CXX
-./configure
-gmake CXXFLAGS="-LANG:std"
+./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include"
+make
 
 # for a c-shell environment
-setenv CC cc
-setenv CXX CC
-./configure
-gmake CXXFLAGS="-LANG:std"
+./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include"
+make
+
 
 See the generic install instructions in README for more details.
 
