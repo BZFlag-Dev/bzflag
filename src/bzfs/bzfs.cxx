@@ -85,7 +85,7 @@ const int udpBufSize = 128000;
 
 typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
 
-static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message);
+static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message, bool fullBuffer=false);
 
 // DisconnectTimeout is how long to wait for a reconnect before
 // giving up.  this should be pretty short to avoid bad clients
@@ -267,7 +267,7 @@ public:
       if (duration < 365.0f * 24 * 3600)
 	sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
 
-      sendMessage(playerIndex, id, teamColor, banlistmessage);
+      sendMessage(playerIndex, id, teamColor, banlistmessage, true);
     }
   }
 
@@ -1916,7 +1916,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 
       // if the buffer is getting too big then drop the player.  chances
       // are the network is down or too unreliable to that player.
-      // FIXME -- is 20kB to big?  to small?
+      // FIXME -- is 20kB too big?  too small?
       if (newCapacity >= 20 * 1024) {
 	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
 	    p.callSign, playerIndex, p.outmsgSize + l);
@@ -3653,7 +3653,6 @@ static void acceptClient()
       curMaxPlayers = playerIndex+1;
   
     // record what port we accepted on
-    // FIXME what should we do if playerIndex > MaxPlayers ?
     player[playerIndex].time = TimeKeeper::getCurrent();
     player[playerIndex].fd = fd;
     player[playerIndex].state = PlayerAccept;
@@ -3820,10 +3819,20 @@ static void respondToPing(bool broadcast = false)
     pingReply.write(pingOutSocket, &pingOutAddr);
 }
 
-static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message)
+static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message, bool fullBuffer)
 {
   // player is sending a message to a particular player, a team, or all.
   // send MsgMessage
+
+  // if fullBuffer=true, it means, that caller already passed a buffer
+  // of size MessageLen and we can use that directly;
+  // otherwise copy the message to a buffer of the correct size first
+  char messagebuf[MessageLen];
+  if (!fullBuffer) {
+    strncpy(messagebuf,message,MessageLen);
+    message=messagebuf;
+  }
+
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = player[playerIndex].id.pack(bufStart);
   buf = targetPlayer.pack(buf);
@@ -4046,7 +4055,7 @@ static void addPlayer(int playerIndex)
   sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/",
       (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
       (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
-  sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
+  sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message, true);
   
   if (clOptions.servermsg && (strlen(clOptions.servermsg) > 0)) {
     
@@ -4058,7 +4067,7 @@ static void addPlayer(int playerIndex)
       strncpy(message, i, l);
       message[l] = '\0';
       sendMessage(playerIndex, player[playerIndex].id, 
-		  player[playerIndex].team, message);
+		  player[playerIndex].team, message, true);
       i = j + 2;
     }
     strncpy(message, i, MessageLen - 1);
@@ -4505,8 +4514,8 @@ static void playerKilled(int victimIndex, int killerIndex,
 	 ((player[killerIndex].wins == 0) ||
 	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > clOptions.teamKillerKickRatio)) {
 	 char message[MessageLen];
-	 strcpy( message, "You have been automatically kicked for team killing" );
-	 sendMessage(killerIndex, player[killerIndex].id, player[killerIndex].team, message);
+	 strcpy(message, "You have been automatically kicked for team killing" );
+	 sendMessage(killerIndex, player[killerIndex].id, player[killerIndex].team, message, true);
 	 removePlayer(killerIndex, "teamkilling");
      }
   }
@@ -4949,7 +4958,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	// give message each shot below 5, each 5th shot & at start
 	if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1){
 	  sprintf(message,"%d shots left",shotsLeft);
-	  sendMessage(playerIndex, shooter.id, shooter.team,message);
+	  sendMessage(playerIndex, shooter.id, shooter.team,message, true);
 	}
       } else { // no shots left
 	if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)){
@@ -4995,14 +5004,14 @@ static void calcLag(int playerIndex, float timepassed)
     char message[MessageLen];
     sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
 	int(pl.lagavg * 1000));
-    sendMessage(playerIndex, pl.id, pl.team,message);
+    sendMessage(playerIndex, pl.id, pl.team,message, true);
     pl.laglastwarn = pl.lagcount;
     pl.lagwarncount++;;
     if (pl.lagwarncount++ > clOptions.maxlagwarn) {
       // drop the player
       sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
 	clOptions.maxlagwarn);
-      sendMessage(playerIndex, pl.id, pl.team, message);
+      sendMessage(playerIndex, pl.id, pl.team, message, true);
       removePlayer(playerIndex, "lag");
     }
   }
@@ -5123,7 +5132,7 @@ static void parseCommand(const char *message, int t)
       sendTeamUpdate(i);
     }
     char reply[MessageLen]="Countdown started.";
-    sendMessage(t, player[t].id,player[t].team,reply);
+    sendMessage(t, player[t].id, player[t].team, reply, true);
 
     // CTF game -> simulate flag captures to return ppl to base
     if (clOptions.gameStyle & int(TeamFlagGameStyle)) {
@@ -5198,14 +5207,14 @@ static void parseCommand(const char *message, int t)
       }
     } else if (strncmp(message + 6, "show", 4) == 0) {
       for (int i = 0; i < numFlags; i++) {
-	char message[MessageLen]; // FIXME
+	char message[MessageLen];
 	sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
 	    flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id),
 	    flag[i].flag.status,
 	    flag[i].flag.position[0],
 	    flag[i].flag.position[1],
 	    flag[i].flag.position[2]);
-	sendMessage(t, player[t].id, player[t].team, message);
+	sendMessage(t, player[t].id, player[t].team, message, true);
       }
     }
   // /kick command allows operator to remove players
@@ -5218,12 +5227,12 @@ static void parseCommand(const char *message, int t)
     if (i < curMaxPlayers) {
       char kickmessage[MessageLen];
       sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
-      sendMessage(i, player[i].id, player[i].team, kickmessage);
+      sendMessage(i, player[i].id, player[i].team, kickmessage, true);
       removePlayer(i, "/kick");
     } else {
       char errormessage[MessageLen];
       sprintf(errormessage, "player %s not found", victimname);
-      sendMessage(t, player[t].id, player[t].team, errormessage);
+      sendMessage(t, player[t].id, player[t].team, errormessage, true);
     }
   }
   // /banlist command shows ips that are banned
@@ -5242,12 +5251,12 @@ static void parseCommand(const char *message, int t)
       strcpy(reply, "IP pattern added to banlist");
     else
       strcpy(reply, "malformed address");
-    sendMessage(t, player[t].id, player[t].team, reply);
+    sendMessage(t, player[t].id, player[t].team, reply, true);
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
       if ((player[i].fd != NotConnected) && (!clOptions.acl.validate(player[i].taddr.sin_addr))) {
 	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
-	sendMessage(i, player[i].id, player[i].team, kickmessage);
+	sendMessage(i, player[i].id, player[i].team, kickmessage, true);
 	removePlayer(i, "/ban");
       }
     }
@@ -5259,7 +5268,7 @@ static void parseCommand(const char *message, int t)
       strcpy(reply, "removed IP pattern");
     else
       strcpy(reply, "no pattern removed");
-    sendMessage(t, player[t].id, player[t].team, reply);
+    sendMessage(t, player[t].id, player[t].team, reply, true);
   }
   // /lagwarn - set maximum allowed lag
   else if (player[t].Admin && strncmp(message+1,"lagwarn",7) == 0) {
@@ -5269,13 +5278,13 @@ static void parseCommand(const char *message, int t)
       clOptions.lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
       char reply[MessageLen];
       sprintf(reply,"lagwarn is now %d ms",int(clOptions.lagwarnthresh * 1000 + 0.5));
-      sendMessage(t, player[t].id,player[t].team,reply);
+      sendMessage(t, player[t].id, player[t].team, reply, true);
     }
     else
     {
       char reply[MessageLen];
       sprintf(reply,"lagwarn is set to %d ms",int(clOptions.lagwarnthresh * 1000 +  0.5));
-      sendMessage(t, player[t].id,player[t].team,reply);
+      sendMessage(t, player[t].id, player[t].team, reply, true);
     }
   }
   // /lagstats gives simple statistics about players' lags
@@ -5283,12 +5292,12 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
-	sprintf(reply,"%-16s : %4dms (%d)%s",player[i].callSign,
-	    int(player[i].lagavg*1000),player[i].lagcount,
+	sprintf(reply,"%-16s : %4dms (%d)%s", player[i].callSign,
+	    int(player[i].lagavg*1000), player[i].lagcount,
 	    player[i].doespings ? "" : " (old)");
 	if (player[i].doespings && player[i].pingslost>0)
-	  sprintf(reply+strlen(reply)," %d lost",player[i].pingslost);
-	    sendMessage(t,player[t].id,player[t].team,reply);
+	  sprintf(reply+strlen(reply), " %d lost", player[i].pingslost);
+	    sendMessage(t,player[t].id, player[t].team, reply, true);
       }
     }
   }
@@ -5300,7 +5309,7 @@ static void parseCommand(const char *message, int t)
 	char reply[MessageLen];
 	sprintf(reply,"%-16s : %4ds",player[i].callSign,
 		int(now-player[i].lastupdate));
-	sendMessage(t,player[t].id,player[t].team,reply);
+	sendMessage(t, player[t].id, player[t].team, reply, true);
       }
     }
   }
@@ -5322,7 +5331,7 @@ static void parseCommand(const char *message, int t)
 	  strcat( reply, flag );
 	  fhIt++;
 	}
-	sendMessage(t,player[t].id,player[t].team,reply);
+	sendMessage(t, player[t].id, player[t].team, reply, true);
       }
   }
   // /playerlist dumps a list of players with IPs etc.
@@ -5334,7 +5343,7 @@ static void parseCommand(const char *message, int t)
 	    inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
 	    player[i].ulinkup ? " udp" : "",
 	    player[i].knowId ? " id" : "");
-	sendMessage(t,player[t].id,player[t].team,reply);
+	sendMessage(t, player[t].id, player[t].team, reply, true);
       }
     }
   }
@@ -5369,7 +5378,7 @@ static void parseCommand(const char *message, int t)
       else
 	sprintf(reply, "Your report has been filed. Thank you.");
     }
-    sendMessage(t, player[t].id, player[t].team, reply);
+    sendMessage(t, player[t].id, player[t].team, reply, true);
   }
   else {
     sendMessage(t,player[t].id,player[t].team,"unknown command");
@@ -5589,7 +5598,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       }
       else {
 	clOptions.bwl.filter(message);
-	sendMessage(t, targetPlayer, TeamColor(targetTeam), message);
+	sendMessage(t, targetPlayer, TeamColor(targetTeam), message, true);
       }
       break;
     }
@@ -5666,8 +5675,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
 	DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callSign, t);
-	strcpy( message, "Autokick: Out of world bounds, Jump too high, Update your client." );
-	sendMessage(t, player[t].id, player[t].team, message);
+	strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
+	sendMessage(t, player[t].id, player[t].team, message, true);
 	removePlayer(t, "too high");
 	break;
       }
@@ -5687,8 +5696,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       {
 	char message[MessageLen];
 	DEBUG1("kicking Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
-	strcpy( message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
-	sendMessage(t, player[t].id, player[t].team, message);
+	strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
+	sendMessage(t, player[t].id, player[t].team, message, true);
 	removePlayer(t, "Out of map bounds");
       }
 	     
@@ -5728,10 +5737,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  else {
 	    char message[MessageLen];
 	    DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
-	     player[t].callSign, t,
-	     sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	    strcpy( message, "Autokick: Tank moving too fast, Update your client." );
-	    sendMessage(t, player[t].id, player[t].team, message);
+	      player[t].callSign, t,
+	      sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+	    strcpy(message, "Autokick: Tank moving too fast, Update your client." );
+	    sendMessage(t, player[t].id, player[t].team, message, true);
 	    removePlayer(t, "too fast");
 	  }
 	  break;
@@ -7041,7 +7050,7 @@ int main(int argc, char **argv)
 	  DEBUG1("kicking Player %s [%d]: idle %d\n", player[i].callSign, i,
 		 int(tm - player[i].lastupdate));
 	  char message[MessageLen]="You were kicked because of idling too long";
-	  sendMessage(i, player[i].id, player[i].team, message);
+	  sendMessage(i, player[i].id, player[i].team, message, true);
 	  removePlayer(i, "idling");
 	}
       }
@@ -7064,14 +7073,14 @@ int main(int argc, char **argv)
 	  message[l] = '\0';
 	  for (int i=0; i<curMaxPlayers; i++)
 	    if (player[i].state > PlayerInLimbo)
-	      sendMessage(i, player[i].id, player[i].team, message);
+	      sendMessage(i, player[i].id, player[i].team, message, true);
 	  c = j + 2;
 	}
 	strncpy(message, c, MessageLen - 1);
 	message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
 	for (int i=0; i<curMaxPlayers; i++)
 	  if (player[i].state > PlayerInLimbo)
-	    sendMessage(i, player[i].id, player[i].team, message);
+	    sendMessage(i, player[i].id, player[i].team, message, true);
 	
 	lastbroadcast = TimeKeeper::getCurrent();
       }
@@ -7182,13 +7191,13 @@ int main(int argc, char **argv)
 	char message[MessageLen];
 	player[i].toBeKicked = false;
 	sprintf(message,"Your end is not using UDP, turn on udp");
-	sendMessage(i, player[i].id, player[i].team, message);
+	sendMessage(i, player[i].id, player[i].team, message, true);
 
 	sprintf(message,"upgrade your client http://BZFlag.org/ or");
-	sendMessage(i, player[i].id, player[i].team, message);
+	sendMessage(i, player[i].id, player[i].team, message, true);
 
 	sprintf(message,"Try another server, Bye!");
-	sendMessage(i, player[i].id, player[i].team, message);
+	sendMessage(i, player[i].id, player[i].team, message, true);
 
 	removePlayer(i, "no UDP");
       }
