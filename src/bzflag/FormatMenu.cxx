@@ -121,8 +121,7 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
   if (numFormats < 2) {
     currentLabel->setString("<switching not available>");
     setFocus(NULL);
-  }
-  else {
+  } else {
     HUDuiLabel* label = (HUDuiLabel*)(getControls()[NumReadouts - 3]);
     label->setString("Press Enter to select and T to test a format. Esc to exit.");
     setFocus(pageLabel);
@@ -202,8 +201,7 @@ void FormatMenu::setSelected(int index)
   if (numFormats > 0) {
     const int indexOnPage = selectedIndex % NumItems;
     getControls()[NumReadouts + indexOnPage]->setFocus();
-  }
-  else {
+  } else {
     setFocus(NULL);
   }
 }
@@ -228,8 +226,7 @@ void FormatMenu::setFormat(bool test)
   if (!setVideoFormat(selectedIndex, test)) {
     // can't load format
     badFormats[selectedIndex] = true;
-  }
-  else if (!test) {
+  } else if (!test) {
     // print OpenGL renderer, which might have changed
     printError((const char*)glGetString(GL_RENDERER));
   }

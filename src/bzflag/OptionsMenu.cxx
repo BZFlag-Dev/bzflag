@@ -23,7 +23,6 @@
 #include "OpenGLTexFont.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "SceneRenderer.h"
 #include "TextUtils.h"
 
 /* local implementation headers */
@@ -33,7 +32,6 @@
 #include "StartupInfo.h"
 
 /* FIXME - from playing.h */
-SceneRenderer* getSceneRenderer();
 StartupInfo* getStartupInfo();
 extern ControlPanel* controlPanel;
 
@@ -50,6 +48,31 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
   HUDuiLabel* label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setString("Options");
+  list.push_back(label);
+
+  inputSetting = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Input Settings");
+  list.push_back(label);
+
+  audioSetting = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Audio Settings");
+  list.push_back(label);
+
+  displaySetting = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Display Settings");
+  list.push_back(label);
+
+  guiOptions = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("GUI Options");
+  list.push_back(label);
+
+  label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("");
   list.push_back(label);
 
   option = new HUDuiList;
@@ -85,29 +108,9 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
   label->setLabel("Clear Server List Cache");
   list.push_back(label);
 
-  guiOptions = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setLabel("GUI Options");
-  list.push_back(label);
-
   saveWorld = label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setLabel("Save World");
-  list.push_back(label);
-
-  inputSetting = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setLabel("Input Setting");
-  list.push_back(label);
-
-  audioSetting = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setLabel("Audio Setting");
-  list.push_back(label);
-
-  displaySetting = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setLabel("Display Setting");
   list.push_back(label);
 
   initNavigation(list, 1,list.size()-1);
@@ -217,8 +220,8 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
     case 'U': {
       StartupInfo* info = getStartupInfo();
       info->useUDPconnection = (list->getIndex() != 0);
-    }
       break;
+    }
 
     case 'S': { // server cache
       time_t minutes = 0;
@@ -238,10 +241,6 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
       (ServerListCache::get())->setMaxCacheAge(minutes);
       break;
     }
-
-    case 'r':
-      // do nothing -- wait for enter or t key
-      break;
   }
 }
 
