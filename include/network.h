@@ -108,7 +108,7 @@ int			getErrno();
 /* setsockopt prototypes the 4th arg as const char*. */
 #define SSOType		const char*
 
-#define	close(__x)	closesocket(__x)
+inline int close(SOCKET s) { return closesocket(s); } 
 #define	ioctl(__fd, __req, __arg) \
 			ioctlsocket(__fd, __req, (u_long*)__arg)
 #define	gethostbyaddr(__addr, __len, __type) \
