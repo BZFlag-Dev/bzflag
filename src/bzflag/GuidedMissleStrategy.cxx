@@ -448,7 +448,11 @@ void GuidedMissileStrategy::radarRender() const
     dir[2] = vel[2] * d * shotTailLength * length;
     glBegin(GL_LINES);
     glVertex2fv(orig);
-    glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
+    if (BZDBCache::leadingShotLine) {
+      glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+    } else {
+      glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
+    }
     glEnd();
 
     // draw a "bright reddish" missle tip
