@@ -280,23 +280,20 @@ void			OpenGLTexFont::BitmapRep::draw(
 				const char* string, int length,
 				float x, float y, float z)
 {
-  char * tmpstr;
+  unsigned int c;
 
   gstate.setState();
   glRasterPos3f(x, y, z);
-
-  tmpstr = strdup (string);
-  length = stripAnsiCodes (tmpstr, length);
+ 
+  length = rawStrlen (string, length);
 
   for (int i = 0; i < length; i++) {
-    const unsigned int c = (unsigned int)tmpstr[i];
+    c = (unsigned int)string[i];
     if (c >= 32 && c < 127) {
-      const Glyph& g = glyph[c - 32];
-      glBitmap(g.width, g.height, g.xorig, g.yorig, g.xmove, g.ymove, g.bitmap);
+      c -= 32;
+      glBitmap(glyph[c].width, glyph[c].height, glyph[c].xorig, glyph[c].yorig, glyph[c].xmove, glyph[c].ymove, glyph[c].bitmap);
     }
   }
-
-  delete[] tmpstr;
 }
 
 float OpenGLTexFont::BitmapRep::drawChar (char c)
@@ -491,19 +488,14 @@ float			OpenGLTexFont::getWidth(const char* s) const
 
 float			OpenGLTexFont::getWidth(const char* s, int length) const
 {
-  char * str;
   float dx = 0.0f;
 
-  str = strdup (s);
-  stripAnsiCodes (str, length);
-  length = strlen (str);
+  length = rawStrlen (s, length);
 
   for (int i = 0; i < length; i++) {
-    if ((str[i] >= 32) && (str[i] < 127))
-      dx += rep->glyph[str[i] - 32].advance;
+    if ((s[i] >= 32) && (s[i] < 127))
+      dx += rep->glyph[s[i] - 32].advance;
   }
-
-  free (str);
 
   return width * dx;
 }
@@ -783,6 +775,7 @@ int OpenGLTexFont::stripAnsiCodes (char * string, int length)
 
   return j;
 }
+
 
 int OpenGLTexFont::rawStrlen (const char * string, int length)
 {
