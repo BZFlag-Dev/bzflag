@@ -1,5 +1,4 @@
 
-
 			     BZFlag release notes
 
 BZFlag 1.11
@@ -10,6 +9,7 @@ BZFlag 1.11
 * Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
 * Poll to reset flags and Poll-cheating prevention - Ian Agar
 * Flag and Tank Entry Zones - Dave Brosius
+* Added MAC's Agility (aka Dodge) flag - Sean Morrison
 * QuickTurn flag symbol changed from A to QT - Sean Morrison
 * Added MAC's handicap game style - Sean Morrison
 * Added ReverseControls bad flag - Sean Morrison
