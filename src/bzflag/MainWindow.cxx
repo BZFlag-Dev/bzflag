@@ -275,6 +275,22 @@ void		    MainWindow::getJoyDevices(std::vector<std::string>
   joystick->getJoyDevices(list);
 }
 
+void		    MainWindow::getJoyDeviceAxes(std::vector<std::string>
+						 &list) const
+{
+  joystick->getJoyDeviceAxes(list);
+}
+
+void		    MainWindow::setJoyXAxis(const std::string axis)
+{
+  joystick->setXAxis(axis);
+}
+
+void		    MainWindow::setJoyYAxis(const std::string axis)
+{
+  joystick->setYAxis(axis);
+}
+
 void			MainWindow::initJoystick(std::string &joystickName) {
   joystick->initJoystick(joystickName.c_str());
 };

@@ -22,6 +22,7 @@
 /* system headers */
 #include <vector>
 #include <string>
+#include <map>
 
 /* local impl. headers */
 #include "WinWindow.h"
@@ -64,7 +65,7 @@ DXJoystick::~DXJoystick()
 void	      DXJoystick::initJoystick(const char* joystickName)
 {
   // turn it off
-  if (!joystickName || strcmp(joystickName, "off") == 0) {
+  if (!joystickName || strcasecmp(joystickName, "off") == 0) {
     device = NULL;
     return;
   }
@@ -118,20 +119,30 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   }
 
   /*
-   * Set data ranges for both axes.  This has the side effect
-   * of ensuring that the joystick has at least two axes.
+   * Set data ranges for all axes, and find out which ones succeeded.
+   * This has the side effect of ensuring that the joystick has at least two axes.
    */
+
+  // we assume the presence of an X and Y axis and bail if there's not one
+  axes["X"]  = true;
+  xAxis = "X";
+  axes["Y"]  = true;
+  yAxis = "Y";
+  // the rest we assume don't exist, and correct ourselves if we're wrong
+  axes["Z"]  = false;
+  axes["Rx"] = false;
+  axes["Ry"] = false;
+  axes["Rz"] = false;
 
   DIPROPRANGE range;
   range.diph.dwSize       = sizeof(range);
   range.diph.dwHeaderSize = sizeof(range.diph);
-  range.diph.dwObj	= DIJOFS_X;
-  range.diph.dwHow	= DIPH_BYOFFSET;
-  range.lMin	      = -1000;
-  range.lMax	      = +1000;
+  range.diph.dwHow	  = DIPH_BYOFFSET;
+  range.lMin		  = -1000;
+  range.lMax		  = +1000;
 
+  range.diph.dwObj = DIJOFS_X;
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
-
   if (success != DI_OK) {
     // couldn't set x axis range, what to do now?
     DXError("Could not set X-axis range", success);
@@ -139,16 +150,34 @@ void	      DXJoystick::initJoystick(const char* joystickName)
     return;
   }
 
-  range.diph.dwObj	  = DIJOFS_Y;
-
+  range.diph.dwObj = DIJOFS_Y;
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
-
   if (success != DI_OK) {
     // couldn't set y axis range, what to do now?
     DXError("Could not set Y-axis range", success);
     device = NULL;
     return;
   }
+
+  range.diph.dwObj = DIJOFS_Z;
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+    axes["Z"] = true;
+
+  range.diph.dwObj = DIJOFS_RX;
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+    axes["Rx"] = true;
+
+  range.diph.dwObj = DIJOFS_RY;
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+    axes["Ry"] = true;
+
+  range.diph.dwObj = DIJOFS_RZ;
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+    axes["Rz"] = true;
 
   /*
    * Acquire the device so that we can get input from it.
@@ -168,8 +197,19 @@ void	      DXJoystick::getJoy(int& x, int& y)
 
   DIJOYSTATE state = pollDevice();
 
-  x = state.lX;
-  y = state.lY;
+  if (xAxis == "X")	 x = state.lX;
+  else if (xAxis == "Y")  x = state.lY;
+  else if (xAxis == "Z")  x = state.lZ;
+  else if (xAxis == "Rx") x = state.lRx;
+  else if (xAxis == "Ry") x = state.lRy;
+  else if (xAxis == "Rz") x = state.lRz;
+
+  if (yAxis == "X")	 y = state.lX;
+  else if (yAxis == "Y")  y = state.lY;
+  else if (yAxis == "Z")  y = state.lZ;
+  else if (yAxis == "Rx") y = state.lRx;
+  else if (yAxis == "Ry") y = state.lRy;
+  else if (yAxis == "Rz") y = state.lRz;
 
   // ballistics
   x = (x * abs(x)) / 1000;
@@ -215,6 +255,29 @@ void	      DXJoystick::getJoyDevices(std::vector<std::string> &list) const
   for (unsigned int i = 0; i < devices.size(); i++) {
     list.push_back(devices[i].tszProductName);
   }
+}
+
+void	      DXJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
+{
+  list.clear();
+  std::map<std::string,bool>::const_iterator itr = axes.begin();
+  while (itr != axes.end()) {
+    if (itr->second == true)
+      list.push_back(itr->first);
+    ++itr;
+  }
+}
+
+void	      DXJoystick::setXAxis(std::string axis)
+{
+  if (axes[axis] == false) return;
+  xAxis = axis;
+}
+
+void	      DXJoystick::setYAxis(std::string axis)
+{
+  if (axes[axis] == false) return;
+  yAxis = axis;
 }
 
 /*

@@ -36,6 +36,13 @@ class BzfJoystick {
     virtual unsigned long getJoyButtons();
     virtual void	getJoyDevices(std::vector<std::string> &list) const;
 
+    /** Return a list of axes belonging to the joystick.  The first and second
+     ** are assumed to be default X and Y axes, respectively.
+     **/
+    virtual void	getJoyDeviceAxes(std::vector<std::string> &list) const;
+    virtual void	setXAxis(const std::string axis);
+    virtual void	setYAxis(const std::string axis);    
+    
     /* Force feedback support. Currently we only support 'rumble' force
      * feedback- a motor in the controller vibrates it, as tactile feedback
      * for explosions, collisions, engines starting, death, that sort of thing.

@@ -40,9 +40,14 @@ public:
   void execute();
   void resize(int width, int height);
   static void callback(HUDuiControl* w, void* data);
+
+  void fillJSOptions();
+
 private:
   HUDuiControl*	   keyMapping;
   HUDuiList*	   activeInput;
+  HUDuiList*	   jsx;
+  HUDuiList*	   jsy;
   KeyboardMapMenu* keyboardMapMenu;
 };
 

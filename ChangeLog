@@ -1,10 +1,12 @@
-			     BZFlag Release Notes
+﻿			     BZFlag Release Notes
 			     ====================
 
 BZFlag 2.0.1
 ------------
 
+* Allow user to select which physical joystick axes to use - Daniel Remenak
 * Fixed antikick so that it actually prevents most kicks - Sean Morrison
+* Fix a number of server crash bugs - Daniel Remenak
 * ctf make restarting on base even when dead - Anonymous 
 * Fixed weirdness on Console Panel when disabling chat display - Alfredo Tupone
 * Fixed a segfault with SDL and no audio - Alfredo Tupone

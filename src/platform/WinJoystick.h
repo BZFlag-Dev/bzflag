@@ -31,15 +31,27 @@ class WinJoystick : public BzfJoystick {
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
+    void        getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void	setXAxis(const std::string axis);
+    void	setYAxis(const std::string axis);
 
   private:
     unsigned int JoystickID;
     bool	inited;
 
-    float	xMin;
-    float       xMax;
-    float       yMin;
-    float       yMax;
+    struct AxisInfo {
+      std::string name;
+      bool exists;
+      DWORD requestFlag;
+      float min;
+      float max;
+    };
+
+    std::vector<WinJoystick::AxisInfo> axes;
+
+    int xIndex;
+    int yIndex;
+
 };
 
 #endif // BZF_WINJOY_H

@@ -178,7 +178,7 @@ void			EvdevJoystick::initJoystick(const char* joystickName)
   currentJoystick = NULL;
   joystickfd = 0;
 
-  if (!strcmp(joystickName, "off") || !strcmp(joystickName, "")) {
+  if (!strcasecmp(joystickName, "off") || !strcmp(joystickName, "")) {
     /* No joystick configured, we're done */
     return;
   }

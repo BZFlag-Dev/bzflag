@@ -1216,6 +1216,8 @@ int			main(int argc, char** argv)
   // create & initialize the joystick
   BzfJoystick* joystick = platformFactory->createJoystick();
   joystick->initJoystick(BZDB.get("joystickname").c_str());
+  joystick->setXAxis(BZDB.get("jsXAxis"));
+  joystick->setYAxis(BZDB.get("jsYAxis"));
 
   // Change audio driver if requested
   if (BZDB.isSet("audioDriver"))

@@ -107,6 +107,21 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
+  // axis settings
+  jsx = option;
+  option->setFontFace(fontFace);
+  option->setLabel("Joystick X Axis:");
+  option->setCallback(callback, (void*)"X");
+  list.push_back(option);
+  option = new HUDuiList;
+  jsy = option;
+  option->setFontFace(fontFace);
+  option->setLabel("Joystick Y Axis:");
+  option->setCallback(callback, (void*)"Y");
+  list.push_back(option);
+  fillJSOptions();
+
+  option = new HUDuiList;
   // confine mouse on/off
   option->setFontFace(fontFace);
   option->setLabel("Confine mouse:");
@@ -138,6 +153,47 @@ InputMenu::~InputMenu()
   delete keyboardMapMenu;
 }
 
+void InputMenu::fillJSOptions()
+{
+  std::vector<std::string>* xoptions = &jsx->getList();
+  std::vector<std::string>* yoptions = &jsy->getList();
+  std::vector<std::string> joystickAxes;
+  getMainWindow()->getJoyDeviceAxes(joystickAxes);
+  if (joystickAxes.size() == 0)
+    joystickAxes.push_back("N/A");
+  int i;
+  for (i = 0; i < (int)joystickAxes.size(); i++) {
+    xoptions->push_back(joystickAxes[i]);
+    yoptions->push_back(joystickAxes[i]);
+  }
+  bool found = false;
+  for (i = 0; i < (int)xoptions->size(); i++) {
+    std::string currentOption = (*xoptions)[i];
+    if (BZDB.get("jsXAxis") == currentOption) {
+      jsx->setIndex(i);
+      found = true;
+    }
+  }
+  if (!found)
+    jsx->setIndex(0);
+  jsx->update();
+  found = false;
+  for (i = 0; i < (int)yoptions->size(); i++) {
+    std::string currentOption = (*yoptions)[i];
+    if (BZDB.get("jsYAxis") == currentOption) {
+      jsy->setIndex(i);
+      found = true;
+    }
+  }
+  if (!found) {
+    if (yoptions->size() > 1)
+      jsy->setIndex(1);
+    else
+      jsy->setIndex(0);
+  }
+  jsy->update();
+}
+
 void			InputMenu::execute()
 {
   HUDuiControl* focus = HUDui::getFocus();
@@ -157,6 +213,20 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
     case 'J':
       BZDB.set("joystickname", selectedOption);
       getMainWindow()->initJoystick(selectedOption);
+      // re-fill all of the joystick-specific options lists
+      // fillJSOptions();
+      break;
+
+    /* Joystick x-axis */
+    case 'X':
+      BZDB.set("jsXAxis", selectedOption);
+      getMainWindow()->setJoyXAxis(selectedOption);
+      break;
+
+    /* Joystick y-axis */
+    case 'Y':
+      BZDB.set("jsYAxis", selectedOption);
+      getMainWindow()->setJoyYAxis(selectedOption);
       break;
 
     /* Active input device */

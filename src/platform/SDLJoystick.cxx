@@ -26,6 +26,7 @@
 
 /* implementation headers */
 #include "ErrorHandler.h"
+#include "TextUtils.h"
 #include "bzfSDL.h"
 
 SDLJoystick::SDLJoystick() : joystickID(NULL)
@@ -35,6 +36,8 @@ SDLJoystick::SDLJoystick() : joystickID(NULL)
     args.push_back(SDL_GetError());
     printError("Could not initialize SDL Joystick subsystem: %s.\n", &args);
   };
+  xAxis = 0;
+  yAxis = 1;
 }
 
 SDLJoystick::~SDLJoystick()
@@ -44,7 +47,7 @@ SDLJoystick::~SDLJoystick()
 
 void			SDLJoystick::initJoystick(const char* joystickName)
 {
-  if (!strcmp(joystickName, "off") || !strcmp(joystickName, "")) {
+  if (!strcasecmp(joystickName, "off") || !strcmp(joystickName, "")) {
     if (joystickID != NULL) {
       SDL_JoystickClose(joystickID);
       joystickID = NULL;
@@ -63,7 +66,7 @@ void			SDLJoystick::initJoystick(const char* joystickName)
     return;
   if (SDL_JoystickNumAxes(joystickID) < 2) {
     SDL_JoystickClose(joystickID);
-    printError("Joystick has less then 2 axis:\n");
+    printError("Joystick has less then 2 axes:\n");
     joystickID = NULL;
     return;
   }
@@ -83,8 +86,8 @@ void			SDLJoystick::getJoy(int& x, int& y)
     return;
 
   SDL_JoystickUpdate();
-  x = SDL_JoystickGetAxis(joystickID, 0);
-  y = SDL_JoystickGetAxis(joystickID, 1);
+  x = SDL_JoystickGetAxis(joystickID, xAxis);
+  y = SDL_JoystickGetAxis(joystickID, yAxis);
 
   x = x * 1000 / 32768;
   y = y * 1000 / 32768;
@@ -122,6 +125,27 @@ void		    SDLJoystick::getJoyDevices(std::vector<std::string>
     list.push_back(joystickName);
   }
 }
+
+void		    SDLJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
+{
+  if (!joystickID) return;
+  list.clear();
+  // number all the axes and send them off
+  for (int i = 0; i < SDL_JoystickNumAxes(joystickID); ++i) {
+    list.push_back(TextUtils::format("%d", i));
+  }
+}
+
+void		    SDLJoystick::setXAxis(const std::string axis)
+{
+  xAxis = atoi(axis.c_str());
+}
+
+void		    SDLJoystick::setYAxis(const std::string axis)
+{
+  yAxis = atoi(axis.c_str());
+}
+
 #endif
 
 // Local Variables: ***

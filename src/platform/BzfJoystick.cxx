@@ -59,12 +59,27 @@ void		    BzfJoystick::getJoyDevices(std::vector<std::string>
   list.clear();
 }
 
+void		    BzfJoystick::getJoyDeviceAxes(std::vector<std::string>
+						  &list) const
+{
+  list.clear();
+  list.push_back("default");
+}
+
 bool		    BzfJoystick::ffHasRumble() const
 {
   return false;
 }
 
 void		    BzfJoystick::ffRumble(int, float, float, float, float)
+{
+}
+
+void		    BzfJoystick::setXAxis(const std::string)
+{
+}
+
+void		    BzfJoystick::setYAxis(const std::string)
 {
 }
 

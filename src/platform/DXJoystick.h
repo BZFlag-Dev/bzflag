@@ -50,6 +50,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 class DXJoystick : public BzfJoystick {
   public:
@@ -61,6 +62,9 @@ class DXJoystick : public BzfJoystick {
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
+    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void	setXAxis(const std::string axis);
+    void	setYAxis(const std::string axis);
     bool	ffHasRumble() const;
     void	ffRumble(int count,
 			 float delay, float duration,
@@ -73,6 +77,10 @@ class DXJoystick : public BzfJoystick {
     void	resetFF();
 
     void	DXError(const char* situation, HRESULT problem);
+
+    std::map<std::string,bool> axes;
+    std::string xAxis;
+    std::string yAxis;
 
     static std::vector<DIDEVICEINSTANCE> devices;
 
