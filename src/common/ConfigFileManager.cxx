@@ -35,6 +35,11 @@ void writeBZDB(const std::string& name, void *stream)
     value = std::string("\"") + value + "\"";
   }
 
+  // quotify the key if there's a space
+  if (name.find(' ') != name.npos) {
+    name = std::string("\"") + name + "\"";
+  }
+
   s << (commentOut ? "#set " : "set ") << name << ' ' << value << std::endl;
 }
 
