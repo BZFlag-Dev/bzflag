@@ -7,9 +7,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   breaking protocol.  In particular -- fix the high priority (10) ones
   for 1.10.4 patch release.
 
-* Fix menu texture changes, they need to use the font size, silly scaling fonts.
-  but make the header immage keep the same aspect. JM
-
 THESE ARE LOWER PRIORITY
 
 * Fix the Windows version of bzadmin so that EOF quits the program, like
