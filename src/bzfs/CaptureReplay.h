@@ -15,7 +15,7 @@
 
 #include "bzfs.h"
 
-const int ReplayObservers = 10;
+const int ReplayObservers = 16;
 
 namespace Capture {
   extern bool init ();

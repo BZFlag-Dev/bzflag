@@ -3593,6 +3593,12 @@ int main(int argc, char **argv)
   
   
   if (Replay::enabled()) {
+    // maxPlayers is sent in the world data to the client.
+    // the client then uses this to setup it's players
+    // data structure, so we need to send it the largest
+    // PlayerId it might see.
+    maxPlayers = MaxPlayers + ReplayObservers;
+    
     if (clOptions->maxTeam[ObserverTeam] == 0) {
       std::cerr << "ERROR: Replay server requires at least 1 observer" << std::endl;
 #if defined(_WIN32)

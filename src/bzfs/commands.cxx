@@ -46,8 +46,8 @@
 
 // externs that poll, veto, vote, and clientquery require
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
-extern PlayerInfo player[MaxPlayers];
-extern PlayerAccessInfo accessInfo[MaxPlayers];
+extern PlayerInfo player[MaxPlayers + ReplayObservers];
+extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
