@@ -4139,22 +4139,16 @@ static void handleVoteCmd(int t, const char *message)
   }
 
   /* find the start of the vote answer */
-  size_t messageLength = (int)strlen(message);
-  size_t nextChar = 0;
-  while ((nextChar < messageLength - 5) && (!isAlphanumeric(*(message+5+nextChar)))) {
-      nextChar++;
-  }
 
-  char answer[8];
-  memset(answer, 0, 8);
+  std::string answer;
+  std::string voteCmd = &message[5];
 
-  for (unsigned int i=0; (i < messageLength - 5 - nextChar) && (i < 31); i++) {
-      answer[i] = tolower(*(message + 5 + nextChar + i));
-  }
-  for (int a=strlen(answer)-1; a >= 0; a--) {
-      if (!isAlphanumeric(answer[a])) {
-	answer[a] = '\0';
-      }
+  int startPos = voteCmd.find_first_not_of(" \t");
+  if (startPos != std::string::npos) {
+    int endPos = voteCmd.find_first_of(" \t", startPos);
+    if (endPos == std::string::npos)
+      endPos = voteCmd.length();
+    answer = voteCmd.substr(startPos, endPos-startPos);
   }
 
   /* XXX answer arrays should be static const but it'll do for now */
@@ -4185,13 +4179,13 @@ static void handleVoteCmd(int t, const char *message)
   int vote=-1;
   for (unsigned int v = 0; v < (noCount > yesCount ? noCount : yesCount); v++) {
       if (v < yesCount) {
-	if (strncmp(answer, yesAnswers[v], 4) == 0) {
+	if (answer == yesAnswers[v]) {
 	  vote = 1;
 	  break;
 	}
       }
       if (v < noCount) {
-	if (strncmp(answer, noAnswers[v], 4) == 0) {
+	if (answer == noAnswers[v]) {
 	  vote = 0;
 	  break;
 	}
@@ -4213,7 +4207,7 @@ static void handleVoteCmd(int t, const char *message)
 	sendMessage(ServerPlayer, t, reply, true);
       }
   } else {
-      if (strlen(answer) == 0) {
+      if (answer.length() == 0) {
 	sprintf(reply,"%s, you did not provide a vote answer", player[t].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
 	sprintf(reply,"Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
