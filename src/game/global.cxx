@@ -12,7 +12,7 @@
 
 #include "global.h"
 
-GlobalDBItem				globalDBItems[48] = {
+GlobalDBItem				globalDBItems[49] = {
 	{ "_gravity",			"-9.8",						false, StateDatabase::Locked},
 	{ "_worldSize",			"800.0",					false, StateDatabase::Locked},
 	{ "_tankLength",		"6.0",						false, StateDatabase::Locked},
@@ -60,6 +60,7 @@ GlobalDBItem				globalDBItems[48] = {
 	{ "_momentumAngAcc",	"1.0",						false, StateDatabase::Locked},
 	{ "_burrowDepth",		"-1.32",					false, StateDatabase::Locked},
 	{ "_burrowSpeedAd",		"0.75",						false, StateDatabase::Locked},
-	{ "_burrowAngularAd",	"0.33",						false, StateDatabase::Locked}
+	{ "_burrowAngularAd",	"0.33",						false, StateDatabase::Locked},
+	{ "_lRAdRate",			"0.5",						false, StateDatabase::Locked}
 };
 // ex: shiftwidth=4 tabstop=4

@@ -181,11 +181,12 @@ enum FlagId {
 						WideAngleFlag,			// fish eye view (sounds good
 												// but isn't)
 						NoJumpingFlag,			// tank cannot jump
+						LongReloadFlag,			// tank takes twice as long to reload
 
 
 						// special flags for size of team and super-flag sets
 						FirstFlag =			RedFlag,
-						LastFlag =			NoJumpingFlag,
+						LastFlag =			LongReloadFlag,
 						FirstTeamFlag =		RedFlag,
 						LastTeamFlag =		PurpleFlag,
 						FirstSuperFlag =	VelocityFlag,
@@ -199,7 +200,7 @@ public:
 	bool					persistent;
 	StateDatabase::Permission	permission;
 };
-extern GlobalDBItem			globalDBItems[48];
+extern GlobalDBItem			globalDBItems[49];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=4 tabstop=4

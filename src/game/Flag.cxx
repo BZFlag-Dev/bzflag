@@ -53,7 +53,8 @@ const char*				Flag::flagName[] = {
 								"Blindness",
 								"Jamming",
 								"Wide Angle",
-								"No Jumping"
+								"No Jumping",
+								"Long Reload"
 						};
 
 const char*				Flag::flagAbbv[] = {
@@ -95,7 +96,8 @@ const char*				Flag::flagAbbv[] = {
 								"B",						// blindness
 								"JM",						// jamming
 								"WA",						// wide angle
-								"NJ"						// no jumping
+								"NJ",						// no jumping
+								"LR"						// long reload
 						};
 
 const char*				Flag::flagHelp[] = {
@@ -151,7 +153,8 @@ const char*				Flag::flagHelp[] = {
 "Blindness (-B):  Can't see out window.  Radar still works.",
 "JaMming (-JM):  Radar doesn't work.  Can still see.",
 "Wide Angle (-WA):  Fish-eye lens distorts view.",
-"No Jumping (-NJ):  Tank cannot jump."
+"No Jumping (-NJ):  Tank cannot jump.",
+"Long Reload (-LR):  Tank takes twice as long to reload."
 						};
 
 void*					Flag::pack(void* buf) const
@@ -218,6 +221,7 @@ FlagType				Flag::getType(FlagId id)
 		case JammingFlag:
 		case WideAngleFlag:
 		case NoJumpingFlag:
+		case LongReloadFlag:
 			return FlagSticky;
 		default:
 			return FlagUnstable;

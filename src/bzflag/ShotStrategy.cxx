@@ -701,6 +701,23 @@ NormalShotStrategy::~NormalShotStrategy()
 }
 
 //
+// LongReloadShotStrategy
+//
+
+LongReloadShotStrategy::LongReloadShotStrategy(ShotPath* path) :
+								SegmentedShotStrategy(path)
+{
+	setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_LRADRATE));
+	// make segments
+	makeSegments(Stop);
+}
+
+LongReloadShotStrategy::~LongReloadShotStrategy()
+{
+	// do nothing
+}
+
+//
 // RapidFireStrategy
 //
 

@@ -66,6 +66,7 @@ const std::string StateDatabase::BZDB_LASERADRATE = std::string("_laserAdRate");
 const std::string StateDatabase::BZDB_THIEFADLIFE = std::string("_thiefAdLife");
 const std::string StateDatabase::BZDB_THIEFADSHOTVEL = std::string("_thiefAdShotVel");
 const std::string StateDatabase::BZDB_THIEFADRATE = std::string("_thiefAdRate");
+const std::string StateDatabase::BZDB_LRADRATE = std::string("_lRAdRate");
 
 
 //

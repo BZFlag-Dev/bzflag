@@ -132,6 +132,9 @@ ShotPath::ShotPath(const FiringInfo& info) :
 		case NoJumpingFlag:
 			strategy = new NormalShotStrategy(this);
 			break;
+		case LongReloadFlag:
+			strategy = new LongReloadShotStrategy(this);
+			break;
 		case RapidFireFlag:
 			strategy = new RapidFireStrategy(this);
 			break;

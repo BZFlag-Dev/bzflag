@@ -145,6 +145,12 @@ public:
 	~NormalShotStrategy();
 };
 
+class LongReloadShotStrategy : public SegmentedShotStrategy {
+public:
+	LongReloadShotStrategy(ShotPath*);
+	~LongReloadShotStrategy();
+};
+
 class RapidFireStrategy : public SegmentedShotStrategy {
 public:
 	RapidFireStrategy(ShotPath*);

@@ -160,6 +160,7 @@ public:
 	static const std::string BZDB_THIEFADLIFE;
 	static const std::string BZDB_THIEFADSHOTVEL;
 	static const std::string BZDB_THIEFADRATE;
+	static const std::string BZDB_LRADRATE;
 
 private:
 	StateDatabase();
