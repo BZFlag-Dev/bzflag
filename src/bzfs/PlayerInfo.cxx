@@ -74,15 +74,11 @@ void PlayerInfo::resetPlayer(bool ctf) {
   restartOnBase = ctf;
 }
 
-bool PlayerInfo::removePlayer() {
-
-  bool wasPlaying = state > PlayerInLimbo;
+void PlayerInfo::removePlayer() {
 
   callSign[0] = 0;
 
   state = PlayerNoExist;
-
-  return wasPlaying;
 }
 
 void PlayerInfo::setRestartOnBase(bool on) {

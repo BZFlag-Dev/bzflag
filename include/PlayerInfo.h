@@ -70,8 +70,7 @@ public:
   int	      getSpamWarns();
   void        initPlayer(int _playerIndex);
   void        resetPlayer(bool ctf);
-  // return false if player was not really in 
-  bool        removePlayer();
+  void        removePlayer();
   void        setRestartOnBase(bool on);
   bool        shouldRestartAtBase();
   bool        isPlaying();

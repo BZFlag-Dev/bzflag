@@ -11,11 +11,8 @@
  */
 #include "bzfs.h"
 #include "NetHandler.h"
-#include "LagInfo.h"
-#include "DelayQueue.h"
 #include "RejoinList.h"
-#include "FlagHistory.h"
-#include "Score.h"
+#include "GameKeeper.h"
 
 const int udpBufSize = 128000;
 
@@ -1328,10 +1325,9 @@ static void acceptClient()
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
-  player[playerIndex].initPlayer(playerIndex);
+  new GameKeeper::Player(playerIndex);
 
   new NetHandler(&player[playerIndex], clientAddr, playerIndex, fd);
-  lastState[playerIndex].order = 0;
 
   // if game was over and this is the first player then game is on
   if (gameOver) {
@@ -1624,7 +1620,6 @@ static void addPlayer(int playerIndex)
   accessInfo[playerIndex].reset(player[playerIndex].getCallSign());
   player[playerIndex].resetPlayer
     ((clOptions->gameStyle & TeamFlagGameStyle) != 0);
-  lagInfo[playerIndex] = new LagInfo(&player[playerIndex]);
   delayq[playerIndex].dequeuePackets();
 
 
@@ -1647,7 +1642,6 @@ static void addPlayer(int playerIndex)
   player[playerIndex].setSpamWarns();
   // player is signing on (has already connected via addClient).
   player[playerIndex].signingOn();
-  score[playerIndex] = new Score();
   // update team state and if first player on team,
   // add team's flag and reset it's score
   bool resetTeamFlag = false;
@@ -2065,20 +2059,14 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // status message
     DEBUG1("Player %s [%d] removed: %s\n",
 	   player[playerIndex].getCallSign(), playerIndex, reason);
-    accessInfo[playerIndex].removePlayer();
-    wasPlaying = player[playerIndex].removePlayer();
-    flagHistory[playerIndex].clear();
-    delayq[playerIndex].dequeuePackets();
+    wasPlaying = player[playerIndex].isPlaying();
+    delete GameKeeper::Player::getPlayerByIndex(playerIndex);
     NetHandler *netPlayer = NetHandler::getHandler(playerIndex);
 #ifdef NETWORK_STATS
     if (wasPlaying)
       netPlayer->dumpMessageStats();
 #endif
     delete netPlayer;
-    delete lagInfo[playerIndex];
-    lagInfo[playerIndex] = NULL;
-    delete score[playerIndex];
-    score[playerIndex] = NULL;
   }
 
   // player is outta here.  if player never joined a team then
