@@ -33,7 +33,6 @@ bzfs \- BZFlag game server
 [\fB\-mps \fR{\fImax-score\fR}]
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR{\fImax-score\fR}]
-[\fB\-noudp\fR]
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
@@ -195,9 +194,6 @@ This is 1 by default.
 \fB\-mts\fI max-score\fR
 Sets a maximum score for teams.  The first team to reach this score is
 declared the winner and the game is over.
-.TP
-.B -noudp
-Do not use a parallel UDP channel for player communication.
 .TP
 \fB-p\fI port\fR
 Listen for game connections on \fIport\fR instead of the default port.
