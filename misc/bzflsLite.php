@@ -12,7 +12,7 @@ $title    = $_GET['title'];
 
 ###############################################################################
 # Connect to the server database.
-$dbpath  = "servers.dat";
+$dbpath  = "bzflag.sqlite";
 $dbexist = is_writable($dbpath);
 $servdb  = sqlite_open($dbpath, 0666, $sqliteerror);
 
