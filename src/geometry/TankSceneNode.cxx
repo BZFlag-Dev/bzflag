@@ -652,7 +652,7 @@ void			TankSceneNode::TankRenderNode::render()
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
     if (sceneNode->useDimensions) {
       const float* dims = sceneNode->dimensions;
-      glScalef(dims[0], dims[1], dims[2]);
+      glScalef(dims[1], dims[0], dims[2]);
       glEnable(GL_NORMALIZE);
     }
 

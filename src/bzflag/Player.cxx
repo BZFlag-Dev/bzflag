@@ -327,17 +327,17 @@ void			Player::setFlag(FlagType* _flag)
   dimensionsTarget[2] = 1.0f;
   if (flagType == Flags::Obesity) {
     const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    dimensionsTarget[0] = factor * 2.0f;
+    dimensionsTarget[0] = factor;
     dimensionsTarget[1] = factor;
   }
   else if (flagType == Flags::Tiny) {
     const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-    dimensionsTarget[0] = factor * 2.0f;
+    dimensionsTarget[0] = factor;
     dimensionsTarget[1] = factor;
   }
   else if (flagType == Flags::Thief) {
     const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    dimensionsTarget[0] = factor * 2.0f;
+    dimensionsTarget[0] = factor;
     dimensionsTarget[1] = factor;
   }
   else if (flagType == Flags::Narrow) {
