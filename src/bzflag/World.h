@@ -113,7 +113,7 @@ class World {
     static void		setBundleMgr(BundleMgr *bundleMgr);
 
     static std::string	getLocale();
-    static void		setLocale(std::string &locale);
+    static void		setLocale(const std::string &locale);
 
     static void		init();
     static void		done();
@@ -408,7 +408,7 @@ inline std::string World::getLocale()
 	return locale;
 }
 
-inline void World::setLocale(std::string& locale)
+inline void World::setLocale(const std::string& locale)
 {
 	World::locale = locale;
 }
