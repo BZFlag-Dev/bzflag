@@ -250,6 +250,9 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // create display lists
   doInitDisplayLists();
 
+  // reset the sky color when it changes
+  BZDB.addCallback("_skyColor", bzdbCallback, this);
+  
   // recreate display lists when context is recreated
   OpenGLGState::registerContextInitializer(freeContext, initContext,
 					   (void*)this);
@@ -259,10 +262,21 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
 BackgroundRenderer::~BackgroundRenderer()
 {
+  BZDB.removeCallback("_skyColor", bzdbCallback, this);
   OpenGLGState::unregisterContextInitializer(freeContext, initContext,
 					     (void*)this);
   delete[] mountainsGState;
   delete[] mountainsList;
+}
+
+
+void BackgroundRenderer::bzdbCallback(const std::string& name, void* data)
+{
+  BackgroundRenderer* br = (BackgroundRenderer*) data;
+  if (name == "_skyColor") {
+    br->setSkyColors();
+  }
+  return;
 }
 
 
@@ -388,6 +402,14 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
 				      const float sunDir[3],
 				      const float moonDir[3])
 {
+  // set sun and moon positions
+  sunDirection[0] = sunDir[0];
+  sunDirection[1] = sunDir[1];
+  sunDirection[2] = sunDir[2];
+  moonDirection[0] = moonDir[0];
+  moonDirection[1] = moonDir[1];
+  moonDirection[2] = moonDir[2];
+
   if (sunXFormList != INVALID_GL_LIST_ID) {
     glDeleteLists(sunXFormList, 1);
     sunXFormList = INVALID_GL_LIST_ID;
@@ -401,27 +423,18 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
     starXFormList = INVALID_GL_LIST_ID;
   }
 
-  makeCelestialLists(renderer, sunDir, moonDir);
+  makeCelestialLists(renderer);
 
   return;
 }
 
 
-void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer,
-					    const float sunDir[3],
-					    const float moonDir[3])
+void BackgroundRenderer::setSkyColors()
 {
-  // save sun and moon positions
-  sunDirection[0] = sunDir[0];
-  sunDirection[1] = sunDir[1];
-  sunDirection[2] = sunDir[2];
-  moonDirection[0] = moonDir[0];
-  moonDirection[1] = moonDir[1];
-  moonDirection[2] = moonDir[2];
-
   // change sky colors according to the sun position
   GLfloat colors[4][3];
   getSkyColor(sunDirection, colors);
+
   skyZenithColor[0] = colors[0][0];
   skyZenithColor[1] = colors[0][1];
   skyZenithColor[2] = colors[0][2];
@@ -434,6 +447,14 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer,
   skyCrossSunDirColor[0] = colors[3][0];
   skyCrossSunDirColor[1] = colors[3][1];
   skyCrossSunDirColor[2] = colors[3][2];
+  
+  return;
+}
+
+
+void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
+{
+  setSkyColors();
 
   // get a few other things concerning the sky
   doShadows = areShadowsCast(sunDirection);
@@ -454,9 +475,9 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer,
   glEndList();
 
   // compute display list for moon
-  float coverage = (moonDir[0] * sunDir[0]) +
-		   (moonDir[1] * sunDir[1]) +
-		   (moonDir[2] * sunDir[2]);
+  float coverage = (moonDirection[0] * sunDirection[0]) +
+		   (moonDirection[1] * sunDirection[1]) +
+		   (moonDirection[2] * sunDirection[2]);
   // hack coverage to lean towards full
   coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
   float worldSize = BZDBCache::worldSize;
@@ -469,9 +490,9 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer,
   float sun2[3];
   const float moonAzimuth = atan2f(moonDirection[1], moonDirection[0]);
   const float moonAltitude = asinf(moonDirection[2]);
-  sun2[0] = sunDir[0] * cosf(moonAzimuth) + sunDir[1] * sinf(moonAzimuth);
-  sun2[1] = sunDir[1] * cosf(moonAzimuth) - sunDir[0] * sinf(moonAzimuth);
-  sun2[2] = sunDir[2] * cosf(moonAltitude) - sun2[0] * sinf(moonAltitude);
+  sun2[0] = sunDirection[0] * cosf(moonAzimuth) + sunDirection[1] * sinf(moonAzimuth);
+  sun2[1] = sunDirection[1] * cosf(moonAzimuth) - sunDirection[0] * sinf(moonAzimuth);
+  sun2[2] = sunDirection[2] * cosf(moonAltitude) - sun2[0] * sinf(moonAltitude);
   const float limbAngle = atan2f(sun2[2], sun2[1]);
 
   int moonSegements = (int)BZDB.eval("moonSegments");
@@ -701,7 +722,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   // toward the sun
   glPushMatrix();
   glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
-							0.0f, 0.0f, 1.0f);
+            0.0f, 0.0f, 1.0f);
 
   // draw sky
   skyGState.setState();
@@ -1470,7 +1491,7 @@ void BackgroundRenderer::doInitDisplayLists()
   // be wrong until setCelestial is called with the appropriate
   // arguments.
   //
-  makeCelestialLists(renderer, sunDirection, moonDirection);
+  makeCelestialLists(renderer);
 }
 
 

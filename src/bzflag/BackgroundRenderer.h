@@ -77,11 +77,11 @@ class BackgroundRenderer {
 
     void		doFreeDisplayLists();
     void		doInitDisplayLists();
+    void		setSkyColors();
+    void		makeCelestialLists(const SceneRenderer&);
     static void		freeContext(void*);
     static void		initContext(void*);
-    void		makeCelestialLists(const SceneRenderer&,
-					   const float sunDirection[3],
-					   const float moonDirection[3]);
+    static void		bzdbCallback(const std::string&, void*);
 
   private:
     // rendering state
