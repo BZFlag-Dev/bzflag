@@ -38,6 +38,13 @@ static const float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
 typedef std::vector<int> tvIndexList;
 
+typedef enum
+{
+	eXAxis,
+	eYAxis,
+	eZAxis
+}teModelAxis;
+
 class CTexCoord
 {
 public:
@@ -59,6 +66,33 @@ public:
 	CVertex(){x = y = z = 0;}
 	~CVertex(){};
 	float x,y,z;
+
+	float get ( teModelAxis axis )
+	{
+		switch (axis)
+		{
+		case eXAxis:
+			return x;
+		case eYAxis:
+			return y;
+		}
+		return z;
+	}
+
+	void translate ( float val, teModelAxis axis )
+	{
+		switch (axis)
+		{
+		case eXAxis:
+			x += val;
+			return;
+
+		case eYAxis:
+			y += val;
+			return;
+		}
+		z += val;
+	}
 
 	bool same ( const CVertex &v )
 	{
@@ -106,6 +140,7 @@ public:
 
 typedef std::map<std::string,CMaterial> tmMaterialMap;
 
+
 class CMesh
 {
 public:
@@ -119,9 +154,43 @@ public:
 	std::string name;
 	tvFaceList	faces;
 
+	float getMaxAxisValue ( teModelAxis axis )
+	{
+		if (!valid())
+			return 0.0f;
+
+		float pt = verts[0].get(axis);
+
+		for ( unsigned int i = 0; i < verts.size(); i++ )
+			if ( verts[i].get(axis) > pt)
+				pt = verts[i].get(axis);
+
+		return pt;
+	}
+
+	float getMinAxisValue ( teModelAxis axis )
+	{
+		if (!valid())
+			return 0.0f;
+
+		float pt = verts[0].get(axis);
+
+		for ( unsigned int i = 0; i < verts.size(); i++ )
+			if ( verts[i].get(axis) < pt)
+				pt = verts[i].get(axis);
+
+		return pt;
+	}
+
+	void translate ( float value, teModelAxis axis )
+	{
+		for ( unsigned int i = 0; i < verts.size(); i++ )
+			verts[i].translate(value,axis);
+	}
+
 	bool valid ( void )
 	{
-		return faces.size();
+		return faces.size() != 0;
 	}
 
 	void clear ( void )
@@ -145,6 +214,21 @@ public:
 
 	tmMaterialMap	materials;
 	tvMeshList		meshes;
+
+	void pushAboveAxis ( teModelAxis axis )
+	{
+		if (!meshes.size())
+			return;
+
+		float minValue = meshes[0].getMinAxisValue(axis);
+
+		for ( unsigned int i = 0; i < meshes.size(); i++ )
+			if ( minValue > meshes[i].getMinAxisValue(axis))
+				minValue = meshes[i].getMinAxisValue(axis);
+
+		for ( unsigned int i = 0; i < meshes.size(); i++ )
+			meshes[i].translate(-minValue,axis);
+	}
 
 	void clear ( void )
 	{
@@ -688,6 +772,8 @@ int main(int argc, char* argv[])
 		printf("unknown input format\n");
 		return 2;
 	}
+
+	model.pushAboveAxis(eZAxis);
 
 	if (model.meshes.size() > 0) {
 		writeBZW(model,output);
