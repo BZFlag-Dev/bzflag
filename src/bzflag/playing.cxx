@@ -3461,61 +3461,69 @@ static void cleanWorldCache()
   BzfString worldPath = getCacheDirectoryName();
 
   char *oldestFile = NULL;
+  int oldestSize = 0;
   int totalSize = 0;
 
+  do {
 #ifdef _WIN32
-  BzfString pattern = worldPath + "/*.bwc";
+	  BzfString pattern = worldPath + "/*.bwc";
 
-  WIN32_FIND_DATA findData;
-  HANDLE h = FindFirstFile(pattern, &findData);
-  if (h != INVALID_HANDLE_VALUE) {
-    FILETIME oldestTime = findData.ftLastAccessTime;
-    oldestFile = strdup(findData.cFileName);
-    totalSize = findData.nFileSizeLow;
+	  WIN32_FIND_DATA findData;
+	  HANDLE h = FindFirstFile(pattern, &findData);
+	  if (h != INVALID_HANDLE_VALUE) {
+	    FILETIME oldestTime = findData.ftLastAccessTime;
+	    oldestFile = strdup(findData.cFileName);
+	    oldestSize = findData.nFileSizeLow;
+	    totalSize = findData.nFileSizeLow;
 
-    while (FindNextFile(h, &findData)) {
-	if (CompareFileTime( &oldestTime, &findData.ftLastAccessTime ) > 0) {
-	  oldestTime = findData.ftLastAccessTime;
-	  if (oldestFile)
-	    free(oldestFile);
-	  oldestFile = strdup(findData.cFileName);
-	}
-	totalSize += findData.nFileSizeLow;
-    }
-    FindClose(h);
-  }
+	    while (FindNextFile(h, &findData)) {
+		if (CompareFileTime( &oldestTime, &findData.ftLastAccessTime ) > 0) {
+		  oldestTime = findData.ftLastAccessTime;
+		  if (oldestFile)
+		    free(oldestFile);
+		  oldestFile = strdup(findData.cFileName);
+		  oldestSize = findData.nFileSizeLow;
+		}
+		totalSize += findData.nFileSizeLow;
+	    }
+	    FindClose(h);
+	  }
 #else
-  DIR *directory = opendir(worldPath);
-  if (directory) {
-    struct dirent* contents;
-    struct stat statbuf;
-    time_t oldestTime = time(NULL);
-    while ((contents = readdir(directory))) {
-      stat((worldPath + "/") + contents->d_name, &statbuf);
-      if (statbuf.st_atime < oldestTime) {
-	if (oldestFile)
-	  free(oldestFile);
-	oldestFile = strdup(contents->d_name);
-      }
-      totalSize += statbuf.st_size;
-    }
-    closedir(directory);
+	  DIR *directory = opendir(worldPath);
+	  if (directory) {
+	    struct dirent* contents;
+	    struct stat statbuf;
+	    time_t oldestTime = time(NULL);
+	    while ((contents = readdir(directory))) {
+	      stat((worldPath + "/") + contents->d_name, &statbuf);
+	      if (statbuf.st_atime < oldestTime) {
+		if (oldestFile)
+		  free(oldestFile);
+		oldestFile = strdup(contents->d_name);
+		oldestSize = statbuf.st_size;
+	      }
+	      totalSize += statbuf.st_size;
+	    }
+	    closedir(directory);
 
-  }
+	  }
 #endif
 
-  if (totalSize < cacheLimit) {
-    if (oldestFile != NULL) {
-	free(oldestFile);
-	oldestFile = NULL;
-    }
-  }
+	  if (totalSize < cacheLimit) {
+	    if (oldestFile != NULL) {
+		free(oldestFile);
+		oldestFile = NULL;
+	    }
+	    return;
+	  }
 
-  if (oldestFile != NULL)
-    remove((getCacheDirectoryName() + "/") + oldestFile);
+	  if (oldestFile != NULL)
+	    remove((getCacheDirectoryName() + "/") + oldestFile);
 
-  if (oldestFile != NULL)
-    free(oldestFile);
+	  if (oldestFile != NULL)
+	    free(oldestFile);
+	  totalSize -= oldestSize;
+  } while (oldestFile && (totalSize > cacheLimit));
 }
 
 static void markOld(BzfString &fileName)
