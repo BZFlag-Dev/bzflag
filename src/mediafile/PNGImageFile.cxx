@@ -103,12 +103,9 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
 	memset(lineBuffers[1], 0, allocSize);
 	activeBufferIndex = 0;
 
-	//Temporary
-	if (colorDepth != 2)
-		return;
-	if (bitDepth != 8)
-		return;
 	if (filterMethod != 0)
+		return;
+	if (interlaceMethod != 0)
 		return;
 
 
@@ -192,8 +189,8 @@ bool					PNGImageFile::read(void* buffer)
 				return false;
 			}
 
-			memcpy(((unsigned char *)buffer)+bufferPos, line+1, lineBufferSize-1);
-			bufferPos += lineBufferSize-1;
+			memcpy(((unsigned char *)buffer)+bufferPos, line+1, realBufferSize-1);
+			bufferPos += realBufferSize-1;
 
 			switchLineBuffers();
 			line = getLineBuffer();
@@ -206,6 +203,16 @@ bool					PNGImageFile::read(void* buffer)
 			delete c;
 			return false;
 		}
+
+		expand();
+
+		if (!filter()) {
+			delete c;
+			return false;
+		}
+
+		memcpy(((unsigned char *)buffer)+bufferPos, line+1, realBufferSize-1);
+
 		inflateEnd(&stream);
 
 		delete c;
@@ -311,6 +318,22 @@ bool PNGImageFile::expand()
 		}
 		break;
 
+		case 8:
+		{
+			if (colorDepth == 3) {
+				if (palette == NULL)
+					return FALSE;
+
+				for (int i = width-1; i >= 0; i--) {
+					PNGRGB &rgb = palette->get(*(pData+i));
+					*(pData + width*3 + 1) = rgb.red;
+					*(pData + width*3 + 2) = rgb.green;
+					*(pData + width*3 + 3) = rgb.blue;
+				}
+			}
+		}
+		break;
+
 		case 16:
 		{
 			for (int i = 0; i < width; i++) {
@@ -323,25 +346,13 @@ bool PNGImageFile::expand()
 			return false;
 	}
 
-	if (colorDepth == 3) {
-		if (palette == NULL)
-			return FALSE;
-
-		for (int i = width-1; i >= 0; i--) {
-			PNGRGB &rgb = palette->get(*(pData+i));
-			*(pData + width*3 + 1) = rgb.red;
-			*(pData + width*3 + 2) = rgb.green;
-			*(pData + width*3 + 3) = rgb.blue;
-		}
-	}
-
 	return true;
 }
 
 /* 
 bool PNGImageFile::filter()
 
-  Filter a line, based on the first byte found in line.
+  Filter a line, based on the first byte found in line. Data must be in 8 bit format
 */
 
 bool PNGImageFile::filter()
