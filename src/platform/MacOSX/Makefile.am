@@ -1,4 +1,6 @@
 libMac_a_SOURCES =			\
+	SDLMain.h			\
+	SDLMain.m			\
 	MacPlatformFactory.cxx		\
 	MacPlatformFactory.h		\
 	MacDisplay.cxx			\
