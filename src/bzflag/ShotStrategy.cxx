@@ -274,6 +274,21 @@ const Teleporter*	ShotStrategy::getFirstTeleporter(const Ray& ray,
   return closestTeleporter;
 }
 
+bool		ShotStrategy::getGround(const Ray& r, float min, float &t) const
+{
+  if (r.getDirection()[2] >= 0.0f)
+    return false;
+
+  float groundT = r.getOrigin()[2] / -r.getDirection()[2];
+  if (groundT < t)
+  {
+    t = groundT;
+    return true;
+  }
+  return false;
+}
+
+
 //
 // ShotPathSegment
 //
@@ -636,7 +651,8 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     float t = timeLeft + minTime;
     int face;
     Obstacle* building = (Obstacle*)((e != Through) ? getFirstBuilding(r, Epsilon, t) : NULL);
-	const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
+    const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
+    bool hitGround = getGround(r, Epsilon, t);
 	t -= minTime;
 	minTime = 0.0f;
 
@@ -678,32 +694,52 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	else if (building) {
 	  // hit building -- can bounce off or stop, buildings ignored for Through
 	  switch (e) {
-	case Stop:
-	  timeLeft = 0.0f;
-	  break;
+	    case Stop:
+	      timeLeft = 0.0f;
+	    break;
 
-	case Reflect: {
-	  // move origin to point of reflection
-	  o[0] += t * d[0];
-	  o[1] += t * d[1];
-	  o[2] += t * d[2];
+	  case Reflect: {
+	    // move origin to point of reflection
+	    o[0] += t * d[0];
+	    o[1] += t * d[1];
+	    o[2] += t * d[2];
 
-	  // reflect direction about normal to building
-	  float normal[3];
-	  building->getNormal(o, normal);
-	  reflect(d, normal);
-	  reason = ShotPathSegment::Ricochet;
-	  break;
-
-	case Through:
-	  assert(0);
+	    // reflect direction about normal to building
+	    float normal[3];
+	    building->getNormal(o, normal);
+	    reflect(d, normal);
+	    reason = ShotPathSegment::Ricochet;
 	}
+	  break;
+
+	  case Through:
+	    assert(0);
 	  }
 	}
-	else if (o2[2]<=0.0f)	// we hit the ground
+	else if (hitGround)	// we hit the ground
 	{
-		// TODO - FIXME make the shots stop or bounce at the ground
-		timeLeft = 0.0f;
+	  switch (e) {
+	    case Stop:
+	    case Through:
+	      timeLeft = 0.0f;
+	      break;
+
+	    case Reflect: {
+	      // move origin to point of reflection
+	      o[0] += t * d[0];
+	      o[1] += t * d[1];
+	      o[2] += t * d[2];
+
+	      // reflect direction about normal to building
+	      float normal[3];
+	      normal[0] = 0.0f;
+	      normal[1] = 0.0f;
+	      normal[2] = 1.0f;
+	      reflect(d, normal);
+	      reason = ShotPathSegment::Ricochet;
+	      break;
+	    }
+	  }
 	}
   } while (timeLeft > Epsilon);
   lastTime = startTime;

@@ -68,6 +68,7 @@ class ShotStrategy {
     const Obstacle*	getFirstBuilding(const Ray&, float min, float& t) const;
     const Teleporter*	getFirstTeleporter(const Ray&, float min,
 							float& t, int& f) const;
+    bool		getGround(const Ray&, float min, float &t) const;
 
   private:
     ShotPath*		path;
