@@ -812,12 +812,12 @@ static void sendMessageToListServerForReal(int index)
     // update player counts in ping reply.  pretend there are no players
     // if the game is over.
     if (gameOver) {
-      pingReply.rogueCount = team[0].team.size;
-      pingReply.redCount = team[1].team.size;
-      pingReply.greenCount = team[2].team.size;
-      pingReply.blueCount = team[3].team.size;
-      pingReply.purpleCount = team[4].team.size;
-      pingReply.observerCount = team[5].team.size;
+      pingReply.rogueCount = (uint8_t)team[0].team.size;
+      pingReply.redCount = (uint8_t)team[1].team.size;
+      pingReply.greenCount = (uint8_t)team[2].team.size;
+      pingReply.blueCount = (uint8_t)team[3].team.size;
+      pingReply.purpleCount = (uint8_t)team[4].team.size;
+      pingReply.observerCount = (uint8_t)team[5].team.size;
     }
     else {
       pingReply.rogueCount = 0;
@@ -856,12 +856,12 @@ static void sendMessageToListServerForReal(int index)
     // pretend there are no players if the game is over
     {
       // update player counts in ping reply.
-      pingReply.rogueCount = team[0].team.size;
-      pingReply.redCount = team[1].team.size;
-      pingReply.greenCount = team[2].team.size;
-      pingReply.blueCount = team[3].team.size;
-      pingReply.purpleCount = team[4].team.size;
-      pingReply.observerCount = team[5].team.size;
+      pingReply.rogueCount = (uint8_t)team[0].team.size;
+      pingReply.redCount = (uint8_t)team[1].team.size;
+      pingReply.greenCount = (uint8_t)team[2].team.size;
+      pingReply.blueCount = (uint8_t)team[3].team.size;
+      pingReply.purpleCount = (uint8_t)team[4].team.size;
+      pingReply.observerCount = (uint8_t)team[5].team.size;
 
       // encode ping reply as ascii hex digits
       char gameInfo[PingPacketHexPackedSize];
@@ -2125,12 +2125,12 @@ static void respondToPing()
 
   // reply with current game info on udpSocket
   pingReply.sourceAddr = Address(addr);
-  pingReply.rogueCount = team[0].team.size;
-  pingReply.redCount = team[1].team.size;
-  pingReply.greenCount = team[2].team.size;
-  pingReply.blueCount = team[3].team.size;
-  pingReply.purpleCount = team[4].team.size;
-  pingReply.observerCount = team[5].team.size;
+  pingReply.rogueCount = (uint8_t)team[0].team.size;
+  pingReply.redCount = (uint8_t)team[1].team.size;
+  pingReply.greenCount = (uint8_t)team[2].team.size;
+  pingReply.blueCount = (uint8_t)team[3].team.size;
+  pingReply.purpleCount = (uint8_t)team[4].team.size;
+  pingReply.observerCount = (uint8_t)team[5].team.size;
   pingReply.write(udpSocket, &addr);
 }
 
@@ -4393,20 +4393,20 @@ int main(int argc, char **argv)
   pingReply.serverId.port = htons(clOptions->wksPort);
   pingReply.serverId.number = 0;
   pingReply.gameStyle = clOptions->gameStyle;
-  pingReply.maxPlayers = maxPlayers;
+  pingReply.maxPlayers = (uint8_t)maxPlayers;
   pingReply.maxShots = clOptions->maxShots;
-  pingReply.rogueMax = clOptions->maxTeam[0];
-  pingReply.redMax = clOptions->maxTeam[1];
-  pingReply.greenMax = clOptions->maxTeam[2];
-  pingReply.blueMax = clOptions->maxTeam[3];
-  pingReply.purpleMax = clOptions->maxTeam[4];
-  pingReply.observerMax = clOptions->maxTeam[5];
+  pingReply.rogueMax = (uint8_t)clOptions->maxTeam[0];
+  pingReply.redMax = (uint8_t)clOptions->maxTeam[1];
+  pingReply.greenMax = (uint8_t)clOptions->maxTeam[2];
+  pingReply.blueMax = (uint8_t)clOptions->maxTeam[3];
+  pingReply.purpleMax = (uint8_t)clOptions->maxTeam[4];
+  pingReply.observerMax = (uint8_t)clOptions->maxTeam[5];
   pingReply.shakeWins = clOptions->shakeWins;
   pingReply.shakeTimeout = clOptions->shakeTimeout;
 #ifdef TIMELIMIT
-  pingReply.maxTime = (int)clOptions->timeLimit;
+  pingReply.maxTime = (uint16_t)clOptions->timeLimit;
 #else
-  pingReply.maxTime = (int)0.0f;
+  pingReply.maxTime = 0;
 #endif
   pingReply.maxPlayerScore = clOptions->maxPlayerScore;
   pingReply.maxTeamScore = clOptions->maxTeamScore;
