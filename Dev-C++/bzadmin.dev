@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin.dev
 Name=bzadmin
-UnitCount=45
+UnitCount=44
 Type=1
 Ver=1
 ObjFiles=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001001000000100
+CompilerSettings=000000000100100000110
 
 [Unit1]
 FileName=..\src\bzadmin\UIMap.cxx
@@ -210,16 +210,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=..\src\net\AdnsHandler.cxx
-CompileCpp=1
-Folder=Source Files/Net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit22]
 FileName=..\src\net\multicast.cxx
 CompileCpp=1
 Folder=Source Files/Net
@@ -229,7 +219,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit22]
 FileName=..\src\net\network.cxx
 CompileCpp=1
 Folder=Source Files/Net
@@ -239,8 +229,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit23]
 FileName=..\src\net\Pack.cxx
+CompileCpp=1
+Folder=Source Files/Net
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit24]
+FileName=..\src\bzflag\ServerLink.cxx
 CompileCpp=1
 Folder=Source Files/Net
 Compile=1
@@ -268,9 +268,9 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit25]
-FileName=..\src\bzflag\ServerLink.cxx
+FileName=..\src\common\StateDatabase.cxx
 CompileCpp=1
-Folder=Source Files/Net
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -288,16 +288,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit26]
-FileName=..\src\common\StateDatabase.cxx
-CompileCpp=1
-Folder=Source Files/Common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit27]
 FileName=..\src\common\TimeKeeper.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -307,7 +297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit27]
 FileName=..\src\common\ErrorHandler.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -317,7 +307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit28]
 FileName=..\src\common\bzfio.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -327,7 +317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
+[Unit29]
 FileName=..\src\common\BundleMgr.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -337,7 +327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit30]
 FileName=..\src\common\Bundle.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -347,7 +337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit31]
 FileName=..\src\common\PlayerState.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -357,7 +347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
+[Unit32]
 FileName=..\src\date\buildDate.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -367,7 +357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit33]
 FileName=..\src\common\ShotUpdate.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -377,7 +367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit34]
 FileName=..\src\common\Flag.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -387,7 +377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit35]
 FileName=..\src\common\Team.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -397,7 +387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit37]
+[Unit36]
 FileName=..\src\bzflag\ServerLink.h
 CompileCpp=1
 Folder=Header Files/Common
@@ -407,7 +397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
+[Unit37]
 FileName=..\src\common\AutoCompleter.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -417,7 +407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit39]
+[Unit38]
 FileName=..\src\common\TextUtils.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -427,8 +417,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit39]
+FileName=..\src\game\ServerList.cxx
+CompileCpp=1
+Folder=Source Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit41]
-FileName=..\src\game\ServerListCache.cxx
+FileName=..\src\game\StartupInfo.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1
@@ -438,7 +438,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit42]
-FileName=..\src\game\StartupInfo.cxx
+FileName=..\src\game\ServerItem.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1
@@ -458,7 +458,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit40]
-FileName=..\src\game\ServerList.cxx
+FileName=..\src\game\ServerListCache.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1
@@ -468,7 +468,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit43]
-FileName=..\src\game\ServerItem.cxx
+FileName=..\src\common\FileManager.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1
@@ -478,7 +478,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit44]
-FileName=..\src\common\FileManager.cxx
+FileName=..\src\game\DirectoryNames.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1

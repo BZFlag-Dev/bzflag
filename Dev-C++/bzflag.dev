@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=000000000100000001010
+CompilerSettings=000000000100000001110
 
 [Unit2]
 FileName=..\src\bzflag\BackgroundRenderer.cxx

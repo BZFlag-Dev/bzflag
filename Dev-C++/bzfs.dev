@@ -9,7 +9,7 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Wer
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lcurl_@@_
 Libs=
-UnitCount=238
+UnitCount=236
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/c-ares","Source Files/common","Source Files/date","Source Files/game","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=000000000110000000010
+CompilerSettings=000000000110000000110
 
 [Unit1]
 FileName=..\src\bzfs\AccessControlList.cxx
@@ -958,17 +958,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit94]
-FileName=..\src\net\AdnsHandler.cxx
-CompileCpp=1
-Folder=Source Files/net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit96]
-FileName=..\src\bzfs\FlagHistory.cxx
+FileName=..\src\bzfs\WorldFileLocation.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
 Compile=1
@@ -977,7 +967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit97]
+[Unit96]
 FileName=..\src\bzfs\EntryZones.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -987,7 +977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit98]
+[Unit97]
 FileName=..\src\bzfs\SpawnPosition.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -997,7 +987,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit99]
+[Unit98]
 FileName=..\src\bzfs\CustomZone.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1007,7 +997,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit100]
+[Unit99]
 FileName=..\src\bzfs\BZWReader.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1017,8 +1007,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit100]
+FileName=..\src\bzfs\BZWError.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit102]
-FileName=..\src\bzfs\GameKeeper.cxx
+FileName=..\src\bzfs\WorldInfo.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
 Compile=1
@@ -1028,7 +1028,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit108]
-FileName=..\src\bzfs\Permissions.h
+FileName=..\src\bzfs\RecordReplay.h
 CompileCpp=1
 Folder=Header Files/bzfs
 Compile=1
@@ -1038,9 +1038,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit111]
-FileName=..\src\bzfs\Score.h
+FileName=..\src\common\bz_Locale.cxx
 CompileCpp=1
-Folder=Header Files/bzfs
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -1048,7 +1048,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit104]
-FileName=..\src\bzfs\BZWError.h
+FileName=..\src\bzfs\BZWReader.h
 CompileCpp=1
 Folder=Header Files/bzfs
 Compile=1
@@ -1058,16 +1058,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit113]
-FileName=..\src\common\Country.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit114]
 FileName=..\src\common\Language.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -1077,367 +1067,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit116]
-FileName=..\src\common\PositionTracker.cxx
-CompileCpp=1
-Folder=Source Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit125]
-FileName=..\src\game\CollisionManager.cxx
-CompileCpp=1
-Folder=Source Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit128]
-FileName=..\include\Bundle.h
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit133]
-FileName=..\include\Language.h
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit134]
-FileName=..\include\OSFile.h
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit135]
-FileName=..\include\PositionTracker.h
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit136]
-FileName=..\include\AdnsHandler.h
-CompileCpp=1
-Folder=Header Files/net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit137]
-FileName=..\include\network.h
-CompileCpp=1
-Folder=Header Files/net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit138]
-FileName=..\include\Protocol.h
-CompileCpp=1
-Folder=Header Files/net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit139]
-FileName=..\include\CollisionManager.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit140]
-FileName=..\include\CommandsStandard.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit141]
-FileName=..\include\DirectoryNames.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit142]
-FileName=..\include\Frustum.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit143]
-FileName=..\include\Intersect.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit144]
-FileName=..\include\LagInfo.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit145]
-FileName=..\include\NetHandler.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit146]
-FileName=..\include\PlayerInfo.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit147]
-FileName=..\include\Ray.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit148]
-FileName=..\src\regex\regfree.c
-CompileCpp=0
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit149]
-FileName=..\src\regex\regcomp.c
-CompileCpp=0
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit150]
-FileName=..\src\regex\regerror.c
-CompileCpp=0
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit154]
-FileName=..\src\regex\cname.h
-CompileCpp=1
-Folder=Header Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit155]
-FileName=..\src\regex\regex2.h
-CompileCpp=1
-Folder=Header Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit156]
-FileName=..\src\bzfs\WorldFileObstacle.cxx
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit157]
-FileName=..\src\obstacle\PyramidBuilding.cxx
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit158]
-FileName=..\src\obstacle\BoxBuilding.cxx
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit159]
-FileName=..\src\obstacle\Teleporter.cxx
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit160]
-FileName=..\src\obstacle\Obstacle.cxx
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit161]
-FileName=..\src\obstacle\WallObstacle.cxx
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit162]
-FileName=..\src\obstacle\BaseBuilding.cxx
-CompileCpp=1
-Folder=Header Files/common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit164]
-FileName=..\src\bzfs\CustomTetra.cxx
-CompileCpp=1
-Folder=Source Files/bzfs
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit165]
-FileName=..\src\zlib\compress.c
-CompileCpp=0
-Folder=Source Files/zlib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=$(CC) -c compress.c -o ../src/bzfs/compress.o $(CFLAGS)
-
-[Unit167]
-FileName=..\src\zlib\adler32.c
-CompileCpp=0
-Folder=Source Files/zlib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit168]
-FileName=..\src\zlib\crc32.c
-CompileCpp=0
-Folder=Source Files/zlib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit169]
-FileName=..\src\zlib\gzio.c
-CompileCpp=0
-Folder=Source Files/zlib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit110]
-FileName=..\src\bzfs\RejoinList.h
-CompileCpp=1
-Folder=Header Files/bzfs
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit115]
+[Unit114]
 FileName=..\src\common\OSFile.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -1447,7 +1077,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit117]
+[Unit116]
 FileName=..\src\game\CommandsStandard.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -1457,8 +1087,378 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit118]
+[Unit125]
+FileName=..\include\BundleMgr.h
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit128]
+FileName=..\include\Country.h
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit133]
+FileName=..\include\OSFile.h
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit134]
+FileName=..\include\PositionTracker.h
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit135]
+FileName=..\include\network.h
+CompileCpp=1
+Folder=Header Files/net
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit136]
+FileName=..\include\Protocol.h
+CompileCpp=1
+Folder=Header Files/net
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit137]
+FileName=..\include\CollisionManager.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit138]
+FileName=..\include\CommandsStandard.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit139]
+FileName=..\include\DirectoryNames.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit140]
+FileName=..\include\Frustum.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit141]
+FileName=..\include\Intersect.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit142]
+FileName=..\include\LagInfo.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit143]
+FileName=..\include\NetHandler.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit144]
+FileName=..\include\PlayerInfo.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit145]
+FileName=..\include\Ray.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit146]
+FileName=..\src\regex\regfree.c
+CompileCpp=0
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit147]
+FileName=..\src\regex\regcomp.c
+CompileCpp=0
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit148]
+FileName=..\src\regex\regerror.c
+CompileCpp=0
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit149]
+FileName=..\src\regex\regexec.c
+CompileCpp=0
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit150]
+FileName=..\src\regex\utils.h
+CompileCpp=1
+Folder=Header Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit154]
+FileName=..\src\bzfs\WorldFileObstacle.cxx
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit155]
+FileName=..\src\obstacle\PyramidBuilding.cxx
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit156]
+FileName=..\src\obstacle\BoxBuilding.cxx
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit157]
+FileName=..\src\obstacle\Teleporter.cxx
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit158]
+FileName=..\src\obstacle\Obstacle.cxx
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit159]
+FileName=..\src\obstacle\WallObstacle.cxx
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit160]
+FileName=..\src\obstacle\BaseBuilding.cxx
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit161]
+FileName=..\src\obstacle\TetraBuilding.cxx
+CompileCpp=1
+Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit162]
+FileName=..\src\bzfs\CustomTetra.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit164]
+FileName=..\src\zlib\deflate.c
+CompileCpp=0
+Folder=Source Files/zlib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=$(CC) -c deflate.c -o ../src/bzfs/deflate.o $(CFLAGS)
+
+[Unit165]
+FileName=..\src\zlib\adler32.c
+CompileCpp=0
+Folder=Source Files/zlib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit167]
+FileName=..\src\zlib\gzio.c
+CompileCpp=0
+Folder=Source Files/zlib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit168]
+FileName=..\src\zlib\infblock.c
+CompileCpp=0
+Folder=Source Files/zlib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit169]
+FileName=..\src\zlib\infcodes.c
+CompileCpp=0
+Folder=Source Files/zlib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit110]
+FileName=..\src\bzfs\Score.h
+CompileCpp=1
+Folder=Header Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit115]
+FileName=..\src\common\PositionTracker.cxx
+CompileCpp=1
+Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit117]
 FileName=..\src\game\DirectoryNames.cxx
+CompileCpp=1
+Folder=Source Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit118]
+FileName=..\src\game\Frustum.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -1478,7 +1478,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit119]
-FileName=..\src\game\Frustum.cxx
+FileName=..\src\game\Intersect.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -1488,7 +1488,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit120]
-FileName=..\src\game\Intersect.cxx
+FileName=..\src\game\LagInfo.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -1508,7 +1508,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit95]
-FileName=..\src\bzfs\WorldFileLocation.cxx
+FileName=..\src\bzfs\FlagHistory.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
 Compile=1
@@ -1518,7 +1518,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit101]
-FileName=..\src\bzfs\BZWError.cxx
+FileName=..\src\bzfs\GameKeeper.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
 Compile=1
@@ -1528,17 +1528,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit103]
-FileName=..\src\bzfs\WorldInfo.cxx
-CompileCpp=1
-Folder=Source Files/bzfs
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit105]
-FileName=..\src\bzfs\BZWReader.h
+FileName=..\src\bzfs\BZWError.h
 CompileCpp=1
 Folder=Header Files/bzfs
 Compile=1
@@ -1547,7 +1537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
+[Unit105]
 FileName=..\src\bzfs\FlagHistory.h
 CompileCpp=1
 Folder=Header Files/bzfs
@@ -1557,7 +1547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit107]
+[Unit106]
 FileName=..\src\bzfs\GameKeeper.h
 CompileCpp=1
 Folder=Header Files/bzfs
@@ -1567,8 +1557,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit107]
+FileName=..\src\bzfs\Permissions.h
+CompileCpp=1
+Folder=Header Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit109]
-FileName=..\src\bzfs\RecordReplay.h
+FileName=..\src\bzfs\RejoinList.h
 CompileCpp=1
 Folder=Header Files/bzfs
 Compile=1
@@ -1578,7 +1578,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit112]
-FileName=..\src\common\bz_Locale.cxx
+FileName=..\src\common\Country.cxx
 CompileCpp=1
 Folder=Source Files/common
 Compile=1
@@ -1588,16 +1588,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit121]
-FileName=..\src\game\LagInfo.cxx
-CompileCpp=1
-Folder=Source Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit122]
 FileName=..\src\game\NetHandler.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -1607,7 +1597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit123]
+[Unit122]
 FileName=..\src\game\PlayerInfo.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -1617,7 +1607,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit124]
+[Unit123]
 FileName=..\src\game\Ray.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -1627,17 +1617,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
-FileName=..\include\BundleMgr.h
+[Unit124]
+FileName=..\src\game\CollisionManager.cxx
 CompileCpp=1
-Folder=Header Files/common
+Folder=Source Files/game
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
+[Unit126]
 FileName=..\include\VotingArbiter.h
 CompileCpp=1
 Folder=Header Files/game
@@ -1647,8 +1637,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
-FileName=..\include\Country.h
+[Unit127]
+FileName=..\include\Bundle.h
 CompileCpp=1
 Folder=Header Files/common
 Compile=1
@@ -1657,7 +1647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit130]
+[Unit129]
 FileName=..\include\ErrorHandler.h
 CompileCpp=1
 Folder=Header Files/common
@@ -1667,7 +1657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit131]
+[Unit130]
 FileName=..\include\FileManager.h
 CompileCpp=1
 Folder=Header Files/common
@@ -1677,7 +1667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit132]
+[Unit131]
 FileName=..\include\KeyManager.h
 CompileCpp=1
 Folder=Header Files/common
@@ -1687,8 +1677,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit132]
+FileName=..\include\Language.h
+CompileCpp=1
+Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit152]
-FileName=..\src\regex\utils.h
+FileName=..\src\regex\cname.h
 CompileCpp=1
 Folder=Header Files/regex
 Compile=1
@@ -1698,7 +1698,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit153]
-FileName=..\src\regex\cclass.h
+FileName=..\src\regex\regex2.h
 CompileCpp=1
 Folder=Header Files/regex
 Compile=1
@@ -1708,9 +1708,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit151]
-FileName=..\src\regex\regexec.c
-CompileCpp=0
-Folder=Source Files/regex
+FileName=..\src\regex\cclass.h
+CompileCpp=1
+Folder=Header Files/regex
 Compile=1
 Link=1
 Priority=1000
@@ -1718,46 +1718,26 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit163]
-FileName=..\src\obstacle\TetraBuilding.cxx
-CompileCpp=1
-Folder=Source Files/common
+FileName=..\src\zlib\compress.c
+CompileCpp=0
+Folder=Source Files/zlib
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c compress.c -o ../src/bzfs/compress.o $(CFLAGS)
 
 [Unit166]
-FileName=..\src\zlib\deflate.c
+FileName=..\src\zlib\crc32.c
 CompileCpp=0
 Folder=Source Files/zlib
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=$(CC) -c deflate.c -o ../src/bzfs/deflate.o $(CFLAGS)
+BuildCmd=
 
 [Unit170]
-FileName=..\src\zlib\infblock.c
-CompileCpp=0
-Folder=Source Files/zlib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit171]
-FileName=..\src\zlib\infcodes.c
-CompileCpp=0
-Folder=Source Files/zlib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit172]
 FileName=..\src\zlib\inffast.c
 CompileCpp=0
 Folder=Source Files/zlib
@@ -1767,7 +1747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit173]
+[Unit171]
 FileName=..\src\zlib\inflate.c
 CompileCpp=0
 Folder=Source Files/zlib
@@ -1777,7 +1757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit174]
+[Unit172]
 FileName=..\src\zlib\inftrees.c
 CompileCpp=0
 Folder=Source Files/zlib
@@ -1787,7 +1767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit175]
+[Unit173]
 FileName=..\src\zlib\infutil.c
 CompileCpp=0
 Folder=Source Files/zlib
@@ -1797,7 +1777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit176]
+[Unit174]
 FileName=..\src\zlib\trees.c
 CompileCpp=0
 Folder=Source Files/zlib
@@ -1807,7 +1787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit177]
+[Unit175]
 FileName=..\src\zlib\uncompr.c
 CompileCpp=0
 Folder=Source Files/zlib
@@ -1817,7 +1797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit178]
+[Unit176]
 FileName=..\src\zlib\zutil.c
 CompileCpp=0
 Folder=Source Files/zlib
@@ -1827,7 +1807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit179]
+[Unit177]
 FileName=..\src\bzfs\ParseMaterial.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1837,7 +1817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit180]
+[Unit178]
 FileName=..\src\bzfs\CustomArc.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1847,7 +1827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit181]
+[Unit179]
 FileName=..\src\bzfs\CustomMesh.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1857,7 +1837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit182]
+[Unit180]
 FileName=..\src\bzfs\CustomMeshFace.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1867,7 +1847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit183]
+[Unit181]
 FileName=..\src\bzfs\CustomSphere.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1877,7 +1857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit184]
+[Unit182]
 FileName=..\src\bzfs\CustomTextureMatrix.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1887,7 +1867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit185]
+[Unit183]
 FileName=..\src\bzfs\CustomWaterLevel.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1897,7 +1877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit186]
+[Unit184]
 FileName=..\src\game\DynamicColor.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1907,7 +1887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit187]
+[Unit185]
 FileName=..\src\game\TextureMatrix.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1917,7 +1897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit188]
+[Unit186]
 FileName=..\src\obstacle\MeshObstacle.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1927,7 +1907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit189]
+[Unit187]
 FileName=..\src\obstacle\MeshFace.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1937,7 +1917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit190]
+[Unit188]
 FileName=..\src\bzfs\CustomDynamicColor.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1947,7 +1927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit191]
+[Unit189]
 FileName=..\src\bzfs\CustomCone.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1957,7 +1937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit192]
+[Unit190]
 FileName=..\src\bzfs\MasterBanList.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1967,7 +1947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit193]
+[Unit191]
 FileName=..\src\common\URLManager.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1977,7 +1957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit194]
+[Unit192]
 FileName=..\src\bzfs\Authentication.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -1987,7 +1967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit195]
+[Unit193]
 FileName=..\src\common\TextUtils.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -1997,7 +1977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit196]
+[Unit194]
 FileName=..\src\game\BzMaterial.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2007,7 +1987,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit197]
+[Unit195]
 FileName=..\src\obstacle\SphereObstacle.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -2017,7 +1997,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit198]
+[Unit196]
 FileName=..\src\obstacle\ArcObstacle.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -2027,7 +2007,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit199]
+[Unit197]
 FileName=..\src\obstacle\ConeObstacle.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -2037,7 +2017,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit200]
+[Unit198]
 FileName=..\src\bzfs\CustomMaterial.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -2047,7 +2027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit201]
+[Unit199]
 FileName=..\src\game\PhysicsDriver.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2057,7 +2037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit202]
+[Unit200]
 FileName=..\src\bzfs\CustomPhysicsDriver.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2067,7 +2047,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit203]
+[Unit201]
 FileName=..\src\bzfs\Filter.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -2077,7 +2057,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit204]
+[Unit202]
 FileName=..\src\common\ParseColor.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -2087,7 +2067,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit205]
+[Unit203]
 FileName=..\src\obstacle\ObstacleModifier.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2097,7 +2077,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit206]
+[Unit204]
 FileName=..\src\obstacle\ObstacleList.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2107,7 +2087,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit207]
+[Unit205]
 FileName=..\src\obstacle\ObstacleMgr.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2117,7 +2097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit208]
+[Unit206]
 FileName=..\src\game\MeshTransform.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2127,7 +2107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit209]
+[Unit207]
 FileName=..\src\bzfs\CustomGroup.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2137,7 +2117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit210]
+[Unit208]
 FileName=..\src\bzfs\CustomMeshTransform.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2147,7 +2127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit211]
+[Unit209]
 FileName=..\src\game\LinkManager.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -2157,7 +2137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit212]
+[Unit210]
 FileName=..\src\bzfs\DropGeometry.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
@@ -2167,7 +2147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit213]
+[Unit211]
 FileName=..\src\common\bzglob.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -2177,7 +2157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit214]
+[Unit212]
 FileName=..\src\c-ares\ares_init.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2187,7 +2167,7 @@ Priority=1000
 OverrideBuildCmd=1
 BuildCmd=$(CC) -c ../src/c-ares/ares_init.c -o ../src/bzfs/ares_init.o -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS
 
-[Unit215]
+[Unit213]
 FileName=..\src\c-ares\ares_mkquery.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2197,7 +2177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit216]
+[Unit214]
 FileName=..\src\c-ares\ares_parse_a_reply.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2207,7 +2187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit217]
+[Unit215]
 FileName=..\src\c-ares\ares_parse_ptr_reply.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2217,7 +2197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit218]
+[Unit216]
 FileName=..\src\c-ares\ares_process.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2227,7 +2207,7 @@ Priority=1000
 OverrideBuildCmd=1
 BuildCmd=$(CC) -c ../src/c-ares/ares_process.c -o ../src/bzfs/ares_process.o -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS
 
-[Unit219]
+[Unit217]
 FileName=..\src\c-ares\ares_query.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2237,7 +2217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit220]
+[Unit218]
 FileName=..\src\c-ares\ares_search.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2247,7 +2227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit221]
+[Unit219]
 FileName=..\src\c-ares\ares_send.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2257,7 +2237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit222]
+[Unit220]
 FileName=..\src\c-ares\ares_strerror.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2267,7 +2247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit223]
+[Unit221]
 FileName=..\src\c-ares\ares_timeout.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2277,7 +2257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit224]
+[Unit222]
 FileName=..\src\c-ares\ares_version.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2287,7 +2267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit225]
+[Unit223]
 FileName=..\src\c-ares\windows_port.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2297,7 +2277,17 @@ Priority=1000
 OverrideBuildCmd=1
 BuildCmd=$(CC) -c ../src/c-ares/windows_port.c -o ../src/bzfs/windows_port.o -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS
 
-[Unit227]
+[Unit224]
+FileName=..\src\c-ares\ares__close_sockets.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit225]
 FileName=..\src\c-ares\ares__get_hostent.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2307,17 +2297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit228]
-FileName=..\src\c-ares\ares__read_line.c
-CompileCpp=0
-Folder=Source Files/c-ares
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit229]
+[Unit227]
 FileName=..\src\c-ares\ares_cancel.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2327,7 +2307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit230]
+[Unit228]
 FileName=..\src\c-ares\ares_destroy.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2337,7 +2317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit231]
+[Unit229]
 FileName=..\src\c-ares\ares_expand_name.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2347,7 +2327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit232]
+[Unit230]
 FileName=..\src\c-ares\ares_expand_string.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2357,7 +2337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit233]
+[Unit231]
 FileName=..\src\c-ares\ares_fds.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2367,7 +2347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit234]
+[Unit232]
 FileName=..\src\c-ares\ares_free_hostent.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2377,7 +2357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit235]
+[Unit233]
 FileName=..\src\c-ares\ares_free_string.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -2387,10 +2367,30 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit236]
+[Unit234]
 FileName=..\src\c-ares\ares_gethostbyaddr.c
 CompileCpp=0
 Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit235]
+FileName=..\src\c-ares\ares_gethostbyname.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit236]
+FileName=..\src\net\AresHandler.cxx
+CompileCpp=1
+Folder=Source Files/net
 Compile=1
 Link=1
 Priority=1000
@@ -2428,7 +2428,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit226]
-FileName=..\src\c-ares\ares__close_sockets.c
+FileName=..\src\c-ares\ares__read_line.c
 CompileCpp=0
 Folder=Source Files/c-ares
 Compile=1
