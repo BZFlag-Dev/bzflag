@@ -761,7 +761,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     // toggle motion freeze
     motionFreeze = !motionFreeze;
     if (motionFreeze) {
-      addMessage(NULL, "The tank's motion is now frozen! ..it wor Press Shift+` to unfreeze");
+      addMessage(NULL, "The tank's motion is now frozen! ... Press Shift+` to unfreeze");
     }
     return;
   }
