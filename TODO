@@ -47,8 +47,6 @@ to do list for bzflag
    file system stuff (dir delimiter, etc.)
    user name stuff
 
-* consider moving to LGPL instead of GPL
-
 * clean up libraries that could be reused by other games
 
 * allow the worlds to be resized as a server option
