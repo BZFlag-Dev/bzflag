@@ -132,6 +132,11 @@ protected:
   ServerLink*	server;
 
 private:
+  void		doSlideMotion(float dt, float iceTime,
+                          float newAngVel, float* newVelocity);
+  float		getNewAngVel(float old, float desired);
+  
+private:
   Location	location;
   FiringStatus	firingStatus;
   TimeKeeper	jamTime;

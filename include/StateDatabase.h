@@ -300,6 +300,7 @@ public:
   static const std::string	BZDB_WINGSGRAVITY;
   static const std::string	BZDB_WINGSJUMPCOUNT;
   static const std::string	BZDB_WINGSJUMPVELOCITY;
+  static const std::string	BZDB_WINGSSLIDETIME;
   static const std::string	BZDB_WORLDSIZE;
 
 

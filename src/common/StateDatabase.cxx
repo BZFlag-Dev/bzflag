@@ -188,6 +188,7 @@ const std::string StateDatabase::BZDB_WIDEANGLEANG      = std::string("_wideAngl
 const std::string StateDatabase::BZDB_WINGSGRAVITY      = std::string("_wingsGravity");
 const std::string StateDatabase::BZDB_WINGSJUMPCOUNT    = std::string("_wingsJumpCount");
 const std::string StateDatabase::BZDB_WINGSJUMPVELOCITY = std::string("_wingsJumpVelocity");
+const std::string StateDatabase::BZDB_WINGSSLIDETIME    = std::string("_wingsSlideTime");
 const std::string StateDatabase::BZDB_WORLDSIZE	 = std::string("_worldSize");
 
 //

@@ -165,6 +165,80 @@ void			LocalPlayer::doUpdate(float dt)
   }
 }
 
+
+void LocalPlayer::doSlideMotion(float dt, float iceTime,
+                                float newAngVel, float* newVelocity)
+{
+  const float oldAzimuth = getAngle();
+  const float* oldVelocity = getVelocity();
+  
+  const float angle = oldAzimuth + (0.5f * dt * newAngVel);
+  const float cos_val = cosf(angle);
+  const float sin_val = sinf(angle);
+  const float scale = (dt / iceTime);
+  const float speedAdj = desiredSpeed * scale;
+  const float* ov = oldVelocity;
+  const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
+  float* nv = newVelocity;
+  nv[0] = ov[0] + (cos_val * speedAdj);
+  nv[1] = ov[1] + (sin_val * speedAdj);
+  const float newSpeed = sqrtf((nv[0] * nv[0]) + (nv[1] * nv[1]));
+
+  // BURROW and AGILITY will not be taken into account
+  const FlagType* flag = getFlag();
+  float maxSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  if (flag == Flags::Velocity) {
+    maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+  } else if (flag == Flags::Thief) {
+    maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+  }
+  
+  if (newSpeed > maxSpeed) {
+    float adjSpeed;
+    if (oldSpeed > maxSpeed) {
+      adjSpeed = oldSpeed - (dt * (maxSpeed / iceTime));
+      if (adjSpeed < 0.0f) {
+        adjSpeed = 0.0f;
+      }
+    } else {
+      adjSpeed = maxSpeed;
+    }
+    const float speedScale = adjSpeed / newSpeed;
+    nv[0] *= speedScale;
+    nv[1] *= speedScale;
+  }
+  return;
+}
+
+
+float LocalPlayer::getNewAngVel(float old, float desired)
+{
+  float newAngVel;
+  
+  if ((inputMethod != Keyboard) || (getPhysicsDriver() >= 0)) {
+    // mouse and joystick users
+    newAngVel = desired;
+
+  } else {
+
+    /* keybaord users
+     * the larger the oldAngVel contribution, the more slowly an
+     * angular velocity converges to the desired "max" velocity; the
+     * contribution of the desired and old velocity should add up to
+     * one for a linear convergence rate.
+     */
+    newAngVel = (old * 0.8f) + (desired * 0.2f);
+
+    // instant stop
+    if ((old * desired < 0.0f) || 
+        (NEAR_ZERO(desired, ZERO_TOLERANCE))) {
+      newAngVel = desired;
+    }
+  }
+  return newAngVel;
+}
+
+
 void			LocalPlayer::doUpdateMotion(float dt)
 {
   static const float MinSearchStep = 0.0001f;
@@ -228,21 +302,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // full control
       float speed = desiredSpeed;
 
-      if ((inputMethod == Keyboard) && (getPhysicsDriver() < 0)) {
-	/* the larger the oldAngVel contribution, the more slowly an
-	 * angular velocity converges to the desired "max" velocity; the
-	 * contribution of the desired and old velocity should add up to
-	 * one for a linear convergence rate.
-	 */
-	newAngVel = oldAngVel*0.8f + desiredAngVel*0.2f;
-
-	// instant stop
-	if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
-	  newAngVel = desiredAngVel;
-	}
-      } else { // mouse or joystick
-	newAngVel = desiredAngVel;
-      }
+      // angular velocity
+      newAngVel = getNewAngVel(oldAngVel, desiredAngVel);
 
       // limit acceleration
       doMomentum(dt, speed, newAngVel);
@@ -271,25 +332,20 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // can't control motion in air unless have wings
       if (getFlag() == Flags::Wings) {
 	float speed = desiredSpeed;
-	if ((inputMethod == Keyboard) && (getPhysicsDriver() < 0)) {
-	  /* the larger the oldAngVel contribution, the more slowly an
-	   * angular velocity converges to the desired "max" velocity; the
-	   * contribution of the desired and old velocity should add up to
-	   * one for a linear convergence rate.
-	   */
-	  newAngVel = oldAngVel*0.8f + desiredAngVel*0.2f;
 
-	  // instant stop
-	  if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
-	    newAngVel = desiredAngVel;
-	  }
-	} else { // mouse or joystick
-	  newAngVel = desiredAngVel;
-	}
-	// compute velocity so far
-	const float angle = oldAzimuth + 0.5f * dt * newAngVel;
-	newVelocity[0] = speed * cosf(angle);
-	newVelocity[1] = speed * sinf(angle);
+        // angular velocity
+        newAngVel = getNewAngVel(oldAngVel, desiredAngVel);
+      
+	// compute horizontal velocity so far
+	const float slideTime = BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME);
+	if (slideTime > 0.0) {
+	  doSlideMotion(dt, slideTime, newAngVel, newVelocity);
+        } else {
+          const float angle = oldAzimuth + 0.5f * dt * newAngVel;
+          newVelocity[0] = speed * cosf(angle);
+          newVelocity[1] = speed * sinf(angle);
+        }
+        
 	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
 	lastSpeed = speed;
       } else {
@@ -332,42 +388,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (phydrv != NULL) {
     const float* v = phydrv->getVelocity();
     if (phydrv->getIsIce()) {
-      const float angle = oldAzimuth + (0.5f * dt * newAngVel);
-      const float cos_val = cosf(angle);
-      const float sin_val = sinf(angle);
       const float iceTime = phydrv->getIceTime();
-      const float scale = (dt / iceTime);
-      const float speedAdj = desiredSpeed * scale;
-      const float* ov = oldVelocity;
-      const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
-      float* nv = newVelocity;
-      nv[0] = ov[0] + (cos_val * speedAdj);
-      nv[1] = ov[1] + (sin_val * speedAdj);
-      const float newSpeed = sqrtf((nv[0] * nv[0]) + (nv[1] * nv[1]));
-
-      // BURROW and AGILITY will not be taken into account
-      const FlagType* flag = getFlag();
-      float maxSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-      if (flag == Flags::Velocity) {
-        maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-      } else if (flag == Flags::Thief) {
-        maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-      }
-      
-      if (newSpeed > maxSpeed) {
-        float adjSpeed;
-        if (oldSpeed > maxSpeed) {
-          adjSpeed = oldSpeed - (dt * (maxSpeed / iceTime));
-          if (adjSpeed < 0.0f) {
-            adjSpeed = 0.0f;
-          }
-        } else {
-          adjSpeed = maxSpeed;
-        }
-        const float speedScale = adjSpeed / newSpeed;
-        nv[0] *= speedScale;
-        nv[1] *= speedScale;
-      }
+      doSlideMotion(dt, iceTime, newAngVel, newVelocity);
     }
     else {
       // adjust the horizontal velocity

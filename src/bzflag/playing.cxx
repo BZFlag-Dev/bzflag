@@ -3839,6 +3839,7 @@ static void cleanWorldCache()
   } while (oldestFile && (totalSize > cacheLimit));
 }
 
+
 static void markOld(std::string &fileName)
 {
 #ifdef _WIN32
@@ -3863,6 +3864,7 @@ static void markOld(std::string &fileName)
 #endif
 }
 
+
 static void sendFlagNegotiation()
 {
   char msg[MaxPacketLen];
@@ -3878,6 +3880,7 @@ static void sendFlagNegotiation()
   }
   serverLink->send(MsgNegotiateFlags, buf - msg, msg);
 }
+
 
 #if defined(FIXME) && defined(ROBOT)
 static void saveRobotInfo(Playerid id, void *msg)
@@ -4024,6 +4027,7 @@ void		leaveGame()
   serverDied = false;
 }
 
+
 static void joinInternetGame()
 {
   // open server
@@ -4126,6 +4130,7 @@ static void joinInternetGame()
   joiningGame = true;
 }
 
+
 static void joinInternetGame2()
 {
   justJoined = true;
@@ -4201,7 +4206,6 @@ static void checkDirtyControlPanel(ControlPanel *cp)
   return;
 }
 
-
 static int		getZoomFactor()
 {
   if (!BZDB.isSet("displayZoom")) return 1;
@@ -4238,22 +4242,39 @@ static void drawUI()
 // stuff to draw a frame
 //
 
-void			setupNearPlane()
+void setupNearPlane()
 {
   NearPlane = NearPlaneNormal;
-  if (myTank) {
-    const bool showTreads = BZDB.isTrue("showTreads") || devDriving;
-    const float halfLength = 0.5f * BZDBCache::tankLength;
-    const float length = myTank->getDimensions()[1]; 
-    if (showTreads && 
-        ((length < (0.9f * halfLength)) || (length > (1.1f * halfLength)))) {
-      NearPlane = NearPlaneClose;
+
+  const bool showTreads = BZDB.isTrue("showTreads");
+  if (!showTreads || !myTank) {
+    return;
+  }
+
+  const Player* tank = myTank;
+  if (roaming) {
+    if (roamView != roamViewFP) {
+      return;
+    }
+    if (!devDriving) {
+      tank = getPlayerByIndex(roamTrackWinner);
     }
   }
+  if (tank == NULL) {
+    return;
+  }
+    
+  const float halfLength = 0.5f * BZDBCache::tankLength;
+  const float length = tank->getDimensions()[1]; 
+  if (fabsf(length - halfLength) > 0.1f) {
+    NearPlane = NearPlaneClose;
+  }
+  
   return;
 }
 
-void			drawFrame(const float dt)
+
+void drawFrame(const float dt)
 {
   // get view type (constant for entire game)
   static SceneRenderer::ViewType viewType = sceneRenderer->getViewType();
@@ -4414,10 +4435,11 @@ void			drawFrame(const float dt)
     if (scene && myTank) {
 
       // add my tank if required
-      const bool showTreads = BZDB.isTrue("showTreads") || devDriving;
-      const bool cloaked = myTank->getFlag() == Flags::Cloaking;
+      const bool inCockpit = (!devDriving || (roamView != roamViewFP));
+      const bool showTreads = (BZDB.isTrue("showTreads") && inCockpit);
+      const bool cloaked = (myTank->getFlag() == Flags::Cloaking);
       if (myTank->needsToBeRendered(cloaked, showTreads)) {
-        myTank->addToScene(scene, myTank->getTeam(), !devDriving, showTreads);
+        myTank->addToScene(scene, myTank->getTeam(), inCockpit, showTreads);
       }
 
       // add my shells

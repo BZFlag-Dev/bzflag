@@ -382,8 +382,8 @@ void TankSceneNode::setJumpJets(float scale)
     const float* pos = getSphere();
     jumpJetsRealLight.setPosition(pos);
 
+    // set the jet ground-light and model positions
     for (int i = 0; i < 4; i++) {
-      // set the ground jet light and model positions
       const float radians = azimuth * (M_PI / 180.0f);
       const float cos_val = cosf(radians);
       const float sin_val = sinf(radians);
