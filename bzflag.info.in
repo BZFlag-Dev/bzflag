@@ -1,7 +1,6 @@
-# BZFlag fink info file
+# BZFlag Fink info file
 #
-# note: this is a fink info file, not a GNU info file
-# /me curses re-use of file extensions
+# NOTE: this is a Finkinfo file, not a GNU info file
 #
 # Copyright (c) 1993 - 2004 Tim Riker
 #
@@ -19,7 +18,7 @@ Revision: 1
 License: LGPL
 HomePage: http://BZFlag.org
 Maintainer: Christopher Sean Morrison <fink@bzflag.bz>
-Description: 3D Multiplayer Multiplatform Tank Battle Game
+Description: 3D multiplayer multiplatform tank battle game
 DescDetail: <<
 BZFlag is a 3D multi-player multi-platform tank battle game that
 allows users to play against each other in a network environment.
@@ -40,16 +39,14 @@ Have fun, play fair. ;)
 # Obtain sources
 Source: mirror:sourceforge:%n/%n-%v.tar.bz2
 Source-MD5: 8e3e5fbef3cfa21079eb06269e6b3d8b
-Source2: mirror:sourceforge:%n/%n-%v.tar.gz
-Source2-MD5: aa52a5f19cb52f073ce3301303fb9c6f
 
 # Dependancies
 Depends: libpng3-shlibs
-BuildDepends: autoconf2.5 | autoconf, automake1.8 | automake1.7 | automake1.6 | automake1.5 | automake1.4, ncurses-dev, libpng3
+BuildDepends: autoconf2.5 | autoconf, automaken, ncurses-dev, libpng3
 
 # Build
 GCC: 3.3
-ConfigureParams: --prefix=%p --without-x
+ConfigureParams: --without-x
 CompileScript: <<
 ./autogen.sh
 ./configure %c
