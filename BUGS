@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- GM and SW flags occasionally do not show in the scoreboard:
+  - right clicking still shows the correct flag
+  - seemed to track a specific player (not slot or team)
+  - the player in question was the only one with an email specified
+
 - SDL/X11 builds have wrong colors in with 8 bit color depths
 
 - SDL/X11 crashes on at least one configuration (Debian, MGA) when changing
