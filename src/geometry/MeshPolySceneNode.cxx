@@ -139,7 +139,8 @@ void MeshPolySceneNode::Geometry::drawVTN() const
 MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
 				     const GLfloat3Array& vertices,
 				     const GLfloat3Array& normals,
-				     const GLfloat2Array& texcoords)
+				     const GLfloat2Array& texcoords) :
+  node(this, vertices, normals, texcoords, _plane)
 {
   int i, j;
   const int count = vertices.getSize();
@@ -195,7 +196,6 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
     area[0] += flat[j][0] * flat[i][1] - flat[j][1] * flat[i][0];
   }
   area[0] = 0.5f * fabsf(area[0]) / normal[ignoreAxis];
-  node = new Geometry(this, vertices, normals, texcoords, getPlane());
 
   // set lod info
   setNumLODs(1, area);
@@ -233,7 +233,6 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
 
 MeshPolySceneNode::~MeshPolySceneNode()
 {
-  delete node;
   return;
 }
 
@@ -277,22 +276,22 @@ bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
 int MeshPolySceneNode::split(const float* splitPlane,
 			     SceneNode*& front, SceneNode*& back) const
 {
-  if (node->normals.getSize() > 0) {
-    return splitWallVTN(splitPlane, node->vertices, node->normals, node->texcoords,
+  if (node.normals.getSize() > 0) {
+    return splitWallVTN(splitPlane, node.vertices, node.normals, node.texcoords,
 			front, back);
   }
   else {
-    return splitWallVT(splitPlane, node->vertices, node->texcoords, front, back);
+    return splitWallVT(splitPlane, node.vertices, node.texcoords, front, back);
   }
 }
 
 
 void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 {
-  node->setStyle(getStyle());
+  node.setStyle(getStyle());
   const GLfloat* dyncol = getDynamicColor();
   if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
-    renderer.addRenderNode(node, getWallGState());
+    renderer.addRenderNode(&node, getWallGState());
   }
   return;
 }
@@ -302,7 +301,7 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   const GLfloat* dyncol = getDynamicColor();
   if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
-    renderer.addShadowNode(node);
+    renderer.addShadowNode(&node);
   }
   return;
 }

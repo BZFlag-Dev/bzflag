@@ -28,7 +28,6 @@
 /* common interface headers */
 #include "bzfgl.h"
 #include "OpenGLGState.h"
-#include "OpenGLDisplayList.h"
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
 
@@ -73,8 +72,11 @@ class BackgroundRenderer {
     BackgroundRenderer&	operator=(const BackgroundRenderer&);
 
     void		resizeSky();
+
+    void		doFreeDisplayLists();
     void		doInitDisplayLists();
-    static void		initDisplayLists(void*);
+    static void		freeContext(void*);
+    static void		initContext(void*);
 
   private:
     // rendering state
@@ -87,7 +89,7 @@ class BackgroundRenderer {
     // stuff for ground
     OpenGLGState	groundGState[4];
     OpenGLGState	invGroundGState[4];
-    OpenGLDisplayList	simpleGroundList[4];
+    GLuint		simpleGroundList[4];
 
     // stuff for grid
     GLfloat		gridSpacing;
@@ -103,14 +105,14 @@ class BackgroundRenderer {
     int			numMountainTextures;
     int			mountainsMinWidth;
     OpenGLGState*	mountainsGState;
-    OpenGLDisplayList*	mountainsList;
+    GLuint*		mountainsList;
 
     // stuff for clouds
     GLfloat		cloudDriftU, cloudDriftV;
     bool		cloudsAvailable;
     bool		cloudsVisible;
     OpenGLGState	cloudsGState;
-    OpenGLDisplayList	cloudsList;
+    GLuint		cloudsList;
 
     // weather
     WeatherRenderer	weather;
@@ -136,11 +138,11 @@ class BackgroundRenderer {
     OpenGLGState	sunGState;
     OpenGLGState	moonGState[2];
     OpenGLGState	starGState[2];
-    OpenGLDisplayList	sunList;
-    OpenGLDisplayList	sunXFormList;
-    OpenGLDisplayList	moonList;
-    OpenGLDisplayList	starList;
-    OpenGLDisplayList	starXFormList;
+    GLuint		sunList;
+    GLuint		sunXFormList;
+    GLuint		moonList;
+    GLuint		starList;
+    GLuint		starXFormList;
 
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;

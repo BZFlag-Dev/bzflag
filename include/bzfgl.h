@@ -52,20 +52,30 @@ extern int __beginendCount;
 }
 #endif
 
-#define _GL_INVALID_ID 0xFFFFFFFF
 
-/* disabling list and texture deletions can be useful for debugging
- * corrupted context states.  still don't have a "proper" context
- * manager, but things are working so it can be disabled.
+// glGenTextures() should never return 0
+#define INVALID_GL_TEXTURE_ID ((GLuint) 0)
+
+// glGenLists() will only return 0 for errors
+#define INVALID_GL_LIST_ID ((GLuint) 0)
+
+
+/* Protect us from ourselves. Warn when these
+ * are called outside of executeFreeContext()
  */
-#if 0
-#  ifndef glDeleteLists
-#    define glDeleteLists(base,count) {}
-#  endif
-#  ifndef glDeleteTextures
-#    define glDeleteTextures(count,textures) {}
-#  endif
-#endif
+#ifdef DEBUG
+#  define glGenLists(count)			bzGenLists((count))
+#  define glGenTextures(count, textures)	bzGenTextures((count), (textures))
+#  define glDeleteLists(base, count)		bzDeleteLists((base), (count))
+#  define glDeleteTextures(count, textures)	bzDeleteTextures((count), (textures))
+#endif // DEBUG
+
+// these are housed at the end of OpenGLGState.cxx, for now
+extern GLuint bzGenLists(GLsizei count);
+extern void   bzGenTextures(GLsizei count, GLuint *textures);
+extern void   bzDeleteLists(GLuint base, GLsizei count);
+extern void   bzDeleteTextures(GLsizei count, const GLuint *textures);
+
 
 #endif /* __BZFGL_H__ */
 

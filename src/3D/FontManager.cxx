@@ -81,7 +81,8 @@ FontManager::FontManager() : Singleton<FontManager>(), dimFactor(0.7f)
   fontFaces.clear();
   BZDB.addCallback(std::string("underlineColor"), callback, NULL);
   BZDB.touch("underlineColor");
-  OpenGLGState::registerContextInitializer(initContext, (void*)this);
+  OpenGLGState::registerContextInitializer(freeContext, initContext,
+                                           (void*)this);
 }
 
 FontManager::~FontManager()
@@ -98,19 +99,28 @@ FontManager::~FontManager()
     }
     faceItr++;
   }
-  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext,
+                                             (void*)this);
   return;
 }
 
-void FontManager::initContext(void *data)
+
+void FontManager::freeContext(void* data)
+{
+  ((FontManager*)data)->clear();
+  return;
+}
+
+
+void FontManager::initContext(void* data)
 {
   ((FontManager*)data)->rebuild();
   return;
 }
 
-void FontManager::rebuild(void)	// rebuild all the lists
-{
 
+void FontManager::clear(void)	// clear all the lists
+{
   /* FIXME - this comment block is the "right" code, but
    * on Windows at least, switching resolutions messes
    * up the GL stuff for build.
@@ -152,8 +162,16 @@ void FontManager::rebuild(void)	// rebuild all the lists
     // create all the fonts anew
     loadAll(fontDirectory);
   }
-
+  return;
 }
+
+
+void FontManager::rebuild(void)	// rebuild all the lists
+{
+  clear();
+  loadAll(fontDirectory);
+}
+
 
 void FontManager::loadAll(std::string directory)
 {

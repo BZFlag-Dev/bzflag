@@ -66,42 +66,66 @@ OpenGLTexture::OpenGLTexture(int _width, int _height,
 				height(_height),
 				repeat(_repeat),
 				internalFormat(_internalFormat),
-				list(0),
+				list(INVALID_GL_TEXTURE_ID),
 				maxFilter(_maxFilter)
 {
-  // make texture map object/list
-    glGenTextures(1, &list);
 
-    // get internal format if not provided
-    if (internalFormat == 0)
-      internalFormat = getBestFormat(width, height, pixels);
+  // get internal format if not provided
+  if (internalFormat == 0)
+    internalFormat = getBestFormat(width, height, pixels);
 
-    // copy the original texture image
-    image = new GLubyte[4 * width * height];
-    ::memcpy(image, pixels, 4 * width * height);
+  // copy the original texture image
+  image = new GLubyte[4 * width * height];
+  ::memcpy(image, pixels, 4 * width * height);
 
   setFilter(configFilterValues[static_cast<int>(_maxFilter)]);
   initContext();
   // watch for context recreation
-  OpenGLGState::registerContextInitializer(static_initContext, (void*)this);
+  OpenGLGState::registerContextInitializer(static_freeContext,
+                                           static_initContext, (void*)this);
 }
 
 OpenGLTexture::~OpenGLTexture()
 {
-  OpenGLGState::unregisterContextInitializer(static_initContext, (void*)this);
+  OpenGLGState::unregisterContextInitializer(static_freeContext,
+                                             static_initContext, (void*)this);
   // free image data
   delete[] image;
-    if (list)
-      glDeleteTextures(1, &list);
+  if (list != INVALID_GL_TEXTURE_ID) {
+    glDeleteTextures(1, &list);
+    list = INVALID_GL_TEXTURE_ID; // make it a habit
+  }
 }
+
+
+void OpenGLTexture::static_freeContext(void *that)
+{
+  ((OpenGLTexture*) that)->freeContext();
+}
+
 
 void OpenGLTexture::static_initContext(void *that)
 {
   ((OpenGLTexture*) that)->initContext();
 }
 
+
+void OpenGLTexture::freeContext()
+{
+  // nuke 'em
+  if (list != INVALID_GL_TEXTURE_ID) {
+    glDeleteTextures(1, &list);
+    list = INVALID_GL_TEXTURE_ID;
+  }
+  return;
+}
+
+
 void OpenGLTexture::initContext()
 {
+  // make texture map object/list
+  glGenTextures(1, &list);
+  
   // set size
   int tmpWidth = width;
   int tmpHeight = height;
@@ -159,27 +183,32 @@ void OpenGLTexture::initContext()
   delete[] origData;
   delete[] origScaledData;
 
+  return;
 }
 
-OpenGLTexture::Filter	OpenGLTexture::getFilter()
+
+OpenGLTexture::Filter OpenGLTexture::getFilter()
 {
   return filter;
 }
 
-std::string		OpenGLTexture::getFilterName()
+
+std::string OpenGLTexture::getFilterName()
 {
   return configFilterValues[static_cast<int>(filter)];
 }
 
-void			OpenGLTexture::setFilter(std::string name)
+
+void OpenGLTexture::setFilter(std::string name)
 {
   for (unsigned int i = 0; i < (sizeof(configFilterValues) /
 				sizeof(configFilterValues[0])); i++)
-    if (name == configFilterValues[i])
-      setFilter(static_cast<Filter>(i));
+  if (name == configFilterValues[i])
+    setFilter(static_cast<Filter>(i));
 }
 
-void			OpenGLTexture::setFilter(Filter _filter)
+
+void OpenGLTexture::setFilter(Filter _filter)
 {
   filter = _filter;
 
@@ -187,45 +216,56 @@ void			OpenGLTexture::setFilter(Filter _filter)
   // limit filter.  try to keep nearest... filters as nearest and
   // linear... as linear.
   if (filterIndex > maxFilter) {
-    if ((filterIndex & 1) == 1)	// nearest...
-      if ((maxFilter & 1) == 1) filterIndex = maxFilter;
-      else filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
-
-    else			// linear...
-      if ((maxFilter & 1) == 1) filterIndex = maxFilter - 1;
-      else filterIndex = maxFilter;
+    if ((filterIndex & 1) == 1)	{ // nearest...
+      if ((maxFilter & 1) == 1) {
+        filterIndex = maxFilter;
+      } else {
+        filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
+      }
+    }
+    else { // linear...
+      if ((maxFilter & 1) == 1) {
+        filterIndex = maxFilter - 1;
+      } else {
+        filterIndex = maxFilter;
+      }
+    }
   }
   glBindTexture(GL_TEXTURE_2D, list);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filterIndex]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filterIndex]);
 }
 
-GLuint			OpenGLTexture::getList() const
+
+GLuint OpenGLTexture::getList() const
 {
   return (list);
 }
 
-void			OpenGLTexture::execute()
+
+void OpenGLTexture::execute()
 {
   bind();
 }
 
-float			OpenGLTexture::getAspectRatio() const
+
+float OpenGLTexture::getAspectRatio() const
 {
-    return ((float) height) / ((float) width);
+  return ((float) height) / ((float) width);
 }
 
-void			OpenGLTexture::bind()
+
+void OpenGLTexture::bind()
 {
-  if (list)
+  if (list != INVALID_GL_TEXTURE_ID) {
     glBindTexture(GL_TEXTURE_2D, list);
-  else
-    glBindTexture(GL_TEXTURE_2D, 0);
+  } else {
+    glBindTexture(GL_TEXTURE_2D, 0); // heh, it's the same call
+  }
 }
 
-int			OpenGLTexture::getBestFormat(
-				int width, int height,
-				const GLvoid* pixels)
+
+int OpenGLTexture::getBestFormat(int width, int height, const GLvoid* pixels)
 {
   // see if all pixels are achromatic
   const GLubyte* scan = (const GLubyte*)pixels;
@@ -270,6 +310,7 @@ int			OpenGLTexture::getBestFormat(
 		(useAlpha ? GL_LUMINANCE_ALPHA : GL_LUMINANCE) :
 		(useAlpha ? GL_RGBA : GL_RGB));
 }
+
 
 // Local Variables: ***
 // mode:C++ ***

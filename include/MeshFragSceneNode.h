@@ -49,7 +49,7 @@ class MeshFragSceneNode : public WallSceneNode {
     bool inAxisBox(const Extents& exts) const;
 
     int getRenderNodeCount() { return 1; }
-    RenderNode*	getRenderNode(int) { return renderNode; }
+    RenderNode*	getRenderNode(int) { return &renderNode; }
 
   protected:
     class Geometry : public RenderNode {
@@ -73,7 +73,7 @@ class MeshFragSceneNode : public WallSceneNode {
     };
 
   private:
-    Geometry* renderNode;
+    Geometry renderNode;
 
     GLint faceCount;
     const MeshFace** faces;

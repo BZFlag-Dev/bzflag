@@ -69,6 +69,7 @@ class OpenGLMaterial {
 			Rep(const GLfloat* specular,
 				const GLfloat* emissive,
 				GLfloat shininess);
+	static void	freeContext(void*);
 	static void	initContext(void*);
       public:
 	bool		init;

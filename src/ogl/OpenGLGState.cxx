@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include "common.h"
@@ -24,6 +25,7 @@
 #ifdef DEBUG
 int __beginendCount;
 #endif
+
 
 //
 // OpenGLGStateState
@@ -887,11 +889,15 @@ OpenGLGState::ContextInitializer*
 			OpenGLGState::ContextInitializer::head = NULL;
 OpenGLGState::ContextInitializer*
 			OpenGLGState::ContextInitializer::tail = NULL;
+bool OpenGLGState::executingFreeFuncs = false;			
+bool OpenGLGState::executingInitFuncs = false;			
 
 OpenGLGState::ContextInitializer::ContextInitializer(
-				OpenGLContextInitializer _callback,
+				OpenGLContextFunction _freeCallback,
+				OpenGLContextFunction _initCallback,
 				void* _userData) :
-				callback(_callback),
+				freeCallback(_freeCallback),
+				initCallback(_initCallback),
 				userData(_userData)
 {
   prev = NULL;
@@ -910,23 +916,42 @@ OpenGLGState::ContextInitializer::~ContextInitializer()
   else head = next;
 }
 
-void			OpenGLGState::ContextInitializer::execute()
+void OpenGLGState::ContextInitializer::executeFreeFuncs()
 {
+  executingFreeFuncs = true;
   ContextInitializer* scan = tail;
   while (scan) {
-    (scan->callback)(scan->userData);
+    (scan->freeCallback)(scan->userData);
     scan = scan->prev;
   }
+  executingFreeFuncs = false;
+  return;
 }
 
+void OpenGLGState::ContextInitializer::executeInitFuncs()
+{
+  executingInitFuncs = true;
+  ContextInitializer* scan = tail;
+  while (scan) {
+    (scan->initCallback)(scan->userData);
+    scan = scan->prev;
+  }
+  executingInitFuncs = false;
+  return;
+}
+
+
 OpenGLGState::ContextInitializer*
-			OpenGLGState::ContextInitializer::find(
-				OpenGLContextInitializer _callback,
-				void* _userData)
+  OpenGLGState::ContextInitializer::find(
+                              OpenGLContextFunction _freeCallback,
+                              OpenGLContextFunction _initCallback,
+                              void* _userData)
 {
   ContextInitializer* scan = head;
   while (scan) {
-    if (scan->callback == _callback && scan->userData == _userData)
+    if ((scan->freeCallback == _freeCallback) && 
+        (scan->initCallback == _initCallback) &&
+        (scan->userData == _userData))
       return scan;
     scan = scan->next;
   }
@@ -949,7 +974,7 @@ static const GLubyte	stipplePattern[NumStipples][4] = {
 				{ 0xff, 0xdd, 0xff, 0x77 },
 				{ 0xff, 0xff, 0xff, 0xff },
 			};
-GLuint			OpenGLGState::stipples = 0u;
+GLuint			OpenGLGState::stipples = INVALID_GL_LIST_ID;
 
 OpenGLGState::OpenGLGState()
 {
@@ -1030,22 +1055,25 @@ void			OpenGLGState::setStipple(GLfloat alpha)
   setStippleIndex(getStippleIndex(alpha));
 }
 
-void			OpenGLGState::setStippleIndex(int index)
+void OpenGLGState::setStippleIndex(int index)
 {
   glCallList(stipples + index);
 }
 
-int			OpenGLGState::getStippleIndex(float alpha)
+
+int OpenGLGState::getStippleIndex(float alpha)
 {
   return (int)((float)(NumStipples - 1) * alpha + 0.5f);
 }
 
-int			OpenGLGState::getOpaqueStippleIndex()
+
+int OpenGLGState::getOpaqueStippleIndex()
 {
   return NumStipples - 1;
 }
 
-void			OpenGLGState::initStipple(void*)
+
+void OpenGLGState::initStipple(void*)
 {
   stipples = glGenLists(NumStipples);
   for (int i = 0; i < NumStipples; i++) {
@@ -1079,36 +1107,57 @@ void			OpenGLGState::initStipple(void*)
   }
 }
 
-void			OpenGLGState::init()
+
+void OpenGLGState::freeStipple(void*)
+{
+  if (stipples != INVALID_GL_LIST_ID) {
+    glDeleteLists(stipples, NumStipples);
+    stipples = INVALID_GL_LIST_ID;
+  }
+  
+  return;
+}
+
+
+void OpenGLGState::init()
 {
   // initialize GL state to what we expect
   initGLState();
 
   // other initialization
-  initStipple();
+  initStipple(NULL);
 
   // redo stipple init if context is recreated
-  registerContextInitializer(initStipple);
+  registerContextInitializer(freeStipple, initStipple, NULL);
 }
 
-void			OpenGLGState::registerContextInitializer(
-				OpenGLContextInitializer callback,
-				void* userData)
+
+void OpenGLGState::registerContextInitializer(
+                     OpenGLContextFunction freeCallback,
+                     OpenGLContextFunction initCallback,
+                     void* userData)
 {
-  if (callback == NULL)
+  if ((freeCallback == NULL) || (initCallback == NULL)) {
     return;
-  new ContextInitializer(callback, userData);
+  }
+  new ContextInitializer(freeCallback, initCallback, userData);
 }
 
-void			OpenGLGState::unregisterContextInitializer(
-				OpenGLContextInitializer callback,
-				void* userData)
+
+void OpenGLGState::unregisterContextInitializer(
+                     OpenGLContextFunction freeCallback,
+		     OpenGLContextFunction initCallback,
+		     void* userData)
 {
-  delete ContextInitializer::find(callback, userData);
+  delete ContextInitializer::find(freeCallback, initCallback, userData);
 }
 
-void			OpenGLGState::initContext()
+
+void OpenGLGState::initContext()
 {
+  // call all of the freeing functions first
+  ContextInitializer::executeFreeFuncs();
+  
   // initialize GL state
   initGLState();
 
@@ -1116,7 +1165,7 @@ void			OpenGLGState::initContext()
   resetState();
 
   // call all initializers
-  ContextInitializer::execute();
+  ContextInitializer::executeInitFuncs();
 
   // initialize the GL state again in case one of the initializers
   // messed it up.
@@ -1134,7 +1183,8 @@ void			OpenGLGState::initContext()
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
 
-void			OpenGLGState::initGLState()
+
+void OpenGLGState::initGLState()
 {
   // initialize GL state to what we expect
   glDisable(GL_TEXTURE_2D);
@@ -1285,6 +1335,59 @@ OpenGLGState		OpenGLGStateBuilder::getState() const
 {
   return OpenGLGState(*state);
 }
+
+
+
+// for hooking debuggers
+static void contextFreeError(const char* message)
+{
+  printf ("contextFreeError(): %s\n", message);
+}
+static void contextInitError(const char* message)
+{
+  printf ("contextInitError(): %s\n", message);
+}
+
+
+#undef glGenLists
+GLuint bzGenLists(GLsizei count)
+{
+  if (OpenGLGState::getExecutingFreeFuncs()) {
+    contextFreeError ("bzGenLists() is having issues");
+  }
+  return glGenLists(count);
+}
+
+
+#undef glGenTextures
+void bzGenTextures(GLsizei count, GLuint *textures)
+{
+  if (OpenGLGState::getExecutingFreeFuncs()) {
+    contextFreeError ("bzGenTextures() is having issues");
+  }
+  return glGenTextures(count, textures);
+}
+
+
+#undef glDeleteLists
+void bzDeleteLists(GLuint base, GLsizei count)
+{
+  if (OpenGLGState::getExecutingInitFuncs()) {
+    contextInitError ("bzDeleteLists() is having issues");
+  }
+  glDeleteLists(base, count);
+}
+
+
+#undef glDeleteTextures
+void bzDeleteTextures(GLsizei count, const GLuint *textures)
+{
+  if (OpenGLGState::getExecutingInitFuncs()) {
+    contextInitError ("bzDeleteTextures() is having issues");
+  }
+  glDeleteTextures(count, textures);
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

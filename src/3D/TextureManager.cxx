@@ -168,11 +168,12 @@ void TextureManager::setMaxFilter ( eTextureFilter filter )
   TextureNameMap::iterator	itr = textureNames.begin();
 
   while (itr != textureNames.end()) {
-    FileTextureInit	fileInit;
+    FileTextureInit fileInit;
+
     fileInit.filter = currentMaxFilter;
     fileInit.name = itr->second.name;
 
-    OpenGLTexture	*newTexture = loadTexture(fileInit, false);
+    OpenGLTexture *newTexture = loadTexture(fileInit, false);
 
     delete(itr->second.texture);
     itr->second.texture = newTexture;

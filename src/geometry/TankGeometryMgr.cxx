@@ -38,9 +38,6 @@ using namespace TankGeometryUtils;
 // Local Variables
 // ---------------
 
-// handy dandy casted value
-static const GLuint InvalidList = (GLuint) -1;
-
 // the display lists
 static GLuint displayLists[LastTankShadow][LastTankLOD]
 			  [LastTankSize][LastTankPart];
@@ -87,6 +84,7 @@ static const partFunction partFunctions[LastTankLOD][BasicTankParts] = {
 // -------------------------
 
 static void setupScales();
+static void freeContext(void *data);
 static void initContext(void *data);
 static void bzdbCallback(const std::string& str, void *data);
 
@@ -104,7 +102,7 @@ void TankGeometryMgr::init()
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
 	for (int part = 0; part < LastTankPart; part++) {
-	  displayLists[shadow][lod][size][part] = InvalidList;
+	  displayLists[shadow][lod][size][part] = INVALID_GL_LIST_ID;
 	}
       }
     }
@@ -118,7 +116,7 @@ void TankGeometryMgr::init()
   BZDB.addCallback ("animatedTreads", bzdbCallback, NULL);
 
   // install the context initializer
-  OpenGLGState::registerContextInitializer (initContext, NULL);
+  OpenGLGState::registerContextInitializer (freeContext, initContext, NULL);
 
   // setup the scaleFactors
   setupScales();
@@ -136,7 +134,7 @@ void TankGeometryMgr::kill()
   BZDB.removeCallback ("animatedTreads", bzdbCallback, NULL);
 
   // remove the context initializer callback
-  OpenGLGState::unregisterContextInitializer(initContext, NULL);
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext, NULL);
 
   return;
 }
@@ -150,14 +148,9 @@ void TankGeometryMgr::deleteLists()
       for (int size = 0; size < LastTankSize; size++) {
 	for (int part = 0; part < LastTankPart; part++) {
 	  GLuint& list = displayLists[shadow][lod][size][part];
-	  if (list != InvalidList) {
-	    if (glIsList(list) == GL_FALSE) {
-	      DEBUG3("TankGeometryMgr: "
-		     "tried to delete an invalid list (%i)\n", list);
-	    } else {
-	      glDeleteLists(list, 1);
-	    }
-	    list = InvalidList;
+	  if (list != INVALID_GL_LIST_ID) {
+	    glDeleteLists(list, 1);
+	    list = INVALID_GL_LIST_ID;
 	  }
 	}
       }
@@ -282,11 +275,17 @@ static void bzdbCallback(const std::string& name, void * /*data*/)
 }
 
 
+static void freeContext(void * /*data*/)
+{
+  // delete all of the lists
+  deleteLists();
+  return;
+}
+
+
 static void initContext(void * /*data*/)
 {
-  // we have to assume that the lists can not be deleted
   buildLists();
-  DEBUG3 ("TankGeometryMgr initContext()\n");
   return;
 }
 

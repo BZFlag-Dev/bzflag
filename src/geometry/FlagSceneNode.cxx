@@ -21,6 +21,7 @@
 #include <math.h>
 
 // common implementation headers
+#include "OpenGLGState.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
@@ -30,8 +31,10 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-int			flagChunks = 8;		// draw flag as 8 quads
-bool		    geoPole = false;	// draw the pole as quads
+
+static const int	flagLists = 8;		// GL list count
+static int		flagChunks = 8;		// draw flag as 8 quads
+static bool		geoPole = false;	// draw the pole as quads
 
 static const GLfloat	Unit = 0.8f;		// meters
 const GLfloat		FlagSceneNode::Width = 1.5f * Unit;
@@ -58,8 +61,8 @@ private:
   static const float	RippleSpeed2;
 };
 
-const float		WaveGeometry::RippleSpeed1 = (float)(2.4 * M_PI);
-const float		WaveGeometry::RippleSpeed2 = (float)(1.724 * M_PI);
+const float	WaveGeometry::RippleSpeed1 = (float)(2.4 * M_PI);
+const float	WaveGeometry::RippleSpeed2 = (float)(1.724 * M_PI);
 
 WaveGeometry::WaveGeometry() : refCount(0)
 {
@@ -94,7 +97,7 @@ void WaveGeometry::waveFlag(float dt)
     wave2[i] = wave0[i] + damp * sinRipple2;
   }
   float base = BZDBCache::flagPoleSize;
-  glList     = glGenLists(1);
+  glList = glGenLists(1);
   glNewList(glList, GL_COMPILE);
   glBegin(GL_QUAD_STRIP);
   for (i = 0; i <= flagChunks; i++) {
@@ -122,7 +125,7 @@ void WaveGeometry::freeFlag()
   glDeleteLists(glList, 1);
 }
 
-WaveGeometry allWaves[8];
+WaveGeometry allWaves[flagLists];
 
 FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
 				billboard(true),
@@ -144,14 +147,14 @@ FlagSceneNode::~FlagSceneNode()
 
 void			FlagSceneNode::waveFlag(float dt)
 {
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < flagLists; i++) {
     allWaves[i].waveFlag(dt);
   }
 }
 
 void			FlagSceneNode::freeFlag()
 {
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < flagLists; i++) {
     allWaves[i].freeFlag();
   }
 }
@@ -244,9 +247,9 @@ FlagSceneNode::FlagRenderNode::FlagRenderNode(
 				const FlagSceneNode* _sceneNode) :
 				sceneNode(_sceneNode)
 {
-  waveReference = (int)(8.0 * bzfrand());
-  if (waveReference >= 8)
-    waveReference = 7;
+  waveReference = (int)((double)flagLists * bzfrand());
+  if (waveReference >= flagLists)
+    waveReference = flagLists - 1;
   allWaves[waveReference].refer();
 }
 

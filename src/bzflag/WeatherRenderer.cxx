@@ -24,7 +24,6 @@
 // common impl headers
 #include "bzfgl.h"
 #include "OpenGLGState.h"
-#include "OpenGLDisplayList.h"
 #include "OpenGLMaterial.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
@@ -573,6 +572,20 @@ void WeatherRenderer::draw (const SceneRenderer & sr)
 }
 
 
+void WeatherRenderer::freeContext (void)
+{
+  if (dropList != INVALID_GL_LIST_ID) {
+    glDeleteLists(dropList, 1);
+    dropList = INVALID_GL_LIST_ID;
+  }
+  if (puddleList != INVALID_GL_LIST_ID) {
+    glDeleteLists(puddleList, 1);
+    puddleList = INVALID_GL_LIST_ID;
+  }
+  return;
+}
+
+
 void WeatherRenderer::rebuildContext (void)
 {
   buildPuddleList ();
@@ -582,8 +595,10 @@ void WeatherRenderer::rebuildContext (void)
 
 void WeatherRenderer::buildDropList (bool draw)
 {
-  if (!draw)
-    dropList.begin ();
+  if (!draw) {
+    dropList = glGenLists(1);
+    glNewList(dropList, GL_COMPILE);
+  }
 
   if (doBillBoards) {
     glBegin (GL_QUADS);
@@ -651,7 +666,7 @@ void WeatherRenderer::buildDropList (bool draw)
   }
 
   if (!draw) {
-    dropList.end ();
+    glEndList();
   }
 }
 
@@ -659,8 +674,10 @@ void WeatherRenderer::buildDropList (bool draw)
 void WeatherRenderer::buildPuddleList (bool draw)
 {
   float scale = 1;
-  if (!draw)
-    puddleList.begin ();
+  if (!draw) {
+    puddleList = glGenLists(1);
+    glNewList(puddleList, GL_COMPILE);
+  }
 
   glBegin (GL_QUADS);
   glTexCoord2f (0, 0);
@@ -677,7 +694,7 @@ void WeatherRenderer::buildPuddleList (bool draw)
   glEnd ();
 
   if (!draw) {
-    puddleList.end ();
+    glEndList();
   }
 }
 
@@ -817,10 +834,11 @@ void WeatherRenderer::drawDrop (rain & drop, const SceneRenderer & sr)
     if (spinRain)
       glRotatef (lastRainTime * 10.0f * rainSpeed, 0, 0, 1);
 
-    if (1)
-      dropList.execute ();
-    else
+    if (1) {
+      glCallList(dropList);
+    } else {
       buildDropList (true);
+    }
     glPopMatrix ();
   }
 }
@@ -838,10 +856,11 @@ void WeatherRenderer::drawPuddle (puddle & splash)
 	     1.0f - lifeTime);
 
   glScalef (scale, scale, scale);
-  if (1)
-    puddleList.execute ();
-  else
+  if (1) {
+    glCallList(puddleList);
+  } else {
     buildPuddleList (true);
+  }
 
   glPopMatrix ();
 }

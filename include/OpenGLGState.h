@@ -25,7 +25,7 @@ class OpenGLGStateRep;
 class OpenGLGStateState;
 class RenderNode;
 
-typedef void		(*OpenGLContextInitializer)(void* userData);
+typedef void		(*OpenGLContextFunction)(void* userData);
 
 class OpenGLGState {
   friend class OpenGLGStateBuilder;
@@ -59,35 +59,64 @@ class OpenGLGState {
     // by initContext() and initContext() will call all initializers in
     // the order they were registered, plus reset the OpenGLGState state.
     //
-    // destroying and recreating the OpenGL context is only necessary on
+    
+    //
+    // The freeFunc()'s job is to make sure that all references that the
+    // owning object might use are invalidated. It should also deallocate
+    // any GL objects that it might have collected. If the references are
+    // not invalidated, then the owner may end up deleting GL objects that
+    // it does not own, because the references have been changed during the
+    // context switch (ex: another routine might have received the same
+    // references when making new objects.)
+    //
+    // The initFunc()'s job is to reallocate GL objects for its owner.
+    //
+    // Destroying and recreating the OpenGL context is only necessary on
     // platforms that cannot abstract the graphics system sufficiently.
     // for example, on win32, changing the display bit depth will cause
     // most OpenGL drivers to crash unless we destroy the context before
     // the switch and recreate it afterwards.
+    //
     static void		registerContextInitializer(
-				OpenGLContextInitializer,
-				void* userData = NULL);
-    static void		unregisterContextInitializer(
-				OpenGLContextInitializer,
-				void* userData = NULL);
-    static void		initContext();
+				OpenGLContextFunction freeFunc,
+				OpenGLContextFunction initFunc,
+				void* userData);
 
+    static void		unregisterContextInitializer(
+				OpenGLContextFunction freeFunc,
+				OpenGLContextFunction initFunc,
+				void* userData);
+				
+    static void		initContext();
+    static bool		getExecutingFreeFuncs();
+    static bool		getExecutingInitFuncs();
+    
   private:
     static void		initGLState();
-    static void		initStipple(void* = NULL);
+    static void		freeStipple(void*);
+    static void		initStipple(void*);
 
     struct ContextInitializer {
       public:
-	ContextInitializer(OpenGLContextInitializer, void*);
+	ContextInitializer(OpenGLContextFunction freeFunc,
+                           OpenGLContextFunction initFunc,
+                           void* data);
 	~ContextInitializer();
-	static void		   execute();
-	static ContextInitializer* find(OpenGLContextInitializer, void*);
+
+	static void executeFreeFuncs();
+	static void executeInitFuncs();
+
+	static ContextInitializer* find(OpenGLContextFunction freeFunc,
+	                                OpenGLContextFunction initFunc,
+	                                void* data);
 
       public:
-	OpenGLContextInitializer callback;
-	void*			userData;
-	ContextInitializer*	prev;
-	ContextInitializer*	next;
+	OpenGLContextFunction freeCallback;
+	OpenGLContextFunction initCallback;
+	void* userData;
+
+	ContextInitializer* prev;
+	ContextInitializer* next;
 	static ContextInitializer* head;
 	static ContextInitializer* tail;
     };
@@ -95,7 +124,19 @@ class OpenGLGState {
   private:
     OpenGLGStateRep*	rep;
     static GLuint	stipples;
+    static bool executingFreeFuncs;
+    static bool executingInitFuncs;
 };
+
+inline bool OpenGLGState::getExecutingFreeFuncs()
+{
+  return executingFreeFuncs;
+}
+inline bool OpenGLGState::getExecutingInitFuncs()
+{
+  return executingInitFuncs;
+}
+
 
 class OpenGLGStateBuilder {
   public:

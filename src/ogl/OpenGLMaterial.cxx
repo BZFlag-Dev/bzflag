@@ -70,15 +70,20 @@ OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
   emissive[3] = 1.0f;
 
   list = glGenLists(1);
-  OpenGLGState::registerContextInitializer(initContext, (void*)this);
+  OpenGLGState::registerContextInitializer(freeContext,
+                                           initContext, (void*)this);
 }
 
 OpenGLMaterial::Rep::~Rep()
 {
-  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
+  OpenGLGState::unregisterContextInitializer(freeContext,
+                                             initContext, (void*)this);
 
   // free OpenGL display list
-  if (list) glDeleteLists(list, 1);
+  if (list != INVALID_GL_LIST_ID) {
+    glDeleteLists(list, 1);
+    list = INVALID_GL_LIST_ID;
+  }
 
   // remove me from material list
   if (next != NULL) next->prev = prev;
@@ -109,10 +114,25 @@ void			OpenGLMaterial::Rep::execute()
   glCallList(list);
 }
 
-void			OpenGLMaterial::Rep::initContext(void* self)
+
+void OpenGLMaterial::Rep::freeContext(void* self)
 {
-  ((Rep*)self)->init = false;
+  GLuint& list = ((Rep*)self)->list;
+  if (list != INVALID_GL_LIST_ID) {
+    glDeleteLists(list, 1);
+    list = INVALID_GL_LIST_ID;
+  }
+  
+  return;
 }
+
+
+void OpenGLMaterial::Rep::initContext(void* self)
+{
+  ((Rep*)self)->init = false; // the next execute() call will rebuild
+  return;
+}
+
 
 //
 // OpenGLMaterial

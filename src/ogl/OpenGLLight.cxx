@@ -77,7 +77,8 @@ OpenGLLight::OpenGLLight(const OpenGLLight& l) : mailbox(0)
 
 OpenGLLight::~OpenGLLight()
 {
-  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
+  OpenGLGState::unregisterContextInitializer(freeContext,
+                                             initContext, (void*)this);
 
   // put display lists on oldLists list
   oldLists.push_back(listBase);
@@ -281,7 +282,8 @@ void OpenGLLight::makeLists()
   }
 
   // watch for context recreation
-  OpenGLGState::registerContextInitializer(initContext, (void*)this);
+  OpenGLGState::registerContextInitializer(freeContext,
+                                           initContext, (void*)this);
 }
 
 
@@ -318,10 +320,19 @@ void OpenGLLight::cleanup()
 }
 
 
-void OpenGLLight::initContext(void* self)
+void OpenGLLight::freeContext(void* self)
 {
+  // FIXME: all of this code is horrible, and yet still
+  //        not as bad as most of the Rep() garbage, stunning
+
   // cause display list to be recreated on next execute()
   ((OpenGLLight*)self)->freeLists();
+}
+
+
+void OpenGLLight::initContext(void* /*self*/)
+{
+  // the next execute() should make new lists, do nothing
 }
 
 

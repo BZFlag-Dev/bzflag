@@ -163,6 +163,7 @@ void MeshFragSceneNode::Geometry::drawVTN() const
 //
 
 MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
+                                    : renderNode(this)
 {
   int i, j, k;
 
@@ -198,10 +199,6 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
   mySphere[3] = 0.25f *
     ((diffs[0] * diffs[0]) + (diffs[1] * diffs[1]) + (diffs[2] * diffs[2]));
   setSphere(mySphere);
-
-  // make the rendering nodes
-  renderNode = new Geometry(this);
-
 
   // count the number of actual vertices
   arrayCount = 0;
@@ -274,7 +271,6 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 
 MeshFragSceneNode::~MeshFragSceneNode()
 {
-  delete renderNode;
   delete[] faces;
   delete[] vertices;
   delete[] normals;
@@ -326,10 +322,10 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 
 void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
-  renderNode->setStyle(getStyle());
+  renderNode.setStyle(getStyle());
   const GLfloat* dyncol = getDynamicColor();
   if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
-    renderer.addRenderNode(renderNode, getWallGState());
+    renderer.addRenderNode(&renderNode, getWallGState());
   }
   return;
 }
@@ -339,7 +335,7 @@ void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   const GLfloat* dyncol = getDynamicColor();
   if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
-    renderer.addShadowNode(renderNode);
+    renderer.addShadowNode(&renderNode);
   }
   return;
 }

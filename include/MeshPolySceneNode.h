@@ -41,7 +41,7 @@ class MeshPolySceneNode : public WallSceneNode {
     void addShadowNodes(SceneRenderer&);
 
     int getRenderNodeCount() { return 1; }
-    RenderNode* getRenderNode(int) { return node; }
+    RenderNode* getRenderNode(int) { return &node; }
 
 
   protected:
@@ -98,7 +98,7 @@ class MeshPolySceneNode : public WallSceneNode {
 		     const GLfloat* uv1, const GLfloat* uv2,
 		     GLfloat* p, GLfloat* uv) const;
 
-    Geometry* node;
+    Geometry node;
 };
 
 inline const int MeshPolySceneNode::Geometry::getVertexCount() const
@@ -108,7 +108,7 @@ inline const int MeshPolySceneNode::Geometry::getVertexCount() const
 
 inline int MeshPolySceneNode::getVertexCount () const
 {
-  return node->getVertexCount();
+  return node.getVertexCount();
 }
 
 inline const GLfloat* MeshPolySceneNode::Geometry::getVertex(int i) const
@@ -123,12 +123,12 @@ inline const GLfloat (*MeshPolySceneNode::Geometry::getVertices() const)[3]
 
 inline const GLfloat* MeshPolySceneNode::getVertex(int i) const
 {
-  return node->getVertex(i);
+  return node.getVertex(i);
 }
 
 inline const GLfloat (*MeshPolySceneNode::getVertices() const)[3]
 {
-  return node->getVertices();
+  return node.getVertices();
 }
 
 

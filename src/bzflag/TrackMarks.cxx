@@ -204,7 +204,6 @@ static const float TextureHeightOffset = 0.0f;
 //
 
 static void setup();
-static void initContext(void* data);
 static void drawSmoke(const TrackEntry& te);
 static void drawPuddle(const TrackEntry& te);
 static void drawTreads(const TrackEntry& te);
@@ -225,8 +224,6 @@ void TrackMarks::init()
   setup();
   setUserFade(BZDB.eval("userTrackFade"));
   setAirCulling((AirCullStyle)BZDB.evalInt("trackMarkCulling"));
-  OpenGLGState::registerContextInitializer(initContext, NULL);
-
   return;
 }
 
@@ -234,8 +231,6 @@ void TrackMarks::init()
 void TrackMarks::kill()
 {
   clear();
-  OpenGLGState::unregisterContextInitializer(initContext, NULL);
-
   return;
 }
 
@@ -564,13 +559,6 @@ static void setup()
   gb.enableMaterial(false); // no lighting
   treadsGState = gb.getState();
 
-  return;
-}
-
-
-static void initContext(void* /*data*/)
-{
-  setup();
   return;
 }
 

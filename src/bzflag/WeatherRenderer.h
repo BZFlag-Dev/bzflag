@@ -29,7 +29,6 @@
 #include "bzfgl.h"
 #include "Extents.h"
 #include "OpenGLGState.h"
-#include "OpenGLDisplayList.h"
 #include "SceneRenderer.h"
 
 class WeatherRenderer {
@@ -49,8 +48,12 @@ public:
 	// called to draw the rain for the current frame
 	void draw ( const SceneRenderer& sr );
 
+	// called when the GL lists need to be deleted
+	void freeContext ( void );
+
 	// called when the GL lists need to be remade
 	void rebuildContext ( void );
+	
 protected:
 	OpenGLGState				rainGState;
 	OpenGLGState				texturedRainState;
@@ -74,8 +77,8 @@ protected:
 	float						maxPuddleTime;
 	float						puddleSpeed;
 	float						puddleColor[4];
-	OpenGLDisplayList			dropList;
-	OpenGLDisplayList			puddleList;
+	GLuint						dropList;
+	GLuint						puddleList;
 
 	typedef struct {
 		float    pos[3];

@@ -79,7 +79,7 @@ bool DisplayListManager::callList ( int list )
   if (it == lists.end())
     return false;
 
-  if (it->second.list != _GL_INVALID_ID)
+  if (it->second.list != INVALID_GL_LIST_ID)
     glCallList(it->second.list);
   else
     return false;
@@ -93,7 +93,7 @@ void DisplayListManager::release ( void )
   while (it != lists.end())
   {
     glDeleteLists(it->second.list,1);
-    it->second.list = _GL_INVALID_ID;
+    it->second.list = INVALID_GL_LIST_ID;
     it++;
   }
 }

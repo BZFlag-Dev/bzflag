@@ -24,7 +24,7 @@
 TextureFont::TextureFont()
 {
   for (int i = 0; i < 128; i++) {
-    listIDs[i] = _GL_INVALID_ID;
+    listIDs[i] = INVALID_GL_LIST_ID;
     fontMetrics[i].charWidth = -1;
   }
 
@@ -40,8 +40,10 @@ TextureFont::TextureFont()
 TextureFont::~TextureFont()
 {
   for (int i = 0; i < 128; i++) {
-    if (listIDs[i] != _GL_INVALID_ID)
+    if (listIDs[i] != INVALID_GL_LIST_ID) {
       glDeleteLists(listIDs[i], 1);
+      listIDs[i] = INVALID_GL_LIST_ID;
+    }
   }
 }
 
@@ -195,8 +197,10 @@ void TextureFont::preLoadLists(void)
 
   glPushMatrix();
   for (int i = 0; i < numberOfCharacters; i++) {
-    if (listIDs[i] != _GL_INVALID_ID)
+    if (listIDs[i] != INVALID_GL_LIST_ID) {
       glDeleteLists(listIDs[i], 1);
+      listIDs[i] = INVALID_GL_LIST_ID; // make it a habit
+    }
     listIDs[i] = glGenLists(1);
     glLoadIdentity();
 

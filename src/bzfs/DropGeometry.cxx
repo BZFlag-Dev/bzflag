@@ -66,12 +66,8 @@ static int sortByTopHeight(const void* a, const void* b)
 {
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
-  // this is wasteful, obstacles should have their extents pre-computed.
-  // the current getExtents() obstacle function calculates the extents
-  // on the fly... As well, extents show be a float[6] array, or perhaps
-  //  a class or struct.
-  const float topA = obsA->getPosition()[2] + obsA->getHeight();;
-  const float topB = obsB->getPosition()[2] + obsB->getHeight();
+  const float topA = obsA->getExtents().maxs[2];
+  const float topB = obsB->getExtents().maxs[2];
   if (topA < topB) {
     return -1;
   } else if (topA > topB) {

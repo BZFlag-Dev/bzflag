@@ -69,6 +69,7 @@ class OpenGLLight {
     static void		cleanup();
 
   private:
+    static void		freeContext(void*);
     static void		initContext(void*);
 
   private:

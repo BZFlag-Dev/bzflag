@@ -25,7 +25,6 @@
 // common impl headers
 #include "bzfgl.h"
 #include "OpenGLGState.h"
-#include "OpenGLDisplayList.h"
 #include "OpenGLMaterial.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
@@ -267,7 +266,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 	gstate.setTexture (tm.getTextureID (text));
 	mountainsGState[i] = gstate.getState ();
       }
-      mountainsList = new OpenGLDisplayList[numMountainTextures];
+      mountainsList = new GLuint[numMountainTextures];
     }
   }
 
@@ -275,14 +274,16 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   doInitDisplayLists();
 
   // recreate display lists when context is recreated
-  OpenGLGState::registerContextInitializer(initDisplayLists, (void*)this);
+  OpenGLGState::registerContextInitializer(freeContext, initContext,
+                                           (void*)this);
 
   notifyStyleChange();
 }
 
 BackgroundRenderer::~BackgroundRenderer()
 {
-  OpenGLGState::unregisterContextInitializer(initDisplayLists, (void*)this);
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext,
+                                             (void*)this);
   delete[] mountainsGState;
   delete[] mountainsList;
 }
@@ -357,14 +358,17 @@ void			BackgroundRenderer::setCelestial(
   doSunset = getSunsetTop(sunDirection, sunsetTop);
 
   // make pretransformed display list for sun
-  sunXFormList.begin();
+  sunXFormList = glGenLists(1);
+  glNewList(sunXFormList, GL_COMPILE);
+  {
     glPushMatrix();
     glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
 							0.0f, 0.0f, 1.0f);
     glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    sunList.execute();
+    glCallList(sunList);
     glPopMatrix();
-  sunXFormList.end();
+  }
+  glEndList();
 
   // compute display list for moon
   float coverage = moonDir[0] * sunDir[0] +
@@ -388,7 +392,9 @@ void			BackgroundRenderer::setCelestial(
   const float limbAngle = atan2f(sun2[2], sun2[1]);
 
   int moonSegements = (int)BZDB.eval("moonSegments");
-  moonList.begin();
+  moonList = glGenLists(1);
+  glNewList(moonList, GL_COMPILE);
+  {
     glPushMatrix();
     glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI),
 							0.0f, 0.0f, 1.0f);
@@ -411,16 +417,20 @@ void			BackgroundRenderer::setCelestial(
     glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
     glEnd();
     glPopMatrix();
-  moonList.end();
+  }
+  glEndList();
 
   // make pretransformed display list for stars
-  starXFormList.begin();
+  starXFormList = glGenLists(1);
+  glNewList(starXFormList, GL_COMPILE);
+  {
     glPushMatrix();
     glMultMatrixf(renderer.getCelestialTransform());
     glScalef(worldSize, worldSize, worldSize);
-    starList.execute();
+    glCallList(starList);
     glPopMatrix();
-  starXFormList.end();
+  }
+  glEndList();
 
 }
 
@@ -564,7 +574,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
 	glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
-	cloudsList.execute();
+	glCallList(cloudsList);
 	glLoadIdentity();	// maybe works around bug in some systems
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
@@ -685,12 +695,12 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   if (sunDirection[2] > -0.009f) {
     sunGState.setState();
     glColor3fv(renderer.getSunScaledColor());
-    sunXFormList.execute();
+    glCallList(sunXFormList);
   }
 
   if (doStars) {
     starGState[starGStateIndex].setState();
-    starXFormList.execute();
+    glCallList(starXFormList);
   }
 
   if (moonDirection[2] > -0.009f) {
@@ -698,7 +708,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     glColor3f(1.0f, 1.0f, 1.0f);
  //   if (useMoonTexture)
  //     glEnable(GL_TEXTURE_2D);
-    moonList.execute();
+    glCallList(moonList);
   }
 
   if (mirror) {
@@ -739,7 +749,7 @@ void BackgroundRenderer::drawGround()
   if (BZDB.evalInt("useQuality") >= 3) {
     drawGroundCentered();
   } else {
-    simpleGroundList[styleIndex].execute();
+    glCallList(simpleGroundList[styleIndex]);
   }
 }
 
@@ -994,18 +1004,57 @@ void BackgroundRenderer::drawMountains(void)
   glColor3f(1.0f, 1.0f, 1.0f);
   for (int i = 0; i < numMountainTextures; i++) {
     mountainsGState[i].setState();
-    mountainsList[i].execute();
+    glCallList(mountainsList[i]);
   }
 }
 
-extern SceneRenderer*	getSceneRenderer();
 
-void			BackgroundRenderer::doInitDisplayLists()
+void BackgroundRenderer::doFreeDisplayLists()
+{
+  int i;
+  
+  // don't forget the tag-along
+  weather.freeContext();
+  
+  // simpleGroundList[1] && simpleGroundList[3] are copies of [0] & [2]
+  simpleGroundList[1] = INVALID_GL_LIST_ID;
+  simpleGroundList[3] = INVALID_GL_LIST_ID;
+
+  // delete the single lists  
+  GLuint* const lists[] = {
+    &simpleGroundList[0], &simpleGroundList[2],
+    &cloudsList, &sunList, &sunXFormList,
+    &moonList, &starList, &starXFormList
+  };
+  const int count = countof(lists);
+  for (i = 0; i < count; i++) {
+    if (*lists[i] != INVALID_GL_LIST_ID) {
+      glDeleteLists(*lists[i], 1);
+      *lists[i] = INVALID_GL_LIST_ID;
+    }
+  }
+  
+  // delete the array of lists
+  if (mountainsList != NULL) {
+    for (i = 0; i < numMountainTextures; i++) {
+      if (mountainsList[i] != INVALID_GL_LIST_ID) {
+        glDeleteLists(mountainsList[i], 1);
+        mountainsList[i] = INVALID_GL_LIST_ID;
+      }
+    }
+  }
+  
+  return;
+}
+
+
+void BackgroundRenderer::doInitDisplayLists()
 {
   int i, j;
-  SceneRenderer& renderer = *(getSceneRenderer());
+  SceneRenderer& renderer = RENDERER;
 
-	weather.rebuildContext();
+  // don't forget the tag-along
+  weather.rebuildContext();
 
   // need some workarounds on RIVA 128
   bool isRiva128 = (strncmp((const char*)glGetString(GL_RENDERER),
@@ -1019,7 +1068,9 @@ void			BackgroundRenderer::doInitDisplayLists()
   // with a normal (60 degree) perspective.
   const float worldSize = BZDBCache::worldSize;
   const float sunRadius = (float)(2.0 * worldSize * atanf((float)(60.0*M_PI/180.0)) / 60.0);
-  sunList.begin();
+  sunList =  glGenLists(1);
+  glNewList(sunList, GL_COMPILE);
+  {
     glBegin(GL_TRIANGLE_FAN);
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
       for (i = 0; i < 20; i++) {
@@ -1028,21 +1079,26 @@ void			BackgroundRenderer::doInitDisplayLists()
 					sunRadius * cosf(angle));
       }
     glEnd();
-  sunList.end();
+  }
+  glEndList();
 
   // make (empty) moon list
-  moonList.begin();
-  moonList.end();
+  moonList =  glGenLists(1);
+  glNewList(moonList, GL_COMPILE);
+  glEndList();
 
   // make stars list
-  starList.begin();
+  starList =  glGenLists(1);
+  glNewList(starList, GL_COMPILE);
+  {
     glBegin(GL_POINTS);
     for (i = 0; i < (int)NumStars; i++) {
       glColor3fv(stars[i]);
       glVertex3fv(stars[i] + 3);
     }
     glEnd();
-  starList.end();
+  }
+  glEndList();
 
   //
   // ground
@@ -1063,8 +1119,11 @@ void			BackgroundRenderer::doInitDisplayLists()
     gameArea[i][1] = gameSize * squareShape[i][1];
     gameArea[i][2] = 0.0f;
   }
+
   if (isRiva128) {
-    simpleGroundList[2].begin();
+    simpleGroundList[2] =  glGenLists(1);
+    glNewList(simpleGroundList[2], GL_COMPILE);
+    {
       glBegin(GL_TRIANGLE_STRIP);
 	renderer.getGroundUV(gameArea[0], uv);
 	glTexCoord2f(uv[0], uv[1]);
@@ -1097,7 +1156,8 @@ void			BackgroundRenderer::doInitDisplayLists()
 	glVertex2fv(gameArea[0]);
 	glVertex2fv(groundPlane[0]);
       glEnd();
-    simpleGroundList[2].end();
+    }
+    glEndList();
   } else {
     int i, j;
     GLfloat xmin, xmax;
@@ -1126,8 +1186,9 @@ void			BackgroundRenderer::doInitDisplayLists()
     xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
     ytexdist = (ytexmax - ytexmin) / (float)GROUND_DIVS;
 
-    simpleGroundList[2].begin();
-
+    simpleGroundList[2] =  glGenLists(1);
+    glNewList(simpleGroundList[2], GL_COMPILE);
+    {
       for (i = 0; i < GROUND_DIVS; i++) {
 	GLfloat yoff, ytexoff;
 
@@ -1154,18 +1215,22 @@ void			BackgroundRenderer::doInitDisplayLists()
 	}
 	glEnd();
       }
-
-    simpleGroundList[2].end();
+    }
+    glEndList();
   }
 
-  simpleGroundList[0].begin();
+  simpleGroundList[0] =  glGenLists(1);
+  glNewList(simpleGroundList[0], GL_COMPILE);
+  {
     glBegin(GL_TRIANGLE_STRIP);
       glVertex2fv(groundPlane[0]);
       glVertex2fv(groundPlane[1]);
       glVertex2fv(groundPlane[3]);
       glVertex2fv(groundPlane[2]);
     glEnd();
-  simpleGroundList[0].end();
+  }
+  glEndList();
+  
   simpleGroundList[1] = simpleGroundList[0];
   simpleGroundList[3] = simpleGroundList[2];
 
@@ -1191,7 +1256,10 @@ void			BackgroundRenderer::doInitDisplayLists()
     GLfloat minAlpha = 0.0f;
     if (isRiva128)
       minAlpha = 1.0f;
-    cloudsList.begin();
+      
+    cloudsList = glGenLists(1);
+    glNewList(cloudsList, GL_COMPILE);
+    {
       glNormal3f(0.0f, 0.0f, 1.0f);
       // inner clouds -- full opacity
       glBegin(GL_QUADS);
@@ -1257,7 +1325,8 @@ void			BackgroundRenderer::doInitDisplayLists()
 		     uvScale * cloudRepeats * squareShape[1][1]);
 	glVertex3fv(cloudsInner[1]);
       glEnd();
-    cloudsList.end();
+    }
+    glEndList();
   }
 
   //
@@ -1273,8 +1342,11 @@ void			BackgroundRenderer::doInitDisplayLists()
     const float angleScale = (float)(M_PI / (numMountainTextures * numFacesPerTexture));
     int n = numFacesPerTexture / 2;
     float hightScale = mountainsMinWidth / 256.0f;
+
     for (j = 0; j < numMountainTextures; n += numFacesPerTexture, j++) {
-      mountainsList[j].begin();
+      mountainsList[j] = glGenLists(1);
+      glNewList(mountainsList[j], GL_COMPILE);
+      {
 	glBegin(GL_TRIANGLE_STRIP);
 	  for (i = 0; i <= numFacesPerTexture; i++) {
 	    const float angle = angleScale * (float)(i + n);
@@ -1315,7 +1387,8 @@ void			BackgroundRenderer::doInitDisplayLists()
 			 0.45f * worldSize*hightScale);
 	  }
 	glEnd();
-      mountainsList[j].end();
+      }
+      glEndList();
     }
   }
 
@@ -1329,10 +1402,18 @@ void			BackgroundRenderer::doInitDisplayLists()
   setCelestial(renderer, up, up);
 }
 
-void			BackgroundRenderer::initDisplayLists(void* self)
+
+void BackgroundRenderer::freeContext(void* self)
+{
+  ((BackgroundRenderer*)self)->doFreeDisplayLists();
+}
+
+
+void BackgroundRenderer::initContext(void* self)
 {
   ((BackgroundRenderer*)self)->doInitDisplayLists();
 }
+
 
 const GLfloat*	BackgroundRenderer::getSunDirection() const
 {

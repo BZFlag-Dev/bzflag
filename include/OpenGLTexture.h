@@ -77,6 +77,7 @@ class OpenGLTexture {
     static std::string	getFilterName();
     void		setFilter(std::string name);
     void		setFilter(Filter);
+    void		freeContext();
     void		initContext();
 
   private:
@@ -89,6 +90,7 @@ class OpenGLTexture {
     int			getBestFormat( int width, int height,
 					const GLvoid* pixels);
     void		bind();
+    static void		static_freeContext(void *that);
     static void		static_initContext(void *that);
 
     static Filter	filter;
