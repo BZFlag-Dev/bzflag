@@ -1,6 +1,11 @@
 to do list for bzflag
 ---------------------
 
+* remove flipz from pyr net code and replace with neg height.
+
+* remove shoothrough/drivethrough and replace with one flag
+  meaning passable
+
 * configure should detect missing GL/GLU headers then
   warn and disable the client compile
 
