@@ -1,0 +1,36 @@
+#!/bin/sh
+# checkam
+# hack to get some feedback as to files that might be missing from Makefile.am
+
+# Copyright (c) 1993 - 2004 Tim Riker
+
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named COPYING that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+echo "The following might need to be added to Makefile.am"
+pwd=`pwd`
+dirs=`find * -type f -name Entries | sed -e 's|/CVS/Entries||'`
+for dir in $dirs ; do
+ if [ -f $dir/Makefile.am ] ; then
+  cd $dir
+  files=`grep '^/' CVS/Entries | sed -e 's|/\([^/]*\)/.*|\1|'`
+  for file in $files ; do
+   case $file in
+    Makefile.am|.cvsignore)
+    ;;
+   *)
+    grep -q $file Makefile.am || \
+     echo "$dir/$file"
+    ;;
+   esac
+  done
+  cd $pwd
+ else
+  echo "$dir/Makefile.am"
+ fi
+done
