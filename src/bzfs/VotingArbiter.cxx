@@ -129,7 +129,7 @@ bool VotingArbiter::closePoll(void)
   }
   // set starting time to exactly current time minus necessary vote time
   _startTime = TimeKeeper::getCurrent();
-  _startTime += -(_voteTime);
+  _startTime += -(float)(_voteTime);
 
   return true;
 }
