@@ -708,6 +708,7 @@ void			HUDuiTextureLabel::setTexture(const OpenGLTexture& t)
   builder.setTexture(t);
   builder.setBlending();
   gstate = builder.getState();
+  texture = t;
 }
 
 void			HUDuiTextureLabel::doRender()
@@ -716,13 +717,13 @@ void			HUDuiTextureLabel::doRender()
 
   // render string if texture filter is Off, otherwise draw the texture
   // about the same size and position as the string would be.
-  if (OpenGLTexture::getFilter() == OpenGLTexture::Off || !gstate.isTextured()) {
+  if (OpenGLTexture::getFilter() == OpenGLTexture::Off || !gstate.isTextured() || !texture.isValid()) {
     HUDuiLabel::doRender();
   }
-  else {
+  else { // why use a font? it's an image, use the image size, let every pixel be seen!!! :)
     const OpenGLTexFont& font = getFont();
-    const float width = font.getWidth(getString());
-    const float height = font.getHeight();
+    const float width = texture.getWidth();//font.getWidth(getString());
+    const float height = texture.getHeight();//font.getHeight();
     const float descent = font.getDescent();
     const float x = getX();
     const float y = getY();
