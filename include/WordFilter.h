@@ -92,7 +92,7 @@ class WordFilter
   typedef struct filter {
     std::string word;
     std::string expression;
-    regex_t compiled;
+    regex_t *compiled;
   } filter_t;
   
   /** word expressions to be filtered including compiled regexp versions */
@@ -163,14 +163,17 @@ class WordFilter
     return i;
   }
 
-  int filterCharacters(std::string &input, int start, int end, bool filterSpaces=false) const
+  int filterCharacters(char *input, int start, int end, bool filterSpaces=false) const
   {
-    if (input.size() == 0) {
+    if (input == NULL) {
       return -1;
     }
     int length = end - start;
     if (length <= 0) {
       return -1;
+    }
+    if (strlen(input) < start) {
+      return 0;
     }
 
     int randomCharPos, previousCharPos;
@@ -236,7 +239,7 @@ class WordFilter
   /** expands a word into an uncompiled regular
    *  expression.
    */
-  std::string *expressionFromString(const std::string &word) const;
+  std::string expressionFromString(const std::string &word) const;
 
   
  public:
@@ -251,7 +254,10 @@ class WordFilter
    * optionally recursively adds all combinations of
    * available suffixes and prefixes.
    */
-  bool addToFilter(const std::string &word, const std::string &expression=NULL, bool append=false);
+  bool addToFilter(const std::string &word);
+  bool addToFilter(const std::string &word, bool append);
+  bool addToFilter(const std::string &word, const std::string &expression);
+  bool addToFilter(const std::string &word, const std::string &expression, bool append);
   
   /** given an input string, filter the input
    * using either the simple or agressive filter
