@@ -23,6 +23,8 @@
  * changes in a backwards incompatible way.  when the protocol really
  * is broken, the version should be set to match the release version that
  * broke it
+ * We are in a (hopefully short) maintainance cycle. Do not change the
+ * proto version without talking to TimRiker
  */
 // TODO make this sucker an int when we change BZFS stuff
 #ifndef BZ_PROTO_VERSION
