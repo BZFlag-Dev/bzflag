@@ -21,7 +21,9 @@
 using namespace std;
 
 
-/** This class maps strings to BZAdmin interfaces. */
+/** This class maps strings to BZAdmin interfaces (subclasses of
+    BZAdminUI). New interface classes should register using the UIAdder
+    class. */
 class UIMap {
 private:
   /** The constructor is private, this is a singleton. */
