@@ -1,6 +1,16 @@
 recent bugs
 ------------
 
+- in bzfs.cxx, "player.setLastMsg(msg)", the last line in "bool checkSpam()", fails to
+  set the last message by that player as "msg" given in the arguments. It sets the time
+  for that msg, but doesn't set the actual message. Variable "lastMsgSent" in PlayerInfo.h/.cxx
+  is what stores the last sent message by the player, but is not assigned the newly sent msg
+  for some reason, therefore it never has a value and in the end, keeps spam checks from working.
+  The time variable, "lastMsgTime" in PlayerInfo.cxx/.h is correctly assigned the sent time,
+  however. The function setLastMsg(std::string) is to blame, rather than the call to it in bzfs.cxx
+  Moving the call to setLastMsg(std::string) to the MsgMessage case in handleCommand() in bzfs.cxx
+  does not work either, just in case it may have for whatever reason.
+
 - spin inversion bug, fix in MeshTransform.cxx (around line 300)
   during the next protocol breakage
 
