@@ -77,9 +77,20 @@ style.  Well we can't have a zillion styles in the code. So follow the BZFlag
 if you want your contribution included.  The source code serves for examples
 but some rules:
 
-  1)  indents are 2 characters. Tabs are 8 characters. There are vi setting in
-      each file to adopt this convention, suggestions welcome here for setting
-      up other environments.
+  1)  indents are 2 characters. Tabs are 8 characters. There are vi and emacs
+      settings in each file to adopt, enforce, remind, and encourage this
+      convention. Suggestions welcome here for setting up other environments. 
+      Here are the lines that should be included at the end of source files:
+      
+	/* ex: shiftwidth=2 tabstop=8
+	 * Local Variables: ***
+	 * mode:C++ ***
+	 * tab-width: 8 ***
+	 * c-basic-offset: 2 ***
+	 * indent-tabs-mode: t ***
+	 * End: ***
+	 */
+
   2)  the opening brace of all blocks goes on the same line as the statement
       introducing it except for functions where it goes on the following line.
       the closing brace is indented like the statement except for functions
