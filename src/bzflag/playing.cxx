@@ -2540,13 +2540,17 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       /* if we're getting this, we have playerlist perm */
       myTank->setPlayerList(true);
+
+      // replacement for the normal MsgAddPlayer message
       if (numIPs == 1) {
 	uint8_t ipsize;
 	uint8_t index;
 	Address ip;
-	msg = nboUnpackUByte(msg, ipsize);
-	msg = nboUnpackUByte(msg, index);
-	msg = ip.unpack(msg);
+	void* tmpMsg = msg; // leave 'msg' pointing at the first entry
+	
+	tmpMsg = nboUnpackUByte(tmpMsg, ipsize);
+	tmpMsg = nboUnpackUByte(tmpMsg, index);
+	tmpMsg = ip.unpack(tmpMsg);
 	int playerIndex = lookupPlayerIndex(index);
 	Player* tank = getPlayerByIndex(playerIndex);
 	if (!tank) {
@@ -2569,39 +2573,42 @@ static void		handleServerMessage(bool human, uint16_t code,
 	message += " from " + ip.getDotNotation();
 
 	addMessage(tank, message);
+      }
 
-      } else {
-	// more than 1 IP
-
-	if (BZDB.isTrue("noIpInfo")) {
-	  break;
-	}
-
-	uint8_t playerId, count, addrlen;
-	Address addr;
+      // print fancy version to be easily found
+      if ((numIPs != 1) || BZDB.isTrue("showIpInfo")) {
+        uint8_t playerId;
+        uint8_t addrlen;
+        Address addr;
       
-	for (int i = 0; i < count; i++) {
-	  msg = nboUnpackUByte(msg, addrlen);
-	  msg = nboUnpackUByte(msg, playerId);
-	  msg = addr.unpack(msg);
-	  
-	  int playerIndex = lookupPlayerIndex(playerId);        
-	  Player* player = getPlayerByIndex(playerIndex);
-	  
-	  if (player != NULL) {
-	    std::string message = ColorStrings[CyanColor];
-	    message += "IPINFO: ";
-	    message += ColorStrings[RedColor];
-	    message += player->getCallSign();
-	    message += ColorStrings[GreenColor];
-	    message += " from ";
-	    message += ColorStrings[BlueColor];
-	    message += addr.getDotNotation();
-	    addMessage(NULL, message);
-	  }
-	}
-      } // end if 1 IP update
+        for (int i = 0; i < numIPs; i++) {
+          msg = nboUnpackUByte(msg, addrlen);
+          msg = nboUnpackUByte(msg, playerId);
+          msg = addr.unpack(msg);
+          
+          int playerIndex = lookupPlayerIndex(playerId);        
+          Player* player = getPlayerByIndex(playerIndex);
+          
+          if (player != NULL) {
+            int color = player->getTeam();
+            if ((color < 0) || (color > 4)) {
+              color = 5;
+            }
+            std::string message = ColorStrings[CyanColor]; // default color
+            message += "IPINFO: ";
+            if (BZDBCache::colorful) message += ColorStrings[color];
+            message += player->getCallSign();
+            if (BZDBCache::colorful) message += ColorStrings[CyanColor];
+            message += "\t from ";
+            if (BZDBCache::colorful) message += ColorStrings[color];
+            message += addr.getDotNotation();
 
+            // also print into the Server Menu
+            controlPanel->addMessage(message, 2);
+          }
+        } // end for loop
+      }
+      break;
     }
 
     case MsgPlayerInfo: {
