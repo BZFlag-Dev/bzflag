@@ -22,6 +22,28 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
+
+float curVertScale[3] = {1,1,1}; /// for the really lame #def
+float curNormScale[3] = {1,1,1}; /// for the really lame #def
+
+void doVertex3f(GLfloat x, GLfloat y, GLfloat z)
+{
+  glVertex3f(x * curVertScale[0], y * curVertScale[1], z * curVertScale[2]);
+}
+
+void doNormal3f(GLfloat x, GLfloat y, GLfloat z)
+{
+  const GLfloat d = hypotf(x * curNormScale[0],
+    hypotf(y * curNormScale[1], z * curNormScale[2]));
+  if (d > 1.0e-5f) {
+    x *= curNormScale[0] / d;
+    y *= curNormScale[1] / d;
+    z *= curNormScale[2] / d;
+  }
+  glNormal3f(x, y, z);
+}
+
+
 class TankFactors
 {
 public:
@@ -733,12 +755,12 @@ void			TankSceneNode::TankRenderNode::renderPart(Part part)
 
 void			TankSceneNode::TankRenderNode::prepStyle(Style style)
 {
-  vertexScale[0] = TankFactors::styleFactors[style][0];
-  vertexScale[1] = TankFactors::styleFactors[style][1];
-  vertexScale[2] = TankFactors::styleFactors[style][2];
-  normalScale[0] = (vertexScale[0] == 0.0f ? 0.0f : 1.0f / vertexScale[0]);
-  normalScale[1] = (vertexScale[1] == 0.0f ? 0.0f : 1.0f / vertexScale[1]);
-  normalScale[2] = (vertexScale[2] == 0.0f ? 0.0f : 1.0f / vertexScale[2]);
+  curVertScale[0] = vertexScale[0] = TankFactors::styleFactors[style][0];
+  curVertScale[1] = vertexScale[1] = TankFactors::styleFactors[style][1];
+  curVertScale[2] = vertexScale[2] = TankFactors::styleFactors[style][2];
+  curNormScale[0] = normalScale[0] = (vertexScale[0] == 0.0f ? 0.0f : 1.0f / vertexScale[0]);
+  curNormScale[1] = normalScale[1] = (vertexScale[1] == 0.0f ? 0.0f : 1.0f / vertexScale[1]);
+  curNormScale[2] = normalScale[2] = (vertexScale[2] == 0.0f ? 0.0f : 1.0f / vertexScale[2]);
 }
 
 void			TankSceneNode::TankRenderNode::
@@ -954,9 +976,6 @@ void			TankSceneNode::HighTankRenderNode::freeParts()
 //
 // geometry rendering methods
 //
-
-#define	glVertex3f	doVertex3f
-#define	glNormal3f	doNormal3f
 
 void			TankSceneNode::TankRenderNode::renderLights()
 {

@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #include "TankSceneNode.h"
+
+#define	glVertex3f	doVertex3f
+#define	glNormal3f	doNormal3f
+
 void buildHighTurret ( void )
 {
     glShadeModel(GL_FLAT);

@@ -12,6 +12,10 @@
 
 #include "TankSceneNode.h"
 
+#define	glVertex3f	doVertex3f
+#define	glNormal3f	doNormal3f
+
+
 float sideVerts[][3] = {  {2.800000f, 0.878000f, 0.829000f},
                           {2.820000f, 0.878000f, 0.716000f},
                           {2.680000f, 0.877000f, 0.684000f},

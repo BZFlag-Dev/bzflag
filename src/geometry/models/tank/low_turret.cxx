@@ -11,6 +11,10 @@
  */
 
 #include "TankSceneNode.h"
+
+#define	glVertex3f	doVertex3f
+#define	glNormal3f	doNormal3f
+
 void buildLowTurret( void )
 {
       glShadeModel(GL_FLAT);

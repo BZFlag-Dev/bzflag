@@ -11,6 +11,10 @@
  */
 
 #include "TankSceneNode.h"
+
+#define	glVertex3f	doVertex3f
+#define	glNormal3f	doNormal3f
+
 void buildMedBody ( void )
 {      glShadeModel(GL_FLAT);
       glBegin(GL_TRIANGLE_STRIP);

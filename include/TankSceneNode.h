@@ -245,6 +245,13 @@ class TankSceneNode : public SceneNode {
     static const int		numLOD;
 };
 
+extern float curVertScale[3]; /// for the really lame #def
+extern float curNormScale[3]; /// for the really lame #def
+
+void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
+void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
+
+
 #endif // BZF_TANK_SCENE_NODE_H
 
 // Local Variables: ***
