@@ -102,6 +102,7 @@ vote_t VotingBooth::getResponseIDFromString(const std::string response) const
   return -1;
 }
 
+
 const std::string VotingBooth::getStringFromResponseID(vote_t id) const
 {
   if ((id >= 0) && (id < _responseCount)) {
@@ -111,15 +112,28 @@ const std::string VotingBooth::getStringFromResponseID(vote_t id) const
   return "";
 }
 
+
+bool VotingBooth::hasVoted(const std::string name) const
+{
+  if (name.size() <= 0) {
+    return false;
+  }
+  for (int i = 0; i < _voterCount; i++) {
+    if (VotingBooth::compare_nocase(_voter[i], name, name.size()) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 bool VotingBooth::vote(std::string voter, vote_t id)
 {
   /* if we are requiring unique, make sure the name does not exist */
   if (_requireUnique) {
-    for (int i = 0; i < _voterCount; i++) {
-      if (VotingBooth::compare_nocase(_voter[i], voter, voter.size()) == 0) {
-	/* repeat voters are not allowed to vote */
-	return false;
-      }
+    if (this->hasVoted(voter)) {
+      /* voters are not allowed to vote multiple times */
+      return false;
     }
   }
 

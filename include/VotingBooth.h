@@ -100,20 +100,28 @@ class VotingBooth
   VotingBooth(const VotingBooth& booth);
   ~VotingBooth(void);
 
-  /** add an response to vote upon
+  /** add a response to vote upon.  vote responses are the choices that
+   * may be voted upon (e.g. "yes", "no", "maybe", etc).
    */
   vote_t addResponse(const std::string response);
 
-  /** lookup the id of a vote response
+  /** lookup the id of a vote response given a string.
    */
   vote_t getResponseIDFromString(const std::string name) const;
+
+  /** lookup the string of a vote response given an id.
+    */
   const std::string getStringFromResponseID(vote_t id) const;
+
+  /** see if a particular person has already voted
+    */
+  bool hasVoted(const std::string name) const;
 
   /** a given user id/name responds and votes to a particular poll
    * response.
    */
   bool vote(const std::string name, vote_t id);
-
+  
   /** return how many votes have been placed for a particular response.
    * lookup votes by vote identifier.
    */
@@ -126,7 +134,7 @@ class VotingBooth
 
   /** return total number of votes received
    */
-  unsigned long int VotingBooth::getTotalVotes(void) const;
+  unsigned long int getTotalVotes(void) const;
 
   /** returns the number of voters
    */
