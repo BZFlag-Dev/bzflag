@@ -1158,11 +1158,11 @@ static void sendMessageToListServerForReal(int index)
     // update player counts in ping reply.  pretend there are no players
     // if the game is over.
     if (gameOver) {
-      pingReply.rogueCount = team[0].team.activeSize;
-      pingReply.redCount = team[1].team.activeSize;
-      pingReply.greenCount = team[2].team.activeSize;
-      pingReply.blueCount = team[3].team.activeSize;
-      pingReply.purpleCount = team[4].team.activeSize;
+      pingReply.rogueCount = team[0].team.size;
+      pingReply.redCount = team[1].team.size;
+      pingReply.greenCount = team[2].team.size;
+      pingReply.blueCount = team[3].team.size;
+      pingReply.purpleCount = team[4].team.size;
     }
     else {
       pingReply.rogueCount = 0;
@@ -1196,11 +1196,11 @@ static void sendMessageToListServerForReal(int index)
     else
       sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
 	  clOptions->publicizedAddress.c_str(),
-	  team[0].team.activeSize,
-	  team[1].team.activeSize,
-	  team[2].team.activeSize,
-	  team[3].team.activeSize,
-	  team[4].team.activeSize);
+	  team[0].team.size,
+	  team[1].team.size,
+	  team[2].team.size,
+	  team[3].team.size,
+	  team[4].team.size);
   }
   DEBUG3("%s",msg);
   send(link.socket, msg, strlen(msg), 0);
@@ -2272,7 +2272,6 @@ static bool defineWorld()
   int i;
   for (i = 0; i < NumTeams; i++) {
     team[i].team.size = 0;
-    team[i].team.activeSize = 0;
     team[i].team.won = 0;
     team[i].team.lost = 0;
   }
@@ -2452,11 +2451,11 @@ static void respondToPing()
 
   // reply with current game info on udpSocket
   pingReply.sourceAddr = Address(addr);
-  pingReply.rogueCount = team[0].team.activeSize;
-  pingReply.redCount = team[1].team.activeSize;
-  pingReply.greenCount = team[2].team.activeSize;
-  pingReply.blueCount = team[3].team.activeSize;
-  pingReply.purpleCount = team[4].team.activeSize;
+  pingReply.rogueCount = team[0].team.size;
+  pingReply.redCount = team[1].team.size;
+  pingReply.greenCount = team[2].team.size;
+  pingReply.blueCount = team[3].team.size;
+  pingReply.purpleCount = team[4].team.size;
   pingReply.write(udpSocket, &addr);
 }
 
@@ -2563,7 +2562,7 @@ static void addPlayer(int playerIndex)
   int numplayers=0;
   for (i=0;i<NumTeams;i++)
   {
-    numplayers+=team[i].team.activeSize;
+    numplayers+=team[i].team.size;
   }
 
   int numobservers = 0;
@@ -2589,15 +2588,15 @@ static void addPlayer(int playerIndex)
 	      (t == ObserverTeam) && numobservers >= clOptions->maxObservers) {
      rejectPlayer(playerIndex, RejectServerFull);
      return;
-   } else if (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)]) {
+   } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
      for (int i = RogueTeam; i < NumTeams; i++) {
-       if (team[i].team.activeSize < clOptions->maxTeam[i]) {
+       if (team[i].team.size < clOptions->maxTeam[i]) {
 	 rejectPlayer(playerIndex, RejectTeamFull);
 	 return ;
        }
      }
      // if team is full then check if server is full
-	 rejectPlayer(playerIndex, RejectServerFull);
+     rejectPlayer(playerIndex, RejectServerFull);
      return;
    }
 
@@ -2668,17 +2667,15 @@ static void addPlayer(int playerIndex)
   player[playerIndex].wins = 0;
   player[playerIndex].losses = 0;
   player[playerIndex].tks = 0;
-  // update team state and if first active player on team,
+  // update team state and if first player on team,
   // add team's flag and reset it's score
   bool resetTeamFlag = false;
   int teamIndex = int(player[playerIndex].team);
-  if ((player[playerIndex].team != ObserverTeam && player[playerIndex].type == TankPlayer ||
-	player[playerIndex].type == ComputerPlayer) &&
-	++team[teamIndex].team.activeSize == 1) {
+  team[teamIndex].team.size++;
+  if (team[teamIndex].team.size == 1 && Team::isColorTeam(player[playerIndex].team)) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
     if ((clOptions->gameStyle & int(TeamFlagGameStyle)) &&
-	teamIndex != int(RogueTeam) &&
 	flag[teamIndex - 1].flag.status == FlagNoExist)
       // can't call resetFlag() here cos it'll screw up protocol for
       // player just joining, so do it later
@@ -2894,7 +2891,7 @@ void resetFlag(int flagIndex)
   // required flags mustn't just disappear
   if (pFlagInfo->required) {
     if (pFlagInfo->flag.type->flagTeam != ::NoTeam) {
-      if (team[pFlagInfo->flag.type->flagTeam].team.activeSize == 0)
+      if (team[pFlagInfo->flag.type->flagTeam].team.size == 0)
 	pFlagInfo->flag.status = FlagNoExist;
       else
 	pFlagInfo->flag.status = FlagOnGround;
@@ -3110,16 +3107,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // decrease team size
     int teamNum = int(player[playerIndex].team);
     --team[teamNum].team.size;
-    if (player[playerIndex].team != ObserverTeam && player[playerIndex].type == TankPlayer ||
-	player[playerIndex].type == ComputerPlayer)
-      --team[teamNum].team.activeSize;
 
     // if last active player on team then remove team's flag if no one
     // is carrying it
-    if (teamNum != int(RogueTeam) &&
-	(player[playerIndex].type == TankPlayer ||
-	player[playerIndex].type == ComputerPlayer) &&
-	team[teamNum].team.activeSize == 0 &&
+    if (Team::isColorTeam(player[playerIndex].team) && team[teamNum].team.size == 0 &&
 	(clOptions->gameStyle & int(TeamFlagGameStyle))) {
       if (flag[teamNum - 1].player == -1 ||
 	  player[flag[teamNum - 1].player].team == teamNum)
@@ -3197,11 +3188,11 @@ static void sendQueryGame(int playerIndex)
   buf = nboPackUShort(bufStart, pingReply.gameStyle);
   buf = nboPackUShort(buf, pingReply.maxPlayers);
   buf = nboPackUShort(buf, pingReply.maxShots);
-  buf = nboPackUShort(buf, team[0].team.activeSize);
-  buf = nboPackUShort(buf, team[1].team.activeSize);
-  buf = nboPackUShort(buf, team[2].team.activeSize);
-  buf = nboPackUShort(buf, team[3].team.activeSize);
-  buf = nboPackUShort(buf, team[4].team.activeSize);
+  buf = nboPackUShort(buf, team[0].team.size);
+  buf = nboPackUShort(buf, team[1].team.size);
+  buf = nboPackUShort(buf, team[2].team.size);
+  buf = nboPackUShort(buf, team[3].team.size);
+  buf = nboPackUShort(buf, team[4].team.size);
   buf = nboPackUShort(buf, pingReply.rogueMax);
   buf = nboPackUShort(buf, pingReply.redMax);
   buf = nboPackUShort(buf, pingReply.greenMax);
@@ -3247,6 +3238,7 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
   player[playerIndex].state = PlayerAlive;
   player[playerIndex].flag = -1;
 
+  // Observer should not send MsgAlive; diagnostic?
   if (player[playerIndex].team == ObserverTeam)
     return;
 
@@ -3266,7 +3258,7 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 
 static void checkTeamScore(int playerIndex, int teamIndex)
 {
-  if (clOptions->maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
+  if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex))) return;
   if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions->maxTeamScore) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
@@ -3549,7 +3541,7 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // if it is a team flag, check if there are any players left in that team -
   // if not, start the flag timeout
-  if (isTeamFlag && team[flagIndex + 1].team.activeSize == 0) {
+  if (isTeamFlag && team[flagIndex + 1].team.size == 0) {
     team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
     team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
   }
@@ -4995,7 +4987,7 @@ int main(int argc, char **argv)
      */
     if (clOptions->gameStyle & TeamFlagGameStyle) {
       for (i = 0; i < CtfTeams; ++i) {
-	if (team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
+	if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0 &&
 	    flag[i - 1].flag.status != FlagNoExist &&
 	    flag[i - 1].player == -1) {
 	  DEBUG1("Flag timeout for team %d\n", i);

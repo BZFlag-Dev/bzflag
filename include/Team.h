@@ -33,6 +33,7 @@ struct Team {
     static const char*	getName(TeamColor); // const
     static const float*	getTankColor(TeamColor); // const
     static const float*	getRadarColor(TeamColor); // const
+    static const bool	isColorTeam(TeamColor); // const
 
     static void		setColors(TeamColor,
 				const float* tank,
@@ -40,7 +41,6 @@ struct Team {
 
   public:
     unsigned short	size;			// num players on team
-    unsigned short	activeSize;		// num non-observers
     unsigned short	won;			// wins by team members
     unsigned short	lost;			// losses by team members
 

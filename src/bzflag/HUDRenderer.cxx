@@ -966,13 +966,14 @@ void			HUDRenderer::renderScoreboard(void)
   delete[] players;
 
   // print teams sorted by score
-  int *teams = new int[NumTeams];
+  int teams[NumTeams];
   int teamCount = 0;
 
   y = (int)y0;
   for (i = RedTeam; i < NumTeams; i++) {
+    if (!Team::isColorTeam(TeamColor(i))) continue;
     const Team* team = World::getWorld()->getTeams() + i;
-    if (team->activeSize == 0) continue;
+    if (team->size == 0) continue;
     teams[teamCount++] = i;
   }
 
@@ -983,7 +984,6 @@ void			HUDRenderer::renderScoreboard(void)
     drawTeamScore(teams[i], x5, (float)y);
     y -= (int)dy;
   }
-  delete[] teams;
 }
 
 void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)

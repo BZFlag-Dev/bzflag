@@ -22,7 +22,7 @@
 // protocol version
 // TODO make this sucker an int when we change BZFS stuff
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"1906"
+#define BZ_PROTO_VERSION	"1907"
 #endif
 
 #ifndef BZ_MAJOR_VERSION
@@ -34,7 +34,7 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV			6
+#define BZ_REV                  7
 #endif
 
 #ifndef BZ_BUILD_TYPE

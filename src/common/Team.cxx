@@ -36,7 +36,6 @@ float			Team::radarColor[NumTeams][3] = {
 Team::Team()
 {
   size = 0;
-  activeSize = 0;
   won = 0;
   lost = 0;
 }
@@ -44,7 +43,6 @@ Team::Team()
 void*			Team::pack(void* buf) const
 {
   buf = nboPackUShort(buf, uint16_t(size));
-  buf = nboPackUShort(buf, uint16_t(activeSize));
   buf = nboPackUShort(buf, uint16_t(won));
   buf = nboPackUShort(buf, uint16_t(lost));
   return buf;
@@ -52,13 +50,11 @@ void*			Team::pack(void* buf) const
 
 void*			Team::unpack(void* buf)
 {
-  uint16_t inSize, inActiveSize, inWon, inLost;
+  uint16_t inSize, inWon, inLost;
   buf = nboUnpackUShort(buf, inSize);
-  buf = nboUnpackUShort(buf, inActiveSize);
   buf = nboUnpackUShort(buf, inWon);
   buf = nboUnpackUShort(buf, inLost);
   size = (unsigned short)inSize;
-  activeSize = (unsigned short)inActiveSize;
   won = (unsigned short)inWon;
   lost = (unsigned short)inLost;
   return buf;
@@ -86,6 +82,11 @@ const float*		Team::getTankColor(TeamColor team) // const
 const float*		Team::getRadarColor(TeamColor team) // const
 {
   return radarColor[int(team)];
+}
+
+const bool		Team::isColorTeam(TeamColor team) // const
+{
+  return team >= RedTeam  && team <= PurpleTeam;
 }
 
 void			Team::setColors(TeamColor team,

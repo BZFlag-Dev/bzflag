@@ -2647,14 +2647,14 @@ static void		updateHighScores()
 #endif
   hud->setPlayerHasHighScore(haveBest);
 
-  if (myTank && myTank->getTeam() != RogueTeam) {
+  if (myTank && Team::isColorTeam(myTank->getTeam())) {
     const Team& myTeam = World::getWorld()->getTeam(int(myTank->getTeam()));
     bestScore = myTeam.won - myTeam.lost;
     haveBest = true;
     for (i = 0; i < NumTeams; i++) {
       if (i == int(myTank->getTeam())) continue;
       const Team& team = World::getWorld()->getTeam(i);
-      if (team.activeSize > 0 && team.won - team.lost >= bestScore) {
+      if (team.size > 0 && team.won - team.lost >= bestScore) {
 	haveBest = false;
 	break;
       }
@@ -2687,7 +2687,7 @@ static void		updateFlag(FlagType* flag)
   hud->setAltitudeTape(flag == Flags::Jumping || World::getWorld()->allowJumping());
 
   // enable/disable display of markers
-  hud->setMarker(0, myTank->getTeam() != RogueTeam &&
+  hud->setMarker(0, Team::isColorTeam(myTank->getTeam()) &&
 			flag->flagTeam != myTank->getTeam() &&
 			World::getWorld()->allowTeamFlags());
   hud->setMarker(1, World::getWorld()->allowAntidote() &&
@@ -3187,7 +3187,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if ( fd->flagTeam != NoTeam
 	     && fd->flagTeam != tank->getTeam()
 	     && ((tank && (tank->getTeam() == myTank->getTeam())))
-	     && (myTank->getTeam() != RogueTeam)) {
+            && (Team::isColorTeam(myTank->getTeam()))) {
 	  hud->setAlert(1, "Team Grab!!!", 3.0f, false);
 	  const float* pos = tank->getPosition();
 	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
@@ -5459,8 +5459,7 @@ static bool		joinGame(const StartupInfo* info,
 #endif
 
   // decide how start for first time
-  restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam &&
-		  myTank->getTeam() != ObserverTeam;
+  restartOnBase = world->allowTeamFlags() && Team::isColorTeam(myTank->getTeam());
 
   // resize background and adjust time (this is needed even if we
   // don't sync with the server)
