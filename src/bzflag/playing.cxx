@@ -2131,7 +2131,7 @@ static std::string	cmdAutoPilot(const std::string&, const CommandManager::ArgLis
     if (myTank->isAutoPilot()) {
       myTank->setAutoPilot(false);
       hud->setAlert(0, "autopilot disabled", 1.0f, true);
-      strcpy(messageBuffer, " [ROGER] Releasing Controls of " );
+      strcpy(messageBuffer, "[ROGER] Releasing Controls of " );
 
       // grab mouse
       if (shouldGrabMouse()) mainWindow->grabMouse();
@@ -2139,14 +2139,15 @@ static std::string	cmdAutoPilot(const std::string&, const CommandManager::ArgLis
     else {
       myTank->setAutoPilot(true);
       hud->setAlert(0, "autopilot enabled", 1.0f, true);
-      strcpy(messageBuffer, " [ROGER] Taking Controls of " );
+      strcpy(messageBuffer, "[ROGER] Taking Controls of " );
 
       // ungrab mouse
       mainWindow->ungrabMouse();
     }
 
-    strcat( messageBuffer, myTank->getCallSign());
+    strcat(messageBuffer, myTank->getCallSign());
     void* buf = messageMessage;
+    buf = nboPackUByte(buf, AllPlayers);
     buf = nboPackString(buf, messageBuffer, MessageLen);
     serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
 
@@ -3763,18 +3764,18 @@ static void		handleServerMessage(bool human, uint16_t code,
       addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
       break;
     } else if (fromServer) {
-      static const char passwdRequest[] =  "Identify with /identify <your password>";
+      static const char passwdRequest[] = "Identify with /identify <your password>";
       if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
 	std::string passwdKey = "password@";
 	passwdKey += startupInfo.serverName;
 	if (BZDB.isSet(passwdKey)) {
 	  std::string passwdResponse = "/identify " + BZDB.get(passwdKey);
-	  std::cout << passwdResponse << std::endl;
  	  char messageBuffer[MessageLen];
  	  memset(messageBuffer, 0, MessageLen);
- 	  strncpy(messageBuffer, passwdResponse.c_str(), MessageLen);
- 	  nboPackString(messageMessage + PlayerIdPLen,
-			messageBuffer, MessageLen);
+          strncpy(messageBuffer, passwdResponse.c_str(), MessageLen);
+          void *buf = messageMessage;
+          buf = nboPackUByte(buf, ServerPlayer);
+ 	  nboPackString(buf, messageBuffer, MessageLen);
  	  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
 	}
       }
