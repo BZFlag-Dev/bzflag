@@ -176,12 +176,6 @@ public:
 
     int				getPrecedence();
 
-    friend std::istream&	operator >> (std::istream& src,
-    					     ExpressionToken& dst);
-    friend std::string&		operator >> (std::string& src,
-    					     ExpressionToken& dst);
-    friend std::ostream&	operator << (std::ostream& dst,
-    					     ExpressionToken& src);
 	private:
     Type tokenType;
     Contents tokenContents;
