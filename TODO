@@ -51,8 +51,6 @@ THESE ARE LOWER PRIORITY
 * sdl build does not set the application icon .. kinda important for
   the folks with icons
 
-* fix the menu font garbage above some letters on some fonts
-
 * improve the mesh collision code (edging)
 
 * incorporate the player's handicap value into the check calculations.
