@@ -42,8 +42,11 @@ bool WordFilter::simpleFilter(char *input) const
 
     word = line.substr(startPosition, endPosition-startPosition);
     findWord.word = word;
-    if (filters[word[0]].find(findWord) != \
-	filters[word[0]].end()) {
+    int firstchar = word[0];
+    if (firstchar < 0)
+      firstchar+=256; // FIXME, not very clean?
+    if (filters[firstchar].find(findWord) != \
+	filters[firstchar].end()) {
 
       /* fill with asterisks */
       //      memset(input+startPosition,'*', endPosition-startPosition);
@@ -86,14 +89,14 @@ bool WordFilter::aggressiveFilter(char *input) const
   startPosition = 0;
 
   int endPosition;
-  char wordIndices[MAX_WORDS];
+  unsigned char wordIndices[MAX_WORDS];
   unsigned int wordIndexLength=0;
 
   char characterIndex;
 
   /* clear memory for arrays */
-  memset(matchPair, 0, MAX_WORDS * 2 * sizeof(int));
-  memset(wordIndices, 0, MAX_WORDS * sizeof(char));
+  memset(matchPair, 0, MAX_WORDS * 2 * sizeof matchPair[0]);
+  memset(wordIndices, 0, MAX_WORDS * sizeof wordIndices[0]);
 
   /* iterate over all the words start position in the input and keep track
    * of the starting character of each word (we only need to check those)
@@ -637,12 +640,15 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     newFilter.expression = expression;
     newFilter.compiled = getCompiledExpression(expression);
 
+    int firstchar = tolower(word[0]);
+    if (firstchar < 0)
+      firstchar += 256; // FIXME, not too clean?
     /* check if the word is already added */
-    if (filters[tolower(word[0])].find(newFilter) != \
-	filters[word[0]].end()) {
+    if (filters[firstchar].find(newFilter) != \
+	filters[firstchar].end()) {
       return false;
     } else {
-      filters[tolower(word[0])].insert(newFilter);
+      filters[firstchar].insert(newFilter);
     }
     return true;
   }
