@@ -3189,7 +3189,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	wasRabbit = tank->getTeam() == RabbitTeam;
 	myTank->restart(pos, forward);
 	firstLife = false;
-	mainWindow->warpMouse();
+	if (!myTank->isAutoPilot())
+	  mainWindow->warpMouse();
 	hud->setAltitudeTape(World::getWorld()->allowJumping());
       } else if (tank->getPlayerType() == ComputerPlayer) {
 	for (int r = 0; r < numRobots; r++) {
