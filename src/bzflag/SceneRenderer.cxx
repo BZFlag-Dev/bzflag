@@ -104,8 +104,6 @@ SceneRenderer::SceneRenderer() :
 				abgr(false),
 				useQualityValue(2),
 				useDepthComplexityOn(false),
-				useCullingTreeOn(false),
-				useCollisionTreeOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
 				panelOpacity(0.3f),
@@ -317,18 +315,6 @@ bool SceneRenderer::useDepthComplexity() const
 }
 
 
-bool SceneRenderer::useCullingTree() const
-{
-  return useCullingTreeOn;
-}
-
-
-bool SceneRenderer::useCollisionTree() const
-{
-  return useCollisionTreeOn;
-}
-
-
 void SceneRenderer::setDepthComplexity(bool on)
 {
   if (on) {
@@ -337,12 +323,6 @@ void SceneRenderer::setDepthComplexity(bool on)
     if (bits < 3) return;
   }
   useDepthComplexityOn = on;
-}
-
-
-void SceneRenderer::setCullingTree(bool on)
-{
-  useCullingTreeOn = on;
 }
 
 
@@ -358,12 +338,6 @@ void SceneRenderer::setupBackgroundMaterials()
     background->setupGroundMaterials();
   }
   return;
-}
-
-
-void			SceneRenderer::setCollisionTree(bool on)
-{
-  useCollisionTreeOn = on;
 }
 
 
@@ -904,11 +878,12 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
       glEnable(GL_POLYGON_OFFSET_FILL);
     }
 
-    if (scene && useCullingTreeOn) {
+    if (scene && BZDBCache::showCullingGrid) {
       scene->drawCuller();
     }
-    if (scene && useCollisionTreeOn && (World::getWorld() != NULL)) {
-      World::getWorld()->drawCollisionGrid();
+    const World* world = World::getWorld();
+    if (scene && BZDBCache::showCollisionGrid && (world != NULL)) {
+      world->drawCollisionGrid();
     }
 
 

@@ -139,7 +139,7 @@ class World {
 
     bool		writeWorld(std::string filename);
 
-    void		drawCollisionGrid();
+    void		drawCollisionGrid() const;
 
     void		freeInsideNodes() const;
 

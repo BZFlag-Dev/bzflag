@@ -1029,7 +1029,7 @@ static void drawLines (int count, const float (*vertices)[3], int color)
   return;
 }
 
-void			World::drawCollisionGrid()
+void World::drawCollisionGrid() const
 {
   GLboolean usingTextures;
 
@@ -1044,6 +1044,7 @@ void			World::drawCollisionGrid()
 
   return;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

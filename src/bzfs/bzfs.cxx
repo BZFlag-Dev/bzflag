@@ -44,6 +44,7 @@
 #include "BZWReader.h"
 #include "PackVars.h"
 #include "SpawnPosition.h"
+#include "DropGeometry.h"
 #include "commands.h"
 #include "FlagInfo.h"
 #include "MasterBanList.h"
@@ -1247,6 +1248,13 @@ static bool defineWorld()
   std::string digest = md5.hexdigest();
   strcat(hexDigest, digest.c_str());
 
+  // water levels probably require flags on buildings
+  const float waterLevel = world->getWaterLevel();
+  if (!clOptions->flagsOnBuildings && (waterLevel > 0.0f)) {
+    clOptions->flagsOnBuildings = true;
+    DEBUG1("WARNING: enabling flags on buildings\n");
+  }
+
   // reset other stuff
   int i;
   for (i = 0; i < NumTeams; i++) {
@@ -1929,7 +1937,7 @@ void resetFlag(FlagInfo &flag)
   // NOTE -- must not be called until world is defined
   assert(world != NULL);
 
-  float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
+//  float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
   float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
   // reposition flag (middle of the map might be a bad idea)
@@ -1948,53 +1956,18 @@ void resetFlag(FlagInfo &flag)
 
   } else {
     // random position (not in a building)
-    float r = BZDBCache::tankRadius;
-    if (flag.flag.type == Flags::Obesity)
-      r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    const Obstacle *obj;
     float worldSize = BZDBCache::worldSize;
-    if (!world->getZonePoint(std::string(flag.flag.type->flagAbbv),
-			     flagPos)) {
-      flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-      flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-      flagPos[2] = 0.0f;
-    }
-
-    const float waterLevel = world->getWaterLevel();
-    if (waterLevel >= 0.0f) {
-      // precautionary measure
-      clOptions->flagsOnBuildings = true;
-    }
-
-    int topmosttype = world->cylinderInBuilding(&obj, flagPos, r, flagHeight);
-
-    while ((topmosttype != NOT_IN_BUILDING) || (flagPos[2] <= waterLevel)) {
-      if (world->getZonePoint(std::string(flag.flag.type->flagAbbv),
-			      flagPos)
-	  && (flagPos[2] > waterLevel)) {
-	// if we've got a related flag zone specified, always use
-	// it. there may be obstacles in the zone that cause the
-	// NOT_IN_BUILDING test to fail a couple of times, but
-	// hopefully the map maker is using zones wisely.
-      } else if (clOptions->flagsOnBuildings && obj
-		 && obj->isFlatTop() && !obj->isDriveThrough()
-		 && (obj->getPosition()[2]
-		     < (flagPos[2] + flagHeight - Epsilon))
-		 && ((obj->getPosition()[2] + obj->getSize()[2] - Epsilon)
-		     > flagPos[2])
-		 && (world->inRect(obj->getPosition(), obj->getRotation(),
-				   obj->getSize(),
-				   flagPos[0], flagPos[1], 0.0f))) {
-	flagPos[2] = obj->getPosition()[2] + obj->getSize()[2];
-	// avoid inf-looping from cumulative rounding errors
-	break;
-      } else {
+    float maxZ = MAXFLOAT;
+    if (!clOptions->flagsOnBuildings) {
+      maxZ = 0.0f;
+    }      
+    do {
+      if (!world->getZonePoint(std::string(flag.flag.type->flagAbbv), flagPos)) {
 	flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos[2] = 0.0f;
       }
-      topmosttype = world->cylinderInBuilding(&obj, flagPos, r, flagHeight);
-    }
+    } while (!DropGeometry::dropFlag(flagPos, 0.0f, maxZ, world));
   }
 
   bool teamIsEmpty = true;

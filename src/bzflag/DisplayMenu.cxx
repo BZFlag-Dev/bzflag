@@ -302,8 +302,8 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useCullingTree() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useCollisionTree() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
 #endif
 
     if (!BZDB.isTrue("texture"))
@@ -392,10 +392,10 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
 #endif
   case 'd':
-    sceneRenderer->setCullingTree(list->getIndex() != 0);
+    BZDB.setBool("showCullingGrid", list->getIndex() != 0);
     break;
   case 'e':
-    sceneRenderer->setCollisionTree(list->getIndex() != 0);
+    BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();

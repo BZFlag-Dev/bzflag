@@ -34,7 +34,9 @@ int   BZDBCache::sizedRadarShots;
 int   BZDBCache::flagChunks;
 float BZDBCache::pulseRate;
 float BZDBCache::pulseDepth;
-
+bool  BZDBCache::showCollisionGrid; 
+bool  BZDBCache::showCullingGrid;
+                
 float BZDBCache::worldSize;
 float BZDBCache::radarLimit;
 float BZDBCache::gravity;
@@ -65,6 +67,8 @@ void BZDBCache::init()
   BZDB.addCallback("flagChunks", clientCallback, NULL);
   BZDB.addCallback("pulseRate", clientCallback, NULL);
   BZDB.addCallback("pulseDepth", clientCallback, NULL);
+  BZDB.addCallback("showCollisionGrid", clientCallback, NULL);
+  BZDB.addCallback("showCullingGrid", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE, serverCallback, NULL);
@@ -126,6 +130,10 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     pulseRate = BZDB.eval("pulseRate");
   else if (name == "pulseDepth")
     pulseDepth = BZDB.eval("pulseDepth");
+  else if (name == "showCollisionGrid")
+    showCollisionGrid = BZDB.eval("showCollisionGrid");
+  else if (name == "showCullingGrid")
+    showCullingGrid = BZDB.eval("showCullingGrid");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)

@@ -17,6 +17,7 @@
 #include <string>
 
 #include "SpawnPosition.h"
+#include "DropGeometry.h"
 #include "Obstacle.h"
 #include "FlagInfo.h"
 #include "TeamBases.h"
@@ -53,19 +54,14 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     playerData->player.setRestartOnBase(false);
   } else {
     const float tankRadius = BZDBCache::tankRadius;
-    const float tankWidth = 0.5f * BZDBCache::tankWidth;
-    const float tankLength = 0.5f * BZDBCache::tankLength;
-    const float tankHeight = BZDBCache::tankHeight;
     safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * 1.5);
     safeDistance = tankRadius * 20; // FIXME: is this a good value?
     const float size = BZDBCache::worldSize;
     const float maxWorldHeight = world->getMaxWorldHeight();
-    const Obstacle *building = NULL;
 
     // keep track of how much time we spend searching for a location
     TimeKeeper start = TimeKeeper::getCurrent();
 
-    int inAirAttempts = 50;
     int tries = 0;
     float minProximity = size / 3.0f;
     float bestDist = -1.0f;
@@ -84,50 +80,12 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       }
       tries++;
 
-      int type = world->boxInBuilding(&building, testPos, azimuth,
-				      tankWidth, tankLength, tankHeight);
-
+      float maxZ = maxWorldHeight;
       if (onGroundOnly) {
-	if (type == NOT_IN_BUILDING) {
-	  foundspot = true;
-	}
-      } else {
-	if ((type == NOT_IN_BUILDING) && (testPos[2] > 0.0f)) {
-	  testPos[2] = 0.0f;
-	  //Find any intersection regardless of z
-	  type = world->boxInBuilding(&building, testPos, azimuth,
-				      tankWidth, tankLength, maxWorldHeight);
-	}
-
-	// in a building? try climbing on roof until on top
-	int lastType = type;
-	const Obstacle* lastObs = NULL;
-	int retriesRemaining = 100; // don't climb forever
-	while (type != NOT_IN_BUILDING) {
-	  testPos[2] = building->getPosition()[2] + building->getHeight() + 0.0001f;
-	  tries++;
-	  lastType = type;
-	  lastObs = building;
-	  type = world->boxInBuilding(&building, testPos, azimuth,
-				      tankWidth, tankLength, tankHeight);
-	  if (--retriesRemaining <= 0) {
-	    DEBUG1("Warning: getSpawnLocation had to climb too many buildings\n");
-	    break;
-	  }
-	}
-	// ok, when not on top of pyramid, tetra, or teleporter
-	if ((lastType == NOT_IN_BUILDING) || ((lastObs != NULL) &&
-	    (lastObs->isFlatTop() && !lastObs->isDriveThrough()))) {
-	  foundspot = true;
-	}
-//	if ((lastType != IN_PYRAMID) && (lastType != IN_TETRA) &&
-//	    (lastType != IN_TELEPORTER)) {
-//	  foundspot = true;
-//	}
-	// only try up in the sky so many times
-	if (--inAirAttempts <= 0) {
-	  onGroundOnly = true;
-	}
+        maxZ = 0.0f;
+      }
+      if (DropGeometry::dropPlayer(testPos, 0.0f, maxZ, world)) {
+        foundspot = true;
       }
 
       // check every now and then if we have already used up 10ms of time
