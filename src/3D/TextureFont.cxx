@@ -111,10 +111,10 @@ bool TextureFont::load(OSFile &file)
   for (i = 0; i < numberOfCharacters; i++) {
     // check character
     if (!fmtRead(file, "Char", tmpBuf)) return false;
-    // it's ok for space (32) to not actually have the space
-    if ((i + 32 != ' ') && tmpBuf[1] != (i + 32)) {
-      DEBUG2("Unexpected character: %c, in font metrics file %s (expected %c).\n",
-	tmpBuf[1], file.getFileName(), i + 32);
+    if ((tmpBuf.size() < 3) || 
+	(tmpBuf[1] != '\"' || tmpBuf[2] != (i + 32) || tmpBuf[3] != '\"')) {
+      DEBUG2("Unexpected character: %s, in font metrics file %s (expected \"%c\").\n",
+	tmpBuf, file.getFileName(), (char)(i + 32));
       return false;
     }
     // read metrics

@@ -523,7 +523,7 @@ void CTextToolView::OnFontSavefontfiles()
 		  rFontMetrics.iStartY = m_arGlyphExtents[iChar].iStartY;
 		  rFontMetrics.iEndY = m_arGlyphExtents[iChar].iEndY;
 
-		  fprintf(fp,"Char: %c\nInitialDist: %d\nWidth: %d\nWhitespace: %d\n",iChar+32,rFontMetrics.iInitalDist,rFontMetrics.iCharWidth,rFontMetrics.iWhiteSpaceDist);
+		  fprintf(fp,"Char: \"%c\"\nInitialDist: %d\nWidth: %d\nWhitespace: %d\n",iChar+32,rFontMetrics.iInitalDist,rFontMetrics.iCharWidth,rFontMetrics.iWhiteSpaceDist);
 		  fprintf(fp,"StartX: %d\nEndX: %d\nStartY: %d\nEndY: %d\n\n",rFontMetrics.iStartX,rFontMetrics.iEndX,rFontMetrics.iStartY,rFontMetrics.iEndY);
 
 	  }
