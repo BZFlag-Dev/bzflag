@@ -91,3 +91,20 @@ float TargetingUtils::getOpenDistance( const float *src, const float azimuth )
   ShotStrategy::getFirstBuilding(tankRay, -0.5f, t);
   return t;
 }
+
+bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *target, float *collisionPt )
+{
+  float t = MAXFLOAT;
+  float dir[3];
+  getUnitVector(src, target, dir);
+
+  Ray tankRay( src, dir );
+  const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, 0.0f, t);
+  if (building == NULL)
+	  return false;
+
+  collisionPt[0] = src[0] + (dir[0] - src[0]) * t;
+  collisionPt[1] = src[1] + (dir[1] - src[1]) * t;
+  collisionPt[2] = src[2] + (dir[2] - src[2]) * t;
+  return true;
+}

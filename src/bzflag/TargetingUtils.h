@@ -24,6 +24,7 @@ public:
   static float getTargetAngleDifference( const float *src, float srcAzimuth, const float *target );
   static bool isLocationObscured( const float *src, const float *target );
   static float getOpenDistance( const float *src, const float azimuth );
+  static bool getFirstCollisionPoint( const float *src, const float *target, float *collisionPt );
 };
 
 #endif

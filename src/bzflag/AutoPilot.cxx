@@ -159,6 +159,28 @@ ShotPath *findWorstBullet(float &minDistance)
   return minPath;
 }
 
+bool	avoidDeathFall(float &rotation, float &speed)
+{
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  float pos1[3], pos2[3];
+  memcpy(pos1, myTank->getPosition(), sizeof(pos1));
+  memcpy(pos2, pos2, sizeof(pos1));
+  pos1[2] += BZDBCache::tankHeight;
+  float azimuth = myTank->getAngle();
+  pos2[0] += BZDBCache::tankHeight * cosf(azimuth);
+  pos2[1] += BZDBCache::tankHeight * sinf(azimuth);
+
+  float collisionPt[3];
+  if (TargetingUtils::getFirstCollisionPoint( pos1, pos2, collisionPt )) {
+	  if (collisionPt[2] < World::getWorld()->getWaterLevel()) {
+		  speed = 0.0f;
+		  return true;
+	  }
+  }
+
+  return false;
+}
+
 bool	avoidBullet(float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -674,16 +696,18 @@ void    dropHardFlags()
 
 void	doAutoPilot(float &rotation, float &speed)
 {
-  dropHardFlags(); //Perhaps we should remove this and learning do it's work
-  if (!avoidBullet(rotation, speed)) {
-    if (!stuckOnWall(rotation, speed)) {
-      if (!chasePlayer(rotation, speed)) {
-	if (!lookForFlag(rotation, speed)) {
-	  navigate(rotation, speed);
-	}
+    dropHardFlags(); //Perhaps we should remove this and let learning do it's work
+	if (!avoidBullet(rotation, speed)) {
+	  if (!stuckOnWall(rotation, speed)) {
+        if (!chasePlayer(rotation, speed)) {
+		  if (!lookForFlag(rotation, speed)) {
+			navigate(rotation, speed);
+		  }
+        }
       }
-    }
-  }
+	}
 
-  fireAtTank();
+	avoidDeathFall(rotation, speed);
+
+    fireAtTank();
 }
