@@ -405,7 +405,6 @@ int MeshPolySceneNode::splitWall(const GLfloat* splitPlane,
     }
     return -1; // node is on the back side
   }
-  
   if ((backCount == 0) || (backCount == bothCount)) {
     if (count > staticSize) {
       delete[] array;
@@ -418,9 +417,7 @@ int MeshPolySceneNode::splitWall(const GLfloat* splitPlane,
   int firstFront = -1, firstBack = -1;
 
   for (i = 0; i < count; i++) {
-    
     const int next = (i + 1) % count; // the next index
-
     if (array[next] & FRONT_SIDE) {
       if (!(array[i] & FRONT_SIDE)) {
         firstFront = next;
@@ -546,7 +543,7 @@ void MeshPolySceneNode::splitEdge(float d1, float d2,
   n[1] = (n1[1] * t2) + (n2[1] * t1);
   n[2] = (n1[2] * t2) + (n2[2] * t1);
   // normalize
-  float len = ((n[0] * n[0]) + (n[1] * n[1]) + (n[2] + n[2]));
+  float len = ((n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]));
   if (len > 1.0e-20f) { // otherwise, let it go...
     len = 1.0f / sqrtf(len);
     n[0] = n[0] * len;
@@ -557,6 +554,8 @@ void MeshPolySceneNode::splitEdge(float d1, float d2,
   // compute texture coordinate
   uv[0] = uv1[0] + (t1 * (uv2[0] - uv1[0]));
   uv[1] = uv1[1] + (t1 * (uv2[1] - uv1[1]));
+  
+  return;
 }
 
 
