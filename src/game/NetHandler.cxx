@@ -14,7 +14,6 @@
 #include "NetHandler.h"
 
 // system headers
-#include <string>
 #include <errno.h>
 
 const int udpBufSize = 128000;
@@ -200,24 +199,22 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
   // update player state
   time = TimeKeeper::getCurrent();
 #ifdef NETWORK_STATS
-  int i;
-  struct MessageCount *statMsg;
-  int direction;
 
-  for (direction = 0; direction <= 1; direction++) {
-    statMsg = msg[direction];
-    for (i = 0; i < MessageTypes; i++) {
-      statMsg[i].count = 0;
-      statMsg[i].code = 0;
-      statMsg[i].maxSize = 0;
-    }
-    msgBytes[direction] = 0;
-    perSecondTime[direction] = time;
-    perSecondCurrentMsg[direction] = 0;
-    perSecondMaxMsg[direction] = 0;
-    perSecondCurrentBytes[direction] = 0;
-    perSecondMaxBytes[direction] = 0;
-  }
+  // initialize the inbound/outbound counters to zero
+  msgBytes[0] = 0;
+  perSecondTime[0] = time;
+  perSecondCurrentMsg[0] = 0;
+  perSecondMaxMsg[0] = 0;
+  perSecondCurrentBytes[0] = 0;
+  perSecondMaxBytes[0] = 0;
+
+  msgBytes[1] = 0;
+  perSecondTime[1] = time;
+  perSecondCurrentMsg[1] = 0;
+  perSecondMaxMsg[1] = 0;
+  perSecondCurrentBytes[1] = 0;
+  perSecondMaxBytes[1] = 0;
+
 #endif
   if (!netPlayer[playerIndex])
     netPlayer[playerIndex] = this;
@@ -505,17 +502,25 @@ void NetHandler::countMessage(uint16_t code, int len, int direction) {
 
   msgBytes[direction] += len;
 
-  int i;
-  struct MessageCount *msg1;
-  msg1 = msg[direction];
-  for (i = 0; i < MessageTypes && msg1[i].code != 0; i++)
-    if (msg1[i].code == code)
-      break;
-  msg1[i].code = code;
-  if (msg1[i].maxSize < len)
-    msg1[i].maxSize = len;
-  msg1[i].count++;
+  // see if we've received a message of this type yet for this direction
+  MessageCountMap::iterator i = msg[direction].find(code);
 
+  if (i == msg[direction].end()) {
+    // if not found, initialize stats
+    struct MessageCount message;
+
+    message.count = 1;
+    message.maxSize = len;
+    msg[direction][code] = message;    // struct copy
+
+  } else {
+
+    msg[direction][code].count++;
+    if (msg[direction][code].maxSize < len) {
+      msg[direction][code].maxSize = len;
+    }
+  }
+  
   TimeKeeper now = TimeKeeper::getCurrent();
   if (now - perSecondTime[direction] < 1.0f) {
     perSecondCurrentMsg[direction]++;
@@ -532,21 +537,22 @@ void NetHandler::countMessage(uint16_t code, int len, int direction) {
 }
 
 void NetHandler::dumpMessageStats() {
-  int i;
-  struct MessageCount *msgStats;
   int total;
   int direction;
 
   DEBUG1("Player connect time: %f\n", TimeKeeper::getCurrent() - time);
+
   for (direction = 0; direction <= 1; direction++) {
     total = 0;
     DEBUG1("Player messages %s:", direction ? "out" : "in");
-    msgStats = msg[direction];
-    for (i = 0; i < MessageTypes && msgStats[i].code != 0; i++) {
-      DEBUG1(" %c%c:%u(%u)", msgStats[i].code >> 8, msgStats[i].code & 0xff,
-	     msgStats[i].count, msgStats[i].maxSize);
-      total += msgStats[i].count;
+
+    for (MessageCountMap::iterator i = msg[direction].begin();
+	 i != msg[direction].end(); i++) {
+      DEBUG1(" %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
+	     i->second.count, i->second.maxSize);
+      total += i->second.count;
     }
+
     DEBUG1(" total:%u(%u) ", total, msgBytes[direction]);
     DEBUG1("max msgs/bytes per second: %u/%u\n",
 	perSecondMaxMsg[direction],

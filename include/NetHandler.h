@@ -15,6 +15,7 @@
 
 /* system headers */
 #include <string>
+#include <map>
 
 /* common interface headers */
 #include "PlayerInfo.h"
@@ -38,11 +39,8 @@ const int maxHandlers = LastRealPlayer;
 #ifdef NETWORK_STATS
 struct MessageCount {
   uint32_t count;
-  uint16_t code;
   uint16_t maxSize;
 };
-// does not include MsgNull
-#define MessageTypes 43
 #endif
 
 /** This class is a client that connects to a BZFlag client and has
@@ -199,13 +197,15 @@ private:
   uint32_t perSecondCurrentMsg[2];
   uint32_t perSecondMaxMsg[2];
   uint32_t msgBytes[2];
-  struct MessageCount msg[2][MessageTypes];
+
+  typedef std::map<const uint16_t, struct MessageCount> MessageCountMap;
+  MessageCountMap msg[2];
 #endif
 };
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
