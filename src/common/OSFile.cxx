@@ -24,7 +24,7 @@
 
 void getUpperName ( char *name )
 {
-#ifdef	_WIN32
+#ifdef    _WIN32
     strupr(name);
 #else
     while(*name++)
@@ -127,10 +127,10 @@ typedef struct OSFile::OSFileInfo
     OSFileInfo()
     {
         stdName = "";
-	osName = "";
-	title = "";
-	useGlobalPath = true;
-	fp = NULL;
+    osName = "";
+    title = "";
+    useGlobalPath = true;
+    fp = NULL;
     }
 
     OSFileInfo( std::string &_stdName, std::string &_osName, std::string &_title )
@@ -467,17 +467,17 @@ typedef struct OSDir::OSDirInfo
 {
     OSDirInfo()
     {
-	baseStdDir = "";
-	baseOSDir = "";
-	namePos = 0;
+    baseStdDir = "";
+    baseOSDir = "";
+    namePos = 0;
     }
 
     OSDirInfo( const OSDirInfo &dInfo )
     {
-	baseStdDir = dInfo.baseStdDir;
-	baseOSDir = dInfo.baseOSDir;
-	nameList = dInfo.nameList;
-	namePos = dInfo.namePos;
+    baseStdDir = dInfo.baseStdDir;
+    baseOSDir = dInfo.baseOSDir;
+    nameList = dInfo.nameList;
+    namePos = dInfo.namePos;
     }
 
     std::string        baseStdDir;
@@ -666,6 +666,100 @@ bool OSDir::windowsAddFileStack ( const char *szPathName, const char* fileMask, 
 #endif 
 }
 
+// linux mask filter functions
+// we don't need these for windows as it can do it right in findNextFile
+#ifndef _WIN32
+static int match_mask (const char *mask, const char *string)
+{ 
+    if (mask == NULL)
+        return 0;
+
+    if (string == NULL)
+        return 0;
+
+    if ((mask[0] == '*') &amp;&amp; (mask[1] == '\0'))
+        return 1;                                    /* instant match */
+
+    while (*mask != '\0') {
+        if (*mask == '*') {
+            mask++;
+            switch (match_multi (&amp;mask, &amp;string)) {
+                case +1:
+                    return 1;
+                case -1:
+                    return 0;
+            }
+        }
+        else if (*string == '\0')
+            return 0;
+        else if ((*mask == '?') || (*mask == *string)) {
+            mask++;
+            string++;
+        }
+        else
+            return 0;
+    }
+
+    if (*string == '\0')
+        return 1;
+    else
+        return 0;
+}
+
+static int match_multi (const char **mask, const char **string)
+{
+    const char *msk;
+    const char *str;
+    const char *msktop;
+    const char *strtop;
+
+    msk = *mask;
+    str = *string;
+
+    while ((*msk != '\0') &amp;&amp; (*msk == '*'))
+        msk++;                      /* get rid of multiple '*'s */
+
+    if (*msk == '\0')                /* '*' was last, auto-match */
+        return +1;
+
+    msktop = msk;
+    strtop = str;
+
+    while (*msk != '\0') {
+        if (*msk == '*') {
+            *mask = msk;
+            *string = str;
+            return 0;                 /* matched this segment */
+        }
+        else if (*str == '\0')
+            return -1;                /* can't match */
+        else {
+            if ((*msk == '?') || (*msk == *str)) {
+                msk++;
+                str++;
+                if ((*msk == '\0') &amp;&amp; (*str != '\0'))    /* advanced check */
+                {                                        
+                    str++;
+                    strtop++;
+                    str = strtop;
+                    msk = msktop;
+                }
+            }
+            else {
+                str++;
+                strtop++;
+                str = strtop;
+                msk = msktop;
+            }
+        }
+    }
+
+    *mask = msk;
+    *string = str;
+    return +1;                                             /* full match */
+}
+#endif
+
 bool OSDir::linuxAddFileStack (  const char *pathName, const char* fileMask, bool recursive  )
 {
 #ifdef _WIN32
@@ -683,17 +777,20 @@ bool OSDir::linuxAddFileStack (  const char *pathName, const char* fileMask, boo
     directory = opendir(searchstr);
     if (!directory)
         return false;
+
+    // TODO: make it use the filemask
     while ((fileInfo = readdir(directory))) {
-        if (!((strcmp(fileInfo->d_name, ".") == 0) || (strcmp(fileInfo->d_name, "..") == 0))) {
+        if (!((strcmp(fileInfo-&gt;d_name, ".") == 0) || (strcmp(fileInfo-&gt;d_name, "..") == 0))) {
             FilePath = searchstr;
-            FilePath += fileInfo->d_name;
+            FilePath += fileInfo-&gt;d_name;
+            GetUperName(fileInfo-&gt;d_name);
 
-            stat(FilePath.c_str(), &statbuf);
+            stat(FilePath.c_str(), &amp;statbuf);
 
-            if (S_ISDIR(statbuf.st_mode) && bRecursive)
+            if (S_ISDIR(statbuf.st_mode) &amp;&amp; bRecursive)
                 LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive);
-            else
-                info->nameList.push_back(FilePath);
+            else if (match_mask (fileMask, fileInfo-&gt;d_name))
+                info-&gt;nameList.push_back(FilePath);
         }
     }
     closedir(directory);
