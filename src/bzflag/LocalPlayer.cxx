@@ -551,7 +551,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
     } else {
       // teleport
       const int source = World::getWorld()->getTeleporter(teleporter, face);
-      const int target = World::getWorld()->getTeleportTarget(source);
+      int target = World::getWorld()->getTeleportTarget(source);
+      if (target == randomTeleporter) {
+        target = rand() % (2 * World::getWorld()->getTeleporters().size());
+      }
+
       int outFace;
       const Teleporter* outPort = World::getWorld()->
 	getTeleporter(target, outFace);

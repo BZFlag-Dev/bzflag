@@ -256,6 +256,11 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     // entered teleporter -- teleport it
     int source = World::getWorld()->getTeleporter(teleporter, face);
     int target = World::getWorld()->getTeleportTarget(source);
+    if (target == randomTeleporter) {
+      // the other side of the teleporter
+      target = (source & ~0x01) + (1 - (source % 2));         
+    }
+      
     int outFace;
     const Teleporter* outTeleporter =
       World::getWorld()->getTeleporter(target, outFace);

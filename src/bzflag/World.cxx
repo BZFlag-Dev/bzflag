@@ -88,7 +88,13 @@ void			World::setWorld(World* _playingField)
 int			World::getTeleportTarget(int source) const
 {
   assert(source >= 0 && source < (int)(2 * teleporters.size()));
-  return teleportTargets[source];
+  int target = teleportTargets[source];
+  if ((target != randomTeleporter) && // random tag
+      (target >= (int)(2 * teleporters.size()))) {
+    // the other side of the teleporter
+    target = ((source / 2) * 2) + (1 - (source % 2));
+  }
+  return target;
 }
 
 int			World::getTeleporter(const Teleporter* teleporter,
