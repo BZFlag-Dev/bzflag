@@ -299,6 +299,7 @@ void *		StateDatabase::getPointer(const std::string& name) const
 
 float			StateDatabase::eval(const std::string& name)
 {
+  typedef std::set<std::string> VariableSet;
   debugLookups(name);
 
   EvalMap::const_iterator cit = evalCache.find(name);
@@ -306,7 +307,7 @@ float			StateDatabase::eval(const std::string& name)
     return cit->second;
 
   //this is to catch recursive definitions
-  static std::set<std::string> variables;
+  static VariableSet variables;
   // ugly hack, since gcc 2.95 doesn't have <limits>
   float NaN;
   memset(&NaN, 0xff, sizeof(float));
@@ -314,7 +315,7 @@ float			StateDatabase::eval(const std::string& name)
   if (variables.find(name) != variables.end())
     return NaN;
 
-  std::set<std::string>::iterator ins_it = variables.insert(name).first;
+  VariableSet::iterator ins_it = variables.insert(name).first;
 
   Map::const_iterator index = items.find(name);
   if (index == items.end() || !index->second.isSet) {

@@ -119,6 +119,7 @@ class WordFilter
     }
   };
 
+  typedef std::set<filter_t, expressionCompare> ExpCompareSet;
 
   /** main collection of what to filter.  items are stored into
    * the array indexed by the first character of the filter word.
@@ -126,14 +127,14 @@ class WordFilter
    * minimal hashing and rather fast lookups.
    */
   // XXX consider making a numeric hash to avoid array overflows
-  std::set<filter_t, expressionCompare> filters[MAX_FILTER_SETS];
+  ExpCompareSet filters[MAX_FILTER_SETS];
 
 
   /** used by the agressive filter */
-  std::set<filter_t, expressionCompare> suffixes;
+  ExpCompareSet suffixes;
 
   /** used by the agressive filter */
-  std::set<filter_t, expressionCompare> prefixes;
+  ExpCompareSet prefixes;
 
 
   /** utility method performs an actual replacement of

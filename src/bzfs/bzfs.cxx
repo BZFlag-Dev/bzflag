@@ -3943,9 +3943,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgNegotiateFlags: {
 	void *bufStart;
 	FlagTypeMap::iterator it;
-	std::set<FlagType*>::iterator m_it;
+	FlagSet::iterator m_it;
 	FlagOptionMap hasFlag;
-	std::set<FlagType*> missingFlags;
+	FlagSet missingFlags;
 	int i;
 	unsigned short numClientFlags = len/2;
 

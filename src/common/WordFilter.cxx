@@ -123,7 +123,7 @@ bool WordFilter::aggressiveFilter(char *input) const
    * e.g. "bzstring" will match a prefix of "bz" and make "s" get added
    * as a bin to check for during matching.
    */
-  for (std::set<filter_t, expressionCompare>::iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
+  for (ExpCompareSet::iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
     if (regexec(i->compiled, sInput.c_str(), 1, match, 0) == 0) {
       if ( (match[0].rm_eo < inputLength) && isAlphabetic(sInput[match[0].rm_eo]) ) {
 	/* do not forget to make sure this is a true prefix */
@@ -149,7 +149,7 @@ bool WordFilter::aggressiveFilter(char *input) const
     /* look at all of the filters that start with the letter wordIndices[j]
      */
     const unsigned int firstchar = (unsigned char)wordIndices[j];
-    for (std::set<filter_t, expressionCompare>::iterator i = filters[firstchar].begin();
+    for (ExpCompareSet::iterator i = filters[firstchar].begin();
 	 i != filters[firstchar].end(); ++i) {
 
       /* the big kahuna burger processing goes on here */
@@ -174,7 +174,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	    /* we are in the middle of a word.. see if we can match a prefix before this */
 	    bool foundit =  false;
-	    for (std::set<filter_t, expressionCompare>::iterator j = prefixes.begin();
+	    for (ExpCompareSet::iterator j = prefixes.begin();
 		 j != prefixes.end(); ++j) {
 	      if (regexec(j->compiled, sInput.c_str(), 1, match, 0) == 0) {
 
@@ -209,7 +209,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	    /* we are at the start of a word, but not at the end, try to get to the end */
 	    bool foundit = false;
-	    for (std::set<filter_t, expressionCompare>::iterator j = suffixes.begin();
+	    for (ExpCompareSet::iterator j = suffixes.begin();
 		 j != suffixes.end(); ++j) {
 //std::cout << "checking " << j->word << " against [" << input + endOffset << "]" << std::endl;
 
@@ -727,7 +727,7 @@ WordFilter::WordFilter(const WordFilter& filter)
 /** destructor releases the compiled bad words */
 WordFilter::~WordFilter(void)
 {
-  std::set<filter_t, expressionCompare>::iterator i;
+  ExpCompareSet::iterator i;
 
   // delete compiled words
   for (int j = 0; j < MAX_FILTER_SETS; ++j) {
@@ -887,7 +887,7 @@ void WordFilter::outputFilter(void) const
 {
   for (int i=0; i < MAX_FILTER_SETS; ++i) {
     int count=0;
-    for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
+    for (ExpCompareSet::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
       std::cout << count++ << ": " << j->word << std::endl;
@@ -901,7 +901,7 @@ void WordFilter::outputWords(void) const
   //		std::cout << "size of compiled set is " << () << std::endl;
   for (int i=0; i < MAX_FILTER_SETS; ++i) {
     int count=0;
-    for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
+    for (ExpCompareSet::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
       std::cout << "[" << i << "] " << count++ << ": " << j->word << std::endl;
@@ -913,7 +913,7 @@ unsigned long int WordFilter::wordCount(void) const
 {
   int count=0;
   for (int i=0; i < MAX_FILTER_SETS; ++i) {
-    for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
+    for (ExpCompareSet::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
       count += 1;
