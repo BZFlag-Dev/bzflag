@@ -247,6 +247,9 @@ void ListServerLink::addMe(PingPacket pingInfo,
   char gameInfo[PingPacketHexPackedSize + 1];
   pingInfo.packHex(gameInfo);
 
+  // TODO loop through and send any player tokens that need approval
+  // TODO loop through groups we are interested and request those too
+  // TODO we probably should convert to a POST instead. List server now allows either
   // send ADD message (must send blank line)
   msg = TextUtils::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s&title=%s HTTP/1.1\r\n"
     "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
@@ -255,6 +258,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
     getAppVersion(),
     publicizedTitle.c_str(),
     hostname.c_str());
+  // TODO need to listen for user info replies and setup callsign for isAllowedToEnter()
   sendMessage(msg);
 }
 
