@@ -99,10 +99,18 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   TextureManager &tm = TextureManager::instance();
 
+  useColorTexture[0] = false;
+  useColorTexture[1] = false;
+
   // ground
   {
-    // load texture
-    OpenGLTexture *groundTexture = tm.getTexture( "ground" );
+    // load texture for normal ground
+    OpenGLTexture *groundTexture = tm.getTexture( "std.ground" );
+
+	if (!groundTexture || !groundTexture->isValid())
+		groundTexture = tm.getTexture( "ground" );
+	else
+		useColorTexture[0] = true;
 
     // gstates
     gstate.reset();
@@ -117,6 +125,28 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.setMaterial(defaultMaterial);
     gstate.setTexture(*groundTexture);
     groundGState[3] = gstate.getState();
+
+	// load texture for inverted ground
+    groundTexture = tm.getTexture( "zone.ground" );
+
+	if (!groundTexture || !groundTexture->isValid())
+		groundTexture = tm.getTexture( "ground" );
+	else
+		useColorTexture[1] = true;
+
+    // gstates
+    gstate.reset();
+    invGroundGState[0] = gstate.getState();
+    gstate.reset();
+    gstate.setMaterial(defaultMaterial);
+    invGroundGState[1] = gstate.getState();
+    gstate.reset();
+    gstate.setTexture(*groundTexture);
+    invGroundGState[2] = gstate.getState();
+    gstate.reset();
+    gstate.setMaterial(defaultMaterial);
+    gstate.setTexture(*groundTexture);
+    invGroundGState[3] = gstate.getState();
   }
 
   // make grid stuff
@@ -585,8 +615,18 @@ void			BackgroundRenderer::drawSky(SceneRenderer& renderer)
 void			BackgroundRenderer::drawGround()
 {
   // draw ground
-  if (invert) glColor3fv(groundColorInv[styleIndex]);
-  else glColor3fv(groundColor[styleIndex]);
+	if (invert){
+		if (useColorTexture[1])
+		   glColor3f(1,1,1);
+		else
+	      glColor3fv(groundColorInv[styleIndex]);
+	}
+	else{
+		if (useColorTexture[0])
+		  glColor3f(1,1,1);
+		else
+	      glColor3fv(groundColor[styleIndex]);
+	}
   glNormal3f(0.0f, 0.0f, 1.0f);
   groundGState[styleIndex].setState();
 

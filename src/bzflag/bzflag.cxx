@@ -119,7 +119,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
-  { "altImageDir",		"alternate",		true,	StateDatabase::ReadWrite,	NULL }
+  { "altImageDir",		"alternate",		true,	StateDatabase::ReadWrite,	NULL },
+  { "groundTexRepeat",		"0.1",		true,	StateDatabase::ReadWrite,	NULL }
 };
 
 #ifdef ROBOT

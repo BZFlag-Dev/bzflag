@@ -367,8 +367,12 @@ void			SceneRenderer::setBackground(BackgroundRenderer* br)
 void			SceneRenderer::getGroundUV(const float p[2],
 							float uv[2]) const
 {
-  uv[0] = 0.01f * p[0];
-  uv[1] = 0.01f * p[1];
+  float repeat = 0.01f;
+    if (BZDB.isSet( "groundTexRepeat" ))
+	   repeat = BZDB.eval( "groundTexRepeat" );
+
+  uv[0] = repeat * p[0];
+  uv[1] = repeat * p[1];
 }
 
 void			SceneRenderer::enableLight(int index, bool on)

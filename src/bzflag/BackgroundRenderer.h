@@ -77,8 +77,10 @@ class BackgroundRenderer {
 
     // stuff for ground
     OpenGLGState	groundGState[4];
+	OpenGLGState	invGroundGState[4];
     OpenGLDisplayList	simpleGroundList[4];
 
+	bool		useColorTexture[2];
     // stuff for grid
     GLfloat		gridSpacing;
     GLfloat		gridCount;

@@ -181,16 +181,34 @@ void			Player::changeTeam(TeamColor _team)
     shininess = tankShininess;
   }
 
-  if (tankTexture == NULL) {
-    TextureManager &tm = TextureManager::instance();
+  // get the texture each time, since it's just a refrence
+  bool useColorTexture = false;
+
+  TextureManager &tm = TextureManager::instance();
+  std::string texName;
+  if (!World::getWorld()->allowRabbit() || ( World::getWorld()->allowRabbit() && (team == RabbitTeam )))
+    texName = Team::getImagePrefix(team);
+  else
+	texName = "h";
+  texName += "tank";
+  tankTexture = tm.getTexture(texName.c_str());
+  if (tankTexture || !tankTexture->isValid())
+    useColorTexture = true;
+  else
     tankTexture = tm.getTexture("tank");
-  }
 
   // change color of tank
   const float* _color = Team::getTankColor(team);
-  color[0] = _color[0];
-  color[1] = _color[1];
-  color[2] = _color[2];
+  if (useColorTexture){	// color is in the image
+    color[0] = 1.0f;
+    color[1] = 1.0f;
+    color[2] = 1.0f;
+  }
+  else {
+    color[0] = _color[0];
+    color[1] = _color[1];
+    color[2] = _color[2];
+  }
   color[3] = 1.0f;
   tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
