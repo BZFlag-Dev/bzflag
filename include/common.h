@@ -19,6 +19,7 @@
 
 #include <string>
 #include <stdarg.h>
+#include <stdio.h>
 
 // Might we be BSDish? sys/param.h has BSD defined if so
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
