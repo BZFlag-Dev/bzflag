@@ -435,13 +435,13 @@ UDP connection is not working. Try using TCP only on servers that allow it.
 .TP
 .br
 .B /lagstats
-Lists network delays by player. Example:
+Lists network delays and jitter by player. Example:
 .ft CW
 .nf
 .ne 3
-MrApathyCream 335ms (5)
-Gerbol 210ms (8)
-captain_macgyver 155ms (12)
+MrApathyCream 335ms (5) +- 10ms
+Gerbol 210ms (8) +- 3ms
+captain_macgyver 155ms (12) +- 0ms
 .ft R
 
 .TP
@@ -538,16 +538,18 @@ List player names and IP addresses. Example:
 .ft R
 
 .TP
-.B /ban {ipList} {mins}
+.B /ban {ipList} {duration} {reason}
 
 Ban players using the specified IPs for certain length of time from using this server. Example:
 .ft CW
 .nf
 .ne 4
-/ban 35.23.43.66 2
+/ban 35.23.43.66 2 cheating
 bans player with specific ip for 2 minutes
 /ban 35.23.*.*,47.23.17.*
 bans all ips in this range forever
+/ban 36.37.2.8 2h30m "ShootMe" was abusing players
+bans specific ip for 2.5 hours with given reason
 .ft R
 
 .TP
