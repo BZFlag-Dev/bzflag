@@ -5599,23 +5599,6 @@ static void extraUsage(const char *pname)
   exit(0);
 }
 
-static int lookupFlag(const char *code)
-{
-  int f = atoi(code);
-
-  if (strcasecmp(code, "LT") == 0)
-    f = LeftTurnOnlyFlag;
-  else if (strcasecmp(code, "RT") == 0)
-    f = RightTurnOnlyFlag;
-  else if (f == 0)
-    for (f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
-      if (strcasecmp(code, Flag::getAbbreviation(FlagId(f))) == 0)
-	break;
-  if (f < int(FirstSuperFlag) || f > int(LastSuperFlag))
-    f = int(NoFlag);
-
-  return f;
-}
 
 static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 {
@@ -5694,11 +5677,10 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
   return true;
 }
 
-static bool setRequiredFlag(FlagInfo& flag, FlagId id)
+static bool setRequiredFlag(FlagInfo& flag, FlagDesc *desc)
 {
   flag.required = true;
-  flag.flag.id = id;
-  flag.flag.type = Flag::getType(id);
+  flag.flag.desc = desc;
   return true;
 }
 
@@ -5750,7 +5732,6 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 {
   CmdLineOptions confOptions;
   delete[] flag;  flag = NULL;
-  delete[] allowedFlags;  allowedFlags = NULL;
 
   // prepare flag counts
   int f, i;
@@ -5814,11 +5795,12 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	  options.flagCount[*it] += rptCnt;
       }
       else {
-	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
+	FlagDesc *fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
-	options.flagCount[f] += rptCnt;
+	options.flagCount[fDesc] += rptCnt;
       }
     }
     else if (strcmp(argv[i], "-sl") == 0) {
@@ -5829,19 +5811,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       }
       else{
 	i++;
-	f = lookupFlag(argv[i]);
-	if (f == int(NoFlag)){
-	// enable lookup of team flags
-	  static char* teamFlags[] = {"RE","GR","BL","PU"};
-	  static FlagId ids[] = {RedFlag, GreenFlag,BlueFlag,PurpleFlag};
-	  for (int j = 0 ; j < 4; j ++){
-	    if (strcasecmp(argv[i], teamFlags[j]) == 0){
-	      f = ids[j];
-	      break;
-	    }
-	  }
-	}
-	if (f == int(NoFlag)) { // still no flag?
+	FlagDesc *fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
@@ -5858,7 +5829,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	    fprintf(stderr, "invalid shot limit \"%s\"\n", argv[i]);
 	    usage(argv[0]);
 	  }
-	  options.flagLimit[f] = x;
+	  options.flagLimit[fDesc] = x;
 
 	}
       }
@@ -5982,11 +5953,12 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	  options.flagDisallowed[*it] = true;
       }
       else {
-	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
+	FlagDesc* fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
-	options.flagDisallowed[f] = true;
+	options.flagDisallowed[fDesc] = true;
       }
     }
     else if (strcmp(argv[i], "-helpmsg") == 0) {
@@ -6378,20 +6350,20 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 
   // first disallow flags inconsistent with game style
   if (options.gameStyle & InertiaGameStyle) {
-    options.flagCount[int(MomentumFlag)] = 0;
-    options.flagDisallowed[int(MomentumFlag)] = true;
+    options.flagCount[Flags::Momentum] = 0;
+    options.flagDisallowed[Flags::Momentum] = true;
   }
   if (options.gameStyle & JumpingGameStyle) {
-    options.flagCount[int(JumpingFlag)] = 0;
-    options.flagDisallowed[int(JumpingFlag)] = true;
+    options.flagCount[Flags::Jumping] = 0;
+    options.flagDisallowed[Flags::Jumping] = true;
   }
   if (options.gameStyle & RicochetGameStyle) {
-    options.flagCount[int(RicochetFlag)] = 0;
-    options.flagDisallowed[int(RicochetFlag)] = true;
+    options.flagCount[Flags::Ricochet] = 0;
+    options.flagDisallowed[Flags::Ricochet] = true;
   }
   if (!options.useTeleporters && !options.worldFile) {
-    options.flagCount[int(PhantomZoneFlag)] = 0;
-    options.flagDisallowed[int(PhantomZoneFlag)] = true;
+    options.flagCount[Flags::PhantomZone] = 0;
+    options.flagDisallowed[Flags::PhantomZone] = true;
   }
   bool hasTeam = false;
   for (int p = RedTeam; p <= PurpleTeam; p++) {
@@ -6401,12 +6373,12 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     }
   }
   if (!hasTeam) {
-    options.flagCount[int(GenocideFlag)] = 0;
-    options.flagDisallowed[int(GenocideFlag)] = true;
-    options.flagCount[int(ColorblindnessFlag)] = 0;
-    options.flagDisallowed[int(ColorblindnessFlag)] = true;
-    options.flagCount[int(MasqueradeFlag)] = 0;
-    options.flagDisallowed[int(MasqueradeFlag)] = true;
+    options.flagCount[Flags::Genocide] = 0;
+    options.flagDisallowed[Flags::Genocide] = true;
+    options.flagCount[Flags::Colorblindness] = 0;
+    options.flagDisallowed[Flags::Colorblindness] = true;
+    options.flagCount[Flags::Masquerade] = 0;
+    options.flagDisallowed[Flags::Masquerade] = true;
   }
 
   if (options.gameStyle & int(RabbitChaseGameStyle)) {
@@ -6418,8 +6390,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
-    for (i = int(FirstSuperFlag); i <= int(LastSuperFlag); i++)
-      if (!options.flagDisallowed[i])
+    for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+      if (!options.flagDisallowed[it->second])
 	options.numAllowedFlags++;
 
     // if none allowed then no extra flags either
@@ -6429,11 +6401,10 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 
     // otherwise make table of allowed flags
     else {
-      allowedFlags = new FlagId[options.numAllowedFlags];
-      int j = 0;
-      for (i = int(FirstSuperFlag); i <= int(LastSuperFlag); i++)
-	if (!options.flagDisallowed[i])
-	  allowedFlags[j++] = FlagId(i);
+      allowedFlags.clear();
+      for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+	if (!options.flagDisallowed[it->second])
+	  allowedFlags.insert(it->second);
     }
   }
 
