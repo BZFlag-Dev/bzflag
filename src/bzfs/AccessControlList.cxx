@@ -308,7 +308,7 @@ bool AccessControlList::load() {
     is.ignore(1);
     std::getline(is, reason);
     is>>std::ws;
-    if (banEnd != 0 && banEnd < TimeKeeper::getCurrent().getSeconds())
+    if (banEnd < 0)
       continue;
     if (ipAddress == "host:") {
       hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
@@ -418,7 +418,7 @@ bool AccessControlList::merge(const std::string& banData) {
     is.ignore(1);
     std::getline(is, reason);
     is>>std::ws;
-    if (banEnd != 0 && banEnd < TimeKeeper::getCurrent().getSeconds())
+    if (banEnd < 0)
       continue;
     if (ipAddress == "host:") {
       hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
