@@ -5,11 +5,16 @@ MAINTAINERCLEANFILES = \
 
 if BZADMIN_INCLUDED
 bin_PROGRAMS = bzadmin
+endif
 
 if HAVE_CURSES
 CURSES_SRC = CursesUI.h CursesUI.cxx
 else
 CURSES_SRC = 
+
+EXTRA_bzadmin_SOURCES = \
+	CursesUI.h \
+	CursesUI.cxx
 endif
 
 bzadmin_SOURCES = \
@@ -34,6 +39,5 @@ bzadmin_SOURCES = \
 all-local:
 	cd @top_srcdir@/src/bzadmin; rm ServerLink.cxx; $(LN_S) ../bzflag/ServerLink.cxx .
 
-endif
 
 LDADD = ../net/libNet.a ../common/libCommon.a @CURSES_LIB@
