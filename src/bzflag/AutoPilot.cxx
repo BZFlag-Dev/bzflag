@@ -360,6 +360,13 @@ bool lookForFlag( float &rotation, float &speed)
 
 bool navigate( float &rotation, float &speed)
 {
+  static TimeKeeper lastNavChange;
+
+  if ((TimeKeeper::getCurrent() - lastNavChange) < 1.0f)
+    return true;
+
+formatDebug("navigating\n");
+
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
   float myAzimuth = myTank->getAngle();
@@ -380,6 +387,7 @@ bool navigate( float &rotation, float &speed)
       rotation = 0.0f;
   }
   speed = 1.0f;
+  lastNavChange = TimeKeeper::getCurrent();
   return true;
 }
 
