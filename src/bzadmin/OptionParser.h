@@ -25,6 +25,15 @@ using namespace std;
 /** This class handles all the command line parsing for bzadmin. */
 class OptionParser {
 public:
+  
+  /** @c helpPrefix is a line (or several lines) of text that is written
+      before the usage description in the help message. It could for example
+      be the program name and version. @c usageSuffix is a line (no linebreaks)
+      of text that will be added to the short usage description, and it
+      could describe command parameters that aren't registered with this
+      parser. */
+  OptionParser(const string& helpPrefix, const string& usageSuffix);
+
   /** Since the individual parsers are allocated dynamically we need a
       destructor that deletes them. */
   ~OptionParser();
@@ -37,7 +46,7 @@ public:
   /** This function parses the given command line. */
   bool parse(int argc, char** argv);
   /** This function prints the help text to the stream @c out. */
-  void printHelp(ostream& os) const;
+  void printHelp(ostream& os, const string& progname) const;
   /** This function prints the usage text to the stream @c out. */
   void printUsage(ostream& os, const string& progName) const;
   /** This template function connects the variable @c variable to the command
@@ -115,6 +124,8 @@ protected:
   map<string, Parser*> parsers;
   vector<string> parameters;
   string error;
+  string helpPre;
+  string usageSuf;
 };
 
 

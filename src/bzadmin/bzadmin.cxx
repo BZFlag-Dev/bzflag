@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stdio.h>
 #include <iostream>
 #include <map>
 #include <string>
@@ -34,7 +35,6 @@ int main(int argc, char** argv) {
 
   // command line options
   string uiName("curses");
-  bool showHelp(false);
 
   // no curses, use stdboth as default instead
   const UIMap& interfaces(UIMap::getInstance());
@@ -49,24 +49,12 @@ int main(int argc, char** argv) {
   uiUsage = string("[-ui ") + uiUsage.substr(0, uiUsage.size() - 1) + ']';
   
   // register and parse command line arguments
-  OptionParser op;
+  OptionParser op(string("bzadmin ") + getAppVersion(), 
+		  "CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ...");
   op.registerVariable("ui", uiName, uiUsage,
 		      "choose a user interface");
-  op.registerVariable("help", showHelp, "[-help]",
-		      "print this help message");
-  if (!op.parse(argc, argv)) {
-    cerr<<op.getError()<<endl;
-    op.printUsage(cout, argv[0]);
-    cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl;
+  if (!op.parse(argc, argv))
     return 1;
-  }
-  if (showHelp) {
-    cout<<"bzadmin "<<getAppVersion()<<endl;
-    op.printUsage(cout, argv[0]);
-    cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl<<endl;
-    op.printHelp(cout);
-    return 0;
-  }
   
   // check that we have callsign and host in the right format and extract them
   if (op.getParameters().size() == 0) {
@@ -87,7 +75,7 @@ int main(int argc, char** argv) {
     port = atoi(host.substr(cPos + 1).c_str());
     host = host.substr(0, cPos);
   }
-  
+
   // check that the ui is valid
   uiIter = UIMap::getInstance().find(uiName);
   if (uiIter == UIMap::getInstance().end()) {
@@ -108,7 +96,7 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  // choose UI and run the main loop
+  // create UI and run the main loop
   BZAdminUI*  ui = uiIter->second(client.getPlayers(), client.getMyId());
   client.setUI(ui);
   client.runLoop();
