@@ -29,7 +29,8 @@
 #include "multicast.h"
 #include "bzfio.h"
 
-static const int	PingPacketHexPackedSize = 2 * 2 * 18;
+// 4 uint16's and 13 uint8's hex encoded
+static const int	PingPacketHexPackedSize = 4 * 7 + 2 * 13;
 
 class PingPacket {
   public:

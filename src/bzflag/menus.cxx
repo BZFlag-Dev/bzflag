@@ -2800,7 +2800,7 @@ bool			ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
-const int		ServerMenu::NumReadouts = 23;
+const int		ServerMenu::NumReadouts = 24;
 const int		ServerMenu::NumItems = 10;
 
 ServerMenu::ServerMenu() : defaultKey(this),
@@ -2812,11 +2812,12 @@ ServerMenu::ServerMenu() : defaultKey(this),
   // add controls
   addLabel("Servers", "");
   addLabel("Players", "");
+  addLabel("Rogue", "");
   addLabel("Red", "");
   addLabel("Green", "");
   addLabel("Blue", "");
   addLabel("Purple", "");
-  addLabel("Rogue", "");
+  addLabel("Observers", "");
   addLabel("", "");			// max shots
   addLabel("", "");			// capture-the-flag/free-style/rabbit chase
   addLabel("", "");			// super-flags
@@ -2934,110 +2935,94 @@ void			ServerMenu::pick()
   char buf[60];
   std::vector<HUDuiControl*>& list = getControls();
 
-  const uint8_t maxes [] = { ping.maxPlayers,ping.redMax,ping.greenMax,ping.blueMax,
-			      ping.purpleMax, ping.rogueMax };
+  const uint8_t maxes [] = { ping.maxPlayers, ping.rogueMax, ping.redMax, ping.greenMax,
+      ping.blueMax, ping.purpleMax, ping.observerMax };
 
   // if this is a cached item set the player counts to "?/max count"
   if (item.cached && item.getPlayerCount() == 0) {
-    for (int i = 1; i <=6; i ++){
-      // handle all non rogue labels
-      if (i != 6){
-       sprintf(buf, "?/%d", maxes[i-1]);
-        ((HUDuiLabel*)list[i])->setLabel(buf);
-
-      } else { // handle the rogue labels - case "i == 6"
-       if (ping.gameStyle & RoguesGameStyle){ // if we have rogues
-         ((HUDuiLabel*)list[i])->setString("Rogue");
-         sprintf(buf, "?/%d", maxes[i-1]);
-         ((HUDuiLabel*)list[i])->setLabel(buf);
-       } else { // no rogues
-         ((HUDuiLabel*)list[i])->setLabel("");
-         ((HUDuiLabel*)list[i])->setString("");
-       }
-      }
+    for (int i = 1; i <=7; i ++){
+      sprintf(buf, "?/%d", maxes[i-1]);
+      ((HUDuiLabel*)list[i])->setLabel(buf);
     }
   } else {  // not an old item, set players #s to info we have
     sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount + ping.greenCount +
 	ping.blueCount + ping.purpleCount + ping.observerCount, ping.maxPlayers);
     ((HUDuiLabel*)list[1])->setLabel(buf);
+printf("%d,%d,%d,%d,%d,%d\n",ping.rogueMax,ping.redMax,ping.greenMax,ping.blueMax,ping.purpleMax,ping.observerMax);
+    if (ping.rogueMax >= ping.maxPlayers)
+      sprintf(buf, "%d", ping.rogueCount);
+    else
+      sprintf(buf, "%d/%d", ping.rogueCount, ping.rogueMax);
+    ((HUDuiLabel*)list[2])->setLabel(buf);
 
     if (ping.redMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.redCount);
     else
       sprintf(buf, "%d/%d", ping.redCount, ping.redMax);
-    ((HUDuiLabel*)list[2])->setLabel(buf);
+    ((HUDuiLabel*)list[3])->setLabel(buf);
 
     if (ping.greenMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.greenCount);
     else
       sprintf(buf, "%d/%d", ping.greenCount, ping.greenMax);
-    ((HUDuiLabel*)list[3])->setLabel(buf);
+    ((HUDuiLabel*)list[4])->setLabel(buf);
 
     if (ping.blueMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.blueCount);
     else
       sprintf(buf, "%d/%d", ping.blueCount, ping.blueMax);
-    ((HUDuiLabel*)list[4])->setLabel(buf);
+    ((HUDuiLabel*)list[5])->setLabel(buf);
 
     if (ping.purpleMax >= ping.maxPlayers)
       sprintf(buf, "%d", ping.purpleCount);
     else
       sprintf(buf, "%d/%d", ping.purpleCount, ping.purpleMax);
-    ((HUDuiLabel*)list[5])->setLabel(buf);
+    ((HUDuiLabel*)list[6])->setLabel(buf);
 
-    if (ping.gameStyle & RoguesGameStyle) {
-      if (ping.rogueMax >= ping.maxPlayers)
-        sprintf(buf, "%d", ping.rogueCount);
-      else
-        sprintf(buf, "%d/%d", ping.rogueCount, ping.rogueMax);
-      ((HUDuiLabel*)list[6])->setLabel(buf);
-      ((HUDuiLabel*)list[6])->setString("Rogue");
-    }
-    else {
-      ((HUDuiLabel*)list[6])->setLabel("");
-      ((HUDuiLabel*)list[6])->setString("");
-    }
+    if (ping.observerMax >= ping.maxPlayers)
+      sprintf(buf, "%d", ping.observerCount);
+    else
+      sprintf(buf, "%d/%d", ping.observerCount, ping.observerMax);
+    ((HUDuiLabel*)list[7])->setLabel(buf);
   }
-
-
 
   std::vector<std::string> args;
   sprintf(buf, "%d", ping.maxShots);
   args.push_back(buf);
 
   if (ping.maxShots == 1)
-    ((HUDuiLabel*)list[7])->setString("{1} Shot", &args );
+    ((HUDuiLabel*)list[8])->setString("{1} Shot", &args );
   else
-    ((HUDuiLabel*)list[7])->setString("{1} Shots", &args );
+    ((HUDuiLabel*)list[8])->setString("{1} Shots", &args );
 
   if (ping.gameStyle & TeamFlagGameStyle)
-    ((HUDuiLabel*)list[8])->setString("Capture-the-Flag");
+    ((HUDuiLabel*)list[9])->setString("Capture-the-Flag");
   else if (ping.gameStyle & RabbitChaseGameStyle)
-    ((HUDuiLabel*)list[8])->setString("Rabbit Chase");
+    ((HUDuiLabel*)list[9])->setString("Rabbit Chase");
   else
     ((HUDuiLabel*)list[8])->setString("Free-style");
 
   if (ping.gameStyle & SuperFlagGameStyle)
-    ((HUDuiLabel*)list[9])->setString("Super Flags");
-  else
-    ((HUDuiLabel*)list[9])->setString("");
-
-  if (ping.gameStyle & AntidoteGameStyle)
-    ((HUDuiLabel*)list[10])->setString("Antidote Flags");
+    ((HUDuiLabel*)list[10])->setString("Super Flags");
   else
     ((HUDuiLabel*)list[10])->setString("");
+
+  if (ping.gameStyle & AntidoteGameStyle)
+    ((HUDuiLabel*)list[11])->setString("Antidote Flags");
+  else
+    ((HUDuiLabel*)list[11])->setString("");
 
   if ((ping.gameStyle & ShakableGameStyle) && ping.shakeTimeout != 0) {
     std::vector<std::string> args;
     sprintf(buf, "%.1f", 0.1f * float(ping.shakeTimeout));
     args.push_back(buf);
     if (ping.shakeWins == 1)
-      ((HUDuiLabel*)list[11])->setString("{1} sec To Drop Bad Flag", &args);
+      ((HUDuiLabel*)list[12])->setString("{1} sec To Drop Bad Flag", &args);
     else
-      ((HUDuiLabel*)list[11])->setString("{1} secs To Drop Bad Flag", &args);
+      ((HUDuiLabel*)list[12])->setString("{1} secs To Drop Bad Flag", &args);
   }
   else
-    ((HUDuiLabel*)list[11])->setString("");
+    ((HUDuiLabel*)list[13])->setString("");
 
   if ((ping.gameStyle & ShakableGameStyle) && ping.shakeWins != 0) {
     std::vector<std::string> args;
@@ -3045,27 +3030,27 @@ void			ServerMenu::pick()
     args.push_back(buf);
     args.push_back(ping.shakeWins == 1 ? "" : "s");
     if (ping.shakeWins == 1)
-      ((HUDuiLabel*)list[11])->setString("{1} Win Drops Bad Flag", &args);
+      ((HUDuiLabel*)list[12])->setString("{1} Win Drops Bad Flag", &args);
     else
-      ((HUDuiLabel*)list[11])->setString("{1} Wins Drops Bad Flag", &args);
+      ((HUDuiLabel*)list[12])->setString("{1} Wins Drops Bad Flag", &args);
   }
-  else
-    ((HUDuiLabel*)list[12])->setString("");
-
-  if (ping.gameStyle & JumpingGameStyle)
-    ((HUDuiLabel*)list[13])->setString("Jumping");
   else
     ((HUDuiLabel*)list[13])->setString("");
 
-  if (ping.gameStyle & RicochetGameStyle)
-    ((HUDuiLabel*)list[14])->setString("Ricochet");
+  if (ping.gameStyle & JumpingGameStyle)
+    ((HUDuiLabel*)list[14])->setString("Jumping");
   else
     ((HUDuiLabel*)list[14])->setString("");
 
-  if (ping.gameStyle & InertiaGameStyle)
-    ((HUDuiLabel*)list[15])->setString("Inertia");
+  if (ping.gameStyle & RicochetGameStyle)
+    ((HUDuiLabel*)list[15])->setString("Ricochet");
   else
     ((HUDuiLabel*)list[15])->setString("");
+
+  if (ping.gameStyle & InertiaGameStyle)
+    ((HUDuiLabel*)list[16])->setString("Inertia");
+  else
+    ((HUDuiLabel*)list[16])->setString("");
 
   if (ping.maxTime != 0) {
     std::vector<std::string> args;
@@ -3076,37 +3061,37 @@ void			ServerMenu::pick()
     else
       sprintf(buf, "0:%02d", ping.maxTime);
     args.push_back(buf);
-    ((HUDuiLabel*)list[16])->setString("Time limit: {1}", &args);
+    ((HUDuiLabel*)list[17])->setString("Time limit: {1}", &args);
   }
   else
-    ((HUDuiLabel*)list[16])->setString("");
+    ((HUDuiLabel*)list[17])->setString("");
 
   if (ping.maxTeamScore != 0) {
     std::vector<std::string> args;
     sprintf(buf, "%d", ping.maxTeamScore);
     args.push_back(buf);
-    ((HUDuiLabel*)list[17])->setString("Max team score: {1}", &args);
+    ((HUDuiLabel*)list[18])->setString("Max team score: {1}", &args);
   }
   else
-    ((HUDuiLabel*)list[17])->setString("");
+    ((HUDuiLabel*)list[18])->setString("");
 
 
   if (ping.maxPlayerScore != 0) {
     std::vector<std::string> args;
     sprintf(buf, "%d", ping.maxPlayerScore);
     args.push_back(buf);
-    ((HUDuiLabel*)list[18])->setString("Max player score: {1}", &args);
+    ((HUDuiLabel*)list[19])->setString("Max player score: {1}", &args);
   }
   else
-    ((HUDuiLabel*)list[18])->setString("");
+    ((HUDuiLabel*)list[19])->setString("");
 
   if (item.cached){
-    ((HUDuiLabel*)list[19])->setString("Cached");
-    ((HUDuiLabel*)list[20])->setString(item.getAgeString());
+    ((HUDuiLabel*)list[20])->setString("Cached");
+    ((HUDuiLabel*)list[21])->setString(item.getAgeString());
   }
   else {
-    ((HUDuiLabel*)list[19])->setString("");
     ((HUDuiLabel*)list[20])->setString("");
+    ((HUDuiLabel*)list[21])->setString("");
   }
 }
 
@@ -3124,8 +3109,7 @@ void			ServerMenu::show()
   ((HUDuiLabel*)list[4])->setLabel("");
   ((HUDuiLabel*)list[5])->setLabel("");
   ((HUDuiLabel*)list[6])->setLabel("");
-  ((HUDuiLabel*)list[6])->setString("");
-  ((HUDuiLabel*)list[7])->setString("");
+  ((HUDuiLabel*)list[7])->setLabel("");
   ((HUDuiLabel*)list[8])->setString("");
   ((HUDuiLabel*)list[9])->setString("");
   ((HUDuiLabel*)list[10])->setString("");
@@ -3138,6 +3122,8 @@ void			ServerMenu::show()
   ((HUDuiLabel*)list[17])->setString("");
   ((HUDuiLabel*)list[18])->setString("");
   ((HUDuiLabel*)list[19])->setString("");
+  ((HUDuiLabel*)list[20])->setString("");
+  ((HUDuiLabel*)list[21])->setString("");
 
   char buffer[80];
 
@@ -3246,8 +3232,8 @@ void			ServerMenu::resize(int width, int height)
   float fontWidth = (float)height / 36.0f;
   float fontHeight = (float)height / 36.0f;
   for (i = 1; i < NumReadouts - 2; i++) {
-    if (i % 6 == 1) {
-      x = (0.125f + 0.25f * (float)((i - 1) / 6)) * (float)width;
+    if (i % 7 == 1) {
+      x = (0.125f + 0.25f * (float)((i - 1) / 7)) * (float)width;
       y = y0;
     }
 
@@ -3258,7 +3244,7 @@ void			ServerMenu::resize(int width, int height)
     label->setPosition(x, y);
   }
 
-  y = ((HUDuiLabel*)list[6])->getY(); //reset bottom to "rogue" label
+  y = ((HUDuiLabel*)list[7])->getY(); //reset bottom to last team label
 
   // reposition search status readout
   {
@@ -3429,15 +3415,15 @@ void			ServerMenu::checkEchos()
 
     // check broadcast sockets
     ServerItem serverInfo;
-	sockaddr_in addr;
+    sockaddr_in addr;
 
-	if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
-		if (serverInfo.ping.read(pingBcastSocket, &addr)) {
-			serverInfo.ping.serverId.serverHost = addr.sin_addr;
-			serverInfo.cached = false;
-			addToListWithLookup(serverInfo);
-		}
-	}
+    if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
+      if (serverInfo.ping.read(pingBcastSocket, &addr)) {
+	serverInfo.ping.serverId.serverHost = addr.sin_addr;
+	serverInfo.cached = false;
+	addToListWithLookup(serverInfo);
+      }
+    }
 
     // check list servers
     for (i = 0; i < numListServers; i++) {
@@ -3454,7 +3440,6 @@ void			ServerMenu::checkEchos()
 	  // ignore SIGPIPE for this send
 	  SIG_PF oldPipeHandler = bzSignal(SIGPIPE, SIG_IGN);
 #endif
-	  
 	  bool errorSending;
 	  {
 	    char url[1024];

@@ -278,6 +278,8 @@ void			PingPacket::unpackHex(char* buf)
   buf = unpackHex8(buf, blueMax);
   buf = unpackHex8(buf, purpleCount);
   buf = unpackHex8(buf, purpleMax);
+  buf = unpackHex8(buf, observerCount);
+  buf = unpackHex8(buf, observerMax);
 }
 
 int			PingPacket::hex2bin(char d)
