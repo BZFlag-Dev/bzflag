@@ -4563,7 +4563,6 @@ int main(int argc, char **argv)
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
-    unsigned short int maxplayers = 0;
     votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime);
     DEBUG1("There is a voting arbiter with the following settings:\n");
     DEBUG1("\tvote time is %d seconds\n", clOptions->voteTime);
@@ -4571,12 +4570,10 @@ int main(int argc, char **argv)
     DEBUG1("\tvotes required are %d\n", clOptions->votesRequired);
     DEBUG1("\tvote percentage necessary is %f\n", clOptions->votePercentage);
     DEBUG1("\tvote repeat time is %d seconds\n", clOptions->voteRepeatTime);
-    for (int i=0; i < NumTeams; i++) {
-      // includes observers on purpose
-      maxplayers+=clOptions->maxTeam[i];
-    }
+    DEBUG1("\tMax players is initially configured to %d\n", maxPlayers);
+
     // override the default voter count to the max number of players possible
-    votingarbiter->setAvailableVoters(maxplayers);
+    votingarbiter->setAvailableVoters(maxPlayers);
     BZDB->setPointer("poll", (void *)votingarbiter);
     BZDB->setPermission("poll", StateDatabase::ReadOnly);
   }
