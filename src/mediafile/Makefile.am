@@ -9,13 +9,11 @@ libMediaFile_a_SOURCES =	\
 	ImageFile.cxx		\
 	ImageFile.h		\
 	MediaFile.cxx		\
+	OggAudioFile.cxx	\
+	OggAudioFile.h		\
 	PNGImageFile.cxx	\
 	PNGImageFile.h		\
 	SGIImageFile.cxx	\
 	SGIImageFile.h		\
 	WaveAudioFile.cxx	\
 	WaveAudioFile.h	
-
-# FIXME - add these in later
-#	OggAudioFile.cxx
-#	OggAudioFile.h

@@ -87,7 +87,8 @@ LDADD =	\
 	../mediafile/libMediaFile.a	\
 	../zlib/libz.a			\
 	$(RESOURCE)			\
-	$(GLIBS)
+	$(GLIBS)			\
+	$(ALIBS)
 else
 LDADD =	\
 	../net/libNet.a			\
@@ -100,7 +101,8 @@ LDADD =	\
 	../mediafile/libMediaFile.a	\
 	../zlib/libz.a			\
 	$(RESOURCE)			\
-	$(GLIBS)
+	$(GLIBS)			\
+	$(ALIBS)
 endif
 
 
