@@ -1466,7 +1466,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   char score[40], kills[40];
 #ifndef DEBUG
   char email[EmailLen + 5];
-  sprintf(email, " (%s)", player->getEmailAddress());
+  if (player->getEmailAddress()[0] != '\0')
+    sprintf(email, " (%s)", player->getEmailAddress());
+  else
+    email[0] = '\0';
 #else
   char email[EmailLen + 25];
   const PlayerId& id = player->getId();
