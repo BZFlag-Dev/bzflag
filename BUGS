@@ -1,10 +1,8 @@
 recent bugs
 ------------
-- using the -worldsize option makes the client rendering go berzerk (see the 
-  brlcad.org Test Server I or II).  size ends up getting set to a trillion..
-
 - bzadmin doesn't redraw / resize windows properly when the terminal is
-  resized
+  resized, backgrounded, or otherwise sent a signal that is visually
+  destructive.
 
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
