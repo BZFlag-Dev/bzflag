@@ -1022,10 +1022,17 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Radar Shot Length:");
   option->setCallback(callback, (void*)"l");
   options = &option->getList();
-  options->push_back(std::string("[O---]"));
-  options->push_back(std::string("[-O--]"));
-  options->push_back(std::string("[--O-]"));
-  options->push_back(std::string("[---O]"));
+  options->push_back(std::string("[O----------]"));
+  options->push_back(std::string("[-O---------]"));
+  options->push_back(std::string("[--O--------]"));
+  options->push_back(std::string("[---O-------]"));
+  options->push_back(std::string("[----O------]"));
+  options->push_back(std::string("[-----O-----]"));
+  options->push_back(std::string("[------O----]"));
+  options->push_back(std::string("[-------O---]"));
+  options->push_back(std::string("[--------O--]"));
+  options->push_back(std::string("[---------O-]"));
+  options->push_back(std::string("[----------O]"));
   option->update();
   list.push_back(option);
 
