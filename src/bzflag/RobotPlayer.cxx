@@ -19,8 +19,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include "common.h"
-#include "RobotPlayer.h"
 #include "World.h"
+#include "RobotPlayer.h"
+#include "RemotePlayer.h"
+#include "Intersect.h"
+#include "ShotStrategy.h" // need this for rayAtDistanceFromOrigin
+#include "TargetingUtils.h"
 #include "ServerLink.h"
 #include "BZDBCache.h"
 
@@ -32,7 +36,6 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 				LocalPlayer(_id, _name, _email),
 				target(NULL),
 				pathIndex(0),
-				timeSinceShot(0.0f),
 				timerForShot(0.0f),
 				drivingForward(true)
 {
@@ -40,22 +43,109 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
   server       = _server;
 }
 
+// estimate a player's position at now+t, similar to dead reckoning
+void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const
+{
+  double hisx=targ->getPosition()[0];
+  double hisy=targ->getPosition()[1];
+  double hisz=targ->getPosition()[2];
+  double hisvx=targ->getVelocity()[0];
+  double hisvy=targ->getVelocity()[1];
+  double hisvz=targ->getVelocity()[2];
+  double omega=fabs(targ->getAngularVelocity());
+  double sx,sy;
+
+  if ((targ->getStatus() & PlayerState::Falling) || fabs(omega) < 2*M_PI / 360 * 0.5)
+  {
+    sx=t*hisvx;
+    sy=t*hisvy;
+  }
+  else
+  {
+    double hisspeed = hypotf(hisvx, hisvy);
+    double alpha = omega * t;
+    double r = hisspeed / fabs(omega);
+    double dx = r * sin(alpha);
+    double dy2 = r * (1 - cos(alpha));
+    double beta = atan2(dy2, dx) * (targ->getAngularVelocity() > 0 ? 1 : -1);
+    double gamma = atan2(hisvy, hisvx);
+    double rho = gamma+beta;
+    sx = hisspeed * t * cos(rho);
+    sy = hisspeed * t * sin(rho);
+  }
+  x=hisx+sx;
+  y=hisy+sy;
+  z=hisz+hisvz*t;
+  if (targ->getStatus() & PlayerState::Falling)
+    z += 0.5 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * t * t;
+  if (z < 0) z = 0;
+}
+
+
+// get coordinates to aim at when shooting a player; steps:
+// 1. estimate how long it will take shot to hit target
+// 2. calc position of target at that point of time
+// 3. jump to 1., using projected position, loop until result is stable
+void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
+{
+  double myx = getPosition()[0];
+  double myy = getPosition()[1];
+  double hisx = targ->getPosition()[0];
+  double hisy = targ->getPosition()[1];
+  double deltax = hisx - myx;
+  double deltay = hisy - myy;
+  double distance = hypotf(deltax,deltay) - BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+  if (distance <= 0) distance = 0;
+  double shotspeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED)*
+    (getFlag() == Flags::Laser ? BZDB.eval(StateDatabase::BZDB_LASERADVEL) :
+     getFlag() == Flags::RapidFire ? BZDB.eval(StateDatabase::BZDB_RFIREADVEL) :
+     getFlag() == Flags::MachineGun ? BZDB.eval(StateDatabase::BZDB_MGUNADVEL) : 1) +
+      hypotf(getVelocity()[0], getVelocity()[1]);
+
+  double errdistance = 1.0;
+  float tx, ty, tz;
+  for (int tries=0 ; errdistance > 0.05 && tries < 4 ; tries++)
+  {
+    float t = distance / shotspeed;
+    projectPosition(targ, t + 0.05, tx, ty, tz); // add 50ms for lag
+    double distance2 = hypotf(tx - myx, ty - myy);
+    errdistance = fabs(distance2-distance) / (distance + ZERO_TOLERANCE);
+    distance = distance2;
+  }
+  projpos[0] = tx; projpos[1] = ty; projpos[2] = tz;
+
+  // projected pos in building -> use current pos
+  if (World::getWorld()->inBuilding(projpos, 0.0f)) {
+    projpos[0] = targ->getPosition()[0];
+    projpos[1] = targ->getPosition()[1];
+    projpos[2] = targ->getPosition()[2];
+  }
+}
+
+
 void			RobotPlayer::doUpdate(float dt)
 {
   LocalPlayer::doUpdate(dt);
 
   float tankRadius = BZDBCache::tankRadius;
-  float shotRange  = BZDB.eval(StateDatabase::BZDB_SHOTRANGE);
+  const float shotRange  = BZDB.eval(StateDatabase::BZDB_SHOTRANGE);
+  const float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
 
+  // fire shot if any available
   timerForShot  -= dt;
   if (timerForShot < 0.0f)
     timerForShot = 0.0f;
+
+  if (getFiringStatus() != Ready)
+    return;
+
+  bool        shoot   = false;
   const float azimuth = getAngle();
   // Allow shooting only if angle is near and timer has elapsed
   if ((int)path.size() != 0 && timerForShot <= 0.0f) {
-    const float* p1     = target->getPosition();
+    float p1[3];
+    getProjectedPosition(target, p1);
     const float* p2     = getPosition();
-    float shootingRange = hypotf(p1[0] - p2[0], p1[1] - p2[1]);
     float shootingAngle = atan2f(p1[1] - p2[1], p1[0] - p2[0]);
     if (shootingAngle < 0.0f)
       shootingAngle += 2.0f * M_PI;
@@ -64,19 +154,59 @@ void			RobotPlayer::doUpdate(float dt)
       azimuthDiff -= 2.0f * M_PI;
     else
       if (azimuthDiff < -M_PI)
-	azimuthDiff += 2.0f * M_PI;
-    if ((shootingRange < tankRadius)
-	|| (shootingRange <= shotRange
-	    && fabs(azimuthDiff) < tankRadius / shootingRange))
-      if (fireShot())
-	// separate shot by 0.4 sec (experimental value)
-	timerForShot = 0.4f;
+        azimuthDiff += 2.0f * M_PI;
+
+    const float targetdistance = hypotf(p1[0] - p2[0], p1[1] - p2[1]) -
+      BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - tankRadius;
+      
+    const float missby = fabs(azimuthDiff) *
+      (targetdistance - BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
+    // only shoot if we miss by less than half a tanklength and no building inbetween
+    if (missby < 0.5*BZDB.eval(StateDatabase::BZDB_TANKLENGTH) &&
+	p1[2] < shotRadius) {
+      float pos[3] = {getPosition()[0], getPosition()[1],
+		      getPosition()[2] +  BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)};
+      float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
+      Ray tankRay(pos, dir);
+      float maxdistance = targetdistance;
+      if (!ShotStrategy::getFirstBuilding(tankRay, -0.5f, maxdistance))
+      {
+	shoot=true;
+	// try to not aim at teammates
+	for (int i=0; i <= World::getWorld()->getCurMaxPlayers(); i++)
+	{
+	  Player *p = 0;
+	  if (i < World::getWorld()->getCurMaxPlayers())
+	    p = World::getWorld()->getPlayer(i);
+	  else
+	    p = LocalPlayer::getMyTank();
+	  if (!p || p->getId() == getId() || validTeamTarget(p) ||
+	     !p->isAlive()) continue;
+	  float relpos[3] = {getPosition()[0] - p->getPosition()[0],
+			     getPosition()[1] - p->getPosition()[1],
+			     getPosition()[2] - p->getPosition()[2]};
+	  Ray ray(relpos, dir);
+	  float impact = rayAtDistanceFromOrigin(ray, 5 * BZDB.eval(StateDatabase::BZDB_TANKRADIUS));
+	  if (impact > 0 && impact < shotRange)
+	  {
+	    shoot=false;
+	    timerForShot = 0.1f;
+	    break;
+	  }
+	}
+	if (shoot && fireShot()) {
+	  // separate shot by 0.2 - 0.8 sec (experimental value)
+	  timerForShot = float(bzfrand()) * 0.6f + 0.2f;
+	}
+      }
+    }
   }
 }
 
 void			RobotPlayer::doUpdateMotion(float dt)
 {
   if (isAlive()) {
+    bool evading = false;
     // record previous position
     const float oldAzimuth = getAngle();
     const float* oldPosition = getPosition();
@@ -87,7 +217,62 @@ void			RobotPlayer::doUpdateMotion(float dt)
     float azimuth = oldAzimuth;
     float tankAngVel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
     float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-    if (dt > 0.0 && pathIndex < (int)path.size()) {
+
+
+    // basically a clone of Roger's evasive code
+    for (int t=0; t <= World::getWorld()->getCurMaxPlayers(); t++)
+    {
+      Player *p = 0;
+      if (t < World::getWorld()->getCurMaxPlayers())
+        p = World::getWorld()->getPlayer(t);
+      else
+        p = LocalPlayer::getMyTank();
+      if (!p || p->getId() == getId())
+        continue;
+      const int maxShots = p->getMaxShots();
+      for (int s = 0; s < maxShots; s++) {
+        ShotPath* shot = p->getShot(s);
+        if (!shot || shot->isExpired())
+          continue;
+        // ignore invisible bullets completely for now (even when visible)
+        if (shot->getFlag() == Flags::InvisibleBullet)
+          continue;
+        const float* shotPos = shot->getPosition();
+        if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
+          continue;
+        const float dist = TargetingUtils::getTargetDistance(position, shotPos);
+        if (dist < 150.0f) {
+          const float *shotVel = shot->getVelocity();
+          float shotAngle = atan2f(shotVel[1], shotVel[0]);
+          float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+
+          float trueVec[2] = {(position[0]-shotPos[0])/dist,(position[1]-shotPos[1])/dist};
+          float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
+
+          if (dotProd > 0.97f) {
+            float rotation;
+            float rotation1 = (shotAngle + M_PI/2.0f) - azimuth;
+            if (rotation1 < -1.0f * M_PI) rotation1 += 2.0f * M_PI;
+            if (rotation1 > 1.0f * M_PI) rotation1 -= 2.0f * M_PI;
+
+            float rotation2 = (shotAngle - M_PI/2.0f) - azimuth;
+            if (rotation2 < -1.0f * M_PI) rotation2 += 2.0f * M_PI;
+            if (rotation2 > 1.0f * M_PI) rotation2 -= 2.0f * M_PI;
+
+            if (fabs(rotation1) < fabs(rotation2))
+              rotation = rotation1;
+            else
+              rotation = rotation2;
+            setDesiredSpeed(1.0f);
+            setDesiredAngVel(rotation);
+            evading = true;
+          }
+        }
+      }
+    }
+
+    // when we are not evading, follow the path
+    if (!evading && dt > 0.0 && pathIndex < (int)path.size()) {
       float distance;
       float v[2];
       const float* endPoint = path[pathIndex].get();
@@ -202,7 +387,9 @@ void			RobotPlayer::setTarget(const Player* _target)
   if (!target) return;
 
   // work backwards (from target to me)
-  const float* p1 = target->getPosition();
+  float proj[3];
+  getProjectedPosition(target, proj);
+  const float *p1 = proj;
   const float* p2 = getPosition();
   float q1[2], q2[2];
   BzfRegion* headRegion = findRegion(p1, q1);
