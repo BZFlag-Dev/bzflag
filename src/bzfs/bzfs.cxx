@@ -3089,7 +3089,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   int flagid = player[victimIndex].flag;
   if (flagid >= 0) {
     // do not simply zap team flag
-    Flag &carriedflag=flag[flagid].flag;
+    Flag &carriedflag = flag[flagid].flag;
     if (carriedflag.type->flagTeam != ::NoTeam) {
       dropFlag(victimIndex, carriedflag.position);
     }
