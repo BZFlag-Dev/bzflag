@@ -16,6 +16,9 @@
 #include "Pack.h"
 
 
+MeshMaterial MeshMaterial::defaultMaterial;
+
+
 void MeshMaterial::reset()
 {
   texture = "";
@@ -239,12 +242,25 @@ int MeshMaterial::packSize()
 }
 
 
+static void printColor(std::ostream& out, const char *name,
+                       const float color[4], const float reference[4])
+{
+  if (memcmp(color, reference, sizeof(float[4])) != 0) {
+    out << name << color[0] << " " << color[1] << " " 
+                << color[2] << " " << color[3] << std::endl;
+  }
+  return;
+}
+                       
+
 void MeshMaterial::print(std::ostream& out, int /*level*/)
 {
   if (texture.size() > 0) {
     out << "    texture " << texture << std::endl;
   }
-  out << "    texmat " << textureMatrix << std::endl;
+  if (textureMatrix != getDefault().textureMatrix) {
+    out << "    texmat " << textureMatrix << std::endl;
+  }
   if (!useTexture) {
     out << "    notexture" << std::endl;
   }
@@ -254,16 +270,19 @@ void MeshMaterial::print(std::ostream& out, int /*level*/)
   if (!useColorOnTexture) {
     out << "    notexcolor" << std::endl;
   }
-  out << "    dyncol " << dynamicColor << std::endl;
-  out << "    ambient " << ambient[0] << " " << ambient[1] << " "
-                        << ambient[2] << " " << ambient[3] << std::endl;
-  out << "    diffuse " << diffuse[0] << " " << diffuse[1] << " "
-                        << diffuse[2] << " " << diffuse[3] << std::endl;
-  out << "    specular " << specular[0] << " " << specular[1] << " "
-                         << specular[2] << " " << specular[3] << std::endl;
-  out << "    emission " << emission[0] << " " << emission[1] << " "
-                         << emission[2] << " " << emission[3] << std::endl;
-  out << "    shininess " << shininess << std::endl;
+  if (dynamicColor != getDefault().dynamicColor) {
+    out << "    dyncol " << dynamicColor << std::endl;
+  }
+
+  printColor(out, "    ambient ", ambient, getDefault().ambient);
+  printColor(out, "    diffuse ", diffuse, getDefault().diffuse);
+  printColor(out, "    specular ", specular, getDefault().specular);
+  printColor(out, "    emission ", emission, getDefault().emission);
+
+  if (shininess != getDefault().shininess) {
+    out << "    shininess " << shininess << std::endl;
+  }
+  
   return;
 }
 

@@ -39,7 +39,9 @@ class MeshMaterial {
     int packSize();
 
     void print(std::ostream& out, int level);
-
+    
+    const MeshMaterial& getDefault() const;
+    
     // data
     std::string texture;
     int dynamicColor;
@@ -52,7 +54,16 @@ class MeshMaterial {
     bool useTexture;
     bool useTextureAlpha;
     bool useColorOnTexture;
+    
+  private:
+    static MeshMaterial defaultMaterial;
 };
+
+inline const MeshMaterial& MeshMaterial::getDefault() const
+{
+  return defaultMaterial;
+}
+
 
 #endif // BZF_MESH_MATERIAL_H
 
