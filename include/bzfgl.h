@@ -52,7 +52,7 @@ extern int __beginendCount;
 
 /* disabling list and texture deletions can be useful for debugging
  * corrupted context states.  still don't have a "proper" context
- * manager, but things are working so it can be disabled. 
+ * manager, but things are working so it can be disabled.
  */
 #if 0
 #  ifndef glDeleteLists

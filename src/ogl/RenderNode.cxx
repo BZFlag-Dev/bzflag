@@ -127,7 +127,7 @@ void RenderNodeGStateList::sort(const GLfloat* e)
     const float dz = (p[2] - e[2]);
     list[i].depth = ((dx * dx) + (dy * dy) + (dz * dz));
   }
-  
+
   // sort from farthest to closest
   qsort (list, count, sizeof(Item), nodeCompare);
 

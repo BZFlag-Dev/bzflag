@@ -58,12 +58,12 @@ static float clampedValue(float input, float max)
     return input;
   }
 }
-    
+
 
 void*	PlayerState::pack(void* buf, uint16_t& code)
 {
   order++;
-  
+
   buf = nboPackInt(buf, int32_t(order));
   buf = nboPackShort(buf, int16_t(status));
 
@@ -130,7 +130,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     tmp = clampedValue(userSpeed, smallMaxVel);
     int16_t speed = (int16_t) ((tmp * smallScale) / smallMaxVel);
     buf = nboPackShort(buf, speed);
-    // pack userAngVel 
+    // pack userAngVel
     tmp = clampedValue(userAngVel, smallMaxAngVel);
     int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
     buf = nboPackShort(buf, angvel);
@@ -181,7 +181,7 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
   } else {
     jumpJetsScale = 0.0f;
   }
-  
+
   if ((inStatus & OnDriver) != 0) {
     buf = nboUnpackInt(buf, phydrv);
   } else {
@@ -198,7 +198,7 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
     userSpeed = 0.0f;
     userAngVel = 0.0f;
   }
-    
+
   return buf;
 }
 

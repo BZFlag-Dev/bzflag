@@ -133,12 +133,12 @@ static DefaultDBItem	defaultDBItems[] = {
   { "roamZoomMax",		"120",			false,	StateDatabase::ReadWrite,	NULL },
   { "roamZoomMin",		"15",			false,	StateDatabase::ReadWrite,	NULL },
   { "maxQuality",		"3",			false,	StateDatabase::ReadWrite,	NULL },
-  { "groundTexRepeat",		"0.1",		  	true,	StateDatabase::ReadWrite,	NULL },
-  { "groundHighResTexRepeat",	"0.05",		 	true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallTexRepeat",		"1.5",		  	true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallHighResTexRepeat",	"5.0",		  	true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallTexRepeat",		"3.0",		  	true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallHighResTexRepeat",	"8.0",		  	true,	StateDatabase::ReadWrite,	NULL },
+  { "groundTexRepeat",		"0.1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "groundHighResTexRepeat",	"0.05",			true,	StateDatabase::ReadWrite,	NULL },
+  { "boxWallTexRepeat",		"1.5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "boxWallHighResTexRepeat",	"5.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "pyrWallTexRepeat",		"3.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "pyrWallHighResTexRepeat",	"8.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "pulseDepth",		"0.4",			true,	StateDatabase::ReadWrite,	NULL },
   { "pulseRate",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -152,11 +152,11 @@ static DefaultDBItem	defaultDBItems[] = {
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
-  { "zoneGroundTexture",	"zone_ground",	  	true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallTexture",		"boxwall",	      	true,	StateDatabase::ReadWrite,	NULL },
-  { "boxTopTexture",		"roof",		 	true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallTexture",		"pyrwall",	      	true,	StateDatabase::ReadWrite,	NULL },
-  { "cautionTexture",		"caution",	      	true,	StateDatabase::ReadWrite,	NULL },
+  { "zoneGroundTexture",	"zone_ground",		true,	StateDatabase::ReadWrite,	NULL },
+  { "boxWallTexture",		"boxwall",		true,	StateDatabase::ReadWrite,	NULL },
+  { "boxTopTexture",		"roof",			true,	StateDatabase::ReadWrite,	NULL },
+  { "pyrWallTexture",		"pyrwall",		true,	StateDatabase::ReadWrite,	NULL },
+  { "cautionTexture",		"caution",		true,	StateDatabase::ReadWrite,	NULL },
   { "waterTexture",		"water",		true,	StateDatabase::ReadWrite,	NULL },
 
   // default fonts
@@ -165,23 +165,23 @@ static DefaultDBItem	defaultDBItems[] = {
   { "serifFont",		"TogaSerifBold",	true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes
-  { "tankTexture",		"tank",		 	true,	StateDatabase::ReadWrite,	NULL },
-  { "boltTexture",		"bolt",		 	true,	StateDatabase::ReadWrite,	NULL },
+  { "tankTexture",		"tank",			true,	StateDatabase::ReadWrite,	NULL },
+  { "boltTexture",		"bolt",			true,	StateDatabase::ReadWrite,	NULL },
   { "laserTexture",		"laser",		true,	StateDatabase::ReadWrite,	NULL },
-  { "baseTopTexture",		"basetop",	      	true,	StateDatabase::ReadWrite,	NULL },
-  { "baseWallTexture",		"basewall",	     	true,	StateDatabase::ReadWrite,	NULL },
+  { "baseTopTexture",		"basetop",		true,	StateDatabase::ReadWrite,	NULL },
+  { "baseWallTexture",		"basewall",		true,	StateDatabase::ReadWrite,	NULL },
 
   // team prefixes
-  { "redTeamPrefix",		"red_",		 	true,	StateDatabase::ReadWrite,	NULL },
+  { "redTeamPrefix",		"red_",			true,	StateDatabase::ReadWrite,	NULL },
   { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "greenTeamPrefix",		"green_",	       	true,	StateDatabase::ReadWrite,	NULL },
-  { "purpleTeamPrefix",		"purple_",	      	true,	StateDatabase::ReadWrite,	NULL },
-  { "rabbitTeamPrefix",		"rabbit_",	      	true,	StateDatabase::ReadWrite,	NULL },
-  { "hunterTeamPrefix",		"hunter_",	      	true,	StateDatabase::ReadWrite,	NULL },
-  { "rogueTeamPrefix",		"rogue_",	       	true,	StateDatabase::ReadWrite,	NULL },
+  { "greenTeamPrefix",		"green_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "purpleTeamPrefix",		"purple_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "rabbitTeamPrefix",		"rabbit_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "hunterTeamPrefix",		"hunter_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "rogueTeamPrefix",		"rogue_",		true,	StateDatabase::ReadWrite,	NULL },
 
   // type prefixes
-  { "superPrefix",		"super_",	       	true,	StateDatabase::ReadWrite,	NULL }
+  { "superPrefix",		"super_",		true,	StateDatabase::ReadWrite,	NULL }
 
 };
 
@@ -1309,7 +1309,7 @@ int			main(int argc, char** argv)
     printFatalError("Error creating window - Exiting");
     return 1;
   }
-    
+
   std::string videoFormat;
   int format = -1;
   if (BZDB.isSet("resolution")) {

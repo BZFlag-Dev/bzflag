@@ -50,9 +50,9 @@ private:
   GUIOptionsMenu*	guiOptionsMenu;
   EffectsMenu*		effectsMenu;
   SaveWorldMenu*	saveWorldMenu;
-  InputMenu*	    	inputMenu;
-  AudioMenu*	    	audioMenu;
-  DisplayMenu*	  	displayMenu;
+  InputMenu*		inputMenu;
+  AudioMenu*		audioMenu;
+  DisplayMenu*		displayMenu;
 };
 
 

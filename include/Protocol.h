@@ -155,7 +155,7 @@ const uint16_t		RejectBadCallsign = 0x0006;
 const uint16_t		RejectRepeatCallsign = 0x0007;
 const uint16_t		RejectRejoinWaitTime = 0x0008;
 
-// death by obstacle 
+// death by obstacle
 const uint16_t		PhysicsDriverDeath = 0x7064;		// 'pd'
 
 

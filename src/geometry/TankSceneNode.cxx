@@ -70,7 +70,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 
   shadowRenderNode.setShadow();
   shadowRenderNode.setTankLOD(LowTankLOD);
-  
+
   jumpJetsRealLight.setAttenuation(0, 0.05f);
   jumpJetsRealLight.setAttenuation(1, 0.0f);
   jumpJetsRealLight.setAttenuation(2, 0.03f);
@@ -81,7 +81,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
     jumpJetsGroundLights[i].setAttenuation(2, 0.03f);
     jumpJetsGroundLights[i].setOnlyGround(true);
   }
-  
+
   return;
 }
 
@@ -259,9 +259,9 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   // set the tank's scaling size
   tankRenderNode.setTankSize(tankSize);
-  
+
   bool narrow = false;
-  if ((tankSize == Narrow) && 
+  if ((tankSize == Narrow) &&
       (!useDimensions || (dimensions[1] < 0.01f)) &&
       (mode == HighTankLOD) && BZDBCache::zbuffer) {
     narrow = true;
@@ -313,18 +313,18 @@ void TankSceneNode::addLight(SceneRenderer& renderer)
   if (cloaked && (color[3] == 0.0f)) {
     return;
   }
-  
+
   if (jumpJetsOn) {
     // the real light
-    jumpJetsRealLight.setColor(jumpJetsScale * 1.0f, 
-                               jumpJetsScale * 0.7f,
-                               jumpJetsScale * 0.3f);
+    jumpJetsRealLight.setColor(jumpJetsScale * 1.0f,
+			       jumpJetsScale * 0.7f,
+			       jumpJetsScale * 0.3f);
     renderer.addLight(jumpJetsRealLight);
     // the ground lights
     for (int i = 0; i < 4; i++) {
-      jumpJetsGroundLights[i].setColor(jumpJetsLengths[i] * 1.0f * 0.25f, 
-                                       jumpJetsLengths[i] * 0.7f * 0.25f,
-                                       jumpJetsLengths[i] * 0.3f * 0.25f);
+      jumpJetsGroundLights[i].setColor(jumpJetsLengths[i] * 1.0f * 0.25f,
+				       jumpJetsLengths[i] * 0.7f * 0.25f,
+				       jumpJetsLengths[i] * 0.3f * 0.25f);
       renderer.addLight(jumpJetsGroundLights[i]);
     }
   }
@@ -926,7 +926,7 @@ void TankSceneNode::TankRenderNode::render()
   }
 
   // FIXME -- add flare lights using addFlareLight().
-  //          pass light position in world space.
+  //	  pass light position in world space.
 
   glShadeModel(GL_FLAT);
   if (!BZDBCache::blend && sceneNode->transparent) {
@@ -935,7 +935,7 @@ void TankSceneNode::TankRenderNode::render()
   if (sceneNode->clip) {
     glDisable(GL_CLIP_PLANE0);
   }
-  
+
   return;
 }
 
@@ -1021,7 +1021,7 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
   }
 
   glDepthFunc(GL_LESS);
-  
+
   if (usingPolyOffset) {
     glPolygonOffset(factor, units);
   } else {
@@ -1129,7 +1129,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   if (isExploding) {
     glPopMatrix();
   }
-  
+
   return;
 }
 
@@ -1269,7 +1269,7 @@ void TankSceneNode::TankRenderNode::renderLights()
 
   glPointSize(1.0f);
   sceneNode->gstate.setState();
-  
+
   return;
 }
 
@@ -1286,7 +1286,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   if (!sceneNode->jumpJetsOn) {
     return;
   }
-  
+
   typedef struct {
     GLfloat vertex[3];
     GLfloat texcoord[2];
@@ -1300,10 +1300,10 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   myColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
   // use a clip plane, because the ground has no depth
-  const GLdouble clipPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};  
+  const GLdouble clipPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
   glClipPlane(GL_CLIP_PLANE1, clipPlane);
   glEnable(GL_CLIP_PLANE1);
-  
+
   sceneNode->jumpJetsGState.setState();
   glDepthMask(GL_FALSE);
   for (int j = 0; j < 4; j++) {
@@ -1314,13 +1314,13 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
       glScalef(1.0f, 1.0f, sceneNode->jumpJetsLengths[j]);
 
       RENDERER.getViewFrustum().executeBillboard();
-      
+
       glBegin(GL_TRIANGLES);
       {
-        for (int v = 0; v < 3; v++) {
-          glTexCoord2fv(jet[v].texcoord);
-          glVertex3fv(jet[v].vertex);
-        }
+	for (int v = 0; v < 3; v++) {
+	  glTexCoord2fv(jet[v].texcoord);
+	  glVertex3fv(jet[v].vertex);
+	}
       }
       glEnd();
     }
@@ -1330,7 +1330,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   sceneNode->gstate.setState();
 
   glDisable(GL_CLIP_PLANE1);
-  
+
   return;
 }
 

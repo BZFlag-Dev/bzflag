@@ -62,7 +62,7 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   }
   shotStatistics.recordFire(info.flagType);
   // FIXME - with dynamic dimensions, this may not be a good idea
-  //         (flag each shot with a 'default dimensions' state?)
+  //	 (flag each shot with a 'default dimensions' state?)
   move(newpos, getAngle());
   setDeadReckoning(info.timeSent);
 }

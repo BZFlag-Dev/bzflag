@@ -31,7 +31,7 @@ namespace TrackMarks {
 
   void setUserFade(float);
   float getUserFade();
-  
+
   enum AirCullStyle {
     NoAirCull     = 0,
     InitAirCull   = (1 << 0), // cull for initial air mark conditions
@@ -41,7 +41,7 @@ namespace TrackMarks {
 
   void setAirCulling(AirCullStyle style);
   AirCullStyle getAirCulling();
-  
+
   const float updateTime = (1.0f / 20.0f);
 }
 

@@ -41,8 +41,8 @@ extern ControlPanel* controlPanel;
 
 
 OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
-                             saveWorldMenu(NULL), inputMenu(NULL),
-                             audioMenu(NULL), displayMenu(NULL)
+			     saveWorldMenu(NULL), inputMenu(NULL),
+			     audioMenu(NULL), displayMenu(NULL)
 {
   // cache font face ID
   int fontFace = MainMenu::getFontFace();

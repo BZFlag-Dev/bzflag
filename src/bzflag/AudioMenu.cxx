@@ -157,7 +157,7 @@ void			AudioMenu::resize(int width, int height)
 #ifdef HAVE_SDL
   i++; // driver
   i++; // device
-#endif // HAVE_SDL  
+#endif // HAVE_SDL
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
 }
 

@@ -59,7 +59,7 @@ class TrackEntry {
   public:
     ~TrackEntry();
     TrackEntry* getNext();
-      
+
   protected:
     TrackEntry* next;
     TrackEntry* prev;
@@ -71,7 +71,7 @@ class TrackEntry {
     int phydrv;
     float lifeTime;
     class TrackSceneNode* sceneNode;
-    
+
   friend class TrackList;
 };
 
@@ -90,7 +90,7 @@ class TrackList {
 
     TrackEntry* getStart() { return start; }
     TrackEntry* getEnd() { return end; }
-    
+
     void addNode(TrackEntry&);
     TrackEntry* removeNode(TrackEntry*); // return the next entry
 
@@ -205,7 +205,7 @@ static void drawTreads(const TrackEntry& te);
 static bool onBuilding(const float pos[3]);
 static void updateList(TrackList& list, float dt);
 static void addEntryToList(TrackList& list,
-                           TrackEntry& te, TrackType type);
+			   TrackEntry& te, TrackType type);
 
 
 /****************************************************************************/
@@ -229,7 +229,7 @@ void TrackMarks::kill()
 {
   clear();
   OpenGLGState::unregisterContextInitializer(initContext, NULL);
-  
+
   return;
 }
 
@@ -271,10 +271,10 @@ void TrackMarks::setAirCulling(AirCullStyle style)
   if ((style < NoAirCull) || (style > FullAirCull)) {
     style = NoAirCull;
   }
-  
+
   AirCull = style;
   BZDB.setInt("trackMarkCulling", style);
-  
+
   return;
 }
 
@@ -286,7 +286,7 @@ AirCullStyle TrackMarks::getAirCulling()
 
 
 static void addEntryToList(TrackList& list,
-                           TrackEntry& te, TrackType type)
+			   TrackEntry& te, TrackType type)
 {
   // push the entry
   list.addNode(te);
@@ -344,7 +344,7 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
   }
   te.scale = scale;
   te.angle = angle * (180.0f / M_PI); // in degress, for glRotatef()
-  
+
   // only use the physics driver if it matters
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
   if (driver == NULL) {
@@ -386,23 +386,23 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
       markPos[0] = pos[0] + dx;
       markPos[1] = pos[1] + dy;
       if (onBuilding(markPos)) {
-        te.sides |= LeftTread;
+	te.sides |= LeftTread;
       }
       // right tread
       markPos[0] = pos[0] - dx;
       markPos[1] = pos[1] - dy;
       if (onBuilding(markPos)) {
-        te.sides |= RightTread;
+	te.sides |= RightTread;
       }
       // add if required
       if (te.sides != 0) {
-        addEntryToList(TreadsObstacleList, te, type);
+	addEntryToList(TreadsObstacleList, te, type);
       } else {
-        return false;
+	return false;
       }
     }
   }
-  
+
   return true;
 }
 
@@ -419,7 +419,7 @@ static bool onBuilding(const float pos[3])
     if (fabsf(top - pos[2]) < 0.2f) {
       const float hitTime = obs->intersect(ray);
       if (hitTime >= 0.0f) {
-        return true;
+	return true;
       }
     }
   }
@@ -432,7 +432,7 @@ static void updateList(TrackList& list, float dt)
   TrackEntry* ptr = list.getStart();
   while (ptr != NULL) {
     TrackEntry& te = *ptr;
-    
+
     // increase the lifeTime
     te.lifeTime += dt;
 
@@ -445,56 +445,56 @@ static void updateList(TrackList& list, float dt)
     // update for the Physics Driver
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
     if (phydrv != NULL) {
-    
+
       const float* v = phydrv->getVelocity();
       te.pos[0] += (v[0] * dt);
       te.pos[1] += (v[1] * dt);
 
       const float av = phydrv->getAngularVel();
       if (av != 0.0f) {
-        const float* ap = phydrv->getAngularPos();
-        const float da = (av * dt);
-        const float cos_val = cosf(da);
-        const float sin_val = sinf(da);
-        const float dx = te.pos[0] - ap[0];
-        const float dy = te.pos[1] - ap[1];
-        te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
-        te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
-        te.angle += da * (180.0f / M_PI);
+	const float* ap = phydrv->getAngularPos();
+	const float da = (av * dt);
+	const float cos_val = cosf(da);
+	const float sin_val = sinf(da);
+	const float dx = te.pos[0] - ap[0];
+	const float dy = te.pos[1] - ap[1];
+	te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
+	te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
+	te.angle += da * (180.0f / M_PI);
       }
 
       if ((AirCull & PhyDrvAirCull) != 0) {
-        // no need to cull ground marks
-        if (te.pos[2] == 0.0f) {
-          continue;
-        }
-        // cull the track marks if they aren't supported
-        float markPos[3];
-        markPos[2] = te.pos[2] - TextureHeightOffset;
-        const float radians = te.angle * (M_PI / 180.0f);
-        const float dx = -sinf(radians) * TreadMiddle;
-        const float dy = +cosf(radians) * TreadMiddle;
-        // left tread
-        if ((te.sides & LeftTread) != 0) {
-          markPos[0] = te.pos[0] + dx;
-          markPos[1] = te.pos[1] + dy;
-          if (!onBuilding(markPos)) {
-            te.sides &= ~LeftTread;
-          }
-        }
-        // right tread
-        if ((te.sides & RightTread) != 0) {
-          markPos[0] = te.pos[0] - dx;
-          markPos[1] = te.pos[1] - dy;
-          if (!onBuilding(markPos)) {
-            te.sides &= ~RightTread;
-          }
-        }
-        // cull this node
-        if (te.sides == 0) {
-          ptr = list.removeNode(ptr);
-          continue;
-        }
+	// no need to cull ground marks
+	if (te.pos[2] == 0.0f) {
+	  continue;
+	}
+	// cull the track marks if they aren't supported
+	float markPos[3];
+	markPos[2] = te.pos[2] - TextureHeightOffset;
+	const float radians = te.angle * (M_PI / 180.0f);
+	const float dx = -sinf(radians) * TreadMiddle;
+	const float dy = +cosf(radians) * TreadMiddle;
+	// left tread
+	if ((te.sides & LeftTread) != 0) {
+	  markPos[0] = te.pos[0] + dx;
+	  markPos[1] = te.pos[1] + dy;
+	  if (!onBuilding(markPos)) {
+	    te.sides &= ~LeftTread;
+	  }
+	}
+	// right tread
+	if ((te.sides & RightTread) != 0) {
+	  markPos[0] = te.pos[0] - dx;
+	  markPos[1] = te.pos[1] - dy;
+	  if (!onBuilding(markPos)) {
+	    te.sides &= ~RightTread;
+	  }
+	}
+	// cull this node
+	if (te.sides == 0) {
+	  ptr = list.removeNode(ptr);
+	  continue;
+	}
       }
     }
 
@@ -509,12 +509,12 @@ void TrackMarks::update(float dt)
 {
   TrackFadeTime = BZDB.eval(StateDatabase::BZDB_TRACKFADE);
   TrackFadeTime = TrackFadeTime * UserFadeScale;
-  
+
   updateList(SmokeList, dt);
   updateList(PuddleList, dt);
   updateList(TreadsGroundList, dt);
   updateList(TreadsObstacleList, dt);
-  
+
   return;
 }
 
@@ -522,7 +522,7 @@ void TrackMarks::update(float dt)
 static void setup()
 {
   OpenGLGStateBuilder gb;
-  
+
   int puddleTexId = -1;
   if (BZDBCache::texture) {
     TextureManager &tm = TextureManager::instance();
@@ -537,7 +537,7 @@ static void setup()
     gb.setTexture(puddleTexId);
   }
   puddleGState = gb.getState();
-  
+
   int smokeTexId = -1;
   if (BZDBCache::texture) {
     TextureManager &tm = TextureManager::instance();
@@ -552,17 +552,17 @@ static void setup()
     gb.setTexture(smokeTexId);
   }
   smokeGState = gb.getState();
-  
+
   gb.reset();
   gb.setShading(GL_FLAT);
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gb.enableMaterial(false); // no lighting
   treadsGState = gb.getState();
-  
+
   return;
 }
-  
+
 
 static void initContext(void* /*data*/)
 {
@@ -592,7 +592,7 @@ void TrackMarks::renderGroundTracks()
     glDepthMask(GL_FALSE);
     glDisable(GL_DEPTH_TEST);
   }
-  
+
   // draw ground treads
   treadsGState.setState();
   for (ptr = TreadsGroundList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
@@ -604,7 +604,7 @@ void TrackMarks::renderGroundTracks()
   for (ptr = PuddleList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
     drawPuddle(*ptr);
   }
-  
+
   // re-enable the zbuffer
   if (BZDBCache::zbuffer) {
     glDepthMask(GL_TRUE);
@@ -627,11 +627,11 @@ void TrackMarks::renderObstacleTracks()
   }
 
   TrackEntry* ptr;
-  
+
   // disable the zbuffer writing (these are the last things drawn)
   // this helps to avoid the zbuffer fighting/flickering effect
   glDepthMask(GL_FALSE);
-  
+
   // draw treads
   treadsGState.setState();
   for (ptr = TreadsObstacleList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
@@ -646,7 +646,7 @@ void TrackMarks::renderObstacleTracks()
 
   // re-enable the zbuffer writing
   glDepthMask(GL_TRUE);
-  
+
   return;
 }
 
@@ -769,7 +769,7 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
   if (BZDBCache::zbuffer) {
     return;
   }
-  
+
   // do not add track marks that are drawn by renderGroundTracks
   std::list<TrackEntry>::iterator it;
 
@@ -782,7 +782,7 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
       scene->addDynamicNode(te.sceneNode);
     }
   }
-      
+
   // smoke track marks in the air
   for (ptr = SmokeList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
     const TrackEntry& te = *ptr;
@@ -791,7 +791,7 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
       scene->addDynamicNode(te.sceneNode);
     }
   }
-      
+
   return;
 }
 
@@ -835,7 +835,7 @@ TrackRenderNode::TrackRenderNode(const TrackEntry* _te, TrackType _type)
   type = _type;
   return;
 }
-  
+
 
 TrackRenderNode::~TrackRenderNode()
 {
@@ -844,7 +844,7 @@ TrackRenderNode::~TrackRenderNode()
 
 
 void TrackRenderNode::render()
-{ 
+{
   if (type == TreadsTrack) {
     drawTreads(*te);
   } else if (type == PuddleTrack) {
@@ -861,15 +861,15 @@ void TrackRenderNode::render()
 //
 
 TrackSceneNode::TrackSceneNode(const TrackEntry* _te, TrackType _type,
-                               const OpenGLGState* _gstate) :
-                                 renderNode(_te, _type)
+			       const OpenGLGState* _gstate) :
+				 renderNode(_te, _type)
 {
   te = _te;
   type = _type;
   gstate = _gstate;
   return;
 }
-                               
+
 TrackSceneNode::~TrackSceneNode()
 {
   return;
@@ -896,7 +896,7 @@ void TrackSceneNode::update()
     radius = (te->scale * TreadOutside);
   }
   setRadius(radius * radius);
-  
+
   return;
 }
 

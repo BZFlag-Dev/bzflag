@@ -83,7 +83,7 @@ class MainWindow {
     void		getJoyDevices(std::vector<std::string> &list) const;
     void		initJoystick(std::string &joystickName);
 
-    bool                isInFault() { return faulting; };
+    bool		isInFault() { return faulting; };
 
   private:
     // no copying
@@ -109,7 +109,7 @@ class MainWindow {
     int			viewHeight;
     int			minWidth;
     int			minHeight;
-    bool                faulting;
+    bool		faulting;
 };
 
 //

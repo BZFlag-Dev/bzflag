@@ -3233,7 +3233,7 @@ static void adjustTolerances()
   if ((clOptions->gameStyle & HandicapGameStyle) != 0) {
     speedTolerance *= HandicapSpeedAdj;
   }
-  
+
   // check for physics driver disabling
   disableHeightChecks = false;
   bool disableSpeedChecks = false;
@@ -3244,25 +3244,25 @@ static void adjustTolerances()
     const float av = phydrv->getAngularVel();
     if (!phydrv->getIsDeath()) {
       if (!phydrv->getIsSlide() &&
-          ((v[0] != 0.0f) || (v[1] != 0.0f) || (av != 0.0f))) {
-        disableSpeedChecks = true;
+	  ((v[0] != 0.0f) || (v[1] != 0.0f) || (av != 0.0f))) {
+	disableSpeedChecks = true;
       }
       if (v[2] > 0.0f) {
-        disableHeightChecks = true;
+	disableHeightChecks = true;
       }
     }
     i++;
     phydrv = PHYDRVMGR.getDriver(i);
   }
-  
+
   if (disableSpeedChecks) {
     speedTolerance = MAXFLOAT;
     DEBUG1("Warning: disabling speed checking due to physics drivers\n");
-  } 
+  }
   if (disableHeightChecks) {
     DEBUG1("Warning: disabling height checking due to physics drivers\n");
-  } 
-  
+  }
+
   return;
 }
 
@@ -3468,7 +3468,7 @@ possible attack from %s\n",
       buf = nboUnpackShort(buf, reason);
       buf = nboUnpackShort(buf, shot);
       if (reason == PhysicsDriverDeath) {
-        buf = nboUnpackInt(buf, phydrv);
+	buf = nboUnpackInt(buf, phydrv);
       }
 
       // Sanity check on shot: Here we have the killer
@@ -3722,42 +3722,42 @@ possible attack from %s\n",
 
 	// see if the player is too high
 	if (!disableHeightChecks) {
-	
-          static const float heightFudge = 1.10f; /* 10% */
 
-          float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
-          float normalGravity = BZDBCache::gravity;
-          if ((wingsGravity < 0.0f) && (normalGravity < 0.0f)) {
+	  static const float heightFudge = 1.10f; /* 10% */
 
-            float wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
-            wingsMaxHeight *= wingsMaxHeight;
-            wingsMaxHeight *= (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
-            wingsMaxHeight /= (-wingsGravity * 0.5f);
+	  float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
+	  float normalGravity = BZDBCache::gravity;
+	  if ((wingsGravity < 0.0f) && (normalGravity < 0.0f)) {
 
-            float normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-            normalMaxHeight *= normalMaxHeight;
-            normalMaxHeight /= (-normalGravity * 0.5f);
+	    float wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+	    wingsMaxHeight *= wingsMaxHeight;
+	    wingsMaxHeight *= (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
+	    wingsMaxHeight /= (-wingsGravity * 0.5f);
 
-            float maxHeight;
-            if (wingsMaxHeight > normalMaxHeight) {
-              maxHeight = wingsMaxHeight;
-            } else {
-              maxHeight = normalMaxHeight;
-            }
+	    float normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+	    normalMaxHeight *= normalMaxHeight;
+	    normalMaxHeight /= (-normalGravity * 0.5f);
 
-            // final adjustments
-            maxHeight *= heightFudge;
-            maxHeight += maxWorldHeight;
+	    float maxHeight;
+	    if (wingsMaxHeight > normalMaxHeight) {
+	      maxHeight = wingsMaxHeight;
+	    } else {
+	      maxHeight = normalMaxHeight;
+	    }
 
-            if (state.pos[2] > maxHeight) {
-              DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-                     playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
-              sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
-              removePlayer(t, "too high");
-              break;
-            }
-          }
-        }
+	    // final adjustments
+	    maxHeight *= heightFudge;
+	    maxHeight += maxWorldHeight;
+
+	    if (state.pos[2] > maxHeight) {
+	      DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
+		     playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
+	      sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
+	      removePlayer(t, "too high");
+	      break;
+	    }
+	  }
+	}
 
 	// make sure the player is still in the map
 	// test all the map bounds + some fudge factor, just in case
@@ -4407,10 +4407,10 @@ int main(int argc, char **argv)
     }
     done = true;
   }
-  
+
   // adjust speed and height checking if required
   adjustTolerances();
-  
+
   // setup the game settings
   makeGameSettings();
 

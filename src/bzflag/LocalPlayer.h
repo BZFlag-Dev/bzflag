@@ -105,7 +105,7 @@ public:
   int	   getSpeed();
   bool		isSpawning();
   void		setSpawning( bool spawn );
-  
+
 
   static LocalPlayer*	getMyTank();
   static void		setMyTank(LocalPlayer*);
@@ -133,9 +133,9 @@ protected:
 
 private:
   void		doSlideMotion(float dt, float slideTime,
-                          float newAngVel, float* newVelocity);
+			  float newAngVel, float* newVelocity);
   float		getNewAngVel(float old, float desired);
-  
+
 private:
   Location	location;
   FiringStatus	firingStatus;

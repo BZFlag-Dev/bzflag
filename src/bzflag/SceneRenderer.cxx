@@ -687,7 +687,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
-           && BZDB.isTrue("userMirror");
+	   && BZDB.isTrue("userMirror");
 
   clearZbuffer = true;
   drawGround = true;
@@ -945,7 +945,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 void SceneRenderer::doRender()
 {
   const bool notMirror = (!mirror || !clearZbuffer);
-  
+
   // render the ground tank tracks
   if (notMirror) {
     TrackMarks::renderGroundTracks();
@@ -970,7 +970,7 @@ void SceneRenderer::doRender()
   if (notMirror) {
     TrackMarks::renderObstacleTracks();
   }
-  
+
   return;
 }
 

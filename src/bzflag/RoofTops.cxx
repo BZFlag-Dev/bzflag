@@ -59,15 +59,15 @@ void RoofTops::clear()
 float RoofTops::getTopHeight(float x, float y, float maxHeight)
 {
   const float zSpeed = -1.0f;
-  
+
   // setup the test ray
   const float dir[3] = { 0.0f, 0.0f, zSpeed };
   const float org[3] = { x, y, maxHeight };
   Ray ray(org, dir);
-  
+
   // get the obstacle list
   const ObsList* olist = COLLISIONMGR.rayTest (&ray, MAXFLOAT);
-  
+
   float minTime = MAXFLOAT;
 
   for (int i = 0; i < olist->count; i++) {
@@ -81,13 +81,13 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
       minTime = t;
     }
   }
-  
+
   float height = maxHeight + (minTime * zSpeed);
 
   if (height < 0.0f) {
     height = 0.0f;
   }
-  
+
   return height;
 }
 

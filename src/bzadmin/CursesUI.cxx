@@ -224,7 +224,7 @@ bool CursesUI::checkCommand(std::string& str) {
     if (targetIter != players.end() && targetIter->first != me &&
 	targetIter->first <= LastRealPlayer) {
       if (targetIter->second.isAdmin) {
-	outputMessage("Warning: Kicking Administrator (" 
+	outputMessage("Warning: Kicking Administrator ("
 	  + targetIter->second.name + ")!", Red);
       }
       cmd = "/kick \"";
@@ -242,7 +242,7 @@ bool CursesUI::checkCommand(std::string& str) {
 	targetIter->first <= LastRealPlayer) {
       if (targetIter->second.ip != "") {
 	if (targetIter->second.isAdmin) {
-	  outputMessage("Warning: Banning Administrator (" 
+	  outputMessage("Warning: Banning Administrator ("
 	    + targetIter->second.name + ")!", Red);
 	}
 	cmd = "/ban ";

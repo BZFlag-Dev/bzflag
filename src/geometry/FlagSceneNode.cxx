@@ -52,8 +52,8 @@ public:
 
   GLuint glList;
 private:
-  int                   refCount;
-  float	                ripple1, ripple2;
+  int		   refCount;
+  float			ripple1, ripple2;
   static const float	RippleSpeed1;
   static const float	RippleSpeed2;
 };
@@ -62,13 +62,13 @@ const float		WaveGeometry::RippleSpeed1 = 2.4f * M_PI;
 const float		WaveGeometry::RippleSpeed2 = 1.724f * M_PI;
 
 WaveGeometry::WaveGeometry() : refCount(0)
-{ 
+{
   ripple1 = 2.0f * M_PI * (float)bzfrand();
   ripple2 = 2.0f * M_PI * (float)bzfrand();
 }
 
 void WaveGeometry::waveFlag(float dt)
-{ 
+{
   int i;
   if (!refCount)
     return;
@@ -116,7 +116,7 @@ void WaveGeometry::waveFlag(float dt)
 }
 
 void WaveGeometry::freeFlag()
-{ 
+{
   if (!refCount)
     return;
   glDeleteLists(glList, 1);

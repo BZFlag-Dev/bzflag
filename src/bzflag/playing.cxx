@@ -128,12 +128,12 @@ HUDRenderer*		hud = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
-static bool	     joinRequested    = false;
+static bool		joinRequested = false;
 bool			admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
 bool			fireButton = false;
-bool		roamButton = false;
+bool			roamButton = false;
 static bool		firstLife = false;
 static bool		showFPS = false;
 static bool		showDrawTime = false;
@@ -147,14 +147,14 @@ float			pauseCountdown = 0.0f;
 float			destructCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
-static std::vector<PlayingCallbackItem>	playingCallbacks;
+static std::vector<PlayingCallbackItem> playingCallbacks;
 bool			gameOver = false;
-static std::vector<BillboardSceneNode*>	explosions;
-static std::vector<BillboardSceneNode*>	prototypeExplosions;
+static std::vector<BillboardSceneNode*> explosions;
+static std::vector<BillboardSceneNode*> prototypeExplosions;
 int			savedVolume = -1;
 static bool		grabMouseAlways = false;
 FlashClock		pulse;
-static bool	     wasRabbit = false;
+static bool		wasRabbit = false;
 static bool		justJoined = false;
 
 MessageOfTheDay		motd;
@@ -168,10 +168,10 @@ static void*		handleMsgSetVars(void *msg);
 void			handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
-static void	     enteringServer(void *buf);
-static void	     joinInternetGame2();
-static void	     cleanWorldCache();
-static void	     markOld(std::string &fileName);
+static void		enteringServer(void *buf);
+static void		joinInternetGame2();
+static void		cleanWorldCache();
+static void		markOld(std::string &fileName);
 void			leaveGame();
 void			drawFrame(const float dt);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
@@ -219,16 +219,16 @@ static ServerLink*	robotServer[MAX_ROBOTS];
 extern struct tm	userTime;
 static double		userTimeEpochOffset;
 
-static bool	     entered = false;
-static bool	     joiningGame   = false;
-static WorldBuilder    *worldBuilder  = NULL;
-static std::string      worldUrl;
-static std::string      worldCachePath;
-static std::string      md5Digest;
-static uint32_t	 worldPtr      = 0;
-static char	    *worldDatabase = NULL;
-static bool	     isCacheTemp;
-static std::ostream    *cacheOut = NULL;
+static bool		entered = false;
+static bool		joiningGame = false;
+static WorldBuilder	*worldBuilder = NULL;
+static std::string	worldUrl;
+static std::string	worldCachePath;
+static std::string	md5Digest;
+static uint32_t		worldPtr = 0;
+static char		*worldDatabase = NULL;
+static bool		isCacheTemp;
+static std::ostream	*cacheOut = NULL;
 
 StartupInfo::StartupInfo() : hasConfiguration(false),
 			     autoConnect(false),
@@ -1822,7 +1822,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackShort(msg, reason);
       msg = nboUnpackShort(msg, shotId);
       if (reason == (int16_t)PhysicsDriverDeath) {
-        msg = nboUnpackInt(msg, phydrv);
+	msg = nboUnpackInt(msg, phydrv);
       }
       BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
       BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
@@ -1938,9 +1938,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
 	  if (driver == NULL) {
 	    message += "Unknown Deadly Obstacle";
-          } else {
-            message += driver->getDeathMsg();
-          }
+	  } else {
+	    message += driver->getDeathMsg();
+	  }
 	  addMessage(victimPlayer, message);
 	}
 	else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
@@ -2955,15 +2955,15 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     else if (reason == PhysicsDriverDeath) {
       const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
       if (driver) {
-        blowedUpNotice = driver->getDeathMsg();
+	blowedUpNotice = driver->getDeathMsg();
       } else {
-        blowedUpNotice = "Killed by unknown obstacle";
+	blowedUpNotice = "Killed by unknown obstacle";
       }
     }
     else {
       blowedUpNotice = "Invalid reason";
     }
-    
+
     // first, check if i'm the culprit
     if (reason == GotShot && getLocalPlayer(killer) == myTank) {
       blowedUpNotice = "Shot myself";
@@ -3012,7 +3012,7 @@ static void		checkEnvironment()
 
   // skip this if i'm dead or paused
   if (!myTank->isAlive() || myTank->isPaused()) return;
-  
+
   FlagType* flagd = myTank->getFlag();
   if (flagd->flagTeam != NoTeam) {
     // have I captured a flag?
@@ -3116,7 +3116,7 @@ static void		checkEnvironment()
   // if not dead yet, see if i'm sitting on death
   else if (myTank->getDeathPhysicsDriver() >= 0) {
     gotBlowedUp(myTank, DeathTouch, ServerPlayer, NULL,
-                myTank->getDeathPhysicsDriver());
+		myTank->getDeathPhysicsDriver());
   }
   // if not dead yet, see if i've dropped below the death level
   else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel)) {
@@ -3573,7 +3573,7 @@ static void		checkEnvironment(RobotPlayer* tank)
   // if not dead yet, see if i'm sitting on death
   else if (tank->getDeathPhysicsDriver() >= 0) {
     gotBlowedUp(tank, DeathTouch, ServerPlayer, NULL,
-                tank->getDeathPhysicsDriver());
+		tank->getDeathPhysicsDriver());
   }
   // if not dead yet, see if the robot dropped below the death level
   else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
@@ -4271,13 +4271,13 @@ void setupNearPlane()
   if (tank == NULL) {
     return;
   }
-    
+
   const float halfLength = 0.5f * BZDBCache::tankLength;
-  const float length = tank->getDimensions()[1]; 
+  const float length = tank->getDimensions()[1];
   if (fabsf(length - halfLength) > 0.1f) {
     NearPlane = NearPlaneClose;
   }
-  
+
   return;
 }
 
@@ -4351,14 +4351,14 @@ void drawFrame(const float dt)
       hud->setAltitude(-1.0f);
       float roamViewAngle;
       setRoamingLabel(false);
-      if ((roamView != roamViewFree) && 
-          ((player && player[roamTrackWinner]) || (devDriving && myTank))) {
-        Player *target;
-        if (!devDriving) {
-          target = player[roamTrackWinner];
-        } else {
-          target = myTank;
-        }
+      if ((roamView != roamViewFree) &&
+	  ((player && player[roamTrackWinner]) || (devDriving && myTank))) {
+	Player *target;
+	if (!devDriving) {
+	  target = player[roamTrackWinner];
+	} else {
+	  target = myTank;
+	}
 	const float *targetTankDir = target->getForward();
 	// fixed camera tracking target
 	if (roamView == roamViewTrack) {
@@ -4416,10 +4416,10 @@ void drawFrame(const float dt)
 	roamViewAngle = roamTheta;
       }
       if (!devDriving) {
-        float virtPos[]={eyePoint[0], eyePoint[1], 0};
-        if (myTank) {
+	float virtPos[]={eyePoint[0], eyePoint[1], 0};
+	if (myTank) {
 	  myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
-        }
+	}
       }
       fov = roamZoom * M_PI / 180.0f;
       moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
@@ -4445,11 +4445,11 @@ void drawFrame(const float dt)
       // add my tank if required
       const bool showTreads = BZDB.isTrue("showTreads");
       const bool showMyTreads = showTreads ||
-                                (devDriving && (roamView != roamViewFP));
+				(devDriving && (roamView != roamViewFP));
       const bool cloaked = (myTank->getFlag() == Flags::Cloaking);
       const bool inCockpit = (!devDriving || (roamView != roamViewFP));
       if (myTank->needsToBeRendered(cloaked, showMyTreads)) {
-        myTank->addToScene(scene, myTank->getTeam(), inCockpit, showMyTreads);
+	myTank->addToScene(scene, myTank->getTeam(), inCockpit, showMyTreads);
       }
 
       // add my shells
@@ -4487,7 +4487,7 @@ void drawFrame(const float dt)
 	  const bool cloaked = (player[i]->getFlag() == Flags::Cloaking) &&
 			       (myTank->getFlag() != Flags::Seer);
 	  const bool following = (roaming && !devDriving) &&
-	                         (roamView == roamViewFP) &&
+				 (roamView == roamViewFP) &&
 				 (roamTrackWinner == i);
 	  const bool showPlayer = !following || showTreads;
 	  const bool inCockpit = following && showTreads;
@@ -4890,21 +4890,21 @@ static void		prepareTheHUD()
       const float* myTeamColor = Team::getTankColor(myTank->getTeam());
       // markers for my team flag
       for (int i = 0; i < numFlags; i++) {
-        Flag& flag = world->getFlag(i);
-        if ((flag.type->flagTeam == myTank->getTeam())
-            && ((flag.status != FlagOnTank) || 
-                (flag.owner != myTank->getId()))) {
-          const float* flagPos = flag.position;
-          float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
-          hud->addMarker(heading, myTeamColor);
-        }
+	Flag& flag = world->getFlag(i);
+	if ((flag.type->flagTeam == myTank->getTeam())
+	    && ((flag.status != FlagOnTank) ||
+		(flag.owner != myTank->getId()))) {
+	  const float* flagPos = flag.position;
+	  float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
+	  hud->addMarker(heading, myTeamColor);
+	}
       }
     }
     if (myTank->getAntidoteLocation()) {
       // marker for my antidote flag
       const GLfloat* antidotePos = myTank->getAntidoteLocation();
       float heading = atan2f(antidotePos[1] - myPos[1],
-                             antidotePos[0] - myPos[0]);
+			     antidotePos[0] - myPos[0]);
       const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
       hud->addMarker(heading, antidoteColor);
     }
@@ -4934,44 +4934,44 @@ static void		updatePauseCountdown(float dt)
        * right flags.
        */
       if (myTank->getLocation() == LocalPlayer::InBuilding) {
-        // custom message when trying to pause while in a building
-        // (could get stuck on un-pause if flag is taken/lost)
-        hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
+	// custom message when trying to pause while in a building
+	// (could get stuck on un-pause if flag is taken/lost)
+	hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
 
       } else if (myTank->getLocation() == LocalPlayer::InAir) {
-        // custom message when trying to pause when jumping/falling
-        hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
+	// custom message when trying to pause when jumping/falling
+	hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
 
       } else if (myTank->getLocation() != LocalPlayer::OnGround &&
-                 myTank->getLocation() != LocalPlayer::OnBuilding) {
-        // catch-all message when trying to pause when you should not
-        hud->setAlert(1, "Unable to pause right now", 1.0f, false);
+		 myTank->getLocation() != LocalPlayer::OnBuilding) {
+	// catch-all message when trying to pause when you should not
+	hud->setAlert(1, "Unable to pause right now", 1.0f, false);
 
       } else {
-        // okay, now we pause.  first drop any team flag we may have.
-        const FlagType* flagd = myTank->getFlag();
-        if (flagd->flagTeam != NoTeam)
-          serverLink->sendDropFlag(myTank->getPosition());
+	// okay, now we pause.  first drop any team flag we may have.
+	const FlagType* flagd = myTank->getFlag();
+	if (flagd->flagTeam != NoTeam)
+	  serverLink->sendDropFlag(myTank->getPosition());
 
-        if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
-          serverLink->sendNewRabbit();
+	if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
+	  serverLink->sendNewRabbit();
 
-        // now actually pause
-        myTank->setPause(true);
-        hud->setAlert(1, NULL, 0.0f, true);
-        controlPanel->addMessage("Paused");
+	// now actually pause
+	myTank->setPause(true);
+	hud->setAlert(1, NULL, 0.0f, true);
+	controlPanel->addMessage("Paused");
 
-        // turn off the sound
-        if (savedVolume == -1) {
-          savedVolume = getSoundVolume();
-          setSoundVolume(0);
-        }
+	// turn off the sound
+	if (savedVolume == -1) {
+	  savedVolume = getSoundVolume();
+	  setSoundVolume(0);
+	}
 
-        // ungrab mouse
-        mainWindow->ungrabMouse();
+	// ungrab mouse
+	mainWindow->ungrabMouse();
       }
     } else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
-               !pausedByUnmap) {
+	       !pausedByUnmap) {
       // update countdown alert
       char msgBuf[40];
       sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
@@ -5031,7 +5031,7 @@ static void		playingLoop()
   while (!CommandsStandard::isQuit()) {
 
     BZDBCache::update();
-    
+
     // get delta time
     TimeKeeper prevTime = TimeKeeper::getTick();
     TimeKeeper::setTick();
@@ -5162,7 +5162,7 @@ static void		playingLoop()
     // notify if input changed
     if ((myTank != NULL) && (myTank->queryInputChange() == true)) {
       controlPanel->addMessage(
-        LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
+	LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
     }
 
     // update other tank's shots
@@ -5256,7 +5256,7 @@ static void		playingLoop()
 
     // send my data
     if (myTank && myTank->isDeadReckoningWrong() &&
-        (myTank->getTeam() != ObserverTeam)) {
+	(myTank->getTeam() != ObserverTeam)) {
       // also calls setDeadReckoning()
       serverLink->sendPlayerUpdate(myTank);
     }
@@ -5812,7 +5812,7 @@ void			startPlaying(BzfDisplay* _display,
     mainMenu->createControls();
     HUDDialogStack::get()->push(mainMenu);
   }
-  
+
   // start game loop
   playingLoop();
 

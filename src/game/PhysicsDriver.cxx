@@ -253,14 +253,14 @@ void PhysicsDriver::setDeathMessage(const std::string& msg)
     first++;
   }
   std::string str = msg.substr(first);
-  
+
   // limit the length
   if (str.size() > 256) {
     str.resize(256);
   }
-  
+
   deathMsg = str;
-  
+
   return;
 }
 
@@ -304,9 +304,9 @@ void * PhysicsDriver::unpack(void *buf)
 
   buf = nboUnpackFloat (buf, slideTime);
   buf = nboUnpackStdString(buf, deathMsg);
-  
+
   finalize();
-  
+
   return buf;
 }
 
@@ -321,7 +321,7 @@ int PhysicsDriver::packSize()
   fullSize += sizeof(float) * 1; // radial velocity
   fullSize += sizeof(float) * 2; // radial position
   fullSize += sizeof(float) * 1; // slide time
-  
+
   fullSize += nboStdStringPackSize(deathMsg);
 
   return fullSize;
@@ -350,7 +350,7 @@ void PhysicsDriver::print(std::ostream& out, int /*level*/)
   if (radialVel != 0.0f) {
     const float* rp = radialPos;
     out << "  radial " << radialVel << " "
-                       << rp[0] << " " << rp[1] << std::endl;
+		       << rp[0] << " " << rp[1] << std::endl;
   }
 
   if (slide) {
@@ -360,7 +360,7 @@ void PhysicsDriver::print(std::ostream& out, int /*level*/)
   if (death) {
     out << "  death " << deathMsg << std::endl;
   }
-  
+
   out << "end" << std::endl << std::endl;
 
   return;

@@ -168,11 +168,11 @@ void			LocalPlayer::doUpdate(float dt)
 
 
 void LocalPlayer::doSlideMotion(float dt, float slideTime,
-                                float newAngVel, float* newVelocity)
+				float newAngVel, float* newVelocity)
 {
   const float oldAzimuth = getAngle();
   const float* oldVelocity = getVelocity();
-  
+
   const float angle = oldAzimuth + (0.5f * dt * newAngVel);
   const float cos_val = cosf(angle);
   const float sin_val = sinf(angle);
@@ -193,13 +193,13 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
   } else if (flag == Flags::Thief) {
     maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
   }
-  
+
   if (newSpeed > maxSpeed) {
     float adjSpeed;
     if (oldSpeed > maxSpeed) {
       adjSpeed = oldSpeed - (dt * (maxSpeed / slideTime));
       if (adjSpeed < 0.0f) {
-        adjSpeed = 0.0f;
+	adjSpeed = 0.0f;
       }
     } else {
       adjSpeed = maxSpeed;
@@ -215,7 +215,7 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
 float LocalPlayer::getNewAngVel(float old, float desired)
 {
   float newAngVel;
-  
+
   if ((inputMethod != Keyboard) || (getPhysicsDriver() >= 0)) {
     // mouse and joystick users
     newAngVel = desired;
@@ -231,8 +231,8 @@ float LocalPlayer::getNewAngVel(float old, float desired)
     newAngVel = (old * 0.8f) + (desired * 0.2f);
 
     // instant stop
-    if ((old * desired < 0.0f) || 
-        (NEAR_ZERO(desired, ZERO_TOLERANCE))) {
+    if ((old * desired < 0.0f) ||
+	(NEAR_ZERO(desired, ZERO_TOLERANCE))) {
       newAngVel = desired;
     }
   }
@@ -287,12 +287,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	dt -= (lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
 	if (dt < 0.0f) {
 	  dt = 0.0f;
-        }
+	}
 	setStatus(PlayerState::DeadStatus);
 	location = Dead;
 	if (isAutoPilot()) {
 	  CMDMGR.run("restart");
-        }
+	}
       }
 
       // can't control explosion motion
@@ -334,19 +334,19 @@ void			LocalPlayer::doUpdateMotion(float dt)
       if (getFlag() == Flags::Wings) {
 	float speed = desiredSpeed;
 
-        // angular velocity
-        newAngVel = getNewAngVel(oldAngVel, desiredAngVel);
-      
+	// angular velocity
+	newAngVel = getNewAngVel(oldAngVel, desiredAngVel);
+
 	// compute horizontal velocity so far
 	const float slideTime = BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME);
 	if (slideTime > 0.0) {
 	  doSlideMotion(dt, slideTime, newAngVel, newVelocity);
-        } else {
-          const float angle = oldAzimuth + 0.5f * dt * newAngVel;
-          newVelocity[0] = speed * cosf(angle);
-          newVelocity[1] = speed * sinf(angle);
-        }
-        
+	} else {
+	  const float angle = oldAzimuth + 0.5f * dt * newAngVel;
+	  newVelocity[0] = speed * cosf(angle);
+	  newVelocity[1] = speed * sinf(angle);
+	}
+
 	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
 	lastSpeed = speed;
       } else {
@@ -389,7 +389,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     const float* v = phydrv->getVelocity();
 
     newVelocity[2] += v[2];
-    
+
     if (phydrv->getIsSlide()) {
       const float slideTime = phydrv->getSlideTime();
       doSlideMotion(dt, slideTime, newAngVel, newVelocity);
@@ -403,12 +403,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
       const float* ap = phydrv->getAngularPos();
 
       if (av != 0.0f) {
-        // the angular velocity is in radians/sec
-        newAngVel += av;
-        const float dx = oldPosition[0] - ap[0];
-        const float dy = oldPosition[1] - ap[1];
-        newVelocity[0] -= av * dy;
-        newVelocity[1] += av * dx;
+	// the angular velocity is in radians/sec
+	newAngVel += av;
+	const float dx = oldPosition[0] - ap[0];
+	const float dy = oldPosition[1] - ap[1];
+	newVelocity[0] -= av * dy;
+	newVelocity[1] += av * dx;
       }
     }
   }
@@ -602,7 +602,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     } else {
       // get component of velocity in normal direction (in horizontal plane)
       float mag = (normal[0] * newVelocity[0]) +
-                  (normal[1] * newVelocity[1]);
+		  (normal[1] * newVelocity[1]);
 
       // handle upward normal component to prevent an upward force
       if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE)) {
@@ -685,7 +685,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // change zoned state
       setStatus(getStatus() ^ PlayerState::FlagActive);
       if (gettingSound) {
-        playLocalSound(SFX_PHANTOM);
+	playLocalSound(SFX_PHANTOM);
       }
     } else {
       // teleport
@@ -697,7 +697,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       int outFace;
       const Teleporter* outPort =
-        World::getWorld()->getTeleporter(target, outFace);
+	World::getWorld()->getTeleporter(target, outFace);
       teleporter->getPointWRT(*outPort, face, outFace,
 			      newPos, newVelocity, newAzimuth,
 			      newPos, newVelocity, &newAzimuth);
@@ -728,12 +728,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
     // because the starting position that the server sends can result
     // in an initial InAir condition, we use this bool to avoid having
     // a false jump mess with the spawnEffect()
-    // FIXME: this isn't a clean way to do it  
+    // FIXME: this isn't a clean way to do it
     if ((oldLocation == InAir) == (location == InAir)) {
       entryDrop = false;
     }
   }
-  
+
   const bool justLanded =
     (oldLocation == InAir) &&
     ((location == OnGround) || (location == OnBuilding));
@@ -750,7 +750,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       playLocalSound(SFX_LAND);
     }
     else if ((location == OnGround) &&
-             (oldPosition[2] == 0.0f) && (newPos[2] < 0.f)) {
+	     (oldPosition[2] == 0.0f) && (newPos[2] < 0.f)) {
       playLocalSound(SFX_BURROW);
     }
   }
@@ -879,11 +879,11 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
       const int driver = face->getPhysicsDriver();
       const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
       if ((phydrv != NULL) && phydrv->getIsDeath()) {
-        deathPhyDrv = driver;
+	deathPhyDrv = driver;
       }
     }
   }
-        
+
   return obstacle;
 }
 
@@ -971,7 +971,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
 
   // no target
   target = NULL;
-  
+
   // no death
   deathPhyDrv = -1;
 
@@ -1051,7 +1051,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   // set desired speed
   desiredSpeed = BZDBCache::tankSpeed * fracOfMaxSpeed;
   Player::setUserSpeed(desiredSpeed);
-  
+
   return;
 }
 
@@ -1080,7 +1080,7 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
   // set desired turn speed
   desiredAngVel = fracOfMaxAngVel * BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
   Player::setUserAngVel(desiredAngVel);
-  
+
   return;
 }
 
@@ -1260,7 +1260,7 @@ void			LocalPlayer::doJump()
       return;
     wingsFlapCount--;
   } else if ((flag != Flags::Bouncy) &&
-             ((flag != Flags::Jumping && !World::getWorld()->allowJumping()) ||
+	     ((flag != Flags::Jumping && !World::getWorld()->allowJumping()) ||
 	      (flag == Flags::NoJumping))) {
     return;
   }
@@ -1284,7 +1284,7 @@ void			LocalPlayer::doJump()
 
   // setup the graphics
   fireJumpJets();
-  
+
   // setup the sound
   if (gettingSound) {
     if (flag == Flags::Wings) {

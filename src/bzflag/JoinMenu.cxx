@@ -78,7 +78,7 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   password->setMaxLength(CallSignLen - 1);
   password->setString(info->password);
   list.push_back(password);
-  
+
   team = new HUDuiList;
   team->setFontFace(fontFace);
   team->setLabel("Team:");

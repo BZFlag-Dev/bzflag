@@ -83,7 +83,7 @@ class TankSceneNode : public SceneNode {
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
-    void 		addLight(SceneRenderer&);
+    void		addLight(SceneRenderer&);
 
     void		setDimensions(const float size[3]);
     void		ignoreDimensions();
@@ -147,7 +147,7 @@ class TankSceneNode : public SceneNode {
 	bool		isExploding;
 	bool		narrowWithDepth;
 	GLfloat		explodeFraction;
-  	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
+	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
     };
     friend class TankRenderNode;
 

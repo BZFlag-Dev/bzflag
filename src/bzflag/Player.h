@@ -156,7 +156,7 @@ private:
   // there's no meaningful shot position).
   virtual bool	doEndShot(int index, bool isHit, float* position) = 0;
   void getDeadReckoning(float* predictedPos, float* predictedAzimuth,
-                        float* predictedVel, float time) const;
+			float* predictedVel, float time) const;
   void calcRelativeMotion(float vel[2], float& speed, float& angvel);
   void setVisualTeam (TeamColor team );
   void updateFlagEffect(FlagType* flag);
@@ -220,11 +220,11 @@ private:
 
   // computable highly dynamic data
   float			forward[3];		// forward unit vector
-  
+
   // relative motion information
   float			relativeSpeed;		// relative speed
   float			relativeAngVel;		// relative angular velocity
-  
+
   // dead reckoning stuff
   TimeKeeper inputTime;		// time of input
   int	inputStatus;		// tank status
@@ -250,7 +250,7 @@ private:
   // 1 -> 1 sample rx
   // 2 -> 2 or more sample rx
   int			deadReckoningState;
-  
+
   int			oldStatus;		// old tank status bits
   float			oldZSpeed;		// old tank vertical speed
 };

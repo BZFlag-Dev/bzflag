@@ -180,7 +180,7 @@ void			HUDuiTypeIn::doRender()
   FontManager &fm = FontManager::instance();
   std::string renderStr;
   if (obfuscate) {
-	renderStr.append(string.size(), '*'); 
+	renderStr.append(string.size(), '*');
   }
   else
     renderStr = string;

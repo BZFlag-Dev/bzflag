@@ -73,7 +73,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setRelativeMotion();
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
-  
+
   // set call sign
   ::strncpy(callSign, name, CallSignLen);
   callSign[CallSignLen-1] = '\0';
@@ -108,7 +108,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   alphaTarget = 1.0f;
 
   lastTrackDraw = TimeKeeper::getCurrent();
-  
+
   return;
 }
 
@@ -245,7 +245,7 @@ void Player::setRelativeMotion()
   // set 'relativeSpeed' and 'relativeAngVel'
   float relativeVel[2];
   Player::calcRelativeMotion(relativeVel, relativeSpeed, relativeAngVel);
-  
+
   return;
 }
 
@@ -268,7 +268,7 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
 {
   vel[0] = state.velocity[0];
   vel[1] = state.velocity[1];
-  
+
   angVel = state.angVel;
 
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
@@ -276,7 +276,7 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
     const float* v = phydrv->getVelocity();
     const float av = phydrv->getAngularVel();
     const float* ap = phydrv->getAngularPos();
-    
+
     // adjust for driver velocity
     vel[0] -= v[0];
     vel[1] -= v[1];
@@ -365,12 +365,12 @@ void Player::updateJumpJets(float dt)
   return;
 }
 
-  
+
 void Player::updateTrackMarks()
 {
   const float minSpeed = 0.1f; // relative speed slop
-  
-  if (isAlive() && !isFalling() && 
+
+  if (isAlive() && !isFalling() &&
       ((getFlag() != Flags::PhantomZone) || !isFlagActive())) {
     const float lifeTime = TimeKeeper::getCurrent() - lastTrackDraw;
     if (lifeTime > TrackMarks::updateTime) {
@@ -381,8 +381,8 @@ void Player::updateTrackMarks()
       const float fullLength = 6.0f;
       const float treadHeight = 1.2f;
       const float dist =
-        dimensions[0] * ((fullLength - treadHeight) / fullLength);
-      
+	dimensions[0] * ((fullLength - treadHeight) / fullLength);
+
       if (relativeSpeed > +minSpeed) {
 	// draw the mark at the back of the treads
 	markPos[0] = state.pos[0] - (forward[0] * dist);
@@ -394,7 +394,7 @@ void Player::updateTrackMarks()
       } else {
 	drawMark = false;
       }
-      
+
       if (drawMark) {
 	TrackMarks::addMark(markPos, dimensionsScale[1],
 			    state.azimuth, state.phydrv);
@@ -553,7 +553,7 @@ void Player::updateTreads(float dt)
     speedFactor = relativeSpeed;
     angularFactor = relativeAngVel;
   }
-    
+
   // setup the linear component
   if (dimensionsScale[0] > 1.0e-6f) {
     speedFactor = speedFactor / dimensionsScale[0];
@@ -567,7 +567,7 @@ void Player::updateTreads(float dt)
   const float halfWidth = 0.5f * BZDBCache::tankWidth;
   // not using dimensions[1], because it may be set to 0.001 by a Narrow flag
   angularFactor *= dimensionsScale[0] * halfWidth;
-    
+
   const float leftOff = dt * (speedFactor - angularFactor);
   const float rightOff = dt * (speedFactor + angularFactor);
 
@@ -727,7 +727,7 @@ void Player::setVisualTeam (TeamColor visualTeam)
   tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
   tankNode->setTexture(tankTexture);
-  
+
   int jumpJetsTexture = tm.getTextureID("jumpjets", false);
   tankNode->setJumpJetsTexture(jumpJetsTexture);
 }
@@ -772,7 +772,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   tankNode->setClipPlane(NULL);
 
   tankNode->setJumpJets(0.0f);
-  
+
   if (isAlive()) {
     tankNode->setExplodeFraction(0.0f);
     tankNode->setJumpJets(state.jumpJetsScale);
@@ -897,7 +897,7 @@ void Player::setLandingSpeed(float velocity)
     // use a fixed decompression rate
     dimensionsRate[2] = 1.0f / squishTime;
   }
-  
+
   return;
 }
 
@@ -938,14 +938,14 @@ void* Player::unpack(void* buf, uint16_t code)
 {
   float timestamp;
   PlayerId id;
-  
+
   buf = nboUnpackFloat(buf, timestamp);
   buf = nboUnpackUByte(buf, id);
   buf = state.unpack(buf, code);
-  
+
   setDeadReckoning(timestamp);
   setRelativeMotion();
-  
+
   return buf;
 }
 
@@ -970,7 +970,7 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 			      float* predictedVel, float dt) const
 {
   *predictedAzimuth = inputAzimuth;
-  
+
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
     predictedPos[0] = inputPos[0];
@@ -993,13 +993,13 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
     // following the parabola
     predictedVel[2] = inputVel[2] + (BZDBCache::gravity * dt);
     predictedPos[2] = inputPos[2] + (inputVel[2] * dt) +
-                      (0.5f * BZDBCache::gravity * dt * dt);
+		      (0.5f * BZDBCache::gravity * dt * dt);
   }
   else {
     // velocity[2] is zero when not falling, except for Burrow flag
     predictedVel[2] = inputVel[2];
     predictedPos[2] = inputPos[2] + (inputVel[2] * dt);
-    
+
     // different algorithms for tanks moving in
     // a straight line vs. turning in a circle
     if (!inputTurning) {
@@ -1027,37 +1027,37 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(inputPhyDrv);
     if (phydrv != NULL) {
       if (phydrv->getIsSlide()) {
-        predictedVel[0] = inputRelVel[0];
-        predictedVel[1] = inputRelVel[1];
-        predictedPos[0] = inputPos[0] + (dt * inputRelVel[0]);
-        predictedPos[1] = inputPos[1] + (dt * inputRelVel[1]);
+	predictedVel[0] = inputRelVel[0];
+	predictedVel[1] = inputRelVel[1];
+	predictedPos[0] = inputPos[0] + (dt * inputRelVel[0]);
+	predictedPos[1] = inputPos[1] + (dt * inputRelVel[1]);
       }
       else {
-        // angular velocity adjustment
-        const float pdAngVel = phydrv->getAngularVel();
-        if (pdAngVel != 0.0f) {
-          const float angle = (dt * pdAngVel);
-          *predictedAzimuth += angle;
-          const float* pdAngPos = phydrv->getAngularPos();
-          const float dx = predictedPos[0] - pdAngPos[0];
-          const float dy = predictedPos[1] - pdAngPos[1];
-          const float cos_val = cosf(angle);
-          const float sin_val = sinf(angle);
-          predictedPos[0] = pdAngPos[0] + ((dx * cos_val) - (dy * sin_val));
-          predictedPos[1] = pdAngPos[1] + ((dy * cos_val) + (dx * sin_val));
-          predictedVel[0] += (-dy * pdAngVel);
-          predictedVel[1] += (+dx * pdAngVel);
-        }
-        // linear velocity adjustment
-        const float* pdVel = phydrv->getVelocity();
-        predictedPos[0] += (dt * pdVel[0]);
-        predictedPos[1] += (dt * pdVel[1]);
-        predictedVel[0] += pdVel[0];
-        predictedVel[1] += pdVel[1];
+	// angular velocity adjustment
+	const float pdAngVel = phydrv->getAngularVel();
+	if (pdAngVel != 0.0f) {
+	  const float angle = (dt * pdAngVel);
+	  *predictedAzimuth += angle;
+	  const float* pdAngPos = phydrv->getAngularPos();
+	  const float dx = predictedPos[0] - pdAngPos[0];
+	  const float dy = predictedPos[1] - pdAngPos[1];
+	  const float cos_val = cosf(angle);
+	  const float sin_val = sinf(angle);
+	  predictedPos[0] = pdAngPos[0] + ((dx * cos_val) - (dy * sin_val));
+	  predictedPos[1] = pdAngPos[1] + ((dy * cos_val) + (dx * sin_val));
+	  predictedVel[0] += (-dy * pdAngVel);
+	  predictedVel[1] += (+dx * pdAngVel);
+	}
+	// linear velocity adjustment
+	const float* pdVel = phydrv->getVelocity();
+	predictedPos[0] += (dt * pdVel[0]);
+	predictedPos[1] += (dt * pdVel[1]);
+	predictedVel[0] += pdVel[0];
+	predictedVel[1] += pdVel[1];
       }
     }
   }
-  
+
   return;
 }
 
@@ -1070,7 +1070,7 @@ bool Player::isDeadReckoningWrong() const
   if ((state.status & checkStates) != (inputStatus & checkStates)) {
     return true;
   }
-  
+
   // never send a packet when dead
   if ((state.status & PlayerState::Alive) == 0) {
     return false;
@@ -1080,7 +1080,7 @@ bool Player::isDeadReckoningWrong() const
   if (state.phydrv != inputPhyDrv) {
     return true;
   }
-  
+
   // otherwise always send at least one packet per second
   if ((TimeKeeper::getTick() - inputTime) >= MaxUpdateTime) {
     return true;
@@ -1116,16 +1116,16 @@ bool Player::isDeadReckoningWrong() const
       (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance)) {
     if (debugLevel >= 4) {
       if (fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) {
-        printf ("state.pos[0] = %f, predictedPos[0] = %f\n",
-                state.pos[0], predictedPos[0]);
+	printf ("state.pos[0] = %f, predictedPos[0] = %f\n",
+		state.pos[0], predictedPos[0]);
       }
       if (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) {
-        printf ("state.pos[1] = %f, predictedPos[1] = %f\n",
-                state.pos[1], predictedPos[1]);
+	printf ("state.pos[1] = %f, predictedPos[1] = %f\n",
+		state.pos[1], predictedPos[1]);
       }
       if (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance) {
-        printf ("state.pos[2] = %f, predictedPos[2] = %f\n",
-                state.pos[2], predictedPos[2]);
+	printf ("state.pos[2] = %f, predictedPos[2] = %f\n",
+		state.pos[2], predictedPos[2]);
       }
     }
     return true;
@@ -1134,7 +1134,7 @@ bool Player::isDeadReckoningWrong() const
   float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
   if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) {
     DEBUG4 ("state.azimuth = %f, predictedAzimuth = %f\n",
-            state.azimuth, predictedAzimuth);
+	    state.azimuth, predictedAzimuth);
     return true;
   }
 
@@ -1183,44 +1183,44 @@ void Player::doDeadReckoning()
 
     // check for a landing
     if (((oldStatus & PlayerState::Falling) != 0) &&
-        ((inputStatus & PlayerState::Falling) == 0)) {
+	((inputStatus & PlayerState::Falling) == 0)) {
       // setup the squish effect
       setLandingSpeed(oldZSpeed);
       // setup the sound
       if (BZDB.isTrue("remoteSounds")) {
-        if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {
-          playWorldSound(SFX_LAND, state.pos, remoteImportant);
-        } else  {
-          // probably never gets played
-          playWorldSound(SFX_BURROW,  state.pos, remoteImportant);
-        }
+	if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {
+	  playWorldSound(SFX_LAND, state.pos, remoteImportant);
+	} else  {
+	  // probably never gets played
+	  playWorldSound(SFX_BURROW,  state.pos, remoteImportant);
+	}
       }
     }
 
-    // FIXME - this still needs work      
-    //         also calculate a more accurate landing speed?
-    
+    // FIXME - this still needs work
+    //	 also calculate a more accurate landing speed?
+
     // check for a jump
     if ((state.velocity[2] > oldZSpeed) && (state.velocity[2] > 0.0f) &&
-        (state.pos[2] > 0.0f)) {
+	(state.pos[2] > 0.0f)) {
   //    if (((oldStatus & PlayerState::Falling) == 0) &&
-  //        ((inputStatus & PlayerState::Falling) != 0) &&
-  //        (predictedVel[2] > 0.0f)) {
+  //	((inputStatus & PlayerState::Falling) != 0) &&
+  //	(predictedVel[2] > 0.0f)) {
       // setup the sound
       if (BZDB.isTrue("remoteSounds")) {
-        if (state.jumpJetsScale > 0.0f) {
-          if (getFlag() == Flags::Wings) {
-            playWorldSound(SFX_FLAP, state.pos, remoteImportant);
-          } else {
-            playWorldSound(SFX_JUMP, state.pos, remoteImportant);
-          }
-        } else {
-          playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
-        }
+	if (state.jumpJetsScale > 0.0f) {
+	  if (getFlag() == Flags::Wings) {
+	    playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+	  } else {
+	    playWorldSound(SFX_JUMP, state.pos, remoteImportant);
+	  }
+	} else {
+	  playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
+	}
       }
     }
   }
-  
+
   // copy some old state
   oldZSpeed = state.velocity[2];
   oldStatus = inputStatus;
@@ -1277,12 +1277,12 @@ void Player::setDeadReckoning(float timestamp)
 
   // set the current state
   setDeadReckoning();
-  
-  // adjust for the time offset  
+
+  // adjust for the time offset
   if (deadReckoningState >= DRStateStable) {
 
     // FIXME - untested
-    
+
     // get predicted offset state
     float predictedPos[3];
     float predictedVel[3];
@@ -1295,7 +1295,7 @@ void Player::setDeadReckoning(float timestamp)
   }
 
   setRelativeMotion();
-  
+
   return;
 }
 
@@ -1303,7 +1303,7 @@ void Player::setDeadReckoning(float timestamp)
 void Player::setDeadReckoning()
 {
   inputTime = TimeKeeper::getTick();
-  
+
   // copy stuff for dead reckoning
   inputStatus = state.status;
   inputAzimuth = state.azimuth;
@@ -1313,13 +1313,13 @@ void Player::setDeadReckoning()
   inputPhyDrv = state.phydrv;
 
   //
-  // pre-calculate some stuff for dead reckoning  
+  // pre-calculate some stuff for dead reckoning
   //
-  
+
   // the relative motion information (with respect to the physics drivers)
   calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
 
-  // setup the turning pararmeters  
+  // setup the turning pararmeters
   inputTurning = false;
   if (fabsf(inputRelAngVel) > 0.001f) {
     inputTurning = true;
@@ -1329,7 +1329,7 @@ void Player::setDeadReckoning()
     inputTurnCenter[0] = inputPos[0] - inputTurnVector[0];
     inputTurnCenter[1] = inputPos[1] - inputTurnVector[1];
   }
-  
+
   return;
 }
 

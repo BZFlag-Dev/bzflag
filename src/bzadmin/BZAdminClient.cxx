@@ -306,7 +306,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	vbuf = nboUnpackShort(vbuf, shotId);
 	if (reason == PhysicsDriverDeath) {
 	  vbuf = nboUnpackInt(vbuf, phydrv);
-        }
+	}
 
 	// find the player names and build a kill message string
 	it = players.find(victim);

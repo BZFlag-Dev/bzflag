@@ -72,7 +72,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
-  
+
   // Display Treads
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -83,7 +83,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
-  
+
   // Track Mark Fading Scale
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
@@ -197,11 +197,11 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
     case 'c': {
       int culling = list->getIndex();
       if (culling <= 0) {
-        TrackMarks::setAirCulling(TrackMarks::NoAirCull);
+	TrackMarks::setAirCulling(TrackMarks::NoAirCull);
       } else if (culling == 1) {
-        TrackMarks::setAirCulling(TrackMarks::InitAirCull);
+	TrackMarks::setAirCulling(TrackMarks::InitAirCull);
       } else {
-        TrackMarks::setAirCulling(TrackMarks::FullAirCull);
+	TrackMarks::setAirCulling(TrackMarks::FullAirCull);
       }
       break;
     }
