@@ -2,6 +2,12 @@
 
 			     BZFlag release notes
 
+* Stream Rolling collision detection is now compressed in height - Alfredo Tupone
+* Rendering options are actuated immediately - Alfredo Tupone
+* Height of base goes through the wire (base thickness defined on world files) - Alfredo Tupone
+* Fixed collision for various things (falling through floor when lagging, being stuck when tank expands, shot going into the ground, collision with pyramids) - Alfredo Tupone
+* Avoiding stuck on connection - Alfredo Tupone
+* Web/Database based list server - Alfredo Tupone, ...
 * Fixed some documentation bugs in the bzfs manual and the bzfs help output - KR (through Lars Luthman)
 * Save world files from the client - Dave Brosius
 * Drop flags on pause after timeout - Sean Morrison
