@@ -89,8 +89,8 @@ struct CmdLineOptions
   int			wksPort;
   int			gameStyle;
   int			rabbitSelection;
-  int 			msgTimer;
-  int 			spamWarnMax;
+  int			msgTimer;
+  int			spamWarnMax;
 
   std::string   servermsg;
   std::string   advertisemsg;
