@@ -66,6 +66,10 @@ bzfs \- BZFlag game server
 [\fB\-userdb \fIfile\fR]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
+[\fB\-vetoTime \fIseconds\fR]
+[\fB\-votePercentage \fIpercentage\fR]
+[\fB\-votesRequired \fInum\fR]
+[\fB\-voteTime \fIseconds\fR]
 [\fB\-world \fIworld-file\fR]
 [\fB\-worldsize \fIworld size\fR]
 .SH DESCRIPTION
@@ -350,6 +354,18 @@ that are configurable, in the the BZFlag client, send a message with
 .TP
 .B -version
 Prints the version number of the executable.
+.TP
+\fB-vetoTime \fIseconds\fR
+Length of time in which a vote can be vetoed
+.TP
+\fB-votePercentage \fIpercentage\fR
+The percentage of yes votes needed in order for the vote to be successful
+.TP
+\fB-votesRequired \fInum\fR
+The number of voters needed to hold a vote
+.TP
+\fB-voteTime \fIseconds\fR
+The length of time the players are able to vote
 .TP
 \fB-world \fIworld-file\fR
 Reads a specific world layout for the game map.
