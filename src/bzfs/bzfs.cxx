@@ -2581,7 +2581,7 @@ static bool defineWorld()
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + 30 + world->getDatabaseSize() + 2;
   if (clOptions->gameStyle & TeamFlagGameStyle)
-    worldDatabaseSize += 4 * (4 + 9 * 4);
+    worldDatabaseSize += 4 * (6 + 9 * 4);
 
   worldDatabase = new char[worldDatabaseSize];
   if(!worldDatabase)		// this should NOT happen but it does sometimes
