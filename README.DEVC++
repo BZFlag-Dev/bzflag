@@ -1,13 +1,21 @@
 Building BZFlag and its associated projects in Dev-C++ on Windows or Linux
 is quite easy.
 
-1. Open up the corresponding project files, included in the "Dev-C++"
+1. Download the latest version of Dev-C++. You can download it from:
+
+    http://sf.net/projects/dev-cpp
+
+   Releases are under "Binaries". Download the release containing MinGW32, which
+   should be the file entitled, "devcppXXXsetup.exe" (replace XXX with a version number).
+   If there is none, it should be quite obvious anyway.
+
+2. Open up the corresponding project files, included in the "Dev-C++"
    directory. Note that each project uses an individual project file,
    so no two can be combined.
 
-2. Let the opened project compile (this may take several minutes, depending on your computer).
+3. Let the opened project compile (this may take several minutes, depending on your computer).
 
-3. The binary should be in each project's corresponding main source
+4. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
 Project files were maintained using Dev-C++ 4.9.9.1
@@ -15,8 +23,8 @@ Project files were maintained using Dev-C++ 4.9.9.1
 The latest version of Dev-C++ (at this time) has been used to create and maintain these project
 files, so older versions may not necessarily work (but they may, but it is best just
 to get the latest or the above version). The version of MinGW32 that Dev-C++
-uses shouldn't matter as long as it is reasonably up to date (at this time, 3.2.x is
-a good minimum for best performance, let alone errorless compilation).
+uses should not matter as long as it is reasonably up to date (at this time, 3.2.x is
+a good minimum for best performance let alone errorless compilation).
 
 The default build is no Kerberos library or libCURL, but to enable these, all you do is
 uncomment their #define's in the config.h file in the /Dev-C++/ directory.
