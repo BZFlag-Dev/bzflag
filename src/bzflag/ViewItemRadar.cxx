@@ -324,7 +324,7 @@ void					ViewItemRadar::drawTank(float x, float y, float z, float minsize)
 	// Changes with height.
 	GLfloat s = TankRadius * 3.0 + (z + BoxHeight) * 2.0f / BoxHeight;
 
-	if (z > 0.0f) {
+	if (BZDB->isTrue("displayRadarTanksOnGround") || z > 0.0f) {
 		glBegin(GL_LINE_LOOP);
 			glVertex2f(x - s, y);
 			glVertex2f(x, y - s);

@@ -256,7 +256,11 @@
   <combo label="Colored Shots" name="displayRadarColoredShots">
     <item label="Off" value="0"/>
     <item label="On" value="1"/>
-  </combo>      
+  </combo>
+  <combo label="Large Tanks on Ground" name="displayRadarTanksOnGround">
+    <item label="Off" value="0" />
+    <item label="On" value="1" />
+  </combo>
 </menu>
 
 
