@@ -2,8 +2,6 @@
 <!--To use, add 
     <?xml-stylesheet type="text/xsl" href="../doc.xsl"?>
     To the top of any xml document, using the correct relative path.
-    This is a work in progress the javascript calls are file related for some reason.
-    More prettifying to do as well.
 -->
 <xsl:template match="book">
 	<html>
