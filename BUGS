@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- Observer controls get confused sometimes. To see, push control and arrows
+  to spin. While keys are down, push alt. Now release all. You continue spinning
+  un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
+  into situations where movement is out of control.
+
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
   bzfls.pl on Tim's     : 1.8 sec
