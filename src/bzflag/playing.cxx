@@ -1331,7 +1331,10 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
       }
 #endif
 
-  if (showMessage) {
+  /* show the message if we don't have the playerlist permission.  if
+   * we do, MsgAdminInfo should arrive with more info.
+   */
+  if (showMessage && !myTank->hasPlayerList()) {
     std::string message("joining as a");
     switch (PlayerType(type)) {
       case TankPlayer:
@@ -1726,40 +1729,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	addPlayer(id, msg, entered);
 	updateNumPlayers();
 	checkScores = true;
-      }
-      break;
-    }
-
-    case MsgAdminInfo: {
-    
-      if (BZDB.isTrue("noIpInfo")) {
-        break;
-      }
-    
-      uint8_t playerId, count, addrlen;
-      Address addr;
-      
-      msg = nboUnpackUByte(msg, count);
-
-      for (int i = 0; i < count; i++) {
-        msg = nboUnpackUByte(msg, addrlen);
-        msg = nboUnpackUByte(msg, playerId);
-        msg = addr.unpack(msg);
-
-        int playerIndex = lookupPlayerIndex(playerId);        
-	Player* player = getPlayerByIndex(playerIndex);
-	
-	if (player != NULL) {
-          std::string message = ColorStrings[CyanColor];
-          message += "IPINFO: ";
-          message += ColorStrings[RedColor];
-          message += player->getCallSign();
-          message += ColorStrings[GreenColor];
-          message += " from ";
-          message += ColorStrings[BlueColor];
-          message += addr.getDotNotation();
-          addMessage(NULL, message);
-        }
       }
       break;
     }
@@ -2565,6 +2534,78 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+    case MsgAdminInfo: {
+      uint8_t numIPs;
+      msg = nboUnpackUByte(msg, numIPs);
+
+      /* if we're getting this, we have playerlist perm */
+      myTank->setPlayerList(true);
+      if (numIPs == 1) {
+	uint8_t ipsize;
+	uint8_t index;
+	Address ip;
+	msg = nboUnpackUByte(msg, ipsize);
+	msg = nboUnpackUByte(msg, index);
+	msg = ip.unpack(msg);
+	int playerIndex = lookupPlayerIndex(index);
+	Player* tank = getPlayerByIndex(playerIndex);
+	if (!tank) {
+	  break;
+	}
+
+	std::string name(tank->getCallSign());
+	std::string message("joining as a");
+	switch (tank->getPlayerType()) {
+	  case TankPlayer:
+	    message += " tank";
+	    break;
+	  case ComputerPlayer:
+	    message += " robot tank";
+	    break;
+	  default:
+	    message += "n unknown type";
+	    break;
+	}
+	message += " from " + ip.getDotNotation();
+	message += " (" + Address::getHostByAddress(ip);
+	message += ")";
+
+	addMessage(tank, message);
+
+      } else {
+	// more than 1 IP
+
+	if (BZDB.isTrue("noIpInfo")) {
+	  break;
+	}
+
+	uint8_t playerId, count, addrlen;
+	Address addr;
+      
+	for (int i = 0; i < count; i++) {
+	  msg = nboUnpackUByte(msg, addrlen);
+	  msg = nboUnpackUByte(msg, playerId);
+	  msg = addr.unpack(msg);
+	  
+	  int playerIndex = lookupPlayerIndex(playerId);        
+	  Player* player = getPlayerByIndex(playerIndex);
+	  
+	  if (player != NULL) {
+	    std::string message = ColorStrings[CyanColor];
+	    message += "IPINFO: ";
+	    message += ColorStrings[RedColor];
+	    message += player->getCallSign();
+	    message += ColorStrings[GreenColor];
+	    message += " from ";
+	    message += ColorStrings[BlueColor];
+	    message += addr.getDotNotation();
+	    addMessage(NULL, message);
+	  }
+	}
+      } // end if 1 IP update
+
+    }
+
     case MsgPlayerInfo: {
       uint8_t numPlayers;
       int i;
@@ -2581,6 +2622,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	p->setAdmin((info & IsAdmin) != 0);
 	p->setRegistered((info & IsRegistered) != 0);
 	p->setVerified((info & IsVerified) != 0);
+	p->setPlayerList((info & HasPlayerList) != 0);
       }
       break;
     }
