@@ -34,7 +34,7 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV			5
+#define BZ_REV			6
 #endif
 
 #ifndef BZ_BUILD_TYPE
