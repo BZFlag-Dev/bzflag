@@ -2916,7 +2916,19 @@ static void addPlayer(int playerIndex)
 
   // make sure the name is not obscene/filtered
   std::cout << "checking callsign: " << player[playerIndex].callSign << std::endl;
-
+  if (clOptions->filterCallsigns) {
+    bool filtered = false;
+    char cs[CallSignLen];
+    memcpy(cs, player[playerIndex].callSign, sizeof(char) * CallSignLen);
+    if (clOptions->filterSimple) {
+      filtered = clOptions->filter.filter(cs, true);
+    } else {
+      filtered = clOptions->filter.filter(cs, false);
+    }
+    if (filtered) { 
+      return rejectPlayer(playerIndex, RejectBadCallsign);
+    }
+  }
 
   TeamColor t = player[playerIndex].team;
 
@@ -5650,6 +5662,9 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     }
     else if (strcmp(argv[i], "-filterChat") == 0) {
       options.filterChat = true;
+    }
+    else if (strcmp(argv[i], "-filterCallsigns") == 0) {
+      options.filterCallsigns = true;
     }
     else if (strcmp(argv[i], "-ban") == 0) {
       if (++i == argc) {
