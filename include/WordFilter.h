@@ -126,7 +126,7 @@ class WordFilter
   /** utility method that returns the position of the 
    * first printable character from a string
    */
-  int firstPrintable(const std::string *input) const
+  int firstPrintable(const std::string &input) const
   {
     if (input == NULL) {
       return -1;
@@ -144,7 +144,7 @@ class WordFilter
   /** utility method that returns the position of the
    * first non-printable character from a string
    */
-  int firstNonprintable(const std::string *input) const
+  int firstNonprintable(const std::string &input) const
   {
     if (input == NULL) {
       return -1;
@@ -159,6 +159,43 @@ class WordFilter
     return i;
   }
 
+  int filterCharacters(std::string &input, int start, int end, bool filterSpaces=false) const
+  {
+    if (input == NULL) {
+      return -1;
+    }
+    int length = end - start;
+    if (length <= 0) {
+      return -1;
+    }
+
+    int count=0;
+    for (int j=0; j < length; j++) {
+      char c = input[start + j];
+      
+      // don't repeat random chars
+      do {
+	randomCharPos = (int)((float)maxFilterChar * (float)bzfrand());
+      } while (randomCharPos == previousCharPos);
+      previousCharPos = randomCharPos;
+      
+      /* when filterspaces is truce, we filter everything.
+       * otherise the ascii character code ranges for a-z, A-Z, and 0-9 
+       * are filtered.
+       */
+      if (filterSpaces) {
+	input[start + j] = filterchars[randomCharPos];
+	count++;
+      } else  if (  ( c > 96 && c < 123 ) || 
+		    ( c > 64  && c < 91 ) || 
+		    ( c > 47 && c < 58 )) {
+	input[start + j] = filterChars[randomCharPos];
+	count++;
+      }
+      
+    }
+    return count;
+  }
   
  protected:
 
