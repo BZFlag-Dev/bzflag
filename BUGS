@@ -42,6 +42,7 @@ recent bugs
 
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
+  (this is probably a bug in automake 1.4, not in our files)
 
 - bzfls seems not to talk the new protocol correctly when testing server:
   1.9: Player [0] accept() from 208.186.182.172:53438 on 6
