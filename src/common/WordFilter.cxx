@@ -131,7 +131,7 @@ bool WordFilter::aggressiveFilter(char *input) const
    * e.g. "bzstring" will match a prefix of "bz" and make "s" get added
    * as a bin to check for during matching.
    */
-  for (ExpCompareSet::iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
+  for (ExpCompareSet::const_iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
     if (regexec(i->compiled, sInput.c_str(), 1, match, 0) == 0) {
       if ( (match[0].rm_eo < inputLength) && isalpha(sInput[match[0].rm_eo]) ) {
 	/* do not forget to make sure this is a true prefix */
@@ -157,7 +157,7 @@ bool WordFilter::aggressiveFilter(char *input) const
     /* look at all of the filters that start with the letter wordIndices[j]
      */
     const unsigned int firstchar = (unsigned char)wordIndices[j];
-    for (ExpCompareSet::iterator i = filters[firstchar].begin();
+    for (ExpCompareSet::const_iterator i = filters[firstchar].begin();
 	 i != filters[firstchar].end(); ++i) {
 
       /* the big kahuna burger processing goes on here */
@@ -182,7 +182,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	    /* we are in the middle of a word.. see if we can match a prefix before this */
 	    bool foundit =  false;
-	    for (ExpCompareSet::iterator j = prefixes.begin();
+	    for (ExpCompareSet::const_iterator j = prefixes.begin();
 		 j != prefixes.end(); ++j) {
 	      if (regexec(j->compiled, sInput.c_str(), 1, match, 0) == 0) {
 
@@ -217,7 +217,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	    /* we are at the start of a word, but not at the end, try to get to the end */
 	    bool foundit = false;
-	    for (ExpCompareSet::iterator j = suffixes.begin();
+	    for (ExpCompareSet::const_iterator j = suffixes.begin();
 		 j != suffixes.end(); ++j) {
 //std::cout << "checking " << j->word << " against [" << input + endOffset << "]" << std::endl;
 
