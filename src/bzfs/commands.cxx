@@ -976,6 +976,13 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
       sprintf(reply, "The /report command is disabled on this server.");
     } else {
       sprintf(reply, "Your report has been filed. Thank you.");
+      std::string temp = std::string("**\"") + playerData->player.getCallSign() + "\" reports: " +
+                         (message + 8);
+      while (temp.size() > 0) {
+        sendMessage (t, AdminPlayers, (temp.substr(0, MessageLen)).c_str());
+        temp.erase(temp.begin(), temp.begin() + (MessageLen - 1));
+      }
+      sendMessage (ServerPlayer, AdminPlayers, message);
       DEBUG1("Player %s [%d] has filed a report (time: %s).\n",
 	     playerData->player.getCallSign(), t, timeStr);
     }
