@@ -1566,15 +1566,15 @@ static void		handleServerMessage(bool human, uint16_t code,
       dumpMissingFlag((char *)msg, len);
       break;
     }
-    serverLink->send(MsgWantSetting, 0, NULL);
+    serverLink->send(MsgWantSettings, 0, NULL);
     break;
   }
 
-  case MsgGameSetting: {
+  case MsgGameSettings: {
     if (worldBuilder)
       delete worldBuilder;
     worldBuilder = new WorldBuilder;
-    worldBuilder->gameSetting(msg);
+    worldBuilder->unpackGameSettings(msg);
     serverLink->send(MsgWantWHash, 0, NULL);
     HUDDialogStack::get()->setFailedMessage("Requesting World Hash...");
     break;

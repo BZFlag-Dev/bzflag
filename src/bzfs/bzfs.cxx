@@ -2250,7 +2250,7 @@ static void sendWorld(int playerIndex, uint32_t ptr)
   directMessage(playerIndex, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
 }
 
-static void sendGameSetting(int playerIndex)
+static void sendGameSettings(int playerIndex)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackFloat(bufStart, BZDBCache::worldSize);
@@ -2265,7 +2265,7 @@ static void sendGameSetting(int playerIndex)
   buf = nboPackUInt(buf, 0); // FIXME - used to be sync time
 
   // send it
-  directMessage(playerIndex, MsgGameSetting, (char*)buf-(char*)bufStart,
+  directMessage(playerIndex, MsgGameSettings, (char*)buf-(char*)bufStart,
 		bufStart);
 }
 
@@ -3295,8 +3295,8 @@ static void handleCommand(int t, const void *rawbuf)
       break;
     }
 
-    case MsgWantSetting: {
-      sendGameSetting(t);
+    case MsgWantSettings: {
+      sendGameSettings(t);
       break;
     }
 

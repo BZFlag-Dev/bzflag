@@ -254,7 +254,7 @@ float WorldInfo::getWaterLevel() const
   return waterLevel;
 }
 
-float WorldInfo::getMaxWorldHeight()
+float WorldInfo::getMaxWorldHeight() const
 {
   return maxHeight;
 }
@@ -338,8 +338,8 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size,
 
 
 InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
-                                             float x, float y, float z, float radius,
-                                             float height)
+                                             float x, float y, float z,
+                                             float radius, float height) const
 {
   if (height < Epsilon) {
     height = Epsilon;
@@ -347,7 +347,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
 
   float pos[3] = {x, y, z};
 
-  for (std::vector<BaseBuilding*>::iterator base_it = bases.begin();
+  for (std::vector<BaseBuilding*>::const_iterator base_it = bases.begin();
        base_it != bases.end(); ++base_it) {
     BaseBuilding* base = *base_it;
     if (base->inCylinder(pos, radius, height)) {
@@ -357,7 +357,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
       return IN_BASE;
     }
   }
-  for (std::vector<BoxBuilding*>::iterator box_it = boxes.begin();
+  for (std::vector<BoxBuilding*>::const_iterator box_it = boxes.begin();
        box_it != boxes.end(); ++box_it) {
     BoxBuilding* box = *box_it;
     if (box->inCylinder(pos, radius, height)) {
@@ -372,7 +372,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
       }
     }
   }
-  for (std::vector<PyramidBuilding*>::iterator pyr_it = pyramids.begin();
+  for (std::vector<PyramidBuilding*>::const_iterator pyr_it = pyramids.begin();
        pyr_it != pyramids.end(); ++pyr_it) {
     PyramidBuilding* pyr = *pyr_it;
     if (pyr->inCylinder(pos, radius, height)) {
@@ -382,7 +382,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
       return IN_PYRAMID;
     }
   }
-  for (std::vector<TetraBuilding*>::iterator tetra_it = tetras.begin();
+  for (std::vector<TetraBuilding*>::const_iterator tetra_it = tetras.begin();
        tetra_it != tetras.end(); ++tetra_it) {
     TetraBuilding* tetra = *tetra_it;
     if (tetra->inCylinder(pos, radius, height)) {
@@ -392,7 +392,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
       return IN_TETRA;
     }
   }
-  for (std::vector<Teleporter*>::iterator tele_it = teleporters.begin();
+  for (std::vector<Teleporter*>::const_iterator tele_it = teleporters.begin();
        tele_it != teleporters.end(); ++tele_it) {
     Teleporter* tele = *tele_it;
     if (tele->inCylinder(pos, radius, height)) {
@@ -413,7 +413,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 				             const float* pos, float radius,
-                                             float height)
+                                             float height) const
 {
   if (height < Epsilon) {
     height = Epsilon;
@@ -436,7 +436,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 				             float x, float y, float z, float radius,
-                                             float height)
+                                             float height) const
 {
   const float pos[3] = {x, y, z};
   return cylinderInBuilding (location, pos, radius, height);
@@ -444,7 +444,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 
 InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
 				        const float* pos, float angle,
-				        float width, float breadth, float height)
+				        float width, float breadth, float height) const
 {
   if (height < Epsilon) {
     height = Epsilon;
@@ -466,7 +466,7 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
   return classifyHit (*location);
 }
 
-InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle)
+InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 {
   if (obstacle == NULL) {
     return NOT_IN_BUILDING;
@@ -501,7 +501,7 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle)
   }
 }
 
-bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
+bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt) const
 {
   const Obstacle* loc;
   InBuildingType type;
@@ -517,7 +517,8 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
   return true;
 }
 
-bool WorldInfo::getSafetyPoint(const std::string &qualifier, const float *pos, float *pt)
+bool WorldInfo::getSafetyPoint(const std::string &qualifier,
+                               const float *pos, float *pt) const
 {
   const Obstacle *loc;
   InBuildingType type;

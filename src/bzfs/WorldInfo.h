@@ -81,9 +81,9 @@ public:
                  float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
   void addWaterLevel (float level, const BzMaterial* matref);
   float getWaterLevel() const;
-  float getMaxWorldHeight();
-  bool getZonePoint(const std::string &qualifier, float *pt);
-  bool getSafetyPoint(const std::string &qualifier, const float *pos, float *pt);
+  float getMaxWorldHeight() const;
+  bool getZonePoint(const std::string &qualifier, float *pt) const;
+  bool getSafetyPoint(const std::string &qualifier, const float *pos, float *pt) const;
   void finishWorld();
   int packDatabase(const BasesList* baseList);
   void *getDatabase() const;
@@ -96,7 +96,7 @@ private:
   void setTeleporterTarget(int src, int tgt);
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
   void loadCollisionManager();
-  InBuildingType classifyHit (const Obstacle* obstacle);
+  InBuildingType classifyHit (const Obstacle* obstacle) const;
   void makeWaterMaterial();
 
 public:
@@ -108,8 +108,8 @@ public:
    * can therefore be used before it has been setup.
    */
   InBuildingType inCylinderNoOctree(Obstacle **location,
-                                               float x, float y, float z, float r,
-                                               float height);
+                                    float x, float y, float z,
+                                    float r, float height) const;
 
   /** check collision between world object and a cylinder.
    * return value is kind of collision.
@@ -118,7 +118,7 @@ public:
    */
   InBuildingType cylinderInBuilding(const Obstacle **obstacle,
 			            float x, float y, float z,
-			            float radius, float height = 0.0f);
+			            float radius, float height = 0.0f) const;
 
   /** check collision between world object and a cylinder.
    * return value is kind of collision.
@@ -127,7 +127,7 @@ public:
    */
   InBuildingType cylinderInBuilding(const Obstacle **obstacle,
 			            const float* pos,
-			            float radius, float height = 0.0f);
+			            float radius, float height = 0.0f) const;
 
   /** check collision between world object and a Z-axis aligned box.
    * return value is kind of collision.
@@ -135,7 +135,7 @@ public:
    */
   InBuildingType boxInBuilding(const Obstacle **obstacle,
 			       const float* pos, float angle,
-			       float width, float breadth, float height);
+			       float width, float breadth, float height) const;
 
 
   /** see if the CollisionManager's view of the world size

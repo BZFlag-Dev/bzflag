@@ -462,7 +462,7 @@ void* WorldBuilder::unpack(void* buf)
   return buf;
 }
 
-void* WorldBuilder::gameSetting(void* buf)
+void* WorldBuilder::unpackGameSettings(void* buf)
 {
   // read style
   uint16_t gameStyle, maxPlayers, maxShots, maxFlags;

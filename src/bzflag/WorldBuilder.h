@@ -39,7 +39,7 @@ class WorldBuilder {
 			~WorldBuilder();
 
     void*		unpack(void*);
-    void               *gameSetting(void*);
+    void               *unpackGameSettings(void*);
 
     World*		getWorld();
     World*		peekWorld();	// doesn't give up ownership
