@@ -240,6 +240,8 @@ static int lookupFirstTeamFlag(int teamindex)
       return i;
   }
   // FIXME should never get here, throw?
+ 	if (clOptions->gameStyle & int(TeamFlagGameStyle)) //make sure it's not because of a dummy dev
+		DEBUG1("WARNING: failed to find a team flag in world"); //warn for now
   return -1;
 }
 
