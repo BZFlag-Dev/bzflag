@@ -1,6 +1,14 @@
 
                              bzflag 1.7 release notes
 
+bzflag 1.7d release 9
+---------------------
+
+* fixed bug in parsing arguments in bzfls
+* fixed reference counting bug in bzfls
+* improved win32 config file location (Daniel Leonard)
+
+
 bzflag 1.7d release 8
 ---------------------
 

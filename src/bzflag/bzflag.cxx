@@ -131,12 +131,14 @@ static BzfString	getConfigFileName()
 #else /* !defined(_WIN32) */
 
   BzfString name;
-  char windir[MAX_PATH];
-  if (GetWindowsDirectory(windir, sizeof(windir)) != 0) {
-    name = windir;
-  }
-  else if (getenv("HOMEPATH")) {
-    name += getenv("HOMEPATH");
+  char dir[MAX_PATH];
+  if (GetWindowsDirectory(dir, sizeof(dir)) != 0) {
+    name = dir;
+    DWORD len = sizeof(dir);
+    if (GetUserName(dir, &len)) {
+      name += "\\Profiles\\";
+      name += dir;
+    }
   }
   else {
     name = "C:";

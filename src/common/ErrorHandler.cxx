@@ -38,6 +38,6 @@ void			printError(const char* fmt, ...)
 #if defined(_WIN32)
   else { OutputDebugString(buffer); OutputDebugString("\n"); }
 #else
-  else fprintf(stdout, "%s\n", buffer);
+  else fprintf(stderr, "%s\n", buffer);
 #endif
 }

@@ -448,6 +448,7 @@ static void		refServerList(Server* scan)
 // unreference the given server and every server after it in the list
 static void		unrefServerList(Server* scan)
 {
+  if (scan) scan = scan->getNext();
   while (scan) {
     scan->unref();
     scan = scan->getNext();
@@ -742,7 +743,8 @@ static int		findMsgEnd(const char* buffer, int, int start)
 // parse up to argc-1 tokens and remaining tokens go into last argument.
 // return False if insufficient tokens found (last argument can be empty),
 // else return True.
-static boolean		parseRequest(char* buffer, char** args, int argc)
+static boolean		parseRequest(char* buffer, char** args, int argc,
+				boolean lastEmpty = False)
 {
   // string must not be empty or have leading whitespace
   if (*buffer == '\0' || isspace(*buffer))
@@ -762,8 +764,10 @@ static boolean		parseRequest(char* buffer, char** args, int argc)
     if (*buffer == '\0')
       if (i == argc)
 	return True;
-      else
+      else if (!lastEmpty || i < argc - 1)
 	return False;
+      else
+	break;
 
     // delimit argument
     *buffer++ = '\0';
@@ -823,7 +827,7 @@ static boolean		startReplyClient(int index)
 
   // parse request to get command
   char* args[NumTeams + 5];
-  if (!parseRequest(request, args, 2))
+  if (!parseRequest(request, args, 2, True))
     return False;
 
   // get command into cmd and remaining arguments into request
