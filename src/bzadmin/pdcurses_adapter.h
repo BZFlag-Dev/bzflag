@@ -12,11 +12,15 @@
 
 #include <cstring>
 
-// these are needed for compilation on UNIX using XCurses
-#define XCURSES 
-#define HAVE_PROTO
+#include "config.h"
 
+#define HAVE_PROTO
+#ifndef HAVE_XCURSES_H
+#define XCURSES 
 #include <xcurses.h>
+#else
+#include <curses.h>
+#endif
 
 using namespace std;
 

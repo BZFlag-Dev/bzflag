@@ -26,7 +26,7 @@
 #ifdef HAVE_NCURSES_H
 #include <ncurses.h>
 #else
-#include "pdcurses_adaptor.h"
+#include "pdcurses_adapter.h"
 #endif
 #endif
 
