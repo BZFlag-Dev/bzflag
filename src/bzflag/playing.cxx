@@ -3833,7 +3833,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      myTank->setRecipient(srcPlayer);
 	    
 	    // play a sound on a private message not from self
-	    playLocalSound( SFX_MESSAGE_PRIVATE );
+	    static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	    if (TimeKeeper::getTick() - lastMsg > 2.0f)
+	      playLocalSound( SFX_MESSAGE_PRIVATE );
+	    lastMsg = TimeKeeper::getTick();
 	  }
 	  fullMsg += "]";
 	  fullMsg += ColorStrings[ResetColor];
@@ -3855,7 +3858,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	  // play a sound if I didn't send the message
 	  if (srcPlayer != myTank) {
-	    playLocalSound( SFX_MESSAGE_TEAM );
+	    static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	    if (TimeKeeper::getTick() - lastMsg > 2.0f)
+	      playLocalSound( SFX_MESSAGE_TEAM );
+	    lastMsg = TimeKeeper::getTick();
 	  }
 	}
 	fullMsg += srcName;
