@@ -40,4 +40,8 @@ bzadmin_SOURCES = \
 ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
 	cp -a @top_srcdir@/src/bzflag/ServerLink.cxx .
 
-LDADD = ../net/libNet.a ../common/libCommon.a @CURSES_LIB@
+LDADD = \
+	../date/buildDate.o		\
+	../net/libNet.a			\
+	../common/libCommon.a		\
+	@CURSES_LIB@

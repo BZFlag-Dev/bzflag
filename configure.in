@@ -190,9 +190,6 @@ if test $host_os = mingw32; then
   LIBS="-mwindows -lgdi32 -lws2_32 -ldsound -lwinmm $LIBS"
 fi
 
-# add buildDate stuff
-LIBS="../date/buildDate.o $LIBS"
-
 # Remove ogg/vorbis dependencies until we actually need them.
 #
 # AC_CHECK_LIB(ogg, ogg_stream_init, [ALIBS="-logg $ALIBS"], [], $ALIBS)

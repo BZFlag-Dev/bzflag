@@ -23,4 +23,8 @@ bzfs_SOURCES = \
 	bzfs.cxx \
 	bzfs.h
 
-LDADD = ../net/libNet.a ../common/libCommon.a
+LDADD = \
+	../date/buildDate.o	\
+	../net/libNet.a		\
+	../common/libCommon.a
+

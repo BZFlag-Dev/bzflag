@@ -73,6 +73,7 @@ endif
 
 if MACOS
 LDADD =	\
+	../date/buildDate.o		\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
@@ -89,6 +90,7 @@ LDADD =	\
 #	$(ALIBS)
 else
 LDADD =	\
+	../date/buildDate.o		\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
