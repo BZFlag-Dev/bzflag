@@ -398,6 +398,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\game\DelayQueue.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\DropGeometry.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\EntryZones.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -1027,6 +1030,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\include\DelayQueue.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\DropGeometry.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\EntryZones.h">
