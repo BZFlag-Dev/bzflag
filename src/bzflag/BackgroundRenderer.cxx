@@ -43,7 +43,7 @@
 
 #include "stars.h"
 
-static     bool         useMoonTexture = false;
+//static     bool         useMoonTexture = false;
 
 static const GLfloat	squareShape[4][2] =
 				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },
