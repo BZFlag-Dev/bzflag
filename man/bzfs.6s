@@ -1001,9 +1001,9 @@ In the following examples, the values are the defaults.
 .br
 \fB  name\fR example_world
 .br
-\fB  size\fR 800.0
+\fB  size\fR 400.0
 .br
-\fB  flagHeight\fR 0.0
+\fB  flagHeight\fR 10.0
 .br
 \fBend\fR
 .br
