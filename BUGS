@@ -7,8 +7,6 @@ recent bugs
   bzflsMy.php on brlcad : 0.3 sec
   bzflsLite on brlcad   : 0.3 sec
 
-- robots spaz-enter after being destroyed
-
 - tanks may be squished from too high away.  i.e. tank carrying steamroller
   can squish from high above as will a burrowed tank (on MAC's playground)
   --steamroller is a weak flag without this leaway. Perhaps split SR radius a
@@ -42,12 +40,6 @@ recent bugs
   1.7: Player [0] accept() from 208.186.182.172:53470 on 7
        Player [0] shutdownAcceptClient: close(7)
 
-- team tag was added to shots to calculate team kills correctly when players
-  change teams (rabbit mode); this does nto really seem to be used or thought through
-  so far (apart from printing a different message when one gets shot); without
-  having digged any depper it looks like we would add team id inforamtion to
-  MsgKilled, too.
-
 older bugs in BZFlag
 --------------------
 
@@ -63,6 +55,8 @@ http://SourceForge.net/tracker/?group_id=3248&atid=103248
 
 * same stipple on teleporters and phantom zone, making phatom
    tank behind teleporter virtually invisible when blending is off.
+
+* hit detection on pyramids computed at altitude of ray origin
 
 * not drawing back to front when depth buffer is on:
    flag edges can't be antialiased right
