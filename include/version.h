@@ -75,7 +75,7 @@ inline int getBuildDate()
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		 "TEST"
+#define BZ_BUILD_TYPE		 "ALPHA"
 #endif
 
 #ifndef BZ_BUILD_DATE
