@@ -40,18 +40,18 @@
 -file ../../data/flag_grab.wav flag_grab.wav
 -file ../../data/flag_lost.wav flag_lost.wav
 -file ../../data/flag_won.wav flag_won.wav
+-file ../../data/jump.wav jump.wav
+-file ../../data/killteam.wav killteam.wav
+-file ../../data/land.wav land.wav
 -file ../../data/laser.wav laser.wav
+-file ../../data/lock.wav lock.wav
+-file ../../data/missile.wav missile.wav
+-file ../../data/phantom.wav phantom.wav
 -file ../../data/pop.wav pop.wav
 -file ../../data/ricochet.wav ricochet.wav
 -file ../../data/shock.wav shock.wav
 -file ../../data/teamgrab.wav teamgrab.wav
 -file ../../data/teleport.wav teleport.wav
--file ../../data/phantom.wav phantom.wav
--file ../../data/missile.wav missile.wav
--file ../../data/jump.wav jump.wav
--file ../../data/land.wav land.wav
--file ../../data/killteam.wav killteam.wav
--file ../../data/lock.wav lock.wav
 -popdir
 -pushdir doc
 -file ../../LICENSE LICENSE
