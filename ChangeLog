@@ -4,6 +4,12 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Hiding flags to cheat clients - Alfredo Tupone
+* Lag is computed only after entering game - Alfredo Tupone
+* Added strong authentication based on kerberos - Alfredo Tupone
+* Bzflag renders frames and accepts commands during joining - Alfredo Tupone
+* CTF world used for FFA make bases into boxes - Alfredo Tupone
+* Allows elevated bases even without -fb - Alfredo Tupone
 * Added optional duration option to /countdown - Sean Morrison
 * Added shot mismatch cheat auto-kicking - Julio Jimenez
 * Improved double-jump response - Anonymous
