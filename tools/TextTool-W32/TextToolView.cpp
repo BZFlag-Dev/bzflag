@@ -539,13 +539,12 @@ void CTextToolView::OnBatchProcessing()
     BatchItem item;
     bool good = ttb->getNext(item);
     while (good) {
-      // set the font
       BYTE italic, quality;
       int bold;
       if (item.italic) italic = TRUE; else italic = FALSE;
       if (item.bold) bold = FW_BOLD; else bold = FW_NORMAL;
       int nHeight = -MulDiv(item.size, iLogicalPixelsY, 72);
-      if (item.size >= 16) quality = ANTIALIASED_QUALITY; else quality = NONANTIALIASED_QUALITY;
+      if (item.antiAlias) quality = ANTIALIASED_QUALITY; else quality = NONANTIALIASED_QUALITY;
 
       delete(m_pFont);
       m_pFont = new CFont;

@@ -4,6 +4,7 @@ group
   font Luxi Mono
   flags none
   sizes 6 8 12 16 32
+  minaasize 16
   filename LuxiMono_$s
 end
 
@@ -11,6 +12,7 @@ group
   font Toga Sans
   flags bold
   sizes 6 8 12 16 32
+  minaasize 0
   filename TogaSansBold_$s
 end
 
@@ -18,6 +20,7 @@ group
   font Toga Serif
   flags bold
   sizes 12 16 32
+  minaasize 0
   filename TogaSerifBold_$s
 end
 
@@ -25,6 +28,7 @@ group
   font Bitstream Vera Sans Mono
   flags bold
   sizes 6 8 12 16
+  minaasize 16
   filename VeraMonoBold_$s
 end
 

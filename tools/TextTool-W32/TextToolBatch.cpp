@@ -43,6 +43,7 @@ void TextToolBatch::loadFile(std::string file)
   std::string flags;
   std::vector<int> sizes;
   std::string filename;
+  int minAASize;
 
   while (input->good()) { 
     buffer[0] = 0;    
@@ -81,6 +82,8 @@ void TextToolBatch::loadFile(std::string file)
 	  if (index >= 0) temp.italic = true; else temp.italic = false;
 	  // set font size
           temp.size = sizes[i];
+	  // set AA quality
+	  if (temp.size >= minAASize) temp.antiAlias = true; else temp.antiAlias = false;
 	  // set filename (with $s -> size transform)
 	  char* buf = new char[5];
 	  sprintf(buf, "%d", sizes[i]);
@@ -90,6 +93,7 @@ void TextToolBatch::loadFile(std::string file)
 	  items.push_back(temp);
 	}
 	sizes.clear();
+	minAASize = 16; // default to AAing 16-point and bigger
       }  
       // read next line
       continue;
@@ -116,6 +120,8 @@ void TextToolBatch::loadFile(std::string file)
       }
     } else if (strncmp(buffer, "filename", 8) == 0) {
       filename = std::string(buffer + 9);
+    } else if (strncmp(buffer, "minaasize", 9) == 0) {
+      minAASize = atoi(buffer + 9);
     } else {
       error("command: unrecognized");
     }

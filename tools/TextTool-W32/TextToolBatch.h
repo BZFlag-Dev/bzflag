@@ -16,6 +16,7 @@
 struct BatchItem {
   std::string font;
   int size;
+  bool antiAlias;
   bool bold;
   bool italic;
   std::string filename;
