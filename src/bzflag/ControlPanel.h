@@ -75,7 +75,7 @@ class ControlPanel {
     std::vector<ControlPanelMessage>	messages;
     GLfloat		teamColor[3];
     static int		messagesOffset;
-    int			maxScrollPages;
+    static const int	maxScrollPages;
     int			maxLines;
 };
 
