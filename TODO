@@ -7,8 +7,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   start from 0001 when 1.10 is released.  otherwise it gets unnecessarily bumped to
   match the client version.  it's a separate communication protocol version.
 
-* check that new flags are in: command line help, man pages, client popup help, and help menu
-
 * Test, Test, Test
 
 * Name the version
