@@ -3719,12 +3719,6 @@ static void addPlayer(int playerIndex)
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
 
-  // if necessary force multicast relaying
-  if (noMulticastRelay) {
-    directMessage(playerIndex, MsgNetworkRelay, 0, getDirectMessageBuffer());
-    player[playerIndex].multicastRelay = True;
-  }
-
   // send time update to new player if we're counting down
   if (timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
     float timeLeft = timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
