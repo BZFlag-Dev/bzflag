@@ -261,7 +261,7 @@ void AccessControlList::sendHostBans(PlayerId id)
     // add reason, if any
     if (it->reason.size()) {
       char *pMsg = banlistmessage;
-      sprintf(pMsg, "   reason: %s", it->reason.c_str() );
+      sprintf(pMsg, "   reason: %s", it->reason.c_str());
       sendMessage(ServerPlayer, id, banlistmessage);
     }
   }
@@ -291,7 +291,7 @@ bool AccessControlList::load() {
       return false;
     is>>banEnd;
     if (banEnd != 0) {
-      banEnd -= long(time(NULL) -TimeKeeper::getCurrent().getSeconds());
+      banEnd -= long(time(NULL) - TimeKeeper::getCurrent().getSeconds());
       banEnd /= 60;
       if (banEnd == 0)
 	banEnd = -1;

@@ -141,7 +141,7 @@ public:
   /** This function unbans any addresses given in @c ipList, which should be
       a comma separated string in the same format as in the ban() functions.
       @returns @c true if there was a ban for any of the addresses, @c false
-               if none of the addresses were banned. */
+      if none of the addresses were banned. */
   bool unban(const char *ipList);
 
   /** This function removes any ban for the host pattern @c hostpat.
