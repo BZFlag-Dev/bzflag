@@ -6879,12 +6879,14 @@ int main(int argc, char **argv)
     }
     
     // check team flag timeouts
-    for (i = 0; i < NumTeams; ++i) {
-      if (team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
-	  flag[i - 1].flag.status != FlagNoExist &&
-	  flag[i - 1].player == -1) {
-	DEBUG1("Flag timeout for team %d\n", i);
-	zapFlag(i - 1);
+    if (cl.gameStyle & TeamFlagGameStyle) {
+      for (i = 0; i < NumTeams; ++i) {
+	if (team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
+	    flag[i - 1].flag.status != FlagNoExist &&
+	    flag[i - 1].player == -1) {
+	  DEBUG1("Flag timeout for team %d\n", i);
+	  zapFlag(i - 1);
+	}
       }
     }
 
