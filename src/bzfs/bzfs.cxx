@@ -3404,10 +3404,6 @@ static void handleCommand(int t, const void *rawbuf)
       PlayerId id;
       PlayerState state;
 
-      if (invalidPlayerAction(player[t], t, "move")) {
-	break;
-      }
-
       buf = nboUnpackFloat(buf, timestamp);
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf);
