@@ -26,6 +26,8 @@ THESE ARE LOWER PRIORITY
   download the game config and the map hash, and then download the
   map as required.
 
+* Iterative octree cell shot collision detection
+
 * instead of kicking laggy players, they should be made observers
   unless there are no observer slots left (then kick).
 
