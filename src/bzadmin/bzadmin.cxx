@@ -95,13 +95,13 @@ int main(int argc, char** argv) {
     // input callsign and host interactively
     std::cout << "No callsign@host specified.  Please input them" << std::endl;
     std::cout << "Callsign: ";
-    std::cin >> name;
+    std::getline(std::cin, name);
     if (name.size() <= 1) {
       std::cerr << "You must specify a callsign.  Exiting." << std::endl;
       return 1;
     }
     std::cout << "Server to connect to: ";
-    std::cin >> host;
+    std::getline(std::cin, host);
     if (host.size() <= 1) {
       std::cerr << "You must specify a host name to connect to.  Exiting." << std::endl;
       return 1;
