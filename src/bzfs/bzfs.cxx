@@ -31,6 +31,10 @@ const int udpBufSize = 128000;
 #define FD_SETSIZE (MaxPlayers + 10)
 #endif /* defined(__sgi) */
 
+#ifdef _WIN32
+#pragma warning( 4 : 4786 )
+#endif
+
 // must be before network.h because that defines a close() macro which
 // messes up fstreams.  luckily, we don't need to call the close() method
 // on any fstream.

@@ -17,6 +17,10 @@
 #ifndef	BZF_PLAYING_H
 #define	BZF_PLAYING_H
 
+#ifdef _WIN32
+#pragma warning( 4 : 4786 )
+#endif
+
 #include "common.h"
 #include "global.h"
 #include <string>

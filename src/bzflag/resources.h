@@ -17,6 +17,10 @@
 #ifndef BZF_RESOURCES_H
 #define	BZF_RESOURCES_H
 
+#ifdef _WIN32
+#pragma warning( 4 : 4786 )
+#endif
+
 #include "common.h"
 #include "bzfio.h"
 #include <string>
