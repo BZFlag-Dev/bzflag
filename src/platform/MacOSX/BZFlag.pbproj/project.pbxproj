@@ -563,9 +563,8 @@
 				1401FCE904B57CAC00A80164,
 			);
 			isa = PBXGroup;
-			name = mediafile;
-			path = /Volumes/Home/Archive/BZ/bzflag/src/mediafile;
-			refType = 0;
+			path = mediafile;
+			refType = 4;
 		};
 		1401FCD404B57CAC00A80164 = {
 			fileEncoding = 30;
@@ -1477,7 +1476,6 @@
 				149184D3051575A100A80164,
 			);
 			buildSettings = {
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-flat_namespace -undefined suppress";
 				OTHER_REZFLAGS = "";
