@@ -3,6 +3,9 @@ recent bugs
 - bullets now travel through the top of a block instead of reflecting off.
   The bullets appear to be half(or more) submerged into the block.
 
+- Can be kicked with WINGS for going to high when adjusting wings gravity, 
+  jump count or jump velocity.
+
 - texture method doesn't seem to be settable from the gui, sometimes -
   switching to the experimental quality mode dropped textures (looked just
   like lowest quality without the stippling) and they couldn't be set back.
