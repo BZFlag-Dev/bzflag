@@ -255,7 +255,7 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
         continue;
       }
       if (zTop < minZ) {
-        return false;
+        break;
       }
       pos[2] = zTop;
       
