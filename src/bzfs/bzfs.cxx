@@ -2720,11 +2720,7 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
     float pos[3];
     bool foundspot = false;
     while (!foundspot) {
-      if (world->getZonePoint(std::string(Team::getName(team)), pos)) {
-	if (onGroundOnly)
-	  pos[2] = 0.0f;
-      }
-      else {
+      if (!world->getZonePoint(std::string(Team::getName(team)), pos)) {
         if (clOptions->gameStyle & TeamFlagGameStyle) {
           // don't spawn close to map edges in CTF mode
           pos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;
