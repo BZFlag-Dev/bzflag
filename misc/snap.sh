@@ -102,7 +102,8 @@ echo "Done."
 # Local Variables: ***
 # mode: sh ***
 # tab-width: 8 ***
-# c-basic-offset: 2 ***
+# sh-basic-offset: 2 ***
+# sh-indentation: 2 ***
 # indent-tabs-mode: t ***
 # End: ***
 # ex: shiftwidth=2 tabstop=8
