@@ -91,39 +91,43 @@ void Downloads::doDownloads()
   // check hosts' access permissions
   bool authNotice = checkAuthorizations(set);
 
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
-    const std::string& texUrl = set_it->c_str();
-    if (CACHEMGR.isCacheFileType(texUrl)) {
-
-      // use the cache?
-      CacheManager::CacheRecord oldrec;
-      if (CACHEMGR.findURL(texUrl, oldrec)) {
-	time_t filetime = 0;
-	if (doDownloads && updateDownloads) {
-	  getFileTime(texUrl, filetime);
-	}
-	if (filetime <= oldrec.date) {
-	  // use the cached file
-	  MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
-	  continue;
-	}
-      }
-
-      // bail here if we can't download
-      if (!doDownloads) {
+  if (!doDownloads) {
+    // bail here if we can't download
+    for (set_it = set.begin(); set_it != set.end(); set_it++) {
+      const std::string& texUrl = set_it->c_str();
+      if (CACHEMGR.isCacheFileType(texUrl)) {
 	MATERIALMGR.setTextureLocal(texUrl, "");
 	std::string msg = ColorStrings[GreyColor];
 	msg += "not downloading: " + texUrl;
 	addMessage(NULL, msg);
-	continue;
       }
+    }
+  } else {
+    for (set_it = set.begin(); set_it != set.end(); set_it++) {
+      const std::string& texUrl = set_it->c_str();
+      if (CACHEMGR.isCacheFileType(texUrl)) {
 
-      // download and cache the URL
-      if (getAndCacheURL(texUrl)) {
-	const std::string localname = CACHEMGR.getLocalName(texUrl);
-	MATERIALMGR.setTextureLocal(texUrl, localname);
-      } else {
-	MATERIALMGR.setTextureLocal(texUrl, "");
+	// use the cache?
+	CacheManager::CacheRecord oldrec;
+	if (CACHEMGR.findURL(texUrl, oldrec)) {
+	  time_t filetime = 0;
+	  if (updateDownloads) {
+	    getFileTime(texUrl, filetime);
+	    if (filetime <= oldrec.date) {
+	      // use the cached file
+	      MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
+	      continue;
+	    }
+	  }
+	}
+
+	// download and cache the URL
+	if (getAndCacheURL(texUrl)) {
+	  const std::string localname = CACHEMGR.getLocalName(texUrl);
+	  MATERIALMGR.setTextureLocal(texUrl, localname);
+	} else {
+	  MATERIALMGR.setTextureLocal(texUrl, "");
+	}
       }
     }
   }
