@@ -27,14 +27,13 @@ OptionsManager* Singleton<OptionsManager>::_instance = (OptionsManager*)0;
 void  OptionsManager::init ( void )
 {
   int textureMode = BZDB.evalInt("texture");
-  if (textureMode == 0)
+  if (textureMode == 0) {
     options.textures[0] = options.textures[1] = options.textures[2] = false;
-  else
-  {
-   options.textures[0] = BZDB.isTrue("objectTextures");
-   options.textures[1] = BZDB.isTrue("worldTextures");
-   options.textures[2] = BZDB.isTrue("environmentTextures");
-   options.filterMode = (textureFilterModes)((int)BZDB.eval("texture")-1);
+  } else {
+    options.textures[0] = BZDB.isTrue("objectTextures");
+    options.textures[1] = BZDB.isTrue("worldTextures");
+    options.textures[2] = BZDB.isTrue("environmentTextures");
+    options.filterMode = (textureFilterModes)(textureMode - 1);
   }
 
   options.blending = BZDB.isTrue("blend");
