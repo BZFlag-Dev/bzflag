@@ -3,7 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Tim Riker <Tim@Rikers.org>
 Standards-Version: 3.5.2.0
-Build-Depends: debhelper, groff, mesag-dev, libstdc++-dev
+Build-Depends: debhelper, libstdc++-dev, groff, xlibs-dev, mesag-dev
 
 Package: bzflag
 Architecture: any
