@@ -49,5 +49,5 @@ if ($#ARGV == 0) {
     print("$ARGV[0] not found in server list\n");
   }
 } else {
-  print("$totalServers\n$totalPlayers\nunknown uptime\nBZFlag servers/players\n");
+  print("$totalPlayers\n$totalServers\nunknown uptime\nBZFlag players/servers\n");
 }
