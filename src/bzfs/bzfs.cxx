@@ -939,13 +939,13 @@ WorldInfo::WorldInfo() :
     sizePyramids(0),
     sizeTeleporters(0),
     sizeBases(0),
+    maxHeight(0),
     walls(NULL),
     boxes(NULL),
     bases(NULL),
     pyramids(NULL),
     teleporters(NULL),
-    database(NULL),
-    maxHeight(0)
+    database(NULL)
 {
 }
 
