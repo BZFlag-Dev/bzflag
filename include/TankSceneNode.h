@@ -144,6 +144,7 @@ class TankSceneNode : public SceneNode {
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
     float		dimensions[3]; // tank dimensions
+    float		mins[3], maxs[3]; // extents
     float		leftTreadOffset;
     float		rightTreadOffset;
     float		leftWheelOffset;

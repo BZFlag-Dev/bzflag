@@ -376,6 +376,12 @@ float			PyramidBuilding::shrinkFactor(float z,
   return shrink;
 }
 
+bool			PyramidBuilding::isFlatTop() const
+{
+  return getZFlip();
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

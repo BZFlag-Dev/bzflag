@@ -293,7 +293,7 @@ void			WallSceneNode::setTextureMatrix(const int texmat)
 void			WallSceneNode::notifyStyleChange()
 {
   float alpha;
-  bool lighted = (BZDB.isTrue("lighting") && gstate.isLighted());
+  bool lighted = (BZDBCache::lighting && gstate.isLighted());
   OpenGLGStateBuilder builder(gstate);
   style = 0;
   if (lighted) {

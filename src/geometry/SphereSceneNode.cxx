@@ -101,7 +101,7 @@ SceneNode**		SphereSceneNode::getParts(int& numParts)
 
 void			SphereSceneNode::notifyStyleChange()
 {
-  lighting = BZDB.isTrue("lighting");
+  lighting = BZDBCache::lighting;
   OpenGLGStateBuilder builder(gstate);
   if (BZDBCache::blend && transparent) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

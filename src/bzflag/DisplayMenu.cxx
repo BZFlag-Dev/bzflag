@@ -25,6 +25,7 @@
 #include "FontManager.h"
 #include "OpenGLTexture.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -284,7 +285,7 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
-    if (BZDB.isTrue("lighting")) {
+    if (BZDBCache::lighting) {
       if (BZDB.isTrue("tesselation")) {
         ((HUDuiList*)list[i++])->setIndex(2);
       } else {
@@ -296,7 +297,7 @@ void			DisplayMenu::resize(int width, int height)
     tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("zbuffer"));
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::zbuffer);
 #if defined(DEBUG_RENDERING)
     ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
@@ -347,11 +348,11 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     sceneRenderer->notifyStyleChange();
     break;
   case '4': {
-    bool oldLighting = BZDB.isTrue("lighting");
+    bool oldLighting = BZDBCache::lighting;
     BZDB.set("lighting", list->getIndex() == 0 ? "0" : "1");
     BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
-    if (oldLighting != BZDB.isTrue("lighting")) {
-      BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
+    if (oldLighting != BZDBCache::lighting) {
+      BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 				   sceneRenderer->useQuality() < 2) ? "1" : "0");
       BZDB.setPersistent("_texturereplace", false);
       sceneRenderer->notifyStyleChange();
@@ -365,7 +366,7 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case '6':
     sceneRenderer->setQuality(list->getIndex());
-    BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
+    BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 				 sceneRenderer->useQuality() < 2) ? "1" : "0");
     BZDB.setPersistent("_texturereplace", false);
     sceneRenderer->notifyStyleChange();

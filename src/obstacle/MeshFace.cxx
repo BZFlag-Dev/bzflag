@@ -131,42 +131,6 @@ void MeshFace::finalize()
     }
   }
   
-  // set the plane type
-  planeBits = 0;
-  const float fudge = 1.0e-5f;
-  if ((fabsf(plane[2]) + fudge) >= 1.0f) {
-    planeBits |= ZPlane;
-    if (plane[2] > 0.0f) {
-      planeBits |= UpPlane;
-    } else {
-      planeBits |= DownPlane;
-    }
-  }
-  else if ((fabsf(plane[0]) + fudge) >= 1.0f) {
-    planeBits |= XPlane;
-  }
-  else if ((fabsf(plane[1]) + fudge) >= 1.0f) {
-    planeBits |= YPlane;
-  }
-
-  if (fabsf(plane[2]) < fudge) {
-    planeBits |= WallPlane;
-  }
-
-  // make the edge planes
-  edgePlanes = new fvec4[vertexCount];
-  for (v = 0; v < vertexCount; v++) {
-    float edge[3];
-    const int next = (v + 1) % vertexCount;
-    vec3sub(edge, vertices[next], vertices[v]);
-    vec3cross(edgePlanes[v], edge, plane);
-    const float scale = 1.0f / sqrtf(vec3dot(edgePlanes[v], edgePlanes[v]));
-    edgePlanes[v][0] = edgePlanes[v][0] * scale;
-    edgePlanes[v][1] = edgePlanes[v][1] * scale;
-    edgePlanes[v][2] = edgePlanes[v][2] * scale;
-    edgePlanes[v][3] = -vec3dot(vertices[v], edgePlanes[v]);
-  }
-
   // setup extents
   mins[0] = mins[1] = mins[2] = +MAXFLOAT;
   maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
@@ -190,6 +154,51 @@ void MeshFace::finalize()
   size[2] = (maxs[2] - mins[2]);
   angle = 0.0f;
   ZFlip = false;
+
+  // make the edge planes
+  edgePlanes = new fvec4[vertexCount];
+  for (v = 0; v < vertexCount; v++) {
+    float edge[3];
+    const int next = (v + 1) % vertexCount;
+    vec3sub(edge, vertices[next], vertices[v]);
+    vec3cross(edgePlanes[v], edge, plane);
+    const float scale = 1.0f / sqrtf(vec3dot(edgePlanes[v], edgePlanes[v]));
+    edgePlanes[v][0] = edgePlanes[v][0] * scale;
+    edgePlanes[v][1] = edgePlanes[v][1] * scale;
+    edgePlanes[v][2] = edgePlanes[v][2] * scale;
+    edgePlanes[v][3] = -vec3dot(vertices[v], edgePlanes[v]);
+  }
+
+  // set the plane type
+  planeBits = 0;
+  const float fudge = 1.0e-5f;
+  if ((fabsf(plane[2]) + fudge) >= 1.0f) {
+    planeBits |= ZPlane;
+    if (plane[2] > 0.0f) {
+      planeBits |= UpPlane;
+      //FIXME
+      plane[2] = 1.0f;
+      plane[3] = -pos[2];
+    } else {
+      planeBits |= DownPlane;
+      //FIXME
+      plane[2] = -1.0f;
+      plane[3] = +pos[2];
+    }
+    //FIXME
+    plane[0] = 0.0f;
+    plane[1] = 0.0f;
+  }
+  else if ((fabsf(plane[0]) + fudge) >= 1.0f) {
+    planeBits |= XPlane;
+  }
+  else if ((fabsf(plane[1]) + fudge) >= 1.0f) {
+    planeBits |= YPlane;
+  }
+
+  if (fabsf(plane[2]) < fudge) {
+    planeBits |= WallPlane;
+  }
 
   return;
 }
@@ -227,6 +236,12 @@ bool MeshFace::isValid() const
   } else {
     return true;
   }
+}
+
+
+bool MeshFace::isFlatTop() const
+{
+  return isUpPlane();
 }
 
 

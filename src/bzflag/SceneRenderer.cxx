@@ -323,7 +323,7 @@ bool			SceneRenderer::useWireframe() const
 
 void			SceneRenderer::setHiddenLine(bool on)
 {
-  useHiddenLineOn = on && BZDB.isTrue("zbuffer") && canUseHiddenLine;
+  useHiddenLineOn = on && BZDBCache::zbuffer && canUseHiddenLine;
   if (!useHiddenLineOn) { depthRange = 0; return; }
 #if defined(GL_VERSION_1_1)
   glPolygonOffset(1.0f, 2.0f);
@@ -442,7 +442,7 @@ void			SceneRenderer::enableLight(int index, bool on)
 
 void			SceneRenderer::enableSun(bool on)
 {
-  if (BZDB.isTrue("lighting") && sunOrMoonUp)
+  if (BZDBCache::lighting && sunOrMoonUp)
     theSun.enableLight(SunLight, on);
 }
 
@@ -538,7 +538,7 @@ void			SceneRenderer::render(
   static const GLfloat blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
   static const GLfloat dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   static const float dimDensity = 0.75f;
-  bool               lighting   = BZDB.isTrue("lighting");
+  bool               lighting   = BZDBCache::lighting;
 
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
@@ -684,7 +684,7 @@ void			SceneRenderer::render(
   }
 
   // prepare z buffer
-  if (BZDB.isTrue("zbuffer")) {
+  if (BZDBCache::zbuffer) {
     if (sameFrame && ++depthRange == numDepthRanges) depthRange = 0;
     if (exposed || useHiddenLineOn || --depthRange < 0) {
       depthRange = numDepthRanges - 1;
@@ -730,7 +730,7 @@ void			SceneRenderer::render(
 
     frustum.executeProjection();
 
-    if (BZDB.isTrue("zbuffer")) glEnable(GL_DEPTH_TEST);
+    if (BZDBCache::zbuffer) glEnable(GL_DEPTH_TEST);
 
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)
@@ -770,7 +770,7 @@ void			SceneRenderer::render(
 	OpenGLLight::enableLight(i + reservedLights, false);
     }
 
-    if (BZDB.isTrue("zbuffer")) glDisable(GL_DEPTH_TEST);
+    if (BZDBCache::zbuffer) glDisable(GL_DEPTH_TEST);
 
     // FIXME -- must do post-rendering: flare lights, etc.
     // flare lights are in world coordinates.  trace ray to that world
@@ -878,6 +878,30 @@ const GLfloat* 		SceneRenderer::getSunDirection() const
   }
 }
 
+
+void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
+{
+  // temporarily turn off non-applicable lights for big meshes
+  for (unsigned int i = (SunLight + 1); i < lights.size(); i++) {
+    const float* pos = lights[i]->getPosition();
+    const float dist = lights[i]->getMaxDist();
+    if ((pos[0] < (mins[0] - dist)) || (pos[0] > (maxs[0] + dist)) ||
+        (pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||
+        (pos[2] < (mins[2] - dist)) || (pos[2] > (maxs[2] + dist))) {
+      lights[i]->enableLight(i, false);
+    }
+  }
+  return;
+}
+
+void SceneRenderer::reenableLights()
+{
+  // reenable the temporarily disabled lights
+  for (unsigned int i = (SunLight + 1); i < lights.size(); i++) {
+    lights[i]->enableLight(i, true);
+  }
+  return;
+}
 
 // Local Variables: ***
 // mode: C++ ***

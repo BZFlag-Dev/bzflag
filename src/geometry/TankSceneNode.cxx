@@ -129,6 +129,13 @@ void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
   azimuth = rad2deg * atan2f(forward[1], forward[0]);
   elevation = -rad2deg * atan2f(forward[2], hypotf(forward[0], forward[1]));
   setCenter(pos);
+  const float maxRadius = 0.5f * (BZDBCache::tankLength + MuzzleMaxX);
+  mins[0] = pos[0] - maxRadius;
+  mins[1] = pos[1] - maxRadius;
+  mins[2] = pos[2];
+  maxs[0] = pos[0] + maxRadius;
+  maxs[1] = pos[1] + maxRadius;
+  maxs[2] = pos[2] + BZDBCache::tankHeight;
 }
 
 
@@ -713,6 +720,12 @@ void TankSceneNode::TankRenderNode::render()
     glScalef(dims[0], dims[1], dims[2]);
     glEnable(GL_NORMALIZE);
   }
+  
+  // disable the dynamic lights, if it might help
+  const bool switchLights = BZDBCache::lighting && (drawLOD == HighTankLOD);
+  if (switchLights) {
+    RENDERER.disableLights(sceneNode->mins, sceneNode->maxs);
+  }
 
   if (!isShadow && (sceneNode->sort || sceneNode->transparent)) {
     // draw is some sorted order
@@ -754,6 +767,11 @@ void TankSceneNode::TankRenderNode::render()
     }
   }
 
+  // re-enable the dynamic lights
+  if (switchLights) {
+    RENDERER.reenableLights();
+  }
+  
   if (sceneNode->useDimensions) {
     glDisable(GL_NORMALIZE);
   }

@@ -187,6 +187,12 @@ void			BoxBuilding::getCorner(int index, float* pos) const
   if (index >= 4) pos[2] += getHeight();
 }
 
+bool			BoxBuilding::isFlatTop() const
+{
+  return true;
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

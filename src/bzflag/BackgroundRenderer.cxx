@@ -265,12 +265,12 @@ BackgroundRenderer::~BackgroundRenderer()
 void			BackgroundRenderer::notifyStyleChange()
 {
   if (BZDB.isTrue("texture")) {
-    if (BZDB.isTrue("lighting"))
+    if (BZDBCache::lighting)
       styleIndex = 3;
     else
       styleIndex = 2;
   } else {
-    if (BZDB.isTrue("lighting"))
+    if (BZDBCache::lighting)
       styleIndex = 1;
     else
       styleIndex = 0;

@@ -379,7 +379,7 @@ void			setSceneDatabase()
   float elapsed = TimeKeeper::getCurrent() - startTime;
 
   // print debugging info
-  if (BZDB.isTrue("zbuffer")) {
+  if (BZDBCache::zbuffer) {
     DEBUG2("ZSceneDatabase processed in %.3f seconds.\n", elapsed);
   } else {
     DEBUG2("BSPSceneDatabase processed in %.3f seconds.\n", elapsed);

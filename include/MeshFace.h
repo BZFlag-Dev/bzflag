@@ -45,6 +45,7 @@ class MeshFace : public Obstacle {
     const char* getType() const;
     static const char* getClassName(); // const
     bool isValid() const;
+    bool isFlatTop() const;
     void getExtents(float* mins, float* maxs) const;
 
     float intersect(const Ray&) const;
@@ -92,6 +93,9 @@ class MeshFace : public Obstacle {
     int packSize();
 
     void print(std::ostream& out, int level);
+    
+  public:
+    mutable float scratchPad;
 
   private:
     static const char* typeName;

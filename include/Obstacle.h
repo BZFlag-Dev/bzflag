@@ -63,6 +63,10 @@ class Obstacle {
    */
   virtual bool isValid() const;
 
+  /** This function returns true if the obstacle has a flat top
+   */
+  virtual bool isFlatTop() const;
+
   /** This function returns the position of this obstacle. */
   const float* getPosition() const;
 

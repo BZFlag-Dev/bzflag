@@ -87,8 +87,9 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
                                       tankWidth, tankLength, tankHeight);
 
       if (onGroundOnly) {
-        if (type == NOT_IN_BUILDING)
+        if (type == NOT_IN_BUILDING) {
           foundspot = true;
+        }
       } else {
         if ((type == NOT_IN_BUILDING) && (testPos[2] > 0.0f)) {
           testPos[2] = 0.0f;
@@ -99,11 +100,13 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 
         // in a building? try climbing on roof until on top
         int lastType = type;
+        const Obstacle* lastObs = NULL;
 	int retriesRemaining = 100; // don't climb forever
         while (type != NOT_IN_BUILDING) {
           testPos[2] = building->getPosition()[2] + building->getHeight() + 0.0001f;
           tries++;
           lastType = type;
+          lastObs = building;
           type = world->boxInBuilding(&building, testPos, azimuth,
                                       tankWidth, tankLength, tankHeight);
 	  if (--retriesRemaining <= 0) {
@@ -112,10 +115,14 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 	  }
         }
         // ok, when not on top of pyramid, tetra, or teleporter
-        if ((lastType != IN_PYRAMID) && (lastType != IN_TETRA) &&
-            (lastType != IN_TELEPORTER)) {
+        if ((lastType == NOT_IN_BUILDING) || ((lastObs != NULL) &&
+            (lastObs->isFlatTop() && !lastObs->isDriveThrough()))) {
           foundspot = true;
         }
+//        if ((lastType != IN_PYRAMID) && (lastType != IN_TETRA) &&
+//            (lastType != IN_TELEPORTER)) {
+//          foundspot = true;
+//        }
         // only try up in the sky so many times
         if (--inAirAttempts <= 0) {
           onGroundOnly = true;

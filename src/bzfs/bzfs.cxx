@@ -1925,13 +1925,13 @@ void resetFlag(FlagInfo &flag)
       if (world->getZonePoint(std::string(flag.flag.type->flagAbbv),
 			      flagPos)
 	  && (flagPos[2] > waterLevel)) {
-        // if you got a related flag zone specified, always use
+        // if we've got a related flag zone specified, always use
         // it. there may be obstacles in the zone that cause the
         // NOT_IN_BUILDING test to fail a couple of times, but
         // hopefully the map maker is using zones wisely.
-      } else if ((clOptions->flagsOnBuildings
-		  && ((topmosttype == IN_BOX_NOTDRIVETHROUGH)
-		      || (topmosttype == IN_BASE)))
+      } else if (clOptions->flagsOnBuildings 
+                 && obj->isFlatTop()
+                 && !obj->isDriveThrough()
 		 && (obj->getPosition()[2]
 		     < (flagPos[2] + flagHeight - Epsilon))
 		 && ((obj->getPosition()[2] + obj->getSize()[2] - Epsilon)
@@ -2632,11 +2632,11 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
     vanish = false;
   else if (--drpFlag.grabs == 0)
     vanish = true;
-  else if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f))
+  else if (topmosttype == NOT_IN_BUILDING && (waterLevel <= 0.0f))
     vanish = false;
-  else if (clOptions->flagsOnBuildings && (obstacleTop > waterLevel)
-	   && (topmosttype == IN_BOX_NOTDRIVETHROUGH
-	       || topmosttype == IN_BASE))
+  else if (clOptions->flagsOnBuildings && (obstacleTop > waterLevel) &&
+           ((topmosttype == NOT_IN_BUILDING) ||
+            (topmost->isFlatTop() && !topmost->isDriveThrough())))
     vanish = false;
   else
     vanish = true;

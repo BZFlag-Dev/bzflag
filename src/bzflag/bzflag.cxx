@@ -1382,7 +1382,7 @@ int			main(int argc, char** argv)
 	  break;
 	}
     }
-    BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
+    BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 	      RENDERER.useQuality() < 2) ? "1" : "0");
     BZDB.setPersistent("_texturereplace", false);
     if (BZDB.isSet("view")) {

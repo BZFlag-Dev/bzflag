@@ -87,6 +87,11 @@ bool			Obstacle::isShootThrough() const
 	return shootThrough;
 }
 
+bool			Obstacle::isFlatTop ( void ) const
+{
+	return false;
+}
+
 void			Obstacle::setZFlip ( void )
 {
 	ZFlip = true;

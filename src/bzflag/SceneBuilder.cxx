@@ -196,15 +196,15 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
 {
   // set LOD flags
-  wallLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
-  baseLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
-  boxLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
-  pyramidLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
-  teleporterLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
+  wallLOD = BZDBCache::lighting && BZDBCache::zbuffer;
+  baseLOD = BZDBCache::lighting && BZDBCache::zbuffer;
+  boxLOD = BZDBCache::lighting && BZDBCache::zbuffer;
+  pyramidLOD = BZDBCache::lighting && BZDBCache::zbuffer;
+  teleporterLOD = BZDBCache::lighting && BZDBCache::zbuffer;
 
   // pick type of database
   SceneDatabase* db;
-  if (BZDB.isTrue("zbuffer"))
+  if (BZDBCache::zbuffer)
     db = new ZSceneDatabase;
   else
     db = new BSPSceneDatabase;

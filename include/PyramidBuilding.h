@@ -30,6 +30,8 @@ class PyramidBuilding : public Obstacle {
     const char*		getType() const;
     static const char*	getClassName(); // const
 
+    bool		isFlatTop() const;
+
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
     void		get3DNormal(const float* p, float* n) const;

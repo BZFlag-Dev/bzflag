@@ -39,6 +39,7 @@ class OpenGLLight {
     const GLfloat*	getPosition() const;
     const GLfloat*	getColor() const;
     const GLfloat*	getAttenuation() const;
+    const GLfloat	getMaxDist() const;
 
     void		setDirection(const GLfloat* xyz);
     void		setPosition(const GLfloat* xyz);
@@ -67,6 +68,7 @@ class OpenGLLight {
     GLfloat		pos[4];
     GLfloat		color[4];
     GLfloat		atten[3];
+    GLfloat		maxDist;
     GLuint		listBase;
     GLuint*		list;
     GLuint		mailbox;
@@ -91,6 +93,11 @@ inline const GLfloat*	OpenGLLight::getColor() const
 inline const GLfloat*	OpenGLLight::getAttenuation() const
 {
   return atten;
+}
+
+inline const GLfloat	OpenGLLight::getMaxDist() const
+{
+  return maxDist;
 }
 
 #endif // BZF_OPENGL_LIGHT_H

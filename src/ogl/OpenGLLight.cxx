@@ -37,6 +37,7 @@ OpenGLLight::OpenGLLight() : mailbox(0)
   atten[0] = 1.0f;
   atten[1] = 0.0f;
   atten[2] = 0.0f;
+  maxDist = 50.0f; //FIXME
   makeLists();
 }
 

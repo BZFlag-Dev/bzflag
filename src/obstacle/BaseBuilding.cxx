@@ -190,6 +190,11 @@ int	BaseBuilding::getTeam() const {
   return team;
 }
 
+bool			BaseBuilding::isFlatTop() const
+{
+  return true;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

@@ -87,6 +87,12 @@ bool ArcObstacle::isValid() const
 }
 
 
+bool ArcObstacle::isFlatTop() const
+{
+  return true;
+}
+
+
 MeshObstacle* ArcObstacle::getMesh()
 {
   return mesh;

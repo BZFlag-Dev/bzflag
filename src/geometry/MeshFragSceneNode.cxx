@@ -18,6 +18,8 @@
 #include "Intersect.h"
 #include "MeshFace.h"
 #include "MeshSceneNodeGenerator.h"
+#include "StateDatabase.h"
+#include "BZDBCache.h"
 
 
 // FIXME - no tesselation is done on for shot lighting
@@ -30,6 +32,8 @@
 //
 // MeshFragSceneNode::Geometry
 //
+
+static int minLightDisabling = 100;
 
 MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node, bool shadow)
 {
@@ -50,12 +54,34 @@ void			MeshFragSceneNode::Geometry::render()
 {
   if (isShadow) {
     drawV();
-  } else {
+  }
+  else {
+  
+    const bool switchLights = (sceneNode->arrayCount >= minLightDisabling)
+                              && BZDBCache::lighting;
+    if (switchLights) {
+      RENDERER.disableLights(sceneNode->mins, sceneNode->maxs);
+    }
+
+    // set the color  
     sceneNode->setColor();
-    if (style >= 2) {
-      drawVTN();
+
+    if (BZDBCache::lighting) {
+      if (BZDBCache::texture) {
+        drawVTN();
+      } else {
+        drawVN();
+      }
     } else {
-      drawVTN();
+      if (BZDBCache::texture) {
+        drawVT();
+      } else {
+        drawV();
+      }
+    }
+
+    if (switchLights) {
+      RENDERER.reenableLights();
     }
   }
 

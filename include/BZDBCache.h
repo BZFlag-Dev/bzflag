@@ -29,9 +29,9 @@ public:
 	static bool  shadows;
 	static bool  zbuffer;
 	static bool  tesselation;
-        static bool  lighting;
-        static bool  smooth;
-        static bool  colorful;
+	static bool  lighting;
+	static bool  smooth;
+	static bool  colorful;
 
 	static float maxLOD;
 	static float worldSize;

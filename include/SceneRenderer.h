@@ -120,6 +120,10 @@ public:
   void		addLight(OpenGLLight&);
   void		addFlareLight(const float* pos, const float* color);
 
+  // temporarily turn off non-applicable lights for big meshes
+  void		disableLights(const float mins[3], const float maxs[3]);
+  void		reenableLights();
+
   void		setTimeOfDay(double julianDay);
   const GLfloat*	getSunColor() const;
   const GLfloat*	getSunScaledColor() const;

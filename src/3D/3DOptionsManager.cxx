@@ -17,6 +17,7 @@
 #include "3DOptionsManager.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 /*const int NO_VARIANT = (-1); */
 
@@ -39,10 +40,10 @@ void  OptionsManager::init ( void )
   options.blending = BZDB.isTrue("blend");
   options.dither = BZDB.isTrue("dither");
   options.smoothing = BZDB.isTrue("smooth");
-  options.dethBuffer = BZDB.isTrue("zbuffer");
+  options.dethBuffer = BZDBCache::zbuffer;
   options.quality  = (renderQuality)BZDB.evalInt("useQuality");
   options.shadows  = BZDB.isTrue("shadows");
-  options.lighting  = BZDB.isTrue("lighting");
+  options.lighting  = BZDBCache::lighting;
 }
 
 void  OptionsManager::save ( void )

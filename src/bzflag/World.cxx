@@ -261,34 +261,36 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   return NULL;
 }
 
-static float Vel[3];
-static bool GoingDown;
 
 static int sortHitNormal(const void* a, const void* b)
 {
-  const MeshFace* obsA = *((const MeshFace**) a);
-  const MeshFace* obsB = *((const MeshFace**) b);
+  const MeshFace* faceA = *((const MeshFace**) a);
+  const MeshFace* faceB = *((const MeshFace**) b);
 
-  if (GoingDown) {  
-    if (obsA->isUpPlane() && !obsB->isUpPlane()) {
+  // Up Planes come first
+  if (faceA->isUpPlane() && !faceB->isUpPlane()) {
+    return -1;
+  }
+  if (faceB->isUpPlane() && !faceA->isUpPlane()) {
+    return +1;
+  }
+
+  // highest Up Plane comes first
+  if (faceA->isUpPlane() && faceB->isUpPlane()) {
+    if (faceA->getPosition()[2] > faceB->getPosition()[2]) {
       return -1;
-    }
-    if (obsB->isUpPlane() && !obsA->isUpPlane()) {
+    } else {
       return +1;
     }
   }
-      
-  const float* plnA = obsA->getPlane();
-  const float* plnB = obsB->getPlane();
-  const float dotA = (plnA[0] * Vel[0]) + (plnA[1] * Vel[1]) + (plnA[2] * Vel[2]);
-  const float dotB = (plnB[0] * Vel[0]) + (plnB[1] * Vel[1]) + (plnB[2] * Vel[2]);
-  if (dotA < dotB) {
+
+  // compare the dot products
+  if (faceA->scratchPad < faceB->scratchPad) {
     return -1;
   } else {
     return +1;
   }
 }
-
 
 const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 					   const float* pos, float angle,
@@ -304,14 +306,14 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
     wallScan++;
   }
 
-  Vel[0] = pos[0] - oldPos[0];  
-  Vel[1] = pos[1] - oldPos[1];  
-  Vel[2] = pos[2] - oldPos[2];
+  float vel[3];
+  vel[0] = pos[0] - oldPos[0];  
+  vel[1] = pos[1] - oldPos[1];  
+  vel[2] = pos[2] - oldPos[2];
   
-  if (Vel[2] <= 0.0f) {
-    GoingDown = true;
-  } else {
-    GoingDown = false;
+  bool goingDown = false;
+  if (vel[2] <= 0.0f) {
+    goingDown = true;
   }
 
   // get the list of potential hits from the collision manager
@@ -328,70 +330,42 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
       if (obs->getType() != MeshFace::getClassName()) {
         return obs;
       } else {
-//        const MeshFace* face = (const MeshFace*) obs;
-//        const float* p = face->getPlane();
-//        const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
-//        if (dot < 1.0e-6f) {
+        const MeshFace* face = (const MeshFace*) obs;
+        const float facePos2 = face->getPosition()[2];
+        if (face->isUpPlane() && 
+            (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
+          continue;
+        }
+        else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) {
+          continue;
+        }
+        else {
+          // add the face to the hitlist
           olist->list[hitCount] = (Obstacle*) obs;
           hitCount++;
-//        }
+          // compute its dot product and stick it in the scratchPad
+          const float* p = face->getPlane();
+          const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+          face->scratchPad = dot;
+        }
       }
     }
   }
-  
+
+  // sort the list by type and dot product  
   qsort (olist->list, hitCount, sizeof(Obstacle*), sortHitNormal);
   
   if (hitCount > 0) {
     const MeshFace* face = (const MeshFace*) olist->list[0];
-    if (face->isUpPlane() && GoingDown) {
-      return face;
-    } else {
-      const float* p = ((const MeshFace*)olist->list[0])->getPlane();
-      const float dot = (p[0] * Vel[0]) + (p[1] * Vel[1]) + (p[2] * Vel[2]);
-      if (dot < 0.0f) {
-        return olist->list[0];
-      } else {
-        return NULL;
-      }
-    }
-  }
-
-
-
-
-
-  if (hitCount > 0) {
-//    printf ("HitCount = %i: ", hitCount);
-    bool goingUp = (oldPos[2] < pos[2]);
-    int lastNonZ = -1;
-    // see if we're hitting a ZPlane first
-    for (int i = 0; i < hitCount; i++) {
-      const MeshFace* face = (const MeshFace*) olist->list[i];
-      const float z = face->getPosition()[2];
+    if (face->isUpPlane() || (face->scratchPad < 0.0f)) {
+//      printf ("pos: <%10.10f> [%10.10f, %10.10f]  ", /*, %10.10f <%10.10f>   ", oldPos[2], pos[2],*/
+//              face->getPosition()[2], face->getPlane()[2], face->getPlane()[3]);
       if (face->isUpPlane()) {
-        if ((oldPos[2] >= z) && (pos[2] <= z) && !goingUp) {
-//          printf ("UpPlane\n");
-          return face;
-        }
+//        printf ("UpPlane\n");
+      } else {
+//        printf ("Not UpPlane\n");
       }
-      else if (face->isDownPlane()) {
-        const float zoff = z - dz; // offset for the tank height
-        if ((oldPos[2] <= zoff) && (pos[2] >= zoff) && goingUp) {
-//          printf ("DownPlane\n");
-          return face;
-        }
-      }
-      else {
-        lastNonZ = i;
-      }
-    }
-
-    // no immediate ZPlane, send something else
-    if (lastNonZ != -1) {
-//      printf ("lastNonZ\n");
-      return olist->list[lastNonZ];
-    } else {
-//      printf ("listZero\n");
+      return face;
     }
   }
 
@@ -750,7 +724,7 @@ static void writeBZDBvar (const std::string& name, void *userData)
   if ((BZDB.getPermission(name) == StateDatabase::Server)
       && (BZDB.get(name) != BZDB.getDefault(name))
       && (name != "poll")) {
-    (*out) << "\t-set " << name << " " << BZDB.get(name) << std::endl;
+    (*out) << "  -set " << name << " " << BZDB.get(name) << std::endl;
   }
   return;
 }

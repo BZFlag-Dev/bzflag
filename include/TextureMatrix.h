@@ -27,6 +27,20 @@ class TextureMatrix {
     ~TextureMatrix();
     const float* getMatrix() const;
     bool setName (const std::string& name);
+
+    // the static parameters (multiples)
+    void addStaticShift (float x, float y);
+    void addStaticSpin (float angle);
+    void addStaticScale (float uSize, float vSize);
+
+    // the dynamic parameters (singles)
+    void seyDynamicShift (float uFreq, float vFreq);
+    void setDynamicSpin (float freq, float uCenter, float vCenter);
+    void setDynamicScale (float uFreq, float vFreq,
+                          float uCenter, float vCenter,
+                          float uSize, float vSize);
+
+    // the dynamic parameters
     void setShiftParams (float uFreq, float vFreq);
     void setRotateParams (float freq, float uCenter, float vCenter);
     void setScaleParams (float uFreq, float vFreq,
