@@ -349,7 +349,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     const int curMaxPlayers = world.getCurMaxPlayers();
     for (i = 0; i < curMaxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
-      if (!player || !player->isAlive() || player->getFlag() == StealthFlag)
+      if (!player || !player->isAlive() || ((player->getFlag() == StealthFlag) && (myTank->getFlag() != SeerFlag)))
 	continue;
 
       GLfloat x = player->getPosition()[0];

@@ -203,6 +203,7 @@ enum FlagId {
 			CloakingFlag,		// make you invisible out window
 			UselessFlag,		// yay, its useless
 			MasqueradeFlag,		// appear in the hud as a teammate
+			SeerFlag,		// see cloak, steath, masquerade as normal
 
 			// the bad super flags
 			ColorblindnessFlag,	// can't see team colors

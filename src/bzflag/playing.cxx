@@ -4049,7 +4049,7 @@ static void		setTarget()
       lockedOn = true;
     }
     else if (a < 0.3f &&				// about 17 degrees
-	player[i]->getFlag() != StealthFlag &&		// can't "see" stealth
+	((player[i]->getFlag() != StealthFlag) || (myTank->getFlag() == SeerFlag)) &&	// can't "see" stealth unless have seer
 	d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
       bestDistance = d;
@@ -4143,7 +4143,7 @@ static void		setHuntTarget()
       lockedOn = true;
     }
     else if (a < 0.3f &&				// about 17 degrees
-	player[i]->getFlag() != StealthFlag &&		// can't "see" stealth
+	((player[i]->getFlag() != StealthFlag) || (myTank->getFlag() == SeerFlag)) &&	// can't "see" stealth unless have seer
 	d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
       bestDistance = d;
@@ -5691,11 +5691,11 @@ static void		playingLoop()
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
-	    if (!colorblind && player[i]->getFlag() == MasqueradeFlag) {
+	    if (!colorblind && (player[i]->getFlag() == MasqueradeFlag) && (myTank->getFlag() != SeerFlag)) {
 	       override = Team::getTankColor(myTank->getTeam());
 	    }
 	    player[i]->addPlayer(scene, override, true);
-	    if (player[i]->getFlag() == CloakingFlag)
+	    if ((player[i]->getFlag() == CloakingFlag) && (myTank->getFlag() != SeerFlag))
 	      player[i]->setInvisible();
 	    else
 	      player[i]->setHidden(roaming && roamView == roamViewFP && roamTrackWinner == i);

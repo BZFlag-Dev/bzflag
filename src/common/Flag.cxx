@@ -80,6 +80,8 @@ Flag::Desc	Flag::descriptions[] =
 		"USeless (+US):  You have found the useless flag. Use it wisely."),
 	Desc( "Masquerade", "MQ", FlagUnstable, NormalShot, FlagGood,
 		"MasQuerade (+MQ):  In opponent's hud, you appear as a teammate."),
+	Desc( "Seer", "SE", FlagUnstable, NormalShot, FlagGood,
+		"SEer (+SE):  See stealthed, cloaked and masquerading tanks as normal."),
 	Desc( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad,
 		"ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!"),
 	Desc( "Obesity", "O", FlagSticky, NormalShot, FlagBad,
