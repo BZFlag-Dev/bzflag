@@ -4,13 +4,13 @@ Name=bzflag
 Ver=1
 IsCpp=1
 Type=0
-Compiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
-CppCompiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
+Compiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror -Wunreachable-code -W_@@_
+CppCompiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror -Wunreachable-code -W_@@_
 Includes=..\include;..\win32;.
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
 UnitCount=314
-Folders="Header Files","Header Files/bzip2","Header Files/common","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/common","Source Files/models","Source Files/net","Source Files/regex","Source Files/zlib"
+Folders="Header Files","Header Files/common","Header Files/net","Header Files/regex","Header Files/zlib","Resource Files","Source Files","Source Files/common","Source Files/models","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
 ResourceIncludes=
@@ -1231,7 +1231,7 @@ BuildCmd=
 
 [Unit123]
 FileName=..\src\zlib\zconf.h
-Folder=Header Files/bzip2
+Folder=Header Files/zlib
 Compile=1
 CompileCpp=1
 Link=1
@@ -1241,7 +1241,7 @@ BuildCmd=
 
 [Unit124]
 FileName=..\src\zlib\zlib.h
-Folder=Header Files/bzip2
+Folder=Header Files/zlib
 Compile=1
 CompileCpp=1
 Link=1
