@@ -28,7 +28,7 @@
 adns_state PlayerInfo::adnsState;
 #endif
 
-void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd,
+void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr,
 			    int _playerIndex) {
   playerIndex      = _playerIndex;
   AddrLen addr_len = sizeof(clientAddr);
@@ -36,10 +36,8 @@ void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd,
   // store address information for player
   memcpy(&taddr, &clientAddr, addr_len);
 
-  fd = _fd;
   state = PlayerInLimbo;
   peer = Address(taddr);
-  tcplen = 0;
   paused = false;
 #ifdef HAVE_ADNS_H
   if (adnsQuery) {
@@ -124,8 +122,6 @@ bool PlayerInfo::removePlayer() {
   regName.empty();
 
   delayq.dequeuePackets();
-
-  tcplen = 0;
 
   callSign[0] = 0;
 
@@ -248,40 +244,6 @@ uint8_t PlayerInfo::getPlayerProperties() {
   return result;
 };
 
-RxStatus PlayerInfo::receive(size_t length) {
-  RxStatus returnValue;
-  if (!exist())
-    return ReadPart;
-  if ((int)length <= tcplen)
-    return ReadAll;
-  int size = recv(fd, tcpmsg + tcplen, length - tcplen, 0);
-  if (size > 0) {
-    tcplen += size;
-    if (tcplen == (int)length)
-      returnValue = ReadAll;
-    else
-      returnValue = ReadPart;
-  } else if (size < 0) {
-    // handle errors
-    // get error code
-    const int err = getErrno();
-
-    // ignore if it's one of these errors
-    if (err == EAGAIN || err == EINTR)
-      returnValue = ReadPart;
-
-    // if socket is closed then give up
-    if (err == ECONNRESET || err == EPIPE) {
-      returnValue = ReadReset;
-    } else {
-      returnValue = ReadError;
-    }
-  } else { // if (size == 0)
-    returnValue = ReadDiscon;
-  }
-  return returnValue;
-};
-
 void PlayerInfo::resetComm() {
     state = PlayerNoExist;
     delayq.init();
@@ -386,9 +348,9 @@ void PlayerInfo::unpackEnter(void *buf) {
   buf = nboUnpackString(buf, email, EmailLen);
   cleanCallSign();
   cleanEMail();
-  DEBUG1("Player %s [%d] has joined from %s:%d on %i\n",
+  DEBUG1("Player %s [%d] has joined from %s:%d\n",
 	 callSign, playerIndex, inet_ntoa(taddr.sin_addr),
-	 ntohs(taddr.sin_port), fd);
+	 ntohs(taddr.sin_port));
 };
 
 void PlayerInfo::getLagStats(char* msg) {
@@ -586,14 +548,6 @@ void PlayerInfo::udpFillRead(void *buf, int len) {
 
 void *PlayerInfo::getUdpBuffer() {
   return udpmsg;
-};
-
-void *PlayerInfo::getTcpBuffer() {
-  return tcpmsg;
-};
-
-void PlayerInfo::cleanTcp() {
-  tcplen = 0;
 };
 
 in_addr PlayerInfo::getIPAddress() {

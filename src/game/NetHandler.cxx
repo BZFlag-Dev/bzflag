@@ -15,7 +15,7 @@
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
-  : info(_info), playerIndex(_playerIndex), fd(_fd),
+  : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
     toBeKicked(false) {
   // store address information for player
@@ -235,6 +235,46 @@ int NetHandler::pflush(fd_set *set) {
   else
     return 0;
 }
+
+RxStatus NetHandler::receive(size_t length) {
+  RxStatus returnValue;
+  if ((int)length <= tcplen)
+    return ReadAll;
+  int size = recv(fd, tcpmsg + tcplen, length - tcplen, 0);
+  if (size > 0) {
+    tcplen += size;
+    if (tcplen == (int)length)
+      returnValue = ReadAll;
+    else
+      returnValue = ReadPart;
+  } else if (size < 0) {
+    // handle errors
+    // get error code
+    const int err = getErrno();
+
+    // ignore if it's one of these errors
+    if (err == EAGAIN || err == EINTR)
+      returnValue = ReadPart;
+
+    // if socket is closed then give up
+    if (err == ECONNRESET || err == EPIPE) {
+      returnValue = ReadReset;
+    } else {
+      returnValue = ReadError;
+    }
+  } else { // if (size == 0)
+    returnValue = ReadDiscon;
+  }
+  return returnValue;
+};
+
+void *NetHandler::getTcpBuffer() {
+  return tcpmsg;
+};
+
+void NetHandler::cleanTcp() {
+  tcplen = 0;
+};
 
 std::string NetHandler::reasonToKick() {
   std::string reason;

@@ -238,7 +238,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
 
   PlayerId pi;
   for (pi = 0; pi < curMaxPlayers; pi++) {
-    if (netPlayer[pi]->isMyUdpAddrPort(uaddr)) {
+    if (netPlayer[pi] && netPlayer[pi]->isMyUdpAddrPort(uaddr)) {
       break;
     }
   }
@@ -249,7 +249,8 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     tmpbuf = nboUnpackUShort(tmpbuf, code);
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
       tmpbuf = nboUnpackUByte(tmpbuf, pi);
-      if ((pi <= curMaxPlayers) && (netPlayer[pi]->setUdpIn(uaddr))) {
+      if ((pi <= curMaxPlayers)
+	  && (netPlayer[pi] && netPlayer[pi]->setUdpIn(uaddr))) {
 	if (uaddr.sin_port)
 	  // send client the message that we are ready for him
 	  sendUDPupdate(pi);
@@ -275,6 +276,11 @@ static int uread(int *playerIndex, int *nopackets, int& n,
 
   *playerIndex = pi;
 
+  if (!netPlayer[pi]) {
+    *playerIndex = 0;
+    return 0;
+  }
+
   netPlayer[pi]->debugUdpRead(n, uaddr, udpSocket);
 
   if (n > 0) {
@@ -288,10 +294,13 @@ static int uread(int *playerIndex, int *nopackets, int& n,
 
 static bool pread(int playerIndex, int l)
 {
-  PlayerInfo& p = player[playerIndex];
+  NetHandler *p = netPlayer[playerIndex];
+
+  if (!p)
+    return false;
 
   // read more data into player's message buffer
-  const RxStatus e = p.receive(l);
+  const RxStatus e = p->receive(l);
 
   if (e == ReadAll) {
     return true;
@@ -1392,7 +1401,7 @@ static void acceptClient()
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
-  player[playerIndex].initPlayer(clientAddr, fd, playerIndex);
+  player[playerIndex].initPlayer(clientAddr, playerIndex);
   netPlayer[playerIndex] = new NetHandler(& player[playerIndex], clientAddr,
 					  playerIndex, fd);
   lastState[playerIndex].order = 0;
@@ -4412,10 +4421,11 @@ int main(int argc, char **argv)
       }
 
     for (i = 0; i < curMaxPlayers; i++) {
-      // kick any clients that need to be
-      std::string reasonToKick = netPlayer[i]->reasonToKick();
-      if (reasonToKick != "") {
-	removePlayer(i, reasonToKick.c_str(), false);
+      if (netPlayer[i]) {
+	// kick any clients that need to be
+	std::string reasonToKick = netPlayer[i]->reasonToKick();
+	if (reasonToKick != "")
+	  removePlayer(i, reasonToKick.c_str(), false);
       }
     }
     // check messages
@@ -4493,7 +4503,7 @@ int main(int argc, char **argv)
 
 	  // read body if we don't have it yet
 	  uint16_t len, code;
-	  void *buf = player[i].getTcpBuffer();
+	  void *buf = netPlayer[i]->getTcpBuffer();
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
 	  if (len>MaxPacketLen) {
@@ -4506,7 +4516,7 @@ int main(int argc, char **argv)
 	    continue;
 
 	  // clear out message
-	  player[i].cleanTcp();
+	  netPlayer[i]->cleanTcp();
 
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // he/she must not be using the UDP link
@@ -4527,7 +4537,7 @@ int main(int argc, char **argv)
 	  }
 
 	  // handle the command
-	  handleCommand(i, code, len, player[i].getTcpBuffer());
+	  handleCommand(i, code, len, netPlayer[i]->getTcpBuffer());
 	}
       }
     } else if (nfound < 0) {

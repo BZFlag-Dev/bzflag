@@ -16,6 +16,27 @@
 /* local implementation headers */
 #include "PlayerInfo.h"
 
+enum RxStatus {
+  ReadAll,
+  ReadPart,
+  ReadReset,
+  ReadError,
+  ReadDiscon
+};
+
+#ifdef DEBUG
+#define NETWORK_STATS
+#endif
+#ifdef NETWORK_STATS
+struct MessageCount {
+  uint32_t count;
+  uint16_t code;
+  uint16_t maxSize;
+};
+// does not include MsgNull
+#define MessageTypes 38
+#endif
+
 class NetHandler {
 public:
   NetHandler(PlayerInfo *_info, const struct sockaddr_in &_clientAddr,
@@ -27,6 +48,9 @@ public:
   void        setUdpOut();
   bool        setUdpIn(struct sockaddr_in &_uaddr);
   int         pwrite(const void *b, int l, int udpSocket);
+  RxStatus    receive(size_t length);
+  void       *getTcpBuffer();
+  void        cleanTcp();
   int         pflush(fd_set *set);
   std::string reasonToKick();
 #ifdef NETWORK_STATS
@@ -49,6 +73,12 @@ private:
 
   // peer's network address
   Address                   peer;
+
+  // input buffers
+  // bytes read in current msg
+  int tcplen;
+  // current TCP msg
+  char tcpmsg[MaxPacketLen];
 
   // output buffer
   int outmsgOffset;

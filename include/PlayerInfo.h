@@ -51,30 +51,6 @@ enum ClientState {
   PlayerAlive
 };
 
-enum RxStatus {
-  ReadAll,
-  ReadPart,
-  ReadReset,
-  ReadError,
-  ReadDiscon
-};
-
-
-#ifdef DEBUG
-#define NETWORK_STATS
-#endif
-#ifdef NETWORK_STATS
-struct MessageCount {
-  public:
-    uint32_t count;
-    uint16_t code;
-    uint16_t maxSize;
-};
-// does not include MsgNull
-#define MessageTypes 38
-#endif
-
-
 #define SEND 1
 #define RECEIVE 0
 
@@ -88,7 +64,7 @@ struct TeamInfo {
 
 class PlayerInfo {
 public:
-  void        initPlayer(const struct sockaddr_in& clientAddr, int _fd,
+  void        initPlayer(const struct sockaddr_in& clientAddr,
 			 int _playerIndex);
   void        resetPlayer(bool ctf);
   bool        isAccessVerified() const;
@@ -114,7 +90,6 @@ public:
   uint8_t     getPlayerProperties();
   void        storeInfo(const char* pwd);
   void        setPassword(const std::string& pwd);
-  RxStatus    receive(size_t length);
   void        createUdpCon(int remote_port);
   void        resetComm();
   const char *getTargetIP();
@@ -161,8 +136,6 @@ public:
   bool        isFlagTransitSafe();
   void        udpFillRead(void *buf, int len);
   void       *getUdpBuffer();
-  void       *getTcpBuffer();
-  void        cleanTcp();
   in_addr     getIPAddress();
   void        delayQueueAddPacket(int length, const void *data, float time);
   bool        delayQueueGetPacket(int *length, void **data);
@@ -206,8 +179,6 @@ private:
 
     // player's registration name
     std::string regName;
-    // socket file descriptor
-    int fd;
     // peer's network address
     Address peer;
 #ifdef HAVE_ADNS_H
@@ -236,23 +207,12 @@ private:
 
     TimeKeeper lastFlagDropTime;
 
-    // input buffers
-    // bytes read in current msg
-    int tcplen;
-    // current TCP msg
-    char tcpmsg[MaxPacketLen];
     // current UDP msg
     char udpmsg[MaxPacketLen];
 
     // TCP connection
     struct sockaddr_in taddr;
 
-    // UDP message queue
-    struct PacketQueue *uqueue;
-    struct PacketQueue *dqueue;
-    unsigned short lastRecvPacketNo;
-    unsigned short lastSendPacketNo;
-    
     // DelayQueue for "Lag Flag"
     DelayQueue delayq;
 
