@@ -6311,6 +6311,17 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     options.flagCount[int(PhantomZoneFlag)] = 0;
     options.flagDisallowed[int(PhantomZoneFlag)] = true;
   }
+  bool hasTeam = false;
+  for (int p = RedTeam; p <= PurpleTeam; p++) {
+    if (options.maxTeam[p] > 1) {
+	hasTeam = true;
+	break;
+    }
+  }
+  if (!hasTeam) {
+    options.flagCount[int(GenocideFlag)] = 0;
+    options.flagDisallowed[int(GenocideFlag)] = true;
+  }
 
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
