@@ -94,19 +94,19 @@ main (int argc, char **argv)
 
   // print the help message
   if (argc != 2) {
-    printf ("\n");
-    printf ("usage:  %s [opts] <filename>\n", execname);
-    printf ("\n");
-    printf ("  -t    disable textures\n");
-    printf ("  -n    disable normals\n");
-    printf ("  -c    disable all colors\n");
-    printf ("  -a    disable ambient\n");
-    printf ("  -d    disable diffuse\n");
-    printf ("  -s    disable specular\n");
-    printf ("  -sh   disable shininess\n");
-    printf ("  -i    invert normals\n");
-    printf ("  -cs   swap ambient and diffuse\n");
-    printf ("\n");
+    printf ("\n" \
+            "usage:  %s [opts] <filename>\n" \
+            "\n" \
+            "  -t    disable textures\n" \
+            "  -n    disable normals\n" \
+            "  -c    disable all colors\n" \
+            "  -a    disable ambient\n" \
+            "  -d    disable diffuse\n" \
+            "  -s    disable specular\n" \
+            "  -sh   disable shininess\n" \
+            "  -i    invert normals\n" \
+            "  -cs   swap ambient and diffuse\n" \
+            "\n", execname);
     return 1;
   }
 
@@ -125,8 +125,8 @@ main (int argc, char **argv)
     // FIXME - Lib3dsMatrix* matrix = &mesh->matrix;
     // comments on statistics
     unsigned int i;
-    printf ("mesh  # %s\n", mesh->name);
-    printf ("# vertices:  %i\n", (int) mesh->points);
+    printf ("mesh  # %s\n" \
+            "# vertices:  %i\n", mesh->name, (int) mesh->points);
     if (Normals) {
       printf ("# normals:   %i\n", (int) mesh->faces * 3);
     }
@@ -172,8 +172,8 @@ main (int argc, char **argv)
     for (i = 0; i < mesh->faces; i++) {
       Lib3dsFace *face = &(mesh->faceL[i]);
       Lib3dsWord *points = face->points;
-      printf ("  face  # material = %s\n", face->material);
-      printf ("    vertices %i %i %i\n", points[0], points[1], points[2]);
+      printf ("  face  # material = %s\n" \
+              "    vertices %i %i %i\n", face->material, points[0], points[1], points[2]);
       if (Normals) {
         printf ("    normals %i %i %i\n", (i * 3) + 0, (i * 3) + 1,
                 (i * 3) + 2);
@@ -182,9 +182,9 @@ main (int argc, char **argv)
           lib3ds_file_material_by_name (File3DS, face->material);
       if (mat) {
         if (Textures && (mesh->texels != 0)) {
-          printf ("    texture %s\n", mat->texture1_map.name);
-          printf ("    texcoords %i %i %i\n", points[0], points[1],
-                  points[2]);
+          printf ("    texture %s\n" \
+                  "    texcoords %i %i %i\n", mat->texture1_map.name, points[0], points[1],
+                                  points[2]);
 
           // BZ isn't ready for these, yet...
           // printf (" #texture %s\n", material->texture2_map.name);
