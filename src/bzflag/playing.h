@@ -85,6 +85,7 @@ void selectNextRecipient (bool forward, bool robotIn);
 extern HUDRenderer	*hud;
 extern char		messageMessage[PlayerIdPLen + MessageLen];
 extern ServerLink*	serverLink;
+extern bool		admin; // am I an admin?
 
 
 #endif // BZF_PLAYING_H
