@@ -41,7 +41,7 @@ static std::string		setupString(std::string dir)
   return name;
 }
 
-std::string		getConfigDirName()
+std::string		getConfigDirName( const char* versionName )
 {
 #if defined(_WIN32)
   std::string name("C:");
@@ -63,7 +63,11 @@ std::string		getConfigDirName()
 
   // yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
   name += "\\My BZFlag Files\\";
-
+	if (versionName)
+	{
+		name += versionName;
+		name += "\\";
+	}
   return name;
 
 #elif defined(__APPLE__)
@@ -76,7 +80,12 @@ std::string		getConfigDirName()
     err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
     if(err == ::noErr) {
       std::strcat(buff, "/BZFlag/");
-      name = buff;
+			if (versionName)
+			{
+				std::strcat(buff, versionName);
+				std::strcat(buff,"/");
+			}
+     name = buff;
     }
   }
   return name;
@@ -88,7 +97,11 @@ std::string		getConfigDirName()
     name += "/";
   }
   name += ".bzf/";
-
+	if (versionName)
+	{
+		name+= versionName;
+		name+="/";
+	}
   return name;
 #endif
 }

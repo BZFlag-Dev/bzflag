@@ -41,6 +41,19 @@
 #define BZ_REV                  9
 #endif
 
+#ifndef BZ_CONFIG_DIR_VERSION
+#define BZ_CONFIG_DIR_VERSION "1.12"
+#endif
+
+#ifndef BZ_CONFIG_FILE_NAME
+#define BZ_CONFIG_FILE_NAME "config.cfg"
+#endif
+
+#ifndef BZ_CONFIG_FILE_VERSION
+#define BZ_CONFIG_FILE_VERSION 1
+#endif
+
+
 // DEVEL | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
 #define BZ_BUILD_TYPE		"DEVEL"

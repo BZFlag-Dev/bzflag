@@ -23,7 +23,7 @@ const char DirectorySeparator = '/';
 const char DirectorySeparator = '\\';
 #endif
 
-extern std::string		getConfigDirName();
+extern std::string		getConfigDirName( const char* versionName = NULL );
 extern std::string		getCacheDirName();
 extern std::string		getRecordDirName();
 extern std::string		getScreenShotDirName();
