@@ -111,6 +111,40 @@ const char* TetraBuilding::getClassName() // const
 }
 
 
+bool TetraBuilding::isValid() const
+{
+  int v, a;
+  
+  float edge[3][3]; // edges from vertex 0
+  for (v = 0; v < 3; v++) {
+    for (a = 0; a < 3; a++) {
+      edge[v][a] = vertices[v+1][a] - vertices[0][a];
+    }
+  }
+  float cross[3];
+  cross[0] = (edge[0][1] * edge[1][2]) - (edge[0][2] * edge[1][1]);
+  cross[1] = (edge[0][2] * edge[1][0]) - (edge[0][0] * edge[1][2]);
+  cross[2] = (edge[0][0] * edge[1][1]) - (edge[0][1] * edge[1][0]);
+  float dot =
+    (cross[0] * edge[2][0]) + (cross[1] * edge[2][1]) + (cross[2] * edge[2][2]);
+    
+  if (fabsf(dot) < 0.0001) {
+    return false; // tetrahedrons require a volume
+  }
+
+  // now check the vertices
+  for (v = 0; v < 4; v++) {
+    for (a = 0; a < 3; a++) {
+      if (fabsf(vertices[v][a]) > maxExtent) {
+        return false;
+      }
+    }
+  }
+  
+  return true;
+}
+
+
 void TetraBuilding::getCorner(int index, float* pos) const
 {
   memcpy (pos, vertices[index], 3 * sizeof(float));

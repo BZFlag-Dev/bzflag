@@ -59,6 +59,10 @@ class Obstacle {
    */
   virtual const char* getType() const = 0;
   
+  /** This function returns true if the obstacle is valid
+   */
+  virtual bool isValid() const;
+  
   /** This function returns the position of this obstacle. */
   const float* getPosition() const;
   
@@ -159,6 +163,11 @@ class Obstacle {
       Someone else can 'friend'ify it later.
   */
   bool collisionState;
+  
+  /** The maximum extent of any object parameter
+   */
+  static const float maxExtent;
+  
   
  protected:
   /** This function checks if a moving horizontal rectangle will hit a 

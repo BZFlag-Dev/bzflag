@@ -17,6 +17,11 @@
 #include "Intersect.h"
 #include "StateDatabase.h"
 
+
+// limits the maximum extent of any obstacle
+const float Obstacle::maxExtent = 1.0e30f;
+
+
 Obstacle::Obstacle()
 {
   memset(pos, 0, sizeof(float) * 3);
@@ -45,6 +50,21 @@ Obstacle::Obstacle(const float* _pos, float _angle,
 Obstacle::~Obstacle()
 {
   // do nothing
+}
+
+bool			Obstacle::isValid() const
+{
+  float maxX = fabsf(cos(angle) * size[0]) +
+               fabsf(sin(angle) * size[1]) + fabsf(pos[0]);
+  float maxY = fabsf(cos(angle) * size[1]) +
+               fabsf(sin(angle) * size[0]) + fabsf(pos[1]);
+
+  if ((maxX > maxExtent) || (maxY > maxExtent) ||
+      ((fabsf(pos[2]) + fabsf(size[2])) > maxExtent)) {
+    return false;
+  }
+  
+  return true;
 }
 
 bool			Obstacle::isDriveThrough() const

@@ -121,7 +121,9 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackUByte(buf, tempflags);
 	BoxBuilding box(data, data[3], data[4], data[5], data[6],
 			(tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
-	append(box);
+        if (box.isValid()) {
+	  append(box);
+        }
 	break;
       }
       case WorldCodePyramid: {
@@ -148,7 +150,9 @@ void* WorldBuilder::unpack(void* buf)
 	if (tempflags & _FLIP_Z)
 	  pyr.setZFlip();
 
-	append(pyr);
+        if (pyr.isValid()) {
+	  append(pyr);
+        }
 	break;
       }
       case WorldCodeTetra: {
@@ -199,7 +203,9 @@ void* WorldBuilder::unpack(void* buf)
 	TetraBuilding tetra(vertices, visible, colored, colors,
 			    (tempflags & _DRIVE_THRU) != 0,
 			    (tempflags & _SHOOT_THRU) != 0);
-	append(tetra);
+        if (tetra.isValid()) {
+	  append(tetra);
+        }
 	break;
       }
       case WorldCodeTeleporter: {
@@ -223,7 +229,9 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackUByte(buf, tempflags);
 	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],
 			(tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
-	append(tele);
+        if (tele.isValid()) {
+	  append(tele);
+        }
 	break;
       }
       case WorldCodeLink: {
@@ -256,7 +264,9 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
 	WallObstacle wall(data, data[3], data[4], data[5]);
-	append(wall);
+        if (wall.isValid()) {
+	  append(wall);
+        }
 	break;
       }
       case WorldCodeBase: {
@@ -281,8 +291,10 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[8]);
 	buf = nboUnpackFloat(buf, data[9]);
 	BaseBuilding base(data, data[3], data +4, team);
-	append(base);
-	setBase(TeamColor(team), data, data[3], data[4], data[5], data[6]);
+        if (base.isValid()) {
+	  append(base);
+	  setBase(TeamColor(team), data, data[3], data[4], data[5], data[6]);
+        }
 	break;
       }
       case WorldCodeWeapon: {
@@ -310,7 +322,7 @@ void* WorldBuilder::unpack(void* buf)
   	  buf = nboUnpackFloat(buf, delay);
   	  weapon.delay.push_back(delay);
   	}
-	append(weapon);
+        append(weapon);
 	break;
       }
       case WorldCodeZone: {
