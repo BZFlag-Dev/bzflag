@@ -3,6 +3,14 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* ether fix the ares builds for windows, or wrap up ares in a class
+  so that windows can just us it's own DNS stuff to do lookups. Or
+  set up a ares lib project that works in all VCs ( 6 is busted )
+  Do we need to include the source tree? we can just make a binary and
+  provide it ( the license supports it, we could even bundle source for devs).
+  Can we just use the bit of source we need? all these and more must be 
+  answered before we can live with this thing.
+
 * command line options that have -set <name> <value> equivalents should be
   reviewed and possibly eliminated
 
