@@ -12,8 +12,11 @@ recent bugs
 
 - taking a full-screen snapshot take too long to complete. That's happening
   since we are saving in png. Profiling reveals that about 30% of the time
-  is spent to get the pixel data and apply gamam correction, 70% is used
+  is spent to get the pixel data and apply gamma correction, 70% is used
   for compression.
+  Reduced compression level from 9 to 5, this speeds up compression
+  by a factor of approx. 6 for me. Now glReadPixels takes the bulk of
+  the time.
 
 - changing video format during game messes up rendering on one of my
   Linux boxes (the one with hardware rendering). Most prominently, the
