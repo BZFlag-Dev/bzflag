@@ -248,9 +248,12 @@ void OpenGLTexture::setFilter(Filter _filter)
       }
     }
   }
+  GLint binding;
+  glGetIntegerv (GL_TEXTURE_BINDING_2D, &binding);
   glBindTexture(GL_TEXTURE_2D, list);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filterIndex]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filterIndex]);
+  glBindTexture(GL_TEXTURE_2D, binding);
 }
 
 
