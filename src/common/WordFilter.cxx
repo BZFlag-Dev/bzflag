@@ -43,7 +43,7 @@ bool WordFilter::simpleFilter(char *input) const
 
     word = line.substr(startPosition, endPosition-startPosition);
     findWord.word = word;
-    firstchar = (unsigned int)word[0];
+    firstchar = (unsigned char)word[0];
     if (filters[firstchar].find(findWord) != \
 	filters[firstchar].end()) {
 
@@ -639,7 +639,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     newFilter.expression = expression;
     newFilter.compiled = getCompiledExpression(expression);
 
-    unsigned int firstchar = (unsigned int)tolower(word[0]);
+    unsigned int firstchar = (unsigned char)tolower(word[0]);
     /* check if the word is already added */
     if (filters[firstchar].find(newFilter) != \
 	filters[firstchar].end()) {
