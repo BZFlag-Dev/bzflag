@@ -1827,58 +1827,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     }
   }
 
-  else if (keymap.isMappedTo(BzfKeyMap::SendAll, key) ||
-	   keymap.isMappedTo(BzfKeyMap::SendTeam, key) ||
-	   keymap.isMappedTo(BzfKeyMap::SendNemesis, key) ||
-	   keymap.isMappedTo(BzfKeyMap::SendRecipient, key)) {
-    // start composing a message
-    if (pressed) {
-      std::string composePrompt;
-      if (keymap.isMappedTo(BzfKeyMap::SendAll, key)) {
-        void* buf = messageMessage;
-        buf = nboPackUByte(buf, AllPlayers);
-	composePrompt = "Send to all: ";
-      }
-      else if (keymap.isMappedTo(BzfKeyMap::SendTeam, key)) {
-        void* buf = messageMessage;
-        buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
-	composePrompt = "Send to teammates: ";
-      }
-      else if (keymap.isMappedTo(BzfKeyMap::SendNemesis, key)) {
-	const Player *nemesis = myTank->getNemesis();
-	if (!nemesis) return;
-
-        void* buf = messageMessage;
-	buf = nboPackUByte(buf, nemesis->getId());
-	composePrompt = "Send to ";
-	composePrompt += nemesis->getCallSign();
-	composePrompt += ": ";
-      }
-      else {
-	const Player *recipient = myTank->getRecipient();
-	if (!recipient) {
-	  for (int i = 0; i < curMaxPlayers; i++) {
-	    if (player[i]) {
-	      myTank->setRecipient(player[i]);
-	      break;
-	    }
-	  }
-	}
-	recipient = myTank->getRecipient();
-	if (recipient) {
-          void* buf = messageMessage;
-	  buf = nboPackUByte(buf, recipient->getId());
-	  composePrompt = "Send to ";
-	  composePrompt += recipient->getCallSign();
-	  composePrompt += ": ";
-	}
-      }
-
-      messageHistoryIndex = 0;
-      hud->setComposing(composePrompt);
-      HUDui::setDefaultKey(&composeKeyHandler);
-    }
-  }
   else if (keymap.isMappedTo(BzfKeyMap::ChooseSilence, key)) {
     if (pressed) {
       messageHistoryIndex = 0;
@@ -2211,6 +2159,56 @@ static std::string cmdPause(const std::string&, const CommandManager::ArgList& a
   return std::string();
 }
 
+static std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
+{
+  static ComposeDefaultKey composeKeyHandler;
+  if (args.size() != 1)
+    return "usage: send {all|team|nemesis|recipient}";
+  std::string composePrompt;
+  if (args[0] == "all") {
+    void* buf = messageMessage;
+    buf = nboPackUByte(buf, AllPlayers);
+    composePrompt = "Send to all: ";
+  } else if (args[0] == "team") {
+    void* buf = messageMessage;
+    buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
+    composePrompt = "Send to teammates: ";
+  } else if (args[0] == "nemesis") {
+    const Player* nemesis = myTank->getNemesis();
+    if (!nemesis) return std::string();
+
+    void* buf = messageMessage;
+    buf = nboPackUByte(buf, nemesis->getId());
+    composePrompt = "Send to ";
+    composePrompt += nemesis->getCallSign();
+    composePrompt += ": ";
+  } else if (args[0] == "recipient") {
+    const Player* recipient = myTank->getRecipient();
+    if (!recipient) {
+      for (int i = 0; i < curMaxPlayers; i++) {
+	if (player[i]) {
+	  myTank->setRecipient(player[i]);
+	  break;
+	}
+      }
+    }
+    recipient = myTank->getRecipient();
+    if (recipient) {
+      void* buf = messageMessage;
+      buf = nboPackUByte(buf, recipient->getId());
+      composePrompt = "Send to ";
+      composePrompt += recipient->getCallSign();
+      composePrompt += ": ";
+    }
+  } else {
+    return "usage: send {all|team|nemesis|recipient}";
+  }
+  messageHistoryIndex = 0;
+  hud->setComposing(composePrompt);
+  HUDui::setDefaultKey(&composeKeyHandler);
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2223,7 +2221,8 @@ static const CommandListItem commandList[] = {
   { "drop",	&cmdDrop,	"drop:  drop the current flag" },
   { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
-  { "pause",	&cmdPause,	"pause: pause/resume" }
+  { "pause",	&cmdPause,	"pause:  pause/resume" },
+  { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" }
 };
 
 static void		doEvent(BzfDisplay* display)
