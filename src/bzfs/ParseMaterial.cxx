@@ -43,6 +43,9 @@ bool parseMaterial(const char* cmd, std::istream& input,
       error = true;
     }
   }
+  else if (strcasecmp(cmd, "spheremap") == 0) {
+    material.useSphereMap = true;
+  }
   else if (strcasecmp(cmd, "dyncol") == 0) {
     if (!(input >> material.dynamicColor)) {
       error = true;

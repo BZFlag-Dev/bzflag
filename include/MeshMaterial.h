@@ -54,6 +54,7 @@ class MeshMaterial {
     bool useTexture;
     bool useTextureAlpha;
     bool useColorOnTexture;
+    bool useSphereMap;
     
   private:
     static MeshMaterial defaultMaterial;

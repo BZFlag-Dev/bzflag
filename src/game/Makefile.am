@@ -18,7 +18,7 @@ libGame_a_SOURCES =			\
 	NetHandler.cxx			\
 	PlayerInfo.cxx			\
 	Ray.cxx				\
-	TextureMatrix.cxx	\
+	TextureMatrix.cxx		\
 	VotingArbiter.cxx
 
 EXTRA_DIST = \

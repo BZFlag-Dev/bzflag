@@ -40,6 +40,7 @@ class OpenGLGState {
     bool		isTextured() const;
     bool		isTextureReplace() const;
     bool		isTextureMatrix() const;
+    bool		isSphereMap() const;
     bool		isLighted() const;
     void		addRenderNode(RenderNode* node) const;
     static void		resetState();
@@ -107,6 +108,7 @@ class OpenGLGStateBuilder {
     void		enableTexture(bool = true);
     void		enableTextureReplace(bool = true);
     void		enableTextureMatrix(bool = true);
+    void		enableSphereMap(bool = true);
     void		enableMaterial(bool = true);
     void		resetBlending();
     void		resetSmoothing();

@@ -148,6 +148,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
     alpha = imageInfo.alpha;
   }
   node->setBlending(alpha);
+  node->setSphereMap(mat->useSphereMap);
 
   // the current color can also affect the blending.
   // if blending is disabled then the alpha value from

@@ -203,8 +203,8 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   const float* eye = frustum->getEye();
 
   // FIXME: As a first cut, i'll be assuming that the frustum
-  //        top points towards Z (not an observer). Also, this
-  //        should be split into a setupShadowVolume() function
+  //        top points towards Z. Also, this should be split
+  //        into a setupShadowVolume() function
   
   if (frustum->getUp()[2] > 0.999999) {
     planeCount = 2;

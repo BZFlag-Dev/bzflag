@@ -41,6 +41,8 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   useColorTexture = false;
   isBlended = false;
   wantBlending = false;
+  wantSphereMap = false;
+  return;
 }
 
 WallSceneNode::~WallSceneNode()
@@ -196,6 +198,12 @@ void			WallSceneNode::setBlending(bool blend)
   return;
 }
 
+void			WallSceneNode::setSphereMap(bool sphereMapping)
+{
+  wantSphereMap = sphereMapping;
+  return;
+}
+
 void			WallSceneNode::setColor(const GLfloat* rgba)
 {
   color[0] = rgba[0];
@@ -317,6 +325,9 @@ void			WallSceneNode::notifyStyleChange()
     builder.setStipple(alpha);
   }
   isBlended = wantBlending || (alpha != 1.0f);
+  if (wantSphereMap) {
+    builder.enableSphereMap(true);
+  }
   gstate = builder.getState();
 }
 

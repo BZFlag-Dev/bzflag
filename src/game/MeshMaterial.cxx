@@ -36,6 +36,7 @@ void MeshMaterial::reset()
   useTexture = true;
   useTextureAlpha = true;
   useColorOnTexture = true;
+  useSphereMap = false;
   return;
 }
 
@@ -60,6 +61,7 @@ MeshMaterial::MeshMaterial(const MeshMaterial& m)
   useTexture = m.useTexture;
   useTextureAlpha = m.useTextureAlpha;
   useColorOnTexture = m.useColorOnTexture;
+  useSphereMap = m.useSphereMap;
   return;
 }
 
@@ -77,6 +79,7 @@ MeshMaterial& MeshMaterial::operator=(const MeshMaterial& m)
   useTexture = m.useTexture;
   useTextureAlpha = m.useTextureAlpha;
   useColorOnTexture = m.useColorOnTexture;
+  useSphereMap = m.useSphereMap;
   return *this;
 }
 
@@ -93,7 +96,8 @@ bool MeshMaterial::operator==(const MeshMaterial& m)
       (memcmp (emission, m.emission, sizeof(float[4])) != 0) ||
       (useTexture != m.useTexture) ||
       (useTextureAlpha != m.useTextureAlpha) ||
-      (useColorOnTexture != m.useColorOnTexture)) {
+      (useColorOnTexture != m.useColorOnTexture) ||
+      (useSphereMap != m.useSphereMap)) {
     return false;
   }
   return true;
@@ -149,6 +153,10 @@ bool MeshMaterial::copyDiffs(const MeshMaterial& moded,
     useColorOnTexture = moded.useColorOnTexture;
     changed = true;
   }
+  if (orig.useSphereMap != moded.useSphereMap) {
+    useSphereMap = moded.useSphereMap;
+    changed = true;
+  }
 
   return changed;
 }
@@ -186,6 +194,9 @@ void* MeshMaterial::pack(void* buf)
   if (useColorOnTexture) {
     stateByte = stateByte | (1 << 2);
   }
+  if (useSphereMap) {
+    stateByte = stateByte | (1 << 3);
+  }
   buf = nboPackUByte(buf, stateByte);
   unsigned char len = (unsigned char)texture.size();
   buf = nboPackUByte(buf, len);
@@ -214,6 +225,9 @@ void* MeshMaterial::unpack(void* buf)
   }
   if (stateByte & (1 << 2)) {
     useColorOnTexture = true;
+  }
+  if (stateByte & (1 << 3)) {
+    useSphereMap = true;
   }
   char textureStr[256];
   unsigned char len;
@@ -281,6 +295,9 @@ void MeshMaterial::print(std::ostream& out, int /*level*/)
 
   if (shininess != getDefault().shininess) {
     out << "    shininess " << shininess << std::endl;
+  }
+  if (useSphereMap) {
+    out << "    spheremap" << std::endl;
   }
   
   return;
