@@ -220,6 +220,10 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location,
 				     float x, float y, float z, float r,
 				     float height) const
 {
+
+  if (height < Epsilon)
+    height = Epsilon;
+
   int i;
   for (i = 0; i < numBases; i++) {
     if ((bases[i].pos[2] < (z + height))
