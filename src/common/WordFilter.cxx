@@ -139,10 +139,10 @@ bool WordFilter::aggressiveFilter(char *input) const
       regCode = regexec(i->compiled, input, 1, match, 0);
 
       if ( regCode == 0 ) {
+#if 0
 	unsigned int startOffset = match[0].rm_so;
 	unsigned int endOffset = match[0].rm_eo;
 
-#if 0
 	/* make sure we only match on word boundaries */
 	if ( (startOffset>0) && (!isAlphabetic(input[startOffset-1])) ) {
 	  continue;
