@@ -1288,7 +1288,10 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
 
   // make scene node
   shockNode = new SphereSceneNode(path->getPosition(), ShockInRadius);
-  shockNode->setColor(1.0f, 1.0f, 1.0f, 0.75f);
+  Player* p = lookupPlayer(path->getPlayer());
+  TeamColor team = p ? p->getTeam() : RogueTeam;
+  const float* c = Team::getRadarColor(team);
+  shockNode->setColor(c[0], c[1], c[2], 0.75f);
 }
 
 ShockWaveStrategy::~ShockWaveStrategy()
@@ -1305,7 +1308,10 @@ void			ShockWaveStrategy::update(float dt)
   const GLfloat frac = (radius - ShockInRadius) /
 			(ShockOutRadius - ShockInRadius);
   shockNode->move(getPath().getPosition(), radius);
-  shockNode->setColor(1.0f, 1.0f, 1.0f, 0.75f - 0.5f * frac);
+  Player* p = lookupPlayer(getPath().getPlayer());
+  TeamColor team = p ? p->getTeam() : RogueTeam;
+  const float* c = Team::getRadarColor(team);
+  shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
 
   // expire when full size
   if (radius >= ShockOutRadius) setExpired();
