@@ -244,7 +244,7 @@ class WordFilter
       return 0;
     }
 
-    int randomCharPos, previousCharPos;
+    int randomCharPos, previousCharPos = -1;
     int maxFilterChar = filterChars.size();
     int count=0;
     for (unsigned int j=0; j < (unsigned int)length; j++) {
