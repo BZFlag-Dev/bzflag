@@ -240,6 +240,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_LDFLAGS = "";
 				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
@@ -2673,7 +2674,7 @@
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
-			name = geometry;
+			name = Geometry;
 			productName = geometry;
 			productReference = 7B77495405C5BC450018EA21;
 			productType = "com.apple.product-type.library.static";
@@ -3074,7 +3075,7 @@
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
-			name = obstacle;
+			name = Obstacle;
 			productName = obstacle;
 			productReference = 7B77498805C5BCE70018EA21;
 			productType = "com.apple.product-type.library.static";
@@ -3267,7 +3268,7 @@
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
-			name = ogl;
+			name = GLKit;
 			productName = ogl;
 			productReference = 7B7749A005C5BD3C0018EA21;
 			productType = "com.apple.product-type.library.static";
@@ -3439,7 +3440,7 @@
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
-			name = scene;
+			name = SceneDB;
 			productName = scene;
 			productReference = 7B7749B805C5BD760018EA21;
 			productType = "com.apple.product-type.library.static";
@@ -3561,7 +3562,7 @@
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
-			name = platform;
+			name = Platform;
 			productName = platform;
 			productReference = 7B7749C505C5BDC30018EA21;
 			productType = "com.apple.product-type.library.static";
@@ -4382,7 +4383,7 @@
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
-			name = mediafile;
+			name = MediaFile;
 			productName = mediafile;
 			productReference = 7B774A3905C5BFAA0018EA21;
 			productType = "com.apple.product-type.library.static";
@@ -5234,6 +5235,7 @@
 				7B774B3305C5C4AD0018EA21,
 				7B774B1D05C5C4210018EA21,
 				7B774F7D05C5C91E0018EA21,
+				7BAD11EB05C5F59E00A62E43,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7118,6 +7120,12 @@
 		};
 		7B9DCC7F05C5A6C30063B49D = {
 			fileRef = 7B9DCC7E05C5A6C30063B49D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BAD11EB05C5F59E00A62E43 = {
+			fileRef = 20286C33FDCF999611CA2CEA;
 			isa = PBXBuildFile;
 			settings = {
 			};
