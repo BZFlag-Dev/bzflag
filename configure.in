@@ -95,11 +95,7 @@ AM_CONDITIONAL(MACOS, $macos)
 #CONFIG is only used for irix packaging
 case $host_os in
    irix*)
-	if test $host_cpu = mips64; then
-	   CONFIG=irix-mips3;
-	else
-	   CONFIG=irix-mips2;
-	fi;
+	CONFIG=irix-mips3;
         AC_SUBST(CONFIG)
         ;;
 esac

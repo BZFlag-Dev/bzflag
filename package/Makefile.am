@@ -22,6 +22,7 @@ else
 if IRIX
 MKDIR	= /usr/bin/mkdir
 RM	= /usr/bin/rm -f
+CD	= cd
 else
 if MACOS
 MKDIR	= /bin/mkdir
