@@ -126,7 +126,7 @@ SOURCE=..\include\MediaFile.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\PNGImageFile.h
+SOURCE=..\src\mediafile\PNGImageFile.h
 # End Source File
 # Begin Source File
 
