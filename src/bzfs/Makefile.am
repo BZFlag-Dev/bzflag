@@ -106,11 +106,17 @@ else
 ZLIB = -lz
 endif
 
+if USE_THREADS
+THREADLIB=-lpthread
+else
+THREADLIB=
+endif
+
 LDADD = \
 	../obstacle/libObstacle.a	\
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
-	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS)
+	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS) $(THREADLIB)
 
 bzfs_LDFLAGS = ../date/buildDate.o
