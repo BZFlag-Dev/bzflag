@@ -3611,12 +3611,15 @@ possible attack from %s\n",
 	PlayerId from, to;
 
 	buf = nboUnpackUByte(buf, from);
+	if (from != t) {
+	  DEBUG1("Kicking Player %s [%d] Player trying to transfer flag\n",
+		 playerData->player.getCallSign(), t);
+	  removePlayer(t, "Player shot mismatch");
+	  break;
+	}
 	buf = nboUnpackUByte(buf, to);
 
-	GameKeeper::Player *fromData
-	  = GameKeeper::Player::getPlayerByIndex(from);
-	if (!fromData)
-	  return;
+	GameKeeper::Player *fromData = playerData;
 
 	int flagIndex = fromData->player.getFlag();
 	if (to == ServerPlayer) {
