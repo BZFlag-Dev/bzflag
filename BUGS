@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- doc/guide/NetworkProtocol.xml is not up to date
+
 - After flag capture, members of losing team are nr to other team.
 
 - On a Team Flag Capture, got explosion, without any jump, at xmission.
