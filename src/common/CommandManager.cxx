@@ -103,7 +103,7 @@ std::string			CommandManager::run(const std::string& cmd) const
     // run it or report error
     if (scan == NULL)
       return std::string("Error parsing command");
-    else
+    else if (name[0] != '#')
       result = run(name, args);
 
     // discard ; and empty commands

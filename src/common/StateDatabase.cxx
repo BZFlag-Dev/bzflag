@@ -427,8 +427,7 @@ void			StateDatabase::write(Callback callback, void* userData) const
   assert(callback != NULL);
 
   for (Map::const_iterator index = items.begin(); index != items.end(); ++index) {
-    if (index->second.isSet && index->second.save &&
-	index->second.value != index->second.defValue) {
+    if (index->second.isSet && index->second.save) {
       (*callback)(index->first, userData);
     }
   }
