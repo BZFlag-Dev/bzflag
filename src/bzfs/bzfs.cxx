@@ -234,8 +234,6 @@ static Address serverAddress;
 static int wksSocket;
 // udpSocket should also be on serverAddress
 static int udpSocket;
-// broadcast pings in/out here
-static int pingBcastSocket;
 // relay player packets
 bool handlePings = true;
 static PingPacket pingReply;
@@ -1525,11 +1523,6 @@ static bool serverStart()
 
   maxFileDescriptor = udpSocket;
 
-  // open sockets to receive and reply to pings
-  struct sockaddr_in pingBcastAddr;
-  Address multicastAddress(BroadcastAddress);
-  pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
-
   for (int i = 0; i < MaxPlayers; i++) {	// no connections
     player[i].fd = NotConnected;
     player[i].state = PlayerNoExist;
@@ -1554,7 +1547,6 @@ static void serverStop()
   // reject attempts to talk to server
   shutdown(wksSocket, 2);
   close(wksSocket);
-  closeMulticast(pingBcastSocket);
 
   // tell players to quit
   int i;
@@ -2595,14 +2587,14 @@ static void respondToPing()
       return;
   }
 
-  // reply with current game info on pingBcastSocket
+  // reply with current game info on udpSocket
   pingReply.sourceAddr = Address(addr);
   pingReply.rogueCount = team[0].team.activeSize;
   pingReply.redCount = team[1].team.activeSize;
   pingReply.greenCount = team[2].team.activeSize;
   pingReply.blueCount = team[3].team.activeSize;
   pingReply.purpleCount = team[4].team.activeSize;
-  pingReply.write(pingBcastSocket, &addr);
+  pingReply.write(udpSocket, &addr);
 }
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer)
