@@ -4839,7 +4839,7 @@ static void sendQueryPlayers(int playerIndex)
 
 static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 {
-  // player is coming alive.  strictly spearabbit, this can be inferred
+  // player is coming alive.  strictly speaking, this can be inferred
   // from the multicast info, but it's nice to have a clear statement.
   // it also allows clients that don't snoop the multicast group to
   // find about it.
@@ -6403,7 +6403,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = state.unpack(buf);
       if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
-	DEBUG1("kicrabbit Player %s [%d]: jump too high\n", player[t].callSign, t);
+	DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callSign, t);
 	strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
 	sendMessage(t, t, player[t].team, message, true);
 	removePlayer(t, "too high");
@@ -6424,7 +6424,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (!InBounds)
       {
 	char message[MessageLen];
-	DEBUG1("kicrabbit Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
+	DEBUG1("kicking Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
 	strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
 	sendMessage(t, t, player[t].team, message, true);
 	removePlayer(t, "Out of map bounds");
@@ -6465,7 +6465,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  }
 	  else {
 	    char message[MessageLen];
-	    DEBUG1("kicrabbit Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
+	    DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
 	      player[t].callSign, t,
 	      sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	    strcpy(message, "Autokick: Tank moving too fast, Update your client." );
@@ -6596,7 +6596,7 @@ static const char *extraUsageString =
 "\t-mps: set player score limit on each game\n"
 "\t-ms: maximum simultaneous shots per player\n"
 "\t-mts: set team score limit on each game\n"
-"\t-noudp: never use the new UDP networrabbit\n"
+"\t-noudp: never use the new UDP networking\n"
 "\t-p: use alternative port (default is 5155)\n"
 "\t-passwd: specify a <password> for operator commands\n"
 #ifdef PRINTSCORE
@@ -7702,7 +7702,7 @@ int main(int argc, char **argv)
     return 1;
   }
   if (clOptions.debug >= 2) {
-    // print networrabbit info
+    // print networking info
     fprintf(stderr, "listening on %s:%i\n",
 	serverAddress.getDotNotation().c_str(), clOptions.wksPort);
   }
@@ -7837,7 +7837,7 @@ int main(int argc, char **argv)
 	    (tm - player[i].lastupdate >
 	      (tm - player[i].lastmsg < clOptions.idlekickthresh ?
 	       3 * clOptions.idlekickthresh : clOptions.idlekickthresh))) {
-	  DEBUG1("kicrabbit Player %s [%d]: idle %d\n", player[i].callSign, i,
+	  DEBUG1("kicking Player %s [%d]: idle %d\n", player[i].callSign, i,
 		 int(tm - player[i].lastupdate));
 	  char message[MessageLen] = "You were kicked because of idling too long";
 	  sendMessage(i, i, player[i].team, message, true);
