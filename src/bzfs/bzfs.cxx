@@ -2792,9 +2792,13 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     }
     if ((teamIndex != playerData->player.getTeam() &&
 	 base != playerData->player.getTeam())) {
-      DEBUG1("Player %s [%d] tried to capture %s flag without reaching its own base\n",
+      DEBUG1("Player %s [%d] (%s) tried to capture %s flag without reaching its own base."
+	     " (Player position: %f %f %f)\n",
 	     playerData->player.getCallSign(), playerIndex,
-	     Team::getName((TeamColor)teamIndex));
+	     Team::getName(playerData->player.getTeam()),
+	     Team::getName((TeamColor)teamIndex),
+	     lastState[playerIndex].pos[0], lastState[playerIndex].pos[1],
+	     lastState[playerIndex].pos[2]);
       //char message[MessageLen];
       //strcpy(message, "Autokick: Tried to capture opponent flag without landing on your base");
       //sendMessage(ServerPlayer, playerIndex, message);
