@@ -485,8 +485,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	teamFlagsAdded = true;
       }
 
-      // if there are any arguments following, see if they are a
-      // rabbit selection styles.
+      // if there are any arguments following, see if they are 'density'
       if (i+1 != argc) {
 	if (isdigit(*argv[i+1])) {
 	  options.citySize = atoi(argv[i+1]);
