@@ -3249,10 +3249,10 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 }
 
 
-static void handleCommand(int t, const void *rawbuf)
+static void handleCommand(int t, const void *rawbuf, bool udp)
 {
   if (!rawbuf) {
-    std::cerr << "WARNING: handleCommnad got a null rawbuf?!" << std::endl;
+    std::cerr << "WARNING: handleCommand got a null rawbuf?!" << std::endl;
     return;
   }
 
@@ -3265,6 +3265,26 @@ static void handleCommand(int t, const void *rawbuf)
   void *buf = (char *)rawbuf;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+
+  if (udp) {
+    switch (code) {
+    case MsgShotBegin:
+    case MsgShotEnd:
+    case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall:
+    case MsgGMUpdate:
+    case MsgAudio:
+    case MsgVideo:
+    case MsgUDPLinkRequest:
+    case MsgUDPLinkEstablished:
+      break;
+    default:
+      DEBUG1("Player [%d] sent packet type (%x) via udp, \
+possible attack from %s\n",
+	     t, code, handler->getTargetIP());
+      return;
+    }
+  }
 
   switch (code) {
     // player joining
@@ -3896,7 +3916,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   }
 
   // handle the command
-  handleCommand(t, netPlayer.getTcpBuffer());
+  handleCommand(t, netPlayer.getTcpBuffer(), false);
 }
 
 static void terminateServer(int /*sig*/)
@@ -4928,7 +4948,7 @@ int main(int argc, char **argv)
 	      sendUDPupdate(id);
 
 	    // handle the command for UDP
-	    handleCommand(id, ubuf);
+	    handleCommand(id, ubuf, true);
 
 	    // don't spend more than 250ms receiving udp
 	    if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
