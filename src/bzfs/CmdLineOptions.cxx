@@ -75,7 +75,7 @@ const char *usageString =
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
-"[-prohibitRoger] "
+"[-disableBots] "
 "[-public <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
@@ -152,7 +152,7 @@ const char *extraUsageString =
 #ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
 #endif
-"\t-prohibitRoger: disallow clients from using autopilot\n"
+"\t-disableBots: disallow clients from using autopilot or robots\n"
 "\t-public <server-description>\n"
 "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
 "\t-publiclist <list-server-url>\n"
@@ -499,6 +499,9 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	std::cerr << "integer argument expected for -density\n";
 	usage(argv[0]);
       }
+    } else if (strcmp(argv[i], "-disableBots") == 0) {
+      // disallow clients from using autopilot or bots
+      BZDB.set(StateDatabase::BZDB_DISABLEBOTS, "true");
     } else if (strncmp(argv[i], "-d", 2) == 0) {
       // increase debug level - this must be the last
       // option beginning with -d so that -dd, -ddd, etc. work
@@ -716,9 +719,6 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       // dump score whenever it changes
       options.printScore = true;
 #endif
-    } else if (strcmp(argv[i], "-prohibitRoger") == 0) {
-      // disallow clients from using autopilot
-      options.prohibitRoger = true;
     } else if (strcmp(argv[i], "-public") == 0) {
       if (++i == argc) {
 	std::cerr << "argument expected for -public\n";

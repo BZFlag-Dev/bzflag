@@ -1889,7 +1889,6 @@ static void acceptClient()
   player[playerIndex].outmsgCapacity = 0;
   player[playerIndex].lastState.order = 0;
   player[playerIndex].paused = false;
-  player[playerIndex].quellRoger = false;
 
   player[playerIndex].pausedSince = TimeKeeper::getNullTime();
 #ifdef NETWORK_STATS
@@ -2180,8 +2179,6 @@ static void addPlayer(int playerIndex)
   player[playerIndex].lasttimestamp = 0.0f;
   player[playerIndex].lastupdate = TimeKeeper::getCurrent();
   player[playerIndex].lastmsg	 = TimeKeeper::getCurrent();
-
-  player[playerIndex].quellRoger = false;
 
   player[playerIndex].nextping = TimeKeeper::getCurrent();
   player[playerIndex].nextping += 10.0;
@@ -3008,10 +3005,9 @@ static void playerAlive(int playerIndex)
     return;
   }
   
-  // disallow roger from respawning if we disable roger.
-  if (player[playerIndex].quellRoger) {
-    sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow autopilot on this server.");
-    removePlayer(playerIndex, "roger");
+  if (player[playerIndex].type == ComputerPlayer && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
+    sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
+    removePlayer(playerIndex, "ComputerPlayer");
     return;
   }
 
@@ -3468,9 +3464,6 @@ static void shotFired(int playerIndex, void *buf, int len)
   const PlayerInfo &shooter = player[playerIndex];
   if (shooter.team == ObserverTeam)
     return;
-  if (shooter.quellRoger) {
-    return;			// don't let rogers shoot if we disallow autopilot
-  }
   FiringInfo firingInfo;
   firingInfo.unpack(buf);
   const ShotUpdate &shot = firingInfo.shot;
@@ -4031,14 +4024,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  }
 	}
 	sendMessage(t, targetPlayer, message, true);
-
-	if (clOptions->prohibitRoger && strncmp(message, "[ROGER] Taking Controls of ", 27) == 0) {
-	  sendMessage(ServerPlayer, t, "Autopilot is prohibited on this server.  Please turn it off immediately.");
-	  player[t].quellRoger = true;
-	} else if (player[t].quellRoger && strncmp(message, "[ROGER] Releasing Controls of ", 30) == 0) {
-	  sendMessage(ServerPlayer, t, "Thank you for turning off autopilot.  Please refrain from using autopilot on this server in the future.");
-	  player[t].quellRoger = false;
-	}
       }
       break;
     }

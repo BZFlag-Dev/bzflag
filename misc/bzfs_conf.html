@@ -161,9 +161,9 @@
 						d.writeln("-printscore<br/><br/>");
 					}
 
-					if (mainform.disable_roger.checked) {
-						d.writeln("#Disable the ROGER autopilot<br/>");
-						d.writeln("-disableRoger<br/><br/>");
+					if (mainform.disable_bots.checked) {
+						d.writeln("#Disable robots and the ROGER autopilot<br/>");
+						d.writeln("-disableBots<br/><br/>");
 					}
 
 					if (mainform.help_msgs.value.length > 0) {
@@ -704,8 +704,8 @@
 						<tr>
 							<td>Filter Simple</td>
 							<td><input type="checkbox" name="filtersimple" title="Perform simple exact matches with the bad word list"/></td>
-							<td>Disable "ROGER" autopilot</td>
-							<td><input type="checkbox" name="disable_roger" title="Disable ROGER autopilot"/></td>
+							<td>Disable bots and autopilot</td>
+							<td><input type="checkbox" name="disable_bots" title="Disable robots and ROGER autopilot"/></td>
 						</tr>
 						<tr>
 							<td>Vote Percent</td>

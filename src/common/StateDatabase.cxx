@@ -83,6 +83,7 @@ const std::string StateDatabase::BZDB_BURROWDEPTH       = std::string("_burrowDe
 const std::string StateDatabase::BZDB_BURROWSPEEDAD     = std::string("_burrowSpeedAd");
 const std::string StateDatabase::BZDB_BURROWANGULARAD   = std::string("_burrowAngularAd");
 const std::string StateDatabase::BZDB_EXPLODETIME       = std::string("_explodeTime");
+const std::string StateDatabase::BZDB_DISABLEBOTS       = std::string("_disableBots");
 const std::string StateDatabase::BZDB_FLAGALTITUDE      = std::string("_flagAltitude");
 const std::string StateDatabase::BZDB_FLAGHEIGHT        = std::string("_flagHeight");
 const std::string StateDatabase::BZDB_FLAGPOLEWIDTH     = std::string("_flagPoleWidth");

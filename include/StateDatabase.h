@@ -191,6 +191,7 @@ public:
   static const std::string	BZDB_BURROWDEPTH;
   static const std::string	BZDB_BURROWSPEEDAD;
   static const std::string	BZDB_BURROWANGULARAD;
+  static const std::string	BZDB_DISABLEBOTS;
   static const std::string	BZDB_EXPLODETIME;
   static const std::string	BZDB_FLAGALTITUDE;
   static const std::string	BZDB_FLAGHEIGHT;
