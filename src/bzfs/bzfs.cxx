@@ -3740,6 +3740,45 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 	  return;
       }
   }
+
+  // send lag pings
+  bool warn;
+  bool kick;
+  int nextPingSeqno = playerData.lagInfo.getNextPingSeqno(warn, kick);
+  if (nextPingSeqno > 0) {
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = nboPackUShort(bufStart, nextPingSeqno);
+    directMessage(p, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
+    // Should recheck if player is still available
+    if (!GameKeeper::Player::getPlayerByIndex(p))
+      return;
+    if (warn) {
+      char message[MessageLen];
+      sprintf(message, "*** Server Warning: your lag is too high ***");
+      sendMessage(ServerPlayer, p, message);
+      // Should recheck if player is still available
+      if (!GameKeeper::Player::getPlayerByIndex(p))
+	return;
+      if (kick) {
+	// drop the player
+	sprintf(message,
+		"You have been kicked due to excessive lag\
+ (you have been warned %d times).",
+		clOptions->maxlagwarn);
+	sendMessage(ServerPlayer, p, message);
+	removePlayer(p, "lag");
+	return;
+      }
+    }
+  }
+
+  // kick any clients that need to be
+  std::string reasonToKick = playerData.netHandler->reasonToKick();
+  if (reasonToKick != "") {
+    removePlayer(p, reasonToKick.c_str(), false);
+    return;
+  }
+
 }
 
 /** main parses command line options and then enters an event and activity
@@ -4412,35 +4451,6 @@ int main(int argc, char **argv)
       }
     }
 
-    // send lag pings
-    for (int j=0;j<curMaxPlayers;j++) {
-      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(j);
-      if (p != NULL) {
-	bool warn;
-	bool kick;
-        int nextPingSeqno = p->lagInfo.getNextPingSeqno(warn, kick);
-	if (nextPingSeqno > 0) {
-	  void *buf, *bufStart = getDirectMessageBuffer();
-	  buf = nboPackUShort(bufStart, nextPingSeqno);
-	  directMessage(j, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
-	  if (warn) {
-	    char message[MessageLen];
-	    sprintf(message, "*** Server Warning: your lag is too high ***");
-	    sendMessage(ServerPlayer, j, message);
-	    if (kick) {
-	      // drop the player
-	      sprintf(message,
-		      "You have been kicked due to excessive lag\
- (you have been warned %d times).",
-		      clOptions->maxlagwarn);
-	      sendMessage(ServerPlayer, j, message);
-	      removePlayer(j, "lag");
-	    }
-	  }
-	}
-      }
-    }
-
     // occasionally add ourselves to the list again (in case we were
     // dropped for some reason).
     if (clOptions->publicizeServer)
@@ -4460,14 +4470,6 @@ int main(int argc, char **argv)
         listServerLink->queueMessage(ListServerLink::ADD);
       }
 
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (NetHandler::exists(i)) {
-	// kick any clients that need to be
-	std::string reasonToKick = NetHandler::getHandler(i)->reasonToKick();
-	if (reasonToKick != "")
-	  removePlayer(i, reasonToKick.c_str(), false);
-      }
-    }
     // check messages
     if (nfound > 0) {
       //DEBUG1("chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
