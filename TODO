@@ -3,13 +3,11 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* Name the version Psyche
-
-* Ship it.
-
-* Notify all those listed in the end of the README
+* Fix the critical bugs for 1.10.2 release
 
 THESE ARE LOWER PRIORITY
+
+* report player kills in bzadmin
 
 * do ansi color in curses bzadmin
 
