@@ -1093,24 +1093,15 @@ void handlePollCmd(int t, const char *message)
     }
 
   } else if (cmd == "vote") {
-    if (!hasPerm(t, PlayerAccessInfo::vote)) {
-      sprintf(reply,"%s, you do not presently have permission to vote (must /identify first)", player[t].callSign);
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
+    std::string voteCmd = "/vote ";
+    voteCmd += arguments;
+    return handleVoteCmd(t, voteCmd.c_str());
 
-    /* !!! needs to be handled by the /vote command  */
-    sprintf(reply,"%s, your vote has been recorded -- unimplemented", player[t].callSign);
-    sendMessage(ServerPlayer, t, reply, true);
   } else if (cmd == "veto") {
-    if (!hasPerm(t, PlayerAccessInfo::veto)) {
-      sprintf(reply,"%s, you do not have permission to veto the poll", player[t].callSign);
-      sendMessage(ServerPlayer, t, reply, true);
-    }
+    std::string vetoCmd = "/veto ";
+    vetoCmd += arguments;
+    return handleVetoCmd(t, vetoCmd.c_str());
 
-    /* !!! needs to be handled by the /veto command  */
-    sprintf(reply,"%s, you have aborted the poll -- unimplemented", player[t].callSign);
-    sendMessage(ServerPlayer, t, reply, true);
   } else {
     sprintf(reply,"Invalid option to the poll command");
     sendMessage(ServerPlayer, t, reply, true);
@@ -1120,6 +1111,7 @@ void handlePollCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, reply, true);
     sprintf(reply,"    or /poll veto");
     sendMessage(ServerPlayer, t, reply, true);
+
   } /* end handling of poll subcommands */
 
   return;
