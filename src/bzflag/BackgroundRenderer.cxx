@@ -264,13 +264,12 @@ BackgroundRenderer::~BackgroundRenderer()
 
 void			BackgroundRenderer::notifyStyleChange()
 {
-  if (BZDBCache::texture) {
+  if (BZDB.isTrue("texture")) {
     if (BZDB.isTrue("lighting"))
       styleIndex = 3;
     else
       styleIndex = 2;
-  }
-  else {
+  } else {
     if (BZDB.isTrue("lighting"))
       styleIndex = 1;
     else
@@ -474,7 +473,7 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
     // the ground gets illuminated).  this is necessary because lighting is
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
-    if (BZDBCache::blend && BZDB.isTrue("lighting"))
+    if (BZDBCache::blend && BZDBCache::lighting)
       drawGroundReceivers(renderer);
 
     if (renderer.useQuality() > 1) {

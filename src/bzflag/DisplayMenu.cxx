@@ -24,6 +24,7 @@
 #include "SceneRenderer.h"
 #include "FontManager.h"
 #include "OpenGLTexture.h"
+#include "StateDatabase.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -304,7 +305,7 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useCullingTree() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useCollisionTree() ? 1 : 0);
 
-    if (!BZDBCache::texture)
+    if (!BZDB.isTrue("texture"))
       tex->setIndex(0);
     else
       tex->setIndex(OpenGLTexture::getFilter());
