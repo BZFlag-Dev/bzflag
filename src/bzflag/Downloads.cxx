@@ -243,7 +243,7 @@ static void printAuthNotice()
 
 static bool getFileTime(const std::string& url, time_t& t)
 {
-  setHudMessage("Download DNS check...");
+  setHudMessage("Update DNS check...");
   
   URLManager& URLMGR = URLManager::instance();
   if (URLMGR.getURLHeader(url)) {
