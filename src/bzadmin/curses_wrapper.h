@@ -50,11 +50,11 @@ inline int use_default_colors() {
   return ERR;
 }
 
-inline int resizeterm(int lines, int cols) {
+inline int resizeterm(int, int) {
   return ERR;
 }
 
-inline int wresize(WINDOW* w, int lines, int cols) {
+inline int wresize(WINDOW*, int, int) {
   return ERR;
 }
 
