@@ -119,7 +119,7 @@ void Bundle::ensureNormalText(std::string &msg)
 // BZFlag's font bitmaps don't contain letters with accents, so strip them here
 // Would be nice if some kind sole added them.
 
-  for (int i = 0; i < msg.length(); i++) {
+  for (std::string::size_type i = 0; i < msg.length(); i++) {
     char c = msg.at(i);
     switch (c) {
       case 'â':
