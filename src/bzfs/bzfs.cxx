@@ -5998,7 +5998,7 @@ static void parse(int argc, char **argv)
     flagCount[int(RicochetFlag)] = 0;
     flagDisallowed[int(RicochetFlag)] = True;
   }
-  if (!useTeleporters) {
+  if (!useTeleporters && !worldFile) {
     flagCount[int(PhantomZoneFlag)] = 0;
     flagDisallowed[int(PhantomZoneFlag)] = True;
   }
