@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* update doc/protocol.txt
+
 * add byte lengths to each world component
 
 * observers == a team
