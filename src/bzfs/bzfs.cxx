@@ -581,7 +581,7 @@ static int		prealwrite(int playerIndex, const void* b, int l)
   assert(p.fd != NotConnected && l > 0);
 
   // write as much data from buffer as we can in one send()
-  const int n = send(p.fd, b, l, 0);
+  const int n = send(p.fd, (const char *)b, l, 0);
 
   // handle errors
   if (n < 0) {

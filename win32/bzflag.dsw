@@ -1,182 +1,364 @@
 Microsoft Developer Studio Workspace File, Format Version 6.00
+
 # WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
 
+
+
 ###############################################################################
+
+
 
 Project: "bzflag"=.\bzflag.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
     Begin Project Dependency
+
     Project_Dep_Name common
+
     End Project Dependency
+
     Begin Project Dependency
+
     Project_Dep_Name geometry
+
     End Project Dependency
+
     Begin Project Dependency
+
     Project_Dep_Name net
+
     End Project Dependency
+
     Begin Project Dependency
+
     Project_Dep_Name obstacle
+
     End Project Dependency
+
     Begin Project Dependency
+
     Project_Dep_Name ogl
+
     End Project Dependency
+
     Begin Project Dependency
+
     Project_Dep_Name platform
+
     End Project Dependency
+
     Begin Project Dependency
+
     Project_Dep_Name scene
+
     End Project Dependency
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "bzfls"=.\bzfls.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
     Begin Project Dependency
+
     Project_Dep_Name common
+
     End Project Dependency
+
     Begin Project Dependency
+
     Project_Dep_Name net
+
     End Project Dependency
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "bzfrelay"=.\bzfrelay.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "bzfs"=.\bzfs.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
     Begin Project Dependency
+
     Project_Dep_Name common
+
     End Project Dependency
+
     Begin Project Dependency
+
     Project_Dep_Name net
+
     End Project Dependency
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "common"=.\common.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "geometry"=.\geometry.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "net"=.\net.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "obstacle"=.\obstacle.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "ogl"=.\ogl.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "platform"=.\platform.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Project: "scene"=.\scene.dsp - Package Owner=<4>
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<4>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
 Global:
 
+
+
 Package=<5>
+
 {{{
+
 }}}
+
+
 
 Package=<3>
+
 {{{
+
 }}}
 
+
+
 ###############################################################################
+
+
 
