@@ -15,7 +15,8 @@
 #include <ctype.h>
 #include <string.h>
 #include <strings.h>
-
+#include <string>
+#include <stdio.h>
 
 typedef struct {
   const char* name;
