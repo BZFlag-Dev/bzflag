@@ -472,7 +472,6 @@ static char **parseWorldOptions (const char *file, int &ac)
 
 void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 {
-  CmdLineOptions confOptions;
   delete[] flag;  flag = NULL;
 
   // prepare flag counts
