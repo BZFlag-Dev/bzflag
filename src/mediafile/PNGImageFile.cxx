@@ -99,6 +99,9 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
 			lineBufferSize = (((4 * width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
 			channels = 4;
 		break;
+
+		default:
+			return;
 	}
 
 	realBufferSize = channels * width + 1;
