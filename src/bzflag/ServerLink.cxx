@@ -709,9 +709,9 @@ void			ServerLink::sendTeleport(int from, int to)
   send(MsgTeleport, sizeof(msg), msg);
 }
 
-void			ServerLink::sendNewKing()
+void			ServerLink::sendNewRabbit()
 {
-  send(MsgNewKing, 0, NULL);
+  send(MsgNewRabbit, 0, NULL);
 }
 
 void			ServerLink::sendUDPlinkRequest()

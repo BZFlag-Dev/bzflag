@@ -14,6 +14,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
 #if defined(_WIN32)
 	#pragma warning(disable: 4786)
+	#pragma warning(disable: 4100)
+	#pragma warning(disable: 4511)
 #endif
 
 #include <string>
@@ -2787,7 +2789,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	if (victimPlayer && killerLocal != victimPlayer) {
 	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-		  ((killerLocal->getTeam() != RogueTeam) || (World::getWorld()->allowKing()))) {
+		  ((killerLocal->getTeam() != RogueTeam) || (World::getWorld()->allowRabbit()))) {
 	    if (killerLocal == myTank) {
 		 hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
 		 playLocalSound( SFX_KILL_TEAM );
@@ -2801,7 +2803,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
       }
 
-      if (World::getWorld()->allowKing())
+      if (World::getWorld()->allowRabbit())
 	victimPlayer->changeTeam( RogueTeam );
 
       // handle my personal score against other players
@@ -3315,23 +3317,23 @@ static void		handleServerMessage(bool human, uint16_t code,
       handlePlayerMessage(code, 0, msg);
       break;
 
-    case MsgNewKing: {
+    case MsgNewRabbit: {
       PlayerId id;
       msg = nboUnpackUByte(msg, id);
-      Player *king = lookupPlayer(id);
+      Player *rabbit = lookupPlayer(id);
 
       for (int i = 0; i < maxPlayers; i++) {
 	if (!player[i] || (player[i]->getTeam() == RogueTeam)) continue;
 
-	if (player[i] != king) {
+	if (player[i] != rabbit) {
 	   player[i]->changeTeam(RogueTeam);
 	}
       }
 
-      if (king != NULL) {
-	king->changeTeam(KingTeam);
-	if (king == myTank) {
-	  hud->setAlert(0, "You are the King of the Hill", 10.0f, false);
+      if (rabbit != NULL) {
+	rabbit->changeTeam(RabbitTeam);
+	if (rabbit == myTank) {
+	  hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
 	} else {
 	  myTank->changeTeam(RogueTeam);
 	}
@@ -3798,7 +3800,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (Observer || !tank->isAlive())
     return false;
 
-  if (World::getWorld()->allowKing())
+  if (World::getWorld()->allowRabbit())
 	tank->changeTeam( RogueTeam );
 
   // you can't take it with you
@@ -5473,8 +5475,8 @@ static void		playingLoop()
 	if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
 	  serverLink->sendDropFlag(myTank->getPosition());
 
-	if (World::getWorld()->allowKing())
-	  serverLink->sendNewKing();
+	if (World::getWorld()->allowRabbit())
+	  serverLink->sendNewRabbit();
 
 	// now actually pause
 	myTank->setPause(true);

@@ -1958,11 +1958,11 @@ Help2Menu::Help2Menu() : HelpMenu("General")
   list.push_back(createLabel(
   	"There are three styles of play, determined by the server configuration:  capture-"));
   list.push_back(createLabel(
-  	"the-flag, king-of-the-hill and free-for-all.  In free-for-all the object is simply to get the"));
+  	"the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"));
   list.push_back(createLabel(
   	"so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"));
   list.push_back(createLabel(
-  	"highest score by shooting opponents.  The object in king-of-the-hill is to be the highest score"));
+  	"highest score by shooting opponents.  The object in rabbit chase is to be the highest score"));
   list.push_back(createLabel(
 	"capture enemy flags while preventing opponents from capturing yours.  In this"));
   list.push_back(createLabel(
@@ -2631,7 +2631,7 @@ ServerMenu::ServerMenu() : defaultKey(this),
   addLabel("Purple", "");
   addLabel("Rogue", "");
   addLabel("", "");			// max shots
-  addLabel("", "");			// capture-the-flag/free-style/king of the hill
+  addLabel("", "");			// capture-the-flag/free-style/rabbit chase
   addLabel("", "");			// super-flags
   addLabel("", "");			// antidote-flag
   addLabel("", "");			// shaking time
@@ -2911,8 +2911,8 @@ void			ServerMenu::pick()
 
   if (ping.gameStyle & TeamFlagGameStyle)
     ((HUDuiLabel*)list[8])->setString("Capture-the-Flag");
-  else if (ping.gameStyle & KingOfTheHillGameStyle)
-    ((HUDuiLabel*)list[8])->setString("King-of-the-Hill");
+  else if (ping.gameStyle & RabbitChaseGameStyle)
+    ((HUDuiLabel*)list[8])->setString("Rabbit Chase");
   else
     ((HUDuiLabel*)list[8])->setString("Free-style");
 

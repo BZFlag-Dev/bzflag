@@ -41,7 +41,7 @@ enum TeamColor {
 			GreenTeam = 2,
 			BlueTeam = 3,
 			PurpleTeam = 4,
-			KingTeam = 5
+			RabbitTeam = 5
 };
 
 #ifdef ROBOT
@@ -132,7 +132,7 @@ enum GameStyle {
 			ShakableGameStyle =		0x0040,	// can drop bad flags
 			AntidoteGameStyle =		0x0080,	// anti-bad flags
 			TimeSyncGameStyle =		0x0100,	// time sync'd to srvr
-			KingOfTheHillGameStyle =	0x0200  // king of the kill
+			RabbitChaseGameStyle =	0x0200  // rabbit chase
 };
 
 // flag stuff

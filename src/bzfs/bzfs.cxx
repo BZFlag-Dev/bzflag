@@ -1207,7 +1207,7 @@ static float baseSize[NumTeams][3];
 static float safetyBasePos[NumTeams][3];
 
 // first player is playerid = 1
-static int kingIndex = 1;
+static int rabbitIndex = 1;
 
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex, char *reason, bool notify=true);
@@ -2232,7 +2232,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       case MsgPlayerUpdate:
       case MsgGMUpdate:
       case MsgLagPing:
-      case MsgNewKing:
+      case MsgNewRabbit:
 	puwrite(playerIndex,b,l);
 	return;
     }
@@ -4319,16 +4319,16 @@ static void addPlayer(int playerIndex)
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
 
-  // if we're the only player, set as king
-  if ((clOptions.gameStyle & int(KingOfTheHillGameStyle)) && firstPlayer) {
-    kingIndex = playerIndex;
+  // if we're the only player, set as rabbit
+  if ((clOptions.gameStyle & int(RabbitChaseGameStyle)) && firstPlayer) {
+    rabbitIndex = playerIndex;
   }
 
-  // send king information
-  if (clOptions.gameStyle & int(KingOfTheHillGameStyle)) {
+  // send rabbit information
+  if (clOptions.gameStyle & int(RabbitChaseGameStyle)) {
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, kingIndex);
-    directMessage(playerIndex, MsgNewKing, (char*)buf-(char*)bufStart, bufStart);
+    buf = nboPackUByte(bufStart, rabbitIndex);
+    directMessage(playerIndex, MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
   }
 
 #ifdef TIMELIMIT
@@ -4549,38 +4549,38 @@ static void zapFlag(int flagIndex)
   resetFlag(flagIndex);
 }
 
-static void annointNewKing()
+static void annointNewRabbit()
 {
   float topRatio = -100000.0f;
-  kingIndex = 0;
+  rabbitIndex = 0;
   int i;
 
   for (i = 0; i < maxPlayers; i++) {
-    if ((i != kingIndex) && (player[i].fd != NotConnected) &&
+    if ((i != rabbitIndex) && (player[i].fd != NotConnected) &&
         (player[i].state == PlayerAlive)) {
       float ratio = (player[i].wins - player[i].losses) * (player[i].wins / 10.0f);
       if (ratio > topRatio) {
 	topRatio = ratio;
-	kingIndex = i;
+	rabbitIndex = i;
       }
     }
   }
-  if (kingIndex == 0) {
+  if (rabbitIndex == 0) {
     // if nobody is alive
     topRatio = -100000.0f;
     for (i = 0; i < maxPlayers; i++) {
-      if ((i != kingIndex) && (player[i].fd != NotConnected)) {
+      if ((i != rabbitIndex) && (player[i].fd != NotConnected)) {
 	float ratio = (player[i].wins - player[i].losses) * (player[i].wins / 10.0f);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
-	  kingIndex = i;
+	  rabbitIndex = i;
 	}
       }
     }
   }
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, kingIndex);
-  broadcastMessage(MsgNewKing, (char*)buf-(char*)bufStart, bufStart);
+  buf = nboPackUByte(bufStart, rabbitIndex);
+  broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
 }
 
 static void removePlayer(int playerIndex, char *reason, bool notify)
@@ -4656,9 +4656,9 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
       stopPlayerPacketRelay();
   }
 
-  if (clOptions.gameStyle & int(KingOfTheHillGameStyle))
-    if (playerIndex == kingIndex)
-      annointNewKing();
+  if (clOptions.gameStyle & int(RabbitChaseGameStyle))
+    if (playerIndex == rabbitIndex)
+      annointNewRabbit();
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
@@ -4952,9 +4952,9 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     }
   }
 
-  if (clOptions.gameStyle & int(KingOfTheHillGameStyle)) {
-    if (victimIndex == kingIndex)
-      annointNewKing();
+  if (clOptions.gameStyle & int(RabbitChaseGameStyle)) {
+    if (victimIndex == rabbitIndex)
+      annointNewRabbit();
   } else {
     // change the team scores -- rogues don't have team scores.  don't
     // change team scores for individual player's kills in capture the
@@ -6363,9 +6363,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       break;
     }
 
-    case MsgNewKing: 
+    case MsgNewRabbit: 
     {
-      annointNewKing();
+      annointNewRabbit();
       break;
     }
 
@@ -6518,7 +6518,7 @@ static const char *usageString =
 "[-helpmsg <file> <name>]"
 "[-i interface] "
 "[-j] "
-"[-king] "
+"[-rabbit] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
 "[-maxidle <time/s>] "
@@ -6583,7 +6583,7 @@ static const char *extraUsageString =
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
-"\t-k: king of the hill style\n"
+"\t-rc: rabbit chase style\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
 "\t-maxidle: idle kick threshhold [s]\n"
@@ -6999,18 +6999,18 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       options.randomCTF = true;
       // capture the flag style
       options.gameStyle |= int(TeamFlagGameStyle);
-      if (options.gameStyle | int(KingOfTheHillGameStyle)) {
-	options.gameStyle &= ~int(KingOfTheHillGameStyle);
-	fprintf(stderr, "Capture the flag incompatible with King of the Hill");
+      if (options.gameStyle | int(RabbitChaseGameStyle)) {
+	options.gameStyle &= ~int(RabbitChaseGameStyle);
+	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase");
 	fprintf(stderr, "Capture the flag assumed");
       }
     }
     else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
       options.gameStyle |= int(TeamFlagGameStyle);
-      if (options.gameStyle | int(KingOfTheHillGameStyle)) {
-	options.gameStyle &= ~int(KingOfTheHillGameStyle);
-	fprintf(stderr, "Capture the flag incompatible with King of the Hill");
+      if (options.gameStyle | int(RabbitChaseGameStyle)) {
+	options.gameStyle &= ~int(RabbitChaseGameStyle);
+	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase");
 	fprintf(stderr, "Capture the flag assumed");
       }
     }
@@ -7095,13 +7095,13 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	options.maxObservers=0;
       }
     }
-    else if (strcmp(argv[i], "-king") == 0) {
-      // king of the hill style
-      options.gameStyle |= int(KingOfTheHillGameStyle)|int(RoguesGameStyle);
+    else if (strcmp(argv[i], "-rabbit") == 0) {
+      // rabbit chase style
+      options.gameStyle |= int(RabbitChaseGameStyle)|int(RoguesGameStyle);
       if (options.gameStyle & int(TeamFlagGameStyle)) {
 	options.gameStyle &= ~int(TeamFlagGameStyle);
-	fprintf(stderr, "King of the Hill incompatible with Capture the flag");
-	fprintf(stderr, "King of the Hill assumed");
+	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag");
+	fprintf(stderr, "Rabbit Chase assumed");
       }
 
     }
@@ -7466,7 +7466,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     options.flagDisallowed[int(ColorblindnessFlag)] = true;
   }
 
-  if (options.gameStyle & int(KingOfTheHillGameStyle)) {
+  if (options.gameStyle & int(RabbitChaseGameStyle)) {
       for (int i = 0; i < NumTeams; i++)
 	      options.maxTeam[i] = 0;
       options.maxTeam[RogueTeam] = maxPlayers;
@@ -7562,8 +7562,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     fprintf(stderr, "style: %x\n", options.gameStyle);
     if (options.gameStyle & int(TeamFlagGameStyle))
       fprintf(stderr, "  capture the flag\n");
-    if (options.gameStyle & int(KingOfTheHillGameStyle))
-      fprintf(stderr, "  king of the kill\n");
+    if (options.gameStyle & int(RabbitChaseGameStyle))
+      fprintf(stderr, "  rabbit chase\n");
     if (options.gameStyle & int(SuperFlagGameStyle))
       fprintf(stderr, "  super flags allowed\n");
     if (options.gameStyle & int(RoguesGameStyle))

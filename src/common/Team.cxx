@@ -71,7 +71,7 @@ const char*		Team::getName(TeamColor team) // const
     case GreenTeam: return "Green Team";
     case BlueTeam: return "Blue Team";
     case PurpleTeam: return "Purple Team";
-    case KingTeam: return "King";
+    case RabbitTeam: return "Rabbit";
     default: return "Invalid team";
   }
 }
