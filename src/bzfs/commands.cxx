@@ -997,10 +997,10 @@ void handleShowgroupCmd(int t, const char *message)
 	line += " ";
 	itr++;
       }
-      while (line.size() > MessageLen) {
+      while (line.size() > (unsigned int)MessageLen) {
         sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
         line.erase(line.begin(), line.begin() + (MessageLen - 1));
-			}
+      }
       sendMessage(ServerPlayer, t, line.c_str());
     } else {
       sendMessage(ServerPlayer, t, "There is no user by that name");

@@ -372,7 +372,7 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
   // targetPlayer = -1: send to all players with the PLAYERLIST permission
   // playerIndex = -1: send info about all players
 
-  GameKeeper::Player *playerData;
+  GameKeeper::Player *playerData = NULL;
   if (playerIndex >= 0) {
     playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData || !playerData->player->isPlaying())
