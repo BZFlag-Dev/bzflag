@@ -14,7 +14,7 @@
 
 # where to send debug printing (might override below)
 $enableDebug	= 0;
-$debugFile 	= "/dev/null";
+$debugFile 	= "bzfls.log";
 
 // define dbhost/dbuname/dbpass/dbname here
 include('serversettings.php');
@@ -237,6 +237,7 @@ if ($action == "LIST" ) {
     debug($debugFile, "Changed " . $servip . " to requesting address: "
         . $_SERVER['REMOTE_ADDR'] );
     $servip =  $_SERVER['REMOTE_ADDR'];
+    $servname = $servip;
     $nameport = $servip . ":" . $servport;
   }elseif ($_SERVER['REMOTE_ADDR'] != $servip) {
     debug($debugFile, "Requesting address is " . $_SERVER['REMOTE_ADDR']
@@ -305,6 +306,7 @@ if ($action == "LIST" ) {
     debug($debugFile, "Changed " . $servip . " to requesting address: "
         . $_SERVER['REMOTE_ADDR'] );
     $servip =  $_SERVER['REMOTE_ADDR'];
+    $servname = $servip;
     $nameport = $servip . ":" . $servport;
   } elseif ($_SERVER['REMOTE_ADDR'] != $servip) {
     debug($debugFile, "Requesting address is " . $_SERVER['REMOTE_ADDR']
