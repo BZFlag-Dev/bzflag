@@ -16,6 +16,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* instead of kicking laggy players, they should be made observers
+  unless there are no observer slots left (then kick).
+
 * ban both the player's name in addition to their IP case insensitively.
   (at least on a poll ban)
 
