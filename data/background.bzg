@@ -11,180 +11,180 @@
 
 # mountains.  only show if texturing.
 <choice>
-  <mask t="renderTexturing">0 1</mask>
-  <geometry>
-    <color>
-      1 1 1 1
-    </color>
-    <texcoord>
-      0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
-      0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
-      0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
-      0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
-      0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
-      0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
-    </texcoord>
-    <normal>
-       1.000  0.000 0    1.000  0.000 0    0.500  0.866 0    0.500  0.866 0
-       0.500  0.866 0    0.500  0.866 0   -0.500  0.866 0   -0.500  0.866 0
-      -0.500  0.866 0   -0.500  0.866 0   -1.000  0.000 0   -1.000  0.000 0
-      -1.000  0.000 0   -1.000  0.000 0   -0.500 -0.866 0   -0.500 -0.866 0
-      -0.500 -0.866 0   -0.500 -0.866 0    0.500 -0.866 0    0.500 -0.866 0
-       0.500 -0.866 0    0.500 -0.866 0    1.000  0.000 0    1.000  0.000 0
-    </normal>
-    <vertex>
-      -1.000  0.000 0   -1.000  0.000 0.4   -0.500 -0.866 0   -0.500 -0.866 0.4
-      -0.500 -0.866 0   -0.500 -0.866 0.4    0.500 -0.866 0    0.500 -0.866 0.4
-       0.500 -0.866 0    0.500 -0.866 0.4    1.000  0.000 0    1.000  0.000 0.4
-       1.000  0.000 0    1.000  0.000 0.4    0.500  0.866 0    0.500  0.866 0.4
-       0.500  0.866 0    0.500  0.866 0.4   -0.500  0.866 0   -0.500  0.866 0.4
-      -0.500  0.866 0   -0.500  0.866 0.4   -1.000  0.000 0   -1.000  0.000 0.4
-    </vertex>
-	<choice>
-      # if not blending then use alpha test to discard all but opaque pixels
-      <mask t="renderBlending">1 2</mask>
-      <group>
-    	<gstate>
-          <texture filename="mountain6" repeat=off/>
-          <alpha func="==" ref="1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              0 1 2 3
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain5" repeat=off/>
-          <alpha func="==" ref="1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              4 5 6 7
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain4" repeat=off/>
-          <alpha func="==" ref="1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              8 9 10 11
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain3" repeat=off/>
-          <alpha func="==" ref="1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              12 13 14 15
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain2" repeat=off/>
-          <alpha func="==" ref="1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              16 17 18 19
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain1" repeat=off/>
-          <alpha func="==" ref="1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              20 21 22 23
-        	</index>
-          </primitive>
-    	</gstate>
-      </group>
-      <group>
-    	<gstate>
-          <texture filename="mountain6" repeat=off/>
-          <blending src="sa" dst="1-sa"/>
-          <alpha func=">=" ref="0.1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              0 1 2 3
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain5" repeat=off/>
-          <blending src="sa" dst="1-sa"/>
-          <alpha func=">=" ref="0.1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              4 5 6 7
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain4" repeat=off/>
-          <blending src="sa" dst="1-sa"/>
-          <alpha func=">=" ref="0.1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              8 9 10 11
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain3" repeat=off/>
-          <blending src="sa" dst="1-sa"/>
-          <alpha func=">=" ref="0.1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              12 13 14 15
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain2" repeat=off/>
-          <blending src="sa" dst="1-sa"/>
-          <alpha func=">=" ref="0.1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              16 17 18 19
-        	</index>
-          </primitive>
-    	</gstate>
-    	<gstate>
-          <texture filename="mountain1" repeat=off/>
-          <blending src="sa" dst="1-sa"/>
-          <alpha func=">=" ref="0.1"/>
-          <shading model=smooth/>
-          <depth write=off/>
-          <primitive type=tstrip>
-        	<index>
-              20 21 22 23
-        	</index>
-          </primitive>
-    	</gstate>
-      </group>
-    </choice>
-  </geometry>
+	<mask t="renderTexturing">0 1</mask>
+	<geometry>
+		<color>
+			1 1 1 1
+		</color>
+		<texcoord>
+			0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
+			0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
+			0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
+			0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
+			0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
+			0.9921875 0  0.9921875 1  0.0078125 0  0.0078125 1
+		</texcoord>
+		<normal>
+			 1.000  0.000 0    1.000  0.000 0    0.500  0.866 0    0.500  0.866 0
+			 0.500  0.866 0    0.500  0.866 0   -0.500  0.866 0   -0.500  0.866 0
+			-0.500  0.866 0   -0.500  0.866 0   -1.000  0.000 0   -1.000  0.000 0
+			-1.000  0.000 0   -1.000  0.000 0   -0.500 -0.866 0   -0.500 -0.866 0
+			-0.500 -0.866 0   -0.500 -0.866 0    0.500 -0.866 0    0.500 -0.866 0
+			 0.500 -0.866 0    0.500 -0.866 0    1.000  0.000 0    1.000  0.000 0
+		</normal>
+		<vertex>
+			-1.000  0.000 0   -1.000  0.000 0.4   -0.500 -0.866 0   -0.500 -0.866 0.4
+			-0.500 -0.866 0   -0.500 -0.866 0.4    0.500 -0.866 0    0.500 -0.866 0.4
+			 0.500 -0.866 0    0.500 -0.866 0.4    1.000  0.000 0    1.000  0.000 0.4
+			 1.000  0.000 0    1.000  0.000 0.4    0.500  0.866 0    0.500  0.866 0.4
+			 0.500  0.866 0    0.500  0.866 0.4   -0.500  0.866 0   -0.500  0.866 0.4
+			-0.500  0.866 0   -0.500  0.866 0.4   -1.000  0.000 0   -1.000  0.000 0.4
+		</vertex>
+		<choice>
+			# if not blending then use alpha test to discard all but opaque pixels
+			<mask t="renderBlending">1 2</mask>
+			<group>
+				<gstate>
+					<texture filename="mountain6" repeat="off" />
+					<alpha func="==" ref="1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							0 1 2 3
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain5" repeat="off" />
+					<alpha func="==" ref="1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							4 5 6 7
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain4" repeat="off" />
+					<alpha func="==" ref="1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							8 9 10 11
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain3" repeat="off" />
+					<alpha func="==" ref="1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							12 13 14 15
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain2" repeat="off" />
+					<alpha func="==" ref="1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							16 17 18 19
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain1" repeat="off" />
+					<alpha func="==" ref="1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							20 21 22 23
+						</index>
+					</primitive>
+				</gstate>
+			</group>
+			<group>
+				<gstate>
+					<texture filename="mountain6" repeat="off" />
+					<blending src="sa" dst="1-sa" />
+					<alpha func=">=" ref="0.1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							0 1 2 3
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain5" repeat="off" />
+					<blending src="sa" dst="1-sa" />
+					<alpha func=">=" ref="0.1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							4 5 6 7
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain4" repeat="off" />
+					<blending src="sa" dst="1-sa" />
+					<alpha func=">=" ref="0.1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							8 9 10 11
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain3" repeat="off" />
+					<blending src="sa" dst="1-sa" />
+					<alpha func=">=" ref="0.1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							12 13 14 15
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain2" repeat="off" />
+					<blending src="sa" dst="1-sa" />
+					<alpha func=">=" ref="0.1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							16 17 18 19
+						</index>
+					</primitive>
+				</gstate>
+				<gstate>
+					<texture filename="mountain1" repeat="off" />
+					<blending src="sa" dst="1-sa" />
+					<alpha func=">=" ref="0.1" />
+					<shading model="smooth" />
+					<depth write="off" />
+					<primitive type="tstrip">
+						<index>
+							20 21 22 23
+						</index>
+					</primitive>
+				</gstate>
+			</group>
+		</choice>
+	</geometry>
 </choice>

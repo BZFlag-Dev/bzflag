@@ -11,61 +11,61 @@
 
 # flag.  don't blend if blending or texturing are off.
 <geometry id="flag">
-  # color is inherited
-  <texcoord>
-    0 0
-    0 0
-    0 1
-    1 0
-    1 1
-  </texcoord>
-  <vertex>
-    0.0 0.0 0.0
-    0.0 0.0 0.8
-    0.0 0.0 1.6
-    1.2 0.0 0.8
-    1.2 0.0 1.6
-  </vertex>
-  <choice>
-	<mask t="renderBlending">1 2</mask>
-	<gstate>
-      <culling cull="off" />
-      <primitive type="tstrip">
-    	<index>
-          2 1 4 3
-    	</index>
-      </primitive>
-	</gstate>
+	# color is inherited
+	<texcoord>
+		0 0
+		0 0
+		0 1
+		1 0
+		1 1
+	</texcoord>
+	<vertex>
+		0.0 0.0 0.0
+		0.0 0.0 0.8
+		0.0 0.0 1.6
+		1.2 0.0 0.8
+		1.2 0.0 1.6
+	</vertex>
 	<choice>
-      <mask t="renderTexturing">1 2</mask>
-	  <gstate>
-    	<culling cull="off" />
-    	<primitive type="tstrip">
-    	  <index>
-        	2 1 4 3
-    	  </index>
-    	</primitive>
-	  </gstate>
-	  <gstate>
-    	<texture repeat="off" rgba="on" filename="flag.rgb" />
-    	<culling cull="off" />
-    	<blending src="sa" dst="1-sa" />
-    	<primitive type="tstrip">
-    	  <index>
-        	2 1 4 3
-    	  </index>
-    	</primitive>
-	  </gstate>
-    </choice>
-  </choice>
-  <gstate>
-    <geometry>
-      <color>0 0 0 1</color>
-      <primitive type="lines">
-        <index>
-          0 2
-        </index>
-      </primitive>
-    </geometry>
-  </gstate>
+		<mask t="renderBlending">1 2</mask>
+		<gstate>
+			<culling cull="off" />
+			<primitive type="tstrip">
+				<index>
+					2 1 4 3
+				</index>
+			</primitive>
+		</gstate>
+		<choice>
+			<mask t="renderTexturing">1 2</mask>
+			<gstate>
+				<culling cull="off" />
+				<primitive type="tstrip">
+					<index>
+						2 1 4 3
+					</index>
+				</primitive>
+			</gstate>
+			<gstate>
+				<texture repeat="off" rgba="on" filename="flag.rgb" />
+				<culling cull="off" />
+				<blending src="sa" dst="1-sa" />
+				<primitive type="tstrip">
+					<index>
+						2 1 4 3
+					</index>
+				</primitive>
+			</gstate>
+		</choice>
+	</choice>
+	<gstate>
+		<geometry>
+			<color>0 0 0 1</color>
+			<primitive type="lines">
+				<index>
+					0 2
+				</index>
+			</primitive>
+		</geometry>
+	</gstate>
 </geometry>

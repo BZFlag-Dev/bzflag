@@ -11,113 +11,113 @@
 
 # explosions.  only show if blending and texturing.
 <choice id="explosion">
-  <mask t="renderBlending">0 1</mask>
-  <choice>
-    <mask t="renderTexturing">0 1</mask>
-	<billboard>
-	  <axis>0 0 0</axis>
-	  <gstate>
-    	<texture repeat="off" rgba="on" filename="explode1.rgb" />
-    	<culling cull="off" />
-    	<blending src="sa" dst="1-sa" />
-    	<alpha func=">=" ref="0.1" />
-    	<depth write="off" />
-    	<animate type="cycle">
-    	  <src>time</src>
-    	  <start>0</start>
-    	  <end>63</end>
-    	  <scale>63.0</scale>
-    	  <step>1.0</step>
-    	  <cycles>1.0</cycles>
-    	  <geometry>
-        	<color>
-        	  1 1 1 1
-        	</color>
-        	<texcoord>0.000 0.000  0.000 0.125  0.125 0.000  0.125 0.125</texcoord>
-        	<texcoord>0.125 0.000  0.125 0.125  0.250 0.000  0.250 0.125</texcoord>
-        	<texcoord>0.250 0.000  0.250 0.125  0.375 0.000  0.375 0.125</texcoord>
-        	<texcoord>0.375 0.000  0.375 0.125  0.500 0.000  0.500 0.125</texcoord>
-        	<texcoord>0.500 0.000  0.500 0.125  0.625 0.000  0.625 0.125</texcoord>
-        	<texcoord>0.625 0.000  0.625 0.125  0.750 0.000  0.750 0.125</texcoord>
-        	<texcoord>0.750 0.000  0.750 0.125  0.875 0.000  0.875 0.125</texcoord>
-        	<texcoord>0.875 0.000  0.875 0.125  1.000 0.000  1.000 0.125</texcoord>
+	<mask t="renderBlending">0 1</mask>
+	<choice>
+		<mask t="renderTexturing">0 1</mask>
+		<billboard>
+			<axis>0 0 0</axis>
+			<gstate>
+				<texture repeat="off" rgba="on" filename="explode1.rgb" />
+				<culling cull="off" />
+				<blending src="sa" dst="1-sa" />
+				<alpha func=">=" ref="0.1" />
+				<depth write="off" />
+				<animate type="cycle">
+					<src>time</src>
+					<start>0</start>
+					<end>63</end>
+					<scale>63.0</scale>
+					<step>1.0</step>
+					<cycles>1.0</cycles>
+					<geometry>
+						<color>
+							1 1 1 1
+						</color>
+						<texcoord>0.000 0.000  0.000 0.125  0.125 0.000  0.125 0.125</texcoord>
+						<texcoord>0.125 0.000  0.125 0.125  0.250 0.000  0.250 0.125</texcoord>
+						<texcoord>0.250 0.000  0.250 0.125  0.375 0.000  0.375 0.125</texcoord>
+						<texcoord>0.375 0.000  0.375 0.125  0.500 0.000  0.500 0.125</texcoord>
+						<texcoord>0.500 0.000  0.500 0.125  0.625 0.000  0.625 0.125</texcoord>
+						<texcoord>0.625 0.000  0.625 0.125  0.750 0.000  0.750 0.125</texcoord>
+						<texcoord>0.750 0.000  0.750 0.125  0.875 0.000  0.875 0.125</texcoord>
+						<texcoord>0.875 0.000  0.875 0.125  1.000 0.000  1.000 0.125</texcoord>
 
-        	<texcoord>0.000 0.125  0.000 0.250  0.125 0.125  0.125 0.250</texcoord>
-        	<texcoord>0.125 0.125  0.125 0.250  0.250 0.125  0.250 0.250</texcoord>
-        	<texcoord>0.250 0.125  0.250 0.250  0.375 0.125  0.375 0.250</texcoord>
-        	<texcoord>0.375 0.125  0.375 0.250  0.500 0.125  0.500 0.250</texcoord>
-        	<texcoord>0.500 0.125  0.500 0.250  0.625 0.125  0.625 0.250</texcoord>
-        	<texcoord>0.625 0.125  0.625 0.250  0.750 0.125  0.750 0.250</texcoord>
-        	<texcoord>0.750 0.125  0.750 0.250  0.875 0.125  0.875 0.250</texcoord>
-        	<texcoord>0.875 0.125  0.875 0.250  1.000 0.125  1.000 0.250</texcoord>
+						<texcoord>0.000 0.125  0.000 0.250  0.125 0.125  0.125 0.250</texcoord>
+						<texcoord>0.125 0.125  0.125 0.250  0.250 0.125  0.250 0.250</texcoord>
+						<texcoord>0.250 0.125  0.250 0.250  0.375 0.125  0.375 0.250</texcoord>
+						<texcoord>0.375 0.125  0.375 0.250  0.500 0.125  0.500 0.250</texcoord>
+						<texcoord>0.500 0.125  0.500 0.250  0.625 0.125  0.625 0.250</texcoord>
+						<texcoord>0.625 0.125  0.625 0.250  0.750 0.125  0.750 0.250</texcoord>
+						<texcoord>0.750 0.125  0.750 0.250  0.875 0.125  0.875 0.250</texcoord>
+						<texcoord>0.875 0.125  0.875 0.250  1.000 0.125  1.000 0.250</texcoord>
 
-        	<texcoord>0.000 0.250  0.000 0.375  0.125 0.250  0.125 0.375</texcoord>
-        	<texcoord>0.125 0.250  0.125 0.375  0.250 0.250  0.250 0.375</texcoord>
-        	<texcoord>0.250 0.250  0.250 0.375  0.375 0.250  0.375 0.375</texcoord>
-        	<texcoord>0.375 0.250  0.375 0.375  0.500 0.250  0.500 0.375</texcoord>
-        	<texcoord>0.500 0.250  0.500 0.375  0.625 0.250  0.625 0.375</texcoord>
-        	<texcoord>0.625 0.250  0.625 0.375  0.750 0.250  0.750 0.375</texcoord>
-        	<texcoord>0.750 0.250  0.750 0.375  0.875 0.250  0.875 0.375</texcoord>
-        	<texcoord>0.875 0.250  0.875 0.375  1.000 0.250  1.000 0.375</texcoord>
+						<texcoord>0.000 0.250  0.000 0.375  0.125 0.250  0.125 0.375</texcoord>
+						<texcoord>0.125 0.250  0.125 0.375  0.250 0.250  0.250 0.375</texcoord>
+						<texcoord>0.250 0.250  0.250 0.375  0.375 0.250  0.375 0.375</texcoord>
+						<texcoord>0.375 0.250  0.375 0.375  0.500 0.250  0.500 0.375</texcoord>
+						<texcoord>0.500 0.250  0.500 0.375  0.625 0.250  0.625 0.375</texcoord>
+						<texcoord>0.625 0.250  0.625 0.375  0.750 0.250  0.750 0.375</texcoord>
+						<texcoord>0.750 0.250  0.750 0.375  0.875 0.250  0.875 0.375</texcoord>
+						<texcoord>0.875 0.250  0.875 0.375  1.000 0.250  1.000 0.375</texcoord>
 
-        	<texcoord>0.000 0.375  0.000 0.500  0.125 0.375  0.125 0.500</texcoord>
-        	<texcoord>0.125 0.375  0.125 0.500  0.250 0.375  0.250 0.500</texcoord>
-        	<texcoord>0.250 0.375  0.250 0.500  0.375 0.375  0.375 0.500</texcoord>
-        	<texcoord>0.375 0.375  0.375 0.500  0.500 0.375  0.500 0.500</texcoord>
-        	<texcoord>0.500 0.375  0.500 0.500  0.625 0.375  0.625 0.500</texcoord>
-        	<texcoord>0.625 0.375  0.625 0.500  0.750 0.375  0.750 0.500</texcoord>
-        	<texcoord>0.750 0.375  0.750 0.500  0.875 0.375  0.875 0.500</texcoord>
-        	<texcoord>0.875 0.375  0.875 0.500  1.000 0.375  1.000 0.500</texcoord>
+						<texcoord>0.000 0.375  0.000 0.500  0.125 0.375  0.125 0.500</texcoord>
+						<texcoord>0.125 0.375  0.125 0.500  0.250 0.375  0.250 0.500</texcoord>
+						<texcoord>0.250 0.375  0.250 0.500  0.375 0.375  0.375 0.500</texcoord>
+						<texcoord>0.375 0.375  0.375 0.500  0.500 0.375  0.500 0.500</texcoord>
+						<texcoord>0.500 0.375  0.500 0.500  0.625 0.375  0.625 0.500</texcoord>
+						<texcoord>0.625 0.375  0.625 0.500  0.750 0.375  0.750 0.500</texcoord>
+						<texcoord>0.750 0.375  0.750 0.500  0.875 0.375  0.875 0.500</texcoord>
+						<texcoord>0.875 0.375  0.875 0.500  1.000 0.375  1.000 0.500</texcoord>
 
-        	<texcoord>0.000 0.500  0.000 0.625  0.125 0.500  0.125 0.625</texcoord>
-        	<texcoord>0.125 0.500  0.125 0.625  0.250 0.500  0.250 0.625</texcoord>
-        	<texcoord>0.250 0.500  0.250 0.625  0.375 0.500  0.375 0.625</texcoord>
-        	<texcoord>0.375 0.500  0.375 0.625  0.500 0.500  0.500 0.625</texcoord>
-        	<texcoord>0.500 0.500  0.500 0.625  0.625 0.500  0.625 0.625</texcoord>
-        	<texcoord>0.625 0.500  0.625 0.625  0.750 0.500  0.750 0.625</texcoord>
-        	<texcoord>0.750 0.500  0.750 0.625  0.875 0.500  0.875 0.625</texcoord>
-        	<texcoord>0.875 0.500  0.875 0.625  1.000 0.500  1.000 0.625</texcoord>
+						<texcoord>0.000 0.500  0.000 0.625  0.125 0.500  0.125 0.625</texcoord>
+						<texcoord>0.125 0.500  0.125 0.625  0.250 0.500  0.250 0.625</texcoord>
+						<texcoord>0.250 0.500  0.250 0.625  0.375 0.500  0.375 0.625</texcoord>
+						<texcoord>0.375 0.500  0.375 0.625  0.500 0.500  0.500 0.625</texcoord>
+						<texcoord>0.500 0.500  0.500 0.625  0.625 0.500  0.625 0.625</texcoord>
+						<texcoord>0.625 0.500  0.625 0.625  0.750 0.500  0.750 0.625</texcoord>
+						<texcoord>0.750 0.500  0.750 0.625  0.875 0.500  0.875 0.625</texcoord>
+						<texcoord>0.875 0.500  0.875 0.625  1.000 0.500  1.000 0.625</texcoord>
 
-        	<texcoord>0.000 0.625  0.000 0.750  0.125 0.625  0.125 0.750</texcoord>
-        	<texcoord>0.125 0.625  0.125 0.750  0.250 0.625  0.250 0.750</texcoord>
-        	<texcoord>0.250 0.625  0.250 0.750  0.375 0.625  0.375 0.750</texcoord>
-        	<texcoord>0.375 0.625  0.375 0.750  0.500 0.625  0.500 0.750</texcoord>
-        	<texcoord>0.500 0.625  0.500 0.750  0.625 0.625  0.625 0.750</texcoord>
-        	<texcoord>0.625 0.625  0.625 0.750  0.750 0.625  0.750 0.750</texcoord>
-        	<texcoord>0.750 0.625  0.750 0.750  0.875 0.625  0.875 0.750</texcoord>
-        	<texcoord>0.875 0.625  0.875 0.750  1.000 0.625  1.000 0.750</texcoord>
+						<texcoord>0.000 0.625  0.000 0.750  0.125 0.625  0.125 0.750</texcoord>
+						<texcoord>0.125 0.625  0.125 0.750  0.250 0.625  0.250 0.750</texcoord>
+						<texcoord>0.250 0.625  0.250 0.750  0.375 0.625  0.375 0.750</texcoord>
+						<texcoord>0.375 0.625  0.375 0.750  0.500 0.625  0.500 0.750</texcoord>
+						<texcoord>0.500 0.625  0.500 0.750  0.625 0.625  0.625 0.750</texcoord>
+						<texcoord>0.625 0.625  0.625 0.750  0.750 0.625  0.750 0.750</texcoord>
+						<texcoord>0.750 0.625  0.750 0.750  0.875 0.625  0.875 0.750</texcoord>
+						<texcoord>0.875 0.625  0.875 0.750  1.000 0.625  1.000 0.750</texcoord>
 
-        	<texcoord>0.000 0.750  0.000 0.875  0.125 0.750  0.125 0.875</texcoord>
-        	<texcoord>0.125 0.750  0.125 0.875  0.250 0.750  0.250 0.875</texcoord>
-        	<texcoord>0.250 0.750  0.250 0.875  0.375 0.750  0.375 0.875</texcoord>
-        	<texcoord>0.375 0.750  0.375 0.875  0.500 0.750  0.500 0.875</texcoord>
-        	<texcoord>0.500 0.750  0.500 0.875  0.625 0.750  0.625 0.875</texcoord>
-        	<texcoord>0.625 0.750  0.625 0.875  0.750 0.750  0.750 0.875</texcoord>
-        	<texcoord>0.750 0.750  0.750 0.875  0.875 0.750  0.875 0.875</texcoord>
-        	<texcoord>0.875 0.750  0.875 0.875  1.000 0.750  1.000 0.875</texcoord>
+						<texcoord>0.000 0.750  0.000 0.875  0.125 0.750  0.125 0.875</texcoord>
+						<texcoord>0.125 0.750  0.125 0.875  0.250 0.750  0.250 0.875</texcoord>
+						<texcoord>0.250 0.750  0.250 0.875  0.375 0.750  0.375 0.875</texcoord>
+						<texcoord>0.375 0.750  0.375 0.875  0.500 0.750  0.500 0.875</texcoord>
+						<texcoord>0.500 0.750  0.500 0.875  0.625 0.750  0.625 0.875</texcoord>
+						<texcoord>0.625 0.750  0.625 0.875  0.750 0.750  0.750 0.875</texcoord>
+						<texcoord>0.750 0.750  0.750 0.875  0.875 0.750  0.875 0.875</texcoord>
+						<texcoord>0.875 0.750  0.875 0.875  1.000 0.750  1.000 0.875</texcoord>
 
-        	<texcoord>0.000 0.875  0.000 1.000  0.125 0.875  0.125 1.000</texcoord>
-        	<texcoord>0.125 0.875  0.125 1.000  0.250 0.875  0.250 1.000</texcoord>
-        	<texcoord>0.250 0.875  0.250 1.000  0.375 0.875  0.375 1.000</texcoord>
-        	<texcoord>0.375 0.875  0.375 1.000  0.500 0.875  0.500 1.000</texcoord>
-        	<texcoord>0.500 0.875  0.500 1.000  0.625 0.875  0.625 1.000</texcoord>
-        	<texcoord>0.625 0.875  0.625 1.000  0.750 0.875  0.750 1.000</texcoord>
-        	<texcoord>0.750 0.875  0.750 1.000  0.875 0.875  0.875 1.000</texcoord>
-        	<texcoord>0.875 0.875  0.875 1.000  1.000 0.875  1.000 1.000</texcoord>
-        	<vertex>
-        	  -1.0 0.0 -1.0
-        	  -1.0 0.0  1.0
-        	   1.0 0.0 -1.0
-        	   1.0 0.0  1.0
-        	</vertex>
-        	<primitive type="tstrip">
-        	  <index>
-            	1 0 3 2
-        	  </index>
-        	</primitive>
-    	  </geometry>
-    	</animate>
-	  </gstate>
-	</billboard>
-  </choice>
+						<texcoord>0.000 0.875  0.000 1.000  0.125 0.875  0.125 1.000</texcoord>
+						<texcoord>0.125 0.875  0.125 1.000  0.250 0.875  0.250 1.000</texcoord>
+						<texcoord>0.250 0.875  0.250 1.000  0.375 0.875  0.375 1.000</texcoord>
+						<texcoord>0.375 0.875  0.375 1.000  0.500 0.875  0.500 1.000</texcoord>
+						<texcoord>0.500 0.875  0.500 1.000  0.625 0.875  0.625 1.000</texcoord>
+						<texcoord>0.625 0.875  0.625 1.000  0.750 0.875  0.750 1.000</texcoord>
+						<texcoord>0.750 0.875  0.750 1.000  0.875 0.875  0.875 1.000</texcoord>
+						<texcoord>0.875 0.875  0.875 1.000  1.000 0.875  1.000 1.000</texcoord>
+						<vertex>
+							-1.0 0.0 -1.0
+							-1.0 0.0  1.0
+							1.0 0.0 -1.0
+							1.0 0.0  1.0
+						</vertex>
+						<primitive type="tstrip">
+							<index>
+								1 0 3 2
+							</index>
+						</primitive>
+					</geometry>
+				</animate>
+			</gstate>
+		</billboard>
+	</choice>
 </choice>

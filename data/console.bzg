@@ -9,32 +9,34 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-<group>
-	<geometry>
-		<color>
-			0.5 0.5 0.5 0.1
-		</color>
-		<texcoord>
-			0 0
-			5 0
-			0 5
-			5 5
-		</texcoord>
-		<vertex>
-			0 0 0
-			1 0 0
-			0 1 0
-			1 1 0
-		</vertex>
-		<gstate>
-			<texture filename="bmetal"/>
-			<shading model="flat"/>
-			<depth func="1" write="off"/>
-			<primitive type="tstrip">
-				<index>
-					0 1 2 3
-				</index>
-			</primitive>
-		</gstate>
-	</geometry>
-</group>
+<geometry>
+	<color>
+		0 0 0 1.0
+		0.31835938 0.16210938 0.16210938 1.0
+		0.2 0.2 0.2 1.0
+		0.31835938 0.16210938 0.16210938 1.0
+	</color>
+	<texcoord>
+		0 0
+		5 0
+		0 5
+		5 5
+	</texcoord>
+	<vertex>
+		0 0 0
+		1 0 0
+		1 1 0
+		0 1 0
+	</vertex>
+	<gstate>
+		<texture filename="bmetal" />
+		<texenv mode="modulate" />
+		<shading model="smooth" />
+		<depth func="1" write="off" />
+		<primitive type="tfan">
+			<index>
+				0 1 2 3
+			</index>
+		</primitive>
+	</gstate>
+</geometry>

@@ -11,57 +11,57 @@
 
 # clouds.  only show if blending and texturing.
 <choice>
-  <mask t="renderBlending">0 1</mask>
-  <choice>
-    <mask t="renderTexturing">0 1</mask>
-	<transform>
-	  <scale>0.6 0.6 0.6</scale>
-	  <translate>0.0 0.0 0.15</translate>
-	  <animate type="cycle">
-    	<src>time</src>
-    	<start>0</start>
-    	<end>1</end>
-    	<scale>0.01</scale>
-    	<transform type="texture">
-    	  <scale>2.2 2.2 2.2</scale>
-    	  <rotate>0.0 0.0 1.0 0.0</rotate>
-    	  <translate>0.0 0.0 0.0   1.0 0.0 0.0</translate>
-    	  <geometry>
-        	<color>
-        	  1 1 1 1  1 1 1 1  1 1 1 1  1 1 1 1
-        	  1 1 1 0  1 1 1 0  1 1 1 0  1 1 1 0
-        	</color>
-        	<texcoord>
-        	  0.375 0.375    0.625 0.375   0.375  0.625    0.625 0.625
-        	  0.000 0.000    1.000 0.000   0.000  1.000    1.000 1.000
-        	</texcoord>
-        	<normal>
-        	  0 0 1
-        	</normal>
-        	<vertex>
-        	  -0.25 -0.25 0.0    0.25 -0.25 0.0   -0.25  0.25 0.0    0.25 0.25 0.0
-        	  -1.00 -1.00 0.0    1.00 -1.00 0.0   -1.00  1.00 0.0    1.00 1.00 0.0
-        	</vertex>
-        	<gstate>
-        	  <texture filename="clouds" />
-        	  <blending src="sa" dst="1-sa" />
-        	  <culling cull="off" />
-        	  <shading model="smooth" />
-        	  <depth write="off" />
-        	  <primitive type="tstrip">
-            	<index>
-            	  0 1 2 3
-            	</index>
-        	  </primitive>
-        	  <primitive type="tstrip">
-            	<index>
-            	  0 4 1 5 3 7 2 6 0 4
-            	</index>
-        	  </primitive>
-        	</gstate>
-    	  </geometry>
-    	</transform>
-	  </animate>
-	</transform>
-  </choice>
+	<mask t="renderBlending">0 1</mask>
+	<choice>
+		<mask t="renderTexturing">0 1</mask>
+		<transform>
+			<scale>0.6 0.6 0.6</scale>
+			<translate>0.0 0.0 0.15</translate>
+			<animate type="cycle">
+				<src>time</src>
+				<start>0</start>
+				<end>1</end>
+				<scale>0.01</scale>
+				<transform type="texture">
+					<scale>2.2 2.2 2.2</scale>
+					<rotate>0.0 0.0 1.0 0.0</rotate>
+					<translate>0.0 0.0 0.0   1.0 0.0 0.0</translate>
+					<geometry>
+						<color>
+							1 1 1 1  1 1 1 1  1 1 1 1  1 1 1 1
+							1 1 1 0  1 1 1 0  1 1 1 0  1 1 1 0
+						</color>
+						<texcoord>
+							0.375 0.375    0.625 0.375   0.375  0.625    0.625 0.625
+							0.000 0.000    1.000 0.000   0.000  1.000    1.000 1.000
+						</texcoord>
+						<normal>
+							0 0 1
+						</normal>
+						<vertex>
+							-0.25 -0.25 0.0    0.25 -0.25 0.0   -0.25  0.25 0.0    0.25 0.25 0.0
+							-1.00 -1.00 0.0    1.00 -1.00 0.0   -1.00  1.00 0.0    1.00 1.00 0.0
+						</vertex>
+						<gstate>
+							<texture filename="clouds" />
+							<blending src="sa" dst="1-sa" />
+							<culling cull="off" />
+							<shading model="smooth" />
+							<depth write="off" />
+							<primitive type="tstrip">
+								<index>
+									0 1 2 3
+								</index>
+							</primitive>
+							<primitive type="tstrip">
+								<index>
+									0 4 1 5 3 7 2 6 0 4
+								</index>
+							</primitive>
+						</gstate>
+					</geometry>
+				</transform>
+			</animate>
+		</transform>
+	</choice>
 </choice>
