@@ -1001,6 +1001,10 @@ bool			LocalPlayer::fireShot()
   // make shot and put it in the table
   shots[i] = new LocalShotPath(firingInfo);
 
+  // Insert timestamp, useful for dead reckoning jitter fixing
+  const float timeStamp = TimeKeeper::getCurrent() - TimeKeeper::getNullTime();
+  firingInfo.timeSent = timeStamp;
+
   server->sendBeginShot(firingInfo);
   if (gettingSound) {
     if (firingInfo.flagType == Flags::ShockWave)

@@ -57,6 +57,7 @@ FiringInfo::FiringInfo()
 
 void*			FiringInfo::pack(void* buf) const
 {
+  buf = nboPackFloat(buf, timeSent);
   buf = shot.pack(buf);
   buf = flagType->pack(buf);
   buf = nboPackFloat(buf, lifetime);
@@ -65,6 +66,7 @@ void*			FiringInfo::pack(void* buf) const
 
 void*			FiringInfo::unpack(void* buf)
 {
+  buf = nboUnpackFloat(buf, timeSent);
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);

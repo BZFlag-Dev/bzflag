@@ -62,7 +62,7 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   }
   shotStatistics.recordFire(info.flagType);
   move(newpos, getAngle());
-  setDeadReckoning();
+  setDeadReckoning(info.timeSent);
 }
 
 ShotPath*		RemotePlayer::getShot(int index) const

@@ -32,7 +32,7 @@
 #include "Flag.h"
 
 const int		ShotUpdatePLen = PlayerIdPLen + 32;
-const int		FiringInfoPLen = ShotUpdatePLen + 6;
+const int		FiringInfoPLen = ShotUpdatePLen + 10;
 
 class BaseLocalPlayer;
 
@@ -59,6 +59,7 @@ struct FiringInfo {
     void*		unpack(void*);
 
   public:
+    float               timeSent;
     ShotUpdate		shot;
     FlagType*		flagType;			// flag when fired
     float		lifetime;		// lifetime of shot (s)
