@@ -542,227 +542,97 @@
 				Name="hitank"
 				Filter="">
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\barrel.c">
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\hitank\barrel.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\body.c">
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\hitank\body.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\ltread.c">
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\hitank\ltread.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\rtread.c">
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\hitank\rtread.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\turret.c">
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\hitank\turret.cxx">
 				</File>
 			</Filter>
 			<Filter
 				Name="medtank"
 				Filter="">
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\barrel.c">
+					RelativePath="..\..\src\geometry\models\medtank\barrel.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\body.c">
+					RelativePath="..\..\src\geometry\models\medtank\body.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\ltread.c">
+					RelativePath="..\..\src\geometry\models\medtank\ltread.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\rtread.c">
+					RelativePath="..\..\src\geometry\models\medtank\rtread.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\turret.c">
+					RelativePath="..\..\src\geometry\models\medtank\turret.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
 				</File>
 			</Filter>
@@ -770,113 +640,78 @@
 				Name="lowtank"
 				Filter="">
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\barrel.c">
+					RelativePath="..\..\src\geometry\models\lowtank\barrel.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\body.c">
+					RelativePath="..\..\src\geometry\models\lowtank\body.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\ltread.c">
+					RelativePath="..\..\src\geometry\models\lowtank\ltread.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\rtread.c">
+					RelativePath="..\..\src\geometry\models\lowtank\rtread.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\turret.c">
+					RelativePath="..\..\src\geometry\models\lowtank\turret.cxx">
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 					</FileConfiguration>
 				</File>
 			</Filter>

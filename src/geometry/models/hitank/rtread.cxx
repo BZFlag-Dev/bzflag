@@ -9,8 +9,10 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-      glShadeModel(GL_FLAT);
+#include "TankSceneNode.h"
+void buildHighRTread ( void )
+{
+  glShadeModel(GL_FLAT);
       glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(0.984696f, 0.000000f, 0.174282f);
 	glTexCoord2f(-0.295f, 0.041f);
@@ -177,7 +179,7 @@
 	glTexCoord2f(0.045f, -0.208f);
 	glVertex3f(3.000f, -0.875f, 0.770f);
       glEnd();
-
+}
 /*
  * Local Variables: ***
  * mode:C ***

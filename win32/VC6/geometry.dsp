@@ -90,28 +90,23 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\barrel.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\hitank\barrel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\body.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\hitank\body.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\ltread.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\hitank\ltread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\rtread.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\hitank\rtread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\turret.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\hitank\turret.cxx
 # End Source File
 # End Group
 # Begin Group "medtank"
@@ -119,28 +114,23 @@ SOURCE=..\..\src\geometry\models\hitank\turret.c
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\barrel.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\medtank\barrel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\body.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\medtank\body.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\ltread.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\medtank\ltread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\rtread.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\medtank\rtread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\turret.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\medtank\turret.cxx
 # End Source File
 # End Group
 # Begin Group "lowtank"
@@ -148,28 +138,23 @@ SOURCE=..\..\src\geometry\models\medtank\turret.c
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\barrel.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\lowtank\barrel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\body.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\lowtank\body.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\ltread.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\lowtank\ltread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\rtread.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\lowtank\rtread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\turret.c
-# PROP Exclude_From_Build 1
+SOURCE=..\..\src\geometry\models\lowtank\turret.cxx
 # End Source File
 # End Group
 # Begin Source File

@@ -10,6 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "TankSceneNode.h"
+void buildLowTurret( void )
+{
       glShadeModel(GL_FLAT);
       glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(0.991228f, 0.000000f, -0.132164f);
@@ -59,7 +62,7 @@
 	glTexCoord2f(0.617f, -0.559f);
 	glVertex3f(1.480f, 0.516f, 1.040f);
       glEnd();
-
+}
 /*
  * Local Variables: ***
  * mode:C ***

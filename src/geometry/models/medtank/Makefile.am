@@ -1,9 +1,9 @@
 EXTRA_DIST =	\
-	barrel.c	\
-	body.c	\
-	ltread.c	\
-	rtread.c	\
-	turret.c
+	barrel.cxx	\
+	body.cxx	\
+	ltread.cxx	\
+	rtread.cxx	\
+	turret.cxx
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

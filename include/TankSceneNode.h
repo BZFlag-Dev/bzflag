@@ -20,6 +20,26 @@
 #include "common.h"
 #include "SceneNode.h"
 
+// prototypes for tank geo
+// hightank
+void buildHighBody ( void );
+void buildHighTurret ( void );
+void buildHighLTread ( void );
+void buildHighRTread ( void );
+void buildHighBarrel ( void );
+// medtank
+void buildMedBody ( void );
+void buildMedTurret ( void );
+void buildMedLTread ( void );
+void buildMedRTread ( void );
+void buildMedBarrel ( void );
+// lowtank
+void buildLowBody ( void );
+void buildLowTurret ( void );
+void buildLowLTread ( void );
+void buildLowRTread ( void );
+void buildLowBarrel ( void );
+
 class TankSceneNode;
 class OpenGLTexture;
 

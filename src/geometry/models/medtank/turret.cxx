@@ -9,7 +9,9 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
+#include "TankSceneNode.h"
+void buildMedTurret ( void )
+{
       glShadeModel(GL_FLAT);
       glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(-0.235964f, 0.967658f, 0.089216f);
@@ -82,7 +84,7 @@
 	glTexCoord2f(0.617f, -0.559f);
 	glVertex3f(1.480f, 0.516f, 1.040f);
       glEnd();
-
+}
 /*
  * Local Variables: ***
  * mode:C ***

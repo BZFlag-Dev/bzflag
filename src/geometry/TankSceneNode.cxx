@@ -986,27 +986,27 @@ void			TankSceneNode::TankRenderNode::renderLights()
 
 void			TankSceneNode::LowTankRenderNode::makeBody()
 {
-#include "models/lowtank/body.c"
+  buildLowBody();
 }
 
 void			TankSceneNode::LowTankRenderNode::makeBarrel()
 {
-#include "models/lowtank/barrel.c"
+  buildLowBarrel();
 }
 
 void			TankSceneNode::LowTankRenderNode::makeTurret()
 {
-#include "models/lowtank/turret.c"
+  buildLowTurret();
 }
 
 void			TankSceneNode::LowTankRenderNode::makeLeftTread()
 {
-#include "models/lowtank/ltread.c"
+  buildLowLTread();
 }
 
 void			TankSceneNode::LowTankRenderNode::makeRightTread()
 {
-#include "models/lowtank/rtread.c"
+  buildLowRTread();
 }
 
 //
@@ -1015,27 +1015,27 @@ void			TankSceneNode::LowTankRenderNode::makeRightTread()
 
 void			TankSceneNode::MedTankRenderNode::makeBody()
 {
-#include "models/medtank/body.c"
+  buildMedBody();
 }
 
 void			TankSceneNode::MedTankRenderNode::makeBarrel()
 {
-#include "models/medtank/barrel.c"
+  buildMedBarrel();
 }
 
 void			TankSceneNode::MedTankRenderNode::makeTurret()
 {
-#include "models/medtank/turret.c"
+  buildMedTurret();
 }
 
 void			TankSceneNode::MedTankRenderNode::makeLeftTread()
 {
-#include "models/medtank/ltread.c"
+  buildMedLTread();
 }
 
 void			TankSceneNode::MedTankRenderNode::makeRightTread()
 {
-#include "models/medtank/rtread.c"
+  buildMedRTread();
 }
 
 //
@@ -1044,27 +1044,27 @@ void			TankSceneNode::MedTankRenderNode::makeRightTread()
 
 void			TankSceneNode::HighTankRenderNode::makeBody()
 {
-#include "models/hitank/body.c"
+  buildHighBody();
 }
 
 void			TankSceneNode::HighTankRenderNode::makeBarrel()
 {
-#include "models/hitank/barrel.c"
+  buildHighBarrel();
 }
 
 void			TankSceneNode::HighTankRenderNode::makeTurret()
 {
-#include "models/hitank/turret.c"
+  buildHighTurret();
 }
 
 void			TankSceneNode::HighTankRenderNode::makeLeftTread()
 {
-#include "models/hitank/ltread.c"
+  buildHighLTread();
 }
 
 void			TankSceneNode::HighTankRenderNode::makeRightTread()
 {
-#include "models/hitank/rtread.c"
+  buildHighRTread();
 }
 
 // Local Variables: ***

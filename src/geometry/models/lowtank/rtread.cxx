@@ -10,7 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-      glShadeModel(GL_FLAT);
+#include "TankSceneNode.h"
+void buildLowRTread ( void )
+{
+    glShadeModel(GL_FLAT);
       glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(0.020362f, 0.000000f, 0.999793f);
 	glTexCoord2f(-0.072f, 0.099f);
@@ -59,7 +62,7 @@
 	glTexCoord2f(0.332f, -0.209f);
 	glVertex3f(2.597f, -0.875f, 0.000f);
       glEnd();
-
+}
 /*
  * Local Variables: ***
  * mode:C ***

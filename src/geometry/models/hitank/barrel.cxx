@@ -10,6 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "TankSceneNode.h"
+void buildHighBarrel ( void )
+{
       glShadeModel(GL_FLAT);
       glBegin(GL_TRIANGLE_FAN);
 	glNormal3f(1.000000f, 0.000000f, 0.000000f);
@@ -56,7 +59,7 @@
 	glVertex3f(1.570f, -0.18f, 1.530f);
 	glVertex3f(4.940f, -0.126f, 1.530f);
       glEnd();
-
+}
 /*
  * Local Variables: ***
  * mode:C ***
