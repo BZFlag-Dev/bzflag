@@ -270,9 +270,8 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   
   //pOut[0] = x2 + t2.getPosition()[0];
   //pOut[1] = y2 + t2.getPosition()[1];
-  pOut[0] = t2.getPosition()[0] + (x2 * t2.getWidth()) / getWidth();
-  pOut[1] = t2.getPosition()[1] + (y2 * t2.getWidth()) / getWidth();
-
+  pOut[0] = t2.getPosition()[0] + (x2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
+  pOut[1] = t2.getPosition()[1] + (y2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
   //T1 = pIn[2] - getPosition()[2]
   //W2 = t2.getHeight()
   //W1 = getHeight
