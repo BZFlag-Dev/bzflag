@@ -59,15 +59,6 @@ recent bugs
   modified gravity ducati.  players seem to continue forwarding after landing
   until X time as if gravity was unchanged.
 
-- Observer controls get confused sometimes. To see, push control and arrows
-  to spin. While keys are down, push alt. Now release all. You continue spinning
-  un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
-  into situations where movement is out of control. This is because the player
-  might release the control or alt key before it releases the arrow key, so
-  the keymanager would see it as an arrow key release, and not a
-  ctrl+arrow key or alt+arrow key release. Should probably use other (single)
-  keys for observer control.
-
 - os x client audio is very choppy when the user has a sound card installed
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
