@@ -307,6 +307,7 @@ LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 LocalPlayer::LocalPlayer(const PlayerId& id,
 			 const char* name, const char* email) :
   BaseLocalPlayer(id, name, email),
+  gettingSound(true),
   location(Dead),
   firingStatus(Deceased),
   flagShakingTime(0.0f),
@@ -789,11 +790,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
 
+  if (gettingSound) {
   // play landing sound if we weren't on something and now we are
   if (oldLocation == InAir && (location == OnGround || location == OnBuilding))
     playLocalSound(SFX_LAND);
   else if (location == OnGround && oldPosition[2] == 0.0f && newPos[2] < 0.f)
     playLocalSound(SFX_BURROW);
+  }
 
   // set falling status
   if (location == OnGround || location == OnBuilding ||
@@ -840,6 +843,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (antidoteFlag)
     antidoteFlag->waveFlag(dt, 0.0f);
 
+  if (gettingSound) {
   if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
       oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
     moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
@@ -850,6 +854,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
 		       (newPos[1] - oldPosition[1]) / dt,
 		       (newPos[2] - oldPosition[2]) / dt);
+  }
 }
 
 const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,

@@ -144,6 +144,8 @@ protected:
   void		doUpdateMotion(float dt);
   void		doMomentum(float dt, float& speed, float& angVel);
   void		doForces(float dt, float* velocity, float& angVel);
+  LocalShotPath**	shots;
+  bool          gettingSound;
 
 private:
   Location		location;
@@ -158,7 +160,6 @@ private:
   float		lastSpeed;
   const Obstacle*	insideBuilding;
   GLfloat		crossingPlane[4];
-  LocalShotPath**	shots;
   bool		anyShotActive;
   const Player*	target;
   const Player*	nemesis;
