@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* describe rabbit hunt in man page (and in-game help?)
+
 * document headers with JavaDoc-style comments (for doxygen)
 
 * update doc/protocol.txt all descriptors to new format

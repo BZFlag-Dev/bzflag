@@ -5,10 +5,6 @@ recent bugs
   that the server choose a different player, thus leading to a happy
   ping-pong of messages until player unpauses or another player joins.
 
-- describe rabbit hunt in man page (and in-game help?)
-
-- doc/protocol is not up to date (version on wiki is mostly correct)
-
 - src/bzflag/ShotStrategy.cxx SegmentedShotStrategy::makeSegments will not
   handle shots that bounce 'down', it presenly ends them. it should make
   them bounce when they hit the gound.
@@ -20,7 +16,7 @@ recent bugs
 older bugs in BZFlag
 --------------------
 
-see the bug tracker on SourceForge for more 
+see the bug tracker on SourceForge for more
 http://SourceForge.net/tracker/?group_id=3248&atid=103248
 
 * exploding tank parts sometimes move along the ground instead of
