@@ -58,13 +58,13 @@ private:
   static const float	RippleSpeed2;
 };
 
-const float		WaveGeometry::RippleSpeed1 = 2.4f * M_PI;
-const float		WaveGeometry::RippleSpeed2 = 1.724f * M_PI;
+const float		WaveGeometry::RippleSpeed1 = (float)(2.4 * M_PI);
+const float		WaveGeometry::RippleSpeed2 = (float)(1.724 * M_PI);
 
 WaveGeometry::WaveGeometry() : refCount(0)
 {
-  ripple1 = 2.0f * M_PI * (float)bzfrand();
-  ripple2 = 2.0f * M_PI * (float)bzfrand();
+  ripple1 = (float)(2.0 * M_PI * bzfrand());
+  ripple2 = (float)(2.0 * M_PI * bzfrand());
 }
 
 void WaveGeometry::waveFlag(float dt)
@@ -74,20 +74,20 @@ void WaveGeometry::waveFlag(float dt)
     return;
   ripple1 += dt * RippleSpeed1;
   if (ripple1 >= 2.0f * M_PI)
-    ripple1 -= 2.0f * M_PI;
+    ripple1 -= (float)(2.0 * M_PI);
   ripple2 += dt * RippleSpeed2;
   if (ripple2 >= 2.0f * M_PI)
-    ripple2 -= 2.0f * M_PI;
+    ripple2 -= (float)(2.0 * M_PI);
   float sinRipple2  = sinf(ripple2);
-  float sinRipple2S = sinf(ripple2 + 1.16f * M_PI);
+  float sinRipple2S = sinf((float)(ripple2 + 1.16 * M_PI));
   float	wave0[maxChunks];
   float	wave1[maxChunks];
   float	wave2[maxChunks];
   for (i = 0; i <= flagChunks; i++) {
     const float x      = float(i) / float(flagChunks);
     const float damp   = 0.1f * x;
-    const float angle1 = ripple1 - 4.0f * M_PI * x;
-    const float angle2 = angle1 - 0.28f * M_PI;
+    const float angle1 = (float)(ripple1 - 4.0 * M_PI * x);
+    const float angle2 = (float)(angle1 - 0.28 * M_PI);
 
     wave0[i] = damp * sinf(angle1);
     wave1[i] = damp * (sinf(angle2) + sinRipple2S);
@@ -163,7 +163,7 @@ void			FlagSceneNode::move(const GLfloat pos[3])
 
 void			FlagSceneNode::turn(GLfloat _angle)
 {
-  angle = _angle * 180.0f / M_PI;
+  angle = (float)(_angle * 180.0 / M_PI);
 }
 
 void			FlagSceneNode::setBillboard(bool _billboard)

@@ -33,8 +33,8 @@ LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				renderNode(this)
 {
   // prepare rendering info
-  azimuth = 180.0f / M_PI*atan2f(forward[1], forward[0]);
-  elevation = -180.0f / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1]));
+  azimuth = (float)(180.0 / M_PI*atan2f(forward[1], forward[0]));
+  elevation = (float)(-180.0 / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1])));
   length = hypotf(forward[0], hypotf(forward[1], forward[2]));
 
   // setup sphere
@@ -103,8 +103,8 @@ LaserSceneNode::LaserRenderNode::LaserRenderNode(
   if (!init) {
     init = true;
     for (int i = 0; i < 6; i++) {
-      geom[i][0] = -LaserRadius * cosf(2.0f * M_PI * float(i) / 6.0f);
-      geom[i][1] =  LaserRadius * sinf(2.0f * M_PI * float(i) / 6.0f);
+      geom[i][0] = (float)(-LaserRadius * cosf(2.0 * M_PI * float(i) / 6.0));
+      geom[i][1] =  (float)(LaserRadius * sinf(2.0 * M_PI * float(i) / 6.0));
     }
   }
 }

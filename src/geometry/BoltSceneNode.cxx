@@ -168,13 +168,13 @@ GLfloat			BoltSceneNode::BoltRenderNode::core[9][2];
 GLfloat			BoltSceneNode::BoltRenderNode::corona[8][2];
 const GLfloat		BoltSceneNode::BoltRenderNode::ring[8][2] = {
 				{ 1.0f, 0.0f },
-				{ M_SQRT1_2, M_SQRT1_2 },
+				{ (float)M_SQRT1_2, (float)M_SQRT1_2 },
 				{ 0.0f, 1.0f },
-				{ -M_SQRT1_2, M_SQRT1_2 },
+				{ (float)-M_SQRT1_2, (float)M_SQRT1_2 },
 				{ -1.0f, 0.0f },
-				{ -M_SQRT1_2, -M_SQRT1_2 },
+				{ (float)-M_SQRT1_2, (float)-M_SQRT1_2 },
 				{ 0.0f, -1.0f },
-				{ M_SQRT1_2, -M_SQRT1_2 }
+				{ (float)M_SQRT1_2, (float)-M_SQRT1_2 }
 			};
 
 BoltSceneNode::BoltRenderNode::BoltRenderNode(
@@ -277,9 +277,9 @@ void			BoltSceneNode::BoltRenderNode::render()
       if (!RENDERER.isSameFrame()) {
 	numFlares = 3 + int(3.0f * (float)bzfrand());
 	for (int i = 0; i < numFlares; i++) {
-	  theta[i] = 2.0f * M_PI * (float)bzfrand();
+	  theta[i] = (float)(2.0 * M_PI * bzfrand());
 	  phi[i] = (float)bzfrand() - 0.5f;
-	  phi[i] *= 2.0f * M_PI * fabsf(phi[i]);
+	  phi[i] *= (float)(2.0 * M_PI * fabsf(phi[i]));
 	}
       }
 

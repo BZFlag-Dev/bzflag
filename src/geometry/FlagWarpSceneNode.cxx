@@ -118,8 +118,8 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
   GLfloat geom[12][2];
   for (int i = 0; i < 12; i++) {
     const GLfloat r = FlagWarpSize * (0.9f + 0.2f * (float)bzfrand());
-    geom[i][0] = r * cosf(2.0f * M_PI * float(i) / 12.0f);
-    geom[i][1] = r * sinf(2.0f * M_PI * float(i) / 12.0f);
+    geom[i][0] = (float)(r * cosf(2.0 * M_PI * float(i) / 12.0));
+    geom[i][1] = (float)(r * sinf(2.0 * M_PI * float(i) / 12.0));
   }
 
   const GLfloat* sphere = sceneNode->getSphere();
