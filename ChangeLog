@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* Server side world parm (bzdb) file [clo] - Dave Brosius
 * Burrow Flag - Dave Brosius
 * Observer is a first class team - Dave Brosius
 * AutoPilot from 1.8 - Dave Brosius
@@ -10,8 +11,8 @@
 * Removed old UDP queueing code and headers - Micah Dowty
 * Convert closed FlagIds to flexible FlagDesc's - Micah Dowty, Dave Brosius
 * Add back PNG support from 1.8 - Dave Brosius, Sean Morrison
-* Add back BZDB from 1.8 - David Trowbridge
-* Seer, Masquerad Flags - Dave Brosius
+* Add back BZDB from 1.8 - David Trowbridge, Dave Brosius
+* Seer, Masquerade Flags - Dave Brosius
 * Don't broadcast single player messages - Dave Brosius
 * Customizable map size in maps - Jeff Myers
 * Drive and Shoot thru options in maps - Jeff Myers
