@@ -445,9 +445,9 @@ void			RobotPlayer::setTarget(const Player* _target)
 BzfRegion*		RobotPlayer::findRegion(const float p[2]) const
 {
   const int count = obstacleList->size();
-  for (int i = 0; i < count; i++)
-    if ((*obstacleList)[i]->isInside(p))
-      return (*obstacleList)[i];
+  for (int o = 0; o < count; o++)
+    if ((*obstacleList)[o]->isInside(p))
+      return (*obstacleList)[o];
 
   // point is outside: find nearest region
   float      distance      = maxDistance;
