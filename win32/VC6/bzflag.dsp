@@ -181,6 +181,10 @@ PostBuild_Cmds=copy ..\..\src\bzflag\SDL_debug\*.exe ..\..\*.exe	copy  ..\..\src
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\AudioMenu.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\FormatMenu.cxx
 # End Source File
 # Begin Source File
@@ -322,6 +326,10 @@ SOURCE=..\..\src\bzflag\Region.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\RegionPriorityQueue.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\RemotePlayer.cxx
 # End Source File
 # Begin Source File
@@ -382,6 +390,10 @@ SOURCE=..\..\src\bzflag\sound.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\stars.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\TargetingUtils.cxx
 # End Source File
 # Begin Source File
@@ -403,6 +415,10 @@ SOURCE=..\..\src\bzflag\WorldPlayer.cxx
 # Begin Group "Menu Headers"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\AudioMenu.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\FormatMenu.h
@@ -763,6 +779,10 @@ SOURCE="C:\Program Files\Microsoft SDK\include\Reason.h"
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\Region.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\RegionPriorityQueue.h
 # End Source File
 # Begin Source File
 
