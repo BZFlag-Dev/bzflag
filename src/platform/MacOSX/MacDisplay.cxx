@@ -1,5 +1,6 @@
 #include "MacDisplay.h"
 #include "BzfEvent.h"
+
 #include <CoreFoundation/CoreFoundation.h>
 
 bool     MacDisplay::pending;
@@ -54,6 +55,11 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
   ::UInt32				eventKeyCode	= 0;
   ::WindowRef			eventWindow		= NULL;
   const ::Boolean		removeEventFromQueue = true;
+
+  /* initialize the event for safety */
+  bzf_event.type = 0;
+  bzf_event.keyDown.ascii = 0;
+  bzf_event.keyDown.shift = 0;
 
   bzf_event.type = (BzfEvent::Type)-1;
 
