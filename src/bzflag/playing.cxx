@@ -2428,6 +2428,10 @@ static void		doEvent(BzfDisplay* display)
 	showKeyboardStatus();
       }
       break;
+      
+    default:
+      /* unset */
+      break;
   }
 }
 
