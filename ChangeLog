@@ -2,10 +2,13 @@
 
 			     BZFlag release notes
 
+* Thief Flag - Dave Brosius
+* MsgPlayerUpdate now has order, reject ooo packets - Dave Brosius
 * Removed old UDP queueing code and headers - Micah Dowty
 * Convert closed FlagIds to flexible FlagDesc's - Micah Dowty, Dave Brosius
 * Add back PNG support from 1.8 - Dave Brosius, Sean Morrison
 * Add back BZDB from 1.8 - David Trowbridge
+* Seer, Masquerad Flags - Dave Brosius
 * Don't broadcast single player messages - Dave Brosius
 * Customizable map size in maps - Jeff Myers
 * Drive and Shoot thru options in maps - Jeff Myers
