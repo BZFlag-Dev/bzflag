@@ -22,15 +22,17 @@
 
 // globals/
 
-bool useMaterials = true;
-bool useAmbient = true;
-bool useDiffuse = true;
-bool useSpecular = true;
-bool useShininess = true;
-bool useNormals = true;
-bool useTexcoords = true;
-bool flipYZ = false;
-bool useSmoothBounce = false;
+static const char VersionString[] = "modeltool v1.1";
+
+static bool useMaterials = true;
+static bool useAmbient = true;
+static bool useDiffuse = true;
+static bool useSpecular = true;
+static bool useShininess = true;
+static bool useNormals = true;
+static bool useTexcoords = true;
+static bool flipYZ = false;
+static bool useSmoothBounce = false;
 
 typedef std::vector<int> tvIndexList;
 
@@ -162,7 +164,7 @@ static void underscoreBeforeNumbers(std::string& name)
 }
     
 
-void readMTL ( CModel &model, std::string file )
+static void readMTL ( CModel &model, std::string file )
 {
 	FILE *fp = fopen(file.c_str(),"rb");
 	if (!fp)
@@ -264,7 +266,7 @@ void readMTL ( CModel &model, std::string file )
 	}
 }
 
-void readOBJ ( CModel &model, std::string file )
+static void readOBJ ( CModel &model, std::string file )
 {
 	model.clear();
 
@@ -462,7 +464,7 @@ void readOBJ ( CModel &model, std::string file )
 	}
 }
 
-void writeBZW  ( CModel &model, std::string file )
+static void writeBZW  ( CModel &model, std::string file )
 {
 	if (model.meshes.size() < 1 )
 		return;
@@ -582,10 +584,11 @@ void writeBZW  ( CModel &model, std::string file )
 	fclose(fp);
 }
 
-int  dumpUsage ( char *exeName, const char* reason )
+static int  dumpUsage ( char *exeName, const char* reason )
 {
-	printf("error: %s\n",reason);
-	printf("usage: %s <input_file_name> [options]\n", exeName);
+	printf("\n%s\n\n", VersionString);
+	printf("error: %s\n\n",reason);
+	printf("usage: %s <input_file_name> [options]\n\n", exeName);
 	printf("       -sm : use the smoothbounce property\n");
 	printf("       -yz : flip y and z coordinates\n");
 	printf("       -n  : disable normals\n");
@@ -685,7 +688,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-int getNewIndex ( CVertex &vert, tvVertList &vertList )
+static int getNewIndex ( CVertex &vert, tvVertList &vertList )
 {
 	tvVertList::iterator itr = vertList.begin();
 
@@ -701,7 +704,7 @@ int getNewIndex ( CVertex &vert, tvVertList &vertList )
 	return count;
 }
 
-int getNewIndex ( CTexCoord &vert, tvTexCoordList &vertList )
+static int getNewIndex ( CTexCoord &vert, tvTexCoordList &vertList )
 {
 	tvTexCoordList::iterator itr = vertList.begin();
 
