@@ -101,6 +101,7 @@ void			BzfWindow::initJoystick(const char* joystickName)
   int numJoystick = SDL_NumJoysticks();
   if (!numJoystick) {
     printError("no joystick is supported...");
+    joystickID = NULL;
     return;
   }
   int i;
