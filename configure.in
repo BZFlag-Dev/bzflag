@@ -46,7 +46,7 @@ AC_PROG_CC
 AC_PROG_CXX
 
 dnl Objective-C compiler (Mac OS X SDL framework build)
-OBJC="gcc"
+AC_CHECK_PROGS(OBJC, gcc, gcc)
 OBJCLIBS="-lobjc"
 OBJCFLAGS=""
 AC_SUBST(OBJC)
