@@ -10,6 +10,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * integrate motd.php into mysql on db and make it use version= so next
   version can have it's own MOTD
 
+* being in the ADMIN group does not get a '@' in front of callsign.
+  what permission should @ be based on?
+
 THESE ARE LOWER PRIORITY
 
 * bzflag should support command line central passwords:
