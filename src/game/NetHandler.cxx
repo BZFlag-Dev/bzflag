@@ -456,9 +456,8 @@ RxStatus NetHandler::receive(size_t length) {
     // ignore if it's one of these errors
     if (err == EAGAIN || err == EINTR)
       returnValue = ReadPart;
-
-    // if socket is closed then give up
-    if (err == ECONNRESET || err == EPIPE) {
+    else if (err == ECONNRESET || err == EPIPE) {
+      // if socket is closed then give up
       returnValue = ReadReset;
     } else {
       returnValue = ReadError;
