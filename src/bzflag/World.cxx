@@ -311,10 +311,7 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   vel[1] = pos[1] - oldPos[1];
   vel[2] = pos[2] - oldPos[2];
 
-  bool goingDown = false;
-  if (vel[2] <= 0.0f) {
-    goingDown = true;
-  }
+  bool goingDown = vel[2] <= 0.0f;
 
   // get the list of potential hits from the collision manager
   const ObsList* olist =
