@@ -1529,6 +1529,14 @@ int			main(int argc, char** argv)
     mainWindow.setQuadrant(MainWindow::UpperRight);
 #endif
 
+  // clear the grid graphics if they are not accessible
+#if !defined(DEBUG_RENDERING)
+  if (debugLevel <= 0) {
+    BZDB.set("showCullingGrid", "0");
+    BZDB.set("showCollisionGrid", "0");
+  }
+#endif  
+
   // set server list URL
   if (BZDB.isSet("list"))
     startupInfo.listServerURL = BZDB.get("list");
