@@ -26,9 +26,13 @@
 #include <unistd.h>
 #include <signal.h>
 
+#include <OS.h>
+
 //#define HALF_RATE_AUDIO
+#define NO_FLOAT
 
 //#define DEBUG_TO_WAV
+//#define DEBUG_TO_WAV2
 
 //#define DBG(a) printf a
 #define DBG(a)
@@ -39,20 +43,35 @@ static const int defaultAudioRate=11025;
 static const int defaultAudioRate=22050;
 #endif
 
+#ifdef NO_FLOAT
+#define SAMPTYPE uint16
+#else
+#define SAMPTYPE float
+#endif
+
+//#define USE_PIPE
+
+#ifdef USE_PIPE
+int p[2];
+#endif
 
 #ifdef DEBUG_TO_WAV
 // debug fd
-int debugWav = 0;
+FILE *debugWav = 0;
+#endif
+#ifdef DEBUG_TO_WAV2
+FILE *debugWav2 = 0;
 #endif
 
+#define MYASSERT(con) if (!(con)) debugger("ASSERT: "#con);
 
 #define AUDIO_BLOCK_FRAME_COUNT 1024
-#define AUDIO_BLOCK_SIZE (AUDIO_BLOCK_FRAME_COUNT * sizeof(float))
+#define AUDIO_BLOCK_SIZE (AUDIO_BLOCK_FRAME_COUNT * sizeof(SAMPTYPE))
 #define AUDIO_BLOCK_COUNT 4
 
 #define AUDIO_BUFFER_SIZE (AUDIO_BLOCK_SIZE*AUDIO_BLOCK_COUNT)
 
-BeOSMedia::BeOSMedia() :
+BeOSMedia::BeOSMedia() : BzfMedia(),
   audioReady(false),
   audioBufferSize(AUDIO_BUFFER_SIZE),
   audioLowWaterMark(AUDIO_BUFFER_SIZE/3),
@@ -85,7 +104,13 @@ bool					BeOSMedia::openAudio()
     return false;
 
 #ifdef DEBUG_TO_WAV
-  debugWav = open("/boot/home/bzflagdbgwav.dat", O_WRONLY);
+  debugWav = fopen("/boot/home/bzflagdbgwav.dat", "w"/*O_WRONLY|O_CREAT*/);
+#endif
+#ifdef DEBUG_TO_WAV2
+  debugWav2 = fopen("/boot/home/bzflagdbgwav2.dat", "w"/*O_WRONLY|O_CREAT*/);
+#endif
+#ifdef USE_PIPE
+  pipe(p);
 #endif
 
   audioQueuePort = create_port(audioQueueMaxCmds, "bzflag_audio_cmd_port");
@@ -123,7 +148,11 @@ bool					BeOSMedia::openAudio()
 
 
   format = media_raw_audio_format::wildcard;
+#ifdef NO_FLOAT
+  format.format = media_raw_audio_format::B_AUDIO_SHORT;
+#else
   format.format = media_raw_audio_format::B_AUDIO_FLOAT;
+#endif
   format.byte_order = B_HOST_IS_LENDIAN ? B_MEDIA_LITTLE_ENDIAN : B_MEDIA_BIG_ENDIAN;
   format.channel_count = 2;
   format.buffer_size = AUDIO_BLOCK_SIZE;
@@ -135,9 +164,9 @@ bool					BeOSMedia::openAudio()
   }
   soundPlayer->SetCookie((void *)this);
   //  soundPlayer->SetVolume(1.0);
-  soundPlayer->SetVolume(0.1);
   soundPlayer->Start();
-  //soundPlayer->SetHasData(true); /* delay playback until the first frame */
+  soundPlayer->SetVolume(0.1);
+  soundPlayer->SetHasData(true); /* delay playback until the first frame */
 
   // Set default no thread
   childThreadID = 0;
@@ -155,28 +184,44 @@ void BeOSMedia::audioplay_callback(void *cookie, void *buffer, size_t bufferSize
   size_t len, amount;
   unsigned char *buf = (unsigned char *)buffer;
 
-  //printf("audio_callback(, , %d, )\n", bufferSize);
+  DBG(("audio_callback(, , %d, )\n", bufferSize));
   s = (BeOSMedia *)cookie;
   memset(buffer, 0, bufferSize);
+
+#ifdef USE_PIPE
+  if (s->checkLowWater) {
+    //write_port(s->audioQueuePort, 'Late', NULL, 0);
+    s->checkLowWater = false;
+    release_sem(s->lowWaterSem);
+  }
+  struct stat st;
+  fstat(p[0], &st);
+  if (st.st_size < 1LL)
+    return;
+  read(p[0], buffer, bufferSize);
+  return;
+#endif
+
   //return;//XXX test
   if (s->audioHasQuit)
     return;
   while (bufferSize > 0) {
     len = MIN(AUDIO_BLOCK_SIZE, bufferSize);
+    len = MIN(len, (AUDIO_BUFFER_SIZE - s->audioOutputIndex));
     err = acquire_sem_etc(s->audioOutputSem, len, B_CAN_INTERRUPT | B_RELATIVE_TIMEOUT, 5000LL);
     //puts("audio callback unlocked");
     //DBG(("audio CB: acquire(%d), error 0x%08lx\n\n", len, err));
     if (err < B_OK) {
       if (err == B_TIMED_OUT) {
-	DBG(("audio callback: timed out.\n"));
+        DBG(("audio callback: timed out.\n"));
         /* tell we are late */
         if (s->checkLowWater) {
           //write_port(s->audioQueuePort, 'Late', NULL, 0);
           s->checkLowWater = false;
           release_sem(s->lowWaterSem);
         }
+        return;
         continue;
-        //return;
       }
       s->audioHasQuit = 1;
       s->soundPlayer->SetHasData(false);
@@ -191,17 +236,22 @@ void BeOSMedia::audioplay_callback(void *cookie, void *buffer, size_t bufferSize
       DBG(("audio callback: 'Doctor Evil, I'm late !'\n"));
     }
     DBG(("################ audio avail = %ld\n", sc));
-    amount = MIN(len, (AUDIO_BUFFER_SIZE - s->audioOutputIndex));
+
+    MYASSERT(s->audioOutputIndex >= 0);
+    MYASSERT(s->audioOutputIndex < AUDIO_BUFFER_SIZE);
+    
+    amount = len;
+    DBG(("AUDIO: reading %8ld bytes from %p\n", amount, &((unsigned char *)s->outputBuffer)[s->audioOutputIndex]));
     memcpy(buf, &((unsigned char *)s->outputBuffer)[s->audioOutputIndex], amount);
     s->audioOutputIndex += amount;
-    if (s->audioOutputIndex >= AUDIO_BUFFER_SIZE) {
-      s->audioOutputIndex %= AUDIO_BUFFER_SIZE;
-      memcpy(buf + amount, &((unsigned char *)s->outputBuffer)[s->audioOutputIndex], len - amount);
-      s->audioOutputIndex += len-amount;
-      s->audioOutputIndex %= AUDIO_BUFFER_SIZE;
-    }
+    if (s->audioOutputIndex >= AUDIO_BUFFER_SIZE)
+//      s->audioOutputIndex %= AUDIO_BUFFER_SIZE;
+      s->audioOutputIndex = 0;
     release_sem_etc(s->audioInputSem, len, 0);
     //DBG(("audio CB: release(%d)\n\n", len));
+#ifdef DEBUG_TO_WAV2
+      fwrite(buf, sizeof(char), len, debugWav2);
+#endif
     buf += len;
     bufferSize -= len;
   }
@@ -239,7 +289,10 @@ void					BeOSMedia::closeAudio()
   audioInputIndex = 0;
   audioOutputIndex = 0;
 #ifdef DEBUG_TO_WAV
-  close(debugWav);
+  fclose(debugWav);
+#endif
+#ifdef DEBUG_TO_WAV2
+  fclose(debugWav2);
 #endif
 }
 
@@ -304,7 +357,7 @@ void					BeOSMedia::writeSoundCommand(const void* cmd, int len)
 bool					BeOSMedia::readSoundCommand(void* cmd, int len)
 {
   DBG(("BeOSMedia::readSoundCommand(, %d)\n", len));
-  //  assert((size_t)len < sizeof(cmdBuffer));
+  //  MYASSERT((size_t)len < sizeof(cmdBuffer));
 
   int32 what = 0;
   while (what != 'SndC') {
@@ -343,15 +396,40 @@ bool					BeOSMedia::isAudioTooEmpty() const
 void					BeOSMedia::writeAudioFrames(
 								    const float* samples, int numFrames)
 {
-  status_t err;
+  status_t err = B_OK;
   int len, ret;
-  numFrames *= 2; /* stereo ! */
-  int size = numFrames * sizeof(float);
+  int numSamples = 2 * numFrames;
+  int size = numSamples * sizeof(SAMPTYPE);
   uint8 *buf = (uint8 *)samples;
 
-  DBG(("BeOSMedia::writeAudioFrames(, %d)\n", numFrames));
+
+    DBG(("BeOSMedia::writeAudioFrames(, %d)\n", numFrames));
+    DBG(("BeOSMedia::audioInputIndex = %d\n", audioInputIndex));
+
+
+    MYASSERT(audioInputIndex >= 0);
+    MYASSERT(audioInputIndex < AUDIO_BUFFER_SIZE);
+  
+  // convert the samples to a format we can handle:
+  // float [-1:1]
+/*
+  for (int j = 0; j < numSamples; j++) {
+    float v = samples[j];
+    if (v < -32767.0)
+      v = -32767.0;
+    if (v > 32767.0)
+      v = 32767.0;
+    samples[j] = v / 32767.0;
 #ifdef DEBUG_TO_WAV
-  write(debugWav, samples, size);
+    {
+      uint16 s = short(v);
+      write(debugWav, &s, sizeof(uint16));
+    }
+#endif
+  }*/
+  
+#ifdef DEBUG_TO_WAV
+  //write(debugWav, samples, size);
 #endif
   //printf("inbuff= %02x %02x %02x %02x\n", buf[0], buf[1], buf[2], buf[3]);
 
@@ -362,39 +440,74 @@ void					BeOSMedia::writeAudioFrames(
   //#ifdef USE_FLOAT
   /*
     float *s = (float *)samples;
-    for (int i = numFrames; i; i--, s++)
+    for (int i = numSamples; i; i--, s++)
     *s /= 32767;
     *///#else
   //#error unsupported short audio format
   //#endif
   while (size > 0) {
     int amount;
-    float *dst;
+    SAMPTYPE *dst;
     len = MIN(size, AUDIO_BLOCK_SIZE);
+    len = MIN(len, (AUDIO_BUFFER_SIZE - audioInputIndex));
+    amount = len;
     //err = acquire_sem_etc(audioInputSem, len, B_CAN_INTERRUPT, 0LL);
-    err = acquire_sem_etc(audioInputSem, len, B_CAN_INTERRUPT | B_RELATIVE_TIMEOUT, 5000LL);
+//    err = acquire_sem_etc(audioInputSem, len, B_CAN_INTERRUPT | B_RELATIVE_TIMEOUT, 5000LL);
     //DBG(("audio write: acquire(%d), error 0x%08lx\n\n", len, err));
     if (err < B_OK)
       return;
-    amount = MIN(len, (AUDIO_BUFFER_SIZE - audioInputIndex));
     //memcpy(&((unsigned char *)outputBuffer)[audioInputIndex], buf, amount);
-    dst = (float *)(&((unsigned char *)outputBuffer)[audioInputIndex]);
-    for (int i = amount/sizeof(float); i; i--) {
-      dst[i] = ((float *)buf)[i] / 32767;
-      dst[i] = MAX(MIN(dst[i], 1.0f), -1.0f);
+    dst = (SAMPTYPE *)(((unsigned char *)outputBuffer) + audioInputIndex);
+    DBG(("AUDIO: piping %8ld bytes at %p\n", amount, dst));
+    for (int i = amount/sizeof(SAMPTYPE) - 1; i >= 0; i--) {
+      float v = MAX(MIN(((float *)buf)[i], 32767.0f), -32767.0f);
+      dst[i] = (SAMPTYPE) v;
+#ifdef DEBUG_TO_WAV
+/*    {
+      uint16 s = short(dst[i]);
+      fwrite(&s, sizeof(uint16), 1, debugWav);
+    }*/
+#endif
+#ifndef NO_FLOAT
+      dst[i] /= 32767.0f;
+#endif
+#ifdef DEBUG_TO_WAV
+      //fwrite(&dst[i], sizeof(SAMPTYPE), 1, debugWav);
+#endif
+
+      //dst[i] = MAX(MIN(dst[i], 1.0f), -1.0f);
     }
+#ifdef DEBUG_TO_WAV
+    fwrite(dst, amount, 1, debugWav);
+#endif
+#ifdef USE_PIPE
+    write(p[1], dst, amount);
+#endif
+    //memcpy(dst, buf, amount);
     audioInputIndex += amount;
+    if (audioInputIndex >= AUDIO_BUFFER_SIZE)
+      audioInputIndex = 0;
+#if 0
     if (audioInputIndex >= AUDIO_BUFFER_SIZE) {
       audioInputIndex %= AUDIO_BUFFER_SIZE;
 
+      DBG(("AUDIO: left: %ld, audioInputIndex: %ld\n", len - amount, audioInputIndex));
       //memcpy(&((unsigned char *)outputBuffer)[audioInputIndex], buf + amount, len - amount);
-      dst = (float *)(&((unsigned char *)outputBuffer)[audioInputIndex]);
-      for (int i = (len-amount)/sizeof(float); i; i--) {
-        dst[i] = ((float *)(buf+amount))[i] / 32767;
-        dst[i] = MAX(MIN(dst[i], 1.0f), -1.0f);
+      dst = (SAMPTYPE *)(&((unsigned char *)outputBuffer)[audioInputIndex]);
+      DBG(("AUDIO: piping %8ld bytes at %p\n", len - amount, dst));
+      for (int i = (len-amount)/sizeof(SAMPTYPE); i; i--) {
+        float v = MAX(MIN(((float *)(buf+amount))[i], 32767.0f), -32767.0f);
+        dst[i] = (SAMPTYPE) v;
+#ifndef NO_FLOAT
+        dst[i] = dst[i] / 32767;
+#endif
+        //dst[i] = MAX(MIN(dst[i], 1.0f), -1.0f);
       }
       audioInputIndex += len - amount;
+      if (audioInputIndex >= AUDIO_BUFFER_SIZE)
+        audioInputIndex %= AUDIO_BUFFER_SIZE;
     }
+#endif
     release_sem_etc(audioOutputSem, len, 0);
     //DBG(("audio write: release(%d)\n\n", len));
     buf += len;
