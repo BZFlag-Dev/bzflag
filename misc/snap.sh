@@ -13,12 +13,13 @@
 #  below.  Namely, you can configure what to checkout, where to checkout, how
 #  to checkout, and where to post the snapshots.
 #
-#  Version 1.0.1
+#  Version 1.0.2
 #  Copyright 2004, Sean Morrison aka brlcad aka learner
 #  this script is in the public domain
 ###
 
 usage ( ) {
+  [ ! "x$1" = "x" ] && echo "ERROR: $1"
   echo "Usage: $0 cvsmodule [checkoutdir] [snapshotdir] [checkout]"
   echo "  cvsmodule is the name of your cvs checkout module"
   echo "  checkoutdir is the name of where to checkout/export (default=.)"
