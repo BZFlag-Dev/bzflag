@@ -178,7 +178,14 @@ void			PyramidBuilding::getCorner(int index,
 
 float			PyramidBuilding::shrinkFactor(float z) const
 {
-  if (z >= getHeight()) return 0.0;
+  const float *pos = getPosition();
+  z -= pos[2];
+
+  if (z < 0.0f)
+    return 1.0f;
+  if (z > getHeight())
+    z = 0.0f;
+
   return (getHeight() - z) / getHeight();
 }
 
