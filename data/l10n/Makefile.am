@@ -1,4 +1,4 @@
-PO_FILES = $(wildcard *.po)
+PO_FILES = $(wildcard $(srcdir)/*.po)
 
 EXTRA_DIST = $(PO_FILES)
 
