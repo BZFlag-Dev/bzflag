@@ -992,19 +992,14 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
     glEnable(GL_POLYGON_OFFSET_FILL);
   }
 
-  // NOTE: the bigger the value, the better the flicker,
-  //       the downside is that the tank may be visible
-  //       through very thin walls.  
-  const float scale = -8.0f;
-  
-  glPolygonOffset(0.0f, 1.0f * scale);
+  glPolygonOffset(-1.0f, -1.0f);
   if (left) {
     renderPart(LeftCasing);
   } else {
     renderPart(RightCasing);
   }
 
-  glPolygonOffset(0.0f, 2.5f * scale);
+  glPolygonOffset(-2.0f, -2.0f);
   for (int i = 0; i < 4; i++) {
     if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
       continue;
@@ -1016,7 +1011,7 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
     }
   }
 
-  glPolygonOffset(0.0f, 3.0f * scale);
+  glPolygonOffset(-3.0f, -3.0f);
   if (left) {
     renderPart(LeftTread);
   } else {
