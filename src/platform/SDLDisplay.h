@@ -101,7 +101,6 @@ class SDLWindow : public BzfWindow {
   int          x;
   int          y;
   bool         hasGamma;
-  float        gamma;
 };
 
 #endif // BZF_SDLDISPLAY_H

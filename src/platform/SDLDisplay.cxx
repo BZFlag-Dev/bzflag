@@ -17,6 +17,7 @@
 #include "SDLDisplay.h"
 #include "OpenGLGState.h"
 #include <iostream>
+extern "C" int SDL_GetGamma(float *red, float *green, float *blue);
 
 static int mx = 0;
 static int my = 0;
@@ -544,8 +545,7 @@ void SDLWindow::getSize(int& width, int& height) const {
   ((SDLDisplay *)getDisplay())->getWindowSize(width, height);
 };
 
-void SDLWindow::setGamma(float newGamma) {
-  gamma = newGamma;
+void SDLWindow::setGamma(float gamma) {
   int result = SDL_SetGamma(gamma, gamma, gamma);
   if (result == -1) {
     printf("Could not set Gamma: %s.\n", SDL_GetError());
@@ -554,6 +554,16 @@ void SDLWindow::setGamma(float newGamma) {
 };
 
 float SDLWindow::getGamma() const {
+  float red;
+  float green;
+  float blue;
+  float gamma = 1.0;
+  // SDL Calculation of the gamma isn't officially supported.
+  int result = SDL_GetGamma(&red, &green, &blue);
+  if (result == -1)
+    printf("Could not get Gamma: %s.\n", SDL_GetError());
+  else
+    gamma = (red + green + blue) / 3.0;
   return gamma;
 };
 
