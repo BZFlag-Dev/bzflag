@@ -27,6 +27,7 @@ public:
 
 	static float maxLOD;
 	static float tankHeight;
+	static float flagRadius;
 
 
 private:

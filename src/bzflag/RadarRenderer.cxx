@@ -152,8 +152,7 @@ void RadarRenderer::drawTank(float x, float y, float z)
 
 void RadarRenderer::drawFlag(float x, float y, float)
 {
-  float flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
-  GLfloat s = flagRadius > 3.0f * ps ? flagRadius : 3.0f * ps;
+  GLfloat s = BZDBCache::flagRadius > 3.0f * ps ? BZDBCache::flagRadius : 3.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(x - s, y);
   glVertex2f(x + s, y);

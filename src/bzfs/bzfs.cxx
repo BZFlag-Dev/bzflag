@@ -3429,10 +3429,9 @@ static void grabFlag(int playerIndex, int flagIndex)
     return;
 
   //last Pos might be lagged by TankSpeed so include in calculation
-  const float flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
   const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
   const float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
-  const float radius2 = (tankSpeed + tankRadius + flagRadius) * (tankSpeed + tankRadius + flagRadius);
+  const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius + BZDBCache::flagRadius);
   const float* tpos = player[playerIndex].lastState.pos;
   const float* fpos = flag[flagIndex].flag.position;
   const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +

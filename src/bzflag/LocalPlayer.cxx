@@ -569,8 +569,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 		(flagAntidotePos[0] - newPos[0]) +
 		(flagAntidotePos[1] - newPos[1]) *
 		(flagAntidotePos[1] - newPos[1]);
-    float flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
-    if (dist < (getRadius() + flagRadius) * (getRadius() + flagRadius))
+    if (dist < (getRadius() + BZDBCache::flagRadius) * (getRadius() + BZDBCache::flagRadius))
       ServerLink::getServer()->sendDropFlag(getPosition());
   }
   // don't forget to wave

@@ -23,6 +23,7 @@ bool  BZDBCache::enhancedRadar;
 
 float BZDBCache::maxLOD;
 float BZDBCache::tankHeight;
+float BZDBCache::flagRadius;
 
 void BZDBCache::init()
 {
@@ -31,6 +32,7 @@ void BZDBCache::init()
 
   BZDB->addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB->addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
+  BZDB->addCallback(StateDatabase::BZDB_FLAGRADIUS, serverCallback, NULL);
 }
 
 void BZDBCache::clientCallback(const std::string& name, void *)
@@ -47,6 +49,8 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
   else if (name == StateDatabase::BZDB_TANKHEIGHT)
     tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+  else if (name == StateDatabase::BZDB_FLAGRADIUS)
+    flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
 }
 
 // Local variables: ***
