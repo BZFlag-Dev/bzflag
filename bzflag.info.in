@@ -46,7 +46,7 @@ BuildDepends: autoconf2.5 | autoconf, automake1.8 | automake1.7 | automake1.6 | 
 
 # Build
 GCC: 3.3
-ConfigureParams: --prefix=%p --without-x --with-regex CPPFLAGS="-I%p/include" LDFLAGS="-L%p/lib -lpng"
+ConfigureParams: --prefix=%p --without-x
 CompileScript: <<
 ./autogen.sh
 ./configure %c
