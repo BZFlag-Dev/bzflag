@@ -470,14 +470,11 @@ bool MeshFace::inMovingBox(const float*, float,
 // with this tetrahedron, so it doesn't have to be particularly fast.
 // As a note, some of the info from the original collision test might
 // be handy here.
-bool MeshFace::isCrossing(const float* p, float angle,
-                          float dx, float dy, float height,
-                          float* plane) const
+bool MeshFace::isCrossing(const float* /*p*/, float /*angle*/,
+                          float /*dx*/, float /*dy*/, float /*height*/,
+                          float* _plane) const
 {
-  p = p;
-  angle = angle;
-  dx = dy = height;
-  plane = plane;
+  memcpy(_plane, plane, sizeof(float[4]));
   return true;
 }
 
