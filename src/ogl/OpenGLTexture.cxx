@@ -110,7 +110,10 @@ void OpenGLTexture::static_initContext(void *that)
 
 void OpenGLTexture::freeContext()
 {
+  // glDeleteTextures should set binding to 0 by itself when the texture
+  //  is in use, but some stacks (Linux/glx/matrox) are broken, so play it safe
   glBindTexture(GL_TEXTURE_2D, 0);
+
   if (list != INVALID_GL_TEXTURE_ID) {
     glDeleteTextures(1, &list);
     list = INVALID_GL_TEXTURE_ID;
