@@ -1154,9 +1154,8 @@ static bool defineWorld()
 	if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
 	  std::cerr << "base was not defined for "
 		    << Team::getName((TeamColor)i)
-		    << ", capture the flag game style removed" << std::endl;
-	  clOptions->gameStyle &= (~TeamFlagGameStyle);
-	  break;
+		    << std::endl;
+	  return false;
 	}
       }
     }
