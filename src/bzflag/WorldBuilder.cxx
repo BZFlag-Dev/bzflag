@@ -127,10 +127,12 @@ void* WorldBuilder::unpack(void* buf)
 	  return NULL;
         }
 
-	TetraBuilding tetra;
-	buf = tetra.unpack(buf);
-        if (tetra.isValid()) {
-	  append(tetra);
+	TetraBuilding* tetra = new TetraBuilding;
+	buf = tetra->unpack(buf);
+        if (tetra->isValid()) {
+	  world->tetras.push_back(tetra);
+        } else {
+          delete tetra;
         }
 	break;
       }
@@ -146,7 +148,9 @@ void* WorldBuilder::unpack(void* buf)
 	MeshObstacle* mesh = new MeshObstacle;
 	buf = mesh->unpack(buf);
         if (mesh->isValid()) {
-	  append(mesh);
+	  world->meshes.push_back(mesh);
+        } else {
+          delete mesh;
         }
 	break;
       }
@@ -169,10 +173,13 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackUByte(buf, tempflags);
-	BoxBuilding box(data, data[3], data[4], data[5], data[6],
-			(tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
-        if (box.isValid()) {
-	  append(box);
+	BoxBuilding* box =
+	  new BoxBuilding(data, data[3], data[4], data[5], data[6],
+			  (tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
+        if (box->isValid()) {
+	  world->boxes.push_back(box);
+        } else {
+          delete box;
         }
 	break;
       }
@@ -195,13 +202,16 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackUByte(buf, tempflags);
 
-	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6],
-			    (tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
-	if (tempflags & _FLIP_Z)
-	  pyr.setZFlip();
-
-        if (pyr.isValid()) {
-	  append(pyr);
+	PyramidBuilding* pyr =
+	  new PyramidBuilding(data, data[3], data[4], data[5], data[6],
+			      (tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
+	if (tempflags & _FLIP_Z) {
+	  pyr->setZFlip();
+        }
+        if (pyr->isValid()) {
+	  world->pyramids.push_back(pyr);
+        } else {
+          delete pyr;
         }
 	break;
       }
@@ -232,7 +242,7 @@ void* WorldBuilder::unpack(void* buf)
 	                 horizontal != 0, (tempflags & _DRIVE_THRU)!=0,
 	                 (tempflags & _SHOOT_THRU)!=0);
         if (tele->isValid()) {
-	  append(tele);
+	  world->teleporters.push_back(tele);
         } else {
           delete tele;
         }
@@ -267,9 +277,11 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[3]);
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
-	WallObstacle wall(data, data[3], data[4], data[5]);
-        if (wall.isValid()) {
-	  append(wall);
+	WallObstacle* wall = new WallObstacle(data, data[3], data[4], data[5]);
+        if (wall->isValid()) {
+	  world->walls.push_back(wall);
+        } else {
+          delete wall;
         }
 	break;
       }
@@ -294,10 +306,12 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[7]);
 	buf = nboUnpackFloat(buf, data[8]);
 	buf = nboUnpackFloat(buf, data[9]);
-	BaseBuilding base(data, data[3], data +4, team);
-        if (base.isValid()) {
-	  append(base);
+	BaseBuilding* base = new BaseBuilding(data, data[3], data +4, team);
+        if (base->isValid()) {
+	  world->basesR.push_back(base);
 	  setBase(TeamColor(team), data, data[3], data[4], data[5], data[6]);
+        } else {
+          delete base;
         }
 	break;
       }
@@ -326,7 +340,7 @@ void* WorldBuilder::unpack(void* buf)
 	  buf = nboUnpackFloat(buf, delay);
 	  weapon.delay.push_back(delay);
 	}
-        append(weapon);
+        world->weapons.push_back(weapon);
 	break;
       }
       case WorldCodeZone: {
@@ -370,7 +384,7 @@ void* WorldBuilder::unpack(void* buf)
 	  buf = nboUnpackUShort(buf, safety);
 	  zone.safety.push_back((TeamColor)safety);
 	}
-	append(zone);
+	world->entryZones.push_back(zone);
 	break;
       }
       default:
@@ -431,7 +445,7 @@ void WorldBuilder::preGetWorld()
   const int numBoxes = world->boxes.size();
   world->boxInsideNodes = new EighthDimSceneNode*[numBoxes];
   for (i = 0; i < numBoxes; i++) {
-    const Obstacle& o = world->boxes[i];
+    const Obstacle& o = *world->boxes[i];
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
@@ -441,7 +455,7 @@ void WorldBuilder::preGetWorld()
   const int numPyramids = world->pyramids.size();
   world->pyramidInsideNodes = new EighthDimSceneNode*[numPyramids];
   for (i = 0; i < numPyramids; i++) {
-    const Obstacle& o = world->pyramids[i];
+    const Obstacle& o = *world->pyramids[i];
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
@@ -451,14 +465,14 @@ void WorldBuilder::preGetWorld()
   const int numTetras = world->tetras.size();
   world->tetraInsideNodes = new EighthDimSceneNode*[numTetras];
   for (i = 0; i < numTetras; i++) {
-    const TetraBuilding& o = world->tetras[i];
+    const TetraBuilding& o = *world->tetras[i];
     world->tetraInsideNodes[i] = new EighthDTetraSceneNode(o.getVertices(),
                                                            o.getPlanes());
   }
   const int numBases = world->basesR.size();
   world->baseInsideNodes = new EighthDimSceneNode*[numBases];
   for (i = 0; i < numBases; i++) {
-    const Obstacle& o = world->basesR[i];
+    const Obstacle& o = *world->basesR[i];
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
@@ -521,52 +535,6 @@ void WorldBuilder::setShakeWins(int wins) const
 void WorldBuilder::setEpochOffset(uint32_t seconds) const
 {
   world->epochOffset = seconds;
-}
-
-void WorldBuilder::append(const WallObstacle& wall)
-{
-  world->walls.push_back(wall);
-}
-
-void WorldBuilder::append(MeshObstacle* mesh)
-{
-  world->meshes.push_back(mesh);
-}
-
-void WorldBuilder::append(const BoxBuilding& box)
-{
-  world->boxes.push_back(box);
-}
-
-void WorldBuilder::append(const PyramidBuilding& pyramid)
-{
-  world->pyramids.push_back(pyramid);
-}
-
-void WorldBuilder::append(const BaseBuilding& base)
-{
-  world->basesR.push_back(base);
-}
-
-void WorldBuilder::append(const TetraBuilding& tetra)
-{
-  world->tetras.push_back(tetra);
-}
-
-void WorldBuilder::append(Teleporter* teleporter)
-{
-  // save teleporter
-  world->teleporters.push_back(teleporter);
-}
-
-void WorldBuilder::append(const Weapon& weapon)
-{
-  world->weapons.push_back(weapon);
-}
-
-void WorldBuilder::append(const EntryZone& zone)
-{
-  world->entryZones.push_back(zone);
 }
 
 void WorldBuilder::setTeleporterTarget(int src, int tgt)

@@ -70,20 +70,31 @@ World::~World()
   for (i = 0; i < NumTeams; i++) {
     bases[i].clear();
   }
-  for (i = 0; i < NumTeams; i++) {
-    bases[i].clear();
+  // delete the obstacles
+  unsigned int u;
+  for (u = 0; u < walls.size(); u++) {
+    delete walls[u];
   }
-  std::vector<MeshObstacle*>::iterator mesh_it;
-  for (mesh_it = meshes.begin(); mesh_it != meshes.end(); mesh_it++) {
-    MeshObstacle* mesh = *mesh_it;
-    delete mesh;
+  for (u = 0; u < meshes.size(); u++) {
+    delete meshes[u];
   }
-  std::vector<Teleporter*>::iterator tele_it;
-  for (tele_it = teleporters.begin(); tele_it != teleporters.end(); tele_it++) {
-    Teleporter* tele = *tele_it;
-    delete tele;
+  for (u = 0; u < tetras.size(); u++) {
+    delete tetras[u];
+  }
+  for (u = 0; u < boxes.size(); u++) {
+    delete boxes[u];
+  }
+  for (u = 0; u < basesR.size(); u++) {
+    delete basesR[u];
+  }
+  for (u = 0; u < pyramids.size(); u++) {
+    delete pyramids[u];
+  }
+  for (u = 0; u < teleporters.size(); u++) {
+    delete teleporters[u];
   }
 }
+
 
 void			World::init()
 {
@@ -158,19 +169,19 @@ EighthDimSceneNode*	World::getInsideSceneNode(const Obstacle* o) const
   int i;
   const int numBases = basesR.size();
   for (i = 0; i < numBases; i++)
-    if (&(basesR[i]) == o)
+    if (basesR[i] == o)
       return baseInsideNodes[i];
   const int numBoxes = boxes.size();
   for (i = 0; i < numBoxes; i++)
-    if (&(boxes[i]) == o)
+    if (boxes[i] == o)
       return boxInsideNodes[i];
   const int numPyramids = pyramids.size();
   for (i = 0; i < numPyramids; i++)
-    if (&(pyramids[i]) == o)
+    if (pyramids[i] == o)
       return pyramidInsideNodes[i];
   const int numTetras = tetras.size();
   for (i = 0; i < numTetras; i++)
-    if (&(tetras[i]) == o)
+    if (tetras[i] == o)
       return tetraInsideNodes[i];
   return NULL;
 }
@@ -219,9 +230,9 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
                                            float dx, float dy, float dz) const
 {
   // check walls
-  std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
+  std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
-    const WallObstacle& wall = *wallScan;
+    const WallObstacle& wall = **wallScan;
     if (wall.inBox(pos, angle, dx, dy, dz)) {
       return &wall;
     }
@@ -245,9 +256,9 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 					   float dx, float dy, float dz) const
 {
   // check walls
-  std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
+  std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
-    const WallObstacle& wall = *wallScan;
+    const WallObstacle& wall = **wallScan;
     if (wall.inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return &wall;
     }
@@ -683,8 +694,8 @@ bool			World::writeWorld(std::string filename)
 
   // Write bases
   {
-    for (std::vector<BaseBuilding>::iterator it = basesR.begin(); it != basesR.end(); ++it) {
-      BaseBuilding base = *it;
+    for (std::vector<BaseBuilding*>::iterator it = basesR.begin(); it != basesR.end(); ++it) {
+      BaseBuilding base = **it;
       out << "base" << std::endl;
       const float *pos = base.getPosition();
       out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
@@ -706,8 +717,8 @@ bool			World::writeWorld(std::string filename)
 
   // Write boxes
   {
-    for (std::vector<BoxBuilding>::iterator it = boxes.begin(); it != boxes.end(); ++it) {
-      BoxBuilding box = *it;
+    for (std::vector<BoxBuilding*>::iterator it = boxes.begin(); it != boxes.end(); ++it) {
+      BoxBuilding box = **it;
       out << "box" << std::endl;
       const float *pos = box.getPosition();
       out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
@@ -727,9 +738,9 @@ bool			World::writeWorld(std::string filename)
 
   // Write pyramids
   {
-    for (std::vector<PyramidBuilding>::iterator it = pyramids.begin();
+    for (std::vector<PyramidBuilding*>::iterator it = pyramids.begin();
 	 it != pyramids.end(); ++it) {
-      PyramidBuilding pyr = *it;
+      PyramidBuilding pyr = **it;
       out << "pyramid" << std::endl;
       const float *pos = pyr.getPosition();
       float height = pyr.getHeight();
@@ -755,9 +766,9 @@ bool			World::writeWorld(std::string filename)
 
   // Write tetrahedrons
   {
-    for (std::vector<TetraBuilding>::iterator it = tetras.begin();
+    for (std::vector<TetraBuilding*>::iterator it = tetras.begin();
 	 it != tetras.end(); ++it) {
-      TetraBuilding tetra  = *it;
+      TetraBuilding tetra  = **it;
       out << "tetra" << std::endl;
       // write the vertices
       for (int v = 0; v < 4; v++) {
@@ -809,7 +820,7 @@ bool			World::writeWorld(std::string filename)
   // Write Teleporters
   {
     for (std::vector<Teleporter*>::iterator it = teleporters.begin(); it != teleporters.end(); ++it) {
-      Teleporter tele = *(*it);
+      Teleporter tele = **it;
       out << "teleporter" << std::endl;
       const float *pos = tele.getPosition();
       out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;

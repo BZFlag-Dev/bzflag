@@ -35,6 +35,10 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
+  edges = NULL;
+  edgePlanes = NULL;
+  specialData = NULL;
+  specialState = 0;
 
   return;
 }
@@ -54,7 +58,10 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
+  edges = NULL;
   edgePlanes = NULL;
+  specialData = NULL;
+  specialState = 0;
 
   finalize();
 
@@ -123,6 +130,17 @@ void MeshFace::finalize()
       return;
     }
   }
+  
+  // set the plane type
+  if (plane[3] > (1.0f - 1.0e-5f)) {
+    planeType = UpPlane;
+  }
+  else if (plane[3] < -(1.0f - 1.0e-5f)) {
+    planeType = DownPlane;
+  }
+  else {
+    planeType = RegPlane;
+  }
 
   // make the edge planes
   edgePlanes = new fvec4[vertexCount];
@@ -171,7 +189,9 @@ MeshFace::~MeshFace()
   delete[] vertices;
   delete[] normals;
   delete[] texcoords;
+  delete[] edges;
   delete[] edgePlanes;
+  delete specialData;
   return;
 }
 

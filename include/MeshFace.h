@@ -24,6 +24,8 @@
 #include "Ray.h"
 #include "Obstacle.h"
 #include "MeshMaterial.h"
+#include "global.h"
+//#include "PhysicsDrive.h"
 
 
 class MeshFace : public Obstacle {
@@ -67,12 +69,21 @@ class MeshFace : public Obstacle {
     int getVertexCount() const;
     bool useNormals() const;
     bool useTexcoords() const;
-    const float *getVertex(int index) const;
-    const float *getNormal(int index) const;
-    const float *getTexcoord(int index) const;
-    const float *getPlane() const;
-    const MeshMaterial *getMaterial() const;
+    const float* getVertex(int index) const;
+    const float* getNormal(int index) const;
+    const float* getTexcoord(int index) const;
+    const float* getPlane() const;
+    const MeshMaterial* getMaterial() const;
+    //const PhysicsDrive* getPhysicsDrive() const;
 
+    bool isSpecial() const;
+    bool isBaseFace() const;
+    bool isLinkToFace() const;
+    bool isLinkFromFace() const;
+
+    void setLink(const MeshFace* link);
+    const MeshFace* getLink() const;
+    
     void *pack(void*);
     void *unpack(void*);
     int packSize();
@@ -89,13 +100,68 @@ class MeshFace : public Obstacle {
     float** texcoords;
     MeshMaterial material;
     bool smoothBounce;
+    //PhysicsDrive* physics;
 
     fvec3 mins, maxs;
     fvec4 plane;
-    MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
     fvec4* edgePlanes;
+
+    MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
+                     // not currently used for anything
+                     
+    enum {
+      RegPlane  = 0,
+      UpPlane   = 1,
+      DownPlane = 2
+    } PlaneType;
+
+    char planeType;
+    
+    
+    enum {
+      LinkToFace      = (1 << 0),
+      LinkFromFace    = (1 << 1),
+      BaseFace        = (1 << 2),
+      IcyFace         = (1 << 3),
+      StickyFace      = (1 << 5),
+      DeathFace       = (1 << 6),
+      PortalFace      = (1 << 7)
+    } SpecialBits;
+
+    // combining all types into one struct, because I'm lazy    
+    typedef struct {
+      // linking data
+      const MeshFace* linkFace;
+      bool linkFromFlat;
+      float linkFromSide[3]; // sideways vector
+      float linkFromDown[3]; // downwards vector
+      float linkFromCenter[3];
+      bool linkToFlat;
+      float linkToSide[3]; // sideways vector
+      float linkToDown[3]; // downwards vector
+      float linkToCenter[3];
+      // base data
+      TeamColor teamColor;
+    } SpecialData;
+    
+    uint16_t specialState;
+    SpecialData* specialData;
 };
 
+inline const MeshMaterial* MeshFace::getMaterial() const
+{
+  return &material;
+}
+
+//inline const PhysicsDrive* MeshFace::getPhysicsDrive() const
+//{
+//  return physics;
+//}
+
+inline const float* MeshFace::getPlane() const
+{
+  return plane;
+}
 
 inline int MeshFace::getVertexCount() const
 {
@@ -107,24 +173,14 @@ inline const float* MeshFace::getVertex(int index) const
   return (const float*)vertices[index];
 }
 
-inline const float *MeshFace::getNormal(int index) const
+inline const float* MeshFace::getNormal(int index) const
 {
   return (const float*)normals[index];
 }
 
-inline const float *MeshFace::getTexcoord(int index) const
+inline const float* MeshFace::getTexcoord(int index) const
 {
   return (const float*)texcoords[index];
-}
-
-inline const float *MeshFace::getPlane() const
-{
-  return plane;
-}
-
-inline const MeshMaterial *MeshFace::getMaterial() const
-{
-  return &material;
 }
 
 inline bool MeshFace::useNormals() const
@@ -135,6 +191,32 @@ inline bool MeshFace::useNormals() const
 inline bool MeshFace::useTexcoords() const
 {
   return (texcoords != NULL);
+}
+
+
+inline bool MeshFace::isSpecial() const
+{
+  return (specialState != 0);
+}
+
+inline bool MeshFace::isBaseFace() const
+{
+  return (specialState & BaseFace);
+}
+
+inline bool MeshFace::isLinkToFace() const
+{
+  return (specialState & LinkToFace);
+}
+
+inline bool MeshFace::isLinkFromFace() const
+{
+  return (specialState & LinkFromFace);
+}
+
+inline const MeshFace* MeshFace::getLink() const
+{
+  return specialData->linkFace;
 }
 
 

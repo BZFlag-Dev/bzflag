@@ -278,12 +278,12 @@ const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
 }
 
 
-void CollisionManager::load (std::vector<MeshObstacle*>   &meshes,
-                             std::vector<BoxBuilding>     &boxes,
-                             std::vector<BaseBuilding>    &bases,
-                             std::vector<PyramidBuilding> &pyrs,
-                             std::vector<TetraBuilding>   &tetras,
-                             std::vector<Teleporter*>     &teles)
+void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
+                             std::vector<BoxBuilding*>     &boxes,
+                             std::vector<BaseBuilding*>    &bases,
+                             std::vector<PyramidBuilding*> &pyrs,
+                             std::vector<TetraBuilding*>   &tetras,
+                             std::vector<Teleporter*>      &teles)
 {
   // clean out the cell lists
   clear();
@@ -302,7 +302,7 @@ void CollisionManager::load (std::vector<MeshObstacle*>   &meshes,
   }
   fullCount = fullCount + (int)(boxes.size() + bases.size() +
                                 pyrs.size() + tetras.size() +
-                                teles.size());
+                                (teles.size() * 3)); // 2 MeshFace links
 
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -316,25 +316,28 @@ void CollisionManager::load (std::vector<MeshObstacle*>   &meshes,
       addToFullList((Obstacle*) mesh->getFace(f));
     }
   }
-  for (std::vector<BoxBuilding>::iterator it_box = boxes.begin();
+  for (std::vector<BoxBuilding*>::iterator it_box = boxes.begin();
        it_box != boxes.end(); it_box++) {
-    addToFullList((Obstacle*) &(*it_box));
+    addToFullList((Obstacle*) (*it_box));
   }
-  for (std::vector<BaseBuilding>::iterator it_base = bases.begin();
+  for (std::vector<BaseBuilding*>::iterator it_base = bases.begin();
        it_base != bases.end(); it_base++) {
-    addToFullList((Obstacle*) &(*it_base));
+    addToFullList((Obstacle*) (*it_base));
   }
-  for (std::vector<PyramidBuilding>::iterator it_pyr = pyrs.begin();
+  for (std::vector<PyramidBuilding*>::iterator it_pyr = pyrs.begin();
        it_pyr != pyrs.end(); it_pyr++) {
-    addToFullList((Obstacle*) &(*it_pyr));
+    addToFullList((Obstacle*) (*it_pyr));
   }
-  for (std::vector<TetraBuilding>::iterator it_tetra = tetras.begin();
+  for (std::vector<TetraBuilding*>::iterator it_tetra = tetras.begin();
        it_tetra != tetras.end(); it_tetra++) {
-    addToFullList((Obstacle*) &(*it_tetra));
+    addToFullList((Obstacle*) (*it_tetra));
   }
   for (std::vector<Teleporter*>::iterator it_tele = teles.begin();
        it_tele != teles.end(); it_tele++) {
-    addToFullList((Obstacle*) (*it_tele));
+    Teleporter* tele = *it_tele;
+    //TREPAN addToFullList((Obstacle*) tele);
+    addToFullList((Obstacle*) tele->getBackLink());
+    addToFullList((Obstacle*) tele->getFrontLink());
   }
 
   // generate the octree

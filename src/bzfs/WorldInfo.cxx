@@ -38,15 +38,27 @@ WorldInfo::WorldInfo() :
 WorldInfo::~WorldInfo()
 {
   delete[] database;
-  std::vector<MeshObstacle*>::iterator mesh_it;
-  for (mesh_it = meshes.begin(); mesh_it != meshes.end(); mesh_it++) {
-    MeshObstacle* mesh = *mesh_it;
-    delete mesh;
+  unsigned int i;
+  for (i = 0; i < walls.size(); i++) {
+    delete walls[i];
   }
-  std::vector<Teleporter*>::iterator tele_it;
-  for (tele_it = teleporters.begin(); tele_it != teleporters.end(); tele_it++) {
-    Teleporter* tele = *tele_it;
-    delete tele;
+  for (i = 0; i < meshes.size(); i++) {
+    delete meshes[i];
+  }
+  for (i = 0; i < tetras.size(); i++) {
+    delete tetras[i];
+  }
+  for (i = 0; i < boxes.size(); i++) {
+    delete boxes[i];
+  }
+  for (i = 0; i < bases.size(); i++) {
+    delete bases[i];
+  }
+  for (i = 0; i < pyramids.size(); i++) {
+    delete pyramids[i];
+  }
+  for (i = 0; i < teleporters.size(); i++) {
+    delete teleporters[i];
   }
 }
 
@@ -56,7 +68,7 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
     maxHeight = z+h;
 
   const float pos[3] = {x, y, z};
-  WallObstacle wall (pos, r, w, h);
+  WallObstacle* wall = new WallObstacle(pos, r, w, h);
   walls.push_back (wall);
 }
 
@@ -66,7 +78,7 @@ void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, flo
     maxHeight = z+h;
 
   const float pos[3] = {x, y, z};
-  BoxBuilding box (pos, r, w, d, h, drive, shoot, false);
+  BoxBuilding* box = new BoxBuilding(pos, r, w, d, h, drive, shoot, false);
   boxes.push_back (box);
 }
 
@@ -76,9 +88,9 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
     maxHeight = z+h;
 
   const float pos[3] = {x, y, z};
-  PyramidBuilding pyr (pos, r, w, d, h, drive, shoot);
+  PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h, drive, shoot);
   if (flipZ) {
-    pyr.setZFlip();
+    pyr->setZFlip();
   }
   pyramids.push_back (pyr);
 }
@@ -90,12 +102,13 @@ void WorldInfo::addTetra(const float vertices[4][3], const bool visible[4],
                          const int textureMatrices[4], const std::string textures[4],
                          bool drive, bool shoot)
 {
-  TetraBuilding tetra (vertices, visible, useColor, colors,
-                       useNormals, normals, useTexCoords, texCoords,
-                       textureMatrices, textures, drive, shoot);
+  TetraBuilding* tetra = 
+    new TetraBuilding(vertices, visible, useColor, colors,
+                      useNormals, normals, useTexCoords, texCoords,
+                      textureMatrices, textures, drive, shoot);
   tetras.push_back (tetra);
 
-  float tetraHeight = tetra.getPosition()[2] + tetra.getHeight();
+  float tetraHeight = tetra->getPosition()[2] + tetra->getHeight();
   if (tetraHeight > maxHeight) {
     maxHeight = tetraHeight;
   }
@@ -125,7 +138,7 @@ void WorldInfo::addBase(float x, float y, float z, float r,
 
   const float pos[3] = {x, y, z};
   const float size[3] = {w, d, h};
-  BaseBuilding base (pos, r, size, color);
+  BaseBuilding* base = new BaseBuilding(pos, r, size, color);
   bases.push_back (base);
 }
 
@@ -265,24 +278,24 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
 
   float pos[3] = {x, y, z};
 
-  for (std::vector<BaseBuilding>::iterator base_it = bases.begin();
+  for (std::vector<BaseBuilding*>::iterator base_it = bases.begin();
        base_it != bases.end(); ++base_it) {
-    BaseBuilding &base = *base_it;
-    if (base.inCylinder(pos, radius, height)) {
+    BaseBuilding* base = *base_it;
+    if (base->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = &base;
+        *location = base;
       }
       return IN_BASE;
     }
   }
-  for (std::vector<BoxBuilding>::iterator box_it = boxes.begin();
+  for (std::vector<BoxBuilding*>::iterator box_it = boxes.begin();
        box_it != boxes.end(); ++box_it) {
-    BoxBuilding &box = *box_it;
-    if (box.inCylinder(pos, radius, height)) {
+    BoxBuilding* box = *box_it;
+    if (box->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = &box;
+        *location = box;
       }
-      if (box.isDriveThrough()) {
+      if (box->isDriveThrough()) {
         return IN_BOX_DRIVETHROUGH;
       }
       else {
@@ -290,22 +303,22 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
       }
     }
   }
-  for (std::vector<PyramidBuilding>::iterator pyr_it = pyramids.begin();
+  for (std::vector<PyramidBuilding*>::iterator pyr_it = pyramids.begin();
        pyr_it != pyramids.end(); ++pyr_it) {
-    PyramidBuilding &pyr = *pyr_it;
-    if (pyr.inCylinder(pos, radius, height)) {
+    PyramidBuilding* pyr = *pyr_it;
+    if (pyr->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = &pyr;
+        *location = pyr;
       }
       return IN_PYRAMID;
     }
   }
-  for (std::vector<TetraBuilding>::iterator tetra_it = tetras.begin();
+  for (std::vector<TetraBuilding*>::iterator tetra_it = tetras.begin();
        tetra_it != tetras.end(); ++tetra_it) {
-    TetraBuilding &tetra = *tetra_it;
-    if (tetra.inCylinder(pos, radius, height)) {
+    TetraBuilding* tetra = *tetra_it;
+    if (tetra->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = &tetra;
+        *location = tetra;
       }
       return IN_TETRA;
     }
@@ -459,7 +472,7 @@ void WorldInfo::finishWorld()
 
 int WorldInfo::packDatabase(const BasesList* baseList)
 {
-  std::vector<TetraBuilding>::iterator tetra_it;
+  std::vector<TetraBuilding*>::iterator tetra_it;
   std::vector<MeshObstacle*>::iterator mesh_it;
   int numBases = 0;
   BasesList::const_iterator base_it;
@@ -494,9 +507,9 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   }
   // tetra sizes are variable
   for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
-    TetraBuilding &tetra = *tetra_it;
+    TetraBuilding* tetra = *tetra_it;
     databaseSize = databaseSize + (2 + 2);
-    databaseSize = databaseSize + tetra.packSize();
+    databaseSize = databaseSize + tetra->packSize();
   }
   // meshes have variable sizes
   for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
@@ -534,7 +547,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
 
   // add tetras
   for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
-    TetraBuilding &tetra = *tetra_it;
+    TetraBuilding& tetra = **tetra_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeTetraSize); // dummy
     databasePtr = nboPackUShort(databasePtr, WorldCodeTetra);
     databasePtr = tetra.pack(databasePtr);
@@ -548,9 +561,9 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   }
 
   // add walls
-  for (std::vector<WallObstacle>::iterator wall_it = walls.begin();
+  for (std::vector<WallObstacle*>::iterator wall_it = walls.begin();
        wall_it != walls.end(); ++wall_it) {
-    WallObstacle &wall = *wall_it;
+    WallObstacle& wall = **wall_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeWallSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
     databasePtr = nboPackVector(databasePtr, wall.getPosition());
@@ -561,9 +574,9 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   }
 
   // add boxes
-  for (std::vector<BoxBuilding>::iterator box_it = boxes.begin();
+  for (std::vector<BoxBuilding*>::iterator box_it = boxes.begin();
        box_it != boxes.end(); ++box_it) {
-    BoxBuilding &box = *box_it;
+    BoxBuilding& box = **box_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeBoxSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
     databasePtr = nboPackVector(databasePtr, box.getPosition());
@@ -578,9 +591,9 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   }
 
   // add pyramids
-  for (std::vector<PyramidBuilding>::iterator pyr_it = pyramids.begin();
+  for (std::vector<PyramidBuilding*>::iterator pyr_it = pyramids.begin();
        pyr_it != pyramids.end(); ++pyr_it) {
-    PyramidBuilding &pyr = *pyr_it;
+    PyramidBuilding& pyr = **pyr_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramidSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
     databasePtr = nboPackVector(databasePtr, pyr.getPosition());
@@ -600,7 +613,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   int i = 0;
   for (std::vector<Teleporter*>::iterator tele_it = teleporters.begin();
        tele_it != teleporters.end(); ++tele_it, i++) {
-    Teleporter& tele = *(*tele_it);
+    Teleporter& tele = **tele_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporterSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
     databasePtr = nboPackVector(databasePtr, tele.getPosition());

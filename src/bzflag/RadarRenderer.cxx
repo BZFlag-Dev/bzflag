@@ -556,13 +556,13 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   }
 
   // draw walls.  walls are flat so a line will do.
-  const std::vector<WallObstacle>& walls = world.getWalls();
+  const std::vector<WallObstacle*>& walls = world.getWalls();
   int count = walls.size();
   glColor3f(0.25f, 0.5f, 0.5f);
   glBegin(GL_LINES);
   int i;
   for (i = 0; i < count; i++) {
-    const WallObstacle& wall = walls[i];
+    const WallObstacle& wall = *walls[i];
     const float w = wall.getBreadth();
     const float c = w * cosf(wall.getRotation());
     const float s = w * sinf(wall.getRotation());
@@ -576,11 +576,11 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   if (smoothingOn && BZDBCache::enhancedRadar == false) glDisable(GL_BLEND);
 
   // draw box buildings.
-  const std::vector<BoxBuilding>& boxes = world.getBoxes();
+  const std::vector<BoxBuilding*>& boxes = world.getBoxes();
   count = boxes.size();
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
-    const BoxBuilding& box = boxes[i];
+    const BoxBuilding& box = *boxes[i];
     if (box.isInvisible())
       continue;
     const float z = box.getPosition()[2];
@@ -600,11 +600,11 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glEnd();
 
   // draw pyramid buildings
-  const std::vector<PyramidBuilding>& pyramids = world.getPyramids();
+  const std::vector<PyramidBuilding*>& pyramids = world.getPyramids();
   count = pyramids.size();
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
-    const PyramidBuilding& pyr = pyramids[i];
+    const PyramidBuilding& pyr = *pyramids[i];
     const float z = pyr.getPosition()[2];
     const float h = pyr.getHeight();
     const float cs = colorScale(z, h);
@@ -622,11 +622,11 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glEnd();
 
   // draw tetrahedron buildings (FIXME, junk)
-  const std::vector<TetraBuilding>& tetras = world.getTetras();
+  const std::vector<TetraBuilding*>& tetras = world.getTetras();
   count = tetras.size();
   glBegin(GL_TRIANGLES);
   for (i = 0; i < count; i++) {
-    const TetraBuilding& tetra = tetras[i];
+    const TetraBuilding& tetra = *tetras[i];
     const float z = tetra.getPosition()[2];
     const float h = tetra.getHeight();
     const float cs = colorScale(z, h);
@@ -666,7 +666,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
     glEnable(GL_BLEND);
     count = boxes.size();
     for (i = 0; i < count; i++) {
-      const BoxBuilding& box = boxes[i];
+      const BoxBuilding& box = *boxes[i];
       if (box.isInvisible())
 	continue;
       const float z = box.getPosition()[2];
@@ -688,7 +688,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
 
     count = pyramids.size();
     for (i = 0; i < count; i++) {
-      const PyramidBuilding& pyr = pyramids[i];
+      const PyramidBuilding& pyr = *pyramids[i];
       const float z = pyr.getPosition()[2];
       const float h = pyr.getHeight();
       const float cs = colorScale(z, h);

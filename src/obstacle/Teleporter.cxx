@@ -271,8 +271,9 @@ float Teleporter::isTeleported(const Ray& r, int& face) const
   float p[3];
   r.getPoint(t, p);
   p[2] -= getPosition()[2];
-  if (p[2] < 0.0f || p[2] > getHeight() - getBorder())
+  if (p[2] < 0.0f || p[2] > getHeight() - getBorder()) {
     return -1.0f;
+  }
 
   // figure out which face:  rotate intersection into teleporter space,
   //	if to east of teleporter then face 0 else face 1.
@@ -288,8 +289,9 @@ float Teleporter::getProximity(const float* p, float radius) const
   // make sure tank is sufficiently close
   if (!testRectCircle(getPosition(), getRotation(),
 			getWidth(), getBreadth() - getBorder(),
-			p, 1.2f * radius))
+			p, 1.2f * radius)) {
     return 0.0f;
+  }
 
   // transform point to teleporter space
   // translate origin

@@ -3111,25 +3111,25 @@ static void		makeObstacleList()
   gameArea[3][1] =  0.5f * worldSize - tankRadius;
   obstacleList.push_back(new BzfRegion(4, gameArea));
 
-  const std::vector<BoxBuilding>& boxes = World::getWorld()->getBoxes();
+  const std::vector<BoxBuilding*>& boxes = World::getWorld()->getBoxes();
   const int numBoxes = boxes.size();
   for (i = 0; i < numBoxes; i++) {
-    addObstacle(obstacleList, boxes[i]);
+    addObstacle(obstacleList, *boxes[i]);
   }
-  const std::vector<PyramidBuilding>& pyramids = World::getWorld()->getPyramids();
+  const std::vector<PyramidBuilding*>& pyramids = World::getWorld()->getPyramids();
   const int numPyramids = pyramids.size();
   for (i = 0; i < numPyramids; i++) {
-    addObstacle(obstacleList, pyramids[i]);
+    addObstacle(obstacleList, *pyramids[i]);
   }
   const std::vector<Teleporter*>& teleporters = World::getWorld()->getTeleporters();
   const int numTeleporters = teleporters.size();
   for (i = 0; i < numTeleporters; i++) {
     addObstacle(obstacleList, *teleporters[i]);
   }
-  const std::vector<TetraBuilding>& tetras = World::getWorld()->getTetras();
+  const std::vector<TetraBuilding*>& tetras = World::getWorld()->getTetras();
   const int numTetras = tetras.size();
   for (i = 0; i < numTetras; i++) {
-    addObstacle(obstacleList, tetras[i]);
+    addObstacle(obstacleList, *tetras[i]);
   }
   const std::vector<MeshObstacle*>& meshes = World::getWorld()->getMeshes();
   const int numMeshes = meshes.size();
@@ -3137,11 +3137,11 @@ static void		makeObstacleList()
     addObstacle(obstacleList, *meshes[i]);
   }
   if (World::getWorld()->allowTeamFlags()) {
-    const std::vector<BaseBuilding>& bases = World::getWorld()->getBases();
+    const std::vector<BaseBuilding*>& bases = World::getWorld()->getBases();
     const int numBases = bases.size();
     for (i = 0; i < numBases; i++) {
-      if ((bases[i].getHeight() != 0.0f) || (bases[i].getPosition()[2] != 0.0f))
-        addObstacle(obstacleList, bases[i]);
+      if ((bases[i]->getHeight() != 0.0f) || (bases[i]->getPosition()[2] != 0.0f))
+        addObstacle(obstacleList, *bases[i]);
     }
   }
 }

@@ -62,12 +62,12 @@ class CollisionManager {
     CollisionManager();
     ~CollisionManager();
 
-    void load (std::vector<MeshObstacle*>   &meshes,
-               std::vector<BoxBuilding>     &boxes,
-               std::vector<BaseBuilding>    &bases,
-               std::vector<PyramidBuilding> &pyrs,
-               std::vector<TetraBuilding>   &tetras,
-               std::vector<Teleporter*>     &teles);
+    void load (std::vector<MeshObstacle*>    &meshes,
+               std::vector<BoxBuilding*>     &boxes,
+               std::vector<BaseBuilding*>    &bases,
+               std::vector<PyramidBuilding*> &pyrs,
+               std::vector<TetraBuilding*>   &tetras,
+               std::vector<Teleporter*>      &teles);
 
     // some basics
     bool needReload() const;         // octree parameter has changed

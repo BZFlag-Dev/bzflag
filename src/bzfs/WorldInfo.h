@@ -153,13 +153,13 @@ private:
   float waterLevel;
   MeshMaterial waterMaterial;
 
-  std::vector<BoxBuilding> boxes;
-  std::vector<BaseBuilding> bases;
-  std::vector<PyramidBuilding> pyramids;
-  std::vector<TetraBuilding> tetras;
-  std::vector<WallObstacle> walls;
-  std::vector<MeshObstacle*> meshes;
-  std::vector<Teleporter*> teleporters;
+  std::vector<WallObstacle*> 	walls;
+  std::vector<MeshObstacle*> 	meshes;
+  std::vector<TetraBuilding*> 	tetras;
+  std::vector<BoxBuilding*>     boxes;
+  std::vector<BaseBuilding*>	bases;
+  std::vector<PyramidBuilding*> pyramids;
+  std::vector<Teleporter*> 		teleporters;
 
   EntryZones	       entryZones;
   WorldWeapons         worldWeapons;

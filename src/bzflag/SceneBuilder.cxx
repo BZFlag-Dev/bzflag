@@ -238,10 +238,10 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   if (!world) return db;
 
   // add nodes to database
-  const std::vector<WallObstacle> &walls = world->getWalls();
-  std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
+  const std::vector<WallObstacle*> &walls = world->getWalls();
+  std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
-    addWall(db, *wallScan);
+    addWall(db, **wallScan);
     ++wallScan;
   }
   const std::vector<MeshObstacle*> &meshes = world->getMeshes();
@@ -250,10 +250,10 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     addMesh(db, *meshScan);
     ++meshScan;
   }
-  const std::vector<BoxBuilding> &boxes = world->getBoxes();
-  std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
+  const std::vector<BoxBuilding*> &boxes = world->getBoxes();
+  std::vector<BoxBuilding*>::const_iterator boxScan = boxes.begin();
   while (boxScan != boxes.end()) {
-    addBox(db, *boxScan);
+    addBox(db, **boxScan);
     ++boxScan;
   }
   const std::vector<Teleporter*> &teleporters = world->getTeleporters();
@@ -262,22 +262,22 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     addTeleporter(db, *(*teleporterScan));
     ++teleporterScan;
   }
-  const std::vector<PyramidBuilding> &pyramids = world->getPyramids();
-  std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
+  const std::vector<PyramidBuilding*> &pyramids = world->getPyramids();
+  std::vector<PyramidBuilding*>::const_iterator pyramidScan = pyramids.begin();
   while (pyramidScan != pyramids.end()) {
-    addPyramid(db, *pyramidScan);
+    addPyramid(db, **pyramidScan);
     ++pyramidScan;
   }
-  const std::vector<TetraBuilding> &tetras = world->getTetras();
-  std::vector<TetraBuilding>::const_iterator tetraScan = tetras.begin();
+  const std::vector<TetraBuilding*> &tetras = world->getTetras();
+  std::vector<TetraBuilding*>::const_iterator tetraScan = tetras.begin();
   while (tetraScan != tetras.end()) {
-    addTetra(db, *tetraScan);
+    addTetra(db, **tetraScan);
     ++tetraScan;
   }
-  const std::vector<BaseBuilding> &baseBuildings = world->getBases();
-  std::vector<BaseBuilding>::const_iterator baseScan = baseBuildings.begin();
+  const std::vector<BaseBuilding*> &baseBuildings = world->getBases();
+  std::vector<BaseBuilding*>::const_iterator baseScan = baseBuildings.begin();
   while (baseScan != baseBuildings.end()) {
-    addBase(db, *baseScan);
+    addBase(db, **baseScan);
     ++baseScan;
   }
 
