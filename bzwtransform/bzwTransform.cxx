@@ -259,6 +259,8 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 			while (!lineStream.eof())
 			{
 				lineStream >> token;
+				if (token.length() == 0)
+					break;
 
 				switch (state)
 				{
