@@ -64,16 +64,26 @@ namespace TextUtils
     return tempStream.str();
   }
 
+
   std::string no_whitespace(const std::string &s)
   {
-    std::string result;
+    const int sourcesize = s.size();
+  
+    int count=0;
+    for (int i=0; i<sourcesize; i++)
+      if (!isWhitespace(s[i]))
+        count++;
 
-    for (std::string::const_iterator i=s.begin(), e=s.end(); i!=e ; ++i)
-      if (!isWhitespace(*i))
-	result+=*i;
-
+    // create result string of correct size
+    std::string result(count,' ');
+  
+    for (int i=0, j=0; i<sourcesize; i++)
+      if (!isWhitespace(s[i]))
+        result[j++] = s[i];
+  
     return result;
   }
+
 
   std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes){
     std::vector<std::string> tokens;
