@@ -1173,7 +1173,7 @@ int			main(int argc, char** argv)
   }
 
   // grab the mouse only if allowed
-  if (db.hasValue("mousegrab") && db.getValue("mousegrab") == "no")
+  if (BZDB->isSet("mousegrab") && !BZDB->isTrue("mousegrab"))
     mainWindow.setNoMouseGrab();
 
   // set window quadrant
