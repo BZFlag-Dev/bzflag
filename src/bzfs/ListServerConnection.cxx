@@ -319,8 +319,10 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += "&checktokens=";
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
     std::string encodedCallsign = TextUtils::url_encode(playerData->player.getCallSign());
-    if (playerData && strlen(playerData->player.getCallSign()) && strlen(playerData->player.getToken())) {
+    if (strlen(playerData->player.getCallSign()) && strlen(playerData->player.getToken())) {
       msg += encodedCallsign;
       msg += "=";
       msg += playerData->player.getToken();
