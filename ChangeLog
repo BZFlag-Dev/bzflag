@@ -7,6 +7,7 @@ BZFlag 1.10.5
 
 * Bots drive around corners faster - Frank Thilo
 * Bots aim better, try to evade shots - Frank Thilo
+* bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
 
 BZFlag 1.10.4 "not a smurf"
 ---------------------------
@@ -55,7 +56,7 @@ BZFlag 1.10.4 "not a smurf"
 * Added support for colored and zoned ground textures - Jeff Meyers
 * Hunter tanks try to use "hunter" texture if found - Jeff Myers
 * Hunter tanks are colored orange color if not using a texture - Jeff Myers
-* Menu uses it's own image for the arrow, menu_arrow.png - Jeff Myers
+* Menu uses its own image for the arrow, menu_arrow.png - Jeff Myers
 * Rename team based datafiles to have the team in the name - Jeff Myers
 * Map objects search for colored textures and use them if found - Jeff Myers
 * Bases search for colored team textures and use them if found - Jeff Myers
