@@ -1176,44 +1176,47 @@ void Player::doDeadReckoning()
     inputVel[2] = 0.0f;
   }
 
-  // the importance level of the remote sounds
-  const bool remoteImportant = false;
+  // setup remote players landing sounds and graphics, and jumping sounds
+  if (isAlive()) {
+    // the importance level of the remote sounds
+    const bool remoteImportant = false;
 
-  // check for a landing
-  if (((oldStatus & PlayerState::Falling) != 0) &&
-      ((inputStatus & PlayerState::Falling) == 0)) {
-    // setup the squish effect
-    setLandingSpeed(oldZSpeed);
-    // setup the sound
-    if (BZDB.isTrue("remoteSounds")) {
-      if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {
-        playWorldSound(SFX_LAND, state.pos, remoteImportant);
-      } else  {
-        // probably never gets played
-        playWorldSound(SFX_BURROW,  state.pos, remoteImportant);
+    // check for a landing
+    if (((oldStatus & PlayerState::Falling) != 0) &&
+        ((inputStatus & PlayerState::Falling) == 0)) {
+      // setup the squish effect
+      setLandingSpeed(oldZSpeed);
+      // setup the sound
+      if (BZDB.isTrue("remoteSounds")) {
+        if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {
+          playWorldSound(SFX_LAND, state.pos, remoteImportant);
+        } else  {
+          // probably never gets played
+          playWorldSound(SFX_BURROW,  state.pos, remoteImportant);
+        }
       }
     }
-  }
 
-  // FIXME - this still needs work      
-  //         also calculate a more accurate landing speed?
-  
-  // check for a jump
-  if ((state.velocity[2] > oldZSpeed) && (state.velocity[2] > 0.0f) &&
-      (state.pos[2] > 0.0f)) {
-//    if (((oldStatus & PlayerState::Falling) == 0) &&
-//        ((inputStatus & PlayerState::Falling) != 0) &&
-//        (predictedVel[2] > 0.0f)) {
-    // setup the sound
-    if (BZDB.isTrue("remoteSounds")) {
-      if (state.jumpJetsScale > 0.0f) {
-        if (getFlag() == Flags::Wings) {
-          playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+    // FIXME - this still needs work      
+    //         also calculate a more accurate landing speed?
+    
+    // check for a jump
+    if ((state.velocity[2] > oldZSpeed) && (state.velocity[2] > 0.0f) &&
+        (state.pos[2] > 0.0f)) {
+  //    if (((oldStatus & PlayerState::Falling) == 0) &&
+  //        ((inputStatus & PlayerState::Falling) != 0) &&
+  //        (predictedVel[2] > 0.0f)) {
+      // setup the sound
+      if (BZDB.isTrue("remoteSounds")) {
+        if (state.jumpJetsScale > 0.0f) {
+          if (getFlag() == Flags::Wings) {
+            playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+          } else {
+            playWorldSound(SFX_JUMP, state.pos, remoteImportant);
+          }
         } else {
-          playWorldSound(SFX_JUMP, state.pos, remoteImportant);
+          playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
         }
-      } else {
-        playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
       }
     }
   }
