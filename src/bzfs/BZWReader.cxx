@@ -115,6 +115,61 @@ void BZWReader::readToken(char *buffer, int n)
 }
 
 
+static bool parseNormalObject(const char* token, WorldFileObject** object)
+{
+  WorldFileObject* tmpObj = NULL;
+
+  if (strcasecmp(token, "box") == 0) {
+    tmpObj = new CustomBox;
+  } else if (strcasecmp(token, "pyramid") == 0) {
+    tmpObj = new CustomPyramid();
+  } else if (strcasecmp(token, "base") == 0) {
+    tmpObj = new CustomBase;
+  } else if (strcasecmp(token, "teleporter") == 0) {
+    tmpObj = new CustomGate();
+  } else if (strcasecmp(token, "link") == 0) {
+    tmpObj = new CustomLink();
+  } else if (strcasecmp(token, "mesh") == 0) {
+    tmpObj = new CustomMesh;
+  } else if (strcasecmp(token, "arc") == 0) {
+    tmpObj = new CustomArc(false);
+  } else if (strcasecmp(token, "meshbox") == 0) {
+    tmpObj = new CustomArc(true);
+  } else if (strcasecmp(token, "cone") == 0) {
+    tmpObj = new CustomCone(false);
+  } else if (strcasecmp(token, "meshpyr") == 0) {
+    tmpObj = new CustomCone(true);
+  } else if (strcasecmp(token, "sphere") == 0) {
+    tmpObj = new CustomSphere;
+  } else if (strcasecmp(token, "tetra") == 0) {
+    tmpObj = new CustomTetra();
+  } else if (strcasecmp(token, "weapon") == 0) {
+    tmpObj = new CustomWeapon;
+  } else if (strcasecmp(token, "zone") == 0) {
+    tmpObj = new CustomZone;
+  } else if (strcasecmp(token, "waterLevel") == 0) {
+    tmpObj = new CustomWaterLevel;
+  } else if (strcasecmp(token, "dynamicColor") == 0) {
+    tmpObj = new CustomDynamicColor;
+  } else if (strcasecmp(token, "textureMatrix") == 0) {
+    tmpObj = new CustomTextureMatrix;
+  } else if (strcasecmp(token, "material") == 0) {
+    tmpObj = new CustomMaterial;
+  } else if (strcasecmp(token, "physics") == 0) {
+    tmpObj = new CustomPhysicsDriver;
+  } else if (strcasecmp(token, "transform") == 0) {
+    tmpObj = new CustomMeshTransform;
+  }
+  
+  if (tmpObj != NULL) {
+    *object = tmpObj;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
 bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
 {
   int line = 1;
@@ -168,7 +223,10 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
 	  std::string("unexpected \"end\" token"), line);
 	return false;
       }
-
+      
+    } else if (parseNormalObject(buffer, &newObject)) {
+      // newObject has already been assigned
+      
     } else if (strcasecmp(buffer, "define") == 0) {
       if (groupDef != worldDef) {
         errorHandler->warning(
@@ -206,49 +264,9 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
       }
       newObject = new CustomGroup(buffer);
 
-    } else if (strcasecmp(buffer, "box") == 0) {
-      newObject = new CustomBox;
-    } else if (strcasecmp(buffer, "pyramid") == 0) {
-      newObject = new CustomPyramid();
-    } else if (strcasecmp(buffer, "base") == 0) {
-      newObject = new CustomBase;
-    } else if (strcasecmp(buffer, "teleporter") == 0) {
-      newObject = new CustomGate();
-    } else if (strcasecmp(buffer, "link") == 0) {
-      newObject = new CustomLink();
-    } else if (strcasecmp(buffer, "mesh") == 0) {
-      newObject = new CustomMesh;
-    } else if (strcasecmp(buffer, "arc") == 0) {
-      newObject = new CustomArc(false);
-    } else if (strcasecmp(buffer, "meshbox") == 0) {
-      newObject = new CustomArc(true);
-    } else if (strcasecmp(buffer, "cone") == 0) {
-      newObject = new CustomCone(false);
-    } else if (strcasecmp(buffer, "meshpyr") == 0) {
-      newObject = new CustomCone(true);
-    } else if (strcasecmp(buffer, "sphere") == 0) {
-      newObject = new CustomSphere;
-    } else if (strcasecmp(buffer, "tetra") == 0) {
-      newObject = new CustomTetra();
-    } else if (strcasecmp(buffer, "weapon") == 0) {
-      newObject = new CustomWeapon;
-    } else if (strcasecmp(buffer, "zone") == 0) {
-      newObject = new CustomZone;
-    } else if (strcasecmp(buffer, "waterLevel") == 0) {
-      newObject = new CustomWaterLevel;
-    } else if (strcasecmp(buffer, "dynamicColor") == 0) {
-      newObject = new CustomDynamicColor;
-    } else if (strcasecmp(buffer, "textureMatrix") == 0) {
-      newObject = new CustomTextureMatrix;
-    } else if (strcasecmp(buffer, "material") == 0) {
-      newObject = new CustomMaterial;
-    } else if (strcasecmp(buffer, "physics") == 0) {
-      newObject = new CustomPhysicsDriver;
-    } else if (strcasecmp(buffer, "transform") == 0) {
-      newObject = new CustomMeshTransform;
     } else if (strcasecmp(buffer, "options") == 0) {
       newObject = fakeObject;
-
+    
     } else if (strcasecmp(buffer, "world") == 0) {
       if (!gotWorld) {
 	newObject = new CustomWorld();
