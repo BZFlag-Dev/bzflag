@@ -55,6 +55,7 @@
 <!ENTITY Useless SYSTEM "Flags/Useless.xml">
 <!ENTITY Velocity SYSTEM "Flags/Velocity.xml">
 <!ENTITY WideAngle SYSTEM "Flags/WideAngle.xml">
+<!ENTITY Wings SYSTEM "Flags/Wings.xml">
 
 ]>
 
