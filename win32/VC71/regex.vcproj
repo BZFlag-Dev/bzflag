@@ -19,6 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="./;../;../../src/regex;../../include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -59,6 +60,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="./;../;../../src/regex"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -98,9 +100,6 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\src\regex\engine.c">
-			</File>
-			<File
 				RelativePath="..\..\src\regex\regcomp.c">
 			</File>
 			<File
@@ -122,6 +121,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\regex\cname.h">
+			</File>
+			<File
+				RelativePath="..\..\include\regex.h">
 			</File>
 			<File
 				RelativePath="..\..\src\regex\regex2.h">
