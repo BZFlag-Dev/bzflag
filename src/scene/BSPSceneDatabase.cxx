@@ -60,8 +60,7 @@ void			BSPSceneDatabase::addStaticNode(SceneNode* node)
   if (!root) {
     root = new Node(false, node);
     setDepth(1);
-  }
-  else {
+  } else {
     insertStatic(1, root, node);
   }
 }
@@ -72,8 +71,7 @@ void			BSPSceneDatabase::addDynamicNode(SceneNode* node)
   if (!root) {
     root = new Node(true, node);
     setDepth(1);
-  }
-  else {
+  } else {
     insertDynamic(1, root, node);
   }
 }
@@ -86,8 +84,7 @@ void			BSPSceneDatabase::addDynamicSphere(SphereSceneNode* n)
   if (!parts) {
     // wouldn't split itself up -- add whole thing
     addDynamicNode(n);
-  }
-  else {
+  } else {
     for (int i = 0; i < numParts; i++)
       addDynamicNode(parts[i]);
   }
@@ -99,8 +96,7 @@ void			BSPSceneDatabase::removeDynamicNodes()
   if (root && root->dynamic) {
     release(root);
     root = NULL;
-  }
-  else {
+  } else {
     removeDynamic(root);
   }
 }
@@ -164,18 +160,20 @@ void			BSPSceneDatabase::insertStatic(int level,
 
   // add nodes
   if (front) {
-    if (root->front) insertStatic(level+1, root->front, front);
-    else {
+    if (root->front) {
+      insertStatic(level + 1, root->front, front);
+    } else {
       root->front = new Node(false, front);
-      setDepth(level+1);
+      setDepth(level + 1);
     }
     root->count++;
   }
   if (back) {
-    if (root->back) insertStatic(level+1, root->back, back);
-    else {
+    if (root->back) {
+      insertStatic(level + 1, root->back, back);
+    } else {
       root->back = new Node(false, back);
-      setDepth(level+1);
+      setDepth(level + 1);
     }
     root->count++;
   }
@@ -189,23 +187,23 @@ void			BSPSceneDatabase::insertDynamic(int level, Node* root,
     const GLfloat* plane = root->node->getPlane();
     const GLfloat* pos = node->getSphere();
     d = pos[0] * plane[0] + pos[1] * plane[1] + pos[2] * plane[2] + plane[3];
-  }
-  else {
+  } else {
     d = root->node->getDistance(eye) - node->getDistance(eye);
   }
 
   if (d >= 0.0) {
-    if (root->front) insertDynamic(level+1, root->front, node);
-    else {
+    if (root->front) {
+      insertDynamic(level + 1, root->front, node);
+    } else {
       root->front = new Node(true, node);
-      setDepth(level+1);
+      setDepth(level + 1);
     }
-  }
-  else {
-    if (root->back) insertDynamic(level+1, root->back, node);
-    else {
+  } else {
+    if (root->back) {
+      insertDynamic(level + 1, root->back, node);
+    } else {
       root->back = new Node(true, node);
-      setDepth(level+1);
+      setDepth(level + 1);
     }
   }
 }
@@ -216,15 +214,13 @@ void			BSPSceneDatabase::removeDynamic(Node* node)
   if (node->front && node->front->dynamic) {
     release(node->front);
     node->front = NULL;
-  }
-  else {
+  } else {
     removeDynamic(node->front);
   }
   if (node->back && node->back->dynamic) {
     release(node->back);
     node->back = NULL;
-  }
-  else {
+  } else {
     removeDynamic(node->back);
   }
 }
@@ -291,16 +287,13 @@ restart:
 	  item.side = BSPSceneIteratorItem::Back;
 	  if (item.node->back)
 	    stack.push_back(BSPSceneIteratorItem(item.node->back));
-	}
-	else {
+	} else {
 	  // eye is in back so render:  front, node, back
 	  item.side = BSPSceneIteratorItem::Front;
 	  if (item.node->front)
 	    stack.push_back(BSPSceneIteratorItem(item.node->front));
 	}
-      }
-
-      else {
+      } else {
 	// nodes without split planes should be rendered back, node, front
 	item.side = BSPSceneIteratorItem::Back;
 	if (item.node->back)
