@@ -5,7 +5,7 @@
 # must change this in MSDev project, too.
 
 AC_INIT(src/bzflag/bzflag.cxx)
-AM_INIT_AUTOMAKE(bzflag, 10707001)
+AM_INIT_AUTOMAKE(bzflag, 1.7g1)
 AM_CONFIG_HEADER(include/config.h)
 
 VERSIONID=1.7g1
