@@ -283,7 +283,7 @@ inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t 
 
 inline void WordFilter::appendUniqueChar(std::string& string, char c) const
 {
-  if (count(string.begin(), string.end(), c) == 0) {
+  if (std::count(string.begin(), string.end(), c) == 0) {
     string += c;
   }
 }
