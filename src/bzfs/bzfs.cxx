@@ -476,7 +476,7 @@ CustomPyramid::CustomPyramid()
 
 void CustomPyramid::write(WorldInfo *world) const
 {
-  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[2], size[2]);
+  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2]);
 }
 
 class CustomGate : public WorldFileObstacle {
@@ -3784,7 +3784,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // altitudes and desired height above start altitude.
   const float thrownAltitude = (flag[flagIndex].flag.id == ShieldFlag) ?
       ShieldFlight * FlagAltitude : FlagAltitude;
-  const float maxAltitude = pos[2] + TankHeight + thrownAltitude;
+  const float maxAltitude = pos[2] + thrownAltitude;
   const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
   const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / Gravity);
   const float flightTime = upTime + downTime;
