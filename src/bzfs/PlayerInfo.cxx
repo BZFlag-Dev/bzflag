@@ -52,7 +52,7 @@ void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd,
 #endif
 };
 
-void PlayerInfo::resetPlayer() {
+void PlayerInfo::resetPlayer(bool ctf) {
   wasRabbit = false;
   toBeKicked = false;
   Admin = false;
@@ -102,13 +102,26 @@ void PlayerInfo::resetPlayer() {
 #ifdef TIMELIMIT
   playedEarly = false;
 #endif
+
+  restartOnBase = ctf;
 }
 
 bool PlayerInfo::isAccessVerified() const {
   return accessInfo.verified;
 }
 
-void PlayerInfo::resetAccess() {
+bool PlayerInfo::removePlayer(const char *reason) {
+
+  // check if we are called again for a dropped player!
+  if (fd == -1)
+    return false;
+
+  bool wasPlaying = state > PlayerInLimbo;
+
+  // status message
+  DEBUG1("Player %s [%d] on %d removed: %s\n", callSign, playerIndex, fd,
+	 reason);
+
   // shutdown TCP socket
   shutdown(fd, 2);
   close(fd);
@@ -149,6 +162,16 @@ void PlayerInfo::resetAccess() {
     hostname = NULL;
   }
 #endif
+
+  state = PlayerNoExist;
+
+#ifdef NETWORK_STATS
+  if (wasPlaying) {
+    dumpMessageStats();
+  }
+#endif
+
+  return wasPlaying;
 }
 
 bool PlayerInfo::gotAccessFailure() {
@@ -536,12 +559,6 @@ void PlayerInfo::debugUdpRead(int n,
       ntohs(_uaddr.sin_port), udpSocket);
 };
 
-void PlayerInfo::debugRemove(const char *reason) {
-  // status message
-  DEBUG1("Player %s [%d] on %d removed: %s\n", callSign, playerIndex, fd,
-	 reason);
-};
-
 void PlayerInfo::debugAdd() {
   DEBUG1("Player %s [%d] has joined from %s:%d on %i\n",
 	 callSign, playerIndex, inet_ntoa(taddr.sin_addr),
@@ -628,14 +645,6 @@ bool PlayerInfo::isAlive() {
   return state == PlayerAlive;
 };
 
-bool PlayerInfo::isInLimbo() {
-  return state == PlayerInLimbo;
-};
-
-void PlayerInfo::remove() {
-  state = PlayerNoExist;
-};
-
 bool PlayerInfo::isDead() {
   return state == PlayerDead;
 };
@@ -668,7 +677,7 @@ void *PlayerInfo::packUpdate(void *buf) {
   return buf;
 };
 
-void *PlayerInfo::unpackEnter(void *buf) {
+void PlayerInfo::unpackEnter(void *buf) {
   // data: type, team, name, email
   uint16_t _type;
   int16_t _team;
@@ -678,7 +687,8 @@ void *PlayerInfo::unpackEnter(void *buf) {
   team = TeamColor(_team);
   buf = nboUnpackString(buf, callSign, CallSignLen);
   buf = nboUnpackString(buf, email, EmailLen);
-  return buf;
+  cleanCallSign();
+  cleanEMail();
 };
 
 void PlayerInfo::getLagStats(char* msg) {

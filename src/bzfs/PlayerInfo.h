@@ -87,9 +87,10 @@ class PlayerInfo {
 public:
   void        initPlayer(const struct sockaddr_in& clientAddr, int _fd,
 			 int _playerIndex);
-  void        resetPlayer();
+  void        resetPlayer(bool ctf);
   bool        isAccessVerified() const;
-  void        resetAccess();
+  // return false if player was not really in 
+  bool        removePlayer(const char *reason);
   bool        gotAccessFailure();
   void        setLoginFail();
   void        reloadInfo();
@@ -111,9 +112,6 @@ public:
   void        storeInfo(const char* pwd);
   void        setPassword(const std::string& pwd);
   void        initStatistics();
-#ifdef NETWORK_STATS
-  void        dumpMessageStats();
-#endif
   bool        isConnected();
   int         pflush(fd_set *set);
   RxStatus    receive(size_t length);
@@ -127,7 +125,6 @@ public:
   void        dropUnconnected();
   void        debugUdpInfo();
   void        debugUdpRead(int n, struct sockaddr_in &_uaddr, int udpSocket);
-  void        debugRemove(const char *reason);
   void        debugAdd();
   void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
   int         fdIsSet(fd_set *set);
@@ -142,21 +139,17 @@ public:
   bool        exist();
   void        signingOn();
   bool        isAlive();
-  bool        isInLimbo();
-  void        remove();
   bool        isDead();
   void        setAlive();
   void        setDead();
   bool        isBot();
   bool        isHuman();
   void       *packUpdate(void *buf);
-  void       *unpackEnter(void *buf);
+  void        unpackEnter(void *buf);
   void        getLagStats(char* msg);
   const char *getCallSign() const;
-  void        cleanCallSign();
   bool        isCallSignReadable();
   const char *getEMail() const;
-  void        cleanEMail();
   bool        isEMailReadable();
   void       *packVirtualFlagCapture(void *buf);
   bool        isTeam(TeamColor team) const;
@@ -211,9 +204,14 @@ public:
   void        countMessage(uint16_t code, int len, int direction);
 #endif
 private:
+  void        cleanCallSign();
+  void        cleanEMail();
   void        udpSend(int udpSocket, const void *b, size_t l);
   int         send(const void *buffer, size_t length);
   int         bufferedSend(int playerIndex, const void *buffer, size_t length);
+#ifdef NETWORK_STATS
+  void        dumpMessageStats();
+#endif
 
   int         playerIndex;
 

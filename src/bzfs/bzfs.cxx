@@ -1533,8 +1533,6 @@ static void fixTeamCount() {
 
 static void addPlayer(int playerIndex)
 {
-  player[playerIndex].cleanCallSign();
-
   // don't allow empty callsign
   if (player[playerIndex].getCallSign()[0] == '\0')
     rejectPlayer(playerIndex, RejectBadCallsign);
@@ -1569,8 +1567,6 @@ static void addPlayer(int playerIndex)
 	   player[playerIndex].getCallSign());
     rejectPlayer(playerIndex, RejectBadCallsign);
   }
-
-  player[playerIndex].cleanEMail();
 
   // make sure the email is not obscene/filtered
   if (clOptions->filterCallsigns) {
@@ -1671,8 +1667,7 @@ static void addPlayer(int playerIndex)
       rejectPlayer(playerIndex, RejectTeamFull);
       return ;
   }
-  player[playerIndex].resetPlayer();
-  player[playerIndex].setRestartOnBase
+  player[playerIndex].resetPlayer
     ((clOptions->gameStyle & TeamFlagGameStyle) != 0);
 
   // accept player
@@ -2104,40 +2099,16 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // not to undo operations that haven't been done.
   // first shutdown connection
 
-  // check if we are called again for a dropped player!
-  if (!player[playerIndex].isConnected())
-    return;
-
-  if (reason == NULL)
-    reason = "";
-
-  // status message
-  player[playerIndex].debugRemove(reason);
-
   // send a super kill to be polite
   if (notify)
     directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
 
-  player[playerIndex].resetAccess();
+  bool wasPlaying = player[playerIndex].removePlayer(reason);
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
-  if (player[playerIndex].isInLimbo()) {
-    player[playerIndex].remove();
 
-    while ((playerIndex >= 0)
-	&& (playerIndex+1 == curMaxPlayers)
-	&& !player[playerIndex].exist()
-	&& !player[playerIndex].isConnected())
-    {
-      playerIndex--;
-      curMaxPlayers--;
-    }
-    return;
-  }
-
-  player[playerIndex].remove();
-
+  if (wasPlaying) {
   // if there is an active poll, cancel any vote this player may have made
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
   if ((arbiter != NULL) && (arbiter->knowsPoll())) {
@@ -2189,14 +2160,11 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     sendTeamUpdate(-1, teamNum);
   }
 
-#ifdef NETWORK_STATS
-  player[playerIndex].dumpMessageStats();
-#endif
-
   fixTeamCount();
 
   // tell the list server the new number of players
   listServerLink->queueMessage(ListServerLink::ADD);
+  }
 
   while ((playerIndex >= 0)
       && (playerIndex+1 == curMaxPlayers)
@@ -2207,6 +2175,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
      curMaxPlayers--;
   }
 
+  if (wasPlaying) {
   // anybody left?
   int i;
   for (i = 0; i < curMaxPlayers; i++)
@@ -2233,6 +2202,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       // is over (i.e. all players have quit).
       publicize();
     }
+  }
   }
 }
 
@@ -3218,7 +3188,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
   switch (code) {
     // player joining
     case MsgEnter: {
-      buf = player[t].unpackEnter(buf);
+      player[t].unpackEnter(buf);
       addPlayer(t);
       player[t].debugAdd();
       break;
