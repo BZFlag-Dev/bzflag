@@ -9,6 +9,7 @@ BZFlag 1.7e5
 * /countdown, /lagwarn - Frank Thilo
 * PatchId fixes - Frank Thilo, Tim Riker
 * New lag measurement using pings - Frank Thilo
+* Reassign keyboard menu is now in two columns - Dave Brosius
 * Fix MsgMessage and CLIENTQUERY handling - Frank Thilo
 * -ban - David Trowbridge, Dave Brosius, Tim Riker
 * Mac OSX work - Kevin Avila <kevin@hzsystems.com>
