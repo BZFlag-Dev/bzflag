@@ -7,7 +7,6 @@ BZFlag \- a tank battle game
 [\fB\-3dfx\fR]
 [\fB\-no3dfx\fR]
 [\fB\-anonymous\fR]
-[\fB\-callsign \fIcallsign\fR]
 [\fB\-directory \fIdirectory\fR]
 [\fB\-echo\fR]
 [\fB\-echoClean\fR]
@@ -19,14 +18,13 @@ BZFlag \- a tank battle game
 [\fB\-multisample\fR]
 [\fB\-mute\fR]
 [\fB\-nolist\fR]
-[\fB\-port \fIport\fR]
 [\fB\-solo \fInumber-of-robots\fR]
 [\fB\-team \fR{\fIautomatic\fR | \fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
 [\fB\-version\fR]
 [\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIthree\fR}]
 [\fB\-window\fR]
 [\fB\-zbuffer \fR{\fIon\fR | \fIoff\fR}]
-[\fIserver\fR]
+[[\fIcallsign@\fR]\fIserver\fR[\fI:port\fR]]
 .SH DESCRIPTION
 .B BZFlag
 is a 3D multi-player tank battle game that allows users
@@ -72,14 +70,6 @@ unsetting MESA_GLX_FX in your environment.
 .TP
 \fB-anonymous\fR
 Uses the email address \fIanonymous\fR instead of \fIusername@hostname\fR.
-.TP
-\fB-callsign\fI callsign\fR
-Uses \fIcallsign\fR as the player's callsign.
-The callsign is taken from the command line if provided.  Otherwise the
-callsign used for the previous game is used.  If that cannot be found
-then the callsign is the value of the \fBBZFLAGID\fR environment variable.
-If \fBBZFLAGID\fR is empty or undefined then \fBbzflag\fR will prompt for a
-callsign when joining a game.
 .TP
 \fB-directory\fI directory\fR
 Looks for data files in \fIdirectory\fR first.  This defaults to a
@@ -127,11 +117,6 @@ Disables sound.
 .B -nolist
 Disables \fBbzfls\fR server querying.  See \fB-list\fR.
 .TP
-\fB-port\fI port\fR
-Connect to server on \fIport\fR instead of the default.
-The server must be listening on this port (see the -p option on
-\fBbzfs\fR).
-.TP
 \fB-solo\fI number-of-robots\fR
 When you join a game, you'll also cause \fInumber-of-robots\fR robots
 to join too.  This is an experimental option and the robots are
@@ -165,10 +150,19 @@ depth (z) buffer and will use a different rendering technique for
 hidden surface removal.  Some systems may be capable of using a
 higher screen resolution if a depth buffer isn't allocated.
 .TP
-\fIserver\fR
-Specifies the host running the \fBbzfs\fR server.
-Multiple independent games can be run on a single network.
-Which server you choose decides which game you enter.
+[\fIcallsign@\fR]\fIserver\fR[\fI:port\fR]
+Specifies the callsign you want, and the host running the \fBbzfs\fR 
+server. Multiple independent games can be run on a single network, or 
+even on different ports on a single computer. Which server and port you 
+choose decides which game you enter. 
+The callsign and the port is optional. If you don't specify a port the
+standard server port will be used, and if you don't specify a callsign the
+callsign used for the previous game is used.  If that cannot be found
+then the callsign is the value of the \fBBZFLAGID\fR environment variable.
+If \fBBZFLAGID\fR is empty or undefined then \fBbzflag\fR will prompt for a
+callsign when joining a game.
+.TP
+
 .RE
 .SS Controls
 Tanks are controlled by moving the mouse within the large yellow box

@@ -19,7 +19,6 @@
     <arg choice='opt'>-3dfx </arg>
     <arg choice='opt'>-no3dfx </arg>
     <arg choice='opt'>-anonymous </arg>
-    <arg choice='opt'>-callsign <replaceable>callsign</replaceable></arg>
     <arg choice='opt'>-directory <replaceable>directory</replaceable></arg>
     <arg choice='opt'>-echo </arg>
     <arg choice='opt'>-echoClean </arg>
@@ -31,14 +30,13 @@
     <arg choice='opt'>-multisample </arg>
     <arg choice='opt'>-mute </arg>
     <arg choice='opt'>-nolist </arg>
-    <arg choice='opt'>-port <replaceable>port</replaceable></arg>
     <arg choice='opt'>-solo <replaceable>number-of-robots</replaceable></arg>
     <arg choice='opt'><arg choice='plain'>-team </arg><group choice='opt'><arg choice='plain'><replaceable>automatic</replaceable></arg><arg choice='plain'><replaceable>red</replaceable></arg><arg choice='plain'><replaceable>green</replaceable></arg><arg choice='plain'><replaceable>blue</replaceable></arg><arg choice='plain'><replaceable>purple</replaceable></arg><arg choice='plain'><replaceable>rogue</replaceable></arg></group></arg>
     <arg choice='opt'>-version </arg>
     <arg choice='opt'><arg choice='plain'>-view </arg><group choice='opt'><arg choice='plain'><replaceable>normal</replaceable></arg><arg choice='plain'><replaceable>stereo</replaceable></arg><arg choice='plain'><replaceable>three</replaceable></arg></group></arg>
     <arg choice='opt'>-window </arg>
     <arg choice='opt'><arg choice='plain'>-zbuffer </arg><group choice='opt'><arg choice='plain'><replaceable>on</replaceable></arg><arg choice='plain'><replaceable>off</replaceable></arg></group></arg>
-    <arg choice='opt'><replaceable>server</replaceable></arg>
+    <arg choice='opt'><arg choice='opt'><replaceable>callsign@</replaceable></arg><arg choice='plain'><replaceable>server</replaceable></arg><arg choice='opt'><replaceable>:port</replaceable></arg></arg>
 </cmdsynopsis>
 </refsynopsisdiv>
 
@@ -97,17 +95,6 @@ unsetting MESA_GLX_FX in your environment.</para>
 <term><option>-anonymous</option></term>
 <listitem>
 <para>Uses the email address <emphasis remap='I'>anonymous</emphasis> instead of <emphasis remap='I'>username@hostname</emphasis>.</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term><option>-callsign</option><replaceable> callsign</replaceable></term>
-<listitem>
-<para>Uses <emphasis remap='I'>callsign</emphasis> as the player's callsign.
-The callsign is taken from the command line if provided.  Otherwise the
-callsign used for the previous game is used.  If that cannot be found
-then the callsign is the value of the <emphasis remap='B'>BZFLAGID</emphasis> environment variable.
-If <emphasis remap='B'>BZFLAGID</emphasis> is empty or undefined then <command>bzflag</command> will prompt for a
-callsign when joining a game.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
@@ -190,14 +177,6 @@ available then the application will terminate.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><option>-port</option><replaceable> port</replaceable></term>
-<listitem>
-<para>Connect to server on <emphasis remap='I'>port</emphasis> instead of the default.
-The server must be listening on this port (see the -p option on
-<emphasis remap='B'>bzfs</emphasis>).</para>
-</listitem>
-</varlistentry>
-<varlistentry>
 <term><option>-solo</option><replaceable> number-of-robots</replaceable></term>
 <listitem>
 <para>When you join a game, you'll also cause <emphasis remap='I'>number-of-robots</emphasis> robots
@@ -249,12 +228,24 @@ higher screen resolution if a depth buffer isn't allocated.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><emphasis remap='I'>server</emphasis></term>
+<term>[<emphasis remap='I'>callsign@</emphasis>]<emphasis remap='I'>server</emphasis>[<emphasis remap='I'>:port</emphasis>]</term>
 <listitem>
-<para>Specifies the host running the <emphasis remap='B'>bzfs</emphasis> server.
-Multiple independent games can be run on a single network.
-Which server you choose decides which game you enter.</para>
-<!-- .RE -->
+<para>Specifies the callsign you want, and the host running the <emphasis remap='B'>bzfs</emphasis> 
+server. Multiple independent games can be run on a single network, or 
+even on different ports on a single computer. Which server and port you 
+choose decides which game you enter. 
+The callsign and the port is optional. If you don't specify a port the
+standard server port will be used, and if you don't specify a callsign the
+callsign used for the previous game is used.  If that cannot be found
+then the callsign is the value of the <emphasis remap='B'>BZFLAGID</emphasis> environment variable.
+If <emphasis remap='B'>BZFLAGID</emphasis> is empty or undefined then <command>bzflag</command> will prompt for a
+callsign when joining a game.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term></term>
+<listitem>
+<para>&nbsp;</para> <!-- FIX-ME: empty list item -->
 </listitem>
 </varlistentry>
 </variablelist> <!-- .TP -->

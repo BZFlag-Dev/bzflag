@@ -350,7 +350,6 @@ static void		usage()
 	" [-no3dfx]"
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
-	" [-callsign <call-sign>]"
 	" [-directory <data-directory>]"
 	" [-echo]"
 	" [-echoClean]"
@@ -362,7 +361,6 @@ static void		usage()
 	" [-locale <locale>]"
 	" [-multisample]"
 	" [-mute]"
-	" [-port <server-port>]"
 #ifdef ROBOT
 	" [-solo <num-robots>]"
 #endif
@@ -371,7 +369,7 @@ static void		usage()
 	" [-view {normal|stereo|stacked|three|anaglyph}]"
 	" [-window]"
 	" [-zoom <zoom-factor>]"
-	" server\n\nExiting.", argv0);
+	" [callsign@]server[:port]\n\nExiting.", argv0);
   if (display != NULL) {
     delete display;
     display=NULL;
@@ -385,15 +383,6 @@ static void		parse(int argc, char** argv)
     if (strcmp(argv[i], "-a") == 0 ||
 		strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
-    } else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "-callsign") == 0) {
-      if (++i == argc) {
-	printFatalError("Missing argument for %s.", argv[i-1]);
-	usage();
-      }
-      if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
-	printFatalError("Callsign truncated.");
-      strncpy(startupInfo.callsign, argv[i], sizeof(startupInfo.callsign) - 1);
-      startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
     } else if (strcmp(argv[i], "-d") == 0 ||
 		strcmp(argv[i], "-directory") == 0) {
       if (++i == argc) {
@@ -477,16 +466,6 @@ static void		parse(int argc, char** argv)
       noAudio = true;
     } else if (strcmp(argv[i], "-multisample") == 0) {
       BZDB.set("_multisample", "1");
-    } else if (strcmp(argv[i], "-port") == 0) {
-      if (++i == argc) {
-	printFatalError("Missing argument for %s.", argv[i-1]);
-	usage();
-      }
-      startupInfo.serverPort = atoi(argv[i]);
-      if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
-	startupInfo.serverPort = ServerPort;
-	printFatalError("Bad port, using default %d.", startupInfo.serverPort);
-      }
 #ifdef ROBOT
     } else if (strcmp(argv[i], "-solo") == 0) {
       if (++i == argc) {
@@ -651,11 +630,38 @@ static void		parse(int argc, char** argv)
       BZDB.set("filterFilename", argv[i], StateDatabase::ReadOnly);
     } else if (argv[i][0] != '-') {
       if (i == argc-1) {
-        if (strlen(argv[i]) >= sizeof(startupInfo.serverName)) {
+	
+	// find the beginning of the server name, parse the callsign
+	char* serverName;
+	if ((serverName = strchr(argv[i], '@')) != NULL) {
+	  *serverName = '\0';
+	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
+	    printFatalError("Callsign truncated.");
+	  strncpy(startupInfo.callsign, argv[i], 
+		  sizeof(startupInfo.callsign) - 1);
+	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+	  ++serverName;
+	}
+	else
+	  serverName = argv[i];
+	
+	// find the beginning of the port number, parse it
+	char* portNumber;
+	if ((portNumber = strchr(serverName, ':')) != NULL) {
+	  *portNumber = '\0';
+	  ++portNumber;
+	  startupInfo.serverPort = atoi(portNumber);
+	  if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
+	    startupInfo.serverPort = ServerPort;
+	    printFatalError("Bad port, using default %d.", 
+			    startupInfo.serverPort);
+	  }
+	}
+        if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
           printFatalError("Server name too long.  Ignoring.");
         }
         else {
-          strcpy(startupInfo.serverName, argv[i]);
+          strcpy(startupInfo.serverName, serverName);
           startupInfo.autoConnect = true;
         }
       } else {
