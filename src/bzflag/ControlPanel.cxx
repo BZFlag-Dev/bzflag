@@ -49,6 +49,9 @@ const int		ControlPanel::maxScrollPages = 10;
 int			ControlPanel::messagesOffset = 0;
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
+				tabsOnRight(true),
+				tabs(NULL),
+				totalTabWidth(0),
 				window(_mainWindow),
 				resized(false),
 				numBuffers(2),
@@ -82,6 +85,27 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   expose();
 
   maxLines = 30;
+
+  /* use pointer initialization to perform precomputation and
+   * prestorage. eventually should move this data into constructor.
+   */
+  resize(); // need resize to set up font and window dimensions
+  if (tabs == NULL) {
+    tabs = new std::vector<const char *>;
+    tabs->push_back("All");
+    tabs->push_back("Chat");
+    tabs->push_back("Server");
+    tabs->push_back("Misc");
+
+    // precompute tab widths once
+    FontManager &fm = FontManager::instance();
+    const float charWidth = fm.getStrLength(fontFace, fontSize, "-");
+    for (unsigned int tab = 0; tab < tabs->size(); tab++) {
+      // add space for about 2-chars on each side for padding
+      tabTextWidth.push_back(fm.getStrLength(fontFace, fontSize, (*tabs)[tab]) + (4.0f * charWidth));
+      totalTabWidth += long(tabTextWidth[tab]);
+    }
+  }
 }
 
 ControlPanel::~ControlPanel()
@@ -93,6 +117,12 @@ ControlPanel::~ControlPanel()
   extern bool echoAnsi;
   if (echoToConsole && echoAnsi) {
     std::cout << ColorStrings[FinalResetColor] << std::flush;
+  }
+  if (tabs != NULL) {
+    tabs->clear();
+    delete tabs;
+    tabTextWidth.clear();
+    totalTabWidth=0;
   }
 }
 
@@ -126,6 +156,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
   FontManager &fm = FontManager::instance();
   const float lineHeight = fm.getStrHeight(fontFace, fontSize, " ");
+  const float charWidth = fm.getStrLength(fontFace, fontSize, "-");
+  const int lineCharWidth = (int)(messageAreaPixels[2] / charWidth);
   const float margin = lineHeight / 4.0f;
 
   if (changedMessage > 0) {
@@ -133,7 +165,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   }
   float fx = messageAreaPixels[0] + margin;
   float fy = messageAreaPixels[1] + margin + 1.0f;
-  int   ay = (renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0 : 30;
+  int   ay = (renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0 : int(lineHeight + 4);
   glScissor(x + messageAreaPixels[0],
       y + messageAreaPixels[1],
       messageAreaPixels[2],
@@ -144,67 +176,73 @@ void			ControlPanel::render(SceneRenderer& renderer)
     // nice blended messages background
     if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
       glEnable(GL_BLEND);
+
+    // clear the background
     glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
     glRecti(messageAreaPixels[0],
 	    messageAreaPixels[1],
 	    messageAreaPixels[0] + messageAreaPixels[2],
 	    messageAreaPixels[1] + messageAreaPixels[3]);
+
+    // display tabs for chat sections
     if (showTabs) {
-      if (messageMode < MessageChat || messageMode > MessageMisc)
-	glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
-      else
-	glColor4f(0.15f, 0.15f, 0.15f, renderer.getPanelOpacity());
-      glRecti(messageAreaPixels[0],
-	      messageAreaPixels[1] + messageAreaPixels[3] - 30 + ay,
-	      messageAreaPixels[0] + 75,
-	      messageAreaPixels[1] + messageAreaPixels[3] + ay);
+      long int drawnTabWidth = 0;
+      for (unsigned int tab = 0; tab < tabs->size(); tab++) {
 
-      if (messageMode == MessageChat)
-	glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
-      else
-	glColor4f(0.15f, 0.15f, 0.15f, renderer.getPanelOpacity());
-      glRecti(messageAreaPixels[0] +75,
-	      messageAreaPixels[1] + messageAreaPixels[3] - 30 + ay,
-	      messageAreaPixels[0] + 150,
-	      messageAreaPixels[1] + messageAreaPixels[3] + ay);
+	// current mode is given a dark background to match the control panel
+	if (messageMode == MessageModes(tab)) {
+	  glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
+	} else {
+	  glColor4f(0.10f, 0.10f, 0.10f, renderer.getPanelOpacity());
+	}
 
-      if (messageMode == MessageServer)
-	glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
-      else
-	glColor4f(0.15f, 0.15f, 0.15f, renderer.getPanelOpacity());
-      glRecti(messageAreaPixels[0] + 150,
-	      messageAreaPixels[1] + messageAreaPixels[3] - 30 + ay,
-	      messageAreaPixels[0] + 225,
-	      messageAreaPixels[1] + messageAreaPixels[3] + ay);
-
-      if (messageMode == MessageMisc)
-	glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
-      else
-	glColor4f(0.15f, 0.15f, 0.15f, renderer.getPanelOpacity());
-      glRecti(messageAreaPixels[0] + 225,
-	      messageAreaPixels[1] + messageAreaPixels[3] - 30 + ay,
-	      messageAreaPixels[0] + 300,
-	      messageAreaPixels[1] + messageAreaPixels[3] + ay);
+	// FIXME: need a menu config option to toggle which side
+	if (tabsOnRight) {
+	  // draw the tabs on the right side
+	  glRecti(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth,
+		  messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
+		  messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(tabTextWidth[tab]), //+ drawnTabWidth + int(tabTextWidth[tab]),
+		  messageAreaPixels[1] + messageAreaPixels[3] + ay);
+	} else {
+	  // draw the tabs on the left side
+	  glRecti(messageAreaPixels[0] + drawnTabWidth,
+		  messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
+		  messageAreaPixels[0] + drawnTabWidth + int(tabTextWidth[tab]),
+		  messageAreaPixels[1] + messageAreaPixels[3] + ay);
+	}
+	drawnTabWidth += long(tabTextWidth[tab]);
+      } // end iteration over tabs
     }
     if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
       glDisable(GL_BLEND);
   }
 
+  // Draw tab labels
   if (showTabs) {
-    // Draw tab labels
-    glColor3f(1.0f, 1.0f, 1.0f);
-    fm.drawString(messageAreaPixels[0] + 30.0f,
-		  messageAreaPixels[1] + messageAreaPixels[3] - 20.0f + ay,
-		  0.0f, fontFace, (float)fontSize, "All");
-    fm.drawString(messageAreaPixels[0] + 100.0f,
-		  messageAreaPixels[1] + messageAreaPixels[3] - 20.0f + ay,
-		  0.0f, fontFace, (float)fontSize, "Chat");
-    fm.drawString(messageAreaPixels[0] + 170.0f,
-		  messageAreaPixels[1] + messageAreaPixels[3] - 20.0f + ay,
-		  0.0f, fontFace, (float)fontSize, "Server");
-    fm.drawString(messageAreaPixels[0] + 250.0f,
-		  messageAreaPixels[1] + messageAreaPixels[3] - 20.0f + ay,
-		  0.0f, fontFace, (float)fontSize, "Misc");
+    long int drawnTabWidth = 0;
+    for (unsigned int tab = 0; tab < tabs->size(); tab++) {
+
+      // current mode is bright, others are not so bright
+      if (messageMode == MessageModes(tab)) {
+	glColor3f(1.0f, 1.0f, 1.0f);
+      } else {
+	glColor3f(0.5f, 0.5f, 0.5f);
+      }
+
+      // FIXME: need a menu config option to toggle which side
+      if (tabsOnRight) {
+	// draw the tabs on the right side
+	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(charWidth * 2.0f),
+		      messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 2.0f) + ay,
+		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
+      } else {
+	// draw the tabs on the left side
+	fm.drawString(messageAreaPixels[0] + drawnTabWidth + int(charWidth * 2.0),
+		      messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 2.0f) + ay,
+		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
+      }
+      drawnTabWidth += long(tabTextWidth[tab]);
+    }
   }
 
   // draw messages
@@ -221,13 +259,11 @@ void			ControlPanel::render(SceneRenderer& renderer)
   //  maxScrollPages       = This number * maxLines is the total maximum
   //                         lines of messages (and scrollback)
   // The font is fixed, so getWidth() returns the same for any char.
-  const int lineCharWidth = (int)(messageAreaPixels[2] / 
-			     (fm.getStrLength(fontFace, fontSize, "-")));
 
   glScissor(x + messageAreaPixels[0],
 	    y + messageAreaPixels[1],
 	    messageAreaPixels[2],
-	    messageAreaPixels[3] - (showTabs ? 30 : 0) + ay);
+	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
   i = messages[messageMode].size() - 1;
   if (messagesOffset > 0) {
@@ -295,7 +331,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
       msgy--;
     }
     j += numLines;
-    fy += (lineHeight * numLines);
+    fy += int(lineHeight * numLines);
   }
   glScissor(x + messageAreaPixels[0] - 1,
 	    y + messageAreaPixels[1] - 1,
@@ -303,44 +339,84 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	    messageAreaPixels[3] + 32);
   OpenGLGState::resetState();
 
+  // draw the lines around the console panel
+  long xpos;
+  long ypos;
+  
   // nice border
   glColor3f(teamColor[0], teamColor[1], teamColor[2] );
   glBegin(GL_LINE_LOOP); {
-    glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-	(float) (y + messageAreaPixels[1] - 1));
-    glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
-	(float) (y + messageAreaPixels[1] - 1));
-    glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
-	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
-    glVertex2f((float) (x + messageAreaPixels[0] - 1 + 300),
-	       (float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3]
-			+ 1.1f));
-    if (ay != 0) {
-      glVertex2f((float) (x + messageAreaPixels[0] - 0.9f + 300),
-		 (float) (y + messageAreaPixels[1] - 1 + 30
-			  + messageAreaPixels[3] + 1.1f));
+    // bottom left
+    xpos = x + messageAreaPixels[0];
+    ypos = y + messageAreaPixels[1] - 1;
+    glVertex2f((float) xpos, (float) ypos);
+    
+    // bottom right
+    xpos += messageAreaPixels[2] + 1;
+    glVertex2f((float) xpos, (float) ypos);
+    
+    // top right
+    ypos += messageAreaPixels[3] + 1;
+    glVertex2f((float) xpos, (float) ypos);
+    
+    // over to panel on left
+    if (!tabsOnRight) {
+      xpos = x + messageAreaPixels[0] + totalTabWidth + 1;
+      glVertex2f((float) xpos, (float) ypos);
     }
-    glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-	       (float) (y + messageAreaPixels[1] - 1 + ay
-			+ messageAreaPixels[3] + 1.1f));
+    
+    // across the top from right to left
+    long int drawnTabWidth = 0;
+    for (int tab = (int)tabs->size() - 1; tab >= 0; tab--) {
+      
+      if (messageMode == MessageModes(tab)) {
+	ypos += ay;
+	glVertex2f((float) xpos, (float) ypos);
+	
+	xpos -= long(tabTextWidth[tab]);
+	glVertex2f((float) xpos, (float) ypos);
+	
+	ypos -= ay;
+	glVertex2f((float) xpos, (float) ypos);
+      } else {
+	xpos -= long(tabTextWidth[tab]);
+	glVertex2f((float) xpos, (float) ypos);
+      }
+      drawnTabWidth += long(tabTextWidth[tab]);
+    }
+    
+    // over from panel on right
+    if (tabsOnRight) {
+      xpos = x + messageAreaPixels[0];
+      glVertex2f((float) xpos, (float) ypos);
+    }
+    
+    /* bottom left
+    ypos = y + messageAreaPixels[1];
+    glVertex2f((float) xpos, (float) ypos);
+    */
+    
   } glEnd();
+
   // some engines miss the corners
-  glBegin(GL_POINTS); {
+  /*
+    glBegin(GL_POINTS); {
     glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-	(float) (y + messageAreaPixels[1] - 1));
+    (float) (y + messageAreaPixels[1] - 1));
     glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
-	(float) (y + messageAreaPixels[1] - 1));
+    (float) (y + messageAreaPixels[1] - 1));
     glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
-	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
+    (float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
     if (ay != 0) {
-      glVertex2f((float) (x + messageAreaPixels[0] - 1 + 300 + 0.9f),
-		 (float) (y + messageAreaPixels[1] - 1 + 30
-			  + messageAreaPixels[3] + 1.1f));
-      glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-		 (float) (y + messageAreaPixels[1] - 1 + 30
-			  + messageAreaPixels[3] + 1.1f));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1 + 200 + 0.9f),
+    (float) (y + messageAreaPixels[1] - 1 + int(lineHeight + 4)
+    + messageAreaPixels[3] + 1.1f));
+    glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
+    (float) (y + messageAreaPixels[1] - 1 + int(lineHeight + 4)
+    + messageAreaPixels[3] + 1.1f));
     }
-  } glEnd();
+    } glEnd();
+  */
 
   // border for radar
   glScissor(x + radarAreaPixels[0] - 1,

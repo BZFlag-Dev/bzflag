@@ -69,6 +69,11 @@ class ControlPanel {
       MessageMisc = 3,
       MessageModeCount
     };
+    bool tabsOnRight;
+    std::vector<const char *> *tabs;
+    std::vector<float> tabTextWidth;
+    long totalTabWidth;
+    
 
     MainWindow&		window;
     bool		resized;
