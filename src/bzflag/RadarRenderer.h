@@ -53,7 +53,8 @@ class RadarRenderer {
     boolean		makeNoise();
     void		makeNoiseTexture();
     void		drawShot(const ShotPath*);
-    void		drawTank(float x, float y, float z, float ps);
+    void		drawTank(float x, float y, float z);
+    void		drawFlag(float x, float y, float z);
 
     static float	colorScale(const Obstacle& o, boolean enhanced);
     static float	transScale(const Obstacle& o);

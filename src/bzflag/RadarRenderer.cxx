@@ -122,25 +122,37 @@ void			RadarRenderer::drawShot(const ShotPath* shot)
   glEnd();
 }
 
-void			RadarRenderer::drawTank(float x, float y,
-						float z, float ps)
+void RadarRenderer::drawTank(float x, float y, float z)
 {
   // Changes with height.
-  GLfloat s = 2.5f + ps * (2.0f + 2.5f * z / (4.0f * BoxHeight));
-
-  // Does not change with height.
-  GLfloat t = 2.5f + ps * (2.0f + 2.5f/(4.0f * BoxHeight));
+  GLfloat s = TankRadius * 3.0f + (z + BoxHeight) * 2.0f / BoxHeight;
 
   glBegin(GL_LINE_STRIP);
-  glVertex2f(x-s,y);
-  glVertex2f(x,y-s);
-  glVertex2f(x+s,y);
-  glVertex2f(x,y+s);
-  glVertex2f(x-s,y);
+  glVertex2f(x - s, y);
+  glVertex2f(x, y - s);
+  glVertex2f(x + s, y);
+  glVertex2f(x, y + s);
+  glVertex2f(x - s, y);
   glEnd();
 
-  s = 1.5f + ps * (2.0f + 2.0f * z / (4.0f * BoxHeight));
-  glRectf(x - t, y - t, x + t, y + t );
+  // Does not change with height.
+  s = TankRadius * 1.5;
+  glRectf(x - s, y - s, x + s, y + s);
+}
+
+void RadarRenderer::drawFlag(float x, float y, float z)
+{
+  GLfloat s = TankRadius * 3.0 + (z + BoxHeight) * 2.0f / BoxHeight;
+  glBegin(GL_LINES);
+  glVertex2f(x - s, y);
+  glVertex2f(x + s, y);
+  glVertex2f(x + s, y);
+  glVertex2f(x - s, y);
+  glVertex2f(x, y - s);
+  glVertex2f(x, y + s);
+  glVertex2f(x, y + s);
+  glVertex2f(x, y - s);
+  glEnd();
 }
 
 void			RadarRenderer::render(SceneRenderer& renderer,
@@ -255,9 +267,6 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     if (decay <= 0.015f) decay = 1.0f;
     else decay *= 0.5f;
 
-    // get size of pixel in model space (assumes radar is square)
-    GLfloat ps = 2.0f * range / GLfloat(w);
-
     // relative to my tank
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
     const float* pos = myTank->getPosition();
@@ -294,7 +303,6 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     // but on systems that don't do correct filtering of endpoints
     // not doing it makes (half) the endpoints jump wildly.
     const int maxPlayers = world.getMaxPlayers();
-    GLfloat s;
     for (i = 0; i < maxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
       if (!player || !player->isAlive() || player->getFlag() == StealthFlag)
@@ -302,19 +310,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
       GLfloat x = player->getPosition()[0];
       GLfloat y = player->getPosition()[1];
+      GLfloat z = player->getPosition()[2];
       if (player->getFlag() != NoFlag) {
-	GLfloat s = 5.0f * ps;
-	glBegin(GL_LINES);
 	glColor3fv(Flag::getColor(player->getFlag()));
-	glVertex2f(x - s, y);
-	glVertex2f(x + s, y);
-	glVertex2f(x + s, y);
-	glVertex2f(x - s, y);
-	glVertex2f(x, y - s);
-	glVertex2f(x, y + s);
-	glVertex2f(x, y + s);
-	glVertex2f(x, y - s);
-	glEnd();
+	drawFlag(x, y, z);
       }
 
       if (myTank->getFlag() == ColorblindnessFlag)
@@ -332,11 +331,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	} else
 	  glColor3fv(Team::getRadarColor(player->getTeam()));
       }
-      drawTank(x, y, player->getPosition()[2], ps);
+      drawTank(x, y, z);
     }
 
     // draw other tanks' shells
-    glColor3f(1.0f, 1.0f, 1.0f);
     for (i = 0; i < maxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
       if (!player) continue;
@@ -353,45 +351,28 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     }
 
     // draw flags not on tanks.
-    s = 3.0f * ps;
-    glBegin(GL_LINES);
     const int maxFlags = world.getMaxFlags();
     for (i = 0; i < maxFlags; i++) {
       const Flag& flag = world.getFlag(i);
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	continue;
       glColor3fv(Flag::getColor(flag.id));
-      glVertex2f(flag.position[0] - s, flag.position[1]);
-      glVertex2f(flag.position[0] + s, flag.position[1]);
-      glVertex2f(flag.position[0] + s, flag.position[1]);
-      glVertex2f(flag.position[0] - s, flag.position[1]);
-      glVertex2f(flag.position[0], flag.position[1] - s);
-      glVertex2f(flag.position[0], flag.position[1] + s);
-      glVertex2f(flag.position[0], flag.position[1] + s);
-      glVertex2f(flag.position[0], flag.position[1] - s);
+      drawFlag(flag.position[0], flag.position[1], flag.position[2]);
     }
     // draw antidote flag
     const float* antidotePos =
 		LocalPlayer::getMyTank()->getAntidoteLocation();
     if (antidotePos) {
       glColor3f(1.0f, 1.0f, 0.0f);
-      glVertex2f(antidotePos[0] - s, antidotePos[1]);
-      glVertex2f(antidotePos[0] + s, antidotePos[1]);
-      glVertex2f(antidotePos[0] + s, antidotePos[1]);
-      glVertex2f(antidotePos[0] - s, antidotePos[1]);
-      glVertex2f(antidotePos[0], antidotePos[1] - s);
-      glVertex2f(antidotePos[0], antidotePos[1] + s);
-      glVertex2f(antidotePos[0], antidotePos[1] + s);
-      glVertex2f(antidotePos[0], antidotePos[1] - s);
+      drawFlag(antidotePos[0], antidotePos[1], antidotePos[2]);
     }
-    glEnd();
 
-    // draw these markers above all others
-    glColor3f(1.0f, 1.0f, 1.0f);
+    // draw these markers above all others always centered
+    glPopMatrix();
 
     // north marker
-    glPopMatrix();	// always centered
     GLfloat ns = 0.05f * range, ny = 0.9f * range;
+    glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_LINE_STRIP);
     glVertex2f(-ns, ny - ns);
     glVertex2f(-ns, ny + ns);
@@ -399,8 +380,13 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glVertex2f(ns, ny + ns);
     glEnd();
 
+    // always up
+    glPopMatrix();
+
+    // get size of pixel in model space (assumes radar is square)
+    GLfloat ps = 2.0f * range / GLfloat(w);
+
     // forward tick
-    glPopMatrix();	// always up
     glBegin(GL_LINES);
     glVertex2f(0.0f, range - ps);
     glVertex2f(0.0f, range - 4.0f * ps);
@@ -424,21 +410,12 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
     // my tank
     glColor3f(1.0f, 1.0f, 1.0f);
-    drawTank(0.0f, 0.0f, myTank->getPosition()[2], ps);
+    drawTank(0.0f, 0.0f, myTank->getPosition()[2]);
 
     // my flag
     if (myTank->getFlag() != NoFlag) {
       glColor3fv(Flag::getColor(myTank->getFlag()));
-      glBegin(GL_LINES);
-      glVertex2f(-5.0f*ps, 0.0f);
-      glVertex2f(5.0f*ps, 0.0f);
-      glVertex2f(5.0f*ps, 0.0f);
-      glVertex2f(-5.0f*ps, 0.0f);
-      glVertex2f(0.0f, -5.0f*ps);
-      glVertex2f(0.0f, 5.0f*ps);
-      glVertex2f(0.0f, 5.0f*ps);
-      glVertex2f(0.0f, -5.0f*ps);
-      glEnd();
+      drawFlag(0.0f, 0.0f, myTank->getPosition()[2]);
     }
   }
 

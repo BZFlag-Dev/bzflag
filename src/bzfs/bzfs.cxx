@@ -4036,7 +4036,15 @@ static void parseCommand(const char *message, int t)
     } else {
       sendMessage(t, player[t].id, player[t].team, "Wrong Password!");
     }
-  // /gameover command allows operator to start a new game
+  // /shutdownserver terminates the server
+  } else if (player[t].Admin && strncmp(message + 1, "shutdownserver", 8) == 0) {
+    done = True;
+  // /superkill closes all player connections
+  } else if (player[t].Admin && strncmp(message + 1, "superkill", 8) == 0) {
+    for (int i = 0; i < MaxPlayers; i++)
+      directMessage(i, MsgSuperKill, 0, NULL);
+    gameOver = True;
+  // /gameover command allows operator to end the game
   } else if (player[t].Admin && strncmp(message + 1, "gameover", 8) == 0) {
     char msg[PlayerIdPLen + 2];
     void *buf = msg;

@@ -1,7 +1,16 @@
 
 			     BZFlag release notes
 
-BZFlag 1.7e4
+BZFlag 1.7e5
+------------
+
+* scale flags bases on elevation - Tim Riker
+* don't scale radar based on screen res - Tim Riker
+* flag radar updated - Tim Riker
+* new admin commands - Tim Riker
+
+
+BZFlag 1.7e4 (was 1.7e3 while in development)
 ------------
 
 * ::memset() instead of bzero() - Björn Augustsson
