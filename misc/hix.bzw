@@ -4,6 +4,14 @@
 #
 # This is a team play world
 
+# Typical World definition
+#
+#world
+#name HiX 2.0
+#size 400.0
+#flagHeight 10.0
+#end
+
 # Typical Teleporter
 #
 # TeleUnit     1.12
@@ -54,6 +62,14 @@
 #size 30.0 30.0 0.0 -- height not yet supported
 #color <team number>
 #end
+
+# Typical World definition
+#
+world
+name HiX 2.0
+size 400.0
+flagHeight 0.0
+end
 
 # top of the world
 box
