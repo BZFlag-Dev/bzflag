@@ -89,8 +89,13 @@ bool			BaseBuilding::isInside(const float* oldP, float,
 					       const float *p, float angle,
 			float dx, float dy) const
 {
+  float topBaseHeight = getPosition()[2] + getHeight();
   float higherZ;
   float lowerZ;
+  // if a base is just the ground (z == 0 && height == 0) no collision
+  // ground is already handled
+  if (topBaseHeight <= 0.0)
+    return false;
   if (oldP[2] > p[2]) {
     higherZ = oldP[2];
     lowerZ  = p[2];
@@ -98,7 +103,7 @@ bool			BaseBuilding::isInside(const float* oldP, float,
     higherZ = p[2];
     lowerZ  = oldP[2];
   }
-  if (lowerZ >= (getPosition()[2] + getHeight()))
+  if (lowerZ >= topBaseHeight)
     return false;
   if ((higherZ + BZDBCache::tankHeight) < getPosition()[2])
     return false;
