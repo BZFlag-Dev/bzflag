@@ -24,10 +24,10 @@
 #endif
 
 /* Version number of package */
-#define VERSION "1.7g2"
+#define VERSION "1.9a0"
 
 /* Bzflag internal version */
-#define BZVERSION 10707002
+#define BZVERSION 10900000
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */

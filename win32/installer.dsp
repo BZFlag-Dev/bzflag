@@ -70,7 +70,7 @@ USERDEP__BZFLA="..\bin\bzfs.exe"	"..\bin\bzflag.exe"	"..\bin\bzfls.exe"
 # Begin Custom Build - Building installer using $(InputPath)
 InputPath=..\package\win32\nsis\BZFlag.nsi
 
-"..\dist\BZFlag_1.7g2.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+"..\dist\BZFlag_1.9a0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\package\win32\nsis 
 	makensis bzflag.nsi 
 	
@@ -83,7 +83,7 @@ USERDEP__BZFLA="..\bin\debug\bzfs.exe"	"..\bin\debug\bzflag.exe"	"..\bin\debug\b
 # Begin Custom Build - Building installer using $(InputPath)
 InputPath=..\package\win32\nsis\BZFlag.nsi
 
-"..\dist\BZFlag_1.7g2.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+"..\dist\BZFlag_1.9a0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\package\win32\nsis 
 	makensis bzflag.nsi 
 	

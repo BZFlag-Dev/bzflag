@@ -6,8 +6,8 @@
 ; It will install notepad.exe into a directory that the user selects,
 ;
 
-!define VER_MAJOR 17
-!define VER_MINOR g2
+!define VER_MAJOR 19
+!define VER_MINOR a0
 
 ; Main Installer Options
 Name "BZFlag"
@@ -66,7 +66,7 @@ Section "BZFlag (required)"
 	File ..\..\..\COPYING
 
 	; Write the installation path into the registry
-	WriteRegStr HKLM SOFTWARE\BZFlag1_7g2 "Install_Dir" "$INSTDIR"
+	WriteRegStr HKLM SOFTWARE\BZFlag1_9a0 "Install_Dir" "$INSTDIR"
 
 	; Write the uninstall keys for Windows
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "DisplayName" "BZFlag(remove only)"
