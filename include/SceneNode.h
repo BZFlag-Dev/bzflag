@@ -65,7 +65,7 @@ class SceneNode {
     virtual const GLfloat* getVertex (int vertex) const;
     virtual bool	isTransparent() const;
 
-    virtual const GLfloat* getPlane() const;
+    const GLfloat*      getPlane() const;
     virtual GLfloat	getDistance(const GLfloat* eye) const;
     virtual bool	cull(const ViewFrustum&) const;
     virtual void	addLight(SceneRenderer&);
@@ -135,6 +135,9 @@ class SceneNode {
 #endif
     static void			noStipple(GLfloat);
 
+  protected:
+    GLfloat		plane[4];	// unit normal, distance to origin
+    bool                noPlane;
   private:
     int			styleMailbox;
     GLfloat		sphere[4];
@@ -149,6 +152,12 @@ class SceneNode {
     static void		(*stipple)(GLfloat);
 };
 
+inline const GLfloat*   SceneNode::getPlane() const
+{
+  if (noPlane)
+    return NULL;
+  return plane;
+}
 
 typedef GLfloat		GLfloat2[2];
 typedef GLfloat		GLfloat3[3];

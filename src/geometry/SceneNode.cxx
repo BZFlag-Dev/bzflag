@@ -26,7 +26,8 @@ void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
 #endif
 void			(*SceneNode::stipple)(GLfloat);
 
-SceneNode::SceneNode() : octreeState(OctreeCulled), styleMailbox(0)
+SceneNode::SceneNode() : octreeState(OctreeCulled), noPlane(true),
+			 styleMailbox(0)
 {
   static bool init = false;
   if (!init) {
@@ -175,11 +176,6 @@ void			SceneNode::addRenderNodes(SceneRenderer&)
 void			SceneNode::addShadowNodes(SceneRenderer&)
 {
   // do nothing
-}
-
-const GLfloat*		SceneNode::getPlane() const
-{
-  return NULL;
 }
 
 void			SceneNode::addLight(SceneRenderer&)

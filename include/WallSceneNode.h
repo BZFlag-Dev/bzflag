@@ -37,7 +37,6 @@ class WallSceneNode : public SceneNode {
     const GLfloat*	getLightedColor() const { return lightedColor; }
     const GLfloat*	getLightedModulateColor() const
 				{ return lightedModulateColor; }
-    const GLfloat*	getPlane() const;
     GLfloat		getDistance(const GLfloat*) const;
     virtual void        getExtents (float* mins, float* maxs) const;
     virtual bool        inAxisBox (const float* mins, const float* maxs) const;
@@ -95,7 +94,6 @@ class WallSceneNode : public SceneNode {
   private:
     int			numLODs;
     float*		elementAreas;
-    GLfloat		plane[4];	// unit normal, distance to origin
     const GLfloat*	dynamicColor;
     GLfloat		color[4];
     GLfloat		modulateColor[4];
@@ -118,11 +116,6 @@ class WallSceneNode : public SceneNode {
 inline int		WallSceneNode::getNumLODs() const
 {
   return numLODs;
-}
-
-inline const GLfloat*	WallSceneNode::getPlane() const
-{
-  return plane;
 }
 
 #endif // BZF_WALL_SCENE_NODE_H
