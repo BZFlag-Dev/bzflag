@@ -23,6 +23,12 @@
 
 #ifdef XIJOYSTICK
 
+/* remove these lines once XIJoystick works */
+#warn XIJoystick support has been DISABLED because it doesn't work - patches welcome.
+#endif
+#if 0
+/* end removal */
+
 /* interface header */
 #include "XIJoystick.h"
 
