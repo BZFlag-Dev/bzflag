@@ -2200,7 +2200,11 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     delete [] b;
     f.close();
     char notify[128];
+#ifdef _WIN32
+    _snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
+#else
     snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
+#endif
     controlPanel->addMessage(notify);
   }
   return std::string();
