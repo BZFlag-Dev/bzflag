@@ -38,31 +38,32 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   if (sLink.getState() != ServerLink::Okay) {
     switch (sLink.getState()) {
       case ServerLink::BadVersion: {
-	       static char versionError[] = "Incompatible server version XXXXXXXX";
-	       strncpy(versionError + strlen(versionError) - 8,
-         sLink.getVersion(), 8);
-         std::cout << versionError;
-	       break;
+	static char versionError[] = "Incompatible server version XXXXXXXX";
+	strncpy(versionError + strlen(versionError) - 8,
+	    sLink.getVersion(), 8);
+	std::cout << versionError;
+	break;
       }
       case ServerLink::Refused: {
-         std::string banMessage = "Server Refused connection due to ban: ";
-				 banMessage += sLink.getRejectionMessage();
-			   std::cout << banMessage;
-         break;
-		  }
+	std::string banMessage = "Server Refused connection due to ban: ";
+	banMessage += sLink.getRejectionMessage();
+	std::cout << banMessage;
+	break;
+      }
       case ServerLink::Rejected:
-	       std::cout << "Game is full or over.  Try again later.";
-         break;
+	std::cout << "Game is full or over.  Try again later.";
+	break;
       case ServerLink::SocketError:
-         std::cout << "Error connecting to server.";
-	       break;
+	std::cout << "Error connecting to server.";
+	break;
       case ServerLink::CrippledVersion:
-	       std::cout << "Cannot connect to full version server.";
-	       break;
+	std::cout << "Cannot connect to full version server.";
+	break;
       default:
-	       std::cout << "Internal error connecting to server.";
-	       break;
+	std::cout << "Internal error connecting to server.";
+	break;
     }
+    std::cout << std::endl;
     return;
   }
   sLink.sendEnter(TankPlayer, myTeam, callsign.c_str(), "");
