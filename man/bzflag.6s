@@ -13,7 +13,7 @@ BZFlag \- a tank battle game
 [\fB\-echoAnsi\fR]
 [\fB\-geometry \fIwidth\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB-\fR}x{\fB+\fR|\fB-\fR}y]]
 [\fB\-latitude \fIlatitude\fR]
-[\fB\-list \fIurl\fR]
+[\fB\-list \fIlist-server-url\fR]
 [\fB\-locale \fIlocale\fR]
 [\fB\-longitude \fIlongitude\fR]
 [\fB\-multisample\fR]

@@ -485,7 +485,7 @@ static void		usage()
 	" [-echoAnsi]"
 	" [-geometry <geometry-spec>]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
-	" [-list <server-list-url>] [-nolist]"
+	" [-list <list-server-url>] [-nolist]"
 	" [-locale <locale>]"
 	" [-multisample]"
 	" [-mute]"
