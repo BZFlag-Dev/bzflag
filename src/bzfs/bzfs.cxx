@@ -4700,7 +4700,7 @@ int main(int argc, char **argv)
 	/* once a poll begins, announce its commencement */
 	if (!announcedOpening) {
 	  voteTime = votingarbiter->getVoteTime();
-	  sprintf(message, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), target.c_str(), voteTime);
+	  snprintf(message, MessageLen, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), target.c_str(), voteTime);
 	  sendMessage(ServerPlayer, AllPlayers, message);
 	  announcedOpening = true;
 	}
@@ -4711,7 +4711,7 @@ int main(int argc, char **argv)
 	if (((voteTime - (int)(tm - votingarbiter->getStartTime()) - 1) % 15 == 0) &&
 	    ((int)(tm - lastAnnounce) != 0) &&
 	    (votingarbiter->timeRemaining() > 0)) {
-	  sprintf(message, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), target.c_str());
+	  snprintf(message, MessageLen, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), target.c_str());
 	  sendMessage(ServerPlayer, AllPlayers, message);
 	  lastAnnounce = tm;
 	}
@@ -4719,7 +4719,7 @@ int main(int argc, char **argv)
 	if (votingarbiter->isPollClosed()) {
 
 	  if (!announcedResults) {
-	    sprintf(message, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
+	    snprintf(message, MessageLen, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
 	    sendMessage(ServerPlayer, AllPlayers, message);
 	    announcedResults = true;
 	  }
@@ -4737,15 +4737,15 @@ int main(int argc, char **argv)
 		pollAction = action;
 	      // a poll that exists and is closed has ended successfully
 	      if(action != "flagreset")
-		sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
+		snprintf(message, MessageLen, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
 	      else
-		sprintf(message, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
+		snprintf(message, MessageLen, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
 	      sendMessage(ServerPlayer, AllPlayers, message);
 	      announcedClosure = true;
 	    }
 	  } else {
 	    if (!announcedClosure) {
-	      sprintf(message, "The poll to %s %s was not successful", action.c_str(), target.c_str());
+	      snprintf(message, MessageLen, "The poll to %s %s was not successful", action.c_str(), target.c_str());
 	      sendMessage(ServerPlayer, AllPlayers, message);
 	      announcedClosure = true;
 
@@ -4789,9 +4789,9 @@ int main(int argc, char **argv)
 		pollAction = action;
 	      }
 	      if (action != "flagreset")
-		sprintf(message, "%s has been %s", target.c_str(), pollAction.c_str());
+		snprintf(message, MessageLen, "%s has been %s", target.c_str(), pollAction.c_str());
 	      else
-		sprintf(message, "All unused flags have now been reset.");
+		snprintf(message, MessageLen, "All unused flags have now been reset.");
 	      sendMessage(ServerPlayer, AllPlayers, message);
 
 	      /* regardless of whether or not the player was found, if the poll
@@ -4808,8 +4808,8 @@ int main(int argc, char **argv)
 		for (v = 0; v < curMaxPlayers; v++) {
 		  GameKeeper::Player *otherData
 		    = GameKeeper::Player::getPlayerByIndex(v);
-		  if (strncmp(otherData->player.getCallSign(),
-			      target.c_str(), 256) == 0) {
+		  if (otherData && (strncmp(otherData->player.getCallSign(),
+			      target.c_str(), 256) == 0)) {
 		    foundPlayer = true;
 		    break;
 		  }
@@ -4822,9 +4822,9 @@ int main(int argc, char **argv)
 		}
 		if (foundPlayer) {
 		  // notify the player
-		  sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
+		  snprintf(message, MessageLen, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
 		  sendMessage(ServerPlayer, v, message);
-		  sprintf(message, "/poll %s", action.c_str());
+		  snprintf(message,  MessageLen, "/poll %s", action.c_str());
 		  removePlayer(v, message);
 		}
 	      } else if (action == "set") {
@@ -4859,9 +4859,9 @@ int main(int argc, char **argv)
 	  // the poll may get enough votes early
 	  if (votingarbiter->isPollSuccessful()) {
 	    if (action != "flagreset")
-	      sprintf(message, "Enough votes were collected to %s %s early.", action.c_str(), target.c_str());
+	      snprintf(message,  MessageLen, "Enough votes were collected to %s %s early.", action.c_str(), target.c_str());
 	    else
-	      sprintf(message, "Enough votes were collected to reset all unused flags early.");
+	      snprintf(message,  MessageLen, "Enough votes were collected to reset all unused flags early.");
 
 	    sendMessage(ServerPlayer, AllPlayers, message);
 
