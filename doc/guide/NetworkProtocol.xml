@@ -42,8 +42,8 @@ BZFlag network protocol
 -----------------------
 [ This is a work in progress.  It is mostly done but still incomplete. ]
 
---> means from client to server
-<-- means from server to client
+--&gt; means from client to server
+&lt;-- means from server to client
 
 All multi-byte data is in network byte order (aka big endian);  that is, the most
 significant byte comes first followed by successively less significant bytes.
@@ -136,8 +136,8 @@ z0 = `launch z;' v = `initial velocity;'  g = acceleration due to gravity.
 
 connect to server
 -----------------
-  -->   connect(server port)
-  <--   +----+----+----+----+----+----+----+----+
+  --&gt;   connect(server port)
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 42 | 5a | 46 | 53 | 31 | 30 | 37 | 62 |       BZFS107b        version
 	+----+----+----+----+----+----+----+----+
 	|   port  |
@@ -165,10 +165,10 @@ to prevent the client from batching the many small packets.
 
 getting the world database
 --------------------------
-  -->   +----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+
 	| 00 | 02 | 67 | 77 | offset  |                 MsgGetWorld
 	+----+----+----+----+----+----+
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| length  | 67 | 77 |remaining| data... |       MsgGetWorld
 	+----+----+----+----+----+----+----+----+
 	or
@@ -301,7 +301,7 @@ The above values are interpreted as follows:
   center (float):       center in xy, bottom in z
   safety (float):       safety position for team flags, used when team A drops team B's
 			flag on team C's base.
-  from & to:            index of teleporter face starting from zero;  the N'th teleporter
+  from &amp; to:            index of teleporter face starting from zero;  the N'th teleporter
 			in the world data has face indices 2*N and 2*N+1.  teleporter
 			links indicate which face teleports to which face;  faces may
 			teleport to themselves.
@@ -313,7 +313,7 @@ Once connected a player normally requests to join the game.  The server replies 
 MsgSuperKill, MsgReject, or MsgAccept.
 
 
-  -->   +----+----+----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| length  | 65 | 6e |  player id...             MsgEnter
 	+----+----+----+----+----+----+----+----+
 			    |  type   |  team   |
@@ -330,7 +330,7 @@ MsgSuperKill, MsgReject, or MsgAccept.
 	+----+----+----+----+----+----+----+----+
 						|
 	+----+----+----+----+----+----+----+----+
-  <--   +----+----+----+----+
+  &lt;--   +----+----+----+----+
 	| 00 | 00 | 61 | 63 |                           MsgAccept
 	+----+----+----+----+
 	or
@@ -388,7 +388,7 @@ leave game
 Once entered, a player can leave the game at any time.  This should be done by sending
 the following message then closing the connection:
 
-  -->   +----+----+----+----+
+  --&gt;   +----+----+----+----+
 	| 00 | 00 | 65 | 78 |                           MsgExit
 	+----+----+----+----+
 
@@ -402,13 +402,13 @@ There are several types of messages that are delivered at any time after a playe
 enters a game.  Clients must be prepared to handle them in any order.
 
   MsgSuperKill
-  <--   +----+----+----+----+
+  &lt;--   +----+----+----+----+
 	| 00 | 00 | 73 | 6b |
 	+----+----+----+----+
 	Client must immediately disconnect from the server.
 
   MsgTimeLeft
-  <--   +----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+
 	| 00 | 02 | 74 | 6f |time left|
 	+----+----+----+----+----+----+
 	Gives the time remaining in the game.  This message is only sent when the
@@ -419,7 +419,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	to do their own count down between messages.
 
   MsgScoreOver
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 0a | 73 | 6f |     player id...
 	+----+----+----+----+----+----+----+----+
 			    | team id |
@@ -433,7 +433,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	Otherwise `team id' indicates which team won.
 
   MsgSetTTL
-  <--   +----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+
 	| 00 | 02 | 74 | 74 | new TTL |
 	+----+----+----+----+----+----+
 	Should a client join with a larger TTL than any other client, the server
@@ -443,7 +443,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	at least `new TTL.'
 
   MsgNetworkRelay
-  <--   +----+----+----+----+
+  &lt;--   +----+----+----+----+
 	| 00 | 00 | 6e | 72 |
 	+----+----+----+----+
 	This message means that the client must start sending messages normally
@@ -453,7 +453,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	relaying.  If the server itself cannot do multicasting then it must
 	force all clients to do multicast-over-tcp.
 
-  -->   +----+----+----+----+
+  --&gt;   +----+----+----+----+
 	| 00 | 00 | 6e | 72 |
 	+----+----+----+----+
 	When a client can't do multicasting it notifies the server of that fact
@@ -464,7 +464,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	multicast so you don't miss messages from other players.
 
   MsgAddPlayer
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| length  | 61 | 70 |     player id...
 	+----+----+----+----+----+----+----+----+
 			    |  type   |  team   |
@@ -485,7 +485,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	is 16 + CallSignLen + EmailLen.
 
   MsgRemovePlayer
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 08 | 72 | 70 |     player id...
 	+----+----+----+----+----+----+----+----+
 			    |
@@ -493,7 +493,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	Sent when another player leaves the game.
 
   MsgFlagUpdate
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 40 | 66 | 75 |flag num | flag id |
 	+----+----+----+----+----+----+----+----+
 	| status  |  type   |     player id...
@@ -530,7 +530,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	appearance/disappearance of a flag.
 
   MsgTeamUpdate
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 0a | 74 | 6f |  team   |  size   |
 	+----+----+----+----+----+----+----+----+
 	| active  |  wins   | losses  |
@@ -545,7 +545,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	team's score (wins minus losses).
 
   MsgAlive
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 20 | 61 | 6c |     player id...
 	+----+----+----+----+----+----+----+----+
 			    |    position (x)   |
@@ -562,7 +562,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	from the game board when killed and do not reappear until sending this
 	message again.
 
-  -->   +----+----+----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| 00 | 18 | 61 | 6c |    position (x)   |
 	+----+----+----+----+----+----+----+----+
 	|    position (y)   |    position (z)   |
@@ -584,7 +584,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 
 
   MsgKilled
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 12 | 6b | 6c |     victim id...
 	+----+----+----+----+----+----+----+----+
 			    |     killer id...
@@ -598,7 +598,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	players may assume the shot has stopped and needn't check themselves
 	against the shot (or they can wait until the MsgShotEnd message arrives).
 
-  -->   +----+----+----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| 00 | 0a | 6b | 6c |     killer id...
 	+----+----+----+----+----+----+----+----+
 			    | shot id |
@@ -611,7 +611,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	immortal.  Don't do this.
 
   MsgGrabFlag
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 48 | 67 | 66 |     grabber id...
 	+----+----+----+----+----+----+----+----+
 			    |flag num | flag id |
@@ -640,7 +640,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	`Flag num' is the index of the flag.  Flags are indexed from zero up to
 	the maximum number of flags minus one.
 
-  -->   +----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+
 	| 00 | 02 | 67 | 66 |flag num |
 	+----+----+----+----+----+----+
 	Sent by a player when it wants to grab a flag.  Players should only
@@ -651,7 +651,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	to wait for a MsgGrabFlag reply.
 
   MsgDropFlag
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 48 | 64 | 66 |     dropper id...
 	+----+----+----+----+----+----+----+----+
 			    |flag num | flag id |
@@ -680,7 +680,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	`Flag num' is the index of the flag.  Flags are indexed from zero up to
 	the maximum number of flags minus one.
 
-  -->   +----+----+----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| 00 | 0c | 64 | 66 |    position (x)   |
 	+----+----+----+----+----+----+----+----+
 	|    position (y)   |    position (z)   |
@@ -695,7 +695,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	dropped the flag when it was dropped.
 
   MsgCaptureFlag
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 0c | 63 | 66 |    capturer id...
 	+----+----+----+----+----+----+----+----+
 			    |flag num | team id |
@@ -712,7 +712,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	accordingly.  This is also the only notice that the capturer is no longer
 	carrying a flag.
 
-  -->   +----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+
 	| 00 | 02 | 63 | 66 | team id |
 	+----+----+----+----+----+----+
 	Sent by a player when it captures a team flag.  `Team id' is the id of
@@ -725,8 +725,8 @@ enters a game.  Clients must be prepared to handle them in any order.
 	server will not enforce any of these requirements.
 
   MsgShotBegin
-  <--
-  -->   +----+----+----+----+----+----+----+----+
+  &lt;--
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| 00 | 2c | 73 | 62 |    shooter id...
 	+----+----+----+----+----+----+----+----+
 			    | shot id | position
@@ -772,8 +772,8 @@ enters a game.  Clients must be prepared to handle them in any order.
 	that's more work than realistically necessary.
 
   MsgShotEnd
-  <--
-  -->   +----+----+----+----+----+----+----+----+
+  &lt;--
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| 00 | 0c | 73 | 65 |    shooter id...
 	+----+----+----+----+----+----+----+----+
 			    | shot id | reason  |
@@ -792,7 +792,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	zero otherwise.
 
   MsgScore
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 0c | 73 | 63 |     player id...
 	+----+----+----+----+----+----+----+----+
 			    |  wins   | losses  |
@@ -800,13 +800,13 @@ enters a game.  Clients must be prepared to handle them in any order.
 	Sent by the server when a player's score changes.  `Player id' is the
 	player with the new score, and `wins' and `losses' are the new scores.
 
-  -->   +----+----+----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| 00 | 04 | 73 | 63 |  wins   | losses  |
 	+----+----+----+----+----+----+----+----+
 	Sent by a player when its score changes.
 
   MsgTeleport
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| 00 | 0c | 73 | 63 |     player id...
 	+----+----+----+----+----+----+----+----+
 			    |  from   |   to    |
@@ -815,13 +815,13 @@ enters a game.  Clients must be prepared to handle them in any order.
 	teleporter face the player entered and `to' is the index of the face
 	the player exited.
 
-  -->   +----+----+----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| 00 | 04 | 73 | 63 |  from   |   to    |
 	+----+----+----+----+----+----+----+----+
 	Sent by a player when it passes through a teleporter.
 
   MsgMessage
-  <--   +----+----+----+----+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
 	| length  | 6d | 67 |  from player id...
 	+----+----+----+----+----+----+----+----+
 			    |   to player id...
@@ -842,7 +842,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	id' is not all zeros then `team' is ignored and the message is only for
 	the identified player.
 
-  -->   +----+----+----+----+----+----+----+----+
+  --&gt;   +----+----+----+----+----+----+----+----+
 	| length  | 6d | 67 |    player id...
 	+----+----+----+----+----+----+----+----+
 			    |  team   |message...

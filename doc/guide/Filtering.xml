@@ -131,7 +131,7 @@
       file is <quote>$HOME/.bzf/config</quote>.  In Windows, the
       configuration file is in the <quote>bzflag19.bzc</quote> file,
       in the <quote>My BZFlag Files</quote> folder, located in the
-      <quote>My Documents</quote> folder.
+      <quote>My Documents</quote> folder.</para>
 
       <para>Regardless of where the configuration file is, you will
       need to edit the file with a text editor and add a single line
@@ -323,7 +323,7 @@
 	  suffixes.  This means that words that only add a suffix or
 	  prefix are not necessary.</para>
 
-	  <para>repetitive identical letter expansions <para>Example:
+	  <para>repetitive identical letter expansions Example:
 	  <quote>dumb ass</quote> will match <quote>dumb
 	  asssss</quote> and <quote>duuumbb aasss</quote>, etc</para>
 
