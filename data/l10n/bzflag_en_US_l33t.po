@@ -443,6 +443,9 @@ msgstr "FR33-$+yl3"
 msgid "Capture-the-Flag"
 msgstr "C4PtuRe-+h3-phl49"
 
+msgid "Rabbit Chase"
+msgstr "R4Bb1T CH@53"
+
 msgid "Super Flags"
 msgstr "SUper PHL49$"
 
@@ -472,6 +475,9 @@ msgstr "$EaL3d"
 
 msgid "Zoned"
 msgstr "z0Ned"
+
+msgid "You are now the rabbit."
+msgstr "j00 @rE n0w +HE R4BB1T."
 
 msgid "Servers found: {1}"
 msgstr "5eRv3R5 PhOund: {1}"
@@ -520,6 +526,12 @@ msgstr "Op3nmuLTiC4$T: 1nVAL1d p0R+ {1}"
 
 msgid "openMulticast: Can't get address of {1}"
 msgstr "0PENMuL+1c45t: C4n'T 9E+ @DDRe5$ 0pH {1}"
+
+msgid "Using multicast relay"
+msgstr "U5in9 mUl+1C4$t R3l@Y"
+
+msgid "Server did send endpoint information, UDP connection up"
+msgstr "5ERvER dID 53ND ENDp0in+ 1NpHOrM@+Ion, uDp c0NN3CTi0n uP"
 
 msgid "joystick '{1}' not supported..."
 msgstr "j0Y5+ICk '{1}' N0+ 5UPp0rt3D..."
