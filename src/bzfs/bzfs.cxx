@@ -5384,8 +5384,8 @@ int main(int argc, char **argv)
 	  anointNewRabbit();
 	// if player is holding a team flag, drop it
 	if (!oldnr && player[h].notResponding) {
-	  for (int j = 0; j < numFlags; i++) {
-	    if (flag[j].player == i) {
+	  for (int j = 0; j < numFlags; j++) {
+	    if (flag[j].player == h) {
 	      dropFlag(h, player[h].lastState.pos);
 	    }
 	  }
