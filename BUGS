@@ -135,9 +135,6 @@ recent bugs
   0xbfffd7ed) Could we be running off the end of the packet (ie count is
   fubar'ed?) Perhaps add sanity check for not overruning end of buffer.
 
-- On a FFA game, where no purple was allowed a Team size of 65535 was displayed
-  for Purple.
-
 - bzadmin seems to be less responsive over the network than bzflag - a
   bzadmin client can get kicked from a very active game by the server
   for causing it to queue too many packages (there's a limit at 20kB, when I
