@@ -4171,6 +4171,9 @@ void		leaveGame()
   BZDB.set(StateDatabase::BZDB_SYNCTIME,
 	   BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
 
+  // flush downloaded textures (before the BzMaterials are nuked)
+  Downloads::removeTextures();
+
   // delete world
   World::setWorld(NULL);
   delete world;
@@ -4179,7 +4182,7 @@ void		leaveGame()
   curMaxPlayers = 0;
   numFlags = 0;
   player = NULL;
-
+  
   // update UI
   hud->setPlaying(false);
   hud->setCracks(false);

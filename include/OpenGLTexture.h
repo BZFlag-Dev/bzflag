@@ -97,6 +97,7 @@ class OpenGLTexture {
     int			getBestFormat( int width, int height,
 					const GLvoid* pixels);
     void		bind();
+    bool		setupImage(const GLubyte* pixels);
 
     void* operator new(size_t s) { return ::operator new(s);}
     void  operator delete(void *p) {::operator delete(p);}
@@ -104,7 +105,10 @@ class OpenGLTexture {
     bool	alpha;
     const int	width;
     const int	height;
+    GLint	scaledWidth;
+    GLint	scaledHeight;
     GLubyte*	image;
+    GLubyte*	imageMemory;
     bool	repeat;
     int		internalFormat;
     GLuint	list;

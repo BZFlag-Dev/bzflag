@@ -72,11 +72,12 @@ OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
   if (internalFormat == 0)
     internalFormat = getBestFormat(width, height, pixels);
 
-  // copy the original texture image
-  image = new GLubyte[4 * width * height];
-  ::memcpy(image, pixels, 4 * width * height);
-
+  // copy/scale the original texture image
+  setupImage((const GLubyte*)pixels);
+  
+  // build and bind the GL texture
   initContext();
+  
   // watch for context recreation
   OpenGLGState::registerContextInitializer(static_freeContext,
 					   static_initContext, (void*)this);
@@ -87,8 +88,8 @@ OpenGLTexture::~OpenGLTexture()
 {
   OpenGLGState::unregisterContextInitializer(static_freeContext,
 					     static_initContext, (void*)this);
-  // free image data
-  delete[] image;
+  delete[] imageMemory;
+  
   freeContext();
   return;
 }
@@ -125,18 +126,28 @@ void OpenGLTexture::initContext()
   // make texture map object/list
   glGenTextures(1, &list);
 
-  // making sure we don't change these values accidentally in this function
-  const int tmpWidth = width;
-  const int tmpHeight = height;
+  // now make texture map display list (compute all mipmaps, if requested).
+  // compute next mipmap from current mipmap to save time.
+  setFilter(filter);
+  glBindTexture(GL_TEXTURE_2D, list);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
+		    scaledWidth, scaledHeight,
+		    GL_RGBA, GL_UNSIGNED_BYTE, image);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  return;
+}
 
 
+bool OpenGLTexture::setupImage(const GLubyte* pixels)
+{
   // align to a 2^N value
-  GLint scaledWidth = 1;
-  GLint scaledHeight = 1;
-  while (scaledWidth < tmpWidth) {
+  scaledWidth = 1;
+  scaledHeight = 1;
+  while (scaledWidth < width) {
     scaledWidth <<= 1;
   }
-  while (scaledHeight < tmpHeight) {
+  while (scaledHeight < height) {
     scaledHeight <<= 1;
   }
 
@@ -162,36 +173,29 @@ void OpenGLTexture::initContext()
   // NOTE: why these are 4-byte aligned is beyond me...
 
   // copy the data into a 4-byte aligned buffer
-  GLubyte* unaligned = new GLubyte[4 * tmpWidth * tmpHeight + 4];
+  GLubyte* unaligned = new GLubyte[4 * width * height + 4];
   GLubyte* aligned = (GLubyte*)(((unsigned long)unaligned & ~3) + 4);
-  ::memcpy(aligned, image, 4 * tmpWidth * tmpHeight);
+  ::memcpy(aligned, pixels, 4 * width * height);
 
   // scale the image if required
-  if ((scaledWidth != tmpWidth) || (scaledHeight != tmpHeight)) {
+  if ((scaledWidth != width) || (scaledHeight != height)) {
     GLubyte* unalignedScaled = new GLubyte[4 * scaledWidth * scaledHeight + 4];
     GLubyte* alignedScaled = (GLubyte*)(((unsigned long)unalignedScaled & ~3) + 4);
 
-    gluScaleImage (GL_RGBA, tmpWidth, tmpHeight, GL_UNSIGNED_BYTE, aligned,
+    // FIXME: 0 is success, return false otherwise...
+    gluScaleImage (GL_RGBA, width, height, GL_UNSIGNED_BYTE, aligned,
 		   scaledWidth, scaledHeight, GL_UNSIGNED_BYTE, alignedScaled);
 
     delete[] unaligned;
     unaligned = unalignedScaled;
     aligned = alignedScaled;
     DEBUG1("Scaling texture from %ix%i to %ix%i\n",
-	   tmpWidth, tmpHeight, scaledWidth, scaledHeight);
+	   width, height, scaledWidth, scaledHeight);
   }
 
-  // now make texture map display list (compute all mipmaps, if requested).
-  // compute next mipmap from current mipmap to save time.
-  setFilter(filter);
-  glBindTexture(GL_TEXTURE_2D, list);
-  gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
-		    scaledWidth, scaledHeight,
-		    GL_RGBA, GL_UNSIGNED_BYTE, aligned);
-  glBindTexture(GL_TEXTURE_2D, 0);
-
-  // free the unaligned pointer
-  delete[] unaligned;
+  // set the image
+  image = aligned;
+  imageMemory = unaligned;
 
   // note if internal format uses alpha
   switch (internalFormat) {
@@ -209,13 +213,12 @@ void OpenGLTexture::initContext()
 #endif
       alpha = true;
       break;
-
     default:
       alpha = false;
       break;
   }
 
-  return;
+  return true;
 }
 
 

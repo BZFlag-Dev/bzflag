@@ -177,14 +177,11 @@ bool Downloads::updateDownloads(bool& rebuild)
         }
       }
 
-      // get 'notUsed' before sticking the file in the cache
-      const std::string localname = CACHEMGR.getLocalName(texUrl);
-      const bool notUsed = (TEXMGR.getTextureID(localname.c_str(), false) < 0);
-      
       // download the file and update the cache
       if (getAndCacheURL(texUrl)) {
         updated = true;
-        if (notUsed) {
+        const std::string localname = CACHEMGR.getLocalName(texUrl);
+        if (!TEXMGR.isLoaded(localname)) {
           rebuild = true; 
         } else {
           TEXMGR.reloadTextureImage(localname); // reload with the new image
@@ -201,6 +198,28 @@ bool Downloads::updateDownloads(bool& rebuild)
   CACHEMGR.saveIndex();
   
   return updated;
+}
+
+
+void Downloads::removeTextures()
+{
+  BzMaterialManager::TextureSet set;
+  BzMaterialManager::TextureSet::iterator set_it;
+  MATERIALMGR.makeTextureList(set);
+  
+  TextureManager& TEXMGR = TextureManager::instance();
+
+  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+    const std::string& texUrl = set_it->c_str();
+    if (CACHEMGR.isCacheFileType(texUrl)) {
+      const std::string& localname = CACHEMGR.getLocalName(texUrl);
+      if (TEXMGR.isLoaded(localname)) {
+        TEXMGR.removeTexture(localname);
+      }
+    }
+  }
+  
+  return;
 }
 
 

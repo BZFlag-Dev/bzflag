@@ -51,13 +51,14 @@ class TextureManager : public Singleton<TextureManager>
 {
 public:
   int getTextureID( const char* name, bool reportFail = true );
-  int addTexture( const char*, OpenGLTexture *texture  );
 
-  void setTextureFilter(int texId, OpenGLTexture::Filter filter);
-  OpenGLTexture::Filter getTextureFilter(int texId);
+  bool isLoaded(const std::string& name);  
+  bool removeTexture(const std::string& name);
+  bool reloadTextureImage(const std::string& name);
 
   void updateTextureFilters();
-  bool reloadTextureImage(const std::string& filename);
+  void setTextureFilter(int texId, OpenGLTexture::Filter filter);
+  OpenGLTexture::Filter getTextureFilter(int texId);
 
   bool bind ( int id );
   bool bind ( const char* name );
@@ -83,6 +84,7 @@ private:
   TextureManager& operator=(const TextureManager &tm);
   ~TextureManager();
 
+  int addTexture( const char*, OpenGLTexture *texture  );
   OpenGLTexture* loadTexture( FileTextureInit &init, bool reportFail = true  );
 
   typedef std::map<std::string, ImageInfo> TextureNameMap;
