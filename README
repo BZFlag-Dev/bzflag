@@ -40,6 +40,7 @@ files in the new bzflag directory:
   ChangeLog	- history of changes
   COPYING	- the license for BZFlag
   NEWS		- placeholder - see ChangeLog
+  DEVINFO       - information for developers
   PORTING	- a guide for porting BZFlag
   RELNOTES	- placeholder - see ChangeLog
   TODO		- incomplete list of things to do
@@ -55,11 +56,13 @@ files in the new bzflag directory:
     bzfs/	  - bzfs app source code (game server)
     common/	  - general purpose classes
     geometry/	  - geometry rendering classes
+    mediafile/	  - classes for reading resources
     net/	  - networking classes and functions
     obstacle/	  - collision detection stuff
     ogl/	  - OpenGL utility classes
     platform/	  - platform dependent code
     scene/	  - high level rendering algorithms
+    zlib/	  - compression library
   win32/	- extra stuff for building on win32 platforms
 
 
