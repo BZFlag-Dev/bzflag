@@ -5260,6 +5260,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	int flagIndex = player[from].flag;
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	flag[flagIndex].flag.owner = to;
+	flag[flagIndex].player = to;
 	player[to].flag = flagIndex;
 	player[from].flag = -1;
         buf = flag[flagIndex].flag.pack(buf);
