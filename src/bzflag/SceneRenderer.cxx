@@ -240,7 +240,9 @@ void			SceneRenderer::setQuality(int value)
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
   }
-  if (useQualityValue >= 1)
+  if (useQualityValue == 3)
+    TankSceneNode::setMaxLOD(-1);
+  else if (useQualityValue >= 1)
     TankSceneNode::setMaxLOD(3);
   else
     TankSceneNode::setMaxLOD(2);

@@ -217,8 +217,12 @@ void			TankSceneNode::addRenderNodes(
   const ViewFrustum& view = renderer.getViewFrustum();
   const float size = sphere[3] * view.getAreaFactor() /
 					getDistance(view.getEye());
-  if (maxLevel > 2 && size > 55.0f) node = &highRenderNode;
-  else if (maxLevel > 1 && size > 25.0f) node = &medRenderNode;
+  if (maxLevel == -1)
+    node = &highRenderNode;
+  else if (maxLevel > 2 && size > 55.0f)
+    node = &highRenderNode;
+  else if (maxLevel > 1 && size > 25.0f)
+    node = &medRenderNode;
   else node = &lowRenderNode;
 
   // if drawing in sorted order then decide which order
