@@ -154,8 +154,10 @@ private:
   bool		spawning;
   int		wingsFlapCount;
   float		handicap;
-  int           rotation;
-  int           speed;
+  bool          left;
+  bool          right;
+  bool          up;
+  bool          down;
 };
 
 
@@ -227,11 +229,21 @@ inline void LocalPlayer::setSpawning( bool spawn )
 }
 
 inline int LocalPlayer::getRotation() {
-  return rotation;
+  if (left && !right)
+    return 1;
+  else if (right && !left)
+    return -1;
+  else
+    return 0;
 }
 
 inline int LocalPlayer::getSpeed() {
-  return speed;
+  if (up && !down)
+    return 1;
+  else if (down && !up)
+    return -1;
+  else
+    return 0;
 }
 
 #endif /* __LOCALPLAYER_H__ */
