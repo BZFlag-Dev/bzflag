@@ -493,18 +493,6 @@ void setRoamingLabel(bool force)
     hud->setRoamingLabel("Roaming");
 }
 
-static void		showInputStatus()
-{
-  if (myTank->getInputMethod() == LocalPlayer::Keyboard)
-    controlPanel->addMessage("Keyboard movement");
-  else if (myTank->getInputMethod() == LocalPlayer::Joystick)
-    controlPanel->addMessage("Joystick movement");
-  else if (myTank->getInputMethod() == LocalPlayer::Mouse)
-    controlPanel->addMessage("Mouse movement");
-  else
-    DEBUG1("Unknown input method!");
-}
-
 static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   const std::string cmd = KEYMGR.get(key, pressed);
@@ -4503,7 +4491,7 @@ static void		playingLoop()
 
     // notify if input changed
     if ((myTank != NULL) && (myTank->queryInputChange() == true))
-      showInputStatus();
+      controlPanel->addMessage(LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
 
     // reposition flags
     updateFlags(dt);
