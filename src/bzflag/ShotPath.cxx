@@ -51,7 +51,6 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
     flagType = Flags::Null;
   }
   lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
-  lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 }
 
 //
