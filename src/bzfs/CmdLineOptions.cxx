@@ -488,16 +488,6 @@ void parse(int argc, char **argv, CmdLineOptions &options)
           options.numTeamFlags[t] += 1;
 	teamFlagsAdded = true;
       }
-    } else if (strcmp(argv[i], "-d") == 0) {
-      // increase debug level
-      int count = 0;
-      char *scan;
-      for (scan = argv[i]+1; *scan == 'd'; scan++) count++;
-      if (*scan != '\0') {
-	std::cerr << "bad argument \"" << argv[i] << "\"\n";
-	usage(argv[0]);
-      }
-      debugLevel += count;
     } else if (strcmp(argv[i], "-density") ==0) {
       if (i+1 != argc && isdigit(*argv[i+1])) {
 	options.citySize = atoi(argv[i+1]);
@@ -507,6 +497,18 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	std::cerr << "integer argument expected for -density\n";
 	usage(argv[0]);
       }
+    } else if (strncmp(argv[i], "-d", 2) == 0) {
+      // increase debug level - this must be the last
+      // option beginning with -d so that -dd, -ddd, etc. work
+      int count = 0;
+      char *scan;
+      for (scan = argv[i]+1; *scan == 'd'; scan++) count++;
+      if (*scan != '\0') {
+	std::cerr << "bad argument \"" << argv[i] << "\"\n";
+	usage(argv[0]);
+      }
+      debugLevel += count;
+      // std::cout << "Debug level is now " << debugLevel << "\n";
     } else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
       if (++i == argc) {
