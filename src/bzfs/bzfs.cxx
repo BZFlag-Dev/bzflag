@@ -5655,26 +5655,27 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	removePlayer(t, "too high");
 	break;
       }
-		// make sure the player is still in the map
-	  // test all the map bounds + some fudge factor, just in case
-	  float	fudge = 5.0f;
-	  bool InBounds = true;
 
-	  if ( (state.pos[1] >= WorldSize*0.5f + fudge) || (state.pos[1] <= -WorldSize*0.5f - fudge))
-		  InBounds = false;
-	  else if ( (state.pos[0] >= WorldSize*0.5f + fudge) || (state.pos[0] <= -WorldSize*0.5f - fudge))
-		  InBounds = false;
-
-	  // kick em cus they are cheating
-	  if (!InBounds)
-	  {
-		char message[MessageLen];
-		DEBUG1("kicking Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
-		strcpy( message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
-		sendMessage(t, player[t].id, player[t].team, message);
-		removePlayer(t, "Out of map bounds");
-	  }
-		  
+      // make sure the player is still in the map
+      // test all the map bounds + some fudge factor, just in case
+      float	fudge = 5.0f;
+      bool InBounds = true;
+ 
+      if ( (state.pos[1] >= WorldSize*0.5f + fudge) || (state.pos[1] <= -WorldSize*0.5f - fudge))
+	InBounds = false;
+      else if ( (state.pos[0] >= WorldSize*0.5f + fudge) || (state.pos[0] <= -WorldSize*0.5f - fudge))
+	InBounds = false;
+ 
+      // kick em cus they are cheating
+      if (!InBounds)
+      {
+	char message[MessageLen];
+	DEBUG1("kicking Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
+	strcpy( message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
+	sendMessage(t, player[t].id, player[t].team, message);
+	removePlayer(t, "Out of map bounds");
+      }
+	     
 
       // check for highspeed cheat; if inertia is enabled, skip test for now
       if (clOptions.linearAcceleration == 0.0f) {
@@ -5704,18 +5705,18 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	maxPlanarSpeedSqr *= 1.1025f;
 	if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	  if (logOnly) {
-		DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-		 player[t].callSign, t,
-		 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+	    DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+		   player[t].callSign, t,
+		   sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	  }
 	  else {
-		char message[MessageLen];
-		DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
-		 player[t].callSign, t,
-		 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		strcpy( message, "Autokick: Tank moving too fast, Update your client." );
-		sendMessage(t, player[t].id, player[t].team, message);
-		removePlayer(t, "too fast");
+	    char message[MessageLen];
+	    DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
+	     player[t].callSign, t,
+	     sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+	    strcpy( message, "Autokick: Tank moving too fast, Update your client." );
+	    sendMessage(t, player[t].id, player[t].team, message);
+	    removePlayer(t, "too fast");
 	  }
 	  break;
 	}
@@ -5736,9 +5737,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // unknown msg type
     default:
       DEBUG1("Player [%d] sent unknown packet type (%x), possible attack from %s\n",
-             t,code,player[t].peer.getDotNotation().c_str());
-//      removePlayer(t, "unknown packet type", false);
-
+	     t,code,player[t].peer.getDotNotation().c_str());
   }
 }
 
