@@ -6300,8 +6300,8 @@ void			startPlaying(BzfDisplay* _display,
   mainWindow = &sceneRenderer->getWindow();
   
   // register some commands
-  for (unsigned int j = 0; j < countof(commandList); ++j) {
-    CMDMGR->add(commandList[j].name, commandList[j].func, commandList[j].help);
+  for (unsigned int c = 0; c < countof(commandList); ++c) {
+    CMDMGR->add(commandList[c].name, commandList[c].func, commandList[c].help);
   }
 
   // make control panel
