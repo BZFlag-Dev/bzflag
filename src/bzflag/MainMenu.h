@@ -15,16 +15,9 @@
 
 #include "common.h"
 
-/* common interface headers */
-#include "OpenGLTexFont.h"
-
-/* local interface headers */
-#include "HUDDialog.h"
-#include "HUDui.h"
-#include "JoinMenu.h"
-#include "OptionsMenu.h"
-#include "QuitMenu.h"
-
+class JoinMenu;
+class OptionsMenu;
+class QuitMenu;
 
 /** MainMenu is the main menu
  */

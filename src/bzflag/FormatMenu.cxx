@@ -21,6 +21,7 @@
 #include "OpenGLTexFont.h"
 #include "BzfWindow.h"
 #include "BzfDisplay.h"
+#include "ErrorHandler.h"
 
 /* local implementation headers */
 #include "MainMenu.h"

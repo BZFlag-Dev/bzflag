@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <string>
 #include <vector>
+#include <math.h>
 
 /* common implementation headers */
 #include "BzfDisplay.h"

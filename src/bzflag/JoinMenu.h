@@ -26,9 +26,9 @@
 /* local interface headers */
 #include "HUDDialog.h"
 #include "HUDui.h"
-#include "ServerStartMenu.h"
-#include "ServerMenu.h"
 
+class ServerStartMenu;
+class ServerMenu;
 
 class JoinMenu : public HUDDialog {
   public:

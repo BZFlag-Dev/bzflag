@@ -21,6 +21,7 @@
 #include "TextUtils.h"
 
 /* local implementation headers */
+#include "StateDatabase.h"
 #include "MainMenu.h"
 #include "sound.h"
 

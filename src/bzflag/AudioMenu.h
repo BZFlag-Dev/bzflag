@@ -13,8 +13,6 @@
 #ifndef __AUDIOMENU_H__
 #define __AUDIOMENU_H__
 
-#include "common.h"
-
 /* common interface headers */
 #include "HUDDialog.h"
 

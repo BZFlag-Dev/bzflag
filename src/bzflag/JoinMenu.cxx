@@ -21,6 +21,8 @@
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "MenuDefaultKey.h"
+#include "ServerStartMenu.h"
+#include "ServerMenu.h"
 
 /* from playing.h */
 StartupInfo* getStartupInfo();
