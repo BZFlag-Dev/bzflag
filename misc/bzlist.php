@@ -49,11 +49,11 @@ function query ($hostport) {
   $buffer=fread($fp, 9);
   //var_dump($buffer);
   # parse reply
-  $array = unpack("a4magic/a4protocol/Cid", $buffer);
-  //var_dump($array);
-  $magic = $array['magic'];
-  $protocol = $array['protocol'];
-  $id = $array['id'];
+  $server = unpack("a4magic/a4protocol/Cid", $buffer);
+  //var_dump($server);
+  $magic = $server['magic'];
+  $protocol = $server['protocol'];
+  $id = $server['id'];
   echo "$magic $protocol $id\n";
   if ($magic != "BZFS") {
     echo "not a bzflag server";
@@ -71,50 +71,70 @@ function query ($hostport) {
   fwrite($fp, $request);
   $buffer=fread($fp, 40);
   //var_dump($buffer);
-  $array += unpack("nlen/ncode/nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime", $buffer);
+  $server += unpack("nlen/ncode/nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime", $buffer);
 
   # MsgQueryPlayers
   $request = pack("n2", 0, 0x7170);
   //var_dump($request);
   fwrite($fp, $request);
   $buffer=fread($fp, 8);
-  var_dump(unpack("c8", $buffer));
-  $array += unpack("nlen/ncode/nnumTeams/nnumPlayers", $buffer);
+  //var_dump(unpack("c8", $buffer));
+  $server += unpack("nlen/ncode/nnumTotalTeams/nnumPlayers", $buffer);
 
   $buffer=fread($fp, 5);
-  var_dump(unpack("c5", $buffer));
-  fclose($fp);
+  $server += unpack("nlen/ncode/CnumTeams", $buffer);
+  //var_dump(unpack("c5", $buffer));
 
-  echo "style:";
-  if ($array['style'] & 0x0001) echo " CTF";
-  if ($array['style'] & 0x0002) echo " flags";
-  if ($array['style'] & 0x0004) echo " rogues";
-  if ($array['style'] & 0x0008) echo " jumping";
-  if ($array['style'] & 0x0010) echo " inertia";
-  if ($array['style'] & 0x0020) echo " ricochet";
-  if ($array['style'] & 0x0040) echo " shaking";
-  if ($array['style'] & 0x0080) echo " antidote";
-  if ($array['style'] & 0x0100) echo " time-sync";
-  if ($array['style'] & 0x0200) echo " rabbit-hunt";
-  echo "\n";
-  echo "maxPlayers: " . $array['maxPlayers'] . "\n";
-  echo "maxShots: " . $array['maxShots'] . "\n";
-  echo "team sizes: " . $array['rogueSize'] . " " .
-      $array['redSize'] . " " . $array['greenSize'] . " " .
-      $array['blueSize'] . " " . $array['purpleSize'] .
-      " (rogue red green blue purple)\n";
-  echo  "max sizes:  " . $array['rogueMax'] . " " .
-      $array['redMax'] . " " . $array['greenMax'] . " " .
-      $array['blueMax'] . " " . $array['purpleMax'] . "\n";
-  if ($array['style'] & 0x0040) {
-    echo "wins to shake bad flag: " . $array['shakeWins'] . "\n";
-    echo "time to shake bad flag: " . $array['shakeTimeout'] / 10 . "\n";
+  for ( $team = 0; $team < $server['numTeams']; $team++ ) {
+    $buffer=fread($fp, 8);
+    $server['team'][$team] = unpack("nnum/nsize/nwon/nlost", $buffer);
   }
-  echo "max player score: " . $array['maxPlayerScore'] . "\n";
-  echo "max team score: " . $array['maxTeamScore'] . "\n";
+
+  for ( $player = 0; $player < $server['numPlayers']; $player++ ) {
+    $buffer='';
+    # handle packet fragmentation - untested
+    while(strlen($buffer) < 175) {
+      $buffer .= fread($fp, 175 - strlen($buffer));
+      //echo strlen($buffer) . "\n";
+    }
+    $server['player'][$player] = unpack("nlen/ncode/Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $buffer);
+  }
+  var_dump($server);
+  fclose($fp);
+  return $server;
+}
+
+function dump ($server) {
+  echo "style:";
+  if ($server['style'] & 0x0001) echo " CTF";
+  if ($server['style'] & 0x0002) echo " flags";
+  if ($server['style'] & 0x0004) echo " rogues";
+  if ($server['style'] & 0x0008) echo " jumping";
+  if ($server['style'] & 0x0010) echo " inertia";
+  if ($server['style'] & 0x0020) echo " ricochet";
+  if ($server['style'] & 0x0040) echo " shaking";
+  if ($server['style'] & 0x0080) echo " antidote";
+  if ($server['style'] & 0x0100) echo " time-sync";
+  if ($server['style'] & 0x0200) echo " rabbit-hunt";
+  echo "\n";
+  echo "maxPlayers: " . $server['maxPlayers'] . "\n";
+  echo "maxShots: " . $server['maxShots'] . "\n";
+  echo "team sizes: " . $server['rogueSize'] . " " .
+      $server['redSize'] . " " . $server['greenSize'] . " " .
+      $server['blueSize'] . " " . $server['purpleSize'] .
+      " (rogue red green blue purple)\n";
+  echo  "max sizes:  " . $server['rogueMax'] . " " .
+      $server['redMax'] . " " . $server['greenMax'] . " " .
+      $server['blueMax'] . " " . $server['purpleMax'] . "\n";
+  if ($server['style'] & 0x0040) {
+    echo "wins to shake bad flag: " . $server['shakeWins'] . "\n";
+    echo "time to shake bad flag: " . $server['shakeTimeout'] / 10 . "\n";
+  }
+  echo "max player score: " . $server['maxPlayerScore'] . "\n";
+  echo "max team score: " . $server['maxTeamScore'] . "\n";
   echo "max time: " . $maxTime / 10 . "\n";
 
-  var_dump($array);
+  var_dump($server);
   return;
 }
 
@@ -135,7 +155,7 @@ if($_GET["hostport"]) {
     <tr><td>&nbsp;</td></tr>
     <tr>
       <td>
-	<pre><? query($hostport); ?></pre>
+	<pre><? dump(query($hostport)); ?></pre>
 	<pre><? system("$bzfquery $hostport"); ?></pre>
       </td>
     </tr>
