@@ -358,7 +358,7 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
 {
   int i;
   const int count = vertices.getSize();
-  const float fudgeFactor = 0.1f;
+  const float fudgeFactor = 0.001f;
   const unsigned char BACK_SIDE = (1 << 0);
   const unsigned char FRONT_SIDE = (1 << 1);
 
