@@ -842,7 +842,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   *nopackets = 0;
 
   PlayerInfo *pPlayerInfo;
-  int pi;
+  PlayerId pi;
   for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
     if ((pPlayerInfo->ulinkup) &&
 	(pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
@@ -856,10 +856,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     tmpbuf = nboUnpackUShort(ubuf, len);
     tmpbuf = nboUnpackUShort(tmpbuf, code);
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
-      tmpbuf = nboPackUByte(tmpbuf, pi);
-      pi--; //FIXME this is off by one? server supplied it...
-      DEBUG2("dump %x %x %x %x %x  %x %x %d %d\n",
-	  ubuf[0], ubuf[1], ubuf[2], ubuf[3], ubuf[4], len, code, pi, curMaxPlayers);
+      tmpbuf = nboUnpackUByte(tmpbuf, pi);
       if ((pi <= curMaxPlayers) && !player[pi].ulinkup) {
 	if (memcmp(&player[pi].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
 	  DEBUG2("Player %s [%d] uread() udp up %s:%d actual %d\n",
