@@ -2494,15 +2494,15 @@ static void dropFlag(int playerIndex, float pos[3])
       topmosttype = tmp;
       topmost = container;
     }
-  }
-
-  // the tank is _not_ inside a building - find the floor
-  else {
-    for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
-      topmosttype = world->cylinderInBuilding(&topmost,
-				      pos[0], pos[1], i, 0,
-				      BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+  } else {
+    // the tank is _not_ inside a building - find the floor
+    for (float i = pos[2]; ; i -= 0.1f) {
+      topmosttype = world->cylinderInBuilding
+	(&topmost, pos[0], pos[1], i, 0,
+	 BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
       if (topmosttype != NOT_IN_BUILDING)
+	break;
+      if (i < 0)
 	break;
     }
   }
