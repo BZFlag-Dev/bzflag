@@ -58,6 +58,7 @@ struct PlayerAccessInfo
       poll,
       vote,
       veto,
+      requireIdentify,
       lastPerm	// just so we know how many rights there
 		// are this dosn't do anything really, just
 		// make sure it's the last real right

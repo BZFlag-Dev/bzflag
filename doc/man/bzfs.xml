@@ -656,6 +656,8 @@ POLL			/poll ban|kick
 VOTE			/vote
 .br
 VETO			/veto
+.br
+REQUIREIDENTIFY         user must /identify when using this callsign
 
 .TP
 .B /register {password}

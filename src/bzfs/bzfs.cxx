@@ -2463,8 +2463,11 @@ static void addPlayer(int playerIndex)
 #endif
 
   if (userExists(player[playerIndex].regName)) {
-    // nick is in the DB send him a message to identify
-    sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
+    // nick is in the DB send him a message to identify.
+    if (hasPerm(getUserInfo(player[playerIndex].regName), PlayerAccessInfo::requireIdentify))
+      sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing.");
+    else
+      sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
     sendMessage(ServerPlayer, playerIndex, "Identify with /identify <your password>");
   }
 }
@@ -3079,6 +3082,13 @@ static void playerAlive(int playerIndex)
   if (player[playerIndex].state != PlayerDead ||
       player[playerIndex].team == ObserverTeam)
     return;
+
+  // make sure the user identifies themselves if required.
+  if (!player[playerIndex].accessInfo.verified && userExists(player[playerIndex].regName) && hasPerm(getUserInfo(player[playerIndex].regName), PlayerAccessInfo::requireIdentify)) {
+    sendMessage(ServerPlayer, playerIndex, "This call sign is registered.  You must identify yourself before playing or use a different callsign.");
+    removePlayer(playerIndex, "unidentified");
+    return;
+  }
 
   // player is coming alive.
   player[playerIndex].state = PlayerAlive;

@@ -4,6 +4,7 @@
 BZFlag 1.10.4
 -------------
 
+* Add the REQUIREIDENTIFY permission so people who are using registered callsigns without identifying can be prevented from spawning - Nils McCarthy
 * Color carried team flags according to their team - Sean Morrison
 * Start of better spawn positions based on tanks - Dave Brosius
 * PNG image grabbing - Daniel Remenak
