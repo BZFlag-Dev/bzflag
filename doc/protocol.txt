@@ -23,6 +23,10 @@ values would be preferred.
 249-252 = colored teams, 1-maxplayers = normal players. Note that maxplayers in
 this context includes observers as well as proper players.
 
+* should msglength just be a u8? Only very few messages are larger than 255
+bytes (MsgGetWorld, maybe MsgAddPlayer, MsgMessage). Could also indicate
+8/16 bit length field by bit 7, probably too much hassle to save one byte.
+
 * should msgtype just be a u8 ? the 2 char format is not very useful if the
 rest is binary.
 
@@ -618,6 +622,11 @@ player.
 	u32 velocity z
 	u32 azimuth
 	u32 angular velocity
+
+FIXME - could move z pos and z velocity to end of message and skip
+transfering these for tanks on ground. Receiver should assume a value of 0
+when data is not in message. This could save 8 bytes of data for a lot of
+messages.
 
 Sent by players to notify other players of changes in its status, position, or
 velocity.  The server ignores "player id" and overwrites "player id".
