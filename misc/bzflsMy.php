@@ -137,6 +137,8 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
 } else {
   print "Unknown command: '$action'\n";
 }
+# make sure the connection to mysql is severed
+mysql_close($link);
 
 # Local Variables: ***
 # mode:php ***
