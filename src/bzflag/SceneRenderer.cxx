@@ -793,16 +793,16 @@ void			SceneRenderer::notifyStyleChange()
 /* FIXME
   // fixup my gstates
   OpenGLGStateBuilder builder(flareGState);
-  builder.enableTexture(BZDB.isTrue("texture"));
+  builder.enableTexture(BZDBCache::texture));
   if (BZDB.isTrue("smooth")) {
-    if (BZDB.isTrue("texture"))
+    if (BZDBCache::texture))
       builder.setBlending(GL_ONE, GL_ONE);
     else
       builder.setBlending();
     builder.setSmoothing();
   }
   else {
-    if (BZDB.isTrue("texture"))
+    if (BZDBCache::texture)
       builder.setBlending(GL_ONE, GL_ONE);
     else
       builder.resetBlending();

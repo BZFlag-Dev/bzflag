@@ -149,7 +149,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   gstate.setCulling((GLenum)GL_NONE);
   sunShadowsGState = gstate.getState();
 
- /* useMoonTexture = BZDB.isTrue("texture") && (BZDB.eval("useQuality")>2);
+ /* useMoonTexture = BZDBCache::texture && (BZDB.eval("useQuality")>2);
   int moonTexture = -1;
   if (useMoonTexture){
     moonTexture = tm.getTextureID( "moon" );
@@ -265,7 +265,7 @@ void			BackgroundRenderer::notifyStyleChange(
 {
   if (renderer.testAndSetStyle(style)) return;
 
-  if (BZDB.isTrue("texture"))
+  if (BZDBCache::texture)
     if (BZDB.isTrue("lighting"))
       styleIndex = 3;
     else
@@ -617,13 +617,13 @@ void			BackgroundRenderer::drawGround()
   // draw ground
   glNormal3f(0.0f, 0.0f, 1.0f);
   if (invert) {
-    if (BZDB.isTrue("texture"))
+    if (BZDBCache::texture)
       glColor3f(1, 1, 1);
     else
       glColor3fv(groundColorInv[styleIndex]);
     invGroundGState[styleIndex].setState();
   } else {
-    if (BZDB.isTrue("texture"))
+    if (BZDBCache::texture)
       glColor3f(1, 1, 1);
     else
       glColor3fv(groundColor[styleIndex]);

@@ -177,7 +177,7 @@ void			TankSceneNode::notifyStyleChange(
 {
   sort = !BZDB.isTrue("zbuffer");
   OpenGLGStateBuilder builder(gstate);
-  builder.enableTexture(BZDB.isTrue("texture"));
+  builder.enableTexture(BZDBCache::texture);
   builder.enableMaterial(BZDB.isTrue("lighting"));
   builder.setSmoothing(BZDB.isTrue("smooth"));
   if (BZDBCache::blend && transparent) {

@@ -1181,7 +1181,7 @@ int			main(int argc, char** argv)
   if (startupInfo.hasConfiguration) {
     if (BZDB.isSet("zbuffersplit"))
       renderer.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
-    if (BZDB.isSet("texture")) {
+    if (BZDBCache::texture) {
 #ifdef _MSC_VER
             // Suppose Pat want to remind himself
 	    { int patlabor_get_tm_to_set_texture; }

@@ -273,7 +273,7 @@ void			BillboardSceneNode::addLight(
 void			BillboardSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  show = hasTexture && BZDB.isTrue("texture") &&
+  show = hasTexture && BZDBCache::texture &&
 	(!hasAlpha || BZDBCache::blend);
   if (show) {
     OpenGLGStateBuilder builder(gstate);

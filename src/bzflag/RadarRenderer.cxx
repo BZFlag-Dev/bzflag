@@ -245,8 +245,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_TEXTURE_2D);
     }
 
-    else if (noiseTexture >= 0 && BZDB.isTrue("texture") &&
-	renderer.useQuality()==0) {
+    else if (noiseTexture >= 0 && BZDBCache::texture &&
+	     renderer.useQuality() == 0) {
       glEnable(GL_TEXTURE_2D);
       tm.bind(noiseTexture);
       glBegin(GL_QUADS);

@@ -276,7 +276,7 @@ void			WallSceneNode::notifyStyleChange(
   else {
     builder.setShading(GL_FLAT);
   }
-  if (BZDB.isTrue("texture") && gstate.isTextured()) {
+  if (BZDBCache::texture && gstate.isTextured()) {
     style += 2;
     builder.enableTexture(true);
     alpha = lighted ? lightedModulateColor[3] : modulateColor[3];
@@ -310,7 +310,7 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
 
 void			WallSceneNode::setColor()
 {
-  if (BZDB.isTrue("texture") && useColorTexture)
+  if (BZDBCache::texture && useColorTexture)
       glColor4f(1,1,1,1);
   else {
     switch (style) {

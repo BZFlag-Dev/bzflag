@@ -383,7 +383,7 @@ void OptionsMenu::resize(int width, int height)
     // mind the ++i !
     ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
 
-    if (!BZDB.isTrue("texture"))
+    if (!BZDBCache::texture)
       tex->setIndex(0);
     else
       tex->setIndex(OpenGLTexture::getFilter());

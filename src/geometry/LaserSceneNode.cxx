@@ -61,7 +61,7 @@ bool			LaserSceneNode::cull(const ViewFrustum&) const
 void			LaserSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  texturing = BZDB.isTrue("texture") && BZDBCache::blend;
+  texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
   if (BZDBCache::blend) {

@@ -3113,7 +3113,7 @@ bool			addExplosion(const float* _pos,
   if (sceneRenderer->useQuality() < 2) return false;
 
   // don't add explosion if blending or texture mapping are off
-  if (!BZDBCache::blend || !BZDB.isTrue("texture"))
+  if (!BZDBCache::blend || !BZDBCache::texture)
     return false;
 
   // pick a random prototype explosion
