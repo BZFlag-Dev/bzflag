@@ -80,13 +80,14 @@ work.  The source implementation file should include it's interface
 and whatever else it might need specific to the implementation.  For C
 code, the header file should include everything the C code needs
 (otherwise there's no point to the header) including prototypes for
-all non-static functions.  The include order for headers within a
-header is common.h, system headers, common interface headers, and then
-local interface headers.  The include order for headers within a
-source file is common.h, it's own interface header, common
-implementation headers, and then local implementation headers.
-Adhering to this order will avoid nasty ordering dependencies and
-makes it easy to change things down the road.
+all non-static functions.
+
+The include order for headers within a header is common.h, system
+headers, common interface headers, and then local interface headers.
+The include order for headers within a source file is common.h,
+its own interface header, common implementation headers, and then
+local implementation headers. Adhering to this order will avoid nasty
+ordering dependencies and makes it easy to change things down the road.
 
 Ideally, there should be one class per file.  There are, of course,
 exceptions to this such as simple utility classes that are local to
