@@ -614,16 +614,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
     PlayerInfo& pi = playerData->player;
 
     if (i != index && pi.isPlaying()) {
-      if (((code == MsgPlayerUpdate) || (code == MsgPlayerUpdateSmall))
-	  && pi.haveFlag()
-	  && (FlagInfo::get(pi.getFlag())->flag.type == Flags::Lag)) {
-	// delay sending to this player
-	playerData->delayq.addPacket(len+4, rawbuf,
-				     BZDB.eval(StateDatabase::BZDB_FAKELAG));
-      } else {
-	// send immediately
-	pwrite(*playerData, rawbuf, len + 4);
-      }
+      pwrite(*playerData, rawbuf, len + 4);
     }
   }
 }
@@ -2767,9 +2758,6 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 
   drpFlag.dropFlag(pos, landing, vanish);
 
-  // removed any delayed packets (in case it was a "Lag Flag")
-  playerData.delayq.dequeuePackets();
-
   // player no longer has flag -- send MsgDropFlag
   sendDrop(drpFlag);
 
@@ -4070,16 +4058,6 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
 static void doStuffOnPlayer(GameKeeper::Player &playerData)
 {
   int p = playerData.getIndex();
-
-  // send delayed packets
-  void *data;
-  int length;
-  if (playerData.delayq.getPacket(&length, &data)) {
-    int result = pwrite(playerData, data, length);
-    free(data);
-    if (result == -1)
-      return;
-  }
 
   // kick idle players
   if (clOptions->idlekickthresh > 0) {

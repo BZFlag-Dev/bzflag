@@ -36,7 +36,6 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_cullElements",		"16",				false, StateDatabase::Locked},
   { "_cullOccluders",		"0",				false, StateDatabase::Locked},
   { "_explodeTime",		"5.0",				false, StateDatabase::Locked},
-  { "_fakeLag",			"0.5",				false, StateDatabase::Locked},
   { "_flagAltitude",		"11.0",				false, StateDatabase::Locked},
   { "_flagEffectTime",		"0.64",				false, StateDatabase::Locked},
   { "_flagHeight",		"10.0",				false, StateDatabase::Locked},

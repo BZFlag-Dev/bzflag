@@ -8,10 +8,7 @@ MAINTAINERCLEANFILES = \
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
 lib3D_a_SOURCES =		\
-	3DOptionsManager.cxx	\
 	BitmapFont.cxx		\
-	DisplayListManager.cxx	\
-	DrawablesManager.cxx	\
 	FontManager.cxx		\
 	ImageFont.cxx		\
 	TextureFont.cxx		\

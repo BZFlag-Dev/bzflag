@@ -110,7 +110,6 @@ BZFlag 1.11.x (development)
 * Throw away bad or early links in world files - Tim Riker
 * Added Record/Replay feature - Anonymous
 * Added Random teleporter destinations - Anonymous
-* Added Lag bad flag - Anonymous
 * Poll to reset flags and Poll-cheating prevention - Ian Agar
 * Flag and Tank Entry Zones - Dave Brosius
 * Spawn improvements - Dave Brosius, Daniel Remenak

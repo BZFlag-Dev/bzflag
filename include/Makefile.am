@@ -1,6 +1,5 @@
 
 noinst_HEADERS =			\
-	3DOptionsManager.h		\
 	Address.h			\
 	AdnsHandler.h			\
 	AnsiCodes.h			\
@@ -31,10 +30,7 @@ noinst_HEADERS =			\
 	ConeObstacle.h			\
 	ConfigFileManager.h		\
 	Country.h			\
-	DelayQueue.h			\
 	DirectoryNames.h		\
-	DisplayListManager.h		\
-	DrawablesManager.h		\
 	DynamicColor.h			\
 	EighthDBaseSceneNode.h		\
 	EighthDBoxSceneNode.h		\

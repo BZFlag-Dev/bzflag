@@ -24,7 +24,6 @@
 #endif
 
 // common interface headers
-#include "DelayQueue.h"
 #include "PlayerInfo.h"
 #include "PlayerState.h"
 
@@ -92,8 +91,6 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState      *lastState;
-    // DelayQueue for "Lag Flag"
-    DelayQueue	delayq;
     // FlagHistory
     FlagHistory       flagHistory;
     // Score

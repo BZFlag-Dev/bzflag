@@ -9,7 +9,6 @@ libGame_a_SOURCES =			\
 	BzMaterial.cxx			\
 	CollisionManager.cxx		\
 	CommandsStandard.cxx		\
-	DelayQueue.cxx			\
 	DirectoryNames.cxx		\
 	DynamicColor.cxx		\
 	Frustum.cxx			\

@@ -99,7 +99,6 @@ const std::string StateDatabase::BZDB_CULLELEMENTS      = std::string("_cullElem
 const std::string StateDatabase::BZDB_CULLOCCLUDERS     = std::string("_cullOccluders");
 const std::string StateDatabase::BZDB_DISABLEBOTS       = std::string("_disableBots");
 const std::string StateDatabase::BZDB_EXPLODETIME       = std::string("_explodeTime");
-const std::string StateDatabase::BZDB_FAKELAG		= std::string("_fakeLag");
 const std::string StateDatabase::BZDB_FLAGALTITUDE      = std::string("_flagAltitude");
 const std::string StateDatabase::BZDB_FLAGEFFECTTIME    = std::string("_flagEffectTime");
 const std::string StateDatabase::BZDB_FLAGHEIGHT	= std::string("_flagHeight");
