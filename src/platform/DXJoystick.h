@@ -45,9 +45,10 @@ class DXJoystick : public BzfJoystick {
   private:
     DIJOYSTATE	pollDevice();
 
+    static std::vector<DIDEVICEINSTANCE> devices;
+
     IDirectInput7* directInput;
     IDirectInputDevice7* device;
-    static std::vector<DIDEVICEINSTANCE> devices;
 
     /* Nasty callbacks 'cause DirectX sucks */
 

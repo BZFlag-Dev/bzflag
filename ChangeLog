@@ -3,8 +3,10 @@
 
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
+
+* Windows Multimedia and DirectInput joystick support - Daniel Remenak
 * bzfs can now announce to multiple public list servers - Sean Morrison
-* Add shared public server bans via a master ban list - Jeff Meyers and..
+* Add shared public server bans via a master ban list - Jeff Myers and...
 	 - Alfredo Tupone, Daniel Remenak, Sean Morrison, Bryan Jennings
 * Linux event device joystick and force feedback support - Micah Dowty
 * Inform users when they are banned on login, and send the ban reason,

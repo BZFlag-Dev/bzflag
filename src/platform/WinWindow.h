@@ -58,7 +58,7 @@ class WinWindow : public BzfWindow {
     void		freeContext();
 
     // other Windows stuff
-    HWND		getHandle() const;
+    static HWND		getHandle();
     LONG		queryNewPalette();
     void		paletteChanged();
     bool		activate();
@@ -83,7 +83,7 @@ class WinWindow : public BzfWindow {
     const WinDisplay*	display;
     WinVisual		visual;
     bool		inDestroy;
-    HWND		hwnd;
+    static HWND		hwnd;
     HWND		hwndChild;
     HGLRC		hRC;
     HDC			hDC;

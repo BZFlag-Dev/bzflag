@@ -20,6 +20,11 @@
 #include <vector>
 #include <string>
 
+/* local impl. headers */
+#include "WinWindow.h"
+#include "ErrorHandler.h"
+#include "TextUtils.h"
+
 std::vector<DIDEVICEINSTANCE> DXJoystick::devices;
 
 DXJoystick::DXJoystick() : device(NULL)
@@ -29,7 +34,7 @@ DXJoystick::DXJoystick() : device(NULL)
 					(void**)&directInput, NULL);
 
   if (success != DI_OK) {
-    // Oops, could not create directinput object - what to do now?
+    printError("Could not initialize DirectInput.");
     return;
   }
 
@@ -37,7 +42,7 @@ DXJoystick::DXJoystick() : device(NULL)
 			   NULL, DIEDFL_ATTACHEDONLY);
 
   if (success != DI_OK) {
-    // Oops, could not enumerate devices - what to do now?
+    printError("Could not enumerate DirectInput devices.");
     return;
   }
 
@@ -69,13 +74,15 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   for (unsigned int i = 0; i < devices.size(); i++) {
     if (joystickName = devices[i].tszProductName)
       thisDevice = devices[i].guidInstance;
+      break;
+    }
   }
   HRESULT success = directInput->CreateDeviceEx(thisDevice,
 						IID_IDirectInputDevice7,
 						(void**)&device, NULL);
 
   if (success != DI_OK) {
-    // couldn't create (device might not exist)
+    printError(string_util::format("Could not initialize DirectInput device: %s", joystickName));
     return;
   }
 
@@ -84,15 +91,15 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    * because we're greedy.
    */
 
-  /* FIXME - don't have hwnd here, would have to get it from WinWindow
-  success = device->SetCooperativeLevel(hwnd, DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+  success = device->SetCooperativeLevel(WinWindow::getHandle(), 
+					DISCL_BACKGROUND | DISCL_EXCLUSIVE);
 
   if (success != DI_OK) {
     // couldn't grab device, what to do now?
+    printError(string_util::format("Could not set exclusive mode on %s", joystickName));
     device = NULL;
     return;
   }
-  */
 
   /*
    * Set the device data format.  We want buttons and axis, so we'll use a
@@ -103,6 +110,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
 
   if (success != DI_OK) {
     // couldn't set data format, what to do now?
+    printError(string_util::format("Could not set return data format for %s", joystickName));
     device = NULL;
     return;
   }
@@ -123,7 +131,8 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
 
   if (success != DI_OK) {
-     // couldn't set x axis range, what to do now?
+    // couldn't set x axis range, what to do now?
+    printError(string_util::format("Could not set X-axis ranges for %s", joystickName));
     device = NULL;
     return;
   }
@@ -134,6 +143,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
 
   if (success != DI_OK) {
     // couldn't set y axis range, what to do now?
+    printError(string_util::format("Could not set Y-axis ranges for %s", joystickName));
     device = NULL;
     return;
   }
@@ -146,6 +156,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   
   if (success != DI_OK) {
     // couldn't acquire, what to do now?
+    printError(string_util::format("Could not aquire %s", joystickName));
     device = NULL;
     return;
   }
@@ -207,6 +218,8 @@ DIJOYSTATE    DXJoystick::pollDevice()
 	device = NULL;
 	return state;
       }
+    } else {
+      printError("Acquisition succeeded, but could not get joystick status.");
     }
   }
 
@@ -221,17 +234,103 @@ void	      DXJoystick::getJoyDevices(std::vector<std::string> &list) const
 }
 
 /*
- * Force feedback functions for future use.
+ * Cool force feedback functions.
  */
 
 bool	      DXJoystick::ffHasRumble() const
 {
+  if (!device)
+    return false;
+  
+  DIDEVCAPS caps;
+  caps.dwSize = sizeof(DIDEVCAPS);
+
+  HRESULT success = device->GetCapabilities(&caps);
+
+  if (success != DI_OK) {
+    // couldn't get capabilities, assume no force feedback
+    printError("Could not get joystick capabilities, assuming no force feedback.");
+    return false;
+  }
+
+  // if we support force feedback, assume we support rumble
+  if (caps.dwFlags & DIDC_FORCEFEEDBACK)
+    return true;
+
   return false;
 }
 
 void	      DXJoystick::ffRumble(int count, float delay, float duration,
 				   float strong_motor, float weak_motor)
 {
+  /*
+   * Create a constant "rumbling" effect with the specified parameters
+   * Note that on joysticks that support "real" force feedback this will
+   * probably just feel like a constant pressure.
+   */
+  DICONSTANTFORCE constantForce;
+  constantForce.lMagnitude = DI_FFNOMINALMAX * ((strong_motor + weak_motor) / 2);
+
+  /*
+   * Build the actual effect
+   */
+  DWORD axes[3] = {DIJOFS_X, DIJOFS_Y, DIJOFS_Z};
+  LONG  dir[3] = {1, 1, 1};
+
+  LPDIRECTINPUTEFFECT createdEffect;
+
+  DIEFFECT effect;
+  effect.dwSize = sizeof(DIEFFECT);
+  // coordinate system really doesn't matter for rumbles but we need to specify it.
+  effect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+  // duration
+  effect.dwDuration = duration * DI_SECONDS;
+  // defaults
+  effect.dwSamplePeriod = 0;
+  effect.dwGain = DI_FFNOMINALMAX;
+  effect.dwTriggerButton = DIEB_NOTRIGGER;
+  effect.dwTriggerRepeatInterval = 0;
+  // all axes
+  effect.cAxes = 3;
+  effect.rgdwAxes = &axes[0];
+  // direction doesn't matter
+  effect.rglDirection = &dir[0];
+  // no envelope
+  effect.lpEnvelope = NULL;
+  // use the constant force data
+  effect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+  effect.lpvTypeSpecificParams = &constantForce;
+  // start delay
+  effect.dwStartDelay = delay * DI_SECONDS;
+
+  // create the effect
+  HRESULT success = device->CreateEffect(GUID_ConstantForce, &effect, &createdEffect, NULL);
+
+  if (success != DI_OK) {
+    // uh-oh, no worky
+    char buffer[40] = {0};
+    if (success == DIERR_DEVICENOTREG)
+      sprintf(buffer, "Device not registered");
+    else if (success == DIERR_DEVICEFULL)
+      sprintf(buffer, "Device is full");
+    else if (success == DIERR_INVALIDPARAM)
+      sprintf(buffer, "Invalid parameter");
+    else if (success == DIERR_NOTINITIALIZED)
+      sprintf(buffer, "Device not initialized");
+    else
+      sprintf(buffer, "Unknown error");
+    printError(string_util::format("Could not create rumble effect (%s).", buffer));
+    return;
+  }
+
+  // play the thing
+  success = createdEffect->Start(count, 0);
+
+  if (success != DI_OK) {
+    // uh-oh, no worky
+    printError("Could not play rumble effect.");
+  }
+
   return;
 }
 

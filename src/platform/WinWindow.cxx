@@ -21,12 +21,13 @@
 WinWindow*		WinWindow::first = NULL;
 HPALETTE		WinWindow::colormap = NULL;
 
+HWND WinWindow::hwnd = NULL;
+
 WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 				BzfWindow(_display),
 				display(_display),
 				visual(*_visual),
 				inDestroy(false),
-				hwnd(NULL),
 				hwndChild(NULL),
 				hRC(NULL),
 				hDC(NULL),
@@ -426,7 +427,7 @@ void			WinWindow::reactivateAll()
     OpenGLGState::initContext();
 }
 
-HWND			WinWindow::getHandle() const
+HWND			WinWindow::getHandle()
 {
   return hwnd;
 }
