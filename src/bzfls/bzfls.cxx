@@ -17,7 +17,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
 #if defined(_WIN32)
 #include <windows.h>
-#define	strcasecmp	_stricmp
 #define sleep(_x)	Sleep(1000 * (_x))
 #endif /* defined(_WIN32) */
 

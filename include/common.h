@@ -44,6 +44,10 @@
 typedef int socklen_t;
 #endif
 
+#if defined HAVE_STRICMP
+#define strcasecmp _stricmp
+#endif
+
 #include <assert.h>
 #include <stddef.h>
 

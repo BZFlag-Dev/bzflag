@@ -37,3 +37,6 @@
 
 /* Enabling Robots */
 #define ROBOT 1
+
+/* On windows, strcasecmp is really stricmp */
+#define HAVE_STRICMP 1

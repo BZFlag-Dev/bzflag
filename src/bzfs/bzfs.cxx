@@ -52,7 +52,6 @@ const int udpBufSize = 128000;
 
 #if defined(_WIN32)
 #include <windows.h>
-#define strcasecmp _stricmp
 #define popen _popen
 #define pclose _pclose
 #define sleep(_x) Sleep(1000 * (_x))
