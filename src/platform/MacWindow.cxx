@@ -162,7 +162,7 @@ class GLContext
     }
 
     void Flush() {
-      glFinish();
+      // glFinish(); CGLFlushDrawable says don't call glFinsh first
       if (cgl_context)
 	CGLFlushDrawable(cgl_context);
     }
