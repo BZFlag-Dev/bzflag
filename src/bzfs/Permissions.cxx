@@ -442,7 +442,6 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 		}
 		
 		// Operators are not allowed for userdb
-		// FIXME: until now we don't use userdb permissions at all
 		if ( !info.groupState.test(PlayerAccessInfo::isGroup) && first != NULL){
 			DEBUG1("userdb: illegal permission string, operators are not allowed in udserdb\n");
 			return;
