@@ -1321,6 +1321,7 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
   switch (code) {
     case MsgAddPlayer:
     case MsgCaptureFlag:
+    case MsgEnter:
     case MsgPlayerUpdate:
     case MsgRemovePlayer:
     case MsgScoreOver:
@@ -1365,7 +1366,6 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
 	// server version
 	patchPlayerId(fromId, toId, msg, 4);
       ;;
-    case MsgEnter:
     case MsgAccept:
     case MsgClientVersion:
     case MsgExit:
