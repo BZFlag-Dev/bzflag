@@ -4358,13 +4358,15 @@ int main(int argc, char **argv)
 
     // send lag pings
     for (int j=0;j<curMaxPlayers;j++) {
-      int nextPingSeqno = GameKeeper::Player::getPlayerByIndex(j)->lagInfo
-	->getNextPingSeqno();
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(j);
+      if (p != NULL) {
+        int nextPingSeqno = p->lagInfo->getNextPingSeqno();
 	if (nextPingSeqno > 0) {
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUShort(bufStart, nextPingSeqno);
 	  directMessage(j, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
 	}
+      }
     }
 
     // occasionally add ourselves to the list again (in case we were
