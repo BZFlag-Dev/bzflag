@@ -16,6 +16,7 @@
 #define __VERSION_H__
 
 #ifndef BZ_BUILD_DATE
+extern int getBuildDate();
 #define BZ_BUILD_DATE		getBuildDate()
 #endif
 

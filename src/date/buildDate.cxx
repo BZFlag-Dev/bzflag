@@ -49,7 +49,7 @@ const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 /* *nix gets this from the passed from my the Makefile */
 char buildDate[] = {__DATE__};
 
-inline int getBuildDate()
+int getBuildDate()
 {
   int year = 1900, month = 0, day = 0;
   char monthStr[512];
