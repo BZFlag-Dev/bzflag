@@ -7,7 +7,7 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   start from 0001 when 1.10 is released.  otherwise it gets unnecessarily bumped to
   match the client version.  it's a separate communication protocol version.
 
-* Test, Test, Test
+* Test, Test
 
 * Name the version
 
@@ -45,8 +45,6 @@ THESE ARE LOWER PRIORITY
    to do global scoping on key actions
 
 * StateDatabase should probably have min max values for eval values
-
-* move version functions to buildDate.cxx
 
 * split -public <desc> into -public, -description <desc>, and -email <contact>
 
