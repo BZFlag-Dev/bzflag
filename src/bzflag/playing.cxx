@@ -5179,7 +5179,6 @@ static void		findFastConfiguration()
   timeConfigurations();
 
   sceneRenderer->setSceneDatabase(NULL);
-  delete timingScene;
 }
 
 static void		defaultErrorCallback(const char* msg)
