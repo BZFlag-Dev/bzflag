@@ -82,6 +82,23 @@ inline void W32_DEBUG_TRACE (const char*) {return;}
 #define	tanf		(float)tan
 #endif
 
+#if defined (__APPLE__) && defined (__GNUC__) && ( __GNUC__ == 3 )
+#include <math.h>
+extern "C" {
+  inline float acosf(float x) {
+    return (float) acos( (double) x);
+  }
+
+  inline float atanf(float x) {       
+    return (float) atan( (double) x);
+  }
+  
+  inline float asinf(float x) {       
+    return (float) asin( (double) x);
+  }
+}
+#endif
+
 // random number stuff
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)
