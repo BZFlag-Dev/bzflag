@@ -153,7 +153,7 @@ protected:
     unsigned int i;
     bzfsrand(0); // ensure consistent seed and same rand value order
     for (i=0; i < 0x10000; i++) {
-      _random_floats[i] = bzfrand();
+      _random_floats[i] = (float)bzfrand();
     }
   }
 

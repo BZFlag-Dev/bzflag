@@ -137,7 +137,7 @@ double PositionTracker::distanceBetween(unsigned short int from, unsigned short 
     (fromSet[from]->position[2] - toSet[to]->position[3]);
 
   // basic Cartesian 3-space formula for distance between two points
-  return math_util::fastsqrt(distanceSquared);
+  return math_util::fastsqrt((float)distanceSquared);
 }
 
 
