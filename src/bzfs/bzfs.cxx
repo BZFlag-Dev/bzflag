@@ -2078,6 +2078,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     delete lagInfo[playerIndex];
     lagInfo[playerIndex] = NULL;
     delete score[playerIndex];
+    score[playerIndex] = NULL;
   }
 
   // player is outta here.  if player never joined a team then
