@@ -3201,43 +3201,44 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   return false;
 }
 
+
 bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 {
   PlayerInfo player = playerData->player;
-  std::string tempmsg = message;
-  std::string lmsg = player.getLastMsg();
+  std::string newMsg = message;
+  std::string oldMsg = player.getLastMsg();
   float dt = TimeKeeper::getCurrent() - player.getLastMsgTime();
 
   // if it's first message, or enough time since last message - can't be spam yet
-  if (lmsg.length() > 0 && dt > clOptions->msgTimer) {
+  if (oldMsg.length() > 0 && dt > clOptions->msgTimer) {
     // might be spam, start doing comparisons
-
+    
     // don't consider whitespace
-    for (std::string::iterator c = tempmsg.begin(); c <= tempmsg.end(); c++)
+    for (std::string::iterator c = newMsg.begin(); c <= newMsg.end(); c++)
       if (isspace(*c))
-	tempmsg.erase(c);
-
+	newMsg.erase(c);
+    
     // does it match the last message? (disregarding whitespace and case)
-    if (TextUtils::compare_nocase(tempmsg, lmsg) == 0) {
+    if (TextUtils::compare_nocase(newMsg, oldMsg) == 0) {
       player.incSpamWarns();
       sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
+
       // has this player already had his share of warnings?
-      if (player.getSpamWarns() > clOptions->spamWarnMax
-	  || clOptions->spamWarnMax == 0) {
+      if (player.getSpamWarns() > clOptions->spamWarnMax || clOptions->spamWarnMax == 0) {
 	sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-	DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
-	      "%d second(s) in between; player was warned %d times]",
-	      player.getCallSign(), t, dt, player.getSpamWarns());
+	DEBUG2("Kicking player %s [%d] for spamming too much: 2 messages sent within %ds after %d warnings",
+	       player.getCallSign(), t, dt, player.getSpamWarns());
 	removePlayer(t, "spam");
 	return true;
       }
     }
   }
-
+  
   // record this message for next time
-  player.setLastMsg(tempmsg);
+  player.setLastMsg(newMsg);
   return false;
 }
+
 
 static void handleCommand(int t, const void *rawbuf)
 {
