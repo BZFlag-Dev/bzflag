@@ -2714,8 +2714,9 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 
   if (isTeamFlag) {
     vanish = false;
-  } else if (--drpFlag.grabs == 0) {
+  } else if (--drpFlag.grabs <= 0) {
     vanish = true;
+    drpFlag.grabs = 0;
   } else {
     vanish = !safelyDropped;
   }
