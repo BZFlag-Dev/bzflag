@@ -34,7 +34,8 @@ bzadmin_SOURCES = \
 	StdOutUI.cxx \
 	UIMap.h \
 	UIMap.cxx \
-	bzadmin.cxx
+	bzadmin.cxx \
+	pdcurses_adapter.h
 
 noinst_HEADERS = \
 	buildDate.cxx

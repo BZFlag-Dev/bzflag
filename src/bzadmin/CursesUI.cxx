@@ -120,7 +120,8 @@ bool CursesUI::checkCommand(string& str) {
     return false;
 
     // send command
-  case 13:
+  case '\n': // works with PDCurses
+  case 13:   // works with ncurses
     if (history.size() == maxHistory)
       history.erase(history.begin());
     history.push_back(cmd);

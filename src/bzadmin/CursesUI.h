@@ -17,7 +17,18 @@
 #include <map>
 #include <string>
 
+#include "config.h"
+
+// which curses?
+#ifdef HAVE_CURSES_H
 #include <curses.h>
+#else
+#ifdef HAVE_NCURSES_H
+#include <ncurses.h>
+#else
+#include "pdcurses_adaptor.h"
+#endif
+#endif
 
 #include "Address.h"
 #include "AutoCompleter.h"
