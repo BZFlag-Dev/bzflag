@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>BZFlag</string>
 	<key>CFBundleGetInfoString</key>
-	<string>BZFlag version 1.11.1, 1993-2004 Tim Riker, Chris Schoeneman</string>
+	<string>BZFlag version 1.11.1, Copyright (c) 1993-2005 Tim Riker</string>
 	<key>CFBundleIconFile</key>
 	<string>MacBZFlag.icns</string>
 	<key>CFBundleIdentifier</key>

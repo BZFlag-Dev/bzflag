@@ -160,7 +160,7 @@ BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,21,20
     LTEXT           "BZFlag TextTool Version 1.0",IDC_STATIC,40,10,119,8,
                     SS_NOPREFIX
-    LTEXT           "Copyright (C) 2003-2004 Tim Riker",IDC_STATIC,40,34,119,
+    LTEXT           "Copyright (c) 2003-2005 Tim Riker",IDC_STATIC,40,34,119,
                     8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
     LTEXT           "Authors: Jeff Myers, Daniel Remenak",IDC_STATIC,40,22,
@@ -195,7 +195,7 @@ BEGIN
             VALUE "FileDescription", "BZFlag TextTool MFC Application\0"
             VALUE "FileVersion", "1, 0, 0, 1\0"
             VALUE "InternalName", "TextTool\0"
-            VALUE "LegalCopyright", "Copyright (C) 2003-2004 Tim Riker\0"
+            VALUE "LegalCopyright", "Copyright (c) 2003-2005 Tim Riker\0"
             VALUE "OriginalFilename", "TextTool.EXE\0"
             VALUE "ProductName", "BZFlag\0"
             VALUE "ProductVersion", "1.11+\0"
