@@ -2300,9 +2300,6 @@ static void addPlayer(int playerIndex)
    } else if (t == NoTeam) {
      rejectPlayer(playerIndex, RejectBadTeam);
 	 return;
-   } else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle)) {
-     rejectPlayer(playerIndex, RejectNoRogues);
-     return;
    } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
      for (int i = RogueTeam; i < NumTeams; i++) {
        if (team[i].team.size < clOptions->maxTeam[i]) {

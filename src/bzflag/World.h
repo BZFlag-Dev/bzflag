@@ -47,7 +47,6 @@ class World {
 
     bool		allowTeamFlags() const;
     bool		allowSuperFlags() const;
-    bool		allowRogues() const;
     bool		allowJumping() const;
     bool		allowInertia() const;
     bool		allShotsRicochet() const;
@@ -212,11 +211,6 @@ inline bool		World::allowTeamFlags() const
 inline bool		World::allowSuperFlags() const
 {
   return (gameStyle & short(SuperFlagGameStyle)) != 0;
-}
-
-inline bool		World::allowRogues() const
-{
-  return (gameStyle & short(RoguesGameStyle)) != 0;
 }
 
 inline bool		World::allowJumping() const

@@ -257,10 +257,6 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 
     // if all counts explicitly listed then add 'em up and set maxPlayers
     if (countCount == CtfTeams + 1) {
-      // if num rogues allowed team > 0, then set Rogues game style
-      if (options.maxTeam[RogueTeam] > 0) {
-	options.gameStyle |= int(RoguesGameStyle);
-      }
       softmaxPlayers = 0;
       for (i = 0; i < CtfTeams + 1; i++) {
 	softmaxPlayers += options.maxTeam[i];
@@ -696,12 +692,9 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "+r") == 0) {
       // all shots ricochet style
       options.gameStyle |= int(RicochetGameStyle);
-    } else if (strcmp(argv[i], "-r") == 0) {
-      // allow rogues
-      options.gameStyle |= int(RoguesGameStyle);
     } else if (strcmp(argv[i], "-rabbit") == 0) {
       // rabbit chase style
-      options.gameStyle |= int(RabbitChaseGameStyle)|int(RoguesGameStyle);
+      options.gameStyle |= int(RabbitChaseGameStyle);
       if (options.gameStyle & int(TeamFlagGameStyle)) {
 	options.gameStyle &= ~int(TeamFlagGameStyle);
 	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag\n");
@@ -1090,8 +1083,6 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       fprintf(stderr, "  rabbit chase\n");
     if (options.gameStyle & int(SuperFlagGameStyle))
       fprintf(stderr, "  super flags allowed\n");
-    if (options.gameStyle & int(RoguesGameStyle))
-      fprintf(stderr, "  rogues allowed\n");
     if (options.gameStyle & int(JumpingGameStyle))
       fprintf(stderr, "  jumping allowed\n");
     if (options.gameStyle & int(InertiaGameStyle))

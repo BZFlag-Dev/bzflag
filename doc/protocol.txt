@@ -323,7 +323,6 @@ is included with the MsgReject message:
 	RejectBadRequest        -- bogus data in MsgEnter
 	RejectBadTeam           -- invalid team id
 	RejectBadType           -- invalid client type
-	RejectNoRogues          -- rogue team requested but rogues not allowed
 	RejectTeamFull          -- no more players allowed on team
 	RejectServerFull        -- no more players allowed on any team
 

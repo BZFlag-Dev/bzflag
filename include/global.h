@@ -95,17 +95,17 @@ const float		RadarHiRangeFactor =	1.0f;	// high radar range
 
 // game styles
 enum GameStyle {
-			PlainGameStyle =		0x0000,
-			TeamFlagGameStyle =		0x0001,	// capture the flag
-			SuperFlagGameStyle =		0x0002,	// superflags allowed
-			RoguesGameStyle =		0x0004,	// rogues allowed
-			JumpingGameStyle =		0x0008,	// jumping allowed
-			InertiaGameStyle =		0x0010,	// momentum for all
-			RicochetGameStyle =		0x0020,	// all shots ricochet
-			ShakableGameStyle =		0x0040,	// can drop bad flags
-			AntidoteGameStyle =		0x0080,	// anti-bad flags
-			TimeSyncGameStyle =		0x0100,	// time sync'd to srvr
-			RabbitChaseGameStyle =	0x0200  // rabbit chase
+	PlainGameStyle =		0x0000,
+	TeamFlagGameStyle =		0x0001,	// capture the flag
+	SuperFlagGameStyle =		0x0002,	// superflags allowed
+	//UnusedGameStyle =		0x0004,	// was rogue, now we use team counts
+	JumpingGameStyle =		0x0008,	// jumping allowed
+	InertiaGameStyle =		0x0010,	// momentum for all
+	RicochetGameStyle =		0x0020,	// all shots ricochet
+	ShakableGameStyle =		0x0040,	// can drop bad flags
+	AntidoteGameStyle =		0x0080,	// anti-bad flags
+	TimeSyncGameStyle =		0x0100,	// time sync'd to srvr
+	RabbitChaseGameStyle =		0x0200	// rabbit chase
 };
 
 // map object flags

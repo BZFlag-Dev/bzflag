@@ -4679,14 +4679,13 @@ static void		addRobots()
 #endif
 
     robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
-    if (world->allowRabbit())
+    if (world->allowRabbit()) {
       robots[j]->setTeam(RogueTeam);
-    else if (world->allowRogues())
-      robots[j]->setTeam((TeamColor)((int)RogueTeam + (int)(bzfrand() *
-							    (int)(PurpleTeam - RogueTeam + 1))));
-    else
-      robots[j]->setTeam((TeamColor)((int)RedTeam + (int)(bzfrand() *
-							  (int)(PurpleTeam - RedTeam + 1))));
+    } else {
+      // TODO: use AutomaticTeam
+      robots[j]->setTeam((TeamColor)((int)RogueTeam +
+	  (int)(bzfrand() * (int)(PurpleTeam - RogueTeam + 1))));
+    }
 
     robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
 			      robots[j]->getCallSign(), robots[j]->getEmailAddress());
@@ -5077,10 +5076,6 @@ static bool		enterServer(ServerLink* serverLink, World* world,
     case RejectBadTeam:
     case RejectBadType:
       printError("Communication error joining game [Rejected].");
-      break;
-
-    case RejectNoRogues:
-      printError("Rogues not allowed.  Try another team.");
       break;
 
     case RejectTeamFull:
