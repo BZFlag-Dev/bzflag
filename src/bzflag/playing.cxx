@@ -3758,10 +3758,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       const char *oldcolor = NULL;
       if (dstTeam == RogueTeam || srcPlayer->getTeam() == NoTeam)
 	oldcolor = ColorStrings[RogueTeam];
-      else if (srcPlayer->getTeam() == ObserverTeam)
-        oldcolor = ColorStrings[CyanColor];
       else
 	oldcolor = ColorStrings[srcPlayer->getTeam()];
+
       addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
       break;
     } else if (fromServer) {
@@ -3864,12 +3863,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	fullMsg += text;
       }
       const char *oldcolor = NULL;
-      if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
-	oldcolor = ColorStrings[RogueTeam];
-      else if (srcPlayer->getTeam() == ObserverTeam)
-	oldcolor = ColorStrings[CyanColor];
-      else
+      if (srcPlayer && srcPlayer->getTeam() != NoTeam)
 	oldcolor = ColorStrings[srcPlayer->getTeam()];
+      else
+	oldcolor = ColorStrings[RogueTeam];
       addMessage(NULL, fullMsg, false, oldcolor);
 
       if (!srcPlayer || srcPlayer!=myTank)
@@ -5313,12 +5310,36 @@ static bool		enterServer(ServerLink* serverLink, World* world,
       if (id == myTank->getId()) {
 	// it's me!  end of updates
 
-	// the server may dictate a team different than we asked for
+	// the server sends back the team the player was joined to
 	void *tmpbuf = buf;
 	uint16_t team, type;
 	tmpbuf = nboUnpackUShort(tmpbuf, type);
 	tmpbuf = nboUnpackUShort(tmpbuf, team);
-	myTank->setTeam((TeamColor)team);
+
+	// if server assigns us a different team, display a message
+	std::string teamMsg;
+	if (myTank->getTeam() != AutomaticTeam) {
+	  teamMsg = string_util::format("%s team was unavailable, you were joined to ",
+					Team::getName(myTank->getTeam()));
+	  if ((TeamColor)team == ObserverTeam) {
+	    teamMsg += "as an Observer";
+	  } else {
+	    teamMsg += string_util::format("the %s", 
+					   Team::getName((TeamColor)team));
+	  }
+	} else {
+	  if ((TeamColor)team == ObserverTeam) {
+	    teamMsg = "You were joined as an observer";
+	  } else {
+	    teamMsg = string_util::format("You were joined to the %s", 
+					  Team::getName((TeamColor)team));
+	  }
+	}
+	if (myTank->getTeam() != (TeamColor)team) {
+	  myTank->setTeam((TeamColor)team);
+	  hud->setAlert(1, teamMsg.c_str(), 8.0f, (TeamColor)team==ObserverTeam?true:false);
+	  addMessage(NULL, teamMsg.c_str(), true);
+	}
 	controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
 	radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
 	roaming = (myTank->getTeam() == ObserverTeam);
@@ -5854,8 +5875,11 @@ static void		playingLoop()
       pauseCountdown -= dt;
       if (pauseCountdown <= 0.0f) {
 
-	/* make sure it is really safe to pause..  make sure the player is
-	 * still on the ground and not in a building
+	/* make sure it is really safe to pause..  since the server
+	 * might make us drop our flag, make sure the player is on the
+	 * ground and not in a building.  prevents getting kicked
+	 * later for being in places we shouldn't without holding the
+	 * right flags.
 	 */
 	if (myTank->getLocation() == LocalPlayer::InBuilding) {
 	  // custom message when trying to pause while in a building
