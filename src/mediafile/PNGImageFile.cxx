@@ -61,7 +61,7 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
   }
 
   unsigned char* data = c->getData();
-  int width, height;
+  int32_t width, height;
   data = (unsigned char *)nboUnpackInt(data, width);
   data = (unsigned char *)nboUnpackInt(data, height);
 

@@ -664,14 +664,17 @@ void* ArcObstacle::pack(void* buf) const
 
 void* ArcObstacle::unpack(void* buf)
 {
+  int32_t inTmp;
   buf = transform.unpack(buf);
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackVector(buf, size);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, sweepAngle);
   buf = nboUnpackFloat(buf, ratio);
-  buf = nboUnpackInt(buf, divisions);
-  buf = nboUnpackInt(buf, phydrv);
+  buf = nboUnpackInt(buf, inTmp);
+  divisions = int(inTmp);
+  buf = nboUnpackInt(buf, inTmp);
+  phydrv = int(inTmp);
 
   int i;
   for (i = 0; i < 4; i++) {
@@ -679,7 +682,8 @@ void* ArcObstacle::unpack(void* buf)
   }
   for (i = 0; i < MaterialCount; i++) {
     int matindex;
-    buf = nboUnpackInt(buf, matindex);
+    buf = nboUnpackInt(buf, inTmp);
+    matindex = int(inTmp);
     materials[i] = MATERIALMGR.getMaterial(matindex);
   }
 

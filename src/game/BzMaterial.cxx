@@ -121,7 +121,8 @@ void* BzMaterialManager::pack(void* buf)
 
 void* BzMaterialManager::unpack(void* buf)
 {
-  unsigned int i, count;
+  unsigned int i;
+  uint32_t count;
   buf = nboUnpackUInt (buf, count);
   for (i = 0; i < count; i++) {
     BzMaterial* mat = new BzMaterial;
@@ -376,10 +377,12 @@ void* BzMaterial::pack(void* buf) const
 void* BzMaterial::unpack(void* buf)
 {
   int i;
+  int32_t inTmp;
 
   buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackInt(buf, dynamicColor);
+  buf = nboUnpackInt(buf, inTmp);
+  dynamicColor = int(inTmp);
   buf = unpack4Float(buf, ambient);
   buf = unpack4Float(buf, diffuse);
   buf = unpack4Float(buf, specular);
@@ -393,8 +396,10 @@ void* BzMaterial::unpack(void* buf)
   for (i = 0; i < textureCount; i++) {
     TextureInfo* texinfo = &textures[i];
     buf = nboUnpackStdString(buf, texinfo->name);
-    buf = nboUnpackInt(buf, texinfo->matrix);
-    buf = nboUnpackInt(buf, texinfo->combineMode);
+    buf = nboUnpackInt(buf, inTmp);
+    texinfo->matrix = int(inTmp);
+    buf = nboUnpackInt(buf, inTmp);
+    texinfo->combineMode = int(inTmp);
     texinfo->useAlpha = false;
     texinfo->useColor = false;
     texinfo->useSphereMap = false;

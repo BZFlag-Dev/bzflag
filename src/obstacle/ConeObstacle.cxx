@@ -443,20 +443,23 @@ void *ConeObstacle::pack(void *buf) const
 
 void *ConeObstacle::unpack(void *buf)
 {
+  int32_t inTmp;
   buf = transform.unpack(buf);
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackVector(buf, size);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, sweepAngle);
-  buf = nboUnpackInt(buf, divisions);
-  buf = nboUnpackInt(buf, phydrv);
+  buf = nboUnpackInt(buf, inTmp);
+  divisions = int(inTmp);
+  buf = nboUnpackInt(buf, inTmp);
+  phydrv = int(inTmp);
 
   int i;
   for (i = 0; i < 2; i++) {
     buf = nboUnpackFloat(buf, texsize[i]);
   }
   for (i = 0; i < MaterialCount; i++) {
-    int matindex;
+    int32_t matindex;
     buf = nboUnpackInt(buf, matindex);
     materials[i] = MATERIALMGR.getMaterial(matindex);
   }

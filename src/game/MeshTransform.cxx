@@ -109,7 +109,8 @@ void * MeshTransformManager::pack(void *buf) const
 
 void * MeshTransformManager::unpack(void *buf)
 {
-  unsigned int i, count;
+  unsigned int i;
+  uint32_t count;
   buf = nboUnpackUInt (buf, count);
   for (i = 0; i < count; i++) {
     MeshTransform* transform = new MeshTransform;
@@ -608,6 +609,7 @@ void * MeshTransform::unpack(void *buf)
   buf = nboUnpackStdString(buf, name);
 
   uint32_t count;
+  int32_t inTmp;
   buf = nboUnpackUInt(buf, count);
 
   for (unsigned int i = 0; i < count; i++) {
@@ -616,7 +618,8 @@ void * MeshTransform::unpack(void *buf)
     buf = nboUnpackUByte (buf, type);
     transform.type = (TransformType) type;
     if (transform.type == IndexTransform) {
-      buf = nboUnpackInt (buf, transform.index);
+      buf = nboUnpackInt (buf, inTmp);
+      transform.index = int(inTmp);
       float* d = transform.data;
       d[0] = d[1] = d[2] = d[3] = 0.0f;
     } else {

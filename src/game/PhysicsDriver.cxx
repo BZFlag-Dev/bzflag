@@ -115,7 +115,8 @@ void * PhysicsDriverManager::pack(void *buf) const
 
 void * PhysicsDriverManager::unpack(void *buf)
 {
-  unsigned int i, count;
+  unsigned int i;
+  uint32_t count;
   buf = nboUnpackUInt (buf, count);
   for (i = 0; i < count; i++) {
     PhysicsDriver* driver = new PhysicsDriver;

@@ -107,7 +107,7 @@ void* WorldBuilder::unpack(void* buf)
   // unpack water level
   buf = nboUnpackFloat(buf, world->waterLevel);
   if (world->waterLevel >= 0.0f) {
-    int matindex;
+    int32_t matindex;
     buf = nboUnpackInt(buf, matindex);
     world->waterMaterial = MATERIALMGR.getMaterial(matindex);
   }

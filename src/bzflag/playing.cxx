@@ -1821,7 +1821,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackShort(msg, reason);
       msg = nboUnpackShort(msg, shotId);
       if (reason == (int16_t)PhysicsDriverDeath) {
-	msg = nboUnpackInt(msg, phydrv);
+        int32_t inPhyDrv;
+	msg = nboUnpackInt(msg, inPhyDrv);
+        phydrv = int(inPhyDrv);
       }
       BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
       BaseLocalPlayer* killerLocal = getLocalPlayer(killer);

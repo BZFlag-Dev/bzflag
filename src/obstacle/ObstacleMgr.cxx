@@ -163,7 +163,9 @@ void* GroupInstance::unpack(void* buf)
     buf = nboUnpackFloat(buf, tint[3]);
   }
   if (modifyPhysicsDriver) {
-    buf = nboUnpackInt(buf, phydrv);
+    int32_t inPhyDrv;
+    buf = nboUnpackInt(buf, inPhyDrv);
+    phydrv = int(inPhyDrv);
   }
 
   return buf;

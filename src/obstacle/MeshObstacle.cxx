@@ -553,8 +553,10 @@ void *MeshObstacle::pack(void *buf) const
 void *MeshObstacle::unpack(void *buf)
 {
   int i;
+  int32_t inTmp;
 
-  buf = nboUnpackInt(buf, checkCount);
+  buf = nboUnpackInt(buf, inTmp);
+  checkCount = int(inTmp);
   checkTypes = new char[checkCount];
   checkPoints = new fvec3[checkCount];
   for (i = 0; i < checkCount; i++) {
@@ -564,26 +566,30 @@ void *MeshObstacle::unpack(void *buf)
     buf = nboUnpackVector(buf, checkPoints[i]);
   }
 
-  buf = nboUnpackInt(buf, vertexCount);
+  buf = nboUnpackInt(buf, inTmp);
+  vertexCount = int(inTmp);
   vertices = new fvec3[vertexCount];
   for (i = 0; i < vertexCount; i++) {
     buf = nboUnpackVector(buf, vertices[i]);
   }
 
-  buf = nboUnpackInt(buf, normalCount);
+  buf = nboUnpackInt(buf, inTmp);
+  normalCount = int(inTmp);
   normals = new fvec3[normalCount];
   for (i = 0; i < normalCount; i++) {
     buf = nboUnpackVector(buf, normals[i]);
   }
 
-  buf = nboUnpackInt(buf, texcoordCount);
+  buf = nboUnpackInt(buf, inTmp);
+  texcoordCount = int(inTmp);
   texcoords = new fvec2[texcoordCount];
   for (i = 0; i < texcoordCount; i++) {
     buf = nboUnpackFloat(buf, texcoords[i][0]);
     buf = nboUnpackFloat(buf, texcoords[i][1]);
   }
 
-  buf = nboUnpackInt(buf, faceCount);
+  buf = nboUnpackInt(buf, inTmp);
+  faceCount = int(inTmp);
   faceSize = faceCount;
   faces = new MeshFace*[faceCount];
   for (i = 0; i < faceCount; i++) {

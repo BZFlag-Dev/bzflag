@@ -123,7 +123,8 @@ void * DynamicColorManager::pack(void *buf) const
 
 void * DynamicColorManager::unpack(void *buf)
 {
-  unsigned int i, count;
+  unsigned int i;
+  uint32_t count;
   buf = nboUnpackUInt (buf, count);
   for (i = 0; i < count; i++) {
     DynamicColor* color = new DynamicColor;
@@ -474,7 +475,8 @@ void * DynamicColor::unpack(void *buf)
 
   for (int c = 0; c < 4; c++) {
     ChannelParams& p = channels[c];
-    unsigned int i, size;
+    unsigned int i;
+    uint32_t size;
 
     buf = nboUnpackFloat (buf, p.minValue);
     buf = nboUnpackFloat (buf, p.maxValue);

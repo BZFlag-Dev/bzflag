@@ -3482,7 +3482,9 @@ possible attack from %s\n",
       buf = nboUnpackShort(buf, reason);
       buf = nboUnpackShort(buf, shot);
       if (reason == PhysicsDriverDeath) {
-	buf = nboUnpackInt(buf, phydrv);
+        int32_t inPhyDrv;
+	buf = nboUnpackInt(buf, inPhyDrv);
+        phydrv = int(inPhyDrv);
       }
 
       // Sanity check on shot: Here we have the killer

@@ -128,7 +128,8 @@ void * TextureMatrixManager::pack(void *buf) const
 
 void * TextureMatrixManager::unpack(void *buf)
 {
-  unsigned int i, count;
+  unsigned int i;
+  uint32_t count;
   buf = nboUnpackUInt (buf, count);
   for (i = 0; i < count; i++) {
     TextureMatrix* texmat = new TextureMatrix;

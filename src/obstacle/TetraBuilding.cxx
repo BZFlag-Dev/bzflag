@@ -431,7 +431,7 @@ void *TetraBuilding::unpack(void* buf)
 
   // unpack the materials
   for (v = 0; v < 4; v++) {
-    int matindex;
+    int32_t matindex;
     buf = nboUnpackInt(buf, matindex);
     materials[v] = MATERIALMGR.getMaterial(matindex);
   }

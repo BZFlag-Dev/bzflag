@@ -551,14 +551,14 @@ void *MeshFace::pack(void *buf) const
   // vertices
   buf = nboPackInt(buf, vertexCount);
   for (int i = 0; i < vertexCount; i++) {
-    int index = (fvec3*)vertices[i] - mesh->getVertices();
+    int32_t index = (fvec3*)vertices[i] - mesh->getVertices();
     buf = nboPackInt(buf, index);
   }
 
   // normals
   if (useNormals()) {
     for (int i = 0; i < vertexCount; i++) {
-      int index = (fvec3*)normals[i] - mesh->getNormals();
+      int32_t index = (fvec3*)normals[i] - mesh->getNormals();
       buf = nboPackInt(buf, index);
     }
   }
@@ -566,7 +566,7 @@ void *MeshFace::pack(void *buf) const
   // texcoords
   if (useTexcoords()) {
     for (int i = 0; i < vertexCount; i++) {
-      int index = (fvec2*)texcoords[i] - mesh->getTexcoords();
+      int32_t index = (fvec2*)texcoords[i] - mesh->getTexcoords();
       buf = nboPackInt(buf, index);
     }
   }
@@ -584,6 +584,7 @@ void *MeshFace::pack(void *buf) const
 
 void *MeshFace::unpack(void *buf)
 {
+  int32_t inTmp;
   driveThrough = shootThrough = smoothBounce = false;
   // state byte
   bool tmpNormals, tmpTexcoords;
@@ -597,10 +598,11 @@ void *MeshFace::unpack(void *buf)
   noclusters   = (stateByte & (1 << 5)) != 0;
 
   // vertices
-  buf = nboUnpackInt(buf, vertexCount);
+  buf = nboUnpackInt(buf, inTmp);
+  vertexCount = int(inTmp);
   vertices = new float*[vertexCount];
   for (int i = 0; i < vertexCount; i++) {
-    int index;
+    int32_t index;
     buf = nboUnpackInt(buf, index);
     vertices[i] = (float*)mesh->getVertices()[index];
   }
@@ -609,7 +611,7 @@ void *MeshFace::unpack(void *buf)
   if (tmpNormals) {
     normals = new float*[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
-      int index;
+      int32_t index;
       buf = nboUnpackInt(buf, index);
       normals[i] = (float*)mesh->getNormals()[index];
     }
@@ -619,19 +621,20 @@ void *MeshFace::unpack(void *buf)
   if (tmpTexcoords) {
     texcoords = new float*[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
-      int index;
+      int32_t index;
       buf = nboUnpackInt(buf, index);
       texcoords[i] = (float*)mesh->getTexcoords()[index];
     }
   }
 
   // material
-  int matindex;
+  int32_t matindex;
   buf = nboUnpackInt(buf, matindex);
   bzMaterial = MATERIALMGR.getMaterial(matindex);
 
   // physics driver
-  buf = nboUnpackInt(buf, phydrv);
+  buf = nboUnpackInt(buf, inTmp);
+  phydrv = int(inTmp);
 
   finalize();
 
