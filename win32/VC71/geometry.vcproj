@@ -163,6 +163,7 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1">
 			<Tool
 				Name="VCCLCompilerTool"/>
@@ -640,6 +641,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\geometry\TankGeometryMgr.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\geometry\TankSceneNode.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -914,6 +918,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\SphereSceneNode.h">
+			</File>
+			<File
+				RelativePath="..\..\include\TankGeometryMgr.h">
 			</File>
 			<File
 				RelativePath="..\..\include\TankSceneNode.h">

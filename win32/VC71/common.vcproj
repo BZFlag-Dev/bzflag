@@ -160,6 +160,7 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1">
 			<Tool
 				Name="VCCLCompilerTool"/>
@@ -195,6 +196,9 @@
 		<Filter
 			Name="Source Files"
 			Filter="c;cxx">
+			<File
+				RelativePath="..\..\src\common\AutoCompleter.cxx">
+			</File>
 			<File
 				RelativePath="..\..\src\common\Bundle.cxx">
 				<FileConfiguration
@@ -802,6 +806,9 @@
 			Filter="h">
 			<File
 				RelativePath="..\..\include\Address.h">
+			</File>
+			<File
+				RelativePath="..\..\include\AutoCompleter.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Bundle.h">
