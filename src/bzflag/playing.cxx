@@ -5505,6 +5505,12 @@ static bool		joinGame(const StartupInfo* info,
     lastEpochOffset = epochOffset;
   }
 
+  // restore the sound
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
+  }
+
   // initialize some other stuff
   updateNumPlayers();
   updateFlag(Flags::Null);
