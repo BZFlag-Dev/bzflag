@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "global.h"
 #include "MainWindow.h"
 #include "BzfWindow.h"
 #include "bzfgl.h"
@@ -26,8 +27,8 @@ MainWindow::MainWindow(BzfWindow* _window) :
 				allowMouseGrab(True),
 				zoomFactor(1),
 				width(0),
-				minWidth(256),
-				minHeight(192)
+				minWidth(MinX),
+				minHeight(MinY)
 {
   window->addResizeCallback(resizeCB, this);
   resize();
@@ -119,9 +120,9 @@ void			MainWindow::setNoMouseGrab()
 void			MainWindow::setQuadrant(Quadrant _quadrant)
 {
   int inWidth = trueWidth;
-  if (inWidth < 256) inWidth = 256;
+  if (inWidth < MinX) inWidth = MinX;
   int inHeight = trueHeight;
-  if (inHeight < 192) inHeight = 192;
+  if (inHeight < MinY) inHeight = MinY;
 
   quadrant = _quadrant;
   switch (quadrant) {
@@ -129,48 +130,56 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
     case FullWindow:
       width = inWidth;
       height = inHeight;
+      viewHeight = height >> 1;
       xOrigin = 0;
       yOrigin = 0;
       break;
     case UpperLeft:
       width = inWidth >> 1;
       height = inHeight >> 1;
+      viewHeight = height;
       xOrigin = 0;
       yOrigin = (inHeight+1) >> 1;
       break;
     case UpperRight:
       width = (inWidth+1) >> 1;
       height = inHeight >> 1;
+      viewHeight = height;
       xOrigin = inWidth >> 1;
       yOrigin = (inHeight+1) >> 1;
       break;
     case LowerLeft:
       width = inWidth >> 1;
       height = (inHeight+1) >> 1;
+      viewHeight = height;
       xOrigin = 0;
       yOrigin = 0;
       break;
     case LowerRight:
       width = (inWidth+1) >> 1;
       height = (inHeight+1) >> 1;
+      viewHeight = height;
       xOrigin = inWidth >> 1;
       yOrigin = 0;
       break;
     case UpperHalf:
       width = inWidth;
       height = inHeight >> 1;
+      viewHeight = height;
       xOrigin = 0;
       yOrigin = (inHeight+1) >> 1;
       break;
     case LowerHalf:
       width = inWidth;
       height = inHeight >> 1;
+      viewHeight = height;
       xOrigin = 0;
       yOrigin = 0;
       break;
     case ZoomRegion:
       width = inWidth;
       height = inHeight;
+      viewHeight = height;
       xOrigin = 0;
       yOrigin = 0;
       break;

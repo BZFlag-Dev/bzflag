@@ -242,16 +242,16 @@ void			HUDRenderer::resizeCallback(void* self)
 void			HUDRenderer::resize(boolean firstTime)
 {
   // get important metrics
-  const int w = firstTime ? 1280 : window.getWidth();
-  const int h = firstTime ? 1024 : window.getHeight();
+  const int w = firstTime ? MinX : window.getWidth();
+  const int h = firstTime ? MinY : window.getHeight();
 
   // compute good targeting box sizes
   {
-    const float xScale = (float)w / 1280.0f;
-    const float yScale = (float)h / 1024.0f;
+    const float xScale = (float)w / (float) MinX;
+    const float yScale = (float)h / (float) MinY;
     const float scale = (xScale < yScale) ? xScale : yScale;
     maxMotionSize = (int)((float)MaxMotionSize * scale);
-    noMotionSize = NoMotionSize; //(int)((float)NoMotionSize * scale);
+    noMotionSize = (int)((float)NoMotionSize * scale / 2.0f);
     headingOffset = 45.0f * (scale > 1.0f ? 1.0f : scale);
   }
 

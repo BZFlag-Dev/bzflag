@@ -74,11 +74,9 @@ class ControlPanel {
     int			panelHeight;
 
     OpenGLTexFont	messageFont;
-    int			width, blanking;
+    int			blanking;
     float		ratio;
     float		du, dv;
-    float		radarAreaUV[4];
-    float		messageAreaUV[4];
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
     ControlPanelMessageList	messages;

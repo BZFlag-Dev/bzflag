@@ -46,6 +46,7 @@ class MainWindow {
     int			getOriginY() const;
     int			getWidth() const;
     int			getHeight() const;
+    int			getViewHeight() const;
     boolean		getFullscreen();
 
     void		setQuit();
@@ -93,6 +94,7 @@ class MainWindow {
     int			xOrigin, yOrigin;
     int			width;
     int			height;
+    int			viewHeight;
     int			minWidth;
     int			minHeight;
 };
@@ -124,6 +126,11 @@ inline int		MainWindow::getWidth() const
 inline int		MainWindow::getHeight() const
 {
   return height;
+}
+
+inline int		MainWindow::getViewHeight() const
+{
+  return viewHeight;
 }
 
 #endif // BZF_MAIN_WINDOW_H

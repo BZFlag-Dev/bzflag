@@ -67,32 +67,13 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer, Res
   background[0] = 0;
   background[1] = 0;
   background[2] = 0;
-  background[3] = 0.3f;
 
   if (resources->hasValue( "opacity" ))
-	  background[3] = (float) atof(resources->getValue( "opacity" ));
-
-  const float iWidth = 256.0f;
-  const float iHeight = 192.0f;
-  const float iSize = iHeight / 4.0f;
-  const float dx = 1.0f / iWidth;
-  const float dy = 1.0f / iHeight;
-  float iSpace;
-  if (background[3] == 1.0f)
-    iSpace = 0.0f;
+    background[3] = (float) atof(resources->getValue( "opacity" ));
   else
-    iSpace = 4.0f;
-  radarAreaUV[0] = dx * iSpace;
-  radarAreaUV[1] = dy * iSpace;
-  radarAreaUV[2] = dx * (iSize - (iSpace * 2.0f));
-  radarAreaUV[3] = dy * (iSize - (iSpace * 2.0f));
-  messageAreaUV[0] = dx * iSize;
-  messageAreaUV[1] = dy * iSpace;
-  messageAreaUV[2] = dx * (iWidth - iSize - iSpace);
-  messageAreaUV[3] = dy * (iSize - (iSpace * 2.0f));
+    background[3] = 0.3f;
 
   // other initialization
-  width = 1;
   blanking = 0;
   radarAreaPixels[0] = 0;
   radarAreaPixels[1] = 0;
@@ -256,20 +237,24 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
 void			ControlPanel::resize()
 {
+  float radarSpace, radarSize;
   // get important metrics
   float w = (float)window.getWidth();
   const float h = (float)window.getHeight();
+  radarSize = h / 4.0f;
+  if (background[3] == 1.0f)
+    radarSpace = 0.0f;
+  else
+    radarSpace = 3.0f * w / MinY;
 
   // compute areas in pixels x,y,w,h
   // leave off 1 pixel for the border
-  radarAreaPixels[0] = (int)(w * radarAreaUV[0]) + 1;
-  radarAreaPixels[1] = (int)(h * radarAreaUV[1]) + 1;
-  radarAreaPixels[2] = (int)(w * radarAreaUV[2]) - 2;
-  radarAreaPixels[3] = (int)(h * radarAreaUV[3]) - 2;
-  messageAreaPixels[0] = (int)(w * messageAreaUV[0] + 1);
-  messageAreaPixels[1] = (int)(h * messageAreaUV[1] + 1);
-  messageAreaPixels[2] = (int)(w * messageAreaUV[2] - 2);
-  messageAreaPixels[3] = (int)(h * messageAreaUV[3] - 2);
+  radarAreaPixels[0] = radarAreaPixels[1] = (int)radarSpace + 1;
+  radarAreaPixels[2] = radarAreaPixels[3] = (int)(radarSize - (radarSpace * 2.0f)) - 2;
+  messageAreaPixels[0] = (int)radarSize + 1;
+  messageAreaPixels[1] = radarAreaPixels[1];
+  messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2;
+  messageAreaPixels[3] = radarAreaPixels[3];
 
   // if radar connected then resize it
   if (radarRenderer)
