@@ -4386,8 +4386,21 @@ static void		checkEnvironment(RobotPlayer* tank)
     // after dropping our shield flag.
     if (hit->isStoppedByHit())
       lookupServer(tank)->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
-    gotBlowedUp(tank, GotShot, hit->getPlayer(), hit->getShotId());
-    if (hit->isStoppedByHit()) {
+
+    FlagDesc* killerFlag = hit->getFlag();
+    bool stopShot;
+
+    if (killerFlag == Flags::Thief) {
+	if (myTank->getFlag() != Flags::Null) {
+		serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
+	}
+	stopShot = true;
+    }
+    else {
+        stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit->getShotId());
+    }
+
+    if (stopShot || hit->isStoppedByHit()) {
       Player* hitter = lookupPlayer(hit->getPlayer());
       if (hitter) hitter->endShot(hit->getShotId());
     }
