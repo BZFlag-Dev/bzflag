@@ -444,8 +444,10 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
 	fprintf(stderr, "Capture the flag assumed\n");
       }
-      for (int t = RedTeam; t <= PurpleTeam; t++)
-        options.numTeamFlags[t] = 1;
+      if ((options.gameStyle & int(TeamFlagGameStyle)) == 0) {
+        for (int t = RedTeam; t <= PurpleTeam; t++)
+          options.numTeamFlags[t] += 1;
+      }
     } else if (strcmp(argv[i], "-conf") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "filename expected for -conf\n");
@@ -474,6 +476,10 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
 	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
 	fprintf(stderr, "Capture the flag assumed\n");
+      }
+      if ((options.gameStyle & int(TeamFlagGameStyle)) == 0) {
+        for (int t = RedTeam; t <= PurpleTeam; t++)
+          options.numTeamFlags[t] += 1;
       }
 
       // if there are any arguments following, see if they are a
