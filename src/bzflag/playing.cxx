@@ -4736,7 +4736,7 @@ std::string		getCacheDirectoryName()
     }
   }
 
-  name += "\\bzflag-cache";
+  name += "\\My Bzflag Files\\bzflag-cache";
   mkdir(name.c_str());
   return name;
 
