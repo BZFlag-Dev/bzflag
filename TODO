@@ -1,14 +1,48 @@
 to do list for bzflag
 ---------------------
 
+* one tcp port. Tim Riker is working on this code. 1.7e4
+  included playerid mangling support to get ready for this.
+
+* break the net compatibility to allow some fixes
+   including:
+
+* player ids to one byte synced on server and clients
+
+* ipv6 support
+
+* version as strings as in 1.9.0-cvs20030604
+
+* if we stay with tcp/udp then use the same ports for the
+   udp pipe as for the tcp pipe on both client and server
+
+* consider using ENet http://enet.cubik.org/ for
+   the network protocol
+
 * encapsulate stuff requiring platform #ifdef's:
    networking API into libNet.a.
    fork/exec (used in menus.cxx) into libPlatform.a
    file system stuff (dir delimiter, etc.)
    user name stuff
 
-* windows makefiles
-   currently have microsoft visual c++ projects only
+* consider moving to LGPL instead of GPL
+
+* clean up libraries that could be reused by other games
+
+* allow the worlds to be resized as a server option
+
+* implement texture cache on client and have server offer
+   new textures as part of the world.
+
+* allow loadable meshes as "tanks"
+
+* supply tank "meshes" from the server
+
+* allow client to choose a mesh from the server list
+
+* implement one way cross server teleporters
+
+* implement a visual "server list" game server
 
 * auto-generated dependency support in makefiles
    manual dependencies cause too much trouble
@@ -42,10 +76,3 @@ to do list for bzflag
    a game.  basic text chat facilities.  allows players
    to wait for enough players for a game and to discuss
    strategy, etc.  could build this into bzfs easily.
-
-* spectator mode. Possibly only through a relay server
-  so as to not load down the normal server.
-
-* one tcp port. Tim Riker is working on this code. 1.7e4
-  should include playerid mangling support to get ready
-  for this patch.
