@@ -14,7 +14,7 @@
 // interface header 
 #include "RecordReplay.h"
 
-// implementation-specific system headers
+// system headers
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -35,14 +35,16 @@ typedef __int64 s64;
 #  include <dirent.h>
 #endif
 
-// implementation-specific bzflag headers
+// common headers
 #include "global.h"
-
-// implementation-specific bzfs-specific headers
+#include "Pack.h"
+#include "StateDatabase.h"
 #include "DirectoryNames.h"
 #include "NetHandler.h"
-#include "CmdLineOptions.h"
 #include "md5.h"
+
+// bzfs specific headers
+#include "CmdLineOptions.h"
 
 
 // Type Definitions
@@ -185,7 +187,7 @@ extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
-extern uint32_t worldDatabaseSize;
+extern u32 worldDatabaseSize;
 extern CmdLineOptions *clOptions;
 
 extern char *getDirectMessageBuffer(void);
@@ -220,7 +222,6 @@ static bool recordReset ()
 
 bool Record::init ()
 {
-  // FIXME - why even bother? it's all done at the top
   RecordDir = getRecordDirName();
   RecordMaxBytes = DefaultMaxBytes;
   RecordUpdateRate = DefaultUpdateRate;
@@ -396,7 +397,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
     return false;
   }
     
-  if (!Recording || (RecordMode != BufferedRecord)) { // FIXME - !Recording?
+  if (!Recording || (RecordMode != BufferedRecord)) {
     sendMessage (ServerPlayer, playerIndex, "No buffer to save");
     return false;
   }
@@ -1165,10 +1166,55 @@ resetStates ()
 }
 
 
+typedef struct {
+  void *bufStart;
+  void *buf;
+  int len;
+  int count;
+} packVarData;
+
+static void
+packVars (const std::string& key, void *data)
+{
+  packVarData& pvd = *((packVarData*) data);
+  std::string value = BZDB.get(key);
+  int pairLen = key.length() + 1 + value.length() + 1;
+  if ((pairLen + pvd.len) > (int)(MaxPacketLen - 2*sizeof(u16))) {
+    nboPackUShort(pvd.bufStart, pvd.count);
+    pvd.count = 0;
+    routePacket (MsgSetVar, pvd.len, pvd.bufStart, FakePacket);
+    pvd.buf = nboPackUShort(pvd.bufStart, 0); //placeholder
+    pvd.len = sizeof(u16);
+  }
+
+  pvd.buf = nboPackUByte(pvd.buf, key.length());
+  pvd.buf = nboPackString(pvd.buf, key.c_str(), key.length());
+  pvd.buf = nboPackUByte(pvd.buf, value.length());
+  pvd.buf = nboPackString(pvd.buf, value.c_str(), value.length());
+  pvd.len += pairLen;
+  pvd.count++;
+}
+
 static bool
 saveVariableStates ()
 {
-  //FIXME
+  // This is basically a PackVars.h rip-off, with the
+  // difference being that instead of sending packets
+  // to the network, it send them to routePacket().
+
+  char buffer[MaxPacketLen];
+  packVarData pvd;
+
+  pvd.bufStart = buffer;
+  pvd.buf      = buffer + sizeof(u16); // u16 placeholder for count
+  pvd.len      = 0;
+  pvd.count    = 0;
+  
+  BZDB.iterate (packVars, &pvd);
+  if (pvd.len > 0) {
+    nboPackUShort(pvd.bufStart, pvd.count);
+    routePacket (MsgSetVar, pvd.len, pvd.bufStart, FakePacket);
+  }
   return true;
 }
 
@@ -1202,8 +1248,6 @@ saveRRpacket (RRpacket *p, FILE *f)
     return false;
   }
 
-  // fflush (f); // FIXME (implement as a command, flush on ::kill()?)
-  
   RecordFileBytes += p->len + RRpacketHdrSize;
   RecordFilePackets++;
   RecordFilePrevLen = p->len;
@@ -1444,7 +1488,6 @@ loadHeader (ReplayHeader *h, FILE *f)
   buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
   buf = nboUnpackString (buf, h->fakeHash, sizeof (h->fakeHash));
   
-  // FIXME - make sure these don't leak anywhere
   h->flags = new char [h->flagsSize];
   h->world = new char [h->worldSize]; // use new, as defineWorld() does
   if ((h->flags == NULL) || (h->world == NULL)) {
