@@ -2882,6 +2882,9 @@ static void parseCommand(const char *message, int t)
 
   if (strncmp(message + 1, "me ", 3) == 0) {
     handleMeCmd(playerData, message);
+    
+  } else if (strncmp(message + 1, "msg", 3) == 0) {
+    handleMsgCmd(playerData, message);
 
   } else if (strncmp(message + 1, "password", 8) == 0) {
     handlePasswordCmd(playerData, message);
@@ -3925,6 +3928,8 @@ int main(int argc, char **argv)
     info.explicitAllows[PlayerAccessInfo::idleStats] = true;
     info.explicitAllows[PlayerAccessInfo::lagStats] = true;
     info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
+    info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
+    info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
     groupAccess["DEFAULT"] = info;
   }
   itr = groupAccess.find("REGISTERED");
