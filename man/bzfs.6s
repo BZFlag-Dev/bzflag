@@ -554,10 +554,10 @@ Write a message to the server administrator. Example:
 .B /viewreports
 View the server's report file.
 .TP
-.B /record
+.B /record [start | stop | size <mbytes> | rate <seconds> |stats | list |save <fname> [secs] | file <fname>]
 Record the current game until stopped.
 .TP
-.B /replay [ list | stop | load | play | skip [+- seconds] ]
+.B /replay [ list | load <filename> | play | skip [+- seconds] ]
 Perform certain actions relating to replaying recordings, if the server is in replay mode.
 .TP
 .B /shutdownserver
