@@ -130,7 +130,7 @@ std::string Bundle::getLocalString(const std::string &key) const
       if (unmapped.find( key ) == unmapped.end( )) {
         unmapped.insert( key );
 	std::string debugStr = "Unmapped Locale String: " + key + "\n";
-	DEBUG1( debugStr.c_str( ));
+	DEBUG1("%s", debugStr.c_str());
       }
     }
     return key;
