@@ -13,29 +13,51 @@
 #ifndef __SERVERLIST_H__
 #define __SERVERLIST_H__
 
-//Someone checked in code without a file called ServerList.h, that was needed.
-//Whoever this is, please check in the real file.
-//This is just a faux file so the thing stinkin' builds
-
-#include <vector>
+#include "ListServer.h"
+#include "BzfEvent.h"
 #include "ServerItem.h"
+#include "ServerList.h"
+#include "ServerListCache.h"
+#include "Protocol.h"
+#include "version.h"
 
-class ServerList
-{
+class ServerList {
 public:
-    unsigned int size();
-    int updateFromCache();
-    void startServerPings();
-    boolean searchActive();
-    void checkEchos();
-    std::vector<ServerItem> getServers();
+	ServerList();
+	virtual ~ServerList();
+	
+	void readServerList(int index);
+	void addToList(ServerItem&, bool doCache=false);
+	void addToListWithLookup(ServerItem&);
+	void checkEchos();
+	void addCacheToList();
+	void startServerPings();
+
+	bool searchActive();
+	const std::vector<ServerItem>& getServers();
+	std::vector<ServerItem>::size_type size();
+	int updateFromCache();
+	void clear();
+private:
+	void _shutDown();
+private:
+	bool m_addedCacheToList;
+	long m_numListServers;
+	int m_phase;
+	std::vector<ServerItem> m_servers;
+	ListServer m_listServers[MaxListServers];
+	ServerListCache* m_serverCache;
+	struct sockaddr_in pingInAddr;
+	int m_pingBcastSocket;
+	struct sockaddr_in m_pingBcastAddr;
 };
 
-inline unsigned int ServerList::size() { return 0; }
-inline int ServerList::updateFromCache() { return 0; }
-inline void ServerList::startServerPings() {}
-inline void ServerList::checkEchos() {}
-inline boolean ServerList::searchActive() {return true;}
-inline std::vector<ServerItem> ServerList::getServers() { return std::vector<ServerItem>(); }
-
 #endif
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
