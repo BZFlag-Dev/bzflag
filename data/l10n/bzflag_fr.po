@@ -457,7 +457,7 @@ msgid "Page {1} of {2}"
 msgstr "Page {1} sur {2}"
 
 msgid "openBroadcast: No udp service {1}"
-msgstr "open Broadcast: Pas de service UDP {1}"
+msgstr "openBroadcast: Pas de service UDP {1}"
 
 msgid "openMulticast: No udp service {1}"
 msgstr "openMulticast: Pas de service UDP {1}"
