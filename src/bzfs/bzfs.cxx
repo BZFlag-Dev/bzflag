@@ -3745,8 +3745,8 @@ static void parseCommand(const char *message, int t)
 		for (int i = 0; i < maxPlayers; i++)
 			if (player[i].fd != NotConnected) {
 				char reply[MessageLen];
-				sprintf(reply,"%-12s : %4dms (%d)",player[i].callSign,
-				int(player[i].lagavg*1000),player[i].lagcount);
+				sprintf(reply,"%-12s(%d) : %4dms (%d)", player[i].callSign,
+						i, int(player[i].lagavg*1000), player[i].lagcount);
 				sendMessage(t,t,player[t].team,reply);
 			}
 	}
