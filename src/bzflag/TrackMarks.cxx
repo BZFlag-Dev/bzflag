@@ -218,6 +218,7 @@ void TrackMarks::init()
   clear();
   setup();
   setUserFade(BZDB.eval("userTrackFade"));
+  setAirCulling((AirCullStyle)BZDB.evalInt("trackMarkCulling"));
   OpenGLGState::registerContextInitializer(initContext, NULL);
 
   return;
@@ -255,12 +256,6 @@ void TrackMarks::setUserFade(float value)
   UserFadeScale = value;
   BZDB.setFloat("userTrackFade", value);
 
-  if (UserFadeScale < 1.0f) { // FIXME
-    AirCull = NoAirCull;
-  } else {
-    AirCull = FullAirCull;
-  }
-
   return;
 }
 
@@ -273,14 +268,20 @@ float TrackMarks::getUserFade()
 
 void TrackMarks::setAirCulling(AirCullStyle style)
 {
+  if ((style < NoAirCull) || (style > FullAirCull)) {
+    style = NoAirCull;
+  }
+  
   AirCull = style;
+  BZDB.setInt("trackMarkCulling", style);
+  
   return;
 }
 
 
 AirCullStyle TrackMarks::getAirCulling()
 {
-  return AirCull;
+  return (AirCullStyle)BZDB.evalInt("trackMarkCulling");
 }
 
 

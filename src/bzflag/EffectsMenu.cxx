@@ -89,11 +89,24 @@ EffectsMenu::EffectsMenu()
   // Track Mark Fading Scale
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("TrackMarks:");
+  option->setLabel("Track Marks :");
   option->setCallback(callback, (void*)"t");
   options = &option->getList();
   options->push_back(std::string("Off"));
   option->createSlider(10);
+  option->update();
+  list.push_back(option);
+
+  // Track Mark Culling Type
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("Track Mark Culling:");
+  option->setCallback(callback, (void*)"c");
+  options = &option->getList();
+  options->push_back(std::string("None"));
+  options->push_back(std::string("Air"));
+  options->push_back(std::string("Moving"));
+  options->push_back(std::string("Full"));
   option->update();
   list.push_back(option);
 
@@ -149,6 +162,7 @@ void EffectsMenu::resize(int width, int height)
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(int((TrackMarks::getUserFade() * 10.0f) + 0.5f));
+  ((HUDuiList*)list[i++])->setIndex(int(TrackMarks::getAirCulling()));
 }
 
 
@@ -173,6 +187,10 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
     case 't': {
       int fade = list->getIndex();
       TrackMarks::setUserFade(float(fade) / 10.0f);
+      break;
+    }
+    case 'c': {
+      TrackMarks::setAirCulling((TrackMarks::AirCullStyle)list->getIndex());
       break;
     }
   }
