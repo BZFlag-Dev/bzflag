@@ -717,7 +717,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // set maximum number of shots
       checkArgc(1, i, argc, argv[i]);
       int newMaxShots = atoi(argv[i]);
-      if (newMaxShots < 1) {
+      if (newMaxShots == 0) {
+	std::cerr << "WARNING: tanks will not be able to shoot" << std::endl;
+	options.maxShots = 0;
+      } else if (newMaxShots < 1) {
 	std::cerr << "using minimum number of shots of 1" << std::endl;
 	options.maxShots = 1;
       } else if (newMaxShots > MaxShots) {
