@@ -1,8 +1,8 @@
+			     BZFlag Release Notes
+			     ====================
 
-			     BZFlag release notes
-
-BZFlag 1.11
------------
+BZFlag 1.12.0  (was 1.11.x)
+---------------------------
 
 * Record/Replay feature - Dave Rodgers
 * Random teleporter destinations - Dave Rodgers
@@ -16,7 +16,6 @@ BZFlag 1.11
 * Added Wings good flag - Dave Brosius
 * Added BZDB variables to allow for more realistic friction - Nils McCarthy
 * Added ForwardOnly and ReverseOnly bad flags - Sean Morrison
-* bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
 * No Jumping and Trigger Happy flags - Nils McCarthy
 * server option to disallow autopilot - Nils McCarthy
 * SDL interface to audio/video/input - Tupone Alfredo
@@ -25,33 +24,40 @@ BZFlag 1.11
 * Allow user to force input device to that of their choosing - Daniel Remenak
 * Tanks can drive over bumps - Dave Brosius
 * Remove Building scene nodes laying on the ground (or lower) - Dave Brosius
-* Bots drive around corners faster - Frank Thilo
-* Rip out the ref counted texture system, as TM controls this now - Dave Brosius
-* Bots aim better, try to evade shots - Frank Thilo
+* Rip out ref counted texture system, TM controls this now - Dave Brosius
 * Added Admin Message Queue - Michael Hoffman
 
-BZFlag 1.10.6
--------------
 
+BZFlag 1.10.6  "the little hop"
+-------------------------------
+
+* Fixed the little hop on spawn at some sites - Alfredo Tupone
+* Fixed issue of players add/removing others from groups - Alfredo Tupone
+* Fixed false positive filter matches involving apostrophes - Sean Morrison
+* Curing ghost/duplicated/ungetable flag - Alfredo Tupone
+* Fixed 0 height flag, no more flags inside buildings - Alfredo Tupone
+* Observers see Masquerade tank with their true color - Alfredo Tupone
+* Password file now supports callsigns with non alphanumerics  - Alfredo Tupone
 * Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
 * Correctly read PNG textures with multiple IDAT chunks - Daniel Remenak
-* Add support for aggressive filtering on more platforms - Sean Morrison
+* Add aggressive filtering support for all platforms - Sean Morrison
 * bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
 * Fixed bug that allowed empty callsigns - Frank Thilo
 * server option to disallow autopilot - Nils McCarthy
 * Bots drive around corners faster - Frank Thilo
 * Bots aim better, try to evade shots - Frank Thilo
 
-BZFlag 1.10.4 "not a smurf"
----------------------------
+
+BZFlag 1.10.4  "not a smurf"
+----------------------------
 
 * Allow user to define quickMessages via the menu system - Frank Thilo
 * Defaults vars are written to config but commented out - Dave Brosius
 * Added -show and -hide options to bzadmin for messages - Lars Luthman
 * Added support for more message types to bzadmin - lan56 @ SF, Lars Luthman
-* Added menu with BZDB editor and playerlist to bzadmin curses UI - Lars Luthman
+* Added menu w/ BZDB editor and playerlist to bzadmin curses UI - Lars Luthman
 * can freeze tod in client, if allowed, via -time hh:mm:ss - Tupone Alfredo
-* Allow variable number of team flags per team with +f bzfs option - Dave Brosius
+* Allow variable number team flags per team with +f bzfs option - Dave Brosius
 * Added private and team chat sounds - Sean Morrison
 * Specify a world file on the Start Server menu gui - Sean Morrison
 * Server sends warning to privmsg sender to an invalid target - Lars Luthman
@@ -59,7 +65,7 @@ BZFlag 1.10.4 "not a smurf"
 * -filterCallsigns filters email too now - Lars Luthman
 * allow multiple team flags per team thru -c 5 - Dave Brosius
 * -maxidle handles idle / paused players the same - Frank Thilo
-* Added optional building density to generated maps - Sean Morrison, Frank Thilo
+* Added optional density to generated maps - Sean Morrison, Frank Thilo
 * Add pause time to /idlestats - Sean Morrison
 * Notify players when reassigned to a different team on join - Sean Morrison
 * Allow multiple bases per team - Dave Brosius
@@ -108,6 +114,7 @@ BZFlag 1.10.4 "not a smurf"
 * Don't do teleporter fog when roaming as an observer - Jeff Myers
 * Pull many world textures from pyBZFlag - Jeff Myers
 
+
 BZFlag 1.10.2
 -------------
 
@@ -139,8 +146,9 @@ BZFlag 1.10.2
 * increase averaging for jitter and loss values in lagstats - Frank Thilo
 * mrtg script updated - Tim Riker
 
-BZFlag 1.10.0 "Break the world" (was 1.9.x)
--------------------------------------------
+
+BZFlag 1.10.0  "Break the world" (was 1.9.x)
+--------------------------------------------
 
 * control spawn on buildings with -sb - Frank Thilo
 * Initial Docbook documentation - Sean Morrison
@@ -209,8 +217,9 @@ BZFlag 1.10.0 "Break the world" (was 1.9.x)
 * Server-side callsign and improved chat filtering - Sean Morrison
 * Rabbit game style - David Trowbridge, Dave Brosius
 
-BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
----------------------------------------------
+
+BZFlag 1.7g2  "Steely Eyed Banana" (was 1.7g1)
+----------------------------------------------
 
 * public release now under LGPL v2.1 - Tim Riker
 * change LICENSE to COPYING - Tim Riker
@@ -252,8 +261,9 @@ BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
 * inline editing of text fields (<- ->) Dave Brosius, Frank Thilo
 * extend admin command -> /flag reset unused - Dave Brosius
 
-BZFlag 1.7g0 "Holy Dancing Monkeys" (was 1.7e7)
------------------------------------------------
+
+BZFlag 1.7g0  "Holy Dancing Monkeys" (was 1.7e7)
+------------------------------------------------
 
 * -tkkr auto team killer - Dave Brosius
 * world file caching - Colin Bayer, Dave Brosius, others
@@ -281,8 +291,9 @@ BZFlag 1.7g0 "Holy Dancing Monkeys" (was 1.7e7)
 * possible win32 installer bug - Chris Walters
 * gcc 3.1+ patches - David Trowbridge
 
-BZFlag 1.7e6 or Armoured Smashing Fist 2002 (was 1.7e5)
--------------------------------------------------------
+
+BZFlag 1.7e6  Armoured Smashing Fist 2002 (was 1.7e5)
+-----------------------------------------------------
 
 * new HUD! - David Trowbridge, Tim Riker, many others
 * added temporary bans (minutes) - Dave Brosius
@@ -332,8 +343,8 @@ BZFlag 1.7e6 or Armoured Smashing Fist 2002 (was 1.7e5)
 * -pr for reconnect port (two port tcp) - Tim Riker
 
 
-BZFlag 1.7e4 (was 1.7e3 while in development)
----------------------------------------------
+BZFlag 1.7e4  (was 1.7e3 while in development)
+----------------------------------------------
 
 * ::memset() instead of bzero() - Björn Augustsson
 * win32 audio thread fix for win2k - crs
@@ -382,11 +393,11 @@ BZFlag 1.7e2
 * minimum size now 256x192 - Tim Riker
 * various bug fixes - many
 
+
 BZFlag 1.7e1
 ------------
 
-* optional UDP unicast based networking,
-  downward compatible with the old TCP method - frank
+* optional UDP unicast networking, back-compatible w/ old TCP method - frank
 * GM now leave smoke trail - frank
 * Explosions are larger - frank
 * Scrollback and Line wrap (use pageup/down keys) - Digit1
@@ -432,6 +443,7 @@ BZFlag 1.7e release 000
 * non-blocking I/O for bzfs and name lookups by crs
 * phantom player fix by Frank Siegert <frank@this.net>
 
+	
 BZFlag 1.7d release 9
 ---------------------
 
