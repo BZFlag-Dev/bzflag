@@ -171,7 +171,7 @@ void			PyramidBuilding::getCorner(int index,
     case 4:
       pos[0] = base[0];
       pos[1] = base[1];
-      pos[2] = getHeight();
+      pos[2] = getHeight() + getPosition()[2];
       break;
   }
 }
