@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- Observer controls get confused sometimes. To see, push control and arrows
+  to spin. While keys are down, push alt. Now release all. You continue spinning
+  un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
+  into situations where movement is out of control.
+
 - 1.9.3 client was able to connect to 1.9.7 server.. odd behavior ensued,
   server tried to kick and fails to find the player.
   (this won't happen with newer clients since they check the whole version
