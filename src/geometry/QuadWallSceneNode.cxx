@@ -107,7 +107,13 @@ void			QuadWallSceneNode::Geometry::render()
 
 void			QuadWallSceneNode::Geometry::renderShadow()
 {
-  drawV();
+  int last = (ds + 1) * dt;
+  glBegin(GL_TRIANGLE_STRIP);
+  glVertex3fv(vertex[last]);
+  glVertex3fv(vertex[0]);
+  glVertex3fv(vertex[last + ds]);
+  glVertex3fv(vertex[ds]);
+  glEnd();								
 }
 
 void			QuadWallSceneNode::Geometry::drawV() const
