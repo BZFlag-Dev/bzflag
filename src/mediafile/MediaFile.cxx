@@ -226,9 +226,9 @@ float*					MediaFile::readSound(
 	std::istream* stream;
 	AudioFile* file = NULL;
 	if (file == NULL)
-		OPENMEDIA(WaveAudioFile);
-	if (file == NULL)
 		OPENMEDIA(OggAudioFile);
+	if (file == NULL)
+		OPENMEDIA(WaveAudioFile);
 
 	// read the audio
 	float* audio = NULL;
