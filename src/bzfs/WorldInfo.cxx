@@ -251,7 +251,13 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
 
 bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
 {
-  return entryZones.getZonePoint(qualifier, pt);
+  if (entryZones.getZonePoint(qualifier, pt))
+  {
+    //BUG: modify pt so that it is on a building
+    return true;
+  }
+
+  return false;
 }
 
 void WorldInfo::finishWorld()
