@@ -496,6 +496,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\ListServerConnection.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\MasterBanList.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\ParseMaterial.cxx">
 			</File>
 			<File
@@ -742,6 +745,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\ListServerConnection.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\MasterBanList.h">
 			</File>
 			<File
 				RelativePath="..\include\md5.h">

@@ -13,6 +13,7 @@
 #ifndef __MASTER_BAN_LIST_H__
 #define __MASTER_BAN_LIST_H__
 
+#include <string>
 
 class MasterBanList {
 public:

@@ -302,6 +302,13 @@ void handleRecordCmd(GameKeeper::Player *playerData, const char *);
 void handleReplayCmd(GameKeeper::Player *playerData, const char *);
 
 
+// reload the master ban list from the server
+void handleReloadMasterBanCmd(GameKeeper::Player *playerData, const char *);
+
+// flush the master ban list
+void handleFlushMasterBanCmd(GameKeeper::Player *playerData, const char *);
+
+
 #endif
 
 // Local Variables: ***

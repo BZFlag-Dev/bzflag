@@ -48,6 +48,7 @@
 #include "PackVars.h"
 #include "Permissions.h"
 #include "RecordReplay.h"
+#include "MasterBanList.h"
 
 
 #if defined(_WIN32)
@@ -2146,6 +2147,36 @@ void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
   char* timeStr = ctime(&now);
   timeStr[24] = '\0';
   sendMessage(ServerPlayer, t, timeStr);
+}
+
+void handleReloadMasterBanCmd(GameKeeper::Player *playerData, const char * /*message*/)
+{
+	int t = playerData->getIndex();
+	if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
+		sendMessage(ServerPlayer, t, "You do not have permission to run the reloadMasterBan command");
+		return;
+	}
+
+	clOptions->acl.purgeMasters();
+	sendMessage(ServerPlayer, t, "master ban list flushed");
+
+	if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
+		MasterBanList	banList;
+		clOptions->acl.merge(banList.get(DefaultMasterBanURL));
+		sendMessage(ServerPlayer, t, "master ban list reloaded");
+	}
+}
+
+void handleFlushMasterBanCmd(GameKeeper::Player *playerData, const char * /*message*/)
+{
+	int t = playerData->getIndex();
+	if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
+		sendMessage(ServerPlayer, t, "You do not have permission to run the flushMasterBan command");
+		return;
+	}
+	
+	clOptions->acl.purgeMasters();
+	sendMessage(ServerPlayer, t, "master ban list flushed");
 }
 
 // Local Variables: ***

@@ -44,6 +44,7 @@
 #include "SpawnPosition.h"
 #include "commands.h"
 #include "FlagInfo.h"
+#include "MasterBanList.h"
 
 const int udpBufSize = 128000;
 
@@ -3066,6 +3067,12 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "replay", 6) == 0) {
     handleReplayCmd(playerData, message);
 
+	} else if (strncmp(message + 1, "reloadmasterban", 6) == 0) {
+		handleReloadMasterBanCmd(playerData, message);
+
+	} else if (strncmp(message + 1, "flushmasterban", 6) == 0) {
+		handleFlushMasterBanCmd(playerData, message);
+
   } else {
     char reply[MessageLen];
     snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
@@ -4047,6 +4054,13 @@ int main(int argc, char **argv)
   } else {
     DEBUG1("Running a private server with the following settings:\n");
   }
+
+	// get the master ban list
+	if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
+		MasterBanList	banList;
+		clOptions->acl.merge(banList.get(DefaultMasterBanURL));
+	}
+
   Score::setTeamKillRatio(clOptions->teamKillerKickRatio);
   Score::setWinLimit(clOptions->maxPlayerScore);
   if (clOptions->rabbitSelection == RandomRabbitSelection)

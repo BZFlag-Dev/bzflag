@@ -21,6 +21,8 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <iostream>
+#include <sstream>
 
 /* common interface headers */
 #include "global.h"
@@ -352,6 +354,8 @@ public:
 	sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
       if( it->bannedBy.length() )
 	sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
+			if( it->fromMaster )
+				sprintf(pMsg + strlen(pMsg), "(m)");
 
       sendMessage(ServerPlayer, id, banlistmessage);
 
@@ -383,6 +387,8 @@ public:
 	sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
       if( it->bannedBy.length() )
 	sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
+			if( it->fromMaster )
+				sprintf(pMsg + strlen(pMsg), "(m)");
 
       sendMessage(ServerPlayer, id, banlistmessage);
 
@@ -528,15 +534,17 @@ public:
 	It only returns @c false if the file exist but is not in the correct
 	format, otherwise @c true is returned. */
 	bool merge( const std::string& banData ) {
-
-		// try to open the ban file
-		std::ifstream is(banData.c_str());
-		if (!is.good())
-			// file does not exist, but that's OK, we'll create it later if needed
+		if (!banData.size())
 			return true;
+		std::stringstream	is(banData,std::stringstream::in);
+		// try to open the ban file
+	//	std::ifstream is(banData.c_str());
+	//	if (!is.good())
+			// file does not exist, but that's OK, we'll create it later if needed
+	//		return true;
 
 		// clear all current bans
-		banList.clear();
+	//	banList.clear();
 
 		// try to read ban entries
 		std::string ipAddress, hostpat, bannedBy, reason, tmp;
@@ -583,6 +591,26 @@ public:
 			}
 		}
 		return true;
+	}
+
+	/** This Function purges any bans that are flaged as from the master ban list, presumabely so it can be remerged */
+	void purgeMasters ( void ){
+		// remove any bans from the master server
+		banList_t::iterator	bItr = banList.begin();
+		while(bItr != banList.end()){
+			if (bItr->fromMaster)
+				bItr = banList.erase(bItr);
+			else
+				bItr++;
+		}
+
+		hostBanList_t::iterator	hItr = hostBanList.begin();
+		while(hItr != hostBanList.end()){
+			if (hItr->fromMaster)
+				hItr = hostBanList.erase(hItr);
+			else
+				hItr++;
+		}
 	}
 
 private:
