@@ -2020,7 +2020,7 @@ BuildCmd=
 [Unit198]
 FileName=..\src\common\TextUtils.cxx
 CompileCpp=1
-Folder=bzfs/Source Files/common
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
