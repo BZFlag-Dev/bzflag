@@ -528,7 +528,7 @@ if test x$enable_debug = xyes; then
    case $host_os in
      linux*|cygwin|mingw32)
 	CPPFLAGS="$CPPFLAGS -Werror";
-	CXXFLAGS="$CXXFLAGS -Wno-deprecated";
+	CXXFLAGS="$CXXFLAGS -Wno-deprecated -fsigned-char";
 	if test x$enable_profiling = xyes; then
 	  CFLAGS="$CFLAGS -pg";
 	  CXXFLAGS="$CXXFLAGS -pg";
@@ -545,7 +545,7 @@ if test x$enable_debug = xyes; then
 else
     case $host_os in
 	 linux*|cygwin|mingw32)
-		CXXFLAGS="$CXXFLAGS -ffast-math -fno-exceptions";;
+		CXXFLAGS="$CXXFLAGS -ffast-math -fno-exceptions -fsigned-char";;
 	 solaris*)
 		CFLAGS="$CFLAGS -O";
 		CXXFLAGS="$CXXFLAGS -O";;
