@@ -50,3 +50,10 @@ Curses lib file is named "libcurses.a" so it links correctly (named exactly like
 If you have any trouble not answered here, and you are unable to figure it out yourself, BZBB (bzbb.bzflag.org)
 can be a big help. Check the "CVS/Development/Compiling" forum on BZBB; there are several posts regarding Dev-C++.
 Post your own message if you still are unable to fix it.
+
+If BZFlag looks significantly messed up when you run it, and it is clearly done loading, and you also have
+reasonably played around with the GUI settings, you may want to close it and re-open it. If
+this does not work, try doing a "clean compile" (rebuild the entire BZFlag project); this usually
+works. If it still looks messed up, it may be a current issue in CVS or your release. Get the latest code
+and try again. If it still does not work, you most likely are a victim of poor hardware. Mention it on BZBB
+for further help.
