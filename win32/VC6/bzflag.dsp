@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=bzflag - Win32 Debug
+CFG=bzflag - Win32 SDL_Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,12 +13,14 @@ CFG=bzflag - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "bzflag.mak" CFG="bzflag - Win32 Debug"
+!MESSAGE NMAKE /f "bzflag.mak" CFG="bzflag - Win32 SDL_Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
 !MESSAGE "bzflag - Win32 Release" (based on "Win32 (x86) Application")
 !MESSAGE "bzflag - Win32 Debug" (based on "Win32 (x86) Application")
+!MESSAGE "bzflag - Win32 SDL_Release" (based on "Win32 (x86) Application")
+!MESSAGE "bzflag - Win32 SDL_Debug" (based on "Win32 (x86) Application")
 !MESSAGE 
 
 # Begin Project
@@ -54,7 +56,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 sdlmain.lib  sdl.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /pdb:"../src/bzflag/bzflag.pdb" /machine:I386 /nodefaultlib:"LIBCMT"
+# ADD LINK32 sdlmain.lib sdl.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /pdb:"../src/bzflag/bzflag.pdb" /machine:I386 /nodefaultlib:"LIBCMT"
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -93,12 +95,84 @@ SOURCE="$(InputPath)"
 PostBuild_Cmds=copy ..\..\src\bzflag\debug\*.exe ..\..\*.exe	copy  ..\..\src\bzflag\debug\*.pdb ..\..\*.pdb
 # End Special Build Tool
 
+!ELSEIF  "$(CFG)" == "bzflag - Win32 SDL_Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "bzflag___Win32_SDL_Release"
+# PROP BASE Intermediate_Dir "bzflag___Win32_SDL_Release"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "bzflag___Win32_SDL_Release"
+# PROP Intermediate_Dir "bzflag___Win32_SDL_Release"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\win32" /I ".\\" /D "_WINDOWS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FD /c
+# SUBTRACT BASE CPP /YX
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\win32" /I ".\\" /D "_WINDOWS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "HAVE_SDL" /FD /c
+# SUBTRACT CPP /YX
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x409 /fo"..\..\src\bzflag\bzflag.res" /d "NDEBUG"
+# ADD RSC /l 0x409 /fo"..\..\src\bzflag\bzflag.res" /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 sdlmain.lib sdl.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /pdb:"../src/bzflag/bzflag.pdb" /machine:I386 /nodefaultlib:"LIBCMT"
+# SUBTRACT BASE LINK32 /pdb:none
+# ADD LINK32 sdlmain.lib sdl.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /pdb:"../src/bzflag/bzflag.pdb" /machine:I386 /nodefaultlib:"LIBCMT"
+# SUBTRACT LINK32 /pdb:none
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Cmds=copy ..\..\src\bzflag\*.exe ..\..\*.exe
+# End Special Build Tool
+
+!ELSEIF  "$(CFG)" == "bzflag - Win32 SDL_Debug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "bzflag___Win32_SDL_Debug0"
+# PROP BASE Intermediate_Dir "bzflag___Win32_SDL_Debug0"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "..\..\src\bzflag\SDL_Debug"
+# PROP Intermediate_Dir "..\..\src\bzflag\SDL_Debug"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /MDd /W3 /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "_WINDOWS" /D "WIN32" /D "_DEBUG" /D "_MBCS" /FD /GZ /c
+# SUBTRACT BASE CPP /YX
+# ADD CPP /nologo /MDd /W3 /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "_WINDOWS" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "HAVE_SDL" /FD /GZ /c
+# SUBTRACT CPP /YX
+# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x409 /d "_DEBUG"
+# ADD RSC /l 0x409 /d "_DEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 sdlmain.lib sdl.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /pdbtype:sept
+# SUBTRACT BASE LINK32 /pdb:none
+# ADD LINK32 sdlmain.lib sdl.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /pdbtype:sept
+# SUBTRACT LINK32 /pdb:none
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Cmds=copy ..\..\src\bzflag\SDL_debug\*.exe ..\..\*.exe	copy  ..\..\src\bzflag\SDL_debug\*.pdb ..\..\*.pdb
+# End Special Build Tool
+
 !ENDIF 
 
 # Begin Target
 
 # Name "bzflag - Win32 Release"
 # Name "bzflag - Win32 Debug"
+# Name "bzflag - Win32 SDL_Release"
+# Name "bzflag - Win32 SDL_Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -136,15 +210,15 @@ SOURCE=..\..\src\bzflag\daylight.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\LocalPlayer.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\HUDRenderer.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\HUDui.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\LocalPlayer.cxx
 # End Source File
 # Begin Source File
 
@@ -289,6 +363,10 @@ SOURCE=..\bzflag.ico
 # Begin Source File
 
 SOURCE=..\..\include\BzfMedia.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfSDL.h
 # End Source File
 # Begin Source File
 

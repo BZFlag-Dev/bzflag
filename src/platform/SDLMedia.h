@@ -17,10 +17,7 @@
 #ifndef BZF_SDLMEDIA_H
 #define	BZF_SDLMEDIA_H
 #include "BzfMedia.h"
-
-#ifdef HAVE_SDL
-#include "SDL.h"
-#include "SDL_thread.h"
+#include "bzfSDL.h"
 
 class SDLMedia : public BzfMedia {
   public:
@@ -74,7 +71,6 @@ class SDLMedia : public BzfMedia {
     bool                waitingData; // Waiting for data
 };
 
-#endif
 #endif // BZF_SDLMEDIA_H
 
 // Local Variables: ***

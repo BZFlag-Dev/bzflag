@@ -23,9 +23,7 @@
 
 #include "common.h"
 #include <vector>
-#ifdef HAVE_SDL
-#include "SDL.h"
-#endif
+#include "bzfSDL.h"
 
 class BzfDisplay;
 

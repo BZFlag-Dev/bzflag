@@ -11,9 +11,7 @@
  */
 
 #include "PlatformFactory.h"
-#ifdef HAVE_SDL
-#include "SDL.h"
-#endif
+#include "bzfSDL.h"
 #include "ErrorHandler.h"
 
 PlatformFactory*	PlatformFactory::instance = 0;

@@ -17,12 +17,11 @@
 #ifndef BZF_SDLDISPLAY_H
 #define	BZF_SDLDISPLAY_H
 
+#include "bzfSDL.h"
 #include "BzfDisplay.h"
 #include "BzfVisual.h"
 #include "BzfWindow.h"
 #include "BzfEvent.h"
-#ifdef HAVE_SDL
-#include "SDL.h"
 
 class SDLDisplay : public BzfDisplay {
  public:
@@ -95,7 +94,6 @@ class SDLWindow : public BzfWindow {
   bool         hasGamma;
   float        gamma;
 };
-#endif
 
 #endif // BZF_SDLDISPLAY_H
 

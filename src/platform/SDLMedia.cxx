@@ -11,7 +11,6 @@
  */
 
 #include "SDLMedia.h"
-#ifdef HAVE_SDL
 #include "ErrorHandler.h"
 
 #ifdef HALF_RATE_AUDIO
@@ -362,7 +361,6 @@ void			SDLMedia::audioSleep(bool, double endTime)
     exit(-1);
   }
 }
-#endif
 
 // Local Variables: ***
 // mode:C++ ***

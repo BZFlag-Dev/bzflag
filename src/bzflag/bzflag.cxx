@@ -28,9 +28,7 @@
 #include <dirent.h>
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
-#ifdef HAVE_SDL
-#include "SDL.h"
-#endif
+#include "bzfSDL.h"
 #include "bzfio.h"
 #include <fstream>
 #include "bzfgl.h"
