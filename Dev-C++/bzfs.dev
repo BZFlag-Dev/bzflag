@@ -9,8 +9,8 @@ CppCompiler=-D__GNUWIN32__ -W -D_CONSOLE -DWIN32 -DNDEBUG -D_MBCS_@@_
 Includes=..\include;..\win32;.
 Linker=-lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=149
-Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net"
+UnitCount=158
+Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex"
 ObjFiles=
 PrivateResource=
 ResourceIncludes=
@@ -1278,9 +1278,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit150]
-FileName=..\src\ogl\OpenGLMaterial.cxx
+FileName=..\src\regex\regfree.c
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/regex
 Compile=1
 Link=1
 Priority=1000
@@ -1288,9 +1288,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit151]
-FileName=..\src\ogl\OpenGLTexture.cxx
+FileName=..\src\regex\engine.c
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/regex
 Compile=1
 Link=1
 Priority=1000
@@ -1298,9 +1298,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit154]
-FileName=..\src\geometry\models\tank\high_body.cxx
+FileName=..\src\regex\regexec.c
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/regex
 Compile=1
 Link=1
 Priority=1000
@@ -1308,9 +1308,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit155]
-FileName=..\src\geometry\models\tank\high_ltread.cxx
+FileName=..\src\regex\utils.h
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/regex
 Compile=1
 Link=1
 Priority=1000
@@ -1318,9 +1318,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit156]
-FileName=..\src\geometry\models\tank\high_rtread.cxx
+FileName=..\src\regex\cclass.h
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/regex
 Compile=1
 Link=1
 Priority=1000
@@ -1328,9 +1328,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit157]
-FileName=..\src\geometry\models\tank\high_turret.cxx
+FileName=..\src\regex\cname.h
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/regex
 Compile=1
 Link=1
 Priority=1000
@@ -1338,9 +1338,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit158]
-FileName=..\src\geometry\models\tank\low_barrel.cxx
+FileName=..\src\regex\regex2.h
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/regex
 Compile=1
 Link=1
 Priority=1000
@@ -1701,6 +1701,26 @@ BuildCmd=
 FileName=..\include\FileManager.h
 CompileCpp=1
 Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit152]
+FileName=..\src\regex\regcomp.c
+CompileCpp=1
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit153]
+FileName=..\src\regex\regerror.c
+CompileCpp=1
+Folder=Source Files/regex
 Compile=1
 Link=1
 Priority=1000
