@@ -1358,7 +1358,6 @@ teri maa ko mera baap choda 		# hi - my father fucked your mother
 
 
 # Indonesian
-biji                    # id - testicles ( slang, lit. means "seed" )
 isep kontol             # id - blow job
 isep kontol gua         # id - suck my dick
 jembut                  # id - pubic hair
@@ -1695,59 +1694,121 @@ preklet vosu!           # sl - cursed donkey (literally "bloody fool")
 
 
 # Spanish
+arrecho			# es - horny
+arrima			# es - fuck the hell out of (slang)
+arrimo			# es - i fuck the hell out of (slang)
+avergallon		# es - masturbation (mexican slang)
+bacalao			# es - cunt (mexican slang)
+bajar al pozo		# es - to eat pussy (cuban)
 cabron                  # es - dick head
+cachate			# es - go fuck yourself (peruvian)
 cago			# es - i shit
+cagada			# es - a shit
 cagate			# es - shit yourself
 cagaste			# es - you shit yourself
 caga			# es - he shit
-#cagar                   # es - to shit (verb)
+cagar                   # es - to shit (verb)
 cagaron			# es - they shit
 cagais			# es - yea shit
-chichis                 # es - breasts
-chilito                 # es - (lit.) little dick
-chimba                  # es - pussy (colombian spanish)
+capullo			# es - asshole,idiot (lit. head of penis)
+carajo			# es - penis (go to hell, wtf do you want)
+caray			# es - explitive like fuck/shit (lit. damn)
+casquete		# es - fuck (slang)
+chacon			# es - cunt (argentinian slang)
+chardo			# es - nigger (cuban slang)
+chichis                 # es - breasts/tits
+chilito                 # es - little dick (mexican insult)
+chimba                  # es - pussy (colombian)
+chinga 			# es - fuck
 chingar                 # es - to fuck
 chingada		# es - fucking
+chingalo		# es - fuck it
+chingate		# es - fuck you (mexican)
 chingas tu madre        # es - fuck your mom
+chocho	   		# es - cunt (spanian and mexican)
 chorizo                 # es - dick (lit. sausage)
-chupame                 # es - suck me
+chucha			# es - fuck
+chupame                 # es - suck me/my
+chuperson		# es - penis (mexican slang)
+cipote			# es - penis
 cogete                  # es - go fuck yourself (lit. go catch yourself)
-cono                    # es - cunt
-con~o                   # es - cunt
-co~no                   # es - cunt
+cojoneando		# es - fucking
+cojonear		# es - to fuck around
+colgados		# es - old/saggy withered tits (mexican slang)
+comemierda		# es - eat shit (cuban), usually two words 
+concha			# es - cunt (uruguayan slang)
+cono                    # es - cunt (con~o)
+crica			# es - pussy (puerto rican)
+culear			# es - to fuck (lit. to move the ass)
 culo                    # es - ass
+cusca			# es - slut (mexican)
 decojo                  # es - decojo (dialect)
+fachar			# es - to fuck a woman (venezuelan)
+fache			# es - fuck a woman (venezuelan)
+facho			# es - fuck a woman (venezuelan)
+flete			# es - pussy/ass (cuban slang)
 follado                 # es - fucked (male)
 follada                 # es - fucked (female)
+follar			# es - to fuck
+foquin			# es - fucking (puerto rican phonetic of english)
 guarra                  # es - bitch
+guebo			# es - cock (santo domingan slang)
 gilipolla               # es - asshole (slang)
 hacete cojer            # es - go and get fucked
-joder                   # es - to fuck
+joder                   # es - to fuck/bother
 jodete                  # es - go fuck yourself
 jodida                  # es - fucked (female)
 jodido                  # es - fucked (male)
-joto                    # es - faggot (mex.)
-mama huevo              # es - suck testicles
+joto                    # es - faggot (mexican slang)
+maleton			# es - son of a bitch (mexican and south american)
+mamey			# es - cunt (mexican)
+mico			# es - cunt (lit. monkey, costa rican)
 maricon                 # es - faggot
 mierda                  # es - shit
+morrongo		# es - dick (mexican slang)
+murrda			# es - shit (slang)
+nema			# es - cock/penis (n~ema)
+nido			# es - cunt (mexican slang)
 ojete                   # es - asshole
+orto			# es - ass (argentinian and uruguayan)
 panocha                 # es - pussy (extremely vulgar, mex)
 peha                    # es - dick
+pelotuda		# es - dumbass
+pelotudo		# es - dumbass
 pendejo                 # es - (m/f) asshole, dickhead, etc.
 pendeja                 # es - (m/f) asshole, dickhead, etc.
-pene                    # es - dick
+pene                    # es - penis
 perra                   # es - bitch
 picha                   # es - prick
 pija			# es - penis (slang)
-pinche                  # es - fucking (hispanic)
+pijo			# es - penis (slang)
+pinche                  # es - fucking (slang)
 pinga  			# es - dick
+pipote			# es - clitoris (lit. big sunflower seed)
+polla			# es - penis
+popa			# es - arse
 puta                    # es - (feminine) whore, bitch
 puto                    # es - (masculine) dickhead, asshole
+raja			# es - cunt (lit. slit)
+reata			# es - penis
+rejue			# es - prostitute (mexican/guatemalan slang)
+rejuego			# es - prostitute (mexican/guatemalan slang)
+remame			# es - cunt (mexican slang)
+rene			# es - nigger (mexican slang)
+riata			# es - dick (mexican slang)
+rul			# es - asshole (mexican slang)
 sacale la leche         # es - make her cum (lit. take the milk out of her)
+taconera  		# es - prostitute (lit. high-heeler)
+trastero		# es - asshole (lit. anus)
 verga                   # es - dick (lit. broomstick)
+vergalito		# es - masturbation of the penis
+vergalo			# es - masturbation of penis by self
 violacion en groupo     # es - gang-bang (rape)
 zorra                   # es - bitch
-zurullo									# es - shit (slang)
+zuramata		# es - dumbass
+zuramato		# es - dumbass
+zurar			# es - to shit/defecate
+zurulo			# es - shit (slang)
 
 
 # Swedish
