@@ -13,7 +13,7 @@ bzfs \- BZFlag game server
 [\fB\-banfile \fIfilename\fR]
 [\fB\-c\fR]
 [\fB\-conf \fIconfigfile\fR]
-[\fB\-cr\fR]
+[\fB\-cr \fR[\fIcount\fR]]
 [\fB\-d\fR]
 [\fB\+f \fR{\fIgood\fR|\fIbad\fR|\fIflag-id\fR}[\fI{count}\fR]]
 [\fB\-f \fR{\fIgood\fR|\fIbad\fR|\fIflag-id\fR}]
@@ -124,8 +124,9 @@ Specifies the name of a configuration file to be used to set all of the
 bzfs options, rather than setting them on the command line.
 .TP
 .B -cr
-Enables the capture-the-flag style game with random map.  By default,
-the free-for-all style is used.
+Enables the capture-the-flag style game with random map.  You can
+optionally specify a building density by providing an number (default
+is 5).  By default, the free-for-all style is used.
 .TP
 .B -d
 Increase debugging level. More -d are used, more debugging info are obtained.
