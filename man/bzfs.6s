@@ -802,7 +802,7 @@ This would be a sample line defining a "cop" group:
 COPS:KICK BAN BANLIST UNBAN INFO
 
 The server will automatically create three groups if they are not specified in
-the groups file: DEFAULT, VERIFIED, and ADMIN. ADMIN has every permission
+the groups file: DEFAULT, VERIFIED, and LOCAL.ADMIN. LOCAL.ADMIN has every permission
 possible (similar to granting admin powers via /password). VERIFIED presently
 allows access to the voting system's /poll and /vote commands.  DEFAULT allows
 /lagstats, /idlestats, /flaghistory and /report.
