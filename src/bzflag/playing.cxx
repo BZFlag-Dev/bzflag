@@ -3764,18 +3764,19 @@ static void		handleServerMessage(bool human, uint16_t code,
       addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
       break;
     } else if (fromServer) {
-      static const char passwdRequest[] = "Identify with /identify <your password>";
+      /* if the server tells us that we need to identify, and we have
+       * already stored a password key for this server -- send it on
+       * over back to auto-identify.
+       */
+      static const char passwdRequest[] = "Identify with /identify";
       if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
-	std::string passwdKey = "password@";
-	passwdKey += startupInfo.serverName;
+	std::string passwdKey = string_util::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort);
 	if (BZDB.isSet(passwdKey)) {
 	  std::string passwdResponse = "/identify " + BZDB.get(passwdKey);
- 	  char messageBuffer[MessageLen];
- 	  memset(messageBuffer, 0, MessageLen);
-          strncpy(messageBuffer, passwdResponse.c_str(), MessageLen);
+	  addMessage(srcPlayer, string_util::format("Autoidentifying with password stored for %s", passwdKey.c_str()).c_str(), false);
           void *buf = messageMessage;
           buf = nboPackUByte(buf, ServerPlayer);
- 	  nboPackString(buf, messageBuffer, MessageLen);
+ 	  nboPackString(buf, (void*) passwdResponse.c_str(), MessageLen);
  	  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
 	}
       }
