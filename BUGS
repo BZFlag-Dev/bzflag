@@ -12,8 +12,6 @@ recent bugs
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
 
-- depthbuffer setting should be saved in config
-
 older bugs in BZFlag
 --------------------
 
