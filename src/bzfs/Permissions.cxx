@@ -267,6 +267,7 @@ void setUserPassword(const std::string &nick, const std::string &pass)
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 {
   switch (perm) {
+    case PlayerAccessInfo::actionMessage: return "actionMessage";
     case PlayerAccessInfo::adminMessages: return "adminMessages";
     case PlayerAccessInfo::antiban : return "antiban";
     case PlayerAccessInfo::antideregister : return "antideregister";
@@ -288,6 +289,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::listPerms: return "listPerms";
     case PlayerAccessInfo::playerList: return "playerList";
     case PlayerAccessInfo::poll: return "poll";
+    case PlayerAccessInfo::privateMessage: return "privateMessage";
     case PlayerAccessInfo::record: return "record";
     case PlayerAccessInfo::removePerms: return "removePerms";
     case PlayerAccessInfo::replay: return "replay";
@@ -309,6 +311,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
 {
+  if (name == "ACTIONMESSAGE") return PlayerAccessInfo::actionMessage;
   if (name == "ADMINMESSAGES") return PlayerAccessInfo::adminMessages;
   if (name == "ANTIBAN") return PlayerAccessInfo::antiban;
   if (name == "ANTIDEREGISTER") return PlayerAccessInfo::antideregister;
@@ -330,6 +333,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
   if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
   if (name == "POLL") return PlayerAccessInfo::poll;
+  if (name == "PRIVATEMESSAGE") return PlayerAccessInfo::privateMessage;
   if (name == "REMOVEPERMS") return PlayerAccessInfo::removePerms;
   if (name == "REQUIREIDENTIFY") return PlayerAccessInfo::requireIdentify;
   if (name == "SETALL") return PlayerAccessInfo::setAll;

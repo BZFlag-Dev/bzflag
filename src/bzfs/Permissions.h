@@ -40,7 +40,8 @@ public:
   // player access info
   enum AccessPerm
     {
-      adminMessages = 0,
+      actionMessage = 0,
+      adminMessages,
       antiban,
       antideregister,
       antikick,
@@ -61,6 +62,7 @@ public:
       listPerms,
       playerList,
       poll,
+      privateMessage,
       record,
       removePerms,
       replay,
