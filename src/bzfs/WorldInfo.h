@@ -38,7 +38,6 @@ typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InB
     float size[3];
     bool shootThrough;
     bool driveThrough;
-    bool flipZ;
     ObstacleLocation &operator=(const ObstacleLocation &ol)
     {
       memcpy(pos, ol.pos, sizeof(float) * 3);
@@ -46,7 +45,6 @@ typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InB
       memcpy(size, ol.size, sizeof(float) * 3);
       shootThrough = ol.shootThrough;
       driveThrough = ol.driveThrough;
-      flipZ = ol.flipZ;
       return *this;
     }
   };
@@ -61,7 +59,17 @@ typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InB
 
   typedef std::vector<Teleporter> TeleporterList;
 
+  struct Pyramid : public ObstacleLocation {
+    public:
+    bool flipZ;
+    Pyramid &operator=(const Pyramid &p)
+    {
+      flipZ = p.flipZ;
+      return *this;
+    }
+  };
 
+  typedef std::vector<Pyramid> PyramidList;
 
 
 class WorldInfo {
@@ -110,7 +118,7 @@ class WorldInfo {
   ObstacleLocationList walls;
   ObstacleLocationList boxes;
   ObstacleLocationList bases;
-  ObstacleLocationList pyramids;
+  PyramidList	       pyramids;
   TeleporterList       teleporters;
   char *database;
   int databaseSize;

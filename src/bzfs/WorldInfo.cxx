@@ -279,8 +279,8 @@ int WorldInfo::packDatabase()
  }
 
   // add pyramids
-  for (it = pyramids.begin(); it != pyramids.end(); ++it) {
-    ObstacleLocation &pyr = *it;
+  for (PyramidList::iterator pyr_it = pyramids.begin(); pyr_it != pyramids.end(); ++pyr_it) {
+    Pyramid &pyr = *pyr_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramidSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
     databasePtr = nboPackVector(databasePtr, pyr.pos);
