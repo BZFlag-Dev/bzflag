@@ -49,20 +49,20 @@ extern int debugLevel;
 
 // seven places of precision is pretty safe, so something less precise
 #if defined(FLT_EPSILON)
-#	define ZERO_TOLERANCE FLT_EPSILON
+#  define ZERO_TOLERANCE FLT_EPSILON
 #else
-#	define ZERO_TOLERANCE 1.0e-06f
+#  define ZERO_TOLERANCE 1.0e-06f
 #endif
 
 // Might we be BSDish? sys/param.h has BSD defined if so
 #ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
+#  include <sys/param.h>
 #endif
 
 #if defined HAVE_STRICMP
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-#define vsnprintf _vsnprintf
+#  define strcasecmp _stricmp
+#  define strncasecmp _strnicmp
+#  define vsnprintf _vsnprintf
 #endif
 
 // some platforms don't have float versions of the math library
@@ -109,11 +109,9 @@ extern int debugLevel;
 #  define	tanf		(float)tan
 #endif
 
-
 // random number stuff
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)
-
 
 #if !defined(_WIN32)
 
