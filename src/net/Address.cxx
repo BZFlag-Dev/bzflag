@@ -173,7 +173,7 @@ BzfString		Address::getHostByAddress(InAddr addr)
     }
 
     // wait up to this many seconds
-    alarm(3);
+    alarm(8);
   }
 #endif
 
