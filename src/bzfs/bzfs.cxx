@@ -6045,6 +6045,34 @@ static void parseCommand(const char *message, int t)
 	}
       }
     }
+  } else if (player[t].accessInfo.verified && strncmp(message + 1, "deregister", 10) == 0) {
+    if (strlen(message) == 11) {
+      // removing own callsign
+      std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(player[t].regName);
+      std::map<std::string, PlayerAccessInfo>::iterator itr2 = userDatabase.find(player[t].regName);
+      passwordDatabase.erase(itr1);
+      userDatabase.erase(itr2);
+      updateDatabases();
+      sendMessage(t, player[t].id, player[t].team, "Your callsign has been deregistered");
+    } else if (strlen(message) > 12 && hasPerm(t, setAll)) {
+      // removing someone else's
+      std::string name = message + 12;
+      makeupper(name);
+      if (userExists(name)) {
+	std::map<std::string, std::string>::iterator itr1 = passwordDatabase.find(name);
+	std::map<std::string, PlayerAccessInfo>::iterator itr2 = userDatabase.find(name);
+	passwordDatabase.erase(itr1);
+	userDatabase.erase(itr2);
+        updateDatabases();
+        char text[MessageLen];
+        sprintf(text, "%s has been deregistered", name.c_str());
+        sendMessage(t, player[t].id, player[t].team, text);
+      } else {
+	char text[MessageLen];
+	sprintf(text, "user %s does not exist", name.c_str());
+	sendMessage(t, player[t].id, player[t].team, text);
+      }
+    }
   } else if (player[t].accessInfo.verified && strncmp(message + 1, "setpass", 7) == 0) {
     std::string pass;
     if (strlen(message) < 9) {
