@@ -508,17 +508,19 @@ static void		parse(int argc, char** argv)
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      if (strcmp(argv[i], "r") == 0 || strcmp(argv[i], "red") == 0)
+      if (strcmp(argv[i], "a") == 0 || strcmp(argv[i], "auto") || strcmp(argv[i], "automatic")) {
+	startupInfo.team = AutomaticTeam;
+      }	else if (strcmp(argv[i], "r") == 0 || strcmp(argv[i], "red") == 0) {
 	startupInfo.team = RedTeam;
-      else if (strcmp(argv[i], "g") == 0 || strcmp(argv[i], "green") == 0)
+      } else if (strcmp(argv[i], "g") == 0 || strcmp(argv[i], "green") == 0) {
 	startupInfo.team = GreenTeam;
-      else if (strcmp(argv[i], "b") == 0 || strcmp(argv[i], "blue") == 0)
+      } else if (strcmp(argv[i], "b") == 0 || strcmp(argv[i], "blue") == 0) {
 	startupInfo.team = BlueTeam;
-      else if (strcmp(argv[i], "p") == 0 || strcmp(argv[i], "purple") == 0)
+      } else if (strcmp(argv[i], "p") == 0 || strcmp(argv[i], "purple") == 0) {
 	startupInfo.team = PurpleTeam;
-      else if (strcmp(argv[i], "z") == 0 || strcmp(argv[i], "rogue") == 0)
+      } else if (strcmp(argv[i], "z") == 0 || strcmp(argv[i], "rogue") == 0) {
 	startupInfo.team = RogueTeam;
-      else {
+      } else {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
@@ -859,11 +861,15 @@ int			main(int argc, char** argv)
     }
     if (BZDB->isSet("team")) {
       std::string value = BZDB->get("team");
-      for (int i = 0; i < NumTeams; i++)
+      for (int i = 0; i < NumTeams; i++) {
 	if (value == Team::getName((TeamColor)i)) {
 	  startupInfo.team = (TeamColor)i;
 	  break;
 	}
+      }
+      if (value == Team::getName(AutomaticTeam)) {
+	startupInfo.team = AutomaticTeam;
+      }
     }
     if (BZDB->isSet("server")) {
       strncpy(startupInfo.serverName, BZDB->get("server").c_str(),
