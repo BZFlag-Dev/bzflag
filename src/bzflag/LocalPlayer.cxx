@@ -120,7 +120,7 @@ const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
 //
 // local update utility functions
 //
-
+/*
 static float		minSafeRange(float angleCosOffBoresight)
 {
   // anything farther than this much from dead-center is okay to
@@ -142,7 +142,7 @@ static float		minSafeRange(float angleCosOffBoresight)
   return (float)(MinRange + f * (MaxRange - MinRange));
 }
 
-/*
+
 void			BaseLocalPlayer::startingLocation
 (float bestStartPoint[3],
  float &startAzimuth,
