@@ -347,7 +347,7 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   flagHelpY = composeTypeIn->getFont().getSpacing() + 4.0f +
 			minorFont.getDescent();
 
-  const float spacing = minorFont.getWidth("  ");
+  const float spacing = minorFont.getWidth(" ");
   scoreLabelWidth += spacing;
   killsLabelWidth += spacing;
 
@@ -1193,14 +1193,21 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 					float x1, float x2, float x3, float y)
 {
   char score[40], kills[40];
-  char email[EmailLen + 10];
+#ifndef DEBUG
+  char email[EmailLen + 4];
+  sprintf(email, " (%s)", player->getEmailAddress());
+#else
+  char email[EmailLen + 25];
+  const PlayerId& id = player->getId();
+  sprintf(email, " %s:%04x-%1x(%s)", inet_ntoa(id.serverHost),
+      ntohs(id.port), ntohs(id.number), player->getEmailAddress());
+#endif  
   sprintf(score, "%d (%d-%d)", player->getScore(),
 			player->getWins(), player->getLosses());
   if (LocalPlayer::getMyTank() != player)
     sprintf(kills, "%d/%d", player->getLocalWins(), player->getLocalLosses());
   else
     strcpy(kills, "");
-  sprintf(email, " (%s)", player->getEmailAddress());
 
   const float callSignWidth = minorFont.getWidth(player->getCallSign());
 
