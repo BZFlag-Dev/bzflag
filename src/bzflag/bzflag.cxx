@@ -102,6 +102,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "underline",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarFlags",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayMainFlags",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayBinoculars",	"0",			false,	StateDatabase::ReadWrite,	NULL },
@@ -170,7 +171,8 @@ static const char*	bindingList[] = {
   "bind \"Page Down\" down \"scrollpanel down\"",
   "bind 1 down \"set displayRadarRange 0.25\"",
   "bind 2 down \"set displayRadarRange 0.5\"",
-  "bind 3 down \"set displayRadarRange 1.0\""
+  "bind 3 down \"set displayRadarRange 1.0\"",
+  "bind A down \"toggle slowKeyboard\""
 };
 
 #ifdef ROBOT

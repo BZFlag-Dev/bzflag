@@ -1735,10 +1735,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       }
     }
   }
-  else if (keymap.isMappedTo(BzfKeyMap::SlowKeyboardMotion, key)) {
+/*  else if (keymap.isMappedTo(BzfKeyMap::SlowKeyboardMotion, key)) {
     if (myTank->isKeyboardMoving())
       myTank->setSlowKeyboard(pressed);
-  }
+  }*/
   // Might be a direction key. Save it for later.
   else if (myTank->isAlive()) {
     if (!myTank->isKeyboardMoving() && pressed)
@@ -1798,7 +1798,7 @@ static void		doMotion()
 
     if (BZDB->isTrue("displayBinoculars"))
       rotation *= 0.2f;
-    if (myTank->hasSlowKeyboard()) {
+    if (BZDB->isTrue("slowKeyboard")) {
       rotation /= 2.0f;
       speed /= 2.0f;
     }

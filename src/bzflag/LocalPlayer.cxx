@@ -669,7 +669,6 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   setAngularVelocity(0.0f);
   setKeyboardSpeed(0.0f);
   setKeyboardAngVel(0.0f);
-  setSlowKeyboard(false);
   resetKey();
   doUpdateMotion(0.0f);
 

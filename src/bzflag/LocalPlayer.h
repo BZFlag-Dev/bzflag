@@ -121,8 +121,6 @@ class LocalPlayer : public BaseLocalPlayer {
     bool		getKeyPressed() const;
     int			getKeyButton() const;
     void		resetKey();
-    void		setSlowKeyboard(bool slow);
-    bool		hasSlowKeyboard() const;
 
     static LocalPlayer*	getMyTank();
     static void		setMyTank(LocalPlayer*);
@@ -163,7 +161,6 @@ class LocalPlayer : public BaseLocalPlayer {
     float		keyboardAngVel;
     int			keyButton;
     bool		keyPressed;
-    bool		slowKeyboard;
 };
 
 //
@@ -250,16 +247,6 @@ inline bool LocalPlayer::getKeyPressed() const
 inline int LocalPlayer::getKeyButton() const
 {
   return keyButton;
-}
-
-inline void LocalPlayer::setSlowKeyboard(bool slow)
-{
-  slowKeyboard = slow;
-}
-
-inline bool LocalPlayer::hasSlowKeyboard() const
-{
-  return slowKeyboard;
 }
 
 #endif // BZF_LOCAL_PLAYER_H
