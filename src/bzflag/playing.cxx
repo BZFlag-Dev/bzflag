@@ -1,4 +1,4 @@
-/* bzflag
+/* bzflag
  * Copyright (c) 1993 - 2003 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
@@ -3080,7 +3080,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       tank->setVelocity(zero);
       tank->setAngularVelocity(0.0f);
       tank->setDeadReckoning();
-      playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
+      if (tank==myTank)
+	playLocalSound(SFX_POP);
+      else
+	playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
     }
 
     break;
@@ -6958,4 +6961,3 @@ void			startPlaying(BzfDisplay* _display,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
