@@ -78,6 +78,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "ControlPanel.h"
 #include "ShotStrategy.h"
 #include "StateDatabase.h"
+#include "KeyManager.h"
+#include "CommandManager.h"
 #include "daylight.h"
 #include "sound.h"
 #include "TimeBomb.h"
@@ -1595,6 +1597,13 @@ static void		doKeyNotPlaying(const BzfKeyEvent& key, bool pressed)
 
 static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 {
+  const std::string cmd = KEYMGR->get(key, pressed);
+  if (!cmd.empty()) {
+    std::string result = CMDMGR->run(cmd);
+    if (!result.empty())
+      std::cerr << result;
+    return;
+  }
   static ComposeDefaultKey composeKeyHandler;
   static SilenceDefaultKey silenceKeyHandler;
   static ServerCommandKey serverCommandKeyHandler;
