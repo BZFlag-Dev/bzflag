@@ -49,7 +49,6 @@ noinst_HEADERS =		\
 	OpenGLTexture.h		\
 	PTSceneNode.h		\
 	Pack.h			\
-	Permissions.h		\
 	Ping.h			\
 	PlatformFactory.h	\
 	PlayerInfo.h		\

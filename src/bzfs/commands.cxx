@@ -45,14 +45,21 @@
 
 // externs that poll, veto, vote, and clientquery require
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
-extern bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right);
 extern PlayerInfo player[MaxPlayers];
+extern PlayerAccessInfo accessInfo[MaxPlayers];
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
 
-// externs that removegroup needs
-extern int getPlayerIDByRegName(const std::string &regName);
+// util functions
+int getPlayerIDByRegName(const std::string &regName)
+{
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (accessInfo[i].getName() == regName)
+      return i;
+  }
+  return -1;
+}
 
 // externs that ghost needs
 extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
@@ -84,11 +91,13 @@ extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 
 void handlePasswordCmd(int t, const char *message)
 {
-  if (player[t].passwordAttemptsMax()) {
+  if (accessInfo[t].passwordAttemptsMax()) {
+    DEBUG1("%s has attempted too many /password tries\n",
+	   player[t].getCallSign());
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
     if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
-      player[t].setAdmin();
+      accessInfo[t].setAdmin();
       sendIPUpdate(t, -1);
       sendMessage(ServerPlayer, t, "You are now an administrator!");
     } else {
@@ -101,7 +110,8 @@ void handlePasswordCmd(int t, const char *message)
 
 void handleSetCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::setVar) && !hasPerm(t, PlayerAccessInfo::setAll)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::setVar)
+      && !accessInfo[t].hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the set command");
     return;
   }
@@ -112,7 +122,8 @@ void handleSetCmd(int t, const char *message)
 
 void handleResetCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::setVar) && !hasPerm(t, PlayerAccessInfo::setAll)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::setVar)
+      && !accessInfo[t].hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the reset command");
     return;
   }
@@ -123,7 +134,7 @@ void handleResetCmd(int t, const char *message)
 
 void handleShutdownserverCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::shutdownServer)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::shutdownServer)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
     return;
   }
@@ -134,7 +145,7 @@ void handleShutdownserverCmd(int t, const char *)
 
 void handleSuperkillCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::superKill)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::superKill)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
     return;
   }
@@ -149,7 +160,7 @@ void handleSuperkillCmd(int t, const char *)
 
 void handleGameoverCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::endGame)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::endGame)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the gameover command");
     return;
   }
@@ -167,7 +178,7 @@ void handleGameoverCmd(int t, const char *)
 
 void handleCountdownCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::countdown)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::countdown)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the countdown command");
     return;
   } else if (!clOptions->timeManualStart) {
@@ -227,7 +238,7 @@ void handleCountdownCmd(int t, const char *)
 
 void handleFlagCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::flagMod)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::flagMod)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the flag command");
     return;
   }
@@ -296,7 +307,7 @@ void handleFlagCmd(int t, const char *message)
 
 void handleKickCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::kick)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::kick)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the kick command");
     return;
   }
@@ -339,7 +350,7 @@ void handleKickCmd(int t, const char *message)
 
 void handleBanlistCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::banlist)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::banlist)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the banlist command");
     return;
   }
@@ -350,7 +361,7 @@ void handleBanlistCmd(int t, const char *)
 
 void handleHostBanlistCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::banlist)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::banlist)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the banlist command");
     return;
   }
@@ -361,7 +372,7 @@ void handleHostBanlistCmd(int t, const char *)
 
 void handleBanCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::ban)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::ban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
   }
@@ -415,7 +426,7 @@ void handleBanCmd(int t, const char *message)
 
 void handleHostBanCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::ban)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::ban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
   }
@@ -471,7 +482,7 @@ void handleHostBanCmd(int t, const char *message)
 
 void handleUnbanCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::unban)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::unban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
     return;
   }
@@ -489,7 +500,7 @@ void handleUnbanCmd(int t, const char *message)
 
 void handleHostUnbanCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::unban)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::unban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
     return;
   }
@@ -508,7 +519,7 @@ void handleHostUnbanCmd(int t, const char *message)
 
 void handleLagwarnCmd(int t, const char *message)
 {
-  if (!hasPerm(t, PlayerAccessInfo::lagwarn)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::lagwarn)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagwarn command");
     return;
   }
@@ -530,7 +541,7 @@ void handleLagwarnCmd(int t, const char *message)
 
 void handleLagstatsCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::lagStats)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::lagStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagstats command");
     return;
   }
@@ -540,6 +551,8 @@ void handleLagstatsCmd(int t, const char *)
   for (int i = 0; i < curMaxPlayers; i++) {
     player[i].getLagStats(reply);
     if (strlen(reply)) {
+      if (accessInfo[i].isAccessVerified())
+	strcat(reply, " (R)");
       sendMessage(ServerPlayer, t, reply, true);
     }
   }
@@ -549,7 +562,7 @@ void handleLagstatsCmd(int t, const char *)
 
 void handleIdlestatsCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::idleStats)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::idleStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the idlestats command");
     return;
   }
@@ -566,7 +579,7 @@ void handleIdlestatsCmd(int t, const char *)
 
 void handleFlaghistoryCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::flagHistory)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::flagHistory)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the flaghistory command");
     return;
   }
@@ -582,7 +595,7 @@ void handleFlaghistoryCmd(int t, const char *)
 
 void handlePlayerlistCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::playerList)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::playerList)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the playerlist command");
     return;
   }
@@ -674,28 +687,27 @@ void handleHelpCmd(int t, const char *message)
 void handleIdentifyCmd(int t, const char *message)
 {
   // player is trying to send an ID
-  if (player[t].isAccessVerified()) {
+  if (accessInfo[t].isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You have already identified");
-  } else if (player[t].gotAccessFailure()) {
+  } else if (accessInfo[t].gotAccessFailure()) {
     sendMessage(ServerPlayer, t, "You have attempted to identify too many times");
-    DEBUG1("Too Many Identifys %s\n",player[t].getName().c_str());
   } else {
     // get their info
-    if (!player[t].isRegistered()) {
+    if (!accessInfo[t].isRegistered()) {
       // not in DB, tell them to reg
       sendMessage(ServerPlayer, t, "This callsign is not registered,"
 		  " please register it with a /register command");
     } else {
-      if (player[t].isPasswordMatching(message + 10)) {
+      if (accessInfo[t].isPasswordMatching(message + 10)) {
 	sendMessage(ServerPlayer, t, "Password Accepted, welcome back.");
 	
 	// get their real info
-	player[t].setPermissionRights();
+	accessInfo[t].setPermissionRights();
 	
 	// if they have the PLAYERLIST permission, send the IP list
 	sendIPUpdate(t, -1);
       } else {
-	player[t].setLoginFail();
+	accessInfo[t].setLoginFail();
 	sendMessage(ServerPlayer, t, "Identify Failed, please make sure"
 		    " your password was correct");
       }
@@ -707,16 +719,16 @@ void handleIdentifyCmd(int t, const char *message)
 
 void handleRegisterCmd(int t, const char *message)
 {
-  if (player[t].isAccessVerified()) {
+  if (accessInfo[t].isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You have already registered and"
 		" identified this callsign");
   } else {
-    if (player[t].isRegistered()) {
+    if (accessInfo[t].isRegistered()) {
       sendMessage(ServerPlayer, t, "This callsign is already registered,"
 		  " if it is yours /identify to login");
     } else {
       if (strlen(message) > 12) {
-	player[t].storeInfo(message + 10);
+	accessInfo[t].storeInfo(message + 10);
 	sendMessage(ServerPlayer, t, "Callsign registration confirmed,"
 		    " please /identify to login");
       } else {
@@ -768,20 +780,23 @@ void handleGhostCmd(int t, const char *message)
 
 void handleDeregisterCmd(int t, const char *message)
 {
-  if (!player[t].isAccessVerified()) {
+  if (!accessInfo[t].isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the deregister command");
     return;
   }
 
   if (strlen(message) == 11) {
     // removing own callsign
-    PasswordMap::iterator itr1 = passwordDatabase.find(player[t].getName());
-    PlayerAccessMap::iterator itr2 = userDatabase.find(player[t].getName());
+    PasswordMap::iterator itr1
+      = passwordDatabase.find(accessInfo[t].getName());
+    PlayerAccessMap::iterator itr2
+      = userDatabase.find(accessInfo[t].getName());
     passwordDatabase.erase(itr1);
     userDatabase.erase(itr2);
-    updateDatabases();
+    PlayerAccessInfo::updateDatabases();
     sendMessage(ServerPlayer, t, "Your callsign has been deregistered");
-  } else if (strlen(message) > 12 && hasPerm(t, PlayerAccessInfo::setAll)) {
+  } else if (strlen(message) > 12
+	     && accessInfo[t].hasPerm(PlayerAccessInfo::setAll)) {
     // removing someone else's
     std::string name = message + 12;
     makeupper(name);
@@ -790,7 +805,7 @@ void handleDeregisterCmd(int t, const char *message)
       PlayerAccessMap::iterator itr2 = userDatabase.find(name);
       passwordDatabase.erase(itr1);
       userDatabase.erase(itr2);
-      updateDatabases();
+      PlayerAccessInfo::updateDatabases();
       char text[MessageLen];
       sprintf(text, "%s has been deregistered", name.c_str());
       sendMessage(ServerPlayer, t, text);
@@ -799,7 +814,7 @@ void handleDeregisterCmd(int t, const char *message)
       sprintf(text, "user %s does not exist", name.c_str());
       sendMessage(ServerPlayer, t, text);
     }
-  } else if (!hasPerm(t, PlayerAccessInfo::setAll)) {
+  } else if (!accessInfo[t].hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to deregister this user");
   }
 
@@ -809,7 +824,7 @@ void handleDeregisterCmd(int t, const char *message)
 
 void handleSetpassCmd(int t, const char *message)
 {
-  if (!player[t].isAccessVerified()) {
+  if (!accessInfo[t].isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the setpass command");
     return;
   }
@@ -823,7 +838,7 @@ void handleSetpassCmd(int t, const char *message)
     return;
   }
   std::string pass = message + startPosition;
-  player[t].setPassword(pass);
+  accessInfo[t].setPasswd(pass);
   char text[MessageLen];
   snprintf(text, MessageLen, "Your password is now set to \"%s\"", pass.c_str());
   sendMessage(ServerPlayer, t, text, true);
@@ -848,12 +863,13 @@ void handleShowgroupCmd(int t, const char *message)
   std::string settie;
 
   if (strlen(message) == 10) {	 // show own groups
-    if (player[t].isAccessVerified()) {
-      settie = player[t].getName();
+    if (accessInfo[t].isAccessVerified()) {
+      settie = accessInfo[t].getName();
     } else {
       sendMessage(ServerPlayer, t, "You are not identified");
     }
-  } else if (hasPerm(t, PlayerAccessInfo::showOthers)) { // show groups for other player
+  } else if (accessInfo[t].hasPerm(PlayerAccessInfo::showOthers)) {
+    // show groups for other player
     char *p1 = strchr(message + 1, '\"');
     char *p2 = 0;
     if (p1) p2 = strchr(p1 + 1, '\"');
@@ -871,7 +887,7 @@ void handleShowgroupCmd(int t, const char *message)
   // something is wrong
   if (settie != "") {
     if (userExists(settie)) {
-      PlayerAccessInfo &info = getUserInfo(settie);
+      PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
 
       std::string line = "Groups for ";
       line += settie;
@@ -929,16 +945,12 @@ void handleSetgroupCmd(int t, const char *message)
     makeupper(group);
 
     if (userExists(settie)) {
-      bool canset = true;
-      if (!hasPerm(t, PlayerAccessInfo::setAll) && !hasPerm(t, PlayerAccessInfo::setPerms)) {
-	canset = player[t].hasSetGroupPermission(group);
-      }
-      if (!canset) {
+      if (!accessInfo[t].canSet(group)) {
 	sendMessage(ServerPlayer, t, "You do not have permission to set this group");
       } else {
-	PlayerAccessInfo &info = getUserInfo(settie);
+	PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
 
-	if (addGroup(info, group)) {
+	if (info.addGroup(group)) {
 	  sendMessage(ServerPlayer, t, "Group Add successful");
 	  int getID = getPlayerIDByRegName(settie);
 	  if (getID != -1) {
@@ -946,9 +958,9 @@ void handleSetgroupCmd(int t, const char *message)
 	    sprintf(temp, "you have been added to the %s group, by %s",
 		    group.c_str(), player[t].getCallSign());
 	    sendMessage(ServerPlayer, getID, temp, true);
-	    player[getID].setGroup(group);
+	    accessInfo[getID].addGroup(group);
 	  }
-	  updateDatabases();
+	  PlayerAccessInfo::updateDatabases();
 	} else {
 	  sendMessage(ServerPlayer, t, "Group Add failed (user may already be in that group)");
 	}
@@ -975,16 +987,12 @@ void handleRemovegroupCmd(int t, const char *message)
     makeupper(settie);
     makeupper(group);
     if (userExists(settie)) {
-      bool canset = true;
-      if (!hasPerm(t, PlayerAccessInfo::setAll) && !hasPerm(t, PlayerAccessInfo::setPerms)) {
-	canset = player[t].hasSetGroupPermission(group);
-      }
-      if (!canset) {
+      if (!accessInfo[t].canSet(group)) {
 	sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
       } else {
-	PlayerAccessInfo &info = getUserInfo(settie);
+	PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
 
-	if (removeGroup(info, group)) {
+	if (info.removeGroup(group)) {
 	  sendMessage(ServerPlayer, t, "Group Remove successful");
 	  int getID = getPlayerIDByRegName(settie);
 	  if (getID != -1) {
@@ -992,9 +1000,9 @@ void handleRemovegroupCmd(int t, const char *message)
 	    sprintf(temp, "You have been removed from the %s group, by %s",
 		    group.c_str(), player[t].getCallSign());
 	    sendMessage(ServerPlayer, getID, temp, true);
-	    player[getID].resetGroup(group);
+	    accessInfo[getID].removeGroup(group);
 	  }
-	  updateDatabases();
+	  PlayerAccessInfo::updateDatabases();
 	} else {
 	  sendMessage(ServerPlayer, t, "Group Remove failed (user may not have been in group)");
 	}
@@ -1008,7 +1016,7 @@ void handleRemovegroupCmd(int t, const char *message)
 
 void handleReloadCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::setAll)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the reload command");
     return;
   }
@@ -1021,7 +1029,7 @@ void handleReloadCmd(int t, const char *)
   passwordDatabase.clear();
   // reload the databases
   if (groupsFile.size())
-    readGroupsFile(groupsFile);
+    PlayerAccessInfo::readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
   PlayerAccessMap::iterator itr = groupAccess.find("DEFAULT");
   if (itr == groupAccess.end()) {
@@ -1048,9 +1056,9 @@ void handleReloadCmd(int t, const char *)
   if (passFile.size())
     readPassFile(passFile);
   if (userDatabaseFile.size())
-    readPermsFile(userDatabaseFile);
+    PlayerAccessInfo::readPermsFile(userDatabaseFile);
   for (int p = 0; p < curMaxPlayers; p++) {
-    player[p].reloadInfo();
+    accessInfo[p].reloadInfo();
   }
   sendMessage(ServerPlayer, t, "Databases reloaded");
 
@@ -1066,7 +1074,7 @@ void handlePollCmd(int t, const char *message)
   DEBUG2("Entered poll command handler (MessageLen is %d)\n", MessageLen);
 
   /* make sure player has permission to request a poll */
-  if (!hasPerm(t, PlayerAccessInfo::poll)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::poll)) {
     sprintf(reply,"%s, you are presently not authorized to run /poll", callsign.c_str());
     sendMessage(ServerPlayer, t, reply, true);
     return;
@@ -1101,7 +1109,8 @@ void handlePollCmd(int t, const char *message)
   unsigned short int available = 0;
   for (int i = 0; i < curMaxPlayers; i++) {
     // any registered/known users on the server (including observers) are eligible to vote
-    if (player[i].isExisting()) {
+
+    if (player[i].exist() && accessInfo[i].exists()) {
       available++;
     }
   }
@@ -1255,7 +1264,7 @@ void handlePollCmd(int t, const char *message)
     // keep track of who is allowed to vote
     for (int j = 0; j < curMaxPlayers; j++) {
       // any registered/known users on the server (including observers) are eligible to vote
-      if (player[j].isExisting()) {
+      if (player[j].exist() && accessInfo[j].exists()) {
 	arbiter->grantSuffrage(player[j].getCallSign());
       }
     }
@@ -1300,7 +1309,7 @@ void handleVoteCmd(int t, const char *message)
   char reply[MessageLen] = {0};
   std::string callsign = std::string(player[t].getCallSign());
 
-  if (!hasPerm(t, PlayerAccessInfo::vote)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::vote)) {
     /* permission denied for /vote */
     sprintf(reply,"%s, you are presently not authorized to run /vote", callsign.c_str());
     sendMessage(ServerPlayer, t, reply, true);
@@ -1416,7 +1425,7 @@ void handleVoteCmd(int t, const char *message)
 
 void handleVetoCmd(int t, const char * /*message*/)
 {
-  if (!hasPerm(t, PlayerAccessInfo::veto)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::veto)) {
     /* permission denied for /veto */
     sendMessage(ServerPlayer, t,
 		string_util::format
@@ -1463,7 +1472,7 @@ void handleVetoCmd(int t, const char * /*message*/)
 void handleViewReportsCmd(int t, const char * /*message*/)
 {
   std::string line;
-  if (!hasPerm(t, PlayerAccessInfo::viewReports)) {
+  if (!accessInfo[t].hasPerm(PlayerAccessInfo::viewReports)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the viewreports command");
     return;
   }

@@ -63,20 +63,6 @@ void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr,
 
 void PlayerInfo::resetPlayer(bool ctf) {
   wasRabbit = false;
-  Admin = false;
-
-  passwordAttempts = 0;
-
-  regName = callSign;
-  makeupper(regName);
-
-  accessInfo.explicitAllows.reset();
-  accessInfo.explicitDenys.reset();
-  accessInfo.verified = false;
-  accessInfo.loginTime = TimeKeeper::getCurrent();
-  accessInfo.loginAttempts = 0;
-  accessInfo.groups.clear();
-  accessInfo.groups.push_back("DEFAULT");
 
   delayq.dequeuePackets();
 
@@ -109,17 +95,9 @@ void PlayerInfo::resetPlayer(bool ctf) {
   restartOnBase = ctf;
 }
 
-bool PlayerInfo::isAccessVerified() const {
-  return accessInfo.verified;
-}
-
 bool PlayerInfo::removePlayer() {
 
   bool wasPlaying = state > PlayerInLimbo;
-
-  accessInfo.verified      = false;
-  accessInfo.loginAttempts = 0;
-  regName.empty();
 
   delayq.dequeuePackets();
 
@@ -139,109 +117,12 @@ bool PlayerInfo::removePlayer() {
   return wasPlaying;
 }
 
-bool PlayerInfo::gotAccessFailure() {
-  return accessInfo.loginAttempts >= 5;
-}
-
-void PlayerInfo::setLoginFail() {
-  accessInfo.loginAttempts++;
-}
-
-void PlayerInfo::setPermissionRights() {
-  accessInfo.verified = true;
-  // get their real info
-  PlayerAccessInfo &info = getUserInfo(regName);
-  accessInfo.explicitAllows = info.explicitAllows;
-  accessInfo.explicitDenys = info.explicitDenys;
-  accessInfo.groups = info.groups;
-  DEBUG1("Identify %s\n", regName.c_str());
-}
-
-void PlayerInfo::reloadInfo() {
-  if (accessInfo.verified && userExists(regName)) {
-    accessInfo = getUserInfo(regName);
-    accessInfo.verified = true;
-  }
-}
-
-bool PlayerInfo::hasSetGroupPermission(const std::string& group) {
-  return hasGroup(accessInfo, group);
-}
-
-bool PlayerInfo::hasPermission(PlayerAccessInfo::AccessPerm right) {
-  return Admin || hasPerm(accessInfo, right);
-}
-
-void PlayerInfo::setGroup(const std::string& group) {
-  addGroup(accessInfo, group);
-}
-
-void PlayerInfo::resetGroup(const std::string& group) {
-  removeGroup(accessInfo, group);
-}
-
-void PlayerInfo::setAdmin() {
-  passwordAttempts = 0;
-  Admin = true;
-}
-
 void PlayerInfo::setRestartOnBase(bool on) {
   restartOnBase = on;
 };
 
 bool PlayerInfo::shouldRestartAtBase() {
   return restartOnBase;
-};
-
-std::string PlayerInfo::getName() {
-  return regName;
-};
-
-bool PlayerInfo::isPasswordMatching(const char* pwd) {
-  return verifyUserPassword(regName.c_str(), pwd);
-};
-
-bool PlayerInfo::isRegistered() const {
-  return userExists(regName);
-};
-
-bool PlayerInfo::isExisting() {
-  return exist() && userExists(regName);
-};
-
-bool PlayerInfo::isIdentifyRequired() {
-  return hasPerm(getUserInfo(regName), PlayerAccessInfo::requireIdentify);
-};
-
-bool PlayerInfo::isAllowedToEnter() {
-  return accessInfo.verified || !isRegistered() || !isIdentifyRequired();
-};
-
-void PlayerInfo::storeInfo(const char* pwd) {
-  PlayerAccessInfo info;
-  info.groups.push_back("DEFAULT");
-  info.groups.push_back("REGISTERED");
-  std::string pass = pwd;
-  setUserPassword(regName.c_str(), pass.c_str());
-  setUserInfo(regName, info);
-  DEBUG1("Register %s %s\n",regName.c_str(), pwd);
-  updateDatabases();
-}
-
-void PlayerInfo::setPassword(const std::string&  pwd) {
-  setUserPassword(regName.c_str(), pwd.c_str());
-  updateDatabases();
-}
-
-uint8_t PlayerInfo::getPlayerProperties() {
-  uint8_t result = 0;
-  if (isRegistered())
-    result |= IsRegistered;
-  if (accessInfo.verified)
-    result |= IsIdentified;
-  if (Admin)
-    result |= IsAdmin;
-  return result;
 };
 
 void PlayerInfo::resetComm() {
@@ -262,9 +143,6 @@ int PlayerInfo::sizeOfIP() {
 };
 
 void *PlayerInfo::packAdminInfo(void *buf) {
-  buf = nboPackUByte(buf, sizeOfIP());
-  buf = nboPackUByte(buf, playerIndex);
-  buf = nboPackUByte(buf, getPlayerProperties());
   buf = peer.pack(buf);
   return buf;
 };
@@ -343,10 +221,9 @@ void PlayerInfo::unpackEnter(void *buf) {
 
 void PlayerInfo::getLagStats(char* msg) {
   if ((state > PlayerInLimbo) && (type == TankPlayer)) {
-    sprintf(msg,"%-16s : %3d +- %2dms %s", callSign,
+    sprintf(msg,"%-16s : %3d +- %2dms", callSign,
 	    int(lagavg * 1000),
-	    int(jitteravg * 1000),
-	    accessInfo.verified ? "(R)" : "");
+	    int(jitteravg * 1000));
     if (lostavg >= 0.01f)
       sprintf(msg + strlen(msg), " %d%% lost/ooo", int(lostavg * 100));
   } else {
@@ -746,18 +623,6 @@ bool PlayerInfo::hasPlayedEarly() {
 
 void PlayerInfo::setPlayedEarly() {
   playedEarly = true;
-};
-
-bool PlayerInfo::passwordAttemptsMax() {
-  bool maxAttempts = passwordAttempts >= 5;
-  // see how many times they have tried, you only get 5
-  if (maxAttempts) {
-    DEBUG1("%s (%s) has attempted too many /password tries\n",
-	   callSign, peer.getDotNotation().c_str());
-  } else {
-    passwordAttempts++;
-  }
-  return maxAttempts;
 };
 
 #ifdef HAVE_ADNS_H

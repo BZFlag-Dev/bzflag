@@ -27,8 +27,9 @@
 
 #include "TimeKeeper.h"
 
-struct PlayerAccessInfo
+class PlayerAccessInfo
 {
+public:
   // player access info
   enum AccessPerm
     {
@@ -65,13 +66,52 @@ struct PlayerAccessInfo
 		// make sure it's the last real right
     };
 
+  void        reset(const char* callSign);
+  void        removePlayer();
+
+  std::string getName();
+
+  bool        isAccessVerified() const;
+  bool        gotAccessFailure();
+  void        setLoginFail();
+  bool        passwordAttemptsMax();
+  bool        isPasswordMatching(const char* pwd);
+  void        setPasswd(const std::string& pwd);
+  void        setAdmin();
+
+  void        setPermissionRights();
+  void        reloadInfo();
+
+  bool        hasGroup(const std::string& group);
+  bool        addGroup(const std::string &group);
+  bool        removeGroup(const std::string& group);
+  bool        canSet(const std::string& group);
+
+  bool        hasPerm(AccessPerm right);
+  bool        isRegistered() const;
+  bool        isIdentifyRequired();
+  bool        isAllowedToEnter();
+  uint8_t     getPlayerProperties();
+  void        storeInfo(const char* pwd);
+  bool        exists();
+  static PlayerAccessInfo &getUserInfo(const std::string &nick);
+  static bool readGroupsFile(const std::string &filename);
+  static bool readPermsFile(const std::string &filename);
+  static bool writePermsFile(const std::string &filename);
+  static void updateDatabases();
   std::bitset<lastPerm>		explicitAllows;
-  std::bitset<lastPerm>		explicitDenys;
   std::vector<std::string>	groups;
+private:
+  std::bitset<lastPerm>		explicitDenys;
   bool				verified;
   TimeKeeper			loginTime;
   int				loginAttempts;
+  bool                          Admin;
 
+  // number of times they have tried to /password
+  int passwordAttempts;
+  // player's registration name
+  std::string regName;
 };
 
 typedef std::map<std::string, PlayerAccessInfo> PlayerAccessMap;
@@ -91,24 +131,13 @@ inline void makeupper(std::string& str)
     str[i] = toupper(str[i]);
 }
 
-bool hasGroup(PlayerAccessInfo& info, const std::string &group);
-bool addGroup(PlayerAccessInfo& info, const std::string &group);
-bool removeGroup(PlayerAccessInfo& info, const std::string &group);
-bool hasPerm(PlayerAccessInfo& info, PlayerAccessInfo::AccessPerm right);
 bool userExists(const std::string &nick);
-PlayerAccessInfo& getUserInfo(const std::string &nick);
-bool setUserInfo(const std::string &nick, PlayerAccessInfo& info);
 bool verifyUserPassword(const std::string &nick, const std::string &pass);
-void setUserPassword(const std::string &nick, const std::string &pass);
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm);
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name);
 void parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms);
 bool readPassFile(const std::string &filename);
 bool writePassFile(const std::string &filename);
-bool readGroupsFile(const std::string &filename);
-bool readPermsFile(const std::string &filename);
-bool writePermsFile(const std::string &filename);
-void updateDatabases();
 
 #endif
 

@@ -29,7 +29,6 @@
 
 // bzflag library headers
 #include "global.h"
-#include "Permissions.h"
 #include "TimeKeeper.h"
 #include "Address.h"
 #include "PlayerState.h"
@@ -67,30 +66,10 @@ public:
   void        initPlayer(const struct sockaddr_in& clientAddr,
 			 int _playerIndex);
   void        resetPlayer(bool ctf);
-  bool        isAccessVerified() const;
   // return false if player was not really in 
   bool        removePlayer();
-  bool        gotAccessFailure();
-  void        setLoginFail();
-  void        reloadInfo();
-  void        setPermissionRights();
-  bool        hasSetGroupPermission(const std::string& group);
-  bool        hasPermission(PlayerAccessInfo::AccessPerm right);
-  void        setGroup(const std::string& group);
-  void        resetGroup(const std::string& group);
-  void        setAdmin();
   void        setRestartOnBase(bool on);
   bool        shouldRestartAtBase();
-  std::string getName();
-  bool        isRegistered() const;
-  bool        isExisting();
-  bool        isIdentifyRequired();
-  bool        isAllowedToEnter();
-  bool        isPasswordMatching(const char* pwd);
-  uint8_t     getPlayerProperties();
-  void        storeInfo(const char* pwd);
-  void        setPassword(const std::string& pwd);
-  void        createUdpCon(int remote_port);
   void        resetComm();
   const char *getTargetIP();
   int         sizeOfIP();
@@ -155,26 +134,21 @@ public:
   void        addFlagToHistory(FlagType* type);
   bool        hasPlayedEarly();
   void        setPlayedEarly();
-  bool        passwordAttemptsMax();
 #ifdef HAVE_ADNS_H
   // return true if host is resolved
   bool        checkDNSResolution();
   const char *getHostname();
   static void startupResolver();
 #endif
+
 private:
   void        cleanCallSign();
   void        cleanEMail();
 
   int         playerIndex;
 
-    // player access
-    PlayerAccessInfo accessInfo;
-    bool Admin;
     bool restartOnBase;
 
-    // player's registration name
-    std::string regName;
     // peer's network address
     Address peer;
 #ifdef HAVE_ADNS_H
@@ -232,10 +206,6 @@ private:
 
     // player played before countdown started
     bool playedEarly;
-
-    // number of times they have tried to /password
-    int passwordAttempts;
-
 };
 
 

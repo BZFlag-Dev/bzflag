@@ -39,6 +39,8 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers];
+// player access
+PlayerAccessInfo accessInfo[MaxPlayers];
 // Last known position, vel, etc
 PlayerState lastState[MaxPlayers];
 // team info
@@ -96,24 +98,9 @@ void resetFlag(int flagIndex);
 static void dropFlag(int playerIndex, float pos[3]);
 static void dropAssignedFlag(int playerIndex);
 
-// util functions
-int getPlayerIDByRegName(const std::string &regName)
-{
-  for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].getName() == regName)
-      return i;
-  }
-  return -1;
-}
-
 int getCurMaxPlayers()
 {
   return curMaxPlayers;
-}
-
-bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
-{
-  return player[playerIndex].hasPermission(right);
 }
 
 static void pwrite(int playerIndex, const void *b, int l)
@@ -324,14 +311,15 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
 
   // send to who?
   std::vector<int> receivers;
-  if (targetPlayer != -1 && 
-      hasPerm(targetPlayer, PlayerAccessInfo::playerList)) {
+  if (targetPlayer != -1
+      && accessInfo[targetPlayer].hasPerm(PlayerAccessInfo::playerList))
+    {
     receivers.push_back(targetPlayer);
   }
   else {
     for (int i = 0; i < curMaxPlayers; ++i) {
       if (player[i].isPlaying() && 
-	  hasPerm(i, PlayerAccessInfo::playerList))
+	  accessInfo[i].hasPerm(PlayerAccessInfo::playerList))
 	receivers.push_back(i);
     }
   }
@@ -340,6 +328,9 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
   void *buf, *bufStart = getDirectMessageBuffer();
   if (playerIndex != -1) {
     buf = nboPackUByte(bufStart, 1);
+    buf = nboPackUByte(buf, player[playerIndex].sizeOfIP());
+    buf = nboPackUByte(buf, playerIndex);
+    buf = nboPackUByte(buf, accessInfo[playerIndex].getPlayerProperties());
     buf = player[playerIndex].packAdminInfo(buf);
     for (unsigned int i = 0; i < receivers.size(); ++i) {
       directMessage(receivers[i], MsgAdminInfo,
@@ -355,6 +346,9 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     buf = nboPackUByte(bufStart, 0); // will be overwritten later
     for (i = 0; i < curMaxPlayers; ++i) {
       if (player[i].isPlaying()) {
+	buf = nboPackUByte(buf, player[i].sizeOfIP());
+	buf = nboPackUByte(buf, i);
+	buf = nboPackUByte(buf, accessInfo[i].getPlayerProperties());
 	buf = player[i].packAdminInfo(buf);
 	++c;
       }
@@ -1349,15 +1343,14 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
       if (player[i].isPlaying() && player[i].isTeam(team))
         directMessage(i, MsgMessage, len, bufStart);
   } else if (targetPlayer == AdminPlayers){
-		// admin messages
-		for (int i = 0; i < curMaxPlayers; i++){
-			if (player[i].isPlaying() && 
-					hasPerm(i, PlayerAccessInfo::adminMessages)){
-					directMessage(i, MsgMessage, len, bufStart);
-			}
-		}
-	
-	} else
+    // admin messages
+    for (int i = 0; i < curMaxPlayers; i++) {
+      if (player[i].isPlaying()
+	  && accessInfo[i].hasPerm(PlayerAccessInfo::adminMessages)) {
+	directMessage(i, MsgMessage, len, bufStart);
+      }
+    }  
+  } else
     broadcastMessage(MsgMessage, len, bufStart);
 }
 
@@ -1522,6 +1515,7 @@ static void addPlayer(int playerIndex)
       rejectPlayer(playerIndex, RejectTeamFull);
       return ;
   }
+  accessInfo[playerIndex].reset(player[playerIndex].getCallSign());
   player[playerIndex].resetPlayer
     ((clOptions->gameStyle & TeamFlagGameStyle) != 0);
 
@@ -1668,9 +1662,9 @@ static void addPlayer(int playerIndex)
     sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
-  if (player[playerIndex].isRegistered()) {
+  if (accessInfo[playerIndex].isRegistered()) {
     // nick is in the DB send him a message to identify.
-    if (player[playerIndex].isIdentifyRequired())
+    if (accessInfo[playerIndex].isIdentifyRequired())
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing.");
     else
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
@@ -1970,6 +1964,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // status message
     DEBUG1("Player %s [%d] removed: %s\n",
 	   player[playerIndex].getCallSign(), playerIndex, reason);
+    accessInfo[playerIndex].removePlayer();
     wasPlaying = player[playerIndex].removePlayer();
     NetHandler *netPlayer = NetHandler::getHandler(playerIndex);
 #ifdef NETWORK_STATS
@@ -2161,7 +2156,7 @@ static void playerAlive(int playerIndex)
     return;
 
   // make sure the user identifies themselves if required.
-  if (!player[playerIndex].isAllowedToEnter()) {
+  if (!accessInfo[playerIndex].isAllowedToEnter()) {
     sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing or use a different callsign.");
     removePlayer(playerIndex, "unidentified");
     return;
@@ -3107,17 +3102,17 @@ static void handleCommand(int t, const void *rawbuf)
       player[t].hasSent(message);
       // check for command
       if (message[0] == '/') {
-				/* make commands case insensitive for user-friendlyness */
-				unsigned int pos=1;
-				while ((pos < strlen(message)) && (isAlphanumeric(message[pos]))) {
-					message[pos] = tolower((int)message[pos]);
-					pos++;
-				}
-				parseCommand(message, t);
+	/* make commands case insensitive for user-friendlyness */
+	unsigned int pos=1;
+	while ((pos < strlen(message)) && (isAlphanumeric(message[pos]))) {
+	  message[pos] = tolower((int)message[pos]);
+	  pos++;
+	}
+	parseCommand(message, t);
+      } else if (targetPlayer == AdminPlayers
+		 && accessInfo[t].hasPerm(PlayerAccessInfo::adminMessages)) {
+	sendMessage (t, AdminPlayers, message, true);			
       }
-			else if (targetPlayer == AdminPlayers && hasPerm(t, PlayerAccessInfo::adminMessages)) {
-				sendMessage (t, AdminPlayers, message, true);			
-			}
       // check if the target player is invalid
       else if (targetPlayer < LastRealPlayer && 
                !player[targetPlayer].isPlaying()) {
@@ -3669,7 +3664,7 @@ int main(int argc, char **argv)
 
   // load up the access permissions & stuff
   if(groupsFile.size())
-    readGroupsFile(groupsFile);
+    PlayerAccessInfo::readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
   PlayerAccessMap::iterator itr = groupAccess.find("DEFAULT");
   if (itr == groupAccess.end()) {
@@ -3696,7 +3691,7 @@ int main(int argc, char **argv)
   if (passFile.size())
     readPassFile(passFile);
   if (userDatabaseFile.size())
-    readPermsFile(userDatabaseFile);
+    PlayerAccessInfo::readPermsFile(userDatabaseFile);
 
 
   /* MAIN SERVER RUN LOOP

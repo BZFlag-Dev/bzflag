@@ -34,6 +34,7 @@ bzfs_SOURCES = \
 	ListServerConnection.cxx \
 	ListServerConnection.h \
 	PackVars.h \
+	Permissions.h \
 	Permissions.cxx \
 	PlayerInfo.cxx \
 	SpawnPosition.cxx \

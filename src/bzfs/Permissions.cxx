@@ -20,17 +20,145 @@
 #include "Permissions.h"
 #include "md5.h"
 
+// implementation-specific bzflag headers
+#include "bzfio.h"
+#include "Protocol.h"
+
 PlayerAccessMap	groupAccess;
 PlayerAccessMap	userDatabase;
 PasswordMap	passwordDatabase;
 
-bool hasGroup(PlayerAccessInfo& info, const std::string &group)
+void setUserPassword(const std::string &nick, const std::string &pass);
+
+void PlayerAccessInfo::reset(const char* callSign) {
+  regName = callSign;
+  makeupper(regName);
+
+  explicitAllows.reset();
+  explicitDenys.reset();
+  verified = false;
+  loginTime = TimeKeeper::getCurrent();
+  loginAttempts = 0;
+  groups.clear();
+  groups.push_back("DEFAULT");
+  Admin = false;
+  passwordAttempts = 0;
+}
+
+void PlayerAccessInfo::removePlayer() {
+  verified      = false;
+  loginAttempts = 0;
+  regName.empty();
+}
+
+bool PlayerAccessInfo::isAccessVerified() const {
+  return verified;
+}
+
+bool PlayerAccessInfo::gotAccessFailure() {
+  bool accessFailure = loginAttempts >= 5;
+  if (accessFailure)
+    DEBUG1("Too Many Identifys %s\n", getName().c_str());
+  return accessFailure;
+}
+
+void PlayerAccessInfo::setLoginFail() {
+  loginAttempts++;
+}
+
+void PlayerAccessInfo::setPermissionRights() {
+  verified = true;
+  // get their real info
+  PlayerAccessInfo &info = getUserInfo(regName);
+  explicitAllows = info.explicitAllows;
+  explicitDenys = info.explicitDenys;
+  groups = info.groups;
+  DEBUG1("Identify %s\n", regName.c_str());
+}
+
+void PlayerAccessInfo::reloadInfo() {
+  if (verified && userExists(regName)) {
+    PlayerAccessInfo accessInfo = getUserInfo(regName);
+    explicitAllows = accessInfo.explicitAllows;
+    explicitDenys  = accessInfo.explicitDenys;
+    groups         = accessInfo.groups;
+    loginTime      = accessInfo.loginTime;
+    loginAttempts  = accessInfo.loginAttempts;
+  }
+}
+
+void PlayerAccessInfo::setAdmin() {
+  passwordAttempts = 0;
+  Admin            = true;
+}
+
+bool PlayerAccessInfo::passwordAttemptsMax() {
+  bool maxAttempts = passwordAttempts >= 5;
+  // see how many times they have tried, you only get 5
+  if (!maxAttempts) {
+    passwordAttempts++;
+  }
+  return maxAttempts;
+}
+
+std::string PlayerAccessInfo::getName() {
+  return regName;
+}
+
+bool PlayerAccessInfo::isPasswordMatching(const char* pwd) {
+  return verifyUserPassword(regName.c_str(), pwd);
+}
+
+bool PlayerAccessInfo::isRegistered() const {
+  return userExists(regName);
+}
+
+bool PlayerAccessInfo::isIdentifyRequired() {
+  return getUserInfo(regName).hasPerm(requireIdentify);
+}
+
+bool PlayerAccessInfo::isAllowedToEnter() {
+  return verified || !isRegistered() || !isIdentifyRequired();
+};
+
+void PlayerAccessInfo::storeInfo(const char* pwd) {
+  PlayerAccessInfo info;
+  info.groups.push_back("DEFAULT");
+  info.groups.push_back("REGISTERED");
+  std::string pass = pwd;
+  setUserPassword(regName.c_str(), pass.c_str());
+  userDatabase[regName] = info;
+  DEBUG1("Register %s %s\n", regName.c_str(), pwd);
+  updateDatabases();
+}
+
+void PlayerAccessInfo::setPasswd(const std::string&  pwd) {
+  setUserPassword(regName.c_str(), pwd.c_str());
+  updateDatabases();
+}
+
+uint8_t PlayerAccessInfo::getPlayerProperties() {
+  uint8_t result = 0;
+  if (isRegistered())
+    result |= IsRegistered;
+  if (verified)
+    result |= IsIdentified;
+  if (Admin)
+    result |= IsAdmin;
+  return result;
+}
+
+bool PlayerAccessInfo::exists() {
+  return userExists(regName);
+}
+
+bool PlayerAccessInfo::hasGroup(const std::string &group)
 {
   std::string str = group;
   makeupper(str);
 
-  std::vector<std::string>::iterator itr = info.groups.begin();
-  while (itr != info.groups.end()) {
+  std::vector<std::string>::iterator itr = groups.begin();
+  while (itr != groups.end()) {
     if ((*itr) == str)
       return true;
     itr++;
@@ -38,30 +166,30 @@ bool hasGroup(PlayerAccessInfo& info, const std::string &group)
   return false;
 }
 
-bool addGroup(PlayerAccessInfo& info, const std::string &group)
+bool PlayerAccessInfo::addGroup(const std::string &group)
 {
-  if (hasGroup(info, group))
+  if (hasGroup(group))
     return false;
 
   std::string str = group;
   makeupper(str);
 
-  info.groups.push_back(str);
+  groups.push_back(str);
   return true;
 }
 
-bool removeGroup(PlayerAccessInfo& info, const std::string &group)
+bool PlayerAccessInfo::removeGroup(const std::string &group)
 {
-  if (!hasGroup(info, group))
+  if (!hasGroup(group))
     return false;
 
   std::string str = group;
   makeupper(str);
 
-  std::vector<std::string>::iterator itr = info.groups.begin();
-  while (itr != info.groups.end()) {
+  std::vector<std::string>::iterator itr = groups.begin();
+  while (itr != groups.end()) {
     if ((*itr) == str) {
-      itr = info.groups.erase(itr);
+      itr = groups.erase(itr);
       return true;
     } else
       itr++;
@@ -69,15 +197,22 @@ bool removeGroup(PlayerAccessInfo& info, const std::string &group)
   return false;
 }
 
-bool hasPerm(PlayerAccessInfo& info, PlayerAccessInfo::AccessPerm right)
-{
-  if (info.explicitDenys.test(right))
-    return false;
-  if (info.explicitAllows.test(right))
+bool PlayerAccessInfo::canSet(const std::string& group) {
+  if (hasPerm(PlayerAccessInfo::setAll) || hasPerm(PlayerAccessInfo::setPerms))
     return true;
-  std::vector<std::string>::iterator itr = info.groups.begin();
+  return hasGroup(group);
+}
+
+bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) {
+  if (Admin)
+    return true;
+  if (explicitDenys.test(right))
+    return false;
+  if (explicitAllows.test(right))
+    return true;
+  std::vector<std::string>::iterator itr = groups.begin();
   PlayerAccessMap::iterator group;
-  while (itr != info.groups.end()) {
+  while (itr != groups.end()) {
     group = groupAccess.find(*itr);
     if (group != groupAccess.end())
       if (group->second.explicitAllows.test(right))
@@ -98,7 +233,7 @@ bool userExists(const std::string &nick)
 }
 
 //FIXME - check for non-existing user (throw?)
-PlayerAccessInfo& getUserInfo(const std::string &nick)
+PlayerAccessInfo &PlayerAccessInfo::getUserInfo(const std::string &nick)
 {
 //  if (!userExists(nick))
 //    return false;
@@ -108,14 +243,6 @@ PlayerAccessInfo& getUserInfo(const std::string &nick)
 //  if (itr == userDatabase.end())
 //    return false;
   return itr->second;
-}
-
-bool setUserInfo(const std::string &nick, PlayerAccessInfo& info)
-{
-  std::string str = nick;
-  makeupper(str);
-  userDatabase[str] = info;
-  return true;
 }
 
 bool verifyUserPassword(const std::string &nick, const std::string &pass)
@@ -255,7 +382,7 @@ bool writePassFile(const std::string &filename)
   return true;
 }
 
-bool readGroupsFile(const std::string &filename)
+bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 {
   std::ifstream in(filename.c_str());
   if (!in)
@@ -278,7 +405,7 @@ bool readGroupsFile(const std::string &filename)
   return true;
 }
 
-bool readPermsFile(const std::string &filename)
+bool PlayerAccessInfo::readPermsFile(const std::string &filename)
 {
   std::ifstream in(filename.c_str());
   if (!in)
@@ -315,7 +442,7 @@ bool readPermsFile(const std::string &filename)
   return true;
 }
 
-bool writePermsFile(const std::string &filename)
+bool PlayerAccessInfo::writePermsFile(const std::string &filename)
 {
   int i;
   std::ofstream out(filename.c_str());
@@ -351,7 +478,7 @@ std::string		groupsFile;
 std::string		passFile;
 std::string		userDatabaseFile;
 
-void updateDatabases()
+void PlayerAccessInfo::updateDatabases()
 {
   if(passFile.size())
     writePassFile(passFile);
