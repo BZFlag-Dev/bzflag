@@ -119,7 +119,7 @@ void handleResetCmd(int t, const char *message)
 }
 
 
-void handleShutdownserverCmd(int, const char *)
+void handleShutdownserverCmd(int t, const char *)
 {
   if (!hasPerm(t, PlayerAccessInfo::shutdownServer)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the reset command");
@@ -130,7 +130,7 @@ void handleShutdownserverCmd(int, const char *)
 }
 
 
-void handleSuperkillCmd(int, const char *)
+void handleSuperkillCmd(int t, const char *)
 {
   if (!hasPerm(t, PlayerAccessInfo::superKill)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
@@ -303,7 +303,6 @@ void handleKickCmd(int t, const char *message)
     return;
   }
   int i;
-  char reply [MessageLen];
   std::vector<std::string> argv = string_util::tokenize( message, " \t", 3, true);
   
   if( argv.size() < 2 ){
@@ -450,7 +449,7 @@ void handleLagwarnCmd(int t, const char *message)
 
 void handleLagstatsCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::lagstats)) {
+  if (!hasPerm(t, PlayerAccessInfo::lagStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagstats command");
     return;
   }
@@ -474,7 +473,7 @@ void handleLagstatsCmd(int t, const char *)
 
 void handleIdlestatsCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::idlestats)) {
+  if (!hasPerm(t, PlayerAccessInfo::idleStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the idlestats command");
     return;
   }
@@ -495,7 +494,7 @@ void handleIdlestatsCmd(int t, const char *)
 
 void handleFlaghistoryCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::flaghistory)) {
+  if (!hasPerm(t, PlayerAccessInfo::flagHistory)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the flaghistory command");
     return;
   }
@@ -525,7 +524,7 @@ void handleFlaghistoryCmd(int t, const char *)
 
 void handlePlayerlistCmd(int t, const char *)
 {
-  if (!hasPerm(t, PlayerAccessInfo::playerlist)) {
+  if (!hasPerm(t, PlayerAccessInfo::playerList)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the playerlist command");
     return;
   }
@@ -1360,7 +1359,7 @@ void handleVetoCmd(int t, const char * /*message*/)
 {
   if (!hasPerm(t, PlayerAccessInfo::veto)) {
     /* permission denied for /veto */
-    sendMessage(ServerPlayer, t, string_util::format("%s, you are presently not authorized to run /veto", player[t].callSign), true);
+    sendMessage(ServerPlayer, t, string_util::format("%s, you are presently not authorized to run /veto", player[t].callSign).c_str(), true);
     return;
   }
 
@@ -1375,16 +1374,16 @@ void handleVetoCmd(int t, const char * /*message*/)
 
   /* make sure there is an unexpired poll */
   if ((arbiter != NULL) && !arbiter->knowsPoll()) {
-    sendMessage(ServerPlayer, t, string_util::format("%s, there is presently no active poll to veto", player[t].callSign), true);
+    sendMessage(ServerPlayer, t, string_util::format("%s, there is presently no active poll to veto", player[t].callSign).c_str(), true);
     return;
   }
 
-  sendMessage(ServerPlayer, t, string_util::format("%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str()), true);
+  sendMessage(ServerPlayer, t, string_util::format("%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str()).c_str(), true);
 
   /* poof */
   arbiter->forgetPoll();
 
-  sendMessage(ServerPlayer, AllPlayers, string_util::format("The poll was cancelled by %s", player[t].callSign), true);
+  sendMessage(ServerPlayer, AllPlayers, string_util::format("The poll was cancelled by %s", player[t].callSign).c_str(), true);
 
   return;
 }
