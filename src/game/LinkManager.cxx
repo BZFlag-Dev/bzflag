@@ -270,11 +270,12 @@ int LinkManager::getTeleportTarget(int source) const
     return dstsList[0];
   }
   else if (dstsList.size() > 1) {
-    int target = rand() % dstsList.size();
+    int target = rand() % int(dstsList.size());
     return dstsList[target];
   }
   else {
     assert(false);
+	return 0;
   }
 }
 
@@ -296,6 +297,7 @@ int LinkManager::getTeleportTarget(int source, unsigned int seed) const
   }
   else {
     assert(false);
+	return 0;
   }
 }
 

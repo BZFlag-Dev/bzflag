@@ -202,6 +202,9 @@
 				RelativePath="..\..\src\game\LagInfo.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\LinkManager.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\MeshTransform.cxx">
 			</File>
 			<File
@@ -259,6 +262,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\LagInfo.h">
+			</File>
+			<File
+				RelativePath="..\..\include\LinkManager.h">
 			</File>
 			<File
 				RelativePath="..\..\include\NetHandler.h">
