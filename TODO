@@ -8,6 +8,11 @@ to do / idea list for bzflag
    low bandwidth, an automatic throttling of bulk messages could
    reduce lag.
 
+* flag negotiation at connect
+   Server tells the client exactly what flags are going to appear,
+   thus allowing flag changes in minor version updates (if the
+   server uses flags that the client doesn't, kill)
+
 * player database in bzfls:
    The idea is to allow players to register their callsign. 
    Whoever want to use that callsign has to authenticate himself
@@ -46,6 +51,16 @@ to do / idea list for bzflag
    completely. bots should get all message types.
 
 * smarter robots
+  robot API - libbzflag anyone?
+
+* change basic server config to a file
+   more complicated server options
+   allow overrides with --option=value
+
+* real collision detection
+
+* new enhanced worlds
+   downloadable textures, sounds, etc
 
 * add type of shot (normal, gm, sw, etc) to killed message
 
