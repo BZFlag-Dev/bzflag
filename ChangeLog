@@ -3,6 +3,7 @@
 
 * add new updates here without heading until a release
 
+* IRIX build fixes - David Trowbridge
 * server list cache - Michael Hoffman
 * OSX Fixes - Sean (brlcad | learner)
 * E-mail field fixes - Lars Luthman
