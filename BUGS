@@ -35,6 +35,8 @@ recent bugs
   A quick fix would make bots always spawn at 0
   http://bzflag.mebigfatguy.com/robobase.bzw
   start as bzfs -world c:\robobase.bzw -fb -j -c
+  MAC: Robots now ALWAYS spawn on the ground no matter what
+  Robots still don't check base (side) collisions
 
 - doc/guide/NetworkProtocol.xml is not up to date
 

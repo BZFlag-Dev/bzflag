@@ -2896,7 +2896,7 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
 {
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
-  if (player[playerId].restartOnBase && team <= PurpleTeam) {
+  if (player[playerId].restartOnBase && (player[playerId].type != ComputerPlayer) && (team <= PurpleTeam)) {
     float x = (baseSize[team][0] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
     float y = (baseSize[team][1] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
     spawnpos[0] = basePos[team][0] + x * cosf(baseRotation[team]) - y * sinf(baseRotation[team]);
@@ -2905,7 +2905,7 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
     player[playerId].restartOnBase = false;
   }
   else {
-    bool onGroundOnly = !clOptions->respawnOnBuildings;
+    bool onGroundOnly = (!clOptions->respawnOnBuildings) || (player[playerId].type == ComputerPlayer);
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     WorldInfo::ObstacleLocation *building;
 
