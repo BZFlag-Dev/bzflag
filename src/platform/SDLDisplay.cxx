@@ -29,7 +29,9 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
   SDL_Rect **modeList
     = SDL_ListModes(NULL, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN
 		    | SDL_HWPALETTE);
-  
+  if (!modeList)
+    printf("Could not Get available video modes: %s.\n", SDL_GetError());
+
   int defaultResolutionIndex = 0;
   ResInfo** resolutions;
   int numResolutions = 1;
@@ -272,22 +274,23 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
 }
 
 void SDLDisplay::createWindow() {
-  Uint32 flags = SDL_HWSURFACE | SDL_OPENGL;
+  SDL_Surface *surface;
   if (fullScreen)
-    SDL_SetVideoMode(getWidth(), getHeight(), 0, flags | SDL_FULLSCREEN);
+    surface = SDL_SetVideoMode(getWidth(), getHeight(), 0,
+			       SDL_OPENGL  | SDL_FULLSCREEN);
   else
-    SDL_SetVideoMode(base_width, base_height, 0, flags);
+    surface = SDL_SetVideoMode(base_width, base_height, 0, SDL_OPENGL);
+  if (!surface)
+    printf("Could not set Video Mode: %s.\n", SDL_GetError());
 };
 
 void SDLDisplay::setFullscreen() {
   fullScreen = true;
-  createWindow();
 }
 
-void SDLDisplay::setWindowSize(int width, int height) {
-  base_width  = width;
-  base_height = height;
-  createWindow();
+void SDLDisplay::setWindowSize(int _width, int _height) {
+  base_width  = _width;
+  base_height = _height;
 }
 
 void SDLDisplay::getWindowSize(int& width, int& height) const {
@@ -301,10 +304,7 @@ void SDLDisplay::getWindowSize(int& width, int& height) const {
 };
 
 void SDLVisual::setDoubleBuffer(bool on) {
-  if (on)
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  else
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, on ? 1 : 0);
 };
 
 void SDLVisual::setRGBA(int minRed, int minGreen,
@@ -324,17 +324,12 @@ void SDLVisual::setStencil(int minDepth) {
 };
 
 void SDLVisual::setStereo(bool on) {
-  if (on)
-    SDL_GL_SetAttribute(SDL_GL_STEREO, 1);
-  else
-    SDL_GL_SetAttribute(SDL_GL_STEREO, 0);
+  SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
 };
   
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display), x(-1), y(-1),
-    hasGamma(SDL_SetGamma(1.0, 1.0, 1.0) != -1)
+  : BzfWindow(_display), x(-1), y(-1), hasGamma(true)
 {
-  ((SDLDisplay *)getDisplay())->createWindow();
 };
 
 void SDLWindow::setTitle(const char * title) {
@@ -372,7 +367,11 @@ void SDLWindow::getSize(int& width, int& height) const {
 
 void SDLWindow::setGamma(float newGamma) {
   gamma = newGamma;
-  SDL_SetGamma(gamma, gamma, gamma);
+  int result = SDL_SetGamma(gamma, gamma, gamma);
+  if (result == -1) {
+    printf("Could not set Gamma: %s.\n", SDL_GetError());
+    hasGamma = false;
+  }
 };
 
 float SDLWindow::getGamma() const {
@@ -385,6 +384,10 @@ bool SDLWindow::hasGammaControl() const {
 
 void SDLWindow::swapBuffers() {
   SDL_GL_SwapBuffers();
+};
+
+void SDLWindow::create(void) {
+  ((SDLDisplay *)getDisplay())->createWindow();
 };
 
 #endif

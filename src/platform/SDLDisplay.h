@@ -88,6 +88,7 @@ class SDLWindow : public BzfWindow {
   void  swapBuffers();
   void  makeContext() {;};
   void  freeContext() {;};
+  void  create(void);
  private:
   int          x;
   int          y;
