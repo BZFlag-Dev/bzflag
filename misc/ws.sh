@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # cleanup whitespace issues
 # could use new sed, but not everybody has that yet
 # sed -i -e 's/search/replace/g' filename1 ...
