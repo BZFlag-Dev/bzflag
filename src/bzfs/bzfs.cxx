@@ -5422,7 +5422,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
 
-      // if tank not on ground cannot be sure if it didn't have HighSpeed before
+/*      // if tank not on ground cannot be sure if it didn't have HighSpeed before
       if (flag[player[t].flag].flag.id == VelocityFlag || state.pos[2] > 0.0f)
 	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
       
@@ -5433,7 +5433,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
 	break;
-      }
+      }*/
     }
     //Fall thru
     case MsgGMUpdate:
