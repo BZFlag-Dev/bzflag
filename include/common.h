@@ -66,8 +66,12 @@ extern int debugLevel;
 #ifdef HAVE__STRNICMP
 #  define strncasecmp _strnicmp
 #endif
-#ifdef HAVE__VSNPRINTF
-#  define vsnprintf _vsnprintf
+#if !defined(HAVE_VSNPRINTF)
+#  ifdef HAVE__VSNPRINTF
+#    define vsnprintf _vsnprintf
+#  else
+#    define vsnprintf(buf, size, fmt, list) vsprintf(buf, fmt, list)
+#  endif
 #endif
 
 // some platforms don't have float versions of the math library
