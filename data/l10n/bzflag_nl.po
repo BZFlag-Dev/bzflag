@@ -4,136 +4,148 @@
 msgid "Join Game"
 msgstr "Spelen"
 
+msgid "nl"
+msgstr "Dutch"
+
+msgid "translator"
+msgstr "Sussudio"
+
 msgid "Find Server"
 msgstr "Zoek Server"
 
-msgid "Connect"	
+msgid "Connect"
 msgstr "Verbinden"
 
-msgid "Callsign:" 
+msgid "Callsign:"
 msgstr "Naam"
 
-#msgid "Team:" 
+#msgid "Team:"
 #msgstr "Team"
 
-#msgid "Server:" 
+#msgid "Server:"
 #msgstr "Server"
 
-msgid "Port:" 
+msgid "Port:"
 msgstr "Poort:"
 
-msgid "Start Server" 
+msgid "Start Server"
 msgstr "Server Starten"
 
-msgid "Up/Down arrows to move, Enter to select, Esc to dismiss" 
+msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
 msgstr "Up/Down pijltjes - bewegen, Enter - selecteren, Esc - afbreken"
 
-msgid "Options" 
+msgid "Options"
 msgstr "Opties"
 
-#msgid "Help" 
+#msgid "Help"
 #msgstr "Help"
 
-msgid "Quit" 
+msgid "Quit"
 msgstr "Stoppen"
 
-msgid "Dithering:" 
+msgid "Dithering:"
 msgstr "Dithering (kleurschakering):"
 
-msgid "Off" 
+msgid "Off"
 msgstr "Uit"
 
-msgid "On" 
+msgid "On"
 msgstr "Aan"
 
-msgid "Blending:" 
+msgid "Blending:"
 msgstr "Blending (kleurvermenging): "
 
-msgid "Smoothing:" 
+msgid "Smoothing:"
 msgstr "Smoothing (kleurvloeing): "
 
-msgid "Lighting:" 
+msgid "Lighting:"
 msgstr "Belichting: "
 
-msgid "Texturing:" 
+msgid "Texturing:"
 msgstr "Texturing (verweving): "
 
-msgid "Nearest" 
+msgid "Nearest"
 msgstr "Dichtsbijzijnde"
 
-msgid "Linear" 
+msgid "Linear"
 msgstr "Rechtlijnig"
 
 #msgid "Nearest Mipmap Nearest"
 #msgstr "Nearest Mipmap Nearest"
 
-#msgid "Linear Mipmap Nearest" 
+#msgid "Linear Mipmap Nearest"
 #msgstr "Linear Midmap Nearest"
 
-#msgid "Nearest Mipmap Linear" 
+#msgid "Nearest Mipmap Linear"
 #msgstr "Nearest Midmap Linear"
 
-#msgid "Linear Mipmap Linear" 
+#msgid "Linear Mipmap Linear"
 #msgstr "Linear Midmap Linear"
 
-msgid "Quality:" 
+msgid "Quality:"
 msgstr "Kwaliteit"
 
-msgid "Low" 
+msgid "Low"
 msgstr "Laag"
 
-msgid "Medium" 
+msgid "Medium"
 msgstr "Midden"
 
-msgid "High" 
+msgid "High"
 msgstr "Hoog"
 
-msgid "Shadows:" 
+msgid "Shadows:"
 msgstr "Schaduwen"
 
-msgid "Depth Buffer:" 
+msgid "Depth Buffer:"
 msgstr "Diepte Buffer"
 
-msgid "Not available" 
+msgid "Not available"
 msgstr "Niet Beschikbaar"
 
-msgid "Change Video Format" 
+msgid "Change Video Format"
 msgstr "Verander Video Formaat"
 
-msgid "Brightness:" 
+msgid "Brightness:"
 msgstr "Helderheid:"
 
-msgid "Sound Volume:" 
+msgid "Sound Volume:"
 msgstr "Geluidssterkte:"
 
 msgid "UDP network connection:"
 msgstr "UDP netwerk verbinding:"
 
-msgid "Change Key Mapping" 
+#msgid "Server List Cache:"
+#msgstr ""
+
+#msgid "Clear Server List Cache"
+#msgstr ""
+
+msgid "Change Key Mapping"
 msgstr "Verander Toetsen Toewijzing"
 
-msgid "GUI Options" 
+msgid "GUI Options"
 msgstr "Grafische User Interface Opties"
 
-msgid "Enhanced radar:" 
+msgid "Enhanced radar:"
 msgstr "Verbeterde Radar:"
 
-msgid "Controlpanel & Score FontSize:" 
+msgid "Controlpanel & Score FontSize:"
 msgstr "Controlepaneel en Puntenaantal Fontgrootte:"
 
-msgid "normal" 
+msgid "normal"
 msgstr "normaal"
 
-msgid "bigger" 
+msgid "bigger"
 msgstr "groter"
 
-msgid "Radar & Panel Opacity:" 
+msgid "Radar & Panel Opacity:"
 msgstr "Radar en Paneel Doorzichtigheid:"
 
-msgid "Colored shots on radar:" 
+msgid "Colored shots on radar:"
 msgstr "Gekleurde Schoten op Radar:"
 
-msgid "Radar Shot Length:" 
+msgid "Radar Shot Length:"
 msgstr "Lengte van Schoten op Radar:"
 
 #msgid "Radar & Panel Size:"
@@ -142,211 +154,241 @@ msgstr "Lengte van Schoten op Radar:"
 #msgid "Mouse Box Size:"
 #msgstr ""
 
-msgid "Page Down for next page" 
+#msgid "Control panel coloring:"
+#msgstr ""
+
+#msgid "Underline color:"
+#msgstr ""
+
+#msgid "Killer Highlight:"
+#msgstr ""
+
+msgid "Page Down for next page"
 msgstr "PageDown voor volgende pagina"
 
-msgid "Page Up for previous page" 
+msgid "Page Up for previous page"
 msgstr "PageUp voor vorige pagina"
 
-msgid "Rogue" 
+msgid "Rogue"
 msgstr "Vrijbuiter"
 
-msgid "Red Team" 
+msgid "Red Team"
 msgstr "Rood Team"
 
-msgid "Green Team" 
+msgid "Green Team"
 msgstr "Groen Team"
 
-msgid "Blue Team" 
+msgid "Blue Team"
 msgstr "Blauw Team"
 
-msgid "Purple Team" 
+msgid "Purple Team"
 msgstr "Paars Team"
 
 msgid "Enter to quit, Esc to resume"
 msgstr "Enter om te stoppen, Esc om door te gaan"
 
-msgid "Really quit?" 
+msgid "Really quit?"
 msgstr "Echt Stoppen?"
 
-msgid "Video Format" 
+msgid "Video Format"
 msgstr "Video Formaat"
 
-msgid "Current Format:" 
+msgid "Current Format:"
 msgstr "Huidig Formaat:"
 
-msgid "Key Mapping" 
+msgid "Key Mapping"
 msgstr "Toets Toewijzingen"
 
-msgid "Reset Defaults" 
+msgid "Reset Defaults"
 msgstr "Herstellen naar Originelen"
 
-msgid "Fire shot:" 
+msgid "Fire shot:"
 msgstr "Schot vuren:"
 
-msgid "Drop flag:" 
+msgid "Drop flag:"
 msgstr "Vlag laten vallen:"
 
-msgid "Identify/Lock On:" 
+msgid "Identify/Lock On:"
 msgstr "Identificeren/Vasthouden:"
 
-msgid "Radar Short:" 
+msgid "Radar Short:"
 msgstr "Radar Kort:"
 
-msgid "Radar Medium:" 
+msgid "Radar Medium:"
 msgstr "Radar Midden:"
 
-msgid "Radar Long:" 
+msgid "Radar Long:"
 msgstr "Radar Lang:"
 
-msgid "Send to All:" 
+msgid "Send to All:"
 msgstr "Aan iedereen zenden:"
 
-msgid "Send to Teammates:" 
+msgid "Send to Teammates:"
 msgstr "Aan Teamleden zenden:"
 
-msgid "Send to Nemesis:" 
+msgid "Send to Nemesis:"
 msgstr "Aan vijand zenden:"
 
-msgid "Send to Recipient:" 
+msgid "Send to Recipient:"
 msgstr "Aan ontvanger zenden:"
 
-msgid "Jump:" 
+msgid "Jump:"
 msgstr "Springen:"
 
-msgid "Binoculars:" 
+msgid "Binoculars:"
 msgstr "Verrekijker:"
 
-msgid "Toggle Score:" 
+msgid "Toggle Score:"
 msgstr "Score aan/uit:"
 
-msgid "Tank Labels:" 
+msgid "Tank Labels:"
 msgstr "Tank Labels:"
 
-msgid "Flag Help:" 
+msgid "Flag Help:"
 msgstr "Vlag Help:"
 
-msgid "Time Forward:" 
+msgid "Time Forward:"
 msgstr "Tijd Vooruit:"
 
-msgid "Time Backward:" 
+msgid "Time Backward:"
 msgstr "Tijd Achteruit:"
 
-msgid "Pause/Resume:" 
+msgid "Pause/Resume:"
 msgstr "Pauzeren/Hervatten:"
 
-msgid "SelfDestruct/Cancel:" 
+#msgid "Self Destruct/Cancel:"
+#msgstr ""
+
+msgid "SelfDestruct/Cancel:"
 msgstr "Zelfvernietiging/Annuleren:"
 
-msgid "Fast Quit:" 
+msgid "Fast Quit:"
 msgstr "Snel Stoppen (van het Spel):"
 
-msgid "Scroll Backward:" 
+msgid "Scroll Backward:"
 msgstr "Achteruit Scrollen:"
 
-msgid "Scroll Forward:" 
+msgid "Scroll Forward:"
 msgstr "Vooruit Scrollen:"
- 
+
 msgid "Slow Keyboard Motion:"
 msgstr "Langzame Toetsenbord Beweging:"
 
-msgid "loading {1}" 
+msgid "loading {1}"
 msgstr "laden {1}"
 
-msgid "controls tank motion" 
+msgid "controls tank motion"
 msgstr "bedient tank beweging"
 
-msgid "Mouse Position:" 
+msgid "Mouse Position:"
 msgstr "Muis Positie:"
 
-msgid "fires shot" 
+msgid "fires shot"
 msgstr "vuurt schot"
 
-msgid "drops flag (if not bad)" 
+msgid "drops flag (if not bad)"
 msgstr "laat vlag vallen (indien niet slecht)"
 
-msgid "identifies player (locks on GM)" 
+msgid "identifies player (locks on GM)"
 msgstr "identificeert speler (vasthouden bij GM)"
 
-msgid "jump (if allowed)" 
-msgstr "spring (indien geoorlooft)" 
+msgid "jump (if allowed)"
+msgstr "spring (indien geoorlooft)"
 
-msgid "short radar range" 
+msgid "short radar range"
 msgstr "kort radar bereik"
 
-msgid "medium radar range" 
+msgid "medium radar range"
 msgstr "midden radar bereik"
 
-msgid "long radar range" 
+msgid "long radar range"
 msgstr "lang radar bereik"
 
-msgid "toggle binoculars" 
+msgid "toggle binoculars"
 msgstr "verrekijker aan/uit"
 
-msgid "toggle heads-up flag help" 
+msgid "toggle heads-up flag help"
 msgstr "Vlag-help aan/uit"
 
-msgid "send message to teammates" 
+msgid "send message to teammates"
 msgstr "zend boodschap aan teamleden"
- 
-msgid "send message to everybody" 
+
+msgid "send message to everybody"
 msgstr "zend boodschap aan iedereen"
-  
-msgid "send message to nemesis" 
+
+msgid "send message to nemesis"
 msgstr "zend boodschap aan vijand"
 
-msgid "send message to recipient" 
+msgid "send message to recipient"
 msgstr "zend boodschap aan ontvanger"
 
-msgid "toggle score sheet" 
+msgid "toggle score sheet"
 msgstr "scorebord aan/uit"
 
-msgid "toggle tank labels" 
+msgid "toggle tank labels"
 msgstr "tank labels aan/uit"
 
-msgid "set time of day backward" 
+msgid "set time of day backward"
 msgstr "Zet de tijd van de dag voorwaarts"
 
-msgid "set time of day forward" 
+msgid "set time of day forward"
 msgstr "Zet de tijd van de dag achterwaarts"
 
-msgid "pause/resume" 
+msgid "pause/resume"
 msgstr "Pauzeren/Hervatten"
 
-msgid "self Destruct/Cancel" 
+msgid "self Destruct/Cancel"
 msgstr "Zelfvernieting/Annuleren"
- 
-msgid "quit" 
+
+msgid "quit"
 msgstr "stoppen"
 
-msgid "scroll message log backward" 
+msgid "scroll message log backward"
 msgstr "blader achterwaarts door boodschappen log"
- 
+
 msgid "scroll message log forward"
 msgstr "blader voorwaarts door booschappen log"
 
-msgid "show/dismiss menu" 
+#msgid "Slow Keyboard Motion"
+#msgstr ""
+
+#msgid "Toggle Radar Flags"
+#msgstr ""
+
+#msgid "Toggle Main Flags"
+#msgstr ""
+
+#msgid "Silence/UnSilence"
+#msgstr ""
+
+#msgid "Server Admin"
+#msgstr ""
+
+#msgid "Hunt"
+#msgstr ""
+
+msgid "show/dismiss menu"
 msgstr "menu aan/uit"
 
-#msgid "Esc:" 
+#msgid "Esc:"
 #msgstr "Esc: "
 
-msgid "Maintainer:" 
+msgid "Maintainer:"
 msgstr "Onderhouder:"
 
-msgid "Original Author:" 
+msgid "Original Author:"
 msgstr "Originele Auteur:"
 
-msgid "Code Contributors:" 
+msgid "Code Contributors:"
 msgstr "Code Bijdragers:"
 
-msgid "Tank Models:" 
+msgid "Tank Models:"
 msgstr "Tank Modellen:"
 
-msgid "Special Thanks:" 
+msgid "Special Thanks:"
 msgstr "Speciale Dank:"
 
-msgid "Send:" 
+msgid "Send:"
 msgstr "Zend:"
 
 #msgid "Servers"
@@ -418,6 +460,9 @@ msgstr "Druk %s om te starten"
 msgid "Dead"
 msgstr "Dood"
 
+#msgid "%.1f"
+#msgstr ""
+
 msgid "Ready"
 msgstr "Klaar"
 
@@ -430,7 +475,109 @@ msgstr "Ingesloten"
 msgid "Zoned"
 msgstr "Zoned"
 
+#msgid "Servers found: {1}"
+#msgstr ""
+
+#msgid "{1} Shot"
+#msgstr ""
+
+#msgid "{1} Shots"
+#msgstr ""
+
 #msgid "Score"
+#msgstr ""
+
+#msgid "{1} sec To Drop Bad Flag"
+#msgstr ""
+
+#msgid "{1} secs To Drop Bad Flag"
+#msgstr ""
+
+#msgid "{1} Win Drops Bad Flag"
+#msgstr ""
+
+#msgid "{1} Wins Drops Bad Flag"
+#msgstr ""
+
+#msgid "Time limit: {1}"
+#msgstr ""
+
+#msgid "Max team score: {1}"
+#msgstr ""
+
+#msgid "Max player score: {1}"
+#msgstr ""
+
+#msgid "Page {1} of {2}"
+#msgstr ""
+
+#msgid "openBroadcast: No udp service {1}"
+#msgstr ""
+
+#msgid "openMulticast: No udp service {1}"
+#msgstr ""
+
+#msgid "openMulticast: Invalid port {1}"
+#msgstr ""
+
+#msgid "openMulticast: Can't get address of {1}"
+#msgstr ""
+
+#msgid "joystick '{1}' not supported..."
+#msgstr ""
+
+#msgid "Ignoring Finder argument '{1}'"
+#msgstr ""
+
+#msgid "Can't open list server: {1}"
+#msgstr ""
+
+#msgid "Server sent downlink endpoint information, port {1}"
+#msgstr ""
+
+#msgid "Communication error joining game [Wrong Code {1}]."
+#msgstr ""
+
+#msgid "Configuration file:  Error on line {1}: Stream failure"
+#msgstr ""
+
+#msgid "Configuration file:  Error on line {1}: Line too long"
+#msgstr ""
+
+#msgid "Network: Created local UDP downlink port {1}"
+#msgstr ""
+
+#msgid "More Info: [{1}:{2}:{3}]"
+#msgstr ""
+
+#msgid "msgid "
+#msgstr ""
+
+#msgid "cannot load texture: {1}"
+#msgstr ""
+
+#msgid "Connection failed."
+#msgstr ""
+
+#msgid "Server forced a disconnect"
+#msgstr ""
+
+#msgid "Rogues not allowed.  Try another team."
+#msgstr ""
+
+#msgid "This team is full.  Try another team."
+#msgstr ""
+
+#msgid "This game is full.  Try again later."
+#msgstr ""
+
+#msgid "Game is full or over.  Try again later."
+#msgstr ""
+
+#msgid "Error connecting to server."
+#msgstr ""
+
+#msgid "Error downloading world database"
 #msgstr ""
 
 #msgid "Kills"
@@ -446,6 +593,9 @@ msgstr "Zoned"
 
 msgid "High Speed"
 msgstr "Hoge Snelheid"
+
+#msgid "Locale:"
+#msgstr ""
 
 msgid "Quick Turn"
 msgstr "Snelle Draai"
@@ -542,6 +692,69 @@ msgstr "De vlag van je team: zorg ervoor dat andere teams dit niet in handen kri
 msgid "Opponent's team flag:  take it to your base to capture it!"
 msgstr "Vlag van de tegenstander: Breng deze naar je basis om deze te veroveren!"
 
+#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
+#msgstr ""
+
+#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgstr ""
+
+#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
+#msgstr ""
+
+#msgid "Machine Gun (MG):  Very fast reload and very short range."
+#msgstr ""
+
+#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+#msgstr ""
+
+#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+#msgstr ""
+
+#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
+#msgstr ""
+
+#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
+#msgstr ""
+
+#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
+#msgstr ""
+
+#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
+
+#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
+#msgstr ""
+
+#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+#msgstr ""
+
+#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+#msgstr ""
+
+#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
+#msgstr ""
+
+#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+#msgstr ""
+
+#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
+#msgstr ""
+
+#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
+#msgstr ""
+
+#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
+#msgstr ""
+
+#msgid "IDentify (ID):  Identifies type of nearest flag."
+#msgstr ""
+
+#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
+#msgstr ""
+
 msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
 msgstr "Snelheid (+V): Tank gaat sneller, laat tegenstanders achter je."
 
@@ -569,16 +782,16 @@ msgstr "Weeromstuit (+R): Schoten stuiteren van de muur. Schiet niet op jezelf!"
 msgid "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone."
 msgstr "Super Kogel (+SB): Schiet door gebouwen. Kan Spook Zone doden."
 
-msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window.",
+msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."
 msgstr "Onzichtbare Kogel (+IB): Schoten worden niet op de radar gezien, wel op het scherm."
 
-msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!",
+msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
 msgstr "Steels (+ST): Tank is onzichtbaar op de radar. Schoten zijn wel zichtbaar. Verras de vijand!"
 
-msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit.",
+msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit."
 msgstr "Zeer Klein (+T): Tank is zeer klein en kan door smalle openingen. Moeilijk om te raken."
 
-msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings.",
+msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
 msgstr "Smal (+N): Tank is zeer smal. Erg moeilijk om van voren te raken, maar normale grootte van de zijkant. Kan door zeer smalle openingen."
 
 msgid "SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time."
@@ -590,7 +803,7 @@ msgstr "Stoomwals (+SR): Vernietigt tanks door ze aan te raken, maar je moet wel
 msgid "Shock Wave (+SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
 msgstr "Schokgolf (+SW): Vuren vernietigt alle tanks in de directe omgeving. Kijk uit voor teamleden! Kan tanks in gebouwen en Spook Zone vernietigen."
 
-msgid "Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave).",
+msgid "Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
 msgstr "Spook Zone (+PZ): Teleporteren"
 
 msgid "Genocide (+G):  Killing one tank kills that tank's whole team."
@@ -643,6 +856,9 @@ msgstr "van een speler van een ander team geeft je een punt, vernietigd worden o
 msgid "teammate scores a loss.  Individual and aggregate team scores are tallied."
 msgstr "vernietigen geeft je een punt verlies. Individuele en samengestelde team scores worden bijgehouden/"
 
+#msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
 msgid "Rogues have no teammates (not even other rogues),so they cannot shoot"
 msgstr "Vrijbuiters hebben geen teamleden (ook geen andere vrijbuiters, dus ze kunnen"
 
@@ -675,6 +891,9 @@ msgstr "zijn om de vlag te veroveren). Het pakken van de vlag vernietigt alle sp
 
 msgid "on that team and gives your team score a bonus;  the players will restart on"
 msgstr "het team waarvan je de vlag pakt and geeft je team een bonus; de spelers herstarten op"
+
+#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
 
 msgid "their team base.  Taking your flag onto an enemy base counts as a capture against"
 msgstr "hun team basis. Het meenemen van jouw flag naar de basis van de vijand telt als een punt"
@@ -786,288 +1005,307 @@ msgstr "Antigif vlaggen zijn geel en verschijnen alleen als je een slechte vlag 
 
 msgid "Good Flags:"
 msgstr "Goede Vlaggen:"
-  
+
 msgid "boosts top speed"
 msgstr "voert topsnelheid op"
-  
+
 msgid "High Speed (V)"
 msgstr "Hoge Snelheid (V)"
-  
+
 msgid "boosts turn rate"
 msgstr "verkleint draaicirkel"
-  
+
 msgid "Quick Turn (A)"
 msgstr "Snelle Draai (A)"
-  
+
 msgid "can drive through buildings"
 msgstr "kan door gebouwen rijden"
-  
+
 msgid "Oscillation Overthruster (OO)"
 msgstr "Oscillation Overthruster (OO)"
-  
+
 msgid "faster shots more often"
 msgstr "snellere schoten en vaker"
-  
+
 msgid "Rapid Fire (F)"
 msgstr "Snelvuur (F)"
-  
+
 msgid "very fast reload, very short range"
 msgstr "snelle herlading, erg korte afstand"
-  
+
 msgid "Machine Gun (MG)"
 msgstr "Machinegeweer (MG)"
-  
+
 msgid "shots guide themselves (right mouse locks on)"
 msgstr "schoten leiden zichzelf (Rechter Muisknop houdt vast)"
-  
+
 msgid "Guided Missile (GM)"
 msgstr "Geleideraket (GM)"
-  
+
 msgid "infinite shot speed and range, long reload time"
 msgstr "oneindige schot snelheid en afstand, lange herladingstijd"
-  
+
 msgid "Laser (L)"
 msgstr "Laser (L)"
-  
+
 msgid "shots ricochet"
 msgstr "schoten weeromstuiten"
-  
+
 msgid "Ricochet (R)"
 msgstr "Weeromstuit (R)"
-  
+
 msgid "shoots through buildings"
 msgstr "schoten gaan door gebouwen"
-  
+
 msgid "Super Bullet (SB)"
 msgstr "Super Kogel (SB)"
-  
+
 msgid "tank invisible on enemy radar"
 msgstr "tank onzichtbaar op vijandelijke radar"
-  
+
 msgid "Stealth (ST)"
 msgstr "Steels (ST)"
-  
+
 msgid "tank invisible out the window"
 msgstr "tank onzichtbaar op het scherm"
-  
+
 msgid "Cloaking (CL)"
 msgstr "Verhulling (CL)"
-  
+
 msgid "shots invisible on radar"
 msgstr "schoten onzichtbaar op radar"
-  
+
 msgid "Invisible Bullet (IB)"
 msgstr "Onzichtbare Kogel (IB)"
-  
+
 msgid "tank becomes smaller"
 msgstr "tank wordt kleiner"
-  
+
 msgid "Tiny (T)"
 msgstr "Zeer Klein (T)"
-  
+
 msgid "tank becomes paper thin"
 msgstr "tank wordt zo dun als papier"
-  
+
 msgid "Narrow (N)"
 msgstr "Smal (N)"
-  
+
 msgid "getting hit just drops the flag"
 msgstr "geraakt worden laat alleen de vlag vallen"
-  
+
 msgid "Shield (SH)"
 msgstr "Schild (SH)"
-  
+
 msgid "destroy tanks by touching them"
 msgstr "vernietig tanks door ze aan te raken"
-  
+
 msgid "Steamroller (SR)"
 msgstr "Stoomwals (SR)"
-  
+
 msgid "expanding spherical shell of destruction"
 msgstr "uitdijende vernietingings bol"
-  
+
 msgid "Shock Wave (SW)"
 msgstr "Schokgolf (SW)"
 
 # Help 6 Strings
 
-  
+
 msgid "teleport to enter/leave zone"
 msgstr "Teleporteer om zone in/uit te gaan"
-  
+
 msgid "Phantom Zone (PZ)"
 msgstr "Spook Zone (PZ)"
-  
+
 msgid "destroys player and all player's teammates"
 msgstr "vernietigt speler en teamleden"
-  
+
 msgid "Genocide (G)"
 msgstr "Kleurmoord (G)"
-  
+
 msgid "allows tank to jump"
 msgstr "tank kan springen"
-  
+
 msgid "Jumping (JP)"
 msgstr "Springen (JP)"
-  
+
 msgid "shows type of nearest superflag"
 msgstr "laat dichtsbijzijnde type supervlag zien"
-  
+
 msgid "Identify (ID)"
 msgstr "IDentificeren (ID)"
-  
+
 msgid "Bad Flags:"
 msgstr "Slechte Vlaggen:"
-  
+
 msgid "can't identify tanks"
 msgstr "kan tanks niet identiceren"
-  
+
 msgid "Colorblindness (CB)"
 msgstr "Kleurenblind (CB)"
-  
+
 msgid "makes tank very large"
 msgstr "maakt tanks erg groot"
-  
+
 msgid "Obesity (O)"
 msgstr "Corpulentie (O)"
-  
+
 msgid "tank can't turn right"
 msgstr "tank kan niet rechtsom keren"
-  
+
 msgid "Left Turn Only (<-)"
 msgstr "Alleen linksom (<-)"
-  
+
 msgid "tank can't turn left"
 msgstr "tank kan niet linksom keren"
-  
+
 msgid "Right Turn Only (->)"
 msgstr "Alleen rechtsom (->)"
-  
+
 msgid "tank has lots of momentum"
 msgstr "tank heeft traagheid"
-  
+
 msgid "Momentum (M)"
 msgstr "Traagheid (M)"
-  
+
 msgid "can't see out the window"
 msgstr "kan niets op het scherm zien"
-  
+
 msgid "Blindness (B)"
 msgstr "Blinddoek (B)"
-  
+
 msgid "can't see anything on radar"
 msgstr "kan niets op radar zien"
-  
+
 msgid "Jamming (JM)"
 msgstr "Storing (JM)"
-  
+
 msgid "fish eye view out the window"
 msgstr "Groothoeks vervorming op het scherm"
-  
+
 msgid "Wide Angle (WA)"
 msgstr "Groothoek Lens (WA)"
 
 # Help 7 Strings
- 
+
 msgid "The radar is on the left side of the control panel.  It shows an overhead"
 msgstr "De radar is aan de linkerkant van het controlepaneel. Het laat een rontgen-overzicht"
-  
+
 msgid "x-ray view of the game.  Buildings and the outer wall are shown in light"
 msgstr "zien van het spel. Gebouwen en de buitenmuur worden in licht blauw weergegeven."
-  
+
 msgid "blue.  Team bases are outlined in the team color.  Teleporters are short"
 msgstr "Team bases worden in omtrek van de teamkleur weergegeven. Teleporters zijn korte"
-  
+
 msgid "yellow lines.  Tanks are dots in the tank's team color, except rogues are"
 msgstr "gele lijntjes. Tanks zijn punten in de tank's teamkleur, behalve vrijbuiters, die geel"
-  
+
 msgid "yellow.  The size of the tank's dot is a rough indication of the tank's"
 msgstr "zijn. De grootte van de tank's punt is een geschatte indicatie van de tank's"
-  
+
 msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
 msgstr "hoogte: hogere tanks hebben grotere stippen. Vlaggen zijn kleine kruisjes. Team vlaggen"
-  
+
 msgid "flags are in the team color, superflags are white, and the antidote flag"
 msgstr "zijn in de teamkleur, super vlaggen zijn wit en de antigif vlaggen zijn geel."
-  
+
 msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
 msgstr "Schoten zijn kleine puntjes (of lijnen of cirkels, voor lasers en schokgolf)."
-  
+
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr "Je tank is altijd in het midden en voorwaarste is altijd omhoog op de radar."
-  
+
 msgid "is always up on the radar.  The yellow V is your field of view.  North"
 msgstr "De gele V is je gezichtsveld."
-  
+
 msgid "is indicated by the letter N."
 msgstr "Noord wordt aangegeven met de letter N."
-  
+
 msgid "The heads-up-display (HUD) has several displays.  The two boxes in the"
 msgstr "Het heads-up-beeldscherm (HUD) heeft diverse schermen. De twee hokjes in het midden"
-  
+
 msgid "center of the view are the motion control boxes;  within the small box"
 msgstr "zijn bewegings controle hokjes; binnenin het kleine hokje beweegt je tank niet,"
-  
+
 msgid "your tank won't move, outside the large box you don't move any faster than"
 msgstr "erbuiten beweeg je niet sneller dan de buitenkant van het grote hokje."
-  
+
 msgid "at the edge of the large box.  Moving the mouse above or below the small"
 msgstr "Het bewege van de muis boven of onder het kleine hokje beweegt voorwaarts of"
-  
+
 msgid "box moves forward or backward, respectively.  Similarly for left and right."
 msgstr "achterwaarts. Hetzelde geldt voor links en rechts."
-  
+
 msgid "The distance away from the small box determines the speed."
 msgstr "De afstand tot het kleine hokje bepaalt de snelheid."
 
 # Help 8 Strings
 
-  
+
 msgid "Above the larger box is a tape showing your current heading.  North is"
 msgstr "Boven het grotere hokje is een strook die de huidige richting laat zien. Noord is 0,"
-  
+
 msgid "0, east is 90, etc.  If jumping is allowed or you have the jumping flag,"
 msgstr "oost is 90, enz. Als springen toegestaan is of als je de spring vlag hebt,"
-  
+
 msgid "an altitude tape appears to the right of the larger box."
 msgstr "verschijnt er een hoogtemeter aan de rechterkant van het grotere hokje."
-  
+
 msgid "Small colored diamonds or arrows may appear on the heading tape.  An"
 msgstr "Kleine gekleurde diamantjes of pijltjes kunnen verschijnen in de richtings-strook."
-  
+
 msgid "arrow pointing left means that a particular flag is to your left, an"
 msgstr "Een pijltje naar links betekent dat een bepaalde klant aan je linkerkant is,"
-  
+
 msgid "arrow pointing right means that the flag is to your right, and a diamond"
 msgstr "een pijltje naar rechts betekent dat de vlag aan je rechterkant is en een diamantje"
-  
+
 msgid "indicates the heading to the flag by its position on the heading tape."
 msgstr "geeft de richting naar de vlag aan."
-  
+
 msgid "In capture-the-flag mode a marker always shows where your team flag is."
 msgstr "In verover-de-flag mode, de pijl geeft altijd aan waar de team vlag is."
-  
+
 msgid "A yellow marker shows the way to the antidote flag."
 msgstr "Een geel pijltje geeft de richting naar een antigif vlag aan."
-  
+
 msgid "At the top of the display are, from left to right, your callsign and"
 msgstr "Aan de bovenkant van het scherm zijn, van links naar rechts, je roepnaam en score,"
-  
+
 msgid "score, your status, and the flag you have.  Your callsign is in the"
 msgstr "je status en de vlag die je hebt. Je roepnaam is in de kleur van je team."
-  
+
 msgid "color of your team.  Your status is one of:  ready, dead, sealed, zoned"
 msgstr "Je status is een van deze: klaar, dood, ingesloten, zoned of herladen"
-  
+
 msgid "or reloading (showing the time until reloaded).  It can also show the"
 msgstr "(geeft de tijd aan tot herladen). Het kan ook de tijd laten zien tot"
-  
+
 msgid "time until a bad flag is dropped (if there's a time limit)."
 msgstr "een slechte vlag wordt gedropt (als er een tijdslimiet is)."
-  
+
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "Andere informele boodschappen kunnen af en toe op de HUD flitsen."
 
+# BZFS Messages
 
+#msgid "You are now an administrator!"
+#msgstr ""
 
+#msgid "Wrong Password!"
+#msgstr ""
 
+#msgid "unknown command"
+#msgstr ""
+
+#msgid "Countdown started."
+#msgstr ""
+
+#msgid "IP pattern added to banlist"
+#msgstr ""
+
+#msgid "malformed address"
+#msgstr ""
+
+#msgid "removed IP pattern"
+#msgstr ""

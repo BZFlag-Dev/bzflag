@@ -3,136 +3,148 @@
 msgid "Join Game"
 msgstr "Tilslut spil"
 
+msgid "da"
+msgstr "Danish"
+
+#msgid "translator"
+#msgstr ""
+
 #msgid "Find Server"
 #msgstr ""
 
-msgid "Connect"	
+msgid "Connect"
 msgstr "Tilslut"
 
-msgid "Callsign:" 
+msgid "Callsign:"
 msgstr "Navn"
 
-msgid "Team:" 
+msgid "Team:"
 msgstr "Hold"
 
-#msgid "Server:" 
+#msgid "Server:"
 #msgstr ""
 
-#msgid "Port:" 
+#msgid "Port:"
 #msgstr ""
 
-#msgid "Start Server" 
+#msgid "Start Server"
 #msgstr ""
 
-msgid "Up/Down arrows to move, Enter to select, Esc to dismiss" 
+msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
 msgstr "Op/ned piltaster for at bevæge sig, Enter for at vælge, Esc for at fortryde"
 
-msgid "Options" 
+msgid "Options"
 msgstr "Valgmuligheder"
 
-msgid "Help" 
+msgid "Help"
 msgstr "Hjælp"
 
-msgid "Quit" 
+msgid "Quit"
 msgstr "Afslut"
 
-msgid "Dithering:" 
+msgid "Dithering:"
 msgstr "Punktning:"
 
-msgid "Off" 
+msgid "Off"
 msgstr "Fra"
 
-msgid "On" 
+msgid "On"
 msgstr "Til"
 
-msgid "Blending:" 
+msgid "Blending:"
 msgstr "Blandning:"
 
-msgid "Smoothing:" 
+msgid "Smoothing:"
 msgstr "Udjævning:"
 
-msgid "Lighting:" 
+msgid "Lighting:"
 msgstr "Lysforhold:"
 
-msgid "Texturing:" 
+msgid "Texturing:"
 msgstr "Teksturer:"
 
-msgid "Nearest" 
+msgid "Nearest"
 msgstr "Nærmest"
 
-msgid "Linear" 
+msgid "Linear"
 msgstr "Lineær"
 
 msgid "Nearest Mipmap Nearest"
 msgstr "Nærmest Mipmap Nærmest"
 
-msgid "Linear Mipmap Nearest" 
+msgid "Linear Mipmap Nearest"
 msgstr "Lineær Mipmap Nærmest"
 
-msgid "Nearest Mipmap Linear" 
+msgid "Nearest Mipmap Linear"
 msgstr "Nærmest Mipmap Lineær"
 
-msgid "Linear Mipmap Linear" 
+msgid "Linear Mipmap Linear"
 msgstr "Lineær Mipmap Lineær"
 
-msgid "Quality:" 
+msgid "Quality:"
 msgstr "Kvalitet:"
 
-msgid "Low" 
+msgid "Low"
 msgstr "Lav"
 
-msgid "Medium" 
+msgid "Medium"
 msgstr "Middel"
 
-msgid "High" 
+msgid "High"
 msgstr "Høj"
 
-msgid "Shadows:" 
+msgid "Shadows:"
 msgstr "Skygger:"
 
-msgid "Depth Buffer:" 
+msgid "Depth Buffer:"
 msgstr "Dybte Buffer:"
 
-msgid "Not available" 
+msgid "Not available"
 msgstr "Ikke muligt"
 
-msgid "Change Video Format" 
+msgid "Change Video Format"
 msgstr "Skift skærmopløsning"
 
-msgid "Brightness:" 
+msgid "Brightness:"
 msgstr "Lys styrke:"
 
-msgid "Sound Volume:" 
+msgid "Sound Volume:"
 msgstr "Lyd styrke:"
 
 msgid "UDP network connection:"
 msgstr "Brug UDP:"
 
-msgid "Change Key Mapping" 
+#msgid "Server List Cache:"
+#msgstr ""
+
+#msgid "Clear Server List Cache"
+#msgstr ""
+
+msgid "Change Key Mapping"
 msgstr "Ændre tasterturopsætning"
 
-msgid "GUI Options" 
+msgid "GUI Options"
 msgstr "GUI opsætning"
 
-msgid "Enhanced radar:" 
+msgid "Enhanced radar:"
 msgstr "Forbedret radar:"
 
-msgid "Controlpanel & Score FontSize:" 
+msgid "Controlpanel & Score FontSize:"
 msgstr "Kontrolpanel & point skriftstørrelse:"
 
-msgid "normal" 
+msgid "normal"
 msgstr "normal"
 
-msgid "bigger" 
+msgid "bigger"
 msgstr "større"
 
-msgid "Radar & Panel Opacity:" 
+msgid "Radar & Panel Opacity:"
 msgstr "Radar & Panel gennemsigtighed:"
 
-msgid "Colored shots on radar:" 
+msgid "Colored shots on radar:"
 msgstr "Farvet skud på radaren:"
 
-msgid "Radar Shot Length:" 
+msgid "Radar Shot Length:"
 msgstr "Radar skud længde:"
 
 #msgid "Radar & Panel Size:"
@@ -141,211 +153,241 @@ msgstr "Radar skud længde:"
 #msgid "Mouse Box Size:"
 #msgstr ""
 
-msgid "Page Down for next page" 
+#msgid "Control panel coloring:"
+#msgstr ""
+
+#msgid "Underline color:"
+#msgstr ""
+
+#msgid "Killer Highlight:"
+#msgstr ""
+
+msgid "Page Down for next page"
 msgstr "'Page Down' til næste side"
 
-msgid "Page Up for previous page" 
+msgid "Page Up for previous page"
 msgstr "'Page Up' til forrige side"
 
-msgid "Rogue" 
+msgid "Rogue"
 msgstr "Slyngel"
 
-msgid "Red Team" 
+msgid "Red Team"
 msgstr "Rødt hold"
 
-msgid "Green Team" 
+msgid "Green Team"
 msgstr "Grønt hold"
 
-msgid "Blue Team" 
+msgid "Blue Team"
 msgstr "Blåt hold"
 
-msgid "Purple Team" 
+msgid "Purple Team"
 msgstr "Lilla hold"
 
 msgid "Enter to quit, Esc to resume"
 msgstr "Enter for at afslutte, Esc for at forsætte"
 
-msgid "Really quit?" 
+msgid "Really quit?"
 msgstr "Afslut? Er du sikker?"
 
-msgid "Video Format" 
+msgid "Video Format"
 msgstr "Skærmopløsning"
 
-msgid "Current Format:" 
+msgid "Current Format:"
 msgstr "Nuværende opløsning:"
 
-msgid "Key Mapping" 
+msgid "Key Mapping"
 msgstr "Tasterturopsætning"
 
-msgid "Reset Defaults" 
+msgid "Reset Defaults"
 msgstr "Reset"
 
-msgid "Fire shot:" 
+msgid "Fire shot:"
 msgstr "Skyd:"
 
-msgid "Drop flag:" 
+msgid "Drop flag:"
 msgstr "Smid flag:"
 
-msgid "Identify/Lock On:" 
+msgid "Identify/Lock On:"
 msgstr "Identificér / Lås:"
 
-msgid "Radar Short:" 
+msgid "Radar Short:"
 msgstr "Radar kort:"
 
-msgid "Radar Medium:" 
+msgid "Radar Medium:"
 msgstr "Radar medium:"
 
-msgid "Radar Long:" 
+msgid "Radar Long:"
 msgstr "Radar lang"
 
-msgid "Send to All:" 
+msgid "Send to All:"
 msgstr "Send til alle:"
 
-msgid "Send to Teammates:" 
+msgid "Send to Teammates:"
 msgstr "Send til holdet:"
 
-msgid "Send to Nemesis:" 
+msgid "Send to Nemesis:"
 msgstr "Send til nemesis:"
 
-msgid "Send to Recipient:" 
+msgid "Send to Recipient:"
 msgstr "Send til modtager:"
 
-msgid "Jump:" 
+msgid "Jump:"
 msgstr "Hop:"
 
-msgid "Binoculars:" 
+msgid "Binoculars:"
 msgstr "Kikkert:"
 
-msgid "Toggle Score:" 
+msgid "Toggle Score:"
 msgstr "Vis/Skjul points:"
 
-msgid "Tank Labels:" 
+msgid "Tank Labels:"
 msgstr "Tank etiket:"
 
-msgid "Flag Help:" 
+msgid "Flag Help:"
 msgstr "Flag hjælp:"
 
-msgid "Time Forward:" 
+msgid "Time Forward:"
 msgstr "Tid fremad:"
 
-msgid "Time Backward:" 
+msgid "Time Backward:"
 msgstr "Tid tilbage:"
 
-#msgid "Pause/Resume:" 
+#msgid "Pause/Resume:"
 #msgstr "Pause/Resume"
 
-msgid "Self Destruct/Cancel:" 
+msgid "Self Destruct/Cancel:"
 msgstr "Selvmord/Fortryd:"
 
-msgid "Fast Quit:" 
+#msgid "SelfDestruct/Cancel:"
+#msgstr ""
+
+msgid "Fast Quit:"
 msgstr "Hurtig afslut:"
 
-msgid "Scroll Backward:" 
+msgid "Scroll Backward:"
 msgstr "Scroll tilbage:"
 
-msgid "Scroll Forward:" 
+msgid "Scroll Forward:"
 msgstr "Scroll fremad"
 
 msgid "Slow Keyboard Motion:"
 msgstr "Langsom tastetur bevægelse:"
 
-msgid "loading {1}" 
+msgid "loading {1}"
 msgstr "indlæser {1}"
 
-msgid "controls tank motion" 
+msgid "controls tank motion"
 msgstr "styrer tank bevægelserne"
 
-msgid "Mouse Position:" 
+msgid "Mouse Position:"
 msgstr "Mus position:"
 
-msgid "fires shot" 
+msgid "fires shot"
 msgstr "skyder"
 
-msgid "drops flag (if not bad)" 
+msgid "drops flag (if not bad)"
 msgstr "smid flag (hvis ikke dårligt)"
 
-msgid "identifies player (locks on GM)" 
+msgid "identifies player (locks on GM)"
 msgstr "identificér spiller (lås ved GM)"
 
-msgid "jump (if allowed)" 
-msgstr "hop (hvis tilladt)" 
+msgid "jump (if allowed)"
+msgstr "hop (hvis tilladt)"
 
-msgid "short radar range" 
+msgid "short radar range"
 msgstr "kort-rækkevidde radar"
 
-msgid "medium radar range" 
+msgid "medium radar range"
 msgstr "middel-rækkevidde radar"
 
-msgid "long radar range" 
+msgid "long radar range"
 msgstr "stor-rækkevidde radar"
 
-msgid "toggle binoculars" 
+msgid "toggle binoculars"
 msgstr "kikkert (til/fra)"
 
-msgid "toggle heads-up flag help" 
+msgid "toggle heads-up flag help"
 msgstr "vis flag hjælp (til/fra)"
 
-msgid "send message to teammates" 
+msgid "send message to teammates"
 msgstr "send besked til holdkammerater"
- 
-msgid "send message to everybody" 
+
+msgid "send message to everybody"
 msgstr "send besked til alle"
-  
-msgid "send message to nemesis" 
+
+msgid "send message to nemesis"
 msgstr "send besked til nemesis"
 
-msgid "send message to recipient" 
+msgid "send message to recipient"
 msgstr "send besked til modtager"
 
-msgid "toggle score sheet" 
+msgid "toggle score sheet"
 msgstr "pointoversigt (til/fra)"
 
-msgid "toggle tank labels" 
+msgid "toggle tank labels"
 msgstr "tank etiket (til/fra)"
 
-msgid "set time of day backward" 
+msgid "set time of day backward"
 msgstr "stil tidspunkt tilbage"
 
-msgid "set time of day forward" 
+msgid "set time of day forward"
 msgstr "stil tidspuntk frem"
 
-#msgid "pause/resume" 
+#msgid "pause/resume"
 #msgstr "pause/resume"
 
-msgid "self Destruct/Cancel" 
+msgid "self Destruct/Cancel"
 msgstr "selvmord/fortryd"
- 
-msgid "quit" 
+
+msgid "quit"
 msgstr "afslut"
 
-msgid "scroll message log backward" 
+msgid "scroll message log backward"
 msgstr "spol tilbage i beskeder"
- 
+
 msgid "scroll message log forward"
 msgstr "spol frem i beskeder"
 
-msgid "show/dismiss menu" 
+#msgid "Slow Keyboard Motion"
+#msgstr ""
+
+#msgid "Toggle Radar Flags"
+#msgstr ""
+
+#msgid "Toggle Main Flags"
+#msgstr ""
+
+#msgid "Silence/UnSilence"
+#msgstr ""
+
+#msgid "Server Admin"
+#msgstr ""
+
+#msgid "Hunt"
+#msgstr ""
+
+msgid "show/dismiss menu"
 msgstr "vis/skjul menu"
 
-#msgid "Esc:" 
+#msgid "Esc:"
 #msgstr "Esc:"
 
-msgid "Maintainer:" 
+msgid "Maintainer:"
 msgstr "Nuværende udvikler:"
 
-msgid "Original Author:" 
+msgid "Original Author:"
 msgstr "Oprindelig udvikler:"
 
-msgid "Code Contributors:" 
+msgid "Code Contributors:"
 msgstr "Bidrag:"
 
-msgid "Tank Models:" 
+msgid "Tank Models:"
 msgstr "Tank modeller:"
 
-msgid "Special Thanks:" 
+msgid "Special Thanks:"
 msgstr "Specielt tak til:"
 
-#msgid "Send:" 
+#msgid "Send:"
 #msgstr "Send:"
 
 #msgid "Servers"
@@ -416,6 +458,9 @@ msgstr "Tryk %s for at starte"
 
 msgid "Dead"
 msgstr "Død"
+
+#msgid "%.1f"
+#msgstr ""
 
 msgid "Ready"
 msgstr "Klar"
@@ -498,6 +543,9 @@ msgstr "Fantom"
 #msgid "Network: Created local UDP downlink port {1}"
 #msgstr ""
 
+#msgid "msgid "
+#msgstr ""
+
 #msgid "More Info: [{1}:{2}:{3}]"
 #msgstr ""
 
@@ -535,6 +583,9 @@ msgstr "Fantom"
 #msgstr ""
 
 #msgid "Team Score"
+#msgstr ""
+
+#msgid "Locale:"
 #msgstr ""
 
 #msgid "Player"
@@ -640,11 +691,77 @@ msgstr "Dit holds flag: forhindre andre hold i at fange det!"
 msgid "Opponent's team flag:  take it to your base to capture it!"
 msgstr "Modstanderens flag: tag det til din base for at erobre det!"
 
+#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
+#msgstr ""
+
+#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgstr ""
+
+#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
+#msgstr ""
+
+#msgid "Machine Gun (MG):  Very fast reload and very short range."
+#msgstr ""
+
+#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+#msgstr ""
+
+#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+#msgstr ""
+
+#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
+#msgstr ""
+
+#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
+#msgstr ""
+
+#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
+#msgstr ""
+
+#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
+
+#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
+#msgstr ""
+
+#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+#msgstr ""
+
+#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+#msgstr ""
+
+#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
+#msgstr ""
+
+#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+#msgstr ""
+
+#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
+#msgstr ""
+
+#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
+#msgstr ""
+
+#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
+#msgstr ""
+
+#msgid "IDentify (ID):  Identifies type of nearest flag."
+#msgstr ""
+
+#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
+#msgstr ""
+
 msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
 msgstr "Hurtighed (+V): Din tank bevæger sig hurtigere."
 
 msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
 msgstr "Drejehastighed (+A): Din tank drejer hurtigere. Nemmere at undgå skud."
+
+#msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
+#msgstr ""
 
 msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
 msgstr "Oscillation Overthruster (+OO):  Kan kører igennem bygninger. Men kan ikke skyde derinde."
@@ -667,16 +784,19 @@ msgstr "Ricochet (+R): Skud preller tilbage fra vægge."
 msgid "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone."
 msgstr "Superskud (+SB):  Skyder igennem bygninger. Kan dræbe fantom tanks."
 
-msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window.",
+msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."
 msgstr "Usynlige skud (+IB): Dine skud er ikke synlige på andres radar, men kan stadig ses."
 
-msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!",
+msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
 msgstr "STealth (+ST): Din tank kan ikke ses på radaren, men dine skud kan."
 
-msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit.",
+#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
+
+msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit."
 msgstr "Lille (+T): Tanken er lille og kan komme igennem små sprækker. Svær at ramme."
 
-msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings.",
+msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
 msgstr "Smal (+N):  Din tank er meget smal. Meget svært at ramme forfra, men normalt fra siden."
 
 msgid "SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time."
@@ -688,7 +808,7 @@ msgstr "Damptromle (+SR):  Smadrer tanks du rører med din egen tank."
 msgid "Shock Wave (+SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
 msgstr "Shockbølge (+SW):  En shockbølge dræber alle tanks i nærheden. Kan også dræbe tanks i bygninger."
 
-msgid "Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave).",
+msgid "Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
 msgstr "Fantom zone (+PZ):  Når du er et fantom, kan du kører igennem bygning. Du kan ikke skyde eller blive skudt (borset fra af super-skud eller shockbølge)."
 
 msgid "Genocide (+G):  Killing one tank kills that tank's whole team."
@@ -884,284 +1004,284 @@ msgstr "Modgiftsflag er gule og er kun synlige når du har et dårligt flag."
 
 msgid "Good Flags:"
 msgstr "Gode flag:"
-  
+
 msgid "boosts top speed"
 msgstr "giver ekstra fart"
-  
+
 msgid "High Speed (V)"
 msgstr "Høj hastighed (V)"
-  
+
 msgid "boosts turn rate"
 msgstr "giver forbedret styring"
-  
+
 msgid "Quick Turn (A)"
 msgstr "Hurtig manøvre (A)"
-  
+
 msgid "can drive through buildings"
 msgstr "kan køre igennem bygninger"
-  
+
 msgid "Oscillation Overthruster (OO)"
 msgstr "Oscillation Overthruster (OO)"
-  
+
 msgid "faster shots more often"
 msgstr "hurtigere skud"
-  
+
 msgid "Rapid Fire (F)"
 msgstr "Turbo-skud (F)"
-  
+
 msgid "very fast reload, very short range"
 msgstr "lader hurtigt, meget kort rækkevidde"
-  
+
 msgid "Machine Gun (MG)"
 msgstr "Maskingevær (MG)"
-  
+
 msgid "shots guide themselves (right mouse locks on)"
 msgstr "søger selv mod målet (højre mus låser målet)"
-  
+
 msgid "Guided Missile (GM)"
 msgstr "Varmesøgende missler (GM)"
-  
+
 msgid "infinite shot speed and range, long reload time"
 msgstr "uendelig hurtigt og rækkevidde, lang tid om at lade"
-  
+
 #msgid "Laser (L)"
 #msgstr ""
-  
+
 msgid "shots ricochet"
 msgstr "skud ricocheter"
-  
+
 #msgid "Ricochet (R)"
 #msgstr ""
-  
+
 msgid "shoots through buildings"
 msgstr "skyder igennem bygninger"
-  
+
 msgid "Super Bullet (SB)"
 msgstr "Superskud (SB)"
-  
+
 msgid "tank invisible on enemy radar"
 msgstr "tank er usynlig på fjendes radar"
-  
+
 #msgid "Stealth (ST)"
 #msgstr ""
-  
+
 msgid "tank invisible out the window"
 msgstr "tank er usynlig (men ikke på radar)"
-  
+
 msgid "Cloaking (CL)"
 msgstr "Usynlighed (CL)"
-  
+
 msgid "shots invisible on radar"
 msgstr "skud kan ikke ses på radaren"
-  
+
 msgid "Invisible Bullet (IB)"
 msgstr "Usynlige skud (IB)"
-  
+
 msgid "tank becomes smaller"
 msgstr "din tank bliver mindre"
-  
+
 msgid "Tiny (T)"
 msgstr "Lille (T)"
-  
+
 msgid "tank becomes paper thin"
 msgstr "din tank bliver meget smal"
-  
+
 msgid "Narrow (N)"
 msgstr "Smal (N)"
-  
+
 msgid "getting hit just drops the flag"
 msgstr "når du rammes, taber du flaget"
-  
+
 msgid "Shield (SH)"
 msgstr "Skjold (SH)"
-  
+
 msgid "destroy tanks by touching them"
 msgstr "dræber tanks ved berøring"
-  
+
 msgid "Steamroller (SR)"
 msgstr "Damptromle (SR)"
-  
+
 msgid "expanding spherical shell of destruction"
 msgstr "afgiver en cirkular dødsring"
-  
+
 msgid "Shock Wave (SW)"
 msgstr "Shockbølge (SW)"
 
 # Help 6 Strings
-  
+
 msgid "teleport to enter/leave zone"
 msgstr "teleporte til at gå ind/ud af fantom zone"
-  
+
 msgid "Phantom Zone (PZ)"
 msgstr "Fantom zone (PZ)"
-  
+
 msgid "destroys player and all player's teammates"
 msgstr "dræber spiller samt hele holdet"
-  
+
 msgid "Genocide (G)"
 msgstr "Massemord (G)"
-  
+
 msgid "allows tank to jump"
 msgstr "tillader tanken at hoppe"
-  
+
 msgid "Jumping (JP)"
 msgstr "Hop (JP)"
-  
+
 msgid "shows type of nearest superflag"
 msgstr "viser type på det nærmeste flag"
-  
+
 msgid "Identify (ID)"
 msgstr "Identificér (ID)"
-  
+
 msgid "Bad Flags:"
 msgstr "Dårlige flag:"
-  
+
 msgid "can't identify tanks"
 msgstr "kan ikke identificere tanks"
-  
+
 msgid "Colorblindness (CB)"
 msgstr "Farveblindhed (CB)"
-  
+
 msgid "makes tank very large"
 msgstr "gør tanken meget stor"
-  
+
 msgid "Obesity (O)"
 msgstr "Forstørrelse (O)"
-  
+
 msgid "tank can't turn right"
 msgstr "kan ikke dreje til højre"
-  
+
 msgid "Left Turn Only (<-)"
 msgstr "Kun venstresving (<-)"
-  
+
 msgid "tank can't turn left"
 msgstr "kan ikke dreje til venstre"
-  
+
 msgid "Right Turn Only (->)"
 msgstr "Kun højresving (->)"
-  
+
 msgid "tank has lots of momentum"
 msgstr "din tank er meget sløv"
-  
+
 msgid "Momentum (M)"
 msgstr "Dobbelt Vægt (M)"
 
 msgid "can't see out the window"
 msgstr "du kan ikke se noget"
-  
+
 msgid "Blindness (B)"
 msgstr "Blindhed (B)"
-  
+
 msgid "can't see anything on radar"
 msgstr "du kan ikke se noget på din radar"
-  
+
 msgid "Jamming (JM)"
 msgstr "Jamming (JM)"
-  
+
 msgid "fish eye view out the window"
 msgstr "fiskeøje syn"
-  
+
 msgid "Wide Angle (WA)"
 msgstr "Vid vinkel (WA)"
 
 # Help 7 Strings
- 
+
 msgid "The radar is on the left side of the control panel.  It shows an overhead"
 msgstr "Radaren er i venstre side af kontrolpanelet. Den viser en oversigt"
-  
+
 msgid "x-ray view of the game.  Buildings and the outer wall are shown in light"
 msgstr "over spillet. Bygninger og ydre vægge vises med lyseblåt. "
-  
+
 msgid "blue.  Team bases are outlined in the team color.  Teleporters are short"
 msgstr "Holdbaser vises i holdets farve. Teleporters er korte gule"
-  
+
 msgid "yellow lines.  Tanks are dots in the tank's team color, except rogues are"
 msgstr "linier. Tanks vises som prikker i holdfarven, undtagen slyngler der"
-  
+
 msgid "yellow.  The size of the tank's dot is a rough indication of the tank's"
 msgstr "er gule. Størrelsen på tankens prik er en indikation af hvor "
-  
+
 msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
 msgstr "højt oppe tanken er: jo større prik jo højere oppe. Flag er små krydser. Holdflag"
-  
+
 msgid "flags are in the team color, superflags are white, and the antidote flag"
 msgstr "er i holdes egen farve, superflag er hvide, modgiftsflag er gule."
-  
+
 msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
 msgstr "Skud er små prikker, laser er linier og shockbølger er cirkler. "
-  
+
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr "Din egen tank er altid i centrum og fremad er altid op"
-  
+
 msgid "is always up on the radar.  The yellow V is your field of view.  North"
 msgstr "på radaren. Det gule 'V' er dit synsfelt. "
-  
+
 msgid "is indicated by the letter N."
 msgstr "Nord er angivet med bogstavet N."
-  
+
 msgid "The heads-up-display (HUD) has several displays.  The two boxes in the"
 msgstr "Dit synsfelt viser flere ting. De to kasser i centrum"
-  
+
 msgid "center of the view are the motion control boxes;  within the small box"
 msgstr "er dine bevægelses kasser. Inden for den inderste (mindste) kasse"
-  
+
 msgid "your tank won't move, outside the large box you don't move any faster than"
 msgstr "bevæger din tank sig ikke, uden for den store kasse kan din tank ikke "
-  
+
 msgid "at the edge of the large box.  Moving the mouse above or below the small"
 msgstr "køre hurtigere i forhold til yderkanten af den store kasse. Ved at flytte"
-  
+
 msgid "box moves forward or backward, respectively.  Similarly for left and right."
 msgstr "musen over/under den lille kasse kører du frem/tilbage. Det samme gælder "
-  
+
 msgid "The distance away from the small box determines the speed."
 msgstr "højre og venstre. "
 
 # Help 8 Strings
 
-  
+
 msgid "Above the larger box is a tape showing your current heading.  North is"
 msgstr "Over den store kasse, er der et kompas der viser din retning. Nord er"
-  
+
 msgid "0, east is 90, etc.  If jumping is allowed or you have the jumping flag,"
 msgstr "0, øst er 90, osv.  Hvis du kan hoppe vises der en skala for"
-  
+
 msgid "an altitude tape appears to the right of the larger box."
 msgstr "hvor meget højde du har på. Denne skala vises til højre for den store kasse"
-  
+
 msgid "Small colored diamonds or arrows may appear on the heading tape.  An"
 msgstr "Små farvede pile eller diamanter kan vise sig i kompasset. En pil der "
-  
+
 msgid "arrow pointing left means that a particular flag is to your left, an"
 msgstr "peger til venstre betyder at flaget er til venstre for dig, tilsvarende "
-  
+
 msgid "arrow pointing right means that the flag is to your right, and a diamond"
 msgstr "gælder hvis den peger på højre. En diamant indikerer hvilken retning flaget"
-  
+
 msgid "indicates the heading to the flag by its position on the heading tape."
 msgstr "er i forhold til dig."
-  
+
 msgid "In capture-the-flag mode a marker always shows where your team flag is."
 msgstr "I erobre-flaget vises den altid hvor dit holdflag befinder sig."
-  
+
 msgid "A yellow marker shows the way to the antidote flag."
 msgstr "En gul pil/diamant viser hvor et modgiftsflag er."
-  
+
 msgid "At the top of the display are, from left to right, your callsign and"
 msgstr "Øverst oppe vises der (fra venstre) dit navn, dine points,"
-  
+
 msgid "score, your status, and the flag you have.  Your callsign is in the"
 msgstr "din status og hvilket flag du har.  Dit navn er i dit holdfarve"
-  
+
 msgid "color of your team.  Your status is one of:  ready, dead, sealed, zoned"
 msgstr "og din status er enten: klar, død, skjult, fantom"
-  
+
 msgid "or reloading (showing the time until reloaded).  It can also show the"
 msgstr "eller lader (samt hvor lang tid dette tager). Det kan også vise "
-  
+
 msgid "time until a bad flag is dropped (if there's a time limit)."
 msgstr "tiden indtil et dårligt flag smides (hvis der er en tidsbegrænsning)."
-  
+
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "Andre informationer kan forekomme af og til."
 

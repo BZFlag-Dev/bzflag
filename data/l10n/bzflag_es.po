@@ -3,136 +3,148 @@
 msgid "Join Game"
 msgstr "Iniciar Partida"
 
+msgid "es"
+msgstr "Spanish"
+
+#msgid "translator"
+#msgstr ""
+
 msgid "Find Server"
 msgstr "Buscar Servidor"
 
-msgid "Connect"	
+msgid "Connect"
 msgstr "Conectar"
 
-msgid "Callsign:" 
+msgid "Callsign:"
 msgstr "Apodo:"
 
-msgid "Team:" 
+msgid "Team:"
 msgstr "Equipo:"
 
-msgid "Server:" 
+msgid "Server:"
 msgstr "Servidor:"
 
-msgid "Port:" 
+msgid "Port:"
 msgstr "Puerto:"
 
-msgid "Start Server" 
+msgid "Start Server"
 msgstr "Iniciar Servidor"
 
-msgid "Up/Down arrows to move, Enter to select, Esc to dismiss" 
+msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
 msgstr "Flechas Arriba/Abajo para moverse, Enter para selecionar, Esc para anular"
 
-msgid "Options" 
+msgid "Options"
 msgstr "Opciones"
 
-msgid "Help" 
+msgid "Help"
 msgstr "Ayuda"
 
-msgid "Quit" 
+msgid "Quit"
 msgstr "Salir"
 
-msgid "Dithering:" 
+msgid "Dithering:"
 msgstr ""
 
-msgid "Off" 
+msgid "Off"
 msgstr "Desactivado"
 
-msgid "On" 
+msgid "On"
 msgstr "Activado"
 
-#msgid "Blending:" 
+#msgid "Blending:"
 #msgstr ""
 
-#msgid "Smoothing:" 
+#msgid "Smoothing:"
 #msgstr ""
 
-#msgid "Lighting:" 
+#msgid "Lighting:"
 #msgstr ""
 
-#msgid "Texturing:" 
+#msgid "Texturing:"
 #msgstr ""
 
-#msgid "Nearest" 
+#msgid "Nearest"
 #msgstr ""
 
-#msgid "Linear" 
+#msgid "Linear"
 #msgstr ""
 
 #msgid "Nearest Mipmap Nearest"
 #msgstr ""
 
-#msgid "Linear Mipmap Nearest" 
+#msgid "Linear Mipmap Nearest"
 #msgstr ""
 
-#msgid "Nearest Mipmap Linear" 
+#msgid "Nearest Mipmap Linear"
 #msgstr ""
 
-#msgid "Linear Mipmap Linear" 
+#msgid "Linear Mipmap Linear"
 #msgstr ""
 
-msgid "Quality:" 
+msgid "Quality:"
 msgstr "Calidad:"
 
-msgid "Low" 
+msgid "Low"
 msgstr "Baja"
 
-msgid "Medium" 
+msgid "Medium"
 msgstr "Media"
 
-msgid "High" 
+msgid "High"
 msgstr "Alta"
 
-msgid "Shadows:" 
+msgid "Shadows:"
 msgstr "Sombras:"
 
-msgid "Depth Buffer:" 
+msgid "Depth Buffer:"
 msgstr "Tamaño del Buffer"
 
-msgid "Not available" 
+msgid "Not available"
 msgstr "No disponible"
 
-msgid "Change Video Format" 
+msgid "Change Video Format"
 msgstr "Cambiar Formato de Video"
 
-msgid "Brightness:" 
+msgid "Brightness:"
 msgstr "Brillo:"
 
-msgid "Sound Volume:" 
+msgid "Sound Volume:"
 msgstr "Volumen:"
 
 msgid "UDP network connection:"
 msgstr "Conexión UDP:"
 
-msgid "Change Key Mapping" 
+#msgid "Server List Cache:"
+#msgstr ""
+
+#msgid "Clear Server List Cache"
+#msgstr ""
+
+msgid "Change Key Mapping"
 msgstr "Cambiar Asociación de Teclas"
 
-msgid "GUI Options" 
+msgid "GUI Options"
 msgstr "Opciones del Intarface"
 
-msgid "Enhanced radar:" 
+msgid "Enhanced radar:"
 msgstr "Radar intensificado:"
 
-msgid "Controlpanel & Score FontSize:" 
+msgid "Controlpanel & Score FontSize:"
 msgstr "Tamaño de las fuentes del panel de control y de la puntuación"
 
-msgid "normal" 
+msgid "normal"
 msgstr "normal"
 
-msgid "bigger" 
+msgid "bigger"
 msgstr "grande"
 
-msgid "Radar & Panel Opacity:" 
+msgid "Radar & Panel Opacity:"
 msgstr "Opacidad del Radar y del Panel"
 
-msgid "Colored shots on radar:" 
+msgid "Colored shots on radar:"
 msgstr "Disparos coloreados en el radar"
 
-msgid "Radar Shot Length:" 
+msgid "Radar Shot Length:"
 msgstr "Longitud de los Disparos en el Radar"
 
 #msgid "Radar & Panel Size:"
@@ -141,211 +153,241 @@ msgstr "Longitud de los Disparos en el Radar"
 #msgid "Mouse Box Size:"
 #msgstr ""
 
-msgid "Page Down for next page" 
-msgstr "AvPag para la siguiente página"
-
-msgid "Page Up for previous page" 
-msgstr "RePag para la página anterior"
-
-#msgid "Rogue" 
+#msgid "Control panel coloring:"
 #msgstr ""
 
-msgid "Red Team" 
+#msgid "Underline color:"
+#msgstr ""
+
+#msgid "Killer Highlight:"
+#msgstr ""
+
+msgid "Page Down for next page"
+msgstr "AvPag para la siguiente página"
+
+msgid "Page Up for previous page"
+msgstr "RePag para la página anterior"
+
+#msgid "Rogue"
+#msgstr ""
+
+msgid "Red Team"
 msgstr "Equipo Rojo"
 
-msgid "Green Team" 
+msgid "Green Team"
 msgstr "Equipo Verde"
 
-msgid "Blue Team" 
+msgid "Blue Team"
 msgstr "Equipo Azul"
 
-msgid "Purple Team" 
+msgid "Purple Team"
 msgstr "Equipo Morado"
 
 msgid "Enter to quit, Esc to resume"
 msgstr "Enter para salir, Esc para reanudar"
 
-msgid "Really quit?" 
+msgid "Really quit?"
 msgstr "¿Realmente quiere salir?"
 
-msgid "Video Format" 
+msgid "Video Format"
 msgstr "Formato de Video"
 
-msgid "Current Format:" 
+msgid "Current Format:"
 msgstr "Formato actual:"
 
-msgid "Key Mapping" 
+msgid "Key Mapping"
 msgstr "Asociación de Teclas"
 
-msgid "Reset Defaults" 
+msgid "Reset Defaults"
 msgstr "Teclas por Defecto"
 
-msgid "Fire shot:" 
+msgid "Fire shot:"
 msgstr "Disparo:"
 
-msgid "Drop flag:" 
+msgid "Drop flag:"
 msgstr "Soltar bandera:"
 
-msgid "Identify/Lock On:" 
+msgid "Identify/Lock On:"
 msgstr "Identificar/Fijar Blanco:"
 
-msgid "Radar Short:" 
+msgid "Radar Short:"
 msgstr "Radar Corto:"
 
-msgid "Radar Medium:" 
+msgid "Radar Medium:"
 msgstr "Radar Mediano:"
 
-msgid "Radar Long:" 
+msgid "Radar Long:"
 msgstr "Radar Grande:"
 
-msgid "Send to All:" 
+msgid "Send to All:"
 msgstr "Enviar a Todos:"
 
-msgid "Send to Teammates:" 
+msgid "Send to Teammates:"
 msgstr "Enviar a Compañeros:"
 
-msgid "Send to Nemesis:" 
+msgid "Send to Nemesis:"
 msgstr "Enviar a Nemesis:"
 
-msgid "Send to Recipient:" 
+msgid "Send to Recipient:"
 msgstr "Enviar al Destinatario:"
 
-msgid "Jump:" 
+msgid "Jump:"
 msgstr "Saltar:"
 
-msgid "Binoculars:" 
+msgid "Binoculars:"
 msgstr "Prismáticos:"
 
-msgid "Toggle Score:" 
+msgid "Toggle Score:"
 msgstr "Activar Puntuación:"
 
-msgid "Tank Labels:" 
+msgid "Tank Labels:"
 msgstr "Etiquetas de los Tanques:"
 
-msgid "Flag Help:" 
+msgid "Flag Help:"
 msgstr "Información de las Banderas:"
 
-msgid "Time Forward:" 
+msgid "Time Forward:"
 msgstr "Avanzar Reloj:"
 
-msgid "Time Backward:" 
+msgid "Time Backward:"
 msgstr "Retrasar Reloj:"
 
-msgid "Pause/Resume:" 
+msgid "Pause/Resume:"
 msgstr "Pausa/Contiuar:"
 
-msgid "SelfDestruct/Cancel:" 
+#msgid "Self Destruct/Cancel:"
+#msgstr ""
+
+msgid "SelfDestruct/Cancel:"
 msgstr "Autodestrucción/Cancelar:"
 
-msgid "Fast Quit:" 
+msgid "Fast Quit:"
 msgstr "Apagado Rápido:"
 
-#msgid "Scroll Backward:" 
+#msgid "Scroll Backward:"
 #msgstr ""
 
-#msgid "Scroll Forward:" 
+#msgid "Scroll Forward:"
 #msgstr ""
- 
+
 msgid "Slow Keyboard Motion:"
 msgstr "Movimiento Lento del Teclado"
 
-msgid "loading {1}" 
+msgid "loading {1}"
 msgstr "cargando {1}"
 
-msgid "controls tank motion" 
+msgid "controls tank motion"
 msgstr "Controles de movimiento del tanque"
 
-msgid "Mouse Position:" 
+msgid "Mouse Position:"
 msgstr "Posición del Ratón"
 
-msgid "fires shot" 
+msgid "fires shot"
 msgstr "disparo"
 
-msgid "drops flag (if not bad)" 
+msgid "drops flag (if not bad)"
 msgstr "soltar bandera (si no es mala)"
 
-msgid "identifies player (locks on GM)" 
+msgid "identifies player (locks on GM)"
 msgstr "identificar jugador (fija blanco con GM)"
 
-msgid "jump (if allowed)" 
-msgstr "saltar (si está permitido)" 
+msgid "jump (if allowed)"
+msgstr "saltar (si está permitido)"
 
-msgid "short radar range" 
+msgid "short radar range"
 msgstr "alcance del radar corto"
 
-msgid "medium radar range" 
+msgid "medium radar range"
 msgstr "alcance del radar mediano"
 
-msgid "long radar range" 
+msgid "long radar range"
 msgstr "alcance del radar largo"
 
-msgid "toggle binoculars" 
+msgid "toggle binoculars"
 msgstr "activar prismáticos"
 
-msgid "toggle heads-up flag help" 
+msgid "toggle heads-up flag help"
 msgstr "activar la información de las banderas"
 
-msgid "send message to teammates" 
+msgid "send message to teammates"
 msgstr "enviar mensaje a los compañeros"
- 
-msgid "send message to everybody" 
+
+msgid "send message to everybody"
 msgstr "enviar mensaje a todo el mundo"
-  
-msgid "send message to nemesis" 
+
+msgid "send message to nemesis"
 msgstr "enviar mensaje a nemesis"
 
-msgid "send message to recipient" 
+msgid "send message to recipient"
 msgstr "enviar mensaje al destinatario"
 
-msgid "toggle score sheet" 
+msgid "toggle score sheet"
 msgstr "activar tabla de puntuación"
 
-msgid "toggle tank labels" 
+msgid "toggle tank labels"
 msgstr "activar etiquetas de los tanques"
 
-#msgid "set time of day backward" 
+#msgid "set time of day backward"
 #msgstr ""
 
-#msgid "set time of day forward" 
+#msgid "set time of day forward"
 #msgstr ""
 
-msgid "pause/resume" 
+msgid "pause/resume"
 msgstr "pausa/continuar"
 
-msgid "self Destruct/Cancel" 
+msgid "self Destruct/Cancel"
 msgstr "Autodestrucción/Cancelar"
- 
-msgid "quit" 
+
+msgid "quit"
 msgstr "salir"
 
-#msgid "scroll message log backward" 
+#msgid "scroll message log backward"
 #msgstr ""
- 
+
 #msgid "scroll message log forward"
 #msgstr ""
 
-msgid "show/dismiss menu" 
-msgstr "mostrar/esconder menú"
-
-#msgid "Esc:" 
+#msgid "Slow Keyboard Motion"
 #msgstr ""
 
-msgid "Maintainer:" 
+#msgid "Toggle Radar Flags"
+#msgstr ""
+
+#msgid "Toggle Main Flags"
+#msgstr ""
+
+#msgid "Silence/UnSilence"
+#msgstr ""
+
+#msgid "Server Admin"
+#msgstr ""
+
+#msgid "Hunt"
+#msgstr ""
+
+msgid "show/dismiss menu"
+msgstr "mostrar/esconder menú"
+
+#msgid "Esc:"
+#msgstr ""
+
+msgid "Maintainer:"
 msgstr "Mantenedor"
 
-msgid "Original Author:" 
+msgid "Original Author:"
 msgstr "Autor Original"
 
-msgid "Code Contributors:" 
+msgid "Code Contributors:"
 msgstr "Contribuciones al Código"
 
-msgid "Tank Models:" 
+msgid "Tank Models:"
 msgstr "Modelos de Tanques"
 
-msgid "Special Thanks:" 
+msgid "Special Thanks:"
 msgstr "Agradecimientos Especiales:"
 
-msgid "Send:" 
+msgid "Send:"
 msgstr "Enviar:"
 
 msgid "Servers"
@@ -416,6 +458,9 @@ msgstr "Pulsa %s para comenzar"
 
 msgid "Dead"
 msgstr "Muerto"
+
+#msgid "%.1f"
+#msgstr ""
 
 msgid "Ready"
 msgstr "Listo"
@@ -498,6 +543,9 @@ msgstr "Encerrado"
 #msgid "Network: Created local UDP downlink port {1}"
 #msgstr ""
 
+#msgid "msgid "
+#msgstr ""
+
 #msgid "More Info: [{1}:{2}:{3}]"
 #msgstr ""
 
@@ -535,6 +583,9 @@ msgstr "Encerrado"
 #msgstr ""
 
 #msgid "Team Score"
+#msgstr ""
+
+#msgid "Locale:"
 #msgstr ""
 
 #msgid "Player"
@@ -640,6 +691,72 @@ msgstr "La bandera de tu equipo: evita que otros equipos la capturen"
 msgid "Opponent's team flag:  take it to your base to capture it!"
 msgstr "La bandera del equipo rival: llevala a tu base y captúrala"
 
+#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
+#msgstr ""
+
+#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgstr ""
+
+#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
+#msgstr ""
+
+#msgid "Machine Gun (MG):  Very fast reload and very short range."
+#msgstr ""
+
+#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+#msgstr ""
+
+#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+#msgstr ""
+
+#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
+#msgstr ""
+
+#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
+#msgstr ""
+
+#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
+#msgstr ""
+
+#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
+
+#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
+#msgstr ""
+
+#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+#msgstr ""
+
+#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+#msgstr ""
+
+#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
+#msgstr ""
+
+#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+#msgstr ""
+
+#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
+#msgstr ""
+
+#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
+#msgstr ""
+
+#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
+#msgstr ""
+
+#msgid "IDentify (ID):  Identifies type of nearest flag."
+#msgstr ""
+
+#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
+#msgstr ""
+
+#msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
 msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
 msgstr "Velocidad (+V):  El tanque se mueve más rápido."
 
@@ -667,16 +784,19 @@ msgstr "Rebote (+R):  Los disparos rebotan en los muros. ¡No te dispares a ti mi
 msgid "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone."
 msgstr "SuperBala (+SB):  Disparas a través de los edificios. Puede matar a Zona Fantasma."
 
-msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window.",
+msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."
 msgstr "Bala Invisible (+IB):  Tus disparos no aparecen en los otros radares. Pueden ser vistos en la ventana."
 
-msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!",
+msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
 msgstr "Stealth (+ST):  El tanque es invisible en el radar. Los disparos son visibles. ¡Acecha a tus enemigos!"
 
-msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit.",
+#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
+
+msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit."
 msgstr "Pequeño (+T):  El tanque es pequeño y puede pasar por sitios pequeños. Muy dificil de dar."
 
-msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings.",
+msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
 msgstr "Estrecho (+N):  El tanque es superfino. Muy dificil de alcanzar desde el frente pero de tamaño normal desde un lado. Puede pasar por sitios pequeños."
 
 msgid "SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time."
@@ -884,284 +1004,307 @@ msgstr "Las banderas antídoto son amarillas y solamente aparecen cuando tienes u
 
 msgid "Good Flags:"
 msgstr "Banderas Buenas:"
-  
+
 msgid "boosts top speed"
 msgstr "aumenta la velocidad máxima"
-  
+
 msgid "High Speed (V)"
 msgstr "Alta Velocidad (V)"
-  
+
 msgid "boosts turn rate"
 msgstr "aumenta la velocidad de giro"
-  
+
 msgid "Quick Turn (A)"
 msgstr "Giro Rápido (A)"
-  
+
 msgid "can drive through buildings"
 msgstr "puedes atravesar edificios"
-  
+
 #msgid "Oscillation Overthruster (OO)"
 #msgstr ""
-  
+
 msgid "faster shots more often"
 msgstr "disparos más rápidos y más a menudo"
-  
+
 msgid "Rapid Fire (F)"
 msgstr "Disparo Rápido (F)"
-  
+
 msgid "very fast reload, very short range"
 msgstr "recarga muy rápida, alcance muy corto"
-  
+
 msgid "Machine Gun (MG)"
 msgstr "Ametralladora (MG)"
-  
+
 msgid "shots guide themselves (right mouse locks on)"
 msgstr "disparos teledirigidos (el botón derecho fija el blanco)"
-  
+
 msgid "Guided Missile (GM)"
 msgstr "Misiles Teledirigidos (GM)"
-  
+
 msgid "infinite shot speed and range, long reload time"
 msgstr "infinita velocidad del diaparo y alcancd, tiempo de recarga largo"
-  
+
 msgid "Laser (L)"
 msgstr "Laser (L)"
-  
+
 msgid "shots ricochet"
 msgstr "los disparos rebotan"
-  
+
 msgid "Ricochet (R)"
 msgstr "Rebote (R)"
-  
+
 msgid "shoots through buildings"
 msgstr "los disparos atraviesan edificios"
-  
+
 msgid "Super Bullet (SB)"
 msgstr "Super Bala (SB)"
-  
+
 msgid "tank invisible on enemy radar"
 msgstr "tanque invisible en el radar enemigo"
-  
+
 #msgid "Stealth (ST)"
 #msgstr ""
-  
+
 msgid "tank invisible out the window"
 msgstr "tanque invisible en la ventana"
-  
+
 msgid "Cloaking (CL)"
 msgstr "Invisible (CL)"
-  
+
 msgid "shots invisible on radar"
 msgstr "disparos invisibles en el radar"
-  
+
 msgid "Invisible Bullet (IB)"
 msgstr "Bala Invisible (IB)"
-  
+
 msgid "tank becomes smaller"
 msgstr "el tanque encoje"
-  
+
 msgid "Tiny (T)"
 msgstr "Pequeño (T)"
-  
+
 msgid "tank becomes paper thin"
 msgstr "el tanque se vuelve como una hoja de papel"
-  
+
 msgid "Narrow (N)"
 msgstr "Estrecho (N)"
-  
+
 msgid "getting hit just drops the flag"
 msgstr "si te dan unicamente pierdes la bandera"
-  
+
 msgid "Shield (SH)"
 msgstr "Escudo (SH)"
-  
+
 msgid "destroy tanks by touching them"
 msgstr "destruye tanque tocándolos"
-  
+
 msgid "Steamroller (SR)"
 msgstr "Apisonadora (SR)"
-  
+
 msgid "expanding spherical shell of destruction"
 msgstr "esfera expansiva de destrucción"
-  
+
 #msgid "Shock Wave (SW)"
 #msgstr ""
 
 # Help 6 Strings
 
-  
+
 msgid "teleport to enter/leave zone"
 msgstr "teletransportador para entrar/salir de la zona"
-  
+
 msgid "Phantom Zone (PZ)"
 msgstr "Zona Fantasma (PZ)"
-  
+
 msgid "destroys player and all player's teammates"
 msgstr "destruye al jugador y a sus compañeros de equipo"
-  
+
 msgid "Genocide (G)"
 msgstr "Genocidio (G)"
-  
+
 msgid "allows tank to jump"
 msgstr "permite saltar al tanque"
-  
+
 msgid "Jumping (JP)"
 msgstr "Salto"
-  
+
 msgid "shows type of nearest superflag"
 msgstr "muestra el tipo de la superbandera más cercana"
-  
+
 msgid "Identify (ID)"
 msgstr "Identificación"
-  
+
 msgid "Bad Flags:"
 msgstr "Banderas Malas"
-  
+
 msgid "can't identify tanks"
 msgstr "no puedes identificar a los tanques"
-  
+
 msgid "Colorblindness (CB)"
 msgstr "Daltonismo (CB)"
-  
+
 msgid "makes tank very large"
 msgstr "hace crecer al tanque"
-  
+
 msgid "Obesity (O)"
 msgstr "Obesidad (O)"
-  
+
 msgid "tank can't turn right"
 msgstr "el tanque no puede girar a la derecha"
-  
+
 msgid "Left Turn Only (<-)"
 msgstr "Giro Solo a la Izquierda (<-)"
-  
+
 msgid "tank can't turn left"
 msgstr "el taque no puede girar a la izquierda"
-  
+
 msgid "Right Turn Only (->)"
 msgstr "Giro Solo a la Derecha (->)"
-  
+
 msgid "tank has lots of momentum"
 msgstr "el tanque tiene mucha inercia"
-  
+
 msgid "Momentum (M)"
 msgstr "Inercia (M)"
-  
+
 msgid "can't see out the window"
 msgstr "no puedes ver por la ventana"
-  
+
 msgid "Blindness (B)"
 msgstr "Ceguera (B)"
-  
+
 msgid "can't see anything on radar"
 msgstr "no puedes ver por el radar"
-  
+
 msgid "Jamming (JM)"
 msgstr "Interferencias (JM)"
-  
+
 msgid "fish eye view out the window"
 msgstr "ojo de pez en la ventana"
-  
+
 msgid "Wide Angle (WA)"
 msgstr "Ojo de Pez (WA)"
 
 # Help 7 Strings
- 
+
 msgid "The radar is on the left side of the control panel.  It shows an overhead"
 msgstr "El radar esta a la izquierda del panel de control. Es una vista cenital"
-  
+
 msgid "x-ray view of the game.  Buildings and the outer wall are shown in light"
 msgstr "con rayos x del juego. Los edificios y los muros exteriores se muestran en azul"
-  
+
 msgid "blue.  Team bases are outlined in the team color.  Teleporters are short"
 msgstr "claro. Las bases de los equipos son del color de cada equipo. Los teletransportadores son"
-  
+
 msgid "yellow lines.  Tanks are dots in the tank's team color, except rogues are"
 msgstr "pequeñas lineas amarillas. Los tanques son puntos del color de su equipo, excepto los rogues, que son"
-  
+
 msgid "yellow.  The size of the tank's dot is a rough indication of the tank's"
 msgstr "amarillos. El tamaño del punto del tanque es una indicación aproximada de la altitud"
-  
+
 msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
 msgstr "del tanque : cuanto más alto está el tanque, mayor es el punto. Las banderas son pequeñas cruces."
-  
+
 msgid "flags are in the team color, superflags are white, and the antidote flag"
 msgstr "Las banderas de equiop son del color del equipo, las superbanderas son blancas y la bandera antídoto"
-  
+
 msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
 msgstr "es amarilla. Los disparos son pequeños puntos (o lineas o círculos, para los lasers y"
-  
+
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr "shock waves respectivamente). Tu tanque siempre está estático en el centro y el frente"
-  
+
 msgid "is always up on the radar.  The yellow V is your field of view.  North"
 msgstr "es siempre la parte superior del radar. La V amarilla es tu campo de visión. En norte"
-  
+
 msgid "is indicated by the letter N."
 msgstr "está indicado con la letra N."
-  
+
 msgid "The heads-up-display (HUD) has several displays.  The two boxes in the"
 msgstr "El heads-up-display (HUD) tiende varios dispositivos. Los dos recuadros en el"
-  
+
 msgid "center of the view are the motion control boxes;  within the small box"
 msgstr "centro son los recuadros de control de movimiento; dentro del recuadro pequeño"
-  
+
 msgid "your tank won't move, outside the large box you don't move any faster than"
 msgstr "tu tanque no se moverá, y fuera del grande no te moverás más rápido que "
-  
+
 msgid "at the edge of the large box.  Moving the mouse above or below the small"
 msgstr "en el borde del recuadro grande. Moviendo del ratón por encima o por debajo del recuadro pequeño "
-  
+
 msgid "box moves forward or backward, respectively.  Similarly for left and right."
 msgstr "te mueves hacia delante y hacia atrás respectivamente. Igual para la izquierda y la derecha."
-  
+
 msgid "The distance away from the small box determines the speed."
 msgstr "La distancia sobre el recuadro pequeño determina la velocidad."
 
 # Help 8 Strings
 
-  
+
 msgid "Above the larger box is a tape showing your current heading.  North is"
 msgstr "Sobre el recuadro grande se muestra la dirección actual. El norte es"
-  
+
 msgid "0, east is 90, etc.  If jumping is allowed or you have the jumping flag,"
 msgstr "o, el este es 90, etc. Si está permitido saltar o tienes la bandera de salto,"
-  
+
 msgid "an altitude tape appears to the right of the larger box."
 msgstr "aparece la altitud a la derecha del recuadro grande."
-  
+
 msgid "Small colored diamonds or arrows may appear on the heading tape.  An"
 msgstr "Los pequeños rombos o flechas coloreadas pueden aparecer sobre el recuadro grande."
-  
+
 msgid "arrow pointing left means that a particular flag is to your left, an"
 msgstr "Una flecha apuntando a la izquierda significa que una bandera en particular está a tu izquierda, una"
-  
+
 msgid "arrow pointing right means that the flag is to your right, and a diamond"
 msgstr "flecha apuntando a la derecha significa que la bandera esta a tu derecha, y un rombo"
-  
+
 msgid "indicates the heading to the flag by its position on the heading tape."
 msgstr "indica la dirección de la bandera."
-  
+
 msgid "In capture-the-flag mode a marker always shows where your team flag is."
 msgstr "En el modo captura-la-bandera el indicador siempre muestra donde está la bandera de tu equipo."
-  
+
 msgid "A yellow marker shows the way to the antidote flag."
 msgstr "un indicador amarillo muestra el camino hacia la bandera antídoto."
-  
+
 msgid "At the top of the display are, from left to right, your callsign and"
 msgstr "En lo alto de la pantalla están, de izquierda a derecha, tu apodo y"
-  
+
 msgid "score, your status, and the flag you have.  Your callsign is in the"
 msgstr "tu puntuación, tu estado y la bandera que tienes. Tu apodo es"
-  
+
 msgid "color of your team.  Your status is one of:  ready, dead, sealed, zoned"
 msgstr "del color de tu equipo. Tu es estado puede ser: listo, muerto, atrapado, en zona"
-  
+
 msgid "or reloading (showing the time until reloaded).  It can also show the"
 msgstr "o recargando (mostrando el tiempo hasta la recarga). También puede mostrar el"
-  
+
+# BZFS Messages
+
+#msgid "You are now an administrator!"
+#msgstr ""
+
+#msgid "Wrong Password!"
+#msgstr ""
+
+#msgid "unknown command"
+#msgstr ""
+
+#msgid "Countdown started."
+#msgstr ""
+
+#msgid "IP pattern added to banlist"
+#msgstr ""
+
+#msgid "malformed address"
+#msgstr ""
+
+#msgid "removed IP pattern"
+#msgstr ""
+
 msgid "time until a bad flag is dropped (if there's a time limit)."
 msgstr "tiempo que queda para dejar una bandera mala (si posee límite de tiempo)."
-  
+
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "Otros mensajes informativos pueden aparecer ocasionalmente en el HUD."
