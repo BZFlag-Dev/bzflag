@@ -257,7 +257,7 @@ BZFlag 1.7e release 000
 * save flaghelp and score state
 * FreeBSD patch by Eric Anholt
 * world creation reordering to support world from file
-* compilation with VC++6 Jeremiah Moss <moss-taylor@yahoo.com>
+* compilation with VC++6 Jeremiah Moss <jeremiah_moss@cobraa1.com>
 * world from a file by Daniel Léonard <fork@videotron.ca>
 * travel underneath floating buildings by Jeremiah
 * radar update to not hide teleporters under buildings by Jeremiah
