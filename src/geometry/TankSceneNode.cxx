@@ -51,9 +51,9 @@ public:
 
        //Modifiers for Normal, Obese. Tiny, Thin, Thief
        static GLfloat styleFactors[5][3];
-       static boolean callbackAdded;
+       static bool callbackAdded;
 };
-boolean TankFactors::callbackAdded = false;
+bool TankFactors::callbackAdded = false;
 GLfloat TankFactors::styleFactors[5][3] = {
 			{ 1.0f, 1.0f, 1.0f },
 			{ 1.0f, 1.0f, 1.0f },
