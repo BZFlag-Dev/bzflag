@@ -268,7 +268,8 @@ void ListServerLink::sendMessage(std::string message)
 {
   const int bufsize = 4096;
   char msg[bufsize];
-  strncpy(msg, message.c_str(), (message.length() > bufsize) ? bufsize : message.length());
+  strncpy(msg, message.c_str(),
+          ((int) message.length() > bufsize) ? bufsize : message.length());
   if (strlen(msg) > 0) {
     DEBUG3("%s\n",msg);
     if (send(linkSocket, msg, strlen(msg), 0) == -1) {
