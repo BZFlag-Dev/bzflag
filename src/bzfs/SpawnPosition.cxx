@@ -80,8 +80,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       }
       tries++;
 
-      int type = world->boxInBuilding(&building, testPos[0], testPos[1], testPos[2],
-                                      azimuth, tankWidth, tankLength, tankHeight);
+      int type = world->boxInBuilding(&building, testPos, azimuth,
+                                      tankWidth, tankLength, tankHeight);
 
       if (onGroundOnly) {
         if (type == NOT_IN_BUILDING)
@@ -90,8 +90,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
         if ((type == NOT_IN_BUILDING) && (testPos[2] > 0.0f)) {
           testPos[2] = 0.0f;
           //Find any intersection regardless of z
-          type = world->boxInBuilding(&building, testPos[0], testPos[1], testPos[2],
-                                      azimuth, tankWidth, tankLength, maxWorldHeight);
+          type = world->boxInBuilding(&building, testPos, azimuth,
+                                      tankWidth, tankLength, maxWorldHeight);
         }
 
         // in a building? try climbing on roof until on top
@@ -101,8 +101,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
           testPos[2] = building->getPosition()[2] + building->getHeight() + 0.0001f;
           tries++;
           lastType = type;
-          type = world->boxInBuilding(&building, testPos[0], testPos[1], testPos[2],
-                                      azimuth, tankWidth, tankLength, tankHeight);
+          type = world->boxInBuilding(&building, testPos, azimuth,
+                                      tankWidth, tankLength, tankHeight);
 	  if (--retriesRemaining <= 0) {
 	    DEBUG1("Warning: getSpawnLocation had to climb too many buildings\n");
 	    break;

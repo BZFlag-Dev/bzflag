@@ -81,13 +81,22 @@ public:
   InBuildingType cylinderInBuilding(const Obstacle **obstacle,
 			            float x, float y, float z,
 			            float radius, float height = 0.0f);
+
+  /** check collision between world object and a cylinder.
+   * return value is kind of collision.
+   * location will return a pointer to the world colliding object
+   * Checking is quite raw
+   */
+  InBuildingType cylinderInBuilding(const Obstacle **obstacle,
+			            const float* pos,
+			            float radius, float height = 0.0f);
   
   /** check collision between world object and a Z-axis aligned box.
    * return value is kind of collision.
    * location will return a pointer to the world colliding object
    */
   InBuildingType boxInBuilding(const Obstacle **obstacle,
-			       float x, float y, float z, float angle,
+			       const float* pos, float angle,
 			       float width, float breadth, float height);
   
   /** see if the CollisionManager's view of the world size

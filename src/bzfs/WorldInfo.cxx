@@ -201,7 +201,7 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
 }
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
-				             float x, float y, float z, float radius,
+				             const float* pos, float radius,
                                              float height)
 {
   checkCollisionManager(); // FIXME - this is lame
@@ -212,8 +212,6 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
     
   *location = NULL;
   
-  const float pos[3] = {x, y, z};
-
   // check everything but walls
   ObstacleList olist = collisionManager.getObstacles (pos, radius);
   for (ObstacleList::const_iterator oit = olist.begin();
@@ -228,8 +226,16 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
   return classifyHit (*location);
 } 
 
+InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
+				             float x, float y, float z, float radius,
+                                             float height)
+{
+  const float pos[3] = {x, y, z};
+  return cylinderInBuilding (location, pos, radius, height);
+}
+
 InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
-				        float x, float y, float z, float angle,
+				        const float* pos, float angle,
 				        float width, float breadth, float height)
 {
   checkCollisionManager(); // FIXME - this is lame
@@ -240,8 +246,6 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
     
   *location = NULL;
   
-  const float pos[3] = {x, y, z};
-
   // check everything but walls
   ObstacleList olist = collisionManager.getObstacles (pos, angle, width, breadth);
   for (ObstacleList::const_iterator oit = olist.begin();

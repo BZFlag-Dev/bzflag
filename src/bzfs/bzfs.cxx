@@ -819,9 +819,9 @@ static WorldInfo *defineTeamWorld()
 	const float rotation = 2.0f * M_PI * (float)bzfrand();
 
 	// if too close to building then try again
-	if (NOT_IN_BUILDING != world->cylinderInBuilding(NULL, x, y, 0,
-						 1.75f * teleBreadth,
-						 1.0f))
+	const Obstacle* obs;
+	if (NOT_IN_BUILDING != world->cylinderInBuilding(&obs, x, y, 0,
+						 1.75f * teleBreadth, 1.0f))
 	  continue;
 	// if to close to a base then try again
 	if ((redGreen &&
@@ -1076,7 +1076,8 @@ static WorldInfo *defineRandomWorld()
       const float rotation = 2.0f * M_PI * (float)bzfrand();
 
       // if too close to building then try again
-      if (NOT_IN_BUILDING != world->cylinderInBuilding(NULL, x, y, 0,
+	  const Obstacle* obs;
+      if (NOT_IN_BUILDING != world->cylinderInBuilding(&obs, x, y, 0,
 					       1.75f * teleBreadth, 1.0f))
 	continue;
 
@@ -1815,10 +1816,7 @@ void resetFlag(int flagIndex)
     }
     
     int topmosttype = world->cylinderInBuilding(&obj,
-					pFlagInfo->flag.position[0],
-					pFlagInfo->flag.position[1],
-					pFlagInfo->flag.position[2],
-					r, flagHeight);
+                        pFlagInfo->flag.position, r, flagHeight);
 					
     while ((topmosttype != NOT_IN_BUILDING) || (pFlagInfo->flag.position[2] <= deadUnder)) {
 
@@ -1844,11 +1842,7 @@ void resetFlag(int flagIndex)
       }
 
       topmosttype = world->cylinderInBuilding(&obj,
-				      pFlagInfo->flag.position[0],
-				      pFlagInfo->flag.position[1],
-				      pFlagInfo->flag.position[2],
-				      r,
-				      flagHeight);
+                      pFlagInfo->flag.position, r, flagHeight);
     }
   }
 
@@ -2493,8 +2487,7 @@ static void dropFlag(int playerIndex, float pos[3])
     drpFlag.flag.status = FlagGoing;
 
   topmosttype = world->cylinderInBuilding(&container,
-				  pos[0], pos[1], pos[2], 0,
-				  BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+                  pos, 0, BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
 
   // the tank is inside a building - find the roof
   if (topmosttype != NOT_IN_BUILDING) {
@@ -2577,8 +2570,8 @@ static void dropFlag(int playerIndex, float pos[3])
     // your own base.  make it fly to the center of the board.
     std::string teamName = Team::getName ((TeamColor) flagTeam);
     if (!world->getSafetyPoint(teamName, pos, drpFlag.flag.landingPosition)) {
-      topmosttype = world->cylinderInBuilding(&container,
-  				     0.0f, 0.0f, 0.0f,
+      const float pos[3] = {0.0f, 0.0f, 0.0f};
+      topmosttype = world->cylinderInBuilding(&container, pos,
 				     BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
 				     BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
       if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
