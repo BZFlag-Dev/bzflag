@@ -274,13 +274,13 @@ const Teleporter*	ShotStrategy::getFirstTeleporter(const Ray& ray,
   return closestTeleporter;
 }
 
-bool		ShotStrategy::getGround(const Ray& r, float, float &t) const
+bool		ShotStrategy::getGround(const Ray& r, float min, float &t) const
 {
   if (r.getDirection()[2] >= 0.0f)
     return false;
 
   float groundT = r.getOrigin()[2] / -r.getDirection()[2];
-  if (groundT < t)
+  if ((groundT > min) && (groundT < t))
   {
     t = groundT;
     return true;
