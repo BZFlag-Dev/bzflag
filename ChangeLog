@@ -1,5 +1,6 @@
 
 			     BZFlag release notes
+* server based scoring - Dave Brosius, Tim Riker
 * add new updates here without heading until a release
 * max. number of observers now defaults to 3 instead of 0 - Frank Thilo
 * Use high water marks for player cnts to reduce looping - Dave Brosius

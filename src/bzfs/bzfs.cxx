@@ -4338,6 +4338,46 @@ static void playerKilled(int victimIndex, int killerIndex,
     }
   }
 
+  // change the player score
+  if (victimIndex != InvalidPlayer) {
+    player[victimIndex].losses++;
+    if (killerIndex != InvalidPlayer) {
+      if (victimIndex != killerIndex) { 
+	if ((player[victimIndex].team != RogueTeam) 
+	    && (player[victimIndex].team == player[killerIndex].team)) {
+	  if (teamKillerDies)
+	    playerKilled(killerIndex, killerIndex, -1);
+	  else
+	    player[killerIndex].losses++;
+	} else
+	  player[killerIndex].wins++;
+      }
+ 
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = player[killerIndex].id.pack(bufStart);
+      buf = nboPackUShort(buf, player[killerIndex].wins);
+      buf = nboPackUShort(buf, player[killerIndex].losses);
+      broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+    }
+
+    //In the future we should send both (n) scores in one packet
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = player[victimIndex].id.pack(bufStart);
+    buf = nboPackUShort(buf, player[victimIndex].wins);
+    buf = nboPackUShort(buf, player[victimIndex].losses);
+    broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+
+    // see if the player reached the score limit
+    if ((maxPlayerScore != 0)
+    &&  ((player[killerIndex].wins - player[killerIndex].losses) >= maxPlayerScore)) {
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = player[killerIndex].id.pack(bufStart);
+	buf = nboPackUShort(buf, uint16_t(NoTeam));
+	broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+	gameOver = True;
+    }
+  }
+
   // change the team scores -- rogues don't have team scores.  don't
   // change team scores for individual player's kills in capture the
   // flag mode.
@@ -4349,8 +4389,7 @@ static void playerKilled(int victimIndex, int killerIndex,
 	  team[int(player[victimIndex].team)].team.lost += 1;
 	else
 	  team[int(player[victimIndex].team)].team.lost += 2;
-    }
-    else {
+    } else {
       if (player[killerIndex].team != RogueTeam) {
 	winningTeam = int(player[killerIndex].team);
 	team[winningTeam].team.won++;
@@ -4366,11 +4405,6 @@ static void playerKilled(int victimIndex, int killerIndex,
 #endif
   if (winningTeam != (int)NoTeam)
     checkTeamScore(killerIndex, winningTeam);
-  // kill team killers if not -tk
-  if (teamKillerDies && (victimIndex != killerIndex) &&
-      (player[victimIndex].team != RogueTeam) &&
-      (player[victimIndex].team == player[killerIndex].team))
-    playerKilled(killerIndex, killerIndex, -1);
 }
 
 static void grabFlag(int playerIndex, int flagIndex)
@@ -4606,9 +4640,10 @@ static void calcLag(int playerIndex, float timepassed)
   }
 }
 
-static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
+static void scoreChanged(int playerIndex)
 {
-  // lag measurement
+  // Client score statistics are now ignored, and processed by server
+  // just used for lag measurement
   // got reference time?
   if (player[playerIndex].lagkillerpending) {
     PlayerInfo &killer = player[playerIndex];
@@ -4619,27 +4654,6 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
     if (timepassed < 10.0) {
       calcLag(playerIndex, timepassed);
     }
-  }
-
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
-  buf = nboPackUShort(buf, wins);
-  buf = nboPackUShort(buf, losses);
-  broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
-  player[playerIndex].wins = wins;
-  player[playerIndex].losses = losses;
-#ifdef PRINTSCORE
-  dumpScore();
-#endif
-
-  // see if the player reached the score limit
-  if (maxPlayerScore != 0 &&
-      player[playerIndex].wins - player[playerIndex].losses >= maxPlayerScore) {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = player[playerIndex].id.pack(bufStart);
-    buf = nboPackUShort(buf, uint16_t(NoTeam));
-    broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-    gameOver = True;
   }
 }
 
@@ -5136,11 +5150,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgScore: {
       if (player[t].Observer)
 	break;
-      // data: wins, losses
-      uint16_t wins, losses;
-      buf = nboUnpackUShort(buf, wins);
-      buf = nboUnpackUShort(buf, losses);
-      scoreChanged(t, wins, losses);
+      //MsgScore from client is ignored now
+      //This is just used for old client lag calc
+      scoreChanged(t);
       break;
     }
 
