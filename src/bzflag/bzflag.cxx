@@ -859,28 +859,28 @@ int			main(int argc, char** argv)
     }
 
     // check for reassigned team colors
-    if (db.hasValue("roguecolor"))
-      setTeamColor(RogueTeam, db.getValue("roguecolor"));
-    if (db.hasValue("redcolor"))
-      setTeamColor(RedTeam, db.getValue("redcolor"));
-    if (db.hasValue("greencolor"))
-      setTeamColor(GreenTeam, db.getValue("greencolor"));
-    if (db.hasValue("bluecolor"))
-      setTeamColor(BlueTeam, db.getValue("bluecolor"));
-    if (db.hasValue("purplecolor"))
-      setTeamColor(PurpleTeam, db.getValue("purplecolor"));
+    if (BZDB->isSet("roguecolor"))
+      setTeamColor(RogueTeam, BZDB->get("roguecolor"));
+    if (BZDB->isSet("redcolor"))
+      setTeamColor(RedTeam, BZDB->get("redcolor"));
+    if (BZDB->isSet("greencolor"))
+      setTeamColor(GreenTeam, BZDB->get("greencolor"));
+    if (BZDB->isSet("bluecolor"))
+      setTeamColor(BlueTeam, BZDB->get("bluecolor"));
+    if (BZDB->isSet("purplecolor"))
+      setTeamColor(PurpleTeam, BZDB->get("purplecolor"));
 
     // check for reassigned radar colors
-    if (db.hasValue("rogueradar"))
-      setRadarColor(RogueTeam, db.getValue("rogueradar"));
-    if (db.hasValue("redradar"))
-      setRadarColor(RedTeam, db.getValue("redradar"));
-    if (db.hasValue("greenradar"))
-      setRadarColor(GreenTeam, db.getValue("greenradar"));
-    if (db.hasValue("blueradar"))
-      setRadarColor(BlueTeam, db.getValue("blueradar"));
-    if (db.hasValue("purpleradar"))
-      setRadarColor(PurpleTeam, db.getValue("purpleradar"));
+    if (BZDB->isSet("rogueradar"))
+      setRadarColor(RogueTeam, BZDB->get("rogueradar"));
+    if (BZDB->isSet("redradar"))
+      setRadarColor(RedTeam, BZDB->get("redradar"));
+    if (BZDB->isSet("greenradar"))
+      setRadarColor(GreenTeam, BZDB->get("greenradar"));
+    if (BZDB->isSet("blueradar"))
+      setRadarColor(BlueTeam, BZDB->get("blueradar"));
+    if (BZDB->isSet("purpleradar"))
+      setRadarColor(PurpleTeam, BZDB->get("purpleradar"));
 
 
     // ignore window name in config file (it's used internally)
