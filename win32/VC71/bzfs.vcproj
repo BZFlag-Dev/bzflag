@@ -360,6 +360,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomMeshTransform.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomZone.cxx">
 				<FileConfiguration
 					Name="Release|Win32">

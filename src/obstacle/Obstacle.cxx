@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 #include <math.h>
 #include <string.h>
-#include "common.h"
 #include "Obstacle.h"
 #include "Intersect.h"
 #include "StateDatabase.h"

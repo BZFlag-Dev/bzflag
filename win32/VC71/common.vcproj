@@ -922,6 +922,9 @@
 				RelativePath="..\..\include\VotingBooth.h">
 			</File>
 			<File
+				RelativePath="..\..\include\win32.h">
+			</File>
+			<File
 				RelativePath="..\..\include\WordFilter.h">
 			</File>
 		</Filter>

@@ -12,10 +12,12 @@
 
 #include "common.h"
 
+
 /* interface header */
 #include "CustomCone.h"
 
 /* system headers */
+#include <math.h>
 #include <sstream>
 #include <vector>
 

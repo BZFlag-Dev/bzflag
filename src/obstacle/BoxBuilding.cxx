@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
 #include "common.h"
+#include <math.h>
 #include "global.h"
 #include "Pack.h"
 #include "BoxBuilding.h"

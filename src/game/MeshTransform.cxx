@@ -11,6 +11,7 @@
  */
 
 #include "MeshTransform.h"
+#include "win32.h"
 
 #include <math.h>
 #include <ctype.h>

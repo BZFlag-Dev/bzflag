@@ -11,6 +11,7 @@
  */
 
 #include "PhysicsDriver.h"
+#include "common.h"
 
 #include <math.h>
 #include <ctype.h>
