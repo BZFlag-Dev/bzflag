@@ -56,6 +56,8 @@ class ShotStrategy {
     // points to the part of the message after the ShotUpdate portion.
     virtual void	readUpdate(uint16_t code, void* msg);
 
+    static const Obstacle*	getFirstBuilding(const Ray&, float min, float& t);
+
   protected:
     const ShotPath&	getPath() const;
     FiringInfo&		getFiringInfo(ShotPath*) const;
@@ -65,7 +67,6 @@ class ShotStrategy {
     void		setExpiring() const;
     void		setExpired() const;
 
-    const Obstacle*	getFirstBuilding(const Ray&, float min, float& t) const;
     const Teleporter*	getFirstTeleporter(const Ray&, float min,
 							float& t, int& f) const;
     bool		getGround(const Ray&, float min, float &t) const;

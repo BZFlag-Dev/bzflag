@@ -157,7 +157,7 @@ FiringInfo&		ShotStrategy::getFiringInfo(ShotPath* p) const
 }
 
 const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
-						float min, float& t) const
+						float min, float& t)
 {
   const Obstacle* closestObstacle = NULL;
 

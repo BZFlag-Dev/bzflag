@@ -123,18 +123,18 @@ class LocalPlayer : public BaseLocalPlayer {
     static LocalPlayer*	getMyTank();
     static void		setMyTank(LocalPlayer*);
 
-  protected:
-    bool		doEndShot(int index, bool isHit, float* pos);
-    void		doUpdate(float dt);
-    void		doUpdateMotion(float dt);
-    void		doMomentum(float dt, float& speed, float& angVel);
-    void		doForces(float dt, float* velocity, float& angVel);
     const Obstacle*	getHitBuilding(const float* pos, float angle,
 				bool phased, bool& expel) const;
     bool		getHitNormal(const Obstacle* o,
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float* normal) const;
+  protected:
+    bool		doEndShot(int index, bool isHit, float* pos);
+    void		doUpdate(float dt);
+    void		doUpdateMotion(float dt);
+    void		doMomentum(float dt, float& speed, float& angVel);
+    void		doForces(float dt, float* velocity, float& angVel);
 
   private:
     Location		location;

@@ -35,6 +35,7 @@ class TimeKeeper {
     float		operator-(const TimeKeeper&) const;
     TimeKeeper&		operator+=(float);
     bool		operator<=(const TimeKeeper&) const;
+    float               getSeconds() const;
 
     static const TimeKeeper&	getCurrent();
     static const TimeKeeper&	getTick(); // const
@@ -88,6 +89,11 @@ inline TimeKeeper&	TimeKeeper::operator+=(float dt)
 inline bool		TimeKeeper::operator<=(const TimeKeeper& t) const
 {
   return seconds <= t.seconds;
+}
+
+inline float		TimeKeeper::getSeconds() const
+{
+  return seconds;
 }
 
 #endif // BZF_TIME_KEEPER_H
