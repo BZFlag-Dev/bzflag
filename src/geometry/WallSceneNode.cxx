@@ -40,6 +40,7 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
   ZFlip = false;
   useColorTexture = false;
+  isBlended = false;
   wantBlending = false;
 }
 
@@ -275,13 +276,9 @@ void			WallSceneNode::setLightedModulateColor(
     forceNotifyStyleChange();
 }
 
-bool			WallSceneNode::isTransparent() const
+bool			WallSceneNode::isTranslucent() const
 {
-  if (color[3] < 1.0f) {
-    return true;
-  } else {
-    return false;
-  }
+  return isBlended;
 }
 
 void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
@@ -343,6 +340,7 @@ void			WallSceneNode::notifyStyleChange(
     builder.resetBlending();
     builder.setStipple(alpha);
   }
+  isBlended = wantBlending || (alpha != 1.0f);
   gstate = builder.getState();
 }
 

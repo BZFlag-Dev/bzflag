@@ -114,7 +114,7 @@ void		        SceneNode::getExtents(float* mins, float* maxs) const
   return;
 }
 
-bool	                SceneNode::isTransparent() const
+bool	                SceneNode::isTranslucent() const
 {
   return false;
 }

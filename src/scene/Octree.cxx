@@ -224,6 +224,8 @@ void Octree::draw () const
     return;
   }
 
+  GLboolean usingTextures;
+  glGetBooleanv(GL_TEXTURE_2D, &usingTextures);
   glDisable (GL_TEXTURE_2D);
 
   // CullFrustum needs to still be valid here
@@ -233,7 +235,9 @@ void Octree::draw () const
   OcclMgr.update(CullFrustum);
   OcclMgr.draw();
 
-  glEnable (GL_TEXTURE_2D);
+  if (usingTextures) {
+    glEnable (GL_TEXTURE_2D);
+  }
 
   return;
 }

@@ -906,10 +906,18 @@ static void drawLines (int count, const float (*vertices)[3])
 void			World::drawCollisionGrid()
 {
   float color[4] = { 0.25f, 0.0f, 0.25f, 0.8f };
+  GLboolean usingTextures;
+  
+  glGetBooleanv (GL_TEXTURE_2D, &usingTextures);
   glDisable (GL_TEXTURE_2D);
+  
   glColor4fv (color);
   collisionManager.draw (drawLines);
-  glEnable (GL_TEXTURE_2D);
+  
+  if (usingTextures) {
+    glEnable (GL_TEXTURE_2D);
+  }
+  
   return;
 }
 

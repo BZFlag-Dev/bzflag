@@ -363,7 +363,7 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
 bool Occluder::makePlanes(const Frustum* frustum)
 {
   // you can see through glass
-  if (sceneNode->isTransparent()) {
+  if (sceneNode->isTranslucent()) {
     return false;
   }
 

@@ -40,7 +40,7 @@ class WallSceneNode : public SceneNode {
     GLfloat		getDistance(const GLfloat*) const;
     virtual void        getExtents (float* mins, float* maxs) const;
     virtual bool        inAxisBox (const float* mins, const float* maxs) const;
-    bool	        isTransparent() const;
+    bool	        isTranslucent() const;
 
     void		setColor(GLfloat r, GLfloat g,
 				GLfloat b, GLfloat a = 1.0f);

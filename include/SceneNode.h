@@ -63,7 +63,7 @@ class SceneNode {
     virtual bool        inAxisBox (const float* mins, const float* maxs) const;
     virtual int         getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
-    virtual bool	isTransparent() const;
+    virtual bool	isTranslucent() const;
 
     const GLfloat*      getPlane() const;
     virtual GLfloat	getDistance(const GLfloat* eye) const;
