@@ -116,12 +116,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   // queue is empty
 
   urecvfd = -1;
-  uqueue = NULL;
-  dqueue = NULL;
 
   ulinkup = false;
-
-  lastSendPacketNo = lastRecvPacketNo = currentRecvSeq = 0;
 
   // initialize version to a bogus number
   strcpy(version, "BZFS0000");
@@ -294,39 +290,13 @@ void			ServerLink::send(uint16_t code, uint16_t len,
   }
 
   if (needForSpeed && (urecvfd>=0) && ulinkup ) {
-    uint32_t length;
-    int n;
-
-    // UDP send
-    void *tobesend;
-    UDEBUG("ENQUEUE %d [%d]\n",len+4, lastSendPacketNo);
-    enqueuePacket(SEND, lastSendPacketNo, (void *)msgbuf,len+4);
-    lastSendPacketNo++;
-    UDEBUG("ASSEMBLE\n");
-    tobesend = assembleSendPacket(&length);
-    if (length == 0) {
-       printError("Attention: Server has not answered for a long time");
-       printError("           Connection will be dropped.");
-       // Server has not answered to clear packet for send buffer, we have
-       // reached the UDP limit (8192) and so we assume the connection is
-       // broken
-       state = Hungup;
-    }
-
-    // length = compressPacket(tobesend, length);
-
-    //printError("UDP SEND %d %d",lastSendPacketNo-1, length);
 #ifdef TESTLINK
     if ((random()%TESTQUALTIY) != 0)
 #endif
-    n = sendto(urecvfd, (const char *)tobesend, length, 0, &usendaddr,
-	       sizeof(usendaddr));
+    sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, &usendaddr, sizeof(usendaddr));
     // we don't care about errors yet
-    if (tobesend) free((unsigned char *)tobesend);
     return;
   }
-
-  //printError("TCP Send: %02x",code);
 
   int r = ::send(fd, (const char*)msgbuf, len + 4, 0);
   (void)r; // silence g++
@@ -346,148 +316,6 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 #endif
 }
 
-void*			ServerLink::getPacketFromServer(uint16_t* length, uint16_t* /* seqno */)
-{
-	struct PacketQueue *moving=dqueue;
-	if (moving != NULL) {
-		void *remember=moving->data;
-		*length = moving->length;
-		free(moving);
-		dqueue=NULL;
-		return remember;
-	}
-	UDEBUG("*** getpacket NULL\n");
-	*length = 0;
-	return NULL;
-}
-
-void			ServerLink::enqueuePacket(int op, int rseqno, void *msg, int n)
-{
-	struct PacketQueue *moving;
-	struct PacketQueue *newpacket = (struct PacketQueue *)malloc(sizeof(struct PacketQueue));
-
-	if (!newpacket) {
-		printError("Fatal: no memory for packetBuffer");
-		return;
-	}
-
-	if (op == SEND) {
-		moving=uqueue;
-	} else {
-		moving=dqueue;
-		// did the last packet wrap around or is OOB?
-		if ((lastRecvPacketNo > rseqno) && ((lastRecvPacketNo-rseqno)<32768)) {
-			return;
-		}
-		lastRecvPacketNo = rseqno;
-	}
-
-	if (moving != NULL) {
-		if (moving->data) free(moving->data);
-		free(moving);
-	}
-	newpacket->seqno=rseqno;
-	newpacket->data=(unsigned char *)malloc(n * sizeof(unsigned char));
-	memcpy((unsigned char *)newpacket->data, (unsigned char *)msg, n);
-	newpacket->length=n;
-	newpacket->next=NULL;
-	if (op == SEND) uqueue=newpacket; else dqueue=newpacket;
-}
-
-void			ServerLink::disqueuePacket(int op, int /*rseqno*/)
-{
-	struct PacketQueue *moving;
-
-	if (op == SEND) {
-		moving=uqueue;
-		uqueue=NULL;
-	} else {
-		moving=dqueue;
-		dqueue=NULL;
-	}
-	if (moving != NULL) {
-		if (moving->data) free(moving->data);
-		free(moving);
-	}
-}
-
-void*			ServerLink::assembleSendPacket(uint32_t* length)
-{
-	struct PacketQueue *moving = uqueue;
-	unsigned char *assemblybuffer;
-	int in, n;
-	unsigned char *buf;
-
-	if (!moving) {
-		*length = 0;
-		return NULL;
-	}
-
-	in = n = 8192;
-
-	assemblybuffer= (unsigned char *)malloc(n);
-
-	buf = assemblybuffer;
-	buf = (unsigned char *)nboPackUShort(buf, 0xfeed);
-	buf = (unsigned char *)nboPackUShort(buf, lastRecvPacketNo);
-	buf = (unsigned char *)nboPackUShort(buf, moving->length);
-	buf = (unsigned char *)nboPackUShort(buf, moving->seqno);
-	n-=8;
-	n-= moving->length;
-	if (n>2) {
-		memcpy((unsigned char *)buf, (unsigned char *)moving->data, moving->length);
-		buf += moving->length;
-	} else {
-		printError("ASSEMBLE SEND PACKET OVERRUN BUFFER");
-	}
-	if (n<=2) {
-		printError("ASSEMBLE SEND PACKET OVERRUN BUFFER");
-		assemblybuffer[0]=0x0;  // invalidate
-		*length=0;
-		return assemblybuffer;
-	}
-
-	buf = (unsigned char *)nboPackUShort(buf, 0xffff);
-	n-=2;
-	*length = (in - n);
-
-	disqueuePacket(SEND,0);
-
-	return assemblybuffer;
-}
-
-void			ServerLink::disassemblePacket(void *msg, int *nopacket)
-{
-	unsigned short marker;
-	unsigned short usdata;
-	unsigned char *buf = (unsigned char *)msg;
-	int numpacket=0;
-
-	UDEBUG("*** DisassemblePacket\n");
-
-	buf = (unsigned char *)nboUnpackUShort(buf, marker);
-	if (marker!=0xfeed) {
-		UDEBUG("!!! Reject Packet because invalid header %04x\n", marker);
-		return;
-	}
-	buf = (unsigned char *)nboUnpackUShort(buf, usdata);
-
-	UDEBUG("Server has seen last Seqno: %d\n",usdata);
-
-	while (true) {
-		unsigned short seqno;
-		unsigned short length;
-		buf = (unsigned char *)nboUnpackUShort(buf, length);
-		if (length == 0xffff) break;
-		buf = (unsigned char *)nboUnpackUShort(buf, seqno);
-		enqueuePacket(RECEIVE, seqno, buf, length);
-		buf+=length;
-		numpacket++;
-	}
-	*nopacket=numpacket;
-}
-
-
 int			ServerLink::read(uint16_t& code, uint16_t& len,
 						void* msg, int blockTime)
 {
@@ -498,26 +326,20 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   if (state != Okay) return -1;
 
   if ((urecvfd >= 0) && ulinkup) {
-    int n, num_packets;
-    uint16_t lseqno;
+    int n;
 
     AddrLen recvlen = sizeof(urecvaddr);
     unsigned char ubuf[8192];
     n = recvfrom(urecvfd, (char *)ubuf, 8192, 0, &urecvaddr, (socklen_t*) &recvlen);
     if (n>0) {
-		disassemblePacket(ubuf, &num_packets);
-    }
-    void *pmsg =  getPacketFromServer(&len, &lseqno);
-    if (pmsg != NULL) {
       // unpack header and get message
       uint16_t sub_length;
-      void* buf = pmsg;
+      void* buf = ubuf;
       buf = nboUnpackUShort(buf, sub_length);
       buf = nboUnpackUShort(buf, code);
       UDEBUG("<** UDP Packet Code %x Len %x / %x\n",code, sub_length, len);
       len = len - 4;
-      memcpy((char *)msg,(char *)buf,len);
-      free(pmsg);
+      memcpy((char *)msg,(char *)buf, sub_length);
       return 1;
     }
 
@@ -764,9 +586,6 @@ void			ServerLink::sendUDPlinkRequest()
 // This concludes an UDP network endpoint setup
 void			ServerLink::setUDPRemotePort(unsigned short portno)
 {
-  char msg[2];
-  void* buf = msg;
-
   struct sockaddr_in serv_addr, existing_addr;
   AddrLen addr_len = sizeof(existing_addr);
 
@@ -790,9 +609,7 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
   args.push_back(info);
   printError("More Info: [{1}:{2}:{3}]", &args);
 
-  buf = nboPackUShort(buf, 0);  // empty
-
-  send(MsgUDPLinkEstablished, sizeof(msg), msg);
+  send(MsgUDPLinkEstablished, 0, NULL);
 
   ulinkup = true;
 }

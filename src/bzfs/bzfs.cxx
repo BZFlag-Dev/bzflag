@@ -269,14 +269,6 @@ enum ClientState {
   PlayerAlive // alive
 };
 
-struct PacketQueue {
-  public:
-    unsigned short seqno;
-    void *data;
-    int length;
-    struct PacketQueue *next;
-};
-
 #ifdef DEBUG
 #define NETWORK_STATS
 #endif
@@ -776,308 +768,19 @@ static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& list)
   list.clear();
 }
 
-
-//
-// rest of server (no more classes, just functions)
-//
-
-void *getPacketFromClient(int playerIndex, uint16_t *length, uint16_t *rseqno)
-{
-  struct PacketQueue *moving = player[playerIndex].dqueue;
-  struct PacketQueue *remindme = NULL;
-  while (moving != NULL) {
-    if (moving->next == NULL) {
-      void *remember = moving->data;
-      *length = moving->length;
-      if (rseqno)
-	*rseqno = moving->seqno;
-      if (remindme)
-	remindme->next = NULL;
-      else
-	player[playerIndex].dqueue = NULL;
-      free(moving);
-      return remember;
-    }
-    remindme = moving;
-    moving = moving->next;
-  }
-  *length = 0;
-  return NULL;
-}
-
-void printQueueDepth(int playerIndex)
-{
-  int d,u;
-  struct PacketQueue *moving;
-  moving = player[playerIndex].dqueue;
-  d = 0;
-  while (moving) {
-    d++;
-    moving = moving->next;
-  }
-  u = 0;
-  moving = player[playerIndex].uqueue;
-  while (moving) {
-    u++;
-    moving = moving->next;
-  }
-  DEBUG4("Player %d RECV QUEUE %d   SEND QUEUE %d\n", playerIndex, d,u);
-}
-
-bool enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
-{
-  struct PacketQueue *oldpacket;
-  struct PacketQueue *newpacket;
-
-  if (op == SEND)
-    oldpacket = player[playerIndex].uqueue;
-  else {
-    oldpacket = player[playerIndex].dqueue;
-  }
-
-  if (oldpacket) {
-    if (oldpacket->data)
-      free(oldpacket->data);
-    free(oldpacket);
-  }
-
-  newpacket = (struct PacketQueue *)malloc(sizeof(struct PacketQueue));
-  newpacket->seqno = rseqno;
-  newpacket->data = (unsigned char *)malloc(n);
-  memcpy((unsigned char *)newpacket->data, (unsigned char *)msg, n);
-  newpacket->length = n;
-  newpacket->next = NULL;
-
-  if (op == SEND)
-    player[playerIndex].uqueue = newpacket;
-  else
-    player[playerIndex].dqueue = newpacket;
-
-  return true;
-}
-
-
-void disqueuePacket(int playerIndex, int op, int /* rseqno */)
-{
-  struct PacketQueue *oldpacket;
-
-  if (op == SEND)
-    oldpacket = player[playerIndex].uqueue;
-  else {
-    oldpacket = player[playerIndex].dqueue;
-  }
-
-  if (oldpacket) {
-    if (oldpacket->data)
-      free(oldpacket->data);
-    free(oldpacket);
-  }
-
-  if (op == SEND)
-    player[playerIndex].uqueue = NULL;
-  else
-    player[playerIndex].dqueue = NULL;
-}
-
-
-void *assembleSendPacket(int playerIndex, int *len)
-{
-  struct PacketQueue *moving = player[playerIndex].uqueue;
-  unsigned char *assemblybuffer;
-  int n = MaxPacketLen, packets = 0, startseq = (-1), endseq = 0, noinqueue;
-  unsigned char *buf;
-
-  assemblybuffer = (unsigned char *)malloc(n);
-  buf = assemblybuffer;
-
-  buf = (unsigned char *)nboPackUShort(buf, 0xfeed);
-  buf = (unsigned char *)nboPackUShort(buf, player[playerIndex].lastRecvPacketNo);
-  n -= 4;
-
-  // lets find how deep the send queue is
-  noinqueue = 0;
-  while (moving) {
-    noinqueue++;
-    moving = moving->next;
-    if (moving)
-      startseq = moving->seqno;
-  }
-
-  // lets see if it is too large (CAN'T BE, Queue is always 1 length)
-
-  if (noinqueue > 128) {
-    // we have more than 128 not aknowledged packets
-    DEBUG2("%d Packets outstanding\n",noinqueue);
-  }
-
-  // this is actually the number of single
-  // packets we send with a single write
-  // 1 means we only send the most recent
-  // 2 the last two most recent, etc...
-  // it is currently advisable to use 1 here as
-  // a. lines are resonable stable (not much loss)
-  // b. an ISDN link will be flooded with 4 > player
-  noinqueue -= 1;
-
-  moving = player[playerIndex].uqueue;
-
-  packets = 0;
-  startseq = -1;
-
-  while (moving) {
-    packets++;
-    if (packets > noinqueue) {
-      if (startseq < 0)
-	startseq = moving->seqno;
-      endseq = moving->seqno;
-      n -= 2;
-      if (n <= 2)
-	break;
-      buf = (unsigned char *)nboPackUShort(buf, moving->length);
-      n -= 2;
-      if (n <= 2)
-	break;
-      buf = (unsigned char *)nboPackUShort(buf, moving->seqno);
-      n -= moving->length;
-      if (n <= 2)
-	break;
-      memcpy((unsigned char *)buf, (unsigned char *)moving->data, moving->length);
-      buf += moving->length;
-    } // noinqueue
-    moving = moving->next;
-  }
-  buf = (unsigned char *)nboPackUShort(buf, 0xffff);
-  n -= 2;
-  if (n <= 2) {
-    DEBUG3("ASSEMBLE SEND PACKET OVERRUN BUFFER\n");
-    *len = 0;
-    return assemblybuffer;
-  }
-  *len = (MaxPacketLen - n);
-  DEBUG4("ASSEMBLY %d packets, %d - %d\n",packets,startseq, endseq);
-  return assemblybuffer;
-}
-
-void disassemblePacket(int playerIndex, void *msg, int *nopackets)
-{
-  unsigned short marker;
-  unsigned short usdata;
-  unsigned char *buf = (unsigned char *)msg;
-
-  int npackets = 0;
-
-  DEBUG4("::: Disassemble Packet\n");
-
-  buf = (unsigned char *)nboUnpackUShort(buf, marker);
-  if (marker!= 0xfeed) {
-    DEBUG3("Reject UPacket because invalid header %04x\n", marker);
-    return;
-  }
-  buf = (unsigned char *)nboUnpackUShort(buf, usdata);
-
-  disqueuePacket(playerIndex, SEND, usdata);
-
-  while (true) {
-    unsigned short seqno;
-    unsigned short length;
-    int ilength;
-
-    buf = (unsigned char *)nboUnpackUShort(buf, length);
-    ilength = length;
-    if (length == 0xffff)
-      break;
-    else
-      if (ilength > 1024) {
-	DEBUG2("* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
-	    playerIndex, ilength);
-	break;
-      }
-    buf = (unsigned char *)nboUnpackUShort(buf, seqno);
-    DEBUG4("SEQ RECV %d Enqueing now...\n",seqno);
-    enqueuePacket(playerIndex, RECEIVE, seqno, buf, length);
-    buf+= length;
-    npackets++;
-  }
-  DEBUG4("%d: Got %d packets\n",(int)time(0),npackets);
-  // printQueueDepth(playerIndex);
-  *nopackets = npackets;
-}
-
-
-const void *assembleUDPPacket(int playerIndex, const void *b, int *l)
-{
-  int length = *l;
-
-  DEBUG4("ENQUEUE %d [%d]\n",length, player[playerIndex].lastSendPacketNo);
-  enqueuePacket(playerIndex, SEND, player[playerIndex].lastSendPacketNo, (void *)b, length);
-
-  player[playerIndex].lastSendPacketNo++;
-
-  DEBUG4("ASSEMBLE\n");
-  return assembleSendPacket(playerIndex, l);
-}
-
-// write an UDP packet down the link to the client, we don't know if it comes through
-// so this code is using a queuing mechanism. As it turns out the queue is not strictly
-// needed if we only use the Multicast messages...
-
+// write an UDP packet down the link to the client
 static int puwrite(int playerIndex, const void *b, int l)
 {
   PlayerInfo& p = player[playerIndex];
-  const void *tobesend = b;
-
-  //DEBUG4("INTO PUWRITE\n");
-
-  tobesend = assembleUDPPacket(playerIndex,b,&l);
-
-  if (!tobesend || (l == 0)) {
-    removePlayer(playerIndex, "Send Queue Overrun", false);
-    if (tobesend)
-      free((unsigned char *)tobesend);
-    return -1;
-  }
-
-  DEBUG4("PUWRITE - ASSEMBLED UDP LEN %d for Player %d\n",l,playerIndex);
-  // write as much data from buffer as we can in one send()
-
-  int n;
 
 #ifdef TESTLINK
-  if ((random()%LINKQUALITY) != 0) {
+  if ((random()%LINKQUALITY) != 0)
 #endif
-    n = sendto(udpSocket, (const char *)tobesend, l, 0, (struct sockaddr*)&p.uaddr, sizeof(p.uaddr));
+  return sendto(udpSocket, (const char *)b, l, 0, (struct sockaddr*)&p.uaddr, sizeof(p.uaddr));
 #ifdef TESTLINK
-  } else
-    DEBUG1("Drop Packet due to Test\n");
+  DEBUG1("Drop Packet due to Test\n");
+  return 0;
 #endif
-  if (tobesend)
-    free((unsigned char *)tobesend);
-
-  // handle errors
-  if (n < 0) {
-    // get error code
-    const int err = getErrno();
-
-    // just try again later if it's one of these errors
-    if (err == EAGAIN || err == EINTR)
-      return -1;
-
-    // if socket is closed then give up
-    if (err == ECONNRESET || err == EPIPE) {
-      removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
-      return -1;
-    }
-
-    // dump other errors and continue
-    nerror("error on UDP write");
-    DEBUG2("player is %d (%s) %d bytes\n", playerIndex, p.callSign, n);
-
-    // we may actually run into not enough buffer space here
-    // but as the link is unreliable anyway we never treat it as
-    // hard error
-  }
-
-  return n;
 }
 
 static int prealwrite(int playerIndex, const void *b, int l)
@@ -1377,12 +1080,6 @@ static void createUDPcon(int t, int remote_port) {
   return;
 }
 
-// obsolete now
-void OOBQueueUpdate(int t, uint32_t rseqno) {
-  if (rseqno > 0)
-    disqueuePacket(t, SEND, rseqno);
-}
-
 static int lookupPlayer(const PlayerId& id)
 {
   for (int i = 0; i < curMaxPlayers; i++)
@@ -1419,7 +1116,6 @@ static int uread(int *playerIndex, int *nopackets)
   PlayerInfo *pPlayerInfo;
   if ((n = recvfrom(udpSocket, (char *)ubuf, MaxPacketLen, MSG_PEEK, (struct sockaddr*)&uaddr, &recvlen)) != -1) {
     uint16_t len, lseqno;
-    void *pmsg;
     int pi;
     for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
       if ((pPlayerInfo->ulinkup) &&
@@ -1483,26 +1179,12 @@ static int uread(int *playerIndex, int *nopackets)
 	ntohs(uaddr.sin_port), udpSocket);
 
     if (n > 0) {
-      // got something! now disassemble the package block into single BZPackets
-      // filling up the dqueue with these packets
-      disassemblePacket(pi, ubuf, nopackets);
-
-      // old code is obsolete
-      // if (*nopackets > 6)
-      //   pucdwrite(playerIndex);
-    }
-    // have something in the receive buffer? so get it
-    // due to the organization sequence and reliability is always granted
-    // even if some packets are lost during transfer
-    pmsg =  getPacketFromClient(pi, &len, &lseqno);
-    if (pmsg != NULL) {
-      int clen = len;
+      *nopackets = 1;
+      int clen = n;
       if (clen < 1024) {
-	memcpy(pPlayerInfo->udpmsg,pmsg,clen);
+	memcpy(pPlayerInfo->udpmsg,ubuf,clen);
 	pPlayerInfo->udplen = clen;
       }
-      // be sure to free the packet again
-      free(pmsg);
       DEBUG4("GOT UDP READ %d Bytes [%d]\n",len, lseqno);
       return pPlayerInfo->udplen;
     }
@@ -3620,12 +3302,6 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
   close(player[playerIndex].fd);
   player[playerIndex].fd = NotConnected;
 
-  // free up the UDP packet buffers
-  if (player[playerIndex].uqueue)
-    disqueuePacket(playerIndex, SEND, 65536);
-  if (player[playerIndex].dqueue)
-    disqueuePacket(playerIndex, RECEIVE, 65536);
-
   player[playerIndex].accessInfo.verified = false;
   player[playerIndex].accessInfo.loginAttempts = 0;
   player[playerIndex].regName.empty();
@@ -5291,9 +4967,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player is ready to receive data over UDP connection, sending 0
     case MsgUDPLinkEstablished: {
-      uint16_t queueUpdate;
-      buf = nboUnpackUShort(buf, queueUpdate);
-      OOBQueueUpdate(t, queueUpdate);
       DEBUG3("Player %s [%d] UDP confirmed\n", player[t].callSign, t);
       if (!clOptions.alsoUDP) {
 	DEBUG2("Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");

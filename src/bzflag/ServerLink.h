@@ -23,13 +23,6 @@
 #include "Protocol.h"
 #include "ShotPath.h"
 
-struct PacketQueue {
-	unsigned short seqno;
-	void *data;
-	int length;
-	struct PacketQueue *next;
-};
-
 class ServerLink {
   public:
     enum State {
@@ -78,13 +71,6 @@ class ServerLink {
     void                sendUDPlinkRequest();
     void		enableUDPCon();
 
-    void*		getPacketFromServer(uint16_t* length, uint16_t* seqno);
-    void		enqueuePacket(int op, int rseqno, void *msg, int n);
-    void		disqueuePacket(int op, int rseqno);
-    void*		assembleSendPacket(uint32_t *length);
-    void*		assembleCDPacket(uint32_t* length);
-    void		disassemblePacket(void *msg, int *numpackets);
-
     static ServerLink*	getServer(); // const
     static void		setServer(ServerLink*);
     void		setUDPRemotePort(unsigned short port);
@@ -104,12 +90,6 @@ class ServerLink {
     char		version[9];
     static ServerLink*	server;
     int			server_abilities;
-
-    struct PacketQueue  *uqueue;
-    struct PacketQueue  *dqueue;
-    unsigned short      lastRecvPacketNo;
-    unsigned short      currentRecvSeq;
-    unsigned short	lastSendPacketNo;
 };
 
 #define SEND 1
