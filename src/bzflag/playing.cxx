@@ -3274,6 +3274,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  msg = nboUnpackString(msg, value, valueLen);
 	  value[valueLen] = '\0';
 	  BZDB->set(name, value);
+	  BZDB->setPersistent(name, false);
+	  BZDB->setPermission(name, StateDatabase::Permission::Locked);
 	}
 	delete[] name;
 	delete[] value;
@@ -5095,6 +5097,8 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	  buf = nboUnpackString(buf, value, valueLen);
 	  value[valueLen] = '\0';
 	  BZDB->set(name, value);
+	  BZDB->setPersistent(name, false);
+	  BZDB->setPermission(name, StateDatabase::Permission::Locked);
 	}
 	delete[] name;
 	delete[] value;
