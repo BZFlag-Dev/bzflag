@@ -104,12 +104,12 @@ namespace Flags {
 
 void* FlagDesc::pack(void* buf) const
 {
-  buf = nboPackUByte(buf, desc->flagAbbv[0]);
-  buf = nboPackUByte(buf, desc->flagAbbv[1]);
+  buf = nboPackUByte(buf, flagAbbv[0]);
+  buf = nboPackUByte(buf, flagAbbv[1]);
   return buf;
 }
 
-void* FlagDesc::unpack(void* buf, FlagDesc &desc)
+void* FlagDesc::unpack(void* buf, FlagDesc* &desc)
 {
   unsigned char abbv[3] = {0,0,0};
   buf = nboUnpackUByte(buf, abbv[0]);

@@ -96,7 +96,7 @@ class FlagDesc {
 
     const float*	getColor();
     void* FlagDesc::pack(void* buf) const;
-    static void* FlagDesc::unpack(void* buf, FlagDesc &desc);
+    static void* FlagDesc::unpack(void* buf, FlagDesc* &desc);
 
     const char*         flagName;
     const char*         flagAbbv;
