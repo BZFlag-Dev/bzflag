@@ -81,7 +81,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
         if (type == NOT_IN_BUILDING)
           foundspot = true;
       } else {
-        if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
+        if ((type == NOT_IN_BUILDING) && (testPos[2] > 0.0f)) {
           testPos[2] = 0.0f;
           //Find any intersection regardless of z
           type = world->inBuilding(&building, testPos[0], testPos[1], testPos[2],
