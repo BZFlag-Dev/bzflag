@@ -31,11 +31,16 @@ Player* lookupPlayer(PlayerId id)
   // check my tank first
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank->getId() == id)
+  if (myTank && myTank->getId() == id)
     return myTank;
 
-  if (id == ServerPlayer)
-    return World::getWorld()->getWorldWeapons();
+  if (id == ServerPlayer) {
+    World* world = World::getWorld();
+    if (world)
+      return world->getWorldWeapons();
+    else
+      return NULL;
+  }
 
   if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
     return player[id];
