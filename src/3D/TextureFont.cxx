@@ -75,7 +75,7 @@ bool readKeyInt(OSFile &file, std::string expectedLeft, int &retval, bool newfil
     line++;
   }
 
-  if (tmpBuf.compare(0, expsize, expectedLeft) == 0 && tmpBuf[expsize]==':') {
+  if (tmpBuf.substr(0, expsize) == expectedLeft && tmpBuf[expsize]==':') {
     retval = atoi(tmpBuf.c_str()+expsize+1);
     return true;
   } else {
@@ -99,7 +99,7 @@ bool readLetter(OSFile &file, char expected)
     line++;
   }
 
-  if (tmpBuf.compare(0, expsize, expectedLeft) == 0) {
+  if (tmpBuf.substr(0, expsize) == expectedLeft) {
     if (int(tmpBuf.size()) >= expsize+4 && tmpBuf[expsize+1]=='"' && tmpBuf[expsize+3]=='"' &&
         tmpBuf[expsize+2]==expected) {
       return true;
