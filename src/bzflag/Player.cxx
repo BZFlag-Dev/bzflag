@@ -245,7 +245,7 @@ void			Player::setVisualTeam (TeamColor visualTeam)
   static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
   static GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
   static float		tankShininess = 20.0f;
-  static GLfloat	rabbitEmissive[3] = { 0.25f, 0.25f, 0.25f };
+  static GLfloat	rabbitEmissive[3] = { 0.0f, 0.0f, 0.0f };
   static float		rabbitShininess = 100.0f;
 
   GLfloat *emissive;
@@ -302,7 +302,7 @@ void			Player::setVisualTeam (TeamColor visualTeam)
       color[2] = _color[2];
     }
   }
-  color[3] = 1.0f;
+  color[3] = (getFlag() == Flags::PhantomZone) && isFlagActive() ? 0.5f : 1.0f;
   tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
   tankNode->setTexture(*tankTexture);
