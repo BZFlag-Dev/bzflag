@@ -314,7 +314,8 @@ void* LinkManager::pack(void* buf) const
 void* LinkManager::unpack(void* buf)
 {
   clear(); // just in case
-  unsigned int i, count;
+  unsigned int i;
+  uint32_t count;
   buf = nboUnpackUInt(buf, count);
   for (i = 0; i < count; i++) {
     LinkNameSet link;

@@ -1510,6 +1510,9 @@ void bzMatrixMode(GLenum mode)
 #else
 #  ifdef HAVE_CGLGETCURRENTCONTEXT
 #    define GET_CURRENT_CONTEXT CGLGetCurrentContext
+#  elif defined(__BEOS__)
+// no way to do that, and you shouldn't have to anyway!
+#    define GET_CURRENT_CONTEXT() 1
 #  else
 #    include <GL/glx.h>
 #    define GET_CURRENT_CONTEXT glXGetCurrentContext

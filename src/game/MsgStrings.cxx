@@ -659,7 +659,7 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
   u8 victim, killer;
   int16_t reason, shot;
   FlagType* flagType;
-  int phydrv;
+  int32_t phydrv;
   d = nboUnpackUByte(d, victim);
   d = nboUnpackUByte(d, killer);
   d = nboUnpackShort(d, reason);

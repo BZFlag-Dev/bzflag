@@ -19,6 +19,9 @@
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
+#ifdef __BEOS__
+#  include <OS.h>
+#endif
 #if !defined(_WIN32)
 #  include <sys/time.h>
 #  include <sys/types.h>
