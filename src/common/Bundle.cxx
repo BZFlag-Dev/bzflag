@@ -75,7 +75,7 @@ void Bundle::load(const std::string &path)
   }
 }
 
-Bundle::TLineType Bundle::parseLine(const std::string &line, std::string &data)
+Bundle::TLineType Bundle::parseLine(const std::string &line, std::string &data) const
 {
   int startPos, endPos;
   TLineType type;
@@ -119,9 +119,9 @@ Bundle::TLineType Bundle::parseLine(const std::string &line, std::string &data)
 #include <set>
 static std::set<std::string> unmapped;
 */
-std::string Bundle::getLocalString(const std::string &key)
+std::string Bundle::getLocalString(const std::string &key) const
 {
-  BundleStringMap::iterator it = mappings.find(key);
+  BundleStringMap::const_iterator it = mappings.find(key);
   if (it != mappings.end())
     return it->second;
   else
@@ -271,7 +271,7 @@ void Bundle::ensureNormalText(std::string &msg)
 }
 
 
-std::string Bundle::formatMessage(const std::string &key, const std::vector<std::string> *parms)
+std::string Bundle::formatMessage(const std::string &key, const std::vector<std::string> *parms) const
 {
   std::string messageIn = getLocalString(key);
   std::string messageOut;
