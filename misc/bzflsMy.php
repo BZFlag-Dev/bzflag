@@ -138,7 +138,7 @@ if (!$result) {
               " ipaddr varchar(17) NOT NULL, " .
               " title varchar(80), " .
               " lastmod INT NOT NULL DEFAULT '0', ".
-	      " PRIMARY KEY (nameport))", $link)
+              " PRIMARY KEY (nameport))", $link)
     or die ("Could not create table: " . mysql_error());
 }
 
@@ -149,7 +149,8 @@ $result = mysql_query("SELECT * FROM players", $link);
 
 if (!$result) {
   debug($debugFile, "Registered players table did not exist, creating a new one");
-  
+ 
+  # FIXME need id for reference from karma table 
   mysql_query("CREATE TABLE players " .
               "(email varchar(64) NOT NULL, " .
               " callsign varchar(32) NOT NULL, " .
@@ -162,7 +163,9 @@ if (!$result) {
               " PRIMARY KEY (email))", $link)
     or die ("Could not create players table: " . mysql_error());
 }
-    
+
+# FIXME need to check/create karma table
+
 debug($debugFile, "Deleting inactive servers from list");
 
 # remove all inactive servers from the table
@@ -396,6 +399,8 @@ if ($action == "LIST" ) {
 } elseif ($action == "SETKARMA") {
   #  -- SETKARMA --
   # Set's a player's karma
+  # FIXME should add/update an entry in the karma table
+  # FIXME should not use a text field assignments
   $result = mysql_query("SELECT assignments FROM players WHERE callsign='$callsign' " .
                         "AND password='$password'", $link)
     or die ("Invalid query: " . mysql_error());
@@ -437,7 +442,7 @@ if ($action == "LIST" ) {
   $result = mysql_query("SELECT karma FROM players WHERE callsign='$callsign'", $link)
     or die ("Invalid query: " . mysql_error());
   $row = mysql_fetch_row($result);
-  print_r($row);
+  print_r("Karma for $callsign is: " . $row[0]);
 } else {
   print "Unknown command: '$action'\n";
   # TODO dump the default form here but still close the database connection
