@@ -148,7 +148,7 @@ class Flag {
 namespace Flags {
   extern FlagType
     *Null,
-    *RedTeam, *GreenTeam, *BlueTeam, *PurpleTeam, *Velocity, *QuickTurn, *Acceleration,
+    *RedTeam, *GreenTeam, *BlueTeam, *PurpleTeam, *Velocity, *QuickTurn,
     *OscillationOverthruster, *RapidFire, *MachineGun, *GuidedMissile, *Laser,
     *Ricochet, *SuperBullet, *InvisibleBullet, *Stealth, *Tiny, *Narrow,
     *Shield, *Steamroller, *ShockWave, *PhantomZone, *Genocide, *Jumping,

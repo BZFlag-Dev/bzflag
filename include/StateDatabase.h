@@ -234,9 +234,6 @@ public:
   static const std::string	BZDB_WALLHEIGHT;
   static const std::string	BZDB_WIDEANGLEANG;
   static const std::string	BZDB_WORLDSIZE;
-  static const std::string	BZDB_DODGEVELAD;
-  static const std::string	BZDB_DODGEVECDELTA;
-  static const std::string	BZDB_DODGECOUNT;
 
 private:
   StateDatabase();

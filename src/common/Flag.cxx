@@ -34,7 +34,6 @@ namespace Flags {
   FlagType *PurpleTeam;
   FlagType *Velocity;
   FlagType *QuickTurn;
-  FlagType *Acceleration;
   FlagType *OscillationOverthruster;
   FlagType *RapidFire;
   FlagType *MachineGun;
@@ -83,8 +82,6 @@ namespace Flags {
 						    "High Speed (+V):  Tank moves faster.  Outrun bad guys." );
     QuickTurn               = new FlagType( "Quick Turn", "A", FlagUnstable, NormalShot, FlagGood, NoTeam,
 						    "Angular velocity (+A):  Tank turns faster.  Good for dodging." );
-    Acceleration	    = new FlagType( "Acceleration", "D", FlagUnstable, NormalShot, FlagGood, NoTeam,
-						    "Dodge Thrust (+D):  Tank accelerates faster.  Good for dodging." );
     OscillationOverthruster = new FlagType( "Oscillation Overthruster", "OO", FlagUnstable, NormalShot, FlagGood, NoTeam,
 						    "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside." );
     RapidFire               = new FlagType( "Rapid Fire", "F", FlagUnstable, SpecialShot, FlagGood, NoTeam,

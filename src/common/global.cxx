@@ -84,10 +84,7 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_velocityAd",		"1.5",				false, StateDatabase::Locked},
 	{ "_wallHeight",		"3.0*_tankHeight",		false, StateDatabase::Locked},
 	{ "_wideAngleAng",		"1.745329", 			false, StateDatabase::Locked},
-	{ "_worldSize",			"800.0",			false, StateDatabase::Locked},
-	{ "_dodgeVelAd",		"0.0f",				false, StateDatabase::Locked},
-	{ "_dodgeVecDelta",		"0.4f",				false, StateDatabase::Locked},
-	{ "_dodgeCount",		"4.0",				false, StateDatabase::Locked}
+	{ "_worldSize",			"800.0",			false, StateDatabase::Locked}
 };
 
 // Local variables: ***

@@ -1015,9 +1015,8 @@ void			LocalPlayer::setTeam(TeamColor team)
 
 void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
-  float oldSpeed = desiredSpeed;
   FlagType* flag = getFlag();
-
+ 
   // can't go faster forward than at top speed, and backward at half speed
   if (fracOfMaxSpeed > 1.0f) fracOfMaxSpeed = 1.0f;
   else if (fracOfMaxSpeed < -0.5f) fracOfMaxSpeed = -0.5f;
@@ -1035,26 +1034,10 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
   } else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
     fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_BURROWSPEEDAD);
-  }
+   }
 
   // set desired speed
   desiredSpeed = fracOfMaxSpeed * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
-
-  // the acceleration/dodge flag gets to tweak the speed
-  if (flag == Flags::Acceleration) {
-    if (dodgeCount-- > 0) {
-      desiredSpeed *= BZDB->eval(StateDatabase::BZDB_DODGEVELAD);
-    } else {
-      float max = (fracOfMaxSpeed > 0.0f) ? 1.0f : 0.5f;
-      if (fabs(desiredSpeed - oldSpeed) > (BZDB->eval(StateDatabase::BZDB_DODGEVECDELTA) * max * BZDB->eval(StateDatabase::BZDB_TANKSPEED))) {
-	if ((desiredSpeed * oldSpeed <= 0.0f) || fabs(desiredSpeed) > fabs(oldSpeed)) {
-	  desiredSpeed *= BZDB->eval(StateDatabase::BZDB_DODGEVELAD);
-	  dodgeCount = int(BZDB->eval(StateDatabase::BZDB_DODGECOUNT));
-	}
-      }
-    }
-  }
-
 }
 
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
