@@ -193,15 +193,15 @@ SOURCE=..\..\src\bzflag\HelpMenu.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\InputMenu.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\HUDDialog.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\HUDDialogStack.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\InputMenu.cxx
 # End Source File
 # Begin Source File
 
@@ -351,6 +351,10 @@ SOURCE=..\..\src\bzflag\ServerListCache.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ShotPath.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShotPathSegment.cxx
 # End Source File
 # Begin Source File
 
@@ -795,6 +799,10 @@ SOURCE=..\..\src\bzflag\ServerListCache.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ShotPath.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShotPathSegment.h
 # End Source File
 # Begin Source File
 
