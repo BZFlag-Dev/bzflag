@@ -2048,7 +2048,7 @@ static float		minSafeRange(float angleCosOffBoresight,
 
   // ramp up to MaxRange as target comes to dead center
   const float f = (angleCosOffBoresight - SafeAngle) / (1.0f - SafeAngle);
-  return (MinRange + f * (MaxRange - MinRange)) * (1 - fractionOfTries * 0.6);
+  return (float)((MinRange + f * (MaxRange - MinRange)) * (1.0f - fractionOfTries * 0.6));
 }
 
 static void		restartPlaying()

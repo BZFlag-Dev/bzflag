@@ -87,6 +87,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\src\obstacle\BaseBuilding.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\obstacle\BoxBuilding.cxx
 # End Source File
 # Begin Source File
@@ -113,6 +117,10 @@ SOURCE=..\src\obstacle\WallObstacle.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\include\BaseBuilding.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\include\BoxBuilding.h

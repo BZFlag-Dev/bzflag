@@ -94,7 +94,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 				state(SocketError),	// assume failure
 				fd(-1)			// assume failure
 {
-  int i, err, wait;
+  int i, err;
   char cServerVersion[128];
 
   struct protoent* p;

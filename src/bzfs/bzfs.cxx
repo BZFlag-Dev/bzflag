@@ -589,7 +589,7 @@ void CustomBase::write(WorldInfo* world) const {
   safetyBasePos[color][0] = 0;
   safetyBasePos[color][1] = 0;
   safetyBasePos[color][2] = 0;
-  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0) ? 1 : 0);
+  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0.0) ? 1.0f : 0.0f);
 }
 
 class CustomWorld : public WorldFileObject {
@@ -2876,8 +2876,8 @@ static TeamColor whoseBase(float x, float y, float z)
   for (int i = 1; i < NumTeams; i++) {
     float nx = x - basePos[i][0];
     float ny = y - basePos[i][1];
-    float rx = cosf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx));
-    float ry = sinf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx));
+    float rx = (float)(cosf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx)));
+    float ry = (float)(sinf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx)));
     if (fabsf(rx) < baseSize[i][0] &&
 	fabsf(ry) < baseSize[i][1] &&
 	basePos[i][2] < z) {

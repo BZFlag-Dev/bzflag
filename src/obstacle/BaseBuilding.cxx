@@ -215,16 +215,16 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
   GLfloat color[4];
   switch(base->getTeam()) {
     case 1:
-      color[0] = 0.7; color[1] = 0.0; color[2] = 0.0;
+      color[0] = 0.7f; color[1] = 0.0f; color[2] = 0.0f;
       break;
     case 2:
-      color[0] = 0.0; color[1] = 0.7; color[2] = 0.0;
+      color[0] = 0.0f; color[1] = 0.7f; color[2] = 0.0f;
       break;
     case 3:
-      color[0] = 0.0; color[1] = 0.0; color[2] = 0.7;
+      color[0] = 0.0f; color[1] = 0.0f; color[2] = 0.7f;
       break;
     case 4:
-      color[0] = 0.7; color[1] = 0.0; color[2] = 0.7;
+      color[0] = 0.7f; color[1] = 0.0f; color[2] = 0.7f;
       break;
   }
   color[3] = 1.0;

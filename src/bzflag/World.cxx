@@ -157,8 +157,8 @@ TeamColor		World::whoseBase(const float* pos) const
   for (int i = 1; i < NumTeams; i++) {
     float nx = pos[0] - bases[i][0];
     float ny = pos[1] - bases[i][1];
-    float rx = cosf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx));
-    float ry = sinf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx));
+    float rx = (float) (cosf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
+    float ry = (float) (sinf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
     if(fabsf(rx) < bases[i][4] &&
        fabsf(ry) < bases[i][5]) {
       float nz = (bases[i][2] > 0) ? (bases[i][2] + 1) : 0;
