@@ -72,12 +72,11 @@ SRV_STR_MAP::iterator ServerListCache::end()
 // load the server cache from the file fileName
 void			ServerListCache::saveCache()
 {
-  // get a file named e.g. BZFS107Server.bzs in the cache dir
-  // allows separation of server caches by version
+  // get a file named e.g. BZFS1910Server.bzs in the cache dir
+  // allows separation of server caches by protocol version
   std::string fileName = getCacheDirectoryName();
   if (fileName == "") return;
   std::string verString = getServerVersion();
-  verString = verString.substr(0,7);
   fileName = fileName + "/" + verString + "Servers.bzs";
 
   char buffer[MAX_STRING+1];
@@ -113,12 +112,11 @@ void			ServerListCache::saveCache()
 // load the server cache
 void			ServerListCache::loadCache()
 {
-  // get a file named BZFS107Server.bzs in the cache dir
-  // allows separation of server caches by version
+  // get a file named BZFS1910Server.bzs in the cache dir
+  // allows separation of server caches by protocol version
   std::string fileName = getCacheDirectoryName();
   if (fileName == "") return;
   std::string verString = getServerVersion();
-  verString = verString.substr(0,7);
   fileName = fileName + "/" + verString + "Servers.bzs";
 
   char buffer[MAX_STRING+1];
