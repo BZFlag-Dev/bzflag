@@ -774,8 +774,7 @@ int Player::getMaxShots() const
 }
 
 
-void Player::addShots(SceneDatabase* scene,
-					 bool colorblind) const
+void Player::addShots(SceneDatabase* scene, bool colorblind) const
 {
   const int count = getMaxShots();
   for (int i = 0; i < count; i++) {
@@ -803,11 +802,13 @@ bool Player::validTeamTarget(const Player *possibleTarget) const
 {
   TeamColor myTeam = getTeam();
   TeamColor targetTeam = possibleTarget->getTeam();
-  if (myTeam != targetTeam)
+  if (myTeam != targetTeam) {
     return true;
+  }
 
-  if (myTeam != RogueTeam)
+  if (myTeam != RogueTeam) {
     return false;
+  }
 
   return !World::getWorld()->allowRabbit();
 }
@@ -830,6 +831,7 @@ bool Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
     predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
     predictedVel[2] = 0.0f;
     *predictedAzimuth = inputAzimuth;
+
   } else if (inputStatus & PlayerState::Falling) {
     // no control when falling
     predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
@@ -840,22 +842,24 @@ bool Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
     predictedPos[1] = inputPos[1] + dt * predictedVel[1];
 
     // only turn if alive
-    if (inputStatus & PlayerState::Alive)
+    if (inputStatus & PlayerState::Alive) {
       *predictedAzimuth = inputAzimuth + dt * inputAngVel;
-    else
+    } else {
       *predictedAzimuth = inputAzimuth;
+    }
 
     // update z with Newtownian integration (like LocalPlayer)
     inputZSpeed += BZDBCache::gravity * (dt - dt2);
     inputPos[2] += inputZSpeed * (dt - dt2);
+
   } else {
     // azimuth changes linearly
     *predictedAzimuth = inputAzimuth + dt * inputAngVel;
 
     // different algorithms for tanks moving in a straight line vs
     // turning in a circle
-    if (inputAngVel == 0.0f) {
 
+    if (inputAngVel == 0.0f) {
       // straight ahead
       predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
       predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
@@ -863,7 +867,6 @@ bool Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
       predictedPos[1] = inputPos[1] + dt * predictedVel[1];
 
     } else {
-
       // need dt2 because velocity is based on previous time step
       const float tmpAzimuth = inputAzimuth + dt2 * inputAngVel;
       predictedVel[0] = inputSpeed * cosf(tmpAzimuth);
@@ -895,15 +898,21 @@ bool Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 bool Player::isDeadReckoningWrong() const
 {
   // always send a new packet when some kinds of status change
-  if ((state.status & (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling)) !=
-      (inputStatus & (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling)))
+  const uint16_t checkStates =
+    (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
+  if ((state.status & checkStates) != (inputStatus & checkStates)) {
     return true;
+  }
 
   // never send a packet when dead
-  if (!(state.status & PlayerState::Alive)) return false;
+  if (!(state.status & PlayerState::Alive)) {
+    return false;
+  }
 
   // otherwise always send at least one packet per second
-  if (TimeKeeper::getTick() - inputTime >= MaxUpdateTime) return true;
+  if (TimeKeeper::getTick() - inputTime >= MaxUpdateTime) {
+    return true;
+  }
 
   // get predicted state
   float predictedPos[3], predictedAzimuth, predictedVel[3];
@@ -911,23 +920,32 @@ bool Player::isDeadReckoningWrong() const
 
   // always send a new packet on reckoned touchdown
   float groundLimit = 0.0f;
-  if (getFlag() == Flags::Burrow)
+  if (getFlag() == Flags::Burrow) {
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
-  if (predictedPos[2] < groundLimit) return true;
+  }
+  if (predictedPos[2] < groundLimit) {
+    return true;
+  }
 
   // client side throttling
   const int throttleRate = int(BZDB.eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
   const float minUpdateTime = throttleRate > 0 ? 1.0f / throttleRate : 0.0f;
-  if (TimeKeeper::getTick() - inputTime < minUpdateTime) return false;
+  if (TimeKeeper::getTick() - inputTime < minUpdateTime) {
+    return false;
+  }
 
   // see if position and azimuth are close enough
   float positionTolerance = BZDB.eval(StateDatabase::BZDB_POSITIONTOLERANCE);
-  if (fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) return true;
-  if (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) return true;
-  if (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance) return true;
+  if ((fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) ||
+      (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) ||
+      (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance)) {
+    return true;
+  }
 
   float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
-  if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) return true;
+  if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) {
+    return true;
+  }
 
   // prediction is good enough
   return false;

@@ -4362,15 +4362,19 @@ void			drawFrame(const float dt)
 			     myTank->getFlag() == Flags::PhantomZone &&
 			     myTank->isFlagActive());
 
-    // turn on scene dimming when showing menu or when
-    // we're dead and no longer exploding, or in a building.
+    // turn on scene dimming when showing menu, when we're dead
+    // and no longer exploding, or when we are in a building.
     bool insideDim = false;
     if (myTank) {
-      const ViewFrustum& vf = sceneRenderer->getViewFrustum();
-      // using NearPlane is only really valid for perpendicular entrances
-      const float np = NearPlane;
+      const float hnp = 0.5f * NearPlane; // half near plane distance
+      const float* eye = sceneRenderer->getViewFrustum().getEye();
+      const float* dir = sceneRenderer->getViewFrustum().getDirection();
+      float clipPos[3];
+      clipPos[0] = eye[0] + (dir[0] * hnp);
+      clipPos[1] = eye[1] + (dir[1] * hnp);
+      clipPos[2] = eye[2];
       const Obstacle* obs;
-      obs = world->hitBuilding(vf.getEye(), 0.0f, np, np, 0.0f);
+      obs = world->hitBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
       if ((obs != NULL) && (obs->getType() != WallObstacle::getClassName())) {
         insideDim = true;
       }
