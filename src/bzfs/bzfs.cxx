@@ -4014,6 +4014,7 @@ static void removePlayer(int playerIndex)
     delete[] player[playerIndex].outmsg;
     player[playerIndex].outmsg = NULL;
   }
+  player[playerIndex].outmsgSize = 0;
 
   player[playerIndex].flagHistory.removeAll();
 
