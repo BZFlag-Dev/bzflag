@@ -200,30 +200,30 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   // FIXME -- when making BSP tree, try several shuffles for best tree
 
   // add nodes to database
-  WallObstaclesCIteratorPtr wallScan(world->getWalls().newCIterator());
-  while (!wallScan->isDone()) {
-    addWall(db, wallScan->getItem());
-    wallScan->next();
+  WallObstaclesCIterator wallScan(world->getWalls());
+  while (!wallScan.isDone()) {
+    addWall(db, wallScan.getItem());
+    wallScan.next();
   }
-  BoxBuildingsCIteratorPtr boxScan(world->getBoxes().newCIterator());
-  while (!boxScan->isDone()) {
-    addBox(db, boxScan->getItem());
-    boxScan->next();
+  BoxBuildingsCIterator boxScan(world->getBoxes());
+  while (!boxScan.isDone()) {
+    addBox(db, boxScan.getItem());
+    boxScan.next();
   }
-  TeleportersCIteratorPtr teleporterScan(world->getTeleporters().newCIterator());
-  while (!teleporterScan->isDone()) {
-    addTeleporter(db, teleporterScan->getItem());
-    teleporterScan->next();
+  TeleportersCIterator teleporterScan(world->getTeleporters());
+  while (!teleporterScan.isDone()) {
+    addTeleporter(db, teleporterScan.getItem());
+    teleporterScan.next();
   }
-  PyramidBuildingsCIteratorPtr pyramidScan(world->getPyramids().newCIterator());
-  while (!pyramidScan->isDone()) {
-    addPyramid(db, pyramidScan->getItem());
-    pyramidScan->next();
+  PyramidBuildingsCIterator pyramidScan(world->getPyramids());
+  while (!pyramidScan.isDone()) {
+    addPyramid(db, pyramidScan.getItem());
+    pyramidScan.next();
   }
-  BaseBuildingsCIteratorPtr baseScan(world->getBases().newCIterator());
-  while (!baseScan->isDone()) {
-    addBase(db, baseScan->getItem());
-    baseScan->next();
+  BaseBuildingsCIterator baseScan(world->getBases());
+  while (!baseScan.isDone()) {
+    addBase(db, baseScan.getItem());
+    baseScan.next();
   }
 
   return db;

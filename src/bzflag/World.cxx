@@ -174,39 +174,39 @@ TeamColor		World::whoseBase(const float* pos) const
 const Obstacle*		World::inBuilding(const float* pos, float radius) const
 {
   // check boxes
-  BoxBuildingsCIteratorPtr boxScan(boxes.newCIterator());
-  while (!boxScan->isDone()) {
-    const BoxBuilding& box = boxScan->getItem();
+  BoxBuildingsCIterator boxScan(boxes);
+  while (!boxScan.isDone()) {
+    const BoxBuilding& box = boxScan.getItem();
     if (box.isInside(pos, radius))
       return &box;
-    boxScan->next();
+    boxScan.next();
   }
 
   // check pyramids
-  PyramidBuildingsCIteratorPtr pyramidScan(pyramids.newCIterator());
-  while (!pyramidScan->isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan->getItem();
+  PyramidBuildingsCIterator pyramidScan(pyramids);
+  while (!pyramidScan.isDone()) {
+    const PyramidBuilding& pyramid = pyramidScan.getItem();
     if (pyramid.isInside(pos, radius))
       return &pyramid;
-    pyramidScan->next();
+    pyramidScan.next();
   }
 
   // check bases
-  BaseBuildingsCIteratorPtr baseScan(basesR.newCIterator());
-  while(!baseScan->isDone()) {
-    const BaseBuilding &base = baseScan->getItem();
+  BaseBuildingsCIterator baseScan(basesR);
+  while(!baseScan.isDone()) {
+    const BaseBuilding &base = baseScan.getItem();
     if(base.isInside(pos, radius))
       return &base;
-    baseScan->next();
+    baseScan.next();
   }
 
   // check teleporters
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.isInside(pos, radius))
       return &teleporter;
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // nope
@@ -217,48 +217,48 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 						float dx, float dy) const
 {
   // check walls
-  WallObstaclesCIteratorPtr wallScan(walls.newCIterator());
-  while (!wallScan->isDone()) {
-    const WallObstacle& wall = wallScan->getItem();
+  WallObstaclesCIterator wallScan(walls);
+  while (!wallScan.isDone()) {
+    const WallObstacle& wall = wallScan.getItem();
     if (wall.isInside(pos, angle, dx, dy))
       return &wall;
-    wallScan->next();
+    wallScan.next();
   }
 
   // check teleporters
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.isInside(pos, angle, dx, dy))
       return &teleporter;
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // strike one -- check boxes
-  BoxBuildingsCIteratorPtr boxScan(boxes.newCIterator());
-  while (!boxScan->isDone()) {
-    const BoxBuilding& box = boxScan->getItem();
+  BoxBuildingsCIterator boxScan(boxes);
+  while (!boxScan.isDone()) {
+    const BoxBuilding& box = boxScan.getItem();
     if (box.isInside(pos, angle, dx, dy))
       return &box;
-    boxScan->next();
+    boxScan.next();
   }
 
   // strike two -- check pyramids
-  PyramidBuildingsCIteratorPtr pyramidScan(pyramids.newCIterator());
-  while (!pyramidScan->isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan->getItem();
+  PyramidBuildingsCIterator pyramidScan(pyramids);
+  while (!pyramidScan.isDone()) {
+    const PyramidBuilding& pyramid = pyramidScan.getItem();
     if (pyramid.isInside(pos, angle, dx, dy))
       return &pyramid;
-    pyramidScan->next();
+    pyramidScan.next();
   }
 
   // strike three -- check bases
-  BaseBuildingsCIteratorPtr baseScan(basesR.newCIterator());
-  while(!baseScan->isDone()) {
-    const BaseBuilding &base = baseScan->getItem();
+  BaseBuildingsCIterator baseScan(basesR);
+  while(!baseScan.isDone()) {
+    const BaseBuilding &base = baseScan.getItem();
     if(base.isInside(pos, angle, dx, dy))
       return &base;
-    baseScan->next();
+    baseScan.next();
   }
   // strike four -- you're out
   return NULL;
@@ -268,12 +268,12 @@ boolean			World::crossingTeleporter(const float* pos,
 					float angle, float dx, float dy,
 					float* plane) const
 {
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.isCrossing(pos, angle, dx, dy, plane))
       return True;
-    teleporterScan->next();
+    teleporterScan.next();
   }
   return False;
 }
@@ -283,12 +283,12 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 						int& face) const
 {
   // check teleporters
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.hasCrossed(oldPos, newPos, face))
       return &teleporter;
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // didn't cross
@@ -298,12 +298,12 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
 {
   // check teleporters
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.isTeleported(r, face) > Epsilon)
       return &teleporter;
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // didn't cross
@@ -314,11 +314,11 @@ float			World::getProximity(const float* p, float r) const
 {
   // get maximum over all teleporters
   float bestProximity = 0.0;
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const float proximity = teleporterScan->getItem().getProximity(p, r);
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const float proximity = teleporterScan.getItem().getProximity(p, r);
     if (proximity > bestProximity) bestProximity = proximity;
-    teleporterScan->next();
+    teleporterScan.next();
   }
   return bestProximity;
 }

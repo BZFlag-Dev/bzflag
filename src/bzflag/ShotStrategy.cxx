@@ -130,23 +130,21 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
   const Obstacle* closestObstacle = NULL;
 
   // check walls
-  WallObstaclesCIteratorPtr wallScan(World::getWorld()->
-					getWalls().newCIterator());
-  while (!wallScan->isDone()) {
-    const WallObstacle& wall = wallScan->getItem();
+  WallObstaclesCIterator wallScan(World::getWorld()->getWalls());
+  while (!wallScan.isDone()) {
+    const WallObstacle& wall = wallScan.getItem();
     const float wallt = wall.intersect(ray);
     if (wallt > min && wallt < t) {
       t = wallt;
       closestObstacle = &wall;
     }
-    wallScan->next();
+    wallScan.next();
   }
 
   // check teleporter borders
-  TeleportersCIteratorPtr teleporterScan(World::getWorld()->
-					getTeleporters().newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(World::getWorld()->getTeleporters());
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     const float telet = teleporter.intersect(ray);
     int face;
     if (telet > min && telet < t &&
@@ -154,45 +152,42 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
       t = telet;
       closestObstacle = &teleporter;
     }
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // check boxes
-  BoxBuildingsCIteratorPtr boxScan(World::getWorld()->
-						getBoxes().newCIterator());
-  while (!boxScan->isDone()) {
-    const BoxBuilding& box = boxScan->getItem();
+  BoxBuildingsCIterator boxScan(World::getWorld()->getBoxes());
+  while (!boxScan.isDone()) {
+    const BoxBuilding& box = boxScan.getItem();
     const float boxt = box.intersect(ray);
     if (boxt > min && boxt < t) {
       t = boxt;
       closestObstacle = &box;
     }
-    boxScan->next();
+    boxScan.next();
   }
 
-  BaseBuildingsCIteratorPtr baseScan(World::getWorld()->
-      				     getBases().newCIterator());
-  while(!baseScan->isDone()) {
-    const BaseBuilding &baseb = baseScan->getItem();
+  BaseBuildingsCIterator baseScan(World::getWorld()->getBases());
+  while(!baseScan.isDone()) {
+    const BaseBuilding &baseb = baseScan.getItem();
     const float baset = baseb.intersect(ray);
     if(baset > min && baset < t) {
       t = baset;
       closestObstacle = &baseb;
     }
-    baseScan->next();
+    baseScan.next();
   }
 
   // check pyramids
-  PyramidBuildingsCIteratorPtr pyramidScan(World::getWorld()->
-						getPyramids().newCIterator());
-  while (!pyramidScan->isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan->getItem();
+  PyramidBuildingsCIterator pyramidScan(World::getWorld()->getPyramids());
+  while (!pyramidScan.isDone()) {
+    const PyramidBuilding& pyramid = pyramidScan.getItem();
     const float pyrt = pyramid.intersect(ray);
     if (pyrt > min && pyrt < t) {
       t = pyrt;
       closestObstacle = &pyramid;
     }
-    pyramidScan->next();
+    pyramidScan.next();
   }
 
   return closestObstacle;
@@ -204,17 +199,16 @@ const Teleporter*	ShotStrategy::getFirstTeleporter(const Ray& ray,
   const Teleporter* closestTeleporter = NULL;
   int face;
 
-  TeleportersCIteratorPtr teleporterScan(World::getWorld()->
-					getTeleporters().newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(World::getWorld()->getTeleporters());
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     const float telet = teleporter.isTeleported(ray, face);
     if (telet > min && telet < t) {
       t = telet;
       f = face;
       closestTeleporter = &teleporter;
     }
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   return closestTeleporter;
