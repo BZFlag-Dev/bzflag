@@ -13,6 +13,8 @@ libPlatform_a_SOURCES =				\
 	LinuxDisplay.h				\
 	LinuxMedia.cxx				\
 	LinuxMedia.h				\
+	SDLMedia.cxx				\
+	SDLMedia.h				\
 	usbjoy.cxx				\
 	XDisplay.cxx				\
 	XDisplay.h				\

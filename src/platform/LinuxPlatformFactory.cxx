@@ -14,7 +14,11 @@
 #include "LinuxDisplay.h"
 #include "XVisual.h"
 #include "XWindow.h"
+#ifdef HAVE_SDL
+#include "SDLMedia.h"
+#else
 #include "LinuxMedia.h"
+#endif
 
 PlatformFactory*	PlatformFactory::getInstance()
 {
@@ -57,7 +61,11 @@ BzfWindow*		LinuxPlatformFactory::createWindow(
 
 BzfMedia*		LinuxPlatformFactory::createMedia()
 {
+#ifdef HAVE_SDL
+  return new SDLMedia;
+#else
   return new LinuxMedia;
+#endif
 }
 
 // Local Variables: ***
