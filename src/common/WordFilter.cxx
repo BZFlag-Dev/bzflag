@@ -306,12 +306,14 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 
 // provides a pointer to a fresh compiled expression for some given expression
+#ifndef HAVE_REGEX_H
+regex_t *WordFilter::getCompiledExpression(const std::string &) const
+{
+  return (regex_t *)NULL;
+}
+#else /* HAVE_REGEX_H */
 regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 {
-#ifndef HAVE_REGEX_H
-  return (regex_t *)NULL;
-
-#else /* HAVE_REGEX_H */
   regex_t *compiledReg;
 
   /* XXX need to convert this to use new/delete */
@@ -329,8 +331,8 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
   }
   return compiledReg;
 
-#endif /* HAVE_REGEX_H */
 }
+#endif /* HAVE_REGEX_H */
 
 
 std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
