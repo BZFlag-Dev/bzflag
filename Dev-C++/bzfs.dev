@@ -4,9 +4,9 @@ Name=bzfs
 Ver=1
 IsCpp=1
 Type=1
-Compiler=-D_DEVCPP=1 -I"..\Dev-C++" -I"..\include" -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Werror -W_@@_
-CppCompiler=-D_DEVCPP=1 -I"..\Dev-C++" -I"..\include" -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Werror -W_@@_
-Includes=
+Compiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Werror -W_@@_
+CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Werror -W_@@_
+Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
 UnitCount=204
