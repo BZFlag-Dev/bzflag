@@ -26,6 +26,9 @@
 
 #ifdef _WIN32
 #include "win32.h"
+#define _FD_SET(fd, set) FD_SET((unsigned int)fd, set)
+#else
+#define _FD_SET(fd, set) FD_SET(fd, set)
 #endif
 
 #include <string>
