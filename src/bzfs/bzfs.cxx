@@ -1276,14 +1276,27 @@ static void acceptClient()
   // send 0xff if list is full
   buffer[8] = (char)0xff;
 
-
- if (!clOptions->acl.validate( clientAddr.sin_addr)) {
+	BanInfo info(clientAddr.sin_addr);
+ if (!clOptions->acl.validate( clientAddr.sin_addr,&info)) {
 
 	 std::string rejectionMessage;
 
-	 rejectionMessage = "REFUSED_";
-	 rejectionMessage += "Insert reason here";
-	 rejectionMessage += (char)0xff;
+	 rejectionMessage = "REFUSED_For: ";
+	 if (info.reason.size())
+		rejectionMessage += info.reason;
+	 else
+		 rejectionMessage += "General Ban";
+
+	 if (info.bannedBy.size())
+	 {
+			rejectionMessage += " by ";
+			rejectionMessage += info.bannedBy;
+	 }
+
+	 if (info.fromMaster)
+		rejectionMessage += " from the master server";
+
+	rejectionMessage += (char)0xff;
 // send back 0xff before closing
 	 send(fd, rejectionMessage.c_str(), rejectionMessage.size(), 0);
 
@@ -3758,8 +3771,24 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   // Checking hostname resolution and ban player if has to
   const char *hostname = playerData.netHandler->getHostname();
   // check against ban lists
-  if (hostname && !clOptions->acl.hostValidate(hostname)) {
-    removePlayer(p, "bannedhost");
+	HostBanInfo info("*");
+  if (hostname && !clOptions->acl.hostValidate(hostname,&info)) {
+		std::string reason = "bannedhost for: ";
+
+		if (info.reason.size())
+			reason += info.reason;
+		else
+			reason += "General Ban";
+
+		if (info.bannedBy.size())
+		{
+			reason += " by ";
+			reason += info.bannedBy;
+		}
+
+		if (info.fromMaster)
+			reason += " from the master server";
+    removePlayer(p, reason.c_str());
     return;
   }
 

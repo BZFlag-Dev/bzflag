@@ -245,7 +245,7 @@ public:
       means that it has not been banned.
       @returns @c true if the address is valid, @c false if not
   */
-  bool validate(const in_addr &ipAddr) {
+  bool validate(const in_addr &ipAddr, BanInfo *info = NULL) {
     expire();
 
     for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
@@ -259,7 +259,11 @@ public:
 	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
 
       if (mask.s_addr == ipAddr.s_addr)
-	return false;
+			{
+				if (info)
+					*info = *it;
+			return false;
+			}
     }
     return true;
   }
@@ -297,11 +301,13 @@ public:
       "not banned".
       @returns @c true if the hostname is valid, @c false if it isn't.
   */
-  bool hostValidate(const char *hostname) {
+  bool hostValidate(const char *hostname, HostBanInfo *info = NULL) {
     expire();
 
     for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
       if (does_match(hostname, strlen(hostname), it->hostpat.c_str(), it->hostpat.length())) {
+				if (info)
+					*info = *it;
 	return false;
       }
     }
