@@ -40,11 +40,11 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV                  1
+#define BZ_REV                  2
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"MAINTENANCE"
+#define BZ_BUILD_TYPE		"RELEASE"
 #endif
 
 // Build Date will be defined at link time, can be different for each exe
