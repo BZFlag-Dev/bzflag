@@ -14,7 +14,6 @@
 #define __VOTINGARBITER_H__
 
 #include "common.h"
-#include <string>
 #include <iostream>
 #include <deque>
 
