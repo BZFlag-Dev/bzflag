@@ -263,7 +263,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool doneLastSection = false;
   int startSend = 0;
   int endSend = (int)text.find("\033[", startSend);
-  std::string tmpText;
   bool tookCareOfANSICode = false;
   float width = 0;
   // run at least once
@@ -279,15 +278,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       getPulseColor(color, color);
     // render text
     if (endSend - startSend > 0) {
-      tmpText = text.substr(startSend, (endSend - startSend));
+      const char* tmpText
+	= text.substr(startSend, (endSend - startSend)).c_str();
       // get substr width, we may need it a couple times
-      width = getStrLength(faceID, size, tmpText, true);
+      width = pFont->getStrLength(scale, tmpText);
       glPushMatrix();
       glTranslatef(x, y, z);
       GLboolean depthMask;
       glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
       glDepthMask(0);
-      pFont->drawString(scale, color, tmpText.c_str());
+      pFont->drawString(scale, color, tmpText);
       if (underline) {
 	OpenGLGState::resetState();  // FIXME - full reset required?
 	if (underlineColor[0] >= 0)
@@ -309,10 +309,12 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (!doneLastSection) {
       startSend = (int)text.find("m", endSend) + 1;
     }
-    // we stopped sending text at an ANSI code, find out what it is and do something about it
+    // we stopped sending text at an ANSI code, find out what it is
+    // and do something about it
     if (endSend != (int)text.size()) {
       tookCareOfANSICode = false;
-      tmpText = text.substr(endSend, (text.find("m", endSend) - endSend) + 1);
+      std::string tmpText
+	= text.substr(endSend, (text.find("m", endSend) - endSend) + 1);
       // colors
       for (int i = 0; i < 8; i++) {
 	if (tmpText == ColorStrings[i]) {
