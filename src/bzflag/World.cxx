@@ -1004,7 +1004,7 @@ bool			World::writeWorld(std::string filename)
   return true;
 }
 
-static void drawLines (int count, const float (*vertices)[3], int color)
+static void drawLines (int count, float (*vertices)[3], int color)
 {
   const float colors[][4] = {
     { 0.25f, 0.25f, 0.25f, 0.8f }, // gray    (branch node)
