@@ -717,12 +717,12 @@ bool			World::writeWorld(std::string filename)
       out << "\trotation " << ((base.getRotation() * 180.0) / M_PI) << std::endl;
       out << "\tcolor " << base.getTeam() << std::endl;
       if (base.isDriveThrough()&&base.isShootThrough())
-        out << "passable" << std::endl;
+        out << "\tpassable" << std::endl;
       else{
         if (base.isDriveThrough())
-          out << "drivethrough" << std::endl;
+          out << "\tdrivethrough" << std::endl;
         if (base.isShootThrough())
-          out << "shootthrough" << std::endl;
+          out << "\tshootthrough" << std::endl;
       }
 
       out << "end" << std::endl;
@@ -740,12 +740,12 @@ bool			World::writeWorld(std::string filename)
       out << "\tsize " << box.getWidth() << " " << box.getBreadth() << " " << box.getHeight() << std::endl;
       out << "\trotation " << ((box.getRotation() * 180.0) / M_PI) << std::endl;
       if (box.isDriveThrough()&&box.isShootThrough())
-        out << "passable" << std::endl;
+        out << "\tpassable" << std::endl;
       else{
         if (box.isDriveThrough())
-	  out << "drivethrough" << std::endl;
+	  out << "\tdrivethrough" << std::endl;
         if (box.isShootThrough())
-	  out << "shootthrough" << std::endl;
+	  out << "\tshootthrough" << std::endl;
       }
       out << "end" << std::endl;
       out << std::endl;
@@ -769,12 +769,12 @@ bool			World::writeWorld(std::string filename)
       out << "\trotation " << ((pyr.getRotation() * 180.0) / M_PI)
 	  << std::endl;
       if (pyr.isDriveThrough()&&pyr.isShootThrough())
-        out << "passable" << std::endl;
+        out << "\tpassable" << std::endl;
       else{
         if (pyr.isDriveThrough())
-	  out << "drivethrough" << std::endl;
+	  out << "\tdrivethrough" << std::endl;
         if (pyr.isShootThrough())
-	  out << "shootthrough" << std::endl;
+	  out << "\tshootthrough" << std::endl;
       }
       out << "end" << std::endl;
       out << std::endl;
