@@ -49,7 +49,78 @@ void			printFatalError(const char* fmt, ...);
 ControlPanelMessage::ControlPanelMessage(const std::string& _string)
 {
   this->string = _string;
-  rawLength = stripAnsiCodes(string).length();
+}
+
+void ControlPanelMessage::breakLines(float maxLength, int fontFace, int fontSize)
+{
+  FontManager &fm = FontManager::instance();
+
+  // get message and its length
+  const char* msg = string.c_str();
+  int lineLen     = string.length();
+
+  lines.clear();
+
+  // in order for the new font engine to draw successive lines in the right
+  // color, it needs to be fed the right ansi codes at the beginning of each
+  // line.  FIXME - storing ALL the codes is wasteful, clear this string
+  // when we come across a RESET code.
+  std::string cumulativeANSICodes = "";
+
+  // break lines
+  while (lineLen > 0) {
+    int lastWhitespace = 0;
+    int n;
+
+    // how many characters will fit?
+    // the unprinted ANSI codes don't count
+    if (fm.getStrLength(fontFace, fontSize, msg) <= maxLength) {
+      n = lineLen;
+    } else {
+      int r = 0;
+      n = 0;
+      while ((n < lineLen) &&
+	     (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) < maxLength)) {
+	if (msg[n] == ESC_CHAR) {
+	  cumulativeANSICodes += msg[n];
+	  n++;
+	  if ((n < lineLen) && (msg[n] == '[')) {
+	    cumulativeANSICodes += msg[n];
+	    n++;
+	    while ((n < lineLen) && ((msg[n] == ';') ||
+		  ((msg[n] >= '0') && (msg[n] <= '9')))) {
+	      cumulativeANSICodes += msg[n];
+	      n++;
+	    }
+	    // ditch the terminating character too
+	    if (n < lineLen) {
+	      cumulativeANSICodes += msg[n];
+	      n++;
+	    }
+	  }
+	} else if ((msg[n] >= 32) && (msg[n] < 127)) {
+	  n++;
+	  r++;
+	} else {
+	  n++;
+	}
+	if (isWhitespace(msg[n])) {
+	  lastWhitespace = n;
+	}
+      }
+    }
+
+    if (lastWhitespace > 0)
+      n = lastWhitespace;
+
+    // message
+    lines.push_back(cumulativeANSICodes + std::string(msg).substr(0, n));
+
+    // account for portion broken
+    msg += n;
+    lineLen -= n;
+
+  }
 }
 
 //
@@ -163,8 +234,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
   OpenGLGState::resetState();
 
   FontManager &fm = FontManager::instance();
-  const float lineHeight = fm.getStrHeight(fontFace, fontSize, " ");
-  const float margin = lineHeight / 4.0f;
 
   if (changedMessage > 0) {
     changedMessage--;
@@ -250,20 +319,17 @@ void			ControlPanel::render(SceneRenderer& renderer)
   }
 
   // draw messages
-  // Code added to allow line-wrap -- just the basics so please modify
-  //  for +'s at the beginning of wrapped lines, etc.
   //
-  // It works by first breaking the string into a vector of strings, each
-  //  of which will fit the control panel, and tallying the number of lines,
-  //  then moving up the proper number of lines and displaying downward --
-  //  that is, it kinda backtracks for each line that will wrap.
+  // It works by first breaking the string into a vector of strings (done 
+  //  elsewhere), each of which will fit the control panel, and tallying 
+  //  the number of lines, then moving up the proper number of lines and
+  //  displaying downward -- that is, it kinda backtracks for each line 
+  //  that will wrap.
   //
   //  messageAreaPixels[2] = Width of Message Window in Pixels
   //  maxLines             = Max messages lines that can be displayed
   //  maxScrollPages       = This number * maxLines is the total maximum
   //                         lines of messages (and scrollback)
-  // The font is NOT necessarily fixed, so we must use GetWidth on the
-  // particular line that is to be broken.
 
   glScissor(x + messageAreaPixels[0],
 	    y + messageAreaPixels[1],
@@ -281,90 +347,21 @@ void			ControlPanel::render(SceneRenderer& renderer)
     GLfloat whiteColor[3] = {1.0f, 1.0f, 1.0f};
     glColor3fv(whiteColor);
 
-    // get message and its length
-    const char* msg = messages[messageMode][i].string.c_str();
-    int lineLen     = messages[messageMode][i].string.length();
-
-    std::vector<std::string> lines;
-    int numLines = 0;
-    // in order for the new font engine to draw successive lines in the right
-    // color, it needs to be fed the right ansi codes at the beginning of each
-    // line.  FIXME - storing ALL the codes is wasteful, clear this string
-    // when we come across a RESET code.
-    std::string cumulativeANSICodes = "";
-
-    // break lines
-    while (lineLen > 0) {
-      int lastWhitespace = 0;
-      int n;
-
-      // how many characters will fit?
-      // the unprinted ANSI codes don't count
-      if (fm.getStrLength(fontFace, fontSize, msg) <= (messageAreaPixels[2] - 2 * margin)) {
-	n = lineLen;
-      } else {
-	int r = 0;
-	n = 0;
-	while ((n < lineLen) &&
-	       (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) <
-	        (messageAreaPixels[2] - 2 * margin))) {
-	  if (msg[n] == ESC_CHAR) {
-	    cumulativeANSICodes += msg[n];
-	    n++;
-	    if ((n < lineLen) && (msg[n] == '[')) {
-	      cumulativeANSICodes += msg[n];
-	      n++;
-	      while ((n < lineLen) && ((msg[n] == ';') ||
-		    ((msg[n] >= '0') && (msg[n] <= '9')))) {
-		cumulativeANSICodes += msg[n];
-		n++;
-	      }
-	      // ditch the terminating character too
-	      if (n < lineLen) {
-		cumulativeANSICodes += msg[n];
-		n++;
-	      }
-	    }
-	  } else if ((msg[n] >= 32) && (msg[n] < 127)) {
-	    n++;
-	    r++;
-	  } else {
-	    n++;
-	  }
-	  if (isWhitespace(msg[n])) {
-	    lastWhitespace = n;
-	  }
-	}
-      }
-
-      if (lastWhitespace > 0)
-	n = lastWhitespace;
-
-      // message
-      lines.push_back(cumulativeANSICodes + std::string(msg).substr(0, n));
-      numLines++;
-
-      // account for portion drawn (or skipped)
-      msg += n;
-      lineLen -= n;
-
-    }
-
     // draw each line of text
+    int numLines = messages[messageMode][i].lines.size();
     int msgy = numLines - 1;
-    for (int l = 0; l < (int)lines.size(); l++)  {
+    for (int l = 0; l < numLines; l++)  {
       assert(msgy >= 0);
 
       // only draw message if inside message area
       if (j + msgy < maxLines)
-	fm.drawString(fx, fy + msgy * lineHeight, 0, fontFace, fontSize, lines[l]);
+	fm.drawString(fx, fy + msgy * lineHeight, 0, fontFace, fontSize, messages[messageMode][i].lines[l]);
 
       // next line
       msgy--;
     }
     j += numLines;
     fy += int(lineHeight * numLines);
-
   }
   glScissor(x + messageAreaPixels[0] - 1,
 	    y + messageAreaPixels[1] - 1,
@@ -547,7 +544,18 @@ void			ControlPanel::resize()
     }
   }
 
-  maxLines = int(messageAreaPixels[3] / fm.getStrHeight(fontFace, fontSize, " "));
+  lineHeight = fm.getStrHeight(fontFace, fontSize, " ");
+
+  maxLines = int(messageAreaPixels[3] / lineHeight);
+  
+  margin = lineHeight / 4.0f;
+
+  // rewrap all the lines
+  for (int i = 0; i < MessageModeCount; i++) {
+    for (int j = 0; j < (int)messages[i].size(); j++) {
+      messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
+    }
+  }
 
   // note that we've been resized at least once
   resized = true;
@@ -569,10 +577,6 @@ void			ControlPanel::expose()
 {
   exposed = numBuffers;
   changedMessage = numBuffers;
-
-  // rebuild font gstates
-  FontManager &fm = FontManager::instance();
-  fm.rebuild();
 }
 
 void			ControlPanel::exposeCallback(void* self)
@@ -626,6 +630,7 @@ void			ControlPanel::addMessage(const std::string& line,
 						 const int mode)
 {
   ControlPanelMessage item(line);
+  item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
 
   // Add to "All" tab
   if ((int)messages[MessageAll].size() < maxLines * maxScrollPages) {

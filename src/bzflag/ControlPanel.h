@@ -30,8 +30,10 @@ class SceneRenderer;
 class ControlPanelMessage {
   public:
 			ControlPanelMessage(const std::string&);
+    void		breakLines(float maxLength, int fontFace, int fontSize);
+
     std::string		string;
-    int			rawLength;
+    std::vector<std::string>	lines;
 };
 
 class ControlPanel {
@@ -94,6 +96,8 @@ class ControlPanel {
     static int		messagesOffset;
     static const int	maxScrollPages;
     int			maxLines;
+    float		margin;
+    float		lineHeight;
 };
 
 #endif // BZF_CONTROL_PANEL_H
