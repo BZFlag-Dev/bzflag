@@ -74,8 +74,6 @@ const float		ShotLength =	0.5f;		// meters
 const float		ShotTailLength=	4.0f;		// meters
 
 // outer wall geometry
-const float		WallPosition =	0.5f*WorldSize +// meters
-						0.75f * TankLength;
 const float		WallHeight =	3.0f*TankHeight;// meters
 
 // pyramid geometry
@@ -118,9 +116,9 @@ const int		MinX = 256;
 const int		MinY = 192;
 const int		NoMotionSize =	10;		// no motion zone size
 const int		MaxMotionSize = 37;		// motion zone size
-const float		RadarLowRange =	0.25f*WorldSize;// low radar range
-const float		RadarMedRange =	0.5f*WorldSize;	// medium radar range
-const float		RadarHiRange =	WorldSize;	// high radar range
+const float		RadarLowRangeFactor =	0.25f;// low radar range
+const float		RadarMedRangeFactor =	0.5f;	// medium radar range
+const float		RadarHiRangeFactor =	1.0f;	// high radar range
 
 // game styles
 enum GameStyle {

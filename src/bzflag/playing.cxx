@@ -1962,17 +1962,17 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 
   else if (keymap.isMappedTo(BzfKeyMap::ShortRange, key)) {
     // smallest radar range
-    if (pressed) radar->setRange(RadarLowRange);
+    if (pressed) radar->setRange(RadarLowRangeFactor*WorldSize);
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::MediumRange, key)) {
     // medium radar range
-    if (pressed) radar->setRange(RadarMedRange);
+    if (pressed) radar->setRange(RadarMedRangeFactor*WorldSize);
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::LongRange, key)) {
     // largest radar range
-    if (pressed) radar->setRange(RadarHiRange);
+    if (pressed) radar->setRange(RadarHiRangeFactor*WorldSize);
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::Pause, key)) {
@@ -5195,7 +5195,7 @@ static bool		joinGame(const StartupInfo* info,
   updateNumPlayers();
   updateFlag(NoFlag);
   updateHighScores();
-  radar->setRange(RadarMedRange);
+  radar->setRange(RadarMedRangeFactor*WorldSize);
   hud->setHeading(myTank->getAngle());
   hud->setAltitude(myTank->getPosition()[2]);
   hud->setTimeLeft(-1);
