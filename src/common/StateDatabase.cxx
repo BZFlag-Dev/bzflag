@@ -130,6 +130,19 @@ void			StateDatabase::set(const std::string& name,
   }
 }
 
+
+void			StateDatabase::setPointer(const std::string& name,
+					   const void * value,
+					   Permission access)
+{
+  char address[32];
+  memset(address, 0, 32);
+  snprintf(address, 32, "%lu", (unsigned long)value);
+  std::string ssaddress = address;
+  this->set(name, ssaddress, access);
+}
+
+
 void			StateDatabase::unset(const std::string& name,
 					     Permission access)
 {
@@ -204,6 +217,17 @@ std::string		StateDatabase::get(const std::string& name) const
   else
     return index->second.value;
 }
+
+
+void *		StateDatabase::getPointer(const std::string& name) const
+{
+  Map::const_iterator index = items.find(name);
+  if (index == items.end() || !index->second.isSet)
+    return (void *)NULL;
+  else
+    return (void *)strtoul(index->second.value.c_str(), NULL, 0);
+}
+
 
 float			StateDatabase::eval(const std::string& name)
 {

@@ -22,7 +22,7 @@
 #define BZDB (StateDatabase::getInstance())
 
 /** would somebody please document this durn thing ;)  at least how
- * it should be used: how to add, modify, and retrieve data.
+ * the class should be used: how to add, modify, and retrieve data.
  */
 class StateDatabase {
 public:
@@ -46,6 +46,13 @@ public:
    */
   void				set(const std::string& name,
 				    const std::string& value,
+				    Permission access = Client);
+
+  /** allow setting name/pointer pairs.  this allows simple object
+   * pointer storage into the bzdb via pointer address serialization.
+   */
+  void				setPointer(const std::string& name,
+				    const void *value,
 				    Permission access = Client);
 
   /** unset a name if access is not less than the permission level
@@ -101,6 +108,11 @@ public:
    * if the name isn't set.
    */
   std::string			get(const std::string& name) const;
+
+  /** returns the pointer stored with a name.  returns NULL if the
+   * name isn't set.
+   */
+  void *			getPointer(const std::string& name) const;
 
   /** get the value as a floating point number. this will evaluate
    * the string as an expression
