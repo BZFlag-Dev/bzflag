@@ -3332,20 +3332,9 @@ static void resetFlag(int flagIndex)
     if (flag[flagIndex].flag.id == ObesityFlag)
        r *= 2.0f * ObeseFactor;
     do {
-      if (gameStyle & TeamFlagGameStyle) {
-	flag[flagIndex].flag.position[0] =
-			0.5f * WorldSize * ((float)bzfrand() - 0.5f);
-	flag[flagIndex].flag.position[1] =
-			0.5f * WorldSize * ((float)bzfrand() - 0.5f);
-	flag[flagIndex].flag.position[2] = 0.0f;
-      }
-      else {
-	flag[flagIndex].flag.position[0] =
-			(WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-	flag[flagIndex].flag.position[1] =
-			(WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-	flag[flagIndex].flag.position[2] = 0.0f;
-      }
+      flag[flagIndex].flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+      flag[flagIndex].flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+      flag[flagIndex].flag.position[2] = 0.0f;
     } while (world->inBuilding(NULL, flag[flagIndex].flag.position[0], flag[flagIndex].flag.position[1], 
 	flag[flagIndex].flag.position[2], r));
   }
