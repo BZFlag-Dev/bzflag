@@ -19,9 +19,9 @@
 
 #include "common.h"
 #include "SceneNode.h"
-#include "OpenGLTexture.h"
 
 class TankSceneNode;
+class OpenGLTexture;
 
 class TankIDLSceneNode : public SceneNode {
   public:
