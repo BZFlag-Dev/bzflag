@@ -4369,7 +4369,9 @@ void			drawFrame(const float dt)
       const ViewFrustum& vf = sceneRenderer->getViewFrustum();
       // using NearPlane is only really valid for perpendicular entrances
       const float np = NearPlane;
-      if (world->hitBuilding(vf.getEye(), 0.0f, np, np, 0.0f) != NULL) {
+      const Obstacle* obs;
+      obs = world->hitBuilding(vf.getEye(), 0.0f, np, np, 0.0f);
+      if ((obs != NULL) && (obs->getType() != WallObstacle::getClassName())) {
         insideDim = true;
       }
     }
