@@ -71,7 +71,7 @@ bool WordFilter::aggressiveFilter(char *input) const
   bool filtered = false;
   regmatch_t match[1];
   if (input == NULL) return false;
-  unsigned int inputLength = strlen(input);
+  int inputLength = strlen(input);
   
 
   /* maintain an array of match indices of the input; values are in
@@ -88,11 +88,11 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   // get a list of characters that might be the start of a word
   char previousChar = 0;
-  for (unsigned int counter = 0; counter < inputLength; counter++) {
+  static char c2[2] = {0};
+  for (int counter = 0; counter < inputLength; counter++) {
     char c = tolower(*(input + counter));
-    char c2[2] = {0};
 
-    if (!isAlphanumeric(previousChar) && isVisible(c)) {
+    if (!isAlphabetic(previousChar) && isVisible(c)) {
 
       // expand punctuation to potential alphabetic characters
       if (isPunctuation(c)) {
@@ -117,7 +117,29 @@ bool WordFilter::aggressiveFilter(char *input) const
     previousChar = c;
   }
 
-  std::cout << "WordIndexLetters are [" << wordIndices << "]" << std::endl;
+  /* prefixes are a special case.. see if any match and capture the next letter if there is one.   */
+  for (std::set<filter_t, expressionCompare>::iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
+    if (regexec(i->compiled, input, 1, match, 0) == 0) {
+      if ( (match[0].rm_eo < inputLength) && isAlphabetic(input[match[0].rm_eo]) ) {
+	/* do not forget to make sure this is a true prefix */
+	if ( (match[0].rm_so > 0) && isAlphabetic(input[match[0].rm_so - 1]) ) {
+	  continue;
+	}
+
+	/* we found a prefix -- add the letter */
+	char d = tolower(input[match[0].rm_eo]);
+//std::cout << "Matched a letter after prefix: " << d << " for prefix: " << i->word << std::endl;
+	if (count(wordIndices.begin(), wordIndices.end(), d) == 0) {
+	  c2[0] = d;
+	  wordIndices.append(c2);
+	}
+      }
+    }
+  }
+
+  
+
+//std::cout << "WordIndexLetters are [" << wordIndices << "]" << std::endl;
   // now we have a record of all potential word boundary positions
 
   
@@ -135,26 +157,92 @@ bool WordFilter::aggressiveFilter(char *input) const
       regCode = regexec(i->compiled, input, 1, match, 0);
 
       if ( regCode == 0 ) {
-#if 0
-	unsigned int startOffset = match[0].rm_so;
-	unsigned int endOffset = match[0].rm_eo;
+	int startOffset = match[0].rm_so;
+	int endOffset = match[0].rm_eo;
+
+//std::cout << "We matched ... ";
 
 	/* make sure we only match on word boundaries */
-	if ( (startOffset>0) && (!isAlphabetic(input[startOffset-1])) ) {
-	  continue;
+	if ( (startOffset>1) && (isAlphabetic(input[startOffset-1])) ) {
+
+//std::cout << "but didn't match a word beginning" << std::endl;
+	  
+	  /* we are in the middle of a word.. see if we can match a prefix before this */
+	  bool foundit =  false;
+	  for (std::set<filter_t, expressionCompare>::iterator j = prefixes.begin();
+	       j != prefixes.end(); ++j) {
+	    if (regexec(j->compiled, input, 1, match, 0) == 0) {
+
+//std::cout << "checking prefix: " << j->word << std::endl;
+
+	      if ( (match[0].rm_so > 1) && (isAlphabetic(input[match[0].rm_so - 1])) ) {
+		/* we matched, but we are still in the middle of a word */
+		continue;
+	      }
+
+//std::cout << "matched a prefix! " << j->word << std::endl;
+	      if (match[0].rm_eo == startOffset) {
+		/* perfect prefix match */
+		startOffset = match[0].rm_so;
+		foundit = true;
+		break;
+	      }
+	    }
+	  }
+	  if (!foundit) {
+	    /* couldn't find a prefix, so skip this match */
+//std::cout << "Could not find a prefix" <<std::endl;
+	    continue;
+	  }
 	}
-	if ( (endOffset<inputLength-2) && (!isAlphabetic(input[endOffset+1])) ) {
-	  continue;
+
+//std::cout << "is endoffset alphabetic: " << input[endOffset] << std::endl;
+
+	if ( (endOffset<inputLength-1) && (isAlphabetic(input[endOffset])) ) {
+
+//std::cout << "but didn't match a word ending" << std::endl;
+	  
+	  /* we are at the start of a word, but not at the end, try to get to the end */
+	  bool foundit = false;
+	  for (std::set<filter_t, expressionCompare>::iterator j = suffixes.begin();
+	       j != suffixes.end(); ++j) {
+//std::cout << "checking " << j->word << " against [" << input + endOffset << "]" << std::endl;
+	    
+	    if (regexec(j->compiled, input + endOffset, 1, match, 0) == 0) {
+
+//std::cout << "is " << match[0].rm_eo << " less than " << inputLength - endOffset << std::endl;	      
+//std::cout << "is alpha =?= " << input[endOffset + match[0].rm_eo + 1] << std::endl;
+
+	      /* again, make sure we are now at a word end */
+	      if ( (match[0].rm_eo < inputLength - endOffset) &&
+		   (isAlphabetic(input[endOffset + match[0].rm_eo])) ) {
+		/* we matched, but we are still in the middle of a word */
+		continue;
+	      }
+
+//std::cout << "matched a suffix! " << j->word << std::endl;
+	      if (match[0].rm_so == 0) {		
+		/* push the end forward a little since we matched */
+		endOffset += match[0].rm_eo;
+		foundit = true;
+		break;
+	      }
+	    }
+	  }
+	  if (!foundit) {
+	    /* couldn't find a suffix, so skip this match */
+//std::cout << "Could not find a suffix" <<std::endl;
+	    continue;
+	  }
 	}
-#endif
 	
 	// add a few more slots if necessary (this should be rare/never)
 	if (matchCount * 2 + 1 >= matchPair.size()) {
 	  matchPair.resize(matchCount * 2 + 201);
 	}
 
-	matchPair[matchCount * 2] = match[0].rm_so; /* position */
-	matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
+	matchPair[matchCount * 2] = startOffset; /* position */
+	matchPair[(matchCount * 2) + 1] = endOffset - startOffset; /* length */
 	matchCount++;
 	filtered = true;
 
@@ -173,11 +261,10 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   } /* iterate over characters */
 
-
   /* finally filter the input.  only filter actual alphanumerics. */
   for (unsigned int i=0; i < matchCount; i++) {
     /* !!! debug */
-#if 1
+#if 0
     char tmp[256] = {0};
     strncpy(tmp, input + matchPair[i*2], matchPair[(i*2)+1]);
     std::cout << "Matched: [" << tmp << "]" << std::endl;
@@ -593,7 +680,9 @@ WordFilter::WordFilter()
   fix.word = "you";
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
-
+  fix.word = "ura";
+  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
+  prefixes.insert(fix);  
 
 #endif
 
