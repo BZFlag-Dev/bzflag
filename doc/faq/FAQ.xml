@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!--
  Copyright (c) 1993 - 2003 Tim Riker
 
- This package is free software;  you can redistribute it and/or
- modify it under the terms of the license found in the file
- named COPYING that should have accompanied this file.
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the license found in the file named COPYING
+ that should have accompanied this file.
 
- THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
+ WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+ MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.  
 -->
 
 <!ENTITY cheating SYSTEM "Cheating.xml">
@@ -35,7 +36,10 @@
     </author>
 
     <abstract>
-      <para>Answers to many of the Frequently Asked Questions about BZFlag.</para>
+
+      <para>Answers to many of the Frequently Asked Questions about
+      BZFlag.</para>
+
     </abstract>
   </bookinfo>
 
