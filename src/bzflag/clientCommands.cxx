@@ -775,6 +775,8 @@ std::string cmdServerCommand(const std::string&, const CommandManager::ArgList& 
   static ServerCommandKey serverCommandKeyHandler;
   if (args.size() != 0)
     return "usage: servercommand";
+  if (!myTank)
+    return "use only when connected";
   static bool prevAdmin = myTank->isAdmin();
   if (!prevAdmin && myTank->isAdmin()) serverCommandKeyHandler.adminInit();
   if (prevAdmin && !myTank->isAdmin()) serverCommandKeyHandler.nonAdminInit();
