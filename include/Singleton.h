@@ -14,8 +14,14 @@
 #define __SINGLETON_H__
 
 /* system headers */
+#ifdef HAVE_ATEXIT
+#	ifdef HAVE_CSTDLIB
 #include <cstdlib>
-
+using std::atexit;
+#	else
+#include <stdlib.h>
+#	endif
+#endif
 
 /* Singleton template class
  *
@@ -71,10 +77,8 @@ public:
     if ( _instance == 0 ) {
       _instance = new T;
       // destroy the singleton when the application terminates
-#ifdef _WIN32
+#ifdef HAVE_ATEXIT
       atexit(Singleton::destroy);
-#else
-      std::atexit(Singleton::destroy);
 #endif
     }
     return *Singleton::_instance;
