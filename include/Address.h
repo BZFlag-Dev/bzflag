@@ -51,7 +51,7 @@ class Address {
 
     static Address	getHostAddress(const char* hostname = NULL);
     static std::string	getHostByAddress(InAddr);
-    static const char*	getHostName(const char* hostname = NULL);
+    static const std::string	getHostName(const std::string hostname = std::string(""));
 
   private:
     std::vector <InAddr>      addr;

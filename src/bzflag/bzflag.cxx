@@ -935,7 +935,7 @@ int			main(int argc, char** argv)
 
     if (email == "default") {
       email = anonymousName;
-      const char* hostname = Address::getHostName();
+      std::string hostname = Address::getHostName();
 #if defined(_WIN32)
       char username[256];
       DWORD usernameLen = sizeof(username);
@@ -946,7 +946,10 @@ int			main(int argc, char** argv)
       struct passwd* pwent = getpwuid(getuid());
       const char* username = pwent ? pwent->pw_name : NULL;
 #endif
-      if (username && hostname) {
+      if (hostname == "") {
+	hostname = "unknown";
+      }
+      if (username) {
 	email = username;
 	email += "@";
 	email += hostname;

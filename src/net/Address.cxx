@@ -212,17 +212,22 @@ std::string		Address::getHostByAddress(InAddr addr)
   return std::string(hent->h_name);
 }
 
-const char*		Address::getHostName(const char* hostname) // const
+const std::string Address::getHostName(const std::string hostname) // const
 {
   char myname[MAXHOSTNAMELEN+1];
-  const char* name = hostname;
-  if (!name)
+  std::string name = hostname;
+  if (name.length() <= 0) {
     if (gethostname(myname, sizeof(myname)) >= 0)
-      name = myname;
-  if (!name) return NULL;
-  struct hostent* hent = gethostbyname(name);
-  if (!hent) return NULL;
-  return hent->h_name;
+      name = std::string(myname);
+  }
+  if (name.length() <= 0) {
+    return std::string("");
+  }
+  struct hostent* hent = gethostbyname(name.c_str());
+  if (!hent) {
+    return std::string("");
+  }
+  return std::string(hent->h_name);
 }
 
 void*			Address::pack(void* _buf) const
