@@ -1543,7 +1543,6 @@ static void		handleServerMessage(boolean human, uint16_t code,
       BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
       Player* victimPlayer = getPlayerByIndex(victimIndex);
       Player* killerPlayer = getPlayerByIndex(killerIndex);
-	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
 #ifdef ROBOT
       if (victimPlayer == myTank) {
 	// uh oh, i'm dead
@@ -1612,7 +1611,15 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  addMessage(victimPlayer, "blew myself up");
 	else if (!killerPlayer)
 	  addMessage(victimPlayer, "destroyed by <unknown>");
-	else {
+	else if (shotId == -1) {
+	  BzfString message("destroyed by ");
+	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
+	      killerPlayer->getTeam() != RogueTeam)
+	    message += "teammate ";
+	  message += killerPlayer->getCallSign();
+	  addMessage(victimPlayer, message);
+	} else {
+	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
 	  BzfString message("");
 	  BzfString teammate("");
 	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
