@@ -89,18 +89,18 @@ AC_PATH_XTRA
 LDFLAGS=$X_LIBS
 case $host_os in
   solaris*)
-    GLIBS="-lresolv -laudio";
+    GLIBS="-lresolv -laudio $(GLIBS)";
     LIBS="-lsocket -lnsl";
     LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib";;
   irix*)
-    GLIBS="-lXsgivc -lX11 -laudio";;
+    GLIBS="-lXsgivc -lX11 -laudio $(GLIBS)";;
 esac;
 
 AC_CHECK_LIB(m, sqrtf)
 
 CPPFLAGS=
 if test x$X_DISPLAY_MISSING = x; then
-  GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS"
+  GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $(GLIBS)"
 fi
 
 AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
