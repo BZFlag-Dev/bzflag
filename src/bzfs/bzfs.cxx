@@ -871,10 +871,11 @@ static void sendMessageToListServerForReal()
     pingReply.packHex(gameInfo);
 
     // send ADD message (must send blank line)
-    sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s HTTP/1.1\r\n"
+    sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s&title=%s HTTP/1.1\r\n"
       "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
       link.pathname.c_str(), clOptions->publicizedAddress.c_str(),
       getServerVersion(), gameInfo,
+      getAppVersion(),
       url_encode(clOptions->publicizedTitle).c_str(),
       link.hostname.c_str());
   }
