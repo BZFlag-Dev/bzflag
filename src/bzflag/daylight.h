@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -43,7 +43,7 @@ void			getSunColor(const float sunDir[3], GLfloat color[3],
 
 // make sky colors given sun direction.  sun direction should be normalized.
 // sky is filled with the colors for the zenith, horizon towards sun, and
-// horizon away from sun, respectively.  
+// horizon away from sun, respectively.
 void			getSkyColor(const float sunDir[3], GLfloat sky[4][3]);
 
 // True if sun is high enough to cast shadows.  sun direction should be
@@ -59,3 +59,4 @@ boolean			areStarsVisible(const float sunDir[3]);
 boolean			getSunsetTop(const float sunDir[3], float& topAltitude);
 
 #endif // BZF_DAYLIGHT_H
+// ex: shiftwidth=2 tabstop=8

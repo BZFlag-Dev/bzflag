@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -193,11 +193,6 @@ void			WinMedia::closeAudio()
   outputBuffer = NULL;
 }
 
-boolean			WinMedia::isAudioBrainDead() const
-{
-  return True;
-}
-
 boolean			WinMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {
@@ -231,6 +226,9 @@ boolean			WinMedia::hasAudioThread() const
 
 DWORD WINAPI		WinMedia::audioThreadInit(void*)
 {
+  // boost the audio thread's priority
+  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+
   // call user routine
   (*threadProc)(threadData);
   return 0;
@@ -426,7 +424,7 @@ void			WinMedia::audioSleep(
     do {
       // break if buffer has drained enough
       if (isAudioTooEmpty())
-        break;
+	break;
 
       // wait.  break if command was sent.
       if (WaitForSingleObject(audioCommandEvent, 1) == WAIT_OBJECT_0)
@@ -440,126 +438,4 @@ void			WinMedia::audioSleep(
     WaitForSingleObject(audioCommandEvent, timeout);
   }
 }
-
-#if 0
-float*			WinMedia::doReadSound(const char* filename,
-				int& numFrames, int& _rate) const
-{
-  HMMIO audioFile = mmioOpen((char*)filename, NULL, MMIO_READ);
-  if (!audioFile) return NULL;
-
-  // find a RIFF chunk with WAVE type
-  MMCKINFO parentInfo;
-  parentInfo.fccType = mmioFOURCC('W', 'A', 'V', 'E');
-  if (mmioDescend(audioFile, &parentInfo, NULL, MMIO_FINDRIFF) !=
-							MMSYSERR_NOERROR) {
-    mmioClose(audioFile, 0);
-    return NULL;
-  }
-
-  // find FMT sub-chunk
-  MMCKINFO subchunkInfo;
-  subchunkInfo.ckid = mmioFOURCC('f', 'm', 't', ' ');
-  if (mmioDescend(audioFile, &subchunkInfo, &parentInfo, MMIO_FINDCHUNK) !=
-							MMSYSERR_NOERROR) {
-    mmioClose(audioFile, 0);
-    return NULL;
-  }
-
-  // read FMT sub-chunk
-  unsigned char* fmtChunk = new unsigned char[subchunkInfo.cksize];
-  if (!fmtChunk) {
-    mmioClose(audioFile, 0);
-    return NULL;
-  }
-  if (mmioRead(audioFile, (HPSTR)fmtChunk, subchunkInfo.cksize) !=
-						(LONG)subchunkInfo.cksize) {
-    delete[] fmtChunk;
-    mmioClose(audioFile, 0);
-    return NULL;
-  }
-
-  // get FMT data
-  WAVEFORMAT* format = (WAVEFORMAT*)fmtChunk;
-  long channels = (long)format->nChannels;
-  long rate = (long)format->nSamplesPerSec;
-  long width = (long)format->nAvgBytesPerSec / (channels * rate);
-  delete[] fmtChunk;
-  if (width != 1 && width != 2) {
-    mmioClose(audioFile, 0);
-    return NULL;
-  }
-
-  // leave FMT chunk
-  mmioAscend(audioFile, &subchunkInfo, 0);
-
-  // find the DATA sub-chunk
-  subchunkInfo.ckid = mmioFOURCC('d', 'a', 't', 'a');
-  if (mmioDescend(audioFile, &subchunkInfo, &parentInfo, MMIO_FINDCHUNK) !=
-							MMSYSERR_NOERROR) {
-    mmioClose(audioFile, 0);
-    return NULL;
-  }
-
-  // check that there's some data
-  long length = subchunkInfo.cksize / (channels * width);
-  if (length == 0) {
-    mmioClose(audioFile, 0);
-    return NULL;
-  }
-
-  // read data
-  unsigned char* rawData = new unsigned char[subchunkInfo.cksize];
-  if (!rawData || mmioRead(audioFile, (HPSTR)rawData, subchunkInfo.cksize) !=
-						(LONG)subchunkInfo.cksize) {
-    delete[] rawData;
-    mmioClose(audioFile, 0);
-    return NULL;
-  }
-  mmioClose(audioFile, 0);
-
-  // convert to floats
-  int i;
-  const int numSamples = 2 * length;
-  float* data = new float[numSamples];
-  if (!data) {
-    delete[] rawData;
-    return NULL;
-  }
-
-  if (width == 1) {
-    const signed char* inData = (const signed char*)rawData;
-    switch (channels) {
-      case 1:
-	for (i = 0; i < length; i++)
-	  data[2 * i] = data[2 * i + 1] = 257.0f * (float)inData[i];
-	break;
-
-      case 2:
-	for (i = 0; i < numSamples; i++)
-	  data[i] = 257.0f * (float)inData[i];
-	break;
-    }
-  }
-
-  else {
-    const short* inData = (const short*)rawData;
-    switch (channels) {
-      case 1:
-	for (i = 0; i < length; i++)
-	  data[2 * i] = data[2 * i + 1] = (float)inData[i];
-	break;
-
-      case 2:
-	for (i = 0; i < numSamples; i++)
-	  data[i] = (float)inData[i];
-	break;
-    }
-  }
-  delete[] rawData;
-
-  numFrames = (int)length;
-  _rate = (int)rate;
-  return data;
-}
-#endif
+// ex: shiftwidth=2 tabstop=8

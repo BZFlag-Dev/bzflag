@@ -10,7 +10,7 @@ Address.cxx
 ************
 
 // don't want this to get called before GUSI is loaded
-#ifndef GUSI_20 
+#ifndef GUSI_20
   Address			Address::localAddress("");
 #endif
 
@@ -151,7 +151,7 @@ added our own definition block:
   #ifndef setenv
     #define setenv(a,b,c)
   #endif
-  
+
   #ifndef putenv
     #define putenv(a)
   #endif
@@ -174,7 +174,7 @@ LocalPlayer.h
 32: changed function prototype (removed inner const)
 
 #ifdef __MWERKS__
-    const float	(*getLastMotionBBox() )[3] const; 
+    const float	(*getLastMotionBBox() )[3] const;
 #else
     const float		(*getLastMotionBBox() const)[3];
 #endif
@@ -206,9 +206,9 @@ menus.cxx
 3197: I haven't figured out a way to start up the server yet.
 
 #elif defined(macintosh)
-    
+
     setStatus ("Server cannot start, this function is not implemented.");
-    
+
 #else /* defined(_WIN32) */
 
     // UNIX
@@ -243,10 +243,10 @@ network.h
     #define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
     #define accept(a,b,c)            accept(a,b,(unsigned int *)c)
     #define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
-  
+
     #define MAXHOSTNAMELEN 255
   #endif
-    
+
 #endif
 
 *************
@@ -284,18 +284,18 @@ playing.cxx
       if (killerPlayer && victimPlayer && shotId >= 0) {
 	      const ShotPath* shot = killerPlayer->getShot(int(shotId));
 	      if (shot && shot->getFlag() == GenocideFlag)
-	        for (int i = 0; i < numRobots; i++)
-	          if (victimPlayer != robots[i] &&
-		          victimPlayer->getTeam() == robots[i]->getTeam() &&
-		          robots[i]->getTeam() != RogueTeam)
-	              gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+		for (int i = 0; i < numRobots; i++)
+		  if (victimPlayer != robots[i] &&
+			  victimPlayer->getTeam() == robots[i]->getTeam() &&
+			  robots[i]->getTeam() != RogueTeam)
+		      gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
       }
       #endif
 
 
 3193:
 
-#ifndef macintosh    
+#ifndef macintosh
     while (!mainWindow->getQuit() && display->isEventPending())
       doEvent(display);
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,8 +14,9 @@
 // crs 10/26/1997 modified JM's changes
 
 #include "WinWindow.h"
-#include "WinVisual.h"
+#include "OpenGLGState.h"
 #include <stdio.h>
+#include <math.h>
 
 WinWindow*		WinWindow::first = NULL;
 HPALETTE		WinWindow::colormap = NULL;
@@ -23,66 +24,42 @@ HPALETTE		WinWindow::colormap = NULL;
 WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 				BzfWindow(_display),
 				display(_display),
+				visual(*_visual),
+				inDestroy(False),
 				hwnd(NULL),
+				hwndChild(NULL),
 				hRC(NULL),
 				hDC(NULL),
+				hDCChild(NULL),
+				inactiveDueToDeactivate(False),
+				inactiveDueToDeactivateAll(False),
+				useColormap(False),
+				hasGamma(False),
+				has3DFXGamma(False),
+				gammaVal(1.0f),
 				prev(NULL),
 				next(NULL)
 {
-  // let user change video format
-  WinDisplay* winDisplay = (WinDisplay*)display;
-  if (winDisplay->initBeforeWindow())
-    winDisplay->initVideoFormat(NULL);
-
   // make window
   hwnd = CreateWindow("BZFLAG", "bzflag",
-			WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
+			WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP |
+			WS_BORDER | WS_CAPTION,
 			0, 0, 640, 480, NULL, NULL,
 			display->getRep()->hInstance, NULL);
   if (hwnd == NULL) return;
 
-  // let user change video format
-  if (!winDisplay->initBeforeWindow())
-    winDisplay->initVideoFormat(hwnd);
+  // create child window.  OpenGL will bind only to the child window.
+  createChild();
+  if (hwndChild == NULL) return;
 
-  if (display->isFullScreenOnly())
-    setFullscreen();
-
+  // get DC
   hDC = GetDC(hwnd);
 
-  // set pixel format
-  const PIXELFORMATDESCRIPTOR* pfd;
-  const int pixelFormat = _visual->get(hDC, &pfd);
-  if (pixelFormat == 0 || !SetPixelFormat(hDC, pixelFormat, pfd)) {
-    ReleaseDC(hwnd, hDC);
-    DestroyWindow(hwnd);
-    hwnd = NULL;
-    hDC = NULL;
-    return;
-  }
-
-  // get pixel format description
-  PIXELFORMATDESCRIPTOR tmpPFD;
-  DescribePixelFormat(hDC, pixelFormat, sizeof(tmpPFD), &tmpPFD);
-
-  // make colormap
-  if (colormap == NULL && (tmpPFD.dwFlags & PFD_NEED_PALETTE))
-    makeColormap(tmpPFD);
-  if (colormap)
+  // set colormap
+  if (colormap) {
     ::SelectPalette(hDC, colormap, FALSE);
-
-  // make OpenGL context
-  hRC = wglCreateContext(hDC);
-  if (hRC == NULL) {
-    ReleaseDC(hwnd, hDC);
-    DestroyWindow(hwnd);
-    hwnd = NULL;
-    hDC = NULL;
-    return;
-  }
-
-  if (colormap)
     ::RealizePalette(hDC);
+  }
 
   // other initialization
   SetMapMode(hDC, MM_TEXT);
@@ -98,13 +75,10 @@ WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 
 WinWindow::~WinWindow()
 {
-  if (wglGetCurrentContext() == hRC)
-    wglMakeCurrent(NULL, NULL);
-  if (hRC != NULL)
-    wglDeleteContext(hRC);
+  destroyChild();
+
   if (hDC != NULL)
     ReleaseDC(hwnd, hDC);
-
   if (hwnd != NULL)
     DestroyWindow(hwnd);
 
@@ -169,6 +143,7 @@ void			WinWindow::setSize(int width, int height)
   dx -= crect.right;
   dy -= crect.bottom;
   MoveWindow(hwnd, rect.left, rect.top, width + dx, height + dy, FALSE);
+  MoveWindow(hwndChild, 0, 0, width, height, FALSE);
 }
 
 void			WinWindow::setMinSize(int width, int height)
@@ -189,6 +164,11 @@ void			WinWindow::setFullscreen()
     MoveWindow(hwnd, 0, 0,
 		GetDeviceCaps(hDC, HORZRES),
 		GetDeviceCaps(hDC, VERTRES), FALSE);
+
+  // resize child
+  int width, height;
+  getSize(width, height);
+  MoveWindow(hwndChild, 0, 0, width, height, FALSE);
 }
 
 void			WinWindow::warpMouse(int x, int y)
@@ -225,21 +205,220 @@ void			WinWindow::hideMouse()
   // FIXME
 }
 
+void			WinWindow::setGamma(float newGamma)
+{
+  if (!useColormap && !hasGamma && !has3DFXGamma)
+    return;
+
+  // save gamma
+  gammaVal = newGamma;
+
+  // build gamma ramps or adjust colormap
+  if (useColormap) {
+    makeColormap(pfd);
+    paletteChanged();
+  }
+  else {
+    WORD map[6][256];
+    for (int i = 0; i < 256; i++) {
+      BYTE v = getIntensityValue((float)i / 255.0f);
+      map[0][i] = map[1][i] = map[2][i] =
+	map[3][i] = map[4][i] = map[5][i] = (WORD)v + ((WORD)v << 8);
+    }
+    setGammaRamps((const WORD*)map);
+  }
+}
+
+float			WinWindow::getGamma() const
+{
+  return gammaVal;
+}
+
+boolean			WinWindow::hasGammaControl() const
+{
+  return useColormap || hasGamma || has3DFXGamma;
+}
+
 void			WinWindow::makeCurrent()
 {
-  wglMakeCurrent(hDC, hRC);
+  if (hDCChild != NULL)
+    wglMakeCurrent(hDCChild, hRC);
 }
 
 void			WinWindow::swapBuffers()
 {
-  SwapBuffers(hDC);
+  if (hDCChild != NULL)
+    SwapBuffers(hDCChild);
+}
+
+void			WinWindow::makeContext()
+{
+  if (!inactiveDueToDeactivate && !inactiveDueToDeactivateAll)
+    if (hDCChild == NULL)
+      createChild();
+  makeCurrent();
+}
+
+void			WinWindow::freeContext()
+{
+  if (hDCChild != NULL)
+    destroyChild();
+}
+
+void			WinWindow::createChild()
+{
+  // get parent size
+  int width, height;
+  getSize(width, height);
+
+  // make window
+  hwndChild = CreateWindow("BZFLAG", "opengl",
+			WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
+			WS_CHILD | WS_VISIBLE,
+			0, 0, width, height, hwnd, NULL,
+			display->getRep()->hInstance, NULL);
+  if (hwndChild == NULL) return;
+
+  if (display->isFullScreenOnly())
+    setFullscreen();
+
+  // get DC
+  hDCChild = GetDC(hwndChild);
+
+  // force visual to recalculate the PFD
+  visual.reset();
+
+  // set pixel format
+  const PIXELFORMATDESCRIPTOR* tmpPFD;
+  const int pixelFormat = visual.get(hDCChild, &tmpPFD);
+  if (pixelFormat == 0 || !SetPixelFormat(hDCChild, pixelFormat, tmpPFD)) {
+    ReleaseDC(hwndChild, hDCChild);
+    DestroyWindow(hwndChild);
+    hwndChild = NULL;
+    hDCChild = NULL;
+    return;
+  }
+
+  // get pixel format description
+  DescribePixelFormat(hDCChild, pixelFormat, sizeof(pfd), &pfd);
+
+  // make colormap
+  useColormap = ((pfd.dwFlags & PFD_NEED_PALETTE) != 0);
+  if (colormap == NULL && useColormap)
+    makeColormap(pfd);
+  if (colormap)
+    ::SelectPalette(hDCChild, colormap, FALSE);
+
+  // if no colormap then adjust gamma ramps
+  if (!useColormap) {
+    getGammaRamps(origGammaRamps);
+    setGamma(gammaVal);
+  }
+
+  // make OpenGL context
+  hRC = wglCreateContext(hDCChild);
+  if (hRC == NULL) {
+    ReleaseDC(hwndChild, hDCChild);
+    DestroyWindow(hwnd);
+    hwndChild = NULL;
+    hDCChild = NULL;
+    return;
+  }
+
+  if (colormap)
+    ::RealizePalette(hDCChild);
+
+  // other initialization
+  SetMapMode(hDCChild, MM_TEXT);
+}
+
+void			WinWindow::destroyChild()
+{
+  setGammaRamps(origGammaRamps);
+  if (hRC != NULL) {
+    if (wglGetCurrentContext() == hRC)
+      wglMakeCurrent(NULL, NULL);
+    wglDeleteContext(hRC);
+    hRC = NULL;
+  }
+  if (hDCChild != NULL) {
+    ReleaseDC(hwndChild, hDCChild);
+    hDCChild = NULL;
+  }
+  if (hwndChild != NULL) {
+    DestroyWindow(hwndChild);
+    hwndChild = NULL;
+  }
+}
+
+typedef BOOL		(*GammaRamp3DFX)(HDC, LPVOID);
+
+void			WinWindow::getGammaRamps(WORD* ramps)
+{
+  if (hDCChild == NULL)
+    return;
+
+  // see if we've got the 3Dfx gamma ramp extension
+  PROC proc = wglGetProcAddress("wglGetDeviceGammaRamp3DFX");
+  if (proc != NULL) {
+    GammaRamp3DFX wglGetDeviceGammaRamp3DFX = (GammaRamp3DFX)proc;
+    has3DFXGamma = wglGetDeviceGammaRamp3DFX(hDCChild, ramps + 3 * 256);
+  }
+
+  // get device gamma ramps
+  hasGamma = GetDeviceGammaRamp(hDCChild, ramps);
+}
+
+void			WinWindow::setGammaRamps(const WORD* ramps)
+{
+  if (hDCChild == NULL)
+    return;
+
+  if (has3DFXGamma) {
+    PROC proc = wglGetProcAddress("wglSetDeviceGammaRamp3DFX");
+    if (proc != NULL) {
+      GammaRamp3DFX wglSetDeviceGammaRamp3DFX = (GammaRamp3DFX)proc;
+      wglSetDeviceGammaRamp3DFX(hDCChild, (LPVOID)(ramps + 3 * 256));
+    }
+  }
+
+  if (hasGamma)
+    SetDeviceGammaRamp(hDCChild, (LPVOID)ramps);
 }
 
 WinWindow*		WinWindow::lookupWindow(HWND hwnd)
 {
+  if (hwnd == NULL)
+    return NULL;
+
   WinWindow* scan = first;
-  while (scan && scan->hwnd != hwnd) scan = scan->next;
+  while (scan && scan->hwnd != hwnd && scan->hwndChild != hwnd)
+    scan = scan->next;
   return scan;
+}
+
+void			WinWindow::deactivateAll()
+{
+  for (WinWindow* scan = first; scan; scan = scan->next) {
+    scan->freeContext();
+    scan->inactiveDueToDeactivateAll = True;
+  }
+}
+
+void			WinWindow::reactivateAll()
+{
+  boolean anyNewChildren = False;
+  for (WinWindow* scan = first; scan; scan = scan->next) {
+    const boolean hadChild = (scan->hDCChild != NULL);
+    scan->inactiveDueToDeactivateAll = False;
+    scan->makeContext();
+    if (!hadChild && scan->hDCChild != NULL)
+      anyNewChildren = True;
+  }
+
+  // reload context data
+  if (anyNewChildren)
+    OpenGLGState::initContext();
 }
 
 HWND			WinWindow::getHandle() const
@@ -254,6 +433,13 @@ LONG			WinWindow::queryNewPalette()
   HPALETTE oldPalette = ::SelectPalette(hDC, colormap, FALSE);
   ::RealizePalette(hDC);
   ::SelectPalette(hDC, oldPalette, FALSE);
+
+  if (hDCChild != NULL) {
+    oldPalette = ::SelectPalette(hDCChild, colormap, FALSE);
+    ::RealizePalette(hDCChild);
+    ::SelectPalette(hDCChild, oldPalette, FALSE);
+  }
+
   return TRUE;
 }
 
@@ -264,38 +450,72 @@ void			WinWindow::paletteChanged()
   HPALETTE oldPalette = ::SelectPalette(hDC, colormap, FALSE);
   ::RealizePalette(hDC);
   ::SelectPalette(hDC, oldPalette, FALSE);
+
+  if (hDCChild != NULL) {
+    oldPalette = ::SelectPalette(hDCChild, colormap, FALSE);
+    ::RealizePalette(hDCChild);
+    ::SelectPalette(hDCChild, oldPalette, FALSE);
+  }
 }
 
-BYTE			WinWindow::getComponentFromIndex(
+boolean			WinWindow::activate()
+{
+  inactiveDueToDeactivate = False;
+
+  // restore window
+  ShowWindow(hwnd, SW_RESTORE);
+  SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0,
+				SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+
+  // recreate OpenGL context
+  const boolean hadChild = (hDCChild != NULL);
+  makeContext();
+
+  if (!hadChild && hDCChild != NULL) {
+    // reload context data
+    OpenGLGState::initContext();
+
+    // force a redraw
+    callExposeCallbacks();
+
+    return True;
+  }
+
+  return False;
+}
+
+boolean			WinWindow::deactivate()
+{
+  // minimize window while not active.  skip if being destroyed.
+  if (!inDestroy)
+    ShowWindow(hwnd, SW_MINIMIZE);
+
+  // destroy OpenGL context
+  const boolean hadChild = (hDCChild != NULL);
+  freeContext();
+
+  inactiveDueToDeactivate = True;
+  return hadChild;
+}
+
+void			WinWindow::onDestroy()
+{
+  inDestroy = True;
+}
+
+BYTE			WinWindow::getIntensityValue(float i) const
+{
+  if (i <= 0.0f) return 0;
+  if (i >= 1.0f) return 255;
+  i = powf(i, 1.0f / gammaVal);
+  return (BYTE)(0.5f + 255.0f * i);
+}
+
+float			WinWindow::getComponentFromIndex(
 				int i, UINT nbits, UINT shift)
 {
-  static const BYTE wlbthreeto8[] = {
-      0, 0111>>1, 0222>>1, 0333>>1, 0444>>1, 0555>>1, 0666>>1, 0377
-  };
-  static const BYTE wlbtwoto8[] = {
-    0, 0x55, 0xaa, 0xff
-  };
-  static const BYTE wlboneto8[] = {
-      0, 255
-  };
-
-  BYTE val = (BYTE)(i >> shift);
-  switch (nbits) {
-    case 1:
-      val &= 0x1;
-      return wlboneto8[val];
-
-    case 2:
-      val &= 0x3;
-      return wlbtwoto8[val];
-
-    case 3:
-      val &= 0x7;
-      return wlbthreeto8[val];
-
-    default:
-      return 0;
-  }
+  const int mask = (1 << nbits) - 1;
+  return (float)((i >> shift) & mask) / (float)mask;
 }
 
 void			WinWindow::makeColormap(
@@ -313,12 +533,12 @@ void			WinWindow::makeColormap(
   // set the colors in the logical palette
   int i, j;
   for (i = 0; i < n; i++) {
-    logicalPalette->palPalEntry[i].peRed =
-		getComponentFromIndex(i, pfd.cRedBits, pfd.cRedShift);
-    logicalPalette->palPalEntry[i].peGreen =
-		getComponentFromIndex(i, pfd.cGreenBits, pfd.cGreenShift);
-    logicalPalette->palPalEntry[i].peBlue =
-		getComponentFromIndex(i, pfd.cBlueBits, pfd.cBlueShift);
+    logicalPalette->palPalEntry[i].peRed = getIntensityValue(
+		getComponentFromIndex(i, pfd.cRedBits, pfd.cRedShift));
+    logicalPalette->palPalEntry[i].peGreen = getIntensityValue(
+		getComponentFromIndex(i, pfd.cGreenBits, pfd.cGreenShift));
+    logicalPalette->palPalEntry[i].peBlue = getIntensityValue(
+		getComponentFromIndex(i, pfd.cBlueBits, pfd.cBlueShift));
     logicalPalette->palPalEntry[i].peFlags = 0;
   }
 
@@ -401,8 +621,12 @@ void			WinWindow::makeColormap(
   }
 
   // create the palette
-  colormap = ::CreatePalette(logicalPalette);
+  if (colormap == NULL)
+    colormap = ::CreatePalette(logicalPalette);
+  else
+    ::SetPaletteEntries(colormap, 0, n, logicalPalette->palPalEntry + 0);
 
   // free the cruft
   delete[] (void*)logicalPalette;
 }
+// ex: shiftwidth=2 tabstop=8

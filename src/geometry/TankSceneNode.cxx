@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,8 +27,8 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				colorblind(False),
 				hidden(False),
 				invisible(False),
-				style(TankRenderNode::Normal),
 				clip(False),
+				style(TankRenderNode::Normal),
 				lowRenderNode(this),
 				medRenderNode(this),
 				highRenderNode(this),
@@ -162,14 +162,14 @@ void			TankSceneNode::addRenderNodes(
     node->sortOrder(above, towards);
   }
 
-  renderer.addRenderNode(node, &gstate);  
+  renderer.addRenderNode(node, &gstate);
 }
 
 void			TankSceneNode::addShadowNodes(
 				SceneRenderer& renderer)
 {
   if (invisible) return;
-  renderer.addShadowNode(&shadowRenderNode);  
+  renderer.addShadowNode(&shadowRenderNode);
 }
 
 void			TankSceneNode::setColorblind(boolean on)
@@ -520,11 +520,14 @@ TankSceneNode::TankRenderNode::TankRenderNode(
     vel[i][0] = 80.0f * ((float)bzfrand() - 0.5f);
     vel[i][1] = 80.0f * ((float)bzfrand() - 0.5f);
   }
+
+  // watch for context recreation
+  OpenGLGState::registerContextInitializer(initContext, (void*)this);
 }
 
 TankSceneNode::TankRenderNode::~TankRenderNode()
 {
-  // do nothing
+  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
 }
 
 void			TankSceneNode::TankRenderNode::setShadow()
@@ -710,6 +713,16 @@ void			TankSceneNode::TankRenderNode::
   glNormal3f(x, y, z);
 }
 
+void			TankSceneNode::TankRenderNode::doInitContext()
+{
+  freeParts();
+}
+
+void			TankSceneNode::TankRenderNode::initContext(void* self)
+{
+  ((TankSceneNode::TankRenderNode*)self)->doInitContext();
+}
+
 //
 // TankSceneNode::LowTankRenderNode
 //
@@ -734,7 +747,7 @@ GLuint			TankSceneNode::LowTankRenderNode::
 {
   if (parts[style] == 0) {
     prepStyle(style);
-    
+
     parts[style] = glGenLists(5);
     glNewList(parts[style] + Body, GL_COMPILE);
       makeBody();
@@ -758,6 +771,13 @@ GLuint			TankSceneNode::LowTankRenderNode::
   }
 
   return parts[style];
+}
+
+void			TankSceneNode::LowTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
+    parts[i] = 0;
 }
 
 //
@@ -784,7 +804,7 @@ GLuint			TankSceneNode::MedTankRenderNode::
 {
   if (parts[style] == 0) {
     prepStyle(style);
-    
+
     parts[style] = glGenLists(5);
     glNewList(parts[style] + Body, GL_COMPILE);
       makeBody();
@@ -808,6 +828,13 @@ GLuint			TankSceneNode::MedTankRenderNode::
   }
 
   return parts[style];
+}
+
+void			TankSceneNode::MedTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
+    parts[i] = 0;
 }
 
 //
@@ -834,7 +861,7 @@ GLuint			TankSceneNode::HighTankRenderNode::
 {
   if (parts[style] == 0) {
     prepStyle(style);
-    
+
     parts[style] = glGenLists(5);
     glNewList(parts[style] + Body, GL_COMPILE);
       makeBody();
@@ -858,6 +885,13 @@ GLuint			TankSceneNode::HighTankRenderNode::
   }
 
   return parts[style];
+}
+
+void			TankSceneNode::HighTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
+    parts[i] = 0;
 }
 
 //
@@ -975,3 +1009,4 @@ void			TankSceneNode::HighTankRenderNode::makeRightTread()
 {
 #include "models/hitank/rtread.c"
 }
+// ex: shiftwidth=2 tabstop=8

@@ -78,7 +78,7 @@ Address.cxx
 ************
 
 // don't want this to get called before GUSI is loaded
-#ifndef GUSI_20 
+#ifndef GUSI_20
   Address			Address::localAddress("");
 #endif
 

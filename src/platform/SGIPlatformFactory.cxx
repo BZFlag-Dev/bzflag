@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -11,7 +11,7 @@
  */
 
 #include "SGIPlatformFactory.h"
-#include "XDisplay.h"
+#include "SGIDisplay.h"
 #include "XVisual.h"
 #include "XWindow.h"
 #include "SGIMedia.h"
@@ -35,7 +35,7 @@ SGIPlatformFactory::~SGIPlatformFactory()
 BzfDisplay*		SGIPlatformFactory::createDisplay(
 				const char* name, const char*)
 {
-  XDisplay* display = new XDisplay(name);
+  XDisplay* display = new XDisplay(name, new SGIDisplayMode);
   if (!display || !display->isValid()) {
     delete display;
     return NULL;
@@ -59,3 +59,4 @@ BzfMedia*		SGIPlatformFactory::createMedia()
 {
   return new SGIMedia;
 }
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -61,6 +61,7 @@ class OpenGLMaterial {
 			~Rep();
 	void		ref();
 	void		unref();
+	void		execute();
 	static Rep*	getRep(const GLfloat* specular,
 				const GLfloat* emissive,
 				GLfloat shininess);
@@ -68,7 +69,9 @@ class OpenGLMaterial {
 			Rep(const GLfloat* specular,
 				const GLfloat* emissive,
 				GLfloat shininess);
+	static void	initContext(void*);
       public:
+	boolean		init;
 	int		refCount;
 	Rep*		prev;
 	Rep*		next;
@@ -101,3 +104,4 @@ inline GLfloat		OpenGLMaterial::getShininess() const
 }
 
 #endif // BZF_OPENGL_MATERIAL_H
+// ex: shiftwidth=2 tabstop=8

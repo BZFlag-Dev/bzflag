@@ -20,45 +20,45 @@
 
 PlatformFactory*	PlatformFactory::getInstance()
 {
-  
+
   if (!instance)
     instance = new MacPlatformFactory ();
-  
+
   return instance;
 }
 
 BzfDisplay* MacPlatformFactory::createDisplay (const char *name, const char *videoFormat) {
 
     if (!display)
-        
+
       display = new MacDisplay (name, videoFormat);
-            
+
     return display;
 }
 
 BzfVisual* MacPlatformFactory::createVisual (const BzfDisplay *_display) {
 
     if (!visual)
-      
+
       visual = new MacVisual ((const MacDisplay*)_display);
-    
+
     return visual;
 }
 
 BzfWindow* MacPlatformFactory::createWindow (const BzfDisplay *_display, BzfVisual *_visual) {
 
-   
+
     if (!window)
       window = new MacWindow ((const MacDisplay*)_display, (MacVisual*)_visual);
-      
-    return window;    
+
+    return window;
 }
 
 BzfMedia*   MacPlatformFactory::createMedia () {
 
     if (!media)
       media = new MacMedia ();
-    
+
     return media;
 }
 
@@ -80,3 +80,4 @@ MacPlatformFactory::~MacPlatformFactory () {
 
 
 
+// ex: shiftwidth=2 tabstop=8

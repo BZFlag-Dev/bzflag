@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-static const char	copyright[] = "Copyright 1993-1999, Chris Schoeneman";
+static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
+#include "bzsignal.h"
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
@@ -63,14 +63,19 @@ static const char	copyright[] = "Copyright 1993-1999, Chris Schoeneman";
 #include "KeyMap.h"
 #include "Intersect.h"
 #include "Ping.h"
+#include "OpenGLTexture.h"
 
 #include "AList.h"
 BZF_DEFINE_ALIST(ExplosionList, BillboardSceneNode*);
 
+#define MAX_MESSAGE_HISTORY (10)
+BZF_DEFINE_ALIST(MessageHistoryList, BzfString);
+BZF_DEFINE_ALIST(SilenceList, BzfString);
+
 static const float	FlagHelpDuration = 60.0f;
 
 static StartupInfo	startupInfo;
-static KeyMap		keymap;
+static BzfKeyMap		keymap;
 static MainMenu*	mainMenu;
 static ServerLink*	serverLink = NULL;
 static PlayerLink*	playerLink = NULL;
@@ -99,7 +104,6 @@ static boolean		restartOnBase = False;
 static boolean		firstLife = False;
 static boolean		showFPS = False;
 static boolean		showDrawTime = False;
-static boolean		showFlagHelp = False;
 static boolean		pausedByUnmap = False;
 static boolean		unmapped = False;
 static int		preUnmapFormat = -1;
@@ -107,20 +111,30 @@ static double		epochOffset;
 static double		lastEpochOffset;
 static float		clockAdjust = 0.0f;
 static float		pauseCountdown = 0.0f;
+//static float		maxPauseCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static PlayingCallbackList	playingCallbacks;
 boolean			gameOver = False;
+static boolean		Observer = False;
+static OpenGLTexture*	tankTexture = NULL;
 static ExplosionList	explosions;
 static ExplosionList	prototypeExplosions;
 static int		savedVolume = -1;
+static boolean		grabMouseAlways = False;
 
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
+
+static MessageHistoryList	messageHistory;
+static int		messageHistoryIndex = 0;
+static SilenceList	silencePlayers;
 
 static void		restartPlaying();
 static void		setTarget();
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
+static Player*		getPlayerByName( const char* name );
+static void		addMessage(const Player* player, const BzfString& msg, const GLfloat* color = NULL);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 
 enum BlowedUpReason {
@@ -144,8 +158,8 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 
 #ifdef ROBOT
 static void		handleMyTankKilled();
-static ServerLink*	robotServer[20];
-static RobotPlayer*	robots[20];
+static ServerLink*	robotServer[MAX_ROBOTS];
+static RobotPlayer*	robots[MAX_ROBOTS];
 static int		numRobots = 0;
 #endif
 
@@ -156,12 +170,31 @@ StartupInfo::StartupInfo() : hasConfiguration(False),
 				autoConnect(False),
 				serverPort(ServerPort),
 				ttl(DefaultTTL),
-				team(RogueTeam)
+				team(RogueTeam),
+				listServerURL(DefaultListServerURL),
+				listServerPort(ServerPort + 1)
 {
   strcpy(serverName, "");
   strcpy(multicastInterface, "");
   strcpy(callsign, "");
   strcpy(email, "");
+  joystickName = "joystick";
+  joystick = False;
+}
+
+//
+// should we grab the mouse?
+//
+
+static void		setGrabMouse(boolean grab)
+{
+  grabMouseAlways = grab;
+}
+
+static boolean		shouldGrabMouse()
+{
+  return grabMouseAlways && !unmapped &&
+			(myTank == NULL || !myTank->isPaused());
 }
 
 //
@@ -198,13 +231,20 @@ StartupInfo*		getStartupInfo()
   return &startupInfo;
 }
 
-KeyMap&			getKeyMap()
+BzfKeyMap&			getBzfKeyMap()
 {
   return keymap;
 }
 
 boolean			setVideoFormat(int index, boolean test)
 {
+#if defined(_WIN32)
+  // give windows extra time to test format (context reloading takes a while)
+  static const float testDuration = 10.0f;
+#else
+  static const float testDuration = 5.0f;
+#endif
+
   // ignore bad formats or when the format test timer is running
   if (testVideoFormatTimer != 0.0f || !display->isValidResolution(index))
     return False;
@@ -220,8 +260,8 @@ boolean			setVideoFormat(int index, boolean test)
   mainWindow->setFullscreen();
   mainWindow->getWindow()->callResizeCallbacks();
   mainWindow->warpMouse();
-  if (test) testVideoFormatTimer = 5.0f;
-  else if (index != display->getDefaultResolution()) mainWindow->grabMouse();
+  if (test) testVideoFormatTimer = testDuration;
+  else if (shouldGrabMouse()) mainWindow->grabMouse();
   return True;
 }
 
@@ -275,9 +315,8 @@ void			joinGameHandler(boolean okay, void*)
 
 static void		dying(int sig)
 {
-#if !defined(_WIN32)
-  display->setResolution(display->getDefaultResolution());
-#endif
+  bzSignal(sig, SIG_DFL);
+  display->setDefaultResolution();
   raise(sig);
 }
 
@@ -287,7 +326,7 @@ static void		dying(int sig)
 
 static void		suicide(int sig)
 {
-  signal(sig, SIG_PF(suicide));
+  bzSignal(sig, SIG_PF(suicide));
   if (mainWindow) mainWindow->setQuit();
 }
 
@@ -297,7 +336,7 @@ static void		suicide(int sig)
 
 static void		hangup(int sig)
 {
-  signal(sig, SIG_PF(hangup));
+  bzSignal(sig, SIG_PF(hangup));
   serverDied = True;
   serverError = True;
 }
@@ -315,6 +354,19 @@ class ComposeDefaultKey : public HUDuiDefaultKey {
 boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   boolean sendIt;
+  if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
+    // jump while typing
+    myTank->jump();
+  }
+
+  if (!myTank->isKeyboardMoving()) {
+    if ((key.button == BzfKeyEvent::Up) ||
+	(key.button == BzfKeyEvent::Down) ||
+	(key.button == BzfKeyEvent::Left) ||
+	(key.button == BzfKeyEvent::Right))
+      return True;
+  }
+
   switch (key.ascii) {
     case 3:	// ^C
     case 27:	// escape
@@ -334,22 +386,142 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   if (sendIt) {
     BzfString message = hud->getComposeString();
     if (message.getLength() > 0) {
-      char messageBuffer[MessageLen];
-      memset(messageBuffer, 0, MessageLen);
-      strncpy(messageBuffer, message, MessageLen);
-      nboPackString(messageMessage + PlayerIdPLen + 2,
-					messageBuffer, MessageLen);
-      serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+      const char* silence = message.getString();
+      if (strncmp(silence, "SILENCE", 7) == 0) {
+	Player *loudmouth = getPlayerByName(silence + 8);
+	if (loudmouth) {
+	  silencePlayers.append(silence + 8);
+	  BzfString message = "Silenced ";
+	  message += (silence + 8);
+	  addMessage(NULL, message);
+	}
+      }
+      else if (strncmp(silence, "UNSILENCE", 9) == 0) {
+	Player *loudmouth = getPlayerByName(silence + 10);
+	if (loudmouth) {
+	  for (int i = 0; i < silencePlayers.getLength(); i++) {
+	    if (strcmp(silencePlayers[i], silence + 10) == 0) {
+	      silencePlayers.remove(i);
+	      BzfString message = "Unsilenced ";
+	      message += (silence + 10);
+	      addMessage(NULL, message);
+	      break;
+	    }
+	  }
+	}
+      }
+      else {
+	int i, mhLen = messageHistory.getLength();
+	for (i = 0; i < mhLen; i++) {
+	  if (messageHistory[i] == message) {
+	    messageHistory.rotate( i, 0 );
+	    break;
+	  }
+	}
+	if (i == mhLen) {
+	  if (mhLen >= MAX_MESSAGE_HISTORY)
+	    messageHistory.remove( mhLen - 1 );
+	  messageHistory.prepend( message );
+	}
+
+	char messageBuffer[MessageLen];
+	memset(messageBuffer, 0, MessageLen);
+	strncpy(messageBuffer, message, MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen + 2, messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+      }
     }
   }
 
-  hud->setComposing(NULL);
+  messageHistoryIndex = 0;
+  hud->setComposing(BzfString());
   HUDui::setDefaultKey(NULL);
   return True;
 }
 
 boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
+  if (!myTank->isKeyboardMoving()) {
+    if (key.button == BzfKeyEvent::Up) {
+      if (messageHistoryIndex < messageHistory.getLength()) {
+	hud->setComposeString(messageHistory[messageHistoryIndex]);
+	messageHistoryIndex++;
+      }
+      else
+	hud->setComposeString(BzfString());
+      return True;
+    }
+    else if (key.button == BzfKeyEvent::Down) {
+      if (messageHistoryIndex > 0){
+	messageHistoryIndex--;
+	hud->setComposeString(messageHistory[messageHistoryIndex]);
+      }
+      else
+	hud->setComposeString(BzfString());
+      return True;
+    }
+    else if (key.button == BzfKeyEvent::Left || key.button==BzfKeyEvent::Right) {
+      const Player *recipient = myTank->getRecipient();
+      if(!recipient) {
+	for (int i = 0; i < maxPlayers; i++) {
+	  if (player[i]) {
+	    myTank->setRecipient(player[i]);
+	    break;
+	  }
+	}
+      }
+      else {
+	const PlayerId id = recipient->getId();
+	int rindex = 0;
+	for (int i = 0; i < maxPlayers; i++) {
+	  if (player[i] && player[i]->getId() == id) rindex = i; }
+	if (key.button == BzfKeyEvent::Left) {
+	  for (int i = rindex-1; i >= 0; i--) {
+	    if (player[i]) {
+	      myTank->setRecipient(player[i]);
+	      break;
+	    }
+	  }
+	  if (recipient == myTank->getRecipient()) {
+	    for (int i = maxPlayers-1; i >=0; i--) {
+	      if (player[i]) {
+		myTank->setRecipient(player[i]);
+		break;
+	      }
+	    }
+	  }
+	}
+	else
+	{
+	  for (int i = rindex+1; i < maxPlayers; i++) {
+	    if (player[i]) {
+	      myTank->setRecipient(player[i]);
+	      break;
+	    }
+	  }
+	  if (recipient == myTank->getRecipient()) {
+	    for (int i = 0; i < maxPlayers; i++) {
+	      if (player[i]) {
+		myTank->setRecipient(player[i]);
+		break;
+	      }
+	    }
+	  }
+	}
+      }
+      recipient = myTank->getRecipient();
+      if (recipient) {
+	void* buf = messageMessage;
+	buf = recipient->getId().pack(buf);
+	buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	BzfString composePrompt = "Send to ";
+	composePrompt += recipient->getCallSign();
+	composePrompt += ": ";
+	hud->setComposing(composePrompt);
+      }
+      return False;
+    }
+  }
   return keyPress(key);
 }
 
@@ -357,66 +529,82 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 // user input handling
 //
 
+#if defined(DEBUG)
 #define FREEZING
-#define ROAMING
 #define SNAPPING
+#endif
 #if defined(FREEZING)
 static boolean		motionFreeze = False;
 #endif
-#if defined(ROAMING)
-static boolean		roaming = False, roamTrack = False;
-static float		roamPos[3] = { 0.0f, 0.0f, MuzzleHeight }, roamDPos[3];
-static float		roamTheta = 0.0f, roamDTheta;
-static float		roamPhi = 0.0f, roamDPhi;
-static float		roamZoom = 60.0f, roamDZoom;
-#endif
+static boolean		roaming = False;
+enum roamingView {
+  roamViewFree = 0,
+  roamViewTrack,
+  roamViewFollow,
+  roamViewFP,
+  roamViewFlag,
+  roamViewCount
+} roamView = roamViewFree;
+static int		roamTrackTank = 0, roamTrackFlag = 0;
+static float		roamPos[3] = { 0.0f, 0.0f, MuzzleHeight },
+			roamDPos[3] = {0.0f, 0.0f, 0.0f};
+static float		roamTheta = 0.0f, roamDTheta = 0.0f;
+static float		roamPhi = 0.0f, roamDPhi = 0.0f;
+static float		roamZoom = 60.0f, roamDZoom = 0.0f;
 
-static void		doMotion()
+static void setRoamingLabel()
 {
-#if defined(FREEZING)
-  if (motionFreeze) return;
-#endif
+  if (player[roamTrackTank]) {
+    switch (roamView) {
+      case roamViewTrack:
+	hud->setRoamingLabel(BzfString("Tracking ") +
+			     player[roamTrackTank]->getCallSign());
+	break;
+  
+      case roamViewFollow:
+	hud->setRoamingLabel(BzfString("Following ") +
+			     player[roamTrackTank]->getCallSign());
+	break;
+  
+      case roamViewFP:
+	hud->setRoamingLabel(BzfString("Driving with ") +
+			     player[roamTrackTank]->getCallSign());
+	break;
 
-  // get mouse position
-  int mx, my;
-  mainWindow->getMousePosition(mx, my);
+      case roamViewFlag:
+	hud->setRoamingLabel(BzfString("Tracking ") +
+			     Flag::getName(world->getFlag(roamTrackFlag).id) +
+			     " Flag");
+	break;
 
-  // calculate desired rotation
-  const int noMotionSize = hud->getNoMotionSize();
-  const int maxMotionSize = hud->getMaxMotionSize();
-  float rotation = 0.0f;
-  if (mx < -noMotionSize) {
-    rotation = float(-mx - noMotionSize) / float(maxMotionSize);
-    if (rotation > 1.0f) rotation = 1.0f;
+      default:
+	hud->setRoamingLabel(BzfString("Roaming"));
+	break;
+    }
   }
-  else if (mx > noMotionSize) {
-    rotation = -float(mx - noMotionSize) / float(maxMotionSize);
-    if (rotation < -1.0f) rotation = -1.0f;
-  }
-  myTank->setDesiredAngVel(rotation);
+  else
+    hud->setRoamingLabel("Roaming");
+}
 
-  // calculate desired speed
-  float speed = 0.0f;
-  if (my < -noMotionSize) {
-    speed = float(-my - noMotionSize) / float(maxMotionSize);
-    if (speed > 1.0f) speed = 1.0f;
-  }
-  else if (my > noMotionSize) {
-    speed = -float(my - noMotionSize) / float(maxMotionSize);
-    if (speed < -0.5f) speed = -0.5f;
-  }
-  myTank->setDesiredSpeed(speed);
+static void		showKeyboardStatus()
+{
+  if (myTank->isKeyboardMoving())
+    controlPanel->addMessage("Keyboard movement");
+  else if (mainWindow->joystick())
+    controlPanel->addMessage("Joystick movement");
+  else
+    controlPanel->addMessage("Mouse movement");
 }
 
 static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 {
-  if (keymap.isMappedTo(KeyMap::TimeForward, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::TimeForward, key)) {
     // plus five minutes
     if (pressed) clockAdjust += 5.0f * 60.0f;
     return True;
   }
 
-  else if (keymap.isMappedTo(KeyMap::TimeBackward, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::TimeBackward, key)) {
     // minus five minutes
     if (pressed) clockAdjust -= 5.0f * 60.0f;
     return True;
@@ -427,7 +615,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
     return True;
   }
 
-  else if (keymap.isMappedTo(KeyMap::Quit, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Quit, key)) {
     getMainWindow()->setQuit();
     return True;
   }
@@ -438,7 +626,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
       case 'T':
       case 't':
 	// toggle frames-per-second display
-	if (keymap.isMapped(key.ascii) == KeyMap::LastKey) {
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) {
 	    showFPS = !showFPS;
 	    if (!showFPS) hud->setFPS(-1.0);
@@ -450,7 +638,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
       case 'Y':
       case 'y':
 	// toggle milliseconds for drawing
-	if (keymap.isMapped(key.ascii) == KeyMap::LastKey) {
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) {
 	    showDrawTime = !showDrawTime;
 	    if (!showDrawTime) hud->setDrawTime(-1.0);
@@ -459,19 +647,40 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 	}
 	break;
 
+/* XXX -- for testing forced recreation of OpenGL context
+      case 'o':
+	if (pressed) {
+	  // destroy OpenGL context
+	  getMainWindow()->getWindow()->freeContext();
+
+	  // recreate OpenGL context
+	  getMainWindow()->getWindow()->makeContext();
+
+	  // force a redraw (mainly for control panel)
+	  getMainWindow()->getWindow()->callExposeCallbacks();
+
+	  // cause sun/moon to be repositioned immediately
+	  lastEpochOffset = epochOffset - 5.0;
+
+	  // reload display lists and textures and initialize other state
+	  OpenGLGState::initContext();
+	}
+	break;
+*/
+
       case ']':
       case '}':
 	// plus 30 seconds
-	if (keymap.isMapped(key.ascii) == KeyMap::LastKey) {
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) clockAdjust += 30.0f;
 	  return True;
 	}
 	break;
-  
+
       case '[':
       case '{':
 	// minus 30 seconds
-	if (keymap.isMapped(key.ascii) == KeyMap::LastKey) {
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) clockAdjust -= 30.0f;
 	  return True;
 	}
@@ -516,9 +725,12 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       int w = mainWindow->getWidth();
       int h = mainWindow->getHeight();
       unsigned char* b = (unsigned char*)malloc(w * h * 3);
-      glReadPixels(0, 0, w, h, GL_RED, GL_UNSIGNED_BYTE, b + 0 * w * h);
-      glReadPixels(0, 0, w, h, GL_GREEN, GL_UNSIGNED_BYTE, b + 1 * w * h);
-      glReadPixels(0, 0, w, h, GL_BLUE, GL_UNSIGNED_BYTE, b + 2 * w * h);
+      //glReadPixels(0, 0, w, h, GL_RED, GL_UNSIGNED_BYTE, b + 0 * w * h);
+      //glReadPixels(0, 0, w, h, GL_GREEN, GL_UNSIGNED_BYTE, b + 1 * w * h);
+      //glReadPixels(0, 0, w, h, GL_BLUE, GL_UNSIGNED_BYTE, b + 2 * w * h);
+      // use something like netpbm and the following command to get usable images
+      // rawtoppm -rgb 640 480 bzfi0000.raw | pnmflip -tb | pnmtojpeg --quality=100 > test.jpg
+      glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
       fwrite(b, 3 * w * h, 1, f);
       free(b);
       fclose(f);
@@ -531,89 +743,205 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     // toggle motion freeze
     motionFreeze = !motionFreeze;
   }
+  //  else
 #endif
-#if defined(ROAMING)
-  if (key.ascii == '~' && pressed) {
-    // toggle roaming
-    roaming = !roaming;
-  }
-  else if (roaming && pressed) {
+  if (roaming) {
+    bool roamingkey = true;
     switch (key.button) {
       case BzfKeyEvent::Left:
-	roamDTheta = 60.0f * (roamZoom / 90.0f);
+	if (pressed) {
+	  if (key.shift == BzfKeyEvent::ShiftKey)
+	    roamDPos[1] =  4.0f * TankSpeed;
+	  else
+	    roamDTheta = 90.0f * (roamZoom / 90.0f);
+	}
+	else
+	  roamDTheta = roamDPos[1] = 0.0f;
 	break;
 
       case BzfKeyEvent::Right:
-	roamDTheta = -60.0f * (roamZoom / 90.0f);
+	if (pressed) {
+	  if (key.shift == BzfKeyEvent::ShiftKey)
+	    roamDPos[1] = -4.0f * TankSpeed;
+	  else
+	    roamDTheta = -90.0f * (roamZoom / 90.0f);
+	}
+	else
+	  roamDTheta = roamDPos[1] = 0.0f;
 	break;
 
       case BzfKeyEvent::Up:
-	roamDPhi = 60.0f * (roamZoom / 90.0f);
+	if (pressed) {
+	  if (key.shift == BzfKeyEvent::ShiftKey)
+	    roamDPos[0] =  4.0f * TankSpeed;
+	  else if (key.shift == BzfKeyEvent::AltKey)
+	    roamDPos[2] =  4.0f * TankSpeed;
+	  else
+	    roamDPhi = -60.0f * (roamZoom / 90.0f);
+	}
+	else
+	  roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
 	break;
 
       case BzfKeyEvent::Down:
-	roamDPhi = -60.0f * (roamZoom / 90.0f);
+	if (pressed)
+	{
+	  if (key.shift == BzfKeyEvent::ShiftKey)
+	    roamDPos[0] = -4.0f * TankSpeed;
+	  else if (key.shift == BzfKeyEvent::AltKey)
+	    roamDPos[2] = -4.0f * TankSpeed;
+	  else
+	    roamDPhi = 60.0f * (roamZoom / 90.0f);
+	}
+	else
+	  roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
 	break;
 
-      case BzfKeyEvent::End:
-	roamDPos[0] = -4.0f * TankSpeed;
-	break;
+      case BzfKeyEvent::F6:
+	if (pressed) {
+	  if (roamView == roamViewFree)
+	    break;
+	  if (roamView == roamViewFlag) {
+	    // search next team flag
+	    const int maxFlags = world->getMaxFlags();
+	    for (int i = 1; i < maxFlags; i++) {
+	      int j = (roamTrackFlag - i + maxFlags) % maxFlags;
+	      const Flag& flag = world->getFlag(j);
+	      if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+		roamTrackFlag = j;
+		break;
+	      }
+	    }
+	  }
+	  else {
+	    for (int i = 1; i < maxPlayers; i++) {
+	      int j = (roamTrackTank - i + maxPlayers) % maxPlayers;
+	      if (player[j] && player[j]->isAlive()) {
+		roamTrackTank = j;
+		break;
+	      }
+	    }
+	  }
+	  setRoamingLabel();
+	 }
+	 break;
 
-      case BzfKeyEvent::Home:
-	roamDPos[0] =  4.0f * TankSpeed;
-	break;
-
-      case BzfKeyEvent::Delete:
-	roamDPos[1] =  4.0f * TankSpeed;
-	break;
-
-      case BzfKeyEvent::PageDown:
-	roamDPos[1] = -4.0f * TankSpeed;
-	break;
-
-      case BzfKeyEvent::Insert:
-	roamDPos[2] = -4.0f * TankSpeed;
-	break;
-
-      case BzfKeyEvent::PageUp:
-	roamDPos[2] =  4.0f * TankSpeed;
-	break;
-
-      case BzfKeyEvent::F9:
-	roamDZoom =  30.0;
-	break;
-
-      case BzfKeyEvent::F10:
-	roamDZoom = -30.0;
+      case BzfKeyEvent::F7:
+	if (pressed) {
+	  if (roamView == roamViewFree)
+	    break;
+	  if (roamView == roamViewFlag) {
+	    // search previous team flag
+	    const int maxFlags = world->getMaxFlags();
+	    for (int i = 1; i < maxFlags; i++) {
+	      int j = (roamTrackFlag + i) % maxFlags;
+	      const Flag& flag = world->getFlag(j);
+	      if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+		roamTrackFlag = j;
+		break;
+	      }
+	    }
+	  }
+	  else {
+	    for (int i = 1; i < maxPlayers; i++) {
+	      int j = (roamTrackTank + i) % maxPlayers;
+	      if (player[j] && player[j]->isAlive()) {
+		    roamTrackTank = j;
+		    break;
+	      }
+	    }
+	  }
+	  setRoamingLabel();
+	}
 	break;
 
       case BzfKeyEvent::F8:
-	roamTrack = !roamTrack;
+	if (pressed) {
+	  roamView = roamingView((roamView + 1) % roamViewCount);
+	  if (roamView == roamViewFlag) {
+	    const int maxFlags = world->getMaxFlags();
+	    bool found = false;
+	    for(int i = 0; i < maxFlags; i++) {
+	      const Flag& flag = world->getFlag(i);
+	      if(flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+		roamTrackFlag = i;
+		found = true;
+		break;
+	      }
+	    }
+	    if(!found)
+	      roamView = roamViewFree;
+	  }
+	  else if(roamView == roamViewTrack || roamView == roamViewFollow ||
+	        roamView == roamViewFP) {
+	    if (!player[roamTrackTank]->isAlive()) {
+	      bool found = false;
+	      for(int i = 0; i < maxPlayers; i++) {
+		if(player[i] && player[i]->isAlive()) {
+		  roamTrackTank = i;
+		  found = true;
+		  break;
+		}
+	      }
+	      if(!found)
+		roamView = roamViewFree;
+	    }
+	  }
+	  setRoamingLabel();
+	}
+	break;
+
+      case BzfKeyEvent::F9:
+	if (pressed)
+	  roamDZoom =  50.0;
+	else
+	  roamDZoom = 0.0;
+	break;
+
+      case BzfKeyEvent::F10:
+	if (pressed)
+	  roamDZoom = -50.0;
+	else
+	  roamDZoom = 0.0;
+	break;
+
+      case BzfKeyEvent::F11:
+	if (pressed)
+	  roamZoom = 60.0;
+
+      default:
+	roamingkey = false;
 	break;
     }
+    if (roamingkey)
+      return;
   }
-#endif
+  //  else
 
-  if (keymap.isMappedTo(KeyMap::FireShot, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::FireShot, key)) {
     fireButton = pressed;
-    if (pressed && myTank->isAlive())
+    if (pressed && myTank->isAlive() && !Observer)
       myTank->fireShot();
   }
 
-  else if (keymap.isMappedTo(KeyMap::DropFlag, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::DropFlag, key)) {
     if (pressed) {
       FlagId flagId = myTank->getFlag();
       if (flagId != NoFlag && !myTank->isPaused() &&
 	  Flag::getType(flagId) != FlagSticky &&
 	  !(flagId == PhantomZoneFlag && myTank->isFlagActive()) &&
 	  !(flagId == OscOverthrusterFlag &&
-	    myTank->getLocation() == LocalPlayer::InBuilding))
+	  myTank->getLocation() == LocalPlayer::InBuilding)) {
 	serverLink->sendDropFlag(myTank->getPosition());
+		// changed: on windows it may happen the MsgDropFlag
+		// never comes back to us, so we drop it right away
+		handleFlagDropped(myTank);
+	  }
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::Identify, key)) {
-    if (pressed && !gameOver && !myTank->isAlive() && !myTank->isExploding()) {
+  else if (keymap.isMappedTo(BzfKeyMap::Identify, key)) {
+    if (pressed && !gameOver && !Observer && !myTank->isAlive() && !myTank->isExploding()) {
       restartPlaying();
     }
 
@@ -624,23 +952,25 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::Jump, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
     if (pressed) myTank->jump();
   }
 
-  else if (keymap.isMappedTo(KeyMap::Binoculars, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Binoculars, key)) {
     if (pressed) {
       if (myTank->getFlag() != WideAngleFlag)
 	myTank->setMagnify(1 - myTank->getMagnify());
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::SendAll, key) ||
-	   keymap.isMappedTo(KeyMap::SendTeam, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::SendAll, key) ||
+	   keymap.isMappedTo(BzfKeyMap::SendTeam, key) ||
+	   keymap.isMappedTo(BzfKeyMap::SendNemesis, key) ||
+	   keymap.isMappedTo(BzfKeyMap::SendRecipient, key)) {
     // start composing a message
     if (pressed) {
-      const char* composePrompt;
-      if (keymap.isMappedTo(KeyMap::SendAll, key)) {
+      BzfString composePrompt;
+      if (keymap.isMappedTo(BzfKeyMap::SendAll, key)) {
 	void* buf = messageMessage;
 	buf = nboPackUInt(buf, 0);
 	buf = nboPackShort(buf, 0);
@@ -648,7 +978,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	buf = nboPackUShort(buf, uint16_t(RogueTeam));
 	composePrompt = "Send to all: ";
       }
-      else {
+      else if (keymap.isMappedTo(BzfKeyMap::SendTeam, key)) {
 	void* buf = messageMessage;
 	buf = nboPackUInt(buf, 0);
 	buf = nboPackShort(buf, 0);
@@ -656,46 +986,92 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
 	composePrompt = "Send to teammates: ";
       }
+      else if (keymap.isMappedTo(BzfKeyMap::SendNemesis, key)) {
+	const Player *nemesis = myTank->getNemesis();
+	if (!nemesis) return;
+
+	void* buf = messageMessage;
+	buf = nemesis->getId().pack(buf);
+	buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	composePrompt = "Send to ";
+	composePrompt += nemesis->getCallSign();
+	composePrompt += ": ";
+      }
+      else {
+	const Player *recipient = myTank->getRecipient();
+	if (!recipient) {
+	  for (int i = 0; i < maxPlayers; i++) {
+	    if (player[i]) {
+	      myTank->setRecipient(player[i]);
+	      break;
+	    }
+	  }
+	}
+	recipient = myTank->getRecipient();
+	if (recipient) {
+	  void* buf = messageMessage;
+	  buf = recipient->getId().pack(buf);
+	  buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	  composePrompt = "Send to ";
+	  composePrompt += recipient->getCallSign();
+	  composePrompt += ": ";
+	}
+      }
+
       // to send to a player use:
       //   buf = myTank->getId().pack(buf);
       //   buf = nboPackUShort(buf, uint16_t(RogueTeam));
+      messageHistoryIndex = 0;
       hud->setComposing(composePrompt);
       HUDui::setDefaultKey(&composeKeyHandler);
     }
   }
-
-  else if (keymap.isMappedTo(KeyMap::Score, key)) {
-    // toggle score board
+  else if (keymap.isMappedTo(BzfKeyMap::ScrollBackward, key)) {
+    // scroll message list backward
     if (pressed) {
-      hud->setScore(!hud->getScore());
+      controlPanel->setMessagesOffset(2,1);
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::FlagHelp, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::ScrollForward, key)) {
+    // scroll message list forward
+    if (pressed) {
+      controlPanel->setMessagesOffset(-2,1);
+    }
+  }
+
+  else if (keymap.isMappedTo(BzfKeyMap::Score, key)) {
+    // toggle score board
+    if (pressed) {
+      sceneRenderer->setScore(!sceneRenderer->getScore());
+    }
+  }
+
+  else if (keymap.isMappedTo(BzfKeyMap::FlagHelp, key)) {
     // toggle flag help
     if (pressed) {
-      showFlagHelp = !showFlagHelp;
-      if (!showFlagHelp) hud->setFlagHelp(NoFlag, 0.0);
+      sceneRenderer->setShowFlagHelp(!sceneRenderer->getShowFlagHelp());
+      if (!sceneRenderer->getShowFlagHelp()) hud->setFlagHelp(NoFlag, 0.0);
       else hud->setFlagHelp(myTank->getFlag(), FlagHelpDuration);
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::ShortRange, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::ShortRange, key)) {
     // smallest radar range
     if (pressed) radar->setRange(RadarLowRange);
   }
 
-  else if (keymap.isMappedTo(KeyMap::MediumRange, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::MediumRange, key)) {
     // medium radar range
     if (pressed) radar->setRange(RadarMedRange);
   }
 
-  else if (keymap.isMappedTo(KeyMap::LongRange, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::LongRange, key)) {
     // largest radar range
     if (pressed) radar->setRange(RadarHiRange);
   }
 
-  else if (keymap.isMappedTo(KeyMap::Pause, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Pause, key)) {
     // pause/resume
     if (pressed && !pausedByUnmap) {
       if (myTank->isAlive()) {
@@ -708,6 +1084,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	    setSoundVolume(savedVolume);
 	    savedVolume = -1;
 	  }
+
+	  // grab mouse
+	  if (shouldGrabMouse())
+	    mainWindow->grabMouse();
 	}
 	else if (pauseCountdown > 0.0f) {
 	  pauseCountdown = 0.0f;
@@ -722,7 +1102,170 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       }
     }
   }
+  else if (key.ascii == 0 &&
+	   key.button >= BzfKeyEvent::F1 &&
+	   key.button <= BzfKeyEvent::F10 &&
+	   (key.shift & (BzfKeyEvent::ControlKey +
+			 BzfKeyEvent::AltKey)) != 0) {
+    // [Ctrl]-[Fx] is message to team
+    // [Alt]-[Fx] is message to all
+    if (pressed) {
+      char name[32];
+      int msgno = (key.button - BzfKeyEvent::F1) + 1;
+      void* buf = messageMessage;
+      buf = nboPackUInt(buf, 0);
+      buf = nboPackShort(buf, 0);
+      buf = nboPackShort(buf, 0);
+      if (key.shift == BzfKeyEvent::ControlKey) {
+	sprintf(name, "quickTeamMessage%d", msgno);
+	buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
+      } else {
+	sprintf(name, "quickMessage%d", msgno);
+	buf = nboPackUShort(buf, uint16_t(RogueTeam));
+      }
+      if (resources->hasValue(name)) {
+	char messageBuffer[MessageLen];
+	memset(messageBuffer, 0, MessageLen);
+	strncpy(messageBuffer,
+		resources->getValue(name).getString(),
+		MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen + 2,
+		      messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+      }
+    }
+  }
+  else if (keymap.isMappedTo(BzfKeyMap::SlowKeyboardMotion, key)) {
+    if (myTank->isKeyboardMoving())
+      myTank->setSlowKeyboard(pressed);
+  }
+  // Might be a direction key. Save it for later.
+  else if (myTank->isAlive()) {
+    if (!myTank->isKeyboardMoving() && pressed)
+      switch (key.button)
+      {
+      case BzfKeyEvent::Left:
+      case BzfKeyEvent::Right:
+      case BzfKeyEvent::Up:
+      case BzfKeyEvent::Down:
+	myTank->setKeyboardMoving(True);
+	showKeyboardStatus();
+	break;
+      }
+    if (myTank->isKeyboardMoving())
+      myTank->setKey(key.button, pressed);
+  }
 }
+
+static float getKeyValue(boolean pressed)
+{
+  if (pressed)
+    return 1;
+  return 0;
+}
+
+static void		doMotion()
+{
+#if defined(FREEZING)
+  if (motionFreeze) return;
+#endif
+
+  float rotation, speed;
+
+  if (myTank->isKeyboardMoving()) {
+    rotation = myTank->getKeyboardAngVel();
+    speed = myTank->getKeyboardSpeed();
+
+    switch (myTank->getKeyButton())
+    {
+    case BzfKeyEvent::Left:
+      rotation = getKeyValue(myTank->getKeyPressed());
+      break;
+    case BzfKeyEvent::Right:
+      rotation = - getKeyValue(myTank->getKeyPressed());
+      break;
+    case BzfKeyEvent::Up:
+      speed = getKeyValue(myTank->getKeyPressed());
+      break;
+    case BzfKeyEvent::Down:
+      speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
+      break;
+    }
+
+    myTank->setKeyboardAngVel(rotation);
+    myTank->setKeyboardSpeed(speed);
+    myTank->resetKey();
+
+    if (myTank->getMagnify())
+      rotation *= 0.2f;
+    if (myTank->hasSlowKeyboard()) {
+      rotation /= 2.0f;
+      speed /= 2.0f;
+    }
+  }
+  else {
+    // get mouse position
+    int mx, my;
+    if (mainWindow->joystick()) {
+      mainWindow->getJoyPosition(mx, my);
+
+      static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
+				BzfKeyEvent::MiddleMouse,
+				BzfKeyEvent::RightMouse,
+				BzfKeyEvent::F1,
+				BzfKeyEvent::F2,
+				BzfKeyEvent::F3,
+				BzfKeyEvent::F4,
+				BzfKeyEvent::F5,
+				BzfKeyEvent::F6,
+				BzfKeyEvent::F7,
+				BzfKeyEvent::F8,
+				BzfKeyEvent::F9
+      };
+
+      static unsigned long old_buttons = 0;
+      unsigned long new_buttons = mainWindow->getJoyButtonSet();
+      if (old_buttons != new_buttons)
+	for (int j = 0; j<12; j++)
+	  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
+	    BzfKeyEvent ev;
+	    ev.button = button_map[j];
+	    ev.ascii = 0;
+	    ev.shift = 0;
+	    doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
+	  }
+      old_buttons = new_buttons;
+    } else
+      mainWindow->getMousePosition(mx, my);
+
+    // calculate desired rotation
+    const int noMotionSize = hud->getNoMotionSize();
+    const int maxMotionSize = hud->getMaxMotionSize();
+    rotation = 0.0f;
+    if (mx < -noMotionSize) {
+      rotation = float(-mx - noMotionSize) / float(maxMotionSize);
+      if (rotation > 1.0f) rotation = 1.0f;
+    }
+    else if (mx > noMotionSize) {
+      rotation = -float(mx - noMotionSize) / float(maxMotionSize);
+      if (rotation < -1.0f) rotation = -1.0f;
+    }
+
+    // calculate desired speed
+    speed = 0.0f;
+    if (my < -noMotionSize) {
+      speed = float(-my - noMotionSize) / float(maxMotionSize);
+      if (speed > 1.0f) speed = 1.0f;
+    }
+    else if (my > noMotionSize) {
+      speed = -float(my - noMotionSize) / float(maxMotionSize);
+      if (speed < -0.5f) speed = -0.5f;
+    }
+  }
+  myTank->setDesiredAngVel(rotation);
+  myTank->setDesiredSpeed(speed);
+}
+
 
 static void		doEvent(BzfDisplay* display)
 {
@@ -756,13 +1299,11 @@ static void		doEvent(BzfDisplay* display)
 	}
       }
 
-      // grab the mouse if we're running full screen
+      // restore the resolution we want if full screen
       if (mainWindow->getFullscreen()) {
 	if (preUnmapFormat != -1) {
 	  display->setResolution(preUnmapFormat);
 	  mainWindow->warpMouse();
-	  if (preUnmapFormat != display->getDefaultResolution())
-	    mainWindow->grabMouse();
 	}
       }
 
@@ -773,6 +1314,8 @@ static void		doEvent(BzfDisplay* display)
       }
 
       unmapped = False;
+      if (shouldGrabMouse())
+	mainWindow->grabMouse();
       break;
 
     case BzfEvent::Unmap:
@@ -794,10 +1337,7 @@ static void		doEvent(BzfDisplay* display)
 	preUnmapFormat = -1;
 	if (display->getNumResolutions() > 1) {
 	  preUnmapFormat = display->getResolution();
-	  if (preUnmapFormat != display->getDefaultResolution()) {
-	    mainWindow->ungrabMouse();
-	    display->setResolution(display->getDefaultResolution());
-	  }
+	  display->setDefaultResolution();
 	}
       }
 
@@ -808,6 +1348,7 @@ static void		doEvent(BzfDisplay* display)
       }
 
       unmapped = True;
+      mainWindow->ungrabMouse();
       break;
 
     case BzfEvent::KeyUp:
@@ -822,6 +1363,13 @@ static void		doEvent(BzfDisplay* display)
 	doKeyNotPlaying(event.keyUp, True);
       else
 	doKeyPlaying(event.keyUp, True);
+      break;
+
+    case BzfEvent::MouseMove:
+      if (myTank && myTank->isAlive() && myTank->isKeyboardMoving()) {
+	myTank->setKeyboardMoving(False);
+	showKeyboardStatus();
+      }
       break;
   }
 }
@@ -862,9 +1410,19 @@ static int		lookupPlayerIndex(const PlayerId& id)
 
 static Player*		getPlayerByIndex(int index)
 {
-  if (index == -2) return myTank;
-  if (index == -1) return NULL;
+  if (index == -2)
+    return myTank;
+  if (index == -1)
+    return NULL;
   return player[index];
+}
+
+static Player*		getPlayerByName( const char* name )
+{
+  for (int i = 0; i < maxPlayers; i++)
+    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
+      return player[i];
+  return NULL;
 }
 
 static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
@@ -892,14 +1450,21 @@ static ServerLink*	lookupServer(const Player* player)
 
 static void		addMessage(const Player* player,
 				const BzfString& msg,
-				const GLfloat* color = NULL)
+				const GLfloat* color)
 {
   BzfString fullMessage;
   if (player) {
     fullMessage += player->getCallSign();
-    fullMessage += " (";
-    fullMessage += Team::getName(player->getTeam());
-    fullMessage += "): ";
+#ifndef BWSUPPORT
+    if (color == NULL) {
+#endif
+      fullMessage += " (";
+      fullMessage += Team::getName(player->getTeam());
+      fullMessage += ")";
+#ifndef BWSUPPORT
+    }
+#endif
+    fullMessage += ": ";
   }
   fullMessage += msg;
   controlPanel->addMessage(fullMessage, color);
@@ -915,7 +1480,6 @@ static void		updateNumPlayers()
       numPlayers[player[i]->getTeam()]++;
   if (myTank)
     numPlayers[myTank->getTeam()]++;
-  controlPanel->setTeamCounts(numPlayers);
 }
 
 static void		updateHighScores()
@@ -994,7 +1558,7 @@ static void		updateFlag(FlagId id)
     hud->setAlert(2, Flag::getName(id), 3.0f, Flag::getType(id) == FlagSticky);
   }
 
-  if (showFlagHelp)
+  if (sceneRenderer->getShowFlagHelp())
     hud->setFlagHelp(id, FlagHelpDuration);
 
   if (!radar && !myTank || !World::getWorld()) return;
@@ -1010,10 +1574,10 @@ static void		updateFlag(FlagId id)
 			id != NoFlag && Flag::getType(id) == FlagSticky);
 }
 
-void			notifyKeyMapChanged()
+void			notifyBzfKeyMapChanged()
 {
-  hud->setRestartKeyLabel(KeyMap::getKeyEventString(
-					keymap.get(KeyMap::Identify)));
+  hud->setRestartKeyLabel(BzfKeyMap::getKeyEventString(
+					keymap.get(BzfKeyMap::Identify)));
 }
 
 //
@@ -1087,6 +1651,14 @@ static void		handleServerMessage(boolean human, uint16_t code,
 {
   boolean checkScores = False;
   switch (code) {
+
+    case MsgUDPLinkRequest:
+      uint16_t portNo;
+      msg = nboUnpackUShort(msg, portNo);
+	  printError("Server sent downlink endpoint information, port %d",portNo);
+	  playerLink->setPortForUPD(portNo);
+      break;
+
     case MsgSuperKill:
       printError("Server forced a disconnect");
       serverError = True;
@@ -1160,7 +1732,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
     case MsgNetworkRelay: {
       // server is telling us that we must use multicast relaying
       playerLink->setUseRelay();
-      printError("Now using multicast relay");
+      printError("Now using server as relay");
       break;
     }
 
@@ -1210,12 +1782,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
       PlayerId id;
       float pos[3], forward[3];
       msg = id.unpack(msg);
-      msg = nboUnpackFloat(msg, pos[0]);
-      msg = nboUnpackFloat(msg, pos[1]);
-      msg = nboUnpackFloat(msg, pos[2]);
-      msg = nboUnpackFloat(msg, forward[0]);
-      msg = nboUnpackFloat(msg, forward[1]);
-      msg = nboUnpackFloat(msg, forward[2]);
+      msg = nboUnpackVector(msg, pos);
+      msg = nboUnpackVector(msg, forward);
       int playerIndex = lookupPlayerIndex(id);
       if (playerIndex >= 0) {
 	static const float zero[3] = { 0.0f, 0.0f, 0.0f };
@@ -1253,8 +1821,9 @@ static void		handleServerMessage(boolean human, uint16_t code,
 #endif
       if (victimLocal) {
 	// uh oh, local player is dead
-	if (victimLocal->isAlive())
+	if (victimLocal->isAlive()){
 	  gotBlowedUp(victimLocal, GotKilledMsg, killer);
+	}
       }
       else if (victimPlayer) {
 	victimPlayer->setExplode(TimeKeeper::getTick());
@@ -1273,26 +1842,33 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  // terminate the shot
 	  killerLocal->endShot(shotId, True);
 	}
-	if (victimPlayer != myTank) {
+	if (victimPlayer && killerLocal != victimPlayer) {
 	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-				killerLocal->getTeam() != RogueTeam) {
-	    if (killerLocal == myTank)
-	      hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
-	    killerLocal->changeScore(0, 1);		// teammate
+	      killerLocal->getTeam() != RogueTeam) {
+	    if (killerLocal == myTank) {
+		 hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
+		 playLocalSound( SFX_KILL_TEAM );
+	    }
+	    // teammate
+	    killerLocal->changeScore(0, 1);
 	  }
 	  else
-	    killerLocal->changeScore(1, 0);		// enemy
+	    // enemy
+	    killerLocal->changeScore(1, 0);
 	}
       }
-
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
 	 !(killerPlayer == myTank && victimPlayer == myTank)) {
 	if (killerLocal == myTank) {
-	  victimPlayer->changeLocalScore(1, 0);
+	  if (victimPlayer)
+	    victimPlayer->changeLocalScore(1, 0);
+	  myTank->setNemesis(victimPlayer);
 	}
 	else {
-	  killerPlayer->changeLocalScore(0, 1);
+	  if (killerPlayer)
+	    killerPlayer->changeLocalScore(0, 1);
+	  myTank->setNemesis(killerPlayer);
 	}
       }
 
@@ -1300,17 +1876,76 @@ static void		handleServerMessage(boolean human, uint16_t code,
       if (human && victimPlayer) {
 	if (killerPlayer == victimPlayer)
 	  addMessage(victimPlayer, "blew myself up");
-	else if (!killerPlayer)
+	else if (!killerPlayer) {
+#ifdef DEBUG
+	  char message[41];
+	  sprintf(message, "destroyed by <%s:%d-%1x>", 
+	      inet_ntoa(killer.serverHost),
+	      ntohs(killer.port),
+	      ntohs(killer.number));
+	  addMessage(victimPlayer, message);
+#else
 	  addMessage(victimPlayer, "destroyed by <unknown>");
-	else if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
-					killerPlayer->getTeam() != RogueTeam) {
-	  BzfString message("destroyed by teammate ");
+#endif
+	} else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
+	  BzfString message("destroyed by ");
+	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
+	      killerPlayer->getTeam() != RogueTeam)
+	    message += "teammate ";
 	  message += killerPlayer->getCallSign();
 	  addMessage(victimPlayer, message);
-	}
-	else {
-	  BzfString message("destroyed by ");
-	  message += killerPlayer->getCallSign();
+	} else {
+	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
+	  BzfString message;
+	  BzfString teammate;
+	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
+	      killerPlayer->getTeam() != RogueTeam)
+	    teammate += "teammate ";
+	  // Give more informative kill messages
+	  switch (shot->getFlag())
+	  {
+	  case LaserFlag:
+	    message += "was fried by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s laser";
+	    break;
+	  case GuidedMissileFlag:
+	    message += "was destroyed by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s guided missile";
+	    break;
+	  case ShockWaveFlag:
+	    message += "felt the effects of ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s shockwave";
+	    break;
+	  case InvisibleBulletFlag:
+	    message += "didn't see ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s bullet";
+	    break;
+	  case MachineGunFlag:
+	    message += "was turned into swiss cheese by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s machine gun";
+	    break;
+	  case SuperBulletFlag:
+	    message += "got skewered by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s super bullet";
+	    break;
+	  default:
+	    message += "got wrecked by ";
+	    message += teammate;
+	    message += killerPlayer->getCallSign();
+	    message += "'s blast";
+	  }
 	  addMessage(victimPlayer, message);
 	}
       }
@@ -1327,6 +1962,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	}
       }
 
+#ifdef ROBOT
       // blow up robots on victim's team if shot was genocide
       if (killerPlayer && victimPlayer && shotId >= 0) {
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
@@ -1337,6 +1973,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 		robots[i]->getTeam() != RogueTeam)
 	      gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
       }
+#endif
 
       checkScores = True;
       break;
@@ -1356,20 +1993,30 @@ static void		handleServerMessage(boolean human, uint16_t code,
       tank->setFlag(world->getFlag(flagIndex).id);
       if (tank == myTank) {
 	// not allowed to grab it if not on the ground
-	if (myTank->getLocation() != LocalPlayer::OnGround) {
+	if (myTank->getLocation() != LocalPlayer::OnGround &&
+	  myTank->getLocation() != LocalPlayer::OnBuilding) {
 	  serverLink->sendDropFlag(myTank->getPosition());
 	}
 	else {
 	  // grabbed flag
 	  playLocalSound(Flag::getType(myTank->getFlag()) != FlagSticky ?
-						SFX_GRAB_FLAG : SFX_GRAB_BAD);
+	      SFX_GRAB_FLAG : SFX_GRAB_BAD);
 	  updateFlag(myTank->getFlag());
 	}
       }
       else if (tank && tank->getTeam() != myTank->getTeam() &&
-		int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
+	  int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
 	hud->setAlert(1, "Flag Alert!!!", 3.0f, True);
 	playLocalSound(SFX_ALERT);
+      }
+      else {
+	FlagId fID = world->getFlag(flagIndex).id;
+	if (((fID >= RedFlag) && (fID <= PurpleFlag)) 
+	    && (fID != tank->getTeam()) 
+	    && ((tank && (tank->getTeam() == myTank->getTeam())))) {
+	  const float* pos = tank->getPosition();
+	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
+	}
       }
       if (tank) {
 	BzfString message("grabbed ");
@@ -1470,6 +2117,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	      playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
 	    else if (firingInfo.flag == LaserFlag)
 	      playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
+	    else if (firingInfo.flag == GuidedMissileFlag)
+	      playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
 	    else
 	      playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
 	  }
@@ -1531,13 +2180,6 @@ static void		handleServerMessage(boolean human, uint16_t code,
     }
 
     case MsgMessage: {
-      static const GLfloat	teamMsgColor[][3] = {
-				  { 1.0, 1.0, 0.5 },	// broadcast
-				  { 1.0, 0.5, 0.5 },	// red
-				  { 0.5, 1.0, 0.5 },	// green
-				  { 0.5, 0.5, 1.0 },	// blue
-				  { 1.0, 0.5, 1.0 }	// purple
-				};
       PlayerId src;
       PlayerId dst;
       uint16_t team;
@@ -1546,30 +2188,124 @@ static void		handleServerMessage(boolean human, uint16_t code,
       msg = nboUnpackUShort(msg, team);
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
-      if (dstPlayer == myTank || (!dstPlayer && /*srcPlayer != myTank &&*/
-		(int(team) == int(RogueTeam) ||
-		int(team) == int(myTank->getTeam())))) {
-	// message is for me
-	BzfString fullMsg;
-	if (dstPlayer) fullMsg = "[direct] ";
-	else if (int(team) != int(RogueTeam)) {
-	  fullMsg = "[to ";
-	  fullMsg += Team::getName(TeamColor(team));
-	  fullMsg += "] ";
+      BzfString srcName;
+      BzfString dstName;
+
+#ifdef DEBUG
+      char srcNameText[26], dstNameText[26];
+#endif
+
+      if (srcPlayer == NULL) {
+#ifdef DEBUG
+	sprintf(srcNameText, "<%s:%d-%1x>", 
+	    inet_ntoa(src.serverHost),
+	    ntohs(src.port),
+	    ntohs(src.number));
+	srcName = srcNameText;
+#else
+	srcName = "(UNKNOWN)";
+#endif
+      } else
+	srcName = srcPlayer->getCallSign();
+
+      bool ignore = false;
+      for (int i = 0; i < silencePlayers.getLength(); i++) {
+	if (strcmp(srcName, silencePlayers[i]) == 0) {
+	  ignore = true;
+	  break;
 	}
-	fullMsg += (const char*)msg;
+      }
+      if (ignore)
+	break;
+
+      if (dstPlayer == NULL) {
+#ifdef DEBUG
+	sprintf(dstNameText, "<%s:%d-%1x>", 
+	    inet_ntoa(dst.serverHost),
+	    ntohs(dst.port),
+	    ntohs(dst.number));
+	dstName = dstNameText;
+#else
+	dstName = "(UNKNOWN)";
+#endif
+      } else
+	dstName = dstPlayer->getCallSign();
+
+      // CLIENTQUERY hack
+      if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
+	char messageBuffer[MessageLen];
+	memset(messageBuffer, 0, MessageLen);
+	sprintf(messageBuffer,"Version %d.%d%c%d",
+	  (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
+	  (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
+	if (startupInfo.useUDPconnection)
+	  strcat(messageBuffer,"+UDP");
+
+	char response[PlayerIdPLen + 2 + MessageLen];
+	void* buf = response;
+	buf = src.pack(buf); // send to requesting client
+	buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	nboPackString(buf, messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(response), response);
 	const GLfloat* msgColor;
 	if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
-	  msgColor = teamMsgColor[0];
+	  msgColor = Team::getRadarColor(RogueTeam);
 	else
-	  msgColor = teamMsgColor[srcPlayer->getTeam()];
-	addMessage(srcPlayer, fullMsg, msgColor);
+	  msgColor = Team::getRadarColor(srcPlayer->getTeam());
 
-	fullMsg = srcPlayer->getCallSign();
-	fullMsg += " (";
-	fullMsg += Team::getName(srcPlayer->getTeam());
-	fullMsg += "): ";
-	fullMsg += (const char*)msg;
+	addMessage(srcPlayer,"[Sent versioninfo per request]", msgColor);
+	break;
+      }
+
+      if (srcPlayer == myTank || dstPlayer == myTank || (!dstPlayer &&
+	  (int(team) == int(RogueTeam) ||
+	  int(team) == int(myTank->getTeam())))) {
+	// message is for me
+	BzfString fullMsg;
+
+	// direct message to or from me
+	if (dstPlayer) {
+	  // talking to myself? that's strange
+	  if (dstPlayer==myTank && srcPlayer==myTank) {
+	    fullMsg=(const char*)msg;
+	  } else {
+	    fullMsg="[";
+	    if (srcPlayer == myTank) {
+	      fullMsg += "->";
+	      fullMsg += dstName;
+	    } else {
+	      fullMsg += srcName;
+	      fullMsg += "->";
+	      if (srcPlayer)
+		myTank->setRecipient(srcPlayer);
+	    }
+	    fullMsg += "] ";
+	    fullMsg += (const char*)msg;
+	  }
+	}
+	else {
+	  // team message
+	  if (int(team) != int(RogueTeam)) {
+#ifdef BWSUPPORT
+	    fullMsg = "[to ";
+	    fullMsg += Team::getName(TeamColor(team));
+	    fullMsg += "] ";
+#else
+	    fullMsg = "[Team] ";
+#endif
+	  }
+	  fullMsg += srcName;
+	  fullMsg += ": ";
+	  fullMsg += (const char*)msg;
+	}
+	const GLfloat* msgColor;
+	if (srcPlayer && srcPlayer->getTeam()!=NoTeam)
+	  msgColor = Team::getRadarColor(srcPlayer->getTeam());
+	else
+	  msgColor = Team::getRadarColor(RogueTeam);
+	addMessage(NULL, fullMsg, msgColor);
+
+	if (!srcPlayer || srcPlayer!=myTank)
 	hud->setAlert(0, fullMsg, 3.0f, False);
       }
       break;
@@ -1608,6 +2344,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
     case MsgGMUpdate:
     case MsgAudio:
     case MsgVideo:
+    case MsgLagPing:
       handlePlayerMessage(code, 0, msg);
       break;
   }
@@ -1657,8 +2394,24 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       RemoteShotPath* shotPath =
 		(RemoteShotPath*)remoteTank->getShot(shot.id);
       if (shotPath) shotPath->update(shot, code, msg);
+      PlayerId targetId;
+      targetId.unpack(msg);
+      Player* targetTank = lookupPlayer(targetId);
+      if (targetTank && (targetTank == myTank)) {
+	static TimeKeeper lastLockMsg;
+	if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
+	  playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);
+	  lastLockMsg=TimeKeeper::getTick();
+	  addMessage(tank, "locked on me");
+	}
+      }
       break;
     }
+
+    // just echo lag ping message
+    case MsgLagPing:
+      playerLink->send(MsgLagPing,2,msg);
+      break;
   }
 }
 
@@ -1713,23 +2466,23 @@ static float		minSafeRange(float angleCosOffBoresight)
   static const float	SafeAngle = 0.5f;		// cos(angle)
 
   // don't ever place within this range
-  static const float	MinRange = 0.5f * ShotSpeed;	// meters
+  static const float	MinRange = 2.0f * ShotSpeed;	// meters
 
   // anything beyond this range is okay at any angle
-  static const float	MaxRange = 1.5f * ShotSpeed;	// meters
+  static const float	MaxRange = 4.0f * ShotSpeed;	// meters
 
   // if more than SafeAngle off boresight then MinRange is okay
   if (angleCosOffBoresight < SafeAngle) return MinRange;
 
   // ramp up to MaxRange as target comes to dead center
   const float f = (angleCosOffBoresight - SafeAngle) / (1.0f - SafeAngle);
-  return MinRange + f * (MaxRange - MinRange);
+  return (float)(MinRange + f * (MaxRange - MinRange));
 }
 
 static void		restartPlaying()
 {
   // maximum tries to find a safe place
-  static const int	MaxTries = 20;		
+  static const int	MaxTries = 1000;
 
   // minimum time before an existing shot can hit us
   static const float	MinShotImpact = 2.0f;		// seconds
@@ -1737,16 +2490,20 @@ static void		restartPlaying()
   // restart my tank
   float startPoint[3];
   float startAzimuth;
-  boolean located = False;
   int locateCount = 0;
-  
+  startPoint[2] = 0.0f;
+  float bestStartPoint[3], bestDist = -1e6;
+  boolean located;
+
   // check for valid starting (no unfair advantage to player or enemies)
   // should find a good location in a few tries... locateCount is a safety
   // check that will probably be invoked when restarting on the team base
   // if the enemy is loitering around waiting for players to reappear.
   // also have to make sure new position isn't in a building;  that must
   // be enforced no matter how many times we need to try new locations.
-  startPoint[2] = 0.0f;
+  // If I can't find a safe spot, try to use the best of the unsafe ones.
+  // The best one is that which violates the minimum safe distance by the
+  // smallest amount.
   do {
     do {
       if (restartOnBase) {
@@ -1755,6 +2512,11 @@ static void		restartPlaying()
 	const float y = (base[5] - 2.0f * TankRadius) * ((float)bzfrand() - 0.5f);
 	startPoint[0] = base[0] + x * cosf(base[3]) - y * sinf(base[3]);
 	startPoint[1] = base[1] + x * sinf(base[3]) + y * cosf(base[3]);
+	if(base[2] != 0) {
+	  startPoint[2] = base[2] + 1;
+	} else {
+	  startPoint[2] = base[2];
+	}
       }
       else {
 	if (world->allowTeamFlags()) {
@@ -1769,6 +2531,13 @@ static void		restartPlaying()
       startAzimuth = 2.0f * M_PI * (float)bzfrand();
     } while (world->inBuilding(startPoint, 2.0f * TankRadius));
 
+    // use first point as best point, so we'll have a fallback
+    if (locateCount == 0) {
+      bestStartPoint[0] = startPoint[0];
+      bestStartPoint[1] = startPoint[1];
+      bestStartPoint[2] = startPoint[2];
+    }
+
     // get info on my tank
     const TeamColor myColor = myTank->getTeam();
     const float myCos = cosf(-startAzimuth);
@@ -1776,6 +2545,7 @@ static void		restartPlaying()
 
     // check each enemy tank
     located = True;
+    float worstDist = 1e6;
     for (int i = 0; i < maxPlayers; i++) {
       // ignore missing player
       if (!player[i]) continue;
@@ -1804,7 +2574,8 @@ static void		restartPlaying()
       if (!located) break;
 
       // test against living enemy tanks
-      if (!player[i]->isAlive() || player[i]->getTeam() == myColor) continue;
+      if (!player[i]->isAlive() ||
+	  (myColor != RogueTeam  && player[i]->getTeam() == myColor)) continue;
 
       // compute enemy position in my local coordinate system
       const float* enemyPos = player[i]->getPosition();
@@ -1819,10 +2590,9 @@ static void		restartPlaying()
 
       // don't allow tank placement if enemy tank is +/- 30 degrees of
       // my boresight and in firing range (our unfair advantage)
-      if (enemyDist < minSafeRange(enemyCos)) {
-        located = False;
-        break;
-      }
+      float safeDist = enemyDist - minSafeRange(enemyCos);
+      if (safeDist < worstDist)
+	worstDist = safeDist;
 
       // compute my position in enemy coordinate system
       // cos = enemyUnitVect[0], sin = enemyUnitVect[1]
@@ -1836,17 +2606,26 @@ static void		restartPlaying()
       const float myDist = hypotf(myX, myY);
       const float myCos = myX / myDist;
 
-      // don't allow tank placement if my tank is +/- 30 degrees of 
+      // don't allow tank placement if my tank is +/- 30 degrees of
       // the enemy's boresight and in firing range (enemy's unfair advantage)
-      if (myDist < minSafeRange(myCos)) {
-        located = False;
-        break;
-      }
+      safeDist = myDist - minSafeRange(myCos);
+      if (safeDist < worstDist)
+	worstDist = safeDist;
     }
+    if (located && worstDist > bestDist) {
+      bestDist = worstDist;
+      bestStartPoint[0] = startPoint[0];
+      bestStartPoint[1] = startPoint[1];
+      bestStartPoint[2] = startPoint[2];
+    }
+    if (bestDist < 0.0f)
+      located = False;
   } while (!located && ++locateCount <= MaxTries);
 
   // restart the tank
-  myTank->restart(startPoint, startAzimuth);
+  myTank->restart(bestStartPoint, startAzimuth);
+  if (!Observer)
+    serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
   serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
   restartOnBase = False;
   firstLife = False;
@@ -1906,6 +2685,31 @@ boolean			addExplosion(const float* _pos,
 
   // add copy to list of current explosions
   explosions.append(newExplosion);
+
+  if (size < (3.0f * TankLength)) return True; // shot explosion
+
+  int boom = (int) (bzfrand() * 8.0) + 3;
+  while (boom--) {
+  // pick a random prototype explosion
+  const int index = (int)(bzfrand() * (float)prototypeExplosions.getLength());
+
+  // make a copy and initialize it
+  BillboardSceneNode* newExplosion = prototypeExplosions[index]->copy();
+  GLfloat pos[3];
+  pos[0] = _pos[0]+(float)(bzfrand()*12.0 - 6.0);
+  pos[1] = _pos[1]+(float)(bzfrand()*12.0 - 6.0);
+  pos[2] = _pos[2]+(float)(bzfrand()*10.0);
+  newExplosion->move(pos);
+  newExplosion->setSize(size);
+  newExplosion->setDuration(duration);
+  newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
+  newExplosion->setLightScaling(size / TankLength);
+  newExplosion->setLightFadeStartTime(0.7f * duration);
+
+  // add copy to list of current explosions
+  explosions.append(newExplosion);
+  }
+
   return True;
 }
 
@@ -1917,8 +2721,13 @@ void			addTankExplosion(const float* pos)
 void			addShotExplosion(const float* pos)
 {
   // only play explosion sound if you see an explosion
-  if (addExplosion(pos, 1.0f * TankLength, 0.8f))
+  if (addExplosion(pos, 1.2f * TankLength, 0.8f))
     playWorldSound(SFX_SHOT_BOOM, pos[0], pos[1], pos[2]);
+}
+
+void			addShotPuff(const float* pos)
+{
+  addExplosion(pos, 0.3f * TankLength, 0.8f);
 }
 
 static void		updateExplosions(float dt)
@@ -1982,7 +2791,8 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 					const PlayerId& killer,
 					int shotId)
 {
-  if (!tank->isAlive()) return False;
+  if (Observer || !tank->isAlive())
+    return False;
 
   // you can't take it with you
   const FlagId flag = tank->getFlag();
@@ -1992,6 +2802,13 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 
     // drop it
     handleFlagDropped(tank);
+  }
+
+  // restore the sound, this happens when paused tank dies
+  // (genocide or team flag captured)
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
   }
 
   // take care of explosion business -- don't want to wait for
@@ -2043,35 +2860,42 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 
 static void		checkEnvironment()
 {
-  if (!myTank) return;
+  if (!myTank || Observer) return;
 
   // skip this if i'm dead or paused
   if (!myTank->isAlive() || myTank->isPaused()) return;
 
   FlagId flagId = myTank->getFlag();
   if (flagId != NoFlag && int(flagId) >= int(FirstTeamFlag) &&
-				int(flagId) <= int(LastTeamFlag)) {
+      int(flagId) <= int(LastTeamFlag)) {
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
-    if (myTank->getLocation() == LocalPlayer::OnGround && base != NoTeam &&
+    if ((base != NoTeam) &&
 	((int(flagId) == int(team) && base != team) ||
-	 (int(flagId) != int(team) && base == team)))
+	(int(flagId) != int(team) && base == team)))
       serverLink->sendCaptureFlag(base);
   }
-  else if (flagId == NoFlag && myTank->getLocation() == LocalPlayer::OnGround) {
-    // grab any and all flags i'm driving over
-    const float* tpos = myTank->getPosition();
-    const float radius = myTank->getRadius();
-    const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
-    for (int i = 0; i < numFlags; i++) {
-      if (world->getFlag(i).id == NoFlag) continue;
-      const float* fpos = world->getFlag(i).position;
-      if ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2) {
-	serverLink->sendGrabFlag(i);
+  else if (flagId == NoFlag && (myTank->getLocation() == LocalPlayer::OnGround ||
+      myTank->getLocation() == LocalPlayer::OnBuilding)) {
+    // Don't grab too fast
+    static TimeKeeper lastGrabSent;
+    if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
+      // grab any and all flags i'm driving over
+      const float* tpos = myTank->getPosition();
+      const float radius = myTank->getRadius();
+      const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
+      for (int i = 0; i < numFlags; i++) {
+	if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
+	  continue;
+	const float* fpos = world->getFlag(i).position;
+	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
+	  serverLink->sendGrabFlag(i);
+	  lastGrabSent=TimeKeeper::getTick();
+	}
       }
-    } 
+    }
   }
   else if (flagId == IdentifyFlag) {
     // identify closest flag
@@ -2083,13 +2907,14 @@ static void		checkEnvironment()
       if (world->getFlag(i).id == NoFlag ||
 	  world->getFlag(i).status != FlagOnGround) continue;
       const float* fpos = world->getFlag(i).position;
-      const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + 
-                         (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+      const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+			 (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) +
+			 (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
       if (dist < minDist) {
 	minDist = dist;
 	closestFlag = i;
       }
-    } 
+    }
     if (closestFlag != -1) {
       // Set HUD alert about what the flag is
       message += Flag::getName(world->getFlag(closestFlag).id);
@@ -2122,7 +2947,7 @@ static void		checkEnvironment()
   }
 
   // if not dead yet, see if i got run over by the steamroller
-  else if (myTank->getLocation() == LocalPlayer::OnGround) {
+  else {
     const float* myPos = myTank->getPosition();
     const float myRadius = myTank->getRadius();
     for (i = 0; i < maxPlayers; i++)
@@ -2130,10 +2955,9 @@ static void		checkEnvironment()
 	  player[i]->getFlag() == SteamrollerFlag &&
 	  !player[i]->isPaused()) {
 	const float* pos = player[i]->getPosition();
-	if (pos[2] < TankHeight &&
-		!(flagId == PhantomZoneFlag && myTank->isFlagActive())) {
+	if (!(flagId == PhantomZoneFlag && myTank->isFlagActive())) {
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
-	  if (hypot(myPos[0] - pos[0], myPos[1] - pos[1]) < radius)
+	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius)
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 	}
       }
@@ -2173,6 +2997,8 @@ static void		setTarget()
     if (a < 0.15f &&					// about 8.5 degrees
 	myTank->getFlag() == GuidedMissileFlag &&	// am i locking on?
 	player[i]->getFlag() != StealthFlag &&		// can't lock on stealth
+	!player[i]->isPaused() &&			// can't lock on paused
+	!player[i]->isNotResponding() &&		// can't lock on not responding
 	d < bestDistance) {				// is it better?
       bestTarget = player[i];
       bestDistance = d;
@@ -2190,6 +3016,8 @@ static void		setTarget()
 
   if (lockedOn) {
     myTank->setTarget(bestTarget);
+    myTank->setNemesis(bestTarget);
+
     BzfString msg("Locked on ");
     msg += bestTarget->getCallSign();
     msg += " (";
@@ -2222,6 +3050,7 @@ static void		setTarget()
     }
     addMessage(NULL, msg);
     hud->setAlert(1, msg, 2.0f, 0);
+    myTank->setNemesis(bestTarget);
   }
 }
 
@@ -2422,26 +3251,22 @@ static void		checkEnvironment(RobotPlayer* tank)
     const float myRadius = tank->getRadius();
     if (myTank->getFlag() == SteamrollerFlag && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
-      if (pos[2] < TankHeight) {
-	const float radius = myRadius + SRRadiusMult * myTank->getRadius();
-	if (hypot(myPos[0] - pos[0], myPos[1] - pos[1]) < radius) {
-	  gotBlowedUp(tank, GotRunOver, myTank->getId());
-	  dead = True;
-	}
+      const float radius = myRadius + SRRadiusMult * myTank->getRadius();
+      if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
+	gotBlowedUp(tank, GotRunOver, myTank->getId());
+	dead = True;
       }
     }
     for (i = 0; !dead && i < maxPlayers; i++)
       if (player[i] &&
 	  player[i]->getFlag() == SteamrollerFlag &&
 	  !player[i]->isPaused()) {
-	const float* pos = player[i]->getPosition();
-	if (pos[2] < TankHeight) {
+	  const float* pos = player[i]->getPosition();
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
-	  if (hypot(myPos[0] - pos[0], myPos[1] - pos[1]) < radius) {
+	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
 	    gotBlowedUp(tank, GotRunOver, player[i]->getId());
 	    dead = True;
 	  }
-	}
       }
   }
 }
@@ -2465,10 +3290,17 @@ static void		addRobots(boolean useMulticastRelay)
 {
   uint16_t code, len;
   char msg[MaxPacketLen];
+  char callsign[CallSignLen];
 
   for (int j = 0; j < numRobots;) {
-    robots[j] = new RobotPlayer(robotServer[j]->getId(),
-					"robot", robotServer[j]);
+
+#if !defined(_WIN32)
+	snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
+#else
+	sprintf(callsign, "%s%2.2d", myTank->getCallSign(), j);
+#endif
+
+    robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
     if (world->allowRogues())
       robots[j]->setTeam((TeamColor)((int)RogueTeam + (int)(bzfrand() *
 					(int)(PurpleTeam - RogueTeam + 1))));
@@ -2527,15 +3359,6 @@ static World*		makeWorld(ServerLink* serverLink)
   // get world database
   uint16_t ptr = 0, bytesLeft = size;
   while (bytesLeft != 0) {
-    // ask and wait for next chunk
-    nboPackUShort(msg, ptr);
-    serverLink->send(MsgGetWorld, 2, msg);
-    if (serverLink->read(code, len, msg, 5000) < 0 ||
-	code == MsgNull || code == MsgSuperKill) {
-      delete[] worldDatabase;
-      return NULL;
-    }
-
     // get bytes left
     void* buf = msg;
     buf = nboUnpackUShort(buf, bytesLeft);
@@ -2545,6 +3368,15 @@ static World*		makeWorld(ServerLink* serverLink)
 
     // increment pointer
     ptr += len - 2;
+
+	// ask and wait for next chunk
+	nboPackUShort(msg, ptr);
+	serverLink->send(MsgGetWorld, 2, msg);
+	if (serverLink->read(code, len, msg, 5000) < 0 ||
+	code == MsgNull || code == MsgSuperKill) {
+	  delete[] worldDatabase;
+	  return NULL;
+	}
   }
 
   // make world
@@ -2557,17 +3389,28 @@ static World*		makeWorld(ServerLink* serverLink)
 }
 
 static boolean		enterServer(ServerLink* serverLink, World* world,
-						const LocalPlayer* myTank)
+						LocalPlayer* myTank)
 {
+
+  time_t timeout=time(0) + 10;  // give us 10 sec
+
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 		myTank->getCallSign(), myTank->getEmailAddress());
+
+  // @ as first lettter of callsign is observer
+  Observer = myTank->getCallSign()[0] == '@';
+  roaming = Observer;
+
+
+  controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
+  radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
 
   // wait for response
   uint16_t code, len;
   char msg[MaxPacketLen];
   if (serverLink->read(code, len, msg, -1) < 0) {
-    printError("Communication error joining game.");
+    printError("Communication error joining game [No immediate respose].");
     return False;
   }
   if (code == MsgSuperKill) {
@@ -2575,7 +3418,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
     return False;
   }
   if (code != MsgAccept && code != MsgReject) {
-    printError("Communication error joining game.");
+    printError("Communication error joining game [Wrong Code %04x].",code);
     return False;
   }
   if (code == MsgReject) {
@@ -2586,7 +3429,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
       case RejectBadRequest:
       case RejectBadTeam:
       case RejectBadType:
-	printError("Communication error joining game.");
+	printError("Communication error joining game [Rejected].");
 	break;
 
       case RejectNoRogues:
@@ -2594,26 +3437,54 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 	break;
 
       case RejectTeamFull:
-	printError("Team is full.  Try another team.");
+	printError("This team is full.  Try another team.");
 	break;
 
       case RejectServerFull:
-	printError("Game is full.  Try again later.");
+	printError("This game is full.  Try again later.");
 	break;
     }
     return False;
   }
 
   // get updates
-  if (serverLink->read(code, len, msg, -1) < 0) goto failed;
+  if (serverLink->read(code, len, msg, -1) < 0) {
+	goto failed;
+  }
   while (code == MsgAddPlayer || code == MsgTeamUpdate ||
-	 code == MsgFlagUpdate || code == MsgNetworkRelay) {
+	 code == MsgFlagUpdate || code == MsgNetworkRelay ||
+	 code == MsgUDPLinkRequest) {
     void* buf = msg;
     switch (code) {
       case MsgAddPlayer: {
 	PlayerId id;
 	buf = id.unpack(buf);
-	if (id == myTank->getId()) {		// it's me!  end of updates
+	if (id == myTank->getId()) {
+	  // it's me!  end of updates
+	  {
+	    // check for actual id appended to msg
+	    void *tmpbuf = buf;
+	    uint16_t team, type, wins, losses;
+	    char callsign[CallSignLen];
+	    char email[EmailLen];
+	    tmpbuf = nboUnpackUShort(tmpbuf, type);
+	    tmpbuf = nboUnpackUShort(tmpbuf, team);
+	    tmpbuf = nboUnpackUShort(tmpbuf, wins);
+	    tmpbuf = nboUnpackUShort(tmpbuf, losses);
+	    tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
+	    tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
+	    if (tmpbuf < msg + len) {
+	      PlayerId id;
+	      //fprintf(stderr, "id test %p %p %p %8.8x %8.8x ", myTank, tmpbuf, msg,
+		  //*(int *)tmpbuf, *((int *)tmpbuf + 1));
+	      tmpbuf = id.unpack(tmpbuf);
+	      myTank->id.serverHost = id.serverHost;
+	      myTank->id.port = id.port;
+	      myTank->id.number = id.number;
+	      //fprintf(stderr, "%p\n", myTank);
+	      serverLink->send(MsgIdAck, 0, NULL);
+	    }
+	  }
 	  // scan through flags and, for flags on
 	  // tanks, tell the tank about its flag.
 	  const int maxFlags = world->getMaxFlags();
@@ -2647,10 +3518,16 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
       case MsgNetworkRelay: {
 	playerLink->setUseRelay();
 	playerLink->setRelay(serverLink);
-	printError("Using multicast relay");
+	printError("Using server as relay");
 	break;
       }
+      case MsgUDPLinkRequest:
+	printError("*** Received UDP Link Granted");
+	// internally
+	break;
     }
+
+    if (time(0)>timeout) goto failed;
 
     if (serverLink->read(code, len, msg, -1) < 0) goto failed;
   }
@@ -2716,8 +3593,6 @@ static void		leaveGame()
   player = NULL;
 
   // update UI
-  controlPanel->resetTeamCounts();
-  sceneRenderer->getBackground()->notifyWorldChange();
   hud->setPlaying(False);
   hud->setCracks(False);
   hud->setPlayerHasHighScore(False);
@@ -2748,9 +3623,7 @@ static void		leaveGame()
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
-			1.1f, 1.5f * WorldSize,
-			mainWindow->getWidth(), mainWindow->getHeight(),
-			mainWindow->getViewHeight());
+      1.1f, 1.5f * WorldSize, mainWindow->getWidth(), mainWindow->getHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // reset some flags
@@ -2776,6 +3649,7 @@ static boolean		joinGame(const StartupInfo* info,
     return False;
   }
 
+  // printError("Join Game");
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
@@ -2820,6 +3694,9 @@ static boolean		joinGame(const StartupInfo* info,
   }
 */
 
+  // set tank textures
+  Player::setTexture(*tankTexture);
+
   // create world
   world = makeWorld(serverLink);
   if (!world) {
@@ -2853,7 +3730,7 @@ static boolean		joinGame(const StartupInfo* info,
   setSceneDatabase();
 
   // make radar
-  radar = new RadarRenderer(*sceneRenderer, *world);
+  radar = new RadarRenderer(*sceneRenderer, *world, resources);
   controlPanel->setRadarRenderer(radar);
   controlPanel->resize();
 
@@ -2943,6 +3820,12 @@ static boolean		joinGame(const StartupInfo* info,
     printError("Using multicast relay");
   }
 
+  // use parallel UDP if desired and using server relay
+  if (startupInfo.useUDPconnection && (playerLink->getState() == PlayerLink::ServerRelay))
+    playerLink->enableUDPConIfRelayed();
+  else
+    printError("No UDP connection, see Options to enable.");
+
   // set marker colors -- team color and antidote flag color
   const float* myTeamColor = Team::getTankColor(myTank->getTeam());
   hud->setMarkerColor(0, myTeamColor[0], myTeamColor[1], myTeamColor[2]);
@@ -2959,7 +3842,8 @@ static boolean		joinGame(const StartupInfo* info,
   serverLink->send(MsgSetTTL, sizeof(msg), msg);
 
   // decide how start for first time
-  restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam;
+  restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam &&
+		  !Observer;
 
   // if server constrains time then adjust it
   if (!world->allowTimeOfDayAdjust()) {
@@ -2969,7 +3853,6 @@ static boolean		joinGame(const StartupInfo* info,
   }
 
   // initialize some other stuff
-  sceneRenderer->getBackground()->notifyWorldChange();
   updateNumPlayers();
   updateFlag(NoFlag);
   updateHighScores();
@@ -3035,8 +3918,7 @@ static void		renderDialog()
     const int height = mainWindow->getHeight();
     const int ox = mainWindow->getOriginX();
     const int oy = mainWindow->getOriginY();
-    glScissor(ox, oy + mainWindow->getPanelHeight(),
-		width, mainWindow->getViewHeight());
+    glScissor(ox, oy, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
@@ -3127,12 +4009,13 @@ static void		playingLoop()
 
     // handle events
     clockAdjust = 0.0f;
-#if defined(ROAMING)
-    roamDPos[0] = roamDPos[1] = roamDPos[2] = 0.0f;
-    roamDTheta = roamDPhi = roamDZoom = 0.0f;
-#endif
+//#ifndef macintosh
     while (!mainWindow->getQuit() && display->isEventPending())
       doEvent(display);
+
+//#else
+//     doEvent(display);
+//#endif
 
     // invoke callbacks
     callPlayingCallbacks();
@@ -3160,22 +4043,20 @@ static void		playingLoop()
       lastEpochOffset = epochOffset;
     }
 
-#if defined(ROAMING)
-    {
-      // move roaming camera
-      float c, s;
-      c = cosf(roamTheta * M_PI / 180.0f);
-      s = sinf(roamTheta * M_PI / 180.0f);
-      roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
-      roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
-      roamPos[2] += dt * roamDPos[2];
-      roamTheta  += dt * roamDTheta;
-      roamPhi    += dt * roamDPhi;
-      roamZoom   += dt * roamDZoom;
-      if (roamZoom < 1.0f) roamZoom = 1.0f;
-      else if (roamZoom > 179.0f) roamZoom = 179.0f;
-    }
-#endif
+    // move roaming camera
+    float c, s;
+    c = cosf(roamTheta * M_PI / 180.0f);
+    s = sinf(roamTheta * M_PI / 180.0f);
+    roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
+    roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
+    roamPos[2] += dt * roamDPos[2];
+    if (roamPos[2] < MuzzleHeight)
+      roamPos[2] = MuzzleHeight;
+    roamTheta  += dt * roamDTheta;
+    roamPhi    += dt * roamDPhi;
+    roamZoom   += dt * roamDZoom;
+    if (roamZoom < 1.0f) roamZoom = 1.0f;
+    else if (roamZoom > 179.0f) roamZoom = 179.0f;
 
     // update test video format timer
     if (testVideoFormatTimer > 0.0f) {
@@ -3192,11 +4073,28 @@ static void		playingLoop()
       pauseCountdown = 0.0f;
       hud->setAlert(1, NULL, 0.0f, True);
     }
+//    if (maxPauseCountdown > 0.0f) {
+//     const int oldMaxPauseCountdown = (int)(maxPauseCountdown + 0.99f);
+//      maxPauseCountdown -= dt;
+//     if (maxPauseCountdown <= 0.0f) {
+//			maxPauseCountdown=0.0;
+//	  }
+//	  if ((int)(maxPauseCountdown + 0.99f) != oldMaxPauseCountdown) {
+//		char msgBuf[40];
+//		sprintf(msgBuf, "Pause Countdown %d", (int)(maxPauseCountdown + 0.99f));
+//		hud->setAlert(1, msgBuf, 1.0f, False);
+//	  }
+//	}
     if (pauseCountdown > 0.0f) {
       const int oldPauseCountdown = (int)(pauseCountdown + 0.99f);
       pauseCountdown -= dt;
       if (pauseCountdown <= 0.0f) {
-	// okay, now we pause
+	// okay, now we pause.  first drop any team flag we may have.
+	const FlagId flagId = myTank->getFlag();
+	if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
+	  serverLink->sendDropFlag(myTank->getPosition());
+
+	// now actually pause
 	myTank->setPause(True);
 	hud->setAlert(1, NULL, 0.0f, True);
 	controlPanel->addMessage("Paused");
@@ -3206,6 +4104,9 @@ static void		playingLoop()
 	  savedVolume = getSoundVolume();
 	  setSoundVolume(0);
 	}
+
+	// ungrab mouse
+	mainWindow->ungrabMouse();
       }
       else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
 							!pausedByUnmap) {
@@ -3269,45 +4170,106 @@ static void		playingLoop()
       targetPoint[0] = eyePoint[0] + myTankDir[0];
       targetPoint[1] = eyePoint[1] + myTankDir[1];
       targetPoint[2] = eyePoint[2] + myTankDir[2];
-#if defined(ROAMING)
       if (roaming) {
-	float dir[3];
-	dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
-	dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
-	dir[2] = sinf(roamPhi * M_PI / 180.0f);
-	eyePoint[0] = roamPos[0];
-	eyePoint[1] = roamPos[1];
-	eyePoint[2] = roamPos[2];
-	if (!roamTrack) {
+	float roamViewAngle;
+#ifdef FOLLOWTANK
+	eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
+	eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
+	eyePoint[2] = myTankPos[2] + MuzzleHeight * 3;
+	targetPoint[0] = eyePoint[0] + myTankDir[0];
+	targetPoint[1] = eyePoint[1] + myTankDir[1];
+	targetPoint[2] = eyePoint[2] + myTankDir[2];
+#else
+	if ((roamView != roamViewFree) && player[roamTrackTank]) {
+	  RemotePlayer *target = player[roamTrackTank];
+	  const float *targetTankDir = target->getForward();
+	  // fixed camera tracking target
+	  if (roamView == roamViewTrack) {
+	    eyePoint[0] = roamPos[0];
+	    eyePoint[1] = roamPos[1];
+	    eyePoint[2] = roamPos[2];
+	    targetPoint[0] = target->getPosition()[0];
+	    targetPoint[1] = target->getPosition()[1];
+	    targetPoint[2] = target->getPosition()[2];
+	  }
+	  // camera following target
+	  else if (roamView == roamViewFollow) {
+	    eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+	    eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+	    eyePoint[2] = target->getPosition()[2] + MuzzleHeight * 6;
+	    targetPoint[0] = target->getPosition()[0];
+	    targetPoint[1] = target->getPosition()[1];
+	    targetPoint[2] = target->getPosition()[2];
+	  }
+	  // target's view
+	  else if (roamView == roamViewFP) {
+	    eyePoint[0] = target->getPosition()[0];
+	    eyePoint[1] = target->getPosition()[1];
+	    eyePoint[2] = target->getPosition()[2] + MuzzleHeight;
+	    targetPoint[0] = eyePoint[0] + targetTankDir[0];
+	    targetPoint[1] = eyePoint[1] + targetTankDir[1];
+	    targetPoint[2] = eyePoint[2] + targetTankDir[2];
+	  }
+	  // track team flag
+	  else if (roamView == roamViewFlag) {
+	    Flag &targetFlag = world->getFlag(roamTrackFlag);
+	    eyePoint[0] = roamPos[0];
+	    eyePoint[1] = roamPos[1];
+	    eyePoint[2] = roamPos[2];
+	    targetPoint[0] = targetFlag.position[0];
+	    targetPoint[1] = targetFlag.position[1];
+	    targetPoint[2] = targetFlag.position[2];
+	  }
+	  roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
+	      targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
+	}
+	// free Roaming
+	else {
+	  float dir[3];
+	  dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
+	  dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
+	  dir[2] = sinf(roamPhi * M_PI / 180.0f);
+	  eyePoint[0] = roamPos[0];
+	  eyePoint[1] = roamPos[1];
+	  eyePoint[2] = roamPos[2];
 	  targetPoint[0] = eyePoint[0] + dir[0];
 	  targetPoint[1] = eyePoint[1] + dir[1];
 	  targetPoint[2] = eyePoint[2] + dir[2];
+	  roamViewAngle = roamTheta;
 	}
-	fov = roamZoom * M_PI / 180.0f;
-      }
+	float virtPos[]={eyePoint[0], eyePoint[1], 0};
+	if (myTank)
+	  myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
 #endif
+	fov = roamZoom * M_PI / 180.0f;
+	moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, False);
+      }
       sceneRenderer->getViewFrustum().setProjection(fov,
-					1.1f, 1.5f * WorldSize,
-					mainWindow->getWidth(),
-					mainWindow->getHeight(),
-					mainWindow->getViewHeight());
+	  1.1f, 1.5f * WorldSize,
+	  mainWindow->getWidth(),
+	  mainWindow->getHeight());
       sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
       // add dynamic nodes
       SceneDatabase* scene = sceneRenderer->getSceneDatabase();
       if (scene && myTank) {
-	myTank->addPlayer(scene, False, False);	// add my tank
-	if (myTank->getFlag() == CloakingFlag)
-	  myTank->setInvisible();		// and make it invisible
-#if defined(ROAMING)
-	else if (roaming)
+	// add my tank
+	myTank->addPlayer(scene, False, False);
+	if (myTank->getFlag() == CloakingFlag) {
+	  // and make it invisible
+	  myTank->setInvisible();
+	} else if (roaming)
 	  myTank->setHidden(False);
-#endif
-	else
-	  myTank->setHidden();			// or make it hidden
-	myTank->addShots(scene, False);		// add my shells
-	myTank->addAntidote(scene);		// add antidote flag
-	world->addFlags(scene);			// add flags
+	else {
+	  // or make it hidden
+	  myTank->setHidden();
+	}
+	// add my shells
+	myTank->addShots(scene, False);
+	// add antidote flag
+	myTank->addAntidote(scene);
+	// add flags
+	world->addFlags(scene);
 
 	// add other tanks and shells
 	const boolean colorblind = (myTank->getFlag() == ColorblindnessFlag);
@@ -3316,7 +4278,10 @@ static void		playingLoop()
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
 	    player[i]->addPlayer(scene, colorblind, True);
-	    player[i]->setInvisible(player[i]->getFlag() == CloakingFlag);
+	    if (player[i]->getFlag() == CloakingFlag)
+	      player[i]->setInvisible();
+	    else
+	      player[i]->setHidden(roaming && roamView == roamViewFP && roamTrackTank == i);
 	  }
 
 	// add explosions
@@ -3324,27 +4289,27 @@ static void		playingLoop()
 
 	// if i'm inside a building then add eighth dimension scene node.
 	if (myTank->getContainingBuilding()) {
-	  SceneNode* node = world->getInsideSceneNode(myTank->
-						getContainingBuilding());
+	  SceneNode* node = world->getInsideSceneNode(myTank->getContainingBuilding());
 	  if (node) scene->addDynamicNode(node);
 	}
       }
 
       // turn blanking and inversion on/off as appropriate
       sceneRenderer->setBlank(myTank && (myTank->isPaused() ||
-			myTank->getFlag() == BlindnessFlag));
+	  myTank->getFlag() == BlindnessFlag));
       sceneRenderer->setInvert(myTank &&
-			myTank->getFlag() == PhantomZoneFlag &&
-			myTank->isFlagActive());
+	  myTank->getFlag() == PhantomZoneFlag &&
+	  myTank->isFlagActive());
 
       // turn on scene dimming when showing menu or when
       // we're dead and no longer exploding.
       sceneRenderer->setDim(HUDDialogStack::get()->isActive() ||
-		(myTank && !myTank->isAlive() && !myTank->isExploding()));
+	  (myTank && !roaming && !myTank->isAlive() && !myTank->isExploding()));
 
       // set hud state
       hud->setDim(HUDDialogStack::get()->isActive());
       hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
+      hud->setRoaming(roaming);
       hud->setCracks(myTank && !firstLife && !myTank->isAlive());
 
       // get frame start time
@@ -3363,7 +4328,7 @@ static void		playingLoop()
 	sceneRenderer->render(False);
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 
 	// set up for drawing left channel
@@ -3390,6 +4355,18 @@ static void		playingLoop()
 	// draw right channel
 	sceneRenderer->render(True, True, True);
 
+#if defined(DEBUG_RENDERING)
+	// set up for drawing rear channel
+	mainWindow->setQuadrant(MainWindow::UpperLeft);
+	// FIXME -- this assumes up is along +z
+	targetPoint[0] = eyePoint[0] - myTankDir[0];
+	targetPoint[1] = eyePoint[1] - myTankDir[1];
+	targetPoint[2] = eyePoint[2] + myTankDir[2];
+	sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
+
+	// draw rear channel
+	sceneRenderer->render(True, True, True);
+#endif
 	// back to center channel
 	mainWindow->setQuadrant(MainWindow::UpperRight);
       }
@@ -3398,13 +4375,13 @@ static void		playingLoop()
        static float FocalPlane = BoxBase;
        static boolean init = False;
        if (!init) {
-         init = True;
-         if (resources->hasValue("eyesep"))
-           EyeDisplacement = (float)atof(resources->getValue("eyesep"));
-         if (resources->hasValue("focal"))
-           FocalPlane = (float)atof(resources->getValue("focal"));
+	 init = True;
+	 if (resources->hasValue("eyesep"))
+	   EyeDisplacement = (float)atof(resources->getValue("eyesep"));
+	 if (resources->hasValue("focal"))
+	   FocalPlane = (float)atof(resources->getValue("focal"));
        }
-      
+
        // setup view for left eye
        sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
 
@@ -3412,7 +4389,7 @@ static void		playingLoop()
        sceneRenderer->render(False);
        hud->render(*sceneRenderer);
        renderDialog();
-       controlPanel->render(1);
+       controlPanel->render(*sceneRenderer);
        if (radar) radar->render(*sceneRenderer, blankRadar);
 
        // set up view for right eye
@@ -3423,7 +4400,7 @@ static void		playingLoop()
        sceneRenderer->render(True, True);
        hud->render(*sceneRenderer);
        renderDialog();
-       controlPanel->render();
+       controlPanel->render(*sceneRenderer);
        if (radar) radar->render(*sceneRenderer, blankRadar);
 
        // draw common stuff
@@ -3442,7 +4419,7 @@ static void		playingLoop()
 	  if (resources->hasValue("focal"))
 	    FocalPlane = (float)atof(resources->getValue("focal"));
 	}
-      
+
 	// setup view for left eye
 #ifdef USE_GL_STEREO
 	glDrawBuffer(GL_BACK_LEFT);
@@ -3454,7 +4431,7 @@ static void		playingLoop()
 #ifndef USE_GL_STEREO
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render(1);
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -3471,7 +4448,7 @@ static void		playingLoop()
 #ifndef USE_GL_STEREO
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -3480,7 +4457,7 @@ static void		playingLoop()
 	glDrawBuffer(GL_BACK);
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -3497,10 +4474,7 @@ static void		playingLoop()
 	  const int y = mainWindow->getOriginY();
 	  const int w = mainWindow->getWidth();
 	  const int h = mainWindow->getHeight();
-	  const int vh = mainWindow->getViewHeight();
-	  const int ph = mainWindow->getPanelHeight();
-	  sceneRenderer->getViewFrustum().setProjection(fov,
-					1.1f, 1.5f * WorldSize, w, h, vh);
+	  sceneRenderer->getViewFrustum().setProjection(fov, 1.1f, 1.5f * WorldSize, w, h);
 	  sceneRenderer->render();
 
 	  // set entire window
@@ -3516,13 +4490,13 @@ static void		playingLoop()
 	  glMatrixMode(GL_MODELVIEW);
 	  glPushMatrix();
 	  glLoadIdentity();
-	  glRasterPos2i(0, mainWindow->getPanelHeight());
+	  glRasterPos2i(0, 0);
 	  glPopMatrix();
 
 	  // zoom small image to entire window
 	  glDisable(GL_DITHER);
 	  glPixelZoom((float)zoomFactor, (float)zoomFactor);
-	  glCopyPixels(x, y + ph, w, vh, GL_COLOR);
+	  glCopyPixels(x, y, w, h, GL_COLOR);
 	  glPixelZoom(1.0f, 1.0f);
 	  if (sceneRenderer->useDithering()) glEnable(GL_DITHER);
 	}
@@ -3534,7 +4508,7 @@ static void		playingLoop()
 	// draw other stuff
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
       }
 
@@ -3553,14 +4527,12 @@ static void		playingLoop()
 	int mx, my;
 	const int width = mainWindow->getWidth();
 	const int height = mainWindow->getHeight();
-	const int panelHeight = mainWindow->getPanelHeight();
 	const int ox = mainWindow->getOriginX();
 	const int oy = mainWindow->getOriginY();
 	mainWindow->getWindow()->getMouse(mx, my);
 	my = height - my - 1;
-	if (my < panelHeight) my = panelHeight;
 
-	glScissor(ox, oy + panelHeight, width, height - panelHeight);
+	glScissor(ox, oy, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
@@ -3599,8 +4571,12 @@ static void		playingLoop()
     if (myTank) {
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
-	if (fireButton && myTank->getFlag() == MachineGunFlag)
+	if (fireButton && myTank->getFlag() == MachineGunFlag && !Observer)
 	  myTank->fireShot();
+      }
+      else {
+	int mx, my;
+	mainWindow->getMousePosition(mx, my);        
       }
       myTank->update();
     }
@@ -3643,7 +4619,7 @@ static void		playingLoop()
 #endif
 
     // send my data
-    if (playerLink && myTank->isDeadReckoningWrong()) {
+    if (playerLink && myTank->isDeadReckoningWrong() && !Observer) {
       playerLink->setRelay(serverLink);
       playerLink->sendPlayerUpdate(myTank);
     }
@@ -3651,6 +4627,14 @@ static void		playingLoop()
 #ifdef ROBOT
     sendRobotUpdates();
 #endif
+  }
+
+  // restore the sound.  if we don't do this then we'll save the
+  // wrong volume when we dump out the configuration file if the
+  // app exits when the game is paused.
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
   }
 
   // hide window
@@ -3696,6 +4680,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(0);
   sceneRenderer->setDithering(True);
   sceneRenderer->setShadows(False);
+  sceneRenderer->setEnhancedRadar(False);
   OpenGLTexture::setFilter(OpenGLTexture::Off);
   timeConfiguration(True);
 
@@ -3765,6 +4750,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(2);
   sceneRenderer->setDithering(True);
   sceneRenderer->setShadows(True);
+  sceneRenderer->setEnhancedRadar(True);
   OpenGLTexture::setFilter(OpenGLTexture::LinearMipmapLinear);
   if (timeConfiguration(True) < MaxFrameTime) return;
   if (timeConfiguration(False) < MaxFrameTime) return;
@@ -3840,8 +4826,7 @@ static void		findFastConfiguration()
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
 					1.1f, 1.5f * WorldSize,
 					mainWindow->getWidth(),
-					mainWindow->getHeight(),
-					mainWindow->getViewHeight());
+					mainWindow->getHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // add a big wall in front of where we're looking.  this is important
@@ -3882,7 +4867,7 @@ static void		startupErrorCallback(const char* msg)
   controlPanel->addMessage(msg);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-  controlPanel->render();
+  controlPanel->render(*sceneRenderer);
   mainWindow->getWindow()->swapBuffers();
 }
 
@@ -3900,8 +4885,36 @@ void			startPlaying(BzfDisplay* _display,
   mainWindow = &sceneRenderer->getWindow();
 
   // make control panel
-  ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
+  ControlPanel _controlPanel(*mainWindow, *sceneRenderer, resources);
   controlPanel = &_controlPanel;
+
+  // tell the control panel how many frame buffers there are.  we
+  // cheat when drawing the control panel, not drawing it if it
+  // hasn't changed.  that only works if we've filled all the
+  // frame buffers (e.g. front and back buffers) with the correct
+  // data.
+  // FIXME -- assuming the contents of any frame buffer except the
+  // front buffer are anything but garbage violates the OpenGL
+  // spec.  we really should redraw the control panel every frame
+  // but this works on every system so far.
+  {
+    int n = 3;	// assume triple buffering
+    switch (sceneRenderer->getViewType()) {
+      case SceneRenderer::Stacked:
+      case SceneRenderer::Stereo:
+#ifndef USE_GL_STEREO
+	// control panel drawn twice per frame
+	n *= 2;
+#endif
+	break;
+
+      case SceneRenderer::ThreeChannel:
+      default:
+	// only one copy of control panel visible
+	break;
+    }
+    controlPanel->setNumberOfFrameBuffers(n);
+  }
 
   // if no configuration, turn off fancy rendering so startup is fast,
   // even on a slow machine.
@@ -3913,15 +4926,20 @@ void			startPlaying(BzfDisplay* _display,
     sceneRenderer->setQuality(0);
     sceneRenderer->setDithering(False);
     sceneRenderer->setShadows(False);
+    sceneRenderer->setEnhancedRadar(False);
     OpenGLTexture::setFilter(OpenGLTexture::Off);
   }
 
+  // should we grab the mouse?  yes if fullscreen.
+  if (!resources->hasValue("window"))
+    setGrabMouse(True);
+#if defined(__linux__) && !defined(DEBUG)
+  // linux usually has a virtual root window so grab mouse always
+  setGrabMouse(True);
+#endif
+
   // show window and clear it immediately
   mainWindow->showWindow(True);
-#if defined(__linux__)
-  // linux usually has a virtual root window so grab mouse
-  mainWindow->grabMouse();
-#endif
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glDisable(GL_SCISSOR_TEST);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -3932,7 +4950,7 @@ void			startPlaying(BzfDisplay* _display,
   glEnable(GL_SCISSOR_TEST);
   controlPanel->resize();
   sceneRenderer->render();
-  controlPanel->render();
+  controlPanel->render(*sceneRenderer);
   mainWindow->getWindow()->swapBuffers();
 
   // startup error callback adds message to control panel and
@@ -3947,21 +4965,24 @@ void			startPlaying(BzfDisplay* _display,
 
   // catch kill signals before changing video mode so we can
   // put it back even if we die.  ignore a few signals.
-  signal(SIGINT, SIG_PF(suicide));
-  signal(SIGILL, SIG_PF(dying));
-  signal(SIGABRT, SIG_PF(dying));
-  signal(SIGSEGV, SIG_PF(dying));
-  signal(SIGTERM, SIG_PF(suicide));
+  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)
+    bzSignal(SIGINT, SIG_PF(suicide));
+  bzSignal(SIGILL, SIG_PF(dying));
+  bzSignal(SIGABRT, SIG_PF(dying));
+  bzSignal(SIGSEGV, SIG_PF(dying));
+  bzSignal(SIGTERM, SIG_PF(suicide));
 #if !defined(_WIN32)
-  signal(SIGPIPE, SIG_PF(hangup));
-  signal(SIGHUP, SIG_IGN);
-  signal(SIGQUIT, SIG_PF(dying));
-  signal(SIGBUS, SIG_PF(dying));
-  signal(SIGUSR1, SIG_IGN);
-  signal(SIGUSR2, SIG_IGN);
+  bzSignal(SIGPIPE, SIG_PF(hangup));
+  bzSignal(SIGHUP, SIG_IGN);
+  if (bzSignal(SIGQUIT, SIG_IGN) != SIG_IGN)
+    bzSignal(SIGQUIT, SIG_PF(dying));
+  #ifndef GUSI_20
+  bzSignal(SIGBUS, SIG_PF(dying));
+  #endif
+  bzSignal(SIGUSR1, SIG_IGN);
+  bzSignal(SIGUSR2, SIG_IGN);
 #endif /* !defined(_WIN32) */
 
-#if !defined(_WIN32)
   // set the resolution (only if in full screen mode)
   if (!resources->hasValue("window") && resources->hasValue("resolution")) {
     BzfString videoFormat = resources->getValue("resolution");
@@ -3977,8 +4998,8 @@ void			startPlaying(BzfDisplay* _display,
 	  char xs, ys;
 	  count = sscanf(resources->getValue("geometry"),
 			"%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
-	  if (w < 640) w = 640;
-	  if (h < 400) h = 400;
+	  if (w < 256) w = 256;
+	  if (h < 192) h = 192;
 	  if (count == 6) {
 	    if (xs == '-') x = display->getWidth() - x - w;
 	    if (ys == '-') y = display->getHeight() - y - h;
@@ -3993,17 +5014,18 @@ void			startPlaying(BzfDisplay* _display,
 	// more resize handling
 	mainWindow->getWindow()->callResizeCallbacks();
 	mainWindow->warpMouse();
-	if (format != display->getDefaultResolution())
-	  mainWindow->grabMouse();
       }
     }
   }
-#endif /* !defined(_WIN32) */
+
+  // grab mouse if we should
+  if (shouldGrabMouse())
+    mainWindow->grabMouse();
 
   // draw again
   glClear(GL_COLOR_BUFFER_BIT);
   sceneRenderer->render();
-  controlPanel->render();
+  controlPanel->render(*sceneRenderer);
   mainWindow->getWindow()->swapBuffers();
 
   // make heads up display
@@ -4014,7 +5036,7 @@ void			startPlaying(BzfDisplay* _display,
   updateNumPlayers();
   updateFlag(NoFlag);
   updateHighScores();
-  notifyKeyMapChanged();
+  notifyBzfKeyMapChanged();
 
   // make background renderer
   BackgroundRenderer background(renderer);
@@ -4036,7 +5058,8 @@ void			startPlaying(BzfDisplay* _display,
 				"explode4"
 			};
   static const GLfloat	zero[3] = { 0.0f, 0.0f, 0.0f };
-  for (i = 0; i < sizeof(explosionNames) / sizeof(explosionNames[0]); i++) {
+  for (i = 0; i < (int)(sizeof(explosionNames) /
+					sizeof(explosionNames[0])); i++) {
     // try loading texture
     OpenGLTexture tex = getTexture(explosionNames[i],
 				OpenGLTexture::Linear, False, True);
@@ -4052,6 +5075,15 @@ void			startPlaying(BzfDisplay* _display,
 
     // add it to list of prototype explosions
     prototypeExplosions.append(explosion);
+  }
+
+  // get tank textures
+  {
+    static const char* tankFilename = "flage";
+    int width, height;
+    tankTexture = new OpenGLTexture;
+    *tankTexture = getTexture(tankFilename, &width, &height,
+					OpenGLTexture::LinearMipmapLinear);
   }
 
   // let other stuff do initialization
@@ -4071,17 +5103,9 @@ void			startPlaying(BzfDisplay* _display,
   // print version
   {
     char bombMessage[80];
-    sprintf(bombMessage, "BZFLAG version %d.%d%c build %d %s",
+    sprintf(bombMessage, "BZFlag version %d.%d%c%d",
 		(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000,
-#if defined(ALPHA_RELEASE)
-		"Alpha"
-#elif defined(BETA_RELEASE)
-		"Beta"
-#else
-		""
-#endif
-		);
+		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
     controlPanel->addMessage("");
     controlPanel->addMessage(bombMessage);
   }
@@ -4094,9 +5118,10 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(bombMessage);
   }
 
-  // print copyright  
+  // print copyright
   controlPanel->addMessage(copyright);
-
+  controlPanel->addMessage("Author: Chris Schoeneman <crs23@bigfoot.com>");
+  controlPanel->addMessage("Maintainer: Tim Riker <Tim@Rikers.org>");
   // print OpenGL renderer
   controlPanel->addMessage((const char*)glGetString(GL_RENDERER));
 
@@ -4115,6 +5140,7 @@ void			startPlaying(BzfDisplay* _display,
   playingLoop();
 
   // clean up
+  delete tankTexture;
   for (i = 0; i < prototypeExplosions.getLength(); i++)
     delete prototypeExplosions[i];
   prototypeExplosions.removeAll();
@@ -4129,9 +5155,12 @@ void			startPlaying(BzfDisplay* _display,
   sceneRenderer->setSceneDatabase(NULL);
   delete zScene;
   delete bspScene;
+  ShotStrategy::done();
+  World::done();
   zScene = NULL;
   bspScene = NULL;
   mainWindow = NULL;
   sceneRenderer = NULL;
   display = NULL;
 }
+// ex: shiftwidth=2 tabstop=8

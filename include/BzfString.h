@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,8 +38,7 @@
 #define	BZF_STRING_H
 
 #include "common.h"
-
-class ostream;
+#include "bzfio.h"
 
 class BzfString {
   public:
@@ -105,3 +104,4 @@ class BzfString {
 BZF_DEFINE_ALIST(BzfStringAList, BzfString);
 
 #endif // BZF_STRING_H
+// ex: shiftwidth=2 tabstop=8

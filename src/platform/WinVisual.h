@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,6 +24,7 @@
 class WinVisual : public BzfVisual {
   public:
 			WinVisual(const WinDisplay*);
+			WinVisual(const WinVisual&);
 			~WinVisual();
 
     void		setLevel(int level);
@@ -41,6 +42,7 @@ class WinVisual : public BzfVisual {
     boolean		build();
 
     // for other Windows stuff
+    void		reset();
     int			get(HDC, const PIXELFORMATDESCRIPTOR**);
 
   protected:
@@ -57,3 +59,4 @@ class WinVisual : public BzfVisual {
 };
 
 #endif // BZF_WINVISUAL_H
+// ex: shiftwidth=2 tabstop=8

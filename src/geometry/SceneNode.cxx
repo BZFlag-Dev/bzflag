@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,7 +39,7 @@ SceneNode::~SceneNode()
 
 #if defined(sun)
 static void __stdcall	oglColor3f(GLfloat r, GLfloat g, GLfloat b)
-				{ glColor3f(r, g, b); } 
+				{ glColor3f(r, g, b); }
 static void __stdcall	oglColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 				{ glColor4f(r, g, b, a); }
 static void __stdcall	oglColor3fv(const GLfloat* v)
@@ -222,3 +222,4 @@ GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
   }
   return *this;
 }
+// ex: shiftwidth=2 tabstop=8

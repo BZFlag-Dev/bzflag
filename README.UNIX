@@ -15,6 +15,6 @@ or, if you want to build an installable package:
 
 If you're building Mesa 3 on Linux PPC, there's one file that
 causes an internal compiler error at the optimization levels
-O2 and above (the default is O5).  Just build that file at
-optimization level O1.
+O2 and above (the default is O5) on some versions of Mesa and
+the compiler.  Just build that file at optimization level O1.
 

@@ -1,7 +1,22 @@
 #!/bin/sh
-
-version=`date +%Y%m%d`
+# build cvs snapshop debian packages
+# call with any argument to build final packages
+if [ -z "$1" -o ! -r config ] ; then
+ echo "$0 { cvs | release } - must be run in the project home directory"
+ exit 1
+fi
+eval `grep VERSIONID config | sed -e 's/ //g'`
+if [ "$1" == "release" ] ; then
+ version=$VERSIONID
+else
+ version=$VERSIONID.`date +%Y%m%d`
+fi
 date=`date --rfc-822`
+make linux
+make pristine
 sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
+chmod +x debian/rules misc/tar
 
-dpkg-buildpackage -us -uc -rfakeroot
+# cvs/non-cvs builds should conflict and replace each other.
+PATH=`pwd`/misc:$PATH dpkg-buildpackage -us -uc -rfakeroot
+echo "now do \"debsign\" and then a \"dupload ../bzflag_${version}_i386.changes\""

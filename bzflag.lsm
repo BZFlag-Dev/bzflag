@@ -1,14 +1,14 @@
-Begin3
-Title:          BZFlag 
-Version:        1.7
-Entered-date:   
-Description:    
-Keywords:        
-Author:         Tim Riker <Tim@Rikers.org> 
-Maintained-by:  Tim Riker <Tim@Rikers.org> 
-Primary-site:   	        
-Home-page:      http:// 
-Original-site:  
-Platforms:       Linux and other Unices
-Copying-policy: GNU Public License
+Begin4
+Title:		BZFlag
+Version:	1.7e2
+Entered-date:	2000-09-01
+Description:	OpenSource OpenGL Multiplayer BattleZone Capture the Flag
+Keywords:	game OpenGL multiplayer
+Author:		Chris Schoeneman <crs23@bigfoot.com>
+Maintained-by:	Tim Riker <Tim@Rikers.org>
+Primary-site:	http://BZFlag.org/
+Alternate-site:
+Original-site:
+Platforms:	Linux and other Unices
+Copying-policy:	GNU Public License
 End

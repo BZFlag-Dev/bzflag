@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* 
+/*
  * includes platform specific network files and adds missing stuff
  *
  * unfortunately this can include far more than necessary
@@ -19,13 +19,18 @@
 #ifndef	BZF_NETWORK_H
 #define	BZF_NETWORK_H
 
+#include "common.h"
+#include "BzfString.h"
+
 #if !defined(_WIN32)
 
 #include <sys/time.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
-#include <sys/param.h>
+#ifndef GUSI_20
+  #include <sys/param.h>
+#endif
 #include <net/if.h>
 #include <netinet/in.h>
 #if defined(__linux__)
@@ -36,8 +41,23 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun))
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__) && !defined(macintosh))
 #include <bstring.h>
+#endif
+
+// add our own def block
+#if defined (macintosh)
+  #ifdef GUSI_20
+    #define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
+    #define accept(a,b,c)            accept(a,b,(unsigned int *)c)
+    #define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
+
+    #define MAXHOSTNAMELEN 255
+
+    #define O_NDELAY O_NONBLOCK
+
+    #define hstrerror(x) "hstrerror is broken"
+  #endif
 #endif
 
 #if defined(__linux__) && !defined(_old_linux_)
@@ -45,6 +65,18 @@
 
 /* setsockopt incorrectly prototypes the 4th arg without const. */
 #define SSOType		void*
+#endif
+
+#if defined(__FreeBSD__) && !defined(_MACOSX_)
+#define AddrLen		socklen_t
+#endif
+
+#if defined(sun)
+/* setsockopt prototypes the 4th arg as const char*. */
+#define SSOType		const char*
+
+/* connect prototypes the 2nd arg without const */
+#define CNCTType	struct sockaddr
 #endif
 
 extern "C" {
@@ -99,11 +131,8 @@ int			getErrno();
 #if !defined(SSOType)
 #define SSOType		const void*
 #endif
-
-// some platforms don't have a SIG_PF type.
-// note that this isn't really network code.
-#if !defined(__sgi) && !defined(sun)
-typedef void		(*SIG_PF)(int);
+#if !defined(CNCTType)
+#define CNCTType	const struct sockaddr
 #endif
 
 #if !defined(INADDR_NONE)
@@ -113,6 +142,21 @@ typedef void		(*SIG_PF)(int);
 class BzfNetwork {
   public:
     static int		setNonBlocking(int fd);
+    static boolean	dereferenceURLs(BzfStringAList& list,
+				int max, BzfStringAList& failedList);
+    static boolean	parseURL(const BzfString& url,
+				BzfString& protocol,
+				BzfString& hostname,
+				int& port,
+				BzfString& pathname);
+
+  private:
+    static BzfString	dereferenceHTTP(const BzfString& hostname, int port,
+				const BzfString& pathname);
+    static BzfString	dereferenceFile(const BzfString& pathname);
+    static void		insertLines(BzfStringAList& list,
+				int index, const BzfString& data);
 };
 
 #endif // BZF_NETWORK_H
+// ex: shiftwidth=2 tabstop=8

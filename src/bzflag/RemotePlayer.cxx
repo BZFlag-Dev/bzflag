@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -32,10 +32,30 @@ RemotePlayer::~RemotePlayer()
 
 void			RemotePlayer::addShot(const FiringInfo& info)
 {
+  float newpos[3];
+  const float *f = getForward();
   RemoteShotPath* newShot = new RemoteShotPath(info);
   int shotNum = int(newShot->getShotId() & 255);
   if (shots[shotNum]) delete shots[shotNum];
   shots[shotNum] = newShot;
+  // Update tanks position and set dead reckoning for better lag handling
+  // shot origin is center of tank for shockwave
+  if (info.flag == ShockWaveFlag) {
+    newpos[0] = info.shot.pos[0];
+    newpos[1] = info.shot.pos[1];
+    newpos[2] = info.shot.pos[2];
+  }
+  // shot origin is muzzle for other shots
+  else {
+    float front = MuzzleFront;
+    if (info.flag == ObesityFlag) front *= ObeseFactor;
+    else if (info.flag == TinyFlag) front *= TinyFactor;
+    newpos[0] = info.shot.pos[0]-(front * f[0]);
+    newpos[1] = info.shot.pos[1]-(front * f[1]);
+    newpos[2] = info.shot.pos[2]-(front * f[2])-MuzzleHeight;
+  }
+  move(newpos, getAngle());
+  setDeadReckoning();
 }
 
 ShotPath*		RemotePlayer::getShot(int index) const
@@ -88,3 +108,4 @@ void			RemotePlayer::updateShots(float dt)
     if (shots[i])
       shots[i]->update(dt);
 }
+// ex: shiftwidth=2 tabstop=8

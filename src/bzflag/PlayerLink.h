@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,6 +22,7 @@
 #include "Address.h"
 #include "Protocol.h"
 #include "multicast.h"
+#include "udpnetwork.h"
 
 class Player;
 class ServerLink;
@@ -31,7 +32,8 @@ class PlayerLink {
     enum State {
 			Okay = 0,
 			SocketError = 1,
-			ServerRelay = 2
+			ServerUDPRelay = 2,
+			ServerRelay = 3
     };
 
 			PlayerLink(const Address& multicastAddress,
@@ -59,7 +61,8 @@ class PlayerLink {
 
     static PlayerLink*	getMulticast(); // const
     static void		setMulticast(PlayerLink*);
-
+    void         	setPortForUPD(unsigned short port);
+    void		enableUDPConIfRelayed();
   private:
     State		state;
     int			ttl;
@@ -92,3 +95,4 @@ inline int		PlayerLink::getOutSocket() const
 }
 
 #endif // BZF_PLAYER_LINK_H
+// ex: shiftwidth=2 tabstop=8

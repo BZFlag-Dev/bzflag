@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -12,29 +12,29 @@
 #
 # configuration for irix mips2
 #
-CONFIG  = irix-mips2
+CONFIG	= irix-mips2
 
 #
 # tools
 #
-AR      = $(TOOLROOT)/usr/bin/ar cru
+AR	= $(TOOLROOT)/usr/bin/ar cru
 CC	= $(TOOLROOT)/usr/bin/cc
 CXX	= $(TOOLROOT)/usr/bin/CC
 CD	= cd
-CP      = /usr/bin/cp
+CP	= /usr/bin/cp
 LD	= $(TOOLROOT)/usr/bin/ld
 MKDIR	= /usr/bin/mkdir
-NROFF   = $(TOOLROOT)/usr/bin/nroff
-RM      = /usr/bin/rm -f
-RMR     = $(RM) -r
+NROFF	= $(TOOLROOT)/usr/bin/nroff
+RM	= /usr/bin/rm -f
+RMR	= $(RM) -r
 SHELL	= /bin/sh
 ECHO	= echo
 
 #
 # compiler definitions
 #
-PCDEFS   =
-PCXXDEFS =
+PCDEFS   = -Dbool=boolean -Dtrue=True -Dfalse=False
+PCXXDEFS = -Dbool=boolean -Dtrue=True -Dfalse=False
 
 #
 # compiler options

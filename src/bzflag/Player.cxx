@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -28,12 +28,13 @@ static const float	MaxUpdateTime = 1.0f;		// seconds
 // Player
 //
 
-OpenGLTexture		Player::tankTexture;
+OpenGLTexture*		Player::tankTexture = NULL;
+int			Player::totalCount = 0;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
 		const char* name, const char* _email) :
-				notResponding(False),
 				id(_id),
+				notResponding(False),
 				team(_team),
 				flag(NoFlag),
 				fromTeleporter(0),
@@ -66,6 +67,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   changeTeam(team);
   pausedSphere = new SphereSceneNode(pos, 1.5f * TankRadius);
   pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
+
+  totalCount++;
 }
 
 Player::~Player()
@@ -73,6 +76,10 @@ Player::~Player()
   delete tankIDLNode;
   delete tankNode;
   delete pausedSphere;
+  if (--totalCount == 0) {
+    delete tankTexture;
+    tankTexture = NULL;
+  }
 }
 
 float			Player::getRadius() const
@@ -129,7 +136,9 @@ void			Player::setAngularVelocity(float _angVel)
 
 void			Player::setTexture(const OpenGLTexture& _texture)
 {
-  tankTexture = _texture;
+  if (!tankTexture)
+    tankTexture = new OpenGLTexture;
+  *tankTexture = _texture;
 }
 
 void			Player::changeTeam(TeamColor _team)
@@ -150,7 +159,7 @@ void			Player::changeTeam(TeamColor _team)
   color[3] = 1.0f;
   tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, tankEmissive, 20.0f));
-  tankNode->setTexture(tankTexture);
+  tankNode->setTexture(*tankTexture);
 }
 
 void			Player::setStatus(short _status)
@@ -307,12 +316,8 @@ void*			Player::pack(void* buf) const
 {
   ((Player*)this)->setDeadReckoning();
   buf = nboPackShort(buf, int16_t(status));
-  buf = nboPackFloat(buf, pos[0]);
-  buf = nboPackFloat(buf, pos[1]);
-  buf = nboPackFloat(buf, pos[2]);
-  buf = nboPackFloat(buf, velocity[0]);
-  buf = nboPackFloat(buf, velocity[1]);
-  buf = nboPackFloat(buf, velocity[2]);
+  buf = nboPackVector(buf, pos);
+  buf = nboPackVector(buf, velocity);
   buf = nboPackFloat(buf, azimuth);
   buf = nboPackFloat(buf, angVel);
   return buf;
@@ -322,12 +327,8 @@ void*			Player::unpack(void* buf)
 {
   int16_t inStatus;
   buf = nboUnpackShort(buf, inStatus);
-  buf = nboUnpackFloat(buf, pos[0]);
-  buf = nboUnpackFloat(buf, pos[1]);
-  buf = nboUnpackFloat(buf, pos[2]);
-  buf = nboUnpackFloat(buf, velocity[0]);
-  buf = nboUnpackFloat(buf, velocity[1]);
-  buf = nboUnpackFloat(buf, velocity[2]);
+  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackVector(buf, velocity);
   buf = nboUnpackFloat(buf, azimuth);
   buf = nboUnpackFloat(buf, angVel);
   status = short(inStatus);
@@ -455,6 +456,11 @@ boolean			Player::isDeadReckoningWrong() const
   // always send a new packet on reckoned touchdown
   if (predictedPos[2] < 0.0f) return True;
 
+  // client side throttling
+  const int throttleRate = 30; // should be configurable
+  const float minUpdateTime = throttleRate > 0 ? 1.0f / throttleRate : 0.0f;
+  if (TimeKeeper::getTick() - inputTime < minUpdateTime) return False;
+
   // see if position and azimuth are close enough
   if (fabsf(pos[0] - predictedPos[0]) > PositionTolerance) return True;
   if (fabsf(pos[1] - predictedPos[1]) > PositionTolerance) return True;
@@ -467,10 +473,14 @@ boolean			Player::isDeadReckoningWrong() const
 
 void			Player::doDeadReckoning()
 {
+  if (!isAlive() && !isExploding())
+    return;
+
   // get predicted state
   float predictedPos[3], predictedAzimuth, predictedVel[3];
   notResponding = !getDeadReckoning(predictedPos, &predictedAzimuth,
 								predictedVel);
+
   if (!isAlive()) notResponding = False;
 
   // if hit ground then update input state (since we don't want to fall
@@ -487,3 +497,4 @@ void			Player::doDeadReckoning()
   setVelocity(predictedVel);
 }
 
+// ex: shiftwidth=2 tabstop=8

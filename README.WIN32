@@ -1,6 +1,7 @@
 README for Win32 platforms
 --------------------------
 
+
 Command line development tools on Win32 are in the stone age.
 NMAKE is bad but COMMAND.COM is infinitely worse.  So, for
 now, bzflag uses Microsoft Visual C++ project files.
@@ -18,10 +19,16 @@ that can read Visual C++ projects and workspaces.  Then:
   * build
   * select `bzfs Release' as the active configuration
   * build
+  * select `bzfls Release' as the active configuration
+  * build
 
-Packaging bzflag on win32 isn't yet as simple as typing `make'
-or building a workspace.  To build the installer:
+To build the installer:
 
+  * open package\win32\install.dsw
+  * select bzfinst Release as the active configuration
+  * Rebuild all
+
+--- or ------------------------------------------------------------
   * open package\win32\install.dsw
   * select `bzfuinst Release' as the active configuration
   * build

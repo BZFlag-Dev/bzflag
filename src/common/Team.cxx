@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,12 +21,21 @@ float			Team::tankColor[NumTeams][3] = {
 				{ 1.0f, 0.0f, 1.0f }
 			};
 float			Team::radarColor[NumTeams][3] = {
-				{ 1.0f, 1.0f, 0.0f },
-				{ 1.0f, 0.0f, 0.0f },
-				{ 0.0f, 1.0f, 0.0f },
-				{ 0.25f, 0.25, 1.0f },	// blue is hard to see
-				{ 1.0f, 0.0f, 1.0f }
+				{ 1.0f, 1.0f, 0.0f }, // rogue
+				{ 1.0f, 0.15f, 0.15f }, //red
+				{ 0.2f, 0.9f, 0.2f }, //green
+				{ 0.08f, 0.25, 1.0f },	// blue
+				{ 1.0f, 0.4f, 1.0f } //purple
 			};
+// taken from old console team messge colors
+//static const GLfloat    teamMsgColor[][3] = {
+//                                { 1.0, 1.0, 0.5 },    // broadcast
+//                                { 1.0, 0.5, 0.5 },    // red
+//                                { 0.5, 1.0, 0.5 },    // green
+//                                { 0.5, 0.5, 1.0 },    // blue
+//                                { 1.0, 0.5, 1.0 }     // purple
+//                        };
+
 
 void*			Team::pack(void* buf) const
 {
@@ -84,3 +93,4 @@ void			Team::setColors(TeamColor team,
   radarColor[int(team)][1] = radar[1];
   radarColor[int(team)][2] = radar[2];
 }
+// ex: shiftwidth=2 tabstop=8

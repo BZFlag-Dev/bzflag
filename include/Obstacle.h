@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -69,7 +69,7 @@ class Obstacle {
 				float oWidth, float oBreadth, float oHeight,
 				float* normal) const;
 
-  private:
+  protected:
     float		pos[3];
     float		angle;
     float		width;
@@ -143,3 +143,4 @@ inline int		ObstacleSceneNodeGenerator::incNodeNumber()
 }
 
 #endif // BZF_OBSTACLE_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,6 +21,31 @@
 #include "XDisplay.h"
 #include <X11/Xlib.h>
 #include <GL/glx.h>
+
+#ifdef XIJOYSTICK
+#include <X11/extensions/XInput.h>
+#endif
+
+#ifdef USBJOYSTICK
+#ifdef __cplusplus
+/* Argh! usb.h has a structure with a member "class". We don't use it, so
+ * let's just move it out of the way
+ */
+#define class CLASS
+extern "C" {
+#endif
+#ifdef __FreeBSD__
+#include <libusb.h>
+#else
+#include <usb.h>
+#endif
+#include <dev/usb/usb.h>
+#include <dev/usb/usbhid.h>
+#ifdef __cplusplus
+#undef class
+}
+#endif
+#endif
 
 class XVisual;
 
@@ -49,11 +74,39 @@ class XWindow : public BzfWindow {
     void		showMouse();
     void		hideMouse();
 
+    void		setGamma(float);
+    float		getGamma() const;
+    boolean		hasGammaControl() const;
+
     void		makeCurrent();
     void		swapBuffers();
+    void		makeContext();
+    void		freeContext();
+
+#ifdef USBJOYSTICK
+    void               initJoystick(const char* joystickName);
+    boolean            joystick() const;
+    void               getJoy(int& x, int& y) const;
+    unsigned long      getJoyButtons() const;
+#endif
+
+#ifdef XIJOYSTICK
+    void		initJoystick(char* joystickName);
+    boolean		joystick() const;
+    void		getJoy(int& x, int& y) const;
+#endif
 
     // other X stuff
     static XWindow*	lookupWindow(Window);
+
+    static void		reactivateAll();
+    static void		deactivateAll();
+
+  private:
+    void		loadColormap();
+    unsigned short	getIntensityValue(float i) const;
+    static float	pixelField(int i, int bits, int offset);
+    static void		countBits(unsigned long mask, int& num, int& offset);
 
   private:
     XDisplay::Rep*	display;
@@ -64,7 +117,17 @@ class XWindow : public BzfWindow {
     boolean		defaultColormap;
     XWindow*		prev;
     XWindow*		next;
+    XVisualInfo		visual;
+    unsigned long*	colormapPixels;
+    float		gammaVal;
     static XWindow*	first;
+
+#ifdef XIJOYSTICK
+    XDevice*		device;
+    int			scaleX, constX;
+    int			scaleY, constY;
+#endif
 };
 
 #endif // BZF_XWINDOW_H
+// ex: shiftwidth=2 tabstop=8

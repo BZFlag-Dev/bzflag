@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,6 +20,7 @@
 #include "OpenGLGState.h"
 #include "BzfString.h"
 #include "AList.h"
+#include "resources.h"
 
 class RadarRenderer;
 class SceneRenderer;
@@ -35,16 +36,18 @@ BZF_DEFINE_ALIST(ControlPanelMessageList, ControlPanelMessage);
 
 class ControlPanel {
   public:
-			ControlPanel(MainWindow&, SceneRenderer&);
+			ControlPanel(MainWindow&, SceneRenderer&, ResourceDatabase *_resources);
 			~ControlPanel();
 
-    void		render(int retouch = 0);
+	void		setControlColor(const GLfloat *color = NULL);
+    void		render(SceneRenderer&);
     void		resize();
 
+    void		setNumberOfFrameBuffers(int);
+
     void		addMessage(const BzfString&, const GLfloat* = NULL);
+	void		setMessagesOffset(int offset, int whence);
     void		setStatus(const char*);
-    void		resetTeamCounts();
-    void		setTeamCounts(const int* counts);
     void		setRadarRenderer(RadarRenderer*);
 
   private:
@@ -55,50 +58,36 @@ class ControlPanel {
     void		expose();
     void		change();
 
-    void		zoomPanel(int width, int height);
-
     static void		resizeCallback(void*);
     static void		exposeCallback(void*);
 
   private:
     MainWindow&		window;
     boolean		resized;
+    boolean		blend;
+    int			numBuffers;
     int			exposed;
     int			changedMessage;
-    int			changedStatus;
-    int			changedCounts;
     RadarRenderer*	radarRenderer;
 
     int			panelWidth;
     int			panelHeight;
-    int			panelFormat;
-    unsigned char*	panelImage;
-    int			panelZoomedImageSize;
-    unsigned char*	panelZoomedImage;
-    unsigned char*	origPanelZoomedImage;
 
-    OpenGLGState	gstate;
-    OpenGLTexture	background;
     OpenGLTexFont	messageFont;
-    OpenGLTexFont	statusFont;
-    OpenGLTexFont	countFont;
     int			width, blanking;
     float		ratio;
     float		du, dv;
     float		radarAreaUV[4];
     float		messageAreaUV[4];
-    float		statusAreaUV[4];
-    float		teamCountAreaUV[NumTeams][2];
-    float		teamCountSizeUV[2];
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
-    int			statusAreaPixels[4];
-    int			teamCountAreaPixels[NumTeams][2];
-    int			teamCountSizePixels[2];
-    BzfString		status;
-    int			teamCounts[NumTeams];
     ControlPanelMessageList	messages;
+    GLfloat		teamColor[3];
+    static int		messagesOffset;
+    static const int	maxScrollPages;
     static const int	maxLines;
+    GLfloat				background[4];
 };
 
 #endif // BZF_CONTROL_PANEL_H
+// ex: shiftwidth=2 tabstop=8

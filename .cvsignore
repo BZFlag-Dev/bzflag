@@ -1,4 +1,7 @@
-Makefile
-Makefile.in
-*.moc.cpp
-*.moc
+bin
+lib
+config-sys
+build-stamp
+work
+*patch
+*diff

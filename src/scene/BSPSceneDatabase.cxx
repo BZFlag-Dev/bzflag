@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -160,7 +160,7 @@ void			BSPSceneDatabase::insertStatic(int level,
       back = node;
       break;
   }
-  
+
   // add nodes
   if (front) {
     if (root->front) insertStatic(level+1, root->front, front);
@@ -341,3 +341,4 @@ restart:
   assert(0);
   return NULL;
 }
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -52,16 +52,18 @@ void			BoxBuilding::getNormal(const float* p, float* n) const
 boolean			BoxBuilding::isInside(const float* p,
 						float radius) const
 {
-  return p[2] < getHeight() && testRectCircle(getPosition(), getRotation(),
-					getWidth(), getBreadth(), p, radius);
+  return p[2] < getPosition()[2] + getHeight() && testRectCircle(getPosition(), getRotation(),
+					getWidth(), getBreadth(), p, radius)
+					&& p[2] >= getPosition()[2];
 }
 
 boolean			BoxBuilding::isInside(const float* p, float a,
 						float dx, float dy) const
 {
-  return p[2] < getHeight() && testRectRect(getPosition(), getRotation(),
+  return p[2] < getPosition()[2] + getHeight() && testRectRect(getPosition(), getRotation(),
 					getWidth(), getBreadth(),
-					p, a, dx, dy);
+					p, a, dx, dy)
+					&& p[2] >= getPosition()[2];
 }
 
 boolean			BoxBuilding::isCrossing(const float* p, float a,
@@ -165,7 +167,7 @@ BoxSceneNodeGenerator::~BoxSceneNodeGenerator()
 WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
 				float uRepeats, float vRepeats, boolean lod)
 {
-  if (getNodeNumber() == 5) return NULL;
+  if (getNodeNumber() == 6) return NULL;
 
   GLfloat base[3], sCorner[3], tCorner[3];
   switch (incNodeNumber()) {
@@ -189,10 +191,15 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
       box->getCorner(0, sCorner);
       box->getCorner(7, tCorner);
       break;
-    case 5:
+    case 5:							//This is the top polygon
       box->getCorner(4, base);
       box->getCorner(5, sCorner);
       box->getCorner(7, tCorner);
+      break;
+    case 6:							//This is the bottom polygon
+      box->getCorner(0, base);
+      box->getCorner(3, sCorner);
+      box->getCorner(1, tCorner);
       break;
   }
 
@@ -206,3 +213,4 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
   tEdge[2] = tCorner[2] - base[2];
   return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
 }
+// ex: shiftwidth=2 tabstop=8

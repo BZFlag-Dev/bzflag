@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,6 +22,7 @@
 #include "global.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
+#include "BaseBuilding.h"
 #include "Teleporter.h"
 #include "WallObstacle.h"
 #include "Flag.h"
@@ -75,6 +76,7 @@ class World {
     const WallObstacles	&getWalls() const;
     const BoxBuildings&	getBoxes() const;
     const PyramidBuildings& getPyramids() const;
+    const BaseBuildings &getBases() const;
     const Teleporters&	getTeleporters() const;
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
@@ -105,6 +107,7 @@ class World {
     static void		setWorld(World*);
 
     static void		init();
+    static void		done();
     static void		setFlagTexture(FlagSceneNode*);
 
   private:
@@ -128,6 +131,7 @@ class World {
     float		bases[NumTeams][9];
     BoxBuildings	boxes;
     PyramidBuildings	pyramids;
+    BaseBuildings	basesR;
     Teleporters		teleporters;
     WallObstacles	walls;
     int*		teleportTargets;
@@ -139,6 +143,7 @@ class World {
     FlagWarpSceneNode**	flagWarpNodes;
     EighthDimSceneNode** boxInsideNodes;
     EighthDimSceneNode** pyramidInsideNodes;
+    EighthDimSceneNode** baseInsideNodes;
     static World*	playingField;
     static const int	maxDeadPlayers;
 };
@@ -164,6 +169,7 @@ class WorldBuilder {
     void		append(const WallObstacle&);
     void		append(const BoxBuilding&);
     void		append(const PyramidBuilding&);
+    void		append(const BaseBuilding&);
     void		append(const Teleporter&);
     void		setTeleporterTarget(int source, int target);
     void		setBase(TeamColor team,
@@ -340,6 +346,11 @@ inline const WallObstacles&	World::getWalls() const
   return walls;
 }
 
+inline const BaseBuildings&	World::getBases() const
+{
+  return basesR;
+}
+
 inline const BoxBuildings&	World::getBoxes() const
 {
   return boxes;
@@ -361,3 +372,4 @@ inline World*		World::getWorld()
 }
 
 #endif // BZF_WORLD_H
+// ex: shiftwidth=2 tabstop=8

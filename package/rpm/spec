@@ -1,5 +1,6 @@
-# bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# BZFlag rpm spec file
+#
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -8,89 +9,80 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# bzflag RPM spec file
-#   RPM is boneheaded in that it expects you to build and install
-#   a package as part of the packaging.  dumb!  we'll hard link the
-#   necessary files into an alternate root and have RPM look there.
-#   we can also get RPM to put files in an alternate location by
-#   using an external rpmrc file.
-#
-Name:		bzflag
-Version:	1.7c
-Release:	2
-Copyright:	Chris Schoeneman 1993-1999
-Group:		X11/Games/Video
-URL:		http://www.bigfoot.com/~bzflag
-Packager:	Chris Schoeneman <crs23@bigfoot.com>
-BuildRoot:	/var/tmp/bzflag
-Summary:	multiplayer 3D tank battle game
+
+%define name bzflag
+%define version 1.7e7
+%define release 1
+
+%define bzbindir	/usr/X11R6/bin
+%define bzdatadir	/usr/share/%{name}/
+%define bzmandir	/usr/share/man
+%define bzdocdir	/usr/share/doc/%{name}-%{version}
+
+name:		%{name}
+version:	%{version}
+release:	%{release}
+group:		Recreation/Action
+copyright:	Copyright (c) 1993 - 2002 Tim Riker
+packager:	Tim Riker <Tim@Rikers.org>
+url:		http://BZFlag.org/
+summary:	multiplayer 3D tank battle game
+source:		http://download.SourceForge.net/bzflag/%{name}-%{version}.tgz
+buildroot:	/var/tmp/%{name}-%{version}-%{release}
+
+# all we want here is to remove glide, but RPM does not provide a way. ;-(
+# [crs -- mesa 3.1 now uses libGL.so.1 and libGLU.so.1.  also, linking
+#  against a mesa built without glide support avoids the glide dependency.]
+#autoreqprov: no
+#requires: ld-linux.so.2 libMesaGL.so.3 libMesaGLU.so.3 libX11.so.6
+#requires: libXext.so.6 libc.so.6 libm.so.6 libstdc++.so.2.9
 
 %description
-bzflag is a networked multiplayer 3D tank battle game, combining
+BZFlag is a networked multiplayer 3D tank battle game, combining
 both fast action and strategy.  Free-for-all and capture-the-flag
 styles are available.
 
 %prep
-# do nothing
+%setup -q
 
 %build
-# do nothing
+%ifarch ppc
+make linux-ppc
+%else
+%ifarch i386 i486 i586 i686
+make linux-i386
+%else
+make linux
+%endif
+%endif
+make ACXXOPTS="$RPM_OPT_FLAGS" ACOPTS="$RPM_OPT_FLAGS"		\
+	INSTALL_DATA_DIR=%{bzdatadir}				\
+	all
 
 %install
-# do nothing
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT%{bzdocdir}
+mkdir -p $RPM_BUILD_ROOT%{bzbindir}
+mkdir -p $RPM_BUILD_ROOT%{bzdatadir}
+mkdir -p $RPM_BUILD_ROOT%{bzmandir}/man6
+mkdir -p $RPM_BUILD_ROOT/usr/X11R6/bin
+install -m644 package/rpm/README.linux $RPM_BUILD_ROOT%{bzdocdir}/README
+install -m644 LICENSE $RPM_BUILD_ROOT%{bzdocdir}
+install -m644 man/*.6 $RPM_BUILD_ROOT%{bzmandir}/man6
+gzip $RPM_BUILD_ROOT%{bzmandir}/man6/*.6
+install -m644 data/*.rgb data/*.wav $RPM_BUILD_ROOT%{bzdatadir}
+# note bzfls/bzfrelay/bzfs might want to live in /usr/bin/
+install bin/* $RPM_BUILD_ROOT%{bzbindir}
 
 %clean
-# do nothing
+rm -rf $RPM_BUILD_ROOT
 
-#
-# note -- bzflag must be setuid root to use 3Dfx drivers
-#
+# note -- bzflag must be setuid root to use 3Dfx drivers without /dev/3dfx
 %files
-%attr(-, root, root) %doc README
-%attr(-, root, root) %doc LICENSE
-%attr(04755, root, root) /usr/local/bzflag/bin/bzflag.real
-%attr(755, root, root) /usr/local/bzflag/bin/bzflag
-%attr(755, root, root) /usr/local/bzflag/bin/bzfs
-%attr(755, root, root) /usr/X11R6/bin/bzflag
-%attr(444, root, root) /usr/local/bzflag/data/bbolt.rgb
-%attr(444, root, root) /usr/local/bzflag/data/boom.wav
-%attr(444, root, root) /usr/local/bzflag/data/boxwall.rgb
-%attr(444, root, root) /usr/local/bzflag/data/caution.rgb
-%attr(444, root, root) /usr/local/bzflag/data/clouds.rgb
-%attr(444, root, root) /usr/local/bzflag/data/explode1.rgb
-%attr(444, root, root) /usr/local/bzflag/data/explosion.wav
-%attr(444, root, root) /usr/local/bzflag/data/fire.wav
-%attr(444, root, root) /usr/local/bzflag/data/fixedbr.rgb
-%attr(444, root, root) /usr/local/bzflag/data/fixedmr.rgb
-%attr(444, root, root) /usr/local/bzflag/data/flag.rgb
-%attr(444, root, root) /usr/local/bzflag/data/flag_alert.wav
-%attr(444, root, root) /usr/local/bzflag/data/flag_drop.wav
-%attr(444, root, root) /usr/local/bzflag/data/flag_grab.wav
-%attr(444, root, root) /usr/local/bzflag/data/flag_lost.wav
-%attr(444, root, root) /usr/local/bzflag/data/flag_won.wav
-%attr(444, root, root) /usr/local/bzflag/data/flage.rgb
-%attr(444, root, root) /usr/local/bzflag/data/gbolt.rgb
-%attr(444, root, root) /usr/local/bzflag/data/ground.rgb
-%attr(444, root, root) /usr/local/bzflag/data/helvbi.rgb
-%attr(444, root, root) /usr/local/bzflag/data/helvbr.rgb
-%attr(444, root, root) /usr/local/bzflag/data/laser.wav
-%attr(444, root, root) /usr/local/bzflag/data/laser.rgb
-%attr(444, root, root) /usr/local/bzflag/data/missile.rgb
-%attr(444, root, root) /usr/local/bzflag/data/mountain.rgb
-%attr(444, root, root) /usr/local/bzflag/data/panel.rgb
-%attr(444, root, root) /usr/local/bzflag/data/pbolt.rgb
-%attr(444, root, root) /usr/local/bzflag/data/pop.wav
-%attr(444, root, root) /usr/local/bzflag/data/pyrwall.rgb
-%attr(444, root, root) /usr/local/bzflag/data/rbolt.rgb
-%attr(444, root, root) /usr/local/bzflag/data/ricochet.wav
-%attr(444, root, root) /usr/local/bzflag/data/roof.rgb
-%attr(444, root, root) /usr/local/bzflag/data/shock.wav
-%attr(444, root, root) /usr/local/bzflag/data/teleport.wav
-%attr(444, root, root) /usr/local/bzflag/data/timesbi.rgb
-%attr(444, root, root) /usr/local/bzflag/data/timesbr.rgb
-%attr(444, root, root) /usr/local/bzflag/data/title.rgb
-%attr(444, root, root) /usr/local/bzflag/data/wall.rgb
-%attr(444, root, root) /usr/local/bzflag/data/ybolt.rgb
-%attr(444, root, root) /usr/local/man/man6/bzflag.6
-%attr(444, root, root) /usr/local/man/man6/bzfs.6
+%defattr(-,root,root)
+%dir %{bzdocdir}
+%dir %{bzdatadir}
+%dir %{bzdatadir}/*
+%doc %{bzdocdir}/*
+%doc %{bzmandir}/man6/*
+%attr(755,root,root) /usr/X11R6/bin/*

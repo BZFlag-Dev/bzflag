@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -11,7 +11,7 @@
  */
 
 #include "LinuxPlatformFactory.h"
-#include "XDisplay.h"
+#include "LinuxDisplay.h"
 #include "XVisual.h"
 #include "XWindow.h"
 #include "LinuxMedia.h"
@@ -35,7 +35,7 @@ LinuxPlatformFactory::~LinuxPlatformFactory()
 BzfDisplay*		LinuxPlatformFactory::createDisplay(
 				const char* name, const char*)
 {
-  XDisplay* display = new XDisplay(name);
+  XDisplay* display = new XDisplay(name, new LinuxDisplayMode);
   if (!display || !display->isValid()) {
     delete display;
     return NULL;
@@ -59,3 +59,4 @@ BzfMedia*		LinuxPlatformFactory::createMedia()
 {
   return new LinuxMedia;
 }
+// ex: shiftwidth=2 tabstop=8

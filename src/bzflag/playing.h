@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,9 +20,10 @@
 #include "common.h"
 #include "global.h"
 #include "AList.h"
+#include "BzfString.h"
 
 class SceneRenderer;
-class KeyMap;
+class BzfKeyMap;
 
 struct StartupInfo {
   public:
@@ -34,10 +35,15 @@ struct StartupInfo {
     char		serverName[80];
     int			serverPort;
     int			ttl;
+    boolean		useUDPconnection;
     char		multicastInterface[65];
     TeamColor		team;
     char		callsign[CallSignLen];
     char		email[EmailLen];
+    BzfString		listServerURL;
+    int			listServerPort;
+    boolean		joystick;
+    BzfString		joystickName;
 };
 
 typedef void		(*JoinGameCallback)(boolean success, void* data);
@@ -61,8 +67,8 @@ MainWindow*		getMainWindow();
 SceneRenderer*		getSceneRenderer();
 void			setSceneDatabase();
 StartupInfo*		getStartupInfo();
-KeyMap&			getKeyMap();
-void			notifyKeyMapChanged();
+BzfKeyMap&			getBzfKeyMap();
+void			notifyBzfKeyMapChanged();
 boolean			setVideoFormat(int, boolean test = False);
 Player*			lookupPlayer(const PlayerId& id);
 void			startPlaying(BzfDisplay* display,
@@ -74,6 +80,7 @@ boolean			addExplosion(const float* pos,
 				float size, float duration);
 void			addTankExplosion(const float* pos);
 void			addShotExplosion(const float* pos);
+void			addShotPuff(const float* pos);
 
 void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);
@@ -81,3 +88,4 @@ void			removePlayingCallback(PlayingCallback, void* data);
 void			joinGame(JoinGameCallback, void* userData);
 
 #endif // BZF_PLAYING_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,6 +1,6 @@
 .TH bzfls 6
 .SH NAME
-bzfls \- bzflag game server-list server
+bzfls \- BZFlag game server-list server
 .SH SYNOPSIS
 .sS
 .B bzfls
@@ -11,7 +11,7 @@ bzfls \- bzflag game server-list server
 [\fIbootstrap-list\fR]
 .SH DESCRIPTION
 \fBBzfls\fR keeps a list of \fBbzfs\fR servers.  It's used to help
-\fBbzflag\fR clients find available servers on the internet.
+\fBBZFlag\fR clients find available servers on the internet.
 .SS Options
 .RS
 .TP 15
@@ -39,7 +39,7 @@ again.
 Public \fBbzfs\fR servers (i.e. those that used the \fI-public\fR
 option) register themselves with \fBbzfls\fR servers at regular
 intervals and update their information, such as the number of
-current players, as it changes.  \fBBzflag\fR clients query the
+current players, as it changes.  \fBBZFlag\fR clients query the
 \fBbzfls\fR servers to provide the user a list of available
 servers.  Working together these programs provide users an easy
 way to find games.
@@ -55,18 +55,18 @@ list until they send an update.
 .PP
 Both clients and servers use a built-in url to find a list of
 \fBbzfls\fR servers (see URLs below).  This url is maintained
-by the bzflag author and lists a number of \fBbzfls\fR servers.
+by the BZFlag author and lists a number of \fBbzfls\fR servers.
 Only these servers are required for game clients and servers
 to provide automatic server finding.  You do not need to run
 your own bzfls under normal circumstances.
 .PP
 If you want a private list of servers then you can run bzfls
-but you must also get clients and servers to use it.  Bzflag
+but you must also get clients and servers to use it.  BZFlag
 uses the \fB-list\fI url\fR option to specify an alternate
 bzfls server.  Bzfs uses \fB-publiclist\fI url\fR.  See URLs
 below for a description of the url format.
 .SS URLs
-The bzflag family understands URLs with the standard syntax but
+The BZFlag family understands URLs with the standard syntax but
 supports a non-standard set of protocols.
 .RS
 .TP 15
@@ -111,19 +111,19 @@ ignored.
 .RS
 .TP 15
 \fBSIGUSR1\fR
-Causes bzfls to write the current server list to /var/tmp/bzfls.lst.
+Causes bzfls to write the current server list to /tmp/bzfls.lst.
 This list can be used as a bootstrap file.
 .TP 15
 \fBSIGUSR2\fR
-Causes bzfls to write network statistics to /var/tmp/bzfls.cnt.
+Causes bzfls to write network statistics to /tmp/bzfls.cnt.
 .RE
 .SH FILES
 .RS
 .TP 15
-/var/tmp/bzfls.cnt
+/tmp/bzfls.cnt
 The network statistics dumped by SIGUSR2.
 .TP
-/var/tmp/bzfls.lst
+/tmp/bzfls.lst
 The server list dumped by SIGUSR1.
 .RE
 .SH SEE ALSO

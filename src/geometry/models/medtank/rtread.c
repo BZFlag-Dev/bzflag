@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -86,3 +86,4 @@
 	glTexCoord2f(0.511f, 0.690f);
 	glVertex3f(-2.970f, -0.875f, 1.410f);
       glEnd();
+// ex: shiftwidth=2 tabstop=8

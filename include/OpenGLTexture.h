@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -79,13 +79,14 @@ class OpenGLTexture {
     static Filter	getFilter();
     static void		setFilter(Filter);
 
-    static int		getBestFormat(int width, int height,
-					const GLvoid* pixels);
-
   private:
     class Rep {
       public:
-			Rep(int maxFilter);
+			Rep(int width, int height,
+					const GLvoid* pixels,
+					int maxFilter,
+					boolean repeat,
+					int internalFormat);
 			~Rep();
 	void		setFilter(int filter);
 
@@ -97,6 +98,18 @@ class OpenGLTexture {
 	static Rep*	first;
 
       private:
+	void		doInitContext();
+	static void	initContext(void*);
+	static int	getBestFormat(int width, int height,
+					const GLvoid* pixels);
+
+      private:
+	const int	width;
+	const int	height;
+	GLubyte*	image;
+	boolean		repeat;
+	int		internalFormat;
+
 	int			maxFilter;
 	static const GLenum	minifyFilter[];
 	static const GLenum	magnifyFilter[];
@@ -127,3 +140,4 @@ inline boolean		OpenGLTexture::hasAlpha() const
 }
 
 #endif // BZF_OPENGL_TEXTURE_H
+// ex: shiftwidth=2 tabstop=8

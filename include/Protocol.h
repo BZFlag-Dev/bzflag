@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -31,7 +31,8 @@
 // adding new flags or changing the communication protocol require
 // minor release number changes.  adding new graphics effects normally
 // only require incrementing the revision number.
-const char* const	ServerVersion = "BZFS107c";
+
+const char* const	ServerVersion = "BZFS107e";
 
 // well known service port number for bzflag server
 const int		ServerPort = 5155;
@@ -40,6 +41,9 @@ const int		ServerPort = 5155;
 // this is the sgi-dog multicast address.
 const char* const	BroadcastAddress = "224.0.1.2";
 const int		BroadcastPort = 5154;
+
+// URL for default list server
+const char* const	DefaultListServerURL = "http://BZFlag.SourceForge.net/list-server.txt";
 
 // multicast ttl's
 const int		DefaultTTL = 8;
@@ -69,6 +73,7 @@ const uint16_t		MsgExit = 0x6578;			// 'ex'
 const uint16_t		MsgFlagUpdate = 0x6675;			// 'fu'
 const uint16_t		MsgGrabFlag = 0x6766;			// 'gf'
 const uint16_t		MsgGetWorld = 0x6777;			// 'gw'
+const uint16_t		MsgIdAck = 0x6964;			// 'id'
 const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
 const uint16_t		MsgNetworkRelay = 0x6e72;		// 'nr'
@@ -114,6 +119,19 @@ const uint16_t		RejectNoRogues = 0x0003;
 const uint16_t		RejectTeamFull = 0x0004;
 const uint16_t		RejectServerFull = 0x0005;
 
+// request for additional UDP link
+
+const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'
+const uint16_t		MsgUDPLinkEstablished = 0x6f67;		// 'og'
+const uint16_t		MsgUDPLinkUpdate = 0x6f68;		// 'oh'
+const uint16_t		MsgClientVersion = 0x6f6a;		// 'oj'
+
+// server control message
+
+const uint16_t		MsgServerControl = 0x6f69;		// 'oi'
+
+// lag ping sent by server to client and reply from client
+const uint16_t		MsgLagPing = 0x7069; 			// 'pi'
 
 /* server communication protocol:
   --> incoming messages (to server)
@@ -234,3 +252,4 @@ server to player messages:
 */
 
 #endif // BZF_PROTOCOL_H
+// ex: shiftwidth=2 tabstop=8

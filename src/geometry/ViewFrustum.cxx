@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,7 +30,7 @@ ViewFrustum::ViewFrustum()
   ::memcpy(projectionMatrix, identity, sizeof(projectionMatrix));
   ::memcpy(deepProjectionMatrix, identity, sizeof(deepProjectionMatrix));
 
-  setProjection(M_PI/4.0, 1.0, 100.0, 1, 1, 1);
+  setProjection(M_PI/4.0, 1.0, 100.0, 1, 1);
   setView(defaultEye, defaultTarget);
 }
 
@@ -151,7 +151,7 @@ void			ViewFrustum::setView(const GLfloat* _eye,
 
 void			ViewFrustum::setProjection(GLfloat fov, GLfloat _m_near,
 						GLfloat _m_far, GLint width,
-						GLint height, GLint viewHeight)
+						GLint height)
 {
   // do easy stuff
   m_near = _m_near;
@@ -159,12 +159,11 @@ void			ViewFrustum::setProjection(GLfloat fov, GLfloat _m_near,
   fovx = fov;
 
   // compute projectionMatrix
-  const GLfloat fracHeight = 1.0f - GLfloat(viewHeight) / GLfloat(height);
   const GLfloat s = 1.0f / tanf(fov / 2.0f);
   projectionMatrix[0] = s;
-  projectionMatrix[5] = (1.0f - fracHeight) * s * GLfloat(width) / GLfloat(viewHeight);
+  projectionMatrix[5] = (1.0f) * s * GLfloat(width) / GLfloat(height);
   projectionMatrix[8] = 0.0f;
-  projectionMatrix[9] = -fracHeight;
+  projectionMatrix[9] = 0.0;
   projectionMatrix[10] = -(m_far + m_near) / (m_far - m_near);
   projectionMatrix[11] = -1.0f;
   projectionMatrix[12] = 0.0f;
@@ -185,7 +184,7 @@ void			ViewFrustum::setProjection(GLfloat fov, GLfloat _m_near,
   fovy = atanf(1.0f / projectionMatrix[5]);
 
   // compute areaFactor
-  areaFactor = 0.25f * s * GLfloat(viewHeight);
+  areaFactor = 0.25f * s * GLfloat(height);
   areaFactor = M_PI * areaFactor * areaFactor;
 }
 
@@ -243,3 +242,4 @@ void			ViewFrustum::makePlane(const GLfloat* v1,
   plane[index][3] = -(eye[0] * plane[index][0] + eye[1] * plane[index][1] +
 						eye[2] * plane[index][2]);
 }
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -12,38 +12,38 @@
 #
 # configuration for generic platform
 #
-CONFIG  = config-win32
+CONFIG	= config-win32
 
 #
 # tools
 #
-AR      = link.exe -lib
+AR	= link.exe -lib
 CC	= cl.exe
 CXX	= cl.exe
 CD	= cd
-CP      = copy.exe
+CP	= copy.exe
 ECHO	= echo
 LD	= link.exe
 MKDIR	= mkdir.exe
-NROFF   = 
+NROFF	=
 RC	= rc.exe
-RM      = del.exe /F /Q
-RMR     = del.exe /F /Q /S
-SHELL	= 
+RM	= del.exe /F /Q
+RMR	= del.exe /F /Q /S
+SHELL	=
 
 #
 # compiler definitions
 #
 PCDEFS   = /D "WIN32" /D "_MBCS" # C compiler definitions
-PCXXDEFS = /D "WIN32" /D "_MBCS" # C++ compiler definitions
-# /nologo /D "_WINDOWS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
-# /nologo /D "_WINDOWS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+PCXXDEFS = /D "WIN32" /D "_MBCS" # C++ compiler definition
+# /nologo /D "_WINDOWS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c
+# /nologo /D "_WINDOWS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c
 
-# /nologo /D "_CONSOLE" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
-# /nologo /D "_CONSOLE" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+# /nologo /D "_CONSOLE" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c
+# /nologo /D "_CONSOLE" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c
 
-# /nologo /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
-# /nologo /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
+# /nologo /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c
+# /nologo /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c
 
 #
 # compiler options

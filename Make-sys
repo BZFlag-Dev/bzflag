@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -31,7 +31,7 @@ package: $(_FORCE)
 	$(CD) package; $(MAKE) $(MFLAGS) targets
 
 clean:
-	$(RM) $(LIBDIR)/*
+	- $(RM) $(LIBDIR)/*
 	$(CD) src; $(MAKE) $(MFLAGS) $@
 	$(CD) man; $(MAKE) $(MFLAGS) $@
 	$(CD) package; $(MAKE) $(MFLAGS) $@
@@ -44,4 +44,20 @@ pristine: clobber
 	$(CD) package; $(MAKE) $(MFLAGS) clobber
 	$(RMR) $(LIBDIR) $(TARGETDIR) $(PACKAGEDIR)
 	$(RM) config-sys
+	-$(RM) $(DEPTH)/bzflag-$(VERSIONID).tar
+	-$(RM) $(DEPTH)/bzflag-$(VERSIONID).tgz
+	-$(RM) $(DEPTH)/build-stamp
+	-$(RM) -r $(DEPTH)/debian/bzflag-server
+	-$(RM) $(DEPTH)/debian/*debhelper
+	-$(RM) $(DEPTH)/debian/*substvars
+	-$(RM) $(DEPTH)/debian/changelog
+	-$(RM) $(DEPTH)/debian/files
 
+tarball: pristine
+	cd $(DEPTH)/..; \
+	mv bzflag bzflag-$(VERSIONID); \
+	find bzflag-$(VERSIONID) -type f | grep -v CVS | \
+	tar cTf - bzflag-$(VERSIONID).tar; \
+	mv bzflag-$(VERSIONID) bzflag; \
+	gzip bzflag-$(VERSIONID).tar; \
+	mv bzflag-$(VERSIONID).tar.gz bzflag/bzflag-$(VERSIONID).tgz

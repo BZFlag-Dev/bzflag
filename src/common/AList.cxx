@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -234,3 +234,4 @@ void*			AListIterator::voidGetItem() const
   // NOTE: should throw exception if isDone()
   return list.voidGet(getIndex());
 }
+// ex: shiftwidth=2 tabstop=8

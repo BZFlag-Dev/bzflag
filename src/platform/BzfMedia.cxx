@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -406,6 +406,7 @@ float*			BzfMedia::doReadSound(const char* filename,
     return 0;
   }
   closeWavFile(file);
+
 #ifdef HALF_RATE_AUDIO
   numFrames/=2;
   rate/=2;
@@ -444,9 +445,11 @@ float*			BzfMedia::doReadSound(const char* filename,
 #ifdef HALF_RATE_AUDIO
 	rawpos+=4;
 #endif
+
       }
     }
   }
   delete [] rawdata;
   return data;
 }
+// ex: shiftwidth=2 tabstop=8

@@ -1,20 +1,24 @@
 #!/bin/sh
 # BZFlaga
 # NOTE: update all three lines below
-# Copyright (c) 1993 - 2001 Tim Riker
-OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2001'
-NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2001'
+# Copyright (c) 1993 - 2002 Tim Riker
+OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2002'
+NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2002'
 #
 # update copyright in all files
 #
 
-# top-level dir
-root=".."
+# bzflag top-level dir
+for root in . .. ; do
+ if [ -r $root/config ] ; then
+  break
+ fi
+done
 
 if [ -r ../bin/bzfs ] ; then
  echo "$0 should be run only after a make pristine!"
  exit 1
-fi 
+fi
 
 rm -f updatecopyright.tmp
 files=`find $root -type f | grep -v updatecopyright`

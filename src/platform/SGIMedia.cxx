@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,7 @@
 #include <bstring.h>
 #include <sys/prctl.h>
 #include <sys/wait.h>
-#include <signal.h>
+#include "bzsignal.h"
 #include <limits.h>
 #include <sys/schedctl.h>
 
@@ -211,11 +211,6 @@ void			SGIMedia::closeAudio()
   outputBuffer = NULL;
 }
 
-boolean			SGIMedia::isAudioBrainDead() const
-{
-  return False;
-}
-
 boolean			SGIMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {
@@ -251,7 +246,7 @@ void			SGIMedia::audioThreadInit(void*)
 
   // parent will kill me when it wants me to quit.  catch the signal
   // and gracefully exit.
-  signal(SIGTERM, SIG_PF(die));
+  bzSignal(SIGTERM, SIG_PF(die));
 
 #if defined(DEADLINE)
   // increase priority
@@ -344,3 +339,4 @@ void			SGIMedia::audioSleep(
   select(maxFd, &commandSelectSet, checkLowWater ? &audioSelectSet : NULL,
 			NULL, (struct timeval*)(endTime >= 0.0 ? &tv : NULL));
 }
+// ex: shiftwidth=2 tabstop=8

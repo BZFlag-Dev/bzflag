@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,14 +15,23 @@
 #include <sys/types.h>
 #if !defined(_WIN32)
 #include <unistd.h>
-#include <signal.h>
+#include "bzsignal.h"
+#include <setjmp.h>
+#include "ErrorHandler.h"
+#endif
+
+#if defined(sun)
+  // Solaris...
+  extern "C" int inet_aton(const char *, struct in_addr *);
 #endif
 
 //
 // Address
 //
 
-Address			Address::localAddress("");
+#if !defined( GUSI_20 ) && !defined( WIN32 )
+  Address			Address::localAddress("");
+#endif
 
 Address::Address()
 {
@@ -89,6 +98,18 @@ BzfString		Address::getDotNotation() const
   return BzfString(inet_ntoa(addr));
 }
 
+#if !defined(_WIN32)
+static jmp_buf alarmEnv;
+static void		onAlarm(int)
+{
+  // jump back to setjmp.  this handles the race condition where we
+  // set the alarm but gethostbyname() wouldn't have been called
+  // until after the alarm goes off (resulting in an indeterminate
+  // wait).
+  longjmp(alarmEnv, 1);
+}
+#endif
+
 Address			Address::getHostAddress(const char* hname)
 {
   Address a;
@@ -105,11 +126,34 @@ Address			Address::getHostAddress(const char* hname)
     return a;
   }
   else {				// non-local address
+#if !defined(_WIN32)
+    // set alarm to avoid waiting too long
+    SIG_PF oldAlarm = bzSignal(SIGALRM, SIG_PF(onAlarm));
+    if (oldAlarm != SIG_ERR) {
+      if (setjmp(alarmEnv) != 0) {
+	// alarm went off
+	hent = NULL;
+	printError("Looking up host name: timeout");
+	return a;
+      }
+
+      // wait up to this many seconds
+      alarm(3);
+    }
+#endif
+
     hent = gethostbyname(hname);
+
+#if !defined(_WIN32)
+    if (oldAlarm != SIG_ERR) {
+      alarm(0);
+      bzSignal(SIGALRM, oldAlarm);
+    }
+#endif
   }
 
   if (!hent) {
-    herror("Address::getHostAddress");
+    herror("Looking up host name");
     return a;
   }
 
@@ -117,28 +161,32 @@ Address			Address::getHostAddress(const char* hname)
   return a;
 }
 
-#if !defined(_WIN32)
-static void		timeout(int)
-{
-  // FIXME -- small chance here of alarm going off again before we can
-  // ignore it.  should be using BSD signals.
-  signal(SIGALRM, SIG_IGN);
-  alarm(0);
-}
-#endif
-
 BzfString		Address::getHostByAddress(InAddr addr)
 {
-  int addrLen = sizeof(addr);
 #if !defined(_WIN32)
-  signal(SIGALRM, SIG_PF(timeout));
-  alarm(2);
+  // set alarm to avoid waiting too long
+  SIG_PF oldAlarm = bzSignal(SIGALRM, SIG_PF(onAlarm));
+  if (oldAlarm != SIG_ERR) {
+    if (setjmp(alarmEnv) != 0) {
+      // alarm went off
+      return BzfString(inet_ntoa(addr));
+    }
+
+    // wait up to this many seconds
+    alarm(8);
+  }
 #endif
+
+  int addrLen = sizeof(addr);
   struct hostent* hent = gethostbyaddr((char*)&addr, addrLen, AF_INET);
+
 #if !defined(_WIN32)
-  alarm(0);
-  signal(SIGALRM, SIG_IGN);
-#endif // !defined(_WIN32)
+  if (oldAlarm != SIG_ERR) {
+    alarm(0);
+    bzSignal(SIGALRM, oldAlarm);
+  }
+#endif
+
   if (!hent) {
     // can't lookup name -- return in standard dot notation
     return BzfString(inet_ntoa(addr));
@@ -216,3 +264,4 @@ boolean			PlayerId::operator!=(const PlayerId& id) const
   return serverHost.s_addr != id.serverHost.s_addr ||
 			port != id.port || number != id.number;
 }
+// ex: shiftwidth=2 tabstop=8

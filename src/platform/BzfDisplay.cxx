@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,7 +35,8 @@ BzfDisplay::ResInfo::~ResInfo()
 // BzfDisplay
 //
 
-BzfDisplay::BzfDisplay() : numResolutions(0),
+BzfDisplay::BzfDisplay() : passWidth(640), passHeight(480),
+				numResolutions(0),
 				defaultResolution(-1),
 				currentResolution(-1),
 				resolutions(NULL)
@@ -62,6 +63,22 @@ int			BzfDisplay::getHeight() const
   return resolutions[currentResolution]->height;
 }
 
+void			BzfDisplay::setPassthroughSize(int w, int h)
+{
+  passWidth = w;
+  passHeight = h;
+}
+
+int			BzfDisplay::getPassthroughWidth() const
+{
+  return passWidth;
+}
+
+int			BzfDisplay::getPassthroughHeight() const
+{
+  return passHeight;
+}
+
 int			BzfDisplay::getNumResolutions() const
 {
   return numResolutions;
@@ -78,6 +95,11 @@ int			BzfDisplay::getResolution() const
   return currentResolution;
 }
 
+int			BzfDisplay::getDefaultResolution() const
+{
+  return defaultResolution;
+}
+
 boolean			BzfDisplay::setResolution(int index)
 {
   if (index < 0 || index >= numResolutions) return False;
@@ -92,9 +114,23 @@ boolean			BzfDisplay::setResolution(int index)
   return True;
 }
 
-int			BzfDisplay::getDefaultResolution() const
+boolean			BzfDisplay::setDefaultResolution()
 {
-  return defaultResolution;
+  const int oldResolution = currentResolution;
+  currentResolution = -1;
+  if (!doSetDefaultResolution()) {
+    currentResolution = oldResolution;
+    return False;
+  }
+  return True;
+}
+
+boolean			BzfDisplay::doSetDefaultResolution()
+{
+  if (numResolutions >= 2 && defaultResolution < numResolutions)
+    return setResolution(defaultResolution);
+  else
+    return False;
 }
 
 int			BzfDisplay::findResolution(const char* name) const
@@ -119,3 +155,4 @@ void			BzfDisplay::initResolutions(ResInfo** _resolutions,
   currentResolution = _currentResolution;
   defaultResolution = currentResolution;
 }
+// ex: shiftwidth=2 tabstop=8

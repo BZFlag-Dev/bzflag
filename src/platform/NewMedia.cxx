@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -61,14 +61,6 @@ void			NewMedia::closeAudio()
   // XXX -- shut down audio device and IPC stuff
 }
 
-boolean			NewMedia::isAudioBrainDead() const
-{
-  // XXX -- return True if audio subsystem doesn't stop playing
-  // when there are no more samples to play (e.g. if it plays a
-  // ring buffer continuously).
-  return False;
-}
-
 boolean			NewMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {
@@ -118,7 +110,7 @@ int			NewMedia::getAudioOutputRate() const
 
 int			NewMedia::getAudioBufferSize() const
 {
-  // XXX -- return the total size of the audio buffer
+  // XXX -- return the total size of the audio buffer in frames
   return 0;
 }
 
@@ -130,7 +122,7 @@ int			NewMedia::getAudioBufferChunkSize() const
   // be affected by changes to the audio filter (which can change
   // at any time) and we wouldn't be able to mix in new sounds that
   // start while the old sound is playing.
-  // 
+  //
   // so we break the audio buffer into several equal sized chunks.
   // at any time, the audio subsystem is playing one chunk, another
   // chunk is ready and waiting to be played, and other chunks are
@@ -165,3 +157,4 @@ void			NewMedia::audioSleep(
   // low water mark.  stop waiting if endTime >= 0.0 and
   // endTime seconds have passed since this method was called.
 }
+// ex: shiftwidth=2 tabstop=8

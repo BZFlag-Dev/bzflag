@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,6 +27,7 @@ class SceneDatabase;
 class WallObstacle;
 class BoxBuilding;
 class PyramidBuilding;
+class BaseBuilding;
 class Teleporter;
 class World;
 
@@ -41,6 +42,7 @@ class SceneDatabaseBuilder {
     void		addWall(SceneDatabase*, const WallObstacle&);
     void		addBox(SceneDatabase*, const BoxBuilding&);
     void		addPyramid(SceneDatabase*, const PyramidBuilding&);
+    void		addBase(SceneDatabase*, const BaseBuilding&);
     void		addTeleporter(SceneDatabase*, const Teleporter&);
 
   private:
@@ -66,6 +68,8 @@ class SceneDatabaseBuilder {
     OpenGLTexture	pyramidTexture;
     boolean		pyramidLOD;
 
+    boolean		baseLOD;
+
     OpenGLMaterial	teleporterMaterial;
     OpenGLTexture	teleporterTexture;
     boolean		teleporterLOD;
@@ -74,14 +78,14 @@ class SceneDatabaseBuilder {
     static const GLfloat wallModulateColors[4][4];
     static const GLfloat wallLightedColors[1][4];
     static const GLfloat wallLightedModulateColors[1][4];
-    static const GLfloat boxColors[5][4];
-    static const GLfloat boxModulateColors[5][4];
-    static const GLfloat boxLightedColors[5][4];
-    static const GLfloat boxLightedModulateColors[5][4];
-    static const GLfloat pyramidColors[4][4];
-    static const GLfloat pyramidModulateColors[4][4];
-    static const GLfloat pyramidLightedColors[4][4];
-    static const GLfloat pyramidLightedModulateColors[4][4];
+    static const GLfloat boxColors[6][4];
+    static const GLfloat boxModulateColors[6][4];
+    static const GLfloat boxLightedColors[6][4];
+    static const GLfloat boxLightedModulateColors[6][4];
+    static const GLfloat pyramidColors[5][4];
+    static const GLfloat pyramidModulateColors[5][4];
+    static const GLfloat pyramidLightedColors[5][4];
+    static const GLfloat pyramidLightedModulateColors[5][4];
     static const GLfloat teleporterColors[3][4];
     static const GLfloat teleporterModulateColors[3][4];
     static const GLfloat teleporterLightedColors[3][4];
@@ -89,3 +93,4 @@ class SceneDatabaseBuilder {
 };
 
 #endif // BZF_SCENE_BUILDER_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,10 +23,11 @@
 #include "SceneDatabase.h"
 #include "EighthDBoxSceneNode.h"
 #include "EighthDPyrSceneNode.h"
+#include "EighthDBaseSceneNode.h"
 #include "playing.h"
 #include "texture.h"
 
-static OpenGLTexture	flagTexture;
+static OpenGLTexture*	flagTexture = NULL;
 
 //
 // World
@@ -48,7 +49,8 @@ World::World() : gameStyle(PlainGameStyle),
 				flagNodes(NULL),
 				flagWarpNodes(NULL),
 				boxInsideNodes(NULL),
-				pyramidInsideNodes(NULL)
+				pyramidInsideNodes(NULL),
+				baseInsideNodes(NULL)
 {
   int i;
   for (i = 0; i < NumTeams; i++) {
@@ -83,12 +85,19 @@ World::~World()
 
 void			World::init()
 {
-  flagTexture = getTexture("flag", OpenGLTexture::Max, False);
+  flagTexture = new OpenGLTexture;
+  *flagTexture = getTexture("flag", OpenGLTexture::Max, False);
+}
+
+void			World::done()
+{
+  delete flagTexture;
+  flagTexture = NULL;
 }
 
 void			World::setFlagTexture(FlagSceneNode* flag)
 {
-  flag->setTexture(flagTexture);
+  flag->setTexture(*flagTexture);
 }
 
 void			World::setWorld(World* _playingField)
@@ -124,8 +133,12 @@ EighthDimSceneNode*	World::getInsideSceneNode(const Obstacle* o) const
 {
   if (!o) return NULL;
 
-  const int numBoxes = boxes.getLength();
   int i;
+  const int numBases = basesR.getLength();
+  for (i = 0; i < numBases; i++)
+    if (&(basesR[i]) == o)
+      return baseInsideNodes[i];
+  const int numBoxes = boxes.getLength();
   for (i = 0; i < numBoxes; i++)
     if (&(boxes[i]) == o)
       return boxInsideNodes[i];
@@ -141,41 +154,59 @@ TeamColor		World::whoseBase(const float* pos) const
   if (!(gameStyle & TeamFlagGameStyle))
     return NoTeam;
 
-  // FIXME -- doesn't handle rotated bases
-  for (int i = 1; i < NumTeams; i++)
-    if (fabsf(pos[0] - bases[i][0]) < bases[i][4] &&
-	fabsf(pos[1] - bases[i][1]) < bases[i][5])
-      return TeamColor(i);
+  for (int i = 1; i < NumTeams; i++) {
+    float nx = pos[0] - bases[i][0];
+    float ny = pos[1] - bases[i][1];
+    float rx = (float) (cosf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
+    float ry = (float) (sinf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
+    if(fabsf(rx) < bases[i][4] &&
+       fabsf(ry) < bases[i][5]) {
+      float nz = (bases[i][2] > 0) ? (bases[i][2] + 1) : 0;
+      float rz = pos[2] - nz;
+      if(fabsf(rz) < 0.1) { // epsilon kludge
+	return TeamColor(i);
+      }
+    }
+  }
   return NoTeam;
 }
 
 const Obstacle*		World::inBuilding(const float* pos, float radius) const
 {
   // check boxes
-  BoxBuildingsCIteratorPtr boxScan(boxes.newCIterator());
-  while (!boxScan->isDone()) {
-    const BoxBuilding& box = boxScan->getItem();
+  BoxBuildingsCIterator boxScan(boxes);
+  while (!boxScan.isDone()) {
+    const BoxBuilding& box = boxScan.getItem();
     if (box.isInside(pos, radius))
       return &box;
-    boxScan->next();
+    boxScan.next();
   }
 
   // check pyramids
-  PyramidBuildingsCIteratorPtr pyramidScan(pyramids.newCIterator());
-  while (!pyramidScan->isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan->getItem();
+  PyramidBuildingsCIterator pyramidScan(pyramids);
+  while (!pyramidScan.isDone()) {
+    const PyramidBuilding& pyramid = pyramidScan.getItem();
     if (pyramid.isInside(pos, radius))
       return &pyramid;
-    pyramidScan->next();
+    pyramidScan.next();
+  }
+
+  // check bases
+  BaseBuildingsCIterator baseScan(basesR);
+  while(!baseScan.isDone()) {
+    const BaseBuilding &base = baseScan.getItem();
+    if(base.isInside(pos, radius))
+      return &base;
+    baseScan.next();
   }
 
   // check teleporters
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.isInside(pos, radius))
       return &teleporter;
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // nope
@@ -186,42 +217,50 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 						float dx, float dy) const
 {
   // check walls
-  WallObstaclesCIteratorPtr wallScan(walls.newCIterator());
-  while (!wallScan->isDone()) {
-    const WallObstacle& wall = wallScan->getItem();
+  WallObstaclesCIterator wallScan(walls);
+  while (!wallScan.isDone()) {
+    const WallObstacle& wall = wallScan.getItem();
     if (wall.isInside(pos, angle, dx, dy))
       return &wall;
-    wallScan->next();
+    wallScan.next();
   }
 
   // check teleporters
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.isInside(pos, angle, dx, dy))
       return &teleporter;
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // strike one -- check boxes
-  BoxBuildingsCIteratorPtr boxScan(boxes.newCIterator());
-  while (!boxScan->isDone()) {
-    const BoxBuilding& box = boxScan->getItem();
+  BoxBuildingsCIterator boxScan(boxes);
+  while (!boxScan.isDone()) {
+    const BoxBuilding& box = boxScan.getItem();
     if (box.isInside(pos, angle, dx, dy))
       return &box;
-    boxScan->next();
+    boxScan.next();
   }
 
   // strike two -- check pyramids
-  PyramidBuildingsCIteratorPtr pyramidScan(pyramids.newCIterator());
-  while (!pyramidScan->isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan->getItem();
+  PyramidBuildingsCIterator pyramidScan(pyramids);
+  while (!pyramidScan.isDone()) {
+    const PyramidBuilding& pyramid = pyramidScan.getItem();
     if (pyramid.isInside(pos, angle, dx, dy))
       return &pyramid;
-    pyramidScan->next();
+    pyramidScan.next();
   }
 
-  // strike three -- you're out
+  // strike three -- check bases
+  BaseBuildingsCIterator baseScan(basesR);
+  while(!baseScan.isDone()) {
+    const BaseBuilding &base = baseScan.getItem();
+    if(base.isInside(pos, angle, dx, dy))
+      return &base;
+    baseScan.next();
+  }
+  // strike four -- you're out
   return NULL;
 }
 
@@ -229,12 +268,12 @@ boolean			World::crossingTeleporter(const float* pos,
 					float angle, float dx, float dy,
 					float* plane) const
 {
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.isCrossing(pos, angle, dx, dy, plane))
       return True;
-    teleporterScan->next();
+    teleporterScan.next();
   }
   return False;
 }
@@ -244,12 +283,12 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 						int& face) const
 {
   // check teleporters
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.hasCrossed(oldPos, newPos, face))
       return &teleporter;
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // didn't cross
@@ -259,12 +298,12 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
 {
   // check teleporters
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     if (teleporter.isTeleported(r, face) > Epsilon)
       return &teleporter;
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // didn't cross
@@ -275,11 +314,11 @@ float			World::getProximity(const float* p, float r) const
 {
   // get maximum over all teleporters
   float bestProximity = 0.0;
-  TeleportersCIteratorPtr teleporterScan(teleporters.newCIterator());
-  while (!teleporterScan->isDone()) {
-    const float proximity = teleporterScan->getItem().getProximity(p, r);
+  TeleportersCIterator teleporterScan(teleporters);
+  while (!teleporterScan.isDone()) {
+    const float proximity = teleporterScan.getItem().getProximity(p, r);
     if (proximity > bestProximity) bestProximity = proximity;
-    teleporterScan->next();
+    teleporterScan.next();
   }
   return bestProximity;
 }
@@ -318,6 +357,13 @@ void			World::freeInsideNodes()
     delete[] pyramidInsideNodes;
     pyramidInsideNodes = NULL;
   }
+  if (baseInsideNodes) {
+    const int numBases = basesR.getLength();
+    for(int i = 0; i < numBases; i++)
+      delete baseInsideNodes[i];
+    delete [] baseInsideNodes;
+    baseInsideNodes = NULL;
+  }
 }
 
 void			World::initFlag(int index)
@@ -333,7 +379,7 @@ void			World::initFlag(int index)
     pos[0] = flag.position[0];
     pos[1] = flag.position[1];
     pos[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-					0.25f * Gravity * flag.flightEnd);
+	0.25f * Gravity * flag.flightEnd) + flag.position[2];
     flagWarpNodes[index]->move(pos);
     flagWarpNodes[index]->setSizeFraction(0.0f);
   }
@@ -369,7 +415,8 @@ void			World::updateFlag(int index, float dt)
 				t * flag.landingPosition[0];
 	flag.position[1] = (1.0f - t) * flag.launchPosition[1] +
 				t * flag.landingPosition[1];
-	flag.position[2] = flag.launchPosition[2] +
+	flag.position[2] = (1.0f - t) * flag.launchPosition[2] +
+				t * flag.landingPosition[2] +
 				flag.flightTime * (flag.initialVelocity +
 					0.5f * Gravity * flag.flightTime);
       }
@@ -386,13 +433,13 @@ void			World::updateFlag(int index, float dt)
       else if (flag.flightTime >= 0.5f * flag.flightEnd) {
 	// falling
 	flag.position[2] = flag.flightTime * (flag.initialVelocity +
-					0.5f * Gravity * flag.flightTime);
+	    0.5f * Gravity * flag.flightTime) + flag.landingPosition[2];
 	alpha = 1.0f;
       }
       else {
 	// hovering
 	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-					0.25f * Gravity * flag.flightEnd);
+	    0.25f * Gravity * flag.flightEnd) + flag.landingPosition[2];
 
 	// flag is fades in during first half of hovering period
 	// and is opaque during the second half.  flag warp grows
@@ -423,13 +470,13 @@ void			World::updateFlag(int index, float dt)
       else if (flag.flightTime < 0.5f * flag.flightEnd) {
 	// rising
 	flag.position[2] = flag.flightTime * (flag.initialVelocity +
-					0.5f * Gravity * flag.flightTime);
+	    0.5f * Gravity * flag.flightTime) + flag.landingPosition[2];
 	alpha = 1.0f;
       }
       else {
 	// hovering
 	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-					0.25f * Gravity * flag.flightEnd);
+	    0.25f * Gravity * flag.flightEnd) + flag.landingPosition[2];
 
 	// flag is opaque during first half of hovering period
 	// and fades out during the second half.  flag warp grows
@@ -493,7 +540,7 @@ void			World::addFlags(SceneDatabase* scene)
       if (j < maxPlayers && !(players[j]->getStatus() & Player::Alive))
 	continue;
     }
-	
+
     scene->addDynamicNode(flagNodes[i]);
 
     // add warp if coming/going and hovering
@@ -669,6 +716,8 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackFloat(buf, data[7]);
 	buf = nboUnpackFloat(buf, data[8]);
+	BaseBuilding base(data, data[3], data +4, team);
+	append(base);
 	setBase(TeamColor(team), data, data[3], data[4], data[5], data + 6);
 	break;
       }
@@ -705,7 +754,7 @@ void			WorldBuilder::preGetWorld()
     world->flags[i].position[2] = 0.0f;
     world->flagNodes[i] = new FlagSceneNode(world->flags[i].position);
     world->flagWarpNodes[i] = new FlagWarpSceneNode(world->flags[i].position);
-    world->flagNodes[i]->setTexture(flagTexture);
+    world->flagNodes[i]->setTexture(*flagTexture);
   }
 
   // prepare inside nodes arrays
@@ -729,6 +778,16 @@ void			WorldBuilder::preGetWorld()
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
     world->pyramidInsideNodes[i] = new EighthDPyrSceneNode(o.getPosition(),
+						obstacleSize, o.getRotation());
+  }
+  const int numBases = world->basesR.getLength();
+  world->baseInsideNodes = new EighthDimSceneNode*[numBases];
+  for (i = 0; i < numBases; i++) {
+    const Obstacle& o = world->basesR[i];
+    obstacleSize[0] = o.getWidth();
+    obstacleSize[1] = o.getBreadth();
+    obstacleSize[2] = o.getHeight();
+    world->baseInsideNodes[i] = new EighthDBaseSceneNode(o.getPosition(),
 						obstacleSize, o.getRotation());
   }
 
@@ -810,6 +869,11 @@ void			WorldBuilder::append(const PyramidBuilding& pyramid)
   world->pyramids.append(pyramid);
 }
 
+void			WorldBuilder::append(const BaseBuilding& base)
+{
+  world->basesR.append(base);
+}
+
 void			WorldBuilder::append(const Teleporter& teleporter)
 {
   // save telelporter
@@ -819,7 +883,7 @@ void			WorldBuilder::append(const Teleporter& teleporter)
 void			WorldBuilder::setTeleporterTarget(int src, int tgt)
 {
   // make sure list is big enough
-  growTargetList(src / 2);
+  growTargetList(src / 2 + 1);
 
   // record target in source entry
   teleportTargets[src] = tgt;
@@ -843,11 +907,11 @@ void			WorldBuilder::setBase(TeamColor team,
 
 void			WorldBuilder::growTargetList(int newMinSize)
 {
-  if (newMinSize <= targetArraySize) return;
+  if (newMinSize < targetArraySize) return;
 
   // get new size at lease as big as newMinSize
   int newSize = targetArraySize;
-  while (newSize < newMinSize) newSize += TeleportArrayGranularity;
+  while (newSize <= newMinSize) newSize += TeleportArrayGranularity;
 
   // copy targets into a larger buffer
   int* newTargets = new int[2 * newSize];
@@ -856,3 +920,4 @@ void			WorldBuilder::growTargetList(int newMinSize)
   targetArraySize = newSize;
   teleportTargets = newTargets;
 }
+// ex: shiftwidth=2 tabstop=8

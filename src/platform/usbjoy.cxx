@@ -61,7 +61,7 @@ usb_joystick::usb_joystick(const char *name)
 
 	if ((fd = open(name, O_RDONLY | O_NONBLOCK))<0)
 		return;
-	
+
 	if ((rd = hid_get_report_desc(fd)) == 0) {
 		close(fd);
 		return;
@@ -192,3 +192,4 @@ unsigned long XWindow::getJoyButtons() const
 
 #endif
 
+// ex: shiftwidth=2 tabstop=8

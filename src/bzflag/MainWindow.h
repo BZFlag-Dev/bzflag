@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -46,15 +46,12 @@ class MainWindow {
     int			getOriginY() const;
     int			getWidth() const;
     int			getHeight() const;
-    int			getPanelHeight() const;
-    int			getViewHeight() const;
     boolean		getFullscreen();
 
     void		setQuit();
     void		setPosition(int x, int y);
     void		setSize(int width, int height);
-    void		setMinSize(int width, int panelHeight, int viewHeight);
-    void		setPanelRatio(float);
+    void		setMinSize(int width, int height);
     void		setFullscreen();
     void		setNoMouseGrab();
 
@@ -66,33 +63,38 @@ class MainWindow {
     void		grabMouse();
     void		ungrabMouse();
 
-    // FIXME -- try to get rid of this
+    void		resize();
+
+    // return true iff there's a joystick available (and it's been initialized)
+    boolean		joystick() const;
+
+    // FIXME -- try to get rid of these.  we'd like to receive
+    // events instead because it means no round trip to the server
+    // for these values that we need every frame.
     void		getMousePosition(int& mx, int& my) const;
+    void		getJoyPosition(int& mx, int& my) const;
+    unsigned long	getJoyButtonSet() const;
 
   private:
     // no copying
 			MainWindow(const MainWindow&);
     MainWindow&		operator=(const MainWindow&);
 
-    void		resize();
-    static void		resize(void*);
+    static void		resizeCB(void*);
 
   private:
     BzfWindow*		window;
     boolean		quit;
     Quadrant		quadrant;
-    float		panelRatio;
     boolean		isFullscreen;
     boolean		allowMouseGrab;
     int			zoomFactor;
     int			trueWidth, trueHeight;
     int			xOrigin, yOrigin;
     int			width;
-    int			panelHeight;
-    int			viewHeight;
+    int			height;
     int			minWidth;
-    int			minPanelHeight;
-    int			minViewHeight;
+    int			minHeight;
 };
 
 //
@@ -121,17 +123,8 @@ inline int		MainWindow::getWidth() const
 
 inline int		MainWindow::getHeight() const
 {
-  return panelHeight + viewHeight;
-}
-
-inline int		MainWindow::getPanelHeight() const
-{
-  return panelHeight;
-}
-
-inline int		MainWindow::getViewHeight() const
-{
-  return viewHeight;
+  return height;
 }
 
 #endif // BZF_MAIN_WINDOW_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,6 +17,7 @@
 #include "ShotPath.h"
 #include "FlagSceneNode.h"
 #include "Ray.h"
+#include "BzfEvent.h"
 
 class Obstacle;
 
@@ -29,7 +30,12 @@ class BaseLocalPlayer : public Player {
 
     void		update();
     Ray			getLastMotion() const;
+#ifdef __MWERKS__
+    const float	(*getLastMotionBBox() )[3] const;
+#else
     const float		(*getLastMotionBBox() const)[3];
+#endif
+
     virtual void	explodeTank() = 0;
     virtual boolean	checkHit(const Player* source,
 				const ShotPath*& hit, float& minTime) const = 0;
@@ -91,6 +97,12 @@ class LocalPlayer : public BaseLocalPlayer {
     void		setMagnify(int zoom);
     void		setTarget(const Player*);
 
+    void		setNemesis(const Player*);
+    const Player*	getNemesis() const;
+
+    void		setRecipient(const Player*);
+    const Player*	getRecipient() const;
+
     void		restart(const float* pos, float azimuth);
     boolean		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
@@ -99,6 +111,19 @@ class LocalPlayer : public BaseLocalPlayer {
     void		changeScore(short deltaWins, short deltaLosses);
 
     void		addAntidote(SceneDatabase*);
+
+    boolean		isKeyboardMoving() const;
+    void		setKeyboardMoving(bool status);
+    void 		setKeyboardSpeed(float speed);
+    void 		setKeyboardAngVel(float angVel);
+    float 		getKeyboardSpeed() const;
+    float 		getKeyboardAngVel() const;
+    void 		setKey(int button, boolean pressed);
+    boolean             getKeyPressed() const;
+    int 		getKeyButton() const;
+    void                resetKey();
+    void                setSlowKeyboard(boolean slow);
+    boolean             hasSlowKeyboard() const;
 
     static LocalPlayer*	getMyTank();
     static void		setMyTank(LocalPlayer*);
@@ -132,7 +157,15 @@ class LocalPlayer : public BaseLocalPlayer {
     boolean		anyShotActive;
     int			magnify;
     const Player*	target;
+    const Player*	nemesis;
+    const Player*	recipient;
     static LocalPlayer*	mainPlayer;
+    boolean		keyboardMoving;
+    float		keyboardSpeed;
+    float		keyboardAngVel;
+    int 		keyButton;
+    boolean             keyPressed;
+    boolean             slowKeyboard;
 };
 
 //
@@ -159,9 +192,82 @@ inline const Player*	LocalPlayer::getTarget() const
   return target;
 }
 
+inline const Player*	LocalPlayer::getNemesis() const
+{
+  return nemesis;
+}
+
+inline const Player*	LocalPlayer::getRecipient() const
+{
+  return recipient;
+}
+
 inline const Obstacle*	LocalPlayer::getContainingBuilding() const
 {
   return insideBuilding;
 }
 
+inline boolean LocalPlayer::isKeyboardMoving() const
+{
+  return keyboardMoving;
+}
+
+inline void LocalPlayer::setKeyboardMoving(bool status)
+{
+  keyboardMoving = status;
+}
+
+inline void LocalPlayer::setKeyboardSpeed(float speed)
+{
+  keyboardSpeed = speed;
+}
+
+inline void LocalPlayer::setKeyboardAngVel(float angVel)
+{
+  keyboardAngVel = angVel;
+}
+
+inline float LocalPlayer::getKeyboardSpeed() const
+{
+  return keyboardSpeed;
+}
+
+inline float LocalPlayer::getKeyboardAngVel() const
+{
+  return keyboardAngVel;
+}
+
+inline void LocalPlayer::setKey(int button, boolean pressed)
+{
+  keyButton = button;
+  keyPressed = pressed;
+}
+
+inline void LocalPlayer::resetKey()
+{
+  keyButton = BzfKeyEvent::NoButton;
+  keyPressed = False;
+}
+
+inline boolean LocalPlayer::getKeyPressed() const
+{
+  return keyPressed;
+}
+
+inline int LocalPlayer::getKeyButton() const
+{
+  return keyButton;
+}
+
+inline void LocalPlayer::setSlowKeyboard(boolean slow)
+{
+  slowKeyboard = slow;
+}
+
+inline boolean LocalPlayer::hasSlowKeyboard() const
+{
+  return slowKeyboard;
+}
+
 #endif // BZF_LOCAL_PLAYER_H
+// ex: shiftwidth=2 tabstop=8

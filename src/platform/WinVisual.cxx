@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -46,6 +46,15 @@ WinVisual::WinVisual(const WinDisplay* _display) :
   pfd.dwLayerMask	= 0;
   pfd.dwVisibleMask	= 0;
   pfd.dwDamageMask	= 0;
+}
+
+WinVisual::WinVisual(const WinVisual& visual) :
+				display(visual.display),
+				pfd(visual.pfd),
+				pixelFormat(visual.pixelFormat),
+				hDC(NULL)
+{
+  display->ref();
 }
 
 WinVisual::~WinVisual()
@@ -117,28 +126,21 @@ boolean			WinVisual::build()
 			0, 0, 1, 1, NULL, NULL, display->hInstance, NULL);
       if (hwnd == NULL) return False;
       hDC = GetDC(hwnd);
-
-      pfd.dwFlags |= PFD_GENERIC_ACCELERATED;
       pixelFormat = ChoosePixelFormat(hDC, &pfd);
-      if (pixelFormat == 0) {
-	pfd.dwFlags &= ~PFD_GENERIC_ACCELERATED;
-	pixelFormat = ChoosePixelFormat(hDC, &pfd);
-      }
-
       ReleaseDC(hwnd, hDC);
       DestroyWindow(hwnd);
       hDC = NULL;
     }
     else {
-      pfd.dwFlags |= PFD_GENERIC_ACCELERATED;
       pixelFormat = ChoosePixelFormat(hDC, &pfd);
-      if (pixelFormat == 0) {
-	pfd.dwFlags &= ~PFD_GENERIC_ACCELERATED;
-	pixelFormat = ChoosePixelFormat(hDC, &pfd);
-      }
     }
   }
   return pixelFormat > 0;
+}
+
+void			WinVisual::reset()
+{
+  pixelFormat = -1;
 }
 
 int			WinVisual::get(HDC _hDC,
@@ -150,3 +152,4 @@ int			WinVisual::get(HDC _hDC,
   if (_pfd) *_pfd = &pfd;
   return pixelFormat;
 }
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -69,10 +69,22 @@ OpenGLTexture		getTexture(const BzfString& file,
   return getTexture(file, NULL, NULL, filter, repeat, noError);
 }
 
+void			printMissingDataDirectoryError(const char* msg)
+{
+  char buffer[4096];
+  sprintf(buffer, "%s\nFailed to load resource because the 'data'\n"
+		"directory can't be found.  Please run bzflag\n"
+		"with the data directory as the current directory\n"
+		"or provide the location of the data directory\n"
+		"using the -directory command line option.", msg);
+  printFatalError(buffer);
+}
+
 //
 // TextureFont
 //
 
+static boolean		anyFontLoaded = False;
 const char*		TextureFont::fontFileName[] = {
 				"timesbr",
 				"timesbi",
@@ -81,16 +93,16 @@ const char*		TextureFont::fontFileName[] = {
 				"fixedmr",
 				"fixedbr",
 			};
-OpenGLTexFont*		TextureFont::font[sizeof(fontFileName) /
-					  sizeof(fontFileName[0])];
+OpenGLTexFont*		TextureFont::font[sizeof(TextureFont::fontFileName) /
+					  sizeof(TextureFont::fontFileName[0])];
 
-OpenGLTexFont		TextureFont::getTextureFont(
-				Font index, boolean required)
+OpenGLTexFont		TextureFont::getTextureFont(Font index, boolean required)
 {
   static boolean init = False;
   if (!init) {
     init = True;
-    for (int i = 0; i < sizeof(fontFileName) /  sizeof(fontFileName[0]); i++)
+    for (int i = 0; i < (int)(sizeof(fontFileName) /
+					sizeof(fontFileName[0])); i++)
       font[i] = NULL;
   }
 
@@ -100,13 +112,26 @@ OpenGLTexFont		TextureFont::getTextureFont(
     if (image) {
       font[index] = new OpenGLTexFont(width, height, image);
       delete[] image;
+      anyFontLoaded = True;
     }
     else if (required) {
       // can't print message usual way because we're going down
-      printFatalError("Can't continue without font: %s", fontFileName[index]);
+      char msg[256];
+      sprintf(msg, "Can't continue without font: %s", fontFileName[index]);
+      if (!anyFontLoaded) {
+	// we haven't loaded any fonts yet so assume we can't find the
+	// data directory.  print a message explaining the problem and
+	// maybe i'll stop getting at least an email a week asking
+	// about this.
+	printMissingDataDirectoryError(msg);
+      }
+      else {
+	printFatalError(msg);
+      }
       exit(1);
     }
   }
 
   return font[index] ? *(font[index]) : OpenGLTexFont();
 }
+// ex: shiftwidth=2 tabstop=8

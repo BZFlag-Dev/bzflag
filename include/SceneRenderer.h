@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -73,6 +73,7 @@ class SceneRenderer {
     boolean		useDepthComplexity() const;
     boolean		useWireframe() const;
     boolean		useHiddenLine() const;
+    boolean		useEnhancedRadar() const;
     boolean		isLastFrame() const;
     boolean		isSameFrame() const;
     ViewType		getViewType() const;
@@ -91,6 +92,7 @@ class SceneRenderer {
     void		setDepthComplexity(boolean on);
     void		setWireframe(boolean on);
     void		setHiddenLine(boolean on);
+    void		setEnhancedRadar(boolean on);
     void		setDim(boolean on);
     void		setViewType(ViewType);
     void		setMaxLOD(int maxLOD);
@@ -143,6 +145,10 @@ class SceneRenderer {
     void		notifyStyleChange();
     void		addRenderNode(RenderNode* node, const OpenGLGState*);
     void		addShadowNode(RenderNode* node);
+    boolean		getShowFlagHelp() const;
+    void		setShowFlagHelp(boolean showFlagHelp);
+    boolean		getScore() const;
+    void		setScore(boolean showScore);
 
   private:
     // disallowed -- don't want to deal with potential state problems
@@ -183,6 +189,7 @@ class SceneRenderer {
     boolean		useDepthComplexityOn;
     boolean		useWireframeOn;
     boolean		useHiddenLineOn;
+    int			useEnhancedRadarOn;
     boolean		useFogHack;
     boolean		useZBufferOn;
     boolean		useStencilOn;
@@ -203,6 +210,8 @@ class SceneRenderer {
     boolean		sameFrame;
     FlareLightList	flareLightList;
     OpenGLGState	flareGState;
+    boolean		showFlagHelp;
+    boolean		showScore;
 
     static SceneRenderer* instance;
 };
@@ -292,3 +301,4 @@ inline boolean			SceneRenderer::isSameFrame() const
 }
 
 #endif // BZF_SCENE_RENDERER_H
+// ex: shiftwidth=2 tabstop=8

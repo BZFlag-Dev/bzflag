@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,7 +18,7 @@
 BzfString		BaseBuilding::typeName("BaseBuilding");
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
-        const float *size, int _team) :
+	const float *size, int _team) :
 		Obstacle(p, rotation, size[0], size[1], size[2]),
 		team(_team)
 {
@@ -47,7 +47,7 @@ BzfString		BaseBuilding::getClassName()
 float			BaseBuilding::intersect(const Ray &r) const
 {
   return timeRayHitsBlock(r, getPosition(), getRotation(),
-                          getWidth(), getBreadth(), getHeight());
+			  getWidth(), getBreadth(), getHeight());
 }
 
 void			BaseBuilding::getNormal(const float *p, float *n) const
@@ -215,16 +215,16 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
   GLfloat color[4];
   switch(base->getTeam()) {
     case 1:
-      color[0] = 0.7; color[1] = 0.0; color[2] = 0.0;
+      color[0] = 0.7f; color[1] = 0.0f; color[2] = 0.0f;
       break;
     case 2:
-      color[0] = 0.0; color[1] = 0.7; color[2] = 0.0;
+      color[0] = 0.0f; color[1] = 0.7f; color[2] = 0.0f;
       break;
     case 3:
-      color[0] = 0.0; color[1] = 0.0; color[2] = 0.7;
+      color[0] = 0.0f; color[1] = 0.0f; color[2] = 0.7f;
       break;
     case 4:
-      color[0] = 0.7; color[1] = 0.0; color[2] = 0.7;
+      color[0] = 0.7f; color[1] = 0.0f; color[2] = 0.7f;
       break;
   }
   color[3] = 1.0;
@@ -242,3 +242,4 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
   retval->setColor(color);
   return retval;
 }
+// ex: shiftwidth=2 tabstop=8

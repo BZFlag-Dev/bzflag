@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -46,6 +46,7 @@ class Player {
 				const char* callsign, const char* emailAddress);
     virtual		~Player();
 
+    PlayerId		id;			// my credentials
     const PlayerId&	getId() const;
     TeamColor		getTeam() const;
     const char*		getCallSign() const;
@@ -132,10 +133,10 @@ class Player {
     SphereSceneNode*	pausedSphere;
     GLfloat		color[4];
     boolean		notResponding;
-    static OpenGLTexture tankTexture;
+    static OpenGLTexture* tankTexture;
+    static int		totalCount;
 
     // permanent data
-    PlayerId		id;			// my credentials
     TeamColor		team;			// my team
     char		callSign[CallSignLen];	// my pseudonym
     char		email[EmailLen];	// my email address
@@ -328,3 +329,4 @@ inline void		Player::resetNotResponding()
 }
 
 #endif // BZF_PLAYER_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,1 +1,51 @@
+to do list for bzflag
+---------------------
 
+* encapsulate stuff requiring platform #ifdef's:
+   networking API into libNet.a.
+   fork/exec (used in menus.cxx) into libPlatform.a
+   file system stuff (dir delimiter, etc.)
+   user name stuff
+
+* windows makefiles
+   currently have microsoft visual c++ projects only
+
+* auto-generated dependency support in makefiles
+   manual dependencies cause too much trouble
+
+* move robots to separate binaries and allow either the
+   client or server to exec them. Have a server option
+   to keep n players in the game which auto spawns/kills
+   enough bots to do it. Get rid of bot player type
+   completely. bots should get all message types.
+
+* smarter robots
+
+* add type of shot (normal, gm, sw, etc) to killed message
+
+* more flag types
+
+* mines:
+   not necessarily a good idea.  if mines are visible
+   then they're fairly useless.  if invisible then they're
+   not fun because you're destroyed without warning and
+   no amount of skill will help you.  someone suggested
+   making them visible within a certain range.  another
+   possibility is damage before destruction.
+
+* radio chat:
+   allow players to communicate via low-quality audio.
+   already some support built into the server for this.
+
+* pre-game waiting room:
+   provide a means for players to gather before and after
+   a game.  basic text chat facilities.  allows players
+   to wait for enough players for a game and to discuss
+   strategy, etc.  could build this into bzfs easily.
+
+* spectator mode. Possibly only through a relay server
+  so as to not load down the normal server.
+
+* one tcp port. Tim Riker is working on this code. 1.7e4
+  should include playerid mangling support to get ready
+  for this patch.

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -115,3 +115,4 @@ boolean			OpenGLDisplayList::unref()
 {
   return --rep->refCount == 0;
 }
+// ex: shiftwidth=2 tabstop=8

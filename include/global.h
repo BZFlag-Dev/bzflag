@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -43,14 +43,10 @@ enum TeamColor {
 			PurpleTeam = 4
 };
 
-// view enumerations
-// FIXME -- may not be used anywhere
-enum ViewDirection {
-			FrontView = 0,
-			LeftView = 1,
-			BackView = 2,
-			RightView = 3
-};
+#ifdef ROBOT
+// robots
+#define MAX_ROBOTS 100
+#endif
 
 // epsilon and very far for ray intersections
 const float		Epsilon =	1.0e-5f;	// arbitrary
@@ -72,7 +68,7 @@ const float		MuzzleFront =	TankRadius+0.1f;// meters
 // rough shot geometry
 const float		ShotRadius =	0.5f;		// meters
 const float		ShotLength =	0.5f;		// meters
-const float		ShotTailLength=	10.0f;		// meters
+const float		ShotTailLength=	4.0f;		// meters
 
 // outer wall geometry
 const float		WallPosition =	0.5f*WorldSize +// meters
@@ -261,8 +257,9 @@ const float		JumpVelocity =	19.0f;		// m/s
 const float		IdentityRange =	50.0f;		// meters
 const float		ObeseFactor =	2.5f;		// 250% normal size
 const float		WideAngleAng =	M_PI / 1.8f;	// 100 degree fov
-const float		MomentumLinAcc=	1.0f;		// 
+const float		MomentumLinAcc=	1.0f;		//
 const float		MomentumAngAcc=	1.0f;		//
 const float		MagnetPower =	0.0f;		// off
 
 #endif // BZF_GLOBAL_H
+// ex: shiftwidth=2 tabstop=8

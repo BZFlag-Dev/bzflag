@@ -26,47 +26,48 @@ class MacMedia : public BzfMedia {
 
     double  stopwatch  (boolean);
     void    sleep      (float );
-    
+
     boolean openAudio  ();
     void    closeAudio ();
-    
+
     boolean isAudioBrainDead () const;
     boolean startAudioThread (void (*)(void*), void *);
     void    stopAudioThread  ();
     boolean hasAudioThread   () const;
     boolean isAudioTooEmpty  () const;
-   
+
     void    writeAudioFrames  (const float *, int);
     void    writeSoundCommand (const void*, int);
     boolean readSoundCommand  (void*, int);
-    
+
     int     getAudioOutputRate ()      const;
     int     getAudioBufferSize ()      const;
     int     getAudioBufferChunkSize () const;
-    
+
     void    audioSleep (boolean, double);
-    
+
    //unsigned char* doReadImage (const char*, int&, int&, int&) const;
-    
+
     BzfString makePath (const BzfString &, const BzfString &) const;
     private:
-    
+
     SndCommand     command;
     SndChannelPtr  channel;
   //  CmpSoundHeader header;
     ExtSoundHeader header;
     SndCallBackUPP callback;
     OSErr          error;
-    
+
     void (*audio_proc)(void*);
-    
+
     SInt16 *buffer;
     SInt16 *rpos;
     SInt16 *wpos;
-    
+
     int num_samples;
-       
+
     queue<char*> command_queue;
 };
 
 #endif // BZF_MACMEDIA_H
+// ex: shiftwidth=2 tabstop=8

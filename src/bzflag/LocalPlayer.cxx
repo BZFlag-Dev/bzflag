@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,6 +16,7 @@
 #include "ServerLink.h"
 #include "sound.h"
 #include "Flag.h"
+#include "BzfEvent.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -99,7 +100,11 @@ Ray			BaseLocalPlayer::getLastMotion() const
   return Ray(lastPosition, getVelocity());
 }
 
-const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
+#ifdef __MWERKS__
+  const float		(*BaseLocalPlayer::getLastMotionBBox() )[3] const
+#else
+  const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
+#endif
 {
   return bbox;
 }
@@ -124,13 +129,16 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
 				insideBuilding(NULL),
 				anyShotActive(False),
 				magnify(0),
-				target(NULL)
+				target(NULL),
+				nemesis(NULL),
+				recipient(NULL)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
   shots = new LocalShotPath*[numShots];
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
+  keyboardMoving = False;
 }
 
 LocalPlayer::~LocalPlayer()
@@ -192,8 +200,8 @@ void			LocalPlayer::doUpdate(float dt)
 
   // drop bad flag if timeout has expired
   if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&
-	getFlag() != NoFlag && Flag::getType(getFlag()) == FlagSticky &&
-	flagShakingTime > 0.0f) {
+      getFlag() != NoFlag && Flag::getType(getFlag()) == FlagSticky &&
+      flagShakingTime > 0.0f) {
     flagShakingTime -= dt;
     if (flagShakingTime <= 0.0f) {
       flagShakingTime = 0.0f;
@@ -263,11 +271,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       // compute velocity so far
       if (location == OnGround || location == OnBuilding ||
-		(location == InBuilding && oldPosition[2] == 0.0f)) {
+	  (location == InBuilding && oldPosition[2] == 0.0f)) {
 	newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
 	newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
 	newVelocity[2] = 0.0f;
-        if (oldPosition[2] != 0.0f) newVelocity[2] += Gravity * dt;
+	if (oldPosition[2] != 0.0f)
+	  newVelocity[2] += Gravity * dt;
       }
       else {
 	// can't control motion in air
@@ -386,7 +395,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // handle upward normal component to prevent an upward force
       if (normal[2] != 0.0f) {
 	// if going down then stop falling
-	if (newVelocity[2] < 0.0f && newVelocity[2] - 
+	if (newVelocity[2] < 0.0f && newVelocity[2] -
 		(mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
 	  newVelocity[2] = 0.0f;
 
@@ -456,6 +465,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (getFlag() == PhantomZoneFlag) {
       // change zoned state
       setStatus(getStatus() ^ FlagActive);
+      if (getStatus() & FlagActive)
+	      playLocalSound( SFX_PHANTOM );
     }
     else {
       // teleport
@@ -657,6 +668,10 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   move(pos, _azimuth);
   setVelocity(zero);
   setAngularVelocity(0.0f);
+  setKeyboardSpeed(0.0f);
+  setKeyboardAngVel(0.0f);
+  setSlowKeyboard(False);
+  resetKey();
   doUpdateMotion(0.0f);
 
   // make me alive now
@@ -761,6 +776,8 @@ boolean			LocalPlayer::fireShot()
     playLocalSound(SFX_SHOCK);
   else if (firingInfo.flag == LaserFlag)
     playLocalSound(SFX_LASER);
+  else if (firingInfo.flag == GuidedMissileFlag)
+    playLocalSound(SFX_MISSILE);
   else
     playLocalSound(SFX_FIRE);
 
@@ -836,6 +853,16 @@ void			LocalPlayer::setMagnify(int zoom)
 void			LocalPlayer::setTarget(const Player* _target)
 {
   target = _target;
+}
+
+void			LocalPlayer::setNemesis(const Player* _nemesis)
+{
+	nemesis = _nemesis;
+}
+
+void			LocalPlayer::setRecipient(const Player* _recipient)
+{
+	recipient = _recipient;
 }
 
 void			LocalPlayer::explodeTank()
@@ -989,3 +1016,4 @@ void			LocalPlayer::addAntidote(SceneDatabase* scene)
   if (antidoteFlag)
     scene->addDynamicNode(antidoteFlag);
 }
+// ex: shiftwidth=2 tabstop=8

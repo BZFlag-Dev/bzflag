@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,8 +19,7 @@
 
 #include "common.h"
 #include "BzfString.h"
-
-class istream;
+#include "bzfio.h"
 
 class ResourceDatabase {
   public:
@@ -42,9 +41,10 @@ class ResourceDatabase {
 
     int			getNameIndex(const BzfString& name) const;
 
-  private:
+  public:
     BzfStringAList	names;
     BzfStringAList	values;
 };
 
 #endif // BZF_RESOURCES_H
+// ex: shiftwidth=2 tabstop=8

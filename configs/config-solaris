@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -12,35 +12,35 @@
 #
 # configuration for generic platform
 #
-CONFIG  = solaris
+CONFIG	= solaris
 
 #
 # tools
 #
-AR      = ar cru
-CC	= gcc
-CXX	= g++
+AR	= ar cru
+CC	= cc
+CXX	= CC
 CD	= cd
-CP      = cp
+CP	= cp
 ECHO	= echo
 LD	= ld
 MKDIR	= mkdir
-NROFF   = nroff
-RM      = rm -f
-RMR     = $(RM) -r
+NROFF	= nroff
+RM	= rm -f
+RMR	= $(RM) -r
 SHELL	= /bin/sh
 
 #
 # compiler definitions
 #
-PCDEFS   = -DSVR -DSVR4
-PCXXDEFS = -DSVR -DSVR4
+PCDEFS   = -DSUN_OGL_NO_VERTEX_MACROS
+PCXXDEFS = -DSUN_OGL_NO_VERTEX_MACROS
 
 #
 # compiler options
 #
-PCOPTS   = -fPIC
-PCXXOPTS = -fPIC -fno-exceptions -fno-rtti
+PCOPTS   =
+PCXXOPTS =
 COPT     = -DNDEBUG -O
 CXXOPT   = -DNDEBUG -O
 CDEBUG   = -DDEBUG -g
@@ -57,8 +57,8 @@ PCXXINCS =
 #
 # linker options
 #
-PLDOPTS  = -L/usr/openwin/lib -lnsl -lsocket -lresolv
-PLDLIBS  = 
+PLDOPTS  = -L/usr/openwin/lib
+PLDLIBS  = -lresolv -lsocket -lnsl
 
 #
 # dirt

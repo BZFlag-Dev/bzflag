@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,15 +25,7 @@
 #include "bzfgl.h"
 
 class BzfKeyEvent;
-
-class WinDisplayRes {
-  public:
-    int			width;
-    int			height;
-    int			refresh;
-    int			depth;
-};
-BZF_DEFINE_ALIST(WinDisplayResList, WinDisplayRes);
+class Resolution;
 
 class WinDisplay : public BzfDisplay {
   public:
@@ -41,13 +33,11 @@ class WinDisplay : public BzfDisplay {
 				const char* videoFormat);
 			~WinDisplay();
 
-    boolean		initBeforeWindow() const;
-
-    void		initVideoFormat(HWND);
-
     boolean		isValid() const;
     boolean		isEventPending() const;
     boolean		getEvent(BzfEvent&) const;
+
+    boolean		setDefaultResolution();
 
     boolean		isFullScreenOnly() const;
     int			getFullWidth() const;
@@ -78,30 +68,21 @@ class WinDisplay : public BzfDisplay {
     WinDisplay&		operator=(const WinDisplay&);
 
     boolean		getKey(const MSG&, BzfKeyEvent&) const;
+    boolean		isNastyKey(const MSG&) const;
 
     boolean		doSetResolution(int);
-    void		setResolutions();
-
-    void		setVideoFormat();
-    void		enumResolution(int width, int height,
-				int refresh, int depth);
+    ResInfo**		getVideoFormats(int& num, int& current);
     static boolean	canChangeDepth();
-    static BOOL CALLBACK videoFormatDialogProc(HWND hDlog, UINT iMsg,
-					WPARAM wParam, LPARAM lParam);
-
-    boolean		canChangeFormat() const;
 
   private:
     Rep*		rep;
 
     // resolution info
-    boolean		init;
     HWND		hwnd;
-    BzfString		configVideoFormat;
-    WinDisplayResList	formats;
     bool		using3Dfx;
     int			fullWidth;
     int			fullHeight;
+    Resolution*		resolutions;
 
     // for key to character translations
     boolean		translated;
@@ -111,12 +92,7 @@ class WinDisplay : public BzfDisplay {
     static const int	asciiMap[];
     static const int	asciiShiftMap[];
     static const int	buttonMap[];
-
-    // video format switching
-    static int		videoFormat;
-    static int*		videoFormatMap;
-    static int		videoFormatMapSize;
-    static WinDisplay*	videoFormatDisplay;
 };
 
 #endif // BZF_WINDISPLAY_H
+// ex: shiftwidth=2 tabstop=8

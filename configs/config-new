@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -12,22 +12,24 @@
 #
 # configuration for generic platform
 #
-CONFIG  = # this file is called config-$(CONFIG)
+CONFIG	= # this file is called config-$(CONFIG)
+
+# XXX -- override install locations here (see Make-common)
 
 #
 # tools
 #
-AR      = # library maintenance tool, add to library mode
+AR	= # library maintenance tool, add to library mode
 CC	= # C compiler
 CXX	= # C++ compiler
 CD	= # change directory
-CP      = # copy file
+CP	= # copy file
 ECHO	= # print
 LD	= # linker
 MKDIR	= # make directory
-NROFF   = # man page compiler
-RM      = # remove file (non-interactive);  must accept multiple files
-RMR     = # remove recursively (non-interactive);  must accept multiple files
+NROFF	= # man page compiler
+RM	= # remove file (non-interactive);  must accept multiple files
+RMR	= # remove recursively (non-interactive);  must accept multiple files
 SHELL	= # shell
 
 #

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -73,7 +73,8 @@ boolean			Teleporter::isInside(const float* p,
 boolean			Teleporter::isInside(const float* p, float a,
 						float dx, float dy) const
 {
-  if (p[2] < getHeight() - getBorder()) {
+  if ((p[2] < getHeight() + getPosition()[2] - getBorder())
+	  && p[2] >= getPosition()[2]) {
     // test individual border columns
     const float c = cosf(getRotation()), s = sinf(getRotation());
     const float d = getBreadth() - 0.5f * getBorder();
@@ -87,7 +88,7 @@ boolean			Teleporter::isInside(const float* p, float a,
     if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return True;
   }
 
-  else if (p[2] <= getHeight()) {
+  else if (p[2] <= getHeight() + getPosition()[2]  && p[2] > getPosition()[2]) {
     // test crossbar
     if (testRectRect(p, a, dx, dy, getPosition(), getRotation(),
 					getWidth(), getBreadth()))
@@ -137,7 +138,8 @@ float			Teleporter::isTeleported(const Ray& r, int& face) const
 
   // if intersection with border is before one without then doesn't teleport
   // (cos it hit the border first).  also no teleport if no intersection.
-  if ((tb >= 0.0f && tb < t) || t < 0.0f) return -1.0f;
+  if ((tb >= 0.0f && t - tb > 1e-6) || t < 0.0f)
+    return -1.0f;
 
   // get teleport position.  if above or below teleporter then no teleportation.
   float p[3];
@@ -234,9 +236,53 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   const float c = cosf(a), s = sinf(a);
   const float x2 = c * x1 - s * y1;
   const float y2 = c * y1 + s * x1;
-  pOut[0] = x2 + t2.getPosition()[0];
-  pOut[1] = y2 + t2.getPosition()[1];
-  pOut[2] = pIn[2];
+
+  /*
+	Here's what the next statements do:
+
+  In order to account for different-size teleporters, each of the dimensions
+  is expressed a a ratio of the length of the transporter in the dimension
+  divided by position of the tank relative to the transporter in that dimension, and
+  is proportional to the width of the target teleporter in that dimension.
+  Here is the formula, with example lengths:
+
+  W1/W2 = T1/T2
+
+
+  |--------|	Tank Pos (T1)
+  |----------------------------------------------------------|	Transport width (W1)
+
+
+  |-|	New tank Pos (T2)
+  |---------|	New Transport width (W2)
+
+  We are looking for T2, and simple algebra tells us that T2 = (W2 * T1) / W1
+
+  Now, we can correctly position the tank.
+
+  Note that this is only the position relative to the transporter, to get the real position,
+  it is added to the rest.  Since I'm not 100% sure of my work, I am leaving the old code
+  commented above.
+  */
+
+  //T1 = x2 and y2
+  //W2 = t2.getWidth()
+  //W1 = getWidth()
+
+  //pOut[0] = x2 + t2.getPosition()[0];
+  //pOut[1] = y2 + t2.getPosition()[1];
+  pOut[0] = t2.getPosition()[0] + (x2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
+  pOut[1] = t2.getPosition()[1] + (y2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
+  //T1 = pIn[2] - getPosition()[2]
+  //W2 = t2.getHeight()
+  //W1 = getHeight
+
+  //(t2.getPosition()[2] - getPosition()[2]) adds the height differences between the
+  //teleporters so that teleporters can be off of the ground at different heights.
+
+  //pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
+  pOut[2] = t2.getPosition()[2]
+	  + ((pIn[2] - getPosition()[2]) * (t2.getHeight() - t2.getBorder()))/getHeight();
 
   if (dOut && dIn) {
     const float dx = dIn[0];
@@ -289,18 +335,18 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
 				boolean lod)
 {
   static const float texCoords[][4][2] = {
-			  { 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 9.5f, 0.0f, 9.5f },
-			  { 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 9.5f, 0.5f, 9.5f },
-			  { 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 9.0f, 0.0f, 9.0f },
-			  { 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 9.0f, 0.5f, 9.0f },
-			  { 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 9.0f, 0.5f, 9.0f },
-			  { 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 9.0f, 0.0f, 9.0f },
-			  { 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 9.0f, 0.5f, 9.0f },
-			  { 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 9.0f, 0.0f, 9.0f },
-			  { 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 5.0f, 0.5f, 5.0f },
-			  { 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 4.0f, 0.5f, 4.0f },
-			  { 0.0f, 0.0f, 5.0f, 0.0f, 5.0f, 0.5f, 0.0f, 0.5f },
-			  { 0.0f, 0.5f, 5.0f, 0.5f, 5.0f, 1.0f, 0.0f, 1.0f }
+			 { { 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.5f }, { 0.0f, 9.5f } },
+			 { { 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.5f }, { 0.5f, 9.5f } },
+			 { { 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f } },
+			 { { 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f } },
+			 { { 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f } },
+			 { { 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f } },
+			 { { 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f } },
+			 { { 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f } },
+			 { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.5f, 5.0f }, { 0.5f, 5.0f } },
+			 { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.5f, 4.0f }, { 0.5f, 4.0f } },
+			 { { 0.0f, 0.0f }, { 5.0f, 0.0f }, { 5.0f, 0.5f }, { 0.0f, 0.5f } },
+			 { { 0.0f, 0.5f }, { 5.0f, 0.5f }, { 5.0f, 1.0f }, { 0.0f, 1.0f } }
 			};
 
   if (getNodeNumber() == 14) return NULL;
@@ -497,3 +543,4 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
   }
   return new QuadWallSceneNode(base, sEdge, tEdge, u, v, uc, vc, lod);
 }
+// ex: shiftwidth=2 tabstop=8

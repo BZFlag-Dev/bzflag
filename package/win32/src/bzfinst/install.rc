@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -41,7 +41,7 @@ IDD_HELLO DIALOG DISCARDABLE  0, 0, 234, 100
 STYLE WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "This program will install BZFLAG.\n\nPress Next to continue.\n\nPress Cancel at any time to quit without installing.",
+    LTEXT           "This program will install BZFlag.\n\nPress Next to continue.\n\nPress Cancel at any time to quit without installing.",
                     -1,2,2,196,53
 END
 
@@ -49,8 +49,8 @@ IDD_LICENSE DIALOG DISCARDABLE  0, 0, 234, 100
 STYLE WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
-    EDITTEXT        IDC_LICENSE,0,0,234,100,ES_MULTILINE | ES_AUTOVSCROLL | 
-                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | WS_HSCROLL | 
+    EDITTEXT        IDC_LICENSE,0,0,234,100,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | WS_HSCROLL |
                     NOT WS_TABSTOP
 END
 
@@ -85,7 +85,7 @@ IDD_FINISH DIALOG DISCARDABLE  0, 0, 234, 100
 STYLE WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Installation complete.\n\nUse the desktop icon to start BZFLAG.",
+    LTEXT           "Installation complete.\n\nUse the desktop icon to start BZFlag.",
                     -1,2,2,136,35
     CONTROL         "Read the README file on exit?",IDC_README,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,2,44,136,10
@@ -103,16 +103,16 @@ IDI_INSTALL             ICON    DISCARDABLE     "install.ico"
 // RAWSTRING
 //
 
-IDR_LICENSE             RAWSTRING DISCARDABLE   "..\\..\\license.txt"
+IDR_LICENSE             RAWSTRING DISCARDABLE   "..\\..\\..\\..\\LICENSE"
 
 
 //
 // String Table
 //
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
-    IDS_INSTALL_NAME        "BZFLAG"
+    IDS_INSTALL_NAME        "BZFlag"
     IDS_TITLE               "Install %s"
 END
 

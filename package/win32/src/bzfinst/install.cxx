@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -338,8 +338,8 @@ int			installFile(const char* path, Uncompressor& stream,
 	}
 	n -= bytes;
 	totalSpace += bytes;
-	(*fileCB)((size - n) / (size / 100));
-	(*totalCB)(totalSpace / (requiredSpace / 100));
+	(*fileCB)(100 * (size - n) / size);
+	(*totalCB)(100 * totalSpace / requiredSpace);
 
 	// send some windows messages
 	if (doMessages())
@@ -475,7 +475,7 @@ static BOOL		addDesktopLink(const char* linkname,
 	shellLink->SetPath(name);
 	shellLink->SetArguments(args);
 	shellLink->SetWorkingDirectory(workdir);
-  
+
 	IPersistFile* persistFile;
 	hres = shellLink->QueryInterface(IID_IPersistFile,
 				      (LPVOID*)&persistFile);
@@ -500,6 +500,19 @@ static BOOL		addDesktopLink(const char* linkname,
     return TRUE;
 }
 
+// if allowRegistryFailure is TRUE then ignore failure to
+// write registry.  since we only use the registry to save
+// uninstall info, we're safe in ignoring failures (the
+// uninstaller just won't be available from Add/Remove
+// programs).  some users complained that they couldn't
+// install because they didn't have permission to edit the
+// registry and there was no way to override the registry
+// changing.
+//
+// FIXME -- must do more sophisticated handling when we
+// use the registry for stuff that actually matters.
+static BOOL allowRegistryFailure = TRUE;
+
 static BOOL		addRegistryKey(const char* parent, const char* name,
 				UndoList& undoList)
 {
@@ -507,7 +520,7 @@ static BOOL		addRegistryKey(const char* parent, const char* name,
 
     // open parent
     key = findKey(parent);
-    if (!key) return FALSE;
+    if (!key) return allowRegistryFailure;
 
     DWORD disp;
     LONG hr = RegCreateKeyEx(key, name, 0, REG_NONE, 0,
@@ -515,7 +528,7 @@ static BOOL		addRegistryKey(const char* parent, const char* name,
 				&disp);
     RegCloseKey(key);
     if (hr != ERROR_SUCCESS)
-	return FALSE;
+	return allowRegistryFailure;
 
     if (disp != REG_OPENED_EXISTING_KEY)
 	undoList.append(new UndoNewRegKey(parent, name));
@@ -529,7 +542,7 @@ static BOOL		addRegistryDWord(const char* parent,
 {
     // open parent
     HKEY key = findKey(parent);
-    if (!key) return FALSE;
+    if (!key) return allowRegistryFailure;
 
     // get the current value
     BYTE* data = NULL;
@@ -542,7 +555,7 @@ static BOOL		addRegistryDWord(const char* parent,
 	if (hr != ERROR_SUCCESS) {
 	    delete[] data;
 	    RegCloseKey(key);
-	    return FALSE;
+	    return allowRegistryFailure;
 	}
 	undo = new UndoNewRegValue(parent, name, type, data, size);
 	delete[] data;
@@ -556,7 +569,7 @@ static BOOL		addRegistryDWord(const char* parent,
     RegCloseKey(key);
     if (hr != ERROR_SUCCESS) {
 	delete undo;
-	return FALSE;
+	return allowRegistryFailure;
     }
 
     if (undo)
@@ -570,7 +583,7 @@ static BOOL		addRegistryString(const char* parent,
 {
     // open parent
     HKEY key = findKey(parent);
-    if (!key) return FALSE;
+    if (!key) return allowRegistryFailure;
 
     // get the current value
     BYTE* data = NULL;
@@ -583,7 +596,7 @@ static BOOL		addRegistryString(const char* parent,
 	if (hr != ERROR_SUCCESS) {
 	    delete[] data;
 	    RegCloseKey(key);
-	    return FALSE;
+	    return allowRegistryFailure;
 	}
 	undo = new UndoNewRegValue(parent, name, type, data, size);
 	delete[] data;
@@ -594,7 +607,7 @@ static BOOL		addRegistryString(const char* parent,
     RegCloseKey(key);
     if (hr != ERROR_SUCCESS) {
 	delete undo;
-	return FALSE;
+	return allowRegistryFailure;
     }
 
     if (undo)
@@ -683,7 +696,7 @@ int			install(const char* instDir,
 		strcpy(cwd, instDir);
 	    else if (cmd == INST_SETSYSDIR)
 		strcpy(cwd, sysDir);
-	    else 
+	    else
 		strcpy(cwd, winDir);
 	    dirStack = 0;
 	    if (!setDirectory(cwd, errorCB)) {
@@ -957,3 +970,4 @@ int			install(const char* instDir,
 
     return TRUE;
 }
+// ex: shiftwidth=2 tabstop=8

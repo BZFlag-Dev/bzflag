@@ -182,6 +182,10 @@ SOURCE=..\src\geometry\BoltSceneNode.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\geometry\EighthDBaseSceneNode.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\geometry\EighthDBoxSceneNode.cxx
 # End Source File
 # Begin Source File
@@ -263,6 +267,10 @@ SOURCE=..\include\BillboardSceneNode.h
 # Begin Source File
 
 SOURCE=..\include\BoltSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\EighthDBaseSceneNode.h
 # End Source File
 # Begin Source File
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -105,3 +105,4 @@ void			EighthDimSceneNode::EighthDimRenderNode::setPolygon(
 {
   ::memcpy(poly[index], vertex, sizeof(GLfloat[3][3]));
 }
+// ex: shiftwidth=2 tabstop=8

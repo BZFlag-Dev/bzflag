@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -55,8 +55,19 @@ class BzfWindow {
     virtual void	showMouse() = 0;
     virtual void	hideMouse() = 0;
 
+    virtual void	setGamma(float) = 0;
+    virtual float	getGamma() const = 0;
+    virtual boolean	hasGammaControl() const = 0;
+
     virtual void	makeCurrent() = 0;
     virtual void	swapBuffers() = 0;
+    virtual void	makeContext() = 0;
+    virtual void	freeContext() = 0;
+
+    virtual void	initJoystick(const char* joystickName);
+    virtual boolean	joystick() const { return False; }
+    virtual void	getJoy(int& x, int& y) const { x = 0; y = 0; }
+    virtual unsigned long getJoyButtons() const { return 0; }
 
     void		callExposeCallbacks() const;
     void		addExposeCallback(void (*cb)(void*), void* data);
@@ -73,3 +84,4 @@ class BzfWindow {
 };
 
 #endif // BZF_WINDOW_H
+// ex: shiftwidth=2 tabstop=8

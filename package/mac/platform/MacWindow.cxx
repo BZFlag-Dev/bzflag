@@ -10,27 +10,27 @@
 
 //Point gMousePosition;
 bool  gMouseGrabbed;
- 
+
 MacWindow::MacWindow (const MacDisplay *display, MacVisual *visual) :
-                        BzfWindow (display)
+			BzfWindow (display)
 {
   GLboolean ok;
 
  // Force 640x480 for now
 #ifndef USE_DSP
-   SetRect (&rect, GLOBAL_OFFSET_X, GLOBAL_OFFSET_Y, 640 + GLOBAL_OFFSET_X, 480 + GLOBAL_OFFSET_Y);   
+   SetRect (&rect, GLOBAL_OFFSET_X, GLOBAL_OFFSET_Y, 640 + GLOBAL_OFFSET_X, 480 + GLOBAL_OFFSET_Y);
    window = NewCWindow (NULL, &rect, "\pBZFlag", false,
-							           plainDBox, (WindowPtr) -1L, true, 0L);
+								   plainDBox, (WindowPtr) -1L, true, 0L);
 #else
 	window = dsSetupScreen (640, 480 );
 #endif
-	
+
 	if (!window) DebugStr  ("\pCould not create a window.");
-	
-#ifdef USE_DSP	
+
+#ifdef USE_DSP
 	display->setWindow (window);
 #endif
-	
+
 	visual->reset ();
 	visual->setLevel(0);
 visual->setIndex(24);
@@ -38,17 +38,17 @@ visual->setIndex(24);
 	visual->setDoubleBuffer (true);
 	visual->setRGBA(1, 1, 1, 0);
 //	visual->setStencil(1);
-	
+
 //	visual->addAttribute1(AGL_FULLSCREEN);
-	
+
 	visual->build ();
-	
+
 	context = aglCreateContext (visual->get(), NULL);
-	
-  if (!context) DebugStr ("\pCould not create an OpenGL context.");   
+
+  if (!context) DebugStr ("\pCould not create an OpenGL context.");
 
   display->setContext    (context);
-  	
+
   makeCurrent ();
 
 // 3dfx routine
@@ -62,9 +62,9 @@ visual->setIndex(24);
   ok = aglSetDrawable (context, (AGLDrawable)window);
 
   if (!ok) DebugStr ("\paglSetDrawable failed.");
-  
+
   ok = aglSetCurrentContext (context);
-  
+
   if (!ok) DebugStr ("\paglSetCurrent failed.");
 
 }
@@ -73,7 +73,7 @@ MacWindow::~MacWindow () {
 
   if (window != NULL)
 
-#ifndef USE_DSP  
+#ifndef USE_DSP
 	DisposeWindow (window);
 #else
   dsShutdownScreen ((CGrafPtr)window);
@@ -86,20 +86,20 @@ void MacWindow::showWindow (boolean show) {
 
 #ifndef USE_DSP
     if (window == NULL)  return;
-       
+
        if (show)
-        ShowWindow (window);
+	ShowWindow (window);
        else
-        HideWindow (window);
+	HideWindow (window);
 #endif
 }
 
 void MacWindow::getPosition (int &x, int &y) { x = 0, y = 0; }
 
-void MacWindow::getSize     (int &width, int &height) const { 
+void MacWindow::getSize     (int &width, int &height) const {
 
   if (window == NULL) return;
-  
+
   width  = window->portRect.right  - window->portRect.left;
   height = window->portRect.bottom - window->portRect.top;
 }
@@ -108,7 +108,7 @@ void MacWindow::setTitle (const char *title) {
 
 #ifndef USE_DSP
   if (window == NULL) return;
-  
+
   setwtitle (window, title);
 #endif
 
@@ -118,9 +118,9 @@ void MacWindow::setPosition (int x, int y) {
 
 #ifndef USE_DSP
   if (window == NULL) return;
-  
+
   MoveWindow (window, x, y, true);
-  
+
   GLboolean ok = aglSetDrawable (context, (AGLDrawable) window);
 
   if (!ok) DebugStr ("\paglSetDrawable failed.");
@@ -130,19 +130,19 @@ void MacWindow::setPosition (int x, int y) {
 void MacWindow::setSize (int width, int height) {
 #ifndef USE_DSP
   if (window == NULL) return;
-  
+
   SizeWindow (window, width, height, true);
-  
+
   GLboolean ok = aglSetDrawable (context, (AGLDrawable) window);
 
   if (!ok) DebugStr ("\paglSetDrawable failed.");
-#endif  
+#endif
 }
 
 void MacWindow::setMinSize (int width, int height) {
 #ifndef USE_DSP
   if (window == NULL) return;
-  
+
   // Not sure what this wants, leave out for now.
   //CollapseWindow (window, true);
 #endif
@@ -150,18 +150,18 @@ void MacWindow::setMinSize (int width, int height) {
 
 void MacWindow::setFullscreen () {} // do nothing for now
 void MacWindow::warpMouse   (int x, int y) {
- 
+
  Point moveTo;
  GrafPtr savePort;
- 
+
  GetPort (&savePort);
  SetPort (window);
- 
+
  moveTo.h = x;
  moveTo.v = y;
- 
+
  LocalToGlobal (&moveTo);
-  
+
  LMSetMouseTemp(moveTo);
  LMSetRawMouseLocation(moveTo);
  LMSetCursorNew(1);
@@ -170,18 +170,18 @@ void MacWindow::warpMouse   (int x, int y) {
 }
 
 void MacWindow::getMouse    (int &x, int &y) const {
-  
+
     Point   tmpMouse;
     GrafPtr savedPort;
 
     GetPort(&savedPort);
     SetPort(window);
     GetMouse (&tmpMouse);  // returns mouse location in coords of local
-                          // window which must be set
+			  // window which must be set
 
     x = tmpMouse.h;
     y = tmpMouse.v;
-    SetPort(savedPort); 
+    SetPort(savedPort);
 }
 
 void MacWindow::grabMouse   () { gMouseGrabbed = true;  }
@@ -201,16 +201,16 @@ void MacWindow::makeCurrent () {
  // This function is pointless in fullscreen mode
 
   if (window == NULL) return;
-  
+
 // GLboolean ok = aglSetDrawable (context, (AGLDrawable) window);
 
 // if (!ok) DebugStr ("\paglSetDrawable failed.");
- 
+
  //if (context == aglGetCurrentContext ());
  // return;
- 
+
  GLboolean ok = aglSetCurrentContext (context);
-  
+
  if (!ok) DebugStr ("\paglSetCurrentContext failed.");
 //#endif
 }
@@ -219,3 +219,4 @@ void MacWindow::swapBuffers () {
 
   aglSwapBuffers (context);
 }
+// ex: shiftwidth=2 tabstop=8

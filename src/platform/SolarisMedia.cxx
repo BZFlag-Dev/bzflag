@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -11,6 +11,7 @@
  */
 
 #include "SolarisMedia.h"
+#include "TimeKeeper.h"
 
 #define DEBUG_SOLARIS			0	//(1 = debug, 0 = don't!)
 
@@ -51,7 +52,7 @@ double			SolarisMedia::stopwatch(boolean start)
 {
 	struct timeval tv;
 	gettimeofday(&tv, 0);
-	if (start) 
+	if (start)
 	{
 		stopwatchTime = (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec;
 		return 0.0;
@@ -66,6 +67,8 @@ void			SolarisMedia::sleep(float timeInSeconds)
 	tv.tv_usec = (long)(1.0e6 * (timeInSeconds - tv.tv_sec));
 	select(0, NULL, NULL, NULL, &tv);
 }
+
+static const int	NumChunks = 4;
 
 boolean			SolarisMedia::openAudio()
 {
@@ -90,10 +93,13 @@ boolean			SolarisMedia::openAudio()
   if(DEBUG_SOLARIS)
     fprintf(stderr, "Opened audio control device '/dev/audioctl'\n");
 
+// removing these avoids a kernel crash on solaris 8 - bzFrank
+#ifdef FLUSHDRAIN
   // Empty buffers
   ioctl(audio_fd, AUDIO_DRAIN, 0);
   ioctl(audio_fd, I_FLUSH, FLUSHRW);
   ioctl(audioctl_fd, I_FLUSH, FLUSHRW);
+#endif
 
   if(ioctl(audio_fd, AUDIO_GETDEV, &a_dev) < 0)
   {
@@ -124,9 +130,9 @@ boolean			SolarisMedia::openAudio()
   a_info.play.precision   = defaultPrecision;
   a_info.play.encoding    = defaultEncoding;
 
-  a_info.play.buffer_size = AUDIO_BUFFER_SIZE;
+  a_info.play.buffer_size = NumChunks * AUDIO_BUFFER_SIZE;
   audioBufferSize   	  = AUDIO_BUFFER_SIZE;
-  audioLowWaterMark	  = AUDIO_BUFFER_SIZE;
+  audioLowWaterMark	  = 2;
 
   if(ioctl(audio_fd, AUDIO_SETINFO, &a_info) == -1)
   {
@@ -159,7 +165,7 @@ boolean			SolarisMedia::openAudio()
 
   // ready to go
   audio_ready = True;
- 
+
   if(DEBUG_SOLARIS)
     fprintf(stderr, "Audio ready.\n");
 
@@ -171,11 +177,6 @@ void			SolarisMedia::closeAudio()
 {
   close(audio_fd);
   close(audioctl_fd);
-}
-
-boolean			SolarisMedia::isAudioBrainDead() const
-{
-  return True;
 }
 
 boolean			SolarisMedia::startAudioThread(
@@ -236,7 +237,7 @@ int			SolarisMedia::getAudioOutputRate() const
 
 int			SolarisMedia::getAudioBufferSize() const
 {
-  return audioBufferSize;
+  return NumChunks * (audioBufferSize >> 1);
 }
 
 int			SolarisMedia::getAudioBufferChunkSize() const
@@ -247,59 +248,66 @@ int			SolarisMedia::getAudioBufferChunkSize() const
 boolean			SolarisMedia::isAudioTooEmpty() const
 {
   ioctl(audioctl_fd, AUDIO_GETINFO, &a_info);
-
-  return (AUDIO_BUFFER_SIZE - (written-(a_info.play.eof*512))) >= audioLowWaterMark;
+  return ((int)a_info.play.eof >= eof_written - audioLowWaterMark);
 }
 
 void			SolarisMedia::writeAudioFrames(
 				const float* samples, int numFrames)
 {
-  int i;
-  char c;
+  int numSamples = 2 * numFrames;
+  int limit;
 
-  i = 0;
-  while(i < (audioBufferSize / 2)) 
-  {
-    if(samples[i] < -32767.0) tmp_buf[eof_counter] = -32767;
-    else
-      if(samples[i] > 32767.0) tmp_buf[eof_counter] = 32767;
-      else
-        tmp_buf[eof_counter] = (short) samples[i];
-
-    eof_counter++;
-    i = i++;
-    if(eof_counter >= 512)
-    {
-      write(audio_fd, tmp_buf, (eof_counter)*2);
-      written += (eof_counter);
-      write(audio_fd, &c, 0);
-      eof_counter = 0;
-      eof_written++;
+  while (numSamples > 0) {
+    if (numSamples>512) limit=512;
+    else limit=numSamples;
+    for (int j = 0; j < limit; j++) {
+      if (samples[j] < -32767.0) tmp_buf[j] = -32767;
+      else if (samples[j] > 32767.0) tmp_buf[j] = 32767;
+      else tmp_buf[j] = short(samples[j]);
     }
+
+    // fill out the chunk (we never write a partial chunk)
+    if (limit < 512) {
+      for (int j = limit; j < 512; ++j)
+	tmp_buf[j] = 0;
+      limit = 512;
+    }
+
+    write(audio_fd, tmp_buf, 2*limit);
+    write(audio_fd, NULL, 0);
+    samples += limit;
+    numSamples -= limit;
+    eof_written++;
   }
 }
 
 void			SolarisMedia::audioSleep(
 				boolean checkLowWater, double endTime)
 {
-  // prepare fd bit vectors
-  fd_set audioSelectSet;
   fd_set commandSelectSet;
-  FD_ZERO(&commandSelectSet);
-  FD_SET(queueOut, &commandSelectSet);
-  if (checkLowWater) {
-    FD_ZERO(&audioSelectSet);
-    FD_SET(audio_fd, &audioSelectSet);
-  }
-
-  // prepare timeout
   struct timeval tv;
-  if (endTime >= 0.0) {
-    tv.tv_sec = (long)endTime;
-    tv.tv_usec = (long)(1.0e6 * (endTime - floor(endTime)));
-  }
 
-  // wait
-  select(maxFd, &commandSelectSet, checkLowWater ? &audioSelectSet : NULL,
-			NULL, (struct timeval*)(endTime >= 0.0 ? &tv : NULL));
+  // To do both these operations at once, we need to poll.
+  if (checkLowWater) {
+    // start looping
+    TimeKeeper start = TimeKeeper::getCurrent();
+    do {
+      // break if buffer has drained enough
+      if (isAudioTooEmpty()) break;
+      FD_ZERO(&commandSelectSet);
+      FD_SET(queueOut, &commandSelectSet);
+      tv.tv_sec=0;
+      tv.tv_usec=50000;
+      if (select(maxFd, &commandSelectSet, 0, 0, &tv)) break;
+
+    } while (endTime<0.0 || (TimeKeeper::getCurrent()-start)<endTime);
+  } else {
+    FD_ZERO(&commandSelectSet);
+    FD_SET(queueOut, &commandSelectSet);
+    tv.tv_sec=int(endTime);
+    tv.tv_usec=int(1.0e6*(endTime-floor(endTime)));
+
+    select(maxFd, &commandSelectSet, 0, 0, (endTime>=0.0)?&tv : 0);
+  }
 }
+// ex: shiftwidth=2 tabstop=8

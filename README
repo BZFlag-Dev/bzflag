@@ -1,1 +1,285 @@
 
+				    bzflag 1.7e7
+
+			Copyright (c) 1993 - 2002 Tim Riker
+
+Maintainer
+=========
+
+Tim Riker
+http://rikers.org/
+Tim@Rikers.org
+
+Author
+======
+
+Chris Schoeneman
+475 Hawthorne Av
+Palo Alto, CA 94301
+crs23@bigfoot.com
+
+
+Introduction
+============
+
+This is the readme file for the BZFlag source tree.  It includes
+a manifest, simple build instructions, and other information for
+bzflag development.
+
+
+BZFlag Home Page
+================
+
+The BZFlag home page is at:  http://BZFlag.org/
+
+
+Getting BZFlag
+==============
+
+The home page provides access to the primary BZFlag download
+site.  This web site includes pages for downloading the compiled
+and source code versions.  Compiled versions are distributed
+as installable packages.  Source code is archived in various
+formats.  After unpacking you should have the following files
+in the new bzflag directory:
+
+  README	- this file
+  README.*	- platform specific details
+  BUGS		- a list of known bugs
+  LICENSE	- the bzflag license
+  PORTING	- a guide for porting bzflag
+  RELNOTES	- release notes for this and prior versions
+  TODO		- (incomplete) list of things to do
+  Make-common	- definitions and rules for all make files
+  Make-sys	- Makefile that does the real work at the top level
+  Makefile	- top level Makefile
+  configs/	- platform configuration files
+  data/		- data files (sounds, images, etc.)
+  include/	- include files for libraries
+  man/		- man pages
+  misc/		- miscellany
+  package/	- stuff to build installable packages
+  src/		- bzflag, bzfs, etc. source code
+    bzflag/	  - bzflag app source code (game client)
+    bzfls/	  - bzfls app source code (list of servers server)
+    bzfrelay/	  - bzfrelay source code (firewall relay for servers)
+    bzfs/	  - bzfs app source code (game server)
+    common/	  - general purpose classes
+    geometry/	  - geometry rendering classes
+    net/	  - networking classes and functions
+    obstacle/	  - collision detection stuff
+    ogl/	  - OpenGL utility classes
+    platform/	  - platform dependent code
+    scene/	  - high level rendering algorithms
+  win32/	- extra stuff for building on win32 platforms
+
+
+Compiling and Installation
+==========================
+
+Building BZFlag for a supported platform normally requires two
+steps:
+
+  % make <platform>
+  % make
+
+The first make configures the build for the named platform.
+The second make actually does the build.  Doing make without
+configuring for a platform lists the available platforms.
+You can also append `-debug' to a platform name to configure
+a debug build.
+
+Some platforms may be different.  See the README file
+appropriate to your system for more information:
+
+  Platform			README file
+  --------			-----------
+  UNIX, Linux			README.UNIX
+  Solaris				README.SOLARIS
+  Windows 95/98/NT		README.WIN32
+
+
+After a successful build, run bzflag using:
+
+  % ./bin/bzflag
+
+The first make configures the build for a particular platform.
+The second builds bzflag, bzfs, etc.  If you enter `make'
+without having configured a platform, you'll get a list of
+available platforms.
+
+bzflag is built into ./bin;  ./bin/bzflag runs bzflag and
+it will automatically look in ./data for the data files.
+
+** IMPORTANT **
+BZFlag will look for the data files in . and ./data.  If
+you run BZFlag from the bin directory, it will fail to
+find the files and die with `cannot continue without
+font fixedbr'.  Either run BZFlag as indicated above
+or use the `-directory <data-directory>' command line
+option to explicitly name the data directory.
+
+You can also build an installable package using:
+
+  % make package
+
+The package will be placed in ./dist;  the exact form of the
+package depends on the platform.
+
+There are three cleanup targets:  clean, clobber, and
+pristine.  `make clean' removes intermediate files but
+leaves bzflag and other programs and any man pages.  `make
+clobber' removes everything clean does and also programs
+and man pages.  `make pristine' removes everything clobber
+does and also packages, directories created during the build,
+and the platform configuration;  this should get the source
+tree back to its original state.
+
+To build BZFlag for an unsupported platform, see PORTING.
+
+The ./config file has a number of build options that you
+may find interesting.
+
+
+Mailing Lists
+=============
+
+There are two BZFlag mailing lists, a user list and a
+developer's list.  The former is for general BZFlag
+discussion and annoucements.  The latter is for coding and
+development discussion only.
+
+To join a mailing list, go to http://BZFlag.org/email-list.html/ and
+follow the info there.
+
+Contributions
+=============
+
+Patched should be entered into the patch tracking system on
+http://sourceforge.net/projects/bzflag/  If you like you may also
+send mail to either the BZFlag development mailing list, or
+Tim@Rikers.org (the development mailing list is prefered) to discuss
+contributions to the official BZFlag source code.  Small changes can be
+attached to the mail in 'cvs diff' format.
+
+
+Bug Reports
+===========
+
+For bug reports please go to bug tracking system on
+http://sourceforge.net/projects/bzflag/ Alternatively, you can email
+bug reports to Tim@Rikers.org but the web based method is the prefered
+way to submit bugs.
+
+
+Known Bugs
+==========
+
+See BUGS.
+
+
+Contributors
+============
+
+BZFlag was written mainly by Chris Schoeneman.  It is now
+maintained by Tim Riker.  Several others deserve mention
+for their contributions:
+
+  Bjorn Augustsson
+  Tamar Cohen
+  Phillip Ezolt
+  David Hoeferlin
+  Tom Hubina
+  Dan Kartch
+  Jed Lengyel
+  Jeff Myers
+  Tim Olson
+  Brian Smits
+  Greg Spencer
+  Andrew White
+  Nafees Bin Zafar
+
+Special thanks go to:
+
+  Kevin Novins
+  Rick Pasetto
+  Adam Rosen
+  Erin Shaw
+  Ben Trumbore
+  Don Greenberg
+
+
+Source Tree Organization
+========================
+
+Note that include/ does not have all the include files.  If
+a header is used entirely within a library (i.e. it doesn't
+directly provide functionality outside the library) then
+the header is found in the library's directory under src/.
+An include file goes in include/ only if it's required by
+another library or libraries or executables.  While this
+complicates locating a header file (it can be in one of
+two places instead of just one place), you can instantly
+tell if a header file is (can be) used by clients of the
+library.
+
+
+UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
+
+This Client and Server now implement UDP unicast relay networking. It
+should provide much better timing and stability compared to the old TCP
+way. To stress test the new way the Client now always forces to relay
+even if Multicasting is available. Please use an older client if you
+need to run multicasting.
+
+This release is compatible with older networking. If this clients connects
+to an older server the normal TCP based networking is used. Also if an older
+client connects to a new server the same happens. Only if a newer client
+and a new server connect the new protocol is engaged. You can see it on
+the console of the client where some messages telling you about.
+
+It is advisable to run only new clients together with new server as otherwise
+the mixed networking may cause strange timing effects on the players.
+
+2. It does not work, why?
+
+- When I connect to a newer server with this client others report they can
+  see me but I get 'black caps' after a few seconds for all other players?
+
+Two possibilies:
+
+a) you are behind a NAT router that is not forwarding UDP port 17200 to your
+   system. If this is the case please put this port into the port forwarding
+   rules.
+
+b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm) that is
+   blocking incoming UDP traffic. Please reconfigure the firewall or disable
+   ZoneAlert for the game, for more intelligent desktop firewalls alike
+   AtGuard just set them up to let UDP port 17200 to 17220 through.
+
+CU on the battlefield
+
+	Onkel Frank
+
+Testing
+=======
+
+If you have rendering problems you might want to try setting:
+
+LIBGL_ALWAYS_INDIRECT=1
+
+On many systems this will force software rendering. It will greatly reduce
+the performance, but may solve rendering issues.
+
+Release Announcements
+=====================
+
+Please notify the following (at least):
+
+bzflag-users list
+http://slashdot.org/
+http://freshmeat.net/projects/bzflag/ (rank BZFlag here!)
+http://happypenguin.org/ (BZFlag is now #2 in the ratings!)
+news@linuxgames.com - http://LinuxGames.com/
+John Gowin <jgowin@linuxorbit.com> (thanx for the review!)
+jd@linuxgaming.co.uk

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,7 +27,8 @@ BZF_DEFINE_ALIST(RegionAzimuthList, float);
 class RobotPlayer : public BaseLocalPlayer {
   public:
 			RobotPlayer(const PlayerId&,
-				const char* name, ServerLink*);
+				const char* name, ServerLink*,
+				const char* _email);
 			~RobotPlayer();
 
     float		getTargetPriority(const Player*) const;
@@ -69,3 +70,4 @@ class RobotPlayer : public BaseLocalPlayer {
 };
 
 #endif // BZF_ROBOT_PLAYER_H
+// ex: shiftwidth=2 tabstop=8

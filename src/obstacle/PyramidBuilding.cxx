@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,6 +14,7 @@
 #include "PyramidBuilding.h"
 #include "Intersect.h"
 #include "TriWallSceneNode.h"
+#include "QuadWallSceneNode.h"
 
 BzfString		PyramidBuilding::typeName("PyramidBuilding");
 
@@ -68,7 +69,8 @@ boolean			PyramidBuilding::isInside(const float* p,
 {
   // really rough -- doesn't decrease size with height
   return p[2] <= getHeight() && testRectCircle(getPosition(), getRotation(),
-					getWidth(), getBreadth(), p, radius);
+					getWidth(), getBreadth(), p, radius)
+					&& p[2] >= getPosition()[2];
 }
 
 boolean			PyramidBuilding::isInside(const float* p, float a,
@@ -77,7 +79,8 @@ boolean			PyramidBuilding::isInside(const float* p, float a,
   const float s = shrinkFactor(p[2]);
   return s > 0.0 && testRectRect(getPosition(), getRotation(),
 					s * getWidth(), s * getBreadth(),
-					p, a, dx, dy);
+					p, a, dx, dy)
+					&& p[2] >= getPosition()[2];
 }
 
 boolean			PyramidBuilding::isCrossing(const float* p, float a,
@@ -168,7 +171,7 @@ void			PyramidBuilding::getCorner(int index,
     case 4:
       pos[0] = base[0];
       pos[1] = base[1];
-      pos[2] = getHeight();
+      pos[2] = getHeight() + getPosition()[2];
       break;
   }
 }
@@ -198,7 +201,10 @@ PyramidSceneNodeGenerator::~PyramidSceneNodeGenerator()
 WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
 				float uRepeats, float vRepeats, boolean lod)
 {
-  if (getNodeNumber() == 4) return NULL;
+
+	bool isSquare = false;
+
+	if (getNodeNumber() == 5) return NULL;
 
   GLfloat base[3], sCorner[3], tCorner[3];
   switch (incNodeNumber()) {
@@ -206,21 +212,31 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
       pyramid->getCorner(0, base);
       pyramid->getCorner(1, sCorner);
       pyramid->getCorner(4, tCorner);
+	  isSquare = false;
       break;
     case 2:
       pyramid->getCorner(1, base);
       pyramid->getCorner(2, sCorner);
       pyramid->getCorner(4, tCorner);
+	  isSquare = false;
       break;
     case 3:
       pyramid->getCorner(2, base);
       pyramid->getCorner(3, sCorner);
       pyramid->getCorner(4, tCorner);
+	  isSquare = false;
       break;
     case 4:
       pyramid->getCorner(3, base);
       pyramid->getCorner(0, sCorner);
       pyramid->getCorner(4, tCorner);
+	  isSquare = false;
+      break;
+    case 5:
+      pyramid->getCorner(0, base);
+      pyramid->getCorner(3, sCorner);
+      pyramid->getCorner(1, tCorner);
+	  isSquare = true;
       break;
   }
 
@@ -232,5 +248,11 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
   tEdge[0] = tCorner[0] - base[0];
   tEdge[1] = tCorner[1] - base[1];
   tEdge[2] = tCorner[2] - base[2];
-  return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+
+  if(isSquare != true)
+	return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+  else
+	return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+
 }
+// ex: shiftwidth=2 tabstop=8

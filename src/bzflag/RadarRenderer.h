@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,16 +19,22 @@
 #define	BZF_RADAR_RENDERER_H
 
 #include "common.h"
+#include "Obstacle.h"
+
 
 class SceneRenderer;
 class World;
 class ShotPath;
+class ResourceDatabase;
+
 
 class RadarRenderer {
   public:
 			RadarRenderer(const SceneRenderer&,
-						const World& world);
+						const World& world, ResourceDatabase *resources);
 			~RadarRenderer();
+
+	void		setControlColor(const GLfloat *color = NULL);
 
     int			getX() const;
     int			getY() const;
@@ -42,21 +48,31 @@ class RadarRenderer {
 
     void		render(SceneRenderer&, boolean blank = False);
     void		freeList();
-    void		makeList(boolean);
+    void		makeList(boolean, SceneRenderer&);
 
   private:
     // no copying
-			RadarRenderer(const RadarRenderer&);
+    RadarRenderer(const RadarRenderer&);
     RadarRenderer&	operator=(const RadarRenderer&);
 
-    void		makeNoise();
+    boolean		makeNoise();
+    void		makeNoiseTexture();
     void		drawShot(const ShotPath*);
-    void		drawTank(float x, float y, float z, float ps);
+    void		drawTank(float x, float y, float z);
+    void		drawFlag(float x, float y, float z);
+    void		drawFlagOnTank(float x, float y, float z);
+
+    static float	colorScale(const float z, const float h, boolean enhanced);
+    static float	transScale(const Obstacle& o);
+
+    void		doInitContext();
+    static void		initContext(void*);
 
   private:
     const World&	world;
     int			x, y;
     int			w, h;
+    float       ps;
     float		range;
     GLfloat		background[4];
     boolean		blend;
@@ -64,8 +80,10 @@ class RadarRenderer {
     boolean		jammed;
     double		decay;
     GLuint		list;
-    unsigned char*	noise;
-    GLenum		noiseFormat;
+	GLfloat		teamColor[3];
+    unsigned char	*noise;
+    OpenGLTexture	*noiseTexture;
+    static const float	colorFactor;
 };
 
 //
@@ -98,3 +116,4 @@ inline float		RadarRenderer::getRange() const
 }
 
 #endif // BZF_RADAR_RENDERER_H
+// ex: shiftwidth=2 tabstop=8

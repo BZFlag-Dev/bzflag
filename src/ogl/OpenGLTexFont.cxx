@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,7 +22,7 @@
 OpenGLTexFont::Rep::Rep() : refCount(1),
 				ascent(0.0f), descent(0.0f),
 				height(0.0f), spacing(0.0f),
-				width(0), data(NULL)
+				data(NULL), width(0)
 {
   // do nothing
 }
@@ -31,7 +31,7 @@ OpenGLTexFont::Rep::Rep(int dx, int dy, const unsigned char* pixels) :
 				refCount(1),
 				ascent(0.0f), descent(0.0f),
 				height(0.0f), spacing(0.0f),
-				width(dx), data(NULL)
+				data(NULL), width(dx)
 {
   // pick a good format.  we want to pack it as much as possible.
 #if defined(GL_VERSION_1_1)
@@ -295,7 +295,7 @@ void			OpenGLTexFont::BitmapRep::createGlyph(int index)
 	if (srcData[(int)(xInvScale * ((float)b + 1.0f))] >= IT) data |= 0x40u;
       case 1:
 	if (srcData[(int)(xInvScale * ((float)b + 0.0f))] >= IT) data |= 0x80u;
-	*dstData++ = data;	
+	*dstData++ = data;
     }
   }
 }
@@ -304,13 +304,13 @@ void			OpenGLTexFont::BitmapRep::createGlyph(int index)
 // OpenGLTexFont
 //
 
-OpenGLTexFont::OpenGLTexFont() : width(1.0f), height(1.0f), bitmapRep(NULL)
+OpenGLTexFont::OpenGLTexFont() : bitmapRep(NULL), width(1.0f), height(1.0f)
 {
   rep = new Rep;
 }
 
 OpenGLTexFont::OpenGLTexFont(int dx, int dy, const unsigned char* pixels) :
-				width(1.0f), height(1.0f), bitmapRep(NULL)
+				bitmapRep(NULL), width(1.0f), height(1.0f)
 {
   rep = new Rep(dx, dy, pixels);
 }
@@ -470,3 +470,4 @@ void			OpenGLTexFont::draw(const char* string, int length,
   }
   glEnd();
 }
+// ex: shiftwidth=2 tabstop=8

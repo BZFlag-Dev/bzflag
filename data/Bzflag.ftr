@@ -6,12 +6,12 @@ TYPE Bzflag
     CMD ALTOPEN	launch -m "Please enter desired options for bzflag:" \
 		    -c $LEADER $REST
     ICON {
-        if (opened) {
-            include("../iconlib/generic.exec.open.fti");
-        } else {
-            include("../iconlib/generic.exec.closed.fti");
-        }
-        include("iconlib/Bzflag.fti");
+	if (opened) {
+	    include("../iconlib/generic.exec.open.fti");
+	} else {
+	    include("../iconlib/generic.exec.closed.fti");
+	}
+	include("iconlib/Bzflag.fti");
     }
 
 TYPE Bzfs
@@ -23,10 +23,10 @@ TYPE Bzfs
     CMD ALTOPEN	launch -m "Please enter desired options for bzfs\nEx. `-c' or `-h -s -t'" \
 		    -c $LEADER $REST
     ICON {
-        if (opened) {
-            include("../iconlib/generic.exec.open.fti");
-        } else {
-            include("../iconlib/generic.exec.closed.fti");
-        }
-        include("iconlib/Bzfs.fti");
+	if (opened) {
+	    include("../iconlib/generic.exec.open.fti");
+	} else {
+	    include("../iconlib/generic.exec.closed.fti");
+	}
+	include("iconlib/Bzfs.fti");
     }

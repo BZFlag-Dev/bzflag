@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -64,6 +64,7 @@ class HUDRenderer {
 
     void		setColor(float r, float g, float b);
     void		setPlaying(boolean playing);
+    void		setRoaming(boolean roaming);
     void		setPlayerHasHighScore(boolean = True);
     void		setTeamHasHighScore(boolean = True);
     void		setHeading(float angle);
@@ -79,16 +80,16 @@ class HUDRenderer {
     void		setMarkerHeading(int index, float heading);
     void		setMarkerColor(int index, float r, float g, float b);
     void		setRestartKeyLabel(const BzfString&);
+    void		setRoamingLabel(const BzfString&);
     void		setTimeLeft(int timeLeftInSeconds);
 
     void		setDim(boolean);
 
-    boolean		getScore() const;
     boolean		getComposing() const;
     BzfString		getComposeString() const;
+    void		setComposeString(const BzfString &message) const;
 
-    void		setScore(boolean showScore);
-    void		setComposing(const char* prompt);
+    void		setComposing(const BzfString &prompt);
 
     void		render(SceneRenderer&);
 
@@ -106,12 +107,13 @@ class HUDRenderer {
     void		renderScoreboard(SceneRenderer&);
     void		renderPlaying(SceneRenderer&);
     void		renderNotPlaying(SceneRenderer&);
+    void		renderRoaming(SceneRenderer&);
     void		renderTimes(SceneRenderer&);
     void		drawPlayerScore(const Player*,
 					float x1, float x2, float x3, float y);
     void		drawDeadPlayerScore(const Player*,
 					float x1, float x2, float x3, float y);
-    void		drawTeamScore(int team, float x1, float x2, float y);
+    void		drawTeamScore(int team, float x, float y);
 
     void		makeCrack(int n, int l, float a);
     BzfString		makeHelpString(const char* help) const;
@@ -126,6 +128,8 @@ class HUDRenderer {
 
     void		resize(boolean firstTime);
     static void		resizeCallback(void*);
+    static int		tankScoreCompare(const void* _a, const void* _b);
+    static int		teamScoreCompare(const void* _a, const void* _b);
 
     class Marker {
       public:
@@ -151,6 +155,7 @@ class HUDRenderer {
     OpenGLTexFont	headingFont;
     OpenGLTexFont	composeFont;
     boolean		playing;
+    boolean		roaming;
     boolean		dim;
     boolean		sDim;
     int			numPlayers;
@@ -168,16 +173,17 @@ class HUDRenderer {
     float		altitudeMarkSpacing;
     float		altitudeLabelMaxWidth;
     float		scoreLabelWidth;
+    float		killsLabelWidth;
     float		teamScoreLabelWidth;
     float		restartLabelWidth;
     float		resumeLabelWidth;
     float		gameOverLabelWidth;
     BzfString		restartLabel;
+    BzfString		roamingLabel;
 
     FlashClock		globalClock;
     FlashClock		scoreClock;
 
-    float		alertY;
     FlashClock		alertClock[MaxAlerts];
     BzfString		alertLabel[MaxAlerts];
     float		alertLabelWidth[MaxAlerts];
@@ -189,7 +195,6 @@ class HUDRenderer {
     int			flagHelpIndex;
     int			flagHelpLines;
 
-    boolean		showScore;
     boolean		showOptions;
     boolean		showCompose;
 
@@ -208,6 +213,7 @@ class HUDRenderer {
     static BzfString	scoreLabel;
     static BzfString	killLabel;
     static BzfString	teamScoreLabel;
+    static BzfString	teamScoreSpacingLabel;
     static BzfString	playerLabel;
     static BzfString	restartLabelFormat;
     static BzfString	resumeLabel;
@@ -216,3 +222,4 @@ class HUDRenderer {
 };
 
 #endif // BZF_HUD_RENDERER_H
+// ex: shiftwidth=2 tabstop=8

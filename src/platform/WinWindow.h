@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,9 +19,8 @@
 
 #include "BzfWindow.h"
 #include "WinDisplay.h"
+#include "WinVisual.h"
 #include <windows.h>
-
-class WinVisual;
 
 class WinWindow : public BzfWindow {
   public:
@@ -48,24 +47,54 @@ class WinWindow : public BzfWindow {
     void		showMouse();
     void		hideMouse();
 
+    void		setGamma(float);
+    float		getGamma() const;
+    boolean		hasGammaControl() const;
+
     void		makeCurrent();
     void		swapBuffers();
+    void		makeContext();
+    void		freeContext();
 
     // other Windows stuff
     HWND		getHandle() const;
     LONG		queryNewPalette();
     void		paletteChanged();
+    boolean		activate();
+    boolean		deactivate();
+    void		onDestroy();
     static WinWindow*	lookupWindow(HWND);
+    static void		deactivateAll();
+    static void		reactivateAll();
 
   private:
-    static BYTE		getComponentFromIndex(int i, UINT nbits, UINT shift);
-    static void		makeColormap(const PIXELFORMATDESCRIPTOR&);
+    BYTE		getIntensityValue(float) const;
+    static float	getComponentFromIndex(int i, UINT nbits, UINT shift);
+    void		makeColormap(const PIXELFORMATDESCRIPTOR&);
+
+    void		createChild();
+    void		destroyChild();
+
+    void		getGammaRamps(WORD*);
+    void		setGammaRamps(const WORD*);
 
   private:
     const WinDisplay*	display;
+    WinVisual		visual;
+    boolean		inDestroy;
     HWND		hwnd;
+    HWND		hwndChild;
     HGLRC		hRC;
     HDC			hDC;
+    HDC			hDCChild;
+    boolean		inactiveDueToDeactivate;
+    boolean		inactiveDueToDeactivateAll;
+    boolean		useColormap;
+    boolean		hasGamma;
+    boolean		has3DFXGamma;
+    float		gammaVal;
+    WORD		origGammaRamps[6 * 256];
+    PIXELFORMATDESCRIPTOR pfd;
     WinWindow*		prev;
     WinWindow*		next;
     static WinWindow*	first;
@@ -73,3 +102,4 @@ class WinWindow : public BzfWindow {
 };
 
 #endif // BZF_WINWINDOW_H
+// ex: shiftwidth=2 tabstop=8

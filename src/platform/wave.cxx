@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -249,8 +249,11 @@ int main(int argc, char *argv[]) {
 
   fd = open("/dev/dsp", O_WRONLY, 0);
   if (fd == -1) {
-    fprintf(stderr, "Failed to open /dev/dsp\n");
-    return -1;
+    fd = open("/dev/sound/dsp", O_WRONLY, 0);
+    if (fd == -1) {
+      fprintf(stderr, "Failed to open /dev/dsp or /dev/sound/dsp\n");
+      return -1;
+    }
   }
 #if BYTE_ORDER == BIG_ENDIAN
   sndformat=AFMT_S16_BE;
@@ -258,7 +261,7 @@ int main(int argc, char *argv[]) {
   sndformat=AFMT_S16_LE;
 #endif
   int oldFormat = sndformat;
-  if ((ioctl(fd, SNDCTL_DSP_SETFMT, &sndformat)==-1) || 
+  if ((ioctl(fd, SNDCTL_DSP_SETFMT, &sndformat)==-1) ||
       sndformat!=oldFormat) {
     fprintf(stderr, "Format now %d\n", sndformat);
     close(fd);
@@ -298,3 +301,4 @@ int main(int argc, char *argv[]) {
 }
 #endif
 
+// ex: shiftwidth=2 tabstop=8

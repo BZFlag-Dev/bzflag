@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -85,6 +85,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				useDepthComplexityOn(False),
 				useWireframeOn(False),
 				useHiddenLineOn(False),
+				useEnhancedRadarOn(True),
 				useFogHack(False),
 				viewType(Normal),
 				maxLOD(32767),
@@ -98,7 +99,9 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				canUseHiddenLine(False),
 				exposed(True),
 				lastFrame(True),
-				sameFrame(False)
+				sameFrame(False),
+				showFlagHelp(False),
+				showScore(False)
 {
   instance = this;
 
@@ -116,6 +119,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   const char* renderer = (const char*)glGetString(GL_RENDERER);
   const char* version = (const char*)glGetString(GL_VERSION);
   const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+  (void)vendor; (void)renderer; (void)version; (void)extensions; // silence g++
 #ifdef GL_ABGR_EXT
   if (strstr(extensions, "GL_EXT_abgr") != NULL && strcmp(vendor, "SGI") == 0) {
     // old hardware is faster with ABGR.  new hardware isn't.
@@ -302,11 +306,11 @@ void			SceneRenderer::setZBufferSplit(boolean on)
     if (bits > 18) {
       // number of independent slices to split depth buffer into
       numDepthRanges = 1 << (bits - 18);
-  
+
       // size of a single range
       depthRangeSize = 1.0 / (double)numDepthRanges;
     }
-    else { 
+    else {
       numDepthRanges = 1;
       depthRangeSize = 1.0;
     }
@@ -373,6 +377,26 @@ boolean			SceneRenderer::useWireframe() const
   return useWireframeOn;
 }
 
+boolean			SceneRenderer::getScore() const
+{
+  return showScore;
+}
+
+void			SceneRenderer::setScore(boolean _showScore)
+{
+  showScore = _showScore;
+}
+
+boolean			SceneRenderer::getShowFlagHelp() const
+{
+  return showFlagHelp;
+}
+
+void			SceneRenderer::setShowFlagHelp(boolean _showFlagHelp)
+{
+  showFlagHelp = _showFlagHelp;
+}
+
 void			SceneRenderer::setHiddenLine(boolean on)
 {
   useHiddenLineOn = on && useZBuffer() && canUseHiddenLine;
@@ -387,6 +411,18 @@ void			SceneRenderer::setHiddenLine(boolean on)
 boolean			SceneRenderer::useHiddenLine() const
 {
   return useHiddenLineOn;
+}
+
+void            SceneRenderer::setEnhancedRadar(boolean _setEnhancedRadar)
+{
+    useEnhancedRadarOn = _setEnhancedRadar;
+    notifyStyleChange();
+
+}
+
+boolean         SceneRenderer::useEnhancedRadar() const
+{
+    return useEnhancedRadarOn;
 }
 
 void			SceneRenderer::setDim(boolean on)
@@ -661,22 +697,13 @@ void			SceneRenderer::render(
   }
 
   // set scissor
-  if (fullWindow)
-    glScissor(window.getOriginX(),
-	      window.getOriginY(),
-	      window.getWidth(),
-	      window.getViewHeight() + window.getPanelHeight());
-  else
-    glScissor(window.getOriginX(),
-	      window.getOriginY() + window.getPanelHeight(),
-	      window.getWidth(),
-	      window.getViewHeight());
+  glScissor(window.getOriginX(), window.getOriginY(), window.getWidth(), window.getHeight());
 
   if (useDepthComplexityOn) {
     glEnable(GL_STENCIL_TEST);
     glClear(GL_STENCIL_BUFFER_BIT);
     glStencilFunc(GL_ALWAYS, 0, 0xf);
-    glStencilOp(GL_KEEP, GL_INCR, GL_INCR); 
+    glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
   }
   if (useHiddenLineOn) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -787,7 +814,7 @@ void			SceneRenderer::render(
 
   if (!reallyUseFogHack) {
     float density = 0.0f;
-    const GLfloat* color;
+    const GLfloat* color = NULL;
     if (useDimming) {
       density = dimDensity;
       color = dimnessColor;
@@ -797,7 +824,7 @@ void			SceneRenderer::render(
 			1.0f : teleporterProximity / 0.75f;
       color = blindnessColor;
     }
-    if (density > 0.0f) {
+    if (density > 0.0f && color != NULL) {
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
       glMatrixMode(GL_MODELVIEW);
@@ -833,7 +860,7 @@ void			SceneRenderer::render(
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP); 
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     for (i = 0; i < numColors; i++) {
       glStencilFunc(i == numColors - 1 ? GL_LEQUAL : GL_EQUAL, i, 0xf);
       glColor3fv(depthColors[i]);
@@ -905,3 +932,4 @@ void			SceneRenderer::doRender()
   orderedList.render();
   glDepthMask(GL_TRUE);
 }
+// ex: shiftwidth=2 tabstop=8

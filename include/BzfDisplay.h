@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -33,6 +33,10 @@ class BzfDisplay {
     int			getWidth() const;
     int			getHeight() const;
 
+    void		setPassthroughSize(int w, int h);
+    int			getPassthroughWidth() const;
+    int			getPassthroughHeight() const;
+
   public:
     class ResInfo {
       public:
@@ -48,8 +52,9 @@ class BzfDisplay {
     int			getNumResolutions() const;
     const ResInfo*	getResolution(int index) const;
     int			getResolution() const;
-    boolean		setResolution(int index);
     int			getDefaultResolution() const;
+    boolean		setResolution(int index);
+    boolean		setDefaultResolution();
     int			findResolution(const char* name) const;
     boolean		isValidResolution(int index) const;
 
@@ -61,8 +66,10 @@ class BzfDisplay {
     BzfDisplay&		operator=(const BzfDisplay&);
 
     virtual boolean	doSetResolution(int) = 0;
+    virtual boolean	doSetDefaultResolution();
 
   private:
+    int			passWidth, passHeight;
     int			numResolutions;
     int			defaultResolution;
     int			currentResolution;
@@ -70,3 +77,4 @@ class BzfDisplay {
 };
 
 #endif // BZF_DISPLAY_H
+// ex: shiftwidth=2 tabstop=8

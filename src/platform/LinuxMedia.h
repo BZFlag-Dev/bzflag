@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,7 +30,6 @@ class LinuxMedia : public BzfMedia {
     void		sleep(float);
     boolean		openAudio();
     void		closeAudio();
-    boolean		isAudioBrainDead() const;
     boolean		startAudioThread(void (*)(void*), void*);
     void		stopAudioThread();
     boolean		hasAudioThread() const;
@@ -46,6 +45,7 @@ class LinuxMedia : public BzfMedia {
   private:
     boolean		checkForAudioHardware();
     boolean		openAudioHardware();
+    boolean		openIoctl(int cmd, void* value, boolean req = True);
     static void		audioThreadInit(void*);
 
     void		writeAudioFrames8Bit(
@@ -53,9 +53,11 @@ class LinuxMedia : public BzfMedia {
     void		writeAudioFrames16Bit(
 				const float* samples, int numFrames);
 
+    static double	getTime();
+
   private:
     boolean		audioReady;
-    int		        audioOutputRate;
+    int			audioOutputRate;
     int			audioBufferSize;
     int			audioLowWaterMark;
     int			maxFd;
@@ -65,6 +67,13 @@ class LinuxMedia : public BzfMedia {
     pid_t		childProcID;
     double		stopwatchTime;
     boolean		audio8Bit;
+
+    boolean		noSetFragment;
+    boolean		getospaceBroken;
+    int			chunksPending;
+    double		chunkTime;
+    double		chunksPerSecond;
 };
 
 #endif // BZF_LINUXMEDIA_H
+// ex: shiftwidth=2 tabstop=8

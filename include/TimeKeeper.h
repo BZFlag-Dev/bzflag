@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,12 +38,14 @@ class TimeKeeper {
 
     static const TimeKeeper&	getCurrent();
     static const TimeKeeper&	getTick(); // const
+	static const TimeKeeper&	getSunExplodeTime();
     static void			setTick();
 
   private:
     double		seconds;
     static TimeKeeper	currentTime;
     static TimeKeeper	tickTime;
+	static TimeKeeper	sunExplodeTime;
 };
 
 //
@@ -89,3 +91,4 @@ inline boolean		TimeKeeper::operator<=(const TimeKeeper& t) const
 }
 
 #endif // BZF_TIME_KEEPER_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,8 +18,12 @@
 #include <sys/types.h>
 #if defined(_WIN32)
 #define _WINSOCKAPI_
-#include <windows.h>
-#else /* defined(_WIN32) */
+#include <shlobj.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <direct.h>
+
+#elif !defined(macintosh)
 #include <pwd.h>
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
@@ -75,7 +79,7 @@ void			printFatalError(const char* fmt, ...)
   vsprintf(buffer, fmt, args);
   va_end(args);
 #if defined(_WIN32)
-  MessageBox(NULL, buffer, "BZFLAG Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+  MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
 #else
   cerr << buffer << endl;
 #endif
@@ -110,10 +114,10 @@ static const char*	configFilterValues[] = {
 
 static BzfString	getConfigFileName()
 {
-#if !defined(_WIN32)
+#if !defined(_WIN32) & !defined(macintosh)
 
   BzfString name;
-  struct passwd* pwent = getpwnam(cuserid(NULL));
+  struct passwd* pwent = getpwuid(getuid());
   if (pwent && pwent->pw_dir) {
     name += BzfString(pwent->pw_dir);
     name += "/";
@@ -128,18 +132,43 @@ static BzfString	getConfigFileName()
 
   return name;
 
-#else /* !defined(_WIN32) */
+#elif defined(_WIN32) /* !defined(_WIN32) */
 
-  return BzfString("bzflag.bzc");
+  // get location of personal files from system.  this appears to be
+  // the closest thing to a home directory on windows.  use root of
+  // C drive as a default in case we can't get the path or it doesn't
+  // exist.
+  BzfString name("C:");
+  char dir[MAX_PATH];
+  ITEMIDLIST* idl;
+  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
+    if (SHGetPathFromIDList(idl, dir)) {
+      struct stat statbuf;
+      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
+	name = dir;
+    }
 
-#endif /* !defined(_WIN32) */
+    IMalloc* shalloc;
+    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
+      shalloc->Free(idl);
+      shalloc->Release();
+    }
+  }
+
+  // append the config file name
+  name += "\\bzflag.bzc";
+  return name;
+
+#elif defined(macintosh)
+  return "bzflag.bzc";
+#endif /* !defined(_WIN32) & !defined(macintosh) */
 }
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) & !defined(macintosh)
 static BzfString	getConfigFileName2()
 {
   BzfString name;
-  struct passwd* pwent = getpwnam(cuserid(NULL));
+  struct passwd* pwent = getpwuid(getuid());
   if (pwent && pwent->pw_dir) {
     name += BzfString(pwent->pw_dir);
     name += "/";
@@ -207,13 +236,18 @@ static void		setVisual(BzfVisual* visual,
 static void		usage()
 {
   printFatalError("usage: %s"
+	" [-3dfx]"
+	" [-no3dfx]"
 	" [-anonymous]"
 	" [-callsign <call-sign>]"
 	" [-directory <data-directory>]"
 	" [-echo]"
 	" [-geometry <geometry-spec>]"
 	" [-interface <interface>]"
+	" [-joystick {yes|no}]"
+	" [-joystickname <name>]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
+	" [-list <server-list-url>] [-nolist]"
 	" [-multisample]"
 	" [-mute]"
 	" [-port <server-port>]"
@@ -262,7 +296,9 @@ static void		parse(int argc, char** argv,
     else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = True;
     }
-    else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
+    else if (strcmp(argv[i], "-h") == 0 ||
+	     strcmp(argv[i], "-help") == 0 ||
+	     strcmp(argv[i], "--help") == 0) {
       usage();
     }
     else if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "-geometry") == 0) {
@@ -290,7 +326,7 @@ static void		parse(int argc, char** argv,
 	usage();
       }
       if (strlen(argv[i]) >= sizeof(startupInfo.multicastInterface))
-	printFatalError("Interface name too long.");	
+	printFatalError("Interface name too long.");
       else
 	strcpy(startupInfo.multicastInterface, argv[i]);
     }
@@ -318,6 +354,23 @@ static void		parse(int argc, char** argv,
       }
       resources.addValue("longitude", argv[i]);
     }
+    else if (strcmp(argv[i], "-list") == 0) {
+      if (++i == argc) {
+	printFatalError("Missing argument for %s.", argv[i-1]);
+	usage();
+      }
+      if (strcmp(argv[i], "default") == 0) {
+	resources.removeValue("list");
+      }
+      else {
+	startupInfo.listServerURL = argv[i];
+	resources.addValue("list", argv[i]);
+      }
+    }
+    else if (strcmp(argv[i], "-nolist") == 0) {
+      startupInfo.listServerURL = "";
+      resources.addValue("list", "");
+    }
     else if (strcmp(argv[i], "-m") == 0 ||
 		strcmp(argv[i], "-mute") == 0) {
       noAudio = True;
@@ -343,7 +396,7 @@ static void		parse(int argc, char** argv,
 	usage();
       }
       numRobotTanks = atoi(argv[i]);
-      if (numRobotTanks < 1 || numRobotTanks > 20) {
+      if (numRobotTanks < 1 || numRobotTanks > MAX_ROBOTS) {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
@@ -384,31 +437,54 @@ static void		parse(int argc, char** argv,
 	printFatalError("Using maximum ttl of %d.", startupInfo.ttl);
       }
     }
-    else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
-      cout << "BZFLAG client, version " <<
-		(VERSION / 10000000) % 100 << "." <<
-		(VERSION / 100000) % 100 <<
-		(char)('a' - 1 + (VERSION / 1000) % 100) <<
-#if defined(ALPHA_RELEASE) || defined(BETA_RELEASE)
-		" build " << VERSION % 1000 <<
-#endif
-#if defined(ALPHA_RELEASE)
-		"Alpha" <<
-#elif defined(BETA_RELEASE)
-		"Beta" <<
-#else
-		"" <<
-#endif
-		endl;
-
-      cout << "  protocol " << ServerVersion[4] << ".";
-      if (ServerVersion[5] != '0') cout << ServerVersion[5];
-      cout << ServerVersion[6] << (char)tolower(ServerVersion[7]) << endl;
-
+    else if (strcmp(argv[i], "-joystick") == 0) {
+      if (++i == argc) {
+	printFatalError("Missing argument for %s.", argv[i-1]);
+	usage();
+      }
+      if (strcmp(argv[i], "no") != 0 && strcmp(argv[i], "yes") != 0) {
+	printFatalError("Invalid argument for %s.", argv[i-1]);
+	usage();
+      }
+      startupInfo.joystick = (strcmp(argv[i], "yes") == 0);
+    }
+    else if (strcmp(argv[i], "-joystickname") == 0) {
+      if (++i == argc) {
+	printFatalError("Missing argument for %s.", argv[i-1]);
+	usage();
+      }
+      startupInfo.joystickName = argv[i];
+    }
+    else if (strcmp(argv[i], "-v") == 0 ||
+	     strcmp(argv[i], "-version") == 0 ||
+	     strcmp(argv[i], "--version") == 0) {
+      printFatalError("BZFlag client, version %d.%d%c%d\n"
+		"  protocol %c.%d%c",
+		(VERSION / 10000000) % 100,
+		(VERSION / 100000) % 100,
+		(char)('a' - 1 + (VERSION / 1000) % 100),
+		VERSION % 1000,
+		ServerVersion[4],
+		atoi(ServerVersion + 5),
+		ServerVersion[7]);
       exit(0);
     }
     else if (strcmp(argv[i], "-window") == 0) {
       resources.addValue("window", "");
+    }
+    else if (strcmp(argv[i], "-3dfx") == 0 || strcmp(argv[i], "-3Dfx") == 0) {
+#if !defined(__linux__)
+      putenv("MESA_GLX_FX=fullscreen");
+#else
+      setenv("MESA_GLX_FX", "fullscreen", 1);
+#endif
+    }
+    else if (strcmp(argv[i], "-no3dfx") == 0 || strcmp(argv[i], "-no3Dfx") == 0) {
+#if !defined(__linux__)
+      putenv("MESA_GLX_FX=");
+#else
+      unsetenv("MESA_GLX_FX");
+#endif
     }
 #ifdef DEBUG
     else if (strcmp(argv[i], "-date") == 0) {
@@ -499,7 +575,7 @@ static void		parse(int argc, char** argv,
     }
     else if (i == argc-1) {
       if (strlen(argv[i]) >= sizeof(startupInfo.serverName)) {
-	printFatalError("Server name too long.  Ignoring.");	
+	printFatalError("Server name too long.  Ignoring.");
       }
       else {
 	strcpy(startupInfo.serverName, argv[i]);
@@ -522,6 +598,8 @@ void			dumpResources(BzfDisplay* display,
 				SceneRenderer& renderer)
 {
   // collect new configuration
+
+  db.addValue("udpnet", startupInfo.useUDPconnection ? "yes" : "no");
   db.addValue("callsign", startupInfo.callsign);
   db.addValue("team", Team::getName(startupInfo.team));
   db.addValue("server", startupInfo.serverName);
@@ -535,6 +613,7 @@ void			dumpResources(BzfDisplay* display,
   }
   if (strlen(startupInfo.multicastInterface) != 0)
     db.addValue("interface", startupInfo.multicastInterface);
+  db.addValue("list", startupInfo.listServerURL);
   if (isSoundOpen()) {
     char buf[20];
     sprintf(buf, "%d", getSoundVolume());
@@ -555,6 +634,12 @@ void			dumpResources(BzfDisplay* display,
   else
     db.addValue("zbuffer",  renderer.useZBuffer() ? "yes" : "no");
 
+  if (renderer.getWindow().getWindow()->hasGammaControl()) {
+    char buf[20];
+    sprintf(buf, "%f", renderer.getWindow().getWindow()->getGamma());
+    db.addValue("gamma", buf);
+  }
+
   db.addValue("quality", configQualityValues[renderer.useQuality()]);
   if (display->getResolution() != -1 &&
       display->getResolution(display->getResolution()))
@@ -568,26 +653,33 @@ void			dumpResources(BzfDisplay* display,
     db.addValue("longitude", buf);
   }
   {
-    KeyMap& map = getKeyMap();
-    for (int i = 0; i < (int)KeyMap::LastKey; i++) {
+    BzfKeyMap& map = getBzfKeyMap();
+    for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
       // get value string
-      const BzfKeyEvent& key1 = map.get((KeyMap::Key)i);
+      const BzfKeyEvent& key1 = map.get((BzfKeyMap::Key)i);
       BzfString value;
       if (key1.ascii != 0 || key1.button != 0) {
-	value = KeyMap::getKeyEventString(key1);
-	const BzfKeyEvent& key2 = map.getAlternate((KeyMap::Key)i);
+	value = BzfKeyMap::getKeyEventString(key1);
+	const BzfKeyEvent& key2 = map.getAlternate((BzfKeyMap::Key)i);
 	if (key2.ascii != 0 || key2.button != 0) {
 	  value += "/";
-	  value += KeyMap::getKeyEventString(key2);
+	  value += BzfKeyMap::getKeyEventString(key2);
 	}
       }
 
       // add it
-      const BzfString name = KeyMap::getKeyName((KeyMap::Key)i);
+      const BzfString name = BzfKeyMap::getKeyName((BzfKeyMap::Key)i);
       db.addValue(name, value);
     }
   }
   db.addValue("startcode", ServerStartMenu::getSettings());
+  db.addValue("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
+  db.addValue("showscore", renderer.getScore() ? "yes" : "no");
+
+  db.addValue("joystick", startupInfo.joystick ? "yes" : "no");
+  db.addValue("joystickname", startupInfo.joystickName);
+
+  db.addValue("enhancedradar", renderer.useEnhancedRadar() ? "yes" : "no");
 
   // don't save these configurations
   db.removeValue("window");
@@ -611,8 +703,8 @@ static boolean		needsFullscreen()
 
   // fullscreen if view is not default
   BzfString value = db.getValue("view");
-  for (int i = 1; i < sizeof(configViewValues) /
-			sizeof(configViewValues[0]); i++)
+  for (int i = 1; i < (int)(sizeof(configViewValues) /
+			sizeof(configViewValues[0])); i++)
     if (value == configViewValues[i])
       return True;
 
@@ -632,6 +724,10 @@ int			main(int argc, char** argv)
 #endif /* defined(_WIN32) */
 {
   argv0 = argv[0];
+
+  // init libs
+
+  //init_packetcompression();
 
   // check time bomb
   if (timeBombBoom()) {
@@ -660,15 +756,19 @@ int			main(int argc, char** argv)
 
   // read resources
   {
-    ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
+    #ifdef __MWERKS__
+	ifstream resourceStream(getConfigFileName(), ios::in);
+     #else
+    ifstream resourceStream(getConfigFileName(), ios::in);
+     #endif
     if (resourceStream) {
       startupInfo.hasConfiguration = True;
       resourceStream >> db;
     }
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) & !defined(macintosh)
     else {
-      ifstream resourceStream2(getConfigFileName2(), ios::in | ios::nocreate);
+      ifstream resourceStream2(getConfigFileName2(), ios::in);
       if (resourceStream2) {
 	startupInfo.hasConfiguration = True;
 	resourceStream2 >> db;
@@ -707,11 +807,16 @@ int			main(int argc, char** argv)
 			sizeof(startupInfo.multicastInterface) - 1] = '\0';
     }
 
+    if (db.hasValue("joystick"))
+      startupInfo.joystick = (db.getValue("joystick") == "yes");
+    if (db.hasValue("joystickname"))
+      startupInfo.joystickName = db.getValue("joystickname");
+
     // key mapping
-    KeyMap& map = getKeyMap();
-    for (int i = 0; i < (int)KeyMap::LastKey; i++) {
-      KeyMap::Key key = (KeyMap::Key)i;
-      const BzfString name = KeyMap::getKeyName(key);
+    BzfKeyMap& map = getBzfKeyMap();
+    for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
+      BzfKeyMap::Key key = (BzfKeyMap::Key)i;
+      const BzfString name = BzfKeyMap::getKeyName(key);
       if (db.hasValue(name)) {
 	// get saved value
 	const BzfString value = db.getValue(name);
@@ -724,8 +829,8 @@ int			main(int argc, char** argv)
 
 	// lookup values
 	BzfKeyEvent event1, event2;
-	const boolean okay1 = KeyMap::translateStringToEvent(value1, event1);
-	const boolean okay2 = KeyMap::translateStringToEvent(value2, event2);
+	const boolean okay1 = BzfKeyMap::translateStringToEvent(value1, event1);
+	const boolean okay2 = BzfKeyMap::translateStringToEvent(value2, event2);
 
 	// set values
 	if (okay1 || okay2) {
@@ -737,6 +842,8 @@ int			main(int argc, char** argv)
     }
 
     // check for reassigned team colors
+    if (db.hasValue("roguecolor"))
+      setTeamColor(RogueTeam, db.getValue("roguecolor"));
     if (db.hasValue("redcolor"))
       setTeamColor(RedTeam, db.getValue("redcolor"));
     if (db.hasValue("greencolor"))
@@ -747,6 +854,8 @@ int			main(int argc, char** argv)
       setTeamColor(PurpleTeam, db.getValue("purplecolor"));
 
     // check for reassigned radar colors
+    if (db.hasValue("rogueradar"))
+      setRadarColor(RogueTeam, db.getValue("rogueradar"));
     if (db.hasValue("redradar"))
       setRadarColor(RedTeam, db.getValue("redradar"));
     if (db.hasValue("greenradar"))
@@ -756,29 +865,43 @@ int			main(int argc, char** argv)
     if (db.hasValue("purpleradar"))
       setRadarColor(PurpleTeam, db.getValue("purpleradar"));
 
+
     // ignore window name in config file (it's used internally)
     db.removeValue("window");
     db.removeValue("multisample");
   }
 
+  // use UDP?
+  startupInfo.useUDPconnection=true;
+  if (db.hasValue("udpnet"))
+    startupInfo.useUDPconnection=(db.getValue("udpnet") == "yes");
+
   // parse arguments
   parse(argc, argv, db);
 
   // get email address if not anonymous
-  BzfString email = anonymousName;
-  if (!anonymous) {
-    const char* hostname = Address::getHostName();
-#if !defined(_WIN32)
-    const char* username = cuserid(NULL);
-#else /* !defined(_WIN32) */
-    char username[256];
-    DWORD usernameLen = sizeof(username);
-    GetUserName(username, &usernameLen);
-#endif /* !defined(_WIN32) */
-    if (username && hostname) {
-      email = username;
-      email += "@";
-      email += hostname;
+  BzfString email;
+  if (db.hasValue("email"))
+    email = db.getValue("email");
+  else {
+    BzfString email = anonymousName;
+    if (!anonymous) {
+      const char* hostname = Address::getHostName();
+#if defined(_WIN32)
+      char username[256];
+      DWORD usernameLen = sizeof(username);
+      GetUserName(username, &usernameLen);
+#elif defined(macintosh)
+      const char *username = "mac_user";
+#else
+      struct passwd* pwent = getpwuid(getuid());
+      const char* username = pwent ? pwent->pw_name : NULL;
+#endif
+      if (username && hostname) {
+	email = username;
+	email += "@";
+	email += hostname;
+      }
     }
   }
   email.truncate(sizeof(startupInfo.email) - 1);
@@ -787,27 +910,12 @@ int			main(int argc, char** argv)
   // make platform factory
   PlatformFactory* platformFactory = PlatformFactory::getInstance();
 
-  // get video format from configuration if running on windows.
-  // if not, we'll set the video format later.  don't set the
-  // format if running in a window.
-  BzfString videoFormat;
-#if defined(_WIN32)
-  if (db.hasValue("window"))
-    videoFormat = "window";
-  else if (db.hasValue("resolution"))
-    videoFormat = db.getValue("resolution");
-#endif /* defined(_WIN32) */
-
   // open display
-  display = platformFactory->createDisplay(NULL, videoFormat);
+  display = platformFactory->createDisplay(NULL, NULL);
   if (!display) {
     printFatalError("Can't open display.  Exiting.");
     return 1;
   }
-
-  // set data directory if user specified
-  if (db.hasValue("directory"))
-    PlatformFactory::getMedia()->setMediaDirectory(db.getValue("directory"));
 
   // choose visual
   BzfVisual* visual = platformFactory->createVisual(display);
@@ -821,14 +929,26 @@ int			main(int argc, char** argv)
   }
   window->setTitle("bzflag");
 
+  /* initialize the joystick */
+  if (startupInfo.joystick)
+    window->initJoystick(startupInfo.joystickName.getString());
+
+  // set data directory if user specified
+  if (db.hasValue("directory"))
+    PlatformFactory::getMedia()->setMediaDirectory(db.getValue("directory"));
+#if defined(_MACOSX_)
+    else
+    {
+	extern char *GetMacOSXDataPath(void);
+	PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
+    }
+#endif
+
   // set window size (we do it here because the OpenGL context isn't yet bound)
-  const boolean useFullscreen = needsFullscreen();
-  if (useFullscreen)
-    window->setFullscreen();
-  else
-    window->setSize(640, 480);
+  boolean setPosition = False, setSize = False;
+  int x = 0, y = 0, w = 0, h = 0;
   if (db.hasValue("geometry")) {
-    int w, h, x, y, count;
+    int count = 0;
     char xs, ys;
     BzfString geometry = db.getValue("geometry");
     if (geometry == "default" ||
@@ -837,24 +957,53 @@ int			main(int argc, char** argv)
 	w < 0 || h < 0) {
       db.removeValue("geometry");
     }
-    else if (count == 6 && xs != '-' && xs != '+' && ys != '-' && ys != '+') {
+    else if (count == 6 && ((xs != '-' && xs != '+') ||
+				(ys != '-' && ys != '+'))) {
       db.removeValue("geometry");
     }
-    else {
-      if (w < 640) w = 640;
-      if (h < 400) h = 400;
-      if (count == 6) {
-	if (xs == '-') x = display->getWidth() - x - w;
-	if (ys == '-') y = display->getHeight() - y - h;
-	window->setPosition(x, y);
-      }
-      window->setSize(w, h);
+    setSize = True;
+    if (w < 256)
+      w = 256;
+    if (h < 192)
+      h = 192;
+    if (count == 6) {
+      if (xs == '-')
+	x = display->getWidth() - x - w;
+      if (ys == '-')
+	y = display->getHeight() - y - h;
+      setPosition = True;
     }
+
+      // must call this before setFullscreen() is called
+      display->setPassthroughSize(w, h);
   }
+
+  // set window size (we do it here because the OpenGL context isn't yet
+  // bound and 3Dfx passthrough cards use the window size to determine
+  // the resolution to use)
+  const boolean useFullscreen = needsFullscreen();
+  if (useFullscreen) {
+    // tell window to be fullscreen
+    window->setFullscreen();
+
+    // set the size if one was requested.  this overrides the default
+    // size (which is the display or passthrough size).
+    if (setSize)
+      window->setSize(w, h);
+  }
+  else if (setSize) {
+    window->setSize(w, h);
+  }
+  else {
+    window->setSize(640, 480);
+  }
+  if (setPosition)
+    window->setPosition(x, y);
 
   // now make the main window wrapper.  this'll cause the OpenGL context
   // to be bound for the first time.
-  MainWindow mainWindow(window);
+  MainWindow* pmainWindow = new MainWindow(window);
+  MainWindow& mainWindow = *pmainWindow;
   // set fullscreen again so MainWindow object knows it's full screen
   if (useFullscreen)
     mainWindow.setFullscreen();
@@ -869,7 +1018,7 @@ int			main(int argc, char** argv)
 
   // set main window's minimum size (arbitrary but should be big enough
   // to see stuff in control panel)
-  mainWindow.setMinSize(640, 120, 360);
+  mainWindow.setMinSize(256, 192);
 
   // initialize graphics state
   mainWindow.getWindow()->makeCurrent();
@@ -881,6 +1030,7 @@ int			main(int argc, char** argv)
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glEnable(GL_SCISSOR_TEST);
+//  glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   OpenGLGState::init();
 
@@ -892,6 +1042,12 @@ int			main(int argc, char** argv)
     if (strncmp(renderer, "Mesa Glide", 10) == 0 ||
 	strncmp(renderer, "3Dfx", 4) == 0)
       db.addValue("fakecursor", "yes");
+  }
+
+  // set gamma if set in resources and we have gamma control
+  if (db.hasValue("gamma")) {
+    if (mainWindow.getWindow()->hasGammaControl())
+      mainWindow.getWindow()->setGamma((float)atof(db.getValue("gamma")));
   }
 
   // make scene renderer
@@ -915,8 +1071,8 @@ int			main(int argc, char** argv)
       renderer.setZBufferSplit(db.getValue("zbuffersplit") == "yes");
     if (db.hasValue("texture")) {
       BzfString value = db.getValue("texture");
-      for (int i = 0; i < sizeof(configFilterValues) /
-			sizeof(configFilterValues[0]); i++)
+      for (int i = 0; i < (int)(sizeof(configFilterValues) /
+				sizeof(configFilterValues[0])); i++)
 	if (value == configFilterValues[i]) {
 	  OpenGLTexture::setFilter((OpenGLTexture::Filter)i);
 	  break;
@@ -925,8 +1081,8 @@ int			main(int argc, char** argv)
     }
     if (db.hasValue("quality")) {
       BzfString value = db.getValue("quality");
-      for (int i = 0; i < sizeof(configQualityValues) /
-			sizeof(configQualityValues[0]); i++)
+      for (int i = 0; i < (int)(sizeof(configQualityValues) /
+				sizeof(configQualityValues[0])); i++)
 	if (value == configQualityValues[i]) {
 	  renderer.setQuality(i);
 	  break;
@@ -937,8 +1093,8 @@ int			main(int argc, char** argv)
     if (db.hasValue("view")) {
       renderer.setViewType(SceneRenderer::Normal);
       BzfString value = db.getValue("view");
-      for (int i = 0; i < sizeof(configViewValues) /
-			sizeof(configViewValues[0]); i++)
+      for (int i = 0; i < (int)(sizeof(configViewValues) /
+				sizeof(configViewValues[0])); i++)
 	if (value == configViewValues[i]) {
 	  renderer.setViewType((SceneRenderer::ViewType)i);
 	  break;
@@ -955,6 +1111,13 @@ int			main(int argc, char** argv)
 
     if (db.hasValue("startcode"))
       ServerStartMenu::setSettings(db.getValue("startcode"));
+    if (db.hasValue("showflaghelp"))
+      renderer.setShowFlagHelp(db.getValue("showflaghelp") == "yes");
+    if (db.hasValue("showscore"))
+      renderer.setScore(db.getValue("showscore") == "yes");
+
+    if (db.hasValue("enhancedradar"))
+      renderer.setEnhancedRadar(db.getValue("enhancedradar") == "yes");
   }
 
   // grab the mouse only if allowed
@@ -971,6 +1134,10 @@ int			main(int argc, char** argv)
     mainWindow.setQuadrant(MainWindow::UpperRight);
 #endif
 
+  // set server list URL
+  if (db.hasValue("list"))
+    startupInfo.listServerURL = db.getValue("list");
+
   // start playing
   startPlaying(display, renderer, db, &startupInfo);
 
@@ -978,8 +1145,11 @@ int			main(int argc, char** argv)
   dumpResources(display, renderer);
 
   // shut down
-  closeSound();
+  display->setDefaultResolution();
+  delete pmainWindow;
+  delete window;
   delete visual;
+  closeSound();
   delete display;
   delete platformFactory;
 
@@ -1008,7 +1178,7 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
     argc++;
-    while (!isspace(*scan) && *scan != 0) scan++;    
+    while (!isspace(*scan) && *scan != 0) scan++;
     while (isspace(*scan) && *scan != 0) scan++;
   }
 
@@ -1045,7 +1215,7 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
     argv[argc++] = scan;
-    while (!isspace(*scan) && *scan != 0) scan++;  
+    while (!isspace(*scan) && *scan != 0) scan++;
     if (*scan) *scan++ = 0;
     while (isspace(*scan) && *scan != 0) scan++;
   }
@@ -1069,7 +1239,6 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
     }
   }
 
-  // run the app
   const int exitCode = myMain(argc, argv);
 
   // clean up and return exit code
@@ -1081,3 +1250,4 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
 }
 
 #endif /* defined(_WIN32) */
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,27 +15,32 @@
  */
 
 #ifndef BZF_SOUND_H
-#define	BZF_SOUND_H
+#define BZF_SOUND_H
 
 #include "common.h"
 
-#define	SFX_FIRE	0		/* shell fired */
-#define	SFX_EXPLOSION	1		/* something other than me blew up */
-#define	SFX_RICOCHET	2		/* shot bounced off building */
-#define	SFX_GRAB_FLAG	3		/* grabbed a good flag */
-#define	SFX_DROP_FLAG	4		/* dropped a flag */
-#define	SFX_CAPTURE	5		/* my team captured enemy flag */
-#define	SFX_LOSE	6		/* my flag captured */
-#define	SFX_ALERT	7		/* my team flag grabbed by enemy */
-#define	SFX_JUMP	8		/* jumping sound */
-#define	SFX_LAND	9		/* landing sound */
-#define	SFX_TELEPORT	10		/* teleporting sound */
-#define	SFX_LASER	11		/* laser fired sound */
-#define	SFX_SHOCK	12		/* shockwave fired sound */
-#define	SFX_POP		13		/* tank appeared sound */
-#define	SFX_DIE		14		/* my tank exploded */
-#define	SFX_GRAB_BAD	15		/* grabbed a bad flag */
-#define	SFX_SHOT_BOOM	16		/* shot exploded */
+#define SFX_FIRE	0		/* shell fired */
+#define SFX_EXPLOSION	1		/* something other than me blew up */
+#define SFX_RICOCHET	2		/* shot bounced off building */
+#define SFX_GRAB_FLAG	3		/* grabbed a good flag */
+#define SFX_DROP_FLAG	4		/* dropped a flag */
+#define SFX_CAPTURE	5		/* my team captured enemy flag */
+#define SFX_LOSE	6		/* my flag captured */
+#define SFX_ALERT	7		/* my team flag grabbed by enemy */
+#define SFX_JUMP	8		/* jumping sound */
+#define SFX_LAND	9		/* landing sound */
+#define SFX_TELEPORT	10		/* teleporting sound */
+#define SFX_LASER	11		/* laser fired sound */
+#define SFX_SHOCK	12		/* shockwave fired sound */
+#define SFX_POP		13		/* tank appeared sound */
+#define SFX_DIE		14		/* my tank exploded */
+#define SFX_GRAB_BAD	15		/* grabbed a bad flag */
+#define SFX_SHOT_BOOM	16		/* shot exploded */
+#define SFX_KILL_TEAM	17		/* shot a teammate */
+#define SFX_PHANTOM	18		/* Went into Phantom zone */
+#define SFX_MISSILE	19		/* guided missile fired */
+#define SFX_LOCK	20		/* missile locked on me */
+#define SFX_TEAMGRAB	21		/* grabbed an opponents team flag */
 
 /* prepare sound effects generator and shut it down */
 void			openSound(const char* pname);
@@ -69,3 +74,4 @@ int			getSoundVolume();
 void			updateSound();
 
 #endif // BZF_SOUND_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -42,7 +42,6 @@ RMKEY,   "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "bzfla
 RMFILE,  "%i\\doc\\README.HTM", "",
 RMFILE,  "%i\\doc\\LICENSE", "",
 RMDIR,   "%i\\doc", "",
-RMFILE,  "%i\\data\\laser.wav", "",
 RMFILE,  "%i\\data\\bbolt.rgb", "",
 RMFILE,  "%i\\data\\bbolt.rgb", "",
 RMFILE,  "%i\\data\\boxwall.rgb", "",
@@ -78,10 +77,17 @@ RMFILE,  "%i\\data\\flag_drop.wav", "",
 RMFILE,  "%i\\data\\flag_grab.wav", "",
 RMFILE,  "%i\\data\\flag_lost.wav", "",
 RMFILE,  "%i\\data\\flag_won.wav", "",
+RMFILE,  "%i\\data\\jump.wav", "",
+RMFILE,  "%i\\data\\killteam.wav", "",
+RMFILE,  "%i\\data\\land.wav", "",
 RMFILE,  "%i\\data\\laser.wav", "",
+RMFILE,  "%i\\data\\lock.wav", "",
+RMFILE,  "%i\\data\\missile.wav", "",
+RMFILE,  "%i\\data\\phantom.wav", "",
 RMFILE,  "%i\\data\\pop.wav", "",
 RMFILE,  "%i\\data\\ricochet.wav", "",
 RMFILE,  "%i\\data\\shock.wav", "",
+RMFILE,  "%i\\data\\teamgrab.wav", "",
 RMFILE,  "%i\\data\\teleport.wav", "",
 RMDIR,   "%i\\data", "",
 RMLINK,  "bzflag", "",
@@ -387,3 +393,4 @@ int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance,
 
     return msg.wParam;
 }
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,7 +23,7 @@
 class BaseBuilding : public Obstacle {
   public:
     			BaseBuilding(const float *pos, float rotation,
-			        const float *size, int _team);
+				const float *size, int _team);
 			~BaseBuilding();
     BzfString		getType() const;
     BzfString		getClassName(); // const
@@ -61,3 +61,4 @@ class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator {
 };
 
 #endif
+// ex: shiftwidth=2 tabstop=8

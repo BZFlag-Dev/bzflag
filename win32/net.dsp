@@ -101,6 +101,10 @@ SOURCE=..\src\net\network.cxx
 
 SOURCE=..\src\net\Pack.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\net\Ping.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -120,6 +124,10 @@ SOURCE=..\include\network.h
 # Begin Source File
 
 SOURCE=..\include\Pack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Ping.h
 # End Source File
 # End Group
 # End Target

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,6 +20,10 @@
 
 #include "HUDDialog.h"
 #include "OpenGLTexFont.h"
+
+class JoinMenu;
+class OptionsMenu;
+class QuitMenu;
 
 class MenuDefaultKey : public HUDuiDefaultKey {
   public:
@@ -47,8 +51,12 @@ class MainMenu : public HUDDialog {
     static const OpenGLTexFont& getFont();
 
   private:
-    static OpenGLTexFont font;
-    static OpenGLTexture title;
+    OpenGLTexFont	font;
+    OpenGLTexture	title;
+    JoinMenu*		joinMenu;
+    OptionsMenu*	optionsMenu;
+    QuitMenu*		quitMenu;
+    static OpenGLTexFont* mainFont;
 };
 
 class ServerStartMenu : public HUDDialog {
@@ -80,3 +88,4 @@ class ServerStartMenu : public HUDDialog {
 };
 
 #endif /* BZF_MENUS_H */
+// ex: shiftwidth=2 tabstop=8

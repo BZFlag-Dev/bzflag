@@ -3,7 +3,22 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "bzfinst"=".\bzfinst.dsp" - Package Owner=<4>
+Project: "bzfinst"=.\bzfinst.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name runmakedb
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "bzfuinst"=.\bzfuinst.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -15,7 +30,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "bzfuinst"=".\bzfuinst.dsp" - Package Owner=<4>
+Project: "makedb"=.\makedb.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -23,11 +38,14 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name bzfuinst
+    End Project Dependency
 }}}
 
 ###############################################################################
 
-Project: "makedb"=".\makedb.dsp" - Package Owner=<4>
+Project: "runmakedb"=.\runmakedb.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -35,6 +53,12 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name bzfuinst
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name makedb
+    End Project Dependency
 }}}
 
 ###############################################################################

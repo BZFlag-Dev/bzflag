@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,9 +23,9 @@ PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
 				const GLfloat2Array& _uv,
 				const GLfloat* _normal) :
 				wall(_wall),
+				normal(_normal),
 				vertex(_vertex),
-				uv(_uv),
-				normal(_normal)
+				uv(_uv)
 {
   // do nothing
 }
@@ -195,3 +195,4 @@ void			PolyWallSceneNode::addShadowNodes(
 {
   renderer.addShadowNode(shadowNode);
 }
+// ex: shiftwidth=2 tabstop=8

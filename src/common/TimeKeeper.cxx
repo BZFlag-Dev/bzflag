@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -26,6 +26,7 @@ static double		qpcFrequency = 0.0;
 
 TimeKeeper		TimeKeeper::currentTime;
 TimeKeeper		TimeKeeper::tickTime;
+TimeKeeper		TimeKeeper::sunExplodeTime;
 
 const TimeKeeper&	TimeKeeper::getCurrent()
 {
@@ -80,3 +81,11 @@ void			TimeKeeper::setTick()
 {
   tickTime = getCurrent();
 }
+
+const TimeKeeper& TimeKeeper::getSunExplodeTime()
+{
+	sunExplodeTime.seconds = 10000.0 * 365 * 24 * 60 * 60;
+	return sunExplodeTime;
+}
+
+// ex: shiftwidth=2 tabstop=8

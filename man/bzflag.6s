@@ -1,9 +1,11 @@
 .TH bzflag 6
 .SH NAME
-bzflag \- a tank battle game
+BZFlag \- a tank battle game
 .SH SYNOPSIS
 .sS
 .B bzflag
+[\fB\-3dfx\fR]
+[\fB\-no3dfx\fR]
 [\fB\-anonymous\fR]
 [\fB\-callsign \fIcallsign\fR]
 [\fB\-directory \fIdirectory\fR]
@@ -11,9 +13,11 @@ bzflag \- a tank battle game
 [\fB\-geometry \fIwidth\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB-\fR}x{\fB+\fR|\fB-\fR}y]]
 [\fB\-interface \fIinterface\fR]
 [\fB\-latitude \fIlatitude\fR]
+[\fB\-list \fIurl\fR]
 [\fB\-longitude \fIlongitude\fR]
 [\fB\-multisample\fR]
 [\fB\-mute\fR]
+[\fB\-nolist\fR]
 [\fB\-port \fIport\fR]
 [\fB\-solo \fInumber-of-robots\fR]
 [\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
@@ -24,7 +28,7 @@ bzflag \- a tank battle game
 [\fB\-zbuffer \fR{\fIon\fR | \fIoff\fR}]
 [\fIserver\fR]
 .SH DESCRIPTION
-.B Bzflag
+.B BZFlag
 is a 3D multi-player tank battle game that allows users
 to play against each other in a networked environment.
 There are five teams:  red, green, blue, purple and rogue
@@ -45,8 +49,24 @@ bases.  The object is simply to get as high a score as possible.
 .SS Options
 .RS
 .TP 15
-.B -anonymous
-Uses the email address \fIanonymous\fR instead of \fIusername@hostname.\fR
+.B -3dfx
+For Mesa users with a passthrough 3Dfx card, e.g. a Voodoo or
+Voodoo 2 based card.  This sets the MESA_GLX_FX environment
+variable to use fullscreen passthrough mode.  Use \fB-geometry\fR
+to use a resolution other than 640x480 on the passthrough card.
+You should not use this option with \fB-window\fR.
+.TP
+.B -no3dfx
+For Mesa users with a passthrough 3Dfx card, such as Voodoo or
+Voodoo 2 based cards.  This unsets the MESA_GLX_FX environment
+variable so that the passthrough card isn't used.  Use this
+option if MESA_GLX_FX is normally set in your environment and
+you don't want bzflag to use the passthrough card.  This option
+is only a convenience;  you can achieve the same effect by
+unsetting MESA_GLX_FX in your environment.
+.TP
+\fB-anonymous\fR
+Uses the email address \fIanonymous\fR instead of \fIusername@hostname\fR.
 .TP
 \fB-callsign\fI callsign\fR
 Uses \fIcallsign\fR as the player's callsign.
@@ -60,7 +80,7 @@ callsign when joining a game.
 Looks for data files in \fIdirectory\fR first.  This defaults to a
 directory named \fIdata\fR in the current directory.  If not found
 there, the game looks for data files in the current directory, then
-in the default installation location \fI/INSTALL_DATA_DIR\fR.
+in the default installation location \fIINSTALL_DATA_DIR\fR.
 .TP
 .B -echo
 Copies all message window output to the shell.
@@ -72,7 +92,8 @@ to use this on some systems when bzflag cannot correctly determine the
 display size.
 .TP
 \fB-interface\fI interface\fR
-Send all multicast packets through \fIinterface.\fR
+Send all multicast packets through \fIinterface\fR, which should be
+the IP address of one the host's multicast capable interfaces.
 Communication between players is normally via multicast as this is
 much more efficient than unicasting to all other players and more
 flexible and efficient than broadcasting to all hosts.  The first
@@ -84,12 +105,24 @@ Uses \fIlatitude\fR when computing celesital object positions.
 \fB-longitude\fI longitude\fR
 Uses \fIlongitude\fR when computing celesital object positions.
 .TP
+\fB-list\fI url\fR
+Look for \fBbzfls\fR servers using \fIurl\fR.  A built-in url is
+used by default (the same url is the default for \fBbzfs\fR).
+See \fBbzfls\fR for a description of the format of \fIurl\fR.
+If \fIurl\fR is \fIdefault\fR then the url is reset to the built-in
+url (the url is remembered across invokations of \fBbzflag\fR).
+\fBBzfls\fR servers keep a list of \fBbzfs\fR servers accessible
+from the internet and are queried when using the Find Server menu.
+.TP
 .B -multisample
 Uses a multisample buffer for rendering.  If multisampling isn't
 available then the application will terminate.
 .TP
 .B -mute
 Disables sound.
+.TP
+.B -nolist
+Disables \fBbzfls\fR server querying.  See \fB-list\fR.
 .TP
 \fB-port\fI port\fR
 Connect to server on \fIport\fR instead of the default.
@@ -260,7 +293,18 @@ a message, you can enter a blank message or press Delete, Escape, or
 Control-C.  Be careful with the Escape key;  pressing Escape once will
 cancel the message, pressing it again will show the main menu.  Backspace
 will delete the most recently typed character.  The Tab key doesn't add
-a tab to the message but instead causes the tank to jump (as usual).  
+a tab to the message but instead causes the tank to jump (as usual).
+You can also send a direct message to a single player by pressing the
+.IR ,
+or
+.IR .
+keys. The
+.IR ,
+key will send your message to your 'nemesis', i.e. the last player who
+killed you or was killed by you. The
+.IR .
+key will send a private message to another player. You can choose the
+recipient by using the left and right arrow keys.
 .SS Scoring
 An individual's score is the difference between that player's wins and
 losses.  A win is scored for each enemy tank destroyed.  A loss is
@@ -491,6 +535,45 @@ Disables the radar but you can still see.
 .TP
 .B Wide Angle (WA)
 Gives the tank a fish eye lens that's rather disorienting.
+.SS Observing
+If a server is full or if you just want to watch a battle without interfering
+in it, you can use the observer mode. To join a server as an observer, use
+.IR @
+as the first letter of your callsign. The maximum number of observers can be
+restricted by the server admin, so you might still not be able to join a
+full server. 
+.PP
+When in observer mode, you can freely roam the world. Using the
+arrow keys you can rotate the camera in every direction. Holding shift and
+usign the arrow keys moves the camera left, right, forward or back. Pressing
+the up or down arrow while holding the the
+.IR ALT
+key will change the camera's altitude. The
+.IR F9
+and
+.IR F10
+keys change the camera's focal lengths, giving a zoom effect. The
+.IR F11
+key will reset the zoom. 
+.PP
+Repeatedly pressing
+.IR F8
+cycles through different roaming modes: \fIfree\fR, \fItracking\fR,
+\fIfollowing\fR, \fIfirst person\fR and \fItracking team flag\fR. The default 
+is \fIfree\fR mode where you can move your camera around. In \fItracking\fR
+mode, the camera will automatically look at a tank. You can cycle through
+available tanks with the
+.IR F6
+and
+.IR F7
+keys. In \fIfollow\fR mode, the camera is positioned right behind the
+targeted tank, whereas you actually look from within the tank when using
+\fIfirst person\fR mode. The last mode, \fItrack team flag\fR is only
+available in capture-the-flag games and will track the team flags. Again, use
+.IR F6
+and
+.IR F7
+to choose which flag to track.
 .RE
 .SH FILES
 .RS
@@ -502,4 +585,4 @@ $(HOME)/.bzflag.$(HOST)
 Stores options between game sessions.  Used when HOST is defined.
 .RE
 .SH SEE ALSO
-bzfs(6)
+bzfls(6), bzfs(6)

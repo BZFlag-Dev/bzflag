@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,6 +38,7 @@ void			printError(const char* fmt, ...)
 #if defined(_WIN32)
   else { OutputDebugString(buffer); OutputDebugString("\n"); }
 #else
-  else fprintf(stdout, "%s\n", buffer);
+  else fprintf(stderr, "%s\n", buffer);
 #endif
 }
+// ex: shiftwidth=2 tabstop=8

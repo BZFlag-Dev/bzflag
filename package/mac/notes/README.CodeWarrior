@@ -11,7 +11,7 @@ bzflag
 			|--- bzfs
 			|--- bzflag.mcp - CW 5.3 project
 			|--- lib - put local libs here
-			|--- notes - contains changelog                      
+			|--- notes - contains changelog
 			|--- platform - MacOS specific implementations of required functions
 			|--- prefix - specify global compile-time settings
 			|--- src - misc source and support files

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -171,6 +171,20 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 				vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2]));
   float area = uLength * vLength;
 
+  // If negative then these values aren't a number of times to repeat
+  // the texture along the surface but the width, or a desired scaled
+  // width, of the texture itself. Repeat the texture as many times 
+  // as necessary to fit the surface.
+  if (uRepeats < 0.0f)
+  {
+      uRepeats = - uLength / uRepeats;
+  }
+
+  if (vRepeats < 0.0f)
+  {
+      vRepeats = - vLength / vRepeats;
+  }
+
   // compute how many LODs required to get smaller edge down to
   // elements no bigger than 4 units on a side.
   int uElements = int(uLength) / 2;
@@ -229,7 +243,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
 				uRepeats, vRepeats);
-	
+
       }
       area /= (float)uElements;
     }
@@ -242,7 +256,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
 				uRepeats, vRepeats);
-	
+
       }
       area /= (float)vElements;
     }
@@ -305,3 +319,4 @@ void			QuadWallSceneNode::addShadowNodes(
 {
   renderer.addShadowNode(shadowNode);
 }
+// ex: shiftwidth=2 tabstop=8

@@ -1,9 +1,7 @@
 # HiX experimental world
-# by Tim Riker <Tim@Rikers.org
+# by Tim Riker <Tim@Rikers.org>
 #
-# This is intended to be a team play world
-# but I need to add server support for ctf
-# and -world to be used together.
+# This is a team play world
 
 # Typical Teleporter
 #
@@ -12,12 +10,12 @@
 # TeleBreadth  4.48
 # TeleHeight  10.08
 #
-# teleporter
-# position     x     y     0.0
-# rotation     rad
-# size         0.56  4.48  20.16
-# border       1.12
-# end
+#teleporter
+#position     x     y     0.0
+#rotation     deg
+#size         0.56  4.48  20.16
+#border       1.12
+#end
 
 # Typical link
 #
@@ -31,91 +29,91 @@
 # BoxBase     30.0
 # BoxHeight    9.42
 #
-# box
-# position     x     y     0.0
-# rotation     rad
-# size         30.0  30.0  9.42
-# end
+#box
+#position     x     y     0.0
+#rotation     deg
+#size         30.0  30.0  9.42
+#end
 
 # Typical pyramid
 #
 # PyrBase      8.20
 # PyrHeight   10.25
 #
-# box
-# position     x     y     0.0
-# rotation     rad
-# size         8.20  8.20  10.25
-# end
+#pyramid
+#position     x     y     0.0
+#rotation     deg
+#size         8.20  8.20  10.25
+#end
 
-# Minimal world
-
-# pyramid
-# position -200.0 -200.0 0.0
-# rotation 2.0
-# size     5.0 7.0 10.0
-# end
+# Typical base
+#base
+#position <x> <y> <z>
+#rotation deg -- not yet supported
+#size 30.0 30.0 0.0 -- height not yet supported
+#color <team number>
+#end
 
 # top of the world
 box
-position 0.0 0.0 30.0
-rotation 0.7853981625
-size     7.5 7.5 15.0
+position 0.0 0.0 29.0
+rotation 45.0
+size     7.5 7.5 16.0
 end
 
 # cross bars
 box
 position 0.0 0.0 29.0
-rotation 0.7853981625
-size     7.5 550.0 1.0
+rotation 45.0
+size     4 550.0 1.0
 end
 box
 position 0.0 0.0 29.0
-rotation 2.3561944875
-size     7.5 550.0 1.0
+rotation 135.0
+size     4 550.0 1.0
 end
 
 # walls under crossbars
 box
-position 180.0 180.0 0.0
-rotation 2.3561944875
-size     0.5 150.0 29.0
+position 180.0 180.0 15.0
+rotation 135.0
+size     0.5 150.0 14.0
 end
 box
-position -180.0 -180.0 0.0
-rotation 2.3561944875
-size     0.5 150.0 29.0
+position -180.0 -180.0 15.0
+rotation 135.0
+size     0.5 150.0 14.0
 end
 box
-position 180.0 -180.0 0.0
-rotation 0.7853981625
-size     0.5 150.0 29.0
+position 180.0 -180.0 15.0
+rotation 45.0
+size     0.5 150.0 14.0
 end
 box
-position -180.0 180.0 0.0
-rotation 0.7853981625
-size     0.5 150.0 29.0
+position -180.0 180.0 15.0
+rotation 45.0
+size     0.5 150.0 14.0
 end
 # fat walls along base
 box
 position 180.0 180.0 0.0
-rotation 2.3561944875
-size     6.0 150.0 15.0
+rotation 135.0
+size     8.0 107.0 15.0
 end
 box
 position -180.0 -180.0 0.0
-rotation 2.3561944875
-size     6.0 150.0 15.0
+rotation 135.0
+size     8.0 107.0 15.0
 end
 box
 position 180.0 -180.0 0.0
-rotation 0.7853981625
-size     6.0 150.0 15.0
+rotation 45.0
+size     8.0 107.0 15.0
 end
 box
 position -180.0 180.0 0.0
-rotation 0.7853981625
-size     6.0 150.0 15.0
+rotation 45.0
+size     8.0 107.0 15.0
 end
 
 # boxes at wall ends for access
@@ -195,53 +193,53 @@ size     7.5 400.0 1.0
 end
 box
 position 0.0 392.5 29.0
-rotation 1.570796325
+rotation 90.0
 size     7.5 400.0 1.0
 end
 box
 position 0.0 -392.5 29.0
-rotation 1.570796325
+rotation 90.0
 size     7.5 400.0 1.0
 end
 # boxes for access
 box
 position 400.0 180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position 400.0 -180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position -400.0 180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position -400.0 -180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position 180.0 400.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position -180.0 400.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position 180.0 -400.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position -180.0 -400.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 
@@ -267,19 +265,233 @@ rotation 0.0
 size     30.0 30.0 15.0
 end
 
-# teleporter
-# position     100.0     100.0     0.0
-# rotation     1.0
-# size         0.56 20.16 7.75
-# border       1.12
-# end
+# teleporter elevators in the corners
+teleporter
+position     390.0 390.0 0.0
+rotation     45.0
+size         0.56  4.48  27.76
+border       1.12
+end
+teleporter
+position     390.0 390.0 30.0
+rotation     45.0
+size         0.56  4.48  15.0
+border       1.12
+end
+link
+from 0
+to 2
+end
+link
+from 1
+to 3
+end
+link
+from 2
+to 0
+end
+link
+from 3
+to 1
+end
 
-# link
-# from 0
-# to 0
-# end
+teleporter
+position     -390.0 -390.0 0.0
+rotation     45.0
+size         0.56  4.48  27.76
+border       1.12
+end
+teleporter
+position     -390.0 -390.0 30.0
+rotation     45.0
+size         0.56  4.48  15.0
+border       1.12
+end
+link
+from 4
+to 6
+end
+link
+from 5
+to 7
+end
+link
+from 6
+to 4
+end
+link
+from 7
+to 5
+end
 
-# link
-# from 1
-# to 1
-# end
+teleporter
+position     390.0 -390.0 0.0
+rotation     135.0
+size         0.56  4.48  27.76
+border       1.12
+end
+teleporter
+position     390.0 -390.0 30.0
+rotation     135.0
+size         0.56  4.48  15.0
+border       1.12
+end
+link
+from 8
+to 10
+end
+link
+from 9
+to 11
+end
+link
+from 10
+to 8
+end
+link
+from 11
+to 9
+end
+
+teleporter
+position     -390.0 390.0 0.0
+rotation     135.0
+size         0.56  4.48  27.76
+border       1.12
+end
+teleporter
+position     -390.0 390.0 30.0
+rotation     135.0
+size         0.56  4.48  15.0
+border       1.12
+end
+link
+from 12
+to 14
+end
+link
+from 13
+to 15
+end
+link
+from 14
+to 12
+end
+link
+from 15
+to 13
+end
+
+# red team base
+base
+position -340.0 0.0 29.0
+rotation 45.0
+size 35.0 35.0 0.0
+color 1
+end
+# green team base
+base
+position 340.0 0.0 29.0
+rotation 45.0
+size 35.0 35.0 0.0
+color 2
+end
+# blue team base
+base
+position 0.0 -340.0 29.0
+rotation 45.0
+size 35.0 35.0 0.0
+color 3
+end
+# purple team base
+base
+position 0.0 340.0 29.0
+rotation 45.0
+size 35.0 35.0 0.0
+color 4
+end
+
+# pyramids around red base
+pyramid
+position -340.0 -45.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position -340.0 45.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position -295.0 0.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position -385.0 0.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+# pyramids around green base
+pyramid
+position 340.0 -45.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 340.0 45.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 295.0 0.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 385.0 0.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+# pyramids around blue base
+pyramid
+position -45.0 -340.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 45.0 -340.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 0.0 -295.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 0.0 -385.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+# pyramids around purple base
+pyramid
+position -45.0 340.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 45.0 340.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 0.0 295.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end
+pyramid
+position 0.0 385.0 0.0
+rotation 0.0
+size     10.0 10.0 29.0
+end

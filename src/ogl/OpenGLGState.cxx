@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -324,7 +324,7 @@ void			OpenGLGStateState::resetOpenGLState() const
   }
   if (sorted.hasMaterial) {
     glDisable(GL_LIGHTING);
-    glDisable(GL_COLOR_MATERIAL);	
+    glDisable(GL_COLOR_MATERIAL);
   }
   if (unsorted.hasBlending) {
     glDisable(GL_BLEND);
@@ -385,13 +385,13 @@ void			OpenGLGStateState::setOpenGLState(
       else {
 	sorted.material.execute();
 	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);	
+	glEnable(GL_COLOR_MATERIAL);
       }
     }
     else {
       if (oldState->sorted.hasMaterial) {
 	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);	
+	glDisable(GL_COLOR_MATERIAL);
       }
     }
 
@@ -751,6 +751,60 @@ void			OpenGLGStateRep::setState()
 }
 
 //
+// OpenGLGState::ContextInitializer
+//
+
+OpenGLGState::ContextInitializer*
+			OpenGLGState::ContextInitializer::head = NULL;
+OpenGLGState::ContextInitializer*
+			OpenGLGState::ContextInitializer::tail = NULL;
+
+OpenGLGState::ContextInitializer::ContextInitializer(
+				OpenGLContextInitializer _callback,
+				void* _userData) :
+				callback(_callback),
+				userData(_userData)
+{
+  prev = NULL;
+  next = head;
+  head = this;
+  if (next) next->prev = this;
+  else tail = this;
+}
+
+OpenGLGState::ContextInitializer::~ContextInitializer()
+{
+  // remove me from list
+  if (next != NULL) next->prev = prev;
+  else tail = prev;
+  if (prev != NULL) prev->next = next;
+  else head = next;
+}
+
+void			OpenGLGState::ContextInitializer::execute()
+{
+  ContextInitializer* scan = tail;
+  while (scan) {
+    (scan->callback)(scan->userData);
+    scan = scan->prev;
+  }
+}
+
+OpenGLGState::ContextInitializer*
+			OpenGLGState::ContextInitializer::find(
+				OpenGLContextInitializer _callback,
+				void* _userData)
+{
+  ContextInitializer* scan = head;
+  while (scan) {
+    if (scan->callback == _callback && scan->userData == _userData)
+      return scan;
+    scan = scan->next;
+  }
+  return NULL;
+}
+
+//
 // OpenGLGState
 //
 
@@ -862,7 +916,7 @@ int			OpenGLGState::getOpaqueStippleIndex()
   return NumStipples - 1;
 }
 
-void			OpenGLGState::initStipple()
+void			OpenGLGState::initStipple(void*)
 {
   stipples = glGenLists(NumStipples);
   for (int i = 0; i < NumStipples; i++) {
@@ -914,10 +968,65 @@ void			OpenGLGState::init()
 #endif
 
   // initialize GL state to what we expect
+  initGLState();
+
+  // other initialization
+  initStipple();
+
+  // redo stipple init if context is recreated
+  registerContextInitializer(initStipple);
+}
+
+void			OpenGLGState::registerContextInitializer(
+				OpenGLContextInitializer callback,
+				void* userData)
+{
+  if (callback == NULL)
+    return;
+  new ContextInitializer(callback, userData);
+}
+
+void			OpenGLGState::unregisterContextInitializer(
+				OpenGLContextInitializer callback,
+				void* userData)
+{
+  delete ContextInitializer::find(callback, userData);
+}
+
+void			OpenGLGState::initContext()
+{
+  // initialize GL state
+  initGLState();
+
+  // reset our idea of the state
+  resetState();
+
+  // call all initializers
+  ContextInitializer::execute();
+
+  // initialize the GL state again in case one of the initializers
+  // messed it up.
+  initGLState();
+
+  // and some more state
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClearDepth(1.0);
+  glClearStencil(0);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glEnable(GL_SCISSOR_TEST);
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+}
+
+void			OpenGLGState::initGLState()
+{
+  // initialize GL state to what we expect
   glDisable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glDisable(GL_LIGHTING);
-  glDisable(GL_COLOR_MATERIAL);	
+  glDisable(GL_COLOR_MATERIAL);
   glDisable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDisable(GL_LINE_SMOOTH);
@@ -928,9 +1037,6 @@ void			OpenGLGState::init()
   glEnable(GL_CULL_FACE);
   glShadeModel(GL_FLAT);
   glDisable(GL_ALPHA_TEST);
-
-  // other initialization
-  initStipple();
 }
 
 //
@@ -1048,3 +1154,4 @@ OpenGLGState		OpenGLGStateBuilder::getState() const
 {
   return OpenGLGState(*state);
 }
+// ex: shiftwidth=2 tabstop=8

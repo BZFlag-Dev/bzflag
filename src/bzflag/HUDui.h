@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -91,7 +91,7 @@ class HUDuiControl {
 
     void		render();
 
-    static OpenGLTexture getArrow() { return arrow; }
+    static OpenGLTexture getArrow() { return *arrow; }
 
   protected:
     virtual void	onSetFont();
@@ -115,10 +115,11 @@ class HUDuiControl {
     HUDuiControl*	prev, *next;
     HUDuiCallback	cb;
     void*		userData;
-    static OpenGLGState	gstate;
-    static OpenGLTexture arrow;
+    static OpenGLGState* gstate;
+    static OpenGLTexture* arrow;
     static int		arrowFrame;
     static TimeKeeper	lastTime;
+    static int		totalCount;
 };
 
 class HUDuiList : public HUDuiControl {
@@ -229,3 +230,4 @@ float			HUDuiControl::getHeight() const
 }
 
 #endif // BZF_HUD_UI_H
+// ex: shiftwidth=2 tabstop=8

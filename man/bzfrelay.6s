@@ -1,6 +1,6 @@
 .TH bzfrelay 6
 .SH NAME
-bzfrelay \- bzflag game server firewall relay
+bzfrelay \- BZFlag game server firewall relay
 .SH SYNOPSIS
 .sS
 .B bzfrelay
@@ -48,7 +48,7 @@ the default connect and reconnect ports.
 .TP
 \fB\-p \fIport\fR
 Listen for reconnections on \fIport\fR instead of the default.
-The bzflag protocol is broken in that it requires clients to
+The BZFlag protocol is broken in that it requires clients to
 connect to the server, get a port to reconnect to, disconnect,
 and reconnect on the new port (there's no reason for this
 except backward compatibility).  This option overrides the

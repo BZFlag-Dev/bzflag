@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -11,6 +11,7 @@
  */
 
 #include "LinuxDisplay.h"
+#include "XWindow.h"
 
 #if defined(USE_XF86VIDMODE_EXT)
 #include <stdio.h>
@@ -156,6 +157,16 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
 
 boolean			LinuxDisplayMode::set(int index)
 {
+  return doSet(index, True);
+}
+
+boolean			LinuxDisplayMode::setDefault(int index)
+{
+  return doSet(index, False);
+}
+
+boolean			LinuxDisplayMode::doSet(int index, boolean position)
+{
   // ignore attempts to set video format to current format.
   // normally this only happens when restoring the default
   // format, when BzfDisplay deliberately forces the change.
@@ -164,19 +175,40 @@ boolean			LinuxDisplayMode::set(int index)
   // format.  however, irix isn't so clever and may cause
   // the display to flicker even when the format isn't
   // really changing.
-  if (index == lastResolution)
+  if (index == lastResolution || numResolutions <= 1)
     return True;
 
+  // deactivate windows before resolution change.  if we don't do this
+  // then the app will almost certainly crash in the OpenGL driver.
+  XWindow::deactivateAll();
+
+  // change resolution
   if (XF86VidModeSwitchToMode(display->getRep()->getDisplay(),
 				display->getRep()->getScreen(),
 				resolutions[index])) {
-    XF86VidModeSetViewPort(display->getRep()->getDisplay(),
+    if (position) {
+      // kludge for accelerated GLX.  when we set the view port after
+      // changing the resolution just before quiting, GLX does not
+      // release the display to X server control.  or something like
+      // that.  the effect is that you see the game window still on
+      // the screen but maybe shifted around and you can't see any of
+      // the other windows.  without this code, a workaround for the
+      // problem is ctrl_alt_+ or ctrl_alt_- to force a resize.
+      XF86VidModeSetViewPort(display->getRep()->getDisplay(),
 				display->getRep()->getScreen(), 0, 0);
+    }
     XSync(display->getRep()->getDisplay(), False);
     lastResolution = index;
+
+    // reactivate previously deactivated window after change
+    XWindow::reactivateAll();
     return True;
   }
+
+  // reactivate previously deactivated window after change
+  XWindow::reactivateAll();
   return False;
 }
 
 #endif
+// ex: shiftwidth=2 tabstop=8

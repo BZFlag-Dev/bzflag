@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include "OpenGLLight.h"
+#include "OpenGLGState.h"
 
 static class OpenGLLightCleanup {
   public:
@@ -56,6 +57,8 @@ OpenGLLight::OpenGLLight(const OpenGLLight& l) : mailbox(0)
 
 OpenGLLight::~OpenGLLight()
 {
+  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
+
   // put display lists on oldLists list
   oldLists.append(listBase);
   delete[] list;
@@ -181,6 +184,9 @@ void			OpenGLLight::makeLists()
   else {
     listBase = glGenLists(numLights);
   }
+
+  // watch for context recreation
+  OpenGLGState::registerContextInitializer(initContext, (void*)this);
 }
 
 void			OpenGLLight::freeLists()
@@ -211,3 +217,10 @@ void			OpenGLLight::cleanup()
     // glDeleteLists(oldLists[i], getMaxLights());
   }
 }
+
+void			OpenGLLight::initContext(void* self)
+{
+  // cause display list to be recreated on next execute()
+  ((OpenGLLight*)self)->freeLists();
+}
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,10 +23,14 @@
 #include "World.h"
 #include "OpenGLGState.h"
 #include "texture.h"
+#if !defined(_MACOSX_)
+#include <malloc.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 
 //
 // FlashClock
@@ -88,7 +92,8 @@ BzfString		HUDRenderer::altitudeLabel[20];
 BzfString		HUDRenderer::scoreSpacingLabel("888 (888-888)");
 BzfString		HUDRenderer::scoreLabel("Score");
 BzfString		HUDRenderer::killLabel("Kills");
-BzfString		HUDRenderer::teamScoreLabel("Team");
+BzfString		HUDRenderer::teamScoreSpacingLabel("888 (888-888) 888");
+BzfString		HUDRenderer::teamScoreLabel("Team Score");
 BzfString		HUDRenderer::playerLabel("Player");
 BzfString		HUDRenderer::restartLabelFormat("Press %s to start");
 BzfString		HUDRenderer::resumeLabel("Press Pause to resume");
@@ -117,7 +122,7 @@ const char*		HUDRenderer::flagHelpString[int(LastFlag) -
 		"Shots are still visible.  Sneak up behind enemies!",
 "Tiny (+T):  Tank is small and can get through small openings.  "
 		"Very hard to hit.",
-"Narrow (+N):  Tank is super thin.  Very hard to hit from front but is"
+"Narrow (+N):  Tank is super thin.  Very hard to hit from front but is "
 		"normal size from side.  Can get through small openings.",
 "SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time.",
 "SteamRoller (+SR):  Destroys tanks you touch but you have to get really close.",
@@ -148,6 +153,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				window(renderer.getWindow()),
 				firstRender(True),
 				playing(False),
+				roaming(False),
 				dim(False),
 				sDim(False),
 				numPlayers(0),
@@ -160,7 +166,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				fps(-1.0),
 				drawTime(-1.0),
 				restartLabel(restartLabelFormat),
-				showScore(False),
+				roamingLabel("Roaming"),
 				showCompose(False)
 {
   int i;
@@ -175,13 +181,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   warningColor[0] = 1.0f;
   warningColor[1] = 0.0f;
   warningColor[2] = 0.0f;
-
-  composeFont = TextureFont::getTextureFont(TextureFont::TimesBoldItalic, True);
-  bigFont = TextureFont::getTextureFont(TextureFont::HelveticaBoldItalic, True);
-  alertFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
-  majorFont = TextureFont::getTextureFont(TextureFont::TimesBold, True);
-  minorFont = TextureFont::getTextureFont(TextureFont::TimesBoldItalic, True);
-  headingFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
 
   // make sure we're notified when MainWindow resizes
   window.getWindow()->addResizeCallback(resizeCallback, this);
@@ -243,12 +242,12 @@ void			HUDRenderer::resize(boolean firstTime)
 {
   // get important metrics
   const int w = firstTime ? 1280 : window.getWidth();
-  const int h = firstTime ? 768 : window.getViewHeight();
+  const int h = firstTime ? 1024 : window.getHeight();
 
   // compute good targeting box sizes
   {
     const float xScale = (float)w / 1280.0f;
-    const float yScale = (float)h / 768.0f;
+    const float yScale = (float)h / 1024.0f;
     const float scale = (xScale < yScale) ? xScale : yScale;
     maxMotionSize = (int)((float)MaxMotionSize * scale);
     noMotionSize = NoMotionSize; //(int)((float)NoMotionSize * scale);
@@ -286,9 +285,9 @@ void			HUDRenderer::resize(boolean firstTime)
       const float dx = font.getWidth(composeTypeIn->getLabel()) + 2.0f;
       const float dy = font.getDescent() + 4.0f;
       const float x = dx + dy + 2.0f * font.getSpacing();
-      const float y = dy;
+      const float y = dy + window.getHeight() / 3;
       composeTypeIn->setLabelWidth(dx);
-      composeTypeIn->setPosition(x, y + dy);
+      composeTypeIn->setPosition(x, y);
       composeTypeIn->setSize(w - x - dy, font.getSpacing());
     }
   }
@@ -306,7 +305,8 @@ int			HUDRenderer::getMaxMotionSize() const
 
 void			HUDRenderer::setBigFontSize(int, int height)
 {
-  const float s = (float)height / 10.0f;
+  const float s = (float)height / 15.0f;
+  bigFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
   bigFont.setSize(s, s);
 
   restartLabelWidth = bigFont.getWidth(restartLabel);
@@ -316,34 +316,45 @@ void			HUDRenderer::setBigFontSize(int, int height)
 
 void			HUDRenderer::setAlertFontSize(int, int height)
 {
-  const float s = (float)height / 16.0f;
+  const float s = (float)height / 24.0f;
+  if (s > 20.0f)
+    alertFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    alertFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    alertFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   alertFont.setSize(s, s);
 
   for (int i = 0; i < MaxAlerts; i++)
     if (alertClock[i].isOn())
       alertLabelWidth[i] = alertFont.getWidth(alertLabel[i]);
-  alertY = -majorFont.getSpacing() +
-	   -alertFont.getSpacing() + alertFont.getDescent();
 }
 
 void			HUDRenderer::setMajorFontSize(int, int height)
 {
-  const float s = (float)height / 16.0f;
+  const float s = (float)height / 24.0f;
+  majorFont = TextureFont::getTextureFont(TextureFont::TimesBold, True);
   majorFont.setSize(s, s);
-
-  alertY = -majorFont.getSpacing() +
-	   -alertFont.getSpacing() + alertFont.getDescent();
 }
 
 void			HUDRenderer::setMinorFontSize(int, int height)
 {
-  const float s = (float)height / 28.0f;
+  const float s = (float)height / 48.0f;
+  if (s > 20.0f)
+    minorFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    minorFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    minorFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   minorFont.setSize(s, s);
 
-  const float spacing = minorFont.getWidth("    ");
-  scoreLabelWidth = minorFont.getWidth(scoreSpacingLabel) + spacing;
-  teamScoreLabelWidth = minorFont.getWidth("Purple Team") + spacing;
-  flagHelpY = minorFont.getDescent() + 10.0f;
+  scoreLabelWidth = minorFont.getWidth(scoreSpacingLabel);
+  killsLabelWidth = minorFont.getWidth(killLabel);
+  teamScoreLabelWidth = minorFont.getWidth(teamScoreSpacingLabel);
+
+  const float spacing = minorFont.getWidth("");
+  scoreLabelWidth += spacing;
+  killsLabelWidth += spacing;
 
   // make flag help messages
   for (int i = 0; i < int(LastFlag) - int(FirstFlag) + 1; i++)
@@ -352,14 +363,20 @@ void			HUDRenderer::setMinorFontSize(int, int height)
 
 void			HUDRenderer::setHeadingFontSize(int, int height)
 {
-  const float s = (float)height / 64.0f;
+  const float s = (float)height / 96.0f;
+  if (s > 20.0f)
+    headingFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    headingFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    headingFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   headingFont.setSize(s, s);
 
   // compute heading labels and (half) widths
   int i;
   for (i = 0; i < 36; i++)
     headingLabelWidth[i] = 0.5f * headingFont.getWidth(headingLabel[i]);
-  
+
   // compute maximum width over all altitude labels
   altitudeLabelMaxWidth = 0.0f;
   for (i = 0; i < 20; i++) {
@@ -370,7 +387,14 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
 
 void			HUDRenderer::setComposeFontSize(int, int height)
 {
-  const float s = (float)height / 32.0f;
+  const float s = (float)height / 48.0f;
+  if (s > 20.0f)
+    composeFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    composeFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    composeFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
+  composeTypeIn->setFont(composeFont);
   composeTypeIn->setFontSize(s, s);
 }
 
@@ -384,6 +408,11 @@ void			HUDRenderer::setColor(float r, float g, float b)
 void			HUDRenderer::setPlaying(boolean _playing)
 {
   playing = _playing;
+}
+
+void			HUDRenderer::setRoaming(boolean _roaming)
+{
+  roaming = _roaming;
 }
 
 void			HUDRenderer::setDim(boolean _dim)
@@ -444,11 +473,6 @@ void			HUDRenderer::setAlert(int index, const char* string,
   }
 }
 
-boolean			HUDRenderer::getScore() const
-{
-  return showScore;
-}
-
 boolean			HUDRenderer::getComposing() const
 {
   return showCompose;
@@ -459,14 +483,14 @@ BzfString		HUDRenderer::getComposeString() const
   return composeTypeIn->getString();
 }
 
-void			HUDRenderer::setScore(boolean _showScore)
+void		    HUDRenderer::setComposeString(const BzfString &message) const
 {
-  showScore = _showScore;
+  composeTypeIn->setString(message);
 }
 
-void			HUDRenderer::setComposing(const char* prompt)
+void			HUDRenderer::setComposing(const BzfString &prompt)
 {
-  showCompose = (prompt != NULL);
+  showCompose = (!prompt.isNull());
   if (showCompose) {
     composeTypeIn->setLabel(prompt);
     composeTypeIn->setString("");
@@ -479,7 +503,7 @@ void			HUDRenderer::setComposing(const char* prompt)
       const float x = dx + dy + 2.0f * font.getSpacing();
       const float y = dy;
       composeTypeIn->setLabelWidth(dx);
-      composeTypeIn->setPosition(x, y + dy);
+      composeTypeIn->setPosition(x, y);
       composeTypeIn->setSize(window.getWidth() - x - dy, font.getSpacing());
     }
   }
@@ -549,6 +573,11 @@ void			HUDRenderer::setRestartKeyLabel(const BzfString& label)
   restartLabelWidth = bigFont.getWidth(restartLabel);
 }
 
+void			HUDRenderer::setRoamingLabel(const BzfString& label)
+{
+  roamingLabel = label;
+}
+
 void			HUDRenderer::setTimeLeft(int _timeLeft)
 {
   timeLeft = _timeLeft;
@@ -561,7 +590,7 @@ BzfString		HUDRenderer::makeHelpString(const char* help) const
 
   // find sections of string not more than maxWidth pixels wide
   // and put them into a BzfString separated by NUL's.
-  const float maxWidth = 2.0f * (float)maxMotionSize;
+  const float maxWidth = 4.0f * (float)maxMotionSize;
   BzfString msg;
   const char* scan = help;
   while (*scan) {
@@ -654,6 +683,8 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   OpenGLGState::resetState();
   if (playing)
     renderPlaying(renderer);
+  else if (roaming)
+    renderRoaming(renderer);
   else
     renderNotPlaying(renderer);
 }
@@ -661,13 +692,14 @@ void			HUDRenderer::render(SceneRenderer& renderer)
 void			HUDRenderer::renderAlerts(SceneRenderer& renderer)
 {
   const float centerx = 0.5f * (float)renderer.getWindow().getWidth();
-  float y = (float)renderer.getWindow().getViewHeight() + alertY;
+
+  float y = (float)renderer.getWindow().getHeight() + -majorFont.getSpacing() + -alertFont.getSpacing();
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
       hudColor3fv(alertColor[i]);
       alertFont.draw(alertLabel[i], centerx - 0.5f * alertLabelWidth[i], y);
+      y -= alertFont.getSpacing();
     }
-    y -= alertFont.getSpacing();
   }
 }
 
@@ -678,13 +710,12 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
 
   char buffer[60];
   const float h = majorFont.getSpacing();
-  float x = 0.25f * h, y = (float)renderer.getWindow().getViewHeight() - h;
+  float x = 0.25f * h, y = (float)renderer.getWindow().getHeight() - h;
   TeamColor teamIndex = player->getTeam();
-  Team& team = World::getWorld()->getTeam(int(teamIndex));
   FlagId flag = player->getFlag();
 
   // print player name and score in upper left corner in team (radar) color
-  if (!playerHasHighScore || scoreClock.isOn()) {
+  if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
     sprintf(buffer, "%s: %d", player->getCallSign(), player->getScore());
     hudColor3fv(Team::getRadarColor(teamIndex));
     majorFont.draw(buffer, x, y);
@@ -693,6 +724,19 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   // print flag if player has one in upper right
   if (flag != NoFlag) {
     sprintf(buffer, "%s", Flag::getName(flag));
+    x = (float)renderer.getWindow().getWidth() -
+			0.25f * h - majorFont.getWidth(buffer);
+    if (Flag::getType(flag) == FlagSticky)
+      hudColor3fv(warningColor);
+    else
+      hudColor3fv(messageColor);
+    majorFont.draw(buffer, x, y);
+  } else {
+    time_t timeNow;
+    struct tm userTime;
+    time(&timeNow);
+    userTime = *localtime(&timeNow);
+    sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
     x = (float)renderer.getWindow().getWidth() -
 			0.25f * h - majorFont.getWidth(buffer);
     if (Flag::getType(flag) == FlagSticky)
@@ -720,36 +764,43 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   else {
     strcpy(buffer, "");
   }
-  switch (player->getFiringStatus()) {
-    case LocalPlayer::Deceased:
-      strcat(buffer, "Dead");
-      break;
+  if (!roaming) {
+    switch (player->getFiringStatus()) {
+      case LocalPlayer::Deceased:
+	strcat(buffer, "Dead");
+	break;
+  
+      case LocalPlayer::Ready:
+	if (flag != NoFlag && Flag::getType(flag) == FlagSticky &&
+		  World::getWorld()->allowShakeTimeout()) {
+	  /* have a bad flag -- show time left 'til we shake it */
+	  statusColor = yellowColor;
+	  sprintf(buffer, "%.1f", player->getFlagShakingTime());
+	}
+	else {
+	  statusColor = greenColor;
+	  strcat(buffer, "Ready");
+	}
+	break;
+  
+      case LocalPlayer::Loading:
+	statusColor = redColor;
+	sprintf(buffer, "Reloaded in %.1f", player->getReloadTime());
+	break;
+  
+      case LocalPlayer::Sealed:
+	strcat(buffer, "Sealed");
+	break;
+  
+      case LocalPlayer::Zoned:
+	strcat(buffer, "Zoned");
+	break;
+    }
+  }
 
-    case LocalPlayer::Ready:
-      if (flag != NoFlag && Flag::getType(flag) == FlagSticky &&
-				World::getWorld()->allowShakeTimeout()) {
-	/* have a bad flag -- show time left 'til we shake it */
-	statusColor = yellowColor;
-	sprintf(buffer, "%.1f", player->getFlagShakingTime());
-      }
-      else {
-	statusColor = greenColor;
-	strcat(buffer, "Ready");
-      }
-      break;
-
-    case LocalPlayer::Loading:
-      statusColor = redColor;
-      sprintf(buffer, "Reloaded in %.1f", player->getReloadTime());
-      break;
-
-    case LocalPlayer::Sealed:
-      strcat(buffer, "Sealed");
-      break;
-
-    case LocalPlayer::Zoned:
-      strcat(buffer, "Zoned");
-      break;
+  if (roaming) {
+    statusColor = messageColor;
+    strcat(buffer,roamingLabel.getString());
   }
 
   x = 0.5f * ((float)renderer.getWindow().getWidth() -
@@ -758,60 +809,100 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   majorFont.draw(buffer, x, y);
 }
 
+int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
+{
+  RemotePlayer* a = World::getWorld()->getPlayer(*(int*)_a);
+  RemotePlayer* b = World::getWorld()->getPlayer(*(int*)_b);
+
+  return b->getScore() - a->getScore();
+}
+
+int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
+{
+
+  Team* c= World::getWorld()->getTeams()+*(int*)_c;
+  Team* d= World::getWorld()->getTeams()+*(int*)_d;
+	 
+  return (d->won-d->lost) - (c->won-c->lost);
+}
+
 void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
 {
-  int i;
+  int i, j;
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !World::getWorld()) return;
 
-  const float x1 = 0.0125f * renderer.getWindow().getWidth();
+  const float x1 = 0.01f * renderer.getWindow().getWidth();
   const float x2 = x1 + scoreLabelWidth;
   const float x3 = x2 + scoreLabelWidth;
-  const float x5 = (1.0f - 0.01f) * renderer.getWindow().getWidth() -
-							teamScoreLabelWidth;
-  const float x4 = x5 - scoreLabelWidth;
-  const float y0 = (float)renderer.getWindow().getViewHeight() -
-				2.0f * alertFont.getSpacing();
+  const float x5 = (1.0f - 0.01f) * renderer.getWindow().getWidth() - teamScoreLabelWidth;
+  const float y0 = (float)renderer.getWindow().getHeight() -
+      majorFont.getSpacing() - alertFont.getSpacing() * 2.0f + alertFont.getDescent();
   hudColor3fv(messageColor);
   minorFont.draw(scoreLabel, x1, y0);
   minorFont.draw(killLabel, x2, y0);
   minorFont.draw(playerLabel, x3, y0);
-  minorFont.draw(scoreLabel, x4, y0);
   minorFont.draw(teamScoreLabel, x5, y0);
   const float dy = minorFont.getSpacing();
   int y = (int)(y0 - dy);
-  drawPlayerScore(myTank, x1, x2, x3, (float)y);
+
+  // print players sorted by score
+  int plrCount = 0;
   const int maxPlayers = World::getWorld()->getMaxPlayers();
-  for (i = 0; i < maxPlayers; i++) {
-    RemotePlayer* player = World::getWorld()->getPlayer(i);
-    if (!player) continue;
+  int* players = new int[maxPlayers];
+
+  for (j = 0; j < maxPlayers; j++)
+    if (World::getWorld()->getPlayer(j))
+      players[plrCount++] = j;
+
+  qsort(players, plrCount, sizeof(int), tankScoreCompare);
+
+  bool drewMyScore = false;
+  for (i = 0; i < plrCount; i++) {
+    RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
+    if (!drewMyScore && myTank->getScore() > player->getScore()) {
+      // if i have greater score than remote player draw my name first
+      drawPlayerScore(myTank, x1, x2, x3, (float)y);
+      y -= (int)dy;
+      drewMyScore = true;
+    }
+    drawPlayerScore(player, x1, x2, x3, (float)y);//then draw the remote player
     y -= (int)dy;
-    drawPlayerScore(player, x1, x2, x3, (float)y);
   }
-  y -= (int)dy;
-  const int maxDeadPlayers = World::getWorld()->getMaxDeadPlayers();
-  DeadPlayer** deadPlayers = World::getWorld()->getDeadPlayers();
-  for (i = 0; i < maxDeadPlayers; i++) {
-    if (!deadPlayers[i]) continue;
+  if (!drewMyScore) {
+    // if my score is smaller or equal to last remote player draw my score 
+    drawPlayerScore(myTank, x1, x2, x3, (float)y);
     y -= (int)dy;
-    drawDeadPlayerScore(deadPlayers[i], x1, x2, x3, (float)y);
   }
+  delete[] players;
+
+  // print teams sorted by score
+  int *teams = new int[NumTeams];
+  int teamCount = 0;
 
   y = (int)y0;
   for (i = RedTeam; i < NumTeams; i++) {
     const Team* team = World::getWorld()->getTeams() + i;
     if (team->activeSize == 0) continue;
-    y -= (int)dy;
-    drawTeamScore(i, x4, x5, (float)y);
+    teams[teamCount++] = i;
   }
+
+  qsort(teams, teamCount, sizeof(int), teamScoreCompare);
+
+  y -= (int)dy;
+  for (i = 0 ; i < teamCount; i++){
+    drawTeamScore(teams[i], x5, (float)y);
+    y -= (int)dy;
+  }
+  delete[] teams;
 }
 
 void			HUDRenderer::renderCracks(SceneRenderer& renderer)
 {
   glPushMatrix();
   glTranslatef(GLfloat(renderer.getWindow().getWidth() >> 1),
-		GLfloat(renderer.getWindow().getViewHeight() >> 1), 0.0f);
+		GLfloat(renderer.getWindow().getHeight() >> 1), 0.0f);
   glLineWidth(3.0);
   hudColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINES);
@@ -842,7 +933,7 @@ void			HUDRenderer::renderCompose(SceneRenderer&)
 void			HUDRenderer::renderTimes(SceneRenderer& renderer)
 {
   const int centerx = renderer.getWindow().getWidth() >> 1;
-  const int centery = renderer.getWindow().getViewHeight() >> 1;
+  const int centery = renderer.getWindow().getHeight() >> 1;
 
   // draw frames per second
   if (fps > 0.0f) {
@@ -850,16 +941,16 @@ void			HUDRenderer::renderTimes(SceneRenderer& renderer)
     sprintf(buf, "FPS: %d", int(fps));
     hudColor3f(1.0f, 1.0f, 1.0f);
     headingFont.draw(buf, (float)(centerx - maxMotionSize),
-		(float)centery - (float)maxMotionSize -
-		headingFont.getSpacing() + headingFont.getDescent());    
+		(float)centery + (float) maxMotionSize +
+		3.0f * (headingFont.getSpacing() + headingFont.getDescent()));
   }
   if (drawTime > 0.0f) {
     char buf[20];
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
-    headingFont.draw(buf, (float)centerx,
-		(float)centery - (float)maxMotionSize -
-		headingFont.getSpacing() + headingFont.getDescent());    
+    headingFont.draw(buf, (float)centerx + maxMotionSize - headingFont.getWidth( buf ),
+		(float)centery + (float) maxMotionSize +
+		3.0f * (headingFont.getSpacing() + headingFont.getDescent()));
   }
 }
 
@@ -867,7 +958,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 {
   // get view metrics
   const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getViewHeight();
+  const int height = renderer.getWindow().getHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
   const int centerx = width >> 1;
@@ -875,14 +966,11 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   int i;
 
   // use one-to-one pixel projection
-  glScissor(ox, oy + renderer.getWindow().getPanelHeight(),
+  glScissor(ox, oy,
 		width, renderer.getWindow().getHeight());
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, width,
-	-GLdouble(renderer.getWindow().getPanelHeight()),
-	GLdouble(renderer.getWindow().getViewHeight()),
-	-1.0, 1.0);
+  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -899,16 +987,17 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // show player scoreboard
   float x, y;
-  if (showScore) renderScoreboard(renderer);
+  if (renderer.getScore()) renderScoreboard(renderer);
 
   // draw flag help
   if (flagHelpClock.isOn()) {
     hudColor3fv(messageColor);
-    y = flagHelpY + (float)flagHelpLines * alertFont.getSpacing();
+    flagHelpY = (float) ((renderer.getWindow().getHeight() >> 1) - maxMotionSize);
+    y = flagHelpY - minorFont.getAscent();
     const char* flagHelpBase = flagHelp[flagHelpIndex].getString();
     for (i = 0; i < flagHelpLines; i++) {
-      minorFont.draw(flagHelpBase, (float)(centerx - maxMotionSize), y);
       y -= minorFont.getSpacing();
+      minorFont.draw(flagHelpBase, (float)(centerx - minorFont.getWidth(flagHelpBase)/2.0), y);
       while (*flagHelpBase) flagHelpBase++;
       flagHelpBase++;
     }
@@ -926,24 +1015,35 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // draw targeting box
   hudColor3fv(hudColor);
-  glBegin(GL_LINE_LOOP);
+  glBegin(GL_LINE_LOOP); {
     glVertex2i(centerx - noMotionSize, centery - noMotionSize);
     glVertex2i(centerx + noMotionSize, centery - noMotionSize);
     glVertex2i(centerx + noMotionSize, centery + noMotionSize);
     glVertex2i(centerx - noMotionSize, centery + noMotionSize);
-  glEnd();
-  glBegin(GL_LINE_LOOP);
+  } glEnd();
+  glBegin(GL_POINTS); {
+    glVertex2i(centerx - noMotionSize, centery - noMotionSize);
+    glVertex2i(centerx + noMotionSize, centery - noMotionSize);
+    glVertex2i(centerx + noMotionSize, centery + noMotionSize);
+    glVertex2i(centerx - noMotionSize, centery + noMotionSize);
+  } glEnd();
+  glBegin(GL_LINE_LOOP); {
     glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
     glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
     glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
     glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
-  glEnd();
+  } glEnd();
+  glBegin(GL_POINTS); {
+    glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
+    glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
+    glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
+    glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
+  } glEnd();
 
   // draw heading strip
   if (True /* always draw heading strip */) {
     // first clip to area
-    glScissor(ox + centerx - maxMotionSize, oy + centery + maxMotionSize - 5 +
-		renderer.getWindow().getPanelHeight(),
+    glScissor(ox + centerx - maxMotionSize, oy + centery + maxMotionSize - 5,
 		2 * maxMotionSize, 15 + (int)(headingFont.getSpacing() + 0.5f));
 
     // draw heading mark
@@ -1012,10 +1112,9 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
       }
     }
     OpenGLGState::resetState();
- 
+
     // draw markers (give 'em a little more space on the sides)
-    glScissor(ox + centerx - maxMotionSize - 8, oy + centery + maxMotionSize +
-		renderer.getWindow().getPanelHeight(),
+    glScissor(ox + centerx - maxMotionSize - 8, oy + centery + maxMotionSize,
 		2 * maxMotionSize + 16, 10);
     glPushMatrix();
     glTranslatef((float)centerx, (float)(centery + maxMotionSize), 0.0f);
@@ -1056,8 +1155,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw altitude strip
   if (altitudeTape) {
     // clip to area
-    glScissor(ox + centerx + maxMotionSize - 5, oy +
-		centery - maxMotionSize + renderer.getWindow().getPanelHeight(),
+    glScissor(ox + centerx + maxMotionSize - 5, oy + centery - maxMotionSize,
 		(int)altitudeLabelMaxWidth + 15, 2 * maxMotionSize);
 
     // draw altitude mark
@@ -1134,19 +1232,15 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
 
   // get view metrics
   const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getViewHeight();
+  const int height = renderer.getWindow().getHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
 
   // use one-to-one pixel projection
-  glScissor(ox, oy + renderer.getWindow().getPanelHeight(),
-		width, renderer.getWindow().getHeight());
+  glScissor(ox, oy, width, height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, width,
-	-GLdouble(renderer.getWindow().getPanelHeight()),
-	GLdouble(renderer.getWindow().getViewHeight()),
-	-1.0, 1.0);
+  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -1196,45 +1290,120 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   glPopMatrix();
 }
 
+void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
+{
+  extern boolean gameOver;
+
+  // get view metrics
+  const int width = renderer.getWindow().getWidth();
+  const int height = renderer.getWindow().getHeight();
+  const int ox = renderer.getWindow().getOriginX();
+  const int oy = renderer.getWindow().getOriginY();
+
+  // use one-to-one pixel projection
+  glScissor(ox, oy, width, height);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  // draw alert messages
+  renderAlerts(renderer);
+
+  // show player scoreboard
+  if (renderer.getScore()) renderScoreboard(renderer);
+
+  // draw times
+  renderTimes(renderer);
+
+  // draw message composition
+  if (showCompose)
+    renderCompose(renderer);
+
+  // tell player what to do to start/resume playing
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank && globalClock.isOn()) {
+    float y = 0.5f * (float)height + bigFont.getSpacing();
+    if (gameOver) {
+      hudColor3fv(messageColor);
+      bigFont.draw(gameOverLabel,
+			0.5f * ((float)width - gameOverLabelWidth), y);
+    }
+  }
+
+  renderStatus(renderer);
+
+  // restore graphics state
+  glPopMatrix();
+}
+
 void			HUDRenderer::drawPlayerScore(const Player* player,
 					float x1, float x2, float x3, float y)
 {
   char score[40], kills[40];
-  char email[EmailLen + 10];
+#ifndef DEBUG
+  char email[EmailLen + 5];
+  sprintf(email, " (%s)", player->getEmailAddress());
+#else
+  char email[EmailLen + 25];
+  const PlayerId& id = player->getId();
+  sprintf(email, " %s:%d-%1x(%s)", inet_ntoa(id.serverHost),
+      ntohs(id.port), ntohs(id.number), player->getEmailAddress());
+#endif
   sprintf(score, "%d (%d-%d)", player->getScore(),
-			player->getWins(), player->getLosses());
+      player->getWins(), player->getLosses());
   if (LocalPlayer::getMyTank() != player)
     sprintf(kills, "%d/%d", player->getLocalWins(), player->getLocalLosses());
   else
-    sprintf(kills, "");
-  sprintf(email, " (%s)", player->getEmailAddress());
+    strcpy(kills, "");
+
+  // "Purple Team" is longest possible string for flag indicator
+  char flag[12]="";
+  FlagId flagid=player->getFlag();
+  if (flagid != NoFlag) {
+    sprintf(flag,"%s",
+	    Flag::getType(flagid) == FlagNormal ?
+	    Flag::getName(flagid) : Flag::getAbbreviation(flagid));
+  }
+
+  // indicate tanks which are paused or not responding
+  char status[5]="";
+  if (player->isNotResponding())
+    strcpy(status,"[nr]");
+  if (player->isPaused())
+    strcpy(status,"[p]");
 
   const float callSignWidth = minorFont.getWidth(player->getCallSign());
-
+  const float emailWidth = minorFont.getWidth(email);
+  const float flagWidth = minorFont.getWidth(flag);
   hudSColor3fv(Team::getRadarColor(player->getTeam()));
   minorFont.draw(score, x1, y);
   minorFont.draw(kills, x2, y);
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
+  minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
+  minorFont.draw(status, x3 + callSignWidth + flagWidth + emailWidth, y);
 }
 
 void			HUDRenderer::drawDeadPlayerScore(const Player* player,
 					float x1, float x2, float x3, float y)
 {
+  // removed this - disconnected players should *NOT* show up in the score list
   // draw dead player scores in a darker shade
   sDim = True;
   drawPlayerScore(player, x1, x2, x3, y);
   sDim = False;
 }
 
-void			HUDRenderer::drawTeamScore(int teamIndex,
-					float x1, float x2, float y)
+void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
 {
-  char score[40];
+  char score[44];
   Team& team = World::getWorld()->getTeam(teamIndex);
-  sprintf(score, "%d (%d-%d)", team.won - team.lost, team.won, team.lost);
+  sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
 
   hudColor3fv(Team::getRadarColor((TeamColor)teamIndex));
   minorFont.draw(score, x1, y);
-  minorFont.draw(Team::getName((TeamColor)teamIndex), x2, y);
 }
+// ex: shiftwidth=2 tabstop=8

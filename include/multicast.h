@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -61,3 +61,4 @@ int			recvMulticast(int fd, void* buffer,
 				int bufferLength, struct sockaddr_in*);
 
 #endif // BZF_MULTICAST_H
+// ex: shiftwidth=2 tabstop=8

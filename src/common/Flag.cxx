@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -94,15 +94,9 @@ void*			Flag::pack(void* buf) const
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(type));
   buf = owner.pack(buf);
-  buf = nboPackFloat(buf, position[0]);
-  buf = nboPackFloat(buf, position[1]);
-  buf = nboPackFloat(buf, position[2]);
-  buf = nboPackFloat(buf, launchPosition[0]);
-  buf = nboPackFloat(buf, launchPosition[1]);
-  buf = nboPackFloat(buf, launchPosition[2]);
-  buf = nboPackFloat(buf, landingPosition[0]);
-  buf = nboPackFloat(buf, landingPosition[1]);
-  buf = nboPackFloat(buf, landingPosition[2]);
+  buf = nboPackVector(buf, position);
+  buf = nboPackVector(buf, launchPosition);
+  buf = nboPackVector(buf, landingPosition);
   buf = nboPackFloat(buf, flightTime);
   buf = nboPackFloat(buf, flightEnd);
   buf = nboPackFloat(buf, initialVelocity);
@@ -116,15 +110,9 @@ void*			Flag::unpack(void* buf)
   buf = nboUnpackUShort(buf, data); status = FlagStatus(data);
   buf = nboUnpackUShort(buf, data); type = FlagType(data);
   buf = owner.unpack(buf);
-  buf = nboUnpackFloat(buf, position[0]);
-  buf = nboUnpackFloat(buf, position[1]);
-  buf = nboUnpackFloat(buf, position[2]);
-  buf = nboUnpackFloat(buf, launchPosition[0]);
-  buf = nboUnpackFloat(buf, launchPosition[1]);
-  buf = nboUnpackFloat(buf, launchPosition[2]);
-  buf = nboUnpackFloat(buf, landingPosition[0]);
-  buf = nboUnpackFloat(buf, landingPosition[1]);
-  buf = nboUnpackFloat(buf, landingPosition[2]);
+  buf = nboUnpackVector(buf, position);
+  buf = nboUnpackVector(buf, launchPosition);
+  buf = nboUnpackVector(buf, landingPosition);
   buf = nboUnpackFloat(buf, flightTime);
   buf = nboUnpackFloat(buf, flightEnd);
   buf = nboUnpackFloat(buf, initialVelocity);
@@ -178,3 +166,4 @@ const float*		Flag::getColor(FlagId id)
       return superColor;
   }
 }
+// ex: shiftwidth=2 tabstop=8

@@ -45,13 +45,13 @@ class MacVisual : public BzfVisual {
 
     boolean		     build();
     AGLPixelFormat get () const { return pixel_format; }
-       
+
     void    reset () { attributes.clear(); }
     void		addAttribute1(GLint attribute);
   protected:
     int			findAttribute(GLint attribute);
-    
-    void		addAttribute2(GLint attribute, int value);      
+
+    void		addAttribute2(GLint attribute, int value);
     void		removeAttribute1(GLint attribute);
     void    removeAttribute2(GLint attribute);
 
@@ -59,8 +59,9 @@ class MacVisual : public BzfVisual {
     const MacDisplay *display;
     // attributes we would like for our pixel format
     // last attribute must be AGL_NONE
-    vector<GLint>       attributes; 
+    vector<GLint>       attributes;
     AGLPixelFormat      pixel_format;
-};  
+};
 
 #endif // BZF_MACVISUAL_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -21,13 +21,7 @@ targets: tardist
 
 dist: $(_FORCE)
 	@VERSION=$(VERSION); export VERSION; \
-	if test "$(RELEASEDEF)" = "-DALPHA_RELEASE"; then \
-	  RELEASETYPE=Alpha; \
-	elif test "$(RELEASEDEF)" = "-DBETA_RELEASE"; then \
-	  RELEASETYPE=Beta; \
-	else \
-	  RELEASETYPE=""; \
-	fi; export RELEASETYPE; \
+	VERSIONID=$(VERSIONID); export VERSIONID; \
 	if test ! -d $(PACKAGEDIR); then $(MKDIR) $(PACKAGEDIR); fi; \
 	if test ! -d $(PACKAGEDIR)/irix; then $(MKDIR) $(PACKAGEDIR)/irix; fi; \
 	($(CD) $(PACKAGEDIR)/irix; $(RM) *); \

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -28,7 +28,7 @@ class ViewFrustum {
 			ViewFrustum();
 			~ViewFrustum();
 
-    const GLfloat*	getEye() const;	
+    const GLfloat*	getEye() const;
     const GLfloat*	getDirection() const;
     const GLfloat*	getUp() const;
     const GLfloat*	getRight() const;
@@ -44,9 +44,8 @@ class ViewFrustum {
     GLfloat		getAreaFactor() const;
 
     void		setView(const GLfloat* eye, const GLfloat* target);
-    void		setProjection(GLfloat fov, GLfloat m_near,
-					GLfloat m_far, GLint width,
-					GLint height, GLint viewHeight);
+    void		setProjection(GLfloat fov, GLfloat m_near, GLfloat m_far,
+					GLint width, GLint height);
     void		setOffset(GLfloat eyeOffset, GLfloat focalPlane);
 
     void		executeProjection() const;
@@ -143,3 +142,4 @@ inline GLfloat		ViewFrustum::getAreaFactor() const
 }
 
 #endif // BZF_VIEW_FRUSTUM_H
+// ex: shiftwidth=2 tabstop=8

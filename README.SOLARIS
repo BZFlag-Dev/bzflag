@@ -21,6 +21,9 @@ Bjorn's fixes included:
   * changed u_int16_t and u_int32_t to uint16_t and uint32_t
   * INADDR_NONE not defined
 
+Bjorn reports that gcc 2.95 doesn't compile bzflag but gcc
+2.95.2 does.
+
 --
 The following are the comments of Andrew White.
 
@@ -68,7 +71,7 @@ Known Problems:
 - When compiling I get errors when make tries to build bzfrelay.
 
 	Time isn't on my side at the moment so this little utility
-	takes last place in the to-do list. I feel it's more 
+	takes last place in the to-do list. I feel it's more
 	important to get the sound code working first.
 
 	Basically, ignore these errors! Everything has been
@@ -101,9 +104,9 @@ Known Problems:
 - bzflag doesn't work when I use WindowMaker - it displays a large
   window then core dumps!
 
-	I'm still looking into this one. Try using dtwm or olwm 
+	I'm still looking into this one. Try using dtwm or olwm
 	instead.
 
 
 
-For any comments please mail me at: andrew.white@sun.com 
+For any comments please mail me at: andrew.white@sun.com

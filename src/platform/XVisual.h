@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -50,11 +50,16 @@ class XVisual : public BzfVisual {
     void		removeAttribute(int index);
     void		editAttribute(int index, int value);
 
+    boolean		matchRequirements(XVisualInfo*) const;
+    static boolean	visualClassIsBetter(int thisBetter, int thanThis);
+
   private:
-    XDisplay::Rep*	display;    boolean		multisampleExt;
+    XDisplay::Rep*	display;
+    boolean		multisampleExt;
     int			attributes[65];
     int			attributeCount;
     XVisualInfo*	visual;
 };
 
 #endif // BZF_XVISUAL_H
+// ex: shiftwidth=2 tabstop=8

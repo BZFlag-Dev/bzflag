@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,7 +18,7 @@
 #define	BZF_LINUXDISPLAY_H
 
 #include "XDisplay.h"
-#if defined(__linux__) && defined(XF86VIDMODE_EXT)
+#if defined(XF86VIDMODE_EXT)
 #define USE_XF86VIDMODE_EXT
 #define private c_private
 #include <X11/extensions/xf86vmode.h>
@@ -33,6 +33,10 @@ class LinuxDisplayMode : public XDisplayMode {
 
     ResInfo**		init(XDisplay* owner, int& num, int& current);
     boolean		set(int);
+    boolean		setDefault(int);
+
+  private:
+    boolean		doSet(int, boolean position);
 
   private:
     XDisplay*		display;
@@ -45,3 +49,4 @@ class LinuxDisplayMode : public XDisplayMode {
 };
 
 #endif // BZF_LINUXDISPLAY_H
+// ex: shiftwidth=2 tabstop=8

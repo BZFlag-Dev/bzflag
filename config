@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -18,14 +18,13 @@
 # increase build number for every potentially released build.
 # must change this in MSDev project, too.
 #
-VERSION = 10703002
+VERSION = 10705007
 
 #
-# uncomment one of these to change the release type.
-# default is a normal release.
+# version id string and build number.  these should be consistent with
+# VERSION.
 #
-#RELEASEDEF = -DALPHA_RELEASE
-#RELEASEDEF = -DBETA_RELEASE
+VERSIONID = 1.7e7
 
 #
 # uncomment this to build in an expiration date (month/day/year)
@@ -35,18 +34,11 @@ VERSION = 10703002
 #
 # uncomment to enable debug render modes
 #
-#DEBUG_RENDERING = -DDEBUG_RENDERING
+ifdef DEBUG
+DEBUG_RENDERING = -DDEBUG_RENDERING
+endif
 
 #
 # uncomment to enable robot tanks
 #
 ROBOTS = -DROBOT
-
-#
-# make optimized (first pair) or debug build (second pair)
-#
-COPTIMIZER    = $(COPT)
-CXXOPTIMIZER  = $(CXXOPT)
-#COPTIMIZER   = $(CDEBUG)
-#CXXOPTIMIZER = $(CXXDEBUG)
-

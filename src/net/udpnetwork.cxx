@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2001 Tim Riker
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -56,7 +56,7 @@ int			openUDPNetwork(int port, struct sockaddr_in* addr)
     close(fd);
     return -1;
   }
-#else if defined(SO_REUSEADDR)
+#elif defined(SO_REUSEADDR)
   /* set reuse address */
   opt = optOn;
   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
@@ -118,3 +118,4 @@ int			recvUDPNetwork(int fd, void* buffer, int bufferLength,
   return byteCount;
 }
 
+// ex: shiftwidth=2 tabstop=8

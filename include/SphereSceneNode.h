@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,7 +35,16 @@ class SphereFragmentSceneNode : public SceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
-  protected:
+  // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
+  // following declaration isn't public it generates an error when trying
+  // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
+  // SphereSceneNode::SphereRenderNode.  i think this is a bug in the
+  // compiler because:
+  //   no other compiler complains
+  //   public/protected/private adjust access not visibility
+  //     SphereSceneNode isn't requesting access, it's granting it
+//  protected:
+  public:
     class FragmentRenderNode : public RenderNode {
       public:
 			FragmentRenderNode(const SphereSceneNode*,
@@ -50,15 +59,6 @@ class SphereFragmentSceneNode : public SceneNode {
 	int		theta2, phi2;
     };
     friend class FragmentRenderNode;
-
-    // Irix 7.2.1 compilers appear to have a bug.  without the following
-    // friend declaration it generates an error when trying to declare
-    // SphereFragmentSceneNode::FragmentRenderNode a friend.  i think
-    // this is a bug in the compiler because:
-    //   no other compiler complains
-    //   public/protected/private adjust access not visibility
-    //     SphereSceneNode isn't requesting access, it's granting it
-    friend class SphereSceneNode;
 
   private:
     SphereSceneNode*	parentSphere;
@@ -121,3 +121,4 @@ class SphereSceneNode : public SceneNode {
 };
 
 #endif // BZF_FLAG_SCENE_NODE_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,7 +23,13 @@
 #endif
 #define NULL 0
 
+/* insert any other broken OS conditionals here */
+#if !defined(_WIN32)
+using namespace std;
+#endif
+
 #include <iostream.h>
 
 #endif
 
+// ex: shiftwidth=2 tabstop=8

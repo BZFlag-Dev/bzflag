@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,8 +23,9 @@
 #include <math.h>
 
 RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
-				ServerLink* _server) :
-				BaseLocalPlayer(_id, _name, "anonymous"),
+				ServerLink* _server,
+				const char* _email = "anonymous") :
+				BaseLocalPlayer(_id, _name, _email),
 				server(_server),
 				target(NULL),
 				pathIndex(0),
@@ -204,9 +205,23 @@ void			RobotPlayer::doUpdateMotion(float dt)
   velocity[1] = (position[1] - oldPosition[1]) / dt0;
   velocity[2] = getVelocity()[2] + Gravity * dt0;
   position[2] += dt0 * velocity[2];
-  if (position[2] <= 0.0f) { position[2] = 0.0f; velocity[2] = 0.0f; }
+  if (position[2] <= 0.0f) {
+    position[2] = 0.0f;
+    velocity[2] = 0.0f;
+  }
 
-  move(position, azimuth);
+  // stop if headed into a building
+  if (World::getWorld()->inBuilding(position, 3.0f * TankRadius)) {
+    position[0] = oldPosition[0];
+    position[1] = oldPosition[1];
+    position[2] = oldPosition[2];
+    velocity[0] = 0.0f;
+    velocity[1] = 0.0f;
+    velocity[2] = 0.0f;
+  }
+  else {
+    move(position, azimuth);
+  }
   setVelocity(velocity);
   setAngularVelocity((getAngle() - oldAzimuth) / dt0);
 }
@@ -460,3 +475,4 @@ void			RobotPlayer::findPath(RegionPriorityQueue& queue,
   }
 }
 
+// ex: shiftwidth=2 tabstop=8

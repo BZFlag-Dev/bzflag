@@ -90,6 +90,10 @@ SOURCE=..\src\common\AList.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\bzsignal.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\BzfString.cxx
 # End Source File
 # Begin Source File
@@ -99,10 +103,6 @@ SOURCE=..\src\common\ErrorHandler.cxx
 # Begin Source File
 
 SOURCE=..\src\common\Flag.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\common\Ping.cxx
 # End Source File
 # Begin Source File
 
@@ -147,10 +147,6 @@ SOURCE=..\include\Flag.h
 # Begin Source File
 
 SOURCE=..\include\global.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\Ping.h
 # End Source File
 # Begin Source File
 

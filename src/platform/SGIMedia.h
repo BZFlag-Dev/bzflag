@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -29,7 +29,6 @@ class SGIMedia : public BzfMedia {
     void		sleep(float);
     boolean		openAudio();
     void		closeAudio();
-    boolean		isAudioBrainDead() const;
     boolean		startAudioThread(void (*)(void*), void*);
     void		stopAudioThread();
     boolean		hasAudioThread() const;
@@ -68,3 +67,4 @@ class SGIMedia : public BzfMedia {
 };
 
 #endif // BZF_SGIMEDIA_H
+// ex: shiftwidth=2 tabstop=8

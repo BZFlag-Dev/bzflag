@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -46,8 +46,6 @@ class BackgroundRenderer {
 					const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
 
-    void		notifyWorldChange();
-
   protected:
     void		drawSky(SceneRenderer&);
     void		drawGround(SceneRenderer&);
@@ -62,6 +60,9 @@ class BackgroundRenderer {
   private:
 			BackgroundRenderer(const BackgroundRenderer&);
     BackgroundRenderer&	operator=(const BackgroundRenderer&);
+
+    void		doInitDisplayLists();
+    static void		initDisplayLists(void*);
 
   private:
     // rendering state
@@ -93,6 +94,7 @@ class BackgroundRenderer {
     boolean		mountainsAvailable;
     boolean		mountainsVisible;
     int			numMountainTextures;
+    int			mountainsMinWidth;
     OpenGLGState*	mountainsGState;
     OpenGLDisplayList*	mountainsList;
 
@@ -174,3 +176,4 @@ inline void		BackgroundRenderer::setSimpleGround(boolean _simple)
 }
 
 #endif // BZF_BACKGROUND_RENDERER_H
+// ex: shiftwidth=2 tabstop=8

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,6 +16,11 @@
 
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
+
+// Might we be BSDish? sys/param.h has BSD defined if so
+#if (defined(__unix__) || defined(unix)) && !defined(USG)
+#include <sys/param.h>
+#endif
 
 #if defined(_WIN32)
 // turn off bogus `this used in base member initialization list'
@@ -52,7 +57,7 @@ const boolean		False = 0;
 const boolean		True = !False;
 
 // some platforms don't have float versions of the math library
-#if defined(_old_linux_) || defined(sun)
+#if defined(_old_linux_) || defined(_MACOSX_) || defined(sun)
 #define	asinf		(float)asin
 #define	atanf		(float)atan
 #define	atan2f		(float)atan2
@@ -74,17 +79,60 @@ const boolean		True = !False;
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)
 
-#if !defined(_WIN32)
 
+#if !defined(_WIN32) & !defined(macintosh)
+
+#ifndef BSD
 #include <values.h>
+#endif
 #include <sys/types.h>
 
-#if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
+#if defined(__linux) || defined(_MACOSX_) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
 #endif
+#if defined(sun)
+typedef signed short	int16_t;
+typedef ushort_t	uint16_t;
+typedef signed int	int32_t;
+typedef uint_t		uint32_t;
+#endif
 
 #endif
+
+#if defined( macintosh )
+
+// missing constants
+
+  #ifndef MAXFLOAT
+    #define	MAXFLOAT	3.402823466e+38f
+  #endif
+
+  #ifndef M_PI
+    #define	M_PI		  3.14159265358979323846f
+  #endif
+
+  #ifndef M_SQRT1_2
+    #define	M_SQRT1_2	0.70710678118654752440f
+  #endif
+
+// need some integer types
+  #include <inttypes.h>
+
+// my own strcasecmp, missing in MSL
+// maybe this should be in BzfString.h ?
+  #ifdef __MWERKS__
+    #include "strcasecmp.h"
+  #endif
+
+  #ifndef setenv
+    #define setenv(a,b,c)
+  #endif
+
+  #ifndef putenv
+    #define putenv(a)
+  #endif
+#endif /* defined( macintosh ) */
 
 #if defined(_WIN32)
 
@@ -119,3 +167,4 @@ typedef unsigned int	uint32_t;
 #ifdef True
 #undef True
 #endif
+// ex: shiftwidth=2 tabstop=8

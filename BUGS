@@ -36,3 +36,14 @@ known bugs in bzflag
 * error dialogs on win32 may appear off screen
    only when display resolution was changed
 
+* collision problems
+   can sometimes get stuck on a pyramid or in a corner.  also
+   picking up the obese flag close to a building can cause you
+   to get stuck.
+
+* robots are just too stupid
+
+* robots can sometimes go through buildings
+   the code to generate the cells of open space are susceptible
+   to roundoff error, causing an open cell inside a building.
+

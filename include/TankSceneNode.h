@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -32,7 +32,16 @@ class TankIDLSceneNode : public SceneNode {
     void		notifyStyleChange(const SceneRenderer&);
     void		addRenderNodes(SceneRenderer&);
 
-  protected:
+  // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
+  // following declaration isn't public it generates an error when trying
+  // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
+  // SphereSceneNode::SphereRenderNode.  i think this is a bug in the
+  // compiler because:
+  //   no other compiler complains
+  //   public/protected/private adjust access not visibility
+  //     SphereSceneNode isn't requesting access, it's granting it
+//  protected:
+  public:
     class IDLRenderNode : public RenderNode {
       public:
 			IDLRenderNode(const TankIDLSceneNode*);
@@ -45,15 +54,6 @@ class TankIDLSceneNode : public SceneNode {
 	static const GLfloat	idlVertex[][3];
     };
     friend class IDLRenderNode;
-
-    // Irix 7.2.1 compilers appear to have a bug.  without the following
-    // friend declaration it generates an error when trying to declare
-    // SphereFragmentSceneNode::FragmentRenderNode a friend.  i think
-    // this is a bug in the compiler because:
-    //   no other compiler complains
-    //   public/protected/private adjust access not visibility
-    //     SphereSceneNode isn't requesting access, it's granting it
-    friend class TankSceneNode;
 
   private:
     const TankSceneNode	*tank;
@@ -124,12 +124,16 @@ class TankSceneNode : public SceneNode {
 	};
 
 	virtual GLuint	getParts(Style) = 0;
+	virtual void	freeParts() = 0;
 	void		renderParts();
 	void		renderPart(Part);
 	void		renderLights();
 	void		prepStyle(Style);
 	void		doVertex3f(GLfloat x, GLfloat y, GLfloat z);
 	void		doNormal3f(GLfloat x, GLfloat y, GLfloat z);
+      private:
+	void		doInitContext();
+	static void	initContext(void*);
       protected:
 	const TankSceneNode* sceneNode;
 	const GLfloat*	color;
@@ -152,6 +156,7 @@ class TankSceneNode : public SceneNode {
 			~LowTankRenderNode();
       protected:
 	GLuint		getParts(Style);
+	void		freeParts();
 	void		makeBody();
 	void		makeBarrel();
 	void		makeTurret();
@@ -166,6 +171,7 @@ class TankSceneNode : public SceneNode {
 			~MedTankRenderNode();
       protected:
 	GLuint		getParts(Style);
+	void		freeParts();
 	void		makeBody();
 	void		makeBarrel();
 	void		makeTurret();
@@ -180,6 +186,7 @@ class TankSceneNode : public SceneNode {
 			~HighTankRenderNode();
       protected:
 	GLuint		getParts(Style);
+	void		freeParts();
 	void		makeBody();
 	void		makeBarrel();
 	void		makeTurret();
@@ -212,3 +219,4 @@ class TankSceneNode : public SceneNode {
 };
 
 #endif // BZF_TANK_SCENE_NODE_H
+// ex: shiftwidth=2 tabstop=8

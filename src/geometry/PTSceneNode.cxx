@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -204,7 +204,7 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
       myColor4fv(outerColor);
       glVertex2fv(corona[0]);
       glEnd();
-  
+
       // draw core
       glBegin(GL_TRIANGLE_FAN);
       myColor3fv(innerColor);
@@ -245,7 +245,7 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
       glVertex2fv(core[1]);
       glVertex2fv(corona[0]);
       glEnd();
-  
+
       // draw core
       myStipple(1.0f);
       glBegin(GL_TRIANGLE_FAN);
@@ -268,3 +268,4 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
 
   glPopMatrix();
 }
+// ex: shiftwidth=2 tabstop=8

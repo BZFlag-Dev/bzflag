@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -12,21 +12,21 @@
 #
 # configuration for irix mips3
 #
-CONFIG  = irix-mips3
+CONFIG	= irix-mips3
 
 #
 # tools
 #
-AR      = $(TOOLROOT)/usr/bin/ar cru
+AR	= $(TOOLROOT)/usr/bin/ar cru
 CC	= $(TOOLROOT)/usr/bin/cc
 CXX	= $(TOOLROOT)/usr/bin/CC
 CD	= cd
-CP      = /usr/bin/cp
+CP	= /usr/bin/cp
 LD	= $(TOOLROOT)/usr/bin/ld
 MKDIR	= /usr/bin/mkdir
-NROFF   = $(TOOLROOT)/usr/bin/nroff
-RM      = /usr/bin/rm -f
-RMR     = $(RM) -r
+NROFF	= $(TOOLROOT)/usr/bin/nroff
+RM	= /usr/bin/rm -f
+RMR	= $(RM) -r
 SHELL	= /bin/sh
 ECHO	= echo
 
@@ -41,8 +41,14 @@ PCXXDEFS =
 #
 PCOPTS   = -xansi -fullwarn -n32 -mips3
 PCXXOPTS = -fullwarn -n32 -mips3
-COPT     = -DNDEBUG -O3
-CXXOPT   = -DNDEBUG -O3 -OPT:fold_arith_limit=3000
+# srosa/SGI -- fold_arith.. is obsolete. Couple other flags were missing
+#COPT     = -DNDEBUG -O3
+#CXXOPT   = -DNDEBUG -O3 -OPT:fold_arith_limit=3000
+COPT     = -DNDEBUG -O3 -OPT:Olimit=0:space=ON -TENV:X=1 -CG:unique_exit=on \
+-OPT:IEEE_arithmetic=1:roundoff=0:wrap_around_unsafe_opt=off
+CXXOPT   = -DNDEBUG -O3 -OPT:Olimit=0:space=ON -TENV:X=1 -CG:unique_exit=on \
+-OPT:IEEE_arithmetic=1:roundoff=0:wrap_around_unsafe_opt=off
+
 CDEBUG   = -DDEBUG -g
 CXXDEBUG = -DDEBUG -g
 
@@ -54,8 +60,11 @@ CXXDEBUG = -DDEBUG -g
 #   1375 -- destructor is not virtual
 #   1376 -- no accessible constructor
 #   1681 -- functions don't match -- virtual function override intended?
-CWOFF    = -diag_suppress 1174
-CXXWOFF  = -diag_suppress 1174,1209,1233,1314,1375,1376,1681
+# srosa/SGI -- 1376 does not exist anymore. Couple others were missing
+# CWOFF    = -diag_suppress 1174
+# CXXWOFF  = -diag_suppress 1174,1209,1233,1314,1375,1376,1681
+CWOFF    = -diag_suppress 1009,1014,1107,1110,1116,1164,1174,1185,1188,1204,1230,1233
+CXXWOFF  = -diag_suppress 1174,1209,1233,1314,1375,1681
 
 #
 # search paths

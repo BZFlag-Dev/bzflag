@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -376,7 +376,7 @@ int main(int argc, char** argv)
     if (outFileName) {
 	outFile = fopen(outFileName, "wb");
 	if (!outFile) {
-	    fprintf(stderr, "can't open input file %s\n", inFileName);
+	    fprintf(stderr, "can't open output file %s\n", outFileName);
 	    return 1;
 	}
     }
@@ -490,3 +490,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
+// ex: shiftwidth=2 tabstop=8

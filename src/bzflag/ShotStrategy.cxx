@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,9 +27,9 @@
 #include "PlayerLink.h"
 #include "Team.h"
 
-static OpenGLTexture	boltTexture[NumTeams];
-static OpenGLTexture	laserTexture;
-static OpenGLTexture	gmTexture;
+static OpenGLTexture*	boltTexture[NumTeams];
+static OpenGLTexture*	laserTexture[NumTeams];
+static OpenGLTexture*	gmTexture;
 
 //
 // ShotPathStrategy
@@ -48,13 +48,40 @@ ShotStrategy::~ShotStrategy()
 
 void			ShotStrategy::init()
 {
-  boltTexture[RogueTeam] = getTexture("ybolt", OpenGLTexture::Linear);
-  boltTexture[RedTeam] = getTexture("rbolt", OpenGLTexture::Linear);
-  boltTexture[GreenTeam] = getTexture("gbolt", OpenGLTexture::Linear);
-  boltTexture[BlueTeam] = getTexture("bbolt", OpenGLTexture::Linear);
-  boltTexture[PurpleTeam] = getTexture("pbolt", OpenGLTexture::Linear);
-  laserTexture = getTexture("laser", OpenGLTexture::Max);
-  gmTexture = getTexture("missile", OpenGLTexture::Max);
+  int i;
+  for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++)
+    boltTexture[i] = new OpenGLTexture;
+  for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++)
+    laserTexture[i] = new OpenGLTexture;
+  gmTexture = new OpenGLTexture;
+
+  *boltTexture[RogueTeam] = getTexture("ybolt", OpenGLTexture::Linear);
+  *boltTexture[RedTeam] = getTexture("rbolt", OpenGLTexture::Linear);
+  *boltTexture[GreenTeam] = getTexture("gbolt", OpenGLTexture::Linear);
+  *boltTexture[BlueTeam] = getTexture("bbolt", OpenGLTexture::Linear);
+  *boltTexture[PurpleTeam] = getTexture("pbolt", OpenGLTexture::Linear);
+  *laserTexture[RogueTeam] = getTexture("ylaser", OpenGLTexture::Max);
+  *laserTexture[RedTeam] = getTexture("rlaser", OpenGLTexture::Max);
+  *laserTexture[GreenTeam] = getTexture("glaser", OpenGLTexture::Max);
+  *laserTexture[BlueTeam] = getTexture("blaser", OpenGLTexture::Max);
+  *laserTexture[PurpleTeam] = getTexture("plaser", OpenGLTexture::Max);
+  *gmTexture = getTexture("missile", OpenGLTexture::Max);
+}
+
+void			ShotStrategy::done()
+{
+  int i;
+  delete gmTexture;
+  gmTexture = NULL;
+
+  for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++) {
+    delete boltTexture[i];
+    boltTexture[i] = NULL;
+  }
+  for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++) {
+    delete laserTexture[i];
+    laserTexture[i] = NULL;
+  }
 }
 
 boolean			ShotStrategy::isStoppedByHit() const
@@ -113,23 +140,21 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
   const Obstacle* closestObstacle = NULL;
 
   // check walls
-  WallObstaclesCIteratorPtr wallScan(World::getWorld()->
-					getWalls().newCIterator());
-  while (!wallScan->isDone()) {
-    const WallObstacle& wall = wallScan->getItem();
+  WallObstaclesCIterator wallScan(World::getWorld()->getWalls());
+  while (!wallScan.isDone()) {
+    const WallObstacle& wall = wallScan.getItem();
     const float wallt = wall.intersect(ray);
     if (wallt > min && wallt < t) {
       t = wallt;
       closestObstacle = &wall;
     }
-    wallScan->next();
+    wallScan.next();
   }
 
   // check teleporter borders
-  TeleportersCIteratorPtr teleporterScan(World::getWorld()->
-					getTeleporters().newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(World::getWorld()->getTeleporters());
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     const float telet = teleporter.intersect(ray);
     int face;
     if (telet > min && telet < t &&
@@ -137,33 +162,42 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
       t = telet;
       closestObstacle = &teleporter;
     }
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   // check boxes
-  BoxBuildingsCIteratorPtr boxScan(World::getWorld()->
-						getBoxes().newCIterator());
-  while (!boxScan->isDone()) {
-    const BoxBuilding& box = boxScan->getItem();
+  BoxBuildingsCIterator boxScan(World::getWorld()->getBoxes());
+  while (!boxScan.isDone()) {
+    const BoxBuilding& box = boxScan.getItem();
     const float boxt = box.intersect(ray);
     if (boxt > min && boxt < t) {
       t = boxt;
       closestObstacle = &box;
     }
-    boxScan->next();
+    boxScan.next();
+  }
+
+  BaseBuildingsCIterator baseScan(World::getWorld()->getBases());
+  while(!baseScan.isDone()) {
+    const BaseBuilding &baseb = baseScan.getItem();
+    const float baset = baseb.intersect(ray);
+    if(baset > min && baset < t) {
+      t = baset;
+      closestObstacle = &baseb;
+    }
+    baseScan.next();
   }
 
   // check pyramids
-  PyramidBuildingsCIteratorPtr pyramidScan(World::getWorld()->
-						getPyramids().newCIterator());
-  while (!pyramidScan->isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan->getItem();
+  PyramidBuildingsCIterator pyramidScan(World::getWorld()->getPyramids());
+  while (!pyramidScan.isDone()) {
+    const PyramidBuilding& pyramid = pyramidScan.getItem();
     const float pyrt = pyramid.intersect(ray);
     if (pyrt > min && pyrt < t) {
       t = pyrt;
       closestObstacle = &pyramid;
     }
-    pyramidScan->next();
+    pyramidScan.next();
   }
 
   return closestObstacle;
@@ -175,17 +209,16 @@ const Teleporter*	ShotStrategy::getFirstTeleporter(const Ray& ray,
   const Teleporter* closestTeleporter = NULL;
   int face;
 
-  TeleportersCIteratorPtr teleporterScan(World::getWorld()->
-					getTeleporters().newCIterator());
-  while (!teleporterScan->isDone()) {
-    const Teleporter& teleporter = teleporterScan->getItem();
+  TeleportersCIterator teleporterScan(World::getWorld()->getTeleporters());
+  while (!teleporterScan.isDone()) {
+    const Teleporter& teleporter = teleporterScan.getItem();
     const float telet = teleporter.isTeleported(ray, face);
     if (telet > min && telet < t) {
       t = telet;
       f = face;
       closestTeleporter = &teleporter;
     }
-    teleporterScan->next();
+    teleporterScan.next();
   }
 
   return closestTeleporter;
@@ -288,8 +321,8 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path) :
   boltSceneNode = new BoltSceneNode(_path->getPosition());
   const float* c = Team::getRadarColor(team);
   boltSceneNode->setColor(c[0], c[1], c[2]);
-  if (boltTexture[team].isValid())
-    boltSceneNode->setTexture(boltTexture[team]);
+  if (boltTexture[team] && boltTexture[team]->isValid())
+    boltSceneNode->setTexture(*boltTexture[team]);
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
@@ -480,16 +513,28 @@ void			SegmentedShotStrategy::addShot(
     TeamColor tmpTeam = colorblind ? RogueTeam : team;
     const float* c = Team::getRadarColor(tmpTeam);
     boltSceneNode->setColor(c[0], c[1], c[2]);
-    if (boltTexture[tmpTeam].isValid())
-      boltSceneNode->setTexture(boltTexture[tmpTeam]);
+    if (boltTexture[tmpTeam] && boltTexture[tmpTeam]->isValid())
+      boltSceneNode->setTexture(*boltTexture[tmpTeam]);
   }
   scene->addDynamicNode(boltSceneNode);
 }
 
 void			SegmentedShotStrategy::radarRender() const
 {
+  // Display lines with a dot for shots
+  const float* vel = getPath().getVelocity();
+  const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+  const float *orig = getPath().getPosition();
+  float dir[3];
+  dir[0] = vel[0] * d * ShotTailLength;
+  dir[1] = vel[1] * d * ShotTailLength;
+  dir[2] = vel[2] * d * ShotTailLength;
+  glBegin(GL_LINES);
+  glVertex2fv(orig);
+  glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+  glEnd();
   glBegin(GL_POINTS);
-    glVertex2fv(getPath().getPosition());
+  glVertex2fv(orig);
   glEnd();
 }
 
@@ -573,7 +618,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
       switch (e) {
-        case Stop:
+	case Stop:
 	  timeLeft = 0.0f;
 	  break;
 
@@ -590,7 +635,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	  reason = ShotPathSegment::Ricochet;
 	  break;
 
-        case Through:
+	case Through:
 	  assert(0);
 	}
       }
@@ -770,7 +815,8 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
     dir[1] = t * rawdir[1];
     dir[2] = t * rawdir[2];
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (laserTexture.isValid()) laserNodes[i]->setTexture(laserTexture);
+    if (laserTexture[team] && laserTexture[team]->isValid())
+      laserNodes[i]->setTexture(*laserTexture[team]);
   }
   setCurrentSegment(numSegments - 1);
 }
@@ -809,7 +855,7 @@ void			LaserStrategy::radarRender() const
       const float* direction = segment.ray.getDirection();
       const float dt = segment.end - segment.start;
       glVertex2fv(origin);
-      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);  
+      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
     }
   glEnd();
 }
@@ -832,11 +878,12 @@ static float		limitAngle(float a)
 
 GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 				ShotStrategy(_path),
+				renderTimes(0),
 				needUpdate(True)
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition());
-  if (gmTexture.isValid()) {
-    ptSceneNode->setTexture(gmTexture);
+  if (gmTexture && gmTexture->isValid()) {
+    ptSceneNode->setTexture(*gmTexture);
     ptSceneNode->setTextureAnimation(4, 4);
     ptSceneNode->setColor(1.0f, 0.2f, 0.0f);
     ptSceneNode->setFlares(True);
@@ -989,6 +1036,9 @@ void			GuidedMissileStrategy::update(float dt)
   newDirection[1] = sinf(azimuth) * cosf(elevation);
   newDirection[2] = sinf(elevation);
   Ray ray = Ray(nextPos, newDirection);
+
+  // Changed: GM leave smoke trail, call add puff every 3 updates
+  if ((++renderTimes % 3) == 0) addShotPuff(nextPos);
 
   // get next position
   ray.getPoint(dt * ShotSpeed, nextPos);
@@ -1214,8 +1264,20 @@ void			GuidedMissileStrategy::expire()
 
 void			GuidedMissileStrategy::radarRender() const
 {
+  // Display lines with a dot for shots
+  const float* vel = getPath().getVelocity();
+  const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+  const float *orig = getPath().getPosition();
+  float dir[3];
+  dir[0] = vel[0] * d * ShotTailLength;
+  dir[1] = vel[1] * d * ShotTailLength;
+  dir[2] = vel[2] * d * ShotTailLength;
+  glBegin(GL_LINES);
+  glVertex2fv(orig);
+  glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+  glEnd();
   glBegin(GL_POINTS);
-    glVertex2fv(getPath().getPosition());
+  glVertex2fv(orig);
   glEnd();
 }
 
@@ -1234,7 +1296,10 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
 
   // make scene node
   shockNode = new SphereSceneNode(path->getPosition(), ShockInRadius);
-  shockNode->setColor(1.0f, 1.0f, 1.0f, 0.75f);
+  Player* p = lookupPlayer(path->getPlayer());
+  TeamColor team = p ? p->getTeam() : RogueTeam;
+  const float* c = Team::getRadarColor(team);
+  shockNode->setColor(c[0], c[1], c[2], 0.75f);
 }
 
 ShockWaveStrategy::~ShockWaveStrategy()
@@ -1251,7 +1316,10 @@ void			ShockWaveStrategy::update(float dt)
   const GLfloat frac = (radius - ShockInRadius) /
 			(ShockOutRadius - ShockInRadius);
   shockNode->move(getPath().getPosition(), radius);
-  shockNode->setColor(1.0f, 1.0f, 1.0f, 0.75f - 0.5f * frac);
+  Player* p = lookupPlayer(getPath().getPlayer());
+  TeamColor team = p ? p->getTeam() : RogueTeam;
+  const float* c = Team::getRadarColor(team);
+  shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
 
   // expire when full size
   if (radius >= ShockOutRadius) setExpired();
@@ -1302,3 +1370,4 @@ void			ShockWaveStrategy::radarRender() const
     }
   glEnd();
 }
+// ex: shiftwidth=2 tabstop=8

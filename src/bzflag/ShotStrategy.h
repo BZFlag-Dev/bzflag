@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,6 +39,7 @@ class ShotStrategy {
     virtual		~ShotStrategy();
 
     static void		init();
+    static void		done();
 
     virtual void	update(float dt) = 0;
     virtual float	checkHit(const BaseLocalPlayer*, float pos[3]) const = 0;
@@ -105,6 +106,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     float		checkHit(const BaseLocalPlayer*, float[3]) const;
     void		addShot(SceneDatabase*, boolean colorblind);
     void		radarRender() const;
+    TeamColor	team;
 
   protected:
     enum ObstacleEffect {
@@ -131,7 +133,6 @@ class SegmentedShotStrategy : public ShotStrategy {
     int			segment, lastSegment;
     ShotPathSegments	segments;
     BoltSceneNode*	boltSceneNode;
-    TeamColor		team;
     float		bbox[2][3];
     int			firstSegment;
 };
@@ -202,10 +203,10 @@ class GuidedMissileStrategy : public ShotStrategy {
     TimeKeeper		prevTime;
     TimeKeeper		currentTime;
     ShotPathSegments	segments;
+	int			renderTimes;
     float		azimuth;
     float		elevation;
     float		nextPos[3];
-    boolean		stopped;
     int			earlySegment;
     BoltSceneNode*	ptSceneNode;
 
@@ -240,3 +241,4 @@ inline const ShotPath&	ShotStrategy::getPath() const
 }
 
 #endif // BZF_SHOT_STRATEGY_H
+// ex: shiftwidth=2 tabstop=8

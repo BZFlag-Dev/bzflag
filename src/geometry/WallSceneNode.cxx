@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -297,10 +297,10 @@ void			WallSceneNode::notifyStyleChange(
 void			WallSceneNode::copyStyle(WallSceneNode* node)
 {
   gstate = node->gstate;
-  setColor(node->color);  
-  setModulateColor(node->modulateColor);  
-  setLightedColor(node->lightedColor);  
-  setLightedModulateColor(node->lightedModulateColor);  
+  setColor(node->color);
+  setModulateColor(node->modulateColor);
+  setLightedColor(node->lightedColor);
+  setLightedModulateColor(node->lightedModulateColor);
   forceNotifyStyleChange();
 }
 
@@ -308,9 +308,9 @@ void			WallSceneNode::setColor()
 {
   switch (style) {
     case 0: myColor4fv(color); break;
-    case 1: myColor4fv(lightedColor); break; 
-    case 2: myColor4fv(modulateColor); break; 
-    case 3: myColor4fv(lightedModulateColor); break; 
+    case 1: myColor4fv(lightedColor); break;
+    case 2: myColor4fv(modulateColor); break;
+    case 3: myColor4fv(lightedModulateColor); break;
   }
 }
 
@@ -451,3 +451,4 @@ void			WallSceneNode::splitEdge(const GLfloat* p1,
   uv[0] = uv1[0] + t * (uv2[0] - uv1[0]);
   uv[1] = uv1[1] + t * (uv2[1] - uv1[1]);
 }
+// ex: shiftwidth=2 tabstop=8
