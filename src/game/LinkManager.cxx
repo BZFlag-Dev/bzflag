@@ -210,6 +210,12 @@ void LinkManager::findTelesByName(const std::string& name,
     glob.erase(0, 1); // erase 1 char from position 0
   }
 
+  // make the trailing face specification case-independent
+  const unsigned int last = glob.size() - 1;
+  if ((glob[last] == 'F') || (glob[last] == 'B')) {
+    glob[last] = tolower(glob[last]);
+  }
+
   // add all teleporters that have matching names
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
   for (unsigned int i = 0; i < teles.size(); i++) {
