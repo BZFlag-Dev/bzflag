@@ -4335,7 +4335,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
 	return "variable " + args[0] + " does not exist";
     case 1:
       if (BZDB.isSet(args[0])) {
-	return args[0] + "=" + BZDB.get(args[0]);
+	return args[0] + " is " + BZDB.get(args[0]);
       }
       else
 	return "variable " + args[0] + " does not exist";
