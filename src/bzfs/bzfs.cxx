@@ -4143,7 +4143,6 @@ static void respondToPing(bool broadcast = false)
     pingReply.write(pingOutSocket, &pingOutAddr);
 }
 
-// FIXME if targetplayer is a single player, no need to broadcast
 static void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer)
 {
   // player is sending a message to a particular player, a team, or all.
@@ -4162,7 +4161,11 @@ static void sendMessage(int playerIndex, PlayerId targetPlayer, const char *mess
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUByte(buf, targetPlayer);
   buf = nboPackString(buf, message, MessageLen);
-  broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
+
+  if (targetPlayer <= LastRealPlayer)
+    directMessage( targetPlayer, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
+  else
+    broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
 }
 
 static void addPlayer(int playerIndex)

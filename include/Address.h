@@ -64,6 +64,7 @@ const int		PlayerIdPLen = sizeof(PlayerId);
 const PlayerId	      	NoPlayer = 255;        
 const PlayerId	       	AllPlayers = 254;
 const PlayerId	       	ServerPlayer = 253;
+const PlayerId		LastRealPlayer = 244;
 
 class ServerId {
   public:
