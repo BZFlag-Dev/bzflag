@@ -84,8 +84,9 @@ LDADD =	\
 	../mediafile/libMediaFile.a	\
 	../zlib/libz.a			\
 	$(RESOURCE)			\
-	$(GLIBS)			\
-	$(ALIBS)
+	$(GLIBS)			
+# This is required to hook in ogg/vorbis libraries
+#	$(ALIBS)
 else
 LDADD =	\
 	../net/libNet.a			\
@@ -98,8 +99,9 @@ LDADD =	\
 	../mediafile/libMediaFile.a	\
 	../zlib/libz.a			\
 	$(RESOURCE)			\
-	$(GLIBS)			\
-	$(ALIBS)
+	$(GLIBS)			
+# This is required to hook in ogg/vorbis libraries
+#	$(ALIBS)
 endif
 
 
