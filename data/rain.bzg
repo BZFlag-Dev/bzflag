@@ -23,7 +23,7 @@
 		<gstate>
 			<texture filename="droplet" />
 			<particlesystem>
-				<quota>2000</quota>
+				<quota>3000</quota>
 				<width>0.004</width>
 				<height>0.1</height>
 
@@ -33,13 +33,13 @@
 				</affector>
 				<emitter type="box">
 					<position>0 0 4</position>
-					<rate>200</rate>
+					<rate>250</rate>
 					<timetolive>1</timetolive>
 					<direction>0 0 -5</direction>
 					<velocity>1</velocity>
 					<angle>0</angle>
 					<color>1 1 1 1</color>
-					<size>6.0 8.0 0.125</size>
+					<size>8.0 8.0 0.125</size>
 				</emitter>
 			</particlesystem>
 		</gstate>
