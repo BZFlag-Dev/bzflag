@@ -60,7 +60,7 @@ void AresHandler::queryHost(char *hostName)
   char *queryHostName = hostName;
 
   char myHost[MAXHOSTNAMELEN+1];
-  if (hostName == NULL or *hostName == '\0') {
+  if (hostName == NULL || *hostName == '\0') {
     // local address
     if (gethostname(hostname, sizeof(hostname)) < 0) {
       status = Failed;
