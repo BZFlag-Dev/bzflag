@@ -247,7 +247,7 @@ float			PyramidBuilding::shrinkFactor(float z,
   if (getZFlip()) {
     shrink = z;
   } else {
-    shrink = 1.0 - z;
+    shrink = 1.0f - z;
   }
 
   // clamp in 0 .. 1

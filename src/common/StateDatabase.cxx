@@ -836,7 +836,7 @@ float StateDatabase::evaluate(Expression e) const
         break;
     }
   }
-  return evaluationStack.top().getNumber();
+  return (float)evaluationStack.top().getNumber();
 }
 
 

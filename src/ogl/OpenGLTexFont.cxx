@@ -577,7 +577,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
     if (blinking) {
       float blinkFactor;
 
-      blinkFactor = (int)time(NULL);
+      blinkFactor = (float)((int)time(NULL));
       blinkFactor = fmodf(blinkFactor, BLINK_RATE) - BLINK_RATE/2.0f;
       blinkFactor = fabsf (blinkFactor) / (BLINK_RATE/2.0f);
       blinkFactor = BLINK_DEPTH * blinkFactor + (1.0f - BLINK_DEPTH);
@@ -612,8 +612,8 @@ void			OpenGLTexFont::draw(const char* string, int length,
 	  }
 
 	  glBegin(GL_LINES);
-	  glVertex2f (x, y - 1.0);
-	  glVertex2f (x + width * g.advance + 1.0, y - 1.0);
+	  glVertex2f (x, y - 1.0f);
+	  glVertex2f (x + width * g.advance + 1.0f, y - 1.0f);
 	  glEnd();
 
 	  rep->gstate.setState();
@@ -657,8 +657,8 @@ void			OpenGLTexFont::draw(const char* string, int length,
 	  }
 
 	  glBegin(GL_LINES);
-	  glVertex2f(xpos, y - 1.0);		// compared to textured, -1.0
-	  glVertex2f(xpos + xmove, y - 1.0);	// compared to textured, -1.0
+	  glVertex2f(xpos, y - 1.0f);		// compared to textured, -1.0
+	  glVertex2f(xpos + xmove, y - 1.0f);	// compared to textured, -1.0
 	  glEnd ();
 
 	  // because we've underlined first, reset the color

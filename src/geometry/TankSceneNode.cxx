@@ -473,7 +473,7 @@ void			TankIDLSceneNode::IDLRenderNode::render()
   plane[3] = (sphere[0] * _plane[0] + sphere[1] * _plane[1] +
 	      sphere[2] * _plane[2] + _plane[3]);
 
-  // compute projection point -- one TankLength in from plane
+  // compute projection point -- one TankLengthy in from plane
   const GLfloat pd = -1.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) - plane[3];
   GLfloat origin[3];
   origin[0] = pd * plane[0];

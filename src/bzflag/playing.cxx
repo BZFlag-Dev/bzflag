@@ -1595,7 +1595,7 @@ static void		doAutoPilot(float &rotation, float &speed)
       // FIXME should go flag hunting ;-)
       int period = int(TimeKeeper::getCurrent().getSeconds());
       float bias = ((period % 10) < 5) ? M_PI/6.0f : -M_PI/9.0f; //asymetrical on purpose
-      rotation = bias + (bzfrand() - 0.5f) * M_PI/12.0f;
+      rotation = bias + ((float)bzfrand() - 0.5f) * M_PI/12.0f;
       speed = 1.0f;
     }
     else { // See if anyone is shootable, if so do so. Then figure out how to chase my target
@@ -1787,7 +1787,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    const float* shotPos = shot->getPosition();
 	    if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
 	      continue;
-	    const float dist = hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
+	    const float dist = (float)hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
 	    if (dist < 100.0f) {
 	      const float *shotVel = shot->getVelocity();
 	      float shotAngle = atan2f(shotVel[1],shotVel[0]);

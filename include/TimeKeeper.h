@@ -110,7 +110,7 @@ inline bool		TimeKeeper::operator<=(const TimeKeeper& t) const
 
 inline float		TimeKeeper::getSeconds(void) const
 {
-  return seconds;
+  return (float)seconds;
 }
 
 #endif // BZF_TIME_KEEPER_H

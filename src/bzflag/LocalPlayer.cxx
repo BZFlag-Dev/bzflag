@@ -1115,8 +1115,8 @@ void LocalPlayer::forceReload(float time)
   // move shot origin way above tank and make it stationary
   const float* pos = getPosition();
   firingInfo.shot.pos[0] = pos[0];
-  firingInfo.shot.pos[1] = pos[1] + 10.0;
-  firingInfo.shot.pos[2] = pos[2] + 1000000.0;
+  firingInfo.shot.pos[1] = pos[1] + 10.0f;
+  firingInfo.shot.pos[2] = pos[2] + 1000000.0f;
   firingInfo.shot.vel[0] = 0.0f;
   firingInfo.shot.vel[1] = 0.0f;
   firingInfo.shot.vel[2] = 0.0f;
