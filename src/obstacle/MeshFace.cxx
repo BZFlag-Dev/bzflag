@@ -83,9 +83,11 @@ void MeshFace::finalize()
   }
 
   if (maxCrossSqr < +1.0e-20f) {
-    DEBUG1("invalid mesh face\n");
-    print(std::cerr, 3);
     vertexCount = 0;
+    DEBUG1("invalid mesh face\n");
+    if (debugLevel >= 3) {
+      print(std::cerr, 3);
+    }
     return;
   }
 
@@ -106,9 +108,11 @@ void MeshFace::finalize()
     vec3cross(c, a, b);
     const float d = vec3dot(c, plane);
     if (d <= 0.0f) {
-      DEBUG1("non-convex mesh face\n");
-      print(std::cerr, 3);
       vertexCount = 0;
+      DEBUG1("non-convex mesh face\n");
+      if (debugLevel >= 3) {
+        print(std::cerr, 3);
+      }
       return;
     }
   }

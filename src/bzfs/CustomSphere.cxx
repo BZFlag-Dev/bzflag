@@ -35,6 +35,7 @@ CustomSphere::CustomSphere()
   size[0] = size[1] = size[2] = 10.0f;
   material.texture = "boxwall";
   texsize[0] = texsize[1] = -4.0f;
+  hemisphere = false;
   useNormals = true;
   return;
 }
@@ -61,6 +62,10 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
       return false;
     }
     size[0] = size[1] = size[2] = radius;
+  }
+  else if ((strcasecmp(cmd, "hemi") == 0) ||
+           (strcasecmp(cmd, "hemisphere") == 0)) {
+    hemisphere = true;
   }
   else if (strcasecmp(cmd, "texsize") == 0) {
     if (!(input >> texsize[0] >> texsize[1])) {
@@ -90,6 +95,12 @@ void CustomSphere::write(WorldInfo *world) const
   cfvec2 t;
   float sz[3], texsz[2];
   const float minSize = 1.0e-6f; // cheezy / lazy
+  int factor = 2;
+  
+  // setup the multiplying factor
+  if (hemisphere) {
+    factor = 1;
+  }
 
   // absolute the sizes
   sz[0] = fabsf(size[0]);
@@ -131,21 +142,27 @@ void CustomSphere::write(WorldInfo *world) const
   v[1] = pos[1];
   v[2] = pos[2] + sz[2];
   vertices.push_back(v);
-  v[2] = pos[2] - sz[2];
-  vertices.push_back(v);
+  if (!hemisphere) {
+    v[2] = pos[2] - sz[2];
+    vertices.push_back(v);
+  }
   if (useNormals) {
     n[0] = 0.0f;
     n[1] = 0.0f;
     n[2] = 1.0f;
     normals.push_back(n);
-    n[2] = -1.0f;
-    normals.push_back(n);
+    if (!hemisphere) {
+      n[2] = -1.0f;
+      normals.push_back(n);
+    }
   }
   t[0] = 0.5f; // weirdness
   t[1] = 1.0f;
   texcoords.push_back(t);
-  t[1] = 0.0f;
-  texcoords.push_back(t);
+  if (!hemisphere) {
+    t[1] = 0.0f;
+    texcoords.push_back(t);
+  }
 
   // the rest of the vertices
   for (i = 0; i < divisions; i++) {
@@ -178,45 +195,54 @@ void CustomSphere::write(WorldInfo *world) const
       t[0] = (float)j / (float)(4 * (i + 1));
       t[0] = t[0] * texsz[0];
       t[1] = (float)(divisions - i - 1) / (float)divisions;
-      t[1] = 0.5f + (0.5f * t[1]);
+      if (!hemisphere) {
+        t[1] = 0.5f + (0.5f * t[1]);
+      }
       t[1] = t[1] * texsz[1];
       texcoords.push_back(t);
 
       // the bottom hemisphere
-      if (i != (divisions - 1)) {
-        // vertex
-        v[2] = (2 * pos[2]) - v[2];
-        vertices.push_back(v);
-        // normal
-        if (useNormals) {
-          n[2] = -n[2];
-          normals.push_back(n);
+      if (!hemisphere) {
+        if (i != (divisions - 1)) {
+          // vertex
+          v[2] = (2 * pos[2]) - v[2];
+          vertices.push_back(v);
+          // normal
+          if (useNormals) {
+            n[2] = -n[2];
+            normals.push_back(n);
+          }
+          // texcoord
+          t[1] = texsz[1] - t[1];
+          texcoords.push_back(t);
         }
-        // texcoord
-        t[1] = texsz[1] - t[1];
-        texcoords.push_back(t);
       }
     }
   }
 
   // the closing strip of texture coordinates
-//  const int texStripOffset = (2 * ringOffset) + (divisions * 4) + 1;
   const int texStripOffset = texcoords.size();
   t[0] = texsz[0] * 0.5f; // weirdness
   t[1] = texsz[1] * 1.0f;
   texcoords.push_back(t);
-  t[1] = 0.0f;
-  texcoords.push_back(t);
+  if (!hemisphere) {
+    t[1] = 0.0f;
+    texcoords.push_back(t);
+  }
   for (i = 0; i < divisions; i++) {
     t[0] = texsz[0] * 1.0f;
     t[1] = (float)(divisions - i - 1) / (float)divisions;
-    t[1] = 0.5f + (0.5f * t[1]);
+    if (!hemisphere) {
+      t[1] = 0.5f + (0.5f * t[1]);
+    }
     t[1] = texsz[1] * t[1];
     texcoords.push_back(t);
     // the bottom hemisphere
-    if (i != (divisions - 1)) {
-      t[1] = texsz[1] - t[1];
-      texcoords.push_back(t);
+    if (!hemisphere) {
+      if (i != (divisions - 1)) {
+        t[1] = texsz[1] - t[1];
+        texcoords.push_back(t);
+      }
     }
   }
 
@@ -240,7 +266,12 @@ void CustomSphere::write(WorldInfo *world) const
   std::vector<int> tlist;
 
   int k = (divisions - 1);
-  const int ringOffset = 1 + (((k*k)+k)*2);
+  int ringOffset;
+  if (!hemisphere) {
+    ringOffset = 1 + (((k*k)+k)*2);
+  } else {
+    ringOffset = 0;
+  }
 
   for (q = 0; q < 4; q++) {
     for (i = 0; i < divisions; i++) {
@@ -281,16 +312,16 @@ void CustomSphere::write(WorldInfo *world) const
 
 
         // top hemisphere
-        a = a * 2;
+        a = a * factor;
         if (!lastCircle) {
-          b = b * 2;
-          c = c * 2;
+          b = b * factor;
+          c = c * factor;
         } else {
           b = b + ringOffset;
           c = c + ringOffset;
         }
         if (i != (divisions - 2)) {
-          d = d * 2;
+          d = d * factor;
         } else {
           d = d + ringOffset;
         }
@@ -300,8 +331,8 @@ void CustomSphere::write(WorldInfo *world) const
           ta = a;
           tc = c;
         } else {
-          ta = texStripOffset + (i * 2);
-          tc = texStripOffset + ((i + 1) * 2);
+          ta = texStripOffset + (i * factor);
+          tc = texStripOffset + ((i + 1) * factor);
         }
 
         push3Ints(vlist, a, b, c);
@@ -316,25 +347,27 @@ void CustomSphere::write(WorldInfo *world) const
         }
 
         // bottom hemisphere
-        a = a + 1;
-        ta = ta + 1;
-        if (!lastCircle) {
-          b = b + 1;
-          c = c + 1;
-          tc = tc + 1;
-        }
-        if (i != (divisions - 2)) {
-          d = d + 1;
-        }
-        push3Ints(vlist, a, c, b);
-        if (useNormals) push3Ints(nlist, a, c, b);
-        push3Ints(tlist, ta, tc, b);
-        addFace(mesh, vlist, nlist, tlist, material);
-        if (!lastCircle) {
-          push3Ints(vlist, b, c, d);
-          if (useNormals) push3Ints(nlist, b, c, d);
-          push3Ints(tlist, b, tc, d);
+        if (!hemisphere) {
+          a = a + 1;
+          ta = ta + 1;
+          if (!lastCircle) {
+            b = b + 1;
+            c = c + 1;
+            tc = tc + 1;
+          }
+          if (i != (divisions - 2)) {
+            d = d + 1;
+          }
+          push3Ints(vlist, a, c, b);
+          if (useNormals) push3Ints(nlist, a, c, b);
+          push3Ints(tlist, ta, tc, b);
           addFace(mesh, vlist, nlist, tlist, material);
+          if (!lastCircle) {
+            push3Ints(vlist, b, c, d);
+            if (useNormals) push3Ints(nlist, b, c, d);
+            push3Ints(tlist, b, tc, d);
+            addFace(mesh, vlist, nlist, tlist, material);
+          }
         }
       }
     }

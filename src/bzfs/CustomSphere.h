@@ -33,6 +33,7 @@ class CustomSphere : public WorldFileObstacle {
   private:
     int divisions;
     float texsize[2];
+    bool hemisphere;
     bool useNormals;
     MeshMaterial material;
 };
