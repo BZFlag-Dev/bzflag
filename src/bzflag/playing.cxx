@@ -1951,37 +1951,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     if (pressed) radar->setRange(RadarHiRangeFactor*WorldSize);
   }
 
-  else if (keymap.isMappedTo(BzfKeyMap::Pause, key)) {
-    // pause/resume
-    if (pressed && !pausedByUnmap) {
-      if (myTank->isAlive()) {
-	if (myTank->isPaused()) {
-	  myTank->setPause(false);
-	  controlPanel->addMessage("Resumed");
-
-	  // restore the sound
-	  if (savedVolume != -1) {
-	    setSoundVolume(savedVolume);
-	    savedVolume = -1;
-	  }
-
-	  // grab mouse
-	  if (shouldGrabMouse())
-	    mainWindow->grabMouse();
-	}
-	else if (pauseCountdown > 0.0f) {
-	  pauseCountdown = 0.0f;
-	  hud->setAlert(1, "Pause cancelled", 1.5f, true);
-	}
-	else {
-	  pauseCountdown = 5.0f;
-	  char msgBuf[40];
-	  sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
-	  hud->setAlert(1, msgBuf, 1.0f, false);
-	}
-      }
-    }
-  }
   else if (key.ascii == 0 &&
 	   key.button >= BzfKeyEvent::F1 &&
 	   key.button <= BzfKeyEvent::F10 &&
@@ -2218,6 +2187,37 @@ static std::string cmdDestruct(const std::string&, const CommandManager::ArgList
   return std::string();
 }
 
+static std::string cmdPause(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: pause";
+  if (!pausedByUnmap && myTank->isAlive()) {
+    if (myTank->isPaused()) {
+      myTank->setPause(false);
+      controlPanel->addMessage("Resumed");
+
+      // restore the sound
+      if (savedVolume != -1) {
+	setSoundVolume(savedVolume);
+	savedVolume = -1;
+      }
+
+      // grab mouse
+      if (shouldGrabMouse())
+	mainWindow->grabMouse();
+    } else if (pauseCountdown > 0.0f) {
+      pauseCountdown = 0.0f;
+      hud->setAlert(1, "Pause cancelled", 1.5f, true);
+    } else {
+      pauseCountdown = 5.0f;
+      char msgBuf[40];
+      sprintf(msgBuf, "Pausing in %d", (int) (pauseCountdown + 0.99f));
+      hud->setAlert(1, msgBuf, 1.0f, false);
+    }
+  }
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2229,7 +2229,8 @@ static const CommandListItem commandList[] = {
   { "jump",	&cmdJump,	"jump:  make player jump" },
   { "drop",	&cmdDrop,	"drop:  drop the current flag" },
   { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
-  { "destruct", &cmdDestruct,	"destruct:  self destruct" }
+  { "destruct", &cmdDestruct,	"destruct:  self destruct" },
+  { "pause",	&cmdPause,	"pause: pause/resume" }
 };
 
 static void		doEvent(BzfDisplay* display)
