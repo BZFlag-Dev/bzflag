@@ -404,6 +404,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     }
 
     // draw other tanks' shells
+    maxShots = World::getWorld()->getMaxShots();
     for (i = 0; i < curMaxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
       if (!player) continue;
