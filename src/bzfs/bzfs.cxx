@@ -3106,15 +3106,22 @@ static void acceptClient()
   // if don't want another player or couldn't make socket then refuse
   // connection by returning an obviously bogus port (port zero).
   int playerIndex;
-  if (gameOver)
-    for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-      if (player[playerIndex].state >= PlayerInLimbo)
-	serverAddr.sin_port = htons(0);
+  if (gameOver) {
+    for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
+      if (player[playerIndex].state >= PlayerInLimbo) {
+        serverAddr.sin_port = htons(0);
+        break;
+      }
+    }
+  }
 
   // find open slot in players list
   for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
     if (player[playerIndex].state == PlayerNoExist)
       break;
+  // full? reject by returning bogus port
+  if (playerIndex == maxPlayers)
+    serverAddr.sin_port = htons(0);
 
   // record what port we accepted on
   player[playerIndex].time = TimeKeeper::getCurrent();
