@@ -6554,7 +6554,7 @@ int main(int argc, char **argv)
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // and player is not using multicast
 	  // he/she must not be using the UDP link
-	  if (requireUDP && player[i].multicastRelay) {
+	  if (requireUDP && player[i].multicastRelay && (player[i].type != ComputerPlayer)) {
 	    if (code == MsgShotBegin) {
 	      player[i].toBeKicked = true;
 	    }
