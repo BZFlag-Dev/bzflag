@@ -48,7 +48,7 @@ int main (int argc, char **argv)
   Lib3dsNode* node;
   const char* execname = argv[0];
 
-  while ((1 == 1) && (argc > 1)) {
+  while (argc > 1) {
     if (strcmp ("-i", argv[1]) == 0) {
       NormalDir = -1.0;
       argc--;
@@ -141,6 +141,7 @@ static void printNode (Lib3dsNode *node)
         cross[0] = (edges[0][1] * edges[1][2]) - (edges[0][2] * edges[1][1]);
         cross[1] = (edges[0][2] * edges[1][0]) - (edges[0][0] * edges[1][2]);
         cross[2] = (edges[0][0] * edges[1][1]) - (edges[0][1] * edges[1][0]);
+
         double length = (cross[0] * cross[0]) +
                         (cross[1] * cross[1]) +
                         (cross[2] * cross[2]);

@@ -352,17 +352,23 @@ void                    QuadWallSceneNode::getExtents(float* _mins, float* _maxs
   return;
 }
 
-bool                    QuadWallSceneNode::inAxisBox(const float* mins,
-                                                     const float* maxs) const
+bool                    QuadWallSceneNode::inAxisBox(const float* boxMins,
+                                                     const float* boxMaxs) const
 {
-  float myMins[3], myMaxs[3];
-  getExtents (myMins, myMaxs);
-  for (int i = 0; i < 3; i++) {
-    if ((myMins[i] > maxs[i]) || (myMaxs[i] < mins[i])) {
-      return false;
-    }
+  if ((mins[0] > boxMaxs[0]) || (maxs[0] < boxMins[0]) ||
+      (mins[1] > boxMaxs[1]) || (maxs[1] < boxMins[1]) ||
+      (mins[2] > boxMaxs[2]) || (maxs[2] < boxMins[2])) {
+    return false;
   }
-  return true;
+  
+  // NOTE: inefficient
+  float vertices[4][3];
+  memcpy (vertices[0], nodes[0]->getVertex(0), sizeof(float[3]));
+  memcpy (vertices[1], nodes[0]->getVertex(1), sizeof(float[3]));
+  memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
+  memcpy (vertices[3], nodes[0]->getVertex(3), sizeof(float[3]));
+  
+  return testPolygonInAxisBox (4, vertices, getPlane(), boxMins, boxMaxs);
 }
 
 int                     QuadWallSceneNode::getVertexCount () const

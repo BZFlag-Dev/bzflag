@@ -18,9 +18,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   is joined when the Server List Cache is enabled.
 
 * server should precompute it's MAX_Z and send it to the client.
-	Client should use that Z and not let the tank go over it.
-	Server needs to resend max when ever gravity changes.
-	This way only real cheaters hit the cheat test.
+  Client should use that Z and not let the tank go over it.
+  Server needs to resend max when ever gravity changes.
+  This way only real cheaters hit the cheat test.
 
 * inform clients that they have been banned, instead of just disconnecting
 

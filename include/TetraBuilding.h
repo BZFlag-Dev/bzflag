@@ -63,6 +63,10 @@ class TetraBuilding : public Obstacle {
     bool           isVisiblePlane(int plane) const;
     bool           isColoredPlane(int plane) const;
     const float*   getPlaneColor(int plane) const;
+    
+    void *pack(void*);
+    void *unpack(void*);
+    int packSize();
 
     std::string	        userTextures[1];
 
@@ -77,6 +81,17 @@ class TetraBuilding : public Obstacle {
     float colors[4][4];   // RGBA color specifications per plane
 
     mutable unsigned char lastPlaneShot;
+
+    /** return true if test[testNumber] was a separation axis */
+    bool checkTest(int testNumber) const;
+    
+    // static data for tank collision tests
+    typedef struct {
+      float normal[3];
+      float boxDist;
+      float tetraDists[4];
+    } planeTest;
+    static planeTest axisTests[25];
 };
 
 

@@ -33,6 +33,10 @@ CustomTetra::CustomTetra()
     for (int j = 0; j < 4; j++) {
       colors[j][i] = 1.0f;
     }
+    useNormals[i] = false;
+    useTexCoords[i] = false;
+    textureMatrices[i] = -1;
+    textures[i] = "";
   }
 
   // NOTE - we can't use WorldFileObstable as the base class
@@ -86,6 +90,66 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       for (int c = 0; c < 4; c++) {
         color[c] = (float)bytecolor[c];
       }
+    }
+  }
+  else if (strcasecmp(cmd, "normals") == 0) {
+    if (vertexCount < 1) {
+      std::cout << "Normals defined before any vertex" << std::endl;
+      // keep on chugging
+    }
+    else if (vertexCount > 4) {
+      std::cout << "Extra tetrahedron normals" << std::endl;
+      // keep on chugging
+    }
+    else {
+      useNormals[vertexCount - 1] = true;
+      for (int v = 0; v < 3; v++) {
+        float* normal = normals[vertexCount - 1][v];
+        input >> normal[0] >> normal[1] >> normal[2];
+      }
+    }
+  }
+  else if (strcasecmp(cmd, "texcoords") == 0) {
+    if (vertexCount < 1) {
+      std::cout << "TexCoords defined before any vertex" << std::endl;
+      // keep on chugging
+    }
+    else if (vertexCount > 4) {
+      std::cout << "Extra tetrahedron texCoords" << std::endl;
+      // keep on chugging
+    }
+    else {
+      useTexCoords[vertexCount - 1] = true;
+      for (int v = 0; v < 3; v++) {
+        float* texCoord = texCoords[vertexCount - 1][v];
+        input >> texCoord[0] >> texCoord[1];
+      }
+    }
+  }
+  else if (strcasecmp(cmd, "texture") == 0) {
+    if (vertexCount < 1) {
+      std::cout << "Texture defined before any vertex" << std::endl;
+      // keep on chugging
+    }
+    else if (vertexCount > 4) {
+      std::cout << "Extra tetrahedron texture" << std::endl;
+      // keep on chugging
+    }
+    else {
+      input >> textures[vertexCount - 1];
+    }
+  }
+  else if (strcasecmp(cmd, "texmatrix") == 0) {
+    if (vertexCount < 1) {
+      std::cout << "TextureMatrix defined before any vertex" << std::endl;
+      // keep on chugging
+    }
+    else if (vertexCount > 4) {
+      std::cout << "Extra tetrahedron TextureMatrix" << std::endl;
+      // keep on chugging
+    }
+    else {
+      input >> textureMatrices[vertexCount - 1];
     }
   }
   else if (strcasecmp(cmd, "drivethrough") == 0) {

@@ -88,11 +88,12 @@ float			timeAndSideRayHitsRect(const Ray& r,
 					const float* boxPos, float boxAngle,
 					float dx, float dy, int& side);
 
-// true if tri-plane touches the axis aligned box
-bool			testTriPlaneInAxisBox(const float** points,
-                                              const float* plane,
-                                              const float* boxMins,
-                                              const float* boxMaxs);
+// return true if polygon touches the axis aligned box
+bool			testPolygonInAxisBox(int pointCount,
+                                             const float (*points)[3],
+                                             const float* plane,
+                                             const float* boxMins,
+                                             const float* boxMaxs);
 
 // return level of axis box intersection with Frumstum
 // possible values are Outside, Partial, and Contained.

@@ -19,6 +19,8 @@
 /* local interface header */
 #include "WorldInfo.h"
 
+/* system header */
+#include <string>
 
 class CustomTetra : public WorldFileObject {
   public:
@@ -27,10 +29,17 @@ class CustomTetra : public WorldFileObject {
     virtual void write(WorldInfo*) const;
   private:
     int vertexCount;
+
     bool visible[4];
     float vertices[4][3];
     bool colored[4];
     float colors[4][4];
+    bool useNormals[4];
+    float normals[4][3][3];
+    bool useTexCoords[4];
+    float texCoords[4][3][2];
+    int textureMatrices[4];
+    std::string textures[4];
 
     bool driveThrough; //FIXME
     bool shootThrough; //FIXME
