@@ -945,7 +945,7 @@ static int listServerLinksCount = 0;
 
 static WorldInfo *world = NULL;
 static char *worldDatabase = NULL;
-static int worldDatabaseSize = 0;
+static uint32_t worldDatabaseSize = 0;
 static float basePos[NumTeams][3];
 static float baseRotation[NumTeams];
 static float baseSize[NumTeams][3];
@@ -4549,7 +4549,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
   }
 }
 
-static void sendWorld(int playerIndex, int ptr)
+static void sendWorld(int playerIndex, uint32_t ptr)
 {
   // send another small chunk of the world database
   assert(world != NULL && worldDatabase != NULL);
@@ -5946,7 +5946,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	void *epochPtr = ((char*)worldDatabase) + 24;
 	nboPackUInt(epochPtr, epochOffset);
       }
-      sendWorld(t, int(ptr));
+      sendWorld(t, ptr);
       break;
     }
 
