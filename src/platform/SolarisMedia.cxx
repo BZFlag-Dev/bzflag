@@ -24,7 +24,7 @@ static const int defaultAudioRate	= 22050;
 #endif
 
 static const int defaultChannels	= 2;
-static const int defaultEncoding 	= AUDIO_ENCODING_LINEAR;
+static const int defaultEncoding	= AUDIO_ENCODING_LINEAR;
 static const int defaultPrecision	= 16;
 
 short tmp_buf[512];
@@ -131,7 +131,7 @@ bool			SolarisMedia::openAudio()
   a_info.play.encoding    = defaultEncoding;
 
   a_info.play.buffer_size = NumChunks * AUDIO_BUFFER_SIZE;
-  audioBufferSize   	  = AUDIO_BUFFER_SIZE;
+  audioBufferSize	  = AUDIO_BUFFER_SIZE;
   audioLowWaterMark	  = 2;
 
   if(ioctl(audio_fd, AUDIO_SETINFO, &a_info) == -1)

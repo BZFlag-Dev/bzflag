@@ -49,7 +49,7 @@ class MacDisplay : public BzfDisplay {
 	  //ResInfo *res_info;
 		int     screen_width;
 	    int     screen_height;
-  	  // int     screen_depth;
+	  // int     screen_depth;
 
 
 	boolean is_valid;

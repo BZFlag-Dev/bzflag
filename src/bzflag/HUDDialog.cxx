@@ -43,7 +43,7 @@ void			HUDDialog::render()
 
 void			HUDDialog::resize(int _width, int _height)
 {
-  width 	= _width;
+  width		= _width;
   height	= _height;
 }
 

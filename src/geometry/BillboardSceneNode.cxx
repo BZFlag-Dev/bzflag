@@ -271,7 +271,7 @@ void			BillboardSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   show = hasTexture && BZDB->isTrue("texture") &&
-  	(!hasAlpha || BZDB->isTrue("blend"));
+	(!hasAlpha || BZDB->isTrue("blend"));
   if (show) {
     OpenGLGStateBuilder builder(gstate);
     if (hasAlpha) {

@@ -42,7 +42,7 @@ class LaserSceneNode : public SceneNode {
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
       private:
 	const LaserSceneNode* sceneNode;
-	static GLfloat 	geom[6][2];
+	static GLfloat	geom[6][2];
     };
     friend class LaserRenderNode;
 

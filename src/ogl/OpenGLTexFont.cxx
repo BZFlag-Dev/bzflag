@@ -32,8 +32,8 @@
 #define ANSI_STR_BLINK		"\033[5m"
 #define ANSI_STR_REVERSE	"\033[7m"	// unimplemented
 
-#define ANSI_STR_FG_BLACK 	"\033[30m"	// grey
-#define ANSI_STR_FG_RED 	"\033[31m"
+#define ANSI_STR_FG_BLACK	"\033[30m"	// grey
+#define ANSI_STR_FG_RED		"\033[31m"
 #define ANSI_STR_FG_GREEN	"\033[32m"
 #define ANSI_STR_FG_YELLOW	"\033[33m"
 #define ANSI_STR_FG_BLUE	"\033[34m"

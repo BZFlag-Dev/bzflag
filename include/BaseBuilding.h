@@ -22,7 +22,7 @@
 
 class BaseBuilding : public Obstacle {
   public:
-    			BaseBuilding(const float *pos, float rotation,
+			BaseBuilding(const float *pos, float rotation,
 				const float *size, int _team);
 			~BaseBuilding();
     std::string		getType() const;
@@ -49,11 +49,11 @@ class BaseBuilding : public Obstacle {
 
 class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator {
   friend class BaseBuilding;
-  			~BaseSceneNodeGenerator();
+			~BaseSceneNodeGenerator();
   public:
     WallSceneNode*	getNextNode(float, float, bool);
   protected:
-    			BaseSceneNodeGenerator(const BaseBuilding *);
+			BaseSceneNodeGenerator(const BaseBuilding *);
   private:
     const BaseBuilding *base;
 };

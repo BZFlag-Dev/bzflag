@@ -41,7 +41,7 @@ public:
   // set a name/value pair.  if access is less than the permission
   // level of the name then this has no effect.
   void				set(const std::string& name,
-  				    const std::string& value,
+				    const std::string& value,
 				    Permission access = Client);
 
   // unset a name if access is not less than the permission level
@@ -59,7 +59,7 @@ public:
   // will not affect persistence of the name.  the default is
   // volatile.
   void				setPersistent(const std::string& name,
-  					      bool = true);
+					      bool = true);
 
   // set the default value for a name.  if the default value is set
   // then the value will not be written by write() if the current
@@ -71,7 +71,7 @@ public:
   // stored independently of a value with the name.  the default
   // permission is ReadWrite (i.e. full access).
   void				setPermission(const std::string& name,
-  					      Permission);
+					      Permission);
 
   // add/remove a callback to/from a name.  all callbacks on a name are
   // invoked when the value changes (either by being set or unset).
@@ -122,7 +122,7 @@ private:
   StateDatabase();
 
   static bool			onCallback(Callback, void* userData,
-  					   void* iterateData);
+					   void* iterateData);
 
   struct Item {
   public:
@@ -144,7 +144,7 @@ private:
 
 private:
   Map				items;
-  static StateDatabase* 	s_instance;
+  static StateDatabase*	s_instance;
 
 public:
   class ExpressionToken {
@@ -184,7 +184,7 @@ private:
   typedef std::vector<ExpressionToken> Expression;
 
 private:
-  static Expression    		infixToPrefix(const Expression &infix);
+  static Expression		infixToPrefix(const Expression &infix);
   float				evaluate(Expression e) const;
 };
 

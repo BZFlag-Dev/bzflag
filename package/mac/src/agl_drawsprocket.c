@@ -60,7 +60,7 @@ CGrafPtr dsSetupScreen( int width, int height )
 	gDSpTheContextAttributes.reserved1					= 0;
 	gDSpTheContextAttributes.reserved2					= 0;
 	gDSpTheContextAttributes.colorTable				    = NULL;
-	gDSpTheContextAttributes.contextOptions 		= 0;
+	gDSpTheContextAttributes.contextOptions			= 0;
 	gDSpTheContextAttributes.gameMustConfirmSwitch	    = false;
 	gDSpTheContextAttributes.reserved3[0]				= 0;
 	gDSpTheContextAttributes.reserved3[1]				= 0;

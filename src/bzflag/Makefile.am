@@ -5,7 +5,7 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-bzflag_SOURCES = 			\
+bzflag_SOURCES =			\
 	MainWindow.cxx			\
 	MainWindow.h			\
 	ControlPanel.cxx		\

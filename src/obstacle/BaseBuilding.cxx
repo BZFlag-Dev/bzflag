@@ -116,7 +116,7 @@ bool			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
 			float *normal) const
 {
   return Obstacle::getHitNormal(pos1, azimuth1, pos2, azimuth2, halfWidth, halfBreadth,
-      			getPosition(), getRotation(), getWidth(), getBreadth(),
+			getPosition(), getRotation(), getWidth(), getBreadth(),
 			getHeight(), normal) >= 0.0f;
 }
 

@@ -127,7 +127,7 @@ const uint16_t		MsgUDPLinkUpdate = 0x6f68;		// 'oh'
 const uint16_t		MsgServerControl = 0x6f69;		// 'oi'
 
 // lag ping sent by server to client and reply from client
-const uint16_t		MsgLagPing = 0x7069; 			// 'pi'
+const uint16_t		MsgLagPing = 0x7069;			// 'pi'
 
 /* server communication protocol:
   --> incoming messages (to server)
@@ -239,7 +239,7 @@ server to player messages:
 			<== temp|perm, digest
   MsgNegotiateFlags	<== flagCount/[flagabbv]
   MsgNewRabbit		a new rabbit has been anointed
-  			<== id
+			<== id
 */
 
 #endif // BZF_PROTOCOL_H

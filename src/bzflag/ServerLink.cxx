@@ -61,9 +61,9 @@ static void		timeout(int)
 
 #else // Connection timeout for Windows
 
-DWORD ThreadID; 		// Thread ID
+DWORD ThreadID;		// Thread ID
 HANDLE hConnected;	// "Connected" event
-HANDLE hThread; 		// Connection thread
+HANDLE hThread;		// Connection thread
 
 typedef struct {
 	int query;
@@ -411,12 +411,12 @@ void			ServerLink::disqueuePacket(int op, int /*rseqno*/)
 	}
 }
 
-void* 			ServerLink::assembleSendPacket(uint32_t* length)
+void*			ServerLink::assembleSendPacket(uint32_t* length)
 {
 	struct PacketQueue *moving = uqueue;
 	unsigned char *assemblybuffer;
 	int in, n;
- 	unsigned char *buf;
+	unsigned char *buf;
 
 	if (!moving) {
 		*length = 0;
@@ -428,10 +428,10 @@ void* 			ServerLink::assembleSendPacket(uint32_t* length)
 	assemblybuffer= (unsigned char *)malloc(n);
 
 	buf = assemblybuffer;
-  	buf = (unsigned char *)nboPackUShort(buf, 0xfeed);
-  	buf = (unsigned char *)nboPackUShort(buf, lastRecvPacketNo);
-  	buf = (unsigned char *)nboPackUShort(buf, moving->length);
-  	buf = (unsigned char *)nboPackUShort(buf, moving->seqno);
+	buf = (unsigned char *)nboPackUShort(buf, 0xfeed);
+	buf = (unsigned char *)nboPackUShort(buf, lastRecvPacketNo);
+	buf = (unsigned char *)nboPackUShort(buf, moving->length);
+	buf = (unsigned char *)nboPackUShort(buf, moving->seqno);
 	n-=8;
 	n-= moving->length;
 	if (n>2) {
@@ -447,7 +447,7 @@ void* 			ServerLink::assembleSendPacket(uint32_t* length)
 		return assemblybuffer;
 	}
 
-  	buf = (unsigned char *)nboPackUShort(buf, 0xffff);
+	buf = (unsigned char *)nboPackUShort(buf, 0xffff);
 	n-=2;
 	*length = (in - n);
 
@@ -456,7 +456,7 @@ void* 			ServerLink::assembleSendPacket(uint32_t* length)
 	return assemblybuffer;
 }
 
-void 			ServerLink::disassemblePacket(void *msg, int *nopacket)
+void			ServerLink::disassemblePacket(void *msg, int *nopacket)
 {
 	unsigned short marker;
 	unsigned short usdata;
@@ -465,21 +465,21 @@ void 			ServerLink::disassemblePacket(void *msg, int *nopacket)
 
 	UDEBUG("*** DisassemblePacket\n");
 
-  	buf = (unsigned char *)nboUnpackUShort(buf, marker);
+	buf = (unsigned char *)nboUnpackUShort(buf, marker);
 	if (marker!=0xfeed) {
 		UDEBUG("!!! Reject Packet because invalid header %04x\n", marker);
 		return;
 	}
-  	buf = (unsigned char *)nboUnpackUShort(buf, usdata);
+	buf = (unsigned char *)nboUnpackUShort(buf, usdata);
 
 	UDEBUG("Server has seen last Seqno: %d\n",usdata);
 
 	while (true) {
 		unsigned short seqno;
 		unsigned short length;
-  		buf = (unsigned char *)nboUnpackUShort(buf, length);
+		buf = (unsigned char *)nboUnpackUShort(buf, length);
 		if (length == 0xffff) break;
-  		buf = (unsigned char *)nboUnpackUShort(buf, seqno);
+		buf = (unsigned char *)nboUnpackUShort(buf, seqno);
 		enqueuePacket(RECEIVE, seqno, buf, length);
 		buf+=length;
 		numpacket++;
@@ -726,20 +726,20 @@ void			ServerLink::sendUDPlinkRequest()
 	return; // we cannot comply
   }
   for (int portno=17200; portno < 65000; portno++) {
-  	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
-  	serv_addr.sin_family = AF_INET;
-  	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  	serv_addr.sin_port = htons(portno);
-  	if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0) {
+	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serv_addr.sin_port = htons(portno);
+	if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0) {
 		break;
-  	}
+	}
   }
 #if !defined(_WIN32)
   AddrLen addr_len = sizeof(serv_addr);
   if (getsockname(urecvfd, (struct sockaddr*)&serv_addr, (socklen_t*) &addr_len) < 0) {
 	close(urecvfd);
 	urecvfd = 0;
-    	printError("Error: getsockname() failed, cannot open UDP socket.");
+	printError("Error: getsockname() failed, cannot open UDP socket.");
 	return;  // we cannot get connection, bail out
   }
 #endif

@@ -792,8 +792,8 @@ static int addServer(const char* inNamePort, const char* version,
   // is server already in the list?  if so then freshen it.
   Server* exists = findServer(nameport);
   if (exists) {
-  	exists->setTitle(title);
-  	exists->setGameInfo(gameInfo);
+    exists->setTitle(title);
+    exists->setGameInfo(gameInfo);
     exists->setFresh();
     lastChangeTime = getTime();
     free(nameport);

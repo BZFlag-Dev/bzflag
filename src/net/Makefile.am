@@ -3,7 +3,7 @@ noinst_LIBRARIES = libNet.a
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-libNet_a_SOURCES =	 		\
+libNet_a_SOURCES =			\
 	Address.cxx			\
 	Pack.cxx			\
 	Ping.cxx			\

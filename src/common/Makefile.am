@@ -1,6 +1,6 @@
 noinst_LIBRARIES = libCommon.a
 
-libCommon_a_SOURCES  =		 	\
+libCommon_a_SOURCES  =			\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
 	CommandManager.cxx		\

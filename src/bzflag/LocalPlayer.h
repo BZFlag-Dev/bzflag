@@ -115,16 +115,16 @@ class LocalPlayer : public BaseLocalPlayer {
 
     bool		isKeyboardMoving() const;
     void		setKeyboardMoving(bool status);
-    void 		setKeyboardSpeed(float speed);
-    void 		setKeyboardAngVel(float angVel);
-    float 		getKeyboardSpeed() const;
-    float 		getKeyboardAngVel() const;
-    void 		setKey(int button, bool pressed);
-    bool             getKeyPressed() const;
-    int 		getKeyButton() const;
-    void                resetKey();
-    void                setSlowKeyboard(bool slow);
-    bool             hasSlowKeyboard() const;
+    void		setKeyboardSpeed(float speed);
+    void		setKeyboardAngVel(float angVel);
+    float		getKeyboardSpeed() const;
+    float		getKeyboardAngVel() const;
+    void		setKey(int button, bool pressed);
+    bool		getKeyPressed() const;
+    int			getKeyButton() const;
+    void		resetKey();
+    void		setSlowKeyboard(bool slow);
+    bool		hasSlowKeyboard() const;
 
     static LocalPlayer*	getMyTank();
     static void		setMyTank(LocalPlayer*);
@@ -164,9 +164,9 @@ class LocalPlayer : public BaseLocalPlayer {
     bool		keyboardMoving;
     float		keyboardSpeed;
     float		keyboardAngVel;
-    int 		keyButton;
-    bool             keyPressed;
-    bool             slowKeyboard;
+    int			keyButton;
+    bool		keyPressed;
+    bool		slowKeyboard;
 };
 
 //

@@ -82,25 +82,25 @@ const float		PyrBase =	4.0f*TankHeight;// meters
 const float		PyrHeight =	5.0f*TankHeight;// meters
 
 // box geometry
-const float		BoxBase = 	5.0f*TankLength;// meters
-const float		BoxHeight = 	6.0f*MuzzleHeight;// meters
+const float		BoxBase =	5.0f*TankLength;// meters
+const float		BoxHeight =	6.0f*MuzzleHeight;// meters
 
 // teleporter geometry (My God, it's full of stars...)
 const float		TeleUnit =	0.4f * TankWidth;// meters
 const float		TeleWidth =	1.0f * TeleUnit;// meters
 const float		TeleBreadth =	4.0f * TeleUnit;// meters
-const float		TeleHeight = 	9.0f * TeleUnit;// meters
+const float		TeleHeight =	9.0f * TeleUnit;// meters
 
 // tank performance info
 const float		TankSpeed =	25.0f;		// meters/sec
 const float		TankAngVel =	M_PI / 4.0f;	// radians/sec
 const float		ShotSpeed =	100.0f;		// meters/sec
-const float		ShotRange = 	350.0f;		// meters
+const float		ShotRange =	350.0f;		// meters
 const float		ReloadTime =	ShotRange / ShotSpeed;	// seconds
 
 // city geometry
-const int		CitySize = 	5;
-const float		AvenueSize = 	2.0f * BoxBase;	// meters
+const int		CitySize =	5;
+const float		AvenueSize =	2.0f * BoxBase;	// meters
 
 // other game info
 const float		ExplodeTime =	5.0f;		// seconds
@@ -111,7 +111,7 @@ const float		FlagRadius =	2.5f;		// meters
 // readout stuff
 const int		MaxMessages =	20;		// msg. history length
 const int		MaxMessageLen =	80;		// length of message
-const float		FlashOnTime = 	1.0f;		// seconds
+const float		FlashOnTime =	1.0f;		// seconds
 const float		FlashOffTime =	0.2f;		// seconds
 const int		MinX = 256;
 const int		MinY = 192;

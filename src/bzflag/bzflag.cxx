@@ -1130,7 +1130,7 @@ int			main(int argc, char** argv)
 	}
     }
     BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
-    	      renderer.useQuality() < 2) ? "yes" : "no");
+	      renderer.useQuality() < 2) ? "yes" : "no");
     BZDB->setPersistent("_texturereplace", false);
     if (db.hasValue("view")) {
       renderer.setViewType(SceneRenderer::Normal);

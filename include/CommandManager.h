@@ -33,7 +33,7 @@ public:
 
   // add/replace a command handler
   void				add(const std::string& name,
-  				    CommandFunction, const std::string& help);
+				    CommandFunction, const std::string& help);
 
   // remove a command handler
   void				remove(const std::string& name);

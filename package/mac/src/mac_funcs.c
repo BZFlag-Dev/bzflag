@@ -161,19 +161,19 @@ void MacOneEvent () {
     switch (eventRec.what) {
 
       case updateEvt:
-  			BeginUpdate((WindowPtr)eventRec.message);
+			BeginUpdate((WindowPtr)eventRec.message);
 	EndUpdate((WindowPtr)eventRec.message);
-  		  break;
+		  break;
 
-  		case osEvt:
+		case osEvt:
 
-  		  switch( (eventRec.message >> 24) & 0x000000FF) {
+		  switch( (eventRec.message >> 24) & 0x000000FF) {
 
-    		    case suspendResumeMessage:
-  				     gInBackground = (eventRec.message & resumeFlag) != 1;
-  				     gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;
-  			    break;
-    		}
+		    case suspendResumeMessage:
+				     gInBackground = (eventRec.message & resumeFlag) != 1;
+				     gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;
+			    break;
+		}
 	break;
 
       case kHighLevelEvent:

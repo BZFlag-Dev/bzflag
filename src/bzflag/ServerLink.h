@@ -81,9 +81,9 @@ class ServerLink {
     void*		getPacketFromServer(uint16_t* length, uint16_t* seqno);
     void		enqueuePacket(int op, int rseqno, void *msg, int n);
     void		disqueuePacket(int op, int rseqno);
-    void* 		assembleSendPacket(uint32_t *length);
-    void* 		assembleCDPacket(uint32_t* length);
-    void 		disassemblePacket(void *msg, int *numpackets);
+    void*		assembleSendPacket(uint32_t *length);
+    void*		assembleCDPacket(uint32_t* length);
+    void		disassemblePacket(void *msg, int *numpackets);
 
     static ServerLink*	getServer(); // const
     static void		setServer(ServerLink*);
@@ -96,9 +96,9 @@ class ServerLink {
     uint32_t		remoteAddress;
     int			usendfd;
     struct sockaddr     usendaddr;
-    int 		urecvfd;
+    int			urecvfd;
     struct sockaddr     urecvaddr;
-    bool 		ulinkup;
+    bool		ulinkup;
 
     PlayerId		id;
     char		version[9];
@@ -109,7 +109,7 @@ class ServerLink {
     struct PacketQueue  *dqueue;
     unsigned short      lastRecvPacketNo;
     unsigned short      currentRecvSeq;
-    unsigned short 	lastSendPacketNo;
+    unsigned short	lastSendPacketNo;
 };
 
 #define SEND 1

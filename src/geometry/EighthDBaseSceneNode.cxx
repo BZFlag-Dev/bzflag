@@ -20,7 +20,7 @@
 const int		BasePolygons = 60;
 
 EighthDBaseSceneNode::EighthDBaseSceneNode(const float pos[3],
-		    		const float size[3], float rotation) :
+				const float size[3], float rotation) :
 				EighthDimSceneNode(BasePolygons),
 				renderNode(this, pos, size, rotation)
 {
@@ -90,8 +90,8 @@ void EighthDBaseSceneNode::addRenderNodes(SceneRenderer& renderer)
 }
 
 EighthDBaseSceneNode::EighthDBaseRenderNode::EighthDBaseRenderNode(
-    			const EighthDBaseSceneNode * _sceneNode,
-		    	const float pos[3],
+			const EighthDBaseSceneNode * _sceneNode,
+			const float pos[3],
 			const float size[3], float rotation) :
 			sceneNode(_sceneNode)
 {

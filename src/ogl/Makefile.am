@@ -5,7 +5,7 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-libGLKit_a_SOURCES =	 		\
+libGLKit_a_SOURCES =			\
 	OpenGLGState.cxx		\
 	OpenGLLight.cxx			\
 	OpenGLMaterial.cxx		\

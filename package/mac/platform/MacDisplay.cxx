@@ -61,75 +61,75 @@ boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
 	  {
 	    switch (eventRec.what)
 			{
-  			case mouseDown:
-  				bzf_event.type = BzfEvent::KeyDown;
-  				bzf_event.keyDown.ascii = 0;
-  				bzf_event.keyDown.shift = 0;
+			case mouseDown:
+				bzf_event.type = BzfEvent::KeyDown;
+				bzf_event.keyDown.ascii = 0;
+				bzf_event.keyDown.shift = 0;
 
-  				// Emulate a 3-button mouse with modifier keys
+				// Emulate a 3-button mouse with modifier keys
 
-  				if (eventRec.modifiers      & controlKey)
-  				  bzf_event.keyDown.button = BzfKeyEvent::MiddleMouse;
-  				else if (eventRec.modifiers & optionKey)
-  				  bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
-  				else
-  				  bzf_event.keyDown.button = BzfKeyEvent::LeftMouse;
+				if (eventRec.modifiers      & controlKey)
+				  bzf_event.keyDown.button = BzfKeyEvent::MiddleMouse;
+				else if (eventRec.modifiers & optionKey)
+				  bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
+				else
+				  bzf_event.keyDown.button = BzfKeyEvent::LeftMouse;
 
-  				break;
+				break;
 
-  			case mouseUp:
-  				bzf_event.type = BzfEvent::KeyUp;
-  				bzf_event.keyUp.ascii = 0;
-  				bzf_event.keyUp.shift = 0;
+			case mouseUp:
+				bzf_event.type = BzfEvent::KeyUp;
+				bzf_event.keyUp.ascii = 0;
+				bzf_event.keyUp.shift = 0;
 
-  				if (eventRec.modifiers      & controlKey)
-  				  bzf_event.keyUp.button = BzfKeyEvent::MiddleMouse;
-  				else if (eventRec.modifiers & optionKey)
-  				  bzf_event.keyUp.button = BzfKeyEvent::RightMouse;
-  				else
-  				  bzf_event.keyUp.button = BzfKeyEvent::LeftMouse;
-  				break;
+				if (eventRec.modifiers      & controlKey)
+				  bzf_event.keyUp.button = BzfKeyEvent::MiddleMouse;
+				else if (eventRec.modifiers & optionKey)
+				  bzf_event.keyUp.button = BzfKeyEvent::RightMouse;
+				else
+				  bzf_event.keyUp.button = BzfKeyEvent::LeftMouse;
+				break;
 
-  			case keyDown:
+			case keyDown:
 
-  				 bzf_event.type = BzfEvent::KeyDown;
-  				 getKey (bzf_event.keyDown, eventRec);
-  				 break;
+				 bzf_event.type = BzfEvent::KeyDown;
+				 getKey (bzf_event.keyDown, eventRec);
+				 break;
 
-  			case keyUp:
-  				bzf_event.type = BzfEvent::KeyUp;
-  				getKey (bzf_event.keyUp, eventRec);
-  				break;
+			case keyUp:
+				bzf_event.type = BzfEvent::KeyUp;
+				getKey (bzf_event.keyUp, eventRec);
+				break;
 
-  			case autoKey:
-  				bzf_event.type = BzfEvent::KeyDown;
-  				getKey (bzf_event.keyDown, eventRec);
-  				break;
+			case autoKey:
+				bzf_event.type = BzfEvent::KeyDown;
+				getKey (bzf_event.keyDown, eventRec);
+				break;
 
-  			case updateEvt:
-  				bzf_event.type = BzfEvent::Redraw;
-  				BeginUpdate((WindowPtr)eventRec.message);
+			case updateEvt:
+				bzf_event.type = BzfEvent::Redraw;
+				BeginUpdate((WindowPtr)eventRec.message);
 		EndUpdate((WindowPtr)eventRec.message);
-  			  break;
+			  break;
 
-  			//case diskEvt:
-  			//	break;
-  			//case activateEvt:
-  			//  break;
+			//case diskEvt:
+			//	break;
+			//case activateEvt:
+			//  break;
 
 
-  		  case osEvt:
-  		  switch( (eventRec.message >> 24) & 0x000000FF) {
+		  case osEvt:
+		  switch( (eventRec.message >> 24) & 0x000000FF) {
 
-  		    case suspendResumeMessage:
+		    case suspendResumeMessage:
 				     gInBackground = (eventRec.message & resumeFlag) != 1;
 				     gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;
 			       gMouseGrabbed = !gInBackground;
 			       if (!gInBackground)
 				SetCursor (&qd.arrow);
 			    break;
-  		  }
-  			break;
+		  }
+			break;
 
 	     case kHighLevelEvent:
 	 AEProcessAppleEvent(&eventRec);

@@ -14,7 +14,7 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 
-Bundle 		*BundleMgr::currentBundle 	= NULL;
+Bundle		*BundleMgr::currentBundle	= NULL;
 
 std::string	BundleMgr::bundlePath		= "./data";
 
@@ -65,7 +65,7 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
   if (locale.length() == 7 && locale.compare("default") == 0) {
     char	localePath[512];
     CFBundleRef	mainBundle = CFBundleGetMainBundle();
-    CFArrayRef	locales 	= NULL;
+    CFArrayRef	locales	= NULL;
     CFURLRef	localeURL	= NULL;
     // Look for a resource in the main bundle by name and type.
     do {
@@ -101,7 +101,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
   if (list == NULL) return false;
   // There could have been stuff added to the list
   // prior to this call. Save the list count.
-  int 	initSize = list->size();
+  int	initSize = list->size();
   
   do {
 	  
@@ -140,7 +140,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
     DIR *localedir = opendir((bundlePath + "/l10n/").c_str());
     if (localedir == NULL) break;
     
-    struct dirent 	*dirinfo = NULL;
+    struct dirent	*dirinfo = NULL;
     while ((dirinfo = readdir(localedir)) != NULL) {
 
       std::string poFile = dirinfo->d_name;

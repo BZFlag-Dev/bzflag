@@ -5,7 +5,7 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-libObstacle_a_SOURCES =		 	\
+libObstacle_a_SOURCES =			\
 	Intersect.cxx			\
 	Obstacle.cxx			\
 	BoxBuilding.cxx			\

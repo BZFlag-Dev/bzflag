@@ -269,7 +269,7 @@ bool			XDisplay::getEvent(BzfEvent& event) const
 	event.keyDown.shift = 0;
 	event.keyDown.button = rep->mapButton(button->button);
 	if (event.keyDown.button == BzfKeyEvent::NoButton)
-  	return false;
+	  return false;
       } else if (xevent.type == rep->getButtonReleaseType()) {
 	XDeviceButtonEvent *button = (XDeviceButtonEvent*) &xevent;
 	event.type = BzfEvent::KeyUp;
@@ -277,7 +277,7 @@ bool			XDisplay::getEvent(BzfEvent& event) const
 	event.keyUp.shift = 0;
 	event.keyUp.button = rep->mapButton(button->button);
 	if (event.keyUp.button == BzfKeyEvent::NoButton)
-  	return false;
+	  return false;
       }
 #endif
   }

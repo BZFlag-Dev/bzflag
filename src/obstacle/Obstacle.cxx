@@ -59,12 +59,12 @@ bool			Obstacle::isShootThrough() const
 	return shootThrough;
 }
 
-void 			Obstacle::setZFlip ( void )
+void			Obstacle::setZFlip ( void )
 {
 	ZFlip = true;
 }
 
-bool 			Obstacle::getZFlip ( void ) const
+bool			Obstacle::getZFlip ( void ) const
 {
 	return ZFlip;
 }

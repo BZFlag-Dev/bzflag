@@ -313,7 +313,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
 }
 
 void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
-    						const BaseBuilding &o)
+						const BaseBuilding &o)
 {
   WallSceneNode *node;
   ObstacleSceneNodeGenerator *nodeGen = o.newSceneNodeGenerator();

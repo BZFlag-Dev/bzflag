@@ -437,7 +437,7 @@ static BaseLocalPlayer*	getLocalPlayer(PlayerId id)
   return NULL;
 }
 
-static TeamColor      	PlayerIdToTeam(PlayerId id)
+static TeamColor	PlayerIdToTeam(PlayerId id)
 {
 	if (id >= 245 && id<=250)
 		return TeamColor(250 - id);
@@ -445,7 +445,7 @@ static TeamColor      	PlayerIdToTeam(PlayerId id)
 		return NoTeam;
 }
 
-static PlayerId	      	TeamToPlayerId(TeamColor team)
+static PlayerId		TeamToPlayerId(TeamColor team)
 {
 	if (team == NoTeam)
 		return NoPlayer;
@@ -1766,7 +1766,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	      roamView = roamViewFree;
 	  }
 	  else if ((roamTrackTank != -1) && (roamView == roamViewTrack ||
-	       	roamView == roamViewFollow || roamView == roamViewFP)) {
+		roamView == roamViewFollow || roamView == roamViewFP)) {
 	    if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
 	      bool found = false;
 	      for(int i = 0; i < curMaxPlayers; i++) {

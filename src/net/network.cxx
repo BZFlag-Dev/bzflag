@@ -424,7 +424,7 @@ bool			BzfNetwork::dereferenceURLs(
 	    if (data.length() == 0)
 		failedList.push_back(list[i]);
 	    else
-	    	list.push_back(data);
+		list.push_back(data);
 
 	    // done with this URL
 	    std::vector<std::string>::iterator it = list.begin();
@@ -440,7 +440,7 @@ bool			BzfNetwork::dereferenceURLs(
 	    if (data.length() == 0)
 		failedList.push_back(list[i]);
 	    else
-	    	list.push_back(data);
+		list.push_back(data);
 
 	    // done with this URL
 	    std::vector<std::string>::iterator it = list.begin();

@@ -343,7 +343,7 @@ void					BeOSMedia::writeAudioFrames(
 #else
       float *s = (float *)(uint8 *)(buf + amount);
       for (int i = (len - amount)/sizeof(short); i; i++, s++)
-      	*s /= 32767;
+	*s /= 32767;
       memcpy(&((unsigned char *)outputBuffer)[audioInputIndex], buf + amount, len - amount);
 #endif
       audioInputIndex += len - amount;

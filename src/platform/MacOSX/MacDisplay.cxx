@@ -110,8 +110,8 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 	bzf_event.keyDown.ascii = 0;
 	bzf_event.keyDown.shift = 0;
 		  if(eventButtons > 9) {
-		  	// bzflag only handles 9 buttons for now
-		  	eventButtons = 9;
+			// bzflag only handles 9 buttons for now
+			eventButtons = 9;
 		  }
 
 		  switch(eventButtons) {

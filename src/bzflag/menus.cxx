@@ -1586,7 +1586,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       BZDB->set("lighting", list->getIndex() ? "yes" : "no");
 
       BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
-      		sceneRenderer->useQuality() < 2) ? "yes" : "no");
+		sceneRenderer->useQuality() < 2) ? "yes" : "no");
       BZDB->setPersistent("_texturereplace", false);
       break;
 
@@ -1599,7 +1599,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       sceneRenderer->setQuality(list->getIndex());
 
       BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
-      		sceneRenderer->useQuality() < 2) ? "yes" : "no");
+		sceneRenderer->useQuality() < 2) ? "yes" : "no");
       BZDB->setPersistent("_texturereplace", false);
       break;
 
@@ -1955,13 +1955,13 @@ Help2Menu::Help2Menu() : HelpMenu("General")
 	"teammates and they don't have a team score."));
   list.push_back(createLabel(""));
   list.push_back(createLabel(
-  	"There are three styles of play, determined by the server configuration:  capture-"));
+	"There are three styles of play, determined by the server configuration:  capture-"));
   list.push_back(createLabel(
-  	"the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"));
+	"the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"));
   list.push_back(createLabel(
-  	"so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"));
+	"so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"));
   list.push_back(createLabel(
-  	"highest score by shooting opponents.  The object in rabbit chase is to be the highest score"));
+	"highest score by shooting opponents.  The object in rabbit chase is to be the highest score"));
   list.push_back(createLabel(
 	"capture enemy flags while preventing opponents from capturing yours.  In this"));
   list.push_back(createLabel(
@@ -2832,7 +2832,7 @@ void			ServerMenu::pick()
   std::vector<HUDuiControl*>& list = getControls();
 
   const uint16_t maxes [] = { ping.maxPlayers,ping.redMax,ping.greenMax,ping.blueMax,
-  			      ping.purpleMax, ping.rogueMax };
+			      ping.purpleMax, ping.rogueMax };
 
   // if this is a cached item set the player counts to "?/max count"
   if (item.cached && item.getPlayerCount() == 0) {

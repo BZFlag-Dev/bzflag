@@ -255,7 +255,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
     glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
 	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
     glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-       	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
+	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
   } glEnd();
 
   // border for radar
@@ -285,7 +285,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
     glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
 	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
     glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-       	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
   } glEnd();
   glPopMatrix();
 }

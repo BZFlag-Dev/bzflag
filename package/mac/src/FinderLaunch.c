@@ -1,7 +1,7 @@
 /*	File:		FinderLaunch.c
 
 	Description:
- 			A routine for sending an open documents Apple event to the
+			A routine for sending an open documents Apple event to the
 			finder.  This routine provides functionality equivalent to
 			selecting a document/file/application and choosing the
 			open command in the Finder's file menu.

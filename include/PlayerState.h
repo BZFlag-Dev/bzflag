@@ -21,7 +21,7 @@ public:
     enum PStatus {				// bit masks
 			DeadStatus =	0x0000,	// not alive, not paused, etc.
 			Alive =		0x0001,	// player is alive
-			Paused = 	0x0002,	// player is paused
+			Paused =	0x0002,	// player is paused
 			Exploding =	0x0004,	// currently blowing up
 			Teleporting =	0x0008,	// teleported recently
 			FlagActive =	0x0010,	// flag special powers active

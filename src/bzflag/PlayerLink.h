@@ -61,7 +61,7 @@ class PlayerLink {
 
     static PlayerLink*	getMulticast(); // const
     static void		setMulticast(PlayerLink*);
-    void         	setPortForUPD(unsigned short port);
+    void		setPortForUPD(unsigned short port);
     void		enableUDPConIfRelayed();
   private:
     State		state;

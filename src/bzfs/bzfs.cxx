@@ -165,7 +165,7 @@ struct PlayerAccessInfo
   std::bitset<lastPerm>		explicitDenys;
   std::vector<std::string>	groups;
   bool				verified;
-  TimeKeeper   			loginTime;
+  TimeKeeper			loginTime;
   int				loginAttempts;
 };
 
@@ -3056,7 +3056,7 @@ static WorldInfo *defineTeamWorld()
 	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
 	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-  	world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
+	world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
 	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.75f * M_PI,
                              0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
