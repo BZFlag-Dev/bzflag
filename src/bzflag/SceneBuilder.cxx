@@ -418,7 +418,7 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
       node->setUseColorTexture(useColorTexture[0]);
     }
     else{
-      if (useColorTexture[1]){  // only set the texture if we have one and are using it
+      if (useColorTexture[1]) {  // only set the texture if we have one and are using it
         node->setTexture(baseTopTexture);
         node->setUseColorTexture(useColorTexture[1]);
       }
@@ -458,10 +458,9 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
       node->setLightedColor(teleporterLightedColors[0]);
       node->setLightedModulateColor(teleporterLightedModulateColors[0]);
       node->setMaterial(teleporterMaterial);
-      node->setTexture(teleporterTexture);
+      node->setTexture(teleporterTexture); 
       node->setUseColorTexture(useColorTexture);
-   }
-    else if (part >= 2 && part <= 11) {
+    } else if (part >= 2 && part <= 11) {
       node->setColor(teleporterColors[1]);
       node->setModulateColor(teleporterModulateColors[1]);
       node->setLightedColor(teleporterLightedColors[1]);
@@ -469,10 +468,10 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
       node->setMaterial(teleporterMaterial);
       node->setTexture(teleporterTexture);
       node->setUseColorTexture(useColorTexture);
-   }
-    else {
+    } else {
       node->setColor(teleporterColors[2]);
       node->setLightedColor(teleporterLightedColors[2]);
+      node->setTexture(-1); // disable texturing
     }
 
     db->addStaticNode(node);
