@@ -47,6 +47,7 @@ noinst_HEADERS =		\
 	network.h		\
 	MediaFile.h		\
 	Obstacle.h		\
+	ObstacleSceneNodeGenerator.h	\
 	OpenGLDisplayList.h	\
 	OpenGLGState.h		\
 	OpenGLLight.h		\
