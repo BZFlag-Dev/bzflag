@@ -10,7 +10,7 @@ Includes=..\include;..\win32;.\\
 Linker=-lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
 UnitCount=119
-Folders="Header Files","Resource Files","Source Files"
+Folders="Header Files","Resource Files","Source Files","Source Files/Buildings","Source Files/Common","Source Files/Custom","Source Files/Managers","Source Files/Net"
 ObjFiles=
 PrivateResource=
 ResourceIncludes=
@@ -31,7 +31,7 @@ CompilerSettings=0010010000000000000000
 
 [Unit1]
 FileName=..\src\bzfs\AccessControlList.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -41,7 +41,7 @@ BuildCmd=
 
 [Unit2]
 FileName=..\src\bzfs\bzfs.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -51,7 +51,7 @@ BuildCmd=
 
 [Unit3]
 FileName=..\src\bzfs\CmdLineOptions.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -61,7 +61,7 @@ BuildCmd=
 
 [Unit4]
 FileName=..\src\bzfs\commands.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -71,7 +71,7 @@ BuildCmd=
 
 [Unit5]
 FileName=..\src\bzfs\CustomBase.cxx
-Folder="Source Files"
+Folder=Source Files/Custom
 Compile=1
 CompileCpp=1
 Link=1
@@ -81,7 +81,7 @@ BuildCmd=
 
 [Unit6]
 FileName=..\src\bzfs\CustomBox.cxx
-Folder="Source Files"
+Folder=Source Files/Custom
 Compile=1
 CompileCpp=1
 Link=1
@@ -91,7 +91,7 @@ BuildCmd=
 
 [Unit7]
 FileName=..\src\bzfs\CustomGate.cxx
-Folder="Source Files"
+Folder=Source Files/Custom
 Compile=1
 CompileCpp=1
 Link=1
@@ -101,7 +101,7 @@ BuildCmd=
 
 [Unit8]
 FileName=..\src\bzfs\CustomLink.cxx
-Folder="Source Files"
+Folder=Source Files/Custom
 Compile=1
 CompileCpp=1
 Link=1
@@ -111,7 +111,7 @@ BuildCmd=
 
 [Unit9]
 FileName=..\src\bzfs\CustomPyramid.cxx
-Folder="Source Files"
+Folder=Source Files/Custom
 Compile=1
 CompileCpp=1
 Link=1
@@ -121,7 +121,7 @@ BuildCmd=
 
 [Unit10]
 FileName=..\src\bzfs\CustomWeapon.cxx
-Folder="Source Files"
+Folder=Source Files/Custom
 Compile=1
 CompileCpp=1
 Link=1
@@ -131,7 +131,7 @@ BuildCmd=
 
 [Unit11]
 FileName=..\src\bzfs\CustomWorld.cxx
-Folder="Source Files"
+Folder=Source Files/Custom
 Compile=1
 CompileCpp=1
 Link=1
@@ -141,7 +141,7 @@ BuildCmd=
 
 [Unit12]
 FileName=..\src\bzfs\FlagInfo.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -151,7 +151,7 @@ BuildCmd=
 
 [Unit13]
 FileName=..\src\bzfs\Permissions.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -161,7 +161,7 @@ BuildCmd=
 
 [Unit14]
 FileName=..\src\bzfs\TeamBases.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -171,7 +171,7 @@ BuildCmd=
 
 [Unit15]
 FileName=..\src\bzfs\TextChunkManager.cxx
-Folder="Source Files"
+Folder=Source Files/Managers
 Compile=1
 CompileCpp=1
 Link=1
@@ -181,7 +181,7 @@ BuildCmd=
 
 [Unit16]
 FileName=..\src\bzfs\WorldFileObject.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -191,7 +191,7 @@ BuildCmd=
 
 [Unit17]
 FileName=..\src\bzfs\WorldFileObstacle.cxx
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -201,7 +201,7 @@ BuildCmd=
 
 [Unit19]
 FileName=..\src\bzfs\AccessControlList.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -211,7 +211,7 @@ BuildCmd=
 
 [Unit20]
 FileName=..\include\Address.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -221,7 +221,7 @@ BuildCmd=
 
 [Unit21]
 FileName=..\include\BZDBCache.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -231,7 +231,7 @@ BuildCmd=
 
 [Unit22]
 FileName=..\include\bzfio.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -241,7 +241,7 @@ BuildCmd=
 
 [Unit23]
 FileName=..\src\bzfs\bzfs.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -251,7 +251,7 @@ BuildCmd=
 
 [Unit24]
 FileName=..\include\bzsignal.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -261,7 +261,7 @@ BuildCmd=
 
 [Unit25]
 FileName=..\include\CallbackList.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -271,7 +271,7 @@ BuildCmd=
 
 [Unit26]
 FileName=..\src\bzfs\CmdLineOptions.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -281,7 +281,7 @@ BuildCmd=
 
 [Unit27]
 FileName=..\include\CommandManager.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -291,7 +291,7 @@ BuildCmd=
 
 [Unit28]
 FileName=..\src\bzfs\commands.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -301,7 +301,7 @@ BuildCmd=
 
 [Unit29]
 FileName=..\include\common.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -311,7 +311,7 @@ BuildCmd=
 
 [Unit30]
 FileName=config.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -321,7 +321,7 @@ BuildCmd=
 
 [Unit31]
 FileName=..\include\ConfigFileManager.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -331,7 +331,7 @@ BuildCmd=
 
 [Unit32]
 FileName=..\src\bzfs\CustomBase.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -341,7 +341,7 @@ BuildCmd=
 
 [Unit33]
 FileName=..\src\bzfs\CustomBox.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -351,7 +351,7 @@ BuildCmd=
 
 [Unit34]
 FileName=..\src\bzfs\CustomGate.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -361,7 +361,7 @@ BuildCmd=
 
 [Unit35]
 FileName=..\src\bzfs\CustomLink.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -371,7 +371,7 @@ BuildCmd=
 
 [Unit36]
 FileName=..\src\bzfs\CustomPyramid.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -381,7 +381,7 @@ BuildCmd=
 
 [Unit37]
 FileName=..\src\bzfs\CustomWeapon.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -391,7 +391,7 @@ BuildCmd=
 
 [Unit38]
 FileName=..\src\bzfs\CustomWorld.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -401,7 +401,7 @@ BuildCmd=
 
 [Unit39]
 FileName=..\include\Flag.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -411,7 +411,7 @@ BuildCmd=
 
 [Unit40]
 FileName=..\src\bzfs\FlagInfo.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -421,7 +421,7 @@ BuildCmd=
 
 [Unit41]
 FileName=..\include\global.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -431,7 +431,7 @@ BuildCmd=
 
 [Unit42]
 FileName=..\include\md5.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -441,7 +441,7 @@ BuildCmd=
 
 [Unit43]
 FileName=..\include\multicast.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -451,7 +451,7 @@ BuildCmd=
 
 [Unit44]
 FileName=..\include\Pack.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -461,7 +461,7 @@ BuildCmd=
 
 [Unit45]
 FileName=..\src\bzfs\PackVars.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -471,7 +471,7 @@ BuildCmd=
 
 [Unit46]
 FileName=..\include\Ping.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -481,7 +481,7 @@ BuildCmd=
 
 [Unit47]
 FileName=..\include\PlayerState.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -491,7 +491,7 @@ BuildCmd=
 
 [Unit48]
 FileName=..\include\ShotUpdate.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -501,7 +501,7 @@ BuildCmd=
 
 [Unit49]
 FileName=..\include\Singleton.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -511,7 +511,7 @@ BuildCmd=
 
 [Unit50]
 FileName=..\include\StateDatabase.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -521,7 +521,7 @@ BuildCmd=
 
 [Unit51]
 FileName=..\include\Team.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -531,7 +531,7 @@ BuildCmd=
 
 [Unit52]
 FileName=..\src\bzfs\TeamBases.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -541,7 +541,7 @@ BuildCmd=
 
 [Unit53]
 FileName=..\src\bzfs\TextChunkManager.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -551,7 +551,7 @@ BuildCmd=
 
 [Unit54]
 FileName=..\include\TextUtils.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -561,7 +561,7 @@ BuildCmd=
 
 [Unit55]
 FileName=..\include\TimeBomb.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -571,7 +571,7 @@ BuildCmd=
 
 [Unit56]
 FileName=..\include\TimeKeeper.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -581,7 +581,7 @@ BuildCmd=
 
 [Unit57]
 FileName=..\include\VotingBooth.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -591,7 +591,7 @@ BuildCmd=
 
 [Unit58]
 FileName=..\include\WordFilter.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -601,7 +601,7 @@ BuildCmd=
 
 [Unit59]
 FileName=..\src\bzfs\WorldFileObject.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -611,7 +611,7 @@ BuildCmd=
 
 [Unit60]
 FileName=..\src\bzfs\WorldFileObstacle.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -621,7 +621,7 @@ BuildCmd=
 
 [Unit61]
 FileName=..\src\bzfs\WorldInfo.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -631,7 +631,7 @@ BuildCmd=
 
 [Unit62]
 FileName=..\src\bzfs\WorldWeapons.h
-Folder="Header Files"
+Folder=Header Files
 Compile=1
 CompileCpp=1
 Link=1
@@ -641,7 +641,7 @@ BuildCmd=
 
 [Unit63]
 FileName=..\src\common\TimeKeeper.cxx
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -651,7 +651,7 @@ BuildCmd=
 
 [Unit64]
 FileName=..\src\common\bzfio.cxx
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -661,7 +661,7 @@ BuildCmd=
 
 [Unit65]
 FileName=..\src\common\StateDatabase.cxx
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -671,7 +671,7 @@ BuildCmd=
 
 [Unit66]
 FileName=..\src\net\Ping.cxx
-Folder=Source Files
+Folder=Source Files/Net
 Compile=1
 CompileCpp=1
 Link=1
@@ -681,7 +681,7 @@ BuildCmd=
 
 [Unit67]
 FileName=..\src\net\Address.cxx
-Folder=Source Files
+Folder=Source Files/Net
 Compile=1
 CompileCpp=1
 Link=1
@@ -691,7 +691,7 @@ BuildCmd=
 
 [Unit68]
 FileName=..\src\net\multicast.cxx
-Folder=Source Files
+Folder=Source Files/Net
 Compile=1
 CompileCpp=1
 Link=1
@@ -701,7 +701,7 @@ BuildCmd=
 
 [Unit69]
 FileName=..\src\net\network.cxx
-Folder=Source Files
+Folder=Source Files/Net
 Compile=1
 CompileCpp=1
 Link=1
@@ -711,7 +711,7 @@ BuildCmd=
 
 [Unit70]
 FileName=..\src\net\Pack.cxx
-Folder=Source Files
+Folder=Source Files/Net
 Compile=1
 CompileCpp=1
 Link=1
@@ -721,7 +721,7 @@ BuildCmd=
 
 [Unit71]
 FileName=..\src\common\md5.cxx
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 CompileCpp=1
 Link=1
@@ -749,18 +749,18 @@ AutoIncBuildNr=0
 
 [Unit72]
 FileName=..\src\common\bzsignal.c
-CompileCpp=1
-Folder=Source Files
+CompileCpp=0
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c bzsignal.c -o ../src/bzfs/bzsignal.o $(CFLAGS)
 
 [Unit73]
 FileName=..\src\common\Flag.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -770,7 +770,7 @@ BuildCmd=
 [Unit74]
 FileName=..\src\common\ErrorHandler.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -780,7 +780,7 @@ BuildCmd=
 [Unit75]
 FileName=..\src\common\Team.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -790,7 +790,7 @@ BuildCmd=
 [Unit76]
 FileName=..\src\common\VotingBooth.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -800,7 +800,7 @@ BuildCmd=
 [Unit77]
 FileName=..\src\common\ShotUpdate.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -810,7 +810,7 @@ BuildCmd=
 [Unit78]
 FileName=..\src\common\WordFilter.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -820,7 +820,7 @@ BuildCmd=
 [Unit79]
 FileName=..\src\common\BZDBCache.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -830,7 +830,7 @@ BuildCmd=
 [Unit80]
 FileName=..\src\common\TimeBomb.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -840,7 +840,7 @@ BuildCmd=
 [Unit81]
 FileName=..\src\common\PlayerState.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -850,7 +850,7 @@ BuildCmd=
 [Unit82]
 FileName=..\src\common\Bundle.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -860,7 +860,7 @@ BuildCmd=
 [Unit83]
 FileName=..\src\common\BundleMgr.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -870,7 +870,7 @@ BuildCmd=
 [Unit84]
 FileName=..\src\common\CommandManager.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Managers
 Compile=1
 Link=1
 Priority=1000
@@ -880,7 +880,7 @@ BuildCmd=
 [Unit85]
 FileName=..\src\common\ConfigFileManager.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Managers
 Compile=1
 Link=1
 Priority=1000
@@ -890,7 +890,7 @@ BuildCmd=
 [Unit86]
 FileName=..\src\common\KeyManager.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Managers
 Compile=1
 Link=1
 Priority=1000
@@ -900,7 +900,7 @@ BuildCmd=
 [Unit87]
 FileName=..\src\common\FileManager.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Managers
 Compile=1
 Link=1
 Priority=1000
@@ -910,7 +910,7 @@ BuildCmd=
 [Unit88]
 FileName=..\src\common\global.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -920,7 +920,7 @@ BuildCmd=
 [Unit89]
 FileName=..\src\date\buildDate.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -930,7 +930,7 @@ BuildCmd=
 [Unit90]
 FileName=..\src\game\VotingArbiter.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -940,7 +940,7 @@ BuildCmd=
 [Unit91]
 FileName=..\src\bzfs\RecordReplay.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -950,7 +950,7 @@ BuildCmd=
 [Unit92]
 FileName=..\src\bzfs\ListServerConnection.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -960,7 +960,7 @@ BuildCmd=
 [Unit93]
 FileName=..\src\bzfs\RejoinList.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -970,7 +970,7 @@ BuildCmd=
 [Unit94]
 FileName=..\src\bzfs\Score.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -980,7 +980,7 @@ BuildCmd=
 [Unit95]
 FileName=..\src\net\AdnsHandler.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Net
 Compile=1
 Link=1
 Priority=1000
@@ -990,7 +990,7 @@ BuildCmd=
 [Unit96]
 FileName=..\src\game\NetHandler.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Net
 Compile=1
 Link=1
 Priority=1000
@@ -1000,7 +1000,7 @@ BuildCmd=
 [Unit97]
 FileName=..\src\bzfs\WorldFileLocation.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1010,7 +1010,7 @@ BuildCmd=
 [Unit98]
 FileName=..\src\bzfs\FlagHistory.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1020,7 +1020,7 @@ BuildCmd=
 [Unit99]
 FileName=..\src\bzfs\EntryZones.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1030,7 +1030,7 @@ BuildCmd=
 [Unit100]
 FileName=..\src\bzfs\SpawnPosition.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1040,7 +1040,7 @@ BuildCmd=
 [Unit101]
 FileName=..\src\game\DirectoryNames.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1050,7 +1050,7 @@ BuildCmd=
 [Unit102]
 FileName=..\src\bzfs\CustomZone.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1060,7 +1060,7 @@ BuildCmd=
 [Unit105]
 FileName=..\src\bzfs\GameKeeper.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1070,7 +1070,7 @@ BuildCmd=
 [Unit106]
 FileName=..\src\game\PlayerInfo.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1080,7 +1080,7 @@ BuildCmd=
 [Unit107]
 FileName=..\src\game\DelayQueue.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1090,7 +1090,7 @@ BuildCmd=
 [Unit108]
 FileName=..\src\game\LagInfo.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1100,7 +1100,7 @@ BuildCmd=
 [Unit109]
 FileName=..\src\obstacle\BaseBuilding.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Buildings
 Compile=1
 Link=1
 Priority=1000
@@ -1110,7 +1110,7 @@ BuildCmd=
 [Unit111]
 FileName=..\src\obstacle\ObstacleSceneNodeGenerator.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1120,7 +1120,7 @@ BuildCmd=
 [Unit104]
 FileName=..\src\bzfs\BZWError.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1130,7 +1130,7 @@ BuildCmd=
 [Unit113]
 FileName=..\src\obstacle\Teleporter.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1140,7 +1140,7 @@ BuildCmd=
 [Unit114]
 FileName=..\src\obstacle\WallObstacle.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1150,7 +1150,7 @@ BuildCmd=
 [Unit103]
 FileName=..\src\bzfs\BZWReader.cxx
 CompileCpp=1
-Folder=bzfs/Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1160,7 +1160,7 @@ BuildCmd=
 [Unit116]
 FileName=..\src\geometry\ViewFrustum.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1530,7 +1530,7 @@ BuildCmd=
 [Unit110]
 FileName=..\src\obstacle\Obstacle.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1540,7 +1540,7 @@ BuildCmd=
 [Unit112]
 FileName=..\src\obstacle\PyramidBuilding.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Buildings
 Compile=1
 Link=1
 Priority=1000
@@ -1550,7 +1550,7 @@ BuildCmd=
 [Unit115]
 FileName=..\src\game\CollisionManager.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Managers
 Compile=1
 Link=1
 Priority=1000
@@ -1560,7 +1560,7 @@ BuildCmd=
 [Unit117]
 FileName=..\src\bzfs\WorldInfo.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1570,7 +1570,7 @@ BuildCmd=
 [Unit118]
 FileName=..\src\game\Ray.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1580,7 +1580,7 @@ BuildCmd=
 [Unit18]
 FileName=..\src\bzfs\WorldWeapons.cxx
 CompileCpp=1
-Folder="Source Files"
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -1590,7 +1590,7 @@ BuildCmd=
 [Unit119]
 FileName=..\src\obstacle\BoxBuilding.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/Buildings
 Compile=1
 Link=1
 Priority=1000
