@@ -24,6 +24,10 @@
 #include "ServerStartMenu.h"
 #include "ServerMenu.h"
 #include "Protocol.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiTypeIn.h"
+#include "HUDuiList.h"
 
 /* from playing.h */
 StartupInfo* getStartupInfo();

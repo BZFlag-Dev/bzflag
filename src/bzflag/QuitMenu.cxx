@@ -21,6 +21,9 @@
 
 /* local implementation headers */
 #include "MainMenu.h"
+#include "HUDDialog.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
 
 
 bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)

@@ -23,6 +23,9 @@
 /* local implementation headers */
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiTypeIn.h"
 
 
 QuickKeysMenu::QuickKeysMenu()

@@ -18,6 +18,8 @@
 
 /* local interface headers */
 #include "HUDDialog.h"
+#include "HUDuiLabel.h"
+#include "HUDuiDefaultKey.h"
 #include "MenuDefaultKey.h"
 
 

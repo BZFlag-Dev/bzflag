@@ -15,7 +15,9 @@
 
 /* local interface headers */
 #include "HUDDialog.h"
-#include "HUDui.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiTypeIn.h"
+#include "HUDuiLabel.h"
 
 
 class SaveWorldMenu : public HUDDialog {

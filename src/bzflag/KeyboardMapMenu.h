@@ -23,7 +23,9 @@
 #include "BzfEvent.h"
 
 /* local interface headers */
-#include "HUDui.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiLabel.h"
+#include "HUDuiControl.h"
 #include "HUDDialog.h"
 #include "QuickKeysMenu.h"
 #include "MenuDefaultKey.h"

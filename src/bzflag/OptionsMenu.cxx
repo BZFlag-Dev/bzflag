@@ -31,6 +31,9 @@
 #include "ControlPanel.h"
 #include "StartupInfo.h"
 #include "ServerListCache.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiList.h"
 
 /* FIXME - from playing.h */
 StartupInfo* getStartupInfo();

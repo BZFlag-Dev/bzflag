@@ -10,31 +10,26 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__MENUDEFAULTKEY_H__
-#define	__MENUDEFAULTKEY_H__
+/*
+ * HUDuiDefaultKey:
+ *	User interface class for the heads-up display.
+ */
 
-/* common interface headers */
+#ifndef	__HUDUIDEFAULTKEY_H__
+#define	__HUDUIDEFAULTKEY_H__
+
 #include "BzfEvent.h"
 
-/* local interface headers */
-#include "HUDuiDefaultKey.h"
+class HUDuiDefaultKey {
+  public:
+			HUDuiDefaultKey();
+    virtual		~HUDuiDefaultKey();
 
-class MenuDefaultKey : public HUDuiDefaultKey {
-public:
-  MenuDefaultKey();
-  ~MenuDefaultKey();
-
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
-
-  static MenuDefaultKey* getInstance();
-
-private:
-  static MenuDefaultKey instance;
+    virtual bool	keyPress(const BzfKeyEvent&);
+    virtual bool	keyRelease(const BzfKeyEvent&);
 };
 
-
-#endif /* __MENUDEFAULTKEY_H__ */
+#endif // __HUDUIDEFAULTKEY_H__
 
 // Local Variables: ***
 // mode: C++ ***

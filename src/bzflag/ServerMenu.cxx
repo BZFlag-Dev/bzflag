@@ -34,6 +34,9 @@
 #include "StartupInfo.h"
 #include "HUDDialogStack.h"
 #include "ErrorHandler.h"
+#include "HUDui.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
 
 /* from playing.h */
 StartupInfo* getStartupInfo();

@@ -27,9 +27,10 @@
 
 /* local interface headers */
 #include "MenuDefaultKey.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiLabel.h"
 
 class ServerMenu;
-class HUDuiLabel;
 
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:

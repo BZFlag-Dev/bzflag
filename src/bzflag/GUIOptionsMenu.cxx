@@ -28,6 +28,9 @@
 #include "World.h"
 #include "SceneRenderer.h"
 #include "HUDDialogStack.h"
+#include "HUDuiControl.h"
+#include "HUDuiList.h"
+#include "HUDuiLabel.h"
 
 /* FIXME - from playing.h */
 SceneRenderer* getSceneRenderer();

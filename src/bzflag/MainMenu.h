@@ -14,7 +14,10 @@
 #define	__MAINMENU_H__
 
 #include "common.h"
+
 #include "HUDDialog.h"
+#include "HUDuiControl.h"
+#include "HUDuiDefaultKey.h"
 
 class JoinMenu;
 class OptionsMenu;

@@ -22,7 +22,7 @@
 /* common interface headers */
 #include "global.h"
 #include "TimeKeeper.h"
-#include "HUDui.h"
+#include "HUDuiTypeIn.h"
 #include "Flag.h"
 
 /* local interface headers */

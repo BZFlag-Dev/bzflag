@@ -40,6 +40,18 @@ bzflag_SOURCES =			\
 	HUDRenderer.h			\
 	HUDui.cxx			\
 	HUDui.h				\
+	HUDuiControl.cxx		\
+	HUDuiControl.h			\
+	HUDuiDefaultKey.cxx		\
+	HUDuiDefaultKey.h		\
+	HUDuiLabel.cxx			\
+	HUDuiLabel.h			\
+	HUDuiList.cxx			\
+	HUDuiList.h			\
+	HUDuiTextureLabel.cxx		\
+	HUDuiTextureLabel.h		\
+	HUDuiTypeIn.cxx			\
+	HUDuiTypeIn.h			\
 	JoinMenu.cxx			\
 	JoinMenu.h			\
 	InputMenu.cxx			\

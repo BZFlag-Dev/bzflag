@@ -19,6 +19,7 @@
 /* common implementation headers */
 #include "StateDatabase.h"
 #include "BundleMgr.h"
+#include "Bundle.h"
 #include "Team.h"
 #include "FontManager.h"
 
@@ -26,6 +27,8 @@
 #include "LocalPlayer.h"
 #include "World.h"
 #include "RemotePlayer.h"
+#include "HUDui.h"
+#include "HUDuiTypeIn.h"
 
 
 //

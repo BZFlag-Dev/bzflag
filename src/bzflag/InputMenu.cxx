@@ -27,6 +27,9 @@
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiList.h"
 
 /* FIXME - from playing.h */
 MainWindow*    getMainWindow();

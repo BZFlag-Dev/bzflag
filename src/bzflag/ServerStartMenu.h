@@ -20,7 +20,9 @@
 
 /* local interface headers */
 #include "HUDDialog.h"
-#include "HUDui.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiList.h"
+#include "HUDuiLabel.h"
 
 class ServerStartMenu : public HUDDialog {
 public:

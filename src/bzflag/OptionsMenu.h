@@ -16,7 +16,8 @@
 /* local interface headers */
 #include "HUDDialog.h"
 #include "MenuDefaultKey.h"
-#include "HUDui.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiControl.h"
 #include "GUIOptionsMenu.h"
 #include "SaveWorldMenu.h"
 #include "InputMenu.h"

@@ -18,8 +18,9 @@
 
 /* local interface headers */
 #include "HUDDialog.h"
-#include "HUDui.h"
-
+#include "HUDuiDefaultKey.h"
+#include "HUDuiLabel.h"
+#include "HUDuiTypeIn.h"
 
 class QuickKeysMenu : public HUDDialog {
 public:

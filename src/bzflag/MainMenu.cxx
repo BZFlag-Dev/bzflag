@@ -28,6 +28,9 @@
 #include "JoinMenu.h"
 #include "OptionsMenu.h"
 #include "QuitMenu.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiTextureLabel.h"
 
 /* from playing.cxx */
 void leaveGame();

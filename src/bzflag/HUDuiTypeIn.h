@@ -11,34 +11,42 @@
  */
 
 /*
- * HUDui:
- *	User interface class for the heads-up display and menu system.
+ * HUDuiTypeIn:
+ *	User interface class for the heads-up display's editable input control.
  */
 
-#ifndef	__HUDUI_H__
-#define	__HUDUI_H__
+#ifndef	__HUDUITYPEIN_H__
+#define	__HUDUITYPEIN_H__
 
+#include <string>
 #include "BzfEvent.h"
 #include "HUDuiControl.h"
-#include "HUDuiDefaultKey.h"
 
-class HUDui {
+class HUDuiTypeIn : public HUDuiControl {
   public:
-    static HUDuiControl* getFocus();
-    static void		setFocus(HUDuiControl*);
+			HUDuiTypeIn();
+			~HUDuiTypeIn();
 
-    static HUDuiDefaultKey* getDefaultKey();
-    static void		setDefaultKey(HUDuiDefaultKey*);
+    int			getMaxLength() const;
+    std::string		getString() const;
 
-    static bool	keyPress(const BzfKeyEvent&);
-    static bool	keyRelease(const BzfKeyEvent&);
+    void		setMaxLength(int);
+    void		setString(const std::string&);
+    void		setEditing(bool _allowEdit);
+
+  protected:
+    bool		doKeyPress(const BzfKeyEvent&);
+    bool		doKeyRelease(const BzfKeyEvent&);
+    void		doRender();
 
   private:
-    static HUDuiControl *focus;
-    static HUDuiDefaultKey* defaultKey;
+    int			maxLength;
+    std::string		string;
+    int			cursorPos;
+    bool		allowEdit;
 };
 
-#endif // __HUDUI_H__
+#endif // __HUDUITYPEIN_H__
 
 // Local Variables: ***
 // mode: C++ ***

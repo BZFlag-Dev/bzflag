@@ -25,6 +25,10 @@
 #include "StateDatabase.h"
 #include "MainMenu.h"
 #include "sound.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiList.h"
+#include "HUDuiTypeIn.h"
 
 AudioMenu::AudioMenu()
 {

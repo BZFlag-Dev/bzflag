@@ -22,7 +22,7 @@
 /* local interface headers */
 #include "MenuDefaultKey.h"
 #include "HUDDialog.h"
-#include "HUDui.h"
+#include "HUDuiDefaultKey.h"
 
 
 class QuitMenuDefaultKey : public MenuDefaultKey {

@@ -44,6 +44,9 @@
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
 #include "StartupInfo.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiList.h"
 
 /* from playing.h */
 StartupInfo* getStartupInfo();

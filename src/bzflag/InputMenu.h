@@ -21,6 +21,9 @@
 /* local interface headers */
 #include "MenuDefaultKey.h"
 #include "KeyboardMapMenu.h"
+#include "HUDuiControl.h"
+#include "HUDuiList.h"
+#include "HUDuiDefaultKey.h"
 
 
 /** this class provides options for setting the gui

@@ -11,34 +11,44 @@
  */
 
 /*
- * HUDui:
- *	User interface class for the heads-up display and menu system.
+ * HUDuiList:
+ *	User interface class for the heads-up display's list (value selection from
+ *  a set) control.
  */
 
-#ifndef	__HUDUI_H__
-#define	__HUDUI_H__
+#ifndef	__HUDUILIST_H__
+#define	__HUDUILIST_H__
 
-#include "BzfEvent.h"
+#include <string>
+#include <vector>
+
 #include "HUDuiControl.h"
-#include "HUDuiDefaultKey.h"
+#include "BzfEvent.h"
 
-class HUDui {
+class HUDuiList : public HUDuiControl {
   public:
-    static HUDuiControl* getFocus();
-    static void		setFocus(HUDuiControl*);
+			HUDuiList();
+			~HUDuiList();
 
-    static HUDuiDefaultKey* getDefaultKey();
-    static void		setDefaultKey(HUDuiDefaultKey*);
+    int			getIndex() const;
+    void		setIndex(int);
 
-    static bool	keyPress(const BzfKeyEvent&);
-    static bool	keyRelease(const BzfKeyEvent&);
+    void		createSlider(int);
+
+    std::vector<std::string>&	getList();
+    void		update();
+
+  protected:
+    bool		doKeyPress(const BzfKeyEvent&);
+    bool		doKeyRelease(const BzfKeyEvent&);
+    void		doRender();
 
   private:
-    static HUDuiControl *focus;
-    static HUDuiDefaultKey* defaultKey;
+    int			index;
+    std::vector<std::string>	list;
 };
 
-#endif // __HUDUI_H__
+#endif // __HUDUILIST_H__
 
 // Local Variables: ***
 // mode: C++ ***

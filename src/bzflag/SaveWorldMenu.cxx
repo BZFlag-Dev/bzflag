@@ -37,6 +37,10 @@
 #include "SaveWorldMenu.h"
 #include "ServerListCache.h"
 #include "MainMenu.h"
+#include "HUDDialog.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiTypeIn.h"
 
 
 SaveWorldMenu::SaveWorldMenu()

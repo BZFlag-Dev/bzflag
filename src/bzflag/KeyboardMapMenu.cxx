@@ -24,6 +24,8 @@
 #include "ActionBinding.h"
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
 
 /* FIXME -- from playing.h */
 void notifyBzfKeyMapChanged();

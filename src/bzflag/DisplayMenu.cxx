@@ -23,10 +23,14 @@
 #include "SceneRenderer.h"
 #include "BZDBCache.h"
 #include "FontManager.h"
+#include "OpenGLTexture.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
+#include "HUDuiControl.h"
+#include "HUDuiList.h"
+#include "HUDuiLabel.h"
 #include "MainWindow.h"
 
 /* FIXME - from playing.h */

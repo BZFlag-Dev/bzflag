@@ -25,12 +25,14 @@
 
 /* local interface headers */
 #include "HUDDialog.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiList.h"
+#include "HUDuiTypeIn.h"
 
 class ServerStartMenu;
 class ServerMenu;
-class HUDuiTypeIn;
-class HUDuiList;
-class HUDuiLabel;
 
 class JoinMenu : public HUDDialog {
   public:

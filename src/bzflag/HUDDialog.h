@@ -25,6 +25,7 @@
 
 /* local interface headers */
 #include "HUDui.h"
+#include "HUDuiControl.h"
 
 
 /**

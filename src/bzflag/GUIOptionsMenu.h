@@ -20,6 +20,7 @@
 
 /* local interface headers */
 #include "MenuDefaultKey.h"
+#include "HUDuiDefaultKey.h"
 
 
 /** this class provides options for setting the gui

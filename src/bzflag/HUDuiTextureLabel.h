@@ -10,31 +10,34 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__MENUDEFAULTKEY_H__
-#define	__MENUDEFAULTKEY_H__
+/*
+ * HUDuiTextureLabel:
+ *	User interface classes and functions for the heads-up display's textured
+ *  label controls.
+ */
 
-/* common interface headers */
-#include "BzfEvent.h"
+#ifndef	__HUDUITEXTURELABEL_H__
+#define	__HUDUITEXTURELABEL_H__
 
-/* local interface headers */
-#include "HUDuiDefaultKey.h"
+#include "HUDuiLabel.h"
+#include "OpenGLGState.h"
 
-class MenuDefaultKey : public HUDuiDefaultKey {
-public:
-  MenuDefaultKey();
-  ~MenuDefaultKey();
+class HUDuiTextureLabel : public HUDuiLabel {
+  public:
+			HUDuiTextureLabel();
+			~HUDuiTextureLabel();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    void		setTexture(const int);
 
-  static MenuDefaultKey* getInstance();
+  protected:
+    void		doRender();
 
-private:
-  static MenuDefaultKey instance;
+  private:
+    OpenGLGState	gstate;
+    int         	texture;
 };
 
-
-#endif /* __MENUDEFAULTKEY_H__ */
+#endif // __HUDUITEXTURELABEL_H__
 
 // Local Variables: ***
 // mode: C++ ***
