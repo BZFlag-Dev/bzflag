@@ -4527,7 +4527,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     }
     for (i = 0; !dead && i < curMaxPlayers; i++)
       if (player[i] && !player[i]->isPaused() &&
-	  ((player[i]->getFlag() == Flags::Steamroller) || ((myTank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
+	  ((player[i]->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
 	  const float* pos = player[i]->getPosition();
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
