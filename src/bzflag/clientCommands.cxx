@@ -356,8 +356,8 @@ std::string cmdRadarZoom(const std::string&,
 
   if (args[0] == "out") {
     range *= 1.05f;
-    if (range > 1.5f)
-      range = 1.5f;
+    if (range > 2.0f)
+      range = 2.0f;
     BZDB.setFloat("displayRadarRange", range);
   } else if (args[0] == "in") {
     range /= 1.05f;
