@@ -3398,22 +3398,6 @@ static void handleCommand(int t, const void *rawbuf)
       buf = nboUnpackFloat(buf, timestamp);
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf);
-      if (t != id) {
-	// Should be a Robot or a cheater
-	if ((id >= curMaxPlayers) || !player[id].isBot()) {
-	  // FIXME - Commented out autokick occasionally being kicked
-	  // out with Robot
-	  // Should check why!
-// 	  char message[MessageLen];
-	  DEBUG1("kicking Player %s [%d] Invalid Id %s [%d]\n",
-		 player[t].getCallSign(), t, player[id].getCallSign(), id);
-// 	  strcpy(message, "Autokick: Using invalid PlayerId, don't cheat.");
-// 	  sendMessage(ServerPlayer, t, message, true);
-// 	  removePlayer(t, "Using invalid PlayerId");
-// 	  break;
-	} else
-	  t = id;
-      }
 
       // silently drop old packet
       if (state.order <= lastState[t].order)
@@ -4496,12 +4480,18 @@ int main(int argc, char **argv)
 	    nboUnpackUByte(buf, t);
 	    break;
 	  }
+	  case MsgPlayerUpdate: {
+	    float timestamp;
+	    buf = nboUnpackFloat(buf, timestamp);
+	    buf = nboUnpackUByte(buf, t);
+	    break;
+	  }
 	  default:
 	    break;
 	  }
 	  // Make sure is a bot
 	  if (t != i) {
-	    if (!player[t].isBot())
+	    if ((t >= curMaxPlayers) || !player[t].isBot())
 	      t = i;
 	    // Should check also if bot and player are related
 	  }
