@@ -707,6 +707,10 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
     std::string timelimit = TimeKeeper::printTime(timeArray);
     matchBegins = TextUtils::format("Match duration is %s", timelimit.c_str());
     sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
+		
+		// make sure the game always start unpaused
+		clOptions->countdownPaused = false;
+		countdownPauseStart = TimeKeeper::getNullTime();
 
   } else {
     sendMessage(ServerPlayer, AllPlayers, "Team scores reset.");
