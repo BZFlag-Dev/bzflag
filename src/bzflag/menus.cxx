@@ -1347,15 +1347,19 @@ SaveWorldMenu::~SaveWorldMenu()
 void			SaveWorldMenu::execute()
 {
   World *pWorld = World::getWorld();
-  if (pWorld == NULL)
+  if (pWorld == NULL) {
     status->setString( "No world loaded to save" );
-  else {
+  } else {
     bool success = World::getWorld()->writeWorld(filename->getString());
-    if (success)
+    if (success) {
       status->setString( "File Saved" );
-    else
+    } else {
       status->setString( "Error saving file" );
+    }
   }
+  const OpenGLTexFont& font = status->getFont();
+  const float statusWidth = font.getWidth(status->getString());
+  status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 
 void			SaveWorldMenu::resize(int width, int height)
