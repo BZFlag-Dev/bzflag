@@ -406,7 +406,7 @@ bool readGroupsFile(const std::string &filename)
     std::string perm;
     while ((in >> c) && (!in.eof()) && (c != ':'))
       name += c;
-    while ((in >> c) && (!in.eof()) && (c != '\n'))
+    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r'))
       perm += c;
 
 
@@ -438,11 +438,11 @@ bool readPermsFile(const std::string &filename)
     std::string name;
     std::vector<std::string> groups;
     // get a name
-    while ((in >> c) && (!in.eof()) && (c != '\n'))
+    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r'))
       name += c;
     makeupper(name);
     // get the groups
-    while ((in >> c) && (!in.eof()) && (c != '\n')) {
+    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r')) {
       std::string temp;
       temp += c;
       while ((in >> c) && (!in.eof()) && (c != ' '))
@@ -455,13 +455,13 @@ bool readPermsFile(const std::string &filename)
 
     std::string perms;
     // get the allows
-    while ((in >> c) && (!in.eof()) && (c != '\n'))
+    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r'))
       perms += c;
     parsePermissionString(perms, info.explicitAllows);
 
     perms="";
     // get the denys
-    while ((in >> c) && (!in.eof()) && (c != '\n'))
+    while ((in >> c) && (!in.eof()) && (c != '\n') && (c != '\r'))
       perms += c;
     parsePermissionString(perms, info.explicitDenys);
 
