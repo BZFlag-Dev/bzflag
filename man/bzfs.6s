@@ -725,13 +725,18 @@ Shows all flags with information. Example:
 
 .BR
 .TP
-.B /kick {playerName}
+.B /kick "Player name" | playerName | #slot> <reason>
 Kick a named player off the server. Example:
 .ft CW
 .nf
 .ne 2
 /kick Gerbol
 You were kicked off the server by MrApathyCream
+
+/kick #1 Team killing
+Kick the player using slot 1 because Team Killing
+
+Note: Slots numbers are only displayed in admins clients. A reason is required
 .ft R
 
 .TP
@@ -747,7 +752,7 @@ List player names and IP addresses. Example:
 .ft R
 
 .TP
-.B /ban {ipList} {duration} {reason}
+.B /ban <ip | ipList | #slot | "Player name" | playerName > <duration> <reason>
 
 Ban players using the specified IPs for certain length of time from using this server. Example:
 .ft CW
@@ -755,10 +760,16 @@ Ban players using the specified IPs for certain length of time from using this s
 .ne 4
 /ban 35.23.43.66 2 cheating
 bans player with specific ip for 2 minutes
-/ban 35.23.*.*,47.23.17.*
+/ban 35.23.*.*,47.23.17.* 0 Cheaters
 bans all ips in this range forever
 /ban 36.37.2.8 2h30m "ShootMe" was abusing players
 bans specific ip for 2.5 hours with given reason
+/ban #5 60m Rejoining
+bans player using slot 5 for 60 minutes with given reason
+/ban "Tanker" 0 cheating
+bans the player Tanker forever because cheating
+
+Note: Slots numbers are only displayed in admins clients. Duration and reason are required.
 .ft R
 
 .TP
