@@ -5180,8 +5180,8 @@ static void markOld(std::string &fileName)
     st.wMonth = 1;
     st.wDay = 1;
     SystemTimeToFileTime( &st, &ft );
-    BOOL b = SetFileTime(h, &ft, &ft, &ft);
-    int i = GetLastError();
+    SetFileTime(h, &ft, &ft, &ft);
+    GetLastError();
     CloseHandle(h);
   }
 #else
