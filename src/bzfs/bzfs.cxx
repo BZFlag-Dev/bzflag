@@ -1523,13 +1523,15 @@ static void fixTeamCount() {
   int teamNum;
   for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
     team[teamNum].team.size = 0;
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-    if (player[playerIndex].isPlaying()) {
-      teamNum = player[playerIndex].getTeam();
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    if (p && p->player->isPlaying()) {
+      teamNum = p->player->getTeam();
       if (teamNum == RabbitTeam)
 	teamNum = RogueTeam;
       team[teamNum].team.size++;
     }
+  }
 }
 
 static void addPlayer(int playerIndex)
@@ -2143,11 +2145,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   bool wasPlaying = playerData->player->isPlaying();
   playerData->netHandler->closing();
 
-  playerData->player->setDead();
-  if (clOptions->gameStyle & int(RabbitChaseGameStyle))
-    if (playerIndex == rabbitIndex)
-      anointNewRabbit();
-
   int flagid = playerData->player->getFlag();
   if (flagid >= 0) {
     // do not simply zap team flag
@@ -2197,6 +2194,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 
   delete playerData;
+
+  if (clOptions->gameStyle & int(RabbitChaseGameStyle))
+    if (playerIndex == rabbitIndex)
+      anointNewRabbit();
 
   // recompute curMaxPlayers
   if (playerIndex + 1 == curMaxPlayers)
