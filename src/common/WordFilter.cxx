@@ -11,6 +11,11 @@
  */
 
 /* no header other than WordFilter.h should be included here */
+
+#ifdef _WIN32
+#pragma warning( 4:4786)
+#endif
+
 #include "WordFilter.h"
 
 
@@ -701,7 +706,7 @@ void WordFilter::outputFilter(void) const
 {
   for (int i=0; i < MAX_FILTERS; ++i) {
     int count=0;
-    for (std::set<filter_t, expressionCompare>::iterator j = filters[i].begin(); \
+    for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
       std::cout << count++ << ": " << j->word << std::endl;
@@ -715,7 +720,7 @@ void WordFilter::outputWords(void) const
   //		std::cout << "size of compiled set is " << () << std::endl;
   for (int i=0; i < MAX_FILTERS; ++i) {
     int count=0;
-    for (std::set<filter_t, expressionCompare>::iterator j = filters[i].begin(); \
+    for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
       std::cout << "[" << i << "] " << count++ << ": " << j->word << std::endl;
@@ -727,7 +732,7 @@ unsigned long int WordFilter::wordCount(void) const
 {
   int count=0;
   for (int i=0; i < MAX_FILTERS; ++i) {
-    for (std::set<filter_t, expressionCompare>::iterator j = filters[i].begin(); \
+    for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
       count += 1;
