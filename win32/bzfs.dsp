@@ -116,6 +116,10 @@ SOURCE=..\src\bzfs\WorldStandardTeam.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\src\game\Protocol.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzfs\WorldFile.h
 # End Source File
 # Begin Source File

@@ -54,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 vorbis_static.lib ogg_static.lib vorbisenc_static.lib vorbisfile_static.lib dsound.lib winmm.lib wsock32.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 vorbis_static.lib ogg_static.lib vorbisenc_static.lib vorbisfile_static.lib dsound.lib winmm.lib wsock32.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386
 
 !ELSEIF  "$(CFG)" == "bzflag - Win32 Debug"
 
@@ -210,6 +210,10 @@ SOURCE=..\src\bzflag\PlayerLink.h
 # Begin Source File
 
 SOURCE=..\src\bzflag\playing.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\game\Protocol.h
 # End Source File
 # Begin Source File
 
