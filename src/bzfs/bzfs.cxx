@@ -1864,8 +1864,9 @@ static void addPlayer(int playerIndex)
       char buffer[MessageLen];
       DEBUG2 ("Player %s [%d] rejoin wait of %.1f seconds\n",
 	      playerData->player.getCallSign(), playerIndex, waitTime);
-      sprintf (buffer, "Can't rejoin for %.1f seconds.", waitTime);
-      rejectPlayer(playerIndex, RejectRejoinWaitTime, buffer);
+      snprintf (buffer, MessageLen, "Can't rejoin for %.1f seconds.", waitTime);
+      sendMessage(ServerPlayer, playerIndex, buffer);
+      removePlayer(playerIndex, "rejoiner");
       return ;
     }
   }
