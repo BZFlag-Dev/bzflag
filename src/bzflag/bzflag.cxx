@@ -929,11 +929,11 @@ int			main(int argc, char** argv)
 
   // get email address if not anonymous
   std::string email;
-  if (db.hasValue("email"))
-    email = db.getValue("email");
-  else {
-    std::string email = anonymousName;
-    if (!anonymous) {
+  if (!anonymous) {
+    if (db.hasValue("email"))
+      email = db.getValue("email");
+    else {
+      email = anonymousName;
       const char* hostname = Address::getHostName();
 #if defined(_WIN32)
       char username[256];
