@@ -1,8 +1,10 @@
 #!/bin/sh
 
-echo "Please don't blindy convert without insuring that"
-echo "the resultant visual whitespace remains the same."
-echo "It's already messed up quite a few files."
+echo
+echo "  Please don't blindy convert without insuring that"
+echo "  the resultant visual whitespace remains the same."
+echo "  It's already messed up quite a few files."
+echo
 exit
 
 # cleanup whitespace issues
