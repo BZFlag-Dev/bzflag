@@ -5059,10 +5059,8 @@
 		4E030C0E048E70E70009E055 = {
 			children = (
 				149184CB051574CD00A80164,
-				4E030C14048E70E70009E055,
 				4E030C28048E70E70009E055,
 				4E030C12048E70E70009E055,
-				4E030C13048E70E70009E055,
 				7B65DEBD04BE51F500FEBA07,
 				7B65DEBE04BE51F500FEBA07,
 				4E030C17048E70E70009E055,
@@ -5137,17 +5135,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = bzflag.cxx;
-			refType = 4;
-		};
-		4E030C13048E70E70009E055 = {
-			isa = PBXFileReference;
-			path = bzflag.ico;
-			refType = 4;
-		};
-		4E030C14048E70E70009E055 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = bzflag.rc;
 			refType = 4;
 		};
 		4E030C15048E70E70009E055 = {
