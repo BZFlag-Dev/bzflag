@@ -49,6 +49,9 @@ struct BanInfo
   bool operator==(const BanInfo &rhs) const {
     return addr.s_addr == rhs.addr.s_addr;
   }
+  bool operator!=(const BanInfo &rhs) const {
+    return addr.s_addr != rhs.addr.s_addr;
+  }
 
   in_addr	addr;
   TimeKeeper	banEnd;
