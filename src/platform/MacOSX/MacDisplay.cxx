@@ -156,7 +156,7 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 
 		case ::kEventRawKeyUp:
 			bzf_event.type = BzfEvent::KeyUp;
-			getKey(bzf_event.keyDown, eventChar, eventKeyCode);
+			getKey(bzf_event.keyUp, eventChar, eventKeyCode);
 		break;
 	  }
 	break;
