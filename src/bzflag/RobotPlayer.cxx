@@ -23,6 +23,8 @@
 #include "World.h"
 #include "ServerLink.h"
 
+std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;
+
 RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 				ServerLink* _server,
 				const char* _email = "anonymous") :
@@ -376,16 +378,30 @@ float			RobotPlayer::getTargetPriority(const
   const float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   const float* p1 = getPosition();
   const float* p2 = _target->getPosition();
-  return 1.0f - 0.5f * hypotf(p2[0] - p1[0], p2[1] - p1[1]) / worldSize;
+
+  float basePriority = 1.0f;
+  // give bonus to non-deadzone targets
+  if (obstacleList) {
+    const BzfRegion* targetRegion = findRegion (p2);
+    if (targetRegion && targetRegion->isInside(p2))
+      basePriority += 1.0f;
+  }
+  return basePriority
+    - 0.5f * hypotf(p2[0] - p1[0], p2[1] - p1[1]) / worldSize;
 }
+
+void                    RobotPlayer::setObstacleList(std::vector<BzfRegion*>*
+						     _obstacleList)
+{
+  obstacleList = _obstacleList;
+};
 
 const Player*		RobotPlayer::getTarget() const
 {
   return target;
 }
 
-void			RobotPlayer::setTarget(const std::vector<BzfRegion*>& regions,
-							const Player* _target)
+void			RobotPlayer::setTarget(const Player* _target)
 {
   static int mailbox = 0;
 
@@ -397,8 +413,8 @@ void			RobotPlayer::setTarget(const std::vector<BzfRegion*>& regions,
   // work backwards (from target to me)
   const float* p1 = target->getPosition();
   const float* p2 = getPosition();
-  BzfRegion* headRegion = findRegion(regions, p1);
-  BzfRegion* tailRegion = findRegion(regions, p2);
+  BzfRegion* headRegion = findRegion(p1);
+  BzfRegion* tailRegion = findRegion(p2);
   if (!headRegion || !tailRegion) {
     // if can't reach target then forget it
     return;
@@ -426,13 +442,12 @@ void			RobotPlayer::setTarget(const std::vector<BzfRegion*>& regions,
   pathIndex = 0;
 }
 
-BzfRegion*		RobotPlayer::findRegion(const std::vector<BzfRegion*>& rlist,
-						const float p[2]) const
+BzfRegion*		RobotPlayer::findRegion(const float p[2]) const
 {
-  const int count = rlist.size();
+  const int count = obstacleList->size();
   for (int i = 0; i < count; i++)
-    if (rlist[i]->isInside(p))
-      return rlist[i];
+    if ((*obstacleList)[i]->isInside(p))
+      return (*obstacleList)[i];
   return NULL;
 }
 

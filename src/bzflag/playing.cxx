@@ -4598,7 +4598,7 @@ static void		setRobotTarget(RobotPlayer* robot)
       bestPriority = priority;
     }
   }
-  robot->setTarget(obstacleList, bestTarget);
+  robot->setTarget(bestTarget);
 }
 
 static void		updateRobots(float dt)
@@ -4753,6 +4753,7 @@ static void		addRobots()
     j++;
   }
   makeObstacleList();
+  RobotPlayer::setObstacleList(&obstacleList);
 }
 
 #endif

@@ -37,7 +37,8 @@ class RobotPlayer : public BaseLocalPlayer {
 
     float		getTargetPriority(const Player*) const;
     const Player*	getTarget() const;
-    void		setTarget(const std::vector<BzfRegion*>& regions, const Player*);
+    void		setTarget(const Player*);
+    static void		setObstacleList(std::vector<BzfRegion*>*);
 
     ShotPath*		getShot(int index) const;
 
@@ -52,8 +53,7 @@ class RobotPlayer : public BaseLocalPlayer {
     bool		doEndShot(int index, bool isHit, float* pos);
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
-    BzfRegion*		findRegion(const std::vector<BzfRegion*>& list,
-					const float p[2]) const;
+    BzfRegion*		findRegion(const float p[2]) const;
     float		getRegionExitPoint(
 				const float p1[2], const float p2[2],
 				const float a[2], const float targetPoint[2],
@@ -71,6 +71,7 @@ class RobotPlayer : public BaseLocalPlayer {
     int			pathIndex;
     float		timeSinceShot;
     float		timerForShot;
+    static std::vector<BzfRegion*>* obstacleList;
 };
 
 #endif // BZF_ROBOT_PLAYER_H
