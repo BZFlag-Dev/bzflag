@@ -365,6 +365,12 @@ msgstr "$ERv3r @dmIn"
 msgid "Hunt"
 msgstr "hUn7"
 
+msgid "autopilot enabled"
+msgstr "aU+OPiL0+ En4BL3D"
+
+msgid "autopilot disabled"
+msgstr "@u+OP1LO+ di5@Bl3d"
+
 msgid "show/dismiss menu"
 msgstr "5H0w/DI5Mis$ MENU"
 
@@ -485,8 +491,8 @@ msgstr "5eRv3R5 PhOund: {1}"
 msgid "{1} Shot"
 msgstr "{1} $H0T"
 
-#msgid "{1} Shots"
-#msgstr ""
+msgid "{1} Shots"
+msgstr "{1} 5H07$"
 
 msgid "{1} Shot"
 msgstr "{1} $H0T$"
@@ -544,6 +550,9 @@ msgstr "C4n'+ 0p3n L15T s3rVer: {1}"
 
 msgid "Server sent downlink endpoint information, port {1}"
 msgstr "5erv3r 5En+ d0wnlInK 3ndPOiNt 1nf0rm@+IOn, P0RT {1}"
+
+msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
+msgstd "5Erv3r 53NT uDP R3KWe$t, Udp UP. 1NPh0: [{1}:{2}:{3}]"
 
 msgid "Communication error joining game [Wrong Code {1}]."
 msgstr "C0Mmunic@T1ON 3rRoR j0Inin9 94m3 [wR0N9 c0D3 {1}]."
