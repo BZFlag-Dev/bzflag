@@ -4760,7 +4760,6 @@ std::string		getCacheDirectoryName()
     if(err == ::noErr) {
       std::strcat(buff, "/BZFlag");
       std::strcat(buff, "/cache");
-      fprintf(stderr, "cache dir is \"%s\"\n", buff);
       cacheName = buff;
     }
   }
