@@ -2,9 +2,10 @@ recent bugs
 ------------
 
 - players gets stuck for no reason, can't move or turn, but can shoot.
-  So far only seen it in ctf mode, happened twice on pop in at base,
-  happened to others while driving.
-  Seen on xmission
+  Seen on xmission, also seen on brlcad (FFA). Was stuck after each respawn,
+  could jump vertically, though. Had to restart client toget unstuck.
+
+- Can only see flag and lights of thief tank
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
