@@ -61,8 +61,12 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
         return true;
       }
       else {
+#ifdef WIN32
+		normal[0] = (float)atof(tmpStr.c_str());
+#else
         char *end;
         normal[0] = strtof (tmpStr.c_str(), &end);
+#endif
       }
       
       if (!((parms >> normal[1]) && (parms >> normal[2]))) {
