@@ -1684,7 +1684,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	}
 
 	// weave towards the player
-	if (distance > 20.0f) {
+	if ((distance > 20.0f) && (myTank->getFlag() != Flags::Steamroller)) {
 	  int period = int(TimeKeeper::getCurrent().getSeconds());
 	  float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
 	  rotation += bias;
