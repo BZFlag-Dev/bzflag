@@ -24,7 +24,7 @@ bzflag development.
 bzflag Home Page
 ================
 
-The bzflag home page is at:  http://www.bigfoot.com/~bzflag
+The bzflag home page is at:  http://bzflag.sourceforge.net/
 
 
 Getting bzflag
@@ -143,33 +143,32 @@ developer's list.  The former is for general bzflag
 discussion and annoucements.  The latter is for coding and
 development discussion only.
 
-To join the user list, send mail to
-
-  bzflag-list-request@groundhog.pair.com
-
-with `subscribe' in the *subject*.  The body of the message can
-be empty;  it will be ignored.
-
-Joining the developer's list is the same, except send the mail
-to:
-
-  bzflag-dev-list-request@groundhog.pair.com
-
+To join a mailing list, go to http://bzflag.sourceforge.net, and click
+on the link on the left that says "SourceForge."  On the web page this 
+takes you to there is a link called "Mailing Lists,"  click on this.  You
+are now at a page listing the two lists.  Click on the "subscribe/unsubscribe/
+preferences" button to subscribe to that mailing list.
 
 Contributions
 =============
 
-Send mail to bzflag@bigfoot.com to discuss contributions to
-the official bzflag source code.  Small changes can be
-included in the mail itself.
+Send mail to either the bzflag development mailing list, or
+TimRikers@users.sourceforge.net(development mailing list prefered) to 
+discuss contributions to the official bzflag source code.  Small changes 
+can be attached to the mail in 'cvs diff' format.
 
 
 Bug Reports
 ===========
 
-Send bug reports to bzflag@bigfoot.com.  Please include which
-version of bzflag you're using (including patch numbers) and
-what platform you're running on.
+For bug reports please go to http://bzflag.sourceforge.net, and click on the 
+link on the left that says "SourceForge. On the web page this takes
+you to there is a link called "Bug Tracking," click on this. You are now
+at a page that lists current bugs, and near the top there is a list of things
+you can do.  The first option is "Submit."  Select this to submit a bug to
+BZFlag
+Alternatively, you can email bug reports to TimRiker@users.sourceforge.net,
+but the web based method is the prefered way to submit bugs.
 
 
 Known Bugs
