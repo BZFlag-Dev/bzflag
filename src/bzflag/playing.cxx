@@ -5210,10 +5210,10 @@ static void		playingLoop()
 	player[i]->doDeadReckoning();
 	const bool isNotResponding = player[i]->isNotResponding();
 	if (!wasNotResponding && isNotResponding) {
-	  addMessage(player[i], std::string("not responding"));
+	  addMessage(player[i], "not responding");
 	}
 	else if (wasNotResponding && !isNotResponding) {
-	  addMessage(player[i], std::string("okay"));
+	  addMessage(player[i], "okay");
 	}
       }
 
