@@ -29,12 +29,13 @@ void LagInfo::reset()
   lastupdate     = info->now;
 }
 
-int LagInfo::getLag()
+int LagInfo::getLag() const
 {
   return int(lagavg * 1000);
 }
 
-void LagInfo::getLagStats(char* msg) {
+void LagInfo::getLagStats(char* msg) const
+{
   msg[0] = 0;
   if (!info->isPlaying() || !info->isHuman())
     return;

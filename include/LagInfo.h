@@ -29,17 +29,17 @@ public:
   void	reset();
   /** Getting lag value
   */
-  int	 getLag();
+  int	getLag() const;
   /** Get a printable version of lag statistics
   */
-  void	getLagStats(char* msg);
+  void	getLagStats(char* msg) const;
   /** functions to be called whenever a playerUpdate or ping message arrives
    */
-  int	 updatePingLag(void *buf, bool &warn, bool &kick);
+  int	updatePingLag(void *buf, bool &warn, bool &kick);
   void	updateLag(float timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
-  int	 getNextPingSeqno(bool &warn, bool &kick);
+  int	getNextPingSeqno(bool &warn, bool &kick);
   /** update the latency
    */
   void	updateLatency(float &waitTime);
