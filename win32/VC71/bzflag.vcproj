@@ -333,6 +333,9 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ShotPathSegment.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\sound.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
