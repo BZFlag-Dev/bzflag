@@ -283,7 +283,7 @@ AC_ARG_ENABLE(adns,  [  --enable-adns           use asynchronous DNS resolver],
   yes) use_adns=true ;;
   no)  use_adns=false ;;
   *) AC_MSG_ERROR(bad value ${enableval} for --enable-adns) ;;
-esac],[use_adns=true])
+esac],[use_adns=false])
 if $use_adns ; then
   AC_DEFINE(HAVE_ADNS)
 else
