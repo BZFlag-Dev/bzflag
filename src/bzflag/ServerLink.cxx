@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #if defined(_WIN32)
-	#pragma warning(disable: 4786)
+  #pragma warning(disable: 4786)
 #endif
 
 #include <string.h>
@@ -58,21 +58,21 @@ HANDLE hConnected;	// "Connected" event
 HANDLE hThread;		// Connection thread
 
 typedef struct {
-	int query;
-	CNCTType* addr;
-	int saddr;
+  int query;
+  CNCTType* addr;
+  int saddr;
 } TConnect;
 
 TConnect conn;
 
 DWORD WINAPI ThreadConnect(LPVOID params)
 {
-	TConnect *conn = (TConnect*)params;
-	if(connect(conn->query, conn->addr, conn->saddr) >= 0) {
-		SetEvent(hConnected); // Connect successful
-		}
-	ExitThread(0);
-	return 0;
+  TConnect *conn = (TConnect*)params;
+  if(connect(conn->query, conn->addr, conn->saddr) >= 0) {
+    SetEvent(hConnected); // Connect successful
+  }
+  ExitThread(0);
+  return 0;
 }
 
 #endif // !defined(_WIN32)
@@ -275,7 +275,7 @@ ServerLink::~ServerLink()
   close(fd);
 
   if (urecvfd >= 0)
-	close(urecvfd);
+    close(urecvfd);
 
   urecvfd = -1;
   ulinkup = false;
@@ -332,16 +332,16 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 
   if ((urecvfd>=0) && ulinkup ) {
     switch (code) {
-	case MsgShotBegin:
-	case MsgShotEnd:
-	case MsgPlayerUpdate:
-	case MsgGMUpdate:
-	case MsgAudio:
-	case MsgVideo:
-	case MsgUDPLinkRequest:
-	case MsgUDPLinkEstablished:
-		needForSpeed=true;
-		break;
+      case MsgShotBegin:
+      case MsgShotEnd:
+      case MsgPlayerUpdate:
+      case MsgGMUpdate:
+      case MsgAudio:
+      case MsgVideo:
+      case MsgUDPLinkRequest:
+      case MsgUDPLinkEstablished:
+	needForSpeed=true;
+	break;
     }
   }
   // MsgUDPLinkRequest always goes udp
@@ -401,13 +401,11 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
       memcpy((char *)msg,(char *)buf, len);
       return 1;
     }
-
     if (UDEBUGMSG) printError("Fallback to normal TCP receive");
     len = 0;
     code = MsgNull;
 
     blockTime = 0;
-
   }
 
   // block for specified period.  default is no blocking (polling)
@@ -424,7 +422,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   if (nfound == 0) return 0;
   if (nfound < 0) return -1;
 
-  // printError("<** TCP Packet Code Recevied %d", time(0));
+  // printError("<** TCP Packet Code Received %d", time(0));
   // FIXME -- don't really want to take the chance of waiting forever
   // on the remaining select() calls, but if the server and network
   // haven't been hosed then the data will get here soon.  And if the
@@ -439,6 +437,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 
   int tlen = rlen;
   while (rlen >= 1 && tlen < 4) {
+    printError("ServerLink::read() loop");
     FD_ZERO(&read_set);
     FD_SET(fd, &read_set);
     nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, NULL);
@@ -621,7 +620,7 @@ void			ServerLink::sendPaused(bool paused)
 void			ServerLink::sendUDPlinkRequest()
 {
   if ((server_abilities & CanDoUDP) != CanDoUDP)
-	return; // server does not support udp (future bzfls test)
+    return; // server does not support udp (future bzfls test)
 
   char msg[1];
   unsigned short localPort;
@@ -630,7 +629,7 @@ void			ServerLink::sendUDPlinkRequest()
   struct sockaddr_in serv_addr;
 
   if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-	return; // we cannot comply
+    return; // we cannot comply
   }
 #if 1
   AddrLen addr_len = sizeof(serv_addr);
@@ -646,13 +645,13 @@ void			ServerLink::sendUDPlinkRequest()
 #else
   // TODO if nobody complains kill this old port 17200 code
   for (int port=17200; port < 65000; port++) {
-	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_addr.sin_port = htons(port);
-	if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0) {
-		break;
-	}
+    ::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serv_addr.sin_port = htons(port);
+    if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0) {
+      break;
+    }
   }
 #endif
   localPort = ntohs(serv_addr.sin_port);
@@ -667,7 +666,7 @@ void			ServerLink::sendUDPlinkRequest()
   buf = nboPackUByte(buf, id);
 
   if (BzfNetwork::setNonBlocking(urecvfd) < 0) {
-	printError("Error: Unable to set NonBlocking for UDP receive socket");
+    printError("Error: Unable to set NonBlocking for UDP receive socket");
   }
 
   send(MsgUDPLinkRequest, sizeof(msg), msg);
@@ -698,4 +697,3 @@ void			ServerLink::confirmIncomingUDP()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
