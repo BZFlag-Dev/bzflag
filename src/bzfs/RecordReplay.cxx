@@ -52,7 +52,7 @@ typedef __int64 s64;
 
 typedef uint16_t u16;
 typedef uint32_t u32;
-typedef s64 RRtime;
+typedef s64 RRtime; // should last a while
 
 enum RecordType {
   StraightToFile  = 0,
@@ -1825,21 +1825,32 @@ freeRRbuffer (RRbuffer *b)
 static RRtime
 getRRtime ()
 {
-  RRtime now;
 #ifndef _WIN32
+
   struct timeval tv;
   gettimeofday (&tv, NULL);
-  now = (RRtime)tv.tv_sec * (RRtime)1000000;
-  now = now + (RRtime)tv.tv_usec;
+  return ((RRtime)tv.tv_sec * (RRtime)1000000) + (RRtime)tv.tv_usec;
+
 #else //_WIN32
-  // FIXME - this will roll every (2^32/1000) seconds (49.71 days)
-  // do something like watch for time() to increase, and remove
-  // 1000000 from the timeGetTime() value (watching for rolls, of course)
-  // Put a hook somewhere to keep the updates constant?
-  now = (RRtime)timeGetTime() * (RRtime)1000;
-#endif //_WIN32
+
+  // FIXME - use QPC if availabe? (10ms[pat] good enough?)
+  //       - during rollovers, check time() against the
+  //         current value to see if a rollover was missed?
   
-  return now;
+  static RRtime offset = ((RRtime)time(NULL) * (RRtime)1000000) -
+                         ((RRtime)timeGetTime() * (RRtime)1000);
+  static u32 lasttime = (u32)timeGetTime();
+  u32 nowtime = (u32)timeGetTime();
+
+  // we've got 49.71 days to catch the rollovers
+  if (nowtime < lasttime) {
+    // add the rollover value
+    offset += ((RRtime)1 << 32);
+  }
+  lasttime = nowtime;
+  return offset + ((RRtime)nowtime * (RRtime)1000);
+
+#endif //_WIN32
 }
 
 /****************************************************************************/
