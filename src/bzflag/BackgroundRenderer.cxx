@@ -277,7 +277,7 @@ void			BackgroundRenderer::notifyStyleChange(
       styleIndex = 0;
 
   // some stuff is drawn only for certain states
-  cloudsVisible = (styleIndex>=2 && cloudsAvailable && BZDBCache::blend);
+  cloudsVisible = (styleIndex >= 2 && cloudsAvailable && BZDBCache::blend);
   mountainsVisible = (styleIndex >= 2 && mountainsAvailable);
   shadowsVisible = BZDB.isTrue("shadows");
   starGStateIndex = BZDB.isTrue("smooth");
@@ -417,8 +417,7 @@ void			BackgroundRenderer::renderSkyAndGround(
   if (renderer.useQuality() > 0) {
     drawSky(renderer);
     drawGround();
-  }
-  else {
+  } else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
     // to draw solid color sky and ground.
     MainWindow& window = renderer.getWindow();
@@ -745,8 +744,7 @@ void			BackgroundRenderer::drawGroundReceivers(
       color[0] = receiverColorInv[0] * lightColor[0];
       color[1] = receiverColorInv[1] * lightColor[1];
       color[2] = receiverColorInv[2] * lightColor[2];
-    }
-    else {
+    } else {
       color[0] = receiverColor[0] * lightColor[0];
       color[1] = receiverColor[1] * lightColor[1];
       color[2] = receiverColor[2] * lightColor[2];
@@ -791,8 +789,7 @@ void			BackgroundRenderer::drawGroundReceivers(
 
       if (i + 1 == receiverRings) {
 	I = 0.0f;
-      }
-      else {
+      } else {
 	d = outerSize + pos[2];
 	I = B / (atten[0] + d * (atten[1] + d * atten[2]));
 	I *= pos[2] / hypotf(outerSize, pos[2]);
@@ -927,8 +924,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 	glVertex2fv(groundPlane[0]);
       glEnd();
     simpleGroundList[2].end();
-  }
-  else {
+  } else {
     int i, j;
     GLfloat xmin, xmax;
     GLfloat ymin, ymax;
@@ -958,7 +954,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 
     simpleGroundList[2].begin();
 
-      for (i=0 ; i<GROUND_DIVS ; i++) {
+      for (i = 0; i < GROUND_DIVS; i++) {
 	GLfloat yoff, ytexoff;
 
 	yoff = ymin + ydist * (GLfloat)i;
@@ -966,23 +962,23 @@ void			BackgroundRenderer::doInitDisplayLists()
 
 	glBegin(GL_TRIANGLE_STRIP);
 
-	glTexCoord2f (xtexmin, ytexoff+ytexdist);
-	glVertex2f (xmin, yoff+ydist);
-	glTexCoord2f (xtexmin, ytexoff);
-	glVertex2f (xmin, yoff);
+	glTexCoord2f(xtexmin, ytexoff + ytexdist);
+	glVertex2f(xmin, yoff + ydist);
+	glTexCoord2f(xtexmin, ytexoff);
+	glVertex2f(xmin, yoff);
 
-	for (j=0 ; j<GROUND_DIVS ; j++) {
+	for (j = 0; j < GROUND_DIVS; j++) {
 	  GLfloat xoff, xtexoff;
 
-	  xoff = xmin + xdist * (GLfloat)(j+1);
-	  xtexoff = xtexmin + xtexdist * (GLfloat)(j+1);
+	  xoff = xmin + xdist * (GLfloat)(j + 1);
+	  xtexoff = xtexmin + xtexdist * (GLfloat)(j + 1);
 
-	  glTexCoord2f (xtexoff, ytexoff+ytexdist);
-	  glVertex2f (xoff, yoff+ydist);
-	  glTexCoord2f (xtexoff, ytexoff);
-	  glVertex2f (xoff, yoff);
+	  glTexCoord2f(xtexoff, ytexoff + ytexdist);
+	  glVertex2f(xoff, yoff + ydist);
+	  glTexCoord2f(xtexoff, ytexoff);
+	  glVertex2f(xoff, yoff);
 	}
-	glEnd ();
+	glEnd();
       }
 
     simpleGroundList[2].end();
@@ -1103,7 +1099,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     const float angleScale = M_PI /
 			(float)(numMountainTextures * numFacesPerTexture);
     int n = numFacesPerTexture / 2;
-    float hightScale = mountainsMinWidth/256.0f;
+    float hightScale = mountainsMinWidth / 256.0f;
     for (j = 0; j < numMountainTextures; n += numFacesPerTexture, j++) {
       mountainsList[j].begin();
 	glBegin(GL_TRIANGLE_STRIP);
