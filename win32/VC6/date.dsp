@@ -78,11 +78,6 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
-# Begin Special Build Tool
-SOURCE="$(InputPath)"
-PostBuild_Desc=Touching buildDate.cxx...
-PostBuild_Cmds=type ..\..\src\date\buildDate.cxx > __bd.cxx	type __bd.cxx > ..\..\src\date\buildDate.cxx	del __bd.cxx
-# End Special Build Tool
 
 !ENDIF 
 

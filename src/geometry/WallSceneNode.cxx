@@ -83,6 +83,7 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
     if (d[i] < 0.0f && (d2[i] = d[i]*d[i]) > sphere[3]) return true;
   }
 
+  return false;
   // see if center of wall is inside each frustum side
   if (d[0] >= 0.0f && d[1] >= 0.0f && d[2] >= 0.0f &&
       d[3] >= 0.0f && d[4] >= 0.0f)

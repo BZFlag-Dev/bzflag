@@ -113,7 +113,8 @@ LocalPlayer*		myTank = NULL;
 static BzfDisplay*	display = NULL;
 static MainWindow*	mainWindow = NULL;
 static SceneRenderer*	sceneRenderer = NULL;
-static SceneDatabase*	scene = NULL;
+static SceneDatabase*	zScene = NULL;
+static SceneDatabase*	bspScene = NULL;
 ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
@@ -257,7 +258,12 @@ SceneRenderer*		getSceneRenderer()
 
 void			setSceneDatabase()
 {
-  sceneRenderer->setSceneDatabase(scene);
+  if (BZDB.isTrue("zbuffer")) {
+    sceneRenderer->setSceneDatabase(zScene);
+  }
+  else {
+    sceneRenderer->setSceneDatabase(bspScene);
+  }
 }
 
 StartupInfo*		getStartupInfo()
@@ -5376,8 +5382,11 @@ static void		leaveGame()
 {
   // delete scene database
   sceneRenderer->setSceneDatabase(NULL);
-  delete scene;
-  scene = NULL;
+  delete zScene;
+  delete bspScene;
+  zScene = NULL;
+  bspScene = NULL;
+
 
   // no more radar
   controlPanel->setRadarRenderer(NULL);
@@ -5541,8 +5550,16 @@ static bool		joinGame(const StartupInfo* info,
   numFlags = world->getMaxFlags();
 
   // make scene database
-  scene = sceneBuilder->make(world);
+  const bool oldUseZBuffer = BZDB.isTrue("zbuffer");
+  BZDB.set("zbuffer", "0");
+  bspScene = sceneBuilder->make(world);
+  BZDB.set("zbuffer", "1");
+  // FIXME - test the zbuffer here
+  if (BZDB.isTrue("zbuffer"))
+    zScene = sceneBuilder->make(world);
+  BZDB.set("zbuffer", oldUseZBuffer ? "1" : "0");
   setSceneDatabase();
+
 
   mainWindow->getWindow()->yieldCurrent();
   // make radar
@@ -7023,9 +7040,11 @@ void			startPlaying(BzfDisplay* _display,
   delete sceneBuilder;
   sceneRenderer->setBackground(NULL);
   sceneRenderer->setSceneDatabase(NULL);
-  delete scene;
+  delete zScene;
+  delete bspScene;
   World::done();
-  scene = NULL;
+  bspScene = NULL;
+  zScene = NULL;
   mainWindow = NULL;
   sceneRenderer = NULL;
   display = NULL;

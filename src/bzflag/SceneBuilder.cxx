@@ -18,7 +18,6 @@
 #include "SceneDatabase.h"
 #include "ZSceneDatabase.h"
 #include "BSPSceneDatabase.h"
-#include "HardwareGLSceneDatabase.h"
 #include "World.h"
 #include "WallSceneNode.h"
 #include "TankSceneNode.h"
@@ -180,14 +179,10 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
 
   // pick type of database
   SceneDatabase* db;
-  if (BZDB.isTrue("optimiseForHardwareGL"))
-	  db = new HardwareGLSceneDatabase;
-  else {
-    if (BZDB.isTrue("zbuffer"))
-      db = new ZSceneDatabase;
-    else
-      db = new BSPSceneDatabase;
-  }
+  if (BZDB.isTrue("zbuffer"))
+    db = new ZSceneDatabase;
+  else
+    db = new BSPSceneDatabase;
   // FIXME -- when making BSP tree, try several shuffles for best tree
 
   // add nodes to database
