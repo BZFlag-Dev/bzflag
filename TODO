@@ -27,8 +27,6 @@ THESE ARE LOWER PRIORITY
 
 * remove UDP client setting. code should figure that out now.
 
-* remove -port and -callsign from bzflag and add support for callsign@server.example.com:port
-
 * add other db server features
   - see http://bzflag.org/wiki/DbServers
   - player/password registration
