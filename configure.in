@@ -209,7 +209,6 @@ case $host_os in
 	fi
 	;;
 esac
-
 if test $prefix = NONE; then
 	prefix=$ac_default_prefix
 fi
@@ -239,6 +238,7 @@ AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
 AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
 if test x$enable_debug = xyes; then
    AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
+   AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
 fi
 
 AC_ARG_ENABLE(client, [  --disable-client        servers-only build])
@@ -337,7 +337,11 @@ if test x$enable_debug = xyes; then
      linux-gnu|cygwin|mingw32)
 	CFLAGS="$CFLAGS -g";
 	CPPFLAGS="$CPPFLAGS -Werror";
-	CXXFLAGS="$CXXFLAGS -g -Wno-deprecated";;
+	CXXFLAGS="$CXXFLAGS -g -Wno-deprecated";
+	if test x$enable_profiling = xyes; then
+	  CPPFLAGS="$CPPFLAGS -pg";
+	  CXXFLAGS="$CXXFLAGS -pg";
+	fi;;
      solaris*)
 	CFLAGS="$CFLAGS -g";
 	CXXFLAGS="$CXXFLAGS -g";;
