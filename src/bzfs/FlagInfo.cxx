@@ -55,6 +55,8 @@ void FlagInfo::setSize(int numFlags)
 {
   delete[] flagList;
   flagList = new FlagInfo[numFlags];
+  for (int i = 0; i < numFlags; i++)
+    flagList[i].flagIndex = i;
 }
 
 void FlagInfo::setRequiredFlag(FlagType *desc)
@@ -63,7 +65,42 @@ void FlagInfo::setRequiredFlag(FlagType *desc)
   flag.type = desc;
 }
 
+void FlagInfo::addFlag()
+{
+  const float flagAltitude = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
+  const float gravity      = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  const float maxGrabs     = BZDB.eval(StateDatabase::BZDB_MAXFLAGGRABS);
 
+  // flag in now entering game
+  flag.status          = FlagComing;
+
+  // compute drop time
+  const float flightTime = 2.0f * sqrtf(-2.0f * flagAltitude / gravity);
+  flag.flightTime        = 0.0f;
+  flag.flightEnd         = flightTime;
+  flag.initialVelocity   = -0.5f * gravity * flightTime;
+  dropDone               = TimeKeeper::getCurrent();
+  dropDone              += flightTime;
+	
+  // decide how sticky the flag will be
+  if (flag.type->flagQuality == FlagBad)
+    flag.endurance = FlagSticky;
+  else
+    flag.endurance = FlagUnstable;
+
+  // how times will it stick around
+  if ((flag.endurance == FlagSticky) || (flag.type == Flags::Thief))
+    grabs = 1;
+  else
+    grabs = int(floor(maxGrabs * (float)bzfrand())) + 1;
+}
+
+void *FlagInfo::pack(void *buf)
+{
+  buf = nboPackUShort(buf, flagIndex);
+  buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
+  return buf;
+}
 
 // Local Variables: ***
 // mode:C++ ***

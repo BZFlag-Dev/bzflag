@@ -262,8 +262,7 @@ void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 
   if (flagIndex != -1) {
     buf = nboPackUShort(bufStart,1);
-    buf = nboPackUShort(buf, flagIndex);
-    buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
+    buf = FlagInfo::flagList[flagIndex].pack(buf);
     if (playerIndex == -1)
       broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
     else
@@ -286,8 +285,7 @@ void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 	      buf = nboPackUShort(bufStart,0); //placeholder
 	  }
 
-	  buf = nboPackUShort(buf, flagIndex);
-	  buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
+	  buf = FlagInfo::flagList[flagIndex].pack(buf);
 	  length += sizeof(uint16_t)+FlagPLen;
 	  cnt++;
 	}
@@ -1726,32 +1724,10 @@ static void addFlag(int flagIndex)
   }
 
   // flag in now entering game
-  FlagInfo::flagList[flagIndex].flag.status = FlagComing;
   numFlagsInAir++;
 
-  // compute drop time
-  const float flightTime = 2.0f * sqrtf(-2.0f * BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE) / BZDB.eval(StateDatabase::BZDB_GRAVITY));
-  FlagInfo::flagList[flagIndex].flag.flightTime = 0.0f;
-  FlagInfo::flagList[flagIndex].flag.flightEnd = flightTime;
-  FlagInfo::flagList[flagIndex].flag.initialVelocity
-    = -0.5f * BZDB.eval(StateDatabase::BZDB_GRAVITY) * flightTime;
-  FlagInfo::flagList[flagIndex].dropDone = TimeKeeper::getCurrent();
-  FlagInfo::flagList[flagIndex].dropDone += flightTime;
-	
-  // decide how sticky the flag will be
-  if (FlagInfo::flagList[flagIndex].flag.type->flagQuality == FlagBad)
-    FlagInfo::flagList[flagIndex].flag.endurance = FlagSticky;
-  else
-    FlagInfo::flagList[flagIndex].flag.endurance = FlagUnstable;
+  FlagInfo::flagList[flagIndex].addFlag();
 
-  // how times will it stick around
-  if ((FlagInfo::flagList[flagIndex].flag.endurance == FlagSticky)
-  ||  (FlagInfo::flagList[flagIndex].flag.type == Flags::Thief))
-    FlagInfo::flagList[flagIndex].grabs = 1;
-  else
-    FlagInfo::flagList[flagIndex].grabs
-      = int(floor(BZDB.eval(StateDatabase::BZDB_MAXFLAGGRABS)
-		  * (float)bzfrand())) + 1;
   sendFlagUpdate(flagIndex);
 }
 
@@ -1765,10 +1741,6 @@ static void randomFlag(int flagIndex)
   // pick a random flag
   FlagInfo::flagList[flagIndex].flag.type
     = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
-  if (FlagInfo::flagList[flagIndex].flag.type->flagQuality == FlagBad)
-    FlagInfo::flagList[flagIndex].flag.endurance = FlagSticky;
-  else
-    FlagInfo::flagList[flagIndex].flag.endurance = FlagUnstable;
   addFlag(flagIndex);
 }
 
@@ -1890,8 +1862,7 @@ void zapFlag(int flagIndex)
 
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUShort(buf, uint16_t(flagIndex));
-    buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
+    buf = FlagInfo::flagList[flagIndex].pack(buf);
     broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
   }
 
@@ -2442,8 +2413,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   // send MsgGrabFlag
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUShort(buf, uint16_t(flagIndex));
-  buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
+  buf = FlagInfo::flagList[flagIndex].pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
   playerData->flagHistory.add(FlagInfo::flagList[flagIndex].flag.type);
@@ -2638,8 +2608,7 @@ static void dropFlag(int playerIndex, float pos[3])
 
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUShort(buf, uint16_t(flagIndex));
-  buf = drpFlag.flag.pack(buf);
+  buf = drpFlag.pack(buf);
   broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
 
   // notify of new flag state
@@ -3390,13 +3359,12 @@ static void handleCommand(int t, const void *rawbuf)
 	void *bufStart = getDirectMessageBuffer();
 	void *buf = nboPackUByte(bufStart, from);
 	buf = nboPackUByte(buf, to);
-	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	FlagInfo::flagList[flagIndex].flag.owner = to;
 	FlagInfo::flagList[flagIndex].player = to;
 	toData->player.resetFlag();
 	toData->player.setFlag(flagIndex);
 	fromData->player.resetFlag();
-	buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
+	buf = FlagInfo::flagList[flagIndex].pack(buf);
 	broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
 	break;
     }

@@ -28,10 +28,14 @@ public:
   FlagInfo();
 
   void setRequiredFlag(FlagType *desc);
+  void addFlag();
+  void *pack(void *buf);
 
   static void setSize(int numFlags);
 
   static FlagInfo *flagList;
+
+  int    flagIndex;
 
     // flag info
     Flag flag;
