@@ -105,6 +105,7 @@ class ServerStartMenu : public HUDDialog {
 
   private:
     float		center;
+    HUDuiLabel*		start;
     HUDuiLabel*		status;
     HUDuiLabel*		failedMessage;
     static char		settings[];

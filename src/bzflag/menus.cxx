@@ -4003,7 +4003,6 @@ ServerStartMenu::ServerStartMenu()
   // add controls
   std::vector<HUDuiControl*>& controls = getControls();
   HUDuiList* list;
-  HUDuiLabel* label;
   std::vector<std::string>* items;
 
   controls.push_back(createLabel("Start Server"));
@@ -4242,8 +4241,8 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
-  label = createLabel("Start");
-  controls.push_back(label);
+  start = createLabel("Start");
+  controls.push_back(start);
 
   status = createLabel("");
   controls.push_back(status);
@@ -4298,8 +4297,7 @@ void			ServerStartMenu::execute()
 
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
-  // FIXME -- hardcoded indices are nasty
-  if (focus == list[15]) {
+  if (focus == start) {
     // start it up:
     //   without: -p, -i, -q, -a, +f, -synctime
     //   -b if -c
@@ -4518,10 +4516,7 @@ void			ServerStartMenu::resize(int width, int height)
   const float h = list[1]->getFont().getHeight();
   const int count = list.size();
   for (int i = 1; i < count; i++) {
-    /* FIXME -- nasty hard-coded constant.. 
-     * should check if label is "Start" 
-     */
-    if (i == 15) {
+    if (list[i] == start) {
       y -= bigFontHeight;
       list[i]->setFontSize(bigFontWidth, bigFontHeight);
       list[i]->setPosition(x, y);
