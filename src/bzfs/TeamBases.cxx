@@ -154,10 +154,10 @@ void TeamBases::getRandomPosition( float &x, float &y, float &z ) const
   int baseIndex = (int) (teamBases.size() * bzfrand());
   const TeamBase &base = teamBases[baseIndex];
 
-  x = (base.size[0] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
-  y = (base.size[1] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
-  x = base.position[0] + x * cosf(base.rotation) - y * sinf(base.rotation);
-  y = base.position[1] + x * sinf(base.rotation) + y * cosf(base.rotation);
+  float deltaX = (base.size[0] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
+  float deltaY = (base.size[1] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
+  x = base.position[0] + deltaX * cosf(base.rotation) - deltaY * sinf(base.rotation);
+  y = base.position[1] + deltaX * sinf(base.rotation) + deltaY * cosf(base.rotation);
   z = base.position[2] + base.size[2];
 }
 
