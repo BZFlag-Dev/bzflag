@@ -141,29 +141,35 @@ bool	avoidBullet(float &rotation, float &speed)
 
 bool	stuckOnWall(float &rotation, float &speed)
 {
+  TimeKeeper lastStuckTime;
+
+  if ((TimeKeeper::getCurrent() - lastStuckTime) < 1.0f)
+    return true;
+
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
   float myAzimuth = myTank->getAngle();
-
-  if (bzfrand() > 0.8f) {
-    // Every once in a while, do something nuts
-    speed = bzfrand() * 1.5f - 0.5f;
-    rotation = bzfrand() * 2.0f - 1.0f;
-    return true;
-  }
 
   const bool phased = myTank->getFlag() == Flags::OscillationOverthruster 
 	              || ((myTank->getFlag() == Flags::PhantomZone) && myTank->isFlagActive());
 
 
   if (!phased && (TargetingUtils::getOpenDistance( pos, myAzimuth ) < 5.0f)) {
+    lastStuckTime = TimeKeeper::getCurrent();
+    if (bzfrand() > 0.8f) {
+      // Every once in a while, do something nuts
+      speed = bzfrand() * 1.5f - 0.5f;
+      rotation = bzfrand() * 2.0f - 1.0f;
+      return true;
+    }
+
     float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/4.0f));
     float rightDistance = TargetingUtils::getOpenDistance( pos, myAzimuth - (M_PI/4.0f));
     if (leftDistance > rightDistance)
       rotation = 1.0f;
     else
       rotation = -1.0f;
-    speed = -0.05f;
+    speed = -0.5f;
     return true;
   }
   return false;
