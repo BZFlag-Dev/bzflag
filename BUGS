@@ -24,9 +24,6 @@ recent bugs
   - seemed to track a specific player (not slot or team)
   - the player in question was the only one with an email specified
 
-- SDL/X11 builds have wrong colors with 8 bit color depths
-  tracked down to incorrect handling in SDL of DirectColor visuals
-
 - sometimes players will receive the message "So-and-so destroyed by server"
   instead of "So-and-so killed by such-and-such".  Appears to depend on
   So-and-so's player slot.
