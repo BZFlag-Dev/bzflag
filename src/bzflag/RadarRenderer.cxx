@@ -11,6 +11,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "bzfgl.h"
 #include "global.h"
 #include "OpenGLTexture.h"
@@ -40,10 +41,11 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
 				list(0),
 				noise(NULL)
 {
+  setControlColor();
   background[0] = 0.0f;
   background[1] = 0.0f;
   background[2] = 0.0f;
-  background[3] = 1.0f;
+  background[3] = 0.5f;
   blend = renderer.useBlending();
   smooth = True;
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
@@ -64,6 +66,15 @@ RadarRenderer::~RadarRenderer()
   OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
   freeList();
   delete[] noise;
+}
+
+void			RadarRenderer::setControlColor(const GLfloat *color)
+{
+	if (color)
+		memcpy(teamColor, color, 3 * sizeof(float));
+	else {
+		memset(teamColor, 0, 3 * sizeof(float));
+	}
 }
 
 void			RadarRenderer::setShape(int _x, int _y, int _w, int _h)
@@ -116,7 +127,6 @@ void			RadarRenderer::makeNoiseTexture()
 
 void			RadarRenderer::drawShot(const ShotPath* shot)
 {
-
   glBegin(GL_POINTS);
   glVertex2fv(shot->getPosition());
   glEnd();
@@ -163,13 +173,37 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   // if opaque then clear
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
-  glScissor(ox + x, oy + y, w, h);
-  if (blank || !blend || background[3] == 1.0f) {
-    glClearColor(background[0], background[1], background[2], 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    if (blank) return;
-  }
+  glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
 
+  // draw nice blended background
+  if(renderer.useBlending())
+    glEnable(GL_BLEND);
+  glColor4fv(background);
+  glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
+  if(renderer.useBlending())
+    glDisable(GL_BLEND);
+  // draw nice border
+  OpenGLGState::resetState();
+//  glColor3f(0.25, 0.5, 0.5);
+  glColor3f(teamColor[0], teamColor[1], teamColor[2] );
+  glBegin(GL_LINE_LOOP); {
+    glVertex2f((float) x,		(float) y);
+    glVertex2f((float) x,		(float) (y + h));
+    glVertex2f((float) (x + w), (float) (y + h));
+    glVertex2f((float) (x + w), (float) y);
+  } glEnd();
+  // some versions miss the corners.
+  glBegin(GL_POINTS); {
+    glVertex2f((float) x,		(float) y);
+    glVertex2f((float) x,		(float) (y + h));
+    glVertex2f((float) (x + w), (float) (y + h));
+    glVertex2f((float) (x + w), (float) y);
+  } glEnd();
+
+  if(blank)
+    return;
+
+  glScissor(ox + x + 1, oy + y + 1, w, h);
   // prepare transforms
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -185,14 +219,6 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glPushMatrix();
   glLoadIdentity();
   OpenGLGState::resetState();
-
-  // if background transparent and blending on then blend in background
-  if (blend && background[3] != 1.0f) {
-    glEnable(GL_BLEND);
-    glColor4fv(background);
-    glRectf(-range, -range, range, range);
-    glDisable(GL_BLEND);
-  }
 
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && bzfrand() > decay) {

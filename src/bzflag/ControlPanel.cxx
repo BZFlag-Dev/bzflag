@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "bzfgl.h"
 #include "global.h"
 #include "ControlPanel.h"
 #include "SceneRenderer.h"
@@ -23,8 +24,6 @@
 #include "ErrorHandler.h"
 #include "Team.h"
 #include "OpenGLGState.h"
-
-static const char*	panelFile = "panel";
 
 void			printFatalError(const char* fmt, ...);
 
@@ -56,11 +55,9 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
 				resized(False),
 				numBuffers(2),
-				radarRenderer(NULL),
-				panelZoomedImageSize(0),
-				panelZoomedImage(NULL),
-				origPanelZoomedImage(NULL)
+				radarRenderer(NULL)
 {
+  setControlColor();
   // make sure we're notified when MainWindow resizes or is exposed
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
@@ -70,81 +67,47 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   statusFont = messageFont;
   countFont = messageFont;
 
-  // load background for control panel.  position and size of radar
-  // and message areas encoded in the upper left corner of the image.
-  int width, height, depth;
-  panelImage = getTextureImage(panelFile, width, height, depth);
-  if (!panelImage) {
-    printMissingDataDirectoryError("Can't continue without control "
-				"panel image.");
-    exit(1);
-  }
-  background = OpenGLTexture(width, height, panelImage,
-				OpenGLTexture::Linear, False);
-  const int codePos = 4 * width * (height - 1);
-  const float iWidth = (float)panelImage[codePos + 0] + 1.0f;
-  const float iHeight = (float)panelImage[codePos + 4] + 1.0f;
+  blend = renderer.useBlending();
+
+  const float iWidth = 256.0f;
+  const float iHeight = 62.0f;
   panelWidth = (int)iWidth;
   panelHeight = (int)iHeight;
-  du = iWidth / (float)width;
-  dv = iHeight / (float)height;
   const float dx = 1.0f / iWidth;
   const float dy = 1.0f / iHeight;
-  radarAreaUV[0] = dx * (float)panelImage[codePos + 8];
-  radarAreaUV[1] = dy * (float)panelImage[codePos + 12];
-  radarAreaUV[2] = dx * (float)panelImage[codePos + 16];
-  radarAreaUV[3] = dy * (float)panelImage[codePos + 20];
-  messageAreaUV[0] = dx * (float)panelImage[codePos + 24];
-  messageAreaUV[1] = dy * (float)panelImage[codePos + 28];
-  messageAreaUV[2] = dx * (float)panelImage[codePos + 32];
-  messageAreaUV[3] = dy * (float)panelImage[codePos + 36];
-  statusAreaUV[0] = dx * (float)panelImage[codePos + 40];
-  statusAreaUV[1] = dy * (float)panelImage[codePos + 44];
-  statusAreaUV[2] = dx * (float)panelImage[codePos + 48];
-  statusAreaUV[3] = dy * (float)panelImage[codePos + 52];
-  teamCountAreaUV[0][0] = dx * (float)panelImage[codePos + 56];
-  teamCountAreaUV[0][1] = dy * (float)panelImage[codePos + 60];
-  teamCountAreaUV[1][0] = dx * (float)panelImage[codePos + 64];
-  teamCountAreaUV[1][1] = dy * (float)panelImage[codePos + 68];
-  teamCountAreaUV[2][0] = dx * (float)panelImage[codePos + 72];
-  teamCountAreaUV[2][1] = dy * (float)panelImage[codePos + 76];
-  teamCountAreaUV[3][0] = dx * (float)panelImage[codePos + 80];
-  teamCountAreaUV[3][1] = dy * (float)panelImage[codePos + 84];
-  teamCountAreaUV[4][0] = dx * (float)panelImage[codePos + 88];
-  teamCountAreaUV[4][1] = dy * (float)panelImage[codePos + 92];
-  teamCountSizeUV[0] = dx * (float)panelImage[codePos + 96];
-  teamCountSizeUV[1] = dy * (float)panelImage[codePos + 100];
+  radarAreaUV[0] = dx * 5.0f;
+  radarAreaUV[1] = dy * 5.0f;
+  radarAreaUV[2] = dx * 42.0f;
+  radarAreaUV[3] = dy * 42.0f;
+  messageAreaUV[0] = dx * 57.0f;
+  messageAreaUV[1] = dy * 5.0f;
+  messageAreaUV[2] = dx * 180.0f;
+  messageAreaUV[3] = dy * 42.0f;
+  statusAreaUV[0] = dx * 3.0f;
+  statusAreaUV[1] = dy * 54.0f;
+  statusAreaUV[2] = dx * 250.0f;
+  statusAreaUV[3] = dy * 5.0f;
+
+  teamCountAreaUV[0][0] = dx * 242.0f;
+  teamCountAreaUV[0][1] = dy * 6.0f;
+  teamCountAreaUV[1][0] = dx * 242.0f;
+  teamCountAreaUV[1][1] = dy * 42.0f;
+  teamCountAreaUV[2][0] = dx * 242.0f;
+  teamCountAreaUV[2][1] = dy * 33.0f;
+  teamCountAreaUV[3][0] = dx * 242.0f;
+  teamCountAreaUV[3][1] = dy * 24.0f;
+  teamCountAreaUV[4][0] = dx * 242.0f;
+  teamCountAreaUV[4][1] = dy * 15.0f;
+
+  teamCountSizeUV[0] = dx * 10.0f;
+  teamCountSizeUV[1] = dy * 5.0f;
 
   // set panel ratio in main window.  ratio is panel width to height.
   // compute ratio based on the fact that the radar should be square.
   ratio = (iHeight / iWidth) *
-		((float)panelImage[codePos + 16] /
-		 (float)panelImage[codePos + 20]);
+		1.0f /
+		 1.0f;
   window.setPanelRatio(ratio);
-
-  // reverse channel order of control panel image if ABGR
-  panelFormat = GL_RGBA;
-  if (renderer.useABGR()) {
-#ifdef GL_ABGR_EXT
-    unsigned char* scan = panelImage;
-    const int count = width * (height - 1);
-    for (int i = 0; i < count; i++) {
-      unsigned char t = scan[0];
-      scan[0] = scan[3];
-      scan[3] = t;
-      t = scan[1];
-      scan[1] = scan[2];
-      scan[2] = t;
-      scan += 4;
-    }
-    panelFormat = GL_ABGR_EXT;
-#endif // GL_ABGR_EXT
-  }
-
-  // gstate for background
-  OpenGLGStateBuilder builder(gstate);
-  builder.setTexture(background);
-  gstate = builder.getState();
 
   // other initialization
   width = 1;
@@ -182,17 +145,20 @@ ControlPanel::~ControlPanel()
   // don't notify me anymore (cos you can't wake the dead!)
   window.getWindow()->removeResizeCallback(resizeCallback, this);
   window.getWindow()->removeExposeCallback(exposeCallback, this);
-
-  // done with image
-  delete[] panelImage;
-  delete[] origPanelZoomedImage;
 }
 
-void			ControlPanel::render()
+void			ControlPanel::setControlColor(const GLfloat *color)
+{
+	if (color)
+		memcpy(teamColor, color, 3 * sizeof(float));
+	else {
+		memset(teamColor, 0, 3 * sizeof(float));
+	}
+}
+
+void			ControlPanel::render(SceneRenderer& renderer)
 {
   if (!resized) resize();
-  if (!exposed && !changedMessage && !changedStatus && !changedCounts)
-    return;
 
   int i, j;
   const int x = window.getOriginX();
@@ -214,44 +180,24 @@ void			ControlPanel::render()
     doClear = False;
 
     if (w != width) {
-      glColor3f(0.666667f, 0.666667f, 0.666667f);
-      glBegin(GL_QUADS);
+	glColor3f(0.666667f, 0.666667f, 0.666667f);
+    glBegin(GL_QUADS);
 	glVertex2i(0, 0);
 	glVertex2i(w, 0);
 	glVertex2i(w, h);
 	glVertex2i(0, h);
       glEnd();
     }
-
-    // draw background
-    const int w = width;
-    if (OpenGLTexture::getFilter() == OpenGLTexture::Off) {
-      glRasterPos2f(0.5f + blanking, 0.5f);
-      glDrawPixels(w, h, (GLenum)panelFormat, GL_UNSIGNED_BYTE, panelZoomedImage);
-    }
-    else {
-      glColor3f(1.0f, 1.0f, 1.0f);
-      gstate.setState();
-      glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2i(0 + blanking, 0);
-	glTexCoord2f(du, 0.0f);
-	glVertex2i(w + blanking, 0);
-	glTexCoord2f(du, dv);
-	glVertex2i(w + blanking, h);
-	glTexCoord2f(0.0f, dv);
-	glVertex2i(0 + blanking, h);
-      glEnd();
-    }
   }
 
   if (changedCounts) {
     changedCounts--;
+  }
 
     // erase player count areas
     // always erase because the colors could be different from the
     // ones in the panel image.
-    /*if (doClear)*/ {
+    if (doClear) {
       static const GLfloat colors[][3] = {
 				{ 0.0f, 0.0f, 0.0f },
 				{ 0.7f, 0.0f, 0.0f },
@@ -270,64 +216,51 @@ void			ControlPanel::render()
     }
 
     // draw player counts
-    glColor3f(1.0f, 1.0f, 1.0f);
     for (i = 0; i < NumTeams; i++) {
       if (teamCounts[i] != 0) {
-	char buf[10];
-	sprintf(buf, "%d", teamCounts[i]);
-	const float w = 0.5f * countFont.getWidth(buf);
-	countFont.draw(buf,
-		(float)teamCountAreaPixels[i][0] +
-			0.5f * (float)teamCountSizePixels[0] - w,
-		(float)teamCountAreaPixels[i][1] +
-			0.5f * (float)teamCountSizePixels[1] +
-			countFont.getBaselineFromCenter());
+		  if (i == 0)
+			glColor3f(1.0f, 1.0f, 1.0f);
+		  else
+			glColor3f(0.0f, 0.0f, 0.0f);
+
+		char buf[10];
+		sprintf(buf, "%d", teamCounts[i]);
+		const float w = 0.5f * countFont.getWidth(buf);
+		countFont.draw(buf,
+			(float)teamCountAreaPixels[i][0] +
+				0.5f * (float)teamCountSizePixels[0] - w,
+			(float)teamCountAreaPixels[i][1] +
+				0.5f * (float)teamCountSizePixels[1] +
+				countFont.getBaselineFromCenter());
       }
-    }
   }
 
-  if (changedStatus) {
-    changedStatus--;
-
-    // erase status area
-    if (doClear) {
-      OpenGLGState::resetState();
-      glColor3f(0.0f, 0.0f, 0.0f);
-      glRecti(statusAreaPixels[0] + 1,
-	      statusAreaPixels[1] + 1,
-	      statusAreaPixels[0] + statusAreaPixels[2] - 1,
-	      statusAreaPixels[1] + statusAreaPixels[3] - 1);
-    }
-
-    // draw status
-    if (status.getLength() != 0) {
-      glColor3f(1.0f, 1.0f, 1.0f);
-      statusFont.draw(status,
-		(float)statusAreaPixels[0], (float)statusAreaPixels[1]);
-    }
-  }
+  // removed status completely
 
   if (changedMessage) {
     changedMessage--;
+  }
 
     const float lineHeight = messageFont.getSpacing();
     const float margin = lineHeight / 4.0f;
     float fx = messageAreaPixels[0] + margin;
     float fy = messageAreaPixels[1] + margin + messageFont.getDescent() + 1.0f;
-    glScissor(x + messageAreaPixels[0] + 1,
-	      y + messageAreaPixels[1] + 1,
-	      messageAreaPixels[2] - (int)margin - 1,
-	      messageAreaPixels[3] - (int)margin - 1);
+  glScissor(x + messageAreaPixels[0] + 0,
+	    y + messageAreaPixels[1] + 0,
+	    messageAreaPixels[2] - (int)margin + 2,
+	    messageAreaPixels[3] - (int)margin + 2);
 
-    // erase message area
-    if (doClear) {
-      OpenGLGState::resetState();
-      glColor3f(0.0f, 0.0f, 0.0f);
+  OpenGLGState::resetState();
+  // nice blended messages background
+  if(renderer.useBlending())
+    glEnable(GL_BLEND);
+  glColor4f(0.0f, 0.0f, 0.0, 0.3f );
       glRecti(messageAreaPixels[0] + 1,
 	      messageAreaPixels[1] + 1,
 	      messageAreaPixels[0] + messageAreaPixels[2] - 1,
 	      messageAreaPixels[1] + messageAreaPixels[3] - 1);
-    }
+  if(renderer.useBlending())
+    glDisable(GL_BLEND);
 
     // draw messages
     // Code added to allow line-wrap -- just the basics so please modify
@@ -384,7 +317,26 @@ void			ControlPanel::render()
       j += numLines;
       fy += (lineHeight * numLines);
     }
-  }
+  glScissor(x + messageAreaPixels[0] + 0,
+	    y + messageAreaPixels[1] + 0,
+	    messageAreaPixels[2] - (int)margin + 2,
+	    messageAreaPixels[3] - (int)margin + 2);
+  OpenGLGState::resetState();
+  //  nice border
+  glColor3f(teamColor[0], teamColor[1], teamColor[2] );
+  glBegin(GL_LINE_LOOP); {
+    glVertex2f((float) (x + messageAreaPixels[0] + 1), (float) (y + messageAreaPixels[1] + 1));
+    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - (int)margin), (float) (y + messageAreaPixels[1] + 1));
+    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - (int)margin), (float) (y + messageAreaPixels[1] + messageAreaPixels[3] - (int)margin));
+    glVertex2f((float) (x + messageAreaPixels[0] + 1), (float) (y + messageAreaPixels[1] + messageAreaPixels[3] - (int)margin));
+  } glEnd();
+  // some engines miss the corners
+  glBegin(GL_POINTS); {
+    glVertex2f((float) (x + messageAreaPixels[0] + 1), (float) (y + messageAreaPixels[1] + 1));
+    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - (int)margin), (float) (y + messageAreaPixels[1] + 1));
+    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - (int)margin), (float) (y + messageAreaPixels[1] + messageAreaPixels[3] - (int)margin));
+    glVertex2f((float) (x + messageAreaPixels[0] + 1), (float) (y + messageAreaPixels[1] + messageAreaPixels[3] - (int)margin));
+  } glEnd();
 
   glPopMatrix();
 }
@@ -403,9 +355,6 @@ void			ControlPanel::resize()
     w = h / ratio;
   }
   width = (int)w;
-
-  // zoom control panel
-  zoomPanel((int)w, (int)h);
 
   // compute areas in pixels
   radarAreaPixels[0] = (int)(w * radarAreaUV[0]) + blanking;
@@ -483,36 +432,6 @@ void			ControlPanel::expose()
 void			ControlPanel::exposeCallback(void* self)
 {
   ((ControlPanel*)self)->expose();
-}
-
-void			ControlPanel::zoomPanel(int width, int height)
-{
-  // allocate more memory if there isn't enough already
-  const int size = 4 * width * height;
-  if (panelZoomedImageSize < size) {
-    delete[] origPanelZoomedImage;
-    panelZoomedImageSize = size;
-    origPanelZoomedImage = new unsigned char[panelZoomedImageSize + 4];
-    panelZoomedImage = (unsigned char*)(((unsigned long)
-					origPanelZoomedImage & ~3) + 4);
-  }
-
-  // zoom pixels.  scan over destination and find pixel in source.
-  unsigned char* dst = panelZoomedImage;
-  const float dy = (float)panelHeight / (float)height;
-  float y = 0.5f * dy;
-  for (int j = 0; j < height; y += dy, j++) {
-    const unsigned char* row = panelImage + 4 * (int)(y+0.25f) * panelWidth;
-    const float dx = (float)panelWidth / (float)width;
-    float x = 0.5f * dx;
-    for (int i = 0; i < width; x += dx, dst += 4, i++) {
-      const unsigned char* src = row + 4 * (int)(x+0.25f);
-      dst[0] = src[0];
-      dst[1] = src[1];
-      dst[2] = src[2];
-      dst[3] = src[3];
-    }
-  }
 }
 
 void			ControlPanel::setMessagesOffset(int offset, int whence)

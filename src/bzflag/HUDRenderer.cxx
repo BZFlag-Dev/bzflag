@@ -697,15 +697,7 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   char buffer[60];
   const float h = majorFont.getSpacing();
   float x = 0.25f * h, y = (float)renderer.getWindow().getViewHeight() - h;
-  TeamColor teamIndex = player->getTeam();
   FlagId flag = player->getFlag();
-
-  // print player name and score in upper left corner in team (radar) color
-  if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
-    sprintf(buffer, "%s: %d", player->getCallSign(), player->getScore());
-    hudColor3fv(Team::getRadarColor(teamIndex));
-    majorFont.draw(buffer, x, y);
-  }
 
   // print flag if player has one in upper right
   if (flag != NoFlag) {
@@ -814,11 +806,11 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   const float y0 = (float)renderer.getWindow().getViewHeight() -
 				2.0f * alertFont.getSpacing();
   hudColor3fv(messageColor);
-  minorFont.draw(scoreLabel, x1, y0);
-  minorFont.draw(killLabel, x2, y0);
-  minorFont.draw(playerLabel, x3, y0);
-  minorFont.draw(teamScoreLabel, x5, y0);
-  const float dy = minorFont.getSpacing();
+  headingFont.draw(scoreLabel, x1, y0);
+  headingFont.draw(killLabel, x2, y0);
+  headingFont.draw(playerLabel, x3, y0);
+  headingFont.draw(teamScoreLabel, x5, y0);
+  const float dy = headingFont.getSpacing();
   int y = (int)(y0 - dy);
 
   // print players sorted by score
@@ -851,15 +843,6 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   }
   delete[] players;
 
-  y -= (int)dy;
-  const int maxDeadPlayers = World::getWorld()->getMaxDeadPlayers();
-  DeadPlayer** deadPlayers = World::getWorld()->getDeadPlayers();
-  for (i = 0; i < maxDeadPlayers; i++) {
-    if (!deadPlayers[i]) continue;
-    y -= (int)dy;
-    drawDeadPlayerScore(deadPlayers[i], x1, x2, x3, (float)y);
-  }
-
   // print teams sorted by score
   int *teams = new int[NumTeams];
   int teamCount = 0;
@@ -875,8 +858,8 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
 
   y -= (int)dy;
   for (i = 0 ; i < teamCount; i++){
-    y -= (int)dy;
     drawTeamScore(teams[i], x5, (float)y);
+    y -= (int)dy;
   }
   delete[] teams;
 }
@@ -924,16 +907,16 @@ void			HUDRenderer::renderTimes(SceneRenderer& renderer)
     sprintf(buf, "FPS: %d", int(fps));
     hudColor3f(1.0f, 1.0f, 1.0f);
     headingFont.draw(buf, (float)(centerx - maxMotionSize),
-		(float)centery - (float)maxMotionSize -
-		headingFont.getSpacing() + headingFont.getDescent());
+		(float)centery + (float) noMotionSize +
+		3.0f * (headingFont.getSpacing() + headingFont.getDescent()));
   }
   if (drawTime > 0.0f) {
     char buf[20];
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
     headingFont.draw(buf, (float)centerx,
-		(float)centery - (float)maxMotionSize -
-		headingFont.getSpacing() + headingFont.getDescent());
+		(float)centery + (float) noMotionSize +
+		3.0f * (headingFont.getSpacing() + headingFont.getDescent()));
   }
 }
 
@@ -941,15 +924,16 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 {
   // get view metrics
   const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getViewHeight();
+  //const int height = renderer.getWindow().getViewHeight();
+  const int height2 = renderer.getWindow().getViewHeight() - renderer.getWindow().getPanelHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
   const int centerx = width >> 1;
-  const int centery = height >> 1;
+  const int centery = height2 / 2;
   int i;
 
   // use one-to-one pixel projection
-  glScissor(ox, oy + renderer.getWindow().getPanelHeight(),
+  glScissor(ox, oy,
 		width, renderer.getWindow().getHeight());
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -978,7 +962,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw flag help
   if (flagHelpClock.isOn()) {
     hudColor3fv(messageColor);
-    y = flagHelpY + (float)flagHelpLines * minorFont.getSpacing();
+    y = flagHelpY + (float)(flagHelpLines-1) * minorFont.getSpacing() - (20 * minorFont.getDescent());
     const char* flagHelpBase = flagHelp[flagHelpIndex].getString();
     for (i = 0; i < flagHelpLines; i++) {
       y -= minorFont.getSpacing();
@@ -1359,21 +1343,22 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   if (player->isPaused())
     strcpy(status,"[p]");
 
-  const float callSignWidth = minorFont.getWidth(player->getCallSign());
-  const float emailWidth = minorFont.getWidth(email);
-  const float flagWidth = minorFont.getWidth(flag);
+  const float callSignWidth = headingFont.getWidth(player->getCallSign());
+  const float emailWidth = headingFont.getWidth(email);
+  const float flagWidth = headingFont.getWidth(flag);
   hudSColor3fv(Team::getRadarColor(player->getTeam()));
-  minorFont.draw(score, x1, y);
-  minorFont.draw(kills, x2, y);
-  minorFont.draw(player->getCallSign(), x3, y);
-  minorFont.draw(email, x3 + callSignWidth, y);
-  minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
-  minorFont.draw(status, x3 + callSignWidth + flagWidth + emailWidth, y);
+  headingFont.draw(score, x1, y);
+  headingFont.draw(kills, x2, y);
+  headingFont.draw(player->getCallSign(), x3, y);
+  headingFont.draw(email, x3 + callSignWidth, y);
+  headingFont.draw(flag, x3 + callSignWidth + emailWidth, y);
+  headingFont.draw(status, x3 + callSignWidth + flagWidth + emailWidth, y);
 }
 
 void			HUDRenderer::drawDeadPlayerScore(const Player* player,
 					float x1, float x2, float x3, float y)
 {
+  // removed this - disconnected players should *NOT* show up in the score list
   // draw dead player scores in a darker shade
   sDim = True;
   drawPlayerScore(player, x1, x2, x3, y);
@@ -1388,6 +1373,6 @@ void			HUDRenderer::drawTeamScore(int teamIndex,
   sprintf(score, "%d (%d-%d)", team.won - team.lost, team.won, team.lost);
 
   hudColor3fv(Team::getRadarColor((TeamColor)teamIndex));
-  minorFont.draw(score, x1, y);
+  headingFont.draw(score, x1, y);
 }
 // ex: shiftwidth=2 tabstop=8

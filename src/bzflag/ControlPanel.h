@@ -38,7 +38,8 @@ class ControlPanel {
 			ControlPanel(MainWindow&, SceneRenderer&);
 			~ControlPanel();
 
-    void		render();
+	void		setControlColor(const GLfloat *color = NULL);
+    void		render(SceneRenderer&);
     void		resize();
 
     void		setNumberOfFrameBuffers(int);
@@ -58,14 +59,13 @@ class ControlPanel {
     void		expose();
     void		change();
 
-    void		zoomPanel(int width, int height);
-
     static void		resizeCallback(void*);
     static void		exposeCallback(void*);
 
   private:
     MainWindow&		window;
     boolean		resized;
+    boolean		blend;
     int			numBuffers;
     int			exposed;
     int			changedMessage;
@@ -75,14 +75,7 @@ class ControlPanel {
 
     int			panelWidth;
     int			panelHeight;
-    int			panelFormat;
-    unsigned char*	panelImage;
-    int			panelZoomedImageSize;
-    unsigned char*	panelZoomedImage;
-    unsigned char*	origPanelZoomedImage;
 
-    OpenGLGState	gstate;
-    OpenGLTexture	background;
     OpenGLTexFont	messageFont;
     OpenGLTexFont	statusFont;
     OpenGLTexFont	countFont;
@@ -102,6 +95,7 @@ class ControlPanel {
     BzfString		status;
     int			teamCounts[NumTeams];
     ControlPanelMessageList	messages;
+	GLfloat					teamColor[3];
     static int			messagesOffset;
     static const int	maxScrollPages;
     static const int	maxLines;

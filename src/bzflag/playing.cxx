@@ -2182,8 +2182,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
       if (srcPlayer == myTank || dstPlayer == myTank || (!dstPlayer &&
 	  (int(team) == int(RogueTeam) ||
 	  int(team) == int(myTank->getTeam())))) {
-        // message is for me
-        BzfString fullMsg;
+	// message is for me
+	BzfString fullMsg;
 
         // direct message to or from me
         if (dstPlayer) {
@@ -2228,7 +2228,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	addMessage(NULL, fullMsg, msgColor);
 
         if (!srcPlayer || srcPlayer!=myTank)
-	  hud->setAlert(0, fullMsg, 3.0f, False);
+	hud->setAlert(0, fullMsg, 3.0f, False);
       }
       break;
     }
@@ -3324,6 +3324,10 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
   Observer = myTank->getCallSign()[0] == '@';
   roaming = Observer;
 
+
+  controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
+  radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
+
   // wait for response
   uint16_t code, len;
   char msg[MaxPacketLen];
@@ -3544,7 +3548,7 @@ static void		leaveGame()
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
 			1.1f, 1.5f * WorldSize,
 			mainWindow->getWidth(), mainWindow->getHeight(),
-			mainWindow->getViewHeight());
+			mainWindow->getViewHeight() + mainWindow->getPanelHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // reset some flags
@@ -4168,7 +4172,7 @@ static void		playingLoop()
 					1.1f, 1.5f * WorldSize,
 					mainWindow->getWidth(),
 					mainWindow->getHeight(),
-					mainWindow->getViewHeight());
+					mainWindow->getViewHeight() + mainWindow->getPanelHeight());
       sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
       // add dynamic nodes
@@ -4244,7 +4248,7 @@ static void		playingLoop()
 	sceneRenderer->render(False);
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 
 	// set up for drawing left channel
@@ -4305,7 +4309,7 @@ static void		playingLoop()
        sceneRenderer->render(False);
        hud->render(*sceneRenderer);
        renderDialog();
-       controlPanel->render();
+       controlPanel->render(*sceneRenderer);
        if (radar) radar->render(*sceneRenderer, blankRadar);
 
        // set up view for right eye
@@ -4316,7 +4320,7 @@ static void		playingLoop()
        sceneRenderer->render(True, True);
        hud->render(*sceneRenderer);
        renderDialog();
-       controlPanel->render();
+       controlPanel->render(*sceneRenderer);
        if (radar) radar->render(*sceneRenderer, blankRadar);
 
        // draw common stuff
@@ -4347,7 +4351,7 @@ static void		playingLoop()
 #ifndef USE_GL_STEREO
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -4364,7 +4368,7 @@ static void		playingLoop()
 #ifndef USE_GL_STEREO
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -4373,7 +4377,7 @@ static void		playingLoop()
 	glDrawBuffer(GL_BACK);
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -4427,7 +4431,7 @@ static void		playingLoop()
 	// draw other stuff
 	hud->render(*sceneRenderer);
 	renderDialog();
-	controlPanel->render();
+	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
       }
 
@@ -4748,7 +4752,7 @@ static void		findFastConfiguration()
 					1.1f, 1.5f * WorldSize,
 					mainWindow->getWidth(),
 					mainWindow->getHeight(),
-					mainWindow->getViewHeight());
+					mainWindow->getViewHeight() + mainWindow->getPanelHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // add a big wall in front of where we're looking.  this is important
@@ -4789,7 +4793,7 @@ static void		startupErrorCallback(const char* msg)
   controlPanel->addMessage(msg);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-  controlPanel->render();
+  controlPanel->render(*sceneRenderer);
   mainWindow->getWindow()->swapBuffers();
 }
 
@@ -4872,7 +4876,7 @@ void			startPlaying(BzfDisplay* _display,
   glEnable(GL_SCISSOR_TEST);
   controlPanel->resize();
   sceneRenderer->render();
-  controlPanel->render();
+  controlPanel->render(*sceneRenderer);
   mainWindow->getWindow()->swapBuffers();
 
   // startup error callback adds message to control panel and
@@ -4947,7 +4951,7 @@ void			startPlaying(BzfDisplay* _display,
   // draw again
   glClear(GL_COLOR_BUFFER_BIT);
   sceneRenderer->render();
-  controlPanel->render();
+  controlPanel->render(*sceneRenderer);
   mainWindow->getWindow()->swapBuffers();
 
   // make heads up display

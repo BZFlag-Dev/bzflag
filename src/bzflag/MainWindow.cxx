@@ -103,7 +103,7 @@ void			MainWindow::getMousePosition(int& mx, int& my) const
 {
   window->getMouse(mx, my);
   mx -= (width >> 1) + xOrigin;
-  my -= (viewHeight >> 1);
+  my -= ((viewHeight + panelHeight) >> 1);
   if (quadrant != FullWindow) my -= ((trueHeight+1) >> 1) - yOrigin;
 }
 

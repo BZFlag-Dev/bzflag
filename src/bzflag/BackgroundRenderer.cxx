@@ -436,30 +436,29 @@ void			BackgroundRenderer::renderSkyAndGround(
     const int x = window.getOriginX();
     const int y = window.getOriginY();
     const int width = window.getWidth();
-    const int panelHeight = window.getPanelHeight();
-    const int viewHeight = window.getViewHeight();
+    const int viewHeight = window.getViewHeight() + window.getPanelHeight();
     const int halfHeight = viewHeight >> 1;
     const SceneRenderer::ViewType viewType = renderer.getViewType();
 
     // draw sky
     glDisable(GL_DITHER);
     glPushAttrib(GL_SCISSOR_BIT);
-    glScissor(x, y + panelHeight + halfHeight, width, halfHeight + 1);
+    glScissor(x, y + halfHeight, width, halfHeight);
     glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw ground -- first get the color (assume it's all green)
     GLfloat groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
     if (fullWindow && viewType == SceneRenderer::ThreeChannel)
-      glScissor(x, y, width, panelHeight + halfHeight);
+      glScissor(x, y, width, halfHeight);
     else if (fullWindow && viewType == SceneRenderer::Stacked)
-      glScissor(x, y, width, panelHeight + halfHeight);
+      glScissor(x, y, width, halfHeight);
 #ifndef USE_GL_STEREO
     else if (fullWindow && viewType == SceneRenderer::Stereo)
-      glScissor(x, y, width, panelHeight + halfHeight);
+      glScissor(x, y, width, halfHeight);
 #endif
     else
-      glScissor(x, y + panelHeight, width, halfHeight);
+      glScissor(x, y, width, halfHeight);
     if (invert) glClearColor(groundColor, 0.0f, groundColor, 0.0f);
     else glClearColor(0.0f, groundColor, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
