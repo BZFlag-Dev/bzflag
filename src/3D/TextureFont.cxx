@@ -252,7 +252,7 @@ float TextureFont::getStrLength(float scale, const char *str)
       thisPassLen = 0;
     } else {
       lastCharacter = charToUse;
-      if ((str[i] < 32) || (str[i] < 9))
+      if (str[i] < 32)
 	charToUse = 32;
       else if (str[i] > numberOfCharacters + 32)
 	charToUse = 32;
