@@ -18,13 +18,8 @@
 #include <string>
 #include <string.h>
 #include <math.h>
-#include <time.h>
-#include "common.h"
 #include "TimeKeeper.h"
 #include "OpenGLTexFont.h"
-//#include "global.h"		// for TeamColor enum
-#include "common.h"		// for bool type
-
 
 
 // ANSI (ISO 6429) colors codes (these are all used in BRIGHT mode)
@@ -759,7 +754,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
 	    else if (color_tmp == CyanColor) {
 	      color = cyan_color;
 	    } else {
-	      std::cout << "Unknown color encountered in " << __FILE__ << " on line " << __LINE__ << std::endl;
+	      std::cerr << "Unknown color encountered in " << __FILE__ << " on line " << __LINE__ << std::endl;
 	    }
 	  }
 	  glColor3fv(color);
