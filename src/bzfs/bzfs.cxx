@@ -2884,7 +2884,6 @@ static bool enemyProximityCheck(TeamColor team, float *pos, float safeDist)
 
 static void getSpawnLocation(int playerId, float* pos, float *azimuth)
 {
-  TimeKeeper start = TimeKeeper::getCurrent();
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
   if (player[playerId].restartOnBase && team <= PurpleTeam) {
@@ -2900,7 +2899,10 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     WorldInfo::ObstacleLocation *building;
 
-    int inAirAttempts = 20;
+    // keep track of how much time we spend searching for a location
+    TimeKeeper start=TimeKeeper::getCurrent();
+
+    int inAirAttempts = 50;
     int tries = 0;
     float minProximity = size / 3.0f;
     bool foundspot = false;
@@ -2927,7 +2929,7 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
 
         // in a building? try climbing on roof until on top
         int lastType = type;
-	int retriesRemaining = 50; // don't climb forever
+	int retriesRemaining = 100; // don't climb forever
         while (type != NOT_IN_BUILDING) {
           pos[2] = building->pos[2] + building->size[2] + 0.0001f;
           tries++;
@@ -2953,8 +2955,9 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
       // check every now and then if we have already used up 10ms of time
       if (tries >= 50) {
         tries=0;
-        if (TimeKeeper::getCurrent() - start > 0.01f) {
+	if (TimeKeeper::getCurrent() - start > 0.01f){
           //Just drop the sucka in, and pray
+	  DEBUG1("Warning: getSpawnLocation ran out of time, just dropping the sucker in\n");
           pos[2] = maxWorldHeight;
           break;
         }
