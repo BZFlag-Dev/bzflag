@@ -108,6 +108,22 @@ int getTarget(const char *victimname) {
 }
 
 
+void handlePartCmd(GameKeeper::Player *playerData, const char *message)
+{
+  std::string message2;
+
+  message2 = string_util::format("%s has quit \"%s\" ",
+				 playerData->player.getCallSign(),  message + 6);
+
+  DEBUG2("%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), message + 6);
+  sendMessage(ServerPlayer, AllPlayers, message2.c_str());
+
+  // now to kick the player
+  int t = playerData->getIndex(); 
+  removePlayer(t, "%s", message + 6);    
+}
+
+
 void handleMeCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();

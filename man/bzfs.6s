@@ -558,6 +558,16 @@ Write a message to the server administrator. Example:
 /report I like this map!
 .ft R
 
+.TP
+.B /part {message}
+Leave the game with a goodbye message (similar to irc's /part)
+.ft CW
+.nf
+.ne 2
+/part Gotta go! bye everyone!
+.ft R
+
+
 .SH SERVER ADMINISTRATIVE COMMANDS
 
 .BR

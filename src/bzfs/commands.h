@@ -17,6 +17,13 @@
 #include "GameKeeper.h"
 
 
+/** part command hook function
+ *
+ * /part <message> quits game with a goodbye message
+ */
+void handlePartCmd(GameKeeper::Player *playerData, const char *message);
+
+
 /** me command hook function
  *
  * /me command allows player to express an action
