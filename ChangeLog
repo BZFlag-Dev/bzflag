@@ -2,6 +2,8 @@
 			     BZFlag release notes
 
 BZFlag 1.10.2
+-------------
+
 * Stop infinite spawn loop caused by complex worlds with large coverage by pyramids
 * Misc Swear processing fixes
 * Allow banfile to be empty or not exist
