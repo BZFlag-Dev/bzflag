@@ -574,6 +574,45 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
+// try to select the next recipient in the specified direction
+// eventually avoiding robots
+static void selectNextRecipient (bool forward, bool robotIn)
+{
+  const Player *recipient = myTank->getRecipient();
+  int rindex;
+  if (!recipient) {
+    rindex = - 1;
+    forward = true;
+  } else {
+    const PlayerId id = recipient->getId();
+    rindex = lookupPlayerIndex(id);
+  }
+  int i = rindex;
+  while (true) {
+    if (forward) {
+      i++;
+      if (i == curMaxPlayers)
+	// if no old rec id we have just ended our search
+	if (recipient == NULL)
+	  break;
+	else
+	  // wrap around
+	  i = 0;
+    } else {
+      if (i == 0)
+	// wrap around
+	i = curMaxPlayers;
+      i--;
+    }
+    if (i == rindex)
+      break;
+    if (player[i] && (robotIn || player[i]->getPlayerType() == TankPlayer)) {
+      myTank->setRecipient(player[i]);
+      break;
+    }
+  }
+}
+
 bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   if (!myTank->isKeyboardMoving()) {
@@ -597,53 +636,10 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
     }
     else if ((key.shift == BzfKeyEvent::ShiftKey || (hud->getComposeString().length() == 0)) &&
 	     (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)) {
+      // exclude robot from private message recipient.
+      // No point sending messages to robot (now)
+      selectNextRecipient(key.button != BzfKeyEvent::Left, false);
       const Player *recipient = myTank->getRecipient();
-      if(!recipient) {
-	for (int i = 0; i < curMaxPlayers; i++) {
-	  if (player[i]) {
-	    myTank->setRecipient(player[i]);
-	    break;
-	  }
-	}
-      }
-      else {
-	const PlayerId id = recipient->getId();
-	int rindex = lookupPlayerIndex(id);
-	if (key.button == BzfKeyEvent::Left) {
-	  for (int i = rindex-1; i >= 0; i--) {
-	    if (player[i]) {
-	      myTank->setRecipient(player[i]);
-	      break;
-	    }
-	  }
-	  if (recipient == myTank->getRecipient()) {
-	    for (int i = curMaxPlayers-1; i >=0; i--) {
-	      if (player[i]) {
-		myTank->setRecipient(player[i]);
-		break;
-	      }
-	    }
-	  }
-	}
-	else
-	{
-	  for (int i = rindex+1; i < curMaxPlayers; i++) {
-	    if (player[i]) {
-	      myTank->setRecipient(player[i]);
-	      break;
-	    }
-	  }
-	  if (recipient == myTank->getRecipient()) {
-	    for (int i = 0; i < curMaxPlayers; i++) {
-	      if (player[i]) {
-		myTank->setRecipient(player[i]);
-		break;
-	      }
-	    }
-	  }
-	}
-      }
-      recipient = myTank->getRecipient();
       if (recipient) {
         void* buf = messageMessage;
 	buf = nboPackUByte(buf, recipient->getId());
@@ -796,54 +792,10 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 
     if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
 		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
+      // exclude robots from silence recipient list they don't talk 
+      selectNextRecipient(key.button == BzfKeyEvent::Up ||
+			  key.button == BzfKeyEvent::Right, false);
       const Player *recipient = myTank->getRecipient();
-      if (!recipient) {
-	for (int i = 0; i < curMaxPlayers; i++) {
-	  if (player[i]) {
-	    myTank->setRecipient(player[i]);
-	    break;
-	  }
-	}
-      }
-      else {
-	const PlayerId id = recipient->getId();
-	int rindex = lookupPlayerIndex(id);
-	if (key.button == BzfKeyEvent::Up ||
-		key.button== BzfKeyEvent::Right) {
-	  for (int i = rindex-1; i >= 0; i--) {
-	    if (player[i]) {
-	      myTank->setRecipient(player[i]);
-	      break;
-	    }
-	  }
-	  if (recipient == myTank->getRecipient()) {
-	    for (int i = curMaxPlayers-1; i >=0; i--) {
-	      if (player[i]) {
-		myTank->setRecipient(player[i]);
-		break;
-	      }
-	    }
-	  }
-	}
-	else
-	{
-	  for (int i = rindex+1; i < curMaxPlayers; i++) {
-	    if (player[i]) {
-	      myTank->setRecipient(player[i]);
-	      break;
-	    }
-	  }
-	  if (recipient == myTank->getRecipient()) {
-	    for (int i = 0; i < curMaxPlayers; i++) {
-	      if (player[i]) {
-		myTank->setRecipient(player[i]);
-		break;
-	      }
-	    }
-	  }
-	}
-      }
-      recipient = myTank->getRecipient();
       if (recipient) {
 	// FIXME change prompt to show current silence state
 	std::string composePrompt = "[Un]Silence -->";
@@ -1236,78 +1188,10 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 
     if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
 		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
+      if (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)
+	// robot stay on the recipient list - to ban eventually ??
+	selectNextRecipient(key.button == BzfKeyEvent::Right, true);
       const Player *recipient = myTank->getRecipient();
-
-      if (recipient) {  // handle selecting another player if <-- or --> hit
-	const PlayerId id = recipient->getId();
-	int rindex = lookupPlayerIndex(id);
-
-	if (key.button== BzfKeyEvent::Left) {
-	  for (int i = rindex-1; i >= 0; i--) {
-	    if (i == startIndex && startIndex != -1){
-	      myTank->setRecipient(NULL);
-	      startIndex = -1;
-	      break;
-	    }
-	    if (player[i]) {
-	      myTank->setRecipient(player[i]);
-	      break;
-	    }
-	  }
-	  if (recipient == myTank->getRecipient()) {
-	    for (int i = curMaxPlayers-1; i >=0; i--) {
-	      if (i == startIndex && startIndex != -1){
-		myTank->setRecipient(NULL);
-		startIndex = -1;
-		break;
-	      }
-	      if (player[i]) {
-		myTank->setRecipient(player[i]);
-		break;
-	      }
-	    }
-	  }
-	} else if (key.button == BzfKeyEvent::Right) {
-	  for (int i = rindex+1; i < curMaxPlayers; i++) {
-	    if (i == startIndex && startIndex != -1){
-	      myTank->setRecipient(NULL);
-	      startIndex = -1;
-	      break;
-	    }
-	    if (player[i]) {
-	      myTank->setRecipient(player[i]);
-	      break;
-	    }
-	  }
-	  if (recipient == myTank->getRecipient()) {
-	    for (int i = 0; i < curMaxPlayers; i++) {
-	      if (i == startIndex && startIndex != -1){
-	      myTank->setRecipient(NULL);
-	      startIndex = -1;
-	      break;
-	      }
-	      if (player[i]) {
-		myTank->setRecipient(player[i]);
-		break;
-	      }
-	    }
-	  }
-	}
-
-      } else { // there is no recipient so choose one if <-- or --> hit
-	if (!recipient && (key.button == BzfKeyEvent::Left ||key.button == BzfKeyEvent::Right) ) {
-	  for (int i = 0; i < curMaxPlayers; i++) {
-	    if (player[i]) {
-	      startIndex = i; // we pretend a null player is at this pos
-	      myTank->setRecipient(player[i]);
-	      break;
-	    }
-	  }
-	}
-      }
-
-
-      recipient = myTank->getRecipient();
 
       // choose which mode we are in
       int maxModes;
