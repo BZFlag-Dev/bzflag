@@ -509,7 +509,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameStyle |= int(InertiaGameStyle);
     } else if (strcmp(argv[i], "-admsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      if (options.advertisemsg != "") {
+      if ((options.advertisemsg != "") || (strlen (argv[i]) == 0)) {
         options.advertisemsg += "\\n";
       }
       options.advertisemsg += argv[i];
@@ -926,7 +926,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       std::cerr << "using speed autokick tolerance of \"" << speedTolerance << "\"" << std::endl;
     } else if (strcmp(argv[i], "-srvmsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      if (options.servermsg != "") {
+      if ((options.servermsg != "") || (strlen (argv[i]) == 0)) {
         options.servermsg += "\\n";
       }
       options.servermsg += argv[i];
