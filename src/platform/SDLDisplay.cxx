@@ -119,7 +119,6 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
   bool ctrl   = ((mode & KMOD_CTRL) != 0);
   bool alt    = ((mode & KMOD_ALT) != 0);
 
-  static const SDL_version *sdlver = SDL_Linked_Version();
 
   switch (event.type) {
 
@@ -127,6 +126,7 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     _event.type	= BzfEvent::MouseMove;
     mx		 = event.motion.x;
 #ifdef __APPLE__
+    static const SDL_version *sdlver = SDL_Linked_Version();
     /* deal with a SDL bug when in windowed mode related to
      * Cocoa coordinate system of (0,0) in bottom-left corner.
      */
