@@ -96,7 +96,9 @@ BzfString		Address::getDotNotation() const
   return BzfString(inet_ntoa(addr));
 }
 
+#if !defined(_WIN32)
 static jmp_buf alarmEnv;
+#endif
 static void		onAlarm(int)
 {
   // jump back to setjmp.  this handles the race condition where we

@@ -435,8 +435,10 @@ int			WorldInfo::packDatabase()
   database = new char[databaseSize];
   void*	databasePtr = database;
 
+  // define i out here so we avoid the loop variable scope debates
+  int i;
   // add walls
-  for (int i = 0 ; i < numWalls ; i++ ) {
+  for (i = 0 ; i < numWalls ; i++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
     databasePtr = nboPackFloat(databasePtr, walls[i].pos[0]);
     databasePtr = nboPackFloat(databasePtr, walls[i].pos[1]);
@@ -448,7 +450,7 @@ int			WorldInfo::packDatabase()
   }
 
   // add boxes
-  for (int i = 0 ; i < numBoxes ; i++ ) {
+  for (i = 0 ; i < numBoxes ; i++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
     databasePtr = nboPackFloat(databasePtr, boxes[i].pos[0]);
     databasePtr = nboPackFloat(databasePtr, boxes[i].pos[1]);
@@ -460,7 +462,7 @@ int			WorldInfo::packDatabase()
   }
 
   // add pyramids
-  for (int i = 0 ; i < numPyramids ; i++ ) {
+  for (i = 0 ; i < numPyramids ; i++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
     databasePtr = nboPackFloat(databasePtr, pyramids[i].pos[0]);
     databasePtr = nboPackFloat(databasePtr, pyramids[i].pos[1]);
@@ -472,7 +474,7 @@ int			WorldInfo::packDatabase()
   }
 
   // add teleporters
-  for (int i = 0 ; i < numTeleporters ; i++ ) {
+  for (i = 0 ; i < numTeleporters ; i++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
     databasePtr = nboPackFloat(databasePtr, teleporters[i].pos[0]);
     databasePtr = nboPackFloat(databasePtr, teleporters[i].pos[1]);
