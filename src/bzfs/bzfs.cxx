@@ -219,7 +219,6 @@ struct CmdLineOptions
 
 enum ClientState {
   PlayerNoExist, // does not exist
-  PlayerAccept, // got connect, sending hello
   PlayerInLimbo, // not entered
   PlayerDead, // dead
   PlayerAlive // alive
