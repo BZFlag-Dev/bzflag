@@ -539,7 +539,7 @@ your tank controls are sluggish, and anyone, no matter what flag
 they have, can crush you like.
 .TP
 .B Seer (SE)
-See Stealthed, Cloaked and Masqueraded tanks as normal.
+See Stealthed, Cloaked and Masqueraded tanks as normal, as well as Invisible Bullets.
 .TP
 .B Thief (TH)
 Tank is small and fast, when you shoot an opponent, he is not killed,
@@ -549,7 +549,8 @@ but instead, you steal his flag.
 It's useless!
 .TP
 .B Wings (WG)
-Tank can drive around in the air.  This can be useful when jumping
+Tank can drive around in the air, and may be able to jump multiple times.
+This can be useful when jumping
 or falling.
 .RE
 .PP
