@@ -146,13 +146,16 @@ void ListServerLink::closeLink()
 void ListServerLink::read()
 {
   if (isConnected()) {
-    char    buf[256];
-    recv(linkSocket, buf, sizeof(buf), 0);
+    char    buf[2048];
+    int bytes = recv(linkSocket, buf, sizeof(buf)-1, 0);
+    buf[bytes]=0;
+    DEBUG4("ListServerStart\n%sListServerEnd\n", buf);
     closeLink();
-    if (nextMessageType != ListServerLink::NONE)
+    if (nextMessageType != ListServerLink::NONE) {
       // There was a pending request arrived after we write:
       // we should redo all the stuff
       openLink();
+    }
   }
 }
 
@@ -206,6 +209,7 @@ void ListServerLink::openLink()
       }
     } else {
       // shouldn't arrive here. Just in case, clean
+      DEBUG3("list server connect and close?");
       closeLink();
     }
   }
@@ -270,11 +274,15 @@ extern uint16_t curMaxPlayers;
       msg += "%%0D%%0A";
     }
   }
-  msg += TextUtils::format("&title=%s HTTP/1.1\r\nUser-Agent: bzfs %s\r\nHost: %s\r\nCache-Control: no-cache\r\n\r\n",
+  msg += TextUtils::format("&title=%s HTTP/1.1\r\n"
+      "User-Agent: bzfs %s\r\n"
+      "Host: %s\r\n"
+      "Cache-Control: no-cache\r\n"
+      "Connection: close\r\n"
+      "\r\n",
     publicizedTitle.c_str(),
     getAppVersion(),
     hostname.c_str());
-  // TODO need to listen for user info replies and setup callsign for isAllowedToEnter()
   sendMessage(msg);
 }
 
@@ -283,7 +291,11 @@ void ListServerLink::removeMe(std::string publicizedAddress)
   std::string msg;
   // send REMOVE (must send blank line)
   msg = TextUtils::format("GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
-    "User-Agent: bzfs %s\r\nHost: %s\r\nCache-Control: no-cache\r\n\r\n",
+    "User-Agent: bzfs %s\r\n"
+    "Host: %s\r\n"
+    "Cache-Control: no-cache\r\n"
+    "Connection: close\r\n"
+    "\r\n",
     pathname.c_str(),
     publicizedAddress.c_str(),
     getAppVersion(),
