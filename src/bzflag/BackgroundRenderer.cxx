@@ -182,17 +182,15 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 	bool done = false;
 	while (!done){
 		char text[256];
-		sprintf(text,"mountan%d",numMountainTextures+1);
+		sprintf(text,"mountain%d",numMountainTextures+1);
 		mountainTexture = tm.getTexture(text);
 		if (mountainTexture && mountainTexture->isValid()){
 			height = mountainTexture->getHeight();
 			width += mountainTexture->getWidth();
 			numMountainTextures++;
 		}
-		else{
+		else
 			done = true;
-			numMountainTextures--;
-		}
 	}
 
     if (numMountainTextures) {
@@ -220,7 +218,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       mountainsGState = new OpenGLGState[numMountainTextures];
       for (i = 0; i < numMountainTextures; i++) {
 		char text[256];
-		sprintf(text,"mountan%d",i+1);
+		sprintf(text,"mountain%d",i+1);
 		gstate.setTexture(*tm.getTexture(text));
 		mountainsGState[i] = gstate.getState();
       }
