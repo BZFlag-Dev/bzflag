@@ -315,7 +315,7 @@ unsigned short int VotingArbiter::timeRemaining(void) const
   return (unsigned short int)remaining;
 }
 
-bool VotingArbiter::retractVote(std::string &player)
+bool VotingArbiter::retractVote(const std::string &player)
 {
   if (_votingBooth == NULL) {
     return false;

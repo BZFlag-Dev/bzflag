@@ -215,7 +215,7 @@ public:
 
   /** allow a player vote to be retracted (perhaps if a player leaves
    */
-  bool retractVote(std::string &player);
+  bool retractVote(const std::string &player);
 
 };
 
