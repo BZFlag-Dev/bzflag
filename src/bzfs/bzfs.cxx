@@ -2029,6 +2029,7 @@ static void acceptClient()
   player[playerIndex].outmsgCapacity = 0;
   player[playerIndex].lastState.order = 0;
   player[playerIndex].paused = false;
+  player[playerIndex].pausedSince = TimeKeeper::getNullTime();
 #ifdef NETWORK_STATS
   initPlayerMessageStats(playerIndex);
 #endif
@@ -2690,6 +2691,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
 static void pausePlayer(int playerIndex, bool paused)
 {
   player[playerIndex].paused = paused;
+  player[playerIndex].pausedSince = TimeKeeper::getCurrent();
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     if (paused && (rabbitIndex == playerIndex)) {
       anointNewRabbit();

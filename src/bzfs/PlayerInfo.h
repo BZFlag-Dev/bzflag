@@ -134,6 +134,8 @@ struct PlayerInfo {
     unsigned short lastSendPacketNo;
 
     bool paused;
+    TimeKeeper pausedSince;
+
     bool notResponding;
     bool toBeKicked;
     std::string toBeKickedReason;

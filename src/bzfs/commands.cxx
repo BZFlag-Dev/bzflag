@@ -478,14 +478,17 @@ void handleIdlestatsCmd(int t, const char *)
     return;
   }
 
-  char reply[MessageLen] = {0};
-
   TimeKeeper now=TimeKeeper::getCurrent();
+  std::string reply;
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-      sprintf(reply,"%-16s : %4ds",player[i].callSign,
-	      int(now-player[i].lastupdate));
-      sendMessage(ServerPlayer, t, reply, true);
+      reply = string_util::format("%-16s : %4ds", player[i].callSign, 
+				  int(now - player[i].lastupdate));
+      if (player[i].paused) {
+	reply += string_util::format("  paused %4ds",
+				     int(now - player[i].pausedSince));
+      }
+      sendMessage(ServerPlayer, t, reply.c_str(), true);
     }
   }
   return;
