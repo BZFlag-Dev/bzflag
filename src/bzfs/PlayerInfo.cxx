@@ -24,6 +24,8 @@
 
 #define MAX_FLAG_HISTORY (10)
 
+adns_state PlayerInfo::adnsState;
+
 void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd,
 			    int _playerIndex) {
   playerIndex      = _playerIndex;
@@ -585,7 +587,7 @@ void PlayerInfo::getPlayerList(char *list) {
 	  peer.getDotNotation().c_str(),
 #ifdef HAVE_ADNS_H
 	  hostname ? " (" : "",
-	  hostname ? player[i].hostname : "",
+	  hostname ? hostname : "",
 	  hostname ? ")" : "",
 #else
 	  "", "", "",
@@ -1213,6 +1215,42 @@ void PlayerInfo::countMessage(uint16_t code, int len, int direction) {
     perSecondCurrentBytes[direction] = 0;
   }
 };
+#endif
+
+#ifdef HAVE_ADNS_H
+// return true if host is resolved
+bool PlayerInfo::checkDNSResolution() {
+  if (!adnsQuery)
+    return false;
+
+  // check to see if query has completed
+  adns_answer *answer;
+  if (adns_check(adnsState, &adnsQuery, &answer, 0) != 0) {
+    if (getErrno() != EAGAIN) {
+      DEBUG1("Player [%d] failed to resolve: errno %d\n", playerIndex,
+	     getErrno());
+      adnsQuery = NULL;
+    }
+    return false;
+  }
+
+  // we got our reply.
+  if (answer->status != adns_s_ok) {
+    DEBUG1("Player [%d] got bad status from resolver: %s\n", playerIndex,
+	   adns_strerror(answer->status));
+    free(answer);
+    adnsQuery = NULL;
+    return false;
+  }
+
+  if (hostname)
+    free(hostname); // shouldn't happen, but just in case
+  hostname = strdup(*answer->rrs.str);
+  DEBUG1("Player [%d] resolved to hostname: %s\n", playerIndex, hostname);
+  free(answer);
+  adnsQuery = NULL;
+  return true;
+}
 #endif
 
 // Local Variables: ***

@@ -13,6 +13,9 @@
 #ifndef __PLAYERINFO_H__
 #define __PLAYERINFO_H__
 
+// bzflag global header
+#include "global.h"
+
 // system headers
 #include <string>
 #ifndef _WIN32
@@ -203,6 +206,10 @@ public:
 #ifdef NETWORK_STATS
   void        countMessage(uint16_t code, int len, int direction);
 #endif
+#ifdef HAVE_ADNS_H
+  // return true if host is resolved
+  bool        checkDNSResolution();
+#endif
 private:
   void        cleanCallSign();
   void        cleanEMail();
@@ -228,12 +235,15 @@ private:
     int fd;
     // peer's network address
     Address peer;
+public:
 #ifdef HAVE_ADNS_H
     // peer's network hostname (malloc/free'd)
     char *hostname;
     // adns query state for while we're looking up hostname
     adns_query adnsQuery;
+  static adns_state adnsState;
 #endif
+private:
     // current state of player
     ClientState state;
     // type of player
