@@ -75,6 +75,7 @@ public:
   private:
     static Player *playerList[PlayerSlot];
     int    playerIndex;
+    PlayerInfo     _player;
   };
   class Flag {
   };

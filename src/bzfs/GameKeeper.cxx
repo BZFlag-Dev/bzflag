@@ -14,14 +14,13 @@
 #include "GameKeeper.h"
 
 // players list FIXME should be resized based on maxPlayers
-PlayerInfo              player[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
 GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd):
-  player(&::player[_playerIndex]),
+  player(&_player),
   lastState(&::lastState[_playerIndex]),
   playerIndex(_playerIndex)
 {

@@ -21,10 +21,7 @@
 // bzfs specific headers
 #include "CmdLineOptions.h" // for MaxPlayers & ReplayObservers
 #include "RecordReplay.h"
-
-// External dependencies  [from bzfs.cxx]
-extern PlayerInfo player[MaxPlayers + ReplayObservers];
-
+#include "GameKeeper.h"
 
 // it's loathsome to expose private structure in a header
 typedef struct RejoinNode {
@@ -50,8 +47,12 @@ RejoinList::~RejoinList ()
 
 bool RejoinList::add (int playerIndex)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return true;
   RejoinNode* rn = new RejoinNode;
-  strcpy (rn->callsign, player[playerIndex].getCallSign());
+  strcpy (rn->callsign, playerData->player->getCallSign());
   rn->joinTime = TimeKeeper::getCurrent();
   queue.push_back (rn);
   return true;
@@ -59,6 +60,11 @@ bool RejoinList::add (int playerIndex)
 
 float RejoinList::waitTime (int playerIndex)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return true;
+
   std::list<struct RejoinNode*>::iterator it;
   TimeKeeper thenTime = TimeKeeper::getCurrent();
   thenTime += -BZDB.eval(StateDatabase::BZDB_REJOINTIME);
@@ -75,7 +81,7 @@ float RejoinList::waitTime (int playerIndex)
     it++;
   }
 
-  const char *callsign = player[playerIndex].getCallSign();
+  const char *callsign = playerData->player->getCallSign();
   float value = 0.0f;
   it = queue.begin();
   while (it != queue.end()) {
