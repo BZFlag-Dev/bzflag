@@ -1181,32 +1181,31 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
 {
   int i;
   for (i = 0; i < numBases; i++) {
-    if ((inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r) && bases[i].pos[2] <
-	(z + flagHeight)) && (bases[i].pos[2] + bases[i].size[2]) > z) {
+    if ((bases[i].pos[2] < (z + flagHeight)) && ((bases[i].pos[2] + bases[i].size[2]) > z)
+    &&  (inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r))) {
       if(location != NULL)
 	*location = &bases[i];
       return IN_BASE;
     }
   }
   for (i = 0; i < numBoxes; i++)
-    if ((inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] <
-	(z + flagHeight)) && (boxes[i].pos[2] + boxes[i].size[2]) > z) {
+    if ((boxes[i].pos[2] < (z + flagHeight)) && ((boxes[i].pos[2] + boxes[i].size[2]) > z)
+    &&  (inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r))) {
       if (location != NULL)
 	*location = &boxes[i];
       return IN_BOX;
     }
   for (i = 0; i < numPyramids; i++) {
-    if ((inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r)) &&
-	pyramids[i].pos[2] < (z + flagHeight) && (pyramids[i].pos[2] + pyramids[i].size[2]) > z) {
+    if ((pyramids[i].pos[2] < (z + flagHeight)) && ((pyramids[i].pos[2] + pyramids[i].size[2]) > z)
+    &&  (inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r))) {
       if (location != NULL)
 	*location = &pyramids[i];
       return IN_PYRAMID;
     }
   }
   for (i = 0; i < numTeleporters; i++)
-    if (inRect(teleporters[i].pos, teleporters[i].rotation, teleporters[i].size, x, y, r) &&
-	teleporters[i].pos[2] < (z + flagHeight) &&
-	(teleporters[i].pos[2] + teleporters[i].size[2]) > z) {
+    if ((teleporters[i].pos[2] < (z + flagHeight)) && ((teleporters[i].pos[2] + teleporters[i].size[2]) > z)
+    &&  (inRect(teleporters[i].pos, teleporters[i].rotation, teleporters[i].size, x, y, r))) {
       static ObstacleLocation __teleporter;
       __teleporter = teleporters[i];
       if (location != NULL)
@@ -4106,9 +4105,9 @@ static void resetFlag(int flagIndex)
 					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     while (topmosttype != NOT_IN_BUILDING) {
 	if ((clOptions.flagsOnBuildings && (topmosttype == IN_BOX)) 
-		&&  (world->inRect(obj->pos, obj->rotation, obj->size, 
-		pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f))
-		&& (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight)) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])) {
+		&& (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight)) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
+		&& (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
+		 {
 	  pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
 	}
 	else {
