@@ -40,6 +40,7 @@ public:
 
   void release( void );
   void acquire ( void );
+
 protected:
   friend class Singleton<DisplayListManager>;
 
