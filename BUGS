@@ -1,9 +1,6 @@
 recent bugs
 ------------
 
-- become sealed/stuck on teleporters and ricochet on the frame seems
-  incorrect
-
 - GM and SW flags occasionally do not show in the scoreboard:
   - right clicking still shows the correct flag
   - seemed to track a specific player (not slot or team)
