@@ -1913,13 +1913,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     }
   }
 
-  else if (keymap.isMappedTo(BzfKeyMap::Score, key)) {
-    // toggle score board
-    if (pressed) {
-      BZDB->set("showscore", BZDB->isTrue("showscore") ? "0" : "1");
-    }
-  }
-
   else if (keymap.isMappedTo(BzfKeyMap::Labels, key)) {
     // toggle tank labels in roaming mode
     if (pressed) {
