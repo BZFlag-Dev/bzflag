@@ -159,7 +159,7 @@ bool			PyramidBuilding::isInside(const float* p, float a,
   if (p[2] + BZDBCache::tankHeight < getPosition()[2])
     return false;
   // Tank is above pyramid ?
-  if (p[2] > getPosition()[2] + getHeight())
+  if (p[2] >= getPosition()[2] + getHeight())
     return false;
   // Could be inside. Then check collision with the rectangle at object height
   // This is a rectangle reduced by shrinking but pass the height that we are
@@ -239,7 +239,7 @@ bool			PyramidBuilding::getHitNormal(
   }
 
   normal[0] = normal[1] = 0;
-  if (flip && objHigh > oTop) {
+  if (flip && objHigh >= oTop) {
     // base of higher object is over the plateau
     normal[2] = 1;
     return true;
