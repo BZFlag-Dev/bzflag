@@ -27,6 +27,38 @@
 
 #include <TimeKeeper.h> // only for debugEval()
 
+void	debugLookups(const std::string &name)
+{
+#ifndef DEBUG
+  return;
+#endif
+  /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
+  static std::map<std::string,int> cnts;
+  static TimeKeeper last = TimeKeeper::getCurrent();
+
+  std::map<std::string,int>::iterator it = cnts.find(name);
+  if (it == cnts.end())
+    cnts[name] = 1;
+  else
+    it->second++;
+
+  TimeKeeper now = TimeKeeper::getCurrent();
+  if (now - last > 20.0f) {
+    std::map<int,std::string> order;
+    for (it = cnts.begin(); it != cnts.end(); it++) {
+      order[-it->second] = it->first;
+      it->second = 0;
+    }
+
+    for (std::map<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
+      char data[100];
+      sprintf(data, "%s = %d", it2->second.c_str(), -it2->first);
+      std::cout << data << std::endl;
+    }
+    last = now;
+  }
+}
+
 const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
 const std::string StateDatabase::BZDB_ANGULARAD         = std::string("_angularAd");
 const std::string StateDatabase::BZDB_BOXHEIGHT         = std::string("_boxHeight");
@@ -222,12 +254,14 @@ void			StateDatabase::removeCallback(
 
 bool			StateDatabase::isSet(const std::string& name) const
 {
+  debugLookups(name);
   Map::const_iterator index = items.find(name);
   return !(index == items.end() || !index->second.isSet);
 }
 
 std::string		StateDatabase::get(const std::string& name) const
 {
+  debugLookups(name);
   Map::const_iterator index = items.find(name);
   if (index == items.end() || !index->second.isSet)
     return std::string();
@@ -235,9 +269,9 @@ std::string		StateDatabase::get(const std::string& name) const
     return index->second.value;
 }
 
-
 void *		StateDatabase::getPointer(const std::string& name) const
 {
+  debugLookups(name);
   Map::const_iterator index = items.find(name);
   if (index == items.end() || !index->second.isSet)
     return (void *)NULL;
@@ -245,38 +279,9 @@ void *		StateDatabase::getPointer(const std::string& name) const
     return (void *)strtoul(index->second.value.c_str(), NULL, 0);
 }
 
-void	debugEvals(const std::string &name)
-{
-  /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
-  static std::map<std::string,int> cnts;
-  static TimeKeeper last = TimeKeeper::getCurrent();
-
-  std::map<std::string,int>::iterator it = cnts.find(name);
-  if (it == cnts.end())
-    cnts[name] = 1;
-  else
-    it->second++;
-
-  TimeKeeper now = TimeKeeper::getCurrent();
-  if (now - last > 20.0f) {
-    std::map<int,std::string> order;
-    for (it = cnts.begin(); it != cnts.end(); it++) {
-      order[-it->second] = it->first;
-      it->second = 0;
-    }
-
-    for (std::map<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
-      char data[100];
-      sprintf(data, "%s = %d", it2->second.c_str(), -it2->first);
-      std::cout << data << std::endl;
-    }
-    last = now;
-  }
-}
-
 float			StateDatabase::eval(const std::string& name)
 {
-  /* debugEvals(name); */
+  debugLookups(name);
 
   EvalMap::const_iterator cit = evalCache.find(name);
   if (cit != evalCache.end())
@@ -311,12 +316,14 @@ float			StateDatabase::eval(const std::string& name)
 
 bool			StateDatabase::isTrue(const std::string& name) const
 {
+  debugLookups(name);
   Map::const_iterator index = items.find(name);
   return !(index == items.end() || !index->second.isTrue);
 }
 
 bool			StateDatabase::isEmpty(const std::string& name) const
 {
+  debugLookups(name);
   Map::const_iterator index = items.find(name);
   return (index == items.end() || !index->second.isSet ||
 	  index->second.value.empty());
@@ -324,12 +331,14 @@ bool			StateDatabase::isEmpty(const std::string& name) const
 
 bool			StateDatabase::isPersistent(const std::string& name) const
 {
+  debugLookups(name);
   Map::const_iterator index = items.find(name);
   return (index != items.end() && index->second.save);
 }
 
 std::string		StateDatabase::getDefault(const std::string& name) const
 {
+  debugLookups(name);
   Map::const_iterator index = items.find(name);
   if (index != items.end())
     return index->second.defValue;
@@ -340,6 +349,7 @@ std::string		StateDatabase::getDefault(const std::string& name) const
 StateDatabase::Permission
 			StateDatabase::getPermission(const std::string& name) const
 {
+  debugLookups(name);
   Map::const_iterator index = items.find(name);
   if (index != items.end())
     return index->second.permission;
@@ -350,6 +360,7 @@ StateDatabase::Permission
 StateDatabase::Map::iterator
 			StateDatabase::lookup(const std::string& name)
 {
+  debugLookups(name);
   Map::iterator index = items.find(name);
   if (index == items.end()) {
     Item tmp;
