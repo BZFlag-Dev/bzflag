@@ -55,13 +55,13 @@ BzfDisplay::~BzfDisplay()
 int			BzfDisplay::getWidth() const
 {
   if (currentResolution == -1) return 640;
-  return resolutions[modeIndex]->width;
+  return resolutions[currentResolution]->width;
 }
 
 int			BzfDisplay::getHeight() const
 {
   if (currentResolution == -1) return 480;
-  return resolutions[modeIndex]->height;
+  return resolutions[currentResolution]->height;
 }
 
 void			BzfDisplay::setPassthroughSize(int w, int h)
