@@ -58,6 +58,7 @@ const char *usageString =
 "[-banfile <filename>] "
 "[-c] "
 "[-cache <url prefix>] "
+"[-cacheout <filename>] "
 "[-conf <filename>] "
 "[-cr] "
 "[-d] "
@@ -143,6 +144,7 @@ const char *extraUsageString =
 "\t-banfile: specify a file to load and store the banlist in\n"
 "\t-c: capture-the-flag style game,\n"
 "\t-cache: url to get binary formatted world,\n"
+"\t-cacheout: generate a binary cache file\n"
 "\t-conf: configuration file\n"
 "\t-cr: capture-the-flag style game with random world\n"
 "\t-d: increase debugging level\n"
@@ -563,6 +565,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-cache") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.cacheURL = argv[i];
+    } else if (strcmp(argv[i], "-cacheout") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.cacheOut = argv[i];
     } else if (strcmp(argv[i], "-conf") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);

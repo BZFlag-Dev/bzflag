@@ -71,7 +71,7 @@ struct CmdLineOptions
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300), disableSet(false),
     disableFlagReset(false), disableBan(false), disableKick(false),
-    autoTeam(false), citySize(5)
+    autoTeam(false), citySize(5), cacheURL(""), cacheOut("")
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -189,6 +189,7 @@ struct CmdLineOptions
   int			numTeamFlags[NumTeams];
 
   std::string           cacheURL;
+  std::string           cacheOut;
 };
 
 

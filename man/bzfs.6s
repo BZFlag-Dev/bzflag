@@ -12,6 +12,8 @@ bzfs \- BZFlag game server
 [\fB\-ban \fIip\fR{,ip}*]
 [\fB\-banfile \fIfilename\fR]
 [\fB\-c\fR]
+[\fB\-cache \fIworldCacheURL\fR]
+[\fB\-cacheout \fIfilename\fR]
 [\fB\-conf \fIconfigfile\fR]
 [\fB\-cr]
 [\fB\-d\fR]
@@ -130,6 +132,13 @@ If this option isn't given the banlist will not be saved.
 .B -c
 Enables the capture-the-flag style game. By default this allocates one team flag per team.
 This can be modified see +f team. By default, the free-for-all style is used.
+.TP
+\fB\-cache \fIworldCacheURL\fR
+Specifies the URL for the world cache file. This is a binary file that clients
+will attempt to download before getting the world from the bzfs server.
+.TP
+\fB\-cacheout \fIfilename\fR
+Save the currently specified world into a binary cache file and exit.
 .TP
 \fB\-conf \fIconfigfilename\fR
 Specifies the name of a configuration file to be used to set all of the

@@ -93,7 +93,6 @@ class TankSceneNode : public SceneNode {
     void		setNarrow();
     void		setThief();
     void		setClipPlane(const GLfloat* plane);
-    void		setDrawClose(bool close);
     void		setExplodeFraction(float t);
     void		rebuildExplosion();
     
@@ -154,7 +153,6 @@ class TankSceneNode : public SceneNode {
     bool		transparent, sort;
     float		explodeFraction;
     bool		clip;
-    bool		drawClose;
     GLfloat		colorOverride[4];
     GLfloat		color[4];
     GLdouble		clipPlane[4];

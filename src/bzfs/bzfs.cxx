@@ -1137,11 +1137,12 @@ static WorldInfo *defineRandomWorld()
 static bool defineWorld()
 {
   // clean up old database
-  if (world)
+  if (world) {
     delete world;
-
-  if (worldDatabase)
+  }
+  if (worldDatabase) {
     delete[] worldDatabase;
+  }
 
   // make world and add buildings
   if (clOptions->worldFile != "") {
@@ -1159,15 +1160,15 @@ static bool defineWorld()
 	}
       }
     }
-
   } else if (clOptions->gameStyle & TeamFlagGameStyle) {
     world = defineTeamWorld();
   } else {
     world = defineRandomWorld();
   }
 
-  if (world == NULL)
+  if (world == NULL) {
     return false;
+  }
 
   maxWorldHeight = world->getMaxWorldHeight();
 
@@ -1180,8 +1181,9 @@ static bool defineWorld()
 
   worldDatabase = new char[worldDatabaseSize];
   // this should NOT happen but it does sometimes
-  if (!worldDatabase)
+  if (!worldDatabase) {
     return false;
+  }
   memset(worldDatabase, 0, worldDatabaseSize);
 
   void *buf = worldDatabase;
@@ -1197,10 +1199,11 @@ static bool defineWorld()
   MD5 md5;
   md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
   md5.finalize();
-  if (clOptions->worldFile == "")
+  if (clOptions->worldFile == "") {
     strcpy(hexDigest, "t");
-  else
+  } else {
     strcpy(hexDigest, "p");
+  }
   std::string digest = md5.hexdigest();
   strcat(hexDigest, digest.c_str());
 
@@ -1212,9 +1215,26 @@ static bool defineWorld()
     team[i].team.lost = 0;
   }
   FlagInfo::setNoFlagInAir();
-  for (i = 0; i < numFlags; i++)
+  for (i = 0; i < numFlags; i++) {
     resetFlag(*FlagInfo::get(i));
+  }
 
+  return true;
+}
+
+static bool saveWorldCache()
+{
+  FILE* file;
+  file = fopen (clOptions->cacheOut.c_str(), "wb");
+  if (file == NULL) {
+    return false;
+  }
+  size_t written =
+    fwrite (worldDatabase, sizeof(char), worldDatabaseSize, file);
+  fclose (file);
+  if (written != worldDatabaseSize) {
+    return false;
+  }
   return true;
 }
 
@@ -4146,6 +4166,13 @@ int main(int argc, char **argv)
 #endif /* defined(_WIN32) */
     std::cerr << "ERROR: A world was not specified" << std::endl;
     return 1;
+  }
+  else if (clOptions->cacheOut != "") {
+    if (!saveWorldCache()) {
+      std::cerr << "ERROR: could not save world cache file: "
+                << clOptions->cacheOut << std::endl;
+    }
+    done = true;
   }
 
   // no original world weapons in replay mode
