@@ -104,6 +104,10 @@ PostBuild_Cmds=copy ..\..\src\bzflag\debug\*.exe ..\..\*.exe	copy ..\..\src\bzfl
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ActionBinding.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\BackgroundRenderer.cxx
 # End Source File
 # Begin Source File
