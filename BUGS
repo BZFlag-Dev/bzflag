@@ -2,11 +2,12 @@ recent bugs
 ------------
 
 - using the -worldsize option makes the client rendering go berzerk (see the 
-  brlcad.org Test Server)
+  brlcad.org Test Server I or II).  size ends up getting set to a trillion..
 
 - SAVEWORLD of a -cr world does not output the team color, and world reader
   doesn't assign a default team/color when color attribute isn't present.
-  (2 separate issues really)
+  (2 separate issues really).  if you define a color in the map, the world
+  objects disappear (see the brlcad.org Test Server III)
 
 - Flipped pyramids are not safe to walk on: getting stucked
 
