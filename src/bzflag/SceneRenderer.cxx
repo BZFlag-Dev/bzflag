@@ -705,13 +705,13 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     // flip back
     frustum.flipVertical();
     OpenGLGState::setInvertCull(false);
+    OpenGLGState::setCullFace(GL_BACK);
 
     // darken the reflection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glDisable(GL_CULL_FACE);
 
     float mirrorColor[4];
     if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
@@ -726,17 +726,16 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     if (BZDBCache::blend && (useQualityValue >= 2)) {
       glColor4fv(mirrorColor);
       glEnable(GL_BLEND);
-      glRectf(1.0f, 1.0f, -1.0f, -1.0f);
+      glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
       glDisable(GL_BLEND);
     } else {
       float stipple = mirrorColor[3];
       glColor3fv(mirrorColor);
       OpenGLGState::setStipple(stipple);
       glEnable(GL_POLYGON_STIPPLE);
-      glRectf(1.0f, 1.0f, -1.0f, -1.0f);
+      glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
       glDisable(GL_POLYGON_STIPPLE);
     }
-    glEnable(GL_CULL_FACE);
 
     clearZbuffer = false;
   }

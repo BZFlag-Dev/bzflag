@@ -146,7 +146,7 @@ void EffectsMenu::resize(int width, int height)
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.5f * ((float)width + (0.5f * titleWidth));
+  x = 0.5f * (float)width;
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   const int count = list.size();
