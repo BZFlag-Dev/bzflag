@@ -76,6 +76,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   ::strncpy(email, _email, EmailLen);
   email[EmailLen-1] = '\0';
 
+  token[0] = '\0';
+
   if (id != ServerPlayer) {
     // make scene nodes
     tankNode = new TankSceneNode(state.pos, forward);
