@@ -5328,6 +5328,7 @@ static const char *usageString =
 "[-b] "
 "[-ban ip{,ip}*] "
 "[-c] "
+"[-conf] "
 "[-cr] "
 "[-d] "
 "[+f {good|<id>}] "
@@ -5382,6 +5383,7 @@ static const char *extraUsageString =
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-c: capture-the-flag style game\n"
 "\t-cr: capture-the-flag style game with random world\n"
+"\t-conf: configuration file\n"
 "\t-d: increase debugging level\n"
 "\t+f: always have flag <id> available\n"
 "\t-f: never randomly generate flag <id>\n"
@@ -5559,8 +5561,41 @@ static bool setRequiredFlag(FlagInfo& flag, FlagId id)
   return true;
 }
 
+static char **parseConfFile( const char *file, int &ac)
+{
+  std::vector<std::string> tokens;
+  ac = 0;
+
+  ifstream confStrm(file);
+  if (confStrm.good()) {
+     char buffer[1024];
+     confStrm.getline(buffer,1024);
+     while (confStrm.good()) {
+       std::string line = buffer;
+       int startPos = line.find_first_not_of("\t \r\n");
+       while ((startPos >= 0) && (line.at(startPos) != '#')) {
+	 int endPos = line.find_first_of("\t \r\n", startPos+1);
+	 if (endPos < 0)
+	    endPos = line.length();
+	 tokens.push_back(line.substr(startPos,endPos-startPos));
+	 startPos = line.find_first_not_of("\t \r\n", endPos+1);
+       }
+       confStrm.getline(buffer,1024);
+     }
+  }
+
+  const char **av = new const char*[tokens.size()+1];
+  av[0] = strdup("bzfs");
+  ac = 1;
+  for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it)
+    av[ac++] = strdup((*it).c_str());
+  return (char **)av;
+}
+
+
 static void parse(int argc, char **argv, CmdLineOptions &options)
 {
+  CmdLineOptions confOptions;
   delete[] flag;  flag = NULL;
   delete[] allowedFlags;  allowedFlags = NULL;
 
@@ -5682,6 +5717,24 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     else if (strcmp(argv[i], "-b") == 0) {
       // random rotation to boxes in capture-the-flag game
       options.randomBoxes = true;
+    }
+    else if (strcmp(argv[i], "-conf") == 0) {
+      if (++i == argc) {
+		fprintf(stderr, "filename expected for -conf\n");
+		usage(argv[0]);
+      }
+      else {
+		int ac;
+		char **av;
+		av = parseConfFile(argv[i], ac);
+		// Theoretically we could merge the options specified in the conf file after parsing
+		// the cmd line options. But for now just overright them on the spot
+//		parse(ac, av, confOptions); 
+		parse(ac, av, options);
+		for (int i = 0; i < ac; i++)
+		  delete[] av[i];
+		delete[] av; 
+	  }
     }
     else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
