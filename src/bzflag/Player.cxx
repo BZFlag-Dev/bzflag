@@ -210,7 +210,7 @@ void Player::move(const float* _pos, float _azimuth)
   }
 
   // update forward vector (always in horizontal plane)
-  if (!isAlive() && isExploding()) {
+   if (false && !isAlive() && isExploding()) {
 	  float f[3];
 
 	  f[0] = forward[0] * explosionMatrix[0][0] + forward[1] * explosionMatrix[0][1] +
