@@ -14,7 +14,13 @@ ints. Bounds will have to be considered, times for flag motion etc will likely
 be milliseconds where as remaining game time would likely be seconds? 16 bit
 values would be preferred.
 
-2) world format has been removed. an XML model format should be devised.
+2) world format has been removed. an XML format should be devised.
+
+3) player ids are now in lockstep on server and all clients.
+
+4) special player numbers. 0 = server, 255 = everyone, 254 = rogue team,
+250-253 = colored teams, 1-maxplayers = normal players. Note that maxplayers in
+this context includes observers as well as proper players.
 
 layers
 ------
@@ -44,13 +50,13 @@ Multibyte values are *not* necessarily aligned on 2 or 4 byte boundaries.
 
 A client normally follows the following sequence during game play:
 
-  connect to server
-  get the world description including world md5 tag
-  recursively get all models by md5 in the world that we do not already have
-  join the game
-  send/receive game messages
-  leave game
-  disconnect from server
+	connect to server
+	get the world description including world resource md5 tag
+	recursively get any resources that are not cached
+	join the game
+	send/receive game messages
+	leave game
+	disconnect from server
 
 
 common message structures
@@ -70,12 +76,12 @@ Flag status is common to a few message types:
 	u32 position z
 
 `status' gives the current location of the flag:
-  FlagNoExist  -- the flag is not active (i.e. not in the game)
-  FlagOnGround -- the flag is sitting on the ground ready to get picked up
-  FlagOnTank   -- the flag is on a player's tank
-  FlagInAir    -- the flag is in the air and will fall back down
-  FlagComing   -- the flag just appeared and is falling to the ground
-  FlagGoing    -- the flag was thrown in the air and is disappearing
+	FlagNoExist  -- not active (i.e. not in the game)
+	FlagOnGround -- sitting on the ground ready to get picked up
+	FlagOnTank   -- on a player's tank
+	FlagInAir    -- in the air and will fall back down
+	FlagComing   -- appeared and is falling to the ground
+	FlagGoing    -- was thrown in the air and is disappearing
 
 `Player id' indicates which player has the flag when `status' is FlagOnTank.  It
 isn't used for any other status.
@@ -103,9 +109,10 @@ compatible and usually just indicate client user interface changes.
 PlayerID here is a connection tracker for the server. If the server has no
 slots open it will just MsgSuperKill
 
+
 message super kill
 ------------------
-  <--	MsgSuperKill
+  <--   MsgSuperKill
 	u16 length = 0
 	u16 0x736b
 
@@ -113,8 +120,8 @@ This message can be sent by the server at any time. The client should assume
 the server is unreachable and not send any more messages.
 
 
-getting the world database
---------------------------
+getting the world
+-----------------
   -->   MsgGetWorld
 	u16 length = 2
 	u16 0x6777
@@ -126,7 +133,11 @@ getting the world database
 	u32 remaining
 	... data
 
-Client sends MsgGetWorld requests until it has read the entire world database.
+Client sends MsgGetWorld requests until it has read the world description. This
+will include server settings and a single md5 that refers to the world resource. The client
+will then request the resource if it does not have it cached, and continue to request any
+other resources that the first refers to if they are not in the client's cache.
+
 Clients should send an `offset' of 0 for the first request and increase
 `offset' by however much data was sent in reply. This messages may come in out
 of order.
@@ -139,7 +150,7 @@ block of data in `remaining'.  The server returns 0 in `remaining' when there
 is no more data left to read.
 
 No other messages should be returned by the server as long as the client sends
-only MsgGetWorld requests. Note that the transport layer beneath may well be
+only MsgGetWorld or MsgGetResource requests. Note that the transport layer beneath may well be
 sending other packets back and forth for packet size and throttling negotiation
 if appropirate
 
@@ -147,26 +158,25 @@ The `data' has the following encoding:
 
 FIXME
 
-getting models used in the world
+getting resources used in the world
 --------------------------------
-  -->   MsgModel
+  -->   MsgGetResource
 	u16 length = 2
 	u16 FIXME
 	u32 offset
-	... model identifier string
-  <--   MsgGetWorld
+	u128 resource identifier md5
+  <--   MsgGetResource
 	u16 length
 	u16 FIXME
 	u32 offset
 	u32 remaining
-	... model identifier string
+	u128 resource identifier md5
 	... data
 
 join game
 ---------
 Once connected a player normally requests to join the game.  The server replies with
 MsgSuperKill, MsgReject, or MsgAccept.
-
 
   -->   MsgEnter - FIXME - likely xml data? any others?
 	u16 length
@@ -182,7 +192,7 @@ MsgSuperKill, MsgReject, or MsgAccept.
 	u16 length = 0
 	u16 0x6163
 
-        or
+	or
 
 	MsgReject
 	u16 length
@@ -205,13 +215,13 @@ If the server responds with MsgReject, the client has not joined the
 game but may keep the PlayerID and try again.  The reason for rejection
 is included with the MsgReject message:
 
-        RejectBadRequest        -- bogus data in MsgEnter
-        RejectBadCredentials    -- bad password, etc. FIXME
-        RejectBadTeam           -- invalid team id
-        RejectBadType           -- invalid client type
-        RejectNoRogues          -- rogue team requested but rogues not allowed
-        RejectTeamFull          -- no more players allowed on team
-        RejectServerFull        -- no more players allowed on any team
+	RejectBadRequest        -- bogus data in MsgEnter
+	RejectBadCredentials    -- bad password, etc. FIXME
+	RejectBadTeam           -- invalid team id
+	RejectBadType           -- invalid client type
+	RejectNoRogues          -- rogue team requested but rogues not allowed
+	RejectTeamFull          -- no more players allowed on team
+	RejectServerFull        -- no more players allowed on any team
 
 If the server responds with MsgAccept, the player has successfully joined the game.
 The server then sends updates about each flag, team, and other players.  The
@@ -224,14 +234,15 @@ of the players already joined.
 Until it receives the MsgAddPlayer for its PlayerID, the client will
 only receive the following kinds of messages:
 
-        MsgSuperKill
-        MsgFlagUpdate
-        MsgTeamUpdate
-        MsgAddPlayer
-        MsgNetworkRelay
+	MsgSuperKill
+	MsgFlagUpdate
+	MsgTeamUpdate
+	MsgAddPlayer
+	MsgNetworkRelay
 
 leave game
 ----------
+
 Once entered, a player can leave the game at any time.  This should be done by sending
 the following message then closing the connection:
 
@@ -247,8 +258,17 @@ left and remove them from the game.
 
 during a game
 -------------
-There are several types of messages that are delivered at any time after a player
-enters a game.  Clients must be prepared to handle them in any order.
+
+There are several types of messages that are delivered at any time after a
+player enters a game.  Clients must be prepared to handle them in any order.
+
+  <--   MsgRemovePlayer
+	u16 length = 1
+	u16 0x7270
+	u8 playerid
+
+Sent when another player leaves the game by MsgExit or some other reason on the
+server.
 
   <--   MsgTimeLeft
 	u16 length = 2
@@ -265,15 +285,11 @@ do their own count down between messages.
   <--   MsgScoreOver
 	u16 length = 2
 	u16 0x736f
-	u8 playerid
-	u8 teamid
+	u8 player/team id
 
 Gives the player or team that won the game by reaching the target score. This
 message is only sent when the server has a target score configured. The client
 should indicate which team or player won and that the game is over.
-
-If `team id' is NoTeam then `player id' indicates which player has won.
-Otherwise `team id' indicates which team won.
 
   <--   MsgAddPlayer - FIXME xml?
 	u16 length
@@ -293,13 +309,6 @@ enumerated in TeamColor.  `Wins' and `losses' give the player's score. The
 player's score equals wins minus losses. `Call sign' and `email address' are
 NUL terminated ASCII strings. This can also be sent by a player to change
 information.
-
-  <--   MsgRemovePlayer
-	u16 length = 1
-	u16 0x7270
-	u8 playerid
-
-Sent when another player leaves the game.
 
   <--   MsgFlagUpdate
 	u16 length
@@ -362,8 +371,9 @@ forward direction vector.
 
 
   -->   MsgKilled
-	u16 length
+  <--   u16 length
 	u16 0x6b6c
+	u8 victim player id
 	u8 killer player id
 	u8 shot id FIXME - add shot type?
 
@@ -372,13 +382,7 @@ which of the killer's shots was the one that hit.  Note that the server might
 not verify kills in any way so it might be trivial to `cheat' by claiming
 you've been killed;  this is generally unproductive.  It also might be easy to
 cheat by never sending MsgKilled, making you almost immortal.  Don't do this.
-
-  <--   MsgKilled
-	u16 length
-	u16 0x6b6c
-	u8 victim player id
-	u8 killer player id
-	u8 shot id FIXME - add shot type?
+Note that the server ignores the victim id and inserts the sending player id.
 
 Sent by the server when a player is killed by itself or another player. The
 victim id is the player that was destroyed and the killer id is the player
@@ -386,7 +390,6 @@ credited with the kill.  Shot id identifies which of the killer's shots hit the
 victim;  if the shot isn't a laser or shockwave, other players may assume the
 shot has stopped and needn't check themselves against the shot (or they can
 wait until the MsgShotEnd message arrives).
-
 
   -->   MsgGrabFlag
 	u16 length
@@ -437,14 +440,14 @@ The launch point for flag drop animation is determined by the position of the pl
 	u32 position y
 	u32 position z
 
-
 Sent by the server when a player is allowed to drop a flag.  This is both the
 notice to the player trying to drop the flag that it succeeded and the notice
 to all other players that the flag was dropped.  
 
   -->   MsgCaptureFlag
-	u16 length
+  <--   u16 length
 	u16 0x6366
+	u8 capturer id
 	u16 flag num
 
 Sent by a player when it captures a team flag.  `Flag num' is the number of a
@@ -455,13 +458,7 @@ least halfway inside a team base, 2) the tank is on the base surface, and 3)
 the player has its own team flag in an enemy base or the player has another
 team's flag in its own base.  Note that the server may not enforce any of these
 requirements. This message implies a client MsgDropFlag request for the flag in
-question.
-
-  <--   MsgCaptureFlag
-	u16 length
-	u16 0x6366
-	u16 flag num
-	u8 capturer id
+question. The server ignores and overwrites capturer.
 
 Sent by the server when a team's flag has been captured.  `Capturer id' is the
 player who captured the flag.  `Flag num' is the index of the team flag of the
@@ -487,10 +484,10 @@ This also should be treated as a MsgDropFlag for the capturer.
 	u32 time
 	u32 lifetime
 	u8 flag id
-	
-Sent by the server when a player has fired a shot.  The identical message is
-send by a player when it fires a shot.  The server may not verify that the
-player is allowed to fire the shot.
+
+Sent by a player when it fires a shot. The identical message is sent by the
+server when a player has fired a shot. The server may not verify that the
+player is allowed to fire the shot. The server ignores and overwrites shooter.
 
 `Shooter id' identifies the player that did the shooting.  `Shot id' is a
 number that uniquely identifies to the shooter which shot this is. `Position' is
@@ -537,63 +534,45 @@ same as in the MsgShotBegin message for the shot.  `Reason' is one if the other
 players should show an explosion for the shot and zero otherwise.
 
   -->   MsgScore
-	u16 length
+  <--   u16 length
 	u16 0x7363
+	u8 player id
 	u16 wins
 	u16 losses
 
 Sent by a player to request a score change. The player must wait for the server
-MsgScore before updating the displayed score.
-
-  <--   MsgScore
-	u16 length
-	u16 0x7363
-	u16 wins
-	u16 losses
-	u8 player id
+MsgScore before updating the displayed score. The server ignores and overwrites
+player id.
 
 Sent by the server when a player's score changes.  `Player id' is the player
 with the new score, and `wins' and `losses' are the new scores.
 
   -->   MsgTeleport
-	u16 length
+  <--   u16 length
 	u16 0x7363
+	u8 player id
 	u16 from
 	u16 to
 
 Sent by a player when it passes through a teleporter. FIXME - should player
 wait for confirmation? would be laggy, but would allow the server to "lock
-doors".
-
-  <--   MsgTeleport
-	u16 length
-	u16 0x7363
-	u16 from
-	u16 to
-	u8 player id
+doors". The server ignores and overwrites player id.
 
 Sent by the server when a player teleports.  `From' is the index of the
 teleporter face the player entered and `to' is the index of the face the player
 exited.
 
   -->   MsgMessage
-	u16 length
+  <--   u16 length
 	u16 0x6d67
-	u8 receiving player id
-	u8 receiving team
+	u8 from player id
+	u8 to player/team id
 	... message
 
 Sent by player to send a message to other players. `Player id' is the player to
 receive the message (or all zeros for all players on the given team) and `team'
-is the team to receive the message (or RogueTeam for all teams).
-
-  <--   MsgMessage
-	u16 length
-	u16 0x6d67
-	u8 sending player id
-	u8 receiving player id
-	u8 receiving team
-	... message
+is the team to receive the message (or RogueTeam for all teams). The server
+ignores and overwrites "from player id".
 
 Sent by the server when one player sends a message to others. `From player id'
 is the player sending the message. If `to player id' is zero then the message
@@ -617,7 +596,7 @@ player.
 	u32 angular velocity
 
 Sent by players to notify other players of changes in its status, position, or
-velocity.  The server may ignore the "player id" and fill in the actual "player id".
+velocity.  The server ignores "player id" and overwrites "player id".
 
 `Status' is the tank's current status.  See PlayerStatus for the meaning of the
 bitfield's bits.  The FlagActive bit indicates whether the player's flag's
