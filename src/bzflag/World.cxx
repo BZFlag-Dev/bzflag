@@ -332,7 +332,7 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   while (baseScan != basesR.end()) {
     const BaseBuilding &base = *baseScan;
 	if (!base.isDriveThrough()){
-    if(base.isInside(pos, angle, dx, dy))
+    if(base.isInside(oldPos, oldAngle, pos, angle, dx, dy))
       return &base;
 	}
     baseScan++;

@@ -73,6 +73,27 @@ bool			BaseBuilding::isInside(const float *p, float angle,
   &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(), p, angle, dx, dy);
 }
 
+bool			BaseBuilding::isInside(const float* oldP, float,
+					       const float *p, float angle,
+			float dx, float dy) const
+{
+  float higherZ;
+  float lowerZ;
+  if (oldP[2] > p[2]) {
+    higherZ = oldP[2];
+    lowerZ  = p[2];
+  } else {
+    higherZ = p[2];
+    lowerZ  = oldP[2];
+  }
+  if (lowerZ >= (getPosition()[2] + getHeight()))
+    return false;
+  if ((higherZ + BZDBCache::tankHeight) < getPosition()[2])
+    return false;
+  return testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
+		      p, angle, dx, dy);
+}
+
 bool			BaseBuilding::isCrossing(const float *p, float angle,
 			float dx, float dy,
 			float *plane) const

@@ -32,6 +32,9 @@ class BaseBuilding : public Obstacle {
     bool		isInside(const float *p, float radius) const;
     bool		isInside(const float *p, float angle,
 				float halfWidth, float halfBreadth) const;
+    bool		isInside(const float* oldP, float oldAngle,
+				 const float* p, float angle,
+				 float halfWidth, float halfBreadth) const;
     bool		isCrossing(const float *p, float angle,
 				float halfWidth, float halfBreadth,
 				float *plane) const;
