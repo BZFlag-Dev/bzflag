@@ -4800,8 +4800,7 @@ int main(int argc, char **argv)
           if (idletime >
 	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
 	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh)) {
-            DEBUG1("kicking Player %s [%d] idle %d\n", player[i].callSign, i,
-                   int(tm - player[i].lastupdate));
+            DEBUG1("kicking Player %s [%d] idle %d\n", player[i].callSign, i, idletime);
             char message[MessageLen] = "You were kicked because of idling too long";
             sendMessage(ServerPlayer, i,  message, true);
             removePlayer(i, "idling");
