@@ -195,7 +195,7 @@ class OpenGLTexFont {
     BitmapRep*		bitmapRep;
     float		width, height;
     static int		underlineColor;
-    GLfloat	storedColor[STORED_COLORS][3];
+    GLfloat		storedColor[STORED_COLORS][3];
 };
 
 #endif // BZF_OPENGLTEXFONT_H
