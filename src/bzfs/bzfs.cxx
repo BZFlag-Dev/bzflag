@@ -5010,7 +5010,8 @@ static void parseCommand(const char *message, int t)
     }      
 
   } else {
-    sendMessage(ServerPlayer, t, "Unknown command [%s]", message+1);
+    sprintf(reply, "Unknown command [%s]", message+1);
+    sendMessage(ServerPlayer, t, reply, true);
   }
 }
 
