@@ -32,7 +32,7 @@
 typedef long int vote_t;
 
 /* max number of potential poll responses */
-static const unsigned short int MAX_VOTE_RESPONSES=32;
+static const unsigned short int MAX_VOTE_RESPONSES=255;
 
 /** VotingBooth is a means to create and track a vote.  A single booth
  * will track and allow voting on a poll.
@@ -54,7 +54,19 @@ class VotingBooth
 
   /** how many responses have been manually added
    */
-  unsigned short int _responsesAdded;
+  unsigned short int _responseCount;
+
+  /** counts of the vote responses 
+   */
+  unsigned long int _votes[MAX_VOTE_RESPONSES];
+
+  /** lists of who has voted
+   */
+  std::string _voter[MAX_VOTE_RESPONSES];
+
+  /** how many voters have been manually added
+   */
+  unsigned short int _voterCount;
 
  protected:
 
@@ -90,16 +102,39 @@ class VotingBooth
   /** lookup the id of a vote response
    */
   vote_t getResponseIDFromString(const std::string name) const;
-  const std::string *getStringFromResponseID(vote_t id) const;
+  const std::string getStringFromResponseID(vote_t id) const;
 
   /** a given user id/name responds and votes to a particular poll
    * response.
    */
   bool vote(const std::string name, vote_t id);
+
+  /** return how many votes have been placed for a particular response.
+   * lookup votes by vote identifier.
+   */
+  unsigned long int getVoteCount(vote_t id) const;
+
+  /** return how many votes have been placed for a particular response.
+   * lookup votes by response.
+   */
+  unsigned long int getVoteCount(const std::string response) const;
+
+  /** returns the number of voters
+   */
+  inline unsigned long int getVoterCount(void) {
+    return _voterCount;
+  }
+
+  /** returns the number of responses available
+   */
+  inline unsigned long int getResponseCount(void) {
+    return _responseCount;
+  }
+
 };
 
 
-VotingBooth *getYesNoVotingBooth(std::string question)
+VotingBooth *getYesNoVotingBooth(std::string question = "")
 {
   VotingBooth *poll = new VotingBooth(question);
 
