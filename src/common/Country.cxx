@@ -19,7 +19,7 @@ bool Country::isValid(int)
 {
   return false;
 }
-bool Country::isValid(std::string)
+bool Country::isValid(const std::string &)
 {
   return false;
 }
@@ -60,7 +60,7 @@ int Country::number(int country)
   // XXX - validate number
   return country;
 }
-int Country::number(std::string)
+int Country::number(const std::string& )
 {
   return 0;
 }
@@ -68,7 +68,7 @@ std::string Country::iso2(int)
 {
   return "";
 }
-std::string Country::iso2(std::string)
+std::string Country::iso2(const std::string &)
 {
   return "";
 }
@@ -76,7 +76,7 @@ std::string Country::iso3(int)
 {
   return "";
 }
-std::string Country::iso3(std::string)
+std::string Country::iso3(const std::string& )
 {
   return "";
 }
@@ -84,7 +84,7 @@ std::string Country::englishName(int)
 {
   return "";
 }
-std::string Country::englishName(std::string)
+std::string Country::englishName(const std::string& )
 {
   return "";
 }
@@ -92,7 +92,7 @@ std::string Country::frenchName(int)
 {
   return "";
 }
-std::string Country::frenchName(std::string)
+std::string Country::frenchName(const std::string& )
 {
   return "";
 }

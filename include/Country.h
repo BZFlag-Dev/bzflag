@@ -25,7 +25,7 @@ class Country
  protected:
 
   static bool isValid(int country);
-  static bool isValid(std::string country);
+  static bool isValid(const std::string& country);
 
  public:
   
@@ -46,19 +46,19 @@ class Country
 
   /** returns the ISO 3166 country code */
   static int number(int country);
-  static int number(std::string country);
+  static int number(const std::string& country);
   /** returns the ISO 3166 country 2-char abbreviation */
   static std::string iso2(int country);
-  static std::string iso2(std::string country);
+  static std::string iso2(const std::string& country);
   /** returns the ISO 3166 country 3-char abbreviation */
   static std::string iso3(int country);
-  static std::string iso3(std::string country);
+  static std::string iso3(const std::string& country);
   /** returns the ISO 3166 country english name for display */
   static std::string englishName(int country);
-  static std::string englishName(std::string country);
+  static std::string englishName(const std::string& country);
   /** returns the ISO 3166 country french name for display */
   static std::string frenchName(int country);
-  static std::string frenchName(std::string country);
+  static std::string frenchName(const std::string& country);
 
   /*
   static const Country CANADA = Country("CA");
