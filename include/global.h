@@ -162,5 +162,13 @@ const float		WideAngleAng =	M_PI / 1.8f;	// 100 degree fov
 const float		MomentumLinAcc=	1.0f;		//
 const float		MomentumAngAcc=	1.0f;		//
 
+
+// map object flags
+#define _DRIVE_THRU	0x01
+#define _SHOOT_THRU 0x02
+#define _FLIP_Z		0x04
+
+const int mapVersion = 1;
+
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8

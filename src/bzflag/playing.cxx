@@ -4770,7 +4770,11 @@ static World*		makeWorld(ServerLink* serverLink)
 
   // make world
   WorldBuilder worldBuilder;
-  worldBuilder.unpack(worldDatabase);
+  if (!worldBuilder.unpack(worldDatabase)){		// world didn't make for some reason
+	  delete[] worldDatabase;
+	  return NULL;
+  }
+
   delete[] worldDatabase;
 
   // return world

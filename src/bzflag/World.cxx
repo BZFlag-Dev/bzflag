@@ -637,7 +637,11 @@ void*			WorldBuilder::unpack(void* buf)
   tmpBuf = (void*)((char*)buf + len);
 
   // read style
-  uint16_t gameStyle, maxPlayers, maxShots, maxFlags;
+  uint16_t gameStyle, maxPlayers, maxShots, maxFlags,serverMapVersion;
+  buf = nboUnpackUShort(buf, serverMapVersion);
+  if (serverMapVersion != mapVersion)
+	  return NULL;
+  
   buf = nboUnpackFloat(buf, WorldSize);
   buf = nboUnpackUShort(buf, gameStyle);
   setGameStyle(short(gameStyle));
@@ -665,7 +669,7 @@ void*			WorldBuilder::unpack(void* buf)
     switch (code) {
       case WorldCodeBox: {
 	float data[7];
-	unsigned char tempflags[3];
+	unsigned char tempflags;
 	memset(data, 0, sizeof(float) * 7);
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
@@ -674,15 +678,14 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
-	buf = nboUnpackUByte(buf, tempflags[0]);
-	buf = nboUnpackUByte(buf, tempflags[1]);
-	BoxBuilding box(data, data[3], data[4], data[5], data[6],tempflags[0]!=0,tempflags[1]!=0);
+	buf = nboUnpackUByte(buf, tempflags);
+	BoxBuilding box(data, data[3], data[4], data[5], data[6],(tempflags & _DRIVE_THRU)==0,(tempflags & _SHOOT_THRU)==0);
 	append(box);
 	break;
       }
       case WorldCodePyramid: {
 	float data[7];
-	unsigned char tempflags[3];
+	unsigned char tempflags;
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
 	buf = nboUnpackFloat(buf, data[2]);
@@ -690,12 +693,10 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
-	buf = nboUnpackUByte(buf, tempflags[0]);
-	buf = nboUnpackUByte(buf, tempflags[1]);
-	buf = nboUnpackUByte(buf, tempflags[2]);
+	buf = nboUnpackUByte(buf, tempflags);
 
-	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6],tempflags[0]!=0,tempflags[1]!=0);
-	if (tempflags[2] !=0)
+	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6],(tempflags & _DRIVE_THRU)==0,(tempflags & _SHOOT_THRU)==0);
+	if ((tempflags & _FLIP_Z)==0)
 		pyr.setZFlip();
 
 	append(pyr);
@@ -703,7 +704,7 @@ void*			WorldBuilder::unpack(void* buf)
       }
       case WorldCodeTeleporter: {
 	float data[8];
-	unsigned char tempflags[3];
+	unsigned char tempflags;
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
 	buf = nboUnpackFloat(buf, data[2]);
@@ -711,10 +712,9 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
-	buf = nboUnpackUByte(buf, tempflags[0]);
-	buf = nboUnpackUByte(buf, tempflags[1]);
 	buf = nboUnpackFloat(buf, data[7]);
-	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],tempflags[0]!=0,tempflags[1]!=0);
+	buf = nboUnpackUByte(buf, tempflags);
+	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],(tempflags & _DRIVE_THRU)==0,(tempflags & _SHOOT_THRU)==0);
 	append(tele);
 	break;
       }

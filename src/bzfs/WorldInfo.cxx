@@ -267,8 +267,8 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
 int WorldInfo::packDatabase()
 {
   databaseSize = (2 + 6 * 4) * numWalls +
-    (2 + 2 + 7 * 4) * numBoxes +
-    (3 + 2 + 7 * 4) * numPyramids +
+    (1 + 2 + 7 * 4) * numBoxes +
+    (1 + 2 + 7 * 4) * numPyramids +
     (2 + 2 + 8 * 4) * numTeleporters +
     (2 + 2 * 2) * 2 * numTeleporters;
   database = new char[databaseSize];
@@ -276,6 +276,8 @@ int WorldInfo::packDatabase()
 
   // define i out here so we avoid the loop variable scope debates
   int i;
+  unsigned char	bitMask;
+
   // add walls
   ObstacleLocation *pWall;
   for (i = 0, pWall = walls ; i < numWalls ; i++, pWall++) {
@@ -295,8 +297,12 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, pBox->pos);
     databasePtr = nboPackFloat(databasePtr, pBox->rotation);
     databasePtr = nboPackVector(databasePtr, pBox->size);
-    databasePtr = nboPackUByte(databasePtr, pBox->driveThrough);
-    databasePtr = nboPackUByte(databasePtr, pBox->shootThrough);
+	bitMask = 0;
+	if (pBox->driveThrough)
+		bitMask |= _DRIVE_THRU;
+ 	if (pBox->shootThrough)
+		bitMask |= _SHOOT_THRU;
+	databasePtr = nboPackUByte(databasePtr, bitMask);
  }
 
   // add pyramids
@@ -306,9 +312,14 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, pPyramid->pos);
     databasePtr = nboPackFloat(databasePtr, pPyramid->rotation);
     databasePtr = nboPackVector(databasePtr, pPyramid->size);
-    databasePtr = nboPackUByte(databasePtr, pPyramid->driveThrough);
-    databasePtr = nboPackUByte(databasePtr, pPyramid->shootThrough);
-    databasePtr = nboPackUByte(databasePtr, pPyramid->flipZ);
+	bitMask = 0;
+	if (pPyramid->driveThrough)
+		bitMask |= _DRIVE_THRU;
+ 	if (pPyramid->shootThrough)
+		bitMask |= _SHOOT_THRU;
+ 	if (pPyramid->flipZ)
+		bitMask |= _FLIP_Z;
+	databasePtr = nboPackUByte(databasePtr, bitMask);
   }
 
   // add teleporters
@@ -318,10 +329,14 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, pTeleporter->pos);
     databasePtr = nboPackFloat(databasePtr, pTeleporter->rotation);
     databasePtr = nboPackVector(databasePtr, pTeleporter->size);
-    databasePtr = nboPackUByte(databasePtr, pTeleporter->driveThrough);
-    databasePtr = nboPackUByte(databasePtr, pTeleporter->shootThrough);
     databasePtr = nboPackFloat(databasePtr, pTeleporter->border);
-    // and each link
+ 	bitMask = 0;
+	if (pTeleporter->driveThrough)
+		bitMask |= _DRIVE_THRU;
+ 	if (pTeleporter->shootThrough)
+		bitMask |= _SHOOT_THRU;
+	databasePtr = nboPackUByte(databasePtr, bitMask);
+   // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
     databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[0]));
