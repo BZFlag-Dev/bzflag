@@ -1,16 +1,15 @@
-must fix for 1.10.4 patch release
----------------------------------
+
+
+recent bugs
+------------
+
+- can't ctrl-c quit the bzfs server from win32
 
 - quol reports that his 1.10.3 server is requiring identification, although
   require identify is not listed anywhere in his group file.  problem still
   happens if he moves the group file out of the way. larsl wonders if this
   happens for all registered users or just the ones in the admin group
-  (the admin users have all permissions, including REQUIREIDENTIFY).
-
-recent bugs
-------------
-
-- The window isn't shaded when the menu is shown unless we're connected to a
+  (the admin users have all permissions, including REQUIREIDENTIFY).- The window isn't shaded when the menu is shown unless we're connected to a
   server
 
 - On a multihead Linux system with Xinerama, BZFlag spans itself across all
