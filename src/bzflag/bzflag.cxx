@@ -663,7 +663,6 @@ static void		parse(int argc, char** argv)
 	printError("Ignoring Finder argument \"{1}\"", &args);
 	// ignore process serial number argument for MacOS X
     } else if (strncmp(argv[i], "-badwords", 9) == 0) {
-      printFatalError("Enteterd badwords section %s.", argv[i-1]);
       if (++i == argc) {
 	printFatalError("Missing bad word filter filename argument for %s.", argv[i-1]);
 	usage();
@@ -939,6 +938,7 @@ int			main(int argc, char** argv)
   // load the bad word filter, if it was set
   if (BZDB->isSet("filterFilename")) {
     std::string filterFilename = BZDB->get("filterFilename");
+    std::cout << "Filter file name specified is \"" << filterFilename << "\"" << std::endl;
     if (filterFilename.length() != 0) {
       unsigned int count;
       filter = new WordFilter();
@@ -948,8 +948,9 @@ int			main(int argc, char** argv)
 
       // stash the filter into the database for retrieval later
       BZDB->setPointer("filter", (void *)filter, StateDatabase::ReadOnly);
+      BZDB->setPersistent("filter", false);
     } else {
-      printError("A proper file name was not given for the -badwords argument");
+      std::cerr << "WARNING: A proper file name was not given for the -badwords argument" << std::endl;
     }
   }
 
