@@ -111,6 +111,10 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	}
         if (TextUtils::isWhitespace(msg[n])) {
 	  lastWhitespace = n;
+	  // Tabs break out into their own message.  These get dealt with
+	  // in ::render, which will increment x instead of y.
+	  if (msg[n] == 9)
+	    break;
 	}
       }
     }
@@ -355,15 +359,35 @@ void			ControlPanel::render(SceneRenderer& renderer)
     // draw each line of text
     int numLines = messages[messageMode][i].lines.size();
     int msgy = numLines - 1;
+    int msgx = 0;
     for (int l = 0; l < numLines; l++)  {
       assert(msgy >= 0);
 
+      std::string msg = messages[messageMode][i].lines[l];
+
+      // Tab chars move horizontally instead of vertically
+      // It doesn't matter where in the string the tab char is
+      // Usually it will be like <ansi><ansi><ansi>\ttext
+      // We use 4 tabstops equally spaced over the controlpanel
+      // which is stupid, and can cause overlapping as the
+      // control panel font size can be changed (FIXME)
+      bool isTab = (msg.find('\t', 0) > -1);
+      if (isTab)
+	msgx += messageAreaPixels[0] / 4;
+      else
+	msgx = 0;
+
       // only draw message if inside message area
       if (j + msgy < maxLines)
-	fm.drawString(fx, fy + msgy * lineHeight, 0, fontFace, fontSize, messages[messageMode][i].lines[l]);
+	fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
 
-      // next line
-      msgy--;
+      if (isTab) {
+	// don't mess up our calculations
+	numLines--;
+      } else {
+	// next line
+	msgy--;
+      }
     }
     j += numLines;
     fy += int(lineHeight * numLines);

@@ -811,6 +811,9 @@
 				RelativePath="..\..\include\Address.h">
 			</File>
 			<File
+				RelativePath="..\..\include\AnsiCodes.h">
+			</File>
+			<File
 				RelativePath="..\..\include\AutoCompleter.h">
 			</File>
 			<File
