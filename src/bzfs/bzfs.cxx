@@ -6819,9 +6819,8 @@ int main(int argc, char **argv)
 
     // check team flag timeouts
     if (clOptions.gameStyle & TeamFlagGameStyle) {
-      for (i = 0; i < NumTeams; ++i) {
-	if (i != RabbitTeam &&
-	    team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
+      for (i = 0; i < CtfTeams; ++i) {
+	if (team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
 	    flag[i - 1].flag.status != FlagNoExist && 
 	    flag[i - 1].player == -1) {
 	  DEBUG1("Flag timeout for team %d\n", i);
