@@ -178,6 +178,10 @@ SOURCE=..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\CommandManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
@@ -191,6 +195,10 @@ SOURCE=..\include\ConfigFileManager.h
 # Begin Source File
 
 SOURCE=..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\FileManager.h
 # End Source File
 # Begin Source File
 
