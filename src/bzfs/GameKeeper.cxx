@@ -22,22 +22,40 @@ extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+SDL_mutex *GameKeeper::Player::mutex = SDL_CreateMutex();
+
+static int tcpRx(void* arg) {
+  GameKeeper::Player *playerData = (GameKeeper::Player *)arg;
+  playerData->handleTcpPacketT();
+  return 0;
+}
+#endif
+
 GameKeeper::Player::Player(int _playerIndex,
-			   const struct sockaddr_in &clientAddr, int fd):
+			   const struct sockaddr_in &clientAddr, int fd,
+			   tcpCallback _clientCallback):
   player(_playerIndex), lagInfo(&player),
   lastState(&::lastState[_playerIndex]),
-  playerIndex(_playerIndex), closed(false)
+  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback)
 {
   playerList[playerIndex] = this;
 
   lastState->order = 0;
   netHandler       = new NetHandler(&player, clientAddr, playerIndex, fd);
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+  thread           = SDL_CreateThread(tcpRx, (void *)this);
+  refCount         = 1;
+#endif
 }
 
 GameKeeper::Player::~Player()
 {
   flagHistory.clear();
   delete netHandler;
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+  SDL_WaitThread(thread, NULL);
+#endif
 
   playerList[playerIndex] = NULL;
 }
@@ -220,7 +238,8 @@ void GameKeeper::Player::clean()
 {
   Player* playerData;
   for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]) && playerData->closed)
+    if ((playerData = playerList[i]) && playerData->closed
+	&& !playerData->refCount)
       delete playerData;  
 }
 
@@ -231,6 +250,45 @@ int GameKeeper::Player::getFreeIndex(int min, int max)
       return i;
   return max;
 }
+
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+void GameKeeper::Player::handleTcpPacketT()
+{
+  while (!closed) {
+    const RxStatus e = netHandler->tcpReceive();
+    if (e == ReadPart)
+      continue;
+    if (SDL_mutexP(mutex) == -1)
+      std::cerr << "Could not lock mutex" << std::endl;
+    clientCallback(*netHandler, playerIndex, e);
+    if (SDL_mutexV(mutex) == -1)
+      std::cerr << "Could not unlock mutex" << std::endl;
+  }
+  refCount = 0;
+}
+
+void GameKeeper::Player::passTCPMutex()
+{
+  if (SDL_mutexP(mutex) == -1)
+    std::cerr << "Could not lock mutex" << std::endl;
+}
+
+void GameKeeper::Player::freeTCPMutex()
+{
+  if (SDL_mutexV(mutex) == -1)
+    std::cerr << "Could not unlock mutex" << std::endl;
+}
+#else
+void GameKeeper::Player::handleTcpPacket(fd_set *set)
+{
+  if (netHandler->isFdSet(set)) {
+    const RxStatus e = netHandler->tcpReceive();
+    if (e == ReadPart)
+      return;
+    clientCallback(*netHandler, playerIndex, e);
+  }
+}
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

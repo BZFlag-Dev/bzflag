@@ -69,7 +69,9 @@ void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
   for (int i = 0; i < maxHandlers; i++) {
     NetHandler *player = netPlayer[i];
     if (player && !player->closed) {
+#if !defined(USE_THREADS) || !defined(HAVE_SDL)
       _FD_SET(player->fd, read_set);
+#endif
       if (player->outmsgSize > 0)
 	_FD_SET(player->fd, write_set);
       if (player->fd > maxFile)
@@ -402,6 +404,12 @@ int NetHandler::pflush(fd_set *set) {
 
 RxStatus NetHandler::tcpReceive() {
   // read more data into player's message buffer
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+  fd_set read_set;
+  FD_ZERO(&read_set);
+  _FD_SET(fd, &read_set);
+  select(fd + 1, (fd_set*)&read_set, 0, 0, 0);
+#endif
 
   // read header if we don't have it yet
   RxStatus e = receive(4);

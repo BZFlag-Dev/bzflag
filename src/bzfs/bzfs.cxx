@@ -1279,6 +1279,7 @@ static void dumpScore()
 }
 #endif
 
+static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
 static void acceptClient()
 {
@@ -1366,7 +1367,7 @@ static void acceptClient()
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
-  new GameKeeper::Player(playerIndex, clientAddr, fd);
+  new GameKeeper::Player(playerIndex, clientAddr, fd, handleTcp);
 
   // if game was over and this is the first player then game is on
   if (gameOver) {
@@ -3730,7 +3731,9 @@ static void handleCommand(int t, const void *rawbuf)
       break;
 
     case MsgKrbTicket:
+      playerData->freeTCPMutex();
       playerData->authentication.verifyCredential((char *)buf, len);
+      playerData->passTCPMutex();
       // Not really the place here, but for initial testing we need something
       if (playerData->authentication.isTrusted())
 	sendMessage(ServerPlayer, t, "Welcome, we trust you");
@@ -3744,9 +3747,8 @@ possible attack from %s\n",
   }
 }
 
-static void handleTcp(NetHandler &netPlayer, int i)
+static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 {
-  const RxStatus e = netPlayer.tcpReceive();
   if (e != ReadAll) {
     if (e == ReadReset) {
       removePlayer(i, "ECONNRESET/EPIPE", false);
@@ -4312,6 +4314,7 @@ int main(int argc, char **argv)
    * world weapons will increase the number of iterations
    * substantially (about x10)
    **/
+  GameKeeper::Player::passTCPMutex();
   int i;
   while (!done) {
 
@@ -4406,6 +4409,7 @@ int main(int argc, char **argv)
     // wait for an incoming communication, a flag to hit the ground,
     // a game countdown to end, a world weapon needed to be fired, 
     // or a replay packet waiting to be sent.
+    GameKeeper::Player::freeTCPMutex();
     struct timeval timeout;
     timeout.tv_sec = long(floorf(waitTime));
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
@@ -4415,6 +4419,7 @@ int main(int argc, char **argv)
 
     // send replay packets 
     // (this check and response should follow immediately after the select() call)
+    GameKeeper::Player::passTCPMutex();
     if (Replay::playing()) {
       Replay::sendPackets ();
     }
@@ -4780,9 +4785,7 @@ int main(int argc, char **argv)
 	  removePlayer(i, "ECONNRESET/EPIPE", false);
 	  continue;
 	}
-	if (netPlayer->isFdSet(&read_set)) {
-	  handleTcp(*netPlayer, i);
-	}
+	playerData->handleTcpPacket(&read_set);
       }
     } else if (nfound < 0) {
       if (getErrno() != EINTR) {
@@ -4801,6 +4804,7 @@ int main(int argc, char **argv)
     GameKeeper::Player::clean();
   }
 
+  GameKeeper::Player::freeTCPMutex();
   serverStop();
 
   // free misc stuff

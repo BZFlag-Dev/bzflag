@@ -19,6 +19,10 @@
 // system headers
 #include <vector>
 #include <string>
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+#include "SDL.h"
+#include "SDL_thread.h"
+#endif
 
 // common interface headers
 #include "DelayQueue.h"
@@ -37,6 +41,8 @@
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
+typedef void (*tcpCallback)(NetHandler &netPlayer, int i, const RxStatus e);
+
 /** This class is meant to be the container of all the global entity that lives
     into the game and methods to act globally on those.
     Up to now it contain players. Flag class is only there as a TODO
@@ -45,7 +51,8 @@ class GameKeeper {
 public:
   class Player {
   public:
-    Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd);
+    Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd,
+	   tcpCallback _clientCallback);
     ~Player();
 
     int            getIndex();
@@ -68,6 +75,12 @@ public:
     void           signingOn(bool ctf);
     void           close();
     static void    clean();
+    void           handleTcpPacket(fd_set *set);
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+    void           handleTcpPacketT();
+#endif
+    static void    passTCPMutex();
+    static void    freeTCPMutex();
 
     // players
     PlayerInfo        player;
@@ -90,6 +103,12 @@ public:
     static Player    *playerList[PlayerSlot];
     int               playerIndex;
     bool              closed;
+    tcpCallback       clientCallback;
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+    SDL_Thread        *thread;
+    int               refCount;
+    static SDL_mutex  *mutex;
+#endif
   };
   class Flag {
   };
@@ -111,6 +130,13 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
     return NULL;
   return playerList[_playerIndex];
 }
+
+#if defined(USE_THREADS) && defined(HAVE_SDL)
+inline void GameKeeper::Player::handleTcpPacket(fd_set *) {;};
+#else
+inline void GameKeeper::Player::passTCPMutex() {;};
+inline void GameKeeper::Player::freeTCPMutex() {;};
+#endif
 
 #endif
 

@@ -3,7 +3,7 @@ bin_PROGRAMS = bzfs
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) $(SDL_CFLAGS)
 
 bzfs_SOURCES = \
 	AccessControlList.cxx \
@@ -107,17 +107,11 @@ else
 ZLIB = -lz
 endif
 
-if USE_THREADS
-THREADLIB=-lpthread
-else
-THREADLIB=
-endif
-
 LDADD = \
 	../obstacle/libObstacle.a	\
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
-	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS) $(THREADLIB)
+	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS) $(SDL_LIBS)
 
 bzfs_LDFLAGS = ../date/buildDate.o
