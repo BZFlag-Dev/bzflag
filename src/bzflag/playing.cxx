@@ -1735,7 +1735,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	for (int i = 0; i < numRobots; i++)
 	  robots[i]->explodeTank();
 #endif
-      }
+      } else if (timeLeft < 0) 
+				hud->setAlert(0, "Game Paused", 10.0f, true);
       break;
     }
 
