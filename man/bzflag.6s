@@ -1,6 +1,8 @@
 .TH bzflag 6
 .SH NAME
 BZFlag \- a tank battle game
+.TP
+(Version BZFLAG_VERSION)
 .SH SYNOPSIS
 .sS
 .B bzflag

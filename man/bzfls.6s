@@ -1,6 +1,8 @@
 .TH bzfls 6
 .SH NAME
 bzfls \- BZFlag game server-list server
+.TP
+(Version BZFLAG_VERSION)
 .SH SYNOPSIS
 .sS
 .B bzfls
