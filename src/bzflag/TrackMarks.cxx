@@ -168,22 +168,30 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
   TrackEntry te;
   TrackType type;
 
+  // determine the track mark type
   if ((pos[2] <= 0.1f) && BZDB.get(StateDatabase::BZDB_MIRROR) != "none") {
     type = puddle;
+    if (pos[2] < 0.0f) {
+      scale = 0.0f; // single puddle, like Narrow tanks
+    }
   } else {
     type = treads;
     if (scale < 0.01f) {
       return false; // Narrow tanks don't draw treads
     }
+    if (pos[2] < 0.0f) {
+      return false; // Burrowed tanks don't draw treads
+    }
   }
 
+  // copy some parameters
   te.startTime = TimeKeeper::getCurrent();
   te.pos[0] = pos[0];
   te.pos[1] = pos[1];
-  te.pos[2] = pos[2] + TextureHeightOffset;
-  memcpy (te.pos, pos, sizeof(float[3]));
-  if (pos[2] > 0.0f) {
-    te.pos[2] += TextureHeightOffset;
+  if (pos[2] < 0.0f) {
+    te.pos[2] = TextureHeightOffset;
+  } else {
+    te.pos[2] = pos[2] + TextureHeightOffset;
   }
   te.scale = scale;
   te.angle = angle * (180.0f / M_PI); // in degress, for glRotatef()
@@ -223,7 +231,7 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
       else {
         te.sides = 0;
         float markPos[3];
-        markPos[2] = pos[2] - TextureHeightOffset;
+        markPos[2] = pos[2];
         const float dx = -sinf(angle) * TreadMiddle;
         const float dy = +cosf(angle) * TreadMiddle;
         // left tread
