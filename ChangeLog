@@ -1,6 +1,11 @@
 
                              BZFlag release notes
 
+BZFlag 1.7e3
+------------
+
+* ::memset() instead of bzero() - Björn Augustsson
+
 BZFlag 1.7e2
 ------------
 
