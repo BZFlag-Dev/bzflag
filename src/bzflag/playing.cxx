@@ -3034,7 +3034,7 @@ static void		updateDaylight(double offset, SceneRenderer& renderer)
 // some robot stuff
 //
 
-static std::vector<BzfRegion*>	obstacleList;
+static std::vector<BzfRegion*>	obstacleList;  // for robots
 
 static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obstacle)
 {
@@ -3338,8 +3338,11 @@ static void		addRobots()
 
     j++;
   }
-  makeObstacleList();
-  RobotPlayer::setObstacleList(&obstacleList);
+  
+  if (numRobots > 0) {
+    makeObstacleList();
+    RobotPlayer::setObstacleList(&obstacleList);
+  }
 }
 
 #endif
