@@ -4237,7 +4237,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (t != id) {
 	// Should be a Robot or a cheater
 	if ((id >= curMaxPlayers) || (player[id].type != ComputerPlayer)) {
-	  // Commented out autokick occasionally being kicked
+	  // FIXME - Commented out autokick occasionally being kicked
 	  // out with Robot
 	  // Should check why!
 // 	  char message[MessageLen];
