@@ -4,6 +4,7 @@
 BZFlag 1.11.x (development)
 ---------------------------
 
+* Addition of converted ProFont font - Andrew Keyser
 * Added a file syntax section to bzw.5 - Fred Cods
 * Added a bzw.5 manpage to document world file format - Sean Morrison
 * Added /quit command - Angelina Carlton
