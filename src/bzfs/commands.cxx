@@ -921,7 +921,7 @@ void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
   char reply[MessageLen];
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (playerData->player.isPlaying() && !playerData->player.isObserver()) {
+    if (playerData->player != NULL && playerData->player.isPlaying() && !playerData->player.isObserver()) {
       sprintf(reply,"%-16s : ", playerData->player.getCallSign());
       playerData->flagHistory.get(reply+strlen(reply));
       sendMessage(ServerPlayer, t, reply);
