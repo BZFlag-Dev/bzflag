@@ -5,6 +5,8 @@ recent bugs
 
 - team flags goes back to their base when dropped
 
+- bad flags should always disappear on drop
+
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
 - OS X client gamma on a secondary display set as main display uses the wrong
