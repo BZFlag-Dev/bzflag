@@ -204,6 +204,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   gstate.setAlphaFunc();
   rainGState = gstate.getState();
 
+  gstate.setCulling(GL_BACK);
+  gstate.setTexture(tm.getTextureID("snowflake"));
+  texturedRainState = gstate.getState();
+
+
   // make mountain stuff
   mountainsAvailable = false;
   {
@@ -563,11 +568,13 @@ void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 		lastRainTime = TimeKeeper::getCurrent().getSeconds();
 		float rainHeight  = 120.0f * BZDBCache::tankHeight;	// same as the clouds
 
-		rainGState.setState();
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();	
+		if (rainSize[0] == 0)	// we are doing line rain
+		{
+			rainGState.setState();
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();	
 			glBegin(GL_LINES);
-				
+
 			std::vector<rain>::iterator itr = raindrops.begin();
 			while (itr != raindrops.end())
 			{
@@ -588,6 +595,73 @@ void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 				itr++;
 			}
 			glEnd();
+		}
+		else // 3d rain
+		{
+			texturedRainState.setState();
+			glDisable(GL_CULL_FACE);
+			glBegin(GL_QUADS);
+
+			std::vector<rain>::iterator itr = raindrops.begin();
+			while (itr != raindrops.end())
+			{
+				glPushMatrix();
+				glTranslatef(itr->pos[0],itr->pos[1],itr->pos[2]);
+				
+				glTexCoord2f(0,0);
+				glVertex3f(-rainSize[0],0,-rainSize[1]);
+
+				glTexCoord2f(1,0);
+				glVertex3f(rainSize[0],0,-rainSize[1]);
+
+				glTexCoord2f(1,1);
+				glVertex3f(rainSize[0],0,rainSize[1]);
+
+				glTexCoord2f(0,1);
+				glVertex3f(-rainSize[0],0,rainSize[1]);
+
+				glRotatef(120 * 0.017453292519943295769236907684886f,0,0,1);
+
+				glTexCoord2f(0,0);
+				glVertex3f(-rainSize[0],0,-rainSize[1]);
+
+				glTexCoord2f(1,0);
+				glVertex3f(rainSize[0],0,-rainSize[1]);
+
+				glTexCoord2f(1,1);
+				glVertex3f(rainSize[0],0,rainSize[1]);
+
+				glTexCoord2f(0,1);
+				glVertex3f(-rainSize[0],0,rainSize[1]);
+
+				glRotatef(120 * 0.017453292519943295769236907684886f,0,0,1);
+
+				glTexCoord2f(0,0);
+				glVertex3f(-rainSize[0],0,-rainSize[1]);
+
+				glTexCoord2f(1,0);
+				glVertex3f(rainSize[0],0,-rainSize[1]);
+
+				glTexCoord2f(1,1);
+				glVertex3f(rainSize[0],0,rainSize[1]);
+
+				glTexCoord2f(0,1);
+				glVertex3f(-rainSize[0],0,rainSize[1]);
+
+				glPopMatrix();
+				itr->pos[2] -= itr->speed * frameTime;
+				if ( itr->pos[2] < 0)
+				{
+					itr->pos[2] = rainHeight;
+					itr->speed = rainSpeed + ((float)(bzfrand()*2.0f -1.0f)*rainSpeedMod);
+					itr->pos[0] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
+					itr->pos[1] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
+				}
+				itr++;
+			}
+			glEnd();
+		}
+		glEnable(GL_CULL_FACE);
 		glColor4f(1,1,1,1);
 		glPopMatrix();
 	}

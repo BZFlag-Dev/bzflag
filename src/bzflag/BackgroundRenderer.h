@@ -118,10 +118,11 @@ class BackgroundRenderer {
 
 	// stuff for rain
 	OpenGLGState				rainGState;
+	OpenGLGState				texturedRainState;
 	std::vector<std::string>	rainTextures;
 	float						rainColor[4][2];
 	float						rainSize[2];
-	int						rainDensity;
+	int							rainDensity;
 	float						rainSpeed;
 	float						rainSpeedMod;
 	float						rainSpread;
