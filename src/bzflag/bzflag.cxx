@@ -803,6 +803,8 @@ int			main(int argc, char** argv)
     BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
   }
 
+  Flags::init();
+
   if (getenv("BZFLAGID")) {
     BZDB->set("callsign", getenv("BZFLAGID"));
     strncpy(startupInfo.callsign, getenv("BZFLAGID"),

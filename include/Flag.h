@@ -155,6 +155,8 @@ namespace Flags {
     *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Burrow,
     *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, *Blindness,
     *Jamming, *WideAngle;
+
+  void init();
 }
 
 #endif // BZF_FLAG_H

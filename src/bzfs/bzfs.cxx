@@ -5638,6 +5638,8 @@ int main(int argc, char **argv)
 #endif /* defined(_WIN32) */
   bzfsrand(time(0));
 
+  Flags::init();
+
   clOptions = new CmdLineOptions();
 
   // set default DB entries
