@@ -14,7 +14,7 @@
 * +f sw{5} syntax to add a bunch of flags - Dave Brosius
 * tanks which jump too high get kicked - Dave Brosius
 * server drops bogus shots (anti cheating) - Tim Riker, Dave Brosius, Frank Thilo
-* i18n support in client - Dave Brosius
+* i18n support in client - Dave Brosius, Isak Styf
 * Optional config file interface for bzfs settings - Dave Brosius
 * inline editing of text fields (<- ->) Dave Brosius, Frank Thilo
 * extend admin command -> /flag reset unused - Dave Brosius

@@ -949,6 +949,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options = &option->getList();
   std::vector<std::string> locales;
   if (BundleMgr::getLocaleList(&locales) == true) {
+	options->push_back(std::string("default"));
 	for (int i = 0; i < (int)locales.size(); i++) {
 	  options->push_back(locales[i]);
 	}
@@ -956,20 +957,8 @@ GUIOptionsMenu::GUIOptionsMenu()
   }
   else {
 	// Something failed when trying to compile a list
-	// of all the locales. Add them manually here instead.
+	// of all the locales. 
 	options->push_back(std::string("default"));
-/*	options->push_back(std::string("da"));
-	options->push_back(std::string("de"));
-	options->push_back(std::string("en_US_l33t"));
-	options->push_back(std::string("en_US_redneck"));
-	options->push_back(std::string("es"));
-	options->push_back(std::string("fr"));
-	options->push_back(std::string("it"));
-	options->push_back(std::string("kg"));
-	options->push_back(std::string("nl"));
-	options->push_back(std::string("pt"));
-	options->push_back(std::string("sv"));
-*/
   }
   
   for (int i = 0; i < (int)options->size(); i++) {
