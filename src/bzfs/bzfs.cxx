@@ -1003,6 +1003,8 @@ static WorldInfo *defineTeamWorld()
 		     size, size, 0.0f, t, false, false);
     }
   }
+  
+  world->finishWorld();
 
   return world;
 }
@@ -1102,6 +1104,8 @@ static WorldInfo *defineRandomWorld()
       }
     delete[] linked;
   }
+
+  world->finishWorld();
 
   return world;
 }

@@ -137,13 +137,13 @@ bool CollisionManager::needReload () const
 }
 
 
-const ObsList *CollisionManager::axisBoxTest (const float* mins,
-                                              const float* maxs) const
+const ObsList *CollisionManager::axisBoxTest (const float* _mins,
+                                              const float* _maxs) const
 {
   FullPad.count = 0;
 
   // get the list
-  root->axisBoxTest (mins, maxs);
+  root->axisBoxTest (_mins, _maxs);
 
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
@@ -157,18 +157,18 @@ const ObsList *CollisionManager::axisBoxTest (const float* mins,
 const ObsList *CollisionManager::cylinderTest (const float *pos, 
                                                float radius, float height) const
 {
-  float mins[3], maxs[3];
-  mins[0] = pos[0] - radius;
-  mins[1] = pos[1] - radius;
-  mins[2] = pos[2];
-  maxs[0] = pos[0] + radius;
-  maxs[1] = pos[1] + radius;
-  maxs[2] = pos[2] + height;
+  float tmpMins[3], tmpMaxs[3];
+  tmpMins[0] = pos[0] - radius;
+  tmpMins[1] = pos[1] - radius;
+  tmpMins[2] = pos[2];
+  tmpMaxs[0] = pos[0] + radius;
+  tmpMaxs[1] = pos[1] + radius;
+  tmpMaxs[2] = pos[2] + height;
   
   FullPad.count = 0;
 
   // get the list
-  root->axisBoxTest (mins, maxs);
+  root->axisBoxTest (tmpMins, tmpMaxs);
 
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
