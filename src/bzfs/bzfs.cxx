@@ -4709,21 +4709,8 @@ static void shotFired(int playerIndex, void *buf, int len)
   float tankSpeed = TankSpeed;
   float lifetime = ReloadTime;
   switch (firingInfo.flag) {
-    case LaserFlag:
-      shotSpeed *= LaserAdVel;
-      lifetime *= LaserAdLife;
-      break;
-    case MachineGunFlag:
-      shotSpeed *= MGunAdVel;
-      lifetime *= MGunAdLife;
-      break;
-    case RapidFireFlag:
-      shotSpeed *= RFireAdVel;
-      lifetime *= RFireAdLife;
-      break;
     case ShockWaveFlag:
       shotSpeed = 0.0f;
-      lifetime *= ShockAdLife;
       break;
     case VelocityFlag:
       tankSpeed *= VelocityAd;

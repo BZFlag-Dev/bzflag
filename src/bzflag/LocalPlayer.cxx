@@ -770,7 +770,7 @@ bool			LocalPlayer::fireShot()
   // make shot and put it in the table
   shots[i] = new LocalShotPath(firingInfo);
 
-  ServerLink::getServer()->sendBeginShot(shots[i]->getFiringInfo());
+  ServerLink::getServer()->sendBeginShot(firingInfo);
   if (firingInfo.flag == ShockWaveFlag)
     playLocalSound(SFX_SHOCK);
   else if (firingInfo.flag == LaserFlag)
