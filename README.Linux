@@ -20,7 +20,7 @@ from www.mesa3d.org.  The glide libraries for 3Dfx users are
 available from www.3dfx.com.
 
 More information about bzflag is available in the man pages for
-bzflag, bzfs, bzfls, bzadmin, and bzfrelay.  Also check:
+bzflag, bzfs, bzfls, and bzadmin.  Also check:
 
   http://BZFlag.org/
 

@@ -545,7 +545,7 @@ enum roamingView {
   roamViewCount
 } roamView = roamViewFP;
 #ifdef DEBUG
-static const bool devDriving = false;
+static const bool devDriving = true;
 #else
 static const bool devDriving = false;
 #endif

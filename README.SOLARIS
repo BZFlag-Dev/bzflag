@@ -37,9 +37,6 @@ Changes:
 - Sound now works ok. Only 16bit stereo is supported, so if your
   card isn't up to date then it won't work - sorry!
 
-- bzfrelay now compiles ok - I haven't tested it though - please
-  let me know if it works or you encounter problems
-
 
 Known Problems:
 ---------------

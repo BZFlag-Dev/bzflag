@@ -1,7 +1,6 @@
 SUBDIRS = \
 	3D \
 	date \
-	bzfrelay \
 	regex \
 	common \
 	net \

@@ -15,7 +15,7 @@ recent bugs
 
 - the octrees can be forced to build twice, because the BZDB vars come
   in after the map has been processed?
- 
+
 - in teleporter with (isValid() == false) can mess up the linking
 
 - sometimes players will recieve the message "So-and-so destroyed by server"
@@ -63,10 +63,6 @@ recent bugs
 - world weapons seem to lag the server when there are many players joined.
   might be related to a rapidly repeating world weapon as well (like once
   a second).
-
-- bzfrelay is broken for current net protocol. Should be just forwarding TCP
-  and UDP packets on a single port.  Could likely just be removed as there are
-  other apps that do bare forwarding and that is all that is needed now.
 
 - reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a

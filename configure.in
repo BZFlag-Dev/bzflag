@@ -632,7 +632,6 @@ AC_OUTPUT(bzflag.info
 	src/Makefile
 	src/bzadmin/Makefile
 	src/bzflag/Makefile
-	src/bzfrelay/Makefile
 	src/bzfs/Makefile
 	src/common/Makefile
 	src/date/Makefile

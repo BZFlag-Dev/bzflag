@@ -55,7 +55,6 @@ directory:
     3D/		  - 3D code including texture manager
     bzadmin/      - bzadmin app source code (text admin/chat client)
     bzflag/	  - bzflag app source code (game client)
-    bzfrelay/	  - bzfrelay source code (firewall relay for servers)
     bzfs/	  - bzfs app source code (game server)
     common/	  - general purpose classes
     geometry/	  - geometry rendering classes

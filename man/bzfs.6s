@@ -294,9 +294,9 @@ Advertise this server with the given \fIaddress\fR and \fIport\fR.
 Only has an effect when used with \fB-public\fR.
 Normally a server advertises itself at the local address and port.
 Some servers are not accessible from the internet at this address
-(for example servers behind a firewall using \fBbzfrelay\fR).  Use
-this option to specify the address and/or port that internet users
-should use to access this server.
+(for example servers behind a firewall using Network Address
+Translation).  Use this option to specify the address and/or port
+that internet users should use to access this server.
 .TP
 \fB-publiclist\fI url\fR
 Advertise this server on the \fBbzfls\fR servers listed at \fIurl\fR.
@@ -491,8 +491,7 @@ Communication between the server and clients (i.e. between \fBbzfs\fR and
 to get
 the server's default port.  If there's a firewall between the server and
 client, the firewall must accept connections from the client to this port
-and forward them to the server.  See \fBbzfrelay\fR for a BZFlag firewall
-relay.
+and forward them to the server.
 .PP
 Clients can search for servers by sending broadcast UDP
 packets.  But they must be on the same local area network for this to work.
@@ -1457,4 +1456,4 @@ Specifies a certain range in the world, and what attributes that range has.
 
 
 .SH SEE ALSO
-bzflag(6), bzfls(6), bzfrelay(6)
+bzflag(6), bzfls(6)
