@@ -383,10 +383,12 @@ void			HUDuiList::createSlider(const int numValues)
   */
   std::vector<std::string> &options = getList();
 
-  for (int i=0; i< numValues; i++) {
-    std::string line(numValues + 2, '-');
-    line[0] = '[';
-    line[numValues + 1] = ']';
+  std::string line(numValues + 2, '-');
+  line[0] = '[';
+  line[numValues + 1] = ']';
+
+  for (int i = 0; i < numValues; i++) {
+    if (i > 0) line[i] = '-';
     line[i + 1] = 'O';
     options.push_back(line);
   }
