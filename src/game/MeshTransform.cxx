@@ -20,6 +20,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 
@@ -281,12 +282,22 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
   normalMatrix[2][2] = (vm[0][0] * vm[1][1]) - (vm[0][1] * vm[1][0]);
 
   // setup the polarity
-  const float polarity =
-    (vertexMatrix[0][0] * vertexMatrix[1][1] * vertexMatrix[2][2]);
-  if (polarity < 0.0f) {
+  const float determinant =
+    (vm[0][0] * ((vm[1][1] * vm[2][2]) - (vm[1][2] * vm[2][1]))) +
+    (vm[0][1] * ((vm[1][2] * vm[2][0]) - (vm[1][0] * vm[2][2]))) +
+    (vm[0][2] * ((vm[1][0] * vm[2][1]) - (vm[1][1] * vm[2][0])));
+  if (determinant < 0.0f) {
     inverted = true;
   } else {
     inverted = false;
+  }
+
+  // abort due to a 2.0.0 bug
+  const float badcheck_2_0_0 = vm[0][0] * vm[1][1] * vm[2][2];
+  if ((determinant * badcheck_2_0_0) < 0.0f) {
+    printf ("ABORTING:  MeshTransform::Tool::Tool()  2.0.0 inversion bug\n");
+    printf ("           This most likely cause is a 'spin' transformation\n");
+    exit (EXIT_FAILURE);
   }
 
   return;
