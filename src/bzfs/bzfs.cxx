@@ -2430,16 +2430,10 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   }
 }
 
-static void grabFlag(int playerIndex, int flagIndex)
+static void grabFlag(int playerIndex, FlagInfo &flag)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
-
-  // Sanity check
-  if (flagIndex < -1 || flagIndex >= numFlags)
-    return;
-
-  FlagInfo &flag = FlagInfo::flagList[flagIndex];
 
   // player wants to take possession of flag
   if (playerData->player.isObserver() ||
@@ -2466,7 +2460,7 @@ static void grabFlag(int playerIndex, int flagIndex)
 
   // okay, player can have it
   flag.grab(playerIndex);
-  playerData->player.setFlag(flagIndex);
+  playerData->player.setFlag(flag.getIndex());
 
   // send MsgGrabFlag
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -3247,7 +3241,9 @@ static void handleCommand(int t, const void *rawbuf)
 	break;
 
       buf = nboUnpackUShort(buf, flag);
-      grabFlag(t, int(flag));
+      // Sanity check
+      if (flag < numFlags)
+	grabFlag(t, FlagInfo::flagList[flag]);
       break;
     }
 
