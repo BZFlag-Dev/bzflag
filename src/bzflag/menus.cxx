@@ -664,7 +664,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1)
   std::vector<HUDuiControl*>& controls = getControls();
 
   controls.push_back(createLabel("Key Mapping"));
-
+  controls.push_back(createLabel("Use up/down arrows to navigate, enter key to enter edit mode"));
   controls.push_back(reset = createLabel(NULL, "Reset Defaults"));
   controls.push_back(createLabel("fire", "Fire shot:"));
   controls.push_back(createLabel(NULL, "Drop flag:"));
@@ -696,37 +696,37 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1)
   controls.push_back(createLabel(NULL, "Hunt Key:"));
   controls.push_back(createLabel(NULL, "AutoPilot Key: "));
 
-  initNavigation(controls, 1, controls.size()-1);
+  initNavigation(controls, 2, controls.size()-1);
 
-  initkeymap("fire", 2);
-  initkeymap("drop", 3);
-  initkeymap("identify", 4);
-  initkeymap("set displayRadarRange 1.0", 5);
-  initkeymap("set displayRadarRange 0.5", 6);
-  initkeymap("set displayRadarRange 0.25", 7);
-  initkeymap("send all", 8);
-  initkeymap("send team", 9);
-  initkeymap("send nemesis", 10);
-  initkeymap("send recipient", 11);
-  initkeymap("jump", 12);
-  initkeymap("toggle displayBinoculars", 13);
-  initkeymap("toggle displayScore", 14);
-  initkeymap("toggle displayLabels", 15);
-  initkeymap("toggle displayFlagHelp", 16);
-  initkeymap("time forward", 17);
-  initkeymap("time backward", 18);
-  initkeymap("pause", 19);
-  initkeymap("destruct", 20);
-  initkeymap("quit", 21);
-  initkeymap("scrollpanel up", 22);
-  initkeymap("scrollpanel down", 23);
-  initkeymap("toggle slowKeyboard", 24);
-  initkeymap("toggle displayRadarFlags", 25);
-  initkeymap("toggle displayMainFlags", 26);
-  initkeymap("silence", 27);
-  initkeymap("servercommand", 28);
-  initkeymap("hunt", 29);
-  initkeymap("autopilot", 30);
+  initkeymap("fire", 3);
+  initkeymap("drop", 4);
+  initkeymap("identify", 5);
+  initkeymap("set displayRadarRange 1.0", 6);
+  initkeymap("set displayRadarRange 0.5", 7);
+  initkeymap("set displayRadarRange 0.25", 8);
+  initkeymap("send all", 9);
+  initkeymap("send team", 10);
+  initkeymap("send nemesis", 11);
+  initkeymap("send recipient", 12);
+  initkeymap("jump", 13);
+  initkeymap("toggle displayBinoculars", 14);
+  initkeymap("toggle displayScore", 15);
+  initkeymap("toggle displayLabels", 16);
+  initkeymap("toggle displayFlagHelp", 17);
+  initkeymap("time forward", 18);
+  initkeymap("time backward", 19);
+  initkeymap("pause", 20);
+  initkeymap("destruct", 21);
+  initkeymap("quit", 22);
+  initkeymap("scrollpanel up", 23);
+  initkeymap("scrollpanel down", 24);
+  initkeymap("toggle slowKeyboard", 25);
+  initkeymap("toggle displayRadarFlags", 26);
+  initkeymap("toggle displayMainFlags", 27);
+  initkeymap("silence", 28);
+  initkeymap("servercommand", 29);
+  initkeymap("hunt", 30);
+  initkeymap("autopilot", 31);
 }
 
 void			KeyboardMapMenu::initkeymap(const std::string& name, int index)
@@ -811,6 +811,9 @@ void			KeyboardMapMenu::resize(int width, int height)
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
+  const float bigFontWidth = (float)height / 28.0f;
+  const float bigFontHeight = (float)height / 28.0f;
+
   const float fontWidth = (float)height / 38.0f;
   const float fontHeight = (float)height / 38.0f;
 
@@ -823,17 +826,26 @@ void			KeyboardMapMenu::resize(int width, int height)
   float x = 0.5f * ((float)width - titleWidth);
   float y = (float)height - titleFont.getHeight();
   title->setPosition(x, y);
+  // reposition help
+  HUDuiLabel*help = (HUDuiLabel*)list[1];
+  help->setFontSize( bigFontWidth, bigFontHeight);
+  const OpenGLTexFont& helpFont = help->getFont();
+  const float helpWidth = helpFont.getWidth(help->getString());
+  x = 0.5f * ((float)width - helpWidth);
+  y -= 1.1f * helpFont.getHeight();
+  help->setPosition(x, y);
+
 
   // reposition options in two columns
   x = 0.30f * (float)width;
-  const float topY = y - 0.6f * titleFont.getHeight();
+  const float topY = y - (0.6f * titleFont.getHeight());
   y = topY;
-  list[1]->setFontSize(fontWidth, fontHeight);
-  const float h = list[1]->getFont().getHeight();
-  const int count = list.size();
+  list[2]->setFontSize(fontWidth, fontHeight);
+  const float h = list[2]->getFont().getHeight();
+  const int count = list.size() - 2;
   const int mid = count / 2;
 
-  for (i = 1; i <= mid; i++) {
+  for (i = 2; i <= mid; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
