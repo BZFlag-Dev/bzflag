@@ -309,6 +309,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
   PlayerInfo *pPlayer = &player[playerIndex];
   buf = nboPackUByte(bufStart, playerIndex);
   buf = pPlayer->packUpdate(buf);
+  
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
     for (int i = 0; i < curMaxPlayers; i++)
@@ -535,9 +536,14 @@ static void serverStop()
 
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
 {
+  if (Capture::enabled()) {
+    Capture::addPacket (code, len, (char*)rawbuf + 4);
+  }
+    
   // relay packet to all players except origin
   for (int i = 0; i < curMaxPlayers; i++) {
     PlayerInfo& pi = player[i];
+    
     if (i != index && pi.isPlaying()) {
       if ((code == MsgPlayerUpdate) && pi.haveFlag() && 
           (flag[pi.getFlag()].flag.type == Flags::Lag)) {
@@ -3799,6 +3805,14 @@ int main(int argc, char **argv)
         }
       }
     }
+    
+    // get time for the next replay packet (if active)
+    if (Replay::enabled()) {
+      float nextTime = Replay::nextTime ();
+      if (nextTime < waitTime) {
+        waitTime = nextTime;
+      }
+    }
 
     // if there are world weapons, update much more frequently
     if (someoneIsConnected && wWeapons.count() > 0) {
@@ -3852,6 +3866,12 @@ int main(int argc, char **argv)
         free (data);
       }
     }
+    
+    // send replay packets
+    if (Replay::playing()) {
+      Replay::sendPackets ();
+    }
+    
 
     // kick idle players
     if (clOptions->idlekickthresh > 0) {

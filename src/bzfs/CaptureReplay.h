@@ -54,7 +54,7 @@ namespace Replay {
   extern bool skip (int seconds); // forward or backwards
   
   extern bool enabled ();
-  extern bool replaying ();
+  extern bool playing ();
 
   extern int getMaxBytes ();
   extern const char * getFileName ();

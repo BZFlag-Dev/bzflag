@@ -20,7 +20,7 @@
 typedef uint16_t u16;
 
 #ifndef _WIN32 //FIXME
-typedef uint64_t CRtime;
+typedef int64_t CRtime;
 #else
 typedef int CRtime;
 #endif
@@ -41,6 +41,7 @@ typedef struct CRpacket {
   u16 fake;
   u16 code;
   int len;
+  int prev_len;
   CRtime timestamp;
   void *data;
 } CRpacket;
@@ -54,12 +55,11 @@ typedef struct {
 //  std::list<CRpacket *> ListTest;
 } CRbuffer;
 
-
 typedef struct {
   unsigned int magic;
   unsigned int version;
   char worldhash[64];
-  char padding[1024-2*sizeof(unsigned int)]; // all padding for now
+  char padding[1024-2*sizeof(unsigned int)-64]; // all padding for now
 } ReplayHeader;
 
 // Local Variables
@@ -70,18 +70,22 @@ static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
 static const char DefaultFileName[] = "capture.bzr";
 static const int ReplayMagic = 0x425A7270; // "BZrp"
 static const int ReplayVersion = 0x0001;
+static const int CRpacketDataLen = 
+                   (sizeof (u16) * 2) + (sizeof (int) * 2) + sizeof (CRtime);
 
 
 static bool Capturing = false;
 static CaptureType CaptureMode = BufferedCapture;
 static CRtime UpdateTime = 0;
+static int CaptureMaxBytes = DefaultMaxBytes;
+static int CaptureFileBytes = 0;
+static int CaptureFilePackets = 0;
+static int CaptureFilePrevLen = 0;
 
 static bool Replaying = false;
 static bool ReplayMode = false;
 static CRtime ReplayOffset = 0;
 
-static int TotalBytes = 0;
-static int MaxBytes = DefaultMaxBytes;
 static unsigned int UpdateRate = DefaultUpdateRate;
 
 static char *FileName = NULL;
@@ -140,6 +144,7 @@ extern void directMessage(int playerIndex, u16 code,
                           int len, const void *msg);
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, 
                         const char *message, bool fullBuffer=false);
+
                         
 /****************************************************************************/
 
@@ -157,15 +162,18 @@ bool Capture::init ()
   }
   freeCRbuffer (&CaptureBuf);
   
-  MaxBytes = DefaultMaxBytes;
-  TotalBytes = 0;
-  UpdateRate = DefaultUpdateRate;
-  UpdateTime = 0;
   Capturing = false;
   CaptureMode = BufferedCapture;
+  CaptureMaxBytes = DefaultMaxBytes;
+  CaptureFileBytes = 0;
+  CaptureFilePackets = 0;
+  CaptureFilePrevLen = 0;
+  UpdateTime = 0;
+  UpdateRate = DefaultUpdateRate;
   
   return true;
 }
+
 
 bool Capture::kill ()
 {
@@ -173,17 +181,24 @@ bool Capture::kill ()
   return true;
 }
 
+
 bool Capture::start ()
 {
   if (ReplayMode) {
     return false;
   }
   Capturing = true;
+  saveStates ();
   return true;
 }
 
+
 bool Capture::stop ()
 {
+  if (Capturing == false) {
+    return false;
+  }
+  
   Capturing = false;
   if (CaptureMode == StraightToFile) {
     Capture::init();
@@ -192,11 +207,13 @@ bool Capture::stop ()
   return true;
 }
 
+
 bool Capture::setSize (int Mbytes)
 {
-  MaxBytes = Mbytes * (1024) * (1024);
+  CaptureMaxBytes = Mbytes * (1024) * (1024);
   return true;
 }
+
 
 bool Capture::setRate (int seconds)
 {
@@ -204,11 +221,31 @@ bool Capture::setRate (int seconds)
   return true;
 }
 
+
 bool Capture::sendStats (int playerIndex)
 {
-  sendMessage (ServerPlayer, playerIndex, "TEST MESSAGE, NO REAL STATS YET");
+  char buffer[MessageLen];
+  
+  if (Capturing) {
+    sendMessage (ServerPlayer, playerIndex, "Capturing enabled");
+  }
+  else {
+    sendMessage (ServerPlayer, playerIndex, "Capturing disabled");
+  }
+   
+  if (CaptureMode == BufferedCapture) {
+    sprintf (buffer, "%i bytes, %i packets, time = %i\n",
+             CaptureBuf.byteCount, CaptureBuf.packetCount, 0);
+  }
+  else {
+    sprintf (buffer, "%i bytes, %i packets, time = %i\n",
+             CaptureFileBytes, CaptureFilePackets, 0);   
+  }
+  sendMessage (ServerPlayer, playerIndex, buffer);
+
   return true;
 }
+
 
 bool Capture::saveFile (const char *filename)
 {
@@ -245,16 +282,54 @@ bool Capture::saveFile (const char *filename)
   return true;
 }
 
+
 bool Capture::saveBuffer (const char *filename)
 {
-  filename = filename;
+  ReplayHeader header;
+  CRpacket *p;
+  
+  if (ReplayMode || !Capturing || (CaptureMode != BufferedCapture)) {
+    return false;
+  }
+    
+  if (filename == NULL) {
+    filename = DefaultFileName;
+  }
+  
+  CaptureFile = fopen (filename, "wb");
+  if (CaptureFile == NULL) {
+    Capture::init();
+    return false;
+  }
+  
+  if (!saveHeader (&header, CaptureFile)) {
+    Capture::init();
+    return false;
+  }
+  
+  p = CaptureBuf.tail;
+  while (p != NULL) {
+    saveCRpacket (p, CaptureFile);
+    p = p->next;
+  }
+  
+  fclose (CaptureFile);
+  CaptureFileBytes = 0;
+  CaptureFilePackets = 0;
+  CaptureFilePrevLen = 0;
+  
   return true;
 }
+
 
 bool 
 routePacket (u16 code, int len, const void * data, bool fake)
 {
   u16 fakeval = NormalPacket;
+  
+  if (!Capturing) {
+    return false;
+  }
   
   if (fake) {
     fakeval = FakedPacket;
@@ -265,6 +340,16 @@ routePacket (u16 code, int len, const void * data, bool fake)
     p->timestamp = getCRtime();
     addCRpacket (&CaptureBuf, p);
     printf ("routePacket: buffered %s\n", print_msg_code (code));
+
+    if (CaptureBuf.byteCount > CaptureMaxBytes) {
+      CRpacket *p;
+      printf ("routePacket: deleting until update\n");
+      while (((p = delCRpacket (&CaptureBuf)) != NULL) &&
+             !(p->fake && (p->code == MsgTeamUpdate))) {
+        free (p->data);
+        free (p);
+      }
+    }
   }
   else {
     CRpacket p;
@@ -277,6 +362,7 @@ routePacket (u16 code, int len, const void * data, bool fake)
   return true; 
 }
 
+
 bool 
 Capture::addPacket (u16 code, int len, const void * data, bool fake)
 {
@@ -286,25 +372,30 @@ Capture::addPacket (u16 code, int len, const void * data, bool fake)
   return routePacket (code, len, data, fake);
 }
 
+
 bool Capture::enabled ()
 {
   return Capturing;
 }
 
+
 int Capture::getSize ()
 {
-  return MaxBytes;
+  return CaptureMaxBytes;
 }
+
 
 int Capture::getRate ()
 {
   return (UpdateRate / 1000000);
 }
 
+
 const char * Capture::getFileName ()
 {
   return FileName;
 }
+
                           
 /****************************************************************************/
 
@@ -333,38 +424,58 @@ bool Replay::init()
   return true;
 }
 
+
 bool Replay::kill()
 {
   Replay::init();
+  ReplayMode = false;
   return true;
 }
 
-bool Replay::enabled()
-{
-  return ReplayMode;
-}
 
 bool Replay::loadFile(const char * filename)
 {
   ReplayHeader header;
+  CRpacket *p;
+  
+  if (!ReplayMode) {
+    return false;
+  }
+  
+  Replay::init();
+  
   if (filename == NULL) {
     filename = DefaultFileName;
   }
   ReplayFile = fopen (filename, "rb");
   if (ReplayFile == NULL) {
     return false;
+    perror ("fopen");
   }
+  
   if (!loadHeader (&header, ReplayFile)) {
     return false;
   }
+
+  // preload the buffer
+  while (ReplayBuf.byteCount < CaptureMaxBytes) { // FIXME CaptureMaxBytes?
+    p = loadCRpacket (ReplayFile);
+    if (p == NULL) {
+      break;
+    }
+    else {
+      addCRpacket (&ReplayBuf, p);
+    }
+  }
+
+  if (ReplayBuf.tail == NULL) {
+    return false;
+  }
+  
   return true;
 }
 
-bool Replay::replaying ()
-{
-  return Replaying;
-}
-                          
+
 bool Replay::sendFileList(int playerIndex)
 {
 #ifndef _WIN32
@@ -381,46 +492,100 @@ bool Replay::sendFileList(int playerIndex)
   }
   
   closedir (dir);
-  
+#else
+  sendMessage (ServerPlayer, playerIndex, "/replay listfiles doesn't work on Windows yet");
 #endif // _WIN32
     
   return true;
 }
 
+
 bool Replay::play()
 {
+  if (!ReplayMode || (ReplayFile == NULL)) {
+    return false;
+  }
+
+  printf ("Replay::play()\n");
+  
   Replaying = true;
-  // FIXME - preload the buffer here
+  ReplayOffset = getCRtime () - ReplayBuf.tail->timestamp;
+  
   return true;
 }
 
-bool Replay::skip(int seconds)
+
+bool Replay::skip(int seconds) //FIXME
 {
+  if (!ReplayMode) {
+    return false;
+  }
   seconds = seconds;
   return true;
 }
 
+
 bool Replay::sendPackets () {
-  if (CaptureBuf.tail == NULL) {
+
+  if (!Replaying) {
     return false;
   }
   
-  delCRpacket (&CaptureBuf); // remove from the tail
-  
+  while (Replay::nextTime () < 0.0f) {
+    CRpacket *p;
+    int i;
+
+    p = delCRpacket (&ReplayBuf);
+
+    printf ("sendPackets(): len = %4i, code = %s, data = %p\n",
+            p->len, print_msg_code (p->code), p->data);
+    fflush (stdout);
+
+    // send message to everyone
+    for (i = 0; i < curMaxPlayers; i++) {
+      if (player[i].isPlaying()) {
+        // the 4 bytes before p->data need to be allocated
+        void *buf = getDirectMessageBuffer ();
+        memcpy (buf, p->data, p->len);
+        directMessage(i, p->code, p->len, buf);
+      }
+    }
+    
+    free (p->data);
+    free (p);
+  }
+    
   return true;
 }
 
+
 float Replay::nextTime()
 {
+#ifdef _WIN32
+  return 1000.0f;
+#endif
   if (ReplayBuf.tail == NULL) {
     return 1000.0f;
   }
   else {
     CRtime diff;
-    diff = ReplayBuf.tail->timestamp - ReplayOffset - getCRtime();
+    diff = (ReplayBuf.tail->timestamp + ReplayOffset) - getCRtime();
     return (float) ((float)diff / (float)1000000);
   }
 }
+
+
+bool Replay::enabled()
+{
+  return ReplayMode;
+}
+
+
+bool Replay::playing ()
+{
+  return Replaying;
+}
+                          
 
 /****************************************************************************/
 
@@ -463,6 +628,7 @@ saveTeamScores ()
   return true;
 }
 
+
 static bool
 saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
 {
@@ -474,12 +640,7 @@ saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
   int cnt = 0;
   int length = sizeof(uint16_t);
   
-printf ("numFlags = %i\n", numFlags);
-fflush (stdout);
-  
   for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-
-printf ("FlagNum = %i\n", flagIndex); fflush (stdout);
 
     if (flag[flagIndex].flag.status != FlagNoExist) {
       if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t)) {
@@ -507,6 +668,7 @@ printf ("FlagNum = %i\n", flagIndex); fflush (stdout);
   return true;
 }
 
+
 static bool
 savePlayerStates ()
 {
@@ -526,6 +688,7 @@ savePlayerStates ()
   return true;
 }
 
+
 static bool
 saveStates ()
 {
@@ -537,6 +700,7 @@ saveStates ()
   
   return true;
 }
+
 
 /****************************************************************************/
 
@@ -559,14 +723,20 @@ saveCRpacket (CRpacket *p, FILE *f)
   buf = nboPackUShort (bufStart, p->fake);
   buf = nboPackUShort (buf, p->code);
   buf = nboPackUInt (buf, p->len);
+  buf = nboPackUInt (buf, CaptureFilePrevLen);
   fwrite (bufStart, bufsize, 1, f);
   fwrite (&p->timestamp, sizeof (CRtime), 1, f); //FIXME 
   fwrite (p->data, p->len, 1, f);
 
   fflush (f);//FIXME
+  
+  CaptureFileBytes += p->len + CRpacketDataLen;
+  CaptureFilePackets++;
+  CaptureFilePrevLen = p->len;
 
   return true;  
 }
+
 
 static CRpacket * //FIXME - totally botched
 loadCRpacket (FILE *f)
@@ -579,18 +749,43 @@ loadCRpacket (FILE *f)
   if (f == NULL) {
     return false;
   }
+  
+  p = (CRpacket *) malloc (sizeof (CRpacket));
 
-  fread (bufStart, bufsize, 1, f);
+  if (fread (bufStart, bufsize, 1, f) <= 0) {
+    free (p);
+    return NULL;
+  }
   buf = nboUnpackUShort (bufStart, p->fake);
   buf = nboUnpackUShort (buf, p->code);
   buf = nboUnpackInt (buf, p->len);
-  fread (&p->timestamp, sizeof (CRtime), 1, f); //FIXME 
-  fread (p->data, p->len, 1, f);
-  
-  p = loadCRpacket (f); //FIXME - to avoid warnings for now
+  buf = nboUnpackInt (buf, p->prev_len);
 
-  return NULL;  
+  if (fread (&p->timestamp, sizeof (CRtime), 1, f) <= 0) {
+    free (p);
+    return NULL;
+  }
+  
+  if (p->len > MaxPacketLen) {
+    printf ("loadCRpacket: ERROR, packtlen = %i\n", p->len);
+    free (p);
+    Replay::init();
+    return NULL;
+  }
+
+  p->data = malloc (p->len);
+  if (fread (p->data, p->len, 1, f) <= 0) {
+    free (p->data);
+    free (p);
+    return NULL;
+  }
+  
+  printf ("loadCRpacket(): len = %4i, code = %s, data = %p\n",
+          p->len, print_msg_code (p->code), p->data);
+
+  return p;  
 }
+
 
 static bool
 saveHeader (ReplayHeader *h, FILE *f)
@@ -608,8 +803,11 @@ saveHeader (ReplayHeader *h, FILE *f)
   
   fwrite (buffer, bufsize, 1, f);
   
+  CaptureFileBytes += bufsize;
+  
   return true;
 }
+
 
 static bool
 loadHeader (ReplayHeader *h, FILE *f)
@@ -631,6 +829,7 @@ loadHeader (ReplayHeader *h, FILE *f)
   return true;
 }
                           
+
 /****************************************************************************/
 
 // Buffer Functions
@@ -638,11 +837,13 @@ loadHeader (ReplayHeader *h, FILE *f)
 static void
 initCRpacket (u16 fake, u16 code, int len, const void *data, CRpacket *p)
 {
+  // CaptureFilePrevLen takes care of p->prev_len
   p->fake = fake;
   p->code = code;
   p->len = len;
-  (const void *) p->data = data; // FIXME - dirty little trick
+  (const void *) p->data = data; // dirty little trick
 }
+
 
 static CRpacket *
 newCRpacket (u16 fake, u16 code, int len, const void *data)
@@ -661,6 +862,7 @@ newCRpacket (u16 fake, u16 code, int len, const void *data)
   return p;
 }
 
+
 static void
 addCRpacket (CRbuffer *b, CRpacket *p)
 {
@@ -674,16 +876,18 @@ addCRpacket (CRbuffer *b, CRpacket *p)
   p->next = NULL;
   b->head = p;
   
-  b->byteCount = b->byteCount + p->len; //FIXME +8?
+  b->byteCount = b->byteCount + (p->len + CRpacketDataLen);
   b->packetCount++;
   
   return;
 }
 
+
 static CRpacket *
 delCRpacket (CRbuffer *b)
 {
   CRpacket *p = b->tail;
+
   if (b->tail == NULL) {
     b->head = NULL;
     b->tail = NULL;
@@ -692,14 +896,18 @@ delCRpacket (CRbuffer *b)
     return NULL;
   }
   
-  b->byteCount = b->byteCount - p->len;
+  b->byteCount = b->byteCount - (p->len + CRpacketDataLen);
   b->packetCount--;
-  
-  
-  if (b->tail->next != NULL) {
+
+  b->tail = p->next;
+    
+  if (p->next != NULL) {
     p->next->prev = NULL;
   }
-  p = b->tail;
+  else {
+    b->head = NULL;
+  }
+
   if (b->head == b->tail) {
     b->head = NULL;
     b->tail = NULL;
@@ -707,9 +915,9 @@ delCRpacket (CRbuffer *b)
     b->packetCount = 0;
   }
   
-  b = b;
   return p;
 }
+
 
 static void
 freeCRbuffer (CRbuffer *b)
@@ -727,6 +935,7 @@ freeCRbuffer (CRbuffer *b)
   
   return;
 }
+
 
 /****************************************************************************/
 
@@ -747,9 +956,10 @@ getCRtime ()
 #endif
 }
 
+
 /****************************************************************************/
 
-// FIXME - for debugging
+// FIXME - DMR - for debugging
 
 static const char *
 print_msg_code (u16 code)
@@ -806,6 +1016,7 @@ print_msg_code (u16 code)
       return buf;
   }
 }
+
 
 /****************************************************************************/
 
