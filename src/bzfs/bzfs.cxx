@@ -1473,18 +1473,6 @@ static void addPlayer(int playerIndex)
     }
   }
 
-  // no quick rejoining, make 'em wait
-  float waitTime = rejoinList.waitTime (playerIndex);
-  if (waitTime > 0.0f) {
-    char buffer[MessageLen];
-    DEBUG2 ("Player %s [%d] rejoin wait of %.1f seconds\n",
-            playerData->player.getCallSign(), playerIndex, waitTime);
-    sprintf (buffer, "Can't rejoin for %.1f seconds.", waitTime);
-    rejectPlayer(playerIndex, RejectRejoinWaitTime, buffer);
-    return ;
-  }
-
-
   TeamColor t = playerData->player.getTeam();
 
   // count current number of players and players+observers
@@ -1542,6 +1530,22 @@ static void addPlayer(int playerIndex)
           playerData->player.setTeam(t);
         }
       }
+    }
+  }
+
+  // no quick rejoining, make 'em wait
+  // you can switch to observer immediately, or switch from observer
+  // to regular player immediately, but only if last time time you
+  // were a regular player isn't in the rejoin list
+  if (playerData->player.getTeam() != ObserverTeam) {
+    float waitTime = rejoinList.waitTime (playerIndex);
+    if (waitTime > 0.0f) {
+      char buffer[MessageLen];
+      DEBUG2 ("Player %s [%d] rejoin wait of %.1f seconds\n",
+              playerData->player.getCallSign(), playerIndex, waitTime);
+      sprintf (buffer, "Can't rejoin for %.1f seconds.", waitTime);
+      rejectPlayer(playerIndex, RejectRejoinWaitTime, buffer);
+      return ;
     }
   }
 
@@ -1981,9 +1985,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     playerData->netHandler->pwrite(sMsgBuf, 4);
   }
 
-  // make them wait from the time they left,
-  // but only if they aren't already waiting
-  if (rejoinList.waitTime (playerIndex) <= 0.0f) {
+  // make them wait from the time they left, but only if they are
+  // not already waiting, and they are not currently an observer.
+  if ((playerData->player.getTeam() != ObserverTeam) &&
+      (rejoinList.waitTime (playerIndex) <= 0.0f)) {
     rejoinList.add (playerIndex);
   }
 
