@@ -40,6 +40,7 @@ noinst_HEADERS =			\
 	EighthDBoxSceneNode.h		\
 	EighthDPyrSceneNode.h		\
 	EighthDimSceneNode.h		\
+	EighthDimShellNode.h		\
 	EmptySceneNodeGenerator.h	\
 	ErrorHandler.h			\
 	FileManager.h			\

@@ -19,6 +19,7 @@ libGeometry_a_SOURCES  =		\
 	MeshPolySceneNode.cxx		\
 	PolyWallSceneNode.cxx		\
 	EighthDimSceneNode.cxx		\
+	EighthDimShellNode.cxx		\
 	EighthDBaseSceneNode.cxx	\
 	EighthDBoxSceneNode.cxx		\
 	EighthDPyrSceneNode.cxx		\
