@@ -233,10 +233,6 @@ SOURCE=..\..\src\geometry\EighthDPyrSceneNode.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\EighthDTetraSceneNode.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\geometry\FlagSceneNode.cxx
 # End Source File
 # Begin Source File
@@ -246,6 +242,10 @@ SOURCE=..\..\src\geometry\FlagWarpSceneNode.cxx
 # Begin Source File
 
 SOURCE=..\..\src\geometry\LaserSceneNode.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\geometry\MeshFragSceneNode.cxx
 # End Source File
 # Begin Source File
 
@@ -353,10 +353,6 @@ SOURCE=..\..\include\EighthDPyrSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\EighthDTetraSceneNode.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\FlagSceneNode.h
 # End Source File
 # Begin Source File
@@ -370,6 +366,10 @@ SOURCE=..\..\include\global.h
 # Begin Source File
 
 SOURCE=..\..\include\LaserSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\MeshFragSceneNode.h
 # End Source File
 # Begin Source File
 

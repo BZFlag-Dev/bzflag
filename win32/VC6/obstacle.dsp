@@ -209,10 +209,6 @@ SOURCE=..\..\src\obstacle\TetraBuilding.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\obstacle\TetraSceneNodeGenerator.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\obstacle\SphereObstacle.cxx
 # End Source File
 # Begin Source File
@@ -358,10 +354,6 @@ SOURCE=..\..\include\TeleporterSceneNodeGenerator.h
 # Begin Source File
 
 SOURCE=..\..\include\TetraBuilding.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\TetraSceneNodeGenerator.h
 # End Source File
 # Begin Source File
 
