@@ -159,6 +159,7 @@ static std::vector<std::string>	silencePlayers;
 static void		restartPlaying();
 static void		setTarget();
 static void		setHuntTarget();
+static void*		handleMsgSetVars(void *msg);
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
@@ -3390,39 +3391,8 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgSetVar: {
-	uint16_t numVars;
-	uint8_t oldNLen = 30, oldVLen = 30;
-	uint8_t nameLen, valueLen;
-
-	char* name = new char[oldNLen+1];
-	char* value = new char[oldVLen+1];
-
-	msg = nboUnpackUShort(msg,numVars);
-	for (int i = 0; i < numVars; i++) {
-	  msg = nboUnpackUByte(msg, nameLen);
-	  if (nameLen > oldNLen) {
-	    delete[] name;
-	    name = new char[nameLen+1];
-	    oldNLen = nameLen;
-	  }
-	  msg = nboUnpackString(msg, name, nameLen);
-	  name[nameLen] = '\0';
-
-	  msg = nboUnpackUByte(msg, valueLen);
-	  if (valueLen > oldVLen) {
-	    delete[] value;
-	    value = new char[valueLen+1];
-	    oldVLen = valueLen;
-	  }
-	  msg = nboUnpackString(msg, value, valueLen);
-	  value[valueLen] = '\0';
-	  BZDB->set(name, value);
-	  BZDB->setPersistent(name, false);
-	  BZDB->setPermission(name, StateDatabase::Locked);
-	}
-	delete[] name;
-	delete[] value;
-	break;
+      msg = handleMsgSetVars(msg);
+      break;
     }
 
     case MsgTeleport: {
@@ -4038,6 +4008,31 @@ static void		handleMyTankKilled(int reason)
   myTank->changeScore(0, 1, 0);
 }
 #endif
+
+static void *handleMsgSetVars(void *msg)
+{
+  uint16_t numVars;
+  uint8_t nameLen, valueLen;
+
+  char name[MaxPacketLen];
+  char value[MaxPacketLen];
+
+  msg = nboUnpackUShort(msg, numVars);
+  for (int i = 0; i < numVars; i++) {
+    msg = nboUnpackUByte(msg, nameLen);
+    msg = nboUnpackString(msg, name, nameLen);
+    name[nameLen] = '\0';
+
+    msg = nboUnpackUByte(msg, valueLen);
+    msg = nboUnpackString(msg, value, valueLen);
+    value[valueLen] = '\0';
+
+    BZDB->set(name, value);
+    BZDB->setPersistent(name, false);
+    BZDB->setPermission(name, StateDatabase::Locked);
+  }
+  return msg;
+}
 
 static void		handleFlagDropped(Player* tank)
 {
@@ -4745,9 +4740,9 @@ static void		addRobots()
   for (int j = 0; j < numRobots;) {
 
 #if !defined(_WIN32)
-	snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
+    snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
 #else
-	sprintf(callsign, "%s%2.2d", myTank->getCallSign(), j);
+    sprintf(callsign, "%s%2.2d", myTank->getCallSign(), j);
 #endif
 
     robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
@@ -5223,41 +5218,9 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	// internally
 	break;
       case MsgSetVar: {
-	uint16_t numVars;
-	uint8_t oldNLen = 30, oldVLen = 30;
-	uint8_t nameLen, valueLen;
-
-	char* name = new char[oldNLen+1];
-	char* value = new char[oldVLen+1];
-
-	buf = nboUnpackUShort(buf,numVars);
-	for (int i = 0; i < numVars; i++) {
-	  buf = nboUnpackUByte(buf, nameLen);
-	  if (nameLen > oldNLen) {
-	    delete[] name;
-	    name = new char[nameLen+1];
-	    oldNLen = nameLen;
-	  }
-	  buf = nboUnpackString(buf, name, nameLen);
-	  name[nameLen] = '\0';
-
-	  buf = nboUnpackUByte(buf, valueLen);
-	  if (valueLen > oldVLen) {
-	    delete[] value;
-	    value = new char[valueLen+1];
-	    oldVLen = valueLen;
-	  }
-	  buf = nboUnpackString(buf, value, valueLen);
-	  value[valueLen] = '\0';
-	  BZDB->set(name, value);
-	  BZDB->setPersistent(name, false);
-	  BZDB->setPermission(name, StateDatabase::Locked);
-	}
-	delete[] name;
-	delete[] value;
+        buf = handleMsgSetVars(buf);
 	break;
-	}
-
+      }
     }
 
     if (time(0)>timeout) goto failed;
