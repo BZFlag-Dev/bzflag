@@ -49,6 +49,7 @@ GState::GState() :texture(),
 class OpenGLGStateRep : public GState {
 public:
 	OpenGLGStateRep();
+	~OpenGLGStateRep();
 
 	void				ref();
 	void				unref();
@@ -69,7 +70,6 @@ public:
 
 private:
 	OpenGLGStateRep(const OpenGLGStateRep&);
-	~OpenGLGStateRep();
 
 	void				doSetState();
 
