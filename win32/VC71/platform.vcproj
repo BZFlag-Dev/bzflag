@@ -139,6 +139,26 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\platform\BzfJoystick.cxx">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\src\platform\BzfMedia.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -259,6 +279,26 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\platform\WinJoystick.cxx">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\src\platform\WinMedia.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -355,6 +395,9 @@
 				RelativePath="..\include\bzfio.h">
 			</File>
 			<File
+				RelativePath="..\include\BzfJoystick.h">
+			</File>
+			<File
 				RelativePath="..\include\BzfMedia.h">
 			</File>
 			<File
@@ -392,6 +435,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\platform\WinDisplay.h">
+			</File>
+			<File
+				RelativePath="..\..\src\platform\WinJoystick.h">
 			</File>
 			<File
 				RelativePath="..\..\src\platform\WinMedia.h">
