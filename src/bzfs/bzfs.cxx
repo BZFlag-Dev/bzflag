@@ -2205,12 +2205,6 @@ static void addPlayer(int playerIndex)
     numplayers+=team[i].team.size;
   }
 
-  int numobservers = 0;
-  for (i=0;i<curMaxPlayers;i++) {
-    if (i != playerIndex && player[i].state > PlayerInLimbo &&
-	player[i].team == ObserverTeam)
-      numobservers++;
-  }
   // automatically assign the player's team
   if (((clOptions->autoTeam) && (t < (int)ObserverTeam)) ||
       (t == AutomaticTeam)) {
