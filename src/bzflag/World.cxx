@@ -716,8 +716,8 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[3]);
 	buf = nboUnpackFloat(buf, data[4]);
 	buf = nboUnpackFloat(buf, data[5]);
-	WallObstacle pyr(data, data[3], data[4], data[5]);
-	append(pyr);
+	WallObstacle wall(data, data[3], data[4], data[5]);
+	append(wall);
 	break;
       }
       case WorldCodeBase: {
