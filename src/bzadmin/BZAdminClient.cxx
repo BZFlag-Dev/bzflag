@@ -56,7 +56,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
   char inbuf[MaxPacketLen];
   int e;
   std::string dstName, srcName;
-  str = "";
+  std::string returnString = "";
   int i;
 
   /* read until we have a package that we want, or until there are no more
@@ -95,8 +95,9 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 	BZDB.setPersistent(name, false);
 	BZDB.setPermission(name, StateDatabase::Locked);
       }
+      str = returnString;
       return GotMessage;
-      
+
     case MsgAddPlayer:
 
       vbuf = nboUnpackUByte(vbuf, p);
@@ -115,15 +116,17 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       players[p].append(callsign);
       if (ui != NULL)
 	ui->addedPlayer(p);
-      str = str + "*** '" + callsign + "' joined the game.";
+      returnString = returnString + "*** '" + callsign + "' joined the game.";
+      str = returnString;
       return GotMessage;
 
     case MsgRemovePlayer:
       vbuf = nboUnpackUByte(vbuf, p);
-      str = str + "*** '" + players[p] + "' left the game.";
+      returnString = returnString + "*** '" + players[p] + "' left the game.";
       if (ui != NULL)
 	ui->removingPlayer(p);
       players.erase(p);
+      str = returnString;
       return GotMessage;
 
     case MsgKilled:
@@ -139,18 +142,20 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       victimName = (it != players.end() ? it->second : "<unknown>");
       it = players.find(killer);
       killerName = (it != players.end() ? it->second : "<unknown>");
-      str = "*** ";
-      str += victimName + ": ";
+      returnString = "*** ";
+      returnString += victimName + ": ";
       if (killer == victim) {
-	str += "blew myself up";
+	returnString += "blew myself up";
       }
       else {
-	str += "destroyed by ";
-	str += killerName;
+	returnString += "destroyed by ";
+	returnString += killerName;
       }
+      str = returnString;
       return GotMessage;
 
     case MsgSuperKill:
+      str = returnString;
       return Superkilled;
 
     case MsgMessage:
@@ -166,14 +171,15 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
       if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
-	str = (char*)vbuf;
-	if (str == "CLIENTQUERY") {
+	returnString = std::string((char*)vbuf);
+	if (returnString == "CLIENTQUERY") {
 	  sendMessage(std::string("bzadmin ") + getAppVersion(), src);
 	  if (ui != NULL)
 	    ui->outputMessage("    [Sent versioninfo per request]");
 	}
 	else {
-	  str = formatMessage((char*)vbuf, src, dst, dstTeam, me);
+	  returnString = formatMessage((char*)vbuf, src, dst, dstTeam, me);
+	  str = returnString;
 	  return GotMessage;
 	}
       }
@@ -181,9 +187,11 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
   }
 
   if (sLink.getState() != ServerLink::Okay) {
+    str = returnString;
     return CommError;
   }
 
+  str = returnString;
   return NoMessage;
 }
 
