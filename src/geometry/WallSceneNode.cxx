@@ -19,8 +19,6 @@
 #include "PolyWallSceneNode.h"
 #include "StateDatabase.h"
 
-int WallSceneNode::maxLOD = -1;
-
 WallSceneNode::WallSceneNode() : numLODs(0),
 				elementAreas(NULL),
 				style(0)
@@ -37,24 +35,12 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   setLightedColor(1.0f, 1.0f, 1.0f);
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
   ZFlip = false;
-
-  if (maxLOD < 0) {
-    maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
-    BZDB->addCallback(StateDatabase::BZDB_MAXLOD, callback, NULL);
-  }
 }
 
 WallSceneNode::~WallSceneNode()
 {
   // free element area table
   delete[] elementAreas;
-}
-
-void WallSceneNode::callback(const std::string& name, void *userData)
-{
-  WallSceneNode *node = reinterpret_cast<WallSceneNode*>(userData);
-  if (name == StateDatabase::BZDB_MAXLOD) 
-    node->maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
 }
 
 void			WallSceneNode::setNumLODs(int num, float* areas)

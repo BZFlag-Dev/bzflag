@@ -14,6 +14,7 @@
 #include "common.h"
 #include "SceneNode.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 #ifndef __MINGW32__
 void			(__stdcall *SceneNode::color3f)(GLfloat, GLfloat, GLfloat);
@@ -22,6 +23,8 @@ void			(__stdcall *SceneNode::color3fv)(const GLfloat*);
 void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
 #endif
 void			(*SceneNode::stipple)(GLfloat);
+
+int SceneNode::maxLOD = -1;
 
 SceneNode::SceneNode() : styleMailbox(0)
 {
@@ -34,11 +37,22 @@ SceneNode::SceneNode() : styleMailbox(0)
 
   setCenter(0.0f, 0.0f, 0.0f);
   setRadius(0.0f);
+
+  if (maxLOD < 0) {
+    maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
+    BZDB->addCallback(StateDatabase::BZDB_MAXLOD, callback, NULL);
+  }
 }
 
 SceneNode::~SceneNode()
 {
   // do nothing
+}
+
+void SceneNode::callback(const std::string& name, void *userData)
+{
+  if (name == StateDatabase::BZDB_MAXLOD) 
+    maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
 }
 
 #if defined(sun)
