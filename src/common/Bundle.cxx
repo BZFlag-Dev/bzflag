@@ -18,8 +18,6 @@
 #include "Bundle.h"
 
 // system headers
-#include <string>
-#include <vector>
 #include <fstream>
 #include <stdio.h>
 
