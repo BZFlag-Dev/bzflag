@@ -4588,16 +4588,18 @@ static void		setRobotTarget(RobotPlayer* robot)
   float bestPriority = 0.0f;
   for (int j = 0; j < curMaxPlayers; j++)
     if (player[j] && player[j]->getId() != robot->getId() &&
-	player[j]->isAlive() && (robot->getTeam() == RogueTeam ||
-	player[j]->getTeam() != robot->getTeam())) {
+	player[j]->isAlive() &&
+	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit())
+	 || player[j]->getTeam() != robot->getTeam())) {
       const float priority = robot->getTargetPriority(player[j]);
       if (priority > bestPriority) {
 	bestTarget = player[j];
 	bestPriority = priority;
       }
     }
-  if (myTank->isAlive() && (robot->getTeam() == RogueTeam ||
-				myTank->getTeam() != robot->getTeam())) {
+  if (myTank->isAlive() &&
+      ((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit()) ||
+       myTank->getTeam() != robot->getTeam())) {
     const float priority = robot->getTargetPriority(myTank);
     if (priority > bestPriority) {
       bestTarget = myTank;
