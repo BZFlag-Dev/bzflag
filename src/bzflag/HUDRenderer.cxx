@@ -106,56 +106,8 @@ std::string		HUDRenderer::restartLabelFormat("Press %s to start");
 std::string		HUDRenderer::resumeLabel("Press Pause to resume");
 std::string		HUDRenderer::cancelDestructLabel("Press Destruct to cancel");
 std::string		HUDRenderer::gameOverLabel("GAME OVER");
-const char*		HUDRenderer::flagHelpString[int(LastFlag) -
-							int(FirstFlag) + 1] = {
-"",
-"You have no flag.",
-"Your team's flag:  prevent other teams from capturing it!",
-"Opponent's team flag:  take it to your base to capture it!",
-"Velocity (+V):  Tank moves faster.  Outrun bad guys.",
-"Angular velocity (+A):  Tank turns faster.  Dodge quicker.",
-"Oscillation Overthruster (+OO):  Can drive through buildings.  "
-		"Can't backup or shoot while inside.",
-"rapid Fire (+F):  Shoots more often.  Shells go faster but not as far.",
-"Machine Gun (+MG):  Very fast reload and very short range.",
-"Guided Missile (+GM):  Shots track a target.  "
-		"Lock on with right button.  "
-		"Can lock on or retarget after firing.",
-"Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time.",
-"Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!",
-"SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone.",
-"Invisible Bullet (+IB):  Your shots don't appear on other radars.  "
-		"Can still see them out window.",
-"STealth (+ST):  Tank is invisible on radar.  "
-		"Shots are still visible.  Sneak up behind enemies!",
-"Tiny (+T):  Tank is small and can get through small openings.  "
-		"Very hard to hit.",
-"Narrow (+N):  Tank is super thin.  Very hard to hit from front but is "
-		"normal size from side.  Can get through small openings.",
-"SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time.",
-"SteamRoller (+SR):  Destroys tanks you touch but you have to get really close.",
-"Shock Wave (+SW):  Firing destroys all tanks nearby.  "
-		"Don't kill teammates!  Can kill tanks on/in buildings.",
-"Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  "
-		"Zoned tank can drive through buildings.  "
-		"Zoned tank can't shoot or be shot (except by "
-		"superbullet and shock wave).",
-"Genocide (+G):  Killing one tank kills that tank's whole team.",
-"JumPing (+JP):  Tank can jump.  Use Tab key.  Can't steer in the air.",
-"IDentify (+ID):  Identifies type of nearest flag.",
-"CLoaking (+CL):  Makes your tank invisible out-the-window.  "
-		"Still visible on radar.",
-"ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!",
-"Obesity (-O):  Tank becomes very large.  Can't fit through teleporters.",
-"left turn only (- <-):  Can't turn right.",
-"right turn only (- ->):  Can't turn left.",
-"Momentum (-M):  Tank has inertia.  Acceleration is limited.",
-"Blindness (-B):  Can't see out window.  Radar still works.",
-"JaMming (-JM):  Radar doesn't work.  Can still see.",
-"Wide Angle (-WA):  Fish-eye lens distorts view."
-			};
 
-HUDRenderer::HUDRenderer(const BzfDisplay* _display,
+HUDRenderer::HUDRenderer(const BzfDisplay* _display, 
 				const SceneRenderer& renderer) :
 				display(_display),
 				window(renderer.getWindow()),
@@ -345,7 +297,7 @@ void			HUDRenderer::setMinorFontSize(int, int height)
 
   // make flag help messages
   for (int i = 0; i < int(LastFlag) - int(FirstFlag) + 1; i++)
-    flagHelp[i] = makeHelpString(flagHelpString[i]);
+	  flagHelp[i] = makeHelpString(Flag::getHelp((FlagId)i));
 }
 
 void			HUDRenderer::setHeadingFontSize(int, int height)
@@ -532,17 +484,7 @@ void			HUDRenderer::setComposing(const std::string &prompt,
 
 void			HUDRenderer::setFlagHelp(FlagId id, float duration)
 {
-  if (id == NoFlag)
-    flagHelpIndex = 1;
-  else if (LocalPlayer::getMyTank() &&
-		int(id) == int(LocalPlayer::getMyTank()->getTeam()))
-    flagHelpIndex = 2;
-  else if (int(id) >= int(FirstTeamFlag) && int(id) <= int(LastTeamFlag))
-    flagHelpIndex = 3;
-  else if (int(id) < int(FirstSuperFlag) || int(id) > int(LastSuperFlag))
-    flagHelpIndex = 0;
-  else
-    flagHelpIndex = int(id) - int(FirstFlag);
+  flagHelpIndex = id;
   flagHelpClock.setClock(duration);
 
   // count the number of lines in the help message

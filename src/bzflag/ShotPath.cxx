@@ -17,6 +17,7 @@
 #include "Protocol.h"
 #include "PlayerLink.h"
 #include "playing.h"
+#include "Flag.h"
 
 //
 // FiringInfo (with BaseLocalPlayer)
@@ -53,61 +54,36 @@ ShotPath::ShotPath(const FiringInfo& info) :
   // each flag should be a flyweight object derived from a
   // base Flag class with a virtual makeShotStrategy() member.
   // just remember -- it's only a game.
-  switch (firingInfo.flag) {
-    case NoFlag:
-    case RedFlag:
-    case GreenFlag:
-    case BlueFlag:
-    case PurpleFlag:
-    case VelocityFlag:
-    case QuickTurnFlag:
-    case OscOverthrusterFlag:
-    case InvisibleBulletFlag:
-    case StealthFlag:
-    case TinyFlag:
-    case NarrowFlag:
-    case ShieldFlag:
-    case SteamrollerFlag:
-    case IdentifyFlag:
-    case CloakingFlag:
-    case PhantomZoneFlag:
-    case JumpingFlag:
-    case GenocideFlag:
-    case ColorblindnessFlag:
-    case ObesityFlag:
-    case LeftTurnOnlyFlag:
-    case RightTurnOnlyFlag:
-    case MomentumFlag:
-    case BlindnessFlag:
-    case JammingFlag:
-    case WideAngleFlag:
+  if (Flag::getShotType( firingInfo.flag) == NormalShot)
       strategy = new NormalShotStrategy(this);
-      break;
-    case RapidFireFlag:
-      strategy = new RapidFireStrategy(this);
-      break;
-    case MachineGunFlag:
-      strategy = new MachineGunStrategy(this);
-      break;
-    case GuidedMissileFlag:
-      strategy = new GuidedMissileStrategy(this);
-      break;
-    case LaserFlag:
-      strategy = new LaserStrategy(this);
-      break;
-    case RicochetFlag:
-      strategy = new RicochetStrategy(this);
-      break;
-    case SuperBulletFlag:
-      strategy = new SuperBulletStrategy(this);
-      break;
-    case ShockWaveFlag:
-      strategy = new ShockWaveStrategy(this);
-      break;
-    default:
-      // shouldn't happen
-      assert(0);
-      break;
+  else {
+	  switch (firingInfo.flag) {
+	    case RapidFireFlag:
+	      strategy = new RapidFireStrategy(this);
+	      break;
+	    case MachineGunFlag:
+	      strategy = new MachineGunStrategy(this);
+	      break;
+	    case GuidedMissileFlag:
+	      strategy = new GuidedMissileStrategy(this);
+	      break;
+	    case LaserFlag:
+	      strategy = new LaserStrategy(this);
+	      break;
+	    case RicochetFlag:
+	      strategy = new RicochetStrategy(this);
+	      break;
+	    case SuperBulletFlag:
+	      strategy = new SuperBulletStrategy(this);
+	      break;
+	    case ShockWaveFlag:
+	      strategy = new ShockWaveStrategy(this);
+	      break;
+	    default:
+	      // shouldn't happen
+	      assert(0);
+	      break;
+	  }
   }
 }
 

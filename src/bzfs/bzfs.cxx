@@ -7032,27 +7032,9 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       }
 
       if (strcmp(argv[i], "good") == 0) {
-	options.flagCount[VelocityFlag] += rptCnt;
-	options.flagCount[QuickTurnFlag] += rptCnt;
-	options.flagCount[OscOverthrusterFlag] += rptCnt;
-	options.flagCount[RapidFireFlag] += rptCnt;
-	options.flagCount[MachineGunFlag] += rptCnt;
-	options.flagCount[GuidedMissileFlag] += rptCnt;
-	options.flagCount[LaserFlag] += rptCnt;
-	options.flagCount[RicochetFlag] += rptCnt;
-	options.flagCount[SuperBulletFlag] += rptCnt;
-	options.flagCount[InvisibleBulletFlag] += rptCnt;
-	options.flagCount[StealthFlag] += rptCnt;
-	options.flagCount[TinyFlag] += rptCnt;
-	options.flagCount[NarrowFlag] += rptCnt;
-	options.flagCount[ShieldFlag] += rptCnt;
-	options.flagCount[SteamrollerFlag] += rptCnt;
-	options.flagCount[ShockWaveFlag] += rptCnt;
-	options.flagCount[PhantomZoneFlag] += rptCnt;
-	options.flagCount[GenocideFlag] += rptCnt;
-	options.flagCount[JumpingFlag] += rptCnt;
-	options.flagCount[IdentifyFlag] += rptCnt;
-	options.flagCount[CloakingFlag] += rptCnt;
+	FlagSet goodFlags = Flag::getGoodFlags();
+	for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
+	  options.flagCount[*it]++;
       }
       else {
 	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
@@ -7208,14 +7190,9 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	usage(argv[0]);
       }
       if (strcmp(argv[i], "bad") == 0) {
-	options.flagDisallowed[ColorblindnessFlag] = true;
-	options.flagDisallowed[ObesityFlag] = true;
-	options.flagDisallowed[LeftTurnOnlyFlag] = true;
-	options.flagDisallowed[RightTurnOnlyFlag] = true;
-	options.flagDisallowed[MomentumFlag] = true;
-	options.flagDisallowed[BlindnessFlag] = true;
-	options.flagDisallowed[JammingFlag] = true;
-	options.flagDisallowed[WideAngleFlag] = true;
+	FlagSet badFlags = Flag::getBadFlags();
+	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
+	  options.flagDisallowed[*it] = true;
       }
       else {
 	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {

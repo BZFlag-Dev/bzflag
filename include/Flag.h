@@ -17,6 +17,7 @@
 #ifndef	BZF_FLAG_H
 #define	BZF_FLAG_H
 
+#include <set>
 #include "common.h"
 #include "global.h"
 #include "Address.h"
@@ -35,16 +36,33 @@ enum FlagType {
 			FlagSticky = 2		// can't be dropped normally
 };
 
+enum FlagQuality {
+			FlagGood = 0,
+			FlagBad = 1,
+			NumQualities
+};
+
+enum ShotType {
+			NormalShot = 0,
+			SpecialShot = 1
+};
+
 const int		FlagPLen = 6 + PlayerIdPLen + 48;
+
+typedef std::set<FlagId> FlagSet;
 
 class Flag {
   public:
     void*		pack(void*) const;
     void*		unpack(void*);
 
+    static FlagSet&	getGoodFlags();
+    static FlagSet&	getBadFlags();
     static const char*	getName(FlagId);
     static const char*	getAbbreviation(FlagId);
     static FlagType	getType(FlagId);
+    static const char*	getHelp(FlagId);
+    static ShotType	getShotType(FlagId);
     static const float*	getColor(FlagId);
 
   public:
@@ -60,8 +78,31 @@ class Flag {
     float		initialVelocity;	// initial launch velocity
 
   private:
-    static const char*	flagName[];
-    static const char*	flagAbbv[];
+    class Desc
+    {
+    public:
+	Desc( const char* name, const char *abbv, FlagType fType, ShotType sType, FlagQuality quality, const char *help ) {
+		flagName = name;
+		flagAbbv = abbv;
+		flagType = fType;
+		flagShot = sType;
+		flagQuality = quality;
+		flagHelp = help;
+
+		flagSets[flagQuality].insert((FlagId) flagCount++);
+	}
+	const char*	flagName;
+	const char*	flagAbbv;
+	FlagType	flagType;
+	const char*	flagHelp;
+	FlagQuality	flagQuality;
+	ShotType	flagShot;
+
+	static int	flagCount;
+	static FlagSet	flagSets[NumQualities];
+    };
+
+    static Desc descriptions[];
 };
 
 #endif // BZF_FLAG_H
