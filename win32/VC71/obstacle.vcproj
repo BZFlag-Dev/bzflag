@@ -263,58 +263,58 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\include\BaseBuilding.h">
+				RelativePath="..\..\include\BaseBuilding.h">
 			</File>
 			<File
-				RelativePath="..\include\BoxBuilding.h">
+				RelativePath="..\..\include\BoxBuilding.h">
 			</File>
 			<File
-				RelativePath="..\include\bzfgl.h">
+				RelativePath="..\..\include\bzfgl.h">
 			</File>
 			<File
-				RelativePath="..\include\bzfio.h">
+				RelativePath="..\..\include\bzfio.h">
 			</File>
 			<File
-				RelativePath="..\include\BzfString.h">
+				RelativePath="..\..\include\BzfString.h">
 			</File>
 			<File
-				RelativePath="..\include\common.h">
+				RelativePath="..\..\include\common.h">
 			</File>
 			<File
-				RelativePath="..\include\Intersect.h">
+				RelativePath="..\..\include\Intersect.h">
 			</File>
 			<File
-				RelativePath="..\include\Obstacle.h">
+				RelativePath="..\..\include\Obstacle.h">
 			</File>
 			<File
-				RelativePath="..\include\OpenGLGState.h">
+				RelativePath="..\..\include\OpenGLGState.h">
 			</File>
 			<File
-				RelativePath="..\include\PyramidBuilding.h">
+				RelativePath="..\..\include\PyramidBuilding.h">
 			</File>
 			<File
-				RelativePath="..\include\QuadWallSceneNode.h">
+				RelativePath="..\..\include\QuadWallSceneNode.h">
 			</File>
 			<File
-				RelativePath="..\include\Ray.h">
+				RelativePath="..\..\include\Ray.h">
 			</File>
 			<File
-				RelativePath="..\include\RenderNode.h">
+				RelativePath="..\..\include\RenderNode.h">
 			</File>
 			<File
-				RelativePath="..\include\SceneNode.h">
+				RelativePath="..\..\include\SceneNode.h">
 			</File>
 			<File
-				RelativePath="..\include\Teleporter.h">
+				RelativePath="..\..\include\Teleporter.h">
 			</File>
 			<File
-				RelativePath="..\include\TriWallSceneNode.h">
+				RelativePath="..\..\include\TriWallSceneNode.h">
 			</File>
 			<File
-				RelativePath="..\include\WallObstacle.h">
+				RelativePath="..\..\include\WallObstacle.h">
 			</File>
 			<File
-				RelativePath="..\include\WallSceneNode.h">
+				RelativePath="..\..\include\WallSceneNode.h">
 			</File>
 		</Filter>
 	</Files>
