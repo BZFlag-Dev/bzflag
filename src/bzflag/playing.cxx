@@ -4163,7 +4163,7 @@ void			drawFrame(const float dt)
 	else if (roamView == roamViewFP) {
 	  eyePoint[0] = target->getPosition()[0];
 	  eyePoint[1] = target->getPosition()[1];
-	  eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
+	  eyePoint[2] = target->getPosition()[2] + muzzleHeight;
 	  targetPoint[0] = eyePoint[0] + targetTankDir[0];
 	  targetPoint[1] = eyePoint[1] + targetTankDir[1];
 	  targetPoint[2] = eyePoint[2] + targetTankDir[2];
