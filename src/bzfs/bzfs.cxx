@@ -3211,15 +3211,16 @@ static void adjustTolerances()
 
 bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 {
-  PlayerInfo player = playerData->player;
+  PlayerInfo &player = playerData->player;
   const std::string &oldMsg = player.getLastMsg();
   float dt = TimeKeeper::getCurrent() - player.getLastMsgTime();
 
   // don't consider whitespace
   std::string newMsg = TextUtils::no_whitespace(message);
 
-  // if it's first message, or enough time since last message - can't be spam yet
-  if (oldMsg.length() > 0 && dt > clOptions->msgTimer) {
+  // if it's first message, or enough time since last message - can't
+  // be spam yet
+  if (oldMsg.length() > 0 && dt < clOptions->msgTimer) {
     // might be spam, start doing comparisons
     // does it match the last message? (disregarding whitespace and case)
     if (TextUtils::compare_nocase(newMsg, oldMsg) == 0) {
@@ -3227,9 +3228,11 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
       sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
 
       // has this player already had his share of warnings?
-      if (player.getSpamWarns() > clOptions->spamWarnMax || clOptions->spamWarnMax == 0) {
+      if (player.getSpamWarns() > clOptions->spamWarnMax
+	  || clOptions->spamWarnMax == 0) {
 	sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-	DEBUG2("Kicking player %s [%d] for spamming too much: 2 messages sent within %ds after %d warnings",
+	DEBUG2("Kicking player %s [%d] for spamming too much: \
+2 messages sent within %fs after %d warnings",
 	       player.getCallSign(), t, dt, player.getSpamWarns());
 	removePlayer(t, "spam");
 	return true;

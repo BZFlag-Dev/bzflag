@@ -51,7 +51,7 @@ struct CmdLineOptions
 {
   CmdLineOptions()
   : wksPort(ServerPort), gameStyle(PlainGameStyle),
-    rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(0),
+    rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(5),
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
     listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
