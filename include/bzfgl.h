@@ -36,7 +36,7 @@
 #endif
 
 /* These will track glBegin/End pairs to make sure that they match */
-#ifndef DEBUG
+#ifdef DEBUG
 extern int __beginendCount;
 #define glBegin(_value) {\
   if (__beginendCount==0) { \
