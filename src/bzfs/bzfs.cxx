@@ -120,10 +120,10 @@ struct PacketQueue {
 #endif
 #ifdef NETWORK_STATS
 struct MessageCount {
-	public:
-		uint32_t count;
-		uint16_t code;
-		uint16_t maxSize;
+  public:
+    uint32_t count;
+    uint16_t code;
+    uint16_t maxSize;
 };
 // does not include MsgNull
 #define MessageTypes 38
@@ -203,14 +203,14 @@ struct PlayerInfo {
     TimeKeeper lagkillertime;
 
 #ifdef NETWORK_STATS
-		// message stats bloat
-		TimeKeeper perSecondTime[2];
-		uint32_t perSecondCurrentBytes[2];
-		uint32_t perSecondMaxBytes[2];
-		uint32_t perSecondCurrentMsg[2];
-		uint32_t perSecondMaxMsg[2];
-		uint32_t msgBytes[2];
-		struct MessageCount msg[2][MessageTypes];
+    // message stats bloat
+    TimeKeeper perSecondTime[2];
+    uint32_t perSecondCurrentBytes[2];
+    uint32_t perSecondMaxBytes[2];
+    uint32_t perSecondCurrentMsg[2];
+    uint32_t perSecondMaxMsg[2];
+    uint32_t msgBytes[2];
+    struct MessageCount msg[2][MessageTypes];
 #endif
 };
 
@@ -263,7 +263,7 @@ class WorldInfo {
 	float pos[3];
 	float rotation;
 	float size[3];
-      ObstacleLocation &operator=( const ObstacleLocation &ol )
+      ObstacleLocation &operator=(const ObstacleLocation &ol)
       {
 	memcpy(pos, ol.pos, sizeof(float) * 3);
 	rotation = ol.rotation;
@@ -307,6 +307,95 @@ class ListServerLink {
     int socket;
     const char *nextMessage;
 };
+
+// FIXME this assumes that 255 is a wildcard
+// it should include a cidr mask with each address
+// it's still useful as is
+BZF_DEFINE_ALIST(IPMaskList, in_addr);
+
+class AccessControlList
+{
+public:
+  void ban(in_addr &ipAddr) {
+    banList.append(ipAddr);
+  }
+
+  void ban(BzfString &ipList) {
+    ban((char *)(const char *)ipList);
+  }
+
+  void ban(const char *ipList) {
+    char *pStart = (char *)(const char *)ipList;
+    char *pSemi;
+
+    in_addr mask;
+    while ((pSemi = strchr(pStart, ';')) != NULL) {
+      *pSemi = 0;
+      if (convert(pStart, mask))
+        ban(mask);
+      *pSemi = ';';
+      pStart = pSemi + 1;
+    }
+    if (convert(pStart, mask))
+      ban(mask);
+  }
+
+  bool validate(in_addr &ipAddr) {
+    int numBans = banList.getLength();
+    for (int i = 0; i < numBans; i++) {
+      in_addr mask = banList[i];
+      if (mask.S_un.S_un_b.s_b1 == 255)
+        mask.S_un.S_un_b.s_b1 = ipAddr.S_un.S_un_b.s_b1;
+      if (mask.S_un.S_un_b.s_b2 == 255)
+        mask.S_un.S_un_b.s_b2 = ipAddr.S_un.S_un_b.s_b2;
+      if (mask.S_un.S_un_b.s_b3 == 255)
+        mask.S_un.S_un_b.s_b3 = ipAddr.S_un.S_un_b.s_b3;
+      if (mask.S_un.S_un_b.s_b4 == 255)
+        mask.S_un.S_un_b.s_b4 = ipAddr.S_un.S_un_b.s_b4;
+
+      if (mask.S_un.S_addr == ipAddr.S_un.S_addr)
+        return false;
+    }
+    return true;
+  }
+
+private:
+
+  bool convert(char *ip, in_addr &mask) {
+    unsigned char b[4];
+    char *pPeriod;
+
+    for (int i = 0; i < 3; i++) {
+      pPeriod = strchr(ip, '.');
+      if (pPeriod) {
+        *pPeriod = 0;
+        if (strcmp("*", ip) == 0)
+          b[i] = 255;
+        else
+          b[i] = atoi(ip);
+        *pPeriod = '.';
+        ip = pPeriod + 1;
+      }
+      else
+        return false;
+    }
+    if (strcmp("*", ip) == 0)
+      b[3] = 255;
+    else
+      b[3] = atoi(ip);
+
+    mask.S_un.S_un_b.s_b1 = b[0];
+    mask.S_un.S_un_b.s_b2 = b[1];
+    mask.S_un.S_un_b.s_b3 = b[2];
+    mask.S_un.S_un_b.s_b4 = b[3];
+    return true;
+  }
+
+  IPMaskList  banList;
+};
+
+// access control list
+static AccessControlList acl;
 
 // server address to listen on
 static Address serverAddress;
@@ -594,10 +683,10 @@ bool CustomBase::read(const char *cmd, istream& input) {
   if (strcmp(cmd, "color") == 0) {
     input >> color;
     if ((color >= 0) && (color < NumTeams)) {
-	hasBase[color] = true;
+      hasBase[color] = true;
     }
     else
-	return False;
+      return False;
   }
   else {
     WorldFileObstacle::read(cmd, input);
@@ -896,7 +985,7 @@ int WorldInfo::packDatabase()
   int i;
   // add walls
   ObstacleLocation *pWall;
-  for (i = 0, pWall = walls ; i < numWalls ; i++, pWall++ ) {
+  for (i = 0, pWall = walls ; i < numWalls ; i++, pWall++) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
     databasePtr = nboPackVector(databasePtr, pWall->pos);
     databasePtr = nboPackFloat(databasePtr, pWall->rotation);
@@ -908,7 +997,7 @@ int WorldInfo::packDatabase()
 
   // add boxes
   ObstacleLocation *pBox;
-  for (i = 0, pBox = boxes ; i < numBoxes ; i++, pBox++ ) {
+  for (i = 0, pBox = boxes ; i < numBoxes ; i++, pBox++) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
     databasePtr = nboPackVector(databasePtr, pBox->pos);
     databasePtr = nboPackFloat(databasePtr, pBox->rotation);
@@ -917,7 +1006,7 @@ int WorldInfo::packDatabase()
 
   // add pyramids
   ObstacleLocation *pPyramid;
-  for (i = 0, pPyramid = pyramids ; i < numPyramids ; i++, pPyramid++ ) {
+  for (i = 0, pPyramid = pyramids ; i < numPyramids ; i++, pPyramid++) {
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
     databasePtr = nboPackVector(databasePtr, pPyramid->pos);
     databasePtr = nboPackFloat(databasePtr, pPyramid->rotation);
@@ -926,7 +1015,7 @@ int WorldInfo::packDatabase()
 
   // add teleporters
   Teleporter *pTeleporter;
-  for (i = 0, pTeleporter = teleporters ; i < numTeleporters ; i++, pTeleporter++ ) {
+  for (i = 0, pTeleporter = teleporters ; i < numTeleporters ; i++, pTeleporter++) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
     databasePtr = nboPackVector(databasePtr, pTeleporter->pos);
     databasePtr = nboPackFloat(databasePtr, pTeleporter->rotation);
@@ -1789,7 +1878,7 @@ static int uread(int *playerIndex, int *nopackets)
       disassemblePacket(pi, ubuf, nopackets);
 
       // old code is obsolete
-      // if (*nopackets > 6 )
+      // if (*nopackets > 6)
       //   pucdwrite(playerIndex);
     }
     // have something in the receive buffer? so get it
@@ -3047,7 +3136,7 @@ static WorldInfo *defineRandomWorld()
   float h = BoxHeight;
   for (i = 0; i < CitySize * CitySize; i++) {
     if (randomHeights)
-      h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f );
+      h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
 	  0.0f, 2.0f * M_PI * (float)bzfrand(),
@@ -3272,6 +3361,10 @@ static void acceptClient()
 
   struct sockaddr_in serverAddr;
   serverAddr.sin_port = htons(reconnectPort);
+
+  if (!acl.validate( clientAddr.sin_addr)) {
+	  serverAddr.sin_port = htons(0);
+  }
 
   // if don't want another player or couldn't make socket then refuse
   // connection by returning an obviously bogus port (port zero).
@@ -4449,6 +4542,19 @@ static void parseCommand(const char *message, int t)
       sendMessage(t, player[t].id, player[t].team, errormessage);
     }
   }
+  // /ban command allows operator to ban players based on ip
+  else if (player[t].Admin && strncmp(message+1, "ban", 3) == 0) {
+	acl.ban(message + 5);
+    char kickmessage[MessageLen];
+    for (int i = 0; i < maxPlayers; i++) {
+		if ((player[i].fd != NotConnected) && (!acl.validate( player[i].taddr.sin_addr))) {
+		  player[i].toBeKicked = false;
+		  sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
+		  sendMessage(i, player[i].id, player[i].team, kickmessage);
+		  removePlayer(i);
+		}
+	}
+  }
   // /lagstats gives simple statistics about players' lags
   else if (strncmp(message+1,"lagstats",8) == 0) {
     for (int i = 0; i < maxPlayers; i++) {
@@ -4760,6 +4866,7 @@ static void terminateServer(int /*sig*/)
 
 static const char *usageString =
 "[-a <vel> <rot>] [-b] [-c] [+f {good|<id>}] [-f {bad|<id>}] [-g] "
+"[-ban ip{;ip}*] "
 "[-h] "
 "[-i interface] "
 "[-j] "
@@ -4825,6 +4932,7 @@ static void extraUsage(const char *pname)
   cout << "usage: " << pname << " " << usageString << endl;
   cout << "\t -a: maximum acceleration settings" << endl;
   cout << "\t -b: randomly oriented buildings" << endl;
+  cout << "\t -ban ip{;ip}*: ban players based on ip address" << endl;
   cout << "\t -c: capture-the-flag style game" << endl;
 //  cout << "\t -d: increase debugging level" << endl;
   cout << "\t +f: always have flag <id> available" << endl;
@@ -5103,6 +5211,14 @@ static void parse(int argc, char **argv)
       // random rotation to boxes in capture-the-flag game
       randomBoxes = True;
     }
+	else if (strcmp(argv[i], "-ban") == 0) {
+		if (++i == argc) {
+			cerr << "argument expected for -f" << endl;
+			usage(argv[0]);
+		}
+		else
+			acl.ban(argv[i]);
+	}
     else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
       randomCTF = True;
