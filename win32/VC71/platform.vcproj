@@ -219,6 +219,12 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\platform\DXJoystick.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\platform\EvdevJoystick.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\platform\PlatformFactory.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -237,6 +243,9 @@
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\platform\SDLJoystick.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\platform\wave.cxx">
@@ -378,6 +387,9 @@
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="..\..\src\platform\XIJoystick.cxx">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -413,7 +425,13 @@
 				RelativePath="..\include\common.h">
 			</File>
 			<File
+				RelativePath="..\..\src\platform\DXJoystick.h">
+			</File>
+			<File
 				RelativePath="..\include\ErrorHandler.h">
+			</File>
+			<File
+				RelativePath="..\..\src\platform\EvdevJoystick.h">
 			</File>
 			<File
 				RelativePath="..\include\OpenGLGState.h">
@@ -426,6 +444,9 @@
 			</File>
 			<File
 				RelativePath="..\include\resource.h">
+			</File>
+			<File
+				RelativePath="..\..\src\platform\SDLJoystick.h">
 			</File>
 			<File
 				RelativePath="..\include\TimeKeeper.h">
@@ -450,6 +471,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\platform\WinWindow.h">
+			</File>
+			<File
+				RelativePath="..\..\src\platform\XIJoystick.h">
 			</File>
 		</Filter>
 	</Files>
