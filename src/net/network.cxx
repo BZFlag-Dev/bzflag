@@ -163,7 +163,9 @@ BzfString		BzfNetwork::dereferenceHTTP(
   // form request
   BzfString data("GET ");
   data += pathname;			// FIXME -- escape special characters
-  data += " HTTP/1.0\r\nAccept: */*\r\n\r\n";
+  data += " HTTP/1.0\r\nHost: ";
+  data += hostname;
+  data += "\r\nAccept: */*\r\n\r\n";
 
   // send request
   if (send(fd, (const char*)data, data.getLength(), 0) < 0) {
