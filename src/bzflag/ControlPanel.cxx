@@ -63,8 +63,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, int fontSize
 
   // in order for the new font engine to draw successive lines in the right
   // color, it needs to be fed the right ansi codes at the beginning of each
-  // line.  FIXME - storing ALL the codes is wasteful, clear this string
-  // when we come across a RESET code.
+  // line.
   std::string cumulativeANSICodes = "";
 
   // break lines
@@ -82,6 +81,12 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, int fontSize
       while ((n < lineLen) &&
 	     (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
+	  // clear the cumulative codes when we hit a reset
+	  // the reset itself will start the new cumulative string.
+	  if (strncmp(msg + n, ANSI_STR_RESET, strlen(ANSI_STR_RESET))
+	      || strncmp(msg + n, ANSI_STR_RESET_FINAL, strlen(ANSI_STR_RESET_FINAL)))
+	    cumulativeANSICodes = "";
+	  // add this code to our cumulative string
 	  cumulativeANSICodes += msg[n];
 	  n++;
 	  if ((n < lineLen) && (msg[n] == '[')) {
