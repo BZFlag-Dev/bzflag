@@ -746,7 +746,6 @@ void			OpenGLTexFont::draw(const char* string, int length,
           underline = uline_tmp;
 
           if (color_tmp != -1) {
-            if (cdebug)
             /* we could check up to the number of stored colors,
              * but we don't need that many
              */
