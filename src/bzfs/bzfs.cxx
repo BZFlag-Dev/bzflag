@@ -2117,6 +2117,10 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
   // player is sending a message to a particular player, a team, or all.
   // send MsgMessage
 
+  if (strlen(message) > (unsigned)MessageLen) {
+    DEBUG1("WARNING: Network message being sent is too long! (cutoff at %d)\n", MessageLen);
+  }
+
   // if fullBuffer=true, it means, that caller already passed a buffer
   // of size MessageLen and we can use that directly;
   // otherwise copy the message to a buffer of the correct size first
