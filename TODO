@@ -170,6 +170,11 @@ THESE ARE LOWER PRIORITY
    allow players to communicate via low-quality audio.
    already some support built into the server for this.
 
+* consider integrating with a real full-fledged sky model like stellarium for
+  more realistic skies: http://sourceforge.net/projects/stellarium/
+  very cool, but very low priority.
+
+
 THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * move -synctime data to different Msg packet, or create new one.
