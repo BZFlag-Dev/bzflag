@@ -2807,9 +2807,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
       }
 
-      if (World::getWorld()->allowRabbit())
-	victimPlayer->changeTeam(RogueTeam);
-
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
 	 !(killerPlayer == myTank && victimPlayer == myTank)) {
