@@ -1495,63 +1495,11 @@
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7B7747E905C5ABB30018EA21 = {
-			buildPhases = (
-				7B7747E705C5ABB30018EA21,
-				7B7747E805C5ABB30018EA21,
-			);
-			buildRules = (
-			);
-			buildSettings = {
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = bzfrelay;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-			};
-			dependencies = (
-			);
-			isa = PBXNativeTarget;
-			name = bzfrelay;
-			productName = bzfrelay;
-			productReference = 7B7747EA05C5ABB30018EA21;
-			productType = "com.apple.product-type.tool";
-		};
-		7B7747EA05C5ABB30018EA21 = {
-			explicitFileType = "compiled.mach-o.executable";
-			includeInIndex = 0;
-			isa = PBXFileReference;
-			path = bzfrelay;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		7B7747EF05C5AC270018EA21 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = bzfrelay.c;
-			path = ../../bzfrelay/bzfrelay.c;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		7B7747F005C5AC270018EA21 = {
 			fileRef = 7B7747EF05C5AC270018EA21;
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		7B7747F105C5AC2B0018EA21 = {
-			children = (
-				7B7747EF05C5AC270018EA21,
-			);
-			isa = PBXGroup;
-			name = bzfrelay;
-			refType = 4;
-			sourceTree = "<group>";
 		};
 		7B7747F205C5ACA40018EA21 = {
 			buildActionMask = 2147483647;
@@ -9393,13 +9341,6 @@
 			isa = PBXTargetDependency;
 			target = 7B9DCC7D05C5A62B0063B49D;
 			targetProxy = 7BC0420105C5D7560095DD69;
-		};
-		7BC0420305C5D7560095DD69 = {
-			containerPortal = 20286C28FDCF999611CA2CEA;
-			isa = PBXContainerItemProxy;
-			proxyType = 1;
-			remoteGlobalIDString = 7B7747E905C5ABB30018EA21;
-			remoteInfo = bzfrelay;
 		};
 		7BC0420405C5D7560095DD69 = {
 			isa = PBXTargetDependency;

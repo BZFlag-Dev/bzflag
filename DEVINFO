@@ -9,7 +9,6 @@ applications
 src/bzflag	- the BZFlag client
 src/bzfs	- the BZFlag server
 src/bzadmin	- the BZFlag admin tool and chat client
-src/bzfrelay	- the BZFlag relay (for relaying to servers)
 
 game dependent libraries
 ------------------------

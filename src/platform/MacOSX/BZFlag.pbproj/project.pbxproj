@@ -2031,13 +2031,6 @@
 			remoteGlobalIDString = 4E030DCF048EAE490009E055;
 			remoteInfo = bzfs;
 		};
-		145FFB3D057D90B20012E1CB = {
-			containerPortal = 29B97313FDCFA39411CA2CEA;
-			isa = PBXContainerItemProxy;
-			proxyType = 1;
-			remoteGlobalIDString = 4E030D84048E8A8D0009E055;
-			remoteInfo = bzfrelay;
-		};
 		145FFB3E057D90B20012E1CB = {
 			containerPortal = 29B97313FDCFA39411CA2CEA;
 			isa = PBXContainerItemProxy;
@@ -2065,13 +2058,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4E030DCF048EAE490009E055;
 			remoteInfo = bzfs;
-		};
-		145FFB42057D90B20012E1CB = {
-			containerPortal = 29B97313FDCFA39411CA2CEA;
-			isa = PBXContainerItemProxy;
-			proxyType = 1;
-			remoteGlobalIDString = 4E030D84048E8A8D0009E055;
-			remoteInfo = bzfrelay;
 		};
 		145FFB43057D90B20012E1CB = {
 			containerPortal = 29B97313FDCFA39411CA2CEA;
@@ -2229,14 +2215,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			path = bzflag.dsw;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		145FFBA4057D962A0012E1CB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = bzfrelay.dsp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5865,14 +5843,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		4E030B89048E70E70009E055 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = bzfrelay.6s;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		4E030B8A048E70E70009E055 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -7453,25 +7423,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			path = World.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		4E030C50048E70E70009E055 = {
-			children = (
-				149184CE0515751500A80164,
-				4E030C53048E70E70009E055,
-				4E030C51048E70E70009E055,
-			);
-			isa = PBXGroup;
-			path = bzfrelay;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		4E030C51048E70E70009E055 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = bzfrelay.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -9922,39 +9873,6 @@
 			);
 			isa = PBXRezBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4E030D84048E8A8D0009E055 = {
-			buildPhases = (
-				4E030D80048E8A8D0009E055,
-				4E030D81048E8A8D0009E055,
-				4E030D82048E8A8D0009E055,
-				4E030D83048E8A8D0009E055,
-			);
-			buildSettings = {
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = bzfrelay;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			dependencies = (
-				4E030DE2048ECCEF0009E055,
-			);
-			isa = PBXToolTarget;
-			name = bzfrelay;
-			productInstallPath = /usr/local/bin;
-			productName = bzfrelay;
-			productReference = 4E030D85048E8A8D0009E055;
-		};
-		4E030D85048E8A8D0009E055 = {
-			explicitFileType = "compiled.mach-o.executable";
-			fallbackIsa = PBXFileReference;
-			isa = PBXExecutableFileReference;
-			path = bzfrelay;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		4E030D87048E8AA10009E055 = {
 			fileRef = 4E030C51048E70E70009E055;

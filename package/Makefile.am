@@ -75,7 +75,6 @@ targets: binprep rpmprep
 #
 binprep:
 	strip ../src/bzflag/bzflag
-	strip ../src/bzfrelay/bzfrelay
 	strip ../src/bzfs/bzfs
 
 #

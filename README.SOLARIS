@@ -67,15 +67,6 @@ Known Problems:
 	finished - can't have Chris's hard work core dumping
 	now can we!
 
-- When compiling I get errors when make tries to build bzfrelay.
-
-	Time isn't on my side at the moment so this little utility
-	takes last place in the to-do list. I feel it's more
-	important to get the sound code working first.
-
-	Basically, ignore these errors! Everything has been
-	compiled correctly except bzfrelay.
-
 - There's no package installation for Solaris
 
 	Again, this isn't so important yet. You should be able

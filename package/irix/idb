@@ -1,6 +1,5 @@
 f 755 demos demos usr/freeware/bin/bzadmin ./src/bzadmin/bzadmin EOE
 f 755 demos demos usr/freeware/bin/bzflag ./src/bzflag/bzflag EOE exitop("tag 0x00fc8001 /usr/freeware/bin/bzflag; iconbookedit -add 'Category:File Name:/usr/freeware/bin/bzflag' -syspage Demos")
-f 755 demos demos usr/freeware/bin/bzfrelay ./src/bzfrelay/bzfrelay EOE
 f 755 demos demos usr/freeware/bin/bzfs ./src/bzfs/bzfs EOE exitop("tag 0x00fc8002 /usr/freeware/bin/bzfs; iconbookedit -add 'Category:File Name:/usr/freeware/bzfs' -syspage Demos")
 f 444 demos demos usr/freeware/share/bzflag/AUTHORS ./AUTHORS REQDATA
 f 444 demos demos usr/freeware/share/bzflag/BUGS ./BUGS REQDATA
@@ -114,5 +113,4 @@ f 444 root sys usr/lib/filetype/install/iconlib/bzflag.fti ./package/irix/bzflag
 f 444 root sys usr/lib/filetype/install/iconlib/bzfs.fti ./package/irix/bzfs.fti DESKTOP
 f 444 root sys usr/share/catman/local/cat6/bzadmin.6 ./man/bzadmin.6 MAN
 f 444 root sys usr/share/catman/local/cat6/bzflag.6 ./man/bzflag.6 MAN
-f 444 root sys usr/share/catman/local/cat6/bzfrelay.6 ./man/bzfrelay.6 MAN
 f 444 root sys usr/share/catman/local/cat6/bzfs.6 ./man/bzfs.6 MAN
