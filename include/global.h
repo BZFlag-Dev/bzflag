@@ -146,7 +146,7 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-extern GlobalDBItem		globalDBItems[51];
+extern GlobalDBItem		globalDBItems[52];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8

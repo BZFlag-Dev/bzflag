@@ -1697,6 +1697,10 @@ static void		doMotion()
 			rotation = -1.0f;
 		if (speed == 1.0f)
 			speed = 1.0f - fabs(rotation);
+
+		//fire too, why not?
+		myTank->fireShot();
+
 #ifdef DEBUG_ROBOT
 		// FIXME speed should drop as distance goes from say 40 to 0?
 		printf("p%d an%f az%f dis%f r%f s%f mp %3.1f:%3.1f tp %3.1f:%3.1f\n",

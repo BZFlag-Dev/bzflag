@@ -799,18 +799,15 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
+  f.lifetime *= BZDB->eval(StateDatabase::BZDB_THIEFADLIFE);
+  float thiefAdVel = BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
+  f.shot.vel[0] *= thiefAdVel;
+  f.shot.vel[1] *= thiefAdVel;
+  f.shot.vel[2] *= thiefAdVel;
   setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_THIEFADRATE));
 
   // make segments
-  f.shot.vel[0] /= 4.0f;
-  f.shot.vel[1] /= 4.0f;
-  f.shot.vel[2] /= 4.0f;
-
   makeSegments(Stop);
-  float thiefAdShotVel = BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
-  f.shot.vel[0] *= 4.0f * thiefAdShotVel;
-  f.shot.vel[1] *= 4.0f * thiefAdShotVel;
-  f.shot.vel[2] *= 4.0f * thiefAdShotVel;
   setCurrentTime(getLastTime());
   endTime = f.lifetime;
 
