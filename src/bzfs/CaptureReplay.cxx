@@ -56,20 +56,20 @@ typedef struct {
 } CRbuffer;
 
 typedef struct {
-  unsigned int magic;
-  unsigned int version;
-  char worldhash[64];
+  unsigned int magic;   // automatic for saves
+  unsigned int version; // automatic for saves
+  char worldhash[64];   // automatic for saves
   char padding[1024-2*sizeof(unsigned int)-64]; // all padding for now
 } ReplayHeader;
 
 // Local Variables
 // ---------------
 
+static const int ReplayMagic = 0x425A6372; // "BZcr"
+static const int ReplayVersion = 0x0001;
 static const int DefaultMaxBytes = (16 * 1024 * 1024); // 16 Mbytes
 static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
-static const char DefaultFileName[] = "capture.bzr";
-static const int ReplayMagic = 0x425A7270; // "BZrp"
-static const int ReplayVersion = 0x0001;
+
 static const int CRpacketDataLen = 
                    (sizeof (u16) * 2) + (sizeof (int) * 2) + sizeof (CRtime);
 
@@ -156,7 +156,7 @@ bool Capture::init ()
     fclose (CaptureFile);
     CaptureFile = NULL;
   }
-  if ((FileName != NULL) && (FileName != DefaultFileName)) {
+  if (FileName != NULL) {
     free (FileName);
     FileName = NULL;
   }
@@ -234,11 +234,11 @@ bool Capture::sendStats (int playerIndex)
   }
    
   if (CaptureMode == BufferedCapture) {
-    sprintf (buffer, "%i bytes, %i packets, time = %i\n",
+    sprintf (buffer, "  buffered: %i bytes, %i packets, time = %i\n",
              CaptureBuf.byteCount, CaptureBuf.packetCount, 0);
   }
   else {
-    sprintf (buffer, "%i bytes, %i packets, time = %i\n",
+    sprintf (buffer, "  saved: %i bytes, %i packets, time = %i\n",
              CaptureFileBytes, CaptureFilePackets, 0);   
   }
   sendMessage (ServerPlayer, playerIndex, buffer);
@@ -258,10 +258,6 @@ bool Capture::saveFile (const char *filename)
   Capture::init();
   Capturing = true;
   CaptureMode = StraightToFile;
-
-  if (filename == NULL) {
-    filename = DefaultFileName;
-  }
   
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
@@ -292,10 +288,6 @@ bool Capture::saveBuffer (const char *filename)
     return false;
   }
     
-  if (filename == NULL) {
-    filename = DefaultFileName;
-  }
-  
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
     Capture::init();
@@ -367,6 +359,9 @@ bool
 Capture::addPacket (u16 code, int len, const void * data, bool fake)
 {
   if ((getCRtime() - UpdateTime) > (int)UpdateRate) {
+    // save the states periodically. if there's nothing happening
+    // on the server, then this won't get called, and the file size
+    // should remaining small.
     saveStates ();
   }
   return routePacket (code, len, data, fake);
@@ -411,7 +406,7 @@ bool Replay::init()
     fclose (ReplayFile);
     ReplayFile = NULL;
   }
-  if ((FileName != NULL) && (FileName != DefaultFileName)) {
+  if (FileName != NULL) {
     free (FileName);
     FileName = NULL;
   }
@@ -444,13 +439,10 @@ bool Replay::loadFile(const char * filename)
   
   Replay::init();
   
-  if (filename == NULL) {
-    filename = DefaultFileName;
-  }
   ReplayFile = fopen (filename, "rb");
   if (ReplayFile == NULL) {
     return false;
-    perror ("fopen");
+    perror ("Replay::loadFile fopen");
   }
   
   if (!loadHeader (&header, ReplayFile)) {
@@ -564,13 +556,13 @@ float Replay::nextTime()
 #ifdef _WIN32
   return 1000.0f;
 #endif
-  if (ReplayBuf.tail == NULL) {
+
+  if (!ReplayMode || !Replaying || (ReplayBuf.tail == NULL)) {
     return 1000.0f;
   }
   else {
-    CRtime diff;
-    diff = (ReplayBuf.tail->timestamp + ReplayOffset) - getCRtime();
-    return (float) ((float)diff / (float)1000000);
+    CRtime diff = (ReplayBuf.tail->timestamp + ReplayOffset) - getCRtime();
+    return (float)diff / 1000000.0f;
   }
 }
 
@@ -794,12 +786,14 @@ saveHeader (ReplayHeader *h, FILE *f)
   char buffer[bufsize];
   void *buf;
   
+  h = h;  // FIXME - avoid warnings
+  
   if (f == NULL) {
     return false;
   }
 
-  buf = nboPackUInt (buffer, h->magic);
-  buf = nboPackUInt (buf, h->version);
+  buf = nboPackUInt (buffer, ReplayMagic);
+  buf = nboPackUInt (buf, ReplayVersion);
   
   fwrite (buffer, bufsize, 1, f);
   

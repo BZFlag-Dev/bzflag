@@ -3820,8 +3820,9 @@ int main(int argc, char **argv)
     }
 
     // minmal waitTime
-    if (waitTime < 0.0f)
+    if (waitTime < 0.0f) {
       waitTime = 0.0f;
+    }
 
     // we have no pending packets
     nfound = 0;

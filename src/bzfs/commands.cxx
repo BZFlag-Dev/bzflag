@@ -1508,8 +1508,8 @@ static void sendCaptureHelp (int t)
   sendMessage(ServerPlayer, t, "  /capture size <Mbytes>");
   sendMessage(ServerPlayer, t, "  /capture rate <seconds>");
   sendMessage(ServerPlayer, t, "  /capture stats");
-  sendMessage(ServerPlayer, t, "  /capture file [filename]");
-  sendMessage(ServerPlayer, t, "  /capture save [filename]");
+  sendMessage(ServerPlayer, t, "  /capture file <filename>");
+  sendMessage(ServerPlayer, t, "  /capture save <filename>");
   return;
 }
 void handleCaptureCmd(int t, const char * message)
@@ -1572,8 +1572,7 @@ void handleCaptureCmd(int t, const char * message)
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
   
     if (*buf == '\0') {
-      Capture::saveBuffer (NULL);
-      return;
+      sendCaptureHelp (t);
     }
     else {
       Capture::saveBuffer (buf);
@@ -1584,8 +1583,7 @@ void handleCaptureCmd(int t, const char * message)
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
   
     if (*buf == '\0') {
-      Capture::saveFile (NULL);
-      return;
+      sendCaptureHelp (t);
     }
     else {
       Capture::saveFile (buf);
@@ -1602,7 +1600,7 @@ void sendReplayHelp (int t)
 {
   sendMessage(ServerPlayer, t, "usage:");
   sendMessage(ServerPlayer, t, "  /replay listfiles");
-  sendMessage(ServerPlayer, t, "  /replay load [filename]");
+  sendMessage(ServerPlayer, t, "  /replay load <filename>");
   sendMessage(ServerPlayer, t, "  /replay play");
   sendMessage(ServerPlayer, t, "  /replay skip <seconds>  (+/-)");
   return;
@@ -1627,8 +1625,7 @@ void handleReplayCmd(int t, const char * message)
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
     
     if (*buf == '\0') {
-      Replay::loadFile (NULL);
-      return;
+      sendReplayHelp (t);
     }
     else {
       Replay::loadFile (buf);
