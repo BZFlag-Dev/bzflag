@@ -161,6 +161,7 @@ private:
   int           stuckingFrameCount;
   bool		spawning;
   int		wingsFlapCount;
+  int		dodgeCount;
   float		handicap;
 };
 

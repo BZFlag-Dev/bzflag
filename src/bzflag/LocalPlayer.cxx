@@ -46,6 +46,8 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   recipient(NULL),
   stuckingFrameCount(0),
   spawning(false),
+  wingsFlapCount(0),
+  dodgeCount(0),
   handicap(0.0f)
 {
   // initialize shots array to no shots fired
