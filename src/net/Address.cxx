@@ -138,7 +138,7 @@ Address			Address::getHostAddress(const char* hname)
       }
 
       // wait up to this many seconds
-      alarm(3);
+      alarm(8);
     }
 #endif
 
