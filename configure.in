@@ -444,7 +444,6 @@ AC_OUTPUT(bzflag.spec
 	package/rpm/Makefile
 	package/irix/Makefile
 	package/mac/Makefile
-	package/mac/notes/Makefile
 	package/mac/platform/Makefile
 	package/mac/src/Makefile
 	package/win32/Makefile
