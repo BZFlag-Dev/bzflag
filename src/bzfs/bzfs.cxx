@@ -4740,7 +4740,21 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
-  // FIXME verify position
+  // verify position
+
+  float dx = player[playerIndex].lastState.pos[0] - firingInfo.shot.pos[0];
+  float dy = player[playerIndex].lastState.pos[1] - firingInfo.shot.pos[1];
+  float dz = player[playerIndex].lastState.pos[2] - firingInfo.shot.pos[2];
+
+  float delta = dx*dx + dy*dy + dz*dz;
+  if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd)) {
+    DEBUG2("shot origination %f %f %f to far from tank %f %f %f\n", 
+	    firingInfo.shot.pos[0], firingInfo.shot.pos[1], firingInfo.shot.pos[2],
+	    player[playerIndex].lastState.pos[0],
+	    player[playerIndex].lastState.pos[1],
+	    player[playerIndex].lastState.pos[2]);
+    return;
+  }
 
   // repack if changed
   if (repack)
