@@ -712,7 +712,7 @@ static int  dumpUsage ( char *exeName, const char* reason )
 	printf("       -sm        : use the smoothbounce property\n");
 	printf("       -yz        : flip y and z coordinates\n");
 	printf("       -n         : disable normals\n");
-	printf("       -t         : disable texture cooridnates\n");
+	printf("       -t         : disable texture coordinates\n");
 	printf("       -m         : disable materials\n");
 	printf("       -a         : disable ambient coloring\n");
 	printf("       -d         : disable diffuse coloring\n");
