@@ -256,7 +256,7 @@ inline bool		World::allowTimeOfDayAdjust() const
 
 inline bool		World::allowRabbit() const
 {
-  return (gameStyle * short(RabbitChaseGameStyle)) == 0;
+  return (gameStyle & short(RabbitChaseGameStyle)) == 0;
 }
 
 inline float		World::getLinearAcceleration() const
