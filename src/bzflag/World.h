@@ -68,7 +68,7 @@ class World {
     bool		allowHandicap() const;
     float		getWaterLevel() const;
     const BzMaterial*	getWaterMaterial() const;
-    const BzMaterial*	getTeleporterMaterial() const;
+    const BzMaterial*	getLinkMaterial() const;
     float		getLinearAcceleration() const;
     float		getAngularAcceleration() const;
     float		getFlagShakeTimeout() const;
@@ -139,7 +139,7 @@ class World {
     static void		done();
     static void		setFlagTexture(FlagSceneNode*);
 
-    void		makeTeleporterMaterial();
+    void		makeLinkMaterial();
 
     void		loadCollisionManager();
     void		checkCollisionManager();
@@ -164,7 +164,7 @@ class World {
     short		gameStyle;
     float		waterLevel;
     const BzMaterial*	waterMaterial;
-    const BzMaterial*	teleporterMaterial;
+    const BzMaterial*	linkMaterial;
     float		linearAcceleration;
     float		angularAcceleration;
     int			maxPlayers;
@@ -269,9 +269,9 @@ inline const BzMaterial*	World::getWaterMaterial() const
   return waterMaterial;
 }
 
-inline const BzMaterial*	World::getTeleporterMaterial() const
+inline const BzMaterial*	World::getLinkMaterial() const
 {
-  return teleporterMaterial;
+  return linkMaterial;
 }
 
 inline float		World::getLinearAcceleration() const

@@ -1408,9 +1408,10 @@ static bool isUrlCached(char *hexDigest)
   bool         gotFromURL = false;
   unsigned int readSize;
 
-  if (worldUrl.size())
-    gotFromURL = URLManager::instance().getURL
-      (worldUrl, (void **) &worldDatabase, readSize);
+  if (worldUrl.size()) {
+    URLManager& urlMgr = URLManager::instance();
+    gotFromURL = urlMgr.getURL(worldUrl, (void **) &worldDatabase, readSize);
+  }
   if (gotFromURL) {
     MD5 md5;
     md5.update((unsigned char *)worldDatabase, readSize);

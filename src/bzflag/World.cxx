@@ -57,7 +57,7 @@ World::World() :
 {
   worldWeapons = new WorldPlayer();
   waterMaterial = NULL;
-  teleporterMaterial = NULL;
+  linkMaterial = NULL;
 }
 
 World::~World()
@@ -439,26 +439,41 @@ void			World::freeInsideNodes()
 }
 
 
-void		World::makeTeleporterMaterial()
+void		World::makeLinkMaterial()
 {
-  DynamicColor* dyncol = new DynamicColor;
-  dyncol->setLimits(0, 0.0f, 0.1f); // red
-  dyncol->setLimits(1, 0.0f, 0.1f); // green
-  dyncol->setLimits(2, 0.0f, 0.1f); // blue
-  dyncol->setLimits(3, 0.75f, 0.75f); // alpha
-  // period, offset, weight
-  float params[3] = {2.0f, 0.0f, 1.0f};
-  params[1] = 0.0f * (params[0] / 3.0f); // red
-  dyncol->addSinusoid(0, params);
-  params[1] = 1.0f * (params[0] / 3.0f); // green
-  dyncol->addSinusoid(1, params);
-  params[1] = 2.0f * (params[0] / 3.0f); // blue
-  dyncol->addSinusoid(2, params);
-  int dyncolId = DYNCOLORMGR.addColor (dyncol);  
+  std::string name = "LinkMaterial";
   
-  TextureMatrix* texmat = new TextureMatrix;
-  texmat->setShiftParams(0.0f, -0.05f);
-  int texmatId = TEXMATRIXMGR.addMatrix (texmat);
+  linkMaterial = MATERIALMGR.findMaterial(name);
+  if (linkMaterial != NULL) {
+    return;
+  }
+
+  int dyncolId = DYNCOLORMGR.findColor(name);
+  if (dyncolId < 0) {
+    DynamicColor* dyncol = new DynamicColor;
+    dyncol->setLimits(0, 0.0f, 0.1f); // red
+    dyncol->setLimits(1, 0.0f, 0.1f); // green
+    dyncol->setLimits(2, 0.0f, 0.1f); // blue
+    dyncol->setLimits(3, 0.75f, 0.75f); // alpha
+    // period, offset, weight
+    float params[3] = {2.0f, 0.0f, 1.0f};
+    params[1] = 0.0f * (params[0] / 3.0f); // red
+    dyncol->addSinusoid(0, params);
+    params[1] = 1.0f * (params[0] / 3.0f); // green
+    dyncol->addSinusoid(1, params);
+    params[1] = 2.0f * (params[0] / 3.0f); // blue
+    dyncol->addSinusoid(2, params);
+    dyncol->setName(name);
+    dyncolId = DYNCOLORMGR.addColor (dyncol);  
+  }
+  
+  int texmatId = TEXMATRIXMGR.findMatrix(name);
+  if (texmatId < 0) {
+    TextureMatrix* texmat = new TextureMatrix;
+    texmat->setShiftParams(0.0f, -0.05f);
+    texmat->setName(name);
+    texmatId = TEXMATRIXMGR.addMatrix (texmat);
+  }
 
   BzMaterial mat;
   const float color[4] = {0.0f, 0.0f, 0.0f, 0.5f};
@@ -466,7 +481,8 @@ void		World::makeTeleporterMaterial()
   mat.setDynamicColor(dyncolId);
   mat.setTexture("telelink");
   mat.setTextureMatrix(texmatId);
-  teleporterMaterial = MATERIALMGR.addMaterial(&mat);
+  mat.setName(name);
+  linkMaterial = MATERIALMGR.addMaterial(&mat);
 
   return;
 }
@@ -773,7 +789,8 @@ bool			World::writeWorld(std::string filename)
 
   // Write meshs
   {
-    for (std::vector<MeshObstacle*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
+    std::vector<MeshObstacle*>::iterator it;
+    for (it = meshes.begin(); it != meshes.end(); ++it) {
       MeshObstacle* mesh = *it;
       mesh->print(out, 1);
     }
@@ -781,7 +798,8 @@ bool			World::writeWorld(std::string filename)
 
   // Write arcs
   {
-    for (std::vector<ArcObstacle*>::iterator it = arcs.begin(); it != arcs.end(); ++it) {
+    std::vector<ArcObstacle*>::iterator it;
+    for (it = arcs.begin(); it != arcs.end(); ++it) {
       ArcObstacle* arc = *it;
       arc->print(out, 1);
     }
@@ -789,7 +807,8 @@ bool			World::writeWorld(std::string filename)
 
   // Write cones
   {
-    for (std::vector<ConeObstacle*>::iterator it = cones.begin(); it != cones.end(); ++it) {
+    std::vector<ConeObstacle*>::iterator it;
+    for (it = cones.begin(); it != cones.end(); ++it) {
       ConeObstacle* cone = *it;
       cone->print(out, 1);
     }
@@ -797,7 +816,8 @@ bool			World::writeWorld(std::string filename)
 
   // Write spheres
   {
-    for (std::vector<SphereObstacle*>::iterator it = spheres.begin(); it != spheres.end(); ++it) {
+    std::vector<SphereObstacle*>::iterator it;
+    for (it = spheres.begin(); it != spheres.end(); ++it) {
       SphereObstacle* sphere = *it;
       sphere->print(out, 1);
     }
@@ -805,7 +825,8 @@ bool			World::writeWorld(std::string filename)
 
   // Write tetras
   {
-    for (std::vector<TetraBuilding*>::iterator it = tetras.begin(); it != tetras.end(); ++it) {
+    std::vector<TetraBuilding*>::iterator it;
+    for (it = tetras.begin(); it != tetras.end(); ++it) {
       TetraBuilding* tetra = *it;
       tetra->print(out, 1);
     }

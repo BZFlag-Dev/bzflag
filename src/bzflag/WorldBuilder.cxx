@@ -452,7 +452,7 @@ void* WorldBuilder::unpack(void* buf)
   delete[] uncompressedWorld;
   
   world->loadCollisionManager();
-  world->makeTeleporterMaterial();
+  world->makeLinkMaterial();
   
   return buf;
 }

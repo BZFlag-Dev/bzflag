@@ -580,7 +580,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   }
 
   MeshPolySceneNode* linkNode;
-  const BzMaterial* mat = world->getTeleporterMaterial();
+  const BzMaterial* mat = world->getLinkMaterial();
 
   linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getBackLink());
   MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
