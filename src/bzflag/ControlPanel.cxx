@@ -232,8 +232,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
   }
 
   if (!resized) resize();
-  if (!changedMessage && renderer.getPanelOpacity() == 1.0f)
-    return;
 
   int i, j;
   const int x = window.getOriginX();
