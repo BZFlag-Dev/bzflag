@@ -5277,7 +5277,7 @@ static void parseCommand(const char *message, int t)
 	clOptions.acl.sendBans(t,player[t].id,player[t].team);
   }
   // /ban command allows operator to ban players based on ip
-  else if (player[t].Admin && strncmp(message+1, "ban", 3) == 0) {
+  else if (player[t].Admin && strncmp(message+1, "ban ", 4) == 0) {
     char reply[MessageLen];
     char *ips = (char *) (message + 5);
     char *time = strchr(ips, ' ');
@@ -5299,7 +5299,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /unban command allows operator to remove ips from the banlist
-  else if (player[t].Admin && strncmp(message+1, "unban", 5) == 0) {
+  else if (player[t].Admin && strncmp(message+1, "unban ", 5) == 0) {
     char reply[MessageLen];
     if (clOptions.acl.unban(message + 7))
       strcpy(reply, "removed IP pattern");
@@ -5309,7 +5309,7 @@ static void parseCommand(const char *message, int t)
   }
   // /lagwarn - set maximum allowed lag
   else if (player[t].Admin && strncmp(message+1,"lagwarn",7) == 0) {
-    if (message[8] == ' ')
+    if (message[8] == ' ' && message[9] != 0)
     {
       const char *maxlag = message + 9;
       clOptions.lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
