@@ -944,8 +944,8 @@ void			ServerCommandKey::updatePrompt()
       switch (mode){
       case Kick:
 	composePrompt = "Kick -> ";
-	composePrompt += recipient->getCallSign();
-	hud->setComposing(composePrompt, false);
+	composePrompt = composePrompt + recipient->getCallSign() + " :";
+	hud->setComposing(composePrompt, true);
 	break;
       case BanIp: case Ban1: case Ban2: case Ban3:
 	// Set the prompt and enable editing/composing --> allows to enter ban time
@@ -1109,64 +1109,68 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
     const Player * troll = myTank->getRecipient();
     if (mode >= Kick && mode <=Ghost){ // handle more complicated modes
-      if (troll) { // cases where we select recipient with keys
+			if (troll) { // cases where we select recipient with keys
 
-	name = troll->getCallSign();
+				name = troll->getCallSign();
 
-	switch (mode){
+				switch (mode){
 
-	case Kick:
-	  sendMsg="/kick " + name;
-	  break;
-	case BanIp: case Ban1: case Ban2: case Ban3:
+				case Kick:
+					// escape the name
+					name = string_util::replace_all(name,"\\","\\\\");
+					name = string_util::replace_all(name,"\"","\\\"");
+					sendMsg="/kick \"" + name + "\"";
+					if (message != "") sendMsg = sendMsg + " " + message;
+					break;
+				case BanIp: case Ban1: case Ban2: case Ban3:
 
-	  /* FIXME FIXME FIXME
-	   * temporarily break ban-by-name for playerid->ubyte
-	   banPattern = makePattern(troll->id.serverHost);
-	   sendMsg="/ban " + banPattern;
+					/* FIXME FIXME FIXME
+					 * temporarily break ban-by-name for playerid->ubyte
+					 banPattern = makePattern(troll->id.serverHost);
+					 sendMsg="/ban " + banPattern;
 
-	   if (message != ""){ // add ban length if something is there
-	   sendMsg = sendMsg + " " + message;
-	   }
-	  */
-	  break;
+					 if (message != ""){ // add ban length if something is there
+					 sendMsg = sendMsg + " " + message;
+					 }
+					*/
+					break;
 
-	case Setgroup:
-	  sendMsg = "/setgroup";
-	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
-	  break;
-	case Removegroup:
-	  sendMsg = "/removegroup";
-	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
-	  break;
-	case Ghost:
-	  sendMsg = "/ghost";
-	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
-	  break;
-	case Showgroup:
-	  sendMsg = "/showgroup";
-	  sendMsg = sendMsg + " \"" +name+ "\"";
-	  break;
+				case Setgroup:
+					sendMsg = "/setgroup";
+					sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
+					break;
+				case Removegroup:
+					sendMsg = "/removegroup";
+					sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
+					break;
+				case Ghost:
+					sendMsg = "/ghost";
+					sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
+					break;
+				case Showgroup:
+					sendMsg = "/showgroup";
+					sendMsg = sendMsg + " \"" +name+ "\"";
+					break;
 
-	default: /* shouldn't happen */ break;
+				default: /* shouldn't happen */ break;
 
-	}
+				}
 
       } else { // no recipient -- editing mode
 
-	switch (mode){
-	case Kick:  sendMsg="/kick"; break;
-	case BanIp: sendMsg="/ban"; break;
-	case Setgroup: sendMsg = "/setgroup"; break;
-	case Removegroup: sendMsg = "/removegroup"; break;
-	case Ghost: sendMsg = "/ghost"; break;
-	case Showgroup: sendMsg = "/showgroup"; break;
+				switch (mode){
+				case Kick:  sendMsg="/kick"; break;
+				case BanIp: sendMsg="/ban"; break;
+				case Setgroup: sendMsg = "/setgroup"; break;
+				case Removegroup: sendMsg = "/removegroup"; break;
+				case Ghost: sendMsg = "/ghost"; break;
+				case Showgroup: sendMsg = "/showgroup"; break;
 
-	default: /* shouldn't happen */ break;
-	}
-	if (message != "") sendMsg = sendMsg + " " + message;
+				default: /* shouldn't happen */ break;
+				}
+			if (message != "") sendMsg = sendMsg + " " + message;
 
-      }
+			}
     } else { // handle less complicated messages
       switch (mode){
       case Unban: sendMsg="/unban " + message; break;
@@ -1203,7 +1207,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     if (sendMsg != ""){
       displayMsg = "-> \"" + sendMsg + "\"";
       if (sendMsg.find("/password",0) == std::string::npos)
-	addMessage(NULL, displayMsg);
+			addMessage(NULL, displayMsg);
 
       void* buf = messageMessage;
       buf = nboPackUByte(buf, ServerPlayer);
@@ -3771,7 +3775,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       // direct message to or from me
       if (dstPlayer) {
-	if (fromServer && (origText == "You are now an administrator!"
+	if (true || fromServer && (origText == "You are now an administrator!"
 			   || origText == "Password Accepted, welcome back."))
 	  admin = true;
 	// talking to myself? that's strange
