@@ -17,7 +17,7 @@
 %define bzbindir	/usr/bin
 %define bzdatadir	/usr/share/%{name}/
 %define bzmandir	/usr/man
-%define bzdocdir	/usr/share/doc/%{name}-%{version}
+# %define bzdocdir	/usr/share/doc/%{name}-%{version}
 
 name:		%{name}
 version:	%{version}
@@ -46,8 +46,9 @@ styles are available.
 %setup -q
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"		\
-	./configure --prefix=/usr --enable-robots --host=i486-pc-linux-gnu
+CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"	\
+	./configure --prefix=/usr --enable-robots	\
+	--host=i386-pc-linux-gnu
 make
 
 %install
@@ -59,9 +60,11 @@ make DESTDIR=$RPM_BUILD_ROOT install
 # note -- bzflag must be setuid root to use 3Dfx drivers without /dev/3dfx
 %files
 %defattr(-,root,root)
-%dir %{bzdocdir}
+# %dir %{bzdocdir}
 %dir %{bzdatadir}
 %dir %{bzdatadir}/*
-%doc %{bzdocdir}/*
+%{bzdatadir}/*
+%{bzdatadir}/l10n/*
+# %doc %{bzdocdir}/*
 %doc %{bzmandir}/man6/*
 %attr(755,root,root) %{bzbindir}/*
