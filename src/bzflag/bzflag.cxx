@@ -898,7 +898,7 @@ int			main(int argc, char** argv)
   if (BZDB.isSet("fixedTime")) {
     int hours, minutes, seconds;
     char dbTime[256];
-    strcpy(dbTime,BZDB.get("fixedTime").c_str());
+    strncpy(dbTime, BZDB.get("fixedTime").c_str(), sizeof(dbTime) - 1);
     if (sscanf(dbTime, "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
 	hours < 0 || hours > 23 ||
 	minutes < 0 || minutes > 59 ||
