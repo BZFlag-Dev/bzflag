@@ -636,8 +636,8 @@ void			ControlPanel::addMessage(const std::string& line,
   
   int maxScrollPages = BZDB.evalInt("scrollPages");
   if (maxScrollPages <= 0) {
-    BZDB.setInt("scrollPages", atoi(BZDB.getDefault("scrollPages").c_str()));
-    maxScrollPages = 1;
+    maxScrollPages = atoi(BZDB.getDefault("scrollPages").c_str());
+    BZDB.setInt("scrollPages", maxScrollPages);
   }
 
   // Add to "All" tab
