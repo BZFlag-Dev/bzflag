@@ -654,14 +654,14 @@ void			Player::setDeadReckoning(float timestamp)
       const float radius = inputSpeed / inputAngVel;
 
       // Rotation center coordinate
-      inputPos[0]       += radius * sin(inputAzimuth);
-      inputPos[1]       -= radius * cos(inputAzimuth);
+      inputPos[0]       -= radius * sin(inputAzimuth);
+      inputPos[1]       += radius * cos(inputAzimuth);
 
       // azimuth changes linearly
       inputAzimuth      -= offset * inputAngVel;
 
-      inputPos[0]       -= radius * sin(inputAzimuth);
-      inputPos[1]       += radius * cos(inputAzimuth);
+      inputPos[0]       += radius * sin(inputAzimuth);
+      inputPos[1]       -= radius * cos(inputAzimuth);
 
     }
   }
