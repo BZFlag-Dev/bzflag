@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\bzfs\"
-			IntermediateDirectory="..\..\src\bzfs\"
+			OutputDirectory=".\..\..\src\bzfs\"
+			IntermediateDirectory=".\..\..\src\bzfs\"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
-				OutputFile="..\..\..\src\bzfs\bzfs.exe"
+				OutputFile=".\..\..\src\bzfs\bzfs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				ProgramDatabaseFile="../src/bzfs/bzfs.pdb"
