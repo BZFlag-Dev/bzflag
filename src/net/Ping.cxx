@@ -168,7 +168,7 @@ bool			PingPacket::isRequest(int fd,
   else if (minReplyTTL) {
     *minReplyTTL = 0;
   }
-  return code == PingCodeRequest || code == PingCodeOldRequest;
+  return code == PingCodeRequest;
 }
 
 bool			PingPacket::sendRequest(int fd,
