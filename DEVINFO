@@ -94,7 +94,7 @@ that same file's implementation.  If it's a public class, though, it's
 usually best to separate it out into another file by itself.
 
 Avoid "extern" in C files. This prevents the compiler from type checking in
-most cases. If you need access to somthing, put it in a header. That's what
+most cases. If you need access to something, put it in a header. That's what
 headers are for.
 
 C++ features
@@ -302,7 +302,7 @@ are made that render it incompatible with prior releases, the version
 number of the protocol must be changed.  This is necessary to prevent
 incompatible clients from attempting connections.  When a change is
 made, the network protocol version needs to be set to the application
-version that is current at that time.  This is also when the revistion
+version that is current at that time.  This is also when the revision
 of the application should be incremented.
 
 The displayed application version includes additional information in
@@ -356,7 +356,7 @@ cannot proceed.  A checklist of items to be completed follows:
   tags using the format of vMAJOR_MINOR_RELEASE
 	e.g. cvs tag v1_10_2
 
-- Perform a "cvs export -r vMAJOR_MINOR_RELEASE" from somehwere else
+- Perform a "cvs export -r vMAJOR_MINOR_RELEASE" from somewhere else
   in the filesystem to obtain a tagged version of the sources.
 
 - Perform a "make dist" of that export to generate a source release
