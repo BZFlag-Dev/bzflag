@@ -61,7 +61,9 @@ bzflag_SOURCES =			\
 	sound.cxx			\
 	sound.h				\
 	stars.h				\
-	texture.cxx
+	texture.cxx			\
+	TargetingUtils.cxx		\
+	TargetingUtils.h
 
 if WIN32
 RESOURCE = bzflag.res

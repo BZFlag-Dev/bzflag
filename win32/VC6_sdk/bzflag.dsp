@@ -217,6 +217,10 @@ SOURCE=..\..\src\bzflag\stars.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\TargetingUtils.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\texture.cxx
 # End Source File
 # Begin Source File
@@ -578,6 +582,10 @@ SOURCE=..\..\include\StateDatabase.h
 # Begin Source File
 
 SOURCE=..\..\include\TankSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\TargetingUtils.h
 # End Source File
 # Begin Source File
 
