@@ -306,7 +306,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 // provides a pointer to a fresh compiled expression for some given expression
 regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 {
-#if HAVE_REGEX_H
+#ifdef HAVE_REGEX_H
   regex_t *compiledReg;
 
   /* XXX need to convert this to use new/delete */
