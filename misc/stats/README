@@ -1,0 +1,27 @@
+BZFlag::Info version 1.7.0
+===================
+
+The BZFlag::Info module provides a class for extracting information about BZFlag servers.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+LWP::UserAgent
+Socket
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2003 Tucker McLean, Tim Riker
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
