@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* BZAdmin now tells more specific reasons why it could not connect - Ian Agar
 * Client shows a MessageOfTheDay from the master server on launch
    for announcements and release notifications - Jeff Myers
 * Add generic URL retreval class - Jeff Myers, Alfredo Tupone
