@@ -36,7 +36,7 @@ const int udpBufSize = 128000;
 #endif
 
 // must be before network.h because that defines a close() macro which
-// messes up fstreams.  luckily, we don't need to call the close() method
+// messes up fstreams.	luckily, we don't need to call the close() method
 // on any fstream.
 #include "bzfio.h"
 #include <fstream>
@@ -148,7 +148,7 @@ enum AccessPerm
   setPerms,
   setAll,
   lastPerm	// just so we know how many rights there
-  		// are this dosn't do anything realy, just
+		// are this dosn't do anything really, just
 		// make sure it's the last real right
 };
 
@@ -166,10 +166,8 @@ std::map<std::string, PlayerAccessInfo>	groupAccess;
 std::map<std::string, PlayerAccessInfo>	userDatabase;
 std::map<std::string, std::string>	passwordDatabase;
 
-bool hasGroup(PlayerAccessInfo& info, const char* group)
+bool hasGroup(PlayerAccessInfo& info, const std::string &group)
 {
-  if (!group)
-    return false;
   std::string str = group;
   makeupper(str);
 
@@ -182,12 +180,11 @@ bool hasGroup(PlayerAccessInfo& info, const char* group)
   return false;
 }
 
-bool addGroup(PlayerAccessInfo& info, const char* group)
+bool addGroup(PlayerAccessInfo& info, const std::string &group)
 {
   if (hasGroup(info, group))
     return false;
-  if (!group)
-    return false;
+
   std::string str = group;
   makeupper(str);
 
@@ -195,14 +192,14 @@ bool addGroup(PlayerAccessInfo& info, const char* group)
   return true;
 }
 
-bool removeGroup(PlayerAccessInfo& info, const char* group)
+bool removeGroup(PlayerAccessInfo& info, const std::string &group)
 {
   if (!hasGroup(info, group))
     return false;
-  if (!group)
-    return false;
+
   std::string str = group;
   makeupper(str);
+
   std::vector<std::string>::iterator itr = info.groups.begin();
   while (itr != info.groups.end()) {
     if ((*itr) == str) {
@@ -216,8 +213,6 @@ bool removeGroup(PlayerAccessInfo& info, const char* group)
 
 bool hasPerm(PlayerAccessInfo& info, AccessPerm right)
 {
-  if (!info.verified)
-    return false;
   if (info.explicitDenys[right])
     return false;
   if (info.explicitAllows[right])
@@ -234,10 +229,8 @@ bool hasPerm(PlayerAccessInfo& info, AccessPerm right)
   return false;
 }
 
-bool userExists(const char* nick)
+bool userExists(const std::string &nick)
 {
-  if (!nick)
-    return false;
   std::string str = nick;
   makeupper(str);
   std::map<std::string, PlayerAccessInfo>::iterator itr = userDatabase.find(str);
@@ -246,54 +239,42 @@ bool userExists(const char* nick)
   return true;
 }
 
-bool getUserInfo(const char* nick, PlayerAccessInfo& info)
+//FIXME - check for non-existing user (throw?)
+PlayerAccessInfo& getUserInfo(const std::string &nick)
 {
-  if (!userExists(nick))
-    return false;
+//  if (!userExists(nick))
+//    return false;
   std::string str = nick;
   makeupper(str);
   std::map<std::string, PlayerAccessInfo>::iterator itr = userDatabase.find(str);
-  if (itr == userDatabase.end())
-    return false;
-  info = itr->second;
-  return true;
+//  if (itr == userDatabase.end())
+//    return false;
+  return itr->second;
 }
 
-bool setUserInfo(const char* nick, PlayerAccessInfo& info)
+bool setUserInfo(const std::string &nick, PlayerAccessInfo& info)
 {
-  if (!nick)
-    return false;
   std::string str = nick;
   makeupper(str);
   userDatabase[str] = info;
   return true;
 }
 
-bool verifyUserPassword(const char* nick, const char* pass)
+bool verifyUserPassword(const std::string &nick, const std::string &pass)
 {
-  if (!nick)
-    return false;
-  if (!pass)
-    return false;
   std::string str1 = nick;
-  std::string str2 = pass;
   makeupper(str1);
   std::map<std::string, std::string>::iterator itr = passwordDatabase.find(str1);
   if (itr == passwordDatabase.end())
     return false;
-  return (itr->second == str2);
+  return (itr->second == pass);
 }
 
-void setUserPassword(const char* nick, const char* pass)
+void setUserPassword(const std::string &nick, const std::string &pass)
 {
-  if (!nick)
-    return;
-  if (!pass)
-    return;
   std::string str1 = nick;
-  std::string str2 = pass;
   makeupper(str1);
-  passwordDatabase[str1] = str2;
+  passwordDatabase[str1] = pass;
 }
 
 const char* nameFromPerm(AccessPerm perm)
@@ -366,12 +347,12 @@ void parsePermissionString(const char* permissionString, bool perms[lastPerm])
     sscanf(data, "%s", temp);
     if (strlen(temp) > 0) {
       if (data - permissionString >= (int) strlen(permissionString))
-        data = const_cast<char*>(&permissionString[strlen(permissionString)]);
+	data = const_cast<char*>(&permissionString[strlen(permissionString)]);
       std::string field;
       makeupper(field);
       AccessPerm perm = permFromName(field);
       if (perm != lastPerm)
-        perms[perm] = true;
+	perms[perm] = true;
     } else {
       data = const_cast<char*>(&permissionString[strlen(permissionString) - 1]);
     }
@@ -487,7 +468,7 @@ bool readPermsFile(const char* filename)
     while ((in >> c) && (!in.eof()) && (c != '\n')) {
       temp = c;
       while ((in >> c) && (!in.eof()) && (c != ' '))
-        temp += c;
+	temp += c;
       if (temp.size())
 	groups.push_back(temp);
     }
@@ -626,7 +607,7 @@ class TextChunkManager
       }
     }
 
-    if (strings.size() != 0){
+    if (strings.size() != 0) {
       theChunks.insert(std::map<std::string, StringVector>::value_type(chunkName,strings));
       chunkNames.push_back(chunkName);
     }
@@ -963,8 +944,8 @@ struct CmdLineOptions
   TextChunkManager	textChunker;
   BadWordList		bwl;
   
-  std::string           reportFile;
-  std::string           reportPipe;
+  std::string		reportFile;
+  std::string		reportPipe;
 };
 
 enum ClientState {
@@ -1089,7 +1070,7 @@ struct PlayerInfo {
     TimeKeeper lastmsg;
 
 	// number of times they have tried to /password
-	int passwordAtempts;
+	int passwordAttempts;
 #ifdef NETWORK_STATS
     // message stats bloat
     TimeKeeper perSecondTime[2];
@@ -1282,15 +1263,18 @@ static void releaseRadio(int playerIndex);
 static void dropFlag(int playerIndex, float pos[3]);
 
 // util functions
-int getPlayerIDByRegName(const char* regName)
+int getPlayerIDByRegName(const std::string &regName)
 {
-  if (!regName)
-    return -1;
   for (int i = 0; i < MaxPlayers; i++) {
     if (player[i].regName == regName)
       return i;
   }
   return -1;
+}
+
+bool hasPerm(int playerIndex, AccessPerm right)
+{
+  return player[playerIndex].Admin || hasPerm(player[playerIndex].accessInfo,right);
 }
 
 //
@@ -1730,7 +1714,7 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
   int i;
   for (i = 0; i < numBases; i++) {
     if ((bases[i].pos[2] < (z + flagHeight)) && ((bases[i].pos[2] + bases[i].size[2]) > z)
-    &&  (inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r))) {
+    &&	(inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r))) {
       if(location != NULL)
 	*location = &bases[i];
       return IN_BASE;
@@ -1738,14 +1722,14 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
   }
   for (i = 0; i < numBoxes; i++)
     if ((boxes[i].pos[2] < (z + flagHeight)) && ((boxes[i].pos[2] + boxes[i].size[2]) > z)
-    &&  (inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r))) {
+    &&	(inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r))) {
       if (location != NULL)
 	*location = &boxes[i];
       return IN_BOX;
     }
   for (i = 0; i < numPyramids; i++) {
     if ((pyramids[i].pos[2] < (z + flagHeight)) && ((pyramids[i].pos[2] + pyramids[i].size[2]) > z)
-    &&  (inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r))) {
+    &&	(inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r))) {
       if (location != NULL)
 	*location = &pyramids[i];
       return IN_PYRAMID;
@@ -1753,7 +1737,7 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
   }
   for (i = 0; i < numTeleporters; i++)
     if ((teleporters[i].pos[2] < (z + flagHeight)) && ((teleporters[i].pos[2] + teleporters[i].size[2]) > z)
-    &&  (inRect(teleporters[i].pos, teleporters[i].rotation, teleporters[i].size, x, y, r))) {
+    &&	(inRect(teleporters[i].pos, teleporters[i].rotation, teleporters[i].size, x, y, r))) {
       static ObstacleLocation __teleporter;
       __teleporter = teleporters[i];
       if (location != NULL)
@@ -2462,7 +2446,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 
       // cutover
       delete[] p.outmsg;
-      p.outmsg         = newbuf;
+      p.outmsg	       = newbuf;
       p.outmsgOffset   = 0;
       p.outmsgCapacity = newCapacity;
     }
@@ -2937,7 +2921,7 @@ static void publicize()
   closeListServers();
 
   // list server initialization
-  listServerLinksCount  = 0;
+  listServerLinksCount	= 0;
 
   // parse the list server URL if we're publicizing ourself
   if (clOptions.publicizeServer && clOptions.publicizedTitle) {
@@ -3652,7 +3636,7 @@ static WorldInfo *defineTeamWorld()
       int i;
       float h = BoxHeight;
       int numTeams = ((clOptions.maxTeam[1] > 0) ? 1 : 0) +
-      		     ((clOptions.maxTeam[2] > 0) ? 1 : 0) +
+		     ((clOptions.maxTeam[2] > 0) ? 1 : 0) +
 		     ((clOptions.maxTeam[3] > 0) ? 1 : 0) +
 		     ((clOptions.maxTeam[4] > 0) ? 1 : 0);
       if (numTeams == 0) {
@@ -3667,8 +3651,8 @@ static WorldInfo *defineTeamWorld()
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center and bases
 	if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > BoxBase*4 &&
-            hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > BoxBase*4 &&
-            hypotf(fabs(x),fabs(y)) > WorldSize/12)
+	    hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > BoxBase*4 &&
+	    hypotf(fabs(x),fabs(y)) > WorldSize/12)
 	  if ((numTeams <= 2) ||
 	     (hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) > BoxBase*4 &&
 	      hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > BoxBase*4)) {
@@ -3694,8 +3678,8 @@ static WorldInfo *defineTeamWorld()
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center or bases
 	if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > PyrBase*4 &&
-            hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > PyrBase*4 &&
-            hypotf(fabs(x),fabs(y)) > WorldSize/12)
+	    hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > PyrBase*4 &&
+	    hypotf(fabs(x),fabs(y)) > WorldSize/12)
 	  if ((numTeams <= 2) ||
 	     (hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) > PyrBase*4 &&
 	     hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > PyrBase*4)) {
@@ -3726,14 +3710,14 @@ static WorldInfo *defineTeamWorld()
 	    continue;
 	  // if to close to a base then try again
 	  if (((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) &&
-             (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= BaseSize*4 ||
-             hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <= BaseSize*4))
+	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= BaseSize*4 ||
+	     hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <= BaseSize*4))
 	    continue;
 
 	  if (((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) &&
-             (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= BaseSize*4 ||
-             hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <= BaseSize*4))
-            continue;
+	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= BaseSize*4 ||
+	     hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <= BaseSize*4))
+	    continue;
 	  
 	  linked[i/teamFactor][0] = linked[i/teamFactor][1] = 0;
 	  if ((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) {
@@ -3743,7 +3727,7 @@ static WorldInfo *defineTeamWorld()
 	  }
 	  if ((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) {
 	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2, 0.5f*TeleWidth,
-	        TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
 	  if ((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) {
@@ -3753,7 +3737,7 @@ static WorldInfo *defineTeamWorld()
 	  }
 	  if ((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) {
 	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2, 0.5f*TeleWidth,
-	        TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
 	}
@@ -4182,7 +4166,7 @@ static void acceptClient()
 
   if (playerIndex < maxPlayers) {
     DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
-        inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
+	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
   
     if (playerIndex >= curMaxPlayers)
       curMaxPlayers = playerIndex+1;
@@ -4195,7 +4179,7 @@ static void acceptClient()
   }
   else { // full? reject by returning bogus port
     DEBUG1("all slots occupied, rejecting accept() from %s:%d on %i\n",
-           inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
+	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
     serverAddr.sin_port = htons(0);
   }
 
@@ -4458,7 +4442,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].ulinkup = false;
   player[playerIndex].toBeKicked = false;
   player[playerIndex].Admin = false;
-  player[playerIndex].passwordAtempts = 0;
+  player[playerIndex].passwordAttempts = 0;
 
   if (player[playerIndex].Observer)
     player[playerIndex].regName = &player[playerIndex].callSign[1];
@@ -4468,9 +4452,9 @@ static void addPlayer(int playerIndex)
   makeupper(player[playerIndex].regName);
 
   memset(player[playerIndex].accessInfo.explicitAllows, 0,
-         sizeof(player[playerIndex].accessInfo.explicitAllows));
+	 sizeof(player[playerIndex].accessInfo.explicitAllows));
   memset(player[playerIndex].accessInfo.explicitDenys, 0,
-         sizeof(player[playerIndex].accessInfo.explicitDenys));
+	 sizeof(player[playerIndex].accessInfo.explicitDenys));
   player[playerIndex].accessInfo.verified = false;
   player[playerIndex].accessInfo.loginTime = 0;// put some time shit here
   player[playerIndex].accessInfo.loginAttempts = 0;
@@ -4490,7 +4474,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].lagkillerpending = false;
 
   player[playerIndex].lastupdate = TimeKeeper::getCurrent();
-  player[playerIndex].lastmsg    = TimeKeeper::getCurrent();
+  player[playerIndex].lastmsg	 = TimeKeeper::getCurrent();
 
   player[playerIndex].nextping = TimeKeeper::getCurrent();
   player[playerIndex].nextping += 10.0;
@@ -4638,10 +4622,10 @@ static void addPlayer(int playerIndex)
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,"You are in observer mode.");
 #endif
 
-  if (userExists(player[playerIndex].regName.c_str())) {
+  if (userExists(player[playerIndex].regName)) {
     // nick is in the DB send him a message to identify
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,
-                "This callsign is owned by someone else, if this is your callsign "
+		"This callsign is owned by someone else, if this is your callsign "
 		"please identify with the /identify <your password> command");
   }
 }
@@ -4917,7 +4901,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
       if (flag[teamNum - 1].player == -1 ||
 	  player[flag[teamNum - 1].player].team == teamNum)
 	zapFlag(teamNum - 1);
-    }      
+    }	   
 
     // send team update
     sendTeamUpdate(teamNum);
@@ -5102,7 +5086,7 @@ static void playerKilled(int victimIndex, int killerIndex,
   // of the killer's round trip time
   // don't do this if player supports lag pings
   if (!player[killerIndex].doespings &&        // lag ping is superior method
-      victimIndex != killerIndex &&            // suicide doesn't change score twice
+      victimIndex != killerIndex &&	       // suicide doesn't change score twice
       !player[killerIndex].lagkillerpending) { // two rapid kills
     player[killerIndex].lagkillerpending = true;
     player[killerIndex].lagkillertime = TimeKeeper::getCurrent();
@@ -5153,7 +5137,7 @@ static void playerKilled(int victimIndex, int killerIndex,
 
     // see if the player reached the score limit
     if ((clOptions.maxPlayerScore != 0)
-    &&  ((player[killerIndex].wins - player[killerIndex].losses) >= clOptions.maxPlayerScore)) {
+    &&	((player[killerIndex].wins - player[killerIndex].losses) >= clOptions.maxPlayerScore)) {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = player[killerIndex].id.pack(bufStart);
 	buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -5275,7 +5259,7 @@ static void dropFlag(int playerIndex, float pos[3])
     for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
       topmosttype = world->inBuilding(&topmost, pos[0], pos[1], i, 0);
       if (topmosttype != NOT_IN_BUILDING)
-        break;
+	break;
     }
   }
 
@@ -5539,7 +5523,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	    lastPos[i]=shooter.lastState.pos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
-	  dropFlag(playerIndex, lastPos);        
+	  dropFlag(playerIndex, lastPos);	 
 	} else { // more shots fired than allowed
 	  // do nothing for now -- could return and not allow shot
 	}
@@ -5655,12 +5639,12 @@ static void parseCommand(const char *message, int t)
   int i;
   // /password command allows player to become operator
   if (strncmp(message + 1,"password ",9) == 0){
-    if (player[t].passwordAtempts >=5){	// see how many times they have tried, you only get 5
+    if (player[t].passwordAttempts >=5 ){	// see how many times they have tried, you only get 5
       sendMessage(t, player[t].id, player[t].team, "Too many attempts");
     }else{
-    player[t].passwordAtempts++;
+    player[t].passwordAttempts++;
     if (clOptions.password && strncmp(message + 10, clOptions.password, strlen(clOptions.password)) == 0){
-      player[t].passwordAtempts = 0;
+      player[t].passwordAttempts = 0;
       player[t].Admin = true;
       sendMessage(t, player[t].id, player[t].team, "You are now an administrator!");
     }else{
@@ -5668,18 +5652,16 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /shutdownserver terminates the server
-  } else if ((player[t].Admin || hasPerm(player[t].accessInfo,shutdownServer)) &&
-            strncmp(message + 1, "shutdownserver", 8) == 0) {
+  } else if (hasPerm(t, shutdownServer) &&
+	    strncmp(message + 1, "shutdownserver", 8) == 0) {
     done = true;
   // /superkill closes all player connections
-  } else if ((player[t].Admin || hasPerm(player[t].accessInfo,superKill)) &&
-            strncmp(message + 1, "superkill", 8) == 0) {
+  } else if (hasPerm(t, superKill) && strncmp(message + 1, "superkill", 8) == 0) {
     for (i = 0; i < MaxPlayers; i++)
       removePlayer(i, "/superkill");
     gameOver = true;
   // /gameover command allows operator to end the game
-  } else if ((player[t].Admin || hasPerm(player[t].accessInfo,endGame)) &&
-            strncmp(message + 1, "gameover", 8) == 0) {
+  } else if (hasPerm(t, endGame) && strncmp(message + 1, "gameover", 8) == 0) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = player[t].id.pack(bufStart);
     buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -5687,9 +5669,8 @@ static void parseCommand(const char *message, int t)
     gameOver = true;
 #ifdef TIMELIMIT
   // /countdown starts timed game, if start is manual, everyone is allowed to
-  } else if (((player[t].Admin || hasPerm(player[t].accessInfo,countdown)) ||
-            clOptions.timeManualStart) &&
-            strncmp(message + 1, "countdown", 9) == 0) {
+  } else if ((hasPerm(t, countdown) || clOptions.timeManualStart) &&
+	    strncmp(message + 1, "countdown", 9) == 0) {
     if (clOptions.timeLimit > 0.0f) {
       gameStartTime = TimeKeeper::getCurrent();
       clOptions.timeElapsed = 0.0f;
@@ -5735,15 +5716,14 @@ static void parseCommand(const char *message, int t)
       zapFlag(i);
 #endif
   // /flag command allows operator to control flags
-  } else if ((player[t].Admin || hasPerm(player[t].accessInfo,flagMod)) &&
-            strncmp(message + 1, "flag ", 5) == 0) {
+  } else if (hasPerm(t, flagMod) && strncmp(message + 1, "flag ", 5) == 0) {
     if (strncmp(message + 6, "reset", 5) == 0) {
       bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
       for (int i = 0; i < numFlags; i++) {
 	  // see if someone had grabbed flag,
 	  const int playerIndex = flag[i].player;
 	  if ((playerIndex != -1) && (!onlyUnused)) {
-	    //  tell 'em to drop it.
+	    //	tell 'em to drop it.
 	    flag[i].player = -1;
 	    flag[i].flag.status = FlagNoExist;
 	    player[playerIndex].flag = -1;
@@ -5793,8 +5773,7 @@ static void parseCommand(const char *message, int t)
       }
     }
   // /kick command allows operator to remove players
-  } else if ((player[t].Admin || hasPerm(player[t].accessInfo,kick)) &&
-            strncmp(message + 1, "kick ", 5) == 0) {
+  } else if (hasPerm(t, kick) && strncmp(message + 1, "kick ", 5) == 0) {
     int i;
     const char *victimname = message + 6;
     for (i = 0; i < curMaxPlayers; i++)
@@ -5812,13 +5791,12 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /banlist command shows ips that are banned
-  else if ((player[t].Admin || hasPerm(player[t].accessInfo,banlist)) &&
-          strncmp(message+1, "banlist", 7) == 0) {
+  else if (hasPerm(t, banlist) &&
+	  strncmp(message+1, "banlist", 7) == 0) {
 	clOptions.acl.sendBans(t,player[t].id,player[t].team);
   }
   // /ban command allows operator to ban players based on ip
-  else if ((player[t].Admin || hasPerm(player[t].accessInfo,ban)) &&
-          strncmp(message+1, "ban", 3) == 0) {
+  else if (hasPerm(t, ban) && strncmp(message+1, "ban", 3) == 0) {
     char reply[MessageLen];
     char *ips = (char *) (message + 5);
     char *time = strchr(ips, ' ');
@@ -5840,8 +5818,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /unban command allows operator to remove ips from the banlist
-  else if ((player[t].Admin || hasPerm(player[t].accessInfo,unban)) &&
-          strncmp(message+1, "unban", 5) == 0) {
+  else if (hasPerm(t, unban) && strncmp(message+1, "unban", 5) == 0) {
     char reply[MessageLen];
     if (clOptions.acl.unban(message + 7))
       strcpy(reply, "removed IP pattern");
@@ -5850,8 +5827,7 @@ static void parseCommand(const char *message, int t)
     sendMessage(t, player[t].id, player[t].team, reply, true);
   }
   // /lagwarn - set maximum allowed lag
-  else if ((player[t].Admin || hasPerm(player[t].accessInfo,lagwarn)) &&
-          strncmp(message+1,"lagwarn",7) == 0) {
+  else if (hasPerm(t, lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
     if (message[8] == ' ') {
       const char *maxlag = message + 9;
       clOptions.lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
@@ -5867,8 +5843,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /lagstats gives simple statistics about players' lags
-  else if (hasPerm(player[t].accessInfo,lagStats) &&
-          strncmp(message+1,"lagstats",8) == 0) {
+  else if (hasPerm(t, lagStats) && strncmp(message+1, "lagstats",8) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
@@ -5882,8 +5857,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /idlestats gives a list of players' idle times
-  else if (hasPerm(player[t].accessInfo,idleStats) &&
-          strncmp(message+1,"idlestats",9) == 0) {
+  else if (hasPerm(t, idleStats) && strncmp(message+1, "idlestats",9) == 0) {
     TimeKeeper now=TimeKeeper::getCurrent();
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
@@ -5895,8 +5869,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /flaghistory gives history of what flags player has carried
-  else if (hasPerm(player[t].accessInfo,flagHistory) &&
-          strncmp(message+1, "flaghistory", 11 ) == 0) {
+  else if (hasPerm(t, flagHistory) && strncmp(message+1, "flaghistory", 11 ) == 0) {
     for (int i = 0; i < curMaxPlayers; i++)
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
@@ -5917,8 +5890,7 @@ static void parseCommand(const char *message, int t)
       }
   }
   // /playerlist dumps a list of players with IPs etc.
-  else if ((hasPerm(player[t].accessInfo,playerList) || player[t].Admin) &&
-          strncmp(message+1,"playerlist",10) == 0) {
+  else if (hasPerm(t, playerList) && strncmp(message+1, "playerlist", 10) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
 	char reply[MessageLen];
@@ -5941,7 +5913,7 @@ static void parseCommand(const char *message, int t)
       char* timeStr = ctime(&now);
       string reportStr;
       reportStr = reportStr + timeStr + "Reported by " +
-      	player[t].callSign + ": " + (message + 8);
+	player[t].callSign + ": " + (message + 8);
       if (clOptions.reportFile.size() > 0) {
 	ofstream ofs(clOptions.reportFile.c_str(), ios::out | ios::app);
 	ofs<<reportStr<<endl<<endl;
@@ -5951,7 +5923,7 @@ static void parseCommand(const char *message, int t)
 	if (pipeWrite != NULL) {
 	  fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
 	} else {
-	  DEBUG1("Couldn't write report to the pipe");
+	  DEBUG1("Couldn't write report to the pipe\n");
 	}
 	pclose(pipeWrite);
       }
@@ -5972,21 +5944,21 @@ static void parseCommand(const char *message, int t)
       bool foundChunk = false;
       const std::vector<std::string>& chunks = clOptions.textChunker.getChunkNames();
       for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
-        if (chunks[i] == (message +6)){
+	if (chunks[i] == (message +6)){
 	  const std::vector<std::string>* lines = clOptions.textChunker.getTextChunk((message + 6));
-	  if (lines != NULL){
+	  if (lines != NULL) {
 	    for (int j = 0; j < (int)lines->size(); j++) {
-	      sendMessage(t,player[t].id,player[t].team, (*lines)[j].c_str());
+	      sendMessage(t, player[t].id, player[t].team, (*lines)[j].c_str());
 	    }
 	    foundChunk = true;
 	    break;
-  	  }
-        }
+	  }
+	}
       }
       if (!foundChunk){
-        char reply[MessageLen];
-        sprintf(reply, "help command %s not found", message + 6);
-        sendMessage(t,player[t].id,player[t].team,reply);
+	char reply[MessageLen];
+	sprintf(reply, "help command %s not found", message + 6);
+	sendMessage(t, player[t].id, player[t].team, reply, true);
       }
     }
   } else if (strncmp(message + 1, "identify", 8) == 0) {
@@ -5995,41 +5967,40 @@ static void parseCommand(const char *message, int t)
       sendMessage(t, player[t].id, player[t].team, "You have already identified");
     } else if (player[t].accessInfo.loginAttempts >= 5) {
       sendMessage(t,player[t].id,player[t].team,"You have attempted to identify too many times");
-      DEBUG1("Too Many Identifys %s",player[t].regName.c_str());
+      DEBUG1("Too Many Identifys %s\n",player[t].regName.c_str());
     } else {
       // get their info
-      if (!userExists(player[t].regName.c_str())) {
+      if (!userExists(player[t].regName)) {
 	// not in DB, tell them to reg
 	sendMessage(t, player[t].id, player[t].team, "This callsign is not registered,"
 		    " please register it with a /register command");
       } else {
 	if (verifyUserPassword(player[t].regName.c_str(), message + 10)) {
-	  sendMessage(t,player[t].id,player[t].team,"Password Accepted, welcome back.");
+	  sendMessage(t, player[t].id, player[t].team, "Password Accepted, welcome back.");
 	  player[t].accessInfo.verified = true;
 
 	  // get their real info
-	  PlayerAccessInfo info;
-	  getUserInfo(player[t].regName.c_str(), info);
+	  PlayerAccessInfo &info = getUserInfo(player[t].regName);
 	  memcpy(player[t].accessInfo.explicitAllows, info.explicitAllows, sizeof(info.explicitAllows));
 	  memcpy(player[t].accessInfo.explicitDenys, info.explicitDenys, sizeof(info.explicitDenys));
 	  player[t].accessInfo.groups = info.groups;
 
-	  DEBUG1("Identify %s",player[t].regName.c_str());
+	  DEBUG1("Identify %s\n",player[t].regName.c_str());
 	} else {
 	  player[t].accessInfo.loginTime++;
 	  sendMessage(t, player[t].id, player[t].team, "Identify Failed, please make sure"
-	  	      " your password was correct");
+		      " your password was correct");
 	}
       }
     }
   } else if (strncmp(message + 1, "register", 8) == 0) {
     if (player[t].accessInfo.verified) {
       sendMessage(t, player[t].id, player[t].team, "You have allready registered and"
-                  " identified this callsign");
+		  " identified this callsign");
     } else {
-      if (userExists(player[t].regName.c_str())) {
+      if (userExists(player[t].regName)) {
 	sendMessage(t, player[t].id, player[t].team, "This callsign is allready registered,"
-	            " if it is yours /identify to login");
+		    " if it is yours /identify to login");
       } else {
 	if (strlen(message) > 10) {
 	  PlayerAccessInfo info;
@@ -6039,54 +6010,47 @@ static void parseCommand(const char *message, int t)
 	  memset(info.explicitDenys, 0, sizeof(info.explicitDenys));
 	  std::string pass = message + 10;
 	  setUserPassword(player[t].regName.c_str(), pass.c_str());
-	  setUserInfo(player[t].regName.c_str(), info);
-	  DEBUG1("Register %s %s",player[t].regName.c_str(),pass.c_str());
+	  setUserInfo(player[t].regName, info);
+	  DEBUG1("Register %s %s\n",player[t].regName.c_str(),pass.c_str());
 
 	  sendMessage(t, player[t].id, player[t].team, "Callsign registration confirmed,"
-	              " please /identify to login");
+		      " please /identify to login");
 	  updateDatabases();
 	} else {
-	  sendMessage(t,player[t].id,player[t].team,"your password must be 3 or more characters");
+	  sendMessage(t,player[t].id, player[t].team, "your password must be 3 or more characters");
 	}
       }
     }
   } else if (strncmp(message + 1, "ghost", 5) == 0) {
-    std::string ghostie;
-    std::string ghostPass;
 
     char *p1 = strchr(message + 1, '\"');
-    if (!p1) {
+    char *p2 = 0;
+    if (p1) p2 = strchr(p1 + 1, '\"');
+    if (!p2) {
       sendMessage(t, player[t].id, player[t].team, "not enough parameters, usage"
-                  " /GHOST \"CALLSIGN\" PASSWORD");
+		  " /ghost \"CALLSIGN\" PASSWORD");
     } else {
-      ghostie = p1 + 1;
-      char *p2 = strchr(p1 + 1, '\"');
-      if (!p2) {
-	sendMessage(t,player[t].id,player[t].team,"not enough parameters, usage"
-	            " /GHOST \"CALLSIGN\" PASSWORD");
+      std::string ghostie(p1+1,p2-p1-1);
+      std::string ghostPass=p2+2;
+
+      makeupper(ghostie);
+
+      int user = getPlayerIDByRegName(ghostie);
+      if (user == -1) {
+	sendMessage(t,player[t].id,player[t].team,"There is no user logged in by that name");
       } else {
-	ghostie.erase(ghostie.begin(), ghostie.end());
-	ghostPass = p2 + 2;
-
-	makeupper(ghostie);
-
-	int user = getPlayerIDByRegName(ghostie.c_str());
-	if (user == -1) {
-	  sendMessage(t,player[t].id,player[t].team,"There is no user logged in by that name");
+	if (!userExists(ghostie)) {
+	  sendMessage(t,player[t].id,player[t].team,"That callsign is not registered");
 	} else {
-	  if (!userExists(ghostie.c_str())) {
-	    sendMessage(t,player[t].id,player[t].team,"That callsign is not registered");
+	  if (!verifyUserPassword(ghostie, ghostPass)) {
+	    sendMessage(t, player[t].id, player[t].team, "Invalid Password");
 	  } else {
-	    if (!verifyUserPassword(ghostie.c_str(), ghostPass.c_str())) {
-	      sendMessage(t,player[t].id,player[t].team,"Invalid Password");
-	    } else {
-	      sendMessage(t,player[t].id,player[t].team,"Ghosting User");
-	      char temp[512];
-	      sprintf(temp, "Your Callsign is registered to another user,"
-	              " You have been ghosted by %s", player[t].callSign);
-	      sendMessage(user,player[user].id,player[user].team,temp);
-	      removePlayer(user, "Ghost");
-	    }
+	    sendMessage(t, player[t].id, player[t].team, "Ghosting User");
+	    char temp[MessageLen];
+	    sprintf(temp, "Your Callsign is registered to another user,"
+		    " You have been ghosted by %s", player[t].callSign);
+	    sendMessage(user, player[user].id, player[user].team, temp, true);
+	    removePlayer(user, "Ghost");
 	  }
 	}
       }
@@ -6094,14 +6058,14 @@ static void parseCommand(const char *message, int t)
   } else if (player[t].accessInfo.verified && strncmp(message + 1, "setpass", 7) == 0) {
     std::string pass;
     if (strlen(message) < 9) {
-      sendMessage(t,player[t].id,player[t].team,"Not enough parameters: usage /setpass");
+      sendMessage(t,player[t].id,player[t].team,"Not enough parameters: usage /setpass PASSWORD");
     } else {
       pass = message + 9;
-      setUserPassword(player[t].regName.c_str(), pass.c_str());
+      setUserPassword(player[t].regName.c_str(), pass);
       updateDatabases();
-      char text[512];
+      char text[MessageLen];
       sprintf(text, "Your password is now set to \"%s\"", pass.c_str());
-      sendMessage(t, player[t].id, player[t].team, text);
+      sendMessage(t, player[t].id, player[t].team, text, true);
     }
   } else if (strncmp(message + 1, "grouplist", 9) == 0) {
     sendMessage(t,player[t].id,player[t].team,"Group List:");
@@ -6110,158 +6074,148 @@ static void parseCommand(const char *message, int t)
       sendMessage(t,player[t].id,player[t].team,itr->first.c_str());
       itr++;
     }
-  } else if (player[t].accessInfo.verified && strncmp(message + 1, "showgroup", 9) == 0) {
+  } else if (strncmp(message + 1, "showgroup", 9) == 0) {
     std::string settie;
-    char *p1 = strchr(message + 1, '\"');
-    if (!p1) {
-      sendMessage(t, player[t].id, player[t].team, "not enough parameters, usage"
-                  " /showgroup \"CALLSIGN\"");
-    } else {
-      settie = p1;
-      char *p2 = strchr(p1 + 1, '\"');
-      if (!p2) {
-	sendMessage(t, player[t].id, player[t].team, "not enough parameters, usage"
-	            " /showgroup \"CALLSIGN\"");
+
+    if (strlen(message) == 10) {	 // show own groups
+      if (player[t].accessInfo.verified) {
+	settie = player[t].regName;
       } else {
-	settie.erase(p2 - p1, settie.size() - (p2 - p1));
+	sendMessage(t, player[t].id, player[t].team, "You are not identified");
+      }
+    } else if (hasPerm(t, showOthers)) { // show groups for other player
+      char *p1 = strchr(message + 1, '\"');
+      char *p2 = 0;
+      if (p1) p2 = strchr(p1 + 1, '\"');
+      if (p2) {
+	settie = string(p1+1, p2-p1-1);
 	makeupper(settie);
+      } else {
+	sendMessage(t, player[t].id, player[t].team, "wrong format, usage"
+		    " /showgroup  or  /showgroup \"CALLSIGN\"");
+      }
+    } else {
+      sendMessage(t, player[t].id, player[t].team, "No permission!");
+    }
 
-	if (userExists(settie.c_str())) {
-	  PlayerAccessInfo info;
-	  getUserInfo(settie.c_str(), info);
+    // something is wrong
+    if (settie!="") {
+      if (userExists(settie)) {
+	PlayerAccessInfo &info = getUserInfo(settie);
 
-	  char line[512];
-	  std::string l;
-	  sprintf(line, "Groups for %s, ", settie.c_str());
-	  l = line;
-	  std::vector<std::string>::iterator itr = info.groups.begin();
-	  while (itr != info.groups.end()) {
-	    l += *itr;
-	    l += " ";
-	    itr++;
-	  }
-	  sendMessage(t,player[t].id,player[t].team,l.c_str());
-	} else {
-	  sendMessage(t,player[t].id,player[t].team,"There is no user by that name");
+	std::string line = "Groups for ";
+	line += settie;
+	line += ", ";
+	std::vector<std::string>::iterator itr = info.groups.begin();
+	while (itr != info.groups.end()) {
+	  line += *itr;
+	  line += " ";
+	  itr++;
 	}
+	// FIXME let's hope that line is not too long (> MessageLen)
+	sendMessage(t, player[t].id, player[t].team, line.c_str());
+      } else {
+	sendMessage(t, player[t].id, player[t].team, "There is no user by that name");
       }
     }
   } else if (strncmp(message + 1, "groupperms", 10) == 0) {
-    sendMessage(t,player[t].id,player[t].team,"Group List:");
+    sendMessage(t, player[t].id, player[t].team, "Group List:");
     std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
     std::string line;
     while (itr != groupAccess.end()) {
       line = itr->first + ":   ";
-      sendMessage(t,player[t].id,player[t].team,line.c_str());
+      sendMessage(t, player[t].id, player[t].team, line.c_str());
 
       for (int i = 0; i < lastPerm; i++) {
 	if (itr->second.explicitAllows[i]) {
 	  line = "     ";
 	  line += nameFromPerm((AccessPerm)i);
-	  sendMessage(t,player[t].id,player[t].team,line.c_str());
+	  sendMessage(t, player[t].id, player[t].team, line.c_str());
 	}
       }
-
-      sendMessage(t,player[t].id,player[t].team,line.c_str());
       itr++;
     }
-  } else if ((player[t].Admin || hasPerm(player[t].accessInfo, setPerms) ||
-            hasPerm(player[t].accessInfo, setAll)) && strncmp(message + 1,
-	    "setgroup", 8) == 0) {
-    std::string settie;
-    std::string group;
+  } else if ((hasPerm(t, setPerms) || hasPerm(t, setAll)) &&
+	     strncmp(message + 1, "setgroup", 8) == 0) {
     char *p1 = strchr(message + 1, '\"');
-    if (!p1) {
-      sendMessage(t,player[t].id,player[t].team,"not enough parameters, usage"
-                  " /setGroup \"CALLSIGN\" GROUP");
+    char *p2 = 0;
+    if (p1) p2 = strchr(p1 + 1, '\"');
+    if (!p2) {
+      sendMessage(t, player[t].id, player[t].team, "not enough parameters, usage"
+		  " /setgroup \"CALLSIGN\" GROUP");
     } else {
-      settie = p1 + 1;
-      char *p2 = strchr(p1 + 1, '\"');
-      if (!p2) {
-	sendMessage(t,player[t].id,player[t].team,"not enough parameters, usage"
-	           "/setGroup \"CALLSIGN\" GROUP");
-      } else {
-	settie.erase(p2 - p1, settie.size() - (p2 - p1));
-	group = p2 + 2;
+      string settie(p1+1, p2-p1-1);
+      string group=p2+2;
 
-	makeupper(settie);
-	makeupper(group);
+      makeupper(settie);
+      makeupper(group);
 
-	if (userExists(settie.c_str())) {
-	  bool canset = true;
-	  if (!hasPerm(player[t].accessInfo, setAll) && !player[t].Admin)
-	    canset = hasGroup(player[t].accessInfo, group.c_str());
-	  if (!canset) {
-	    sendMessage(t,player[t].id,player[t].team,"You do not have permission to set this group");
-	  } else {
-	    PlayerAccessInfo info;
-	    getUserInfo(settie.c_str(), info);
-
-	    if (addGroup(info, group.c_str())) {
-	      sendMessage(t,player[t].id,player[t].team,"Group Add successful");
-	      int getID = getPlayerIDByRegName(settie.c_str());
-	      if (getID != -1) {
-		char temp[512];
-		sprintf(temp, "you have been added to the %s group, by %s",group.c_str(),player[t].callSign);
-		sendMessage(getID,player[getID].id,player[getID].team,temp);
-		addGroup(player[getID].accessInfo, group.c_str());
-	      }
-	      updateDatabases();
-	    } else {
-	      sendMessage(t,player[t].id,player[t].team,"Group Add failed (user may allready have that group)");
-	    }
-	  }
+      if (userExists(settie)) {
+	bool canset = true;
+	if (!hasPerm(t, setAll))
+	  canset = hasGroup(player[t].accessInfo, group.c_str());
+	if (!canset) {
+	  sendMessage(t, player[t].id, player[t].team, "You do not have permission to set this group");
 	} else {
-	  sendMessage(t,player[t].id,player[t].team,"There is no user by that name");
+	  PlayerAccessInfo &info = getUserInfo(settie);
+
+	  if (addGroup(info, group)) {
+	    sendMessage(t, player[t].id, player[t].team, "Group Add successful");
+	    int getID = getPlayerIDByRegName(settie);
+	    if (getID != -1) {
+	      char temp[MessageLen];
+	      sprintf(temp, "you have been added to the %s group, by %s", group.c_str(), player[t].callSign);
+	      sendMessage(getID, player[getID].id, player[getID].team, temp, true);
+	      addGroup(player[getID].accessInfo, group);
+	    }
+	    updateDatabases();
+	  } else {
+	    sendMessage(t, player[t].id, player[t].team, "Group Add failed (user may allready have that group)");
+	  }
 	}
+      } else {
+	sendMessage(t, player[t].id, player[t].team, "There is no user by that name");
       }
     }
-  } else if ((player[t].Admin || hasPerm(player[t].accessInfo, setPerms) ||
-            hasPerm(player[t].accessInfo, setAll)) && strncmp(message + 1,
-	    "removeGroup", 11) == 0) {
-    std::string settie;
-    std::string group;
-
+  } else if ((hasPerm(t, setPerms) || hasPerm(t, setAll)) &&
+	     strncmp(message + 1, "removegroup", 11) == 0) {
     char *p1 = strchr(message + 1, '\"');
-    if (!p1) {
-      sendMessage(t,player[t].id,player[t].team,"not enough parameters, usage /removeGroup \"CALLSIGN\" GROUP");
-    } else {
-      settie = p1;
-      char *p2 = strchr(p1 + 1, '\"');
-      if (!p2) {
-	sendMessage(t,player[t].id,player[t].team,"not enough parameters, usage /removeGroup \"CALLSIGN\" GROUP");
-      } else {
-	settie.erase(p2 - p1, settie.size() - (p2 - p1));
-	group = p2 + 2;
-	makeupper(settie);
-	makeupper(group);
-	if (userExists(settie.c_str())) {
-	  bool canset = true;
-	  if (!hasPerm(player[t].accessInfo, setAll) && !player[t].Admin)
-	    canset = hasGroup(player[t].accessInfo, group.c_str());
-	  if (!canset) {
-	    sendMessage(t,player[t].id,player[t].team,"You do not have permission to remove this group");
-	  } else {
-	    PlayerAccessInfo info;
-	    getUserInfo(settie.c_str(), info);
+    char *p2 = 0;
+    if (p1) p2 = strchr(p1 + 1, '\"');
+    if (!p2) {
+      sendMessage(t, player[t].id, player[t].team, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
+    } else
+    {
+      string settie(p1+1, p2-p1-1);
+      string group=p2+2;
 
-	    if (removeGroup(info, group.c_str())) {
-	      sendMessage(t,player[t].id,player[t].team,"Group Remove successful");
-	      int getID = getPlayerIDByRegName(settie.c_str());
-	      if (getID != -1) {
-		char temp[512];
-		sprintf(temp,"you have been removed from the %s group, by %s",group.c_str(),player[t].callSign);
-		sendMessage(getID,player[getID].id,player[getID].team,temp);
-		removeGroup(player[getID].accessInfo, group.c_str());
-	      }
-	      updateDatabases();
-	    } else {
-	      sendMessage(t,player[t].id,player[t].team,"Group Remove failed ( user may not have had group)");
-	    }
-	  }
+      makeupper(settie);
+      makeupper(group);
+      if (userExists(settie)) {
+	bool canset = true;
+	if (!hasPerm(t, setAll))
+	  canset = hasGroup(player[t].accessInfo, group.c_str());
+	if (!canset) {
+	  sendMessage(t, player[t].id, player[t].team, "You do not have permission to remove this group");
 	} else {
-	  sendMessage(t,player[t].id,player[t].team,"There is no user by that name");
+	  PlayerAccessInfo &info = getUserInfo(settie);
+
+	  if (removeGroup(info, group)) {
+	    sendMessage(t, player[t].id, player[t].team, "Group Remove successful");
+	    int getID = getPlayerIDByRegName(settie);
+	    if (getID != -1) {
+	      char temp[MessageLen];
+	      sprintf(temp, "you have been removed from the %s group, by %s", group.c_str(), player[t].callSign);
+	      sendMessage(getID, player[getID].id, player[getID].team, temp, true);
+	      removeGroup(player[getID].accessInfo, group);
+	    }
+	    updateDatabases();
+	  } else {
+	    sendMessage(t, player[t].id, player[t].team, "Group Remove failed ( user may not have had group)");
+	  }
 	}
+      } else {
+	sendMessage(t, player[t].id, player[t].team, "There is no user by that name");
       }
     }
   } else {
@@ -6885,7 +6839,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     if (countCount == NumTeams) {
     // if num rogues allowed team > 0, then set Rogues game style
       if (options.maxTeam[RogueTeam] > 0)
-        clOptions.gameStyle |= int(RoguesGameStyle);
+	clOptions.gameStyle |= int(RoguesGameStyle);
       softmaxPlayers = 0;
       for (i = 0; i < NumTeams; i++)
 	softmaxPlayers += options.maxTeam[i];
@@ -7969,7 +7923,7 @@ int main(int argc, char **argv)
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
     nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     //if (nfound)
-    //  DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+    //	DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
 #ifdef TIMELIMIT
     // see if game time ran out
@@ -8018,34 +7972,34 @@ int main(int argc, char **argv)
 	// every 15 minutes
 	char message[MessageLen];
 	if (clOptions.advertisemsg != NULL){
-          // split the admsg into several lines if it contains '\n'
-          const char* c = clOptions.advertisemsg;
-          const char* j;
-          while ((j = strstr(c, "\\n")) != NULL) {
-            int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
-            strncpy(message, c, l);
-            message[l] = '\0';
-            for (int i=0; i<curMaxPlayers; i++)
-              if (player[i].state > PlayerInLimbo)
-                sendMessage(i, player[i].id, player[i].team, message, true);
-            c = j + 2;
-          }
-          strncpy(message, c, MessageLen - 1);
-          message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
+	  // split the admsg into several lines if it contains '\n'
+	  const char* c = clOptions.advertisemsg;
+	  const char* j;
+	  while ((j = strstr(c, "\\n")) != NULL) {
+	    int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
+	    strncpy(message, c, l);
+	    message[l] = '\0';
+	    for (int i=0; i<curMaxPlayers; i++)
+	      if (player[i].state > PlayerInLimbo)
+		sendMessage(i, player[i].id, player[i].team, message, true);
+	    c = j + 2;
+	  }
+	  strncpy(message, c, MessageLen - 1);
+	  message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
 	  for (int i=0; i<curMaxPlayers; i++)
 	    if (player[i].state > PlayerInLimbo)
 	      sendMessage(i, player[i].id, player[i].team, message, true);
 	}
 	// multi line from file advert
-        if (adLines != NULL){
-          for (int j = 0; j < (int)adLines->size(); j ++){
-            for (int i=0; i<curMaxPlayers; i++){
-              if (player[i].state > PlayerInLimbo){
-                sendMessage(i, player[i].id, player[i].team, (*adLines)[j].c_str());
-              }
-            }
-          }
-        }
+	if (adLines != NULL){
+	  for (int j = 0; j < (int)adLines->size(); j ++){
+	    for (int i=0; i<curMaxPlayers; i++){
+	      if (player[i].state > PlayerInLimbo){
+		sendMessage(i, player[i].id, player[i].team, (*adLines)[j].c_str());
+	      }
+	    }
+	  }
+	}
 	lastbroadcast = TimeKeeper::getCurrent();
       }
     }
