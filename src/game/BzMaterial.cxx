@@ -187,7 +187,7 @@ void BzMaterial::reset()
 {
   dynamicColor = -1;
   const float defAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-  const float defDiffuse[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
+  const float defDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
   const float defSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   const float defEmission[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   memcpy (ambient, defAmbient, sizeof(ambient));

@@ -358,9 +358,9 @@ properties:
 .br
 \fB  ambient\fR  0.2 0.2 0.2 1.0  # ambient color
 .br
-\fB  diffuse\fR  0.8 0.8 0.8 1.0  # diffuse color (\fBmain color\fR)
+\fB  diffuse\fR  1.0 1.0 1.0 1.0  # diffuse color (\fBmain color\fR)
 .br
-\fB  color\fR    0.8 0.8 0.8 1.0  # synonym for 'diffuse'
+\fB  color\fR    1.0 1.0 1.0 1.0  # synonym for 'diffuse'
 .br
 \fB  specular\fR 0.0 0.0 0.0 1.0  # specular color
 .br
