@@ -139,12 +139,12 @@ class World {
     int			shakeWins;
     uint32_t		epochOffset;
     float		bases[NumTeams][9];
-    std::vector<BoxBuilding>	boxes;
+    std::vector<BoxBuilding>		boxes;
     std::vector<PyramidBuilding>	pyramids;
-    std::vector<BaseBuilding>	basesR;
+    std::vector<BaseBuilding>		basesR;
     std::vector<Teleporter>		teleporters;
-    std::vector<WallObstacle>	walls;
-    int*		teleportTargets;
+    std::vector<WallObstacle>		walls;
+    std::vector<int>			teleportTargets;
     Team		team[NumTeams];
     RemotePlayer**	players;
     DeadPlayer**	deadPlayers;
@@ -189,14 +189,12 @@ class WorldBuilder {
 				float w, float b, const float* safety);
 
   private:
-    void		growTargetList(int newMinSize);
     void		preGetWorld();
 
   private:
     bool		owned;
     World*		world;
-    int			targetArraySize;
-    int*		teleportTargets;
+    std::vector<int>	teleportTargets;
 };
 
 //

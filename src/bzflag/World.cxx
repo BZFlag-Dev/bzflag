@@ -77,7 +77,6 @@ World::~World()
   int i;
   freeFlags();
   freeInsideNodes();
-  delete[] teleportTargets;
   for (i = 0; i < curMaxPlayers; i++)
     delete players[i];
   delete[] players;
@@ -595,19 +594,15 @@ void			World::addDeadPlayer(Player* dyingPlayer)
 // WorldBuilder
 //
 
-static const int	TeleportArrayGranularity = 16;
-
-WorldBuilder::WorldBuilder() : targetArraySize(TeleportArrayGranularity)
+WorldBuilder::WorldBuilder()
 {
   world = new World;
   owned = true;
-  teleportTargets = new int[2 * targetArraySize];
 }
 
 WorldBuilder::~WorldBuilder()
 {
   if (owned) delete world;
-  delete[] teleportTargets;
 }
 
 void*			WorldBuilder::unpack(void* buf)
@@ -794,12 +789,7 @@ void			WorldBuilder::preGetWorld()
 						obstacleSize, o.getRotation());
   }
 
-  // copy teleporter target list
-  if (world->teleportTargets)
-    delete[] world->teleportTargets;
-  const int size = 2 * world->teleporters.size();
-  world->teleportTargets = new int[size];
-  ::memcpy(world->teleportTargets, teleportTargets, size * sizeof(int));
+  world->teleportTargets = teleportTargets;
 }
 
 World*			WorldBuilder::getWorld()
@@ -879,14 +869,14 @@ void			WorldBuilder::append(const BaseBuilding& base)
 
 void			WorldBuilder::append(const Teleporter& teleporter)
 {
-  // save telelporter
+  // save teleporter
   world->teleporters.push_back(teleporter);
 }
 
 void			WorldBuilder::setTeleporterTarget(int src, int tgt)
 {
-  // make sure list is big enough
-  growTargetList(src / 2 + 1);
+  if (teleportTargets.capacity() < src+1)
+    teleportTargets.resize(src+10);
 
   // record target in source entry
   teleportTargets[src] = tgt;
@@ -908,19 +898,4 @@ void			WorldBuilder::setBase(TeamColor team,
   world->bases[teamIndex][8] = safety[2];
 }
 
-void			WorldBuilder::growTargetList(int newMinSize)
-{
-  if (newMinSize < targetArraySize) return;
-
-  // get new size at lease as big as newMinSize
-  int newSize = targetArraySize;
-  while (newSize <= newMinSize) newSize += TeleportArrayGranularity;
-
-  // copy targets into a larger buffer
-  int* newTargets = new int[2 * newSize];
-  ::memcpy(newTargets, teleportTargets, 2 * targetArraySize * sizeof(int));
-  delete[] teleportTargets;
-  targetArraySize = newSize;
-  teleportTargets = newTargets;
-}
 // ex: shiftwidth=2 tabstop=8
