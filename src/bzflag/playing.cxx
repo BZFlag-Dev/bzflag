@@ -4756,7 +4756,9 @@ static void		addRobots()
     if (robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
       delete robots[j];
       delete robotServer[j];
+      robots[j] = NULL;
       robotServer[j] = robotServer[--numRobots];
+      robotServer[numRobots] = NULL;
       continue;
     }
 
