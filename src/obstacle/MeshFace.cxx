@@ -59,10 +59,10 @@ void MeshFace::finalize()
 {
   float maxCrossSqr = 0.0f;
   float bestCross[3] = { 0.0f, 0.0f, 0.0f };
+  int bestSet[3] = { -1, -1, -1 };
   
   // find the best vertices for making the plane
   int i, j, k;
-  int bestSet[3] = { -1, -1, -1 };
   for (i = 0; i < (vertexCount - 2); i++) {
     for (j = i; j < (vertexCount - 1); j++) {
       for (k = j; k < (vertexCount - 0); k++) {
@@ -99,7 +99,8 @@ void MeshFace::finalize()
   p[3] = -((p[0] * vert[0]) + (p[1] * vert[1]) + (p[2] * vert[2]));
   
   // see if the whole face is convex
-  for (int v = 0; v < vertexCount; v++) {
+  int v, a;
+  for (v = 0; v < vertexCount; v++) {
     float a[3], b[3], c[3];
     vec3sub(a, vertices[(v + 1) % vertexCount], vertices[(v + 0) % vertexCount]);
     vec3sub(b, vertices[(v + 2) % vertexCount], vertices[(v + 1) % vertexCount]);
@@ -116,8 +117,8 @@ void MeshFace::finalize()
   // setup extents
   mins[0] = mins[1] = mins[2] = +MAXFLOAT;
   maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
-  for (int v = 0; v < vertexCount; v++) {
-    for (int a = 0; a < 3; a++) {
+  for (v = 0; v < vertexCount; v++) {
+    for (a = 0; a < 3; a++) {
       if (vertices[v][a] < mins[a]) {
         mins[a] = vertices[v][a];
       }

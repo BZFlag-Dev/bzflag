@@ -86,10 +86,12 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
                            const std::vector<int>& _texcoords,
                            const MeshMaterial& _material)
 {
+  // protect the face list from overrun
   if (faceCount >= faceSize) {
     return false;
   }
 
+  // make sure the list lengths are sane
   unsigned int i;
   unsigned int count = _vertices.size();
   if ((count < 3) ||
@@ -97,6 +99,25 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
       ((_texcoords.size() > 0) && (_texcoords.size() != count))) {
     return false;
   }
+  
+  // validate the indices
+  for (i = 0; i < _vertices.size(); i++) {
+    if (_vertices[i] >= vertexCount) {
+      return false;
+    }
+  }
+  for (i = 0; i < _normals.size(); i++) {
+    if (_normals[i] >= normalCount) {
+      return false;
+    }
+  }
+  for (i = 0; i < _texcoords.size(); i++) {
+    if (_texcoords[i] >= texcoordCount) {
+      return false;
+    }
+  }
+
+  // use the indicies to makes lists of pointers  
   float **v = new float*[_vertices.size()];
   float **n = NULL;
   float **t = NULL;

@@ -202,9 +202,7 @@ void* MeshMaterial::unpack(void* buf)
 {
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  useTexture = false;
-  useTextureAlpha = false;
-  useColorOnTexture = false;
+  useTexture =  useTextureAlpha= useColorOnTexture = false;
   if (stateByte & (1 << 0)) {
     useTexture = true;
   } 
