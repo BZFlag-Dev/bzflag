@@ -64,6 +64,7 @@ struct CmdLineOptions
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
     teamFlagTimeout(30), maxlagwarn(10000), lagwarnthresh(-1.0),
     idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f),
+    spamWarnMax(0), msgTimer(0),
     linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
     useFallbackPort(false), requireUDP(false), randomBoxes(false),
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
@@ -91,6 +92,8 @@ struct CmdLineOptions
   int			wksPort;
   int			gameStyle;
   int			rabbitSelection;
+  int 			msgTimer;
+  int 			spamWarnMax;
 
   std::string   servermsg;
   std::string   advertisemsg;

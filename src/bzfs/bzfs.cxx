@@ -1643,6 +1643,8 @@ static void addPlayer(int playerIndex)
   if (!NetHandler::exists(playerIndex))
     return;
 
+  player[playerIndex].setLastMsg("");
+  player[playerIndex].setSpamWarns();
   // player is signing on (has already connected via addClient).
   player[playerIndex].signingOn();
   score[playerIndex] = new Score();
@@ -3256,10 +3258,30 @@ static void handleCommand(int t, const void *rawbuf)
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
       player[t].hasSent(message);
+      // check for spamming
+      std::string tempmsg = message;
+      for (int c = 0; c <= tempmsg.size() - 1; c++)
+	if (isspace(tempmsg[c]))
+      	  tempmsg.erase(tempmsg.begin() + c);
+      if (strcasecmp(tempmsg.c_str(), player[t].getLastMsg().c_str()) == 0 &&
+   	      TimeKeeper::getCurrent() - player[t].getLastMsgTime() <= clOptions->msgTimer) {
+	player[t].incSpamWarns();
+	sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
+	if (player[t].getSpamWarns() > clOptions->spamWarnMax || clOptions->spamWarnMax == 0) {
+	  sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
+	  DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
+		 "less than %d second(s) in between; player was warned %d times]", 
+		 player[t].getCallSign(), t, TimeKeeper::getCurrent() - player[t].getLastMsgTime(),
+		 player[t].getSpamWarns());
+	  removePlayer(t, "spam");
+	  break;
+	}
+      }
+      player[t].setLastMsg(tempmsg);
       // check for command
       if (message[0] == '/') {
 	/* make commands case insensitive for user-friendlyness */
-	unsigned int pos=1;
+	unsigned int pos = 1;
 	while ((pos < strlen(message)) && (isAlphanumeric(message[pos]))) {
 	  message[pos] = tolower((int)message[pos]);
 	  pos++;

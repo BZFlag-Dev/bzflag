@@ -26,6 +26,31 @@ PlayerInfo::PlayerInfo() {
   state = PlayerNoExist;
 }
 
+std::string PlayerInfo::getLastMsg() {
+  return lastMsgSent;
+}
+
+TimeKeeper PlayerInfo::getLastMsgTime() {
+  return lastMsgTime;
+}
+
+int PlayerInfo::getSpamWarns() {
+  return spamWarns;
+}
+
+void PlayerInfo::incSpamWarns() {
+  ++spamWarns;
+}
+
+void PlayerInfo::setSpamWarns() {
+  spamWarns = 0;
+}
+
+void PlayerInfo::setLastMsg(std::string msg) {
+  lastMsgSent = msg;
+  lastMsgTime = TimeKeeper::getCurrent();
+}
+
 void PlayerInfo::initPlayer(int _playerIndex) {
   playerIndex      = _playerIndex;
 
@@ -38,7 +63,7 @@ void PlayerInfo::resetPlayer(bool ctf) {
   wasRabbit = false;
 
   lastupdate = TimeKeeper::getCurrent();
-  lastmsg	 = TimeKeeper::getCurrent();
+  lastmsg    = TimeKeeper::getCurrent();
 
   replayState = ReplayNone;
 
@@ -75,6 +100,7 @@ bool PlayerInfo::isPlaying() {
 bool PlayerInfo::exist() {
   return state != PlayerNoExist;
 };
+
 void PlayerInfo::signingOn() {
   state = PlayerDead;
   flag = -1;

@@ -95,6 +95,8 @@ const char *usageString =
 "[-sb] "
 "[-set <name> <value>] "
 "[-sl <id> <num>] "
+"[-spamtime <time>] "
+"[-spamwarn <warnAmt>] "
 "[-speedtol <tolerance>] "
 "[-srvmsg <text>] "
 "[-st <time>] "
@@ -175,6 +177,8 @@ const char *extraUsageString =
 "\t-sb: allow tanks to respawn on buildings\n"
 "\t-set <name>=<value>: set a BZDB variable's value\n"
 "\t-sl: limit flag <id> to <num> shots\n"
+"\t-spamtime <time>: make <time> be the required time in seconds between messages sent that are alike\n"
+"\t-spamwarn <warnAmt>: warn a spammer that sends messages before -spamtime times out <warnAmt> many times\n"
 "\t-speedtol: multiplyers over normal speed to auto kick at\n"
 "\t\tdefaults to 1.25, should not be less then 1.0\n"
 "\t-srvmsg: specify a <msg> to print upon client login\n"
@@ -899,6 +903,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	}
 	options.flagLimit[fDesc] = x;
       }
+    } else if (strcmp(argv[i], "-spamtime") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.msgTimer = atoi(argv[i]);
+      std::cerr << "using spam time of " << options.msgTimer << "\n";
+    } else if (strcmp(argv[i], "-spamwarn") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.spamWarnMax = atoi(argv[i]);
+      std::cerr << "using spam warn amount of " << options.spamWarnMax << "\n";
     } else if (strcmp(argv[i], "-speedtol") == 0) {
       checkArgc(1, i, argc, argv[i]);
       speedTolerance = (float) atof(argv[i]);

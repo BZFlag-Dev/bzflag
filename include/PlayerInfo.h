@@ -62,6 +62,12 @@ struct TeamInfo {
 class PlayerInfo {
 public:
   PlayerInfo();
+  void	      setLastMsg(std::string msg);
+  void	      setSpamWarns();
+  std::string getLastMsg();
+  TimeKeeper  getLastMsgTime();
+  void 	      incSpamWarns();
+  int	      getSpamWarns();
   void        initPlayer(int _playerIndex);
   void        resetPlayer(bool ctf);
   // return false if player was not really in 
@@ -140,6 +146,11 @@ private:
     TimeKeeper lastFlagDropTime;
 
     std::string clientVersion;
+
+    // spam prevention
+    std::string lastMsgSent;
+    int spamWarns;
+    TimeKeeper lastMsgTime;
 
     bool paused;
     TimeKeeper pausedSince;

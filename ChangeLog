@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Prevent message flooding/spamming - Ian Agar
 * Consolidated polling system bzfs options (-poll) - Ian Agar, Sean Morrison
 * Improved server pause cheat detection and reporting - Ian Agar, Sean Morrison
 * Changed the way Roaming keys drives the Observer - Alfredo Tupone 
