@@ -28,7 +28,9 @@
 #include <dirent.h>
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
-#include "common.h"
+#ifdef HAVE_SDL
+#include <SDL/SDL.h>
+#endif
 #include "bzfio.h"
 #include <fstream>
 #include "bzfgl.h"
@@ -730,7 +732,7 @@ static bool		needsFullscreen()
 //	initialize application and enter event loop
 //
 
-#if defined(_WIN32) && !defined(USE_SDL)
+#if defined(_WIN32) && !defined(HAVE_SDL)
 int			myMain(int argc, char** argv)
 #else /* defined(_WIN32) */
 int			main(int argc, char** argv)
@@ -1313,7 +1315,7 @@ int			main(int argc, char** argv)
   return 0;
 }
 
-#if defined(_WIN32) && !defined(USE_SDL)
+#if defined(_WIN32) && !defined(HAVE_SDL)
 
 //
 // WinMain()
