@@ -18,6 +18,8 @@
 #include "ErrorHandler.h"
 #include <assert.h>
 #include <ctype.h>
+#include <stack>
+#include <stdexcept>
 
 //
 // StateDatabase::Item
@@ -144,6 +146,19 @@ std::string				StateDatabase::get(const std::string& name) const
 		return index->second.value;
 }
 
+float					StateDatabase::eval(std::string name) const
+{
+	Map::const_iterator index = items.find(name);
+	if (index == items.end() || !index->second.isSet)
+		throw std::runtime_error("BZDB:" + name + " not found\n");
+//		return NaN;
+	Expression pre, inf;
+	std::string value = index->second.value;
+	value >> inf;
+	pre = infixToPrefix(inf);
+	return evaluate(pre);
+}
+
 bool					StateDatabase::isTrue(const std::string& name) const
 {
 	Map::const_iterator index = items.find(name);
@@ -243,6 +258,419 @@ StateDatabase*			StateDatabase::getInstance()
 	if (s_instance == NULL)
 		s_instance = new StateDatabase;
 	return s_instance;
+}
+
+StateDatabase::ExpressionToken::ExpressionToken()
+{
+	tokenType = number;
+	tokenContents.number = 0;
+}
+
+StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
+{
+	tokenType = _tokenType;
+	switch(tokenType) {
+	case number:
+		tokenContents.number = 0;
+		break;
+	case variable:
+		break;
+	case oper:
+		tokenContents.oper = none;
+		break;
+	}
+}
+
+StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType, Contents _tokenContents)
+{
+	tokenType = _tokenType;
+	tokenContents = _tokenContents;
+}
+
+void StateDatabase::ExpressionToken::setType(Type _tokenType)
+{
+	tokenType = _tokenType;
+	switch(tokenType) {
+	case number:
+		tokenContents.number = 0;
+		break;
+	case variable:
+		break;
+	case oper:
+		tokenContents.oper = none;
+	}
+}
+
+void StateDatabase::ExpressionToken::setContents(Contents _tokenContents)
+{
+	tokenContents = _tokenContents;
+}
+
+void StateDatabase::ExpressionToken::setNumber(double num)
+{
+	tokenType = number;
+	tokenContents.number = num;
+}
+
+void StateDatabase::ExpressionToken::setVariable(std::string var)
+{
+	tokenType = variable;
+	tokenContents.variable = var;
+}
+
+void StateDatabase::ExpressionToken::setOper(Operator op)
+{
+	tokenType = oper;
+	tokenContents.oper = op;
+}
+
+StateDatabase::ExpressionToken::Type StateDatabase::ExpressionToken::getTokenType()
+{
+	return tokenType;
+}
+
+StateDatabase::ExpressionToken::Contents StateDatabase::ExpressionToken::getTokenContents()
+{
+	return tokenContents;
+}
+
+double StateDatabase::ExpressionToken::getNumber()
+{
+	// note that the necessary type check must be done first
+	return tokenContents.number;
+}
+
+std::string	StateDatabase::ExpressionToken::getVariable()
+{
+	// note that the necessary type check must be done first
+	return tokenContents.variable;
+}
+
+StateDatabase::ExpressionToken::Operator StateDatabase::ExpressionToken::getOperator()
+{
+	// note that the necessary type check must be done first
+	return tokenContents.oper;
+}
+
+int StateDatabase::ExpressionToken::getPrecedence()
+{
+	switch (tokenContents.oper) {
+		case add:
+		case subtract:
+			return 1;
+		case multiply:
+		case divide:
+			return 2;
+		case power:
+			return 3;
+		case lparen:
+			return 4;
+		case rparen:
+		default:
+			return 0;
+	}
+}
+
+istream&operator >> (istream& src, StateDatabase::ExpressionToken& dst)
+{
+	char temp;
+	std::string tempname;
+
+	src >> temp;
+	if ((temp >= '0' && temp <= '9') || temp == '.') {
+		// number
+		tempname += temp;
+		temp = src.peek();
+		while ((temp >= '0' && temp <= '9') || temp == '.') {
+			src >> temp;
+			tempname += temp;
+			temp = src.peek();
+		}
+		dst.setNumber(atof(tempname.c_str()));
+	}
+	else if (temp == '+' || temp == '-' || temp == '*' || temp == '/' || temp == '^' || temp == '(' || temp == ')') {
+		// operator
+		switch(temp) {
+		case '+':
+			dst.setOper(StateDatabase::ExpressionToken::add);
+			break;
+		case '-':
+			dst.setOper(StateDatabase::ExpressionToken::subtract);
+			break;
+		case '*':
+			dst.setOper(StateDatabase::ExpressionToken::multiply);
+			break;
+		case '/':
+			dst.setOper(StateDatabase::ExpressionToken::divide);
+			break;
+		case '^':
+			dst.setOper(StateDatabase::ExpressionToken::power);
+			break;
+		case '(':
+			dst.setOper(StateDatabase::ExpressionToken::lparen);
+			break;
+		case ')':
+			dst.setOper(StateDatabase::ExpressionToken::rparen);
+			break;
+		}
+	}
+	else if((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') {
+		// variable (perhaps prefix with $?)
+		tempname += temp;
+		temp = src.peek();
+		while ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') {
+			src >> temp;
+			tempname += temp;
+			temp = src.peek();
+		}
+		dst.setVariable(tempname);
+	}
+	else {
+		// throw an error?
+	}
+	return src;
+}
+
+std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
+{
+	char temp;
+	std::string tempname;
+
+	temp = src[0]; src = src.substr(1);
+	if ((temp >= '0' && temp <= '9') || temp == '.') {
+		// number
+		tempname += temp;
+		temp = src[0];
+		while (((temp >= '0' && temp <= '9') || temp == '.') && (src.length() != 0)) {
+			src = src.substr(1);
+			tempname += temp;
+			temp = src[0];
+		}
+		dst.setNumber(atof(tempname.c_str()));
+	}
+	else if (temp == '+' || temp == '-' || temp == '*' || temp == '/' || temp == '^' || temp == '(' || temp == ')') {
+		// operator
+		switch (temp) {
+		case '+':
+			dst.setOper(StateDatabase::ExpressionToken::add);
+			break;
+		case '-':
+			dst.setOper(StateDatabase::ExpressionToken::subtract);
+			break;
+		case '*':
+			dst.setOper(StateDatabase::ExpressionToken::multiply);
+			break;
+		case '/':
+			dst.setOper(StateDatabase::ExpressionToken::divide);
+			break;
+		case '^':
+			dst.setOper(StateDatabase::ExpressionToken::power);
+			break;
+		case '(':
+			dst.setOper(StateDatabase::ExpressionToken::lparen);
+			break;
+		case ')':
+			dst.setOper(StateDatabase::ExpressionToken::rparen);
+			break;
+		}
+	}
+	else if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') {
+		tempname += temp;
+		temp = src[0];
+		while (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') && (src.length() != 0)) {
+			src = src.substr(1);
+			tempname += temp;
+			temp = src[0];
+		}
+		dst.setVariable(tempname);
+	}
+	else {
+		// throw an error?
+	}
+	return src;
+}
+
+ostream& operator << (ostream& dst, StateDatabase::ExpressionToken& src)
+{
+	switch (src.tokenType) {
+	case StateDatabase::ExpressionToken::number:
+		dst << src.getNumber();
+		break;
+	case StateDatabase::ExpressionToken::oper:
+		switch (src.getOperator()) {
+		case StateDatabase::ExpressionToken::add:
+			dst << '+';
+			break;
+		case StateDatabase::ExpressionToken::subtract:
+			dst << '-';
+			break;
+		case StateDatabase::ExpressionToken::multiply:
+			dst << '*';
+			break;
+		case StateDatabase::ExpressionToken::divide:
+			dst << '/';
+			break;
+		case StateDatabase::ExpressionToken::power:
+			dst << '^';
+			break;
+		case StateDatabase::ExpressionToken::lparen:
+			dst << '(';
+			break;
+		case StateDatabase::ExpressionToken::rparen:
+			dst << ')';
+			break;
+		case StateDatabase::ExpressionToken::none:
+			break;
+		}
+		break;
+	case StateDatabase::ExpressionToken::variable:
+		dst << src.getVariable();
+		break;
+	}
+	return dst;
+}
+
+istream& operator >> (istream& src, StateDatabase::Expression& dst)
+{
+	StateDatabase::ExpressionToken temp;
+	char tempc;
+
+	dst.clear();
+	src.unsetf(ios::skipws);
+	while (src.peek() != '\n') {
+		while (src.peek() == ' ' || src.peek() == '\t')
+			src >> tempc;
+		src >> temp;
+		dst.push_back(temp);
+	}
+	src >> tempc;
+	src.setf(ios::skipws);
+	return src;
+}
+
+std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
+{
+	StateDatabase::ExpressionToken temp;
+
+	dst.clear();
+	while (src.length() != 0) {
+		while (src[0] == ' ' || src[0] == '\t') {
+			src = src.substr(1);
+		}
+		src >> temp;
+		dst.push_back(temp);
+	}
+	return src;
+}
+
+ostream& operator << (ostream& dst, StateDatabase::Expression& src)
+{
+	if(src.size()) {
+		for (unsigned int i = 0; i < src.size() - 1; i++) {
+			dst << src[i] << ' ';
+		}
+		dst << src[src.size() - 1];
+	}
+	return dst;
+}
+
+StateDatabase::Expression StateDatabase::infixToPrefix(Expression infix) const
+{
+	Expression postfix, prefix;
+	std::stack<ExpressionToken> operators;
+
+	for (Expression::iterator i = infix.begin(); i != infix.end(); i++) {
+		if (i->getTokenType() == ExpressionToken::variable || i->getTokenType() == ExpressionToken::number) {
+			postfix.push_back(*i);
+		}
+		else if (i->getTokenType() == ExpressionToken::oper) {
+			if (i->getOperator() == ExpressionToken::lparen) {
+				operators.push(*i);
+			}
+			else if (i->getOperator() == ExpressionToken::rparen) {
+				// unstack operators until a matching ( is found
+				while(operators.top().getOperator() != ExpressionToken::lparen) {
+					postfix.push_back(operators.top()); operators.pop();
+				}
+				// discard (
+				operators.pop();
+			}
+			else {
+				while((operators.size() > 0) && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
+					postfix.push_back(operators.top()); operators.pop();
+				}
+				operators.push(*i);
+			}
+		}
+	}
+	while (operators.size() > 0) {
+		postfix.push_back(operators.top()); operators.pop();
+	}
+
+	for (Expression::reverse_iterator ri = postfix.rbegin(); ri != postfix.rend(); ri++)
+		prefix.push_back(*ri);
+	return prefix;
+}
+
+float StateDatabase::evaluate(Expression e) const
+{
+	stack<ExpressionToken> evaluationStack;
+	ExpressionToken tok, lvalue, rvalue;
+	bool unary;
+
+	for (Expression::reverse_iterator i = e.rbegin(); i != e.rend(); i++) {
+		unary = false;
+		switch(i->getTokenType()) {
+		case ExpressionToken::number:
+			evaluationStack.push(*i);
+			break;
+		case ExpressionToken::variable:
+			// strip off '$'?
+			tok.setNumber(BZDB->eval(i->getVariable()));
+			evaluationStack.push(tok);
+			break;
+		case ExpressionToken::oper:
+			if (evaluationStack.size() == 0)
+				; // syntax error
+			lvalue = evaluationStack.top(); evaluationStack.pop();
+			if (evaluationStack.size() == 0)
+				unary = true; // syntax error or unary operator
+			if (!unary) {
+				rvalue = evaluationStack.top(); evaluationStack.pop();
+			}
+			switch(i->getOperator()) {
+			case ExpressionToken::add:
+				tok.setNumber(lvalue.getNumber() + rvalue.getNumber());
+				evaluationStack.push(tok);
+				break;
+			case ExpressionToken::subtract:
+				if (unary)
+					tok.setNumber(-lvalue.getNumber());
+				else
+					tok.setNumber(lvalue.getNumber() - rvalue.getNumber());
+				evaluationStack.push(tok);
+				break;
+			case ExpressionToken::multiply:
+				tok.setNumber(lvalue.getNumber() * rvalue.getNumber());
+				evaluationStack.push(tok);
+				break;
+			case ExpressionToken::divide:
+				tok.setNumber(lvalue.getNumber() / rvalue.getNumber());
+				evaluationStack.push(tok);
+				break;
+			case ExpressionToken::power:
+				tok.setNumber(pow(lvalue.getNumber(), rvalue.getNumber()));
+				evaluationStack.push(tok);
+				break;
+			default:
+				// lparen and rparen should have been stripped out
+				// throw something here, too
+				break;
+			}
+			break;
+		}
+	}
+	return evaluationStack.top().getNumber();
 }
 
 // ex: shiftwidth=4 tabstop=4

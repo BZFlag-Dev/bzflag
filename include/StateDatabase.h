@@ -15,6 +15,7 @@
 
 #include "common.h"
 #include <string>
+#include <vector>
 #include "CallbackList.h"
 #include "bzfio.h"
 
@@ -86,6 +87,10 @@ public:
 	// if the name isn't set.
 	std::string			get(const std::string& name) const;
 
+	// get the value as a floating point number. this will evaluate
+	// the string as an expression
+	float				eval(std::string name) const;
+
 	// return true if the value associated with a name indicates
 	// logical true, which is when the value is not empty and not
 	// "0" and not "false" and not "no".
@@ -136,7 +141,55 @@ private:
 private:
 	Map					items;
 	static StateDatabase* s_instance;
+
+public:
+	class ExpressionToken {
+	public:
+		enum Type { oper, number, variable };
+		enum Operator { add, subtract, multiply, divide, power, lparen, rparen, none };
+		struct Contents {
+		public:
+			double number;
+			std::string variable;
+			Operator oper;
+		};
+
+		ExpressionToken();
+		ExpressionToken(Type _tokenType);
+		ExpressionToken(Type _tokenType, Contents _tokenContents);
+
+		void				setType(Type _tokenType);
+		void				setContents(Contents _tokenContents);
+		void				setNumber(double number);
+		void				setVariable(std::string variable);
+		void				setOper(Operator oper);
+
+		Type				getTokenType();
+		Contents			getTokenContents();
+		double				getNumber();
+		std::string			getVariable();
+		Operator			getOperator();
+
+		int					getPrecedence();
+
+		friend istream&		operator >> (istream& src, ExpressionToken& dst);
+		friend std::string&	operator >> (std::string& src, ExpressionToken& dst);
+		friend ostream&		operator << (ostream& dst, ExpressionToken& src);
+	private:
+		Type tokenType;
+		Contents tokenContents;
+	};
+
+	typedef std::vector<ExpressionToken> Expression;
+
+private:
+	Expression				infixToPrefix(Expression infix) const;
+	float					evaluate(Expression e) const;
 };
+
+istream& operator >> (istream& src, StateDatabase::Expression& dst);
+std::string& operator >> (std::string& src, StateDatabase::Expression& dst);
+ostream& operator << (ostream& dst, StateDatabase::Expression& src);
 
 #endif // BZF_STATE_DATABASE_H
 // ex: shiftwidth=4 tabstop=4

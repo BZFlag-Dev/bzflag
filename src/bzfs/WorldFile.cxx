@@ -399,10 +399,10 @@ WorldInfo *defineWorldFromFile(const char *filename)
 	}
 
 	// make walls
-	world->addWall(0.0f, 0.5f * atof(BZDB->get("_worldSize").c_str()), 0.0f, 1.5f * M_PI, 0.5f * atof(BZDB->get("_worldSize").c_str()), WallHeight);
-	world->addWall(0.5f * atof(BZDB->get("_worldSize").c_str()), 0.0f, 0.0f, M_PI, 0.5f * atof(BZDB->get("_worldSize").c_str()), WallHeight);
-	world->addWall(0.0f, -0.5f * atof(BZDB->get("_worldSize").c_str()), 0.0f, 0.5f * M_PI, 0.5f * atof(BZDB->get("_worldSize").c_str()), WallHeight);
-	world->addWall(-0.5f * atof(BZDB->get("_worldSize").c_str()), 0.0f, 0.0f, 0.0f, 0.5f * atof(BZDB->get("_worldSize").c_str()), WallHeight);
+	world->addWall(0.0f, 0.5f * BZDB->eval("_worldSize"), 0.0f, 1.5f * M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
+	world->addWall(0.5f * BZDB->eval("_worldSize"), 0.0f, 0.0f, M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
+	world->addWall(0.0f, -0.5f * BZDB->eval("_worldSize"), 0.0f, 0.5f * M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
+	world->addWall(-0.5f * BZDB->eval("_worldSize"), 0.0f, 0.0f, 0.0f, 0.5f * BZDB->eval("_worldSize"), WallHeight);
 
 	// add objects
 	const int n = (int)list.size();

@@ -89,27 +89,27 @@ void					Player::setId(PlayerId newID)
 float					Player::getRadius() const
 {
 	if (flag == ObesityFlag)
-		return atof(BZDB->get("_tankRadius").c_str()) * atof(BZDB->get("_obeseFactor").c_str());
+		return BZDB->eval("_tankRadius") * BZDB->eval("_obeseFactor");
 	else if (flag == TinyFlag)
-		return atof(BZDB->get("_tankRadius").c_str()) * atof(BZDB->get("_tinyFactor").c_str());
+		return BZDB->eval("_tankRadius") * BZDB->eval("_tinyFactor");
 	else if (flag == ThiefFlag)
-		return atof(BZDB->get("_tankRadius").c_str()) * atof(BZDB->get("_thiefTinyFactor").c_str());
-	return atof(BZDB->get("_tankRadius").c_str());
+		return BZDB->eval("_tankRadius") * BZDB->eval("_thiefTinyFactor");
+	return BZDB->eval("_tankRadius");
 }
 
 void					Player::getMuzzle(float* m) const
 {
 	// okay okay, I should really compute the up vector instead of using [0,0,1]
-	float front = atof(BZDB->get("_muzzleFront").c_str());
+	float front = BZDB->eval("_muzzleFront");
 	if (flag == ObesityFlag)
-		front *= atof(BZDB->get("_obeseFactor").c_str());
+		front *= BZDB->eval("_obeseFactor");
 	else if (flag == TinyFlag)
-		front *= atof(BZDB->get("_tinyFactor").c_str());
+		front *= BZDB->eval("_tinyFactor");
 	else if (flag == ThiefFlag)
-		front *= atof(BZDB->get("_thiefTinyFactor").c_str());
+		front *= BZDB->eval("_thiefTinyFactor");
 	m[0] = pos[0] + front * forward[0];
 	m[1] = pos[1] + front * forward[1];
-	m[2] = pos[2] + front * forward[2] + atof(BZDB->get("_muzzleHeight").c_str());
+	m[2] = pos[2] + front * forward[2] + BZDB->eval("_muzzleHeight");
 }
 
 void					Player::move(const float* _pos, float _azimuth)
@@ -131,7 +131,7 @@ void					Player::move(const float* _pos, float _azimuth)
 
 	// compute teleporter proximity
 	if (World::getWorld())
-		teleporterProximity = World::getWorld()->getProximity(pos, atof(BZDB->get("_tankRadius").c_str()));
+		teleporterProximity = World::getWorld()->getProximity(pos, BZDB->eval("_tankRadius"));
 }
 
 void					Player::setVelocity(const float* _velocity)
@@ -232,7 +232,7 @@ void					Player::updateSparks(float /*dt*/)
 {
 	// FIXME -- need animated alpha on tanks
 	if (flag != PhantomZoneFlag || !isFlagActive()) {
-		teleporterProximity = World::getWorld()->getProximity(pos, atof(BZDB->get("_tankRadius").c_str()));
+		teleporterProximity = World::getWorld()->getProximity(pos, BZDB->eval("_tankRadius"));
 		if (teleporterProximity == 0.0f) {
 			// FIXME -- alpha = 1.0f;
 			return;
@@ -271,21 +271,21 @@ void					Player::addPlayerSceneNode(
 	transformSceneNode->translate.push(pos[0], pos[1], pos[2]);
 	transformSceneNode->rotate.push(0.0f, 0.0f, 1.0f, azimuth * 180.0f / M_PI);
 	if (flag == ObesityFlag) {
-		transformSceneNode->scale.push(atof(BZDB->get("_obeseFactor").c_str()), atof(BZDB->get("_obeseFactor").c_str()), 1.0f);
+		transformSceneNode->scale.push(BZDB->eval("_obeseFactor"), BZDB->eval("_obeseFactor"), 1.0f);
 	}
 	else if (flag == TinyFlag) {
-		transformSceneNode->scale.push(atof(BZDB->get("_tinyFactor").c_str()), atof(BZDB->get("_tinyFactor").c_str()), 1.0f);
+		transformSceneNode->scale.push(BZDB->eval("_tinyFactor"), BZDB->eval("_tinyFactor"), 1.0f);
 	}
 	else if (flag == BurrowFlag) {
 		OpenGLGStateBuilder builder;
 		builder.setClipping(true);
 		// we set the clip plane just slightly above the ground, because if
 		// its at z=0.0, it clips the ground for the burrowed player.
-		builder.setClipPlane(0.0f, 0.0f, 1.0f, atof(BZDB->get("_burrowDepth").c_str()));
+		builder.setClipPlane(0.0f, 0.0f, 1.0f, BZDB->eval("_burrowDepth"));
 		gStateSceneNode->set(builder.getState());
 	}
 	else if (flag == ThiefFlag) {
-		transformSceneNode->scale.push(atof(BZDB->get("_thiefTinyFactor").c_str()), atof(BZDB->get("_thiefTinyFactor").c_str()), 1.0f);
+		transformSceneNode->scale.push(BZDB->eval("_thiefTinyFactor"), BZDB->eval("_thiefTinyFactor"), 1.0f);
 	}
 	else if (flag == NarrowFlag) {
 		transformSceneNode->scale.push(1.0f, 0.01f, 1.0f);
@@ -413,7 +413,7 @@ bool					Player::getDeadReckoning(
 			*predictedAzimuth = inputAzimuth;
 
 		// update z with Newtownian integration (like LocalPlayer)
-		((Player*)this)->inputZSpeed += atof(BZDB->get("_gravity").c_str()) * (dt - dt2);
+		((Player*)this)->inputZSpeed += BZDB->eval("_gravity") * (dt - dt2);
 		((Player*)this)->inputPos[2] += inputZSpeed * (dt - dt2);
 	}
 	else {
@@ -459,7 +459,7 @@ bool					Player::getDeadReckoning(
 
 bool					Player::isDeadReckoningWrong() const
 {
-	float depthLimit = (getFlag() == BurrowFlag) ? atof(BZDB->get("_burrowDepth").c_str()) : 0.0f;
+	float depthLimit = (getFlag() == BurrowFlag) ? BZDB->eval("_burrowDepth") : 0.0f;
 
 	// always send a new packet when some kinds of status change
 	if ((status & (Alive | Paused | Falling)) !=
@@ -500,7 +500,7 @@ void					Player::doDeadReckoning()
 	// if hit ground then update input state (since we don't want to fall
 	// anymore)
 
-	float depthLimit = (getFlag() == BurrowFlag) ? atof(BZDB->get("_burrowDepth").c_str()) : 0.0f;
+	float depthLimit = (getFlag() == BurrowFlag) ? BZDB->eval("_burrowDepth") : 0.0f;
 	if (predictedPos[2] < depthLimit) {
 		predictedPos[2] = depthLimit;
 		predictedVel[2] = 0.0f;
