@@ -560,7 +560,6 @@ class WorldInfo {
     int getDatabaseSize() const;
 
   private:
-    bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
     bool rectHitCirc(float dx, float dy, const float *p, float r) const;
 
   public:
@@ -585,6 +584,7 @@ class WorldInfo {
     };
 
     InBuildingType inBuilding(ObstacleLocation **location, float x, float y, float z, float radius) const;
+    bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
 
   private:
     int numWalls;
@@ -4057,7 +4057,9 @@ static void resetFlag(int flagIndex)
     int topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0], 
 					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     while (topmosttype != NOT_IN_BUILDING) {
-	if (clOptions.flagsOnBuildings && (topmosttype == IN_BOX)) {
+	if ((clOptions.flagsOnBuildings && (topmosttype == IN_BOX)) 
+		&&  (world->inRect(obj->pos, obj->rotation, obj->size, 
+		pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f))) {
 	  pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
 	}
 	else {
