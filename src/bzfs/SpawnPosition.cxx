@@ -213,6 +213,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
 const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
 {
   float worstDist = 1e12f; // huge number
+  bool  noEnemy   = true;
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isAlive() && areFoes(player[i].getTeam(), team)) {
@@ -224,11 +225,13 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
         if (distSq < worstDist) {
           worstDist = distSq;
 	  enemyAngle = lastState[i].azimuth;
+	  noEnemy    = false;
 	}
       }
     }
   }
-
+  if (noEnemy)
+    enemyAngle = (float)bzfrand() * 2.0f * M_PI;
   return sqrtf(worstDist);
 }
 
