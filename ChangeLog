@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Seer flag now can see Invisible Bullets - Dave Rodgers
 * Added admin message sounds - Cameron Mandrake, Sean Morrison
 * Better shot reflections for non-square pyramids - Dave Rodgers
 * Fixed collision detection impalement problem - Dave Rodgers
