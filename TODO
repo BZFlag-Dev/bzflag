@@ -1,6 +1,9 @@
 to do list for bzflag
 ---------------------
 
+* FIXME make maintainer-clean does not enter DIST_SUBDIRS
+  so each Makefile.in and Makefile are not removed there
+
 * describe rabbit hunt in man page (and in-game help?)
 
 * document headers with JavaDoc-style comments (for doxygen)
