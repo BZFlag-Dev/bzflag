@@ -592,10 +592,11 @@ BzfString		HUDRenderer::makeHelpString(const char* help) const
 
   // find sections of string not more than maxWidth pixels wide
   // and put them into a BzfString separated by NUL's.
-  const float maxWidth = 4.0f * (float)maxMotionSize;
+  const float maxWidth = (float)window.getWidth() * 0.85f;
   BzfString msg;
   const char* scan = help;
   while (*scan) {
+    // FIXME should break at previous space, not after word that passes maxWidth
     // find next blank (can only break lines at spaces)
     const char* base = scan;
     do {
