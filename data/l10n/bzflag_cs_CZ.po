@@ -1,47 +1,18 @@
-# Preklad bzflagu do Cestiny by Twinsen, 7.9.2003
-# Translation of bzflag to Czech by Twinsen, 09/07/2003
+# Preklad bzflagu do Cestiny by Pavel Lobodinsky, 7.5.2004, pro verzi 1.10.4
+# Translation of bzflag to Czech by Pavel Lobodinsky, 05/07/2004, for version 1.10.4
 
-msgid "Join Game"
-msgstr "Hrat"
+msgid "Not available"
+msgstr "Nedostupny"
 
-msgid "Find Server"
-msgstr "Nalezt server"
+msgid "xx"
+msgstr "Zaklad prekladu"
 
-#msgid "translator"
-#msgstr ""
+msgid "translator"
+msgstr "Pavel Lobodinsky"
 
-msgid "Connect"
-msgstr "Pripojit se"
 
-msgid "Callsign:"
-msgstr "Prezdivka:"
-
-msgid "Team:"
-msgstr "Tym:"
-
-msgid "Server:"
-msgstr "Server:"
-
-msgid "Port:"
-msgstr "Port:"
-
-msgid "Start Server"
-msgstr "Start serveru"
-
-msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
-msgstr "Sipky nahoru/dolu pro pohyb, Enter pro vybrani, Esc pro zruseni"
-
-msgid "Options"
-msgstr "Nastaveni"
-
-msgid "Help"
-msgstr "Napoveda"
-
-msgid "Quit"
-msgstr "Konec"
-
-msgid "Dithering:"
-msgstr "Rozkladani (Dithering):"
+# Globalni volby
+# Global options
 
 msgid "On"
 msgstr "Zapnuto"
@@ -54,6 +25,243 @@ msgstr "Vypnuto"
 
 msgid "off"
 msgstr "Vypnuto"
+
+msgid "yes"
+msgstr "ano"
+
+msgid "no"
+msgstr "ne"
+
+msgid "no limit"
+msgstr "bez limitu"
+
+msgid "Page {1} of {2}"
+msgstr "Strana {1} z {2}"
+
+
+
+# Hlavni menu
+# Main menu
+
+msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
+msgstr "Sipky nahoru/dolu pro pohyb, Enter pro vybrani, Esc pro zruseni"
+
+msgid "Join Game"
+msgstr "Hrat"
+
+
+msgid "Find Server"
+msgstr "Nalezt server"
+
+msgid "Servers"
+msgstr "Servery"
+
+msgid "Players"
+msgstr "Hraci"
+
+#msgid "Rogue"	# Jiz definovano ve volbe Tymu
+#msgstr "Zli"	# Already defined in Team option
+
+msgid "Red"
+msgstr "Cerveny"
+
+msgid "Green"
+msgstr "Zeleny"
+
+msgid "Blue"
+msgstr "Modry"
+
+msgid "Purple"
+msgstr "Purpurovy"
+
+msgid "Observers"
+msgstr "Pozorovatele"
+
+
+msgid "Connect"
+msgstr "Pripojit se"
+
+msgid "Trying..."
+msgstr "Zkousim..."
+
+
+msgid "Callsign:"
+msgstr "Prezdivka:"
+
+msgid "Team:"
+msgstr "Tym:"
+
+msgid "Rogue"
+msgstr "Zli"
+
+msgid "Red Team"
+msgstr "Cerveny tym"
+
+msgid "Green Team"
+msgstr "Zeleny tym"
+
+msgid "Blue Team"
+msgstr "Modry tym"
+
+msgid "Purple Team"
+msgstr "Purpurovy tym"
+
+msgid "Observer"
+msgstr "Pozorovatel"
+
+msgid "Automatic"
+msgstr "Automaticky"
+
+
+msgid "Server:"
+msgstr "Server:"
+
+msgid "Port:"
+msgstr "Port:"
+
+msgid "Email:"
+msgstr "Email:"
+
+msgid "Start Server"
+msgstr "Start serveru"
+
+msgid "Style:"
+msgstr "Typ hry:"
+
+msgid "Free for All"
+msgstr "volna-pro-vsechny"
+
+msgid "Capture the Flag"
+msgstr "ziskani-vlajky"
+
+msgid "Rabbit Hunt"
+msgstr "honba-na-kralika"
+
+
+msgid "Max Players:"
+msgstr "Max. pocet hracu:"
+
+msgid "Max Shots:"
+msgstr "Max. pocet vystrelu najednou:"
+
+msgid "Teleporters:"
+msgstr "Teleporty:"
+
+msgid "Ricochet:"
+msgstr "Odrazeni strel:"
+
+msgid "Jumping:"
+msgstr "Skakani:"
+
+msgid "Superflags:"
+msgstr "Super vlajky:"
+
+msgid "all flags"
+msgstr "vsechny vlajky"
+
+msgid "good flags only"
+msgstr "jen dobre vlajky"
+
+
+msgid "Max Superflags:"
+msgstr "Max. pocet super vlajek:"
+
+msgid "Bad Flag Antidote:"
+msgstr "Povolena anti-vlajka:"
+
+msgid "Bad Flag Time Limit:"
+msgstr "Cas do zahozeni spatne vlajky:"
+
+msgid "15 seconds"
+msgstr "15 sekund"
+
+msgid "30 seconds"
+msgstr "30 sekund"
+
+msgid "60 seconds"
+msgstr "60 sekund"
+
+msgid "180 seconds"
+msgstr "180 sekund"
+
+
+msgid "Bad Flag Win Limit:"
+msgstr "Pocet vitezstvi do zahozeni spatne vlajky:"
+
+msgid "drop after 1 win"
+msgstr "zahodit po 1 vitezstvi"
+
+msgid "drop after 2 wins"
+msgstr "zahodit po 2 vitezstvich"
+
+msgid "drop after 3 wins"
+msgstr "zahodit po 3 vitezstvich"
+
+
+msgid "Game Over:"
+msgstr "Konec hry:"
+
+msgid "never"
+msgstr "nikdy"
+
+msgid "after 5 minutes"
+msgstr "po 5 minutach"
+
+msgid "after 15 minutes"
+msgstr "po 15 minutach"
+
+msgid "after 60 minutes"
+msgstr "po 60 minutach"
+
+msgid "after 3 hours"
+msgstr "po 3 hodinach"
+
+msgid "when a player gets +3"
+msgstr "az hrac dosahne +3 bodu"
+
+msgid "when a player gets +10"
+msgstr "az hrac dosahne +10 bodu"
+
+msgid "when a player gets +25"
+msgstr "az hrac dosahne +25 bodu"
+
+msgid "when a team gets +3"
+msgstr "az tym dosahne +3 bodu"
+
+msgid "when a team gets +10"
+msgstr "az tym dosahne +10 bodu"
+
+msgid "when a team gets +25"
+msgstr "az tym dosahne +25 bodu"
+
+msgid "when a team gets +100"
+msgstr "az tym dosahne +100 bodu"
+
+
+msgid "Server Reset:"
+msgstr "Reset serveru:"
+
+msgid "no, quit after game"
+msgstr "ne, ukonci po hre"
+
+msgid "yes, reset for more games"
+msgstr "ano, reset pro dalsi hry"
+
+
+msgid "World Map:"
+msgstr "Mapa:"
+
+msgid "random map"
+msgstr "nahodna mapa"
+
+
+
+
+msgid "Options"
+msgstr "Nastaveni"
+
+msgid "Dithering:"
+msgstr "Rozkladani (Dithering):"
 
 msgid "Blending:"
 msgstr "Smesovani (Blending):"
@@ -85,6 +293,7 @@ msgstr "Nejblize Linear Mipmap"
 msgid "Linear Mipmap Linear"
 msgstr "Linearni Linear Minimap"
 
+
 msgid "Quality:"
 msgstr "Kvalita:"
 
@@ -97,17 +306,28 @@ msgstr "Stredni"
 msgid "High"
 msgstr "Vysoka"
 
+msgid "Experimental"
+msgstr "Experimentalni"
+
+
 msgid "Shadows:"
 msgstr "Stiny:"
 
 msgid "Depth Buffer:"
 msgstr "Hloubkovy buffer:"
 
-msgid "Not available"
-msgstr "Nedostupny"
-
 msgid "Change Video Format"
 msgstr "Zmena video formatu"
+
+msgid "Video Format"
+msgstr "Video format"
+
+msgid "Press Enter to select and T to test a format. Esc to exit."
+msgstr "Stiskni Enter pro vybrani a T pro test formatu. Esc pro konec."
+
+msgid "Current Format:"
+msgstr "Aktualni format:"
+
 
 msgid "Brightness:"
 msgstr "Jas:"
@@ -119,7 +339,7 @@ msgid "UDP network connection:"
 msgstr "UDP sitove spojeni:"
 
 msgid "Server List Cache:"
-msgstr "Cache List serveru:"
+msgstr "List Cache serveru:"
 
 msgid "Off / Backup Mode"
 msgstr "Vypnuto / Zalozni mod"
@@ -151,74 +371,15 @@ msgstr "15 dnu"
 msgid "30 days"
 msgstr "30 dnu"
 
+
 msgid "Clear Server List Cache"
-msgstr "Smazani cache List serveru"
+msgstr "Smazani List Cache serveru"
 
 msgid "Change Key Mapping"
 msgstr "Nastaveni klaves"
 
-msgid "GUI Options"
-msgstr "Nastaveni grafickeho rozhrani"
-
-msgid "Enhanced radar:"
-msgstr "Rozsireny radar:"
-
-msgid "Controlpanel & Score FontSize:"
-msgstr "Velikost fontu ovladaciho panelu a skore:"
-
-msgid "normal"
-msgstr "Normalni"
-
-msgid "bigger"
-msgstr "Vetsi"
-
-msgid "Radar & Panel Opacity:"
-msgstr "Pruhlednost radaru a panelu:"
-
-msgid "Colored shots on radar:"
-msgstr "Barevne strely na radaru:"
-
-msgid "Radar Shot Length:"
-msgstr "Delka zobrazeni strely na radaru:"
-
-msgid "Radar & Panel Size:"
-msgstr "Velikost radaru a panelu:"
-
-msgid "Mouse Box Size:"
-msgstr "Velikost ovladaciho prostoru mysi:"
-
-msgid "Page Down for next page"
-msgstr "Page Down pro dalsi stranu"
-
-msgid "Page Up for previous page"
-msgstr "Page Up pro predchozi stranu"
-
-msgid "Rogue"
-msgstr "Rogue"
-
-msgid "Red Team"
-msgstr "Cerveny tym"
-
-msgid "Green Team"
-msgstr "Zeleny tym"
-
-msgid "Blue Team"
-msgstr "Modry tym"
-
-msgid "Purple Team"
-msgstr "Purpurovy tym"
-
-msgid "Enter to quit, Esc to resume"
-msgstr "Enter pro ukonceni, Esc pro pokracovani"
-
-msgid "Really quit?"
-msgstr "Opravdu chces skoncit?"
-
-msgid "Video Format"
-msgstr "Video format"
-
-msgid "Current Format:"
-msgstr "Aktualni format:"
+msgid "Use up/down arrows to navigate, enter key to enter edit mode"
+msgstr "Sipky nahoru/dolu pro pohyb, Enter pro editaci"
 
 msgid "Key Mapping"
 msgstr "Nastaveni klaves"
@@ -244,11 +405,17 @@ msgstr "Stredni dosah radaru:"
 msgid "Radar Long:"
 msgstr "Velky dosah radaru:"
 
+msgid "Send to All"
+msgstr "Zaslat zpravu vsem"
+
 msgid "Send to All:"
 msgstr "Zaslat zpravu vsem:"
 
 msgid "Send to Teammates:"
 msgstr "Zaslat zpravu tymu:"
+
+msgid "Send to Team"
+msgstr "Zaslat zpravu tymu"
 
 msgid "Send to Nemesis:"
 msgstr "Zaslat zpravu nemesis:"
@@ -283,6 +450,9 @@ msgstr "Pauza/Pokracovat:"
 msgid "Self Destruct/Cancel:"
 msgstr "Sebezniceni/Zruseni:"
 
+msgid "SelfDestruct/Cancel:"
+msgstr "Sebezniceni/Zruseni:"
+
 msgid "Fast Quit:"
 msgstr "Rychle opustit hru:"
 
@@ -295,86 +465,181 @@ msgstr "Posuv zaznamu zprav vpred:"
 msgid "Slow Keyboard Motion:"
 msgstr "Pomaly posuv tanku:"
 
-#msgid "SelfDestruct/Cancel:"
-#msgstr ""
+msgid "Toggle Radar Flags:"
+msgstr "Zobrazit vlajky na radaru:"
+
+msgid "Toggle Main Flags:"
+msgstr "Zobrazit vlaky pred sebou:"
+
+msgid "Silence/UnSilence Key:"
+msgstr "Umlceni/Odmlceni hrace:"
+
+msgid "Server Command Key:"
+msgstr "Prikaz serveru:"
+
+msgid "Hunt Key:"
+msgstr "Pronasledovani:"
+
+msgid "AutoPilot Key: "
+msgstr "Autopilot:"
+
+msgid "Define Quick Keys"
+msgstr "Definovat rychle klavesy"
+
+msgid "Notice: depending on platform not all keys might work"
+msgstr "Upozorneni: v zavislosti na platforme nemusi fungovat vsechny klavesy"
+
+
+
+msgid "GUI Options"
+msgstr "Nastaveni grafickeho rozhrani"
+
+msgid "Enhanced radar:"
+msgstr "Rozsireny radar:"
+
+msgid "Controlpanel & Score FontSize:"
+msgstr "Velikost fontu ovladaciho panelu a skore:"
+
+msgid "normal"
+msgstr "Normalni"
+
+msgid "bigger"
+msgstr "Vetsi"
+
+msgid "Radar & Panel Opacity:"
+msgstr "Pruhlednost radaru a panelu:"
+
+msgid "Colored shots on radar:"
+msgstr "Barevne strely na radaru:"
+
+msgid "Radar Shot Length:"
+msgstr "Delka strely na radaru:"
+
+msgid "Radar Shot Size:"
+msgstr "Velikost strely na radaru:"
+
+msgid "Radar & Panel Size:"
+msgstr "Velikost radaru a panelu:"
+
+msgid "Mouse Box Size:"
+msgstr "Velikost ovladaciho prostoru mysi:"
+
+
+msgid "Save World"
+msgstr "Ulozeni mapy"
+
+msgid "File Name:"
+msgstr "Nazev souboru:"
+
+
+
+msgid "Help"
+msgstr "Napoveda"
+
+
+
+
+msgid "Quit"
+msgstr "Konec"
+
+msgid "Page Down for next page"
+msgstr "Page Down pro dalsi stranu"
+
+msgid "Page Up for previous page"
+msgstr "Page Up pro predchozi stranu"
+
+msgid "Enter to quit, Esc to resume"
+msgstr "Enter pro ukonceni, Esc pro pokracovani"
+
+msgid "Really quit?"
+msgstr "Opravdu chces skoncit?"
 
 msgid "loading {1}"
 msgstr "nacitam {1}"
 
-msgid "controls tank motion"
-msgstr "ovladani tanku"
+msgid "Controls Tank Position:"
+msgstr "Ovladani tanku:"
 
-msgid "Mouse Position:"
-msgstr "Pozice mysi:"
+msgid "Mouse Position"
+msgstr "Pozice mysi"
 
-msgid "fires shot"
-msgstr "strelba"
+msgid "Fires Shot:"
+msgstr "Strelba:"
 
-msgid "drops flag (if not bad)"
-msgstr "zahodi vlajku (neni-li spatna)"
+msgid "Drops Flag (if not bad):"
+msgstr "Zahodi vlajku (neni-li spatna):"
 
-msgid "identifies player (locks on GM)"
-msgstr "identifikuje hrace / zamereni pro Rizenou strelu"
+msgid "Identifies Player (locks on GM):"
+msgstr "Identifikuje hrace (zamereni Rizene strely):"
 
-msgid "jump (if allowed)"
-msgstr "skok (je-li povolen)"
+msgid "Short Radar Range:"
+msgstr "Maly dosah radaru:"
 
-msgid "short radar range"
-msgstr "maly dosah radaru"
+msgid "Medium Radar Range:"
+msgstr "Stredni dosah radaru:"
 
-msgid "medium radar range"
-msgstr "stredni dosah radaru"
+msgid "Long Radar Range:"
+msgstr "Velky dosah radaru:"
 
-msgid "long radar range"
-msgstr "velky dosah radaru"
+msgid "Send Message to Everybody:"
+msgstr "Zaslat zpravu vsem"
 
-msgid "toggle binoculars"
-msgstr "dalekohled"
+msgid "Send Message to Teammates:"
+msgstr "Zaslat zpravu tymu:"
 
-msgid "toggle heads-up flag help"
-msgstr "zobrazeni napovedy k vlajkam"
+msgid "Send Message to Nemesis:"
+msgstr "Zaslat zpravu nemesis:"
 
-msgid "send message to teammates"
-msgstr "zaslat zpravu tymu"
+msgid "Send Message to Recipient:"
+msgstr "Zaslat zpravu prijemci:"
 
-msgid "send message to everybody"
-msgstr "zaslat zpravu vsem"
+msgid "Jump (if allowed):"
+msgstr "Skok (je-li povolen):"
 
-msgid "send message to nemesis"
-msgstr "zaslat zpravu nemesis"
+msgid "Toggle Binoculars:"
+msgstr "Dalekohled:"
 
-msgid "send message to recipient"
-msgstr "zaslat zpravu prijemci"
+msgid "Toggle Score Sheet:"
+msgstr "Tabulka se skore:"
 
-msgid "toggle score sheet"
-msgstr "tabulka se skore"
+msgid "Toggle Tank Labels:"
+msgstr "Popis tanku:"
 
-msgid "toggle tank labels"
-msgstr "popis tanku"
+msgid "Toggle Heads-up Flag Help:"
+msgstr "Zobrazeni napovedy k vlajkam:"
 
-msgid "set time of day backward"
-msgstr "posun casu zpet"
+msgid "Set Time of Day Backward:"
+msgstr "Posun casu zpet:"
 
-msgid "set time of day forward"
-msgstr "posun casu vpred"
+msgid "Set Time of Day Forward:"
+msgstr "Posun casu vpred:"
 
-msgid "pause/resume"
-msgstr "pauza/pokracovani"
+msgid "Self destruct/Cancel:"
+msgstr "Sebezniceni/Zruseni:"
 
-msgid "self Destruct/Cancel"
-msgstr "sebezniceni/zruseni"
+msgid "Quit:"
+msgstr "Konec:"
 
-msgid "quit"
-msgstr "konec"
+msgid "Scroll Message Log Backward:"
+msgstr "Posuv zaznamu zprav zpet:"
 
-msgid "scroll message log backward"
-msgstr "posuv zaznamu zprav zpet"
+msgid "Scroll Message Log Forward:"
+msgstr "Posuv aznamu zprav vpred:"
 
-msgid "scroll message log forward"
-msgstr "posuv zaznamu zprav vpred"
+msgid "Silence/UnSilence:"
+msgstr "Umlceni/Odmlceni hrace:"
 
-msgid "show/dismiss menu"
-msgstr "ukaz/opust menu"
+msgid "Show/Dismiss menu:"
+msgstr "Ukaz/opust menu:"
+
+msgid "Server Admin:"
+msgstr "Admin serveru:"
+
+msgid "Hunt:"
+msgstr "Pronasledovani:"
+
+msgid "Auto Pilot:"
+msgstr "Autopilot:"
 
 msgid "Esc:"
 msgstr "Esc:"
@@ -394,41 +659,11 @@ msgstr "Modely Tanku:"
 msgid "Special Thanks:"
 msgstr "Specialni diky:"
 
-#msgid "Silence/UnSilence"
-#msgstr ""
-
-#msgid "Server Admin"
-#msgstr ""
-
-#msgid "Hunt"
-#msgstr ""
-
-#msgid "autopilot enabled"
-#msgstr ""
-
-#msgid "autopilot disabled"
-#msgstr ""
+msgid "BZFlag Home Page:"
+msgstr "Domovska stranka BZFlagu:"
 
 msgid "Send:"
 msgstr "Zaslat:"
-
-msgid "Servers"
-msgstr "Servery"
-
-msgid "Players"
-msgstr "Hraci"
-
-msgid "Red"
-msgstr "Cerveny"
-
-msgid "Green"
-msgstr "Zeleny"
-
-msgid "Blue"
-msgstr "Modry"
-
-msgid "Purple"
-msgstr "Purpurovy"
 
 msgid "Controls"
 msgstr "Ovladani"
@@ -457,9 +692,6 @@ msgstr "Vystupy II"
 msgid "Credits"
 msgstr "Credits"
 
-msgid "Press Enter to select and T to test a format. Esc to exit."
-msgstr "Stiskni Enter pro vybrani a T pro test formatu. Esc pro konec."
-
 msgid "Free-style"
 msgstr "Volny-styl"
 
@@ -471,9 +703,6 @@ msgstr "Super vlajky"
 
 msgid "Antidote Flags"
 msgstr "Anti-spatne vlajky"
-
-msgid "Trying..."
-msgstr "Zkousim..."
 
 msgid "Press %s to start"
 msgstr "Stiskni %s pro start"
@@ -487,8 +716,8 @@ msgstr "%.1f"
 msgid "Ready"
 msgstr "Pripraven"
 
-#msgid "Rabbit Chase"
-#msgstr ""
+msgid "Rabbit Chase"
+msgstr "Hon na kralika"
 
 msgid "Reloaded in %.1f"
 msgstr "Nabiti za %.1f"
@@ -520,8 +749,8 @@ msgstr "{1} vitezstvi do zahozeni spatne vlajky"
 msgid "{1} Wins Drops Bad Flag"
 msgstr "{1} vitezstvi do zahozeni spatne vlajky"
 
-#msgid "You are now the rabbit."
-#msgstr ""
+msgid "You are now the rabbit."
+msgstr "Nyni jsi kralik."
 
 msgid "Time limit: {1}"
 msgstr "Casovy limit: {1}"
@@ -531,9 +760,6 @@ msgstr "Maximalni skore tymu: {1}"
 
 msgid "Max player score: {1}"
 msgstr "Maximalni skore hrace: {1}"
-
-msgid "Page {1} of {2}"
-msgstr "Strana {1} z {2}"
 
 msgid "openBroadcast: No udp service {1}"
 msgstr "openBroadcast: Zadna UDP sluzba {1}"
@@ -571,11 +797,11 @@ msgstr "Konfiguracni soubor: Chyba na radku {1}: Radek je prilis dlouhy"
 msgid "Network: Created local UDP downlink port {1}"
 msgstr "Sit: Vytvoren lokalni UDP downlink port {1}"
 
-#msgid "Using multicast relay"
-#msgstr ""
+msgid "Using multicast relay"
+msgstr "Pouzivam multicast prenos"
 
-#msgid "Server did send endpoint information, UDP connection up"
-#msgstr ""
+msgid "Server did send endpoint information, UDP connection up"
+msgstr "Server zaslal informaci o koncovem bode, UDP spojeni zapnuto"
 
 msgid "More Info: [{1}:{2}:{3}]"
 msgstr "Vice informaci: [{1}:{2}:{3}]"
@@ -589,8 +815,8 @@ msgstr "Spojeni selhalo."
 msgid "Server forced a disconnect"
 msgstr "Server vynutil odpojeni"
 
-#msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
-#msgstr ""
+msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
+msgstr "Server zaslal UDP pozadavek, UDP informace: [{1}:{2}:{3}]"
 
 msgid "Rogues not allowed.  Try another team."
 msgstr "Zli nejsou dovoleni. Zkus jiny tym."
@@ -607,11 +833,11 @@ msgstr "Hra je obsazena nebo ukoncena. Zkus to pozdeji."
 msgid "Error connecting to server."
 msgstr "Chyba spojeni se serverem"
 
-#msgid "msgid "
-#msgstr ""
+msgid "msgid "
+msgstr "id zpravy"
 
 msgid "Error downloading world database"
-msgstr "Chyba pri stahovani svetove databaze"
+msgstr "Chyba pri stahovani databaze map"
 
 msgid "Score"
 msgstr "Skore"
@@ -690,13 +916,13 @@ msgid "Identify"
 msgstr "Identifikace"
 
 msgid "Cloaking"
-msgstr "Maskovani"
+msgstr "Zahaleni"
 
 msgid "Colorblindness"
 msgstr "Barvoslepost"
 
 msgid "Obesity"
-msgstr "Obesita"
+msgstr "Obezita"
 
 msgid "Left Turn Only"
 msgstr "Otaceni pouze vlevo"
@@ -726,11 +952,11 @@ msgstr "Vlajka tveho tymu:  zabran dalsim tymum, aby ji zabrali!"
 msgid "Opponent's team flag:  take it to your base to capture it!"
 msgstr "Vlajka protihrace:  vezmi ji do tve zakladny, aby jsi ji zabral!"
 
-msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
+msgid "High Speed (+V):  Tank moves faster.  Outrun bad guys."
 msgstr "Vysoka rychlost (+V): Tank se pohybuje rychleji. Utec zlym hochum."
 
-msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
-msgstr "Rychle otaceni (+A): Tak se otaci rychleji. Uhyba rychleji."
+msgid "Angular velocity (+A):  Tank turns faster.  Good for dodging."
+msgstr "Rychle otaceni (+A): Tak se otaci rychleji. Dobre se uhyba."
 
 msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
 msgstr "Projizdeni budovami (+OO): Lze prochazet budovami. V budovach nelze jez zpet, skakat, nebo strilet."
@@ -747,29 +973,29 @@ msgstr "Rizena strela (+GM): Sestreli cil po draze. Zamer pravym tl. mysi. Lze z
 msgid "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."
 msgstr "Laser (+L): Strili laser. Nekonecna rychlost a dosah, ale dlouhy cas nabijeni."
 
-#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
-#msgstr ""
-
 msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"
 msgstr "Odrazeni strel (+R): Strely se odrazeji od sten. Nesejmi sam sebe!"
 
-#msgid "Useless"
-#msgstr ""
+msgid "SEer (+SE):  See stealthed, cloaked and masquerading tanks as normal."
+msgstr "Jasnovidec (+SE): Vidi skryte, zahalene a maskovane tanky jako normalni."
 
-#msgid "Thief"
-#msgstr ""
+msgid "MasQuerade (+MQ):  In opponent's hud, you appear as a teammate."
+msgstr "Maskovani (+MQ): Na obrazovce protihrace vypadas jako hrac z jeho tymu."
 
-#msgid "Masquerade"
-#msgstr ""
+msgid "Useless"
+msgstr "Zbytecny"
 
-#msgid "Seer"
-#msgstr ""
+msgid "Thief"
+msgstr "Zlodej"
 
-#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
-#msgstr ""
+msgid "Masquerade"
+msgstr "Maskovani"
 
-#msgid "Burrow"
-#msgstr ""
+msgid "Seer"
+msgstr "Jasnovidec"
+
+msgid "Burrow"
+msgstr "Zahrabani"
 
 #msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
 #msgstr ""
@@ -804,7 +1030,7 @@ msgstr "Odrazeni strel (+R): Strely se odrazeji od sten. Nesejmi sam sebe!"
 #msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
 #msgstr ""
 
-#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+#msgid "SHield (SH):  Getting hit only drops flag.  Flag flies an extra-long time."
 #msgstr ""
 
 #msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
@@ -831,8 +1057,8 @@ msgstr "Odrazeni strel (+R): Strely se odrazeji od sten. Nesejmi sam sebe!"
 msgid "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone."
 msgstr "Super strela (+SB): Strely prochazeji stenami. Lze zabit Prizrak."
 
-#msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
-#msgstr ""
+msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
+msgstr "Tymova vlajka: Je-li tva, zabran ostatnim tymum, aby ji zabrali. Neni-li tva, vezmi ji do sve zakladny, aby jsi ji zabral!"
 
 msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."
 msgstr "Neviditelna strela (+IB): Tve strely nebudou videt na radarech ostatnich tanku. Stale je vsak lze videt pred sebou."
@@ -846,7 +1072,7 @@ msgstr "Maly tank (+T): Tank je maly a muze prochazet pres male otvory. Je velmi
 msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
 msgstr "Tenky tank (+N): Tank je super tenky. Je velmi tezke jej zasahnout zepredu, nebo zezadu, ale z boku ma normalni velikost. Muze prochazet pres male otvory."
 
-msgid "SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+msgid "SHield (+SH):  Getting hit only drops flag.  Flag flies an extra-long time."
 msgstr "Stit (+SH): Zasazenim je pouze zahozena vlajka. Vlajka leta velmi dlouho."
 
 msgid "SteamRoller (+SR):  Destroys tanks you touch but you have to get really close."
@@ -856,7 +1082,7 @@ msgid "Shock Wave (+SW):  Firing destroys all tanks nearby.  Don't kill teammate
 msgstr "Niciva vlna (+SW): Strilenim se znici vsechny blizke tanky. Nezabij tanky z tveho tymu! Lze znicit tanky v/na budovach."
 
 msgid "Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
-msgstr "Prizrak (+PZ): Prujezdem teleportu se tank stane prizrakem. Tank pak muze projizdet skrz budovy. Pokud je tank prizrakem, nelze strilet, nebo byt sestrelen (vyjma tanku s vlajkami SuperBullet a ShockWave)."
+msgstr "Prizrak (+PZ): Prujezdem teleportu se tank stane prizrakem. Tank pak muze projizdet skrz budovy. Pokud je tank prizrakem, nelze strilet, nebo byt sestrelen (vyjma tanku s vlajkami Super Strela a Niciva vlna)."
 
 msgid "Genocide (+G):  Killing one tank kills that tank's whole team."
 msgstr "Genocida (+G): Znicenim jednoho tanku se znici vsechny tanky v jeho tymu."
@@ -868,19 +1094,28 @@ msgid "IDentify (+ID):  Identifies type of nearest flag."
 msgstr "Identifikace (+ID): Identifikuje nejblizsi vlajku."
 
 msgid "CLoaking (+CL):  Makes your tank invisible out-the-window.  Still visible on radar."
-msgstr "Maskovani (+CL): Tvuj tank nelze videt pred sebou, ale je stale viditelny na radaru."
+msgstr "Zahaleni (+CL): Tvuj tank nelze videt pred sebou, ale je stale viditelny na radaru."
+
+msgid "Burrow (+BU):  Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!"
+msgstr "Zahrabani (+BV): Tank je zahraban do zeme, odolny proti normalnim strelam, ale muze byt kymkoliv prejet!"
+
+msgid "THief (+TH):  Steal flags.  Small and fast but can't kill."
+msgstr "Zlodej (+TH): Krade vlajky. Maly a rychly, ale nemuze zabijet."
+
+msgid "USeless (+US):  You have found the useless flag. Use it wisely."
+msgstr "Zbytecny (+US): Nasel jsi zbytecnou vlajku. Pouzivej ji rozumne."
 
 msgid "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!"
 msgstr "Barvoslepost (-CB): Nelze rozpoznat barvy tymu. Neznic hrace z tveho tymu!"
 
 msgid "Obesity (-O):  Tank becomes very large.  Can't fit through teleporters."
-msgstr "Obesita (-O): Tank se stane velmi velkym. Nemuze projet teleportem."
+msgstr "Obezita (-O): Tank se stane velmi velkym. Nemuze projet teleportem."
 
-msgid "left turn only (- <-):  Can't turn right."
-msgstr "Otaceni jen vlevo (<--): Nelze se otacet vpravo."
+msgid "left turn only (-LT):  Can't turn right."
+msgstr "Otaceni jen vlevo (-LT): Nelze se otacet vpravo."
 
-msgid "right turn only (- ->):  Can't turn left."
-msgstr "Otaceni jen vpravo (-->): Nelze se otacet vlevo."
+msgid "right turn only (-RT):  Can't turn left."
+msgstr "Otaceni jen vpravo (-RT): Nelze se otacet vlevo."
 
 msgid "Momentum (-M):  Tank has inertia.  Acceleration is limited."
 msgstr "Setrvacnost (-M): Tank ma velkou setrvacnost. Omezena je take akcelerace."
@@ -899,7 +1134,7 @@ msgid "BZFlag is a multi-player networked tank battle game.  There are five team
 msgstr "BZFlag je tankova sitova bojova hra pro vice hracu. Je zde pet tymu:"
 
 msgid "red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"
-msgstr "cerveni, zeleni, modri, purpurovi a rogues (rogue tanky jsou cerne). Znicenim"
+msgstr "cerveni, zeleni, modri, purpurovi a zli (zle tanky jsou cerne). Znicenim"
 
 msgid "player on another team scores a win, while being destroyed or destroying a"
 msgstr "hrace v jinem tymu se zvysi skore, pokud jsi znicen, nebo znicis"
@@ -908,28 +1143,28 @@ msgid "teammate scores a loss.  Individual and aggregate team scores are tallied
 msgstr "tank sveho tymu, snizi se skore. Vlastni a celkova skore tymu jsou ukladana."
 
 msgid "Rogues have no teammates (not even other rogues),so they cannot shoot"
-msgstr "Rogues nemaji tymy (dokonce ani ostatni rogues), takze nemohou znicit"
+msgstr "Zli nemaji tymy (dokonce ani ostatni zli), takze nemohou znicit"
 
 msgid "teammates and they don't have a team score."
 msgstr "hrace v tymech a nemaji tymove skore."
 
-#msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
-#msgstr ""
+msgid "There are three styles of play, determined by the server configuration:  capture-"
+msgstr "Existuji tri zpusoby hry, zavisle na konfiguraci serveru: ziskani-vlajky,"
 
-msgid "There are two styles of play, determined by the server configuration:  capture-"
-msgstr "Existuji dva zpusoby hrani, zavisle na konfiguraci serveru: ziskani-vlajky"
+msgid "the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"
+msgstr "honba-na-kralika a volne-pro-vsechny. Ve hre volne-pro-vsechny je cilem ziskat"
 
-msgid "the-flag and free-for-all.  In free-for-all the object is simply to get the"
-msgstr "a volne-pro-vsechny. Ve hre volne-pro-vsechny je cilem ziskat"
+msgid "highest score by shooting opponents.  The object in rabbit chase is to be the highest score"
+msgstr "nejvyssi skore nicenim protihracu. Cil hry honba-na-kralika je byt nejvyssi skore,"
 
-msgid "highest score by shooting opponents.  The object in capture-the-flag is to"
-msgstr "nejvyssi skore nicenim protihracu. Cil hry ziskani-vlajky je"
+msgid "so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"
+msgstr "aby jsi mel bily tank. Vsichni jsou proti tobe. Cil hry ziskani-vlajky je"
 
 msgid "capture enemy flags while preventing opponents from capturing yours.  In this"
 msgstr "ziskat nepritelovu vlajku pri zabranovani ukradeni tve vlastni. V tomto"
 
 msgid "style, each team (but not rogues) has a team base and each team with at least"
-msgstr "typu hry ma kazdy tym (mimo rogues) zakladnu tymu a kazdy tym s alespon"
+msgstr "typu hry ma kazdy tym (mimo zlych) zakladnu tymu a kazdy tym s alespon"
 
 msgid "one player has a team flag which has the color of the team.  To capture a flag,"
 msgstr "jednim hracem ma tymovou vlajku v barve tymu. Aby jsi ziskal vlajku,"
@@ -939,9 +1174,6 @@ msgstr "musis ji uchopit a prinest do tve zakladny (musis byt na zemi"
 
 msgid "in your base to register the capture).  Capturing a flag destroys all the players"
 msgstr "ve tve zakladne, aby bylo ziskani vlajky platne). Ziskani vlajky znici vsechny hrace"
-
-#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
 
 msgid "on that team and gives your team score a bonus;  the players will restart on"
 msgstr "v tymu a da tvemu tymu bodovy bonus; hraci zacnou znova v"
@@ -1055,179 +1287,209 @@ msgid "Good Flags:"
 msgstr "Dobre vlajky:"
 
 msgid "boosts top speed"
-msgstr "zvysi rychlost"
+msgstr "Zvysi rychlost"
 
 msgid "High Speed (V)"
 msgstr "Vysoka rychlost (V)"
 
 msgid "boosts turn rate"
-msgstr "zvysi rychlost otaceni"
+msgstr "Zvysi rychlost otaceni"
 
 msgid "Quick Turn (A)"
 msgstr "Rychle otaceni (A)"
 
 msgid "can drive through buildings"
-msgstr "lze projizdet skrz budovy"
+msgstr "Lze projizdet skrz budovy"
 
 msgid "Oscillation Overthruster (OO)"
 msgstr "Projizdeni budovami (OO)"
 
 msgid "faster shots more often"
-msgstr "rychlejsi a castejsi strelba"
+msgstr "Rychlejsi a castejsi strelba"
 
 msgid "Rapid Fire (F)"
 msgstr "Rychla strelba (F)"
 
 msgid "very fast reload, very short range"
-msgstr "velmi rychle nabijeni, velmi kratky dosah"
+msgstr "Velmi rychle nabijeni, velmi kratky dosah"
 
 msgid "Machine Gun (MG)"
 msgstr "Kulomet (MG)"
 
 msgid "shots guide themselves (right mouse locks on)"
-msgstr "strely se ridi samy (zamereni pravym tl. mysi)"
+msgstr "Strely se ridi samy (zamereni pravym tl. mysi)"
 
 msgid "Guided Missile (GM)"
 msgstr "Rizena strela (GM)"
 
 msgid "infinite shot speed and range, long reload time"
-msgstr "nekonecna rychlost a dosah, dlouho se nabiji"
+msgstr "Nekonecna rychlost a dosah, dlouho se nabiji"
 
 msgid "Laser (L)"
 msgstr "Laser (L)"
 
 msgid "shots ricochet"
-msgstr "strely se odrazeji"
+msgstr "Strely se odrazeji"
 
 msgid "Ricochet (R)"
 msgstr "Odrazeni strel (R)"
 
 msgid "shoots through buildings"
-msgstr "strely prochazeji budovami"
+msgstr "Strely prochazeji budovami"
 
 msgid "Super Bullet (SB)"
 msgstr "Super strela (SB)"
 
 msgid "tank invisible on enemy radar"
-msgstr "tank nelze videt na radarech protihracu"
+msgstr "Tank nelze videt na radarech protihracu"
 
 msgid "Stealth (ST)"
 msgstr "Stealth (ST)"
 
 msgid "tank invisible out the window"
-msgstr "tank nelze videt pred sebou"
+msgstr "Tank nelze videt pred sebou"
 
 msgid "Cloaking (CL)"
-msgstr "Maskovani (CL)"
+msgstr "Zahaleni (CL)"
 
 msgid "shots invisible on radar"
-msgstr "strely nelze videt na radaru"
+msgstr "Strely nelze videt na radaru"
 
 msgid "Invisible Bullet (IB)"
 msgstr "Neviditelna strela (IB)"
 
 msgid "tank becomes smaller"
-msgstr "tank se stane mensim"
+msgstr "Tank se stane mensim"
 
 msgid "Tiny (T)"
 msgstr "Maly tank (T)"
 
 msgid "tank becomes paper thin"
-msgstr "tank se stane tenkym jako papir"
+msgstr "Tank se stane tenkym jako papir"
 
 msgid "Narrow (N)"
 msgstr "Tenky tank (N)"
 
 msgid "getting hit just drops the flag"
-msgstr "zasazenim se jen zahodi vlajka"
+msgstr "Zasazenim se jen zahodi vlajka"
 
 msgid "Shield (SH)"
 msgstr "Stit (SH) "
 
 msgid "destroy tanks by touching them"
-msgstr "zniceni tanku pouhym dotekem"
+msgstr "Zniceni tanku pouhym dotekem"
 
 msgid "Steamroller (SR)"
 msgstr "Parni valec (SR)"
 
 msgid "expanding spherical shell of destruction"
-msgstr "rozsirujici se niciva vlna"
+msgstr "Rozsirujici se niciva vlna"
 
 msgid "Shock Wave (SW)"
 msgstr "Niciva vlna (SW)"
 
 # Help 6 Strings
 msgid "teleport to enter/leave zone"
-msgstr "projetim teleportem se tank zmeni v prizrak a opacne"
+msgstr "Projetim teleportem se tank zmeni v prizrak a opacne"
 
 msgid "Phantom Zone (PZ)"
 msgstr "Prizrak (PZ)"
 
 msgid "destroys player and all player's teammates"
-msgstr "znici hrace a vsechny v jeho tymu"
+msgstr "Znici hrace a vsechny v jeho tymu"
 
 msgid "Genocide (G)"
 msgstr "Genocida (G)"
 
 msgid "allows tank to jump"
-msgstr "umozni tanku skakat"
+msgstr "Umozni tanku skakat"
 
 msgid "Jumping (JP)"
 msgstr "Skakani (JP)"
 
 msgid "shows type of nearest superflag"
-msgstr "identifikuje nejblizsi vlajku"
+msgstr "Identifikuje nejblizsi vlajku"
 
 msgid "Identify (ID)"
 msgstr "Identifikace (ID)"
+
+msgid "it's useless"
+msgstr "Zbytecna vlajka bez funkce"
+
+msgid "Useless (US)"
+msgstr "Zbytecny (US)"
+
+msgid "In opponent's hud, you appear as a teammate"
+msgstr "Na obrazovce protihrace vypadas jako hrac z jeho tymu"
+
+msgid "Masquerade (MQ)"
+msgstr "Maskovani (MQ)"
+
+msgid "See stealthed, cloaked and masquerading tanks as normal."
+msgstr "Vidi skryte, zahalene a maskovane tanky jako normalni."
+
+msgid "Seer (SE)"
+msgstr "Jasnovidec (SE)"
+
+msgid "Steal flags.  Small and fast but can't kill."
+msgstr "Krade vlajky. Maly a rychly, ale nemuze zabijet."
+
+msgid "Thief (TH)"
+msgstr "Zlodej (TH)"
+
+msgid "Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!"
+msgstr "Tank je zahraban do zeme, odolny proti normalnim strelam, ale muze byt kymkoliv prejet!"
+
+msgid "Burrow (BU)"
+msgstr "Zahrabani (BV)"
 
 msgid "Bad Flags:"
 msgstr "Spatne vlajky:"
 
 msgid "can't identify tanks"
-msgstr "nelze rozpoznat ostatni tanky"
+msgstr "Nelze rozpoznat ostatni tanky"
 
 msgid "Colorblindness (CB)"
 msgstr "Barvoslepost (CB)"
 
 msgid "makes tank very large"
-msgstr "tank je velmi velky"
+msgstr "Tank je velmi velky"
 
 msgid "Obesity (O)"
 msgstr "Obezita (0)"
 
 msgid "tank can't turn right"
-msgstr "tank se nemuze otacet vpravo"
+msgstr "Tank se nemuze otacet vpravo"
 
 msgid "Left Turn Only (<-)"
 msgstr "Otaceni pouze vlevo (<-)"
 
 msgid "tank can't turn left"
-msgstr "tank se nemuze otacet vlevo"
+msgstr "Tank se nemuze otacet vlevo"
 
 msgid "Right Turn Only (->)"
 msgstr "Otaceni pouze vpravo (->)"
 
 msgid "tank has lots of momentum"
-msgstr "tank ma velkou setrvacnost"
+msgstr "Tank ma velkou setrvacnost"
 
 msgid "Momentum (M)"
 msgstr "Setrvacnost (M)"
 
 msgid "can't see out the window"
-msgstr "nelze videt pred sebe"
+msgstr "Nelze videt pred sebe"
 
 msgid "Blindness (B)"
 msgstr "Slepota (B)"
 
 msgid "can't see anything on radar"
-msgstr "nelze videt nic na radaru"
+msgstr "Nelze videt nic na radaru"
 
 msgid "Jamming (JM)"
 msgstr "Ruseni radaru (JM)"
 
 msgid "fish eye view out the window"
-msgstr "pohled pres lupu zakrivuje zorne pole"
+msgstr "Pohled pres lupu zakrivuje zorne pole"
 
 msgid "Wide Angle (WA)"
 msgstr "Siroky uhel (WA)"
@@ -1243,7 +1505,7 @@ msgid "blue.  Team bases are outlined in the team color.  Teleporters are short"
 msgstr "modre. Zakladny tymu jsou vyznaceny barvou tymu. Teleporty jsou kratke"
 
 msgid "yellow lines.  Tanks are dots in the tank's team color, except rogues are"
-msgstr "zlute cary. Tanky jsou tecky v barve tymu, vyjma rogues, kteri jsou"
+msgstr "zlute cary. Tanky jsou tecky v barve tymu, vyjma zlych, kteri jsou"
 
 msgid "yellow.  The size of the tank's dot is a rough indication of the tank's"
 msgstr "zluti. Velikost tecky tanku odpovida jeho vysce nad zemi."
@@ -1364,172 +1626,30 @@ msgstr "zobrazit vlajky na radaru"
 msgid "Toggle Main Flags"
 msgstr "zobrazit vlaky pred sebou"
 
-msgid "Toggle Radar Flags:"
-msgstr "Zobrazit vlajky na radaru:"
-
-msgid "Toggle Main Flags:"
-msgstr "Zobrazit vlaky pred sebou:"
-
-msgid "Silience/UnSilence"
-msgstr "umlceni/odmlceni hrace"
-
-msgid "Silience/UnSilence Key:"
-msgstr "Umlceni/Odmlceni hrace:"
-
-msgid "Server Command Key:"
-msgstr "Prikaz serveru:"
+msgid "Silence/UnSilence"
+msgstr "Umlceni/Odmlceni hrace"
 
 msgid "self destruct/cancel"
 msgstr "sebezniceni/zruseni"
 
-# Start serveru
-# Start server
-msgid "yes"
-msgstr "ano"
 
-msgid "no"
-msgstr "ne"
+# Hlasky vpravo nahore
+# Messages in the right up corner
 
-msgid "Style:"
-msgstr "Typ hry:"
+msgid "autopilot enabled"
+msgstr "autopilot povolen"
 
-msgid "Free for All"
-msgstr "volna-pro-vsechny"
+msgid "autopilot disabled"
+msgstr "autopilot zakazan"
 
-msgid "Capture the Flag"
-msgstr "ziskani-vlajky"
 
-msgid "Max Players:"
-msgstr "Max. pocet hracu:"
+# Hlasky uprostred
+# Messages in the middle of the screen
 
-msgid "Max Shots:"
-msgstr "Max. pocet vystrelu najednou:"
+msgid "AutoPilot on"
+msgstr "Autopilot zapnut"
 
-msgid "Teleporters:"
-msgstr "Teleporty:"
 
-msgid "Ricochet:"
-msgstr "Odrazeni strel:"
-
-msgid "Jumping:"
-msgstr "Skakani:"
-
-msgid "Superflags:"
-msgstr "Super vlajky:"
-
-msgid "all flags"
-msgstr "vsechny vlajky"
-
-msgid "good flags only"
-msgstr "jen dobre vlajky"
-
-msgid "Max Superflags:"
-msgstr "Max. pocet super vlajek:"
-
-msgid "Bad Flag Antidote:"
-msgstr "Povolena anti-vlajka:"
-
-msgid "Bad Flag Time Limit:"
-msgstr "Cas do zahozeni spatne vlajky:"
-
-msgid "no limit"
-msgstr "bez limitu"
-
-msgid "15 seconds"
-msgstr "15 sekund"
-
-msgid "30 seconds"
-msgstr "30 sekund"
-
-msgid "60 seconds"
-msgstr "60 sekund"
-
-msgid "180 seconds"
-msgstr "180 sekund"
-
-msgid "Bad Flag Win Limit:"
-msgstr "Pocet vitezstvi do zahozeni spatne vlajky:"
-
-msgid "drop after 1 win"
-msgstr "zahodit po 1 vitezstvi"
-
-msgid "drop after 2 wins"
-msgstr "zahodit po 2 vitezstvich"
-
-msgid "drop after 3 wins"
-msgstr "zahodit po 3 vitezstvich"
-
-msgid "Server Visibility:"
-msgstr "Viditelnost serveru:"
-
-msgid "local host only (ttl=0)"
-msgstr "jen pro mne (ttl=0)"
-
-msgid "subnet only (ttl=1)"
-msgstr "jen pro podsit (ttl=1)"
-
-msgid "local area (ttl=8)"
-msgstr "lokalni sit (ttl=8)"
-
-msgid "site (ttl=32)"
-msgstr "poloha (ttl=32)"
-
-msgid "organization (ttl=64)"
-msgstr "organizace (tt=64)"
-
-msgid "continent (ttl=128)"
-msgstr "kontinent (ttl=128)"
-
-msgid "world (ttl=255)"
-msgstr "svet (ttl=255)"
-
-msgid "Game Over:"
-msgstr "Konec hry:"
-
-msgid "never"
-msgstr "nikdy"
-
-msgid "after 5 minutes"
-msgstr "po 5 minutach"
-
-msgid "after 15 minutes"
-msgstr "po 15 minutach"
-
-msgid "after 60 minutes"
-msgstr "po 60 minutach"
-
-msgid "after 3 hours"
-msgstr "po 3 hodinach"
-
-msgid "when a player gets +3"
-msgstr "az hrac dosahne +3 bodu"
-
-msgid "when a player gets +10"
-msgstr "az hrac dosahne +10 bodu"
-
-msgid "when a player gets +25"
-msgstr "az hrac dosahne +25 bodu"
-
-msgid "when a team gets +3"
-msgstr "az tym dosahne +3 bodu"
-
-msgid "when a team gets +10"
-msgstr "az tym dosahne +10 bodu"
-
-msgid "when a team gets +25"
-msgstr "az tym dosahne +25 bodu"
-
-msgid "when a team gets +100"
-msgstr "az tym dosahne +100 bodu"
-
-msgid "Server Reset:"
-msgstr "Reset serveru:"
-
-msgid "no, quit after game"
-msgstr "ne, ukonci po hre"
-
-msgid "yes, reset for more games"
-msgstr "ano, reset pro dalsi hry"
 
 # Nastaveni GUI
 # GUI settings
@@ -1560,8 +1680,11 @@ msgstr "Blikani"
 msgid "Underline"
 msgstr "Podtrzeni"
 
+
+
 # Identifikace vlajek
 # Flags identification
+
 msgid "Closest Flag: High Speed"
 msgstr "Nejblizsi vlajka: Vysoka rychlost"
 
@@ -1593,7 +1716,7 @@ msgid "Closest Flag: Stealth"
 msgstr "Nejblizsi vlajka: Stealth"
 
 msgid "Closest Flag: Cloaking"
-msgstr "Nejblizsi vlajka: Maskovani"
+msgstr "Nejblizsi vlajka: Zahaleni"
 
 msgid "Closest Flag: Invisible Bullet"
 msgstr "Nejblizsi vlajka: Neviditelna strela"
@@ -1649,19 +1772,40 @@ msgstr "Nejblizsi vlajka: Ruseni radaru"
 msgid "Closest Flag: Wide Angle"
 msgstr "Nejblizsi vlajka: Siroky uhel"
 
+msgid "Closest Flag: Useless"
+msgstr "Nejblizsi vlajka: Zbytecny"
+
+msgid "Closest Flag: Thief"
+msgstr "Nejblizsi vlajka: Zlodej"
+
+msgid "Closest Flag: Masquerade"
+msgstr "Nejblizsi vlajka: Maskovani"
+
+msgid "Closest Flag: Seer"
+msgstr "Nejblizsi vlajka: Jasnovidec"
+
+msgid "Closest Flag: Burrow"
+msgstr "Nejblizsi vlajka: Zahrabani"
+
+
+
 # Ostatni
 # Other
+
 msgid "Server started."
 msgstr "Server spusten."
 
 msgid "Shot myself"
 msgstr "Sejmul jsi se sam..."
 
+
+
 # !!! Hlaseni nize nelze prelozit :-(
 # !!! Messages below cannot be translated :-(
 
 # Informace o vlajce, kterou sebrali hraci
 # Informations about flags grabbed by opponents
+
 msgid "grabbed High Speed flag"
 msgstr "vzal vlajku Vysoka rychlost"
 
@@ -1693,7 +1837,7 @@ msgid "grabbed Stealth flag"
 msgstr "vzal vlajku Stealth"
 
 msgid "grabbed Cloaking flag"
-msgstr "vzal vlajku Maskovani"
+msgstr "vzal vlajku Zahaleni"
 
 msgid "grabbed Invisible Bullet flag"
 msgstr "vzal vlajku Neviditelna strela"
@@ -1762,3 +1906,4 @@ msgstr "Sejmut "
 
 msgid "got skewred by "
 msgstr "prospikovan "
+
