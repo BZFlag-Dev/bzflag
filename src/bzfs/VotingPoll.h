@@ -40,6 +40,12 @@ class VotingPoll
 
  protected:
 
+    /** performs the supported and requested actions of a voting poll
+    * if the poll was successful
+    */
+    bool enforce(void);
+
+  
  public:
 
   VotingPoll(unsigned short int voteTime=60, unsigned short int vetoTime=20,
@@ -101,6 +107,7 @@ class VotingPoll
     * i.e. enough votes have been received that the vote is successful
     */
   bool isSuccessful(void) const;
+
 
 };
 

@@ -21,19 +21,28 @@
 
 /* private */
 
+
 /* protected */
 
-/* public: */
-
-inline bool VotingPoll::isOpen(void) const {
-  if (_votingBooth != NULL) {
-    return true;
-  }
+bool VotingPoll::enforce(void) {
   return false;
 }
 
+
+/* public: */
+
+/* calling isClosed() is the more common case since a poll is
+* considered "successful" when it "isClosed()" and "isSuccessful()"
+*/
+inline bool VotingPoll::isOpen(void) const {
+  return (!this->isClosed());
+}
+
 inline bool VotingPoll::isClosed(void) const {
-  return (!this->isOpen());
+  if (_votingBooth == NULL) {
+    return true;
+  }
+  return false;
 }
 
 bool VotingPoll::open(void) {

@@ -5790,19 +5790,15 @@ int main(int argc, char **argv)
 
     // manage voting poll for collective kicks/bans
     if (clOptions->voteTime > 0) {
-      static int counter = 0;
-      static TimeKeeper lastTick = TimeKeeper::getCurrent();
-      // every few seconds, check for an update
-      if (TimeKeeper::getCurrent() - lastTick > 5) {
+      if (votingpoll->isClosed() && votingpoll->isSuccessful()) {
 	char message[256];
 	memset(message, 0, 256);
-	sprintf(message, "DEBUG: Checking voting polls (%d ticks; %f ticks/s)", counter, (float)counter / (float)5.0);
-//	sendMessage(ServerPlayer, AllPlayers, message, true);
-	counter=0;
-	// 	votingPoll->update();
-	lastTick = TimeKeeper::getCurrent();
+	sprintf(message, "DEBUG: voting poll is closed and successful");
+	sendMessage(ServerPlayer, AllPlayers, message, true);
+
+	// perform the action of the poll
+
       }
-      counter++;
     }
 
     // periodic advertising broadcast
