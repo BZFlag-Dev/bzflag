@@ -60,6 +60,17 @@ void*			Team::unpack(void* buf)
   return buf;
 }
 
+const char*  Team::getImagePrefix(TeamColor team)
+{
+  switch (team) {
+  case RedTeam: return "r";
+  case GreenTeam: return "g";
+  case BlueTeam: return "b";
+  case PurpleTeam: return "p";
+  default: return "y";
+  }
+}
+
 const char*		Team::getName(TeamColor team) // const
 {
   switch (team) {
@@ -92,7 +103,7 @@ const float*		Team::getRadarColor(TeamColor team) // const
   return radarColor[int(team)];
 }
 
-bool		Team::isColorTeam(TeamColor team) // const
+const bool		Team::isColorTeam(TeamColor team) // const
 {
   return team >= RedTeam  && team <= PurpleTeam;
 }

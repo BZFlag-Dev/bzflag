@@ -36,7 +36,13 @@
 #include "SceneRenderer.h"
 #include "MainWindow.h"
 #include "TextureManager.h"
+
+#include "MediaFile.h"
+#include <string.h>
+#include "common.h"
+
 #include "stars.h"
+
 
 static const GLfloat	squareShape[4][2] =
 				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },
@@ -96,7 +102,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // ground
   {
     // load texture
-    OpenGLTexture *groundTexture = tm.getTexture( TX_GROUND );
+    OpenGLTexture *groundTexture = tm.getTexture( "ground" );
 
     // gstates
     gstate.reset();
@@ -154,7 +160,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // make cloud stuff
   cloudsAvailable = false;
-  OpenGLTexture *cloudsTexture = tm.getTexture( TX_CLOUDS );
+  OpenGLTexture *cloudsTexture = tm.getTexture( "clouds" );
   if (cloudsTexture->isValid()) {
     cloudsAvailable = true;
     gstate.reset();
@@ -172,12 +178,23 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     OpenGLTexture *mountainTexture;
     int width  = 0;
     int height = 0;
-    for (numMountainTextures = 0;
-	 (mountainTexture = tm.getTexture(TX_MOUNTAIN, numMountainTextures));
-	 numMountainTextures++) {
-      height = mountainTexture->getHeight();
-      width += mountainTexture->getWidth();
-    }
+	numMountainTextures = 0;
+	bool done = false;
+	while (!done){
+		char text[256];
+		sprintf(text,"mountan%d",numMountainTextures+1);
+		mountainTexture = tm.getTexture(text);
+		if (mountainTexture && mountainTexture->isValid()){
+			height = mountainTexture->getHeight();
+			width += mountainTexture->getWidth();
+			numMountainTextures++;
+		}
+		else{
+			done = true;
+			numMountainTextures--;
+		}
+	}
+
     if (numMountainTextures) {
       mountainsAvailable = true;
 
@@ -202,8 +219,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       // prepare each texture
       mountainsGState = new OpenGLGState[numMountainTextures];
       for (i = 0; i < numMountainTextures; i++) {
-	gstate.setTexture(*tm.getTexture(TX_MOUNTAIN, i));
-	mountainsGState[i] = gstate.getState();
+		char text[256];
+		sprintf(text,"mountan%d",i+1);
+		gstate.setTexture(*tm.getTexture(text));
+		mountainsGState[i] = gstate.getState();
       }
       mountainsList = new OpenGLDisplayList[numMountainTextures];
     }

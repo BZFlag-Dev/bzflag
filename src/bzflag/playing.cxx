@@ -6718,8 +6718,6 @@ void			startPlaying(BzfDisplay* _display,
 				     SceneRenderer& renderer,
 				     StartupInfo* _info)
 {
-  int i;
-
   // initalization
   display = _display;
   sceneRenderer = &renderer;
@@ -6900,26 +6898,34 @@ void			startPlaying(BzfDisplay* _display,
   static const GLfloat	zero[3] = { 0.0f, 0.0f, 0.0f };
 
   TextureManager &tm = TextureManager::instance();
-  for (i = 1;; i++) {
-    // try loading texture
-    OpenGLTexture *tex = tm.getTexture( TX_EXPLOSION, i );
 
-    if (!tex || !tex->isValid()) break;
+  bool done = false;
+  int explostion = 1;
+  while (!done){
+	  char text[256];
+	  sprintf(text,"explode%d",explostion);
 
-    // make explosion scene node
-    BillboardSceneNode* explosion = new BillboardSceneNode(zero);
-    explosion->setTexture(*tex);
-    explosion->setTextureAnimation(8, 8);
-    explosion->setLight();
-    explosion->setLightColor(1.0f, 0.8f, 0.5f);
-    explosion->setLightAttenuation(0.04f, 0.0f, 0.01f);
+	  OpenGLTexture *tex = tm.getTexture( text );
+	  
+	  if (!tex || !tex->isValid())
+		  done = true;
+      else {
+		// make explosion scene node
+		BillboardSceneNode* explosion = new BillboardSceneNode(zero);
+		explosion->setTexture(*tex);
+		explosion->setTextureAnimation(8, 8);
+		explosion->setLight();
+		explosion->setLightColor(1.0f, 0.8f, 0.5f);
+		explosion->setLightAttenuation(0.04f, 0.0f, 0.01f);
 
-    // add it to list of prototype explosions
-    prototypeExplosions.push_back(explosion);
+		// add it to list of prototype explosions
+		prototypeExplosions.push_back(explosion);
+		explostion++;
+	}
   }
 
   // get tank textures
-  tankTexture = tm.getTexture( TX_TANK );
+  tankTexture = tm.getTexture( "tank" );
 
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);

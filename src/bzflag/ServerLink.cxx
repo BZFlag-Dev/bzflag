@@ -18,12 +18,12 @@
 #include <ctype.h>
 #include <time.h>
 
-#include "common.h"
+#include "network.h"
 #include "ServerLink.h"
 #include "Pack.h"
 #include "LocalPlayer.h"
 #include "ErrorHandler.h"
-#include "network.h"
+#include "common.h"
 
 // invoke persistent rebuilding for current version dates
 #include "version.h"

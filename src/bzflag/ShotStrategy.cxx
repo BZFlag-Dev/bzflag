@@ -342,7 +342,12 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) 
   boltSceneNode->setColor(c[0], c[1], c[2]);
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *texture = tm.getTexture(transparent ? TX_TRANSBOLT : TX_BOLT, team);
+  std::string imageName = Team::getImagePrefix(team);
+  if (transparent)
+	  imageName += "t";
+  imageName +="bolt";
+
+  OpenGLTexture *texture = tm.getTexture(imageName.c_str());
   if (texture && texture->isValid())
     boltSceneNode->setTexture(*texture);
 }
@@ -546,7 +551,9 @@ void			SegmentedShotStrategy::addShot(
     const float* c = Team::getRadarColor(tmpTeam);
     boltSceneNode->setColor(c[0], c[1], c[2]);
     TextureManager &tm = TextureManager::instance();
-    OpenGLTexture *texture = tm.getTexture(TX_BOLT, tmpTeam);
+	std::string imageName = Team::getImagePrefix(team);
+	imageName +="bolt";
+    OpenGLTexture *texture = tm.getTexture(imageName.c_str());
     if (texture && texture->isValid())
       boltSceneNode->setTexture(*texture);
   }
@@ -831,7 +838,7 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   thiefNodes = new LaserSceneNode*[numSegments];
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *texture = tm.getTexture(TX_THIEF);
+  OpenGLTexture *texture = tm.getTexture("theif");
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
@@ -980,7 +987,9 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *texture = tm.getTexture(TX_LASER, tmpTeam);
+  std::string imageName = Team::getImagePrefix(tmpTeam);
+  imageName +="bolt";
+  OpenGLTexture *texture = tm.getTexture(imageName.c_str());
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
@@ -1060,7 +1069,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition());
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *texture = tm.getTexture(TX_MISSILE);
+  OpenGLTexture *texture = tm.getTexture("missile");
 
   if (texture && texture->isValid()) {
     ptSceneNode->setTexture(*texture);

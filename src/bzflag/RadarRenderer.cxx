@@ -201,7 +201,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   OpenGLGState::resetState();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *noiseTexture = tm.getTexture( TX_NOISE );
+  OpenGLTexture *noiseTexture = tm.getTexture( "noise" );
 
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && bzfrand() > decay) {

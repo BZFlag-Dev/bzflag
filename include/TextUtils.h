@@ -511,6 +511,10 @@ inline std::string url_encode(std::string text)
 }
 
 
+// so we can keep a map with strings as the key
+inline  bool operator < (const std::string &s1,const std::string &s2) { return (s1.compare(s2)<0);}
+
+
 #endif // __TEXTUTILS_H__
 
 

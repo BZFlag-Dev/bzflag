@@ -111,7 +111,7 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
   if (totalCount == 0) {
     // load arrow texture
     TextureManager &tm = TextureManager::instance();
-    arrow = tm.getTexture( TX_BOLT, RogueTeam );
+    arrow = tm.getTexture( "ybolt" );
 
     // make gstate for focus arrow
     gstate = new OpenGLGState;

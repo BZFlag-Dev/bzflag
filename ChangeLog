@@ -9,6 +9,7 @@ BZFlag 1.10.4
 * Color carried team flags according to their team - Sean Morrison
 * Start of better spawn positions based on tanks - Dave Brosius
 * PNG image grabbing - Daniel Remenak
+* Texture Manager only loads textures when needed, reorg textures to make more sense - Jeff Myers
 
 BZFlag 1.10.2
 -------------

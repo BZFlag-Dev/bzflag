@@ -13,38 +13,32 @@
 #include <string>
 #include <map>
 
+#include "TextUtils.h"
 #include "OpenGLTexture.h"
 #include "Singleton.h"
 
-typedef enum TextureType { TX_BOLT, TX_TRANSBOLT, TX_LASER, TX_THIEF, TX_MISSILE,
-                           TX_GROUND, TX_CLOUDS, TX_MOUNTAIN, TX_EXPLOSION,
-			   TX_TANK, TX_FLAG, TX_WALL, TX_BOX, TX_ROOF, TX_PYRAMID,
-			   TX_CAUTION, TX_TITLEFONT, TX_NOISE
-			};
 
 struct FileTextureInit
 {
-  TextureType		type;
-  int			variant;
-  char*			fileName;
+  std::string		name;
   OpenGLTexture::Filter	filter;
 };
 
 struct ProcTextureInit
 {
-  TextureType		type;
-  int			variant;
+  std::string		name;
   OpenGLTexture*	(*proc)(ProcTextureInit &init);
   OpenGLTexture::Filter	filter;
 };
 
+
+typedef std::map<std::string, OpenGLTexture*> TextureNameMap;
+
 class TextureManager : public Singleton<TextureManager>
 {
 public:
-  OpenGLTexture* getTexture( TextureType type );
-  OpenGLTexture* getTexture( TextureType type, int variant );
-  void addTexture( TextureType type, OpenGLTexture *texture );
-  void addTexture( TextureType type, int variant, OpenGLTexture *texture );
+  OpenGLTexture* getTexture( const char* name );
+  void addTexture( const char*, OpenGLTexture *texture );
 
   static OpenGLTexture* noiseProc( ProcTextureInit &init );
 
@@ -58,10 +52,9 @@ private:
   ~TextureManager();
 
   OpenGLTexture* loadTexture( FileTextureInit &init );
-  void           loadBigTexture(TextureType type, FileTextureInit &init);
 
 
-  std::map<int, OpenGLTexture*> m_Textures;
+  TextureNameMap m_Textures;
 };
 
 

@@ -146,14 +146,14 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 
 
   // make styles -- first the outer wall
-  OpenGLTexture *wallTexture = tm.getTexture( TX_WALL );
+  OpenGLTexture *wallTexture = tm.getTexture( "wall" );
   wallTexWidth = wallTexHeight = 10.0f;
   if (wallTexture->isValid())
     wallTexWidth = wallTexture->getAspectRatio() * wallTexHeight;
 
 
   // make box styles
-  OpenGLTexture *boxTexture = tm.getTexture( TX_BOX );
+  OpenGLTexture *boxTexture = tm.getTexture( "boxwall" );
   boxTexWidth = boxTexHeight = 0.2f * BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   if (boxTexture->isValid())
     boxTexWidth = boxTexture->getAspectRatio() * boxTexHeight;
@@ -228,7 +228,7 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *wallTexture = tm.getTexture( TX_WALL );
+  OpenGLTexture *wallTexture = tm.getTexture( "wall" );
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
 				o.getHeight() / wallTexHeight, wallLOD))) {
@@ -253,8 +253,8 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *boxTexture = tm.getTexture( TX_BOX );
-  OpenGLTexture *boxTopTexture = tm.getTexture( TX_ROOF );
+  OpenGLTexture *boxTexture = tm.getTexture( "boxwall" );
+  OpenGLTexture *boxTopTexture = tm.getTexture( "roof" );
 
   while ((node = ((part != 5) ? nodeGen->getNextNode(
 				-1.5f*boxTexWidth,
@@ -287,7 +287,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *pyramidTexture = tm.getTexture( TX_PYRAMID );
+  OpenGLTexture *pyramidTexture = tm.getTexture( "pyrwall" );
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   while ((node = nodeGen->getNextNode(-3.0f * boxTexHeight,
@@ -313,7 +313,7 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   ObstacleSceneNodeGenerator *nodeGen = o.newSceneNodeGenerator();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *boxTexture = tm.getTexture( TX_BOX );
+  OpenGLTexture *boxTexture = tm.getTexture( "boxwall" );
 
   // this assumes bases have 6 parts - if they don't, it still works
   int part = 0;
@@ -345,7 +345,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *teleporterTexture = tm.getTexture( TX_CAUTION );
+  OpenGLTexture *teleporterTexture = tm.getTexture( "caution" );
 
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
 							teleporterLOD))) {

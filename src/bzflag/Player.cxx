@@ -183,7 +183,7 @@ void			Player::changeTeam(TeamColor _team)
 
   if (tankTexture == NULL) {
     TextureManager &tm = TextureManager::instance();
-    tankTexture = tm.getTexture(TX_TANK);
+    tankTexture = tm.getTexture("tank");
   }
 
   // change color of tank
