@@ -22,6 +22,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * either disable server checks when -handicap mode is enabled, or
   incorporate the player's handicap value into the check calculations.
 
+* either disable server checks when there are moving surfaces, or
+  incorporate the object's speed into the check calculations.
+
 * improve the mesh collision code (edging)
 
 * speed up the radar rendering
@@ -29,7 +32,7 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
 
-* better user authentication mechanism
+* group handling for now-working central login
 
 
 THESE ARE LOWER PRIORITY
