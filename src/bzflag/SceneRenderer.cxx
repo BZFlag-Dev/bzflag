@@ -457,7 +457,7 @@ void			SceneRenderer::enableSun(bool on)
 
 void			SceneRenderer::addLight(OpenGLLight& light)
 {
-  // add light
+  // add a light, and grow the maximum list size if required
   lightsCount++;
   if (lightsCount > lightsSize) {
     OpenGLLight** newList = new OpenGLLight*[lightsSize * 2];
@@ -619,6 +619,7 @@ void			SceneRenderer::render(
       // sort by importance      
       qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
 
+
       // count the valid lights (negative values indicate culled lights)
       dynamicLights = 0;      
       for (i = 0; i < lightsCount; i++) {
@@ -628,10 +629,8 @@ void			SceneRenderer::render(
       }
 
       // limit the light count      
-      if (lightsCount > maxLights) {
+      if (dynamicLights > maxLights) {
         dynamicLights = maxLights;
-      } else {
-        dynamicLights = lightsCount;
       }
     }
   }
@@ -764,8 +763,9 @@ void			SceneRenderer::render(
   if (!blank) {
     if (lighting) {
       // now turn on the remaining lights
-      for (i = 0; i < dynamicLights; i++)
+      for (i = 0; i < dynamicLights; i++) {
 	OpenGLLight::enableLight(i + reservedLights);
+      }
     }
 
     frustum.executeProjection();

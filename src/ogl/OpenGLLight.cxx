@@ -163,6 +163,7 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
   // (shouldn't happen for dynamic lights?)
   if (pos[3] == 0.0f) {
     importance = MAXFLOAT;
+    return;
   }
   
   // This is not an exact test, the real culling shape should
@@ -171,10 +172,10 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
   
   // check if the light is in front of the front viewing plane
   bool sphereCull = true;
-  const GLfloat* dir = frustum.getDirection();
-  const float fd = (dir[0] * pos[0]) +
-                   (dir[1] * pos[1]) +
-                   (dir[2] * pos[2]) + dir[3];
+  const GLfloat* p = frustum.getDirection();
+  const float fd = (p[0] * pos[0]) +
+                   (p[1] * pos[1]) +
+                   (p[2] * pos[2]) + p[3];
 
   // cull against the frustum planes
   // (right, left, up, and down)
@@ -184,7 +185,7 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
       const float* p = frustum.getSide(i);
       const float len = (p[0] * pos[0]) +
                         (p[1] * pos[1]) +
-                        (p[2] * pos[2]) + dir[3];
+                        (p[2] * pos[2]) + p[3];
       if (len < -maxDist) {
         importance = -1.0f;
         return;
