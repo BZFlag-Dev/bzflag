@@ -115,7 +115,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
     }
   }
 
-  if (e == -1) {
+  if (sLink.getState() != ServerLink::Okay) {
     return CommError;
   }
 
