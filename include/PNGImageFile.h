@@ -15,6 +15,9 @@
 
 #include "ImageFile.h"
 
+class PNGPalette;
+class PNGChunk;
+
 class PNGImageFile : public ImageFile {
 public:
 	PNGImageFile(std::istream*);
@@ -25,8 +28,36 @@ public:
 	// ImageFile overrides
 	virtual bool		read(void* buffer);
 private:
+	PNGPalette* readPalette( PNGChunk *c );
+	int decodeData( void *buffer, int bufferPos, PNGChunk *c );
+
 	static unsigned char	pngHeader[8];
 	bool					valid;
+	unsigned char			bitDepth;
+	unsigned char			colorDepth;
+	unsigned char			compressionMethod;
+	unsigned char			filterMethod;
+	unsigned char			interlaceMethod;
+};
+
+class PNGRGB
+{
+public:
+	unsigned char red;
+	unsigned char green;
+	unsigned char blue;
+};
+
+class PNGPalette
+{
+public:
+	PNGPalette( int numColors );
+	~PNGPalette();
+	void add( PNGRGB &color );
+private:
+	int		curColor;
+	int		numColors;
+	PNGRGB	*colors;
 };
 
 class PNGChunk

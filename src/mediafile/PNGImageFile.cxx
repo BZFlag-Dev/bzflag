@@ -19,8 +19,6 @@
 #include <winsock2.h>
 #endif
 
-// This code is 'inprogress' I'm reading chunk types that I don't find documented. TBD
-// Not ready for use.
 
 
 //
@@ -32,13 +30,13 @@ unsigned char PNGImageFile::pngHeader[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
 PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), valid(true) 
 {
 	char buffer[8];
-	stream->read( buffer, 8 );
-	if (strncmp( (char*)pngHeader, buffer, 8 ) != 0) {
+	stream->read(buffer, 8);
+	if (strncmp((char*)pngHeader, buffer, 8) != 0) {
 		valid = false;
 		return;
 	}
 
-	PNGChunk *c = PNGChunk::readChunk( stream );
+	PNGChunk *c = PNGChunk::readChunk(stream);
 	if (c->getType() != PNGChunk::IHDR) {
 		valid = false;
 		delete c;
@@ -47,11 +45,14 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), valid(true
 
 	unsigned char* data = c->getData();
 	int width, height;
-	unsigned char bitDepth, colorDepth;
-	data = (unsigned char *)nboUnpackInt( data, width );
-	data = (unsigned char *)nboUnpackInt( data, height );
-	data = (unsigned char *)nboUnpackUByte( data, bitDepth );
-	data = (unsigned char *)nboUnpackUByte( data, colorDepth );
+	data = (unsigned char *)nboUnpackInt(data, width);
+	data = (unsigned char *)nboUnpackInt(data, height);
+
+	data = (unsigned char *)nboUnpackUByte(data, bitDepth);
+	data = (unsigned char *)nboUnpackUByte(data, colorDepth);
+	data = (unsigned char *)nboUnpackUByte(data, compressionMethod);
+	data = (unsigned char *)nboUnpackUByte(data, filterMethod);
+	data = (unsigned char *)nboUnpackUByte(data, interlaceMethod);
 
 	init(3, width, height);
 }
@@ -69,20 +70,64 @@ std::string				PNGImageFile::getExtension()
 bool					PNGImageFile::read(void* buffer)
 {
 	PNGChunk *c;
+	int		  bufferPos;
 	
-	do
-	{
-		c = PNGChunk::readChunk(getStream());
-		if ((c->getType() == PNGChunk::IDAT) || (c->getType() == PNGChunk::IEND))
-			break;
+	c = PNGChunk::readChunk(getStream());
+	while ((c->getType() != PNGChunk::IDAT) && (c->getType() != PNGChunk::IEND)) {
+		if (c->getType() == PNGChunk::PLTE)
+			readPalette(c);
 		delete c;
-	} while (true);
+		c = PNGChunk::readChunk(getStream());
+	}
 
-	unsigned char *data = c->getData();
+	bufferPos = 0;
+	while (c->getType() == PNGChunk::IDAT) {
+		bufferPos = decodeData(buffer, bufferPos, c);
+		delete c;
+		c = PNGChunk::readChunk(getStream());
+	}
 
 
 	delete c;
 	return true;
+}
+
+PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
+{
+	int numColors = c->getLength() / sizeof(PNGRGB);
+	PNGPalette *p = new PNGPalette(numColors);
+	PNGRGB rgb;
+
+	unsigned char *pData = c->getData();
+	for (int i = 0; i < numColors; i++) {
+		pData = (unsigned char *)nboUnpackUByte(pData, rgb.red);
+		pData = (unsigned char *)nboUnpackUByte(pData, rgb.green);
+		pData = (unsigned char *)nboUnpackUByte(pData, rgb.blue);
+		p->add(rgb);
+	}
+	return p;
+}
+
+int PNGImageFile::decodeData(void *buffer, int bufferPos, PNGChunk *c)
+{
+	return bufferPos;
+}
+
+PNGPalette::PNGPalette(int nc)
+{
+	curColor = 0;
+	numColors = nc;
+	colors = new PNGRGB[nc];
+}
+
+PNGPalette::~PNGPalette()
+{
+	delete [] colors;
+}
+
+void PNGPalette::add(PNGRGB& color)
+{
+	colors[curColor++] = color;
 }
 
 int PNGChunk::IHDR = 'IHDR';
@@ -94,17 +139,16 @@ int PNGChunk::IEND = 'IEND';
 PNGChunk *PNGChunk::readChunk(std::istream *stream)
 {
 	PNGChunk *c = new PNGChunk();
-	stream->read( (char *) &c->length, 4 );
-	c->length = ntohl( c->length );
-	stream->read( (char *) &c->type, 4 );
-	c->type = ntohl( c->type );
-	if (c->length > 0)
-	{
+	stream->read((char *) &c->length, 4);
+	c->length = ntohl(c->length);
+	stream->read((char *) &c->type, 4);
+	c->type = ntohl(c->type);
+	if (c->length > 0) {
 		c->data = new unsigned char[c->length];
-		stream->read( (char*) c->data, c->length );
+		stream->read((char*) c->data, c->length);
 	}
-	stream->read( (char *) &c->crc, 4 );
-	c->crc = ntohl( c->crc );
+	stream->read((char *) &c->crc, 4);
+	c->crc = ntohl(c->crc);
 	return c;
 }
 
