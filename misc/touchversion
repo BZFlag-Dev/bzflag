@@ -83,20 +83,4 @@ else
   cat $tmp > $file
 fi
 
-# Mac Makefile's
-for file in  \
-	$root/src/platform/MacOSX/BZFlag.pbproj/Makefile \
-	$root/src/platform/MacOSX/English.lproj/MainMenu.nib/Makefile \
-	$root/src/platform/MacOSX/English.lproj/Makefile \
-	$root/src/platform/MacOSX/Makefile \
-	; do
-  if [ ! -w $file ]; then
-    echo "$file not found or not writable."
-  else
-    sed -e "s/VERSION *= *[0-9]*/VERSION = $VERSIONNUM/g" \
-	-e "s/VERSIONNUM *= *[0-9]*/VERSIONNUM = $BZVERSION/g"< $file > $tmp
-    cat $tmp > $file
-  fi
-done
-
 rm $tmp
