@@ -91,6 +91,10 @@ SOURCE=..\..\src\scene\BSPSceneDatabase.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\scene\HardwareGLSceneDatabase.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\scene\SceneDatabase.cxx
 # End Source File
 # Begin Source File
@@ -112,6 +116,10 @@ SOURCE=..\..\include\common.h
 # Begin Source File
 
 SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\HardwareGLSceneDatabase.h
 # End Source File
 # Begin Source File
 
