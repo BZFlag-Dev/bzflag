@@ -53,6 +53,7 @@ class CustomArc : public WorldFileObstacle {
     float angle;
     float ratio;
     float texsize[4];
+    int phydrv;
     bool useNormals;
     bool smoothBounce;
     BzMaterial materials[MaterialCount];

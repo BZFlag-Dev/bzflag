@@ -24,6 +24,7 @@
 #include "TextureManager.h"
 #include "ShotPath.h"
 #include "ShotStatistics.h"
+#include "Obstacle.h"
 
 
 // for dead reckoning
@@ -37,6 +38,7 @@ int		Player::tankTexture = -1;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
 	       const char* name, const char* _email, const PlayerType _type) :
+  lastObstacle(NULL),
   notResponding(false),
   autoPilot(false),
   hunted(false),

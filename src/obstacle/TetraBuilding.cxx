@@ -103,13 +103,13 @@ void TetraBuilding::finalize()
   std::vector<int> tlist;
   
   push3Ints(vlist, 0, 2, 1);
-  addFace(mesh, vlist, nlist, tlist, materials[0]);
+  addFace(mesh, vlist, nlist, tlist, materials[0], -1);
   push3Ints(vlist, 0, 1, 3);
-  addFace(mesh, vlist, nlist, tlist, materials[1]);
+  addFace(mesh, vlist, nlist, tlist, materials[1], -1);
   push3Ints(vlist, 1, 2, 3);
-  addFace(mesh, vlist, nlist, tlist, materials[2]);
+  addFace(mesh, vlist, nlist, tlist, materials[2], -1);
   push3Ints(vlist, 2, 0, 3);
-  addFace(mesh, vlist, nlist, tlist, materials[3]);
+  addFace(mesh, vlist, nlist, tlist, materials[3], -1);
   
   // wrap it up
   mesh->setIsLocal(true);

@@ -26,6 +26,7 @@
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
+#include "PhysicsDriver.h"
 #include "FlagSceneNode.h"
 
 
@@ -812,6 +813,9 @@ bool			World::writeWorld(std::string filename)
 
   // Write materials
   MATERIALMGR.print(out, 1);
+
+  // Write materials
+  PHYDRVMGR.print(out, 1);
 
   // Write water level
   {

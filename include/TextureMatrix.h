@@ -14,8 +14,6 @@
 #define _TEXTURE_MATRIX_H_
 
 
-#include "TimeKeeper.h"
-
 #include <string>
 #include <vector>
 #include <iostream>

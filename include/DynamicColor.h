@@ -14,8 +14,6 @@
 #define _DYNAMIC_COLOR_H_
 
 
-#include "TimeKeeper.h"
-
 #include <string>
 #include <vector>
 #include <iostream>

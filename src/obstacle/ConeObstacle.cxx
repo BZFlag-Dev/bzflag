@@ -19,6 +19,7 @@
 
 #include "ConeObstacle.h"
 #include "MeshUtils.h"
+#include "PhysicsDriver.h"
 
 
 const char* ConeObstacle::typeName = "ConeObstacle";
@@ -35,7 +36,7 @@ ConeObstacle::ConeObstacle(const float* _pos, const float* _size,
                          float _rotation, float _sweepAngle,
                          const float _texsize[2], bool _useNormals,
                          int _divisions, const BzMaterial* mats[MaterialCount],
-                         bool bounce, bool drive, bool shoot)
+                         int physics, bool bounce, bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -50,6 +51,7 @@ ConeObstacle::ConeObstacle(const float* _pos, const float* _size,
   // arc specific parameters
   divisions = _divisions;
   sweepAngle = _sweepAngle;
+  phydrv = physics;
   smoothBounce = bounce;
   useNormals = _useNormals;  
   memcpy(texsize, _texsize, sizeof(texsize));
@@ -287,22 +289,22 @@ void ConeObstacle::finalize()
     push3Ints(vlist, vtop, V(0), V(1));
     if (useNormals) push3Ints(nlist, NC(0), NE(0), NE(1));
     push3Ints(tlist, tmid, T(0), T(1));
-    addFace(mesh, vlist, nlist, tlist, materials[Edge]);
+    addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
     // bottom
     push3Ints(vlist, vbot, V(1), V(0));
     push3Ints(tlist, tmid, TI(1), TI(0));
-    addFace(mesh, vlist, nlist, tlist, materials[Bottom]);
+    addFace(mesh, vlist, nlist, tlist, materials[Bottom], phydrv);
   }
 
   if (!isCircle) {
     // start face
     push3Ints(vlist, vbot, 0, vtop);
     push3Ints(tlist, t00, t10, t01);
-    addFace(mesh, vlist, nlist, tlist, materials[StartFace]);
+    addFace(mesh, vlist, nlist, tlist, materials[StartFace], phydrv);
     // end face
     push3Ints(vlist, vlen - 1, vbot, vtop);
     push3Ints(tlist, t00, t10, t11);
-    addFace(mesh, vlist, nlist, tlist, materials[EndFace]);
+    addFace(mesh, vlist, nlist, tlist, materials[EndFace], phydrv);
   }
 
   // wrap it up
@@ -379,6 +381,7 @@ void *ConeObstacle::pack(void *buf)
   buf = nboPackFloat(buf, angle);
   buf = nboPackFloat(buf, sweepAngle);
   buf = nboPackInt(buf, divisions);
+  buf = nboPackInt(buf, phydrv);
   
   int i;
   for (i = 0; i < 2; i++) {
@@ -408,6 +411,7 @@ void *ConeObstacle::unpack(void *buf)
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, sweepAngle);
   buf = nboUnpackInt(buf, divisions);
+  buf = nboUnpackInt(buf, phydrv);
 
   int i;
   for (i = 0; i < 2; i++) {
@@ -441,6 +445,7 @@ int ConeObstacle::packSize()
   fullSize += sizeof(float);
   fullSize += sizeof(float);
   fullSize += sizeof(int);
+  fullSize += sizeof(int);
   fullSize += sizeof(float[2]);
   fullSize += sizeof(int[MaterialCount]);
   fullSize += sizeof(unsigned char);
@@ -467,6 +472,17 @@ void ConeObstacle::print(std::ostream& out, int /*level*/)
   for (i = 0; i < MaterialCount; i++) {
     out << "  " << sideNames[i] << " refmat ";
     MATERIALMGR.printReference(out, materials[i]);
+    out << std::endl;
+  }
+
+  if (phydrv >= 0) {
+    out << "    phydrv ";
+    const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+    if ((driver != NULL) && (driver->getName().size() > 0)) {
+      out << driver->getName();
+    } else {
+      out << phydrv;
+    }
     out << std::endl;
   }
 

@@ -19,6 +19,7 @@
 #include "MeshFace.h"
 #include "MeshObstacle.h"
 
+#include "PhysicsDriver.h"
 #include "Intersect.h"
 
 
@@ -39,14 +40,15 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   edgePlanes = NULL;
   specialData = NULL;
   specialState = 0;
+  phydrv = -1;
 
   return;
 }
 
 
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
-                   float** _vertices, float** _normals,
-                   float** _texcoords, const BzMaterial* _bzMaterial,
+                   float** _vertices, float** _normals, float** _texcoords,
+                   const BzMaterial* _bzMaterial, int physics,
                    bool bounce, bool drive, bool shoot)
 {
   mesh = _mesh;
@@ -55,6 +57,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   normals = _normals;
   texcoords = _texcoords;
   bzMaterial = _bzMaterial;
+  phydrv = physics;
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
@@ -577,9 +580,13 @@ void *MeshFace::pack(void *buf)
       buf = nboPackInt(buf, index);
     }
   }
+
   // material
   int matindex = MATERIALMGR.getIndex(bzMaterial);
   buf = nboPackInt(buf, matindex);
+  
+  // physics driver
+  buf = nboPackInt(buf, phydrv);
 
   return buf;
 }
@@ -626,11 +633,15 @@ void *MeshFace::unpack(void *buf)
       texcoords[i] = (float*)mesh->getTexcoords()[index];
     }
   }
+
   // material
   int matindex;
   buf = nboUnpackInt(buf, matindex);
   bzMaterial = MATERIALMGR.getMaterial(matindex);
 
+  // physics driver
+  buf = nboUnpackInt(buf, phydrv);
+  
   finalize();
 
   return buf;
@@ -648,7 +659,8 @@ int MeshFace::packSize()
   if (useTexcoords()) {
     fullSize += sizeof(int) * vertexCount;
   }
-  fullSize += sizeof(int);//material
+  fullSize += sizeof(int); // material
+  fullSize += sizeof(int); // physics driver
 
   return fullSize;
 }
@@ -710,6 +722,17 @@ void MeshFace::print(std::ostream& out, int level)
   out << "    refmat ";
   MATERIALMGR.printReference(out, bzMaterial);
   out  << std::endl;
+  
+  if (phydrv >= 0) {
+    out << "    phydrv ";
+    const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+    if ((driver != NULL) && (driver->getName().size() > 0)) {
+      out << driver->getName();
+    } else {
+      out << phydrv;
+    }
+    out << std::endl;
+  }
   
   if (smoothBounce && !mesh->useSmoothBounce()) {
     out << "    smoothBounce" << std::endl;

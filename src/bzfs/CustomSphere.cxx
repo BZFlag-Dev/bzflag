@@ -18,11 +18,10 @@
 /* system headers */
 #include <sstream>
 #include <vector>
-#include "math.h"
 
 /* common implementation headers */
 #include "SphereObstacle.h"
-#include "vectors.h"
+#include "PhysicsDriver.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
@@ -37,6 +36,7 @@ CustomSphere::CustomSphere()
   materials[Bottom].setTexture("roof");
   texsize[0] = texsize[1] = -4.0f;
   hemisphere = false;
+  phydrv = -1;
   useNormals = true;
   smoothBounce = false;
   return;
@@ -72,6 +72,17 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "texsize") == 0) {
     if (!(input >> texsize[0] >> texsize[1])) {
       return false;
+    }
+  }
+  else if (strcasecmp(cmd, "phydrv") == 0) {
+    std::string drvname;
+    if (!(input >> drvname)) {
+      std::cout << "missing Physics Driver parameter" << std::endl;
+      return false;
+    }
+    phydrv = PHYDRVMGR.findDriver(drvname);
+    if (phydrv == -1) {
+      std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
     }
   }
   else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
@@ -141,6 +152,7 @@ void CustomSphere::write(WorldInfo *world) const
   }
   SphereObstacle* sphere = new SphereObstacle(pos, size, rotation, texsize,
                                               useNormals, hemisphere, divisions, mats,
+                                              phydrv,
                                               smoothBounce, driveThrough, shootThrough);
 
   if (sphere->isValid()) {

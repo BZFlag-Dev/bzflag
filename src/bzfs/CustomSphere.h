@@ -43,6 +43,7 @@ class CustomSphere : public WorldFileObstacle {
     int divisions;
     float texsize[2];
     bool hemisphere;
+    int phydrv;
     bool useNormals;
     bool smoothBounce;
     BzMaterial materials[MaterialCount];

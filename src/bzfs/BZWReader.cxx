@@ -32,14 +32,15 @@
 #include "CustomWorld.h"
 #include "CustomZone.h"
 #include "CustomTetra.h"
-#include "CustomDynamicColor.h"
-#include "CustomTextureMatrix.h"
-#include "CustomMaterial.h"
 #include "CustomMesh.h"
 #include "CustomArc.h"
 #include "CustomCone.h"
 #include "CustomSphere.h"
 #include "CustomWaterLevel.h"
+#include "CustomDynamicColor.h"
+#include "CustomPhysicsDriver.h"
+#include "CustomTextureMatrix.h"
+#include "CustomMaterial.h"
 
 BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
 {
@@ -172,6 +173,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       }
     } else if (strcasecmp(buffer, "waterLevel") == 0) {
       newObject = new CustomWaterLevel;
+    } else if (strcasecmp(buffer, "physics") == 0) {
+      newObject = new CustomPhysicsDriver;
     } else if (strcasecmp(buffer, "dynamicColor") == 0) {
       newObject = new CustomDynamicColor;
     } else if (strcasecmp(buffer, "textureMatrix") == 0) {

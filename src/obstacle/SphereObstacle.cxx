@@ -19,6 +19,7 @@
 
 #include "SphereObstacle.h"
 #include "MeshUtils.h"
+#include "PhysicsDriver.h"
 
 
 const char* SphereObstacle::typeName = "SphereObstacle";
@@ -35,7 +36,7 @@ SphereObstacle::SphereObstacle(const float* _pos, const float* _size,
                          float _rotation, const float _texsize[2], 
                          bool _useNormals, bool _hemisphere,
                          int _divisions, const BzMaterial* mats[MaterialCount],
-                         bool bounce, bool drive, bool shoot)
+                         int physics, bool bounce, bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -50,6 +51,7 @@ SphereObstacle::SphereObstacle(const float* _pos, const float* _size,
   // arc specific parameters
   divisions = _divisions;
   hemisphere = _hemisphere;
+  phydrv = physics;
   smoothBounce = bounce;
   useNormals = _useNormals;  
   memcpy(texsize, _texsize, sizeof(texsize));
@@ -357,12 +359,12 @@ void SphereObstacle::finalize()
         push3Ints(vlist, a, b, c);
         if (useNormals) push3Ints(nlist, a, b, c);
         push3Ints(tlist, ta, b, tc);
-        addFace(mesh, vlist, nlist, tlist, materials[Edge]);
+        addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
         if (!lastCircle) {
           push3Ints(vlist, b, d, c);
           if (useNormals) push3Ints(nlist, b, d, c);
           push3Ints(tlist, b, d, tc);
-          addFace(mesh, vlist, nlist, tlist, materials[Edge]);
+          addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
         }
 
         // bottom hemisphere
@@ -380,12 +382,12 @@ void SphereObstacle::finalize()
           push3Ints(vlist, a, c, b);
           if (useNormals) push3Ints(nlist, a, c, b);
           push3Ints(tlist, ta, tc, b);
-          addFace(mesh, vlist, nlist, tlist, materials[Edge]);
+          addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
           if (!lastCircle) {
             push3Ints(vlist, b, c, d);
             if (useNormals) push3Ints(nlist, b, c, d);
             push3Ints(tlist, b, tc, d);
-            addFace(mesh, vlist, nlist, tlist, materials[Edge]);
+            addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
           }
         }
       }
@@ -401,7 +403,7 @@ void SphereObstacle::finalize()
       vlist.push_back(v + offset);
       tlist.push_back(i + bottomTexOffset);
     }
-    addFace(mesh, vlist, nlist, tlist, materials[Bottom]);
+    addFace(mesh, vlist, nlist, tlist, materials[Bottom], phydrv);
   }
 
   // wrap it up
@@ -477,6 +479,7 @@ void *SphereObstacle::pack(void *buf)
   buf = nboPackVector(buf, size);
   buf = nboPackFloat(buf, angle);
   buf = nboPackInt(buf, divisions);
+  buf = nboPackInt(buf, phydrv);
   
   int i;
   for (i = 0; i < 2; i++) {
@@ -506,6 +509,7 @@ void *SphereObstacle::unpack(void *buf)
   buf = nboUnpackVector(buf, size);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackInt(buf, divisions);
+  buf = nboUnpackInt(buf, phydrv);
 
   int i;
   for (i = 0; i < 2; i++) {
@@ -539,6 +543,7 @@ int SphereObstacle::packSize()
   fullSize += sizeof(float[3]);
   fullSize += sizeof(float);
   fullSize += sizeof(int);
+  fullSize += sizeof(int);
   fullSize += sizeof(float[2]);
   fullSize += sizeof(int[MaterialCount]);
   fullSize += sizeof(unsigned char);
@@ -567,6 +572,17 @@ void SphereObstacle::print(std::ostream& out, int /*level*/)
   for (i = 0; i < MaterialCount; i++) {
     out << "  " << sideNames[i] << " refmat ";
     MATERIALMGR.printReference(out, materials[i]);
+    out << std::endl;
+  }
+
+  if (phydrv >= 0) {
+    out << "    phydrv ";
+    const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+    if ((driver != NULL) && (driver->getName().size() > 0)) {
+      out << driver->getName();
+    } else {
+      out << phydrv;
+    }
     out << std::endl;
   }
 

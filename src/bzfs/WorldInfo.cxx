@@ -20,6 +20,8 @@
 #include "Intersect.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
+#include "BzMaterial.h"
+#include "PhysicsDriver.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"
@@ -567,7 +569,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
     worldWeapons.packSize() + entryZones.packSize() +
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
-    MATERIALMGR.packSize();
+    MATERIALMGR.packSize() + PHYDRVMGR.packSize();
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
@@ -600,6 +602,9 @@ int WorldInfo::packDatabase(const BasesList* baseList)
 
   // add materials
   databasePtr = MATERIALMGR.pack(databasePtr);
+
+  // add physics drivers
+  databasePtr = PHYDRVMGR.pack(databasePtr);
 
   // add water level
   databasePtr = nboPackFloat(databasePtr, waterLevel);

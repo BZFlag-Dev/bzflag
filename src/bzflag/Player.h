@@ -33,6 +33,7 @@ class SceneDatabase;
 class TankSceneNode;
 class TankIDLSceneNode;
 class SphereSceneNode;
+class Obstacle;
 
 const int PlayerUpdatePLen = PlayerIdPLen + 42;
 const int PlayerUpdateSmallPLen = PlayerUpdatePLen - 16;
@@ -139,6 +140,7 @@ public:
 protected:
   // shot statistics
   ShotStatistics	shotStatistics;
+  const Obstacle* lastObstacle; // last obstacle touched
 
 private:
   // return true if the shot had to be terminated or false if it

@@ -38,7 +38,7 @@ class SphereObstacle : public Obstacle {
                    float _rotation, const float _texsize[2], 
                    bool _useNormals, bool hemisphere,
                    int _divisions, const BzMaterial* mats[MaterialCount],
-                   bool bounce, bool drive, bool shoot);
+                   int physics, bool bounce, bool drive, bool shoot);
     ~SphereObstacle();
     MeshObstacle* getMesh();
 
@@ -82,6 +82,7 @@ class SphereObstacle : public Obstacle {
     
     int divisions;
     bool hemisphere;
+    int phydrv;
     bool smoothBounce;
     bool useNormals;
     float texsize[2];

@@ -60,8 +60,8 @@ void DynamicColorManager::update()
   float t = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
   std::vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
-    DynamicColor* texmat = *it;
-    texmat->update(t);
+    DynamicColor* color = *it;
+    color->update(t);
   }
   return;
 }

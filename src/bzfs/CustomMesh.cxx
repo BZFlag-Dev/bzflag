@@ -19,10 +19,14 @@
 #include "CustomMeshFace.h"
 #include "ParseMaterial.h"
 
+/* common implementation headers */
+#include "PhysicsDriver.h"
+
 
 CustomMesh::CustomMesh()
 {
   face = NULL;
+  phydrv = -1;
   driveThrough = false;
   shootThrough = false;
   fragments = true;
@@ -71,7 +75,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       std::cout << "discarding incomplete mesh face" << std::endl;
       delete face;
     }
-    face = new CustomMeshFace (material, smoothBounce,
+    face = new CustomMeshFace (material, phydrv, smoothBounce,
                                driveThrough, shootThrough);
   }
   else if (strcasecmp(cmd, "inside") == 0) {
@@ -110,6 +114,17 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       return false;
     }
     texcoords.push_back(texcoord);
+  }
+  else if (strcasecmp(cmd, "phydrv") == 0) {
+    std::string drvname;
+    if (!(input >> drvname)) {
+      std::cout << "missing Physics Driver parameter" << std::endl;
+      return false;
+    }
+    phydrv = PHYDRVMGR.findDriver(drvname);
+    if (phydrv == -1) {
+      std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
+    }
   }
   else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
            (strcasecmp(cmd, "smoothbounce") == 0)) {

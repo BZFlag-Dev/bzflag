@@ -18,16 +18,20 @@
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
 
+/* common implementation headers */
+#include "PhysicsDriver.h"
+
 /* system headers */
 #include <sstream>
 #include <iostream>
 
 
-CustomMeshFace::CustomMeshFace(const BzMaterial& _material,
+CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
                                bool bounce, bool drive, bool shoot)
 {
   material = _material;
   smoothBounce = bounce;
+  phydrv = physics;
   driveThrough = drive;
   shootThrough = shoot;
   return;
@@ -77,6 +81,17 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
       return false;
     }
   }
+  else if (strcasecmp(cmd, "phydrv") == 0) {
+    std::string drvname;
+    if (!(input >> drvname)) {
+      std::cout << "missing Physics Driver parameter" << std::endl;
+      return false;
+    }
+    phydrv = PHYDRVMGR.findDriver(drvname);
+    if (phydrv == -1) {
+      std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
+    }
+  }
   else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
            (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
@@ -107,7 +122,7 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
 void CustomMeshFace::write(MeshObstacle *mesh) const
 {
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
-  mesh->addFace(vertices, normals, texcoords, matref,
+  mesh->addFace(vertices, normals, texcoords, matref, phydrv,
                 smoothBounce, driveThrough, shootThrough);
   return;
 }

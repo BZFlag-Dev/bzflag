@@ -19,6 +19,7 @@
 
 #include "ArcObstacle.h"
 #include "MeshUtils.h"
+#include "PhysicsDriver.h"
 
 
 const char* ArcObstacle::typeName = "ArcObstacle";
@@ -35,7 +36,7 @@ ArcObstacle::ArcObstacle(const float* _pos, const float* _size,
                          float _rotation, float _sweepAngle, float _ratio,
                          const float _texsize[4], bool _useNormals,
                          int _divisions, const BzMaterial* mats[MaterialCount],
-                         bool bounce, bool drive, bool shoot)
+                         int physics, bool bounce, bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -51,6 +52,7 @@ ArcObstacle::ArcObstacle(const float* _pos, const float* _size,
   divisions = _divisions;
   sweepAngle = _sweepAngle;
   ratio = _ratio;
+  phydrv = physics;
   smoothBounce = bounce;
   useNormals = _useNormals;  
   memcpy(texsize, _texsize, sizeof(texsize));
@@ -317,17 +319,17 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
     push4Ints(vlist, PV(0), PV(2), PV(3), PV(1));
     if (useNormals) push4Ints(nlist, PN(0), PN(1), PN(1), PN(0));
     push4Ints(tlist, PTO(0), PTO(2), PTO(3), PTO(1));
-    addFace(mesh, vlist, nlist, tlist, materials[Outside]);
+    addFace(mesh, vlist, nlist, tlist, materials[Outside], phydrv);
 
     // top
     push3Ints(vlist, vtop, PV(1), PV(3));
     push3Ints(tlist, tmid, PTC(0), PTC(1));
-    addFace(mesh, vlist, nlist, tlist, materials[Top]);
+    addFace(mesh, vlist, nlist, tlist, materials[Top], phydrv);
 
     // bottom
     push3Ints(vlist, vbot, PV(2), PV(0));
     push3Ints(tlist, tmid, PTCI(1), PTCI(0));
-    addFace(mesh, vlist, nlist, tlist, materials[Bottom]);
+    addFace(mesh, vlist, nlist, tlist, materials[Bottom], phydrv);
   }
 
 
@@ -336,13 +338,13 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
     // start face
     push4Ints(vlist, vbot, 0, 1, vtop);
     push4Ints(tlist, 0, tc + 0, tc + 1, 1);
-    addFace(mesh, vlist, nlist, tlist, materials[StartFace]);
+    addFace(mesh, vlist, nlist, tlist, materials[StartFace], phydrv);
     
     // end face
     int e = divisions * 2;
     push4Ints(vlist, e + 0, vbot, vtop, e + 1);
     push4Ints(tlist, 0, tc + 0, tc + 1, 1);
-    addFace(mesh, vlist, nlist, tlist, materials[EndFace]);
+    addFace(mesh, vlist, nlist, tlist, materials[EndFace], phydrv);
   }
 
   return;
@@ -449,23 +451,23 @@ void ArcObstacle::makeRing(bool isCircle, float a, float r, float h,
     push4Ints(vlist, RV(4), RV(0), RV(1), RV(5));
     if (useNormals) push4Ints(nlist, RN(2), RN(0), RN(0), RN(2));
     push4Ints(tlist, RIT(2), RIT(0), RIT(1), RIT(3));
-    addFace(mesh, vlist, nlist, tlist, materials[Inside]);
+    addFace(mesh, vlist, nlist, tlist, materials[Inside], phydrv);
 
     // outside
     push4Ints(vlist, RV(2), RV(6), RV(7), RV(3));
     if (useNormals) push4Ints(nlist, RN(1), RN(3), RN(3), RN(1));
     push4Ints(tlist, RT(0), RT(2), RT(3), RT(1));
-    addFace(mesh, vlist, nlist, tlist, materials[Outside]);
+    addFace(mesh, vlist, nlist, tlist, materials[Outside], phydrv);
 
     // top
     push4Ints(vlist, RV(3), RV(7), RV(5), RV(1));
     push4Ints(tlist, RT(0), RT(2), RT(3), RT(1));
-    addFace(mesh, vlist, nlist, tlist, materials[Top]);
+    addFace(mesh, vlist, nlist, tlist, materials[Top], phydrv);
 
     // bottom
     push4Ints(vlist, RV(0), RV(4), RV(6), RV(2));
     push4Ints(tlist, RT(0), RT(2), RT(3), RT(1));
-    addFace(mesh, vlist, nlist, tlist, materials[Bottom]);
+    addFace(mesh, vlist, nlist, tlist, materials[Bottom], phydrv);
   }
 
   if (!isCircle) {
@@ -473,13 +475,13 @@ void ArcObstacle::makeRing(bool isCircle, float a, float r, float h,
     // start face
     push4Ints(vlist, 0, 2, 3, 1);
     push4Ints(tlist, 0, tc + 0, tc + 1, 1);
-    addFace(mesh, vlist, nlist, tlist, materials[StartFace]);
+    addFace(mesh, vlist, nlist, tlist, materials[StartFace], phydrv);
     
     // end face
     int e = divisions * 4;
     push4Ints(vlist, e + 2, e + 0, e + 1, e + 3);
     push4Ints(tlist, 0, tc + 0, tc + 1, 1);
-    addFace(mesh, vlist, nlist, tlist, materials[EndFace]);
+    addFace(mesh, vlist, nlist, tlist, materials[EndFace], phydrv);
   }
 
   return;
@@ -561,6 +563,7 @@ void *ArcObstacle::pack(void *buf)
   buf = nboPackFloat(buf, sweepAngle);
   buf = nboPackFloat(buf, ratio);
   buf = nboPackInt(buf, divisions);
+  buf = nboPackInt(buf, phydrv);
   
   int i;
   for (i = 0; i < 4; i++) {
@@ -591,6 +594,7 @@ void *ArcObstacle::unpack(void *buf)
   buf = nboUnpackFloat(buf, sweepAngle);
   buf = nboUnpackFloat(buf, ratio);
   buf = nboUnpackInt(buf, divisions);
+  buf = nboUnpackInt(buf, phydrv);
 
   int i;
   for (i = 0; i < 4; i++) {
@@ -625,6 +629,7 @@ int ArcObstacle::packSize()
   fullSize += sizeof(float);
   fullSize += sizeof(float);
   fullSize += sizeof(int);
+  fullSize += sizeof(int);
   fullSize += sizeof(float[4]);
   fullSize += sizeof(int[MaterialCount]);
   fullSize += sizeof(unsigned char);
@@ -653,6 +658,17 @@ void ArcObstacle::print(std::ostream& out, int /*level*/)
   for (i = 0; i < MaterialCount; i++) {
     out << "  " << sideNames[i] << " refmat ";
     MATERIALMGR.printReference(out, materials[i]);
+    out << std::endl;
+  }
+  
+  if (phydrv >= 0) {
+    out << "    phydrv ";
+    const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+    if ((driver != NULL) && (driver->getName().size() > 0)) {
+      out << driver->getName();
+    } else {
+      out << phydrv;
+    }
     out << std::endl;
   }
 

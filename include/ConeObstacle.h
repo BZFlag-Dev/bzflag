@@ -40,7 +40,7 @@ class ConeObstacle : public Obstacle {
                 float _rotation, float _angle,
                 const float _texsize[2], bool _useNormals,
                 int _divisions, const BzMaterial* mats[MaterialCount],
-                bool bounce, bool drive, bool shoot);
+                int physics, bool bounce, bool drive, bool shoot);
     ~ConeObstacle();
     MeshObstacle* getMesh();
 
@@ -84,6 +84,7 @@ class ConeObstacle : public Obstacle {
     
     int divisions;
     float sweepAngle;
+    int phydrv;
     bool smoothBounce;
     bool useNormals;
     float texsize[2];

@@ -35,8 +35,8 @@ class MeshFace : public Obstacle {
   public:
     MeshFace(class MeshObstacle* mesh);
     MeshFace(MeshObstacle* _mesh, int _vertexCount,
-             float** _vertices, float** _normals,
-             float** _texcoords, const BzMaterial* _bzMaterial,
+             float** _vertices, float** _normals, float** _texcoords,
+             const BzMaterial* _bzMaterial, int physics,
              bool smoothBounce, bool drive, bool shoot);
     ~MeshFace();
 
@@ -75,6 +75,7 @@ class MeshFace : public Obstacle {
     const float* getTexcoord(int index) const;
     const float* getPlane() const;
     const BzMaterial* getMaterial() const;
+    int getPhysicsDriver() const;
     //const PhysicsDrive* getPhysicsDrive() const;
 
     bool isSpecial() const;
@@ -107,7 +108,7 @@ class MeshFace : public Obstacle {
     float** texcoords;
     const BzMaterial* bzMaterial;
     bool smoothBounce;
-    //PhysicsDrive* physics;
+    int phydrv;
 
     fvec3 mins, maxs;
     fvec4 plane;
@@ -163,10 +164,10 @@ inline const BzMaterial* MeshFace::getMaterial() const
   return bzMaterial;
 }
 
-//inline const PhysicsDrive* MeshFace::getPhysicsDrive() const
-//{
-//  return physics;
-//}
+inline int MeshFace::getPhysicsDriver() const
+{
+  return phydrv;
+}
 
 inline const float* MeshFace::getPlane() const
 {

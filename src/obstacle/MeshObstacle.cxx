@@ -91,7 +91,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
 bool MeshObstacle::addFace(const std::vector<int>& _vertices,
                            const std::vector<int>& _normals,
                            const std::vector<int>& _texcoords,
-                           const BzMaterial* _material,
+                           const BzMaterial* _material, int phydrv,
                            bool bounce, bool drive, bool shoot)
 {
   // protect the face list from overrun
@@ -157,7 +157,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   }
   
   // make the face
-  MeshFace* face = new MeshFace(this, count, v, n, t, _material, 
+  MeshFace* face = new MeshFace(this, count, v, n, t, _material, phydrv,
                                 bounce, drive, shoot);
 
   // check its validity

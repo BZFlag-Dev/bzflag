@@ -18,11 +18,10 @@
 /* system headers */
 #include <sstream>
 #include <vector>
-#include "math.h"
 
 /* common implementation headers */
 #include "ArcObstacle.h"
-#include "vectors.h"
+#include "PhysicsDriver.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
@@ -36,6 +35,7 @@ CustomArc::CustomArc()
   ratio = 1.0f;
   angle = 360.0f;
   texsize[0] = texsize[1] = texsize[2] = texsize[3] = -4.0f;
+  phydrv = -1;
   useNormals = true;
   smoothBounce = false;
 
@@ -79,6 +79,17 @@ bool CustomArc::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "texsize") == 0) {
     if (!(input >> texsize[0] >> texsize[1] >> texsize[2] >> texsize[3])) {
       return false;
+    }
+  }
+  else if (strcasecmp(cmd, "phydrv") == 0) {
+    std::string drvname;
+    if (!(input >> drvname)) {
+      std::cout << "missing Physics Driver parameter" << std::endl;
+      return false;
+    }
+    phydrv = PHYDRVMGR.findDriver(drvname);
+    if (phydrv == -1) {
+      std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
     }
   }
   else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
@@ -150,6 +161,7 @@ void CustomArc::write(WorldInfo *world) const
   }
   ArcObstacle* arc = new ArcObstacle(pos, size, rotation, angle, ratio,
                                      texsize, useNormals, divisions, mats,
+                                     phydrv,
                                      smoothBounce, driveThrough, shootThrough);
   if (arc->isValid()) {
     arc->getMesh()->setIsLocal(true);

@@ -36,6 +36,8 @@ bzfs_SOURCES = \
 	CustomMesh.h \
 	CustomMeshFace.cxx \
 	CustomMeshFace.h \
+	CustomPhysicsDriver.cxx \
+	CustomPhysicsDriver.h \
 	CustomSphere.cxx \
 	CustomSphere.h \
 	CustomTextureMatrix.cxx \

@@ -44,6 +44,7 @@ class CustomCone : public WorldFileObstacle {
     int divisions;
     float angle;
     float texsize[2];
+    int phydrv;
     bool useNormals;
     bool smoothBounce;
     BzMaterial materials[MaterialCount];

@@ -42,7 +42,7 @@ class ArcObstacle : public Obstacle {
                 float _rotation, float _angle, float _ratio,
                 const float _texsize[4], bool _useNormals,
                 int _divisions, const BzMaterial* mats[MaterialCount],
-                bool bounce, bool drive, bool shoot);
+                int physics, bool bounce, bool drive, bool shoot);
     ~ArcObstacle();
     MeshObstacle* getMesh();
 
@@ -92,6 +92,7 @@ class ArcObstacle : public Obstacle {
     int divisions;
     float sweepAngle;
     float ratio;
+    int phydrv;
     bool smoothBounce;
     bool useNormals;
     float texsize[4];

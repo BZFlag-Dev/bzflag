@@ -24,6 +24,7 @@
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
+#include "PhysicsDriver.h"
 #include "FlagSceneNode.h"
 
 /* compression library header */
@@ -85,6 +86,10 @@ void* WorldBuilder::unpack(void* buf)
   // unpack texture matrices
   MATERIALMGR.clear();
   buf = MATERIALMGR.unpack(buf);
+
+  // unpack texture matrices
+  PHYDRVMGR.clear();
+  buf = PHYDRVMGR.unpack(buf);
 
   // unpack water level
   buf = nboUnpackFloat(buf, world->waterLevel);

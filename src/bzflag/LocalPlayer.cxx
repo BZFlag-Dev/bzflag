@@ -21,6 +21,7 @@
 #include "WallObstacle.h"
 #include "BZDBCache.h"
 #include "FlagSceneNode.h"
+#include "PhysicsDriver.h"
 
 /* local implementation headers */
 #include "World.h"
@@ -304,6 +305,35 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
 
+  // do the physics driver stuff
+  if ((lastObstacle != NULL) && 
+      (lastObstacle->getType() == MeshFace::getClassName())) {
+    const MeshFace* face = (const MeshFace*) lastObstacle;
+    int driverId = face->getPhysicsDriver();
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
+    if (phydrv != NULL) {
+      const float* v = phydrv->getVelocity();
+      const float av = phydrv->getAngularVel();
+      const float* ap = phydrv->getAngularPos();
+
+      // adjust the velocity
+      newVelocity[0] += v[0];
+      newVelocity[1] += v[1];
+      newVelocity[2] += v[2];
+      
+      if (av != 0.0f) {
+        // the angular velocity is a percentage of 360/second
+        const float angvel = (av * 2.0f * M_PI);
+        newAngVel += angvel;
+        const float dx = oldPosition[0] - ap[0];
+        const float dy = oldPosition[1] - ap[1];
+        newVelocity[0] -= angvel * dy;
+        newVelocity[1] += angvel * dx;
+      }
+    }
+  }
+  lastObstacle = NULL;
+
   // get new position so far (which is just the current position)
   float newPos[3];
   newPos[0] = oldPosition[0];
@@ -328,6 +358,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     // try to see if we are stuck on a building
     obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth,
                               phased, expelled);
+    
     if (obstacle && expelled) {
       stuckFrameCount++;
       stuck = true;
@@ -389,12 +420,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
     // see if we hit anything.  if not then we're done.
     obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
                               phased, expelled);
+    
     if (!obstacle || !expelled) break;
 
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
     if ((oldLocation != InAir)
     &&  (obstacle->getType() != WallObstacle::getClassName())
-    &&  (obstacle->getType() != TetraBuilding::getClassName())
     &&  (obstacle->getType() != PyramidBuilding::getClassName())
     &&  (obstacleTop != tmpPos[2]) && 
         (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
@@ -444,6 +475,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       } else if (searchObstacle) {
         // if we hit a building then record which one and where
 	obstacle = searchObstacle;
+    
 	expelled = searchExpelled;
 	hitAzimuth = newAzimuth;
 	hitPos[0] = newPos[0];
@@ -481,6 +513,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (newPos[2] > 0.0 && normal[2] > 0.001f) {
       if (location != Dead && location != Exploding && expelled) {
 	location = OnBuilding;
+        lastObstacle = obstacle;
       }
       newVelocity[2] = 0.0f;
     } else {
@@ -531,7 +564,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
   insideBuilding = (const Obstacle*)(location == InBuilding ? obstacle : NULL);
-
+  
   // see if we're crossing a wall
   if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
     if (insideBuilding->isCrossing(newPos, newAzimuth,
@@ -820,6 +853,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   // initialize position/speed state
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   location = (pos[2] > 0.0f) ? OnBuilding : OnGround;
+  lastObstacle = NULL;
   lastSpeed = 0.0f;
   desiredSpeed = 0.0f;
   desiredAngVel = 0.0f;

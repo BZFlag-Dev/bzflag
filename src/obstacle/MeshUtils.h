@@ -53,11 +53,11 @@ static inline void addFace (MeshObstacle* mesh,
                             std::vector<int>& verticesList,
                             std::vector<int>& normalsList,
                             std::vector<int>& texcoordsList,
-                            const BzMaterial* material)
+                            const BzMaterial* material, int phydrv)
 {
   // use the mesh defaults for smoothBounce, driveThrough, and shootThough
   const BzMaterial* matref = MATERIALMGR.addMaterial(material);
-  mesh->addFace(verticesList, normalsList, texcoordsList, matref,
+  mesh->addFace(verticesList, normalsList, texcoordsList, matref, phydrv,
                 false, false, false);
   verticesList.clear();
   normalsList.clear();
