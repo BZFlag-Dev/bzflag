@@ -725,7 +725,9 @@ void			BackgroundRenderer::drawGroundReceivers(
   }
 
   const int count = renderer.getNumAllLights();
-  if (count == 0) return;
+  if (count == 0) {
+    return;
+  }
 
   // bright sun dims intensity of ground receivers
   const float B = 1.0f - 0.6f * renderer.getSunBrightness();
@@ -735,6 +737,10 @@ void			BackgroundRenderer::drawGroundReceivers(
   int i, j;
   for (int k = 0; k < count; k++) {
     const OpenGLLight& light = renderer.getLight(k);
+    if (light.getImportance() < 0.0f) {
+      continue; // this is a culled light
+    }
+    
     const GLfloat* pos = light.getPosition();
     const GLfloat* lightColor = light.getColor();
     const GLfloat* atten = light.getAttenuation();

@@ -605,20 +605,20 @@ void			SceneRenderer::render(
   int i;
   dynamicLights = 0;
   if (!sameFrame) {
+
     clearLights();
+    
     if (scene && !blank && lighting) {
       // get the potential dynamic lights
       scene->addLights(*this);
       
       // calculate the light importances
-      int i;
       for (i = 0; i < lightsCount; i++) {
         lights[i]->setImportance(frustum);
       }
 
       // sort by importance      
       qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
-
 
       // count the valid lights (negative values indicate culled lights)
       dynamicLights = 0;      
