@@ -53,8 +53,12 @@ AC_PROG_CXX
 dnl Objective-C compiler (Mac OS X SDL framework build)
 AC_CHECK_PROGS(OBJC, gcc, gcc)
 AC_SUBST(OBJC)
-OBJCDEPMODE="depmode=gcc"
-AC_SUBST(OBJCDEPMODE)
+if test "x$OBJCDEPMODE" = "x" ; then
+   OBJCDEPMODE="depmode=gcc"
+   AC_SUBST(OBJCDEPMODE)
+fi
+OBJCFLAGS=""
+AC_SUBST(OBJCFLAGS)
 AM_CONDITIONAL([am__fastdepOBJC], 
 	       [test "x$enable_dependency_tracking" != xno])
 
