@@ -1,13 +1,13 @@
 recent bugs
 ------------
 
-- VC6 builds only if you have an updated platform SDK. It would but there is
-  one developer who insisits that he is special and keeps changing the code
-  to a method that only works for him, and not for the other people who use 
-  the software.
+- VC6 users with an updated platform SDK need to comment out the socketlen_t line
+  in config.h. We should make sure the windows net headers are included before
+  common.h so that we can test for the existence of this item before we define
+  it. Or Mr.ApathyCream will keep changing it back.
 
-- VC 7.1 builds do not work, link errors in texture manager. Guess this means
-  we can desuport windows.
+- VC 7.1 release builds do not work, link errors in texture manager. It seems to have
+  to do with the singleton, the class defines a deconstructor, but the header dosn't have one.
 
 - if a modified client sends an invalid id back to the server, the invalid id
   gets propagated to all clients, crashing everyone during unpack() with a
