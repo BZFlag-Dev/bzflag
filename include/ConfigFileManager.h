@@ -33,7 +33,7 @@ public:
    read(filename) uses FileManager to open the stream and returns
    false if the file cannot be opened.  they all call parse().
   */
-  bool				read(std::string filename);
+  bool				read(std::string& filename);
   /** Read a configuration file.
    read(filename) uses FileManager to open the stream and returns
    false if the file cannot be opened.  they all call parse().
@@ -43,7 +43,7 @@ public:
   /** Write out a configuration file.
    Writes to a format that the CommandManager can understand
   */
-  bool				write(std::string filename);
+  bool				write(std::string& filename);
 
   /** Get the singleton instance.
    returns the existing singleton if available, if not, creates
