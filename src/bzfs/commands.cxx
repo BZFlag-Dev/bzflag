@@ -30,6 +30,7 @@
 #else
 #include <string.h>
 #endif
+#include <time.h>
 
 // common implementation headers
 #include "Address.h"

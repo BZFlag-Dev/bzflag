@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <vector>
 #include <string>
+#include <time.h>
 
 // implementation-specific bzflag headers
 #include "NetHandler.h"
