@@ -415,7 +415,7 @@ void			BackgroundRenderer::setCelestial(
 
   if (BZDB.isSet("RAIN_DESNSITY"))
   {
-	  rainDensity = BZDB.eval("RAIN_DESNSITY");
+	  rainDensity = (int)BZDB.eval("RAIN_DESNSITY");
 	  rainColor[0][0] = 0.75f;   rainColor[1][0] = 0.75f;   rainColor[2][0] = 0.75f;   rainColor[3][0] = 0.75f; 
 	  rainColor[0][1] = 0.0f;   rainColor[1][1] = 0.0f;   rainColor[2][1] = 0.0f;   rainColor[3][1] = 0.0f; 
 	  rainSize[0] = 0.0f; rainSize[1] = 10.0f;
@@ -435,17 +435,19 @@ void			BackgroundRenderer::setCelestial(
 		  rainSpread = BZDB.eval("RAIN_SPREAD");
 
 	  float rainHeight  = 120.0f * BZDBCache::tankHeight;	// same as the clouds
-
-	  for ( int drops = 0; drops< rainDensity; drops++)
+	  if (raindrops.size() == 0)
 	  {
-		  rain drop;
-		  drop.speed = rainSpeed + ((bzfrand()*2.0f -1.0f)*rainSpeedMod);
-		  drop.pos[0] = ((bzfrand()*2.0f -1.0f)*rainSpread);
-		  drop.pos[1] = ((bzfrand()*2.0f -1.0f)*rainSpread);
-		  drop.pos[2] = ((bzfrand())*rainHeight);
-		  raindrops.push_back(drop);
+		for ( int drops = 0; drops< rainDensity; drops++)
+		{
+			rain drop;
+			drop.speed = rainSpeed + (((float)bzfrand()*2.0f -1.0f)*rainSpeedMod);
+			drop.pos[0] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
+			drop.pos[1] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
+			drop.pos[2] = (((float)bzfrand())*rainHeight);
+			raindrops.push_back(drop);
+		}
+		lastRainTime = TimeKeeper::getCurrent().getSeconds();
 	  }
-	  lastRainTime = TimeKeeper::getCurrent().getSeconds();
   }
 
 }
@@ -581,9 +583,9 @@ void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 				if ( itr->pos[2] < 0)
 				{
 					itr->pos[2] = rainHeight;
-					itr->speed = rainSpeed + ((bzfrand()*2.0f -1.0f)*rainSpeedMod);
-					itr->pos[0] = ((bzfrand()*2.0f -1.0f)*rainSpread);
-					itr->pos[1] = ((bzfrand()*2.0f -1.0f)*rainSpread);
+					itr->speed = rainSpeed + ((float)(bzfrand()*2.0f -1.0f)*rainSpeedMod);
+					itr->pos[0] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
+					itr->pos[1] = (((float)bzfrand()*2.0f -1.0f)*rainSpread);
 				}
 				itr++;
 			}
