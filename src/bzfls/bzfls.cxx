@@ -37,7 +37,7 @@ static const char	copyright[] = "Copyright 1999, Chris Schoeneman";
 #include "TimeBomb.h"
 
 // give up on connections that have been idle DisconnectTimeout seconds.
-static const float	DisconnectTimeout = 10.0f;
+static const float DisconnectTimeout = 10.0f;
 
 // purge list every CheckListInterval seconds of servers that haven't
 // talked to us in ServerExpiration seconds.  CheckListInterval can be
@@ -46,21 +46,21 @@ static const float	DisconnectTimeout = 10.0f;
 // being purged and without bugging us too much.  however, dead servers
 // can remain in the list for up to ServerExpiration seconds, so it
 // should be kept reasonably low.
-static const float	CheckListInterval = 10.0f;
-static const float	ServerExpiration = 45.0f * 60.0f;
+static const float CheckListInterval = 10.0f;
+static const float ServerExpiration = 45.0f * 60.0f;
 
 // expect messages to be no longer than this
-static const int	MaxInputMsgSize = 1024;
+static const int MaxInputMsgSize = 1024;
 
 // handle this many clients at once.  since we do not hold lengthly
 // dialogues with clients this doesn't have to be too large.
-static const int	MaxClients = 20;
+static const int MaxClients = 20;
 
-static const int	NotConnected = -1;	// do NOT change
+static const int NotConnected = -1;	// do NOT change
 
 class Server {
   public:
-    Server(const char* address, const char* version, const char* build,
+    Server(const char *name, const char* version, const char* build,
 				const char* gameInfo, const char* title);
     ~Server();
 
@@ -85,12 +85,14 @@ class Server {
     const char*		getName() const;
     const char*		getPort() const;
 
+  public:
+    char		address[16]; // enough space for "AAA.BBB.CCC.DDD" including null
+
   private:
     Server*		prev;
     Server*		next;
     boolean		fresh;
     int			refCount;
-    char*		address;
     char*		title;
     char		version[9];
     char*		build;
@@ -160,34 +162,37 @@ static TimeKeeper	lastDumpTime, startTime;
 // Server
 //
 
-Server::Server(const char* inAddress,
-				const char* inVersion,
-				const char* inBuild,
-				const char* inGameInfo,
-				const char* inTitle) :
-				prev(NULL),
-				next(NULL),
-				fresh(True),
-				refCount(1),
-				time(TimeKeeper::getCurrent())
+Server::Server(const char* inName,
+		const char* inVersion,
+		const char* inBuild,
+		const char* inGameInfo,
+		const char* inTitle) :
+		prev(NULL),
+		next(NULL),
+		fresh(True),
+		refCount(1),
+		time(TimeKeeper::getCurrent())
 {
-  address = strdup(inAddress);
+  name = strdup(inName);
+  // start with a padded localhost, fill in address when testing
   build = strdup(inBuild);
   title = strdup(inTitle);
   gameInfo = strdup(inGameInfo);
   strncpy(version, inVersion, 8);
   version[8] = '\0';
+  strncpy(address,"127.000.000.001",15);
+  address[15] = '\0';
 
-  // extract name and port from address
-  char* delimiter = strchr(address, ':');
+  // extract name and port from name
+  char* delimiter = strchr(name, ':');
   if (delimiter) {
     *delimiter = '\0';
-    name = strdup(address);
+    name = strdup(name);
     port = strdup(delimiter + 1);
     *delimiter = ':';
   }
   else {
-    name = strdup(address);
+    name = strdup(name);
     port = NULL;
   }
 
@@ -201,7 +206,7 @@ Server::Server(const char* inAddress,
       *scanTitle = ' ';
 
   if (debug >= 1)
-    fprintf(stderr, "added server: %s\n", address);
+    fprintf(stderr, "added server: %s, %s, %s, %s, %s\n", name, build, gameInfo, address, title);
 }
 
 Server::~Server()
@@ -210,7 +215,6 @@ Server::~Server()
     fprintf(stderr, "removed server: %s\n", address);
 
   free(title);
-  free(address);
   free(gameInfo);
   free(build);
   free(name);
@@ -220,7 +224,7 @@ Server::~Server()
   if (next) next->prev = prev;
 }
 
-void			Server::addAfter(Server* newServer)
+void Server::addAfter(Server* newServer)
 {
   assert(newServer->prev == NULL && newServer->next == NULL);
   newServer->prev = this;
@@ -229,18 +233,18 @@ void			Server::addAfter(Server* newServer)
   next = newServer;
 }
 
-void			Server::ref()
+void Server::ref()
 {
   ++refCount;
 }
 
-void			Server::unref()
+void Server::unref()
 {
   --refCount;
   assert(refCount >= 0);
 }
 
-void			Server::setStale()
+void Server::setStale()
 {
   if (fresh) {
     unref();
@@ -250,7 +254,7 @@ void			Server::setStale()
   fresh = False;
 }
 
-void			Server::setFresh()
+void Server::setFresh()
 {
   if (!fresh) {
     ref();
@@ -261,76 +265,76 @@ void			Server::setFresh()
   fresh = True;
 }
 
-void			Server::setNumPlayers(int* players)
+void Server::setNumPlayers(int* players)
 {
   PingPacket::repackHexPlayerCounts(gameInfo, players);
 }
 
-void			Server::setTitle(const char* inTitle)
+void Server::setTitle(const char* inTitle)
 {
 	if (title)
 		free(title);
 	title = strdup(inTitle);
 }
 
-void			Server::setGameInfo(const char* inGameInfo)
+void Server::setGameInfo(const char* inGameInfo)
 {
 	if (gameInfo)
 		free(gameInfo);
 	gameInfo = strdup(inGameInfo);
 }
 
-Server*			Server::getNext() const
+Server* Server::getNext() const
 {
   return next;
 }
 
-boolean			Server::isReferenced() const
+boolean Server::isReferenced() const
 {
   return (refCount > 0);
 }
 
-boolean			Server::isStale(const TimeKeeper& currentTime) const
+boolean Server::isStale(const TimeKeeper& currentTime) const
 {
   return (currentTime - time >= ServerExpiration);
 }
 
-boolean			Server::isFresh() const
+boolean Server::isFresh() const
 {
   return fresh;
 }
 
-const char*		Server::getTitle() const
+const char* Server::getTitle() const
 {
   return title;
 }
 
-const char*		Server::getAddress() const
+const char* Server::getAddress() const
 {
   return address;
 }
 
-const char*		Server::getVersion() const
+const char* Server::getVersion() const
 {
   return version;
 }
 
-const char*		Server::getBuild() const
+const char* Server::getBuild() const
 {
   return build;
 }
 
-const char*		Server::getGameInfo() const
+const char* Server::getGameInfo() const
 {
   return gameInfo;
 }
 
-const char*		Server::getName() const
+const char* Server::getName() const
 {
   return name;
 }
 
-const char*		Server::getPort() const
+const char* Server::getPort() const
 {
   return port;
 }
@@ -359,7 +363,7 @@ TestServer::~TestServer()
   if (next) next->prev = prev;
 }
 
-void			TestServer::addAfter(TestServer* newServer)
+void TestServer::addAfter(TestServer* newServer)
 {
   assert(newServer->prev == NULL && newServer->next == NULL);
   newServer->prev = this;
@@ -368,41 +372,41 @@ void			TestServer::addAfter(TestServer* newServer)
   next = newServer;
 }
 
-void			TestServer::setWait()
+void TestServer::setWait()
 {
   wait = True;
 }
 
-boolean			TestServer::testWaitAndReset()
+boolean TestServer::testWaitAndReset()
 {
   if (!wait) return False;
   wait = False;
   return True;
 }
 
-Server*			TestServer::orphanServer()
+Server* TestServer::orphanServer()
 {
   Server* tmp = server;
   server = NULL;
   return tmp;
 }
 
-TestServer*		TestServer::getNext() const
+TestServer* TestServer::getNext() const
 {
   return next;
 }
 
-int			TestServer::getFD() const
+int TestServer::getFD() const
 {
   return fd;
 }
 
-Server*			TestServer::getServer() const
+Server* TestServer::getServer() const
 {
   return server;
 }
 
-const TimeKeeper&	TestServer::getTime() const
+const TimeKeeper& TestServer::getTime() const
 {
   return startTime;
 }
@@ -413,7 +417,7 @@ const TimeKeeper&	TestServer::getTime() const
 //
 
 // get the number seconds since the epoch
-static time_t		getTime()
+static time_t getTime()
 {
 #if defined(_WIN32)
   return time(NULL);
@@ -425,7 +429,7 @@ static time_t		getTime()
 }
 
 // print an RFC 1123 compliant data into buffer
-static void		getRFC1123Date(char* buffer, time_t time)
+static void getRFC1123Date(char* buffer, time_t time)
 {
   static const char* wkday[] = { "Sun", "Mon", "Tue",
 				 "Wed", "Thu", "Fri", "Sat" };
@@ -444,7 +448,7 @@ static void		getRFC1123Date(char* buffer, time_t time)
 }
 
 // find an unused client slot
-static int		findOpenSlot()
+static int findOpenSlot()
 {
   for (int i = 0; i < MaxClients; ++i)
     if (client[i].fd == NotConnected)
@@ -453,7 +457,7 @@ static int		findOpenSlot()
 }
 
 // reference the given server and every server after it in the list
-static void		refServerList(Server* scan)
+static void refServerList(Server* scan)
 {
   while (scan) {
     scan->ref();
@@ -462,7 +466,7 @@ static void		refServerList(Server* scan)
 }
 
 // unreference the given server and every server after it in the list
-static void		unrefServerList(Server* scan)
+static void unrefServerList(Server* scan)
 {
   if (scan) scan = scan->getNext();
   while (scan) {
@@ -472,7 +476,7 @@ static void		unrefServerList(Server* scan)
 }
 
 // accept a connection into a client slot
-static void		acceptClient(int fd)
+static void acceptClient(int fd)
 {
   // find an open slot
   int index = findOpenSlot();
@@ -504,7 +508,7 @@ static void		acceptClient(int fd)
 }
 
 // close a client connection and free the client slot
-static void		removeClient(int index)
+static void removeClient(int index)
 {
   assert(client[index].fd != NotConnected);
 
@@ -522,7 +526,7 @@ static void		removeClient(int index)
 }
 
 // start the server 
-static boolean		serverStart()
+static boolean serverStart()
 {
   maxFileDescriptor = 0;
 
@@ -578,7 +582,7 @@ static boolean		serverStart()
 }
 
 // shutdown the server
-static void		serverStop()
+static void serverStop()
 {
   // close listen socket
   close(wksSocket);
@@ -606,7 +610,7 @@ static void		serverStop()
 }
 
 // remove unused server entries in the database and make old entries stale
-static void		checkList(const TimeKeeper& time)
+static void checkList(const TimeKeeper& time)
 {
   Server* scan = serverList->getNext();
   while (scan) {
@@ -631,7 +635,7 @@ static void		checkList(const TimeKeeper& time)
 }
 
 // check if server at address is accessible and responsive
-static boolean		scheduleServerTest(Server* server)
+static boolean scheduleServerTest(Server* server)
 {
   // create socket, make it non-blocking, and start connection
   int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -651,6 +655,7 @@ static boolean		scheduleServerTest(Server* server)
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
   addr.sin_addr = Address::getHostAddress(server->getName());
+  sprintf(server->address, "%s", inet_ntoa(addr.sin_addr)); // FIXME this will bomb on ipv6
   if (connect(fd, (CNCTType*)&addr, sizeof(addr)) < 0) {
 #if defined(_WIN32)
 #undef EINPROGRESS
@@ -679,37 +684,36 @@ static boolean		scheduleServerTest(Server* server)
   }
 }
 
-// lookup a server in the list by address
-static Server*		findServer(const char* address)
+// lookup a server in the list by name
+static Server* findServer(const char* name)
 {
-  // search server list for exact same address
+  // search server list for exact same name
   Server* scan = serverList->getNext();
-  while (scan && strcmp(scan->getAddress(), address) != 0)
+  while (scan && strcmp(scan->getName(), name) != 0)
     scan = scan->getNext();
   return scan;
 }
 
-// lookup a server in the list by address
-static TestServer*	findTestServer(const char* address)
+// lookup a server in the list by name
+static TestServer* findTestServer(const char* name)
 {
-  // search server list for exact same address
+  // search server list for exact same name
   TestServer* scan = testingList->getNext();
-  while (scan && strcmp(scan->getServer()->getAddress(), address) != 0)
+  while (scan && strcmp(scan->getServer()->getName(), name) != 0)
     scan = scan->getNext();
   return scan;
 }
 
 // add a server to the list (or freshen an existing entry)
-static int		addServer(const char* address, const char* version,
-				const char* build,
-				const char* gameInfo, const char* title)
+static int addServer(const char* name, const char* version,
+	const char* build, const char* gameInfo, const char* title)
 {
   // check format of version
   if (strncmp(version, "BZFS", 4) != 0)
     return 1;
 
   // is server already in the list?  if so then freshen it.
-  Server* exists = findServer(address);
+  Server* exists = findServer(name);
   if (exists) {
   	exists->setTitle(title);
   	exists->setGameInfo(gameInfo);
@@ -719,11 +723,11 @@ static int		addServer(const char* address, const char* version,
   }
 
   // is server already in testing list?  if so then ignore it.
-  if (findTestServer(address))
+  if (findTestServer(name))
     return 1;
 
   // create server object but don't add it to our list yet
-  Server* server = new Server(address, version, build, gameInfo, title);
+  Server* server = new Server(name, version, build, gameInfo, title);
 
   // can we connect to the server?  if not then we reject the request
   // to add the server.  this prevents most cases of inaccessible
@@ -743,7 +747,7 @@ static int		addServer(const char* address, const char* version,
 }
 
 // find the end of a request message
-static int		findMsgEnd(const char* buffer, int, int start)
+static int findMsgEnd(const char* buffer, int, int start)
 {
   // find \r\n\r\n or \n\n sequence in buffer.  return -1 if not found,
   // otherwise index of start of match.  start looking around index start.
@@ -761,7 +765,7 @@ static int		findMsgEnd(const char* buffer, int, int start)
 // parse up to argc-1 tokens and remaining tokens go into last argument.
 // return False if insufficient tokens found (last argument can be empty),
 // else return True.
-static boolean		parseRequest(char* buffer, char** args, int argc,
+static boolean parseRequest(char* buffer, char** args, int argc,
 				boolean lastEmpty = False)
 {
   // string must not be empty or have leading whitespace
@@ -804,7 +808,7 @@ static boolean		parseRequest(char* buffer, char** args, int argc,
 }
 
 // continue sending reply
-static boolean		continueReplyClient(int index)
+static boolean continueReplyClient(int index)
 {
   // go to the next fresh server in the list
   Server* server = client[index].nextServer;
@@ -823,10 +827,11 @@ static boolean		continueReplyClient(int index)
     return False;
 
   // print server info into client buffer
-  sprintf(client[index].buffer, "%s %s %s %s\r\n",
-				server->getAddress(),
+  sprintf(client[index].buffer, "%s %s %s %s %s\r\n",
+				server->getName(),
 				server->getVersion(),
 				server->getGameInfo(),
+				server->getAddress(),
 				server->getTitle());
   client[index].offset = 0;
   client[index].length = strlen(client[index].buffer);
@@ -835,7 +840,7 @@ static boolean		continueReplyClient(int index)
 }
 
 // parse a request and begin reply
-static boolean		startReplyClient(int index)
+static boolean startReplyClient(int index)
 {
   // now replying
   client[index].sendingReply = True;
@@ -861,7 +866,7 @@ static boolean		startReplyClient(int index)
     numAddsTotal++;
 
     // looks like a server requesting to add itself
-    // ADD <address> <version> <build> <gameinfo> <title>
+    // ADD <name> <version> <build> <gameinfo> <title>
     if (!parseRequest(request, args, 5)) {
       numAddsBad++;
       return False;
@@ -879,7 +884,7 @@ static boolean		startReplyClient(int index)
     numRemovesTotal++;
 
     // looks like a server requesting to remove itself
-    // REMOVE <address>
+    // REMOVE <name>
     args[0] = request;
 
     // lookup server in list.  if there, make it stale
@@ -999,7 +1004,7 @@ static boolean		startReplyClient(int index)
   return False;
 }
 
-static void		readClient(int index, const TimeKeeper& tm)
+static void readClient(int index, const TimeKeeper& tm)
 {
   assert(client[index].fd != NotConnected);
   int length = recv(client[index].fd,
@@ -1050,7 +1055,7 @@ static void		readClient(int index, const TimeKeeper& tm)
   }
 }
 
-static void		writeClient(int index, const TimeKeeper& tm)
+static void writeClient(int index, const TimeKeeper& tm)
 {
   // write more data
   int length = send(client[index].fd,
@@ -1082,7 +1087,7 @@ static void		writeClient(int index, const TimeKeeper& tm)
   }
 }
 
-static void		dumpServerList(int /*sig*/)
+static void dumpServerList(int /*sig*/)
 {
 #if !defined(_WIN32)				// no SIGUSR1 in Windows
   signal(SIGUSR1, SIG_PF(dumpServerList));
@@ -1099,7 +1104,7 @@ static void		dumpServerList(int /*sig*/)
     server = server->getNext();
     if (server != NULL && server->isFresh()) {
       fprintf(file, "%s %s %s %s %s\r\n",
-				server->getAddress(),
+				server->getName(),
 				server->getBuild(),
 				server->getVersion(),
 				server->getGameInfo(),
@@ -1110,7 +1115,7 @@ static void		dumpServerList(int /*sig*/)
   fclose(file);
 }
 
-static void		dumpTraffic(int /*sig*/)
+static void dumpTraffic(int /*sig*/)
 {
 #if !defined(_WIN32)				// no SIGUSR2 in Windows
   signal(SIGUSR2, SIG_PF(dumpTraffic));
@@ -1154,7 +1159,7 @@ static void		dumpTraffic(int /*sig*/)
   lastDumpTime = t;
 }
 
-static void		bootstrapList(int argc, char** argv)
+static void bootstrapList(int argc, char** argv)
 {
   int i;
   FILE* file;
@@ -1191,10 +1196,10 @@ static void		bootstrapList(int argc, char** argv)
   }
 }
 
-static int		exitCode = 0;
-static boolean		done = False;
+static int exitCode = 0;
+static boolean done = False;
 
-static void		terminateServer(int /*sig*/)
+static void terminateServer(int /*sig*/)
 {
   signal(SIGINT, SIG_PF(terminateServer));
   signal(SIGTERM, SIG_PF(terminateServer));
@@ -1202,10 +1207,10 @@ static void		terminateServer(int /*sig*/)
   done = True;
 }
 
-static const char*	usageString =
+static const char* usageString =
 "[-p <port>] [-version] [<server-list-file> ...]";
 
-static void		printVersion(FILE* out)
+static void printVersion(FILE* out)
 {
   fprintf(out, "%s\n", copyright);
 
@@ -1229,14 +1234,14 @@ static void		printVersion(FILE* out)
 				(char)tolower(ServerVersion[7]));
 }
 
-static void		usage(const char* pname)
+static void usage(const char* pname)
 {
   printVersion(stderr);
   fprintf(stderr, "usage: %s %s\n", pname, usageString);
   exit(1);
 }
 
-static int		parse(int argc, char** argv)
+static int parse(int argc, char** argv)
 {
   // parse command line
   for (int i = 1; i < argc; i++) {
@@ -1275,7 +1280,7 @@ static int		parse(int argc, char** argv)
   return argc;
 }
 
-int			main(int argc, char** argv)
+int main(int argc, char** argv)
 {
   // check time bomb
   if (timeBombBoom()) {

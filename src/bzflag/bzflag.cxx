@@ -623,7 +623,7 @@ void			dumpResources(BzfDisplay* display,
   db.addValue("smooth",   renderer.useSmoothing() ? "yes" : "no");
   db.addValue("lighting", renderer.useLighting() ? "yes" : "no");
   db.addValue("texture",  renderer.useTexture() ?
-		configFilterValues[OpenGLTexture::getFilter()] : "no");
+ 		configFilterValues[OpenGLTexture::getFilter()] : "no");
   db.addValue("shadows",  renderer.useShadows() ? "yes" : "no");
 
   GLint value;

@@ -2659,7 +2659,7 @@ void			ServerMenu::readServerList(int index)
       *scan++ = '\0';
 
       // parse server info
-      char* scan2, *name, *version, *info, *title;
+      char *scan2, *name, *version, *info, *address, *title;
       name = base;
       version = name;
       while (*version && !isspace(*version))  version++;
@@ -2667,7 +2667,10 @@ void			ServerMenu::readServerList(int index)
       info = version;
       while (*info && !isspace(*info))  info++;
       while (*info &&  isspace(*info)) *info++ = 0;
-      title = info;
+      address = info;
+      while (*address && !isspace(*address))  address++;
+      while (*address &&  isspace(*address)) *address++ = 0;
+      title = address;
       while (*title && !isspace(*title))  title++;
       while (*title &&  isspace(*title)) *title++ = 0;
 
@@ -2686,27 +2689,23 @@ void			ServerMenu::readServerList(int index)
 	// store info
 	ServerItem serverInfo;
 	serverInfo.ping.unpackHex(info);
-	serverInfo.ping.serverId.serverHost = Address::getHostAddress(name);
-	serverInfo.ping.serverId.port = htons((int16_t)port);
-	serverInfo.name = name;
-
-	// if name looks like an address in dot notation then try
-	// converting it to a hostname
-	int dot[4];
-	if (sscanf(name, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
+        int dot[4] = {127,0,0,1};
+        if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
 	  if (dot[0] >= 0 && dot[0] <= 255 &&
-		dot[1] >= 0 && dot[1] <= 255 &&
-		dot[2] >= 0 && dot[2] <= 255 &&
-		dot[3] >= 0 && dot[3] <= 255) {
+	      dot[1] >= 0 && dot[1] <= 255 &&
+	      dot[2] >= 0 && dot[2] <= 255 &&
+	      dot[3] >= 0 && dot[3] <= 255) {
 	    InAddr addr;
 	    unsigned char* paddr = (unsigned char*)&addr.s_addr;
 	    paddr[0] = (unsigned char)dot[0];
 	    paddr[1] = (unsigned char)dot[1];
 	    paddr[2] = (unsigned char)dot[2];
 	    paddr[3] = (unsigned char)dot[3];
-	    serverInfo.name = Address::getHostByAddress(addr);
+	    serverInfo.ping.serverId.serverHost = addr;
 	  }
-	}
+        }
+	serverInfo.ping.serverId.port = htons((int16_t)port);
+	serverInfo.name = name;
 
 	// construct description
 	serverInfo.description = serverInfo.name;
