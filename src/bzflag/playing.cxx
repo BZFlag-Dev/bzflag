@@ -4817,6 +4817,7 @@ static void		playingLoop()
       targetPoint[1] = eyePoint[1] + myTankDir[1];
       targetPoint[2] = eyePoint[2] + myTankDir[2];
       if (roaming) {
+        hud->setAltitude(-1.0f);
 	float roamViewAngle;
 #ifdef FOLLOWTANK
 	eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
@@ -4830,7 +4831,6 @@ static void		playingLoop()
 	if (player && (roamView != roamViewFree) && player[roamTrackWinner]) {
 	  RemotePlayer *target = player[roamTrackWinner];
 	  const float *targetTankDir = target->getForward();
-	  hud->setAltitude(-1.0f);
 	  // fixed camera tracking target
 	  if (roamView == roamViewTrack) {
 	    eyePoint[0] = roamPos[0];
