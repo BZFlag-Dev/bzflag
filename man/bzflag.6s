@@ -19,7 +19,6 @@ BZFlag \- a tank battle game
 [\fB\-mute\fR]
 [\fB\-nolist\fR]
 [\fB\-port \fIport\fR]
-[\fB\-solo \fInumber-of-robots\fR]
 [\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
 [\fB\-ttl \fIttl\fR]
 [\fB\-version\fR]
@@ -128,11 +127,6 @@ Disables \fBbzfls\fR server querying.  See \fB-list\fR.
 Connect to server on \fIport\fR instead of the default.
 The server must be listening on this port (see the -p option on
 \fBbzfs\fR).
-.TP
-\fB-solo\fI number-of-robots\fR
-When you join a game, you'll also cause \fInumber-of-robots\fR robots
-to join too.  This is an experimental option and the robots are
-extremely stupid players.  Robots are added to teams at random.
 .TP
 \fB-team\fI team-name\fR
 Chooses the player's team.

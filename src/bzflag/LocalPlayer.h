@@ -22,7 +22,7 @@ class Obstacle;
 class SceneNodeGroup;
 class SceneNodeTransform;
 
-// FIXME -- clean this up (needed for the robot tanks)
+// FIXME -- clean this up (was needed for old robot tanks)
 class BaseLocalPlayer : public Player {
 public:
 	BaseLocalPlayer(const PlayerId&,

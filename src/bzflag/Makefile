@@ -35,7 +35,6 @@ CXXFILES =				\
 	playing.cxx			\
 	LocalPlayer.cxx			\
 	RemotePlayer.cxx		\
-	RobotPlayer.cxx			\
 	DeadPlayer.cxx			\
 	ServerLink.cxx			\
 	PlayerLink.cxx			\
