@@ -10,3 +10,7 @@ modeltool_CPPFLAGS = \
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+LDADD = \
+	$(top_srcdir)/src/common/libCommon.a
+
