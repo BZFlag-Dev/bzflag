@@ -211,15 +211,15 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("random map");
 
 
-  // add a list of .bzw files found in the world file dir
+  // add a list of .bzw/.map files found in the world file dir
   std::string searchDir = getWorldDirName();
   scanWorldFiles (searchDir, items);
 
-  // add a list of .bzw files found in the config file dir
+  // add a list of .bzw/.map files found in the config file dir
   searchDir = getConfigDirName();
   scanWorldFiles (searchDir, items);
 
-  // add a list of .bzw files found in the data or current dir
+  // add a list of .bzw/.map files found in the data or current dir
   searchDir = BZDB.get("directory"); // could be an empty string
 #ifdef _WIN32
   if (searchDir.length() == 0) {
@@ -272,15 +272,19 @@ void ServerStartMenu::scanWorldFiles (const std::string& searchDir,
                                       std::vector<std::string>* items)
 {
 #ifdef _WIN32
-  std::string pattern = searchDir + "*.bzw";
-  WIN32_FIND_DATA findData;
-  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
-  if (h != INVALID_HANDLE_VALUE) {
-    std::string file;
-    while (FindNextFile(h, &findData)) {
-      file = findData.cFileName;
-      worldFiles[file] = searchDir + file;
-      items->push_back(file);
+  std::vector<std::string> pattern;
+  pattern.push_back(searchDir + "*.bzw");
+  pattern.push_back(searchDir + "*.map");
+  for (int i=0; i<pattern.size(); i++) {
+    WIN32_FIND_DATA findData;
+    HANDLE h = FindFirstFile(pattern[i].c_str(), &findData);
+    if (h != INVALID_HANDLE_VALUE) {
+      std::string file;
+      while (FindNextFile(h, &findData)) {
+	file = findData.cFileName;
+	worldFiles[file] = searchDir + file;
+	items->push_back(file);
+      }
     }
   }
 #else
@@ -295,6 +299,9 @@ void ServerStartMenu::scanWorldFiles (const std::string& searchDir,
       if (file.length() > 4) {
 	suffix = file.substr(file.length()-4, 4);
 	if (compare_nocase(suffix, ".bzw") == 0) {
+	  worldFiles[file] = searchDir + file;
+	  items->push_back(file);
+	} else if (compare_nocase(suffix, ".map") == 0) {
 	  worldFiles[file] = searchDir + file;
 	  items->push_back(file);
 	}
