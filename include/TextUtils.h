@@ -80,6 +80,33 @@ class string_util {
       }
       return out;
     }
+
+    static int string_util::parseDuration(std::string &duration)
+    {
+      int durationInt = 0;
+      int t = 0;
+
+      int len = duration.length();
+      for(int i=0; i < len; i++) {
+	if( isdigit(duration[i]) ) {
+	  t = t * 10 + (duration[i] - '0');
+	}
+        else if(duration[i] == 'h' || duration[i] == 'H') { 
+	  durationInt += (t * 60); 
+	  t = 0;
+	}
+        else if(duration[i] == 'd' || duration[i] == 'D') {
+	  durationInt += (t * 1440);
+	  t = 0;
+	}
+        else if(duration[i] == 'w' || duration[i] == 'w') {
+	  durationInt += (t * 10080);
+	  t = 0;
+	}
+      } 
+      durationInt += t;
+      return durationInt;
+    }
 };
 
 

@@ -4000,37 +4000,12 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, reply, true);
     }
     else {
-      int durationInt;
+      int durationInt = 0;
       std::string ip = argv[1];
       std::string reason;
 
-      if( argv.size() >= 3 ) {
-	// read and parses ducations like: 1d3m -> one day, 3 mins
-	// supports: week(w),day(d),hour(h),min(m)
-	durationInt = 0;
-	int t = 0;
-	for(int i=0; i < (int)argv[2].size(); i++) {
-	  if( isdigit(argv[2][i]) ) {
-	    t = t * 10 + (argv[2][i] - '0');
-	  }
-	  else if( argv[2][i] == 'h' || argv[2][i] == 'H' ) { 
-	    durationInt += (t * 60); 
-	    t = 0;
-	  }
-	  else if( argv[2][i] == 'd' || argv[2][i] == 'D' ) {
-	    durationInt += (t * 1440);
-	    t = 0;
-	  }
-	  else if( argv[2][i] == 'w' || argv[2][i] == 'w' ) {
-	    durationInt += (t * 10080);
-	    t = 0;
-	  }
-	} 
-	durationInt += t;
-      }
-      else {
-	durationInt = 0;
-      }
+      if( argv.size() >= 3 )
+	durationInt = string_util::parseDuration(argv[2]);
 	
       if( argv.size() == 4 )
 	reason = argv[3];
