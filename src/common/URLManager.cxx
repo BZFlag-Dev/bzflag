@@ -179,15 +179,18 @@ void URLManager::freeURLData(void *data)
 
 URLManager::URLManager()
 {
+  CURLcode result;
+  
   easyHandle = NULL;
   theData = NULL;
   theLen = 0;
   errorCode = CURLE_OK;
 
+  DEBUG1("LIBCURL: %s\n", curl_version());
+  
 #if LIBCURL_VERSION_NUM >= 0x070a00
-  CURLcode curlResult;
-  if ((curlResult = curl_global_init(CURL_GLOBAL_NOTHING)))
-    DEBUG1("Unexpected error from libcurl; Error: %d\n", curlResult);
+  if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
+    DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
 #endif
 
   easyHandle = curl_easy_init();
@@ -196,8 +199,8 @@ URLManager::URLManager()
     return;
   }
   CURL* curl = easyHandle;
-
-  CURLcode result = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunction);
+  
+  result = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunction);
   if (result != CURLE_OK)
     DEBUG1("CURLOPT_WRITEFUNCTION error: %d\n", result);
 
