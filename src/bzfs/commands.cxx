@@ -91,7 +91,7 @@ extern void sendDrop(FlagInfo &flag);
 
 // externs that countdown requires
 extern bool countdownActive;
-extern bool countdownDelay;
+extern int countdownDelay;
 
 // externs that identify and password requires
 extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
@@ -141,19 +141,28 @@ std::string printTime(int timeValue[])
   char temp[20];
 
   if (timeValue[0] > 0) {
-    snprintf(temp, 20, "%i day%s, ", timeValue[0], timeValue[0] == 1 ? "" : "s");
+    snprintf(temp, 20, "%i day%s", timeValue[0], timeValue[0] == 1 ? "" : "s");
     valueNames.append(temp);
   }
   if (timeValue[1] > 0) {
-    snprintf(temp, 20, "%i hour%s, ", timeValue[1], timeValue[1] == 1 ? "" : "s");
+    if (timeValue[0] > 0) {
+      valueNames.append(", ");
+    }
+    snprintf(temp, 20, "%i hour%s", timeValue[1], timeValue[1] == 1 ? "" : "s");
     valueNames.append(temp);
   }
   if (timeValue[2] > 0) {
-    snprintf(temp, 20, "%i min%s, ", timeValue[2], timeValue[2] == 1 ? "" : "s");
+    if ((timeValue[1] > 0) || (timeValue[0] > 0)) {
+      valueNames.append(", ");
+    }
+    snprintf(temp, 20, "%i min%s", timeValue[2], timeValue[2] == 1 ? "" : "s");
     valueNames.append(temp);
   }
   if (timeValue[3] > 0) {
-    snprintf(temp, 20, "%i sec%s. ", timeValue[3], timeValue[3] == 1 ? "" : "s");
+    if ((timeValue[2] > 0) || (timeValue[1] > 0) || (timeValue[0] > 0)) {
+      valueNames.append(", ");
+    }
+    snprintf(temp, 20, "%i sec%s", timeValue[3], timeValue[3] == 1 ? "" : "s");
     valueNames.append(temp);
   }
 
@@ -169,7 +178,7 @@ void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
   
   rawTime = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
   convertTime(rawTime,temp);
-  sprintf(reply,"%s", printTime(temp).c_str());
+  sprintf(reply,"%s.", printTime(temp).c_str());
   sendMessage(ServerPlayer,t, reply);
 }
 
@@ -440,8 +449,9 @@ static void zapAllFlags()
     zapFlag(*FlagInfo::get(i));
 }
 
-void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
+void handleCountdownCmd(GameKeeper::Player *playerData, const char *message)
 {
+  // /countdown starts timed game, if start is manual, everyone is allowed to
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::countdown)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the countdown command");
@@ -449,17 +459,61 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
   } else if (!clOptions->timeManualStart) {
     sendMessage(ServerPlayer, t, "This server was not configured for manual clock countdowns");
     return;
-  } else if (countdownDelay == true) {
+  } else if (countdownDelay > 0) {
     sendMessage(ServerPlayer, t, "There is a countdown already in progress");
     return;
   }
 
-  // /countdown starts timed game, if start is manual, everyone is allowed to
-  char reply[MessageLen] = {0};
-
   // if the timelimit is not set .. don't countdown
   if (clOptions->timeLimit > 1.0f) {
-    countdownDelay = true;
+
+    // skip spaces to tell the difference between an atoi of nothing and of 0
+    int spaceSkip = 0;
+    while ((strlen(message+10+spaceSkip) > 0) &&
+	   TextUtils::isWhitespace(message[10+spaceSkip])) {
+      spaceSkip++;
+    }
+    // otherwise, see if a time was given as an argument
+    std::string time = &message[10+spaceSkip];
+
+    // default is 10 seconds
+    countdownDelay = 10;
+    if (time.size() > 0) {
+      countdownDelay = atoi(time.c_str());
+    }
+
+    // limit/sanity check
+    const int MAX_DELAY = 120;
+    if (countdownDelay > MAX_DELAY) {
+      sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to %d instead of %d", MAX_DELAY, countdownDelay).c_str());
+      countdownDelay = MAX_DELAY;
+    } else if (countdownDelay < 0) {
+      sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to 0 instead of %d", countdownDelay).c_str());
+      countdownDelay = 0;
+    }
+
+    sendMessage(ServerPlayer, t, "Team scores reset, countdown started.");
+
+    // let everyone know what's going on
+    int timeArray[4];
+    std::string matchBegins;
+    if (countdownDelay == 0) {
+      matchBegins = "Match begins now!";
+    } else {
+      convertTime((float)countdownDelay, timeArray);
+      std::string countdowntime = printTime(timeArray);
+      matchBegins = TextUtils::format("Match begins in about %s", countdowntime.c_str());
+    }
+    sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
+
+    convertTime(clOptions->timeLimit, timeArray);
+    std::string timelimit = printTime(timeArray);
+    matchBegins = TextUtils::format("Match duration is %s", timelimit.c_str());
+    sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
+
+  } else {
+    sendMessage(ServerPlayer, AllPlayers, "Team scores reset.");
+    sendMessage(ServerPlayer, t, "The server is not configured for timed matches.");
   }
 
   // reset team scores
@@ -467,9 +521,6 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
     team[i].team.lost = team[i].team.won = 0;
   }
   sendTeamUpdate();
-
-  sprintf(reply, "Countdown started.");
-  sendMessage(ServerPlayer, t, reply);
 
   return;
 }
