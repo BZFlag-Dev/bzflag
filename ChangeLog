@@ -5,6 +5,13 @@
 
 * check for unknown message types and dump player just in case - Frank Thilo 
 * check incoming TCP for oversized messages - Frank Thilo
+* multiline server and ad messages with '\n' - Lars Luthman
+* -speedtol server option: specify tolerance for speed kick - Jeff Myers
+* /report server command - Lars Luthman
+* -sl server option: shot limit for flags - Michael Hoffman
+* limit /password tries - Jeff Myers
+* -tftimeout server option - Lars Luthman
+* put observers to the bottom of the scoreboard - Lars Luthman
 * resize mouse boxes - Frank Thilo
 * choose [un]silence - Michael Hoffman, Tim Riker
 * flag on radar/view on/off - Michael Hoffman, Tim Riker
