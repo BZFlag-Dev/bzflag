@@ -244,7 +244,7 @@ static std::string	getReallyOldConfigFileName()
 }
 #endif
 
-std::string getCurrentConfigFileName ( void )
+std::string getCurrentConfigFileName(void)
 {
   std::string configFile = BZ_CONFIG_FILE_NAME;
 
@@ -264,7 +264,7 @@ std::string getCurrentConfigFileName ( void )
 // this function will look for the config, if it's not there, 
 // it will TRY and find an old one and copy it
 // so that the update function can upgrade it to the current version
-// the asumtion is that there is a unique config per version
+// the assumption is that there is a unique config per version
 void findConfigFile(void)
 {
   // look for the current file
@@ -349,7 +349,17 @@ void updateConfigFile ( void )
   switch (configVersion) {
   case 0: // 1.10-1.12
     // update from old unversioned config
-    // TODO - roaming fixes - remove keys bound to "roam translate *" and "roam rotate *"
+    // roaming fixes - remove keys bound to "roam translate *" and "roam rotate *"
+    KEYMGR.unbindCommand(std::string("roam translate left"));
+    KEYMGR.unbindCommand(std::string("roam translate right"));
+    KEYMGR.unbindCommand(std::string("roam translate up"));
+    KEYMGR.unbindCommand(std::string("roam translate down"));
+    KEYMGR.unbindCommand(std::string("roam translate forward"));
+    KEYMGR.unbindCommand(std::string("roam translate backward"));
+    KEYMGR.unbindCommand(std::string("roam rotate left"));
+    KEYMGR.unbindCommand(std::string("roam rotate right"));
+    KEYMGR.unbindCommand(std::string("roam rotate up"));
+    KEYMGR.unbindCommand(std::string("roam rotate down"));
     // TODO - any other breaking changes from 1.10 to 1.11
 
   case 1: // 1.12
