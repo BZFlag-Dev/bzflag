@@ -66,7 +66,7 @@ SOURCE=..\package\win32\nsis\BZFlag.nsi
 !IF  "$(CFG)" == "installer - Win32 Release"
 
 # PROP Ignore_Default_Tool 1
-USERDEP__BZFLA="..\src\bzfs\bzfs.exe"	"..\src\bzflag\bzflag.exe"	"..\src\bzfls\bzadmin.exe"	
+USERDEP__BZFLA="..\src\bzfs\bzfs.exe"	"..\src\bzflag\bzflag.exe"	"..\src\bzadmin\bzadmin.exe"	
 # Begin Custom Build - Building installer using $(InputPath)
 InputPath=..\package\win32\nsis\BZFlag.nsi
 
@@ -79,7 +79,7 @@ InputPath=..\package\win32\nsis\BZFlag.nsi
 !ELSEIF  "$(CFG)" == "installer - Win32 Debug"
 
 # PROP Ignore_Default_Tool 1
-USERDEP__BZFLA="..\src\bzfs\debug\bzfs.exe"	"..\src\bzflag\debug\bzflag.exe"	"..\src\bzfls\debug\bzadmin.exe"	
+USERDEP__BZFLA="..\src\bzfs\debug\bzfs.exe"	"..\src\bzflag\debug\bzflag.exe"	"..\src\bzadmin\debug\bzadmin.exe"	
 # Begin Custom Build - Building installer using $(InputPath)
 InputPath=..\package\win32\nsis\BZFlag.nsi
 
