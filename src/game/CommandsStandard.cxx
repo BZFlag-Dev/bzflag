@@ -10,12 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// system includes
+/* interface header */
+#include "CommandsStandard.h"
+
+/* system implementation headers */
 #include <stdio.h>
 #include <ctype.h>
 
-// private includes
-#include "CommandsStandard.h"
+/* common implementation headers */
 #include "CommandManager.h"
 #include "StateDatabase.h"
 #include "KeyManager.h"
@@ -275,13 +277,7 @@ static std::string cmdMult(const std::string&, const CommandManager::ArgList& ar
 // command name to function mapping
 //
 
-struct CommandListItem {
-public:
-  const char*			name;
-  CommandManager::CommandFunction func;
-  const char*			help;
-};
-static const CommandListItem commandList[] = {
+const CommandListItem commandList[] = {
   { "quit",	&cmdQuit,	"quit:  quit the program" },
   { "help",	&cmdHelp,	"help [<command-name>]:  get help on a command or a list of commands" },
   { "print",	&cmdPrint,	"print ...:  print arguments; $name is replaced by value of variable \"name\"" },
