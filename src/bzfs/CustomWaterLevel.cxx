@@ -35,6 +35,8 @@ CustomWaterLevel::CustomWaterLevel()
   material.diffuse[3] = 0.9f;
   // only use the color as a backup
   material.useColorOnTexture = false;
+  // make sure that alpha is enabled
+  material.useTextureAlpha = true;
   return;
 }
 

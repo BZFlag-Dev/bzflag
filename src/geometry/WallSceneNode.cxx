@@ -188,6 +188,16 @@ void			WallSceneNode::setDynamicColor(const GLfloat* rgba)
   return;
 }
 
+void			WallSceneNode::setBlending(bool blend)
+{
+  const bool oldWantBlending = wantBlending;
+  wantBlending = blend;
+  if (oldWantBlending != wantBlending) {
+    forceNotifyStyleChange();
+  }
+  return;
+}
+
 void			WallSceneNode::setColor(const GLfloat* rgba)
 {
   const bool oldTransparent = (color[3] != 1.0f);
@@ -324,7 +334,7 @@ void			WallSceneNode::notifyStyleChange(
   }
   builder.enableTextureReplace(BZDB.isTrue("_texturereplace"));
   builder.enableMaterial(lighted);
-  if (BZDBCache::blend && alpha != 1.0f) {
+  if (BZDBCache::blend && (wantBlending || (alpha != 1.0f))) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }

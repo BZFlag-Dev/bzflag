@@ -145,15 +145,17 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
   // deal with the blending setting
   bool alpha = false;
   const ImageInfo& imageInfo = tm.getInfo(faceTexture);
-  if (((dc != NULL) && dyncol->canHaveAlpha()) || // FIXME - don't include color here?
-      (imageInfo.alpha && mat->useTextureAlpha)) {
+  if (imageInfo.alpha && mat->useTextureAlpha) {
     alpha = true;
   }
-//  node->setBlending(alpha);
+  node->setBlending(alpha);
 
-  // the current color can also affect the blending
+  // the current color can also affect the blending.
+  // if blending is disabled then the alpha value from
+  // one of these colors is used to set the stipple value.
+  // we'll just set it to the middle value.
   if (dc) {
-    const float color[4] = { 1.0f, 1.0f, 1.0f, 0.0f }; // alpha value != 1.0f
+    const float color[4] = { 1.0f, 1.0f, 1.0f, 0.5f }; // alpha value != 1.0f
     if (dyncol->canHaveAlpha()) {
       node->setColor(color); // trigger transparency check
       node->setModulateColor(color);
