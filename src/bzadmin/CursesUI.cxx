@@ -107,12 +107,9 @@ bool CursesUI::checkCommand(std::string& str) {
   int c = wgetch(cmdWin);
   switch (c) {
     
-    // if ncurses is configured with SIGWINCH support this will work
-#ifndef XCURSES
   case KEY_RESIZE:
     handleResize(LINES, COLS);
     return false;
-#endif
 
   case ERR:
     return false;
@@ -234,17 +231,18 @@ PlayerId CursesUI::getTarget() const {
 }
 
 
-#ifndef XCURSES
 void CursesUI::handleResize(int lines, int cols) {
+  resize_term(lines, cols);
   mvwin(targetWin, lines - 2, 0);
+  wresize(targetWin, 1, cols);
   mvwin(cmdWin, lines - 1, 0);
+  wresize(cmdWin, 1, cols);
   wresize(mainWin, lines - 2, cols);
-  resizeterm(lines, cols);
   updateTargetWin();
   updateCmdWin();
   wrefresh(mainWin);
 }
-#endif
+
 
 void CursesUI::updateTargetWin() {
   wclear(targetWin);

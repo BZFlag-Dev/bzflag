@@ -51,7 +51,7 @@ inline int nonl() {
 }
 
 
-// make it compatible with ncurses
+// wrap some functions to make it compatible with ncurses
 inline int pd_waddstr(WINDOW* w, const char* str) {
   char* newStr = new char[strlen(str) + 1];
   strcpy(newStr, str);
@@ -65,6 +65,11 @@ inline int pd_endwin() {
   return i;
 }
 #define endwin pd_endwin
+
+inline int wresize(WINDOW* w, int lines, int cols) {
+  return (resize_window(w, lines, cols) != NULL);
+}
+
 
 // Local variables: ***
 // mode:C++ ***
