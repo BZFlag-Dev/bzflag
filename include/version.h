@@ -36,15 +36,15 @@
 #endif
 
 #ifndef BZ_MINOR_VERSION
-#define BZ_MINOR_VERSION	10
+#define BZ_MINOR_VERSION	11
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV                  4
+#define BZ_REV                  0
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"RELEASE"
+#define BZ_BUILD_TYPE		"DEVELOPER"
 #endif
 
 // Build Date will be defined at link time, can be different for each exe
