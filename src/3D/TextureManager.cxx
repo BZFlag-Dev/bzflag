@@ -262,11 +262,7 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
     if (reportFail) {
       std::vector<std::string> args;
       args.push_back(init.name);
-      // FIXME - printError("cannot load texture: {1}", &args);
-      // Until someones keeps track of which textures have
-      // previously been attempted, this warning is being
-      // relegated to the DEBUG domain.
-      DEBUG1("cannot load texture: {1}", &args);
+      printError("cannot load texture: {1}", &args);
     }
     return NULL;
   }
