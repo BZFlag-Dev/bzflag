@@ -16,7 +16,7 @@
 /* system implementation headers */
 #include <assert.h>
 
-void PlayerInfo::initPlayer(struct sockaddr_in clientAddr, int _fd) {
+void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd) {
   AddrLen addr_len = sizeof(clientAddr);
 
   // store address information for player
@@ -169,7 +169,7 @@ void PlayerInfo::reloadInfo() {
   }
 }
 
-bool PlayerInfo::hasSetGroupPermission(std::string group) {
+bool PlayerInfo::hasSetGroupPermission(const std::string& group) {
   return hasGroup(accessInfo, group);
 }
 
@@ -177,11 +177,11 @@ bool PlayerInfo::hasPermission(PlayerAccessInfo::AccessPerm right) {
   return Admin || hasPerm(accessInfo, right);
 }
 
-void PlayerInfo::setGroup(std::string group) {
+void PlayerInfo::setGroup(const std::string& group) {
   addGroup(accessInfo, group);
 }
 
-void PlayerInfo::resetGroup(std::string group) {
+void PlayerInfo::resetGroup(const std::string& group) {
   removeGroup(accessInfo, group);
 }
 
@@ -233,7 +233,7 @@ void PlayerInfo::storeInfo(const char* pwd) {
   updateDatabases();
 }
 
-void PlayerInfo::setPassword(std::string  pwd) {
+void PlayerInfo::setPassword(const std::string&  pwd) {
   setUserPassword(regName.c_str(), pwd.c_str());
   updateDatabases();
 }
@@ -402,7 +402,7 @@ possible attack from %s\n",
 	 index,code,peer.getDotNotation().c_str());
 };
 
-bool PlayerInfo::isAtIP(std::string IP) {
+bool PlayerInfo::isAtIP(const std::string& IP) {
   return strcmp(peer.getDotNotation().c_str(), IP.c_str()) == 0;
 };
 
