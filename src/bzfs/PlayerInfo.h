@@ -136,6 +136,8 @@ struct PlayerInfo {
     unsigned short lastRecvPacketNo;
     unsigned short lastSendPacketNo;
 
+    std::string clientVersion;
+
     bool paused;
     TimeKeeper pausedSince;
 

@@ -695,6 +695,12 @@ void			ServerLink::confirmIncomingUDP()
   send(MsgUDPLinkEstablished, 0, NULL);
 }
 
+void			ServerLink::sendVersionString()
+{
+  DEBUG3("Sent client version string to server: %s\n", getAppVersion());
+  send(MsgVersion, strlen(getAppVersion()), getAppVersion());
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -214,6 +214,11 @@ void handleVoteCmd(int t, const char *message);
  */
 void handleVetoCmd(int t, const char *message);
 
+/** /clientquery command hook function
+ *
+ *  /clientquery returns all attached clients' version strings
+ */
+void handleClientqueryCmd(int t, const char *);
 
 #endif
 

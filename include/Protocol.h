@@ -94,6 +94,7 @@ const uint16_t		MsgTimeUpdate = 0x746f;			// 'to'
 const uint16_t		MsgTeleport = 0x7470;			// 'tp'
 const uint16_t		MsgTransferFlag = 0x7466;		// 'tf'
 const uint16_t		MsgTeamUpdate = 0x7475;			// 'tu'
+const uint16_t		MsgVersion = 0x7672;			// 've'
 const uint16_t		MsgVideo = 0x7669;			// 'vi'
 const uint16_t		MsgWantWHash = 0x7768;			// 'wh'
 

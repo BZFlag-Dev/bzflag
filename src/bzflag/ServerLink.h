@@ -75,6 +75,7 @@ class ServerLink {
     void		sendNewRabbit();
     void		sendPaused(bool paused);
     void		sendUDPlinkRequest();
+    void		sendVersionString();
 
     static ServerLink*	getServer(); // const
     static void		setServer(ServerLink*);

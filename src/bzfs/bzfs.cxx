@@ -3772,14 +3772,17 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "reload", 6) == 0) {
     handleReloadCmd(t, message);
 
-  } else if (strncmp(message+1, "poll",4) == 0) {
+  } else if (strncmp(message + 1, "poll", 4) == 0) {
     handlePollCmd(t, message);
 
-  } else if (strncmp(message+1, "vote", 4) == 0) {
+  } else if (strncmp(message + 1, "vote", 4) == 0) {
     handleVoteCmd(t, message);
 
-  } else if (strncmp(message+1, "veto", 4) == 0) {
+  } else if (strncmp(message + 1, "veto", 4) == 0) {
     handleVetoCmd(t, message);
+
+  } else if (strncmp(message + 1, "clientquery", 11) == 0) {
+    handleClientqueryCmd(t, message);
 
   } else {
     char reply[MessageLen];
@@ -3899,6 +3902,18 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	player[t].playedEarly = true;
 #endif
       playerAlive(t);
+      break;
+    }
+
+    // player sent version string
+    case MsgVersion: {
+      char *versionString = new char[len];
+      buf = nboUnpackString(buf, versionString, len);
+      player[t].clientVersion = std::string(versionString);
+      delete[] versionString;
+
+      DEBUG2("Player %s [%d] sent version string: %s\n", 
+	player[t].callSign, t, player[t].clientVersion.c_str());
       break;
     }
 

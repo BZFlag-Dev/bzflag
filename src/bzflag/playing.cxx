@@ -2210,6 +2210,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     // CLIENTQUERY hack
+    // TODO: this is obsoleted by /clientquery server command.  Take it out sometime.
     if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
       char messageBuffer[MessageLen];
       memset(messageBuffer, 0, MessageLen);
@@ -4114,6 +4115,8 @@ static bool		joinGame(const StartupInfo* info,
   else
     printError("No UDP connection, see Options to enable.");
 
+  // send my version string
+  serverLink->sendVersionString();
 
   // add robot tanks
 #if defined(ROBOT)

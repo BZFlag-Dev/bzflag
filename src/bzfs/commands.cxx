@@ -42,7 +42,7 @@
 
 // FIXME -- need to pull communication out of bzfs.cxx...
 
-// externs that poll, veto, and vote require
+// externs that poll, veto, vote, and clientquery require
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 extern bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right);
 extern PlayerInfo player[MaxPlayers];
@@ -1402,6 +1402,19 @@ void handleVetoCmd(int t, const char * /*message*/)
   return;
 }
 
+void handleClientqueryCmd(int t, const char * /*message*/)
+{
+  DEBUG2("Clientquery requested by %s [%d]", player[t].callSign, t);
+  sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
+  // send server's own version string just for kicks
+  sendMessage(ServerPlayer, t, string_util::format("BZFS Version: %s", getAppVersion()).c_str());
+  // send all players' version strings
+  // is faking a message from the remote client rude? did that so that /clientquery and CLIENTQUERY look about the same.
+  for (int i = 0; i < curMaxPlayers;i++) {
+    sendMessage(i, t, string_util::format("Version: %s", player[i].clientVersion.c_str()).c_str());
+  }
+  return;
+}
 
 
 
