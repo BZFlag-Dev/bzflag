@@ -743,8 +743,10 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
     clOptions->acl.save();
 
     GameKeeper::Player::setRecheckAll(true);
+
+    sendMessage(ServerPlayer, t, "Host pattern added to banlist");
 #ifndef HAVE_ADNS_H
-    sendMessage(ServerPlayer, t, "Host pattern added to banlist. WARNING: host patterns not supported in this compilation.");
+    sendMessage(ServerPlayer, t, "WARNING: host patterns not supported in this compilation");
 #endif
   }
   return;
