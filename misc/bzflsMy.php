@@ -31,11 +31,14 @@ $title    = $_GET['title'];
 $enableDebug	= 0;
 $debugFile 	= "/dev/null";
 
-# for banning.  provide key => value pairs where the key is either an
-# ip address
-$banlist = array( "68.109.43.46" => "knightmare.kicks-ass.net",
-		  "127.0.0.1" => "localhost");
-
+# for banning.  provide key => value pairs where the key is an
+# ip address. value is not used at present.
+# FIXME this should be in an sql table with a remote admin interface
+$banlist = array(
+#  "68.109.43.46" => "knightmare.kicks-ass.net",
+#  "127.0.0.1" => "localhost"
+  "255.255.255.255" => "globalbroadcast"
+);
 
 # log function
 if ($enableDebug) {
