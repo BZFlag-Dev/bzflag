@@ -122,7 +122,7 @@ bool			PingPacket::waitForReply(int fd,
     // wait for input
     fd_set read_set;
     FD_ZERO(&read_set);
-    FD_SET(fd, &read_set);
+    _FD_SET(fd, &read_set);
     int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, &timeout);
 
     // if got a message read it.  if a ping packet and from right

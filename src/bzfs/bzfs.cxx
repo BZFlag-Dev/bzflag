@@ -1176,9 +1176,9 @@ static void serverStop()
     FD_ZERO(&write_set);
     FD_ZERO(&read_set);
     if (listServerLink.phase == ListServerLink::CONNECTING)
-      FD_SET(listServerLink.socket, &write_set);
+      _FD_SET(listServerLink.socket, &write_set);
     else
-      FD_SET(listServerLink.socket, &read_set);
+      _FD_SET(listServerLink.socket, &read_set);
     fdMax = listServerLink.socket;
 
     // wait for socket to connect or timeout
@@ -4805,19 +4805,19 @@ int main(int argc, char **argv)
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].fd != NotConnected) {
 	//DEBUG1("fdset fd,read %i %lx\n",player[i].fd,read_set);
-	FD_SET(player[i].fd, &read_set);
+	_FD_SET(player[i].fd, &read_set);
 
 	if (player[i].outmsgSize > 0)
-	  FD_SET(player[i].fd, &write_set);
+	  _FD_SET(player[i].fd, &write_set);
 	if (player[i].fd > maxFileDescriptor)
 	  maxFileDescriptor = player[i].fd;
       }
     }
     // always listen for connections
-    FD_SET(wksSocket, &read_set);
+    _FD_SET(wksSocket, &read_set);
     if (wksSocket > maxFileDescriptor)
       maxFileDescriptor = wksSocket;
-    FD_SET(udpSocket, &read_set);
+    _FD_SET(udpSocket, &read_set);
     if (udpSocket > maxFileDescriptor)
       maxFileDescriptor = udpSocket;
 
@@ -4825,9 +4825,9 @@ int main(int argc, char **argv)
     if (listServerLinksCount)
       if (listServerLink.socket != NotConnected) {
 	if (listServerLink.phase == ListServerLink::CONNECTING)
-	  FD_SET(listServerLink.socket, &write_set);
+	  _FD_SET(listServerLink.socket, &write_set);
 	else
-	  FD_SET(listServerLink.socket, &read_set);
+	  _FD_SET(listServerLink.socket, &read_set);
 	if (listServerLink.socket > maxFileDescriptor)
 	  maxFileDescriptor = listServerLink.socket;
       }
