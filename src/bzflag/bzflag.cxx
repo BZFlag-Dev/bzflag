@@ -728,7 +728,7 @@ void			dumpResources(BzfDisplay* display,
   int maxListSize = 1000000; //do even that many play bzflag?
   char buffer [bufferLength]; 
   
-  if (list.size() < maxListSize) maxListSize = list.size();
+  if ((int)list.size() < maxListSize) maxListSize = list.size();
   for (int i = 0; i < maxListSize; i++) {
     sprintf(buffer,"silencedPerson%d",i); 
     db.addValue(buffer, list[i]);	

@@ -326,7 +326,7 @@ std::string		BzfNetwork::dereferenceHTTP(
     // data is rest of Location: header line sans leading/trailing whitespace.
     // skip to beginnning of url;
     locpos += 9;
-    for(;(locpos < data.length()) && data[locpos] != ' '; locpos++);
+    for(;(locpos < (int)data.length()) && data[locpos] != ' '; locpos++);
     std::string location = data.substr(locpos);
     locpos = location.find_first_of("\n");
     if(locpos == -1)
@@ -476,7 +476,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
 
 
   int delimiterpos = 0;
-  for(; (delimiterpos < url.length()) && (url[delimiterpos] != ':') && (url[delimiterpos] != ' '); delimiterpos++);
+  for(; (delimiterpos < (int)url.length()) && (url[delimiterpos] != ':') && (url[delimiterpos] != ' '); delimiterpos++);
   if(url[delimiterpos] != ':')
     return false;
 
@@ -493,7 +493,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
     if (mungedurl[0] == '/' && mungedurl[1] == '/') {
       mungedurl = mungedurl.substr(2);
       int pos = 0;
-      for(; (pos < mungedurl.length()) && (mungedurl[pos] != ':') && (mungedurl[pos] != '/') && (mungedurl[pos] != '\\') && (mungedurl[pos] != ' '); pos++);
+      for(; (pos < (int)mungedurl.length()) && (mungedurl[pos] != ':') && (mungedurl[pos] != '/') && (mungedurl[pos] != '\\') && (mungedurl[pos] != ' '); pos++);
 
       if(mungedurl[pos] == ' ')
 	return false;

@@ -102,8 +102,8 @@ SUBDIR_MAKERULE= \
 			${ECHO} "SKIPPING $$d: No such directory."; \
 		fi \
 	else \
-		${ECHO} "${CD} $$d; $(MAKE) $${RULE:=$@}"; \
-		(${CD} $$d; ${MAKE} $${RULE:=$@}); \
+		${ECHO} "$(MAKE) -C $$d $${RULE:=$@}"; \
+		${MAKE} -C $$d $${RULE:=$@} || exit; \
 	fi
 
 SUBDIRS_MAKERULE= \

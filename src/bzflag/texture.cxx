@@ -25,8 +25,6 @@ void			printFatalError(const char* fmt, ...);
 unsigned char*		getTextureImage(const std::string& file,
 				int& width, int& height, int& depth)
 {
-  Bundle *bdl = BundleMgr::getCurrentBundle();
-
   if (file.length() == 0) return NULL;
   std::vector<std::string> args;
   args.push_back(file);
@@ -37,8 +35,6 @@ unsigned char*		getTextureImage(const std::string& file,
 unsigned char*		getTextImage(const std::string& file,
 				int& width, int& height)
 {
-  Bundle *bdl = BundleMgr::getCurrentBundle();
-
   if (file.length() == 0) return NULL;
   std::vector<std::string> args;
   args.push_back(file);

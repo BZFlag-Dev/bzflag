@@ -329,19 +329,19 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
   // whence = 0, 1, or 2 (akin to SEEK_SET, SEEK_CUR, SEEK_END)
   switch (whence) {
     case 0:
-      if (offset < messages.size())
+      if (offset < (int)messages.size())
 	messagesOffset=offset;
       else
 	messagesOffset=messages.size()-1;
       break;
     case 1:
-      if (offset>0) {
-	if (messagesOffset+offset < messages.size())
+      if (offset > 0) {
+	if (messagesOffset+offset < (int)messages.size())
 	  messagesOffset+=offset;
 	else
 	  messagesOffset=messages.size()-1;
       }
-      else if (offset<0) {
+      else if (offset < 0) {
 	if (messagesOffset+offset >= 0)
 	  messagesOffset+=offset;
 	else
@@ -349,8 +349,8 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
       }
       break;
     case 2:
-      if (offset<0) {
-	if (messages.size() >= offset)
+      if (offset < 0) {
+	if ((int)messages.size() >= offset)
 	  messagesOffset+=offset;
 	else
 	  messagesOffset=0;

@@ -584,7 +584,7 @@ void			SceneRenderer::addFlareLight(
 
 int			SceneRenderer::getNumLights() const
 {
-  if (lights.size() > maxLights) return maxLights;
+  if ((int)lights.size() > maxLights) return maxLights;
   return lights.size();
 }
 

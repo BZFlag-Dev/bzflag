@@ -2333,7 +2333,7 @@ void			ServerMenu::setSelected(int index)
   // clamp index
   if (index < 0)
     index = servers.size() - 1;
-  else if (index != 0 && index >= servers.size())
+  else if (index != 0 && index >= (int)servers.size())
     index = 0;
 
   // ignore if no change
@@ -2352,14 +2352,14 @@ void			ServerMenu::setSelected(int index)
     const int base = newPage * NumItems;
     for (int i = 0; i < NumItems; ++i) {
       HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
-      if (base + i < servers.size())
+      if (base + i < (int)servers.size())
 	label->setString(servers[base + i].description);
       else
 	label->setString("");
     }
 
     // change page label
-    if (servers.size() > NumItems) {
+    if ((int)servers.size() > NumItems) {
       char msg[50];
       std::vector<std::string> args;
       sprintf(msg, "%d", newPage + 1);
@@ -2613,7 +2613,7 @@ void			ServerMenu::show()
 
 void			ServerMenu::execute()
 {
-  if (selectedIndex < 0 || selectedIndex >= servers.size())
+  if (selectedIndex < 0 || selectedIndex >= (int)servers.size())
     return;
 
   // update startup info
@@ -2733,7 +2733,7 @@ void			ServerMenu::checkEchos()
 
     // print urls we failed to open
     int i;
-    for (i = 0; i < failedURLs.size(); ++i) {
+    for (i = 0; i < (int)failedURLs.size(); ++i) {
 	std::vector<std::string> args;
 	args.push_back(failedURLs[i]);
 	printError("Can't open list server: {1}", &args);
@@ -2741,7 +2741,7 @@ void			ServerMenu::checkEchos()
 
     // check urls for validity
     numListServers = 0;
-    for (i = 0; i < urls.size(); ++i) {
+    for (i = 0; i < (int)urls.size(); ++i) {
 	// parse url
 	std::string protocol, hostname, path;
 	int port = ServerPort + 1;
@@ -3747,7 +3747,7 @@ void			JoinMenu::joinErrorCallback(const char* msg)
   if (self->oldErrorCallback) (*self->oldErrorCallback)(msg);
 }
 
-void			JoinMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
+void			JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
 {
   status->setString(msg);
   const OpenGLTexFont& font = status->getFont();

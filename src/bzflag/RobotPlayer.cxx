@@ -154,7 +154,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
   float azimuth = oldAzimuth;
 
   if (isAlive()) {
-    while (dt > 0.0 && pathIndex < path.size()) {
+    while (dt > 0.0 && pathIndex < (int)path.size()) {
       float azimuthDiff = pathAzimuth[pathIndex] - azimuth;
       if (azimuthDiff > M_PI) azimuthDiff -= 2.0f * M_PI;
       else if (azimuthDiff < -M_PI) azimuthDiff += 2.0f * M_PI;

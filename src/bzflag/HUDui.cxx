@@ -349,7 +349,7 @@ int			HUDuiList::getIndex() const
 void			HUDuiList::setIndex(int _index)
 {
   if (_index < 0) index = 0;
-  else if (_index >= list.size()) index = list.size() - 1;
+  else if (_index >= (int)list.size()) index = list.size() - 1;
   else index = _index;
 }
 
@@ -390,7 +390,7 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
 
     case BzfKeyEvent::Right:
       if (index != -1) {
-	if (++index >= list.size()) index = 0;
+	if (++index >= (int)list.size()) index = 0;
 	doCallback();
       }
       break;
@@ -498,12 +498,12 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       return true;
 
     case BzfKeyEvent::Right:
-      if (cursorPos < string.length())
+      if (cursorPos < (int)string.length())
 	cursorPos++;
       return true;
 
     case BzfKeyEvent::Delete:
-      if (cursorPos < string.length()) {
+      if (cursorPos < (int)string.length()) {
 	cursorPos++;
         c = backspace;
       }
@@ -531,7 +531,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
   }
   else {
     if (isspace(c)) c = whitespace;
-    if (string.length() == maxLength) goto noRoom;
+    if ((int)string.length() == maxLength) goto noRoom;
 
     string = string.substr(0, cursorPos) + c + string.substr( cursorPos, string.length() - cursorPos);
     cursorPos++;

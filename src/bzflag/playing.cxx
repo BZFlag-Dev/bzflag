@@ -622,7 +622,7 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
     if (name != NULL) {
       // bad indent :)
       int inListPos = -1;
-      for (int i = 0; i < silencePlayers.size(); i++) {
+      for (unsigned int i = 0; i < silencePlayers.size(); i++) {
 	if (strcmp(silencePlayers[i].c_str(),name) == 0) {
 	  inListPos = i;
 	}
@@ -5781,7 +5781,7 @@ void			startPlaying(BzfDisplay* _display,
   controlPanel->addMessage((const char*)glGetString(GL_RENDERER));
 
   //inform user of silencePlayers on startup
-  for (int j = 0; j < silencePlayers.size(); j ++){
+  for (unsigned int j = 0; j < silencePlayers.size(); j ++){
     std::string aString = silencePlayers[j];
     aString += " Silenced";
     if (silencePlayers[j] == "*") {
