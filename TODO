@@ -5,10 +5,12 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * change the version and build release packages
 
-* look closely at how local and global logins / groups interact;
-  most probably some fixing needed (e.g. server owner should be
-  able to only use some specified global groups, maybe via 
-  seocnd group file)
+* look closely at how local and global logins / groups interact:
+  - add option for non-public servers to use global logins? (match servers)
+  - add option for public-servers to not use global logins? or only
+    use global logins (no /register)?
+  - what should happen, when local user with password exists (/register),
+    then globla login with same callsign happens later?
 
 THESE ARE LOWER PRIORITY
 
