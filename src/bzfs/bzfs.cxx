@@ -1589,7 +1589,6 @@ static void addPlayer(int playerIndex)
 
 
   // no quick rejoining, make 'em wait
-  in_addr playerIP = NetHandler::getHandler(playerIndex)->getIPAddress();
   float waitTime = rejoinList.waitTime (playerIndex);
   if (waitTime > 0.0f) {
     char buffer[MessageLen];
@@ -2095,8 +2094,11 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (notify)
     directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
 
-  // make them wait from the time they left  
-  rejoinList.add (playerIndex);
+  // make them wait from the time they left,
+  // but only if they aren't already waiting
+  if (rejoinList.waitTime (playerIndex) <= 0.0f) {
+    rejoinList.add (playerIndex);
+  }
 
   // if there is an active poll, cancel any vote this player may have made
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
