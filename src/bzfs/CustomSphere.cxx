@@ -34,6 +34,7 @@ CustomSphere::CustomSphere()
   pos[2] = 10.0f;
   size[0] = size[1] = size[2] = 10.0f;
   material.texture = "boxwall";
+  useNormals = true;
   return;
 }
 
@@ -56,6 +57,9 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     input >> radius;
     size[0] = size[1] = size[2] = radius;
   }
+  else if (strcasecmp(cmd, "flatshading") == 0) {
+    useNormals = false;
+  }
   else if (parseMaterial(cmd, input, material, materror)) {
     if (materror) {
       return false;
@@ -74,6 +78,19 @@ void CustomSphere::write(WorldInfo *world) const
   int i, j, q;
   cfvec3 v, n;
   cfvec2 t;
+  float sz[3];
+  const float minSize = 1.0e-6f; // cheezy / lazy
+
+  // absolute the sizes  
+  sz[0] = fabsf(size[0]);
+  sz[1] = fabsf(size[1]);
+  sz[2] = fabsf(size[2]);
+  
+  // validity checking
+  if ((divisions < 1) ||
+      (sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize)) {
+    return;
+  }
   
   // setup the coordinates
   std::vector<char> checkTypes;
@@ -85,16 +102,18 @@ void CustomSphere::write(WorldInfo *world) const
   // the center vertices
   v[0] = pos[0];
   v[1] = pos[1];
-  v[2] = pos[2] + size[2];
+  v[2] = pos[2] + sz[2];
   vertices.push_back(v);
-  v[2] = pos[2] - size[2];
+  v[2] = pos[2] - sz[2];
   vertices.push_back(v);
-  n[0] = 0.0f;
-  n[1] = 0.0f;
-  n[2] = 1.0f;
-  normals.push_back(n);
-  n[2] = -1.0f;
-  normals.push_back(n);
+  if (useNormals) {
+    n[0] = 0.0f;
+    n[1] = 0.0f;
+    n[2] = 1.0f;
+    normals.push_back(n);
+    n[2] = -1.0f;
+    normals.push_back(n);
+  }
   t[0] = 0.5f; // weirdness
   t[1] = 1.0f;
   texcoords.push_back(t);
@@ -109,20 +128,22 @@ void CustomSphere::write(WorldInfo *world) const
       float v_angle = ((M_PI / 2.0f) * 
                       (float)(divisions - i - 1) / (float)(divisions));
       float delta[3];
-      delta[0] = size[0] * (cos(h_angle) * cos(v_angle));
-      delta[1] = size[1] * (sin(h_angle) * cos(v_angle));
-      delta[2] = size[2] * sin(v_angle);
+      delta[0] = sz[0] * (cos(h_angle) * cos(v_angle));
+      delta[1] = sz[1] * (sin(h_angle) * cos(v_angle));
+      delta[2] = sz[2] * sin(v_angle);
       // vertex
       v[0] = pos[0] + delta[0];
       v[1] = pos[1] + delta[1];
       v[2] = pos[2] + delta[2];
       vertices.push_back(v);
       // normal
-      const float len = 1.0f / sqrtf(vec3dot(delta, delta));
-      n[0] = delta[0] * len;
-      n[1] = delta[1] * len;
-      n[2] = delta[2] * len;
-      normals.push_back(v);
+      if (useNormals) {
+        const float len = 1.0f / sqrtf(vec3dot(delta, delta));
+        n[0] = delta[0] * len;
+        n[1] = delta[1] * len;
+        n[2] = delta[2] * len;
+        normals.push_back(v);
+      }
       // texcoord
       t[0] = (float)j / (float)(4 * (i + 1));
       t[1] = (float)(divisions - i - 1) / (float)divisions;
@@ -135,8 +156,10 @@ void CustomSphere::write(WorldInfo *world) const
         v[2] = (2 * pos[2]) - v[2];
         vertices.push_back(v);
         // normal
-        n[2] = -n[2];
-        normals.push_back(n);
+        if (useNormals) {
+          n[2] = -n[2];
+          normals.push_back(n);
+        }
         // texcoord
         t[1] = 1.0f - t[1];
         texcoords.push_back(t);
@@ -179,9 +202,9 @@ void CustomSphere::write(WorldInfo *world) const
                      faceCount, driveThrough, shootThrough);
                      
   // add the faces to the mesh
-  std::vector<int> verticesList;
-  std::vector<int> normalsList;
-  std::vector<int> texcoordsList;
+  std::vector<int> vlist;
+  std::vector<int> nlist;
+  std::vector<int> tlist;
 
   int k = (divisions - 1);
   const int ringOffset = 1 + (((k*k)+k)*2);
@@ -190,6 +213,9 @@ void CustomSphere::write(WorldInfo *world) const
     for (i = 0; i < divisions; i++) {
       for (j = 0; j < (i + 1); j++) {
         int a, b, c, d, ta, tc;
+        // a, b, c form the upwards pointing triangle
+        // b, c, d form the downwards pointing triangle
+        // ta and tc are the texcoords for a and c
         const bool lastStrip = ((q == 3) && (j == i));
         const bool lastCircle = (i == (divisions - 1));
 
@@ -245,15 +271,15 @@ void CustomSphere::write(WorldInfo *world) const
           tc = texStripOffset + ((i + 1) * 2);
         }
         
-        push3Ints(verticesList, a, b, c);
-        push3Ints(normalsList, a, b, c);
-        push3Ints(texcoordsList, ta, b, tc);
-        addFace(mesh, verticesList, normalsList, texcoordsList, material);
+        push3Ints(vlist, a, b, c);
+        if (useNormals) push3Ints(nlist, a, b, c);
+        push3Ints(tlist, ta, b, tc);
+        addFace(mesh, vlist, nlist, tlist, material);
         if (!lastCircle) {
-          push3Ints(verticesList, b, d, c);
-          push3Ints(normalsList, b, d, c);
-          push3Ints(texcoordsList, b, d, tc);
-          addFace(mesh, verticesList, normalsList, texcoordsList, material);
+          push3Ints(vlist, b, d, c);
+          if (useNormals) push3Ints(nlist, b, d, c);
+          push3Ints(tlist, b, d, tc);
+          addFace(mesh, vlist, nlist, tlist, material);
         }
 
         // bottom hemisphere
@@ -267,15 +293,15 @@ void CustomSphere::write(WorldInfo *world) const
         if (i != (divisions - 2)) {
           d = d + 1;
         }
-        push3Ints(verticesList, a, c, b);
-        push3Ints(normalsList, a, c, b);
-        push3Ints(texcoordsList, ta, tc, b);
-        addFace(mesh, verticesList, normalsList, texcoordsList, material);
+        push3Ints(vlist, a, c, b);
+        if (useNormals) push3Ints(nlist, a, c, b);
+        push3Ints(tlist, ta, tc, b);
+        addFace(mesh, vlist, nlist, tlist, material);
         if (!lastCircle) {
-          push3Ints(verticesList, b, c, d);
-          push3Ints(normalsList, b, c, d);
-          push3Ints(texcoordsList, b, tc, d);
-          addFace(mesh, verticesList, normalsList, texcoordsList, material);
+          push3Ints(vlist, b, c, d);
+          if (useNormals) push3Ints(nlist, b, c, d);
+          push3Ints(tlist, b, tc, d);
+          addFace(mesh, vlist, nlist, tlist, material);
         }
       }
     }

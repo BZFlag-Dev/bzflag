@@ -32,6 +32,7 @@ class CustomSphere : public WorldFileObstacle {
 
   private:
     int divisions;
+    bool useNormals;
     MeshMaterial material;
 };
 

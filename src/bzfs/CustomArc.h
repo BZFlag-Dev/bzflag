@@ -27,13 +27,18 @@ class CustomArc : public WorldFileObstacle {
   public:
     CustomArc();
     ~CustomArc();
-    virtual bool read(const char *cmd, std::istream& input);
+    virtual bool read(const char* cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
 
   private:
-    void makePie(bool isCircle);
-    void makeRing(bool isCircle);
-    
+    bool parseSideMaterials(const char* cmd, std::istream& input,
+                            bool& error);
+    void makePie(bool isCircle, float angle, float rot,
+                 float height, float radius, float squish,
+                 WorldInfo* world) const;
+    void makeRing(bool isCircle, float angle, float rot, 
+                  float height, float inrad, float outrad,
+                  float squish, WorldInfo* world) const;
     enum {
       Top,
       Bottom,
@@ -46,6 +51,7 @@ class CustomArc : public WorldFileObstacle {
     int divisions;
     float angle;
     float ratio;
+    bool useNormals;
     MeshMaterial materials[6];
 };
 
