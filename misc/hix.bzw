@@ -713,114 +713,114 @@ end
 
 # red team base
 base
-position -340.0 0.0 29.0
+position -340.0 0.0 26.0
 rotation 45.0
-size 35.0 35.0 0.0
+size 35.0 35.0 4.0
 color 1
 end
 # green team base
 base
-position 340.0 0.0 29.0
+position 340.0 0.0 26.0
 rotation 45.0
-size 35.0 35.0 0.0
+size 35.0 35.0 4.0
 color 2
 end
 # blue team base
 base
-position 0.0 -340.0 29.0
+position 0.0 -340.0 26.0
 rotation 45.0
-size 35.0 35.0 0.0
+size 35.0 35.0 4.0
 color 3
 end
 # purple team base
 base
-position 0.0 340.0 29.0
+position 0.0 340.0 26.0
 rotation 45.0
-size 35.0 35.0 0.0
+size 35.0 35.0 4.0
 color 4
 end
 
-# pyramids around red base
+# pyramids under red base
 pyramid
 position -340.0 -45.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position -340.0 45.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position -295.0 0.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position -385.0 0.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
-# pyramids around green base
+# pyramids under green base
 pyramid
 position 340.0 -45.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 340.0 45.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 295.0 0.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 385.0 0.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
-# pyramids around blue base
+# pyramids under blue base
 pyramid
 position -45.0 -340.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 45.0 -340.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 0.0 -295.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 0.0 -385.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
-# pyramids around purple base
+# pyramids under purple base
 pyramid
 position -45.0 340.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 45.0 340.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 0.0 295.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
 pyramid
 position 0.0 385.0 0.0
 rotation 0.0
-size     7.5 7.5 30.0
+size     7.5 7.5 26.0
 end
