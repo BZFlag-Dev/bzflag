@@ -1,9 +1,6 @@
 recent bugs
 ------------
 
-- bzfls.pl doesn't properly list multiple servers from the same ip (brlcad.org
-  is a good example)
-
 - tanks get stuck on pyramids instead of sliding off
 
 - tanks may be squished from too high away.  i.e. tank carrying steamroller
