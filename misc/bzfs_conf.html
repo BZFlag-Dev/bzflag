@@ -2,7 +2,6 @@
 	<head>
 		<title>BZFS Configuration Builder</title>
 		<script language="JavaScript">
-			var console = null;   
 
 			function ableControls()
 			{
@@ -21,15 +20,16 @@
 	
 			function buildConfig()
 			{
-				// Open a plain text window
-				if (( console == null) || ( console.closed)) { 
-				        console = window.open("","untitled_bz.conf","width=600,height=300,resizable");
-				        console.document.open("text/html");
-				}
+				var console = window.open("","untitled_bz.conf","width=600,height=300,resizable");
+				console.document.open("text/html");
 				var d = console.document;
 				var mainform = document.forms["main"];
 
 				d.writeln("<html><body><p>");
+				d.writeln("#This is a bzfs configuration file.<br/>");
+				d.writeln("#Copy and paste into a simple text file and name it like <i>sample.conf</i>.<br/>");
+				d.writeln("#Use it like <code>bzfs -conf <i>sample.conf</i></code><br/><br/>");
+
 				if (mainform.port.value != 5155) {
 					d.writeln("#Initial port clients connect on<br/>");
 					d.writeln("-p " + mainform.port.value + "<br/>");
@@ -519,48 +519,48 @@
 					<legend>Forbidden Optional Flags</legend>
 					<table width="100%">
 						<tr>
-							<td align="right">(bad)</td><td><input type="text" name="bad_forbid_flags" value="0" size="3"/></td>
+							<td align="right">(bad)</td><td><input type="checkbox" name="bad_forbid_flags"/></td>
 						</tr>
 						<tr>
-							<td align="right">(V)</td><td><input type="text" name="v_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(A)</td><td><input type="text" name="a_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(OO)</td><td><input type="text" name="oo_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(F)</td><td><input type="text" name="f_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(MG)</td><td><input type="text" name="mg_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(GM)</td><td><input type="text" name="gm_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(V)</td><td><input type="checkbox" name="v_forbid_flag"/></td>
+							<td align="right">(A)</td><td><input type="checkbox" name="a_forbid_flag"/></td>
+							<td align="right">(OO)</td><td><input type="checkbox" name="oo_forbid_flag"/></td>
+							<td align="right">(F)</td><td><input type="checkbox" name="f_forbid_flag"/></td>
+							<td align="right">(MG)</td><td><input type="checkbox" name="mg_forbid_flag"/></td>
+							<td align="right">(GM)</td><td><input type="checkbox" name="gm_forbid_flag"/></td>
 						</tr>
 						<tr>
-							<td align="right">(L)</td><td><input type="text" name="l_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(R)</td><td><input type="text" name="r_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(SB)</td><td><input type="text" name="sb_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(IB)</td><td><input type="text" name="ib_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(ST)</td><td><input type="text" name="st_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(T)</td><td><input type="text" name="t_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(L)</td><td><input type="checkbox" name="l_forbid_flag"/></td>
+							<td align="right">(R)</td><td><input type="checkbox" name="r_forbid_flag"/></td>
+							<td align="right">(SB)</td><td><input type="checkbox" name="sb_forbid_flag"/></td>
+							<td align="right">(IB)</td><td><input type="checkbox" name="ib_forbid_flag"/></td>
+							<td align="right">(ST)</td><td><input type="checkbox" name="st_forbid_flag"/></td>
+							<td align="right">(T)</td><td><input type="checkbox" name="t_forbid_flag"/></td>
 						</tr>
 						<tr>
-							<td align="right">(N)</td><td><input type="text" name="l_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(SH)</td><td><input type="text" name="r_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(SR)</td><td><input type="text" name="sb_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(SW)</td><td><input type="text" name="sw_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(PZ)</td><td><input type="text" name="pz_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(G)</td><td><input type="text" name="g_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(N)</td><td><input type="checkbox" name="l_forbid_flag"/></td>
+							<td align="right">(SH)</td><td><input type="checkbox" name="r_forbid_flag"/></td>
+							<td align="right">(SR)</td><td><input type="checkbox" name="sb_forbid_flag"/></td>
+							<td align="right">(SW)</td><td><input type="checkbox" name="sw_forbid_flag"/></td>
+							<td align="right">(PZ)</td><td><input type="checkbox" name="pz_forbid_flag"/></td>
+							<td align="right">(G)</td><td><input type="checkbox" name="g_forbid_flag"/></td>
 						</tr>
 						<tr>
-							<td align="right">(JP)</td><td><input type="text" name="jp_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(IB)</td><td><input type="text" name="ib_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(CL)</td><td><input type="text" name="cl_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(JP)</td><td><input type="checkbox" name="jp_forbid_flag"/></td>
+							<td align="right">(IB)</td><td><input type="checkbox" name="ib_forbid_flag"/></td>
+							<td align="right">(CL)</td><td><input type="checkbox" name="cl_forbid_flag"/></td>
 						</tr>
 						<tr>
 						<tr>
-							<td align="right">(CB)</td><td><input type="text" name="cb_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(&lt;-)</td><td><input type="text" name="lt_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(-&gt;)</td><td><input type="text" name="gt_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(M)</td><td><input type="text" name="m_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(B)</td><td><input type="text" name="b_forbid_flag" value="0" size="3"/></td>
-							<td align="right">(JM)</td><td><input type="text" name="jm_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(CB)</td><td><input type="checkbox" name="cb_forbid_flag"/></td>
+							<td align="right">(&lt;-)</td><td><input type="checkbox" name="lt_forbid_flag"/></td>
+							<td align="right">(-&gt;)</td><td><input type="checkbox" name="gt_forbid_flag"/></td>
+							<td align="right">(M)</td><td><input type="checkbox" name="m_forbid_flag"/></td>
+							<td align="right">(B)</td><td><input type="checkbox" name="b_forbid_flag"/></td>
+							<td align="right">(JM)</td><td><input type="checkbox" name="jm_forbid_flag"/></td>
 						</tr>
 						<tr>
-							<td align="right">(WA)</td><td><input type="text" name="wa_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(WA)</td><td><input type="checkbox" name="wa_forbid_flag"/></td>
 						</tr>
 					</table>
 				</fieldset>
