@@ -787,30 +787,57 @@ Dynamic change the maximum allowed lag time. Example:
 
 .SH USER MANAGEMENT
 
-Generally, you start with empty files for the user and password databases.
-These are maintained by the server, and modifiable through server commands.
-You will want to specify a groups file that has whatever specific groups you
-care to have on your server. These are laid out with one line in the file
-per group, using the following format:
+Generally, you start with empty files for the user and password
+databases.  These are maintained by the server, and modifiable through
+server commands.  Users in turn belong to groups.  Groups are
+generally customized to perhaps allow administrative control to
+trusted users.
+
+There are both local and global groups, i.e. groups that are available
+across the entire BZFlag network.  In setting up a server, you may
+want to specify global groups that will allow already well known and
+trusted users to police your server and help maintain control against
+cheaters and abuse.
+
+A group database file is set up to contain the specific local and
+global groups you care to have on your server and exactly what
+permissions are granted by each.  These files are laid out with one
+line per group, using the following format:
 
 GROUP_NAME: perm1 perm2 perm3 ... permN
 
-Group names cannot have spaces, quotes, or other special characters in them.
-
-This would be a sample line defining a "cop" group:
+Group names cannot have spaces, quotes, or other special characters in
+them.  This would be a sample line defining a "cop" group:
 
 COPS:KICK BAN BANLIST UNBAN INFO
 
-The server will automatically create three groups if they are not specified in
-the groups file: DEFAULT, VERIFIED, and LOCAL.ADMIN. LOCAL.ADMIN has every permission
-possible (similar to granting admin powers via /password). VERIFIED presently
-allows access to the voting system's /poll and /vote commands.  DEFAULT allows
-/lagstats, /idlestats, /flaghistory and /report.
+To distinguish between a group that is local and one that is global,
+use the "LOCAL." prefix as part of the group name, e.g.:
 
-Once the server is running, users can register their callsigns and admins can
-set their group memberships. Users can use any command that their permissions
-allow. Every user, registered or not, is part of the DEFAULT group. When a
-user identifies, they become part of the VERIFIED group.
+LOCAL.OPERATOR: BANLIST
+
+The server will automatically create three groups if they are not
+specified in the groups file: DEFAULT, VERIFIED, and LOCAL.ADMIN.  The
+LOCAL.ADMIN group has almost every permission possible (similar to
+granting admin powers via /password).  VERIFIED presently allows
+access to the voting system's /poll and /vote commands.  DEFAULT
+allows /lagstats, /idlestats, /flaghistory, /date, /msg, /me, and
+/report.
+
+Once the server is running, users can register their callsigns and
+admins can set their group memberships. Users can use any command that
+their permissions allow. Every user, registered or not, is part of the
+DEFAULT group. When a user identifies, they become part of the
+VERIFIED group.
+
+In addition, there are global groups available that persist
+network-wide.  Users that register their callsigns on the BZFlag
+website at http://my.bzflag.org/bb/ have the ability to globally
+authenticate by providing a password from within the client.  When
+they authenticate, bzfs will ask the list server if they belong to any
+of the groups listed in your group database file that are not prefixed
+with "LOCAL.".  If they are a member of a group in question, then they
+are granted the permissions you specify for that group.
 
 The available permissions are as follows:
 
