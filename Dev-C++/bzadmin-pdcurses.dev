@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin-pdcurses.dev
 Name=bzadmin-pdcurses
-UnitCount=38
+UnitCount=44
 Type=1
 Ver=1
 ObjFiles=
@@ -408,9 +408,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit39]
-FileName=..\src\bzflag\ServerLink.h
+FileName=..\src\game\DirectoryNames.cxx
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -418,29 +418,29 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit40]
-FileName=..\src\bzadmin\CursesUI.cxx
+FileName=..\src\game\ServerItem.cxx
 CompileCpp=1
-Folder=Source Files/UI
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=$(CPP) -c ../src/bzadmin/CursesUI.cxx -o ../src/bzadmin/CursesUI.o I"C:/Dev-Cpp/include/c++/backward"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/c++"  -I"C:/Dev-Cpp/include/c++/mingw32"  -I"../include"  -I"../src/bzflag"  -I"."  -Wall -fexpensive-optimizations -O2
+BuildCmd=
 
 [Unit41]
-FileName=..\src\bzadmin\CursesMenu.cxx
+FileName=..\src\game\ServerList.cxx
 CompileCpp=1
-Folder=Source Files/UI
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=$(CPP) -c CursesMenu.cxx -o ../src/bzadmin/CursesMenu.o $(CXXFLAGS)
+BuildCmd=
 
 [Unit42]
-FileName=..\src\bzflag\ServerLink.h
+FileName=..\src\game\ServerListCache.cxx
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
@@ -461,6 +461,26 @@ BuildCmd=
 FileName=..\src\net\Address.cxx
 CompileCpp=1
 Folder=Source Files/Net
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit43]
+FileName=..\src\game\StartupInfo.cxx
+CompileCpp=1
+Folder=Source Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit44]
+FileName=..\src\common\FileManager.cxx
+CompileCpp=1
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000

@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin.dev
 Name=bzadmin
-UnitCount=39
+UnitCount=45
 Type=1
 Ver=1
 ObjFiles=
@@ -427,18 +427,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
-FileName=..\src\bzflag\ServerLink.h
-CompileCpp=1
-Folder=Header Files/Common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit41]
-FileName=..\src\common\AutoCompleter.cxx
+FileName=..\src\game\ServerListCache.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1
@@ -448,7 +438,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit42]
-FileName=..\src\common\TextUtils.cxx
+FileName=..\src\game\StartupInfo.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1
@@ -461,6 +451,46 @@ BuildCmd=
 FileName=..\src\bzadmin\OptionParser.h
 CompileCpp=1
 Folder=Header Files/BZAdmin
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit40]
+FileName=..\src\game\ServerList.cxx
+CompileCpp=1
+Folder=Source Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit43]
+FileName=..\src\game\ServerItem.cxx
+CompileCpp=1
+Folder=Source Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit44]
+FileName=..\src\common\FileManager.cxx
+CompileCpp=1
+Folder=Source Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit45]
+FileName=..\src\game\DirectoryNames.cxx
+CompileCpp=1
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
