@@ -450,6 +450,9 @@
   <!--  laser shots -->
   <!INCLUDE "shot-L.bzg" />
 
+  <!--  thief shots -->
+  <!INCLUDE "shot-T.bzg" />
+
   <!--  guided missile shots -->
   <!INCLUDE "shot-GM.bzg" />
 

@@ -15,6 +15,7 @@
 
 #include "AudioFile.h"
 #include <vorbis/vorbisfile.h>
+#include <vorbis/codec.h>
 
 class OggAudioFile : public AudioFile {
 public:
@@ -29,7 +30,6 @@ public:
 protected:
 	OggVorbis_File		file;
 	vorbis_info*		info;
-	bool				open;
 	int					stream;
 };
 

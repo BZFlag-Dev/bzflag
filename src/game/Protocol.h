@@ -68,6 +68,7 @@ const uint16_t			MsgSuperKill = 0x736b;					// 'sk'
 const uint16_t			MsgTimeUpdate = 0x746f;					// 'to'
 const uint16_t			MsgTeleport = 0x7470;					// 'tp'
 const uint16_t			MsgTeamUpdate = 0x7475;					// 'tu'
+const uint16_t			MsgTransferFlag = 0x7466;				// 'tf'
 
 // unreliable messages
 const uint16_t			MsgUDPLinkEstablished = 0x6f67;			// 'og'

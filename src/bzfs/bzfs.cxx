@@ -2908,6 +2908,32 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		case MsgShotUpdate:
 			relayPlayerPacket(t, len, rawbuf);
 			break;
+
+		// player has transferred flag to another tank
+		case MsgTransferFlag: {
+			PlayerId from, to;
+
+			buf = nboUnpackUByte(buf, from);
+			buf = nboUnpackUByte(buf, to);
+
+			if ((from == InvalidPlayer) || (to == InvalidPlayer))
+				break;
+
+			zapFlag(player[to].flag);
+			char msg[2*PlayerIdPLen + 2 + FlagPLen];
+			void *buf = msg;
+			buf = nboPackUByte(buf, from);
+			buf = nboPackUByte(buf, to);
+			int flagIndex = player[from].flag;
+			buf = nboPackUShort(buf, uint16_t(flagIndex));
+			flag[flagIndex].playerId = to;
+			flag[flagIndex].flag.owner = to;
+			player[to].flag = flagIndex;
+			player[from].flag = -1;
+			buf = flag[flagIndex].flag.pack(buf);
+			broadcastMessage(MsgTransferFlag, sizeof(msg), msg);
+			break;
+		}
 	}
 }
 
@@ -3199,6 +3225,7 @@ static void parse(int argc, char **argv)
 				flagCount[IdentifyFlag]++;
 				flagCount[CloakingFlag]++;
 				flagCount[MasqueradeFlag]++;
+				flagCount[ThiefFlag]++;
 			}
 			else {
 				if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
@@ -3666,6 +3693,8 @@ static void parse(int argc, char **argv)
 				if (setRequiredFlag(flag[f], CloakingFlag))
 					f++;
 				if (setRequiredFlag(flag[f], MasqueradeFlag))
+					f++;
+				if (setRequiredFlag(flag[f], ThiefFlag))
 					f++;
 			}
 			else {

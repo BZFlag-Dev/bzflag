@@ -92,6 +92,8 @@ void					BaseLocalPlayer::update()
 		size *= ObeseFactor;
 	else if (getFlag() == TinyFlag)
 		size *= TinyFactor;
+	else if (getFlag() == ThiefFlag)
+		size *= ThiefTinyFactor;
 	bbox[0][0] -= size;
 	bbox[1][0] += size;
 	bbox[0][1] -= size;
@@ -600,6 +602,10 @@ const Obstacle*			LocalPlayer::getHitBuilding(const float* p, float a,
 	else if (getFlag() == NarrowFlag) {
 		width = 0.0f;
 	}
+	else if (getFlag() == ThiefFlag) {
+		length *= ThiefTinyFactor;
+		width *= 2.0f * ThiefTinyFactor;
+	}
 
 	const Obstacle* obstacle = World::getWorld()->
 								hitBuilding(p, a, length, width);
@@ -629,6 +635,10 @@ bool					LocalPlayer::getHitNormal(const Obstacle* o,
 	}
 	else if (getFlag() == NarrowFlag) {
 		width = 0.0f;
+	}
+	else if (getFlag() == ThiefFlag) {
+		length *= ThiefTinyFactor;
+		width *= 2.0f * ThiefTinyFactor;
 	}
 
 	return o->getHitNormal(pos1, azimuth1, pos2, azimuth2, length, width, normal);
@@ -734,6 +744,8 @@ void					LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 	// boost speed for certain flags
 	if (getFlag() == VelocityFlag)
 		fracOfMaxSpeed *= VelocityAd;
+	else if (getFlag() == ThiefFlag)
+		fracOfMaxSpeed *= ThiefVelAd;
 
 	// set desired speed
 	desiredSpeed = fracOfMaxSpeed * TankSpeed;
@@ -817,6 +829,8 @@ bool					LocalPlayer::fireShot()
 		SOUNDMGR->playLocalSound("laser");
 	else if (firingInfo.flag == GuidedMissileFlag)
 		SOUNDMGR->playLocalSound("missile");
+	else if (firingInfo.flag == ThiefFlag)
+		SOUNDMGR->playLocalSound("thief");
 	else
 		SOUNDMGR->playLocalSound("fire");
 
@@ -958,11 +972,11 @@ bool					LocalPlayer::checkHit(const Player* source,
 		if (!shot || shot->isExpired()) continue;
 
 		// my own shock wave cannot kill me
-		if (source == this && shot->getFlag() == ShockWaveFlag) continue;
+		const FlagId shotFlag = shot->getFlag();
+		if (source == this && ((shotFlag == ShockWaveFlag) || (shotFlag == ThiefFlag))) continue;
 
 		// short circuit test if shot can't possibly hit.
 		// only superbullet or shockwave can kill zoned dude
-		const FlagId shotFlag = shot->getFlag();
 		if (getFlag() == PhantomZoneFlag && isFlagActive() &&
 				shotFlag != SuperBulletFlag && shotFlag != ShockWaveFlag)
 			continue;

@@ -23,20 +23,18 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	cb.close_func = OAFClose;
 	cb.tell_func = OAFTell;
 
-	ov_open_callbacks(in, &file, NULL, 0, cb);
-	if (!&file) {
-		std::cerr << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
-		open = false;
+	if(ov_open_callbacks(in, &file, NULL, 0, cb) < 0) {
+		cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
 	}
 	else {
-		open = true;
+		info = ov_info(&file, -1);
+		int samples = ov_pcm_total(&file, -1);
+		init(info->rate, info->channels, samples, 2);
 	}
-	info = ov_info(&file, -1);
 }
 
 OggAudioFile::~OggAudioFile()
 {
-	open = false;
 	ov_clear(&file);
 }
 
@@ -47,42 +45,59 @@ std::string	OggAudioFile::getExtension()
 
 bool		OggAudioFile::read(void* buffer, int numFrames)
 {
-	if (!open)
-		return false;
 	int frames;
-	int bytes = numFrames * 2;
-	int stream = -1;
+	int bytes = numFrames * info->channels * 2;
 	frames = ov_read(&file, (char *) buffer, bytes, 0, 2, 1, &stream);
-	if (frames < 0)
-		return false;
+	if (frames < 0) {
+		if (frames == OV_HOLE)
+			// OV_HOLE is non-fatal
+			return true;
+		else
+			return false;
+	}
 	return true;
 }
 
 size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
 {
 	std::istream *in = (std::istream*) datasource;
+	std::streampos pos1 = in->tellg();
 	in->read((char*)ptr, size * nmemb);
-	return size * nmemb;
+	std::streampos pos2 = in->tellg();
+	if(in->eof())
+		return 0;
+	return pos2 - pos1;
 }
 
-int		OAFSeek(void*, ogg_int64_t, int)
+int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
 {
-	// return -1 always, disabling seeking
-	return -1;
+	std::istream *in = (std::istream*) datasource;
+	switch (whence) {
+		case SEEK_SET:
+			in->seekg(offset, std::ios::beg);
+			break;
+		case SEEK_CUR:
+			in->seekg(offset, std::ios::cur);
+			break;
+		case SEEK_END:
+			in->seekg(offset, std::ios::end);
+			break;
+	}
+	return 0;
 }
 
-int		OAFClose(void*)
+int		OAFClose(void* datasource)
 {
 	// technically we should close here, but this is handled outside
 
-//	std::istream *in = (std::istream*) datasource;
-//	in->close();
+	std::istream *in = (std::istream*) datasource;
+	in->close();
 	return 0;
 }
 
-long		OAFTell(void*)
+long		OAFTell(void* datasource)
 {
-	// do nothing, since seeking isn't implemented
-	return 0;
+	std::istream *in = (std::istream*) datasource;
+	return in->tellg();
 }
 // ex: shiftwidth=4 tabstop=4

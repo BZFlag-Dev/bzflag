@@ -408,6 +408,7 @@ float					SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 	float radius = TankRadius;
 	if (tank->getFlag() == ObesityFlag) radius *= ObeseFactor;
 	else if (tank->getFlag() == TinyFlag) radius *= TinyFactor;
+	else if (tank->getFlag() == ThiefFlag) radius *= ThiefTinyFactor;
 	const float radius2 = radius * radius;
 
 	// tank is positioned from it's bottom so shift position up by
@@ -898,6 +899,125 @@ bool					LaserStrategy::isStoppedByHit() const
 }
 
 //
+// ThiefStrategy
+//
+
+ThiefStrategy::ThiefStrategy(ShotPath* path) :
+								SegmentedShotStrategy(path),
+								cumTime(0.0f)
+{
+	// speed up shell and decrease lifetime
+	FiringInfo& f = getFiringInfo(path);
+	f.lifetime *= (ThiefAdShotVel * ThiefVelAd) / 3000;
+	f.shot.vel[0] *= ThiefVelAd;
+	f.shot.vel[1] *= ThiefVelAd;
+	f.shot.vel[2] *= ThiefVelAd;
+	setReloadTime(path->getReloadTime() / ThiefAdRate);
+
+	// make segments
+	makeSegments(Stop);
+	setCurrentTime(getLastTime());
+	endTime = f.lifetime;
+
+	// get models
+	Player* p = lookupPlayer(path->getPlayer());
+	TeamColor team = p ? p->getTeam() : RogueTeam;
+	teamSceneNode  = findShotModel(team, "T");
+	rogueSceneNode = findShotModel(RogueTeam, "T");
+
+	// make thief scene nodes
+	// FIXME -- this still creates the SegmentedShotStrategy scene nodes
+	nodes = new SceneNodeGroup;
+	model = new SceneNodeGroup;
+	const int numSegments = getSegments().size();
+	for (int i = 0; i < numSegments; i++)
+		nodes->pushChild(createSegment(i));
+	setCurrentSegment(numSegments - 1);
+}
+
+ThiefStrategy::~ThiefStrategy()
+{
+	nodes->unref();
+	model->unref();
+	teamSceneNode->unref();
+	rogueSceneNode->unref();
+}
+
+SceneNode*					ThiefStrategy::createSegment(int index) const
+{
+	const ShotPathSegment& segment = getSegments()[index];
+	const float t = segment.end - segment.start;
+	const Ray& ray = segment.ray;
+	const Real* pos = ray.getOrigin().get();
+	const Real* dir = ray.getDirection().get();
+	const float len = ray.getDirection().length();
+
+	// compute transform.  maps origin to ray.getOrigin() and 1,0,0
+	// to ray.getOrigin() + t * ray.getDirection().
+	Matrix matrix, tmp;
+	matrix.setTranslate(pos[0], pos[1], pos[2]);
+	tmp.setRotate(0.0f, 0.0f, 1.0f, atan2f(dir[1], dir[0]) * 180.0f / M_PI);
+	matrix *= tmp;
+	tmp.setRotate(0.0f, 1.0f, 0.0f, -asinf(dir[2] / len) * 180.0f / M_PI);
+	matrix *= tmp;
+	tmp.setScale(t * len, 1.0f, 1.0f);
+	matrix *= tmp;
+
+	// set transform
+	float m[16];
+	SceneNodeMatrixTransform* xform = new SceneNodeMatrixTransform;
+	xform->matrix.set(matrix.get(m), 16);
+
+	// put model under transform (all segments share the same model)
+	xform->pushChild(model);
+
+	return xform;
+}
+
+void						ThiefStrategy::update(float dt)
+{
+	cumTime += dt;
+	if (cumTime >= endTime)
+		setExpired();
+}
+
+void						ThiefStrategy::addShot(
+									SceneNodeGroup* group, bool colorblind)
+{
+	// use appropriate model
+	model->clearChildren();
+	if (colorblind)
+		model->pushChild(rogueSceneNode);
+	else
+		model->pushChild(teamSceneNode);
+	
+	// thief is so fast we always show every segment
+	group->pushChild(nodes);
+}
+
+void						ThiefStrategy::radarRender() const
+{
+	// draw all segments
+	const ShotPathSegments& segments = getSegments();
+	const int numSegments = (int) segments.size();
+	glBegin(GL_LINES);
+	for (int i = 0; i < numSegments; i++) {
+		const ShotPathSegment& segment = segments[i];
+		const Real* origin = segment.ray.getOrigin().get();
+		const Real* direction = segment.ray.getDirection().get();
+		const float dt = segment.end - segment.start;
+		glVertex2fv(origin);
+		glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+	}
+	glEnd();
+}
+
+bool						ThiefStrategy::isStoppedByHit() const
+{
+	return false;
+}
+
+//
 // GuidedMissileStrategy
 //
 
@@ -1158,6 +1278,7 @@ float					GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 	float radius = TankRadius;
 	if (tank->getFlag() == ObesityFlag) radius *= ObeseFactor;
 	else if (tank->getFlag() == TinyFlag) radius *= TinyFactor;
+	else if (tank->getFlag() == ThiefFlag) radius *= ThiefTinyFactor;
 	const float radius2 = radius * radius;
 
 	// tank is positioned from it's bottom so shift position up by

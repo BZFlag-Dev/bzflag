@@ -189,6 +189,7 @@ enum FlagId {
 						IdentifyFlag,			// lets you identify other flags
 						CloakingFlag,			// make you invisible out window
 						MasqueradeFlag,			// makes tank look like teammate
+						ThiefFlag,				// can steal another's flag
 
 						// the bad super flags
 						ColorblindnessFlag,		// can't see team colors
@@ -207,7 +208,6 @@ enum FlagId {
 						HeatSeekerFlag,			// aims at strongest heat source
 						DeathFlag,				// die the instant you grab it
 						PossessionFlag,			// control another tank's motion
-						ThiefFlag,				// can steal another's flag
 						Kamikazi,				// large destruct radius when dropped
 						Suicide,				// high speed, fast shots, die at first kill
 						ECM,					// disable radars of nearby tanks (not teammates)
@@ -249,6 +249,10 @@ const float				JumpVelocity =	19.0f;				// m/s
 const float				IdentityRange =	50.0f;				// meters
 const float				ObeseFactor =	2.5f;				// 250% normal size
 const float				WideAngleAng =	M_PI / 1.8f;		// 100 degree fov
+const float				ThiefVelAd =    1.67f;				// 2/3 faster
+const float				ThiefTinyFactor=0.5f;				// 50% normal size
+const float				ThiefAdShotVel =1000.0f;			// 1000x faster shots
+const float				ThiefAdRate =   10.0f;				// 10x faster
 const float				MomentumLinAcc=	1.0f;				//
 const float				MomentumAngAcc=	1.0f;				//
 const float				MagnetPower =	0.0f;				// off

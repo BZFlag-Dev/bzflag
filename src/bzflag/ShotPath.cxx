@@ -150,6 +150,9 @@ ShotPath::ShotPath(const FiringInfo& info) :
 		case ShockWaveFlag:
 			strategy = new ShockWaveStrategy(this);
 			break;
+		case ThiefFlag:
+			strategy = new ThiefStrategy(this);
+			break;
 		default:
 			// shouldn't happen
 			assert(0);

@@ -42,6 +42,7 @@ const char*				Flag::flagName[] = {
 								"Identify",
 								"Cloaking",
 								"Masquerade",
+								"Thief",
 								"Colorblindness",
 								"Obesity",
 								"Left Turn Only",
@@ -80,6 +81,7 @@ const char*				Flag::flagAbbv[] = {
 								"ID",						// identify
 								"CL",						// cloaking
 								"MQ",						// masquerade
+								"TH",						// thief
 								"CB",						// colorblindness
 								"O",						// obesity
 								"<-",						// left turn only
@@ -130,6 +132,7 @@ const char*				Flag::flagHelp[] = {
 				"Still visible on radar.",
 "MasQuerade (+MQ):  Makes your tank look like a teammate out-the-window.  "
 				"Normal team colors everywhere else.",
+"THief (+TH):  Steals flags.  Small and fast but can't kill.",
 "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!",
 "Obesity (-O):  Tank becomes very large.  Can't fit through teleporters.",
 "left turn only (- <-):  Can't turn right.",

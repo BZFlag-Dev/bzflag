@@ -227,9 +227,8 @@ float*					MediaFile::readSound(
 	AudioFile* file = NULL;
 	if (file == NULL)
 		OPENMEDIA(WaveAudioFile);
-	if (file == NULL) {
+	if (file == NULL)
 		OPENMEDIA(OggAudioFile);
-	}
 
 	// read the audio
 	float* audio = NULL;
@@ -239,6 +238,9 @@ float*					MediaFile::readSound(
 		int numChannels = file->getNumChannels();
 		int numFrames   = file->getNumFrames();
 		int sampleWidth = file->getSampleWidth();
+
+		cout << filename << endl;
+		cout << "numFrames   = " << numFrames << endl;
 
 		// make a buffer to read into
 		unsigned char* raw = new unsigned char[numFrames *

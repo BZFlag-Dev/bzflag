@@ -179,6 +179,28 @@ private:
 	SceneNode*			rogueSceneNode;
 };
 
+class ThiefStrategy : public SegmentedShotStrategy {
+public:
+	ThiefStrategy(ShotPath*);
+	~ThiefStrategy();
+
+	void				update(float dt);
+	virtual bool		isStoppedByHit() const;
+	void				addShot(SceneNodeGroup*, bool colorblind);
+	void				radarRender() const;
+
+private:
+	SceneNode*			createSegment(int) const;
+
+private:
+	float				cumTime;
+	float				endTime;
+	SceneNodeGroup*		nodes;
+	SceneNodeGroup*		model;
+	SceneNode*			teamSceneNode;
+	SceneNode*			rogueSceneNode;
+};
+
 class RicochetStrategy : public SegmentedShotStrategy {
 public:
 	RicochetStrategy(ShotPath*);

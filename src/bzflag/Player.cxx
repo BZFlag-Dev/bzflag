@@ -86,8 +86,10 @@ float					Player::getRadius() const
 {
 	if (flag == ObesityFlag)
 		return TankRadius * ObeseFactor;
-	if (flag == TinyFlag)
+	else if (flag == TinyFlag)
 		return TankRadius * TinyFactor;
+	else if (flag == ThiefFlag)
+		return TankRadius * ThiefTinyFactor;
 	return TankRadius;
 }
 
@@ -99,6 +101,8 @@ void					Player::getMuzzle(float* m) const
 		front *= ObeseFactor;
 	else if (flag == TinyFlag)
 		front *= TinyFactor;
+	else if (flag == ThiefFlag)
+		front *= ThiefTinyFactor;
 	m[0] = pos[0] + front * forward[0];
 	m[1] = pos[1] + front * forward[1];
 	m[2] = pos[2] + front * forward[2] + MuzzleHeight;

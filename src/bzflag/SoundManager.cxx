@@ -50,7 +50,8 @@ SoundManager::SoundManager()
 	soundFiles.push_back("phantom");
 	soundFiles.push_back("missile");
 	soundFiles.push_back("lock");
-	soundFiles.push_back("rain");
+	soundFiles.push_back("thief");
+//	soundFiles.push_back("rain");
 }
 
 void			SoundManager::openSound(const char*)

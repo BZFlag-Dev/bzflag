@@ -359,6 +359,7 @@
     Jumping (JP):   allows tank to jump&#x0a;
     Identify (ID):   shows type of nearest superflag&#x0a;
     Masquerade (MQ):  tank appears as teammate out the window&#x0a;
+    Thief (TH):  steals flags, small and quick but can't kill&#x0a;
     &#x0a;
     Bad Flags:&#x0a;
     Colorblindness (CB):   can't identify tanks&#x0a;
