@@ -3047,7 +3047,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	FlagDesc* fd = world->getFlag(flagIndex).desc;
 	if ( fd->flagTeam != NoTeam
 	     && fd->flagTeam != tank->getTeam()
-	     && ((tank && (tank->getTeam() == myTank->getTeam())))) {
+	     && ((tank && (tank->getTeam() == myTank->getTeam())))
+	     && (myTank->getTeam() != RogueTeam)) {
 	  hud->setAlert(1, "Team Grab!!!", 3.0f, false);
 	  const float* pos = tank->getPosition();
 	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
