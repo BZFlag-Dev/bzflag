@@ -41,14 +41,14 @@ msgstr "H31P"
 msgid "Quit"
 msgstr "KwIT"
 
-#msgid "on"
-#msgstr ""
+msgid "on"
+msgstr "Awn"
 
 msgid "Dithering:"
 msgstr "dItH3RIng:"
 
-#msgid "off"
-#msgstr ""
+msgid "off"
+msgstr "awlf"
 
 msgid "Off"
 msgstr "0pHph"
@@ -116,35 +116,35 @@ msgstr "8RI9h+n355:"
 msgid "Sound Volume:"
 msgstr "5OUnD VOlUmE:"
 
-#msgid "Off / Backup Mode"
-#msgstr ""
+msgid "Off / Backup Mode"
+msgstr "Awlf / B4C|<u9 |\/|0c|3"
 
-#msgid "5 Minutes"
-#msgstr ""
+msgid "5 Minutes"
+msgstr "5 m1nu735"
 
-#msgid "15 Minutes"
-#msgstr ""
+msgid "15 Minutes"
+msgstr "15 m1nu735"
 
-#msgid "30 Minutes"
-#msgstr ""
+msgid "30 Minutes"
+msgstr "30 m1nu735"
 
-#msgid "1 Hour"
-#msgstr ""
+msgid "1 Hour"
+msgstr "1 h0uR"
 
-#msgid "5 Hours"
-#msgstr ""
+msgid "5 Hours"
+msgstr "5 h0uR5"
 
-#msgid "15 Hours"
-#msgstr ""
+msgid "15 Hours"
+msgstr "15 h0uR5"
 
-#msgid "1 day"
-#msgstr ""
+msgid "1 day"
+msgstr "1 c|4y"
 
-#msgid "15 days"
-#msgstr ""
+msgid "15 days"
+msgstr "15 c|4Y5"
 
-#msgid "30 days"
-#msgstr ""
+msgid "30 days"
+msgstr "30 c|4Y5"
 
 msgid "UDP network connection:"
 msgstr "uDP nEtw0rK cOnNect1on:"
@@ -274,9 +274,6 @@ msgstr "8in0cuL4r$:"
 
 msgid "Toggle Score:"
 msgstr "+099l3 $COR3:"
-
-#msgid "Self Destruct/Cancel:"
-#msgstr ""
 
 msgid "Tank Labels:"
 msgstr "T@nk l48ELs:"
