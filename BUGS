@@ -1,7 +1,7 @@
 recent bugs
 ------------
 
-- bots get no handicap at the moment; the relative score data is not
+- bots imherit the owner's handycat; the relative score data is not
   available to them; could instead use absolute score
 
 - teleporters ricochet on the frame seems incorrect
