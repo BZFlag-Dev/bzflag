@@ -41,6 +41,7 @@ public:
     ~Player();
 
     static Player *getPlayerByIndex(int _playerIndex);
+    static void    updateLatency(float &waitTime);
 
     // players 
     PlayerInfo       *player;

@@ -41,8 +41,6 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers + ReplayObservers];
-// player lag info
-LagInfo *lagInfo[MaxPlayers + ReplayObservers] = {NULL};
 // player access
 PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 // Last known position, vel, etc
@@ -3037,6 +3035,9 @@ static void handleCommand(int t, const void *rawbuf)
   NetHandler *handler = NetHandler::getHandler(t);
   if (!handler)
     return;
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
+  if (!playerData)
+    return;
 
   uint16_t len, code;
   void *buf = (char *)rawbuf;
@@ -3368,10 +3369,7 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgLagPing: {
       bool warn;
       bool kick;
-      LagInfo *info = lagInfo[t];
-      if (!info)
-	return;
-      int lag = info->updatePingLag(buf, warn, kick);
+      int lag = playerData->lagInfo->updatePingLag(buf, warn, kick);
       if (warn) {
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -3404,8 +3402,8 @@ static void handleCommand(int t, const void *rawbuf)
       if (state.order <= lastState[t].order)
 	break;
 
-      if (lagInfo[t])
-	lagInfo[t]->updateLag(timestamp, state.order - lastState[t].order > 1);
+      playerData->lagInfo->updateLag(timestamp,
+				     state.order - lastState[t].order > 1);
       player[t].updateIdleTime();
 
       TimeKeeper now = TimeKeeper::getCurrent();
@@ -3958,13 +3956,7 @@ int main(int argc, char **argv)
 
     int p;
     // get time for next lagping
-    bool someoneIsConnected = false;
-    for (p = 0; p < curMaxPlayers; p++) {
-      if (player[p].isPlaying() && player[p].isHuman()
-	  && lagInfo[p]->updateLatency(waitTime)) {
-	someoneIsConnected = true;
-      }
-    }
+    GameKeeper::Player::updateLatency(waitTime);
 
     // get time for next delayed packet (Lag Flag)
     for (p = 0; p < curMaxPlayers; p++) {
@@ -4345,14 +4337,13 @@ int main(int argc, char **argv)
 
     // send lag pings
     for (int j=0;j<curMaxPlayers;j++) {
-      if (player[j].isPlaying() && player[j].isHuman()) {
-	int nextPingSeqno = lagInfo[j]->getNextPingSeqno();
+      int nextPingSeqno = GameKeeper::Player::getPlayerByIndex(j)->lagInfo
+	->getNextPingSeqno();
 	if (nextPingSeqno > 0) {
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUShort(bufStart, nextPingSeqno);
 	  directMessage(j, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
 	}
-      }
     }
 
     // occasionally add ourselves to the list again (in case we were

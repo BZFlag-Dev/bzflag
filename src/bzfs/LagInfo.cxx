@@ -89,6 +89,9 @@ void LagInfo::updateLag(float timestamp, bool ooo) {
 }
 
 int LagInfo::getNextPingSeqno() {
+  if (!info->isPlaying() || !info->isHuman())
+    return -1;
+
   TimeKeeper tm = TimeKeeper::getCurrent();
   if (nextping - tm >= 0)
     // no time for pinging
@@ -110,14 +113,13 @@ int LagInfo::getNextPingSeqno() {
 }
 
 // update absolute latency based on LagPing messages
-bool LagInfo::updateLatency(float &waitTime) {
+void LagInfo::updateLatency(float &waitTime) {
+  if (!info->isPlaying() || !info->isHuman())
+    return;
   TimeKeeper tm = TimeKeeper::getCurrent();
-  bool shouldPing = false;
   if (nextping - tm < waitTime) {
     waitTime   = nextping - tm;
-    shouldPing = true;
   };
-  return shouldPing;
 }
 
 void LagInfo::setThreshold(float _threshold, float _max) {

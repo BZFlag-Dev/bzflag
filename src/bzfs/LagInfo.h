@@ -36,7 +36,7 @@ public:
   int         getNextPingSeqno();
   /** update the latency
    */
-  bool        updateLatency(float &waitTime);
+  void        updateLatency(float &waitTime);
   /** set the threshold for warning/kicking
    */
   static void setThreshold(float _threshold, float _max);

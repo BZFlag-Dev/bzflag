@@ -14,7 +14,8 @@
 #include "GameKeeper.h"
 
 extern PlayerInfo       player[PlayerSlot];
-extern LagInfo         *lagInfo[PlayerSlot];
+// player lag info
+LagInfo                *lagInfo[PlayerSlot] = {NULL};
 extern PlayerAccessInfo accessInfo[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
 extern DelayQueue       delayq[PlayerSlot];
@@ -55,6 +56,15 @@ GameKeeper::Player::~Player()
 GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int _playerIndex)
 {
   return GameKeeper::Player::playerList[_playerIndex];
+}
+
+void GameKeeper::Player::updateLatency(float &waitTime)
+{
+  int p;
+  for (p = 0; p < PlayerSlot; p++)
+    if (playerList[p]) {
+      playerList[p]->lagInfo->updateLatency(waitTime);
+  }
 }
 
 // Local Variables: ***
