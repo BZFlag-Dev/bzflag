@@ -146,6 +146,10 @@ SOURCE=..\..\src\common\BundleMgr.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\common\bz_Locale.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\common\BZDBCache.cxx
 # End Source File
 # Begin Source File
@@ -191,10 +195,6 @@ SOURCE=..\..\src\common\KeyManager.cxx
 # Begin Source File
 
 SOURCE=..\..\src\common\Language.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\common\Locale.cxx
 # End Source File
 # Begin Source File
 
@@ -247,6 +247,10 @@ SOURCE=..\..\include\Bundle.h
 # Begin Source File
 
 SOURCE=..\..\include\BundleMgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bz_Locale.h
 # End Source File
 # Begin Source File
 
@@ -311,10 +315,6 @@ SOURCE=..\..\include\KeyManager.h
 # Begin Source File
 
 SOURCE=..\..\include\Language.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\Locale.h
 # End Source File
 # Begin Source File
 
