@@ -3028,7 +3028,8 @@ static void zapFlag(int flagIndex)
 		player[playerIndex].flag = -1;
 
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte(bufStart, playerIndex);
+		buf = nboPackUByte(bufStart, DropReasonForced);
+		buf = nboPackUByte(buf, playerIndex);
 		buf = nboPackUShort(buf, uint16_t(flagIndex));
 		buf = flag[flagIndex].flag.pack(buf);
 		broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3345,7 +3346,7 @@ static void grabFlag(int playerIndex, int flagIndex)
 	broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void dropFlag(int playerIndex, float pos[3])
+static void dropFlag(int playerIndex, FlagDropReason reason, float pos[3])
 {
 	assert(world != NULL);
 	const WorldInfo::ObstacleLocation* container;
@@ -3451,7 +3452,8 @@ static void dropFlag(int playerIndex, float pos[3])
 	// player no longer has flag -- send MsgDropFlag
 	player[playerIndex].flag = -1;
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, reason);
+	buf = nboPackUByte(buf, playerIndex);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3665,8 +3667,8 @@ static void parseCommand(const char *message, int t)
 					player[playerIndex].flag = -1;
 
 					void *buf, *bufStart = getDirectMessageBuffer();
-					buf = nboPackUByte(bufStart, playerIndex);
-					buf = nboPackUByte(bufStart, playerIndex);
+					buf = nboPackUByte(bufStart, DropReasonForced);
+					buf = nboPackUByte(buf, playerIndex);
 					buf = nboPackUShort(buf, uint16_t(i));
 					buf = flag[i].flag.pack(buf);
 					broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3685,7 +3687,8 @@ static void parseCommand(const char *message, int t)
 						player[playerIndex].flag = -1;
 
 						void *buf, *bufStart = getDirectMessageBuffer();
-						buf = nboPackUByte(bufStart, playerIndex);
+						buf = nboPackUByte(bufStart, DropReasonForced);
+						buf = nboPackUByte(buf, playerIndex);
 						buf = nboPackUShort(buf, uint16_t(i));
 						buf = flag[i].flag.pack(buf);
 						broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3829,9 +3832,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		// player requesting to drop flag
 		case MsgDropFlag: {
 			// data: position of drop
+			uint8_t reason;
 			float pos[3];
+			buf = nboUnpackUByte(buf, reason);
 			buf = nboUnpackVector(buf, pos);
-			dropFlag(t, pos);
+			dropFlag(t, (FlagDropReason)reason, pos);
 			break;
 		}
 

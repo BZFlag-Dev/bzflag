@@ -210,7 +210,7 @@ void					LocalPlayer::doUpdate(float dt)
 		flagShakingTime -= dt;
 		if (flagShakingTime <= 0.0f) {
 			flagShakingTime = 0.0f;
-			ServerLink::getServer()->sendDropFlag(getPosition());
+			ServerLink::getServer()->sendDropFlag(DropReasonTimeout, getPosition());
 		}
 	}
 }
@@ -533,7 +533,7 @@ void					LocalPlayer::doUpdateMotion(float dt)
 				(flagAntidotePos[1] - newPos[1]) *
 				(flagAntidotePos[1] - newPos[1]);
 		if (dist < (getRadius() + FlagRadius) * (getRadius() + FlagRadius))
-			ServerLink::getServer()->sendDropFlag(getPosition());
+			ServerLink::getServer()->sendDropFlag(DropReasonTimeout, getPosition());
 	}
 
 	if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
@@ -1016,7 +1016,7 @@ void					LocalPlayer::changeScore(short deltaWins,
 		flagShakingWins -= deltaWins;
 		if (flagShakingWins <= 0) {
 			flagShakingWins = 0;
-			ServerLink::getServer()->sendDropFlag(getPosition());
+			ServerLink::getServer()->sendDropFlag(DropReasonTimeout, getPosition());
 		}
 	}
 }

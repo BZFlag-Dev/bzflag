@@ -22,6 +22,7 @@
 #include "Address.h"
 #include "Protocol.h"
 #include "ShotPath.h"
+#include "Flag.h"
 
 struct PacketQueue {
 public:
@@ -68,7 +69,7 @@ public:
 	void				sendPlayerUpdate(const Player*);
 	void				sendCaptureFlag(TeamColor);
 	void				sendGrabFlag(int flagIndex);
-	void				sendDropFlag(const float* position);
+	void				sendDropFlag(FlagDropReason reason, const float* position);
 	void				sendKilled(const PlayerId&, int shotId);
 	void				sendBeginShot(const FiringInfo&);
 	void				sendEndShot(const PlayerId&, int shotId, int reason);

@@ -661,10 +661,11 @@ void					ServerLink::sendGrabFlag(int flagIndex)
 	send(MsgGrabFlag, sizeof(msg), msg);
 }
 
-void					ServerLink::sendDropFlag(const float* position)
+void					ServerLink::sendDropFlag(FlagDropReason reason, const float* position)
 {
 	char msg[12];
 	void* buf = msg;
+	buf = nboPackUByte(buf, reason);
 	buf = nboPackVector(buf, position);
 	send(MsgDropFlag, sizeof(msg), msg);
 }

@@ -21,6 +21,15 @@
 #include "global.h"
 #include "Address.h"
 
+enum FlagDropReason {
+						DropReasonTimeout = 0,
+						DropReasonScore,
+						DropReasonCaptured,
+						DropReasonDropped,
+						DropReasonKilled,
+						DropReasonForced
+};
+
 enum FlagStatus {
 						FlagNoExist = 0,
 						FlagOnGround,

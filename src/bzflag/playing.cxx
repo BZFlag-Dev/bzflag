@@ -625,7 +625,7 @@ static BzfString	cmdDrop(const BzfString&,
 		!(flagId == PhantomZoneFlag && myTank->isFlagActive()) &&
 		!(flagId == OscOverthrusterFlag &&
 		myTank->getLocation() == LocalPlayer::InBuilding)) {
-			serverLink->sendDropFlag(myTank->getPosition());
+			serverLink->sendDropFlag(DropReasonDropped, myTank->getPosition());
 			// changed: on windows it may happen the MsgDropFlag
 			// never comes back to us, so we drop it right away
 			handleFlagDropped(myTank);
@@ -1327,7 +1327,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 				// not allowed to grab it if not on the ground
 				if (myTank->getLocation() != LocalPlayer::OnGround &&
 					myTank->getLocation() != LocalPlayer::OnBuilding) {
-					serverLink->sendDropFlag(myTank->getPosition());
+					serverLink->sendDropFlag(DropReasonDropped, myTank->getPosition());
 				}
 				else {
 					// grabbed flag
@@ -1351,8 +1351,10 @@ static void				handleServerMessage(bool human, uint16_t code,
 		}
 
 		case MsgDropFlag: {
+			uint8_t reason;
 			PlayerId id;
 			uint16_t flagIndex;
+			msg = nboUnpackUByte(msg, reason);
 			msg = nboUnpackUByte(msg, id);
 			msg = nboUnpackUShort(msg, flagIndex);
 			msg = world->getFlag(int(flagIndex)).unpack(msg);
@@ -2021,7 +2023,7 @@ static bool				gotBlowedUp(BaseLocalPlayer* tank,
 	const FlagId flag = tank->getFlag();
 	if (flag != NoFlag) {
 		// tell other players I've dropped my flag
-		lookupServer(tank)->sendDropFlag(tank->getPosition());
+		lookupServer(tank)->sendDropFlag(DropReasonKilled, tank->getPosition());
 
 		// drop it
 		handleFlagDropped(tank);
@@ -2946,7 +2948,7 @@ static void				playingLoop()
 				// okay, now we pause.  first drop any team flag we may have.
 				const FlagId flagId = myTank->getFlag();
 				if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
-					serverLink->sendDropFlag(myTank->getPosition());
+					serverLink->sendDropFlag(DropReasonDropped, myTank->getPosition());
 
 				// now actually pause
 				myTank->setPause(true);
