@@ -42,14 +42,14 @@ extern int __beginendCount;
   if (__beginendCount==0) { \
     __beginendCount++;\
   } else {\
-    fprintf(stderr, "ERROR: glBegin called on %s:%d without calling glEnd before\n", __FILE__, __LINE__); \
+    std::cerr << "ERROR: glBegin called on " << __FILE__ << ':' << __LINE__ << " without calling glEnd before\n"; \
     assert(__beginendCount==0 && "glBegin called without glEnd"); \
   } \
   glBegin(_value);\
 }
 #define glEnd(_value) {\
   if (__beginendCount==0) { \
-    fprintf(stderr, "ERROR: glEnd called on %s:%d without calling glBegin before\n", __FILE__, __LINE__); \
+    std::cerr << "ERROR: glEnd called on " << __FILE__ << ':' << __LINE__ << " without calling glBegin before\n"; \
     assert(__beginendCount!=0 && "glEnd called without glBegin"); \
   } else {\
     __beginendCount--;\

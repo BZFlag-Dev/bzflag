@@ -45,7 +45,7 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
     if (!WorldFileObstacle::read(cmd, input))
       return false;
     if(!clOptions->flagsOnBuildings && (pos[2] != 0)) {
-      printf("Dropping team base down to 0 because -fb not set\n");
+      std::cout << "Dropping team base down to 0 because -fb not set\n";
       pos[2] = 0;
     }
   }

@@ -208,7 +208,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
       }
     }
     if (commaCount != 5) {
-      printf("improper player count list\n");
+      std::cout << "improper player count list\n";
       return false;
     }
 
@@ -274,7 +274,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     char *tail;
     long count = strtol(argv, &tail, 10);
     if (argv == tail) {
-      printf("improper player count\n");
+      std::cout << "improper player count\n";
       return false;
     }
     if (count < 1) {
@@ -308,26 +308,28 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 
 void printVersion()
 {
-  printf("BZFlag server %s (protocol %s) http://BZFlag.org/\n",
-      getAppVersion(),
-      getProtocolVersion());
-  printf("%s\n", copyright);
+  std::cout << "BZFlag server " << getAppVersion() << " (protocol " << getProtocolVersion() <<
+  	       ") http://BZFlag.org/\n";
+  std::cout << copyright << std::endl;
 }
 
 void usage(const char *pname)
 {
   printVersion();
-  fprintf(stderr, "\nUsage: %s %s\n", pname, usageString);
+  std::cerr << "\nUsage: " << pname << ' ' << usageString << std::endl;
   exit(1);
 }
 
 void extraUsage(const char *pname)
 {
+  char buffer[64];
   printVersion();
-  printf("\nUsage: %s %s\n", pname, usageString);
-  printf("\n%s\nFlag codes:\n", extraUsageString);
-  for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
-    printf("\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
+  std::cout << "\nUsage: " << pname << ' ' << usageString << std::endl;
+  std::cout << std::endl << extraUsageString << std::endl << "Flag codes:\n";
+  for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
+    sprintf(buffer, "\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
+    std::cout << buffer;
+  }
   exit(0);
 }
 
@@ -342,7 +344,7 @@ char **parseConfFile( const char *file, int &ac)
      confStrm.getline(buffer,1024);
 
      if (!confStrm.good()) {
-       fprintf(stderr, "configuration file not found\n");
+       std::cerr << "configuration file not found\n";
        usage("bzfs");
      }
 
@@ -391,7 +393,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     if (strcmp(argv[i], "-a") == 0) {
       // momentum settings
       if (i + 2 >= argc) {
-	fprintf(stderr, "two arguments expected for \"%s\"\n", argv[i]);
+	std::cerr << "two arguments expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.linearAcceleration = (float)atof(argv[++i]);
@@ -403,7 +405,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.gameStyle |= int(InertiaGameStyle);
     } else if (strcmp(argv[i], "-admsg") == 0) {
        if (++i == argc) {
-	 fprintf(stderr, "argument expected for -admsg\n");
+	 std::cerr << "argument expected for -admsg\n";
 	 usage(argv[0]);
        }
        options.advertisemsg = argv[i];
@@ -414,7 +416,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.randomBoxes = true;
     } else if (strcmp(argv[i], "-badwords") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -badwords\n");
+	std::cerr << "argument expected for -badwords\n";
 	usage(argv[0]);
       }
       else {
@@ -422,20 +424,20 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
     } else if (strcmp(argv[i], "-ban") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -ban\n");
+	std::cerr << "argument expected for -ban\n";
 	usage(argv[0]);
       }
       else
 	options.acl.ban(argv[i]);
     } else if (strcmp(argv[i], "-banfile") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -banfile\n");
+	std::cerr << "argument expected for -banfile\n";
 	usage(argv[0]);
       }
       else {
 	options.acl.setBanFile(argv[i]);
 	if (!options.acl.load()) {
-	  fprintf(stderr, "could not load banfile \"%s\"", argv[i]);
+	  std::cerr << "could not load banfile \"" << argv[i] << "\"\n";
 	  usage(argv[0]);
 	}
       }
@@ -444,8 +446,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.gameStyle |= int(TeamFlagGameStyle);
       if (options.gameStyle & int(RabbitChaseGameStyle)) {
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
-	fprintf(stderr, "Capture the flag assumed\n");
+	std::cerr << "Capture the flag incompatible with Rabbit Chase\n";
+	std::cerr << "Capture the flag assumed\n";
       }
       if (!teamFlagsAdded) {
         for (int t = RedTeam; t <= PurpleTeam; t++)
@@ -454,7 +456,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
     } else if (strcmp(argv[i], "-conf") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "filename expected for -conf\n");
+	std::cerr << "filename expected for -conf\n";
 	usage(argv[0]);
       } else {
 	int ac;
@@ -478,8 +480,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.gameStyle |= int(TeamFlagGameStyle);
       if (options.gameStyle & int(RabbitChaseGameStyle)) {
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
-	fprintf(stderr, "Capture the flag assumed\n");
+	std::cerr << "Capture the flag incompatible with Rabbit Chase\n";
+	std::cerr << "Capture the flag assumed\n";
       }
       if (!teamFlagsAdded) {
         for (int t = RedTeam; t <= PurpleTeam; t++)
@@ -492,7 +494,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       char *scan;
       for (scan = argv[i]+1; *scan == 'd'; scan++) count++;
       if (*scan != '\0') {
-	fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
+	std::cerr << "bad argument \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       debugLevel += count;
@@ -502,13 +504,13 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	i++;
       }
       else {
-	fprintf(stderr, "integer argument expected for -density\n");
+	std::cerr << "integer argument expected for -density\n";
 	usage(argv[0]);
       }
     } else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -f\n");
+	std::cerr << "argument expected for -f\n";
 	usage(argv[0]);
       }
       if (strcmp(argv[i], "bad") == 0) {
@@ -522,7 +524,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       } else {
 	FlagType* fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
-	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
+	  std::cerr << "invalid flag \"" << argv[i] << "\"\n";
 	  usage(argv[0]);
 	}
 	options.flagDisallowed[fDesc] = true;
@@ -530,7 +532,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "+f") == 0) {
       // add required flag
       if (++i == argc) {
-	fprintf(stderr, "argument expected for +f\n");
+	std::cerr << "argument expected for +f\n";
 	usage(argv[0]);
       }
 
@@ -556,7 +558,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       } else {
 	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
-	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
+	  std::cerr << "invalid flag \"" << argv[i] << "\"\n";
 	  usage(argv[0]);
 	} else if (fDesc->flagTeam != NoTeam) {
 	  options.numTeamFlags[fDesc->flagTeam] += rptCnt;
@@ -577,23 +579,23 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.oneGameOnly = true;
     } else if (strcmp(argv[i], "-groupdb") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       groupsFile = argv[i];
-      fprintf(stderr, "using group file  \"%s\"\n", argv[i]);
+      std::cerr << "using group file \"" << argv[i] << "\"\n";
     } else if (strcmp(argv[i], "-h") == 0) {
       options.randomHeights = true;
     } else if (strcmp(argv[i], "-help") == 0) {
       extraUsage(argv[0]);
     } else if (strcmp(argv[i], "-helpmsg") == 0) {
       if (i + 2 >= argc) {
-	fprintf(stderr, "2 arguments expected for -helpmsg\n");
+	std::cerr << "2 arguments expected for -helpmsg\n";
 	usage(argv[0]);
       } else {
 	i++;
 	if (!options.textChunker.parseFile(argv[i], argv[i+1])){
-	  fprintf(stderr,"couldn't read file %s\n",argv[i]);
+	  std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"\n";
 	  usage(argv[0]);
 	}
 	i++;
@@ -601,7 +603,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-i") == 0) {
       // use a different interface
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -i\n");
+	std::cerr << "argument expected for -i\n";
 	usage(argv[0]);
       }
       options.pingInterface = argv[i];
@@ -610,26 +612,26 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.gameStyle |= int(JumpingGameStyle);
     } else if (strcmp(argv[i], "-lagdrop") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.maxlagwarn = atoi(argv[i]);
     } else if (strcmp(argv[i], "-lagwarn") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.lagwarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-maxidle") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.idlekickthresh = (float) atoi(argv[i]);
     } else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -mp\n");
+	std::cerr << "argument expected for -mp\n";
 	usage(argv[0]);
       }
       if (playerCountArg == 0)
@@ -639,45 +641,45 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-mps") == 0) {
       // set maximum player score
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -mps\n");
+	std::cerr << "argument expected for -mps\n";
 	usage(argv[0]);
       }
       options.maxPlayerScore = atoi(argv[i]);
       if (options.maxPlayerScore < 1) {
-	fprintf(stderr, "disabling player score limit\n");
+	std::cerr << "disabling player score limit\n";
 	options.maxPlayerScore = 0;
       }
     } else if (strcmp(argv[i], "-ms") == 0) {
       // set maximum number of shots
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -ms\n");
+	std::cerr << "argument expected for -ms\n";
 	usage(argv[0]);
       }
       int newMaxShots = atoi(argv[i]);
       if (newMaxShots < 1) {
-	fprintf(stderr, "using minimum number of shots of 1\n");
+	std::cerr << "using minimum number of shots of 1\n";
 	options.maxShots = 1;
       }
       else if (newMaxShots > MaxShots) {
-	fprintf(stderr, "using maximum number of shots of %d\n", MaxShots);
+	std::cerr << "using maximum number of shots of " << MaxShots << std::endl;
 	options.maxShots = uint16_t(MaxShots);
       }
       else options.maxShots = uint16_t(newMaxShots);
     } else if (strcmp(argv[i], "-mts") == 0) {
       // set maximum team score
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -mts\n");
+	std::cerr << "argument expected for -mts\n";
 	usage(argv[0]);
       }
       options.maxTeamScore = atoi(argv[i]);
       if (options.maxTeamScore < 1) {
-	fprintf(stderr, "disabling team score limit\n");
+	std::cerr << "disabling team score limit\n";
 	options.maxTeamScore = 0;
       }
     } else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -p\n");
+	std::cerr << "argument expected for -p\n";
 	usage(argv[0]);
       }
       options.wksPort = atoi(argv[i]);
@@ -687,14 +689,14 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	options.useGivenPort = true;
     } else if (strcmp(argv[i], "-passdb") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       passFile = argv[i];
-      fprintf(stderr, "using password file  \"%s\"\n", argv[i]);
+      std::cerr << "using password file \"" << argv[i] << "\"\n";
     } else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       // at least put password someplace that ps won't see
@@ -712,25 +714,25 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 #endif
     } else if (strcmp(argv[i], "-public") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -public\n");
+	std::cerr << "argument expected for -public\n";
 	usage(argv[0]);
       }
       options.publicizeServer = true;
       options.publicizedTitle = argv[i];
       if (options.publicizedTitle.length() > 127) {
 	argv[i][127] = '\0';
-	fprintf(stderr, "description too long... truncated\n");
+	std::cerr << "description too long... truncated\n";
       }
     } else if (strcmp(argv[i], "-publicaddr") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -publicaddr\n");
+	std::cerr << "argument expected for -publicaddr\n";
 	usage(argv[0]);
       }
       options.publicizedAddress = argv[i];
       options.publicizeServer = true;
     } else if (strcmp(argv[i], "-publiclist") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -publiclist\n");
+	std::cerr << "argument expected for -publiclist\n";
 	usage(argv[0]);
       }
       options.listServerURL = argv[i];
@@ -745,8 +747,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.gameStyle |= int(RabbitChaseGameStyle);
       if (options.gameStyle & int(TeamFlagGameStyle)) {
 	options.gameStyle &= ~int(TeamFlagGameStyle);
-	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag\n");
-	fprintf(stderr, "Rabbit Chase assumed\n");
+	std::cerr << "Rabbit Chase incompatible with Capture the flag\n";
+	std::cerr << "Rabbit Chase assumed\n";
       }
       // default selection style
       options.rabbitSelection = ScoreRabbitSelection; 
@@ -767,18 +769,18 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
     } else if (strcmp(argv[i], "-reportfile") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -reportfile\n");
+	std::cerr << "argument expected for -reportfile\n";
 	usage(argv[0]);
       }
       options.reportFile = argv[i];
     } else if (strcmp(argv[i], "-reportpipe") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -reportpipe\n");
+	std::cerr << "argument expected for -reportpipe\n";
 	usage(argv[0]);
       }
       options.reportPipe = argv[i];
     } else if (strcmp(argv[i], "-requireudp") == 0) {
-      fprintf(stderr, "require UDP clients!\n");
+      std::cerr << "require UDP clients!\n";
       options.requireUDP = true;
     } else if (strcmp(argv[i], "+s") == 0) {
       // set required number of random flags
@@ -810,13 +812,13 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-sl") == 0) {
       // add required flag
       if (i +2 >= argc) {
-	fprintf(stderr, "2 arguments expected for -sl\n");
+	std::cerr << "2 arguments expected for -sl\n";
 	usage(argv[0]);
       } else {
 	i++;
 	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
-	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
+	  std::cerr << "invalid flag \"" << argv[i] << "\"\n";
 	  usage(argv[0]);
 	} else {
 	  i++;
@@ -824,11 +826,11 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	  if (isdigit(argv[i][0])){
 	    x = atoi(argv[i]);
 	    if (x < 1){
-	      fprintf(stderr, "can only limit to 1 or more shots\n");
+	      std::cerr << "can only limit to 1 or more shots\n";
 	      usage(argv[0]);
 	    }
 	  } else {
-	    fprintf(stderr, "invalid shot limit \"%s\"\n", argv[i]);
+	    std::cerr << "invalid shot limit \"" << argv[i] << "\"\n";
 	    usage(argv[0]);
 	  }
 	  options.flagLimit[fDesc] = x;
@@ -836,30 +838,30 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
     } else if (strcmp(argv[i], "-speedtol") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       speedTolerance = (float) atof(argv[i]);
-      fprintf(stderr, "using speed autokick tolerance of \"%f\"\n", speedTolerance);
+      std::cerr << "using speed autokick tolerance of \"" << speedTolerance << "\"\n";
     } else if (strcmp(argv[i], "-srvmsg") == 0) {
        if (++i == argc) {
-	 fprintf(stderr, "argument expected for -srvmsg\n");
+	 std::cerr << "argument expected for -srvmsg\n";
 	 usage(argv[0]);
        }
        options.servermsg = argv[i];
     } else if (strcmp(argv[i], "-st") == 0) {
       // set shake timeout
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -st\n");
+	std::cerr << "argument expected for -st\n";
 	usage(argv[0]);
       }
       float timeout = (float)atof(argv[i]);
       if (timeout < 0.1f) {
 	options.shakeTimeout = 1;
-	fprintf(stderr, "using minimum shake timeout of %f\n", 0.1f * (float)options.shakeTimeout);
+	std::cerr << "using minimum shake timeout of " << 0.1f * (float)options.shakeTimeout << std::endl;
       } else if (timeout > 300.0f) {
 	options.shakeTimeout = 3000;
-	fprintf(stderr, "using maximum shake timeout of %f\n", 0.1f * (float)options.shakeTimeout);
+	std::cerr << "using maximum shake timeout of " << 0.1f * (float)options.shakeTimeout << std::endl;
       } else {
 	options.shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
       }
@@ -867,16 +869,16 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-sw") == 0) {
       // set shake win count
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -sw\n");
+	std::cerr << "argument expected for -sw\n";
 	usage(argv[0]);
       }
       int count = atoi(argv[i]);
       if (count < 1) {
 	options.shakeWins = 1;
-	fprintf(stderr, "using minimum shake win count of %d\n", options.shakeWins);
+	std::cerr << "using minimum shake win count of " << options.shakeWins << std::endl;
       } else if (count > 20) {
 	options.shakeWins = 20;
-	fprintf(stderr, "using maximum ttl of %d\n", options.shakeWins);
+	std::cerr << "using maximum ttl of " << options.shakeWins << std::endl;
       } else {
 	options.shakeWins = uint16_t(count);
       }
@@ -888,29 +890,28 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       // allow teleporters
       options.useTeleporters = true;
       if (options.worldFile != NULL)
-	fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
+	std::cerr << "-t is meaningless when using a custom world, ignoring\n";
     } else if (strcmp(argv[i], "-tftimeout") == 0) {
       // use team flag timeout
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -tftimeout\n");
+	std::cerr << "argument expected for -tftimeout\n";
 	usage(argv[0]);
       }
       options.teamFlagTimeout = atoi(argv[i]);
       if (options.teamFlagTimeout < 0)
 	options.teamFlagTimeout = 0;
-      fprintf(stderr, "using team flag timeout of %i seconds\n",
-	      options.teamFlagTimeout);
+      std::cerr << "using team flag timeout of " << options.teamFlagTimeout << " seconds\n";
 #ifdef TIMELIMIT
     } else if (strcmp(argv[i], "-time") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -time\n");
+	std::cerr << "argument expected for -time\n";
 	usage(argv[0]);
       }
       options.timeLimit = (float)atof(argv[i]);
       if (options.timeLimit <= 0.0f) {
 	options.timeLimit = 300.0f;
       }
-      fprintf(stderr, "using time limit of %i seconds\n", (int)options.timeLimit);
+      std::cerr << "using time limit of " << (int)options.timeLimit << " seconds\n";
       options.timeElapsed = options.timeLimit;
     } else if (strcmp(argv[i], "-timemanual") == 0) {
       options.timeManualStart = true;
@@ -920,83 +921,83 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.teamKillerDies = false;
     } else if (strcmp(argv[i], "-tkkr") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for -tkkr");
+	std::cerr << "argument expected for -tkkr";
 	usage(argv[0]);
       }
       options.teamKillerKickRatio = atoi(argv[i]);
       if (options.teamKillerKickRatio < 0) {
 	 options.teamKillerKickRatio = 0;
-	 fprintf(stderr, "disabling team killer kick ratio");
+	 std::cerr << "disabling team killer kick ratio";
       }
     } else if (strcmp(argv[i], "-userdb") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       userDatabaseFile = argv[i];
-      fprintf(stderr, "using userDB file  \"%s\"\n", argv[i]);
+      std::cerr << "using userDB file \"" << argv[i] << "\"\n";
     } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
       printVersion();
       exit(0);
     } else if (strcmp(argv[i], "-vars") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.bzdbVars = argv[i];
     } else if (strcmp(argv[i], "-vetoTime") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.vetoTime = (unsigned short int)atoi(argv[i]);
     } else if (strncmp(argv[i], "-votePercentage", 15) == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.votePercentage = (float)atof(argv[i]);
     } else if (strncmp(argv[i], "-voteRepeatTime", 15) == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.voteRepeatTime = (unsigned short int)atoi(argv[i]);
     } else if (strncmp(argv[i], "-votesRequired", 15) == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.votesRequired = (unsigned short int)atoi(argv[i]);
     } else if (strncmp(argv[i], "-voteTime", 9) == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       options.voteTime = (unsigned short int)atoi(argv[i]);
     } else if (strcmp(argv[i], "-world") == 0) {
        if (++i == argc) {
-	 fprintf(stderr, "argument expected for -world\n");
+	 std::cerr << "argument expected for -world\n";
 	 usage(argv[0]);
        }
        options.worldFile = argv[i];
        if (options.useTeleporters)
-	 fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
+	 std::cerr << "-t is meaningless when using a custom world, ignoring\n";
     } else if (strcmp(argv[i], "-worldsize") == 0) {
       if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	std::cerr << "argument expected for \"" << argv[i] << "\"\n";
 	usage(argv[0]);
       }
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d",atoi(argv[i])*2));
-      fprintf(stderr, "using world size of \"%f\"\n", BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
+      std::cerr << "using world size of \"" << BZDB.eval(StateDatabase::BZDB_WORLDSIZE) << "\"\n";
     } else {
-      fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
+      std::cerr << "bad argument \"" << argv[i] << "\"\n";
       usage(argv[0]);
     }
   }
 
   if (options.flagsOnBuildings && !(options.gameStyle & JumpingGameStyle)) {
-    fprintf(stderr, "flags on boxes requires jumping\n");
+    std::cerr << "flags on boxes requires jumping\n";
     usage(argv[0]);
   }
 
@@ -1163,27 +1164,25 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   }
 
   // debugging
-  if (debugLevel >= 1) {
-    // print style
-    fprintf(stderr, "style: %x\n", options.gameStyle);
-    if (options.gameStyle & int(TeamFlagGameStyle))
-      fprintf(stderr, "  capture the flag\n");
-    if (options.gameStyle & int(RabbitChaseGameStyle))
-      fprintf(stderr, "  rabbit chase\n");
-    if (options.gameStyle & int(SuperFlagGameStyle))
-      fprintf(stderr, "  super flags allowed\n");
-    if (options.gameStyle & int(JumpingGameStyle))
-      fprintf(stderr, "  jumping allowed\n");
-    if (options.gameStyle & int(InertiaGameStyle))
-      fprintf(stderr, "  inertia: %f, %f\n", options.linearAcceleration, options.angularAcceleration);
-    if (options.gameStyle & int(RicochetGameStyle))
-      fprintf(stderr, "  all shots ricochet\n");
-    if (options.gameStyle & int(ShakableGameStyle))
-      fprintf(stderr, "  shakable bad flags: timeout=%f, wins=%i\n",
+  // print style
+  DEBUG1("style: %x\n", options.gameStyle);
+  if (options.gameStyle & int(TeamFlagGameStyle))
+    DEBUG1("  capture the flag\n");
+  if (options.gameStyle & int(RabbitChaseGameStyle))
+    DEBUG1("  rabbit chase\n");
+  if (options.gameStyle & int(SuperFlagGameStyle))
+    DEBUG1("  super flags allowed\n");
+  if (options.gameStyle & int(JumpingGameStyle))
+    DEBUG1("  jumping allowed\n");
+  if (options.gameStyle & int(InertiaGameStyle))
+    DEBUG1("  inertia: %f, %f\n", options.linearAcceleration, options.angularAcceleration);
+  if (options.gameStyle & int(RicochetGameStyle))
+    DEBUG1("  all shots ricochet\n");
+  if (options.gameStyle & int(ShakableGameStyle))
+    DEBUG1("  shakable bad flags: timeout=%f, wins=%i\n",
 	  0.1f * float(options.shakeTimeout), options.shakeWins);
-    if (options.gameStyle & int(AntidoteGameStyle))
-      fprintf(stderr, "  antidote flags\n");
-  }
+  if (options.gameStyle & int(AntidoteGameStyle))
+    DEBUG1("  antidote flags\n");
 }
 
 

@@ -82,8 +82,7 @@ ControlPanel::~ControlPanel()
   extern bool echoToConsole;
   extern bool echoAnsi;
   if (echoToConsole && echoAnsi) {
-    fprintf(stdout, ColorStrings[FinalResetColor]);
-    fflush(stdout);
+    std::cout << ColorStrings[FinalResetColor] << std::flush;
   }
 }
 
@@ -415,13 +414,13 @@ void			ControlPanel::addMessage(const std::string& line)
   extern bool echoAnsi;
   if (echoToConsole) {
     if (echoAnsi) {
-      fprintf(stdout, "%s%s\n", line.c_str(), ColorStrings[ResetColor]);
+      std::cout << line << ColorStrings[ResetColor] << std::endl;
     } else {
       char *tmpstr;
 
       tmpstr = strdup(line.c_str());
       OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
-      fprintf(stdout, "%s\n", tmpstr);
+      std::cout << tmpstr << std::endl;
       delete [] tmpstr;
     }
     fflush(stdout);

@@ -2931,14 +2931,14 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   // sanity check
   if (i < 0) {
     printError(string_util::format("Invalid player identification (%d)", i));
-    fprintf(stderr, "WARNING: invalid player identification when adding player (id is %d)\n", i);
+    std::cerr << "WARNING: invalid player identification when adding player with id " << i << std::endl;
     return NULL;
   }
 
   if (player[i]) {
     // we're not in synch with server -> help!  not a good sign, but not fatal.
     printError("Server error when adding player, player already added");
-    fprintf(stderr, "WARNING: player already exists at location with id %d\n", i);
+    std::cerr << "WARNING: player already exists at location with id " << i << std::endl;
     return NULL;
   }
 
@@ -3084,17 +3084,18 @@ static void		handleServerMessage(bool human, uint16_t code,
       tmpbuf = nboUnpackUShort(tmpbuf, tks);
       tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
       tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
-      fprintf(stderr, "id %d:%u:%s %d:%u:%s\n",
-	      id.port,
-	      id.number,
-	      callsign,
-	      robots[i]->getId().port,
-	      robots[i]->getId().number,
-	      robots[i]->getCallSign());
+      std::cerr << "id " << id.port << ':' <<
+      			    id.number << ':' <<
+			    callsign << ' ' <<
+			    robots[i]->getId().port << ':' <<
+			    robots[i]->getId().number << ':' <<
+			    robots[i]->getCallsign() << std::endl;
       if (strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
 	// check for real robot id
-	fprintf(stderr, "id test %p %p %p %8.8x %8.8x\n",
+	char buffer[100];
+	snprintf(buffer, 100, "id test %p %p %p %8.8x %8.8x\n",
 		robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
+	std::cerr << buffer;
 	if (tmpbuf < (char *)msg + len) {
 	  PlayerId id;
 	  tmpbuf = nboUnpackUByte(tmpbuf, id);
@@ -3107,7 +3108,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 #endif
     if (id == myTank->getId()) {
-      fprintf(stderr, "WARNING: found my own id in MsgAddPlayer packet\n");
+      std::cerr << "WARNING: found my own id in MsgAddPlayer packet\n";
       break;		// that's odd -- it's me!
     }
     addPlayer(id, msg, true);

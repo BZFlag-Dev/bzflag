@@ -1190,7 +1190,7 @@ static bool readWorldStream(std::istream& input, const char *location, std::vect
     // watch out for starting a new object when one is already in progress
     if (newObject) {
       if (object) {
-	printf("%s(%d) : discarding incomplete object\n", location, line);
+	std::cout << location << '(' << line << ") : discarding incomplete object\n";
 	delete object;
       }
       object = newObject;
@@ -1213,7 +1213,7 @@ static bool readWorldStream(std::istream& input, const char *location, std::vect
 	object = NULL;
       }
       else {
-	printf("%s(%d) : unexpected \"end\" token\n", location, line);
+	std::cout << location << '(' << line << ") : unexpected \"end\" token\n";
 	return false;
       }
     }
@@ -1245,14 +1245,14 @@ static bool readWorldStream(std::istream& input, const char *location, std::vect
     else if (object) {
       if (!object->read(buffer, input)) {
 	// unknown token
-	printf("%s(%d) : unknown object parameter \"%s\"-skipping\n", location, line, buffer);
+	std::cout << location << '(' << line << ") : unknown object parameter \"" << buffer << "\" - skipping\n";
 	//delete object;
 	//return false;
       }
     }
     else {// filling the current object
       // unknown token
-      printf("%s(%d) : invalid object type \"%s\"-skipping\n", location, line, buffer);
+      std::cout << location << '(' << line << ") : invalid object type \"" << buffer << "\" - skipping\n";
       delete object;
      // return false;
     }
@@ -1265,7 +1265,7 @@ static bool readWorldStream(std::istream& input, const char *location, std::vect
   }
 
   if (object) {
-    printf("%s(%d) : missing \"end\" token\n", location, line);
+    std::cout << location << '(' << line << ") : missing \"end\" token\n";
     delete object;
     return false;
   }
@@ -1284,7 +1284,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
 #endif
 
   if (!input) {
-    printf("could not find bzflag world file : %s\n", filename);
+    std::cout << "could not find bzflag world file : " << filename << std::endl;
     return NULL;
   }
 
@@ -1317,7 +1317,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   if (clOptions->gameStyle & TeamFlagGameStyle) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
       if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
-	printf("base was not defined for team %i capture the flag game style removed.\n", i);
+	std::cout << "base was not defined for team " << i << ", capture the flag game style removed.\n";
 	clOptions->gameStyle &= (~TeamFlagGameStyle);
 	break;
       }
@@ -1452,7 +1452,7 @@ static WorldInfo *defineTeamWorld()
       const bool redGreen = haveRed || haveGreen;
       const bool bluePurple = haveBlue || havePurple;
       if (!redGreen && !bluePurple) {
-	fprintf(stderr, "need some teams, use -mp");
+	std::cerr << "need some teams, use -mp\n";
 	exit(20);
       }
       const float *redPosition = bases[RedTeam].getBasePosition(0);
@@ -1969,16 +1969,18 @@ static void dumpScore()
     return;
 #ifdef TIMELIMIT
   if (clOptions->timeLimit > 0.0f)
-    printf("#time %f\n", clOptions->timeLimit - clOptions->timeElapsed);
+    std::cout << "#time " << clOptions->timeLimit - clOptions->timeElapsed << std::endl;
 #endif
-  printf("#teams");
+  std::cout << "#teams";
   for (i = int(RedTeam); i < NumTeams; i++)
-    printf(" %d-%d %s", team[i].team.won, team[i].team.lost, Team::getName(TeamColor(i)));
-  printf("\n#players\n");
+    std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' <<
+    	         Team::getName(TeamColor(i));
+  std::cout << "\n#players\n";
   for (i = 0; i < curMaxPlayers; i++)
     if (player[i].state > PlayerInLimbo)
-      printf("%d-%d %s\n", player[i].wins, player[i].losses, player[i].callSign);
-  printf("#end\n");
+      std::cout << player[i].wins << '-' << player[i].losses << ' ' <<
+      		   player[i].callSign << std::endl;
+  std::cout << "#end\n";
 }
 #endif
 
@@ -4492,17 +4494,15 @@ int main(int argc, char **argv)
 
   // check time bomb
   if (timeBombBoom()) {
-    fprintf(stderr, "This release expired on %s.\n", timeBombString());
-    fprintf(stderr, "Please upgrade to the latest release.\n");
+    std::cerr << "This release expired on " << timeBombString() << ".\n";
+    std::cerr << "Please upgrade to the latest release.\n";
     exit(0);
   }
 
   // print expiration date
   if (timeBombString()) {
-    char bombMessage[80];
-    fprintf(stderr, "This release will expire on %s.\n", timeBombString());
-    sprintf(bombMessage, "Version %s", getAppVersion());
-    fprintf(stderr, "%s\n", bombMessage);
+    std::cerr << "This release will expire on " << timeBombString() << ".\n";
+    std::cerr << "Version " << getAppVersion() << std::endl;
   }
 
   // trap some signals
@@ -4666,7 +4666,7 @@ int main(int argc, char **argv)
 #if defined(_WIN32)
     WSACleanup();
 #endif /* defined(_WIN32) */
-    fprintf(stderr, "Something failed\n");
+    std::cerr << "Something failed\n";
     return 1;
   }
 
@@ -5223,10 +5223,10 @@ int main(int argc, char **argv)
 	      char message[MessageLen];
 	      sprintf(message,"Your end is not using UDP, turn on udp");
 	      sendMessage(ServerPlayer, i, message, true);
-	  
+
 	      sprintf(message,"upgrade your client http://BZFlag.org/ or");
 	      sendMessage(ServerPlayer, i, message, true);
-	  
+
 	      sprintf(message,"Try another server, Bye!");
 	      sendMessage(ServerPlayer, i, message, true);
 	      removePlayer(i, "no UDP");

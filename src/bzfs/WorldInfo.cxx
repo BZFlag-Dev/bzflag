@@ -161,7 +161,6 @@ void WorldInfo::addLink(int from, int to)
   // silently discard links from teleporters that don't exist
   if (from <= numTeleporters * 2 + 1) {
     teleporters[from / 2].to[from % 2] = to;
-    //printf("addlink %d %d\n",from,to);
   }
 }
 

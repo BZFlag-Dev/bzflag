@@ -359,9 +359,6 @@ void handleBanCmd(int t, const char *message)
   std::string msg = message;
   std::vector<std::string> argv = string_util::tokenize( msg, " \t", 4 );
 
-  //    for(int i = 0; i < argc; i++)
-  //      printf("argv[%d] = %s\n", i, argv[i] );
-
   if( argv.size() < 2 ){
     strcpy(reply, "Syntax: /ban <ip> [duration] [reason]");
     sendMessage(ServerPlayer, t, reply, true);

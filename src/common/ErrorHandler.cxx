@@ -46,7 +46,7 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 #if defined(_WIN32)
   else { OutputDebugString(msg.c_str()); OutputDebugString("\n"); }
 #else
-  else fprintf(stderr, "%s\n", msg.c_str());
+  else std::cerr << msg << std::endl;
 #endif
 }
 
