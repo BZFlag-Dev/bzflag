@@ -13,6 +13,12 @@ must fix for 1.10.4 patch release
 recent bugs
 ------------
 
+- On a multihead Linux system with Xinerama, BZFlag spans itself across all
+  monitors- usually not what the user wants. This could be fixed by implementing
+  Xinerama support in BZFlag's X platform code, or by just implementing an SDL
+  platform. SDL already has good Xinerama support, and would vastly simplify
+  the platform code if it replaced the other platforms.
+
 - the aggressive filter will occasionally encounter a false-positive match
   due to apostrophe's -- need to take then into consideration.  need a
   a better way to handle localized pre/suffix matching too as a handful
