@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- sometimes players will recieve the message "So-and-so destroyed by server"
+  instead of "So-and-so killed by such-and-such".  Appears to depend on
+  So-and-so's player slot.
+
 - Too many flags caused "drop, unresponsive with 16687 bytes queued"
   (+f good{40} was the breaking point, linux, local bzfs server)
   admittedly, an unreasonable number of flags
@@ -30,10 +34,6 @@ recent bugs
   move the window to a secondary monitor, you cannot control the
   brightness of the (SDL) window since it presently modifying the
   gamma of the display that started it.
-
-- sometimes players will recieve the message "So-and-so destroyed by server"
-  instead of "So-and-so killed by such-and-such".  Appears to depend on
-  So-and-so's player slot.
 
 - /poll kick sometimes(?) crashes the server
 
