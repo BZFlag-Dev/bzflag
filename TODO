@@ -11,7 +11,7 @@ THESE ARE LOWER PRIORITY
 * look closely at how local and global logins / groups interact:
   - add option for non-public servers to use global logins? (match servers)
   - add option for public-servers to not use global logins?
-    (if no passwd, then they only use global logins ie: no /register)
+    (if no passdb, then they only use global logins ie: no /register)
 
 * add SPAWN permission which EVERYONE has by default
 
