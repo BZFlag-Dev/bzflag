@@ -10,17 +10,47 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <string.h>
 #include "common.h"
+
+// system headers
+#include <string.h>
+#include <stdlib.h>
+
+// implementation header
+#include "ZSceneDatabase.h"
+
+// common headers
 #include "SceneNode.h"
 #include "WallSceneNode.h"
-#include "ZSceneDatabase.h"
 #include "SphereSceneNode.h"
-#include "Octree.h"
-#include "StateDatabase.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 #include "TimeKeeper.h"
 #include "Intersect.h"
+
+// local headers
+#include "Octree.h"
+
+
+// utility function
+static int compareZExtents(const void* a, const void* b)
+{
+  const SceneNode* nodeA = *((const SceneNode**)a);
+  const SceneNode* nodeB = *((const SceneNode**)b);
+  // FIXME: getExtents() really needs fixing, this is stupid
+  float dummy[3], maxsA[3], maxsB[3];
+  nodeA->getExtents(dummy, maxsA);
+  nodeB->getExtents(dummy, maxsB);
+  if (maxsA[2] > maxsB[2]) {
+    return +1;
+  }
+  else if (maxsB[2] > maxsA[2]) {
+    return -1;
+  }
+  else {
+    return 0;
+  }
+}
 
 
 ZSceneDatabase::ZSceneDatabase()
@@ -159,14 +189,19 @@ void ZSceneDatabase::makeCuller()
 
   TimeKeeper startTime = TimeKeeper::getCurrent();
 
+  // sorted from lowest to highest
+  qsort(staticList, staticCount, sizeof(SceneNode*), compareZExtents);
+
+  // make the tree
   octree->addNodes (staticList, staticCount, cullDepth, cullElements);
 
   float elapsed = TimeKeeper::getCurrent() - startTime;
-  DEBUG2 ("Octree processed in %.3f seconds.\n", elapsed);
+  DEBUG2 ("SceneNode Octree processed in %.3f seconds.\n", elapsed);
 
   if (culledList != staticList) {
     delete culledList;
   }
+  
   // make scratch pad for the culler
   culledList = new SceneNode*[staticCount];
 }
@@ -208,6 +243,8 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
   for (i = 0; i < culledCount; i++) {
     SceneNode* node = culledList[i];
     node->addShadowNodes(renderer);
+
+    // clear the state
     node->octreeState = SceneNode::OctreeCulled;
   }
 
@@ -229,6 +266,11 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
   if (octree) {
     const Frustum* f = (const Frustum *) &vf;
     culledCount = octree->getRadarList (culledList, staticCount, f);
+
+    // FIXME: this helps the look of things, but it takes too much time
+    if (BZDB.isTrue("textureRadarSort")) {
+      qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
+    }
   }
   
   // if the node has a plane, see that it isn't downwards
@@ -248,6 +290,8 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
         rnode->renderShadow();
       }
     }
+
+    // clear the state
     snode->octreeState = SceneNode::OctreeCulled;
   }
   return;

@@ -69,6 +69,7 @@ class CollisionManager {
     bool needReload() const;	 // octree parameter has changed
     int getObstacleCount() const;    // total number of obstacles
     float getMaxWorldHeight() const; // maximum Z level in the world
+    const float* getWorldExtents() const; // 3 mins, then 3 maxs
 
 
     // test against an axis aligned bounding box
@@ -103,11 +104,10 @@ class CollisionManager {
 
     class ColDetNode* root;   // the root of the octree
 
-    float mins[3];
-    float maxs[3];
-
+    float mins[3]; // grid extents
+    float maxs[3]; // grid extents
+    float worldExtents[6];
     float WorldSize;
-    float MaxHeight;
 };
 
 extern CollisionManager COLLISIONMGR;
@@ -185,7 +185,7 @@ inline int CollisionManager::getObstacleCount() const
 
 inline float CollisionManager::getMaxWorldHeight() const
 {
-  return MaxHeight;
+  return worldExtents[5];
 }
 
 

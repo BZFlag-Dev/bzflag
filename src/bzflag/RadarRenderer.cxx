@@ -581,6 +581,9 @@ void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
   //       - also add a renderShadow() member (they don't need sorting,
   //         and if you don't have double-buffering, you shouldn't be
   //         using shadows)
+  //       - vertex shaders would be faster
+  //       - it would probably be a better approach to attach a radar
+  //         rendering object to each obstacle... no time
 
   // draw the walls normally
   if (smoothingOn) {

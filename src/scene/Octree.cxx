@@ -12,12 +12,18 @@
 
 #include "common.h"
 
+// system headers
 #include <math.h>
-#include <stdlib.h>
 
+// implementation header
 #include "Octree.h"
-#include "Intersect.h"
+
+// local headers
 #include "Occluder.h"
+
+// common headers
+#include "Intersect.h"
+
 
 static const int fullListBreak = 3; // FIXME
 static const float testFudge = 0.1f;
@@ -69,26 +75,6 @@ inline static void squeezeChildren (OctreeNode** children)
     }
   }
   return;
-}
-
-
-static int compareZExtents(const void* a, const void* b)
-{
-  const SceneNode* nodeA = *((const SceneNode**)a);
-  const SceneNode* nodeB = *((const SceneNode**)b);
-  // FIXME: getExtents() really needs fixing, this is stupid
-  float dummy[3], maxsA[3], maxsB[3];
-  nodeA->getExtents(dummy, maxsA);
-  nodeB->getExtents(dummy, maxsB);
-  if (maxsA[2] > maxsB[2]) {
-    return +1;
-  }
-  else if (maxsB[2] > maxsA[2]) {
-    return -1;
-  }
-  else {
-    return 0;
-  }
 }
 
 
@@ -151,9 +137,6 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
   float maxs[3]; // maximum extents
 
   getExtents (mins, maxs, list, listSize);
-
-  // sorted from lowest to highest
-  qsort(CullList, CullListCount, sizeof(SceneNode*), compareZExtents);
 
   // making babies
   root = new OctreeNode(0, mins, maxs, list, listSize);
@@ -227,9 +210,6 @@ int Octree::getRadarList (SceneNode** list, int listSize,
   // get the nodes
   root->getRadarList();
   
-  // FIXME: this is the proper way to do it, but it takes too much time
-  //qsort(CullList, CullListCount, sizeof(SceneNode*), compareZExtents);
-
   return CullListCount;
 }
 

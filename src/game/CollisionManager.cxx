@@ -147,7 +147,6 @@ void CollisionManager::clear ()
   root = NULL;
 
   WorldSize = 0.0f;
-  MaxHeight = 0.0f;
 
   leafNodes = 0;
   totalNodes = 0;
@@ -393,9 +392,12 @@ void CollisionManager::load ()
 
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
   for (int i = 0; i < 3; i++) {
-    DEBUG2 ("  extent[%i] = %f, %f\n", i, mins[i], maxs[i]);
+    DEBUG2 ("  grid extent[%i] = %f, %f\n", i, mins[i], maxs[i]);
   }
-  DEBUG2 ("  maxHeight = %f\n", MaxHeight);
+  for (int i = 0; i < 3; i++) {
+    DEBUG2 ("  world extent[%i] = %f, %f\n", i,
+            worldExtents[i], worldExtents[i+3]);
+  }
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);
   DEBUG2 ("ColDet Octree total elements = %i\n", totalElements);
@@ -444,8 +446,9 @@ void CollisionManager::setExtents (ObsList *list)
     }
   }
 
-  // set the max height
-  MaxHeight = maxs[2];
+  // record the world extents
+  memcpy(worldExtents, mins, sizeof(float[3]));
+  memcpy(worldExtents + 3, maxs, sizeof(float[3]));
 
   // find the longest axis
   float width = -MAXFLOAT;
