@@ -99,23 +99,15 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   /* use pointer initialization to perform precomputation and
    * prestorage. eventually should move this data into constructor.
    */
-  resize(); // need resize to set up font and window dimensions
   if (tabs == NULL) {
     tabs = new std::vector<const char *>;
     tabs->push_back("All");
     tabs->push_back("Chat");
     tabs->push_back("Server");
     tabs->push_back("Misc");
-
-    // precompute tab widths once
-    FontManager &fm = FontManager::instance();
-    const float charWidth = fm.getStrLength(fontFace, fontSize, "-");
-    for (unsigned int tab = 0; tab < tabs->size(); tab++) {
-      // add space for about 2-chars on each side for padding
-      tabTextWidth.push_back(fm.getStrLength(fontFace, fontSize, (*tabs)[tab]) + (4.0f * charWidth));
-      totalTabWidth += long(tabTextWidth[tab]);
-    }
   }
+
+  resize(); // need resize to set up font and window dimensions
 }
 
 ControlPanel::~ControlPanel()
@@ -537,11 +529,24 @@ void			ControlPanel::resize()
     fontSize = 16;
     break;
   }
+
   FontManager &fm = FontManager::instance();
   fontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
   // rebuild font gstates
   fm.rebuild();
+
+  // tab widths may have changed
+  if (tabs) {
+    tabTextWidth.clear();
+    totalTabWidth = 0;
+    const float charWidth = fm.getStrLength(fontFace, fontSize, "-");
+    for (unsigned int tab = 0; tab < tabs->size(); tab++) {
+      // add space for about 2-chars on each side for padding
+      tabTextWidth.push_back(fm.getStrLength(fontFace, fontSize, (*tabs)[tab]) + (4.0f * charWidth));
+      totalTabWidth += long(tabTextWidth[tab]);
+    }
+  }
 
   maxLines = int(messageAreaPixels[3] / fm.getStrHeight(fontFace, fontSize, " "));
 
