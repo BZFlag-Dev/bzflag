@@ -562,7 +562,9 @@ and
 .IR F10
 keys change the camera's focal lengths, giving a zoom effect. The
 .IR F11
-key will reset the zoom. 
+key will reset the zoom. Pressing
+.IR l
+lets you toggle the display of tank labels.
 .PP
 Repeatedly pressing
 .IR F8
