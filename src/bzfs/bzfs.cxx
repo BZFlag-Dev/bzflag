@@ -4450,6 +4450,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].accessInfo.verified = false;
   player[playerIndex].accessInfo.loginTime = TimeKeeper::getCurrent();
   player[playerIndex].accessInfo.loginAttempts = 0;
+  player[playerIndex].accessInfo.groups.clear();
   player[playerIndex].accessInfo.groups.push_back("DEFAULT");
 
   player[playerIndex].lastRecvPacketNo = 0;
@@ -4797,6 +4798,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
   if (player[playerIndex].dqueue)
     disqueuePacket(playerIndex, RECEIVE, 65536);
 
+  player[playerIndex].accessInfo.groups.clear();
   player[playerIndex].accessInfo.verified = false;
   player[playerIndex].accessInfo.loginAttempts = 0;
   player[playerIndex].regName.empty();
