@@ -3,31 +3,56 @@ SUBDIRS = l10n
 EXTRA_DIST = \
 	bbolt.png	\
 	blaser.png	\
-	btbolt.png	\
+	boom.wav	\
 	boxwall.png	\
+	btbolt.png	\
 	caution.png	\
 	clouds.png	\
 	explode1.png	\
+	explosion.wav	\
+	fire.wav	\
 	fixedbr.png	\
 	fixedmr.png	\
 	flag.png	\
-	flage.png	\
+	flag_alert.wav	\
+	flag_drop.wav	\
+	flag_grab.wav	\
+	flag_lost.wav	\
+	flag_won.wav	\
 	gbolt.png	\
 	glaser.png	\
 	ground.png	\
 	gtbolt.png	\
 	helvbi.png	\
 	helvbr.png	\
+	hunt.wav	\
+	hunt_select.wav	\
+	jump.wav	\
+	killteam.wav	\
+	land.wav	\
+	laser.wav	\
+	lock.wav	\
 	missile.png	\
-	mountain.png	\
+	missile.wav	\
+	mountain1.png	\
+	mountain2.png	\
+	mountain3.png	\
 	pbolt.png	\
+	phantom.wav	\
 	plaser.png	\
+	pop.wav		\
 	ptbolt.png	\
 	pyrwall.png	\
 	rbolt.png	\
+	ricochet.wav	\
 	rlaser.png	\
-	rtbolt.png	\
 	roof.png	\
+	rtbolt.png	\
+	shock.wav	\
+	steamroller.wav	\
+	tank.png	\
+	teamgrab.wav	\
+	teleport.wav	\
 	thief.png	\
 	timesbi.png	\
 	timesbr.png	\
@@ -38,30 +63,7 @@ EXTRA_DIST = \
 	wtbolt.png	\
 	ybolt.png	\
 	ylaser.png	\
-	ytbolt.png	\
-	boom.wav	\
-	explosion.wav	\
-	fire.wav	\
-	flag_alert.wav	\
-	flag_drop.wav	\
-	flag_grab.wav	\
-	flag_lost.wav	\
-	flag_won.wav	\
-	hunt.wav	\
-	hunt_select.wav	\
-	jump.wav	\
-	killteam.wav	\
-	land.wav	\
-	laser.wav	\
-	lock.wav	\
-	missile.wav	\
-	phantom.wav	\
-	pop.wav		\
-	ricochet.wav	\
-	shock.wav	\
-	steamroller.wav	\
-	teamgrab.wav	\
-	teleport.wav
+	ytbolt.png
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
