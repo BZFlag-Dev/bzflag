@@ -189,6 +189,7 @@ LDADD =	\
 	../mediafile/libMediaFile.a	\
 	$(REGEX)			\
 	$(ZLIB)				\
+	$(KRB5_LIBS)			\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
 	$(CURL_LIBS)			\

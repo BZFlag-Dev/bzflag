@@ -109,6 +109,6 @@ LDADD = \
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
-	$(REGEX) $(ZLIB) $(CURL_LIBS)
+	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS)
 
 bzfs_LDFLAGS = ../date/buildDate.o
