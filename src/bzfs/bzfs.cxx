@@ -42,6 +42,8 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers];
+// Last known position, vel, etc
+PlayerState lastState[MaxPlayers];
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -1644,6 +1646,7 @@ static void acceptClient()
 
   // FIXME add new client server welcome packet here when client code is ready
   player[playerIndex].initPlayer(clientAddr, fd);
+  lastState[playerIndex].order = 0;
 
 #ifdef HAVE_ADNS_H
   // launch the asynchronous query to look up this hostname
@@ -2412,7 +2415,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       // do not simply zap team flag
       Flag &carriedflag = flag[flagid].flag;
       if (carriedflag.type->flagTeam != ::NoTeam) {
-	dropFlag(playerIndex, player[playerIndex].lastState.pos);
+	dropFlag(playerIndex, lastState[playerIndex].pos);
       }
       else {
 	zapFlag(flagid);
@@ -2507,14 +2510,14 @@ static float enemyProximityCheck(TeamColor team, float *pos, float &enemyAngle)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isAlive() && areFoes(player[i].getTeam(), team)) {
-      float *enemyPos = player[i].lastState.pos;
+      float *enemyPos = lastState[i].pos;
       if (fabs(enemyPos[2] - pos[2]) < 1.0f) {
         float x = enemyPos[0] - pos[0];
         float y = enemyPos[1] - pos[1];
         float distSq = x * x + y * y;
         if (distSq < worstDist) {
           worstDist = distSq;
-	  enemyAngle = player[i].lastState.azimuth;
+	  enemyAngle = lastState[i].azimuth;
 	}
       }
     }
@@ -2741,9 +2744,9 @@ static void playerAlive(int playerIndex)
   float pos[3], fwd;
   getSpawnLocation(playerIndex, pos, &fwd);
   // update last position immediately
-  player[playerIndex].lastState.pos[0] = pos[0];
-  player[playerIndex].lastState.pos[1] = pos[1];
-  player[playerIndex].lastState.pos[2] = pos[2];
+  lastState[playerIndex].pos[0] = pos[0];
+  lastState[playerIndex].pos[1] = pos[1];
+  lastState[playerIndex].pos[2] = pos[2];
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackVector(buf,pos);
@@ -2923,7 +2926,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
   const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius + BZDBCache::flagRadius);
-  const float* tpos = player[playerIndex].lastState.pos;
+  const float* tpos = lastState[playerIndex].pos;
   const float* fpos = flag[flagIndex].flag.position;
   const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
@@ -3205,8 +3208,10 @@ static void shotFired(int playerIndex, void *buf, int len)
 	   playerIndex, firingInfo.flagType->flagAbbv,
 	   flag[shooter.getFlag()].flag.type->flagAbbv);
     firingInfo.flagType = Flags::Null;
-    firingInfo.shot.vel[0] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * cos(shooter.lastState.azimuth);
-    firingInfo.shot.vel[1] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * sin(shooter.lastState.azimuth);
+    firingInfo.shot.vel[0] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED)
+      * cos(lastState[playerIndex].azimuth);
+    firingInfo.shot.vel[1] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED)
+      * sin(lastState[playerIndex].azimuth);
     firingInfo.shot.vel[2] = 0.0f;
   }
 
@@ -3236,7 +3241,8 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
   else {
       //If shot is different height than player, can't be sure they didn't drop V in air
-      if (shooter.lastState.pos[2] != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
+      if (lastState[playerIndex].pos[2]
+	  != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
 	tankSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   }
 
@@ -3260,9 +3266,9 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify position
-  float dx = shooter.lastState.pos[0] - shot.pos[0];
-  float dy = shooter.lastState.pos[1] - shot.pos[1];
-  float dz = shooter.lastState.pos[2] - shot.pos[2];
+  float dx = lastState[playerIndex].pos[0] - shot.pos[0];
+  float dy = lastState[playerIndex].pos[1] - shot.pos[1];
+  float dz = lastState[playerIndex].pos[2] - shot.pos[2];
 
   float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
   if (firingInfo.flagType == Flags::Obesity)
@@ -3274,8 +3280,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
 	    shooter.getCallSign(), playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
-	    shooter.lastState.pos[0], shooter.lastState.pos[1],
-	    shooter.lastState.pos[2], sqrt(delta));
+	    lastState[playerIndex].pos[0], lastState[playerIndex].pos[1],
+	    lastState[playerIndex].pos[2], sqrt(delta));
     return;
   }
 
@@ -3307,7 +3313,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	  // also handle case where limit was set to 0
 	  float lastPos [3];
 	  for (int i = 0; i < 3; i ++){
-	    lastPos[i] = shooter.lastState.pos[i];
+	    lastPos[i] = lastState[playerIndex].pos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
 	  dropFlag(playerIndex, lastPos);
@@ -3853,11 +3859,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       }
 
       // silently drop old packet
-      if (state.order <= player[t].lastState.order)
+      if (state.order <= lastState[t].order)
 	break;
 
       // packet got lost (or out ouf order): count
-      if (state.order - player[t].lastState.order > 1)
+      if (state.order - lastState[t].order > 1)
         updateLagLost(t);
 
       TimeKeeper now = TimeKeeper::getCurrent();
@@ -3945,8 +3951,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	    else if (flag[player[t].getFlag()].flag.type == Flags::Agility)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL) * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
  	    else if ((flag[player[t].getFlag()].flag.type == Flags::Burrow) &&
-	      (player[t].lastState.pos[2] == state.pos[2]) && 
-	      (player[t].lastState.velocity[2] == state.velocity[2]) &&
+	      (lastState[t].pos[2] == state.pos[2]) && 
+	      (lastState[t].velocity[2] == state.velocity[2]) &&
 	      (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
 	      // if we have burrow and are not actively burrowing
 	      // You may have burrow and still be above ground. Must check z in ground!!
@@ -3955,8 +3961,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      // If player is moving vertically, or not alive the speed checks
 	      // seem to be problematic. If this happens, just log it for now,
 	      // but don't actually kick
-	      if ((player[t].lastState.pos[2] != state.pos[2])
-	      ||  (player[t].lastState.velocity[2] != state.velocity[2])
+	      if ((lastState[t].pos[2] != state.pos[2])
+	      ||  (lastState[t].velocity[2] != state.velocity[2])
 	      ||  ((state.status & PlayerState::Alive) == 0)) {
 		logOnly = true;
 	      }
@@ -3985,7 +3991,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
       }
 
-      player[t].lastState = state;
+      lastState[t] = state;
 
       // Player might already be dead and did not know it yet (e.g. teamkill)
       // do not propogate
@@ -4485,7 +4491,7 @@ int main(int argc, char **argv)
 	if (!oldnr && player[h].notResponding) {
 	  for (int j = 0; j < numFlags; j++) {
 	    if (flag[j].player == h) {
-	      dropFlag(h, player[h].lastState.pos);
+	      dropFlag(h, lastState[h].pos);
 	    }
 	  }
 	}

@@ -34,7 +34,6 @@ void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd) {
   outmsgSize = 0;
   outmsgOffset = 0;
   outmsgCapacity = 0;
-  lastState.order = 0;
   paused = false;
 #ifdef HAVE_ADNS_H
   if (adnsQuery) {

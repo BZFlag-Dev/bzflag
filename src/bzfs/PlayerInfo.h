@@ -200,9 +200,6 @@ private:
     int wins, losses, tks;
 
 public:
-    // Last known position, vel, etc
-    PlayerState lastState;
-
     TimeKeeper lastFlagDropTime;
 
     // input buffers
