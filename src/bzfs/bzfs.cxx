@@ -2913,9 +2913,10 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 				   tankRadius, BZDBCache::tankHeight);
       if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
         pos[2] = 0.0f;
+	//Find any intersection regardless of z
         type = world->inBuilding(&building,
 				 pos[0], pos[1], pos[2],
-				 tankRadius, BZDBCache::tankHeight);
+				 tankRadius, maxWorldHeight);
       }
 
       lastType = NOT_IN_BUILDING;
