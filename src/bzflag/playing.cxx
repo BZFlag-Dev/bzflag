@@ -1620,7 +1620,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
       tank->setFlag(world->getFlag(flagIndex).id);
       if (tank == myTank) {
 	// not allowed to grab it if not on the ground
-	if (myTank->getLocation() != LocalPlayer::OnGround) {
+	if (myTank->getLocation() != LocalPlayer::OnGround && 
+	  myTank->getLocation() != LocalPlayer::OnBuilding) {
 	  serverLink->sendDropFlag(myTank->getPosition());
 	}
 	else {
@@ -2386,7 +2387,8 @@ static void		checkEnvironment()
 	 (int(flagId) != int(team) && base == team)))
       serverLink->sendCaptureFlag(base);
   }
-  else if (flagId == NoFlag && myTank->getLocation() == LocalPlayer::OnGround) {
+  else if (flagId == NoFlag && (myTank->getLocation() == LocalPlayer::OnGround || 
+    myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // grab any and all flags i'm driving over
     const float* tpos = myTank->getPosition();
     const float radius = myTank->getRadius();
@@ -2396,7 +2398,8 @@ static void		checkEnvironment()
 	continue;
       const float* fpos = world->getFlag(i).position;
       if ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2) {
+		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) + (tpos[2] - fpos[2]) * 
+		(tpos[2] - fpos[2]) < radius2) {
 	serverLink->sendGrabFlag(i);
       }
     }

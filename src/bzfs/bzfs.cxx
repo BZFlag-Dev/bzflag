@@ -222,16 +222,16 @@ class WorldInfo {
     void addPyramid(float x, float y, float z, float r, float w, float d, float h);
     void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b);
     void addLink(int from, int to);
-    boolean inBuilding(float x, float y, float radius) const;
     int packDatabase();
     void *getDatabase() const;
     int getDatabaseSize() const;
-
+    
   private:
     boolean inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
     boolean rectHitCirc(float dx, float dy, const float *p, float r) const;
 
-    struct Obstacle {
+  public:
+    struct ObstacleLocation {
       public:
 	float pos[3];
 	float rotation;
@@ -247,6 +247,8 @@ class WorldInfo {
 	int to[2];
     };
 
+    int inBuilding(ObstacleLocation **location, float x, float y, float z, float radius) const;
+
   private:
     int numWalls;
     int numBoxes;
@@ -256,9 +258,9 @@ class WorldInfo {
     int sizeBoxes;
     int sizePyramids;
     int sizeTeleporters;
-    Obstacle *walls;
-    Obstacle *boxes;
-    Obstacle *pyramids;
+    ObstacleLocation *walls;
+    ObstacleLocation *boxes;
+    ObstacleLocation *pyramids;
     Teleporter *teleporters;
     char *database;
     int databaseSize;
@@ -330,6 +332,8 @@ static boolean randomBoxes;
 static boolean randomHeights;
 // True if -t on cmd line
 static boolean useTeleporters;
+// True if -fb on cmd line
+static boolean flagsOnBuildings;
 // True if -g on cmd line
 static boolean oneGameOnly;
 static int gameStyle;
@@ -405,35 +409,27 @@ class WorldFileObstacle : public WorldFileObject {
     virtual bool read(const char *cmd, istream&);
 
   protected:
-    float posX;
-    float posY;
-    float posZ;
+    float pos[3];
     float rotation;
-    float sizeX;
-    float sizeY;
-    float sizeZ;
+    float size[3];
 };
 
 WorldFileObstacle::WorldFileObstacle()
 {
-   posX = 0.0f;
-   posY = 0.0f;
-   posZ = 0.0f;
+   pos[0] = pos[1] = pos[2] = 0.0f;
    rotation = 0.0f;
-   sizeX = 1.0f;
-   sizeY = 1.0f;
-   sizeZ = 1.0f;
+   size[0] = size[1] = size[2] = 1.0f;
 }
 
 bool WorldFileObstacle::read(const char *cmd, istream& input)
 {
   if (strcmp(cmd, "position") == 0)
-    input >> posX >> posY >> posZ;
+    input >> pos[0] >> pos[1] >> pos[2];
   else if (strcmp(cmd, "rotation") == 0) {
     input >> rotation;
     rotation = rotation * M_PI / 180.0f;
   } else if (strcmp(cmd, "size") == 0)
-    input >> sizeX >> sizeY >> sizeZ;
+    input >> size[0] >> size[1] >> size[2];
   else
     return False;
   return True;
@@ -447,14 +443,13 @@ class CustomBox : public WorldFileObstacle {
 
 CustomBox::CustomBox()
 {
-  sizeX = BoxBase;
-  sizeY = BoxBase;
-  sizeZ = BoxHeight;
+  size[0] = size[1] = BoxBase;
+  size[2] = BoxHeight;
 }
 
 void CustomBox::write(WorldInfo *world) const
 {
-  world->addBox(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ);
+  world->addBox(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2]);
 }
 
 class CustomPyramid : public WorldFileObstacle {
@@ -465,14 +460,13 @@ class CustomPyramid : public WorldFileObstacle {
 
 CustomPyramid::CustomPyramid()
 {
-  sizeX = PyrBase;
-  sizeY = PyrBase;
-  sizeZ = PyrHeight;
+  size[0] = size[1] = PyrBase;
+  size[2] = PyrHeight;
 }
 
 void CustomPyramid::write(WorldInfo *world) const
 {
-  world->addPyramid(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ);
+  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[2], size[2]);
 }
 
 class CustomGate : public WorldFileObstacle {
@@ -487,9 +481,9 @@ class CustomGate : public WorldFileObstacle {
 
 CustomGate::CustomGate()
 {
-  sizeX = 0.5f * TeleWidth;
-  sizeY = TeleBreadth;
-  sizeZ = 2.0f * TeleHeight;
+  size[0] = 0.5f * TeleWidth;
+  size[1] = TeleBreadth;
+  size[2] = 2.0f * TeleHeight;
   border = TeleWidth;
 }
 
@@ -504,7 +498,7 @@ bool CustomGate::read(const char *cmd, istream& input)
 
 void CustomGate::write(WorldInfo *world) const
 {
-  world->addTeleporter(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ, border);
+  world->addTeleporter(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2], border);
 }
 
 class CustomLink : public WorldFileObject {
@@ -552,12 +546,9 @@ class CustomBase : public WorldFileObstacle {
 
 CustomBase::CustomBase()
 {
-  posX = 0.0f;
-  posY = 0.0f;
-  posZ = 0.0f;
+  pos[0] = pos[1] = pos[2] = 0.0f;
   rotation = 0.0f;
-  sizeX = BaseSize;
-  sizeY = BaseSize;
+  size[0] = size[1] = BaseSize;
 }
 
 bool CustomBase::read(const char *cmd, istream& input) {
@@ -569,12 +560,12 @@ bool CustomBase::read(const char *cmd, istream& input) {
 }
 
 void CustomBase::write(WorldInfo* world) const {
-  basePos[color][0] = posX;
-  basePos[color][1] = posY;
-  basePos[color][2] = posZ;
+  basePos[color][0] = pos[0];
+  basePos[color][1] = pos[1];
+  basePos[color][2] = pos[2];
   baseRotation[color] = rotation;
-  baseSize[color][0] = sizeX;
-  baseSize[color][1] = sizeY;
+  baseSize[color][0] = size[0];
+  baseSize[color][1] = size[1];
   safetyBasePos[color][2] = basePos[color][2];
 }
 
@@ -655,7 +646,7 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
 {
   if (numWalls >= sizeWalls) {
     sizeWalls = (sizeWalls == 0) ? 16 : 2 * sizeWalls;
-    walls = (Obstacle *)realloc(walls, sizeof(Obstacle) * sizeWalls);
+    walls = (ObstacleLocation *)realloc(walls, sizeof(ObstacleLocation) * sizeWalls);
   }
   walls[numWalls].pos[0] = x;
   walls[numWalls].pos[1] = y;
@@ -672,7 +663,7 @@ void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, flo
 {
   if (numBoxes >= sizeBoxes) {
     sizeBoxes = (sizeBoxes == 0) ? 16 : 2 * sizeBoxes;
-    boxes = (Obstacle *)realloc(boxes, sizeof(Obstacle) * sizeBoxes);
+    boxes = (ObstacleLocation *)realloc(boxes, sizeof(ObstacleLocation) * sizeBoxes);
   }
   boxes[numBoxes].pos[0] = x;
   boxes[numBoxes].pos[1] = y;
@@ -688,7 +679,7 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
 {
   if (numPyramids >= sizePyramids) {
     sizePyramids = (sizePyramids == 0) ? 16 : 2 * sizePyramids;
-    pyramids = (Obstacle *)realloc(pyramids, sizeof(Obstacle) * sizePyramids);
+    pyramids = (ObstacleLocation *)realloc(pyramids, sizeof(ObstacleLocation) * sizePyramids);
   }
   pyramids[numPyramids].pos[0] = x;
   pyramids[numPyramids].pos[1] = y;
@@ -775,20 +766,43 @@ boolean WorldInfo::inRect(const float *p1, float angle, const float *size, float
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
-boolean WorldInfo::inBuilding(float x, float y, float r) const
+int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float y, float z, float r) const
 {
   int i;
-  for (i = 0; i < numPyramids; i++)
-    if (inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r) && pyramids[i].pos[2] < flagHeight)
-      return True;
   for (i = 0; i < numBoxes; i++)
-    if (inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] < flagHeight)
-      return True;
+    if ((inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] < 
+        (z + flagHeight)) && (boxes[i].pos[2] + boxes[i].size[2]) > z) {
+      if (location != NULL)
+	*location = &boxes[i];
+      return 1;
+    }
+  for (i = 0; i < numPyramids; i++) {
+    float modSize[3];
+    modSize[0] = pyramids[i].size[0] * ((z - pyramids[i].pos[2]) / pyramids[i].size[2]);
+    modSize[1] = pyramids[i].size[1] * ((z - pyramids[i].pos[2]) / pyramids[i].size[2]);
+    modSize[2] = pyramids[i].size[2];
+    if ((inRect(pyramids[i].pos, pyramids[i].rotation, modSize,x,y,r)) && 
+        pyramids[i].pos[2] < (z + flagHeight) && (pyramids[i].pos[2] + pyramids[i].size[2]) > z) {
+      if (location != NULL)
+	*location = &pyramids[i];
+      return 2;
+    }
+  }
   for (i = 0; i < numTeleporters; i++)
-    if (inRect(teleporters[i].pos, teleporters[i].rotation,
-		teleporters[i].size, x, y, r) && teleporters[i].pos[2] < flagHeight)
-      return True;
-  return False;
+    if (inRect(teleporters[i].pos, teleporters[i].rotation, teleporters[i].size, x, y, r) &&
+	teleporters[i].pos[2] < (z + flagHeight) &&
+	(teleporters[i].pos[2] + teleporters[i].size[2]) > z) {
+      static ObstacleLocation __teleporter;
+      __teleporter.pos = teleporters[i].pos;
+      __teleporter.rotation = teleporters[i].rotation;
+      __teleporter.size = teleporters[i].size;
+      if (location != NULL)
+	*location = &__teleporter;
+      return 3;
+    }
+  if (location != NULL)
+    *location = (ObstacleLocation *)NULL;
+  return 0;
 }
 
 int WorldInfo::packDatabase()
@@ -2701,7 +2715,7 @@ static WorldInfo *defineRandomWorld()
       const float rotation = 2.0f * M_PI * (float)bzfrand();
 
       // if too close to building then try again
-      if (world->inBuilding(x, y, 1.75f * TeleBreadth))
+      if (world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
 	continue;
 
       world->addTeleporter(x, y, 0.0f, rotation,
@@ -3315,7 +3329,8 @@ static void resetFlag(int flagIndex)
 			(WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
 	flag[flagIndex].flag.position[2] = 0.0f;
       }
-    } while (world->inBuilding(flag[flagIndex].flag.position[0], flag[flagIndex].flag.position[1], r));
+    } while (world->inBuilding(NULL, flag[flagIndex].flag.position[0], flag[flagIndex].flag.position[1], 
+        flag[flagIndex].flag.position[2], r));
   }
 
   // required flags mustn't just disappear
@@ -3689,7 +3704,9 @@ static void grabFlag(int playerIndex, int flagIndex)
 static void dropFlag(int playerIndex, float pos[3])
 {
   assert(world != NULL);
-
+  WorldInfo::ObstacleLocation* container;
+  int topmosttype;
+  WorldInfo::ObstacleLocation* topmost = (WorldInfo::ObstacleLocation *)NULL;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
   const int flagIndex = player[playerIndex].flag;
@@ -3703,6 +3720,14 @@ static void dropFlag(int playerIndex, float pos[3])
   else
     flag[flagIndex].flag.status = FlagGoing;
   numFlagsInAir++;
+
+  for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
+    topmosttype = world->inBuilding(&container, pos[0], pos[1], i, 0);
+    if (topmosttype) {
+      topmost = container;
+      break;
+    }
+  }
 
   // figure out landing spot -- if flag in a Bad Place
   // when dropped, move to safety position or make it going
@@ -3719,34 +3744,28 @@ static void dropFlag(int playerIndex, float pos[3])
     flag[flagIndex].flag.landingPosition[1] = safetyBasePos[int(teamBase)][1];
     flag[flagIndex].flag.landingPosition[2] = safetyBasePos[int(teamBase)][2];
   }
-  else if (world->inBuilding(pos[0], pos[1], 0.0f)) {
-    // should probably move flag somewhere just outside building
-    if (int(flag[flagIndex].flag.id) >= int(FirstTeamFlag) &&
-	int(flag[flagIndex].flag.id) <= int(LastTeamFlag)) {
-      // people were cheating by dropping their flag above the nearest
-      // convenient building which makes it fly all the way back to
-      // your own base.  make it fly to the center of the board for now,
-      // until flags on buildings are allowed.
-      flag[flagIndex].flag.landingPosition[0] = 0.0f;
-      flag[flagIndex].flag.landingPosition[1] = 0.0f;
-      flag[flagIndex].flag.landingPosition[2] = 0.0f;
-//      int teamIndex = int(flag[flagIndex].flag.id);
-//      flag[flagIndex].flag.landingPosition[0] = safetyBasePos[teamIndex][0];
-//      flag[flagIndex].flag.landingPosition[1] = safetyBasePos[teamIndex][1];
-//      flag[flagIndex].flag.landingPosition[2] = safetyBasePos[teamIndex][2];
-    }
-    else {
-      flag[flagIndex].flag.status = FlagGoing;
-      flag[flagIndex].flag.landingPosition[0] = pos[0];
-      flag[flagIndex].flag.landingPosition[1] = pos[1];
-      flag[flagIndex].flag.landingPosition[2] = 0.0f;
-    }
-  }
-  else {
+  else if (topmosttype == 0) {
     flag[flagIndex].flag.landingPosition[0] = pos[0];
     flag[flagIndex].flag.landingPosition[1] = pos[1];
     flag[flagIndex].flag.landingPosition[2] = 0.0f;
   }
+  else if (flagsOnBuildings && (topmosttype == 1)) {
+    flag[flagIndex].flag.landingPosition[0] = pos[0];
+    flag[flagIndex].flag.landingPosition[1] = pos[1];
+    flag[flagIndex].flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
+  }
+  else if (int(flag[flagIndex].flag.id) >= int(FirstTeamFlag) &&
+      int(flag[flagIndex].flag.id) <= int(LastTeamFlag)) {
+    // people were cheating by dropping their flag above the nearest
+    // convenient building which makes it fly all the way back to
+    // your own base.  make it fly to the center of the board.
+    flag[flagIndex].flag.landingPosition[0] = 0.0f;
+    flag[flagIndex].flag.landingPosition[1] = 0.0f;
+    flag[flagIndex].flag.landingPosition[2] = 0.0f;
+  }
+  else
+    flag[flagIndex].flag.status = FlagGoing;
+
   flag[flagIndex].flag.position[0] = flag[flagIndex].flag.landingPosition[0];
   flag[flagIndex].flag.position[1] = flag[flagIndex].flag.landingPosition[1];
   flag[flagIndex].flag.position[2] = flag[flagIndex].flag.landingPosition[2];
@@ -4330,6 +4349,7 @@ static void extraUsage(const char *pname)
 //  cout << "\t -d: increase debugging level" << endl;
   cout << "\t +f: always have flag <id> available" << endl;
   cout << "\t -f: never randomly generate flag <id>" << endl;
+  cout << "\t -fb: allow flags on box buildings" << endl;
   cout << "\t -g: serve one game and then exit" << endl;
   cout << "\t -h: use random building heights" << endl;
   cout << "\t -i: listen on <interface>" << endl;
@@ -4612,6 +4632,10 @@ static void parse(int argc, char **argv)
       }
       debug += count;
     }
+    else if (strcmp(argv[i], "-fb") == 0) {
+      // flags on buildings
+      flagsOnBuildings = True;
+    }
     else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
       if (++i == argc) {
@@ -4888,6 +4912,11 @@ static void parse(int argc, char **argv)
       cerr << "bad argument " << argv[i] << endl;
       usage(argv[0]);
     }
+  }
+
+  if (flagsOnBuildings && !(gameStyle & JumpingGameStyle)) {
+    cerr << "flags on boxes requires jumping" << endl;
+    usage(argv[0]);
   }
 
   // get player counts.  done after other arguments because we need
