@@ -454,15 +454,20 @@ static void createUDPcon(int t, int remote_port) {
 }
 
 
+static bool realPlayer(const PlayerId& id)
+{
+  return id<=curMaxPlayers && player[id].state>PlayerInLimbo;
+}
+
 static int lookupPlayer(const PlayerId& id)
 {
   if (id == ServerPlayer)
     return id;
 
-  for (int i = 0; i < curMaxPlayers; i++)
-    if ((player[i].state > PlayerInLimbo) && (i == id))
-      return i;
-  return InvalidPlayer;
+  if (!realPlayer(id))
+    return InvalidPlayer;
+
+  return id;
 }
 
 
@@ -3121,30 +3126,33 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 static void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex)
 {
+  if (!realPlayer(victimIndex))
+    return;
+
   // aliases for convenience
   // Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer
-  PlayerInfo &killer = player[((killerIndex == InvalidPlayer) || (killerIndex == ServerPlayer)) ? 0 : killerIndex],
-             &victim = player[victimIndex];
+  PlayerInfo *killer = realPlayer(killerIndex) ? &player[killerIndex] : 0,
+             *victim = &player[victimIndex];
 
   // victim was already dead. keep score.
-  if (victim.state != PlayerAlive) return;
+  if (victim->state != PlayerAlive) return;
 
-  victim.state = PlayerDead;
+  victim->state = PlayerDead;
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;
-  if ((killerIndex != InvalidPlayer) && (killerIndex != ServerPlayer)) {
-    const bool rabbitinvolved = killer.wasRabbit || victim.team == RabbitTeam;
-    const bool foe = areFoes(victim.team, killer.team);
+  if (killer) {
+    const bool rabbitinvolved = killer->wasRabbit || victim->team == RabbitTeam;
+    const bool foe = areFoes(victim->team, killer->team);
     teamkill = !foe && !rabbitinvolved;
   }
 
   //update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
-     killer.tks++;
-     if (killer.tks >= 3 && (clOptions->teamKillerKickRatio > 0) && // arbitrary 3
-         (killer.wins == 0 ||
-          killer.tks * 100 / killer.wins > clOptions->teamKillerKickRatio)) {
+     killer->tks++;
+     if (killer->tks >= 3 && (clOptions->teamKillerKickRatio > 0) && // arbitrary 3
+         (killer->wins == 0 ||
+          killer->tks * 100 / killer->wins > clOptions->teamKillerKickRatio)) {
        char message[MessageLen];
        strcpy(message, "You have been automatically kicked for team killing" );
        sendMessage(ServerPlayer, killerIndex, message, true);
@@ -3162,7 +3170,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
-  int flagid = victim.flag;
+  int flagid = victim->flag;
   if (flagid >= 0) {
     // do not simply zap team flag
     Flag &carriedflag = flag[flagid].flag;
@@ -3175,47 +3183,45 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   }
 
   // change the player score
-  if (victimIndex != InvalidPlayer) {
-    bufStart = getDirectMessageBuffer();
-    victim.losses++;
-    if ((killerIndex != InvalidPlayer) && (killerIndex != ServerPlayer)) {
-      if (victimIndex != killerIndex) {
-	if (teamkill) {
-	  if (clOptions->teamKillerDies)
-	    playerKilled(killerIndex, killerIndex, reason, -1);
-	  else
-	    killer.losses++;
-	} else
-	  killer.wins++;
-      }
-
-      buf = nboPackUByte(bufStart, 2);
-      buf = nboPackUByte(buf, killerIndex);
-      buf = nboPackUShort(buf, killer.wins);
-      buf = nboPackUShort(buf, killer.losses);
-      buf = nboPackUShort(buf, killer.tks);
-    }
-    else {
-      buf = nboPackUByte(bufStart, 1);
+  bufStart = getDirectMessageBuffer();
+  victim->losses++;
+  if (killer) {
+    if (victimIndex != killerIndex) {
+      if (teamkill) {
+        if (clOptions->teamKillerDies)
+          playerKilled(killerIndex, killerIndex, reason, -1);
+        else
+          killer->losses++;
+      } else
+        killer->wins++;
     }
 
-    buf = nboPackUByte(buf, victimIndex);
-    buf = nboPackUShort(buf, victim.wins);
-    buf = nboPackUShort(buf, victim.losses);
-    buf = nboPackUShort(buf, victim.tks);
-    broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+    buf = nboPackUByte(bufStart, 2);
+    buf = nboPackUByte(buf, killerIndex);
+    buf = nboPackUShort(buf, killer->wins);
+    buf = nboPackUShort(buf, killer->losses);
+    buf = nboPackUShort(buf, killer->tks);
+  }
+  else {
+    buf = nboPackUByte(bufStart, 1);
+  }
 
-    // see if the player reached the score limit
-    if (clOptions->maxPlayerScore != 0
-	&& killerIndex != InvalidPlayer
-	&& killerIndex != ServerPlayer
-	&& killer.wins - killer.losses >= clOptions->maxPlayerScore) {
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, killerIndex);
-      buf = nboPackUShort(buf, uint16_t(NoTeam));
-      broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-      gameOver = true;
-    }
+  buf = nboPackUByte(buf, victimIndex);
+  buf = nboPackUShort(buf, victim->wins);
+  buf = nboPackUShort(buf, victim->losses);
+  buf = nboPackUShort(buf, victim->tks);
+  broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+
+  // see if the player reached the score limit
+  if (clOptions->maxPlayerScore != 0
+      && killerIndex != InvalidPlayer
+      && killerIndex != ServerPlayer
+      && killer->wins - killer->losses >= clOptions->maxPlayerScore) {
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = nboPackUByte(bufStart, killerIndex);
+    buf = nboPackUShort(buf, uint16_t(NoTeam));
+    broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+    gameOver = true;
   }
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
@@ -3229,23 +3235,23 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     int winningTeam = (int)NoTeam;
     if (!(clOptions->gameStyle & (TeamFlagGameStyle | RabbitChaseGameStyle))) {
       int killerTeam = -1;
-      if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer && victim.team == killer.team) {
-	if (killer.team != RogueTeam)
+      if (killer && victim->team == killer->team) {
+	if (killer->team != RogueTeam)
 	  if (killerIndex == victimIndex)
-	    team[int(victim.team)].team.lost += 1;
+	    team[int(victim->team)].team.lost += 1;
 	  else
-	    team[int(victim.team)].team.lost += 2;
+	    team[int(victim->team)].team.lost += 2;
       } else {
-	if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer && killer.team != RogueTeam) {
-	  winningTeam = int(killer.team);
+	if (killer && killer->team != RogueTeam) {
+	  winningTeam = int(killer->team);
 	  team[winningTeam].team.won++;
 	}
-	if (victim.team != RogueTeam)
-	  team[int(victim.team)].team.lost++;
-	if ((killerIndex != InvalidPlayer) && (killerIndex != ServerPlayer))
-	  killerTeam = killer.team;
+	if (victim->team != RogueTeam)
+	  team[int(victim->team)].team.lost++;
+	if (killer)
+	  killerTeam = killer->team;
       }
-      sendTeamUpdate(-1,int(victim.team), killerTeam);
+      sendTeamUpdate(-1,int(victim->team), killerTeam);
     }
 #ifdef PRINTSCORE
     dumpScore();
