@@ -2232,11 +2232,8 @@ static void pwrite(int playerIndex, const void *b, int l)
       case MsgPlayerUpdate:
       case MsgGMUpdate:
       case MsgLagPing:
-	puwrite(playerIndex,b,l);
-	return;
       case MsgNewKing:
-        DEBUG3("sending MsgNewKing (= %d) via puwrite() to %d\n", kingIndex, playerIndex);
-	puwrite(playerIndex, b, l);
+	puwrite(playerIndex,b,l);
 	return;
     }
   }
@@ -4116,9 +4113,14 @@ static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor
 
 static void addPlayer(int playerIndex)
 {
-  // reject player if asks for bogus team or rogue and rogues aren't allowed
-  // or if the team is full.
-
+  // find out if we're the first player to join
+  bool firstPlayer = true;
+  for (PlayerId i = 0; i < maxPlayers; i++) {
+    if ((player[i].state != PlayerNoExist) && (i != playerIndex)) {
+      firstPlayer = false;
+      break;
+    }
+  }
   // strip leading blanks
   char *sp = player[playerIndex].callSign, *tp = sp;
   while (*sp==' ')
@@ -4168,6 +4170,8 @@ static void addPlayer(int playerIndex)
       numobservers++;
   }
 
+  // reject player if asks for bogus team or rogue and rogues aren't allowed
+  // or if the team is full.
   if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
       player[playerIndex].type == ComputerPlayer)) ||
       (t == RogueTeam && !(clOptions.gameStyle & RoguesGameStyle)) ||
@@ -4315,13 +4319,17 @@ static void addPlayer(int playerIndex)
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
 
+  // if we're the only player, set as king
+  if ((clOptions.gameStyle & int(KingOfTheHillGameStyle)) && firstPlayer) {
+    kingIndex = playerIndex;
+  }
+
   // send king information
   if (clOptions.gameStyle & int(KingOfTheHillGameStyle)) {
     char msg[PlayerIdPLen];
     void *buf = msg;
     buf = nboPackUByte(buf, kingIndex);
     directMessage(playerIndex, MsgNewKing, sizeof(msg), msg);
-    DEBUG3("sending king (= %d) information to new player\n", kingIndex);
   }
 
 #ifdef TIMELIMIT
@@ -4575,7 +4583,6 @@ static void annointNewKing()
   void *buf = msg;
   buf = nboPackUByte(buf, kingIndex);
   broadcastMessage(MsgNewKing, sizeof(msg), msg);
-  DEBUG3("annointing a new king (= %d)\n", kingIndex);
 }
 
 static void removePlayer(int playerIndex, char *reason, bool notify)
@@ -6358,7 +6365,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     case MsgNewKing: 
     {
-      DEBUG3("recieved MsgNewKing\n");
       annointNewKing();
       break;
     }
