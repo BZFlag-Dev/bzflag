@@ -2000,30 +2000,31 @@ static void		doMessages()
 // local update utility functions
 //
 
-static float		minSafeRange(float angleCosOffBoresight)
+static float		minSafeRange(float angleCosOffBoresight,
+                                     double fractionOfTries)
 {
   // anything farther than this much from dead-center is okay to
   // place at MinRange
   static const float	SafeAngle = 0.5f;		// cos(angle)
 
   // don't ever place within this range
-  static const float	MinRange = 1.0f * ShotSpeed;	// meters
+  static const float	MinRange = 2.5f * ShotSpeed;	// meters
 
   // anything beyond this range is okay at any angle
-  static const float	MaxRange = 3.0f * ShotSpeed;	// meters
+  static const float	MaxRange = 5.0f * ShotSpeed;	// meters
 
   // if more than SafeAngle off boresight then MinRange is okay
   if (angleCosOffBoresight < SafeAngle) return MinRange;
 
   // ramp up to MaxRange as target comes to dead center
   const float f = (angleCosOffBoresight - SafeAngle) / (1.0f - SafeAngle);
-  return MinRange + f * (MaxRange - MinRange);
+  return (MinRange + f * (MaxRange - MinRange)) * (1 - fractionOfTries * 0.6);
 }
 
 static void		restartPlaying()
 {
   // maximum tries to find a safe place
-  static const int	MaxTries = 100;
+  static const int	MaxTries = 1000;
 
   // minimum time before an existing shot can hit us
   static const float	MinShotImpact = 2.0f;		// seconds
@@ -2114,7 +2115,7 @@ static void		restartPlaying()
 
       // don't allow tank placement if enemy tank is +/- 30 degrees of
       // my boresight and in firing range (our unfair advantage)
-      if (enemyDist < minSafeRange(enemyCos)) {
+      if (enemyDist < minSafeRange(enemyCos,double(locateCount)/MaxTries)) {
 	located = False;
 	break;
       }
@@ -2133,7 +2134,7 @@ static void		restartPlaying()
 
       // don't allow tank placement if my tank is +/- 30 degrees of
       // the enemy's boresight and in firing range (enemy's unfair advantage)
-      if (myDist < minSafeRange(myCos)) {
+      if (myDist < minSafeRange(myCos,double(locateCount)/MaxTries)) {
 	located = False;
 	break;
       }
