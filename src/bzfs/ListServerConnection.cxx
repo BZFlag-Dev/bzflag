@@ -270,10 +270,10 @@ void ListServerLink::sendMessage(std::string message)
 {
   const int bufsize = 4096;
   char msg[bufsize];
-  strncpy(msg, message.c_str(),
-          ((int) message.length() > bufsize) ? bufsize : message.length());
+  strncpy(msg, message.c_str(), bufsize);
+  msg[bufsize - 1] = 0;
   if (strlen(msg) > 0) {
-    DEBUG3("%s\n",msg);
+    DEBUG3("%s\n", msg);
     if (send(linkSocket, msg, strlen(msg), 0) == -1) {
       perror("List server send failed");
       DEBUG3("Unable to send to the list server!\n");
