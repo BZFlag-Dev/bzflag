@@ -1477,6 +1477,78 @@
 			settings = {
 			};
 		};
+		14B98BB504E1CB7100A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WorldWeapons.cxx;
+			refType = 4;
+		};
+		14B98BB604E1CB7100A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WorldWeapons.h;
+			refType = 4;
+		};
+		14B98BB704E1CB7100A80164 = {
+			fileRef = 14B98BB504E1CB7100A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14B98BB804E1CB7100A80164 = {
+			fileRef = 14B98BB604E1CB7100A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14B98BB904E1CBD500A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = global.cxx;
+			refType = 4;
+		};
+		14B98BBA04E1CBD500A80164 = {
+			fileRef = 14B98BB904E1CBD500A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14B9934604E1CFB000A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ServerListCache.cxx;
+			refType = 4;
+		};
+		14B9934704E1CFB000A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ServerListCache.h;
+			refType = 4;
+		};
+		14B9934804E1CFB000A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WorldPlayer.cxx;
+			refType = 4;
+		};
+		14B9934904E1CFB000A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WorldPlayer.h;
+			refType = 4;
+		};
+		14B9934A04E1CFB000A80164 = {
+			fileRef = 14B9934604E1CFB000A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14B9934C04E1CFB000A80164 = {
+			fileRef = 14B9934804E1CFB000A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		14C1C18A04B63B8C00A80164 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -1517,7 +1589,6 @@
 				14C1C1A004B63BCF00A80164,
 				14C1C1A104B63BD000A80164,
 				14C1C1A304B63BD100A80164,
-				14C1C1A504B63BD300A80164,
 				14C1C1A604B63BD400A80164,
 				14C1C1A804B63BD500A80164,
 				14C1C1AD04B63BDB00A80164,
@@ -1710,12 +1781,6 @@
 		};
 		14C1C1A404B63BD200A80164 = {
 			fileRef = 1401FD1704B62E0600A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		14C1C1A504B63BD300A80164 = {
-			fileRef = 1401FD1D04B62E0600A80164;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2206,7 +2271,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				14953633049CEC6800A80164,
-				7B65DEC004BE51F500FEBA07,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2317,6 +2381,8 @@
 				4E030E85048EDF720009E055,
 				14C1C1D904B6438400A80164,
 				7B65DEBF04BE51F500FEBA07,
+				14B9934A04E1CFB000A80164,
+				14B9934C04E1CFB000A80164,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4421,6 +4487,10 @@
 				14C1C1D804B6438400A80164,
 				7B65DEBD04BE51F500FEBA07,
 				7B65DEBE04BE51F500FEBA07,
+				14B9934604E1CFB000A80164,
+				14B9934704E1CFB000A80164,
+				14B9934804E1CFB000A80164,
+				14B9934904E1CFB000A80164,
 			);
 			isa = PBXGroup;
 			path = bzflag;
@@ -4797,6 +4867,8 @@
 				1404B12904B8798200A80164,
 				7B79F0C504BA753400FEBA07,
 				7B79F0C604BA753400FEBA07,
+				14B98BB504E1CB7100A80164,
+				14B98BB604E1CB7100A80164,
 			);
 			isa = PBXGroup;
 			path = bzfs;
@@ -4835,6 +4907,7 @@
 				14C1C1D004B63FE400A80164,
 				14ACDFBF04B665F900A80164,
 				7B79F0AF04BA74BD00FEBA07,
+				14B98BB904E1CBD500A80164,
 			);
 			isa = PBXGroup;
 			path = common;
@@ -6233,6 +6306,7 @@
 				14C1C1D104B63FE400A80164,
 				14ACDFC004B665F900A80164,
 				7B79F0B004BA74BD00FEBA07,
+				14B98BBA04E1CBD500A80164,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7326,6 +7400,7 @@
 				14ACDFDD04B6B05F00A80164,
 				1404B12B04B8798200A80164,
 				7B79F0C804BA753400FEBA07,
+				14B98BB804E1CB7100A80164,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7338,6 +7413,7 @@
 				14ACDFDC04B6B05F00A80164,
 				1404B12A04B8798200A80164,
 				7B79F0C704BA753400FEBA07,
+				14B98BB704E1CB7100A80164,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8622,12 +8698,6 @@
 		};
 		7B65DEBF04BE51F500FEBA07 = {
 			fileRef = 7B65DEBD04BE51F500FEBA07;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		7B65DEC004BE51F500FEBA07 = {
-			fileRef = 7B65DEBE04BE51F500FEBA07;
 			isa = PBXBuildFile;
 			settings = {
 			};
