@@ -35,8 +35,8 @@ int			Player::totalCount = 0;
 Player::Player(const PlayerId& _id, TeamColor _team,
 		const char* name, const char* _email) :
 				notResponding(false),
-				hunted(false),
 				autoPilot(false),
+				hunted(false),
 				id(_id),
 				team(_team),
 				flag(Flags::Null),

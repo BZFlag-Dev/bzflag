@@ -149,7 +149,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 	 i != filters[wordIndices[j]].end(); 
 	 ++i) {
     
-      regCode = regexec(i->compiled, input, 1, match, NULL);
+      regCode = regexec(i->compiled, input, 1, match, 0);
       counter++;
       
       if ( regCode == 0 ) {
