@@ -585,6 +585,19 @@ and
 .IR F7
 to choose which flag to track.
 .RE
+.SH User Commands
+.RS
+The following commands can be executed by sending a message to all and using these strings as the message
+.TP 15
+CLIENTQUERY
+Requests that all users send you there version information
+.TP 15
+SILENCE \fIplayerName\fR
+Does not display any message coming from player with \fIplayerName\fR name
+.TP 15
+UNSILENCE \fIplayerName\fR
+Reshow messages coming from player with \fIplayerName\fR name
+.RE
 .SH FILES
 .RS
 .TP 15
