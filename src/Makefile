@@ -18,6 +18,7 @@ COMMONPREF = src
 include $(DEPTH)/Make-common
 
 SUBDIRS =				\
+	zlib				\
 	bzfrelay			\
 	game				\
 	platform			\
