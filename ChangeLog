@@ -6,6 +6,7 @@ BZFlag 1.11.x (development)
 
 * Observer counts and match times added to game queries - David Vuorio
 * Central authentication - Tim Riker
+* Avoid transfer flag cheat - Alfredo Tupone
 * Cheat client flag obfuscation and hiding - Alfredo Tupone
 * Added strong authentication via Kerberos - Alfredo Tupone
 * BZFlag renders frames and accepts commands during joining - Alfredo Tupone
