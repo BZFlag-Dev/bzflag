@@ -365,6 +365,13 @@
 						d.write(" ");
 					}
 
+					if (mainform.bad_mand_flag.value > 0) {
+						d.write("+f bad");
+						if (mainform.bad_mand_flag.value > 1)
+							d.write("{"+mainform.bad_mand_flag.value+"}");
+						d.write(" ");
+					}
+
 					for (var i = 0; i < flags.length; i++) {
 						var el = flags[i].toLowerCase() + "_mand_flag";
 						var cnt = mainform.elements[el].value;
@@ -380,6 +387,9 @@
 					d.writeln("#Forbidden flags<br/>");
 					if (mainform.bad_forbid_flag.checked > 0)
 						d.write("-f bad ");
+
+					if (mainform.good_forbid_flag.checked > 0)
+						d.write("-f good ");
 
 					for (var i = 0; i < flags.length; i++) {
 						var el = flags[i].toLowerCase() + "_forbid_flag";
@@ -715,6 +725,7 @@
 						<table width="100%">
 							<tr>
 								<td align="right">(good)</td><td><input type="text" id="gd" name="good_mand_flag" value="0" size="3" title="All good flags"/></td>
+								<td align="right">(bad)</td><td><input type="text" id="bd" name="bad_mand_flag" value="0" size="3" title="All bad flags"/></td>
 							</tr>
 							<tr>
 								<td align="right">(V)</td><td><input type="text" name="v_mand_flag" value="0" size="3" title="High Speed"/></td>
@@ -771,6 +782,7 @@
 						<table width="100%">
 							<tr>
 								<td align="right">(bad)</td><td><input type="checkbox" name="bad_forbid_flag" title="All bad flags"/></td>
+								<td align="right">(good)</td><td><input type="checkbox" name="good_forbid_flag" title="All good flags"/></td>
 							</tr>
 							<tr>
 								<td align="right">(V)</td><td><input type="checkbox" name="v_forbid_flag" title="High Speed"/></td>
