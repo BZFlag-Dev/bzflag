@@ -691,53 +691,7 @@ copy debug\*.pdb ..\..\*.pdb
 					RelativePath="..\..\src\bzflag\Roster.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\SegmentedShotStrategy.cxx">
-				</File>
-				<File
 					RelativePath="..\..\src\bzflag\ServerCommandKey.cxx">
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\ShotPath.cxx">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\ShotPathSegment.cxx">
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\ShotStrategy.cxx">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\SilenceDefaultKey.cxx">
@@ -782,6 +736,59 @@ copy debug\*.pdb ..\..\*.pdb
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 				</File>
+				<Filter
+					Name="shots"
+					Filter="">
+					<File
+						RelativePath="..\..\src\bzflag\GuidedMissleStrategy.cxx">
+					</File>
+					<File
+						RelativePath="..\..\src\bzflag\SegmentedShotStrategy.cxx">
+					</File>
+					<File
+						RelativePath="..\..\src\bzflag\ShotPath.cxx">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="0"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="2"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\src\bzflag\ShotPathSegment.cxx">
+					</File>
+					<File
+						RelativePath="..\..\src\bzflag\ShotStrategy.cxx">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="0"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="2"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""/>
+						</FileConfiguration>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="menus"
@@ -856,6 +863,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\FormatMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\GuidedMissleStrategy.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\GUIOptionsMenu.h">
