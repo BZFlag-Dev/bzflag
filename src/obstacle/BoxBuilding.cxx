@@ -54,7 +54,7 @@ boolean			BoxBuilding::isInside(const float* p,
 {
   return p[2] < getPosition()[2] + getHeight() && testRectCircle(getPosition(), getRotation(),
 					getWidth(), getBreadth(), p, radius)
-					&& p[2] > getPosition()[2];
+					&& p[2] >= getPosition()[2];
 }
 
 boolean			BoxBuilding::isInside(const float* p, float a,
@@ -63,7 +63,7 @@ boolean			BoxBuilding::isInside(const float* p, float a,
   return p[2] < getPosition()[2] + getHeight() && testRectRect(getPosition(), getRotation(),
 					getWidth(), getBreadth(),
 					p, a, dx, dy)
-					&& p[2] > getPosition()[2];
+					&& p[2] >= getPosition()[2];
 }
 
 boolean			BoxBuilding::isCrossing(const float* p, float a,

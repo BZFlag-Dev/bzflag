@@ -73,7 +73,8 @@ boolean			Teleporter::isInside(const float* p,
 boolean			Teleporter::isInside(const float* p, float a,
 						float dx, float dy) const
 {
-  if (p[2] < getHeight() - getBorder()) {
+  if ((p[2] < getHeight() + getPosition()[2] - getBorder()) 
+	  && p[2] >= getPosition()[2]) {
     // test individual border columns
     const float c = cosf(getRotation()), s = sinf(getRotation());
     const float d = getBreadth() - 0.5f * getBorder();
@@ -87,7 +88,7 @@ boolean			Teleporter::isInside(const float* p, float a,
     if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return True;
   }
 
-  else if (p[2] <= getHeight()) {
+  else if (p[2] <= getHeight() + getPosition()[2]  && p[2] > getPosition()[2]) {
     // test crossbar
     if (testRectRect(p, a, dx, dy, getPosition(), getRotation(),
 					getWidth(), getBreadth()))
@@ -236,7 +237,7 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   const float y2 = c * y1 + s * x1;
   pOut[0] = x2 + t2.getPosition()[0];
   pOut[1] = y2 + t2.getPosition()[1];
-  pOut[2] = pIn[2];
+  pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
 
   if (dOut && dIn) {
     const float dx = dIn[0];

@@ -69,7 +69,7 @@ boolean			PyramidBuilding::isInside(const float* p,
   // really rough -- doesn't decrease size with height
   return p[2] <= getHeight() && testRectCircle(getPosition(), getRotation(),
 					getWidth(), getBreadth(), p, radius)
-					&& p[2] > getPosition()[2];
+					&& p[2] >= getPosition()[2];
 }
 
 boolean			PyramidBuilding::isInside(const float* p, float a,
@@ -79,7 +79,7 @@ boolean			PyramidBuilding::isInside(const float* p, float a,
   return s > 0.0 && testRectRect(getPosition(), getRotation(),
 					s * getWidth(), s * getBreadth(),
 					p, a, dx, dy)
-					&& p[2] > getPosition()[2];
+					&& p[2] >= getPosition()[2];
 }
 
 boolean			PyramidBuilding::isCrossing(const float* p, float a,
