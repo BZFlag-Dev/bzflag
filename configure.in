@@ -14,8 +14,8 @@ AM_CONFIG_HEADER(include/config.h)
 
 # Let the C++ code know about OS and user
 AC_CANONICAL_HOST
-AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [Bzflag System Environment])
-AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled Bzflag])
+AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
+AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
 
 #Checks for programs.
 AC_PROG_MAKE_SET
