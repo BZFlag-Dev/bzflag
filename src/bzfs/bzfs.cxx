@@ -1148,6 +1148,19 @@ static bool defineWorld()
     BZWReader* reader = new BZWReader(clOptions->worldFile);
     world = reader->defineWorldFromFile();
     delete reader;
+
+    if (clOptions->gameStyle & TeamFlagGameStyle) {
+      for (int i = RedTeam; i <= PurpleTeam; i++) {
+	if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
+	  std::cerr << "base was not defined for "
+		    << Team::getName((TeamColor)i)
+		    << ", capture the flag game style removed" << std::endl;
+	  clOptions->gameStyle &= (~TeamFlagGameStyle);
+	  break;
+	}
+      }
+    }
+
   } else if (clOptions->gameStyle & TeamFlagGameStyle) {
     world = defineTeamWorld();
   } else {

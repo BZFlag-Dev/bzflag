@@ -10,25 +10,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* bzflag special common - 1st one */
-#include "common.h"
-
 // interface header
 #include "BZWReader.h"
 
 // implementation-specific system headers
 #include <fstream>
-#include <string>
-#include <vector>
+#include <sstream>
 
 // implementation-specific bzflag headers
-#include "Team.h"
 #include "URLManager.h"
 
 // implementation-specific bzfs-specific headers
-#include "BZWError.h"
-#include "CmdLineOptions.h"
-#include "TeamBases.h"
 #include "WorldFileObject.h"
 #include "CustomBox.h"
 #include "CustomPyramid.h"
@@ -46,9 +38,6 @@
 #include "CustomCone.h"
 #include "CustomSphere.h"
 #include "CustomWaterLevel.h"
-
-extern CmdLineOptions *clOptions;
-extern BasesList bases;
 
 static const std::string urlProtocol("http://");
 
@@ -247,16 +236,6 @@ WorldInfo* BZWReader::defineWorldFromFile()
   const int n = list.size();
   for (int i = 0; i < n; ++i)
     list[i]->write(world);
-
-  if (clOptions->gameStyle & TeamFlagGameStyle) {
-    for (int i = RedTeam; i <= PurpleTeam; i++) {
-      if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
-	errorHandler->warning(std::string("base was not defined for ") + Team::getName((TeamColor)i) + std::string(", capture the flag game style removed."), 0);
-	clOptions->gameStyle &= (~TeamFlagGameStyle);
-	break;
-      }
-    }
-  }
 
   // clean up
   emptyWorldFileObjectList(list);
