@@ -7,14 +7,16 @@ recent bugs
   gamma (very very dark); brightness is set incorrectly.
 
 - the high jump cheat check doesn't work very well with varying or positive
-  gravity
+  gravity - this might be fixed as of 9/27
 
 - votingarbiter is confused by a player name with an embedded space
 
 - thief gets kicked for speeding sometimes after stealing flag
+   -> this might be fixed as of 9/26
 
 - get kicked for speeding when dying with high speed flag sometimes
   (ok, it was not me, it was roger)
+   -> this might be fixed as of 9/26
 
 - Shots that bounce off the ground occasionally reflect in the wrong
   direction - x/y flipped

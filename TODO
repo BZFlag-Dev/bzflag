@@ -12,11 +12,15 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
       or remove the check (maybe optionally), make it take past gravity changes
       into account when calculating the maximum allowed height (probably
       tricky).
+	  --this could be fixed as of 9/27--
 
     - players can get autokicked for speeding if a theif steals their flag
+	  --this could be fixed as of 9/26--
 
 
 THESE ARE LOWER PRIORITY
+
+* StateDatabase should probably have min max values for eval values
 
 * move version functions to buildDate.cxx
 
