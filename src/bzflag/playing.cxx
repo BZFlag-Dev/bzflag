@@ -1740,10 +1740,11 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 	// weave towards the player
 	const Player *target = myTank->getTarget();
-	if (distance > 30.0f) {
+	if (distance > 40.0f) {
 	  float enemyUnitVec[2] = { cos(enemyAzimuth), sin(enemyAzimuth) };
 	  float myUnitVec[2] = { cos(myAzimuth), sin(myAzimuth) };
-	  if ((myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]) < 0.0f) {
+	  if ((myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]) < 0.866f) {
+	    //if target is more than 30 degrees away, turn as fast as you can
 	    rotation *= M_PI / (2.0f * fabs(rotation));
 	    speed = 0.0f;
 	  }
