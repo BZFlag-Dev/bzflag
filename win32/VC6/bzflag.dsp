@@ -202,6 +202,10 @@ SOURCE=..\..\src\bzflag\CommandsStandard.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ComposeDefaultKey.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\ControlPanel.cxx
 # End Source File
 # Begin Source File
@@ -250,11 +254,19 @@ SOURCE=..\..\src\bzflag\RobotPlayer.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\Roster.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\SceneBuilder.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\SceneRenderer.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerCommandKey.cxx
 # End Source File
 # Begin Source File
 
@@ -271,6 +283,10 @@ SOURCE=..\..\src\bzflag\ShotPath.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ShotStrategy.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\SilenceDefaultKey.cxx
 # End Source File
 # Begin Source File
 
@@ -399,6 +415,10 @@ SOURCE=..\..\include\CommandsStandard.h
 # Begin Source File
 
 SOURCE=..\..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ComposeDefaultKey.h
 # End Source File
 # Begin Source File
 
@@ -602,6 +622,10 @@ SOURCE=..\..\src\bzflag\RobotPlayer.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\Roster.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\SceneBuilder.h
 # End Source File
 # Begin Source File
@@ -615,6 +639,10 @@ SOURCE=..\..\include\SceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\SceneRenderer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerCommandKey.h
 # End Source File
 # Begin Source File
 
@@ -639,6 +667,10 @@ SOURCE=..\..\src\bzflag\ShotStrategy.h
 # Begin Source File
 
 SOURCE=..\..\include\ShotUpdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\SilenceDefaultKey.h
 # End Source File
 # Begin Source File
 
