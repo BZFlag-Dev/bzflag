@@ -114,16 +114,60 @@ static AudioSamples	soundSamples[SFX_COUNT];
 static long		audioBufferSize;
 static int		soundLevel;
 
+static BzfMedia*	media = NULL;
+
+/* speed of sound stuff */
+static float		timeSizeOfWorld;		/* in seconds */
+static TimeKeeper	startTime;
+static double		prevTime, curTime;
+
+typedef struct {
+  AudioSamples*		samples;		/* event sound effect */
+  bool		busy;			/* true iff in use */
+  long			ptr;			/* current sample */
+  double		ptrFracLeft;		/* fractional step ptr */
+  double		ptrFracRight;		/* fractional step ptr */
+  int			flags;			/* state info */
+  float			x, y, z;		/* event location */
+  double		time;			/* time of event */
+  float			lastLeftAtten;
+  float			lastRightAtten;
+  float			dx, dy, dz;		/* last relative position */
+  float			d;			/* last relative distance */
+  float			dLeft;			/* last relative distance */
+  float			dRight;			/* last relative distance */
+  float			amplitude;		/* last sfx amplitude */
+} SoundEvent;
+
+/* list of events currently pending */
+static SoundEvent	events[MaxEvents];
+static int		portUseCount;
+static double		endTime;
+
+/* fade in/out table */
+const int		FadeDuration = 16;
+static float		fadeIn[FadeDuration];
+static float		fadeOut[FadeDuration];
+
+/* scratch buffer for adding contributions from sources */
+static float*		scratch;
+
+static bool		usingSameThread = false;
+
+static bool		audioInnerLoop();
 
 void			openSound(const char*)
 {
+  int i;
+
   if (usingAudio) return;			// already opened
 
-  if (!PlatformFactory::getMedia()->openAudio())
+  media = PlatformFactory::getMedia();
+  if (!media->openAudio())
     return;
 
   // initialize buffers
-  for (int i = 0; i < SFX_COUNT; i++) {
+  for (i = 0; i < SFX_COUNT; i++) {
     soundSamples[i].data = NULL;
     soundSamples[i].mono = NULL;
     soundSamples[i].monoRaw = NULL;
@@ -131,21 +175,48 @@ void			openSound(const char*)
 
   // open audio data files
   if (!allocAudioSamples()) {
-    PlatformFactory::getMedia()->closeAudio();
+    media->closeAudio();
 #ifndef DEBUG
     std::cout << "WARNING: Unable to open audio data files" << std::endl;
 #endif
     return;					// couldn't get samples
   }
 
+  audioBufferSize = media->getAudioBufferChunkSize() << 1;
+
+  /* initialize */
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  timeSizeOfWorld = 1.414f * worldSize / SpeedOfSound;
+  for (i = 0; i < MaxEvents; i++) {
+    events[i].samples = NULL;
+    events[i].busy = false;
+  }
+  portUseCount = 0;
+  for (i = 0; i < FadeDuration; i += 2) {
+    fadeIn[i] = fadeIn[i+1] =
+		sinf(M_PI / 2.0f * (float)i / (float)(FadeDuration-2));
+    fadeOut[i] = fadeOut[i+1] = 1.0f - fadeIn[i];
+  }
+  scratch = new float[audioBufferSize];
+
+  startTime = TimeKeeper::getCurrent();
+  curTime = 0.0;
+  endTime = -1.0;
+
+  usingSameThread = !media->hasAudioThread();
+
+  if (media->hasAudioCallback()) {
+    media->startAudioCallback(audioInnerLoop);
+  } else {
   // start audio thread
-  if (!PlatformFactory::getMedia()->startAudioThread(audioLoop, NULL)) {
-    PlatformFactory::getMedia()->closeAudio();
+  if (!usingSameThread && !media->startAudioThread(audioLoop, NULL)) {
+    media->closeAudio();
     freeAudioSamples();
 #ifndef DEBUG
     std::cout << "WARNING: Unable to start the audio thread" << std::endl;
 #endif
     return;
+  }
   }
 
   setSoundVolume(10);
@@ -172,6 +243,8 @@ void			closeSound(void)
 
   // reset audio hardware
   PlatformFactory::getMedia()->closeAudio();
+
+  delete[] scratch;
 
   // free memory used for sfx samples
   freeAudioSamples();
@@ -388,29 +461,6 @@ int			getSoundVolume()
  *	and ptr is incremented by 2 for each (stereo) sample.
  */
 
-typedef struct {
-  AudioSamples*		samples;		/* event sound effect */
-  bool		busy;			/* true iff in use */
-  long			ptr;			/* current sample */
-  double		ptrFracLeft;		/* fractional step ptr */
-  double		ptrFracRight;		/* fractional step ptr */
-  int			flags;			/* state info */
-  float			x, y, z;		/* event location */
-  double		time;			/* time of event */
-  float			lastLeftAtten;
-  float			lastRightAtten;
-  float			dx, dy, dz;		/* last relative position */
-  float			d;			/* last relative distance */
-  float			dLeft;			/* last relative distance */
-  float			dRight;			/* last relative distance */
-  float			amplitude;		/* last sfx amplitude */
-} SoundEvent;
-
-/* list of events currently pending */
-static SoundEvent	events[MaxEvents];
-static int		portUseCount;
-static double		endTime;
-
 /* last position of the receiver */
 static float		lastX, lastY, lastZ, lastTheta;
 static float		lastXLeft, lastYLeft;
@@ -427,19 +477,6 @@ static float		velY;
 /* volume */
 static float		volumeAtten = 1.0f;
 static int		mutingOn = 0;
-
-/* scratch buffer for adding contributions from sources */
-static float*		scratch;
-
-/* fade in/out table */
-const int		FadeDuration = 16;
-static float		fadeIn[FadeDuration];
-static float		fadeOut[FadeDuration];
-
-/* speed of sound stuff */
-static float		timeSizeOfWorld;		/* in seconds */
-static TimeKeeper	startTime;
-static double		prevTime, curTime;
 
 static void		recalcEventDistance(SoundEvent* e)
 {
@@ -921,15 +958,9 @@ static int		findBestLocalSlot()
 //
 // audioLoop() simply generates samples and keeps the audio hw fed
 //
-static BzfMedia*	media = NULL;
-static bool		usingSameThread = false;
-
-static bool		audioInnerLoop(bool noWaiting)
+static bool		audioInnerLoop()
 {
     int i, j;
-
-    // sleep until audio buffers hit low water mark or new command available
-    media->audioSleep(true, noWaiting ? 0.0 : endTime);
 
     /* get time step */
     prevTime = curTime;
@@ -1079,48 +1110,23 @@ static bool		audioInnerLoop(bool noWaiting)
 
 static void		audioLoop(void*)
 {
-  int i;
-
-  media = PlatformFactory::getMedia();
-  audioBufferSize = media->getAudioBufferChunkSize() << 1;
-
-  /* initialize */
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-  timeSizeOfWorld = 1.414f * worldSize / SpeedOfSound;
-  for (i = 0; i < MaxEvents; i++) {
-    events[i].samples = NULL;
-    events[i].busy = false;
-  }
-  portUseCount = 0;
-  for (i = 0; i < FadeDuration; i += 2) {
-    fadeIn[i] = fadeIn[i+1] =
-		sinf(M_PI / 2.0f * (float)i / (float)(FadeDuration-2));
-    fadeOut[i] = fadeOut[i+1] = 1.0f - fadeIn[i];
-  }
-  scratch = new float[audioBufferSize];
-
-  startTime = TimeKeeper::getCurrent();
-  curTime = 0.0;
-  endTime = -1.0;
-
-  // if using same thread then return immediately
-  usingSameThread = !media->hasAudioThread();
-  if (usingSameThread) return;
-
   // loop until requested to stop
-  bool done = false;
-  while (!done) {
-    if (audioInnerLoop(false))
-      done = true;
-  }
+  while (true) {
+    // sleep until audio buffers hit low water mark or new command available
+    media->audioSleep(true, endTime);
 
-  delete[] scratch;
+    if (audioInnerLoop())
+      break;
+  }
 }
 
 void			updateSound()
 {
-  if (isSoundOpen() && usingSameThread)
-    audioInnerLoop(true);
+  if (isSoundOpen() && usingSameThread) {
+    // sleep until audio buffers hit low water mark or new command available
+    media->audioSleep(true, 0.0);
+    audioInnerLoop();
+  }
 }
 
 // Local Variables: ***
