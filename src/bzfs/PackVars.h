@@ -13,8 +13,12 @@
 #ifndef __PACKVARS_H__
 #define __PACKVARS_H__
 
-// bzflag common interface headers
+/* system interface headers */
+#include <string>
+
+/* common interface headers */
 #include "Pack.h"
+#include "StateDatabase.h"
 
 /* FIXME - external dependancies that need to be cleaned up and separated out
  * into an interface.
@@ -22,7 +26,7 @@
 extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 
 
-/** class to easily send a bunch of BZDB variables via MsgSetVar.
+/** class to send a bunch of BZDB variables via MsgSetVar.
  * dtor does the actual send
  */
 class PackVars
@@ -30,10 +34,10 @@ class PackVars
 public:
   PackVars(void *buffer, int playerIndex) : bufStart(buffer)
   {
-     buf = nboPackUShort(bufStart, 0);//placeholder
-     playerId = playerIndex;
-     len = sizeof(uint16_t);
-     count = 0;
+    buf = nboPackUShort(bufStart, 0);//placeholder
+    playerId = playerIndex;
+    len = sizeof(uint16_t);
+    count = 0;
   }
 
   ~PackVars()
@@ -79,15 +83,12 @@ private:
 };
 
 
-#else
-class PackVars;
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
