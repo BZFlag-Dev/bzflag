@@ -2000,6 +2000,18 @@ static void acceptClient()
     return;
   }
 
+  int keepalive = 1;
+  int n;
+#if defined(_WIN32)
+  n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
+		 (const char *)&keepalive, sizeof(int));
+#else
+  n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
+		 (const void *)&keepalive, sizeof(int));
+#endif
+  if (n < 0) {
+      nerror("couldn't set keepalive");
+  }
   // send server version and playerid
   char buffer[9];
   memcpy(buffer, getServerVersion(), 8);
