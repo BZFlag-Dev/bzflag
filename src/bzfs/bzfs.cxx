@@ -1845,7 +1845,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 {
   // relay packet to all players except origin
   for (int i = 0; i < curMaxPlayers; i++)
-    if (i != index)
+    if (i != index && player[i].state > PlayerInLimbo)
       pwrite(i, rawbuf, len + 4);
 }
 
@@ -5166,9 +5166,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 
 	// allow a 5% tolerance level for speed
-    float realtol=1.0f;
-    if(speedTolerance>1.0f)
-     realtol = speedTolerance;
+	float realtol=1.0f;
+	if(speedTolerance>1.0f)
+	realtol = speedTolerance;
 	maxPlanarSpeedSqr *= realtol;
 	if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	  if (logOnly) {
