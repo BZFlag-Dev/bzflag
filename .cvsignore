@@ -1,4 +1,5 @@
 aclocal.m4
+bzflag.info
 bzflag.lsm
 bzflag.spec
 config.cache
