@@ -475,7 +475,7 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
   int current = -1;
   const int currentWidth = GetDeviceCaps(hDC, HORZRES);
   const int currentHeight = GetDeviceCaps(hDC, VERTRES);
-  for (i = 0; i < numResolutions; i++) {
+  for (i = numResolutions; i >= 0; i--) {
     const Resolution* r = resolutions + i;
     if (r->width == currentWidth &&
 	r->height == currentHeight &&
