@@ -24,13 +24,6 @@ THESE ARE LOWER PRIORITY
 * require an email contact name for public servers. Perhaps
   unpublished by default
 
-* Add ban voting.  Players can initiate a request to ban a
-  particular player.  This requires /requestVote and /vote
-  commands for the client, and server configurability to allow
-  or disallow voting, as well as parameters for what consists
-  a successful vote.  Also, admins should be allowed to veto a
-  vote.
-
 * Create a new MsgThrottle message sent from client to server
   to inform server to throttle MsgPlayerUpdates from other clients
   to X. X is set in bzflag.bzc. Server uses PlayerInfo.lastState to
