@@ -30,7 +30,6 @@ bzflag_SOURCES =			\
 	ShotStrategy.h			\
 	Region.cxx			\
 	Region.h			\
-	RenderNode.cxx			\
 	Player.cxx			\
 	Player.h			\
 	playing.cxx			\
