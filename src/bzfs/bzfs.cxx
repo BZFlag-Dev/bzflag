@@ -1519,8 +1519,8 @@ static void addPlayer(int playerIndex)
   float waitTime = rejoinList.waitTime (playerIndex);
   if (waitTime > 0.0f) {
     char buffer[MessageLen];
-    DEBUG3 ("Rejoin wait %.1f seconds for %s\n",
-            waitTime, player[playerIndex].getCallSign());
+    DEBUG2 ("Player %s [%d] rejoin wait of %.1f seconds\n",
+            player[playerIndex].getCallSign(), playerIndex, waitTime);
     sprintf (buffer, "Can't rejoin for %.1f seconds.", waitTime);
     rejectPlayer(playerIndex, RejectRejoinWaitTime, buffer);
     return ;
