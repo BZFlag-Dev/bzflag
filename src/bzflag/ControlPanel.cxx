@@ -46,9 +46,7 @@ ControlPanelMessage::ControlPanelMessage(const std::string& _string,
 // ControlPanel
 //
 
-const int		ControlPanel::maxLines = 30;
-const int		ControlPanel::maxScrollPages = 4;
-int				ControlPanel::messagesOffset = 0;
+int			ControlPanel::messagesOffset = 0;
 extern void		printMissingDataDirectoryError(const char*);
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
@@ -74,6 +72,9 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   messageAreaPixels[2] = 0;
   messageAreaPixels[3] = 0;
   expose();
+
+  maxLines = 30;
+  maxScrollPages = 4;
 }
 
 ControlPanel::~ControlPanel()
@@ -283,6 +284,7 @@ void			ControlPanel::resize()
   messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2;
   messageAreaPixels[3] = radarAreaPixels[3];
 
+
   // if radar connected then resize it
   if (radarRenderer)
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
@@ -296,7 +298,9 @@ void			ControlPanel::resize()
     messageFont = TextureFont::getTextureFont(TextureFont::Fixed, true);
   messageFont.setSize(fontSize, fontSize);
 
-  // note that we've been resized at least once
+  maxLines = messageAreaPixels[3] / fontSize;
+
+	   // note that we've been resized at least once
   resized = true;
   expose();
 }

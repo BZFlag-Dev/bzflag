@@ -75,8 +75,8 @@ class ControlPanel {
     std::vector<ControlPanelMessage>	messages;
     GLfloat		teamColor[3];
     static int		messagesOffset;
-    static const int	maxScrollPages;
-    static const int	maxLines;
+    int			maxScrollPages;
+    int			maxLines;
 };
 
 #endif // BZF_CONTROL_PANEL_H
