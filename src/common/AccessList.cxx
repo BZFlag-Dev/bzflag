@@ -48,7 +48,7 @@ AccessList::AccessList(const std::string& _filename, const char* content)
 {
   filename = getConfigDirName();
   filename += _filename;
-  
+
   alwaysAuth = false;
 
   bool fileExists = reload();
@@ -70,32 +70,32 @@ const std::string& AccessList::getFileName() const
 {
   return filename;
 }
-    
+
 bool AccessList::reload()
 {
   patterns.clear();
   alwaysAuth = false;
-  
+
   FILE* file = fopen(filename.c_str(), "r");
   if (file == NULL) {
     return false;
   }
-  
+
   char buf[256];
   while (fgets (buf, 256, file) != NULL) {
 
     char* c = eatWhite(buf);
-    
+
     // clip any trailing any CR or NL
     char* tmp = c;
     while (*tmp != '\0') {
       if ((*tmp == '\r') || (*tmp == '\n')) {
-        *tmp = '\0';
+	*tmp = '\0';
       }
       tmp++;
     }
 
-    // skip comments and blank lines    
+    // skip comments and blank lines
     if ((*c == '\0') || (*c == '#')) {
       continue;
     }
@@ -124,12 +124,12 @@ bool AccessList::reload()
     }
 
     c = eatWhite(c);
-    
+
     if (*c == '\0') {
       DEBUG1("%s: missing pattern (%s)\n", filename.c_str(), buf);
       continue; // ignore this line
     }
-    
+
     // terminate the pattern on the first non-white
     char* end = eatNonWhite(c);
     *end = '\0';
@@ -138,14 +138,14 @@ bool AccessList::reload()
     pattern.type = type;
     pattern.pattern = c;
     patterns.push_back(pattern);
-    
+
     DEBUG4("AccessList(%s):  added  (%i: %s)\n", filename.c_str(), type, c);
   }
-  
+
   fclose(file);
-  
+
   alwaysAuth = computeAlwaysAuth();
-  
+
   return true;
 }
 
@@ -166,8 +166,8 @@ bool AccessList::computeAlwaysAuth() const
   }
   return true;
 }
-    
-    
+
+
 bool AccessList::authorized(const std::vector<std::string>& strings) const
 {
   for (unsigned int i = 0; i < patterns.size(); i++) {
@@ -175,34 +175,34 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
     if ((p.type == allow) || (p.type == deny)) {
       // simple globbing
       for (unsigned int s = 0; s < strings.size(); s++) {
-        if (glob_match(p.pattern, strings[s])) {
-          if (p.type == allow) {
-            return true;
-          }
-          else if (p.type == deny) {
-            return false;
-          }
-        }
+	if (glob_match(p.pattern, strings[s])) {
+	  if (p.type == allow) {
+	    return true;
+	  }
+	  else if (p.type == deny) {
+	    return false;
+	  }
+	}
       }
     } else {
       // regular expression
       regex_t re;
       if (regcomp(&re, p.pattern.c_str(), REG_EXTENDED | REG_ICASE) != 0) {
-        continue;
+	continue;
       }
       for (unsigned int s = 0; s < strings.size(); s++) {
-        if (regexec(&re, strings[s].c_str(), 0, NULL, 0) == 0) {
-          if (p.type == allow_regex) {
-            return true;
-          }
-          else if (p.type == deny_regex) {
-            return false;
-          }
-        }
+	if (regexec(&re, strings[s].c_str(), 0, NULL, 0) == 0) {
+	  if (p.type == allow_regex) {
+	    return true;
+	  }
+	  else if (p.type == deny_regex) {
+	    return false;
+	  }
+	}
       }
     }
   }
-  
+
   return true;
 }
 

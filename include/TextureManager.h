@@ -52,7 +52,7 @@ class TextureManager : public Singleton<TextureManager>
 public:
   int getTextureID( const char* name, bool reportFail = true );
 
-  bool isLoaded(const std::string& name);  
+  bool isLoaded(const std::string& name);
   bool removeTexture(const std::string& name);
   bool reloadTextureImage(const std::string& name);
 

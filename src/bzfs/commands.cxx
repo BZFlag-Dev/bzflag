@@ -68,7 +68,7 @@ extern void initGroups();
 // externs that poll, veto, vote, and clientquery require
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
-                              const char *message);
+			      const char *message);
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 
@@ -1214,22 +1214,22 @@ static void handleShowgroupCmd(GameKeeper::Player *playerData, const char *messa
     if (playerIndex < curMaxPlayers) {
       GameKeeper::Player* target = GameKeeper::Player::getPlayerByIndex(playerIndex);
       if (target != NULL) {
-        PlayerAccessInfo &info = target->accessInfo;
-        // FIXME remove local groups from this list. better yet unify the two.
-        std::string line = "Global Groups (only extras) for ";
-        line += settie;
-        line += ": ";
-        std::vector<std::string>::iterator itr = info.groups.begin();
-        while (itr != info.groups.end()) {
+	PlayerAccessInfo &info = target->accessInfo;
+	// FIXME remove local groups from this list. better yet unify the two.
+	std::string line = "Global Groups (only extras) for ";
+	line += settie;
+	line += ": ";
+	std::vector<std::string>::iterator itr = info.groups.begin();
+	while (itr != info.groups.end()) {
 	  line += *itr;
 	  line += " ";
 	  itr++;
-        }
-        while (line.size() > (unsigned int)MessageLen) {
+	}
+	while (line.size() > (unsigned int)MessageLen) {
 	  sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
 	  line.erase(line.begin(), line.begin() + (MessageLen - 1));
-        }
-        sendMessage(ServerPlayer, t, line.c_str());
+	}
+	sendMessage(ServerPlayer, t, line.c_str());
       }
     }
     // once for local groups
@@ -1399,12 +1399,12 @@ static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
   GameKeeper::Player::reloadAccessDatabase();
   sendMessage(ServerPlayer, t, "Databases reloaded");
-  
+
   // Validate all of the current players
 
   std::string reason;
   char kickmessage[MessageLen];
-  
+
   // Check host bans
   GameKeeper::Player::setAllNeedHostbanChecked(true);
 
@@ -2126,16 +2126,16 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
 {
   size_t messageStart = 0;
   int t = playerData->getIndex();
-  
+
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::say)) {
     char reply[MessageLen] = {0};
     sprintf(reply,"%s, you do not have permission to run the /say command", playerData->player.getCallSign());
     sendMessage(ServerPlayer, t, reply);
     return;
   }
-  
+
   std::string messageText = &message[4];
-  
+
   // skip any leading whitespace
   while ((messageStart < messageText.size()) &&
 	 (isspace(messageText[messageStart]))) {
@@ -2147,8 +2147,8 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
     sendMessage(ServerPlayer, t, "Usage: /say some message");
     return;
   }
-  
-  
+
+
   // send the message
   sendMessage(ServerPlayer, AllPlayers, messageText.c_str() + messageStart );
   return;

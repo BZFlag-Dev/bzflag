@@ -31,7 +31,7 @@ class WinJoystick : public BzfJoystick {
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
-    void        getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
     void	setXAxis(const std::string axis);
     void	setYAxis(const std::string axis);
 

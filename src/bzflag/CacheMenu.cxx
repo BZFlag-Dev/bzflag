@@ -92,7 +92,7 @@ CacheMenu::CacheMenu()
   cacheSize->setMaxLength(4);
   cacheSize->setString(BZDB.get("maxCacheMB"));
   list.push_back(cacheSize);
-  
+
   // Clear Download Cache
   clearDownloadCache = label = new HUDuiLabel;
   label->setFontFace(fontFace);
@@ -190,7 +190,7 @@ void CacheMenu::execute()
       // already cleared -- do nothing
     }
   }
-  
+
   return;
 }
 
@@ -247,7 +247,7 @@ void CacheMenu::resize(int width, int height)
 
   // load current settings
   i = 1;
-  
+
   // server cache age
   int index = 0;
   switch ((ServerListCache::get())->getMaxCacheAge()){
@@ -268,12 +268,12 @@ void CacheMenu::resize(int width, int height)
 
   i++; // cache size
   i++; // clear downloads cache
-  
+
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("doDownloads") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("updateDownloads") ? 1 : 0);
   i++; // update downloads now
-  
-  return;  
+
+  return;
 }
 
 

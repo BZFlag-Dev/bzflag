@@ -163,7 +163,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
-    if (playerData->player.isAlive()) { 
+    if (playerData->player.isAlive()) {
       float *enemyPos = playerData->lastState->pos;
       float enemyAngle = playerData->lastState->azimuth;
       if (playerData->player.getFlag() >= 0) {

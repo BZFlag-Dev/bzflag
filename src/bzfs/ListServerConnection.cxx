@@ -214,7 +214,7 @@ void ListServerLink::read()
 	      sendMessage(ServerPlayer, playerIndex, "If it is not yours, please ask an admin "
 			  "to deregister it so that you may use your global callsign.");
 	    }
-            playerData->setNeedThisHostbanChecked(true);
+	    playerData->setNeedThisHostbanChecked(true);
 	    playerData->player.clearToken();
 	  }
 	}
@@ -227,9 +227,9 @@ void ListServerLink::read()
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
 	  if (playerData != NULL) {
-            playerData->setNeedThisHostbanChecked(true);
+	    playerData->setNeedThisHostbanChecked(true);
 	    playerData->player.clearToken();
-          }
+	  }
 	}
       }
 
@@ -355,8 +355,8 @@ void ListServerLink::addMe(PingPacket pingInfo,
       msg += encodedCallsign;
       Address addr = handler->getIPAddress();
       if (!addr.isPrivate()) {
-        msg += "@";
-        msg += handler->getTargetIP();
+	msg += "@";
+	msg += handler->getTargetIP();
       }
       msg += "=";
       msg += playerData->player.getToken();

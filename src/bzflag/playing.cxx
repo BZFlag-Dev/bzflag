@@ -1406,31 +1406,31 @@ static bool isCached(char *hexDigest)
 
 
 int curlProgressFunc(void* /*clientp*/,
-                     double dltotal, double dlnow,
-                     double /*ultotal*/, double /*ulnow*/)
+		     double dltotal, double dlnow,
+		     double /*ultotal*/, double /*ulnow*/)
 {
   // download aborted?
   BzfEvent event;
   if (display->isEventPending()) {
     if (display->peekEvent(event)) {
       switch (event.type) {
-        case BzfEvent::Quit:
-          return 1; 		    // terminate the curl call
-        case BzfEvent::KeyDown:
-          display->getEvent(event); // flush the event
-          return 1; 		    // terminate the curl call
-        case BzfEvent::KeyUp:
-          display->getEvent(event); // flush the event
-          break;
-        case BzfEvent::MouseMove:
-          display->getEvent(event); // flush the event
-          break;
-        case BzfEvent::Unset:
-        case BzfEvent::Map:
-        case BzfEvent::Unmap:
-        case BzfEvent::Redraw:
-        case BzfEvent::Resize:
-          break;
+	case BzfEvent::Quit:
+	  return 1;		    // terminate the curl call
+	case BzfEvent::KeyDown:
+	  display->getEvent(event); // flush the event
+	  return 1;		    // terminate the curl call
+	case BzfEvent::KeyUp:
+	  display->getEvent(event); // flush the event
+	  break;
+	case BzfEvent::MouseMove:
+	  display->getEvent(event); // flush the event
+	  break;
+	case BzfEvent::Unset:
+	case BzfEvent::Map:
+	case BzfEvent::Unmap:
+	case BzfEvent::Redraw:
+	case BzfEvent::Resize:
+	  break;
       }
     }
   }
@@ -1446,7 +1446,7 @@ int curlProgressFunc(void* /*clientp*/,
   drawFrame(0.0f);
 
   return 0;
-}                            
+}
 
 
 static bool isUrlCached()
@@ -2471,46 +2471,46 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	fullMsg += colorStr;
 
-        // display action messages differently
-        bool isAction = false;
-        if ((text[0] == '*') && (text[1] == ' ') &&
-            (text[text.size() - 1] == '*') &&
-            (text[text.size() - 2] == '\t')) {
-          isAction = true;
-          text = text.substr(2, text.size() - 4);
-        }
+	// display action messages differently
+	bool isAction = false;
+	if ((text[0] == '*') && (text[1] == ' ') &&
+	    (text[text.size() - 1] == '*') &&
+	    (text[text.size() - 2] == '\t')) {
+	  isAction = true;
+	  text = text.substr(2, text.size() - 4);
+	}
 
 	// direct message to or from me
 	if (dstPlayer) {
 	  //if (fromServer && (origText == "You are now an administrator!"
 	  //		     || origText == "Password Accepted, welcome back."))
 	  //admin = true;
-	  
+
 	  // talking to myself? that's strange
 	  if (dstPlayer == myTank && srcPlayer == myTank) {
 	    fullMsg = text;
 	  } else {
 	    if (BZDB.get("killerhighlight") == "1")
 	      fullMsg += ColorStrings[PulsatingColor];
-            else if (BZDB.get("killerhighlight") == "2")
+	    else if (BZDB.get("killerhighlight") == "2")
 	      fullMsg += ColorStrings[UnderlineColor];
 
 	    if (srcPlayer == myTank) {
-              if (isAction) {
-                fullMsg += "[->" + text + "]";
-              } else {
-                fullMsg += "[->" + dstName + "]";
-                fullMsg += ColorStrings[ResetColor] + " ";
-                fullMsg += ColorStrings[CyanColor] + text;
-              }
+	      if (isAction) {
+		fullMsg += "[->" + text + "]";
+	      } else {
+		fullMsg += "[->" + dstName + "]";
+		fullMsg += ColorStrings[ResetColor] + " ";
+		fullMsg += ColorStrings[CyanColor] + text;
+	      }
 	    } else {
-              if (isAction) {
-                fullMsg += "[" + text + "->]";
-              } else {
-                fullMsg += "[" + srcName + "->]";
-                fullMsg += ColorStrings[ResetColor] + " ";
-                fullMsg += ColorStrings[CyanColor] + text;
-              }
+	      if (isAction) {
+		fullMsg += "[" + text + "->]";
+	      } else {
+		fullMsg += "[" + srcName + "->]";
+		fullMsg += ColorStrings[ResetColor] + " ";
+		fullMsg += ColorStrings[CyanColor] + text;
+	      }
 
 	      if (srcPlayer)
 		myTank->setRecipient(srcPlayer);
@@ -2564,7 +2564,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
 	  }
 	}
-	
+
 	std::string oldcolor = "";
 	if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
 	  oldcolor = ColorStrings[RogueTeam];
@@ -4182,7 +4182,7 @@ void		leaveGame()
   curMaxPlayers = 0;
   numFlags = 0;
   player = NULL;
-  
+
   // update UI
   hud->setPlaying(false);
   hud->setCracks(false);
@@ -4235,9 +4235,9 @@ static void joinInternetGame()
     HUDDialogStack::get()->setFailedMessage("Server not found");
     return;
   }
-  
+
   // check for a local server block
-  ServerAccessList.reload(); 
+  ServerAccessList.reload();
   std::vector<std::string> nameAndIp;
   nameAndIp.push_back(startupInfo.serverName);
   nameAndIp.push_back(serverAddress.getDotNotation());

@@ -1538,7 +1538,7 @@ int			main(int argc, char** argv)
     BZDB.set("showCullingGrid", "0");
     BZDB.set("showCollisionGrid", "0");
   }
-#endif  
+#endif
 
   // set server list URL
   if (BZDB.isSet("list"))

@@ -14,11 +14,11 @@ is quite easy.
     http://libsdl.org/
 
     Installation instructions are below.
-    
+
 3. Download libCURL, available from:
 
     http://curl.haxx.se/latest.cgi?curl=win32-ssl-devel-mingw
-    
+
    Installation is roughly the same as the SDL instructions below.
 
 4. Open up the corresponding project files, included in the "Dev-C++"

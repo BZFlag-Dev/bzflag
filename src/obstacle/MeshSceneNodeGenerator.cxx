@@ -67,10 +67,10 @@ static bool translucentMaterial(const BzMaterial* mat)
     if (texname.size() > 0) {
       faceTexture = tm.getTextureID(texname.c_str());
       if (faceTexture >= 0) {
-        const ImageInfo& imageInfo = tm.getInfo(faceTexture);
-        if (imageInfo.alpha && mat->getUseTextureAlpha(0)) {
-          return true;
-        }
+	const ImageInfo& imageInfo = tm.getInfo(faceTexture);
+	if (imageInfo.alpha && mat->getUseTextureAlpha(0)) {
+	  return true;
+	}
       }
     }
   }
@@ -180,7 +180,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
 
     // see if this face needs to be drawn individually
     if (firstFace->noClusters() ||
-        (translucentMaterial(firstMat) && !firstMat->getNoSorting())) {
+	(translucentMaterial(firstMat) && !firstMat->getNoSorting())) {
       MeshNode mn;
       mn.isFace = true;
       mn.faces.push_back(firstFace);
@@ -323,7 +323,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 {
   // cheat a little
   ((BzMaterial*)mat)->setReference();
-  
+
   TextureManager &tm = TextureManager::instance();
   OpenGLMaterial oglMaterial(mat->getSpecular(),
 			     mat->getEmission(),
@@ -391,7 +391,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
       node->setLightedModulateColor(color);
     }
   }
-  
+
   node->setAlphaThreshold(mat->getAlphaThreshold());
   node->setNoCulling(mat->getNoCulling());
   node->setNoSorting(mat->getNoSorting());

@@ -84,11 +84,11 @@ bool URLManager::getURL(const std::string& URL, void **data, unsigned int& size)
 bool URLManager::getFileTime(time_t& t)
 {
   t = 0;
-  
+
   if (lastCallFailed) {
     return false;
   }
-  
+
   long filetime;
   CURLcode result;
   result = curl_easy_getinfo((CURL*)easyHandle, CURLINFO_FILETIME, &filetime);
@@ -97,7 +97,7 @@ bool URLManager::getFileTime(time_t& t)
     return false;
   }
   t = (time_t)filetime;
-  
+
   return true;
 }
 
@@ -105,15 +105,15 @@ bool URLManager::getFileTime(time_t& t)
 bool URLManager::getURLHeader(const std::string& URL)
 {
 //  return false;
-  
+
   bool retcode = true;
   CURLcode result;
-  
+
   float timeout = 15;
   if (BZDB.isSet("httpTimeout")) {
     timeout = BZDB.eval("httpTimeout");
   }
-  
+
 #if LIBCURL_VERSION_NUM >= 0x070a00
   result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_NOSIGNAL, true);
   if (result) {
@@ -133,7 +133,7 @@ bool URLManager::getURLHeader(const std::string& URL)
     DEBUG1("CURLOPT_NOBODY error: %d\n", result);
     retcode = false;
   }
-  
+
   result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
   if (result) {
     DEBUG1("CURLOPT_URL error: %d\n", result);
@@ -161,15 +161,15 @@ bool URLManager::getURLHeader(const std::string& URL)
     DEBUG1("CURLOPT_NOBODY error: %d\n", result);
     retcode = false;
   }
-  
+
   result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_HTTPGET, 1);
   if (result) {
     DEBUG1("CURLOPT_HTTPGET error: %d\n", result);
     retcode = false;
   }
-  
+
   lastCallFailed = !retcode;
-  
+
   return retcode;
 }
 
@@ -302,10 +302,10 @@ bool URLManager::beginGet(const std::string URL)
 }
 
 
-void URLManager::setProgressFunc(int (*func)(void* clientp, 
-                                             double dltotal, double dlnow,
-                                             double ultotal, double ulnow),
-                                             void* data)
+void URLManager::setProgressFunc(int (*func)(void* clientp,
+					     double dltotal, double dlnow,
+					     double ultotal, double ulnow),
+					     void* data)
 {
   if (!easyHandle) {
     return;
@@ -369,10 +369,10 @@ bool URLManager::beginGet(const std::string)
   return false;
 }
 void URLManager::setProgressFunc(int (*)(void*, double, double,
-                                                double, double), void*)
+						double, double), void*)
 {
   return;
-}                                                
+}
 
 #endif // HAVE_CURL
 

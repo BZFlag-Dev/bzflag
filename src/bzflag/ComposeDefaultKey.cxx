@@ -63,7 +63,7 @@ static bool varIsEqual(const std::string& name)
   if (name[0] != '_') {
     return true;
   }
-  
+
   // get the parameters
   const std::string exp = BZDB.get(name);
   const std::string defexp = BZDB.getDefault(name);
@@ -73,10 +73,10 @@ static bool varIsEqual(const std::string& name)
   const float defval = BZDB.eval("tmp");
   const bool valNaN = !(val == val);
   const bool defNaN = !(defval == defval);
-  
+
   if (valNaN != defNaN) {
     return false;
-  } 
+  }
 
   if (valNaN) {
     return (exp == defexp);
@@ -97,7 +97,7 @@ static void listSetVars(const std::string& name, void* boolPtr)
       foundVarDiff = true;
     }
   }
-   
+
   char message[MessageLen];
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
     if (BZDBCache::colorful) {
@@ -201,15 +201,15 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  addMessage(NULL, "Invalid file name specified");
 	}
       } else if (message == "/set") {
-        bool diff = false;
+	bool diff = false;
 	BZDB.iterate(listSetVars, &diff);
       } else if (message == "/diff") {
-        bool diff = true;
-        foundVarDiff = false;
+	bool diff = true;
+	foundVarDiff = false;
 	BZDB.iterate(listSetVars, &diff);
-        if (!foundVarDiff) {
-          addMessage(LocalPlayer::getMyTank(), "all variables are at defaults", 2);
-        }
+	if (!foundVarDiff) {
+	  addMessage(LocalPlayer::getMyTank(), "all variables are at defaults", 2);
+	}
 #ifdef DEBUG
       } else if (strncmp(cmd, "/localset", 9) == 0) {
 	std::string params = cmd + 9;

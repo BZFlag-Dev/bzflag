@@ -164,7 +164,7 @@ static void underscoreBeforeNumbers(std::string& name)
 	}
 	return;
 }
-    
+
 
 static void readMTL ( CModel &model, std::string file )
 {
@@ -235,7 +235,7 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].diffuse[0] = (float)atof(lineParts[1].c_str());
 						model.materials[matName].diffuse[1] = (float)atof(lineParts[2].c_str());
 						model.materials[matName].diffuse[2] = (float)atof(lineParts[3].c_str());
-					}	
+					}
 				}
 				if (TextUtils::tolower(tag) == "ks")
 				{
@@ -244,7 +244,7 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].specular[0] = (float)atof(lineParts[1].c_str());
 						model.materials[matName].specular[1] = (float)atof(lineParts[2].c_str());
 						model.materials[matName].specular[2] = (float)atof(lineParts[3].c_str());
-					}	
+					}
 				}
 				if (TextUtils::tolower(tag) == "ns")
 				{
@@ -303,13 +303,13 @@ static void readOBJ ( CModel &model, std::string file )
 	char *p = strrchr (file.c_str(),'\\');
 	if ( !p )
 		p = strrchr (file.c_str(),'/');
-		
+
 	if (p)
 	{
 		baseFilePath = file;
 		baseFilePath.erase(baseFilePath.begin()+(p-file.c_str()+1),baseFilePath.end());
 	}
-	
+
 	std::string lineTerminator = "\n";
 
 	std::string fileText = pData;
@@ -326,8 +326,8 @@ static void readOBJ ( CModel &model, std::string file )
 	tvVertList		temp_verts;
 	tvVertList		temp_normals;
 	tvTexCoordList	temp_texCoords;
-	
-	
+
+
 	std::string currentMaterial = "";
 
 	std::vector<std::string>::iterator lineItr = lines.begin();
@@ -347,11 +347,11 @@ static void readOBJ ( CModel &model, std::string file )
 				{
 					CVertex vert;
 					vert.x = (float)atof(lineParts[1].c_str());
-					
+
 					if (flipYZ)
 					{
 						vert.y = -1.0f*(float)atof(lineParts[3].c_str());
-						vert.z = (float)atof(lineParts[2].c_str());			
+						vert.z = (float)atof(lineParts[2].c_str());
 					}
 					else
 					{
@@ -412,13 +412,13 @@ static void readOBJ ( CModel &model, std::string file )
 					{
 						std::string section = lineParts[i];
 
-            // TextUtils::tokenize() does not make 3
-            // strings from "1//2", so do it the hard way
-            const std::string::size_type npos = std::string::npos;
+	    // TextUtils::tokenize() does not make 3
+	    // strings from "1//2", so do it the hard way
+	    const std::string::size_type npos = std::string::npos;
 						std::string::size_type pos1, pos2 = npos;
-            pos1 = section.find_first_of('/');
-            if (pos1 != npos) {
-              pos2 = section.find_first_of('/', pos1 + 1);
+	    pos1 = section.find_first_of('/');
+	    if (pos1 != npos) {
+	      pos2 = section.find_first_of('/', pos1 + 1);
 						}
 
 						std::string vertPart, uvPart, normPart;
@@ -433,7 +433,7 @@ static void readOBJ ( CModel &model, std::string file )
 						    normPart = section.substr(pos2 + 1, npos);
 							}
 						}
-						
+
 						if (vertPart.size() > 0) {
 							face.verts.push_back(atoi(vertPart.c_str())-1);
 						}
@@ -445,7 +445,7 @@ static void readOBJ ( CModel &model, std::string file )
 						}
 					}
 
-          bool valid = true;					
+	  bool valid = true;
 					const int vSize = (int)face.verts.size();
 					const int nSize = (int)face.normals.size();
 					const int tSize = (int)face.texCoords.size();
@@ -528,7 +528,7 @@ static void writeBZW  ( CModel &model, std::string file )
 
 		if (useSmoothBounce)
 			fprintf (fp,"  smoothbounce\n");
-			
+
 		tvVertList::iterator vertItr = mesh.verts.begin();
 		while ( vertItr != mesh.verts.end() )
 		{
@@ -557,7 +557,7 @@ static void writeBZW  ( CModel &model, std::string file )
 			CFace	&face = *faceItr;
 
 			fprintf (fp,"  face\n");
-			
+
 			tvIndexList::iterator	indexItr = face.verts.begin();
 			fprintf (fp,"    vertices");
 			while ( indexItr != face.verts.end() )
@@ -583,7 +583,7 @@ static void writeBZW  ( CModel &model, std::string file )
 			if (useMaterials && (face.material.size() > 0)) {
 			  fprintf (fp, "    matref %s\n", face.material.c_str());
 			}
-			
+
 			fprintf (fp,"  endface\n");
 
 			faceItr++;
@@ -621,16 +621,16 @@ int main(int argc, char* argv[])
 	// make sure we have all the right stuff
 	if ( argc < 2)
 		return dumpUsage(argv[0],"No input file specified");
-		
+
 	// get the input file
-	// check argv for 
+	// check argv for
 	if ( argv[1][0] == '\"' )
 	{
 		argv[1]++;
 		argv[1][strlen(argv[1])-1] = 0;
 	}
 	input = argv[1];
-	
+
 	// see if it has an extenstion
 	char *p = strrchr(argv[1],'.');
 	if (p)
@@ -742,7 +742,7 @@ void CMesh::reindex ( void )
 	{
 		CFace	&face = *faceItr;
 		CFace	newFace;
-		
+
 		newFace.material = face.material;
 
 		tvIndexList::iterator indexItr = face.verts.begin();

@@ -32,7 +32,7 @@ class SDLJoystick : public BzfJoystick {
     void	getJoyDevices(std::vector<std::string> &list) const;
     void	getJoyDeviceAxes(std::vector<std::string> &list) const;
     void	setXAxis(const std::string axis);
-    void	setYAxis(const std::string axis);    
+    void	setYAxis(const std::string axis);
 
   private:
     SDL_Joystick		*joystickID;

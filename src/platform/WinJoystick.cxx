@@ -226,7 +226,7 @@ void	      WinJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
   list.clear();
   if (!inited)
     return;
-  
+
   for (unsigned int i = 0; i < axes.size(); ++i) {
     if (axes[i].exists)
       list.push_back(axes[i].name);

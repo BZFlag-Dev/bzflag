@@ -182,7 +182,7 @@ void BzMaterialManager::makeTextureList(TextureSet& set, bool referenced) const
     const BzMaterial* mat = materials[i];
     for (int j = 0; j < mat->getTextureCount(); j++) {
       if (mat->getReference() || !referenced) {
-        set.insert(mat->getTexture(j));
+	set.insert(mat->getTexture(j));
       }
     }
   }
@@ -191,13 +191,13 @@ void BzMaterialManager::makeTextureList(TextureSet& set, bool referenced) const
 
 
 void BzMaterialManager::setTextureLocal(const std::string& url,
-                                        const std::string& local)
+					const std::string& local)
 {
   for (unsigned int i = 0; i < materials.size(); i++) {
     BzMaterial* mat = materials[i];
     for (int j = 0; j < mat->getTextureCount(); j++) {
       if (mat->getTexture(j) == url) {
-        mat->setTextureLocal(j, local);
+	mat->setTextureLocal(j, local);
       }
     }
   }
@@ -237,7 +237,7 @@ void BzMaterial::reset()
   delete[] shaders;
   shaders = NULL;
   shaderCount = 0;
-  
+
   referenced = false;
 
   return;
@@ -275,7 +275,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   int i;
 
   referenced = false;
-  
+
   name = m.name;
 
   dynamicColor = m.dynamicColor;
@@ -381,7 +381,7 @@ void* BzMaterial::pack(void* buf) const
   int i;
 
   buf = nboPackStdString(buf, name);
-  
+
   uint8_t modeByte = 0;
   if (noCulling) modeByte |= (1 << 0);
   if (noSorting) modeByte |= (1 << 1);
@@ -488,12 +488,12 @@ void* BzMaterial::unpack(void* buf)
 int BzMaterial::packSize() const
 {
   int i;
-  
+
   const int modeSize = sizeof(uint8_t);
 
   const int colorSize = sizeof(int32_t) + (4 * sizeof(float[4])) +
-                        sizeof(float) + sizeof(float);
-  
+			sizeof(float) + sizeof(float);
+
   int textureSize = sizeof(unsigned char);
   for (i = 0; i < textureCount; i++) {
     textureSize += nboStdStringPackSize(textures[i].name);

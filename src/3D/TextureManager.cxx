@@ -81,7 +81,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
     DEBUG2("Could not get texture ID; no provided name\n");
     return -1;
   }
-  
+
   // see if we have the texture
   TextureNameMap::iterator it = textureNames.find(name);
   if (it != textureNames.end()) {
@@ -94,7 +94,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
     FileTextureInit texInfo;
     texInfo.name = filename;
     texInfo.filter = OpenGLTexture::LinearMipmapLinear;
-    
+
     OpenGLTexture *image = loadTexture(texInfo, reportFail);
     if (!image) {
       DEBUG2("Image not found or unloadable: %s\n", name);
@@ -131,9 +131,9 @@ bool TextureManager::removeTexture(const std::string& name)
   // clear the maps
   textureIDs.erase(info.id);
   textureNames.erase(name);
-  
+
   DEBUG2("TextureManager::removed: %s\n", name.c_str());
-  
+
   return true;
 }
 
@@ -144,7 +144,7 @@ bool TextureManager::reloadTextureImage(const std::string& name)
   if (it == textureNames.end()) {
     return false;
   }
-  
+
   ImageInfo& info = it->second;
   OpenGLTexture* oldTex = info.texture;
   OpenGLTexture::Filter filter = oldTex->getFilter();
@@ -155,19 +155,19 @@ bool TextureManager::reloadTextureImage(const std::string& name)
   fileInit.name = name;
   OpenGLTexture* newTex = loadTexture(fileInit, false);
   newTex->setFilter(filter);
-  
+
   //  name and id fields are not changed
   info.texture = newTex;
   info.alpha = newTex->hasAlpha();
   info.x = newTex->getWidth();
   info.y = newTex->getHeight();
-  
+
   delete oldTex;
-  
+
   return true;
 }
 
-  
+
 bool TextureManager::bind ( int id )
 {
   TextureIDMap::iterator it = textureIDs.find(id);

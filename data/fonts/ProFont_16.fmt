@@ -5,7 +5,7 @@ TextureHeight: 256
 TextZStep: 22
 
 # ROW 1
-# 	1,1
+#	1,1
 #	11,20
 Char: " "
 InitialDist: 0

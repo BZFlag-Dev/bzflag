@@ -623,9 +623,9 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr) {
 void NetHandler::getPlayerList(char *list) {
   sprintf(list, "[%d]%-16s: %s%s%s%s%s%s", playerIndex, info->getCallSign(),
 	  peer.getDotNotation().c_str(),
-          getHostname() ? " (" : "",
-          getHostname() ? getHostname() : "",
-          getHostname() ? ")" : "",
+	  getHostname() ? " (" : "",
+	  getHostname() ? getHostname() : "",
+	  getHostname() ? ")" : "",
 	  udpin ? " udp" : "",
 	  udpout ? "+" : "");
 };

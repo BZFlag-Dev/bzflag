@@ -548,7 +548,7 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
 				"(UNKNOWN)"));
   const std::string dstName = (players.count(dst) ? players[dst].name :
 			       "(UNKNOWN)");
-  
+
   // display action messages differently
   bool isAction = false;
   std::string message;
@@ -559,22 +559,22 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
   } else {
     message = msg;
   }
-  
+
   // direct message to or from me
   if (dst == me || players.count(dst)) {
     if (!(src == me && dst == me)) {
       if (src == me) {
-        if (isAction) {
-          formatted += "[->" + message + "]";
-        } else {
+	if (isAction) {
+	  formatted += "[->" + message + "]";
+	} else {
 	  formatted += "[->" + dstName + "] " + message;
-        }
+	}
       } else {
-        if (isAction) {
-          formatted += "[" + message + "->]";
-        } else {
+	if (isAction) {
+	  formatted += "[" + message + "->]";
+	} else {
 	  formatted += "[" + srcName + "->] " + message;
-        }
+	}
       }
     } else {
       formatted += message;
@@ -587,7 +587,7 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
       formatted += "[Admin] ";
     else if (dstTeam != NoTeam)
       formatted += "[Team] ";
-      
+
     if (!isAction) {
       formatted += srcName;
       formatted += ": ";

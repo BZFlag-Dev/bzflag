@@ -21,7 +21,7 @@
 extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
-bool                GameKeeper::Player::allNeedHostbanChecked  = false;
+bool		GameKeeper::Player::allNeedHostbanChecked  = false;
 
 #if defined(USE_THREADS)
 pthread_mutex_t GameKeeper::Player::mutex = PTHREAD_MUTEX_INITIALIZER;

@@ -26,13 +26,13 @@ class AccessList {
 
     bool alwaysAuthorized() const;
     bool authorized(const std::vector<std::string>& strings) const;
-    
+
     const std::string& getFileName() const;
 
   private:
     bool computeAlwaysAuth() const;
     void makeContent(const char* content) const;
-    
+
   private:
     std::string filename;
     bool alwaysAuth;

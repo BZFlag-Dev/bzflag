@@ -83,8 +83,8 @@ public:
 
     // For hostban checking, to avoid check and check again
     static void    setAllNeedHostbanChecked(bool set);
-    void           setNeedThisHostbanChecked(bool set);
-    bool           needsHostbanChecked();
+    void	   setNeedThisHostbanChecked(bool set);
+    bool	   needsHostbanChecked();
 
     // players
     PlayerInfo	player;
@@ -111,7 +111,7 @@ public:
     static pthread_mutex_t mutex;
     int	       refCount;
 #endif
-    bool              needThisHostbanChecked;
+    bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
   };
@@ -162,7 +162,7 @@ inline void GameKeeper::Player::freeTCPMutex()
 inline void GameKeeper::Player::setAllNeedHostbanChecked(bool set)
 {
   allNeedHostbanChecked = set;
-}  
+}
 
 inline void GameKeeper::Player::setNeedThisHostbanChecked(bool set)
 {

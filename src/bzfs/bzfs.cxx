@@ -138,7 +138,7 @@ static bool       isIdentifyFlagIn = false;
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendPlayerMessage(GameKeeper::Player* playerData, PlayerId dstPlayer,
-                       const char *message);
+		       const char *message);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
@@ -1373,7 +1373,7 @@ static void acceptClient()
   memcpy(buffer, getServerVersion(), 8);
   // send 0xff if list is full
   buffer[8] = (char)0xff;
-  
+
   int keepalive = 1, n;
   n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
 		 (SSOType)&keepalive, sizeof(int));
@@ -1443,7 +1443,7 @@ static void respondToPing(Address addr)
 
 
 void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
-                       const char *message)
+		       const char *message)
 {
   const PlayerId srcPlayer = playerData->getIndex();
   bool isAction = false;
@@ -1453,39 +1453,39 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   if ((message[0] == '/') &&
       (tolower(message[1]) == 'm') && (tolower(message[2]) == 'e')) {
     isAction = true;
-    
+
     actionMsg = TextUtils::format("* %s %s\t*", playerData->player.getCallSign(),
-                                  message + 4);
+				  message + 4);
     message = actionMsg.c_str();
   }
 
   // check for a server command
   if (!isAction && (message[0] == '/') && (message[1] != '/')) {
-    // record server commands    
+    // record server commands
     if (Record::enabled()) {
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte (bufStart, srcPlayer);
       buf = nboPackUByte (buf, dstPlayer);
       buf = nboPackString (buf, message, strlen(message) + 1);
       Record::addPacket (MsgMessage, (char*)buf - (char*)bufStart, bufStart,
-                         HiddenPacket);
+			 HiddenPacket);
     }
     parseServerCommand(message, srcPlayer);
     return; // bail out
   }
-  
+
   // check if the player has permission to use the admin channel
   if ((dstPlayer == AdminPlayers) &&
       !playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend)) {
     sendMessage(ServerPlayer, srcPlayer,
-                "You do not have permission to speak on the admin channel.");
+		"You do not have permission to speak on the admin channel.");
     return; // bail out
   }
-  
+
   // check for bogus targets
   if ((dstPlayer < LastRealPlayer) && !realPlayer(dstPlayer)) {
     sendMessage(ServerPlayer, srcPlayer,
-                "The player you tried to talk to does not exist!");
+		"The player you tried to talk to does not exist!");
     return; // bail out
   }
 
@@ -1510,7 +1510,7 @@ void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *messag
     }
     msg = filtered;
   }
-  
+
   sendMessage(playerIndex, dstPlayer, msg);
 }
 
@@ -1746,14 +1746,14 @@ static void addPlayer(int playerIndex)
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
-  
+
   int filterIndex = 0;
   Filter::Action filterAction = filter.check(*playerData, filterIndex);
   if (filterAction == Filter::DROP) {
     rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
     return ;
   }
-  
+
   // check against ban lists
   bool playerIsAntiBanned = playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
   in_addr playerIP = playerData->netHandler->getIPAddress();
@@ -1764,25 +1764,25 @@ static void addPlayer(int playerIndex)
 
       rejectionMessage = BanRefusalString;
       if (info.reason.size())
-        rejectionMessage += info.reason;
+	rejectionMessage += info.reason;
       else
-        rejectionMessage += "General Ban";
+	rejectionMessage += "General Ban";
 
       rejectionMessage += ColorStrings[WhiteColor];
       if (info.bannedBy.size()) {
-        rejectionMessage += " by ";
-        rejectionMessage += ColorStrings[BlueColor];
-        rejectionMessage += info.bannedBy;
+	rejectionMessage += " by ";
+	rejectionMessage += ColorStrings[BlueColor];
+	rejectionMessage += info.bannedBy;
       }
 
       rejectionMessage += ColorStrings[GreenColor];
       if (info.fromMaster)
-        rejectionMessage += " [you are on the master ban list]";
+	rejectionMessage += " [you are on the master ban list]";
 
       rejectPlayer(playerIndex, RejectIPBanned, rejectionMessage.c_str());
       return;
     }
-  
+
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
     DEBUG2("checking callsign: %s\n",playerData->player.getCallSign());
@@ -3053,7 +3053,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     dz = 0.0f;
   float delta = dx*dx + dy*dy + dz*dz;
   if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) *
-              (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
+	      (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
 	    shooter.getCallSign(), playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
@@ -3272,22 +3272,22 @@ possible attack from %s\n",
 	     t, handler->getTargetIP(), timeStamp.c_str(),
 	     playerData->player.getToken());
       if (result) {
-      	addPlayer(t);
-      } else if (playerData->player.getToken()[0] != '\0' 
-         && strcmp(playerData->player.getToken(), "badtoken")) {
-         
-         // Find the user already logged on and kick
-         // them if someone else is trying to log on
-         // and has globally authenticated.	
-         for (int i = 0; i < curMaxPlayers; i++) {  
-           GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
+	addPlayer(t);
+      } else if (playerData->player.getToken()[0] != '\0'
+	 && strcmp(playerData->player.getToken(), "badtoken")) {
+
+	 // Find the user already logged on and kick
+	 // them if someone else is trying to log on
+	 // and has globally authenticated.
+	 for (int i = 0; i < curMaxPlayers; i++) {
+	   GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
 	   if (!otherPlayer) continue;
 	   if (strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0){
 	     sendMessage(ServerPlayer,i,"Another client has demonstrated ownership of your callsign with the correct password.  You have been ghosted.");
 	     removePlayer(i, "Ghost");
 	     break;
 	   }
-	}	     
+	}
 	addPlayer(t);
       } else {
 	rejectPlayer(t, rejectCode, rejectMsg);
@@ -3501,7 +3501,7 @@ possible attack from %s\n",
       // check for spamming
       if (checkSpam(message, playerData, t))
 	break;
-	
+
       sendPlayerMessage (playerData, dstPlayer, message);
       break;
     }
@@ -3979,28 +3979,28 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
       HostBanInfo hostInfo("*");
       if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
-        std::string reason = "bannedhost for: ";
-        if (hostInfo.reason.size())
-          reason += hostInfo.reason;
-        else
-          reason += "General Ban";
+	std::string reason = "bannedhost for: ";
+	if (hostInfo.reason.size())
+	  reason += hostInfo.reason;
+	else
+	  reason += "General Ban";
 
-        if (hostInfo.bannedBy.size()) {
-          reason += " by ";
-          reason += hostInfo.bannedBy;
-        }
+	if (hostInfo.bannedBy.size()) {
+	  reason += " by ";
+	  reason += hostInfo.bannedBy;
+	}
 
-        if (hostInfo.fromMaster)
-          reason += " from the master server";
+	if (hostInfo.fromMaster)
+	  reason += " from the master server";
 
-        removePlayer(p, reason.c_str());
-        return;
+	removePlayer(p, reason.c_str());
+	return;
       }
     }
     playerData.setNeedThisHostbanChecked(false);
   }
 #endif
-  
+
   // update notResponding
   if (playerData.player.hasStartedToNotRespond()) {
     // if player is the rabbit, anoint a new one

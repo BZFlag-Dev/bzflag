@@ -125,7 +125,7 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
   if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_ALLEVENTS) <= 0) {
     return false;
   }
-    
+
   return setupEvent(_event, event);
 }
 
@@ -147,7 +147,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     /* deal with a SDL bug when in windowed mode related to
      * Cocoa coordinate system of (0,0) in bottom-left corner.
      */
-    if ( (fullScreen) || 
+    if ( (fullScreen) ||
 	 (sdlver->major > 1) ||
 	 (sdlver->minor > 2) ||
 	 (sdlver->patch > 6) ) {

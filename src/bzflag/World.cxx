@@ -1037,7 +1037,7 @@ void World::drawCollisionGrid() const
 
   glGetBooleanv (GL_TEXTURE_2D, &usingTextures);
   glDisable (GL_TEXTURE_2D);
-  
+
   COLLISIONMGR.draw (&drawLines);
 
   if (usingTextures) {

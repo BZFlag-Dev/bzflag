@@ -53,7 +53,7 @@ static const char DownloadContent[] =
   "allow *.bzflag.bz\n"
   "allow *.bzflag.org\n"
   "deny *\n";
-  
+
 static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
 
 
@@ -78,8 +78,8 @@ void Downloads::doDownloads()
 
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set, false /* ignore referencing */); 
-  
+  MATERIALMGR.makeTextureList(set, false /* ignore referencing */);
+
   bool authNotice = false;
 
   const bool doDownloads =	BZDB.isTrue("doDownloads");
@@ -91,44 +91,44 @@ void Downloads::doDownloads()
 
       // check access authorization
       if (!authorizedServer(texUrl)) {
-        MATERIALMGR.setTextureLocal(texUrl, "");
-        authNotice = true;
-        continue;
+	MATERIALMGR.setTextureLocal(texUrl, "");
+	authNotice = true;
+	continue;
       }
 
       // use the cache?
       CacheManager::CacheRecord oldrec;
       if (CACHEMGR.findURL(texUrl, oldrec)) {
-        time_t filetime = 0;
-        if (doDownloads && updateDownloads) {
-          getFileTime(texUrl, filetime);
-        }
-        if (filetime <= oldrec.date) {
-          // use the cached file
-          MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
-          continue;
-        }
+	time_t filetime = 0;
+	if (doDownloads && updateDownloads) {
+	  getFileTime(texUrl, filetime);
+	}
+	if (filetime <= oldrec.date) {
+	  // use the cached file
+	  MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
+	  continue;
+	}
       }
-      
+
       // bail here if we can't download
       if (!doDownloads) {
-        MATERIALMGR.setTextureLocal(texUrl, "");
-        std::string msg = ColorStrings[GreyColor];
-        msg += "not downloading: " + texUrl;
-        addMessage(NULL, msg);
-        continue;
+	MATERIALMGR.setTextureLocal(texUrl, "");
+	std::string msg = ColorStrings[GreyColor];
+	msg += "not downloading: " + texUrl;
+	addMessage(NULL, msg);
+	continue;
       }
-      
+
       // download and cache the URL
       if (getAndCacheURL(texUrl)) {
-        const std::string localname = CACHEMGR.getLocalName(texUrl);
-        MATERIALMGR.setTextureLocal(texUrl, localname);
+	const std::string localname = CACHEMGR.getLocalName(texUrl);
+	MATERIALMGR.setTextureLocal(texUrl, localname);
       } else {
-        MATERIALMGR.setTextureLocal(texUrl, "");
+	MATERIALMGR.setTextureLocal(texUrl, "");
       }
     }
   }
-  
+
   if (authNotice) {
     printAuthNotice();
   }
@@ -143,65 +143,65 @@ bool Downloads::updateDownloads(bool& rebuild)
 {
   CACHEMGR.loadIndex();
   CACHEMGR.limitCacheSize();
-  
+
   DownloadAccessList.reload();
-  
+
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
   MATERIALMGR.makeTextureList(set, true /* only referenced materials */);
-  
+
   TextureManager& TEXMGR = TextureManager::instance();
 
   rebuild = false;
   bool updated = false;
   bool authNotice = false;
-  
+
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
     const std::string& texUrl = set_it->c_str();
     if (CACHEMGR.isCacheFileType(texUrl)) {
 
       // check access authorization
       if (!authorizedServer(texUrl)) {
-        MATERIALMGR.setTextureLocal(texUrl, "");
-        authNotice = true;
-        continue;
+	MATERIALMGR.setTextureLocal(texUrl, "");
+	authNotice = true;
+	continue;
       }
 
       // use the cache or update?
       CacheManager::CacheRecord oldrec;
       if (CACHEMGR.findURL(texUrl, oldrec)) {
-        time_t filetime;
-        getFileTime(texUrl, filetime);
-        if (filetime <= oldrec.date) {
-          // keep using the cached file
-          MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
-          if (!TEXMGR.isLoaded(oldrec.name)) {
-            rebuild = true;
-          }
-          continue;
-        }
+	time_t filetime;
+	getFileTime(texUrl, filetime);
+	if (filetime <= oldrec.date) {
+	  // keep using the cached file
+	  MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
+	  if (!TEXMGR.isLoaded(oldrec.name)) {
+	    rebuild = true;
+	  }
+	  continue;
+	}
       }
 
       // download the file and update the cache
       if (getAndCacheURL(texUrl)) {
-        updated = true;
-        const std::string localname = CACHEMGR.getLocalName(texUrl);
-        if (!TEXMGR.isLoaded(localname)) {
-          rebuild = true; 
-        } else {
-          TEXMGR.reloadTextureImage(localname); // reload with the new image
-        }
-        MATERIALMGR.setTextureLocal(texUrl, localname); // if it wasn't cached
+	updated = true;
+	const std::string localname = CACHEMGR.getLocalName(texUrl);
+	if (!TEXMGR.isLoaded(localname)) {
+	  rebuild = true;
+	} else {
+	  TEXMGR.reloadTextureImage(localname); // reload with the new image
+	}
+	MATERIALMGR.setTextureLocal(texUrl, localname); // if it wasn't cached
       }
     }
   }
-  
+
   if (authNotice) {
     printAuthNotice();
   }
 
   CACHEMGR.saveIndex();
-  
+
   return updated;
 }
 
@@ -211,7 +211,7 @@ void Downloads::removeTextures()
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
   MATERIALMGR.makeTextureList(set, false /* ignore referencing */);
-  
+
   TextureManager& TEXMGR = TextureManager::instance();
 
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
@@ -219,11 +219,11 @@ void Downloads::removeTextures()
     if (CACHEMGR.isCacheFileType(texUrl)) {
       const std::string& localname = CACHEMGR.getLocalName(texUrl);
       if (TEXMGR.isLoaded(localname)) {
-        TEXMGR.removeTexture(localname);
+	TEXMGR.removeTexture(localname);
       }
     }
   }
-  
+
   return;
 }
 
@@ -244,7 +244,7 @@ static void printAuthNotice()
 static bool getFileTime(const std::string& url, time_t& t)
 {
   setHudMessage("Update DNS check...");
-  
+
   URLManager& URLMGR = URLManager::instance();
   if (URLMGR.getURLHeader(url)) {
     URLMGR.getFileTime(t);
@@ -261,16 +261,16 @@ static bool getFileTime(const std::string& url, time_t& t)
 static bool getAndCacheURL(const std::string& url)
 {
   bool result = false;
-  
+
   setHudMessage("Download DNS check...");
-  
+
   URLManager& URLMGR = URLManager::instance();
   URLMGR.setProgressFunc(curlProgressFunc, NULL);
 
   std::string msg = ColorStrings[GreyColor];
   msg += "downloading: " + url;
   addMessage(NULL, msg);
-  
+
   void* urlData;
   unsigned int urlSize;
 
@@ -306,7 +306,7 @@ static bool authorizedServer(const std::string& url)
   if (DownloadAccessList.alwaysAuthorized()) {
     return true;
   }
-  
+
   // parse url
   std::string protocol, hostname, path, ip;
   int port = 1;
@@ -319,7 +319,7 @@ static bool authorizedServer(const std::string& url)
     setHudMessage("");
   }
 
-  // make the list of strings to check  
+  // make the list of strings to check
   std::vector<std::string> nameAndIp;
   if (hostname.size() > 0) {
     nameAndIp.push_back(hostname);
@@ -337,7 +337,7 @@ static bool authorizedServer(const std::string& url)
     addMessage(NULL, msg);
     return false;
   }
-  
+
   return true;
 }
 
@@ -360,7 +360,7 @@ void Downloads::doDownloads()
   bool needWarning = false;
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set, false /* ignore referencing */); 
+  MATERIALMGR.makeTextureList(set, false /* ignore referencing */);
 
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
     const std::string& texUrl = set_it->c_str();
@@ -374,7 +374,7 @@ void Downloads::doDownloads()
       MATERIALMGR.setTextureLocal(texUrl, "");
     }
   }
-  
+
   if (needWarning && BZDB.isTrue("doDownloads")) {
     std::string msg = ColorStrings[RedColor];
     msg += "Downloads are not available for clients without libcurl";

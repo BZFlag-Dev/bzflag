@@ -61,7 +61,7 @@ void CustomMaterial::writeToManager() const
   if ((name.size() > 0) && (MATERIALMGR.findMaterial(name) != NULL)) {
     std::cout << "warning: duplicate material name"
 	      << " (" << name << ")" << std::endl;
-    std::cout << "         the first material will be used" << std::endl;
+    std::cout << "	 the first material will be used" << std::endl;
   }
 
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
@@ -70,11 +70,11 @@ void CustomMaterial::writeToManager() const
   if ((name.size() > 0) && (refname.size() > 0)) {
     if (name != refname) {
       std::cout << "warning: matching named materials"
-	        << " (" << refname << " vs. " << name << ")" << std::endl;
-      std::cout << "         the first name will be used" << std::endl;
+		<< " (" << refname << " vs. " << name << ")" << std::endl;
+      std::cout << "	 the first name will be used" << std::endl;
     }
   }
-    
+
   int index = MATERIALMGR.getIndex(matref);
   if (index < 0) {
     std::cout << "CustomMaterial::write: material didn't register" << std::endl;

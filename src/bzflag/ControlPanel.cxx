@@ -318,7 +318,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	drawnTabWidth += long(tabTextWidth[tab]);
       } // end iteration over tabs
     }
-    
+
     if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
       glDisable(GL_BLEND);
   }
@@ -334,12 +334,12 @@ void			ControlPanel::render(SceneRenderer& renderer)
       const int maxTop = messageAreaPixels[1] + messageAreaPixels[3];
       int top = messageAreaPixels[1] + int((offset + size) * (float)messageAreaPixels[3]);
       if (top > maxTop) {
-        top = maxTop;
+	top = maxTop;
       }
       glColor3f(0.7f, 0.7f, 0.7f);
       glRecti(messageAreaPixels[0],
-              messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
-              messageAreaPixels[0] + 2, top);
+	      messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
+	      messageAreaPixels[0] + 2, top);
 
     }
   }
@@ -727,7 +727,7 @@ void			ControlPanel::addMessage(const std::string& line,
     }
     if (messageMode != MessageAll && messageMode != mode) {
       if (!unRead[mode] && (int)BZDB.eval("showtabs") > 0)
-        invalidate();
+	invalidate();
       unRead[mode] = true;
     }
   }

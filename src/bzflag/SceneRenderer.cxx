@@ -305,10 +305,10 @@ void SceneRenderer::setQuality(int value)
     BZDB.set("moonSegments","24");
   else
     BZDB.set("moonSegments","12");
-  
+
   if (useQualityValue > 0)
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-  else  
+  else
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
 
   BZDB.set("useQuality", TextUtils::format("%d", value));

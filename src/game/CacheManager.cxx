@@ -29,7 +29,7 @@
 #ifndef _WIN32
 #  include <unistd.h>
 #endif
-                     
+
 // common headers
 #include "md5.h"
 #include "bzfio.h"
@@ -45,8 +45,8 @@ static void removeDirs(const std::string& path);
 static void removeNewlines(char* c);
 static std::string partialEncoding(const std::string& string);
 static bool compareUsedDate(const CacheManager::CacheRecord& a,
-                            const CacheManager::CacheRecord& b);
-                  
+			    const CacheManager::CacheRecord& b);
+
 
 CacheManager CACHEMGR;
 
@@ -64,7 +64,7 @@ CacheManager::~CacheManager()
   return;
 }
 
-    
+
 bool CacheManager::isCacheFileType(const std::string name) const
 {
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {
@@ -90,7 +90,7 @@ std::string CacheManager::getLocalName(const std::string name) const
   }
 #ifdef _WIN32
   std::replace(local.begin(), local.end(), '/', '\\');
-#endif  
+#endif
   return local;
 }
 
@@ -113,13 +113,13 @@ bool CacheManager::addFile(CacheRecord& record, const void* data)
   if (((data == NULL) && (record.size != 0)) || (record.url.size() <= 0)) {
     return false;
   }
-  
+
   record.name = getLocalName(record.url);
   std::ostream* out = FILEMGR.createDataOutStream(record.name);
   if (out == NULL) {
     return false;
   }
-  
+
   bool replacement = false;
   CacheRecord* rec = &record;
 
@@ -131,23 +131,23 @@ bool CacheManager::addFile(CacheRecord& record, const void* data)
   }
 
   out->write((char*)data, rec->size);
-  
+
   rec->usedDate = time(NULL); // update the timestamp
-  
+
   MD5 md5;
   md5.update((unsigned char *)data, rec->size);
   md5.finalize();
   rec->key = md5.hexdigest();
-  
+
   if (!replacement) {
     records.push_back(*rec);
   }
-  
+
   delete out;
-  return true;  
+  return true;
 }
 
-    
+
 int CacheManager::findRecord(const std::string& url)
 {
   for (unsigned int i = 0; i < records.size(); i++) {
@@ -164,7 +164,7 @@ bool CacheManager::loadIndex()
 {
   records.clear();
 
-  FILE* file = fopen(indexName.c_str(), "r");  
+  FILE* file = fopen(indexName.c_str(), "r");
   if (file == NULL) {
     return false;
   }
@@ -219,7 +219,7 @@ bool CacheManager::saveIndex()
   for (unsigned int i = 0; i < records.size(); i++) {
     const CacheRecord& rec = records[i];
     fprintf(file, "%s\n%u %lu %lu %s\n\n", rec.url.c_str(),
-            rec.size, rec.date, rec.usedDate, rec.key.c_str());
+	    rec.size, rec.date, rec.usedDate, rec.key.c_str());
   }
 
   fclose(file);
@@ -249,7 +249,7 @@ void CacheManager::limitCacheSize()
     removeDirs(rec.name);
     records.pop_back();
   }
-  
+
   return;
 }
 
@@ -263,7 +263,7 @@ std::vector<CacheManager::CacheRecord> CacheManager::getCacheList() const
 static bool fileExists (const std::string& name)
 {
   struct stat buf;
-#ifndef _WIN32       
+#ifndef _WIN32
   return (stat(name.c_str(), &buf) == 0);
 #else
   // Windows sucks yet again, if there is a trailing  "\"
@@ -274,7 +274,7 @@ static bool fileExists (const std::string& name)
   }
   return (_stat(dirname.c_str(), (struct _stat *) &buf) == 0);
 #endif
-}  
+}
 
 
 static void removeDirs(const std::string& path)
@@ -284,7 +284,7 @@ static void removeDirs(const std::string& path)
   while (tmp.size() > minLen) {
 #ifndef _WIN32
     unsigned int i = tmp.find_last_of('/');
-#else    
+#else
     unsigned int i = tmp.find_last_of('\\');
 #endif
     tmp = tmp.substr(0, i);
@@ -322,7 +322,7 @@ static std::string partialEncoding(const std::string& string)
       tmp += "%20";
     }
     else if ((c == '%') || (c == '*') || (c == '?') ||
-             (c == ':') || (c == '"') || (c == '\\')) {
+	     (c == ':') || (c == '"') || (c == '\\')) {
       tmp += '%';
       sprintf(hex, "%-2.2X", c);
       tmp += hex;
@@ -331,16 +331,16 @@ static std::string partialEncoding(const std::string& string)
       tmp += c;
     }
   }
-  return tmp;    
+  return tmp;
 }
 
 
 static bool compareUsedDate(const CacheManager::CacheRecord& a,
-                            const CacheManager::CacheRecord& b)
+			    const CacheManager::CacheRecord& b)
 {
   // oldest last
   return (a.usedDate > b.usedDate);
-}                       
+}
 
 
 /*

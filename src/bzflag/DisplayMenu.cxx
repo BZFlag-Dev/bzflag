@@ -152,7 +152,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 
 #if !defined(DEBUG_RENDERING)
   if (debugLevel > 0) {
-#endif  
+#endif
     option = new HUDuiList;
     option->setFontFace(fontFace);
     option->setLabel("Hidden Line:");

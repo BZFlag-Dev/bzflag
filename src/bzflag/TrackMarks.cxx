@@ -517,7 +517,7 @@ void TrackMarks::update(float dt)
     clear();
     return;
   }
-  
+
   updateList(SmokeList, dt);
   updateList(PuddleList, dt);
   updateList(TreadsGroundList, dt);

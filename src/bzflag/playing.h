@@ -80,10 +80,10 @@ void			addMessage(const Player* player,
 				   bool highlight = false,
 				   const char* oldColor = NULL);
 
-int	 		curlProgressFunc(void* clientp,
-                                         double dltotal, double dlnow,
-                                         double ultotal, double ulnow);
-                            
+int			curlProgressFunc(void* clientp,
+					 double dltotal, double dlnow,
+					 double ultotal, double ulnow);
+
 void selectNextRecipient (bool forward, bool robotIn);
 void handleFlagDropped(Player* tank);
 void setTarget();

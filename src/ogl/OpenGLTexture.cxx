@@ -74,10 +74,10 @@ OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
 
   // copy/scale the original texture image
   setupImage((const GLubyte*)pixels);
-  
+
   // build and bind the GL texture
   initContext();
-  
+
   // watch for context recreation
   OpenGLGState::registerContextInitializer(static_freeContext,
 					   static_initContext, (void*)this);
@@ -89,7 +89,7 @@ OpenGLTexture::~OpenGLTexture()
   OpenGLGState::unregisterContextInitializer(static_freeContext,
 					     static_initContext, (void*)this);
   delete[] imageMemory;
-  
+
   freeContext();
   return;
 }
