@@ -123,10 +123,6 @@ SOURCE=..\include\bzfio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BzfString.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
