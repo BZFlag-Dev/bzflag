@@ -23,6 +23,9 @@ $gameinfo = $_GET['gameinfo'];
 $title    = $_GET['title'];
 # $title =~ s/'/''/g;  to write in php'
 
+if(!extension_loaded('sqlite')) {
+	dl('sqlite.so');
+}
 ###############################################################################
 # Connect to the server database.
 $dbpath  = "bzflag.sqlite";
