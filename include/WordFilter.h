@@ -48,7 +48,8 @@
 
 
 /** utility function returns truthfully whether
- * given character is an alphanumeric
+ * given character is an alphanumeric.  this is 
+ * strictly letters and numbers.
  */
 inline bool isAlphanumeric(const char c)
 {
@@ -61,8 +62,8 @@ inline bool isAlphanumeric(const char c)
 }
 
 /** utility function returns truthfully whether
- * given character is printable (including white
- * space).
+ * given character is printable.  this includes
+ * letters, numbers, punctuation, and whitespace
  */
 inline bool isPrintable(const char c)
 {
@@ -73,6 +74,18 @@ inline bool isPrintable(const char c)
   return true;
 }
 
+/** utility function returns truthfully whether
+ * a given character is printable whitespace.
+ * this includes newline, carriage returns, tabs
+ * and spaces.
+ */
+inline bool isWhitespace(const char c)
+{
+  if (((c >= 9) && (c <= 13)) || (c == 32)) {
+    return true;
+  }
+  return false;
+}
 
 #if defined (UINT8_MAX)
 static const unsigned short int MAX_FILTERS = UINT8_MAX;
