@@ -3,7 +3,6 @@ EXTRA_DIST =	\
 	bzflag.vcproj	\
 	bzadmin.vcproj	\
 	bzfs.vcproj	\
-	bzwtransform.vcproj	\
 	common.vcproj	\
 	geometry.vcproj	\
 	installer.vcproj	\
