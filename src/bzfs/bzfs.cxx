@@ -4404,7 +4404,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].accessInfo.verified = false;
   player[playerIndex].accessInfo.loginTime = 0;// put some time shit here
   player[playerIndex].accessInfo.loginAttempts = 0;
-  player[playerIndex].accessInfo.groups.push_back(std::string("DEFAULT"));
+  player[playerIndex].accessInfo.groups.push_back("DEFAULT");
 
   player[playerIndex].lastRecvPacketNo = 0;
   player[playerIndex].lastSendPacketNo = 0;
@@ -5950,8 +5950,8 @@ static void parseCommand(const char *message, int t)
       } else {
 	if (strlen(message) > 10) {
 	  PlayerAccessInfo info;
-	  info.groups.push_back(std::string("DEFAULT"));
-	  info.groups.push_back(std::string("REGISTERED"));
+	  info.groups.push_back("DEFAULT");
+	  info.groups.push_back("REGISTERED");
 	  std::string pass = message + 10;
 	  setUserPassword(player[t].regName.c_str(), pass.c_str());
 	  setUserInfo(player[t].regName, info);
@@ -6162,40 +6162,42 @@ static void parseCommand(const char *message, int t)
 	sendMessage(t, player[t].id, player[t].team, "There is no user by that name");
       }
     }
-  } else if (hasPerm(t, setAll) &&
-	  strncmp(message + 1, "reload", 6) == 0) {
-      // reload the databases
-	  if(groupsFile.size())
-		readGroupsFile(groupsFile);
-	  // make sure that the 'admin' & 'default' groups exist
-	  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find(std::string("DEFAULT"));
-	  if (itr == groupAccess.end()) {
-		PlayerAccessInfo info;
-		info.explicitAllows[idleStats] = true;
-		info.explicitAllows[lagStats] = true;
-		info.explicitAllows[flagHistory] = true;
-	   groupAccess[std::string("DEFAULT")] = info;
-	  }
-	  itr = groupAccess.find(std::string("ADMIN"));
-	  if (itr == groupAccess.end()) {
-		PlayerAccessInfo info;
-		for (int i = 0; i < lastPerm; i++)
-		  info.explicitAllows[i] = true;
-		groupAccess[std::string("ADMIN")] = info;
-	  }
-	  if (passFile.size())
-		readPassFile(passFile);
-	  if (userDatabaseFile.size())
-		readPermsFile(userDatabaseFile);
-	  for ( int p = 0; p < p; i++){
-		  if (player[p].accessInfo.verified && userExists(player[p].regName)){
-			player[p].accessInfo = getUserInfo(player[p].regName);
-			player[p].accessInfo.verified = true;
-		  }
-	  sendMessage(t,player[t].id,player[t].team,"Databases reloaded");
-	  }
+  } else if (hasPerm(t, setAll) && strncmp(message + 1, "reload", 6) == 0) {
+    groupAccess.clear();
+    userDatabase.clear();
+    passwordDatabase.clear();
+    // reload the databases
+    if (groupsFile.size())
+      readGroupsFile(groupsFile);
+    // make sure that the 'admin' & 'default' groups exist
+    std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find("DEFAULT");
+    if (itr == groupAccess.end()) {
+      PlayerAccessInfo info;
+      info.explicitAllows[idleStats] = true;
+      info.explicitAllows[lagStats] = true;
+      info.explicitAllows[flagHistory] = true;
+      groupAccess["DEFAULT"] = info;
+    }
+    itr = groupAccess.find("ADMIN");
+    if (itr == groupAccess.end()) {
+      PlayerAccessInfo info;
+      for (int i = 0; i < lastPerm; i++)
+	info.explicitAllows[i] = true;
+      groupAccess["ADMIN"] = info;
+    }
+    if (passFile.size())
+      readPassFile(passFile);
+    if (userDatabaseFile.size())
+      readPermsFile(userDatabaseFile);
+    for (int p = 0; p < curMaxPlayers; p++) {
+      if (player[p].accessInfo.verified && userExists(player[p].regName)) {
+	player[p].accessInfo = getUserInfo(player[p].regName);
+	player[p].accessInfo.verified = true;
+      }
+    }
+    sendMessage(t, player[t].id, player[t].team, "Databases reloaded");
   } else {
-    sendMessage(t,player[t].id,player[t].team,"unknown command");
+    sendMessage(t, player[t].id, player[t].team, "unknown command");
   }
 }
 
@@ -7805,20 +7807,20 @@ int main(int argc, char **argv)
   if(groupsFile.size())
     readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
-  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find(std::string("DEFAULT"));
+  std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find("DEFAULT");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     info.explicitAllows[idleStats] = true;
     info.explicitAllows[lagStats] = true;
     info.explicitAllows[flagHistory] = true;
-   groupAccess[std::string("DEFAULT")] = info;
+   groupAccess["DEFAULT"] = info;
   }
-  itr = groupAccess.find(std::string("ADMIN"));
+  itr = groupAccess.find("ADMIN");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     for (int i = 0; i < lastPerm; i++)
       info.explicitAllows[i] = true;
-    groupAccess[std::string("ADMIN")] = info;
+    groupAccess["ADMIN"] = info;
   }
   if (passFile.size())
     readPassFile(passFile);
