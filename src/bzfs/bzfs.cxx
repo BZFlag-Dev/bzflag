@@ -4805,21 +4805,24 @@ static void parseCommand(const char *message, int t)
   // /flag command allows operator to control flags
   } else if (player[t].Admin && strncmp(message + 1, "flag ", 5) == 0) {
     if (strncmp(message + 6, "reset", 5) == 0) {
+      boolean onlyUnused = strncmp(message + 11, " unused", 7) == 0;
       for (int i = 0; i < numFlags; i++) {
-	// see if someone had grabbed flag.  tell 'em to drop it.
-	const int playerIndex = flag[i].player;
-	if (playerIndex != -1) {
-	  flag[i].player = -1;
-	  flag[i].flag.status = FlagNoExist;
-	  player[playerIndex].flag = -1;
+	  // see if someone had grabbed flag,
+	  const int playerIndex = flag[i].player;
+	  if ((playerIndex != -1) && (!onlyUnused)) {
+	    //  tell 'em to drop it.
+	    flag[i].player = -1;
+	    flag[i].flag.status = FlagNoExist;
+	    player[playerIndex].flag = -1;
 
-	  void *buf, *bufStart = getDirectMessageBuffer();
-	  buf = player[playerIndex].id.pack(bufStart);
-	  buf = nboPackUShort(buf, uint16_t(i));
-	  buf = flag[i].flag.pack(buf);
-	  broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
-	}
-	resetFlag(i);
+	    void *buf, *bufStart = getDirectMessageBuffer();
+	    buf = player[playerIndex].id.pack(bufStart);
+	    buf = nboPackUShort(buf, uint16_t(i));
+	    buf = flag[i].flag.pack(buf);
+	    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+	  }
+	  if ((playerIndex == -1) || (!onlyUnused))
+	    resetFlag(i);
       }
     } else if (strncmp(message + 6, "up", 2) == 0) {
       for (int i = 0; i < numFlags; i++) {
