@@ -12,14 +12,16 @@
 #ifndef __WORLDOBJECT_H__
 #define __WORLDOBJECT_H__
 
+#include <iostream>
+
 class WorldObject {
 public:
   WorldObject() { };
   virtual ~WorldObject() { };
   
-  virtual std::string myToken() const;
-  friend istream& operator>>(std::istream& o, const WorldObject&) const;
-  friend ostream& operator<<(std::ostream& o, const WorldObject&) const;
+  virtual std::string myToken() const = 0;
+  static std::istream& operator>>(std::istream& o, const WorldObject&) const;
+  static std::ostream& operator<<(std::ostream& o, const WorldObject&) const;
 }
 
 #endif //__WORLDOBJECT_H__
