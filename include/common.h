@@ -36,7 +36,8 @@
 #include <math.h>
 
 extern int debugLevel;
-// Like verbose debug messages?
+// Like verbose debug messages? level 0 for development only
+#define DEBUG0 formatDebug
 #define DEBUG1 if (debugLevel >= 1) formatDebug
 #define DEBUG2 if (debugLevel >= 2) formatDebug
 #define DEBUG3 if (debugLevel >= 3) formatDebug
