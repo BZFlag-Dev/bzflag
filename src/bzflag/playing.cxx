@@ -1807,11 +1807,12 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 static void		doMotion()
 {
+  float rotation = 0.0f, speed = 1.0f;
+  bool pressed = myTank->getKeyPressed();
+
 #if defined(FREEZING)
   if (motionFreeze) return;
 #endif
-
-  float rotation = 0.0f, speed = 1.0f;
 
   if (myTank->isAutoPilot()) {
     doAutoPilot(rotation, speed);
@@ -1823,16 +1824,24 @@ static void		doMotion()
     switch (myTank->getKeyButton())
     {
     case BzfKeyEvent::Left:
-      rotation = getKeyValue(myTank->getKeyPressed());
+      if (pressed || rotation > 0.0f) {
+	rotation = getKeyValue(myTank->getKeyPressed());
+      }
       break;
     case BzfKeyEvent::Right:
-      rotation = - getKeyValue(myTank->getKeyPressed());
+      if (pressed || rotation < 0.0f) {
+	rotation = - getKeyValue(myTank->getKeyPressed());
+      }
       break;
     case BzfKeyEvent::Up:
-      speed = getKeyValue(myTank->getKeyPressed());
+      if (pressed || speed > 0.0f) {
+	speed = getKeyValue(myTank->getKeyPressed());
+      }
       break;
     case BzfKeyEvent::Down:
-      speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
+      if (pressed || speed < 0.0f) {
+	speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
+      }
       break;
     }
 

@@ -250,7 +250,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     groundLimit = BZDB->eval(StateDatabase::BZDB_BURROWDEPTH);
 
   // get linear and angular speed at start of time step
-  if (dt != 0.0f) {
+  if (!NEAR_ZERO(dt,ZERO_TOLERANCE)) {
     if (location == Dead || isPaused()) {
       // can't move if paused or dead -- set dt to zero instead of
       // clearing velocity and newAngVel for when we resume (if paused)
@@ -275,7 +275,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
     else {
       // full control
       float speed = desiredSpeed;
-      newAngVel = desiredAngVel;
+      newAngVel = oldAngVel*0.95f + desiredAngVel*0.05f;
+
+      // instant stop
+      if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
+	newAngVel = desiredAngVel;
+      }
 
       // limit acceleration
       doMomentum(dt, speed, newAngVel);
@@ -411,7 +416,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       float mag = normal[0] * newVelocity[0] + normal[1] * newVelocity[1];
 
       // handle upward normal component to prevent an upward force
-      if (normal[2] != 0.0f) {
+      if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE)) {
 	// if going down then stop falling
 	if (newVelocity[2] < 0.0f && newVelocity[2] -
 		(mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
@@ -419,7 +424,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
 	// normalize force magnitude in horizontal plane
 	float horNormal = normal[0] * normal[0] + normal[1] * normal[1];
-	if (horNormal != 0.0f)
+	if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE))
 	  mag /= horNormal;
       }
 
@@ -470,7 +475,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   }
 
   // compute actual velocities.  do this before teleportation.
-  if (dt != 0.0f) {
+  if (!NEAR_ZERO(dt, ZERO_TOLERANCE)) {
     newAngVel = (newAzimuth - oldAzimuth) / dt;
     newVelocity[0] = (newPos[0] - oldPosition[0]) / dt;
     newVelocity[1] = (newPos[1] - oldPosition[1]) / dt;
@@ -508,12 +513,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // play landing sound if we weren't on something and now we are
   if (oldLocation == InAir && (location == OnGround || location == OnBuilding))
     playLocalSound(SFX_LAND);
-  else if ((location == OnGround) && (oldPosition[2] == 0.0f) && (newPos[2] < 0.0f))
+  else if ((location == OnGround) && (NEAR_ZERO(oldPosition[2], ZERO_TOLERANCE)) && (newPos[2] < 0.0f))
     playLocalSound(SFX_BURROW);
 
   // set falling status
   if (location == OnGround || location == OnBuilding ||
-	(location == InBuilding && newPos[2] == 0.0f))
+	(location == InBuilding && NEAR_ZERO(newPos[2], ZERO_TOLERANCE)))
     setStatus(getStatus() & ~short(PlayerState::Falling));
   else if (location == InAir || location == InBuilding)
     setStatus(getStatus() | short(PlayerState::Falling));
@@ -560,8 +565,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
 	oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
     moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
-	(dt == 0.0f || teleporter != NULL && getFlag() != Flags::PhantomZone));
-  if (dt == 0.0f)
+	(NEAR_ZERO(dt, ZERO_TOLERANCE) || teleporter != NULL && getFlag() != Flags::PhantomZone));
+  if (NEAR_ZERO(dt, ZERO_TOLERANCE))
     speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
   else
     speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
@@ -602,7 +607,7 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
 		obstacle->getType() == Teleporter::getClassName() ||
 		(getFlag() == Flags::OscillationOverthruster && desiredSpeed < 0.0f &&
-		p[2] == 0.0f));
+		NEAR_ZERO(p[2], ZERO_TOLERANCE)));
   return obstacle;
 }
 
