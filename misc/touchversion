@@ -2,6 +2,9 @@
 #
 # update the version numbers in the win32 projects
 
+echo this script is broken, needs updating
+exit
+
 tmp=tmp.$$
 
 # bzflag top-level dir
