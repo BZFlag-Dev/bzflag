@@ -20,6 +20,8 @@ bzfs_SOURCES = \
 	WorldInfo.h \
 	WorldWeapons.cxx \
 	WorldWeapons.h \
+	commands.cxx \
+	commands.h \
 	bzfs.cxx \
 	bzfs.h
 
