@@ -84,6 +84,7 @@ std::istream*			FileManager::createDataInStream(
   }
 #endif
 
+  std::cerr << "WARNING: Unable to create input stream for [" << filename << "]" << std::endl;
   return NULL;
 }
 
@@ -108,7 +109,6 @@ std::ostream*			FileManager::createDataOutStream(
       if (stream && *stream)
 	return stream;
       delete stream;
-      return NULL;
     }
 
     // try data directory
@@ -117,7 +117,6 @@ std::ostream*			FileManager::createDataOutStream(
       if (stream && *stream)
 	return stream;
       delete stream;
-      return NULL;
     }
   } else {
     // try absolute path
@@ -158,8 +157,10 @@ std::ostream*			FileManager::createDataOutStream(
       return stream;
 #endif
     delete stream;
-    return NULL;
   }
+
+  std::cerr << "WARNING: Unable to create output stream for [" << filename << "]" << std::endl;
+  return NULL;
 }
 
 bool				FileManager::isAbsolute(const std::string& path) const
