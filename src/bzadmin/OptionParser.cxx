@@ -49,9 +49,11 @@ bool OptionParser::parse(int argc, char** argv) {
       printHelp(std::cout, argv[0]);
       return false;
     }
-    if (argv[i][0] != '-')
+    if (argv[i][0] != '-') {
       parameters.push_back(argv[i]);
-    else {
+      // should just blank out the password, but we don't really parse it here
+      memset(argv[i], ' ', strlen(argv[i]));
+    } else {
       iter = parsers.find(&argv[i][1]);
       if (iter == parsers.end()) {
 	error = error + "Unknown option \"" + argv[i] + "\"";
