@@ -4,7 +4,8 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
-* Allow server to control latitude and longitude (-synclocation) - Daniel Remenak
+* Adding ability to load world from url (http, ftp, file) - Alfredo Tupone
+* Allow server to control lat and long (-synclocation) - Daniel Remenak
 * Added tank spawn expansion effect - Dave Rodgers
 * Added tank squishiness - Dave Rodgers, Dave Brosius
 * Added animated effects for T, N, TH, O, and CL flags - Dave Rodgers
@@ -25,7 +26,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Added user specified dynamic colors - Dave Rodgers
 * Added user specified texture matrices - Dave Rodgers
 * Improved BSP splitting algorithm - Dave Rodgers
-* Added /part command for disconnecting from server - bzgirl
+* Added /part command for disconnecting from server - Angelina Carlton
 * Show status while trying to connect & download world - Daniel Remenak
 * Update old configs to avoid broken keybindings - Daniel Remenak
 * Config files are stored per-version, using older when needed - Jeff Myers
