@@ -38,8 +38,11 @@
 #define NEAR_ZERO(_value,_epsilon)  ( ((_value) > -_epsilon) && ((_value) < _epsilon) )
 
 // seven places of precision is pretty safe, so something less precise
-#define ZERO_TOLERANCE 0.000001f
-
+#if defined(FLT_EPSILON)
+#	define ZERO_TOLERANCE FLT_EPSILON
+#else
+#	define ZERO_TOLERANCE 1.0e-06f
+#endif
 
 // Might we be BSDish? sys/param.h has BSD defined if so
 #if (defined(__unix__) || defined(unix) || defined(__APPLE__)) && !defined(USG)
