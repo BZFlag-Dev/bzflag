@@ -230,6 +230,14 @@ effectively useless for cheating.  Pressing
 .IR Pause
 before the pause takes effect cancels the pause request.
 .PP
+The
+.IR Delete
+key initiates a self destruct sequence. You will see a countdown that 
+can be stopped by pressing
+.IR Delete
+once more. Otherwise, you tank will self destruct. This can be useful if
+your tank gets stuck and there is no other tank around to shoot you.
+.PP
 The list of players and scores is displayed when your tank is
 paused or dead.  Pressing the
 .IR s
