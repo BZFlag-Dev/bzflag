@@ -45,8 +45,8 @@ GameKeeper::Player::Player(int _playerIndex,
   netHandler       = new NetHandler(&player, clientAddr, playerIndex, fd);
 #if defined(USE_THREADS) && defined(HAVE_SDL)
   thread           = SDL_CreateThread(tcpRx, (void *)this);
-  refCount         = 1;
 #endif
+  refCount         = 1;
 }
 
 GameKeeper::Player::~Player()
@@ -239,7 +239,8 @@ void GameKeeper::Player::clean()
   Player* playerData;
   for (int i = 0; i < PlayerSlot; i++)
     if ((playerData = playerList[i]) && playerData->closed
-	&& !playerData->refCount)
+	&& !playerData->refCount
+	)
       delete playerData;  
 }
 

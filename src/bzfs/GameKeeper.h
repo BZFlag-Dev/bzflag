@@ -106,9 +106,9 @@ public:
     tcpCallback       clientCallback;
 #if defined(USE_THREADS) && defined(HAVE_SDL)
     SDL_Thread        *thread;
-    int               refCount;
     static SDL_mutex  *mutex;
 #endif
+    int               refCount;
   };
   class Flag {
   };
