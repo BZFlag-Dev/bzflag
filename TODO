@@ -44,8 +44,6 @@ THESE ARE LOWER PRIORITY
   provided on the key binding menu) without manually editing the config file
   needs to be decoupled from identify and added to menu.
 
-* do ansi color in curses bzadmin
-
 * make tank scene node not use a list per size mode, just use the scale matrix.
 
 * server should track last reported player and shot positions
