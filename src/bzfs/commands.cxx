@@ -372,8 +372,7 @@ void handleLagstatsCmd(int t, const char *)
   char reply[MessageLen] = {0};
 
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].state > PlayerInLimbo && player[i].type == TankPlayer
-	&& player[i].team != ObserverTeam) {
+    if (player[i].state > PlayerInLimbo && player[i].type == TankPlayer) {
       sprintf(reply,"%-16s : %3dms (%d) +- %2dms %s", player[i].callSign,
 	      int(player[i].lagavg*1000), player[i].lagcount,
 	      int(player[i].jitteravg*1000),
