@@ -66,7 +66,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    * Find this device, and try to initialize it.
    */
   GUID thisDevice;
-  for (int i = 0; i < devices.size(); i++) {
+  for (unsigned int i = 0; i < devices.size(); i++) {
     if (joystickName = devices[i].tszProductName)
       thisDevice = devices[i].guidInstance;
   }
@@ -215,7 +215,7 @@ DIJOYSTATE    DXJoystick::pollDevice()
 
 void	      DXJoystick::getJoyDevices(std::vector<std::string> &list) const
 {
-  for (int i = 0; i < devices.size(); i++) {
+  for (unsigned int i = 0; i < devices.size(); i++) {
     list.push_back(devices[i].tszProductName);
   }
 }
