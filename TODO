@@ -3,9 +3,6 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* Somehow convert the BackgroundRenderer's mountain texture into the
-  TextureManager system. Calling all Tupones :)
-
 * Need to use different, clearly disjoint numbering system on bzfs.  perhaps just
   start from 0001 when 1.10 is released.  otherwise it gets unnecessarily bumped to
   match the client version.  it's a separate communication protocol version.
