@@ -205,6 +205,9 @@
 				RelativePath="..\..\src\game\NetHandler.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\PhysicsDriver.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\PlayerInfo.cxx">
 			</File>
 			<File
@@ -244,6 +247,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\NetHandler.h">
+			</File>
+			<File
+				RelativePath="..\..\include\PhysicsDriver.h">
 			</File>
 			<File
 				RelativePath="..\..\include\PlayerInfo.h">

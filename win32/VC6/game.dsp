@@ -178,6 +178,10 @@ SOURCE=..\..\src\game\NetHandler.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\PhysicsDriver.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\PlayerInfo.cxx
 # End Source File
 # Begin Source File
@@ -231,6 +235,10 @@ SOURCE=..\..\include\LagInfo.h
 # Begin Source File
 
 SOURCE=..\..\include\NetHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\PhysicsDriver.h
 # End Source File
 # Begin Source File
 
