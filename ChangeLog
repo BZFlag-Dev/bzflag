@@ -5,6 +5,7 @@ BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
 * Adding ability to load world from url (http, ftp, file) - Alfredo Tupone
+* Reduce network load by buffering UDP packet (no delay) - Alfredo Tupone
 * Allow server to control lat and long (-synclocation) - Daniel Remenak
 * Added tank spawn expansion effect - Dave Rodgers
 * Added tank squishiness - Dave Rodgers, Dave Brosius
