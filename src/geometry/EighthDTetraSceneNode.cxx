@@ -17,16 +17,37 @@
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 
-const int		TetraPolygons = 20; //FIXME
+const int		TetraPolygons = 20;
 
-// FIXME - this can cause spin loops...
+
+static void getRandomPoint (const float* center, 
+                            const float (*out)[3],
+                            float* point)
+{
+  // pick the first direciton
+  int dir = (int) (0.5f + (4.0f * bzfrand()));
+  memcpy (point, center, sizeof(float[3]));
+  float factor = 1.0f;
+  for (int i = 0; i < 4; i++) {
+    float f = factor * bzfrand();
+    const float* dirvec = out[dir];
+    factor = factor - f;
+    point[0] = point[0] + (dirvec[0] * f);
+    point[1] = point[1] + (dirvec[1] * f);
+    point[2] = point[2] + (dirvec[2] * f);
+    dir = (dir + 1) % 4;
+    factor = factor * f;
+  }
+  return;
+}                            
+
 
 EighthDTetraSceneNode::EighthDTetraSceneNode(const float (*vertices)[3],
-                                             const float (*planes)[4]) :
-				EighthDimSceneNode(TetraPolygons),
-				renderNode(this, vertices)
+                                             const float (*/*planes*/)[4]) :
+                                             EighthDimSceneNode(TetraPolygons),
+                                             renderNode(this, vertices)
 {
-  int i, p, v, a;
+  int i, v, a;
 
   // get pseudo-center
   GLfloat center[3];
@@ -37,47 +58,39 @@ EighthDTetraSceneNode::EighthDTetraSceneNode(const float (*vertices)[3],
     }
     center[a] = 0.25f * center[a];
   }
-  GLfloat radiusSquared = 0.0f;
+
+  // get the outwards pointing vectors from the center
+  GLfloat out[4][3];
   for (v = 0; v < 4; v++) {
-    GLfloat out[3];
-    out[0] = vertices[v][0] - center[0];
-    out[1] = vertices[v][1] - center[1];
-    out[2] = vertices[v][2] - center[2];
-    float radsqu = (out[0] * out[0]) + (out[1] * out[1]) + (out[2] * out[2]);
-    if (radsqu > radiusSquared) {
-      radiusSquared = radsqu;
+    for (a = 0; a < 3; a++) {
+      out[v][0] = vertices[v][0] - center[0];
+      out[v][1] = vertices[v][1] - center[1];
+      out[v][2] = vertices[v][2] - center[2];
     }
   }
-    
-  float radius = sqrtf (radiusSquared);
   
+  // get the maximum radius
+  float radiusSquared = 0.0f;
+  for (v = 0; v < 4; v++) {
+    const float rs = (vertices[v][0] * vertices[v][0]) +
+                     (vertices[v][1] * vertices[v][1]) +
+                     (vertices[v][2] * vertices[v][2]);
+    if (rs > radiusSquared) {
+      radiusSquared = rs;
+    }
+  }
+
+  // make the random nodes
   for (i = 0; i < TetraPolygons; i++) {
     GLfloat vertex[3][3];
-    
     for (int j = 0; j < 3; j++) {
-      bool done;
-      do {
-        done = true;
-        vertex[j][0] = center[0] + radius * ((float)bzfrand() - 0.5f);
-        vertex[j][1] = center[1] + radius * ((float)bzfrand() - 0.5f);
-        vertex[j][2] = center[2] + radius * ((float)bzfrand() - 0.5f);
-        // test the 4 planes
-        for (p = 0; p < 4; p++) {
-          float dist = (planes[p][0] * vertex[j][0]) +
-                       (planes[p][1] * vertex[j][1]) +
-                       (planes[p][2] * vertex[j][2]) + planes[p][3];
-          if (dist > 0.0f) {
-            done = false;
-            break;
-          }
-        }
-      } while (!done);
+      getRandomPoint(center, out, vertex[0]);
+      getRandomPoint(center, out, vertex[1]);
+      getRandomPoint(center, out, vertex[2]);
     }
-
     setPolygon(i, vertex);
   }
 
-  
   // set sphere
   setCenter(center);
   setRadius(0.25f * radiusSquared);

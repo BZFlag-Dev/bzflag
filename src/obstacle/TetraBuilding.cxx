@@ -359,22 +359,66 @@ bool TetraBuilding::inMovingBox(const float*, float,
 }                                          
 
 
+// This is only used when the player has an Oscillation Overthruster
+// flag, and only after we already know that the tank is ineterfering
+// with another object (inBox() type test), so it doesn't have to be
+// particularly fast. As a note, some of the info from the original
+// collision test might be handy here.
 bool TetraBuilding::isCrossing(const float* p, float angle,
                                float dx, float dy, float height,
                                float* plane) const
 {
-  p = p;
-  dx = dy = angle = height;
-  if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
-      (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
+  float corner[8][3]; // the box corners
+  const float cosval = cos(angle);
+  const float sinval = sin(angle);
+  int bv, tp; // box vertices, tetra planes
+
+  // make the box vertices  
+  corner[0][0] = (cosval * dx) - (sinval * dy);
+  corner[1][0] = (cosval * dx) + (sinval * dy);
+  corner[0][1] = (cosval * dy) + (sinval * dx);
+  corner[1][1] = (cosval * dy) - (sinval * dx);
+  for (bv = 0; bv < 2; bv++) {
+    corner[bv+2][0] = -corner[bv][0];
+    corner[bv+2][1] = -corner[bv][1];
+  }
+  for (bv = 0; bv < 4; bv++) {
+    corner[bv+0][2] = p[2];
+    corner[bv+4][2] = p[2] + height;
+  }
+
+  // see if any tetra planes separate the box vertices
+  bool done = false;
+  for (tp = 0; tp < 4; tp++) {
+    int splitdir;
+    for (bv = 0; bv < 8; bv++) {
+      const float d = (corner[bv][0] * planes[tp][0]) +
+                      (corner[bv][1] * planes[tp][1]) +
+                      (corner[bv][2] * planes[tp][2]) + planes[tp][3];
+
+      int newdir = (d > 0.0f) ? +1 : -1;
+ 
+      if (bv == 0) {
+        splitdir = newdir;
+      }
+      else if (splitdir != newdir) {
+        done = true;
+        break;
+      }
+    }
+    if (done) {
+      break;
+    }
+  }
+  
+  // copy the plane information if requested
+  if (tp < 4) {
     if (plane != NULL) {
-      plane[0] = 0.0f;
-      plane[1] = 0.0f;
-      plane[2] = 1.0f;
-      plane[3] = 0.0f;
+      memcpy (plane, planes[tp], sizeof(float[4]));
     }
     return true;
   }
+  
   return false;
 }
 
