@@ -2,8 +2,6 @@ if BUILDZLIB
 noinst_LIBRARIES = libz.a
 endif
 
-AM_CFLAGS = -ansi
-
 MAINTAINERCLEANFILES = \
 	Makefile.in
 

@@ -1,6 +1,6 @@
 noinst_LIBRARIES = libCommon.a
 
-AM_CFLAGS = -D_XOPEN_SOURCE -ansi
+AM_CFLAGS = -D_XOPEN_SOURCE
 
 libCommon_a_SOURCES  =			\
 	BZDBCache.cxx			\

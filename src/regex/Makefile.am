@@ -2,8 +2,6 @@ if BUILD_REGEX
 noinst_LIBRARIES = libregex.a
 endif
 
-AM_CFLAGS = -ansi
-
 libregex_a_SOURCES  =	\
 	cclass.h	\
 	cname.h		\
