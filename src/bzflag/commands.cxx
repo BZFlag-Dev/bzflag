@@ -102,7 +102,8 @@ std::string cmdIconify(const std::string&, const CommandManager::ArgList& args)
 {
   if (args.size() != 0)
     return "usage: iconify";
-  mainWindow->iconify();
+  if (myTank == NULL || !myTank->isAlive() || myTank->isPaused())
+    mainWindow->iconify();
   return std::string();
 }
 
