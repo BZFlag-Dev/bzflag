@@ -203,10 +203,6 @@ void ListServerLink::read()
       } else if (strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier)) == 0) {
 	char *callsign;
 	callsign = base + strlen(tokBadIdentifier);
-	// find end of callsign (string is "callsign=token")
-	char *p = callsign;
-	while (*p && (*p != '=')) p++;
-	*p = 0;
 	int playerIndex = getTarget(callsign);
 	DEBUG3("Got: [%d] %s\n", playerIndex, base);
 	if (playerIndex < curMaxPlayers) {
