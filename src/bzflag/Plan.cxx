@@ -38,6 +38,66 @@ bool Plan::isValid()
 }
 
 /**
+ * PlanStack
+ */
+
+PlanStack::PlanStack()
+{
+	Plan *pPlan = new TopLevelPlan();
+	plans.push(pPlan);
+}
+
+void PlanStack::execute()
+{
+	Plan *pPlan = NULL;
+	
+	while (plans.size() > 0) {
+		pPlan = plans.top();
+		if (!pPlan->isValid()) {
+			delete pPlan;
+			plans.pop();
+		}
+	}
+
+	while (pPlan->usesSubPlan()) {
+		pPlan = pPlan->createSubPlan();
+		plans.push(pPlan);
+	}
+
+	pPlan->execute();
+}
+
+/**
+ * TopLevelPlan
+ */
+
+TopLevelPlan::TopLevelPlan()
+: Plan(0)
+{
+}
+
+bool TopLevelPlan::isValid()
+{	//always valid
+	return true;
+}
+
+bool TopLevelPlan::usesSubPlan()
+{
+	return true;
+}
+
+Plan *TopLevelPlan::createSubPlan()
+{	//TODO: Pick a plan
+	return NULL;
+}
+
+void TopLevelPlan::execute()
+{
+	//Noop
+}
+
+
+/**
  * GotoPointPlan
  */
 
@@ -57,7 +117,7 @@ Plan *GotoPointPlan::createSubPlan()
 	return NULL;
 }
 
-void GotoPointPlan::execute( float &/*rotation*/, float &/*velocity*/ )
+void GotoPointPlan::execute()
 {
 }
 
@@ -89,7 +149,7 @@ Plan* WeavePlan::createSubPlan()
 	return NULL;
 }
 
-void WeavePlan::execute( float &/*rotation*/, float &/*velocity*/ )
+void WeavePlan::execute()
 {
 }
 
@@ -141,7 +201,7 @@ Plan *HuntPlayerPlan::createSubPlan()
 	}
 }
 
-void HuntPlayerPlan::execute( float &, float &)
+void HuntPlayerPlan::execute()
 {
 }
 
@@ -169,7 +229,7 @@ Plan *HuntTeamFlagPlan::createSubPlan()
 	return NULL;
 }
 
-void HuntTeamFlagPlan::execute( float &, float &)
+void HuntTeamFlagPlan::execute()
 {
 }
 
@@ -197,7 +257,7 @@ Plan *CaptureFlagPlan::createSubPlan()
 	return NULL;
 }
 
-void CaptureFlagPlan::execute( float &, float &)
+void CaptureFlagPlan::execute()
 {
 }
 

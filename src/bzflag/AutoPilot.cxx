@@ -10,7 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <stack>
 #include "TimeKeeper.h"
 #include "Roster.h"
 #include "TargetingUtils.h"
@@ -27,7 +26,7 @@ static FlagSuccessMap flagSuccess;
 static int			  totalSum = 0;
 static int			  totalCnt = 0;
 
-static std::stack<std::vector<Plan *> > planStack;
+static PlanStack planStack;
 
 void teachAutoPilot(FlagType *type, int adjust)
 {

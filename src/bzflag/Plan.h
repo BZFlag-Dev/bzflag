@@ -13,6 +13,8 @@
 #ifndef	PLAN_H
 #define	PLAN_H
 
+#include <vector>
+#include <stack>
 #include "TimeKeeper.h"
 
 /**
@@ -49,13 +51,33 @@ public:
 	virtual Plan *createSubPlan() = 0;
 
 	/**
-	 * execute the plan. set the rotation and speed
+	 * execute the plan
 	 *
 	 */
-	virtual void execute( float &rotation, float &velocity ) = 0;
+	virtual void execute() = 0;
 
 private:
 	TimeKeeper planExpiration;
+};
+
+class PlanStack
+{
+public:
+	PlanStack();
+	void execute();
+private:
+	std::stack<Plan *> plans;
+};
+
+class TopLevelPlan : public Plan
+{
+public:
+	TopLevelPlan();
+
+	virtual bool isValid();
+	virtual bool usesSubPlan();
+	virtual Plan *createSubPlan() ;
+	virtual void execute();
 };
 
 class GotoPointPlan : public Plan
@@ -65,7 +87,7 @@ public:
 	
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan() ;
-	virtual void execute( float &rotation, float &velocity );
+	virtual void execute();
 
 private:
 	float gotoPt[3];
@@ -79,7 +101,7 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan* createSubPlan();
-	virtual void execute( float &rotation, float &velocity );
+	virtual void execute();
 
 private:
 	int playerID;
@@ -94,7 +116,7 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan();
-	virtual void execute( float &, float &);
+	virtual void execute();
 
 private:
 	int playerID;
@@ -108,7 +130,7 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan();
-	virtual void execute( float &, float &);
+	virtual void execute();
 private:
 	int flagID;
 };
@@ -121,7 +143,7 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan();
-	virtual void execute( float &, float &);
+	virtual void execute();
 };
 
 #endif
