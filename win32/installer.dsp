@@ -66,6 +66,7 @@ SOURCE=.\makeins.bat
 !IF  "$(CFG)" == "installer - Win32 Release"
 
 # PROP Ignore_Default_Tool 1
+USERDEP__MAKEI="Release/bzflag.exe"	"Release/bzfs.exe"	"Release/bzfls.exe"	
 # Begin Custom Build - Building Installer...
 InputPath=.\makeins.bat
 
@@ -77,6 +78,7 @@ InputPath=.\makeins.bat
 !ELSEIF  "$(CFG)" == "installer - Win32 Debug"
 
 # PROP Ignore_Default_Tool 1
+USERDEP__MAKEI="Debug/bzflag.exe"	"Debug/bzfs.exe"	"Debug/bzfls.exe"	
 # Begin Custom Build - Building Installer...
 InputPath=.\makeins.bat
 
