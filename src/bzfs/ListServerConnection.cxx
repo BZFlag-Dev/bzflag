@@ -327,13 +327,17 @@ void ListServerLink::addMe(PingPacket pingInfo,
     getServerVersion(), gameInfo,
     getAppVersion());
   msg += "&checktokens=";
+  // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
+    NetHandler *handler = playerData->netHandler;
     std::string encodedCallsign = TextUtils::url_encode(playerData->player.getCallSign());
     if (strlen(playerData->player.getCallSign()) && strlen(playerData->player.getToken())) {
       msg += encodedCallsign;
+      msg += "@";
+      msg += handler->getTargetIP();
       msg += "=";
       msg += playerData->player.getToken();
       msg += "%0D%0A";
