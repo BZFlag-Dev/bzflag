@@ -177,6 +177,12 @@ struct PlayerInfo {
     unsigned short lastSendPacketNo;
 
     boolean toBeKicked;
+
+    // lag measurement
+    bool lagkillerpending;
+    TimeKeeper lagkillertime;
+    float lagavg,lagalpha;
+    int lagcount,laglastwarn,lagwarncount;
 };
 
 #define SEND 1
@@ -364,6 +370,9 @@ static int worldDatabaseSize = 0;
 static float basePos[NumTeams][3];
 static float safetyBasePos[NumTeams][3];
 static const char *worldFile = NULL;
+
+static float lagwarnthresh=-1.0;
+static char *password=NULL;
 
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex);
@@ -2864,6 +2873,22 @@ static void addPlayer(int playerIndex)
 {
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full.
+
+  // look if there is as name clash, we won't allow this
+  int i;
+  for (i=0;i<maxPlayers;i++)
+  {
+    if (i==playerIndex)
+      continue;
+    if (strcmp(player[i].callSign,player[playerIndex].callSign)==0)
+      break;
+  }
+  if (i<maxPlayers)
+  {
+    // this is a hack; would better add a new reject type
+    player[playerIndex].team = NoTeam;
+  }
+
   TeamColor t = player[playerIndex].team;
   if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
 			player[playerIndex].type == ComputerPlayer)) ||
@@ -2901,6 +2926,14 @@ static void addPlayer(int playerIndex)
 
   player[playerIndex].uqueue=NULL;
   player[playerIndex].dqueue=NULL;
+
+  player[playerIndex].lagkillerpending = false;
+  player[playerIndex].lagavg = 0;
+  player[playerIndex].lagcount = 0;
+  player[playerIndex].laglastwarn = 0;
+  player[playerIndex].lagwarncount = 0;
+  player[playerIndex].lagalpha = 1;
+
 
   // accept player
   directMessage(playerIndex, MsgAccept, 0, NULL);
@@ -3393,6 +3426,15 @@ static void playerKilled(int victimIndex, int killerIndex,
   buf = nboPackShort(buf, shotIndex);
   broadcastMessage(MsgKilled, sizeof(msg), msg);
 
+  // we try to estimate lag by measuring time between broadcast of MsgKilled
+  // and MsgScore reply of the killer; should give us a good approximation
+  //  of the killer's round trip time
+  if (victimIndex != killerIndex &&            // suicide doesn't change score twice
+      !player[killerIndex].lagkillerpending) { // two rapid kills
+    player[killerIndex].lagkillerpending=true;
+    player[killerIndex].lagkillertime=TimeKeeper::getCurrent();
+  }
+
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
   zapFlag(player[victimIndex].flag);
@@ -3614,6 +3656,31 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 
 static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 {
+  // lag measurement
+  if (player[playerIndex].lagkillerpending) { // got reference time?
+    PlayerInfo &killer=player[playerIndex];
+    TimeKeeper now=TimeKeeper::getCurrent(),&then=killer.lagkillertime;
+    float timepassed=now-then;
+    killer.lagkillerpending=false;
+    if (timepassed<10.0) { // huge lags might be error!?
+      // time is smoothed exponentially using a dynamic smoothing factor
+      killer.lagavg=killer.lagavg*(1-killer.lagalpha)+killer.lagalpha*timepassed;
+      killer.lagalpha=killer.lagalpha/(0.9+killer.lagalpha);
+      killer.lagcount++;
+      // warn players from time to time whose lag is > threshold (-lagwarn)
+      if (lagwarnthresh>0 && killer.lagavg>lagwarnthresh &&
+          killer.lagcount-killer.laglastwarn>5+2*killer.lagwarncount) {
+        char message[MessageLen];
+        sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
+                int(killer.lagavg*1000));
+        sendMessage(playerIndex, player[playerIndex].id,
+                    player[playerIndex].team,message);
+        killer.laglastwarn=killer.lagcount;
+        killer.lagwarncount++;;
+      }
+    }
+  }
+
   char msg[PlayerIdPLen + 4];
   void *buf = msg;
   buf = player[playerIndex].id.pack(buf);
@@ -3683,6 +3750,53 @@ static void releaseRadio(int playerIndex)
   char msg[PlayerIdPLen];
   player[playerIndex].id.pack(msg);
   broadcastMessage(MsgReleaseRadio, sizeof(msg), msg);
+}
+
+// parse player comands (messages with leading /)
+static void parseCommand(const char *message, int t)
+{
+  // /kick command allows operator to remove players (-passwd)
+  if (strncmp(message+1,"kick ",5)==0) {
+    if (password && strncmp(message+6, password, strlen(password))==0) {
+      int i;
+      const char *victimname = message + 6 + strlen(password) + 1;
+      for (i = 0; i < maxPlayers; i++)
+        if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname)==0)
+          break;
+      if (i < maxPlayers) {
+        char kickmessage[MessageLen];
+        player[i].toBeKicked = false;
+        sprintf(kickmessage,"*** Your were kicked off the server by %s ***",
+                player[t].callSign);
+        sendMessage(i, player[i].id, player[i].team, kickmessage);
+        removePlayer(i);
+      }
+      else {
+        char errormessage[MessageLen];
+        sprintf(errormessage, "player %s not found", victimname);
+        sendMessage(t, player[t].id, player[t].team, errormessage);
+      }
+    }
+    else {
+      if (password)
+        sendMessage(t, player[t].id,player[t].team,"Wrong Password!");
+      else
+        sendMessage(t, player[t].id,player[t].team,"kicking not enabled on server");
+    }
+  }
+  // /lagstats gives simpel statistics about players' lags
+  else if (strncmp(message+1,"lagstats",8)==0) {
+    for (int i = 0; i < maxPlayers; i++)
+      if (player[i].fd != NotConnected) {
+        char reply[MessageLen];
+        sprintf(reply,"%-12s : %4dms (%d)",player[i].callSign,
+                int(player[i].lagavg*1000),player[i].lagcount);
+        sendMessage(t,player[t].id,player[t].team,reply);
+      }
+  }
+  else {
+    sendMessage(t,player[t].id,player[t].team,"unknown command");
+  }
 }
 
 static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
@@ -3866,7 +3980,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = nboUnpackUShort(buf, targetTeam);
       buf = nboUnpackString(buf, message, sizeof(message));
       UMDEBUG("Player %s [%d]: %s\n",player[t].callSign, t, message);
-      sendMessage(t, targetPlayer, TeamColor(targetTeam), message);
+      // check for command
+      if (message[0] == '/') {
+        parseCommand(message, t);
+      }
+      else
+        sendMessage(t, targetPlayer, TeamColor(targetTeam), message);
       break;
     }
 
@@ -3962,7 +4081,10 @@ static const char *usageString =
 #endif
 "[-ttl <ttl>] "
 "[-srvmsg <text>] "
-"[-world <filename>]";
+"[-world <filename>] "
+"[-passwd <password>] "
+"[-lagwarn <time/ms>]";
+
 
 static void printVersion(ostream& out)
 {
@@ -4033,6 +4155,8 @@ static void extraUsage(const char *pname)
 #endif
   cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << endl;
   cout << "\t -world: world file to load" << endl;
+  cout << "\t -passwd: specify a <password> for operator commands" << endl;
+  cout << "\t -lagwarn: lag warnign threshhold time [ms]" <<
   cout << "\nFlag codes:" << endl;
   for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
     cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
@@ -4528,6 +4652,20 @@ static void parse(int argc, char **argv)
     else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
       printVersion(cout);
       exit(0);
+    }
+    else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
+      if (++i == argc) {
+	cerr << "argument expected for " << argv[i] << endl;
+	usage(argv[0]);
+      }
+      password=argv[i];
+    }
+    else if (strcmp(argv[i], "-lagwarn") == 0) {
+      if (++i == argc) {
+	cerr << "argument expected for " << argv[i] << endl;
+	usage(argv[0]);
+      }
+      lagwarnthresh=atoi(argv[i])/1000.0;
     }
     else {
       cerr << "bad argument " << argv[i] << endl;

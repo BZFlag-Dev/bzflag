@@ -28,6 +28,7 @@ BZFlag 1.7e1
 * don't drain and flush audio on solaris - frank
 * alpha Macintosh port - Darrell Walisser <dwaliss1@purdue.edu>
 * quick message support - Kris Verbeeck
+* /kick and /lagstats server messages, -passwd - Frank Thilo
 
 
 BZFlag 1.7e release 000
