@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
-
 #include "common.h"
 
 // system includes

@@ -40,6 +40,8 @@
 #define BZ_BUILD_TYPE		"DEVEL"
 #endif
 
+const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
+
 #ifndef BZ_BUILD_DATE
 /* to get the version in the right format YYYYMMDD */
 /* yes this is horible but it needs to be done to get it right */
@@ -82,7 +84,7 @@ inline int getBuildDate()
   return (year*10000) + (month*100)+ day;
 }
 #endif
-// down here do above gets created
+// down here so above gets created
 #include "version.h"
 
 const char*		getProtocolVersion()

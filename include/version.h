@@ -31,6 +31,7 @@
 #define BZ_CONFIG_FILE_VERSION	2
 #endif
 
+extern const char copyright[];
 
 // various version functions in buildDate.cxx
 extern const char* getProtocolVersion();

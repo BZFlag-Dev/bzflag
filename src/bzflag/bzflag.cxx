@@ -620,10 +620,10 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-v") == 0 ||
 	     strcmp(argv[i], "-version") == 0 ||
 	     strcmp(argv[i], "--version") == 0) {
-      printFatalError("BZFlag client, version %s\n"
-		"  protocol %s",
+      printFatalError("BZFlag client %s (protocol %s) http://BZFlag.org/\n%s",
 		getAppVersion(),
-		getProtocolVersion());
+		getProtocolVersion(),
+		copyright);
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");
