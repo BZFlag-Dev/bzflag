@@ -1,7 +1,9 @@
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-EXTRA_DIST =	\
+noinst_LIBRARIES =	libTank.a
+
+libTank_a_SOURCES =	\
 	high_barrel.cxx		\
 	high_body.cxx		\
 	high_ltread.cxx		\

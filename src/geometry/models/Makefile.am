@@ -1,4 +1,4 @@
-noinst_SUBDIRS = tank
+SUBDIRS = tank
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

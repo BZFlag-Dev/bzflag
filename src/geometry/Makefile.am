@@ -1,4 +1,4 @@
-noinst_SUBDIRS = models
+SUBDIRS = models
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
@@ -28,19 +28,6 @@ libGeometry_a_SOURCES  =		\
 	FlagSceneNode.cxx		\
 	FlagWarpSceneNode.cxx		\
 	TankSceneNode.cxx		\
-	BillboardSceneNode.cxx		\
-	models/tank/high_barrel.cxx	\
-	models/tank/high_body.cxx	\
-	models/tank/high_ltread.cxx	\
-	models/tank/high_rtread.cxx	\
-	models/tank/high_turret.cxx	\
-	models/tank/low_barrel.cxx	\
-	models/tank/low_body.cxx	\
-	models/tank/low_ltread.cxx	\
-	models/tank/low_rtread.cxx	\
-	models/tank/low_turret.cxx	\
-	models/tank/medium_barrel.cxx	\
-	models/tank/medium_body.cxx	\
-	models/tank/medium_ltread.cxx	\
-	models/tank/medium_rtread.cxx	\
-	models/tank/medium_turret.cxx
+	BillboardSceneNode.cxx
+
+libGeometry_a_LIBADD =	models/tank/libTank.a
