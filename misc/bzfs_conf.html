@@ -42,11 +42,6 @@
 						d.writeln("-p " + mainform.port.value + "<br/><br/>");
 					}
 
-					if (mainform.reconnect_port.value != 5156) {
-						d.writeln("#Reconnect port<br/>");
-						d.writeln("-pr " + mainform.reconnect_port.value+"<br/><br/>");
-					}
-
 					if (mainform.udp_required.checked) {
 						d.writeln("#Require UDP<br/>");
 						d.writeln("-requireudp<br/><br/>");
@@ -209,6 +204,31 @@
 					if (mainform.filtersimple.checked) {
 						d.writeln("#Perform simple exact matches with the bad word list<br/>");
 						d.writeln("-filterSimple<br/><br/>");
+					}
+
+					if (mainform.votepercent.value != 50.1) {
+						d.writeln("#Percentage of players required to affirm a poll<br/>");
+						d.writeln("-votePercentage " + mainform.votepercent.value + "<br/><br/>");
+					}
+
+					if (mainform.votesrequired.value != 3) {
+						d.writeln("#Minimum count of votes required to make a vote valid<br/>");
+						d.writeln("-votesRequired " + mainform.votesrequired.value + "<br/><br/>");
+					}
+
+					if (mainform.votetime.value != 60) {
+						d.writeln("#maximum amount of time a player has to vote on a poll in seconds<br/>");
+						d.writeln("-voteTime " + mainform.votetime.value + "<br/><br/>");
+					}
+
+					if (mainform.vetotime.value != 20) {
+						d.writeln("#Maximum seconds an authorized user has to cancel a poll<br/>");
+						d.writeln("-vetoTime " + mainform.vetotime.value + "<br/><br/>");
+					}
+
+					if (mainform.voterepeattime.value != 300) {
+						d.writeln("#Minimum seconds required before a player may request another vote<br/>");
+						d.writeln("-voteRepeatTime " + mainform.voterepeattime.value + "<br/><br/>");
 					}
 
 					if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
@@ -395,8 +415,6 @@
 					<tr>
 						<td>Port</td>
 						<td><input type="text" name="port" value="5154" size="30" title="Initial port clients connect on"/></td>
-						<td>Reconnect Port</td>
-						<td><input type="text" name="reconnect_port" value="5156" size="30" title="Reconnect port"/></td>
 					</tr>
 					<tr>
 						<td>UDP Required</td>
@@ -518,6 +536,22 @@
 					<tr>
 						<td>Filter Simple</td>
 						<td><input type="checkbox" name="filtersimple" title="Perform simple exact matches with the bad word list"/></td>
+					</tr>
+					<tr>
+						<td>Vote Percent</td>
+						<td><input type="text" name="votepercent" value="50.1" title="Percentage of players required to affirm a poll"/></td>
+						<td>Votes Required</td>
+						<td><input type="text" name="votesrequired" value="3" title="Minimum count of votes required to make a vote valid"/></td>
+					</tr>
+					<tr>
+						<td>Vote Time</td>
+						<td><input type="text" name="votetime" value="60" title="maximum amount of time a player has to vote on a poll in seconds"/></td>
+						<td>Veto Time</td>
+						<td><input type="text" name="vetotime" value="20" title="Maximum seconds an authorized user has to cancel a poll"/></td>
+					</tr>
+					<tr>
+						<td>Vote Repeat Time</td>
+						<td><input type="text" name="voterepeattime" value="300" title="Minimum seconds required before a player may request another vote"/></td>
 					</tr>
 				</table>
 			</fieldset>
