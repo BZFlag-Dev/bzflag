@@ -201,6 +201,7 @@ bool PositionTracker::addWaypoint(const double from[3], const double to[3], doub
 
   // see if the first point already exists
   foundPoint = false;
+  fromToken  = 0;
   for (i = 0; i != waypointSet.size(); i++) {
     if ((waypointSet[i]->position[0] = from[0]) &&
 	(waypointSet[i]->position[1] = from[1]) &&
@@ -222,6 +223,7 @@ bool PositionTracker::addWaypoint(const double from[3], const double to[3], doub
 
   // see if the second point already exists
   foundPoint = false;
+  toToken    = 0;
   for (i = 0; i != waypointSet.size(); i++) {
     if ((waypointSet[i]->position[0] = to[0]) &&
 	(waypointSet[i]->position[1] = to[1]) &&
