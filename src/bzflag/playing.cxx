@@ -37,6 +37,7 @@
 // yikes! that's a lotsa includes!
 #include "global.h"
 #include "bzsignal.h"
+#include "AccessList.h"
 #include "Address.h"
 #include "BzfEvent.h"
 #include "BzfWindow.h"
@@ -4170,12 +4171,24 @@ void		leaveGame()
 
 static void joinInternetGame()
 {
-  // open server
+  // get server address
   Address serverAddress(startupInfo.serverName);
   if (serverAddress.isAny()) {
     HUDDialogStack::get()->setFailedMessage("Server not found");
     return;
   }
+  
+  // check server name authorization state
+  ServerAccessList.reload(); 
+  std::vector<std::string> nameAndIp;
+  nameAndIp.push_back(startupInfo.serverName);
+  nameAndIp.push_back(serverAddress.getDotNotation());
+  if (!ServerAccessList.authorized(nameAndIp)) {
+    HUDDialogStack::get()->setFailedMessage("Server Access Denied Locally");
+    return;
+  }
+
+  // open server
   ServerLink* _serverLink = new ServerLink(serverAddress,
 					   startupInfo.serverPort);
 
