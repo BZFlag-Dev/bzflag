@@ -3993,8 +3993,16 @@ static void parseCommand(const char *message, int t)
     } else {
       sendMessage(t, player[t].id, player[t].team, "Wrong Password!");
     }
+  // /gameover command allows operator to start a new game
+  } else if (player[t].Admin && strncmp(message + 1, "gameover", 8) == 0) {
+    char msg[PlayerIdPLen + 2];
+    void *buf = msg;
+    buf = player[t].id.pack(buf);
+    buf = nboPackUShort(buf, uint16_t(NoTeam));
+    broadcastMessage(MsgScoreOver, sizeof(msg), msg);
+    gameOver = True;
   // /flag command allows operator to control flags
-  } else if (player[t].Admin && strncmp(message + 1, "flag ",5) == 0) {
+  } else if (player[t].Admin && strncmp(message + 1, "flag ", 5) == 0) {
     if (strncmp(message + 6, "reset", 5) == 0) {
       for (int i = 0; i < numFlags; i++) {
 	// see if someone had grabbed flag.  tell 'em to drop it.
