@@ -44,4 +44,6 @@ SIG_PF bzSignal(int signo, SIG_PF func)
   return oact.sa_handler;
 #endif // _WIN32
 }
-/* ex: shiftwidth=2 tabstop=8 */
+/*
+ * ex: shiftwidth=2 tabstop=8
+ */
