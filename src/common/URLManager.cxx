@@ -10,24 +10,27 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-// bzflag common header
-
-
-#include "common.h"
-
-#include "URLManager.h"
-#include <iostream>
-
-#include "bzfio.h"
-#include "StateDatabase.h"
-
 #ifdef _MSC_VER
 #pragma warning( 4: 4786)
 #define _WINSOCK2API_
 #endif
+
+// bzflag common header
+#include "common.h"
+
+// class interface header
+#include "URLManager.h"
 #ifdef HAVE_CURL
 #include <curl/curl.h>
 #endif
+
+// system headers
+#include <iostream>
+
+// common implementation headers
+#include "bzfio.h"
+#include "StateDatabase.h"
+
 
 template <>
 URLManager* Singleton<URLManager>::_instance = (URLManager*)0;
@@ -37,188 +40,188 @@ static size_t writeFunction(void *ptr, size_t size, size_t nmemb, void *stream);
 #endif // HAVE_CURL
 
 #ifdef HAVE_CURL
-bool URLManager::getURL ( const std::string URL, std::string &data )
+bool URLManager::getURL(const std::string URL, std::string &data)
 #else
-bool URLManager::getURL ( const std::string, std::string&)
+bool URLManager::getURL(const std::string, std::string&)
 #endif // HAVE_CURL
 {
-	if (theData)
-		free (theData);
+  if (theData)
+    free(theData);
 
-	theData = NULL;
-	theLen = 0;
+  theData = NULL;
+  theLen = 0;
 
 #ifdef HAVE_CURL
-	CURLcode result;
-	if (!easyHandle) {
-		return false;
-	}
+  CURLcode result;
+  if (!easyHandle) {
+    return false;
+  }
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, 5);
-	if (result)
-	  DEBUG1("Something wrong with CURL; Error: %d\n",result);
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, 5);
+  if (result)
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
-	if (result) {
-		DEBUG1("Something wrong with CURL; Error:  %d\n",result);
-		return false;
-	}
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    return false;
+  }
 
-	// FIXME: This could block for a _long_ time.
-	result = curl_easy_perform((CURL*)easyHandle);
-	if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
-		DEBUG1("Error: server reported: %d\n",result);
-		return false;
-	} else if (result) {
-		DEBUG1("Something wrong with CURL; Error: %d\n",result);
-		return false;
-	}
+  // FIXME: This could block for a _long_ time.
+  result = curl_easy_perform((CURL*)easyHandle);
+  if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
+    DEBUG1("Error: server reported: %d\n", result);
+    return false;
+  } else if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    return false;
+  }
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, NULL);
-	if (result) {
-		DEBUG1("Something wrong with CURL; Error: %d\n",result);
-		return false;
-	}
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, NULL);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    return false;
+  }
 
-	if (!theData)
-		return false;
+  if (!theData)
+    return false;
 
-	char	* newData = (char*)malloc(theLen + 1);
-	memcpy(newData,theData,theLen);
+  char* newData = (char*)malloc(theLen + 1);
+  memcpy(newData, theData, theLen);
 
-	newData[theLen] = 0;
+  newData[theLen] = 0;
 
-	data = newData;
-	free(newData);
+  data = newData;
+  free(newData);
 
-	return true;
+  return true;
 #endif
-	return false;
+  return false;
 }
 
 #ifdef HAVE_CURL
-bool URLManager::getURL ( const std::string URL, void **data, unsigned int& size )
+bool URLManager::getURL(const std::string URL, void **data, unsigned int& size)
 #else
-bool URLManager::getURL (const std::string, void **, unsigned int&)
+bool URLManager::getURL(const std::string, void **, unsigned int&)
 #endif // HAVE_CURL
 {
-	if (theData)
-		free (theData);
+  if (theData)
+    free(theData);
 
-	theData = NULL;
-	theLen = 0;
+  theData = NULL;
+  theLen = 0;
 
 #ifdef HAVE_CURL
-	CURLcode result;
-	if (!easyHandle) {
-		return false;
-	}
+  CURLcode result;
+  if (!easyHandle) {
+    return false;
+  }
 
-	float timeout = 15;
-	if (BZDB.isSet("httpTimeout"))
-		timeout = BZDB.eval("httpTimeout");
+  float timeout = 15;
+  if (BZDB.isSet("httpTimeout"))
+    timeout = BZDB.eval("httpTimeout");
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, timeout);
-	if (result)
-	  DEBUG1("Something wrong with CURL; Error: %d\n",result);
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, timeout);
+  if (result)
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
-	if (result) {
-		DEBUG1("Something wrong with CURL; Error:  %d\n",result);
-	}
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, URL.c_str());
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+  }
 
-	// FIXME: This could block for a _long_ time.
-	result = curl_easy_perform((CURL*)easyHandle);
-	if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
-		DEBUG1("Error: server reported: %d\n",result);
-		return false;
-	} else if (result) {
-		DEBUG1("Something wrong with CURL; Error: %d\n",result);
-		return false;
-	}
+  // FIXME: This could block for a _long_ time.
+  result = curl_easy_perform((CURL*)easyHandle);
+  if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
+    DEBUG1("Error: server reported: %d\n", result);
+    return false;
+  } else if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    return false;
+  }
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, NULL);
-	if (result) {
-		DEBUG1("Something wrong with CURL; Error: %d\n",result);
-		return false;
-	}
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_URL, NULL);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    return false;
+  }
 
-	if (!theData)
-		return false;
+  if (!theData)
+    return false;
 
-	*data = malloc(theLen);
-	memcpy(*data,theData,theLen);
-	size = theLen;
-	return true;
+  *data = malloc(theLen);
+  memcpy(*data, theData, theLen);
+  size = theLen;
+  return true;
 #endif
-	return false;
+  return false;
 }
 
-void URLManager::freeURLData ( void *data )
+void URLManager::freeURLData(void *data)
 {
-	free(data);
+  free(data);
 }
 
 URLManager::URLManager()
 {
-	easyHandle = NULL;
-	theData = NULL;
-	theLen = 0;
+  easyHandle = NULL;
+  theData = NULL;
+  theLen = 0;
 
 #ifdef HAVE_CURL
-	CURLcode curlResult;
-	if ((curlResult = curl_global_init(CURL_GLOBAL_NOTHING)))
-		DEBUG1("Unexpected error from libcurl; Error: %d\n",curlResult);
+  CURLcode curlResult;
+  if ((curlResult = curl_global_init(CURL_GLOBAL_NOTHING)))
+    DEBUG1("Unexpected error from libcurl; Error: %d\n", curlResult);
 
-	easyHandle = curl_easy_init();
-	if (!easyHandle) {
-		DEBUG1("Something wrong with CURL\n");
-		return;
-	}
+  easyHandle = curl_easy_init();
+  if (!easyHandle) {
+    DEBUG1("Something wrong with CURL\n");
+    return;
+  }
 
-	CURLcode result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_WRITEFUNCTION, writeFunction);
-	if (result)
-			DEBUG1("Something wrong with CURL; Error: %d\n",result);
+  CURLcode result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_WRITEFUNCTION, writeFunction);
+  if (result)
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_FILE, this);
-	if (result)
-		DEBUG1("Something wrong with CURL; Error: %d\n",result);
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_FILE, this);
+  if (result)
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
 #endif
 }
 
 URLManager::~URLManager()
 {
-	if (theData)
-		free (theData);
+  if (theData)
+    free (theData);
 
-	theData = NULL;
-	theLen = 0;
+  theData = NULL;
+  theLen = 0;
 
 #ifdef HAVE_CURL
-	if (easyHandle)
-		curl_easy_cleanup((CURL*)easyHandle);
-	curl_global_cleanup();
+  if (easyHandle)
+    curl_easy_cleanup((CURL*)easyHandle);
+  curl_global_cleanup();
 #endif
 }
 
 void URLManager::collectData(char* ptr, int len)
 {
-	unsigned char	*newData = (unsigned char*)malloc(theLen + len);
-	if (theData)
-		memcpy(newData,theData,theLen);
+  unsigned char	*newData = (unsigned char*)malloc(theLen + len);
+  if (theData)
+    memcpy(newData, theData, theLen);
 
-	memcpy(&(newData[theLen]),ptr,len);
-	theLen+= len;
+  memcpy(&(newData[theLen]), ptr, len);
+  theLen += len;
 
-	free(theData);
-	theData = newData;
+  free(theData);
+  theData = newData;
 }
 
 #ifdef HAVE_CURL
-static size_t writeFunction(void *ptr, size_t size, size_t nmemb,void *stream)
+static size_t writeFunction(void *ptr, size_t size, size_t nmemb, void *stream)
 {
-	int len = size * nmemb;
-	((URLManager *)stream)->collectData((char *)ptr, len);
-	return len;
+  int len = size * nmemb;
+  ((URLManager*)stream)->collectData((char*)ptr, len);
+  return len;
 }
 #endif // HAVE_CURL

@@ -27,23 +27,23 @@
 
 class URLManager : public Singleton<URLManager> {
 public:
-	bool getURL ( const std::string URL, std::string &data );
-	bool getURL ( const std::string URL, void **data, unsigned int& size );
-	void freeURLData ( void *data );
+  bool getURL(const std::string URL, std::string &data);
+  bool getURL(const std::string URL, void **data, unsigned int& size);
+  void freeURLData(void *data);
 
-	void collectData(char* ptr, int len);
+  void collectData(char* ptr, int len);
 
 protected:
-	friend class Singleton<URLManager>;
-	URLManager();
-	~URLManager();
+  friend class Singleton<URLManager>;
+  URLManager();
+  ~URLManager();
 
 private:
-	// these are CURL specific
-	// should probably put them in a pimple
-	void *easyHandle;
-	void *theData;
-	unsigned int theLen;
+  // these are CURL specific
+  // should probably put them in a pimple
+  void *easyHandle;
+  void *theData;
+  unsigned int theLen;
 };
 
 
