@@ -525,7 +525,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   // prepare flag counts
   int i;
   bool allFlagsOut = false;
-  bool teamFlagsAdded = false;
+  static bool teamFlagsAdded = false;
 
   // parse command line
   int playerCountArg = 0,playerCountArg2 = 0;
