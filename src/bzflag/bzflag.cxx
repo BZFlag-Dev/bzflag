@@ -234,7 +234,7 @@ static std::string	getConfigFileName()
     name += std::string(pwent->pw_dir);
     name += "/";
   }
-  name += ".bzflag19";
+  name += ".bzf/config";
 
   // add in hostname on UNIX
   if (getenv("HOST")) {
@@ -285,7 +285,7 @@ static std::string	getConfigFileName2()
     name += std::string(pwent->pw_dir);
     name += "/";
   }
-  name += ".bzflag19";
+  name += ".bzf/config";
   return name;
 }
 #endif

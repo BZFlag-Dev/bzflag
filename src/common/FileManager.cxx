@@ -16,6 +16,10 @@
 #include <ctype.h>
 #include <fstream>
 
+#ifndef _WIN32
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
 
 //
 // FileManager
@@ -125,6 +129,17 @@ std::ostream*			FileManager::createDataOutStream(
     }
   } else {
     // try absolute path
+    int i = 0;
+#ifndef _WIN32    
+    // create all directories above the file
+    while ((i = filename.find('/', i+1)) != -1) {
+      struct stat statbuf;
+      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 && 
+	    (S_ISDIR(statbuf.st_mode)))) {
+	mkdir(filename.substr(0, i).c_str(), 0777);
+      }
+    }
+#endif
     std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
     if (stream && *stream)
       return stream;

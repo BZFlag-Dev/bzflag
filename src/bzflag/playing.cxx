@@ -4767,7 +4767,7 @@ std::string		getCacheDirectoryName()
     name += std::string(pwent->pw_dir);
     name += "/";
   }
-  name += ".bzflag-cache";
+  name += ".bzf/cache";
 
   // add in hostname on UNIX
   if (getenv("HOST")) {
