@@ -419,6 +419,9 @@ Shoots a laser, with effectively infinite speed and range.  Just point
 and shoot.  The binoculars are handy for lining up distant targets.
 The downside (you knew it was coming) is that the reload time is doubled.
 .TP
+.B Masquerade (MQ)
+Tank appears like teammate out-the window but is normal elsewhere.
+.TP
 .B Ricochet (R)
 Shots reflect off walls.  It is exceptionally easy to kill yourself with
 this flag.

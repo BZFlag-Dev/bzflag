@@ -70,9 +70,10 @@ public:
 	void					setId(PlayerId);
 
 	void					addPlayerSceneNode(SceneNodeGroup*,
-							bool viewerIsColorblind);
+								bool viewerIsColorblind,
+								bool masqueraded, TeamColor masquerade);
 	void					addShotsSceneNodes(SceneNodeGroup*,
-							bool viewerIsColorblind);
+								bool viewerIsColorblind);
 
 	bool					isAlive() const;
 	bool					isPaused() const;

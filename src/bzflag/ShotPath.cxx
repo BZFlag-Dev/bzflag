@@ -124,6 +124,7 @@ ShotPath::ShotPath(const FiringInfo& info) :
 		case RightTurnOnlyFlag:
 		case MomentumFlag:
 		case BlindnessFlag:
+		case MasqueradeFlag:
 		case JammingFlag:
 		case WideAngleFlag:
 			strategy = new NormalShotStrategy(this);

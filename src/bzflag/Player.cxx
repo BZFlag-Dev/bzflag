@@ -237,8 +237,11 @@ void					Player::updateSparks(float /*dt*/)
 }
 
 void					Player::addPlayerSceneNode(
-								SceneNodeGroup* group, bool colorblind)
+								SceneNodeGroup* group, bool colorblind,
+								bool masqueraded, TeamColor masquerade)
 {
+	static const char* teamSuffix = "yrgbpk";
+
 	// skip player that's dead
 	if (!isAlive() && !isExploding())
 		return;
@@ -267,10 +270,18 @@ void					Player::addPlayerSceneNode(
 
 	// choose player model
 	transformSceneNode->clearChildren();
-	if (colorblind)
+	if (colorblind) {
 		transformSceneNode->pushChild(roguePlayerSceneNode);
-	else
+	}
+	else if (masqueraded) {
+		SceneNode* masqPlayerSceneNode;
+		masqPlayerSceneNode = SCENEMGR->find(string_util::format(
+		                                "player-%c", teamSuffix[masquerade]));
+		transformSceneNode->pushChild(masqPlayerSceneNode);
+	}
+	else {
 		transformSceneNode->pushChild(teamPlayerSceneNode);
+	}
 
 	// add player
 	group->pushChild(transformSceneNode);

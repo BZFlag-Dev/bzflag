@@ -3217,11 +3217,14 @@ static void				playingLoop()
 					for (i = 0; i < maxPlayers; i++) {
 						Player* p = player[i];
 						if (p != NULL) {
+							const bool masqueraded = (p->getFlag() == MasqueradeFlag);
 							p->updateSparks(dt);
 							p->addShotsSceneNodes(dynamicGroup, colorblind);
-							if (p->getFlag() != CloakingFlag)
-								if(!(myTank->RoamView == LocalPlayer::RoamViewFP && myTank->roamTrackTank == i))
-									p->addPlayerSceneNode(dynamicGroup, colorblind);
+							if (p->getFlag() != CloakingFlag) {
+								if(!(myTank->RoamView == LocalPlayer::RoamViewFP && myTank->roamTrackTank == i)) {
+										p->addPlayerSceneNode(dynamicGroup, colorblind, masqueraded, myTank->getTeam());
+								}
+							}
 						}
 					}
 

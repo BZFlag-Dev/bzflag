@@ -3148,6 +3148,7 @@ static void parse(int argc, char **argv)
 				flagCount[JumpingFlag]++;
 				flagCount[IdentifyFlag]++;
 				flagCount[CloakingFlag]++;
+				flagCount[MasqueradeFlag]++;
 			}
 			else {
 				if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
@@ -3615,6 +3616,8 @@ static void parse(int argc, char **argv)
 				if (setRequiredFlag(flag[f], IdentifyFlag))
 					f++;
 				if (setRequiredFlag(flag[f], CloakingFlag))
+					f++;
+				if (setRequiredFlag(flag[f], MasqueradeFlag))
 					f++;
 			}
 			else {
