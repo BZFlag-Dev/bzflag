@@ -88,7 +88,7 @@ void			BaseLocalPlayer::update()
   // expand bounding box to include entire tank
   float size = TankRadius;
   if (getFlag() == Flags::Obesity) size *= ObeseFactor;
-  else if (getFlag() == Flags::Tiny) size *= TinyFactor;
+  else if (getFlag() == Flags::Tiny) size *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (getFlag() == Flags::Thief) size *= ThiefTinyFactor;
   bbox[0][0] -= size;
   bbox[1][0] += size;
@@ -575,8 +575,8 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
     width *= 2.0f * ObeseFactor;
   }
   else if (getFlag() == Flags::Tiny) {
-    length *= TinyFactor;
-    width *= 2.0f * TinyFactor;
+    length *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    width *= 2.0f * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   }
   else if (getFlag() == Flags::Thief) {
     length *= ThiefTinyFactor;
@@ -609,8 +609,8 @@ bool			LocalPlayer::getHitNormal(const Obstacle* o,
     width *= 2.0f * ObeseFactor;
   }
   else if (getFlag() == Flags::Tiny) {
-    length *= TinyFactor;
-    width *= 2.0f * TinyFactor;
+    length *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    width *= 2.0f * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   }
   else if (getFlag() == Flags::Thief) {
     length *= ThiefTinyFactor;
@@ -721,7 +721,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
   // boost speed for certain flags
   if (getFlag() == Flags::Velocity)
-    fracOfMaxSpeed *= VelocityAd;
+    fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
   else if (getFlag() == Flags::Thief)
     fracOfMaxSpeed *= ThiefVelAd;
   else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f))
@@ -745,7 +745,7 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 
   // boost turn speed for other flags
   if (getFlag() == Flags::QuickTurn)
-    fracOfMaxAngVel *= AngularAd;
+    fracOfMaxAngVel *= BZDB->eval(StateDatabase::BZDB_ANGULARAD);
   else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f))
     fracOfMaxAngVel *= BurrowAngAd;
 

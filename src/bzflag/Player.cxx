@@ -92,7 +92,7 @@ Player::~Player()
 float			Player::getRadius() const
 {
   if (flag == Flags::Obesity) return TankRadius * ObeseFactor;
-  if (flag == Flags::Tiny)    return TankRadius * TinyFactor;
+  if (flag == Flags::Tiny)    return TankRadius * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   if (flag == Flags::Thief)   return TankRadius * ThiefTinyFactor;
   return TankRadius;
 }
@@ -102,7 +102,7 @@ void			Player::getMuzzle(float* m) const
   // okay okay, I should really compute the up vector instead of using [0,0,1]
   float front = MuzzleFront;
   if (flag == Flags::Obesity) front *= ObeseFactor;
-  else if (flag == Flags::Tiny) front *= TinyFactor;
+  else if (flag == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (flag == Flags::Thief) front *= ThiefTinyFactor;
   m[0] = state.pos[0] + front * forward[0];
   m[1] = state.pos[1] + front * forward[1];

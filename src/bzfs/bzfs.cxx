@@ -3847,7 +3847,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude.
   const float thrownAltitude = (drpFlag.flag.desc == Flags::Shield) ?
-      ShieldFlight * FlagAltitude : FlagAltitude;
+     BZDB->eval(StateDatabase::BZDB_SHIELDFLIGHT) * FlagAltitude : FlagAltitude;
   const float maxAltitude = pos[2] + thrownAltitude;
   const float upTime = sqrtf(-2.0f * thrownAltitude / BZDB->eval(StateDatabase::BZDB_GRAVITY));
   const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / BZDB->eval(StateDatabase::BZDB_GRAVITY));
@@ -3954,7 +3954,7 @@ static void shotFired(int playerIndex, void *buf, int len)
       tankSpeed = 0.0f;
   }
   else if (firingInfo.flag == Flags::Velocity) {
-      tankSpeed *= VelocityAd;
+      tankSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
   }
   else if (firingInfo.flag == Flags::Thief) {
       tankSpeed *= ThiefVelAd;
@@ -3965,7 +3965,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   else {
       //If shot is different height than player, can't be sure they didn't drop V in air
       if (shooter.lastState.pos[2] != (shot.pos[2]-MuzzleHeight))
-	tankSpeed *= VelocityAd;
+	tankSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
   }
 
   // FIXME, we should look at the actual TankSpeed ;-)
@@ -3996,8 +3996,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     front *= ObeseFactor;
 
   float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * VelocityAd + front) *
-	      (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * VelocityAd + front)) {
+  if (delta > (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * BZDB->eval(StateDatabase::BZDB_VELOCITYAD) + front) *
+	      (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * BZDB->eval(StateDatabase::BZDB_VELOCITYAD) + front)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
 	    shooter.callSign, playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
@@ -5086,7 +5086,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	// if tank is not driving cannot be sure it didn't toss (V) in flight
 	// if tank is not alive cannot be sure it didn't just toss (V)
 	if (flag[player[t].flag].flag.desc == Flags::Velocity)
-	  maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
+	  maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD)*BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
 	else if (flag[player[t].flag].flag.desc == Flags::Thief)
 	  maxPlanarSpeedSqr *= ThiefVelAd * ThiefVelAd;
 	else {

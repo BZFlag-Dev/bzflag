@@ -830,6 +830,7 @@ int			main(int argc, char** argv)
     BZDB->setPermission(defaultDBItems[i].name, defaultDBItems[i].permission);
     BZDB->addCallback(defaultDBItems[i].name, defaultDBItems[i].callback, NULL);
   }
+
   for (i = 0; i < countof(globalDBItems); ++i) {
     assert(globalDBItems[i].name != NULL);
     if (globalDBItems[i].value != NULL) {

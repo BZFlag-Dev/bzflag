@@ -133,20 +133,6 @@ enum GameStyle {
 };
 
 // Super flag characteristic modifiers
-const float		VelocityAd =	1.5f;		// 50% faster
-const float		AngularAd =	1.5f;		// 50% faster turns
-const float		RFireAdVel =	1.5f;		// 50% faster shots
-const float		RFireAdRate =	2.0f;		// 2x faster reload
-const float		RFireAdLife =	1.0f/RFireAdRate;// 1/2 normal lifetime
-const float		MGunAdVel =	1.5f;		// 50% faster shots
-const float		MGunAdRate =	10.0f;		// 10x faster reload
-const float		MGunAdLife =	1.0f/MGunAdRate;// 1/10 normal lifetime
-const float		LaserAdVel =	1000.0f;		// 1000x faster shots
-const float		LaserAdRate =	0.5f;		// 1/2x faster reload
-const float		LaserAdLife =	0.1f;		// 1/10 normal lifetime
-const float		GMissileAng =	M_PI / 5.0f;	// max turn rate (rad/s)
-const float		TinyFactor =	0.4f;		// 40% normal size
-const float		ShieldFlight =	2.7f;		// flag goes 170% higher
 const float		SRRadiusMult =	2.0;		// 200% normal radius
 const float		ShockAdLife =	0.20f;		// 20% normal lifetime
 const float		ShockInRadius =	6.0f;	// size of tank

@@ -24,7 +24,7 @@
 static const GLfloat styleFactors[5][3] = {
 			{ 1.0f, 1.0f, 1.0f },
 			{ ObeseFactor, ObeseFactor, 1.0f },
-			{ TinyFactor, TinyFactor, 1.0f },
+			{ BZDB->eval(StateDatabase::BZDB_TINYFACTOR), BZDB->eval(StateDatabase::BZDB_TINYFACTOR), 1.0f },
 			{ 1.0f, 0.0f, 1.0f },
 			{ ThiefTinyFactor, ThiefTinyFactor, 1.0f }
 		};
@@ -206,7 +206,7 @@ void			TankSceneNode::setObese()
 void			TankSceneNode::setTiny()
 {
   style = TankRenderNode::Tiny;
-  setRadius(TinyFactor * TinyFactor * baseRadius);
+  setRadius(BZDB->eval(StateDatabase::BZDB_TINYFACTOR) * BZDB->eval(StateDatabase::BZDB_TINYFACTOR) * baseRadius);
 }
 
 void			TankSceneNode::setNarrow()

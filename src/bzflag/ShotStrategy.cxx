@@ -474,7 +474,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   // get tank radius
   float radius = TankRadius;
   if (tank->getFlag() == Flags::Obesity)   radius *= ObeseFactor;
-  else if (tank->getFlag() == Flags::Tiny) radius *= TinyFactor;
+  else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (tank->getFlag() == Flags::Thief) radius *= ThiefTinyFactor;
   const float radius2 = radius * radius;
 
@@ -773,11 +773,11 @@ RapidFireStrategy::RapidFireStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= RFireAdLife;
-  f.shot.vel[0] *= RFireAdVel;
-  f.shot.vel[1] *= RFireAdVel;
-  f.shot.vel[2] *= RFireAdVel;
-  setReloadTime(path->getReloadTime() / RFireAdRate);
+  f.lifetime *= BZDB->eval(StateDatabase::BZDB_RFIREADLIFE);
+  f.shot.vel[0] *= BZDB->eval(StateDatabase::BZDB_RFIREADVEL);
+  f.shot.vel[1] *= BZDB->eval(StateDatabase::BZDB_RFIREADVEL);
+  f.shot.vel[2] *= BZDB->eval(StateDatabase::BZDB_RFIREADVEL);
+  setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_RFIREADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -885,11 +885,11 @@ MachineGunStrategy::MachineGunStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= MGunAdLife;
-  f.shot.vel[0] *= MGunAdVel;
-  f.shot.vel[1] *= MGunAdVel;
-  f.shot.vel[2] *= MGunAdVel;
-  setReloadTime(path->getReloadTime() / MGunAdRate);
+  f.lifetime *= BZDB->eval(StateDatabase::BZDB_MGUNADLIFE);
+  f.shot.vel[0] *= BZDB->eval(StateDatabase::BZDB_MGUNADVEL);
+  f.shot.vel[1] *= BZDB->eval(StateDatabase::BZDB_MGUNADVEL);
+  f.shot.vel[2] *= BZDB->eval(StateDatabase::BZDB_MGUNADVEL);
+  setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_MGUNADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -942,11 +942,11 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= LaserAdLife;
-  f.shot.vel[0] *= LaserAdVel;
-  f.shot.vel[1] *= LaserAdVel;
-  f.shot.vel[2] *= LaserAdVel;
-  setReloadTime(path->getReloadTime() / LaserAdRate);
+  f.lifetime *= BZDB->eval(StateDatabase::BZDB_LASERADLIFE);
+  f.shot.vel[0] *= BZDB->eval(StateDatabase::BZDB_LASERADVEL);
+  f.shot.vel[1] *= BZDB->eval(StateDatabase::BZDB_LASERADVEL);
+  f.shot.vel[2] *= BZDB->eval(StateDatabase::BZDB_LASERADVEL);
+  setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_LASERADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -1160,21 +1160,21 @@ void			GuidedMissileStrategy::update(float dt)
 
     // compute new azimuth
     float deltaAzimuth = limitAngle(newAzimuth - azimuth);
-    if (fabsf(deltaAzimuth) <= dt * GMissileAng)
+    if (fabsf(deltaAzimuth) <= dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG))
       azimuth = limitAngle(newAzimuth);
     else if (deltaAzimuth > 0.0f)
-      azimuth = limitAngle(azimuth + dt * GMissileAng);
+      azimuth = limitAngle(azimuth + dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG));
     else
-      azimuth = limitAngle(azimuth - dt * GMissileAng);
+      azimuth = limitAngle(azimuth - dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG));
 
     // compute new elevation
     float deltaElevation = limitAngle(newElevation - elevation);
-    if (fabsf(deltaElevation) <= dt * GMissileAng)
+    if (fabsf(deltaElevation) <= dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG))
       elevation = limitAngle(newElevation);
     else if (deltaElevation > 0.0f)
-      elevation = limitAngle(elevation + dt * GMissileAng);
+      elevation = limitAngle(elevation + dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG));
     else
-      elevation = limitAngle(elevation - dt * GMissileAng);
+      elevation = limitAngle(elevation - dt * BZDB->eval(StateDatabase::BZDB_GMISSILEANG));
   }
   float newDirection[3];
   newDirection[0] = cosf(azimuth) * cosf(elevation);
@@ -1269,7 +1269,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
   // get tank radius
   float radius = TankRadius;
   if (tank->getFlag() == Flags::Obesity)   radius *= ObeseFactor;
-  else if (tank->getFlag() == Flags::Tiny) radius *= TinyFactor;
+  else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (tank->getFlag() == Flags::Thief) radius *= ThiefTinyFactor;
   const float radius2 = radius * radius;
 
