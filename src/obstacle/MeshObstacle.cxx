@@ -298,7 +298,7 @@ void MeshObstacle::finalize()
     const Extents& exts = faces[f]->getExtents();
     extents.expandToBox(exts);
   }
-  
+
   // setup fake obstacle parameters
   pos[0] = (extents.maxs[0] + extents.mins[0]) / 2.0f;
   pos[1] = (extents.maxs[1] + extents.mins[1]) / 2.0f;
@@ -631,11 +631,11 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   out << indent << "# normals = " << normalCount << std::endl;
   out << indent << "# texcoords = " << texcoordCount << std::endl;
   out << indent << "# mins = " << extents.mins[0] << " "
-                               << extents.mins[1] << " "
-                               << extents.mins[2] << std::endl;
-  out << indent << "# maxs = " << extents.maxs[0] << " " 
-                               << extents.maxs[1] << " "
-                               << extents.maxs[2] << std::endl;
+			       << extents.mins[1] << " "
+			       << extents.mins[2] << std::endl;
+  out << indent << "# maxs = " << extents.maxs[0] << " "
+			       << extents.maxs[1] << " "
+			       << extents.maxs[2] << std::endl;
 
   if (noclusters) {
     out << indent << "  noclusters" << std::endl;

@@ -1065,38 +1065,38 @@ static WorldInfo *defineTeamWorld()
       const float size[3] = {baseSize * 0.5f, baseSize * 0.5f, 0.0f};
       const float safeOff = 0.5f * (baseSize + pyrBase);
       switch (t) {
-        case RedTeam: {
-          p[0] = (-worldSize + baseSize) / 2.0f;
-          p[1] = 0.0f;
-          world->addBase(p, 0.0f, size, t, false, false);
-          zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, world);
-          zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, world);
-          break;
-        }
-        case GreenTeam: {
-          p[0] = (worldSize - baseSize) / 2.0f;
-          p[1] = 0.0f;
-          world->addBase(p, 0.0f, size, t, false, false);
-          zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, world);
-          zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, world);
-          break;
-        }
-        case BlueTeam: {
-          p[0] = 0.0f;
-          p[1] = (-worldSize + baseSize) / 2.0f;
-          world->addBase(p, 0.0f, size, t, false, false);
-          zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, world);
-          zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, world);
-          break;
-        }
-        case PurpleTeam: {
-          p[0] = 0.0f;
-          p[1] = (worldSize - baseSize) / 2.0f;
-          world->addBase(p, 0.0f, size, t, false, false);
-          zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, world);
-          zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, world);
-          break;
-        }
+	case RedTeam: {
+	  p[0] = (-worldSize + baseSize) / 2.0f;
+	  p[1] = 0.0f;
+	  world->addBase(p, 0.0f, size, t, false, false);
+	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, world);
+	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, world);
+	  break;
+	}
+	case GreenTeam: {
+	  p[0] = (worldSize - baseSize) / 2.0f;
+	  p[1] = 0.0f;
+	  world->addBase(p, 0.0f, size, t, false, false);
+	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, world);
+	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, world);
+	  break;
+	}
+	case BlueTeam: {
+	  p[0] = 0.0f;
+	  p[1] = (-worldSize + baseSize) / 2.0f;
+	  world->addBase(p, 0.0f, size, t, false, false);
+	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, world);
+	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, world);
+	  break;
+	}
+	case PurpleTeam: {
+	  p[0] = 0.0f;
+	  p[1] = (worldSize - baseSize) / 2.0f;
+	  world->addBase(p, 0.0f, size, t, false, false);
+	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, world);
+	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, world);
+	  break;
+	}
       }
     }
   }
@@ -1999,7 +1999,7 @@ void resetFlag(FlagInfo &flag)
     float maxZ = MAXFLOAT;
     if (!clOptions->flagsOnBuildings) {
       maxZ = 0.0f;
-    }      
+    }
     float worldSize = BZDBCache::worldSize;
     do {
       if (!world->getZonePoint(std::string(flag.flag.type->flagAbbv), flagPos)) {
@@ -2654,7 +2654,7 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
 static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 {
   assert(world != NULL);
-  
+
   const float size = BZDBCache::worldSize;
   if (pos[0] < -size || pos[0] > size)
     pos[0] = 0.0;
@@ -2687,11 +2687,11 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   float maxZ = MAXFLOAT;
   if (!clOptions->flagsOnBuildings) {
     maxZ = 0.0f;
-  }      
+  }
 
   float landing[3] = {pos[0], pos[1], pos[2]};
   bool safelyDropped =
-        DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
+	DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
 
   bool vanish;
 
@@ -2714,18 +2714,18 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
       // try the center
       landing[0] = landing[1] = landing[2] = 0.0f;
       bool safelyDropped =
-        DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
+	DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
       if (!safelyDropped) {
-        // ok, we give up, send it home
-        TeamBases &teamBases = bases[flagTeam];
-        const TeamBase &base = teamBases.getRandomBase(flagIndex);
-        landing[0] = base.position[0];
-        landing[1] = base.position[1];
-        landing[2] = base.position[2] + base.size[2];
+	// ok, we give up, send it home
+	TeamBases &teamBases = bases[flagTeam];
+	const TeamBase &base = teamBases.getRandomBase(flagIndex);
+	landing[0] = base.position[0];
+	landing[1] = base.position[1];
+	landing[2] = base.position[2] + base.size[2];
       }
     }
   }
-    
+
   if (isTeamFlag) {
     // if it is a team flag, check if there are any players left in
     // that team - if not, start the flag timeout
@@ -3444,9 +3444,9 @@ possible attack from %s\n",
       buf = nboUnpackShort(buf, reason);
       buf = nboUnpackShort(buf, shot);
       if (reason == PhysicsDriverDeath) {
-        int32_t inPhyDrv;
+	int32_t inPhyDrv;
 	buf = nboUnpackInt(buf, inPhyDrv);
-        phydrv = int(inPhyDrv);
+	phydrv = int(inPhyDrv);
       }
 
       // Sanity check on shot: Here we have the killer

@@ -29,7 +29,7 @@ class CustomZone : public WorldFileLocation {
 
     // make a safety zone for all team flags (on the ground)
     void addFlagSafety(float x, float y, WorldInfo* worldInfo);
-               
+
     const QualifierList &getQualifiers() const;
     float getArea() const;
     void getRandomPoint(float *pt) const;

@@ -24,10 +24,10 @@
 
 
 /** size of description/name */
-static const size_t MAX_STRING = 200; 
+static const size_t MAX_STRING = 200;
 
 /** convenience map type */
-typedef std::map<std::string, ServerItem> SRV_STR_MAP; 
+typedef std::map<std::string, ServerItem> SRV_STR_MAP;
 
 
 /** The ServerListCache is a simple aging container of server entries.
@@ -56,7 +56,7 @@ public:
 
   /** get the set maximum cache age */
   time_t		getMaxCacheAge();
-  
+
   /** clear the server list cache */
   bool			clearCache();
 
@@ -67,7 +67,7 @@ public:
   /** last item in the cache.  this is a wrapper that allows access to
    * the maps end method */
   SRV_STR_MAP::iterator end();
-  
+
   /** search for some address in the cache.  this is a wrapper that
    * allows access to the maps find method */
   SRV_STR_MAP::iterator find(std::string ServerAddress);
@@ -80,7 +80,7 @@ private:
   SRV_STR_MAP		serverCache;
 
   /** age after we don't show servers in cache */
-  time_t		maxCacheAge; 
+  time_t		maxCacheAge;
 
   /** one cache to rule them all */
   static ServerListCache globalCache;

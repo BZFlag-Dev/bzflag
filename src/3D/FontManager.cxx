@@ -83,14 +83,14 @@ FontManager::FontManager() : Singleton<FontManager>(), dimFactor(0.7f)
   BZDB.addCallback(std::string("underlineColor"), callback, NULL);
   BZDB.touch("underlineColor");
   OpenGLGState::registerContextInitializer(freeContext, initContext,
-                                           (void*)this);
+					   (void*)this);
 }
 
 FontManager::~FontManager()
 {
   clear();
   OpenGLGState::unregisterContextInitializer(freeContext, initContext,
-                                             (void*)this);
+					     (void*)this);
   return;
 }
 

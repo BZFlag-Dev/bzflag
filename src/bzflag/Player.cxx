@@ -760,7 +760,7 @@ void Player::addRemoteSound(int sound)
   }
   return;
 }
-    
+
 
 void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 			bool inCockpit, bool showIDL)
@@ -1226,13 +1226,13 @@ void Player::doDeadReckoning()
     // play jumping type sounds, and then clear them
     if (state.sounds != PlayerState::NoSounds) {
       if ((state.sounds & PlayerState::JumpSound) != 0) {
-        playWorldSound(SFX_JUMP, state.pos, remoteImportant);
+	playWorldSound(SFX_JUMP, state.pos, remoteImportant);
       }
       if ((state.sounds & PlayerState::WingsSound) != 0) {
-        playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+	playWorldSound(SFX_FLAP, state.pos, remoteImportant);
       }
       if ((state.sounds & PlayerState::BounceSound) != 0) {
-        playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
+	playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
       }
       state.sounds = PlayerState::NoSounds;
     }
@@ -1325,7 +1325,7 @@ void Player::setDeadReckoning()
   memcpy(inputPos, state.pos, sizeof(float[3]));
   memcpy(inputVel, state.velocity, sizeof(float[3]));
   inputPhyDrv = state.phydrv;
-  
+
   //
   // pre-calculate some stuff for dead reckoning
   //

@@ -107,7 +107,7 @@ void			LocalPlayer::doUpdate(float dt)
   const int numShots = World::getWorld()->getMaxShots();
   static TimeKeeper pauseTime = TimeKeeper::getNullTime();
   static bool wasPaused = false;
-  
+
   // if paused then boost the reload times by dt (so that, effectively,
   // reloading isn't performed)
   int i;

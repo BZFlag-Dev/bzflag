@@ -68,7 +68,7 @@ class PyramidBuilding : public Obstacle {
 
   private:
     void finalize();
-    
+
     // compute minimum shrinking for height between z and z + height
     float		shrinkFactor(float z, float height = 0.0) const;
 

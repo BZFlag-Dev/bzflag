@@ -82,13 +82,13 @@ OpenGLTexture::OpenGLTexture(int _width, int _height,
   initContext();
   // watch for context recreation
   OpenGLGState::registerContextInitializer(static_freeContext,
-                                           static_initContext, (void*)this);
+					   static_initContext, (void*)this);
 }
 
 OpenGLTexture::~OpenGLTexture()
 {
   OpenGLGState::unregisterContextInitializer(static_freeContext,
-                                             static_initContext, (void*)this);
+					     static_initContext, (void*)this);
   // free image data
   delete[] image;
   freeContext();
@@ -122,7 +122,7 @@ void OpenGLTexture::initContext()
 {
   // make texture map object/list
   glGenTextures(1, &list);
-  
+
   // set size
   int tmpWidth = width;
   int tmpHeight = height;
@@ -176,8 +176,8 @@ void OpenGLTexture::initContext()
   setFilter(getFilter());
   glBindTexture(GL_TEXTURE_2D, list);
   gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
-                    scaledWidth, scaledHeight,
-                    GL_RGBA, GL_UNSIGNED_BYTE, data);
+		    scaledWidth, scaledHeight,
+		    GL_RGBA, GL_UNSIGNED_BYTE, data);
   glBindTexture(GL_TEXTURE_2D, 0);
   delete[] origData;
   delete[] origScaledData;
@@ -217,16 +217,16 @@ void OpenGLTexture::setFilter(Filter _filter)
   if (filterIndex > maxFilter) {
     if ((filterIndex & 1) == 1)	{ // nearest...
       if ((maxFilter & 1) == 1) {
-        filterIndex = maxFilter;
+	filterIndex = maxFilter;
       } else {
-        filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
+	filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
       }
     }
     else { // linear...
       if ((maxFilter & 1) == 1) {
-        filterIndex = maxFilter - 1;
+	filterIndex = maxFilter - 1;
       } else {
-        filterIndex = maxFilter;
+	filterIndex = maxFilter;
       }
     }
   }

@@ -1420,7 +1420,7 @@ int			main(int argc, char** argv)
       display=NULL;
     }
     exit(1);
-    
+
   } else {
     DEBUG3("Using the following GL_RENDERER: %s", glRenderer);
   }

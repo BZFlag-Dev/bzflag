@@ -186,12 +186,12 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
 
 
 int Octree::getRadarList (SceneNode** list, int listSize,
-                          const Frustum* frustum) const
+			  const Frustum* frustum) const
 {
   // This is basically the same as Octree::getFrustumList(),
   // except that it doesn't use the occluders. This duplication
   // was done to try and speed-up this low level code.
-  
+
   if (!root) {
     return 0;
   }
@@ -200,14 +200,14 @@ int Octree::getRadarList (SceneNode** list, int listSize,
     printf ("Octree::getRadarList() internal error!\n");
     exit (1);
   }
-  
+
   CullFrustum = frustum;
   CullList = list;
   CullListCount = 0;
 
   // get the nodes
   root->getRadarList();
-  
+
   return CullListCount;
 }
 
@@ -223,7 +223,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
     printf ("Octree::getShadowList() internal error!\n");
     exit (1);
   }
-  
+
   // we project the frustum onto the ground plane, and then
   // use those lines to generate planes in the direction of
   // the sun's light. that is the potential shadow volume.
@@ -316,7 +316,7 @@ void Octree::getExtents (SceneNode** list, int listSize)
       width = axisWidth;
     }
   }
-  
+
   extents.copy(tmpExts);
 
   // make it a cube, with Z on its minimum
@@ -404,7 +404,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
 
   // resize the list to save space
   list = (SceneNode**) realloc (list, count * sizeof (SceneNode*));
-  
+
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (listSize <= minElements)) {
     resizeCell();
@@ -556,7 +556,7 @@ void OctreeNode::getRadarList () const
   if (level == Outside) {
     return;
   }
-  
+
   if (level == Contained) {
     getFullyVisible ();
     return;
@@ -646,7 +646,7 @@ void OctreeNode::getFullyVisible () const
 void OctreeNode::getShadowList () const
 {
   IntersectLevel level = testAxisBoxOcclusion (extents,
-                                               ShadowPlanes, ShadowCount);
+					       ShadowPlanes, ShadowCount);
   if (level == Outside) {
     return;
   }

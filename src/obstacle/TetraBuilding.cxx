@@ -142,7 +142,7 @@ MeshObstacle* TetraBuilding::makeMesh()
   mesh->finalize();
 
   if (mesh->isValid()) {
-    return mesh;        
+    return mesh;
   } else {
     delete mesh;
     return NULL;

@@ -91,10 +91,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   OpenGLMaterial rainMaterial(white, white, 0.0f);
 
   int i;
-  
-  sunList = INVALID_GL_LIST_ID; 
-  moonList = INVALID_GL_LIST_ID; 
-  starList = INVALID_GL_LIST_ID; 
+
+  sunList = INVALID_GL_LIST_ID;
+  moonList = INVALID_GL_LIST_ID;
+  starList = INVALID_GL_LIST_ID;
   cloudsList = INVALID_GL_LIST_ID;
   sunXFormList = INVALID_GL_LIST_ID;
   starXFormList = INVALID_GL_LIST_ID;
@@ -247,7 +247,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // recreate display lists when context is recreated
   OpenGLGState::registerContextInitializer(freeContext, initContext,
-                                           (void*)this);
+					   (void*)this);
 
   notifyStyleChange();
 }
@@ -255,7 +255,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 BackgroundRenderer::~BackgroundRenderer()
 {
   OpenGLGState::unregisterContextInitializer(freeContext, initContext,
-                                             (void*)this);
+					     (void*)this);
   delete[] mountainsGState;
   delete[] mountainsList;
 }
@@ -265,40 +265,40 @@ void BackgroundRenderer::setupGroundMaterials()
 {
   TextureManager &tm = TextureManager::instance();
 
-  // see if we have a map specified material  
+  // see if we have a map specified material
   const BzMaterial* bzmat = MATERIALMGR.findMaterial("GroundMaterial");
-  
+
   int groundTextureID = -1;
   int groundTextureMatrixID = -1;
-  
+
   if (bzmat == NULL) {
     // default ground material
     memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
     groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
   }
   else {
-    // map specified material 
+    // map specified material
     for (int i = 0; i < 4; i++) {
       memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
     }
     if (bzmat->getTextureCount() > 0) {
       groundTextureID = tm.getTextureID(bzmat->getTexture(0).c_str(), false);
       if (groundTextureID < 0) {
-        // use the default as a backup (default color too)
-        memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
-        groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
+	// use the default as a backup (default color too)
+	memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
+	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
       } else {
-        // only apply the texture matrix if the texture is valid
-        groundTextureMatrixID = bzmat->getTextureMatrix(0);
+	// only apply the texture matrix if the texture is valid
+	groundTextureMatrixID = bzmat->getTextureMatrix(0);
       }
     }
   }
 
   static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
-  
+
   OpenGLGStateBuilder gb;
-  
+
   // ground gstates
   gb.reset();
   groundGState[0] = gb.getState();
@@ -395,7 +395,7 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
     glDeleteLists(starXFormList, 1);
     starXFormList = INVALID_GL_LIST_ID;
   }
-  
+
   makeCelestialLists(renderer, sunDir, moonDir);
 
   return;
@@ -403,8 +403,8 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
 
 
 void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer,
-				            const float sunDir[3],
-                                            const float moonDir[3])
+					    const float sunDir[3],
+					    const float moonDir[3])
 {
   // save sun and moon positions
   sunDirection[0] = sunDir[0];
@@ -509,7 +509,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer,
     glPopMatrix();
   }
   glEndList();
-  
+
   return;
 }
 
@@ -1082,15 +1082,15 @@ void BackgroundRenderer::drawMountains(void)
 void BackgroundRenderer::doFreeDisplayLists()
 {
   int i;
-  
+
   // don't forget the tag-along
   weather.freeContext();
-  
+
   // simpleGroundList[1] && simpleGroundList[3] are copies of [0] & [2]
   simpleGroundList[1] = INVALID_GL_LIST_ID;
   simpleGroundList[3] = INVALID_GL_LIST_ID;
 
-  // delete the single lists  
+  // delete the single lists
   GLuint* const lists[] = {
     &simpleGroundList[0], &simpleGroundList[2],
     &cloudsList, &sunList, &sunXFormList,
@@ -1103,17 +1103,17 @@ void BackgroundRenderer::doFreeDisplayLists()
       *lists[i] = INVALID_GL_LIST_ID;
     }
   }
-  
+
   // delete the array of lists
   if (mountainsList != NULL) {
     for (i = 0; i < numMountainTextures; i++) {
       if (mountainsList[i] != INVALID_GL_LIST_ID) {
-        glDeleteLists(mountainsList[i], 1);
-        mountainsList[i] = INVALID_GL_LIST_ID;
+	glDeleteLists(mountainsList[i], 1);
+	mountainsList[i] = INVALID_GL_LIST_ID;
       }
     }
   }
-  
+
   return;
 }
 
@@ -1297,7 +1297,7 @@ void BackgroundRenderer::doInitDisplayLists()
     glEnd();
   }
   glEndList();
-  
+
   simpleGroundList[1] = simpleGroundList[0];
   simpleGroundList[3] = simpleGroundList[2];
 
@@ -1323,7 +1323,7 @@ void BackgroundRenderer::doInitDisplayLists()
     GLfloat minAlpha = 0.0f;
     if (isRiva128)
       minAlpha = 1.0f;
-      
+
     cloudsList = glGenLists(1);
     glNewList(cloudsList, GL_COMPILE);
     {

@@ -84,10 +84,10 @@ class ArcObstacle : public Obstacle {
   private:
     void finalize();
     MeshObstacle* makePie(bool isCircle, float a, float r, float h,
-		          float radius, float squish, float texsz[4]);
+			  float radius, float squish, float texsz[4]);
     MeshObstacle* makeRing(bool isCircle, float a, float r, float h,
-		           float inrad, float outrad, float squish,
-		           float texsz[4]);
+			   float inrad, float outrad, float squish,
+			   float texsz[4]);
   private:
     static const char* typeName;
 

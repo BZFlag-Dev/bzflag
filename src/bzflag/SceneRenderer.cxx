@@ -455,10 +455,10 @@ void SceneRenderer::setSceneDatabase(SceneDatabase* db)
   } else {
     inOrder = false;
   }
-  
+
   // update the background materials
   setupBackgroundMaterials();
-  
+
   return;
 }
 
@@ -1092,7 +1092,7 @@ void SceneRenderer::getRenderNodes()
 
     // add the shadow rendering nodes
     if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)
-        && (!mirror || !clearZbuffer)) {
+	&& (!mirror || !clearZbuffer)) {
       scene->addShadowNodes(*this);
     }
   }

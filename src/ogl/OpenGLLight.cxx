@@ -108,7 +108,7 @@ void OpenGLLight::makeLists()
   }
 
   OpenGLGState::registerContextInitializer(freeContext,
-                                           initContext, (void*)this);
+					   initContext, (void*)this);
   return;
 }
 
@@ -116,7 +116,7 @@ void OpenGLLight::makeLists()
 OpenGLLight::~OpenGLLight()
 {
   OpenGLGState::unregisterContextInitializer(freeContext,
-                                             initContext, (void*)this);
+					     initContext, (void*)this);
   freeLists();
   delete[] lists;
   return;
@@ -273,7 +273,7 @@ void OpenGLLight::execute(int index) const
   // a display list), but do not turn it on.
   if (lists[index] != INVALID_GL_LIST_ID) {
     glCallList(lists[index]);
-  } 
+  }
   else {
     lists[index] = glGenLists(1);
     glNewList(lists[index], GL_COMPILE_AND_EXECUTE);

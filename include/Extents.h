@@ -25,7 +25,7 @@ class Extents {
   public:
     Extents();
     Extents(const float mins[3], const float maxs[3]);
-    
+
     void reset();
 
     void copy(const Extents& orig);
@@ -34,16 +34,16 @@ class Extents {
     void expandToBox(const Extents& box); // expand to contain the box
     void expandToPoint(const float[3]); // expand to contain the point
     void addMargin(float margin);     // widen the extents by "margin"
-    
+
     const float getWidth(int axis) const;
-    
+
     bool touches(const Extents& orig) const;
     bool contains(const Extents& orig) const;
-    
+
   private:
     // force passing by reference
     Extents(const Extents& orig);
-    
+
   public:
     float mins[3];
     float maxs[3];

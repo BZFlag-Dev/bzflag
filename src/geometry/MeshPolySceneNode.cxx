@@ -269,7 +269,7 @@ bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
   }
 
   return testPolygonInAxisBox (getVertexCount(), getVertices(),
-                               getPlane(), exts);
+			       getPlane(), exts);
 }
 
 

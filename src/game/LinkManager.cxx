@@ -150,10 +150,10 @@ void LinkManager::doLinking()
 
     for (unsigned s = 0; s < srcNumbers.size(); s++) {
       for (unsigned d = 0; d < dstNumbers.size(); d++) {
-        std::vector<int>& dstsList = linkNumbers[srcNumbers[s]].dsts;
-        if (!inIntList(dstNumbers[d], dstsList)) { // no duplicates
-          dstsList.push_back(dstNumbers[d]);
-        }
+	std::vector<int>& dstsList = linkNumbers[srcNumbers[s]].dsts;
+	if (!inIntList(dstNumbers[d], dstsList)) { // no duplicates
+	  dstsList.push_back(dstNumbers[d]);
+	}
       }
     }
   }
@@ -180,8 +180,8 @@ void LinkManager::doLinking()
     for (i = 0; i < linkNumbers.size(); i++) {
       printf ("SRC %3i%c:  DSTS", (i / 2), ((i % 2) == 0) ? 'f' : 'b');
       for (unsigned int j = 0; j < linkNumbers[i].dsts.size(); j++) {
-        int dst = linkNumbers[i].dsts[j];
-        printf (" %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
+	int dst = linkNumbers[i].dsts[j];
+	printf (" %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
       }
       printf ("\n");
     }
@@ -192,7 +192,7 @@ void LinkManager::doLinking()
 
 
 void LinkManager::findTelesByName(const std::string& name,
-                                  std::vector<int>& list) const
+				  std::vector<int>& list) const
 {
   list.clear();
 
@@ -221,18 +221,18 @@ void LinkManager::findTelesByName(const std::string& name,
     int secondlast = tolower(glob[glob.size() - 2]);
     if ((secondlast == ':') || (secondlast == '?') || (secondlast == '*')) {
       if (lastchar == '?') {
-        front = true;
-        back = true;
+	front = true;
+	back = true;
       }else if (lastchar == 'f') {
-        front = true;
+	front = true;
       } else if (lastchar == 'b') {
-        back = true;
+	back = true;
       }
       // clip the end
       if (secondlast == '*') {
-        glob.resize(glob.size() - 1);
+	glob.resize(glob.size() - 1);
       } else {
-        glob.resize(glob.size() - 2);
+	glob.resize(glob.size() - 2);
       }
     }
   }
@@ -247,10 +247,10 @@ void LinkManager::findTelesByName(const std::string& name,
     Teleporter* tele = (Teleporter*) teles[i];
     if (match_object_name(glob.c_str(), tele->getName().c_str())) {
       if (front) {
-        list.push_back((int)(i * 2) + 0);
+	list.push_back((int)(i * 2) + 0);
       }
       if (back) {
-        list.push_back((int)(i * 2) + 1);
+	list.push_back((int)(i * 2) + 1);
       }
     }
   }
@@ -369,12 +369,12 @@ static int match_object_name (const char *string, const char *objname)
     if (*string == MATCH_MULTI) {
       string++;
       switch (match_multi (&string, &objname)) {
-        case +1: {
-          return 1;
-        }
-        case -1: {
-          return 0;
-        }
+	case +1: {
+	  return 1;
+	}
+	case -1: {
+	  return 0;
+	}
       }
     }
     else if (*objname == '\0') {
@@ -425,20 +425,20 @@ static int match_multi (const char **string, const char **objname)
     }
     else {
       if ((*str == MATCH_SINGLE) || (*str == *obj)) {
-        str++;
-        obj++;
-        if ((*str == '\0') && (*obj != '\0')) { // advanced check
-          obj++;
-          objtop++;
-          obj = objtop;
-          str = strtop;
-        }
+	str++;
+	obj++;
+	if ((*str == '\0') && (*obj != '\0')) { // advanced check
+	  obj++;
+	  objtop++;
+	  obj = objtop;
+	  str = strtop;
+	}
       }
       else {
-        obj++;
-        objtop++;
-        obj = objtop;
-        str = strtop;
+	obj++;
+	objtop++;
+	obj = objtop;
+	str = strtop;
       }
     }
   }

@@ -64,7 +64,7 @@ class GroupInstance {
     void setShootThrough();
 
     const std::string& getName() const;
-    
+
     const std::string& getGroupDef() const;
     const MeshTransform& getTransform() const;
 
@@ -123,7 +123,7 @@ class GroupDefinition {
     void tighten(); // reduce memory usage
 
     void sort(int (*compare)(const void* a, const void* b));
-    
+
     void makeGroups(const MeshTransform& xform,
 		    const ObstacleModifier& obsMod) const;
 
@@ -140,7 +140,7 @@ class GroupDefinition {
 
     void printGrouped(std::ostream& out, const std::string& indent) const;
     void printFlatFile(std::ostream& out, const std::string& indent) const;
-    
+
   public:
     static void clearDepthName();
 

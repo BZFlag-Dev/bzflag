@@ -83,15 +83,15 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       const float waterLevel = world->getWaterLevel();
       float minZ = 0.0f;
       if (waterLevel > minZ) {
-        minZ = waterLevel;
+	minZ = waterLevel;
       }
       float maxZ = maxWorldHeight;
       if (onGroundOnly) {
-        maxZ = 0.0f;
+	maxZ = 0.0f;
       }
-      
+
       if (DropGeometry::dropPlayer(testPos, minZ, maxZ)) {
-        foundspot = true;
+	foundspot = true;
       }
 
       // check every now and then if we have already used up 10ms of time

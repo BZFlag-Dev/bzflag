@@ -179,7 +179,7 @@ class World {
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
 
-    LinkManager		links;    
+    LinkManager		links;
 
     static World*	playingField;
     static BundleMgr	*bundleMgr;

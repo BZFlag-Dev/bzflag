@@ -50,7 +50,7 @@ ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
 
 LDADD = \
 	../date/libDate.a	\
-	@CURSES_LIB@ 		\
+	@CURSES_LIB@		\
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a

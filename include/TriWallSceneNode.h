@@ -36,7 +36,7 @@ class TriWallSceneNode : public WallSceneNode {
     void		addShadowNodes(SceneRenderer&);
 
     bool		inAxisBox (const Extents& exts) const;
-    
+
     int			getVertexCount () const;
     const		GLfloat* getVertex (int vertex) const;
 

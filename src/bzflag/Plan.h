@@ -21,7 +21,7 @@ class ShotPath;
 
 /**
  * Roger will follow a plan. These plans are stored on a plan stack
- * allowing for short medium and long range plans to cooperate to 
+ * allowing for short medium and long range plans to cooperate to
  * produce a better playing bot.
  */
 class Plan
@@ -65,7 +65,7 @@ public:
 	 * implementation. This method only gets called if usesSubPlan
 	 * return false.
 	 *
-	 * @param rotation an output reference to the desired rotation 
+	 * @param rotation an output reference to the desired rotation
 	 * @param speed an output reference to the desired speed
 	 */
 	virtual void execute(float &rotation, float &speed);
@@ -108,7 +108,7 @@ class GotoPointPlan : public Plan
 {
 public:
 	GotoPointPlan(float *pt);
-	
+
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan() ;
 	virtual void execute(float &rotation, float &speed);

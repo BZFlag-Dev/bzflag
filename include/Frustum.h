@@ -11,16 +11,16 @@
  */
 
 /* Frustum
- *	Encapsulates a camera.
+ * Encapsulates a camera.
  */
 
-#ifndef	BZF_FRUSTUM_H
-#define	BZF_FRUSTUM_H
+#ifndef BZF_FRUSTUM_H
+#define BZF_FRUSTUM_H
 
 #include "common.h"
 
 // FIXME -- will need a means for off center projections for
-//	looking through teleporters
+// looking through teleporters
 
 class Frustum {
   public:
@@ -51,7 +51,7 @@ class Frustum {
 
     // used for radar culling
     void		setOrthoPlanes(const Frustum& view,
-                                       float width, float breadth);
+				       float width, float breadth);
 
   protected:
     void		makePlane(const float* v1, const float* v2, int);

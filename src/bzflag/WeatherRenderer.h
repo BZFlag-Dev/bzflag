@@ -53,7 +53,7 @@ public:
 
 	// called when the GL lists need to be remade
 	void rebuildContext ( void );
-	
+
 protected:
 	OpenGLGState				rainGState;
 	OpenGLGState				texturedRainState;
@@ -114,11 +114,11 @@ protected:
 	float				gridSize;
 	float				keyFactor;
 
-        typedef struct {
-          float mins[3];
-          float maxs[3];
-        } copyExtents;
-        
+	typedef struct {
+	  float mins[3];
+	  float maxs[3];
+	} copyExtents;
+
 	typedef struct  {
 		std::vector<rain>	drops;
 		copyExtents		bbox;

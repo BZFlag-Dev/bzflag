@@ -52,12 +52,12 @@ void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
     qual += std::string(Team::getName((TeamColor) team));
     qualifiers.push_back(qual);
   }
-  
+
   worldInfo->addZone(this);
-  
+
   return;
 }
-               
+
 
 bool CustomZone::read(const char *cmd, std::istream& input) {
   if (strcmp(cmd, "flag") == 0) {

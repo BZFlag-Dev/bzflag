@@ -47,7 +47,7 @@ class OccluderManager {
     bool occludePeek(const Extents& exts);
 
     int getOccluderCount () const;
-    
+
     void draw() const;
 
   private:

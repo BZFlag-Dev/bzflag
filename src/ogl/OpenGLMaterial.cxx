@@ -49,7 +49,7 @@ OpenGLMaterial::Rep*	OpenGLMaterial::Rep::getRep(
 }
 
 OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
-                         const GLfloat* _emissive,
+			 const GLfloat* _emissive,
 			 GLfloat _shininess)
 			 : refCount(1), shininess(_shininess)
 {
@@ -59,7 +59,7 @@ OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
   next = head;
   head = this;
   if (next) next->prev = this;
-  
+
   specular[0] = _specular[0];
   specular[1] = _specular[1];
   specular[2] = _specular[2];
@@ -70,13 +70,13 @@ OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
   emissive[3] = 1.0f;
 
   OpenGLGState::registerContextInitializer(freeContext,
-                                           initContext, (void*)this);
+					   initContext, (void*)this);
 }
 
 OpenGLMaterial::Rep::~Rep()
 {
   OpenGLGState::unregisterContextInitializer(freeContext,
-                                             initContext, (void*)this);
+					     initContext, (void*)this);
 
   // free OpenGL display list
   if (list != INVALID_GL_LIST_ID) {

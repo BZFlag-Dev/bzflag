@@ -315,7 +315,7 @@ void PlanStack::execute(float &rotation, float &speed)
 		return;
 
 	Plan *pPlan = NULL;
-	
+
 	while (plans.size() > 0) {
 		pPlan = plans.top();
 		if (!pPlan->isValid()) {
@@ -366,13 +366,13 @@ GotoPointPlan::GotoPointPlan(float *pt)
 {
 	memcpy( gotoPt, pt, sizeof( gotoPt ));
 }
-	
+
 bool GotoPointPlan::usesSubPlan()
 {
 	return false;
 }
 
-Plan *GotoPointPlan::createSubPlan() 
+Plan *GotoPointPlan::createSubPlan()
 {
 	return NULL;
 }
@@ -466,7 +466,7 @@ bool HuntPlayerPlan::usesSubPlan()
 Plan *HuntPlayerPlan::createSubPlan()
 {
 	Player *pPlayer = lookupPlayer(playerID);
- 	LocalPlayer *myTank = LocalPlayer::getMyTank();
+	LocalPlayer *myTank = LocalPlayer::getMyTank();
     bool isObscured = TargetingUtils::isLocationObscured( myTank->getPosition(), pPlayer->getPosition());
 	if (isObscured) {
 		float pt[3];

@@ -861,7 +861,7 @@ void			HUDRenderer::renderScoreboard(void)
     fm.drawString(x5, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(teamScoreLabel));
   const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
   int y = (int)(y0 - dy);
-  
+
   // make room for the status marker
   const float xs = x3 - fm.getStrLength(minorFontFace, minorFontSize, "+|");
 
@@ -1530,7 +1530,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 }
 
 void			HUDRenderer::drawPlayerScore(const Player* player,
-                            float x1, float x2, float x3, float xs, float y)
+			    float x1, float x2, float x3, float xs, float y)
 {
   // score
   char score[40], kills[40];
@@ -1556,7 +1556,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   // dim the font if we're dim
   const std::string dimString = dim ? ColorStrings[DimColor] : "";
-  
+
   // authentication status
   std::string statusInfo = dimString;
   if (BZDBCache::colorful) {

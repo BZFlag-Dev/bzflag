@@ -120,7 +120,7 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   uint32_t i, count;
-  
+
   // unpack the weapons
   buf = nboUnpackUInt(buf, count);
   for (i = 0; i < count; i++) {
@@ -166,7 +166,7 @@ void* WorldBuilder::unpack(void* buf)
 
   // build the world obstacles
   OBSTACLEMGR.makeWorld();
-  
+
   // link the teleporters
   world->links.doLinking();
 
@@ -184,7 +184,7 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   world->makeLinkMaterial();
-  
+
   // NOTE: relying on checkCollisionManager() to do the first loading
   //       of ColiisionManager, because the BZDB variables come in later,
   //       and would cause a double loading if we did it now.
@@ -254,7 +254,7 @@ void WorldBuilder::preGetWorld()
     world->flagWarpNodes[i] = new FlagWarpSceneNode(world->flags[i].position);
     world->flagNodes[i]->setTexture(World::flagTexture);
   }
-  
+
   return;
 }
 

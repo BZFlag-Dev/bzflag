@@ -34,9 +34,9 @@ int   BZDBCache::sizedRadarShots;
 int   BZDBCache::flagChunks;
 float BZDBCache::pulseRate;
 float BZDBCache::pulseDepth;
-bool  BZDBCache::showCollisionGrid; 
+bool  BZDBCache::showCollisionGrid;
 bool  BZDBCache::showCullingGrid;
-                
+
 float BZDBCache::worldSize;
 float BZDBCache::radarLimit;
 float BZDBCache::gravity;

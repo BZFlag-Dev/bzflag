@@ -390,7 +390,7 @@ bool WorldInfo::getSafetyPoint(const std::string &qualifier,
   if (!entryZones.getSafetyPoint(qualifier, pos, pt)) {
     return false;
   }
-  
+
   return true;
 }
 
@@ -400,7 +400,7 @@ void WorldInfo::finishWorld()
   entryZones.calculateQualifierLists();
 
   loadCollisionManager();
-  
+
   links.doLinking();
 
   maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
@@ -411,7 +411,7 @@ void WorldInfo::finishWorld()
   if (maxHeight < 0.0f) {
     maxHeight = 0.0f;
   }
-  
+
   return;
 }
 
@@ -463,7 +463,7 @@ int WorldInfo::packDatabase()
 
   // pack teleporter links
   databasePtr = links.pack(databasePtr);
-  
+
   // pack water level
   databasePtr = nboPackFloat(databasePtr, waterLevel);
   if (waterLevel >= 0.0f) {

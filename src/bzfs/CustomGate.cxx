@@ -53,7 +53,7 @@ void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
 		   border, horizontal, driveThrough, shootThrough);
 
   tele->setName(telename);
-  
+
   groupdef->addObstacle(tele);
 }
 

@@ -63,7 +63,7 @@ void GroupInstance::init()
   material = NULL;
   driveThrough = false;
   shootThrough = false;
-  
+
   return;
 }
 
@@ -153,7 +153,7 @@ void GroupInstance::setShootThrough()
   shootThrough = true;
   return;
 }
-                
+
 
 const std::string& GroupInstance::getGroupDef() const
 {
@@ -235,7 +235,7 @@ void* GroupInstance::unpack(void* buf)
     buf = nboUnpackInt(buf, matindex);
     material = MATERIALMGR.getMaterial(matindex);
   }
-  
+
   return buf;
 }
 
@@ -266,7 +266,7 @@ int GroupInstance::packSize()
 void GroupInstance::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "group " << groupdef << std::endl;
-  
+
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
   }
@@ -285,9 +285,9 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
     if (driver != NULL) {
       out << indent << "  phydrv ";
       if (driver->getName().size() > 0) {
-        out << driver->getName();
+	out << driver->getName();
       } else {
-        out << phydrv;
+	out << phydrv;
       }
       out << std::endl;
     }
@@ -305,7 +305,7 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
   }
 
   out << indent << "end" << std::endl;
-  
+
   return;
 }
 
@@ -431,7 +431,7 @@ void GroupDefinition::makeTeleName(Obstacle* obs, unsigned int pos) const
     fullname += buffer;
   }
   tele->setName(fullname);
-  return;  
+  return;
 }
 
 
@@ -447,10 +447,10 @@ void GroupDefinition::appendGroupName(const GroupInstance* group) const
     for (unsigned int i = 0; i < groups.size(); i++) {
       const GroupInstance* g = groups[i];
       if (g == group) {
-        break;
+	break;
       }
       if (g->getGroupDef() == group->getGroupDef()) {
-        count++;
+	count++;
       }
     }
     newName = "/";
@@ -509,32 +509,32 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs;
       if (isWorld) {
-        obs = list[i]; // no need to copy
+	obs = list[i]; // no need to copy
       } else {
-        obs = list[i]->copyWithTransform(xform);
+	obs = list[i]->copyWithTransform(xform);
       }
 
       // the tele names are setup with default names if
       // they are not named (even for those in the world
       // groupd def). also, invalid teles are named
       if (type == teleType) {
-        makeTeleName(obs, i);
+	makeTeleName(obs, i);
       }
 
       if (obs->isValid()) {
-        if (!isWorld) {
-          // add it to the world
-          obs->setSource(Obstacle::GroupDefSource);
-          obsMod.execute(obs);
-          OBSTACLEMGR.addWorldObstacle(obs);
-        }
-        // generate contained meshes
-        MeshObstacle* mesh = makeContainedMesh(type, obs);
-        if ((mesh != NULL) && mesh->isValid()) {
-          mesh->setSource(Obstacle::ContainerSource | groupDefBit);
-          obsMod.execute(mesh);
-          OBSTACLEMGR.addWorldObstacle(mesh);
-        }
+	if (!isWorld) {
+	  // add it to the world
+	  obs->setSource(Obstacle::GroupDefSource);
+	  obsMod.execute(obs);
+	  OBSTACLEMGR.addWorldObstacle(obs);
+	}
+	// generate contained meshes
+	MeshObstacle* mesh = makeContainedMesh(type, obs);
+	if ((mesh != NULL) && mesh->isValid()) {
+	  mesh->setSource(Obstacle::ContainerSource | groupDefBit);
+	  obsMod.execute(mesh);
+	  OBSTACLEMGR.addWorldObstacle(mesh);
+	}
       }
     }
   }
@@ -552,7 +552,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       ObstacleModifier newObsMod(obsMod, *group);
       MeshTransform tmpXform = xform;
       tmpXform.prepend(group->getTransform());
-  
+
       // recurse and make plentiful
       groupDef->makeGroups(tmpXform, newObsMod);
 
@@ -561,7 +561,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
     }
     else {
       DEBUG1("warning: group definition \"%s\" is missing\n",
-             group->getGroupDef().c_str());
+	     group->getGroupDef().c_str());
     }
   }
 
@@ -641,10 +641,10 @@ void GroupDefinition::deleteInvalidObstacles()
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs = list[i];
       if (!obs->isValid()) {
-        DEBUG1("Deleted invalid %s obstacle\n", obs->getType());
-        delete obs;
-        list.remove(i);
-        i--; // don't miss the substitute
+	DEBUG1("Deleted invalid %s obstacle\n", obs->getType());
+	delete obs;
+	list.remove(i);
+	i--; // don't miss the substitute
       }
     }
   }
@@ -737,12 +737,12 @@ int GroupDefinition::packSize() const
 
 
 void GroupDefinition::printGrouped(std::ostream& out,
-                                   const std::string& indent) const
+				   const std::string& indent) const
 {
   const bool isWorld = (this == OBSTACLEMGR.getWorld());
   const bool saveAsMeshes = BZDB.isTrue("saveAsMeshes");
   std::string myIndent = indent;
-  
+
   // deal with indenting
   if (!isWorld) {
     myIndent += "  ";
@@ -756,27 +756,27 @@ void GroupDefinition::printGrouped(std::ostream& out,
       const Obstacle* obs = list[i];
 
       if (!obs->isFromGroupDef() && !obs->isFromContainer()) {
-        if (!saveAsMeshes) {
-          if (!obs->isFromContainer()) {
-            obs->print(out, myIndent);
-          }
-        }
-        else {
-          if (!isContainer(type)) {
-            obs->print(out, myIndent);
-          } else {
-            // rebuild the mesh  (ya, just to print it)
-            MeshObstacle* mesh = makeContainedMesh(type, obs);
-            if ((mesh != NULL) && (mesh->isValid())) {
-              mesh->print(out, myIndent);
-            }
-            delete mesh;
-          }
-        }
+	if (!saveAsMeshes) {
+	  if (!obs->isFromContainer()) {
+	    obs->print(out, myIndent);
+	  }
+	}
+	else {
+	  if (!isContainer(type)) {
+	    obs->print(out, myIndent);
+	  } else {
+	    // rebuild the mesh  (ya, just to print it)
+	    MeshObstacle* mesh = makeContainedMesh(type, obs);
+	    if ((mesh != NULL) && (mesh->isValid())) {
+	      mesh->print(out, myIndent);
+	    }
+	    delete mesh;
+	  }
+	}
       }
     }
   }
-  
+
   // print the groups
   for (unsigned int i = 0; i < groups.size(); i++) {
     groups[i]->print(out, myIndent);
@@ -792,7 +792,7 @@ void GroupDefinition::printGrouped(std::ostream& out,
 
 
 void GroupDefinition::printFlatFile(std::ostream& out,
-                                    const std::string& indent) const
+				    const std::string& indent) const
 {
   const bool saveAsMeshes = BZDB.isTrue("saveAsMeshes");
 
@@ -803,13 +803,13 @@ void GroupDefinition::printFlatFile(std::ostream& out,
       const Obstacle* obs = list[i];
 
       if (!saveAsMeshes) {
-        if (!obs->isFromContainer()) {
-          obs->print(out, indent);
-        }
+	if (!obs->isFromContainer()) {
+	  obs->print(out, indent);
+	}
       } else {
-        if (!isContainer(type)) {
-          obs->print(out, indent);
-        }
+	if (!isContainer(type)) {
+	  obs->print(out, indent);
+	}
       }
     }
   }
@@ -880,7 +880,7 @@ static int compareHeights(const void* a, const void* b)
     return -1;
   } else {
     return +1;
-  }  
+  }
 }
 
 
@@ -890,18 +890,18 @@ void GroupDefinitionMgr::makeWorld()
 
   MeshTransform noXform;
   ObstacleModifier noMods;
-  
+
   world.makeGroups(noXform, noMods);
-  
+
   world.deleteInvalidObstacles();
 
-  // sort from top to bottom for enhanced radar  
+  // sort from top to bottom for enhanced radar
   for (int type = 0; type < GroupDefinition::ObstacleTypeCount; type++) {
     world.sort(compareHeights);
   }
-    
+
   tighten();
-  
+
   return;
 }
 
@@ -987,7 +987,7 @@ void GroupDefinitionMgr::print(std::ostream& out,
 {
   const bool saveFlatFile = BZDB.isTrue("saveFlatFile");
 
-  if (!saveFlatFile) {  
+  if (!saveFlatFile) {
     // print the group definitions
     for (unsigned int i = 0; i < list.size(); i++) {
       list[i]->printGrouped(out, indent);

@@ -33,14 +33,14 @@ class PlayerState
       JumpJets =	(1 << 9),	// tank has jump jets on
       PlaySound =	(1 << 10)	// play one or more sounds
     };
-    
+
     enum PStatusSounds {
-      NoSounds = 	0,
+      NoSounds =	0,
       JumpSound =	(1 << 0),
-      WingsSound = 	(1 << 1),
+      WingsSound =	(1 << 1),
       BounceSound =	(1 << 2)
     };
-    
+
 
     PlayerState();
     void*	pack(void*, uint16_t& code);

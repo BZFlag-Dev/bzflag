@@ -244,7 +244,7 @@ void* BoxBuilding::unpack(void* buf)
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0;
-  
+
   finalize();
 
   return buf;

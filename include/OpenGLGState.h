@@ -59,7 +59,7 @@ class OpenGLGState {
     // by initContext() and initContext() will call all initializers in
     // the order they were registered, plus reset the OpenGLGState state.
     //
-    
+
     //
     // The freeFunc()'s job is to make sure that all references that the
     // owning object might use are invalidated. It should also deallocate
@@ -86,11 +86,11 @@ class OpenGLGState {
 				OpenGLContextFunction freeFunc,
 				OpenGLContextFunction initFunc,
 				void* userData);
-				
+
     static void		initContext();
     static bool		getExecutingFreeFuncs();
     static bool		getExecutingInitFuncs();
-    
+
   private:
     static void		initGLState();
     static void		freeStipple(void*);
@@ -99,16 +99,16 @@ class OpenGLGState {
     struct ContextInitializer {
       public:
 	ContextInitializer(OpenGLContextFunction freeFunc,
-                           OpenGLContextFunction initFunc,
-                           void* data);
+			   OpenGLContextFunction initFunc,
+			   void* data);
 	~ContextInitializer();
 
 	static void executeFreeFuncs();
 	static void executeInitFuncs();
 
 	static ContextInitializer* find(OpenGLContextFunction freeFunc,
-	                                OpenGLContextFunction initFunc,
-	                                void* data);
+					OpenGLContextFunction initFunc,
+					void* data);
 
       public:
 	OpenGLContextFunction freeCallback;

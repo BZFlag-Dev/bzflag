@@ -98,7 +98,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
       phydrv = grpinst.phydrv;
     }
   }
-  
+
   if (grpinst.modifyMaterial || obsMod.modifyMaterial) {
     modifyMaterial = true;
     if (obsMod.modifyMaterial) {
@@ -107,7 +107,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
       material = grpinst.material;
     }
   }
-  
+
   driveThrough = grpinst.driveThrough || obsMod.driveThrough;
   shootThrough = grpinst.shootThrough || obsMod.shootThrough;
 

@@ -80,7 +80,7 @@ void OccluderManager::setMaxOccluders(int size)
 
 
 IntersectLevel OccluderManager::occlude(const Extents& exts,
-                                        unsigned int score)
+					unsigned int score)
 {
   IntersectLevel level = Outside;
 

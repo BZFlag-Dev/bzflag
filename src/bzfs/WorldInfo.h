@@ -164,7 +164,7 @@ private:
   float waterLevel;
   const BzMaterial*	waterMatRef;
 
-  LinkManager	links;  
+  LinkManager	links;
   EntryZones	entryZones;
   WorldWeapons	worldWeapons;
 

@@ -212,8 +212,8 @@ MeshObstacle* ArcObstacle::makeMesh()
 
 
 MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
-                                   float h, float radius, float squish,
-                                   float texsz[4])
+				   float h, float radius, float squish,
+				   float texsz[4])
 {
   MeshObstacle* mesh;
   int i;
@@ -384,11 +384,11 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 
 
 MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
-                                    float h, float inrad, float outrad,
-                                    float squish, float texsz[4])
+				    float h, float inrad, float outrad,
+				    float squish, float texsz[4])
 {
   MeshObstacle* mesh;
-  
+
   // setup the coordinates
   std::vector<char> checkTypes;
   std::vector<cfvec3> checkPoints;

@@ -203,7 +203,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     range = maxRange;
     BZDB.set("displayRadarRange", "1.0");
   }
-  
+
   // prepare transforms
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -216,8 +216,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   if (fastRadar) {
     const double maxHeight = (double) COLLISIONMGR.getWorldExtents().maxs[2];
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
-            -yCenter * yUnit, (ySize - yCenter) * yUnit,
-            -(maxHeight + 10.0), (maxHeight + 10.0));
+	    -yCenter * yUnit, (ySize - yCenter) * yUnit,
+	    -(maxHeight + 10.0), (maxHeight + 10.0));
   } else {
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
 	    -yCenter * yUnit, (ySize - yCenter) * yUnit, -1.0, +1.0);
@@ -233,7 +233,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
     TextureManager &tm = TextureManager::instance();
     int noiseTexture = tm.getTextureID( "noise" );
-    
+
     glColor3f(1.0f, 1.0f, 1.0f);
 
     if ((noiseTexture >= 0) && (renderer.useQuality() > 0)) {
@@ -334,7 +334,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     if (smoothingOn) {
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
-    
+
     // Redraw buildings
     renderObstacles(smoothingOn, fastRadar, range);
 
@@ -571,7 +571,7 @@ float RadarRenderer::transScale(const float z, const float h)
 
 
 void RadarRenderer::renderObstacles(bool smoothingOn,
-                                    bool fastRadar, float range)
+				    bool fastRadar, float range)
 {
   if (smoothingOn) {
     glEnable(GL_BLEND);
@@ -580,8 +580,8 @@ void RadarRenderer::renderObstacles(bool smoothingOn,
 
   // draw the walls
   renderWalls();
-  
-  // draw the boxes, pyramids, and meshes  
+
+  // draw the boxes, pyramids, and meshes
   if (!fastRadar) {
     renderBoxPyrMesh(smoothingOn);
   } else {
@@ -590,14 +590,14 @@ void RadarRenderer::renderObstacles(bool smoothingOn,
 
   // draw the team bases and teleporters
   renderBasesAndTeles();
-  
+
   if (smoothingOn) {
     glDisable(GL_BLEND);
     glDisable(GL_LINE_SMOOTH);
   }
-  
+
   return;
-}    
+}
 
 
 void RadarRenderer::renderWalls()
@@ -616,7 +616,7 @@ void RadarRenderer::renderWalls()
     glVertex2f(pos[0] + s, pos[1] - c);
   }
   glEnd();
-  
+
   return;
 }
 
@@ -624,27 +624,27 @@ void RadarRenderer::renderWalls()
 void RadarRenderer::renderBoxPyrMeshFast(bool smoothingOn, float range)
 {
   // FIXME - This is hack code at the moment, but even when
-  //         rendering the full world, it draws the aztec map
-  //         3X faster (the culling algo is actually slows us
-  //         down in that case)
-  //       - need a better default gradient texture
-  //         (better colors, and tied in to show max jump height?)
-  //       - build a procedural texture if default is missing
-  //       - use a GL_TEXTURE_1D
-  //       - setup the octree to return Z sorted elements (partially done)
-  //       - add a renderClass() member to SceneNode (also for coloring)
-  //       - also add a renderShadow() member (they don't need sorting,
-  //         and if you don't have double-buffering, you shouldn't be
-  //         using shadows)
-  //       - vertex shaders would be faster
-  //       - it would probably be a better approach to attach a radar
-  //         rendering object to each obstacle... no time
+  //	 rendering the full world, it draws the aztec map
+  //	 3X faster (the culling algo is actually slows us
+  //	 down in that case)
+  //	   - need a better default gradient texture
+  //	     (better colors, and tied in to show max jump height?)
+  //	   - build a procedural texture if default is missing
+  //	   - use a GL_TEXTURE_1D
+  //	   - setup the octree to return Z sorted elements (partially done)
+  //	   - add a renderClass() member to SceneNode (also for coloring)
+  //	   - also add a renderShadow() member (they don't need sorting,
+  //	     and if you don't have double-buffering, you shouldn't be
+  //	     using shadows)
+  //	   - vertex shaders would be faster
+  //	   - it would probably be a better approach to attach a radar
+  //	     rendering object to each obstacle... no time
 
   // get the texture
   int gradientTexId = -1;
   TextureManager &tm = TextureManager::instance();
   gradientTexId = tm.getTextureID("radar", false);
-  
+
   // GL state
   OpenGLGStateBuilder gb;
   gb.setTexture(gradientTexId);
@@ -685,7 +685,7 @@ void RadarRenderer::renderBoxPyrMeshFast(bool smoothingOn, float range)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
   OpenGLGState::resetState();
-  
+
   // do this after the GState setting
   if (smoothingOn) {
     glEnable(GL_BLEND);
@@ -693,14 +693,14 @@ void RadarRenderer::renderBoxPyrMeshFast(bool smoothingOn, float range)
     glDisable(GL_POLYGON_SMOOTH);
   }
 
-  return;  
+  return;
 }
-  
-  
+
+
 void RadarRenderer::renderBoxPyrMesh(bool smoothingOn)
 {
   int i;
-  
+
   // don't blend the polygons if enhanced radar disabled
   if (smoothingOn && (BZDBCache::radarStyle <= 0)) {
     glDisable(GL_BLEND);
@@ -843,7 +843,7 @@ void RadarRenderer::renderBoxPyrMesh(bool smoothingOn)
 void RadarRenderer::renderBasesAndTeles()
 {
   int i;
-  
+
   // draw team bases
   if(world.allowTeamFlags()) {
     for(i = 1; i < NumTeams; i++) {

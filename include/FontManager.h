@@ -37,7 +37,7 @@ public:
   void loadAll(std::string dir);
 
   void clear();
-  
+
   void rebuild(void);
 
   int getFaceID(std::string faceName);

@@ -31,31 +31,31 @@ class LinkManager {
 
     LinkManager();
     ~LinkManager();
-    
+
     void clear();
-    
+
     void addLink(int src, int dst);
     void addLink(const std::string& src, const std::string& dst);
 
     void doLinking();
-    
+
     int getTeleportTarget(int source) const;
     int getTeleportTarget(int source, unsigned int seed) const;
 
     int packSize() const;
     void* pack(void*) const;
     void* unpack(void*);
-    
+
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
 
     void makeLinkName(int number, std::string& name);
     void findTelesByName(const std::string& name,
-                         std::vector<int>& list) const;
-                                      
+			 std::vector<int>& list) const;
+
   private:
-  
+
     typedef struct {
       std::string src;
       std::string dst;

@@ -102,7 +102,7 @@ static inline int compareHeights (const Obstacle* obsA, const Obstacle* obsB)
 {
   const Extents& eA = obsA->getExtents();
   const Extents& eB = obsB->getExtents();
-  
+
   if (eA.maxs[2] > eB.maxs[2]) {
     return -1;
   } else {
@@ -114,7 +114,7 @@ static inline int compareFaceHeights (const Obstacle* obsA, const Obstacle* obsB
 {
   const Extents& eA = obsA->getExtents();
   const Extents& eB = obsB->getExtents();
-  
+
   if (fabsf(eA.maxs[2] - eB.maxs[2]) < 1.0e-3) {
     if (eA.mins[2] > eB.mins[2]) {
       return -1;
@@ -137,10 +137,10 @@ static int compareObstacles (const void* a, const void* b)
   // - and finally, the mesh objects (checkpoints really)
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
-  
+
   bool isMeshA = (obsA->getType() == MeshObstacle::getClassName());
   bool isMeshB = (obsB->getType() == MeshObstacle::getClassName());
-  
+
   if (isMeshA) {
     if (!isMeshB) {
       return +1;
@@ -148,7 +148,7 @@ static int compareObstacles (const void* a, const void* b)
       return compareHeights(obsA, obsB);
     }
   }
-  
+
   if (isMeshB) {
     if (!isMeshA) {
       return -1;
@@ -156,10 +156,10 @@ static int compareObstacles (const void* a, const void* b)
       return compareHeights(obsA, obsB);
     }
   }
-  
+
   bool isFaceA = (obsA->getType() == MeshFace::getClassName());
   bool isFaceB = (obsB->getType() == MeshFace::getClassName());
-  
+
   if (isFaceA) {
     if (!isFaceB) {
       return +1;
@@ -167,7 +167,7 @@ static int compareObstacles (const void* a, const void* b)
       return compareFaceHeights(obsA, obsB);
     }
   }
-    
+
   if (isFaceB) {
     if (!isFaceA) {
       return -1;
@@ -175,7 +175,7 @@ static int compareObstacles (const void* a, const void* b)
       return compareFaceHeights(obsA, obsB);
     }
   }
-    
+
   return compareHeights(obsB, obsA); // reversed
 }
 
@@ -417,7 +417,7 @@ void CollisionManager::load ()
   // from bottom to top, so insert them in reverse order to
   // speed of the sorting.
   //
-  
+
   const int boxCount = (int)boxes.size();
   for (i = (boxCount - 1); i >= 0; i--) {
     addToFullList(boxes[i]);
@@ -466,11 +466,11 @@ void CollisionManager::load ()
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  grid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
-                                               gridExtents.maxs[i]);
+					       gridExtents.maxs[i]);
   }
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  world extent[%i] = %f, %f\n", i,
-            worldExtents.mins[i], worldExtents.maxs[i+3]);
+	    worldExtents.mins[i], worldExtents.maxs[i+3]);
   }
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);
@@ -518,7 +518,7 @@ void CollisionManager::setExtents (ObsList *list)
       width = axisWidth;
     }
   }
-  
+
   gridExtents.copy(worldExtents);
 
   // make it a cube, with Z on its minimum

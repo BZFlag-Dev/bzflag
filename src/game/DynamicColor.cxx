@@ -176,7 +176,7 @@ DynamicColor::DynamicColor()
   }
   possibleAlpha = false;
   name = "";
-  
+
   return;
 }
 
@@ -204,7 +204,7 @@ void DynamicColor::finalize()
       } else if (seq.list[i] > colorMax) {
 	seq.list[i] = colorMax;
       } else if ((c == 3) && (seq.list[i] == colorMid)) {
-        noAlphaSeqMid = false;
+	noAlphaSeqMid = false;
       }
     }
   }
@@ -212,7 +212,7 @@ void DynamicColor::finalize()
   // check if there might be translucency
   possibleAlpha = true;
   const ChannelParams& p = channels[3]; // the alpha channel
-  
+
   if ((p.minValue == 1.0f) && (p.maxValue == 1.0f)) {
     // opaque regardless of functions
     possibleAlpha = false;
@@ -222,7 +222,7 @@ void DynamicColor::finalize()
     // check the a special sequence case
     const sequenceParams& seq = p.sequence;
     if ((seq.count > 0) &&
-        (noAlphaSeqMid && (p.minValue == 0.0f) && (p.maxValue == 1.0f))) {
+	(noAlphaSeqMid && (p.minValue == 0.0f) && (p.maxValue == 1.0f))) {
       // transparency, not translucency
       possibleAlpha = false;
     }
@@ -230,13 +230,13 @@ void DynamicColor::finalize()
 
       // check for the common case
       if ((p.sinusoids.size() == 0) &&
-          (p.clampUps.size() == 0) &&
-          (p.clampDowns.size() == 0) &&
-          (p.sequence.count == 0)) {
-        // not using any functions
-        if (p.maxValue == 1.0f) {
-          possibleAlpha = false;
-        }
+	  (p.clampUps.size() == 0) &&
+	  (p.clampDowns.size() == 0) &&
+	  (p.sequence.count == 0)) {
+	// not using any functions
+	if (p.maxValue == 1.0f) {
+	  possibleAlpha = false;
+	}
       }
     }
   }
@@ -299,7 +299,7 @@ void DynamicColor::setSequence(int channel,float period, float offset,
   delete[] seq.list;
   seq.list = NULL;
   seq.count = 0;
-  
+
   if (period >= minPeriod) {
     seq.period = period;
     seq.offset = offset;
@@ -309,7 +309,7 @@ void DynamicColor::setSequence(int channel,float period, float offset,
       seq.list[i] = list[i];
     }
   }
-  
+
   return;
 }
 

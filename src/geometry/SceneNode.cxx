@@ -50,7 +50,7 @@ SceneNode::SceneNode()
 
   noPlane = true;
   octreeState = OctreeCulled;
-  
+
   return;
 }
 

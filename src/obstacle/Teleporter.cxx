@@ -63,9 +63,9 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
   Teleporter* copy =
     new Teleporter(newPos, newAngle, newSize[0], newSize[1], newSize[2],
 		   border, horizontal, driveThrough, shootThrough);
-		   
+
   copy->setName(name);
-  
+
   return copy;
 }
 
@@ -94,7 +94,7 @@ void Teleporter::finalize()
   extents.maxs[1] = pos[1] + yspan;
   extents.mins[2] = pos[2];
   extents.maxs[2] = pos[2] + size[2];
-  
+
   makeLinks();
 
   return;
@@ -521,7 +521,7 @@ bool Teleporter::getHitNormal(const float* pos1, float azimuth1,
 void* Teleporter::pack(void* buf) const
 {
   buf = nboPackStdString(buf, name);
-  
+
   buf = nboPackVector(buf, pos);
   buf = nboPackFloat(buf, angle);
   buf = nboPackVector(buf, origSize);
@@ -542,7 +542,7 @@ void* Teleporter::pack(void* buf) const
 void* Teleporter::unpack(void* buf)
 {
   buf = nboUnpackStdString(buf, name);
-  
+
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackVector(buf, size);

@@ -415,7 +415,7 @@ void			ServerList::checkEchos(StartupInfo *info)
       int minPhase = 4;
       for (i = 0; i < numListServers; i++) {
 	ListServer& listServer = listServers[i];
-	if ((listServer.socket != -1) && 
+	if ((listServer.socket != -1) &&
 	    (listServer.phase >= 3) &&
 	    (listServer.failures++ > 3)) {
 	  if (minPhase > listServer.phase) {

@@ -2517,10 +2517,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       int i;
       msg = nboUnpackUByte(msg, numPlayers);
       for (i = 0; i < numPlayers; ++i) {
-        PlayerId id;
-        msg = nboUnpackUByte(msg, id);
-        Player *p = lookupPlayer(id);
-        uint8_t info;
+	PlayerId id;
+	msg = nboUnpackUByte(msg, id);
+	Player *p = lookupPlayer(id);
+	uint8_t info;
 	// parse player info bitfield
 	msg = nboUnpackUByte(msg, info);
 	if (!p)
@@ -4047,7 +4047,7 @@ void		leaveGame()
 
   // delete scene database (after the world has been destroyed)
   sceneRenderer->setSceneDatabase(NULL);
-  
+
   return;
 }
 

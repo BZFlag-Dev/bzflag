@@ -226,8 +226,8 @@ static void spin(float m[3][2], float radians)
   const float crd = cosf(radians);
   const float srd = sinf(radians);
   const float t[3][2] = {{+crd, +srd},
-                         {-srd, +crd},
-                         {0.0f, 0.0f}};
+			 {-srd, +crd},
+			 {0.0f, 0.0f}};
   multiply(m, t);
   return;
 }
@@ -243,11 +243,11 @@ TextureMatrix::TextureMatrix()
 
   // the static parameters
   useStatic = false;
-  rotation = 0.0f;   
+  rotation = 0.0f;
   uFixedShift = vFixedShift = 0.0f;
   uFixedScale = vFixedScale = 1.0f;
   uFixedCenter = vFixedCenter = 0.5f;
-  
+
   // the dynamic parameters
   useDynamic = false;
   spinFreq = 0.0f;
@@ -270,7 +270,7 @@ void TextureMatrix::finalize()
 {
   useStatic = false;
   useDynamic = false;
-  
+
   if ((rotation != 0.0f) ||
       (uFixedShift != 0.0f) || (vFixedShift != 0.0f) ||
       (uFixedScale != 1.0f) || (vFixedScale != 1.0f)) {
@@ -282,13 +282,13 @@ void TextureMatrix::finalize()
       (uScaleFreq != 0.0f) || (vScaleFreq != 0.0f)) {
     useDynamic = true;
   }
-  
+
   if (useStatic) {
     // setup the staticMatrix
     const float radians = rotation * (float)(M_PI / 180.0);
 
     shift(staticMatrix, -(uFixedShift + uFixedCenter),
-                        -(vFixedShift + vFixedCenter));
+			-(vFixedShift + vFixedCenter));
     spin(staticMatrix, -radians);
     if ((uFixedScale != 0.0f) && (vFixedScale != 0.0f)) {
       scale(staticMatrix, (1.0f / uFixedScale), (1.0f / vFixedScale));
@@ -300,8 +300,8 @@ void TextureMatrix::finalize()
       makeFullMatrix(matrix, staticMatrix); // convert to 4x4
     }
   }
-  
-  return;  
+
+  return;
 }
 
 
@@ -411,7 +411,7 @@ void TextureMatrix::update (float t)
 
   // the matrix reloaded
 //  memcpy(matrix, identityMatrix, sizeof(float[4][4]));
-  
+
   float partial[3][2];
   memcpy(partial, partialIdentity, sizeof(float[3][2]));
 
@@ -427,18 +427,18 @@ void TextureMatrix::update (float t)
   // the shift params
   const float ushf = fmodf(t * uShiftFreq, 1.0f);
   const float vshf = fmodf(t * vShiftFreq, 1.0f);
-  
+
   shift(partial, -(ushf + uCenter), -(vshf + vCenter));
   spin(partial, -radians);
   scale(partial, (1.0f / uscl), (1.0f / vscl));
   shift(partial, +uCenter, +vCenter);
-  
+
   if (useStatic) {
     multiply(partial, staticMatrix);
   }
-  
+
   makeFullMatrix(matrix, partial);
-  
+
   return;
 }
 
@@ -446,7 +446,7 @@ void TextureMatrix::update (float t)
 void * TextureMatrix::pack(void *buf) const
 {
   buf = nboPackStdString (buf, name);
-  
+
   uint8_t state = 0;
   if (useStatic)  state |= (1 << 0);
   if (useDynamic) state |= (1 << 1);
@@ -510,7 +510,7 @@ void * TextureMatrix::unpack(void *buf)
   }
 
   finalize();
-  
+
   return buf;
 }
 
@@ -561,9 +561,9 @@ void TextureMatrix::print(std::ostream& out, const std::string& /*indent*/) cons
       out << "  shift " << uShiftFreq << " " << vShiftFreq << std::endl;
     }
     if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
-        (uScale != 1.0f) || (vScale != 1.0f)) {
+	(uScale != 1.0f) || (vScale != 1.0f)) {
       out << "  scale " << uScaleFreq << " " << vScaleFreq << " "
-                        << uScale << " " << vScale << std::endl;
+			<< uScale << " " << vScale << std::endl;
     }
     if ((uCenter != 0.5f) || (uCenter != 0.5f)) {
       out << "  center " << uCenter << " " << vCenter << std::endl;

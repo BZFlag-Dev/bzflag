@@ -890,8 +890,8 @@ OpenGLGState::ContextInitializer*
 			OpenGLGState::ContextInitializer::head = NULL;
 OpenGLGState::ContextInitializer*
 			OpenGLGState::ContextInitializer::tail = NULL;
-bool OpenGLGState::executingFreeFuncs = false;			
-bool OpenGLGState::executingInitFuncs = false;			
+bool OpenGLGState::executingFreeFuncs = false;
+bool OpenGLGState::executingInitFuncs = false;
 
 OpenGLGState::ContextInitializer::ContextInitializer(
 				OpenGLContextFunction _freeCallback,
@@ -944,15 +944,15 @@ void OpenGLGState::ContextInitializer::executeInitFuncs()
 
 OpenGLGState::ContextInitializer*
   OpenGLGState::ContextInitializer::find(
-                              OpenGLContextFunction _freeCallback,
-                              OpenGLContextFunction _initCallback,
-                              void* _userData)
+			      OpenGLContextFunction _freeCallback,
+			      OpenGLContextFunction _initCallback,
+			      void* _userData)
 {
   ContextInitializer* scan = head;
   while (scan) {
-    if ((scan->freeCallback == _freeCallback) && 
-        (scan->initCallback == _initCallback) &&
-        (scan->userData == _userData))
+    if ((scan->freeCallback == _freeCallback) &&
+	(scan->initCallback == _initCallback) &&
+	(scan->userData == _userData))
       return scan;
     scan = scan->next;
   }
@@ -1115,7 +1115,7 @@ void OpenGLGState::freeStipple(void*)
     glDeleteLists(stipples, NumStipples);
     stipples = INVALID_GL_LIST_ID;
   }
-  
+
   return;
 }
 
@@ -1134,9 +1134,9 @@ void OpenGLGState::init()
 
 
 void OpenGLGState::registerContextInitializer(
-                     OpenGLContextFunction freeCallback,
-                     OpenGLContextFunction initCallback,
-                     void* userData)
+		     OpenGLContextFunction freeCallback,
+		     OpenGLContextFunction initCallback,
+		     void* userData)
 {
   if ((freeCallback == NULL) || (initCallback == NULL)) {
     DEBUG1("registerContextInitializer() error\n");
@@ -1147,11 +1147,11 @@ void OpenGLGState::registerContextInitializer(
 
 
 void OpenGLGState::unregisterContextInitializer(
-                     OpenGLContextFunction freeCallback,
+		     OpenGLContextFunction freeCallback,
 		     OpenGLContextFunction initCallback,
 		     void* userData)
 {
-  ContextInitializer* ci = 
+  ContextInitializer* ci =
     ContextInitializer::find(freeCallback, initCallback, userData);
   if (ci == NULL) {
     DEBUG1("unregisterContextInitializer() error\n");
@@ -1167,7 +1167,7 @@ void OpenGLGState::initContext()
   DEBUG1("ContextInitializer::executeFreeFuncs() start\n");
   ContextInitializer::executeFreeFuncs();
   DEBUG1("ContextInitializer::executeFreeFuncs() end\n");
-  
+
   // initialize GL state
   initGLState();
 

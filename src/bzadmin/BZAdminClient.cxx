@@ -253,7 +253,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       vbuf = nboUnpackUByte(vbuf, numPlayers);
       for (i = 0; i < numPlayers; ++i) {
 	vbuf = nboUnpackUByte(vbuf, p);
-        uint8_t info;
+	uint8_t info;
 	// parse player info bitfield
 	vbuf = nboUnpackUByte(vbuf, info);
 	players[p].isAdmin = ((info & IsAdmin) != 0);
@@ -317,9 +317,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	vbuf = nboUnpackShort(vbuf, reason);
 	vbuf = nboUnpackShort(vbuf, shotId);
 	if (reason == PhysicsDriverDeath) {
-          int32_t inPhyDrv;
+	  int32_t inPhyDrv;
 	  vbuf = nboUnpackInt(vbuf, inPhyDrv);
-          phydrv = int(inPhyDrv);
+	  phydrv = int(inPhyDrv);
 	}
 
 	// find the player names and build a kill message string

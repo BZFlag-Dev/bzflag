@@ -319,8 +319,8 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 {
   TextureManager &tm = TextureManager::instance();
   OpenGLMaterial oglMaterial(mat->getSpecular(),
-                             mat->getEmission(),
-                             mat->getShininess());
+			     mat->getEmission(),
+			     mat->getShininess());
 
   int userTexture = (mat->getTextureCount() > 0);
   int faceTexture = -1;

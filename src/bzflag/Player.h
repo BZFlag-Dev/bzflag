@@ -165,8 +165,8 @@ public:
   void setZpos (float z);
 
 protected:
-  void          clearRemoteSounds();
-  void          addRemoteSound(int sound);
+  void	  clearRemoteSounds();
+  void	  addRemoteSound(int sound);
 
 protected:
   // shot statistics

@@ -481,7 +481,7 @@ bool MeshFace::inBox(const float* p, float angle,
   box.maxs[0] = +dx;
   box.maxs[1] = +dy;
   box.maxs[2] = height;
-  
+
   bool hit = testPolygonInAxisBox(vertexCount, v, pln, box);
 
   delete[] v;

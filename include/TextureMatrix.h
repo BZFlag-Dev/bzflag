@@ -23,9 +23,9 @@ class TextureMatrix {
   public:
     TextureMatrix();
     ~TextureMatrix();
-    
+
     void finalize();
-    
+
     const float* getMatrix() const;
     bool setName (const std::string& name);
 

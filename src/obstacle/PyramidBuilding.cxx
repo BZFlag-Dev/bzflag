@@ -444,7 +444,7 @@ void* PyramidBuilding::unpack(void* buf)
   driveThrough = (stateByte & _DRIVE_THRU) != 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0;
   ZFlip = (stateByte & _FLIP_Z) != 0;
-  
+
   finalize();
 
   return buf;

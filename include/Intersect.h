@@ -104,7 +104,7 @@ IntersectLevel testAxisBoxInFrustum(const Extents& extents,
 // is contained within all of the planes.
 // the occluder plane normals point inwards
 IntersectLevel testAxisBoxOcclusion(const Extents& extents,
-                                    const float (*planes)[4],
+				    const float (*planes)[4],
 				    int planeCount);
 
 // return true if the ray will intersect with the

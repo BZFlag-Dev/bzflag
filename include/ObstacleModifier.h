@@ -25,7 +25,7 @@ class ObstacleModifier {
     ObstacleModifier(const ObstacleModifier& obsMod,
 		     const GroupInstance& grpinst);
     ~ObstacleModifier();
-    void init();		     
+    void init();
 
     void execute(Obstacle* obstacle) const;
 

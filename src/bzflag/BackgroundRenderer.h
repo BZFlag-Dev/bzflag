@@ -35,7 +35,7 @@ class BackgroundRenderer {
   public:
 			BackgroundRenderer(const SceneRenderer&);
 			~BackgroundRenderer();
-			
+
     void		setupGroundMaterials();
 
     void		renderSky(SceneRenderer&, bool fullWindow, bool mirror);
@@ -80,8 +80,8 @@ class BackgroundRenderer {
     static void		freeContext(void*);
     static void		initContext(void*);
     void		makeCelestialLists(const SceneRenderer&,
-				           const float sunDirection[3],
-				           const float moonDirection[3]);
+					   const float sunDirection[3],
+					   const float moonDirection[3]);
 
   private:
     // rendering state

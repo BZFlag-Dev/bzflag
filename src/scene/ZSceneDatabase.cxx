@@ -199,7 +199,7 @@ void ZSceneDatabase::makeCuller()
   if (culledList != staticList) {
     delete culledList;
   }
-  
+
   // make scratch pad for the culler
   culledList = new SceneNode*[staticCount];
 }
@@ -266,27 +266,27 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
     culledCount = octree->getRadarList (culledList, staticCount, f);
 
     // FIXME: - this helps the look of things, but it takes too much time
-    //        * it may be reasonable now
+    //	* it may be reasonable now
     if (BZDB.isTrue("radarSort")) {
       qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
     }
   }
-  
+
   // if the node has a plane, see that it isn't downwards
   for (int i = 0; i < culledCount; i++) {
     SceneNode* snode = culledList[i];
     const float* plane = snode->getPlane();
     if (plane != NULL) {
       if (plane[2] > 0.0f) {
-        RenderNode* rnode = snode->getRenderNode(0);
-        if (rnode != NULL) {
-          rnode->renderShadow();
-        }
+	RenderNode* rnode = snode->getRenderNode(0);
+	if (rnode != NULL) {
+	  rnode->renderShadow();
+	}
       }
     } else {
       RenderNode* rnode = snode->getRenderNode(0);
       if (rnode != NULL) {
-        rnode->renderShadow();
+	rnode->renderShadow();
       }
     }
 
@@ -323,9 +323,9 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
     if (plane != NULL) {
       // see if our eye is behind the plane
       if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-           plane[3]) <= 0.0f) {
-        node->octreeState = SceneNode::OctreeCulled;
-        continue;
+	   plane[3]) <= 0.0f) {
+	node->octreeState = SceneNode::OctreeCulled;
+	continue;
       }
     }
 
@@ -334,8 +334,8 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
     if (node->octreeState != SceneNode::OctreeVisible) {
       const Extents& exts = node->getExtents();
       if (testAxisBoxInFrustum(exts, frustumPtr) == Outside) {
-        node->octreeState = SceneNode::OctreeCulled;
-        continue;
+	node->octreeState = SceneNode::OctreeCulled;
+	continue;
       }
     }
 

@@ -163,7 +163,7 @@ void MeshFragSceneNode::Geometry::drawVTN() const
 //
 
 MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
-                                    : renderNode(this)
+				    : renderNode(this)
 {
   int i, j, k;
 

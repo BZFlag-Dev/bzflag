@@ -43,10 +43,10 @@ class RadarRenderer {
     void		setJammed(bool = true);
 
     void		render(SceneRenderer&, bool blank = false);
-    
+
     void		renderObstacles(bool smoothing,
-                                        bool fastRadar,
-                                        float range);
+					bool fastRadar,
+					float range);
     void		renderWalls();
     void		renderBoxPyrMesh(bool smoothing);
     void		renderBoxPyrMeshFast(bool smoothing, float range);

@@ -76,7 +76,7 @@ World::~World()
   for (i = 0; i < NumTeams; i++) {
     bases[i].clear();
   }
-  
+
   // clear the managers
   links.clear();
   DYNCOLORMGR.clear();
@@ -137,7 +137,7 @@ int World::getTeleportTarget(int source) const
 int World::getTeleportTarget(int source, unsigned int seed) const
 {
   return links.getTeleportTarget(source, seed);
-}  
+}
 
 
 int World::getTeleporter(const Teleporter* teleporter, int face) const
@@ -271,7 +271,7 @@ static int compareObstacles(const void* a, const void* b)
 
   bool isMeshA = (typeA == MeshObstacle::getClassName());
   bool isMeshB = (typeB == MeshObstacle::getClassName());
-  
+
   if (isMeshA) {
     if (!isMeshB) {
       return +1;
@@ -279,7 +279,7 @@ static int compareObstacles(const void* a, const void* b)
       return compareHeights(obsA, obsB);
     }
   }
-  
+
   if (isMeshB) {
     if (!isMeshA) {
       return -1;
@@ -290,7 +290,7 @@ static int compareObstacles(const void* a, const void* b)
 
   bool isFaceA = (typeA == MeshFace::getClassName());
   bool isFaceB = (typeB == MeshFace::getClassName());
-  
+
   if (isFaceA) {
     if (!isFaceB) {
       return +1;
@@ -298,7 +298,7 @@ static int compareObstacles(const void* a, const void* b)
       return compareHeights(obsA, obsB);
     }
   }
-    
+
   if (isFaceB) {
     if (!isFaceA) {
       return -1;
@@ -306,7 +306,7 @@ static int compareObstacles(const void* a, const void* b)
       return compareHeights(obsA, obsB);
     }
   }
-    
+
   return compareHeights(obsB, obsA); // reversed
 }
 
@@ -363,13 +363,13 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
 
 
   int i;
-  
+
   // check non-mesh obstacles
   for (i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     const char* type = obs->getType();
     if ((type == MeshFace::getClassName()) ||
-        (type == MeshObstacle::getClassName())) {
+	(type == MeshObstacle::getClassName())) {
       break;
     }
     if (!obs->isDriveThrough() &&
@@ -381,7 +381,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     return NULL; // no more obstacles, we are done
   }
 
-  // do some prep work for mesh faces  
+  // do some prep work for mesh faces
   int hitCount = 0;
   float vel[3];
   vel[0] = pos[0] - oldPos[0];
@@ -401,26 +401,26 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
       const MeshFace* face = (const MeshFace*) obs;
       const float facePos2 = face->getPosition()[2];
       if (face->isUpPlane() &&
-          (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
-        continue;
+	  (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
+	continue;
       }
       else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) {
-        continue;
+	continue;
       }
       else {
-        // add the face to the hitlist
-        olist->list[hitCount] = (Obstacle*) obs;
-        hitCount++;
-        // compute its dot product and stick it in the scratchPad
-        const float* p = face->getPlane();
-        const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
-        face->scratchPad = dot;
+	// add the face to the hitlist
+	olist->list[hitCount] = (Obstacle*) obs;
+	hitCount++;
+	// compute its dot product and stick it in the scratchPad
+	const float* p = face->getPlane();
+	const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+	face->scratchPad = dot;
       }
     }
   }
   // sort the list by dot product (this sort will be replaced with a running tab
   qsort (olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
-  
+
   // see if there as a valid meshface hit
   if (hitCount > 0) {
     const MeshFace* face = (const MeshFace*) olist->list[0];
@@ -936,14 +936,14 @@ bool			World::writeWorld(std::string filename)
   // Write weapons
   {
     for (std::vector<Weapon>::iterator it = weapons.begin();
-         it != weapons.end(); ++it) {
+	 it != weapons.end(); ++it) {
       Weapon weapon = *it;
       out << "weapon" << std::endl;
       if (weapon.type != Flags::Null) {
 	out << "\ttype " << weapon.type->flagAbbv << std::endl;
       }
       out << "\tposition " << weapon.pos[0] << " " << weapon.pos[1] << " "
-                           << weapon.pos[2] << std::endl;
+			   << weapon.pos[2] << std::endl;
       out << "\trotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
       out << "\tinitdelay " << weapon.initDelay << std::endl;
       if (weapon.delay.size() > 0) {
@@ -961,13 +961,13 @@ bool			World::writeWorld(std::string filename)
   // Write entry zones
   {
     for (std::vector<EntryZone>::iterator it = entryZones.begin();
-         it != entryZones.end(); ++it) {
+	 it != entryZones.end(); ++it) {
       EntryZone zone = *it;
       out << "zone" << std::endl;
       out << "\tposition " << zone.pos[0] << " " << zone.pos[1] << " "
-                           << zone.pos[2] << std::endl;
+			   << zone.pos[2] << std::endl;
       out << "\tsize " << zone.size[0] << " " << zone.size[1] << " "
-                       << zone.size[2] << std::endl;
+		       << zone.size[2] << std::endl;
       out << "\trotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
       if (zone.flags.size() > 0) {
 	out << "\tflag";
