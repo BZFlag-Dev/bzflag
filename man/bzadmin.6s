@@ -6,7 +6,6 @@ bzadmin \- a text based client for BZFlag
 .B bzadmin
 [\fB\-help\fR]
 [\fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}]
-[\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
 \fIcallsign@hostname\fR:[\fIport\fR] [\fIcommand\fR] [\fIcommand\fR] ...
 .SH DESCRIPTION
 .B bzadmin
@@ -53,10 +52,6 @@ The stdboth interface is a combination of stdin and stdout - it prints
 server output to the standard out stream, and reads user commands from
 the standard in stream.
 .TP
-\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}
-Select the team for your client. This will only affect which team messages
-you will be able to see.
-.TP
 \fIcallsign@hostname\fR[\fI:port\fR]
 Specifies the callsign that you want your client to use, and the
 hostname where the BZFlag server is. bzadmin always joins as an 
@@ -73,7 +68,7 @@ an user interface.
 .SS Examples
 .RS
 .TP 15
-\fBbzadmin -team blue admin@localhost:5155\fR
+\fBbzadmin admin@localhost:5155\fR
 .br
 Join the game on localhost, port 5155, using the callsign '@admin'.
 .TP
@@ -85,4 +80,4 @@ Connect to the server at localhost and ban the IP 192.168.0.2.
 Connect to bzserver.xy and print all server messages that contain 'magicword'.
 .RE
 .SH SEE ALSO
-bzfls(6), bzfs(6), bzflag(6)
+bzfs(6), bzflag(6)

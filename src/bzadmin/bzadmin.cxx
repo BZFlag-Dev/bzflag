@@ -49,10 +49,9 @@ string formatMessage(const string& msg, PlayerId src,
 
 // some global variables
 map<PlayerId, string> players;
-TeamColor myTeam;
+TeamColor myTeam(ObserverTeam);
 struct CLOptions {
-  CLOptions() : team("green"), ui("curses"), showHelp(false) { }
-  string team;
+  CLOptions() : ui("curses"), showHelp(false) { }
   string ui;
   bool showHelp;
 } clOptions;
@@ -75,9 +74,6 @@ int main(int argc, char** argv) {
   
   // register and parse command line arguments
   OptionParser op;
-  op.registerVariable("team", clOptions.team, 
-		      "[-team red|green|blue|purple|rogue]",
-		      "choose a team for your observer");
   op.registerVariable("ui", clOptions.ui, uiUsage,
 		      "choose a user interface");
   op.registerVariable("help", clOptions.showHelp, "[-help]",
@@ -94,20 +90,6 @@ int main(int argc, char** argv) {
     cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl<<endl;
     op.printHelp(cout);
     return 0;
-  }
-  if (clOptions.team == "rogue")
-    myTeam = RogueTeam;
-  else if (clOptions.team == "red")
-    myTeam = RedTeam;
-  else if (clOptions.team == "green")
-    myTeam = GreenTeam;
-  else if (clOptions.team == "blue")
-    myTeam = BlueTeam;
-  else if (clOptions.team == "purple")
-    myTeam = PurpleTeam;
-  else {
-    cerr<<'"'<<clOptions.team<<"\" is not a valid team."<<endl;
-    return 1;
   }
   
   // check that the ui is valid
@@ -129,7 +111,6 @@ int main(int argc, char** argv) {
     return 1;
   }
   string name = namehost.substr(0, atPos);
-  name.insert(name.begin(), '@');
   string host = namehost.substr(atPos + 1);
   int port = ServerPort;
   int cPos = host.find(':');
