@@ -176,6 +176,7 @@ void Bundle::ensureNormalText(std::string &msg)
       break;
       case 'ö':
       case 'ø':
+      case 'Œ':
 	msg[i] = 'o';
 	i++;
 	msg.insert(i, 1, 'e');
@@ -215,6 +216,7 @@ void Bundle::ensureNormalText(std::string &msg)
       case '¿':
       case '¡':
       case '…':
+      case '':
 	msg[i] = ' ';
       break;
 
