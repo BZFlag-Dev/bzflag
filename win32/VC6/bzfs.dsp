@@ -171,6 +171,10 @@ SOURCE=..\..\src\bzfs\Permissions.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\PlayerInfo.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\TeamBases.cxx
 # End Source File
 # Begin Source File
