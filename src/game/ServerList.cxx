@@ -459,10 +459,12 @@ void			ServerList::checkEchos(StartupInfo *info)
 	  bool errorSending;
 	  {
 	    char url[1024];
+	    std::string encodedCallsign = TextUtils::url_encode(info->callsign);
+	    std::string encodedPassword = TextUtils::url_encode(info->password);
 	    snprintf(url, sizeof(url),
 		     "GET %s?action=LIST&version=%s&callsign=%s&password=%s HTTP/1.1\r\nHost: %s\r\nCache-control: no-cache\r\n\r\n",
 		     listServer.pathname.c_str(), getServerVersion(),
-		     info->callsign, info->password,
+		     encodedCallsign.c_str(), encodedPassword.c_str(),
 		     listServer.hostname.c_str());
 	    //DEBUG0("url: %s\n",url);
 	    errorSending = send(listServer.socket, url, int(strlen(url)), 0)
