@@ -4350,9 +4350,10 @@ int main(int argc, char **argv)
       }
     }
 
-    // Fire world weapons
-    wWeapons.fire();
-
+    if (!Replay::enabled()) {
+      // Fire world weapons, if we aren't in replay mode
+      wWeapons.fire();
+    }
   }
 
   serverStop();
