@@ -366,7 +366,7 @@ routePacket (u16 code, int len, const void * data, bool fake)
 bool 
 Capture::addPacket (u16 code, int len, const void * data, bool fake)
 {
-  if ((getCRtime() - UpdateTime) > UpdateRate) {
+  if ((getCRtime() - UpdateTime) > (int)UpdateRate) {
     saveStates ();
   }
   return routePacket (code, len, data, fake);
