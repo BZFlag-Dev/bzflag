@@ -1,11 +1,13 @@
 #!/bin/sh
-
+# build cvs snapshop debian packages
+# call with any argument to build final packages
 if [ ! -r config ] ; then
  echo $0 be run in the project home directory
 fi
 eval `grep VERSIONID config | sed -e 's/ //g'`
 if [ -z "$1" ] ; then
  version=$VERSIONID.`date +%Y%m%d`
+ noclobber=-nc
 else
  version=$VERSIONID
 fi
@@ -17,4 +19,4 @@ sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > de
 chmod +x debian/rules misc/tar
 
 # cvs/non-cvs builds should conflict and replace each other.
-PATH='pwd'/misc:$PATH dpkg-buildpackage -us -uc -nc -rfakeroot
+PATH='pwd'/misc:$PATH dpkg-buildpackage -us -uc $noclobber -rfakeroot
