@@ -1320,7 +1320,7 @@ int			main(int argc, char** argv)
 //	windows entry point.  forward to main()
 //
 
-int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
+int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 {
   // convert command line to argc and argv.  note that it's too late
   // to do this right because spaces that were embedded in a single
@@ -1339,30 +1339,13 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
     while (isspace(*scan) && *scan != 0) scan++;
   }
 
-  // get path to application.  this is ridiculously complex.
-  char* appName;
-  LPCTSTR cmdLine2 = GetCommandLine();
-  if (cmdLine2[0] == '\"') {
-    // quoted
-    cmdLine2++;
-    LPCTSTR argv0End = cmdLine2;
-    while (*argv0End && *argv0End != '\"') argv0End++;
-    const int len = argv0End - cmdLine2;
-    appName = new char[len + 1];
-    for (int i = 0; i < len; i++)
-      appName[i] = (char)cmdLine2[i];
-    appName[len] = '\0';
-  }
-  else {
-    // not quoted
-    LPCTSTR argv0End = cmdLine2;
-    while (*argv0End && !isspace(*argv0End)) argv0End++;
-    const int len = argv0End - cmdLine2;
-    appName = new char[len + 1];
-    for (int i = 0; i < len; i++)
-      appName[i] = (char)cmdLine2[i];
-    appName[len] = '\0';
-  }
+	// get path to application.  this is ridiculously simple.
+	char appName[MAX_PATH];
+
+	GetModuleFileName(instance,appName,MAX_PATH);
+
+	if (strrchr(appName,'\\'))
+		*strrchr(appName,'\\') = NULL;
 
   // make argument list and assign arguments
   char** argv = new char*[argc];
@@ -1381,7 +1364,6 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
 
   // clean up and return exit code
   delete[] argv;
-  delete[] appName;
   free(cmdLine);
   return exitCode;
 }
