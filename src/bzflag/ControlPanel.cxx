@@ -144,7 +144,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
 				resized(false),
 				numBuffers(2),
-				exposed(0),
 				changedMessage(0),
 				radarRenderer(NULL),
 				renderer(&renderer),
@@ -173,7 +172,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
     messages[i].clear();
   }
   teamColor[0] = teamColor[1] = teamColor[2] = (GLfloat)0.0f;
-  expose();
 
   maxLines = 30;
 
@@ -232,6 +230,11 @@ void			ControlPanel::render(SceneRenderer& renderer)
   }
 
   if (!resized) resize();
+
+  // optimization for software rendering folks
+  if (!changedMessage && renderer.getPanelOpacity() == 1.0f) {
+    return;
+  }
 
   int i, j;
   const int x = window.getOriginX();
@@ -611,7 +614,6 @@ void			ControlPanel::resize()
 
   // note that we've been resized at least once
   resized = true;
-  expose();
 }
 
 void			ControlPanel::resizeCallback(void* self)
@@ -622,18 +624,20 @@ void			ControlPanel::resizeCallback(void* self)
 void			ControlPanel::setNumberOfFrameBuffers(int n)
 {
   numBuffers = n;
-  expose();
 }
 
-void			ControlPanel::expose()
+void ControlPanel::invalidate()
 {
-  exposed = numBuffers;
-  changedMessage = numBuffers;
+  if (numBuffers) {
+    changedMessage = numBuffers;
+  } else {
+    changedMessage++;
+  }
 }
 
 void			ControlPanel::exposeCallback(void* self)
 {
-  ((ControlPanel*)self)->expose();
+  ((ControlPanel*)self)->invalidate();
 }
 
 void			ControlPanel::setMessagesOffset(int offset, int whence)
@@ -733,10 +737,9 @@ void			ControlPanel::setRadarRenderer(RadarRenderer* rr)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

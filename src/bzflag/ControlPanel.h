@@ -44,6 +44,7 @@ class ControlPanel {
     void		setControlColor(const GLfloat *color = NULL);
     void		render(SceneRenderer&);
     void		resize();
+    void		invalidate();
 
     void		setNumberOfFrameBuffers(int);
 
@@ -57,9 +58,6 @@ class ControlPanel {
     // no copying!
 			ControlPanel(const ControlPanel&);
     ControlPanel&	operator=(const ControlPanel&);
-
-    void		expose();
-    void		change();
 
     static void		resizeCallback(void*);
     static void		exposeCallback(void*);

@@ -4122,6 +4122,17 @@ static void		renderDialog()
   }
 }
 
+static void checkDirtyControlPanel(ControlPanel *cp)
+{
+  if (cp) {
+    if (HUDDialogStack::get()->isActive()) {
+      cp->invalidate();
+    }
+  }
+  return;
+}
+
+
 static int		getZoomFactor()
 {
   if (!BZDB.isSet("displayZoom")) return 1;
@@ -4153,7 +4164,8 @@ void			drawFrame(const float dt)
   GLfloat eyePoint[3];
   GLfloat targetPoint[3];
   int i;
-  
+
+  checkDirtyControlPanel(controlPanel);
 
   if (!unmapped) {
     // compute fps
