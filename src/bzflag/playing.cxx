@@ -2158,7 +2158,16 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    lastMsg = TimeKeeper::getTick();
 	  }
 	}
-	fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
+
+	// display action messages differently
+	if ((text[0] == '*') &&
+	    (text[1] == ' ') &&
+	    (text[text.size() - 1] == '*') &&
+	    (text[text.size() - 2] == '\t')) {
+	  fullMsg += text.substr(2, text.size() - 4);
+	} else {
+	  fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
+	}
       }
       std::string oldcolor = "";
       if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
