@@ -22,14 +22,17 @@ struct OAFInputBundle {
   std::streamoff	length;
 };
 
+/** This class represents an Ogg Vorbis audio file. It implements the read()
+    function from AudioFile. */
 class OggAudioFile : public AudioFile {
 public:
   OggAudioFile(std::istream*);
   virtual ~OggAudioFile();
-
+  
+  /** This class returns the default extension of Ogg Vorbis files. */
   static std::string	getExtension();
 
-  // AudioFile overrides
+  /** This function reads data from an Ogg Vorbis file. */
   virtual bool		read(void* buffer, int numFrames);
 
 protected:

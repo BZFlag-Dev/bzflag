@@ -22,12 +22,14 @@
 // #define HALF_RATE_AUDIO
 
 
+/** This class is a base class for media files, which can be image files or
+    audio files. */
 class MediaFile {
 public:
   /** Close the media file.  This does *not* destroy the stream. */
   virtual ~MediaFile();
 
-  /** Read an image file.  use delete[] to release the returned
+  /** Read an image file.  Use delete[] to release the returned
       image.  Returns NULL on failure.  Images are stored RGBA,
       left to right, bottom to top. */
   static unsigned char* readImage(const std::string& filename,

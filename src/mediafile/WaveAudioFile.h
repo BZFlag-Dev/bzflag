@@ -15,14 +15,17 @@
 
 #include "AudioFile.h"
 
+/** This class represents a WAVE file. It implements the read() function from
+    AudioFile. */
 class WaveAudioFile : public AudioFile {
 public:
   WaveAudioFile(std::istream*);
   virtual ~WaveAudioFile();
-
+  
+  /** This function returns the default extension of WAVE audio files. */
   static std::string	getExtension();
 
-  // AudioFile overrides
+  /** This function reads data from a WAVE file. */
   virtual bool		read(void* buffer, int numFrames);
 
 protected:

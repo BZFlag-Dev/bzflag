@@ -15,31 +15,41 @@
 
 #include "MediaFile.h"
 
+
+/** This ABC represents an audio file. It has subclasses for different audio
+    formats. */
 class AudioFile : public MediaFile {
 public:
-  // close the audio file.  this does *not* destroy the stream.
+  /** Close the audio file. This does *not* destroy the stream. */
   virtual ~AudioFile();
 
   // note -- all concrete AudioFile types should have a method to
   // return the default file extension for files in the format:
   // static std::string getExtension();
 
-  // read more sample data into buffer.  samples are in left,right
-  // order for stereo files.  samples are in host byte order.
-  // client must not attempt to read past last sample.  returns
-  // false on error.  (a frame is one sample for each channel.)
-  // buffer must be numFrames * getNumChannels() * getSampleWidth()
-  // bytes at least.
-  virtual bool		read(void* buffer, int numFrames) = 0;
+  /** Read more sample data into buffer. Samples are in left, right
+      order for stereo files. Samples are in host byte order.
+      Client must not attempt to read past last sample. Returns
+      false on error. A frame is one sample for each channel.
+      @c buffer must be @c numFrames * @c getNumChannels() * 
+      @c getSampleWidth() bytes at least. */
+  virtual bool read(void* buffer, int numFrames) = 0;
 
-  // returns true if the stream was successfully opened as an audio file
-  bool			isOpen() const;
+  /** Returns true if the stream was successfully opened as an audio file. */
+  bool isOpen() const;
 
-  // get information about the audio file.  a frame is one sample
-  // for each channel.  sample width is in bytes
+  /** Get the frame rate of the audio file. A frame is one sample
+      for each channel. */
   int			getFramesPerSecond() const;
+  
+  /** Get the number of channels in the audio file. */
   int			getNumChannels() const;
+  
+  /** Get the number of frames in the audio file. A frame is one sample
+      for each channel. */
   int			getNumFrames() const;
+  
+  /** Get the sample width of the audio file, in bytes. */
   int			getSampleWidth() const;
 
 protected:

@@ -15,14 +15,18 @@
 
 #include "ImageFile.h"
 
+
+/** This class represents a SGI image file. It implements read() from
+    ImageFile. */
 class SGIImageFile : public ImageFile {
 public:
   SGIImageFile(std::istream*);
   virtual ~SGIImageFile();
-
+  
+  /** This function returns the default extension of SGI image files. */
   static std::string	getExtension();
 
-  // ImageFile overrides
+  /** This function reads image data from a SGI image file. */
   virtual bool		read(void* buffer);
 
 protected:
