@@ -26,8 +26,8 @@
 #include "DirectoryNames.h"
 
 
-AccessList ServerAccessList("server_list.txt");
-AccessList DownloadAccessList("download_list.txt");
+AccessList ServerAccessList("ServerAccess.txt");
+AccessList DownloadAccessList("DownloadAccess.txt");
 
 
 static inline char* eatWhite(char* c)
