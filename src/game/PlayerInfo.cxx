@@ -34,23 +34,23 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset (callSign, 0, CallSignLen);
 }
 
-std::string PlayerInfo::getLastMsg() {
+inline std::string PlayerInfo::getLastMsg() {
   return lastMsgSent;
 }
 
-TimeKeeper PlayerInfo::getLastMsgTime() {
+inline TimeKeeper PlayerInfo::getLastMsgTime() {
   return lastMsgTime;
 }
 
-int PlayerInfo::getSpamWarns() {
+inline int PlayerInfo::getSpamWarns() {
   return spamWarns;
 }
 
-void PlayerInfo::incSpamWarns() {
+inline void PlayerInfo::incSpamWarns() {
   ++spamWarns;
 }
 
-void PlayerInfo::setLastMsg(std::string msg) {
+inline void PlayerInfo::setLastMsg(std::string msg) {
   lastMsgSent = msg;
   lastMsgTime = now;
 }
@@ -80,11 +80,11 @@ void PlayerInfo::signingOn() {
   state = PlayerDead;
 };
 
-bool PlayerInfo::isAlive() {
+inline bool PlayerInfo::isAlive() {
   return state == PlayerAlive;
 };
 
-bool PlayerInfo::isDead() {
+inline bool PlayerInfo::isDead() {
   return state == PlayerDead;
 };
 
@@ -97,11 +97,11 @@ void PlayerInfo::setDead() {
   state = PlayerDead;
 };
 
-bool PlayerInfo::isPaused() {
+inline bool PlayerInfo::isPaused() {
   return paused;
 };
 
-bool PlayerInfo::isBot() {
+inline bool PlayerInfo::isBot() {
   return type == ComputerPlayer;
 };
 
@@ -254,15 +254,15 @@ void *PlayerInfo::packVirtualFlagCapture(void *buf) {
   return buf;
 };
 
-bool PlayerInfo::isTeam(TeamColor _team) const {
+inline bool PlayerInfo::isTeam(TeamColor _team) const {
   return team == _team;
 };
 
-bool PlayerInfo::isObserver() const {
+inline bool PlayerInfo::isObserver() const {
   return team == ObserverTeam;
 };
 
-TeamColor PlayerInfo::getTeam() {
+inline TeamColor PlayerInfo::getTeam() {
   return team;
 };
 
@@ -279,7 +279,7 @@ void PlayerInfo::wasNotARabbit() {
   wasRabbit = false;
 };
 
-bool PlayerInfo::isARabbitKill(PlayerInfo &victim) {
+inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) {
   return wasRabbit || victim.team == RabbitTeam;
 };
 
