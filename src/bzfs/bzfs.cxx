@@ -3279,7 +3279,7 @@ static void addPlayer(int playerIndex)
   int i;
   for (i = 0; i < maxPlayers; i++)
   {
-    if (i == playerIndex)
+    if (i == playerIndex  || player[i].state <= PlayerInLimbo)
       continue;
     if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0)
       break;
