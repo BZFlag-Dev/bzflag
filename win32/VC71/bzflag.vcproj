@@ -773,6 +773,9 @@ copy debug\*.pdb ..\..\*.pdb
 					RelativePath="..\..\src\bzflag\AudioMenu.cxx">
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\DisplayMenu.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\FormatMenu.cxx">
 				</File>
 				<File
@@ -848,6 +851,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\daylight.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\DisplayMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\FlashClock.h">
