@@ -73,11 +73,13 @@ float			Obstacle::getHitNormal(
   int i, bestSide = -1;
   float minTime = 1.0f;
   for (i = 0; i < 4; i++) {
-    float p[2], d[2];
+    float p[3], d[3];
     p[0] = pos1[0] + square[i][0]*c1*width - square[i][1]*s1*breadth;
     p[1] = pos1[1] + square[i][0]*s1*width + square[i][1]*c1*breadth;
+    p[2] = 0;
     d[0] = pos2[0] + square[i][0]*c2*width - square[i][1]*s2*breadth - p[0];
     d[1] = pos2[1] + square[i][0]*s2*width + square[i][1]*c2*breadth - p[1];
+    d[2] = 0;
     int side;
     const float t = timeAndSideRayHitsRect(Ray(p, d),
 				oPos, oAzimuth, oWidth, oBreadth, side);
