@@ -126,6 +126,7 @@ elsif ( $action eq "ADD" ) {
   # ASSUMPTION: only the 'lastmod' column of table needs updating since all
   # else should remain the same as before
   else {
+    # FIXME need to update everything here!!!
     $servdb->do(
       "UPDATE servers SET
           lastmod = $curtime
