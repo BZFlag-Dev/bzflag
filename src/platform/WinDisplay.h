@@ -32,6 +32,8 @@ class WinDisplay : public BzfDisplay {
     bool		isValid() const;
     bool		isEventPending() const;
     bool		getEvent(BzfEvent&) const;
+    bool		hasGetKeyMode() {return true;};
+    void		getModState(bool &shift, bool &control, bool &alt);
 
     bool		setDefaultResolution();
 

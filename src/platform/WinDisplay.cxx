@@ -327,6 +327,12 @@ bool			WinDisplay::getEvent(BzfEvent& event) const
   return true;
 }
 
+void			WinDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
+  shift = (GetKeyState(VK_SHIFT) < 0);
+  ctrl  = (GetKeyState(VK_CONTROL) < 0);
+  alt   = (GetKeyState(VK_MENU) < 0);
+}
+
 bool			WinDisplay::getKey(const MSG& msg,
 					BzfKeyEvent& key) const
 {
