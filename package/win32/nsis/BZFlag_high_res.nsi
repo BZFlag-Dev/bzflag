@@ -6,7 +6,7 @@
 ; It will install notepad.exe into a directory that the user selects,
 ;
 !define VER_MAJOR 1.11
-!define VER_MINOR .2
+!define VER_MINOR .4
 ; Main Installer Options
 Name "BZFlag"
 Icon ..\..\..\win32\bzflag.ico
@@ -91,7 +91,7 @@ SectionEnd
 Function .onInstSuccess
 	MessageBox MB_YESNO|MB_ICONQUESTION \
 		"Setup has completed. Would you like to view readme file now?" \
-		/SD IDNO IDNO NoReadme
+		IDNO NoReadme
 			ExecShell open '$INSTDIR\doc\ReadMe.win32.html'
 		NoReadme:
 FunctionEnd
