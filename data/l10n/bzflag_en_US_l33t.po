@@ -706,6 +706,21 @@ msgstr "jAMMin9"
 msgid "Wide Angle"
 msgstr "WIde @NglE"
 
+msgid "Useless"
+msgstr "U5ELE$5"
+
+msgid "Thief"
+msgstr "tHi3ph"
+
+msgid "Masquerade"
+msgstr "M@5Kw3r4dE"
+
+msgid "Seer"
+msgstr "533R"
+
+msgid "Burrow"
+msgstr "8URroW"
+
 # Flag help
 
 msgid "You have no flag."
