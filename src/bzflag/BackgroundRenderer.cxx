@@ -738,34 +738,32 @@ void			BackgroundRenderer::drawGround()
 
 void BackgroundRenderer::drawGroundCentered()
 {
-//  const float InnerHalfWidth = 64.0f;
-  const float groundSize = 10.0f * BZDBCache::worldSize;
-
   const ViewFrustum& frustum = RENDERER.getViewFrustum();
   const float* center = frustum.getEye();
 
+  const float groundSize = 10.0f * BZDBCache::worldSize;
   const float repeat = BZDB.eval("groundHighResTexRepeat");
 
   // vertices  
-  const float voXmin = -groundSize;
-  const float voXmax = +groundSize;
-  const float voYmin = -groundSize;
-  const float voYmax = +groundSize;
+  const float vXmin = -groundSize;
+  const float vXmax = +groundSize;
+  const float vYmin = -groundSize;
+  const float vYmax = +groundSize;
   const GLfloat vertices[5][2] = {
     {center[0], center[1]},
-    {voXmin, voYmin}, {voXmax, voYmin}, {voXmax, voYmax}, {voXmin, voYmax}
+    {vXmin, vYmin}, {vXmax, vYmin}, {vXmax, vYmax}, {vXmin, vYmax}
   };
 
   // texcoords
-  const float toffX = center[0] * repeat;
-  const float toffY = center[1] * repeat;
-  const float toXmin = -groundSize * repeat;
-  const float toXmax = +groundSize * repeat;
-  const float toYmin = -groundSize * repeat;
-  const float toYmax = +groundSize * repeat;
+  const float tcenterX = center[0] * repeat;
+  const float tcenterY = center[1] * repeat;
+  const float tXmin = -groundSize * repeat;
+  const float tXmax = +groundSize * repeat;
+  const float tYmin = -groundSize * repeat;
+  const float tYmax = +groundSize * repeat;
   const GLfloat texcoords[5][2] = {
-    {toffX, toffY},
-    {toXmin, toYmin}, {toXmax, toYmin}, {toXmax, toYmax}, {toXmin, toYmax}
+    {tcenterX, tcenterY},
+    {tXmin, tYmin}, {tXmax, tYmin}, {tXmax, tYmax}, {tXmin, tYmax}
   };
 
   GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
