@@ -185,10 +185,6 @@ SOURCE=..\..\src\bzflag\AudioMenu.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\clientCommands.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\DisplayMenu.cxx
 # End Source File
 # Begin Source File
@@ -283,6 +279,10 @@ SOURCE=..\bzflag.rc
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\callbacks.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\clientCommands.cxx
 # End Source File
 # Begin Source File
 
