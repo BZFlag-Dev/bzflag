@@ -651,6 +651,7 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-date") == 0) {
       checkArgc(i, argc, argv[i]);
       int month, day, year;
+      // FIXME: should use iso yyyy.mm.dd format
       if (sscanf(argv[i], "%d/%d/%d", &month, &day, &year) != 3 ||
 		day < 1 || day > 31 ||		// FIXME -- upper limit loose
 		month < 1 || month > 12 ||
