@@ -218,8 +218,6 @@ void			GUIOptionsMenu::resize(int width, int height)
   const float fontSize = (float)height / 45.0f;
   FontManager &fm = FontManager::instance();
 
-  std::cout << "!!!guioptionsmenu::resize " << width << " x "<< height << std::endl;
-
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];

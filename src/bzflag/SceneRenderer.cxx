@@ -338,8 +338,6 @@ void			SceneRenderer::setPanelOpacity(float opacity)
 {
   bool needtoresize = opacity == 1.0f || panelOpacity == 1.0f;
 
-  std::cout << "!!! setPanelOpacity " << opacity << " panel opacity " << panelOpacity << std::endl;
-
   panelOpacity = opacity;
   notifyStyleChange();
   if (needtoresize) {
