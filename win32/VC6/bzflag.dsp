@@ -90,7 +90,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\..\src\bzflag\debug\*.exe ..\..\*.exe	copy ..\..\..\src\bzflag\debug\*.pdb ..\..\*.pdb	copy debug\*.pdb ..\..\*.pdb
+PostBuild_Cmds=copy ..\..\src\bzflag\debug\*.exe ..\..\*.exe	copy ..\..\src\bzflag\debug\*.pdb ..\..\*.pdb
 # End Special Build Tool
 
 !ENDIF 
