@@ -17,6 +17,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 // work around an ugly STL bug in BeOS
 // FIXME someone test whether it is still needed
