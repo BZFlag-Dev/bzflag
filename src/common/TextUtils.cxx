@@ -19,21 +19,29 @@
 #include <sstream>
 #include <stdarg.h>
 #include <vector>
+#include <stdio.h>
+#include <assert.h>
 
 namespace TextUtils
 {
   std::string vformat(const char* fmt, va_list args) {
-    char *buffer = NULL;
+    const int fixedbs = 8192;
+    char buffer[fixedbs];
 #ifdef HAVE_VSNPRINTF
-    int bs = vsnprintf(buffer, 0, fmt, args);
+    const int bs = vsnprintf(buffer, fixedbs, fmt, args) + 1;
+    if (bs > fixedbs) {
+      char *bufp = new char[bs];
+      vsnprintf(bufp, bs, fmt, args);
+      std::string ret = bufp;
+      delete[] bufp;
+      return ret;
+    }
 #else
-    int bs = vsprintf(buffer, fmt, args);
+    const int bs = vsprintf(buffer, fmt, args) + 1;
+    assert(bs <= fixedbs);
 #endif
-    buffer = new char[bs];
-    vsnprintf(buffer, bs, fmt, args);
-    std::string ret = std::string(buffer);
-    delete [] buffer;
-    return ret;
+  
+    return buffer;
   }
 
 
