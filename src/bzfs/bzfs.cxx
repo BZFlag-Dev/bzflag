@@ -3958,7 +3958,7 @@ static void parseCommand(const char *message, int t)
       }
     }
 
-  // set sets a world configuration variable that gets sent to all clients
+  // /set sets a world configuration variable that gets sent to all clients
   } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp(message + 1, "set", 3) == 0) {
     sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
   // /shutdownserver terminates the server
@@ -4486,8 +4486,7 @@ static void parseCommand(const char *message, int t)
     char *p2 = 0;
     if (p1) p2 = strchr(p1 + 1, '\"');
     if (!p2) {
-      sendMessage(ServerPlayer, t, "not enough parameters, usage"
-		  " /setgroup \"CALLSIGN\" GROUP");
+      sendMessage(ServerPlayer, t, "not enough parameters, usage /setgroup \"CALLSIGN\" GROUP");
     } else {
       string settie(p1+1, p2-p1-1);
       string group=p2+2;
@@ -4616,7 +4615,7 @@ static void parseCommand(const char *message, int t)
     sprintf(reply,"DEBUG: poll command section entered");
     sendMessage(ServerPlayer, t, reply, true);
 #endif
-    
+
     /* make sure player has permission to request a poll */
     if (!hasPerm(t, poll)) {
       sprintf(reply,"%s, you are presently not authorized to run /poll", player[t].callSign);
@@ -4630,7 +4629,7 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
-    
+
     /* make sure that there is not a poll active already */
     if (arbiter->knowsPoll()) {
       sprintf(reply,"A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
@@ -4653,9 +4652,9 @@ static void parseCommand(const char *message, int t)
     if (available - 1 < clOptions->votesRequired) {
       sprintf(reply,"Unable to initiate a new poll.  There are not enough players.");
       sendMessage(ServerPlayer, t, reply, true);
-      sprintf(reply,"There needs to be at least %d other %s and only %d %s available.", 
+      sprintf(reply,"There needs to be at least %d other %s and only %d %s available.",
 	      clOptions->votesRequired,
-	      clOptions->votesRequired - 1 == 1 ? "player" : "players", 
+	      clOptions->votesRequired - 1 == 1 ? "player" : "players",
 	      available - 1,
 	      available - 1 == 1 ? "is" : "are");
       sendMessage(ServerPlayer, t, reply, true);
@@ -4748,7 +4747,7 @@ static void parseCommand(const char *message, int t)
 	/* unquoted -- so just copy username if one was given*/
 	strncpy(voteplayer, message+argStartOffset, messageLength-argStartOffset);
       }
-     
+
 	  int i = 0;
       /* trim off any trailing whitespace */
       for (i = messageLength-argStartOffset-1; i >= 0; i--) {
@@ -4829,11 +4828,11 @@ static void parseCommand(const char *message, int t)
 	  arbiter->grantSuffrage(player[i].callSign);
 	}
       }
-      
+
       // automatically place a vote for the player requesting the poll
       arbiter->voteYes(player[t].callSign);
 
-      
+
     } else if (strncmp(command, "vote", 4) == 0) {
 
 #if 0
@@ -4868,7 +4867,7 @@ static void parseCommand(const char *message, int t)
       sprintf(reply,"%s, you have aborted the poll -- unimplemented", player[t].callSign);
       sendMessage(ServerPlayer, t, reply, true);
 
-      
+
     } else {
 
       sprintf(reply,"Invalid option to the poll command");
@@ -4881,7 +4880,7 @@ static void parseCommand(const char *message, int t)
 
 
   } else if (strncmp(message+1, "vote",4) == 0) {
-    
+
 #if 0
     sprintf(reply,"DEBUG: vote command section entered");
     sendMessage(ServerPlayer, t, reply, true);
@@ -4909,7 +4908,7 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
-    
+
     /* find the start of the vote answer */
     size_t messageLength = (int)strlen(message);
     size_t nextChar = 0;
@@ -4929,7 +4928,7 @@ static void parseCommand(const char *message, int t)
       }
     }
 
-    /* XXX answer arrays should be static const but it'll do for now */    
+    /* XXX answer arrays should be static const but it'll do for now */
     static const unsigned int yesCount = 8;
     char yesAnswers[8][5];
     memset(yesAnswers, 0, 8 * 5 * sizeof(char));
@@ -4987,7 +4986,7 @@ static void parseCommand(const char *message, int t)
 	/* player voted no */
 	sprintf(reply,"%s, your vote in opposition of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
 	sendMessage(ServerPlayer, t, reply, true);
-      }	
+      }
     } else if (vote == 1) {
       if ((cast = arbiter->voteYes(player[t].callSign)) == true) {
 	/* player voted yes */
@@ -5008,7 +5007,7 @@ static void parseCommand(const char *message, int t)
       }
       return;
     }
-      
+
     if (!cast) {
       /* player was unable to cast their vote; probably already voted */
       sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
@@ -5016,7 +5015,7 @@ static void parseCommand(const char *message, int t)
       return;
     }
 
-    
+
   } else if (strncmp(message+1, "veto",4) == 0) {
 
 #if 0
@@ -5046,7 +5045,7 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
-    
+
     /* poof */
     arbiter->forgetPoll();
 
@@ -5502,7 +5501,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
   switch (args.size()) {
     case 2:
       if (BZDB->isSet(args[0])) {
-	StateDatabase::Permission permission= BZDB->getPermission(args[0]);
+	StateDatabase::Permission permission=BZDB->getPermission(args[0]);
 	if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	  BZDB->set(args[0], args[1], StateDatabase::Server);
 	  return args[0] + " set";
@@ -5511,9 +5510,14 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
       }
       else
 	return "variable " + args[0] + " does not exist";
-
+    case 1:
+      if (BZDB->isSet(args[0])) {
+	return args[0] + "=" + BZDB->get(args[0]);
+      }
+      else
+	return "variable " + args[0] + " does not exist";
     default:
-      return "usage: set <name> <value>";
+      return "usage: set <name> [<value>]";
   }
 }
 
@@ -5596,7 +5600,7 @@ int main(int argc, char **argv)
     BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
     BZDB->addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
-  CMDMGR->add("set", cmdSet, "set [<name> <value>]");
+  CMDMGR->add("set", cmdSet, "set <name> [<value>]");
 
   BZDBCache::init();
 
@@ -5856,7 +5860,7 @@ int main(int argc, char **argv)
 	memset(message, 0, 256);
 	sprintf(message, "DEBUG: poll time remaining: %ld", votingarbiter->timeRemaining());
 	sendMessage(ServerPlayer, AllPlayers, message, true);
-	
+
 	std::string person = votingarbiter->getPollPlayer();
 	std::string action = votingarbiter->getPollAction();
 
@@ -5920,7 +5924,7 @@ int main(int argc, char **argv)
 	    // get ready for the next poll
 	    votingarbiter->forgetPoll();
 	    announcedClosure = false;
-	  
+
 	  }
 
 	} else {
@@ -5929,7 +5933,7 @@ int main(int argc, char **argv)
 	    memset(message, 0, 256);
 	    sprintf(message, "Enough votes were collected to %s %s early.", action.c_str(), person.c_str());
 	    sendMessage(ServerPlayer, AllPlayers, message, true);
-	      
+
 	    // close the poll since we have enough votes (next loop will kick off notification)
 	    votingarbiter->closePoll();
 	  } // the poll is over
