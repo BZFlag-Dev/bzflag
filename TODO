@@ -18,8 +18,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * fix the menu font garbage above some letters on some fonts
 
-* fix the position of the label of the tabbed panels (position incorrectly)
-
 * configure should test and enable the fudged acosf atanf asinf
 
 * add language translations for the new flags
