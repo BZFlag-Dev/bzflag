@@ -207,9 +207,10 @@ void ListServerLink::read()
 	    sendPlayerInfo();
 	  } else {
 	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
-			"This callsign is registered locally on this server.  If it is "
-			"yours, please ask an admin to grant it membership in the "
-			"LOCAL.GLOBAL group.  If it is not yours, please ask an admin "
+			"This callsign is registered locally on this server.");
+	    sendMessage(ServerPlayer, playerIndex, "If the local account is yours, "
+			"please ask an admin to grant it membership in the LOCAL.GLOBAL group.");
+	    sendMessage(ServerPlayer, playerIndex, "If it is not yours, please ask an admin "
 			"to deregister it so that you may use your global callsign.");
 	  }
 	  playerData->player.clearToken();
