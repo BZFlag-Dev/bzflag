@@ -23,6 +23,8 @@
 #include "RemotePlayer.h"
 #include "KeyManager.h"
 #include "AutoCompleter.h"
+#include "BZDBCache.h"
+#include "AnsiCodes.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -52,10 +54,17 @@ void printout(const std::string& name, void*)
 void listSetVars(const std::string& name, void*)
 {
   char message[MessageLen];
-
+  
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
-    sprintf(message, "/set %s <%f> %s ", name.c_str(),
-            BZDB.eval(name), BZDB.get(name).c_str());
+    if (BZDBCache::colorful) {
+      sprintf(message, "/set %s%s %s%f %s%s",
+              ColorStrings[RedColor].c_str(), name.c_str(),
+              ColorStrings[GreenColor].c_str(), BZDB.eval(name),
+              ColorStrings[BlueColor].c_str(), BZDB.get(name).c_str());
+    } else {
+      sprintf(message, "/set %s <%f> %s", name.c_str(),
+              BZDB.eval(name), BZDB.get(name).c_str());
+    }
     addMessage(LocalPlayer::getMyTank(), message, 2);
   }
 }
