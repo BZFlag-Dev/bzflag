@@ -186,7 +186,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       if (src == ServerPlayer && returnString[0] == '[') {
 	char* ipHere;
 #ifdef _WIN32
-	p = PlayerId(atol(returnString.c_str() + 1);
+	p = PlayerId(atol(returnString.c_str() + 1));
 #else
 	p = PlayerId(std::strtol(returnString.c_str() + 1, &ipHere, 10));
 #endif
