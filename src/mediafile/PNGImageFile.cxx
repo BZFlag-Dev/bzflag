@@ -175,15 +175,15 @@ bool					PNGImageFile::read(void* buffer)
   stream.zalloc = (alloc_func)NULL;
   stream.zfree = (free_func)NULL;
 
+  err = inflateInit(&stream);
+  if (err != Z_OK) {
+    delete c;
+    return false;
+  }
+
   while (c->getType() == PNGChunk::IDAT) {
     stream.next_in = c->getData();
     stream.avail_in = c->getLength();
-
-    err = inflateInit(&stream);
-    if (err != Z_OK) {
-      delete c;
-      return false;
-    }
 
     err = inflate(&stream, Z_SYNC_FLUSH);
     while ((err == Z_OK) && (stream.avail_out == 0)) {
@@ -206,25 +206,25 @@ bool					PNGImageFile::read(void* buffer)
       err = inflate(&stream, Z_SYNC_FLUSH);
     }
 
-    if (err != Z_STREAM_END) {
+    if ((err != Z_STREAM_END) && (err != Z_OK)) {
       delete c;
       return false;
     }
-
-    expand();
-
-    if (!filter()) {
-      delete c;
-      return false;
-    }
-
-    memcpy(((unsigned char *)buffer)+bufferPos, line+1, realBufferSize-1);
-
-    inflateEnd(&stream);
 
     delete c;
     c = PNGChunk::readChunk(getStream());
   }
+
+  inflateEnd(&stream);
+
+  expand();
+
+  if (!filter()) {
+    delete c;
+    return false;
+  }
+
+  memcpy(((unsigned char *)buffer)+bufferPos, line+1, realBufferSize-1);
 
   delete c;
   return true;
