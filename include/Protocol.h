@@ -130,6 +130,9 @@ const uint16_t		MsgClientVersion = 0x6f6a;		// 'oj'
 
 const uint16_t		MsgServerControl = 0x6f69;		// 'oi'
 
+// lag ping sent by server to client and reply from client
+const uint16_t		MsgLagPing = 0x7069; 			// 'pi'
+
 /* server communication protocol:
   --> incoming messages (to server)
   <-- outgoing messages to single player

@@ -192,10 +192,16 @@ struct PlayerInfo {
     boolean Admin;
 
     // lag measurement
-    bool lagkillerpending;
-    TimeKeeper lagkillertime;
     float lagavg,lagalpha;
     int lagcount,laglastwarn,lagwarncount;
+    // new method (ping)
+    bool trypings,doespings,pingpending;
+    TimeKeeper nextping,lastping;
+    int pingseqno,pingslost,pingssent;
+    // old method (on kill)
+    bool lagkillerpending;
+    TimeKeeper lagkillertime;
+
 #ifdef NETWORK_STATS
 		// message stats bloat
 		TimeKeeper perSecondTime[2];
@@ -1441,7 +1447,8 @@ static void pwrite(int playerIndex, const void *b, int l)
 	case MsgShotBegin:
 	case MsgShotEnd:
 	case MsgPlayerUpdate:
-	case MsgGMUpdate:
+    case MsgGMUpdate:
+    case MsgLagPing:
 	  puwrite(playerIndex,b,l);
 	  return;
     }
@@ -3491,12 +3498,22 @@ static void addPlayer(int playerIndex)
   player[playerIndex].uqueue = NULL;
   player[playerIndex].dqueue = NULL;
 
-  player[playerIndex].lagkillerpending = false;
   player[playerIndex].lagavg = 0;
   player[playerIndex].lagcount = 0;
   player[playerIndex].laglastwarn = 0;
   player[playerIndex].lagwarncount = 0;
   player[playerIndex].lagalpha = 1;
+
+  player[playerIndex].nextping = TimeKeeper::getCurrent();
+  player[playerIndex].nextping += 10.0;
+  player[playerIndex].pingpending = false;
+  player[playerIndex].doespings = false;
+  player[playerIndex].trypings = true;
+  player[playerIndex].pingseqno = 0;
+  player[playerIndex].pingslost = 0;
+  player[playerIndex].pingssent = 0;
+
+  player[playerIndex].lagkillerpending = false;
 
 
   // accept player
@@ -3982,8 +3999,10 @@ static void playerKilled(int victimIndex, int killerIndex,
 
   // we try to estimate lag by measuring time between broadcast of MsgKilled
   // and MsgScore reply of the killer; should give us a good approximation
-  //  of the killer's round trip time
-  if (victimIndex != killerIndex &&            // suicide doesn't change score twice
+  // of the killer's round trip time
+  // don't do this if player supports lag pings
+  if (!player[killerIndex].doespings &&        // lag ping is superior method
+      victimIndex != killerIndex &&            // suicide doesn't change score twice
       !player[killerIndex].lagkillerpending) { // two rapid kills
     player[killerIndex].lagkillerpending = true;
     player[killerIndex].lagkillertime = TimeKeeper::getCurrent();
@@ -4222,6 +4241,32 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
   broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 }
 
+static void calcLag(int playerIndex, float timepassed)
+{
+  PlayerInfo &pl=player[playerIndex];
+  // time is smoothed exponentially using a dynamic smoothing factor
+  pl.lagavg = pl.lagavg*(1-pl.lagalpha)+pl.lagalpha*timepassed;
+  pl.lagalpha = pl.lagalpha / (0.9f + pl.lagalpha);
+  pl.lagcount++;
+  // warn players from time to time whose lag is > threshold (-lagwarn)
+  if (lagwarnthresh > 0 && pl.lagavg > lagwarnthresh &&
+      pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
+    char message[MessageLen];
+    sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
+        int(pl.lagavg * 1000));
+    sendMessage(playerIndex, pl.id, pl.team,message);
+    pl.laglastwarn = pl.lagcount;
+    pl.lagwarncount++;;
+    if (pl.lagwarncount++ > maxlagwarn) {
+      // drop the player
+      sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
+        maxlagwarn);
+      sendMessage(playerIndex, pl.id, pl.team, message);
+      removePlayer(playerIndex);
+    }
+  }
+}
+
 static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 {
   // lag measurement
@@ -4229,32 +4274,11 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
   if (player[playerIndex].lagkillerpending) {
     PlayerInfo &killer = player[playerIndex];
     TimeKeeper now = TimeKeeper::getCurrent(),&then = killer.lagkillertime;
-    float timepassed = now-then;
+    float timepassed = now - then;
     killer.lagkillerpending = false;
     // huge lags might be error!?
     if (timepassed < 10.0) {
-      // time is smoothed exponentially using a dynamic smoothing factor
-      killer.lagavg = killer.lagavg*(1-killer.lagalpha)+killer.lagalpha*timepassed;
-      killer.lagalpha = killer.lagalpha/(0.9f+killer.lagalpha);
-      killer.lagcount++;
-      // warn players from time to time whose lag is > threshold (-lagwarn)
-      if (lagwarnthresh > 0 && killer.lagavg > lagwarnthresh &&
-	  killer.lagcount-killer.laglastwarn > 5 + 2 * killer.lagwarncount) {
-	char message[MessageLen];
-	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-	    int(killer.lagavg * 1000));
-	sendMessage(playerIndex, player[playerIndex].id,
-	    player[playerIndex].team,message);
-	killer.laglastwarn = killer.lagcount;
-	killer.lagwarncount++;;
-	if (killer.lagwarncount++ > maxlagwarn) {
-	  // drop the player
-	  sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
-	    maxlagwarn);
-	  sendMessage(playerIndex, killer.id, killer.team, message);
-	  removePlayer(playerIndex);
-	}
-      }
+      calcLag(playerIndex, timepassed);
     }
   }
 
@@ -4426,16 +4450,30 @@ static void parseCommand(const char *message, int t)
   }
   // /lagstats gives simple statistics about players' lags
   else if (strncmp(message+1,"lagstats",8) == 0) {
-    for (int i = 0; i < maxPlayers; i++)
+    for (int i = 0; i < maxPlayers; i++) {
       if (player[i].fd != NotConnected) {
-	char reply[MessageLen];
-	sprintf(reply,"[%d]%-12s:%4dms(%d) %s:%d%s%s",i,player[i].callSign,
-		int(player[i].lagavg*1000),player[i].lagcount,
+        char reply[MessageLen];
+    	sprintf(reply,"%-12s : %4dms (%d)%s",player[i].callSign,
+            int(player[i].lagavg*1000),player[i].lagcount,
+                player[i].doespings ? "" : " (old)");
+        if (player[i].doespings && player[i].pingslost>0)
+          sprintf(reply+strlen(reply)," %d lost",player[i].pingslost);
+	    sendMessage(t,player[t].id,player[t].team,reply);
+      }
+    }
+  }
+  // /playerlist dumps a list of players with IPs etc.
+  else if (player[t].Admin && strncmp(message+1,"playerlist",10) == 0) {
+    for (int i = 0; i < maxPlayers; i++) {
+      if (player[i].fd != NotConnected) {
+        char reply[MessageLen];
+	sprintf(reply,"[%d]%-12s: %s:%d%s%s",i,player[i].callSign,
 		inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
 		player[i].ulinkup ? " udp" : "",
 		player[i].knowId ? " id" : "");
-	sendMessage(t,player[t].id,player[t].team,reply);
+        sendMessage(t,player[t].id,player[t].team,reply);
       }
+    }
   }
   else {
     sendMessage(t,player[t].id,player[t].team,"unknown command");
@@ -4685,6 +4723,20 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player is sending a Server Control Message not implemented yet
     case MsgServerControl:
       break;
+
+    case MsgLagPing:
+    {
+      uint16_t pingseqno;
+      buf = nboUnpackUShort(buf, pingseqno);
+      player[t].doespings = true;
+      if (pingseqno == player[t].pingseqno)
+      {
+        float dt = TimeKeeper::getCurrent() - player[t].lastping;
+        calcLag(t, dt);
+        player[t].pingpending = false;
+      }
+      break;
+    }
 
     // player is sending multicast data
     case MsgPlayerUpdate:
@@ -5707,6 +5759,13 @@ int main(int argc, char **argv)
 	  waitTime = flag[i].dropDone - tm;
     }
 
+    // get time for next lagping
+    for (int j=0;j<maxPlayers;j++)
+    {
+      if (player[j].state == PlayerAlive && player[j].nextping - tm < waitTime)
+        waitTime = player[j].nextping - tm;
+    }
+
     // minmal waitTime
     if (waitTime < 0.0f)
       waitTime = 0.0f;
@@ -5774,6 +5833,32 @@ int main(int argc, char **argv)
 	if (i != numFlags)
 	  randomFlag(i);
 	lastSuperFlagInsertion = tm;
+      }
+    }
+
+    // send lag pings
+    for (int j=0;j<maxPlayers;j++)
+    {
+      if (player[j].trypings &&
+          player[j].state == PlayerAlive && player[j].nextping-tm < 0)
+      {
+        player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
+        if (player[j].pingpending) // ping lost
+        {
+          player[j].pingslost++;
+          // got no response to first 3 pings? give up forever
+          if (player[j].pingssent >= 3 && !player[j].doespings)
+            player[j].trypings = false;
+        }
+        char  buffer[2];
+        void *buf = (void*)buffer;
+        buf = nboPackUShort(buf, player[j].pingseqno);
+        directMessage(j, MsgLagPing, sizeof(buffer), buffer);
+        player[j].pingpending = true;
+        player[j].lastping = tm;
+        player[j].nextping = tm;
+        player[j].nextping += 10.0f;
+        player[j].pingssent++;
       }
     }
 

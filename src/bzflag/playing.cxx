@@ -2020,6 +2020,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
     case MsgGMUpdate:
     case MsgAudio:
     case MsgVideo:
+    case MsgLagPing:
       handlePlayerMessage(code, 0, msg);
       break;
   }
@@ -2082,6 +2083,11 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       }
       break;
     }
+
+    // just echo lag ping message
+    case MsgLagPing:
+      playerLink->send(MsgLagPing,2,msg);
+      break;
   }
 }
 
