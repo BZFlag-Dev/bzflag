@@ -23,9 +23,9 @@ AC_PROG_CC
 AC_PROG_CXX
 
 dnl On SGI systems, figure out if we are using MIPSPro compiler
+using_mipspro=no
 if test "$build_vendor" = "sgi" ; then
     AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
-    using_mipspro=no
     AC_TRY_COMPILE([], 
 		   [#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
 this line should cause a compile failure when building with the MIPSpro compiler;
@@ -108,17 +108,17 @@ AM_CONDITIONAL(MACOS, $macos)
 AC_PATH_XTRA
 
 
+AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 LDFLAGS="$LDFLAGS $X_LIBS"
 case $host_os in
   solaris*)
-    GLIBS="-lresolv -laudio $GLIBS"
+    GLIBS="-lresolv $GLIBS"
     LIBS="-lsocket -lnsl -lresolv"
     LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
     ;;
   irix*)
     CONFIG=irix-mips3
     AC_SUBST(CONFIG)
-    AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
     GLIBS="-lXsgivc -lX11 -laudio $GLIBS"
     ;;
   beos)
