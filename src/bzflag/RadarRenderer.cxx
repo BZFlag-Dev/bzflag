@@ -202,9 +202,6 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glScissor(ox + x, oy + y, w, h);
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank && (myTank->getFlag() == Flags::Burrow) && (myTank->getPosition()[2] == BurrowDepth)) {
-    glScissor( ox + x + w*0.3f, oy + y + h*0.3f, w*0.4f, h*0.4f);
-  }
 
   if (opacity == 1.0f) {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -216,6 +213,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
   // prepare transforms
   float range = BZDB->eval("displayRadarRange") * WorldSize;
+  // when burrowed, limit radar range
+  if (myTank && (myTank->getFlag() == Flags::Burrow) && (myTank->getPosition()[2] == BurrowDepth)) {
+    range = min(range, WorldSize / 4.0f);
+  }
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   const int xSize = renderer.getWindow().getWidth();
