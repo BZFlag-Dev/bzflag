@@ -12,7 +12,6 @@
 				var mainform = document.forms["main"];
 				var freeForAll = (mainform.game_style.value == "ffa");
 				mainform.allow_teleporters.disabled = mainform.world_type.checked;
-				mainform.ping_ttl.disabled = !mainform.respond_pings.checked;
 				mainform.world_file.disabled = !mainform.world_type.checked;
 				mainform.randomly_orient_buildings.disabled = mainform.world_type.checked;
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
@@ -75,11 +74,6 @@
 					if (!mainform.respond_pings.checked) {
 						d.writeln("#Server will not respond to pings<br/>");
 						d.writeln("-q<br/><br/>");
-					}
-
-					if (!mainform.ping_ttl.value.disabled && mainform.ping_ttl.value != 8) {
-						d.writeln("#Time to Live for Ping<br/>");
-						d.writeln("-ttl " + mainform.ping_ttl.value + "<br/><br/>");
 					}
 
 					if (mainform.sync_time.checked) {
@@ -441,10 +435,6 @@
 						<td>
 							<input type="checkbox" name="respond_pings" onClick="return ableControls()" title="Whether or not Server will respond to pings" CHECKED/>
 						</td>
-						<td>Ping TTL </td>
-						<td><input type="text" name="ping_ttl" value="8" size="30" title="Time to Live for Ping"/></td>
-					</tr>
-					<tr>
 						<td>Synchronize Time</td>
 						<td>
 							<input type="checkbox" name="sync_time" title="Synchronize time of day on all clients"/>
