@@ -58,9 +58,6 @@ to do list for bzflag
 
 * implement a visual "server list" game server
 
-* auto-generated dependency support in makefiles
-   manual dependencies cause too much trouble
-
 * move robots to separate binaries and allow either the
    client or server to exec them. Have a server option
    to keep n players in the game which auto spawns/kills
