@@ -1052,7 +1052,7 @@ void PlayerInfo::updateLagPlayerUpdate(float timestamp, bool ooo) {
 int PlayerInfo::updatePingLag(void *buf, float threshold, float max,
 			      bool &warn, bool &kick) {
   uint16_t _pingseqno;
-  int lag;
+  int lag = 0;
   nboUnpackUShort(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
     float timepassed = TimeKeeper::getCurrent() - lastping;
