@@ -24,6 +24,7 @@
 #include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "OpenGLDisplayList.h"
+#include <string>
 
 class SceneRenderer;
 
@@ -48,6 +49,7 @@ class BackgroundRenderer {
 					const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
 
+    std::string		userTextures[2];
   protected:
     void		drawSky(SceneRenderer&);
     void		drawGround(void);
@@ -77,10 +79,9 @@ class BackgroundRenderer {
 
     // stuff for ground
     OpenGLGState	groundGState[4];
-	OpenGLGState	invGroundGState[4];
+    OpenGLGState	invGroundGState[4];
     OpenGLDisplayList	simpleGroundList[4];
 
-	bool		useColorTexture[2];
     // stuff for grid
     GLfloat		gridSpacing;
     GLfloat		gridCount;

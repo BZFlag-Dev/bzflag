@@ -120,7 +120,11 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
   { "altImageDir",		"alternate",		true,	StateDatabase::ReadWrite,	NULL },
-  { "groundTexRepeat",		"0.1",                  true,	StateDatabase::ReadWrite,	NULL }
+  { "groundTexRepeat",		"0.1",                  true,	StateDatabase::ReadWrite,	NULL },
+
+  // default texture names
+  { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
+  { "zoneGroundTexture",	"zone_ground",          true,	StateDatabase::ReadWrite,	NULL }
 };
 
 #ifdef ROBOT

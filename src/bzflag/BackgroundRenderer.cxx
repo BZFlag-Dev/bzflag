@@ -99,18 +99,16 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   TextureManager &tm = TextureManager::instance();
 
-  useColorTexture[0] = false;
-  useColorTexture[1] = false;
-
   // ground
   {
     // load texture for normal ground
-    OpenGLTexture *groundTexture = tm.getTexture( "std_ground",false );
+    OpenGLTexture *groundTexture = NULL;
+    
+    if (userTextures[0].size())
+      groundTexture = tm.getTexture( userTextures[0].c_str(),false );
 
-	if (!groundTexture || !groundTexture->isValid())
-		groundTexture = tm.getTexture( "ground" );
-	else
-		useColorTexture[0] = true;
+    if (!groundTexture || !groundTexture->isValid())
+      groundTexture = tm.getTexture( BZDB.get("stdGroundTexture").c_str(),true );
 
     // gstates
     gstate.reset();
@@ -126,13 +124,13 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.setTexture(*groundTexture);
     groundGState[3] = gstate.getState();
 
-	// load texture for inverted ground
-    groundTexture = tm.getTexture( "zone_ground",false );
+    // load texture for inverted ground
+    groundTexture = NULL;
+    if (userTextures[1].size())
+      groundTexture = tm.getTexture( userTextures[1].c_str(),false );
 
-	if (!groundTexture || !groundTexture->isValid())
-		groundTexture = tm.getTexture( "ground" );
-	else
-		useColorTexture[1] = true;
+    if (!groundTexture || !groundTexture->isValid())
+      groundTexture = tm.getTexture( BZDB.get("zoneGroundTexture").c_str(),false );
 
     // gstates
     gstate.reset();
@@ -617,14 +615,14 @@ void			BackgroundRenderer::drawGround()
   // draw ground
   glNormal3f(0.0f, 0.0f, 1.0f);
   if (invert){
-    if (useColorTexture[1])
+    if (BZDB.isTrue("texture"))
       glColor3f(1,1,1);
     else
       glColor3fv(groundColorInv[styleIndex]);
     invGroundGState[styleIndex].setState();
   }
   else{
-    if (useColorTexture[0])
+    if (BZDB.isTrue("texture"))
       glColor3f(1,1,1);
     else
       glColor3fv(groundColor[styleIndex]);
