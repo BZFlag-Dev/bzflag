@@ -355,12 +355,12 @@ std::string cmdRadarZoom(const std::string&,
 
   float range = BZDB.eval("displayRadarRange");
 
-  if (args[0] == "in") {
+  if (args[0] == "out") {
     range *= 1.05f;
     if (range > 1.5f)
       range = 1.5f;
     BZDB.setFloat("displayRadarRange", range);
-  } else if (args[0] == "out") {
+  } else if (args[0] == "in") {
     range /= 1.05f;
     if (range < 0.125f)
       range = 0.125f;
@@ -380,12 +380,12 @@ std::string cmdViewZoom(const std::string&,
 
   float fov = BZDB.eval("displayFOV");
 
-  if (args[0] == "in") {
+  if (args[0] == "out") {
     fov += 1.0f;
     if (fov > 60.0f)
       fov = 60.0f;
     BZDB.setFloat("displayFOV", fov);
-  } else if (args[0] == "out") {
+  } else if (args[0] == "in") {
     fov -= 1.0f;
     if (fov < 15.0f)
       fov = 15.0f;
@@ -641,9 +641,9 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
       return "usage: roam zoom {in|out|normal|stop}";
     if (!roamButton || args[1] == "stop") {
       roamDZoom = 0.0f;
-    } else if (args[1] == "in") {
-      roamDZoom = 50.0f;
     } else if (args[1] == "out") {
+      roamDZoom = 50.0f;
+    } else if (args[1] == "in") {
       roamDZoom = -50.0f;
     } else if (args[1] == "normal") {
       roamZoom = 60.0f;
