@@ -43,7 +43,7 @@
  * UTF-8 format.  it would be nice to eventually support
  * full indexing of 
  */
-static const unsigned short int MAX_FILTER_SETS = 256;
+#define MAX_FILTER_SETS 256
 
 
 /** WordFilter will load a list of words and phrases from a file or one at
