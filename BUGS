@@ -18,11 +18,6 @@ recent bugs
 - resetting key map doesn't seem to fully erase the current bindings before
   reapplying defaults (same bug as above?)
 
-- Observer controls get confused sometimes. To see, push control and arrows
-  to spin. While keys are down, push alt. Now release all. You continue spinning
-  un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
-  into situations where movement is out of control.
-
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
 - make maintainer-clean does not enter DIST_SUBDIRS
