@@ -741,7 +741,7 @@ static float baseSize[NumTeams][3];
 static float safetyBasePos[NumTeams][3];
 
 static void stopPlayerPacketRelay();
-static void removePlayer(int playerIndex, char *reason);
+static void removePlayer(int playerIndex, char *reason, bool notify=true);
 static void resetFlag(int flagIndex);
 static void releaseRadio(int playerIndex);
 static void dropFlag(int playerIndex, float pos[3]);
@@ -1542,7 +1542,7 @@ static int puwrite(int playerIndex, const void *b, int l)
   tobesend = assembleUDPPacket(playerIndex,b,&l);
 
   if (!tobesend || (l == 0)) {
-    removePlayer(playerIndex, "Send Queue Overrun");
+    removePlayer(playerIndex, "Send Queue Overrun", false);
     if (tobesend)
       free((unsigned char *)tobesend);
     return -1;
@@ -1575,7 +1575,7 @@ static int puwrite(int playerIndex, const void *b, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
-      removePlayer(playerIndex, "ECONNRESET/EPIPE");
+      removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
       return -1;
     }
 
@@ -1610,13 +1610,13 @@ static int prealwrite(int playerIndex, const void *b, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
-      removePlayer(playerIndex, "ECONNRESET/EPIPE");
+      removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
       return -1;
     }
 
     // dump other errors and remove the player
     nerror("error on write");
-    removePlayer(playerIndex, "Write error");
+    removePlayer(playerIndex, "Write error", false);
     return -1;
   }
 
@@ -1811,7 +1811,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       if (newCapacity >= 20 * 1024) {
 	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
 	    p.callSign, playerIndex, p.outmsgSize + l);
-	removePlayer(playerIndex, NULL);
+	removePlayer(playerIndex, NULL, false);
 	goto unpatch;
       }
 
@@ -2164,17 +2164,17 @@ static int pread(int playerIndex, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
-      removePlayer(playerIndex, "ECONNRESET/EPIPE");
+      removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
       return -1;
     }
 
     // dump other errors and remove the player
     nerror("error on read");
-    removePlayer(playerIndex, "Read error");
+    removePlayer(playerIndex, "Read error", false);
     return -1;
   } else {
     // disconnected
-    removePlayer(playerIndex, "Disconnected");
+    removePlayer(playerIndex, "Disconnected", false);
     return -1;
   }
 
@@ -4161,7 +4161,7 @@ static void zapFlag(int flagIndex)
   resetFlag(flagIndex);
 }
 
-static void removePlayer(int playerIndex, char *reason)
+static void removePlayer(int playerIndex, char *reason, bool notify=true)
 {
   // player is signing off or sent a bad packet.  since the
   // bad packet can come before MsgEnter, we must be careful
@@ -4180,7 +4180,8 @@ static void removePlayer(int playerIndex, char *reason)
       player[playerIndex].callSign, playerIndex, player[playerIndex].fd, reason);
 
   // send a super kill to be polite
-  directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
+  if (notify)
+    directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
 
   // shutdown TCP socket
   shutdown(player[playerIndex].fd, 2);
@@ -5261,7 +5262,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player closing connection
     case MsgExit:
       // data: <none>
-      removePlayer(t, "left");
+      removePlayer(t, "left", false);
       break;
 
     // player requesting new ttl
