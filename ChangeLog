@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* Convert closed FlagIds to flexible FlagDesc's - Micah Dowty, Dave Brosius
 * Add back PNG support from 1.8 - Dave Brosius, Sean Morrison
 * Add back BZDB from 1.8 - David Trowbridge
 * Don't broadcast single player messages - Dave Brosius
