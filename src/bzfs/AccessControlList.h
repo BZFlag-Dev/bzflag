@@ -18,7 +18,7 @@
 #endif
 
 
-#include <ctime>
+#include <time.h>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -229,7 +229,7 @@ public:
 	return false;
       is>>banEnd;
       if (banEnd != 0) {
-	banEnd -= long(std::time(NULL) -TimeKeeper::getCurrent().getSeconds());
+	banEnd -= long(time(NULL) -TimeKeeper::getCurrent().getSeconds());
 	banEnd /= 60;
 	if (banEnd == 0)
 	  banEnd = -1;
@@ -291,7 +291,7 @@ public:
 	os<<"end: 0"<<'\n';
       }
       else {
-	os<<"end: "<<(long(it->banEnd.getSeconds() + std::time(NULL) - 
+	os<<"end: "<<(long(it->banEnd.getSeconds() + time(NULL) - 
 			   TimeKeeper::getCurrent().getSeconds()))<<'\n';
       }
       os<<"banner: "<<it->bannedBy<<'\n';
