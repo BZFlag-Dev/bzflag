@@ -992,7 +992,6 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
     RemotePlayer *pl = World::getWorld()->getPlayer(i);
     if (pl && pl->isAlive()) {
       const char *name = pl->getCallSign();
-      int len = strlen(name);
       double x, y, z;
       hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
@@ -1008,7 +1007,6 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
           flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
           flagStr += ")";
           const char *fname = flagStr.c_str();
-	  len = strlen (fname);
 	  fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, fname) / 2,
 			float(y) + offset - fm.getStrHeight(labelsFontFace, labelsFontSize, fname),
 			0, labelsFontFace, labelsFontSize, fname);
