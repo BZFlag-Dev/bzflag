@@ -50,7 +50,7 @@ use File::stat;
 my $cacheFile = '/tmp/mrtg-bzflag.tmp';
 my @lines;
 
-if (-d $cacheFile && time() - stat($cacheFile)->mtime < 10) {
+if (-d $cacheFile && time() - stat($cacheFile)->mtime < 60) {
   open(CACHEFILE, "<$cacheFile");
   chomp(@lines = <CACHEFILE>);
   close(CACHEFILE);
