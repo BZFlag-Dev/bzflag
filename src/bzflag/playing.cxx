@@ -496,7 +496,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	(key.button == BzfKeyEvent::Down))
       return true;
   }
-
+  
   switch (key.ascii) {
     case 3:	// ^C
     case 27:	// escape
@@ -540,28 +540,28 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	    break;
 	    }
 	  }
-	} else {
-	  int i, mhLen = messageHistory.size();
-	  for (i = 0; i < mhLen; i++) {
-	    if (messageHistory[i] == message) {
-	      messageHistory.erase(messageHistory.begin() + i);
-	      messageHistory.push_front(message);
-	      break;
-	    }
-	  }
-	  if (i == mhLen) {
-	    if (mhLen >= MAX_MESSAGE_HISTORY) {
-	      messageHistory.pop_back();
-	    }
-	    messageHistory.push_front(message);
-	  }
-
-	  char messageBuffer[MessageLen];
-	  memset(messageBuffer, 0, MessageLen);
-	  strncpy(messageBuffer, message.c_str(), MessageLen);
-	  nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-	  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
 	}
+      } else {
+	int i, mhLen = messageHistory.size();
+	for (i = 0; i < mhLen; i++) {
+	  if (messageHistory[i] == message) {
+	    messageHistory.erase(messageHistory.begin() + i);
+	    messageHistory.push_front(message);
+	    break;
+	  }
+	}
+	if (i == mhLen) {
+	  if (mhLen >= MAX_MESSAGE_HISTORY) {
+	    messageHistory.pop_back();
+	  }
+	  messageHistory.push_front(message);
+	}
+	
+	char messageBuffer[MessageLen];
+	memset(messageBuffer, 0, MessageLen);
+	strncpy(messageBuffer, message.c_str(), MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
     }
   }
