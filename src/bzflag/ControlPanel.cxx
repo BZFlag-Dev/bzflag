@@ -33,6 +33,7 @@
 #include "BZDBCache.h"
 #include "AnsiCodes.h"
 #include "FontManager.h"
+#include "TextUtils.h"
 
 /* local implementation headers */
 #include "SceneRenderer.h"
@@ -298,6 +299,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
     // break lines
     while (lineLen > 0) {
+      int lastWhitespace = 0;
       int n;
 
       // how many characters will fit?
@@ -328,8 +330,14 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	  } else {
 	    n++;
 	  }
+	  if (isWhitespace(msg[n])) {
+	    lastWhitespace = n;
+	  }
 	}
       }
+
+      if (lastWhitespace > 0)
+	n = lastWhitespace;
 
       // message
       lines.push_back(std::string(msg).substr(0, n));
