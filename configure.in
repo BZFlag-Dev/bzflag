@@ -541,7 +541,7 @@ if test "x$with_kerberos" = "xyes" ; then
     AC_MSG_RESULT([yes])
   else
     AC_MSG_RESULT([no])
-    AC_MSG_ERROR(Kerberos build support was requested, but Kerberos support was not found)
+    AC_MSG_ERROR([Kerberos build support was requested, but Kerberos support was not found])
   fi
 fi
 
