@@ -17,6 +17,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#if !defined(_WIN32)
+#include <errno.h>
+#endif
 
 /* common implementation headers */
 #include "version.h"
@@ -25,20 +28,19 @@
 #include "Protocol.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
+#include "ErrorHandler.h"
 
 /* local implementation headers */
 #include "ServerListCache.h"
 #include "StartupInfo.h"
-#include "ErrorHandler.h"
-#if !defined(_WIN32)
-#include <errno.h>
-#endif
+
 
 /* from playing.h */
 StartupInfo* getStartupInfo();
 typedef void (*PlayingCallback)(void*);
 void addPlayingCallback(PlayingCallback, void* data);
 void removePlayingCallback(PlayingCallback, void* data);
+
 
 ServerList::ServerList() :
 	numListServers(0),
