@@ -217,7 +217,7 @@ shadows
 yes/no -- turns shadows on or off.
 
 smooth
-yes/no -- turns point & line antialiasing on or off.
+yes/no -- turns point &amp; line antialiasing on or off.
 
 texture
 Sets the texturing filter or turns texturing off. Values can be: no,
@@ -287,7 +287,7 @@ Enables blending of buildings on radar based on height.
 
     <sect1>
 
-      <title>Key Options<title>
+      <title>Key Options</title>
 
       <para>Key values are either a single key's name or two key names
       separated by a slash (e.g. =/+). The mouse buttons are treated

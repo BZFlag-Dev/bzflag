@@ -39,7 +39,7 @@
     </listitem>
 
     <listitem>
-      <para>Press <quote>Start<quote></para>
+      <para>Press <quote>Start</quote></para>
     </listitem>
 
     <listitem>
@@ -116,7 +116,7 @@
     </listitem>
 
     <listitem>
-      <para>Unpack the distribution: <userinpout>cat bzflag.tardist |
+      <para>Unpack the distribution: <userinput>cat bzflag.tardist |
       ( cd /usr/tmp/bzflagroot; tar xvf - )</userinput></para>
     </listitem>
 
