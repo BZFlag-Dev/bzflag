@@ -149,7 +149,10 @@ void *FlagInfo::pack(void *buf)
 void *FlagInfo::fakePack(void *buf)
 {
   buf = nboPackUShort(buf, flagIndex);
-  buf = FlagInfo::flagList[flagIndex].flag.fakePack(buf);
+  if (FlagInfo::flagList[flagIndex].flag.type->flagTeam == ::NoTeam)
+    buf = FlagInfo::flagList[flagIndex].flag.fakePack(buf);
+  else
+    buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
   return buf;
 }
 
