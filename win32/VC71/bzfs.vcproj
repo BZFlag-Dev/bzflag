@@ -164,6 +164,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\Authentication.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\bzfs.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -657,6 +660,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\include\Address.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\Authentication.h">
 			</File>
 			<File
 				RelativePath="..\include\bzfio.h">
