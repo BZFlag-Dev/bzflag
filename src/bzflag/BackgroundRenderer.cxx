@@ -458,7 +458,7 @@ void			BackgroundRenderer::renderSkyAndGround(
       glScissor(x, y, width, height >> 1);
 #endif
     else
-      glScissor(x, y + height - viewHeight, width, (viewHeight >> 1));
+      glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
     if (invert) glClearColor(groundColor, 0.0f, groundColor, 0.0f);
     else glClearColor(0.0f, groundColor, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
