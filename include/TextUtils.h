@@ -24,7 +24,7 @@
  */
 class string_util {
 public:
-  static std::string vformat(const char* fmt, va_list args) {
+  inline static std::string vformat(const char* fmt, va_list args) {
     // FIXME -- should prevent buffer overflow in all cases
     // not all platforms support vsnprintf so we'll use vsprintf and a
     // big temporary buffer and hope for the best.
@@ -32,7 +32,7 @@ public:
     vsnprintf(buffer, 8192, fmt, args);
     return std::string(buffer);
   }
-  static std::string format(const char* fmt, ...) {
+  inline static std::string format(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     std::string result = vformat(fmt, args);
@@ -40,7 +40,31 @@ public:
     return result;
   }
 
-  // replace all of in in replaceMe with withMe
+  /** returns a string converted to lowercase
+   */
+  inline static std::string tolower(const std::string& s)
+  {
+    std::string trans = s;
+
+    std::transform(trans.begin(), trans.end(), // source
+               trans.begin(),    // destination
+               ::tolower);
+    return trans;
+  }
+
+  /** returns a string converted to uppercase
+   */
+  inline static std::string toupper(const std::string& s)
+  {
+    std::string trans = s;
+    std::transform (trans.begin(), trans.end(), // source
+               trans.begin(),    // destination
+               ::toupper);
+    return trans;
+  }
+
+  /** replace all of in in replaceMe with withMe
+   */
   static std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe)
   {
     std::string result;
