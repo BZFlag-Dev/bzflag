@@ -2099,8 +2099,11 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 
   // status message
-  DEBUG1("Player %s [%d] removed: %s\n",
-	 playerData->player.getCallSign(), playerIndex, reason);
+  DEBUG1("Player %s [%d] removed at %s: %s\n",
+	 playerData->player.getCallSign(), 
+	 playerIndex, 
+	 TimeKeeper::timestamp(), 
+	 reason);
   bool wasPlaying = playerData->player.isPlaying();
   playerData->netHandler->closing();
 
@@ -3151,8 +3154,11 @@ static void handleCommand(int t, const void *rawbuf)
       uint16_t rejectCode;
       char     rejectMsg[128];
       bool result = playerData->loadEnterData(buf, rejectCode, rejectMsg);
-      DEBUG1("Player %s [%d] has joined from %s\n",
-	     playerData->player.getCallSign(), t, handler->getTargetIP());
+      DEBUG1("Player %s [%d] has joined from %s at %s\n",
+	     playerData->player.getCallSign(), 
+	     t, 
+	     handler->getTargetIP(),
+	     TimeKeeper::timestamp());
       if (result) {
 	addPlayer(t);
       } else {
