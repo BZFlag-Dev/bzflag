@@ -1,3 +1,7 @@
+This description is not up to date, most recent changes in code have not
+been reflected in here, for example the move to 1 byte playerids, changes to
+MsgMessage, MsgNewRabbit etc.
+
 BZFlag network protocol
 -----------------------
 [ This is a work in progress.  It is mostly done but still incomplete. ]
