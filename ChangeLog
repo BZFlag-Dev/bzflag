@@ -35,6 +35,7 @@ BZFlag 1.7e3
 * don't relay read in player read - Frank Thilo, Tim Riker
 * -fb flags on box buildings - Tim Riker, Colin Bayer
 * networking code fixes - Tim Riker, Frank Thilo, etc.
+* new admin commands - Tim Riker
 
 
 BZFlag 1.7e2
