@@ -151,7 +151,6 @@ private:
   float		desiredSpeed;
   float		desiredAngVel;
   float		lastSpeed;
-  const Obstacle*	insideBuilding;
   float		crossingPlane[4];
   bool		anyShotActive;
   const Player*	target;

@@ -46,7 +46,6 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   desiredSpeed(0.0f),
   desiredAngVel(0.0f),
   lastSpeed(0.0f),
-  insideBuilding(NULL),
   anyShotActive(false),
   target(NULL),
   nemesis(NULL),
@@ -649,17 +648,17 @@ void			LocalPlayer::doUpdateMotion(float dt)
       location = InAir;
     }
   }
-  insideBuilding = (const Obstacle*)(location == InBuilding ? obstacle : NULL);
 
   // see if we're crossing a wall
   if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
-    if (insideBuilding->isCrossing(newPos, newAzimuth,
-				   0.5f * BZDBCache::tankLength,
-				   0.5f * BZDBCache::tankWidth,
-				   BZDBCache::tankHeight, NULL))
+    if (obstacle->isCrossing(newPos, newAzimuth,
+                             0.5f * BZDBCache::tankLength,
+                             0.5f * BZDBCache::tankWidth,
+                             BZDBCache::tankHeight, NULL)) {
       setStatus(getStatus() | int(PlayerState::CrossingWall));
-    else
+    } else {
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
+    }
   } else if (World::getWorld()->crossingTeleporter( newPos, newAzimuth,
 		      0.5f * BZDBCache::tankLength,
 		      0.5f * BZDBCache::tankWidth,
