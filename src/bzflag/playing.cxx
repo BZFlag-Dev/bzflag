@@ -5937,7 +5937,7 @@ void			startPlaying(BzfDisplay* _display,
     std::vector<std::string> msgs = motd.getPrintable(versions);
 
     for (unsigned int j = 0; j < msgs.size(); ++j) {
-      controlPanel->addMessage(ColorStrings[UnderlineColor] + ColorStrings[WhiteColor] + msgs[j]);
+      controlPanel->addMessage(ColorStrings[WhiteColor] + "* " + msgs[j]);
     }
   }
 
