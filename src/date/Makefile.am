@@ -12,4 +12,4 @@ libDate_a_SOURCES  =			\
 	buildDate.cxx
 
 all-local:
-	rm buildDate.o
+	-rm buildDate.o
