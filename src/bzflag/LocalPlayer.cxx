@@ -297,6 +297,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	newAngVel = oldAngVel;
       }
 
+      // below the ground: however I got there, creep up
+      if (oldPosition[2] < groundLimit)
+        newVelocity[2] = max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
+
       // now apply outside forces
       doForces(dt, newVelocity, newAngVel);
 
@@ -333,7 +337,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newPos[0] = tmpPos[0] + timeStep * newVelocity[0];
     newPos[1] = tmpPos[1] + timeStep * newVelocity[1];
     newPos[2] = tmpPos[2] + timeStep * newVelocity[2];
-    if (newPos[2] < groundLimit) newPos[2] = groundLimit;
+    if (newPos[2]<groundLimit && newVelocity[2]<0) newPos[2] = groundLimit;
 
     // see if we hit anything.  if not then we're done.
     obstacle = getHitBuilding(newPos, newAzimuth, phased, expelled);
@@ -356,7 +360,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newPos[0] = tmpPos[0] + t * newVelocity[0];
       newPos[1] = tmpPos[1] + t * newVelocity[1];
       newPos[2] = tmpPos[2] + t * newVelocity[2];
-      if (newPos[2] < groundLimit) newPos[2] = groundLimit;
+      if (newPos[2]<groundLimit && newVelocity[2]<0) newPos[2] = groundLimit;
 
       // see if we hit anything
       bool searchExpelled;
