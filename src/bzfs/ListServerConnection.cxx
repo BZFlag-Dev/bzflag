@@ -171,11 +171,11 @@ void ListServerLink::read()
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
 	char *callsign, *group;
 	callsign = (char *)(base + strlen(tokGoodIdentifier));
-	int playerIndex = getTarget(callsign);
-	DEBUG3("Got: [%d] %s\n", playerIndex, base);
+	DEBUG3("Got: %s\n", base);
 	group = callsign;
 	while (*group && (*group != ':')) group++;
 	while (*group && (*group == ':')) *group++ = 0;
+	int playerIndex = getTarget(callsign);
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  if (!playerData->accessInfo.isRegistered())
