@@ -4153,7 +4153,7 @@ static void parseCommand(const char *message, int t)
     }
   // set sets a world configuration variable that gets sent to all clients
   } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp( message + 1, "set", 3) == 0) {
-    CFGMGR->read(stringstream( message + 1));
+    CMDMGR->run(message + 1);
   // /shutdownserver terminates the server
   } else if (hasPerm(t, shutdownServer) &&
 	    strncmp(message + 1, "shutdownserver", 8) == 0) {
