@@ -6,6 +6,8 @@ MAINTAINERCLEANFILES = \
 bzfs_SOURCES = \
 	AccessControlList.cxx \
 	AccessControlList.h \
+	BZWReader.cxx \
+	BZWReader.h \
 	CmdLineOptions.cxx \
 	CmdLineOptions.h \
 	CustomBase.cxx \
