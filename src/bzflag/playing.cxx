@@ -6101,7 +6101,7 @@ static void		playingLoop()
       SceneDatabase* scene = sceneRenderer->getSceneDatabase();
       if (scene && myTank) {
 	// add my tank
-	myTank->addPlayer(scene, 0, false);
+	myTank->addToScene(scene, myTank->getTeam(), false);
 	if (myTank->getFlag() == Flags::Cloaking) {
 	  // and make it invisible
 	  myTank->setInvisible();
@@ -6123,23 +6123,22 @@ static void		playingLoop()
 	// add flags
 	world->addFlags(scene);
 
-	const GLfloat *override = NULL;
-	if (myTank->getFlag() == Flags::Colorblindness)
-	  override = colorblindColor;
-
-	// add other tanks and shells
+	TeamColor overrideTeam = RogueTeam;
 	const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
+	  
+	// add other tanks and shells
 	for (i = 0; i < curMaxPlayers; i++)
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
-	    if (!colorblind)
-	      if ((player[i]->getFlag() == Flags::Masquerade) && (myTank->getFlag() != Flags::Seer)) {
-		override = Team::getTankColor(myTank->getTeam());
-	      }
+	    overrideTeam = RogueTeam;
+	    if (!colorblind){
+	      if ((player[i]->getFlag() == Flags::Masquerade) && (myTank->getFlag() != Flags::Seer))
+		overrideTeam = myTank->getTeam();
 	      else
-		override = NULL;
-	    player[i]->addPlayer(scene, override, true);
+		overrideTeam = player[i]->getTeam();
+	    }
+	    player[i]->addToScene(scene, overrideTeam, true);
 	    if ((player[i]->getFlag() == Flags::Cloaking) && (myTank->getFlag() != Flags::Seer))
 	      player[i]->setInvisible();
 	    else

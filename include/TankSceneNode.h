@@ -83,7 +83,6 @@ class TankSceneNode : public SceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
-    void		setColorOverride(const GLfloat *override);
     void		setNormal();
     void		setObese();
     void		setTiny();

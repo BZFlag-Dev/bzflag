@@ -69,8 +69,7 @@ public:
   virtual int		getMaxShots() const;
   virtual ShotPath*	getShot(int index) const = 0;
 
-  void		addPlayer(SceneDatabase*, const float* colorOverride,
-			  bool showIDL);
+  void		addToScene(SceneDatabase*, TeamColor efectiveTeam, bool showIDL);
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setHidden(bool hidden = true);
   void		setInvisible(bool invisible = true);
@@ -127,25 +126,30 @@ private:
   bool		getDeadReckoning(float* predictedPos,
 				 float* predictedAzimuth,
 				 float* predictedVel) const;
-
+  void setVisualTeam (TeamColor team );
 private:
   // data not communicated with other players
+  bool			notResponding;
+  bool			autoPilot;
+  bool			hunted;
+  PlayerId		id;			// my credentials
+
+  // data use for drawing
   TankSceneNode*	tankNode;
   TankIDLSceneNode*	tankIDLNode;
   SphereSceneNode*	pausedSphere;
   GLfloat		color[4];
-  bool			notResponding;
-  bool			autoPilot;
+  TeamColor		drawTeam;		// the team I actualy use to draw
+  std::string		userTexture;
   static OpenGLTexture* tankTexture;
-  bool			hunted;
-  PlayerId		id;			// my credentials
+  static OpenGLTexture* tankOverideTexture;
 
   // permanent data
   TeamColor		team;			// my team
+
   char			callSign[CallSignLen];	// my pseudonym
   char			email[EmailLen];	// my email address
   PlayerType		type;                   // Human/Computer
-  std::string		userTexture;
 
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding

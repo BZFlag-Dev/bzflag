@@ -223,13 +223,6 @@ void			TankSceneNode::addShadowNodes(
   renderer.addShadowNode(&shadowRenderNode);
 }
 
-void			TankSceneNode::setColorOverride(const float *override)
-{
-  useOverride = (override != NULL);
-  if (useOverride)
-    memmove(colorOverride, override, sizeof(colorOverride));
-}
-
 void			TankSceneNode::setNormal()
 {
   style = TankRenderNode::Normal;
@@ -609,7 +602,7 @@ void			TankSceneNode::TankRenderNode::render()
   base = getParts(sceneNode->style);
   explodeFraction = sceneNode->explodeFraction;
   isExploding = (explodeFraction != 0.0f);
-  color = sceneNode->useOverride ? sceneNode->colorOverride : sceneNode->color;
+  color = sceneNode->color;
   alpha = sceneNode->color[3];
 
   if (!sceneNode->blending && sceneNode->transparent) myStipple(alpha);

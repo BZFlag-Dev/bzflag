@@ -240,7 +240,7 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
   if (!wallTexture || !wallTexture->isValid())
     wallTexture = tm.getTexture( "wall" );
   else
-    useColorTexture = true;
+    useColorTexture = BZDB.isTrue("texture");
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
 				o.getHeight() / wallTexHeight, wallLOD))) {
@@ -277,7 +277,7 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   if (!boxTexture || !boxTexture->isValid())
      boxTexture = tm.getTexture( "boxwall" );
   else
-    useColorTexture[0] = true;
+    useColorTexture[0] = BZDB.isTrue("texture");
 
   OpenGLTexture *boxTopTexture = NULL;
 
@@ -288,7 +288,7 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   if (!boxTopTexture || !boxTopTexture->isValid())
     boxTopTexture = tm.getTexture( "roof" );
   else
-    useColorTexture[1] = true;
+    useColorTexture[1] = BZDB.isTrue("texture");
 
   while ((node = ((part != 5) ? nodeGen->getNextNode(
 				-1.5f*boxTexWidth,
@@ -338,7 +338,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   if (!pyramidTexture || !pyramidTexture->isValid())
     pyramidTexture = tm.getTexture( "pyrwall" );
   else
-    useColorTexture = true;
+    useColorTexture = BZDB.isTrue("texture");
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   while ((node = nodeGen->getNextNode(-3.0f * boxTexHeight,
@@ -381,7 +381,7 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   if (!boxTexture || !boxTexture->isValid())
     boxTexture = tm.getTexture( "boxwall" );
   else
-    useColorTexture[0] = true;
+    useColorTexture[0] = BZDB.isTrue("texture");
 
   OpenGLTexture *baseTopTexture = NULL;
 
@@ -395,7 +395,7 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   if (!baseTopTexture || !baseTopTexture->isValid())
     baseTopTexture = NULL;
   else
-    useColorTexture[1] = true;
+    useColorTexture[1] = BZDB.isTrue("texture");
 
   // this assumes bases have 6 parts - if they don't, it still works
   int part = 0;
@@ -453,7 +453,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   if (!teleporterTexture || !teleporterTexture->isValid())
     teleporterTexture = tm.getTexture( "caution" );
   else
-    useColorTexture = true;
+    useColorTexture = BZDB.isTrue("texture");
 
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
 							teleporterLOD))) {

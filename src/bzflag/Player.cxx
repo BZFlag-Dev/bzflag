@@ -160,78 +160,11 @@ void			Player::setAngularVelocity(float _angVel)
 
 void			Player::changeTeam(TeamColor _team)
 {
-  static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
-  static GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
-  static float		tankShininess = 20.0f;
-  static GLfloat	rabbitEmissive[3] = { 0.25f, 0.25f, 0.25f };
-  static float		rabbitShininess = 100.0f;
-
-  GLfloat *emissive;
-  GLfloat shininess;
-
   // set team
   team = _team;
 
-  if (team == RabbitTeam) {
-    emissive = rabbitEmissive;
-    shininess = rabbitShininess;
-  }
-  else {
-    emissive = tankEmissive;
-    shininess = tankShininess;
-  }
-
-  // get the texture each time, since it's just a refrence
-  bool useColorTexture = false;
-  const bool hunter = World::getWorld()->allowRabbit() && team != RabbitTeam;
-
-  TextureManager &tm = TextureManager::instance();
-  std::string texName;
-  if (hunter)
-    texName = "hunter_";
-  else
-    texName = Team::getImagePrefix(team);
-
-  texName += "tank";
-
-  // now after we did all that, see if they have a user texture
-  tankTexture = NULL;
-  if (userTexture.size())
-    tankTexture = tm.getTexture(userTexture.c_str(),false);
-
-  // if the user load failed try our calculated texture
-  if (!tankTexture || !tankTexture->isValid())
-    tankTexture = tm.getTexture(texName.c_str(),false);
-  if (tankTexture && tankTexture->isValid())
-    useColorTexture = true;
-  else
-    tankTexture = tm.getTexture("tank");
-
-  // change color of tank
-  const float* _color = Team::getTankColor(team);
-  if (BZDB.isTrue("texture")){	// color is in the image
-    color[0] = 1.0f;
-    color[1] = 1.0f;
-    color[2] = 1.0f;
-  }
-  else {
-    // we are the hunter, we are orange..
-    // TODO this is cheap, just untill a "hunter" team is made
-    if (hunter) {
-      color[0] = 1.0f;
-      color[1] = 0.5f;
-      color[2] = 0.0f;
-    }
-    else {
-      color[0] = _color[0];
-      color[1] = _color[1];
-      color[2] = _color[2];
-    }
-  }
-  color[3] = 1.0f;
-  tankNode->setColor(color);
-  tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
-  tankNode->setTexture(*tankTexture);
+  // set the scene node
+  setVisualTeam(team);
 }
 
 void			Player::setStatus(short _status)
@@ -307,13 +240,82 @@ void			Player::updateSparks(float /*dt*/)
   tankNode->setColor(color);
 }
 
-void			Player::addPlayer(SceneDatabase* scene,
-					  const float* colorOverride,
+void			Player::setVisualTeam (TeamColor visualTeam)
+{
+  static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
+  static GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
+  static float		tankShininess = 20.0f;
+  static GLfloat	rabbitEmissive[3] = { 0.25f, 0.25f, 0.25f };
+  static float		rabbitShininess = 100.0f;
+
+  GLfloat *emissive;
+  GLfloat shininess;
+
+  if (visualTeam == RabbitTeam) {
+    emissive = rabbitEmissive;
+    shininess = rabbitShininess;
+  }
+  else {
+    emissive = tankEmissive;
+    shininess = tankShininess;
+  }
+
+  // get the texture each time, since it's just a refrence
+  const bool hunter = World::getWorld()->allowRabbit() && visualTeam != RabbitTeam;
+
+  TextureManager &tm = TextureManager::instance();
+  std::string texName;
+  if (hunter)
+    texName = "hunter_";
+  else
+    texName = Team::getImagePrefix(visualTeam);
+
+  texName += "tank";
+
+  // now after we did all that, see if they have a user texture
+  tankTexture = NULL;
+  if (userTexture.size())
+    tankTexture = tm.getTexture(userTexture.c_str(),false);
+
+  // if the user load failed try our calculated texture
+  if (!tankTexture || !tankTexture->isValid())
+    tankTexture = tm.getTexture(texName.c_str(),false);
+
+  // change color of tank
+  const float* _color = Team::getTankColor(visualTeam);
+  if (BZDB.isTrue("texture") && tankTexture && tankTexture->isValid()){	// color is in the image
+    color[0] = 1.0f;
+    color[1] = 1.0f;
+    color[2] = 1.0f;
+  }
+  else {
+    // we are the hunter, we are orange..
+    // TODO this is cheap, just untill a "hunter" team is made
+    if (hunter) {
+      color[0] = 1.0f;
+      color[1] = 0.5f;
+      color[2] = 0.0f;
+    }
+    else {
+      color[0] = _color[0];
+      color[1] = _color[1];
+      color[2] = _color[2];
+    }
+  }
+  color[3] = 1.0f;
+  tankNode->setColor(color);
+  tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
+  tankNode->setTexture(*tankTexture);
+}
+
+
+void			Player::addToScene(SceneDatabase* scene,
+					  TeamColor efectiveTeam,
 					  bool showIDL)
 {
   if (!isAlive() && !isExploding()) return;
   tankNode->move(state.pos, forward);
-  tankNode->setColorOverride(colorOverride);
+  setVisualTeam(efectiveTeam);
   if (isAlive()) {
     if (flagType == Flags::Obesity) tankNode->setObese();
     else if (flagType == Flags::Tiny) tankNode->setTiny();
