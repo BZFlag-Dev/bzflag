@@ -884,7 +884,7 @@ In the following examples, the values are the defaults.
 .br
 \fBinitdelay\fR 10.0
 .br
-\fBdelay\fR 10.0
+\fBdelay\fR 10.0 3.0 5.0 3.0
 .br
 \fBtype\fR V
 .br
