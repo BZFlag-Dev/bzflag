@@ -56,7 +56,7 @@ struct FiringInfo {
 
   public:
     ShotUpdate		shot;
-    FlagId		flag;			// flag when fired
+    FlagDesc*		flag;			// flag when fired
     float		lifetime;		// lifetime of shot (s)
 };
 
