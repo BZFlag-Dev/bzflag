@@ -455,7 +455,10 @@ bool			Player::isDeadReckoningWrong() const
   getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel);
 
   // always send a new packet on reckoned touchdown
-  if (predictedPos[2] < 0.0f) return true;
+  float groundLimit = 0.0f;
+  if (getFlag() == Flags::Burrow)
+    groundLimit = BZDB->eval(StateDatabase::BZDB_BURROWDEPTH);
+  if (predictedPos[2] < groundLimit) return true;
 
   // client side throttling
   const int throttleRate = 30; // should be configurable
