@@ -52,10 +52,10 @@ extern int __beginendCount;
 // The following are temporary until a 
 // proper context manager is in place.
 #ifndef glDeleteLists
-# define glDeleteLists(base,count) 
+# define glDeleteLists(base,count) {}
 #endif
 #ifndef glDeleteTextures
-# define glDeleteTextures(count,textures) 
+# define glDeleteTextures(count,textures) {}
 #endif
 
 
