@@ -280,7 +280,7 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   //teleporters so that teleporters can be off of the ground at different heights.
 
   //pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
-  pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2]
+  pOut[2] = t2.getPosition()[2]
 	  + ((pIn[2] - getPosition()[2]) * (t2.getHeight() - t2.getBorder()))/getHeight();
 
   if (dOut && dIn) {
