@@ -51,7 +51,7 @@ file=$root/win32/installer.dsp
 if [ ! -w $file ]; then
   echo "$file not found or not writable."
 else
-  sed -e "s/BZFlag_[^\"]*\"/BZFlag_$BZVERSION.exe\"/g" < $file > $tmp
+  sed -e "s/BZFlag[0-9][^\"]*\"/BZFlag$BZVERSION.exe\"/g" < $file > $tmp
   cat $tmp > $file
 fi
 
