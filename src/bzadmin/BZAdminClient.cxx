@@ -14,7 +14,11 @@
 #pragma warning( 4: 4786)
 #endif
 
-#include <cmath>
+#ifdef HAVE_CMATH
+#  include <cmath>
+#else
+#  include <math.h>
+#endif
 #include <iostream>
 #include <sstream>
 
@@ -82,7 +86,6 @@ BZAdminClient::ServerCode
 BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
   uint16_t code, len;
   char inbuf[MaxPacketLen];
-  int e;
   std::string dstName, srcName;
   int i;
   PlayerIdMap::iterator iter;
@@ -90,7 +93,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
-  while ((e = sLink.read(code, len, inbuf, 100)) == 1) {
+  while (sLink.read(code, len, inbuf, 100) == 1) {
 
     colorCode = Default;
     void* vbuf = inbuf;
