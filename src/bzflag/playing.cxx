@@ -122,6 +122,7 @@ HUDRenderer*		hud = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
+static bool             joinRequested    = false;
 static JoinGameCallback	joinGameCallback = NULL;
 static void*		joinGameUserData = NULL;
 static ConnectStatusCallback connectCallback = NULL;
@@ -163,6 +164,11 @@ static void*		handleMsgSetVars(void *msg);
 void			handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
+static void             enteringServer(void *buf);
+static void             joinInternetGame2();
+static void             cleanWorldCache();
+static void             markOld(std::string &fileName);
+void	                leaveGame();
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 static void		setRobotTarget(RobotPlayer* robot);
 extern void		doAutoPilot(float &rotation, float &speed);
@@ -204,6 +210,14 @@ extern struct tm	userTime;
 static double		userTimeEpochOffset;
 
 static bool             entered = false;
+static bool             joiningGame   = false;
+static WorldBuilder    *worldBuilder  = NULL;
+static std::string      worldUrl;
+static std::string      worldCachePath;
+static uint32_t         worldPtr      = 0;
+static int              worldSize;
+static char            *worldDatabase = NULL;
+static bool             isCacheTemp;
 
 StartupInfo::StartupInfo() : hasConfiguration(false),
 			     autoConnect(false),
@@ -440,6 +454,7 @@ static void		callPlayingCallbacks()
 
 void			joinGame(JoinGameCallback cb, void* data)
 {
+  joinRequested    = true;
   joinGameCallback = cb;
   joinGameUserData = data;
 }
@@ -855,6 +870,19 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 }
 
 static void doKey(const BzfKeyEvent& key, bool pressed) {
+  if (joiningGame && pressed) {
+    if (worldBuilder) {
+      delete worldBuilder;
+      worldBuilder = NULL;
+    }
+    if (worldDatabase) {
+      delete[] worldDatabase;
+      worldDatabase = NULL;
+    }
+    printError("Download stopped by user action");
+    leaveGame();
+    (*joinGameCallback)(false, joinGameUserData);
+  }
   if (!myTank)
     doKeyNotPlaying(key, pressed);
   else
@@ -1361,10 +1389,139 @@ static bool removePlayer (PlayerId id)
   return true;
 }
 
-static void enteringServer(void *buf);
+static bool isCached(char *hexDigest)
+{
+  std::istream *cachedWorld;
+  bool cached    = false;;
+  worldCachePath = getCacheDirName();
+  worldCachePath += hexDigest;
+  worldCachePath += ".bwc";
+  if ((cachedWorld = FILEMGR.createDataInStream(worldCachePath, true))) {
+    cached = true;
+    delete cachedWorld;
+  }
+  return cached;
+}
+
+static bool isUrlCached(char *hexDigest)
+{
+  bool         gotFromURL = false;
+  unsigned int readSize;
+
+  if (worldUrl.size())
+    gotFromURL = URLManager::instance().getURL
+      (worldUrl, (void **) &worldDatabase, readSize);
+  if (gotFromURL) {
+    MD5 md5;
+    md5.update((unsigned char *)worldDatabase, readSize);
+    md5.finalize();
+    std::string digest = md5.hexdigest();
+    if (strcmp(md5.hexdigest().c_str(), &hexDigest[1]))
+      gotFromURL = false;
+  }
+  if (gotFromURL) {
+    cleanWorldCache();
+    std::ostream* cacheOut = FILEMGR.createDataOutStream(worldCachePath, true,
+							 true);
+    if (cacheOut != NULL) {
+      cacheOut->write(worldDatabase, readSize);
+      delete cacheOut;
+    } else {
+      gotFromURL = false;
+    }
+    URLManager::instance().freeURLData((void *)worldDatabase);
+  }
+  return gotFromURL;
+}
+
+static void loadCachedWorld()
+{
+  std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
+  connectStatusCB("Loading world from cache...");
+  cachedWorld->seekg(0, std::ios::end);
+  std::streampos size = cachedWorld->tellg();
+  unsigned long charSize = std::streamoff(size);
+  cachedWorld->seekg(0);
+  char *worldDatabase = new char[charSize];
+  cachedWorld->read(worldDatabase, charSize);
+  delete cachedWorld;
+
+  // make world
+  if (!worldBuilder->unpack(worldDatabase)) {
+    // world didn't make for some reason
+    delete[] worldDatabase;
+    printError("Error downloading world database.");
+    leaveGame();
+    (*joinGameCallback)(false, joinGameUserData);
+    return;
+  }
+  delete[] worldDatabase;
+
+  // return world
+  world = worldBuilder->getWorld();    
+  (*joinGameCallback)(true, joinGameUserData);
+  joinInternetGame2();
+  joiningGame = false;
+}
+
+static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
+{
+  if (worldPtr) {
+    connectStatusCB(TextUtils::format
+		    ("Downloading World (%2d%% complete/%d kb remaining)...",
+		     100 - (100 * (bytesLeft / 1024) / (worldSize / 1024)),
+		     bytesLeft / 1024));
+  } else {
+    // get size of entire world database and make space
+    worldSize = bytesLeft + len;
+    worldDatabase = new char[worldSize];
+    if (!worldDatabase) {
+      delete worldBuilder;
+      worldBuilder = NULL;
+      if (worldDatabase) {
+	delete[] worldDatabase;
+	worldDatabase = NULL;
+      }
+      printError("Error downloading world database.");
+      leaveGame();
+      (*joinGameCallback)(false, joinGameUserData);
+      return false;
+    }
+    connectStatusCB(TextUtils::format("Downloading World (%d kb)...",
+				      worldSize / 1024));
+  }
+  // add chunk to database so far
+  ::memcpy(worldDatabase + int(worldPtr), buf, len);
+  // increment pointer
+  worldPtr += len;
+
+  if (bytesLeft != 0) {
+    char msg[MaxPacketLen];
+    // ask for next chunk
+    nboPackUInt(msg, worldPtr);
+    serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+    return false;
+  }
+  
+  if (worldCachePath.length() > 0) {
+    cleanWorldCache();
+    std::ostream* cacheOut
+      = FILEMGR.createDataOutStream(worldCachePath, true, true);
+    if (cacheOut != NULL) {
+      cacheOut->write(worldDatabase, worldSize);
+      delete cacheOut;
+      if (isCacheTemp)
+	markOld(worldCachePath);
+    }
+  }
+  delete[] worldDatabase;
+  worldDatabase = NULL;
+
+  return true;
+}
 
 static void		handleServerMessage(bool human, uint16_t code,
-					    uint16_t, void* msg)
+					    uint16_t len, void* msg)
 {
   std::vector<std::string> args;
   bool checkScores = false;
@@ -1403,6 +1560,57 @@ static void		handleServerMessage(bool human, uint16_t code,
       serverError = true;
       break;
     }
+
+  case MsgGameSetting: {
+    if (worldBuilder)
+      delete worldBuilder;
+    worldBuilder = new WorldBuilder;
+    worldBuilder->gameSetting(msg);
+    serverLink->send(MsgWantWHash, 0, NULL);
+    connectStatusCB("Requesting World Hash...");
+    break;
+  }
+
+  case MsgCacheURL: {
+    char *cacheURL = new char[len];
+    nboUnpackString(msg, cacheURL, len);
+    worldUrl = cacheURL;
+    delete [] cacheURL;
+    break;
+  }
+
+  case MsgWantWHash: {
+    char *hexDigest = new char[len];
+    nboUnpackString(msg, hexDigest, len);
+    if (isCached(hexDigest) || isUrlCached(hexDigest)) {
+      delete [] hexDigest;
+      loadCachedWorld();
+      delete worldBuilder;
+      worldBuilder = NULL;
+      break;
+    }
+    isCacheTemp = hexDigest[0] == 't';
+    delete [] hexDigest;
+    connectStatusCB("Downloading World...");
+    {
+      char msg[MaxPacketLen];
+      // ask for world
+      nboPackUInt(msg, 0);
+      serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+      worldPtr = 0;
+    }
+    break;
+  }
+
+  case MsgGetWorld: {
+    // create world
+    uint32_t bytesLeft;
+    void *buf = nboUnpackUInt(msg, bytesLeft);
+    bool last = processWorldChunk(buf, len - 4, bytesLeft);
+    if (last)
+      loadCachedWorld();
+    break;
+  }
 
     case MsgTimeUpdate: {
       uint16_t timeLeft;
@@ -3624,158 +3832,6 @@ static bool negotiateFlags(ServerLink* serverLink)
   return true;
 }
 
-//
-// join/leave a game
-//
-
-static World*		makeWorld(ServerLink* serverLink)
-{
-  std::istream *cachedWorld = NULL;
-  uint16_t code, len;
-  uint32_t size;
-  char msg[MaxPacketLen];
-  std::string worldPath;
-  bool isTemp = false;
-  char *cacheURL = NULL;
-  std::string url;
-  WorldBuilder worldBuilder;
-
-  connectStatusCB("Requesting World Hash...");
-
-  // ask for the hash of the world (ignoring all other messages)
-  serverLink->send(MsgWantSetting, 0, NULL);
-  if (serverLink->read(code, len, msg, 5000) <= 0)
-    return NULL;
-  if (code != MsgGameSetting)
-    return NULL;
-  worldBuilder.gameSetting(msg);
-
-  serverLink->send(MsgWantWHash, 0, NULL);
-  if (serverLink->read(code, len, msg, 5000) <= 0)
-    return NULL;
-  if (code == MsgCacheURL) {
-    cacheURL = new char[len];
-    nboUnpackString(msg, cacheURL, len);
-    url = cacheURL;
-    delete [] cacheURL;
-    if (serverLink->read(code, len, msg, 5000) <= 0)
-      return NULL;
-  }
-
-  if (code != MsgWantWHash) return NULL;
-
-  char *hexDigest = new char[len];
-  nboUnpackString(msg, hexDigest, len);
-  isTemp = hexDigest[0] == 't';
-
-  worldPath = getCacheDirName();
-  worldPath += hexDigest;
-  worldPath += ".bwc";
-  cachedWorld = FILEMGR.createDataInStream(worldPath, true);
-
-  connectStatusCB("Downloading World...");
-
-  char* worldDatabase;
-  bool  gotFromURL = false;
-  unsigned int readSize;
-  if ((cachedWorld == NULL) && url.size() && !isTemp) {
-    gotFromURL = URLManager::instance().getURL(url, (void **) &worldDatabase,
-					       readSize);
-  }
-  if (gotFromURL) {
-    MD5 md5;
-    md5.update((unsigned char *)worldDatabase, readSize);
-    md5.finalize();
-    std::string digest = md5.hexdigest();
-    if (strcmp(md5.hexdigest().c_str(), &hexDigest[1]))
-      gotFromURL = false;
-  }
-  delete[] hexDigest;
-  if (gotFromURL) {
-    cleanWorldCache();
-    std::ostream* cacheOut
-      = FILEMGR.createDataOutStream(worldPath, true, true);
-    if (cacheOut != NULL) {
-      cacheOut->write(worldDatabase, readSize);
-      delete cacheOut;
-    }
-    cachedWorld = FILEMGR.createDataInStream(worldPath, true);
-    URLManager::instance().freeURLData((void *)worldDatabase);
-  }
-  if (cachedWorld == NULL) {
-    // ask for world and wait for it (ignoring all other messages)
-    nboPackUInt(msg, 0);
-    serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
-    if (serverLink->read(code, len, msg, 5000) <= 0) return NULL;
-    if (code == MsgNull || code == MsgSuperKill) return NULL;
-    if (code != MsgGetWorld) return NULL;
-
-    // get size of entire world database and make space
-    uint32_t bytesLeft;
-    void *buf = nboUnpackUInt(msg, bytesLeft);
-    size = bytesLeft + len - 4;
-    worldDatabase = new char[size];
-
-    connectStatusCB(TextUtils::format("Downloading World (%d kb)...", size / 1024));
-
-    // get world database
-    uint32_t ptr = 0;
-    while (bytesLeft != 0) {
-      // add chunk to database so far
-      ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
-
-      // increment pointer
-      ptr += len - sizeof(uint32_t);
-      // ask and wait for next chunk
-      nboPackUInt(msg, ptr);
-      serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
-      if (serverLink->read(code, len, msg, 5000) < 0 ||
-	  code == MsgNull || code == MsgSuperKill) {
-	delete[] worldDatabase;
-	return NULL;
-      }
-      // get bytes left
-      buf = nboUnpackUInt(msg, bytesLeft);
-
-      connectStatusCB(TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
-					  100 - (100 * (bytesLeft / 1024) / (size / 1024)), bytesLeft / 1024));
-    }
-    // add final chunk
-    ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
-
-    if (worldPath.length() > 0) {
-      cleanWorldCache();
-      std::ostream* cacheOut = FILEMGR.createDataOutStream(worldPath, true, true);
-      if (cacheOut != NULL) {
-	cacheOut->write(worldDatabase, size);
-	delete cacheOut;
-	if (isTemp)
-	  markOld(worldPath);
-      }
-    }
-  } else {
-    connectStatusCB("Loading world from cache...");
-    cachedWorld->seekg(0, std::ios::end);
-    std::streampos size = cachedWorld->tellg();
-    unsigned long charSize = std::streamoff(size);
-    cachedWorld->seekg(0);
-    worldDatabase = new char[charSize];
-    cachedWorld->read(worldDatabase, charSize);
-  }
-
-  // make world
-  if (!worldBuilder.unpack(worldDatabase)) {	// world didn't make for some reason
-    delete[] worldDatabase;
-    return NULL;
-  }
-
-  delete[] worldDatabase;
-  delete cachedWorld;
-
-  // return world
-  return worldBuilder.getWorld();
-}
-
 #if defined(FIXME) && defined(ROBOT)
 static void saveRobotInfo(Playerid id, void *msg)
 {
@@ -3819,6 +3875,7 @@ static void saveRobotInfo(Playerid id, void *msg)
 void		leaveGame()
 {
   entered = false;
+  joiningGame = false;
 
   // delete scene database
   sceneRenderer->setSceneDatabase(NULL);
@@ -3906,20 +3963,44 @@ void		leaveGame()
   serverDied = false;
 }
 
-static bool		joinGame(const StartupInfo* info,
-				 ServerLink* _serverLink)
+static void joinInternetGame()
 {
+  // open server
+  Address serverAddress(startupInfo.serverName);
+  if (serverAddress.isAny()) {
+    (*joinGameCallback)(false, joinGameUserData);
+    return;
+  }
+  ServerLink* _serverLink = new ServerLink(serverAddress,
+					   startupInfo.serverPort);
+
+#if defined(ROBOT)
+  extern int numRobotTanks;
+  int i, j;
+  for (i = 0, j = 0; i < numRobotTanks; i++) {
+    robotServer[j] = new ServerLink(serverAddress, startupInfo.serverPort,
+				    j + 1);
+    if (!robotServer[j] || robotServer[j]->getState() != ServerLink::Okay) {
+      delete robotServer[j];
+      continue;
+    }
+    j++;
+  }
+  numRobots = j;
+#endif
+
+  serverLink = _serverLink;
+
   // assume everything's okay for now
   serverDied = false;
   serverError = false;
   admin = false;
 
-  serverLink = _serverLink;
-
   if (!serverLink) {
     printError("Memory error");
     leaveGame();
-    return false;
+    (*joinGameCallback)(false, joinGameUserData);
+    return;
   }
 
   // printError("Join Game");
@@ -3963,24 +4044,24 @@ static bool		joinGame(const StartupInfo* info,
     }
 
     leaveGame();
-    return false;
+    (*joinGameCallback)(false, joinGameUserData);
+    return;
   }
 
   connectStatusCB("Connection Established...");
 
   if (!negotiateFlags(serverLink)) {
     leaveGame();
-    return false;
+    (*joinGameCallback)(false, joinGameUserData);
+    return;
   }
 
-  // create world
-  world = makeWorld(serverLink);
-  if (!world) {
-    printError("Error downloading world database.");
-    leaveGame();
-    return false;
-  }
+  serverLink->send(MsgWantSetting, 0, NULL);
+  joiningGame = true;
+}
 
+static void joinInternetGame2()
+{
   ServerLink::setServer(serverLink);
   World::setWorld(world);
 
@@ -4009,8 +4090,9 @@ static bool		joinGame(const StartupInfo* info,
   controlPanel->resize();
 
   // make local player
-  myTank = new LocalPlayer(serverLink->getId(), info->callsign, info->email);
-  myTank->setTeam(info->team);
+  myTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign,
+			   startupInfo.email);
+  myTank->setTeam(startupInfo.team);
   LocalPlayer::setMyTank(myTank);
 
   if (world->allowRabbit() && myTank->getTeam() != ObserverTeam)
@@ -4019,47 +4101,6 @@ static bool		joinGame(const StartupInfo* info,
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(), myTank->getEmailAddress());
-
-  return true;
-}
-
-static bool		joinInternetGame(const StartupInfo* info)
-{
-  // open server
-  Address serverAddress(info->serverName);
-  if (serverAddress.isAny()) return false;
-  ServerLink* serverLink = new ServerLink(serverAddress, info->serverPort);
-
-  Address multicastAddress(BroadcastAddress);
-
-#if defined(ROBOT)
-  extern int numRobotTanks;
-  int i, j;
-  for (i = 0, j = 0; i < numRobotTanks; i++) {
-    robotServer[j] = new ServerLink(serverAddress, info->serverPort, j + 1);
-    if (!robotServer[j] || robotServer[j]->getState() != ServerLink::Okay) {
-      delete robotServer[j];
-      continue;
-    }
-    j++;
-  }
-  numRobots = j;
-#endif
-
-  return joinGame(info, serverLink);
-}
-
-static bool		joinGame()
-{
-  // assume we have everything we need to join.  figure out how
-  // to join by which arguments are set in StartupInfo.
-  // currently only support joinInternetGame.
-  if (startupInfo.serverName[0])
-    return joinInternetGame(&startupInfo);
-
-  // can't figure out how to join
-  printError("Can't figure out how to join.");
-  return false;
 }
 
 static void		renderDialog()
@@ -4675,15 +4716,15 @@ static void		playingLoop()
     // try to join a game if requested.  do this *before* handling
     // events so we do a redraw after the request is posted and
     // before we actually try to join.
-    if (joinGameCallback) {
+    if (joinRequested) {
       // if already connected to a game then first sign off
       if (myTank) leaveGame();
 
       // now try connecting
-      (*joinGameCallback)(joinGame(), joinGameUserData);
+      joinInternetGame();
 
       // don't try again
-      joinGameCallback = NULL;
+      joinRequested = false;
     }
 
     mainWindow->getWindow()->yieldCurrent();
@@ -5544,6 +5585,7 @@ void			startPlaying(BzfDisplay* _display,
   if (startupInfo.autoConnect &&
       startupInfo.callsign[0] && startupInfo.serverName[0]) {
     joinGameCallback = &joinGameHandler;
+    joinRequested    = true;
     controlPanel->addMessage("Trying...");
   } else {
     HUDDialogStack::get()->push(mainMenu);
