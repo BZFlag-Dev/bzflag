@@ -76,19 +76,6 @@ const char*		Team::getName(TeamColor team) // const
   }
 }
 
-TeamColor		Team::getTeam(std::string teamname) // const
-{
-  if (teamname == "Automatic") return AutomaticTeam;
-  if (teamname == "Rogue") return RogueTeam;
-  if (teamname == "Red Team") return RedTeam;
-  if (teamname == "Green Team") return GreenTeam;
-  if (teamname == "Blue Team") return BlueTeam;
-  if (teamname == "PurpleTeam") return PurpleTeam;
-  if (teamname == "ObserverTeam") return ObserverTeam;
-  if (teamname == "Rabbit") return RabbitTeam;
-  return NoTeam;			 
-}
-
 const float*		Team::getTankColor(TeamColor team) // const
 {
   if (int(team) < 0) {

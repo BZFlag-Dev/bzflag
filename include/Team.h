@@ -31,7 +31,6 @@ struct Team {
     void*		unpack(void*);
 
   static const char*	getName(TeamColor); // const
-  static TeamColor	getTeam(std::string); // const
   static const float*	getTankColor(TeamColor); // const
   static const float*	getRadarColor(TeamColor); // const
   static bool		isColorTeam(TeamColor); // const
