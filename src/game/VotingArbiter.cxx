@@ -38,7 +38,7 @@ void VotingArbiter::updatePollers(void)
 bool VotingArbiter::isPollerWaiting(const std::string &name) const
 {
   for (unsigned int i = 0; i < _pollers.size(); i++) {
-    if (compare_nocase(_pollers[i].name, name) == 0) {
+    if (string_util::compare_nocase(_pollers[i].name, name) == 0) {
       return true;
     }
   }
@@ -151,7 +151,7 @@ bool VotingArbiter::setAvailableVoters(unsigned short int count)
 bool VotingArbiter::grantSuffrage(const std::string &player)
 {
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
-    if (compare_nocase(_suffraged[i], player) == 0) {
+    if (string_util::compare_nocase(_suffraged[i], player) == 0) {
       return true;
     }
   }
@@ -169,7 +169,7 @@ bool VotingArbiter::hasSuffrage(const std::string &player) const
   // was this player granted the right to vote?
   bool foundPlayer = false;
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
-    if (compare_nocase(_suffraged[i], player) == 0) {
+    if (string_util::compare_nocase(_suffraged[i], player) == 0) {
       foundPlayer = true;
       break;
     }

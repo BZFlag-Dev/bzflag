@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <sstream>
 #include "BZAdminClient.h"
 #include "CursesMenu.h"
 #include "StateDatabase.h"

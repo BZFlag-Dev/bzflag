@@ -367,11 +367,11 @@ bool readPassFile(const std::string &filename)
   std::string line;
   while (std::getline(in, line)) {
     // Should look at an unescaped ':'
-    int colonpos = unescape_lookup(line, '\\', ':');
+    int colonpos = string_util::unescape_lookup(line, '\\', ':');
     if (colonpos == -1)
       continue;
     {
-      std::string name = unescape(line.substr(0, colonpos), '\\');
+      std::string name = string_util::unescape(line.substr(0, colonpos), '\\');
       std::string pass = line.substr(colonpos + 1);
       makeupper(name);
       setUserPassword(name.c_str(), pass.c_str());
@@ -388,7 +388,7 @@ bool writePassFile(const std::string &filename)
     return false;
   PasswordMap::iterator itr = passwordDatabase.begin();
   while (itr != passwordDatabase.end()) {
-    out << escape(itr->first, '\\') << ':' << itr->second << std::endl;
+    out << string_util::escape(itr->first, '\\') << ':' << itr->second << std::endl;
     itr++;
   }
   out.close();

@@ -78,7 +78,7 @@ extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
 static bool		anonymous = false;
 static std::string	anonymousName("anonymous");
-static std::string	alternateConfig("");
+static std::string	alternateConfig;
 static bool		noAudio = false;
 struct tm		userTime;
 static StartupInfo	startupInfo;
@@ -368,21 +368,21 @@ void updateConfigFile(void)
     // iconify
     BzfKeyEvent key;
     if (KEYMGR.stringToKeyEvent("F4", key)
-        && (KEYMGR.get(key, true) == std::string("")))
+        && (KEYMGR.get(key, true) == ""))
       KEYMGR.bind(key, true, "iconify");
     // toggle console & radar
     if (KEYMGR.stringToKeyEvent("F3", key)
-        && (KEYMGR.get(key, true) == std::string("")))
+        && (KEYMGR.get(key, true) == ""))
       KEYMGR.bind(key, true, "toggleConsoleAndRadar");
     // controlpanel tabs - all or nothing
     if (KEYMGR.stringToKeyEvent("Shift+F1", key)
-        && (KEYMGR.get(key, true) == std::string(""))
+        && (KEYMGR.get(key, true) == "")
 	&& KEYMGR.stringToKeyEvent("Shift+F2", key)
-        && (KEYMGR.get(key, true) == std::string(""))
+        && (KEYMGR.get(key, true) == "")
 	&& KEYMGR.stringToKeyEvent("Shift+F3", key)
-        && (KEYMGR.get(key, true) == std::string(""))
+        && (KEYMGR.get(key, true) == "")
 	&& KEYMGR.stringToKeyEvent("Shift+F4", key)
-        && (KEYMGR.get(key, true) == std::string(""))) {
+        && (KEYMGR.get(key, true) == "")) {
       KEYMGR.stringToKeyEvent("Shift+F1", key);
       KEYMGR.bind(key, true, "messagepanel all");
       KEYMGR.stringToKeyEvent("Shift+F2", key);
@@ -1077,7 +1077,7 @@ int			main(int argc, char** argv)
 
   // see if there is a _default_ badwords file
   if (!BZDB.isSet("filterFilename")) {
-    std::string name = "";
+    std::string name;
 #if !defined(_WIN32) & !defined(macintosh)
     name = getConfigDirName();
     name += "badwords.txt";

@@ -23,6 +23,7 @@ libCommon_a_SOURCES  =			\
 	ShotUpdate.cxx			\
 	StateDatabase.cxx		\
 	Team.cxx			\
+	TextUtils.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
 	VotingBooth.cxx			\

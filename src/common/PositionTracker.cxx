@@ -46,7 +46,7 @@ PositionTracker::~PositionTracker()
       /* sanity clear */
       trackSet[i]->id = UNSET_ID;
       trackSet[i]->intID = 0;
-      trackSet[i]->strID = std::string("");
+      trackSet[i]->strID.clear();
       trackSet[i]->lastUpdate = TimeKeeper::getNullTime();
       trackSet[i]->position[0] = trackSet[i]->position[1] = trackSet[i]->position[2] = 0.0;
       trackSet[i]->forgotten = true;
@@ -125,7 +125,7 @@ unsigned short PositionTracker::track(long int id, std::string group)
   item_t *newTracking = new item_t;
   newTracking->id = INT_ID;
   newTracking->intID = id;
-  newTracking->strID = std::string("");
+  newTracking->strID.clear();
   newTracking->lastUpdate = TimeKeeper::getNullTime();
   newTracking->position[0] = newTracking->position[1] = newTracking->position[2] = 0.0;
   newTracking->forgotten = false;

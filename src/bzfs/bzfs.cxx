@@ -3389,7 +3389,7 @@ static void handleCommand(int t, const void *rawbuf)
       if (message[0] == '/' && message[1] != '/') {
 	/* make commands case insensitive for user-friendlyness */
 	unsigned int pos = 1;
-	while ((pos < strlen(message)) && (isAlphanumeric(message[pos]))) {
+        while ((pos < strlen(message)) && (string_util::isAlphanumeric(message[pos]))) {
 	  message[pos] = tolower((int)message[pos]);
 	  pos++;
 	}

@@ -268,7 +268,7 @@ inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t 
     if (filterSpaces) {
       input[start + j] = filterChars[randomCharPos];
       count++;
-    } else if (isAlphanumeric(c)) {
+    } else if (string_util::isAlphanumeric(c)) {
       input[start + j] = filterChars[randomCharPos];
       count++;
     } /* else it is non-letters so we can ignore */

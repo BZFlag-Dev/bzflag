@@ -109,7 +109,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	} else {
 	  n++;
 	}
-	if (isWhitespace(msg[n])) {
+        if (string_util::isWhitespace(msg[n])) {
 	  lastWhitespace = n;
 	}
       }

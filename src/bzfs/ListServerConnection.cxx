@@ -229,7 +229,7 @@ void ListServerLink::sendQueuedMessages()
 
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
-    addMe(getTeamCounts(), publicizeAddress, url_encode(publicizeDescription));
+    addMe(getTeamCounts(), publicizeAddress, string_util::url_encode(publicizeDescription));
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     DEBUG3("Queuing REMOVE message to list server\n");

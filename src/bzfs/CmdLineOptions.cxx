@@ -22,6 +22,7 @@
 // implementation-specific bzflag headers
 #include "version.h"
 #include "Team.h"
+#include "TextUtils.h"
 
 /* FIXME implementation specific header for global that should eventually go
  * away */
@@ -32,6 +33,9 @@
 #include "bzfs.h"
 #include "FlagInfo.h"
 #include "BZWError.h"
+
+// import from string_util for convenience
+using string_util::compare_nocase;
 
 /* data nasties */
 extern float speedTolerance;
