@@ -161,6 +161,15 @@ public:
    */
   void				write(Callback, void* userData) const;
 
+  /** tell the state database whether it should print debug info to stdout
+   * now and then.
+   */
+  void                          setDebug(bool print);
+  
+  /** do we want debug output? 
+   */
+  bool                          getDebug() const;
+  
   /** get the singleton instance of the state database
    */
   static StateDatabase* getInstance();
@@ -312,6 +321,7 @@ private:
   float				evaluate(Expression e) const;
   typedef std::map<std::string,float> EvalMap;
   EvalMap			evalCache;
+  bool                          debug;
 };
 
 std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst);
