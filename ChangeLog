@@ -2,6 +2,8 @@
 
 			     BZFlag release notes
 
+* bzfs use only 1 port instead of 2 (by default IANA assigned: 5154)
+* bots (-solo) game is by far more playable
 * Added client-side chat filtering - Sean Morrison
 * Configuration files and cache is stored in ~/.bzf/ on *IX - Lars Luthman
 * Added team ID to shots for TK reasons (1.9.2) - Jeff Myers
