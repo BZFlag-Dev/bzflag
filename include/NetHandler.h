@@ -74,9 +74,9 @@ public:
 
   /** General function to support the select statement
    */
-  static void fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
-  static int  isUdpFdSet(fd_set *read_set);
-  int         fdIsSet(fd_set *set);
+  static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
+  static bool isUdpFdSet(fd_set *read_set);
+  bool        isFdSet(fd_set *set);
 
   /**
      return the opened socket, usable from all other network internal client

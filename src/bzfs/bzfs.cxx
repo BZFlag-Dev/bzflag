@@ -3710,7 +3710,7 @@ int main(int argc, char **argv)
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
-    NetHandler::fdSet(&read_set, &write_set, maxFileDescriptor);
+    NetHandler::setFd(&read_set, &write_set, maxFileDescriptor);
     // always listen for connections
     _FD_SET(wksSocket, &read_set);
     if (wksSocket > maxFileDescriptor)
@@ -4202,7 +4202,7 @@ int main(int argc, char **argv)
 	}
 
 	netPlayer = NetHandler::getHandler(i);
-	if (netPlayer && netPlayer->fdIsSet(&read_set)) {
+	if (netPlayer && netPlayer->isFdSet(&read_set)) {
 
 	  const RxStatus e = netPlayer->tcpReceive();
 	  if (e != ReadAll) {

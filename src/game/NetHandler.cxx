@@ -59,7 +59,7 @@ void NetHandler::destroyHandlers() {
   }
 }
 
-void NetHandler::fdSet(fd_set *read_set, fd_set *write_set, int &maxFile) {
+void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
   for (int i = 0; i < maxHandlers; i++) {
     NetHandler *player = netPlayer[i];
     if (player) {
@@ -171,8 +171,8 @@ than %s:%d\n",
   return id;
 }
 
-int NetHandler::isUdpFdSet(fd_set *read_set) {
-  return FD_ISSET(udpSocket, read_set);
+bool NetHandler::isUdpFdSet(fd_set *read_set) {
+  return bool(FD_ISSET(udpSocket, read_set));
 }
 
 int NetHandler::udpSocket = -1;
@@ -240,8 +240,8 @@ NetHandler *NetHandler::getHandler(int _playerIndex) {
   return netPlayer[_playerIndex];
 }
 
-int NetHandler::fdIsSet(fd_set *set) {
-  return FD_ISSET(fd, set);
+bool NetHandler::isFdSet(fd_set *set) {
+  return bool(FD_ISSET(fd, set));
 }
 
 int NetHandler::send(const void *buffer, size_t length) {
