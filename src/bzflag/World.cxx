@@ -57,6 +57,8 @@ World::World() :
   baseInsideNodes(NULL)
 {
   worldWeapons = new WorldPlayer();
+  waterMaterial = NULL;
+  teleporterMaterial = NULL;
 }
 
 World::~World()
@@ -447,6 +449,40 @@ void			World::freeInsideNodes()
     baseInsideNodes = NULL;
   }
 }
+
+
+void		World::makeTeleporterMaterial()
+{
+  DynamicColor* dyncol = new DynamicColor;
+  dyncol->setLimits(0, 0.0f, 0.1f); // red
+  dyncol->setLimits(1, 0.0f, 0.1f); // green
+  dyncol->setLimits(2, 0.0f, 0.1f); // blue
+  dyncol->setLimits(3, 0.75f, 0.75f); // alpha
+  // period, offset, weight
+  float params[3] = {2.0f, 0.0f, 1.0f};
+  params[1] = 0.0f * (params[0] / 3.0f); // red
+  dyncol->addSinusoid(0, params);
+  params[1] = 1.0f * (params[0] / 3.0f); // green
+  dyncol->addSinusoid(1, params);
+  params[1] = 2.0f * (params[0] / 3.0f); // blue
+  dyncol->addSinusoid(2, params);
+  int dyncolId = DYNCOLORMGR.addColor (dyncol);  
+  
+  TextureMatrix* texmat = new TextureMatrix;
+  texmat->setShiftParams(0.0f, -0.05f);
+  int texmatId = TEXMATRIXMGR.addMatrix (texmat);
+
+  BzMaterial mat;
+  const float color[4] = {0.0f, 0.0f, 0.0f, 0.5f};
+  mat.setDiffuse(color);
+  mat.setDynamicColor(dyncolId);
+  mat.setTexture("telelink");
+  mat.setTextureMatrix(texmatId);
+  teleporterMaterial = MATERIALMGR.addMaterial(&mat);
+
+  return;
+}
+
 
 void			World::initFlag(int index)
 {

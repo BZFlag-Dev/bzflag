@@ -47,7 +47,7 @@ class SceneDatabaseBuilder {
     void		addPyramid(SceneDatabase*, const PyramidBuilding&);
     void		addBase(SceneDatabase*, const BaseBuilding&);
     void		addTetra(SceneDatabase*, const TetraBuilding&);
-    void		addTeleporter(SceneDatabase*, const Teleporter&);
+    void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);
     void		addWaterLevel(SceneDatabase*, const World*);
 
   private:

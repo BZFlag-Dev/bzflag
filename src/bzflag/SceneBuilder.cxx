@@ -260,7 +260,7 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   const std::vector<Teleporter*> &teleporters = world->getTeleporters();
   std::vector<Teleporter*>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
-    addTeleporter(db, *(*teleporterScan));
+    addTeleporter(db, *(*teleporterScan), world);
     ++teleporterScan;
   }
   const std::vector<PyramidBuilding*> &pyramids = world->getPyramids();
@@ -608,7 +608,8 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
 }
 
 void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
-						const Teleporter& o)
+						const Teleporter& o,
+						const World* world)
 {
   // this assumes teleporters have fourteen parts:  12 border sides, 2 faces
   int part = 0;
@@ -668,17 +669,15 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
     part = (part + 1) % numParts;
   }
 
-  BzMaterial material;
-  material.clearTextures();
-  material.setDiffuse(teleporterLightedColors[2]);
   MeshPolySceneNode* linkNode;
+  const BzMaterial* mat = world->getTeleporterMaterial();
 
   linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getBackLink());
-  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, &material);
+  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
   db->addStaticNode(linkNode);
   
   linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getFrontLink());
-  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, &material);
+  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
   db->addStaticNode(linkNode);
   
   delete nodeGen;
