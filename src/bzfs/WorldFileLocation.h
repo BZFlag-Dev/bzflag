@@ -9,27 +9,28 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef __WORLDFILEOBSTACLE_H__
-#define __WORLDFILEOBSTACLE_H__
+#ifndef __WORLDFILELOCATION_H__
+#define __WORLDFILELOCATION_H__
 
 // system headers
 #include <iostream>
 
 // bzfs-specific headers
-#include "WorldFileLocation.h"
+#include "WorldFileObject.h"
 
 
-class WorldFileObstacle : public WorldFileLocation {
+class WorldFileLocation : public WorldFileObject {
 public:
-  WorldFileObstacle();
+  WorldFileLocation();
   virtual bool read(const char *cmd, std::istream&);
 
 protected:
-  bool driveThrough;
-  bool shootThrough;
+  float pos[3];
+  float rotation;
+  float size[3];
 };
 
-#endif /* __WORLDFILEOBSTACLE_H__ */
+#endif /* __WORLDFILELOCATION_H__ */
 
 // Local variables: ***
 // mode:C++ ***

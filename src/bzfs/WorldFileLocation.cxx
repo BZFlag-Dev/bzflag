@@ -16,25 +16,28 @@
 
 #include <math.h>
 
-#include "WorldFileObstacle.h"
+#include "WorldFileLocation.h"
 
-WorldFileObstacle::WorldFileObstacle()
+WorldFileLocation::WorldFileLocation()
 {
-  driveThrough = false;
-  shootThrough = false;
+  pos[0] = pos[1] = pos[2] = 0.0f;
+  rotation = 0.0f;
+  size[0] = size[1] = size[2] = 1.0f;
 }
 
 
-bool WorldFileObstacle::read(const char *cmd, std::istream& input)
+bool WorldFileLocation::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "drivethrough") == 0)
-    driveThrough = true;
-  else if (strcasecmp(cmd, "shootthrough") == 0)
-    shootThrough = true;
-  else if (strcasecmp(cmd, "passable") == 0)
-    driveThrough = shootThrough = true;
+  if (strcasecmp(cmd, "position") == 0)
+    input >> pos[0] >> pos[1] >> pos[2];
+  else if (strcasecmp(cmd, "rotation") == 0) {
+    input >> rotation;
+    rotation = rotation * M_PI / 180.0f;
+  } else if (strcasecmp(cmd, "size") == 0){
+    input >> size[0] >> size[1] >> size[2];
+  }
   else
-    return WorldFileLocation::read(cmd, input);
+    return WorldFileObject::read(cmd, input);
   return true;
 }
 

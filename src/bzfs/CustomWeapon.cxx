@@ -63,7 +63,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     if (type == NULL)
       return false;
   }
-  else if (!WorldFileObstacle::read(cmd, input))
+  else if (!WorldFileLocation::read(cmd, input))
       return false;
 
   return true;

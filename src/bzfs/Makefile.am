@@ -36,6 +36,8 @@ bzfs_SOURCES = \
 	TeamBases.h \
 	TextChunkManager.cxx \
 	TextChunkManager.h \
+	WorldFileLocation.cxx \
+	WorldFileLocation.h \
 	WorldFileObject.cxx \
 	WorldFileObject.h \
 	WorldFileObstacle.cxx \

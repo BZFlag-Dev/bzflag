@@ -167,6 +167,10 @@ SOURCE=..\..\src\bzfs\TextChunkManager.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\WorldFileLocation.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\WorldFileObject.cxx
 # End Source File
 # Begin Source File
@@ -368,6 +372,10 @@ SOURCE=..\..\include\win32.h
 # Begin Source File
 
 SOURCE=..\..\include\WordFilter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\WorldFileLocation.h
 # End Source File
 # Begin Source File
 

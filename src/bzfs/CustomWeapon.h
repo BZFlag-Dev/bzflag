@@ -24,11 +24,11 @@
 #include "TimeKeeper.h"
 
 /* local interface headers */
-#include "WorldFileObstacle.h"
+#include "WorldFileLocation.h"
 #include "WorldInfo.h"
 
 
-class CustomWeapon : public WorldFileObstacle {
+class CustomWeapon : public WorldFileLocation {
   public:
     CustomWeapon();
   virtual bool read(const char *cmd, std::istream&);
