@@ -103,8 +103,8 @@ LaserSceneNode::LaserRenderNode::LaserRenderNode(
   if (!init) {
     init = true;
     for (int i = 0; i < 6; i++) {
-      geom[i][0] = (float)(-LaserRadius * cosf(2.0 * M_PI * float(i) / 6.0));
-      geom[i][1] =  (float)(LaserRadius * sinf(2.0 * M_PI * float(i) / 6.0));
+      geom[i][0] = -LaserRadius * cosf((float)(2.0 * M_PI * double(i) / 6.0));
+      geom[i][1] =  LaserRadius * sinf((float)(2.0 * M_PI * double(i) / 6.0));
     }
   }
 }
