@@ -60,7 +60,6 @@ void WorldWeapons::fire()
 
 
       //Set up timer for next shot
-      w->nextTime = TimeKeeper::getCurrent();
       w->nextTime += w->delay[w->nextDelay];
       w->nextDelay++;
       if (w->nextDelay == w->delay.size())
@@ -69,13 +68,13 @@ void WorldWeapons::fire()
   }
 }
 
-void WorldWeapons::add(const FlagDesc *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay)
+void WorldWeapons::add(const FlagDesc *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
 {
   Weapon *w = new Weapon();
   w->type = type;
   memmove(&w->origin, origin, 3*sizeof(float));
   w->direction = direction;
-  w->nextTime = TimeKeeper::getCurrent();
+  w->nextTime = sync;
   w->nextTime += initdelay;
   w->nextDelay = 0;
   w->delay = delay;

@@ -695,7 +695,10 @@ class CustomWeapon : public WorldFileObstacle {
     float initdelay;
     std::vector<float> delay;
     FlagDesc *type;
+    static TimeKeeper sync;
 };
+
+TimeKeeper CustomWeapon::sync = TimeKeeper::getCurrent();
 
 CustomWeapon::CustomWeapon()
 {
@@ -741,7 +744,7 @@ bool CustomWeapon::read(const char *cmd, istream& input) {
 }
 
 void CustomWeapon::write(WorldInfo* world) const {
-  wWeapons.add(type, pos, rotation, initdelay, delay);
+  wWeapons.add(type, pos, rotation, initdelay, delay, sync);
 }
 
 class CustomWorld : public WorldFileObject {
