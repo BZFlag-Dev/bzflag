@@ -149,9 +149,8 @@ void RadarRenderer::drawTank(float x, float y, float z)
   glEnd();
 }
 
-void RadarRenderer::drawFlag(float x, float y, float, bool drawAlways)
+void RadarRenderer::drawFlag(float x, float y, float)
 {
-  if (!BZDB->isTrue("displayRadarFlags") && !drawAlways) return;
   float flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
   GLfloat s = flagRadius > 3.0f * ps ? flagRadius : 3.0f * ps;
   glBegin(GL_LINES);
@@ -469,14 +468,14 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const float *flagcolor = flag.desc->getColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       // always draw team flags
-      drawFlag(flag.position[0], flag.position[1], flag.position[2], true);
+      drawFlag(flag.position[0], flag.position[1], flag.position[2]);
     }
     // draw antidote flag
     const float* antidotePos =
 		LocalPlayer::getMyTank()->getAntidoteLocation();
     if (antidotePos) {
       glColor3f(1.0f, 1.0f, 0.0f);
-      drawFlag(antidotePos[0], antidotePos[1], antidotePos[2], true);
+      drawFlag(antidotePos[0], antidotePos[1], antidotePos[2]);
     }
 
     // draw these markers above all others always centered
