@@ -1,3 +1,4 @@
+so
 /* bzflag
  * Copyright (c) 1993 - 2004 Tim Riker
  *
@@ -146,6 +147,9 @@ int		savedVolume = -1;
 static bool		grabMouseAlways = false;
 FlashClock		pulse;
 static bool             wasRabbit = false;
+
+MessageOfTheDay					motd;
+
 
 char		messageMessage[PlayerIdPLen + MessageLen];
 
@@ -5452,11 +5456,9 @@ void			startPlaying(BzfDisplay* _display,
   tmpString += (const char*)glGetString(GL_RENDERER);
   controlPanel->addMessage(tmpString);
 
-  {
-    // get the MOTD
-    MessageOfTheDay	motd;
-    controlPanel->addMessage("MOTD: "+motd.get("http://bzflag.org/motd.php"));
-  }
+	// get current MOTD
+  controlPanel->addMessage("MOTD: "+motd.get("http://bzflag.org/motd.php"));
+  
   //inform user of silencePlayers on startup
   for (unsigned int j = 0; j < silencePlayers.size(); j ++){
     std::string aString = silencePlayers[j];
