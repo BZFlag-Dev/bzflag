@@ -23,11 +23,12 @@
 	
 			function buildConfig()
 			{
+				var d;
 				try
 				{
-					var console = window.open("","untitled_bz.conf","width=600,height=300,resizable");
+					var console = window.open("","_blank","width=600,height=300,resizable");
 					console.document.open("text/html");
-					var d = console.document;
+					d = console.document;
 					var mainform = document.forms["main"];
 	
 					d.writeln("<html><body><p>");
