@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- After dropping thief flag, a player still looks tiny in main view.
+
 - get kicked for speeding when _tankSpeed changes to a lower value
 
 - players can get autokicked for jumping too high when the admin changes
