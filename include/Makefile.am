@@ -4,7 +4,8 @@ noinst_HEADERS =			\
 	Address.h			\
 	AdnsHandler.h			\
 	AnsiCodes.h			\
-	AutoCompleter.h 		\
+	ArcObstacle.h			\
+	AutoCompleter.h			\
 	BaseSceneNodeGenerator.h	\
 	BoxSceneNodeGenerator.h		\
 	BSPSceneDatabase.h		\
@@ -27,12 +28,14 @@ noinst_HEADERS =			\
 	CollisionManager.h		\
 	CommandManager.h		\
 	CommandsStandard.h		\
+	ConeObstacle.h			\
 	ConfigFileManager.h		\
 	Country.h			\
 	DelayQueue.h			\
 	DirectoryNames.h		\
 	DisplayListManager.h		\
 	DrawablesManager.h		\
+	DynamicColor.h			\
 	EighthDBaseSceneNode.h		\
 	EighthDBoxSceneNode.h		\
 	EighthDPyrSceneNode.h		\
@@ -44,6 +47,7 @@ noinst_HEADERS =			\
 	Flag.h				\
 	FlagSceneNode.h			\
 	FlagWarpSceneNode.h		\
+	Frustum.h			\
 	GLCollect.h			\
 	Intersect.h			\
 	KeyManager.h			\
@@ -53,6 +57,7 @@ noinst_HEADERS =			\
 	MathUtils.h			\
 	MediaFile.h			\
 	MeshFace.h			\
+	MeshFragSceneNode.h		\
 	MeshObstacle.h			\
 	MeshPolySceneNode.h		\
 	MeshSceneNodeGenerator.h	\
@@ -68,6 +73,7 @@ noinst_HEADERS =			\
 	PTSceneNode.h			\
 	Pack.h				\
 	ParseColor.h			\
+	PhysicsDriver.h			\
 	Ping.h				\
 	PlatformFactory.h		\
 	PlayerInfo.h			\
@@ -87,6 +93,7 @@ noinst_HEADERS =			\
 	ShotSceneNode.h			\
 	ShotUpdate.h			\
 	Singleton.h			\
+	SphereObstacle.h		\
 	SphereSceneNode.h		\
 	StateDatabase.h			\
 	TankGeometryMgr.h		\
@@ -125,13 +132,14 @@ noinst_HEADERS =			\
 	regex.h				\
 	resource.h			\
 	udpnetwork.h			\
+	vectors.h			\
 	version.h			\
 	win32.h
 
-MAINTAINERCLEANFILES = \
-	config.h.in \
-	stamp-h.in \
+MAINTAINERCLEANFILES =	\
+	config.h.in	\
+	stamp-h.in	\
 	Makefile.in
 
-EXTRA_DIST = \
+EXTRA_DIST =	\
 	README

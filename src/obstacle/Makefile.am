@@ -1,7 +1,7 @@
 
 noinst_LIBRARIES = libObstacle.a
 
-MAINTAINERCLEANFILES = \
+MAINTAINERCLEANFILES =	\
 	Makefile.in
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
@@ -11,7 +11,7 @@ libObstacle_a_SOURCES =			\
 	BaseSceneNodeGenerator.cxx	\
 	BoxSceneNodeGenerator.cxx	\
 	EmptySceneNodeGenerator.cxx	\
-	ObstacleSceneNodeGenerator.cxx  \
+	ObstacleSceneNodeGenerator.cxx	\
 	PyramidSceneNodeGenerator.cxx	\
 	TeleporterSceneNodeGenerator.cxx\
 	WallSceneNodeGenerator.cxx	\
@@ -23,6 +23,7 @@ libObstacle_a_SOURCES =			\
 	BoxBuilding.cxx			\
 	MeshFace.cxx			\
 	MeshObstacle.cxx		\
+	MeshUtils.h			\
 	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
@@ -44,5 +45,5 @@ libObstacle_a_SOURCES =			\
 	WallObstacle.cxx
 endif
 
-EXTRA_DIST = \
+EXTRA_DIST =	\
 	README

@@ -1,30 +1,32 @@
-EXTRA_DIST = \
-	bzbz.pl		\
-	bzfls.pl	\
-	bzflsLite.php	\
-	bzfquery.pl	\
-	bzfs.conf	\
-	bzfs_conf.html	\
-	bzfsd		\
-	bzfquery.py	\
-	bzirc.pl	\
-	bzlist.php	\
-	bzwcvt.pl	\
-	checkam		\
-	doxyfile	\
-	fountains.bzw	\
-	groups.conf	\
-	hix.bzw		\
-	man2html.c	\
-	mrtg-bzflag.pl	\
+EXTRA_DIST =				\
+	3ds2bzw.c			\
+	bzbz.pl				\
+	bzfquery.pl			\
+	bzfs.conf			\
+	bzfs_conf.html			\
+	bzfsd				\
+	bzfquery.py			\
+	bzirc.pl			\
+	bzlist.php			\
+	bzwcvt.pl			\
+	checkam				\
+	doxyfile			\
+	filter.txt			\
+	fountains.bzw			\
+	groups.conf			\
+	hix.bzw				\
+	man2html.c			\
+	mrtg-bzflag.pl			\
 	multilingualSwearList.txt	\
-	rebuild-bzflag	\
-	serverstats.sh	\
-	simpleSwearList.txt	\
-	snap.sh		\
-	tar		\
-	touchcopyright	\
-	touchversion
+	pingtimes.sh			\
+	rebuild-bzflag			\
+	serverstats.sh			\
+	simpleSwearList.txt		\
+	snap.sh				\
+	tar				\
+	touchcopyright			\
+	touchversion			\
+	ws.sh
 
-MAINTAINERCLEANFILES = \
+MAINTAINERCLEANFILES =	\
 	Makefile.in

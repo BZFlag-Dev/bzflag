@@ -1,4 +1,4 @@
-EXTRA_DIST = \
+EXTRA_DIST =			\
 	blue_basetop.png	\
 	blue_basewall.png	\
 	blue_tank.png		\
@@ -13,6 +13,7 @@ EXTRA_DIST = \
 	highflag.png		\
 	hunter_tank.png		\
 	menu_arrow.png		\
+	mesh.png		\
 	moon.png		\
 	purple_basetop.png	\
 	purple_basewall.png	\
@@ -24,12 +25,14 @@ EXTRA_DIST = \
 	red_tank.png		\
 	rogue_tank.png		\
 	std_ground.png		\
+	telelink.png		\
+	tetrawall.png		\
 	title.png		\
 	wall.png		\
 	water.png		\
 	zone_ground.png
 
-MAINTAINERCLEANFILES = \
+MAINTAINERCLEANFILES =	\
 	Makefile.in
 
 install-data-local: $(EXTRA_DIST)

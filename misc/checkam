@@ -24,7 +24,7 @@ for dir in $dirs ; do
 	Makefile.am|.cvsignore)
 	;;
 	*)
-	grep -q $file Makefile.am || \
+	grep -q "\<$file\>" Makefile.am || \
 	  echo "$dir/$file"
 	;;
       esac
