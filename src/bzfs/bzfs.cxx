@@ -339,12 +339,13 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
 
   // pack and send the message(s)
   void *buf, *bufStart = getDirectMessageBuffer();
-  if (playerIndex != -1) {
+  NetHandler *handler = NetHandler::getHandler(playerIndex);
+  if (handler) {
     buf = nboPackUByte(bufStart, 1);
-    buf = nboPackUByte(buf, player[playerIndex].sizeOfIP());
+    buf = nboPackUByte(buf, handler->sizeOfIP());
     buf = nboPackUByte(buf, playerIndex);
     buf = nboPackUByte(buf, accessInfo[playerIndex].getPlayerProperties());
-    buf = player[playerIndex].packAdminInfo(buf);
+    buf = handler->packAdminInfo(buf);
     for (unsigned int i = 0; i < receivers.size(); ++i) {
       directMessage(receivers[i], MsgAdminInfo,
 		    (char*)buf - (char*)bufStart, bufStart);
@@ -359,10 +360,11 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     buf = nboPackUByte(bufStart, 0); // will be overwritten later
     for (i = 0; i < curMaxPlayers; ++i) {
       if (player[i].isPlaying()) {
-	buf = nboPackUByte(buf, player[i].sizeOfIP());
+	NetHandler *handler = NetHandler::getHandler(i);
+	buf = nboPackUByte(buf, handler->sizeOfIP());
 	buf = nboPackUByte(buf, i);
 	buf = nboPackUByte(buf, accessInfo[i].getPlayerProperties());
-	buf = player[i].packAdminInfo(buf);
+	buf = handler->packAdminInfo(buf);
 	++c;
       }
       if (c == ipsPerPackage || i + 1 == curMaxPlayers) {
@@ -2933,6 +2935,10 @@ static void parseCommand(const char *message, int t)
 
 static void handleCommand(int t, const void *rawbuf)
 {
+  NetHandler *handler = NetHandler::getHandler(t);
+  if (!handler)
+    return;
+
   uint16_t len, code;
   void *buf = (char *)rawbuf;
   buf = nboUnpackUShort(buf, len);
@@ -3417,7 +3423,7 @@ static void handleCommand(int t, const void *rawbuf)
     default:
       DEBUG1("Player [%d] sent unknown packet type (%x), \
 possible attack from %s\n",
-	     t, code, player[t].getTargetIP());
+	     t, code, handler->getTargetIP());
   }
 }
 
@@ -3997,12 +4003,8 @@ int main(int argc, char **argv)
 		// show the delinquent no mercy; make sure he is kicked even if he changed
 		// his callsign by finding a corresponding IP and matching it to the saved one
 		if (!foundPlayer) {
-		  for (v = 0; v < curMaxPlayers; v++) {
-		    if (player[v].isAtIP(realIP)) {
-		      foundPlayer = true;
-		      break;
-		    }
-		  }
+		  v = NetHandler::whoIsAtIP(realIP);
+		  foundPlayer = (v >= 0);
 		}
 		if (foundPlayer) {
 		  // notify the player

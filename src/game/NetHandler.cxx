@@ -559,6 +559,36 @@ void NetHandler::getPlayerList(char *list) {
 	  udpout ? "+" : "");
 }; 
 
+const char *NetHandler::getTargetIP() {
+  return peer.getDotNotation().c_str();
+}
+
+int NetHandler::sizeOfIP() {
+   return peer.getIPVersion() == 4 ? 8 : 20; // 8 for IPv4, 20 for IPv6
+}
+
+void *NetHandler::packAdminInfo(void *buf) {
+  buf = peer.pack(buf);
+  return buf;
+}
+
+int NetHandler::whoIsAtIP(const std::string& IP) {
+  int position = -1;
+  NetHandler *player;
+  for (int v = 0; v < maxHandlers; v++) {
+    player = netPlayer[v];
+    if (player && !strcmp(player->peer.getDotNotation().c_str(), IP.c_str())) {
+      position = v;
+      break;
+    }
+  }
+  return position;
+}
+
+in_addr NetHandler::getIPAddress() {
+  return uaddr.sin_addr;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -305,6 +305,16 @@ void handleFlagCmd(int t, const char *message)
   return;
 }
 
+int getTarget(const char *victimname) {
+  int i;
+  for (i = 0; i < curMaxPlayers; i++) {
+    if (NetHandler::exists(i)
+	&& strncasecmp(player[i].getCallSign(), victimname, 256) == 0) {
+      break;
+    }
+  }
+  return i;
+}
 
 void handleKickCmd(int t, const char *message)
 {
@@ -323,12 +333,7 @@ void handleKickCmd(int t, const char *message)
 
   const char *victimname = argv[1].c_str();
 
-  for (i = 0; i < curMaxPlayers; i++) {
-    if (NetHandler::exists(i)
-	&& strcasecmp(player[i].getCallSign(), victimname) == 0) {
-      break;
-    }
-  }
+  i = getTarget(victimname);
   
   if (i < curMaxPlayers) {
     char kickmessage[MessageLen];
@@ -404,8 +409,8 @@ void handleBanCmd(int t, const char *message)
       strcpy(reply, "IP pattern added to banlist");
       char kickmessage[MessageLen];
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (NetHandler::exists(i)
-	    && !clOptions->acl.validate(player[i].getIPAddress())) {
+	NetHandler *handler = NetHandler::getHandler(i);
+	if (handler && !clOptions->acl.validate(handler->getIPAddress())) {
 	  sprintf(kickmessage,"You were banned from this server by %s",
 		  player[t].getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage, true);
@@ -1217,21 +1222,15 @@ void handlePollCmd(int t, const char *message)
       // all polls that are not set or flagreset polls take a player name
 
       /* make sure the requested player is actually here */
-      bool foundPlayer = false;
-      for (int v = 0; v < curMaxPlayers; v++) {
-	if (strncasecmp(target.c_str(), callsign.c_str(), 256) == 0) {
-	  targetIP = player[v].getTargetIP();
-	  foundPlayer = true;
-	  break;
-	}
-      }
-
-      if (!foundPlayer) {
+      int v = getTarget(target.c_str());
+      if (v >= curMaxPlayers) {
 	/* wrong name? */
-	sprintf(reply, "The player specified for a %s vote is not here", cmd.c_str());
+	sprintf(reply,
+		"The player specified for a %s vote is not here", cmd.c_str());
 	sendMessage(ServerPlayer, t, reply, true);
 	return;
       }
+      targetIP = NetHandler::getHandler(v)->getTargetIP();
     }
 
     /* create and announce the new poll */

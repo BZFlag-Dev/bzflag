@@ -37,7 +37,6 @@ void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr,
   memcpy(&taddr, &clientAddr, addr_len);
 
   state = PlayerInLimbo;
-  peer = Address(taddr);
   paused = false;
 #ifdef HAVE_ADNS_H
   if (adnsQuery) {
@@ -132,23 +131,6 @@ void PlayerInfo::resetComm() {
     hostname = NULL;
     adnsQuery = NULL;
 #endif  
-};
-
-const char *PlayerInfo::getTargetIP() {
-  return peer.getDotNotation().c_str();
-};
-
-int PlayerInfo::sizeOfIP() {
-   return peer.getIPVersion() == 4 ? 8 : 20; // 8 for IPv4, 20 for IPv6
-};
-
-void *PlayerInfo::packAdminInfo(void *buf) {
-  buf = peer.pack(buf);
-  return buf;
-};
-
-bool PlayerInfo::isAtIP(const std::string& IP) {
-  return strcmp(peer.getDotNotation().c_str(), IP.c_str()) == 0;
 };
 
 bool PlayerInfo::isPlaying() {
@@ -403,10 +385,6 @@ bool PlayerInfo::scoreReached(int score) {
 
 bool PlayerInfo::isFlagTransitSafe() {
   return TimeKeeper::getCurrent() - lastFlagDropTime >= 2.0f;
-};
-
-in_addr PlayerInfo::getIPAddress() {
-  return taddr.sin_addr;
 };
 
 void PlayerInfo::delayQueueAddPacket(int length, const void *data,

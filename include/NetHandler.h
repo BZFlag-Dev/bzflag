@@ -120,6 +120,11 @@ public:
   void        dumpMessageStats();
 #endif
   void        getPlayerList(char *list); 
+  const char *getTargetIP();
+  int         sizeOfIP();
+  void       *packAdminInfo(void *buf);
+  static int  whoIsAtIP(const std::string& IP);
+  in_addr     getIPAddress();
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);

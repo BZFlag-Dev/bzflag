@@ -71,10 +71,6 @@ public:
   void        setRestartOnBase(bool on);
   bool        shouldRestartAtBase();
   void        resetComm();
-  const char *getTargetIP();
-  int         sizeOfIP();
-  void       *packAdminInfo(void *buf);
-  bool        isAtIP(const std::string& IP);
   bool        isPlaying();
   bool        exist();
   void        signingOn();
@@ -111,7 +107,6 @@ public:
   void       *packScore(void *buf);
   bool        scoreReached(int score);
   bool        isFlagTransitSafe();
-  in_addr     getIPAddress();
   void        delayQueueAddPacket(int length, const void *data, float time);
   bool        delayQueueGetPacket(int *length, void **data);
   void        delayQueueDequeuePackets();
