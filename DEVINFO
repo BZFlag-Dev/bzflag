@@ -251,9 +251,11 @@ The BZFlag version number is in the format of:
 
 All "development" versions use an odd number for the minor version number.  All
 "release" versions use an even number for the minor version, e.g.. 1.9.x is a
-development version for a future 1.10 release.  The revision version represents
-signifigant feature changes or stages in a development version, such as a
-change to the network protocol or a move to a definate testing stage.  For
+development version for a future 1.10 release.  Release versions also use even
+revision version numbers. Maintainance work is done on odd numbered revisions
+and releases are even numbered. For development versions the revision version
+represents signifigant feature changes or stages in a development version, such
+as a change to the network protocol or a move to a definate testing stage.  For
 "release" versions, the revision represents patches or bug fixes to the base
 release, but not new feature development.  This allows the developers to "leave
 some room" for patches and emergency fixes to a release line.
