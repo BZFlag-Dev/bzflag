@@ -1,6 +1,13 @@
 recent bugs
 ------------
 
+- when one tank gets very close to a teleporter, the animated treads look
+  funny from the perspective of a second tank (looks like the wheels
+  disappear or something)
+
+- when a shield flag is dropped due to its owner being shot, it is not
+  always zapped like it should be.
+
 - if you fire IMMEDIATELY after spawning, you'll expand into the bullet
   (try pounding on both mouse buttons at once, like a 4-year-old would)
   (is this worth fixing?)
