@@ -8,8 +8,8 @@ MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d
 REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
 
 CONF_DATE=`date +%Y%m%d`
-echo "BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV-$CONF_DATE"
-AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV-$CONF_DATE)
+echo "BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE"
+AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE)
 AM_CONFIG_HEADER(include/config.h)
 
 # Let the C++ code know about OS and user
@@ -396,7 +396,8 @@ fi;
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
-AC_OUTPUT(Makefile
+AC_OUTPUT(bzflag.spec
+	Makefile
 	data/Makefile
 	data/l10n/Makefile
 	debian/Makefile
