@@ -637,9 +637,9 @@ static WorldInfo *defineTeamWorld()
 
   // make walls
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-  world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
-  world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
-  world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
+  world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
   world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
   const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
@@ -776,7 +776,7 @@ static WorldInfo *defineTeamWorld()
 	  (hypotf(fabs(x), fabs(y)) <= worldSize / 12))
 	continue;
 
-      float angle = 2.0f * M_PI * (float)bzfrand();
+      float angle = (float)(2.0 * M_PI * bzfrand());
       if (redGreen) {
 	world->addBox(x, y, 0.0f, angle, boxBase, boxBase, h);
 	world->addBox(-x, -y, 0.0f, angle, boxBase, boxBase, h);
@@ -820,7 +820,7 @@ static WorldInfo *defineTeamWorld()
 	  (hypotf(fabs(x), fabs(y)) <= worldSize/12))
 	continue;
 
-      float angle = 2.0f * M_PI * (float)bzfrand();
+      float angle = (float)(2.0 * M_PI * bzfrand());
       if (redGreen) {
 	world->addPyramid(x, y, 0.0f, angle,pyrBase, pyrBase, h);
 	world->addPyramid(-x, -y, 0.0f, angle,pyrBase, pyrBase, h);
@@ -845,7 +845,7 @@ static WorldInfo *defineTeamWorld()
       for (i = 0; i < numTeleporters;) {
 	const float x = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
 	const float y = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
-	const float rotation = 2.0f * M_PI * (float)bzfrand();
+	const float rotation = (float)(2.0 * M_PI * bzfrand());
 
 	// if too close to building then try again
 	Obstacle* obs;
@@ -869,15 +869,15 @@ static WorldInfo *defineTeamWorld()
 	if (redGreen) {
 	  world->addTeleporter(x, y, 0.0f, rotation, 0.5f * teleWidth,
 	      teleBreadth, 2.0f * teleHeight, teleWidth, false);
-	  world->addTeleporter(-x, -y, 0.0f, rotation + M_PI, 0.5f * teleWidth,
+	  world->addTeleporter(-x, -y, 0.0f, (float)(rotation + M_PI), 0.5f * teleWidth,
 	      teleBreadth, 2.0f * teleHeight, teleWidth, false);
 	  i += 2;
 	}
 	if (bluePurple) {
-	  world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2,
+	  world->addTeleporter(y, -x, 0.0f, (float)(rotation + M_PI / 2.0),
 			       0.5f * teleWidth, teleBreadth, 2.0f * teleWidth,
 			       teleWidth, false);
-	  world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2,
+	  world->addTeleporter(-y, x, 0.0f, (float)(rotation + M_PI * 3.0 / 2.0),
 			       0.5f * teleWidth, teleBreadth, 2.0f * teleWidth,
 			       teleWidth, false);
 	  i += 2;
@@ -973,22 +973,22 @@ static WorldInfo *defineTeamWorld()
 	  world->addBox(
 	      xmin + float(i) * (2.0f * boxBase + avenueSize),
 	      ymin + float(j) * (2.0f * boxBase + avenueSize), 0.0f,
-	      clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	      clOptions->randomBoxes ? (float)(0.5 * M_PI * (bzfrand() - 0.5)) : 0.0f,
 	      boxBase, boxBase, h);
 	  world->addBox(
 	      -1.0f * (xmin + float(i) * (2.0f * boxBase + avenueSize)),
 	      -1.0f * (ymin + float(j) * (2.0f * boxBase + avenueSize)), 0.0f,
-	      clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	      clOptions->randomBoxes ? (float)(0.5 * M_PI * (bzfrand() - 0.5)) : 0.0f,
 	      boxBase, boxBase, h);
 	  world->addBox(
 	      -1.0f * (ymin + float(j) * (2.0f * boxBase + avenueSize)),
 	      xmin + float(i) * (2.0f * boxBase + avenueSize), 0.0f,
-	      clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	      clOptions->randomBoxes ? (float)(0.5 * M_PI * (bzfrand() - 0.5)) : 0.0f,
 	      boxBase, boxBase, h);
 	  world->addBox(
 	      ymin + float(j) * (2.0f * boxBase + avenueSize),
 	      -1.0f * (xmin + float(i) * (2.0f * boxBase + avenueSize)), 0.0f,
-	      clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	      clOptions->randomBoxes ? (float)(0.5 * M_PI * (bzfrand() - 0.5)) : 0.0f,
 	      boxBase, boxBase, h);
 	}
       }
@@ -1000,21 +1000,21 @@ static WorldInfo *defineTeamWorld()
       float teleHeight = BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
       const float xoff = boxBase + 0.5f * avenueSize;
       const float yoff = boxBase + 0.5f * avenueSize;
-      world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
+      world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, (float)(1.25 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
+      world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, (float)(0.75 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
+      world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, (float)(1.75 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
+      world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, (float)(0.25 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter(-3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, 1.25f * M_PI,
+      world->addTeleporter(-3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, (float)(1.25 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter(-3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, 0.75f * M_PI,
+      world->addTeleporter(-3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, (float)(0.75 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter( 3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, 1.75f * M_PI,
+      world->addTeleporter( 3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, (float)(1.75 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter( 3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, 0.25f * M_PI,
+      world->addTeleporter( 3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, (float)(0.25 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
 //
       world->addLink(0, 14);

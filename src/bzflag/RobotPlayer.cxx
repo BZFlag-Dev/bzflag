@@ -156,13 +156,13 @@ void			RobotPlayer::doUpdate(float dt)
     const float* p2     = getPosition();
     float shootingAngle = atan2f(p1[1] - p2[1], p1[0] - p2[0]);
     if (shootingAngle < 0.0f)
-      shootingAngle += 2.0f * M_PI;
+      shootingAngle += (float)(2.0 * M_PI);
     float azimuthDiff   = shootingAngle - azimuth;
     if (azimuthDiff > M_PI)
-      azimuthDiff -= 2.0f * M_PI;
+      azimuthDiff -= (float)(2.0 * M_PI);
     else
       if (azimuthDiff < -M_PI)
-	azimuthDiff += 2.0f * M_PI;
+	azimuthDiff += (float)(2.0 * M_PI);
 
     const float targetdistance = hypotf(p1[0] - p2[0], p1[1] - p2[1]) -
       BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - tankRadius;
@@ -260,13 +260,13 @@ void			RobotPlayer::doUpdateMotion(float dt)
 
 	  if (dotProd > 0.97f) {
 	    float rotation;
-	    float rotation1 = (shotAngle + M_PI/2.0f) - azimuth;
-	    if (rotation1 < -1.0f * M_PI) rotation1 += 2.0f * M_PI;
-	    if (rotation1 > 1.0f * M_PI) rotation1 -= 2.0f * M_PI;
+	    float rotation1 = (float)((shotAngle + M_PI/2.0) - azimuth);
+	    if (rotation1 < -1.0f * M_PI) rotation1 += (float)(2.0 * M_PI);
+	    if (rotation1 > 1.0f * M_PI) rotation1 -= (float)(2.0 * M_PI);
 
-	    float rotation2 = (shotAngle - M_PI/2.0f) - azimuth;
-	    if (rotation2 < -1.0f * M_PI) rotation2 += 2.0f * M_PI;
-	    if (rotation2 > 1.0f * M_PI) rotation2 -= 2.0f * M_PI;
+	    float rotation2 = (float)((shotAngle - M_PI/2.0) - azimuth);
+	    if (rotation2 < -1.0f * M_PI) rotation2 += (float)(2.0 * M_PI);
+	    if (rotation2 > 1.0f * M_PI) rotation2 -= (float)(2.0 * M_PI);
 
 	    if (fabs(rotation1) < fabs(rotation2))
 	      rotation = rotation1;
@@ -296,8 +296,8 @@ void			RobotPlayer::doUpdateMotion(float dt)
 
       float segmentAzimuth = atan2f(v[1], v[0]);
       float azimuthDiff = segmentAzimuth - azimuth;
-      if (azimuthDiff > M_PI) azimuthDiff -= 2.0f * M_PI;
-      else if (azimuthDiff < -M_PI) azimuthDiff += 2.0f * M_PI;
+      if (azimuthDiff > M_PI) azimuthDiff -= (float)(2.0 * M_PI);
+      else if (azimuthDiff < -M_PI) azimuthDiff += (float)(2.0 * M_PI);
       if (fabs(azimuthDiff) > 0.01f) {
 	// drive backward when target is behind, try to stick to last direction
 	if (drivingForward)

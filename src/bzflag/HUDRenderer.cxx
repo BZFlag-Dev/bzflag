@@ -440,8 +440,7 @@ void			HUDRenderer::initCracks()
 {
   for (int i = 0; i < HUDNumCracks; i++) {
     const float d = 0.90f * float(maxMotionSize) * ((float)bzfrand() + 0.90f);
-    const float a = 2.0f * M_PI * (float(i) + (float)bzfrand()) /
-						    float(HUDNumCracks);
+    const float a = (float)(2.0 * M_PI * (double(i) + bzfrand()) / double(HUDNumCracks));
     cracks[i][0][0] = 0.0f;
     cracks[i][0][1] = 0.0f;
     cracks[i][1][0] = d * cosf(a);
@@ -464,7 +463,7 @@ void			HUDRenderer::addMarker(float _heading, const float *_color )
   markers.resize(markers.size() + 1);
   HUDMarker &m = markers[markers.size() - 1];
 
-  _heading = 90.0f - 180.0f * _heading / M_PI;
+  _heading = (float)(90.0 - 180.0 * _heading / M_PI);
   while (_heading < 0.0f) _heading += 360.0f;
   while (_heading >= 360.0f) _heading -= 360.0f;
   m.heading = _heading;
@@ -558,13 +557,13 @@ void			HUDRenderer::makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLev
   if (l >= (1 << (HUDCrackLevels - 1))) return;
   float d = 0.5f * float(maxMotionSize) *
 		((float)bzfrand() + 0.5f) * powf(0.5f, 0.69f * logf(float(l)));
-  float newAngle = a + M_PI * (float)bzfrand() / float(HUDNumCracks);
+  float newAngle = (float)(a + M_PI * bzfrand() / double(HUDNumCracks));
   crackpattern[n][2*l][0] = crackpattern[n][l][0] + d * cosf(newAngle);
   crackpattern[n][2*l][1] = crackpattern[n][l][1] + d * sinf(newAngle);
   makeCrack(crackpattern, n, 2*l, newAngle);
   d = 0.5f * float(maxMotionSize) *
 		((float)bzfrand() + 0.5f) * powf(0.5f, 0.69f * logf(float(l)));
-  newAngle = a - M_PI * (float)bzfrand() / float(HUDNumCracks);
+  newAngle = (float)(a - M_PI * bzfrand() / double(HUDNumCracks));
   crackpattern[n][2*l+1][0] = crackpattern[n][l][0] + d * cosf(newAngle);
   crackpattern[n][2*l+1][1] = crackpattern[n][l][1] + d * sinf(newAngle);
   makeCrack(crackpattern, n, 2*l+1, newAngle);
