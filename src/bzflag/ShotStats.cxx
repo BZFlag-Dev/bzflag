@@ -180,7 +180,7 @@ void			ShotStats::resize(int width, int height)
 
   for (int i = 1; i < (int)list.size(); ++i) {
     // determine row & column (i - 1 to account for title)
-    int row = (int)floor((i - 1) / columns);
+    int row = (i - 1) / columns;
     int column = (i - 1) - (columns * row) + 1;
     // account for 3 extra columns in player name
     if (column > 1)
