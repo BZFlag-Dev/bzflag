@@ -10,12 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* no header other than WordFilter.h should be included here */
-
-#ifdef _MSC_VER
-#pragma warning( 4:4786)
-#endif
-
 // this classes interface
 #include "WordFilter.h"
 
@@ -368,7 +362,7 @@ std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
       set = "g96";
       break;
     case 'i':
-      set = "il|!\\/";
+      set = "il1|!\\/";
       break;
     case 'l':
       set = "li1!|\\/";
