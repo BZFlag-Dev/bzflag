@@ -30,6 +30,8 @@ AC_SUBST(AR)
 AC_CHECK_PROG(AR, ar, ar)
 AC_SUBST(AR_FLAGS)
 
+AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
+AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
 
 # Just for kicks
 echo -n "checking for artificial intelligence for robots..." 1>&6
