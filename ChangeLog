@@ -13,6 +13,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Update old configs to avoid broken keybindings - Daniel Remenak
 * Config files are stored per-version, using older when needed - Jeff Myers
 * Faster tank and shot collision detection using an octree - Dave Rodgers
+* Better linewrapping for control panel - Daniel Remenak
 * Configurable font size for control panel and scoreboard - Daniel Remenak
 * Textures are now reloaded on a mode change for optimal quality - Jeff Myers
 * Automatic team joins changed to encourage team-play - Alfredo Tupone
