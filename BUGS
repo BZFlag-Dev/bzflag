@@ -1,6 +1,9 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
+- Burrowed tanks are often getting kicked by speed check on server.
+  Perhaps ignore cheats 2 secs after flag grab as well as current flag drop
+
 - Now that the tank parts actually have real sides, there are some depth buffer
   artifacts with a tank has N
 
