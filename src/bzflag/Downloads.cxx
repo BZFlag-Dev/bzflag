@@ -58,6 +58,7 @@ static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
 
 
 /******************************************************************************/
+#undef HAVE_CURL
 #ifdef HAVE_CURL
 /******************************************************************************/
 
@@ -360,7 +361,7 @@ void Downloads::doDownloads()
   bool needWarning = false;
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set, true);
+  MATERIALMGR.makeTextureList(set, false /* ignore referencing */); 
 
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
     const std::string& texUrl = set_it->c_str();
@@ -399,12 +400,12 @@ bool Downloads::updateDownloads(bool& /*rebuild*/)
   return false;
 }
 
+
 void Downloads::removeTextures()
 {
-  /* FIXME: just a placeholder as this function is declared but only defined for
-     HAVE_CURL building */
   return;
 }
+
 
 /******************************************************************************/
 #endif // HAVE_CURL
