@@ -145,6 +145,11 @@ NACLIB =	\
 	../platform/MacOSX/libMac.a
 endif
 
+if BUILD_REGEX
+REGEX = \
+	../regex/libregex.a
+endif
+
 LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
@@ -157,6 +162,7 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
 	../3D/lib3D.a			\
+	$(REGEX)			\
 	$(ZLIB)				\
 	$(RESOURCE)			\
 	$(GLIBS)			\

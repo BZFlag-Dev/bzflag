@@ -55,10 +55,16 @@ bzfs_SOURCES = \
 	bzfs.cxx \
 	bzfs.h
 
+if BUILD_REGEX
+REGEX = \
+	../regex/libregex.a
+endif
+
 LDADD = \
 	../net/libNet.a		\
 	../game/libGame.a	\
 	../common/libCommon.a	\
+	$(REGEX)		\
 	$(CURL_LIBS)
 
 AM_CPPFLAGS = $(CURL_CFLAGS)
