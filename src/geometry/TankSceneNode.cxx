@@ -208,13 +208,15 @@ void			TankSceneNode::setNormal()
 void			TankSceneNode::setObese()
 {
   style = TankRenderNode::Obese;
-  setRadius(BZDB->eval(StateDatabase::BZDB_OBESEFACTOR) * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR) * baseRadius);
+  float factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  setRadius(factor*factor*baseRadius);
 }
 
 void			TankSceneNode::setTiny()
 {
   style = TankRenderNode::Tiny;
-  setRadius(BZDB->eval(StateDatabase::BZDB_TINYFACTOR) * BZDB->eval(StateDatabase::BZDB_TINYFACTOR) * baseRadius);
+  float factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  setRadius(factor*factor*baseRadius);
 }
 
 void			TankSceneNode::setNarrow()
@@ -226,7 +228,8 @@ void			TankSceneNode::setNarrow()
 void			TankSceneNode::setThief()
 {
   style = TankRenderNode::Thief;
-  setRadius(BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR)*BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR)*baseRadius);
+  float factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  setRadius(factor*factor*baseRadius);
 }
 
 void			TankSceneNode::setExplodeFraction(float t)
