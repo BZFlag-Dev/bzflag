@@ -1,4 +1,6 @@
+if CLIENT_INCLUDED
 noinst_LIBRARIES = libGLKit.a
+endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

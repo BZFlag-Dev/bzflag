@@ -3,7 +3,9 @@ SUBDIRS = models
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+if CLIENT_INCLUDED
 noinst_LIBRARIES = libGeometry.a
+endif
 
 libGeometry_a_SOURCES  =		\
 	ViewFrustum.cxx			\

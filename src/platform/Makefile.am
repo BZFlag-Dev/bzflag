@@ -108,7 +108,9 @@ endif
 endif
 endif
 
+if CLIENT_INCLUDED
 noinst_LIBRARIES = libPlatform.a
+endif
 
 EXTRA_libPlatform_a_SOURCES = 		\
  	XDisplay.cxx			\
