@@ -459,7 +459,11 @@ bool navigate( float &rotation, float &speed)
   }
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const float *pos = myTank->getPosition();
+  float pos[3];
+  
+  memcpy( pos, myTank->getPosition(), sizeof( pos ));
+  if (pos[2] < 0.0f)
+	  pos[2] = 0.01f;
   float myAzimuth = myTank->getAngle();
 
   float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/4.0f));
@@ -490,6 +494,8 @@ bool fireAtTank()
   float pos[3];
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   memcpy( pos, myTank->getPosition(), sizeof(pos));
+  if (pos[2] < 0.0f)
+	  pos[2] = 0.01f;
   float myAzimuth = myTank->getAngle();
 
   float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
