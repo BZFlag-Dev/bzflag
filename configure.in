@@ -422,6 +422,9 @@ if test x$enable_debug = xyes; then
    CXXFLAGS="$CXXFLAGS -g";
    case $host_os in
      linux-gnu|cygwin|mingw32)
+	# Adding Optimization compatible with debugging
+	CFLAGS="$CFLAGS -O";
+	CXXFLAGS="$CXXFLAGS -O";
 	CPPFLAGS="$CPPFLAGS -Werror";
 	CXXFLAGS="$CXXFLAGS -Wno-deprecated";
 	if test x$enable_profiling = xyes; then
