@@ -1310,8 +1310,6 @@ void *assembleSendPacket(int playerIndex, int *len)
     *len = 0;
     return assemblybuffer;
   }
-  if (n < 4096)
-    DEBUG3("Warning: TOO Long a PACKET: %d %d\n",noinqueue, packets);
   *len = (MaxPacketLen - n);
   DEBUG4("ASSEMBLY %d packets, %d - %d\n",packets,startseq, endseq);
   return assemblybuffer;
@@ -4046,7 +4044,7 @@ static void removePlayer(int playerIndex)
     if (flagid >= 0) {
       // do not simply zap team flag
       Flag &carriedflag = flag[flagid].flag;
-      if (carriedflag.id >= RedFlag && carriedflag.id <= PurpleFlag) {
+      if (carriedflag.id >= FirstTeamFlag && carriedflag.id <= LastTeamFlag) {
         dropFlag(playerIndex, carriedflag.position);
       }
       else {
@@ -4249,7 +4247,7 @@ static void playerKilled(int victimIndex, int killerIndex,
   if (flagid >= 0) {
     // do not simply zap team flag
     Flag &carriedflag=flag[flagid].flag;
-    if (carriedflag.id >= RedFlag && carriedflag.id <= PurpleFlag) {
+    if (carriedflag.id >= FirstTeamFlag && carriedflag.id <= LastTeamFlag) {
       dropFlag(victimIndex, carriedflag.position);
     }
     else {
