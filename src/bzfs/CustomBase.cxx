@@ -14,12 +14,10 @@
 #include "CustomBase.h"
 
 /* local implementation headers */
-#include "CmdLineOptions.h"
 #include "TeamBases.h"
 
 /* FIXME - external dependancies */
 extern const int CtfTeams;
-extern CmdLineOptions *clOptions;
 extern BasesList bases;
 
 
@@ -40,11 +38,6 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
   } else {
     if (!WorldFileObstacle::read(cmd, input))
       return false;
-    if (!clOptions->flagsOnBuildings && ((pos[2] != 0) || (size[2] != 0))) {
-      std::cout << "Dropping team base down to 0 because -fb not set\n";
-      pos[2] = 0;
-      size[2] = 0;
-    }
   }
   return true;
 }
