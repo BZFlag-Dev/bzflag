@@ -146,8 +146,8 @@ TeamColor		World::whoseBase(const float* pos) const
     for (TeamBases::const_iterator it = bases[i].begin(); it != bases[i].end(); ++it) {
       float nx = pos[0] - it->p[0];
       float ny = pos[1] - it->p[1];
-      float rx = (float) (cosf(atanf(ny/nx)-it->p[3]) * sqrt((ny * ny) + (nx * nx)));
-      float ry = (float) (sinf(atanf(ny/nx)-it->p[3]) * sqrt((ny * ny) + (nx * nx)));
+      float rx = (float) (cosf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
+      float ry = (float) (sinf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
       if(fabsf(rx) < it->p[4] &&
          fabsf(ry) < it->p[5]) {
         float nz = it->p[2] + it->p[6];
@@ -721,7 +721,7 @@ bool			World::writeWorld(std::string filename)
       out << "\tsize " << base.getWidth() << " " << base.getBreadth() << " " << base.getHeight() << std::endl;
       out << "\trotation " << ((base.getRotation() * 180.0) / M_PI) << std::endl;
       out << "\tcolor " << base.getTeam() << std::endl;
-      if (base.isDriveThrough()&&base.isShootThrough())
+      if (base.isDriveThrough() && base.isShootThrough())
         out << "\tpassable" << std::endl;
       else{
         if (base.isDriveThrough())
@@ -744,7 +744,7 @@ bool			World::writeWorld(std::string filename)
       out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
       out << "\tsize " << box.getWidth() << " " << box.getBreadth() << " " << box.getHeight() << std::endl;
       out << "\trotation " << ((box.getRotation() * 180.0) / M_PI) << std::endl;
-      if (box.isDriveThrough()&&box.isShootThrough())
+      if (box.isDriveThrough() && box.isShootThrough())
         out << "\tpassable" << std::endl;
       else{
         if (box.isDriveThrough())
