@@ -12,6 +12,7 @@
 
 
 #include <stdlib.h>
+#include <math.h>
 #include "Occluder.h"
 #include "SceneNode.h"
 #include "Frustum.h"
@@ -23,6 +24,8 @@
 //
 // The Occluder Manager
 //
+
+const int OccluderManager::MaxOccluders = MAX_OCCLUDERS;
 
 OccluderManager::OccluderManager()
 {
@@ -269,6 +272,10 @@ void OccluderManager::draw() const
 //
 // The Occluders
 //
+
+const bool Occluder::DrawEdges = true;
+const bool Occluder::DrawNormals = false;
+const bool Occluder::DrawVertices = true;
 
 Occluder::Occluder(SceneNode* node)
 {

@@ -25,10 +25,12 @@ class Occluder {
     int vertexCount; // 3 or 4 vertices
     float planes[5][4];
     float vertices[4][3];
-    static const bool DrawEdges = true;
-    static const bool DrawNormals = false;
-    static const bool DrawVertices = true;
+    static const bool DrawEdges;
+    static const bool DrawNormals;
+    static const bool DrawVertices;
 };
+
+#define MAX_OCCLUDERS 64
 
 class OccluderManager {
 
@@ -49,8 +51,8 @@ class OccluderManager {
     void sort();
     int activeOccluders;
     int allowedOccluders;
-    static const int MaxOccluders = 64;
-    Occluder* occluders[MaxOccluders];
+    static const int MaxOccluders;
+    Occluder* occluders[MAX_OCCLUDERS];
 };
 
 inline void Occluder::addScore(unsigned int score)
