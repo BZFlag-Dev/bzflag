@@ -222,6 +222,9 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
       players.erase(p);
       return true;
 
+    case MsgSuperKill:
+      throw string("Server forced a disconnect");
+
     case MsgMessage:
 
       // unpack the message header
