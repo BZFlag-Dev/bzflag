@@ -36,7 +36,7 @@ CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
   init_pair(Blue, COLOR_BLUE, -1);
   init_pair(Purple, COLOR_MAGENTA, -1);
   init_pair(Yellow, COLOR_YELLOW, -1);
-  init_pair(LightBlue, COLOR_CYAN, -1);
+  init_pair(Cyan, COLOR_CYAN, -1);
   nonl();
   cbreak();
   noecho();

@@ -21,7 +21,7 @@ enum ColorCode {
   Blue,
   Purple,
   Yellow,
-  LightBlue
+  Cyan
 };
 
 #endif

@@ -58,7 +58,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   colorMap[GreenTeam] = Green;
   colorMap[BlueTeam] = Blue;
   colorMap[PurpleTeam] = Purple;
-  colorMap[ObserverTeam] = LightBlue;
+  colorMap[ObserverTeam] = Cyan;
 }
 
 
