@@ -33,7 +33,6 @@
 				mainform.randomly_orient_buildings.disabled = mainform.world_type.checked;
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
 				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || freeForAll || rabbit;
-				mainform.allow_rogues.disabled = !freeForAll;
 
 				return true;
 			}
@@ -347,19 +346,14 @@
 						d.writeln("-j<br/><br/>");
 					}
 
-					if (mainform.max_concurrent_shots.value != 1) {
-						d.writeln("#Maximum concurrent shots<br/>");
-						d.writeln("-ms " + mainform.max_concurrent_shots.value + "<br/><br/>");
-					}
-
 					if (mainform.allow_richochet.checked) {
 						d.writeln("#Ordinance richochets<br/>");
 						d.writeln("+r<br/><br/>");
 					}
 
-					if ((!mainform.allow_rogues.disabled) && mainform.allow_rogues.checked) {
-						d.writeln("#Allow rogue tanks<br/>");
-						d.writeln("-r<br/><br/>");
+					if (mainform.max_concurrent_shots.value != 1) {
+						d.writeln("#Maximum concurrent shots<br/>");
+						d.writeln("-ms " + mainform.max_concurrent_shots.value + "<br/><br/>");
 					}
 
 					if (mainform.bad_flag_shake_time.value > 0) {
@@ -746,18 +740,14 @@
 							<td>
 								<input type="checkbox" name="allow_jumping" title="Whether or not tanks can jump without a flag"/>
 							</td>
-							<td>Max Concurrent Shots</td>
-							<td><input type="text" name="max_concurrent_shots" value="1" size="30" title="Maximum number of shots a tank shoots at one time"/></td>
-						</tr>
-						<tr>
 							<td>Allow Richochet</td>
 							<td>
 								<input type="checkbox" name="allow_richochet" title="Whether or not bullets richochet without a flag"/>
 							</td>
-							<td>Allow Rogues</td>
-							<td>
-								<input type="checkbox" name="allow_rogues" title="Whether or not Rogues are allowed to join"/>
-							</td>
+						</tr>
+						<tr>
+							<td>Max Concurrent Shots</td>
+							<td><input type="text" name="max_concurrent_shots" value="1" size="30" title="Maximum number of shots a tank shoots at one time"/></td>
 						</tr>
 						<tr>
 							<td>Bad Flag Shake Time</td>
