@@ -6,7 +6,7 @@
 ; It will install notepad.exe into a directory that the user selects,
 ;
 
-!define VER_MAJOR 1.7
+!define VER_MAJOR 17
 !define VER_MINOR g1
 
 ; Main Installer Options
@@ -18,7 +18,7 @@ DisabledBitmap "DisableCheck.bmp"
 Caption "BZFlag ${VER_MAJOR}${VER_MINOR}: - Setup"
 
 ; The file to write
-OutFile "..\..\..\dist\BZFlag_${VER_MAJOR}${VER_MINOR}.exe"
+OutFile "..\..\..\dist\bzflag${VER_MAJOR}${VER_MINOR}.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}
@@ -44,9 +44,9 @@ Section "BZFlag (required)"
 	; Set output path to the installation directory.
 	SetOutPath $INSTDIR
 	; Put file there
-	File ..\..\..\bin\bzflag.exe
-	File ..\..\..\bin\bzfls.exe
-	File ..\..\..\bin\bzfs.exe
+	File ..\..\..\src\bzflag\bzflag.exe
+	File ..\..\..\src\bzfls\bzfls.exe
+	File ..\..\..\src\bzfs\bzfs.exe
 
 	; make the data dir
 	SetOutPath $INSTDIR\data

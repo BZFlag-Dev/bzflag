@@ -47,10 +47,10 @@ RSC=rc.exe
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../src/geometry/geometry.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
+# ADD LIB32 /nologo /out:"..\src\geometry\geometry.lib"
 
 !ELSEIF  "$(CFG)" == "geometry - Win32 Debug"
 
@@ -71,10 +71,10 @@ LIB32=link.exe -lib
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../src/geometry/Debug/geometry.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
+# ADD LIB32 /nologo /out:"..\src\geometry\Debug\geometry.lib"
 
 !ENDIF 
 

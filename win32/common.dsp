@@ -47,10 +47,10 @@ RSC=rc.exe
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../src/common/common.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
+# ADD LIB32 /nologo /out:"..\src\common\common.lib"
 
 !ELSEIF  "$(CFG)" == "common - Win32 Debug"
 
@@ -70,10 +70,10 @@ LIB32=link.exe -lib
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../src/common/Debug/common.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
+# ADD LIB32 /nologo /out:"..\src\common\Debug\common.lib"
 
 !ENDIF 
 

@@ -47,10 +47,10 @@ RSC=rc.exe
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../src/scene/scene.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
+# ADD LIB32 /nologo /out:"..\src\scene\scene.lib"
 
 !ELSEIF  "$(CFG)" == "scene - Win32 Debug"
 
@@ -71,10 +71,10 @@ LIB32=link.exe -lib
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../src/scene/Debug/scene.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
+# ADD LIB32 /nologo /out:"..\src\scene\Debug\scene.lib"
 
 !ENDIF 
 

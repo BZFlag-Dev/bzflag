@@ -72,18 +72,6 @@ Package=<4>
 
 ###############################################################################
 
-Project: "bzwtransform"=".\bzwtransform.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
 Project: "common"=".\common.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -97,57 +85,6 @@ Package=<4>
 ###############################################################################
 
 Project: "geometry"=".\geometry.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "installer"=".\installer.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name bzfls
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name bzfs
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name bzflag
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name makehtml
-    End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "makehtml"=".\makehtml.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name man2html
-    End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "man2html"=".\man2html.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
