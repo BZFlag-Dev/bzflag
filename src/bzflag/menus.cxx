@@ -1146,7 +1146,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       std::string locale = (*options)[list->getIndex()];
 
       World::setLocale(locale);
-      db.addValue("locale", locale);
+      BZDB->set("locale", locale);
       World::getBundleMgr()->getBundle(locale, true);
 
       GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();

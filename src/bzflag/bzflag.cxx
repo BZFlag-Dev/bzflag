@@ -468,7 +468,7 @@ static void		parse(int argc, char** argv,
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      resources.addValue("locale", argv[i]);
+      BZDB->set("locale", argv[i]);
     }
     else if (strcmp(argv[i], "-nolist") == 0) {
       startupInfo.listServerURL = "";
@@ -1078,7 +1078,7 @@ int			main(int argc, char** argv)
   BundleMgr *bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
   World::setBundleMgr(bm);
 
-  std::string locale = (db.hasValue("locale")) ? db.getValue("locale") : "default";
+  std::string locale = (BZDB->isSet("locale")) ? BZDB->get("locale") : "default";
   World::setLocale(locale);
   bm->getBundle(World::getLocale());
 
