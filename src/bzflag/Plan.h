@@ -51,13 +51,15 @@ public:
 	virtual Plan *createSubPlan() = 0;
 
 	/**
-	 * execute the plan
-	 *
+	 * execute the plan. The default implementation just attempts
+	 * to shoot at enemies. Overridden methods should call this base
+	 * implementation.
 	 */
-	virtual void execute() = 0;
+	virtual void execute();
 
 private:
 	TimeKeeper planExpiration;
+	TimeKeeper lastShot;
 };
 
 class PlanStack
