@@ -798,61 +798,64 @@ user identifies, they become part of the VERIFIED group.
 
 The available permissions are as follows:
 
-IDLESTATS               /idlestats
+.\" Use one tab between permission and description
+.ta 2i T .5i
+
+IDLESTATS	/idlestats
 .br
-LAGSTATS                /lagstats
+LAGSTATS	/lagstats
 .br
-FLAGMOD                 /flag
+FLAGMOD	/flag
 .br
-FLAGHISTORY             /flaghistory
+FLAGHISTORY	/flaghistory
 .br
-LAGWARN                 /lagwarn
+LAGWARN	/lagwarn
 .br
-KICK                    /kick
+KICK	/kick
 .br
-BAN                     /ban /hostban
+BAN	/ban /hostban
 .br
-BANLIST                 /banlist /hostbanlist
+BANLIST	/banlist /hostbanlist
 .br
-UNBAN                   /unban /hostunban
+UNBAN	/unban /hostunban
 .br
-COUNTDOWN               /countdown
+COUNTDOWN	/countdown
 .br
-ENDGAME                 /endgame
+ENDGAME	/endgame
 .br
-SETVAR			/set /reset
+SETVAR	/set /reset
 .br
-SHUTDOWNSERVER          /shutdownserver
+SHUTDOWNSERVER	/shutdownserver
 .br
-SUPERKILL               /superkill
+SUPERKILL	/superkill
 .br
-PLAYERLIST              /playerlist
+PLAYERLIST	/playerlist
 .br
-INFO                    not implemented
+INFO	not implemented
 .br
-LISTPERMS               not implemented
+LISTPERMS	not implemented
 .br
-SHOWOTHERS              not implemented
+SHOWOTHERS	not implemented
 .br
-REMOVEPERMS             /removegroup
+REMOVEPERMS	/removegroup
 .br
-SETPERMS                /setgroup
+SETPERMS	/setgroup
 .br
-SETALL                  use of all set/remove commands
+SETALL	use of all set/remove commands
 .br
-SETPASSWORD             not implemented
+SETPASSWORD	not implemented
 .br
-POLL			/poll ban|kick
+POLL	/poll ban|kick
 .br
-VOTE			/vote
+VOTE	/vote
 .br
-VETO			/veto
+VETO	/veto
 .br
-REQUIREIDENTIFY         user must /identify when using this callsign
+REQUIREIDENTIFY	user must /identify when using this callsign
 .br
-PRIVATEMESSAGE		/msg
+PRIVATEMESSAGE	/msg
 .br
-ACTIONMESSAGE		/me
+ACTIONMESSAGE	/me
 .br
 ADMINMESSAGESEND	player may send messages on the admin channel
 .br
