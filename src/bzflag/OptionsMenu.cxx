@@ -45,7 +45,7 @@ StartupInfo* getStartupInfo();
 extern ControlPanel* controlPanel;
 
 
-OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
+OptionsMenu::OptionsMenu() : formatMenu(NULL),
 			     guiOptionsMenu(NULL), saveWorldMenu(NULL),
 			     inputMenu(NULL)
 {
@@ -267,11 +267,6 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   label->setLabel("Clear Server List Cache");
   list.push_back(label);
 
-  keyMapping = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setLabel("Change Key Mapping");
-  list.push_back(label);
-
   guiOptions = label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setLabel("GUI Options");
@@ -293,7 +288,6 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
 OptionsMenu::~OptionsMenu()
 {
   delete formatMenu;
-  delete keyboardMapMenu;
   delete guiOptionsMenu;
   delete saveWorldMenu;
   delete inputMenu;
@@ -305,10 +299,6 @@ void OptionsMenu::execute()
   if (focus == videoFormat) {
     if (!formatMenu) formatMenu = new FormatMenu;
     HUDDialogStack::get()->push(formatMenu);
-  }
-  else if (focus == keyMapping) {
-    if (!keyboardMapMenu) keyboardMapMenu = new KeyboardMapMenu;
-    HUDDialogStack::get()->push(keyboardMapMenu);
   }
   else if (focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;

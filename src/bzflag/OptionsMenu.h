@@ -18,7 +18,6 @@
 #include "MenuDefaultKey.h"
 #include "HUDui.h"
 #include "FormatMenu.h"
-#include "KeyboardMapMenu.h"
 #include "GUIOptionsMenu.h"
 #include "SaveWorldMenu.h"
 #include "InputMenu.h"
@@ -42,13 +41,11 @@ public:
 
 private:
   HUDuiControl*	videoFormat;
-  HUDuiControl*	keyMapping;
   HUDuiControl*	guiOptions;
   HUDuiControl*	clearCache;
   HUDuiControl*	saveWorld;
   HUDuiControl*	inputSetting;
   FormatMenu*		formatMenu;
-  KeyboardMapMenu*	keyboardMapMenu;
   GUIOptionsMenu*	guiOptionsMenu;
   SaveWorldMenu*	saveWorldMenu;
   InputMenu*            inputMenu;

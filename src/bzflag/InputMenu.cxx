@@ -24,12 +24,13 @@
 /* local implementation headers */
 #include "MainWindow.h"
 #include "MainMenu.h"
+#include "HUDDialogStack.h"
 
 /* FIXME - from playing.h */
 MainWindow*    getMainWindow();
 
 
-InputMenu::InputMenu()
+InputMenu::InputMenu() : keyboardMapMenu(NULL)
 {
   std::string currentJoystickDevice = BZDB.get("joystickname");
   // add controls
@@ -44,6 +45,11 @@ InputMenu::InputMenu()
 
   option = new HUDuiList;
   std::vector<std::string>* options = &option->getList();
+
+  keyMapping = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Change Key Mapping");
+  list.push_back(label);
 
   // set joystick Device
   option->setFont(MainMenu::getFont());
@@ -72,10 +78,16 @@ InputMenu::InputMenu()
 
 InputMenu::~InputMenu()
 {
+  delete keyboardMapMenu;
 }
 
 void			InputMenu::execute()
 {
+  HUDuiControl* focus = HUDui::getFocus();
+  if (focus == keyMapping) {
+    if (!keyboardMapMenu) keyboardMapMenu = new KeyboardMapMenu;
+    HUDDialogStack::get()->push(keyboardMapMenu);
+  }
 }
 
 void			InputMenu::callback(HUDuiControl* w, void* data) {

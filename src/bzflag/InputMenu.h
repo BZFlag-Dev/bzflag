@@ -20,6 +20,7 @@
 
 /* local interface headers */
 #include "MenuDefaultKey.h"
+#include "KeyboardMapMenu.h"
 
 
 /** this class provides options for setting the gui
@@ -36,6 +37,9 @@ public:
   void execute();
   void resize(int width, int height);
   static void callback(HUDuiControl* w, void* data);
+private:
+  HUDuiControl*	   keyMapping;
+  KeyboardMapMenu* keyboardMapMenu;
 };
 
 
