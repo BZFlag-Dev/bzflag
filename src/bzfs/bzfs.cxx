@@ -2447,7 +2447,6 @@ static void playerAlive(int playerIndex)
   }
 
   // player is coming alive.
-  playerData->player.setAlive();
   dropAssignedFlag(playerIndex);
 
   // send MsgAlive
@@ -2464,6 +2463,9 @@ static void playerAlive(int playerIndex)
   buf = nboPackFloat(buf, spawnPosition->getAzimuth());
   broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
   delete spawnPosition;
+
+  // player is alive.
+  playerData->player.setAlive();
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     playerData->player.wasNotARabbit();
