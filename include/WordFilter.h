@@ -13,6 +13,8 @@
 #ifndef __WORDFILTER_H__
 #define __WORDFILTER_H__
 
+#include "common.h"
+
 #include <string>
 #include <vector>
 #include <set>
@@ -25,7 +27,9 @@
 #include <ctype.h>
 #include <sys/types.h>
 
-#ifdef HAVE_REGEX_H
+#ifdef BUILD_REGEX
+#  include "regex.h"
+#elif defined(HAVE_REGEX_H)
 #  include <regex.h>
 #else
 #  define regex_t void
