@@ -9,14 +9,28 @@
 	<html>
 		<head>
 			<title>BZFlag - <xsl:value-of select="bookinfo/title"/></title>
+			<style type="text/css">
+				a { font-size: 110%; text-decoration:none; display: block; color:#0000FF; background-color:#DAE2F6; }
+				a:link.selected { display: block; color:#000000; background-color:#BED0EA; }
+				a:visit.selected { display: block; color:#000000; background-color:#BED0EA; }
+				a:hover.selected { display: block; color:#000000; background-color: #BED0EA; }
+				a:link.unselected { display: block; color:#0000FF; background-color:#9FB5E0; }
+				a:visit.unselected { display: block; color:#0000FF; background-color:#7090D0; }
+				a:hover.unselected { display: block; color:#000000; background-color: #BED0EA; }
+			</style>
+	
 			<script language="JavaScript">
 				var curDiv = &quot;<xsl:value-of select="chapter[1]/@id"/>&quot;;
 				function switchDiv( divName )
 				{
 					var el = document.getElementById( curDiv );
 					el.style.display = "none";
+					el = document.getElementById( curDiv + "_ctrl" );
+					el.className = "unselected";
 					el = document.getElementById( divName );
 					el.style.display = "block";
+					el = document.getElementById( divName + "_ctrl" );
+					el.className = "selected";
 					curDiv = divName;
 				}
 			</script>
@@ -53,7 +67,9 @@
 				<xsl:attribute name="width"><xsl:value-of select="$chapWidth"/>%</xsl:attribute>
 				<xsl:variable name="divid"><xsl:value-of select="@id"/></xsl:variable>
 				<xsl:element name="a">
-					<xsl:attribute name="href">javascript:switchDiv(&apos;<xsl:value-of select="$divid"/>&apos;)</xsl:attribute>
+					<xsl:attribute name="href">javascript:switchDiv(&quot;<xsl:value-of select="$divid"/>&quot;)</xsl:attribute>
+					<xsl:attribute name="class">unselected</xsl:attribute>
+					<xsl:attribute name="id"><xsl:value-of select="@id"/>_ctrl</xsl:attribute>
 					<xsl:value-of select="title"/>
 				</xsl:element>
 			</xsl:element>
