@@ -482,6 +482,7 @@ static void		usage()
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
 	" [-config <configfile>]"
+	" [-debug]"
 	" [-directory <data-directory>]"
 	" [-echo]"
 	" [-echoAnsi]"

@@ -71,6 +71,10 @@ unsetting MESA_GLX_FX in your environment.
 \fB-anonymous\fR
 Uses the email address \fIanonymous\fR instead of \fIusername@hostname\fR.
 .TP
+\fB-debug\fR
+Adds some diagnostic output. Can be specified multiple times to increase
+verbosity.
+.TP
 \fB-directory\fI directory\fR
 Looks for data files in \fIdirectory\fR first.  This defaults to a
 directory named \fIdata\fR in the current directory.  If not found
