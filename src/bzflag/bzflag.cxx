@@ -1254,7 +1254,7 @@ int			main(int argc, char** argv)
   fm.loadAll(PlatformFactory::getMedia()->getMediaDirectory() + "/fonts");
   // try to get a font - only returns -1 if there are no fonts at all
   if (fm.getFaceID(BZDB.get("consoleFont")) < 0) {
-    printFatalError("No fonts found.  Exiting");
+    printFatalError("No fonts found  (the -directory option may help).  Exiting");
     return 1;
   }
 
