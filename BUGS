@@ -7,11 +7,6 @@ recent bugs
 - the high jump cheat check doesn't work very well with varying or positive
   gravity
 
-- robots sometimes drive straight through THE MIDDLE of buildings (seen on xmission(hix))
-   the code to generate the cells of open space are susceptible
-   to roundoff error, causing this effect.
-   They also shoot through the buildings
-
 - votingarbiter is confused by a player name with an embedded space
 
 - thief gets kicked for speeding sometimes after stealing flag
@@ -36,9 +31,6 @@ recent bugs
 
   1.7: Player [0] accept() from 208.186.182.172:53470 on 7
        Player [0] shutdownAcceptClient: close(7)
-
-- rendering options like textures and shadows do not immediately take
-  effect; need to call notifystylechange()?
 
 - team tag was added to shots to calculate team kills correctly when players 
   change teams (rabbit mode); this does nto really seem to be used or thought through
