@@ -1639,6 +1639,9 @@ void handleReplayCmd(int t, const char * message)
       Replay::skip (t, skip);
     }
   }
+  else if (strncmp (buf, "pause", 5) == 0) {
+    Replay::pause (t);
+  }
   else {
     Replay::sendHelp (t);
   }

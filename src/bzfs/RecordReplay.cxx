@@ -153,6 +153,8 @@ static bool routePacket (u16 code, int len, const void *data, u16 mode);
 
 static RRpacket *nextPacket ();
 static RRpacket *prevPacket ();
+static RRpacket *nextFilePacket ();
+static RRpacket *prevFilePacket ();
 static RRpacket *nextStatePacket ();
 static RRpacket *prevStatePacket ();
 
@@ -306,6 +308,9 @@ bool Record::setDirectory (const char *dirname)
 bool Record::setSize (int playerIndex, int Mbytes)
 {
   char buffer[MessageLen];
+  if (Mbytes <= 0) {
+    Mbytes = 1;
+  }
   RecordMaxBytes = Mbytes * (1024) * (1024);
   snprintf (buffer, MessageLen, "Record size set to %i", Mbytes);
   sendMessage(ServerPlayer, playerIndex, buffer, true);    
@@ -316,6 +321,9 @@ bool Record::setSize (int playerIndex, int Mbytes)
 bool Record::setRate (int playerIndex, int seconds)
 {
   char buffer[MessageLen];
+  if (seconds <= 0) {
+    seconds = 1;
+  }
   RecordUpdateRate = seconds * 1000000;
   snprintf (buffer, MessageLen, "Record rate set to %i", seconds);
   sendMessage(ServerPlayer, playerIndex, buffer, true);    
@@ -707,7 +715,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   // preload the buffer 
   // FIXME - this should be a moving window, for big files, mmap() ?
-  while (ReplayBuf.byteCount < RecordMaxBytes) {
+  while (ReplayBuf.byteCount < 5000 /*FIXME - RecordMaxBytes*/) {
     p = loadPacket (ReplayFile);
     if (p == NULL) {
       break;
@@ -851,7 +859,7 @@ bool Replay::play(int playerIndex)
   
   Replaying = true;
   if (ReplayPos != NULL) {
-    ReplayOffset = getRRtime () - ReplayBuf.tail->timestamp;
+    ReplayOffset = getRRtime () - ReplayPos->timestamp;
   }
 
   // reset the replay observers' view of state  
@@ -865,8 +873,6 @@ bool Replay::play(int playerIndex)
 
 bool Replay::skip(int playerIndex, int seconds)
 {
-  RRpacket *p;
-
   if (!ReplayMode) {
     sendMessage (ServerPlayer, playerIndex, "Server is not in replay mode");
     return false;
@@ -876,78 +882,78 @@ bool Replay::skip(int playerIndex, int seconds)
     sendMessage (ServerPlayer, playerIndex, "No replay file loaded");
     return false;
   }
-
-  p = ReplayPos;
-  RRtime nowtime = p->timestamp;
-
-  if (seconds != 0) {
-
-    RRtime target = p->timestamp + ((RRtime)seconds * (RRtime)1000000);
-
-    if (seconds > 0) {
-      while (p != NULL) {
-        if ((p->timestamp >= target) && ((p == ReplayPos) || 
-            (p->mode && (p->code == MsgTeamUpdate)))) { // start on an update
-          break;
-        }
-        p = p->next;
-      }
-      if (p == NULL) {
-        p = ReplayBuf.head;
-      }
-    }
-    else {
-      while (p != NULL) {
-        if ((p->timestamp <= target) && 
-            (p->mode && (p->code == MsgTeamUpdate))) { // start on an update
-          break;
-        }
-        p = p->prev;
-      }
-      if (p == NULL) {
-        p = ReplayBuf.tail;
-      }
-    }
+  
+  if (seconds == 0) {
+    ReplayOffset = getRRtime() - ReplayPos->timestamp;
+    return true;
   }
+
+  RRpacket *p = ReplayPos;
+  RRtime nowtime = p->timestamp;
+  RRtime target = nowtime + ((RRtime)seconds * (RRtime)1000000);
+  u32 nowFilePos = p->nextFilePos;   // for keeping track
+  
+  if (seconds > 0) {
+    do {
+      p = nextStatePacket ();
+    } while ((p != NULL) && (p->timestamp < target));
+  }
+  else {
+    do {
+      p = prevStatePacket ();
+    } while ((p != NULL) && (p->timestamp > target));
+  }      
    
   if (p == NULL) {
     sendMessage (ServerPlayer, playerIndex, "can't skip, no data available");
     return false;
   }
   
-  if (p != ReplayPos) {
+  if (ReplayPos->nextFilePos != nowFilePos) {
     // reset the replay observers' view of state  
     resetStates();
   }
   
-  RRtime newOffset = getRRtime() - p->timestamp;
-  ReplayOffset = newOffset;
-  ReplayPos = p;
+  ReplayOffset = getRRtime() - p->timestamp;
   
   RRtime diff = p->timestamp - nowtime;
   char buffer[MessageLen];
-  sprintf (buffer, "Skipping %.3f seconds (asked %i)",
+  snprintf (buffer, MessageLen, "Skipping %.3f seconds (asked %i)",
            (float)diff/1000000.0f, seconds);
-  sendMessage (ServerPlayer, playerIndex, buffer);
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
   
   return true;
 }
 
 
-bool Replay::sendPackets () {
+bool Replay::pause(int playerIndex)
+{
+  if ((ReplayFile != NULL) && (ReplayPos != NULL)) {
+    Replaying = false;
+    sendMessage (ServerPlayer, playerIndex, "Replay paused");
+  }
+  else {
+    sendMessage (ServerPlayer, playerIndex, "Can't pause, not playing");
+    return false;
+  }
+  return true;
+}
+
+  
+bool Replay::sendPackets ()
+{
   bool sent = false;
+  RRpacket *p = ReplayPos;
 
   if (!Replaying) {
     return false;
   }
 
-  while (Replay::nextTime () < 0.0f) {
+  while ((p != NULL) && (Replay::nextTime () < 0.0f)) {
     int i;
-    RRpacket *p;
-    
-    p = ReplayPos;
 
-    if (p == NULL) { // FIXME - internal error? (tag with !!! for now)
+    if (p == NULL) {
+      // this is a safety, it shouldn't happen
       resetStates ();
       Replaying = false;
       ReplayPos = ReplayBuf.tail;
@@ -958,7 +964,6 @@ bool Replay::sendPackets () {
     DEBUG4 ("sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p->mode, p->len, msgString (p->code), p->data);
             
-
     if (p->mode != HiddenPacket) {
       // set the database variables if this is MsgSetVar
       if (p->code == MsgSetVar) {
@@ -1008,12 +1013,12 @@ bool Replay::sendPackets () {
       DEBUG4 ("  skipping hidden packet\n");
     }
     
-    ReplayPos = ReplayPos->next;
+    p = nextPacket();
     sent = true;
     
   } // while loop
 
-  if (ReplayPos == NULL) {
+  if (p == NULL) {
     resetStates ();
     Replaying = false;
     ReplayPos = ReplayBuf.tail;
@@ -1110,35 +1115,11 @@ nextPacket ()
     return NULL;
   }
   else if (ReplayPos->next != NULL) {
-    RRpacket *tmp = ReplayPos;
     ReplayPos = ReplayPos->next;
-    return tmp;
+    return ReplayPos;
   }
   else {
-    // try to load a file packet
-    if (ReplayPos->nextFilePos > 0) {
-      fseek (ReplayFile, ReplayPos->nextFilePos, SEEK_SET);
-    }
-    else {
-      ReplayPos = ReplayBuf.head;
-      return NULL;
-    }
-      
-    RRpacket *p = loadPacket (ReplayFile);
-    if (p != NULL) {
-      RRpacket *tail = delTailPacket (&ReplayBuf);
-      if (tail != NULL) {
-        delete[] tail->data;
-        delete tail;
-      }
-      addHeadPacket (&ReplayBuf, p);
-      return p;
-    }
-    else {
-      return NULL;
-    }
-    ReplayPos = ReplayBuf.head;
-    return p;
+    return nextFilePacket();
   }
 }
 
@@ -1155,16 +1136,53 @@ prevPacket ()
     return ReplayPos;
   }
   else {
-    // try to load a file packet
-    if (ReplayPos->prevFilePos > 0) {
-      fseek (ReplayFile, ReplayPos->prevFilePos, SEEK_SET);
-    }
-    else {
-      ReplayPos = ReplayBuf.tail;
-      return NULL;
-    }
+    return prevFilePacket ();
+  }
+}
+
+
+static RRpacket *
+nextFilePacket ()
+{
+  RRpacket *p = NULL;
+  
+  // set the file position
+  if ((ReplayPos->nextFilePos == 0) ||
+      (fseek (ReplayFile, ReplayPos->nextFilePos, SEEK_SET) < 0)) {
     
-    RRpacket *p = loadPacket (ReplayFile);
+    printf ("fseek (ReplayFile, %i, SEEK_SET) = %i\n", ReplayPos->nextFilePos,
+            fseek (ReplayFile, ReplayPos->nextFilePos, SEEK_SET));
+  }
+  else {
+    p = loadPacket (ReplayFile);
+    
+    if (p != NULL) {
+      RRpacket *tail = delTailPacket (&ReplayBuf);
+      if (tail != NULL) {
+        delete[] tail->data;
+        delete tail;
+      }
+      addHeadPacket (&ReplayBuf, p);
+    }
+  }
+
+  ReplayPos = ReplayBuf.head;
+  return p;
+}
+
+
+static RRpacket *
+prevFilePacket ()
+{
+  RRpacket *p = NULL;
+  
+  // set the file position
+  if ((ReplayPos->prevFilePos <= 0) ||
+      (fseek (ReplayFile, ReplayPos->prevFilePos, SEEK_SET) < 0)) {
+  }
+  else {
+    p = loadPacket (ReplayFile);
+
     if (p != NULL) {
       RRpacket *head = delHeadPacket (&ReplayBuf);
       if (head != NULL) {
@@ -1172,15 +1190,11 @@ prevPacket ()
         delete head;
       }
       addTailPacket (&ReplayBuf, p);
-      return p;
     }
-    else {
-      ReplayPos = ReplayBuf.tail;
-      return NULL;
-    }
-    ReplayPos = ReplayBuf.tail;
-    return p;
   }
+
+  ReplayPos = ReplayBuf.tail;
+  return p;
 }
 
 
@@ -1211,9 +1225,6 @@ prevStatePacket ()
   
   return p;
 
-  // FIXME
-  nextPacket ();
-  prevPacket ();
   nextStatePacket ();
   prevStatePacket ();
 }
@@ -1403,7 +1414,7 @@ saveVariablesState ()
 
   pvd.bufStart = buffer;
   pvd.buf      = buffer + sizeof(u16); // u16 placeholder for count
-  pvd.len      = 0;
+  pvd.len      = sizeof(u16);
   pvd.count    = 0;
   
   BZDB.iterate (packVars, &pvd);
@@ -1466,11 +1477,15 @@ savePacket (RRpacket *p, FILE *f)
   if (f == NULL) {
     return false;
   }
+  
+  // file pointer to the next packet location
+  u32 thisFilePos = ftell (f);
+  u32 nextFilePos = ftell (f) + RRpacketHdrSize + p->len;
 
   buf = nboPackUShort (bufStart, p->mode);
   buf = nboPackUShort (buf, p->code);
   buf = nboPackUInt (buf, p->len);
-  buf = nboPackUInt (buf, p->nextFilePos); //FIXME
+  buf = nboPackUInt (buf, nextFilePos);
   buf = nboPackUInt (buf, RecordFilePrevPos);
   buf = nboPackUInt (buf, (u32) (p->timestamp >> 32));        // msb
   buf = nboPackUInt (buf, (u32) (p->timestamp & 0xFFFFFFFF)); // lsb
@@ -1482,7 +1497,7 @@ savePacket (RRpacket *p, FILE *f)
 
   RecordFileBytes += p->len + RRpacketHdrSize;
   RecordFilePackets++;
-  RecordFilePrevPos = ftell (f);
+  RecordFilePrevPos = thisFilePos;
 
   return true;  
 }
@@ -1729,7 +1744,7 @@ loadHeader (ReplayHeader *h, FILE *f)
   else {
     h->flags = NULL;
   }
-
+  
   // load the world database
   h->world = new char [h->worldSize];
   if (fread (h->world, h->worldSize, 1, f) == 0) {

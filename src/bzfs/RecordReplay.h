@@ -58,7 +58,8 @@ namespace Replay {
   extern bool unloadFile (int playerIndex);
   extern bool play (int playerIndex);
   extern bool skip (int playerIndex, int seconds); // 0 secs jumps to next packet
-  extern bool jumpto (int playerIndex, int seconds);
+  extern bool pause (int playerIndex);
+//FIXME  extern bool jumpto (int playerIndex, int seconds);
   
   extern bool enabled ();
   extern bool playing ();
