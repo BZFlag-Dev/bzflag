@@ -5579,9 +5579,15 @@ static char **parseConfFile( const char *file, int &ac)
   ac = 0;
 
   ifstream confStrm(file);
-  if (confStrm.good()) {
+  if (confStrm.is_open()) {
      char buffer[1024];
      confStrm.getline(buffer,1024);
+
+     if (!confStrm.good()) {
+       fprintf(stderr, "configuration file not found\n");
+       usage("bzfs");
+     }
+
      while (confStrm.good()) {
        std::string line = buffer;
        int startPos = line.find_first_not_of("\t \r\n");
@@ -5747,12 +5753,13 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 		av = parseConfFile(argv[i], ac);
 		// Theoretically we could merge the options specified in the conf file after parsing
 		// the cmd line options. But for now just overright them on the spot
-//		parse(ac, av, confOptions); 
+	        //	parse(ac, av, confOptions); 
 		parse(ac, av, options);
 
 		//for (int i = 0; i < ac; i++) // These strings need to stick around for -world, -servermsg, etc
 		//  delete[] av[i];
-		delete[] av; 
+		delete[] av;
+
 	  }
     }
     else if (strcmp(argv[i], "-cr") == 0) {
