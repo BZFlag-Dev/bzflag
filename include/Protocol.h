@@ -122,6 +122,8 @@ const uint16_t		RejectBadType = 0x0002;
 const uint16_t		RejectNoRogues = 0x0003;
 const uint16_t		RejectTeamFull = 0x0004;
 const uint16_t		RejectServerFull = 0x0005;
+const uint16_t		RejectBadCallsign = 0x0006;
+const uint16_t		RejectRepeatCallsign = 0x0007;
 
 // request for additional UDP link
 
