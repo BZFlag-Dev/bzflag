@@ -4,9 +4,12 @@
 BZFlag 1.7e2
 ------------
 
-* wait loop removal - chestal/timr
+* bzfs performance fix, wait loop removal - chestal/timr
 * limbo flag bugfix - chestal
 * *bsd cleanups from new ports maintainer - Nick Sayer
+* scrollback cleanups - crs
+* minimum size now 256x192 - TimR
+* various bug fixes - many
 
 BZFlag 1.7e1
 ------------

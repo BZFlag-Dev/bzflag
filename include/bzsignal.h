@@ -13,7 +13,7 @@
 #include <signal.h>
 
 /* some platforms don't have a SIG_PF type. */
-#if !defined(__sgi) && !defined(sun)
+#ifndef SIG_PF
 typedef void (*SIG_PF)(int);
 #endif
 
