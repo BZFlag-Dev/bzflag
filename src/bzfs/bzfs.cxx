@@ -630,8 +630,10 @@ static int pread(int playerIndex, int l)
 static void *flagPack(void *buf, int flagIndex)
 {
   buf = nboPackUShort(buf, flagIndex);
-  bool hide = flag[flagIndex].flag.type->flagTeam
-    == ::NoTeam && !isIdentifyFlagIn;
+  bool hide
+    = (flag[flagIndex].flag.type->flagTeam == ::NoTeam)
+    && !isIdentifyFlagIn
+    && (flag[flagIndex].player == -1);
   buf = flag[flagIndex].flag.pack(buf, hide);
   return buf;
 }
