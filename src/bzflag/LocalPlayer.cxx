@@ -1155,6 +1155,9 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
     fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
   }
 
+  // apply handicap advantage to tank speed
+  fracOfMaxAngVel *= (1.0f + (handicap * (HandicapAngAdj - 1.0f)));
+
   // set desired turn speed
   desiredAngVel = fracOfMaxAngVel * BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
   Player::setUserAngVel(desiredAngVel);
@@ -1227,9 +1230,12 @@ bool			LocalPlayer::fireShot()
     // apply any handicap advantage to shot speed
     if (handicap > 0.0f) {
       const float speedAd = 1.0f + (handicap * (HandicapShotSpeedAdj - 1.0f));
-      firingInfo.shot.vel[0] *= speedAd;
-      firingInfo.shot.vel[1] *= speedAd;
-      firingInfo.shot.vel[2] *= speedAd;
+      const float* dir = getForward();
+      const float* tankVel = getVelocity();
+      const float shotSpeed = speedAd * BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+      firingInfo.shot.vel[0] = tankVel[0] + shotSpeed * dir[0];
+      firingInfo.shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
+      firingInfo.shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
     }
     // Set _shotsKeepVerticalVelocity on the server if you want shots
     // to have the same vertical velocity as the tank when fired.
@@ -1607,27 +1613,32 @@ void			LocalPlayer::changeScore(short deltaWins,
   }
 }
 
-float LocalPlayer::updateHandicap()
+// calculate overall relative score to other players
+int			 LocalPlayer::getHandicapScoreBase() const
+{
+  int wins = 0;
+  int losses = 0;
+  const int maxplayers = World::getWorld()->getMaxPlayers();
+
+  // compute overall wins and losses in relation to other players
+  for (int i = 0; i < maxplayers; i++) {
+    RemotePlayer *player = World::getWorld()->getPlayer(i);
+    if ((player == NULL) || (player->getId() == LocalPlayer::getMyTank()->getId())) {
+      continue;
+    }
+    wins += player->getLocalWins();
+    losses += player->getLocalLosses();
+  }
+  return losses - wins;
+}
+
+float			LocalPlayer::updateHandicap()
 {
   /* compute and return the handicap */
 
   if (World::getWorld()->allowHandicap()) {
-    int wins = 0;
-    int losses = 0;
-    const int maxplayers = World::getWorld()->getMaxPlayers();
-
-    // compute overall wins and losses in relation to other players
-    for (int i = 0; i < maxplayers; i++) {
-      RemotePlayer *player = World::getWorld()->getPlayer(i);
-      if ((player == NULL) || (player->getId() == LocalPlayer::getMyTank()->getId())) {
-	continue;
-      }
-      wins += player->getLocalWins();
-      losses += player->getLocalLosses();
-    }
-
     // a relative score of -50 points will provide maximum handicap
-    handicap = float(losses - wins) / 50.0f;
+    handicap = float(getHandicapScoreBase()) / 50.0f;
 
     /* limit how much of a handicap is afforded, and only provide
      * handicap advantages instead of disadvantages.

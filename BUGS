@@ -1,9 +1,6 @@
 recent bugs
 ------------
 
-- bots imherit the owner's handycat; the relative score data is not
-  available to them; could instead use absolute score
-
 - teleporters ricochet on the frame seems incorrect
 
 - GM and SW flags occasionally do not show in the scoreboard:

@@ -92,7 +92,8 @@ enum GameStyle {
 
 // handicap adjustment scales
 const float HandicapSpeedAdj = 2.0f;
-const float HandicapShotSpeedAdj = 2.0f;
+const float HandicapAngAdj = 1.5f;
+const float HandicapShotSpeedAdj = 1.75f;
 
 // map object flags
 #define _DRIVE_THRU	0x01
