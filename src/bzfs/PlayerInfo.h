@@ -31,10 +31,10 @@
 
 
 enum ClientState {
-  PlayerNoExist, // does not exist
-  PlayerInLimbo, // not entered
-  PlayerDead, // dead
-  PlayerAlive // alive
+  PlayerNoExist,
+  PlayerInLimbo,
+  PlayerDead,
+  PlayerAlive
 };
 
 
@@ -127,6 +127,7 @@ struct PlayerInfo {
     unsigned short lastSendPacketNo;
 
     bool paused;
+    bool notResponding;
     bool toBeKicked;
 
 

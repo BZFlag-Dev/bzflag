@@ -2950,7 +2950,7 @@ static void anointNewRabbit()
   rabbitIndex = NoPlayer;
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (i != oldRabbit && !player[i].paused && player[i].state == PlayerAlive && player[i].team != ObserverTeam) {
+    if (i != oldRabbit && !player[i].paused && !player[i].notResponding && player[i].state == PlayerAlive && player[i].team != ObserverTeam) {
       float ratio = (player[i].wins - player[i].losses) * player[i].wins;
       if (ratio > topRatio) {
 	topRatio = ratio;
@@ -2961,7 +2961,7 @@ static void anointNewRabbit()
   if (rabbitIndex == NoPlayer) {
     // nobody, or no other than old rabbit to choose from
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo && !player[i].paused && player[i].team != ObserverTeam) {
+      if (player[i].state > PlayerInLimbo && !player[i].paused && !player[i].notResponding && player[i].team != ObserverTeam) {
 	float ratio = (player[i].wins - player[i].losses) * player[i].wins;
 	if (ratio > topRatio) {
 	  topRatio = ratio;
@@ -5374,6 +5374,25 @@ int main(int argc, char **argv)
       }
     }
 
+    // update notResponding
+    for (int h = 0; h < curMaxPlayers; h++) {
+      if (player[h].state > PlayerInLimbo) {
+	bool oldnr = player[h].notResponding;
+	player[h].notResponding = ((TimeKeeper::getCurrent().getSeconds() - player[h].lastupdate.getSeconds()) > 3.5);
+	// if player is the rabbit, anoint a new one
+	if (!oldnr && player[h].notResponding && h == rabbitIndex)
+	  anointNewRabbit();
+	// if player is holding a team flag, drop it
+	if (!oldnr && player[h].notResponding) {
+	  for (int j = 0; j < numFlags; i++) {
+	    if (flag[j].player == i) {
+	      dropFlag(h, player[h].lastState.pos);
+	    }
+	  }
+	}
+      }
+    }
+
     // manage voting poll for collective kicks/bans
     if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {
       if (votingarbiter->knowsPoll()) {
@@ -5384,7 +5403,7 @@ int main(int argc, char **argv)
 
 	static unsigned short int voteTime = 0;
 	static bool initialAnnounce = true;
-	
+
 	/* once a poll begins, announce its commencement */
 	if (initialAnnounce) {
 	  voteTime = votingarbiter->getVoteTime();
