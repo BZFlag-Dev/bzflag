@@ -55,7 +55,7 @@ class PlayerState
     int		phydrv;		// physics driver
 
     // the following are to be used only for drawing
-    float	userSpeed;	// user's deired angular velocity
+    float	userSpeed;	// user's desired angular velocity
     float	userAngVel;	// angular velocity of tank
     float	jumpJetsScale;	// angular velocity of tank
 
