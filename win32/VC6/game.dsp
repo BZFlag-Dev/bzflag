@@ -142,7 +142,7 @@ SOURCE=..\..\src\game\CommandsStandard.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\game\GetCacheDir.cxx
+SOURCE=..\..\src\game\DirectoryNames.cxx
 # End Source File
 # Begin Source File
 
@@ -162,7 +162,7 @@ SOURCE=..\..\src\game\CommandsStandard.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\GetCacheDir.h
+SOURCE=..\..\include\DirectoryNames.h
 # End Source File
 # Begin Source File
 
