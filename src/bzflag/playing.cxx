@@ -4113,7 +4113,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	// matching the team-display style of other kill messages
 	TeamColor team = lookupPlayer(killer)->getTeam();
 	if (hit)
-		team = ((ShotPath*)hit)->getTeam();
+	  team = hit->getTeam();
 	if (myTank->getTeam() == team && team != RogueTeam) {
 	  blowedUpNotice += "teammate " ;
 	  blowedUpNotice += lookupPlayer(killer)->getCallSign();

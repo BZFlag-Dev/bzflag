@@ -44,7 +44,7 @@ struct ShotUpdate {
     float		pos[3];			// shot position
     float		vel[3];			// shot velocity
     float		dt;			// time shot has existed
-	TeamColor   team;
+    TeamColor		team;
 };
 
 struct FiringInfo {

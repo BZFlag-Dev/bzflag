@@ -65,7 +65,7 @@ class ShotPath {
 
     void		radarRender() const;
     FiringInfo&		getFiringInfo();
-	TeamColor		getTeam();
+    TeamColor		getTeam() const;
   protected:
 			ShotPath(const FiringInfo&);
     void		updateShot(float dt);
@@ -174,7 +174,7 @@ inline FiringInfo&	ShotPath::getFiringInfo()
   return firingInfo;
 }
 
-inline 	TeamColor   ShotPath::getTeam()
+inline 	TeamColor	ShotPath::getTeam() const
 {
   return firingInfo.shot.team;
 }
