@@ -362,7 +362,7 @@ bool			Player::getDeadReckoning(
 {
   // see if predicted position and orientation (only) are close enough
   const float dt2 = inputPrevTime - inputTime;
-  ((Player*)this)->inputPrevTime = TimeKeeper::getTick();
+  inputPrevTime = TimeKeeper::getTick();
   const float dt = inputPrevTime - inputTime;
 
   if (inputStatus & PlayerState::Paused) {
@@ -391,8 +391,8 @@ bool			Player::getDeadReckoning(
       *predictedAzimuth = inputAzimuth;
 
     // update z with Newtownian integration (like LocalPlayer)
-    ((Player*)this)->inputZSpeed += BZDB->eval(StateDatabase::BZDB_GRAVITY) * (dt - dt2);
-    ((Player*)this)->inputPos[2] += inputZSpeed * (dt - dt2);
+    inputZSpeed += BZDB->eval(StateDatabase::BZDB_GRAVITY) * (dt - dt2);
+    inputPos[2] += inputZSpeed * (dt - dt2);
   }
   else {
     // azimuth changes linearly
@@ -504,6 +504,27 @@ void			Player::doDeadReckoning()
 
   move(predictedPos, predictedAzimuth);
   setVelocity(predictedVel);
+}
+
+void Player::setDeadReckoning()
+{
+  // save stuff for dead reckoning
+  inputTime = TimeKeeper::getTick();
+  inputPrevTime = inputTime;
+  inputStatus = state.status;
+  inputPos[0] = state.pos[0];
+  inputPos[1] = state.pos[1];
+  inputPos[2] = state.pos[2];
+  inputSpeed = hypotf(state.velocity[0], state.velocity[1]);
+  if (cosf(state.azimuth) * state.velocity[0] + sinf(state.azimuth) * state.velocity[1] < 0.0f)
+    inputSpeed = -inputSpeed;
+  if (inputSpeed != 0.0f)
+    inputSpeedAzimuth = atan2f(state.velocity[1], state.velocity[0]);
+  else
+    inputSpeedAzimuth = 0.0f;
+  inputZSpeed = state.velocity[2];
+  inputAzimuth = state.azimuth;
+  inputAngVel = state.angVel;
 }
 
 // ex: shiftwidth=2 tabstop=8
