@@ -156,13 +156,13 @@ void			SceneNode::getRenderNodes(SceneRenderer& renderer)
 {
   const float eyeMove = renderer.getViewFrustum().getEyeMove();
   bool recompute      = false;
-  if (eyeDistance >= 0) {
+  if (eyeDistance >= 0.0f) {
     eyeDistance -= eyeMove;
-    if (eyeDistance < 0)
+    if (eyeDistance < 0.0f)
       recompute = true;
   } else {
     eyeDistance += eyeMove;
-    if (eyeDistance >= 0)
+    if (eyeDistance >= 0.0f)
       recompute = true;
   }
   if (recompute) {
@@ -170,7 +170,7 @@ void			SceneNode::getRenderNodes(SceneRenderer& renderer)
     eyeDistance = getPlaneDistance(eye);
   }
   // cull if eye is behind (or on) plane
-  if (eyeDistance >= 0 && !cull(renderer.getViewFrustum())) {
+  if ((eyeDistance >= 0.0f) && !cull(renderer.getViewFrustum())) {
     if (!renderer.testAndSetStyle(styleMailbox)) {
       notifyStyleChange(renderer);
     }
