@@ -17,6 +17,7 @@ bzfs \- BZFlag game server
 [\fB\-i \fIinterface\fR]
 [\fB\-j\fR]
 [\fB\-lagwarn \fR{\fItime/ms\fR}]
+[\fB\-maxidle \fR{\fItime/s\fR}]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue-count\fR]\fB,\fR[\fIred-count\fR]\fB,\fR[\fIgreen-count\fR]\fB,\fR[\fIblue-count\fR]\fB,\fR[\fIpurple-count\fR]}]
 [\fB\-mps \fR{\fImax-score\fR}]
 [\fB\-ms \fIshots\fR]
@@ -103,6 +104,11 @@ Allows jumping.
 .TP
 \fB-lagwarn\fI time/ms\fR
 Send warnings to players that lag more than time.
+.TP
+\fB-maxidle\fI time/s\fR
+Kick players that did not play longer than time seconds. Pausing players are
+not kicked. If a player uttered a word recently, he will be kicked after
+thrice the given time.
 .TP
 \fB-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR]}
 Sets the maximum number of players, total or per team.  A single value sets

@@ -211,7 +211,10 @@ struct PlayerInfo {
     FlagHistoryList flagHistory;
     // player played before countdown started
     bool playedEarly;
- 
+
+    // idle kick
+    TimeKeeper lastupdate,lastmsg;
+
 #ifdef NETWORK_STATS
     // message stats bloat
     TimeKeeper perSecondTime[2];
@@ -603,6 +606,7 @@ static const char *worldFile = NULL;
 static float lagwarnthresh = -1.0;
 static int maxlagwarn = 10000;
 static char *password = NULL;
+static float idlekickthresh = -1.0;
 
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex);
@@ -3719,6 +3723,10 @@ static void addPlayer(int playerIndex)
   player[playerIndex].laglastwarn = 0;
   player[playerIndex].lagwarncount = 0;
   player[playerIndex].lagalpha = 1;
+  player[playerIndex].lagkillerpending = false;
+
+  player[playerIndex].lastupdate = TimeKeeper::getCurrent();
+  player[playerIndex].lastmsg    = TimeKeeper::getCurrent();
 
   player[playerIndex].nextping = TimeKeeper::getCurrent();
   player[playerIndex].nextping += 10.0;
@@ -3728,8 +3736,6 @@ static void addPlayer(int playerIndex)
   player[playerIndex].pingseqno = 0;
   player[playerIndex].pingslost = 0;
   player[playerIndex].pingssent = 0;
-
-  player[playerIndex].lagkillerpending = false;
 
   player[playerIndex].playedEarly = false;
 
@@ -4796,7 +4802,7 @@ static void parseCommand(const char *message, int t)
   // /lagstats gives simple statistics about players' lags
   else if (strncmp(message+1,"lagstats",8) == 0) {
     for (int i = 0; i < maxPlayers; i++) {
-      if (player[i].fd != NotConnected) {
+      if (player[i].state > PlayerInLimbo) {
         char reply[MessageLen];
     	sprintf(reply,"%-12s : %4dms (%d)%s",player[i].callSign,
             int(player[i].lagavg*1000),player[i].lagcount,
@@ -4804,6 +4810,18 @@ static void parseCommand(const char *message, int t)
         if (player[i].doespings && player[i].pingslost>0)
           sprintf(reply+strlen(reply)," %d lost",player[i].pingslost);
 	    sendMessage(t,player[t].id,player[t].team,reply);
+      }
+    }
+  }
+  // /idlestats gives a list of players' idle times
+  else if (strncmp(message+1,"idlestats",9) == 0) {
+    TimeKeeper now=TimeKeeper::getCurrent();
+    for (int i = 0; i < maxPlayers; i++) {
+      if (player[i].state > PlayerInLimbo) {
+        char reply[MessageLen];
+        sprintf(reply,"%-12s : %4ds",player[i].callSign,
+                int(now-player[i].lastupdate));
+        sendMessage(t,player[t].id,player[t].team,reply);
       }
     }
   }
@@ -4831,7 +4849,7 @@ static void parseCommand(const char *message, int t)
   // /playerlist dumps a list of players with IPs etc.
   else if (player[t].Admin && strncmp(message+1,"playerlist",10) == 0) {
     for (int i = 0; i < maxPlayers; i++) {
-      if (player[i].fd != NotConnected) {
+      if (player[i].state > PlayerInLimbo) {
         char reply[MessageLen];
 	sprintf(reply,"[%d]%-12s: %s:%d%s%s",i,player[i].callSign,
 		inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
@@ -5043,6 +5061,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player sending a message
     case MsgMessage: {
+      player[t].lastmsg = TimeKeeper::getCurrent();
       // data: target player, target team, message string
       PlayerId targetPlayer;
       uint16_t targetTeam;
@@ -5120,6 +5139,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player is sending multicast data
     case MsgPlayerUpdate:
+      player[t].lastupdate = TimeKeeper::getCurrent();
     case MsgGMUpdate:
     case MsgAudio:
     case MsgVideo:
@@ -5148,6 +5168,7 @@ static const char *usageString =
 "[-j] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
+"[-maxidle <time/s>] "
 "[-mo <count> ]"
 "[-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>]}] "
 "[-mps <score>] "
@@ -5255,6 +5276,7 @@ static void extraUsage(const char *pname)
   cout << "\t -passwd: specify a <password> for operator commands" << endl;
   cout << "\t -lagwarn: lag warning threshhold time [ms]" << endl;
   cout << "\t -lagdrop: drop player after this many lag warnings" << endl;
+  cout << "\t -maxidle: idle kick threshhold [s]" << endl;
   cout << "\nFlag codes:" << endl;
   for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
     cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
@@ -5823,6 +5845,13 @@ static void parse(int argc, char **argv)
       }
       maxlagwarn = atoi(argv[i]);
     }
+    else if (strcmp(argv[i], "-maxidle") == 0) {
+      if (++i == argc) {
+        cerr << "argument expected for " << argv[i] << endl;
+        usage(argv[0]);
+      }
+      idlekickthresh = atoi(argv[i]);
+    }
     else {
       cerr << "bad argument " << argv[i] << endl;
       usage(argv[0]);
@@ -6215,6 +6244,23 @@ int main(int argc, char **argv)
       }
     }
 #endif
+
+    // kick idle players
+    if (idlekickthresh > 0) {
+      TimeKeeper now = TimeKeeper::getCurrent();
+      for (int i=0;i<maxPlayers;i++) {
+        if (!player[i].Observer && player[i].state == PlayerDead &&
+            (now - player[i].lastupdate >
+              (now-player[i].lastmsg < idlekickthresh ?
+               3 * idlekickthresh : idlekickthresh))) {
+          DEBUG1("kicking idle player %s (%d)\n",player[i].callSign,
+                 int(now - player[i].lastupdate));
+          char message[MessageLen]="You were kicked because of idling too long";
+          sendMessage(i, player[i].id, player[i].team, message);
+          removePlayer(i);
+        }
+      }
+    }
 
     // if any flags were in the air, see if they've landed
     if (numFlagsInAir > 0) {
