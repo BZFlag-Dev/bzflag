@@ -104,7 +104,7 @@ void MeshFace::finalize()
   if (maxCrossSqr < +1.0e-20f) {
 
     DEBUG1("invalid mesh face");
-    if (debugLevel >= 3) {
+    if ((debugLevel >= 3) && (mesh != NULL)) {
       printf(":");
       for (i = 0; i < vertexCount; i++) {
         printf(" %i", (fvec3*)vertices[i] - mesh->getVertices());
@@ -136,7 +136,7 @@ void MeshFace::finalize()
     if (d <= 0.0f) {
 
       DEBUG1("non-convex mesh face");
-      if (debugLevel >= 3) {
+      if ((debugLevel >= 3) && (mesh != NULL)) {
         printf(":");
         for (i = 0; i < vertexCount; i++) {
           printf(" %i", (fvec3*)vertices[i] - mesh->getVertices());
