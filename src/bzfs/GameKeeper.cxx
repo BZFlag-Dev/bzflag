@@ -21,7 +21,7 @@
 extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
-bool                GameKeeper::Player::checkAllPlayer         = false;
+bool                GameKeeper::Player::allNeedHostbanChecked  = false;
 
 #if defined(USE_THREADS)
 pthread_mutex_t GameKeeper::Player::mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -39,7 +39,7 @@ GameKeeper::Player::Player(int _playerIndex,
   player(_playerIndex), lagInfo(&player),
   lastState(&::lastState[_playerIndex]),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-  checkHostnameBan(false)
+  needThisHostbanChecked(false)
 {
   playerList[playerIndex] = this;
 
@@ -205,6 +205,11 @@ bool GameKeeper::Player::loadEnterData(void *buf,
       return false;
     }
   }
+  const char *token = player.getToken();
+  if (token[0] == '\0') {
+    setNeedThisHostbanChecked(true);
+  }
+
   return true;
 }
 
@@ -214,7 +219,6 @@ void GameKeeper::Player::signingOn(bool ctf)
   player.resetPlayer(ctf);
   player.signingOn();
   lagInfo.reset();
-  checkHostnameBan = true;
 }
 
 int GameKeeper::Player::getPlayerIDByName(const std::string &name)

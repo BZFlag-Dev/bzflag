@@ -3957,27 +3957,29 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 #ifdef HAVE_ADNS_H
   const char *hostname = playerData.netHandler->getHostname();
 
-  if (hostname && !playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)
-      && playerData.mustCheckHostBan()) {
-    HostBanInfo hostInfo("*");
-    if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
-      std::string reason = "bannedhost for: ";
-      if (hostInfo.reason.size())
-        reason += hostInfo.reason;
-      else
-        reason += "General Ban";
+  if (hostname && playerData.needsHostbanChecked()) {
+    if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
+      HostBanInfo hostInfo("*");
+      if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
+        std::string reason = "bannedhost for: ";
+        if (hostInfo.reason.size())
+          reason += hostInfo.reason;
+        else
+          reason += "General Ban";
 
-      if (hostInfo.bannedBy.size()) {
-        reason += " by ";
-        reason += hostInfo.bannedBy;
+        if (hostInfo.bannedBy.size()) {
+          reason += " by ";
+          reason += hostInfo.bannedBy;
+        }
+
+        if (hostInfo.fromMaster)
+          reason += " from the master server";
+
+        removePlayer(p, reason.c_str());
+        return;
       }
-
-      if (hostInfo.fromMaster)
-        reason += " from the master server";
-
-      removePlayer(p, reason.c_str());
-      return;
     }
+    playerData.setNeedThisHostbanChecked(false);
   }
 #endif
   
@@ -4591,7 +4593,7 @@ int main(int argc, char **argv)
 	continue;
       doStuffOnPlayer(*playerData);
     }
-    GameKeeper::Player::setRecheckAll(false);
+    GameKeeper::Player::setAllNeedHostbanChecked(false);
 
     // manage voting poll for collective kicks/bans/sets
     if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {

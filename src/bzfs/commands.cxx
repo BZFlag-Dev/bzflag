@@ -742,7 +742,7 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
 			   reason.c_str());
     clOptions->acl.save();
 
-    GameKeeper::Player::setRecheckAll(true);
+    GameKeeper::Player::setAllNeedHostbanChecked(true);
 
     sendMessage(ServerPlayer, t, "Host pattern added to banlist");
 #ifndef HAVE_ADNS_H
@@ -1437,7 +1437,7 @@ static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
   char kickmessage[MessageLen];
   
   // Check host bans
-  GameKeeper::Player::setRecheckAll(true);
+  GameKeeper::Player::setAllNeedHostbanChecked(true);
 
   //Check IP bans
   for (int i = 0; i < curMaxPlayers; i++) {
