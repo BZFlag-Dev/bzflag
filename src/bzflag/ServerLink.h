@@ -21,6 +21,9 @@
 
 #include <string>
 #ifdef HAVE_KRB5
+	#ifdef MAXHOSTNAMELEN
+		#undef MAXHOSTNAMELEN
+	#endif 
 #include <krb5.h>
 #endif
 

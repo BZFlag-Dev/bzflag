@@ -13,6 +13,12 @@
 /* interface header */
 #include "Authentication.h"
 
+
+// because kebos dosn't asume anyone else but them has defines.
+#ifdef MAXHOSTNAMELEN
+#undef MAXHOSTNAMELEN
+#endif 
+
 /* system implementation headers */
 #ifdef HAVE_KRB5
 #include <com_err.h>

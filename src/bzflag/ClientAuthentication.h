@@ -16,8 +16,13 @@
 /* bzflag special common - 1st one */
 #include "common.h"
 
+
 /* system implementation headers */
 #ifdef HAVE_KRB5
+	// because kebos dosn't asume anyone else but them has defines.
+	#ifdef MAXHOSTNAMELEN
+		#undef MAXHOSTNAMELEN
+	#endif 
 #include <krb5.h>
 #endif
 
