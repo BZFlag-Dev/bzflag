@@ -230,15 +230,6 @@ static int lookupPlayer(const PlayerId& id)
   return id;
 }
 
-static int lookupFirstTeamFlag(int teamindex)
-{
-  for (int i = 0; i < numFlags; i++) {
-    if (FlagInfo::flagList[i].flag.type->flagTeam == teamindex)
-      return i;
-  }
-  return -1;
-}
-
 static void setNoDelay(int fd)
 {
   // turn off TCP delay (collection).  we want packets sent immediately.
@@ -1591,23 +1582,14 @@ static void addPlayer(int playerIndex)
 
   // player is signing on (has already connected via addClient).
   playerData->signingOn((clOptions->gameStyle & TeamFlagGameStyle) != 0);
-  // update team state and if first player on team,
-  // add team's flag and reset it's score
-  bool resetTeamFlag = false;
+
+  // update team state and if first player on team, reset it's score
   int teamIndex = int(playerData->player.getTeam());
   team[teamIndex].team.size++;
   if (team[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
-    if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
-      int flagid = lookupFirstTeamFlag(teamIndex);
-      if (flagid >= 0 && FlagInfo::flagList[flagid].flag.status == FlagNoExist) {
-        // can't call resetFlag() here cos it'll screw up protocol for
-        // player just joining, so do it later
-        resetTeamFlag = true;
-      }
-    }
   }
 
   // send new player updates on each player, all existing flags, and all teams.
@@ -1666,12 +1648,17 @@ static void addPlayer(int playerIndex)
   if (!NetHandler::exists(playerIndex))
     return;
 
-  // reset that flag
-  if (resetTeamFlag) {
-    int flagid = lookupFirstTeamFlag(teamIndex);
-    if (flagid >= 0) {
-      for (int n = 0; n < clOptions->numTeamFlags[teamIndex]; n++)
-        resetFlag(n+flagid);
+  // if first player on team add team's flag
+  if (team[teamIndex].team.size == 1
+      && Team::isColorTeam((TeamColor)teamIndex)) {
+    if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
+      int flagid = FlagInfo::lookupFirstTeamFlag(teamIndex);
+      if (flagid >= 0
+	  && FlagInfo::flagList[flagid].flag.status == FlagNoExist) {
+	// reset those flags
+	for (int n = 0; n < clOptions->numTeamFlags[teamIndex]; n++)
+	  resetFlag(n+flagid);
+      }
     }
   }
 
@@ -2017,7 +2004,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     if (Team::isColorTeam((TeamColor)teamNum)
 	&& team[teamNum].team.size == 0 &&
 	(clOptions->gameStyle & int(TeamFlagGameStyle))) {
-      int flagid = lookupFirstTeamFlag(teamNum);
+      int flagid = FlagInfo::lookupFirstTeamFlag(teamNum);
       if (flagid >= 0) {
 	GameKeeper::Player *otherData;
 	for (int n = 0; n < clOptions->numTeamFlags[teamNum]; n++) {
@@ -4332,7 +4319,7 @@ int main(int argc, char **argv)
     if (clOptions->gameStyle & TeamFlagGameStyle) {
       for (i = RedTeam; i < CtfTeams; ++i) {
         if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0) {
-          int flagid = lookupFirstTeamFlag(i);
+          int flagid = FlagInfo::lookupFirstTeamFlag(i);
 	  if (flagid >= 0) {
 	    for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {
               if (FlagInfo::flagList[flagid + n].flag.status != FlagNoExist &&

@@ -36,6 +36,7 @@ public:
   static void setSize(int _numFlags);
   static void setAllowed(std::vector<FlagType*> allowed);
   static void setExtra(int extra);
+  static int  lookupFirstTeamFlag(int teamindex);
 
   static FlagInfo *flagList;
 

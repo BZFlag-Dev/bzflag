@@ -75,6 +75,15 @@ void FlagInfo::setExtra(int extra)
   numExtraFlags = extra;
 }
 
+int FlagInfo::lookupFirstTeamFlag(int teamindex)
+{
+  for (int i = 0; i < numFlags; i++) {
+    if (flagList[i].flag.type->flagTeam == teamindex)
+      return i;
+  }
+  return -1;
+}
+
 void FlagInfo::setRequiredFlag(FlagType *desc)
 {
   required = true;
