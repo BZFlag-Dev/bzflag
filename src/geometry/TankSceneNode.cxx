@@ -20,8 +20,41 @@
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 
-  //Modifiers for Normal, Obese. Tiny and Thin
-static GLfloat styleFactors[5][3] = {
+class TankFactors
+{
+public:
+       TankFactors()
+       {
+         if (!callbackAdded) {
+	     BZDB->addCallback(StateDatabase::BZDB_OBESEFACTOR, callback, NULL );
+	     BZDB->addCallback(StateDatabase::BZDB_TINYFACTOR, callback, NULL );
+	     BZDB->addCallback(StateDatabase::BZDB_THIEFTINYFACTOR, callback, NULL );
+	     callbackAdded = true;
+	 }
+       }
+  
+       static void callback(const std::string& name, void* userData)
+       {
+	  if (name == StateDatabase::BZDB_OBESEFACTOR) {
+             styleFactors[1][0] = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+             styleFactors[1][1] = styleFactors[1][0];
+	  }
+	  else if (name == StateDatabase::BZDB_TINYFACTOR) {
+             styleFactors[2][0] = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+             styleFactors[2][1] = styleFactors[2][0];
+	  }
+	  else if (name == StateDatabase::BZDB_THIEFTINYFACTOR) {
+             styleFactors[4][0] = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+             styleFactors[4][1] = styleFactors[4][0];
+	  }
+       }
+
+       //Modifiers for Normal, Obese. Tiny, Thin, Thief
+       static GLfloat styleFactors[5][3];
+       static boolean callbackAdded;
+};
+boolean TankFactors::callbackAdded = false;
+GLfloat TankFactors::styleFactors[5][3] = {
 			{ 1.0f, 1.0f, 1.0f },
 			{ 1.0f, 1.0f, 1.0f },
 			{ 1.0f, 1.0f, 1.0f },
@@ -46,13 +79,9 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				shadowRenderNode(this)
 {
   // setup style factors (BZDB isn't set up at global init time
-  styleFactors[1][0] = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  styleFactors[1][1] = styleFactors[1][0];
-  styleFactors[2][0] = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  styleFactors[2][1] = styleFactors[2][0];
-  styleFactors[4][0] = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  styleFactors[4][1] = styleFactors[4][0];
-			
+
+  TankFactors(); // Install callbacks for styleFactors
+
 			// prepare geometry
   move(pos, forward);
   baseRadius = 0.25f * (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) +
@@ -709,9 +738,9 @@ void			TankSceneNode::TankRenderNode::renderPart(Part part)
 
 void			TankSceneNode::TankRenderNode::prepStyle(Style style)
 {
-  vertexScale[0] = styleFactors[style][0];
-  vertexScale[1] = styleFactors[style][1];
-  vertexScale[2] = styleFactors[style][2];
+  vertexScale[0] = TankFactors::styleFactors[style][0];
+  vertexScale[1] = TankFactors::styleFactors[style][1];
+  vertexScale[2] = TankFactors::styleFactors[style][2];
   normalScale[0] = (vertexScale[0] == 0.0f ? 0.0f : 1.0f / vertexScale[0]);
   normalScale[1] = (vertexScale[1] == 0.0f ? 0.0f : 1.0f / vertexScale[1]);
   normalScale[2] = (vertexScale[2] == 0.0f ? 0.0f : 1.0f / vertexScale[2]);
@@ -936,11 +965,11 @@ void			TankSceneNode::TankRenderNode::renderLights()
   glPointSize(2.0f);
   glBegin(GL_POINTS);
     myColor3fv(lights[0]);
-    glVertex3f(lights[0][3]*styleFactors[sceneNode->style][0], lights[0][4]*styleFactors[sceneNode->style][1], lights[0][5]*styleFactors[sceneNode->style][2]);
+    glVertex3f(lights[0][3]*TankFactors::styleFactors[sceneNode->style][0], lights[0][4]*TankFactors::styleFactors[sceneNode->style][1], lights[0][5]*TankFactors::styleFactors[sceneNode->style][2]);
     myColor3fv(lights[1]);
-    glVertex3f(lights[1][3]*styleFactors[sceneNode->style][0], lights[1][4]*styleFactors[sceneNode->style][1], lights[1][5]*styleFactors[sceneNode->style][2]);
+    glVertex3f(lights[1][3]*TankFactors::styleFactors[sceneNode->style][0], lights[1][4]*TankFactors::styleFactors[sceneNode->style][1], lights[1][5]*TankFactors::styleFactors[sceneNode->style][2]);
     myColor3fv(lights[2]);
-    glVertex3f(lights[2][3]*styleFactors[sceneNode->style][0], lights[2][4]*styleFactors[sceneNode->style][1], lights[2][5]*styleFactors[sceneNode->style][2]);
+    glVertex3f(lights[2][3]*TankFactors::styleFactors[sceneNode->style][0], lights[2][4]*TankFactors::styleFactors[sceneNode->style][1], lights[2][5]*TankFactors::styleFactors[sceneNode->style][2]);
   glEnd();
   glPointSize(1.0f);
   sceneNode->gstate.setState();
