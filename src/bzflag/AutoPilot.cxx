@@ -28,44 +28,44 @@ static int			  totalCnt = 0;
 
 void teachAutoPilot(FlagType *type, int adjust)
 {
-	if (type == Flags::Null)
-		return;
+  if (type == Flags::Null)
+    return;
 
-	FlagSuccessMap::iterator it = flagSuccess.find(type);
-	if (it != flagSuccess.end()) {
-		std::pair<int,int> &pr = it->second;
-		pr.first += adjust;
-		pr.second++;
-	}
-	else
-		flagSuccess[type] = std::pair<int,int>(adjust,1);
-	totalSum += adjust;
-	totalCnt++;
+  FlagSuccessMap::iterator it = flagSuccess.find(type);
+  if (it != flagSuccess.end()) {
+    std::pair<int,int> &pr = it->second;
+    pr.first += adjust;
+    pr.second++;
+  } else {
+    flagSuccess[type] = std::pair<int,int>(adjust,1);
+  }
+  totalSum += adjust;
+  totalCnt++;
 }
 
 bool isFlagUseful( FlagType *type )
 {
-	if (type == Flags::Null)
-		return false;
+  if (type == Flags::Null)
+    return false;
 
-	FlagSuccessMap::iterator it = flagSuccess.find( type );
-	float flagValue;
-	if (it != flagSuccess.end()) {
-		std::pair<int,int> &pr = it->second;
-		if (pr.second == 0)
-		  flagValue = 0.0f;
-		else
-		  flagValue = (float)pr.first / (float)pr.second;
-	}
-	else
-		return true;
+  FlagSuccessMap::iterator it = flagSuccess.find( type );
+  float flagValue;
+  if (it != flagSuccess.end()) {
+    std::pair<int,int> &pr = it->second;
+    if (pr.second == 0)
+      flagValue = 0.0f;
+    else
+      flagValue = (float)pr.first / (float)pr.second;
+  } else {
+    return true;
+  }
 
-	float avg;
-	if (totalCnt == 0)
-		avg = 0.0f;
-	else
-		avg = (float)totalSum/(float)totalCnt;
-	return ((float)flagValue) >= avg;
+  float avg;
+  if (totalCnt == 0)
+    avg = 0.0f;
+  else
+    avg = (float)totalSum / (float)totalCnt;
+  return ((float)flagValue) >= avg;
 }
 
 float normalizeAngle(float ang)
