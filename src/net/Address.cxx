@@ -39,15 +39,17 @@
 
 Address::Address()
 {
-  memset(&addr, 0, sizeof(addr));
-  addr.s_addr = htonl(INADDR_ANY);
+  InAddr tempAddr;
+
+  memset(&tempAddr, 0, sizeof(addr));
+  tempAddr.s_addr = htonl(INADDR_ANY);
+  addr.push_back(tempAddr);
 }
 
 Address::Address(const std::string& name)
 {
-  memset(&addr, 0, sizeof(addr));
   Address a = getHostAddress((const char*)(name.length() ? name.c_str() : NULL));
-  addr = a.addr;
+  addr.push_back(a.addr[0]);
 }
 
 Address::Address(const Address& address) : addr(address.addr)
@@ -57,12 +59,12 @@ Address::Address(const Address& address) : addr(address.addr)
 
 Address::Address(const InAddr& _addr)
 {
-  addr = _addr;
+  addr.push_back(_addr);
 }
 
 Address::Address(const struct sockaddr_in& _addr)
 {
-  addr = _addr.sin_addr;
+  addr.push_back(_addr.sin_addr);
 }
 
 Address::~Address()
@@ -72,33 +74,34 @@ Address::~Address()
 
 Address&		Address::operator=(const Address& address)
 {
-  addr = address.addr;
+  addr.clear();
+  addr.push_back(address.addr[0]);
   return *this;
 }
 
 Address::operator InAddr() const
 {
-  return addr;
+  return addr[0];
 }
 
 bool			Address::operator==(const Address& address) const
 {
-  return addr.s_addr == address.addr.s_addr;
+  return addr[0].s_addr == address.addr[0].s_addr;
 }
 
 bool			Address::operator!=(const Address& address) const
 {
-  return addr.s_addr != address.addr.s_addr;
+  return addr[0].s_addr != address.addr[0].s_addr;
 }
 
 bool			Address::isAny() const
 {
-  return addr.s_addr == htonl(INADDR_ANY);
+  return addr[0].s_addr == htonl(INADDR_ANY);
 }
 
 std::string		Address::getDotNotation() const
 {
-  return std::string(inet_ntoa(addr));
+  return std::string(inet_ntoa(addr[0]));
 }
 
 uint8_t		        Address::getIPVersion() const {
@@ -120,6 +123,8 @@ static void		onAlarm(int)
 Address			Address::getHostAddress(const char* hname)
 {
   Address a;
+  InAddr tempAddr;
+  int j;
 
   struct hostent* hent;
   if (!hname) {				// local address
@@ -129,7 +134,8 @@ Address			Address::getHostAddress(const char* hname)
     else
       return a;
   }
-  else if (inet_aton(hname, &a.addr) != 0) {
+  else if (inet_aton(hname, &tempAddr) != 0) {
+    a.addr.push_back(tempAddr);
     return a;
   }
   else {				// non-local address
@@ -164,7 +170,11 @@ Address			Address::getHostAddress(const char* hname)
     return a;
   }
 
-  ::memcpy(&a.addr, hent->h_addr_list[0], sizeof(a.addr));
+  a.addr.clear();
+  for (j=0; hent->h_addr_list[j] != NULL; j++){
+    ::memcpy(&tempAddr, hent->h_addr_list[j], sizeof(tempAddr));
+    a.addr.push_back(tempAddr);
+  }
   return a;
 }
 
@@ -219,7 +229,7 @@ void*			Address::pack(void* _buf) const
   unsigned char* buf = (unsigned char*)_buf;
   buf = (unsigned char*)nboPackUByte(_buf, 4);
   // everything in InAddr  is already in network byte order
-  int32_t hostaddr = int32_t(addr.s_addr);
+  int32_t hostaddr = int32_t(addr[0].s_addr);
   ::memcpy(buf, &hostaddr, sizeof(int32_t));	buf += sizeof(int32_t);
   return (void*)buf;
 }
@@ -227,13 +237,16 @@ void*			Address::pack(void* _buf) const
 void*			Address::unpack(void* _buf)
 {
   unsigned char* buf = (unsigned char*)_buf;
+  InAddr tempAddr;
   // FIXME - should actually parse the first byte to see if it's IPv4 or
   // IPv6
   ++buf;
   // everything in InAddr should be stored in network byte order
   int32_t hostaddr;
   ::memcpy(&hostaddr, buf, sizeof(int32_t));	buf += sizeof(int32_t);
-  addr.s_addr = u_long(hostaddr);
+  tempAddr.s_addr = u_long(hostaddr);
+  addr.clear();
+  addr.push_back(tempAddr);
   return (void*)buf;
 }
 

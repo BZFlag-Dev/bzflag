@@ -25,6 +25,7 @@
 #include "common.h"
 #include "network.h"
 #include "Pack.h"
+#include <vector>
 
 typedef struct in_addr	InAddr;			// shorthand
 
@@ -53,7 +54,7 @@ class Address {
     static const char*	getHostName(const char* hostname = NULL);
 
   private:
-    InAddr		addr;
+    std::vector <InAddr>      addr;
     static Address	localAddress;
 };
 
