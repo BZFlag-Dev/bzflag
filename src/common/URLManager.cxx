@@ -22,7 +22,9 @@
 #include "URLManager.h"
 
 // system headers
+#ifdef _WIN32
 #include <winsock2.h>
+#endif
 #ifdef HAVE_CURL
 #include <curl/curl.h>
 #endif
