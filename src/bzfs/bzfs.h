@@ -92,6 +92,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "PlayerInfo.h"
 #include "PackVars.h"
 #include "TeamBases.h"
+#include "ListServerConnection.h"
 
 // types for reading world files
 #include "WorldFileObstacle.h"

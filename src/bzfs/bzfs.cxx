@@ -28,21 +28,11 @@ float speedTolerance = 1.125f;
 
 #define MAX_FLAG_HISTORY (10)
 
-struct ListServerLink {
-    Address address;
-    int port;
-    int socket;
-    enum MessageType {NONE,ADD,REMOVE} nextMessageType;
-    std::string hostname;
-    std::string pathname;
-    enum Phase {CONNECTING, WRITTEN} phase;
-};
-
 // Command Line Options
 CmdLineOptions *clOptions;
 
 // server address to listen on
-static Address serverAddress;
+Address serverAddress;
 // well known service socket
 static int wksSocket;
 // udpSocket should also be on serverAddress
@@ -80,8 +70,7 @@ static char hexDigest[50];
 TimeKeeper gameStartTime;
 bool countdownActive = false;
 #endif
-static TimeKeeper listServerLastAddTime;
-static ListServerLink listServerLink;
+static ListServerLink *listServerLink = NULL;
 static int listServerLinksCount = 0;
 
 static WorldInfo *world = NULL;
@@ -789,223 +778,45 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
   }
 }
 
-
-static void closeListServer()
+PingPacket getTeamCounts()
 {
-  ListServerLink& link = listServerLink;
-  if (link.socket != NotConnected) {
-    close(link.socket);
-    DEBUG4("Closing List server\n");
-    link.socket = NotConnected;
-  }
-}
-
-static void openListServer();
-
-static void readListServer()
-{
-  ListServerLink& link = listServerLink;
-  if (link.socket != NotConnected) {
-    char    buf[256];
-    recv(link.socket, buf, sizeof(buf), 0);
-    closeListServer();
-    if (link.nextMessageType != ListServerLink::NONE)
-      // There was a pending request arrived after we write:
-      // we should redo all the stuff
-      openListServer();
-  }
-}
-
-static void openListServer()
-{
-  ListServerLink& link = listServerLink;
-
-  // start opening connection if not already doing so
-  if (link.socket == NotConnected) {
-    link.socket = socket(AF_INET, SOCK_STREAM, 0);
-    DEBUG4("Opening List Server\n");
-    if (link.socket == NotConnected) {
-      return;
-    }
-
-    // set to non-blocking for connect
-    if (BzfNetwork::setNonBlocking(link.socket) < 0) {
-      closeListServer();
-      return;
-    }
-
-    // Make our connection come from our serverAddress in case we have
-    // multiple/masked IPs so the list server can verify us.
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr = serverAddress;
-
-    // assign the address to the socket
-    if (bind(link.socket, (CNCTType*)&addr, sizeof(addr)) < 0) {
-      closeListServer();
-      return;
-    }
-
-    // connect.  this should fail with EINPROGRESS but check for
-    // success just in case.
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port   = htons(link.port);
-    addr.sin_addr   = link.address;
-    if (connect(link.socket, (CNCTType*)&addr, sizeof(addr)) < 0) {
-#if defined(_WIN32)
-#undef EINPROGRESS
-#define EINPROGRESS EWOULDBLOCK
-#endif
-      if (getErrno() != EINPROGRESS) {
-	nerror("connecting to list server");
-	// TODO should try to lookup dns name again, but we don't have it anymore
-	closeListServer();
-      }
-      else {
-	listServerLink.phase = ListServerLink::CONNECTING;
-      }
-    } else {
-      // shouldn't arrive here. Just in case, clean
-      closeListServer();
-    }
-  }
-}
-
-
-// Sending message to list server foresee 3 stages
-// 1. Connection
-// 2. Writing
-// 3. Reading & closing
-// These phases are started via sendMessageToListServer
-static void sendMessageToListServer(ListServerLink::MessageType type)
-{
-  // ignore if not publicizing
-  if (!clOptions->publicizeServer)
-    return;
-
-  // start opening connections if not already doing so
-  if (listServerLinksCount) {
-
-    ListServerLink& link = listServerLink;
-
-    // Open network connection only if closed
-    if (link.socket == NotConnected)
-      openListServer();
-
-    // record next message to send.
-    link.nextMessageType = type;
-  }
-}
-
-
-static void sendMessageToListServerForReal()
-{
-  // ignore if link not connected
-  ListServerLink& link = listServerLink;
-  if (link.socket == NotConnected)
-    return;
-
-  char msg[4096] = "";
-
-  if (link.nextMessageType == ListServerLink::ADD) {
-    if (gameOver) {
-      // pretend there are no players if the game is over.
-      pingReply.rogueCount = 0;
-      pingReply.redCount = 0;
-      pingReply.greenCount = 0;
-      pingReply.blueCount = 0;
-      pingReply.purpleCount = 0;
-      pingReply.observerCount = 0;
-    } else {
-      // update player counts in ping reply.
-      pingReply.rogueCount = (uint8_t)team[0].team.size;
-      pingReply.redCount = (uint8_t)team[1].team.size;
-      pingReply.greenCount = (uint8_t)team[2].team.size;
-      pingReply.blueCount = (uint8_t)team[3].team.size;
-      pingReply.purpleCount = (uint8_t)team[4].team.size;
-      pingReply.observerCount = (uint8_t)team[5].team.size;
-    }
-
-    // encode ping reply as ascii hex digits plus NULL
-    char gameInfo[PingPacketHexPackedSize + 1];
-    pingReply.packHex(gameInfo);
-
-    // send ADD message (must send blank line)
-    sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s HTTP/1.1\r\n"
-      "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
-      link.pathname.c_str(), clOptions->publicizedAddress.c_str(),
-      getServerVersion(), gameInfo,
-      url_encode(clOptions->publicizedTitle).c_str(),
-      link.hostname.c_str());
-  }
-  else if (link.nextMessageType == ListServerLink::REMOVE) {
-    // send REMOVE (must send blank line)
-    sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
-      "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
-      link.pathname.c_str(),
-      clOptions->publicizedAddress.c_str(),
-      link.hostname.c_str());
-  }
-  if (strlen(msg) > 0) {
-    DEBUG3("%s\n",msg);
-    if (send(link.socket, msg, strlen(msg), 0) == -1) {
-      perror("List server send failed");
-      DEBUG3("Unable to send to the list server!\n");
-      closeListServer();
-    } else {
-      link.nextMessageType = ListServerLink::NONE;
-      link.phase           = ListServerLink::WRITTEN;
-    }
+  if (gameOver) {
+    // pretend there are no players if the game is over.
+    pingReply.rogueCount = 0;
+    pingReply.redCount = 0;
+    pingReply.greenCount = 0;
+    pingReply.blueCount = 0;
+    pingReply.purpleCount = 0;
+    pingReply.observerCount = 0;
   } else {
-    closeListServer();
+    // update player counts in ping reply.
+    pingReply.rogueCount = (uint8_t)team[0].team.size;
+    pingReply.redCount = (uint8_t)team[1].team.size;
+    pingReply.greenCount = (uint8_t)team[2].team.size;
+    pingReply.blueCount = (uint8_t)team[3].team.size;
+    pingReply.purpleCount = (uint8_t)team[4].team.size;
+    pingReply.observerCount = (uint8_t)team[5].team.size;
   }
+  return pingReply;
 }
-
 
 static void publicize()
 {
-  // hangup any previous list server sockets
+  /* // hangup any previous list server sockets
   if (listServerLinksCount)
-    closeListServer();
+    listServerLink.closeLink(); */
 
-  // list server initialization
-  listServerLinksCount	= 0;
+  listServerLinksCount = 0;
 
-  // parse the list server URL if we're publicizing ourself
   if (clOptions->publicizeServer) {
-    // parse url
-    std::string protocol, hostname, pathname;
-    int port = 80;
-    if (!BzfNetwork::parseURL(clOptions->listServerURL, protocol,
-                              hostname, port, pathname))
-      return;
-
-    // ignore if not right protocol
-    if (protocol != "http")
-      return;
-
-    // ignore if port is bogus
-    if (port < 1 || port > 65535)
-      return;
-
-    // ignore if bad address
-    Address address = Address::getHostAddress(hostname.c_str());
-    if (address.isAny())
-      return;
-
-    // add to list
-    listServerLink.address  = address;
-    listServerLink.port     = port;
-    listServerLink.socket   = NotConnected;
-    listServerLink.pathname = pathname;
-    listServerLink.hostname = hostname;
+    // list server initialization
+    listServerLink = new ListServerLink(clOptions->listServerURL, clOptions->publicizedAddress, clOptions->publicizedTitle);
     listServerLinksCount++;
-
-    // schedule message for list server
-    sendMessageToListServer(ListServerLink::ADD);
-    DEBUG3("Sent ADD message to list server\n");
+  } else {
+    // don't use a list server; we need a ListServerLink object anyway
+    // pass no arguments to the constructor, so the object will exist but do nothing if called
+    listServerLink = new ListServerLink();
+    listServerLinksCount = 0;
   }
 }
 
@@ -1147,58 +958,17 @@ static void serverStop()
     directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
 
   // close connections
-  for (i = 0; i < MaxPlayers; i++)
+  for (i = 0; i < MaxPlayers; i++) {
     if (player[i].fd != NotConnected) {
       shutdown(player[i].fd, 2);
       close(player[i].fd);
       delete[] player[i].outmsg;
     }
+  }
 
-  // now tell the list servers that we're going away.  this can
-  // take some time but we don't want to wait too long.  we do
-  // our own multiplexing loop and wait for a maximum of 3 seconds
-  // total.
-  sendMessageToListServer(ListServerLink::REMOVE);
-  TimeKeeper start = TimeKeeper::getCurrent();
-  if (!listServerLinksCount)
-    return;
-  do {
-    // compute timeout
-    float waitTime = 3.0f - (TimeKeeper::getCurrent() - start);
-    if (waitTime <= 0.0f)
-      break;
-    if (listServerLink.socket == NotConnected)
-      break;
-    // check for list server socket connection
-    int fdMax = -1;
-    fd_set write_set;
-    fd_set read_set;
-    FD_ZERO(&write_set);
-    FD_ZERO(&read_set);
-    if (listServerLink.phase == ListServerLink::CONNECTING)
-      _FD_SET(listServerLink.socket, &write_set);
-    else
-      _FD_SET(listServerLink.socket, &read_set);
-    fdMax = listServerLink.socket;
-
-    // wait for socket to connect or timeout
-    struct timeval timeout;
-    timeout.tv_sec = long(floorf(waitTime));
-    timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
-    int nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set,
-			0, &timeout);
-    if (nfound == 0)
-      // Time has gone, close and go
-      break;
-    // check for connection to list server
-    if (FD_ISSET(listServerLink.socket, &write_set))
-      sendMessageToListServerForReal();
-    else if (FD_ISSET(listServerLink.socket, &read_set))
-      readListServer();
-  } while (true);
-
-  // stop list server communication
-  closeListServer();
+  // remove from list server and disconnect
+  // this destructor must be explicitly called
+  listServerLink->~ListServerLink();
 }
 
 
@@ -2539,7 +2309,7 @@ static void addPlayer(int playerIndex)
   fixTeamCount();
 
   // tell the list server the new number of players
-  sendMessageToListServer(ListServerLink::ADD);
+  listServerLink->queueMessage(ListServerLink::ADD);
 
 #ifdef PRINTSCORE
   dumpScore();
@@ -2979,7 +2749,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   fixTeamCount();
 
   // tell the list server the new number of players
-  sendMessageToListServer(ListServerLink::ADD);
+  listServerLink->queueMessage(ListServerLink::ADD);
 
   while ((playerIndex >= 0)
       && (playerIndex+1 == curMaxPlayers)
@@ -4823,13 +4593,13 @@ int main(int argc, char **argv)
 
     // check for list server socket connected
     if (listServerLinksCount)
-      if (listServerLink.socket != NotConnected) {
-	if (listServerLink.phase == ListServerLink::CONNECTING)
-	  _FD_SET(listServerLink.socket, &write_set);
+      if (listServerLink->isConnected()) {
+	if (listServerLink->phase == ListServerLink::CONNECTING)
+	  _FD_SET(listServerLink->linkSocket, &write_set);
 	else
-	  _FD_SET(listServerLink.socket, &read_set);
-	if (listServerLink.socket > maxFileDescriptor)
-	  maxFileDescriptor = listServerLink.socket;
+	  _FD_SET(listServerLink->linkSocket, &read_set);
+	if (listServerLink->linkSocket > maxFileDescriptor)
+	  maxFileDescriptor = listServerLink->linkSocket;
       }
 
     // find timeout when next flag would hit ground
@@ -5192,7 +4962,7 @@ int main(int argc, char **argv)
     // occasionally add ourselves to the list again (in case we were
     // dropped for some reason).
     if (clOptions->publicizeServer)
-      if (tm - listServerLastAddTime > ListServerReAddTime) {
+      if (tm - listServerLink->lastAddTime > ListServerReAddTime) {
 	// if there are no list servers and nobody is playing then
 	// try publicizing again because we probably failed to get
 	// the list last time we published, and if we don't do it
@@ -5211,8 +4981,7 @@ int main(int argc, char **argv)
 	}
 
 	// send add request
-        sendMessageToListServer(ListServerLink::ADD);
-	listServerLastAddTime = tm;
+        listServerLink->queueMessage(ListServerLink::ADD);
       }
 
     for (i = 0; i < curMaxPlayers; i++) {
@@ -5231,11 +5000,11 @@ int main(int argc, char **argv)
 
       // check for connection to list server
       if (listServerLinksCount)
-	if (listServerLink.socket != NotConnected)
-	  if (FD_ISSET(listServerLink.socket, &write_set))
-	    sendMessageToListServerForReal();
-	  else if (FD_ISSET(listServerLink.socket, &read_set)) 
-	    readListServer();
+	if (listServerLink->isConnected())
+	  if (FD_ISSET(listServerLink->linkSocket, &write_set))
+	    listServerLink->sendQueuedMessages();
+	  else if (FD_ISSET(listServerLink->linkSocket, &read_set)) 
+	    listServerLink->read();
 
       // check if we have any UDP packets pending
       if (FD_ISSET(udpSocket, &read_set)) {

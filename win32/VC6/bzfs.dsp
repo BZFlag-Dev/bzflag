@@ -147,6 +147,10 @@ SOURCE=..\..\src\bzfs\FlagInfo.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\ListServerConnection.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\Permissions.cxx
 # End Source File
 # Begin Source File
@@ -268,6 +272,10 @@ SOURCE=..\..\src\bzfs\FlagInfo.h
 # Begin Source File
 
 SOURCE=..\..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\ListServerConnection.h
 # End Source File
 # Begin Source File
 
