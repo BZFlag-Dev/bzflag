@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#pragma warning( 4:4786)
+#endif
+
 #include <string>
 #include <string.h>
 #include <math.h>
