@@ -50,7 +50,7 @@ public:
   void drawString(float x, float y, float z, const std::string &face,
 		  float size, const std::string &text);
 
-  float getStrLength(int faceID, float size, std::string text,
+  float getStrLength(int faceID, float size, const std::string &text,
 		     bool alreadyStripped = false);
   float getStrLength(const std::string &face, float size,
 		     const std::string &text, bool alreadyStripped = false);

@@ -391,7 +391,7 @@ void FontManager::drawString(float x, float y, float z,
   drawString(x, y, z, getFaceID(face), size, text);
 }
 
-float FontManager::getStrLength(int faceID, float size,	std::string text,
+float FontManager::getStrLength(int faceID, float size,	const std::string &text,
 				bool alreadyStripped)
 {
   if (text.size() == 0)
@@ -413,10 +413,9 @@ float FontManager::getStrLength(int faceID, float size,	std::string text,
   float scale = size / (float)pFont->getSize();
 
   // don't include ansi codes in the length, but allow outside funcs to skip this step
-  if (!alreadyStripped)
-    text = stripAnsiCodes(text);
+  const std::string &stripped = alreadyStripped ? text : stripAnsiCodes(text);
 
-  return pFont->getStrLength(scale, text.c_str(), (int)text.size());
+  return pFont->getStrLength(scale, stripped.c_str(), (int)stripped.size());
 }
 
 float FontManager::getStrLength(const std::string &face, float size,
