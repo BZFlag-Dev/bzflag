@@ -24,6 +24,8 @@
 typedef uint16_t u16;
 
 #ifndef _WIN32
+#  include <sys/types.h>
+#  include <sys/stat.h>
 typedef int64_t CRtime;
 #else
 #  include <time.h>
