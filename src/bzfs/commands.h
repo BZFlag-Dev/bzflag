@@ -24,6 +24,13 @@
 void handleMeCmd(GameKeeper::Player *playerData, const char *message);
 
 
+/** msg command hook function
+ *
+ * /msg command allows player to directly communicate to other players
+ */
+void handleMsgCmd(GameKeeper::Player *playerData, const char *message);
+
+
 /** password command hook function
  *
  * /password command allows player to become operator

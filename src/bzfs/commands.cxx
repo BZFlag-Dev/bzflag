@@ -93,13 +93,250 @@ extern bool countdownActive;
 extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 
 
+int getTarget(const char *victimname) {
+  GameKeeper::Player *targetData;
+  int i;
+  for (i = 0; i < curMaxPlayers; i++) {
+    targetData = GameKeeper::Player::getPlayerByIndex(i);
+    if (targetData && strncasecmp(targetData->player.getCallSign(),
+				  victimname, 256) == 0) {
+      break;
+    }
+  }
+  return i;
+}
+
+
 void handleMeCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   std::string message2;
 
-  message2 = string_util::format("* %s %s", playerData->player.getCallSign(), message + 3);
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::actionMessage)) {
+    char reply[MessageLen] = {0};
+    sprintf(reply,"%s, you are not presently authorized to perform /me actions", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, t, reply);
+    return;
+  }
+
+  /* wrap the action using *\t(.*)\t* for effect. the \t is converted
+   * to a space, but allows new clients to display differently.
+   */
+  message2 = string_util::format("*\t%s %s\t*", playerData->player.getCallSign(), message + 4);
   sendMessage(t, AllPlayers, message2.c_str());
+}
+
+
+void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
+{
+  int from = playerData->getIndex();
+  int to;
+
+  std::string message2;
+  size_t callsignStart=0, callsignEnd=0, messageStart=0;
+
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::privateMessage)) {
+    char reply[MessageLen] = {0};
+    sprintf(reply,"%s, you are not presently authorized to /msg people privately", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, from, reply);
+    return;
+  }
+
+  // start from after "/msg"
+  std::string arguments = &message[4];
+  std::string recipient = std::string("");
+
+  // skip any leading whitespace
+  callsignStart = 0;
+  while ((callsignStart < arguments.size()) &&
+	 (isspace(arguments[callsignStart]))) {
+    callsignStart++;
+  }
+
+  // find the player name, optionally quoted
+  if ( arguments[callsignStart] == '"' ) {
+    callsignStart++;
+
+    // find the trailing quote
+    bool foundQuote = false;
+    callsignEnd = callsignStart;
+    while ((callsignEnd + 1 < arguments.size()) &&
+	   (!foundQuote)) {
+      callsignEnd++;
+      if (arguments[callsignEnd] == '"') {
+	foundQuote = true;
+	messageStart = callsignEnd + 1;
+	callsignEnd--;
+      }
+    }
+
+    // no quote means a mismatch
+    if (!foundQuote) {
+      sendMessage(ServerPlayer, from, "Quote mismatch?");
+      sendMessage(ServerPlayer, from, "Usage: /msg \"some callsign\" some message");
+      return;
+    }
+
+  } else {
+    // unquoted callsign
+
+    // find the first matching name (not the longest for sake of performance)
+    bool foundCallsign = false;
+    callsignEnd = callsignStart;
+    while ((callsignEnd + 1 < arguments.size()) &&
+	   (!foundCallsign)) {
+      callsignEnd++;
+      if (!isspace(arguments[callsignEnd])) {
+	continue;
+      }
+
+      // we have a space
+      recipient = arguments.substr(callsignStart, callsignEnd - callsignStart);
+      messageStart = callsignEnd;
+
+      to = getTarget(recipient.c_str());
+      if (to < curMaxPlayers) {
+	callsignEnd--;
+	foundCallsign = true;
+      }
+    }
+  }
+  
+  recipient = arguments.substr(callsignStart, callsignEnd - callsignStart + 1);
+  to = getTarget(recipient.c_str());
+  
+  // valid callsign
+  if (to >= curMaxPlayers) {
+    message2 = string_util::format("No such callsign.", recipient.c_str());
+    sendMessage(ServerPlayer, from, message2.c_str());
+    return;
+  }
+  
+  // make sure there is something to send
+  if ((messageStart >= arguments.size() - 1) || (messageStart == 0)) {
+    // found player, but nothing to send
+    message2 = string_util::format("No text to send to \"%s\".", recipient.c_str());
+    sendMessage(ServerPlayer, from, message2.c_str());
+    return;
+  }
+  
+  // send the message
+  sendMessage(from, to, arguments.c_str() + messageStart + 1);
+  return;
+}
+
+void handleMsgCmd2(GameKeeper::Player *playerData, const char *message)
+{
+  int t = playerData->getIndex();
+  std::string message2;
+  size_t startPosition, endPosition;
+
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::privateMessage)) {
+    char reply[MessageLen] = {0};
+    sprintf(reply,"%s, you are not presently authorized to /msg people privately", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, t, reply);
+    return;
+  }
+
+  // start from after "/msg"
+  std::string arguments = &message[4];
+  std::string recipient;
+  bool quoted = false;
+
+  DEBUG2("Command arguments are [%s]\n", arguments.c_str());
+
+  startPosition = 0;
+  while ((startPosition < arguments.size()) &&
+	 (isspace(arguments[startPosition]))) {
+    startPosition++;
+  }
+  // do not include a starting quote, if given
+  if ( arguments[startPosition] == '"' ) {
+    startPosition++;
+    quoted = true;
+  }
+
+  /* find the first name that matches unless a quote was opened */
+  endPosition = startPosition;
+  int v = curMaxPlayers;
+  bool foundRecipient = false;
+  while ((endPosition+1 < arguments.size()) && (!foundRecipient)) {
+    endPosition++;
+
+    if (arguments[endPosition] == '"') {
+      if (quoted) {
+	recipient = arguments.substr(startPosition, endPosition - startPosition);
+	v = getTarget(recipient.c_str());
+	foundRecipient = true;
+      } else {
+	/* we must have found a quote in the message, went too far */
+	foundRecipient = true;
+	endPosition--;
+      }
+
+    } else if (isspace(arguments[endPosition])) {
+      /* if quotes are being used, spaces don't matter */
+      if (!quoted) {
+
+	recipient = arguments.substr(startPosition, endPosition - startPosition);
+	v = getTarget(recipient.c_str());
+
+	/* match the first real player found */
+	if (v < curMaxPlayers) {
+	  foundRecipient = true;
+	}
+      }
+    }
+  }
+
+  // account for the extra space
+  if (quoted) {
+    endPosition++;
+  }
+
+  DEBUG2("Recipient's name is \"%s\" with start %d and end %d\n", recipient.c_str(), startPosition, endPosition);
+
+  if (v >= curMaxPlayers) {
+    std::string msg;
+
+    if (recipient == "") {
+      sendMessage(ServerPlayer, t, "No callsign provided.");
+      sendMessage(ServerPlayer, t, "Usage: /msg callsign some message");
+    } else if (endPosition + 1 == arguments.size()) {
+      // made it to the end of the string 
+
+      if (getTarget(arguments.c_str() + 1) < curMaxPlayers) {
+	// got to the end ofthe string and matched a player name
+	msg = string_util::format("No text to send to \"%s\".", arguments.c_str() + 1);
+	sendMessage(ServerPlayer, t, msg.c_str());
+      } else {
+	if (quoted) {
+	  // possible quote mismatch
+	  msg = string_util::format("Quote mismatch?  \"%s\" is not here.  No such callsign.", arguments.c_str() + 1);
+	  sendMessage(ServerPlayer, t, msg.c_str());
+	} else {
+	  msg = string_util::format("No such callsign.", recipient.c_str());
+	  sendMessage(ServerPlayer, t, msg.c_str());
+	  sendMessage(ServerPlayer, t, "Usage: /msg callsign some message");
+	}
+      }
+    } else {
+      msg = string_util::format("No such callsign.", recipient.c_str());
+      sendMessage(ServerPlayer, t, msg.c_str());
+      sendMessage(ServerPlayer, t, "Usage: /msg callsign some message");
+    }
+    return;
+  }
+
+  // make sure there is something to send
+  if (strlen(arguments.c_str() + endPosition + 1) <= 0) {
+    sendMessage(ServerPlayer, t, "No text to send.");
+    return;
+  }
+
+  // relay the message
+  sendMessage(t, v, arguments.c_str() + endPosition + 1);
+  return;
 }
 
 
@@ -345,18 +582,6 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
   return;
 }
 
-int getTarget(const char *victimname) {
-  GameKeeper::Player *targetData;
-  int i;
-  for (i = 0; i < curMaxPlayers; i++) {
-    targetData = GameKeeper::Player::getPlayerByIndex(i);
-    if (targetData && strncasecmp(targetData->player.getCallSign(),
-				  victimname, 256) == 0) {
-      break;
-    }
-  }
-  return i;
-}
 
 void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 {
