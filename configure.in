@@ -83,33 +83,17 @@ esac
 
 AM_CONDITIONAL(MACOS, $macos)
 
+#CONFIG is only used for irix packaging
 case $host_os in
-   linux-gnu)
-	case $host_vendor in
-	     pc)  CONFIG='linux-i386';;
-	     ppc) CONFIG='linux-ppc';;
-	     *)   CONFIG='linux';;
-	esac;;
-   solaris*)
-	if $sun_cc; then
-	   CONFIG=solaris-cc;
-	elif $sun_gcc; then
-	   CONFIG=solaris-gcc;
-	else
-	   CONFIG=solaris;
-	fi;;
    irix*)
 	if test $host_cpu = mips64; then
 	   CONFIG=irix-mips3;
 	else
 	   CONFIG=irix-mips2;
-	fi;;
-   macos|darwin*)
-	CONFIG=macosx;;
-   cygwin|mingw32|windows*)
-	CONFIG=config-win32;;
+	fi;
+        AC_SUBST(CONFIG)
+        ;;
 esac
-AC_SUBST(CONFIG)
 
 AC_PATH_XTRA
 
