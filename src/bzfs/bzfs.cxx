@@ -1559,13 +1559,13 @@ static void pwrite(int playerIndex, const void *b, int l)
   PlayerInfo& p = player[playerIndex];
   if (p.fd == NotConnected || l == 0)
     return;
+  void *buf = (void *)b;
 
   if (!player[playerIndex].knowId)
      patchMessage(player[playerIndex].id, player[playerIndex].oldId, b);
   // Check if UDP Link is used instead of TCP, if so jump into puwrite
   if (p.ulinkup) {
     uint16_t len, code;
-    void *buf = (void *)b;
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
 
@@ -1589,7 +1589,7 @@ static void pwrite(int playerIndex, const void *b, int l)
   if (p.fd != NotConnected && p.outmsgSize == 0) {
     const int n = prealwrite(playerIndex, b, l);
     if (n > 0) {
-      b  = (const void*)(((const char*)b) + n);
+      buf  = (void*)(((const char*)b) + n);
       l -= n;
     }
   }
@@ -1636,7 +1636,7 @@ static void pwrite(int playerIndex, const void *b, int l)
     }
 
     // append data
-    memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, b, l);
+    memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, buf, l);
     p.outmsgSize += l;
   }
 unpatch:
