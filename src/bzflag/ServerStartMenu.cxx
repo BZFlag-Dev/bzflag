@@ -502,7 +502,8 @@ void ServerStartMenu::execute()
       else if (errno == ENOEXEC)
 	setStatus("Failed... server program is not executable.");
       else
-	setStatus("Failed... unknown error.");
+	setStatus(TextUtils::format("Failed... unknown error (%d).", errno, serverCmd).c_str());
+      DEBUG1("Failed to start server (%s) - error %d.\n", serverCmd, errno);
     }
     else {
       setStatus("Server started.");

@@ -1627,11 +1627,7 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 
   // get path to application.  this is ridiculously simple.
   char appName[MAX_PATH];
-
   GetModuleFileName(instance,appName,MAX_PATH);
-
-  if (strrchr(appName,'\\'))
-    *strrchr(appName,'\\') = '\0';
 
   // make argument list and assign arguments
   char** argv = new char*[argc];
