@@ -2122,7 +2122,7 @@ static std::string	cmdAutoPilot(const std::string&, const CommandManager::ArgLis
   char messageBuffer[MessageLen];
   memset(messageBuffer, 0, MessageLen);
 
-  if (myTank != NULL) {
+  if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
     if (myTank->isAutoPilot()) {
       myTank->setAutoPilot(false);
       hud->setAlert(0, "autopilot disabled", 1.0f, true);
