@@ -70,8 +70,6 @@ class OpenGLTexFont {
     float		getWidth() const;
     float		getHeight() const;
     float		getWidth(const std::string&) const;
-    float		getWidth(const char* string) const;
-    float		getWidth(const char* string, int length) const;
     float		getSpacing() const;
     float		getBaselineFromCenter() const;
     void		draw(const std::string&,

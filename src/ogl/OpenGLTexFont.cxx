@@ -507,21 +507,13 @@ float			OpenGLTexFont::getHeight() const
   return height;
 }
 
-float			OpenGLTexFont::getWidth(const std::string& s) const
-{
-  return getWidth(s.c_str(), s.length());
-}
-
-float			OpenGLTexFont::getWidth(const char* s) const
-{
-  return getWidth((const char*)s, ::strlen(s));
-}
-
-float			OpenGLTexFont::getWidth(const char* s, int length) const
+float			OpenGLTexFont::getWidth(const std::string& str) const
 {
   float dx = 0.0f;
 
-  length = rawStrlen (s, length);
+  const char* s = str.c_str();
+  
+  int length = rawStrlen (s, str.size());
 
   for (int i = 0; i < length; i++) {
     if ((s[i] >= 32) && (s[i] < 127))
@@ -787,6 +779,10 @@ int OpenGLTexFont::stripAnsiCodes(char * string, int length)
 
   j=0;
 
+  if (string == NULL) {
+    return j;
+  }
+
   for (i=0 ; i<length ; i++) {
     if (string[i] == ESC_CHAR) {
       i++;
@@ -818,6 +814,10 @@ int OpenGLTexFont::rawStrlen(const char * string, int length)
 
   j=0;
 
+  if (string == NULL) {
+    return j;
+  }
+
   for (i=0 ; i<length ; i++) {
     if (string[i] == ESC_CHAR) {
       i++;
@@ -830,8 +830,7 @@ int OpenGLTexFont::rawStrlen(const char * string, int length)
           i++;
         }
       }
-    }
-    else {
+    } else {
       j++;
     }
   }
