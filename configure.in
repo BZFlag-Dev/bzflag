@@ -478,9 +478,9 @@ fi;
 # do we want to build our own regex lib
 AC_ARG_WITH(regex, [  --with-regex            Use bzflag regex lib])
 if test x$with_regex != xno ; then
-   AM_CONDITIONAL(BUILD_REGEX, true)
    AC_DEFINE(BUILD_REGEX, 1, [Building regex])
 fi;
+AM_CONDITIONAL(BUILD_REGEX, test "x$with_regex" != "xno")
 
 
 LIBDIR="\$(top_srcdir)/lib"
