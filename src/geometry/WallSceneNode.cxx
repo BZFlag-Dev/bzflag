@@ -38,7 +38,6 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   setModulateColor(1.0f, 1.0f, 1.0f);
   setLightedColor(1.0f, 1.0f, 1.0f);
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
-  ZFlip = false;
   useColorTexture = false;
   isBlended = false;
   wantBlending = false;
@@ -324,11 +323,14 @@ void			WallSceneNode::notifyStyleChange()
 void			WallSceneNode::copyStyle(WallSceneNode* node)
 {
   gstate = node->gstate;
+  useColorTexture = node->useColorTexture;
   dynamicColor = node->dynamicColor;
   setColor(node->color);
   setModulateColor(node->modulateColor);
   setLightedColor(node->lightedColor);
   setLightedModulateColor(node->lightedModulateColor);
+  isBlended = node->isBlended;
+  wantBlending = node->wantBlending;
 }
 
 void			WallSceneNode::setColor()

@@ -104,7 +104,6 @@ class WallSceneNode : public SceneNode {
     bool		isBlended;
     bool		wantBlending;
     OpenGLGState	gstate;
-    bool		ZFlip;
     bool                useColorTexture;
 };
 
