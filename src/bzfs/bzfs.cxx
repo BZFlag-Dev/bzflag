@@ -3632,8 +3632,9 @@ static void shutdownAcceptClient(int playerIndex)
   player[playerIndex].state = PlayerNoExist;
 
   while ((playerIndex >= 0)
-  &&     (playerIndex+1 == curMaxPlayers)
-  &&     (player[playerIndex].state == PlayerNoExist))
+      && (playerIndex+1 == curMaxPlayers)
+      && (player[playerIndex].state == PlayerNoExist)
+      && (player[playerIndex].fd = NotConnected))
   {
      playerIndex--;
      curMaxPlayers--;
@@ -4108,8 +4109,9 @@ static void removePlayer(int playerIndex)
     player[playerIndex].state = PlayerNoExist;
 
     while ((playerIndex >= 0)
-    &&     (playerIndex+1 == curMaxPlayers)
-    &&     (player[playerIndex].state == PlayerNoExist))
+	&& (playerIndex+1 == curMaxPlayers)
+	&& (player[playerIndex].state == PlayerNoExist)
+        && (player[playerIndex].fd = NotConnected))
     {
 	playerIndex--;
 	curMaxPlayers--;
@@ -4170,8 +4172,9 @@ static void removePlayer(int playerIndex)
   sendMessageToListServer("SETNUM");
 
   while ((playerIndex >= 0)
-  &&     (playerIndex+1 == curMaxPlayers)
-  &&     (player[playerIndex].state == PlayerNoExist))
+      && (playerIndex+1 == curMaxPlayers)
+      && (player[playerIndex].state == PlayerNoExist)
+      && (player[playerIndex].fd = NotConnected))
   {
      playerIndex--;
      curMaxPlayers--;
