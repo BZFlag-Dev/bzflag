@@ -330,26 +330,70 @@ public:
     banList.append(ipAddr);
   }
 
-  void ban(BzfString &ipList) {
-    ban((const char *)ipList);
+  bool ban(BzfString &ipList) {
+    return ban((const char *)ipList);
   }
 
-  void ban(const char *ipList) {
+  bool ban(const char *ipList) {
     char *buf = strdup(ipList);
     char *pStart = buf;
     char *pSep;
+    bool added = false;
+
+    in_addr mask;
+    while ((pSep = strchr(pStart, ',')) != NULL) {
+      *pSep = 0;
+      if (convert(pStart, mask)) {
+        ban(mask);
+        added = true;
+      }
+      *pSep = ',';
+      pStart = pSep + 1;
+    }
+    if (convert(pStart, mask)) {
+      ban(mask);
+      added = true;
+    }
+    free(buf);
+    return added;
+  }
+
+  bool unban(in_addr &ipAddr) {
+    int numBans = banList.getLength();
+    bool found = false;
+    for (int i = 0; i < numBans; i++) {
+      if (banList[i].s_addr == ipAddr.s_addr) {
+        banList.remove(i);
+        i--;
+        numBans--;
+        found = true;
+      }
+    }
+    return found;
+  }
+
+  bool unban(BzfString &ipList) {
+    return unban((const char *)ipList);
+  }
+
+  bool unban(const char *ipList) {
+    char *buf = strdup(ipList);
+    char *pStart = buf;
+    char *pSep;
+    bool success = false;
 
     in_addr mask;
     while ((pSep = strchr(pStart, ',')) != NULL) {
       *pSep = 0;
       if (convert(pStart, mask))
-        ban(mask);
+        success|=unban(mask);
       *pSep = ',';
       pStart = pSep + 1;
     }
     if (convert(pStart, mask))
-      ban(mask);
+      success|=unban(mask);
     free(buf);
+    return success;
   }
 
   bool validate(in_addr &ipAddr) {
@@ -4708,8 +4752,11 @@ static void parseCommand(const char *message, int t)
   }
   // /ban command allows operator to ban players based on ip
   else if (player[t].Admin && strncmp(message+1, "ban", 3) == 0) {
-    acl.ban(message + 5);
-    char reply[MessageLen] = "IP pattern added to banlist";
+    char reply[MessageLen];
+    if (acl.ban(message + 5))
+      strcpy(reply, "IP pattern added to banlist");
+    else
+      strcpy(reply, "malformed address");
     sendMessage(t, player[t].id, player[t].team, reply);
     char kickmessage[MessageLen];
     for (int i = 0; i < maxPlayers; i++) {
@@ -4720,6 +4767,15 @@ static void parseCommand(const char *message, int t)
 		  removePlayer(i);
 		}
 	}
+  }
+  // /unban command allows operator to rmove ips from the banlist
+  else if (player[t].Admin && strncmp(message+1, "unban", 5) == 0) {
+    char reply[MessageLen];
+    if (acl.unban(message + 7))
+      strcpy(reply, "removed IP pattern");
+    else
+      strcpy(reply, "no pattern removed");
+    sendMessage(t, player[t].id, player[t].team, reply);
   }
   // /lagwarn - set maximum allowed lag
   else if (player[t].Admin && strncmp(message+1,"lagwarn",7) == 0) {
