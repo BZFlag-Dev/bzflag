@@ -134,22 +134,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   list.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Depth Buffer:");
-  option->setCallback(callback, (void*)"8");
-  options = &option->getList();
-  GLint value;
-  glGetIntegerv(GL_DEPTH_BITS, &value);
-  if (value == 0) {
-    options->push_back(std::string("Not available"));
-  } else {
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-  }
-  option->update();
-  list.push_back(option);
-
 #if defined(DEBUG_RENDERING)
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -180,7 +164,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
-#endif
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -201,6 +184,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
+#endif
 
   BzfWindow* window = getMainWindow()->getWindow();
   option = new HUDuiList;
@@ -297,14 +281,13 @@ void			DisplayMenu::resize(int width, int height)
     tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::zbuffer);
 #if defined(DEBUG_RENDERING)
     ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
-#endif
     ((HUDuiList*)list[i++])->setIndex(renderer->useCullingTree() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useCollisionTree() ? 1 : 0);
+#endif
 
     if (!BZDB.isTrue("texture"))
       tex->setIndex(0);
@@ -378,12 +361,6 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case '7':
     BZDB.set("shadows", list->getIndex() ? "1" : "0");
-    sceneRenderer->notifyStyleChange();
-    break;
-  case '8':
-    BZDB.set("zbuffer", list->getIndex() ? "1" : "0");
-    // FIXME - test for whether the z buffer will work
-    setSceneDatabase();
     sceneRenderer->notifyStyleChange();
     break;
 #if defined(DEBUG_RENDERING)
