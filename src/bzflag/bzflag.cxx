@@ -327,7 +327,7 @@ static void		usage()
 static void checkArgc(int& i, int argc, const char* option, const char *type = "Missing")
 {
   if ((i+1) == argc) {
-	  printFatalError("%s argument for %s\n", type, option);
+    printFatalError("%s argument for %s\n", type, option);
     usage();
   }
   i++; // just skip the option argument string
