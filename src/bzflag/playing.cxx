@@ -1636,7 +1636,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    if (fpos[2] == pos[2]) {
               const float dist = (pos[0] - fpos[0]) * (pos[0] - fpos[0]) +
 			         (pos[1] - fpos[1]) * (pos[1] - fpos[1]);
-              if ((dist < 1500.0f) && (dist < minDist)) {
+              if ((dist < 2000.0f) && (dist < minDist)) {
 	        minDist = dist;
 	        closestFlag = i;
 	      }
@@ -1667,7 +1667,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  //If we are driving relatively towards our target and a building pops up jump over it
 	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
 	    const Obstacle *building = NULL;
-	    float d = distance;
+	    float d = distance - 5.0f; //Make sure building is REALLY in front of player (-5)
 
 	    const float *velocity = myTank->getVelocity();
 
