@@ -1820,19 +1820,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
   //  else
 
-  if (keymap.isMappedTo(BzfKeyMap::Identify, key)) {
-    if (pressed && !gameOver && !Observer && !myTank->isAlive() && !myTank->isExploding()) {
-      restartPlaying();
-    }
-
-    else {
-      // set target (for guided missile lock on) or get target info
-      if (pressed && myTank->isAlive() && !myTank->isPaused())
-	setTarget();
-    }
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::Binoculars, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::Binoculars, key)) {
     if (pressed) {
       if (myTank->getFlag() != WideAngleFlag)
 	myTank->setMagnify(1 - myTank->getMagnify());
@@ -2216,6 +2204,19 @@ static std::string cmdDrop(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
+static std::string cmdIdentify(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: identify";
+  if (myTank != NULL) {
+    if (!gameOver && !Observer && !myTank->isAlive() && !myTank->isExploding())
+      restartPlaying();
+    else if (myTank->isAlive() && !myTank->isPaused())
+      setTarget();
+  }
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2225,7 +2226,8 @@ struct CommandListItem {
 static const CommandListItem commandList[] = {
   { "fire",	&cmdFire,	"fire:  fire a shot" },
   { "jump",	&cmdJump,	"jump:  make player jump" },
-  { "drop",	&cmdDrop,	"drop:  drop the current flag" }
+  { "drop",	&cmdDrop,	"drop:  drop the current flag" },
+  { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" }
 };
 
 static void		doEvent(BzfDisplay* display)
