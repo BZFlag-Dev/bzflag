@@ -23,6 +23,7 @@
 #include "TextUtils.h"
 
 // initialize the singleton
+template <>
 CommandManager* Singleton<CommandManager>::_instance = (CommandManager*)0;
 
 CommandManager::CommandManager()

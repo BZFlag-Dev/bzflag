@@ -22,6 +22,7 @@
 #include "KeyManager.h"
 
 // initialize the singleton
+template <>
 ActionBinding* Singleton<ActionBinding>::_instance = (ActionBinding*)0;
 
 

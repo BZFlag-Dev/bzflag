@@ -17,6 +17,7 @@
 #include "UIMap.h"
 
 // initialize the singleton
+template <>
 UIMap* Singleton<UIMap>::_instance = (UIMap*)0;
 
 UIMap::UIMap() {

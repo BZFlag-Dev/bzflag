@@ -73,6 +73,7 @@ void	_debugLookups(const std::string &name)
 #endif
 
 // initialize the singleton
+template <>
 StateDatabase* Singleton<StateDatabase>::_instance = (StateDatabase*)0;
 
 

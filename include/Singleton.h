@@ -38,6 +38,13 @@ using std::atexit;
  *
  *   friend class Singleton<Whatever>;
  *
+ * The class will also need to initialize it's own instance in a single
+ * compilation unit (a .cxx file):
+ *
+ *   // statically initialize the instance to nothing
+ *   template <>
+ *   Whatever* Singleton<Whatever>::_instance = 0;
+ *
  * The class can easily be extended to support different allocation
  * mechanisms or multithreading access.  This implementation, however,
  * only uses new/delete and is not thread safe.
@@ -102,10 +109,6 @@ public:
    */
   inline static const T& constInstance() { return *instance(); }
 };
-
-// statically initialize the instance to nothing
-//template < typename T >
-//T* Singleton<T>::_instance = 0;
 
 #endif /* __SINGLETON_H__ */
 
