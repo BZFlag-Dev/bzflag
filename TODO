@@ -5,12 +5,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * Rewrite the Networking section of bzfs.6s
 
-* fix TCP/UDP negotiation for fw'ed clients to handle:
-   to and from both do not work - working?
-   to server works, from does not - working?
-   to and from both work - working?
-   from server works, to does not - would NOT work with NAT
-
 * Try to build bzadmin on Win32 using PDCurses (it works with the X11
   version of PDCurses) at least include stdin/stdout in win32 builds
 
