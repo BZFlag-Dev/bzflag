@@ -324,7 +324,7 @@ void extraUsage(const char *pname)
   printVersion();
   printf("\nUsage: %s %s\n", pname, usageString);
   printf("\n%s\nFlag codes:\n", extraUsageString);
-  for (std::map<std::string, FlagType*>::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
+  for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
     printf("\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
   exit(0);
 }
@@ -1019,7 +1019,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
-    for (std::map<std::string,FlagType*>::iterator it = FlagType::getFlagMap().begin();
+    for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
 	it != FlagType::getFlagMap().end(); ++it)
       if (!options.flagDisallowed[it->second])
 	options.numAllowedFlags++;
@@ -1032,7 +1032,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     // otherwise make table of allowed flags
     else {
       allowedFlags.clear();
-      for (std::map<std::string,FlagType*>::iterator it = FlagType::getFlagMap().begin();
+      for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
 	  it != FlagType::getFlagMap().end(); ++it) {
 	FlagType *fDesc = it->second;
 	if ((fDesc == Flags::Null) || (fDesc->flagTeam != ::NoTeam))
@@ -1049,7 +1049,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     // rogues don't get a flag
     numFlags += CtfTeams - 1;
   }
-  for (std::map<std::string, FlagType*>::iterator it = FlagType::getFlagMap().begin();
+  for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
        it != FlagType::getFlagMap().end(); ++it) {
     numFlags += options.flagCount[it->second];
   }
@@ -1096,7 +1096,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   }
 
 
-  for (std::map<std::string, FlagType*>::iterator it2 = FlagType::getFlagMap().begin(); it2 != FlagType::getFlagMap().end(); ++it2) {
+  for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin(); it2 != FlagType::getFlagMap().end(); ++it2) {
     FlagType *fDesc = it2->second;
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {

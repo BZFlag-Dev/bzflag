@@ -73,7 +73,7 @@ struct CmdLineOptions
     debug(0)
   {
     int i;
-    for (std::map<std::string, FlagType*>::iterator it = FlagType::getFlagMap().begin();
+    for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
 	 it != FlagType::getFlagMap().end(); ++it) {
 	flagCount[it->second] = 0;
 	flagLimit[it->second] = -1;

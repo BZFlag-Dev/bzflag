@@ -76,6 +76,8 @@ enum ShotType {
 
 const int		FlagPLen = 6 + PlayerIdPLen + 48;
 
+class FlagType;
+typedef std::map<std::string, FlagType*> FlagTypeMap;
 
 class FlagType {
   public:
@@ -99,7 +101,7 @@ class FlagType {
     static void* unpack(void* buf, FlagType* &desc);
     /** Static wrapper function that makes sure that the flag map is
 	initialized before it's used. */
-    static std::map<std::string, FlagType*>& getFlagMap();
+    static FlagTypeMap& getFlagMap();
 
     const char*		flagName;
     const char*		flagAbbv;
