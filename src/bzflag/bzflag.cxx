@@ -1030,6 +1030,10 @@ int			main(int argc, char** argv)
   /* initialize the joystick */
   window->initJoystick(BZDB.get("joystickname").c_str());
 
+  // Change audio driver if requested
+  if (BZDB.isSet("audioDriver"))
+    PlatformFactory::getMedia()->setDriver(BZDB.get("audioDriver"));
+
   // set data directory if user specified
   if (BZDB.isSet("directory"))
     PlatformFactory::getMedia()->setMediaDirectory(BZDB.get("directory"));
