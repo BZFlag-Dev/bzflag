@@ -106,6 +106,7 @@ const char *usageString =
 "[-reportfile <filename>] "
 "[-reportpipe <filename>] "
 "[-requireudp] "
+"[-requireidentify] "
 "[+s <flag-count>] "
 "[-s <flag-count>] "
 "[-sa] "
@@ -193,6 +194,7 @@ const char *extraUsageString =
 "\t-reportfile <filename>: the file to store reports in\n"
 "\t-reportpipe <filename>: the program to pipe reports through\n"
 "\t-requireudp: require clients to use udp\n"
+"\t-requireidentify: require clients to identify\n"
 "\t+s: always have <num> super flags (default=16)\n"
 "\t-s: allow up to <num> super flags (default=16)\n"
 "\t-sa: insert antidote superflags\n"
@@ -903,6 +905,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-requireudp") == 0) {
       std::cerr << "require UDP clients!" << std::endl;
       options.requireUDP = true;
+    } else if (strcmp(argv[i], "-requireidentify") == 0) {
+      std::cerr << "require clients to identify!" << std::endl;
+      options.requireIdentify = true;
     } else if (strcmp(argv[i], "+s") == 0) {
       // set required number of random flags
       if (i+1 < argc && isdigit(argv[i+1][0])) {

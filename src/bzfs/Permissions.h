@@ -113,6 +113,7 @@ public:
   bool	isRegistered() const;
   bool	isIdentifyRequired();
   bool	isAllowedToEnter();
+  bool	isVerified();
   uint8_t     getPlayerProperties();
   void	storeInfo(const char* pwd);
   bool	exists();

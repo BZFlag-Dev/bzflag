@@ -123,6 +123,10 @@ bool PlayerAccessInfo::isAllowedToEnter() {
   return verified || !isRegistered() || !isIdentifyRequired();
 };
 
+bool PlayerAccessInfo::isVerified() {
+	return verified;
+};
+
 void PlayerAccessInfo::storeInfo(const char* pwd) {
   PlayerAccessInfo info;
   info.addGroup("VERIFIED");

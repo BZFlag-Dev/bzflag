@@ -2439,6 +2439,14 @@ static void playerAlive(int playerIndex)
     return;
   }
 
+ // make sure the user identifies if required, don't kick them, just don't let them spawn
+  if (!playerData->accessInfo.isVerified() && clOptions->requireIdentify) {
+    sendMessage(ServerPlayer, playerIndex, "This server requires identification before you can join");
+    sendMessage(ServerPlayer, playerIndex, "Please use /identify, or /register if you have not registerd your callsign or");
+    sendMessage(ServerPlayer, playerIndex, "register on http://my.BZFlag.org/bb/ and use that callsign/password.");
+    return;
+  }
+
   if (playerData->player.isBot()
       && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
     sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
