@@ -5247,13 +5247,13 @@ void			startPlaying(BzfDisplay* _display,
 
   // catch kill signals before changing video mode so we can
   // put it back even if we die.  ignore a few signals.
-  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)
-    bzSignal(SIGINT, SIG_PF(suicide));
   bzSignal(SIGILL, SIG_PF(dying));
   bzSignal(SIGABRT, SIG_PF(dying));
   bzSignal(SIGSEGV, SIG_PF(dying));
   bzSignal(SIGTERM, SIG_PF(suicide));
 #if !defined(_WIN32)
+  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)
+    bzSignal(SIGINT, SIG_PF(suicide));
   bzSignal(SIGPIPE, SIG_PF(hangup));
   bzSignal(SIGHUP, SIG_IGN);
   if (bzSignal(SIGQUIT, SIG_IGN) != SIG_IGN)
