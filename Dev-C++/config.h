@@ -34,6 +34,12 @@
 /* Enabling Snapping */
 #define SNAPPING 1
 
+/* Enable score dumping for BZFS */
+#define PRINTSCORE 1
+
+/* Enable time limits for BZFS servers */
+#define TIMELIMIT 1
+
 /* On windows, strcasecmp is really stricmp */
 #ifdef _WIN32
 #define HAVE_STRICMP 1
@@ -58,7 +64,7 @@
     #else
       #define BZ_BUILD_OS			"linux-DevC++-gcc"
     #endif //DEBUG
-  #elseif defined(_WIN32)
+  #else if defined(_WIN32)
     #ifdef DEBUG
       #define BZ_BUILD_OS			"W32-DevC++-MinGW32D"
     #else
