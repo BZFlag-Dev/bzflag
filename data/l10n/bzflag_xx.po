@@ -3,10 +3,11 @@
 # Locales are specifed in three parts separated by underscores
 # en_US_l33t, for example
 # The first part is the base language, the second part is a country code, the third part is a dialect
-# The second and third parts are optional, but if you want to specify a dialog, you need to specify the country
+# The second and third parts are optional, but if you want to specify a dialect, you need to specify the country
 # so, <language>_[<country>[_<dialect>]]
 
 # If you don't know a translation for a phrase, just comment out the msgid and msgstr for that entry
+# Use the pound # character to comment a line out
 
 # Language codes can be found at
 #  http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt
@@ -15,7 +16,7 @@
 
 # name your resultant file: bzflag_<locale>.po
 
-# When run, pick a locale like bzflag en_US_l33t
+# When run, pick a locale like bzflag -locale en_US_l33t
 
 # locale files are cummulative. That is, if you specify a locale that contains a country and dialect, 
 # the base language file is first loaded, and any strings found in the country file replace the base ones, and then
