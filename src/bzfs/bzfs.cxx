@@ -70,7 +70,7 @@ const int udpBufSize = 128000;
 #include "multicast.h"
 #include "Ping.h"
 #include "TimeBomb.h"
-#include "md5.h"
+#include "../../include/md5.h"
 #include "ShotUpdate.h"
 
 static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message);
