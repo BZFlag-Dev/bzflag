@@ -44,6 +44,12 @@ dnl FIXME: need to move the rest of the ARGs up here too
 AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
+AC_PATH_PROG(CCACHE, ccache)
+if test "$CCACHE"
+then
+  CC="ccache $CC"
+  CXX="ccache $CXX"
+fi
 dnl On SGI systems, figure out if we are using MIPSPro compiler
 using_mipspro=no
 if test "$build_vendor" = "sgi" ; then
