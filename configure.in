@@ -44,12 +44,24 @@ dnl FIXME: need to move the rest of the ARGs up here too
 AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
+
+dnl Objective-C compiler (Mac OS X SDL framework build)
+OBJC="gcc"
+OBJCLIBS="-lobjc"
+OBJCFLAGS=""
+AC_SUBST(OBJC)
+AC_SUBST(OBJCLIBS)
+AC_SUBST(OBJCFLAGS)
+_AM_DEPENDENCIES([OBJC])
+
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE"
 then
   CC="ccache $CC"
   CXX="ccache $CXX"
+  OBJC="ccache $OBJC"
 fi
+
 dnl On SGI systems, figure out if we are using MIPSPro compiler
 using_mipspro=no
 if test "$build_vendor" = "sgi" ; then
@@ -367,9 +379,9 @@ fi
 case $host_os in
      macos|darwin*)
 	if test x$with_SDL = xyes; then
-	    LIBS="$LIBS -framework Carbon -framework OpenGL"
+	    LIBS="$LIBS -framework Carbon -framework Cocoa -framework OpenGL"
 	else
-	    LIBS="$LIBS -framework Carbon -framework OpenGL -framework AGL"
+	    LIBS="$LIBS -framework Carbon -framework AGL"
 	fi
 	;;
      irix)
@@ -427,15 +439,12 @@ AC_LANG_C
 if test x$with_SDL = xyes; then
 
   AC_MSG_CHECKING([for SDL framework])
-  savedCFLAGS="$CFLAGS"
   savedLDFLAGS="$LDFLAGS"
-  CPPFLAGS="$CPPFLAGS -framework SDL"
   LDFLAGS="$LDFLAGS -framework SDL"
   framework_SDL_flag_works=yes
   AC_TRY_COMPILE( [], [], [], [framework_SDL_flag_works=no] )
   AC_MSG_RESULT([$framework_SDL_flag_works])
   if test x$framework_SDL_flag_works = xno ; then
-    CPPFLAGS="$savedCPPFLAGS"
     LDFLAGS="$savedLDFLAGS"
     with_SDL=no
   fi
@@ -711,8 +720,6 @@ AC_OUTPUT(bzflag.info
 	src/ogl/Makefile
 	src/platform/Makefile
 	src/platform/MacOSX/Makefile
-	src/platform/MacOSX/English.lproj/Makefile
-	src/platform/MacOSX/English.lproj/MainMenu.nib/Makefile
 	src/regex/Makefile
 	src/scene/Makefile
 	src/zlib/Makefile
