@@ -29,6 +29,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzfs", "bzfs.vcproj", "{7FA
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "common.vcproj", "{57138F88-A81F-4FFB-8BDD-58DB1A1473F5}"
 	ProjectSection(ProjectDependencies) = postProject
+		{D1848CE5-AAD0-4757-AA37-E8B8227E3BF2} = {D1848CE5-AAD0-4757-AA37-E8B8227E3BF2}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "date", "date.vcproj", "{93772A78-3C80-4635-AC84-983B8E0FECF3}"
@@ -83,6 +84,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scene", "scene.vcproj", "{1
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "zlib.vcproj", "{CC93828F-7156-4021-9C77-9951FC187E83}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "regex.vcproj", "{D1848CE5-AAD0-4757-AA37-E8B8227E3BF2}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -156,6 +161,10 @@ Global
 		{CC93828F-7156-4021-9C77-9951FC187E83}.Debug.Build.0 = Debug|Win32
 		{CC93828F-7156-4021-9C77-9951FC187E83}.Release.ActiveCfg = Release|Win32
 		{CC93828F-7156-4021-9C77-9951FC187E83}.Release.Build.0 = Release|Win32
+		{D1848CE5-AAD0-4757-AA37-E8B8227E3BF2}.Debug.ActiveCfg = Debug|Win32
+		{D1848CE5-AAD0-4757-AA37-E8B8227E3BF2}.Debug.Build.0 = Debug|Win32
+		{D1848CE5-AAD0-4757-AA37-E8B8227E3BF2}.Release.ActiveCfg = Release|Win32
+		{D1848CE5-AAD0-4757-AA37-E8B8227E3BF2}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
