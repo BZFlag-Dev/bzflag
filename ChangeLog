@@ -127,8 +127,8 @@ BZFlag 1.11.x (development)
 * Added Admin Message Queue - Michael Hoffman
 
 
-BZFlag 1.10.6  "the little hop"
--------------------------------
+BZFlag 1.10.6  "the little hop" (2004-05-14)
+--------------------------------------------
 
 * Fixed the little hop on spawn at some sites - Alfredo Tupone
 * Fixed issue of players add/removing others from groups - Alfredo Tupone
@@ -147,8 +147,8 @@ BZFlag 1.10.6  "the little hop"
 * Bots aim better, try to evade shots - Frank Thilo
 
 
-BZFlag 1.10.4  "not a smurf"
-----------------------------
+BZFlag 1.10.4  "not a smurf" (2004-01-24)
+-----------------------------------------
 
 * Allow user to define quickMessages via the menu system - Frank Thilo
 * Defaults vars are written to config but commented out - Dave Brosius
@@ -214,8 +214,8 @@ BZFlag 1.10.4  "not a smurf"
 * Pull many world textures from pyBZFlag - Jeff Myers
 
 
-BZFlag 1.10.2
--------------
+BZFlag 1.10.2 (2003-12-23)
+--------------------------
 
 * improved transparent proxy support for server - Frank Thilo, Alfredo Tupone
 * Stop infinite spawn loop with complex worlds containing big pyramids
@@ -246,8 +246,8 @@ BZFlag 1.10.2
 * mrtg script updated - Tim Riker
 
 
-BZFlag 1.10.0  "Break the world" (was 1.9.x)
---------------------------------------------
+BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
+-------------------------------------------------------
 
 * control spawn on buildings with -sb - Frank Thilo
 * Initial Docbook documentation - Sean Morrison
@@ -317,8 +317,8 @@ BZFlag 1.10.0  "Break the world" (was 1.9.x)
 * Rabbit game style - David Trowbridge, Dave Brosius
 
 
-BZFlag 1.7g2  "Steely Eyed Banana" (was 1.7g1)
-----------------------------------------------
+BZFlag 1.7g2  "Steely Eyed Banana" (2003-06-17 was 1.7g1)
+---------------------------------------------------------
 
 * public release now under LGPL v2.1 - Tim Riker
 * change LICENSE to COPYING - Tim Riker
@@ -361,8 +361,8 @@ BZFlag 1.7g2  "Steely Eyed Banana" (was 1.7g1)
 * extend admin command -> /flag reset unused - Dave Brosius
 
 
-BZFlag 1.7g0  "Holy Dancing Monkeys" (was 1.7e7)
-------------------------------------------------
+BZFlag 1.7g0  "Holy Dancing Monkeys" (2002-12-08 was 1.7e7)
+-----------------------------------------------------------
 
 * -tkkr auto team killer - Dave Brosius
 * world file caching - Colin Bayer, Dave Brosius, others
@@ -391,8 +391,8 @@ BZFlag 1.7g0  "Holy Dancing Monkeys" (was 1.7e7)
 * gcc 3.1+ patches - David Trowbridge
 
 
-BZFlag 1.7e6  Armoured Smashing Fist 2002 (was 1.7e5)
------------------------------------------------------
+BZFlag 1.7e6  Armoured Smashing Fist (2002-06-19 was 1.7e5)
+-----------------------------------------------------------
 
 * new HUD! - David Trowbridge, Tim Riker, many others
 * added temporary bans (minutes) - Dave Brosius
@@ -442,8 +442,8 @@ BZFlag 1.7e6  Armoured Smashing Fist 2002 (was 1.7e5)
 * -pr for reconnect port (two port tcp) - Tim Riker
 
 
-BZFlag 1.7e4  (was 1.7e3 while in development)
-----------------------------------------------
+BZFlag 1.7e4 (2001-11-27 was 1.7e3)
+-----------------------------------
 
 * ::memset() instead of bzero() - Björn Augustsson
 * win32 audio thread fix for win2k - crs
@@ -482,8 +482,8 @@ BZFlag 1.7e4  (was 1.7e3 while in development)
 * GM lock alert msg/sound - Tim Riker (prompted by Colin Bayer)
 
 
-BZFlag 1.7e2
-------------
+BZFlag 1.7e2 (2001-04-17)
+-------------------------
 
 * bzfs performance fix, wait loop removal - chestal/timr
 * limbo flag bugfix - chestal
@@ -493,8 +493,8 @@ BZFlag 1.7e2
 * various bug fixes - many
 
 
-BZFlag 1.7e1
-------------
+BZFlag 1.7e1 (2001-03-10)
+-------------------------
 
 * optional UDP unicast networking, back-compatible w/ old TCP method - frank
 * GM now leave smoke trail - frank
@@ -522,8 +522,8 @@ BZFlag 1.7e1
 * /kick and /lagstats server messages, -passwd - Frank Thilo
 
 
-BZFlag 1.7e release 000
------------------------
+BZFlag 1.7e release 000 (2001-01-26)
+------------------------------------
 
 * Tim Riker <Tim@Rikers.org> now maintainer
 * build now 3 digits so alpha sorts work (until we hit 1.10? ;-)
@@ -543,8 +543,8 @@ BZFlag 1.7e release 000
 * phantom player fix by Frank Siegert <frank@this.net>
 
 
-BZFlag 1.7d release 9
----------------------
+BZFlag 1.7d release 9 (2000-02-01)
+----------------------------------
 
 * fixed bug in parsing arguments in bzfls
 * fixed reference counting bug in bzfls
