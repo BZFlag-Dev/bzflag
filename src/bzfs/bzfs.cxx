@@ -5589,12 +5589,13 @@ int main(int argc, char **argv)
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
     unsigned short int maxplayers = 0;
-    votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage);
+    votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime);
     DEBUG1("There is a voting arbiter with the following settings:\n");
     DEBUG1("\tvote time is %d seconds\n", clOptions->voteTime);
     DEBUG1("\tveto time is %d seconds\n", clOptions->vetoTime);
     DEBUG1("\tvotes required are %d\n", clOptions->votesRequired);
     DEBUG1("\tvote percentage necessary is %f\n", clOptions->votePercentage);
+    DEBUG1("\tvote repeat time is %s seconds\n", clOptions->voteRepeatTime);
     for (int i=0; i < NumTeams; i++) {
       // includes observers on purpose
       maxplayers+=clOptions->maxTeam[i];
