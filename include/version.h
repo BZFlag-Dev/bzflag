@@ -21,7 +21,7 @@ extern int getBuildDate();
 #endif
 
 #ifndef BZ_CONFIG_DIR_VERSION
-#define BZ_CONFIG_DIR_VERSION	"1.12"
+#define BZ_CONFIG_DIR_VERSION	"2.0"
 #endif
 
 #ifndef BZ_CONFIG_FILE_NAME
