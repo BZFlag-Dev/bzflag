@@ -971,6 +971,8 @@ const GLfloat*		LocalPlayer::getAntidoteLocation() const
 
 ShotPath*		LocalPlayer::getShot(int index) const
 {
+  if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
+    return NULL;
   return shots[index & 255];
 }
 
