@@ -834,22 +834,21 @@ static void sendMessageToListServerForReal(int index)
 
     // send ADD message
     {
-      sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n",
-	      link.hostname.c_str(),
-	      link.pathname.c_str(),
-	      clOptions->publicizedAddress.c_str(),
-	      getServerVersion(),
-	      gameInfo,
-	      url_encode(clOptions->publicizedTitle).c_str());
+      sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s HTTP/1.1\r\n"
+              "Host: %s\r\n",
+              link.pathname.c_str(), clOptions->publicizedAddress.c_str(),
+	      getServerVersion(), gameInfo,
+              url_encode(clOptions->publicizedTitle).c_str(),
+              link.hostname.c_str());
     }
   }
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
     {
-      sprintf(msg, "GET http://%s%s?action=REMOVE&nameport=%s\n",
-	      link.hostname.c_str(),
+      sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\nHost: %s\r\n",
 	      link.pathname.c_str(),
-	      clOptions->publicizedAddress.c_str());
+              clOptions->publicizedAddress.c_str(),
+              link.hostname.c_str());
     }
   }
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
