@@ -1,11 +1,10 @@
 #!/bin/sh
-# build cvs snapshop debian packages
-# call with any argument to build final packages
-if [ -z "$1" -o ! -r config ] ; then
+# build release or cvs snapshop debian packages
+if [ -z "$1" -o ! -r configure.in ] ; then
  echo "$0 { cvs | release } - must be run in the project home directory"
  exit 1
 fi
-eval `grep VERSIONID config | sed -e 's/ //g'`
+VERSIONID=`grep ^AM_INIT_AUTOMAKE configure.in | sed -e 's/.* //g' -e 's/)//g'`
 if [ "$1" == "release" ] ; then
  version=$VERSIONID
 else
@@ -13,16 +12,13 @@ else
 fi
 date=`date --rfc-822`
 arch=$(dpkg-architecture -qDEB_HOST_ARCH)
-aclocal
-touch NEWS
-autoheader
-automake --add-missing
-autoconf
-#make linux
-#make pristine
+./autogen.sh
+./configure
+make maintainer-clean
+./autogen.sh
+echo "date=$date version=$version arch=$arch"
 sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
 chmod +x debian/rules misc/tar
-
 # cvs/non-cvs builds should conflict and replace each other.
 PATH=`pwd`/misc:$PATH dpkg-buildpackage -us -uc -rfakeroot
 echo "now do \"debsign\" and then a \"dupload ../bzflag_${version}_${arch}.changes\""
