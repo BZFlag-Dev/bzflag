@@ -122,7 +122,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
       n = lastWhitespace;
 
     // message
-    lines.push_back(cumulativeANSICodes + std::string(msg).substr(0, n));
+    lines.push_back(cumulativeANSICodes + std::string(msg, n));
 
     // account for portion broken
     msg += n;
