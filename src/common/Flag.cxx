@@ -229,6 +229,8 @@ namespace Flags {
     delete TriggerHappy;
     delete Bouncy;
     delete Lag;
+
+    delete[] FlagType::flagSets;
   }
 }
 
