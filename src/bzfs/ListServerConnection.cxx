@@ -177,7 +177,7 @@ void ListServerLink::read()
 	if (getTarget(callsign) < curMaxPlayers) {
 	  int playerIndex = getTarget(callsign);
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  // TODO this will crash if there is no group database
+	  playerData->accessInfo.storeInfo(NULL);
 	  playerData->accessInfo.setPermissionRights();
 	  DEBUG3("Got: \"%s\" \"%s\" %d\n", callsign, group, getTarget(callsign));
 	  sendMessage(ServerPlayer, playerIndex, "Global login approved!");

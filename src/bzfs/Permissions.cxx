@@ -126,10 +126,15 @@ bool PlayerAccessInfo::isAllowedToEnter() {
 void PlayerAccessInfo::storeInfo(const char* pwd) {
   PlayerAccessInfo info;
   info.groups.push_back("REGISTERED");
-  std::string pass = pwd;
-  setUserPassword(regName.c_str(), pass.c_str());
+  if (pwd == NULL) {
+    setUserPassword(regName.c_str(), "");
+    DEBUG1("Global Temp Register %s\n", regName.c_str());
+  } else {
+    std::string pass = pwd;
+    setUserPassword(regName.c_str(), pass.c_str());
+    DEBUG1("Register %s %s\n", regName.c_str(), pwd);
+  }
   userDatabase[regName] = info;
-  DEBUG1("Register %s %s\n", regName.c_str(), pwd);
   updateDatabases();
 }
 
@@ -244,8 +249,12 @@ void setUserPassword(const std::string &nick, const std::string &pass)
 {
   std::string str1 = nick;
   makeupper(str1);
-  // assume it's already a hash when length is 32 (FIXME?)
-  passwordDatabase[str1] = pass.size()==32 ? pass : MD5(pass).hexdigest();
+  if (pass.size() == 0) {
+    passwordDatabase[str1] = "*";
+  } else {
+    // assume it's already a hash when length is 32 (FIXME?)
+    passwordDatabase[str1] = pass.size()==32 ? pass : MD5(pass).hexdigest();
+  }
 }
 
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
