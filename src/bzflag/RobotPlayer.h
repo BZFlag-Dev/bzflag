@@ -28,29 +28,21 @@
 
 class ServerLink;
 
-class RobotPlayer : public BaseLocalPlayer {
+class RobotPlayer : public LocalPlayer {
   public:
 			RobotPlayer(const PlayerId&,
 				const char* name, ServerLink*,
 				const char* _email);
-			~RobotPlayer();
 
     float		getTargetPriority(const Player*) const;
     const Player*	getTarget() const;
     void		setTarget(const Player*);
     static void		setObstacleList(std::vector<BzfRegion*>*);
 
-    ShotPath*		getShot(int index) const;
-
-    void		setTeam(TeamColor);
     void		restart(const float* pos, float azimuth);
-    bool		checkHit(const Player* source, const ShotPath*& hit,
-							float& minTime) const;
     void		explodeTank();
-    void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
   private:
-    bool		doEndShot(int index, bool isHit, float* pos);
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
     BzfRegion*		findRegion(const float p[2], float nearest[2]) const;
@@ -64,7 +56,6 @@ class RobotPlayer : public BaseLocalPlayer {
 
   private:
     ServerLink*		server;
-    LocalShotPath**	shots;
     const Player*	target;
     std::vector<RegionPoint>	path;
     int			pathIndex;

@@ -29,95 +29,22 @@ std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;
 RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 				ServerLink* _server,
 				const char* _email = "anonymous") :
-				BaseLocalPlayer(_id, _name, _email),
+				LocalPlayer(_id, _name, _email),
 				server(_server),
 				target(NULL),
 				pathIndex(0),
 				timeSinceShot(0.0f),
 				timerForShot(0.0f)
 {
-  // NOTE -- code taken directly from LocalPlayer
-  // initialize shots array to no shots fired
-  const int numShots = World::getWorld()->getMaxShots();
-  shots = new LocalShotPath*[numShots];
-  for (int i = 0; i < numShots; i++)
-    shots[i] = NULL;
+  gettingSound = false;
 }
 
-RobotPlayer::~RobotPlayer()
-{
-  // NOTE -- code taken directly from LocalPlayer
-  // free shots
-  const int numShots = World::getWorld()->getMaxShots();
-  for (int i = 0; i < numShots; i++)
-    if (shots[i])
-      delete shots[i];
-  delete[] shots;
-}
-
-// NOTE -- code taken directly from LocalPlayer
-ShotPath*		RobotPlayer::getShot(int index) const
-{
-  index &= 0x00FF;
-  if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
-    return NULL;
-  return shots[index];
-}
-
-// NOTE -- code taken directly from LocalPlayer
-bool			RobotPlayer::doEndShot(
-				int id, bool isHit, float* pos)
-{
-  const int index = id & 255;
-  const int salt = (id >> 8) & 127;
-
-  // special id used in some messages (and really shouldn't be sent here)
-  if (id == -1)
-    return false;
-
-  // ignore bogus shots (those with a bad index or for shots that don't exist)
-  if (index < 0 || index >= World::getWorld()->getMaxShots() || !shots[index])
-    return false;
-
-  // ignore shots that already ending
-  if (shots[index]->isExpired() || shots[index]->isExpiring())
-    return false;
-
-  // ignore shots that have the wrong salt.  since we reuse shot indices
-  // it's possible for an old MsgShotEnd to arrive after we've started a
-  // new shot.  that's where the salt comes in.  it changes for each shot
-  // so we can identify an old shot from a new one.
-  if (salt != ((shots[index]->getShotId() >> 8) & 127))
-    return false;
-
-  // don't stop if it's because were hitting something and we don't stop
-  // when we hit something.
-  if (isHit && !shots[index]->isStoppedByHit())
-    return false;
-
-  // end it
-  const float* shotPos = shots[index]->getPosition();
-  pos[0] = shotPos[0];
-  pos[1] = shotPos[1];
-  pos[2] = shotPos[2];
-  shots[index]->setExpired();
-  return true;
-}
-
-// NOTE -- code mostly taken from LocalPlayer::doUpdate()
 void			RobotPlayer::doUpdate(float dt)
 {
-  // reap dead (reloaded) shots
+  LocalPlayer::doUpdate(dt);
+
   const int numShots = World::getWorld()->getMaxShots();
   int i;
-  for (i = 0; i < numShots; i++)
-    if (shots[i] && shots[i]->isReloaded()) {
-      if (!shots[i]->isExpired())
-	shots[i]->setExpired();
-      delete shots[i];
-      shots[i] = NULL;
-    }
-
   // fire shot if any available
   timeSinceShot += dt;
   float tankRadius = BZDBCache::tankRadius;
@@ -177,26 +104,21 @@ void			RobotPlayer::doUpdate(float dt)
 	break;
       }
   }
-
-  // update shots
-  for (i = 0; i < numShots; i++)
-    if (shots[i])
-      shots[i]->update(dt);
-
 }
 
 void			RobotPlayer::doUpdateMotion(float dt)
 {
-  // record previous position
-  const float oldAzimuth = getAngle();
-  const float* oldPosition = getPosition();
-  float position[3];
-  position[0] = oldPosition[0];
-  position[1] = oldPosition[1];
-  position[2] = oldPosition[2];
-  float azimuth = oldAzimuth;
-  float tankAngVel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
   if (isAlive()) {
+    // record previous position
+    const float oldAzimuth = getAngle();
+    const float* oldPosition = getPosition();
+    float position[3];
+    position[0] = oldPosition[0];
+    position[1] = oldPosition[1];
+    position[2] = oldPosition[2];
+    float azimuth = oldAzimuth;
+    float tankAngVel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+    float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     if (dt > 0.0 && pathIndex < (int)path.size()) {
       float distance;
       float v[2];
@@ -206,7 +128,6 @@ void			RobotPlayer::doUpdateMotion(float dt)
       v[1] = endPoint[1] - position[1];
       distance = hypotf(v[0], v[1]);
       float tankRadius = BZDBCache::tankRadius;
-      float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
       if (distance <= tankRadius)
 	pathIndex++;
 
@@ -216,177 +137,47 @@ void			RobotPlayer::doUpdateMotion(float dt)
       else if (azimuthDiff < -M_PI) azimuthDiff += 2.0f * M_PI;
       if (fabs(azimuthDiff) > 0.01f) {
 	// tank doesn't move forward while turning
+	setDesiredSpeed(0.0f);
+	// set desired turn speed
 	if (azimuthDiff >= dt * tankAngVel) {
-	  azimuth += dt * tankAngVel;
+	  setDesiredAngVel(1.0f);
+	} else if (azimuthDiff <= -dt * tankAngVel) {
+	  setDesiredAngVel(-1.0f);
+	} else {
+	  setDesiredAngVel(azimuthDiff / dt / tankAngVel);
 	}
-	else if (azimuthDiff <= -dt * tankAngVel) {
-	  azimuth -= dt * tankAngVel;
-	}
-	else {
-	  azimuth += azimuthDiff;
-	}
-      }
-      else {
+      } else {
 	// tank doesn't turn while moving forward
+	setDesiredAngVel(0.0f);
 	// find how long it will take to get to next path segment
-	float t;
 	if (distance <= dt * tankSpeed) {
 	  pathIndex++;
-	  t = distance / tankSpeed;
+	  // set desired speed
+	  setDesiredSpeed(distance / dt / tankSpeed);
+	} else {
+	  setDesiredSpeed(1.0f);
 	}
-	else {
-	  t = dt;
-	}
-	position[0] += t * tankSpeed * cosf(azimuth);
-	position[1] += t * tankSpeed * sinf(azimuth);
       }
     }
   }
-  else if (isExploding()) {
-    if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME))
-      setStatus(PlayerState::DeadStatus);
-  }
-
-  float velocity[3];
-  velocity[0] = (position[0] - oldPosition[0]) / dt;
-  velocity[1] = (position[1] - oldPosition[1]) / dt;
-  velocity[2] = getVelocity()[2] + BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
-  position[2] += dt * velocity[2];
-  if (position[2] <= 0.0f) {
-    position[2] = 0.0f;
-    velocity[2] = 0.0f;
-  }
-
-  move(position, azimuth);
-  setVelocity(velocity);
-  setAngularVelocity((getAngle() - oldAzimuth) / dt);
-}
-
-// NOTE -- code taken directly from LocalPlayer
-// NOTE -- minTime should be initialized to Infinity by the caller
-bool			RobotPlayer::checkHit(const Player* source,
-						const ShotPath*& hit,
-						float& minTime) const
-{
-  bool goodHit = false;
-
-  // if firing tank is paused then it doesn't count
-  if (source->isPaused()) return goodHit;
-
-  const int maxShots = source->getMaxShots();
-  for (int i = 0; i < maxShots; i++) {
-    // get shot
-    const ShotPath* shot = source->getShot(i);
-    if (!shot || shot->isExpired()) continue;
-
-    // my own shock wave cannot kill me
-    if (source == this && shot->getFlag() == Flags::ShockWave) continue;
-
-    // short circuit test if shot can't possibly hit.
-    // only superbullet or shockwave can kill zoned dude
-    const FlagType* shotFlag = shot->getFlag();
-    if (getFlag() == Flags::PhantomZone && isFlagActive() &&
-		shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave)
-      continue;
-    // laser can't hit a cloaked tank
-    if (getFlag() == Flags::Cloaking && shotFlag == Flags::Laser)
-      continue;
-
-    // test myself against shot
-    float position[3];
-    const float t = shot->checkHit(this, position);
-    if (t >= minTime) continue;
-
-/* robots don't have this yet
-    // test if shot hit a part of my tank that's through a teleporter.
-    // hit is no good if hit point is behind crossing plane.
-    if (isCrossingWall() && position[0] * crossingPlane[0] +
-		position[1] * crossingPlane[1] +
-		position[2] * crossingPlane[2] + crossingPlane[3] < 0.0f)
-      continue;
-*/
-
-    // okay, shot hit
-    goodHit = true;
-    hit = shot;
-    minTime = t;
-  }
-  return goodHit;
+  LocalPlayer::doUpdateMotion(dt);
 }
 
 void			RobotPlayer::explodeTank()
 {
-  // NOTE -- code taken directly from LocalPlayer
-  float gravity      = BZDB.eval(StateDatabase::BZDB_GRAVITY);
-  float explodeTime  = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
-  // Limiting max height increment to this value (the old default value)
-  const float zMax  = 49.0f;
-  setExplode(TimeKeeper::getTick());
-  const float* oldVelocity = getVelocity();
-  float newVelocity[3];
-  float maxSpeed;
-  newVelocity[0] = oldVelocity[0];
-  newVelocity[1] = oldVelocity[1];
-  if (gravity < 0) {
-    // comparing 2 speed:
-    //   to have a simmetric path (ending at same height as starting)
-    //   to reach the acme of parabola, under the max height established
-    // take the less
-    newVelocity[2] = - 0.5f * gravity * explodeTime;
-    maxSpeed       = sqrtf(- 2.0f * zMax * gravity);
-    if (newVelocity[2] > maxSpeed)
-      newVelocity[2] = maxSpeed;
-  } else {
-    newVelocity[2] = oldVelocity[2];
-  }
-  setVelocity(newVelocity);
+  LocalPlayer::explodeTank();
   target = NULL;
   path.clear();
 }
 
-void			RobotPlayer::setTeam(TeamColor team)
-{
-  changeTeam(team);
-}
-
-void			RobotPlayer::changeScore(short deltaWins,
-						short deltaLosses,
-						short deltaTeamKills)
-{
-  Player::changeScore(deltaWins, deltaLosses, deltaTeamKills);
-}
-
 void			RobotPlayer::restart(const float* pos, float _azimuth)
 {
-  // put me in limbo
-  setStatus(short(PlayerState::DeadStatus));
-
-  // can't have a flag
-  setFlag(Flags::Null);
-
-  // get rid of existing shots
-  const int numShots = World::getWorld()->getMaxShots();
-  // get rid of existing shots
-  for (int i = 0; i < numShots; i++)
-    if (shots[i]) {
-      delete shots[i];
-      shots[i] = NULL;
-    }
-
+  LocalPlayer::restart(pos, _azimuth);
   // no target
   path.clear();
   target = NULL;
   pathIndex = 0;
 
-  // initialize position/speed state
-  static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-  move(pos, _azimuth);
-  setVelocity(zero);
-  setAngularVelocity(0.0f);
-  doUpdateMotion(0.0f);
-
-  // make me alive now
-  setStatus(getStatus() | short(PlayerState::Alive));
 }
 
 float			RobotPlayer::getTargetPriority(const
