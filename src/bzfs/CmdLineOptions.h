@@ -19,6 +19,7 @@
 /* system headers */
 #include <string>
 #include <map>
+#include <vector>
 
 /* bzflag common headers */
 #include "Protocol.h"
@@ -51,10 +52,10 @@ struct CmdLineOptions
   CmdLineOptions()
   : wksPort(ServerPort), gameStyle(PlainGameStyle),
     rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(0),
-    servermsg(""),
-    advertisemsg(""), worldFile(""), pingInterface(""),
-    listServerURL(DefaultListServerURL), password(""),
-    publicizedTitle(""), publicizedAddress(""), suppressMasterBanList(false),
+    servermsg(""), advertisemsg(""), worldFile(""), 
+    pingInterface(""), password(""), 
+    listServerOverridden(false), publicizedTitle(""), publicizedAddress(""), 
+    suppressMasterBanList(false), masterBanListOverridden(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
@@ -84,6 +85,9 @@ struct CmdLineOptions
       maxTeam[i] = MaxPlayers;
       numTeamFlags[i] = 0;
     }
+
+    listServerURL.push_back(DefaultListServerURL);
+    masterBanListURL.push_back(DefaultMasterBanURL);
   }
 
   int			wksPort;
@@ -96,14 +100,17 @@ struct CmdLineOptions
   std::string   advertisemsg;
   std::string   worldFile;
   std::string   pingInterface;
-  std::string   listServerURL;
   std::string   password;
+
+  bool listServerOverridden;
+  std::vector<std::string>   listServerURL;
 
   std::string	publicizedTitle;
   std::string	publicizedAddress;
 
   bool			suppressMasterBanList;
-  std::string		masterBanListURL;
+  bool			masterBanListOverridden;
+  std::vector<std::string>		masterBanListURL;
   
   uint16_t		maxShots;
   int			maxTeamScore;

@@ -225,7 +225,7 @@ const char *extraUsageString =
 static void printVersion()
 {
   std::cout << "BZFlag server " << getAppVersion() << " (protocol " << getProtocolVersion() <<
-	       ") http://BZFlag.org/\n";
+    ") http://BZFlag.org/\n";
   std::cout << copyright << std::endl;
   std::cout.flush();
 }
@@ -366,7 +366,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
       if (count > MaxPlayers) {
 	maxRealPlayers = MaxPlayers;
       } else {
-       maxRealPlayers = uint8_t(count);
+	maxRealPlayers = uint8_t(count);
       }
     }
     // limit max team size to max players
@@ -736,12 +736,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "disabling team score limit" << std::endl;
 	options.maxTeamScore = 0;
       }
-		} else if (strcmp(argv[i],"-noMasterBanlist") == 0){
-			options.suppressMasterBanList = true;
-		} else if (strcmp(argv[i],"-masterBanURL") == 0){
-			checkArgc(1, i, argc, argv[i]);
-			options.masterBanListURL = argv[i];
-		} else if (strcmp(argv[i], "-p") == 0) {
+    } else if (strcmp(argv[i],"-noMasterBanlist") == 0){
+      options.suppressMasterBanList = true;
+    } else if (strcmp(argv[i],"-masterBanURL") == 0){
+      /* if this is the first master ban url, override the default
+       * list.  otherwise just keep adding urls. 
+       */
+      if (!options.masterBanListOverridden) {
+	options.masterBanListURL.clear();
+	options.masterBanListOverridden = true;
+      }
+      checkArgc(1, i, argc, argv[i]);
+      options.masterBanListURL.push_back(argv[i]);
+    } else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
@@ -810,9 +817,16 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.publicizedAddress = argv[i];
       options.publicizeServer = true;
     } else if (strcmp(argv[i], "-publiclist") == 0) {
+      /* if this is the first -publiclist, override the default list
+       * server.  otherwise just keep adding urls. 
+       */
+      if (!options.listServerOverridden) {
+	options.listServerURL.clear();
+	options.listServerOverridden = true;
+      }
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
-      options.listServerURL = argv[i];
+      options.listServerURL.push_back(argv[i]);
     } else if (strcmp(argv[i], "-q") == 0) {
       // don't handle pings
       checkFromWorldFile(argv[i], fromWorldFile);
@@ -915,7 +929,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	  x = atoi(argv[i]);
 	  if (x < 1){
 	    std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
-      x = 1;
+	    x = 1;
 	  }
 	} else {
 	  std::cerr << "invalid shot limit \"" << argv[i] << "\"" << std::endl;
@@ -1002,8 +1016,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.teamKillerKickRatio = atoi(argv[i]);
       if (options.teamKillerKickRatio < 0) {
-	 options.teamKillerKickRatio = 0;
-	 std::cerr << "disabling team killer kick ratio";
+	options.teamKillerKickRatio = 0;
+	std::cerr << "disabling team killer kick ratio";
       }
     } else if (strcmp(argv[i], "-userdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
@@ -1049,7 +1063,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   // get player counts.  done after other arguments because we need
   // to ignore counts for rogues if rogues aren't allowed.
   if (playerCountArg > 0 && (!parsePlayerCount(argv[playerCountArg], options) ||
-      playerCountArg2 > 0 && !parsePlayerCount(argv[playerCountArg2], options)))
+			     playerCountArg2 > 0 && !parsePlayerCount(argv[playerCountArg2], options)))
     usage(argv[0]);
 
   // first disallow flags inconsistent with game style
@@ -1093,14 +1107,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (options.maxTeam[i] > 0 && options.maxTeam[RogueTeam] != maxRealPlayers)
 	std::cout << "only rogues are allowed in Rabbit Style; zeroing out " << Team::getName((TeamColor) i) << std::endl;
       options.maxTeam[i] = 0;
-	}
+    }
   }
 
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
-	it != FlagType::getFlagMap().end(); ++it)
+	 it != FlagType::getFlagMap().end(); ++it)
       if (!options.flagDisallowed[it->second])
 	options.numAllowedFlags++;
 
@@ -1115,7 +1129,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       std::vector<FlagType*> allowedFlags;
       allowedFlags.clear();
       for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
-	  it != FlagType::getFlagMap().end(); ++it) {
+	   it != FlagType::getFlagMap().end(); ++it) {
 	FlagType *fDesc = it->second;
 	if ((fDesc == Flags::Null) || (fDesc->flagTeam != ::NoTeam))
 	  continue;
@@ -1179,7 +1193,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     }
   }
   for (; f < numFlags; f++) {
-     FlagInfo::get(f)->required = allFlagsOut;
+    FlagInfo::get(f)->required = allFlagsOut;
   }
 
   // debugging
@@ -1199,7 +1213,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     DEBUG1("  all shots ricochet\n");
   if (options.gameStyle & int(ShakableGameStyle))
     DEBUG1("  shakable bad flags: timeout=%f, wins=%i\n",
-	  0.1f * float(options.shakeTimeout), options.shakeWins);
+	   0.1f * float(options.shakeTimeout), options.shakeWins);
   if (options.gameStyle & int(AntidoteGameStyle))
     DEBUG1("  antidote flags\n");
 }
@@ -1207,10 +1221,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

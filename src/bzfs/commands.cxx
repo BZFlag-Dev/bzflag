@@ -2152,36 +2152,35 @@ void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
 
 void handleReloadMasterBanCmd(GameKeeper::Player *playerData, const char * /*message*/)
 {
-	int t = playerData->getIndex();
-	if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
-		sendMessage(ServerPlayer, t, "You do not have permission to run the reloadMasterBan command");
-		return;
-	}
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the reloadMasterBan command");
+    return;
+  }
 
-	clOptions->acl.purgeMasters();
-	sendMessage(ServerPlayer, t, "master ban list flushed");
+  clOptions->acl.purgeMasters();
+  sendMessage(ServerPlayer, t, "master ban list flushed");
 
-	if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
-		MasterBanList	banList;
-		std::string URL  = "http://bzflag.sourceforge.net/master-bans.txt";
-		if(clOptions->masterBanListURL.size())
-			URL = clOptions->masterBanListURL;
-
-		clOptions->acl.merge(banList.get(URL));
-		DEBUG1("Reloaded master ban list from %s\n",URL.c_str());
-	}
+  if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
+    MasterBanList	banList;
+    std::string URL  = "http://bzflag.sourceforge.net/master-bans.txt";
+    for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
+      clOptions->acl.merge(banList.get(i->c_str()));
+      DEBUG1("Reloaded master ban list from %s\n", i->c_str());
+    }
+  }
 }
 
 void handleFlushMasterBanCmd(GameKeeper::Player *playerData, const char * /*message*/)
 {
-	int t = playerData->getIndex();
-	if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
-		sendMessage(ServerPlayer, t, "You do not have permission to run the flushMasterBan command");
-		return;
-	}
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the flushMasterBan command");
+    return;
+  }
 	
-	clOptions->acl.purgeMasters();
-	sendMessage(ServerPlayer, t, "master ban list flushed");
+  clOptions->acl.purgeMasters();
+  sendMessage(ServerPlayer, t, "master ban list flushed");
 }
 
 // Local Variables: ***

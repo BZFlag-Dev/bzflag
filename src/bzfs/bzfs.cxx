@@ -441,8 +441,10 @@ static void publicize()
 
   if (clOptions->publicizeServer) {
     // list server initialization
-    listServerLink = new ListServerLink(clOptions->listServerURL, clOptions->publicizedAddress, clOptions->publicizedTitle);
-    listServerLinksCount++;
+    for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); i++) {
+      listServerLink = new ListServerLink(i->c_str(), clOptions->publicizedAddress, clOptions->publicizedTitle);
+      listServerLinksCount++;
+    }
   } else {
     // don't use a list server; we need a ListServerLink object anyway
     // pass no arguments to the constructor, so the object will exist but do nothing if called
@@ -4060,16 +4062,14 @@ int main(int argc, char **argv)
     DEBUG1("Running a private server with the following settings:\n");
   }
 
-	// get the master ban list
-	if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
-		MasterBanList	banList;
-		std::string URL  = "http://bzflag.org/master-bans.txt";
-		if(clOptions->masterBanListURL.size())
-			URL = clOptions->masterBanListURL;
-
-		clOptions->acl.merge(banList.get(URL));
-		DEBUG1("Loaded master ban list from %s\n",URL.c_str());
-	}
+  // get the master ban list
+  if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
+    MasterBanList	banList;
+    for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
+      clOptions->acl.merge(banList.get(i->c_str()));
+      DEBUG1("Loaded master ban list from %s\n", i->c_str());
+    }
+  }
 
   Score::setTeamKillRatio(clOptions->teamKillerKickRatio);
   Score::setWinLimit(clOptions->maxPlayerScore);
