@@ -33,7 +33,7 @@ DisplayListManager::DisplayListManager(const DisplayListManager &dm)
   release();
   lists = dm.lists;
   lastID = dm.lastID;
-  aquire();
+  acquire();
 }
 
 DisplayListManager& DisplayListManager::operator=(const DisplayListManager &dm)
@@ -41,7 +41,7 @@ DisplayListManager& DisplayListManager::operator=(const DisplayListManager &dm)
   release()
   lists = dm.lists;
   lastID = dm.lastID;
-  aquire();
+  acquire();
   return *this;
 }
 
