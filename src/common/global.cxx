@@ -9,6 +9,11 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#if (_WIN32)
+// turn off bogus `this used in base member initialization list'
+	#pragma warning(disable: 4786)
+#endif
+
 
 #include "global.h"
 
@@ -80,6 +85,8 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_wideAngleAng",		"1.745329", 			false, StateDatabase::Locked},
 	{ "_worldSize",			"800.0",			false, StateDatabase::Locked},
 };
+
+
 
 
 // just a place to put the version stuff, as there was no where else
