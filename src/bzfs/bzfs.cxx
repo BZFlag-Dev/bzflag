@@ -2392,10 +2392,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   }
 
   // okay, player can have it
-  FlagInfo::flagList[flagIndex].flag.status = FlagOnTank;
-  FlagInfo::flagList[flagIndex].flag.owner = playerIndex;
-  FlagInfo::flagList[flagIndex].player = playerIndex;
-  FlagInfo::flagList[flagIndex].numShots = 0;
+  FlagInfo::flagList[flagIndex].grab(playerIndex);
   playerData->player.setFlag(flagIndex);
 
   // send MsgGrabFlag

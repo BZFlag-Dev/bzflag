@@ -180,6 +180,14 @@ void FlagInfo::resetFlag(float position[3])
   flag.position[2] = position[2];
 }
 
+void FlagInfo::grab(int playerIndex)
+{
+  flag.status = FlagOnTank;
+  flag.owner  = playerIndex;
+  player      = playerIndex;
+  numShots    = 0;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

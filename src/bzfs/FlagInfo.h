@@ -32,6 +32,7 @@ public:
   void *pack(void *buf);
   void dropFlag(float pos[3], float landingPos[3], bool vanish);
   void resetFlag(float position[3]);
+  void grab(int playerIndex);
 
   static void setSize(int _numFlags);
   static void setAllowed(std::vector<FlagType*> allowed);
