@@ -150,7 +150,8 @@ uint8_t PlayerAccessInfo::getPlayerProperties() {
     result |= IsRegistered;
   if (verified)
     result |= IsVerified;
-  if (Admin)
+  if (!hasPerm(hideAdmin) &&
+      (Admin || hasPerm(ban) || hasPerm(shortBan)))
     result |= IsAdmin;
   return result;
 }
@@ -198,7 +199,7 @@ bool PlayerAccessInfo::canSet(const std::string& group) {
 }
 
 bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) {
-  if (Admin)
+  if (Admin && (right != hideAdmin))
     return true;
   if (explicitDenys.test(right))
     return false;
@@ -275,6 +276,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::endGame: return "endGame";
     case PlayerAccessInfo::flagHistory: return "flagHistory";
     case PlayerAccessInfo::flagMod: return "flagMod";
+    case PlayerAccessInfo::hideAdmin: return "hideAdmin";
     case PlayerAccessInfo::idleStats: return "idleStats";
     case PlayerAccessInfo::info: return "info";
     case PlayerAccessInfo::kick: return "kick";
@@ -322,6 +324,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "ENDGAME") return PlayerAccessInfo::endGame;
   if (name == "FLAGHISTORY") return PlayerAccessInfo::flagHistory;
   if (name == "FLAGMOD") return PlayerAccessInfo::flagMod;
+  if (name == "HIDEADMIN") return PlayerAccessInfo::hideAdmin;
   if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;
   if (name == "INFO") return PlayerAccessInfo::info;
   if (name == "KICK") return PlayerAccessInfo::kick;

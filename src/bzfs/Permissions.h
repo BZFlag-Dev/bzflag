@@ -55,6 +55,7 @@ public:
       flagHistory,
       date,
       flagMod,
+      hideAdmin,
       idleStats,
       info,
       kick,
