@@ -76,6 +76,11 @@ void WorldInfo::addTetra(const float (*vertices)[3], const bool *visible,
 {
   TetraBuilding tetra (vertices, visible, colored, colors, drive, shoot);
   tetras.push_back (tetra);
+
+  float tetraHeight = tetra.getPosition()[2] + tetra.getHeight();  
+  if (tetraHeight > maxHeight) {
+    maxHeight = tetraHeight;
+  }
 }
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive, bool shoot)
