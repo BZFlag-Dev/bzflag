@@ -10,6 +10,9 @@ recent bugs
 
 - thief gets kicked for speeding sometimes after stealing flag
 
+- get kicked for speeding when dying with high speed flag sometimes
+  (ok, it was not me, it was roger)
+
 - Shots that bounce off the ground occasionally reflect in the wrong
   direction - x/y flipped
 
