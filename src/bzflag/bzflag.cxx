@@ -575,6 +575,9 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-locale") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("locale", argv[i]);
+    } else if (strcmp(argv[i], "-motd") == 0) {
+      checkArgc(i, argc, argv[i]);
+      BZDB.set("motd", argv[i]);
     } else if (strcmp(argv[i], "-nolist") == 0) {
       startupInfo.listServerURL = "";
       BZDB.set("list", "");
@@ -914,6 +917,9 @@ int			main(int argc, char** argv)
 
   // initialize global objects and classes
   bzfsrand(time(0));
+
+  // set default MOTD URL
+  BZDB.set("motd", "http://bzflag.org/motd.php");
 
     // set default DB entries
   for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {

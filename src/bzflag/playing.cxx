@@ -5569,7 +5569,7 @@ void			startPlaying(BzfDisplay* _display,
   // get current MOTD
   if (!BZDB.isTrue("disableMOTD")) {
     controlPanel->addMessage(ColorStrings[UnderlineColor] + "MOTD: " +
-                             motd.get("http://bzflag.org/motd.php"));
+                             motd.get(BZDB.get("motd")));
   }
   
   //inform user of silencePlayers on startup
