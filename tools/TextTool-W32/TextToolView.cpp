@@ -119,8 +119,8 @@ void CTextToolView::OnDraw(CDC* pDC)
 	CPen	pen2(PS_SOLID,1,RGB(64,64,255));
 	pDC->SelectObject(pen);
 
-	CString		szString = " !\"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ{\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
-	pDC->GetCharABCWidths(' ','}',m_aWidths);
+	CString		szString = " !\"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ{\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+	pDC->GetCharABCWidths(' ','~',m_aWidths);
 
 	LOGFONT			rLogFont;
 
@@ -135,7 +135,7 @@ void CTextToolView::OnDraw(CDC* pDC)
 	int	iYPos = 0;
 
 	int iXCount = 0;
-	for (int iChar = ' '; iChar <= '}';iChar++)
+	for (int iChar = ' '; iChar <= '~'; iChar++)
 	{
 		int iThisItem = iChar-' ';
 
