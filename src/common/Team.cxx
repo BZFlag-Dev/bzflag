@@ -101,16 +101,17 @@ void			Team::setColors(TeamColor team,
 				const float* tank,
 				const float* radar)
 {
-  if (int(team) < 0) {
-    team = 0;
-  }
+  const int teamIndex = int(team);
+  // ignore bogus team color
+  if (teamIndex < 0)
+    return;
 
-  tankColor[int(team)][0] = tank[0];
-  tankColor[int(team)][1] = tank[1];
-  tankColor[int(team)][2] = tank[2];
-  radarColor[int(team)][0] = radar[0];
-  radarColor[int(team)][1] = radar[1];
-  radarColor[int(team)][2] = radar[2];
+  tankColor[teamIndex][0] = tank[0];
+  tankColor[teamIndex][1] = tank[1];
+  tankColor[teamIndex][2] = tank[2];
+  radarColor[teamIndex][0] = radar[0];
+  radarColor[teamIndex][1] = radar[1];
+  radarColor[teamIndex][2] = radar[2];
 }
 
 // Local variables: ***
