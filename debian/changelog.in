@@ -2,7 +2,13 @@ bzflag (@VERSION@) unstable; urgency=low
 
   * CVS Build
 
- -- Tim Riker <Tim@Rikers.org>  Thu, 22 Feb 2001 16:42:22 -0700
+ -- Tim Riker <Tim@Rikers.org>  @DATE@
+
+bzflag (1.7e2-1) unstable; urgency=low
+
+  * upload sources as well. Closes: Bug#94433
+
+ -- Tim Riker <Tim@Rikers.org>  Wed, 18 Apr 2001 16:25:24 -0600
 
 bzflag (1.7e2) unstable; urgency=low
 
