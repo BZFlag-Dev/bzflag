@@ -6,8 +6,13 @@ recent bugs
 
 - doc/guide/NetworkProtocol.xml is not up to date
 
-- list server includes counts for players running on non-public servers on
-  the same machine on different ports
+- list server includes counts for players running on non-public/mis-configured
+  servers on the same machine on different ports.  if server runs on port 5156
+  with publicaddr set to machine:5156 and then also runs another on 59999 with
+  publicaddr set to machine:5156 (by accident or otherwise), then player joins
+  to the 59999 server mask the 5156 server.  it'd be easy to blow this off as
+  expected behavior, but I expect one can also trojan any server's counts 
+  using this same technique..
 
 - bunny hunt issues.  observed the player selection consistently toggle
   between the best player (score-wise) and one of the worst players non-stop
