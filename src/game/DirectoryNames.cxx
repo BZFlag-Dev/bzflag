@@ -113,6 +113,7 @@ extern std::string		getCacheDirName()
   name += "cache";
 #if !defined (_WIN32) && !defined (__APPLE__)
   // add in hostname on UNIX
+  // FIXME should be able to share the cache
   if (getenv("HOST")) {
     name += ".";
     name += getenv("HOST");
