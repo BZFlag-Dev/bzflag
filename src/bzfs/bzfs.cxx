@@ -5212,6 +5212,7 @@ static const char *usageString =
 "[-d] "
 "[+f {good|<id>}] "
 "[-f {bad|<id>}] "
+"[-fb] "
 "[-g] "
 "[-h] "
 "[-i interface] "
@@ -5234,9 +5235,10 @@ static const char *usageString =
 "[-public <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
+"[-q] "
 "[+r] "
 "[-r] "
-"[-requireudp]"
+"[-requireudp] "
 "[{+s|-s} [<num>]] "
 "[-sa] "
 "[-srvmsg <text>] "
@@ -5248,6 +5250,7 @@ static const char *usageString =
 "[-time <seconds>] "
 #endif
 "[-ttl <ttl>] "
+"[-version] "
 "[-world <filename>]";
 
 
@@ -5279,7 +5282,7 @@ static void usage(const char *pname)
 static void extraUsage(const char *pname)
 {
   printVersion(cout);
-  cout << "usage: " << pname << " " << usageString << endl;
+  cout << endl << "usage: " << pname << " " << usageString << endl << endl;
   cout << "\t -a: maximum acceleration settings" << endl;
   cout << "\t -admsg: specify a <msg> which will be broadcast every 15 minutes" << endl;
   cout << "\t -b: randomly oriented buildings" << endl;
@@ -5294,6 +5297,9 @@ static void extraUsage(const char *pname)
   cout << "\t -h: use random building heights" << endl;
   cout << "\t -i: listen on <interface>" << endl;
   cout << "\t -j: allow jumping" << endl;
+  cout << "\t -lagdrop: drop player after this many lag warnings" << endl;
+  cout << "\t -lagwarn: lag warning threshhold time [ms]" << endl;
+  cout << "\t -maxidle: idle kick threshhold [s]" << endl;
   cout << "\t -mo: maximum number of additional observers allowed" << endl;
   cout << "\t -mp: maximum players total or per team" << endl;
   cout << "\t -mps: set player score limit on each game" << endl;
@@ -5301,6 +5307,7 @@ static void extraUsage(const char *pname)
   cout << "\t -mts: set team score limit on each game" << endl;
   cout << "\t -noudp: never use the new UDP networking" << endl;
   cout << "\t -p: use alternative port (default is " << ServerPort << ")" << endl;
+  cout << "\t -passwd: specify a <password> for operator commands" << endl;
   cout << "\t -pr <port>: use reconnect port" << endl;
 #ifdef PRINTSCORE
   cout << "\t -printscore: write score to stdout whenever it changes" << endl;
@@ -5324,11 +5331,8 @@ static void extraUsage(const char *pname)
   cout << "\t -time: set time limit on each game" << endl;
 #endif
   cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << endl;
+  cout << "\t -version: print version and exit" << endl;
   cout << "\t -world: world file to load" << endl;
-  cout << "\t -passwd: specify a <password> for operator commands" << endl;
-  cout << "\t -lagwarn: lag warning threshhold time [ms]" << endl;
-  cout << "\t -lagdrop: drop player after this many lag warnings" << endl;
-  cout << "\t -maxidle: idle kick threshhold [s]" << endl;
   cout << "\nFlag codes:" << endl;
   for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
     cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
