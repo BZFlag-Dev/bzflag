@@ -201,17 +201,17 @@ inline bool MeshFace::isSpecial() const
 
 inline bool MeshFace::isBaseFace() const
 {
-  return (specialState & BaseFace);
+  return (specialState & BaseFace) != 0;
 }
 
 inline bool MeshFace::isLinkToFace() const
 {
-  return (specialState & LinkToFace);
+  return (specialState & LinkToFace) != 0;
 }
 
 inline bool MeshFace::isLinkFromFace() const
 {
-  return (specialState & LinkFromFace);
+  return (specialState & LinkFromFace) != 0;
 }
 
 inline const MeshFace* MeshFace::getLink() const
