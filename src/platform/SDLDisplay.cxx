@@ -114,6 +114,11 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
   if (SDL_PollEvent(&event) == 0)
     return false;
 
+  SDLMod mode = SDL_GetModState();
+  bool shift  = ((mode & KMOD_SHIFT) != 0);
+  bool ctrl   = ((mode & KMOD_CTRL) != 0);
+  bool alt    = ((mode & KMOD_ALT) != 0);
+
   switch (event.type) {
 
   case SDL_MOUSEMOTION:
@@ -139,6 +144,13 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     _event.type          = BzfEvent::KeyDown;
     _event.keyDown.ascii = 0;
     _event.keyDown.shift = 0;
+    if (shift)
+      _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+    if (ctrl)
+      _event.keyDown.shift |= BzfKeyEvent::ControlKey;
+    if (alt)
+      _event.keyDown.shift |= BzfKeyEvent::AltKey;
+
     switch (event.button.button) {
     case SDL_BUTTON_LEFT:
       _event.keyDown.button = BzfKeyEvent::LeftMouse;
@@ -179,6 +191,13 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     _event.type = BzfEvent::KeyUp;
     _event.keyUp.ascii = 0;
     _event.keyUp.shift = 0;
+    if (shift)
+      _event.keyUp.shift |= BzfKeyEvent::ShiftKey;
+    if (ctrl)
+      _event.keyUp.shift |= BzfKeyEvent::ControlKey;
+    if (alt)
+      _event.keyUp.shift |= BzfKeyEvent::AltKey;
+
     switch (event.button.button) {
     case SDL_BUTTON_LEFT:
       _event.keyDown.button = BzfKeyEvent::LeftMouse;
