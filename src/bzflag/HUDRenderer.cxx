@@ -776,14 +776,16 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   int y = (int)(y0 - dy);
   drawPlayerScore(myTank, x1, x2, x3, (float)y);
   y -= (int)dy;
-  const int maxPlayers = World::getWorld()->getMaxPlayers();
-  RemotePlayer* players_unsorted[maxPlayers];
-  RemotePlayer* players[maxPlayers];
+  RemotePlayer **players_unsorted;
+  RemotePlayer **players;
   int hiScore;
   int hiScoreIndex;
   RemotePlayer* hiScorePlayer;
   int plrCount = 0;
+  int maxPlayers = World::getWorld()->getMaxPlayers();
   // run a sort by score
+  players_unsorted = (RemotePlayer **)malloc(maxPlayers * sizeof(RemotePlayer *));
+  players = (RemotePlayer **)malloc(maxPlayers * sizeof(RemotePlayer *));
   for (j = 0; j < maxPlayers; j++) {
     players_unsorted[j] = World::getWorld()->getPlayer(j);
     if (players_unsorted[j]) plrCount++;
@@ -804,12 +806,14 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
       players_unsorted[hiScoreIndex] = (RemotePlayer *)NULL;
     }
   }
+  free(players_unsorted);
   for (i = 0; i < plrCount; i++) {
     RemotePlayer* player = players[i];
     if (!player) continue;
     y -= (int)dy;
     drawPlayerScore(player, x1, x2, x3, (float)y);
   }
+  free(players);
   y -= (int)dy;
   const int maxDeadPlayers = World::getWorld()->getMaxDeadPlayers();
   DeadPlayer** deadPlayers = World::getWorld()->getDeadPlayers();
