@@ -161,6 +161,7 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
 //
 static void onGlobalChanged(const std::string& msg, void*)
 {
+  // NOTE:  /set and /reset are blocked when in replay mode
   std::string name  = msg;
   std::string value = BZDB.get(msg);
   void *bufStart = getDirectMessageBuffer();

@@ -116,6 +116,10 @@ void handleSetCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, "You do not have permission to run the set command");
     return;
   }
+  if (Replay::enabled()) {
+    sendMessage(ServerPlayer, t, "You can't /set variables in replay mode");
+    return;
+  }
   sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
   return;
 }
@@ -126,6 +130,10 @@ void handleResetCmd(int t, const char *message)
   if (!accessInfo[t].hasPerm(PlayerAccessInfo::setVar)
       && !accessInfo[t].hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the reset command");
+    return;
+  }
+  if (Replay::enabled()) {
+    sendMessage(ServerPlayer, t, "You can't /reset variables in replay mode");
     return;
   }
   sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());

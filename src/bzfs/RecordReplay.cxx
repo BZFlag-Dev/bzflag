@@ -40,6 +40,7 @@ typedef __int64 s64;
 // ----------------
 
 typedef uint16_t u16;
+typedef uint32_t u32;
 typedef s64 RRtime;
 
 enum RecordType {
@@ -52,16 +53,16 @@ typedef struct RRpacket {
   struct RRpacket *prev;
   u16 mode;
   u16 code;
-  int len;
-  int prev_len;
+  u32 len;
+  u32 prev_len;
   RRtime timestamp;
   void *data;
 } RRpacket;
 static const int RRpacketHdrLen = sizeof (RRpacket) - 
                                   (2 * sizeof (RRpacket*) - sizeof (void *));
 typedef struct {
-  s64 byteCount;
-  s64 packetCount;
+  u32 byteCount;
+  u32 packetCount;
   // into the head, out of the tail
   RRpacket *head; // last packet in 
   RRpacket *tail; // first packet in
@@ -69,18 +70,18 @@ typedef struct {
 } RRbuffer;
 
 typedef struct {
-  unsigned int magic;           // record file type identifier
-  unsigned int version;         // record file version
-  unsigned int offset;          // length of the full header
-  unsigned int seconds;         // number of seconds in the file
-  unsigned int player;          // player that saved this record file
+  u32 magic;                    // record file type identifier
+  u32 version;                  // record file version
+  u32 offset;                   // length of the full header
+  u32 seconds;                  // number of seconds in the file
+  u32 player;                   // player that saved this record file
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];         // player's email
   char serverVersion[8];        // BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];            // hash of worldDatabase
   char fakeHash[64];            // hash of worldDatabase, maxPlayers adjusted
-  unsigned int worldSize;       // size of world database 
+  u32 worldSize;                // size of world database 
   char *world;                  // the world
 } ReplayHeader;
 
@@ -88,10 +89,10 @@ typedef struct {
 // Local Variables
 // ---------------
 
-static const unsigned int ReplayMagic = 0x425A6372; // "BZcr"
-static const unsigned int ReplayVersion = 0x0001;
-static const int DefaultMaxBytes = (16 * 1024 * 1024); // 16 Mbytes
-static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
+static const u32 ReplayMagic       = 0x425A7272; // "BZrr"
+static const u32 ReplayVersion     = 0x0001;
+static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
+static const u32 DefaultUpdateRate = (10 * 1000000); // seconds
 
 static std::string RecordDir;
 
@@ -99,10 +100,10 @@ static bool Recording = false;
 static RecordType RecordMode = BufferedRecord;
 static RRtime RecordUpdateTime = 0;
 static RRtime RecordUpdateRate = 0;
-static s64 RecordMaxBytes = DefaultMaxBytes;
-static s64 RecordFileBytes = 0;
-static s64 RecordFilePackets = 0;
-static int RecordFilePrevLen = 0;
+static u32 RecordMaxBytes = DefaultMaxBytes;
+static u32 RecordFileBytes = 0;
+static u32 RecordFilePackets = 0;
+static u32 RecordFilePrevLen = 0;
 
 static bool Replaying = false;
 static bool ReplayMode = false;
@@ -307,11 +308,11 @@ bool Record::sendStats (int playerIndex)
   }
    
   if (RecordMode == BufferedRecord) {
-    snprintf (buffer, MessageLen, "  buffered: %lli bytes, %lli packets, time = %i",
+    snprintf (buffer, MessageLen, "  buffered: %i bytes, %i packets, time = %i",
              RecordBuf.byteCount, RecordBuf.packetCount, 0);
   }
   else {
-    snprintf (buffer, MessageLen, "  saved: %lli bytes, %lli packets, time = %i",
+    snprintf (buffer, MessageLen, "  saved: %i bytes, %i packets, time = %i",
              RecordFileBytes, RecordFilePackets, 0);   
   }
   sendMessage (ServerPlayer, playerIndex, buffer, true);
@@ -742,7 +743,7 @@ matchWorldDatabase (ReplayHeader *h)
 
 static bool isRecordFile (const char *filename)
 {
-  unsigned int magic;
+  u32 magic;
   char buffer[sizeof(magic)];
   bool retval = true;
   
@@ -1276,8 +1277,8 @@ saveRRpacket (RRpacket *p, FILE *f)
   buf = nboPackUShort (buf, p->code);
   buf = nboPackUInt (buf, p->len);
   buf = nboPackUInt (buf, RecordFilePrevLen);
-  buf = nboPackUInt (buf, (unsigned int) (p->timestamp >> 32));        // msb
-  buf = nboPackUInt (buf, (unsigned int) (p->timestamp & 0xFFFFFFFF)); // lsb
+  buf = nboPackUInt (buf, (u32) (p->timestamp >> 32));        // msb
+  buf = nboPackUInt (buf, (u32) (p->timestamp & 0xFFFFFFFF)); // lsb
 
   if ((fwrite (bufStart, RRpacketHdrLen, 1, f) == 0) ||
       (fwrite (p->data, p->len, 1, f) == 0)) {
@@ -1300,7 +1301,7 @@ loadRRpacket (FILE *f)
   RRpacket *p;
   char bufStart[RRpacketHdrLen];
   void *buf;
-  unsigned int timeMsb, timeLsb;
+  u32 timeMsb, timeLsb;
   
   if (f == NULL) {
     return false;
@@ -1314,8 +1315,8 @@ loadRRpacket (FILE *f)
   }
   buf = nboUnpackUShort (bufStart, p->mode);
   buf = nboUnpackUShort (buf, p->code);
-  buf = nboUnpackInt (buf, p->len);
-  buf = nboUnpackInt (buf, p->prev_len);
+  buf = nboUnpackUInt (buf, p->len);
+  buf = nboUnpackUInt (buf, p->prev_len);
   buf = nboUnpackUInt (buf, timeMsb);
   buf = nboUnpackUInt (buf, timeLsb);
   p->timestamp = ((RRtime)timeMsb << 32) + (RRtime)timeLsb;
