@@ -406,3 +406,4 @@ void					SceneNodeGeometry::interpolate(
 	for (unsigned int i = 0; i < n; ++i)
 		d.set(i, t1 * a.get(i) + t * b.get(i));
 }
+// ex: shiftwidth=4 tabstop=4

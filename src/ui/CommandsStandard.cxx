@@ -402,3 +402,4 @@ bool					CommandsStandard::isQuit()
 {
 	return quitFlag;
 }
+// ex: shiftwidth=4 tabstop=4

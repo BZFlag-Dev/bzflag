@@ -79,3 +79,4 @@ class ServerId {
 };
 
 #endif // BZF_INET_ADDR_H
+// ex: shiftwidth=4 tabstop=4

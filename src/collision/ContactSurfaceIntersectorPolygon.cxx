@@ -529,3 +529,4 @@ p.distance = b->getPlane().distance(p.point);
 		contacts.push_back(p);
 	}
 }
+// ex: shiftwidth=4 tabstop=4

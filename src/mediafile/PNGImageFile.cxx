@@ -602,3 +602,4 @@ unsigned char *PNGChunk::getData()
 {
 	return data;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -146,3 +146,4 @@ const Matrix&			ViewFrustum::getTransform()
 	static const Matrix matrix = RealMatrix(raw_matrix);
 	return matrix;
 }
+// ex: shiftwidth=4 tabstop=4

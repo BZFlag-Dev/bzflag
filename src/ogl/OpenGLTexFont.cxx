@@ -569,3 +569,4 @@ void					OpenGLTexFont::draw(const char* string, int length,
 	}
 	glEnd();
 }
+// ex: shiftwidth=4 tabstop=4

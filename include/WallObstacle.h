@@ -48,3 +48,4 @@ private:
 typedef std::vector<WallObstacle> WallObstacles;
 
 #endif // BZF_WALL_OBSTACLE_H
+// ex: shiftwidth=4 tabstop=4

@@ -117,3 +117,4 @@ const float*			ViewFrustum::getProjectionMatrix() const
 }
 
 #endif // BZF_VIEW_FRUSTUM_H
+// ex: shiftwidth=4 tabstop=4

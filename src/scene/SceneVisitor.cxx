@@ -31,3 +31,4 @@ bool					SceneVisitor::descend(SceneNodeGroup* n)
 {
 	return n->descend(this, getParams());
 }
+// ex: shiftwidth=4 tabstop=4

@@ -205,3 +205,4 @@ bool					SGIImageFile::readRLE(void* buffer)
 
 	return isOkay();
 }
+// ex: shiftwidth=4 tabstop=4

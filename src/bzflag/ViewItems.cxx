@@ -38,3 +38,4 @@ void					ViewItems::fini()
 	VIEWMGR->removeReader("hud");
 	VIEWMGR->removeReader("score");
 }
+// ex: shiftwidth=4 tabstop=4

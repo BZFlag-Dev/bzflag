@@ -1062,3 +1062,4 @@ void					LocalPlayer::addAntidoteSceneNode(SceneNodeGroup* group)
 		group->pushChild(antidoteFlag);
 	}
 }
+// ex: shiftwidth=4 tabstop=4

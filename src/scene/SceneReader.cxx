@@ -1235,3 +1235,4 @@ void					SceneReader::saveNamedNode(const std::string& id)
 	// save id in node
 	state.node->setID(id);
 }
+// ex: shiftwidth=4 tabstop=4

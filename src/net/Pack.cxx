@@ -136,3 +136,4 @@ void*					nboUnpackString(void* b, void* m, int len)
 	::memcpy(m, b, len);
 	return (void*)((char*)b + len);
 }
+// ex: shiftwidth=4 tabstop=4

@@ -53,3 +53,4 @@ Real				distance;
 typedef std::vector<ContactPoint> ContactPoints;
 
 #endif
+// ex: shiftwidth=4 tabstop=4

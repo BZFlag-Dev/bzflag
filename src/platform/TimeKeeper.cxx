@@ -31,3 +31,4 @@ void					TimeKeeper::setTick()
 {
 	tickTime.seconds = PLATFORM->getClock();
 }
+// ex: shiftwidth=4 tabstop=4

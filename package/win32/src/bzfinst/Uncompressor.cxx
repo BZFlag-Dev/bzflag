@@ -402,3 +402,4 @@ void			Uncompressor::transformReverseBurrowsWheeler(
   // clean up
   delete[] count;
 }
+// ex: shiftwidth=4 tabstop=4

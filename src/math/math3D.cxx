@@ -361,3 +361,4 @@ Quaternion&				Quaternion::identity()
 	v[1] = v[2] = v[3] = R_(0.0);
 	return *this;
 }
+// ex: shiftwidth=4 tabstop=4

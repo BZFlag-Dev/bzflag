@@ -499,3 +499,4 @@ bool					BzfNetwork::parseURL(const std::string& url,
 
 	return true;
 }
+// ex: shiftwidth=4 tabstop=4

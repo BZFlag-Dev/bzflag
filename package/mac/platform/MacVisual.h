@@ -64,3 +64,4 @@ class MacVisual : public BzfVisual {
 };
 
 #endif // BZF_MACVISUAL_H
+// ex: shiftwidth=4 tabstop=4

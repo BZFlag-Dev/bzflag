@@ -78,3 +78,4 @@ Quaternion		Trackball::getRotation(Real x, Real y) const
     // convert to quaternion
     return Quaternion(a, phi * 0.99 * 180.0 / M_PI);
 }
+// ex: shiftwidth=4 tabstop=4

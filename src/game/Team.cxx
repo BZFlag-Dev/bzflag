@@ -171,3 +171,4 @@ void					Team::onColorChange(const std::string& name, void*)
 	color[2] = CLAMP(color[2], 0.0f, 1.0f);
 #undef CLAMP
 }
+// ex: shiftwidth=4 tabstop=4

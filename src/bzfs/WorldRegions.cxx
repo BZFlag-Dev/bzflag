@@ -257,3 +257,4 @@ void defineWorldRegions(const WorldInfo* world)
 	std::istringstream stream(xml.c_str());
 	parseWorld(stream);
 }
+// ex: shiftwidth=4 tabstop=4

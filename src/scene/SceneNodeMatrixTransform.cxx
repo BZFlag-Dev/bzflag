@@ -50,3 +50,4 @@ bool					SceneNodeMatrixTransform::visit(SceneVisitor* visitor)
 {
 	return visitor->visit(this);
 }
+// ex: shiftwidth=4 tabstop=4

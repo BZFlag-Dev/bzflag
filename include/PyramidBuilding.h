@@ -55,3 +55,4 @@ private:
 typedef std::vector<PyramidBuilding> PyramidBuildings;
 
 #endif // BZF_PYRAMID_BUILDING_H
+// ex: shiftwidth=4 tabstop=4

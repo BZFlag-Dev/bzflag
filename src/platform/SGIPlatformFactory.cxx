@@ -63,3 +63,4 @@ double					SGIPlatformFactory::getClock() const
 	else
 		return secondsPerTick * (double)(*iotimer_addr - clockZero)
 }
+// ex: shiftwidth=4 tabstop=4

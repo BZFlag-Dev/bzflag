@@ -394,3 +394,4 @@ void					SceneManager::updateMoon(
 				moonDir[1] * sunDir[1] +
 				moonDir[2] * sunDir[2];
 }
+// ex: shiftwidth=4 tabstop=4

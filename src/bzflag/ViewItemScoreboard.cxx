@@ -608,3 +608,4 @@ View*					ViewItemScoreboardReader::open(XMLTree::iterator xml)
 
 	return item;
 }
+// ex: shiftwidth=4 tabstop=4

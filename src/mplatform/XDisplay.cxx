@@ -426,3 +426,4 @@ bool					XDisplayMode::setDefault(int mode)
 {
 	return set(mode);
 }
+// ex: shiftwidth=4 tabstop=4

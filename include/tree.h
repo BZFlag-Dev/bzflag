@@ -1116,3 +1116,4 @@ T& tree<T, tree_node_allocator>::child(iterator it, unsigned int num) const
 	}
 
 #endif
+// ex: shiftwidth=4 tabstop=4

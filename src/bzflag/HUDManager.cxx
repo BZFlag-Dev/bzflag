@@ -111,3 +111,4 @@ void					HUDManager::iterate(Callback callback, void* userData)
 		(*callback)(index->first, index->second.heading,
 								index->second.color, userData);
 }
+// ex: shiftwidth=4 tabstop=4

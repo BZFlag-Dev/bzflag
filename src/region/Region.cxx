@@ -76,3 +76,4 @@ RegionShapePrimitive*	RegionPrimitive::getPrimitive() const
 {
 	return static_cast<RegionShapePrimitive*>(getShape());
 }
+// ex: shiftwidth=4 tabstop=4

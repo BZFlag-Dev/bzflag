@@ -82,3 +82,4 @@ nDot = nDot2;
 		nDot = b->getOmega() % normal;
 	}
 }
+// ex: shiftwidth=4 tabstop=4

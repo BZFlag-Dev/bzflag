@@ -80,3 +80,4 @@ void					ContactSurfacePolygon::makeNormal()
 	Vec3 normal = (vertices[1] - vertices[0]) % (vertices[2] - vertices[1]);
 	plane.set(normal.normalize(), vertices[0]);
 }
+// ex: shiftwidth=4 tabstop=4

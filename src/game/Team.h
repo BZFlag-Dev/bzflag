@@ -51,3 +51,4 @@ private:
 };
 
 #endif // BZF_TEAM_H
+// ex: shiftwidth=4 tabstop=4

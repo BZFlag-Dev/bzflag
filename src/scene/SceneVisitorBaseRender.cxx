@@ -193,3 +193,4 @@ void					SceneVisitorBaseRender::setStipple(float alpha)
 	glLineStipple(1, lineStipples[lIndex]);
 	glPolygonStipple(reinterpret_cast<const GLubyte*>(polygonStipples[pIndex]));
 }
+// ex: shiftwidth=4 tabstop=4

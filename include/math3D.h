@@ -2250,3 +2250,4 @@ void					Ray::getPoint(Real t, double p[3]) const
 }
 
 #endif
+// ex: shiftwidth=4 tabstop=4

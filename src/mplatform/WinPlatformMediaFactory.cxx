@@ -469,3 +469,4 @@ void					WinPlatformMediaFactory::audioSleep(
 		WaitForSingleObject(audioCommandEvent, timeout);
 	}
 }
+// ex: shiftwidth=4 tabstop=4

@@ -35,3 +35,4 @@ private:
 };
 
 #endif // BZF_REMOTE_PLAYER_H
+// ex: shiftwidth=4 tabstop=4

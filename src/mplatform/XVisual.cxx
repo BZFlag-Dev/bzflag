@@ -361,3 +361,4 @@ XVisualInfo*			XVisual::get()
 	if (!build()) return NULL;
 	return visual;
 }
+// ex: shiftwidth=4 tabstop=4

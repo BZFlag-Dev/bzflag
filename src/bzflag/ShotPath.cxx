@@ -284,3 +284,4 @@ void					RemoteShotPath::update(const ShotUpdate& shot,
 	// let the strategy see the message
 	getStrategy()->readUpdate(code, msg);
 }
+// ex: shiftwidth=4 tabstop=4

@@ -265,3 +265,4 @@ bool			ServerId::operator!=(const ServerId& id) const
   return serverHost.s_addr != id.serverHost.s_addr ||
 			port != id.port || number != id.number;
 }
+// ex: shiftwidth=4 tabstop=4

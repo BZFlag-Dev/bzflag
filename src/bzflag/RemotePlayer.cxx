@@ -88,3 +88,4 @@ void					RemotePlayer::updateShots(float dt)
 		if (shots[i])
 			shots[i]->update(dt);
 }
+// ex: shiftwidth=4 tabstop=4

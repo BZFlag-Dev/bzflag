@@ -662,3 +662,4 @@ int						CommandsSearch::getPlayerCount(const GameServer& info)
 		item.blueCount +
 		item.purpleCount;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -39,3 +39,4 @@ void					addPlayingCallback(PlayingCallback, void* data);
 void					removePlayingCallback(PlayingCallback, void* data);
 
 #endif // BZF_PLAYING_H
+// ex: shiftwidth=4 tabstop=4

@@ -156,3 +156,4 @@ bool					OpenGLTexture::hasAlpha() const
 }
 
 #endif // BZF_OPENGL_TEXTURE_H
+// ex: shiftwidth=4 tabstop=4

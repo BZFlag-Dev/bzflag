@@ -513,3 +513,4 @@ void					MenuReader::parseChildren(
 		throw;
 	}
 }
+// ex: shiftwidth=4 tabstop=4

@@ -139,3 +139,4 @@ private:
 };
 
 #endif // BZF_STATE_DATABASE_H
+// ex: shiftwidth=4 tabstop=4

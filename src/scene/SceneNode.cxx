@@ -33,3 +33,4 @@ int						SceneNode::unref()
 	}
 	return n;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -59,3 +59,4 @@ const Vec3&				ContactSurfaceEdge::getAverageNormal() const
 }
 
 #endif
+// ex: shiftwidth=4 tabstop=4

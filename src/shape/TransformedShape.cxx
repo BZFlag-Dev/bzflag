@@ -74,3 +74,4 @@ Shape*					TransformedShape::getShape() const
 {
 	return shape;
 }
+// ex: shiftwidth=4 tabstop=4

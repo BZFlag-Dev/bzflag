@@ -385,3 +385,4 @@ return playingField;
 }
 
 #endif // BZF_WORLD_H
+// ex: shiftwidth=4 tabstop=4

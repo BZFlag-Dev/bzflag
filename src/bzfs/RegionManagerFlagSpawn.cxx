@@ -148,3 +148,4 @@ void					RegionManagerFlagSpawn::computeProbability()
 
 	dirty = false;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -51,3 +51,4 @@ private:
 typedef std::vector<BaseBuilding> BaseBuildings;
 
 #endif
+// ex: shiftwidth=4 tabstop=4

@@ -84,3 +84,4 @@ bool					LinearEquationSolverGaussian::solve(
 
 	return true;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -940,3 +940,4 @@ void					WorldBuilder::growTargetList(int newMinSize)
 	targetArraySize = newSize;
 	teleportTargets = newTargets;
 }
+// ex: shiftwidth=4 tabstop=4

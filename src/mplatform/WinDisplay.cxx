@@ -1294,3 +1294,4 @@ const int				WinDisplay::buttonMap[] = {
 		BzfKeyEvent::NoButton,		// VK_OEM_CLEAR
 		BzfKeyEvent::NoButton		// no VK_ code
 };
+// ex: shiftwidth=4 tabstop=4

@@ -511,3 +511,4 @@ int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance,
 
     return msg.wParam;
 }
+// ex: shiftwidth=4 tabstop=4

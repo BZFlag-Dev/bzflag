@@ -26,3 +26,4 @@
 #include "SceneNodeSelector.h"
 #include "SceneNodeSphereTransform.h"
 #include "SceneNodeTransform.h"
+// ex: shiftwidth=4 tabstop=4

@@ -137,3 +137,4 @@ void					RegionReaderFlagSpawn::parseFlags(
 		b = e;
 	}
 }
+// ex: shiftwidth=4 tabstop=4

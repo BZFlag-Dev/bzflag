@@ -1538,3 +1538,4 @@ int main(int argc, char** argv)
 	// done
 	return exitCode;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -46,3 +46,4 @@ bool					SceneVisitorFind::visit(SceneNodeGroup* n)
 		return false;
 	return descend(n);
 }
+// ex: shiftwidth=4 tabstop=4

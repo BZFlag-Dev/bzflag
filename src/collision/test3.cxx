@@ -479,3 +479,4 @@ objects[0].body->dump();
 
   glutMainLoop();
 }
+// ex: shiftwidth=4 tabstop=4

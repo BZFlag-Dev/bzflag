@@ -180,3 +180,4 @@ void					SceneNodeLight::compute4Vec(float* dst,
 		dst[3] = t1 * v[3] + t2 * v[7];
 	}
 }
+// ex: shiftwidth=4 tabstop=4

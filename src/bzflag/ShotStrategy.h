@@ -255,3 +255,4 @@ inline const ShotPath&	ShotStrategy::getPath() const
 }
 
 #endif // BZF_SHOT_STRATEGY_H
+// ex: shiftwidth=4 tabstop=4

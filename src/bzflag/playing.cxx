@@ -3637,3 +3637,4 @@ void					startPlaying(BzfDisplay* _display,
 	mainWindow = NULL;
 	display = NULL;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -466,3 +466,4 @@ bool					OpenGLGStateBuilder::getForceDithering() const
 }
 
 #endif // BZF_OPENGL_GSTATE_H
+// ex: shiftwidth=4 tabstop=4

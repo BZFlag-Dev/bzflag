@@ -80,3 +80,4 @@ private:
 };
 
 #endif // BZF_DISPLAY_H
+// ex: shiftwidth=4 tabstop=4

@@ -724,3 +724,4 @@ byte_t*			Compressor::transformHuffman(
   delete tree2;
   return tmpOutput - extraLength;
 }
+// ex: shiftwidth=4 tabstop=4

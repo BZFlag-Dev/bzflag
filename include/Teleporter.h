@@ -72,3 +72,4 @@ float					Teleporter::getBorder() const
 }
 
 #endif // BZF_TELEPORTER_H
+// ex: shiftwidth=4 tabstop=4

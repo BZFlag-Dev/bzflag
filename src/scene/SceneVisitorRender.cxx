@@ -932,3 +932,4 @@ bool					SceneVisitorRender::isCulled(
 	// inside frustum
 	return false;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -89,3 +89,4 @@ bool					MessageManager::keyRelease(const BzfKeyEvent& key)
 			return true;
 	return false;
 }
+// ex: shiftwidth=4 tabstop=4

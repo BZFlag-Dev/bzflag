@@ -439,3 +439,4 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeLight* n)
 
 	return result;
 }
+// ex: shiftwidth=4 tabstop=4

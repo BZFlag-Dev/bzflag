@@ -74,3 +74,4 @@ void			UndoList::clear()
 	d_list = next;
     }
 }
+// ex: shiftwidth=4 tabstop=4

@@ -101,3 +101,4 @@ bool					WallObstacle::getHitNormal(
 	getNormal(NULL, normal);
 	return true;
 }
+// ex: shiftwidth=4 tabstop=4

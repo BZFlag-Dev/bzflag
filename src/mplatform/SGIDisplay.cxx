@@ -454,3 +454,4 @@ bool					SGIDisplayMode::set(int index)
 }
 
 #endif
+// ex: shiftwidth=4 tabstop=4

@@ -23,3 +23,4 @@ ErrorCallback			setErrorCallback(ErrorCallback);
 void					printError(const char* fmt, ...);
 
 #endif // BZF_ERROR_HANDLER_H
+// ex: shiftwidth=4 tabstop=4

@@ -382,3 +382,4 @@ void					Trackball::spin()
 		rot = base;
 	}
 }
+// ex: shiftwidth=4 tabstop=4

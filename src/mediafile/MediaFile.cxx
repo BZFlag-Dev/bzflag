@@ -304,3 +304,4 @@ float*					MediaFile::readSound(
 
 	return audio;
 }
+// ex: shiftwidth=4 tabstop=4

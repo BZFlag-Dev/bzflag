@@ -418,3 +418,4 @@ bool					RegionPriorityQueue::isEmpty() const
 {
 	return (head == 0);
 }
+// ex: shiftwidth=4 tabstop=4

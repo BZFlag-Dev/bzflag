@@ -837,3 +837,4 @@ void					SceneDatabaseBuilder::addTeleporter(const Teleporter& o)
 								n + 36, n + 37, n + 38, n + 39,
 								n + 41, n + 40, n + 43, n + 42);
 }
+// ex: shiftwidth=4 tabstop=4

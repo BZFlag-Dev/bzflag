@@ -63,3 +63,4 @@ void					RegionReaderObstacle::parse(XMLTree::iterator xml)
 	// add region
 	RGNMGR_OBSTACLE->insert(new RegionPrimitive(shape));
 }
+// ex: shiftwidth=4 tabstop=4

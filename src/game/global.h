@@ -251,3 +251,4 @@ const float				MomentumAngAcc=	1.0f;				//
 const float				MagnetPower =	0.0f;				// off
 
 #endif // BZF_GLOBAL_H
+// ex: shiftwidth=4 tabstop=4

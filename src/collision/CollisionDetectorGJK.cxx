@@ -495,3 +495,4 @@ void					CollisionDetectorGJK::computeDeterminant()
 							 determinant[7][2]  * (dot[2][0] - dot[2][3]);
 	}
 }
+// ex: shiftwidth=4 tabstop=4

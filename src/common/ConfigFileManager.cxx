@@ -132,3 +132,4 @@ void					ConfigFileManager::read(std::istream& stream,
 	// and semantic parsing
 	parse(xmlTree.begin());
 }
+// ex: shiftwidth=4 tabstop=4

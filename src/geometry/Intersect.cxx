@@ -500,3 +500,4 @@ bool					Intersect::testRectInRect(
 	}
 	return true;
 }
+// ex: shiftwidth=4 tabstop=4

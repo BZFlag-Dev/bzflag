@@ -52,3 +52,4 @@ private:
 typedef std::vector<BoxBuilding> BoxBuildings;
 
 #endif // BZF_BOX_BUILDING_H
+// ex: shiftwidth=4 tabstop=4

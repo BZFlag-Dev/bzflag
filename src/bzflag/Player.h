@@ -341,3 +341,4 @@ inline void				Player::setAutoPilot(bool _autoPilot)
 
 
 #endif // BZF_PLAYER_H
+// ex: shiftwidth=4 tabstop=4

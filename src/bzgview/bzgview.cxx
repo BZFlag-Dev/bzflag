@@ -367,3 +367,4 @@ int WINAPI				WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 }
 
 #endif
+// ex: shiftwidth=4 tabstop=4

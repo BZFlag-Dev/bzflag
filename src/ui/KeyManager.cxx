@@ -276,3 +276,4 @@ bool					KeyManager::KeyEventLess::operator()(
 
 	return false;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -310,3 +310,4 @@ void					SolarisPlatformMediaFactory::audioSleep(
 		select(maxFd, &commandSelectSet, 0, 0, (endTime>=0.0)?&tv : 0);
 	}
 }
+// ex: shiftwidth=4 tabstop=4

@@ -53,3 +53,4 @@ void*					nboUnpackVector(void*, float*);
 void*					nboUnpackString(void*, void*, int len);
 
 #endif // BZF_PACK_H
+// ex: shiftwidth=4 tabstop=4

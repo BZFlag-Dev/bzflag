@@ -118,3 +118,4 @@ ViewItemScene*			ViewItemPlayerSceneReader::createItem()
 {
 	return new ViewItemPlayerScene;
 }
+// ex: shiftwidth=4 tabstop=4

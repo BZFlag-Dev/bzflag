@@ -209,3 +209,4 @@ bool					LinuxDisplayMode::doSet(int index, bool position)
 }
 
 #endif
+// ex: shiftwidth=4 tabstop=4

@@ -268,3 +268,4 @@ bool					MessageBuffer::keyRelease(const BzfKeyEvent& key)
 
 	return true;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -212,3 +212,4 @@ char*					PingPacket::unpackHex16(char* buf, uint16_t& v)
 	v = d;
 	return buf;
 }
+// ex: shiftwidth=4 tabstop=4

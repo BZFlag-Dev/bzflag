@@ -90,3 +90,4 @@ private:
 };
 
 #endif // BZF_INTERSECT_H
+// ex: shiftwidth=4 tabstop=4

@@ -33,3 +33,4 @@
 #define IDC_INSTALLING                  1010
 #define IDC_SPACE                       1011
 #define IDC_README                      1012
+// ex: shiftwidth=4 tabstop=4

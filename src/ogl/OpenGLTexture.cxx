@@ -512,3 +512,4 @@ int						OpenGLTexture::Rep::getBestFormat(
 				(useAlpha ? GL_LUMINANCE_ALPHA : GL_LUMINANCE) :
 				(useAlpha ? GL_RGBA : GL_RGB));
 }
+// ex: shiftwidth=4 tabstop=4

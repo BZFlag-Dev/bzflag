@@ -245,3 +245,4 @@ StateDatabase*			StateDatabase::getInstance()
 	return s_instance;
 }
 
+// ex: shiftwidth=4 tabstop=4

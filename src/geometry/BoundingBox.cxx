@@ -97,3 +97,4 @@ void					BoundingBox::get(Real* minXYZ, Real* maxXYZ) const
 	maxXYZ[1] = p[0][1] + y;
 	maxXYZ[2] = p[0][2] + z;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -116,3 +116,4 @@ public:
 };
 
 #endif /* BZF_EVENT_H */
+// ex: shiftwidth=4 tabstop=4

@@ -119,3 +119,4 @@ viewSetSize(ViewSize& size, bool* scaled = 0)
 }
 
 #endif
+// ex: shiftwidth=4 tabstop=4

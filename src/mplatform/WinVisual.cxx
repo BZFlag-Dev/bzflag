@@ -152,3 +152,4 @@ int						WinVisual::get(HDC _hDC,
 	if (_pfd) *_pfd = &pfd;
 	return pixelFormat;
 }
+// ex: shiftwidth=4 tabstop=4

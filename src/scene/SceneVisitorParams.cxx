@@ -90,3 +90,4 @@ bool					SceneVisitorParams::isFloat(const std::string& name) const
 {
 	return (floatParams.find(name) != floatParams.end());
 }
+// ex: shiftwidth=4 tabstop=4

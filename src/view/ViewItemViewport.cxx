@@ -168,3 +168,4 @@ ViewItemViewport*				ViewItemViewportReader::create() const
 {
 	return new ViewItemViewport;
 }
+// ex: shiftwidth=4 tabstop=4

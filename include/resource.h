@@ -11,3 +11,4 @@
  */
 
 #define IDI_BZICON                      101
+// ex: shiftwidth=4 tabstop=4

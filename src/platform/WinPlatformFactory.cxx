@@ -297,3 +297,4 @@ std::string				WinPlatformFactory::getConfigFileName() const
 	// append the config file name
 	return FILEMGR->catPath(name, "bzflag18.bzc");
 }
+// ex: shiftwidth=4 tabstop=4

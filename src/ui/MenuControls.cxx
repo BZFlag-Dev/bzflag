@@ -1512,3 +1512,4 @@ void					MenuList::setTarget()
 		}
 	}
 }
+// ex: shiftwidth=4 tabstop=4

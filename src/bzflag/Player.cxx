@@ -468,3 +468,4 @@ void					Player::doDeadReckoning()
 	setVelocity(predictedVel);
 }
 
+// ex: shiftwidth=4 tabstop=4

@@ -1032,3 +1032,4 @@ int WINAPI				WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 }
 
 #endif /* defined(_WIN32) */
+// ex: shiftwidth=4 tabstop=4

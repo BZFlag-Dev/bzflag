@@ -222,3 +222,4 @@ inline ShotStrategy*		ShotPath::getStrategy()
 }
 
 #endif // BZF_SHOT_PATH_H
+// ex: shiftwidth=4 tabstop=4

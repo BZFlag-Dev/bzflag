@@ -970,3 +970,4 @@ int			install(const char* instDir,
 
     return TRUE;
 }
+// ex: shiftwidth=4 tabstop=4

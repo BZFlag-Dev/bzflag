@@ -332,3 +332,4 @@ View*					ViewItemHUDReader::open(XMLTree::iterator xml)
 	item = new ViewItemHUD(primary);
 	return item;
 }
+// ex: shiftwidth=4 tabstop=4

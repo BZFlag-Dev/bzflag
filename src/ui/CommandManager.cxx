@@ -187,3 +187,4 @@ const char*				CommandManager::skipWhitespace(const char* string)
 		++string;
 	return string;
 }
+// ex: shiftwidth=4 tabstop=4

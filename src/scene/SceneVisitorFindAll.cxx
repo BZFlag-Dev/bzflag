@@ -54,3 +54,4 @@ bool					SceneVisitorFindAll::visit(SceneNodeGroup* n)
 	// descend into all children (regardless of group type)
 	return n->SceneNodeGroup::descend(this, getParams());
 }
+// ex: shiftwidth=4 tabstop=4

@@ -147,3 +147,4 @@ void					BoxBuilding::getCorner(int index, float* pos) const
 	pos[2] = base[2];
 	if (index >= 4) pos[2] += getHeight();
 }
+// ex: shiftwidth=4 tabstop=4

@@ -67,3 +67,4 @@ void					CommandReader::parseCommand(XMLTree::iterator xml)
 			printError("%s", result.c_str());
 	}
 }
+// ex: shiftwidth=4 tabstop=4

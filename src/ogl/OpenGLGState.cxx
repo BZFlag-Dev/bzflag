@@ -692,3 +692,4 @@ OpenGLGState			OpenGLGStateBuilder::getState() const
 	unique->freeze();
 	return OpenGLGState(unique);
 }
+// ex: shiftwidth=4 tabstop=4

@@ -62,3 +62,4 @@ private:
 };
 
 #endif // BZF_XVISUAL_H
+// ex: shiftwidth=4 tabstop=4

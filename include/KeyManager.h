@@ -88,3 +88,4 @@ private:
 };
 
 #endif // BZF_KEYMANAGER_H
+// ex: shiftwidth=4 tabstop=4

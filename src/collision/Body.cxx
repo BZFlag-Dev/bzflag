@@ -404,3 +404,4 @@ void					Body::dump() const
 		fprintf(stderr, "      a: % 11g % 11g % 11g\n", a[0], a[1], a[2]);
 	}
 }
+// ex: shiftwidth=4 tabstop=4

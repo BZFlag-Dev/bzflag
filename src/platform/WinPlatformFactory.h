@@ -63,3 +63,4 @@ private:
 };
 
 #endif // BZF_WIN_PLATFORM_FACTORY_H
+// ex: shiftwidth=4 tabstop=4

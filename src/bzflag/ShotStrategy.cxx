@@ -1434,3 +1434,4 @@ void					ShockWaveStrategy::radarRender() const
 		}
 	glEnd();
 }
+// ex: shiftwidth=4 tabstop=4

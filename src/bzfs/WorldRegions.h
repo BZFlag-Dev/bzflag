@@ -18,3 +18,4 @@ class WorldInfo;
 void defineWorldRegions(const WorldInfo*);
 
 #endif
+// ex: shiftwidth=4 tabstop=4

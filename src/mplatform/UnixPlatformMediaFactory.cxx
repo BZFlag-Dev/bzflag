@@ -35,3 +35,4 @@ BzfWindow*				UnixPlatformMediaFactory::createWindow(
 {
 	return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
+// ex: shiftwidth=4 tabstop=4

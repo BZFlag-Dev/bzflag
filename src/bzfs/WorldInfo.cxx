@@ -251,3 +251,4 @@ int WorldInfo::getDatabaseSize() const
 {
 	return databaseSize;
 }
+// ex: shiftwidth=4 tabstop=4

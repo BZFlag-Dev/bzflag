@@ -128,3 +128,4 @@ void					TransformableShape::getDumpPoints(
 	for (unsigned int i = 0; i < points.size(); ++i)
 		points[i].xformPoint(getTransform());
 }
+// ex: shiftwidth=4 tabstop=4

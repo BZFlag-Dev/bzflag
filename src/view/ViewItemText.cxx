@@ -310,3 +310,4 @@ void					ViewItemTextReader::close()
 	assert(item != NULL);
 	item->setText(msg);
 }
+// ex: shiftwidth=4 tabstop=4

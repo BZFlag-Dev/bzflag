@@ -121,3 +121,4 @@ inline Real deg2rad(Real x) { return R_PI * (x / R_(180.0)); }
 #endif
 
 #endif
+// ex: shiftwidth=4 tabstop=4

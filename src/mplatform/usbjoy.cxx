@@ -235,3 +235,4 @@ unsigned long			XWindow::getJoyButtons() const
 
 #endif
 
+// ex: shiftwidth=4 tabstop=4

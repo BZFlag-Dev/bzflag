@@ -638,3 +638,4 @@ void					WinWindow::makeColormap(
 	// free the cruft
 	delete[] (void*)logicalPalette;
 }
+// ex: shiftwidth=4 tabstop=4

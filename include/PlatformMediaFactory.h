@@ -111,3 +111,4 @@ private:
 };
 
 #endif // BZF_PLATFORM_MEDIA_FACTORY_H
+// ex: shiftwidth=4 tabstop=4

@@ -238,3 +238,4 @@ RegionShapePrimitive*	RegionReader::parsePyramid(XMLTree::iterator xml)
 	return new RegionShapePrimitive(new TransformedShape(
 								new ShapePyramid(x, y, z), xform));
 }
+// ex: shiftwidth=4 tabstop=4

@@ -160,3 +160,4 @@ const int				BaseBuilding::getTeam() const
 {
 	return team;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -237,3 +237,4 @@ FlagId					Flag::getIDFromAbbreviation(const char* abbv)
 			return static_cast<FlagId>(i);
 	return NullFlag;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -101,3 +101,4 @@ const Vec3&				RegionManagerBase::getSafety(
 {
 	return safety[team];
 }
+// ex: shiftwidth=4 tabstop=4

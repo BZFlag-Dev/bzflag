@@ -177,3 +177,4 @@ int strnnocasecmp(const char* s1, const char* s2, int n)
 }
 
 #endif // BZF_COMMON_H
+// ex: shiftwidth=4 tabstop=4

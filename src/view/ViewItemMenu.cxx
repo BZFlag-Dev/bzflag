@@ -69,3 +69,4 @@ View*					ViewItemMenuReader::open(XMLTree::iterator)
 	item = new ViewItemMenu;
 	return item;
 }
+// ex: shiftwidth=4 tabstop=4

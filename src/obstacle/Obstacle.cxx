@@ -135,3 +135,4 @@ float					Obstacle::getHitNormal(
 	}
 	return minTime;
 }
+// ex: shiftwidth=4 tabstop=4

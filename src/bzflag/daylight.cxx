@@ -206,3 +206,4 @@ bool					areShadowsCast(const float sunDir[3])
 	return sunDir[2] > 0.087f; // sin(5)
 }
 */
+// ex: shiftwidth=4 tabstop=4

@@ -84,3 +84,4 @@ ODEAssistant::Type		ODESolverRungeKutta::doIntegrate(
 							(yOut[i] + yDotTmp[i] + R_(2.0) * yDotMid[i]);
 	return type;
 }
+// ex: shiftwidth=4 tabstop=4

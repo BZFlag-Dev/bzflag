@@ -1131,3 +1131,4 @@ void					updateSound()
 	if (isSoundOpen() && usingSameThread)
 		audioInnerLoop(true);
 }
+// ex: shiftwidth=4 tabstop=4

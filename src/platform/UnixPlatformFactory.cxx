@@ -247,3 +247,4 @@ std::string				UnixPlatformFactory::getConfigFileName() const
 								pwent->pw_dir : "");
 	return FILEMGR->catPath(homeDir, ".bzflag18");
 }
+// ex: shiftwidth=4 tabstop=4

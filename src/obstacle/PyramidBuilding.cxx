@@ -175,3 +175,4 @@ float					PyramidBuilding::shrinkFactor(float z) const
 	if (z >= getHeight()) return 0.0;
 	return (getHeight() - z) / getHeight();
 }
+// ex: shiftwidth=4 tabstop=4

@@ -34,3 +34,4 @@ void					getCelestialTransform(double julianDay,
 										float xform[4][4]);
 
 #endif // BZF_DAYLIGHT_H
+// ex: shiftwidth=4 tabstop=4

@@ -41,3 +41,4 @@ const char*				timeBombString()
 	if (timeBomb[0] == '\0') return NULL;
 	return timeBomb;
 }
+// ex: shiftwidth=4 tabstop=4

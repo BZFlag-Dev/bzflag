@@ -151,3 +151,4 @@ private:
 };
 
 #endif // BZF_OPENGLTEXFONT_H
+// ex: shiftwidth=4 tabstop=4

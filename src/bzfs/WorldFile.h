@@ -18,3 +18,4 @@ class WorldInfo;
 WorldInfo *defineWorldFromFile(const char *filename);
 
 #endif
+// ex: shiftwidth=4 tabstop=4

@@ -23,3 +23,4 @@ bool					timeBombBoom();
 const char*				timeBombString();
 
 #endif /* BZF_TIME_BOMB_H */
+// ex: shiftwidth=4 tabstop=4

@@ -65,3 +65,4 @@ ViewItemViewport*		ViewItemScissorReader::create() const
 {
 	return new ViewItemScissor;
 }
+// ex: shiftwidth=4 tabstop=4

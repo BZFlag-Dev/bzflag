@@ -436,3 +436,4 @@ SceneNodeParticleSystem SceneNodeParticleSystem::operator = (const SceneNodePart
 	boundingBox = p.boundingBox;
 	return *this;
 }
+// ex: shiftwidth=4 tabstop=4

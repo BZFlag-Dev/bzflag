@@ -118,3 +118,4 @@ int						recvUDPNetwork(int fd, void* buffer, int bufferLength,
 	return byteCount;
 }
 
+// ex: shiftwidth=4 tabstop=4

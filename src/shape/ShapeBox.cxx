@@ -552,3 +552,4 @@ unsigned int			ShapeBox::getParallelFace(
 	// no satisfactory face
 	return n;
 }
+// ex: shiftwidth=4 tabstop=4

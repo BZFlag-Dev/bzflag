@@ -273,3 +273,4 @@ inline bool				LocalPlayer::hasSlowKeyboard() const
 }
 
 #endif // BZF_LOCAL_PLAYER_H
+// ex: shiftwidth=4 tabstop=4

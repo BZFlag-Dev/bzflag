@@ -343,3 +343,4 @@ bool					SceneVisitorWrite::visit(SceneNodeXForm* n)
 
 	return result;
 }
+// ex: shiftwidth=4 tabstop=4

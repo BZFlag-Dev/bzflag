@@ -120,3 +120,4 @@ public:
 };
 
 #endif // BZF_XDISPLAY_H
+// ex: shiftwidth=4 tabstop=4

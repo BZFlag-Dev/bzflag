@@ -100,3 +100,4 @@ const uint16_t			RejectTeamFull = 0x0004;
 const uint16_t			RejectServerFull = 0x0005;
 
 #endif // BZF_PROTOCOL_H
+// ex: shiftwidth=4 tabstop=4

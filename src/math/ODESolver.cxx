@@ -259,3 +259,4 @@ ODEAssistant::Type		ODESolver::testClassify(const VectorN& y,
 	assistant->unmarshall(y);
 	return assistant->drive(x, ODEAssistant::Classify);
 }
+// ex: shiftwidth=4 tabstop=4

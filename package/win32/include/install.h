@@ -26,3 +26,4 @@ int			install(const char* dir,
 				SetNameCB readmeName);
 
 #endif
+// ex: shiftwidth=4 tabstop=4

@@ -413,3 +413,4 @@ WorldInfo *defineWorldFromFile(const char *filename)
 	emptyWorldFileObjectList(list);
 	return world;
 }
+// ex: shiftwidth=4 tabstop=4

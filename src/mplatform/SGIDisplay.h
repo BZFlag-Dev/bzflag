@@ -54,3 +54,4 @@ private:
 };
 
 #endif // BZF_SGIDISPLAY_H
+// ex: shiftwidth=4 tabstop=4

@@ -58,3 +58,4 @@ void					BodyManager::removeAll()
 		delete *index;
 	bodies.clear();
 }
+// ex: shiftwidth=4 tabstop=4

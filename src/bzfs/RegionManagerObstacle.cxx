@@ -128,3 +128,4 @@ const RegionPrimitive*	RegionManagerObstacle::intersect(
 
 	return region;
 }
+// ex: shiftwidth=4 tabstop=4

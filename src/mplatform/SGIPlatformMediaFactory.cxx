@@ -319,3 +319,4 @@ void					SGIPlatformMediaFactory::audioSleep(
 	select(maxFd, &commandSelectSet, checkLowWater ? &audioSelectSet : NULL,
 						NULL, (struct timeval*)(endTime >= 0.0 ? &tv : NULL));
 }
+// ex: shiftwidth=4 tabstop=4

@@ -54,3 +54,4 @@ int						ImageFile::getHeight() const
 {
 	return height;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -309,3 +309,4 @@ bool					Teleporter::getHitNormal(
 						getPosition(), getRotation(), getWidth(), getBreadth(),
 						getHeight(), normal) >= 0.0f;
 }
+// ex: shiftwidth=4 tabstop=4

@@ -60,3 +60,4 @@ private:
 };
 
 #endif // BZF_UNIX_PLATFORM_FACTORY_H
+// ex: shiftwidth=4 tabstop=4

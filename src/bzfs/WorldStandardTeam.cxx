@@ -261,3 +261,4 @@ WorldInfo *defineTeamWorld()
 
 	return world;
 }
+// ex: shiftwidth=4 tabstop=4

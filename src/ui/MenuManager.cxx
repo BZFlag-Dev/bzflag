@@ -85,3 +85,4 @@ MenuManager*			MenuManager::getInstance()
 		mgr = new MenuManager;
 	return mgr;
 }
+// ex: shiftwidth=4 tabstop=4

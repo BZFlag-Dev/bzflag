@@ -94,3 +94,4 @@ bool					TimeKeeper::operator<=(const TimeKeeper& t) const
 }
 
 #endif // BZF_TIME_KEEPER_H
+// ex: shiftwidth=4 tabstop=4

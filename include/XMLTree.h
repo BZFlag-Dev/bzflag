@@ -416,3 +416,4 @@ xmlParseEnum(const E* e, const Operation& op)
 extern const XMLParseEnumList<bool> s_xmlEnumBool[];	// "false", "true"
 
 #endif // XMLTREE_H
+// ex: shiftwidth=4 tabstop=4

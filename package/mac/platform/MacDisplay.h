@@ -67,3 +67,4 @@ class MacDisplay : public BzfDisplay {
 
 #endif // BZF_MACDISPLAY_H
 //BZF_DEFINE_ALIST(MacDisplayResList, MacDisplayRes);
+// ex: shiftwidth=4 tabstop=4

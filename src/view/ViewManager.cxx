@@ -131,3 +131,4 @@ ViewManager*			ViewManager::getInstance()
 		mgr = new ViewManager;
 	return mgr;
 }
+// ex: shiftwidth=4 tabstop=4

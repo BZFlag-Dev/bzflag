@@ -86,3 +86,4 @@ void					PlatformFactory::signalForward(Signal signo)
 {
 	(*signalHandlers[signo])(signo);
 }
+// ex: shiftwidth=4 tabstop=4

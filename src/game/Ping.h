@@ -68,3 +68,4 @@ private:
 };
 
 #endif // BZF_PING_H
+// ex: shiftwidth=4 tabstop=4

@@ -136,3 +136,4 @@ private:
 };
 
 #endif // BZF_XWINDOW_H
+// ex: shiftwidth=4 tabstop=4

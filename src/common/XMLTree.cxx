@@ -904,3 +904,4 @@ std::string				XMLTree::escape(const std::string& string)
 	}
 	return output;
 }
+// ex: shiftwidth=4 tabstop=4

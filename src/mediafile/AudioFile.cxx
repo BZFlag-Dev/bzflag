@@ -61,3 +61,4 @@ int						AudioFile::getSampleWidth() const
 {
 	return sampWidth;
 }
+// ex: shiftwidth=4 tabstop=4

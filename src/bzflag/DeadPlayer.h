@@ -35,3 +35,4 @@ private:
 };
 
 #endif // BZF_DEADPLAYER_H
+// ex: shiftwidth=4 tabstop=4

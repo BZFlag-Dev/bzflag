@@ -104,3 +104,4 @@ private:
 };
 
 #endif // BZF_REGION_H
+// ex: shiftwidth=4 tabstop=4

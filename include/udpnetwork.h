@@ -39,3 +39,4 @@ int						recvUDPNetwork(int fd, void* buffer,
 							int bufferLength, struct sockaddr_in*);
 
 #endif // BZF_UDPNET_H
+// ex: shiftwidth=4 tabstop=4

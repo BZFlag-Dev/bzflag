@@ -351,3 +351,4 @@ void					Menu::keyRelease(const BzfKeyEvent& key)
 		return;
 */
 }
+// ex: shiftwidth=4 tabstop=4

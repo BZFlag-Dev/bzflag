@@ -109,3 +109,4 @@ float				Obstacle::getHeight() const
 }
 
 #endif // BZF_OBSTACLE_H
+// ex: shiftwidth=4 tabstop=4

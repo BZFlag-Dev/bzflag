@@ -127,3 +127,4 @@ inline const char*		ServerLink::getVersion() const
 }
 
 #endif // BZF_SERVER_LINK_H
+// ex: shiftwidth=4 tabstop=4

@@ -49,3 +49,4 @@ void					printError(const char* fmt, ...)
 	}
 #endif
 }
+// ex: shiftwidth=4 tabstop=4

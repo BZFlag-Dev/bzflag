@@ -203,3 +203,4 @@ void					RegionShapeIntersection::getRandomPoint(Vec3& p) const
 		a()->getRandomPoint(p);
 	} while (!b()->isInside(p));
 }
+// ex: shiftwidth=4 tabstop=4

@@ -27,3 +27,4 @@ void					BzfWindow::initJoystick(const char* joystickName)
 {
 	printError("joystick '%s' not supported...", joystickName);
 }
+// ex: shiftwidth=4 tabstop=4

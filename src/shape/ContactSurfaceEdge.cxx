@@ -52,3 +52,4 @@ const void*				ContactSurfaceEdge::getType() const
 {
 	return getClassType();
 }
+// ex: shiftwidth=4 tabstop=4

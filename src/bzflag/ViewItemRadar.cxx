@@ -564,3 +564,4 @@ View*					ViewItemRadarReader::open(XMLTree::iterator)
 	item = new ViewItemRadar;
 	return item;
 }
+// ex: shiftwidth=4 tabstop=4

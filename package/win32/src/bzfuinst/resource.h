@@ -13,3 +13,4 @@
 #define IDD_MAIN                        101
 #define IDC_TOTAL_METER                 1000
 
+// ex: shiftwidth=4 tabstop=4

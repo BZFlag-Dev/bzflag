@@ -85,3 +85,4 @@ void					ShapePoint::getDumpPoints(
 {
 	points.push_back(v);
 }
+// ex: shiftwidth=4 tabstop=4

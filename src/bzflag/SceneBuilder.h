@@ -70,3 +70,4 @@ private:
 };
 
 #endif // BZF_SCENE_BUILDER_H
+// ex: shiftwidth=4 tabstop=4
