@@ -128,6 +128,9 @@ if test "x$with_kerberos" = "xyes" ; then
 fi
 AC_LANG_RESTORE
 AC_CHECK_HEADERS( \
+	AGL/agl.h \
+	GL/glx.h \
+	X11/Xlib.h \
 	linux/input.h \
 	sys/param.h \
 	unistd.h \
@@ -228,31 +231,6 @@ esac;
 
 # Check for the math lib
 AC_CHECK_LIB(m, sqrtf)
-
-# Check for functions
-AC_CHECK_FUNCS(\
-	Sleep \
-	WaitForSingleObject \
-	asinf \
-	atan2f \
-	atanf \
-	atexit \
-	cosf \
-	expf \
-	fabsf \
-	floorf \
-	fmodf \
-	getrlimit \
-	hypotf \
-	logf \
-	powf \
-	select \
-	sinf \
-	snooze \
-	sqrtf \
-	tanf \
-	usleep \
-)
 
 # for BeOS - old network stack don't have those libs ( move it in the case switch ?)
 AC_CHECK_LIB(socket, socket)
@@ -533,7 +511,8 @@ case $host_os in
 	;;
 esac
 
-CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=\$\$(date -u +%Y%m%d)"
+
+CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=$CONF_DATE"
 
 if test x$enable_debug = xyes; then
    CFLAGS="$CFLAGS -O0";
@@ -588,6 +567,34 @@ else
      esac;
      AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi;
+
+# Check for functions
+AC_CHECK_FUNCS(\
+	Sleep \
+	WaitForSingleObject \
+	aglGetCurrentContext \
+	asinf \
+	atan2f \
+	atanf \
+	atexit \
+	cosf \
+	expf \
+	fabsf \
+	floorf \
+	fmodf \
+	getrlimit \
+	glXGetCurrentContext \
+	hypotf \
+	logf \
+	powf \
+	select \
+	sinf \
+	snooze \
+	sqrtf \
+	tanf \
+	usleep \
+	wglGetCurrentContext \
+)
 
 if test "x$with_kerberos" = "xyes" ; then
   have_krb5=no
