@@ -64,6 +64,10 @@ CursesUI::CursesUI(BZAdminClient& c) :
   // initialize the menu
   menu.setUpdateCallback(initMainMenu);
   
+  // add additional chat targets
+  additionalTargets[PlayerId(250 - ObserverTeam)] = PlayerInfo("teammates");
+  additionalTargets[AdminPlayers] = PlayerInfo("admins");
+    
   // register commands for tab completion
   comp.registerWord("/ban ");
   comp.registerWord("/banlist");
@@ -223,11 +227,20 @@ bool CursesUI::checkCommand(std::string& str) {
     updateMainWinFromBuffer(LINES - 2);
     return false;
 
-    // change target
+    // change target - we have two maps to iterate over, so if we get to
+    // the end/beginning of the first one we go to the beginning/end of the
+    // second one and vice versa, also the maps should never be empty
   case KEY_LEFT:
-    if (targetIter == players.begin())
+    if (targetIter == additionalTargets.begin()) {
+      targetIter = players.begin();
       for (unsigned int i = 0; i < players.size() - 1; i++)
 	++targetIter;
+    }
+    else if (targetIter == players.begin()) {
+      targetIter = additionalTargets.begin();
+      for (unsigned int i = 0; i < additionalTargets.size() - 1; i++)
+	++targetIter;
+    }
     else
       targetIter--;
     updateTargetWin();
@@ -235,6 +248,8 @@ bool CursesUI::checkCommand(std::string& str) {
   case KEY_RIGHT:
     targetIter++;
     if (targetIter == players.end())
+      targetIter = additionalTargets.begin();
+    else if (targetIter == additionalTargets.end())
       targetIter = players.begin();
     updateTargetWin();
     return false;
@@ -259,7 +274,8 @@ bool CursesUI::checkCommand(std::string& str) {
 
     // kick target
   case KEY_F(5):
-    if (targetIter != players.end() && targetIter->first != me) {
+    if (targetIter != players.end() && targetIter->first != me &&
+	targetIter->first <= LastRealPlayer) {
       cmd = "/kick \"";
       cmd += targetIter->second.name;
       cmd += "\"";
@@ -269,9 +285,10 @@ bool CursesUI::checkCommand(std::string& str) {
     }
     return false;
 
-    // ban target (only works if we have done /playerlist earlier)
+    // ban target
   case KEY_F(6):
-    if (targetIter != players.end() && targetIter->first != me) {
+    if (targetIter != players.end() && targetIter->first != me &&
+	targetIter->first <= LastRealPlayer) {
       if (targetIter->second.ip != "") {
 	cmd = "/ban ";
 	cmd += targetIter->second.ip;
@@ -282,10 +299,6 @@ bool CursesUI::checkCommand(std::string& str) {
       else {
 	std::string msg = "--- Can't ban ";
 	msg += targetIter->second.name + ", you don't have the IP address";
-	outputMessage(msg, Red);
-	outputMessage("--- Trying to fetch IP addresses...", Red);
-	str = "/playerlist";
-	return true;
       }
     }
     return false;

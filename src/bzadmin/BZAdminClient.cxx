@@ -218,7 +218,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       players.erase(p);
       break;
 
-    case MsgAdminInfo: {
+    case MsgAdminInfo:
       uint8_t numIPs;
       uint8_t tmp;
       vbuf = nboUnpackUByte(vbuf, numIPs);
@@ -230,14 +230,15 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	vbuf = a.unpack(vbuf);
 	players[p].ip = a.getDotNotation();
       }
-      lastMessage.first = std::string("*** IP update received, ") + 
-	string_util::format("%d", numIPs) + " IP" + (numIPs == 1 ? "" : "s") +
-	" updated.";
+      if (messageMask[MsgAdminInfo]) {
+	lastMessage.first = std::string("*** IP update received, ") + 
+	  string_util::format("%d", numIPs) + " IP" +(numIPs == 1 ? "" : "s") +
+	  " updated.";
       }
       break;
-
-  	case MsgScoreOver: {
-  	  if (messageMask[MsgScoreOver]) {
+      
+    case MsgScoreOver:
+      if (messageMask[MsgScoreOver]) {
  	PlayerId id;
 	uint16_t team;
 	vbuf = nboUnpackUByte(vbuf, id);
@@ -246,27 +247,25 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	victimName = (it != players.end() ? it->second.name : "<unknown>");
 	if (team == (uint16_t)NoTeam) {
 	  Team temp;
-		victimName = temp.getName((TeamColor)team);
-			}
-	lastMessage.first = std::string("*** ") + victimName + " won the game.";
-		}
-			}
-		break;
-
-  	case MsgTimeUpdate: {
-	  	if (messageMask[MsgTimeUpdate]) {
-  uint16_t timeLeft;
-  vbuf = nboUnpackUShort(vbuf, timeLeft);
-  if (timeLeft == 0)
-  	lastMessage.first = "*** Time Expired.";
-	else
-		lastMessage.first = std::string("*** ") + string_util::format("%d", timeLeft)
-												+ " seconds remaining.";
+	  victimName = temp.getName((TeamColor)team);
 	}
-		}
-		break;
-
-  	case MsgKilled:
+	lastMessage.first = std::string("*** ") + victimName + " won the game.";
+      }
+      break;
+      
+    case MsgTimeUpdate:
+      if (messageMask[MsgTimeUpdate]) {
+	uint16_t timeLeft;
+	vbuf = nboUnpackUShort(vbuf, timeLeft);
+	if (timeLeft == 0)
+	  lastMessage.first = "*** Time Expired.";
+	else
+	  lastMessage.first = std::string("*** ") + 
+	    string_util::format("%d", timeLeft) + " seconds remaining.";
+      }
+      break;
+      
+    case MsgKilled:
       if (messageMask[MsgKilled]) {
 	PlayerId victim, killer;
 	int16_t shotId, reason;
@@ -294,7 +293,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     case MsgSuperKill:
       return Superkilled;
 
-    case MsgScore: {
+    case MsgScore:
       uint8_t numScores;
       vbuf = nboUnpackUByte(vbuf, numScores);
       for (uint8_t i = 0; i < numScores; i++) {
@@ -316,8 +315,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  (numScores == 1 ? "s" : "") + " updated.";
       }
       break;
-    }
-
+      
     case MsgMessage:
 
       // unpack the message header
@@ -327,17 +325,15 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       vbuf = nboUnpackUByte(vbuf, src);
       vbuf = nboUnpackUByte(vbuf, dst);
       
-      // is the message for me?
+      // format the message depending on src and dst
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
-      if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
-	if (messageMask[MsgMessage]) {
-	  lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
-	  PlayerIdMap::const_iterator iter = players.find(src);
-	  lastMessage.second = (iter == players.end() ? 
-				colorMap[NoTeam] : 
-				colorMap[iter->second.team]);
-	}
+      if (messageMask[MsgMessage]) {
+	lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
+	PlayerIdMap::const_iterator iter = players.find(src);
+	lastMessage.second = (iter == players.end() ? 
+			      colorMap[NoTeam] : 
+			      colorMap[iter->second.team]);
       }
       break;
     }
@@ -476,9 +472,11 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
     formatted += msg;
   }
 
-  // public or team message
+  // public or admin or team message
   else {
-    if (dstTeam != NoTeam)
+    if (dst == AdminPlayers)
+      formatted += "[Admin] ";
+    else if (dstTeam != NoTeam)
       formatted += "[Team] ";
     formatted += srcName;
     formatted += ": ";
