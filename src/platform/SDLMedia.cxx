@@ -238,7 +238,7 @@ void	SDLMedia::setDriver(std::string driverName) {
 // Setting Audio Device
 void	SDLMedia::setDevice(std::string deviceName) {
   static char envAssign[256];
-  std::string envVar = "SDL_PATH_DSP=" + deviceName;
+  std::string envVar = "AUDIODEV=" + deviceName;
   strncpy(envAssign, envVar.c_str(), 255);
   envAssign[255]     = '\0';
   putenv(envAssign);
@@ -287,12 +287,12 @@ float*	    SDLMedia::doReadSound(const std::string &filename, int &numFrames,
 
 void SDLMedia::audioDriver(std::string& driverName)
 {
-  char driver[128] = "SDL: audio not available";
+  char driver[128];
   char *result = SDL_AudioDriverName(driver, sizeof(driver));
   if (result)
     driverName = driver;
   else
-    driverName = "SDL: audio not available";
+    driverName = "audio not available";
 }
 
 #endif //HAVE_SDL
