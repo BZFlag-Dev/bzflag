@@ -193,7 +193,9 @@ static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
   GameKeeper::Player *muteeData = GameKeeper::Player::getPlayerByIndex(to);
   if (muteeData) {
     muteeData->accessInfo.revokePerm(PlayerAccessInfo::talk);
-  }
+    message2 = TextUtils::format("You have been muted by %s.", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, to, message2.c_str());
+  }        
   
   // confirm player is muted
   message2 = TextUtils::format("player id %d \"%s\" is now muted.", to, noisy_player.c_str());
@@ -290,16 +292,16 @@ static void handleUnmuteCmd(GameKeeper::Player *playerData, const char *message)
   }
   
   // unmute the player
-  /// so don't change it
   GameKeeper::Player *unmuteData = GameKeeper::Player::getPlayerByIndex(to);
   if (unmuteData) {
     unmuteData->accessInfo.grantPerm(PlayerAccessInfo::talk);
+    message2 = TextUtils::format("You have been unmuted by %s.", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, to, message2.c_str());
   }
   
   // confirm player is unmuted
   message2 = TextUtils::format("player id %d \"%s\" is now unmuted.", to, happy_player.c_str());
   sendMessage(ServerPlayer, from, message2.c_str());  
-
 }
 
 class NoDigit {
