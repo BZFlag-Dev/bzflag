@@ -79,6 +79,7 @@ void ServerList::readServerList(int index, StartupInfo *info)
     char* base = listServer.buffer;
     static char *tokenIdentifier = "TOKEN: ";
     static char *noTokenIdentifier = "NOTOK: ";
+    static char *errorIdentifier = "ERROR: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
@@ -99,6 +100,11 @@ void ServerList::readServerList(int index, StartupInfo *info)
 	continue;
       } else if (strncmp(base, noTokenIdentifier, strlen(noTokenIdentifier)) == 0) {
 	printError("ERROR: did not get token:");
+	printError(base);
+	strcpy(info->token, "badtoken\0");
+	base = scan;
+	continue;
+      } else if (strncmp(base, errorIdentifier, strlen(errorIdentifier)) == 0) {
 	printError(base);
 	strcpy(info->token, "badtoken\0");
 	base = scan;
