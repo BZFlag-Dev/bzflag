@@ -68,7 +68,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
   cfvec3ListToArray (normalList, normalCount, normals);
   texcoordCount = texcoordList.size();
   texcoords = new fvec2[texcoordCount];
-  for (i = 0; i < texcoordCount; i++) {
+  for (i = 0; i < (unsigned int)texcoordCount; i++) {
     memcpy (texcoords[i], texcoordList[i].data, sizeof(fvec2));
   }
   faceSize = _faceCount;
