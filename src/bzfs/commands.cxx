@@ -100,10 +100,9 @@ extern int countdownDelay;
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern void sendPlayerInfo(void);
 
-class NoDigit
-{
+class NoDigit {
 public:
- bool operator() (char c) {return !isdigit(c);}
+  bool operator() (char c) {return !isdigit(c);}
 };
 
 int getSlotNumber(std::string player) {
