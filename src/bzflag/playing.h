@@ -17,21 +17,21 @@
 #ifndef	BZF_PLAYING_H
 #define	BZF_PLAYING_H
 
-#if defined(_MSC_VER)
-#pragma warning(disable: 4786)
-#pragma warning(disable: 4100)
-#pragma warning(disable: 4511)
-#endif
+#include "common.h"
 
 // system includes
 #include <string>
 #include <vector>
 
+/* common headers */
 #include "BzfDisplay.h"
-#include "MainWindow.h"
-#include "SceneRenderer.h"
 #include "Player.h"
+#include "SceneRenderer.h"
 #include "StartupInfo.h"
+
+/* local headers */
+#include "MainWindow.h"
+
 
 #define MAX_MESSAGE_HISTORY (20)
 
