@@ -544,7 +544,7 @@ void Player::updateTranslucency(float dt)
     teleporterProximity =
       World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
     teleAlpha = (1.0f - (0.75f * teleporterProximity));
-    
+
     if (alpha == 0.0f) {
       color[3] = 0.0f; // not trusting FP accuracy
     } else {
@@ -779,7 +779,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   if (!isAlive() && !isExploding()) {
     return; // don't draw anything
   }
-  
+
   // place the tank
   tankNode->move(state.pos, forward);
 
@@ -798,13 +798,13 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
   // is this tank fully cloaked?
   const bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
-  
+
   if (cloaked && !seerView) {
     return; // don't draw anything
   }
-  
+
   // setup the visibility properties
-  if (inCockpit && !showTreads) {  
+  if (inCockpit && !showTreads) {
     tankNode->setOnlyShadows(true);
   } else {
     tankNode->setOnlyShadows(false);
@@ -817,12 +817,12 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     } else {
       color[3] = teleAlpha;
     }
-  } 
-  
+  }
+
   // setup the color and material
   setVisualTeam(effectiveTeam);
   tankNode->setColor(color);
-  
+
   tankNode->setInTheCockpit(inCockpit);
 
   // reset the clipping plane

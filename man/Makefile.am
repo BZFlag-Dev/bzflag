@@ -21,7 +21,7 @@ BUILD_DATE=$(shell echo $(VERSION) | sed -e "s/.*\.\([0-9][0-9][0-9][0-9]\)\([0-
 
 EXTRA_DIST = bzadmin.6s bzflag.6s bzfs.6s bzw.5s
 
-DISTCLEANFILES = bzflag.6 bzfs.6 bzadmin.6 bzfquery.6 bzw.5 
+DISTCLEANFILES = bzflag.6 bzfs.6 bzadmin.6 bzfquery.6 bzw.5
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

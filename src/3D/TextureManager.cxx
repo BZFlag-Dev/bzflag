@@ -144,7 +144,7 @@ OpenGLTexture::Filter TextureManager::getMaxFilter ( void )
   return OpenGLTexture::getMaxFilter();
 }
 
-  
+
 std::string TextureManager::getMaxFilterName ( void )
 {
   OpenGLTexture::Filter maxFilter = OpenGLTexture::getMaxFilter();
@@ -271,7 +271,7 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
 
   OpenGLTexture *texture =
     new OpenGLTexture(width, height, image, init.filter, true);
-    
+
   delete[] image;
 
   return texture;
@@ -279,7 +279,7 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
 
 
 int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data,
-                               OpenGLTexture::Filter filter, bool repeat, int format)
+			       OpenGLTexture::Filter filter, bool repeat, int format)
 {
   return addTexture(name, new OpenGLTexture(x, y, data, filter, repeat, format));
 }
@@ -299,7 +299,7 @@ void TextureManager::setTextureFilter(int texId, OpenGLTexture::Filter filter)
 
   return;
 }
-  
+
 
 OpenGLTexture::Filter TextureManager::getTextureFilter(int texId)
 {
@@ -313,7 +313,7 @@ OpenGLTexture::Filter TextureManager::getTextureFilter(int texId)
 
   return texture->getFilter();
 }
-  
+
 
 /* --- Procs --- */
 

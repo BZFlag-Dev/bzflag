@@ -783,7 +783,7 @@ void			World::addFlags(SceneDatabase* scene, bool seerView)
     // Cloaking flag on a tank if we don't have a Seer flag.
     if (flags[i].status == FlagOnTank) {
       if ((flags[i].type == Flags::Cloaking) && !seerView) {
-        continue;
+	continue;
       }
       int j;
       for (j = 0; j < curMaxPlayers; j++)

@@ -252,7 +252,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // reset the sky color when it changes
   BZDB.addCallback("_skyColor", bzdbCallback, this);
-  
+
   // recreate display lists when context is recreated
   OpenGLGState::registerContextInitializer(freeContext, initContext,
 					   (void*)this);
@@ -447,7 +447,7 @@ void BackgroundRenderer::setSkyColors()
   skyCrossSunDirColor[0] = colors[3][0];
   skyCrossSunDirColor[1] = colors[3][1];
   skyCrossSunDirColor[2] = colors[3][2];
-  
+
   return;
 }
 
@@ -722,7 +722,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   // toward the sun
   glPushMatrix();
   glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
-            0.0f, 0.0f, 1.0f);
+	    0.0f, 0.0f, 1.0f);
 
   // draw sky
   skyGState.setState();

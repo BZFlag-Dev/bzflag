@@ -72,7 +72,7 @@ void listSetVars(const std::string& name, void*)
 }
 
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
-{ 
+{
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
@@ -86,7 +86,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	(key.button == BzfKeyEvent::Down))
       return true;
   }
-  
+
   switch (key.ascii) {
     case 3:	// ^C
     case 27: {	// escape
@@ -174,8 +174,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	}
 #endif
       } else if (strncmp(message.c_str(), "/quit", 5) == 0 ) {
-	
-	char messageBuffer[MessageLen]; // send message 
+
+	char messageBuffer[MessageLen]; // send message
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer, message.c_str(), MessageLen);
 	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);

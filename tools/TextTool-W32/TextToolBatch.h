@@ -27,9 +27,9 @@ public:
   TextToolBatch(std::string file);
   TextToolBatch();
   ~TextToolBatch();
-  
+
   void loadFile(std::string file);
-  
+
   bool getNext(BatchItem& item);
 
   void error(std::string msg);

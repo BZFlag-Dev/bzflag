@@ -45,8 +45,8 @@ void TextToolBatch::loadFile(std::string file)
   std::string filename;
   int minAASize;
 
-  while (input->good()) { 
-    buffer[0] = 0;    
+  while (input->good()) {
+    buffer[0] = 0;
 
     // trim leading ws
     ws(*input);
@@ -70,18 +70,18 @@ void TextToolBatch::loadFile(std::string file)
       if (!group) error("end: Not in group");
       // unset flag, create items, and read next line if "end" and in group
       else {
-        group = false;
-        for (unsigned int i = 0; i < sizes.size(); i++) {
+	group = false;
+	for (unsigned int i = 0; i < sizes.size(); i++) {
 	  BatchItem temp;
 	  // set font face
-          temp.font = font;
+	  temp.font = font;
 	  // set font flags (just bold and italic; underline and strikethrough are just lines)
 	  int index = flags.find("bold", 0);
 	  if (index >= 0) temp.bold = true; else temp.bold = false;
 	  index = flags.find("italic", 0);
 	  if (index >= 0) temp.italic = true; else temp.italic = false;
 	  // set font size
-          temp.size = sizes[i];
+	  temp.size = sizes[i];
 	  // set AA quality
 	  if (temp.size >= minAASize) temp.antiAlias = true; else temp.antiAlias = false;
 	  // set filename (with $s -> size transform)
@@ -94,11 +94,11 @@ void TextToolBatch::loadFile(std::string file)
 	}
 	sizes.clear();
 	minAASize = 16; // default to AAing 16-point and bigger
-      }  
+      }
       // read next line
       continue;
     }
-  
+
     // error if not in group
     if (!group) error("command: Not in group");
 
@@ -112,7 +112,7 @@ void TextToolBatch::loadFile(std::string file)
       unsigned int x = 0;
       unsigned int y = tmp.size();
       while (x < tmp.size()) {
-        y = tmp.find(" ", x + 1);
+	y = tmp.find(" ", x + 1);
 	std::string sizestr = tmp.substr(x, y);
 	int sizeint = atoi(sizestr.c_str());
 	sizes.push_back(sizeint);
@@ -133,7 +133,7 @@ void TextToolBatch::loadFile(std::string file)
 
 bool TextToolBatch::getNext(BatchItem& item)
 {
-  if (position >= items.size()) 
+  if (position >= items.size())
     return false;
 
   item = items[position++];

@@ -381,7 +381,7 @@ void CollisionManager::load ()
   int i;
 
   TimeKeeper startTime = TimeKeeper::getCurrent();
-  
+
   // get the lists
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
@@ -498,7 +498,7 @@ void CollisionManager::load ()
 
   float elapsed = TimeKeeper::getCurrent() - startTime;
   DEBUG2 ("Collision Octree processed in %.3f seconds.\n", elapsed);
-  
+
   return;
 }
 
@@ -607,34 +607,34 @@ ColDetNode::ColDetNode(unsigned char _depth,
     const char* obsType = obs->getType();
     if (testExts.touches(obs->getExtents())) {
       if (obsType != meshType) {
-        if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
-          // add this obstacle to the list
-          fullList.list[fullList.count] = obs;
-          fullList.count++;
-          if (obsType == faceType) {
-            // record this face's hit in its mesh obstacle
-            MeshFace* face = (MeshFace*) obs;
-            MeshObstacle* mesh = face->getMesh();
-            if (mesh != NULL) {
-              mesh->collisionState = true;
-            }
-          }
-        }
+	if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
+	  // add this obstacle to the list
+	  fullList.list[fullList.count] = obs;
+	  fullList.count++;
+	  if (obsType == faceType) {
+	    // record this face's hit in its mesh obstacle
+	    MeshFace* face = (MeshFace*) obs;
+	    MeshObstacle* mesh = face->getMesh();
+	    if (mesh != NULL) {
+	      mesh->collisionState = true;
+	    }
+	  }
+	}
       } else {
-        MeshObstacle* mesh = (MeshObstacle*) obs;
-        if (mesh->collisionState) {
-          fullList.list[fullList.count] = (Obstacle*) mesh;
-          fullList.count++;
-          mesh->collisionState = false;
-        }
-        else if (mesh->containsPointNoOctree (point)) {
-          fullList.list[fullList.count] = (Obstacle*) mesh;
-          fullList.count++;
-        }
+	MeshObstacle* mesh = (MeshObstacle*) obs;
+	if (mesh->collisionState) {
+	  fullList.list[fullList.count] = (Obstacle*) mesh;
+	  fullList.count++;
+	  mesh->collisionState = false;
+	}
+	else if (mesh->containsPointNoOctree (point)) {
+	  fullList.list[fullList.count] = (Obstacle*) mesh;
+	  fullList.count++;
+	}
       }
     }
-  }          
-          
+  }
+
   // count will remain as the total numbers of
   // scene nodes that intersect with this cell
   count = fullList.count;
@@ -728,7 +728,7 @@ void ColDetNode::resizeCell ()
 {
   int i;
   Extents absExts;
-  
+
   if (childCount > 0) {
     // use lower children's extents
     for (i = 0; i < childCount; i++) {
@@ -741,7 +741,7 @@ void ColDetNode::resizeCell ()
       absExts.expandToBox(obs->getExtents());
     }
   }
-  
+
   for (i = 0; i < 3; i++) {
     if (absExts.mins[i] > extents.mins[i]) {
       extents.mins[i] = absExts.mins[i];

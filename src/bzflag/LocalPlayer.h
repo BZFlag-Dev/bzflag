@@ -73,7 +73,7 @@ public:
   void		setDesiredSpeed(float fracOfMaxSpeed);
   void		setDesiredAngVel(float fracOfMaxAngVel);
   void		setPause(bool = true);
-  void          activateAutoPilot(bool = true);
+  void		activateAutoPilot(bool = true);
   bool		fireShot();
   void		forceReload(float time = 0.0f);
   void		explodeTank();

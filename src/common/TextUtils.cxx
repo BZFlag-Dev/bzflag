@@ -38,7 +38,7 @@ namespace TextUtils
       delete[] bufp;
       return ret;
     }
- 
+
     return buffer;
   }
 
@@ -79,19 +79,19 @@ namespace TextUtils
   std::string no_whitespace(const std::string &s)
   {
     const int sourcesize = s.size();
-  
+
     int count = 0, i = 0, j = 0;
     for (i = 0; i < sourcesize; i++)
       if (!isWhitespace(s[i]))
-        count++;
+	count++;
 
     // create result string of correct size
     std::string result(count, ' ');
-  
+
     for (i = 0, j = 0; i < sourcesize; i++)
       if (!isWhitespace(s[i]))
-        result[j++] = s[i];
-  
+	result[j++] = s[i];
+
     return result;
   }
 

@@ -75,15 +75,15 @@ class OpenGLTexture {
 
     Filter		getFilter();
     void		setFilter(Filter);
-    
+
     static int		getFilterCount();
     static const char*	getFilterName(Filter id);
     static const char**	getFilterNames();
-    
+
     static Filter	getMaxFilter();
     static void		setMaxFilter(Filter);
 
-    
+
     void		freeContext();
     void		initContext();
 

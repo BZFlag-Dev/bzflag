@@ -181,7 +181,7 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
     case 'G':
       {
 	bool grabbing = (selectedOption == "Yes");
-        BZDB.set("mousegrab", grabbing ? "true" : "false");
+	BZDB.set("mousegrab", grabbing ? "true" : "false");
 	getMainWindow()->enableGrabMouse(grabbing);
       }
       break;
@@ -189,8 +189,8 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
     /* Jump while typing */
     case 'H':
       {
-        bool jump = (selectedOption == "Yes");
-        BZDB.setBool("jumpTyping", jump ? true : false);
+	bool jump = (selectedOption == "Yes");
+	BZDB.setBool("jumpTyping", jump ? true : false);
       }
       break;
 

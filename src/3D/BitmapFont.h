@@ -35,7 +35,7 @@ public:
 
 private:
   unsigned char *bitmaps[MAX_TEXTURE_FONT_CHARS];
-  bool        loaded;
+  bool	loaded;
 };
 
 #endif //_BITMAP_FONT_H_

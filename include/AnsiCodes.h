@@ -81,7 +81,7 @@ static std::string ColorStrings[16] = {
   ANSI_STR_UNDERLINE,   // 10 Underline
   ANSI_STR_RESET_FINAL, // 11 Really reset (no brightness added)
   ANSI_STR_BRIGHT,	// 12 Bright mode
-  ANSI_STR_DIM, 	// 13 Dim mode
+  ANSI_STR_DIM,	// 13 Dim mode
   ANSI_STR_NO_PULSATE,  // 14 No Pulsating
   ANSI_STR_NO_UNDERLINE // 15 No Underlining
 };

@@ -460,11 +460,11 @@ void TankSceneNode::rebuildExplosion()
 
 void TankSceneNode::renderRadar()
 {
-  const float angleCopy = azimuth; 
+  const float angleCopy = azimuth;
   const float* sphere = getSphere();
   float posCopy[3];
   memcpy(posCopy, sphere, sizeof(float[3]));
-  
+
   // allow negative values for burrowed clipping
   float tankPos[3];
   tankPos[0] = 0.0f;
@@ -474,7 +474,7 @@ void TankSceneNode::renderRadar()
   } else {
     tankPos[2] = sphere[2];
   }
-  
+
   setCenter(tankPos);
   azimuth = 0.0f;
 
@@ -484,17 +484,17 @@ void TankSceneNode::renderRadar()
   if (color[3] < 0.15f) {
     color[3] = 0.15f;
   }
-    
+
   tankRenderNode.setRadar(true);
   tankRenderNode.sortOrder(true /* above */, false, false);
   tankRenderNode.render();
   tankRenderNode.setRadar(false);
-  
+
   color[3] = oldAlpha;
-  
+
   setCenter(posCopy);
   azimuth = angleCopy;
-  
+
   return;
 }
 
@@ -884,7 +884,7 @@ void TankSceneNode::TankRenderNode::render()
 
   // disable the dynamic lights, if it might help
   const bool switchLights = BZDBCache::lighting &&
-                            !isShadow && (drawLOD == HighTankLOD);
+			    !isShadow && (drawLOD == HighTankLOD);
   if (switchLights) {
     RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
   }
@@ -1189,7 +1189,7 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
   if (BZDBCache::texture) {
     clr = white;
   }
-  
+
   switch (part) {
     case Body: {
       myColor4f(clr[0], clr[1], clr[2], alpha);

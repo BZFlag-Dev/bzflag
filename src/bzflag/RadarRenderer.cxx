@@ -50,12 +50,12 @@ static bool toggleTank = false;
 const float RadarRenderer::colorFactor = 40.0f;
 
 RadarRenderer::RadarRenderer(const SceneRenderer&, const World& _world)
-                                                   : world(_world)
+						   : world(_world)
 {
   jammed = false;
   x = y = w = h = 0;
   decay = 0.01f;
-  
+
   setControlColor();
 
   multiSampled = false;
@@ -116,13 +116,13 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
   if (pos[2] < 0.0f) {
     size = 0.5f;
   }
-  
+
   // NOTE: myTank was checked in render()
   const float myAngle = LocalPlayer::getMyTank()->getAngle();
-  
+
   // transform to the tanks location
   glTranslatef(pos[0], pos[1], 0.0f);
-  
+
   // draw the tank
   if ((player == NULL) || !useTankDimensions) {
     // align to the screen axes
@@ -144,7 +144,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
     // align to the screen axes
     glRotatef(float(myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
   }
-    
+
   // adjust with height box size
   const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   size = size * (1.0f + (0.5f * (pos[2] / boxHeight)));
@@ -157,7 +157,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
   glVertex2f(0.0f, +size);
   glVertex2f(-size, 0.0f);
   glEnd();
-  
+
   glPopMatrix();
 }
 
@@ -193,7 +193,7 @@ void RadarRenderer::drawFancyTank(const Player* player)
     glEnable(GL_BLEND);
   }
 
-  return;      
+  return;
 }
 
 
@@ -215,12 +215,12 @@ void RadarRenderer::drawFlag(const float pos[3])
 void RadarRenderer::drawFlagOnTank(const float pos[3])
 {
   glPushMatrix();
-  
+
   // align it to the screen axes
   const float angle = LocalPlayer::getMyTank()->getAngle();
   glTranslatef(pos[0], pos[1], 0.0f);
   glRotatef(float(angle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-  
+
   float tankRadius = BZDBCache::tankRadius;
   GLfloat s = 2.5f * tankRadius > 4.0f * ps ? 2.5f * tankRadius : 4.0f * ps;
   glBegin(GL_LINES);
@@ -241,7 +241,7 @@ void RadarRenderer::drawFlagOnTank(const float pos[3])
 void RadarRenderer::renderFrame(SceneRenderer& renderer)
 {
   const MainWindow& window = renderer.getWindow();
-  
+
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
@@ -250,7 +250,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
-  
+
   OpenGLGState::resetState();
 
   const int ox = window.getOriginX();
@@ -262,16 +262,16 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
   const float right = float(ox + x + w) + 0.5f;
   const float top = float(oy + y) - 0.5f;
   const float bottom = float(oy + y + h) + 0.5f;
-  
+
   glColor3fv(teamColor);
-  
+
   glBegin(GL_LINE_LOOP); {
     glVertex2f(left, top);
     glVertex2f(right, top);
     glVertex2f(right, bottom);
     glVertex2f(left, bottom);
   } glEnd();
-  
+
   glBegin(GL_POINTS); {
     glVertex2f(left, top);
     glVertex2f(right, top);
@@ -293,18 +293,18 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
   // note that this scissor setup is used for the reset of the rendering
   glScissor(ox + x, oy + y, w, h);
-  
+
   if (opacity == 1.0f) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
   }
-  
+
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
-  
+
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
-  
+
   return;
 }
 
@@ -318,11 +318,11 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
   // render the frame
   renderFrame(renderer);
-  
+
   if (blank) {
     return;
   }
-  
+
   smooth = !multiSampled && BZDBCache::smooth;
   const bool fastRadar = ((BZDBCache::radarStyle == 1) && BZDBCache::zbuffer);
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -344,7 +344,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       BZDB.set("displayRadarRange", "1.0");
     }
   }
-  
+
   // prepare projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -357,14 +357,14 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   const double yUnit = 2.0 * range / double(h);
   const double maxHeight = (double) COLLISIONMGR.getWorldExtents().maxs[2];
   glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
-          -yCenter * yUnit, (ySize - yCenter) * yUnit,
-          -(maxHeight + 10.0), (maxHeight + 10.0));
+	  -yCenter * yUnit, (ySize - yCenter) * yUnit,
+	  -(maxHeight + 10.0), (maxHeight + 10.0));
 
   // prepare modelview matrix
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
-  
+
   OpenGLGState::resetState();
 
   // if jammed then draw white noise.  occasionally draw a good frame.
@@ -411,7 +411,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	glVertex2f(-range, range);
       }
       glEnd();
-      
+
       glDisable(GL_TEXTURE_2D);
     }
 
@@ -432,7 +432,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	glVertex2f(-range, range);
       }
       glEnd();
-      
+
       glDisable(GL_TEXTURE_2D);
     }
     if (decay > 0.015f) decay *= 0.5f;
@@ -543,15 +543,15 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     for (i = 0; i < curMaxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
       if (!player) {
-        continue;
+	continue;
       }
       if (!player->isAlive() &&
-          (!useTankModels || !observer || !player->isExploding())) {
-        continue;
+	  (!useTankModels || !observer || !player->isExploding())) {
+	continue;
       }
       if ((player->getFlag() == Flags::Stealth) &&
-          (myTank->getFlag() != Flags::Seer)) {
-        continue;
+	  (myTank->getFlag() != Flags::Seer)) {
+	continue;
       }
 
       const float* position = player->getPosition();
@@ -590,9 +590,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	}
       }
       if (!observer) {
-        drawTank(position, NULL);
+	drawTank(position, NULL);
       } else {
-        drawTank(position, player);
+	drawTank(position, player);
       }
     }
 
@@ -673,18 +673,18 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       // revert to the centered transformation
       glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
       glTranslatef(-myPos[0], -myPos[1], 0.0f);
-      
+
       // my flag
       if (myTank->getFlag() != Flags::Null) {
-        glColor3fv(myTank->getFlag()->getColor());
-        drawFlagOnTank(myPos);
+	glColor3fv(myTank->getFlag()->getColor());
+	drawFlagOnTank(myPos);
       }
 
       // my tank
       glColor3f(1.0f, 1.0f, 1.0f);
       drawTank(myPos, myTank);
     }
-    
+
     if (smooth) {
       glDisable(GL_BLEND);
       glDisable(GL_LINE_SMOOTH);
@@ -818,7 +818,7 @@ void RadarRenderer::renderBoxPyrMeshFast(float range)
   int gradientTexId = -1;
   TextureManager &tm = TextureManager::instance();
   gradientTexId = tm.getTextureID("radar", false);
-  
+
   // safety: no texture, no service
   if (gradientTexId < 0) {
     renderBoxPyrMesh();
@@ -882,7 +882,7 @@ void RadarRenderer::renderBoxPyrMesh()
   int i;
 
   const bool enhanced = (BZDBCache::radarStyle > 0);
-  
+
   if (!smooth) {
     // smoothing has blending disabled
     if (enhanced) {
@@ -970,7 +970,7 @@ void RadarRenderer::renderBoxPyrMesh()
       int vertexCount = face->getVertexCount();
       glBegin(GL_TRIANGLE_FAN);
       for (int v = 0; v < vertexCount; v++) {
-        const float* pos = face->getVertex(v);
+	const float* pos = face->getVertex(v);
 	glVertex2f(pos[0], pos[1]);
       }
       glEnd();
@@ -979,7 +979,7 @@ void RadarRenderer::renderBoxPyrMesh()
   if (smooth) {
     glDisable(GL_POLYGON_SMOOTH);
   }
-  
+
   // NOTE: revert from the enhanced setting
   if (enhanced && !smooth) {
     glDisable(GL_BLEND);

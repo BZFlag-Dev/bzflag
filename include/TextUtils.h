@@ -223,7 +223,7 @@ namespace TextUtils {
 
     for (unsigned short i = 0; i < max; i++)
       if (isAlphanumeric(input[i]))
-        return i;
+	return i;
 
     return -1;
   }
@@ -240,7 +240,7 @@ namespace TextUtils {
 
     for (unsigned short i = 0; i < max; i++)
       if (!isAlphanumeric(input[i]))
-        return i;
+	return i;
 
     return -1;
   }
@@ -254,10 +254,10 @@ namespace TextUtils {
 
     if (max > input.length())
       max = (unsigned short)input.length();
-   
+
     for (unsigned short i = 0; i < max; i++)
       if (isPrintable(input[i]))
-        return i;
+	return i;
 
     return -1;
   }
@@ -273,8 +273,8 @@ namespace TextUtils {
 
     for (unsigned short i = 0; i < max; i++)
       if (!isPrintable(input[i]))
-        return i;
-	  
+	return i;
+
     return -1;
   }
 
@@ -290,7 +290,7 @@ namespace TextUtils {
 
     for (unsigned short i = 0; i < max; i++)
       if (isVisible(input[i]))
-        return i;
+	return i;
 
     return -1;
   }
@@ -304,12 +304,12 @@ namespace TextUtils {
   {
     if (max > input.length())
       max = (unsigned short)input.length();
-    
+
     for (unsigned short i = 0; i < max; i++)
       if (!isVisible(input[i]))
-        return i;
-	
-    return -1;  
+	return i;
+
+    return -1;
  }
 
 
@@ -320,11 +320,11 @@ namespace TextUtils {
   {
     if (max > input.length())
       max = (unsigned short)input.length();
-	
+
     for (unsigned short i = 0; i < max; i++)
       if (isAlphabetic(input[i]))
-        return i;
-   
+	return i;
+
     return -1;
   }
 
@@ -339,7 +339,7 @@ namespace TextUtils {
 
     for (unsigned short i = 0; i < max; i++)
       if (!isAlphabetic(input[i]))
-        return i;
+	return i;
 
     return -1;
   }

@@ -82,7 +82,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     } else {
       n = 0;
       while ((n < lineLen) &&
-             (fm.getStrLength(fontFace, fontSize, std::string(msg, n+1)) < maxLength)) {
+	     (fm.getStrLength(fontFace, fontSize, std::string(msg, n+1)) < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.

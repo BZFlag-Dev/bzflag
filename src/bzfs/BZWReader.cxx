@@ -74,7 +74,7 @@ BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
   // .BZW is the official worldfile extension, warn for others
   if ((filename.length() < 4) ||
       (strcasecmp(filename.substr(filename.length() - 4, 4).c_str(),
-                  ".bzw") != 0)) {
+		  ".bzw") != 0)) {
     errorHandler->warning(std::string(
       "world file extension is not .bzw, trying to load anyway"), 0);
   }
@@ -172,14 +172,14 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
 
 
 bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
-                                GroupDefinition* groupDef)
+				GroupDefinition* groupDef)
 {
   // make sure input is valid
   if (input->peek() == EOF) {
     errorHandler->fatalError(std::string("unexpected EOF"), 0);
     return false;
   }
-  
+
   int line = 1;
   char buffer[1024];
   WorldFileObject* object = NULL;
@@ -284,30 +284,30 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       readToken(buffer, sizeof(buffer));
       std::string incName = buffer;
       if (object == NULL) {
-        // FIXME - check for recursion
-        //       - better filename handling ("", spaces, and / vs. \\)
-        //       - make relative names work from the base file location
-        DEBUG1 ("%s: (line %i): including \"%s\"\n",
-                location.c_str(), line, incName.c_str());
-        BZWReader incFile(incName);
-        std::vector<WorldFileObject*> incWlist;
-        if (incFile.readWorldStream(incWlist, groupDef)) {
-          // add the included objects
-          for (unsigned int i = 0; i < incWlist.size(); i++) {
-            wlist.push_back(incWlist[i]);
-          }
-        } else {
-          // empty the failed list
-          emptyWorldFileObjectList(incWlist);
-          errorHandler->fatalError(
-            TextUtils::format("including \"%s\"", incName.c_str()), line);
-          return false;
-        }
+	// FIXME - check for recursion
+	//       - better filename handling ("", spaces, and / vs. \\)
+	//       - make relative names work from the base file location
+	DEBUG1 ("%s: (line %i): including \"%s\"\n",
+		location.c_str(), line, incName.c_str());
+	BZWReader incFile(incName);
+	std::vector<WorldFileObject*> incWlist;
+	if (incFile.readWorldStream(incWlist, groupDef)) {
+	  // add the included objects
+	  for (unsigned int i = 0; i < incWlist.size(); i++) {
+	    wlist.push_back(incWlist[i]);
+	  }
+	} else {
+	  // empty the failed list
+	  emptyWorldFileObjectList(incWlist);
+	  errorHandler->fatalError(
+	    TextUtils::format("including \"%s\"", incName.c_str()), line);
+	  return false;
+	}
       }
       else {
-        errorHandler->warning(
-          TextUtils::format("including \"%s\" within an obstacle, skipping",
-                            incName.c_str()), line);
+	errorHandler->warning(
+	  TextUtils::format("including \"%s\" within an obstacle, skipping",
+			    incName.c_str()), line);
       }
 
     } else if (strcasecmp(buffer, "world") == 0) {
@@ -358,7 +358,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
   }
   if (groupDef != startDef) {
     errorHandler->fatalError(std::string("missing \"enddef\" parameter"), line);
-    if (startDef == worldDef) { 
+    if (startDef == worldDef) {
       delete groupDef;
     }
     retval = false;

@@ -52,10 +52,10 @@ class TextureManager : public Singleton<TextureManager>
 public:
   int getTextureID( const char* name, bool reportFail = true );
   int addTexture( const char*, OpenGLTexture *texture  );
-  
+
   void setTextureFilter(int texId, OpenGLTexture::Filter filter);
   OpenGLTexture::Filter getTextureFilter(int texId);
-  
+
   void updateTextureFilters();
 
   bool bind ( int id );
@@ -72,7 +72,7 @@ public:
   float GetAspectRatio ( int id );
 
   int newTexture (const char* name, int x, int y, unsigned char* data,
-                  OpenGLTexture::Filter filter, bool repeat = true, int format = 0);
+		  OpenGLTexture::Filter filter, bool repeat = true, int format = 0);
 protected:
   friend class Singleton<TextureManager>;
 

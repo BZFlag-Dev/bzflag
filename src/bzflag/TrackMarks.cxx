@@ -419,10 +419,10 @@ static bool onBuilding(const float pos[3])
     if (obs->isFlatTop()) {
       const float top = obs->getExtents().maxs[2];
       if ((pos[2] >= (top - 0.1f)) && (pos[2] <= (top + 0.1f))) {
-        const float hitTime = obs->intersect(ray);
-        if (hitTime >= 0.0f) {
-          return true;
-        }
+	const float hitTime = obs->intersect(ray);
+	if (hitTime >= 0.0f) {
+	  return true;
+	}
       }
     }
   }

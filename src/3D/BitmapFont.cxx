@@ -68,39 +68,39 @@ void BitmapFont::build(void)
     for (int j = 0; j < h; j++) {
       const unsigned char* srcRow = &image[4*((height-ey+j)*width+sx)];
       unsigned char* dstData = bitmaps[i] + j * bytesPerRow;
-  
+
       int b;
       for (b = 0; b < w - 7; b += 8) {
-        unsigned char data = 0;
+	unsigned char data = 0;
 
-        if (srcRow[4*(b+0)] >= IT) data |= 0x80u;
-        if (srcRow[4*(b+1)] >= IT) data |= 0x40u;
-        if (srcRow[4*(b+2)] >= IT) data |= 0x20u;
-        if (srcRow[4*(b+3)] >= IT) data |= 0x10u;
-        if (srcRow[4*(b+4)] >= IT) data |= 0x08u;
-        if (srcRow[4*(b+5)] >= IT) data |= 0x04u;
-        if (srcRow[4*(b+6)] >= IT) data |= 0x02u;
-        if (srcRow[4*(b+7)] >= IT) data |= 0x01u;
-        *dstData++ = data;
+	if (srcRow[4*(b+0)] >= IT) data |= 0x80u;
+	if (srcRow[4*(b+1)] >= IT) data |= 0x40u;
+	if (srcRow[4*(b+2)] >= IT) data |= 0x20u;
+	if (srcRow[4*(b+3)] >= IT) data |= 0x10u;
+	if (srcRow[4*(b+4)] >= IT) data |= 0x08u;
+	if (srcRow[4*(b+5)] >= IT) data |= 0x04u;
+	if (srcRow[4*(b+6)] >= IT) data |= 0x02u;
+	if (srcRow[4*(b+7)] >= IT) data |= 0x01u;
+	*dstData++ = data;
       }
-  
+
       unsigned char data = 0;
       switch (w - b) {
-        case 7:
-          if (srcRow[4*(b+6)] >= IT) data |= 0x02u;
-        case 6:
-          if (srcRow[4*(b+5)] >= IT) data |= 0x04u;
-        case 5:
-          if (srcRow[4*(b+4)] >= IT) data |= 0x08u;
-        case 4:
-          if (srcRow[4*(b+3)] >= IT) data |= 0x10u;
-        case 3:
-          if (srcRow[4*(b+2)] >= IT) data |= 0x20u;
-        case 2:
-          if (srcRow[4*(b+1)] >= IT) data |= 0x40u;
-        case 1:
-          if (srcRow[4*(b+0)] >= IT) data |= 0x80u;
-          *dstData++ = data;
+	case 7:
+	  if (srcRow[4*(b+6)] >= IT) data |= 0x02u;
+	case 6:
+	  if (srcRow[4*(b+5)] >= IT) data |= 0x04u;
+	case 5:
+	  if (srcRow[4*(b+4)] >= IT) data |= 0x08u;
+	case 4:
+	  if (srcRow[4*(b+3)] >= IT) data |= 0x10u;
+	case 3:
+	  if (srcRow[4*(b+2)] >= IT) data |= 0x20u;
+	case 2:
+	  if (srcRow[4*(b+1)] >= IT) data |= 0x40u;
+	case 1:
+	  if (srcRow[4*(b+0)] >= IT) data |= 0x80u;
+	  *dstData++ = data;
       }
     }
   }

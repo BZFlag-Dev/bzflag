@@ -1520,7 +1520,7 @@ void bzMatrixMode(GLenum mode)
 #endif
 
 // NOTE: if you're compiler croaks here, then you might want
-//       to find an alternative method for OpenGL context 
+//       to find an alternative method for OpenGL context
 //       detection on your system.
 
 #ifndef GET_CURRENT_CONTEXT

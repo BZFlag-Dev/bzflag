@@ -97,11 +97,11 @@ bool readLetter(OSFile &file, char expected)
 
   if (tmpBuf.substr(0, expsize) == expectedLeft) {
     if (int(tmpBuf.size()) >= expsize+4 && tmpBuf[expsize+1]=='"' && tmpBuf[expsize+3]=='"' &&
-        tmpBuf[expsize+2]==expected) {
+	tmpBuf[expsize+2]==expected) {
       return true;
     } else {
       DEBUG2("Unexpected character: %s, in font metrics file %s, line %d (expected \"%c\").\n",
-             tmpBuf.c_str()+expsize, file.getFileName().c_str(), line, expected);
+	     tmpBuf.c_str()+expsize, file.getFileName().c_str(), line, expected);
       return false;
     }
   } else {

@@ -2199,10 +2199,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // make them wait from the time they left, but only if they are
     // not already waiting, and they are not currently an observer.
     if ((playerData->player.getTeam() != ObserverTeam) &&
-        (rejoinList.waitTime (playerIndex) <= 0.0f)) {
+	(rejoinList.waitTime (playerIndex) <= 0.0f)) {
       rejoinList.add (playerIndex);
     }
-    
+
     // tell everyone player has left
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
@@ -2795,7 +2795,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     if ((teamIndex == playerData->player.getTeam() &&
 	 base == playerData->player.getTeam()))	{
       DEBUG1("Player %s [%d] might have sent MsgCaptureFlag for taking their own "
-             "flag onto their own base\n",
+	     "flag onto their own base\n",
 	     playerData->player.getCallSign(), playerIndex);
       //return; //sanity check
     }

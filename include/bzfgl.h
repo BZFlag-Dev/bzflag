@@ -64,7 +64,7 @@ extern int __beginendCount;
  * are called inside of the wrong context code
  * sections (freeing and initializing).
  */
-//#define DEBUG_GL_MATRIX_STACKS 
+//#define DEBUG_GL_MATRIX_STACKS
 #ifdef DEBUG
 #  define glNewList(list,mode)			bzNewList((list), (mode))
 #  define glGenLists(count)			bzGenLists((count))

@@ -45,7 +45,7 @@ class RadarRenderer {
     void		render(SceneRenderer&, bool blank, bool observer);
 
     void		renderFrame(SceneRenderer&);
-    
+
     void		renderObstacles(bool fastRadar, float range);
     void		renderWalls();
     void		renderBoxPyrMesh();
@@ -59,7 +59,7 @@ class RadarRenderer {
 
     void		drawShot(const ShotPath*);
     void		drawTank(const float pos[3],
-                                 const class Player* player);
+				 const class Player* player);
     void		drawFancyTank(const class Player* player);
     void		drawFlag(const float pos[3]);
     void		drawFlagOnTank(const float pos[3]);

@@ -65,7 +65,7 @@ void windowsMakePath(const std::string &path)
   std::string::size_type pos = 0;
   std::string::size_type delimitpos;
 
-  do 
+  do
   {
     delimitpos = path.find('\\', pos);
     std::string nextdir = path.substr(pos, delimitpos);
@@ -601,17 +601,17 @@ bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool
       if ((strlen(fileInfo.name) >0) && (strcmp(fileInfo.name,".") != 0) &&
     (strcmp(fileInfo.name,"..") != 0))
       {
-        FilePath = pathName;
-        FilePath += "\\";
-        FilePath += fileInfo.name;
+	FilePath = pathName;
+	FilePath += "\\";
+	FilePath += fileInfo.name;
 
-        if ((fileInfo.attrib & _A_SUBDIR) && bRecursive)
-          windowsAddFileStack(FilePath,fileMask,bRecursive);
-        else if (!(fileInfo.attrib & _A_SUBDIR))
-          info->nameList.push_back(FilePath);
+	if ((fileInfo.attrib & _A_SUBDIR) && bRecursive)
+	  windowsAddFileStack(FilePath,fileMask,bRecursive);
+	else if (!(fileInfo.attrib & _A_SUBDIR))
+	  info->nameList.push_back(FilePath);
       }
       if (_findnext(hFile,&fileInfo) == -1)
-        bDone = true;
+	bDone = true;
     }
   }
   return true;
@@ -639,9 +639,9 @@ static int match_multi(const char **mask, const char **string)
   str = *string;
 
   while ((*msk != '\0') && (*msk == '*'))
-    msk++;          /* get rid of multiple '*'s */
+    msk++;	  /* get rid of multiple '*'s */
 
-  if (*msk == '\0')        /* '*' was last, auto-match */
+  if (*msk == '\0')	/* '*' was last, auto-match */
     return +1;
 
   msktop = msk;
@@ -661,29 +661,29 @@ static int match_multi(const char **mask, const char **string)
     {
       if ((*msk == '?') || (*msk == *str))
       {
-        msk++;
-        str++;
-        if ((*msk == '\0') && (*str != '\0'))  /* advanced check */
-        {
-          str++;
-          strtop++;
-          str = strtop;
-          msk = msktop;
-        }
+	msk++;
+	str++;
+	if ((*msk == '\0') && (*str != '\0'))  /* advanced check */
+	{
+	  str++;
+	  strtop++;
+	  str = strtop;
+	  msk = msktop;
+	}
       }
       else
       {
-        str++;
-        strtop++;
-        str = strtop;
-        msk = msktop;
+	str++;
+	strtop++;
+	str = strtop;
+	msk = msktop;
       }
     }
   }
 
   *mask = msk;
   *string = str;
-  return +1;                       /* full match */
+  return +1;		       /* full match */
 }
 
 static int match_mask (const char *mask, const char *string)
@@ -695,7 +695,7 @@ static int match_mask (const char *mask, const char *string)
     return 0;
 
   if ((mask[0] == '*') && (mask[1] == '\0'))
-    return 1;                  /* instant match */
+    return 1;		  /* instant match */
 
   while (*mask != '\0')
   {
@@ -704,10 +704,10 @@ static int match_mask (const char *mask, const char *string)
       mask++;
       switch (match_multi (&mask, &string))
       {
-        case +1:
-          return 1;
-        case -1:
-          return 0;
+	case +1:
+	  return 1;
+	case -1:
+	  return 0;
       }
     }
     else if (*string == '\0')
@@ -763,9 +763,9 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
       stat(FilePath.c_str(), &statbuf);
 
       if (S_ISDIR(statbuf.st_mode) && bRecursive)
-        linuxAddFileStack(FilePath,fileMask,bRecursive);
+	linuxAddFileStack(FilePath,fileMask,bRecursive);
       else if (match_mask(fileMask.c_str(), fileInfo->d_name))
-        info->nameList.push_back(FilePath);
+	info->nameList.push_back(FilePath);
     }
   }
   closedir(directory);

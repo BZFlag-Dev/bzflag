@@ -163,9 +163,9 @@ CommandManager::ArgList& args)
   if (args.size() != 0) {
     return "usage: toggleRadar";
   }
-  
+
   CMDMGR.run("toggle displayRadar");
-  
+
   warnAboutRadar();
 
   return std::string();

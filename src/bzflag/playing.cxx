@@ -1874,7 +1874,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 	addTankExplosion(explodePos);
       }
-      
+
       if (killerLocal) {
 	// local player did it
 	if (shotId >= 0) {
@@ -2547,7 +2547,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	uint8_t index;
 	Address ip;
 	void* tmpMsg = msg; // leave 'msg' pointing at the first entry
-	
+
 	tmpMsg = nboUnpackUByte(tmpMsg, ipsize);
 	tmpMsg = nboUnpackUByte(tmpMsg, index);
 	tmpMsg = ip.unpack(tmpMsg);
@@ -2577,36 +2577,36 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       // print fancy version to be easily found
       if ((numIPs != 1) || BZDB.isTrue("showips")) {
-        uint8_t playerId;
-        uint8_t addrlen;
-        Address addr;
-      
-        for (int i = 0; i < numIPs; i++) {
-          msg = nboUnpackUByte(msg, addrlen);
-          msg = nboUnpackUByte(msg, playerId);
-          msg = addr.unpack(msg);
-          
-          int playerIndex = lookupPlayerIndex(playerId);        
-          Player* player = getPlayerByIndex(playerIndex);
+	uint8_t playerId;
+	uint8_t addrlen;
+	Address addr;
 
-          if (player != NULL) {
-            int color = player->getTeam();
-            if ((color < 0) || (color > 4)) {
-              color = 5;
-            }
-            std::string message = ColorStrings[CyanColor]; // default color
-            message += "IPINFO: ";
-            if (BZDBCache::colorful) message += ColorStrings[color];
-            message += player->getCallSign();
-            if (BZDBCache::colorful) message += ColorStrings[CyanColor];
-            message += "\t from: ";
-            if (BZDBCache::colorful) message += ColorStrings[color];
-            message += addr.getDotNotation();
+	for (int i = 0; i < numIPs; i++) {
+	  msg = nboUnpackUByte(msg, addrlen);
+	  msg = nboUnpackUByte(msg, playerId);
+	  msg = addr.unpack(msg);
 
-            // also print into the Server Menu
-            controlPanel->addMessage(message, 2);
-          }
-        } // end for loop
+	  int playerIndex = lookupPlayerIndex(playerId);
+	  Player* player = getPlayerByIndex(playerIndex);
+
+	  if (player != NULL) {
+	    int color = player->getTeam();
+	    if ((color < 0) || (color > 4)) {
+	      color = 5;
+	    }
+	    std::string message = ColorStrings[CyanColor]; // default color
+	    message += "IPINFO: ";
+	    if (BZDBCache::colorful) message += ColorStrings[color];
+	    message += player->getCallSign();
+	    if (BZDBCache::colorful) message += ColorStrings[CyanColor];
+	    message += "\t from: ";
+	    if (BZDBCache::colorful) message += ColorStrings[color];
+	    message += addr.getDotNotation();
+
+	    // also print into the Server Menu
+	    controlPanel->addMessage(message, 2);
+	  }
+	} // end for loop
       }
       break;
     }
@@ -4207,20 +4207,20 @@ static void joinInternetGame()
 	// you got banned
       case ServerLink::Refused:{
 	const std::string& rejmsg = serverLink->getRejectionMessage();
-	
+
 	// add to the HUD
-        std::string msg = ColorStrings[RedColor];
+	std::string msg = ColorStrings[RedColor];
 	msg += "You have been banned from this server";
 	HUDDialogStack::get()->setFailedMessage(msg.c_str());
-	
+
 	// add to the console
-        msg = ColorStrings[RedColor];
+	msg = ColorStrings[RedColor];
 	msg += "You have been banned from this server:";
 	addMessage(NULL, msg);
-        msg = ColorStrings[YellowColor];
-        msg += rejmsg;
+	msg = ColorStrings[YellowColor];
+	msg += rejmsg;
 	addMessage(NULL, msg);
-	
+
 	break;
       }
 
@@ -4589,14 +4589,14 @@ void drawFrame(const float dt)
 
       const bool seerView = (myTank->getFlag() == Flags::Seer);
       const bool showTreads = BZDB.isTrue("showTreads");
-      
+
       // add my tank if required
       const bool inCockpit = (!devDriving || (roamView == roamViewFP));
       const bool showMyTreads = showTreads ||
-                                (devDriving && (roamView != roamViewFP));
+				(devDriving && (roamView != roamViewFP));
       myTank->addToScene(scene, myTank->getTeam(),
-                         inCockpit, seerView,
-                         showMyTreads, showMyTreads /*showIDL*/);
+			 inCockpit, seerView,
+			 showMyTreads, showMyTreads /*showIDL*/);
 
       // add my shells
       myTank->addShots(scene, false);
@@ -4637,9 +4637,9 @@ void drawFrame(const float dt)
 	  const bool showPlayer = !inCockpit || showTreads;
 
 	  // add player tank if required
-          player[i]->addToScene(scene, effectiveTeam,
-                                inCockpit, seerView,
-                                showPlayer, showPlayer /*showIDL*/);
+	  player[i]->addToScene(scene, effectiveTeam,
+				inCockpit, seerView,
+				showPlayer, showPlayer /*showIDL*/);
 	}
       }
 

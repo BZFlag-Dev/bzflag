@@ -385,7 +385,7 @@ void updateConfigFile(void)
     KEYMGR.unbindCommand("roam rotate stop");
 
     // add new default keybindings if there's no conflict
-    
+
     // iconify
     BzfKeyEvent key;
     if (KEYMGR.stringToKeyEvent("F4", key)
@@ -534,10 +534,10 @@ static void		parse(int argc, char** argv)
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
     } else if ((strcmp(argv[i], "-d") == 0) ||
-               (strcmp(argv[i], "-debug") == 0)) {
+	       (strcmp(argv[i], "-debug") == 0)) {
       debugLevel++;
     } else if ((strcmp(argv[i], "-dir") == 0) ||
-               (strcmp(argv[i], "-directory") == 0)) {
+	       (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);
       if (strlen(argv[i]) == 0)
 	BZDB.unset("directory");
@@ -1472,7 +1472,7 @@ int			main(int argc, char** argv)
     TextureManager& tm = TextureManager::instance();
     tm.setMaxFilter(BZDB.get("texture"));
     BZDB.set("texture", tm.getMaxFilterName());
-    
+
     BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 	      RENDERER.useQuality() < 2) ? "1" : "0");
     BZDB.setPersistent("_texturereplace", false);

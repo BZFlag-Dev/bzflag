@@ -67,7 +67,7 @@ OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
   internalFormat = _internalFormat;
   filter = _filter;
   list = INVALID_GL_TEXTURE_ID;
-  
+
   // get internal format if not provided
   if (internalFormat == 0)
     internalFormat = getBestFormat(width, height, pixels);
@@ -139,7 +139,7 @@ void OpenGLTexture::initContext()
   while (scaledHeight < tmpHeight) {
     scaledHeight <<= 1;
   }
-  
+
   // get minimum valid size for texture (boost to 2^m x 2^n)
   GLint maxTextureSize;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
@@ -150,7 +150,7 @@ void OpenGLTexture::initContext()
   if (maxTextureSize > bzMaxTexSize) {
     maxTextureSize = bzMaxTexSize;
   }
-  
+
   // clamp to the maximum size
   if (scaledWidth > maxTextureSize) {
     scaledWidth = maxTextureSize;
@@ -160,7 +160,7 @@ void OpenGLTexture::initContext()
   }
 
   // NOTE: why these are 4-byte aligned is beyond me...
-  
+
   // copy the data into a 4-byte aligned buffer
   GLubyte* unaligned = new GLubyte[4 * tmpWidth * tmpHeight + 4];
   GLubyte* aligned = (GLubyte*)(((unsigned long)unaligned & ~3) + 4);
@@ -173,12 +173,12 @@ void OpenGLTexture::initContext()
 
     gluScaleImage (GL_RGBA, tmpWidth, tmpHeight, GL_UNSIGNED_BYTE, aligned,
 		   scaledWidth, scaledHeight, GL_UNSIGNED_BYTE, alignedScaled);
-		   
+
     delete[] unaligned;
     unaligned = unalignedScaled;
     aligned = alignedScaled;
     DEBUG1("Scaling texture from %ix%i to %ix%i\n",
-           tmpWidth, tmpHeight, scaledWidth, scaledHeight);
+	   tmpWidth, tmpHeight, scaledWidth, scaledHeight);
   }
 
   // now make texture map display list (compute all mipmaps, if requested).
@@ -214,7 +214,7 @@ void OpenGLTexture::initContext()
       alpha = false;
       break;
   }
-  
+
   return;
 }
 
@@ -294,7 +294,7 @@ const char** OpenGLTexture::getFilterNames()
 {
   return configFilterNames;
 }
-    
+
 
 float OpenGLTexture::getAspectRatio() const
 {

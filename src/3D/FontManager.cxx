@@ -150,31 +150,31 @@ void FontManager::loadAll(std::string directory)
     if (TextUtils::compare_nocase(ext, "fmt") == 0) {
       ImageFont *pFont;
       if (bitmapRenderer)
-        pFont = new BitmapFont;
+	pFont = new BitmapFont;
       else
-        pFont = new TextureFont;
+	pFont = new TextureFont;
       if (pFont) {
-        if (pFont->load(file)) {
-          std::string  str = TextUtils::toupper(pFont->getFaceName());
+	if (pFont->load(file)) {
+	  std::string  str = TextUtils::toupper(pFont->getFaceName());
 
-          FontFaceMap::iterator faceItr = faceNames.find(str);
+	  FontFaceMap::iterator faceItr = faceNames.find(str);
 
-          int faceID = 0;
-          if (faceItr == faceNames.end()) {
-            // it's new
-            FontSizeMap faceList;
-            fontFaces.push_back(faceList);
-            faceID = (int)fontFaces.size() - 1;
-            faceNames[str] = faceID;
-          } else {
-            faceID = faceItr->second;
-          }
+	  int faceID = 0;
+	  if (faceItr == faceNames.end()) {
+	    // it's new
+	    FontSizeMap faceList;
+	    fontFaces.push_back(faceList);
+	    faceID = (int)fontFaces.size() - 1;
+	    faceNames[str] = faceID;
+	  } else {
+	    faceID = faceItr->second;
+	  }
 
-          fontFaces[faceID][pFont->getSize()] = pFont;
-        } else {
-          DEBUG4("Font Texture load failed: %s\n", file.getOSName().c_str());
-          delete(pFont);
-        }
+	  fontFaces[faceID][pFont->getSize()] = pFont;
+	} else {
+	  DEBUG4("Font Texture load failed: %s\n", file.getOSName().c_str());
+	  delete(pFont);
+	}
       }
     }
   }
@@ -250,7 +250,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   }
 
   float scale = size / (float)pFont->getSize();
-  
+
   // filtering is off by default for fonts.
   // if the font is large enough, and the scaling factor
   // is not an integer, then request filtering
@@ -264,7 +264,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     y = floorf(y);
     z = floorf(z);
   }
-  
+
 
   /*
    * Colorize text based on ANSI codes embedded in it
@@ -404,7 +404,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     pFont->filter(false);
   }
 
-  return;  
+  return;
 }
 
 void FontManager::drawString(float x, float y, float z,

@@ -84,7 +84,7 @@ class TankSceneNode : public SceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
     void		addLight(SceneRenderer&);
-    
+
     void		renderRadar();
 
     void		setNormal();

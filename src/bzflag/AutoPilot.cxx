@@ -22,10 +22,10 @@
 
 typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
 
-static FlagSuccessMap flagSuccess;
-static int			  totalSum = 0;
-static int			  totalCnt = 0;
-static bool                       wantJump = false;
+static FlagSuccessMap	flagSuccess;
+static int		totalSum = 0;
+static int		totalCnt = 0;
+static bool		wantJump = false;
 
 static PlanStack planStack;
 
@@ -419,8 +419,8 @@ bool chasePlayer(float &rotation, float &speed)
 	float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
 
 	if (((building->getPosition()[2] - pos[2] + building->getHeight())) < maxJump) {
-          speed = d / 50.0f;
-          wantJump = true;
+	  speed = d / 50.0f;
+	  wantJump = true;
 	  return true;
 	}
       }
@@ -706,9 +706,9 @@ void	doAutoPilot(float &rotation, float &speed)
   if (!avoidBullet(rotation, speed)) {
     if (!stuckOnWall(rotation, speed)) {
       if (!chasePlayer(rotation, speed)) {
-        if (!lookForFlag(rotation, speed)) {
-          navigate(rotation, speed);
-        }
+	if (!lookForFlag(rotation, speed)) {
+	  navigate(rotation, speed);
+	}
       }
     }
   }

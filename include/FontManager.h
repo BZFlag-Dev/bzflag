@@ -80,8 +80,8 @@ private:
   static void	freeContext(void *data);
   static void	initContext(void *data);
   static GLfloat underlineColor[3];
-  float		 dimFactor;
-  bool           canScale;
+  float		dimFactor;
+  bool		canScale;
 };
 
 inline void FontManager::setDimFactor(float newDimFactor)

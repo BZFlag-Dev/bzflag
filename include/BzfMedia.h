@@ -121,7 +121,7 @@ class BzfMedia {
 
     virtual void	setDriver(std::string driverName);
     virtual void	setDevice(std::string deviceName);
-    virtual void        audioDriver(std::string& driverName);
+    virtual void	audioDriver(std::string& driverName);
 
   protected:
     // return default extensions for image and sound files

@@ -99,9 +99,9 @@ public:
   const ShotStatistics*	getShotStatistics() const;
 
   void		addToScene(SceneDatabase*, TeamColor effectiveTeam,
-                           bool inCockpit, bool seerView,
-                           bool showTreads, bool showIDL);
-			   
+			   bool inCockpit, bool seerView,
+			   bool showTreads, bool showIDL);
+
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
@@ -164,7 +164,7 @@ public:
   void		setDeadReckoning(float timestamp);
 
   void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
-  
+
   void		renderRadar() const;
 
   void setZpos (float z);
@@ -254,7 +254,7 @@ private:
   PlayerState		state;
 
   // additional state
-  bool                  autoPilot;
+  bool			autoPilot;
 
   // computable highly dynamic data
   float			forward[3];		// forward unit vector
