@@ -39,7 +39,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun))
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__))
 #include <bstring.h>
 #endif
 
@@ -48,6 +48,10 @@
 
 /* setsockopt incorrectly prototypes the 4th arg without const. */
 #define SSOType		void*
+#endif
+
+#if defined(__FreeBSD__)
+#define AddrLen		socklen_t
 #endif
 
 #if defined(sun)

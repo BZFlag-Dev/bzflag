@@ -13,7 +13,11 @@
 #include "LinuxMedia.h"
 #include <math.h>
 #include <fcntl.h>
+#ifdef __FreeBSD__
+#include <machine/endian.h>
+#else
 #include <endian.h>
+#endif
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -23,6 +27,7 @@
 #include <sys/ioctl.h>
 #include <TimeKeeper.h>
 #include <errno.h>
+#include <string.h>
 
 #ifdef HALF_RATE_AUDIO
 static const int defaultAudioRate=11025;

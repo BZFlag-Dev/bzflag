@@ -76,7 +76,9 @@ const boolean		True = !False;
 
 #if !defined(_WIN32)
 
+#ifndef __FreeBSD__
 #include <values.h>
+#endif
 #include <sys/types.h>
 
 #if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
