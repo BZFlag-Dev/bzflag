@@ -83,6 +83,9 @@ class Player {
     void		resetNotResponding();
     bool		isHunted() const;
     void		setHunted(bool _hunted);
+    bool		isAutoPilot() const;
+    void		setAutoPilot(bool = true);
+
 
     // returns true iff dead reckoning is too different from the
     // current tank state.
@@ -128,6 +131,7 @@ class Player {
     SphereSceneNode*	pausedSphere;
     GLfloat		color[4];
     bool		notResponding;
+    bool		autoPilot;
     static OpenGLTexture* tankTexture;
     static int		totalCount;
     bool		hunted;
@@ -341,6 +345,16 @@ inline bool  Player::isHunted() const
 inline void  Player::setHunted(bool _hunted)
 {
   hunted = _hunted;
+}
+
+inline bool  Player::isAutoPilot() const
+{
+  return (autoPilot);
+}
+
+inline void  Player::setAutoPilot(bool _autoPilot)
+{
+  autoPilot = _autoPilot;
 }
 
 #endif // BZF_PLAYER_H

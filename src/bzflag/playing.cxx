@@ -232,7 +232,7 @@ static void		setGrabMouse(bool grab)
 static bool		shouldGrabMouse()
 {
   return grabMouseAlways && !unmapped &&
-			(myTank == NULL || !myTank->isPaused());
+			(myTank == NULL || !myTank->isPaused() || myTank->isAutoPilot());
 }
 
 //
@@ -1644,7 +1644,60 @@ static void		doMotion()
 
   float rotation, speed;
 
-  if (myTank->isKeyboardMoving()) {
+  if (myTank->isAutoPilot()) {
+	//FIXME bot motion
+	PlayerId t;
+	PlayerId target = maxPlayers;
+	const float *mp = myTank->getPosition();
+	float distance = Infinity;
+	for (t = 0; t < maxPlayers; t++) {
+		if ((t != myTank->getId()) && player[t] &&
+				player[t]->isAlive() &&
+				!player[t]->isPaused() &&
+				!player[t]->isNotResponding() &&
+				((myTank->getTeam() == RogueTeam) ||
+				(player[t]->getTeam() != myTank->getTeam()))) {
+			const float *tp = player[t]->getPosition();
+			float d = hypotf(tp[0] - mp[0], tp[1] - mp[1]);
+			if (d < distance) {
+				target = t;
+				break;
+			}
+		}
+	}
+	if (target == maxPlayers) {
+		// no target. just sit here for now
+		// FIXME should go flag hunting ;-)
+		rotation = speed = 0.0f;
+	}
+	else {
+		myTank->setTarget(player[target]);
+		// blindly head towards the player
+		const float *tp = player[target]->getPosition();
+		float azimuth = atan2f(tp[1] - mp[1], tp[0] - mp[0]);
+		if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
+		rotation = atan2f(tp[1] - mp[1], tp[0] - mp[0]) - myTank->getAngle();
+		if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
+		if (fabs(rotation) > M_PI / 2)
+			speed = -0.5f;
+		else
+			speed =	1.0f;
+		if (rotation > 1.0f)
+			rotation = 1.0f;
+		else if (rotation < -1.0f)
+			rotation = -1.0f;
+		if (speed == 1.0f)
+			speed = 1.0f - fabs(rotation);
+#ifdef DEBUG_ROBOT
+		// FIXME speed should drop as distance goes from say 40 to 0?
+		printf("p%d an%f az%f dis%f r%f s%f mp %3.1f:%3.1f tp %3.1f:%3.1f\n",
+				target, myTank->getAngle(), azimuth, distance,
+				rotation, speed,
+				mp[0],mp[1],tp[0],tp[1]);
+#endif
+	}
+  }
+  else if (myTank->isKeyboardMoving()) {
     rotation = myTank->getKeyboardAngVel();
     speed = myTank->getKeyboardSpeed();
 
@@ -1825,7 +1878,7 @@ static std::string cmdPause(const std::string&, const CommandManager::ArgList& a
 {
   if (args.size() != 0)
     return "usage: pause";
-  if (!pausedByUnmap && myTank->isAlive()) {
+  if (!pausedByUnmap && myTank->isAlive() && !myTank->isAutoPilot()) {
     if (myTank->isPaused()) {
       myTank->setPause(false);
       controlPanel->addMessage("Resumed");
@@ -1849,6 +1902,31 @@ static std::string cmdPause(const std::string&, const CommandManager::ArgList& a
       hud->setAlert(1, msgBuf, 1.0f, false);
     }
   }
+  return std::string();
+}
+
+static std::string	cmdAutoPilot(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+	return "usage: autopilot";
+
+  if (myTank != NULL) {
+	if (myTank->isAutoPilot()) {
+		myTank->setAutoPilot(false);
+		hud->setAlert(0, "autopilot disabled", 1.0f, true);
+
+		// grab mouse
+		if (shouldGrabMouse()) mainWindow->grabMouse();
+	}
+	else {
+		myTank->setAutoPilot(true);
+		hud->setAlert(0, "autopilot enabled", 1.0f, true);
+
+		// ungrab mouse
+		mainWindow->ungrabMouse();
+	}
+  }
+
   return std::string();
 }
 
@@ -2197,7 +2275,8 @@ static const CommandListItem commandList[] = {
   { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
   { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
   { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
-  { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" }
+  { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
+  { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
 };
 
 static void		doEvent(BzfDisplay* display)
@@ -2257,7 +2336,7 @@ static void		doEvent(BzfDisplay* display)
       // already counting down to pausing, we're alive, and we're not
       // already paused.
       if (!pausedByUnmap && pauseCountdown == 0.0f &&
-	  myTank && myTank->isAlive() && !myTank->isPaused()) {
+	  myTank && myTank->isAlive() && !myTank->isPaused() && !myTank->isAutoPilot()) {
 	// get ready to pause (no cheating through instantaneous pausing)
 	pauseCountdown = 5.0f;
 

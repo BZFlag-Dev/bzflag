@@ -176,7 +176,8 @@ static const char*	bindingList[] = {
   "bind A down \"toggle slowKeyboard\"",
   "bind U down hunt",
   "bind \"Right Mouse\" up restart",
-  "bind I up restart"
+  "bind I up restart",
+  "bind 9 down autopilot"
 };
 
 #ifdef ROBOT

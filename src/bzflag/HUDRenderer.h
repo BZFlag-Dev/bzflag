@@ -193,6 +193,7 @@ class HUDRenderer {
     float		teamScoreLabelWidth;
     float		restartLabelWidth;
     float		resumeLabelWidth;
+    float		autoPilotWidth;
     float		cancelDestructLabelWidth;
     float		gameOverLabelWidth;
     std::string		restartLabel;
@@ -236,6 +237,7 @@ class HUDRenderer {
     static std::string	resumeLabel;
     static std::string	cancelDestructLabel;
     static std::string	gameOverLabel;
+    static std::string	autoPilotLabel;
     bool		huntIndicator;
     bool		hunting;
     int			huntPosition;

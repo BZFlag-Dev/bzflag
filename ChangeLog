@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* AutoPilot from 1.8 - Dave Brosius
 * Thief Flag - Dave Brosius
 * MsgPlayerUpdate now has order, reject ooo packets - Dave Brosius
 * Removed old UDP queueing code and headers - Micah Dowty

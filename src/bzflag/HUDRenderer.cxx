@@ -105,6 +105,7 @@ std::string		HUDRenderer::restartLabelFormat("Press %s or \"i\" to start");
 std::string		HUDRenderer::restartLabelFormat("Press %s to start");
 #endif
 std::string		HUDRenderer::resumeLabel("Press Pause to resume");
+std::string		HUDRenderer::autoPilotLabel("AutoPilot on");
 std::string		HUDRenderer::cancelDestructLabel("Press Destruct to cancel");
 std::string		HUDRenderer::gameOverLabel("GAME OVER");
 
@@ -255,6 +256,7 @@ void			HUDRenderer::setBigFontSize(int, int height)
   resumeLabelWidth = bigFont.getWidth(resumeLabel);
   cancelDestructLabelWidth = bigFont.getWidth(cancelDestructLabel);
   gameOverLabelWidth = bigFont.getWidth(gameOverLabel);
+  autoPilotWidth = bigFont.getWidth(autoPilotLabel);
 }
 
 void			HUDRenderer::setAlertFontSize(int, int height)
@@ -1352,9 +1354,19 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
       while (*flagHelpBase) flagHelpBase++;
       flagHelpBase++;
     }
+
   }
 
-  // draw times
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank && globalClock.isOn()) {
+    float y = 0.5f * (float)height + bigFont.getSpacing();
+    if (myTank->isAutoPilot()) {
+      hudColor3fv(messageColor);
+      bigFont.draw(autoPilotLabel, 0.5f * ((float)width - autoPilotWidth), y);
+    }
+  }
+
+    // draw times
   renderTimes();
 
   // draw message composition
@@ -1426,6 +1438,11 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
       hudColor3fv(messageColor);
       bigFont.draw(resumeLabel,
 			0.5f * ((float)width - resumeLabelWidth), y);
+    }
+    else if (myTank->isAutoPilot()) {
+      hudColor3fv(messageColor);
+      bigFont.draw(autoPilotLabel,
+			0.5f * ((float)width - autoPilotWidth), y);
     }
   }
 

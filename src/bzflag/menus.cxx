@@ -685,6 +685,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1)
   controls.push_back(createLabel(NULL, "Silience/UnSilence Key:"));
   controls.push_back(createLabel(NULL, "Server Command Key:"));
   controls.push_back(createLabel(NULL, "Hunt Key:"));
+  controls.push_back(createLabel(NULL, "AutoPilot Key: "));
 
   initNavigation(controls, 1, controls.size()-1);
 
@@ -716,6 +717,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1)
   initkeymap("silence", 27);
   initkeymap("servercommand", 28);
   initkeymap("hunt", 29);
+  initkeymap("autopilot", 30);
 }
 
 void			KeyboardMapMenu::initkeymap(const std::string& name, int index)
@@ -1926,6 +1928,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.push_back(createLabel("Silience/UnSilence"));
   list.push_back(createLabel("Server Admin"));
   list.push_back(createLabel("Hunt"));
+  list.push_back(createLabel("Auto Pilot"));
   list.push_back(createLabel("show/dismiss menu", "Esc:"));
 }
 
