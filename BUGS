@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- saveworld does not save world weapons
+
 - Something is wrong with the shininess I think. When I play on rabbit
   server with only one other player which is rabbit. When I set the time of
   day close to sunrise, as soon as the rabbit becomes visible in 3D view,
@@ -31,7 +33,6 @@ recent bugs
   A quick fix would make bots always spawn at 0
   http://bzflag.mebigfatguy.com/robobase.bzw
   start as bzfs -world c:\robobase.bzw -fb -j -c
-
 
 - doc/guide/NetworkProtocol.xml is not up to date
 
