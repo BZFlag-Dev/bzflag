@@ -326,15 +326,15 @@ public:
 
   void ban(const char *ipList) {
     char *pStart = (char *)(const char *)ipList;
-    char *pSemi;
+    char *pSep;
 
     in_addr mask;
-    while ((pSemi = strchr(pStart, ';')) != NULL) {
-      *pSemi = 0;
+    while ((pSep = strchr(pStart, ',')) != NULL) {
+      *pSep = 0;
       if (convert(pStart, mask))
         ban(mask);
-      *pSemi = ';';
-      pStart = pSemi + 1;
+      *pSep = ',';
+      pStart = pSep + 1;
     }
     if (convert(pStart, mask))
       ban(mask);
@@ -344,16 +344,14 @@ public:
     int numBans = banList.getLength();
     for (int i = 0; i < numBans; i++) {
       in_addr mask = banList[i];
-      if (mask.S_un.S_un_b.s_b1 == 255)
-        mask.S_un.S_un_b.s_b1 = ipAddr.S_un.S_un_b.s_b1;
-      if (mask.S_un.S_un_b.s_b2 == 255)
-        mask.S_un.S_un_b.s_b2 = ipAddr.S_un.S_un_b.s_b2;
-      if (mask.S_un.S_un_b.s_b3 == 255)
-        mask.S_un.S_un_b.s_b3 = ipAddr.S_un.S_un_b.s_b3;
-      if (mask.S_un.S_un_b.s_b4 == 255)
-        mask.S_un.S_un_b.s_b4 = ipAddr.S_un.S_un_b.s_b4;
+      if (mask.s_addr & 0x00ffffff == 0x00ffffff)
+        mask.s_addr = (mask.s_addr & 0xff000000) | (ipAddr.s_addr | 0xff000000);
+      if (mask.s_addr & 0x0000ffff == 0x0000ffff)
+        mask.s_addr = (mask.s_addr & 0xffff0000) | (ipAddr.s_addr | 0xffff0000);
+      if (mask.s_addr & 0x000000ff == 0x000000ff)
+        mask.s_addr = (mask.s_addr & 0xffffff00) | (ipAddr.s_addr | 0xffffff00);
 
-      if (mask.S_un.S_addr == ipAddr.S_un.S_addr)
+      if (mask.s_addr == ipAddr.s_addr)
         return false;
     }
     return true;
@@ -384,10 +382,7 @@ private:
     else
       b[3] = atoi(ip);
 
-    mask.S_un.S_un_b.s_b1 = b[0];
-    mask.S_un.S_un_b.s_b2 = b[1];
-    mask.S_un.S_un_b.s_b3 = b[2];
-    mask.S_un.S_un_b.s_b4 = b[3];
+	mask.s_addr= b[0] << 24 | b[1] << 16 | b[2] << 8 | b[3];
     return true;
   }
 
@@ -4866,7 +4861,7 @@ static void terminateServer(int /*sig*/)
 
 static const char *usageString =
 "[-a <vel> <rot>] [-b] [-c] [+f {good|<id>}] [-f {bad|<id>}] [-g] "
-"[-ban ip{;ip}*] "
+"[-ban ip{,ip}*] "
 "[-h] "
 "[-i interface] "
 "[-j] "
@@ -4932,7 +4927,7 @@ static void extraUsage(const char *pname)
   cout << "usage: " << pname << " " << usageString << endl;
   cout << "\t -a: maximum acceleration settings" << endl;
   cout << "\t -b: randomly oriented buildings" << endl;
-  cout << "\t -ban ip{;ip}*: ban players based on ip address" << endl;
+  cout << "\t -ban ip{,ip}*: ban players based on ip address" << endl;
   cout << "\t -c: capture-the-flag style game" << endl;
 //  cout << "\t -d: increase debugging level" << endl;
   cout << "\t +f: always have flag <id> available" << endl;
@@ -5207,18 +5202,18 @@ static void parse(int argc, char **argv)
 	angularAcceleration = 0.0f;
       gameStyle |= int(InertiaGameStyle);
     }
-    else if (strcmp(argv[i], "-b") == 0) {
-      // random rotation to boxes in capture-the-flag game
-      randomBoxes = True;
-    }
 	else if (strcmp(argv[i], "-ban") == 0) {
 		if (++i == argc) {
-			cerr << "argument expected for -f" << endl;
+			cerr << "argument expected for -ban" << endl;
 			usage(argv[0]);
 		}
 		else
 			acl.ban(argv[i]);
 	}
+    else if (strcmp(argv[i], "-b") == 0) {
+      // random rotation to boxes in capture-the-flag game
+      randomBoxes = True;
+    }
     else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
       randomCTF = True;

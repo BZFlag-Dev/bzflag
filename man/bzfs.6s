@@ -6,6 +6,7 @@ bzfs \- BZFlag game server
 .B bzfs
 [\fB\-a \fIvelocity\fR \fIrotation\fR]
 [\fB\-b\fR]
+[\fB\-ban \fIaddress\fR[,...]]
 [\fB\-c\fR]
 [\fB\-cr\fR]
 [\fB\+f \fR{\fIgood\fR|\fIflag-id\fR}]
@@ -57,6 +58,10 @@ yield greater inertia.
 .TP
 .B -b
 When \fB-c\fR is supplied, this option randomly rotates the buildings.
+.TP
+.B -ban \fIaddress\fR[,...]
+Prohibits connections from the listed addresses. Trailing 255 bytes are
+treated as mask bytes.
 .TP
 .B -c
 Enables the capture-the-flag style game.  By default, the free-for-all
