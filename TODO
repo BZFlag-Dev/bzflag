@@ -1,21 +1,33 @@
 to do list for bzflag
 ---------------------
 
+These should happen before the next release:
+
+* version as strings as in 1.9.0-cvs20030604
+
 * Some BZDB variables are still incorrectly cached. Root them
   out and use callbacks, or refetch them always.
-
-* create new 64x64, 48x48, 32x32, 16x16 official bzflag icons.
-  Should feature the BZFlag tank. The large ones should include
-  the BZFlag logo. All should feature transparency.
 
 * convert server to use 5154 as the default port, because IANA rocks!
 
 * remove -noudp option
 
+* server should pick client enter position
+
+* describe rabbit hunt in man page (and in-game help?)
+
+* add byte lengths to each world component
+
+* support gameinfo requests as one time udp packets (if udp)
+
+These are lower priority
+
+* create new 64x64, 48x48, 32x32, 16x16 official bzflag icons.
+  Should feature the BZFlag tank. The large ones should include
+  the BZFlag logo. All should feature transparency.
+
 * move -synctime data to different Msg packet, or create new one.
   MsgSetVar (ala 1.8) would be a good one
-
-* server should pick client enter position
 
 * flags should all be nullflags from client view until
   a) you pick one up
@@ -38,13 +50,9 @@ to do list for bzflag
   have to be atoi()'ed or eval()'ed all the time. isTrue would
   also be a good one to cache
 
-* describe rabbit hunt in man page (and in-game help?)
-
 * document headers with JavaDoc-style comments (for doxygen)
 
 * update doc/protocol.txt all descriptors to new format
-
-* add byte lengths to each world component
 
 * move team base packing into WorldInfo (bzfs)
   and add height (z)
@@ -69,8 +77,6 @@ to do list for bzflag
    including:
 
 * ipv6 support
-
-* version as strings as in 1.9.0-cvs20030604
 
 * if we stay with tcp/udp then use the same ports for the
    udp pipe as for the tcp pipe on both client and server
@@ -97,8 +103,6 @@ to do list for bzflag
 
 * implement one way cross server teleporters
 
-* implement a visual "server list" game server
-
 * move robots to separate binaries and allow either the
    client or server to exec them. Have a server option
    to keep n players in the game which auto spawns/kills
@@ -122,6 +126,8 @@ to do list for bzflag
 * radio chat:
    allow players to communicate via low-quality audio.
    already some support built into the server for this.
+
+* implement a visual "server list" game server
 
 * pre-game waiting room:
    provide a means for players to gather before and after
