@@ -3905,9 +3905,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 				}
 				parseCommand(message, t);
       }
-			else if (targetPlayer == AdminPlayers){
-				sendMessage (t, AdminPlayers, message, true);
-				
+			else if (targetPlayer == AdminPlayers && hasPerm(t, PlayerAccessInfo::adminMessages)) {
+				sendMessage (t, AdminPlayers, message, true);			
 			}
       // check if the target player is invalid
       else if (targetPlayer < LastRealPlayer && 
