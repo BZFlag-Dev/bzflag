@@ -217,12 +217,14 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
-InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float y, float z, float r) const
+InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location,
+				     float x, float y, float z, float r,
+				     float height) const
 {
   int i;
-  const float flagHeight = BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT);
   for (i = 0; i < numBases; i++) {
-	  if ((bases[i].pos[2] < (z + flagHeight)) && ((bases[i].pos[2] + bases[i].size[2]) > z)
+    if ((bases[i].pos[2] < (z + height))
+	&& ((bases[i].pos[2] + bases[i].size[2]) > z)
 	&&	(inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r))) {
       if(location != NULL)
 	*location = &bases[i];
@@ -230,14 +232,16 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
     }
   }
   for (i = 0; i < numBoxes; i++)
-    if ((boxes[i].pos[2] < (z + flagHeight)) && ((boxes[i].pos[2] + boxes[i].size[2]) > z)
+    if ((boxes[i].pos[2] < (z + height))
+	&& ((boxes[i].pos[2] + boxes[i].size[2]) > z)
 	&&	(inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r))) {
       if (location != NULL)
 	*location = &boxes[i];
       return IN_BOX;
     }
   for (i = 0; i < numPyramids; i++) {
-    if ((pyramids[i].pos[2] < (z + flagHeight)) && ((pyramids[i].pos[2] + pyramids[i].size[2]) > z)
+    if ((pyramids[i].pos[2] < (z + height))
+	&& ((pyramids[i].pos[2] + pyramids[i].size[2]) > z)
 	&&	(inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r))) {
       if (location != NULL)
 	*location = &pyramids[i];
@@ -245,7 +249,8 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
     }
   }
   for (i = 0; i < numTeleporters; i++)
-    if ((teleporters[i].pos[2] < (z + flagHeight)) && ((teleporters[i].pos[2] + teleporters[i].size[2]) > z)
+    if ((teleporters[i].pos[2] < (z + height))
+	&& ((teleporters[i].pos[2] + teleporters[i].size[2]) > z)
 	&&	(inRect(teleporters[i].pos, teleporters[i].rotation, teleporters[i].size, x, y, r))) {
       static ObstacleLocation __teleporter;
       __teleporter = teleporters[i];
@@ -282,7 +287,6 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackFloat(databasePtr, pWall->rotation);
     databasePtr = nboPackFloat(databasePtr, pWall->size[0]);
     // walls have no depth
-    // databasePtr = nboPackFloat(databasePtr, pWall->size[1]);
     databasePtr = nboPackFloat(databasePtr, pWall->size[2]);
   }
 
@@ -345,16 +349,6 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
     databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[1]));
   }
-
-/*  Base *pBase;
-  for (i = 0, pBase = bases; i < numBases; i++, pBase++) {
-    databasePtr = nboPackUShort(databasePtr, WorldCodeBase);
-    databasePtr = nboPackUShort(databasePtr, team); // FIXME?
-    databasePtr = nboPackVector(databasePtr, pBase->pos);
-    databasePtr = nboPackFloat(databasePtr, pBase->rotation);
-    databasePtr = nboPackFloat(databasePtr, pBase->size[0]);
-    databasePtr = nboPackFloat(databasePtr, pBase->size[1]);
-  }*/
 
   return 1;
 }

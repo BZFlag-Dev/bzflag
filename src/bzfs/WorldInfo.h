@@ -83,7 +83,16 @@ class WorldInfo {
     int to[2];
   };
 
-  InBuildingType inBuilding(ObstacleLocation **location, float x, float y, float z, float radius) const;
+  /** check collision between world object and a cylinder.
+    * return value is kind of collision.
+    * location will return a pointer to the world colliding object
+    * Checking is quite raw
+    */
+  InBuildingType inBuilding(ObstacleLocation **location,
+			    float x, float y, float z,
+			    float radius, float height = 0.0f) const;
+  /** check collision between a rectangle and a circle
+    */
   bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
 
  private:

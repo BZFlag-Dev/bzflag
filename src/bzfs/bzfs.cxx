@@ -2536,8 +2536,12 @@ void resetFlag(int flagIndex)
     pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[2] = 0.0f;
-    int topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
-					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
+    int topmosttype = world->inBuilding(&obj,
+					pFlagInfo->flag.position[0],
+					pFlagInfo->flag.position[1],
+					pFlagInfo->flag.position[2],
+					r,
+					BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT));
     while (topmosttype != NOT_IN_BUILDING) {
       if ((clOptions->flagsOnBuildings && (topmosttype == IN_BOX))
 	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT))) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
@@ -2551,8 +2555,12 @@ void resetFlag(int flagIndex)
         pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
         pFlagInfo->flag.position[2] = 0.0f;
       }
-      topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
-                                           pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
+      topmosttype = world->inBuilding(&obj,
+				      pFlagInfo->flag.position[0],
+				      pFlagInfo->flag.position[1],
+				      pFlagInfo->flag.position[2],
+				      r,
+				      BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT));
     }
   }
 
@@ -2847,21 +2855,27 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 
     int lastType = IN_PYRAMID;
     while ((lastType == IN_PYRAMID) || (lastType == IN_TELEPORTER)) {
-      pos[0] = (bzfrand() * size) - (size/2.0f);
-      pos[1] = (bzfrand() * size) - (size/2.0f);
+      pos[0] = (bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+      pos[1] = (bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
       pos[2] = (bzfrand() * maxWorldHeight);
 
-      int type = world->inBuilding(&building, pos[0], pos[1], pos[2], tankRadius);
+      int type = world->inBuilding(&building,
+				   pos[0], pos[1], pos[2],
+				   tankRadius, BZDBCache::tankHeight);
       if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
         pos[2] = 0.0f;
-        type = world->inBuilding(&building, pos[0], pos[1], pos[2], tankRadius);
+        type = world->inBuilding(&building,
+				 pos[0], pos[1], pos[2],
+				 tankRadius, BZDBCache::tankHeight);
       }
 
       lastType = NOT_IN_BUILDING;
       while (type != NOT_IN_BUILDING) {
-        pos[2] = building->pos[2] + building->size[2] + 0.25f;
+        pos[2] = building->pos[2] + building->size[2];
         lastType = type;
-        type = world->inBuilding(&building, pos[0], pos[1], pos[2], tankRadius);
+        type = world->inBuilding(&building,
+				 pos[0], pos[1], pos[2], tankRadius,
+				 BZDBCache::tankHeight);
       }
     }
   }
@@ -3177,14 +3191,18 @@ static void dropFlag(int playerIndex, float pos[3])
   else
     drpFlag.flag.status = FlagGoing;
 
-  topmosttype = world->inBuilding(&container, pos[0], pos[1], pos[2], 0);
+  topmosttype = world->inBuilding(&container,
+				  pos[0], pos[1], pos[2], 0,
+				  BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT));
 
   // the tank is inside a building - find the roof
   if (topmosttype != NOT_IN_BUILDING) {
     topmost = container;
     int tmp;
     for (float i = container->pos[2] + container->size[2];
-	 (tmp = world->inBuilding(&container, pos[0], pos[1], i, 0)) !=
+	 (tmp = world->inBuilding(&container,
+				  pos[0], pos[1], i, 0,
+				  BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT))) !=
 	   NOT_IN_BUILDING; i += 0.1f) {
       topmosttype = tmp;
       topmost = container;
@@ -3194,7 +3212,9 @@ static void dropFlag(int playerIndex, float pos[3])
   // the tank is _not_ inside a building - find the floor
   else {
     for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
-      topmosttype = world->inBuilding(&topmost, pos[0], pos[1], i, 0);
+      topmosttype = world->inBuilding(&topmost,
+				      pos[0], pos[1], i, 0,
+				      BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT));
       if (topmosttype != NOT_IN_BUILDING)
 	break;
     }
@@ -3235,7 +3255,10 @@ static void dropFlag(int playerIndex, float pos[3])
     // people were cheating by dropping their flag above the nearest
     // convenient building which makes it fly all the way back to
     // your own base.  make it fly to the center of the board.
-    topmosttype = world->inBuilding(&container, 0.0f, 0.0f, 0.0f, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
+    topmosttype = world->inBuilding(&container,
+				    0.0f, 0.0f, 0.0f,
+				    BZDB->eval(StateDatabase::BZDB_TANKRADIUS),
+				    BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT));
     if (topmosttype == NOT_IN_BUILDING) {
 	drpFlag.flag.landingPosition[0] = 0.0f;
 	drpFlag.flag.landingPosition[1] = 0.0f;
