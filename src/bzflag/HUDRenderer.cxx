@@ -175,7 +175,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
     marker[i].color[1] = 0.0f;
     marker[i].color[2] = 0.0f;
   }
-  flagHelpDesc = NULL;
 
   // initialize clocks
   globalClock.setClock(-1.0f, 0.8f, 0.4f);
@@ -487,7 +486,6 @@ void			HUDRenderer::setComposing(const std::string &prompt,
 
 void			HUDRenderer::setFlagHelp(FlagDesc* desc, float duration)
 {
-  flagHelpDesc = desc;
   flagHelpClock.setClock(duration);
 
   // Generate the formatted help for this flag
