@@ -19,11 +19,7 @@ void formatDebug(const char* fmt, ...)
     char buffer[8192];
     va_list args;
     va_start(args, fmt);
-#if defined(_WIN32)
-    _vsnprintf(buffer, 8192, fmt, args);
-#else
     vsnprintf(buffer, 8192, fmt, args);
-#endif
     va_end(args);
     std::cout << buffer;
   }

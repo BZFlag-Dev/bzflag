@@ -42,11 +42,7 @@ class string_util {
       // not all platforms support vsnprintf so we'll use vsprintf and a
       // big temporary buffer and hope for the best.
       char buffer[8192];
-#if defined(_WIN32)
-      _vsnprintf(buffer, 8192, fmt, args);
-#else
       vsnprintf(buffer, 8192, fmt, args);
-#endif
       return std::string(buffer);
     }
     static std::string format(const char* fmt, ...) {
