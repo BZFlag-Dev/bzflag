@@ -107,10 +107,12 @@ void                    SDLJoystick::getJoyDevices(std::vector<std::string>
 						 &list) const
 {
   int numJoystick = SDL_NumJoysticks();
+  if (numJoystick > 9) //user would have to be insane to have this many anyway
+    numJoystick = 9;
   int i;
   for (i = 0; i < numJoystick; i++) {
-    char joystickName[256];
-    sprintf(joystickName, "%d - %s", i, SDL_JoystickName(i));
+    char joystickName[50]; //only room for so much on the menu
+    snprintf(joystickName, 50, "%d - %s", i, SDL_JoystickName(i));
     list.push_back(joystickName);
   }
 }
