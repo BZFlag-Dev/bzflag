@@ -563,6 +563,9 @@
 				RelativePath="..\..\src\common\OSFile.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\common\ParseColor.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\common\PlayerState.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -878,6 +881,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Pack.h">
+			</File>
+			<File
+				RelativePath="..\..\include\ParseColor.h">
 			</File>
 			<File
 				RelativePath="..\..\include\PlayerState.h">
