@@ -20,7 +20,7 @@
 #include "WinDisplay.h"
 #include "WinVisual.h"
 #include "WinWindow.h"
-#include "BzfJoystick.h"  // no native j/s implementation
+#include "WinJoystick.h"
 #endif
 
 PlatformFactory*	PlatformFactory::getInstance()
@@ -108,12 +108,14 @@ BzfMedia*		WinPlatformFactory::createMedia()
 #endif
 }
 
-#ifdef HAVE_SDL
 BzfJoystick*		WinPlatformFactory::createJoystick()
 {
+#ifdef HAVE_SDL
   return new SDLJoystick();
-}
+#else
+  return new WinJoystick();
 #endif
+}
 
 // Local Variables: ***
 // mode:C++ ***

@@ -185,6 +185,10 @@ SOURCE=..\..\src\platform\WinDisplay.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\platform\WinJoystick.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\platform\WinMedia.cxx
 # End Source File
 # Begin Source File
@@ -294,6 +298,10 @@ SOURCE=..\..\include\win32.h
 # Begin Source File
 
 SOURCE=..\..\src\platform\WinDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\platform\WinJoystick.h
 # End Source File
 # Begin Source File
 
