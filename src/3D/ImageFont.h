@@ -10,20 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef _TEXTURE_FONT_H_
-#define _TEXTURE_FONT_H_
+#ifndef _IMAGE_FONT_H_
+#define _IMAGE_FONT_H_
 
 #ifdef _MSC_VER
   #pragma warning(disable : 4786)  // Disable warning message
 #endif
 
-#include "OSFile.h"
-#include "Singleton.h"
-#include "OpenGLGState.h"
-
-#include <map>
 #include <string>
-#include <vector>
+#include "bzfgl.h"
+#include "OSFile.h"
 
 #define MAX_TEXTURE_FONT_CHARS	(128)
 
@@ -74,48 +70,4 @@ private:
   ImageFont &operator=(const ImageFont&);
 };
 
-///////////////////////
-
-class TextureFont : public ImageFont {
-public:
-  TextureFont();
-  virtual ~TextureFont();
-
-  virtual void build();
-  virtual bool isBuilt() const {return textureID != -1;}
-
-  virtual void filter(bool dofilter);
-  virtual void drawString(float scale, GLfloat color[3], const char *str, int len);
-
-  virtual void free();
-
-private:
-  void preLoadLists();
-
-  unsigned int	listIDs[MAX_TEXTURE_FONT_CHARS];
-
-  int	      textureID;
-  OpenGLGState gstate;
-};
-
-///////////////////////
-
-class BitmapFont : public ImageFont {
-public:
-  BitmapFont();
-  virtual ~BitmapFont();
-
-  virtual void build();
-  virtual bool isBuilt() const {return loaded;}
-
-  virtual void filter(bool dofilter);
-  virtual void drawString(float scale, GLfloat color[3], const char *str, int len);
-
-  virtual void free();
-
-private:
-  unsigned char *bitmaps[MAX_TEXTURE_FONT_CHARS];
-  bool        loaded;
-};
-
-#endif //_TEXTURE_FONT_H_
+#endif //_IMAGE_FONT_H_

@@ -139,6 +139,7 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1">
 			<Tool
 				Name="VCCLCompilerTool"/>
@@ -179,6 +180,9 @@
 				RelativePath="..\..\src\3d\3DOptionsManager.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\3d\BitmapFont.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\3d\DisplayListManager.cxx">
 			</File>
 			<File
@@ -186,6 +190,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\3d\FontManager.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\3d\ImageFont.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\3d\TextureFont.cxx">
@@ -202,6 +209,9 @@
 				RelativePath="..\..\include\3DOptionsManager.h">
 			</File>
 			<File
+				RelativePath="..\..\src\3d\BitmapFont.h">
+			</File>
+			<File
 				RelativePath="..\..\include\DisplayListManager.h">
 			</File>
 			<File
@@ -211,7 +221,10 @@
 				RelativePath="..\..\include\FontManager.h">
 			</File>
 			<File
-				RelativePath="..\..\include\TextureFont.h">
+				RelativePath="..\..\src\3d\ImageFont.h">
+			</File>
+			<File
+				RelativePath="..\..\src\3d\TextureFont.h">
 			</File>
 			<File
 				RelativePath="..\..\include\TextureManager.h">

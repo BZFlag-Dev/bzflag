@@ -10,22 +10,30 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+// BZFlag common header
+#include "common.h"
+
+// Interface header
+#include "FontManager.h"
+
+// System headers
 #include <math.h>
 #include <string>
 
-#include "common.h"
+// Global implementation headers
 #include "bzfgl.h"
-#include "FontManager.h"
-#include "TextureFont.h"
 #include "bzfio.h"
 #include "AnsiCodes.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
-#include "OpenGLTexture.h"
-#include "TextureManager.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
+
+// Local implementation headers
+#include "ImageFont.h"
+#include "BitmapFont.h"
+#include "TextureFont.h"
 
 // initialize the singleton
 template <>

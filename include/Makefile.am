@@ -118,7 +118,6 @@ noinst_HEADERS =			\
 	TextUtils.h			\
 	TextureManager.h		\
 	TextureMatrix.h			\
-	TextureFont.h			\
 	TimeBomb.h			\
 	TimeKeeper.h			\
 	TracerSceneNode.h		\

@@ -14,6 +14,9 @@
 #pragma warning( 4: 4786 )
 #endif
 
+// BZFlag common header
+#include "common.h"
+
 // interface headers
 #include "TextureManager.h"
 
@@ -22,11 +25,12 @@
 #include <string>
 
 // common implementation headers
+#include "bzfgl.h"
 #include "TextUtils.h"
 #include "global.h"
 #include "MediaFile.h"
 #include "ErrorHandler.h"
-
+#include "OpenGLTexture.h"
 #include "OSFile.h"
 
 /*const int NO_VARIANT = (-1); */
