@@ -349,7 +349,8 @@ const char* URLManager::getErrorString() const
   
   // LIBCURL didn't get curl_easy_strerror() until version 7.12.0.
   // BZFlag isn't currently limiting the libcurl version, so here's
-  // a local function to do the same.
+  // a local function to do the same. It should be compatible with
+  // curl versions all the way back to 7.9.5.
 
 #define STRING_CASE(x)  \
   case CURLE_##x: return #x
@@ -417,8 +418,8 @@ const char* URLManager::getErrorString() const
     STRING_CASE(SSL_PEER_CERTIFICATE);
     STRING_CASE(GOT_NOTHING);
     STRING_CASE(SSL_ENGINE_NOTFOUND);
-#if LIBCURL_VERSION_NUM >= 0x070C03
     STRING_CASE(SSL_ENGINE_SETFAILED);
+#if LIBCURL_VERSION_NUM >= 0x070C03
     STRING_CASE(SEND_ERROR);
     STRING_CASE(RECV_ERROR);
     STRING_CASE(SHARE_IN_USE);
