@@ -45,11 +45,12 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   
   // set a default message mask
   showMessageType(MsgAddPlayer);
+  showMessageType(MsgKilled);
+  showMessageType(MsgMessage);
+  showMessageType(MsgNewRabbit);
+  showMessageType(MsgPause);
   showMessageType(MsgRemovePlayer);
   showMessageType(MsgSuperKill);
-  showMessageType(MsgMessage);
-  showMessageType(MsgSetVar);
-  showMessageType(MsgScore);
   
   // initialise the colormap
   colorMap[NoTeam] = Yellow;
@@ -81,9 +82,6 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
   while ((e = sLink.read(code, len, inbuf, 100)) == 1) {
-    // check if we're interested in this message type
-    if (!messageMask[code])
-      continue;
 
     void* vbuf = inbuf;
     PlayerId p;
@@ -92,6 +90,28 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 
     switch (code) {
 
+    case MsgNewRabbit:
+      vbuf = nboUnpackUByte(vbuf, p);
+      returnString = "*** '" + players[p].name + "' is now the rabbit.";
+      break;
+      
+    case MsgPause:
+      uint8_t paused;
+      vbuf = nboUnpackUByte(vbuf, p);
+      vbuf = nboUnpackUByte(vbuf, paused);
+      returnString = "*** '" + players[p].name + "': " + 
+	(paused ? "paused" : "resumed") + ".";
+      break;
+      
+    case MsgAlive:
+      vbuf = nboUnpackUByte(vbuf, p);
+      returnString = "*** '" + players[p].name + "' has respawned.";
+      break;
+
+    case MsgLagPing:
+      returnString = "*** Received lag ping from server.";
+      break;
+      
     case MsgSetVar:
       // code stolen from playing.cxx
       uint16_t numVars;
@@ -114,7 +134,6 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 	BZDB.setPersistent(name, false);
 	BZDB.setPermission(name, StateDatabase::Locked);
       }
-      str = returnString;
       return NoMessage;
 
     case MsgAddPlayer:
@@ -138,8 +157,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       if (ui != NULL)
 	ui->addedPlayer(p);
       returnString = returnString + "*** '" + callsign + "' joined the game.";
-      str = returnString;
-      return GotMessage;
+      break;
 
     case MsgRemovePlayer:
       vbuf = nboUnpackUByte(vbuf, p);
@@ -148,8 +166,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       if (ui != NULL)
 	ui->removingPlayer(p);
       players.erase(p);
-      str = returnString;
-      return GotMessage;
+      break;
 
     case MsgKilled:
       PlayerId victim, killer;
@@ -165,19 +182,14 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       it = players.find(killer);
       killerName = (it != players.end() ? it->second.name : "<unknown>");
       returnString = "*** ";
-      returnString += victimName + ": ";
-      if (killer == victim) {
-	returnString += "blew myself up";
-      }
-      else {
-	returnString += "destroyed by ";
-	returnString += killerName;
-      }
-      str = returnString;
-      return GotMessage;
+      returnString = returnString + "'" + victimName + "' ";
+      if (killer == victim)
+	returnString += "blew myself up.";
+      else
+	returnString = returnString + "destroyed by '" + killerName + "'.";
+      break;
 
     case MsgSuperKill:
-      str = returnString;
       return Superkilled;
 
     case MsgScore: {
@@ -235,25 +247,29 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 	  sendMessage(std::string("bzadmin ") + getAppVersion(), src);
 	  if (ui != NULL)
 	    ui->outputMessage("    [Sent versioninfo per request]", Default);
+	  return NoMessage;
 	}
 	else {
 	  returnString = formatMessage((char*)vbuf, src, dst, dstTeam, me);
-	  str = returnString;
 	  PlayerIdMap::const_iterator iter = players.find(src);
 	  colorCode = (iter == players.end() ? 
 		       colorMap[NoTeam] : colorMap[iter->second.team]);
-	  return GotMessage;
 	}
       }
+      break;
+    }
+    
+    if (messageMask[code]) {
+      str = returnString;
+      return GotMessage;
     }
   }
-
+  
   if (sLink.getState() != ServerLink::Okay) {
     str = returnString;
     return CommError;
   }
-
-  str = returnString;
+  
   return NoMessage;
 }
 
@@ -311,7 +327,8 @@ void BZAdminClient::runLoop() {
 
 void BZAdminClient::sendMessage(const std::string& msg,
 				PlayerId target) {
-  // /set is a local command, don't send it, just list the BZDB variables
+  // local commands:
+  // /set lists all BZDB variables
   if (msg == "/set") {
     if (ui != NULL)
       BZDB.iterate(listSetVars, this);
