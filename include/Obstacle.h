@@ -84,9 +84,9 @@ class Obstacle {
     float		width;
     float		breadth;
     float		height;
-	bool		driveThrough;
-	bool		shootThrough;
-	bool		ZFlip;
+    bool		driveThrough;
+    bool		shootThrough;
+    bool		ZFlip;
 };
 
 class ObstacleSceneNodeGenerator {
