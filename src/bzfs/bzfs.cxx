@@ -374,6 +374,7 @@ static float safetyBasePos[NumTeams][3];
 static const char *worldFile = NULL;
 
 static float lagwarnthresh = -1.0;
+static int maxlagwarn = (int)Infinity;
 static char *password = NULL;
 
 static void stopPlayerPacketRelay();
@@ -3679,6 +3680,13 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
             player[playerIndex].team,message);
         killer.laglastwarn = killer.lagcount;
         killer.lagwarncount++;;
+	if (killer.lagwarncount++ > maxlagwarn) {
+	  // drop the player
+	  sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).", 
+	    maxlagwarn);
+	  sendMessage(playerIndex, killer.id, killer.team, message);
+	  removePlayer(playerIndex);
+	}
       }
     }
   }
@@ -4059,6 +4067,7 @@ static const char *usageString =
 "[-h] "
 "[-i interface] "
 "[-j] "
+"[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
 "[-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>]}] "
 "[-mps <score>] "
@@ -4158,7 +4167,8 @@ static void extraUsage(const char *pname)
   cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << endl;
   cout << "\t -world: world file to load" << endl;
   cout << "\t -passwd: specify a <password> for operator commands" << endl;
-  cout << "\t -lagwarn: lag warnign threshhold time [ms]" <<
+  cout << "\t -lagwarn: lag warning threshhold time [ms]" << endl;
+  cout << "\t -lagdrop: drop player after this many lag warnings" <<
   cout << "\nFlag codes:" << endl;
   for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
     cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
@@ -4668,6 +4678,13 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       lagwarnthresh = atoi(argv[i])/1000.0f;
+    }
+    else if (strcmp(argv[i], "-lagdrop") == 0) {
+      if (++i == argc) {
+	cerr << "argument expected for " << argv[i] << endl;
+	usage(argv[0]);
+      }
+      maxlagwarn = atoi(argv[i]);
     }
     else {
       cerr << "bad argument " << argv[i] << endl;

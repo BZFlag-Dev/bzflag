@@ -23,6 +23,7 @@ BZFlag 1.7e3
 * don't color shots when CB - Valery Fouques
 * jump while typing - Valery Fouques
 * don't lock on paused or not responding - Valery Fouques
+* -lagdrop server option - Colin Bayer
 
 BZFlag 1.7e2
 ------------
