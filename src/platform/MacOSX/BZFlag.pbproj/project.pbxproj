@@ -5480,6 +5480,9 @@
 				1404B12904B8798200A80164,
 				14B98BB504E1CB7100A80164,
 				14B98BB604E1CB7100A80164,
+				7BAE806705292DBA00FEBA07,
+				7BAE806805292DBA00FEBA07,
+				7BAE806905292DBA00FEBA07,
 			);
 			isa = PBXGroup;
 			path = bzfs;
@@ -7930,6 +7933,8 @@
 				1499D59604F99AC300A80164,
 				1499D59804F99AC300A80164,
 				14BB9F870506EAC300A80164,
+				7BAE806B05292DBA00FEBA07,
+				7BAE806C05292DBA00FEBA07,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7947,6 +7952,7 @@
 				1499D59704F99AC300A80164,
 				14BB9F860506EAC300A80164,
 				7BADDCC2051FCEE500FEBA07,
+				7BAE806A05292DBA00FEBA07,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9334,6 +9340,42 @@
 			isa = PBXGroup;
 			name = date;
 			refType = 4;
+		};
+		7BAE806705292DBA00FEBA07 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = commands.cxx;
+			refType = 4;
+		};
+		7BAE806805292DBA00FEBA07 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = commands.h;
+			refType = 4;
+		};
+		7BAE806905292DBA00FEBA07 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PlayerInfo.h;
+			refType = 4;
+		};
+		7BAE806A05292DBA00FEBA07 = {
+			fileRef = 7BAE806705292DBA00FEBA07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BAE806B05292DBA00FEBA07 = {
+			fileRef = 7BAE806805292DBA00FEBA07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BAE806C05292DBA00FEBA07 = {
+			fileRef = 7BAE806905292DBA00FEBA07;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		7BE2CA49051D096C00FEBA07 = {
 			buildActionMask = 2147483647;
