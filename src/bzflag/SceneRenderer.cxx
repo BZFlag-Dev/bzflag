@@ -117,19 +117,20 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
   (void)vendor; (void)renderer; (void)version; (void)extensions; // silence g++
 #ifdef GL_ABGR_EXT
-  if (extensions != NULL && strstr(extensions, "GL_EXT_abgr") != NULL
-  && vendor != NULL && strcmp(vendor, "SGI") == 0) {
+  if ((extensions != NULL && strstr(extensions, "GL_EXT_abgr") != NULL) &&
+      (vendor != NULL && strcmp(vendor, "SGI") == 0)) {
     // old hardware is faster with ABGR.  new hardware isn't.
-    if (strncmp(renderer, "GR1", 3) == 0 ||
-	strncmp(renderer, "VGX", 3) == 0 ||
-	strncmp(renderer, "LIGHT", 5) == 0 ||
-	strrncmp(renderer, "-XS", 3) == 0 ||
-	strrncmp(renderer, "-XSM", 4) == 0 ||
-	strrncmp(renderer, "-XS24", 5) == 0 ||
-	strrncmp(renderer, "-XS24-Z", 7) == 0 ||
-	strrncmp(renderer, "-XZ", 3) == 0 ||
-	strrncmp(renderer, "-Elan", 5) == 0 ||
-	strrncmp(renderer, "-Extreme", 8) == 0)
+    if ((renderer != NULL) && 
+	(strncmp(renderer, "GR1", 3) == 0 ||
+	 strncmp(renderer, "VGX", 3) == 0 ||
+	 strncmp(renderer, "LIGHT", 5) == 0 ||
+	 strrncmp(renderer, "-XS", 3) == 0 ||
+	 strrncmp(renderer, "-XSM", 4) == 0 ||
+	 strrncmp(renderer, "-XS24", 5) == 0 ||
+	 strrncmp(renderer, "-XS24-Z", 7) == 0 ||
+	 strrncmp(renderer, "-XZ", 3) == 0 ||
+	 strrncmp(renderer, "-Elan", 5) == 0 ||
+	 strrncmp(renderer, "-Extreme", 8) == 0))
       abgr = true;
   }
 #endif
@@ -146,10 +147,6 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   // polygon.
   if (version != NULL && strncmp(version, "1.1", 3) == 0)
     useFogHack = true;
-/* IMPACT at 1.0 used to allow fog hack but not after patch 1935
-  if (strncmp(renderer, "IMPACT", 6) == 0)
-    useFogHack = true;
-*/
 
   // prepare context with stuff that'll never change
   glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
