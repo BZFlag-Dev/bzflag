@@ -18,7 +18,6 @@ libObstacle_a_SOURCES =			\
 	BoxBuilding.cxx			\
 	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
-	TetraBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\
 	WallObstacle.cxx
@@ -28,8 +27,8 @@ libObstacle_a_SOURCES =			\
 	BoxBuilding.cxx			\
 	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
-	TetraBuilding.cxx		\
 	Teleporter.cxx			\
+	TetraBuilding.cxx		\
 	WallObstacle.cxx
 endif
 
