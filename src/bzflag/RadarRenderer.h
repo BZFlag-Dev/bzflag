@@ -58,7 +58,7 @@ class RadarRenderer {
     void		makeNoiseTexture();
     void		drawShot(const ShotPath*);
     void		drawTank(float x, float y, float z);
-    void		drawFlag(float x, float y, float z);
+    void		drawFlag(float x, float y, float z, bool drawAlways = false);
     void		drawFlagOnTank(float x, float y, float z);
 
     static float	colorScale(const float z, const float h, bool enhanced);

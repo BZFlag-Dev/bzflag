@@ -147,9 +147,9 @@ void RadarRenderer::drawTank(float x, float y, float z)
   glEnd();
 }
 
-void RadarRenderer::drawFlag(float x, float y, float)
+void RadarRenderer::drawFlag(float x, float y, float, bool drawAlways)
 {
-  if (!showFlags) return;
+  if (!showFlags && !drawAlways) return;
   GLfloat s = FlagRadius > 3.0f * ps ? FlagRadius : 3.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(x - s, y);
@@ -406,7 +406,9 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const float cs = colorScale(flag.position[2], MuzzleHeight, renderer.useEnhancedRadar());
       const float *flagcolor = Flag::getColor(flag.id);
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
-      drawFlag(flag.position[0], flag.position[1], flag.position[2]);
+      // always draw team flags
+      drawFlag(flag.position[0], flag.position[1], flag.position[2],
+              flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag);
     }
     // draw antidote flag
     const float* antidotePos =
