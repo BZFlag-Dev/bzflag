@@ -2854,6 +2854,11 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
   // if everybody left then reset world
   if (i == curMaxPlayers) {
+    for (BasesList::iterator it = bases->begin(); it != bases->end(); ++it) {
+      delete it->second;
+    }
+    bases->clear();
+
     if (clOptions->oneGameOnly) {
       done = true;
       exitCode = 0;
