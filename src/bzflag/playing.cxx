@@ -874,16 +874,18 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	  }
 	  else if(roamView == roamViewTrack || roamView == roamViewFollow ||
 	        roamView == roamViewFP) {
-	    bool found = false;
-	    for(int i = 0; i < maxPlayers; i++) {
-	      if(player[i] && player[i]->isAlive()) {
-		roamTrackTank = i;
-		found = true;
-		break;
+	    if (!player[roamTrackTank]->isAlive()) {
+	      bool found = false;
+	      for(int i = 0; i < maxPlayers; i++) {
+		if(player[i] && player[i]->isAlive()) {
+		  roamTrackTank = i;
+		  found = true;
+		  break;
+		}
 	      }
+	      if(!found)
+		roamView = roamViewFree;
 	    }
-	    if(!found)
-	      roamView = roamViewFree;
 	  }
 	  setRoamingLabel();
 	}
