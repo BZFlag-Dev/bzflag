@@ -3686,6 +3686,7 @@ ServerStartMenu::ServerStartMenu()
   items = &list->getList();
   items->push_back("Capture the Flag");
   items->push_back("Free for All");
+  items->push_back("Rabbit Hunt");
   list->update();
   controls.push_back(list);
 
@@ -3905,9 +3906,12 @@ void			ServerStartMenu::execute()
       args[arg++] = "-c";
       args[arg++] = "-b";
     }
-    else {
+    else if (((HUDuiList*)list[1])->getIndex() == 1){
       args[arg++] = "-r";
       args[arg++] = "-h";
+    }
+    else {
+      args[arg++] = "-rabbit";
     }
 
     // max players
