@@ -30,8 +30,7 @@ bzfs \- BZFlag game server
 [\fB\-lagdrop \fIwarn-count\fR]
 [\fB\-lagwarn \fR\fItime/ms\fR]
 [\fB\-maxidle \fR\fItime/s\fR]
-[\fB\-mo \fIobserver-count\fR]
-[\fB\-mp \fR{\fIcount\fR|[\fIrogue-count\fR]\fB,\fR[\fIred-count\fR]\fB,\fR[\fIgreen-count\fR]\fB,\fR[\fIblue-count\fR]\fB,\fR[\fIpurple-count\fR]}]
+[\fB\-mp \fR{\fIcount\fR|[\fIrogue-count\fR]\fB,\fR[\fIred-count\fR]\fB,\fR[\fIgreen-count\fR]\fB,\fR[\fIblue-count\fR]\fB,\fR[\fIpurple-count\fR],\fR[\fIobserver-count\fR]}]
 [\fB\-mps \fR{\fImax-score\fR}]
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR{\fImax-score\fR}]
@@ -44,7 +43,6 @@ bzfs \- BZFlag game server
 [\fB\-publiclist \fIurl\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
-[\fB\-r\fR]
 [\fB\-rabbit\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
@@ -191,10 +189,7 @@ Kick players that did not play longer than time seconds. Pausing players are
 not kicked. If a player uttered a word recently, he will be kicked after
 thrice the given time.
 .TP
-\fB\-mo \fIobserver-count\fR
-Sets the maximum number of observers; defaults to 3
-.TP
-\fB-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR]}
+\fB-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR],\fR[\fIobserver\fR]}
 Sets the maximum number of players, total or per team.  A single value sets
 the total number of players allowed.  Five comma separated values set the
 maximum for each team.  If a count is left blank then no limit is set for
@@ -262,9 +257,6 @@ especially if the \fB-p\fR option is also used.
 .B +r
 Makes most shots ricochet.
 Super bullets, shock waves, and guided missiles do not.
-.TP
-.B -r
-Allows rogues to join the game.  By default, no rogue players are allowed.
 .TP
 .B -rabbit
 Enables the rabbit-hunt style game.  By default, the free-for-all
@@ -395,11 +387,10 @@ The following game styles are recommended starting points.
 \fB-c\fR [\fB-b\fR]
 Basic capture-the-flag game.  It teaches teamwork and dogfighting skills.
 .TP
-\fB-r -s -t\fR
-Free-for-all with superflags and teleporters.  Rogues are allowed.
-Teaches players how to use superflags and teleporters for maximum effect.
-You may want to allow players to drop bad flags with any of -sa, -st,
-and -sw.
+\fB-s -t\fR
+Free-for-all with superflags and teleporters.  Teaches players how to use
+superflags and teleporters for maximum effect.  You may want to allow 
+players to drop bad flags with any of -sa, -st, and -sw.
 .RE
 .PP
 Notice that the maximum number of shots for these styles is one.  Having
