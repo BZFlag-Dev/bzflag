@@ -844,7 +844,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
   }
 }
 
-static float getKeyValue(bool pressed)
+static float getKeyValue(boolean pressed)
 {
   if (pressed)
     return 1;
@@ -884,10 +884,10 @@ static void		doMotion()
     myTank->resetKey();
 
     if (myTank->getMagnify())
-      rotation *= 0.2;
+      rotation *= 0.2f;
     if (myTank->hasSlowKeyboard()) {
-      rotation /= 2.0;
-      speed /= 2.0;
+      rotation /= 2.0f;
+      speed /= 2.0f;
     }
   }
   else {

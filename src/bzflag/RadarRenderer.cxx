@@ -51,7 +51,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
 
   // watch for context recreation
   OpenGLGState::registerContextInitializer(initContext, (void*)this);
-  if (makeNoise()==true)
+  if (makeNoise()==True)
     makeNoiseTexture();
   else noiseTexture=0;
 }
@@ -218,7 +218,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_TEXTURE_2D);
     }
 
-    else if (noiseTexture != 0 && renderer.useTexture()==true &&
+    else if (noiseTexture != 0 && renderer.useTexture()==True &&
 	renderer.useQuality()==0) {
       glEnable(GL_TEXTURE_2D);
       noiseTexture->execute();
