@@ -1020,8 +1020,9 @@ struct PlayerInfo {
     TimeKeeper lastupdate;
     TimeKeeper lastmsg;
 
-	// number of times they have tried to /password
-	int passwordAttempts;
+    // number of times they have tried to /password
+    int passwordAttempts;
+
 #ifdef NETWORK_STATS
     // message stats bloat
     TimeKeeper perSecondTime[2];
