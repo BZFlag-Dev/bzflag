@@ -394,7 +394,7 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   // this assumes bases have 6 parts - if they don't, it still works
   int part = 0;
   // repeat the textue once for the top and bottom, else use the old messed up way
-  while ((node = ((part != 2) ? nodeGen->getNextNode(
+  while ((node = ((part < 2) ? nodeGen->getNextNode(
                                 1,
                                 1, boxLOD) :
                                 nodeGen->getNextNode(
