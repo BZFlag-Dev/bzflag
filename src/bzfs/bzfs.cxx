@@ -1490,14 +1490,16 @@ static void addPlayer(int playerIndex)
     playerData->player.setTeam(ObserverTeam);
   } else {
     // automatically assign the player's team
-    if ((clOptions->autoTeam && t < (int)ObserverTeam) || t == AutomaticTeam) {
+    if (((clOptions->autoTeam && t < (int)ObserverTeam) || t == AutomaticTeam) &&
+        (t != RogueTeam || team[RogueTeam].team.size >= clOptions->maxTeam[RogueTeam])) {
       std::vector<TeamColor> minIndex;
       int sizeOfSmallestTeam = maxRealPlayers;
 
       for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
         const int teamsize = team[i].team.size;
         // if the team is not full and the smallest
-        if (teamsize < clOptions->maxTeam[i] && teamsize <= sizeOfSmallestTeam) {
+        if (teamsize < clOptions->maxTeam[i] && teamsize <= sizeOfSmallestTeam &&
+            teamsize != 0) {
           if (teamsize < sizeOfSmallestTeam) {
             minIndex.clear();
             sizeOfSmallestTeam = team[i].team.size;
@@ -4178,9 +4180,6 @@ int main(int argc, char **argv)
 	    }
 	  }
 
-	  /* the poll either terminates by itself or via a veto command */
-	  if (votingarbiter->isPollExpired()) {
-
 	    /* maybe successful, maybe not */
 	    if (votingarbiter->isPollSuccessful()) {
 	      // perform the action of the poll, if any
@@ -4261,7 +4260,6 @@ int main(int argc, char **argv)
 	    announcedClosure = false;
 	    announcedOpening = false;
 	    announcedResults = false;
-	  }
 
 	} else {
 	  // the poll may get enough votes early
