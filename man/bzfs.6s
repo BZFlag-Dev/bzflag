@@ -16,6 +16,7 @@ bzfs \- BZFlag game server
 [\fB\-f \fR{\fIbad\fR|\fIflag-id\fR}]
 [\fB\-fb\fR]
 [\fB\-g\fR]
+[\fB\-groupdb \fIfile\fR]
 [\fB\-h\fR]
 [\fB\-help\fR]
 [\fB\-helpmsg \fIfile\fR \fIname\fR]
@@ -31,6 +32,7 @@ bzfs \- BZFlag game server
 [\fB\-mts \fR{\fImax-score\fR}]
 [\fB\-noudp\fR]
 [\fB\-p \fIport\fR]
+[\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
 [\fB\-pr \fIport\fR]
 [\fB\-public \fIdescription\fR]
@@ -58,6 +60,7 @@ bzfs \- BZFlag game server
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-ttl \fIttl\fR]
+[\fB\-userdb \fIfile\fR]
 [\fB\-version\fR]
 [\fB\-world \fIworld-file\fR]
 .SH DESCRIPTION
@@ -119,6 +122,9 @@ Allow flags on box buildings.
 .B -g
 Quit after serving one game.
 .TP
+\fB-groupdb \fIfile\fR
+Load groups from file
+.TP
 .B -h
 Buildings are given random heights.
 .TP
@@ -177,6 +183,9 @@ Do not use a parallel UDP channel for player communication.
 \fB-p\fI port\fR
 Listen for game connections on \fIport\fR instead of the default port.
 Use \fB-help\fR to print the default port.
+.TP
+\fB-passdb\fI file\fR
+Load passwords from file
 .TP
 \fB-passwd\fI password\fR
 Specify a server administrator password for use in remote administration
@@ -309,6 +318,9 @@ Sets the maximum number of hops a ``ping'' reply will take.  This
 effectively limits the range of the server in the network.
 Clients more than \fItime-to-live\fR hops away will not receive notification
 of the server's existence.
+.TP
+\fB-userdb\fI file\fR
+Load group associations from file
 .TP
 .B -version
 Prints the version number of the executable.
@@ -518,6 +530,109 @@ Starts the countdown sequence for a timed game. Example:
 Dynamic change the maximum allowed lag time. Example:
 
 /lagwarn 300
+
+.SH USER MANAGEMENT
+
+Generally, you start with empty files for the user and password databases.
+These are maintained by the server, and modifyable through server commands.
+You will want to specify a groups file that has whatever specific groups you
+care to have on your server. These are laid out with one line in the file
+per group, using the following format:
+
+GROUP_NAME: perm1 perm2 perm3 ... permN
+
+Group names cannot have spaces, quotes, or other special characters in them.
+
+This would be a sample line defining a "cop" group:
+
+COPS:KICK BAN BANLIST UNBAN INFO
+
+The server will automatically create two groups if they are not specified in
+the groups file: DEFAULT and ADMIN. ADMIN has ever permission possible (similar
+to granting admin powers via /password). DEFAULT allows /lagstats, /idlestats,
+/flaghistory and /report.
+
+Once the server is running, users can register their callsigns and admins can
+set their group memberships. Users can use any command that their permissions
+allow. Every user, registered or not, is part of the DEFAULT group. When a
+user identifies, they become part of the REGISTERED group.
+
+The available permissions are as follows:
+
+IDLESTATS               /idlestats
+LAGSTATS                /lagstats
+FLAGMOD                 /flag
+FLAGHISTORY             /flaghistory
+LAGWARN                 /lagwarn
+KICK                    /kick
+BAN                     /ban
+BANLIST                 /banlist
+UNBAN                   /unban
+COUNTDOWN               /countdown
+ENDGAME                 /endgame
+SHUTDOWNSERVER          /shutdownserver
+SUPERKILL               /superkill
+PLAYERLIST              /playerlist
+INFO                    not implemented
+LISTPERMS               not implemented
+SHOWOTHERS              not implemented
+REMOVEPERMS             /removegroup
+SETPERMS		/setgroup
+SETALL			use of all set/remove commands
+SETPASSWORD		not implemented
+
+.TP
+.B /register {password}
+
+Register your current callsign to the specified password. Passwords
+must be at least 3 characters long, and the callsign may not contain
+quotes or other non-alphanumeric/space characters
+
+.TP
+.B /identify {password}
+
+Log in to a registered callsign
+
+.TP
+.B /setpass {password}
+
+Changes your password
+
+.TP
+.B /ghost {callsign} {password}
+
+Kicks off an impersonating player or ghost
+
+.TP
+.B /grouplist
+
+Lists the available user groups
+
+.TP
+.B /groupperms
+
+Lists the permissions for each group
+
+.TP
+.B /showgroup {callsign}
+
+Lists the groups that a registered user is a member of
+
+.TP
+.B /setgroup {callsign} {group}
+
+Add a user to a group
+
+.TP
+.B /removegroup {callsign} {group}
+
+Remove a user from a group
+
+.TP
+.B /reload
+
+Reloads the user, group, and password files (for synchronization between
+multiple servers on the same machine)
 
 .SH SEE ALSO
 bzflag(6), bzfls(6), bzfrelay(6), mrouted(1)
