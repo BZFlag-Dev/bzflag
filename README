@@ -1,5 +1,5 @@
 
-				    bzflag 1.7e7
+				    bzflag 1.7g2
 
 			Copyright (c) 1993 - 2003 Tim Riker
 
@@ -77,17 +77,28 @@ in the new bzflag directory:
 Compiling and Installation
 ==========================
 
-Building BZFlag for a supported platform normally requires two
-steps:
+If you got souce from CVS you should bootstrap the building system
+running the following commands inside the CVS directory:
 
-  % make <platform>
+  % touch NEWS
+  % aclocal
+  % autoheader --add-missing
+  % automake
+  % autoconf
+
+This commands are put on the autogen.sh file, so you can just run 
+  % sh autogen.sh
+
+After doing that, build a parallel directory to the one you
+just downloaded and autoconfigured.
+Go in this new directory and 
+  % ../bzflag/configure
   % make
+  % make install
 
-The first make configures the build for the named platform.
-The second make actually does the build of bzflag, bzfs, etc.
-Doing make without configuring for a platform lists the
-available platforms. You can also append `-debug' to a
-platform name to configure a debug build.
+You should have bzflag in the system directory ready to run.
+For detailed information on installing, see INSTALL file.
+  
 
 Some platforms may be different.  See the README file
 appropriate to your system for more information:
@@ -98,21 +109,6 @@ appropriate to your system for more information:
   Solaris				README.SOLARIS
   Windows 95/98/NT		README.WIN32
 
-
-After a successful build, run bzflag using:
-
-  % ./bin/bzflag
-
-bzflag is built into ./bin;  ./bin/bzflag runs bzflag and
-it will automatically look in ./data for the data files.
-
-** IMPORTANT **
-BZFlag will look for the data files in . and ./data.  If
-you run BZFlag from the bin directory, it will fail to
-find the files and die with `cannot continue without
-font fixedbr'.  Either run BZFlag as indicated above
-or use the `-directory <data-directory>' command line
-option to explicitly name the data directory.
 
 You can also build an installable package using:
 
