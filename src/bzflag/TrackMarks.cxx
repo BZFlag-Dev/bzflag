@@ -55,7 +55,6 @@ typedef struct {
 
 static std::list<TrackEntry> TreadsList;
 static std::list<TrackEntry> PuddleList;
-static int TrackTexture = -1;
 static float TrackFadeTime = 5.0f;
 static float UserFadeScale = 1.0f;
 //static float TrackWidth = 1.0f;
@@ -70,7 +69,7 @@ static const float TreadMarkWidth = 0.2f;
 
 static OpenGLGState treadsState;
 static OpenGLGState puddleState;
-static const std::string puddleTexture = "puddle";
+static const char puddleTexture[] = "puddle";
 
 static float TextureHeightOffset = 0.05f;
 
@@ -88,7 +87,7 @@ void TrackMarks::init()
   clear();
   
   TextureManager &tm = TextureManager::instance();
-  TrackTexture = tm.getTextureID(puddleTexture.c_str(), false);
+  int puddleTexId = tm.getTextureID(puddleTexture, false);
   
   OpenGLGStateBuilder gb;
   
@@ -97,7 +96,7 @@ void TrackMarks::init()
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gb.enableMaterial(false); // no lighting
-  gb.setTexture(TrackTexture);
+  gb.setTexture(puddleTexId);
   puddleState = gb.getState();
   
   gb.reset();
@@ -237,7 +236,7 @@ void TrackMarks::render()
   TimeKeeper nowTime = TimeKeeper::getCurrent();
 
   std::list<TrackEntry>::iterator it;
-
+  
   // draw treads
   treadsState.setState();
   it = TreadsList.begin();
@@ -271,7 +270,7 @@ void TrackMarks::render()
     it = next;
     drawPuddle(te, timeDiff);
   }
-  
+
   return;
 }
 

@@ -643,10 +643,6 @@ static int sortLights (const void* a, const void* b)
   }
 }
 
-//FIXME - move these into the class later
-static bool clearZbuffer;
-static bool drawGround;
-static bool mirror;
 
 void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
                            bool fullWindow)

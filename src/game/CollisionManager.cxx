@@ -308,10 +308,10 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   std::vector<MeshObstacle*>::iterator it_mesh;
   for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
     MeshObstacle* mesh = *it_mesh;
-    fullCount = fullCount + mesh->getFaceCount();
+    fullCount += mesh->getFaceCount() + 1; // one for the mesh itself
   }
-  fullCount = fullCount + (int)(boxes.size() + bases.size() +
-                                pyrs.size() + (teles.size() * 3)); // 2 MeshFace links
+  fullCount += (int)(boxes.size() + bases.size() +
+                     pyrs.size() + (teles.size() * 3)); // 2 MeshFace links
 
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -344,17 +344,19 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
     addToFullList((Obstacle*) tele->getBackLink());
     addToFullList((Obstacle*) tele->getFrontLink());
   }
-  
-  // FIXME - sort the Z height and size
+  // FIXME - sort by Z height and size
   qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareZlevels);
-  for (int q = 0; q < FullList.count; q++) {
-    float mx[3], mn[3];
-    FullList.list[q]->getExtents(mn, mx);
+
+  // add the mesh obstacles after the sorting
+  for (it_mesh = meshes.begin(); it_mesh != meshes.end(); it_mesh++) {
+    addToFullList((Obstacle*) (*it_mesh));
   }
+
 
   // generate the octree
   setExtents (&FullList);
   root = new ColDetNode (0, mins, maxs, &FullList);
+  
   
   leafNodes = 0;
   totalNodes = 0;
@@ -464,7 +466,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
   }
   childCount = 0;
 
-  // copy the incoming list
+  // alloacte enough room for the incoming list
   const int listBytes = _list->count * sizeof (Obstacle*);
   fullList.list = (Obstacle**) malloc (listBytes);
 
@@ -478,22 +480,51 @@ ColDetNode::ColDetNode(unsigned char _depth,
     testMaxs[i] = maxs[i] + testFudge;
   }
 
+  // setup some test parameters
+  float pos[3];
+  pos[0] = 0.5f * (testMaxs[0] + testMins[0]);
+  pos[1] = 0.5f * (testMaxs[1] + testMins[1]);
+  pos[2] = testMins[2];
+  float size[3];
+  size[0] = 0.5f * (testMaxs[0] - testMins[0]);
+  size[1] = 0.5f * (testMaxs[1] - testMins[1]);
+  size[2] = (testMaxs[2] - testMins[2]);
+  float point[3];
+  point[0] = pos[0];
+  point[1] = pos[1];
+  point[2] = 0.5f * (testMaxs[2] + testMins[2]);
+
   // find all of the intersecting nodes
   fullList.count = 0;
   for (i = 0; i < _list->count; i++) {
     Obstacle* obs = _list->list[i];
-    float pos[3];
-    pos[0] = 0.5f * (testMaxs[0] + testMins[0]);
-    pos[1] = 0.5f * (testMaxs[1] + testMins[1]);
-    pos[2] = testMins[2];
-    float size[3];
-    size[0] = 0.5f * (testMaxs[0] - testMins[0]);
-    size[1] = 0.5f * (testMaxs[1] - testMins[1]);
-    size[2] = (testMaxs[2] - testMins[2]);
-    if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
-      fullList.list[fullList.count] = obs;
-      fullList.count++;
-    }
+    if (obs->getType() != MeshObstacle::getClassName()) {
+      if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
+        fullList.list[fullList.count] = obs;
+        fullList.count++;
+      }
+    } else {
+      // add a mesh if any of its faces are in the node,
+      // or if it passes the 'point containment' test.
+      MeshObstacle* mesh = (MeshObstacle*) obs;
+      bool needCheck = true;
+      for (int j = 0; j < fullList.count; j++) {
+        Obstacle* tmpObs = fullList.list[j];
+        if (tmpObs->getType() == MeshFace::getClassName()) {
+          MeshFace* face = (MeshFace*) tmpObs;
+          if (face->getMesh() == mesh) {
+            fullList.list[fullList.count] = (Obstacle*) mesh;
+            fullList.count++;
+            needCheck = false;
+            break;
+          }
+        }
+      }
+      if (needCheck && mesh->containsPointNoOctree (point)) {
+        fullList.list[fullList.count] = (Obstacle*) mesh;
+        fullList.count++;
+      }
+    }      
   }
 
   // count will remain as the total numbers of
@@ -605,6 +636,7 @@ void ColDetNode::resizeCell ()
         absMaxs[a] = tmpMaxs[a];
     }
   }
+  
   for (i = 0; i < 3; i++) {
     if (absMins[i] > mins[i])
       mins[i] = absMins[i];
@@ -757,6 +789,18 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
   float points[5][3];
   const float* extents[2] = { mins, maxs };
 
+  // pick a color  
+  int hasMeshObs = 0;
+  int hasNormalObs = 0;
+  for (x = 0; x < fullList.count; x++) {
+    if (fullList.list[x]->getType() == MeshObstacle::getClassName()) {
+      hasMeshObs = 1;
+    } else {
+      hasNormalObs = 1;
+    }
+  }
+  int color = hasNormalObs + (2 * hasMeshObs);
+
   // draw Z-normal squares
   for (z = 0; z < 2; z++) {
     for (c = 0; c < 4; c++) {
@@ -767,7 +811,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
       points[c][2] = extents[z][2];
     }
     memcpy (points[4], points[0], sizeof (points[4]));
-    drawLinesFunc (5, points);
+    drawLinesFunc (5, points, color);
   }
 
   // draw the corner edges
@@ -779,7 +823,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
       points[z][1] = extents[y][1];
       points[z][2] = extents[z][2];
     }
-    drawLinesFunc (2, points);
+    drawLinesFunc (2, points, color);
   }
 
   // draw the kids

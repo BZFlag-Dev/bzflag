@@ -54,7 +54,7 @@ ZSceneDatabase::~ZSceneDatabase()
 }
 
 
-void ZSceneDatabase::addStaticNode(SceneNode* object)
+bool ZSceneDatabase::addStaticNode(SceneNode* object, bool /*dontFree*/)
 {
   if (staticCount == staticSize) {
     if (staticSize == 0) staticSize = 15;
@@ -66,6 +66,7 @@ void ZSceneDatabase::addStaticNode(SceneNode* object)
     staticList = newStatic;
   }
   staticList[staticCount++] = object;
+  return false; // node would not be freed
 }
 
 

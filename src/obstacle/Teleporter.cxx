@@ -92,8 +92,8 @@ void Teleporter::makeLinks()
   texcoords[3][0] = 0.0f;
   texcoords[3][1] = ytxcd;
   
-  const float cos_val = cos(a);
-  const float sin_val = sin(a);
+  const float cos_val = cosf(a);
+  const float sin_val = sinf(a);
   
   if (!horizontal) {
     const float params[4][2] = 
@@ -166,8 +166,8 @@ void Teleporter::getExtents(float* mins, float* maxs) const
   // use the border width instead of size[0] (which for teleporters
   // is half the distance between the teleporter planes).
   float sizeX = border * 0.5f;
-  float xspan = (fabsf(cos(angle)) * sizeX) + (fabsf(sin(angle)) * size[1]);
-  float yspan = (fabsf(cos(angle)) * size[1]) + (fabsf(sin(angle)) * sizeX);
+  float xspan = (fabsf(cosf(angle)) * sizeX) + (fabsf(sinf(angle)) * size[1]);
+  float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * sizeX);
   mins[0] = pos[0] - xspan;
   maxs[0] = pos[0] + xspan;
   mins[1] = pos[1] - yspan;

@@ -37,6 +37,10 @@
 #include "PyramidSceneNodeGenerator.h"
 #include "ObstacleSceneNodeGenerator.h"
 #include "TeleporterSceneNodeGenerator.h"
+#include "EighthDimShellNode.h"
+#include "EighthDBoxSceneNode.h"
+#include "EighthDPyrSceneNode.h"
+#include "EighthDBaseSceneNode.h"
 
 // common implementation headers
 #include "StateDatabase.h"
@@ -210,7 +214,12 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     db = new BSPSceneDatabase;
   // FIXME -- when making BSP tree, try several shuffles for best tree
 
-  if (!world) return db;
+  if (!world) {
+    return db;
+  }
+
+  // free any prior inside nodes
+  world->freeInsideNodes();
 
   // add nodes to database
   const std::vector<WallObstacle*> &walls = world->getWalls();
@@ -287,7 +296,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   const BzMaterial* mat = world->getWaterMaterial();
   MeshSceneNodeGenerator::setupNodeMaterial(node, mat);
 
-  db->addStaticNode(node);
+  db->addStaticNode(node, false);
 
   return;
 }
@@ -323,7 +332,7 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
     node->setTexture(wallTexture);
     node->setUseColorTexture(useColorTexture);
 
-    db->addStaticNode(node);
+    db->addStaticNode(node, false);
     part = (part + 1) % 5;
   }
   delete nodeGen;
@@ -336,7 +345,14 @@ void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
   MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator (mesh);
 
   while ((node = nodeGen->getNextNode(wallLOD))) {
-    db->addStaticNode(node);
+    // make the inside node
+    const bool ownTheNode = db->addStaticNode(node, true);
+    // The BSP can split a MeshPolySceneNode and then delete it, which is
+    // not good for the EighthDimShellNode's referencing scheme. If the
+    // BSP would have split and then deleted this node, ownTheNode will
+    // return true, and the EighthDimShellNode will then own the node.
+    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
+    mesh->addInsideSceneNode(inode);
   }
   delete nodeGen;
 }
@@ -395,15 +411,24 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
       node->setUseColorTexture(useColorTexture[1]);
     }
 
-    db->addStaticNode(node);
+    db->addStaticNode(node, false);
     part = (part + 1) % 6;
   }
+
+  // add the inside node
+  GLfloat obstacleSize[3];
+  obstacleSize[0] = o.getWidth();
+  obstacleSize[1] = o.getBreadth();
+  obstacleSize[2] = o.getHeight();
+  SceneNode* inode =
+    new EighthDBoxSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+  o.addInsideSceneNode(inode);
+
   delete nodeGen;
 }
 
 
-void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
-						const PyramidBuilding& o)
+void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 {
   // this assumes pyramids have four parts:  four sides
   int part = 0;
@@ -438,15 +463,24 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
     node->setTexture(pyramidTexture);
     node->setUseColorTexture(useColorTexture);
 
-    db->addStaticNode(node);
+    db->addStaticNode(node, false);
     part = (part + 1) % 5;
   }
+
+  // add the inside node
+  GLfloat obstacleSize[3];
+  obstacleSize[0] = o.getWidth();
+  obstacleSize[1] = o.getBreadth();
+  obstacleSize[2] = o.getHeight();
+  SceneNode* inode =
+    new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+  o.addInsideSceneNode(inode);
+  
   delete nodeGen;
 }
 
 
-void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
-						const BaseBuilding &o)
+void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 {
   WallSceneNode *node;
   ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
@@ -510,8 +544,18 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
       }
     }
     part++;
-    db->addStaticNode(node);
+    db->addStaticNode(node, false);
   }
+
+  // add the inside node
+  GLfloat obstacleSize[3];
+  obstacleSize[0] = o.getWidth();
+  obstacleSize[1] = o.getBreadth();
+  obstacleSize[2] = o.getHeight();
+  SceneNode* inode = new
+    EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+  o.addInsideSceneNode(inode);
+  
   delete nodeGen;
 }
 
@@ -573,7 +617,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
       }
     }
 
-    db->addStaticNode(node);
+    db->addStaticNode(node, false);
     part = (part + 1) % numParts;
   }
 
@@ -582,11 +626,11 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 
   linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getBackLink());
   MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
-  db->addStaticNode(linkNode);
+  db->addStaticNode(linkNode, false);
   
   linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getFrontLink());
   MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
-  db->addStaticNode(linkNode);
+  db->addStaticNode(linkNode, false);
   
   delete nodeGen;
 }

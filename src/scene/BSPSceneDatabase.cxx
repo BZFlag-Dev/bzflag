@@ -58,7 +58,7 @@ BSPSceneDatabase::~BSPSceneDatabase()
 }
 
 
-void BSPSceneDatabase::addStaticNode(SceneNode* node)
+bool BSPSceneDatabase::addStaticNode(SceneNode* node, bool dontFree)
 {
   // make sure node has a definite plane for splitting
   assert(node->getPlane());
@@ -67,8 +67,9 @@ void BSPSceneDatabase::addStaticNode(SceneNode* node)
   if (!root) {
     root = new Node(false, node);
     setDepth(1);
+    return false; // node would not be freed
   } else {
-    insertStatic(1, root, node);
+    return insertStatic(1, root, node, dontFree);
   }
 }
 
@@ -146,9 +147,11 @@ void BSPSceneDatabase::release(Node* node)
 }
 
 
-void BSPSceneDatabase::insertStatic(int level,
-						Node* root, SceneNode* node)
+bool BSPSceneDatabase::insertStatic(int level, Node* root,
+                                    SceneNode* node, bool dontFree)
 {
+  bool wouldFree = false;
+  
   // dynamic nodes should only be inserted after all static nodes
   assert(root->dynamic == 0);
 
@@ -162,7 +165,11 @@ void BSPSceneDatabase::insertStatic(int level,
       ((WallSceneNode*)back)->copyStyle((WallSceneNode*)node);
 
       // done with split node so get rid of it
-      delete node;
+      if (dontFree) {
+        wouldFree = true;
+      } else {
+        delete node;
+      }
       break;
     case 1:
       // completely in front
@@ -174,10 +181,12 @@ void BSPSceneDatabase::insertStatic(int level,
       break;
   }
 
+  const bool dontFreeNext = (dontFree && !wouldFree);
+
   // add nodes
   if (front) {
     if (root->front) {
-      insertStatic(level + 1, root->front, front);
+      wouldFree = insertStatic(level + 1, root->front, front, dontFreeNext);
     } else {
       root->front = new Node(false, front);
       setDepth(level + 1);
@@ -186,13 +195,15 @@ void BSPSceneDatabase::insertStatic(int level,
   }
   if (back) {
     if (root->back) {
-      insertStatic(level + 1, root->back, back);
+      wouldFree = insertStatic(level + 1, root->back, back, dontFreeNext);
     } else {
       root->back = new Node(false, back);
       setDepth(level + 1);
     }
     root->count++;
   }
+  
+  return wouldFree;
 }
 
 

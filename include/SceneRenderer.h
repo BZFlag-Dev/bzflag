@@ -172,6 +172,9 @@ private:
   MainWindow*		window;
   bool		blank;
   bool		invert;
+  bool		mirror;
+  bool		drawGround;
+  bool		clearZbuffer;
   ViewFrustum		frustum;
   GLint		maxLights;
   GLint		reservedLights;

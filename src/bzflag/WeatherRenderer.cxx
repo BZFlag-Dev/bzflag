@@ -121,15 +121,15 @@ void WeatherRenderer::init ( void )
 {
 	OpenGLGStateBuilder gstate;
 
-	static const GLfloat	white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	OpenGLMaterial rainMaterial(white, white, 0.0f);
+//	static const GLfloat	white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//	OpenGLMaterial rainMaterial(white, white, 0.0f);
 
 	TextureManager &tm = TextureManager::instance();
 
 	gstate.reset();
 	gstate.setShading();
 	gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE_MINUS_SRC_ALPHA);
-	gstate.setMaterial(rainMaterial);
+//	gstate.setMaterial(rainMaterial);
 	gstate.setAlphaFunc();
 	rainGState = gstate.getState();
 
@@ -173,14 +173,14 @@ void WeatherRenderer::set ( void )
 
 		TextureManager &tm = TextureManager::instance();
 
-		static const GLfloat	white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		OpenGLMaterial rainMaterial(white, white, 0.0f);
+//		static const GLfloat	white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//		OpenGLMaterial rainMaterial(white, white, 0.0f);
 
 		OpenGLGStateBuilder gstate;
 		gstate.reset();
 		gstate.setShading();
 		gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE_MINUS_SRC_ALPHA);
-		gstate.setMaterial(rainMaterial);
+//		gstate.setMaterial(rainMaterial);
 		gstate.setAlphaFunc();
 
 		OpenGLGStateBuilder puddleGStateBuilder(puddleState);
@@ -312,8 +312,8 @@ void WeatherRenderer::set ( void )
 			spinRain = BZDB.evalInt("_rainSpins") == 1;
 
 		// update the actual puddle material
-		OpenGLMaterial puddleMaterial(puddleColor, puddleColor, 0.0f);
-		puddleGStateBuilder.setMaterial(puddleMaterial);
+//		OpenGLMaterial puddleMaterial(puddleColor, puddleColor, 0.0f);
+//		puddleGStateBuilder.setMaterial(puddleMaterial);
 		puddleState = puddleGStateBuilder.getState();
 
 
@@ -492,12 +492,12 @@ void WeatherRenderer::draw ( const SceneRenderer& sr )
 	glDisable(GL_CULL_FACE);
 	glMatrixMode(GL_MODELVIEW);
 	glColor4f(1,1,1,1.0f);
-	glDepthMask(0);
-	glDisable(GL_LIGHTING);
+	glDepthMask(GL_FALSE);
+//	glDisable(GL_LIGHTING);
 
 	if (doLineRain)	// we are doing line rain
 	{
-		glEnable(GL_COLOR_MATERIAL);
+//		glEnable(GL_COLOR_MATERIAL);
 		rainGState.setState();
 
 		glPushMatrix();	
@@ -543,7 +543,7 @@ void WeatherRenderer::draw ( const SceneRenderer& sr )
 	{
 		glEnd();
 		glPopMatrix();
-		glDisable(GL_COLOR_MATERIAL);
+//		glDisable(GL_COLOR_MATERIAL);
 	}
 	
 	if (doPuddles)
@@ -558,10 +558,10 @@ void WeatherRenderer::draw ( const SceneRenderer& sr )
 		}
 	}
 
-	glEnable(GL_LIGHTING);
+//	glEnable(GL_LIGHTING);
 	glEnable(GL_CULL_FACE);
 	glColor4f(1,1,1,1);
-	glDepthMask(1);
+	glDepthMask(GL_TRUE);
 }
 
 void WeatherRenderer::rebuildContext ( void )
@@ -795,7 +795,7 @@ void WeatherRenderer::drawPuddle ( puddle	&splash )
 	float scale = fabs(splash.time * rainSpeed*0.035f*puddleSpeed);
 	float lifeTime = splash.time/maxPuddleTime;
 
-	glColor4f(1,1,1,1.0f - lifeTime);
+        glColor4f(puddleColor[0], puddleColor[1], puddleColor[2], 1.0f - lifeTime);
 
 	glScalef(scale,scale,scale);
 	if (1)

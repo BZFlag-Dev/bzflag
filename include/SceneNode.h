@@ -73,36 +73,45 @@ class SceneNode {
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
     
-    static void		enableInvertView();
-    static void		disableInvertView();
+
+    static void enableInvertView();
+    static void disableInvertView();
+
+    virtual int getRenderNodeCount() { return 0; }
+    virtual RenderNode*	getRenderNode(int) { return NULL; }
+    virtual OpenGLGState* getGState(int) { return NULL; }
+    
 
     static void		setColorOverride(bool = true);
     static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
 #ifdef __MINGW32__
       {if (!colorOverride) ::glColor3f(r, g, b); };
 #else
-				{ (*color3f)(r, g, b); }
+      { (*color3f)(r, g, b); }
 #endif
+
     static void		glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 #ifdef __MINGW32__
       {if (!colorOverride) ::glColor4f(r, g, b, a); };
 #else
-				{ (*color4f)(r, g, b, a); }
+      { (*color4f)(r, g, b, a); }
 #endif
+
     static void		glColor3fv(const GLfloat* rgb)
 #ifdef __MINGW32__
       {if (!colorOverride) ::glColor3fv(rgb); };
 #else
-				{ (*color3fv)(rgb); }
+      { (*color3fv)(rgb); }
 #endif
+
     static void		glColor4fv(const GLfloat* rgba)
 #ifdef __MINGW32__
-     {if (!colorOverride) ::glColor4fv(rgba); };
+      {if (!colorOverride) ::glColor4fv(rgba); };
 #else
-				{ (*color4fv)(rgba); }
+      { (*color4fv)(rgba); }
 #endif
-    static void		setStipple(GLfloat alpha)
-				{ (*stipple)(alpha); }
+
+    static void		setStipple(GLfloat alpha) { (*stipple)(alpha); }
 
     enum CullState {
       OctreeCulled,

@@ -97,8 +97,6 @@ MeshObstacle* SphereObstacle::getMesh()
 void SphereObstacle::finalize()
 {
   int i, j, q;
-  cfvec3 v, n;
-  cfvec2 t;
   float sz[3], texsz[2];
   const float minSize = 1.0e-6f; // cheezy / lazy
   int factor = 2;
@@ -142,6 +140,18 @@ void SphereObstacle::finalize()
   std::vector<cfvec3> vertices;
   std::vector<cfvec3> normals;
   std::vector<cfvec2> texcoords;
+  cfvec3 v, n;
+  cfvec2 t;
+
+  // add the checkpoint (one is sufficient)
+  v[0] = pos[0];
+  v[1] = pos[1];
+  v[2] = pos[2];
+  if (hemisphere) {
+    v[2] = v[2] + (0.5f * size[2]);
+  }
+  checkPoints.push_back(v);
+  checkTypes.push_back(MeshObstacle::CheckInside);
 
   // the center vertices
   v[0] = pos[0];
@@ -178,9 +188,9 @@ void SphereObstacle::finalize()
       float v_angle = ((M_PI / 2.0f) * 
                        (float)(divisions - i - 1) / (float)(divisions));
       float unit[3];
-      unit[0] = cos(h_angle) * cos(v_angle);
-      unit[1] = sin(h_angle) * cos(v_angle);
-      unit[2] = sin(v_angle);
+      unit[0] = cosf(h_angle) * cosf(v_angle);
+      unit[1] = sinf(h_angle) * cosf(v_angle);
+      unit[2] = sinf(v_angle);
       // vertex
       v[0] = pos[0] + (sz[0] * unit[0]);
       v[1] = pos[1] + (sz[1] * unit[1]);
@@ -258,23 +268,11 @@ void SphereObstacle::finalize()
     const float astep = (M_PI * 2.0f) / (float) (divisions * 4);
     for (i = 0; i < (divisions * 4); i++) {
       float ang = astep * (float)i;
-      cfvec2 t;
-      t[0] = texsz[0] * (0.5f + (0.5f * cos(ang)));
-      t[1] = texsz[1] * (0.5f + (0.5f * sin(ang)));
+      t[0] = texsz[0] * (0.5f + (0.5f * cosf(ang)));
+      t[1] = texsz[1] * (0.5f + (0.5f * sinf(ang)));
       texcoords.push_back(t);
     }
   }
-
-  // add the checkpoint (one is sufficient)
-
-  v[0] = pos[0];
-  v[1] = pos[1];
-  v[2] = pos[2];
-  if (hemisphere) {
-    v[2] = v[2] + (size[2] / 2.0f);
-  }
-  checkPoints.push_back(v);
-  checkTypes.push_back(MeshObstacle::CheckInside);
 
   // make the mesh
   int faceCount = (divisions * divisions) * 8;

@@ -18,9 +18,6 @@
 #include "Pack.h"
 #include "TextUtils.h"
 #include "Protocol.h"
-#include "EighthDBoxSceneNode.h"
-#include "EighthDPyrSceneNode.h"
-#include "EighthDBaseSceneNode.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
@@ -494,15 +491,19 @@ void* WorldBuilder::unpackGameSettings(void* buf)
 void WorldBuilder::preGetWorld()
 {
   // if no inertia gameStyle then make sure accelerations are zero (disabled)
-  if (!(world->gameStyle & short(InertiaGameStyle)))
+  if (!(world->gameStyle & short(InertiaGameStyle))) {
     setInertia(0.0, 0.0);
+  }
 
   // prepare players array
-  if (world->players) delete[] world->players;
+  if (world->players) {
+    delete[] world->players;
+  }
   world->players = new RemotePlayer*[world->maxPlayers];
   int i;
-  for (i = 0; i < world->maxPlayers; i++)
+  for (i = 0; i < world->maxPlayers; i++) {
     world->players[i] = NULL;
+  }
 
   // prepare flags array
   world->freeFlags();
@@ -520,40 +521,7 @@ void WorldBuilder::preGetWorld()
     world->flagNodes[i]->setTexture(World::flagTexture);
   }
 
-  // prepare inside nodes arrays
-  world->freeInsideNodes();
-  GLfloat obstacleSize[3];
-  const int numBoxes = world->boxes.size();
-  for (i = 0; i < numBoxes; i++) {
-    Obstacle& o = *world->boxes[i];
-    obstacleSize[0] = o.getWidth();
-    obstacleSize[1] = o.getBreadth();
-    obstacleSize[2] = o.getHeight();
-    SceneNode* node = new EighthDBoxSceneNode(o.getPosition(),
-                                              obstacleSize, o.getRotation());
-    o.addInsideSceneNode(node);
-  }
-  const int numPyramids = world->pyramids.size();
-  for (i = 0; i < numPyramids; i++) {
-    Obstacle& o = *world->pyramids[i];
-    obstacleSize[0] = o.getWidth();
-    obstacleSize[1] = o.getBreadth();
-    obstacleSize[2] = o.getHeight();
-    SceneNode* node  = new EighthDPyrSceneNode(o.getPosition(),
-                                               obstacleSize, o.getRotation());
-    o.addInsideSceneNode(node);
-  }
-  const int numBases = world->basesR.size();
-  for (i = 0; i < numBases; i++) {
-    Obstacle& o = *world->basesR[i];
-    obstacleSize[0] = o.getWidth();
-    obstacleSize[1] = o.getBreadth();
-    obstacleSize[2] = o.getHeight();
-    SceneNode* node = new EighthDBaseSceneNode(o.getPosition(),
-                                               obstacleSize, o.getRotation());
-    o.addInsideSceneNode(node);
-  }
-
+  // copy the teleporter targets list
   world->teleportTargets = teleportTargets;
 }
 

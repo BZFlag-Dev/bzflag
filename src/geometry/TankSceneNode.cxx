@@ -240,8 +240,8 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     GLfloat dx = eye[0] - sphere[0];
     GLfloat dy = eye[1] - sphere[1];
     const float radians = azimuth * M_PI / 180.0f;
-    const float cos_val = cos(radians);
-    const float sin_val = sin(radians);
+    const float cos_val = cosf(radians);
+    const float sin_val = sinf(radians);
 
     const float frontDot = (cos_val * dx) + (sin_val * dy);
     const bool towards = (frontDot > 0.0f);

@@ -33,7 +33,8 @@ class BSPSceneDatabase : public SceneDatabase {
 			BSPSceneDatabase();
 			~BSPSceneDatabase();
 
-    void		addStaticNode(SceneNode*);
+    // returns true if the node would have been deleted
+    bool		addStaticNode(SceneNode*, bool dontFree);
     void		addDynamicNode(SceneNode*);
     void		addDynamicSphere(SphereSceneNode*);
     void		removeDynamicNodes();
@@ -64,7 +65,8 @@ class BSPSceneDatabase : public SceneDatabase {
     void		nodeAddShadowNodes(Node*);
     void		nodeAddRenderNodes(Node*);
     
-    void		insertStatic(int, Node*, SceneNode*);
+    // returns true if the node would have been deleted
+    bool		insertStatic(int, Node*, SceneNode*, bool dontFree);
     void		insertDynamic(int, Node*, SceneNode*);
     void		removeDynamic(Node*);
     void		free(Node*);

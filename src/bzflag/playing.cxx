@@ -4343,12 +4343,20 @@ void			drawFrame(const float dt)
       // add explosions
       addExplosions(scene);
 
-      // if i'm inside a building then add eighth dimension scene node.
-      if (myTank->getContainingBuilding()) {
-        int n;
-        const Obstacle* obs = myTank->getContainingBuilding();
+      // if inside a building, add some eighth dimension scene nodes.
+      const Obstacle* obs = myTank->getContainingBuilding();
+      if (obs != NULL) {
+        // use the parent MeshObstacle instead of the MeshFace
+        // (if available, some mesh faces do not have parents)
+        if (obs->getType() == MeshFace::getClassName()) {
+          const MeshFace* face = (const MeshFace*) obs;
+          const MeshObstacle* mesh = face->getMesh();
+          if (mesh != NULL) {
+            obs = (const Obstacle*) mesh;
+          }
+        }
         // add the inside nodes
-        for (n = 0; n < obs->getInsideSceneNodeCount(); n++) {
+        for (int n = 0; n < obs->getInsideSceneNodeCount(); n++) {
           scene->addDynamicNode(obs->getInsideSceneNodeList()[n]);
         }
       }
@@ -4373,8 +4381,8 @@ void			drawFrame(const float dt)
       clipPos[1] = eye[1] + (dir[1] * hnp);
       clipPos[2] = eye[2];
       const Obstacle* obs;
-      obs = world->hitBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
-      if ((obs != NULL) && (obs->getType() != WallObstacle::getClassName())) {
+      obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
+      if (obs != NULL) {
         insideDim = true;
       }
     }
@@ -5301,7 +5309,7 @@ static void		findFastConfiguration()
   node->setLightedModulateColor(color);
   node->setTexture(HUDuiControl::getArrow());
   node->setMaterial(OpenGLMaterial(color, color));
-  timingScene->addStaticNode(node);
+  timingScene->addStaticNode(node, false);
   sceneRenderer->setSceneDatabase(timingScene);
   sceneRenderer->setDim(false);
 

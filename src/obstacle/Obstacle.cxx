@@ -73,8 +73,8 @@ bool			Obstacle::isValid() const
 
 void			Obstacle::getExtents(float* mins, float* maxs) const
 {
-  float xspan = (fabsf(cos(angle)) * size[0]) + (fabsf(sin(angle)) * size[1]);
-  float yspan = (fabsf(cos(angle)) * size[1]) + (fabsf(sin(angle)) * size[0]);
+  float xspan = (fabsf(cosf(angle)) * size[0]) + (fabsf(sinf(angle)) * size[1]);
+  float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * size[0]);
   mins[0] = pos[0] - xspan;
   maxs[0] = pos[0] + xspan;
   mins[1] = pos[1] - yspan;
@@ -235,6 +235,7 @@ void Obstacle::addInsideSceneNode(SceneNode* node)
 
 void Obstacle::freeInsideSceneNodeList()
 {
+  insideNodeCount = 0;
   delete[] insideNodes;
   insideNodes = NULL;
   return;

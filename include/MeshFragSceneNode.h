@@ -49,6 +49,9 @@ class MeshFragSceneNode : public WallSceneNode {
     void getExtents(float* mins, float* maxs) const;
     bool inAxisBox(const float* mins, const float* maxs) const;
       
+    int getRenderNodeCount() { return 1; }
+    RenderNode*	getRenderNode(int) { return renderNode; }
+    
   protected:
     class Geometry : public RenderNode {
       public:

@@ -216,6 +216,23 @@ const Obstacle*		World::inBuilding(const float* pos,
   return NULL;
 }
 
+const Obstacle*		World::inBuilding(const float* pos, float angle,
+                                           float dx, float dy, float dz) const
+{
+  // check everything but the walls
+  const ObsList* olist = COLLISIONMGR.boxTest (pos, angle, dx, dy, dz);
+
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    if (obs->inBox(pos, angle, dx, dy, dz)) {
+      return obs;
+    }
+  }
+
+  return NULL;
+}
+
+
 const Obstacle*		World::hitBuilding(const float* pos, float angle,
                                            float dx, float dy, float dz) const
 {
@@ -275,7 +292,8 @@ static int sortHitNormal(const void* a, const void* b)
 
 const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 					   const float* pos, float angle,
-					   float dx, float dy, float dz) const
+					   float dx, float dy, float dz,
+					   bool directional) const
 {
   // check walls
   std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
@@ -338,7 +356,7 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   
   if (hitCount > 0) {
     const MeshFace* face = (const MeshFace*) olist->list[0];
-    if (face->isUpPlane() || (face->scratchPad < 0.0f)) {
+    if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional) {
 //      printf ("pos: <%10.10f> [%10.10f, %10.10f]  ", /*, %10.10f <%10.10f>   ", oldPos[2], pos[2],*/
 //              face->getPosition()[2], face->getPlane()[2], face->getPlane()[3]);
       if (face->isUpPlane()) {
@@ -431,7 +449,7 @@ void			World::freeFlags()
   flagWarpNodes = NULL;
 }
 
-void			World::freeInsideNodes()
+void			World::freeInsideNodes() const
 {
   unsigned int i;
   int j;  
@@ -440,18 +458,28 @@ void			World::freeInsideNodes()
     for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
       delete obs->getInsideSceneNodeList()[j];
     }
+    obs->freeInsideSceneNodeList();
   }
   for (i = 0; i < pyramids.size(); i++) {
     Obstacle* obs = (Obstacle*) pyramids[i];
     for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
       delete obs->getInsideSceneNodeList()[j];
     }
+    obs->freeInsideSceneNodeList();
   }
   for (i = 0; i < basesR.size(); i++) {
     Obstacle* obs = (Obstacle*) basesR[i];
     for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
       delete obs->getInsideSceneNodeList()[j];
     }
+    obs->freeInsideSceneNodeList();
+  }
+  for (i = 0; i < meshes.size(); i++) {
+    Obstacle* obs = (Obstacle*) meshes[i];
+    for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
+      delete obs->getInsideSceneNodeList()[j];
+    }
+    obs->freeInsideSceneNodeList();
   }
   return;
 }
@@ -1024,25 +1052,40 @@ bool			World::writeWorld(std::string filename)
   return true;
 }
 
-static void drawLines (int count, const float (*vertices)[3])
+static void drawLines (int count, const float (*vertices)[3], int color)
 {
+  const float colors[][4] = {
+    { 0.25f, 0.25f, 0.25f, 0.8f }, // gray    (branch node)
+    { 0.25f, 0.25f, 0.0f,  0.8f }, // yellow  (regular)
+    { 0.0f,  0.25f, 0.25f, 0.8f }, // cyan    (meshed)
+    { 0.25f, 0.0f,  0.25f, 0.8f }, // purple  (meshed + regular)
+  };
+  const int colorCount = sizeof(colors) / sizeof(colors[0]);
+
+  if (color < 0) {
+    color = 0;
+  }
+  else if (color >= colorCount) {
+    color = colorCount - 1;
+  }
+  glColor4fv (colors[color]);
+  
   glBegin (GL_LINE_STRIP);
   for (int i = 0; i < count; i++) {
     glVertex3fv (vertices[i]);
   }
   glEnd ();
+  
   return;
 }
 
 void			World::drawCollisionGrid()
 {
-  float color[4] = { 0.25f, 0.0f, 0.25f, 0.8f };
   GLboolean usingTextures;
   
   glGetBooleanv (GL_TEXTURE_2D, &usingTextures);
   glDisable (GL_TEXTURE_2D);
   
-  glColor4fv (color);
   COLLISIONMGR.draw (drawLines);
   
   if (usingTextures) {

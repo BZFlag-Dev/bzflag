@@ -49,8 +49,10 @@ class MeshObstacle : public Obstacle {
     void finalize();
 
     enum CheckType {
-      CheckInside = 0,
-      CheckOutside = 1
+      CheckInside =  0,
+      CheckOutside = 1,
+      InsideParity = 2,
+      OutsidePartiy = 3
     };
 
     const char* getType() const;
@@ -76,6 +78,9 @@ class MeshObstacle : public Obstacle {
                       const float* pos2, float azimuth2,
                       float halfWidth, float halfBreadth,
                       float height, float* normal) const;
+                      
+    bool containsPoint(const float point[3]) const;
+    bool containsPointNoOctree(const float point[3]) const;
 
     const char *getCheckTypes() const;
     const fvec3 *getCheckPoints() const;

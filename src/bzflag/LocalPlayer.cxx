@@ -321,37 +321,30 @@ void			LocalPlayer::doUpdateMotion(float dt)
   }
   
   // do the physics driver stuff
-  setPhysicsDriver(-1);
-  if ((lastObstacle != NULL) && 
-      (lastObstacle->getType() == MeshFace::getClassName())) {
-    const MeshFace* face = (const MeshFace*) lastObstacle;
-    int driverId = face->getPhysicsDriver();
-    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
-    if (phydrv != NULL) {
-      const float* v = phydrv->getVelocity();
-      const float av = phydrv->getAngularVel();
-      const float* ap = phydrv->getAngularPos();
+  const int driverId = getPhysicsDriver();
+  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
+  if (phydrv != NULL) {
+    const float* v = phydrv->getVelocity();
+    const float av = phydrv->getAngularVel();
+    const float* ap = phydrv->getAngularPos();
 
-      // adjust the velocity
-      newVelocity[0] += v[0];
-      newVelocity[1] += v[1];
-      newVelocity[2] += v[2];
+    // adjust the velocity
+    newVelocity[0] += v[0];
+    newVelocity[1] += v[1];
+    newVelocity[2] += v[2];
 
-      // play the jump sound
-      if (v[2] > 0.0f) {
-        playLocalSound(SFX_JUMP);
-      }
-      
-      if (av != 0.0f) {
-        // the angular velocity is in radians/sec
-        newAngVel += av;
-        const float dx = oldPosition[0] - ap[0];
-        const float dy = oldPosition[1] - ap[1];
-        newVelocity[0] -= av * dy;
-        newVelocity[1] += av * dx;
-      }
-      
-      setPhysicsDriver(driverId);
+    // play the jump sound
+    if (v[2] > 0.0f) {
+      playLocalSound(SFX_JUMP);
+    }
+    
+    if (av != 0.0f) {
+      // the angular velocity is in radians/sec
+      newAngVel += av;
+      const float dx = oldPosition[0] - ap[0];
+      const float dy = oldPosition[1] - ap[1];
+      newVelocity[0] -= av * dy;
+      newVelocity[1] += av * dx;
     }
   }
   lastObstacle = NULL;
@@ -686,6 +679,18 @@ void			LocalPlayer::doUpdateMotion(float dt)
     setStatus(getStatus() | short(PlayerState::Falling));
   }
 
+  // setup the physics driver
+  setPhysicsDriver(-1);
+  if ((lastObstacle != NULL) && 
+      (lastObstacle->getType() == MeshFace::getClassName())) {
+    const MeshFace* face = (const MeshFace*) lastObstacle;
+    int driverId = face->getPhysicsDriver();
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
+    if (phydrv != NULL) {
+      setPhysicsDriver(driverId);
+    }
+  }
+
   // compute firing status
   switch (location) {
   case Dead:
@@ -777,16 +782,16 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
 					    const float* p, float a,
 					    bool phased, bool& expelled) const
 {
+  const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
   const float* dims = getDimensions();
   const Obstacle* obstacle = World::getWorld()->
-    hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2]);
+    hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2], !hasOOflag);
     
   expelled = (obstacle != NULL);
   if (expelled && phased)
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
 		obstacle->getType() == Teleporter::getClassName() ||
-		(getFlag() == Flags::OscillationOverthruster &&
-		 desiredSpeed < 0.0f && p[2] == 0.0f));
+		(hasOOflag && desiredSpeed < 0.0f && p[2] == 0.0f));
   return obstacle;
 }
 

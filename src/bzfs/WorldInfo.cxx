@@ -485,6 +485,9 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
   else if (obstacle->getType() == TetraBuilding::getClassName()) {
     return IN_TETRA;
   }
+  else if (obstacle->getType() == MeshObstacle::getClassName()) {
+    return IN_MESH;
+  }
   else if (obstacle->getType() == MeshFace::getClassName()) {
     return IN_MESHFACE;
   }

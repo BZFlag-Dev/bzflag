@@ -161,13 +161,26 @@ void ConeObstacle::finalize()
   cfvec3 v, n;
   cfvec2 t;
 
+  // add the checkpoint (one is sufficient)
+  if (isCircle) {
+    v[0] = pos[0];
+    v[1] = pos[1];
+  } else {
+    const float dir = r + (0.5f * a);
+    v[0] = pos[0] + (cosf(dir) * sz[0] * 0.25f);
+    v[1] = pos[1] + (sinf(dir) * sz[1] * 0.25f);
+  }
+  v[2] = pos[2] + (0.5f * size[2]);
+  checkPoints.push_back(v);
+  checkTypes.push_back(MeshObstacle::CheckInside);
+
+  int i;    
   const float astep = a / (float) divisions;
-  
-  int i;
+
   for (i = 0; i < (divisions + 1); i++) {
     float ang = r + (astep * (float)i);
-    float cos_val = cos(ang);
-    float sin_val = sin(ang);
+    float cos_val = cosf(ang);
+    float sin_val = sinf(ang);
 
     // vertices
     if (!isCircle || (i != divisions)) {
@@ -196,9 +209,8 @@ void ConeObstacle::finalize()
     }
 
     // texture coordinates (around the edge)
-    cfvec2 t;
-    t[0] = texsz[0] * (0.5f + (0.5f * cos(ang)));
-    t[1] = texsz[1] * (0.5f + (0.5f * sin(ang)));
+    t[0] = texsz[0] * (0.5f + (0.5f * cosf(ang)));
+    t[1] = texsz[1] * (0.5f + (0.5f * sinf(ang)));
     texcoords.push_back(t);
   }
 
@@ -207,8 +219,8 @@ void ConeObstacle::finalize()
     for (i = 0; i < divisions; i++) {
       float ang = r + (astep * (0.5f + (float)i));
       // the horizontal normals
-      n[0] = cos(ang) / sz[0];
-      n[1] = sin(ang) / sz[1];
+      n[0] = cosf(ang) / sz[0];
+      n[1] = sinf(ang) / sz[1];
       n[2] = 1.0f / sz[2];
       // normalize
       float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);

@@ -67,6 +67,7 @@ class MeshFace : public Obstacle {
                       float halfWidth, float halfBreadth,
                       float height, float* normal) const;
 
+    MeshObstacle* getMesh() const;
     int getVertexCount() const;
     bool useNormals() const;
     bool useTexcoords() const;
@@ -159,6 +160,11 @@ class MeshFace : public Obstacle {
     uint16_t specialState;
     SpecialData* specialData;
 };
+
+inline MeshObstacle* MeshFace::getMesh() const
+{
+  return mesh;
+}
 
 inline const BzMaterial* MeshFace::getMaterial() const
 {

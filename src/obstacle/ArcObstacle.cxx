@@ -203,7 +203,22 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
   std::vector<cfvec3> vertices;
   std::vector<cfvec3> normals;
   std::vector<cfvec2> texcoords;
+  cfvec3 v, n;
+  cfvec2 t;
 
+  // add the checkpoint (one is sufficient)
+  if (isCircle) {
+    v[0] = pos[0];
+    v[1] = pos[1];
+  } else {
+    const float dir = r + (0.5f * a);
+    v[0] = pos[0] + (cosf(dir) * radius * 0.5f);
+    v[1] = pos[1] + (sinf(dir) * radius * 0.5f * squish);
+  }
+  v[2] = pos[2] + (0.5f * size[2]);
+  checkPoints.push_back(v);
+  checkTypes.push_back(MeshObstacle::CheckInside);
+  
   // setup the texsize across the disc
   if (texsz[2] < 0.0f) {
     texsz[2] = -((2.0f * radius) / texsz[2]);
@@ -216,12 +231,11 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
 
   for (i = 0; i < (divisions + 1); i++) {
     float ang = r + (astep * (float)i);
-    float cos_val = cos(ang);
-    float sin_val = sin(ang);
+    float cos_val = cosf(ang);
+    float sin_val = sinf(ang);
 
     // vertices and normals
     if (!isCircle || (i != divisions)) {
-      cfvec3 v, n;
       float delta[2];
       delta[0] = cos_val * radius;
       delta[1] = (sin_val * radius) * squish;
@@ -245,7 +259,6 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
     }
 
     // texture coordinates (around the edge)
-    cfvec2 t;
     t[0] = (float) i / (float) divisions;
     t[0] = texsz[0] * t[0];
     t[1] = 0.0f;
@@ -258,23 +271,20 @@ void ArcObstacle::makePie(bool isCircle, float a, float r, float h,
   // texture coordinates (around the disc)
   for (i = 0; i < (divisions + 1); i++) {
     float ang = astep * (float)i;
-    float cos_val = cos(ang);
-    float sin_val = sin(ang);
-    cfvec2 t;
+    float cos_val = cosf(ang);
+    float sin_val = sinf(ang);
     t[0] = texsz[2] * (0.5f + (0.5f * cos_val));
     t[1] = texsz[3] * (0.5f + (0.5f * sin_val));
     texcoords.push_back(t);
   }
 
   // the central coordinates
-  cfvec3 v;
   v[0] = pos[0];
   v[1] = pos[1];
   v[2] = pos[2];
   vertices.push_back(v); // bottom
   v[2] = pos[2] + h;
   vertices.push_back(v); // top
-  cfvec2 t;
   t[0] = texsz[2] * 0.5f;
   t[1] = texsz[3] * 0.5f;
   texcoords.push_back(t);
@@ -356,25 +366,66 @@ void ArcObstacle::makeRing(bool isCircle, float a, float r, float h,
                            float inrad, float outrad, float squish,
                            float texsz[4])
 {
-  int i;
-
   // setup the coordinates
   std::vector<char> checkTypes;
   std::vector<cfvec3> checkPoints;
   std::vector<cfvec3> vertices;
   std::vector<cfvec3> normals;
   std::vector<cfvec2> texcoords;
+  cfvec3 v, n;
+  cfvec2 t;
 
+  // add the checkpoints (very wasteful)
+  v[0] = pos[0];
+  v[1] = pos[1];
+  if (pos[2] > 0.0f) {
+    // down
+    v[2] = pos[2] - (1.0f * size[2]);
+    checkPoints.push_back(v);
+    checkTypes.push_back(MeshObstacle::CheckOutside);
+    // up
+    v[2] = pos[2] + (2.0f * size[2]);
+    checkPoints.push_back(v);
+    checkTypes.push_back(MeshObstacle::CheckOutside);
+  } else {
+    // up
+    v[2] = pos[2] + (2.0f * size[2]);
+    checkPoints.push_back(v);
+    checkTypes.push_back(MeshObstacle::CheckOutside);
+    // down
+    v[2] = pos[2] - (1.0f * size[2]);
+    checkPoints.push_back(v);
+    checkTypes.push_back(MeshObstacle::CheckOutside);
+  }
+  // east
+  v[2] = pos[2] + (0.5f * size[2]);
+  v[0] = pos[0] + (outrad * 2.0f);
+  checkPoints.push_back(v);
+  checkTypes.push_back(MeshObstacle::CheckOutside);
+  // west
+  v[0] = pos[0] - (outrad * 2.0f);
+  checkPoints.push_back(v);
+  checkTypes.push_back(MeshObstacle::CheckOutside);
+  // north
+  v[0] = pos[0];
+  v[1] = pos[1] + (outrad * squish * 2.0f);
+  checkPoints.push_back(v);
+  checkTypes.push_back(MeshObstacle::CheckOutside);
+  // south
+  v[1] = pos[1] - (outrad * squish * 2.0f);
+  checkPoints.push_back(v);
+  checkTypes.push_back(MeshObstacle::CheckOutside);
+  
+  int i;
   const float astep = a / (float) divisions;
 
   for (i = 0; i < (divisions + 1); i++) {
     float ang = r + (astep * (float)i);
-    float cos_val = cos(ang);
-    float sin_val = sin(ang);
+    float cos_val = cosf(ang);
+    float sin_val = sinf(ang);
 
     // vertices and normals
     if (!isCircle || (i != divisions)) {
-      cfvec3 v, n;
       // inside points
       v[0] = pos[0] + (cos_val * inrad);
       v[1] = pos[1] + (squish * (sin_val * inrad));
@@ -406,7 +457,6 @@ void ArcObstacle::makeRing(bool isCircle, float a, float r, float h,
     }
 
     // texture coordinates
-    cfvec2 t;
     // inside texcoord
     t[0] = (float) i / (float) divisions;
     t[0] = texsz[0] * t[0];

@@ -18,8 +18,7 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * fix the menu font garbage above some letters on some fonts
 
-* fix the position of the label of the tabbel panels (position
-  incorrectly)
+* fix the position of the label of the tabbed panels (position incorrectly)
 
 * configure should test and enable the fudged acosf atanf asinf
 
@@ -28,7 +27,7 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * either disable server checks when -handicap mode is enabled, or
   incorporate the player's handicap value into the check calculations.
 
-* complete the mesh collision code (trepan)
+* improve the mesh collision code (edging)
 
 * speed up the radar rendering
 

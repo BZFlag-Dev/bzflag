@@ -102,13 +102,16 @@ class World {
     TeamColor		whoseBase(const float* pos) const;
     const Obstacle*	inBuilding(const float* pos, float radius,
                                    float tankHeight) const;
+    const Obstacle*	inBuilding(const float* pos, float angle,
+                                   float tankWidth, float tankBreadth,
+                                   float tankHeight) const;
     const Obstacle*	hitBuilding(const float* pos, float angle,
                                     float tankWidth, float tankBreadth,
                                     float tankHeight) const;
     const Obstacle*	hitBuilding(const float* oldPos, float oldAngle,
 				    const float* pos, float angle,
 				    float tankWidth, float tankBreadth,
-				    float tankHeight) const;
+				    float tankHeight, bool directional) const;
     bool		crossingTeleporter(const float* oldPos, float angle,
 					float tankWidth, float tankBreadth,
 					float tankHeight, float* plane) const;
@@ -143,6 +146,7 @@ class World {
 
     void		drawCollisionGrid();
 
+    void		freeInsideNodes() const;
 
   private:
     // disallow copy and assignment
@@ -150,7 +154,6 @@ class World {
     World&		operator=(const World&);
 
     void		freeFlags();
-    void		freeInsideNodes();
     
 
   private:

@@ -33,12 +33,12 @@
 // MeshPolySceneNode::Geometry
 //
 
-MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* _wall,
+MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* node,
   const GLfloat3Array& _vertices, const GLfloat3Array& _normals,
   const GLfloat2Array& _texcoords, const GLfloat* _normal) :
     vertices(_vertices), normals(_normals), texcoords(_texcoords)
 {
-  wall = _wall;
+  sceneNode = node;
   normal = _normal;
   style = 0;
   return;
@@ -53,7 +53,7 @@ MeshPolySceneNode::Geometry::~Geometry()
 
 void MeshPolySceneNode::Geometry::render()
 {
-  wall->setColor();
+  sceneNode->setColor();
 
   if (normals.getSize() != 0) {
     if (style >= 2) {

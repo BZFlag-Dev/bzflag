@@ -34,7 +34,8 @@ class SceneDatabase {
 			SceneDatabase();
     virtual		~SceneDatabase();
 
-    virtual void	addStaticNode(SceneNode*) = 0;
+    // returns true if the node would have been deleted
+    virtual bool	addStaticNode(SceneNode*, bool dontFree) = 0;
     virtual void	addDynamicNode(SceneNode*) = 0;
     virtual void	addDynamicSphere(SphereSceneNode*) = 0;
     virtual void	removeDynamicNodes() = 0;

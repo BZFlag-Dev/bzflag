@@ -205,11 +205,6 @@ void MeshFace::finalize()
     planeBits |= WallPlane;
   }
 
-  // why bother?
-  phydrv = -1;
-  driveThrough = true;
-  shootThrough = true;
-  
   return;
 }
 
@@ -396,9 +391,6 @@ void MeshFace::getNormal(const float* /*p*/, float* n) const
   if (n) {
     memcpy (n, plane, sizeof(float[3]));
   }
-//  n[0] = 0.0f;
-//  n[1] = 0.0f;
-//  n[2] = 1.0f;
   return;
 }
 
@@ -416,9 +408,6 @@ bool MeshFace::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
   if (normal) {
     memcpy (normal, plane, sizeof(float[3]));
   }
-//  normal[0] = 0.0f;
-//  normal[1] = 0.0f;
-//  normal[2] = 1.0f;
   return true;
 }
 
@@ -446,8 +435,8 @@ bool MeshFace::inBox(const float* p, float angle,
 
   float pln[4]; // translated plane
   fvec3* v = new fvec3[vertexCount]; // translated vertices
-  const float cos_val = cos(-angle);
-  const float sin_val = sin(-angle);
+  const float cos_val = cosf(-angle);
+  const float sin_val = sinf(-angle);
   for (i = 0; i < vertexCount; i++) {
     float h[2];
     h[0] = vertices[i][0] - p[0];

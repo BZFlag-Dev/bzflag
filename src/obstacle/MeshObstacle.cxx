@@ -16,6 +16,7 @@
 #include "Pack.h"
 #include "MeshObstacle.h"
 #include "MeshFace.h"
+#include "CollisionManager.h"
 #include "Intersect.h"
 
 
@@ -269,92 +270,146 @@ void MeshObstacle::getExtents(float* _mins, float* _maxs) const
 }
 
 
-float MeshObstacle::intersect(const Ray& ray) const
+bool MeshObstacle::containsPoint(const float point[3]) const
 {
-  ray.getDirection();
-  return -1.0f;
+  // this should use the CollisionManager's rayTest function
+//  const ObsList* olist = COLLISIONMGR.rayTest (&ray, t);
+  return containsPointNoOctree(point);
 }
 
 
-void MeshObstacle::get3DNormal(const float* /*p*/, float* n) const
+bool MeshObstacle::containsPointNoOctree(const float point[3]) const
 {
-  n = n;
-  return;
+  if (checkCount <= 0) {
+    return false;
+  }
+  
+  int c, f;
+  float dir[3];
+  bool hasOutsides = false;
+
+  for (c = 0; c < checkCount; c++) {
+    if (checkTypes[c] == CheckInside) {
+      vec3sub (dir, checkPoints[c], point);
+      Ray ray(point, dir); 
+      bool hitFace = false;
+      for (f = 0; f < faceCount; f++) {
+        const MeshFace* face = faces[f];
+        const float hittime = face->intersect(ray);
+        if ((hittime > 0.0f) && (hittime <= 1.0f)) {
+          hitFace = true;
+          break;
+        }
+      }
+      if (!hitFace) {
+        return true;
+      }
+    }
+    else if (checkTypes[c] == CheckOutside) {
+      hasOutsides = true;
+      vec3sub (dir, point, checkPoints[c]);
+      Ray ray(checkPoints[c], dir);
+      bool hitFace = false;
+      for (f = 0; f < faceCount; f++) {
+        const MeshFace* face = faces[f];
+        const float hittime = face->intersect(ray);
+        if ((hittime > 0.0f) && (hittime <= 1.0f)) {
+          hitFace = true;
+          break;
+        }
+      }
+      if (!hitFace) {
+        return false;
+      }
+    }
+    else {
+      printf ("checkType (%i) is not supported yet\n", checkTypes[c]);
+      exit (1);
+    }
+  }
+  
+  return hasOutsides;
 }
 
 
+float MeshObstacle::intersect(const Ray& /*ray*/) const
+{
+  return -1.0f; // rays only intersect with mesh faces
+}
 
 
-/////////////////////////////////////////////////////////////
-//  FIXME - everything after this point is currently JUNK! //
-/////////////////////////////////////////////////////////////
-
+void MeshObstacle::get3DNormal(const float* /*p*/, float* /*n*/) const
+{
+  return; // this should never be called if intersect() is always < 0.0f
+}
 
 
 void MeshObstacle::getNormal(const float* p, float* n) const
 {
-  p = p;
-  n = n;
+  const fvec3 center = { pos[0], pos[1], pos[2] + (0.5f * size[2]) };
+  fvec3 out;
+  vec3sub (out, p, center);
+  if (out[2] < 0.0f) {
+    out[2] = 0.0f;
+  }
+  float len = vec3dot(out, out);
+  if (len > 0.0f) {
+    len = 1 / sqrtf(len);
+    n[0] = out[0] * len;
+    n[1] = out[1] * len;
+    n[2] = out[2] * len;
+  } else {
+    n[0] = 0.0f;
+    n[1] = 0.0f;
+    n[2] = 1.0f;
+  }
+  
   return;
 }
 
 
-bool MeshObstacle::getHitNormal(const float* pos1, float,
-				 const float* pos2, float,
-				 float, float, float height,
-				 float* normal) const
+bool MeshObstacle::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
+				 const float* p, float /*angle*/,
+				 float, float, float /*height*/,
+				 float* n) const
 {
-  pos1 = pos2;
-  normal = normal;
-  height = height;
-  return false;
+  if (n != NULL) {
+    getNormal(p, n);
+  }
+  return true;
 }
 
 
 bool MeshObstacle::inCylinder(const float* p,
-                               float radius, float height) const
+                               float /*radius*/, float height) const
 {
-  p = p;
-  radius = height;
-  return false;
+  const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
+  return containsPoint(mid);
 }
 
 
-bool MeshObstacle::inBox(const float* p, float angle,
-                          float dx, float dy, float height) const
+bool MeshObstacle::inBox(const float* p, float /*angle*/,
+                         float /*dx*/, float /*dy*/, float height) const
 {
-  p = p;
-  angle = angle;
-  dx = dy = height;
-  return false;
+  const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
+  return containsPoint(mid);
 }
 
 
 bool MeshObstacle::inMovingBox(const float*, float,
-                                const float* p, float angle,
-                                float dx, float dy, float height) const
+                               const float* p, float /*angle*/,
+                               float /*dx*/, float /*dy*/, float height) const
 {
-  p = p;
-  angle = angle;
-  dx = dy = height;
-  return false;
+  const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
+  return containsPoint(mid);
 }
 
 
-// This is only used when the player has an Oscillation Overthruster
-// flag, and only after we already know that the tank is interfering
-// with this tetrahedron, so it doesn't have to be particularly fast.
-// As a note, some of the info from the original collision test might
-// be handy here.
-bool MeshObstacle::isCrossing(const float* p, float angle,
-                               float dx, float dy, float height,
-                               float* plane) const
+bool MeshObstacle::isCrossing(const float* /*p*/, float /*angle*/,
+                               float /*dx*/, float /*dy*/, float /*height*/,
+                               float* /*plane*/) const
 {
-  p = p;
-  angle = angle;
-  dx = dy = height;
-  plane = plane;
-  return false;
+  return false; // the MeshFaces should handle this case
 }
 
 

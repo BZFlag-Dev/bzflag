@@ -40,6 +40,10 @@ class MeshPolySceneNode : public WallSceneNode {
 
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
+    
+    int getRenderNodeCount() { return 1; }
+    RenderNode* getRenderNode(int) { return node; }
+    
 
   protected:
     class Geometry : public RenderNode {
@@ -56,14 +60,14 @@ class MeshPolySceneNode : public WallSceneNode {
 	const GLfloat* getVertex(int i) const;
         const GLfloat (*getVertices() const)[3];
 	const int getVertexCount() const;
-	const GLfloat* getPosition() { return wall->getSphere(); }
+	const GLfloat* getPosition() { return sceneNode->getSphere(); }
       private:
 	void drawV() const; // draw with just vertices
 	void drawVT() const; // draw with texcoords
 	void drawVN() const; // draw with normals
 	void drawVTN() const; // draw with texcoords and normals
       private:
-	MeshPolySceneNode* wall;
+	MeshPolySceneNode* sceneNode;
 	int style;
 	const GLfloat* normal;
       public:

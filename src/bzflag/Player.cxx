@@ -955,21 +955,25 @@ bool Player::isDeadReckoningWrong() const
 
 void Player::doDeadReckoning()
 {
-  if (!isAlive() && !isExploding())
+  if (!isAlive() && !isExploding()) {
     return;
+  }
 
   // get predicted state
   float predictedPos[3], predictedAzimuth, predictedVel[3];
   notResponding = !getDeadReckoning(predictedPos, &predictedAzimuth,
 				    predictedVel);
 
-  if (!isAlive()) notResponding = false;
+  if (!isAlive()) {
+    notResponding = false;
+  }
 
   // if hit ground then update input state (since we don't want to fall
   // anymore)
   float groundLimit = 0.0f;
-  if (getFlag() == Flags::Burrow)
+  if (getFlag() == Flags::Burrow) {
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+  }
     
   if (predictedPos[2] < groundLimit) {
     predictedPos[2] = groundLimit;
@@ -1012,7 +1016,8 @@ void Player::setDeadReckoning(float timestamp)
       offset = (offset > 0) ? maxToleratedJitter : -maxToleratedJitter;
       // and discard, but before adjust delta a little
       discardUpdate = true;
-    } else if (offset > 0) {
+    } 
+    else if (offset > 0) {
       // fast alignment to the packet that take less travel time
       // that's for trying to have less lag
       alpha = 1.0f;
@@ -1020,21 +1025,25 @@ void Player::setDeadReckoning(float timestamp)
   }
   // alpha filtering
   deltaTime = deltaTime + offset * alpha;
-  if (discardUpdate)
+  if (discardUpdate) {
     return;
+  }
   // when alpha is 1, that really means we are re-initializing deltaTime
   // so offset should be zero
-  if (alpha == 1.0f)
+  if (alpha == 1.0f) {
     offset = 0.0f;
-  if (deadReckoningState < DRStateStable)
+  }
+  if (deadReckoningState < DRStateStable) {
     ++deadReckoningState;
+  }
 
   setDeadReckoning();
 
   // Future the state based on offset
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
-  } else if (inputStatus & PlayerState::Falling) {
+  } 
+  else if (inputStatus & PlayerState::Falling) {
     // no control when falling
     float vx = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
     float vy = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
@@ -1047,10 +1056,11 @@ void Player::setDeadReckoning(float timestamp)
        inputAzimuth -= offset * inputAngVel;
 
     // update z
-    float deltaSpeed      = BZDBCache::gravity * offset;
-    inputZSpeed          -= deltaSpeed;
-    inputPos[2]          -= (deltaSpeed / 2.0f + inputZSpeed) * offset;
-  } else {
+    float deltaSpeed = BZDBCache::gravity * offset;
+    inputZSpeed -= deltaSpeed;
+    inputPos[2] -= (deltaSpeed / 2.0f + inputZSpeed) * offset;
+  }
+  else {
     // different algorithms for tanks moving in a straight line vs
     // turning in a circle
     if (inputAngVel == 0.0f) {
@@ -1070,14 +1080,14 @@ void Player::setDeadReckoning(float timestamp)
       const float radius = inputSpeed / inputAngVel;
 
       // Rotation center coordinate
-      inputPos[0]       -= radius * sin(inputAzimuth);
-      inputPos[1]       += radius * cos(inputAzimuth);
+      inputPos[0] -= radius * sinf(inputAzimuth);
+      inputPos[1] += radius * cosf(inputAzimuth);
 
       // azimuth changes linearly
-      inputAzimuth      -= offset * inputAngVel;
+      inputAzimuth -= offset * inputAngVel;
 
-      inputPos[0]       += radius * sin(inputAzimuth);
-      inputPos[1]       -= radius * cos(inputAzimuth);
+      inputPos[0] += radius * sinf(inputAzimuth);
+      inputPos[1] -= radius * cosf(inputAzimuth);
 
     }
   }
@@ -1094,12 +1104,19 @@ void Player::setDeadReckoning()
   inputPos[1] = state.pos[1];
   inputPos[2] = state.pos[2];
   inputSpeed = hypotf(state.velocity[0], state.velocity[1]);
-  if (cosf(state.azimuth) * state.velocity[0] + sinf(state.azimuth) * state.velocity[1] < 0.0f)
+  
+  const float xspeed = cosf(state.azimuth) * state.velocity[0]; 
+  const float yspeed = sinf(state.azimuth) * state.velocity[1];
+  if ((xspeed + yspeed) < 0.0f) {
     inputSpeed = -inputSpeed;
-  if (inputSpeed != 0.0f)
+  }
+
+  if (inputSpeed != 0.0f) {
     inputSpeedAzimuth = atan2f(state.velocity[1], state.velocity[0]);
-  else
+  } else {
     inputSpeedAzimuth = 0.0f;
+  }
+  
   inputZSpeed = state.velocity[2];
   inputAzimuth = state.azimuth;
   inputAngVel = state.angVel;

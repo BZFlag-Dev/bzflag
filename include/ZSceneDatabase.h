@@ -26,7 +26,8 @@ class ZSceneDatabase : public SceneDatabase {
 			ZSceneDatabase();
 			~ZSceneDatabase();
 
-    void		addStaticNode(SceneNode*);
+    // returns true if the node would have been deleted
+    bool		addStaticNode(SceneNode*, bool dontFree);
     void		addDynamicNode(SceneNode*);
     void		addDynamicSphere(SphereSceneNode*);
     void		removeDynamicNodes();

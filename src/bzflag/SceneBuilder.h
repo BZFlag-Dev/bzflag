@@ -42,8 +42,8 @@ class SceneDatabaseBuilder {
     void		addWall(SceneDatabase*, const WallObstacle&);
     void		addMesh(SceneDatabase*, MeshObstacle*);
     void		addBox(SceneDatabase*, BoxBuilding&);
-    void		addPyramid(SceneDatabase*, const PyramidBuilding&);
-    void		addBase(SceneDatabase*, const BaseBuilding&);
+    void		addPyramid(SceneDatabase*, PyramidBuilding&);
+    void		addBase(SceneDatabase*, BaseBuilding&);
     void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);
     void		addWaterLevel(SceneDatabase*, const World*);
 
