@@ -4599,6 +4599,10 @@ static void		checkEnvironment(RobotPlayer* tank)
   for (i = 0; i < curMaxPlayers; i++)
     if (player[i] && player[i]->getId() != tank->getId())
       tank->checkHit(player[i], hit, minTime);
+
+  // Check Server Shots
+  tank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
+
   if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
     // force shot to terminate locally immediately (no server round trip);
