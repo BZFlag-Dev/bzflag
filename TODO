@@ -25,6 +25,14 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* Add a -lib <file> option to bzfs, or "include" statements in map
+  files to allow the use of object libraries. Should also get ObstatlceMgr
+  to only send out and print those objects which are required by the map.
+  This could be implemented by added a referenced() member function to each
+  type that would be be called during ObstacleMgr::makeWorld()  (including
+  materials, physics drivers, texture matrices, transforms, and dynamic
+  colors). 
+
 * Teach Roger how to avoid driving into the water on maps that have
   waterlevels set.  Probably needs to know not to drive into deadly
   physics drivers too.
