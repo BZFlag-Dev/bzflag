@@ -11,6 +11,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* /identify reply should list groups you are in
+
 * Fix the Windows version of bzadmin so that EOF quits the program, like
   the UNIX version (see checkCommand() in StdBothUI.cxx).
 
