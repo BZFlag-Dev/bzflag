@@ -163,19 +163,16 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   mountainsAvailable = false;
   {
     OpenGLTexture *mountainTexture;
-    numMountainTextures = 0;
-    while (true) {
-      mountainTexture = tm.getTexture(TX_MOUNTAIN, numMountainTextures);
-      if (!mountainTexture)
-	break;
-      numMountainTextures++;
+    int width  = 0;
+    int height = 0;
+    for (numMountainTextures = 0;
+	 (mountainTexture = tm.getTexture(TX_MOUNTAIN, numMountainTextures));
+	 numMountainTextures++) {
+      height = mountainTexture->getHeight();
+      width += mountainTexture->getWidth();
     }
     if (numMountainTextures) {
       mountainsAvailable = true;
-
-      int width, height;
-      unsigned char* mountainImage = MediaFile::readImage("mountain", &width, &height);
-      delete[] mountainImage;
 
       // prepare common gstate
       gstate.reset();
@@ -184,6 +181,8 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       gstate.setMaterial(defaultMaterial);
       gstate.setAlphaFunc();
 
+      if (numMountainTextures > 1)
+	width -= 2 * numMountainTextures;
       // find power of two at least as large as height
       int scaledHeight = 1;
       while (scaledHeight < height) scaledHeight <<= 1;

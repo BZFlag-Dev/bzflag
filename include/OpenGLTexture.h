@@ -77,6 +77,8 @@ class OpenGLTexture {
     void		execute() const;
 
     float		getAspectRatio() const;
+    int                 getWidth() const;
+    int                 getHeight() const;
 
     static Filter	getFilter();
     static std::string	getFilterName();
@@ -148,6 +150,15 @@ inline bool		OpenGLTexture::isValid() const
 inline bool		OpenGLTexture::hasAlpha() const
 {
   return rep != NULL && rep->alpha;
+}
+
+inline int		OpenGLTexture::getWidth() const
+{
+  return rep->width;
+}
+inline int		OpenGLTexture::getHeight() const
+{
+  return rep->height;
 }
 
 #endif // BZF_OPENGL_TEXTURE_H
