@@ -230,7 +230,7 @@ Server::~Server()
 
   if (prev)
     prev->next = next;
-  else
+  else if (this == serverList)
     serverList = next; 
   if (next)
     next->prev = prev;
@@ -379,7 +379,7 @@ TestServer::~TestServer()
     close(fd);
   if (prev)
     prev->next = next;
-  else
+  else if (this == testingList)
     testingList = next;
   if (next)
     next->prev = prev;
