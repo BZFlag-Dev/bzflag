@@ -3,7 +3,9 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* Make packages for 1.10.2 :)
+* Fix and/or close outstanding bugs in sf tracker that do not require
+  breaking protocol.
+
 
 THESE ARE LOWER PRIORITY
 
@@ -116,7 +118,7 @@ THESE ARE LOWER PRIORITY
 
 * document headers with JavaDoc-style comments (for doxygen)
 
-* update doc/protocol.txt all descriptors to new format
+* update doc/guide/NetworkProtocol.xml all descriptors to new format
 
 * support gameinfo requests as one time udp packets (if udp)
 
