@@ -58,7 +58,6 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     int tries = 0;
     float minProximity = size / 3.0f;
     float bestDist = -1.0f;
-    float testPos[3];
     bool foundspot = false;
     while (!foundspot) {
       if (!world->getZonePoint(std::string(Team::getName(team)), testPos)) {
