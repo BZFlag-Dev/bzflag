@@ -4152,7 +4152,6 @@ static void		playingLoop()
 	gotBlowedUp( myTank, SelfDestruct, myTank->getId() );
 
 	hud->setAlert(1, NULL, 0.0f, True);
-	controlPanel->addMessage("Tank self Destructed");
       }
       else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
 	// update countdown alert

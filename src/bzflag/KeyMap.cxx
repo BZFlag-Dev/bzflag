@@ -31,7 +31,7 @@ const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 				{ '=', 0, 0 },
 				{ '-', 0, 0 },
 				{ 0, BzfKeyEvent::Pause, 0 },
-				{ 'd', 0, 0 },
+				{ 0, BzfKeyEvent::Delete, 0 },
 				{ 0, BzfKeyEvent::F12, 0 },
 				{ 0, BzfKeyEvent::PageUp, 0 },
 				{ 0, BzfKeyEvent::PageDown, 0 },
