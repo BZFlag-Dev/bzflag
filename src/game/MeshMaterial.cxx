@@ -274,8 +274,8 @@ void MeshMaterial::print(std::ostream& out, int /*level*/)
     out << "    dyncol " << dynamicColor << std::endl;
   }
 
-  printColor(out, "    ambient ", ambient, getDefault().ambient);
-  printColor(out, "    diffuse ", diffuse, getDefault().diffuse);
+  printColor(out, "    ambient ",  ambient,  getDefault().ambient);
+  printColor(out, "    diffuse ",  diffuse,  getDefault().diffuse);
   printColor(out, "    specular ", specular, getDefault().specular);
   printColor(out, "    emission ", emission, getDefault().emission);
 

@@ -38,8 +38,7 @@ MeshSceneNodeGenerator::~MeshSceneNodeGenerator()
   return;
 }
 
-WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
-                                                   float /*vRepeats*/, bool /*lod*/)
+WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
 {
   int i;
 

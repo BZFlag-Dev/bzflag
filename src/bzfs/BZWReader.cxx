@@ -29,7 +29,6 @@
 #include "CmdLineOptions.h"
 #include "TeamBases.h"
 #include "WorldFileObject.h"
-#include "CustomArc.h"
 #include "CustomBox.h"
 #include "CustomPyramid.h"
 #include "CustomGate.h"

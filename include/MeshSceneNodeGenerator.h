@@ -26,7 +26,7 @@ class MeshSceneNodeGenerator {
 
   public:
     ~MeshSceneNodeGenerator();
-    WallSceneNode* getNextNode(float, float, bool);
+    WallSceneNode* getNextNode(bool lod);
     static void setupNodeMaterial(MeshPolySceneNode* node,
                                   const MeshMaterial* mat);
   protected:

@@ -364,7 +364,7 @@ void			SceneDatabaseBuilder::addMesh(SceneDatabase* db,
   WallSceneNode* node;
   MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator (mesh);
 
-  while ((node = nodeGen->getNextNode(1.0f, 1.0f, wallLOD))) {
+  while ((node = nodeGen->getNextNode(wallLOD))) {
     db->addStaticNode(node);
   }
   delete nodeGen;
