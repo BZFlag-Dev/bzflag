@@ -758,6 +758,7 @@ void			KeyboardMapMenu::dismiss()
 
 void			KeyboardMapMenu::resize(int width, int height)
 {
+  int i;
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
@@ -783,7 +784,7 @@ void			KeyboardMapMenu::resize(int width, int height)
   const int count = list.getLength();
   const int mid = count / 2;
 
-  for (int i = 1; i <= mid; i++) {
+  for (i = 1; i <= mid; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
