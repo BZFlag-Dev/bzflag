@@ -848,7 +848,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   // get the list
   GLuint list;
   TankShadow shadow = isShadow ? ShadowOn : ShadowOff;
-  list = TANKGEOMMGR.getPartList(shadow, part, drawSize, drawLOD);
+  list = TankGeometryMgr::getPartList(shadow, part, drawSize, drawLOD);
   
   // draw the part
   glCallList(list);
@@ -988,7 +988,7 @@ void TankSceneNode::TankRenderNode::renderLights()
 
   glBegin(GL_POINTS);
   {
-    const float* scale = TANKGEOMMGR.getScaleFactor(sceneNode->tankSize);
+    const float* scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
     myColor3fv(lights[0]);
     glVertex3f(lights[0][3] * scale[0],
                lights[0][4] * scale[1],

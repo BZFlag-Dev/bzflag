@@ -21,9 +21,6 @@
 #include "SceneNode.h"
 
 
-extern class TankGeometryMgr TANKGEOMMGR;
-
-
 namespace TankGeometryEnums {
 
   enum TankShadow {
@@ -75,88 +72,20 @@ namespace TankGeometryEnums {
 }
 
 
-class TankGeometryMgr {
+namespace TankGeometryMgr {
 
-  public:
-    TankGeometryMgr();
-    ~TankGeometryMgr();
+  void init();
+  void kill();
+  void buildLists();
+  void deleteLists();
 
-    // rebuild the display lists
-    void rebuildLists();
+  GLuint getPartList(TankGeometryEnums::TankShadow shadow,
+                     TankGeometryEnums::TankPart part,
+                     TankGeometryEnums::TankSize size,
+                     TankGeometryEnums::TankLOD lod);
 
-    // grab a list, make dem graphics
-    GLuint getPartList(TankGeometryEnums::TankShadow shadow, 
-                       TankGeometryEnums::TankPart part, 
-                       TankGeometryEnums::TankSize size,
-                       TankGeometryEnums::TankLOD lod) const;
-    
-    // for doVertex3f(), doNormal3f(), and doTexCoord2f()
-    static TankGeometryEnums::TankShadow getShadowMode(); // const
-    static const float* currentScaleFactor(); // const
-    static const float* getScaleFactor(
-                          TankGeometryEnums::TankSize size); // const
-    
-    
-  private:
-    // delete the display lists
-    void deleteLists();
-    
-    // setup the scaling factors, and a callback BZDB
-    static void setupScales(const std::string& name, void *data);
-    
-    // for the OpenGLGState callback
-    static void initContext(void*);
-
-  private:
-    // display lists for drawing each part at different
-    // sizes and at different Levels Of Detail
-    static GLuint displayLists[TankGeometryEnums::LastTankShadow]
-                              [TankGeometryEnums::LastTankLOD]
-                              [TankGeometryEnums::LastTankSize]
-                              [TankGeometryEnums::LastTankPart];
-    
-    // scaling factors for the different sizes
-    static GLfloat scaleFactors[TankGeometryEnums::LastTankSize][3];
-    
-    // for currentVertexScale() and currentNormalScale()
-    static const float* scaleFactor;
-    
-    // shadow mode
-    static TankGeometryEnums::TankShadow shadowMode;
-    
-    // functions that make the basic tank parts
-    typedef void (*PartFunction)(void);
-    static const PartFunction partFunctions[TankGeometryEnums::LastTankLOD]
-                                           [TankGeometryEnums::BasicTankParts];
-                                           
-    // BZDB callback status
-    bool callbacksInstalled;
-};
-
-inline GLuint TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow, 
-                                           TankGeometryEnums::TankPart part, 
-                                           TankGeometryEnums::TankSize size,
-                                           TankGeometryEnums::TankLOD lod) const
-{
-  return displayLists[shadow][lod][size][part];
+  const float* getScaleFactor(TankGeometryEnums::TankSize size);
 }
-
-inline TankGeometryEnums::TankShadow TankGeometryMgr::getShadowMode()
-{
-  return shadowMode;
-}
-
-inline const float* TankGeometryMgr::getScaleFactor(
-                                       TankGeometryEnums::TankSize size)
-{
-  return scaleFactors[size];
-}
-
-inline const float* TankGeometryMgr::currentScaleFactor()
-{
-  return scaleFactor;
-}
-
 
 
 namespace TankGeometryUtils {
@@ -191,8 +120,8 @@ namespace TankGeometryUtils {
   void buildHighBody (void);
   void buildHighBarrel (void);
   void buildHighTurret (void);
-  void buildHighLCasing (int divs);
-  void buildHighRCasing (int divs);
+  void buildHighLCasing (void);
+  void buildHighRCasing (void);
   
   void buildHighLTread (int divs);
   void buildHighRTread (int divs);

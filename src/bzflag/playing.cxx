@@ -693,27 +693,28 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	}
 	return true;
 
-	/* XXX -- for testing forced recreation of OpenGL context
-	   case 'o':
-	   if (pressed) {
-	   // destroy OpenGL context
-	   getMainWindow()->getWindow()->freeContext();
+      // for testing forced recreation of OpenGL context
+#if defined(DEBUG_RENDERING)      
+      case 'X':
+        if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
+          // destroy OpenGL context
+          getMainWindow()->getWindow()->freeContext();
 
-	   // recreate OpenGL context
-	   getMainWindow()->getWindow()->makeContext();
+          // recreate OpenGL context
+          getMainWindow()->getWindow()->makeContext();
 
-	   // force a redraw (mainly for control panel)
-	   getMainWindow()->getWindow()->callExposeCallbacks();
+          // force a redraw (mainly for control panel)
+          getMainWindow()->getWindow()->callExposeCallbacks();
 
-	   // cause sun/moon to be repositioned immediately
-	   lastEpochOffset = epochOffset - 5.0;
+          // cause sun/moon to be repositioned immediately
+          lastEpochOffset = epochOffset - 5.0;
 
-	   // reload display lists and textures and initialize other state
-	   OpenGLGState::initContext();
-	   }
-	   break;
-	*/
-
+          // reload display lists and textures and initialize other state
+          OpenGLGState::initContext();
+        }
+        return true;
+#endif // DEBUG_RENDERING
+        
       case ']':
       case '}':
 	// plus 30 seconds
@@ -4595,8 +4596,6 @@ static void		playingLoop()
   TimeKeeper::setTick();
   updateDaylight(epochOffset, *sceneRenderer);
   
-  // rebuild the tank display lists
-  TANKGEOMMGR.rebuildLists();
 
   // main loop
   while (!CommandsStandard::isQuit()) {
@@ -5428,6 +5427,10 @@ void			startPlaying(BzfDisplay* _display,
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
   World::init();
+
+  // initialize and build the tank display lists
+  TankGeometryMgr::init();
+  TankGeometryMgr::buildLists();
 
   // prepare dialogs
   mainMenu = new MainMenu;

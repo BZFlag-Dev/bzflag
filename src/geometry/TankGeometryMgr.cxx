@@ -16,38 +16,45 @@
 #include <string>
 #include "common.h"
 #include "global.h"
+#include "TankGeometryMgr.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "TankGeometryMgr.h"
 #include "OpenGLGState.h"
 
 
-// the one and only
-TankGeometryMgr TANKGEOMMGR;
+// use the namespaces
+using namespace TankGeometryMgr;
+using namespace TankGeometryEnums;
+using namespace TankGeometryUtils;
+
+
+// Local Variables
+// ---------------
 
 // handy dandy casted value
 static const GLuint InvalidList = (GLuint) -1;
 
-// use the namespaces
-using namespace TankGeometryEnums;
-using namespace TankGeometryUtils;
-
-GLfloat TankGeometryMgr::scaleFactors[LastTankSize][3] = {
+// the display lists
+static GLuint displayLists[LastTankShadow][LastTankLOD]
+                          [LastTankSize][LastTankPart];
+         
+// the scaling factors
+static GLfloat scaleFactors[LastTankSize][3] = {
   {1.0f, 1.0f, 1.0f},   // Normal
   {1.0f, 1.0f, 1.0f},   // Obese
   {1.0f, 1.0f, 1.0f},   // Tiny
   {1.0f, 0.001f, 1.0f}, // Narrow
   {1.0f, 1.0f, 1.0f}    // Thief
 };
-const float* TankGeometryMgr::scaleFactor = scaleFactors[Normal];
+// the current scaling factors
+static const float* currentScaleFactor = scaleFactors[Normal];
 
-TankShadow TankGeometryMgr::shadowMode = ShadowOn;
+// the current shadow mode (used to remove glNormal3f and glTexcoord2f calls)
+static TankShadow shadowMode = ShadowOn;
 
-GLuint TankGeometryMgr::displayLists
-         [LastTankShadow][LastTankLOD][LastTankSize][LastTankPart];
-
-const TankGeometryMgr::PartFunction 
-  TankGeometryMgr::partFunctions[LastTankLOD][BasicTankParts] = {
+// arrays of functions to avoid large switch statements
+typedef void (*partFunction)(void);
+static const partFunction partFunctions[LastTankLOD][BasicTankParts] = {
   { buildLowBody, 
     buildLowBarrel,
     buildLowTurret,
@@ -63,13 +70,27 @@ const TankGeometryMgr::PartFunction
   { buildHighBody,
     buildHighBarrel,
     buildHighTurret,
-    buildHighLCasingOld,
-    buildHighRCasingOld
+    buildHighLCasing,
+    buildHighRCasing
   }
 };
+
+
+// Local Function Prototypes
+// -------------------------
+
+static void setupScales();
+static void initContext(void *data);
+static void bzdbCallback(const std::string& str, void *data);
+
+
+/****************************************************************************/
+
+// TankGeometryMgr Functions
+// -------------------------
     
 
-TankGeometryMgr::TankGeometryMgr()
+void TankGeometryMgr::init()
 {
   // initialize the lists to invalid
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
@@ -81,22 +102,26 @@ TankGeometryMgr::TankGeometryMgr()
       }
     }
   }
-  callbacksInstalled = false;
-  OpenGLGState::registerContextInitializer (initContext, (void*)this);
   
+  // install the BZDB callbacks
+  // This MUST be done after BZDB has been initialized in main()
+  BZDB.addCallback (StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL);
+  BZDB.addCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
+  BZDB.addCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
+  
+  // install the context initializer
+  OpenGLGState::registerContextInitializer (initContext, NULL);
+  
+  // setup the scaleFactors
+  setupScales();
+
   return;
 }
 
 
-TankGeometryMgr::~TankGeometryMgr()
+void TankGeometryMgr::kill()
 {
-  // FIXME: do we still have GL?  
-  deleteLists();
-  
-  // FIXME: really worth doing?
-  if (callbacksInstalled) {
-    OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
-  }
+  OpenGLGState::unregisterContextInitializer(initContext, NULL);
   return;
 }
 
@@ -108,10 +133,15 @@ void TankGeometryMgr::deleteLists()
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
         for (int part = 0; part < LastTankPart; part++) {
-          GLuint list = displayLists[shadow][lod][size][part];
+          GLuint& list = displayLists[shadow][lod][size][part];
           if (list != InvalidList) {
-            glDeleteLists(list, 1);
-            list = InvalidList;
+            if (glIsList(list) == GL_FALSE) {
+              DEBUG3("TankGeometryMgr: "
+                     "tried to delete an invalid list (%i)\n", list);
+            } else {
+              glDeleteLists(list, 1);
+              list = InvalidList;
+            }
           }
         }
       }
@@ -121,83 +151,12 @@ void TankGeometryMgr::deleteLists()
 }
 
 
-void TankGeometryMgr::setupScales(const std::string& /*name*/, void * /*data*/)
+void TankGeometryMgr::buildLists()
 {
-  float scale;
-  
-  scaleFactors[Normal][0] = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
-  scaleFactors[Normal][0] /= scale;
-
-  scaleFactors[Normal][1] = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKWIDTH).c_str());
-  scaleFactors[Normal][1] /= scale;
-
-  scaleFactors[Normal][2] = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKHEIGHT).c_str());
-  scaleFactors[Normal][2] /= scale;
-  
-  scale = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  scaleFactors[Obese][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Obese][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Obese][2] = scaleFactors[Normal][2];
-
-  scale = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  scaleFactors[Tiny][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Tiny][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Tiny][2] = scaleFactors[Normal][2];
-
-  scale = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  scaleFactors[Thief][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Thief][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Thief][2] = scaleFactors[Normal][2];
-
-  scaleFactors[Narrow][0] = scaleFactors[Normal][0];
-  scaleFactors[Narrow][1] = 0.001f;
-  scaleFactors[Narrow][2] = scaleFactors[Normal][2];
-  
-  return;  
-}
-
-
-void TankGeometryMgr::initContext(void * /*data*/)
-{
-  // initialize the lists to invalid
-  for (int shadow = 0; shadow < LastTankShadow; shadow++) {
-    for (int lod = 0; lod < LastTankLOD; lod++) {
-      for (int size = 0; size < LastTankSize; size++) {
-        for (int part = 0; part < LastTankPart; part++) {
-          displayLists[shadow][lod][size][part] = InvalidList;
-        }
-      }
-    }
-  }
-  TANKGEOMMGR.rebuildLists();
-  return;
-}
-
-
-void TankGeometryMgr::rebuildLists()
-{
-  // install the calllbacks
-  if (!callbacksInstalled) {
-    // the BZDB callbacks (at least), cannot be installed at
-    // global statup because BZDB is not initialized until 
-    // main() is called
-    BZDB.addCallback (StateDatabase::BZDB_OBESEFACTOR, setupScales, NULL);
-    BZDB.addCallback (StateDatabase::BZDB_TINYFACTOR, setupScales, NULL);
-    BZDB.addCallback (StateDatabase::BZDB_THIEFTINYFACTOR, setupScales, NULL);
-    callbacksInstalled = true;
-  }
-
   // setup the scale factors
-  std::string junk;
-  setupScales(junk, NULL);
-  scaleFactor = scaleFactors[Normal];
+  setupScales();
+  currentScaleFactor = scaleFactors[Normal];
   
-  // delete any old lists
-  deleteLists();
-
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
@@ -219,23 +178,11 @@ void TankGeometryMgr::rebuildLists()
           glNewList(list, GL_COMPILE);
           
           // setup the scale factor
-          scaleFactor = scaleFactors[size];
+          currentScaleFactor = scaleFactors[size];
           
           if (part < MedTankParts) {
             // the basic parts
-            if (!(lod == HighTankLOD)) {
-              partFunctions[lod][part]();
-            } else {
-              if (part == LeftCasing) {
-                buildHighLCasing(30);
-              }
-              else if (part == RightCasing) {
-                buildHighRCasing(30);
-              }
-              else {
-                partFunctions[lod][part]();
-              }
-            }
+            partFunctions[lod][part]();
           } 
           else {
             // the animated parts
@@ -279,9 +226,93 @@ void TankGeometryMgr::rebuildLists()
 }
 
 
+GLuint TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
+                                    TankGeometryEnums::TankPart part,
+                                    TankGeometryEnums::TankSize size,
+                                    TankGeometryEnums::TankLOD lod)
+{                   
+  return displayLists[shadow][lod][size][part];
+}
+
+
+const float* TankGeometryMgr::getScaleFactor(TankSize size)
+{
+  return scaleFactors[size];
+}
+
+
+/****************************************************************************/
+
+// Local Functions
+// ---------------
+
+
+static void bzdbCallback(const std::string& name, void */*data*/)
+{
+  deleteLists();
+  buildLists();
+  DEBUG3 ("TankGeometryMgr bzdbCallback(%s)\n", name.c_str());
+  return;
+}
+
+
+static void initContext(void * /*data*/)
+{
+  // we have to assume that the lists can not be deleted
+  buildLists();
+  DEBUG3 ("TankGeometryMgr initContext()\n");
+  return;
+}
+
+
+static void setupScales()
+{
+  float scale;
+  
+  scaleFactors[Normal][0] = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
+  scaleFactors[Normal][0] /= scale;
+
+  scaleFactors[Normal][1] = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKWIDTH).c_str());
+  scaleFactors[Normal][1] /= scale;
+
+  scaleFactors[Normal][2] = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKHEIGHT).c_str());
+  scaleFactors[Normal][2] /= scale;
+  
+  scale = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  scaleFactors[Obese][0] = scale * scaleFactors[Normal][0];
+  scaleFactors[Obese][1] = scale * scaleFactors[Normal][1];
+  scaleFactors[Obese][2] = scaleFactors[Normal][2];
+
+  scale = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  scaleFactors[Tiny][0] = scale * scaleFactors[Normal][0];
+  scaleFactors[Tiny][1] = scale * scaleFactors[Normal][1];
+  scaleFactors[Tiny][2] = scaleFactors[Normal][2];
+
+  scale = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  scaleFactors[Thief][0] = scale * scaleFactors[Normal][0];
+  scaleFactors[Thief][1] = scale * scaleFactors[Normal][1];
+  scaleFactors[Thief][2] = scaleFactors[Normal][2];
+
+  scaleFactors[Narrow][0] = scaleFactors[Normal][0];
+  scaleFactors[Narrow][1] = 0.001f;
+  scaleFactors[Narrow][2] = scaleFactors[Normal][2];
+  
+  return;  
+}
+
+
+/****************************************************************************/
+
+// TankGeometryUtils Functions
+// ---------------------------
+
+
 void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
 {
-  const float* scale = TankGeometryMgr::currentScaleFactor();
+  const float* scale = currentScaleFactor;
   x = x * scale[0];
   y = y * scale[1];
   z = z * scale[2];
@@ -292,10 +323,10 @@ void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
 
 void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
 {
-  if (TankGeometryMgr::getShadowMode() == ShadowOn) {
+  if (shadowMode == ShadowOn) {
     return;
   }
-  const float* scale = TankGeometryMgr::currentScaleFactor();
+  const float* scale = currentScaleFactor;
   GLfloat sx = x * scale[0];
   GLfloat sy = y * scale[1];
   GLfloat sz = z * scale[2];
@@ -312,7 +343,7 @@ void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
 
 void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
 {
-  if (TankGeometryMgr::getShadowMode() == ShadowOn) {
+  if (shadowMode == ShadowOn) {
     return;
   }
   glTexCoord2f(x, y);

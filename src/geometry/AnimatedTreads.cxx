@@ -64,7 +64,7 @@ float TankGeometryUtils::getTreadTexLen()
 }
 
 
-static void buildCasing(float Yoffset, int /*divisions*/)
+static void buildCasing(float Yoffset)
 {
   const float yLeft = Yoffset + (0.5f * casingWidth);
   const float yRight = Yoffset - (0.5f * casingWidth);
@@ -419,15 +419,15 @@ static void buildWheel(const float pos[3], float angle, int divisions)
 }
 
 
-void TankGeometryUtils::buildHighLCasing(int divs)
+void TankGeometryUtils::buildHighLCasing()
 {
-  buildCasing(+treadYCenter, divs);
+  buildCasing(+treadYCenter);
   return;
 }
 
-void TankGeometryUtils::buildHighRCasing(int divs)
+void TankGeometryUtils::buildHighRCasing()
 {
-  buildCasing(-treadYCenter, divs);
+  buildCasing(-treadYCenter);
   return;
 }
 
