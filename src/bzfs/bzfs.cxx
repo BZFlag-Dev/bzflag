@@ -41,6 +41,7 @@ const int		MaxShots = 10;
 #endif /* defined(_WIN32) */
 
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -722,6 +723,9 @@ static void		setNoDelay(int fd)
   struct protoent* p = getprotobyname("tcp");
   if (p && setsockopt(fd, p->p_proto, TCP_NODELAY, (SSOType)&on, sizeof(on)) < 0) {
     nerror("enabling TCP_NODELAY");
+  int mode = fcntl(fd, F_GETFL, 0);
+  if (mode == -1 || fcntl(fd, F_SETFL, mode | O_NDELAY) < 0)
+    nerror("enabling O_NDELAY");
   }
 }
 
