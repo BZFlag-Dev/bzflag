@@ -2,8 +2,10 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 1.10.7 in progress
+BZFlag 1.10.8  "lightning strikes back - return of the list server"
+-------------------------------------------------------------------
 
+* New list server URL
 * Added admin message sounds - Cameron Mandrake, Sean Morrison
 * Throw away bad or early links in world files - Tim Riker
 
