@@ -80,18 +80,21 @@ const int		FlagPLen = 6 + PlayerIdPLen + 48;
 class FlagDesc {
   public:
     FlagDesc( const char* name, const char* abbv, FlagType fType, 
-	      ShotType sType, FlagQuality quality, const char* help ) {
+	      ShotType sType, FlagQuality quality, TeamColor team, const char* help ) {
       flagName = name;
       flagAbbv = abbv;
       flagType = fType;
       flagShot = sType;
       flagQuality = quality;
       flagHelp = help;
+      flagTeam = team;
       
       flagSets[flagQuality].insert(this);
       flagMap[flagAbbv] = this;
       flagCount++;
     }
+
+    const float*	getColor();
 
     const char*         flagName;
     const char*         flagAbbv;
@@ -99,6 +102,7 @@ class FlagDesc {
     const char*         flagHelp;
     FlagQuality	        flagQuality;
     ShotType            flagShot;
+    TeamColor           flagTeam;
 
     typedef std::set<FlagDesc*> FlagSet;
     static std::map<std::string, FlagDesc*> flagMap;
@@ -116,7 +120,6 @@ class Flag {
     static FlagSet&	getGoodFlags();
     static FlagSet&	getBadFlags();
     static FlagDesc*	getDescFromAbbreviation(const char* abbreviation);
-    const float*	getColor(FlagId id);
 
   public:
     FlagDesc*		desc;
