@@ -102,17 +102,17 @@ extern "C" {
 
 #if !defined(_WIN32)
 
-#ifndef BSD
-#  ifndef __BEOS__
+#ifndef __BEOS__
+#  ifdef HAVE_VALUES_H
 #    include <values.h>
-#  else
-#    include <limits.h>
+#  endif
+#else
+#  include <limits.h>
 /* BeOS: FIXME */
-#    define MAXSHORT SHORT_MAX
-#    define MAXINT INT_MAX
-#    define MAXLONG LONG_MAX
-#  endif /* __BEOS__ */
-#endif /* BSD */
+#  define MAXSHORT SHORT_MAX
+#  define MAXINT INT_MAX
+#  define MAXLONG LONG_MAX
+#endif /* __BEOS__ */
 
 #include <sys/types.h>
 
