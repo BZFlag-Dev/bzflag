@@ -54,6 +54,8 @@ void	  MainMenu::createControls()
   HUDuiTextureLabel* textureLabel;
 
   // clear controls
+  for (unsigned int i = 0; i < list.size(); i++)
+    delete list[i];
   list.erase(list.begin(), list.end());
 
   // load title
@@ -111,6 +113,13 @@ HUDuiControl* MainMenu::createLabel(const char* string)
 
 MainMenu::~MainMenu()
 {
+  // clear controls
+  std::vector<HUDuiControl *>& list = getControls();
+  for (unsigned int i = 0; i < list.size(); i++)
+    delete list[i];
+  list.erase(list.begin(), list.end());
+
+  // destroy submenus
   delete joinMenu;
 #ifdef HAVE_KRB5
   delete loginMenu;
