@@ -69,7 +69,7 @@ fi
 
 
 case $host_os in
-     linux*) linux=true;;
+     linux*|freebsd*) linux=true;;
      *) linux=false;;
 esac
 AM_CONDITIONAL(LINUX, $linux)
