@@ -134,6 +134,9 @@ msgstr "c0LORed sHO+S On R@d4R:"
 msgid "Radar Shot Length:" 
 msgstr "r@d4r Sh0T L3nGTh:"
 
+msgid "Radar & Panel Size:"
+msgstr "r@d4r & p@n31 51z3:"
+
 msgid "Page Down for next page" 
 msgstr "P493 DOWN Phor nexT P493"
 

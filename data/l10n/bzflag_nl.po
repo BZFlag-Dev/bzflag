@@ -136,6 +136,9 @@ msgstr "Gekleurde Schoten op Radar:"
 msgid "Radar Shot Length:" 
 msgstr "Lengte van Schoten op Radar:"
 
+#msgid "Radar & Panel Size:"
+#msgstr ""
+
 msgid "Page Down for next page" 
 msgstr "PageDown voor volgende pagina"
 

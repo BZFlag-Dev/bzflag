@@ -135,6 +135,9 @@ msgstr "Tirs colorés sur le radar"
 msgid "Radar Shot Length:"
 msgstr "Longueur des tirs sur le radar"
 
+#msgid "Radar & Panel Size:"
+#msgstr ""
+
 msgid "Page Down for next page"
 msgstr "Page Suiv pour la page suivante"
 

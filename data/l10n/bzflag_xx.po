@@ -160,6 +160,9 @@ msgstr ""
 msgid "Radar Shot Length:" 
 msgstr ""
 
+msgid "Radar & Panel Size:"
+msgstr ""
+
 msgid "Page Down for next page" 
 msgstr ""
 
