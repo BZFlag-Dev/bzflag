@@ -53,7 +53,6 @@ class SDLDisplay : public BzfDisplay {
   bool oldFullScreen;
   int  oldWidth;
   int  oldHeight;
-  bool GLContextInited;
 };
 
 class SDLVisual : public BzfVisual {

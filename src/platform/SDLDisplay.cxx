@@ -25,7 +25,7 @@ static int my = 0;
 SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
 			   base_height(480), canGrabMouse(true),
 			   oldFullScreen(false),
-			   oldWidth(0), oldHeight(0), GLContextInited(false)
+			   oldWidth(0), oldHeight(0)
 {
   if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
     printf("Could not initialize SDL Video subsystem: %s.\n", SDL_GetError());
@@ -495,10 +495,8 @@ bool SDLDisplay::createWindow() {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
     return false;
   } else {
-    // reload context data
-    if (!GLContextInited)
-      OpenGLGState::initContext();
-    GLContextInited = true;
+    // init opengl context
+    OpenGLGState::initContext();
     return true;
   }
 };
@@ -654,8 +652,9 @@ void SDLWindow::swapBuffers() {
 };
 
 bool SDLWindow::create(void) {
-  if (!((SDLDisplay *)getDisplay())->createWindow())
+  if (!((SDLDisplay *)getDisplay())->createWindow()) {
     return false;
+  }
   return true;
 };
 

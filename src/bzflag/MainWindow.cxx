@@ -238,7 +238,6 @@ void			MainWindow::resize()
   if (!window->create())
     faulting = true;
   setQuadrant(quadrant);
-  OpenGLGState::initContext();
 }
 
 void			MainWindow::resizeCB(void* _self)
