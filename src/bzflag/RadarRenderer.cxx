@@ -396,6 +396,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       drawTank(x, y, z);
     }
 
+    bool coloredShot = BZDB.isTrue("coloredradarshots");
     // draw other tanks' shells
     maxShots = World::getWorld()->getMaxShots();
     for (i = 0; i < curMaxPlayers; i++) {
@@ -405,7 +406,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	const ShotPath* shot = player->getShot(j);
 	if (shot && shot->getFlag() != Flags::InvisibleBullet) {
 	  const float *shotcolor;
-	  if (BZDB.isTrue("coloredradarshots")) {
+	  if (coloredShot) {
 	    if (myTank->getFlag() == Flags::Colorblindness)
 	      shotcolor = Team::getRadarColor(RogueTeam);
 	    else
