@@ -56,6 +56,7 @@ TextureInit loader[] =
 	{ TX_EXPLOSION, 4, "explode4", OpenGLTexture::Linear },
 
 	{ TX_TANK, NO_VARIANT, "flage", OpenGLTexture::LinearMipmapLinear },
+	{ TX_FLAG, NO_VARIANT, "flag", OpenGLTexture::Max },
 };
 
 
@@ -71,7 +72,7 @@ TextureManager* TextureManager::getTextureManager()
 
 void TextureManager::terminate()
 {
-#ifdef MEMORY_CORRUPTION_STILL_BOOSTED
+#ifdef MEMORY_CORRUPTION_FIXED
   if (m_TM)
     delete m_TM;
   m_TM = NULL;

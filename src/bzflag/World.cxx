@@ -37,6 +37,7 @@
 #include "Flag.h"
 #include "BZDBCache.h"
 #include "TextUtils.h"
+#include "TextureManager.h"
 
 static OpenGLTexture*	flagTexture = NULL;
 
@@ -89,13 +90,12 @@ World::~World()
 
 void			World::init()
 {
-  flagTexture = new OpenGLTexture;
-  *flagTexture = getTexture("flag", OpenGLTexture::Max, false);
+  TextureManager *tm = TextureManager::getTextureManager();
+  flagTexture = tm->getTexture( TX_FLAG );
 }
 
 void			World::done()
 {
-  delete flagTexture;
   flagTexture = NULL;
 }
 
