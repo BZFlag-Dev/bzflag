@@ -97,8 +97,7 @@ void ServerList::readServerList(int index)
       // look for ^TOKEN: and save token if found
       if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
 	StartupInfo* info = getStartupInfo();
-	printError("got token. TODO: give it to the server");
-        //printError(base);
+	printError("got token:");
 	strncpy(info->token, (char *)(base + strlen(tokenIdentifier)), TokenLen);
 	printError(info->token);
 	base=scan;
