@@ -55,6 +55,76 @@
 //082
 //083
 //084
+//140
+//141
+//142
+//143
+//144
+		14AEE76105E12FCE00964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = CommandsStandard.cxx;
+			path = ../../game/CommandsStandard.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE76205E12FCE00964215 = {
+			fileRef = 14AEE76105E12FCE00964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE76505E1306100964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = commands.cxx;
+			path = ../../bzflag/commands.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE76605E1306100964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = commands.h;
+			path = ../../bzflag/commands.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE76705E1306100964215 = {
+			fileRef = 14AEE76505E1306100964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE76805E1306100964215 = {
+			fileRef = 14AEE76605E1306100964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE77205E134BF00964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ObstacleSceneNodeGenerator.h;
+			path = ../../../include/ObstacleSceneNodeGenerator.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE77305E134BF00964215 = {
+			fileRef = 14AEE77205E134BF00964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//140
+//141
+//142
+//143
+//144
 //180
 //181
 //182
@@ -123,8 +193,8 @@
 			projectDirPath = "";
 			targets = (
 				7B774ACF05C5C17D0018EA21,
-				7B9DCC6F05C5A5060063B49D,
 				7B9DCC7D05C5A62B0063B49D,
+				7B9DCC6F05C5A5060063B49D,
 				7B7747E905C5ABB30018EA21,
 				7B7747F405C5ACA40018EA21,
 				7B77484005C5AF720018EA21,
@@ -3036,6 +3106,7 @@
 		7B77498505C5BCE70018EA21 = {
 			buildActionMask = 2147483647;
 			files = (
+				14AEE77305E134BF00964215,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4579,7 +4650,8 @@
 				7B774A5805C5C0220018EA21,
 				7B774A5905C5C0220018EA21,
 				7B774A5A05C5C0220018EA21,
-				7B774A5B05C5C0220018EA21,
+				14AEE76505E1306100964215,
+				14AEE76605E1306100964215,
 				7BBA6D5B05D9D349008D1AA8,
 				7BBA6D5C05D9D349008D1AA8,
 				7B774A5C05C5C0220018EA21,
@@ -4746,15 +4818,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = callbacks.h;
 			path = ../../bzflag/callbacks.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		7B774A5B05C5C0220018EA21 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = CommandsStandard.cxx;
-			path = ../../bzflag/CommandsStandard.cxx;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -5239,6 +5302,7 @@
 				7BBA6DD005D9D5C7008D1AA8,
 				7BBA6DD205D9D5C7008D1AA8,
 				7BBA6DD405D9D5C7008D1AA8,
+				14AEE76805E1306100964215,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5251,7 +5315,6 @@
 				7B774AD805C5C1D60018EA21,
 				7B774ADA05C5C1D60018EA21,
 				7B774ADB05C5C1D60018EA21,
-				7B774ADD05C5C1D60018EA21,
 				7B774ADE05C5C1D60018EA21,
 				7B774AE005C5C1D60018EA21,
 				7B774AE205C5C1D60018EA21,
@@ -5304,6 +5367,7 @@
 				7BBA6DCF05D9D5C7008D1AA8,
 				7BBA6DD105D9D5C7008D1AA8,
 				7BBA6DD305D9D5C7008D1AA8,
+				14AEE76705E1306100964215,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5462,12 +5526,6 @@
 		};
 		7B774ADC05C5C1D60018EA21 = {
 			fileRef = 7B774A5A05C5C0220018EA21;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		7B774ADD05C5C1D60018EA21 = {
-			fileRef = 7B774A5B05C5C0220018EA21;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7061,7 +7119,6 @@
 		};
 		7B9DCC7905C5A5F20063B49D = {
 			children = (
-				7B77486A05C5AFE50018EA21,
 				7BBD61FD05D9C3030063FD3C,
 				7B77475D05C5A87B0018EA21,
 				7B77475E05C5A87B0018EA21,
@@ -7108,6 +7165,7 @@
 				7B77478E05C5A87B0018EA21,
 				7B77478F05C5A87B0018EA21,
 				7B77479005C5A87B0018EA21,
+				14AEE77205E134BF00964215,
 				7B77479105C5A87B0018EA21,
 				7B77479205C5A87B0018EA21,
 				7B77479305C5A87B0018EA21,
@@ -7150,6 +7208,7 @@
 				7B7747B805C5A87B0018EA21,
 				7B7747B905C5A87B0018EA21,
 				7B7747BA05C5A87B0018EA21,
+				7B77486A05C5AFE50018EA21,
 				7B7747BB05C5A87B0018EA21,
 				7B7747BC05C5A87B0018EA21,
 				7B7747BD05C5A87B0018EA21,
@@ -7174,7 +7233,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# shell script goes here\nif [ -f \"${TEMP_FILES_DIR}/include/config.h\" ] ; then\n    # already ran configure, so don't bother\n    echo \"config.h already generated, skipping\"\n    exit 0\nfi\necho \"GENERATING CONFIG.H\"\ncd ${TARGET_BUILD_DIR}/../../../..\necho \"running autoconf\"\n./autogen.sh > /dev/null 2>&1 \nif [ $? -gt 0 ] ; then\n    echo \"preperation for configure failed\"\n    exit 1\nfi\nmake distclean\ncd ${TEMP_FILES_DIR}\necho \"running configure\"\n../../../../../../configure --enable-robots 2>&1\nif [ -f \"include/config.h\" ] ; then\n    cp include/config.h ${TARGET_BUILD_DIR}\nelse\n    echo \"Error: Unable to generate config.h\"\n    exit 1\nfi\necho \"done\"\nexit 0";
+			shellScript = "# shell script goes here\nif [ -f \"${TEMP_FILES_DIR}/include/config.h\" ] ; then\n    # already ran configure, so don't bother\n    echo \"config.h already generated, skipping\"\n    exit 0\nfi\necho \"GENERATING CONFIG.H\"\nif [ ! -f \"${TARGET_BUILD_DIR}/../../../../configure\" ] ; then\n    cd ${TARGET_BUILD_DIR}/../../../..\n    echo \"running autoconf\"\n    ./autogen.sh > /dev/null 2>&1 \n    if [ $? -gt 0 ] ; then\n        echo \"preperation for configure failed\"\n        exit 1\n    fi\n    make distclean\nfi\ncd ${TEMP_FILES_DIR}\necho \"running configure\"\n../../../../../../configure --enable-robots 2>&1\nif [ -f \"include/config.h\" ] ; then\n    cp include/config.h ${TARGET_BUILD_DIR}\nelse\n    echo \"Error: Unable to generate config.h\"\n    exit 1\nfi\necho \"done\"\nexit 0";
 		};
 		7B9DCC7D05C5A62B0063B49D = {
 			buildPhases = (
@@ -8097,6 +8156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BBD621305D9CAFB0063FD3C,
+				14AEE76205E12FCE00964215,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8138,6 +8198,7 @@
 		};
 		7BBD620705D9C80E0063FD3C = {
 			children = (
+				14AEE76105E12FCE00964215,
 				7B77486905C5AFE50018EA21,
 			);
 			isa = PBXGroup;
