@@ -106,7 +106,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayRadarFlags",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayMainFlags",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayBinoculars",	"0",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL }
+  { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL }
 };
 
 // default key bindings
@@ -641,7 +642,7 @@ static void		parse(int argc, char** argv,
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-      resources.addValue("zoom", argv[i]);
+      BZDB->set("displayZoom", argv[i]);
     }
     else if (strcmp(argv[i], "-zbuffer") == 0) {
       if (++i == argc) {

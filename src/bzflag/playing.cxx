@@ -5345,8 +5345,8 @@ static void		renderDialog()
 
 static int		getZoomFactor()
 {
-  if (!resources->hasValue("zoom")) return 1;
-  const int zoom = atoi(resources->getValue("zoom").c_str());
+  if (!BZDB->isSet("displayZoom")) return 1;
+  const int zoom = atoi(BZDB->get("displayZoom").c_str());
   if (zoom < 1) return 1;
   if (zoom > 8) return 8;
   return zoom;
