@@ -305,6 +305,10 @@ SOURCE=..\src\bzflag\SceneBuilder.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\SceneRenderer.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzflag\ServerLink.h
 # End Source File
 # Begin Source File
