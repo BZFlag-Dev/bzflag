@@ -521,6 +521,8 @@
   <key label="Radar short:" down="set displayRadarRange 0.25"/>
   <key label="Radar Medium:" down="set displayRadarRange 0.50"/>
   <key label="Radar Long:" down="set displayRadarRange 1.00"/>
+  <key label="Radar Zoom In:" down="mult displayRadarRange 0.95"/>
+  <key label="Radar Zoom Out:" down="mult displayRadarRange 1.05263"/>
   <key label="Pause/Resume:" down="pause"/>
   <key label="Binoculars:" down="toggle displayBinoculars"/>
   <key label="Send to All:" down="send all"/>
