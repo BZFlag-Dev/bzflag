@@ -1592,17 +1592,16 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
-  if (BZDB.isTrue("colorful") &&
-      ((flagd == Flags::ShockWave)   ||
-       (flagd == Flags::Genocide)    ||
-       (flagd == Flags::Laser)       ||
-       (flagd == Flags::GuidedMissile))) {
-    GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
-    hudSColor3fv(white_color);
-    minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
-    hudSColor3fv(Team::getRadarColor(player->getTeam()));
-  } else if (BZDB.isTrue("colorful") && (flagd->endurance == FlagNormal)) {
-    hudSColor3fv(Team::getRadarColor(Team::getTeam(flagd->flagName)));
+  if (BZDB.isTrue("colorful")) {
+    if ((flagd == Flags::ShockWave)   ||
+	(flagd == Flags::Genocide)    ||
+	(flagd == Flags::Laser)       ||
+	(flagd == Flags::GuidedMissile)) {
+      GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
+      hudSColor3fv(white_color);
+    } else if (flagd->endurance == FlagNormal) {
+      hudSColor3fv(Team::getRadarColor(Team::getTeam(flagd->flagName)));
+    }
     minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
     hudSColor3fv(Team::getRadarColor(player->getTeam()));
   } else {
