@@ -73,22 +73,23 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer, Res
 	  background[3] = (float) atof(resources->getValue( "opacity" ));
 
   const float iWidth = 256.0f;
-  const float iHeight = 64.0f;
+  const float iHeight = 192.0f;
+  const float iSize = iHeight / 4.0f;
   const float dx = 1.0f / iWidth;
   const float dy = 1.0f / iHeight;
   float iSpace;
   if (background[3] == 1.0f)
     iSpace = 0.0f;
   else
-    iSpace = 5.0f;
+    iSpace = 4.0f;
   radarAreaUV[0] = dx * iSpace;
   radarAreaUV[1] = dy * iSpace;
-  radarAreaUV[2] = dx * (iHeight - (iSpace * 2.0f));
-  radarAreaUV[3] = dy * (iHeight - (iSpace * 2.0f));
-  messageAreaUV[0] = dx * iHeight;
+  radarAreaUV[2] = dx * (iSize - (iSpace * 2.0f));
+  radarAreaUV[3] = dy * (iSize - (iSpace * 2.0f));
+  messageAreaUV[0] = dx * iSize;
   messageAreaUV[1] = dy * iSpace;
-  messageAreaUV[2] = dx * (iWidth - iHeight - iSpace);
-  messageAreaUV[3] = dy * (iHeight - (iSpace * 2.0f));
+  messageAreaUV[2] = dx * (iWidth - iSize - iSpace);
+  messageAreaUV[3] = dy * (iSize - (iSpace * 2.0f));
 
   // other initialization
   width = 1;
@@ -257,7 +258,7 @@ void			ControlPanel::resize()
 {
   // get important metrics
   float w = (float)window.getWidth();
-  const float h = (float)window.getHeight() / 3;
+  const float h = (float)window.getHeight();
 
   // compute areas in pixels x,y,w,h
   // leave off 1 pixel for the border
