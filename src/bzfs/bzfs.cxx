@@ -129,7 +129,7 @@ struct CmdLineOptions
     maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0), teamFlagTimeout(30),
     pingTTL(DefaultTTL), maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f),
     timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
-    useFallbackPort(false), alsoUDP(true), requireUDP(false), randomBoxes(false), randomCTF(false),
+    useFallbackPort(false), requireUDP(false), randomBoxes(false), randomCTF(false),
     flagsOnBuildings(false), oneGameOnly(false), timeManualStart(false), randomHeights(false), useTeleporters(false),
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
   {
@@ -181,7 +181,6 @@ struct CmdLineOptions
 
   bool			useGivenPort;
   bool			useFallbackPort;
-  bool			alsoUDP; // true if UDP can be used in parallel to TCP connections
   bool			requireUDP; // true if only new clients allowed
   bool			randomBoxes;
   bool			randomCTF;
@@ -1696,50 +1695,48 @@ static bool serverStart()
   maxFileDescriptor = wksSocket;
 
   // udp socket
-  if (clOptions->alsoUDP) {
-    int n;
+  int n;
     // we open a udp socket on the same port if alsoUDP
-    if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+  if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
       nerror("couldn't make udp connect socket");
       return false;
-    }
+  }
 
     // increase send/rcv buffer size
 #if defined(_WIN32)
-    n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const char *)&udpBufSize,sizeof(int));
+  n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const char *)&udpBufSize,sizeof(int));
 #else
-    n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const void *)&udpBufSize,sizeof(int));
+  n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const void *)&udpBufSize,sizeof(int));
 #endif
-    if (n < 0) {
+  if (n < 0) {
       nerror("couldn't increase udp send buffer size");
       close(wksSocket);
       close(udpSocket);
       return false;
-    }
+  }
 
 #if defined(_WIN32)
-    n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const char *)&udpBufSize,sizeof(int));
+  n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const char *)&udpBufSize,sizeof(int));
 #else
-    n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const void *)&udpBufSize,sizeof(int));
+  n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const void *)&udpBufSize,sizeof(int));
 #endif
-    if (n < 0) {
+  if (n < 0) {
       nerror("couldn't increase udp receive buffer size");
       close(wksSocket);
       close(udpSocket);
       return false;
-    }
-    addr.sin_port = htons(clOptions->wksPort);
-    if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
+  }
+  addr.sin_port = htons(clOptions->wksPort);
+  if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
       nerror("couldn't bind udp listen port");
       close(wksSocket);
       close(udpSocket);
       return false;
-    }
-    // don't buffer info, send it immediately
-    BzfNetwork::setNonBlocking(udpSocket);
-
-    maxFileDescriptor = udpSocket;
   }
+  // don't buffer info, send it immediately
+  BzfNetwork::setNonBlocking(udpSocket);
+
+  maxFileDescriptor = udpSocket;
 
   // open sockets to receive and reply to pings
   Address multicastAddress(BroadcastAddress);
@@ -5027,21 +5024,16 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player is requesting an additional UDP connection, sending its own UDP port
     case MsgUDPLinkRequest: {
-      if (clOptions->alsoUDP) {
 	uint16_t port;
 	buf = nboUnpackUShort(buf, port);
 	player[t].ulinkup = false;
 	createUDPcon(t, port);
-      }
       break;
     }
 
     // player is ready to receive data over UDP connection, sending 0
     case MsgUDPLinkEstablished: {
       DEBUG3("Player %s [%d] UDP confirmed\n", player[t].callSign, t);
-      if (!clOptions->alsoUDP) {
-	DEBUG2("Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
-      }
       break;
     }
 
@@ -5225,7 +5217,6 @@ static const char *usageString =
 "[-mps <score>] "
 "[-ms <shots>] "
 "[-mts <score>] "
-"[-noudp] "
 "[-p <port>] "
 "[-passwd <password>] "
 #ifdef PRINTSCORE
@@ -5294,7 +5285,6 @@ static const char *extraUsageString =
 "\t-mps: set player score limit on each game\n"
 "\t-ms: maximum simultaneous shots per player\n"
 "\t-mts: set team score limit on each game\n"
-"\t-noudp: never use the new UDP networking\n"
 "\t-p: use alternative port (default is 5155)\n"
 "\t-passwd: specify a <password> for operator commands\n"
 #ifdef PRINTSCORE
@@ -5519,10 +5509,6 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   // parse command line
   int playerCountArg = 0,playerCountArg2 = 0;
   for (i = 1; i < argc; i++) {
-      if (strcmp(argv[i], "-noudp") == 0) {
-	DEBUG3("Setup: Server will use only TCP for connections\n");
-	options.alsoUDP = false;
-      } else
       if (strcmp(argv[i], "-requireudp") == 0) {
 	DEBUG3("Setup: Server requires (UDP) clients!\n");
 	options.requireUDP = true;
@@ -6500,8 +6486,7 @@ int main(int argc, char **argv)
     }
     // always listen for connections
     FD_SET(wksSocket, &read_set);
-    if (clOptions->alsoUDP)
-      FD_SET(udpSocket, &read_set);
+    FD_SET(udpSocket, &read_set);
     // always listen for pings
     if (pingInSocket != -1)
       FD_SET(pingInSocket, &read_set);
