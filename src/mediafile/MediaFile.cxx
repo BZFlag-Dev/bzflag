@@ -158,44 +158,44 @@ unsigned char*		MediaFile::readImage(
     // read the image
     if (image != NULL && buffer != NULL) {
       if (!file->read(buffer)) {
-        // failed to read image.  clean up.
-        if (buffer != image)
-          delete[] buffer;
-        delete[] image;
-        image  = NULL;
-        buffer = NULL;
+	// failed to read image.  clean up.
+	if (buffer != image)
+	  delete[] buffer;
+	delete[] image;
+	image  = NULL;
+	buffer = NULL;
       } else {
-        // expand image into 4 channels
-        int n = dx * dy;
-        const unsigned char* src = buffer;
-        unsigned char* dst = image;
-        if (dz == 1) {
-          // r=g=b=i, a=max
-          for (; n > 0; --n) {
-            dst[0] = dst[1] = dst[2] = src[0];
-            dst[3] = 0xff;
-            src += 1;
-            dst += 4;
-          }
-        } else if (dz == 2) {
-          // r=g=b=i
-          for (; n > 0; --n) {
-            dst[0] = dst[1] = dst[2] = src[0];
-            dst[3] = src[1];
-            src += 2;
-            dst += 4;
-          }
-        } else if (dz == 3) {
-          // a=max
-          for (; n > 0; --n) {
-            dst[0] = src[0];
-            dst[1] = src[1];
-            dst[2] = src[2];
-            dst[3] = 0xff;
-            src += 3;
-            dst += 4;
-          }
-        }
+	// expand image into 4 channels
+	int n = dx * dy;
+	const unsigned char* src = buffer;
+	unsigned char* dst = image;
+	if (dz == 1) {
+	  // r=g=b=i, a=max
+	  for (; n > 0; --n) {
+	    dst[0] = dst[1] = dst[2] = src[0];
+	    dst[3] = 0xff;
+	    src += 1;
+	    dst += 4;
+	  }
+	} else if (dz == 2) {
+	  // r=g=b=i
+	  for (; n > 0; --n) {
+	    dst[0] = dst[1] = dst[2] = src[0];
+	    dst[3] = src[1];
+	    src += 2;
+	    dst += 4;
+	  }
+	} else if (dz == 3) {
+	  // a=max
+	  for (; n > 0; --n) {
+	    dst[0] = src[0];
+	    dst[1] = src[1];
+	    dst[2] = src[2];
+	    dst[3] = 0xff;
+	    src += 3;
+	    dst += 4;
+	  }
+	}
       }
     }
 
@@ -249,36 +249,36 @@ float*		MediaFile::readSound(
 
       // convert
       if (numChannels == 1) {
-        if (sampleWidth == 1) {
-          signed char* src = reinterpret_cast<signed char*>(raw);
-          for (int i = 0; i < numFrames; ++i) {
-            audio[2 * i] = audio[2 * i + 1] = 257.0f * static_cast<float>(*src);
-            src += step;
-          }
-        } else {
-          int16_t* src = reinterpret_cast<int16_t*>(raw);
-          for (int i = 0; i < numFrames; ++i) {
-            audio[2 * i] = audio[2 * i + 1] = static_cast<float>(*src);
-            src += step;
-          }
-        }
+	if (sampleWidth == 1) {
+	  signed char* src = reinterpret_cast<signed char*>(raw);
+	  for (int i = 0; i < numFrames; ++i) {
+	    audio[2 * i] = audio[2 * i + 1] = 257.0f * static_cast<float>(*src);
+	    src += step;
+	  }
+	} else {
+	  int16_t* src = reinterpret_cast<int16_t*>(raw);
+	  for (int i = 0; i < numFrames; ++i) {
+	    audio[2 * i] = audio[2 * i + 1] = static_cast<float>(*src);
+	    src += step;
+	  }
+	}
       } else {
-        step *= 2;
-        if (sampleWidth == 1) {
-          signed char* src = reinterpret_cast<signed char*>(raw);
-          for (int i = 0; i < numFrames; ++i) {
-            audio[2 * i]     = 257.0f * static_cast<float>(src[0]);
-            audio[2 * i + 1] = 257.0f * static_cast<float>(src[1]);
-            src += step;
-          }
-        } else {
-          int16_t* src = reinterpret_cast<int16_t*>(raw);
-          for (int i = 0; i < numFrames; ++i) {
-            audio[2 * i]     = static_cast<float>(src[0]);
-            audio[2 * i + 1] = static_cast<float>(src[1]);
-            src += step;
-          }
-        }
+	step *= 2;
+	if (sampleWidth == 1) {
+	  signed char* src = reinterpret_cast<signed char*>(raw);
+	  for (int i = 0; i < numFrames; ++i) {
+	    audio[2 * i]     = 257.0f * static_cast<float>(src[0]);
+	    audio[2 * i + 1] = 257.0f * static_cast<float>(src[1]);
+	    src += step;
+	  }
+	} else {
+	  int16_t* src = reinterpret_cast<int16_t*>(raw);
+	  for (int i = 0; i < numFrames; ++i) {
+	    audio[2 * i]     = static_cast<float>(src[0]);
+	    audio[2 * i + 1] = static_cast<float>(src[1]);
+	    src += step;
+	  }
+	}
       }
     }
 

@@ -80,9 +80,9 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
   $pos = strpos($version, "BZFS");
   if ($pos === false || $pos > 0)
     return;
-  
+
   $curtime = time();
-  
+
   $result = sqlite_array_query($servdb,
 			       "SELECT nameport FROM servers "
 			       . "WHERE nameport = '$nameport'");
@@ -121,7 +121,7 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
 } elseif ($action == "REMOVE") {
 #  -- REMOVE --
 # Server requests to be removed from the DB.
-  $result = sqlite_query($servdb, 
+  $result = sqlite_query($servdb,
 			 "DELETE FROM servers WHERE nameport = '$nameport'");
   print "Unknown command: '$action'\n";
 }

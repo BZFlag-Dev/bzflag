@@ -619,13 +619,13 @@ void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
     int cnt = 0;
     int length = sizeof(uint16_t);
     for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-        if (flag[flagIndex].flag.status != FlagNoExist) {
-          if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t)) {
+	if (flag[flagIndex].flag.status != FlagNoExist) {
+	  if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t)) {
 	      nboPackUShort(bufStart, cnt);
-              if (playerIndex == -1)
-                broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-              else
-                directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+	      if (playerIndex == -1)
+		broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+	      else
+		directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
 	      cnt = 0;
 	      length = sizeof(uint16_t);
 	      buf = nboPackUShort(bufStart,0); //placeholder
@@ -640,10 +640,10 @@ void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 
     if (cnt > 0) {
 	nboPackUShort(bufStart, cnt);
-        if (playerIndex == -1)
-          broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-        else
-          directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+	if (playerIndex == -1)
+	  broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+	else
+	  directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
     }
   }
 }
@@ -834,7 +834,7 @@ static void sendMessageToListServerForReal(int index)
 
     // send ADD message
     {
-      sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n", 
+      sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n",
 	      link.hostname.c_str(),
 	      link.pathname.c_str(),
 	      clOptions->publicizedAddress.c_str(),
@@ -846,7 +846,7 @@ static void sendMessageToListServerForReal(int index)
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
     {
-      sprintf(msg, "GET http://%s%s?action=REMOVE&nameport=%s\n", 
+      sprintf(msg, "GET http://%s%s?action=REMOVE&nameport=%s\n",
 	      link.hostname.c_str(),
 	      link.pathname.c_str(),
 	      clOptions->publicizedAddress.c_str());
@@ -866,7 +866,7 @@ static void sendMessageToListServerForReal(int index)
       // encode ping reply as ascii hex digits
       char gameInfo[PingPacketHexPackedSize];
       pingReply.packHex(gameInfo);
-      sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n", 
+      sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n",
 	      link.hostname.c_str(),
 	      link.pathname.c_str(),
 	      clOptions->publicizedAddress.c_str(),
@@ -1726,21 +1726,21 @@ static WorldInfo *defineTeamWorld()
 	const float xoff = BoxBase + 0.5f * AvenueSize;
 	const float yoff = BoxBase + 0.5f * AvenueSize;
 	world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
-	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
-	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
-	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
-	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
-	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter(-3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.75f * M_PI,
-                             0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter( 3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.75f * M_PI,
-                             0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter( 3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.25f * M_PI,
-                             0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 
 	world->addLink(0, 14);
 	world->addLink(1, 7);
@@ -2248,7 +2248,7 @@ static void addPlayer(int playerIndex)
 
     for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
       // if the team is valid and not full
-      if ((clOptions->maxTeam[i] > 0) && 
+      if ((clOptions->maxTeam[i] > 0) &&
 	  (team[i].team.size < softmaxPlayers) &&
 	  (team[i].team.size <= sizeOfSmallestTeam)) {
 	if (team[i].team.size < sizeOfSmallestTeam) {
@@ -2266,7 +2266,7 @@ static void addPlayer(int playerIndex)
     }
 #endif
 
-    // reassign the team if 
+    // reassign the team if
     if (minIndex.size() == 0) {
       // all teams are all full, try observer
       t = player[playerIndex].team = ObserverTeam;
@@ -2592,15 +2592,15 @@ void resetFlag(int flagIndex)
 	   && ((topmosttype == IN_BOX) || (topmosttype == IN_BASE)))
 	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight))
 	  && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
-          && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
+	  && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
       {
-        pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
+	pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
       }
       else
       {
-        pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-        pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-        pFlagInfo->flag.position[2] = 0.0f;
+	pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+	pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+	pFlagInfo->flag.position[2] = 0.0f;
       }
       topmosttype = world->inBuilding(&obj,
 				      pFlagInfo->flag.position[0],
@@ -2910,18 +2910,18 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 				   pos[0], pos[1], pos[2],
 				   tankRadius, BZDBCache::tankHeight);
       if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
-        pos[2] = 0.0f;
+	pos[2] = 0.0f;
 	//Find any intersection regardless of z
-        type = world->inBuilding(&building,
+	type = world->inBuilding(&building,
 				 pos[0], pos[1], pos[2],
 				 tankRadius, maxWorldHeight);
       }
 
       lastType = NOT_IN_BUILDING;
       while (type != NOT_IN_BUILDING) {
-        pos[2] = building->pos[2] + building->size[2];
-        lastType = type;
-        type = world->inBuilding(&building,
+	pos[2] = building->pos[2] + building->size[2];
+	lastType = type;
+	type = world->inBuilding(&building,
 				 pos[0], pos[1], pos[2], tankRadius,
 				 BZDBCache::tankHeight);
       }
@@ -3095,7 +3095,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     player[victimIndex].losses++;
     if (killerIndex != InvalidPlayer) {
       if (victimIndex != killerIndex) {
-        if (tk) {
+	if (tk) {
 	  if (clOptions->teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, reason, -1);
 	  else
@@ -3578,19 +3578,19 @@ static void updateLag(int playerIndex, float timepassed, float jitter = 0.0f)
     pl.lagcount++;
     // warn players from time to time whose lag is > threshold (-lagwarn)
     if (clOptions->lagwarnthresh > 0 && pl.lagavg > clOptions->lagwarnthresh &&
-        pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
+	pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
       char message[MessageLen];
       sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-          int(pl.lagavg * 1000));
+	  int(pl.lagavg * 1000));
       sendMessage(ServerPlayer, playerIndex, message, true);
       pl.laglastwarn = pl.lagcount;
       pl.lagwarncount++;;
       if (pl.lagwarncount++ > clOptions->maxlagwarn) {
-        // drop the player
-        sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
-          clOptions->maxlagwarn);
-        sendMessage(ServerPlayer, playerIndex, message, true);
-        removePlayer(playerIndex, "lag");
+	// drop the player
+	sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
+	  clOptions->maxlagwarn);
+	sendMessage(ServerPlayer, playerIndex, message, true);
+	removePlayer(playerIndex, "lag");
       }
     }
   }
@@ -3956,9 +3956,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	if (flagIndex == -1)
 	  return;
 
-        zapFlag(player[to].flag);
+	zapFlag(player[to].flag);
 
-        void *bufStart = getDirectMessageBuffer();
+	void *bufStart = getDirectMessageBuffer();
 	void *buf = nboPackUByte(bufStart, from);
 	buf = nboPackUByte(buf, to);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
@@ -3966,7 +3966,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	flag[flagIndex].player = to;
 	player[to].flag = flagIndex;
 	player[from].flag = -1;
-        buf = flag[flagIndex].flag.pack(buf);
+	buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
 	player[from].lastFlagDropTime = TimeKeeper::getCurrent();
 	player[to].lastFlagDropTime = TimeKeeper::getCurrent();
@@ -3980,7 +3980,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     case MsgNewRabbit: {
       if (t == rabbitIndex)
-        anointNewRabbit();
+	anointNewRabbit();
       break;
     }
 
@@ -4034,28 +4034,28 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       // silently drop old packet
       if (state.order <= player[t].lastState.order)
-        break;
+	break;
 
       // packet got lost (or out ouf order): count
       if (state.order - player[t].lastState.order > 1)
-        player[t].packetslost++;
+	player[t].packetslost++;
 
       TimeKeeper now = TimeKeeper::getCurrent();
       // don't calc jitter if more than 2 seconds between packets
       if (player[t].lasttimestamp > 0.0f && timestamp-player[t].lasttimestamp < 2.0f) {
-        const float jitter = fabs(now - player[t].lastupdate - (timestamp - player[t].lasttimestamp));
-        updateLag(t, -1.0f, jitter);
+	const float jitter = fabs(now - player[t].lastupdate - (timestamp - player[t].lasttimestamp));
+	updateLag(t, -1.0f, jitter);
       }
       player[t].lasttimestamp = timestamp;
       player[t].lastupdate = now;
 
       //Don't kick players up to 5 seconds after a world parm has changed, 5-> BZBB var?
       if (now - lastWorldParmChange > 5.0f) {
-        float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
-        if (gravity < 0.0f) {
-          float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
+	float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+	if (gravity < 0.0f) {
+	  float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
 
-          if (state.pos[2] > maxTankHeight) {
+	  if (state.pos[2] > maxTankHeight) {
 	    char message[MessageLen];
 	    DEBUG1("kicking Player %s [%d] jump too high [max: %f height: %f]\n", player[t].callSign, t, maxTankHeight, state.pos[2]);
 	    strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
@@ -4065,12 +4065,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  }
 	}
 
-        // make sure the player is still in the map
-        // test all the map bounds + some fudge factor, just in case
-        float	fudge = 5.0f;
-        bool InBounds = true;
-        float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-        if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge)) {
+	// make sure the player is still in the map
+	// test all the map bounds + some fudge factor, just in case
+	float	fudge = 5.0f;
+	bool InBounds = true;
+	float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+	if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge)) {
 	  std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << fudge << ")" << std::endl;
 	  InBounds = false;
 	} else if ( (state.pos[0] >= worldSize*0.5f + fudge) || (state.pos[0] <= -worldSize*0.5f - fudge)) {
@@ -4078,14 +4078,14 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
        	  InBounds = false;
 	}
 
-        if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) + -0.5) {
+	if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) + -0.5) {
 	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " + -0.5)" << std::endl;
 	  InBounds = false;
 	}
 
 
-        // kick em cus they are cheating
-        if (!InBounds)
+	// kick em cus they are cheating
+	if (!InBounds)
 	{
 	  char message[MessageLen];
 	  DEBUG1("kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].callSign, t, state.pos[0], state.pos[1], state.pos[2]);
@@ -4094,12 +4094,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  removePlayer(t, "Out of map bounds");
 	}
 
-        // Speed problems occur around flag drops, so don't check for a short period of time
-        // after player drops a flag. Currently 1/4 second, adjust as needed. Maybe BZDB?
+	// Speed problems occur around flag drops, so don't check for a short period of time
+	// after player drops a flag. Currently 1/4 second, adjust as needed. Maybe BZDB?
 
-        if (TimeKeeper::getCurrent() - player[t].lastFlagDropTime >= 0.25f) {
-          // check for highspeed cheat; if inertia is enabled, skip test for now
-          if (clOptions->linearAcceleration == 0.0f) {
+	if (TimeKeeper::getCurrent() - player[t].lastFlagDropTime >= 0.25f) {
+	  // check for highspeed cheat; if inertia is enabled, skip test for now
+	  if (clOptions->linearAcceleration == 0.0f) {
 	    // Doesn't account for going fast backwards, or jumping/falling
 	    float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
 				      state.velocity[1]*state.velocity[1];
@@ -4120,7 +4120,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      if ((player[t].lastState.pos[2] != state.pos[2])
 	      ||  (player[t].lastState.velocity[2] != state.velocity[2])
 	      ||  ((state.status & PlayerState::Alive) == 0)) {
-   	        logOnly = true;
+   		logOnly = true;
 	      }
 	    }
 
@@ -4131,18 +4131,18 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	    maxPlanarSpeedSqr *= realtol;
 	    if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	      if (logOnly) {
-	           DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+		   DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		   player[t].callSign, t,
 		   sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	      }
 	      else {
-	           char message[MessageLen];
-	           DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-	           player[t].callSign, t,
-	           sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	           strcpy(message, "Autokick: Tank moving too fast, Update your client." );
-	           sendMessage(ServerPlayer, t, message, true);
-	           removePlayer(t, "too fast");
+		   char message[MessageLen];
+		   DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+		   player[t].callSign, t,
+		   sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		   strcpy(message, "Autokick: Tank moving too fast, Update your client." );
+		   sendMessage(ServerPlayer, t, message, true);
+		   removePlayer(t, "too fast");
 	      }
 	      break;
 	    }
@@ -4735,13 +4735,13 @@ int main(int argc, char **argv)
 	  while ((j = strstr(c, "\\n")) != NULL) {
 	    int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
 	    strncpy(message, c, l);
-            message[l] = '\0';
-            sendMessage(ServerPlayer, AllPlayers, message, true);
+	    message[l] = '\0';
+	    sendMessage(ServerPlayer, AllPlayers, message, true);
 	    c = j + 2;
 	  }
 	  strncpy(message, c, MessageLen - 1);
-          message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
-          sendMessage(ServerPlayer, AllPlayers, message, true);
+	  message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
+	  sendMessage(ServerPlayer, AllPlayers, message, true);
 	}
 	// multi line from file advert
 	if (adLines != NULL){
@@ -4812,7 +4812,7 @@ int main(int argc, char **argv)
       {
 	player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
 	if (player[j].pingpending) // ping lost
-          player[j].packetslost++;
+	  player[j].packetslost++;
 
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUShort(bufStart, player[j].pingseqno);

@@ -20,7 +20,7 @@
 #include <vector>
 
 
-/** This is an abstract base class for all different option parsers. 
+/** This is an abstract base class for all different option parsers.
     The idea is that you register a Parser object for each command line option,
     and the subclass of the object depends on what the program should
     do when it sees that option. If it should change a variable you could
@@ -33,15 +33,15 @@ class Parser {
 public:
   /** This constructor should be called by all subclasses.
       @param usageText A text string that describes how this command line
-                       option should be used, e.g. "[-ui curses|stdout]".
+		       option should be used, e.g. "[-ui curses|stdout]".
       @param helpText A short description of what this option does.
   */
   Parser(const std::string& usageText, const std::string& helpText)
     : usage(usageText), help(helpText) { }
   virtual ~Parser() { }
-  /** This function is called by OptionParser when the option that this 
-      parser is mapped to is given on the command line. It will return 
-      the number of parameters that this option takes, so that the 
+  /** This function is called by OptionParser when the option that this
+      parser is mapped to is given on the command line. It will return
+      the number of parameters that this option takes, so that the
       OptionParser knows where to look for next option.
   */
   virtual int parse(char** argv) = 0;
@@ -51,8 +51,8 @@ public:
 
 /** This is a template class for the variable parser. It should be used
     when you want a command line option to change the value of a variable.
-    The template parameter T must be such that there is a function 
-    <code>istream& operator>>(istream&, T&)</code>. 
+    The template parameter T must be such that there is a function
+    <code>istream& operator>>(istream&, T&)</code>.
 */
 template <class T>
 class VariableParser : public Parser {
@@ -77,7 +77,7 @@ protected:
 /** This is a specialization for @c string variables. It copies the
     entire parameter instead of just the first word (which the
     stream operator would have done). */
-template<> 
+template<>
 class VariableParser<std::string> : public Parser {
 public:
   VariableParser(std::string& variable, const std::string& usageText,
@@ -93,7 +93,7 @@ protected:
 
 /** This is a specialization for @c bool variables. It does not
     take a parameter, but just sets the variable to @c true. */
-template<> 
+template<>
 class VariableParser<bool> : public Parser {
 public:
   VariableParser(bool& variable, const std::string& usageText,
@@ -136,15 +136,15 @@ public:
   /** This function prints the usage text to the stream @c out. */
   void printUsage(std::ostream& os, const std::string& progName) const;
   /** This template function connects the variable @c variable to the command
-      line option @c option. This means that if you have a @c std::string 
+      line option @c option. This means that if you have a @c std::string
       variable called @c myName and call this function like
       this: <code>registerVariable("name", myName)</code>, and then give
       the parameters <code>-name "Lars Luthman"</code> on the command line,
       the variable @c myName will get the value <code>"Lars Luthman"</code>
       when the command line is parsed. This is a template function, so it
-      will work for variables of other types too, such as @c float or 
+      will work for variables of other types too, such as @c float or
       @c int. The only condition on the variable type is that it can be
-      read from an @c istream. 
+      read from an @c istream.
   */
   template <class T>
   bool registerVariable(const std::string& option, T& variable,

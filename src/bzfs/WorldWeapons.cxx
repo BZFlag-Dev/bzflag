@@ -59,7 +59,7 @@ void WorldWeapons::fire()
       firingInfo.shot.vel[2] = 0.0f;
       firingInfo.shot.id = worldShotId++;
       if (worldShotId > 30) // Maximum of 30 world shots
-        worldShotId = 0;
+	worldShotId = 0;
       firingInfo.shot.dt = 0;
       buf = firingInfo.pack(bufStart);
 
@@ -71,7 +71,7 @@ void WorldWeapons::fire()
       w->nextTime += w->delay[w->nextDelay];
       w->nextDelay++;
       if (w->nextDelay == (int)w->delay.size())
-        w->nextDelay = 0;
+	w->nextDelay = 0;
     }
   }
 }

@@ -120,7 +120,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   if ((extensions != NULL && strstr(extensions, "GL_EXT_abgr") != NULL) &&
       (vendor != NULL && strcmp(vendor, "SGI") == 0)) {
     // old hardware is faster with ABGR.  new hardware isn't.
-    if ((renderer != NULL) && 
+    if ((renderer != NULL) &&
 	(strncmp(renderer, "GR1", 3) == 0 ||
 	 strncmp(renderer, "VGX", 3) == 0 ||
 	 strncmp(renderer, "LIGHT", 5) == 0 ||

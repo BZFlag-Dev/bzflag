@@ -102,7 +102,7 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
   $curtime = time();
 
   $result = mysql_query("SELECT * FROM servers " .
-			"WHERE nameport = '$nameport'") 
+			"WHERE nameport = '$nameport'")
     or die ("Invalid query: ". mysql_error());
   $count = mysql_num_rows($result);
   if (!$count) {

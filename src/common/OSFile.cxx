@@ -28,7 +28,7 @@ void getUpperName ( char *name )
     strupr(name);
 #else
     while(*name++)
-        *name = toupper(*name);
+	*name = toupper(*name);
 #endif
 }
 
@@ -48,10 +48,10 @@ void osFileStdToOSDir ( char *dir )
     char *p = dir;
 
     while ( *p != NULL ) {
-        if (*p == '/')
-            *p = '\\';
+	if (*p == '/')
+	    *p = '\\';
 
-        p++;
+	p++;
     }
 #endif//WIN32
 }
@@ -64,10 +64,10 @@ void osFileOSToStdDir ( char *dir )
     char *p = dir;
 
     while ( *p != NULL ) {
-        if (*p == '\\')
-            *p= '/';
+	if (*p == '\\')
+	    *p= '/';
 
-        p++;
+	p++;
     }
 #endif//WIN32
 }
@@ -80,17 +80,17 @@ void windowsMakePath(const char * path)
     char *pos = strchr (path,'\\');
 
     if (!pos) { // dono maybe the screwed up
-        std::string str = "\\";
-        str += path;
-        mkdir(str.c_str());
-        return;
+	std::string str = "\\";
+	str += path;
+	mkdir(str.c_str());
+	return;
     }
 
     while (pos) {
-        std::string str = path;
-        str.resize(pos-path);
-        mkdir(str.c_str());
-        pos = strchr (pos+1,'\\');
+	std::string str = path;
+	str.resize(pos-path);
+	mkdir(str.c_str());
+	pos = strchr (pos+1,'\\');
     }
 }
 #endif // windows
@@ -114,10 +114,10 @@ void setOSFileBaseDir ( const char *dir )
 {
     stdBaseDir = dir;
     if (!dir)
-        osBaseDir.empty();
+	osBaseDir.empty();
     else {
-        osBaseDir = stdBaseDir;
-        osFileStdToOSDir((char*)osBaseDir.c_str());
+	osBaseDir = stdBaseDir;
+	osFileStdToOSDir((char*)osBaseDir.c_str());
     }
 }
 
@@ -126,7 +126,7 @@ typedef struct OSFile::OSFileInfo
 {
     OSFileInfo()
     {
-        stdName = "";
+	stdName = "";
     osName = "";
     title = "";
     useGlobalPath = true;
@@ -135,22 +135,22 @@ typedef struct OSFile::OSFileInfo
 
     OSFileInfo( std::string &_stdName, std::string &_osName, std::string &_title )
     {
-        stdName = _stdName;
-        osName = _osName;
-        title = _title;
-        useGlobalPath = true;
-        fp = NULL;
+	stdName = _stdName;
+	osName = _osName;
+	title = _title;
+	useGlobalPath = true;
+	fp = NULL;
     }
-    
+  
     const OSFileInfo& operator=( const OSFileInfo &xInfo )
     {
-        stdName = xInfo.stdName;
-        osName = xInfo.osName;
-        title = xInfo.title;
-        useGlobalPath = xInfo.useGlobalPath;
-        fp = NULL;
+	stdName = xInfo.stdName;
+	osName = xInfo.osName;
+	title = xInfo.title;
+	useGlobalPath = xInfo.useGlobalPath;
+	fp = NULL;
     }
-    
+  
     std::string        stdName;
     std::string        osName;
     std::string        title;
@@ -178,7 +178,7 @@ OSFile::OSFile ( const char *name )
 OSFile::OSFile ( const OSFile &r)
 {
     info = new OSFileInfo;
-    info->fp = r.info->fp;    
+    info->fp = r.info->fp;  
     info->osName = r.info->osName;
     info->stdName = r.info->stdName;
     info->title = r.info->title;
@@ -189,15 +189,15 @@ OSFile::OSFile ( const OSFile &r)
 OSFile& OSFile::operator = (const OSFile &r)
 {
     if (this != &r) {
-        if (info)
-            delete (info);
-    
-        info = new OSFileInfo;
-        info->fp = r.info->fp;    
-        info->osName = r.info->osName;
-        info->stdName = r.info->stdName;
-        info->title = r.info->title;
-        info->useGlobalPath = r.info->useGlobalPath;
+	if (info)
+	    delete (info);
+  
+	info = new OSFileInfo;
+	info->fp = r.info->fp;  
+	info->osName = r.info->osName;
+	info->stdName = r.info->stdName;
+	info->title = r.info->title;
+	info->useGlobalPath = r.info->useGlobalPath;
     }
     return *this;
 }
@@ -205,7 +205,7 @@ OSFile& OSFile::operator = (const OSFile &r)
 OSFile::OSFile ( const char *name, const char *mode   )
 {
     info = new OSFileInfo;
-    info->fp = NULL;    
+    info->fp = NULL;  
     info->useGlobalPath = true;
 
     open(name,mode);
@@ -215,7 +215,7 @@ OSFile::~OSFile()
 {
     close();
     if (info)
-        delete (info);
+	delete (info);
 }
 
 bool OSFile::open ( const char *name, const char *mode  )
@@ -234,22 +234,22 @@ bool OSFile::open ( const char *mode )
     char    modeToUse[32];
 
     if (!mode)
-        sprintf(modeToUse,"rb");
+	sprintf(modeToUse,"rb");
     else
-        strcpy(modeToUse,mode);
+	strcpy(modeToUse,mode);
 
     std::string    fileName;
-    
+  
     if (info->useGlobalPath)
-        fileName = osBaseDir;
+	fileName = osBaseDir;
     fileName += info->osName;
 
     info->fp = fopen(fileName.c_str(),mode);
 
     // we may need to make the file path to the file, if we are writing then lets get on with it.
     if (!info->fp && strchr(mode,'w')) {
-        osMakePath(fileName.c_str());
-        info->fp = fopen(fileName.c_str(),mode);
+	osMakePath(fileName.c_str());
+	info->fp = fopen(fileName.c_str(),mode);
     }
 
     return isOpen();
@@ -258,7 +258,7 @@ bool OSFile::open ( const char *mode )
 bool OSFile::close ( void )
 {
     if (info->fp)
-        fclose(info->fp);
+	fclose(info->fp);
 
     info->fp = NULL;
 
@@ -268,7 +268,7 @@ bool OSFile::close ( void )
 int OSFile::read ( void* data, int size, int count )
 {
     if (!isOpen())
-        return 0;
+	return 0;
 
     return fread(data,size,count,info->fp);
 }
@@ -276,24 +276,24 @@ int OSFile::read ( void* data, int size, int count )
 unsigned char  OSFile::readChar ( void )
 {
     if (!isOpen())
-        return 0;
+	return 0;
 
     char c = 0;
 
     if (fscanf(info->fp,"%c",&c) != 1)
-        return 0;
+	return 0;
     return c;
 }
 
 const char* OSFile::readLine ( void )
 {
     static std::string line;
-    
+  
     line = "";
     char c = readChar();
     while (c != 0 && c != '/n' && c != 10) {
-        line += c;
-        c = readChar();
+	line += c;
+	c = readChar();
     }
     return line.c_str();
 }
@@ -301,7 +301,7 @@ const char* OSFile::readLine ( void )
 int OSFile::scanChar ( unsigned char *pChar )
 {
     if (!pChar || !isOpen())
-        return 0;
+	return 0;
 
     return fscanf(info->fp,"%c",pChar);
 }
@@ -309,18 +309,18 @@ int OSFile::scanChar ( unsigned char *pChar )
 const char* OSFile::scanStr ( )
 {
     if (!isOpen())
-        return 0;
-    
+	return 0;
+  
     static char temp[1024] = {0};
     if (fscanf(info->fp,"%s",temp)!=1)
-        return NULL;
+	return NULL;
     return temp;
 }
 
 int  OSFile::write ( const void* data, int size )
 {
     if (!isOpen())
-        return 0;
+	return 0;
 
     return fwrite(data,size,1,info->fp);
 }
@@ -334,22 +334,22 @@ void OSFile::flush ( void )
 int OSFile::seek ( teFilePos ePos, int iOffset )
 {
     if (!isOpen())
-        return 0;
+	return 0;
 
     long iMode;
     switch(ePos) {
-        case eFileStart:
-            iMode = SEEK_SET;
-            break;
+	case eFileStart:
+	    iMode = SEEK_SET;
+	    break;
 
-        case eFileEnd:
-            iMode = SEEK_END ;
-            break;
+	case eFileEnd:
+	    iMode = SEEK_END ;
+	    break;
 
-        case eCurentPos:
-        default:
-            iMode = SEEK_CUR ;
-            break;
+	case eCurentPos:
+	default:
+	    iMode = SEEK_CUR ;
+	    break;
     }
 
     return fseek(info->fp,iOffset,iMode);
@@ -358,20 +358,20 @@ int OSFile::seek ( teFilePos ePos, int iOffset )
 unsigned int OSFile::size ( void )
 {
     if (!isOpen())
-        return 0;
+	return 0;
 
     unsigned int pos = ftell(info->fp);
     fseek(info->fp,0,SEEK_END);
     unsigned int len = ftell(info->fp);
     fseek(info->fp,pos, SEEK_SET);
-    
+  
     return len;
 }
 
 unsigned int OSFile::tell ( void )
 {
     if (!isOpen())
-        return 0;
+	return 0;
     return ftell(info->fp);
 }
 
@@ -393,16 +393,16 @@ void OSFile::osName ( const char *name )
 const char* OSFile::getFileTitle ()
 {
     if (info->stdName.size()== 0)
-        return NULL;
+	return NULL;
 
     // yes I know this part is horible, put it in the pimple
     static std::string title;
     char    *path = strrchr(info->stdName.c_str(),'/');
 
     if (path)
-        path++;
+	path++;
     else
-        path = (char*)info->stdName.c_str();
+	path = (char*)info->stdName.c_str();
 
     title = path;
 
@@ -414,7 +414,7 @@ const char* OSFile::getFileTitle ()
     else {
       title.resize(title.size() - strlen(getExtension()) - 1);
     }
-    
+  
 
     return title.c_str();
 }
@@ -422,12 +422,12 @@ const char* OSFile::getFileTitle ()
 const char* OSFile::getExtension()
 {
     if (info->stdName.size()== 0)
-        return NULL;
+	return NULL;
 
     char    *pEnd = strrchr(info->stdName.c_str(),'.');
 
     if (pEnd)
-        pEnd++;
+	pEnd++;
 
     return pEnd;
 }
@@ -435,7 +435,7 @@ const char* OSFile::getExtension()
 const char* OSFile::getFullOSPath ( void )
 {
     static std::string    szPath;
-    
+  
     szPath.empty();
     szPath = osBaseDir;
     szPath += info->osName;
@@ -500,10 +500,10 @@ OSDir::OSDir( const OSDir& r)
 OSDir& OSDir::operator = (const OSDir& r)
 {
     if (this != &r) {
-        info->baseStdDir = r.info->baseStdDir;
-        info->baseOSDir = r.info->baseOSDir;
-        info->nameList = r.info->nameList;
-        info->namePos = r.info->namePos;
+	info->baseStdDir = r.info->baseStdDir;
+	info->baseOSDir = r.info->baseOSDir;
+	info->nameList = r.info->nameList;
+	info->namePos = r.info->namePos;
     }
 
     return *this;
@@ -520,8 +520,8 @@ OSDir::OSDir( const char* szDirName )
 OSDir::~OSDir()
 {
     if (info) {
-        info->nameList.clear();
-        delete(info);
+	info->nameList.clear();
+	delete(info);
     }
     info = NULL;
 }
@@ -575,7 +575,7 @@ const char* OSDir::getFullOSPath ( void )
     static std::string    szFilePath;
 
     szFilePath.empty();
-    szFilePath = osBaseDir; 
+    szFilePath = osBaseDir;
 
     szFilePath += info->baseOSDir;
     return szFilePath.c_str();
@@ -590,30 +590,30 @@ bool OSDir::getNextFile ( OSFile &oFile, const char* fileMask, bool recursive )
 {
     std::string realMask = "*.*";
     if (fileMask)
-        realMask = fileMask;
+	realMask = fileMask;
 
     getUpperName((char*)realMask.c_str());
-    
+  
     std::string theFileExt;
     if (info->namePos == -1) {
-        info->nameList.clear();
-        windowsAddFileStack(getFullOSPath(),realMask.c_str(),recursive);
-        linuxAddFileStack(getFullOSPath(),realMask.c_str(),recursive);
+	info->nameList.clear();
+	windowsAddFileStack(getFullOSPath(),realMask.c_str(),recursive);
+	linuxAddFileStack(getFullOSPath(),realMask.c_str(),recursive);
 
-        info->namePos = 0;
+	info->namePos = 0;
     }
-    
+  
     unsigned int size = info->nameList.size();
     if (info->namePos >= size) {
-        info->namePos = -1;
-        return false;
+	info->namePos = -1;
+	return false;
     }
 
     std::string    fileName = info->nameList[info->namePos];
 
     if (osBaseDir.size()>1) {
-        std::string temp = &(fileName.c_str()[osBaseDir.size()]);
-        fileName = temp;
+	std::string temp = &(fileName.c_str()[osBaseDir.size()]);
+	fileName = temp;
     }
 
     oFile.osName(fileName.c_str());
@@ -627,7 +627,7 @@ bool OSDir::windowsAddFileStack ( const char *szPathName, const char* fileMask, 
 {
 #ifdef _WIN32
     struct _finddata_t fileInfo;
-    
+  
     long        hFile;
     std::string searchstr;
 
@@ -638,72 +638,72 @@ bool OSDir::windowsAddFileStack ( const char *szPathName, const char* fileMask, 
     searchstr = szPathName;
     searchstr += "\\";
     if (fileMask)
-        searchstr += fileMask;
+	searchstr += fileMask;
     else
-        searchstr += "*.*";
+	searchstr += "*.*";
 
     hFile = _findfirst(searchstr.c_str(),&fileInfo);
 
     if (hFile != -1) {
-        while (!bDone) {
-            if ( (strlen(fileInfo.name) >0) && (strcmp(fileInfo.name,".") != 0) && (strcmp(fileInfo.name,"..") != 0)) {
-                FilePath = szPathName;
-                FilePath += "\\";
-                FilePath += fileInfo.name;
+	while (!bDone) {
+	    if ( (strlen(fileInfo.name) >0) && (strcmp(fileInfo.name,".") != 0) && (strcmp(fileInfo.name,"..") != 0)) {
+		FilePath = szPathName;
+		FilePath += "\\";
+		FilePath += fileInfo.name;
 
-                if ( (fileInfo.attrib & _A_SUBDIR ) && bRecursive)
-                    windowsAddFileStack(FilePath.c_str(),fileMask,bRecursive);
-                else if (!(fileInfo.attrib & _A_SUBDIR) )
-                    info->nameList.push_back(FilePath);
-            }
-            if (_findnext(hFile,&fileInfo) == -1)
-                bDone = true;
-        }
+		if ( (fileInfo.attrib & _A_SUBDIR ) && bRecursive)
+		    windowsAddFileStack(FilePath.c_str(),fileMask,bRecursive);
+		else if (!(fileInfo.attrib & _A_SUBDIR) )
+		    info->nameList.push_back(FilePath);
+	    }
+	    if (_findnext(hFile,&fileInfo) == -1)
+		bDone = true;
+	}
     }
     return true;
 #else
     return false;
-#endif 
+#endif
 }
 
 // linux mask filter functions
 // we don't need these for windows as it can do it right in findNextFile
 #ifndef _WIN32
 static int match_mask (const char *mask, const char *string)
-{ 
+{
     if (mask == NULL)
-        return 0;
+	return 0;
 
     if (string == NULL)
-        return 0;
+	return 0;
 
     if ((mask[0] == '*') &amp;&amp; (mask[1] == '\0'))
-        return 1;                                    /* instant match */
+	return 1;                                    /* instant match */
 
     while (*mask != '\0') {
-        if (*mask == '*') {
-            mask++;
-            switch (match_multi (&amp;mask, &amp;string)) {
-                case +1:
-                    return 1;
-                case -1:
-                    return 0;
-            }
-        }
-        else if (*string == '\0')
-            return 0;
-        else if ((*mask == '?') || (*mask == *string)) {
-            mask++;
-            string++;
-        }
-        else
-            return 0;
+	if (*mask == '*') {
+	    mask++;
+	    switch (match_multi (&amp;mask, &amp;string)) {
+		case +1:
+		    return 1;
+		case -1:
+		    return 0;
+	    }
+	}
+	else if (*string == '\0')
+	    return 0;
+	else if ((*mask == '?') || (*mask == *string)) {
+	    mask++;
+	    string++;
+	}
+	else
+	    return 0;
     }
 
     if (*string == '\0')
-        return 1;
+	return 1;
     else
-        return 0;
+	return 0;
 }
 
 static int match_multi (const char **mask, const char **string)
@@ -717,41 +717,41 @@ static int match_multi (const char **mask, const char **string)
     str = *string;
 
     while ((*msk != '\0') &amp;&amp; (*msk == '*'))
-        msk++;                      /* get rid of multiple '*'s */
+	msk++;                      /* get rid of multiple '*'s */
 
     if (*msk == '\0')                /* '*' was last, auto-match */
-        return +1;
+	return +1;
 
     msktop = msk;
     strtop = str;
 
     while (*msk != '\0') {
-        if (*msk == '*') {
-            *mask = msk;
-            *string = str;
-            return 0;                 /* matched this segment */
-        }
-        else if (*str == '\0')
-            return -1;                /* can't match */
-        else {
-            if ((*msk == '?') || (*msk == *str)) {
-                msk++;
-                str++;
-                if ((*msk == '\0') &amp;&amp; (*str != '\0'))    /* advanced check */
-                {                                        
-                    str++;
-                    strtop++;
-                    str = strtop;
-                    msk = msktop;
-                }
-            }
-            else {
-                str++;
-                strtop++;
-                str = strtop;
-                msk = msktop;
-            }
-        }
+	if (*msk == '*') {
+	    *mask = msk;
+	    *string = str;
+	    return 0;                 /* matched this segment */
+	}
+	else if (*str == '\0')
+	    return -1;                /* can't match */
+	else {
+	    if ((*msk == '?') || (*msk == *str)) {
+		msk++;
+		str++;
+		if ((*msk == '\0') &amp;&amp; (*str != '\0'))    /* advanced check */
+		{                                      
+		    str++;
+		    strtop++;
+		    str = strtop;
+		    msk = msktop;
+		}
+	    }
+	    else {
+		str++;
+		strtop++;
+		str = strtop;
+		msk = msktop;
+	    }
+	}
     }
 
     *mask = msk;
@@ -773,25 +773,25 @@ bool OSDir::linuxAddFileStack (  const char *pathName, const char* fileMask, boo
 
     strcpy(searchstr, szPathName);
     if (searchstr[strlen(searchstr) - 1] != '/')
-        strcat(searchstr, "/");
+	strcat(searchstr, "/");
     directory = opendir(searchstr);
     if (!directory)
-        return false;
+	return false;
 
     // TODO: make it use the filemask
     while ((fileInfo = readdir(directory))) {
-        if (!((strcmp(fileInfo-&gt;d_name, ".") == 0) || (strcmp(fileInfo-&gt;d_name, "..") == 0))) {
-            FilePath = searchstr;
-            FilePath += fileInfo-&gt;d_name;
-            GetUperName(fileInfo-&gt;d_name);
+	if (!((strcmp(fileInfo-&gt;d_name, ".") == 0) || (strcmp(fileInfo-&gt;d_name, "..") == 0))) {
+	    FilePath = searchstr;
+	    FilePath += fileInfo-&gt;d_name;
+	    GetUperName(fileInfo-&gt;d_name);
 
-            stat(FilePath.c_str(), &amp;statbuf);
+	    stat(FilePath.c_str(), &amp;statbuf);
 
-            if (S_ISDIR(statbuf.st_mode) &amp;&amp; bRecursive)
-                LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive);
-            else if (match_mask (fileMask, fileInfo-&gt;d_name))
-                info-&gt;nameList.push_back(FilePath);
-        }
+	    if (S_ISDIR(statbuf.st_mode) &amp;&amp; bRecursive)
+		LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive);
+	    else if (match_mask (fileMask, fileInfo-&gt;d_name))
+		info-&gt;nameList.push_back(FilePath);
+	}
     }
     closedir(directory);
     return true;

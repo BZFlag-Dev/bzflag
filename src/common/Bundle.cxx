@@ -45,20 +45,20 @@ void Bundle::load(const std::string &path)
     TLineType type = parseLine(line, data);
     if (type == tMSGID) {
       if (untranslated.length() > 0) {
-        mappings.erase(untranslated);
-        ensureNormalText(translated);
-        mappings.insert(std::pair<std::string,std::string>(untranslated, translated));
+	mappings.erase(untranslated);
+	ensureNormalText(translated);
+	mappings.insert(std::pair<std::string,std::string>(untranslated, translated));
       }
       untranslated = data;
       translated.resize(0);
     }
     else if (type == tMSGSTR) {
       if (untranslated.length() > 0)
-        translated = data;
+	translated = data;
     }
     else if (type == tAPPEND) {
       if (untranslated.length() > 0)
-        translated += data;
+	translated += data;
     }
     else if (type == tERROR) {
 
@@ -223,12 +223,12 @@ void Bundle::ensureNormalText(std::string &msg)
       case 'ü':
 	msg[i] = 'u';
 	i++;
-        msg.insert(i, 1, 'e');
+	msg.insert(i, 1, 'e');
       break;
       case 'Ü':
 	msg[i] = 'U';
 	i++;
-        msg.insert(i, 1, 'e');
+	msg.insert(i, 1, 'e');
       break;
       case 'ñ':
 	msg[i] = 'n';
@@ -237,9 +237,9 @@ void Bundle::ensureNormalText(std::string &msg)
 	msg[i] = 'Y';
       break;
       case 'ß':
-        msg[i] = 's';
-        i++;
-        msg.insert(i, 1, 's');
+	msg[i] = 's';
+	i++;
+	msg.insert(i, 1, 's');
       break;
       case '¿':
       case '¡':
@@ -247,11 +247,11 @@ void Bundle::ensureNormalText(std::string &msg)
       break;
 
       default: // A temporary patch, to catch untranslated chars.. To be removed eventually
-        if (((c >= 'A') && (c <= 'Z'))
+	if (((c >= 'A') && (c <= 'Z'))
 	    || ((c >= 'a') && (c <= 'z'))
-            || ((c >= '0') && (c <= '9'))
-            || (c == '}') || (c == '{') || (c == ' ')
-            || (c == ':') || (c == '/') || (c == '-')
+	    || ((c >= '0') && (c <= '9'))
+	    || (c == '}') || (c == '{') || (c == ' ')
+	    || (c == ':') || (c == '/') || (c == '-')
 	    || (c == ',') || (c == '&') || (c == '?')
 	    || (c == '<') || (c == '>') || (c == '.')
 	    || (c == '(') || (c == ')') || (c == '%')
@@ -297,7 +297,7 @@ std::string Bundle::formatMessage(const std::string &key, const std::vector<std:
     else {
       num--;
       if ((num >= 0) && (num < parmCnt))
-        messageOut += (*parms)[num];
+	messageOut += (*parms)[num];
     }
     startPos = rCurlyPos+1;
     lCurlyPos = messageIn.find_first_of("{", startPos);

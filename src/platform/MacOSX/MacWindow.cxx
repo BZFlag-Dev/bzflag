@@ -146,7 +146,7 @@ class GLContext
       char * word;
       char * sep = " \t";
       for(word = strtok(tmp, sep); word != NULL; word = strtok(NULL, sep)) {
-        fprintf(stderr, "\t%s\n", word);
+	fprintf(stderr, "\t%s\n", word);
       }
       delete [] tmp;
       tmp = NULL;
@@ -451,7 +451,7 @@ void MacWindow::getSize(int &width, int &height) const {
 
 void MacWindow::setTitle(const char *title) {}
 void MacWindow::setPosition(int x, int y) {}
-void MacWindow::setSize(int width, int height) 
+void MacWindow::setSize(int width, int height)
 {
   settings.Window_Size.width = width;
   settings.Window_Size.height = height;

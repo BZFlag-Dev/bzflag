@@ -26,7 +26,7 @@ public:
   CustomWorld();
   virtual bool read(const char *cmd, std::istream&);
   virtual void write(WorldInfo*) const;
-  
+
 protected:
   double _size;
   double _fHeight;

@@ -45,7 +45,7 @@ public:
   OpenGLTexture* getTexture( TextureType type, int variant );
   void addTexture( TextureType type, OpenGLTexture *texture );
   void addTexture( TextureType type, int variant, OpenGLTexture *texture );
-  
+
   static OpenGLTexture* noiseProc( ProcTextureInit &init );
 
 protected:
@@ -56,11 +56,11 @@ private:
   TextureManager();
   TextureManager(const TextureManager &tm);
   TextureManager& operator=(const TextureManager &tm);
-  
+
   OpenGLTexture* loadTexture( FileTextureInit &init );
   void           loadBigTexture(TextureType type, FileTextureInit &init);
 
-  
+
   std::map<int, OpenGLTexture*> m_Textures;
 };
 

@@ -474,8 +474,8 @@ static void		parse(int argc, char** argv)
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      if ((strcmp(argv[i], "a") == 0) || 
-	  (strcmp(argv[i], "auto") == 0) || 
+      if ((strcmp(argv[i], "a") == 0) ||
+	  (strcmp(argv[i], "auto") == 0) ||
 	  (strcmp(argv[i], "automatic") == 0)) {
 	startupInfo.team = AutomaticTeam;
       }	else if (strcmp(argv[i], "r") == 0 || strcmp(argv[i], "red") == 0) {
@@ -628,7 +628,7 @@ static void		parse(int argc, char** argv)
 	  *serverName = '\0';
 	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
 	    printFatalError("Callsign truncated.");
-	  strncpy(startupInfo.callsign, argv[i], 
+	  strncpy(startupInfo.callsign, argv[i],
 		  sizeof(startupInfo.callsign) - 1);
 	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
 	  ++serverName;
@@ -644,19 +644,19 @@ static void		parse(int argc, char** argv)
 	  startupInfo.serverPort = atoi(portNumber);
 	  if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
 	    startupInfo.serverPort = ServerPort;
-	    printFatalError("Bad port, using default %d.", 
+	    printFatalError("Bad port, using default %d.",
 			    startupInfo.serverPort);
 	  }
 	}
-        if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
-          printFatalError("Server name too long.  Ignoring.");
-        }
-        else {
-          strcpy(startupInfo.serverName, serverName);
-          startupInfo.autoConnect = true;
-        }
+	if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
+	  printFatalError("Server name too long.  Ignoring.");
+	}
+	else {
+	  strcpy(startupInfo.serverName, serverName);
+	  startupInfo.autoConnect = true;
+	}
       } else {
-        printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);
+	printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);
       }
     } else {
       printFatalError("Unknown option %s.", argv[i]);
@@ -1087,15 +1087,15 @@ int			main(int argc, char** argv)
     {
       setSize = true;
       if (w < 256)
-        w = 256;
+	w = 256;
       if (h < 192)
-        h = 192;
+	h = 192;
       if (count == 6) {
-        if (xs == '-')
-          x = display->getWidth() - x - w;
-        if (ys == '-')
-          y = display->getHeight() - y - h;
-        setPosition = true;
+	if (xs == '-')
+	  x = display->getWidth() - x - w;
+	if (ys == '-')
+	  y = display->getHeight() - y - h;
+	setPosition = true;
       }
       // must call this before setFullscreen() is called
       display->setPassthroughSize(w, h);

@@ -70,8 +70,8 @@ bool StdBothUI::checkCommand(std::string& str) {
   if (WaitForSingleObject(readEvent, 100) == WAIT_OBJECT_0) {
     if (pos > 2) {
       if ((buffer[pos-1] == '\n') || (buffer[pos-1] == '\r') || (pos == MessageLen)) {
-        buffer[pos-2] = '\0';
-        str = buffer;
+	buffer[pos-2] = '\0';
+	str = buffer;
 	pos = 0;
 	SetEvent(processedEvent);
 	return true;

@@ -151,10 +151,10 @@ hidden surface removal.  Some systems may be capable of using a
 higher screen resolution if a depth buffer isn't allocated.
 .TP
 [\fIcallsign@\fR]\fIserver\fR[\fI:port\fR]
-Specifies the callsign you want, and the host running the \fBbzfs\fR 
-server. Multiple independent games can be run on a single network, or 
-even on different ports on a single computer. Which server and port you 
-choose decides which game you enter. 
+Specifies the callsign you want, and the host running the \fBbzfs\fR
+server. Multiple independent games can be run on a single network, or
+even on different ports on a single computer. Which server and port you
+choose decides which game you enter.
 The callsign and the port is optional. If you don't specify a port the
 standard server port will be used, and if you don't specify a callsign the
 callsign used for the previous game is used.  If that cannot be found

@@ -55,7 +55,7 @@ BeOSPlatformFactory::BeOSPlatformFactory()
       bapp_thid = spawn_thread(bapp_thread, "bzflag BApplication", B_NORMAL_PRIORITY, NULL);
       resume_thread(bapp_thid);
       while (!own_BApp_created)
-        snooze(50000);
+	snooze(50000);
     }
   }
 }

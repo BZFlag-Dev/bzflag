@@ -245,7 +245,7 @@ bool			PyramidBuilding::getHitNormal(
   } else if (objLow + height < oBottom) {
     normal[2] = -1;
     return true;
-  }    
+  }  
 
   // get normal in z = const plane
   const float s = shrinkFactor(pos1[2], height);

@@ -99,8 +99,8 @@ bool					SGIImageFile::readVerbatim(void* buffer)
 
       // swizzle into place
       for (int x = 0; x < dx; ++x) {
-        *dst = row[x];
-        dst += dz;
+	*dst = row[x];
+	dst += dz;
       }
     }
   }
@@ -149,50 +149,50 @@ bool					SGIImageFile::readRLE(void* buffer)
 
       // make row buffer bigger if necessary
       if (length > rowSize) {
-        delete[] row;
-        rowSize = length;
-        row     = new unsigned char[rowSize];
+	delete[] row;
+	rowSize = length;
+	row     = new unsigned char[rowSize];
       }
 
       // read raw data
       getStream()->seekg(startTable[y + z * dy], std::ios::beg);
       readRaw(row, length);
       if (!isOkay())
-        break;
+	break;
 
       // decode
       unsigned char* src = row;
       while (1) {
-        // check for error in image
-        if (static_cast<uint32_t>(src - row) >= length) {
-          delete[] row;
-          delete[] startTable;
-          delete[] lengthTable;
-          return false;
-        }
+	// check for error in image
+	if (static_cast<uint32_t>(src - row) >= length) {
+	  delete[] row;
+	  delete[] startTable;
+	  delete[] lengthTable;
+	  return false;
+	}
 
-        // get next code
-        const unsigned char type = *src++;
-        int count = static_cast<int>(type & 0x7f);
+	// get next code
+	const unsigned char type = *src++;
+	int count = static_cast<int>(type & 0x7f);
 
-        // zero code means end of row
-        if (count == 0)
-          break;
+	// zero code means end of row
+	if (count == 0)
+	  break;
 
-        if (type & 0x80) {
-          // copy count pixels
-          while (count--) {
-            *dst = *src++;
-            dst += dz;
-          }
-        } else {
-          // repeat pixel count times
-          const unsigned char pixel = *src++;
-          while (count--) {
-            *dst = pixel;
-            dst += dz;
-          }
-        }
+	if (type & 0x80) {
+	  // copy count pixels
+	  while (count--) {
+	    *dst = *src++;
+	    dst += dz;
+	  }
+	} else {
+	  // repeat pixel count times
+	  const unsigned char pixel = *src++;
+	  while (count--) {
+	    *dst = pixel;
+	    dst += dz;
+	  }
+	}
       }
     }
   }

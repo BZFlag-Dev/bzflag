@@ -378,7 +378,7 @@ void			LocalPlayer::doUpdate(float dt)
       ServerLink::getServer()->sendDropFlag(getPosition());
       pauseTime = TimeKeeper::getSunExplodeTime();
     }
-    
+  
   } else {
     pauseTime = TimeKeeper::getNullTime();
     wasPaused = false;
@@ -479,20 +479,20 @@ void			LocalPlayer::doUpdateMotion(float dt)
       float speed = desiredSpeed;
 
       if (keyboardMoving) {
-        /* the larger the oldAngVel contribution, the more slowly an
-         * angular velocity converges to the desired "max" velocity; the
-         * contribution of the desired and old velocity should add up to
-         * one for a linear convergence rate.
-         */
-        newAngVel = oldAngVel*0.8f + desiredAngVel*0.2f;
+	/* the larger the oldAngVel contribution, the more slowly an
+	 * angular velocity converges to the desired "max" velocity; the
+	 * contribution of the desired and old velocity should add up to
+	 * one for a linear convergence rate.
+	 */
+	newAngVel = oldAngVel*0.8f + desiredAngVel*0.2f;
 
-        // instant stop
-        if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
-          newAngVel = desiredAngVel;
-        }
+	// instant stop
+	if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
+	  newAngVel = desiredAngVel;
+	}
       }
       else { // mouse
-        newAngVel = desiredAngVel;
+	newAngVel = desiredAngVel;
       }
 
       // limit acceleration
@@ -519,9 +519,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // below the ground: however I got there, creep up
       if (oldPosition[2] < groundLimit) {
 #ifdef _WIN32
-        newVelocity[2] = max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
+	newVelocity[2] = max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
 #else
-        newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
+	newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
 #endif
       }
 
@@ -1015,7 +1015,7 @@ void			LocalPlayer::setTeam(TeamColor team)
 void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
   FlagType* flag = getFlag();
- 
+
   // can't go faster forward than at top speed, and backward at half speed
   if (fracOfMaxSpeed > 1.0f) fracOfMaxSpeed = 1.0f;
   else if (fracOfMaxSpeed < -0.5f) fracOfMaxSpeed = -0.5f;

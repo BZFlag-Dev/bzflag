@@ -129,14 +129,14 @@ bool		WaveAudioFile::read(void* buffer, int numFrames)
     case 2: {
       uint16_t* samples = reinterpret_cast<uint16_t*>(buffer);
       for (int i = 0; i < numSamples; ++i)
-        swap16LE(samples + i);
+	swap16LE(samples + i);
       break;
     }
 
     case 4: {
       uint32_t* samples = reinterpret_cast<uint32_t*>(buffer);
       for (int i = 0; i < numSamples; ++i)
-        swap32LE(samples + i);
+	swap32LE(samples + i);
       break;
     }
   }

@@ -37,7 +37,7 @@
 
 #include <stdio.h>
 
-typedef enum 
+typedef enum
 {
     eFileStart,
     eCurentPos,
@@ -72,7 +72,7 @@ public:
     const char* getFileTitle ();
 
     const char* getExtension ();
-    
+  
     const char* getFullOSPath ();
 
     bool isOpen ();

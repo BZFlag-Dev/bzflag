@@ -163,7 +163,7 @@ std::string		KeyManager::keyEventToString(
       return name + "Space";
     default:
       if (!isspace(key.ascii))
-        return name + std::string(&key.ascii, 1);
+	return name + std::string(&key.ascii, 1);
       return name + "???";
   }
 }

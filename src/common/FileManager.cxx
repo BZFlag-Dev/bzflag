@@ -52,7 +52,7 @@ std::istream*			FileManager::createDataInStream(
       std::ifstream* stream = new std::ifstream(catPath(BZDB.get("directory"),
 						filename).c_str(), mode);
       if (stream && *stream)
-        return stream;
+	return stream;
       delete stream;
     }
 
@@ -60,7 +60,7 @@ std::istream*			FileManager::createDataInStream(
     {
       std::ifstream* stream = new std::ifstream(catPath("data", filename).c_str(), mode);
       if (stream && *stream)
-        return stream;
+	return stream;
       delete stream;
     }
   }
@@ -106,7 +106,7 @@ std::ostream*			FileManager::createDataOutStream(
       std::ofstream* stream = new std::ofstream(catPath(BZDB.get("directory"),
 						filename).c_str(), mode);
       if (stream && *stream)
-        return stream;
+	return stream;
       delete stream;
       return NULL;
     }
@@ -115,7 +115,7 @@ std::ostream*			FileManager::createDataOutStream(
     {
       std::ofstream* stream = new std::ofstream(catPath("data", filename).c_str(), mode);
       if (stream && *stream)
-        return stream;
+	return stream;
       delete stream;
       return NULL;
     }

@@ -27,13 +27,13 @@
  *
  *   class Whatever : public Singleton<Whatever> ...
  *
- * The class will need to provide either a public or a protected friend 
+ * The class will need to provide either a public or a protected friend
  * constructor:
  *
  *   friend class Singleton<Whatever>;
  *
  * The class can easily be extended to support different allocation
- * mechanisms or multithreading access.  This implementation, however, 
+ * mechanisms or multithreading access.  This implementation, however,
  * only uses new/delete and is not thread safe.
  *
  * The Singleton will automatically get destroyed when the application
@@ -48,10 +48,10 @@ private:
   static T* _instance;
 
 protected:
-  
+
   // protection from instantiating a non-singleton Singleton
   Singleton() { }
-  Singleton(T* pInstance) { _instance = pInstance; } 
+  Singleton(T* pInstance) { _instance = pInstance; }
   Singleton(const Singleton &) { } // do not use
   Singleton& operator=(const Singleton&) { return *this; } // do not use
   ~Singleton() { _instance = 0; } // do not delete

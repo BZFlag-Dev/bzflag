@@ -512,7 +512,7 @@ float			OpenGLTexFont::getWidth(const std::string& str) const
   float dx = 0.0f;
 
   const char* s = str.c_str();
-  
+ 
   int length = rawStrlen (s, str.size());
 
   for (int i = 0; i < length; i++) {
@@ -646,7 +646,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
 
 	glRasterPos3f(xpos + 1.0f, y + 1.0f, z);
 
-        xmove = bitmapRep->drawChar (c);
+	xmove = bitmapRep->drawChar (c);
 
 	if (underline == true) {
 	  if (underlineColor == CyanColor) {
@@ -668,100 +668,100 @@ void			OpenGLTexFont::draw(const char* string, int length,
 	    glColor3fv(color);
 	}
 
-        xpos = xpos + xmove;
+	xpos = xpos + xmove;
       }
     }
     else if (c == ESC_CHAR) {          // process the ANSI color codes
       i++;
 
       if ((i < length) && (string[i] == '[')) {
-        int pos;
-        bool blink_tmp = blinking;
-        bool uline_tmp = underline;
-        int color_tmp = -1; // color
+	int pos;
+	bool blink_tmp = blinking;
+	bool uline_tmp = underline;
+	int color_tmp = -1; // color
 
-        do {
-          i++;
-          pos = i;
+	do {
+	  i++;
+	  pos = i;
 
-          while ((i < length) && (string[i] >= '0') && (string[i] <= '9'))
-            i++;
+	  while ((i < length) && (string[i] >= '0') && (string[i] <= '9'))
+	    i++;
 
-          if ((i < length) && ((string[i] == ';') || (string[i] == 'm'))) {
+	  if ((i < length) && ((string[i] == ';') || (string[i] == 'm'))) {
 
-            // process the single digit codes
+	    // process the single digit codes
 
-            if ((i - pos) == 1) {
-              switch (string[pos]) {
-                case '0' : {
-                  // RESET
-                  blink_tmp = false;
-                  uline_tmp = false;
-                  color_tmp = DefaultColor;
-                  break;
-                }
-                case '4' : {
-                  // UNDERLINE
-                  uline_tmp = true;
-                  break;
-                }
-                case '5' : {
-                  // BLINK
-                  blink_tmp = true;
-                  break;
-                }
-                default : {
-                  // unknown or unused code
-                  break;
-                }
-              }     // end switch
-            }       // end (i - pos) == 1
+	    if ((i - pos) == 1) {
+	      switch (string[pos]) {
+		case '0' : {
+		  // RESET
+		  blink_tmp = false;
+		  uline_tmp = false;
+		  color_tmp = DefaultColor;
+		  break;
+		}
+		case '4' : {
+		  // UNDERLINE
+		  uline_tmp = true;
+		  break;
+		}
+		case '5' : {
+		  // BLINK
+		  blink_tmp = true;
+		  break;
+		}
+		default : {
+		  // unknown or unused code
+		  break;
+		}
+	      }     // end switch
+	    }       // end (i - pos) == 1
 
-            // process the double-digit codes (colors)
+	    // process the double-digit codes (colors)
 
-            else if (((i - pos) == 2) && (string[pos] == '3')) {
-              if ((string[pos + 1] >= '0') && (string[pos + 1] <= '7')) {
-                color_tmp = color_map[string[pos + 1] - '0'];
-              }
-            }
-          }
-          else {
-            break;	// not ';' or 'm'
-          }
-        } while (string[i] != 'm');
+	    else if (((i - pos) == 2) && (string[pos] == '3')) {
+	      if ((string[pos + 1] >= '0') && (string[pos + 1] <= '7')) {
+		color_tmp = color_map[string[pos + 1] - '0'];
+	      }
+	    }
+	  }
+	  else {
+	    break;	// not ';' or 'm'
+	  }
+	} while (string[i] != 'm');
 
 
-        // the codes are only valid if terminated with a 'm'
+	// the codes are only valid if terminated with a 'm'
 
-        if (string[i] == 'm') {
+	if (string[i] == 'm') {
 
-          blinking = blink_tmp;
-          underline = uline_tmp;
+	  blinking = blink_tmp;
+	  underline = uline_tmp;
 
-          if (color_tmp != -1) {
-            /* we could check up to the number of stored colors,
-             * but we don't need that many
-             */
-            if ((color_tmp < 5) && (color_tmp >= 0)) {
-              color = storedColor[color_tmp];
-            }
-            else if (color_tmp == GreyColor) {
-              color = grey_color;
-            }
-            else if (color_tmp == WhiteColor) {
-              color = white_color;
-            }
-            else if (color_tmp == CyanColor) {
-              color = cyan_color;
-            } else {
-              std::cout << "Unknown color encountered in " << __FILE__ << " on line " << __LINE__ << std::endl;
-            }
-          }
-          glColor3fv(color);
-        }
-        else {
-          // Bad Ending code
-        }
+	  if (color_tmp != -1) {
+	    /* we could check up to the number of stored colors,
+	     * but we don't need that many
+	     */
+	    if ((color_tmp < 5) && (color_tmp >= 0)) {
+	      color = storedColor[color_tmp];
+	    }
+	    else if (color_tmp == GreyColor) {
+	      color = grey_color;
+	    }
+	    else if (color_tmp == WhiteColor) {
+	      color = white_color;
+	    }
+	    else if (color_tmp == CyanColor) {
+	      color = cyan_color;
+	    } else {
+	      std::cout << "Unknown color encountered in " << __FILE__ << " on line " << __LINE__ << std::endl;
+	    }
+	  }
+	  glColor3fv(color);
+	}
+	else {
+	  // Bad Ending code
+	}
       }
       else {
 	// Bad Beginning code
@@ -788,12 +788,12 @@ int OpenGLTexFont::stripAnsiCodes(char * string, int length)
       i++;
 
       if ((i < length) && (string[i] == '[')) {
-        i++;
+	i++;
 
-        while ((i < length) && ((string[i] == ';') ||
-               ((string[i] >= '0') && (string[i] <= '9')))) {
-          i++;
-        }
+	while ((i < length) && ((string[i] == ';') ||
+	       ((string[i] >= '0') && (string[i] <= '9')))) {
+	  i++;
+	}
       }
     }
     else {
@@ -823,12 +823,12 @@ int OpenGLTexFont::rawStrlen(const char * string, int length)
       i++;
 
       if ((i < length) && (string[i] == '[')) {
-        i++;
+	i++;
 
-        while ((i < length) && ((string[i] == ';') ||
-               ((string[i] >= '0') && (string[i] <= '9')))) {
-          i++;
-        }
+	while ((i < length) && ((string[i] == ';') ||
+	       ((string[i] >= '0') && (string[i] <= '9')))) {
+	  i++;
+	}
       }
     } else {
       j++;

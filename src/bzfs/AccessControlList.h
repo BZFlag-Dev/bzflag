@@ -168,20 +168,20 @@ public:
       pMsg+=strlen(pMsg);
 
       if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
-        strcat( pMsg, "*.*.*" );
+	strcat( pMsg, "*.*.*" );
       } else {
-        sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
-        pMsg+=strlen(pMsg);
-        if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
-          strcat( pMsg, "*.*" );
-        } else {
-          sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
-          pMsg+=strlen(pMsg);
-          if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+	sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
+	pMsg+=strlen(pMsg);
+	if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
+	  strcat( pMsg, "*.*" );
+	} else {
+	  sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+	  pMsg+=strlen(pMsg);
+	  if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
 	    strcat( pMsg, "*" );
-          else
+	  else
 	    sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
-        }
+	}
       }
       // print duration when < 1 year
       double duration = it->banEnd - TimeKeeper::getCurrent();
@@ -200,21 +200,21 @@ public:
       }
     }
   }
-  
+
   /** This function tells this object where to save the banlist, and where
       to load it from. */
   void setBanFile(const std::string& filename) {
     banFile = filename;
   }
-  
+
   /** This function loads a banlist from the ban file, if it has been set. */
   bool load() {
-    
+  
     // try to open the ban file
     std::ifstream is(banFile.c_str());
     if (!is.good())
       return false;
-    
+  
     // try to read ban entries
     std::string ipAddress, bannedBy, reason, tmp;
     long banEnd;
@@ -247,13 +247,13 @@ public:
       is>>std::ws;
       if (banEnd != 0 && banEnd < TimeKeeper::getCurrent().getSeconds())
 	continue;
-      if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd, 
+      if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
 	       (reason.size() > 0 ? reason.c_str() : NULL)))
 	return false;
     }
     return true;
   }
-  
+
   /** This function saves the banlist to the ban file, if it has been set. */
   void save() {
     if (banFile.size() == 0)
@@ -265,40 +265,40 @@ public:
     }
     banList_t::const_iterator it;
     for (it = banList.begin(); it != banList.end(); ++it) {
-      
+    
       // print address
       in_addr mask = it->addr;
       os<<((ntohl(mask.s_addr) >> 24) % 256)<<'.';
       if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
-        os<<"*.*.*";
+	os<<"*.*.*";
       } else {
-        os<<((ntohl(mask.s_addr) >> 16) % 256)<<'.';
-        if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
-          os<<"*.*";
-        } else {
-          os<<((ntohl(mask.s_addr) >> 8) % 256)<<'.';
-          if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+	os<<((ntohl(mask.s_addr) >> 16) % 256)<<'.';
+	if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
+	  os<<"*.*";
+	} else {
+	  os<<((ntohl(mask.s_addr) >> 8) % 256)<<'.';
+	  if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
 	    os<<"*";
-          else
+	  else
 	    os<<(ntohl(mask.s_addr) % 256);
-        }
+	}
       }
       os<<'\n';
-      
+    
       // print ban end, banner, and reason
-      if (it->banEnd.getSeconds() == 
+      if (it->banEnd.getSeconds() ==
 	  TimeKeeper::getSunExplodeTime().getSeconds()) {
 	os<<"end: 0"<<'\n';
       }
       else {
-	os<<"end: "<<(long(it->banEnd.getSeconds() + time(NULL) - 
+	os<<"end: "<<(long(it->banEnd.getSeconds() + time(NULL) -
 			   TimeKeeper::getCurrent().getSeconds()))<<'\n';
       }
       os<<"banner: "<<it->bannedBy<<'\n';
       os<<"reason: "<<it->reason<<'\n';
     }
   }
-  
+
 private:
   bool convert(char *ip, in_addr &mask);
 

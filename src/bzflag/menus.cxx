@@ -780,18 +780,18 @@ void			KeyboardMapMenu::execute()
     for (it = mappable.begin(); it != mappable.end(); it++) {
       if (list[it->second.index] == focus) {
 	editing = it->second.index;
-        if (!it->second.key1.empty() && !it->second.key2.empty()) {
-          // gotta kill the old values
-          BzfKeyEvent ev;
-          KEYMGR.stringToKeyEvent(it->second.key1, ev);
-          KEYMGR.unbind(ev, true);
+	if (!it->second.key1.empty() && !it->second.key2.empty()) {
+	  // gotta kill the old values
+	  BzfKeyEvent ev;
+	  KEYMGR.stringToKeyEvent(it->second.key1, ev);
+	  KEYMGR.unbind(ev, true);
 	  if (it->first == "fire")
 	    KEYMGR.unbind(ev, false);
-          KEYMGR.stringToKeyEvent(it->second.key2, ev);
-          KEYMGR.unbind(ev, true);
+	  KEYMGR.stringToKeyEvent(it->second.key2, ev);
+	  KEYMGR.unbind(ev, true);
 	  if (it->first == "fire")
 	    KEYMGR.unbind(ev, false);
-        }
+	}
       }
     }
   }
@@ -884,7 +884,7 @@ void			KeyboardMapMenu::update()
     } else {
       value += it->second.key1;
       if (!it->second.key2.empty()) {
-        value += " or " + it->second.key2;
+	value += " or " + it->second.key2;
       } else if (isEditing() && (it->second.index == editing)) {
 	value += " or ???";
       }
@@ -1292,7 +1292,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
       GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();
       if (menu)
-        menu->resize(menu->getWidth(), menu->getHeight());
+	menu->resize(menu->getWidth(), menu->getHeight());
       break;
     }
   }
@@ -1400,7 +1400,7 @@ void			SaveWorldMenu::resize(int width, int height)
     y -= 1.0f * h;
   }
 
-  x = 100.0f;  
+  x = 100.0f;
   y -= 100.0f;
   list[i]->setFontSize(fontWidth, fontHeight);
   list[i]->setPosition(x, y);
@@ -1437,7 +1437,7 @@ class OptionsMenu : public HUDDialog {
 };
 
 OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
-                             guiOptionsMenu(NULL), saveWorldMenu(NULL)
+			     guiOptionsMenu(NULL), saveWorldMenu(NULL)
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
@@ -1908,16 +1908,16 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       time_t minutes = 0;
       int index = list->getIndex();
       switch (index){
-        case 0: minutes = 0; break;
-        case 1: minutes = 5; break;
-        case 2: minutes = 15; break;
-        case 3: minutes = 30; break;
-        case 4: minutes = 60; break;
-        case 5: minutes = 60*5; break;
-        case 6: minutes = 60*15; break;
-        case 7: minutes = 60*24; break;
-        case 8: minutes = 60*24*15; break;
-        case 9: minutes = 60*24*30; break;
+	case 0: minutes = 0; break;
+	case 1: minutes = 5; break;
+	case 2: minutes = 15; break;
+	case 3: minutes = 30; break;
+	case 4: minutes = 60; break;
+	case 5: minutes = 60*5; break;
+	case 6: minutes = 60*15; break;
+	case 7: minutes = 60*24; break;
+	case 8: minutes = 60*24*15; break;
+	case 9: minutes = 60*24*30; break;
       }
       (ServerListCache::get())->setMaxCacheAge(minutes);
       break;
@@ -2833,10 +2833,10 @@ bool			ServerItem::operator<(const ServerItem &right)
     }
     else if (left.getPlayerCount() == right.getPlayerCount()){
       if (left.getAgeMinutes() > right.getAgeMinutes()){
-        return true;
+	return true;
       }
       else {
-        return false;
+	return false;
       }
     }
     else {
@@ -3439,9 +3439,9 @@ void			ServerMenu::checkEchos()
 	    args.push_back(urls[i]);
 	    printError("Can't open list server: {1}", &args);
 	    if (!addedCacheToList) {
-              addedCacheToList = true;
-              addCacheToList();
-            }
+	      addedCacheToList = true;
+	      addCacheToList();
+	    }
 	    continue;
 	}
 
@@ -3474,9 +3474,9 @@ void			ServerMenu::checkEchos()
 	printError("Can't create list server socket");
 	listServer.socket = -1;
 	if (!addedCacheToList) {
-          addedCacheToList = true;
-          addCacheToList();
-        }
+	  addedCacheToList = true;
+	  addCacheToList();
+	}
 	continue;
       }
 
@@ -3486,9 +3486,9 @@ void			ServerMenu::checkEchos()
 	close(listServer.socket);
 	listServer.socket = -1;
 	if (!addedCacheToList){
-          addedCacheToList = true;
-          addCacheToList();
-        }
+	  addedCacheToList = true;
+	  addCacheToList();
+	}
 	continue;
       }
 
@@ -3507,9 +3507,9 @@ void			ServerMenu::checkEchos()
 	  close(listServer.socket);
 	  listServer.socket = -1;
 	  if (!addedCacheToList){
-            addedCacheToList = true;
-            addCacheToList();
-          }
+	    addedCacheToList = true;
+	    addCacheToList();
+	  }
 	  continue;
 	}
       }
@@ -3597,9 +3597,9 @@ void			ServerMenu::checkEchos()
 	    close(listServer.socket);
 	    listServer.socket = -1;
 	    if (!addedCacheToList){
-              addedCacheToList = true;
-              addCacheToList();
-             }
+	      addedCacheToList = true;
+	      addCacheToList();
+	     }
 	  }
 	  else {
 	    listServer.phase = 3;
@@ -3698,9 +3698,9 @@ void			ServerMenu::readServerList(int index)
 	  serverInfo.description += title;
 	}
 
-        serverInfo.cached = false;
-        // add to list & add it to the server cache
-        addToList(serverInfo,true);
+	serverInfo.cached = false;
+	// add to list & add it to the server cache
+	addToList(serverInfo,true);
       }
 
       // next reply
@@ -3752,7 +3752,7 @@ void			ServerMenu::addToList(ServerItem& info, bool doCache)
   for (i = 0; i < (int)servers.size(); i++) {
     ServerItem& server = servers[i];
     if (server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr
-        && server.ping.serverId.port == info.ping.serverId.port) {
+	&& server.ping.serverId.port == info.ping.serverId.port) {
       servers.erase(servers.begin() + i); // erase this item
     }
   }

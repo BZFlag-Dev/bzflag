@@ -946,17 +946,17 @@ void			HUDRenderer::renderScoreboard(void)
 
       // toggle the hunt indicator if this is the current player pointed to
       if(getHuntPosition() == i) {
-        setHuntIndicator(true);
-        // If hunt is selected set this player to be hunted
-        if(getHuntSelection()) {
-          player->setHunted(true);
-          setHunting(true);
-          setHuntSelection(false);
-          setHunt(false);
-          huntPlayerAlive = true; // hunted player is alive since you selected him
-        }
+	setHuntIndicator(true);
+	// If hunt is selected set this player to be hunted
+	if(getHuntSelection()) {
+	  player->setHunted(true);
+	  setHunting(true);
+	  setHuntSelection(false);
+	  setHunt(false);
+	  huntPlayerAlive = true; // hunted player is alive since you selected him
+	}
       } else {
-        setHuntIndicator(false);
+	setHuntIndicator(false);
       }
     } else {
       setHuntIndicator(false);
@@ -1026,7 +1026,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
   const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
 
   GLint view[]={window.getOriginX(), window.getOriginY(),
-                window.getWidth(), window.getHeight()};
+		window.getWidth(), window.getHeight()};
   const GLfloat *projf = renderer.getViewFrustum().getProjectionMatrix();
   const GLfloat *modelf = renderer.getViewFrustum().getViewMatrix();
 
@@ -1045,10 +1045,10 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
       double x, y, z;
       hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
-                 pl->getPosition()[2], model, proj, view, &x, &y, &z);
+		 pl->getPosition()[2], model, proj, view, &x, &y, &z);
       if (z >= 0.0 && z <= 1.0)
-        labelsFont.draw(name, len, float(x) - labelsFont.getWidth(name) / 2,
-                        float(y) + offset - labelsFont.getHeight());
+	labelsFont.draw(name, len, float(x) - labelsFont.getWidth(name) / 2,
+			float(y) + offset - labelsFont.getHeight());
     }
   }
 }
@@ -1062,7 +1062,7 @@ void			HUDRenderer::renderCracks()
 
   glPushMatrix();
   glTranslatef(GLfloat(window.getWidth() >> 1),
-               GLfloat(window.getViewHeight() >> 1), 0.0f);
+	       GLfloat(window.getViewHeight() >> 1), 0.0f);
   glLineWidth(3.0);
   hudColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINES);
@@ -1592,7 +1592,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
-  if (BZDB.isTrue("colorful") && 
+  if (BZDB.isTrue("colorful") &&
       ((flagd == Flags::ShockWave)   ||
        (flagd == Flags::Genocide)    ||
        (flagd == Flags::Laser)       ||

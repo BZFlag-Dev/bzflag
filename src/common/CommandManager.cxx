@@ -93,8 +93,8 @@ std::string			CommandManager::run(const std::string& cmd) const
       std::string value;
       scan = readValue(scan, &value);
       if (scan != NULL) {
-        scan = skipWhitespace(scan);
-        args.push_back(value);
+	scan = skipWhitespace(scan);
+	args.push_back(value);
       }
     }
 
@@ -156,12 +156,12 @@ const char*			CommandManager::readQuoted(const char* string,
   for (; *string != '\0'; ++string) {
     if (escaped) {
       switch (*string) {
-        case 't': value->append("\t", 1); break;
-        case 'n': value->append("\n", 1); break;
-        case 'r': value->append("\r", 1); break;
-        case '\\': value->append("\\", 1); break;
-        case '\"': value->append("\"", 1); break;
-        default: value->append(string, 1); break;
+	case 't': value->append("\t", 1); break;
+	case 'n': value->append("\n", 1); break;
+	case 'r': value->append("\r", 1); break;
+	case '\\': value->append("\\", 1); break;
+	case '\"': value->append("\"", 1); break;
+	default: value->append(string, 1); break;
       }
       escaped = false;
     } else if (*string == '\\') {

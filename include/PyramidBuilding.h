@@ -50,7 +50,7 @@ class PyramidBuilding : public Obstacle {
     void		getCorner(int index, float* pos) const;
 
   protected:
-    // compute minimum shrinking for height between z and z + height 
+    // compute minimum shrinking for height between z and z + height
     float		shrinkFactor(float z, float height = 0.0) const;
 
   private:

@@ -522,7 +522,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     case BzfKeyEvent::Delete:
       if (cursorPos < (int)string.length()) {
 	cursorPos++;
-        c = backspace;
+	c = backspace;
       }
       else
 	return true;
@@ -625,13 +625,13 @@ void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::
   if (_params) {
     if (params != NULL) {
       while (params->size() > 0)
-        params->erase(params->begin());
+	params->erase(params->begin());
       delete params;
     }
     params = new std::vector<std::string>;
     if (params) {
       for (int i = 0; i < (int)_params->size(); i++) {
-        params->push_back((*_params)[i]);
+	params->push_back((*_params)[i]);
       }
     }
   }

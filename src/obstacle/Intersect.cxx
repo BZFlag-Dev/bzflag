@@ -340,7 +340,7 @@ static float		timeRayHitsPlane(const float pb[3],
   n[1] = u[2] * v[0] - u[0] * v[2];
   n[2] = u[0] * v[1] - u[1] * v[0];
 
-  // computing unnormalized distance projecting the distance on versor 
+  // computing unnormalized distance projecting the distance on versor
   float distance = 0.0;
   for (i = 0; i < 3; i++) {
     distance += n[i] * d[i];
@@ -355,7 +355,7 @@ static float		timeRayHitsPlane(const float pb[3],
   for (i = 0; i < 3; i++) {
     velocity += n[i] * db[i];
   }
-  
+
   // if velocity is greater than 0 no way to trespass the plane
   if (velocity > 0.0f)
     return -1.0f;
@@ -404,7 +404,7 @@ float			timeRayHitsPyramids(const Ray& r,
 
   float x1[3], x2[3], x3[3];
   float residualTemp;
-  
+
   x1[2] = 0.0f;
   x2[2] = 0.0f;
   x3[0] = 0.0f;
@@ -454,7 +454,7 @@ float			timeRayHitsPyramids(const Ray& r,
     pb[i] += residualTemp * db[i];
   }
   residualTime += residualTemp;
-  
+
   x3[0] = dx;
   x3[1] = dy;
   x3[2] = 0.0f;

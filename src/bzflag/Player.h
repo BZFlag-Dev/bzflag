@@ -194,7 +194,7 @@ inline TeamColor	Player::getTeam() const
   return team;
 }
 
-inline void		Player::setTeam(TeamColor _team) 
+inline void		Player::setTeam(TeamColor _team)
 {
   team = _team;
 }

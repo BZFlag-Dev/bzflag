@@ -917,30 +917,30 @@ void			BackgroundRenderer::doInitDisplayLists()
     simpleGroundList[2].begin();
 
       for (i=0 ; i<GROUND_DIVS ; i++) {
-        GLfloat yoff, ytexoff;
+	GLfloat yoff, ytexoff;
 
-        yoff = ymin + ydist * (GLfloat)i;
-        ytexoff = ytexmin + ytexdist * (GLfloat)i;
+	yoff = ymin + ydist * (GLfloat)i;
+	ytexoff = ytexmin + ytexdist * (GLfloat)i;
 
-        glBegin(GL_TRIANGLE_STRIP);
+	glBegin(GL_TRIANGLE_STRIP);
 
-        glTexCoord2f (xtexmin, ytexoff+ytexdist);
-        glVertex2f (xmin, yoff+ydist);
-        glTexCoord2f (xtexmin, ytexoff);
-        glVertex2f (xmin, yoff);
+	glTexCoord2f (xtexmin, ytexoff+ytexdist);
+	glVertex2f (xmin, yoff+ydist);
+	glTexCoord2f (xtexmin, ytexoff);
+	glVertex2f (xmin, yoff);
 
-        for (j=0 ; j<GROUND_DIVS ; j++) {
-          GLfloat xoff, xtexoff;
+	for (j=0 ; j<GROUND_DIVS ; j++) {
+	  GLfloat xoff, xtexoff;
 
-          xoff = xmin + xdist * (GLfloat)(j+1);
-          xtexoff = xtexmin + xtexdist * (GLfloat)(j+1);
+	  xoff = xmin + xdist * (GLfloat)(j+1);
+	  xtexoff = xtexmin + xtexdist * (GLfloat)(j+1);
 
-          glTexCoord2f (xtexoff, ytexoff+ytexdist);
-          glVertex2f (xoff, yoff+ydist);
-          glTexCoord2f (xtexoff, ytexoff);
-          glVertex2f (xoff, yoff);
-        }
-        glEnd ();
+	  glTexCoord2f (xtexoff, ytexoff+ytexdist);
+	  glVertex2f (xoff, yoff+ydist);
+	  glTexCoord2f (xtexoff, ytexoff);
+	  glVertex2f (xoff, yoff);
+	}
+	glEnd ();
       }
 
     simpleGroundList[2].end();

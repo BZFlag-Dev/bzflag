@@ -650,9 +650,9 @@ bool			World::writeWorld(std::string filename)
       out << "\trotation " << ((base.getRotation() * 180.0) / M_PI) << std::endl;
       out << "\tcolor " << base.getTeam() << std::endl;
       if (base.isDriveThrough())
-        out << "drivethrough" << std::endl;
+	out << "drivethrough" << std::endl;
       if (base.isShootThrough())
-        out << "shootthrough" << std::endl;
+	out << "shootthrough" << std::endl;
       out << "end" << std::endl;
       out << std::endl;
     }
@@ -669,9 +669,9 @@ bool			World::writeWorld(std::string filename)
       out << "\tsize " << box.getWidth() << " " << box.getBreadth() << " " << box.getHeight() << std::endl;
       out << "\trotation " << ((box.getRotation() * 180.0) / M_PI) << std::endl;	
       if (box.isDriveThrough())
-        out << "drivethrough" << std::endl;
+	out << "drivethrough" << std::endl;
       if (box.isShootThrough())
-        out << "shootthrough" << std::endl;
+	out << "shootthrough" << std::endl;
       out << "end" << std::endl;
       out << std::endl;
     }
@@ -688,11 +688,11 @@ bool			World::writeWorld(std::string filename)
       out << "\tsize " << pyr.getWidth() << " " << pyr.getBreadth() << " " << pyr.getHeight() << std::endl;
       out << "\trotation " << ((pyr.getRotation() * 180.0) / M_PI) << std::endl;
       if (pyr.isDriveThrough())
-        out << "drivethrough" << std::endl;
+	out << "drivethrough" << std::endl;
       if (pyr.isShootThrough())
-        out << "shootthrough" << std::endl;
+	out << "shootthrough" << std::endl;
       if (pyr.getZFlip())
-        out << "flipz" << std::endl;
+	out << "flipz" << std::endl;
       out << "end" << std::endl;
       out << std::endl;
     }

@@ -106,7 +106,7 @@ bool WordFilter::aggressiveFilter(char *input) const
       // expand punctuation to potential alphabetic characters
       if (isPunctuation(c)) {
 
-        std::string puncChars = alphabeticSetFromCharacter(c);
+	std::string puncChars = alphabeticSetFromCharacter(c);
 	for (unsigned int cnt = 0; cnt < puncChars.size(); cnt++) {
 	  appendUniqueChar(wordIndices, tolower(puncChars[cnt]));
 	}
@@ -210,7 +210,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 	    /* we are at the start of a word, but not at the end, try to get to the end */
 	    bool foundit = false;
 	    for (std::set<filter_t, expressionCompare>::iterator j = suffixes.begin();
-	         j != suffixes.end(); ++j) {
+		 j != suffixes.end(); ++j) {
 //std::cout << "checking " << j->word << " against [" << input + endOffset << "]" << std::endl;
 
 	      if (regexec(j->compiled, sInput.c_str() + endOffset, 1, match, 0) == 0) {
@@ -220,7 +220,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 		/* again, make sure we are now at a word end */
 		if ( (match[0].rm_eo < inputLength - endOffset) &&
-                     (isAlphabetic(sInput[endOffset + match[0].rm_eo])) ) {
+		     (isAlphabetic(sInput[endOffset + match[0].rm_eo])) ) {
 		  /* we matched, but we are still in the middle of a word */
 		  continue;
 		}
@@ -253,7 +253,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 	  matched = true;
 	  // zappo! .. erase stuff that has been filtered to speed up future checks
 	  // fill with some non-whitespace alpha that is not the start/end of a suffix to prevent rematch
-          std::string filler;
+	  std::string filler;
 	  filler.assign(endOffset - startOffset, 'W');
 	  sInput.replace(startOffset, endOffset - startOffset, filler);
 
@@ -264,7 +264,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 	} else {
 	  char errorBuffer[256];
 	  regerror(regCode, i->compiled, errorBuffer, 256);
-          std::cout << errorBuffer << std::endl;
+	  std::cout << errorBuffer << std::endl;
 
 	} /* end if regcode */
 
@@ -489,8 +489,8 @@ std::string WordFilter::expressionFromString(const std::string &word) const
 	/* append single characters */
 	expression.append(charSet);
       } else {
-        std::cout << "ERROR: l33t-speak returned an empty string" << std::endl;
-        std::cout << "ERROR: This should never happen" << std::endl;
+	std::cout << "ERROR: l33t-speak returned an empty string" << std::endl;
+	std::cout << "ERROR: This should never happen" << std::endl;
 	exit(1);
       }
 

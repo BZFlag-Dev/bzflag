@@ -84,30 +84,30 @@ static std::string		cmdPrint(const std::string&,
       // could be a variable
       ++scan;
       if (*scan == '$') {
-        // no, it's just $$ which maps to $
-        result += "$";
-        ++scan;
+	// no, it's just $$ which maps to $
+	result += "$";
+	++scan;
       } else if (*scan != '{') {
-        // parse variable name
-        const char* name = scan;
-        while (*scan != '\0' && !isspace(*scan))
-          ++scan;
+	// parse variable name
+	const char* name = scan;
+	while (*scan != '\0' && !isspace(*scan))
+	  ++scan;
 
-        // look up variable
-        result += BZDB.get(std::string(name, scan - name));
+	// look up variable
+	result += BZDB.get(std::string(name, scan - name));
       } else {
-        // parse "quoted" variable name
-        const char* name = ++scan;
-        while (*scan != '\0' && *scan != '}')
-          ++scan;
+	// parse "quoted" variable name
+	const char* name = ++scan;
+	while (*scan != '\0' && *scan != '}')
+	  ++scan;
 
-        if (*scan != '\0') {
-          // look up variable
-          result += BZDB.get(std::string(name, scan - name));
+	if (*scan != '\0') {
+	  // look up variable
+	  result += BZDB.get(std::string(name, scan - name));
 
-          // skip }
-          ++scan;
-        }
+	  // skip }
+	  ++scan;
+	}
       }
     }
   }

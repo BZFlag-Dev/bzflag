@@ -322,10 +322,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     for (i = 0; i < maxShots; i++) {
       const ShotPath* shot = myTank->getShot(i);
       if (shot) {
-        const float cs = colorScale(shot->getPosition()[2],
+	const float cs = colorScale(shot->getPosition()[2],
 		muzzleHeight, BZDBCache::enhancedRadar);
-        glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
-        shot->radarRender();
+	glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+	shot->radarRender();
       }
     }
 
@@ -335,10 +335,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     for (i = 0; i < maxShots; i++) {
       const ShotPath* shot = worldWeapons->getShot(i);
       if (shot) {
-        const float cs = colorScale(shot->getPosition()[2],
+	const float cs = colorScale(shot->getPosition()[2],
 		muzzleHeight, BZDBCache::enhancedRadar);
-        glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
-        shot->radarRender();
+	glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+	shot->radarRender();
       }
     }
 
@@ -403,20 +403,20 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {
 	const ShotPath* shot = player->getShot(j);
-        if (shot && shot->getFlag() != Flags::InvisibleBullet) {
-          const float *shotcolor;
+	if (shot && shot->getFlag() != Flags::InvisibleBullet) {
+	  const float *shotcolor;
 	  if (BZDB.isTrue("coloredradarshots")) {
-            if (myTank->getFlag() == Flags::Colorblindness)
-              shotcolor = Team::getRadarColor(RogueTeam);
-            else
-              shotcolor = Team::getRadarColor(player->getTeam());
-            const float cs = colorScale(shot->getPosition()[2],
+	    if (myTank->getFlag() == Flags::Colorblindness)
+	      shotcolor = Team::getRadarColor(RogueTeam);
+	    else
+	      shotcolor = Team::getRadarColor(player->getTeam());
+	    const float cs = colorScale(shot->getPosition()[2],
 		    muzzleHeight, BZDBCache::enhancedRadar);
-            glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
-          }
-          else
-            glColor3f(1.0f, 1.0f, 1.0f);
-          shot->radarRender();
+	    glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
+	  }
+	  else
+	    glColor3f(1.0f, 1.0f, 1.0f);
+	  shot->radarRender();
 	}
       }
     }
@@ -425,16 +425,16 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     const int maxFlags = world.getMaxFlags();
     if (BZDB.isTrue("displayRadarFlags")) {
       for (i = 0; i < maxFlags; i++) {
-        // draw normal flags
-        const Flag& flag = world.getFlag(i);
-        if (flag.status == FlagNoExist || flag.status == FlagOnTank)
+	// draw normal flags
+	const Flag& flag = world.getFlag(i);
+	if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	  continue;
-        if (flag.type->flagTeam != NoTeam)
+	if (flag.type->flagTeam != NoTeam)
 	  continue;
-        const float cs = colorScale(flag.position[2], muzzleHeight, BZDBCache::enhancedRadar);
-        const float *flagcolor = flag.type->getColor();
-        glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
-        drawFlag(flag.position[0], flag.position[1], flag.position[2]);
+	const float cs = colorScale(flag.position[2], muzzleHeight, BZDBCache::enhancedRadar);
+	const float *flagcolor = flag.type->getColor();
+	glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
+	drawFlag(flag.position[0], flag.position[1], flag.position[2]);
       }
     }
     for (i = 0; i < maxFlags; i++) {
@@ -686,13 +686,13 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
       const float beta = atan2f(base[5], base[4]);
       const float r = hypotf(base[4], base[5]);
       glVertex2f(base[0] + r * cosf(base[3] + beta),
-                 base[1] + r * sinf(base[3] + beta));
+		 base[1] + r * sinf(base[3] + beta));
       glVertex2f(base[0] + r * cosf(base[3] - beta + M_PI),
-                 base[1] + r * sinf(base[3] - beta + M_PI));
+		 base[1] + r * sinf(base[3] - beta + M_PI));
       glVertex2f(base[0] + r * cosf(base[3] + beta + M_PI),
-                 base[1] + r * sinf(base[3] + beta + M_PI));
+		 base[1] + r * sinf(base[3] + beta + M_PI));
       glVertex2f(base[0] + r * cosf(base[3] - beta),
-                 base[1] + r * sinf(base[3] - beta));
+		 base[1] + r * sinf(base[3] - beta));
       glEnd();
     }
   }

@@ -27,8 +27,8 @@ bzfs_SOURCES = \
 	PackVars.h \
 	Permissions.cxx \
 	Permissions.h \
-        PlayerInfo.h \
-        TextChunkManager.cxx \
+	PlayerInfo.h \
+	TextChunkManager.cxx \
 	TextChunkManager.h \
 	VotingArbiter.cxx \
 	VotingArbiter.h \

@@ -27,7 +27,7 @@ class TankFactors
 public:
        TankFactors()
        {
-         if (!callbackAdded) {
+	 if (!callbackAdded) {
 	     BZDB.addCallback(StateDatabase::BZDB_OBESEFACTOR, callback, NULL );
 	     BZDB.addCallback(StateDatabase::BZDB_TINYFACTOR, callback, NULL );
 	     BZDB.addCallback(StateDatabase::BZDB_THIEFTINYFACTOR, callback, NULL );
@@ -38,16 +38,16 @@ public:
        static void callback(const std::string& name, void*)
        {
 	  if (name == StateDatabase::BZDB_OBESEFACTOR) {
-             styleFactors[1][0] = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-             styleFactors[1][1] = styleFactors[1][0];
+	     styleFactors[1][0] = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+	     styleFactors[1][1] = styleFactors[1][0];
 	  }
 	  else if (name == StateDatabase::BZDB_TINYFACTOR) {
-             styleFactors[2][0] = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-             styleFactors[2][1] = styleFactors[2][0];
+	     styleFactors[2][0] = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+	     styleFactors[2][1] = styleFactors[2][0];
 	  }
 	  else if (name == StateDatabase::BZDB_THIEFTINYFACTOR) {
-             styleFactors[4][0] = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-             styleFactors[4][1] = styleFactors[4][0];
+	     styleFactors[4][0] = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+	     styleFactors[4][1] = styleFactors[4][0];
 	  }
        }
 

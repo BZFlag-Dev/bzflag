@@ -201,7 +201,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	      }
 	      // ditch the terminating character too
 	      if (n < lineLen)
-	        n++;
+		n++;
 	    }
 	  }
 	  else if ((msg[n] >= 32) && (msg[n] < 127)) {
@@ -216,7 +216,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
       // only draw message if inside message area
       if (j + msgy < maxLines)
-        messageFont.draw(msg, n, fx, fy + msgy * lineHeight);
+	messageFont.draw(msg, n, fx, fy + msgy * lineHeight);
 
       // account for portion drawn (or skipped)
       msg += n;
@@ -320,7 +320,7 @@ void			ControlPanel::resize()
   // if radar connected then resize it
   if (radarRenderer)
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
-                            radarAreaPixels[2], radarAreaPixels[3]);
+			    radarAreaPixels[2], radarAreaPixels[3]);
 
   const bool useBigFont = messageAreaPixels[2] / (BZDB.isTrue("bigfont") ? 60.0f : 80.0f) > 10.0f;
   const float fontSize = useBigFont ? 11.0f : 7.0f;

@@ -133,8 +133,8 @@ Increase debugging level. More -d are used, more debugging info are obtained.
 Forces the existence of the given flag.  If specified multiple times
 for the same \fIflag-id\fR, then that many flags will appear.  The
 \fIgood\fR argument is equivalent to specifying \fB+f\fR once for
-each kind of good flag. Same goes for the \fIbad\fR argument.  The optional 
-\fI{count}\fR parameter allows the specification of multiple flags of the 
+each kind of good flag. Same goes for the \fIbad\fR argument.  The optional
+\fI{count}\fR parameter allows the specification of multiple flags of the
 same type. Note that the curly braces are required.
 .TP
 \fB-f\fR {\fIgood\fR|\fIbad\fR|\fIflag-id\fR}
@@ -396,7 +396,7 @@ Basic capture-the-flag game.  It teaches teamwork and dogfighting skills.
 .TP
 \fB-s -t\fR
 Free-for-all with superflags and teleporters.  Teaches players how to use
-superflags and teleporters for maximum effect.  You may want to allow 
+superflags and teleporters for maximum effect.  You may want to allow
 players to drop bad flags with any of -sa, -st, and -sw.
 .RE
 .PP

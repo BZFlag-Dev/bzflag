@@ -193,8 +193,8 @@ bool					PNGImageFile::read(void* buffer)
       expand();
 
       if (!filter()) {
-        delete c;
-        return false;
+	delete c;
+	return false;
       }
 
       memcpy(((unsigned char *)buffer)+bufferPos, line+1, realBufferSize-1);
@@ -296,12 +296,12 @@ bool PNGImageFile::expand()
     case 1:
     {
       for (int i = width-1; i >= 0; i--) {
-        int byteOffset = i/8 + 1;
-        int bit = 7 - i%8;
-        if (*(pData+byteOffset) & bit)
-          *(pData+i+1) = 0xFF;
-        else
-          *(pData+i+1) = 0x00;
+	int byteOffset = i/8 + 1;
+	int bit = 7 - i%8;
+	if (*(pData+byteOffset) & bit)
+	  *(pData+i+1) = 0xFF;
+	else
+	  *(pData+i+1) = 0x00;
       }
     }
     break;
@@ -309,9 +309,9 @@ bool PNGImageFile::expand()
     case 2:
     {
       for (int i = width-1; i >= 0; i--) {
-        int byteOffset = i/4 + 1;
-        int bitShift = 6-2*(i%4);
-        *(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
+	int byteOffset = i/4 + 1;
+	int bitShift = 6-2*(i%4);
+	*(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
       }
     }
     break;
@@ -319,9 +319,9 @@ bool PNGImageFile::expand()
     case 4:
     {
       for (int i = width-1; i >= 0; i--) {
-        int byteOffset = i/2+1;
-        int bitShift = 4-4*(i%2);
-        *(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
+	int byteOffset = i/2+1;
+	int bitShift = 4-4*(i%2);
+	*(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
       }
     }
     break;
@@ -329,15 +329,15 @@ bool PNGImageFile::expand()
     case 8:
     {
       if (colorDepth == 3) {
-        if (palette == NULL)
-          return false;
+	if (palette == NULL)
+	  return false;
 
-        for (int i = width-1; i >= 0; i--) {
-          PNGRGB &rgb = palette->get(*(pData+i));
-          *(pData + width*3 + 1) = rgb.red;
-          *(pData + width*3 + 2) = rgb.green;
-          *(pData + width*3 + 3) = rgb.blue;
-        }
+	for (int i = width-1; i >= 0; i--) {
+	  PNGRGB &rgb = palette->get(*(pData+i));
+	  *(pData + width*3 + 1) = rgb.red;
+	  *(pData + width*3 + 2) = rgb.green;
+	  *(pData + width*3 + 3) = rgb.blue;
+	}
       }
     }
     break;
@@ -345,7 +345,7 @@ bool PNGImageFile::expand()
     case 16:
     {
       for (int i = 0; i < width; i++) {
-        *(pData+i+1) = (*pData + 2*i + 1);
+	*(pData+i+1) = (*pData + 2*i + 1);
       }
     }
     break;
@@ -379,7 +379,7 @@ bool PNGImageFile::filter()
     {
       int channels = getNumChannels();
       for (int i = 1; i < lineBufferSize; i++, pData++)
-        *pData += *(pData-channels);
+	*pData += *(pData-channels);
       return true;
       break;
     }
@@ -388,7 +388,7 @@ bool PNGImageFile::filter()
     {
       unsigned char *pUp = getLineBuffer(false)+1;
       for (int i = 1; i < lineBufferSize; i++, pData++, pUp++)
-        *pData += *pUp;
+	*pData += *pUp;
       return true;
       break;
     }
@@ -398,10 +398,10 @@ bool PNGImageFile::filter()
       unsigned char *pUp = getLineBuffer(false)+1;
       int channels = getNumChannels();
       for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
-        int last = *(pData-channels);
-        int up = *pUp;
+	int last = *(pData-channels);
+	int up = *pUp;
 
-        *pData += (last + up)/2;
+	*pData += (last + up)/2;
       }
       return true;
       break;
@@ -412,17 +412,17 @@ bool PNGImageFile::filter()
       unsigned char *pUp = getLineBuffer(false)+1;
       int channels = getNumChannels();
       for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
-        int a = *(pData-channels);
-        int b = *pUp;
-        int c = *(pUp-channels);
+	int a = *(pData-channels);
+	int b = *pUp;
+	int c = *(pUp-channels);
 
-        int p = b - c;
-        int pc = a - c;
-        int pa = abs(p);
-        int pb = abs(pc);
-        pc = abs(p + pc);
+	int p = b - c;
+	int pc = a - c;
+	int pa = abs(p);
+	int pb = abs(pc);
+	pc = abs(p + pc);
 
-        *pData += (pa <= pb && pa <= pc) ? a : (pb <= pc) ? b : c;
+	*pData += (pa <= pb && pa <= pc) ? a : (pb <= pc) ? b : c;
       }
       return true;
       break;

@@ -157,11 +157,11 @@ void BeOSMedia::audioplay_callback(void *cookie, void *buffer, size_t bufferSize
     if (err < B_OK) {
       if (err == B_TIMED_OUT) {
 //puts("audio callback late");
-        /* tell we are late */
-        if (s->checkLowWater)
-          write_port(s->audioQueuePort, 'Late', NULL, 0);
-        continue;
-        //return;
+	/* tell we are late */
+	if (s->checkLowWater)
+	  write_port(s->audioQueuePort, 'Late', NULL, 0);
+	continue;
+	//return;
       }
       s->audioHasQuit = 1;
       s->soundPlayer->SetHasData(false);
@@ -335,10 +335,10 @@ void					BeOSMedia::writeAudioFrames(
       float *s = (float *)(uint8 *)(buf + amount);
       short *d = (short *)&((unsigned char *)outputBuffer)[audioInputIndex];
       for (int i = (len - amount)/sizeof(short); i; i++) {
-        if (*s < -32767) *d = -32767;
-        else if (*s > 32767) *d = 32767;
-        else *d = (short)(*s /** 32767*/);
-        d++; s++;
+	if (*s < -32767) *d = -32767;
+	else if (*s > 32767) *d = 32767;
+	else *d = (short)(*s /** 32767*/);
+	d++; s++;
       }
 #else
       float *s = (float *)(uint8 *)(buf + amount);

@@ -1496,7 +1496,7 @@ void			GuidedMissileStrategy::radarRender() const
       glEnd();
     }
   }
-  
+
 }
 
 //

@@ -52,7 +52,7 @@ void	_debugLookups(const std::string &name)
 
     for (std::multimap<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
       if (-it2->first / interval < 1.0f)
-        break;
+	break;
       char data[100];
       sprintf(data, "%-25s = %.2f acc/sec", it2->second.c_str(), -it2->first / interval);
       std::cout << data << std::endl;
@@ -417,7 +417,7 @@ void			StateDatabase::write(Callback callback, void* userData) const
 
   for (Map::const_iterator index = items.begin(); index != items.end(); ++index) {
     if (index->second.isSet && index->second.save &&
-        index->second.value != index->second.defValue) {
+	index->second.value != index->second.defValue) {
       (*callback)(index->first, userData);
     }
   }
@@ -555,26 +555,26 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
     // operator
     switch(temp) {
       case '+':
-        dst.setOper(StateDatabase::ExpressionToken::add);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::add);
+	break;
       case '-':
-        dst.setOper(StateDatabase::ExpressionToken::subtract);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::subtract);
+	break;
       case '*':
-        dst.setOper(StateDatabase::ExpressionToken::multiply);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::multiply);
+	break;
       case '/':
-        dst.setOper(StateDatabase::ExpressionToken::divide);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::divide);
+	break;
       case '^':
-        dst.setOper(StateDatabase::ExpressionToken::power);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::power);
+	break;
       case '(':
-        dst.setOper(StateDatabase::ExpressionToken::lparen);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::lparen);
+	break;
       case ')':
-        dst.setOper(StateDatabase::ExpressionToken::rparen);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::rparen);
+	break;
     }
   } else if((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') {
     // variable (perhaps prefix with $?)
@@ -612,26 +612,26 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
     // operator
     switch (temp) {
       case '+':
-        dst.setOper(StateDatabase::ExpressionToken::add);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::add);
+	break;
       case '-':
-        dst.setOper(StateDatabase::ExpressionToken::subtract);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::subtract);
+	break;
       case '*':
-        dst.setOper(StateDatabase::ExpressionToken::multiply);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::multiply);
+	break;
       case '/':
-        dst.setOper(StateDatabase::ExpressionToken::divide);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::divide);
+	break;
       case '^':
-        dst.setOper(StateDatabase::ExpressionToken::power);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::power);
+	break;
       case '(':
-        dst.setOper(StateDatabase::ExpressionToken::lparen);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::lparen);
+	break;
       case ')':
-        dst.setOper(StateDatabase::ExpressionToken::rparen);
-        break;
+	dst.setOper(StateDatabase::ExpressionToken::rparen);
+	break;
     }
   } else if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') {
     tempname += temp;
@@ -656,29 +656,29 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionTok
       break;
     case StateDatabase::ExpressionToken::oper:
       switch (src.getOperator()) {
-        case StateDatabase::ExpressionToken::add:
-          dst << '+';
-          break;
-        case StateDatabase::ExpressionToken::subtract:
-          dst << '-';
-          break;
-        case StateDatabase::ExpressionToken::multiply:
-          dst << '*';
-          break;
-        case StateDatabase::ExpressionToken::divide:
-          dst << '/';
-          break;
-        case StateDatabase::ExpressionToken::power:
-          dst << '^';
-          break;
-        case StateDatabase::ExpressionToken::lparen:
-          dst << '(';
-          break;
-        case StateDatabase::ExpressionToken::rparen:
-          dst << ')';
-          break;
-        case StateDatabase::ExpressionToken::none:
-          break;
+	case StateDatabase::ExpressionToken::add:
+	  dst << '+';
+	  break;
+	case StateDatabase::ExpressionToken::subtract:
+	  dst << '-';
+	  break;
+	case StateDatabase::ExpressionToken::multiply:
+	  dst << '*';
+	  break;
+	case StateDatabase::ExpressionToken::divide:
+	  dst << '/';
+	  break;
+	case StateDatabase::ExpressionToken::power:
+	  dst << '^';
+	  break;
+	case StateDatabase::ExpressionToken::lparen:
+	  dst << '(';
+	  break;
+	case StateDatabase::ExpressionToken::rparen:
+	  dst << ')';
+	  break;
+	case StateDatabase::ExpressionToken::none:
+	  break;
       }
       break;
     case StateDatabase::ExpressionToken::variable:
@@ -742,19 +742,19 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
       postfix.push_back(*i);
     } else if (i->getTokenType() == ExpressionToken::oper) {
       if (i->getOperator() == ExpressionToken::lparen) {
-        operators.push(*i);
+	operators.push(*i);
       } else if (i->getOperator() == ExpressionToken::rparen) {
-        // unstack operators until a matching ( is found
-        while(operators.top().getOperator() != ExpressionToken::lparen) {
-          postfix.push_back(operators.top()); operators.pop();
-        }
-        // discard (
-        operators.pop();
+	// unstack operators until a matching ( is found
+	while(operators.top().getOperator() != ExpressionToken::lparen) {
+	  postfix.push_back(operators.top()); operators.pop();
+	}
+	// discard (
+	operators.pop();
       } else {
-        while((operators.size() > 0) && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
-          postfix.push_back(operators.top()); operators.pop();
-        }
-        operators.push(*i);
+	while((operators.size() > 0) && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
+	  postfix.push_back(operators.top()); operators.pop();
+	}
+	operators.push(*i);
       }
     }
   }
@@ -777,55 +777,55 @@ float StateDatabase::evaluate(Expression e) const
     unary = false;
     switch(i->getTokenType()) {
       case ExpressionToken::number:
-        evaluationStack.push(*i);
-        break;
+	evaluationStack.push(*i);
+	break;
       case ExpressionToken::variable:
-        // strip off '$'?
-        tok.setNumber(BZDB.eval(i->getVariable()));
-        evaluationStack.push(tok);
-        break;
+	// strip off '$'?
+	tok.setNumber(BZDB.eval(i->getVariable()));
+	evaluationStack.push(tok);
+	break;
       case ExpressionToken::oper:
-        if (evaluationStack.size() == 0) {
-          // syntax error
-        }
-        // rvalue and lvalue are switched, since we're reversed
-        rvalue = evaluationStack.top(); evaluationStack.pop();
-        if (evaluationStack.size() == 0) {
-          unary = true; // syntax error or unary operator
-        }
-        if (!unary) {
-          lvalue = evaluationStack.top(); evaluationStack.pop();
-        }
-        switch(i->getOperator()) {
-          case ExpressionToken::add:
-            tok.setNumber(lvalue.getNumber() + rvalue.getNumber());
-            evaluationStack.push(tok);
-            break;
-          case ExpressionToken::subtract:
-            if (unary)
-              tok.setNumber(-rvalue.getNumber());
-          else
-            tok.setNumber(lvalue.getNumber() - rvalue.getNumber());
-            evaluationStack.push(tok);
-            break;
-          case ExpressionToken::multiply:
-            tok.setNumber(lvalue.getNumber() * rvalue.getNumber());
-            evaluationStack.push(tok);
-            break;
-          case ExpressionToken::divide:
-            tok.setNumber(lvalue.getNumber() / rvalue.getNumber());
-            evaluationStack.push(tok);
-            break;
-          case ExpressionToken::power:
-            tok.setNumber(pow(lvalue.getNumber(), rvalue.getNumber()));
-            evaluationStack.push(tok);
-            break;
-        default:
-          // lparen and rparen should have been stripped out
-          // throw something here, too
-          break;
-        }
-        break;
+	if (evaluationStack.size() == 0) {
+	  // syntax error
+	}
+	// rvalue and lvalue are switched, since we're reversed
+	rvalue = evaluationStack.top(); evaluationStack.pop();
+	if (evaluationStack.size() == 0) {
+	  unary = true; // syntax error or unary operator
+	}
+	if (!unary) {
+	  lvalue = evaluationStack.top(); evaluationStack.pop();
+	}
+	switch(i->getOperator()) {
+	  case ExpressionToken::add:
+	    tok.setNumber(lvalue.getNumber() + rvalue.getNumber());
+	    evaluationStack.push(tok);
+	    break;
+	  case ExpressionToken::subtract:
+	    if (unary)
+	      tok.setNumber(-rvalue.getNumber());
+	  else
+	    tok.setNumber(lvalue.getNumber() - rvalue.getNumber());
+	    evaluationStack.push(tok);
+	    break;
+	  case ExpressionToken::multiply:
+	    tok.setNumber(lvalue.getNumber() * rvalue.getNumber());
+	    evaluationStack.push(tok);
+	    break;
+	  case ExpressionToken::divide:
+	    tok.setNumber(lvalue.getNumber() / rvalue.getNumber());
+	    evaluationStack.push(tok);
+	    break;
+	  case ExpressionToken::power:
+	    tok.setNumber(pow(lvalue.getNumber(), rvalue.getNumber()));
+	    evaluationStack.push(tok);
+	    break;
+	default:
+	  // lparen and rparen should have been stripped out
+	  // throw something here, too
+	  break;
+	}
+	break;
     }
   }
   return (float)evaluationStack.top().getNumber();

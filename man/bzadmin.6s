@@ -54,7 +54,7 @@ the standard in stream.
 .TP
 \fIcallsign@hostname\fR[\fI:port\fR]
 Specifies the callsign that you want your client to use, and the
-hostname where the BZFlag server is. The port number is optional, 
+hostname where the BZFlag server is. The port number is optional,
 and the default value is 5154.
 .TP
 \fIcommand\fR

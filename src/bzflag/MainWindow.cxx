@@ -134,9 +134,9 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
       width = inWidth;
       height = inHeight;
       if (isFullView)
-        viewHeight = height;
+	viewHeight = height;
       else
-        viewHeight = inHeight * (46 - SceneRenderer::getInstance()->getRadarSize()) / 60;
+	viewHeight = inHeight * (46 - SceneRenderer::getInstance()->getRadarSize()) / 60;
       xOrigin = 0;
       yOrigin = 0;
       break;

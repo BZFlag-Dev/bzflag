@@ -336,9 +336,9 @@ std::string		BzfNetwork::dereferenceHTTP(
     else {
       bodypos = data.find("\n\n");
       if(bodypos != -1)
-        body = data.substr(bodypos + 2);
+	body = data.substr(bodypos + 2);
       else
-        return std::string();
+	return std::string();
     }
     if(body[body.length() - 1] == '\n')
       body = body.substr(0, body.length() - 1);
