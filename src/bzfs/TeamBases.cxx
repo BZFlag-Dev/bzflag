@@ -103,14 +103,6 @@ const float *TeamBases::getBasePosition( int base ) const
   return teamBases[base].position;
 }
 
-const float *TeamBases::getBaseSize( int base ) const
-{
-  if ((base < 0) || (base >= (int)teamBases.size()))
-    base = 0;
-
-  return teamBases[base].size;
-}
-
 void *TeamBases::pack( void *buf ) const
 {
   for (TeamBaseList::const_iterator it = teamBases.begin(); it != teamBases.end(); ++it) {
@@ -149,18 +141,6 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
   return -1.0f;
 }
 
-void TeamBases::getRandomPosition( float &x, float &y, float &z ) const
-{
-  int baseIndex = (int) (teamBases.size() * bzfrand());
-  const TeamBase &base = teamBases[baseIndex];
-
-  float deltaX = (base.size[0] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
-  float deltaY = (base.size[1] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
-  x = base.position[0] + deltaX * cosf(base.rotation) - deltaY * sinf(base.rotation);
-  y = base.position[1] + deltaX * sinf(base.rotation) + deltaY * cosf(base.rotation);
-  z = base.position[2] + base.size[2];
-}
-
 void TeamBases::getSafetyZone( float &x, float &y, float &z ) const
 {
   int baseIndex = (int) (teamBases.size() * bzfrand());
@@ -171,6 +151,10 @@ void TeamBases::getSafetyZone( float &x, float &y, float &z ) const
   z = base.safetyZone[2];
 }
 
+const TeamBases::TeamBase &TeamBases::getRandomBase( int id )
+{
+  return teamBases[id % teamBases.size()];
+}
 
 TeamBases::TeamBase::TeamBase(const float *pos, const float *siz, float rot, const float *safety)
 {
@@ -178,4 +162,13 @@ TeamBases::TeamBase::TeamBase(const float *pos, const float *siz, float rot, con
   memcpy(&size, siz, sizeof size);
   memcpy(&safetyZone, safety, sizeof safetyZone);
   rotation = rot;
+}
+
+void TeamBases::TeamBase::getRandomPosition( float &x, float &y, float &z ) const
+{
+  float deltaX = (size[0] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
+  float deltaY = (size[1] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
+  x = position[0] + deltaX * cosf(rotation) - deltaY * sinf(rotation);
+  y = position[1] + deltaX * sinf(rotation) + deltaY * cosf(rotation);
+  z = position[2] + size[2];
 }

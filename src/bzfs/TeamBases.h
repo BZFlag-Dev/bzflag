@@ -21,33 +21,34 @@ class TeamBases;
 
 typedef std::map<int, TeamBases> BasesList;
 
+
 class TeamBases
-{
+{ // This class represents all the bases for one team
 public:
-  TeamBases();
-  TeamBases(TeamColor team, bool initDefault = false);
-  void addBase( const float *position, const float *size, float rotation, const float *safetyZone );
-  int size() const;
-  TeamColor getTeam() const;
-  const float *TeamBases::getBasePosition( int base ) const;
-  const float *TeamBases::getBaseSize( int base ) const;
-  void *pack( void *buf ) const;
-  float findBaseZ( float x, float y, float z ) const;
-  void getRandomPosition( float &x, float &y, float &z ) const;
-  void getSafetyZone( float &x, float &y, float &z ) const;
-
-
-
-private:
-  struct TeamBase
-  {
+  class TeamBase
+  { // This class represents one base
+  public:
     TeamBase() {}
     TeamBase(const float *pos, const float *siz, float rot, const float *safety);
+    void getRandomPosition( float &x, float &y, float &z ) const;
     float position[3];
     float size[3];
     float rotation;
     float safetyZone[3];
   };
+
+  TeamBases();
+  TeamBases(TeamColor team, bool initDefault = false);
+  void addBase( const float *position, const float *size, float rotation, const float *safetyZone );
+  int size() const;
+  TeamColor getTeam() const;
+  const float *getBasePosition( int base ) const;
+  void *pack( void *buf ) const;
+  float findBaseZ( float x, float y, float z ) const;
+  const TeamBase& getRandomBase( int id );
+  void getSafetyZone( float &x, float &y, float &z ) const;
+
+private:
   typedef std::vector<TeamBase> TeamBaseList;
 
   TeamBaseList teamBases;
