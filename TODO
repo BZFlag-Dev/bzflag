@@ -5,9 +5,6 @@ These should happen before the next release:
 
 * version as strings as in 1.9.0-cvs20030604
 
-* Some BZDB variables are still incorrectly cached. Root them
-  out and use callbacks, or refetch them always.
-
 * server should pick client enter position
 
 * describe rabbit hunt in man page (and in-game help?)

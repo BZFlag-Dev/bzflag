@@ -467,7 +467,7 @@ static uint16_t curMaxPlayers = 0;
 // max simulataneous per player
 static bool hasBase[CtfTeams] = { false };
 
-static float maxTankHeight = 0.0f;
+static float maxWorldHeight = 0.0f;
 
 static char hexDigest[50];
 
@@ -2571,8 +2571,7 @@ static bool defineWorld()
       return false;
    }
 
-   int improperly_cached_maxTankHeight;
-   maxTankHeight = world->getMaxWorldHeight() + 1.0f + ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -BZDB->eval(StateDatabase::BZDB_GRAVITY)));
+   maxWorldHeight = world->getMaxWorldHeight();
 
    // package up world
   world->packDatabase();
@@ -5075,6 +5074,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       PlayerState state;
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf);
+      float maxTankHeight = maxWorldHeight + 1.0f + ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -BZDB->eval(StateDatabase::BZDB_GRAVITY)));
+
       if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
 	DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callSign, t);
