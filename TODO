@@ -2,7 +2,7 @@ to do list for bzflag
 ---------------------
 
 * move team base packing into WorldInfo (bzfs)
-  and add size (z)
+  and add height (z)
 
 * remove reconnect from server and client
 
