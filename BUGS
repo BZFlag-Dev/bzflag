@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- README.UNIX is out of date
+
 - resetting key map is not implemented
 
 - first help page does not grab keybindings
