@@ -57,6 +57,7 @@ class ShotStrategy {
     virtual void	readUpdate(uint16_t code, void* msg);
 
     static const Obstacle*	getFirstBuilding(const Ray&, float min, float& t);
+    static void		reflect(float* v, const float* n); // const
 
   protected:
     const ShotPath&	getPath() const;
@@ -115,7 +116,6 @@ class SegmentedShotStrategy : public ShotStrategy {
     };
     void		makeSegments(ObstacleEffect = Stop);
     const std::vector<ShotPathSegment>&	getSegments() const;
-    static void		reflect(float* v, const float* n); // const
 
     void		setCurrentTime(const TimeKeeper&);
     const TimeKeeper&	getLastTime() const;

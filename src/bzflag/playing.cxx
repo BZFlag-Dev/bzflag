@@ -1627,39 +1627,75 @@ static void		doAutoPilot(float &rotation, float &speed)
 	}
       }
       else {
+	Ray shotRay(pos,dir);
+	float minBuilding = -0.5f;
+	float shotAngle = myTank->getAngle();
+	float shotDir[3];
+	memcpy(shotDir,dir,sizeof(shotDir));
         TimeKeeper now = TimeKeeper::getCurrent();
         if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+	  for (int tries = 0; tries < 2; tries++) {
+	    for (t = 0; t < curMaxPlayers; t++) {
+	      if (t != myTank->getId() && player[t] &&
+	        player[t]->isAlive() && !player[t]->isPaused() &&
+	        !player[t]->isNotResponding() &&
+	        myTank->validTeamTarget(player[t])) {
 
-	  for (t = 0; t < curMaxPlayers; t++) {
-	    if (t != myTank->getId() && player[t] &&
-	      player[t]->isAlive() && !player[t]->isPaused() &&
-	      !player[t]->isNotResponding() &&
-	      myTank->validTeamTarget(player[t])) {
+	        const float *tp = player[t]->getPosition();
+	        if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(shotRay.getOrigin()[2] - tp[2]) < 2.0f * BZDBCache::tankHeight)) {
 
-	      const float *tp = player[t]->getPosition();
-	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDBCache::tankHeight)) {
+	          float targetAngle = atan2f(tp[1] - shotRay.getOrigin()[1], tp[0] - shotRay.getOrigin()[0]);
+	          float targetRotation = targetAngle - shotAngle;
+	          if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
+	          if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
 
-	        float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
-	        float targetRotation = targetAngle - myTank->getAngle();
-	        if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
-	        if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
+	          if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
+	          ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
+		    float d = hypotf(tp[0] - shotRay.getOrigin()[0], tp[1] - shotRay.getOrigin()[1]);
+		    const Obstacle *building = NULL;
+		    if (myTank->getFlag() != Flags::SuperBullet)
+		      building = ShotStrategy::getFirstBuilding(shotRay, minBuilding, d);
 
-	        if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
-	        ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
-		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
-		  const Obstacle *building = NULL;
-		  if (myTank->getFlag() != Flags::SuperBullet)
-		    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
-
-		  if (!building) {
-		    myTank->fireShot();
-		    lastShot = now;
-		    shotFired = true;
-		    t = curMaxPlayers;
-		  }	
+		    if (!building) {
+		      myTank->fireShot();
+		      lastShot = now;
+		      shotFired = true;
+		      t = curMaxPlayers;
+		      tries = 2;
+		    }	
+		  }
 		}
 	      }
 	    }
+
+	    if (!shotFired && (myTank->getFlag() != Flags::SuperBullet) 
+	    &&  (myTank->getFlag() == Flags::Ricochet) || World::getWorld()->allShotsRicochet()) {
+	      float d = 200.0f;
+	      const Obstacle *building = ShotStrategy::getFirstBuilding(shotRay, -0.5f, d);
+	      if (building && (d > 30.0f) 
+	      && ((building->getType() == BoxBuilding::getClassName())
+	      || (building->getType() == WallObstacle::getClassName()))) {
+	        float shotPos[3];
+	        memcpy(shotPos,shotRay.getOrigin(),sizeof(shotPos));
+	        shotPos[0] += d * shotDir[0];
+	        shotPos[1] += d * shotDir[1];
+
+	        float normal[3];
+	        building->getNormal(shotPos, normal);
+		ShotStrategy::reflect(shotDir, normal);
+
+		shotAngle = atan2f(shotDir[1],shotDir[0]);
+		float reflectAngle = acos(normal[0]*shotDir[0]+normal[1]*shotDir[1]);
+		if (fabs(reflectAngle) > (7.0f * M_PI/180.0f)) {
+		  shotRay = Ray(shotPos,shotDir);
+		  minBuilding = 4.0f;
+		}
+		else
+		  tries = 2;
+	      }
+	    }
+	    else
+	      tries = 2;
 	  }
 	}
       }

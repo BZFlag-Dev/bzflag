@@ -251,6 +251,17 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
   return closestObstacle;
 }
 
+void			ShotStrategy::reflect(float* v,
+							const float* n) // const
+{
+  // normal is assumed to be normalized, v needn't be
+  const float d = -2.0f * (n[0] * v[0] + n[1] * v[1] + n[2] * v[2]);
+  v[0] += d * n[0];
+  v[1] += d * n[1];
+  v[2] += d * n[2];
+}
+
+
 const Teleporter*	ShotStrategy::getFirstTeleporter(const Ray& ray,
 					float min, float& t, int& f) const
 {
@@ -775,16 +786,6 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 const std::vector<ShotPathSegment>&	SegmentedShotStrategy::getSegments() const
 {
   return segments;
-}
-
-void			SegmentedShotStrategy::reflect(float* v,
-							const float* n) // const
-{
-  // normal is assumed to be normalized, v needn't be
-  const float d = -2.0f * (n[0] * v[0] + n[1] * v[1] + n[2] * v[2]);
-  v[0] += d * n[0];
-  v[1] += d * n[1];
-  v[2] += d * n[2];
 }
 
 //
