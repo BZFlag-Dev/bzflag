@@ -42,14 +42,14 @@ msgstr "Ayuda"
 msgid "Quit"
 msgstr "Salir"
 
-#msgid "on"
-#msgstr ""
+msgid "on"
+msgstr "activado"
 
 msgid "Dithering:"
 msgstr ""
 
-#msgid "off"
-#msgstr ""
+msgid "off"
+msgstr "desactivado"
 
 msgid "Off"
 msgstr "Desactivado"
@@ -120,32 +120,32 @@ msgstr "Volumen:"
 #msgid "Off / Backup Mode"
 #msgstr ""
 
-#msgid "5 Minutes"
-#msgstr ""
+msgid "5 Minutes"
+msgstr "5 Minutos"
 
-#msgid "15 Minutes"
-#msgstr ""
+msgid "15 Minutes"
+msgstr "15 Minutos"
 
-#msgid "30 Minutes"
-#msgstr ""
+msgid "30 Minutes"
+msgstr "30 Minutos"
 
-#msgid "1 Hour"
-#msgstr ""
+msgid "1 Hour"
+msgstr "1 Hora"
 
-#msgid "5 Hours"
-#msgstr ""
+msgid "5 Hours"
+msgstr "5 Horas"
 
-#msgid "15 Hours"
-#msgstr ""
+msgid "15 Hours"
+msgstr "15 Horas"
 
-#msgid "1 day"
-#msgstr ""
+msgid "1 day"
+msgstr "1 dia"
 
-#msgid "15 days"
-#msgstr ""
+msgid "15 days"
+msgstr "15 dias"
 
-#msgid "30 days"
-#msgstr ""
+msgid "30 days"
+msgstr "30 dias"
 
 msgid "UDP network connection:"
 msgstr "Conexión UDP:"
@@ -204,8 +204,8 @@ msgstr "AvPag para la siguiente página"
 msgid "Page Up for previous page"
 msgstr "RePag para la página anterior"
 
-#msgid "Rogue"
-#msgstr ""
+msgid "Rogue"
+msgstr "Sin Equipo"
 
 msgid "Red Team"
 msgstr "Equipo Rojo"
@@ -291,8 +291,8 @@ msgstr "Retrasar Reloj:"
 msgid "Pause/Resume:"
 msgstr "Pausa/Contiuar:"
 
-#msgid "Self Destruct/Cancel:"
-#msgstr ""
+msgid "Self Destruct/Cancel:"
+msgstr "Autodestrucción/Cancelar"
 
 msgid "SelfDestruct/Cancel:"
 msgstr "Autodestrucción/Cancelar:"
@@ -300,11 +300,11 @@ msgstr "Autodestrucción/Cancelar:"
 msgid "Fast Quit:"
 msgstr "Apagado Rápido:"
 
-#msgid "Scroll Backward:"
-#msgstr ""
+msgid "Scroll Backward:"
+msgstr "Voluta al reverse"
 
-#msgid "Scroll Forward:"
-#msgstr ""
+msgid "Scroll Forward:"
+msgstr "Voluta Adelante"
 
 msgid "Slow Keyboard Motion:"
 msgstr "Movimiento Lento del Teclado"
@@ -1441,11 +1441,11 @@ msgstr "del tanque : cuanto más alto está el tanque, mayor es el punto. Las band
 #msgid "Server Reset:"
 #msgstr ""
 
-#msgid "no, quit after game"
-#msgstr ""
+msgid "no, quit after game"
+msgstr "no, salga despues del juego"
 
-#msgid "yes, reset for more games"
-#msgstr ""
+msgid "yes, reset for more games"
+msgstr "si, reajuste para mas juegos"
 
 msgid "flags are in the team color, superflags are white, and the antidote flag"
 msgstr "Las banderas de equiop son del color del equipo, las superbanderas son blancas y la bandera antídoto"
@@ -1456,20 +1456,20 @@ msgstr "es amarilla. Los disparos son pequeños puntos (o lineas o círculos, para
 #msgid "cyan"
 #msgstr ""
 
-#msgid "grey"
-#msgstr ""
+msgid "grey"
+msgstr "gris"
 
-#msgid "text"
-#msgstr ""
+msgid "text"
+msgstr "texto"
 
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr "shock waves respectivamente). Tu tanque siempre está estático en el centro y el frente"
 
-#msgid "None"
-#msgstr ""
+msgid "None"
+msgstr "Ninguno"
 
-#msgid "Blinking"
-#msgstr ""
+msgid "Pulsating"
+msgstr "Pulsando"
 
 #msgid "Underline"
 #msgstr ""
