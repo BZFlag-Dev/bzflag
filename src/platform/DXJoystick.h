@@ -44,6 +44,11 @@ class DXJoystick : public BzfJoystick {
 
   private:
     DIJOYSTATE	pollDevice();
+    void	reaquireDevice();
+    void	enumerateDevices();
+    void	resetFF();
+
+    void	DXError(const char* situation, HRESULT problem);
 
     static std::vector<DIDEVICEINSTANCE> devices;
 

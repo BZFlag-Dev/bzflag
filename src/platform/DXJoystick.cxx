@@ -34,18 +34,11 @@ DXJoystick::DXJoystick() : device(NULL)
 					(void**)&directInput, NULL);
 
   if (success != DI_OK) {
-    printError("Could not initialize DirectInput.");
+    DXError("Could not initialize DirectInput", success);
     return;
   }
 
-  directInput->EnumDevices(DIDEVTYPE_JOYSTICK, &deviceEnumCallback,
-			   NULL, DIEDFL_ATTACHEDONLY);
-
-  if (success != DI_OK) {
-    printError("Could not enumerate DirectInput devices.");
-    return;
-  }
-
+  enumerateDevices();
 }
 
 DXJoystick::~DXJoystick()
@@ -82,7 +75,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
 						(void**)&device, NULL);
 
   if (success != DI_OK) {
-    printError(string_util::format("Could not initialize DirectInput device: %s", joystickName));
+    DXError("Could not initialize device", success);
     return;
   }
 
@@ -96,7 +89,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
 
   if (success != DI_OK) {
     // couldn't grab device, what to do now?
-    printError(string_util::format("Could not set exclusive mode on %s", joystickName));
+    DXError("Could not set exclusive mode", success);
     device = NULL;
     return;
   }
@@ -110,7 +103,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
 
   if (success != DI_OK) {
     // couldn't set data format, what to do now?
-    printError(string_util::format("Could not set return data format for %s", joystickName));
+    DXError("Could not set data format", success);
     device = NULL;
     return;
   }
@@ -132,7 +125,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
 
   if (success != DI_OK) {
     // couldn't set x axis range, what to do now?
-    printError(string_util::format("Could not set X-axis ranges for %s", joystickName));
+    DXError("Could not set X-axis range", success);
     device = NULL;
     return;
   }
@@ -143,7 +136,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
 
   if (success != DI_OK) {
     // couldn't set y axis range, what to do now?
-    printError(string_util::format("Could not set Y-axis ranges for %s", joystickName));
+    DXError("Could not set Y-axis range", success);
     device = NULL;
     return;
   }
@@ -152,14 +145,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    * Acquire the device so that we can get input from it.
    */
 
-  success = device->Acquire();
-  
-  if (success != DI_OK) {
-    // couldn't acquire, what to do now?
-    printError(string_util::format("Could not aquire %s", joystickName));
-    device = NULL;
-    return;
-  }
+  reaquireDevice();
 }
 
 bool	      DXJoystick::joystick() const
@@ -209,18 +195,7 @@ DIJOYSTATE    DXJoystick::pollDevice()
   success = device->GetDeviceState(sizeof(DIJOYSTATE), &state);
   if (success != DI_OK) {
     // got no state, what's wrong?
-    if (success == DIERR_INPUTLOST) {
-      // try to reaquire the device
-      success = device->Acquire();
-  
-      if (success != DI_OK) {
-	// couldn't acquire, what to do now?
-	device = NULL;
-	return state;
-      }
-    } else {
-      printError("Acquisition succeeded, but could not get joystick status.");
-    }
+    DXError("Acquisition succeeded, but could not get joystick status", success);
   }
 
   return state;
@@ -249,7 +224,7 @@ bool	      DXJoystick::ffHasRumble() const
 
   if (success != DI_OK) {
     // couldn't get capabilities, assume no force feedback
-    printError("Could not get joystick capabilities, assuming no force feedback.");
+    printError("Could not get joystick capabilities, assuming no force feedback");
     return false;
   }
 
@@ -263,6 +238,9 @@ bool	      DXJoystick::ffHasRumble() const
 void	      DXJoystick::ffRumble(int count, float delay, float duration,
 				   float strong_motor, float weak_motor)
 {
+  if (!device)
+    return;
+
   /*
    * Create a constant "rumbling" effect with the specified parameters
    * Note that on joysticks that support "real" force feedback this will
@@ -316,19 +294,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   HRESULT success = device->CreateEffect(GUID_ConstantForce, &effect, &createdEffect, NULL);
 
   if (success != DI_OK) {
-    // uh-oh, no worky
-    char buffer[40] = {0};
-    if (success == DIERR_DEVICENOTREG)
-      sprintf(buffer, "Device not registered");
-    else if (success == DIERR_DEVICEFULL)
-      sprintf(buffer, "Device is full");
-    else if (success == DIERR_INVALIDPARAM)
-      sprintf(buffer, "Invalid parameter");
-    else if (success == DIERR_NOTINITIALIZED)
-      sprintf(buffer, "Device not initialized");
-    else
-      sprintf(buffer, "Unknown error");
-    printError(string_util::format("Could not create rumble effect (%s).", buffer));
+    DXError("Could not create rumble effect", success);
     return;
   }
 
@@ -337,12 +303,113 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
 
   if (success != DI_OK) {
     // uh-oh, no worky
-    printError("Could not play rumble effect.");
+    DXError("Could not play rumble effect", success);
   }
 
   return;
 }
 
+void DXJoystick::enumerateDevices()
+{
+  if (!directInput)
+    return;
+
+  devices.clear();
+
+  HRESULT success = directInput->EnumDevices(DIDEVTYPE_JOYSTICK,
+					     &deviceEnumCallback, NULL,
+					     DIEDFL_ATTACHEDONLY);
+
+  if (success != DI_OK) {
+    DXError("Could not enumerate DirectInput devices", success);
+    return;
+  }
+}
+
+void DXJoystick::reaquireDevice()
+{
+  if (!device)
+    return;
+
+  // try to reaquire the device
+  HRESULT success = device->Acquire();
+
+  if (success != DI_OK) {
+    // couldn't acquire, what to do now?
+    device = NULL;
+    DXError("Could not acquire device", success);
+  }
+}
+
+void DXJoystick::resetFF()
+{
+  if (!device)
+    return;
+
+  HRESULT success = device->SendForceFeedbackCommand(DISFFC_RESET);
+
+  if (success != DI_OK) {
+    // couldn't reset, what to do now?
+    device = NULL;
+    DXError("Could not reset force feedback device", success);
+  }
+}
+
+/* error handling */
+
+void DXJoystick::DXError(const char* situation, HRESULT problem)
+{
+  // uh-oh, no worky
+  char buffer[40] = {0};
+
+  // some stuff we can handle
+  if (problem == DIERR_UNPLUGGED) {
+    device = NULL;
+    printError("Joystick device in use has been unplugged.");
+    enumerateDevices();
+    return;
+  }
+  if (problem == DIERR_INPUTLOST) {
+    reaquireDevice();
+    return;
+  }
+  if (problem == DIERR_DEVICEFULL) {
+    printError("DirectInput device is full.  Resetting FF state.");
+    resetFF();
+    return;
+  }
+
+  // print error messages
+  if (problem == DIERR_DEVICENOTREG)
+    sprintf(buffer, "Device not registered");
+  else if (problem == DIERR_INVALIDPARAM)
+    sprintf(buffer, "Invalid parameter");
+  else if (problem == DIERR_NOTINITIALIZED)
+    sprintf(buffer, "Device not initialized");
+  else if (problem == DI_BUFFEROVERFLOW)
+    sprintf(buffer, "Buffer overflow");
+  else if (problem == DIERR_BADDRIVERVER)
+    sprintf(buffer, "Bad or incompatible device driver");
+  else if (problem == DIERR_EFFECTPLAYING)
+    sprintf(buffer, "Effect already playing");
+  else if (problem == DIERR_INCOMPLETEEFFECT)
+    sprintf(buffer, "Incomplete effect");
+  else if (problem == DIERR_MOREDATA)
+    sprintf(buffer, "Return buffer not large enough");
+  else if (problem == DIERR_NOTACQUIRED)
+    sprintf(buffer, "Device not acquired");
+  else if (problem == DIERR_NOTDOWNLOADED)
+    sprintf(buffer, "Effect not downloaded");
+  else if (problem == DIERR_NOTINITIALIZED)
+    sprintf(buffer, "Device not initialized");
+  else if (problem == DIERR_OUTOFMEMORY)
+    sprintf(buffer, "Out of memory");
+  else if (problem == DIERR_UNSUPPORTED)
+    sprintf(buffer, "Action not supported by driver");
+  else
+    sprintf(buffer, "Unknown error (%d)", problem);
+  printError(string_util::format("%s (%s).", situation, buffer));
+}
 
 /* Nasty callbacks 'cause DirectX sucks */
 
