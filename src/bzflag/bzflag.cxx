@@ -695,7 +695,7 @@ static void createCacheSignature ()
 //	initialize application and enter event loop
 //
 
-#if defined(_WIN32) && !defined(HAVE_SDL)
+#if defined(_WIN32) && !defined(HAVE_SDL) || defined(__MINGW32__)
 int			myMain(int argc, char** argv)
 #else /* defined(_WIN32) */
 int			main(int argc, char** argv)
@@ -1325,7 +1325,7 @@ int			main(int argc, char** argv)
   return 0;
 }
 //
-#if defined(_WIN32) && !defined(HAVE_SDL)
+#if defined(_WIN32) && !defined(HAVE_SDL) || defined(__MINGW32__)
 
 //
 // WinMain()
