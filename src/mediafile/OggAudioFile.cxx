@@ -14,11 +14,6 @@
 #include <fstream>
 #include "OggAudioFile.h"
 
-//This fix uses a dangerous static variable which means only one OggAudioFile can be constructed at a time, which in this case is
-//ok, but should be fixed with a better solution.
-
-static int fileSize;
-
 OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 {
 	stream = -1;
@@ -29,11 +24,12 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	cb.close_func = OAFClose;
 	cb.tell_func = OAFTell;
 
-	in->seekg (0, std::ios::end);
-	fileSize = in->tellg();
-	in->seekg (0, std::ios::beg);
+	OAFInputBundle* bundle = new OAFInputBundle;
+	in->seekg(0, ios::end);
+	bundle->input = in; bundle->length = std::streamoff(in->tellg());
+	in->seekg(0, ios::beg);
 
-	if(ov_open_callbacks(in, &file, NULL, 0, cb) < 0) {
+	if(ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0) {
 		std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
 	}
 	else {
@@ -70,30 +66,33 @@ bool		OggAudioFile::read(void* buffer, int numFrames)
 
 size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
 {
-	std::istream *in = (std::istream*) datasource;
-	std::streampos pos1 = in->tellg();
-	int readSize = size * nmemb;
-	if ((readSize + pos1) > fileSize)
-		readSize = fileSize - pos1;
-	if (readSize == 0)
-		return 0;
+	OAFInputBundle* bundle = (OAFInputBundle*) datasource;
+	std::streamoff pos1 = std::streamoff(bundle->input->tellg());
+	std::streamsize read = size * nmemb;
 
-	in->read((char*)ptr, readSize);
-	return readSize;
+	if (pos1 + read > bundle->length) {
+		read = bundle->length - pos1;
+	}
+	if (pos1 == bundle->length)
+		// EOF
+		return 0;
+	bundle->input->read((char*) ptr, read);
+
+	return read;
 }
 
 int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
 {
-	std::istream *in = (std::istream*) datasource;
+	OAFInputBundle* bundle = (OAFInputBundle*) datasource;
 	switch (whence) {
 		case SEEK_SET:
-			in->seekg(offset, std::ios::beg);
+			bundle->input->seekg(offset, std::ios::beg);
 			break;
 		case SEEK_CUR:
-			in->seekg(offset, std::ios::cur);
+			bundle->input->seekg(offset, std::ios::cur);
 			break;
 		case SEEK_END:
-			in->seekg(offset, std::ios::end);
+			bundle->input->seekg(offset, std::ios::end);
 			break;
 	}
 	return 0;
@@ -102,15 +101,14 @@ int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
 int		OAFClose(void* datasource)
 {
 	// technically we should close here, but this is handled outside
-
-	std::ifstream *in = (std::ifstream*) datasource;
-	in->close();
+	OAFInputBundle* bundle = (OAFInputBundle*) datasource;
+	delete bundle;
 	return 0;
 }
 
 long		OAFTell(void* datasource)
 {
-	std::istream *in = (std::istream*) datasource;
-	return in->tellg();
+	OAFInputBundle* bundle = (OAFInputBundle*) datasource;
+	return bundle->input->tellg();
 }
 // ex: shiftwidth=4 tabstop=4

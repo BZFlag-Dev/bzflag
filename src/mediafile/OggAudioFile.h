@@ -17,6 +17,11 @@
 #include <vorbis/vorbisfile.h>
 #include <vorbis/codec.h>
 
+struct OAFInputBundle {
+	std::istream*		input;
+	std::streamoff		length;
+};
+
 class OggAudioFile : public AudioFile {
 public:
 	OggAudioFile(std::istream*);
