@@ -29,6 +29,7 @@ AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
 if test $HASPOD2MAN = no; then
 	AC_MSG_ERROR(could not find pod2man)
 fi
+AC_ISC_POSIX
 
 # Just for kicks
 echo -n "checking for artificial intelligence for robots..." 1>&6
@@ -36,7 +37,7 @@ echo " warning: not found" 1>&6
 
 
 #Checks for headers
-AC_CHECK_HEADERS([stdlib.h stdio.h string.h])
+AC_STDC_HEADERS
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
 AC_CHECK_HEADERS([cstdlib cstdio cstring])
@@ -46,6 +47,7 @@ AC_LANG_RESTORE
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
 #AC_CHECK_TYPES(socklen_t)
+AC_CONST
 
 AC_TRY_COMPILE([#include <sys/types.h>
 		#include <sys/socket.h>],
