@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- /lagstats reporting looks horrible with variable width fonts
+
 - it appears that MSVC5 has problems loading large world files
   (for example: 500Kbytes).
 
