@@ -1,6 +1,12 @@
 recent bugs
 ------------
 
+- Unused parameter 'list' breaks GCC debug build when HAVE_SDL isn't defined
+  (src/platform/BzfWindow.cxx:185). Can't remove it cause it would break the
+  build when HAVE_SDL _is_ defined. Don't want to add another #ifdef. Should
+  probably use inline functions or other methods that does not involve all this
+  preprocessor hackery.
+
 - bzfrelay is probably broken for current net protocol. Should be just
   forwarding TCP and UDP packets on a single port.
 
