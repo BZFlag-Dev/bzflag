@@ -127,7 +127,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
-static void dropFlag(int playerIndex, float pos[3]);
+static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
 static void dropAssignedFlag(int playerIndex);
 
 int getCurMaxPlayers()
@@ -2013,7 +2013,7 @@ static void zapFlagByPlayer(int playerIndex)
   // do not simply zap team flag
   Flag &carriedflag = flag.flag;
   if (carriedflag.type->flagTeam != ::NoTeam) {
-    dropFlag(playerIndex, playerData->lastState->pos);
+    dropFlag(*playerData, playerData->lastState->pos);
   } else {
     zapFlag(flag);
   }
@@ -2466,13 +2466,8 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
   playerData->flagHistory.add(flag.flag.type);
 }
 
-static void dropFlag(int playerIndex, float pos[3])
+static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
-
   const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
   const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   if (pos[0] < -size || pos[0] > size)
@@ -2488,7 +2483,7 @@ static void dropFlag(int playerIndex, float pos[3])
   const Obstacle* topmost = 0;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
-  const int flagIndex = playerData->player.getFlag();
+  const int flagIndex = playerData.player.getFlag();
   if (flagIndex < 0)
     return;
   FlagInfo &drpFlag = *FlagInfo::get(flagIndex);
@@ -2618,7 +2613,7 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.dropFlag(pos, landingPos, vanish);
 
   // removed any delayed packets (in case it was a "Lag Flag")
-  playerData->delayq.dequeuePackets();
+  playerData.delayq.dequeuePackets();
 
   // player no longer has flag -- send MsgDropFlag
   sendDrop(drpFlag);
@@ -2852,7 +2847,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	    lastPos[i] = lastState[playerIndex].pos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
-	  dropFlag(playerIndex, lastPos);
+	  dropFlag(*playerData, lastPos);
 	} else { // more shots fired than allowed
 	  // do nothing for now -- could return and not allow shot
 	}
@@ -3238,7 +3233,7 @@ static void handleCommand(int t, const void *rawbuf)
       // data: position of drop
       float pos[3];
       buf = nboUnpackVector(buf, pos);
-      dropFlag(t, pos);
+      dropFlag(*playerData, pos);
       break;
     }
 
@@ -3730,12 +3725,16 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   // update notResponding
   if (playerData.player.hasStartedToNotRespond()) {
     // if player is the rabbit, anoint a new one
-    if (p == rabbitIndex)
+    if (p == rabbitIndex) {
       anointNewRabbit();
+      // Should recheck if player is still available
+      if (!GameKeeper::Player::getPlayerByIndex(p))
+	return;
+    }
     // if player is holding a flag, drop it
     for (int j = 0; j < numFlags; j++)
       if (FlagInfo::get(j)->player == p)
-	dropFlag(p, lastState[p].pos);
+	dropFlag(playerData, lastState[p].pos);
   }
 }
 
