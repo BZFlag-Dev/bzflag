@@ -8,6 +8,7 @@
 #
 # Version 1.0.0
 # Copyright 2004, Sean Morrison aka brlcad aka learner
+#  this script is in the public domain
 ###
 
 echo "BZFlag Server Statistics"
