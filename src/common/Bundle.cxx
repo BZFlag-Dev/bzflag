@@ -121,11 +121,11 @@ static std::set<std::string> unmapped;
 
 std::string Bundle::getLocalString(const std::string &key) const
 {
+  if (key == "") return key;
   BundleStringMap::const_iterator it = mappings.find(key);
-  if (it != mappings.end())
+  if (it != mappings.end()) {
     return it->second;
-  else
-  {
+  } else {
     if (BZDB.getDebug()) {
       if (unmapped.find( key ) == unmapped.end( )) {
         unmapped.insert( key );
@@ -133,7 +133,6 @@ std::string Bundle::getLocalString(const std::string &key) const
 	DEBUG1( debugStr.c_str( ));
       }
     }
-
     return key;
   }
 }
