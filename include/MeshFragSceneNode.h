@@ -61,8 +61,7 @@ class MeshFragSceneNode : public WallSceneNode {
 	void render();
 	void renderShadow();
 	void setStyle(int _style) { style = _style; }
-	const GLfloat* getPosition() { return sceneNode->getSphere(); }
-
+	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
       private:
 	void drawV() const; // draw with just vertices
 	void drawVT() const; // draw with texcoords

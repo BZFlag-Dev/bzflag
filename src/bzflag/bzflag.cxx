@@ -64,6 +64,7 @@
 #include "BZDBCache.h"
 #include "WordFilter.h"
 #include "TextUtils.h"
+#include "ParseColor.h"
 #include "ActionBinding.h"
 #include "ServerStartMenu.h"
 #include "FontManager.h"
@@ -415,31 +416,19 @@ void updateConfigFile(void)
   BZDB.setInt("config_version", configVersion);
 }
 
-static void		setTeamColor(TeamColor team, const std::string& value)
+static void		setTeamColor(TeamColor team, const std::string& str)
 {
-  float color[3];
-  if (sscanf(value.c_str(), "%f %f %f", color+0, color+1, color+2) != 3)
-    return;
-  if (color[0] < 0.0f) color[0] = 0.0f;
-  else if (color[0] > 1.0f) color[0] = 1.0f;
-  if (color[1] < 0.0f) color[1] = 0.0f;
-  else if (color[1] > 1.0f) color[1] = 1.0f;
-  if (color[2] < 0.0f) color[2] = 0.0f;
-  else if (color[2] > 1.0f) color[2] = 1.0f;
+  float color[4];
+  parseColorString(str, color);
+  // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, color, Team::getRadarColor(team));
 }
 
-static void		setRadarColor(TeamColor team, const std::string& value)
+static void		setRadarColor(TeamColor team, const std::string& str)
 {
-  float color[3];
-  if (sscanf(value.c_str(), "%f %f %f", color+0, color+1, color+2) != 3)
-    return;
-  if (color[0] < 0.0f) color[0] = 0.0f;
-  else if (color[0] > 1.0f) color[0] = 1.0f;
-  if (color[1] < 0.0f) color[1] = 0.0f;
-  else if (color[1] > 1.0f) color[1] = 1.0f;
-  if (color[2] < 0.0f) color[2] = 0.0f;
-  else if (color[2] > 1.0f) color[2] = 1.0f;
+  float color[4];
+  parseColorString(str, color);
+  // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, Team::getTankColor(team), color);
 }
 

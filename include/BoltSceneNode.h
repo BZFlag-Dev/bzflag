@@ -51,7 +51,7 @@ class BoltSceneNode : public ShotSceneNode {
 	void		setColor(const GLfloat* rgba);
   void    setTextureColor(const GLfloat* rgba);
 	void		render();
-	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
 	void		setAnimation(int cu, int cv);
       private:
 	const BoltSceneNode* sceneNode;

@@ -151,16 +151,19 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   // choose axis to ignore (the one with the largest normal component)
   int ignoreAxis;
   const GLfloat* normal = getPlane();
-  if (fabsf(normal[0]) > fabsf(normal[1]))
-    if (fabsf(normal[0]) > fabsf(normal[2]))
+  if (fabsf(normal[0]) > fabsf(normal[1])) {
+    if (fabsf(normal[0]) > fabsf(normal[2])) {
       ignoreAxis = 0;
-    else
+    } else {
       ignoreAxis = 2;
-  else
-    if (fabsf(normal[1]) > fabsf(normal[2]))
+    }
+  } else {
+    if (fabsf(normal[1]) > fabsf(normal[2])) {
       ignoreAxis = 1;
-    else
+    } else {
       ignoreAxis = 2;
+    }
+  }
 
   // project vertices onto plane
   GLfloat2Array flat(count);
@@ -209,10 +212,13 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   sphere[1] /= (float)count;
   sphere[2] /= (float)count;
   for (i = 0; i < count; i++) {
-    GLfloat r = (sphere[0] - vertices[i][0]) * (sphere[0] - vertices[i][0]) +
-		(sphere[1] - vertices[i][1]) * (sphere[1] - vertices[i][1]) +
-		(sphere[2] - vertices[i][2]) * (sphere[2] - vertices[i][2]);
-    if (r > sphere[3]) sphere[3] = r;
+    const float dx = sphere[0] - vertices[i][0];
+    const float dy = sphere[1] - vertices[i][1];
+    const float dz = sphere[2] - vertices[i][2];
+    GLfloat r = ((dx * dx) + (dy * dy) + (dz * dz));
+    if (r > sphere[3]) {
+      sphere[3] = r;
+    }
   }
   setSphere(sphere);
 

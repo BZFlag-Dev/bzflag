@@ -93,7 +93,6 @@ class World {
     const std::vector<BoxBuilding*>&	 getBoxes() const;
     const std::vector<PyramidBuilding*>& getPyramids() const;
     const std::vector<BaseBuilding*>&    getBases() const;
-    const std::vector<TetraBuilding*>&   getTetras() const;
     const std::vector<Teleporter*>&	 getTeleporters() const;
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
@@ -394,11 +393,6 @@ inline const std::vector<BoxBuilding*>& World::getBoxes() const
 inline const std::vector<PyramidBuilding*>& World::getPyramids() const
 {
   return pyramids;
-}
-
-inline const std::vector<TetraBuilding*>& World::getTetras() const
-{
-  return tetras;
 }
 
 inline const std::vector<Teleporter*>& World::getTeleporters() const

@@ -56,11 +56,13 @@ void			RemotePlayer::addShot(const FiringInfo& info)
     if (info.flagType == Flags::Obesity) front *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     else if (info.flagType == Flags::Tiny) front *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
     else if (info.flagType == Flags::Thief) front *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    newpos[0] = info.shot.pos[0]-(front * f[0]);
-    newpos[1] = info.shot.pos[1]-(front * f[1]);
-    newpos[2] = info.shot.pos[2]-(front * f[2])-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+    newpos[0] = info.shot.pos[0] - (front * f[0]);
+    newpos[1] = info.shot.pos[1] - (front * f[1]);
+    newpos[2] = info.shot.pos[2] - BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   }
   shotStatistics.recordFire(info.flagType);
+  // FIXME - with dynamic dimensions, this may not be a good idea
+  //         (flag each shot with a 'default dimensions' state?)
   move(newpos, getAngle());
   setDeadReckoning(info.timeSent);
 }

@@ -614,15 +614,25 @@ void			ServerLink::sendDropFlag(const float* position)
   send(MsgDropFlag, sizeof(msg), msg);
 }
 
-void			ServerLink::sendKilled(const PlayerId& killer, int reason,
-								int shotId)
+void			ServerLink::sendKilled(const PlayerId& killer,
+                                               int reason, int shotId,
+                                               int phydrv)
 {
-  char msg[PlayerIdPLen + 4];
+  char msg[PlayerIdPLen + 2 + 2 + 4];
   void* buf = msg;
+
   buf = nboPackUByte(buf, killer);
   buf = nboPackUShort(buf, int16_t(reason));
   buf = nboPackShort(buf, int16_t(shotId));
-  send(MsgKilled, sizeof(msg), msg);
+
+  int msgLen = PlayerIdPLen + (sizeof(int16_t) * 2);
+
+  if (reason == PhysicsDriverDeath) {
+    buf = nboPackInt(buf, phydrv);
+    msgLen += sizeof(int);
+  }
+
+  send(MsgKilled, msgLen, msg);
 }
 
 
@@ -641,8 +651,14 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   if (code == MsgPlayerUpdateSmall) {
     len = PlayerUpdateSmallPLen;
   }
+  if ((player->getStatus() & PlayerState::JumpJets) != 0) {
+    len += sizeof(short);
+  }
   if ((player->getStatus() & PlayerState::OnDriver) != 0) {
-    len = len + sizeof(int);
+    len += sizeof(int);
+  }
+  if ((player->getStatus() & PlayerState::OnIce) != 0) {
+    len += (2 * sizeof(short));
   }
   send(code, len, msg);
 }

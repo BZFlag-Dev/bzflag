@@ -57,8 +57,6 @@ static std::list<TrackEntry> TreadsList;
 static std::list<TrackEntry> PuddleList;
 static float TrackFadeTime = 5.0f;
 static float UserFadeScale = 1.0f;
-//static float TrackWidth = 1.0f;
-
 
 // FIXME - get these from AnimatedTreads
 static const float TreadOutside = 1.4f;
@@ -78,6 +76,8 @@ static float TextureHeightOffset = 0.05f;
 //////////////////////
 
 //static void bzdbCallback(const std::string& name, void* data);
+static void setup();
+static void initContext(void* data);
 static void drawPuddle(const TrackEntry& te, float lifetime);
 static void drawTreads(const TrackEntry& te, float lifetime);
 
@@ -85,28 +85,9 @@ static void drawTreads(const TrackEntry& te, float lifetime);
 void TrackMarks::init()
 {
   clear();
-
-  TextureManager &tm = TextureManager::instance();
-  int puddleTexId = tm.getTextureID(puddleTexture, false);
-
-  OpenGLGStateBuilder gb;
-
-  gb.reset();
-  gb.setShading(GL_FLAT);
-  gb.setAlphaFunc(GL_GEQUAL, 0.1f);
-  gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  gb.enableMaterial(false); // no lighting
-  gb.setTexture(puddleTexId);
-  puddleState = gb.getState();
-
-  gb.reset();
-  gb.setShading(GL_FLAT);
-  gb.setAlphaFunc(GL_GEQUAL, 0.1f);
-  gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  gb.enableMaterial(false); // no lighting
-  treadsState = gb.getState();
-
+  setup();
   setUserFade(BZDB.eval("userTrackFade"));
+  OpenGLGState::registerContextInitializer(initContext, NULL);
 
   return;
 }
@@ -115,6 +96,8 @@ void TrackMarks::init()
 void TrackMarks::kill()
 {
   clear();
+  OpenGLGState::unregisterContextInitializer(initContext, NULL);
+  
   return;
 }
 
@@ -171,13 +154,27 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
   }
   te.scale = scale;
   te.angle = angle * (180.0f / M_PI) ;
-  te.phydrv = phydrv;
+  
+  // only use the physics driver if it matters
+  const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+  if (driver == NULL) {
+    te.phydrv = -1;
+  } else {
+    const float* v = driver->getVelocity();
+    const float av = driver->getAngularVel();
+    if ((v[0] == 0.0f) && (v[1] == 0.0f) && (av == 0.0f)) {
+      te.phydrv = -1;
+    } else {
+      te.phydrv = phydrv;
+    }
+  }
 
   if (type == treads) {
     TreadsList.push_back(te);
   } else {
     PuddleList.push_back(te);
   }
+  
   return true;
 }
 
@@ -271,6 +268,37 @@ void TrackMarks::render()
     drawPuddle(te, timeDiff);
   }
 
+  return;
+}
+
+
+static void setup()
+{
+  TextureManager &tm = TextureManager::instance();
+  int puddleTexId = tm.getTextureID(puddleTexture, false);
+  
+  OpenGLGStateBuilder gb;
+  
+  gb.reset();
+  gb.setShading(GL_FLAT);
+  gb.setAlphaFunc(GL_GEQUAL, 0.1f);
+  gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  gb.enableMaterial(false); // no lighting
+  gb.setTexture(puddleTexId);
+  puddleState = gb.getState();
+  
+  gb.reset();
+  gb.setShading(GL_FLAT);
+  gb.setAlphaFunc(GL_GEQUAL, 0.1f);
+  gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  gb.enableMaterial(false); // no lighting
+  treadsState = gb.getState();
+}
+  
+
+static void initContext(void* /*data*/)
+{
+  setup();
   return;
 }
 

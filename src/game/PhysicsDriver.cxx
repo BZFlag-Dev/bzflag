@@ -13,7 +13,9 @@
 #include "PhysicsDriver.h"
 
 #include <math.h>
+#include <ctype.h>
 #include <string.h>
+#include <string>
 #include <vector>
 
 #include "TimeKeeper.h"
@@ -167,6 +169,10 @@ PhysicsDriver::PhysicsDriver()
   velocity[0] = velocity[1] = velocity[2] = 0.0f;
   angularVel = 0.0f;
   angularPos[0] = angularPos[1] = 0.0f;
+  ice = false;
+  iceTime = 0.0f;
+  death = false;
+  deathMsg = "";
   return;
 }
 
@@ -178,6 +184,15 @@ PhysicsDriver::~PhysicsDriver()
 
 void PhysicsDriver::finalize()
 {
+  if (iceTime > 0.0f) {
+    ice = true;
+  } else {
+    ice = false;
+    iceTime = 0.0f;
+  }
+  if (deathMsg.size() > 0) {
+    death = true;
+  }
   return;
 }
 
@@ -212,12 +227,50 @@ void PhysicsDriver::setVelocity(const float vel[3])
 }
 
 
-void PhysicsDriver::setAngular(float angleVel, const float anglePos[2])
+void PhysicsDriver::setAngular(float vel, const float pos[2])
 {
   // convert from (rotations/second) to (radians/second)
-  angularVel = angleVel * (2.0f * M_PI);
-  angularPos[0] = anglePos[0];
-  angularPos[1] = anglePos[1];
+  angularVel = vel * (2.0f * M_PI);
+  angularPos[0] = pos[0];
+  angularPos[1] = pos[1];
+  return;
+}
+
+
+void PhysicsDriver::setRadial(float vel, const float pos[2])
+{
+  radialVel = vel;
+  radialPos[0] = pos[0];
+  radialPos[1] = pos[1];
+  return;
+}
+
+
+void PhysicsDriver::setIceTime(float _iceTime)
+{
+  iceTime = _iceTime;
+  return;
+}
+
+
+void PhysicsDriver::setDeathMessage(const std::string& msg)
+{
+  // strip any leading whitespace
+  int first = 0;
+  const char* c = msg.c_str();
+  while ((*c != '\0') && isspace(*c)) {
+    c++;
+    first++;
+  }
+  std::string str = msg.substr(first);
+  
+  // limit the length
+  if (str.size() > 256) {
+    str.resize(256);
+  }
+  
+  deathMsg = str;
+  
   return;
 }
 
@@ -236,6 +289,12 @@ void * PhysicsDriver::pack(void *buf)
   buf = nboPackFloat (buf, angularVel);
   buf = nboPackFloat (buf, angularPos[0]);
   buf = nboPackFloat (buf, angularPos[1]);
+  buf = nboPackFloat (buf, radialVel);
+  buf = nboPackFloat (buf, radialPos[0]);
+  buf = nboPackFloat (buf, radialPos[1]);
+
+  buf = nboPackFloat (buf, iceTime);
+  buf = nboPackStdString(buf, deathMsg);
 
   return buf;
 }
@@ -245,13 +304,19 @@ void * PhysicsDriver::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 
-  finalize();
-
   buf = nboUnpackVector (buf, velocity);
   buf = nboUnpackFloat (buf, angularVel);
   buf = nboUnpackFloat (buf, angularPos[0]);
   buf = nboUnpackFloat (buf, angularPos[1]);
+  buf = nboUnpackFloat (buf, radialVel);
+  buf = nboUnpackFloat (buf, radialPos[0]);
+  buf = nboUnpackFloat (buf, radialPos[1]);
 
+  buf = nboUnpackFloat (buf, iceTime);
+  buf = nboUnpackStdString(buf, deathMsg);
+  
+  finalize();
+  
   return buf;
 }
 
@@ -263,6 +328,11 @@ int PhysicsDriver::packSize()
   fullSize += sizeof(float) * 3; // velocity
   fullSize += sizeof(float) * 1; // angular velocity
   fullSize += sizeof(float) * 2; // angular position
+  fullSize += sizeof(float) * 1; // radial velocity
+  fullSize += sizeof(float) * 2; // radial position
+  fullSize += sizeof(float) * 1; // ice time
+  
+  fullSize += nboStdStringPackSize(deathMsg);
 
   return fullSize;
 }
@@ -287,6 +357,20 @@ void PhysicsDriver::print(std::ostream& out, int /*level*/)
 			<< ap[0] << " " << ap[1] << std::endl;
   }
 
+  if (radialVel != 0.0f) {
+    const float* rp = radialPos;
+    out << "  radial " << radialVel << " "
+                       << rp[0] << " " << rp[1] << std::endl;
+  }
+
+  if (ice) {
+    out << "  ice " << iceTime << std::endl;
+  }
+
+  if (death) {
+    out << "  death " << deathMsg << std::endl;
+  }
+  
   out << "end" << std::endl << std::endl;
 
   return;

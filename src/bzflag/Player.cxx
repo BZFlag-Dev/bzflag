@@ -26,6 +26,7 @@
 #include "ShotStatistics.h"
 #include "CollisionManager.h"
 #include "Obstacle.h"
+#include "PhysicsDriver.h"
 #include "TrackMarks.h"
 
 
@@ -66,8 +67,12 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   move(zero, 0.0f);
   setVelocity(zero);
   setAngularVelocity(0.0f);
+  setPhysicsDriver(-1);
   setDeadReckoning();
-
+  setRelativeMotion();
+  setUserSpeed(0.0f);
+  setUserAngVel(0.0f);
+  
   // set call sign
   ::strncpy(callSign, name, CallSignLen);
   callSign[CallSignLen-1] = '\0';
@@ -102,7 +107,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   alphaTarget = 1.0f;
 
   lastTrackDraw = TimeKeeper::getCurrent();
-
+  
   return;
 }
 
@@ -179,8 +184,12 @@ void Player::move(const float* _pos, float _azimuth)
   state.azimuth = _azimuth;
 
   // limit angle
-  if (state.azimuth < 0.0f) state.azimuth = 2.0f * M_PI - fmodf(-state.azimuth, 2.0f * (float)M_PI);
-  else if (state.azimuth >= 2.0f * M_PI) state.azimuth = fmodf(state.azimuth, 2.0f * (float)M_PI);
+  if (state.azimuth < 0.0f) {
+    state.azimuth = (2.0f * M_PI) - fmodf(-state.azimuth, (2.0f * M_PI));
+  }
+  else if (state.azimuth >= (2.0f * M_PI)) {
+    state.azimuth = fmodf(state.azimuth, (2.0f * M_PI));
+  }
 
   // update forward vector (always in horizontal plane)
   forward[0] = cosf(state.azimuth);
@@ -213,13 +222,86 @@ void Player::setPhysicsDriver(int driver)
 {
   state.phydrv = driver;
   if (driver >= 0) {
-    state.status |= PlayerState::OnDriver;
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+    if (phydrv) {
+      state.status |= PlayerState::OnDriver;
+      if (phydrv->getIsIce()) {
+        state.status |= PlayerState::OnIce;
+      } else {
+        state.status &= ~PlayerState::OnIce;
+      }
+    }
   } else {
-    state.status &= ~PlayerState::OnDriver;
+    state.status &= ~(PlayerState::OnDriver | PlayerState::OnIce);
   }
   return;
 }
 
+
+void Player::setRelativeMotion()
+{
+  bool falling = (state.status & short(PlayerState::Falling)) != 0;
+  if (falling && (getFlag() != Flags::Wings)) {
+    // no adjustments while falling
+    return;
+  }
+
+  // set 'relativeSpeed' and 'relativeAngVel'
+  float relativeVel[2];
+  Player::calcRelativeMotion(relativeVel, relativeSpeed, relativeAngVel);
+  
+  return;
+}
+
+
+void Player::setUserSpeed(float speed)
+{
+  state.userSpeed = speed;
+  return;
+}
+
+
+void Player::setUserAngVel(float angVel)
+{
+  state.userAngVel = angVel;
+  return;
+}
+
+
+void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
+{
+  vel[0] = state.velocity[0];
+  vel[1] = state.velocity[1];
+  
+  angVel = state.angVel;
+
+  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
+  if (phydrv != NULL) {
+    const float* v = phydrv->getVelocity();
+    const float av = phydrv->getAngularVel();
+    const float* ap = phydrv->getAngularPos();
+    
+    // adjust for driver velocity
+    vel[0] -= v[0];
+    vel[1] -= v[1];
+
+    // adjust for driver angular velocity
+    if (av != 0.0f) {
+      const float dx = state.pos[0] - ap[0];
+      const float dy = state.pos[1] - ap[1];
+      vel[0] += av * dy;
+      vel[1] -= av * dx;
+      angVel = state.angVel - av;
+    }
+  }
+
+  // speed relative to the tank's direction
+  // (could use forward[] instead of re-doing the trig, but this is
+  //  used in the setDeadReckoning(), when forward[] is not yet set)
+  speed = (vel[0] * cosf(state.azimuth)) + (vel[1] * sinf(state.azimuth));
+
+  return;
+}
 
 void Player::changeTeam(TeamColor _team)
 {
@@ -262,19 +344,44 @@ void Player::setTeleport(const TimeKeeper& t, short from, short to)
 void Player::updateTank(float dt, bool local)
 {
   updateDimensions(dt, local);
-  updateTreads(dt);
   updateTranslucency(dt);
+  updateTreads(dt);
+  updateJumpJets(dt);
+  updateTrackMarks();
+  return;
+}
 
+
+void Player::updateJumpJets(float dt)
+{
+  float jumpVel;
+  if (getFlag() == Flags::Wings) {
+    jumpVel = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+  } else {
+    jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+  }
+  const float jetTime = 0.5f * (jumpVel / -BZDBCache::gravity);
+  state.jumpJetsScale -= (dt / jetTime);
+  if (state.jumpJetsScale < 0.0f) {
+    state.jumpJetsScale = 0.0f;
+    state.status &= ~PlayerState::JumpJets;
+  }
+  return;
+}
+
+  
+void Player::updateTrackMarks()
+{
   if (isAlive() && ((state.status & PlayerState::Falling) == 0)) {
     if ((TimeKeeper::getCurrent() - lastTrackDraw) > 0.050f) {
       bool drawMark = true;
       float markPos[3];
       markPos[2] = state.pos[2];
-      if (inputSpeed > +0.001f) {
+      if (relativeSpeed > +0.001f) {
 	// draw the mark at the back of the treads
 	markPos[0] = state.pos[0] - (forward[0] * dimensions[0]);
 	markPos[1] = state.pos[1] - (forward[1] * dimensions[0]);
-      } else if (inputSpeed < -0.001f) {
+      } else if (relativeSpeed < -0.001f) {
 	// draw the mark at the front of the treads
 	markPos[0] = state.pos[0] + (forward[0] * dimensions[0]);
 	markPos[1] = state.pos[1] + (forward[1] * dimensions[0]);
@@ -429,21 +536,34 @@ void Player::updateTranslucency(float dt)
 
 void Player::updateTreads(float dt)
 {
-  // setup the tread offsets
-  float speedFactor = inputSpeed;
+  float speedFactor;
+  float angularFactor;
+
+  if ((state.status & PlayerState::OnIce) != 0) {
+    speedFactor = state.userSpeed;
+    angularFactor = state.userAngVel;
+  } else {
+    speedFactor = relativeSpeed;
+    angularFactor = relativeAngVel;
+  }
+    
+  // setup the linear component
   if (dimensionsScale[0] > 1.0e-6f) {
     speedFactor = speedFactor / dimensionsScale[0];
   } else {
     speedFactor = speedFactor * 1.0e6f;
   }
 
-  float angularFactor = inputAngVel;
+  // setup the angular component
+  const float angularScale = 2.0f; // spin factor (at 1.0, the edges line up)
+  angularFactor *= angularScale;
   const float halfWidth = 0.5f * BZDBCache::tankWidth;
   // not using dimensions[1], because it may be set to 0.001 by a Narrow flag
   angularFactor *= dimensionsScale[0] * halfWidth;
-
+    
   const float leftOff = dt * (speedFactor - angularFactor);
   const float rightOff = dt * (speedFactor + angularFactor);
+
   tankNode->addTreadOffsets(leftOff, rightOff);
 
   return;
@@ -598,6 +718,17 @@ void Player::setVisualTeam (TeamColor visualTeam)
   tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
   tankNode->setTexture(tankTexture);
+  
+  int jumpJetsTexture = tm.getTextureID("jumpjets", false);
+  tankNode->setJumpJetsTexture(jumpJetsTexture);
+}
+
+
+void Player::fireJumpJets()
+{
+  state.jumpJetsScale = 1.0f;
+  state.status |= PlayerState::JumpJets;
+  return;
 }
 
 
@@ -631,8 +762,11 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   // reset the clipping plane
   tankNode->setClipPlane(NULL);
 
+  tankNode->setJumpJets(0.0f);
+  
   if (isAlive()) {
     tankNode->setExplodeFraction(0.0f);
+    tankNode->setJumpJets(state.jumpJetsScale);
     scene->addDynamicNode(tankNode);
 
     if (isCrossingWall()) {
@@ -673,8 +807,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     float t = (TimeKeeper::getTick() - explodeTime) /
 	      BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
-      // FIXME
-      //      setStatus(DeadStatus);
+      // FIXME - setStatus(DeadStatus);
       t = 1.0f;
     } else if (t < 0.0f) {
       // shouldn't happen but why take chances
@@ -790,11 +923,14 @@ void* Player::unpack(void* buf, uint16_t code)
 {
   float timestamp;
   PlayerId id;
-
+  
   buf = nboUnpackFloat(buf, timestamp);
   buf = nboUnpackUByte(buf, id);
   buf = state.unpack(buf, code);
+  
   setDeadReckoning(timestamp);
+  setRelativeMotion();
+  
   return buf;
 }
 
@@ -815,109 +951,131 @@ bool Player::validTeamTarget(const Player *possibleTarget) const
 }
 
 
-bool Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
-			      float* predictedVel) const
+void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
+			      float* predictedVel, float dt) const
 {
-  // see if predicted position and orientation (only) are close enough
-  const float dt2 = inputPrevTime - inputTime;
-  inputPrevTime = TimeKeeper::getTick();
-  const float dt = inputPrevTime - inputTime;
-
+  predictedVel[2] = inputVel[2];
+  predictedPos[2] = inputPos[2];
+  *predictedAzimuth = inputAzimuth;
+  
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
     predictedPos[0] = inputPos[0];
     predictedPos[1] = inputPos[1];
-    predictedPos[2] = inputPos[2];
-    predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
-    predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
-    predictedVel[2] = 0.0f;
-    *predictedAzimuth = inputAzimuth;
-
-  } else if (inputStatus & PlayerState::Falling) {
+    predictedVel[0] = 0.0f;
+    predictedVel[1] = 0.0f;
+  }
+  else if (inputStatus & PlayerState::Falling) {
     // no control when falling
-    predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
-    predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
-
-    // follow a simple parabola
-    predictedPos[0] = inputPos[0] + dt * predictedVel[0];
-    predictedPos[1] = inputPos[1] + dt * predictedVel[1];
-
+    predictedVel[0] = inputVel[0];
+    predictedVel[1] = inputVel[1];
+    predictedPos[0] = inputPos[0] + (dt * inputVel[0]);
+    predictedPos[1] = inputPos[1] + (dt * inputVel[1]);
     // only turn if alive
     if (inputStatus & PlayerState::Alive) {
-      *predictedAzimuth = inputAzimuth + dt * inputAngVel;
-    } else {
-      *predictedAzimuth = inputAzimuth;
+      *predictedAzimuth += (dt * inputAngVel);
     }
-
-    // update z with Newtownian integration (like LocalPlayer)
-    inputZSpeed += BZDBCache::gravity * (dt - dt2);
-    inputPos[2] += inputZSpeed * (dt - dt2);
-
-  } else {
-    // azimuth changes linearly
-    *predictedAzimuth = inputAzimuth + dt * inputAngVel;
-
-    // different algorithms for tanks moving in a straight line vs
-    // turning in a circle
-
-    if (inputAngVel == 0.0f) {
-      // straight ahead
-      predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
-      predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
-      predictedPos[0] = inputPos[0] + dt * predictedVel[0];
-      predictedPos[1] = inputPos[1] + dt * predictedVel[1];
-
-    } else {
-      // need dt2 because velocity is based on previous time step
-      const float tmpAzimuth = inputAzimuth + dt2 * inputAngVel;
-      predictedVel[0] = inputSpeed * cosf(tmpAzimuth);
-      predictedVel[1] = inputSpeed * sinf(tmpAzimuth);
-
-      // find current position on circle:
-      // tank with constant angular and linear velocity moves in a circle
-      // with radius = (linear velocity/angular velocity).  circle turns
-      // to the left (counterclockwise) when the ratio is positive.
-      const float radius = inputSpeed / inputAngVel;
-      const float offAzimuth = inputAzimuth - 0.5f * M_PI;
-      const float angle = offAzimuth + dt * inputAngVel;
-      predictedPos[0] = inputPos[0] + radius * (cosf(angle) - cosf(offAzimuth));
-      predictedPos[1] = inputPos[1] + radius * (sinf(angle) - sinf(offAzimuth));
-
-    }
-
-    // inputZSpeed will be zero when not falling
+    // following the parabola
+    predictedVel[2] = inputVel[2] + BZDBCache::gravity * dt;
+    predictedPos[2] = inputPos[2] + (inputVel[2] * dt) +
+                      (0.5f * BZDBCache::gravity * dt * dt);
   }
+  else {
+    // always zero when not falling
+    predictedVel[2] = 0.0f;
+    
+    // different algorithms for tanks moving in
+    // a straight line vs. turning in a circle
+    if (!inputTurning) {
+      // move straight
+      predictedVel[0] = inputRelVel[0];
+      predictedVel[1] = inputRelVel[1];
+      predictedPos[0] = inputPos[0] + (dt * inputRelVel[0]);
+      predictedPos[1] = inputPos[1] + (dt * inputRelVel[1]);
+    } else {
+      // make a sweeping arc
+      const float angle = (dt * inputRelAngVel);
+      *predictedAzimuth += angle;
+      const float cos_val = cosf(angle);
+      const float sin_val = sinf(angle);
+      const float* tc = inputTurnCenter;
+      const float* tv = inputTurnVector;
+      predictedPos[0] = tc[0] + ((tv[0] * cos_val) - (tv[1] * sin_val));
+      predictedPos[1] = tc[1] + ((tv[1] * cos_val) + (tv[0] * sin_val));
+      const float* rv = inputRelVel;
+      predictedVel[0] = (rv[0] * cos_val) - (rv[1] * sin_val);
+      predictedVel[1] = (rv[1] * cos_val) + (rv[0] * sin_val);
+    }
 
-  predictedVel[2] = inputZSpeed;
-  predictedPos[2] = inputPos[2];
-
-  // return false if we haven't gotten an update in a while
-  return (dt < BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
+    // make the physics driver adjustments
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(inputPhyDrv);
+    if (phydrv) {
+      if (phydrv->getIsIce()) {
+        predictedVel[0] = inputRelVel[0];
+        predictedVel[1] = inputRelVel[1];
+        predictedPos[0] = inputPos[0] + (dt * inputRelVel[0]);
+        predictedPos[1] = inputPos[1] + (dt * inputRelVel[1]);
+      }
+      else {
+        // angular velocity adjustment
+        const float pdAngVel = phydrv->getAngularVel();
+        if (pdAngVel != 0.0f) {
+          const float angle = (dt * pdAngVel);
+          *predictedAzimuth += angle;
+          const float* pdAngPos = phydrv->getAngularPos();
+          const float dx = predictedPos[0] - pdAngPos[0];
+          const float dy = predictedPos[1] - pdAngPos[1];
+          const float cos_val = cosf(angle);
+          const float sin_val = sinf(angle);
+          predictedPos[0] = pdAngPos[0] + ((dx * cos_val) - (dy * sin_val));
+          predictedPos[1] = pdAngPos[1] + ((dy * cos_val) + (dx * sin_val));
+          predictedVel[0] += (-dy * pdAngVel);
+          predictedVel[1] += (+dx * pdAngVel);
+        }
+        // linear velocity adjustment
+        const float* pdVel = phydrv->getVelocity();
+        predictedPos[0] += (dt * pdVel[0]);
+        predictedPos[1] += (dt * pdVel[1]);
+        predictedVel[0] += pdVel[0];
+        predictedVel[1] += pdVel[1];
+      }
+    }
+  }
+  
+  return;
 }
 
 
 bool Player::isDeadReckoningWrong() const
 {
-  // always send a new packet when some kinds of status change
   const uint16_t checkStates =
-    (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
+    (PlayerState::Alive | PlayerState::Paused | PlayerState::OnDriver);
+  // always send a new packet when some kinds of status change
   if ((state.status & checkStates) != (inputStatus & checkStates)) {
     return true;
   }
-
+  
   // never send a packet when dead
-  if (!(state.status & PlayerState::Alive)) {
+  if ((state.status & PlayerState::Alive) == 0) {
     return false;
   }
 
+  //  send a packet if we've crossed a physics driver boundary
+  if (state.phydrv != inputPhyDrv) {
+    return true;
+  }
+  
   // otherwise always send at least one packet per second
-  if (TimeKeeper::getTick() - inputTime >= MaxUpdateTime) {
+  if ((TimeKeeper::getTick() - inputTime) >= MaxUpdateTime) {
     return true;
   }
 
   // get predicted state
-  float predictedPos[3], predictedAzimuth, predictedVel[3];
-  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel);
+  float predictedPos[3];
+  float predictedVel[3];
+  float predictedAzimuth;
+  float dt = TimeKeeper::getTick() - inputTime;
+  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, dt);
 
   // always send a new packet on reckoned touchdown
   float groundLimit = 0.0f;
@@ -930,7 +1088,7 @@ bool Player::isDeadReckoningWrong() const
 
   // client side throttling
   const int throttleRate = int(BZDB.eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
-  const float minUpdateTime = throttleRate > 0 ? 1.0f / throttleRate : 0.0f;
+  const float minUpdateTime = (throttleRate > 0) ? (1.0f / throttleRate) : 0.0f;
   if (TimeKeeper::getTick() - inputTime < minUpdateTime) {
     return false;
   }
@@ -940,11 +1098,27 @@ bool Player::isDeadReckoningWrong() const
   if ((fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) ||
       (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) ||
       (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance)) {
+    if (debugLevel >= 4) {
+      if (fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) {
+        printf ("state.pos[0] = %f, predictedPos[0] = %f\n",
+                state.pos[0], predictedPos[0]);
+      }
+      if (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) {
+        printf ("state.pos[1] = %f, predictedPos[1] = %f\n",
+                state.pos[1], predictedPos[1]);
+      }
+      if (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance) {
+        printf ("state.pos[2] = %f, predictedPos[2] = %f\n",
+                state.pos[2], predictedPos[2]);
+      }
+    }
     return true;
   }
 
   float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
   if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) {
+    DEBUG4 ("state.azimuth = %f, predictedAzimuth = %f\n",
+            state.azimuth, predictedAzimuth);
     return true;
   }
 
@@ -960,16 +1134,20 @@ void Player::doDeadReckoning()
   }
 
   // get predicted state
-  float predictedPos[3], predictedAzimuth, predictedVel[3];
-  notResponding = !getDeadReckoning(predictedPos, &predictedAzimuth,
-				    predictedVel);
+  float predictedPos[3];
+  float predictedVel[3];
+  float predictedAzimuth;
+  float dt = TimeKeeper::getTick() - inputTime;
+  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, dt);
 
+  // setup notResponding
   if (!isAlive()) {
     notResponding = false;
+  } else {
+    notResponding = (dt > BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
   }
 
-  // if hit ground then update input state (since we don't want to fall
-  // anymore)
+  // if hit ground then update input state (we don't want to fall anymore)
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow) {
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
@@ -979,19 +1157,22 @@ void Player::doDeadReckoning()
     predictedPos[2] = groundLimit;
     predictedVel[2] = 0.0f;
     inputStatus &= ~PlayerState::Falling;
-    inputZSpeed = 0.0f;
-    inputSpeedAzimuth = inputAzimuth;
+    inputVel[2] = 0.0f;
   }
 
   if (((oldStatus & PlayerState::Falling) != 0) &&
       ((inputStatus & PlayerState::Falling) == 0)) {
     setLandingSpeed(oldZSpeed);
   }
-  oldZSpeed = inputZSpeed;
+  oldZSpeed = inputVel[2];
   oldStatus = inputStatus;
 
   move(predictedPos, predictedAzimuth);
   setVelocity(predictedVel);
+  
+  setRelativeMotion();
+
+  return;
 }
 
 
@@ -1024,7 +1205,7 @@ void Player::setDeadReckoning(float timestamp)
     }
   }
   // alpha filtering
-  deltaTime = deltaTime + offset * alpha;
+  deltaTime = deltaTime + (offset * alpha);
   if (discardUpdate) {
     return;
   }
@@ -1034,92 +1215,75 @@ void Player::setDeadReckoning(float timestamp)
     offset = 0.0f;
   }
   if (deadReckoningState < DRStateStable) {
-    ++deadReckoningState;
+    deadReckoningState++;
   }
 
+  // set the current state
   setDeadReckoning();
+  
+  // adjust for the time offset  
+  if (deadReckoningState >= DRStateStable) {
 
-  // Future the state based on offset
-  if (inputStatus & PlayerState::Paused) {
-    // don't move when paused
+    // FIXME - untested
+    
+    // get predicted offset state
+    float predictedPos[3];
+    float predictedVel[3];
+    float predictedAzimuth;
+    getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, -offset);
+    move(predictedPos, predictedAzimuth);
+    setVelocity(predictedVel);
+    // set the current state, again
+    setDeadReckoning();
   }
-  else if (inputStatus & PlayerState::Falling) {
-    // no control when falling
-    float vx = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
-    float vy = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
-    // follow a simple parabola
-    inputPos[0] -= offset * vx;
-    inputPos[1] -= offset * vy;
 
-    // only turn if alive
-    if (inputStatus & PlayerState::Alive)
-       inputAzimuth -= offset * inputAngVel;
-
-    // update z
-    float deltaSpeed = BZDBCache::gravity * offset;
-    inputZSpeed -= deltaSpeed;
-    inputPos[2] -= (deltaSpeed / 2.0f + inputZSpeed) * offset;
-  }
-  else {
-    // different algorithms for tanks moving in a straight line vs
-    // turning in a circle
-    if (inputAngVel == 0.0f) {
-
-      // straight ahead
-      float vx = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
-      float vy = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
-      inputPos[0] -= offset * vx;
-      inputPos[1] -= offset * vy;
-
-    } else {
-
-      // find current position on circle:
-      // tank with constant angular and linear velocity moves in a circle
-      // with radius = (linear velocity/angular velocity).  circle turns
-      // to the left (counterclockwise) when the ratio is positive.
-      const float radius = inputSpeed / inputAngVel;
-
-      // Rotation center coordinate
-      inputPos[0] -= radius * sinf(inputAzimuth);
-      inputPos[1] += radius * cosf(inputAzimuth);
-
-      // azimuth changes linearly
-      inputAzimuth -= offset * inputAngVel;
-
-      inputPos[0] += radius * sinf(inputAzimuth);
-      inputPos[1] -= radius * cosf(inputAzimuth);
-
-    }
-  }
+  setRelativeMotion();
+  
+  return;
 }
 
 
 void Player::setDeadReckoning()
 {
-  // save stuff for dead reckoning
   inputTime = TimeKeeper::getTick();
-  inputPrevTime = inputTime;
+  
+  // copy stuff for dead reckoning
   inputStatus = state.status;
-  inputPos[0] = state.pos[0];
-  inputPos[1] = state.pos[1];
-  inputPos[2] = state.pos[2];
-  inputSpeed = hypotf(state.velocity[0], state.velocity[1]);
-
-  const float xspeed = cosf(state.azimuth) * state.velocity[0];
-  const float yspeed = sinf(state.azimuth) * state.velocity[1];
-  if ((xspeed + yspeed) < 0.0f) {
-    inputSpeed = -inputSpeed;
-  }
-
-  if (inputSpeed != 0.0f) {
-    inputSpeedAzimuth = atan2f(state.velocity[1], state.velocity[0]);
-  } else {
-    inputSpeedAzimuth = 0.0f;
-  }
-
-  inputZSpeed = state.velocity[2];
   inputAzimuth = state.azimuth;
   inputAngVel = state.angVel;
+  memcpy(inputPos, state.pos, sizeof(float[3]));
+  memcpy(inputVel, state.velocity, sizeof(float[3]));
+  inputPhyDrv = state.phydrv;
+
+  //
+  // pre-calculate some stuff for dead reckoning  
+  //
+  
+  // the relative motion information (with respect to the physics drivers)
+  calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
+
+  // setup the turning pararmeters  
+  inputTurning = false;
+  if (fabsf(inputRelAngVel) > 0.001f) {
+    inputTurning = true;
+    const float radius = (inputRelSpeed / inputRelAngVel);
+    inputTurnVector[0] = +sinf(inputAzimuth) * radius;
+    inputTurnVector[1] = -cosf(inputAzimuth) * radius;
+    inputTurnCenter[0] = inputPos[0] - inputTurnVector[0];
+    inputTurnCenter[1] = inputPos[1] - inputTurnVector[1];
+  }
+  
+  return;
+}
+
+bool Player::isOnDeath() const
+{
+  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
+  if ((phydrv != NULL) && phydrv->getIsDeath()) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 

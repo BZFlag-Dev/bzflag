@@ -18,29 +18,36 @@
 class PlayerState
 {
   public:
-    enum PStatus {		// bit masks
-      DeadStatus =      0,	// not alive, not paused, etc.
-      Alive =	   (1 << 0), // player is alive
-      Paused =	  (1 << 1), // player is paused
-      Exploding =       (1 << 2), // currently blowing up
-      Teleporting =     (1 << 3), // teleported recently
-      FlagActive =      (1 << 4), // flag special powers active
-      CrossingWall =    (1 << 5), // tank crossing building wall
-      Falling =	 (1 << 6), // tank accel'd by gravity
-      OnDriver =	(1 << 7)  // tank is on a physics driver
+    enum PStatus {			// bit masks
+      DeadStatus =      0,		// not alive, not paused, etc.
+      Alive =	   	(1 << 0),	// player is alive
+      Paused =	  	(1 << 1),	// player is paused
+      Exploding =       (1 << 2),	// currently blowing up
+      Teleporting =     (1 << 3),	// teleported recently
+      FlagActive =      (1 << 4),	// flag special powers active
+      CrossingWall =    (1 << 5),	// tank crossing building wall
+      Falling =	 	(1 << 6),	// tank accel'd by gravity
+      OnDriver =	(1 << 7),	// tank is on a physics driver
+      OnIce =		(1 << 8),	// tank is on ice, sending user specs
+      JumpJets =	(1 << 9)	// tank has jump jets on
     };
 
     PlayerState();
-    void*		pack(void*, uint16_t& code);
-    void*		unpack(void*, uint16_t code);
+    void*	pack(void*, uint16_t& code);
+    void*	unpack(void*, uint16_t code);
 
-    long		order;			// packet ordering
-    short		status;			// see PStatus enum
-    float		pos[3];			// position of tank
-    float		velocity[3];		// velocity of tank
-    float		azimuth;		// orientation of tank
-    float		angVel;			// angular velocity of tank
-    int			phydrv;			// physics driver
+    long	order;		// packet ordering
+    short	status;		// see PStatus enum
+    float	pos[3];		// position of tank
+    float	velocity[3];	// velocity of tank
+    float	azimuth;	// orientation of tank
+    float	angVel;		// angular velocity of tank
+    int		phydrv;		// physics driver
+
+    // the following are to be used only for drawing
+    float	userSpeed;	// user's deired angular velocity
+    float	userAngVel;	// angular velocity of tank
+    float	jumpJetsScale;	// angular velocity of tank
 };
 
 

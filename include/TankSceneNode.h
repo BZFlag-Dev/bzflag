@@ -19,6 +19,7 @@
 
 #include "common.h"
 #include "SceneNode.h"
+#include "OpenGLLight.h"
 #include "TankGeometryMgr.h"
 
 class TankSceneNode;
@@ -32,7 +33,6 @@ class TankIDLSceneNode : public SceneNode {
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
-
   // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
   // following declaration isn't public it generates an error when trying
   // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
@@ -48,7 +48,7 @@ class TankIDLSceneNode : public SceneNode {
 			IDLRenderNode(const TankIDLSceneNode*);
 			~IDLRenderNode();
 	void		render();
-	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
       private:
 	const TankIDLSceneNode* sceneNode;
 	static const int	idlFaces[][5];
@@ -78,10 +78,12 @@ class TankSceneNode : public SceneNode {
     void		setColor(const GLfloat* rgba);
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
+    void		setJumpJetsTexture(const int);
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
+    void 		addLight(SceneRenderer&);
 
     void		setDimensions(const float size[3]);
     void		ignoreDimensions();
@@ -93,6 +95,7 @@ class TankSceneNode : public SceneNode {
     void		setThief();
     void		setClipPlane(const GLfloat* plane);
     void		setExplodeFraction(float t);
+    void		setJumpJets(float scale);
     void		setInTheCockpit(bool value);
     void		rebuildExplosion();
 
@@ -117,7 +120,7 @@ class TankSceneNode : public SceneNode {
 	void		setTankSize(TankGeometryEnums::TankSize);
 	void		sortOrder(bool above, bool towards, bool left);
 	void		render();
-	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
 
 	void		renderPart(TankGeometryEnums::TankPart part);
 	void		renderParts();
@@ -125,6 +128,7 @@ class TankSceneNode : public SceneNode {
 	void		renderLeftParts();
 	void		renderRightParts();
 	void		renderLights();
+	void		renderJumpJets();
 	void		setupPartColor(TankGeometryEnums::TankPart part);
 	bool		setupTextureMatrix(TankGeometryEnums::TankPart part);
 
@@ -140,7 +144,7 @@ class TankSceneNode : public SceneNode {
 	bool		towards;
 	bool		isExploding;
 	GLfloat		explodeFraction;
-	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
+  	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
     };
     friend class TankRenderNode;
 
@@ -169,9 +173,17 @@ class TankSceneNode : public SceneNode {
     TankGeometryEnums::TankSize tankSize;
     GLfloat vel[TankGeometryEnums::LastTankPart][2];
     GLfloat spin[TankGeometryEnums::LastTankPart][4];
+    bool		jumpJetsOn;
+    GLfloat		jumpJetsScale;
+    GLfloat		jumpJetsLengths[4];
+    GLfloat		jumpJetsPositions[4][3];
+    OpenGLLight		jumpJetsRealLight;
+    OpenGLLight		jumpJetsGroundLights[4];
+    OpenGLGState	jumpJetsGState;
 
-    static int			maxLevel;
-    static const int		numLOD;
+    static int		maxLevel;
+    static const int	numLOD;
+    static GLfloat	jumpJetsModel[4][3];
 };
 
 

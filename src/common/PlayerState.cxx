@@ -36,18 +36,34 @@ const float smallMaxAngVel = 0.001f * smallScale;
 
 
 PlayerState::PlayerState()
-: order(0), status(DeadStatus), azimuth(0.0f), angVel(0.0f)
+  : order(0), status(DeadStatus), azimuth(0.0f), angVel(0.0f)
 {
   pos[0] = pos[1] = pos[2] = 0.0f;
   velocity[0] = velocity[0] = velocity[2] = 0.0f;
   phydrv = -1;
+  userSpeed = 0.0f;
+  userAngVel = 0.0f;
+  jumpJetsScale = 0.0f;
+  return;
 }
 
+
+static float clampedValue(float input, float max)
+{
+  if (input > max) {
+    return max;
+  } else if (input < -max) {
+    return -max;
+  } else {
+    return input;
+  }
+}
+    
 
 void*	PlayerState::pack(void* buf, uint16_t& code)
 {
   order++;
-
+  
   buf = nboPackInt(buf, int32_t(order));
   buf = nboPackShort(buf, int16_t(status));
 
@@ -99,10 +115,26 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     buf = nboPackShort(buf, angVelShort);
   }
 
+  if ((status & JumpJets) != 0) {
+    float tmp = clampedValue(jumpJetsScale, 1.0f);
+    buf = nboPackShort(buf, (int16_t) (tmp * smallScale));
+  }
+
   if ((status & OnDriver) != 0) {
     buf = nboPackInt(buf, phydrv);
   }
 
+  if ((status & OnIce) != 0) {
+    float tmp;
+    // pack userSpeed
+    tmp = clampedValue(userSpeed, smallMaxVel);
+    int16_t speed = (int16_t) ((tmp * smallScale) / smallMaxVel);
+    buf = nboPackShort(buf, speed);
+    // pack userAngVel 
+    tmp = clampedValue(userAngVel, smallMaxAngVel);
+    int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
+    buf = nboPackShort(buf, angvel);
+  }
   return buf;
 }
 
@@ -142,12 +174,31 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
     angVel = ((float)angVelShort * smallMaxAngVel) / smallScale;
   }
 
+  if ((inStatus & JumpJets) != 0) {
+    int16_t jumpJetsShort;
+    buf = nboUnpackShort(buf, jumpJetsShort);
+    jumpJetsScale = ((float)jumpJetsShort) / smallScale;
+  } else {
+    jumpJetsScale = 0.0f;
+  }
+  
   if ((inStatus & OnDriver) != 0) {
     buf = nboUnpackInt(buf, phydrv);
   } else {
     phydrv = -1;
   }
 
+  if ((inStatus & OnIce) != 0) {
+    int16_t userSpeedShort, userAngVelShort;
+    buf = nboUnpackShort(buf, userSpeedShort);
+    buf = nboUnpackShort(buf, userAngVelShort);
+    userSpeed = ((float)userSpeedShort * smallMaxVel) / smallScale;
+    userAngVel = ((float)userAngVelShort * smallMaxAngVel) / smallScale;
+  } else {
+    userSpeed = 0.0f;
+    userAngVel = 0.0f;
+  }
+    
   return buf;
 }
 

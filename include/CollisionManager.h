@@ -68,6 +68,7 @@ class CollisionManager {
 	       std::vector<BaseBuilding*>    &bases,
 	       std::vector<PyramidBuilding*> &pyrs,
 	       std::vector<Teleporter*>      &teles);
+    void clear ();
 
     // some basics
     bool needReload() const;	 // octree parameter has changed
@@ -103,7 +104,6 @@ class CollisionManager {
 
   private:
 
-    void clear ();		  // reset the state
     void setExtents(ObsList* list); // gather the extents
 
     class ColDetNode* root;   // the root of the octree

@@ -106,6 +106,7 @@ World::~World()
   for (u = 0; u < teleporters.size(); u++) {
     delete teleporters[u];
   }
+  COLLISIONMGR.clear();
 }
 
 

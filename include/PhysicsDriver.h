@@ -26,15 +26,24 @@ class PhysicsDriver {
 
     bool setName(const std::string& name);
     void setVelocity(const float vel[3]);
-    void setAngular(float angleVel, const float anglePos[2]);
+    void setAngular(float angleVel, const float pos[2]);
+    void setRadial(float radialVel, const float pos[2]);
+    void setIceTime(float iceTime);
+    void setDeathMessage(const std::string& msg);
 
     void finalize();
     void update(float time);
 
+    const std::string& getName() const;
     const float* getVelocity() const;
     const float getAngularVel() const;
     const float* getAngularPos() const;
-    const std::string& getName() const;
+    const float getRadialVel() const;
+    const float* getRadialPos() const;
+    const bool getIsIce() const;
+    const float getIceTime() const;
+    const bool getIsDeath() const;
+    const std::string& getDeathMsg() const;
 
     void* pack(void*);
     void* unpack(void*);
@@ -49,6 +58,12 @@ class PhysicsDriver {
     float velocity[3];
     float angularVel;
     float angularPos[2];
+    float radialVel;
+    float radialPos[2];
+    bool ice;
+    float iceTime;
+    bool death;
+    std::string deathMsg;
 };
 
 inline const float* PhysicsDriver::getVelocity() const
@@ -62,6 +77,30 @@ inline const float PhysicsDriver::getAngularVel() const
 inline const float* PhysicsDriver::getAngularPos() const
 {
   return angularPos;
+}
+inline const float PhysicsDriver::getRadialVel() const
+{
+  return radialVel;
+}
+inline const float* PhysicsDriver::getRadialPos() const
+{
+  return radialPos;
+}
+inline const bool PhysicsDriver::getIsIce() const
+{
+  return ice;
+}
+inline const float PhysicsDriver::getIceTime() const
+{
+  return iceTime;
+}
+inline const bool PhysicsDriver::getIsDeath() const
+{
+  return death;
+}
+inline const std::string& PhysicsDriver::getDeathMsg() const
+{
+  return deathMsg;
 }
 
 

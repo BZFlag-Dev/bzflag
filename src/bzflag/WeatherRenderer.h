@@ -66,6 +66,8 @@ protected:
 	bool						doLineRain;
 	bool						doBillBoards;
 	bool						spinRain;
+	bool						cullRoofTops;
+	bool						roofPuddles;
 	float						rainStartZ;
 	float						rainEndZ;
 	float						maxPuddleTime;
@@ -77,15 +79,16 @@ protected:
 	typedef struct {
 		float    pos[3];
 		float	 speed;
+		float    roofTop;
 		int		 texture;
-	}rain;
+	} rain;
 	std::vector<rain>			raindrops;
 
 	typedef struct {
 		float			pos[3];
 		float			time;
 		int				texture;
-	}puddle;
+	} puddle;
 	std::vector<puddle>			puddles;
 
 	float						lastRainTime;

@@ -38,7 +38,7 @@ class EighthDPyrSceneNode : public EighthDimSceneNode {
 				const float size[3], float rotation);
 			~EighthDPyrRenderNode();
 	void		render();
-	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
       private:
 	const EighthDPyrSceneNode* sceneNode;
 	GLfloat		corner[5][3];

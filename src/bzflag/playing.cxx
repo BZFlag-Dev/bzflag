@@ -100,6 +100,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TrackMarks.h"
 #include "md5.h"
 #include "FlagSceneNode.h"
+#include "PhysicsDriver.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -178,8 +179,10 @@ extern void		doAutoPilot(float &rotation, float &speed);
 extern void		teachAutoPilot( FlagType *, int );
 
 // Far and Near Frustum clipping planes
-const float NearPlane = 0.25f;
-const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
+static const float NearPlaneNormal = 1.0f;
+static const float NearPlaneClose = 0.25f; // for drawing in the cockpit
+static float NearPlane = NearPlaneNormal;
+static const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
 
 enum BlowedUpReason {
   GotKilledMsg,
@@ -188,7 +191,9 @@ enum BlowedUpReason {
   GotCaptured,
   GenocideEffect,
   SelfDestruct,
-  WaterDeath
+  WaterDeath,
+  LastReason,
+  DeathTouch = PhysicsDriverDeath
 };
 static const char*	blowedUpMessage[] = {
   NULL,
@@ -202,7 +207,8 @@ static const char*	blowedUpMessage[] = {
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
 				    BlowedUpReason reason,
 				    PlayerId killer,
-				    const ShotPath *hit = NULL);
+				    const ShotPath *hit = NULL,
+				    int physicsDriver = -1);
 
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason);
@@ -528,7 +534,7 @@ static ServerLink*	lookupServer(const Player* player)
 #if defined(FREEZING)
 static bool		motionFreeze = false;
 #endif
-bool		roaming = false;
+bool roaming = false;
 enum roamingView {
   roamViewFree = 0,
   roamViewTrack,
@@ -537,6 +543,7 @@ enum roamingView {
   roamViewFlag,
   roamViewCount
 } roamView = roamViewFP;
+static const bool devDriving = false;
 
 int roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
 float roamPos[3] = {0.0f, 0.0f, 1.57f};  /* MuzzleHeight */
@@ -573,8 +580,14 @@ void setRoamingLabel(bool force)
     playerString = "Winner ";
   }
 
-  if (player[roamTrackWinner]) {
-    const Player* tracked = player[roamTrackWinner];
+  Player* tracked = player[roamTrackWinner];
+  if (!devDriving) {
+    tracked = player[roamTrackWinner];
+  } else {
+    tracked = myTank;
+  }
+  
+  if (tracked) {
     if (BZDBCache::colorful) {
       int color = tracked->getTeam();
       if (color < 0 || color > 4) {
@@ -1798,10 +1811,14 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgKilled: {
       PlayerId victim, killer;
       int16_t shotId, reason;
+      int phydrv;
       msg = nboUnpackUByte(msg, victim);
       msg = nboUnpackUByte(msg, killer);
       msg = nboUnpackShort(msg, reason);
       msg = nboUnpackShort(msg, shotId);
+      if (reason == (int16_t)PhysicsDriverDeath) {
+        msg = nboUnpackInt(msg, phydrv);
+      }
       BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
       BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
       Player* victimPlayer = lookupPlayer(victim);
@@ -1910,6 +1927,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	else if (reason == WaterDeath) {
 	  message += "fell in the water";
+	  addMessage(victimPlayer, message);
+	}
+	else if (reason == PhysicsDriverDeath) {
+	  const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+	  if (driver == NULL) {
+	    message += "Unknown Deadly Obstacle";
+          } else {
+            message += driver->getDeathMsg();
+          }
 	  addMessage(victimPlayer, message);
 	}
 	else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
@@ -2723,17 +2749,19 @@ static void		updateExplosions(float dt)
   // update time of all explosions
   int i;
   const int count = explosions.size();
-  for (i = 0; i < count; i++)
+  for (i = 0; i < count; i++) {
     explosions[i]->updateTime(dt);
+  }
 
   // reap expired explosions
-  for (i = count - 1; i >= 0; i--)
+  for (i = count - 1; i >= 0; i--) {
     if (explosions[i]->isAtEnd()) {
       delete explosions[i];
       std::vector<BillboardSceneNode*>::iterator it = explosions.begin();
       for(int j = 0; j < i; j++) it++;
       explosions.erase(it);
     }
+  }
 }
 
 static void		addExplosions(SceneDatabase* scene)
@@ -2838,7 +2866,7 @@ static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
 				    BlowedUpReason reason,
 				    PlayerId killer,
-				    const ShotPath* hit)
+				    const ShotPath* hit, int phydrv)
 {
   if (tank && (tank->getTeam() == ObserverTeam || !tank->isAlive()))
     return false;
@@ -2906,13 +2934,31 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     // tell server I'm dead in case it doesn't already know
     if (reason == GotShot || reason == GotRunOver ||
 	reason == GenocideEffect || reason == SelfDestruct ||
-	reason == WaterDeath)
-      lookupServer(tank)->sendKilled(killer, reason, shotId);
+	reason == WaterDeath || reason == DeathTouch)
+      lookupServer(tank)->sendKilled(killer, reason, shotId, phydrv);
   }
 
   // print reason if it's my tank
-  if (tank == myTank && blowedUpMessage[reason]) {
-    std::string blowedUpNotice = blowedUpMessage[reason];
+  if ((tank == myTank) &&
+      ((reason < LastReason) && blowedUpMessage[reason]) ||
+      (reason == PhysicsDriverDeath)) {
+
+    std::string blowedUpNotice;
+    if (reason < LastReason) {
+      blowedUpNotice = blowedUpMessage[reason];
+    }
+    else if (reason == PhysicsDriverDeath) {
+      const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+      if (driver) {
+        blowedUpNotice = driver->getDeathMsg();
+      } else {
+        blowedUpNotice = "Killed by unknown obstacle";
+      }
+    }
+    else {
+      blowedUpNotice = "Invalid reason";
+    }
+    
     // first, check if i'm the culprit
     if (reason == GotShot && getLocalPlayer(killer) == myTank) {
       blowedUpNotice = "Shot myself";
@@ -2961,7 +3007,7 @@ static void		checkEnvironment()
 
   // skip this if i'm dead or paused
   if (!myTank->isAlive() || myTank->isPaused()) return;
-
+  
   FlagType* flagd = myTank->getFlag();
   if (flagd->flagTeam != NoTeam) {
     // have I captured a flag?
@@ -3061,6 +3107,11 @@ static void		checkEnvironment()
       Player* hitter = lookupPlayer(hit->getPlayer());
       if (hitter) hitter->endShot(hit->getShotId());
     }
+  }
+  // if not dead yet, see if i'm sitting on death
+  else if (myTank->getDeathPhysicsDriver() >= 0) {
+    gotBlowedUp(myTank, DeathTouch, ServerPlayer, NULL,
+                myTank->getDeathPhysicsDriver());
   }
   // if not dead yet, see if i've dropped below the death level
   else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel)) {
@@ -3371,11 +3422,6 @@ static void		makeObstacleList()
   for (i = 0; i < numTeleporters; i++) {
     addObstacle(obstacleList, *teleporters[i]);
   }
-  const std::vector<TetraBuilding*>& tetras = World::getWorld()->getTetras();
-  const int numTetras = tetras.size();
-  for (i = 0; i < numTetras; i++) {
-    addObstacle(obstacleList, *tetras[i]);
-  }
   const std::vector<MeshObstacle*>& meshes = World::getWorld()->getMeshes();
   const int numMeshes = meshes.size();
   for (i = 0; i < numMeshes; i++) {
@@ -3443,25 +3489,32 @@ static void		updateRobots(float dt)
   // see if we should look for new targets
   clock += dt;
   if (clock > newTargetTimeout) {
-    while (clock > newTargetTimeout) clock -= newTargetTimeout;
+    while (clock > newTargetTimeout) {
+      clock -= newTargetTimeout;
+    }
     pickTarget = true;
   }
 
   // start dead robots
-  for (i = 0; i < numRobots; i++)
+  for (i = 0; i < numRobots; i++) {
     if (!gameOver && !robots[i]->isAlive() && !robots[i]->isExploding()
-	&& pickTarget)
+	&& pickTarget) {
       robotServer[i]->sendAlive();
+    }
+  }
 
   // retarget robots
-  for (i = 0; i < numRobots; i++)
+  for (i = 0; i < numRobots; i++) {
     if (robots[i]->isAlive() && (pickTarget || !robots[i]->getTarget()
-				 || !robots[i]->getTarget()->isAlive()))
+				 || !robots[i]->getTarget()->isAlive())) {
       setRobotTarget(robots[i]);
+    }
+  }
 
   // do updates
-  for (i = 0; i < numRobots; i++)
+  for (i = 0; i < numRobots; i++) {
     robots[i]->update();
+  }
 }
 
 
@@ -3475,9 +3528,11 @@ static void		checkEnvironment(RobotPlayer* tank)
   float minTime = Infinity;
   tank->checkHit(myTank, hit, minTime);
   int i;
-  for (i = 0; i < curMaxPlayers; i++)
-    if (player[i] && player[i]->getId() != tank->getId())
+  for (i = 0; i < curMaxPlayers; i++) {
+    if (player[i] && player[i]->getId() != tank->getId()) {
       tank->checkHit(player[i], hit, minTime);
+    }
+  }
 
   // Check Server Shots
   tank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
@@ -3510,7 +3565,11 @@ static void		checkEnvironment(RobotPlayer* tank)
       if (hitter) hitter->endShot(hit->getShotId());
     }
   }
-
+  // if not dead yet, see if i'm sitting on death
+  else if (tank->getDeathPhysicsDriver() >= 0) {
+    gotBlowedUp(tank, DeathTouch, ServerPlayer, NULL,
+                tank->getDeathPhysicsDriver());
+  }
   // if not dead yet, see if the robot dropped below the death level
   else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
     gotBlowedUp(tank, WaterDeath, ServerPlayer);
@@ -3640,7 +3699,7 @@ static void enteringServer(void *buf)
   }
   controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
   radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
-  roaming = (myTank->getTeam() == ObserverTeam);
+  roaming = (myTank->getTeam() == ObserverTeam) || devDriving;
 
   // scan through flags and, for flags on
   // tanks, tell the tank about its flag.
@@ -3952,7 +4011,8 @@ void		leaveGame()
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
-						NearPlane, FarPlaneScale * worldSize,
+						NearPlaneNormal,
+						FarPlaneScale * worldSize,
 						mainWindow->getWidth(),
 						mainWindow->getHeight(),
 						mainWindow->getViewHeight());
@@ -4178,6 +4238,21 @@ static void drawUI()
 // stuff to draw a frame
 //
 
+void			setupNearPlane()
+{
+  NearPlane = NearPlaneNormal;
+  if (myTank) {
+    const bool showTreads = BZDB.isTrue("showTreads") || devDriving;
+    const float halfLength = 0.5f * BZDBCache::tankLength;
+    const float length = myTank->getDimensions()[1]; 
+    if (showTreads && 
+        ((length < (0.9f * halfLength)) || (length > (1.1f * halfLength)))) {
+      NearPlane = NearPlaneClose;
+    }
+  }
+  return;
+}
+
 void			drawFrame(const float dt)
 {
   // get view type (constant for entire game)
@@ -4242,20 +4317,19 @@ void			drawFrame(const float dt)
     targetPoint[0] = eyePoint[0] + myTankDir[0];
     targetPoint[1] = eyePoint[1] + myTankDir[1];
     targetPoint[2] = eyePoint[2] + myTankDir[2];
+
     if (roaming) {
       hud->setAltitude(-1.0f);
       float roamViewAngle;
-#ifdef FOLLOWTANK
-      eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
-      eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
-      eyePoint[2] = myTankPos[2] + muzzleHeight * 3;
-      targetPoint[0] = eyePoint[0] + myTankDir[0];
-      targetPoint[1] = eyePoint[1] + myTankDir[1];
-      targetPoint[2] = eyePoint[2] + myTankDir[2];
-#else
       setRoamingLabel(false);
-      if (player && (roamView != roamViewFree) && player[roamTrackWinner]) {
-	RemotePlayer *target = player[roamTrackWinner];
+      if ((roamView != roamViewFree) && 
+          ((player && player[roamTrackWinner]) || (devDriving && myTank))) {
+        Player *target;
+        if (!devDriving) {
+          target = player[roamTrackWinner];
+        } else {
+          target = myTank;
+        }
 	const float *targetTankDir = target->getForward();
 	// fixed camera tracking target
 	if (roamView == roamViewTrack) {
@@ -4312,16 +4386,24 @@ void			drawFrame(const float dt)
 	targetPoint[2] = eyePoint[2] + dir[2];
 	roamViewAngle = roamTheta;
       }
-      float virtPos[]={eyePoint[0], eyePoint[1], 0};
-      if (myTank)
-	myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
-#endif
+      if (!devDriving) {
+        float virtPos[]={eyePoint[0], eyePoint[1], 0};
+        if (myTank) {
+	  myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
+        }
+      }
       fov = roamZoom * M_PI / 180.0f;
       moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
     }
+
+    // only use a close plane for drawing in the
+    // cockpit, and even then only for odd sized tanks
+    setupNearPlane();
+    
     float worldSize = BZDBCache::worldSize;
     sceneRenderer->getViewFrustum().setProjection(fov,
-						  NearPlane, FarPlaneScale * worldSize,
+						  NearPlane,
+						  FarPlaneScale * worldSize,
 						  mainWindow->getWidth(),
 						  mainWindow->getHeight(),
 						  mainWindow->getViewHeight());
@@ -4332,10 +4414,10 @@ void			drawFrame(const float dt)
     if (scene && myTank) {
 
       // add my tank if required
-      const bool showTreads = BZDB.isTrue("showTreads");
+      const bool showTreads = BZDB.isTrue("showTreads") || devDriving;
       const bool cloaked = myTank->getFlag() == Flags::Cloaking;
       if (myTank->needsToBeRendered(cloaked, showTreads)) {
-	myTank->addToScene(scene, myTank->getTeam(), true, showTreads);
+        myTank->addToScene(scene, myTank->getTeam(), !devDriving, showTreads);
       }
 
       // add my shells
@@ -4450,7 +4532,7 @@ void			drawFrame(const float dt)
     }
 
     // so observers can have enhanced radar
-    if (roaming && myTank) {
+    if (roaming && myTank && !devDriving) {
       myTank->setZpos(roamPos[2]);
     }
 
@@ -4709,6 +4791,192 @@ void			drawFrame(const float dt)
   }
 }
 
+
+static void		setupRoamingCamera(float dt)
+{
+  // move roaming camera
+  if (myTank) {
+    bool control = ((shiftKeyStatus & BzfKeyEvent::ControlKey) != 0);
+    bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0);
+    bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey) != 0);
+    if (display->hasGetKeyMode()) {
+      display->getModState (shift, control, alt);
+    }
+    roamDPos[0] = 0.0;
+    roamDPos[1] = 0.0;
+    roamDPos[2] = 0.0;
+    roamDTheta  = 0.0;
+    roamDTheta  = 0.0;
+    roamDPhi    = 0.0;
+    if (!control && !shift) {
+      roamDPos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+    }
+    if (alt) {
+      roamDPos[1] = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
+    } else {
+      roamDTheta  = roamZoom * (float)myTank->getRotation();
+    }
+    if (control) {
+      roamDPhi    = -2.0f * roamZoom / 3.0f * (float)myTank->getSpeed();
+    }
+    if (shift) {
+      roamDPos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+    }
+  }
+  float c, s;
+  c = cosf(roamTheta * M_PI / 180.0f);
+  s = sinf(roamTheta * M_PI / 180.0f);
+  roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
+  roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
+  roamPos[2] += dt * roamDPos[2];
+  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  if (roamPos[2] < muzzleHeight) {
+    roamPos[2] = muzzleHeight;
+  }
+  roamTheta  += dt * roamDTheta;
+  roamPhi    += dt * roamDPhi;
+  roamZoom   += dt * roamDZoom;
+  if (roamZoom < BZDB.eval("roamZoomMin")) {
+    roamZoom = BZDB.eval("roamZoomMin");
+  }
+  else if (roamZoom > BZDB.eval("roamZoomMax")) {
+    roamZoom = BZDB.eval("roamZoomMax");
+  }
+  return;
+}
+
+
+static void		prepareTheHUD()
+{
+  // prep the HUD
+  if (myTank) {
+    const float* myPos = myTank->getPosition();
+    hud->setHeading(myTank->getAngle());
+    hud->setAltitude(myPos[2]);
+    if (world->allowTeamFlags()) {
+      const float* myTeamColor = Team::getTankColor(myTank->getTeam());
+      // markers for my team flag
+      for (int i = 0; i < numFlags; i++) {
+        Flag& flag = world->getFlag(i);
+        if ((flag.type->flagTeam == myTank->getTeam())
+            && ((flag.status != FlagOnTank) || 
+                (flag.owner != myTank->getId()))) {
+          const float* flagPos = flag.position;
+          float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
+          hud->addMarker(heading, myTeamColor);
+        }
+      }
+    }
+    if (myTank->getAntidoteLocation()) {
+      // marker for my antidote flag
+      const GLfloat* antidotePos = myTank->getAntidoteLocation();
+      float heading = atan2f(antidotePos[1] - myPos[1],
+                             antidotePos[0] - myPos[0]);
+      const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
+      hud->addMarker(heading, antidoteColor);
+    }
+  }
+  return;
+}
+
+
+static void		updatePauseCountdown(float dt)
+{
+  if (!myTank) {
+    pauseCountdown = 0.0f;
+  }
+  if (pauseCountdown > 0.0f && !myTank->isAlive()) {
+    pauseCountdown = 0.0f;
+    hud->setAlert(1, NULL, 0.0f, true);
+  }
+  if (pauseCountdown > 0.0f) {
+    const int oldPauseCountdown = (int)(pauseCountdown + 0.99f);
+    pauseCountdown -= dt;
+    if (pauseCountdown <= 0.0f) {
+
+      /* make sure it is really safe to pause..  since the server
+       * might make us drop our flag, make sure the player is on the
+       * ground and not in a building.  prevents getting kicked
+       * later for being in places we shouldn't without holding the
+       * right flags.
+       */
+      if (myTank->getLocation() == LocalPlayer::InBuilding) {
+        // custom message when trying to pause while in a building
+        // (could get stuck on un-pause if flag is taken/lost)
+        hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
+
+      } else if (myTank->getLocation() == LocalPlayer::InAir) {
+        // custom message when trying to pause when jumping/falling
+        hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
+
+      } else if (myTank->getLocation() != LocalPlayer::OnGround &&
+                 myTank->getLocation() != LocalPlayer::OnBuilding) {
+        // catch-all message when trying to pause when you should not
+        hud->setAlert(1, "Unable to pause right now", 1.0f, false);
+
+      } else {
+        // okay, now we pause.  first drop any team flag we may have.
+        const FlagType* flagd = myTank->getFlag();
+        if (flagd->flagTeam != NoTeam)
+          serverLink->sendDropFlag(myTank->getPosition());
+
+        if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
+          serverLink->sendNewRabbit();
+
+        // now actually pause
+        myTank->setPause(true);
+        hud->setAlert(1, NULL, 0.0f, true);
+        controlPanel->addMessage("Paused");
+
+        // turn off the sound
+        if (savedVolume == -1) {
+          savedVolume = getSoundVolume();
+          setSoundVolume(0);
+        }
+
+        // ungrab mouse
+        mainWindow->ungrabMouse();
+      }
+    } else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
+               !pausedByUnmap) {
+      // update countdown alert
+      char msgBuf[40];
+      sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
+      hud->setAlert(1, msgBuf, 1.0f, false);
+    }
+  }
+  return;
+}
+
+
+static void		updateDestructCountdown(float dt)
+{
+  if (!myTank) {
+    destructCountdown = 0.0f;
+  }
+  if (destructCountdown > 0.0f && !myTank->isAlive()) {
+    destructCountdown = 0.0f;
+    hud->setAlert(1, NULL, 0.0f, true);
+  }
+  if (destructCountdown > 0.0f) {
+    const int oldDestructCountdown = (int)(destructCountdown + 0.99f);
+    destructCountdown -= dt;
+    if (destructCountdown <= 0.0f) {
+      // now actually destruct
+      gotBlowedUp( myTank, SelfDestruct, myTank->getId() );
+
+      hud->setAlert(1, NULL, 0.0f, true);
+    } else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
+      // update countdown alert
+      char msgBuf[40];
+      sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
+      hud->setAlert(1, msgBuf, 1.0f, false);
+    }
+  }
+  return;
+}
+
+
 //
 // main playing loop
 //
@@ -4728,7 +4996,9 @@ static void		playingLoop()
 
   // main loop
   while (!CommandsStandard::isQuit()) {
+
     BZDBCache::update();
+    
     // get delta time
     TimeKeeper prevTime = TimeKeeper::getTick();
     TimeKeeper::setTick();
@@ -4745,19 +5015,6 @@ static void		playingLoop()
     }
 
     mainWindow->getWindow()->yieldCurrent();
-
-    // do dead reckoning on remote players
-    for (i = 0; i < curMaxPlayers; i++)
-      if (player[i]) {
-	const bool wasNotResponding = player[i]->isNotResponding();
-	player[i]->doDeadReckoning();
-	const bool isNotResponding = player[i]->isNotResponding();
-	if (!wasNotResponding && isNotResponding) {
-	  addMessage(player[i], "not responding");
-	} else if (wasNotResponding && !isNotResponding) {
-	  addMessage(player[i], "okay");
-	}
-      }
 
     // try to join a game if requested.  do this *before* handling
     // events so we do a redraw after the request is posted and
@@ -4818,7 +5075,9 @@ static void		playingLoop()
     mainWindow->getWindow()->yieldCurrent();
 
     // quick out
-    if (CommandsStandard::isQuit()) break;
+    if (CommandsStandard::isQuit()) {
+      break;
+    }
 
     // if server died then leave the game (note that this may cause
     // further server errors but that's okay).
@@ -4826,8 +5085,9 @@ static void		playingLoop()
 	(serverLink && serverLink->getState() == ServerLink::Hungup)) {
       // if we haven't reported the death yet then do so now
       if (serverDied ||
-	  (serverLink && serverLink->getState() == ServerLink::Hungup))
+	  (serverLink && serverLink->getState() == ServerLink::Hungup)) {
 	printError("Server has unexpectedly disconnected");
+      }
       leaveGame();
     }
 
@@ -4849,51 +5109,7 @@ static void		playingLoop()
 
     // move roaming camera
     if (roaming) {
-      if (myTank) {
-	bool control = ((shiftKeyStatus & BzfKeyEvent::ControlKey) != 0);
-	bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0);
-	bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey) != 0);
-	if (display->hasGetKeyMode())
-	  display->getModState (shift, control, alt);
-	roamDPos[0] = 0.0;
-	roamDPos[1] = 0.0;
-	roamDPos[2] = 0.0;
-	roamDTheta  = 0.0;
-	roamDTheta  = 0.0;
-	roamDPhi    = 0.0;
-	if (!control && !shift)
-	  roamDPos[0] = (float)(4 * myTank->getSpeed())
-	    * BZDBCache::tankSpeed;
-	if (alt)
-	  roamDPos[1] = (float)(4 * myTank->getRotation())
-	    * BZDBCache::tankSpeed;
-	else
-	  roamDTheta  = roamZoom * (float)myTank->getRotation();
-	if (control)
-	  roamDPhi    = -2.0f * roamZoom / 3.0f * (float)myTank->getSpeed();
-	if (shift)
-	  roamDPos[2] = (float)(-4 * myTank->getSpeed())
-	    * BZDBCache::tankSpeed;
-      }
-      float c, s;
-      c = cosf(roamTheta * M_PI / 180.0f);
-      s = sinf(roamTheta * M_PI / 180.0f);
-      roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
-      roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
-      roamPos[2] += dt * roamDPos[2];
-      float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-      if (roamPos[2] < muzzleHeight) {
-	roamPos[2] = muzzleHeight;
-      }
-      roamTheta  += dt * roamDTheta;
-      roamPhi    += dt * roamDPhi;
-      roamZoom   += dt * roamDZoom;
-      if (roamZoom < BZDB.eval("roamZoomMin")) {
-	roamZoom = BZDB.eval("roamZoomMin");
-      }
-      else if (roamZoom > BZDB.eval("roamZoomMax")) {
-	roamZoom = BZDB.eval("roamZoomMax");
-      }
+      setupRoamingCamera(dt);
     }
     setRoamingLabel(false);
 
@@ -4906,111 +5122,15 @@ static void		playingLoop()
       }
     }
 
-    // update pause countdown
-    if (!myTank) pauseCountdown = 0.0f;
-    if (pauseCountdown > 0.0f && !myTank->isAlive()) {
-      pauseCountdown = 0.0f;
-      hud->setAlert(1, NULL, 0.0f, true);
-    }
-    if (pauseCountdown > 0.0f) {
-      const int oldPauseCountdown = (int)(pauseCountdown + 0.99f);
-      pauseCountdown -= dt;
-      if (pauseCountdown <= 0.0f) {
-
-	/* make sure it is really safe to pause..  since the server
-	 * might make us drop our flag, make sure the player is on the
-	 * ground and not in a building.  prevents getting kicked
-	 * later for being in places we shouldn't without holding the
-	 * right flags.
-	 */
-	if (myTank->getLocation() == LocalPlayer::InBuilding) {
-	  // custom message when trying to pause while in a building
-	  // (could get stuck on un-pause if flag is taken/lost)
-	  hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
-
-	} else if (myTank->getLocation() == LocalPlayer::InAir) {
-	  // custom message when trying to pause when jumping/falling
-	  hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
-
-	} else if (myTank->getLocation() != LocalPlayer::OnGround &&
-		   myTank->getLocation() != LocalPlayer::OnBuilding) {
-	  // catch-all message when trying to pause when you should not
-	  hud->setAlert(1, "Unable to pause right now", 1.0f, false);
-
-	} else {
-	  // okay, now we pause.  first drop any team flag we may have.
-	  const FlagType* flagd = myTank->getFlag();
-	  if (flagd->flagTeam != NoTeam)
-	    serverLink->sendDropFlag(myTank->getPosition());
-
-	  if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
-	    serverLink->sendNewRabbit();
-
-	  // now actually pause
-	  myTank->setPause(true);
-	  hud->setAlert(1, NULL, 0.0f, true);
-	  controlPanel->addMessage("Paused");
-
-	  // turn off the sound
-	  if (savedVolume == -1) {
-	    savedVolume = getSoundVolume();
-	    setSoundVolume(0);
-	  }
-
-	  // ungrab mouse
-	  mainWindow->ungrabMouse();
-	}
-
-      } else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
-		 !pausedByUnmap) {
-	// update countdown alert
-	char msgBuf[40];
-	sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
-	hud->setAlert(1, msgBuf, 1.0f, false);
-      }
-    }
-
-    // update destruct countdown
-    if (!myTank) destructCountdown = 0.0f;
-    if (destructCountdown > 0.0f && !myTank->isAlive()) {
-      destructCountdown = 0.0f;
-      hud->setAlert(1, NULL, 0.0f, true);
-    }
-    if (destructCountdown > 0.0f) {
-      const int oldDestructCountdown = (int)(destructCountdown + 0.99f);
-      destructCountdown -= dt;
-      if (destructCountdown <= 0.0f) {
-	// now actually destruct
-	gotBlowedUp( myTank, SelfDestruct, myTank->getId() );
-
-	hud->setAlert(1, NULL, 0.0f, true);
-      } else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
-	// update countdown alert
-	char msgBuf[40];
-	sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
-	hud->setAlert(1, msgBuf, 1.0f, false);
-      }
-    }
+    // update the countdowns
+    updatePauseCountdown(dt);
+    updateDestructCountdown(dt);
 
     // notify if input changed
-    if ((myTank != NULL) && (myTank->queryInputChange() == true))
-      controlPanel->addMessage(LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
-
-    // adjust properties based on flags (dimensions, cloaking, etc...)
-    if (myTank) {
-      myTank->updateTank(dt, true);
+    if ((myTank != NULL) && (myTank->queryInputChange() == true)) {
+      controlPanel->addMessage(
+        LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
     }
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i]) {
-	player[i]->updateTank(dt, false);
-      }
-    }
-
-    // reposition flags
-    updateFlags(dt);
-
-    // update explosion animations
-    updateExplosions(dt);
 
     // update other tank's shots
     for (i = 0; i < curMaxPlayers; i++) {
@@ -5019,20 +5139,28 @@ static void		playingLoop()
       }
     }
 
-    World *world = World::getWorld();
     // update servers shots
+    const World *world = World::getWorld();
     if (world) {
       world->getWorldWeapons()->updateShots(dt);
     }
 
-    // update track marks
+    // update track marks  (before any tanks are moved)
     TrackMarks::update(dt);
 
-    // draw the frame
-    drawFrame(dt);
-
-    // play the sounds
-    updateSound();
+    // do dead reckoning on remote players
+    for (i = 0; i < curMaxPlayers; i++) {
+      if (player[i]) {
+	const bool wasNotResponding = player[i]->isNotResponding();
+	player[i]->doDeadReckoning();
+	const bool isNotResponding = player[i]->isNotResponding();
+	if (!wasNotResponding && isNotResponding) {
+	  addMessage(player[i], "not responding");
+	} else if (wasNotResponding && !isNotResponding) {
+	  addMessage(player[i], "okay");
+	}
+      }
+    }
 
     // do motion
     if (myTank) {
@@ -5054,53 +5182,56 @@ static void		playingLoop()
     }
 
 #ifdef ROBOT
-    if (entered)
+    if (entered) {
       updateRobots(dt);
-#endif
-
-    // prep the HUD
-    if (myTank) {
-      const float* myPos = myTank->getPosition();
-      hud->setHeading(myTank->getAngle());
-      hud->setAltitude(myPos[2]);
-      if (world->allowTeamFlags()) {
-	const float* myTeamColor = Team::getTankColor(myTank->getTeam());
-	// markers for my team flag
-	for (i = 0; i < numFlags; i++) {
-	  Flag& flag = world->getFlag(i);
-	  if ((flag.type->flagTeam == myTank->getTeam())
-	      &&  (flag.status != FlagOnTank || flag.owner != myTank->getId())) {
-	    const float* flagPos = flag.position;
-	    float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
-	    hud->addMarker(heading, myTeamColor);
-	  }
-	}
-      }
-      if (myTank->getAntidoteLocation()) {
-	// marker for my antidote flag
-	const GLfloat* antidotePos = myTank->getAntidoteLocation();
-	float heading = atan2f(antidotePos[1] - myPos[1],antidotePos[0] - myPos[0]);
-	const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
-	hud->addMarker(heading, antidoteColor);
-      }
     }
+#endif
 
     // check for flags and hits
     checkEnvironment();
 
 #ifdef ROBOT
-    if (entered)
+    if (entered) {
       checkEnvironmentForRobots();
+    }
 #endif
 
+    // adjust properties based on flags (dimensions, cloaking, etc...)
+    if (myTank) {
+      myTank->updateTank(dt, true);
+    }
+    for (i = 0; i < curMaxPlayers; i++) {
+      if (player[i]) {
+	player[i]->updateTank(dt, false);
+      }
+    }
+
+    // reposition flags
+    updateFlags(dt);
+
+    // update explosion animations
+    updateExplosions(dt);
+
+    // prep the HUD
+    prepareTheHUD();
+
+    // draw the frame
+    drawFrame(dt);
+
+    // play the sounds
+    updateSound();
+
     // send my data
-    if (myTank && myTank->isDeadReckoningWrong() && myTank->getTeam() != ObserverTeam) {
+    if (myTank && myTank->isDeadReckoningWrong() &&
+        (myTank->getTeam() != ObserverTeam)) {
+      // also calls setDeadReckoning()
       serverLink->sendPlayerUpdate(myTank);
     }
 
 #ifdef ROBOT
-    if (entered)
+    if (entered) {
       sendRobotUpdates();
+    }
 #endif
   }
 
@@ -5301,7 +5432,8 @@ static void		findFastConfiguration()
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
   float worldSize = BZDBCache::worldSize;
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
-						NearPlane, FarPlaneScale * worldSize,
+						NearPlane,
+						FarPlaneScale * worldSize,
 						mainWindow->getWidth(),
 						mainWindow->getHeight(),
 						mainWindow->getViewHeight());
@@ -5645,7 +5777,7 @@ void			startPlaying(BzfDisplay* _display,
     mainMenu->createControls();
     HUDDialogStack::get()->push(mainMenu);
   }
-
+  
   // start game loop
   playingLoop();
 

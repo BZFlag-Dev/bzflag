@@ -52,6 +52,7 @@ OpenGLLight::OpenGLLight() : mailbox(0)
   // it doesn't seem to be worth the bother or CPU time to actually
   // use this equation. Grep for 'Attenuation' to find the values.
   //
+  onlyReal = false;
   onlyGround = false;
   makeLists();
 }
@@ -230,6 +231,13 @@ void OpenGLLight::execute(int index) const
     glEndList();
   }
   glCallList(listBase + index);
+  return;
+}
+
+
+void OpenGLLight::setOnlyReal(bool value)
+{
+  onlyReal = value;
   return;
 }
 

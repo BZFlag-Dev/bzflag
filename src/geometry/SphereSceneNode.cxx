@@ -389,7 +389,7 @@ const GLfloat*		SphereFragmentSceneNode::FragmentRenderNode::
 }
 
 const GLfloat*		SphereFragmentSceneNode::FragmentRenderNode::
-				getPosition()
+				getPosition() const
 {
   return sceneNode->getSphere();
 }

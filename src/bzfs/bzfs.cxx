@@ -2434,7 +2434,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
 static void playerKilled(int victimIndex, int killerIndex, int reason,
-			int16_t shotIndex)
+			int16_t shotIndex, int phydrv)
 {
   GameKeeper::Player *killerData = NULL;
   GameKeeper::Player *victimData
@@ -2481,6 +2481,9 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   buf = nboPackUByte(buf, killerIndex);
   buf = nboPackShort(buf, reason);
   buf = nboPackShort(buf, shotIndex);
+  if (reason == PhysicsDriverDeath) {
+    buf = nboPackInt(buf, phydrv);
+  }
   broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
 
   // zap flag player was carrying.  clients should send a drop flag
@@ -2495,7 +2498,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     if (victimIndex != killerIndex) {
       if (teamkill) {
 	if (clOptions->teamKillerDies)
-	  playerKilled(killerIndex, killerIndex, reason, -1);
+	  playerKilled(killerIndex, killerIndex, reason, -1, -1);
 	else
 	  killerData->score.killedBy();
       } else {
@@ -3418,9 +3421,13 @@ possible attack from %s\n",
       // data: id of killer, shot id of killer
       PlayerId killer;
       int16_t shot, reason;
+      int phydrv;
       buf = nboUnpackUByte(buf, killer);
       buf = nboUnpackShort(buf, reason);
       buf = nboUnpackShort(buf, shot);
+      if (reason == PhysicsDriverDeath) {
+        buf = nboUnpackInt(buf, phydrv);
+      }
 
       // Sanity check on shot: Here we have the killer
       if (killer != ServerPlayer) {
@@ -3428,7 +3435,7 @@ possible attack from %s\n",
 	if ((si < -1) || (si >= clOptions->maxShots))
 	  break;
       }
-      playerKilled(t, lookupPlayer(killer), reason, shot);
+      playerKilled(t, lookupPlayer(killer), reason, shot, phydrv);
       break;
     }
 
@@ -4590,7 +4597,7 @@ int main(int argc, char **argv)
 	      directMessage(i, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
 
 	      // kick 'em while they're down
-	      playerKilled(i, curMaxPlayers, 0, -1);
+	      playerKilled(i, curMaxPlayers, 0, -1, -1);
 
 	      // be sure to reset the player!
 	      player->player.setDead();

@@ -62,6 +62,7 @@ public:
   const float*	getVelocity() const;
   float		getAngularVelocity() const;
   int		getPhysicsDriver() const;
+  int		getDeathPhysicsDriver() const;
   float		getRadius() const;
   void		getMuzzle(float*) const;
   float		getMuzzleHeight() const;
@@ -89,6 +90,7 @@ public:
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
+  void		fireJumpJets();
   bool		needsToBeRendered(bool cloaked, bool showTreads);
 
   bool		isAlive() const;
@@ -98,6 +100,7 @@ public:
   bool		isExploding() const;
   bool		isCrossingWall() const;
   bool		isNotResponding() const;
+  bool		isOnDeath() const;
   void		resetNotResponding();
   bool		isHunted() const;
   void		setHunted(bool _hunted);
@@ -118,6 +121,9 @@ public:
   void		setVelocity(const float* velocity);
   void		setAngularVelocity(float);
   void		setPhysicsDriver(int);
+  void		setRelativeMotion();
+  void		setUserSpeed(float speed);
+  void		setUserAngVel(float angvel);
   void		changeTeam(TeamColor);
   virtual void	setFlag(FlagType*);
   virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
@@ -149,14 +155,16 @@ private:
   // position if you return true (it's okay to return false if
   // there's no meaningful shot position).
   virtual bool	doEndShot(int index, bool isHit, float* position) = 0;
-  bool		getDeadReckoning(float* predictedPos,
-				 float* predictedAzimuth,
-				 float* predictedVel) const;
+  void getDeadReckoning(float* predictedPos, float* predictedAzimuth,
+                        float* predictedVel, float time) const;
+  void calcRelativeMotion(float vel[2], float& speed, float& angvel);
   void setVisualTeam (TeamColor team );
   void updateFlagEffect(FlagType* flag);
+  void updateTranslucency(float dt);
   void updateDimensions(float dt, bool local);
   void updateTreads(float dt);
-  void updateTranslucency(float dt);
+  void updateJumpJets(float dt);
+  void updateTrackMarks();
   bool hitObstacleResizing();
 private:
   // data not communicated with other players
@@ -212,27 +220,39 @@ private:
 
   // computable highly dynamic data
   float			forward[3];		// forward unit vector
-
+  
+  // relative motion information
+  float			relativeSpeed;		// relative speed
+  float			relativeAngVel;		// relative angular velocity
+  
   // dead reckoning stuff
-  TimeKeeper		inputTime;		// time of input
-  mutable TimeKeeper	inputPrevTime;		// time of last dead reckoning
-  int			inputStatus;		// tank status
-  mutable float		inputPos[3];		// tank position
-  float			inputSpeed;		// tank horizontal speed
-  mutable float		inputZSpeed;		// tank vertical speed
-  float			inputAzimuth;		// direction tank is pointing
-  float			inputSpeedAzimuth;	// direction of speed
-  float			inputAngVel;		// tank turn rate
-  float			deltaTime;		// average difference between
-						// time source and
-						// time destination
-  float			offset;			// time offset on last
-						// measurement
-  int			deadReckoningState;	// 0 -> not received any sample
-						// 1 -> 1 sample rx
-						// 2 -> 2 or more sample rx
-  float			oldZSpeed;		// old tank vertical speed
+  TimeKeeper inputTime;		// time of input
+  int	inputStatus;		// tank status
+  float	inputPos[3];		// tank position
+  float	inputVel[3];		// tank velocity
+  float	inputAzimuth;		// direction tank is pointing
+  float	inputAngVel;		// tank turn rate
+  bool	inputTurning;		// tank is turning
+  float inputRelVel[2];		// relative velocity
+  float	inputRelSpeed;		// relative speed
+  float	inputRelAngVel;		// relative angular velocity
+  float	inputTurnCenter[2];	// tank turn center
+  float	inputTurnVector[2];	// tank turn vector
+  int	inputPhyDrv;		// physics driver
+
+  // average difference between time source and time destination
+  float			deltaTime;
+
+  // time offset on last measurement
+  float			offset;
+
+  // 0 -> not received any sample
+  // 1 -> 1 sample rx
+  // 2 -> 2 or more sample rx
+  int			deadReckoningState;
+  
   int			oldStatus;		// old tank status bits
+  float			oldZSpeed;		// old tank vertical speed
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.

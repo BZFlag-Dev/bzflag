@@ -66,11 +66,25 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
   color[3] = 1.0f;
   setColor(1.0f, 1.0f, 1.0f);
   setExplodeFraction(0.0f);
+  setJumpJets(0.0f);
 
   rebuildExplosion();
 
   shadowRenderNode.setShadow();
   shadowRenderNode.setTankLOD(LowTankLOD);
+  
+  jumpJetsRealLight.setAttenuation(0, 0.05f);
+  jumpJetsRealLight.setAttenuation(1, 0.0f);
+  jumpJetsRealLight.setAttenuation(2, 0.03f);
+  jumpJetsRealLight.setOnlyReal(true);
+  for (int i = 0; i < 4; i++) {
+    jumpJetsGroundLights[i].setAttenuation(0, 0.05f);
+    jumpJetsGroundLights[i].setAttenuation(1, 0.0f);
+    jumpJetsGroundLights[i].setAttenuation(2, 0.03f);
+    jumpJetsGroundLights[i].setOnlyGround(true);
+  }
+  
+  return;
 }
 
 
@@ -131,6 +145,14 @@ void TankSceneNode::setTexture(const int texture)
 }
 
 
+void TankSceneNode::setJumpJetsTexture(const int texture)
+{
+  OpenGLGStateBuilder builder(jumpJetsGState);
+  builder.setTexture(texture);
+  jumpJetsGState = builder.getState();
+}
+
+
 void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
 {
   const float rad2deg = (180.0f / M_PI);
@@ -144,6 +166,7 @@ void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
   maxs[0] = pos[0] + maxRadius;
   maxs[1] = pos[1] + maxRadius;
   maxs[2] = pos[2] + BZDBCache::tankHeight;
+  return;
 }
 
 
@@ -192,6 +215,11 @@ void TankSceneNode::notifyStyleChange()
     builder2.setSmoothing(false);
   }
   lightsGState = builder2.getState();
+
+  OpenGLGStateBuilder builder3(jumpJetsGState);
+  builder3.setCulling(GL_NONE);
+  builder3.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  jumpJetsGState = builder3.getState();
 }
 
 
@@ -274,6 +302,30 @@ void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
 }
 
 
+void TankSceneNode::addLight(SceneRenderer& renderer)
+{
+  if (cloaked && (color[3] == 0.0f)) {
+    return;
+  }
+  
+  if (jumpJetsOn) {
+    // the real light
+    jumpJetsRealLight.setColor(jumpJetsScale * 1.0f, 
+                               jumpJetsScale * 0.7f,
+                               jumpJetsScale * 0.3f);
+    renderer.addLight(jumpJetsRealLight);
+    // the ground lights
+    for (int i = 0; i < 4; i++) {
+      jumpJetsGroundLights[i].setColor(jumpJetsLengths[i] * 1.0f * 0.25f, 
+                                       jumpJetsLengths[i] * 0.7f * 0.25f,
+                                       jumpJetsLengths[i] * 0.3f * 0.25f);
+      renderer.addLight(jumpJetsGroundLights[i]);
+    }
+  }
+  return;
+}
+
+
 void TankSceneNode::setNormal()
 {
   tankSize = Normal;
@@ -318,6 +370,41 @@ void TankSceneNode::setExplodeFraction(float t)
 }
 
 
+void TankSceneNode::setJumpJets(float scale)
+{
+  jumpJetsOn = false;
+  if ((maxLevel == -1) && (scale > 0.0f) &&
+      BZDBCache::zbuffer && BZDBCache::texture) {
+    jumpJetsOn = true;
+    jumpJetsScale = scale;
+
+    // set the real light's position
+    const float* pos = getSphere();
+    jumpJetsRealLight.setPosition(pos);
+
+    for (int i = 0; i < 4; i++) {
+      // set the ground jet light and model positions
+      const float radians = azimuth * (M_PI / 180.0f);
+      const float cos_val = cosf(radians);
+      const float sin_val = sinf(radians);
+      const float* scale = TankGeometryMgr::getScaleFactor(tankSize);
+      const float* jm = jumpJetsModel[i];
+      const float v[2] = {jm[0] * scale[0], jm[1] * scale[1]};
+      float* jetPos = jumpJetsPositions[i];
+      jetPos[0] = pos[0] + ((cos_val * v[0]) - (sin_val * v[1]));
+      jetPos[1] = pos[1] + ((cos_val * v[1]) + (sin_val * v[0]));
+      jetPos[2] = pos[2] + jm[2];
+      jumpJetsGroundLights[i].setPosition(jetPos);
+
+      // setup the random lengths
+      const float randomFactor = (1.0f - (0.5f * (0.5f - bzfrand())));
+      jumpJetsLengths[i] = jumpJetsScale * randomFactor;
+    }
+  }
+  return;
+}
+
+
 void TankSceneNode::setClipPlane(const GLfloat* plane)
 {
   if (!plane) {
@@ -330,6 +417,7 @@ void TankSceneNode::setClipPlane(const GLfloat* plane)
     clipPlane[2] = GLdouble(plane[2]);
     clipPlane[3] = GLdouble(plane[3]);
   }
+  return;
 }
 
 
@@ -337,6 +425,7 @@ void TankSceneNode::setHidden(bool _hidden)
 {
   hidden = _hidden;
   cloaked = false;
+  return;
 }
 
 
@@ -344,18 +433,21 @@ void TankSceneNode::setCloaked(bool _cloaked)
 {
   cloaked = _cloaked;
   hidden = false;
+  return;
 }
 
 
 void TankSceneNode::setMaxLOD(int _maxLevel)
 {
   maxLevel = _maxLevel;
+  return;
 }
 
 
 void TankSceneNode::setInTheCockpit(bool value)
 {
   inTheCockpit = value;
+  return;
 }
 
 
@@ -405,12 +497,14 @@ TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
   builder.setShading(GL_SMOOTH);
   builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gstate = builder.getState();
+  return;
 }
 
 
 TankIDLSceneNode::~TankIDLSceneNode()
 {
   // do nothing
+  return;
 }
 
 
@@ -426,6 +520,7 @@ void TankIDLSceneNode::move(const GLfloat _plane[4])
   setCenter(s[0] + 1.5f * BZDBCache::tankLength * plane[0],
 	    s[1] + 1.5f * BZDBCache::tankLength * plane[1],
 	    s[2] + 1.5f * BZDBCache::tankLength * plane[2]);
+  return;
 }
 
 
@@ -441,12 +536,14 @@ void TankIDLSceneNode::notifyStyleChange()
     builder.setStipple(0.5f);
   }
   gstate = builder.getState();
+  return;
 }
 
 
 void TankIDLSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
+  return;
 }
 
 //
@@ -541,12 +638,14 @@ TankIDLSceneNode::IDLRenderNode::IDLRenderNode(
 				sceneNode(_sceneNode)
 {
   // do nothing
+  return;
 }
 
 
 TankIDLSceneNode::IDLRenderNode::~IDLRenderNode()
 {
   // do nothing
+  return;
 }
 
 
@@ -568,7 +667,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
   plane[3] = (sphere[0] * _plane[0] + sphere[1] * _plane[1] +
 	      sphere[2] * _plane[2] + _plane[3]);
 
-  // compute projection point -- one TankLengthy in from plane
+  // compute projection point -- one TankLength in from plane
   const GLfloat pd = -1.0f * BZDBCache::tankLength - plane[3];
   GLfloat origin[3];
   origin[0] = pd * plane[0];
@@ -633,6 +732,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
     glEnd();
 
   glPopMatrix();
+  return;
 }
 
 
@@ -666,6 +766,7 @@ TankSceneNode::TankRenderNode::TankRenderNode(const TankSceneNode* _sceneNode) :
 {
   drawLOD = LowTankLOD;
   drawSize = Normal;
+  return;
 }
 
 
@@ -678,6 +779,7 @@ TankSceneNode::TankRenderNode::~TankRenderNode()
 void TankSceneNode::TankRenderNode::setShadow()
 {
   isShadow = true;
+  return;
 }
 
 
@@ -687,6 +789,7 @@ void TankSceneNode::TankRenderNode::sortOrder(
   above = _above;
   towards = _towards;
   left = _left;
+  return;
 }
 
 
@@ -788,6 +891,7 @@ void TankSceneNode::TankRenderNode::render()
     }
   }
 
+
   // re-enable the dynamic lights
   if (switchLights) {
     RENDERER.reenableLights();
@@ -800,14 +904,23 @@ void TankSceneNode::TankRenderNode::render()
   // restore the MODELVIEW matrix
   glPopMatrix();
 
+  // render the jumpJets
   if (!isExploding && !isShadow) {
-    // FIXME -- add flare lights using addFlareLight().
-    // pass light position in world space.
+    renderJumpJets(); // after the matrix has been reloaded
   }
 
+  // FIXME -- add flare lights using addFlareLight().
+  //          pass light position in world space.
+
   glShadeModel(GL_FLAT);
-  if (!BZDBCache::blend && sceneNode->transparent) myStipple(0.5f);
-  if (sceneNode->clip) glDisable(GL_CLIP_PLANE0);
+  if (!BZDBCache::blend && sceneNode->transparent) {
+    myStipple(0.5f);
+  }
+  if (sceneNode->clip) {
+    glDisable(GL_CLIP_PLANE0);
+  }
+  
+  return;
 }
 
 
@@ -942,6 +1055,8 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   if (isExploding) {
     glPopMatrix();
   }
+  
+  return;
 }
 
 
@@ -1080,6 +1195,69 @@ void TankSceneNode::TankRenderNode::renderLights()
 
   glPointSize(1.0f);
   sceneNode->gstate.setState();
+  
+  return;
+}
+
+
+GLfloat TankSceneNode::jumpJetsModel[4][3] = {
+  {-1.5f, -0.6f, +0.25f},
+  {-1.5f, +0.6f, +0.25f},
+  {+1.5f, -0.6f, +0.25f},
+  {+1.5f, +0.6f, +0.25f}
+};
+
+void TankSceneNode::TankRenderNode::renderJumpJets()
+{
+  if (!sceneNode->jumpJetsOn) {
+    return;
+  }
+  
+  typedef struct {
+    GLfloat vertex[3];
+    GLfloat texcoord[2];
+  } jetVertex;
+  static const jetVertex jet[3] = {
+    {{+0.3f,  0.0f, 0.0f}, {0.0f, 1.0f}},
+    {{-0.3f,  0.0f, 0.0f}, {1.0f, 1.0f}},
+    {{ 0.0f, -1.0f, 0.0f}, {0.5f, 0.0f}}
+  };
+
+  myColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+
+  // use a clip plane, because the ground has no depth
+  const GLdouble clipPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};  
+  glClipPlane(GL_CLIP_PLANE1, clipPlane);
+  glEnable(GL_CLIP_PLANE1);
+  
+  sceneNode->jumpJetsGState.setState();
+  glDepthMask(GL_FALSE);
+  for (int j = 0; j < 4; j++) {
+    glPushMatrix();
+    {
+      const float* pos = sceneNode->jumpJetsPositions[j];
+      glTranslatef(pos[0], pos[1], pos[2]);
+      glScalef(1.0f, 1.0f, sceneNode->jumpJetsLengths[j]);
+
+      RENDERER.getViewFrustum().executeBillboard();
+      
+      glBegin(GL_TRIANGLES);
+      {
+        for (int v = 0; v < 3; v++) {
+          glTexCoord2fv(jet[v].texcoord);
+          glVertex3fv(jet[v].vertex);
+        }
+      }
+      glEnd();
+    }
+    glPopMatrix();
+  }
+  glDepthMask(GL_TRUE);
+  sceneNode->gstate.setState();
+
+  glDisable(GL_CLIP_PLANE1);
+  
+  return;
 }
 
 

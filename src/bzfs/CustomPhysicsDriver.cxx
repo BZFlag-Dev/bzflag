@@ -41,17 +41,45 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
   if (strcasecmp ("velocity", cmd) == 0) {
     float vel[3];
     if (!(input >> vel[0] >> vel[1] >> vel[2])) {
+      std::cout << "parameters errors " << std::endl;
       return false;
     }
     driver->setVelocity(vel);
   }
   else if (strcasecmp ("angular", cmd) == 0) {
-    float angVel;
-    float angPos[2];
-    if (!(input >> angVel >> angPos[0] >> angPos[1])) {
+    float vel;
+    float pos[2];
+    if (!(input >> vel >> pos[0] >> pos[1])) {
+      std::cout << "parameters errors " << std::endl;
       return false;
     }
-    driver->setAngular(angVel, angPos);
+    driver->setAngular(vel, pos);
+  }
+  else if (strcasecmp ("radial", cmd) == 0) {
+    float vel;
+    float pos[2];
+    if (!(input >> vel >> pos[0] >> pos[1])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    driver->setRadial(vel, pos);
+  }
+  else if (strcasecmp ("ice", cmd) == 0) {
+    float iceTime;
+    if (!(input >> iceTime)) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    driver->setIceTime(iceTime);
+  }
+  else if (strcasecmp ("death", cmd) == 0) {
+    std::string line;
+    std::getline(input, line);
+    driver->setDeathMessage(line);
+    input.putback('\n');
+    if (driver->getDeathMsg().size() == 0) {
+      std::cout << "Physics Driver: empty death message, pacifying" << std::endl;
+    }
   }
   else {
     // NOTE: we don't use a WorldFileObstacle

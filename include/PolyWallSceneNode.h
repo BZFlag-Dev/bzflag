@@ -42,7 +42,7 @@ class PolyWallSceneNode : public WallSceneNode {
 			~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();
-	const GLfloat*	getPosition() { return wall->getSphere(); }
+	const GLfloat*	getPosition() const { return wall->getSphere(); }
       private:
 	void		drawV() const;
 	void		drawVT() const;

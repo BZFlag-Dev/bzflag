@@ -58,7 +58,7 @@ class TriWallSceneNode : public WallSceneNode {
 	void		render();
 	void		renderShadow();
 	const GLfloat*  getVertex(int i) const;
-	const GLfloat*	getPosition() { return wall->getSphere(); }
+	const GLfloat*	getPosition() const { return wall->getSphere(); }
       private:
 	void		drawV() const;
 	void		drawVT() const;

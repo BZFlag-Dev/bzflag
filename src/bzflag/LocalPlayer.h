@@ -66,6 +66,7 @@ public:
   ShotPath*	getShot(int index) const;
   const Player*	getTarget() const;
   const Obstacle*	getContainingBuilding() const;
+  int		getDeathPhysicsDriver() const;
 
   void		setTeam(TeamColor);
   void		setDesiredSpeed(float fracOfMaxSpeed);
@@ -104,6 +105,7 @@ public:
   int	   getSpeed();
   bool		isSpawning();
   void		setSpawning( bool spawn );
+  
 
   static LocalPlayer*	getMyTank();
   static void		setMyTank(LocalPlayer*);
@@ -112,7 +114,7 @@ public:
 				       bool phased, bool& expel) const;
   const Obstacle*	getHitBuilding(const float* oldPos, float oldAngle,
 				       const float* pos, float angle,
-				       bool phased, bool& expel) const;
+				       bool phased, bool& expel);
   bool		getHitNormal(const Obstacle* o,
 			     const float* pos1, float azimuth1,
 			     const float* pos2, float azimuth2,
@@ -162,6 +164,7 @@ private:
   bool		entryDrop; // first drop since entering
   bool		wantJump;
   bool		jumpPressed;
+  int		deathPhyDrv;	// physics driver that caused death
 };
 
 
@@ -193,6 +196,11 @@ inline const Player* LocalPlayer::getRecipient() const
 inline const Obstacle* LocalPlayer::getContainingBuilding() const
 {
   return insideBuilding;
+}
+
+inline int		LocalPlayer::getDeathPhysicsDriver() const
+{
+  return deathPhyDrv;
 }
 
 inline LocalPlayer::InputMethod LocalPlayer::getInputMethod() const

@@ -299,10 +299,14 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       if (messageMask[MsgKilled]) {
 	PlayerId victim, killer;
 	int16_t shotId, reason;
+	int phydrv;
 	vbuf = nboUnpackUByte(vbuf, victim);
 	vbuf = nboUnpackUByte(vbuf, killer);
 	vbuf = nboUnpackShort(vbuf, reason);
 	vbuf = nboUnpackShort(vbuf, shotId);
+	if (reason == PhysicsDriverDeath) {
+	  vbuf = nboUnpackInt(vbuf, phydrv);
+        }
 
 	// find the player names and build a kill message string
 	it = players.find(victim);

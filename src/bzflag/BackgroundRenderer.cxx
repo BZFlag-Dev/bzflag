@@ -829,6 +829,9 @@ void			BackgroundRenderer::drawGroundReceivers(
   int i, j;
   for (int k = 0; k < count; k++) {
     const OpenGLLight& light = renderer.getLight(k);
+    if (light.getOnlyReal()) {
+      continue;
+    }
 
     const GLfloat* pos = light.getPosition();
     const GLfloat* lightColor = light.getColor();

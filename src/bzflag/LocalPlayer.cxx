@@ -61,7 +61,8 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   down(false),
   entryDrop(true),
   wantJump(false),
-  jumpPressed(false)
+  jumpPressed(false),
+  deathPhyDrv(-1)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
@@ -312,6 +313,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (wantJump) {
     doJump();
     if (!wantJump) {
+      fireJumpJets();
       newVelocity[2] = oldVelocity[2];
       if ((lastObstacle != NULL) && !lastObstacle->isFlatTop()
 	  && BZDB.isTrue(StateDatabase::BZDB_NOCLIMB)) {
@@ -326,26 +328,66 @@ void			LocalPlayer::doUpdateMotion(float dt)
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
   if (phydrv != NULL) {
     const float* v = phydrv->getVelocity();
-    const float av = phydrv->getAngularVel();
-    const float* ap = phydrv->getAngularPos();
+    if (phydrv->getIsIce()) {
+      const float angle = oldAzimuth + (0.5f * dt * newAngVel);
+      const float cos_val = cosf(angle);
+      const float sin_val = sinf(angle);
+      const float iceTime = phydrv->getIceTime();
+      const float scale = (dt / iceTime);
+      const float speedAdj = desiredSpeed * scale;
+      const float* ov = oldVelocity;
+      const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
+      float* nv = newVelocity;
+      nv[0] = ov[0] + (cos_val * speedAdj);
+      nv[1] = ov[1] + (sin_val * speedAdj);
+      const float newSpeed = sqrtf((nv[0] * nv[0]) + (nv[1] * nv[1]));
 
-    // adjust the velocity
-    newVelocity[0] += v[0];
-    newVelocity[1] += v[1];
-    newVelocity[2] += v[2];
+      // BURROW and AGILITY will not be taken into account
+      const FlagType* flag = getFlag();
+      float maxSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+      if (flag == Flags::Velocity) {
+        maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+      } else if (flag == Flags::Thief) {
+        maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+      }
+      
+      if (newSpeed > maxSpeed) {
+        float adjSpeed;
+        if (oldSpeed > maxSpeed) {
+          adjSpeed = oldSpeed - (dt * (maxSpeed / iceTime));
+          if (adjSpeed < 0.0f) {
+            adjSpeed = 0.0f;
+          }
+        } else {
+          adjSpeed = maxSpeed;
+        }
+        const float speedScale = adjSpeed / newSpeed;
+        nv[0] *= speedScale;
+        nv[1] *= speedScale;
+      }
+    }
+    else {
+      // adjust the horizontal velocity
+      newVelocity[0] += v[0];
+      newVelocity[1] += v[1];
 
-    // play the jump sound
-    if (v[2] > 0.0f) {
-      playLocalSound(SFX_JUMP);
+      const float av = phydrv->getAngularVel();
+      const float* ap = phydrv->getAngularPos();
+
+      if (av != 0.0f) {
+        // the angular velocity is in radians/sec
+        newAngVel += av;
+        const float dx = oldPosition[0] - ap[0];
+        const float dy = oldPosition[1] - ap[1];
+        newVelocity[0] -= av * dy;
+        newVelocity[1] += av * dx;
+      }
     }
 
-    if (av != 0.0f) {
-      // the angular velocity is in radians/sec
-      newAngVel += av;
-      const float dx = oldPosition[0] - ap[0];
-      const float dy = oldPosition[1] - ap[1];
-      newVelocity[0] -= av * dy;
-      newVelocity[1] += av * dx;
+    newVelocity[2] += v[2];
+    // play the jump sound
+    if (v[2] > 0.0f) {
+      playLocalSound(SFX_BOUNCE);
     }
   }
   lastObstacle = NULL;
@@ -504,10 +546,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
 
     // get position just before impact
-    newAzimuth = tmpAzimuth + searchTime * newAngVel;
-    newPos[0] = tmpPos[0] + searchTime * newVelocity[0];
-    newPos[1] = tmpPos[1] + searchTime * newVelocity[1];
-    newPos[2] = tmpPos[2] + searchTime * newVelocity[2];
+    newAzimuth = tmpAzimuth + (searchTime * newAngVel);
+    newPos[0] = tmpPos[0] + (searchTime * newVelocity[0]);
+    newPos[1] = tmpPos[1] + (searchTime * newVelocity[1]);
+    newPos[2] = tmpPos[2] + (searchTime * newVelocity[2]);
     if (oldPosition[2] < groundLimit) {
 #ifdef _MSC_VER
       newVelocity[2] = max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
@@ -537,7 +579,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newVelocity[2] = 0.0f;
     } else {
       // get component of velocity in normal direction (in horizontal plane)
-      float mag = normal[0] * newVelocity[0] + normal[1] * newVelocity[1];
+      float mag = (normal[0] * newVelocity[0]) +
+                  (normal[1] * newVelocity[1]);
 
       // handle upward normal component to prevent an upward force
       if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE)) {
@@ -715,7 +758,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
   move(newPos, newAzimuth);
   setVelocity(newVelocity);
   setAngularVelocity(newAngVel);
-  newAzimuth = getAngle();
+  setRelativeMotion();
+  newAzimuth = getAngle(); // pickup the limited angle range from move()
 
   // see if I'm over my antidote
   if (antidoteFlag && location == OnGround) {
@@ -777,7 +821,7 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* p, float a,
 
 const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
 					    const float* p, float a,
-					    bool phased, bool& expelled) const
+					    bool phased, bool& expelled)
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
   const float* dims = getDimensions();
@@ -789,6 +833,18 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
 		obstacle->getType() == Teleporter::getClassName() ||
 		(hasOOflag && desiredSpeed < 0.0f && p[2] == 0.0f));
+
+  if (obstacle != NULL) {
+    if (obstacle->getType() == MeshFace::getClassName()) {
+      const MeshFace* face = (const MeshFace*) obstacle;
+      const int driver = face->getPhysicsDriver();
+      const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+      if ((phydrv != NULL) && phydrv->getIsDeath()) {
+        deathPhyDrv = driver;
+      }
+    }
+  }
+        
   return obstacle;
 }
 
@@ -876,6 +932,9 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
 
   // no target
   target = NULL;
+  
+  // no death
+  deathPhyDrv = -1;
 
   // initialize position/speed state
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
@@ -952,7 +1011,11 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
   // set desired speed
   desiredSpeed = BZDBCache::tankSpeed * fracOfMaxSpeed;
+  Player::setUserSpeed(desiredSpeed);
+  
+  return;
 }
+
 
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 {
@@ -977,7 +1040,11 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 
   // set desired turn speed
   desiredAngVel = fracOfMaxAngVel * BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+  Player::setUserAngVel(desiredAngVel);
+  
+  return;
 }
+
 
 void			LocalPlayer::setPause(bool pause)
 {

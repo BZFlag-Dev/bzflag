@@ -53,7 +53,7 @@ class SphereFragmentSceneNode : public SceneNode {
 			~FragmentRenderNode();
 	const GLfloat*	getVertex() const;
 	void		render();
-	const GLfloat*	getPosition();
+	const GLfloat*	getPosition() const;
       private:
 	const SphereSceneNode*	sceneNode;
 	int		theta, phi;
@@ -100,7 +100,7 @@ class SphereSceneNode : public SceneNode {
 	void		setHighResolution(bool);
 	void		setBaseIndex(int index);
 	void		render();
-	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
       private:
 	const SphereSceneNode* sceneNode;
 	bool		highResolution;

@@ -52,6 +52,8 @@ class OpenGLLight {
     void		setImportance(const ViewFrustum& frustum);
     GLfloat		getImportance() const;
 
+    void		setOnlyReal(bool value);
+    bool		getOnlyReal() const;
     void		setOnlyGround(bool value);
     bool		getOnlyGround() const;
 
@@ -75,6 +77,7 @@ class OpenGLLight {
     GLfloat		atten[3];
     GLfloat		maxDist;
     GLfloat		importance;
+    bool		onlyReal;
     bool		onlyGround;
     GLuint		listBase;
     GLuint*		list;
@@ -110,6 +113,11 @@ inline const GLfloat	OpenGLLight::getMaxDist() const
 inline GLfloat		 OpenGLLight::getImportance() const
 {
   return importance;
+}
+
+inline bool		 OpenGLLight::getOnlyReal() const
+{
+  return onlyReal;
 }
 
 inline bool		 OpenGLLight::getOnlyGround() const

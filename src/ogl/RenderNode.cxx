@@ -102,14 +102,15 @@ void RenderNodeGStateList::grow()
 }
 
 
-static int distCompare(const void *p1, const void* p2)
+static int nodeCompare(const void *a, const void* b)
 {
-  const RenderNodeGStateList::Item* item1 =
-    (const RenderNodeGStateList::Item*) p1;
-  const RenderNodeGStateList::Item* item2 =
-    (const RenderNodeGStateList::Item*) p2;
+  const RenderNodeGStateList::Item* itemA =
+    (const RenderNodeGStateList::Item*) a;
+  const RenderNodeGStateList::Item* itemB =
+    (const RenderNodeGStateList::Item*) b;
 
-  if (item1->depth > item2->depth) {
+  // draw from back to front
+  if (itemA->depth > itemB->depth) {
     return -1;
   } else {
     return +1;
@@ -118,17 +119,17 @@ static int distCompare(const void *p1, const void* p2)
 
 void RenderNodeGStateList::sort(const GLfloat* e)
 {
-  int i;
-
-  // get depths
-  for (i = 0; i < count; i++) {
+  // calculate distances from the eye (squared)
+  for (int i = 0; i < count; i++) {
     const GLfloat* p = list[i].node->getPosition();
-    list[i].depth = ((p[0] - e[0]) * (p[0] - e[0])) +
-		    ((p[1] - e[1]) * (p[1] - e[1])) +
-		    ((p[2] - e[2]) * (p[2] - e[2]));
+    const float dx = (p[0] - e[0]);
+    const float dy = (p[1] - e[1]);
+    const float dz = (p[2] - e[2]);
+    list[i].depth = ((dx * dx) + (dy * dy) + (dz * dz));
   }
-
-  qsort (list, count, sizeof(Item), distCompare);
+  
+  // sort from farthest to closest
+  qsort (list, count, sizeof(Item), nodeCompare);
 
   return;
 }

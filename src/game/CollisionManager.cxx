@@ -45,6 +45,9 @@ static SplitObsList	SplitPad;  // for returning a split list of obstacles
 
 static ColDetNodeList	RayList;   // for returning a list a ray hit nodes
 
+static ObsList		EmptyList = { 0, NULL };
+static ColDetNodeList	EmptyNodeList = { 0, NULL };
+
 
 /* static functions */
 
@@ -134,6 +137,7 @@ CollisionManager::~CollisionManager ()
 void CollisionManager::clear ()
 {
   delete root;
+  root = NULL;
 
   WorldSize = 0.0f;
   leafNodes = 0;
@@ -180,6 +184,10 @@ bool CollisionManager::needReload () const
 const ObsList* CollisionManager::axisBoxTest (const float* _mins,
 					      const float* _maxs) const
 {
+  if (root == NULL) {
+    return &EmptyList;
+  }
+
   FullPad.count = 0;
 
   // get the list
@@ -197,6 +205,10 @@ const ObsList* CollisionManager::axisBoxTest (const float* _mins,
 const ObsList* CollisionManager::cylinderTest (const float *pos,
 					       float radius, float height) const
 {
+  if (root == NULL) {
+    return &EmptyList;
+  }
+
   float tmpMins[3], tmpMaxs[3];
   tmpMins[0] = pos[0] - radius;
   tmpMins[1] = pos[1] - radius;
@@ -250,8 +262,11 @@ const ObsList* CollisionManager::movingBoxTest (
 
 const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
 {
-  FullPad.count = 0;
+  if (root == NULL) {
+    return &EmptyList;
+  }
 
+  FullPad.count = 0;
   RayList.count = 0;
 
   // get the list
@@ -277,6 +292,10 @@ static int compareRayNodes (const void *a, const void *b)
 const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
 						      float timeLeft) const
 {
+  if (root == NULL) {
+    return &EmptyNodeList;
+  }
+
   RayList.count = 0;
 
   // get the list

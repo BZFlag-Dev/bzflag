@@ -47,7 +47,7 @@ class FlagSceneNode : public SceneNode {
 			FlagRenderNode(const FlagSceneNode*);
 			~FlagRenderNode();
 	void		render();
-	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
       private:
 	const FlagSceneNode* sceneNode;
         int             waveReference;

@@ -60,7 +60,7 @@ class MeshPolySceneNode : public WallSceneNode {
 	const GLfloat* getVertex(int i) const;
 	const GLfloat (*getVertices() const)[3];
 	const int getVertexCount() const;
-	const GLfloat* getPosition() { return sceneNode->getSphere(); }
+	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
       private:
 	void drawV() const; // draw with just vertices
 	void drawVT() const; // draw with texcoords

@@ -8,6 +8,7 @@ EXTRA_DIST =			\
 	blue_super_bolt.png	\
 	blue_tank.png		\
 	boom.wav		\
+	bounce.wav		\
 	boxwall.png		\
 	bubble.png		\
 	burrow.wav		\
@@ -36,6 +37,7 @@ EXTRA_DIST =			\
 	hunt_select.wav		\
 	hunter_tank.png		\
 	jump.wav		\
+	jumpjets.png		\
 	killteam.wav		\
 	land.wav		\
 	laser.wav		\

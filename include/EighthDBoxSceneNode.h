@@ -38,7 +38,7 @@ class EighthDBoxSceneNode : public EighthDimSceneNode {
 				const float size[3], float rotation);
 			~EighthDBoxRenderNode();
 	void		render();
-	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
       private:
 	const EighthDBoxSceneNode* sceneNode;
 	GLfloat		corner[8][3];

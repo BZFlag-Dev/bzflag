@@ -155,6 +155,10 @@ const uint16_t		RejectBadCallsign = 0x0006;
 const uint16_t		RejectRepeatCallsign = 0x0007;
 const uint16_t		RejectRejoinWaitTime = 0x0008;
 
+// death by obstacle 
+const uint16_t		PhysicsDriverDeath = 0x7064;		// 'pd'
+
+
 // request for additional UDP link
 const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'
 const uint16_t		MsgUDPLinkEstablished = 0x6f67;		// 'og'

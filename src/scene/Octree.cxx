@@ -174,7 +174,6 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   OcclMgr.update(CullFrustum);
 
   // get the nodes
-  DEBUG4 ("Octree::getFrustumList: root count = %i\n", root->getCount());
   root->getFrustumList ();
 
   OcclMgr.select(CullList, CullListCount);
@@ -263,7 +262,6 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   // FIXME: use occluders later?  OcclMgr.update(CullFrustum);
 
   // get the nodes
-  DEBUG4 ("Octree::getFrustumList: root count = %i\n", root->getCount());
   root->getShadowList ();
 
   return CullListCount;
