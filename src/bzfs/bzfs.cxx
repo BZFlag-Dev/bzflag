@@ -2861,8 +2861,7 @@ static bool enemyProximityCheck(TeamColor team, float *pos, float safeDist)
 {
   safeDist*= safeDist;
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].state >= PlayerInLimbo && player[i].team != ObserverTeam &&
-        areFoes(player[i].team, team)) {
+    if (player[i].state == PlayerAlive && areFoes(player[i].team, team)) {
       float *enemyPos = player[i].lastState.pos;
       if (fabs(enemyPos[2] - pos[2]) < 1.0f) {
         float x = enemyPos[0] - pos[0];
@@ -2879,6 +2878,7 @@ static bool enemyProximityCheck(TeamColor team, float *pos, float safeDist)
 
 static void getSpawnLocation(int playerId, float* pos, float *azimuth)
 {
+  TimeKeeper start=TimeKeeper::getCurrent();
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
   if (player[playerId].restartOnBase && team <= PurpleTeam) {
@@ -2895,8 +2895,8 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
     WorldInfo::ObstacleLocation *building;
 
     int inAirAttempts = 20;
-    long int failSafeLimit = 100;
-    float minProximity = size / 10.0f;
+    int failSafeLimit = 100;
+    float minProximity = size / 3.0f;
     bool foundspot = false;
     while (!foundspot) {
       pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
@@ -2933,10 +2933,7 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
         }
         // ok, when not on top of pyramid or teleporter
         if (lastType != IN_PYRAMID  &&  lastType != IN_TELEPORTER) {
-	  if (!enemyProximityCheck(team, pos, minProximity)){
-            foundspot = true;
-	    minProximity *= 0.99f;
-	  }
+          foundspot = true;
         }
       }
 
@@ -2948,7 +2945,14 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
       // simple check for a hanging server
       if (--failSafeLimit <= 0) {
 	//Just drop the sucka in, and pray
-	pos[2] = maxWorldHeight;
+        pos[2] = maxWorldHeight;
+        break;
+      }
+
+      // check if spot is safe enough
+      if (foundspot && enemyProximityCheck(team, pos, minProximity)) {
+        foundspot = false;
+        minProximity *= 0.99f;
       }
     }
   }
@@ -3041,6 +3045,10 @@ static void playerAlive(int playerIndex)
   // send MsgAlive
   float pos[3], fwd;
   getSpawnLocation(playerIndex, pos, &fwd);
+  // update last position immediately
+  player[playerIndex].lastState.pos[0] = pos[0];
+  player[playerIndex].lastState.pos[1] = pos[1];
+  player[playerIndex].lastState.pos[2] = pos[2];
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackVector(buf,pos);
