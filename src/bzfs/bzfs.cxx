@@ -1574,10 +1574,10 @@ static void pwrite(int playerIndex, const void *b, int l)
 	case MsgShotBegin:
 	case MsgShotEnd:
 	case MsgPlayerUpdate:
-    case MsgGMUpdate:
-    case MsgLagPing:
+	case MsgGMUpdate:
+	case MsgLagPing:
 	  puwrite(playerIndex,b,l);
-	  return;
+	  goto unpatch;
     }
   }
 
@@ -1611,7 +1611,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 	    playerIndex, p.callSign, p.outmsgSize + l);
 	DEBUG4("REMOVE: CAPACITY\n");
 	removePlayer(playerIndex);
-	return;
+	goto unpatch;
       }
 
       // allocate memory
@@ -1639,6 +1639,10 @@ static void pwrite(int playerIndex, const void *b, int l)
     memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, b, l);
     p.outmsgSize += l;
   }
+unpatch:
+  if (!player[playerIndex].knowId)
+     patchMessage(player[playerIndex].oldId, player[playerIndex].id, b);
+  return;
 }
 
 static char sMsgBuf[MaxPacketLen];
