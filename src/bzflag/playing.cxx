@@ -4660,7 +4660,7 @@ static bool negotiateFlags(ServerLink* serverLink)
   /* Send MsgNegotiateFlags to the server with
    * the abbreviations for all the flags we support.
    */
-  for (i = FlagDesc::getFlagMap().begin(); 
+  for (i = FlagDesc::getFlagMap().begin();
        i != FlagDesc::getFlagMap().end(); i++) {
     buf = (char*) i->second->pack(buf);
   }
@@ -4669,7 +4669,7 @@ static bool negotiateFlags(ServerLink* serverLink)
   /* Response should always be a MsgNegotiateFlags. If not, assume the server
    * is too old or new to understand our flag system.
    */
-  if (serverLink->read(code, len, msg, 5000)<=0 || code != MsgNegotiateFlags) { 
+  if (serverLink->read(code, len, msg, 5000)<=0 || code != MsgNegotiateFlags) {
     printError("Unsupported response from server during flag negotiation");
     return false;
   }

@@ -5129,7 +5129,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 
 	/* Compare them to the flags this game might need, generating a list of missing flags */
-	for (it = FlagDesc::getFlagMap().begin(); 
+	for (it = FlagDesc::getFlagMap().begin();
 	     it != FlagDesc::getFlagMap().end(); ++it) {
 		if (!hasFlag[it->second]) {
 		   if (clOptions.flagCount[it->second] > 0)
@@ -5141,8 +5141,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	/* Pack a message with the list of missing flags */
 	buf = bufStart = getDirectMessageBuffer();
-	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it)
-	  buf = (*m_it)->pack(buf);
+	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it) {
+	  if ((*m_it) != Flags::Null)
+	    buf = (*m_it)->pack(buf);
+	}
 	directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
 	break;
     }
