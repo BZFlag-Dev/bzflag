@@ -108,6 +108,7 @@ class ServerStartMenu : public HUDDialog {
     HUDuiLabel*		status;
     HUDuiLabel*		failedMessage;
     static char		settings[];
+    std::map<std::string, std::string> worldFiles;
 };
 
 class ServerItem {

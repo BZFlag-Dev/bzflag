@@ -18,29 +18,37 @@
 #pragma warning( 4 : 4786 )
 #endif
 
+/* system headers */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#ifndef _WIN32
+#  include <sys/types.h>
+#  include <dirent.h>
+#  include <pwd.h>
+#endif
 #include <map>
 #include "common.h"
 #include "bzsignal.h"
 #if defined(_WIN32)
-#define _POSIX_
-#include <limits.h>
-#undef _POSIX_
-#include <process.h>
+#  define _POSIX_
+#  include <limits.h>
+#  undef _POSIX_
+#  include <process.h>
 #else
-#include <sys/types.h>
-#ifndef GUSI_20
-  #include <sys/wait.h>
-#endif
-#include <unistd.h>
+#  include <sys/types.h>
+#  ifndef GUSI_20
+#    include <sys/wait.h>
+#  endif
+#  include <unistd.h>
 #endif
 #include <math.h>
 #include <time.h>
 #include <fstream>
+
+/* implementation-specific headers */
 #include "bzfio.h"
 #include "menus.h"
 #include "sound.h"
@@ -3967,6 +3975,120 @@ ServerStartMenu::ServerStartMenu()
   list->update();
   controls.push_back(list);
 
+  list = createList("World Map:");
+  items = &list->getList();
+  items->push_back("random map");
+
+  /* add a list of world files found.  look in the current directory
+   * as well as in the config file directory.
+   */
+#ifdef _WIN32
+  /* add a list of .bzw files found in the current dir */
+  std::string pattern = BZDB.get("directory") + "\\";
+  WIN32_FIND_DATA findData;
+  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
+  if (h != INVALID_HANDLE_VALUE) {
+    std::string file;
+    std::string suffix;
+    while (FindNextFile(h, &findData)) {
+      file = findData.cFileName;
+      if (file.length() > 4) {
+	suffix = file.substr(file.length() - 4, 4);
+	if (compare_nocase(suffix, ".bzw") == 0) {
+	  worldFiles[file] = pattern + file;
+	  items->push_back(file);
+	}
+      }
+    }
+  }
+
+  /* add a list of .bzw files found in the config file dir */
+  pattern = "C:";
+  char dir[MAX_PATH];
+  ITEMIDLIST* idl;
+  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
+    if (SHGetPathFromIDList(idl, dir)) {
+      struct stat statbuf;
+      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
+	pattern = dir;
+    }
+    IMalloc* shalloc;
+    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
+      shalloc->Free(idl);
+      shalloc->Release();
+    }
+  }
+  // yes it seems silly but the windows way is to have "my" in front of any folder you make in the my docs dir
+  // todo: make this stuff go into the application data dir.
+  pattern += "\\My BZFlag Files\\";
+  WIN32_FIND_DATA findData;
+  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
+  if (h != INVALID_HANDLE_VALUE) {
+    std::string file;
+    std::string suffix;
+    while (FindNextFile(h, &findData)) {
+      file = findData.cFileName;
+      if (file.length() > 4) {
+	suffix = file.substr(file.length() - 4, 4);
+	if (compare_nocase(suffix, ".bzw") == 0) {
+	  worldFiles[file] = pattern + file;
+	  items->push_back(file);
+	}
+      }
+    }
+  }
+#else
+  /* add a list of .bzw files found in the current dir */
+  std::string pattern = BZDB.get("directory") + "/";
+  DIR *directory = opendir(pattern.c_str());
+  if (directory) {
+    struct dirent* contents;
+    std::string file;
+    std::string suffix;
+    while ((contents = readdir(directory))) {
+      file = contents->d_name;
+      if (file.length() > 4) {
+	suffix = file.substr(file.length()-4, 4);
+	if (compare_nocase(suffix, ".bzw") == 0) {
+	  worldFiles[file] = pattern + file;
+	  items->push_back(file);
+	}
+      }
+    }
+    closedir(directory);
+  }
+
+  /* add a list of .bzw files found in the config file dir */
+  struct passwd* pwent = getpwuid(getuid());
+  pattern = "";
+  if (pwent && pwent->pw_dir) {
+    pattern += std::string(pwent->pw_dir);
+    pattern += "/";
+  }
+  pattern += ".bzf/";
+  directory = opendir(pattern.c_str());
+  if (directory) {
+    struct dirent* contents;
+    std::string file;
+    std::string suffix;
+    while ((contents = readdir(directory))) {
+      file = contents->d_name;
+      if (file.length() > 4) {
+	suffix = file.substr(file.length()-4, 4);
+	if (compare_nocase(suffix, ".bzw") == 0) {
+	  worldFiles[file] = pattern + file;
+	  items->push_back(file);
+	}
+      }
+    }
+    closedir(directory);
+  }
+
+#endif
+
+  list->update();
+  controls.push_back(list);
+
   label = createLabel("Start");
   controls.push_back(label);
 
@@ -4023,7 +4145,8 @@ void			ServerStartMenu::execute()
 
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
-  if (focus == list[14]) {
+  // FIXME -- hardcoded indices are nasty
+  if (focus == list[15]) {
     // start it up:
     //   without: -p, -i, -q, -a, +f, -synctime
     //   -b if -c
@@ -4136,6 +4259,14 @@ void			ServerStartMenu::execute()
     if (((HUDuiList*)list[13])->getIndex() == 0)
       args[arg++] = "-g";
 
+    // world map file
+    if (((HUDuiList*)list[14])->getIndex() != 0) { // not random
+      args[arg++] = "-world";
+      std::vector<std::string> fileList = ((HUDuiList*)list[14])->getList();
+      std::string filename = fileList[((HUDuiList*)list[14])->getIndex()].c_str();
+      args[arg++] = worldFiles[filename].c_str();
+    }
+
     // no more arguments
     args[arg++] = NULL;
 
@@ -4234,6 +4365,9 @@ void			ServerStartMenu::resize(int width, int height)
   const float h = list[1]->getFont().getHeight();
   const int count = list.size();
   for (int i = 1; i < count; i++) {
+    /* FIXME -- nasty hard-coded constant.. 
+     * should check if label is "Start" 
+     */
     if (i == 15) {
       y -= bigFontHeight;
       list[i]->setFontSize(bigFontWidth, bigFontHeight);
