@@ -12,6 +12,7 @@
 
 #include <assert.h>
 #include <string>
+#include <string.h>
 
 #include "common.h"
 #include "bzfgl.h"
@@ -152,7 +153,7 @@ bool TextureFont::load(OSFile &file)
 
   // now wack off the extension;
   if (extension)
-    faceName.erase(faceName.size() - sizeof(extension), faceName.size());
+    faceName.erase(faceName.size() - strlen(extension), faceName.size());
 
   temp = strrchr(faceName.c_str(), '_');
 
@@ -161,10 +162,10 @@ bool TextureFont::load(OSFile &file)
     faceName.resize(temp - faceName.c_str());
   }
 
-  // faceName.erase(faceName.size()-sizeof(temp),faceName.size());
+  // faceName.erase(faceName.size()-strlen(temp),faceName.size());
 
   if (extension)
-    texture.erase(texture.size() - sizeof(extension), texture.size());
+    texture.erase(texture.size() - strlen(extension), texture.size());
 
   return (numberOfCharacters > 0);
 }
