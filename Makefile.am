@@ -38,11 +38,11 @@ MAINTAINERCLEANFILES = \
 
 debian-cvs: dist
 	-rm -rf $(distdir)
-	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
+	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
 	(cd $(distdir) && debian/buildsnap cvs)
 
 debian-release: debian/changelog dist
 	-rm -rf $(distdir)
-	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
+	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
 	cp debian/changelog $(distdir)/debian/
 	(cd $(distdir) && debian/buildsnap release)
