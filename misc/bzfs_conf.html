@@ -1,0 +1,574 @@
+<html>
+	<head>
+		<title>BZFS Configuration Builder</title>
+		<script language="JavaScript">
+			var console = null;   
+
+			function ableControls()
+			{
+				var mainform = document.forms["main"];
+				var freeForAll = (mainform.game_style.value == "ffa");
+				mainform.allow_teleporters.disabled = mainform.world_type.checked;
+				mainform.ping_ttl.disabled = !mainform.respond_pings.checked;
+				mainform.world_file.disabled = !mainform.world_type.checked;
+				mainform.randomly_orient_buildings.disabled = mainform.world_type.checked;
+				mainform.random_building_heights.disabled = mainform.world_type.checked;
+				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || freeForAll;
+				mainform.allow_rogues.disabled = !freeForAll;
+				
+				return true;
+			}
+	
+			function buildConfig()
+			{
+				// Open a plain text window
+				if (( console == null) || ( console.closed)) { 
+				        console = window.open("","untitled_bz.conf","width=600,height=300,resizable");
+				        console.document.open("text/html");
+				}
+				var d = console.document;
+				var mainform = document.forms["main"];
+
+				d.writeln("<html><body><p>");
+				if (mainform.port.value != 5155) {
+					d.writeln("#Initial port clients connect on<br/>");
+					d.writeln("-p " + mainform.port.value + "<br/>");
+				}
+				
+				if (mainform.reconnect_port.value != 5156) {
+					d.writeln("#Reconnect port<br/>");
+					d.writeln("-pr " + mainform.reconnect_port.value+"<br/>");
+				}
+
+				if (mainform.udp.value == "required") {
+					d.writeln("#Require UDP<br/>");
+					d.writeln("-requireudp<br/>");
+				}
+				else if (mainform.udp.value == "none") {
+					d.writeln("#Disallow UDP<br/>");
+					d.writeln("-noudp<br/>");
+				}
+
+				if (mainform.listen_interface.value.length > 0) {
+					d.writeln("#Listen on this network interface<br/>");
+					d.writeln("-i " + mainform.listen_interface.value + "<br/>");
+				}
+
+				if (mainform.public_description.value.length > 0) {
+					d.writeln("#Public description for the server<br/>");
+					d.writeln("-public \"" + mainform.public_description.value + "\"<br/>");
+				}
+
+				if (mainform.public_address.value.length > 0) {
+					d.writeln("#Public network address for the server<br/>");
+					d.writeln("-publicaddr " + mainform.public_address.value + "<br/>");
+				}
+
+				if (mainform.public_list_server.value.length > 0) {
+					d.writeln("#Public List server to register with<br/>")
+					d.writeln("-publiclist " + mainform.public_list_server.value + "<br/>");
+				}
+
+				if (mainform.server_message.value.length > 0) {
+					d.writeln("#Server Message displayed when player joins<br/>");
+					d.writeln("-srvmsg \"" + mainform.server_message.value + "\"<br/>");
+				}
+
+				if (!mainform.respond_pings.checked) {
+					d.writeln("#Server will not respond to pings<br/>");
+					d.writeln("-q<br/>");
+				}
+
+				if (!mainform.ping_ttl.value.disabled && mainform.ping_ttl.value != 8) {
+					d.writeln("# Time to Live for Ping<br/>");
+					d.writeln("-ttl " + mainform.ping_ttl.value + "<br/>");
+				}
+
+				if (mainform.sync_time.checked) {
+					d.writeln("#Synchronize time of day on all clients<br/>");
+					d.writeln("-synctime<br/>");
+				}
+
+				if (mainform.lag_warn_time.value != 0) {
+					d.writeln("#Lag Warning threshold time [ms]");
+					d.writeln("-lagwarn " + mainform.lag_warn_time.value + "<br/>");
+				}
+
+				if (mainform.lag_drop_time.value != 0) {
+					d.writeln("#Drop player after this many lag warnings");
+					d.writeln("-lagdrop " + mainform.lag_drop_time.value + "<br/>");
+				}
+
+				if (mainform.ban_list.value.length > 0) {
+					d.writeln("#Ban players based on ip addresses");
+					d.writeln("-ban \"" + mainform.ban_list.value + "\"<br/>");
+				}
+
+				if (mainform.idle_kick_time.value != 0) {
+					d.writeln("#Idle Kick Threshold [s]");
+					d.writeln("-maxidle " + mainform.idle_kick_time.value + "<br/>");
+				}
+
+				if (!mainform.team_killers_die.checked) {
+					d.writeln("#Player does not die when killing a teammate<br/>");
+					d.writeln("-tk<br/>");
+				}
+
+				if (mainform.team_killer_kick_ratio.value != 0) {
+					d.writeln("#Team killer to wins percentage (1-100) above which player is kicked");
+					d.writeln("-tkkr " + mainform.team_killer_kick_ratio.value + "<br/>");
+				}
+
+				if (mainform.advertisement_message.value.length > 0) {
+					d.writeln("#Message that is broadcast every 15 minutes<br/>");
+					d.writeln("-admsg \"" + mainform.advertisement_message.value + "<br/>");
+				}
+
+				if (mainform.debug_level.value != 0) {
+					d.writeln("#Increase debugging level<br/>");
+					d.write("-");
+					for (i = 0; i < mainform.debug_level.value; i++)
+						d.write("d");
+					d.writeln("");
+				}
+
+				if (mainform.password.value.length > 0) {
+					d.writeln("#Administrator's password<br/>");
+					d.writeln("-password \"" + mainform.password.value + "\"<br/>");
+				}
+
+				if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
+					d.writeln("#World file to load<br/>");
+					d.writeln("-world \"" + mainform.world_file.value + "\"<br/>");
+				}
+
+				if (mainform.game_style.value == "ctf") {
+					d.writeln("#Capture the flag game style<br/>");
+					d.writeln("-c<br/>");
+				}
+
+				if (mainform.flags_on_buildings.checked) {
+					d.writeln("#Flags on buildings<br/>");
+					d.writeln("-fb<br/>");
+				}
+
+				if ((!mainform.randomly_orient_buildings.disabled) && mainform.randomly_orient_buildings.checked) {
+					d.writeln("#Randomly orient buildings<br/>");
+					d.writeln("-b<br/>");
+				}
+
+				if ((!mainform.random_building_heights.disabled) && mainform.random_building_heights.checked) {
+					d.writeln("#Randomly height buildings buildings<br/>");
+					d.writeln("-h<br/>");
+				}
+
+				if (mainform.maximum_acceleration.checked) {
+					d.writeln("#Limit Acceleration<br/>");
+					d.writeln("-a<br/>");
+				}
+
+				if ((!mainform.balanced_ctf_map.disabled) && mainform.balanced_ctf_map.checked) {
+					d.writeln("#Balanced capture the flag world<br/>");
+					d.writeln("-cr<br/>");
+				}
+
+				if (mainform.exit_one_game.checked) {
+					d.writeln("#Serve one game and exit<br/>");
+					d.writeln("-g<br/>");
+				}
+
+				if (mainform.maximum_players.value != 40) {
+					d.writeln("#Maximum number of players<br/>");
+					d.writeln("-mp " + mainform.maximum_players.value + "<br/>");
+				}
+
+				if (mainform.maximum_observers.value != 3) {
+					d.writeln("#Maximum number of additional observers allowed<br/>");
+					d.writeln("-mo " + mainform.maximum_observers.value + "<br/>");
+				}
+
+				if (mainform.maximum_team_score.value > 0) {
+					d.writeln("#Maximum Team score limit on game<br/>");
+					d.writeln("-mts " + mainform.maximum_team_score.value + "<br/>");
+				}
+				
+				if (mainform.maximum_player_score.value > 0) {
+					d.writeln("#Maximum Player score limit on game<br/>");
+					d.writeln("-mps " + mainform.maximum_player_score.value + "<br/>");
+				}
+
+				if (mainform.mandatory_superflags.value != 16) {
+					d.writeln("#Number of superflags that must exist at all times<br/>");
+					d.writeln("+s " + mainform.mandatory_superflags.value + "<br/>");
+				}
+
+				if (mainform.allowed_superflags.value != 16) {
+					d.writeln("#Number of superflags that may exist at any time<br/>");
+					d.writeln("-s " + mainform.allowed_superflags.value + "<br/>");
+				}
+
+				if ((!mainform.allow_teleporters.disabled) && mainform.allow_teleporters.checked) {
+					d.writeln("#Allow random teleporters<br/>");
+					d.writeln("-t<br/>");
+				}
+
+				if (mainform.insert_antidote_flags.checked) {
+					d.writeln("#Insert antidote superflags<br/>");
+					d.writeln("-sa<br/>");
+				}
+
+				if (mainform.allow_jumping.checked) {
+					d.writeln("#Tanks can jump<br/>");
+					d.writeln("-j<br/>");
+				}
+
+				if (mainform.max_concurrent_shots.value != 1) {
+					d.writeln("#Maximum concurrent shots<br/>");
+					d.writeln("-ms " + mainform.max_concurrent_shots.value + "<br/>");
+				}
+
+				if (mainform.allow_richochet.checked) {
+					d.writeln("#Ordinance richochets<br/>");
+					d.writeln("+r<br/>");
+				}
+
+				if ((!mainform.allow_rogues.disabled) && mainform.allow_rogues.checked) {
+					d.writeln("#Allow rogue tanks<br/>");
+					d.writeln("-r<br/>");
+				}
+
+				if (mainform.bad_flag_shake_time.value > 0) {
+					d.writeln("#Bad Flag shake time [s]<br/>");
+					d.writeln("-st " + mainform.bad_flag_shake_time.value + "<br/>");
+				}
+
+				if (mainform.bad_flag_shake_wins.value > 0) {
+					d.writeln("#Bad Flag shake wins<br/>");
+					d.writeln("-sw " + mainform.bad_flag_shake_wins.value + "<br/>");
+				}
+				
+
+
+				d.writeln("</p></body></html>");
+				return false;
+			}
+		</script>
+	</head>
+	<body>
+		<h1>BZFS Configuration Builder</h1>
+		<hr/>
+		<form method="post" name="main" encType="multipart/form-data" onLoad="return ableControls()" onSubmit="return buildConfig();">
+			<fieldset>
+				<legend>Server information</legend>
+				<table width="100%">
+					<tr>
+						<td>Port</td>
+						<td><input type="text" name="port" value="5155" size="30"/></td>
+						<td>Reconnect Port</td>
+						<td><input type="text" name="reconnect_port" value="5156" size="30"/></td>
+					</tr>
+					<tr>
+						<td>UDP</td>
+						<td>
+							<select name="udp" value="allowed">
+								<option value="required">Required</option>
+								<option value="allowed" SELECTED>Allowed</option>
+								<option value="never">Never</option>
+							</select>
+						</td>
+						<td>Listen On Interface</td>
+						<td><input type="text" name="listen_interface" size="30"/></td>
+					</tr>
+					<tr>
+						<td>Public Description</td>
+						<td><input type="text" name="public_description" size="30"/></td>
+						<td>Public Address</td>
+						<td><input type="text" name="public_address" size="30"/></td>
+					</tr>
+					<tr>
+						<td>Use Public List Server</td>
+						<td><input type="text" name="public_list_server" size="30"/></td>
+						<td>Server Message</td>
+						<td><input type="text" name="server_message" size="30"/></td>
+					</tr>
+					<tr>
+						<td>Respond to Pings</td>
+						<td>
+							<input type="checkbox" name="respond_pings" onClick="return ableControls()" CHECKED/>
+						</td>
+						<td>Ping TTL </td>
+						<td><input type="text" name="ping_ttl" value="8" size="30"/></td>
+					</tr>
+					<tr>
+						<td>Synchronize Time</td>
+						<td>
+							<input type="checkbox" name="sync_time"/>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+			<br/>
+			<fieldset>
+				<legend>Administration Information</legend>
+				<table width="100%">
+					<tr>
+						<td>Lag Warn Time</td>
+						<td><input type="text" name="lag_warn_time" value="0" size="30"/></td>
+						<td>Lag Warn Drop Count</td>
+						<td><input type="text" name="lag_drop_time" value="0" size="30"/></td>
+					</tr>
+					<tr span="2">
+						<td>Ban List</td>
+						<td colspan="3"><input type="text" name="ban_list" size="100"/></td>
+					</tr>
+					<tr>
+						<td>Idle Kick Time</td>
+						<td><input type="text" name="idle_kick_time" value="0" size="30"/></td>
+						<td>Team Killers Die</td>
+						<td>
+							<input type="checkbox" name="team_killers_die" CHECKED/>
+						</td>
+					</tr>
+					<tr>
+						<td>Team Killer Kick Ratio</td>
+						<td><input type="text" name="team_killer_kick_ratio" value="0" size="30"/></td>
+					</tr>
+					<tr span="2">
+						<td>Advertisement Message</td>
+						<td colspan="3"><input type="text" name="advertisement_message" size="100"/></td>
+					</tr>
+					<tr>
+						<td>Debug Level</td>
+						<td>
+							<select name="debug_level" value="0">
+								<option value="0">None</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+							</select>
+						</td>
+						<td>Password</td>
+						<td><input type="text" name="password" size="30"/></td>
+					</tr>
+				</table>
+			</fieldset>
+			<br/>
+			<fieldset>
+				<legend>World Information</legend>
+				<table width="100%">
+					<tr>
+						<td>World File</td>
+						<td colspan="2">
+							<input type="checkbox" name="world_type" onClick="return ableControls()"/>
+							<input type="file" name="world_file"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Game Style</td>
+						<td>
+							<select name="game_style" value="ffa" onClick="return ableControls()">
+								<option value="ffa">Free for All</option>
+								<option value="ctf">Capture the Flag</option>
+							</select>
+						</td>
+						<td>Flags on Buildings</td>
+						<td>
+							<input type="checkbox" name="flags_on_buildings"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Randomly Orient Buildings</td>
+						<td>
+							<input type="checkbox" name="randomly_orient_buildings"/>
+						</td>
+						<td>Randomly Building Heights</td>
+						<td>
+							<input type="checkbox" name="random_building_heights"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Maximum Acceleration</td>
+						<td>
+							<input type="checkbox" name="maximum_acceleration"/>
+						</td>
+						<td>Balanced CTF Map</td>
+						<td>
+							<input type="checkbox" name="balanced_ctf_map"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Exit after one game</td>
+						<td>
+							<input type="checkbox" name="exit_one_game"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Maximum Players</td>
+						<td><input type="text" name="maximum_players" value="40" size="30"/></td>
+						<td>Maximum Observers</td>
+						<td><input type="text" name="maximum_observers" value="3" size="30"/></td>
+					</tr>
+					<tr>
+						<td>Maximum Team Score</td>
+						<td><input type="text" name="maximum_team_score" value="0" size="30"/></td>
+						<td>Maximum Player Score</td>
+						<td><input type="text" name="maximum_player_score" value="0" size="30"/></td>
+					</tr>
+					<tr>
+						<td>Mandatory SuperFlags</td>
+						<td><input type="text" name="mandatory_superflags" value="16" size="30"/></td>
+						<td>Allowed SuperFlags</td>
+						<td><input type="text" name="allowed_superflags" value="16" size="30"/></td>
+					</tr>
+					<tr>
+						<td>Allow Teleporters</td>
+						<td>
+							<input type="checkbox" name="allow_teleporters"/>
+						</td>
+						<td>Insert Antidote flags</td>
+						<td>
+							<input type="checkbox" name="insert_antidote_flags"/>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+			<br/>
+			<fieldset>
+				<legend>Tank information</legend>
+				<table width="100%">
+					<tr>
+						<td>Allow Jumping</td>
+						<td>
+							<input type="checkbox" name="allow_jumping"/>
+						</td>
+						<td>Max Concurrent Shots</td>
+						<td><input type="text" name="max_concurrent_shots" value="1" size="30"/></td>
+					</tr>
+					<tr>
+						<td>Allow Richochet</td>
+						<td>
+							<input type="checkbox" name="allow_richochet"/>
+						</td>
+						<td>Allow Rogues</td>
+						<td>
+							<input type="checkbox" name="allow_rogues"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Bad Flag Shake Time</td>
+						<td><input type="text" name="bad_flag_shake_time" value="0" size="30"/></td>
+						<td>Bad Flag Shake Wins</td>
+						<td><input type="text" name="bad_flag_shake_wins" value="0" size="30"/></td>
+					</tr>
+				</table>
+			</fieldset>
+			<br/>
+			<fieldset>
+				<legend>Flag Information</legend>
+				<fieldset>
+					<legend>Mandatory Flags</legend>
+					<table width="100%">
+						<tr>
+							<td align="right">(good)</td><td><input type="text" name="good_mand_flags" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(V)</td><td><input type="text" name="v_mand_flag" value="0" size="3"/></td>
+							<td align="right">(A)</td><td><input type="text" name="a_mand_flag" value="0" size="3"/></td>
+							<td align="right">(OO)</td><td><input type="text" name="oo_mand_flag" value="0" size="3"/></td>
+							<td align="right">(F)</td><td><input type="text" name="f_mand_flag" value="0" size="3"/></td>
+							<td align="right">(MG)</td><td><input type="text" name="mg_mand_flag" value="0" size="3"/></td>
+							<td align="right">(GM)</td><td><input type="text" name="gm_mand_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(L)</td><td><input type="text" name="l_mand_flag" value="0" size="3"/></td>
+							<td align="right">(R)</td><td><input type="text" name="r_mand_flag" value="0" size="3"/></td>
+							<td align="right">(SB)</td><td><input type="text" name="sb_mand_flag" value="0" size="3"/></td>
+							<td align="right">(IB)</td><td><input type="text" name="ib_mand_flag" value="0" size="3"/></td>
+							<td align="right">(ST)</td><td><input type="text" name="st_mand_flag" value="0" size="3"/></td>
+							<td align="right">(T)</td><td><input type="text" name="t_mand_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(N)</td><td><input type="text" name="l_mand_flag" value="0" size="3"/></td>
+							<td align="right">(SH)</td><td><input type="text" name="r_mand_flag" value="0" size="3"/></td>
+							<td align="right">(SR)</td><td><input type="text" name="sb_mand_flag" value="0" size="3"/></td>
+							<td align="right">(SW)</td><td><input type="text" name="sw_mand_flag" value="0" size="3"/></td>
+							<td align="right">(PZ)</td><td><input type="text" name="pz_mand_flag" value="0" size="3"/></td>
+							<td align="right">(G)</td><td><input type="text" name="g_mand_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(JP)</td><td><input type="text" name="jp_mand_flag" value="0" size="3"/></td>
+							<td align="right">(IB)</td><td><input type="text" name="ib_mand_flag" value="0" size="3"/></td>
+							<td align="right">(CL)</td><td><input type="text" name="cl_mand_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+						<tr>
+							<td align="right">(CB)</td><td><input type="text" name="cb_mand_flag" value="0" size="3"/></td>
+							<td align="right">(&lt;-)</td><td><input type="text" name="lt_mand_flag" value="0" size="3"/></td>
+							<td align="right">(-&gt;)</td><td><input type="text" name="gt_mand_flag" value="0" size="3"/></td>
+							<td align="right">(M)</td><td><input type="text" name="m_mand_flag" value="0" size="3"/></td>
+							<td align="right">(B)</td><td><input type="text" name="b_mand_flag" value="0" size="3"/></td>
+							<td align="right">(JM)</td><td><input type="text" name="jm_mand_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(WA)</td><td><input type="text" name="wa_mand_flag" value="0" size="3"/></td>
+						</tr>
+					</table>
+				</fieldset>
+				<fieldset>
+					<legend>Forbidden Optional Flags</legend>
+					<table width="100%">
+						<tr>
+							<td align="right">(bad)</td><td><input type="text" name="bad_forbid_flags" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(V)</td><td><input type="text" name="v_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(A)</td><td><input type="text" name="a_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(OO)</td><td><input type="text" name="oo_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(F)</td><td><input type="text" name="f_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(MG)</td><td><input type="text" name="mg_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(GM)</td><td><input type="text" name="gm_forbid_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(L)</td><td><input type="text" name="l_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(R)</td><td><input type="text" name="r_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(SB)</td><td><input type="text" name="sb_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(IB)</td><td><input type="text" name="ib_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(ST)</td><td><input type="text" name="st_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(T)</td><td><input type="text" name="t_forbid_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(N)</td><td><input type="text" name="l_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(SH)</td><td><input type="text" name="r_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(SR)</td><td><input type="text" name="sb_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(SW)</td><td><input type="text" name="sw_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(PZ)</td><td><input type="text" name="pz_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(G)</td><td><input type="text" name="g_forbid_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(JP)</td><td><input type="text" name="jp_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(IB)</td><td><input type="text" name="ib_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(CL)</td><td><input type="text" name="cl_forbid_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+						<tr>
+							<td align="right">(CB)</td><td><input type="text" name="cb_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(&lt;-)</td><td><input type="text" name="lt_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(-&gt;)</td><td><input type="text" name="gt_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(M)</td><td><input type="text" name="m_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(B)</td><td><input type="text" name="b_forbid_flag" value="0" size="3"/></td>
+							<td align="right">(JM)</td><td><input type="text" name="jm_forbid_flag" value="0" size="3"/></td>
+						</tr>
+						<tr>
+							<td align="right">(WA)</td><td><input type="text" name="wa_forbid_flag" value="0" size="3"/></td>
+						</tr>
+					</table>
+				</fieldset>
+			</fieldset>
+			<br/>
+			<center>
+				<input type="submit" value="Build Configuration"/>
+			</center>
+		</form>
+	</body>
+</html>
