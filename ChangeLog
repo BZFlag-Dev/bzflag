@@ -6,7 +6,7 @@ BZFlag 2.0.1
 
 * Added TALK, MUTE, UNMUTE permissions - Angelina Carlton
 * Added /mute, /unmute commands - Angelina Carlton
-* Bzadmin does not require opengl headers - Alfredo Tupone
+* bzadmin does not require opengl headers - Alfredo Tupone
 * bzfs handle both -mp specification - Alfredo Tupone
 * bzfs correctly handles ban time - Alfredo Tupone, Julio Jimenez
 * bzfs no more put jittered players as Not Responding - Alfredo Tupone
