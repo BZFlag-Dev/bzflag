@@ -82,7 +82,7 @@ extern TimeKeeper gameStartTime;
 extern TeamInfo team[NumTeams];
 extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
 extern int numFlags;
-extern void zapFlag(int flagIndex);
+extern void zapFlag(FlagInfo & flag);
 extern void sendFlagUpdate(FlagInfo &flag);
 extern void resetFlag(FlagInfo &flag);
 
@@ -508,7 +508,7 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
   }
   // reset all flags
   for (i = 0; i < numFlags; i++)
-    zapFlag(i);
+    zapFlag(FlagInfo::flagList[i]);
 
 #endif // end TIMELIMIT
 
