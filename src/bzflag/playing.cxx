@@ -15,8 +15,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "common.h"
 
 // system includes
-#include <iostream>
-#include <deque>
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
@@ -71,21 +69,15 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "sound.h"
 #include "TimeBomb.h"
 #include "HUDDialogStack.h"
-#include "texture.h"
 #include "ErrorHandler.h"
 #include "ZSceneDatabase.h"
 #include "QuadWallSceneNode.h"
 #include "BillboardSceneNode.h"
 #include "Intersect.h"
-#include "Ping.h"
-#include "OpenGLTexture.h"
-#include "BundleMgr.h"
-#include "Bundle.h"
 #include "CommandsStandard.h"
 #include "BZDBCache.h"
 #include "WordFilter.h"
 #include "TextUtils.h"
-#include "TextureManager.h"
 #include "TargetingUtils.h"
 #include "MainMenu.h"
 #include "ComposeDefaultKey.h"
