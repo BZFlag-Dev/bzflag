@@ -1372,7 +1372,7 @@ saveRabbitState ()
 static bool
 savePlayersState ()
 {
-  int i;
+  int i, count = 0;
   char bufStart[MaxPacketLen];
   char adminBuf[MaxPacketLen];
   void *buf, *adminPtr;
@@ -1399,6 +1399,8 @@ savePlayersState ()
       adminPtr = nboPackUByte(adminPtr, i);
       adminPtr = nboPackUByte(adminPtr, accessInfo[i].getPlayerProperties());
       adminPtr = handler->packAdminInfo(adminPtr);
+      
+      count++;
     }
   }
 
@@ -1407,7 +1409,7 @@ savePlayersState ()
   // here in case the record buffer has grown past the original
   // packet.
   if (adminPtr != (adminBuf + sizeof(unsigned char))) {
-    buf = nboPackUByte (adminPtr, i);
+    buf = nboPackUByte (adminPtr, count);
     routePacket (MsgAdminInfo,
                  (char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
   }
