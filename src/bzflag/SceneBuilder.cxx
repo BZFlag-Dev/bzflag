@@ -259,11 +259,13 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
 
   while ((node = ((part != 5) ? nodeGen->getNextNode(
-				o.getBreadth() / boxTexWidth,
-				o.getHeight() / boxTexHeight, boxLOD) :
+				-1.5f*boxTexWidth,
+				-1.5f*boxTexWidth, boxLOD) :
+    // I'm using boxTexHeight for roof since textures are same
+    // size and this number is available
 				nodeGen->getNextNode(
-				0.25f * o.getBreadth(),
-				0.25f * o.getHeight(), boxLOD)))) {
+				-boxTexHeight,
+				-boxTexHeight, boxLOD)))) {
     node->setColor(boxColors[part]);
     node->setModulateColor(boxModulateColors[part]);
     node->setLightedColor(boxLightedColors[part]);
@@ -285,9 +287,10 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   int part = 0;
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
-
-  while ((node = nodeGen->getNextNode(3.0f,
-				3.0f * o.getHeight() / o.getBreadth(),
+  
+  // Using boxTexHeight since it's (currently) the same and it's already available
+  while ((node = nodeGen->getNextNode(-3.0f * boxTexHeight,
+				-3.0f * boxTexHeight,
 				pyramidLOD))) {
     node->setColor(pyramidColors[part]);
     node->setModulateColor(pyramidModulateColors[part]);
@@ -313,8 +316,8 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   while ((node = ((part < 2) ? nodeGen->getNextNode(
 				o.getBreadth(), o.getHeight(),
 				baseLOD) : nodeGen->getNextNode(
-				o.getBreadth() / boxTexWidth,
-				o.getHeight() / boxTexHeight, boxLOD)))) {
+				-1.5f*boxTexWidth,
+				-1.5f*boxTexWidth, boxLOD)))) {
     if(part >= 2) {
       node->setColor(boxColors[part - 2]);
       node->setModulateColor(boxModulateColors[part - 2]);
