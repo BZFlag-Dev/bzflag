@@ -2136,7 +2136,7 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
       // ignore blank line
     }
 
-    else if (strcmp(buffer, "#") == 0) {
+    else if (buffer[0] == '#') {
       // ignore comment
     }
 
