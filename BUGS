@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- Observer movement controls seems to get locked-up in Hunt mode.
+
 - Sometimes letters can go missing from the status line of the HUD.
   Like "Cloaking" turning into "loaking", "Brad2901" turning into "rad"
   Alignment is correct for the new strings (e.g. "loaking" is centered)
