@@ -3,9 +3,6 @@ recent bugs
 
 - Flaghelp falls into the radar area when radar is 'bigger'
 
-- VC 7.1 release builds do not work, link errors in texture manager. It seems to have
-  to do with the singleton, the class defines a deconstructor, but the header dosn't have one.
-
 - Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
   in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
   Could we be running off the end of the packet (ie count is fubar'ed?)
