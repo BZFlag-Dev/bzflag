@@ -1429,7 +1429,7 @@ int			main(int argc, char** argv)
     }
 
     // DIE
-    printFatalError("ERROR: Unable to initialize an OpenGL context");
+    printFatalError("ERROR: Unable to initialize an OpenGL renderer");
     if (display != NULL) {
       delete display;
       display=NULL;
