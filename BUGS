@@ -2,6 +2,10 @@ recent bugs
 ------------
 
 - new list server takes way too long (3-5 seconds) to respond.
+  Taking some measurement from receiving request to sending result:
+  bzfls.pl on Tim's     : 1.8 sec
+  bzflsMy.php on brlcad : 0.3 sec
+  bzflsLite on brlcad   : 0.3 sec
 
 - robots spaz-enter after being destroyed
 
