@@ -336,6 +336,9 @@ void					XMLTree::read(XMLStream& stream, XMLTree::iterator root)
 				newNode->swap(node);
 				break;
 			}
+
+			case Include:
+			break;
 		}
 		type = readNode(stream, &node, tagStack.size() <= 1);
 	}
