@@ -33,6 +33,7 @@ MeshObstacle::MeshObstacle()
   vertices = normals = NULL;
   texcoordCount = 0;
   texcoords = NULL;
+  smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
   return;
@@ -55,7 +56,8 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
                            const std::vector<cfvec3>& verticeList,
                            const std::vector<cfvec3>& normalList,
                            const std::vector<cfvec2>& texcoordList,
-                           int _faceCount, bool drive, bool shoot)
+                           int _faceCount,
+                           bool bounce, bool drive, bool shoot)
 {
   unsigned int i;
   // copy the info
@@ -74,6 +76,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
   faceSize = _faceCount;
   faceCount = 0;
   faces = new MeshFace*[faceSize];
+  smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
 
@@ -84,7 +87,8 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
 bool MeshObstacle::addFace(const std::vector<int>& _vertices,
                            const std::vector<int>& _normals,
                            const std::vector<int>& _texcoords,
-                           const MeshMaterial& _material)
+                           const MeshMaterial& _material,
+                           bool bounce, bool drive, bool shoot)
 {
   // protect the face list from overrun
   if (faceCount >= faceSize) {
@@ -136,8 +140,23 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
       t[i] = (float*)texcoords[_texcoords[i]];
     }
   }
-  MeshFace* face = new MeshFace(this, count, v, n, t, _material,
-                                driveThrough, shootThrough);
+  
+  // override the flags if they're set for the whole mesh
+  if (smoothBounce) {
+    bounce = true;
+  }
+  if (driveThrough) {
+    drive = true;
+  }
+  if (shootThrough) {
+    shoot = true;
+  }
+  
+  // make the face
+  MeshFace* face = new MeshFace(this, count, v, n, t, _material, 
+                                bounce, drive, shoot);
+
+  // check its validity
   if (face->isValid()) {
     faces[faceCount] = face;
     faceCount++;
@@ -369,10 +388,13 @@ void *MeshObstacle::pack(void *buf)
   // pack the state byte
   unsigned char stateByte = 0;
   if (isDriveThrough()) {
-    stateByte |= _DRIVE_THRU;
+    stateByte |= (1 << 0);
   }
   if (isShootThrough()) {
-    stateByte |= _SHOOT_THRU;
+    stateByte |= (1 << 1);
+  }
+  if (hasSmoothBounce()) {
+    stateByte |= (1 << 2);
   }
   buf = nboPackUByte(buf, stateByte);
 
@@ -424,11 +446,14 @@ void *MeshObstacle::unpack(void *buf)
   // unpack the state byte
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  if (stateByte & _DRIVE_THRU) {
+  if (stateByte & (1 << 0)) {
     driveThrough = true;
   }
-  if (stateByte & _SHOOT_THRU) {
+  if (stateByte & (1 << 1)) {
     shootThrough = true;
+  }
+  if (stateByte & (1 << 2)) {
+    smoothBounce = true;
   }
 
   finalize();
@@ -473,6 +498,16 @@ void MeshObstacle::print(std::ostream& out, int level)
     out << "# texcoords = " << texcoordCount << std::endl;
     out << "# mins = " << mins[0] << " " << mins[1] << " " << mins[2] << std::endl;
     out << "# maxs = " << maxs[0] << " " << maxs[1] << " " << maxs[2] << std::endl;
+  }
+  
+  if (smoothBounce) {
+    out << "  smoothBounce" << std::endl;
+  }
+  if (driveThrough) {
+    out << "  driveThrough" << std::endl;
+  }
+  if (shootThrough) {
+    out << "  shootThrough" << std::endl;
   }
 
   int i, j;

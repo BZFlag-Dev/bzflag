@@ -55,7 +55,9 @@ static inline void addFace (MeshObstacle* mesh,
                             std::vector<int>& texcoordsList,
                             const MeshMaterial& material)
 {
-  mesh->addFace(verticesList, normalsList, texcoordsList, material);
+  // use the mesh defaults for smoothBounce, driveThrough, and shootThough
+  mesh->addFace(verticesList, normalsList, texcoordsList, material,
+                false, false, false);
   verticesList.clear();
   normalsList.clear();
   texcoordsList.clear();

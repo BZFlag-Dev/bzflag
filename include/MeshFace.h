@@ -35,7 +35,7 @@ class MeshFace : public Obstacle {
     MeshFace(MeshObstacle* _mesh, int _vertexCount,
              float** _vertices, float** _normals,
              float** _texcoords, const MeshMaterial& _material,
-             bool drive, bool shoot);
+             bool smoothBounce, bool drive, bool shoot);
     ~MeshFace();
 
     void finalize();
@@ -88,6 +88,7 @@ class MeshFace : public Obstacle {
     float** normals;
     float** texcoords;
     MeshMaterial material;
+    bool smoothBounce;
 
     fvec3 mins, maxs;
     fvec4 plane;

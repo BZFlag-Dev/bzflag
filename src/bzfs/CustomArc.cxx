@@ -38,6 +38,7 @@ CustomArc::CustomArc()
   angle = 360.0f;
   texsize[0] = texsize[1] = texsize[2] = texsize[3] = -4.0f;
   useNormals = true;
+  smoothBounce = false;
 
   // setup the default textures
   materials[Top].texture = "roof";
@@ -81,6 +82,10 @@ bool CustomArc::read(const char *cmd, std::istream& input)
     if (!(input >> texsize[0] >> texsize[1] >> texsize[2] >> texsize[3])) {
       return false;
     }
+  }
+  else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
+           (strcasecmp(cmd, "smoothbounce") == 0)) {
+    smoothBounce = true;
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;
@@ -325,7 +330,7 @@ void CustomArc::makePie(bool isCircle, float a, float r, float h,
 
   MeshObstacle* mesh =
     new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
-                     fcount, driveThrough, shootThrough);
+                     fcount, smoothBounce, driveThrough, shootThrough);
 
   // now make the faces
   int vlen, nlen;
@@ -378,6 +383,7 @@ void CustomArc::makePie(bool isCircle, float a, float r, float h,
     push4Ints(vlist, vbot, 0, 1, vtop);
     push4Ints(tlist, 0, tc + 0, tc + 1, 1);
     addFace(mesh, vlist, nlist, tlist, materials[StartFace]);
+    
     // end face
     int e = divisions * 2;
     push4Ints(vlist, e + 0, vbot, vtop, e + 1);
@@ -434,8 +440,8 @@ void CustomArc::makeRing(bool isCircle, float a, float r, float h,
       // inside normal
       if (useNormals) {
         n[2] = 0.0f;
-        n[0] = -cos_val;
-        n[1] = -sin_val * squish;
+        n[0] = -cos_val * squish;
+        n[1] = -sin_val;
         float len = 1.0f / sqrtf((n[0] * n[0]) + (n[1] * n[1]));
         n[0] = n[0] * len;
         n[1] = n[1] * len;
@@ -467,7 +473,7 @@ void CustomArc::makeRing(bool isCircle, float a, float r, float h,
 
   MeshObstacle* mesh =
     new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
-                     fcount, driveThrough, shootThrough);
+                     fcount, smoothBounce, driveThrough, shootThrough);
 
   // now make the faces
   int vlen, nlen;
@@ -520,6 +526,7 @@ void CustomArc::makeRing(bool isCircle, float a, float r, float h,
     push4Ints(vlist, 0, 2, 3, 1);
     push4Ints(tlist, 0, tc + 0, tc + 1, 1);
     addFace(mesh, vlist, nlist, tlist, materials[StartFace]);
+    
     // end face
     int e = divisions * 4;
     push4Ints(vlist, e + 2, e + 0, e + 1, e + 3);

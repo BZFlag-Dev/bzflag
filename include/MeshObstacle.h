@@ -35,12 +35,13 @@ class MeshObstacle : public Obstacle {
                  const std::vector<cfvec3>& vertices,
                  const std::vector<cfvec3>& normals,
                  const std::vector<cfvec2>& texcoords,
-                 int faceCount, bool drive, bool shoot);
+                 int faceCount, bool bounce, bool drive, bool shoot);
 
     bool addFace (const std::vector<int>& vertices,
                   const std::vector<int>& normals,
                   const std::vector<int>& texcoords,
-                  const MeshMaterial& material);
+                  const MeshMaterial& material,
+                  bool bounce, bool drive, bool shoot);
 
     ~MeshObstacle();
 
@@ -82,6 +83,7 @@ class MeshObstacle : public Obstacle {
     const fvec2 *getTexcoords() const;
     int getFaceCount() const;
     const MeshFace* getFace(int face) const;
+    bool hasSmoothBounce() const;
 
     void *pack(void*);
     void *unpack(void*);
@@ -103,6 +105,7 @@ class MeshObstacle : public Obstacle {
     fvec2* texcoords;
     int faceCount, faceSize;
     MeshFace** faces;
+    bool smoothBounce;
 
     fvec3 mins, maxs;
 };
@@ -140,6 +143,11 @@ inline int MeshObstacle::getFaceCount() const
 inline const MeshFace* MeshObstacle::getFace(int face) const
 {
   return faces[face];
+}
+
+inline bool MeshObstacle::hasSmoothBounce() const
+{
+  return smoothBounce;
 }
 
 

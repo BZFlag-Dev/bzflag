@@ -14,6 +14,7 @@
 #include "common.h"
 #include "global.h"
 #include "Pack.h"
+#include "vectors.h"
 
 #include "MeshFace.h"
 #include "MeshObstacle.h"
@@ -31,6 +32,10 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   vertices = NULL;
   normals = NULL;
   texcoords = NULL;
+  smoothBounce = false;
+  driveThrough = false;
+  shootThrough = false;
+
   return;
 }
 
@@ -38,7 +43,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
                    float** _vertices, float** _normals,
                    float** _texcoords, const MeshMaterial& _material,
-                   bool drive, bool shoot)
+                   bool bounce, bool drive, bool shoot)
 {
   mesh = _mesh;
   vertexCount = _vertexCount;
@@ -46,6 +51,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   normals = _normals;
   texcoords = _texcoords;
   material = _material;
+  smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
 
@@ -263,13 +269,59 @@ float MeshFace::intersect(const Ray& ray) const
 }
 
 
-void MeshFace::get3DNormal(const float* /*p*/, float* n) const
+void MeshFace::get3DNormal(const float* p, float* n) const
 {
-  // intersect() must be called on this obstacle
-  // before this function can be used.
-  memcpy (n, plane, sizeof(float[3]));
-  // FIXME - use the vertex normals to produce
-  //         a smoother reflection surface?
+  if (!smoothBounce || !useNormals()) {
+    // just use the plain normal
+    memcpy (n, plane, sizeof(float[3]));
+  }
+  else {
+    // normal smoothing to fake curved surfaces
+    int i;
+    // calculate the triangle ares
+    float totalArea = 0.0f;
+    float areas[vertexCount];
+    for (i = 0; i < vertexCount; i++) {
+      int next = (i + 1) % vertexCount;
+      float ea[3], eb[3], cross[3];
+      vec3sub(ea, p, vertices[i]);
+      vec3sub(eb, vertices[next], vertices[i]);
+      vec3cross(cross, ea, eb);
+      areas[i] = sqrtf(vec3dot(cross, cross));
+      totalArea = totalArea + areas[i];
+    }
+    float smallestArea = MAXFLOAT;
+    float twinAreas[vertexCount];
+    for (i = 0; i < vertexCount; i++) {
+      int next = (i + 1) % vertexCount;
+      twinAreas[i] = areas[i] + areas[next];
+      if (twinAreas[i] < 1.0e-10f) {
+        memcpy (n, normals[next], sizeof(float[3]));
+        return;
+      }
+      if (twinAreas[i] < smallestArea) {
+        smallestArea = twinAreas[i];
+      }
+    }
+    float normal[3] = {0.0f, 0.0f, 0.0f};
+    for (i = 0; i < vertexCount; i++) {
+      int next = (i + 1) % vertexCount;
+      float factor = smallestArea / twinAreas[i];
+      normal[0] = normal[0] + (normals[next][0] * factor);
+      normal[1] = normal[1] + (normals[next][1] * factor);
+      normal[2] = normal[2] + (normals[next][2] * factor);
+    }
+    float len = sqrtf(vec3dot(normal, normal));
+    if (len < 1.0e-10) {
+      memcpy (n, plane, sizeof(float[3]));
+      return;
+    }
+    len = 1.0f / len;
+    n[0] = normal[0] * len;
+    n[1] = normal[1] * len;
+    n[2] = normal[2] * len;
+  }
+  
   return;
 }
 
@@ -364,6 +416,9 @@ void *MeshFace::pack(void *buf)
   if (isShootThrough()) {
     stateByte = stateByte | (1 << 3);
   }
+  if (smoothBounce) {
+    stateByte = stateByte | (1 << 4);
+  }
   buf = nboPackUByte(buf, stateByte);
   // vertices
   buf = nboPackInt(buf, vertexCount);
@@ -402,6 +457,9 @@ void *MeshFace::unpack(void *buf)
   }
   if (stateByte & (1 << 3)) {
     shootThrough = true;
+  }
+  if (stateByte & (1 << 4)) {
+    smoothBounce = true;
   }
   // vertices
   buf = nboUnpackInt(buf, vertexCount);
@@ -509,6 +567,16 @@ void MeshFace::print(std::ostream& out, int level)
   }
 
   material.print(out, level);
+  
+  if (smoothBounce && !mesh->hasSmoothBounce()) {
+    out << "    smoothBounce" << std::endl;
+  }
+  if (driveThrough && !mesh->isDriveThrough()) {
+    out << "    driveThrough" << std::endl;
+  }
+  if (shootThrough && !mesh->isShootThrough()) {
+    out << "    shootThrough" << std::endl;
+  }
 
   out << "  endface" << std::endl;
 

@@ -37,6 +37,7 @@ CustomCone::CustomCone()
   texsize[0] = texsize[1] = -4.0f;
   angle = 360.0f;
   useNormals = true;
+  smoothBounce = false;
 
   // setup the default textures
   materials[Edge].texture = "boxwall";
@@ -73,6 +74,10 @@ bool CustomCone::read(const char *cmd, std::istream& input)
     if (!(input >> texsize[0] >> texsize[1])) {
       return false;
     }
+  }
+  else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
+           (strcasecmp(cmd, "smoothbounce") == 0)) {
+    smoothBounce = true;
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;
@@ -293,7 +298,7 @@ void CustomCone::write(WorldInfo *world) const
 
   MeshObstacle* mesh =
     new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
-                     fcount, driveThrough, shootThrough);
+                     fcount, smoothBounce, driveThrough, shootThrough);
 
   // now make the faces
   int vlen;
@@ -329,7 +334,6 @@ void CustomCone::write(WorldInfo *world) const
     if (useNormals) push3Ints(nlist, NC(0), NE(0), NE(1));
     push3Ints(tlist, tmid, T(0), T(1));
     addFace(mesh, vlist, nlist, tlist, materials[Edge]);
-
     // bottom
     push3Ints(vlist, vbot, V(1), V(0));
     push3Ints(tlist, tmid, TI(1), TI(0));

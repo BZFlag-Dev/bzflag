@@ -37,6 +37,7 @@ CustomSphere::CustomSphere()
   texsize[0] = texsize[1] = -4.0f;
   hemisphere = false;
   useNormals = true;
+  smoothBounce = false;
   return;
 }
 
@@ -71,6 +72,10 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     if (!(input >> texsize[0] >> texsize[1])) {
       return false;
     }
+  }
+  else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
+           (strcasecmp(cmd, "smoothbounce") == 0)) {
+    smoothBounce = true;
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;
@@ -258,7 +263,7 @@ void CustomSphere::write(WorldInfo *world) const
   int faceCount = (divisions * divisions) * 8;
   MeshObstacle* mesh =
     new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
-                     faceCount, driveThrough, shootThrough);
+                     faceCount, smoothBounce, driveThrough, shootThrough);
 
   // add the faces to the mesh
   std::vector<int> vlist;

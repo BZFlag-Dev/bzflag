@@ -23,9 +23,13 @@
 #include <iostream>
 
 
-CustomMeshFace::CustomMeshFace(const MeshMaterial& _material)
+CustomMeshFace::CustomMeshFace(const MeshMaterial& _material,
+                               bool bounce, bool drive, bool shoot)
 {
   material = _material;
+  smoothBounce = bounce;
+  driveThrough = drive;
+  shootThrough = shoot;
   return;
 }
 
@@ -73,6 +77,19 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
       return false;
     }
   }
+  else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
+           (strcasecmp(cmd, "smoothbounce") == 0)) {
+    smoothBounce = true;
+  }
+  else if (strcasecmp(cmd, "drivethrough") == 0) {
+    driveThrough = true;
+  }
+  else if (strcasecmp(cmd, "shootthrough") == 0) {
+    shootThrough = true;
+  }
+  else if (strcasecmp(cmd, "passable") == 0) {
+    driveThrough = shootThrough = true;
+  }
   else if (parseMaterial(cmd, input, material, materror)) {
     if (materror) {
       return false;
@@ -89,7 +106,8 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
 
 void CustomMeshFace::write(MeshObstacle *mesh) const
 {
-  mesh->addFace(vertices, normals, texcoords, material);
+  mesh->addFace(vertices, normals, texcoords, material,
+                smoothBounce, driveThrough, shootThrough);
   return;
 }
 

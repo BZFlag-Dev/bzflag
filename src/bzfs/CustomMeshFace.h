@@ -28,15 +28,21 @@
 
 class CustomMeshFace {
   public:
-    CustomMeshFace(const MeshMaterial& material);
+    CustomMeshFace(const MeshMaterial& material, bool smoothBounce,
+                   bool driveThrough, bool shootThrough);
     bool read(const char *cmd, std::istream& input);
     void write(MeshObstacle* mesh) const;
 
   private:
     MeshMaterial material;
+
     std::vector<int> vertices;
     std::vector<int> normals;
     std::vector<int> texcoords;
+    
+    bool smoothBounce;
+    bool driveThrough;
+    bool shootThrough;
 };
 
 
