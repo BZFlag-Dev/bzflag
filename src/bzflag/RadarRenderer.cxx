@@ -156,7 +156,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     return;
   }
 
-  const bool smoothingOn = smooth && BZDB.isTrue("smooth");
+  const bool smoothingOn = smooth && BZDBCache::smooth;
 
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
