@@ -98,6 +98,8 @@ const int udpBufSize = 128000;
 #include "md5.h"
 #include "ShotUpdate.h"
 
+#include "./TextChunkManager.h"
+
 float	WorldSize = DEFAULT_WORLD;
 bool    gotWorld = false;
 
@@ -528,74 +530,6 @@ struct BanInfo
     TimeKeeper	banEnd;
 };
 
-// maintains a list of lists of strings, more or less a bunch
-// of files that can be read into and managed by this class.
-// chunkname is the name that is used to index into this list.
-// note that there is no delete function as of yet.
-class TextChunkManager
-{
-  // wrapper to avoid compile issues on VC++
-  class StringVector
-  {
-    public:
-      size_t size() const
-      {
-       return theVector.size();
-      }
-      void push_back(std::string x)
-      {
-       theVector.push_back(x);
-      }
-      const std::vector<std::string>& getVector() const{ // get the real vector
-       return theVector;
-      }
-    private:
-      std::vector<std::string> theVector;
-  };
-
-  public:
-  // load the file fileName into the chunk specified by chunkname
-  // if the chunkname is already taken it will *not* be replaced
-  bool parseFile(const std::string &fileName, const std::string &chunkName)
-  {
-    char buffer[MessageLen];
-    ifstream in(fileName.c_str());
-    if (!in) return false;
-
-    StringVector strings;
-    for(int i = 0; i < 20 && in.good(); i++) {
-      in.getline(buffer,MessageLen);
-      if(!in.fail()){ // really read something
-       strings.push_back(buffer);
-      }
-    }
-
-    if (strings.size() != 0) {
-      theChunks.insert(std::map<std::string, StringVector>::value_type(chunkName,strings));
-      chunkNames.push_back(chunkName);
-    }
-    return true;
-  }
-  // get a chunk given a name of the chunk returns null if it
-  // can't find it
-  const std::vector<std::string>* getTextChunk(const std::string chunkName)
-  {
-    std::map<std::string, StringVector>::const_iterator it;
-    it =theChunks.find(chunkName);
-    if (it != theChunks.end()){
-      return &it->second.getVector();
-    } else {
-      return NULL;
-    }
-  }
-  const std::vector<std::string>& getChunkNames()
-  {
-    return chunkNames;
-  }
-private:
-  std::map<std::string, StringVector> theChunks; // a mapping of names of chunks to chunks
-  std::vector<std::string> chunkNames; // vector of all the names of the chunks
-};
 
 class AccessControlList
 {
