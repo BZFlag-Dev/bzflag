@@ -2304,9 +2304,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       bool ignore = false;
       for (int i = 0; i < silencePlayers.size(); i++) {
-	if (strcmp(srcName.c_str(), silencePlayers[i].c_str()) == 0) {
-	  ignore = true;
-	  break;
+	const char *silenceCallSign = silencePlayers[i].c_str();
+	if ((strcmp(srcName.c_str(), silenceCallSign) == 0) 
+        ||  (strcmp( "*", silenceCallSign) == 0)) {
+	    ignore = true;
+	    break;
 	}
       }
       if (ignore)
