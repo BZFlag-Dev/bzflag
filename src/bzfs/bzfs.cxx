@@ -2445,7 +2445,7 @@ static void addPlayer(int playerIndex)
   if (resetTeamFlag) {
     int flagid = lookupFirstTeamFlag(teamIndex);
     if (flagid >= 0) {
-      for (int n = 0; n < clOptions->numTeamFlags; n++)
+      for (int n = 0; n < clOptions->numTeamFlags[teamIndex]; n++)
         resetFlag(n+flagid);
     }
   }
@@ -2874,7 +2874,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
         (clOptions->gameStyle & int(TeamFlagGameStyle))) {
       int flagid = lookupFirstTeamFlag(teamNum);
       if (flagid >= 0) {
-        for (int n = 0; n < clOptions->numTeamFlags; n++) {
+        for (int n = 0; n < clOptions->numTeamFlags[teamNum]; n++) {
           if ((flag[flagid+n].player == -1 || player[flag[flagid+n].player].team == teamNum))
 	    zapFlag(flagid+n);
 	}
@@ -5021,7 +5021,7 @@ int main(int argc, char **argv)
         if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0) {
           int flagid = lookupFirstTeamFlag(i);
 	  if (flagid >= 0) {
-	    for (int n = 0; n < clOptions->numTeamFlags; n++) {
+	    for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {
               if (flag[flagid+n].flag.status != FlagNoExist &&
 	          flag[flagid+n].player == -1) {
 	        DEBUG1("Flag timeout for team %d\n", i);

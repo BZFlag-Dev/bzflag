@@ -45,7 +45,7 @@ const char *usageString =
 "[-badwords <filename>] "
 "[-ban ip{,ip}*] "
 "[-banfile <filename>] "
-"[-c [numteamflags]] "
+"[-c] "
 "[-conf <filename>] "
 "[-cr [density]] "
 "[-d] "
@@ -120,7 +120,7 @@ const char *extraUsageString =
 "\t-badwords: bad-world file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-banfile: specify a file to load and store the banlist in\n"
-"\t-c: [numteamflags] capture-the-flag style game, with optional number of team flags per team\n"
+"\t-c: capture-the-flag style game,\n"
 "\t-conf: configuration file\n"
 "\t-cr [density]: capture-the-flag style game with random world\n\t\toptionally specify integer density (default 5)\n"
 "\t-d: increase debugging level\n"
@@ -444,15 +444,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
 	fprintf(stderr, "Capture the flag assumed\n");
       }
-      if (i+1 != argc) {
-	int matches = sscanf(argv[i+1], "%d", &options.numTeamFlags);
-	if (matches == 1) {
-	  if (options.numTeamFlags <= 0)
-	    fprintf(stderr, "Invalid number of team flags: 1 assumed\n");
-	  else
-	    i++;
-	}
-      }
+      for (int t = RedTeam; t <= PurpleTeam; t++)
+        options.numTeamFlags[t] = 1;
     } else if (strcmp(argv[i], "-conf") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "filename expected for -conf\n");
@@ -547,13 +540,19 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	FlagSet badFlags = Flag::getBadFlags();
 	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
 	  options.flagCount[*it] += rptCnt;
+      } else if (strcmp(argv[i], "team") == 0) {
+	for (int t = RedTeam; t <= PurpleTeam; t++) 
+	  options.numTeamFlags[t] += rptCnt;
       } else {
 	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
+	} else if (fDesc->flagTeam != NoTeam) {
+	  options.numTeamFlags[fDesc->flagTeam] += rptCnt;
+	} else {
+	  options.flagCount[fDesc] += rptCnt;
 	}
-	options.flagCount[fDesc] += rptCnt;
       }
     } else if (strcmp(argv[i], "-fb") == 0) {
       // flags on buildings
@@ -1067,7 +1066,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   if (options.gameStyle & TeamFlagGameStyle) {
     for (int col = RedTeam; col <= PurpleTeam; col++)
       if (options.maxTeam[col] > 0)
-        numFlags += options.numTeamFlags;
+        numFlags += options.numTeamFlags[col];
   }
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
        it != FlagType::getFlagMap().end(); ++it) {
@@ -1101,7 +1100,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   int f = 0;
   if (options.gameStyle & TeamFlagGameStyle) {
     if (options.maxTeam[RedTeam] > 0) {
-      for (int n = 0; n < options.numTeamFlags; n++) {
+      for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
         flag[f].required = true;
         flag[f].flag.type = Flags::RedTeam;
         flag[f].flag.endurance = FlagNormal;
@@ -1109,7 +1108,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
     }
     if (options.maxTeam[GreenTeam] > 0) {
-      for (int n = 0; n < options.numTeamFlags; n++) {
+      for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++) {
         flag[f].required = true;
         flag[f].flag.type = Flags::GreenTeam;
         flag[f].flag.endurance = FlagNormal;
@@ -1117,7 +1116,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
     }
     if (options.maxTeam[BlueTeam] > 0) {
-      for (int n = 0; n < options.numTeamFlags; n++) {
+      for (int n = 0; n < options.numTeamFlags[BlueTeam]; n++) {
         flag[f].required = true;
         flag[f].flag.type = Flags::BlueTeam;
         flag[f].flag.endurance = FlagNormal;
@@ -1125,7 +1124,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
     }
     if (options.maxTeam[PurpleTeam] > 0) {
-      for (int n = 0; n < options.numTeamFlags; n++) {
+      for (int n = 0; n < options.numTeamFlags[PurpleTeam]; n++) {
         flag[f].required = true;
         flag[f].flag.type = Flags::PurpleTeam;
         flag[f].flag.endurance = FlagNormal;
