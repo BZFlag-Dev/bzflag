@@ -1,5 +1,3 @@
-SUBDIRS = models
-
 noinst_LIBRARIES = libGeometry.a
 
 libGeometry_a_SOURCES  =		\

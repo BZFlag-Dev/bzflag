@@ -294,7 +294,6 @@ AC_OUTPUT(Makefile
           debian/Makefile
           misc/Makefile
           win32/Makefile
-          doc/Makefile
           include/Makefile
           package/linux/Makefile
           package/rpm/Makefile
@@ -309,9 +308,4 @@ AC_OUTPUT(Makefile
           package/win32/src/Makefile
           package/win32/src/bzfinst/Makefile
           package/win32/src/bzfuinst/Makefile
-          package/win32/src/makedb/Makefile
-          src/geometry/models/Makefile
-          src/geometry/models/hitank/Makefile
-          src/geometry/models/lowtank/Makefile
-          src/geometry/models/medtank/Makefile
-          src/platform/MacBZFlag.pbproj/Makefile)
+          package/win32/src/makedb/Makefile)

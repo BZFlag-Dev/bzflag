@@ -1,1 +1,0 @@
-EXTRA_DIST = InfoPlist.strings project.pbxproj rae.pbxuser
