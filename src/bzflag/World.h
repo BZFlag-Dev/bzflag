@@ -58,6 +58,8 @@ class World {
     float		getFlagShakeTimeout() const;
     int			getFlagShakeWins() const;
     int			getMaxPlayers() const;
+    int			getCurMaxPlayers() const;
+    void		setCurMaxPlayers(int curMaxPlayers);
     int			getMaxDeadPlayers() const;
     int			getMaxShots() const;
     int			getMaxFlags() const;
@@ -123,6 +125,7 @@ class World {
     float		linearAcceleration;
     float		angularAcceleration;
     int			maxPlayers;
+    int			curMaxPlayers;
     int			maxShots;
     int			maxFlags;
     float		shakeTimeout;
@@ -264,6 +267,16 @@ inline int		World::getFlagShakeWins() const
 inline int		World::getMaxPlayers() const
 {
   return maxPlayers;
+}
+
+inline int		World::getCurMaxPlayers() const
+{
+  return curMaxPlayers;
+}
+
+inline void		World::setCurMaxPlayers(int curMaxPlayers)
+{
+  this->curMaxPlayers = curMaxPlayers;
 }
 
 inline int		World::getMaxDeadPlayers() const

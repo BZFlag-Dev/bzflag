@@ -354,8 +354,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     // (once in each direction);  this degrades the antialiasing
     // but on systems that don't do correct filtering of endpoints
     // not doing it makes (half) the endpoints jump wildly.
-    const int maxPlayers = world.getMaxPlayers();
-    for (i = 0; i < maxPlayers; i++) {
+    const int curMaxPlayers = world.getCurMaxPlayers();
+    for (i = 0; i < curMaxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
       if (!player || !player->isAlive() || player->getFlag() == StealthFlag)
 	continue;
@@ -387,7 +387,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     }
 
     // draw other tanks' shells
-    for (i = 0; i < maxPlayers; i++) {
+    for (i = 0; i < curMaxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {

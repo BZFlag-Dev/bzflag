@@ -853,10 +853,10 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
 
   // print players sorted by score
   int plrCount = 0;
-  const int maxPlayers = World::getWorld()->getMaxPlayers();
-  int* players = new int[maxPlayers];
+  const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
+  int* players = new int[curMaxPlayers];
 
-  for (j = 0; j < maxPlayers; j++)
+  for (j = 0; j < curMaxPlayers; j++)
     if (World::getWorld()->getPlayer(j))
       players[plrCount++] = j;
 

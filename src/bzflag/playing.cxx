@@ -93,6 +93,7 @@ static HUDRenderer*	hud = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 static int		maxPlayers = 0;		// not including me
+static int		curMaxPlayers = 0;
 static RemotePlayer**	player = NULL;
 static int		numFlags = 0;
 static JoinGameCallback	joinGameCallback = NULL;
@@ -466,7 +467,7 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
     else if (key.button == BzfKeyEvent::Left || key.button==BzfKeyEvent::Right) {
       const Player *recipient = myTank->getRecipient();
       if(!recipient) {
-	for (int i = 0; i < maxPlayers; i++) {
+	for (int i = 0; i < curMaxPlayers; i++) {
 	  if (player[i]) {
 	    myTank->setRecipient(player[i]);
 	    break;
@@ -476,7 +477,7 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       else {
 	const PlayerId id = recipient->getId();
 	int rindex = 0;
-	for (int i = 0; i < maxPlayers; i++) {
+	for (int i = 0; i < curMaxPlayers; i++) {
 	  if (player[i] && player[i]->getId() == id) rindex = i; }
 	if (key.button == BzfKeyEvent::Left) {
 	  for (int i = rindex-1; i >= 0; i--) {
@@ -486,7 +487,7 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 	    }
 	  }
 	  if (recipient == myTank->getRecipient()) {
-	    for (int i = maxPlayers-1; i >=0; i--) {
+	    for (int i = curMaxPlayers-1; i >=0; i--) {
 	      if (player[i]) {
 		myTank->setRecipient(player[i]);
 		break;
@@ -496,14 +497,14 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 	}
 	else
 	{
-	  for (int i = rindex+1; i < maxPlayers; i++) {
+	  for (int i = rindex+1; i < curMaxPlayers; i++) {
 	    if (player[i]) {
 	      myTank->setRecipient(player[i]);
 	      break;
 	    }
 	  }
 	  if (recipient == myTank->getRecipient()) {
-	    for (int i = 0; i < maxPlayers; i++) {
+	    for (int i = 0; i < curMaxPlayers; i++) {
 	      if (player[i]) {
 		myTank->setRecipient(player[i]);
 		break;
@@ -817,8 +818,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	    }
 	  }
 	  else {
-	    for (int i = 1; i < maxPlayers; i++) {
-	      int j = (roamTrackTank - i + maxPlayers) % maxPlayers;
+	    for (int i = 1; i < curMaxPlayers; i++) {
+	      int j = (roamTrackTank - i + curMaxPlayers) % curMaxPlayers;
 	      if (player[j] && player[j]->isAlive()) {
 		roamTrackTank = j;
 		break;
@@ -846,8 +847,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	    }
 	  }
 	  else {
-	    for (int i = 1; i < maxPlayers; i++) {
-	      int j = (roamTrackTank + i) % maxPlayers;
+	    for (int i = 1; i < curMaxPlayers; i++) {
+	      int j = (roamTrackTank + i) % curMaxPlayers;
 	      if (player[j] && player[j]->isAlive()) {
 		    roamTrackTank = j;
 		    break;
@@ -879,7 +880,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	        roamView == roamViewFP) {
 	    if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
 	      bool found = false;
-	      for(int i = 0; i < maxPlayers; i++) {
+	      for(int i = 0; i < curMaxPlayers; i++) {
 		if(player[i] && player[i]->isAlive()) {
 		  roamTrackTank = i;
 		  found = true;
@@ -1003,7 +1004,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       else {
 	const Player *recipient = myTank->getRecipient();
 	if (!recipient) {
-	  for (int i = 0; i < maxPlayers; i++) {
+	  for (int i = 0; i < curMaxPlayers; i++) {
 	    if (player[i]) {
 	      myTank->setRecipient(player[i]);
 	      break;
@@ -1405,7 +1406,7 @@ Player*			lookupPlayer(const PlayerId& id)
     return myTank;
 
   // check other players
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     if (player[i] && player[i]->getId() == id)
       return player[i];
 
@@ -1420,7 +1421,7 @@ static int		lookupPlayerIndex(const PlayerId& id)
     return -2;
 
   // check other players
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     if (player[i] && player[i]->getId() == id)
       return i;
 
@@ -1439,7 +1440,7 @@ static Player*		getPlayerByIndex(int index)
 
 static Player*		getPlayerByName( const char* name )
 {
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
       return player[i];
   return NULL;
@@ -1495,7 +1496,7 @@ static void		updateNumPlayers()
   int i, numPlayers[NumTeams];
   for (i = 0; i < NumTeams; i++)
     numPlayers[i] = 0;
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     if (player[i])
       numPlayers[player[i]->getTeam()]++;
   if (myTank)
@@ -1509,7 +1510,7 @@ static void		updateHighScores()
    * one spot. */
   boolean anyPlayers = False;
   int i;
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     if (player[i]) {
       anyPlayers = True;
       break;
@@ -1531,7 +1532,7 @@ static void		updateHighScores()
 
   boolean haveBest = True;
   int bestScore = myTank ? myTank->getScore() : 0;
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     if (player[i] && player[i]->getScore() >= bestScore) {
       haveBest = False;
       break;
@@ -1629,6 +1630,10 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
     return NULL;
   }
 
+  if (i >= curMaxPlayers) {
+    curMaxPlayers = i+1;
+    World::getWorld()->setCurMaxPlayers(curMaxPlayers);
+  }
   // add player
   if (PlayerType(type) == TankPlayer || PlayerType(type) == ComputerPlayer) {
     player[i] = new RemotePlayer(id, TeamColor(team), callsign, email);
@@ -1775,6 +1780,16 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	world->addDeadPlayer(player[playerIndex]);
 	delete player[playerIndex];
 	player[playerIndex] = NULL;
+
+	while ((playerIndex >= 0)
+	&&     (playerIndex+1 == curMaxPlayers)
+	&&     (player[playerIndex] == NULL))
+	{
+	  playerIndex--;
+	  curMaxPlayers--;
+	}
+	World::getWorld()->setCurMaxPlayers(curMaxPlayers);
+	
 	updateNumPlayers();
 	checkScores = True;
       }
@@ -2108,7 +2123,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       // but we're not going to get an individual notification for
       // each of them, so add an explosion for each now.  don't
       // include me, though;  I already blew myself up.
-      for (int i = 0; i < maxPlayers; i++) {
+      for (int i = 0; i < curMaxPlayers; i++) {
 	if (player[i] &&
 	    player[i]->isAlive() &&
 	    player[i]->getTeam() == capturedTeam) {
@@ -2129,7 +2144,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
     case MsgShotBegin: {
       FiringInfo firingInfo;
       msg = firingInfo.unpack(msg);
-      for (int i = 0; i < maxPlayers; i++)
+      for (int i = 0; i < curMaxPlayers; i++)
 	if (player[i] && player[i]->getId() == firingInfo.shot.player) {
 	  const float* pos = firingInfo.shot.pos;
 	  player[i]->addShot(firingInfo);
@@ -2159,7 +2174,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 
       if (localPlayer)
 	localPlayer->endShot(int(shotId), False, reason == 0);
-      else for (int i = 0; i < maxPlayers; i++)
+      else for (int i = 0; i < curMaxPlayers; i++)
 	if (player[i] && player[i]->getId() == id) {
 	  player[i]->endShot(int(shotId), False, reason == 0);
 	  break;
@@ -2174,7 +2189,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       msg = nboUnpackUShort(msg, wins);
       msg = nboUnpackUShort(msg, losses);
       // only update score of remote players (local score is already known)
-      for (int i = 0; i < maxPlayers; i++)
+      for (int i = 0; i < curMaxPlayers; i++)
 	if (player[i] && player[i]->getId() == id) {
 	  player[i]->changeScore(wins - player[i]->getWins(),
 				losses - player[i]->getLosses());
@@ -2567,7 +2582,7 @@ static void		restartPlaying()
     // check each enemy tank
     located = True;
     float worstDist = 1e6;
-    for (int i = 0; i < maxPlayers; i++) {
+    for (int i = 0; i < curMaxPlayers; i++) {
       // ignore missing player
       if (!player[i]) continue;
 
@@ -2948,7 +2963,7 @@ static void		checkEnvironment()
   float minTime = Infinity;
   myTank->checkHit(myTank, hit, minTime);
   int i;
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     if (player[i])
       myTank->checkHit(player[i], hit, minTime);
   if (hit) {
@@ -2970,7 +2985,7 @@ static void		checkEnvironment()
   else {
     const float* myPos = myTank->getPosition();
     const float myRadius = myTank->getRadius();
-    for (i = 0; i < maxPlayers; i++)
+    for (i = 0; i < curMaxPlayers; i++)
       if (player[i] &&
 	  player[i]->getFlag() == SteamrollerFlag &&
 	  !player[i]->isPaused()) {
@@ -2998,7 +3013,7 @@ static void		setTarget()
   boolean lockedOn = False;
 
   // figure out which tank is centered in my sights
-  for (int i = 0; i < maxPlayers; i++) {
+  for (int i = 0; i < curMaxPlayers; i++) {
     if (!player[i] || !player[i]->isAlive()) continue;
 
     // compute position in my local coordinate system
@@ -3184,7 +3199,7 @@ static void		setRobotTarget(RobotPlayer* robot)
 {
   Player* bestTarget = NULL;
   float bestPriority = 0.0f;
-  for (int j = 0; j < maxPlayers; j++)
+  for (int j = 0; j < curMaxPlayers; j++)
     if (player[j] && player[j]->getId() != robot->getId() &&
 	player[j]->isAlive() && (robot->getTeam() == RogueTeam ||
 	player[j]->getTeam() != robot->getTeam())) {
@@ -3247,7 +3262,7 @@ static void		checkEnvironment(RobotPlayer* tank)
   float minTime = Infinity;
   tank->checkHit(myTank, hit, minTime);
   int i;
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     if (player[i] && player[i]->getId() != tank->getId())
       tank->checkHit(player[i], hit, minTime);
   if (hit) {
@@ -3277,7 +3292,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 	dead = True;
       }
     }
-    for (i = 0; !dead && i < maxPlayers; i++)
+    for (i = 0; !dead && i < curMaxPlayers; i++)
       if (player[i] &&
 	  player[i]->getFlag() == SteamrollerFlag &&
 	  !player[i]->isPaused()) {
@@ -3511,7 +3526,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 	  for (int i = 0; i < maxFlags; i++) {
 	    const Flag& flag = world->getFlag(i);
 	    if (flag.status == FlagOnTank)
-	      for (int j = 0; j < maxPlayers; j++)
+	      for (int j = 0; j < curMaxPlayers; j++)
 		if (player[j] && player[j]->getId() == flag.owner) {
 		  player[j]->setFlag(flag.id);
 		  break;
@@ -3609,6 +3624,7 @@ static void		leaveGame()
   world = NULL;
   teams = NULL;
   maxPlayers = 0;
+  curMaxPlayers = 0;
   numFlags = 0;
   player = NULL;
 
@@ -3735,6 +3751,7 @@ static boolean		joinGame(const StartupInfo* info,
 
   // prep players
   maxPlayers = world->getMaxPlayers();
+  curMaxPlayers = 0;
   player = world->getPlayers();
 
   // prep flags
@@ -4001,7 +4018,7 @@ static void		playingLoop()
     doMessages();
 
     // do dead reckoning on remote players
-    for (i = 0; i < maxPlayers; i++)
+    for (i = 0; i < curMaxPlayers; i++)
       if (player[i]) {
 	const boolean wasNotResponding = player[i]->isNotResponding();
 	player[i]->doDeadReckoning();
@@ -4169,7 +4186,7 @@ static void		playingLoop()
     updateExplosions(dt);
 
     // update other tank's shots
-    for (i = 0; i < maxPlayers; i++)
+    for (i = 0; i < curMaxPlayers; i++)
       if (player[i])
 	player[i]->updateShots(dt);
 
@@ -4319,7 +4336,7 @@ static void		playingLoop()
 
 	// add other tanks and shells
 	const boolean colorblind = (myTank->getFlag() == ColorblindnessFlag);
-	for (i = 0; i < maxPlayers; i++)
+	for (i = 0; i < curMaxPlayers; i++)
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);

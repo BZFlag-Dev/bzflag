@@ -40,6 +40,7 @@ World::World() : gameStyle(PlainGameStyle),
 				linearAcceleration(0.0f),
 				angularAcceleration(0.0f),
 				maxPlayers(0),
+				curMaxPlayers(0),
 				maxShots(1),
 				maxFlags(0),
 				teleportTargets(NULL),
@@ -75,7 +76,7 @@ World::~World()
   freeFlags();
   freeInsideNodes();
   delete[] teleportTargets;
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     delete players[i];
   delete[] players;
   for (i = 0; i < maxDeadPlayers; i++)
@@ -510,7 +511,7 @@ void			World::updateFlag(int index, float dt)
 
   // narrow flag on tank turns with tank (so it's almost invisible head-on)
   if (flag.id == NarrowFlag && flag.status == FlagOnTank) {
-    for (int i = 0; i < maxPlayers; i++)
+    for (int i = 0; i < curMaxPlayers; i++)
       if (players[i] && players[i]->getId() == flag.owner) {
 	const float* dir = players[i]->getForward();
 	flagNodes[index]->setBillboard(False);
@@ -533,11 +534,11 @@ void			World::addFlags(SceneDatabase* scene)
     if (flags[i].status == FlagOnTank) {
       if (flags[i].id == CloakingFlag) continue;
       int j;
-      for (j = 0; j < maxPlayers; j++)
+      for (j = 0; j < curMaxPlayers; j++)
 	if (players[j] && players[j]->getId() == flags[i].owner)
 	  break;
 
-      if (j < maxPlayers && !(players[j]->getStatus() & Player::Alive))
+      if (j < curMaxPlayers && !(players[j]->getStatus() & Player::Alive))
 	continue;
     }
 
