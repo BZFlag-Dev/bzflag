@@ -62,9 +62,11 @@
 #include "World.h"
 #include "Bundle.h"
 #include "resources.h"
+#include "ControlPanel.h"
 
 extern ResourceDatabase db;	// bzflag.cxx
 extern int killerHighlight;	// playing.cxx
+extern ControlPanel* controlPanel; // playing.cxx
 
 //
 // MenuDefaultKey
@@ -1171,6 +1173,7 @@ class OptionsMenu : public HUDDialog {
     HUDuiControl*	videoFormat;
     HUDuiControl*	keyMapping;
     HUDuiControl*	guiOptions;
+    HUDuiControl*	clearCache;
     FormatMenu*		formatMenu;
     KeyboardMapMenu*	keyboardMapMenu;
     GUIOptionsMenu*	guiOptionsMenu;
@@ -1392,7 +1395,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   option->setLabel("Server List Cache:");
   option->setCallback(callback, (void*)"S");
   options = &option->getList();
-  options->push_back(std::string("Off"));
+  options->push_back(std::string("Off / Backup Mode"));
   options->push_back(std::string("5 Minutes"));
   options->push_back(std::string("15 Minutes"));
   options->push_back(std::string("30 Minutes"));
@@ -1404,6 +1407,11 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   options->push_back(std::string("30 days"));
   option->update();
   list.push_back(option);
+
+  clearCache = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Clear Server List Cache");
+  list.push_back(label); 
 
   keyMapping = label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
@@ -1439,6 +1447,9 @@ void			OptionsMenu::execute()
   else if (focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
     HUDDialogStack::get()->push(guiOptionsMenu);
+  }
+  else if (focus == clearCache) {
+     ServerMenu::clearCache();
   }
 }
 
@@ -1529,6 +1540,7 @@ void			OptionsMenu::resize(int width, int height)
       default: index = 4;
     }
     ((HUDuiList*)list[i++])->setIndex(index);
+    i++; // clear cache label
   }
 }
 
@@ -1616,8 +1628,9 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
         case 9: minutes = 60*24*30; break;
       }
       ServerMenu::setMaxCacheAge(minutes);
+      break;
     }
-
+ 
 #if defined(DEBUG_RENDERING)
     case 'a':
       sceneRenderer->setHiddenLine(list->getIndex() != 0);
@@ -2690,6 +2703,18 @@ void			ServerMenu::loadCache()
     }
     inFile.close();
   }
+}
+
+// clear the server list cache 
+void			ServerMenu::clearCache()
+{
+  if (serverCache.size() > 0){
+    serverCache.clear();
+    controlPanel->addMessage("Cleared Cache");
+  } else {
+    controlPanel->addMessage("Cache Already empty");
+  }
+
 }
 
 void			ServerMenu::addLabel(

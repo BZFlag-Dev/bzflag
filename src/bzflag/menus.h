@@ -156,6 +156,7 @@ class ServerMenu : public HUDDialog {
     static void		loadCache();
     static void		setMaxCacheAge(time_t time);
     static time_t	getMaxCacheAge();
+    static void		clearCache();
 
 
   public:
