@@ -404,7 +404,7 @@ bool AccessControlList::merge(const std::string& banData) {
       return false;
     is>>banEnd;
     if (banEnd != 0) {
-      banEnd -= long(time(NULL) - TimeKeeper::getCurrent().getSeconds());
+      banEnd -= long(time(NULL));
       banEnd /= 60;
       if (banEnd == 0)
 	banEnd = -1;
