@@ -26,9 +26,10 @@ void writeBZDB(const std::string& name, void *stream)
 {
   std::ostream& s = *reinterpret_cast<std::ostream*>(stream);
   std::string value = BZDB.get(name);
-  // quotify anything with a space
-  if (value.find(' ') != value.npos)
+  // quotify anything with a space and empty strings
+  if ((value.find(' ') != value.npos) || (value.size() == 0)) {
     value = std::string("\"") + value + "\"";
+  }
   s << "set " << name << ' ' << value << std::endl;
 }
 
