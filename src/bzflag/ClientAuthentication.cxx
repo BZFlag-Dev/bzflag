@@ -31,16 +31,26 @@ krb5_creds        ClientAuthentication::creds;
 krb5_creds       *ClientAuthentication::new_creds;
 krb5_principal    ClientAuthentication::client;
 krb5_principal    ClientAuthentication::server;
-char*             ClientAuthentication::principalName;
+char              ClientAuthentication::principalName[128];
 #endif
 bool              ClientAuthentication::authentication = false;
 
-void ClientAuthentication::init()
+#ifdef HAVE_KRB5
+void ClientAuthentication::init(const char *username, const char *password)
+#else
+void ClientAuthentication::init(const char *username, const char *)
+#endif // HAVE_KRB5
 {
+  strncpy(principalName, username, 128);
+  principalName[127] = 0;
+
 #ifdef HAVE_KRB5
   assert(context == NULL);
   assert(cc == NULL);
+
   krb5_error_code retval;
+  krb5_creds      my_creds;
+
   // Initializing kerberos library
   if ((retval = krb5_init_context(&context)))
     err("bzflag:", retval, "while initializing krb5");
@@ -50,13 +60,33 @@ void ClientAuthentication::init()
 					     "FILE:/tmp/krb5_cc_bzflag")))
     err("bzflag", retval, "setting default cache");
   // Getting credential cache 
-  if (context && (retval = krb5_cc_default(context, &cc)))
+  if (!retval && (retval = krb5_cc_default(context, &cc)))
     err("bzflag:", retval, "getting credentials cache");
-  if (cc && (retval = krb5_cc_get_principal(context, cc, &client)))
-    err("bzflag:", retval, "getting principal name");
-  if (!retval && (retval = krb5_unparse_name(context, client, &principalName)))
-    err("bzflag:", retval, "unparsing principal name");
-  if (context && (retval = krb5_parse_name(context,
+
+  char clientName[139];
+  snprintf(clientName, 139, "%s@BZFLAG.ORG", username);
+  if (cc && (retval = krb5_parse_name(context, clientName, &client)))
+    err("bzflag", retval, "parsing principal name");
+
+  // Initing credential cache
+  if (!retval && (retval = krb5_cc_initialize(context, cc, client)))
+    err("bzflag", retval, "initializing credential cache");
+
+  char intPassword[128];
+  strncpy(intPassword, password, 128);
+  intPassword[127] = 0;
+  // Get credentials for server
+  if (!retval && (retval = krb5_get_init_creds_password(context, &my_creds,
+ 							client, intPassword,
+ 							krb5_prompter_posix,
+ 							NULL, 0, NULL, NULL)))
+    err("bzflag", retval, "getting credential");
+
+  // Store credentials in cache
+  if (!retval && (retval = krb5_cc_store_cred(context, cc, &my_creds)))
+    err("bzflag", retval, "storing credential in cache");
+
+  if (!retval && (retval = krb5_parse_name(context,
 					   "krbtgt/BZFLAG.ORG@BZFLAG.ORG",
 					   &server)))
     err("bzflag:", retval, "setting up tgt server name");
@@ -75,13 +105,6 @@ void ClientAuthentication::sendCredential(ServerLink&)
 #ifdef HAVE_KRB5
   assert(context != NULL);
   assert(cc != NULL);
-  assert(principalName != NULL);
-
-  char simpleName[128];
-  int i;
-  strncpy(simpleName, principalName, 128);
-  for (i = 0; i < 127 && simpleName[i] && (simpleName[i] != '@'); i++);
-  simpleName[i] = 0;
 
   krb5_error_code retval;
   /* Get credentials for server */
@@ -93,7 +116,7 @@ void ClientAuthentication::sendCredential(ServerLink&)
 				     &new_creds)))
     err("bzflag:", retval, "getting TGT");
   if (!retval) {
-    serverLink.sendKerberosTicket(simpleName, &new_creds->ticket);
+    serverLink.sendKerberosTicket(principalName, &new_creds->ticket);
   }
 #endif
 }

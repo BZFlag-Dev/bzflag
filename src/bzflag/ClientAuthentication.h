@@ -31,7 +31,7 @@
 
 class ClientAuthentication {
  public:
-  static void init();
+  static void init(const char *username, const char *password);
   static void sendCredential(ServerLink &serverLink);
 private:
 #ifdef HAVE_KRB5
@@ -44,8 +44,8 @@ private:
   static krb5_creds       *new_creds;
   static krb5_principal    client;
   static krb5_principal    server;
-  static char             *principalName;
 #endif
+  static char              principalName[128];
   static bool              authentication;
 };
 

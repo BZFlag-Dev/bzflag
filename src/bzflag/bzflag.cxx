@@ -1457,7 +1457,8 @@ int			main(int argc, char** argv)
   }
 
   // Initializing Authentication
-  ClientAuthentication::init();
+  ClientAuthentication::init(BZDB.get("username").c_str(),
+			     BZDB.get("password").c_str());
 
   // start playing
   startPlaying(display, RENDERER, &startupInfo);
