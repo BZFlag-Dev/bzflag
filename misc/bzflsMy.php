@@ -29,23 +29,23 @@ $title    = $_GET['title'];
 
 # where to send debug printing
 $enableDebug	= 0;
-$debugFile 		= "/tmp/bzflsMy.php.txt";
+$debugFile 	= "/dev/null";
 
 # log function
 if ($enableDebug) {
-  function debug ($filename, $message) {
-    $fp = fopen($filename, "a");
-    if ($fp) {
-      # output the message with a BSD-style timestamp
-      fwrite($fp, date("D M j G:i:s T Y") . " " . $_SERVER['REMOTE_ADDR'] . " " . $message . "\n");
-      fclose($fp);
-    } else {
-      print("Unable to write to to log file [$filename]");
-    }
-  }
+	function debug ($filename, $message) {
+		$fp = fopen($filename, "a");
+		if ($fp) {
+			# output the message with a BSD-style timestamp
+			fwrite($fp, date("D M j G:i:s T Y") . " " . $_SERVER['REMOTE_ADDR'] . " " . $message . "\n");
+			fclose($fp);
+		} else {
+			print("Unable to write to to log file [$filename]");
+		}
+	}
 } else {
-  function debug ($filename, $message) {
-  }
+	function debug ($filename, $message) {
+	}
 }
 
 debug($debugFile, "Connecting to the database");
@@ -53,17 +53,18 @@ debug($debugFile, "Connecting to the database");
 # Connect to the server database persistently.
 $link = mysql_pconnect($dbhost, $dbuname, $dbpass)
      or die("Could not connect: " . mysql_error());
-
 if (!mysql_select_db($dbname)) {
-  debug($debugFile, "Database did not exist, creating a new one");
+	
+	debug($debugFile, "Database did not exist, creating a new one");
+
   mysql_create_db($dbname) or die("Could not create db: " . mysql_error());
 }
-
 $result = mysql_query("SELECT * FROM servers", $link);
 
 # If the servers table does not exist, create it.
 if (!$result) {
-  debug($debugFile, "Database table did not exist, creating a new one");
+
+	debug($debugFile, "Database table did not exist, creating a new one");
 
   mysql_query("CREATE TABLE servers " .
               "(nameport varchar(60) NOT NULL, " .
@@ -83,7 +84,7 @@ debug($debugFile, "Deleteing inactive servers from list");
 $timeout = 1800;    # timeout in seconds
 $staletime = time() - $timeout;
 mysql_query("DELETE FROM servers WHERE lastmod < $staletime", $link)
-  or die("Could not drop old items" . mysql_error());
+     or die("Could not drop old items" . mysql_error());
 
 header("Content-type: text/plain");
 # Do stuff based on what the 'action' is...
@@ -92,7 +93,7 @@ header("Content-type: text/plain");
 # Same as LIST in the old bzfls
 if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
 
-  debug($debugFile, "Fetching LIST");
+	debug($debugFile, "Fetching LIST");
 
   if ($version)
     $result = mysql_query("SELECT nameport,version,gameinfo,ipaddr,title "
@@ -111,7 +112,7 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
   }
 } elseif ($action == "ADD") {
 
-debug($debugFile, "Attempting to ADD $nameport $version $gameinfo $title");
+	debug($debugFile, "Attempting to ADD $nameport $version $gameinfo $title");
 
 #  -- ADD --
 # Server either requests to be added to DB, or to issue a keep-alive so that it
@@ -131,7 +132,11 @@ debug($debugFile, "Attempting to ADD $nameport $version $gameinfo $title");
     $servport = 5154;
   $servip = gethostbyname($servname);
 
-  debug($debugFile, "Attempting to establish a connection to $servname $servport");
+  if ($_SERVER['REMOTE_ADDR'] != $servip) {
+    debug($debugFile, "Requesting address is " . $_SERVER['REMOTE_ADDR']
+        . " while server is at " . $servip );
+    die();
+  }
 
   $fp = fsockopen ($servname, $servport, $errno, $errstring, 30);
   if (!$fp) {
@@ -148,38 +153,51 @@ debug($debugFile, "Attempting to ADD $nameport $version $gameinfo $title");
   $count = mysql_num_rows($result);
   if (!$count) {
 
-  debug($debugFile, "Server does not already exist in database -- adding");
+		debug($debugFile, "Server does not already exist in database -- adding");
 
 # Server does not already exist in DB so insert into DB
-  $result = mysql_query("INSERT INTO servers "
-			. "(nameport, build, version, gameinfo, ipaddr,"
-			. " title, lastmod) VALUES "
-			. "('$nameport', '$build', '$version',"
-			. " '$gameinfo', '$servip', '$title', $curtime)", $link)
-    or die ("Invalid query: ". mysql_error());
+    $result = mysql_query("INSERT INTO servers "
+			  . "(nameport, build, version, gameinfo, ipaddr,"
+                          . " title, lastmod) VALUES "
+			  . "('$nameport', '$build', '$version',"
+			  . " '$gameinfo', '$servip', '$title', $curtime)", $link)
+      or die ("Invalid query: ". mysql_error());
   } else {
 
-  debug($debugFile, "Server already exists in database -- updating");
+		debug($debugFile, "Server already exists in database -- updating");
 
 # Server exists already, so update the table entry
 # ASSUMPTION: only the 'lastmod' column of table needs updating since all
 # else should remain the same as before
-  $result = mysql_query("UPDATE servers SET " .
-			"build = '$build', " .
-			"version = '$version', " .
-			"gameinfo = '$gameinfo', " .
-			"title = '$title', " .
-			"lastmod = $curtime " .
-			"WHERE nameport = '$nameport'", $link)
+    $result = mysql_query("UPDATE servers SET " .
+			  "build = '$build', " .
+			  "version = '$version', " .
+			  "gameinfo = '$gameinfo', " .
+			  "title = '$title', " .
+			  "lastmod = $curtime " .
+			  "WHERE nameport = '$nameport'", $link)
       or die ("Invalid query: ". mysql_error());
   }
 
-  debug($debugFile, "ADD complete");
+	debug($debugFile, "ADD complete");
 
   print "ADD complete\n";
 } elseif ($action == "REMOVE") {
 
-  debug($debugFile, "REMOVE request from $nameport");
+	debug($debugFile, "REMOVE request from $nameport");
+
+  $split = explode(":", $nameport);
+  $servname = $split[0];
+  if (array_key_exists(1, $split))
+    $servport = $split[1];
+  else
+    $servport = 5154;
+  $servip = gethostbyname($servname);
+  if ($_SERVER['REMOTE_ADDR'] != $servip) {
+    debug($debugFile, "Requesting address is " . $_SERVER['REMOTE_ADDR']
+        . " while server is at " . $servip );
+    die();
+  }
 
 #  -- REMOVE --
 # Server requests to be removed from the DB.
@@ -190,19 +208,22 @@ debug($debugFile, "Attempting to ADD $nameport $version $gameinfo $title");
   print "Unknown command: '$action'\n";
 }
 
+
 # make sure the connection to mysql is severed
 if ($link) {
-  # for a transaction commit just in case
-  debug($debugFile, "Commiting any pending transactions");
-  mysql_query("COMMIT", $link);
 
-  # debug($debugFile, "Closing link to database");
+	# for a transaction commit just in case
+	debug($debugFile, "Commiting any pending transactions");
+	mysql_query("COMMIT", $link);
 
-  # say bye bye (shouldn't need to ever really, especially for persistent..)
-  #mysql_close($link);
+	# debug($debugFile, "Closing link to database");
+
+	# say bye bye (shouldn't need to ever really, especially for persistent..)
+	#	mysql_close($link);
 }
 
 debug($debugFile, "End session");
+
 
 # Local Variables: ***
 # mode:php ***
