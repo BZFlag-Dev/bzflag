@@ -27,6 +27,7 @@ bzadmin_SOURCES = \
 	BZAdminClient.h \
 	BZAdminClient.cxx \
 	BZAdminUI.h \
+	colors.h \
 	$(CURSES_SRC) \
 	OptionParser.h \
 	OptionParser.cxx \
