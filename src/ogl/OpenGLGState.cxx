@@ -15,7 +15,6 @@
 #include "common.h"
 #include "OpenGLGState.h"
 #include "TextureManager.h"
-#include "TextureMatrix.h"
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
 
@@ -39,11 +38,8 @@ class OpenGLGStateState {
     void		reset();
     void		enableTexture(bool);
     void		enableTextureReplace(bool);
-    void		enableTextureMatrix(bool);
-    void		enableSphereMap(bool);
     void		enableMaterial(bool);
     void		setTexture(const int tex);
-    void		setTextureMatrix(const int texmatrix);
     void		setMaterial(const OpenGLMaterial&);
     void		setBlending(GLenum sFactor, GLenum dFactor);
     void		setStipple(float alpha);
@@ -58,10 +54,6 @@ class OpenGLGStateState {
 				{ return sorted.texture >= 0; }
     bool		isTextureReplace() const
 				{ return sorted.hasTextureReplace; }
-    bool		isTextureMatrix() const
-				{ return sorted.hasTextureMatrix; }
-    bool		isSphereMap() const
-				{ return sorted.hasSphereMap; }
     bool		isLighted() const
 				{ return sorted.material.isValid(); }
 
@@ -81,11 +73,8 @@ class OpenGLGStateState {
       public:
 	bool		hasTexture;
 	bool		hasTextureReplace;
-	bool     	hasTextureMatrix;
-	bool     	hasSphereMap;
 	bool		hasMaterial;
 	int 		texture;
-	int      	textureMatrix;
 	OpenGLMaterial	material;
     };
 
@@ -129,8 +118,6 @@ class OpenGLGStateRep {
     bool		isBlended() { return state.isBlended(); }
     bool		isTextured() { return state.isTextured(); }
     bool		isTextureReplace() { return state.isTextureReplace(); }
-    bool		isTextureMatrix() { return state.isTextureMatrix(); }
-    bool		isSphereMap() { return state.isSphereMap(); }
     bool		isLighted() { return state.isLighted(); }
     void		setState();
     static void		resetState();
@@ -163,11 +150,8 @@ class OpenGLGStateRep {
 OpenGLGStateState::Sorted::Sorted() :
 				hasTexture(false),
 				hasTextureReplace(false),
-				hasTextureMatrix(false),
-				hasSphereMap(false),
 				hasMaterial(false),
 				texture(-1),
-				textureMatrix(-1),
 				material(OpenGLMaterial())
 {
   // do nothing
@@ -182,11 +166,8 @@ void			OpenGLGStateState::Sorted::reset()
 {
   hasTexture = false;
   hasTextureReplace = false;
-  hasTextureMatrix = false;
-  hasSphereMap = false;
   hasMaterial = false;
   texture = -1;
-  textureMatrix = -1;
   material = OpenGLMaterial();
 }
 
@@ -196,11 +177,6 @@ bool			OpenGLGStateState::Sorted::operator==(
   if (hasTexture != s.hasTexture || texture != s.texture)
     return false;
   if (hasTextureReplace != s.hasTextureReplace)
-    return false;
-  if ((hasTextureMatrix != s.hasTextureMatrix) ||
-      (textureMatrix != s.textureMatrix))
-    return false;
-  if (hasSphereMap != s.hasSphereMap) 
     return false;
   if (hasMaterial != s.hasMaterial || material != s.material)
     return false;
@@ -216,12 +192,6 @@ bool			OpenGLGStateState::Sorted::operator<(
   if (hasTexture) {
     if (hasTextureReplace != s.hasTextureReplace) return s.hasTextureReplace;
     return texture < s.texture;
-  }
-  if (hasTextureMatrix != s.hasTextureMatrix) {
-    return textureMatrix < s.textureMatrix;
-  }
-  if (hasSphereMap != s.hasSphereMap) {
-    return !hasSphereMap;
   }
 
   // this < s if this has no material and s does or material < s.material
@@ -297,19 +267,6 @@ void			OpenGLGStateState::enableTextureReplace(bool)
   sorted.hasTextureReplace = false;
 }
 
-void			OpenGLGStateState::enableTextureMatrix(bool on)
-{
-  if (on)
-    sorted.hasTextureMatrix = sorted.textureMatrix >= 0;
-  else
-    sorted.hasTexture = false;
-}
-
-void			OpenGLGStateState::enableSphereMap(bool on)
-{
-  sorted.hasSphereMap = on;
-}
-
 void			OpenGLGStateState::enableMaterial(bool on)
 {
   if (on) sorted.hasMaterial = sorted.material.isValid();
@@ -321,13 +278,6 @@ void			OpenGLGStateState::setTexture(
 {
   sorted.hasTexture = _texture>=0;
   sorted.texture = _texture;
-}
-
-void			OpenGLGStateState::setTextureMatrix(
-					const int _textureMatrix)
-{
-  sorted.hasTexture = _textureMatrix>=0;
-  sorted.textureMatrix = _textureMatrix;
 }
 
 void			OpenGLGStateState::setMaterial(
@@ -384,15 +334,6 @@ void			OpenGLGStateState::resetOpenGLState() const
   if (sorted.hasTextureReplace) {
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   }
-  if (sorted.hasTextureMatrix) {
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-  }
-  if (sorted.hasSphereMap) {
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-  }
   if (sorted.hasMaterial) {
     glDisable(GL_LIGHTING);
     glDisable(GL_COLOR_MATERIAL);
@@ -447,38 +388,6 @@ void			OpenGLGStateState::setOpenGLState(
 	if (oldState->sorted.hasTextureReplace) {
 	  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         }
-      }
-    }
-
-    // texture transformation matrix
-    if (sorted.hasTextureMatrix) {
-      if (sorted.textureMatrix != oldState->sorted.textureMatrix) {
-        glMatrixMode(GL_TEXTURE);
-        glLoadMatrixf(TEXMATRIXMGR.getMatrix(sorted.textureMatrix)->getMatrix());
-        glMatrixMode(GL_MODELVIEW);
-      }
-    }
-    else {
-      if (oldState->sorted.hasTextureMatrix) {
-        glMatrixMode(GL_TEXTURE);
-        glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
-      }
-    }
-    
-    // spherical texture mapping
-    if (sorted.hasSphereMap) {
-      if (!oldState->sorted.hasSphereMap) {
-        glTexGenf(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-        glTexGenf(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-        glEnable(GL_TEXTURE_GEN_S);
-        glEnable(GL_TEXTURE_GEN_T);
-      }
-    }
-    else {
-      if (oldState->sorted.hasSphereMap) {
-        glDisable(GL_TEXTURE_GEN_S);
-        glDisable(GL_TEXTURE_GEN_T);
       }
     }
 
@@ -607,30 +516,6 @@ void			OpenGLGStateState::setOpenGLState(
       glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
-    // texture transformation matrix
-    if (sorted.hasTextureMatrix) {
-      glMatrixMode(GL_TEXTURE);
-      glLoadMatrixf(TEXMATRIXMGR.getMatrix(sorted.textureMatrix)->getMatrix());
-      glMatrixMode(GL_MODELVIEW);
-    }
-    else {
-      glMatrixMode(GL_TEXTURE);
-      glLoadIdentity();
-      glMatrixMode(GL_MODELVIEW);
-    }
-
-    // spherical texture mapping
-    if (sorted.hasSphereMap) {
-      glTexGenf(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-      glTexGenf(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-      glEnable(GL_TEXTURE_GEN_S);
-      glEnable(GL_TEXTURE_GEN_T);
-    }
-    else {
-      glDisable(GL_TEXTURE_GEN_S);
-      glDisable(GL_TEXTURE_GEN_T);
-    }
-    
     // lighting and material
     if (sorted.hasMaterial) {
       sorted.material.execute();
@@ -1216,16 +1101,6 @@ void			OpenGLGStateBuilder::enableTextureReplace(bool on)
   state->enableTextureReplace(on);
 }
 
-void			OpenGLGStateBuilder::enableTextureMatrix(bool on)
-{
-  state->enableTextureMatrix(on);
-}
-
-void			OpenGLGStateBuilder::enableSphereMap(bool on)
-{
-  state->enableSphereMap(on);
-}
-
 void			OpenGLGStateBuilder::enableMaterial(bool on)
 {
   state->enableMaterial(on);
@@ -1250,12 +1125,6 @@ void			OpenGLGStateBuilder::setTexture(
 					const int texture)
 {
   state->setTexture(texture);
-}
-
-void			OpenGLGStateBuilder::setTextureMatrix(
-					const int textureMatrix)
-{
-  state->setTextureMatrix(textureMatrix);
 }
 
 void			OpenGLGStateBuilder::setMaterial(

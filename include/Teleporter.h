@@ -20,7 +20,6 @@
 #include "common.h"
 #include <string>
 #include "Obstacle.h"
-#include "MeshFace.h"
 
 class Teleporter : public Obstacle {
   public:
@@ -65,23 +64,12 @@ class Teleporter : public Obstacle {
 				const float* pIn, const float* dIn, float aIn,
 				float* pOut, float* dOut, float* aOut) const;
 
-    void makeLinks();				
-    const MeshFace* getBackLink() const;
-    const MeshFace* getFrontLink() const;
-
     std::string	        userTextures[1];
   private:
     float		border;
-	bool		horizontal;
+    bool		horizontal;
     static const char*	typeName;
-
-    MeshFace* backLink;
-    MeshFace* frontLink;
-    float fvertices[4][3]; // front vertices
-    float bvertices[4][3]; // back vertices
 };
-
-const int randomTeleporter = (unsigned short)(-1);
 
 //
 // Teleporter
@@ -95,16 +83,6 @@ inline float Teleporter::getBorder() const
 inline bool Teleporter::isHorizontal() const
 {
   return horizontal;
-}
-
-inline const MeshFace* Teleporter::getBackLink() const
-{
-  return backLink;
-}
-
-inline const MeshFace* Teleporter::getFrontLink() const
-{
-  return frontLink;
 }
 
 

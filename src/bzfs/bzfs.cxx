@@ -551,7 +551,8 @@ static void serverStop()
 }
 
 
-static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
+static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf,
+                              uint16_t /*code*/)
 {
   // relay packet to all players except origin
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -561,16 +562,8 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
     PlayerInfo& pi = playerData->player;
 
     if (i != index && pi.isPlaying()) {
-      if (((code == MsgPlayerUpdate) ||(code == MsgPlayerUpdateSmall))
-          && pi.haveFlag()
-	  && (FlagInfo::get(pi.getFlag())->flag.type == Flags::Lag)) {
-        // delay sending to this player
-	playerData->delayq.addPacket(len+4, rawbuf,
-				     BZDB.eval(StateDatabase::BZDB_FAKELAG));
-      } else {
-        // send immediately
-        pwrite(*playerData, rawbuf, len + 4);
-      }
+      // send immediately
+      pwrite(*playerData, rawbuf, len + 4);
     }
   }
 }
@@ -1884,18 +1877,11 @@ void resetFlag(FlagInfo &flag)
       flagPos[2] = 0.0f;
     }
 
-    const float waterLevel = world->getWaterLevel();
-    if (waterLevel >= 0.0f) {
-      // precautionary measure
-      clOptions->flagsOnBuildings = true;
-    }
-
     int topmosttype = world->cylinderInBuilding(&obj, flagPos, r, flagHeight);
 
-    while ((topmosttype != NOT_IN_BUILDING) || (flagPos[2] <= waterLevel)) {
+    while (topmosttype != NOT_IN_BUILDING) {
       if (world->getZonePoint(std::string(flag.flag.type->flagAbbv),
-			      flagPos)
-	  && (flagPos[2] > waterLevel)) {
+			      flagPos)) {
         // if you got a related flag zone specified, always use
         // it. there may be obstacles in the zone that cause the
         // NOT_IN_BUILDING test to fail a couple of times, but
@@ -2590,7 +2576,6 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   }
   // if topmosttype is NOT_IN_BUILDING position has reached ground
 
-  const float waterLevel = world->getWaterLevel();
   float obstacleTop = 0.0f;
   if (topmosttype != NOT_IN_BUILDING) {
     obstacleTop = topmost->getPosition()[2] + topmost->getSize()[2];
@@ -2603,10 +2588,10 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
     vanish = false;
   else if (--drpFlag.grabs == 0)
     vanish = true;
-  else if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f))
+  else if (topmosttype == NOT_IN_BUILDING)
     vanish = false;
-  else if (clOptions->flagsOnBuildings && (obstacleTop > waterLevel)
-	   && (topmosttype == IN_BOX_NOTDRIVETHROUGH
+  else if (clOptions->flagsOnBuildings &&
+           (topmosttype == IN_BOX_NOTDRIVETHROUGH
 	       || topmosttype == IN_BASE))
     vanish = false;
   else
@@ -2632,7 +2617,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 	  topmosttype = world->cylinderInBuilding
 	    (&container, landingPos, BZDBCache::tankRadius,
 	     flagHeight);
-	  if ((topmosttype != NOT_IN_BUILDING) || (landingPos[2] <= waterLevel)) {
+	  if (topmosttype != NOT_IN_BUILDING) {
 	    TeamBases &teamBases = bases[flagTeam];
 	    const TeamBase &base = teamBases.getRandomBase(flagIndex);
 	    landingPos[0] = base.position[0];
@@ -2641,9 +2626,9 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 	  }
 	}
       }
-    } else if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f)) {
+    } else if (topmosttype == NOT_IN_BUILDING) {
       // use default landing position
-    } else if (clOptions->flagsOnBuildings && (obstacleTop > waterLevel)
+    } else if (clOptions->flagsOnBuildings
 	       && (topmosttype == IN_BOX_NOTDRIVETHROUGH)) {
       // use default landing position
     } else {
@@ -2656,7 +2641,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 	topmosttype = world->cylinderInBuilding
 	  (&container, pos, BZDBCache::tankRadius,
 	   flagHeight);
-	if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f)) {
+	if (topmosttype == NOT_IN_BUILDING) {
 	  landingPos[0] = 0.0f;
 	  landingPos[1] = 0.0f;
 	  landingPos[2] = 0.0f;
@@ -2679,9 +2664,6 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   }
 
   drpFlag.dropFlag(pos, landingPos, vanish);
-
-  // removed any delayed packets (in case it was a "Lag Flag")
-  playerData.delayq.dequeuePackets();
 
   // player no longer has flag -- send MsgDropFlag
   sendDrop(drpFlag);
@@ -3848,16 +3830,6 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
 static void doStuffOnPlayer(GameKeeper::Player &playerData)
 {
   int p = playerData.getIndex();
-
-  // send delayed packets
-  void *data;
-  int length;
-  if (playerData.delayq.getPacket(&length, &data)) {
-    int result = pwrite(playerData, data, length);
-    free(data);
-    if (result == -1)
-      return;
-  }
 
   // kick idle players
   if (clOptions->idlekickthresh > 0) {

@@ -21,10 +21,6 @@
 #include "EighthDBoxSceneNode.h"
 #include "EighthDPyrSceneNode.h"
 #include "EighthDBaseSceneNode.h"
-#include "EighthDTetraSceneNode.h"
-#include "DynamicColor.h"
-#include "TextureMatrix.h"
-#include "BzMaterial.h"
 #include "FlagSceneNode.h"
 
 /* compression library header */
@@ -75,26 +71,6 @@ void* WorldBuilder::unpack(void* buf)
   }
   buf = uncompressedWorld;
 
-  // unpack dynamic colors
-  DYNCOLORMGR.clear();
-  buf = DYNCOLORMGR.unpack(buf);
-
-  // unpack texture matrices
-  TEXMATRIXMGR.clear();
-  buf = TEXMATRIXMGR.unpack(buf);
-
-  // unpack texture matrices
-  MATERIALMGR.clear();
-  buf = MATERIALMGR.unpack(buf);
-
-  // unpack water level
-  buf = nboUnpackFloat(buf, world->waterLevel);
-  if (world->waterLevel >= 0.0f) {
-    int matindex;
-    buf = nboUnpackInt(buf, matindex);
-    world->waterMaterial = MATERIALMGR.getMaterial(matindex);
-  }
-
   // read geometry
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
@@ -102,93 +78,6 @@ void* WorldBuilder::unpack(void* buf)
   while (code != WorldCodeEnd) {
     switch (code) {
 
-      case WorldCodeTetra: {
-
-        // a good double check, but a bogus length
-	if (len != WorldCodeTetraSize) {
-          delete[] uncompressedWorld;
-          DEBUG1 ("WorldBuilder::unpack() bad tetra size\n");
-	  return NULL;
-        }
-
-	TetraBuilding* tetra = new TetraBuilding;
-	buf = tetra->unpack(buf);
-        if (tetra->isValid()) {
-	  world->tetras.push_back(tetra);
-        } else {
-          delete tetra;
-        }
-	break;
-      }
-      case WorldCodeMesh: {
-
-        // a good double check, but a bogus length
-	if (len != WorldCodeMeshSize) {
-          delete[] uncompressedWorld;
-          DEBUG1 ("WorldBuilder::unpack() bad mesh size\n");
-	  return NULL;
-        }
-
-	MeshObstacle* mesh = new MeshObstacle;
-	buf = mesh->unpack(buf);
-        if (mesh->isValid()) {
-	  world->meshes.push_back(mesh);
-        } else {
-          delete mesh;
-        }
-	break;
-      }
-      case WorldCodeArc: {
-        // a good double check, but a bogus length
-	if (len != WorldCodeArcSize) {
-          delete[] uncompressedWorld;
-          DEBUG1 ("WorldBuilder::unpack() bad arc size\n");
-	  return NULL;
-        }
-	ArcObstacle* arc = new ArcObstacle;
-	buf = arc->unpack(buf);
-        if (arc->isValid()) {
-	  world->arcs.push_back(arc);
-	  world->meshes.push_back(arc->getMesh());
-        } else {
-          delete arc;
-        }
-        break;
-      }
-      case WorldCodeCone: {
-        // a good double check, but a bogus length
-	if (len != WorldCodeConeSize) {
-          delete[] uncompressedWorld;
-          DEBUG1 ("WorldBuilder::unpack() bad cone size\n");
-	  return NULL;
-        }
-	ConeObstacle* cone = new ConeObstacle;
-	buf = cone->unpack(buf);
-        if (cone->isValid()) {
-	  world->cones.push_back(cone);
-	  world->meshes.push_back(cone->getMesh());
-        } else {
-          delete cone;
-        }
-        break;
-      }
-      case WorldCodeSphere: {
-        // a good double check, but a bogus length
-	if (len != WorldCodeSphereSize) {
-          delete[] uncompressedWorld;
-          DEBUG1 ("WorldBuilder::unpack() bad sphere size\n");
-	  return NULL;
-        }
-	SphereObstacle* sphere = new SphereObstacle;
-	buf = sphere->unpack(buf);
-        if (sphere->isValid()) {
-	  world->spheres.push_back(sphere);
-	  world->meshes.push_back(sphere->getMesh());
-        } else {
-          delete sphere;
-        }
-        break;
-      }
       case WorldCodeBox: {
 	float data[7];
 	unsigned char tempflags;
@@ -537,13 +426,6 @@ void WorldBuilder::preGetWorld()
     obstacleSize[2] = o.getHeight();
     world->pyramidInsideNodes[i] = new EighthDPyrSceneNode(o.getPosition(),
 							   obstacleSize, o.getRotation());
-  }
-  const int numTetras = world->tetras.size();
-  world->tetraInsideNodes = new EighthDimSceneNode*[numTetras];
-  for (i = 0; i < numTetras; i++) {
-    const TetraBuilding& o = *world->tetras[i];
-    world->tetraInsideNodes[i] = new EighthDTetraSceneNode(o.getVertices(),
-                                                           o.getPlanes());
   }
   const int numBases = world->basesR.size();
   world->baseInsideNodes = new EighthDimSceneNode*[numBases];

@@ -85,18 +85,6 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   dimensions[0] = 0.5f * BZDBCache::tankLength;
   dimensions[1] = 0.5f * BZDBCache::tankWidth;
   dimensions[2] = BZDBCache::tankHeight;
-  memcpy (oldDimensions, dimensions, sizeof(float[3]));
-  for (int i = 0; i < 3; i++) {  
-    dimensionsRate[i] = 0.0f;
-    dimensionsScale[i] = 1.0f;
-    dimensionsTarget[i] = 1.0f;
-  }
-  useDimensions = false;
-  
-  // setup alpha properties
-  alpha = 1.0f;
-  alphaRate = 0.0f;
-  alphaTarget = 1.0f;
   
   return;
 }
@@ -133,7 +121,8 @@ float			Player::getRadius() const
   // NOTE: this encompasses everything but Narrow
   //       the Obese, Tiny, and Thief flags adjust
   //       the radius, but Narrow does not.
-  return (dimensionsScale[0] * BZDBCache::tankRadius);
+  const float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  return (BZDBCache::tankRadius * (dimensions[0] / tankLength));
 }
 
 void			Player::getMuzzle(float* m) const
@@ -142,17 +131,52 @@ void			Player::getMuzzle(float* m) const
   //       as well, we do not use BZDB_MUZZLEFRONT, but the
   //       0.1f value listed in global.cxx is added on to the
   //       scaled version of tankRadius.
-  const float front = (dimensionsScale[0] * BZDBCache::tankRadius) + 0.1f;
+  const float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  const float tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  const float front = (BZDBCache::tankRadius * (dimensions[0] / tankLength)) + 0.1f;
   m[0] = state.pos[0] + (front * forward[0]);
   m[1] = state.pos[1] + (front * forward[1]);
-  const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  m[2] = state.pos[2] + (height * dimensionsScale[2]);
+  const float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  m[2] = state.pos[2] + (muzzleHeight * (dimensions[2] / tankHeight));
+  return;
+}
+
+void 			Player::updateTank(float /*dt*/)
+{
+  // set the dimension
+  dimensions[0] = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  dimensions[1] = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  dimensions[2] = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  
+  FlagType* effectFlag = getFlag();
+  
+  if (effectFlag == Flags::Obesity) {
+    const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+    dimensions[0] *= factor;
+    dimensions[1] *= factor;
+  }
+  else if (effectFlag == Flags::Tiny) {
+    const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+    dimensions[0] *= factor;
+    dimensions[1] *= factor;
+  }
+  else if (effectFlag == Flags::Thief) {
+    const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    dimensions[0] *= factor;
+    dimensions[1] *= factor;
+  }
+  else if (effectFlag == Flags::Narrow) {
+    dimensions[1] = 0.001f;
+  }
+
   return;
 }
 
 float			Player::getMuzzleHeight() const
 {
-  return (dimensionsScale[2] * BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+  const float tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  const float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  return (muzzleHeight * (dimensions[2] / tankHeight));
 }
 
 void			Player::move(const float* _pos, float _azimuth)
@@ -210,9 +234,7 @@ void			Player::setExplode(const TimeKeeper& t)
   explodeTime = t;
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
 	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
-  tankNode->rebuildExplosion();
   // setup the flag effect to revert to normal
-  updateFlagEffect(Flags::Null);
 }
 
 void			Player::setTeleport(const TimeKeeper& t,
@@ -223,103 +245,6 @@ void			Player::setTeleport(const TimeKeeper& t,
   fromTeleporter = from;
   toTeleporter = to;
   setStatus(getStatus() | short(PlayerState::Teleporting));
-}
-
-void			Player::updateTank(float dt)
-{
-  // copy the current dimensions to the old dimensions
-  memcpy (oldDimensions, dimensions, sizeof(float[3]));
-  
-  // update the dimensions
-  for (int i = 0; i < 3; i++) {
-    if (dimensionsRate[i] != 0.0f) {
-      dimensionsScale[i] += dt * dimensionsRate[i];
-      if (dimensionsRate[i] < 0.0f) {
-        if (dimensionsScale[i] < dimensionsTarget[i]) {
-          dimensionsScale[i] = dimensionsTarget[i];
-          dimensionsRate[i] = 0.0f;
-        }
-      } else {
-        if (dimensionsScale[i] > dimensionsTarget[i]) {
-          dimensionsScale[i] = dimensionsTarget[i];
-          dimensionsRate[i] = 0.0f;
-        }
-      }
-    }
-  }
-  
-  // check if the dimensions are at a steady state
-  if ((dimensionsScale[0] == dimensionsTarget[0]) &&
-      (dimensionsScale[1] == dimensionsTarget[1]) &&
-      (dimensionsScale[2] == dimensionsTarget[2])) {
-    useDimensions = false;
-  } else {
-    useDimensions = true;
-  }
-  
-  // set the actual dimensions based on the scale
-  dimensions[0] = dimensionsScale[0] *
-                  0.5f * BZDBCache::tankLength;
-  dimensions[1] = dimensionsScale[1] * 
-                  0.5f * BZDBCache::tankWidth;
-  dimensions[2] = dimensionsScale[2] *
-                  BZDBCache::tankHeight;
-                  
-  // update the alpha value
-  if (alphaRate != 0.0f) {
-    alpha += dt * alphaRate;
-    if (alphaRate < 0.0f) {
-      if (alpha < alphaTarget) {
-        alpha = alphaTarget;
-        alphaRate = 0.0f;
-      }
-    } else {
-      if (alpha > alphaTarget) {
-        alpha = alphaTarget;
-        alphaRate = 0.0f;
-      }
-    }
-  }
-    
-  // set the tankNode color
-  if ((flagType == Flags::PhantomZone) && isFlagActive()) {
-    color[3] = 0.25f; // barely visible, regardless of teleporter proximity
-  } 
-  else if (alpha == 0.0f) {
-    color[3] = 0.0f;
-  }
-  else {
-    teleporterProximity =
-      World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
-    color[3] = alpha * (1.0f - (0.75f * teleporterProximity));
-  } 
-  tankNode->setColor(color);
-  
-  setupTreads(dt);
-  
-  return;
-}
-
-void			Player::setupTreads(float dt)
-{
-  // setup the tread offsets
-  float speedFactor = inputSpeed;
-  if (dimensionsScale[0] > 1.0e-6f) {
-    speedFactor = speedFactor / dimensionsScale[0];
-  } else {
-    speedFactor = speedFactor * 1.0e6f;
-  }
-
-  float angularFactor = inputAngVel;
-  const float halfWidth = 0.5f * BZDBCache::tankWidth;
-  // not using dimensions[1], because it may be set to 0.001 by a Narrow flag
-  angularFactor *= dimensionsScale[0] * halfWidth;
-
-  const float leftOff = dt * (speedFactor - angularFactor);
-  const float rightOff = dt * (speedFactor + angularFactor);
-  tankNode->addTreadOffsets(leftOff, rightOff);
-
-  return;  
 }
 
 void			Player::changeScore(short deltaWins, short deltaLosses, short deltaTeamKills)
@@ -340,63 +265,9 @@ void			Player::setFlag(FlagType* _flag)
 {
   // set the type
   flagType = _flag;
-  updateFlagEffect(flagType);
   return;
 }
   
-void			Player::updateFlagEffect(FlagType* effectFlag)
-{
-  float FlagEffectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
-  if (FlagEffectTime <= 0.0f) {
-    FlagEffectTime = 0.001f; // safety
-  }
-
-  // set the dimension targets
-  dimensionsTarget[0] = 1.0f;
-  dimensionsTarget[1] = 1.0f;
-  dimensionsTarget[2] = 1.0f;
-  if (effectFlag == Flags::Obesity) {
-    const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    dimensionsTarget[0] = factor;
-    dimensionsTarget[1] = factor;
-  }
-  else if (effectFlag == Flags::Tiny) {
-    const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-    dimensionsTarget[0] = factor;
-    dimensionsTarget[1] = factor;
-  }
-  else if (effectFlag == Flags::Thief) {
-    const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    dimensionsTarget[0] = factor;
-    dimensionsTarget[1] = factor;
-  }
-  else if (effectFlag == Flags::Narrow) {
-    dimensionsTarget[1] = 0.001f;
-  }
-
-  // set the dimension rates
-  for (int i = 0; i < 3; i++) {
-    if (dimensionsTarget[i] != dimensionsScale[i]) {
-      dimensionsRate[i] = dimensionsTarget[i] - dimensionsScale[i];
-      dimensionsRate[i] = dimensionsRate[i] / FlagEffectTime;
-    }
-  }
-
-  // set the alpha target
-  if (effectFlag == Flags::Cloaking) {
-    alphaTarget = 0.0f;
-  } else {
-    alphaTarget = 1.0f;
-  }
-
-  // set the alpha rate
-  if (alphaTarget != alpha) {
-    alphaRate = (alphaTarget - alpha) / FlagEffectTime;
-  }
-
-  return;
-}
-
 void			Player::endShot(int index,
 					bool isHit, bool showExplosion)
 {
@@ -480,25 +351,15 @@ void			Player::addToScene(SceneDatabase* scene,
   tankNode->move(state.pos, forward);
   setVisualTeam(effectiveTeam);
 
-  // only use dimensions if we aren't at steady state.
-  // this is done because it's more expensive to use
-  // GL_NORMALIZE then to use precalculated normals.
-  if (!useDimensions) {
-    tankNode->ignoreDimensions();
+  // reset the clipping plane
+  tankNode->setClipPlane(NULL);
+  
+  if (isAlive()) {
     if (flagType == Flags::Obesity) tankNode->setObese();
     else if (flagType == Flags::Tiny) tankNode->setTiny();
     else if (flagType == Flags::Narrow) tankNode->setNarrow();
     else if (flagType == Flags::Thief) tankNode->setThief();
     else tankNode->setNormal();
-  } 
-  else {
-    tankNode->setDimensions(dimensionsScale);
-  }
-
-  // reset the clipping plane
-  tankNode->setClipPlane(NULL);
-  
-  if (isAlive()) {
     tankNode->setExplodeFraction(0.0f);
     scene->addDynamicNode(tankNode);
 
@@ -552,8 +413,7 @@ void			Player::addToScene(SceneDatabase* scene,
   }
   
   if (isAlive() && (isPaused() || isNotResponding())) {
-    pausedSphere->move(state.pos, 
-                       1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
+    pausedSphere->move(state.pos, 1.5f * BZDBCache::tankRadius);
     scene->addDynamicSphere(pausedSphere);
   }
 }
@@ -567,7 +427,7 @@ bool			Player::needsToBeRendered(bool cloaked, bool showTreads)
 
   // setup the visibility properties
   if (cloaked) {
-    tankNode->setCloaked(true); // show the fading effect
+    tankNode->setInvisible(true); // show nothing
   }
   else if (!showTreads) {
     tankNode->setHidden(true); // just shadows
@@ -577,61 +437,6 @@ bool			Player::needsToBeRendered(bool cloaked, bool showTreads)
   }
   
   return true;
-}
-
-
-void            Player::setLandingSpeed(float velocity)
-{
-  float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
-  if (squishiness < 0.001f) {
-    return;
-  }
-  float squishTime = BZDB.eval(StateDatabase::BZDB_SQUISHTIME);
-  if (squishTime < 0.001) {
-    return;
-  }
-  const float gravity = BZDBCache::gravity;
-  if (velocity > 0.0f) {
-    velocity = 0.0f;
-  }
-  // use a fixed decompression rate
-  dimensionsRate[2] = 1.0f / squishTime;
-  
-  // Setup so that a drop height of BZDB_GRAVITY squishes
-  // by a factor of 1/11, when BZDB_SQUISHFACTOR is set to 1
-  // 
-  // G = gravity;  V = velocity;  D = fall distance; K = factor
-  //
-  // V = sqrt (2 * D * G)
-  // V = sqrt(2) * G  { @ D = G)
-  // scale = 1 / (1 + (K * V^2))
-  // scale = 1 / (1 + (K * 2 * G^2))
-  // set: (K * 2 * G^2) = 0.1
-  // K = 0.1 / (2 * G^2)
-  //
-  float k = 0.1f / (2.0f * gravity * gravity);
-  k = k * squishiness;
-  if (flagType == Flags::Bouncy) {
-    k = k * 4.0f;
-  }
-  dimensionsScale[2] = 1.0f / (1.0f + (k * (velocity * velocity)));
-  
-  return;
-}
-
-
-void			Player::spawnEffect()
-{
-  const float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
-  if (squishiness > 0.0f) {
-    const float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
-    const float factor = 1.0f / effectTime;
-    for (int i = 0; i < 3; i++) {
-      dimensionsRate[i] = factor;
-      dimensionsScale[i] = 0.01f;
-    }
-  }
-  return;
 }
 
 
@@ -823,10 +628,6 @@ void			Player::doDeadReckoning()
     inputSpeedAzimuth = inputAzimuth;
   }
 
-  if (((oldStatus & PlayerState::Falling) != 0) &&
-      ((inputStatus & PlayerState::Falling) == 0)) {
-    setLandingSpeed(oldZSpeed);
-  }
   oldZSpeed = inputZSpeed;
   oldStatus = inputStatus;
   

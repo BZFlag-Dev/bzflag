@@ -28,23 +28,18 @@
 
 // scene node implemenation headers
 #include "WallSceneNode.h"
-#include "MeshPolySceneNode.h"
 #include "TankSceneNode.h"
 #include "BoxSceneNodeGenerator.h"
 #include "WallSceneNodeGenerator.h"
-#include "MeshSceneNodeGenerator.h"
 #include "BaseSceneNodeGenerator.h"
-#include "TetraSceneNodeGenerator.h"
 #include "PyramidSceneNodeGenerator.h"
 #include "ObstacleSceneNodeGenerator.h"
 #include "TeleporterSceneNodeGenerator.h"
 
 // common implementation headers
 #include "StateDatabase.h"
-#include "BZDBCache.h"
 #include "TextureManager.h"
-#include "BzMaterial.h"
-#include "DynamicColor.h"
+#include "BZDBCache.h"
 
 
 //
@@ -135,31 +130,6 @@ const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
 				{ 0.25f, 0.25f, 0.63f, 1.0f }
 			};
 
-const GLfloat		SceneDatabaseBuilder::tetraColors[4][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::tetraModulateColors[4][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::tetraLightedColors[4][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::tetraLightedModulateColors[4][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-
 const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] = {
 				{ 1.0f, 0.875f, 0.0f, 1.0f },
 				{ 0.9f, 0.8f, 0.0f, 1.0f },
@@ -186,7 +156,6 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 				wallMaterial(black, black, 0.0f),
 				boxMaterial(black, black, 0.0f),
 				pyramidMaterial(black, black, 0.0f),
-				tetraMaterial(black, black, 0.0f),
 				teleporterMaterial(black, black, 0.0f)
 {
   // FIXME -- should get texture heights from resources
@@ -225,7 +194,6 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   baseLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
   boxLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
   pyramidLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
-  tetraLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
   teleporterLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
 
   // pick type of database
@@ -245,12 +213,6 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     addWall(db, **wallScan);
     ++wallScan;
   }
-  const std::vector<MeshObstacle*> &meshes = world->getMeshes();
-  std::vector<MeshObstacle*>::const_iterator meshScan = meshes.begin();
-  while (meshScan != meshes.end()) {
-    addMesh(db, *meshScan);
-    ++meshScan;
-  }
   const std::vector<BoxBuilding*> &boxes = world->getBoxes();
   std::vector<BoxBuilding*>::const_iterator boxScan = boxes.begin();
   while (boxScan != boxes.end()) {
@@ -269,12 +231,6 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     addPyramid(db, **pyramidScan);
     ++pyramidScan;
   }
-  const std::vector<TetraBuilding*> &tetras = world->getTetras();
-  std::vector<TetraBuilding*>::const_iterator tetraScan = tetras.begin();
-  while (tetraScan != tetras.end()) {
-    addTetra(db, **tetraScan);
-    ++tetraScan;
-  }
   const std::vector<BaseBuilding*> &baseBuildings = world->getBases();
   std::vector<BaseBuilding*>::const_iterator baseScan = baseBuildings.begin();
   while (baseScan != baseBuildings.end()) {
@@ -282,45 +238,7 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     ++baseScan;
   }
 
-  // add the water level node
-  addWaterLevel(db, world);
-
   return db;
-}
-
-void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
-                                         const World* world)
-{
-  float plane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
-  const float level = world->getWaterLevel();
-  plane[3] = -level;
-
-  // don't draw it if it isn't active
-  if (level < 0.0f) {
-    return;
-  }
-
-  // setup the vertex and texture coordinates
-  float size = BZDBCache::worldSize;
-  GLfloat3Array v(4);
-  GLfloat3Array n(0);
-  GLfloat2Array t(4);
-  v[0][0] = v[0][1] = v[1][1] = v[3][0] = -size/2.0f;
-  v[1][0] = v[2][0] = v[2][1] = v[3][1] = +size/2.0f;
-  v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;
-  t[0][0] = t[0][1] = t[1][1] = t[3][0] = 0.0f;
-  t[1][0] = t[2][0] = t[2][1] = t[3][1] = 2.0f;
-
-  MeshPolySceneNode* node =
-    new MeshPolySceneNode(plane, v, n, t);
-
-  // setup the material
-  const BzMaterial* mat = world->getWaterMaterial();
-  MeshSceneNodeGenerator::setupNodeMaterial(node, mat);
-
-  db->addStaticNode(node);
-
-  return;
 }
 
 void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
@@ -355,18 +273,6 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
 
     db->addStaticNode(node);
     part = (part + 1) % 5;
-  }
-  delete nodeGen;
-}
-
-void			SceneDatabaseBuilder::addMesh(SceneDatabase* db,
-						const MeshObstacle* mesh)
-{
-  WallSceneNode* node;
-  MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator (mesh);
-
-  while ((node = nodeGen->getNextNode(wallLOD))) {
-    db->addStaticNode(node);
   }
   delete nodeGen;
 }
@@ -469,70 +375,6 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
 
     db->addStaticNode(node);
     part = (part + 1) % 5;
-  }
-  delete nodeGen;
-}
-
-void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
-						const TetraBuilding& o)
-{
-  // this assumes tetras have four parts:  four sides
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new TetraSceneNodeGenerator(&o);
-
-  TextureManager &tm = TextureManager::instance();
-  int tetraTexture = -1;
-
-  bool useColorTexture = false;
-  // try object, standard, then default
-  if (o.textures[0].size())
-    tetraTexture = tm.getTextureID(o.textures[0].c_str(),false);
-  if (tetraTexture < 0)
-    tetraTexture = tm.getTextureID(BZDB.get("tetraWallTexture").c_str(),false);
-
-  useColorTexture = tetraTexture >= 0;
-
-  // Using boxTexHeight since it's (currently) the same and it's already available
-  float textureFactor = BZDB.eval("tetraWallTexRepeat");
-  if (BZDB.eval("useQuality") >= 3)
-    textureFactor = BZDB.eval("tetraWallHighResTexRepeat");
-
-  int part = 0;
-  int realPart = 0;
-  while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
-				      -textureFactor * boxTexHeight,
-                                      tetraLOD))) {
-
-    while (!o.isVisiblePlane(realPart)) {
-      realPart = (realPart + 1) % 4;
-    }
-
-    if (!o.isColoredPlane(realPart)) {
-      node->setColor(tetraColors[realPart]);
-      node->setModulateColor(tetraModulateColors[realPart]);
-      node->setLightedColor(tetraLightedColors[realPart]);
-      node->setLightedModulateColor(tetraLightedModulateColors[realPart]);
-      node->setUseColorTexture(useColorTexture);
-    }
-    else {
-      const float* color = o.getPlaneColor(realPart);
-      node->setColor(color);
-      node->setModulateColor(color);
-      node->setLightedColor(color);
-      node->setLightedModulateColor(color);
-      node->setUseColorTexture(false);
-    }
-
-    node->setMaterial(tetraMaterial);
-    node->setTexture(tetraTexture);
-    int texmat = o.getTextureMatrix(realPart);
-    if (texmat >= 0) {
-      node->setTextureMatrix(texmat);
-    }
-
-    db->addStaticNode(node);
-    part = (part + 1) % 4;
-    realPart = (realPart + 1) % 4;
   }
   delete nodeGen;
 }
@@ -668,19 +510,6 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
     part = (part + 1) % numParts;
   }
 
-  BzMaterial material;
-  material.clearTextures();
-  material.setDiffuse(teleporterLightedColors[2]);
-  MeshPolySceneNode* linkNode;
-
-  linkNode = MeshSceneNodeGenerator::getSceneNode(o.getBackLink());
-  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, &material);
-  db->addStaticNode(linkNode);
-  
-  linkNode = MeshSceneNodeGenerator::getSceneNode(o.getFrontLink());
-  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, &material);
-  db->addStaticNode(linkNode);
-  
   delete nodeGen;
 }
 

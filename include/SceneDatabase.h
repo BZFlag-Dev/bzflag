@@ -46,8 +46,6 @@ class SceneDatabase {
     virtual void	addShadowNodes(SceneRenderer &renderer) = 0;
     virtual void	addRenderNodes(SceneRenderer& renderer) = 0;
 
-    virtual void	drawCuller() = 0;
-
   private:
 			SceneDatabase(const SceneDatabase&);
     SceneDatabase&	operator=(const SceneDatabase&);

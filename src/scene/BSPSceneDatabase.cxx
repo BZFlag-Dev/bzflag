@@ -399,12 +399,6 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
 }
             
             
-void BSPSceneDatabase::drawCuller()
-{
-  return;
-}
-
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

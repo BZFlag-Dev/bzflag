@@ -21,10 +21,8 @@
 /* common interface headers */
 #include "Ray.h"
 #include "Obstacle.h"
-#include "MeshObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
-#include "TetraBuilding.h"
 #include "BaseBuilding.h"
 #include "Teleporter.h"
 
@@ -40,7 +38,6 @@ typedef union {
     ObsList boxes;
     ObsList bases;
     ObsList pyrs;
-    ObsList tetras;
     ObsList teles;
   } named;
 } SplitObsList;
@@ -62,11 +59,9 @@ class CollisionManager {
     CollisionManager();
     ~CollisionManager();
 
-    void load (std::vector<MeshObstacle*>    &meshes,
-               std::vector<BoxBuilding*>     &boxes,
+    void load (std::vector<BoxBuilding*>     &boxes,
                std::vector<BaseBuilding*>    &bases,
                std::vector<PyramidBuilding*> &pyrs,
-               std::vector<TetraBuilding*>   &tetras,
                std::vector<Teleporter*>      &teles);
 
     // some basics

@@ -45,8 +45,6 @@ class BSPSceneDatabase : public SceneDatabase {
     void		addShadowNodes(SceneRenderer &renderer);
     void		addRenderNodes(SceneRenderer& renderer);
     
-    void		drawCuller();
-
   private:
     class Node {
       public:

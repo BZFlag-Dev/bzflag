@@ -23,10 +23,69 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
-using namespace TankGeometryEnums;
 
-const float MuzzleMaxX = 4.94f;
+float curVertScale[3] = {1,1,1}; /// for the really lame #def
+float curNormScale[3] = {1,1,1}; /// for the really lame #def
 
+void doVertex3f(GLfloat x, GLfloat y, GLfloat z)
+{
+  glVertex3f(x * curVertScale[0], y * curVertScale[1], z * curVertScale[2]);
+}
+
+void doNormal3f(GLfloat x, GLfloat y, GLfloat z)
+{
+  const GLfloat d = hypotf(x * curNormScale[0],
+    hypotf(y * curNormScale[1], z * curNormScale[2]));
+  if (d > 1.0e-5f) {
+    x *= curNormScale[0] / d;
+    y *= curNormScale[1] / d;
+    z *= curNormScale[2] / d;
+  }
+  glNormal3f(x, y, z);
+}
+
+
+class TankFactors
+{
+public:
+       TankFactors()
+       {
+	 if (!callbackAdded) {
+	     BZDB.addCallback(StateDatabase::BZDB_OBESEFACTOR, callback, NULL );
+	     BZDB.addCallback(StateDatabase::BZDB_TINYFACTOR, callback, NULL );
+	     BZDB.addCallback(StateDatabase::BZDB_THIEFTINYFACTOR, callback, NULL );
+	     callbackAdded = true;
+	 }
+       }
+
+       static void callback(const std::string& name, void*)
+       {
+	  if (name == StateDatabase::BZDB_OBESEFACTOR) {
+	     styleFactors[1][0] = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+	     styleFactors[1][1] = styleFactors[1][0];
+	  }
+	  else if (name == StateDatabase::BZDB_TINYFACTOR) {
+	     styleFactors[2][0] = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+	     styleFactors[2][1] = styleFactors[2][0];
+	  }
+	  else if (name == StateDatabase::BZDB_THIEFTINYFACTOR) {
+	     styleFactors[4][0] = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+	     styleFactors[4][1] = styleFactors[4][0];
+	  }
+       }
+
+       //Modifiers for Normal, Obese. Tiny, Thin, Thief
+       static GLfloat styleFactors[5][3];
+       static bool callbackAdded;
+};
+bool TankFactors::callbackAdded = false;
+GLfloat TankFactors::styleFactors[5][3] = {
+			{ 1.0f, 1.0f, 1.0f },
+			{ 1.0f, 1.0f, 1.0f },
+			{ 1.0f, 1.0f, 1.0f },
+			{ 1.0f, 0.001f, 1.0f },
+			{ 1.0f, 1.0f, 1.0f }
+		};
 
 // parts: body, turret, barrel, left tread, right tread
 
@@ -34,45 +93,41 @@ const int		TankSceneNode::numLOD = 3;
 int			TankSceneNode::maxLevel = numLOD;
 
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-                                leftTreadOffset(0.0f), rightTreadOffset(0.0f), 
-                                leftWheelOffset(0.0f), rightWheelOffset(0.0f), 
-                                useDimensions(false), useOverride(false),
-				hidden(false), cloaked(false),
+				useOverride(false),
+				hidden(false),
+				invisible(false),
 				clip(false),
-				tankRenderNode(this),
-				shadowRenderNode(this),
-				tankSize(TankGeometryEnums::Normal)
+				style(TankRenderNode::Normal),
+				lowRenderNode(this),
+				medRenderNode(this),
+				highRenderNode(this),
+				shadowRenderNode(this)
 {
   // setup style factors (BZDB isn't set up at global init time
 
+  TankFactors(); // Install callbacks for styleFactors
+
 			// prepare geometry
   move(pos, forward);
-  float length = BZDBCache::tankLength;
-  length = 0.5f * (length + MuzzleMaxX);
-  const float width = BZDBCache::tankWidth;
-  const float height = 0.5f * BZDBCache::tankHeight;
-
-  baseRadius = (length * length) + (width * width) + (height * height);
+  baseRadius = 0.25f * (BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) +
+			BZDB.eval(StateDatabase::BZDB_TANKWIDTH) * BZDB.eval(StateDatabase::BZDB_TANKWIDTH) +
+			BZDBCache::tankHeight * BZDBCache::tankHeight);
   setRadius(baseRadius);
 
   color[3] = 1.0f;
   setColor(1.0f, 1.0f, 1.0f);
   setExplodeFraction(0.0f);
-  
-  rebuildExplosion();
 
   shadowRenderNode.setShadow();
-  shadowRenderNode.setTankLOD(LowTankLOD);
 }
-
 
 TankSceneNode::~TankSceneNode()
 {
   // do nothing
 }
 
-
-void TankSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void			TankSceneNode::setColor(
+				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
   color[0] = r;
   color[1] = g;
@@ -81,8 +136,7 @@ void TankSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
   transparent = (color[3] != 1.0f);
 }
 
-
-void TankSceneNode::setColor(const GLfloat* rgba)
+void			TankSceneNode::setColor(const GLfloat* rgba)
 {
   color[0] = rgba[0];
   color[1] = rgba[1];
@@ -91,68 +145,29 @@ void TankSceneNode::setColor(const GLfloat* rgba)
   transparent = (color[3] != 1.0f);
 }
 
-
-void TankSceneNode::setDimensions(const float dims[3])
-{
-  memcpy (dimensions, dims, sizeof(float[3]));
-  useDimensions = true;
-  return;
-}
-
-
-void TankSceneNode::ignoreDimensions()
-{
-  useDimensions = false;
-  return;
-}
-
-
-void TankSceneNode::setMaterial(const OpenGLMaterial& mat)
+void			TankSceneNode::setMaterial(const OpenGLMaterial& mat)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setMaterial(mat);
   gstate = builder.getState();
 }
 
-
-void TankSceneNode::setTexture(const int texture)
+void			TankSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
   gstate = builder.getState();
 }
 
-
-void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
+void			TankSceneNode::move(const GLfloat pos[3],
+					const GLfloat forward[3])
 {
-  const float rad2deg = (180.0f / M_PI);
-  azimuth = rad2deg * atan2f(forward[1], forward[0]);
-  elevation = -rad2deg * atan2f(forward[2], hypotf(forward[0], forward[1]));
+  azimuth = 180.0f / M_PI*atan2f(forward[1], forward[0]);
+  elevation = -180.0f / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1]));
   setCenter(pos);
 }
 
-
-void TankSceneNode::addTreadOffsets(float left, float right)
-{
-  const float wheelScale = TankGeometryUtils::getWheelScale();
-  const float treadScale = TankGeometryUtils::getTreadScale();
-  const float treadTexLen = TankGeometryUtils::getTreadTexLen();
-  
-  leftTreadOffset += left * treadScale;
-  leftTreadOffset = fmodf (leftTreadOffset, treadTexLen);
-  leftWheelOffset += left * wheelScale;
-  leftWheelOffset = fmodf (leftWheelOffset, 360.0f);
-
-  rightTreadOffset += right * treadScale;
-  rightTreadOffset = fmodf (rightTreadOffset, treadTexLen);
-  rightWheelOffset += right * wheelScale;
-  rightWheelOffset = fmodf (rightWheelOffset, 360.0f);
-  
-  return;
-}
-
-
-void TankSceneNode::notifyStyleChange()
+void			TankSceneNode::notifyStyleChange()
 {
   sort = !BZDBCache::zbuffer;
   OpenGLGStateBuilder builder(gstate);
@@ -179,46 +194,28 @@ void TankSceneNode::notifyStyleChange()
   lightsGState = builder2.getState();
 }
 
-
-void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
+void			TankSceneNode::addRenderNodes(
+				SceneRenderer& renderer)
 {
   // don't draw hidden tanks.  this is mainly to avoid drawing player's
   // tank when player is using view from tank.  can't simply not include
   // player, though, cos then we wouldn't get the tank's shadow.
-  if (hidden || (cloaked && (color[3] == 0.0f))) return;
+  if (hidden || invisible) return;
 
   // pick level of detail
+  TankRenderNode* node;
   const GLfloat* sphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
-  const float size = sphere[3] *
-                     (view.getAreaFactor() /getDistance(view.getEye()));
+  const float size = sphere[3] * view.getAreaFactor() /
+					getDistance(view.getEye());
+  if (maxLevel == -1)
+    node = &highRenderNode;
+  else if (maxLevel > 2 && size > 55.0f)
+    node = &highRenderNode;
+  else if (maxLevel > 1 && size > 25.0f)
+    node = &medRenderNode;
+  else node = &lowRenderNode;
 
-  // set the level of detail
-  TankLOD mode = LowTankLOD;
-  if (BZDBCache::zbuffer) {
-    if ((maxLevel == -1) || ((maxLevel > 2) && (size > 55.0f))) {
-      mode = HighTankLOD;
-    }
-    else if ((maxLevel > 1) && (size > 25.0f)) {
-      mode = MedTankLOD;
-    }
-    else {
-      mode = LowTankLOD;
-    }
-  }
-  else {
-    // do BSP users a favor  
-    if ((maxLevel == -1) || ((maxLevel > 0) && (size > 25.0f))) {
-      mode = MedTankLOD;
-    } else {
-      mode = LowTankLOD;
-    }
-  }
-  tankRenderNode.setTankLOD(mode);
-      
-  // set the tank's scaling size
-  tankRenderNode.setTankSize(tankSize);
-    
   // if drawing in sorted order then decide which order
   if (sort || transparent) {
     const GLfloat* eye = view.getEye();
@@ -230,74 +227,58 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     const bool towards = d < (dx * dx + dy * dy);
     // note: above test should take elevation into account
     const bool above = sphere[2] > eye[2];
-    tankRenderNode.sortOrder(above, towards);
+    node->sortOrder(above, towards);
   }
 
-  renderer.addRenderNode(&tankRenderNode, &gstate);
+  renderer.addRenderNode(node, &gstate);
 }
 
-
-void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
+void			TankSceneNode::addShadowNodes(
+				SceneRenderer& renderer)
 {
-  if (cloaked && (color[3] == 0.0f)) {
-    return;
-  }
-
-  // use HighTankLOD shadows in experimental mode
-  if ((TankSceneNode::maxLevel == -1) && BZDBCache::zbuffer) {
-    shadowRenderNode.setTankLOD (HighTankLOD);
-  } else {
-    shadowRenderNode.setTankLOD (LowTankLOD);
-  }
+  if (invisible) return;
   renderer.addShadowNode(&shadowRenderNode);
 }
 
-
-void TankSceneNode::setNormal()
+void			TankSceneNode::setNormal()
 {
-  tankSize = Normal;
+  style = TankRenderNode::Normal;
   setRadius(baseRadius);
 }
 
-
-void TankSceneNode::setObese()
+void			TankSceneNode::setObese()
 {
-  tankSize = Obese;
+  style = TankRenderNode::Obese;
   float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
   setRadius(factor*factor*baseRadius);
 }
 
-
-void TankSceneNode::setTiny()
+void			TankSceneNode::setTiny()
 {
-  tankSize = Tiny;
+  style = TankRenderNode::Tiny;
   float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
   setRadius(factor*factor*baseRadius);
 }
 
-
-void TankSceneNode::setNarrow()
+void			TankSceneNode::setNarrow()
 {
-  tankSize = Narrow;
+  style = TankRenderNode::Narrow;
   setRadius(baseRadius);
 }
 
-
-void TankSceneNode::setThief()
+void			TankSceneNode::setThief()
 {
-  tankSize = Thief;
+  style = TankRenderNode::Thief;
   float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   setRadius(factor*factor*baseRadius);
 }
 
-
-void TankSceneNode::setExplodeFraction(float t)
+void			TankSceneNode::setExplodeFraction(float t)
 {
   explodeFraction = t;
 }
 
-
-void TankSceneNode::setClipPlane(const GLfloat* plane)
+void			TankSceneNode::setClipPlane(const GLfloat* plane)
 {
   if (!plane) {
     clip = false;
@@ -311,67 +292,34 @@ void TankSceneNode::setClipPlane(const GLfloat* plane)
   }
 }
 
-
-void TankSceneNode::setHidden(bool _hidden)
+void			TankSceneNode::setHidden(bool _hidden)
 {
   hidden = _hidden;
-  cloaked = false;
+  invisible = false;
 }
 
-
-void TankSceneNode::setCloaked(bool _cloaked)
+void			TankSceneNode::setInvisible(bool _invisible)
 {
-  cloaked = _cloaked;
+  invisible = _invisible;
   hidden = false;
 }
 
-
-void TankSceneNode::setMaxLOD(int _maxLevel)
+void			TankSceneNode::setMaxLOD(int _maxLevel)
 {
   maxLevel = _maxLevel;
 }
-
-
-void TankSceneNode::rebuildExplosion()
-{
-  // prepare explosion rotations and translations
-  for (int i = 0; i < LastTankPart; i++) {
-    // pick an unbiased rotation vector
-    GLfloat d;
-    do {
-      spin[i][0] = (float)bzfrand() - 0.5f;
-      spin[i][1] = (float)bzfrand() - 0.5f;
-      spin[i][2] = (float)bzfrand() - 0.5f;
-      d = hypotf(spin[i][0], hypotf(spin[i][1], spin[i][2]));
-    } while (d < 0.001f || d > 0.5f);
-    spin[i][0] /= d;
-    spin[i][1] /= d;
-    spin[i][2] /= d;
-
-    // now an angular velocity -- make sure we get at least 2 complete turns
-    spin[i][3] = 360.0f * (5.0f * (float)bzfrand() + 2.0f);
-
-    // make arbitrary 2d translation
-    vel[i][0] = 80.0f * ((float)bzfrand() - 0.5f);
-    vel[i][1] = 80.0f * ((float)bzfrand() - 0.5f);
-  }
-  return;
-}
-
 
 //
 // TankIDLSceneNode
 //
 
 TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
-				   tank(_tank),
-				   renderNode(this)
+				tank(_tank),
+				renderNode(this)
 {
   static const GLfloat defaultPlane[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
   move(defaultPlane);
-  float radius = BZDBCache::tankLength;
-  radius = radius * 4.0f;
-  setRadius(radius);
+  setRadius(4.0f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
 
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
@@ -380,14 +328,12 @@ TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
   gstate = builder.getState();
 }
 
-
 TankIDLSceneNode::~TankIDLSceneNode()
 {
   // do nothing
 }
 
-
-void TankIDLSceneNode::move(const GLfloat _plane[4])
+void			TankIDLSceneNode::move(const GLfloat _plane[4])
 {
   plane[0] = _plane[0];
   plane[1] = _plane[1];
@@ -396,13 +342,12 @@ void TankIDLSceneNode::move(const GLfloat _plane[4])
 
   // compute new sphere
   const GLfloat* s = tank->getSphere();
-  setCenter(s[0] + 1.5f * BZDBCache::tankLength * plane[0],
-	    s[1] + 1.5f * BZDBCache::tankLength * plane[1],
-	    s[2] + 1.5f * BZDBCache::tankLength * plane[2]);
+  setCenter(s[0] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[0],
+	    s[1] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[1],
+	    s[2] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[2]);
 }
 
-
-void TankIDLSceneNode::notifyStyleChange()
+void			TankIDLSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   if (BZDBCache::blend) {
@@ -416,8 +361,8 @@ void TankIDLSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-
-void TankIDLSceneNode::addRenderNodes(SceneRenderer& renderer)
+void			TankIDLSceneNode::addRenderNodes(
+				SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
 }
@@ -426,88 +371,86 @@ void TankIDLSceneNode::addRenderNodes(SceneRenderer& renderer)
 // TankIDLSceneNode::IDLRenderNode
 //
 
-const int TankIDLSceneNode::IDLRenderNode::idlFaces[][5] = {
-  // body
-  { 4,  1, 0, 4, 5 },
-  { 4,  5, 4, 2, 3 },
-  { 4,  3, 2, 7, 6 },
-  { 4,  6, 7, 0, 1 },
-  // turret
-  { 3,  12, 15, 10 },
-  { 3,  12, 10, 9 },
-  { 3,  13, 8, 11 },
-  { 3,  13, 11, 14 },
-  { 4,  15, 14, 11, 10 },
-  { 4,  10, 11, 8, 9 },
-  { 4,  9, 8, 13, 12 },
-  // barrel
-  { 4,  21, 17, 18, 22 },
-  { 4,  22, 18, 19, 23 },
-  { 4,  23, 19, 16, 20 },
-  { 4,  20, 16, 17, 21 },
-  { 4,  17, 16, 19, 18 },
-  // ltread
-  { 4,  29, 26, 25, 28 },
-  { 4,  28, 25, 27, 30 },
-  { 4,  30, 27, 31, 24 },
-  { 4,  24, 31, 26, 29 },
-  { 4,  25, 26, 31, 27 },
-  // rtread
-  { 4,  37, 34, 33, 36 },
-  { 4,  36, 33, 35, 38 },
-  { 4,  38, 35, 39, 32 },
-  { 4,  32, 39, 34, 37 },
-  { 4,  37, 36, 38, 32 }
-};
-
+const int		TankIDLSceneNode::IDLRenderNode::idlFaces[][5] = {
+				// body
+				{ 4,  1, 0, 4, 5 },
+				{ 4,  5, 4, 2, 3 },
+				{ 4,  3, 2, 7, 6 },
+				{ 4,  6, 7, 0, 1 },
+				// turret
+				{ 3,  12, 15, 10 },
+				{ 3,  12, 10, 9 },
+				{ 3,  13, 8, 11 },
+				{ 3,  13, 11, 14 },
+				{ 4,  15, 14, 11, 10 },
+				{ 4,  10, 11, 8, 9 },
+				{ 4,  9, 8, 13, 12 },
+				// barrel
+				{ 4,  21, 17, 18, 22 },
+				{ 4,  22, 18, 19, 23 },
+				{ 4,  23, 19, 16, 20 },
+				{ 4,  20, 16, 17, 21 },
+				{ 4,  17, 16, 19, 18 },
+				// ltread
+				{ 4,  29, 26, 25, 28 },
+				{ 4,  28, 25, 27, 30 },
+				{ 4,  30, 27, 31, 24 },
+				{ 4,  24, 31, 26, 29 },
+				{ 4,  25, 26, 31, 27 },
+				// rtread
+				{ 4,  37, 34, 33, 36 },
+				{ 4,  36, 33, 35, 38 },
+				{ 4,  38, 35, 39, 32 },
+				{ 4,  32, 39, 34, 37 },
+				{ 4,  37, 36, 38, 32 }
+			};
 const GLfloat		TankIDLSceneNode::IDLRenderNode::idlVertex[][3] = {
-  // body
-  { 2.430f, 0.877f, 0.000f },
-  { 2.430f, -0.877f, 0.000f },
-  { -2.835f, 0.877f, 1.238f },
-  { -2.835f, -0.877f, 1.238f },
-  { 2.575f, 0.877f, 1.111f },
-  { 2.575f, -0.877f, 1.111f },
-  { -2.229f, -0.877f, 0.000f },
-  { -2.229f, 0.877f, 0.000f },
-  // turret
-  { -1.370f, 0.764f, 2.050f },
-  { -1.370f, -0.765f, 2.050f },
-  { 1.580f, -0.434f, 1.790f },
-  { 1.580f, 0.435f, 1.790f },
-  { -0.456f, -1.060f, 1.040f },
-  { -0.456f, 1.080f, 1.040f },
-  { 1.480f, 0.516f, 1.040f },
-  { 1.480f, -0.516f, 1.040f },
-  // barrel
-  { 4.940f, 0.047f, 1.410f },
-  { 4.940f, -0.079f, 1.530f },
-  { 4.940f, 0.047f, 1.660f },
-  { 4.940f, 0.173f, 1.530f },
-  { 1.570f, 0.047f, 1.350f },
-  { 1.570f, -0.133f, 1.530f },
-  { 1.570f, 0.047f, 1.710f },
-  { 1.570f, 0.227f, 1.530f },
-  // ltread
-  { -2.229f, 0.877f, 0.000f },
-  { 2.730f, 1.400f, 1.294f },
-  { 2.597f, 1.400f, 0.000f },
-  { -2.970f, 1.400f, 1.410f },
-  { 2.730f, 0.877f, 1.294f },
-  { 2.597f, 0.877f, 0.000f },
-  { -2.970f, 0.877f, 1.410f },
-  { -2.229f, 1.400f, 0.000f },
-  // rtread
-  { -2.229f, -1.400f, 0.000f },
-  { 2.730f, -0.875f, 1.294f },
-  { 2.597f, -0.875f, 0.000f },
-  { -2.970f, -0.875f, 1.410f },
-  { 2.730f, -1.400f, 1.294f },
-  { 2.597f, -1.400f, 0.000f },
-  { -2.970f, -1.400f, 1.410f },
-  { -2.229f, -0.875f, 0.000f }
-};
-
+				// body
+				{ 2.430f, 0.877f, 0.000f },
+				{ 2.430f, -0.877f, 0.000f },
+				{ -2.835f, 0.877f, 1.238f },
+				{ -2.835f, -0.877f, 1.238f },
+				{ 2.575f, 0.877f, 1.111f },
+				{ 2.575f, -0.877f, 1.111f },
+				{ -2.229f, -0.877f, 0.000f },
+				{ -2.229f, 0.877f, 0.000f },
+				// turret
+				{ -1.370f, 0.764f, 2.050f },
+				{ -1.370f, -0.765f, 2.050f },
+				{ 1.580f, -0.434f, 1.790f },
+				{ 1.580f, 0.435f, 1.790f },
+				{ -0.456f, -1.060f, 1.040f },
+				{ -0.456f, 1.080f, 1.040f },
+				{ 1.480f, 0.516f, 1.040f },
+				{ 1.480f, -0.516f, 1.040f },
+				// barrel
+				{ 4.940f, 0.047f, 1.410f },
+				{ 4.940f, -0.079f, 1.530f },
+				{ 4.940f, 0.047f, 1.660f },
+				{ 4.940f, 0.173f, 1.530f },
+				{ 1.570f, 0.047f, 1.350f },
+				{ 1.570f, -0.133f, 1.530f },
+				{ 1.570f, 0.047f, 1.710f },
+				{ 1.570f, 0.227f, 1.530f },
+				// ltread
+				{ -2.229f, 0.877f, 0.000f },
+				{ 2.730f, 1.400f, 1.294f },
+				{ 2.597f, 1.400f, 0.000f },
+				{ -2.970f, 1.400f, 1.410f },
+				{ 2.730f, 0.877f, 1.294f },
+				{ 2.597f, 0.877f, 0.000f },
+				{ -2.970f, 0.877f, 1.410f },
+				{ -2.229f, 1.400f, 0.000f },
+				// rtread
+				{ -2.229f, -1.400f, 0.000f },
+				{ 2.730f, -0.875f, 1.294f },
+				{ 2.597f, -0.875f, 0.000f },
+				{ -2.970f, -0.875f, 1.410f },
+				{ 2.730f, -1.400f, 1.294f },
+				{ 2.597f, -1.400f, 0.000f },
+				{ -2.970f, -1.400f, 1.410f },
+				{ -2.229f, -0.875f, 0.000f }
+			};
 
 TankIDLSceneNode::IDLRenderNode::IDLRenderNode(
 				const TankIDLSceneNode* _sceneNode) :
@@ -516,14 +459,12 @@ TankIDLSceneNode::IDLRenderNode::IDLRenderNode(
   // do nothing
 }
 
-
 TankIDLSceneNode::IDLRenderNode::~IDLRenderNode()
 {
   // do nothing
 }
 
-
-void TankIDLSceneNode::IDLRenderNode::render()
+void			TankIDLSceneNode::IDLRenderNode::render()
 {
   static const GLfloat innerColor[4] = { 1.0f, 1.0f, 1.0f, 0.75f };
   static const GLfloat outerColor[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
@@ -542,7 +483,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
 	      sphere[2] * _plane[2] + _plane[3]);
 
   // compute projection point -- one TankLengthy in from plane
-  const GLfloat pd = -1.0f * BZDBCache::tankLength - plane[3];
+  const GLfloat pd = -1.0f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) - plane[3];
   GLfloat origin[3];
   origin[0] = pd * plane[0];
   origin[1] = pd * plane[1];
@@ -608,162 +549,120 @@ void TankIDLSceneNode::IDLRenderNode::render()
   glPopMatrix();
 }
 
-
 //
 // TankSceneNode::TankRenderNode
 //
 
-const GLfloat  // FIXME: setup so these come from TANKGEOMMGR
-  TankSceneNode::TankRenderNode::centerOfGravity[LastTankPart][3] = {
-  { 0.000f,  0.0f, 1.5f * 0.68f }, // body
-  { 3.252f,  0.0f, 1.532f },	   // barrel
-  { 0.125f,  0.0f, 2.5f * 0.68f }, // turret
-  { 0.000f, +0.7f, 0.5f * 0.68f }, // left case
-  { 0.000f, -0.7f, 0.5f * 0.68f }, // right case
-  { 0.000f, +0.7f, 0.7f }, // left tread
-  { 0.000f, -0.9f, 0.7f }, // right tread
-  { -2.25f, +0.9f, 0.7f }, // left wheel0
-  { -0.75f, +0.9f, 0.7f }, // left wheel1
-  { +0.75f, +0.9f, 0.7f }, // left wheel2
-  { +2.25f, +0.9f, 0.7f }, // left wheel3
-  { -2.25f, -0.9f, 0.7f }, // right wheel0
-  { -0.75f, -0.9f, 0.7f }, // right wheel1
-  { +0.75f, -0.9f, 0.7f }, // right wheel2
-  { +2.25f, -0.9f, 0.7f }  // right wheel3
-};
+const GLfloat		TankSceneNode::TankRenderNode::centerOfGravity[][3] = {
+				{ 0.000f,  0.0f, 1.5f * 0.68f },// body
+				{ 3.252f,  0.0f, 1.532f },	// barrel
+				{ 0.125f,  0.0f, 2.5f * 0.68f },// turret
+				{ 0.000f,  0.7f, 0.5f * 0.68f },// left tread
+				{ 0.000f, -0.7f, 0.5f * 0.68f }	// right tread
+			};
+GLfloat			TankSceneNode::TankRenderNode::vertexScale[3];
+GLfloat			TankSceneNode::TankRenderNode::normalScale[3];
 
-
-TankSceneNode::TankRenderNode::TankRenderNode(const TankSceneNode* _sceneNode) :
-				sceneNode(_sceneNode), isShadow(false),
-				above(false), towards(false)
+TankSceneNode::TankRenderNode::TankRenderNode(
+				const TankSceneNode* _sceneNode) :
+				sceneNode(_sceneNode),
+				isShadow(false),
+				above(false),
+				towards(false)
 {
-  drawLOD = LowTankLOD;
-  drawSize = Normal;
-}
+  // prepare explosion rotations and translations
+  for (int i = 0; i < 5; i++) {
+    // pick an unbiased rotation vector
+    GLfloat d;
+    do {
+      spin[i][0] = (float)bzfrand() - 0.5f;
+      spin[i][1] = (float)bzfrand() - 0.5f;
+      spin[i][2] = (float)bzfrand() - 0.5f;
+      d = hypotf(spin[i][0], hypotf(spin[i][1], spin[i][2]));
+    } while (d < 0.001f || d > 0.5f);
+    spin[i][0] /= d;
+    spin[i][1] /= d;
+    spin[i][2] /= d;
 
+    // now an angular velocity -- make sure we get at least 2 complete turns
+    spin[i][3] = 360.0f * (5.0f * (float)bzfrand() + 2.0f);
+
+    // make arbitrary 2d translation
+    vel[i][0] = 80.0f * ((float)bzfrand() - 0.5f);
+    vel[i][1] = 80.0f * ((float)bzfrand() - 0.5f);
+  }
+
+  // watch for context recreation
+  OpenGLGState::registerContextInitializer(initContext, (void*)this);
+}
 
 TankSceneNode::TankRenderNode::~TankRenderNode()
 {
-  return;
+  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
 }
 
-
-void TankSceneNode::TankRenderNode::setShadow()
+void			TankSceneNode::TankRenderNode::setShadow()
 {
   isShadow = true;
 }
 
-
-void TankSceneNode::TankRenderNode::sortOrder(
+void			TankSceneNode::TankRenderNode::sortOrder(
 				bool _above, bool _towards)
 {
   above = _above;
   towards = _towards;
 }
 
-
-void TankSceneNode::TankRenderNode::setTankLOD(TankLOD lod)
+void			TankSceneNode::TankRenderNode::render()
 {
-  drawLOD = lod;
-  return;
-}
-
-
-void TankSceneNode::TankRenderNode::setTankSize(TankSize size)
-{
-  drawSize = size;
-  return;
-}
-
-
-void TankSceneNode::TankRenderNode::render()
-{
-  if (!sceneNode->useDimensions) {
-    drawSize = sceneNode->tankSize;
-  } else {
-    // for animated resizing effects, setup with the Normal size,
-    // and let useDimensions and glScalef() handle the scaling
-    drawSize = Normal;
-  }
-  
+  base = getParts(sceneNode->style);
   explodeFraction = sceneNode->explodeFraction;
   isExploding = (explodeFraction != 0.0f);
   color = sceneNode->color;
   alpha = sceneNode->color[3];
 
-  if (!BZDBCache::blend && sceneNode->transparent) {
-    myStipple(alpha);
-  }
-
+  if (!BZDBCache::blend && sceneNode->transparent) myStipple(alpha);
   if (sceneNode->clip) {
     glClipPlane(GL_CLIP_PLANE0, sceneNode->clipPlane);
     glEnable(GL_CLIP_PLANE0);
   }
 
   const GLfloat* sphere = sceneNode->getSphere();
-  
-  // save the MODELVIEW matrix
   glPushMatrix();
-  
-  glTranslatef(sphere[0], sphere[1], sphere[2]);
-  glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
-  glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
-  if (sceneNode->useDimensions) {
-    const float* dims = sceneNode->dimensions;
-    glScalef(dims[0], dims[1], dims[2]);
-    glEnable(GL_NORMALIZE);
-  }
+    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+    glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 
-  if (!isShadow && (sceneNode->sort || sceneNode->transparent)) {
-    // draw is some sorted order
-    if (sceneNode->explodeFraction == 0.0f) {
-      // normal state
-      renderParts();
+    if (!isShadow && (sceneNode->sort || sceneNode->transparent)) {
+      // draw is some sorted order
+      if (sceneNode->explodeFraction == 0.0f) {
+	// normal state
+	renderParts();
+      }
+      else {
+	// exploding -- draw back facing stuff first then draw front facing stuff
+	glCullFace(GL_FRONT);
+	renderParts();
+	glCullFace(GL_BACK);
+	renderParts();
+      }
     }
     else {
-      // exploding -- draw back facing stuff first then draw front facing stuff
-      glCullFace(GL_FRONT);
-      renderParts();
-      glCullFace(GL_BACK);
-      renderParts();
-    }
-  }
-  else {
-    // any old order is fine.  if exploding then draw both sides.
-    if (isExploding) {
-      glDisable(GL_CULL_FACE);
-    }
-    renderPart(Body);
-    renderPart(Turret);
-    renderPart(Barrel);
-    renderPart(LeftCasing);
-    renderPart(RightCasing);
-    if (drawLOD == HighTankLOD) {
-      for (int i = 0; i < 4; i++) {
-        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
-          continue;
-        }
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
-      }
+      // any old order is fine.  if exploding then draw both sides.
+      if (isExploding) glDisable(GL_CULL_FACE);
       renderPart(LeftTread);
       renderPart(RightTread);
+      renderPart(Body);
+      renderPart(Turret);
+      renderPart(Barrel);
+      if (isExploding) glEnable(GL_CULL_FACE);
     }
-    if (isExploding) {
-      glEnable(GL_CULL_FACE);
-    }
-  }
 
-  if (sceneNode->useDimensions) {
-    glDisable(GL_NORMALIZE);
-  }
-  
-  // restore the MODELVIEW matrix
   glPopMatrix();
 
   if (!isExploding && !isShadow) {
-    // FIXME -- add flare lights using addFlareLight().
-    // pass light position in world space.
+    // FIXME -- add flare lights using addFlareLight().  pass
+    // light position in world space.
   }
 
   glShadeModel(GL_FLAT);
@@ -771,24 +670,12 @@ void TankSceneNode::TankRenderNode::render()
   if (sceneNode->clip) glDisable(GL_CLIP_PLANE0);
 }
 
-
-void TankSceneNode::TankRenderNode::renderParts()
+void			TankSceneNode::TankRenderNode::renderParts()
 {
   // draw parts in back to front order
   if (!above) {
-    renderPart(LeftCasing);
-    renderPart(RightCasing);
-    if (drawLOD == HighTankLOD) {
-      for (int i = 0; i < 4; i++) {
-        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
-          continue;
-        }
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
-      }
-      renderPart(LeftTread);
-      renderPart(RightTread);
-    }
+    renderPart(LeftTread);
+    renderPart(RightTread);
     renderPart(Body);
     if (towards) {
       renderPart(Turret);
@@ -809,212 +696,389 @@ void TankSceneNode::TankRenderNode::renderParts()
       renderPart(Turret);
     }
     renderPart(Body);
-    renderPart(LeftCasing);
-    renderPart(RightCasing);
-    if (drawLOD == HighTankLOD) {
-      for (int i = 0; i < 4; i++) {
-        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
-          continue;
-        }
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
-      }
-      renderPart(LeftTread);
-      renderPart(RightTread);
-    }
+    renderPart(LeftTread);
+    renderPart(RightTread);
   }
 }
 
-
-void TankSceneNode::TankRenderNode::renderPart(TankPart part)
+void			TankSceneNode::TankRenderNode::renderPart(Part part)
 {
   // apply explosion transform
   if (isExploding) {
     glPushMatrix();
-    const float* vel = sceneNode->vel[part];
-    const float* spin = sceneNode->spin[part];
-    const float* cog = centerOfGravity[part];
-    glTranslatef(cog[0] + (explodeFraction * vel[0]),
-		 cog[1] + (explodeFraction * vel[1]),
-		 cog[2]);
-    glRotatef(spin[3] * explodeFraction, spin[0], spin[1], spin[2]);
-    glTranslatef(-cog[0], -cog[1], -cog[2]);
-  }
-  
-  // setup the animation texture matrix
-  bool usingTexMat = false;
-  if (!isShadow && (drawLOD == HighTankLOD) && (part >= BasicTankParts)) {
-    usingTexMat = setupTextureMatrix(part);
-  }
- 
-  // set color
-  if (!isShadow) {
-    setupPartColor(part);
+    glTranslatef(centerOfGravity[part][0] + explodeFraction * vel[part][0],
+		 centerOfGravity[part][1] + explodeFraction * vel[part][1],
+		 centerOfGravity[part][2]);
+    glRotatef(spin[part][3] * explodeFraction,
+		 spin[part][0], spin[part][1], spin[part][2]);
+    glTranslatef(-centerOfGravity[part][0],
+		 -centerOfGravity[part][1],
+		 -centerOfGravity[part][2]);
   }
 
-  // get the list
-  GLuint list;
-  TankShadow shadow = isShadow ? ShadowOn : ShadowOff;
-  list = TankGeometryMgr::getPartList(shadow, part, drawSize, drawLOD);
-  
-  // draw the part
-  glCallList(list);
+  // set color
+  switch (part) {
+    case Body:
+      myColor4f(color[0], color[1], color[2], alpha);
+      break;
+
+    case Barrel:
+      myColor4f(0.25f, 0.25f, 0.25f, alpha);
+      break;
+
+    case Turret:
+      myColor4f(0.9f * color[0], 0.9f * color[1], 0.9f * color[2], alpha);
+      break;
+
+    case LeftTread:
+    case RightTread:
+      myColor4f(0.5f * color[0], 0.5f * color[1], 0.5f * color[2], alpha);
+      break;
+  }
+
+  // draw part
+  glCallList(base + part);
 
   if (part == Turret && !isExploding && !isShadow) {
     renderLights();
   }
 
-  // restore texture transform
-  if (usingTexMat) {
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
+  // restore transform
+  if (isExploding) glPopMatrix();
+}
+
+void			TankSceneNode::TankRenderNode::prepStyle(Style style)
+{
+  curVertScale[0] = vertexScale[0] = TankFactors::styleFactors[style][0];
+  curVertScale[1] = vertexScale[1] = TankFactors::styleFactors[style][1];
+  curVertScale[2] = vertexScale[2] = TankFactors::styleFactors[style][2];
+  curNormScale[0] = normalScale[0] = (vertexScale[0] == 0.0f ? 0.0f : 1.0f / vertexScale[0]);
+  curNormScale[1] = normalScale[1] = (vertexScale[1] == 0.0f ? 0.0f : 1.0f / vertexScale[1]);
+  curNormScale[2] = normalScale[2] = (vertexScale[2] == 0.0f ? 0.0f : 1.0f / vertexScale[2]);
+}
+
+void			TankSceneNode::TankRenderNode::
+				doVertex3f(GLfloat x, GLfloat y, GLfloat z)
+{
+  glVertex3f(x * vertexScale[0], y * vertexScale[1], z * vertexScale[2]);
+}
+
+void			TankSceneNode::TankRenderNode::
+				doNormal3f(GLfloat x, GLfloat y, GLfloat z)
+{
+  const GLfloat d = hypotf(x * normalScale[0],
+			hypotf(y * normalScale[1], z * normalScale[2]));
+  if (d > 1.0e-5f) {
+    x *= normalScale[0] / d;
+    y *= normalScale[1] / d;
+    z *= normalScale[2] / d;
   }
-  
-  // restore modelview transform
-  if (isExploding) {
-    glPopMatrix();
+  glNormal3f(x, y, z);
+}
+
+void			TankSceneNode::TankRenderNode::doInitContext()
+{
+  freeParts();
+}
+
+void			TankSceneNode::TankRenderNode::initContext(void* self)
+{
+  ((TankSceneNode::TankRenderNode*)self)->doInitContext();
+}
+
+//
+// TankSceneNode::LowTankRenderNode
+//
+
+GLuint			TankSceneNode::LowTankRenderNode::parts[lastStyle] =
+				{ _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID };
+
+TankSceneNode::LowTankRenderNode::LowTankRenderNode(
+				const TankSceneNode* sceneNode) :
+				TankRenderNode(sceneNode)
+{
+  // do nothing
+}
+
+TankSceneNode::LowTankRenderNode::~LowTankRenderNode()
+{
+  // release the lists to be nice
+  freeParts();
+}
+
+GLuint			TankSceneNode::LowTankRenderNode::
+				getParts(Style style)
+{
+  if (parts[style] == _NO_LIST_ID) {
+    prepStyle(style);
+
+    parts[style] = glGenLists(5);
+    glNewList(parts[style] + Body, GL_COMPILE);
+      makeBody();
+    glEndList();
+
+    glNewList(parts[style] + Barrel, GL_COMPILE);
+      makeBarrel();
+    glEndList();
+
+    glNewList(parts[style] + Turret, GL_COMPILE);
+      makeTurret();
+    glEndList();
+
+    glNewList(parts[style] + LeftTread, GL_COMPILE);
+      makeLeftTread();
+    glEndList();
+
+    glNewList(parts[style] + RightTread, GL_COMPILE);
+      makeRightTread();
+    glEndList();
+  }
+
+  return parts[style];
+}
+
+void			TankSceneNode::LowTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < countof(parts); i++)
+  {
+    glDeleteLists(parts[i],5);
+    parts[i] = _NO_LIST_ID;
   }
 }
 
+//
+// TankSceneNode::MedTankRenderNode
+//
 
-void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
+GLuint			TankSceneNode::MedTankRenderNode::parts[lastStyle] =
+				{ _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID };
+
+TankSceneNode::MedTankRenderNode::MedTankRenderNode(
+				const TankSceneNode* sceneNode) :
+				TankRenderNode(sceneNode)
 {
-  const GLfloat white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-  const GLfloat* clr = color;
-  
-  // do not use color modulation with tank textures
-  if (BZDBCache::texture) {
-    clr = white;
-  }
-  
-  switch (part) {
-    case Body: {
-      myColor4f(clr[0], clr[1], clr[2], alpha);
-      break;
-    }
-    case Barrel: {
-      myColor4f(0.25f, 0.25f, 0.25f, alpha);
-      break;
-    }
-    case Turret: {
-      myColor4f(0.9f * clr[0], 0.9f * clr[1], 0.9f * clr[2], alpha);
-      break;
-    }
-    case LeftCasing:
-    case RightCasing: {
-      myColor4f(0.7f * clr[0], 0.7f * clr[1], 0.7f * clr[2], alpha);
-      break;
-    }
-    case LeftTread:
-    case RightTread: {
-      myColor4f(0.3f * clr[0], 0.3f * clr[1], 0.3f * clr[2], alpha);
-      break;
-    }
-    case LeftWheel0:
-    case LeftWheel1:
-    case LeftWheel2:
-    case LeftWheel3:
-    case RightWheel0:
-    case RightWheel1:
-    case RightWheel2:
-    case RightWheel3: {
-      myColor4f(0.4f * clr[0], 0.4f * clr[1], 0.4f * clr[2], alpha);
-      break;
-    }
-    case LastTankPart: { // avoid warnings about unused enumerated values
-      break;
-    }
-  }
-  return;
+  // do nothing
 }
 
-
-bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
+TankSceneNode::MedTankRenderNode::~MedTankRenderNode()
 {
-  bool usingTexMat = true;
-  
-  switch (part) {
-    case LeftTread: {
-      glMatrixMode(GL_TEXTURE);
-      glLoadIdentity();
-      glTranslatef(sceneNode->leftTreadOffset, 0.0f, 0.0f);
-      glMatrixMode(GL_MODELVIEW);
-      break;
-    }
-    case RightTread: {
-      glMatrixMode(GL_TEXTURE);
-      glLoadIdentity();
-      glTranslatef(sceneNode->rightTreadOffset, 0.0f, 0.0f);
-      glMatrixMode(GL_MODELVIEW);
-      break;
-    }
-    case LeftWheel0:
-    case LeftWheel1:
-    case LeftWheel2:
-    case LeftWheel3: {
-      glMatrixMode(GL_TEXTURE);
-      glLoadIdentity();
-      glTranslatef(+0.5f, +0.5f, 0.0f);
-      glRotatef(sceneNode->leftWheelOffset, 0.0f, 0.0f, 1.0f);
-      glTranslatef(-0.5f, -0.5f, 0.0f);
-      glMatrixMode(GL_MODELVIEW);
-      break;
-    }
-    case RightWheel0:
-    case RightWheel1:
-    case RightWheel2:
-    case RightWheel3: {
-      glMatrixMode(GL_TEXTURE);
-      glLoadIdentity();
-      glTranslatef(+0.5f, +0.5f, 0.0f);
-      glRotatef(sceneNode->rightWheelOffset, 0.0f, 0.0f, 1.0f);
-      glTranslatef(-0.5f, -0.5f, 0.0f);
-      glMatrixMode(GL_MODELVIEW);
-      break;
-    }
-    default: {
-      usingTexMat = false;
-      break;
-    }
-  }
-  
-  return usingTexMat;
+  // release the lists to be nice
+  freeParts();
 }
 
-
-void TankSceneNode::TankRenderNode::renderLights()
+GLuint			TankSceneNode::MedTankRenderNode::
+				getParts(Style style)
 {
-  static const GLfloat lights[3][6] = {
-    { 1.0f, 1.0f, 1.0f, -1.53f,  0.00f, 2.1f },
-    { 1.0f, 0.0f, 0.0f,  0.10f,  0.75f, 2.1f },
-    { 0.0f, 1.0f, 0.0f,  0.10f, -0.75f, 2.1f }
-  };
+  if (parts[style] == _NO_LIST_ID) {
+    prepStyle(style);
+
+    parts[style] = glGenLists(5);
+    glNewList(parts[style] + Body, GL_COMPILE);
+      makeBody();
+    glEndList();
+
+    glNewList(parts[style] + Barrel, GL_COMPILE);
+      makeBarrel();
+    glEndList();
+
+    glNewList(parts[style] + Turret, GL_COMPILE);
+      makeTurret();
+    glEndList();
+
+    glNewList(parts[style] + LeftTread, GL_COMPILE);
+      makeLeftTread();
+    glEndList();
+
+    glNewList(parts[style] + RightTread, GL_COMPILE);
+      makeRightTread();
+    glEndList();
+  }
+
+  return parts[style];
+}
+
+void			TankSceneNode::MedTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < countof(parts); i++){
+    glDeleteLists(parts[i],5);
+    parts[i] = _NO_LIST_ID;
+  }
+}
+
+//
+// TankSceneNode::HighTankRenderNode
+//
+
+GLuint			TankSceneNode::HighTankRenderNode::parts[lastStyle] =
+				{ _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID };
+
+TankSceneNode::HighTankRenderNode::HighTankRenderNode(
+				const TankSceneNode* sceneNode) :
+				TankRenderNode(sceneNode)
+{
+  // do nothing
+}
+
+TankSceneNode::HighTankRenderNode::~HighTankRenderNode()
+{
+  // release the lists to be nice
+  freeParts();
+}
+
+GLuint			TankSceneNode::HighTankRenderNode::
+				getParts(Style style)
+{
+  if (parts[style] == _NO_LIST_ID) {
+    prepStyle(style);
+
+    parts[style] = glGenLists(5);
+    glNewList(parts[style] + Body, GL_COMPILE);
+      makeBody();
+    glEndList();
+
+    glNewList(parts[style] + Barrel, GL_COMPILE);
+      makeBarrel();
+    glEndList();
+
+    glNewList(parts[style] + Turret, GL_COMPILE);
+      makeTurret();
+    glEndList();
+
+    glNewList(parts[style] + LeftTread, GL_COMPILE);
+      makeLeftTread();
+    glEndList();
+
+    glNewList(parts[style] + RightTread, GL_COMPILE);
+      makeRightTread();
+    glEndList();
+  }
+
+  return parts[style];
+}
+
+void			TankSceneNode::HighTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < countof(parts); i++){
+    glDeleteLists(parts[i],5);
+    parts[i] = _NO_LIST_ID;
+  }
+}
+
+//
+// geometry rendering methods
+//
+
+void			TankSceneNode::TankRenderNode::renderLights()
+{
+  static const GLfloat	lights[3][6] = {
+				{ 1.0f, 1.0f, 1.0f, -1.53f,  0.00f, 2.1f },
+				{ 1.0f, 0.0f, 0.0f,  0.10f,  0.75f, 2.1f },
+				{ 0.0f, 1.0f, 0.0f,  0.10f, -0.75f, 2.1f }
+			};
+
   sceneNode->lightsGState.setState();
   glPointSize(2.0f);
-
   glBegin(GL_POINTS);
-  {
-    const float* scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
     myColor3fv(lights[0]);
-    glVertex3f(lights[0][3] * scale[0],
-               lights[0][4] * scale[1],
-               lights[0][5] * scale[2]);
+    glVertex3f(lights[0][3]*TankFactors::styleFactors[sceneNode->style][0], lights[0][4]*TankFactors::styleFactors[sceneNode->style][1], lights[0][5]*TankFactors::styleFactors[sceneNode->style][2]);
     myColor3fv(lights[1]);
-    glVertex3f(lights[1][3] * scale[0],
-               lights[1][4] * scale[1],
-               lights[1][5] * scale[2]);
+    glVertex3f(lights[1][3]*TankFactors::styleFactors[sceneNode->style][0], lights[1][4]*TankFactors::styleFactors[sceneNode->style][1], lights[1][5]*TankFactors::styleFactors[sceneNode->style][2]);
     myColor3fv(lights[2]);
-    glVertex3f(lights[2][3] * scale[0],
-               lights[2][4] * scale[1],
-               lights[2][5] * scale[2]);
-  }
+    glVertex3f(lights[2][3]*TankFactors::styleFactors[sceneNode->style][0], lights[2][4]*TankFactors::styleFactors[sceneNode->style][1], lights[2][5]*TankFactors::styleFactors[sceneNode->style][2]);
   glEnd();
-
   glPointSize(1.0f);
   sceneNode->gstate.setState();
 }
 
+//
+// TankSceneNode::LowTankRenderNode
+//
+
+void			TankSceneNode::LowTankRenderNode::makeBody()
+{
+  buildLowBody();
+}
+
+void			TankSceneNode::LowTankRenderNode::makeBarrel()
+{
+  buildLowBarrel();
+}
+
+void			TankSceneNode::LowTankRenderNode::makeTurret()
+{
+  buildLowTurret();
+}
+
+void			TankSceneNode::LowTankRenderNode::makeLeftTread()
+{
+  buildLowLTread();
+}
+
+void			TankSceneNode::LowTankRenderNode::makeRightTread()
+{
+  buildLowRTread();
+}
+
+//
+// TankSceneNode::MedTankRenderNode
+//
+
+void			TankSceneNode::MedTankRenderNode::makeBody()
+{
+  buildMedBody();
+}
+
+void			TankSceneNode::MedTankRenderNode::makeBarrel()
+{
+  buildMedBarrel();
+}
+
+void			TankSceneNode::MedTankRenderNode::makeTurret()
+{
+  buildMedTurret();
+}
+
+void			TankSceneNode::MedTankRenderNode::makeLeftTread()
+{
+  buildMedLTread();
+}
+
+void			TankSceneNode::MedTankRenderNode::makeRightTread()
+{
+  buildMedRTread();
+}
+
+//
+// TankSceneNode::HighTankRenderNode
+//
+
+void			TankSceneNode::HighTankRenderNode::makeBody()
+{
+  buildHighBody();
+}
+
+void			TankSceneNode::HighTankRenderNode::makeBarrel()
+{
+  buildHighBarrel();
+}
+
+void			TankSceneNode::HighTankRenderNode::makeTurret()
+{
+  buildHighTurret();
+}
+
+void			TankSceneNode::HighTankRenderNode::makeLeftTread()
+{
+  buildHighLTread();
+}
+
+void			TankSceneNode::HighTankRenderNode::makeRightTread()
+{
+  buildHighRTread();
+}
 
 // Local Variables: ***
 // mode:C++ ***

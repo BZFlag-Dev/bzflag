@@ -15,13 +15,11 @@ libGeometry_a_SOURCES  =		\
 	WallSceneNode.cxx		\
 	QuadWallSceneNode.cxx		\
 	TriWallSceneNode.cxx		\
-	MeshPolySceneNode.cxx		\
 	PolyWallSceneNode.cxx		\
 	EighthDimSceneNode.cxx		\
 	EighthDBaseSceneNode.cxx	\
 	EighthDBoxSceneNode.cxx		\
 	EighthDPyrSceneNode.cxx		\
-	EighthDTetraSceneNode.cxx	\
 	ShellSceneNode.cxx		\
 	TracerSceneNode.cxx		\
 	PTSceneNode.cxx			\
@@ -30,9 +28,7 @@ libGeometry_a_SOURCES  =		\
 	SphereSceneNode.cxx		\
 	FlagSceneNode.cxx		\
 	FlagWarpSceneNode.cxx		\
-	AnimatedTreads.cxx		\
 	TankSceneNode.cxx		\
-	TankGeometryMgr.cxx		\
 	BillboardSceneNode.cxx
 
 libGeometry_a_LIBADD =	\
