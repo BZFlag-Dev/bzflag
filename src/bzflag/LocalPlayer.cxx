@@ -548,6 +548,27 @@ void			LocalPlayer::doUpdateMotion(float dt)
   const Obstacle* obstacle;
   float timeStep = dt;
   if (location != Dead && location != Exploding) location = OnGround;
+
+  // try to see if we are stuck on a building
+  obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
+			    expelled);
+  if (obstacle) {
+    // we are using a maximum value on time for frame to avoid lagging problem
+    float deltaTime = dt > 0.1f ? 0.1f : dt;
+    float normalStuck[3];
+    obstacle->getNormal(newPos, normalStuck);
+    // use all the given speed to exit
+    float movementMax
+      = hypotf(newVelocity[0], hypotf(newVelocity[1], newVelocity[2]))
+      * deltaTime;
+    // exit will be in the normal direction
+    newPos[0] += movementMax * normalStuck[0];
+    newPos[1] += movementMax * normalStuck[1];
+    newPos[2] += movementMax * normalStuck[2];
+    // compute time for all other kind of movements
+    timeStep -= deltaTime;
+  }
+
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
     // record position at beginning of time step
     float tmpPos[3], tmpAzimuth;
