@@ -3,11 +3,11 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* Fix and/or close outstanding bugs in sf tracker that do not require
-  breaking protocol.  In particular -- fix the high priority (10) ones
-  for 1.10.4 patch release.
+* None
 
 THESE ARE LOWER PRIORITY
+
+* need to test for AR so that SGI build uses -o instead of cru
 
 * extend player name cycling (like on /kick and /ban) to /poll kick and
   /poll ban
