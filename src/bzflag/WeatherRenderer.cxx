@@ -108,6 +108,7 @@ WeatherRenderer::WeatherRenderer ()
   BZDB.addCallback ("_rainTexture", bzdbCallBack, this);
   BZDB.addCallback ("_rainSpins", bzdbCallBack, this);
   BZDB.addCallback ("_rainRoofs", bzdbCallBack, this);
+  BZDB.addCallback ("userRainScale", bzdbCallBack, this);
 }
 
 
@@ -130,6 +131,7 @@ WeatherRenderer::~WeatherRenderer ()
   BZDB.removeCallback ("_rainTexture", bzdbCallBack, this);
   BZDB.removeCallback ("_rainSpins", bzdbCallBack, this);
   BZDB.removeCallback ("_rainRoofs", bzdbCallBack, this);
+  BZDB.removeCallback ("userRainScale", bzdbCallBack, this);
 }
 
 
@@ -165,7 +167,7 @@ void WeatherRenderer::set (void)
 
   if (dbItemSet ("_rainType") || dbItemSet ("_rainDensity")) {
     // default rain desnity
-    rainDensity = 1000;
+    rainDensity = (int) (1000.0f * BZDB.eval("userRainScale"));
 
     // some defaults
     doLineRain = false;
@@ -239,7 +241,7 @@ void WeatherRenderer::set (void)
         rainSize[1] = 2.0f;
       }
       else if (rainType == "particle") {
-        rainDensity = 500;
+        rainDensity = (int) (500.0f * BZDB.eval("userRainScale"));
         gstate.setTexture (tm.getTextureID ("red_super_bolt"));
         rainSpeed = -20.0f;
         rainSpeedMod = 5.0f;
@@ -287,7 +289,7 @@ void WeatherRenderer::set (void)
       rainSpread = BZDB.eval ("_rainSpread");
 
     if (dbItemSet ("_rainDensity"))
-      rainDensity = (int) BZDB.eval ("_rainDensity");
+      rainDensity = (int) (BZDB.eval("_rainDensity") * BZDB.eval("userRainScale"));
 
     if (dbItemSet ("_rainSpeed"))
       rainSpeed = BZDB.eval ("_rainSpeed");
