@@ -1465,61 +1465,34 @@ static void		showKeyboardStatus()
 static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   const std::string cmd = KEYMGR->get(key, pressed);
+
   if (!cmd.empty()) {
     std::string result = CMDMGR->run(cmd);
     if (!result.empty())
       std::cerr << result << std::endl;
     return true;
-  }
-  if (key.ascii == 27) {
-    if (pressed) HUDDialogStack::get()->push(mainMenu);
-    return true;
-  } else if (hud->getHunt()) {
-    if (key.button == BzfKeyEvent::Down ||
-        KEYMGR->get(key, true) == "identify") {
-      if (pressed) {
-        hud->setHuntPosition(hud->getHuntPosition()+1);
-      }
-      return true;
-    } else if (key.button == BzfKeyEvent::Up ||
-    	       KEYMGR->get(key, true) == "drop") {
-      if (pressed) {
-        hud->setHuntPosition(hud->getHuntPosition()-1);
-      }
-      return true;
-    } else if (KEYMGR->get(key, true) == "fire") {
-      if (pressed) {
-        hud->setHuntSelection(true);
-        playLocalSound(SFX_HUNT_SELECT);
-      }
-      return true;
-    }
+
   } else {
+
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {
       case 'T':
       case 't':
 	// toggle frames-per-second display
-	if (KEYMGR->get(key, pressed).empty()) {
-	  if (pressed) {
-	    showFPS = !showFPS;
-	    if (!showFPS) hud->setFPS(-1.0);
-	  }
-	  return true;
-	}
-	break;
+        if (pressed) {
+          showFPS = !showFPS;
+          if (!showFPS) hud->setFPS(-1.0);
+        }
+        return true;
 
       case 'Y':
       case 'y':
 	// toggle milliseconds for drawing
-	if (KEYMGR->get(key, pressed).empty()) {
-	  if (pressed) {
-	    showDrawTime = !showDrawTime;
-	    if (!showDrawTime) hud->setDrawTime(-1.0);
-	  }
-	  return true;
-	}
-	break;
+        if (pressed) {
+          showDrawTime = !showDrawTime;
+          if (!showDrawTime) hud->setDrawTime(-1.0);
+        }
+        return true;
 
 /* XXX -- for testing forced recreation of OpenGL context
       case 'o':
@@ -1545,23 +1518,44 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       case ']':
       case '}':
 	// plus 30 seconds
-	if (KEYMGR->get(key, pressed).empty()) {
-	  if (pressed) clockAdjust += 30.0f;
-	  return true;
-	}
-	break;
+	if (pressed) clockAdjust += 30.0f;
+	return true;
 
       case '[':
       case '{':
 	// minus 30 seconds
-	if (KEYMGR->get(key, pressed).empty()) {
-	  if (pressed) clockAdjust -= 30.0f;
-	  return true;
-	}
+	if (pressed) clockAdjust -= 30.0f;
+	return true;
+        
+      default:
 	break;
     }
   }
 
+  if (key.ascii == 27) {
+    if (pressed) HUDDialogStack::get()->push(mainMenu);
+    return true;
+  } else if (hud->getHunt()) {
+    if (key.button == BzfKeyEvent::Down ||
+        KEYMGR->get(key, true) == "identify") {
+      if (pressed) {
+        hud->setHuntPosition(hud->getHuntPosition()+1);
+      }
+      return true;
+    } else if (key.button == BzfKeyEvent::Up ||
+    	       KEYMGR->get(key, true) == "drop") {
+      if (pressed) {
+        hud->setHuntPosition(hud->getHuntPosition()-1);
+      }
+      return true;
+    } else if (KEYMGR->get(key, true) == "fire") {
+      if (pressed) {
+        hud->setHuntSelection(true);
+        playLocalSound(SFX_HUNT_SELECT);
+      }
+      return true;
+    }
+  }
   return false;
 }
 
