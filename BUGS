@@ -1,8 +1,8 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
-- Tanks with the N flag are not rendered as narrow, but their flags seem
-  to be.
+- Tanks with N and O (probably other shape-altering flags too) are rendered
+  as normal tanks.
 
 - quol reports that his 1.10.3 server is requiring identification, although
   require identify is not listed anywhere in his group file.  problem still
