@@ -12,10 +12,12 @@
 
 #include <signal.h>
 
+#if !defined(__sgi)
 /* some platforms don't have a SIG_PF type. */
 #ifndef SIG_PF
 typedef void (*SIG_PF)(int);
 #endif
+#endif /* defined(__sgi) */
 
 #ifdef __cplusplus
 extern "C" {

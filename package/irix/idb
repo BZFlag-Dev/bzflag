@@ -7,6 +7,7 @@ f 755 demos demos usr/local/bin/bzfrelay ./bin/bzfrelay EOE
 f 755 demos demos usr/local/bin/bzfs ./bin/bzfs EOE exitop("tag 0x00fc8002 /usr/local/bin/bzfs; iconbookedit -add 'Category:File Name:/usr/local/bin/bzfs' -syspage Demos")
 f 444 demos demos usr/local/lib/bzflag/LICENSE ./LICENSE REQDATA
 f 444 demos demos usr/local/lib/bzflag/bbolt.rgb ./data/bbolt.rgb TEXTURES
+f 444 demos demos usr/local/lib/bzflag/blaser.rgb ./data/blaser.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/boom.wav ./data/boom.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/boxwall.rgb ./data/boxwall.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/caution.rgb ./data/caution.rgb TEXTURES
@@ -24,19 +25,27 @@ f 444 demos demos usr/local/lib/bzflag/flag_lost.wav ./data/flag_lost.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/flag_won.wav ./data/flag_won.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/flage.rgb ./data/flage.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/gbolt.rgb ./data/gbolt.rgb TEXTURES
+f 444 demos demos usr/local/lib/bzflag/glaser.rgb ./data/glaser.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/ground.rgb ./data/ground.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/helvbi.rgb ./data/helvbi.rgb REQDATA
 f 444 demos demos usr/local/lib/bzflag/helvbr.rgb ./data/helvbr.rgb REQDATA
-f 444 demos demos usr/local/lib/bzflag/laser.rgb ./data/laser.rgb TEXTURES
+f 444 demos demos usr/local/lib/bzflag/jump.wav ./data/jump.wav SOUNDS
+f 444 demos demos usr/local/lib/bzflag/killteam.wav ./data/killteam.wav SOUNDS
+f 444 demos demos usr/local/lib/bzflag/land.wav ./data/land.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/laser.wav ./data/laser.wav SOUNDS
+f 444 demos demos usr/local/lib/bzflag/lock.wav ./data/lock.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/missile.rgb ./data/missile.rgb TEXTURES
+f 444 demos demos usr/local/lib/bzflag/missile.wav ./data/missile.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/mountain.rgb ./data/mountain.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/panel.rgb ./data/panel.rgb REQDATA
 f 444 demos demos usr/local/lib/bzflag/pbolt.rgb ./data/pbolt.rgb TEXTURES
+f 444 demos demos usr/local/lib/bzflag/phantom.wav ./data/phantom.wav SOUNDS
+f 444 demos demos usr/local/lib/bzflag/plaser.rgb ./data/plaser.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/pop.wav ./data/pop.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/pyrwall.rgb ./data/pyrwall.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/rbolt.rgb ./data/rbolt.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/ricochet.wav ./data/ricochet.wav SOUNDS
+f 444 demos demos usr/local/lib/bzflag/rlaser.rgb ./data/rlaser.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/roof.rgb ./data/roof.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/shock.wav ./data/shock.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/teleport.wav ./data/teleport.wav SOUNDS
@@ -45,6 +54,7 @@ f 444 demos demos usr/local/lib/bzflag/timesbr.rgb ./data/timesbr.rgb REQDATA
 f 444 demos demos usr/local/lib/bzflag/title.rgb ./data/title.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/wall.rgb ./data/wall.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/ybolt.rgb ./data/ybolt.rgb TEXTURES
+f 444 demos demos usr/local/lib/bzflag/ylaser.rgb ./data/ylaser.rgb TEXTURES
 f 444 root sys usr/share/catman/local/cat6/bzflag.z ./man/bzflag.z MAN
 f 444 root sys usr/share/catman/local/cat6/bzfls.z ./man/bzfls.z MAN
 f 444 root sys usr/share/catman/local/cat6/bzfrelay.z ./man/bzfrelay.z MAN
