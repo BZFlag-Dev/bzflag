@@ -157,8 +157,9 @@ public:
 
 
 protected:
+  typedef std::map<std::string, Parser*> ParserMap;
 
-  std::map<std::string, Parser*> parsers;
+  ParserMap parsers;
   std::vector<std::string> parameters;
   std::string error;
   std::string helpPre;

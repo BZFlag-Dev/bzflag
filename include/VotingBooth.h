@@ -31,6 +31,7 @@ class VotingBooth
 private:
 
   static const short int RETRACTED_VOTE;
+  typedef std::map<std::string, short int> VoterResponseMap;
 
   /** question that is voted upon (optionally provided)
    */
@@ -43,7 +44,7 @@ private:
   /** collection of the voters and their response responses (index into the
    * choice vector)
    */
-  std::map<std::string, short int> _vote;
+  VoterResponseMap _vote;
 
 protected:
 

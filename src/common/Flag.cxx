@@ -167,7 +167,7 @@ void* FlagType::unpack(void* buf, FlagType* &type)
   return buf;
 }
 
-FlagTypeMap& FlagType::getFlagMap() {
+  FlagTypeMap& FlagType::getFlagMap() {
   static std::map<std::string, FlagType*> flagMap;
   return flagMap;
 }
@@ -206,7 +206,7 @@ void*			Flag::unpack(void* buf)
 
 FlagType* Flag::getDescFromAbbreviation(const char* abbreviation)
 {
-  std::map<std::string, FlagType*>::iterator i;
+  FlagTypeMap::iterator i;
   std::string abbvString;
 
   /* Uppercase the abbreviation */

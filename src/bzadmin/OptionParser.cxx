@@ -24,7 +24,7 @@ OptionParser::OptionParser(const std::string& helpPrefix,
 }
 
 OptionParser::~OptionParser() {
-  std::map<std::string, Parser*>::iterator iter;
+  ParserMap::iterator iter;
   for (iter = parsers.begin(); iter != parsers.end(); ++iter)
     delete iter->second;
 }
@@ -43,7 +43,7 @@ const std::vector<std::string>& OptionParser::getParameters() const {
 bool OptionParser::parse(int argc, char** argv) {
   parameters.clear();
   error = "";
-  std::map<std::string, Parser*>::iterator iter;
+  ParserMap::iterator iter;
   for (int i = 1; i < argc; ++i) {
     if (!strcmp(argv[i], "-help")) {
       printHelp(std::cout, argv[0]);
@@ -74,7 +74,7 @@ void OptionParser::printHelp(std::ostream& os, const std::string& progName) cons
   os<<helpPre<<std::endl<<std::endl;
   printUsage(os, progName);
   os<<std::endl<<std::endl;
-  std::map<std::string, Parser*>::const_iterator iter;
+  ParserMap::const_iterator iter;
   os<<"   -help: print this help message"<<std::endl;
   for (iter = parsers.begin(); iter != parsers.end(); ++iter)
     os<<"   -"<<iter->first<<": "<<iter->second->help<<std::endl;
@@ -82,7 +82,7 @@ void OptionParser::printHelp(std::ostream& os, const std::string& progName) cons
 
 
 void OptionParser::printUsage(std::ostream& os, const std::string& progName) const {
-  std::map<std::string, Parser*>::const_iterator iter;
+  ParserMap::const_iterator iter;
   os<<"Usage: "<<progName<<" [-help] ";
   for (iter = parsers.begin(); iter != parsers.end(); ++iter)
     os<<iter->second->usage<<" ";

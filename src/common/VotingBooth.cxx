@@ -102,7 +102,7 @@ bool VotingBooth::vote(std::string voterName, std::string response)
 
 bool VotingBooth::retractVote(const std::string voterName)
 {
-  std::map<std::string, short int>::iterator i = _vote.find(voterName);
+  VoterResponseMap::iterator i = _vote.find(voterName);
 
   /* if not found, then nothing to retract */
   if (i == _vote.end()) {
@@ -118,7 +118,7 @@ unsigned long int VotingBooth::getVoteCount(const std::string response) const
 {
   unsigned long int total=0;
 
-  for (std::map<std::string, short int>::const_iterator i = _vote.begin();
+  for (VoterResponseMap::const_iterator i = _vote.begin();
        i != _vote.end(); ++i) {
     /* negative indices indicate an uncounted vote (perhaps retracted) */
     if ( (i->second >= 0) && (_choice[i->second] == response) ) {
