@@ -11,7 +11,13 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
    to and from both work - working?
    from server works, to does not - would NOT work with NAT
 
+
 THESE ARE LOWER PRIORITY
+
+* add ability to capture a screenshot from inside the game
+
+* rewrite mac os x display/window code to support app switching,
+  resolution mode changes, screen captures, etc.
 
 * move to perl/php based bzfls http://bzflag.org/wiki/DbServers and add
   - player/password registration
@@ -92,10 +98,6 @@ THESE ARE LOWER PRIORITY
 * Lag information should be appended to MsgPlayerUpdate packet
   by server, and use half in dead reckoning calculations
 
-* create new 64x64, 48x48, 32x32, 16x16 official BZFlag icons.
-  Should feature the BZFlag tank. The large ones should include
-  the BZFlag logo. All should feature transparency.
-
 * move -synctime data to different Msg packet, or create new one.
   MsgSetVar (ala 1.8) would be a good one
 
@@ -133,8 +135,6 @@ THESE ARE LOWER PRIORITY
 
 * remove shoothrough/drivethrough and replace with one flag
   meaning passable
-
-* bzadmin should build without GL headers installed
 
 * build a prototype(4) for bsd, solaris
 
@@ -177,15 +177,14 @@ THESE ARE LOWER PRIORITY
 
 * add type of shot (normal, gm, sw, etc) to killed message
 
-* more flag types
-
 * mines:
    not necessarily a good idea.  if mines are visible
    then they're fairly useless.  if invisible then they're
    not fun because you're destroyed without warning and
    no amount of skill will help you.  someone suggested
    making them visible within a certain range.  another
-   possibility is damage before destruction.
+   possibility is damage before destruction. another idea
+   is for mines to be visible on 3d, but not on radar.
 
 * radio chat:
    allow players to communicate via low-quality audio.
