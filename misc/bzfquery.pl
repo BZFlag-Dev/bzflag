@@ -14,14 +14,13 @@
 #
 # contact a bzflag server and print the game status to stdout
 #
+use Socket;
 
 # get arguments:  server [port]
 ($servername,$port) = @ARGV;
 $port = 5155 unless $port;
 
 # some socket defines
-$AF_INET = 2;
-$SOCK_STREAM = 1;
 $sockaddr = 'S n a4 x8';
 
 # port to port number
@@ -30,10 +29,10 @@ $sockaddr = 'S n a4 x8';
 
 # get server address
 ($name,$aliases,$type,$len,$serveraddr) = gethostbyname($servername);
-$server = pack($sockaddr, $AF_INET, $port, $serveraddr);
+$server = pack($sockaddr, AF_INET, $port, $serveraddr);
 
 # connect
-die $! unless socket(S1, $AF_INET, $SOCK_STREAM, $proto);
+die $! unless socket(S1, AF_INET, SOCK_STREAM, $proto);
 die $! unless connect(S1, $server);
 
 # don't buffer
@@ -55,8 +54,8 @@ die "incompatible version" if ($major == 1 && $minor == 7 && $revision eq "b");
 die "rejected by server" if ($port == 0);
 
 # reconnect on new port
-$server = pack($sockaddr, $AF_INET, $port, $serveraddr);
-die $! unless socket(S, $AF_INET, $SOCK_STREAM, $proto);
+$server = pack($sockaddr, AF_INET, $port, $serveraddr);
+die $! unless socket(S, AF_INET, SOCK_STREAM, $proto);
 die $! unless connect(S, $server);
 select(S); $| = 1; select(STDOUT);
 
