@@ -95,6 +95,7 @@ const std::string StateDatabase::BZDB_MGUNADRATE 	= std::string("_mGunAdRate");
 const std::string StateDatabase::BZDB_MGUNADLIFE 	= std::string("_mGunAdLife");
 const std::string StateDatabase::BZDB_MUZZLEFRONT	= std::string("_muzzleFront");
 const std::string StateDatabase::BZDB_MUZZLEHEIGHT	= std::string("_muzzleHeight");
+const std::string StateDatabase::BZDB_NOTRESPONDINGTIME = std::string("_notRespondingTime");
 const std::string StateDatabase::BZDB_OBESEFACTOR       = std::string("_obeseFactor");
 const std::string StateDatabase::BZDB_POSITIONTOLERANCE = std::string("_positionTolerance");
 const std::string StateDatabase::BZDB_PYRBASE           = std::string("_pyrBase");

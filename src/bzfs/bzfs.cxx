@@ -5375,10 +5375,11 @@ int main(int argc, char **argv)
     }
 
     // update notResponding
+    float notRespondingTime = BZDB->eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
     for (int h = 0; h < curMaxPlayers; h++) {
       if (player[h].state > PlayerInLimbo) {
 	bool oldnr = player[h].notResponding;
-	player[h].notResponding = ((TimeKeeper::getCurrent().getSeconds() - player[h].lastupdate.getSeconds()) > 3.5);
+	player[h].notResponding = ((TimeKeeper::getCurrent().getSeconds() - player[h].lastupdate.getSeconds()) > notRespondingTime);
 	// if player is the rabbit, anoint a new one
 	if (!oldnr && player[h].notResponding && h == rabbitIndex)
 	  anointNewRabbit();

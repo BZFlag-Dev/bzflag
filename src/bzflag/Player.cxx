@@ -432,7 +432,7 @@ bool			Player::getDeadReckoning(
   predictedPos[2] = inputPos[2];
 
   // return false if we haven't gotten an update in a while
-  return (dt < 3.5f * MaxUpdateTime);
+  return (dt < BZDB->eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
 }
 
 bool			Player::isDeadReckoningWrong() const

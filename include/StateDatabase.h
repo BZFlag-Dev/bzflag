@@ -192,6 +192,7 @@ public:
   static const std::string	BZDB_MGUNADLIFE;
   static const std::string	BZDB_MUZZLEFRONT;
   static const std::string	BZDB_MUZZLEHEIGHT;
+  static const std::string	BZDB_NOTRESPONDINGTIME;
   static const std::string	BZDB_OBESEFACTOR;
   static const std::string	BZDB_POSITIONTOLERANCE;
   static const std::string      BZDB_PYRBASE;
