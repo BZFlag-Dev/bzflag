@@ -617,6 +617,7 @@ void			ControlPanel::resize()
 
   // note that we've been resized at least once
   resized = true;
+  invalidate();
 }
 
 void			ControlPanel::resizeCallback(void* self)
