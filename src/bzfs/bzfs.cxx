@@ -2580,9 +2580,17 @@ static void dropFlag(int playerIndex, float pos[3])
            && (bases.find(teamBase) != bases.end())) {
     std::string teamName = Team::getName ((TeamColor) flagTeam);
     if (!world->getSafetyPoint(teamName, pos, drpFlag.flag.landingPosition)) {
-      bases[teamBase].getSafetyZone( drpFlag.flag.landingPosition[0],
-                                     drpFlag.flag.landingPosition[1],
-                                     drpFlag.flag.landingPosition[2] );
+      bases[teamBase].getSafetyZone(drpFlag.flag.landingPosition[0],
+                                    drpFlag.flag.landingPosition[1],
+                                    drpFlag.flag.landingPosition[2]);
+      // default flag safety zones are on the ground
+      if (drpFlag.flag.landingPosition[2] <= deadUnder) {
+	TeamBases &teamBases = bases[flagTeam];
+	const TeamBase &base = teamBases.getRandomBase(flagIndex); 
+	drpFlag.flag.landingPosition[0] = base.position[0];
+	drpFlag.flag.landingPosition[1] = base.position[1];
+	drpFlag.flag.landingPosition[2] = base.position[2] + base.size[2];
+      }
     }
   }
   else if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
@@ -2590,9 +2598,8 @@ static void dropFlag(int playerIndex, float pos[3])
     drpFlag.flag.landingPosition[1] = pos[1];
     drpFlag.flag.landingPosition[2] = 0.0f;
   }
-  else if (clOptions->flagsOnBuildings
-           && (topmosttype == IN_BOX_NOTDRIVETHROUGH || topmosttype == IN_BASE)
-           && (obstacleTop > deadUnder)) {
+  else if (clOptions->flagsOnBuildings && (obstacleTop > deadUnder)
+           && (topmosttype == IN_BOX_NOTDRIVETHROUGH || topmosttype == IN_BASE)) {
     drpFlag.flag.landingPosition[0] = pos[0];
     drpFlag.flag.landingPosition[1] = pos[1];
     drpFlag.flag.landingPosition[2] = obstacleTop;
