@@ -188,7 +188,7 @@ class WordFilter
   /** returns what alphabetic character a given char
    * corresponds to (e.g. 3 => e, | => il)
    */
-  std::string setFromCharacter(const char c) const;
+  std::string alphabeticSetFromCharacter(const char c) const;
   
   /** expands a word into an uncompiled regular
    *  expression.
