@@ -56,6 +56,8 @@ class ListServer {
     int			port;
     int			socket;
     int			phase;
+    std::string         hostname;
+    std::string         pathname;
     int			bufferSize;
     char		buffer[1024];
 };

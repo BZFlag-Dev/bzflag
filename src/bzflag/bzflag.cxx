@@ -363,6 +363,7 @@ static void		usage()
 	" [-echo]"
 	" [-echoClean]"
 	" [-geometry <geometry-spec>]"
+	" [-http]"
 	" [-joystick {1|0}]"
 	" [-joystickname <name>]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
@@ -385,6 +386,7 @@ static void		usage()
 
 static void		parse(int argc, char** argv)
 {
+  startupInfo.http = false;
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-a") == 0 ||
 		strcmp(argv[i], "-anonymous") == 0) {
@@ -524,6 +526,8 @@ static void		parse(int argc, char** argv)
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
+    } else if (strcmp(argv[i], "-http") == 0) {
+	startupInfo.http = true;
     } else if (strcmp(argv[i], "-joystick") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);

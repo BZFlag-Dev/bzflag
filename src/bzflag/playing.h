@@ -47,6 +47,7 @@ struct StartupInfo {
     char		serverName[80];
     int			serverPort;
     bool		useUDPconnection;
+    bool		http;
     TeamColor		team;
     char		callsign[CallSignLen];
     char		email[EmailLen];

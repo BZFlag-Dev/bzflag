@@ -3257,6 +3257,7 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 
 void			ServerMenu::checkEchos()
 {
+  const StartupInfo* info = getStartupInfo();
   // lookup server list in phase 0
   if (phase == 0) {
     // dereference URL
@@ -3301,6 +3302,8 @@ void			ServerMenu::checkEchos()
 
 	// add to list
 	listServers[numListServers].address = address;
+	listServers[numListServers].hostname = hostname;
+	listServers[numListServers].pathname = path;
 	listServers[numListServers].port    = port;
 	listServers[numListServers].socket  = -1;
 	listServers[numListServers].phase   = 2;
@@ -3425,12 +3428,25 @@ void			ServerMenu::checkEchos()
 
 	// send list request
 	else if (FD_ISSET(listServer.socket, &write_set)) {
-	  static const char* msg = "LIST\n\n";
 #if !defined(_WIN32)
 	  // ignore SIGPIPE for this send
 	  SIG_PF oldPipeHandler = bzSignal(SIGPIPE, SIG_IGN);
 #endif
-	  if (send(listServer.socket, msg, strlen(msg), 0) != (int)strlen(msg)) {
+	  
+	  bool errorSending;
+	  if (info->http) {
+	    char url[1024];
+	    snprintf(url, sizeof(url), "GET http://%s%s?action=LIST\r\n",
+		     listServer.hostname.c_str(),
+		     listServer.pathname.c_str());
+	    errorSending = send(listServer.socket, url, strlen(url), 0)
+	      != (int) strlen(url);
+	  } else {
+	    static const char* msg = "LIST\n\n";
+	    errorSending = send(listServer.socket, msg, strlen(msg), 0)
+	      != (int)strlen(msg);
+	  }
+	  if (errorSending) {
 	    // probably unable to connect to server
 	    close(listServer.socket);
 	    listServer.socket = -1;
