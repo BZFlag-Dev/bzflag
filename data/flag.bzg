@@ -1,3 +1,4 @@
+<!--
 # bzflag
 # Copyright (c) 1993 - 2002 Tim Riker
 #
@@ -10,6 +11,7 @@
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 # flag.  don't blend if blending or texturing are off.
+-->
 <geometry id="flag">
 	# color is inherited
 	<texcoord>

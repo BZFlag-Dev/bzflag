@@ -1,3 +1,4 @@
+<!--
 # bzflag
 # Copyright (c) 1993 - 2002 Tim Riker
 #
@@ -10,6 +11,8 @@
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 # mountains.  only show if texturing.
+-->
+
 <choice>
 	<mask t="renderTexturing">0 1</mask>
 	<geometry>

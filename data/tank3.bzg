@@ -1,3 +1,4 @@
+<!--
 # bzflag
 # Copyright (c) 1993 - 2002 Tim Riker
 #
@@ -10,6 +11,8 @@
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 # low detail tank model
+
+-->
 
 <group>
   <gstate>

@@ -169,6 +169,8 @@ bool					ConfigReader::doRead(void* userData)
 		Type type = readTag(&tag, &values);
 		if (type == End)
 			break;
+		else if (type == Comment)
+			continue;
 
 		// open new state level
 		if (type == Open || type == OpenClose) {
@@ -265,9 +267,17 @@ ConfigReader::Type		ConfigReader::readTag(BzfString* tag, Values* values)
 	c = get();
 	if (c == '/')
 		type = Close;
+	else if (c == '!')
+		type = Comment;
 	else
 		unget(c);
 
+	if (type == Comment) {
+		c = get();
+		while ((c != -1) && (c != '>'))
+			c = get();
+		return Comment;
+	}
 	// read tag
 	BzfString data;
 	data = readToken();

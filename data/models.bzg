@@ -1,3 +1,4 @@
+<!--
 # bzflag
 # Copyright (c) 1993 - 2002 Tim Riker
 #
@@ -8,6 +9,7 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+-->
 
 <group>
 
@@ -66,7 +68,7 @@
               0.43  0.75  0.95  1
               0.25  0.55  0.86  1
             </color>
-            <color ref=3/>
+            <color ref="3"/>
             <vertex t="sunAltitude">
                0.0  0.0  1.0
                0.0  1.0  0.0
@@ -107,7 +109,7 @@
                1.0  0.0  0.0
                0.0  0.0  1.0
             </vertex>
-            <primitive type=triangles>
+            <primitive type="triangles">
               <index>
                 0 2 1
                 0 3 2
@@ -141,7 +143,7 @@
               <smoothing smooth="on" />
               <blending src="sa" dst="1-sa" />
               <alpha func=">=" ref="0.2" />
-              <depth write=off func="1" />
+              <depth write="off" func="1" />
               <point size="2" />
               <include filename="stars.bzg" />
             </gstate>

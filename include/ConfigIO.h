@@ -61,7 +61,7 @@ public:
 	static BzfString	escape(const BzfString& string);
 
 private:
-	enum Type { End, Open, Close, OpenClose };
+	enum Type { End, Open, Close, OpenClose, Comment };
 	bool				read(istream* stream,
 							const BzfString& filename, void* userData);
 	bool				doRead(void* userData);
