@@ -1127,7 +1127,10 @@ int			main(int argc, char** argv)
   MainWindow& mainWindow = *pmainWindow;
   // set fullscreen again so MainWindow object knows it's full screen
   if (useFullscreen)
+    // this will also call window create
     mainWindow.setFullscreen();
+  else
+    window->create();
 
   // get sound files.  must do this after creating the window because
   // DirectSound is a bonehead API.
