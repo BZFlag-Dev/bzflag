@@ -23,7 +23,7 @@
 class ShotStatistics {
 public:
 
-  ShotStatistics::ShotStatistics() : 
+  ShotStatistics() : 
       normalFired(0), normalHit(0),
       guidedMissileFired(0), guidedMissileHit(0),
       laserFired(0), laserHit(0),
@@ -31,7 +31,7 @@ public:
       shockWaveFired(0), shockWaveHit(0),
       thiefFired(0), thiefHit(0)
       {};
-  ShotStatistics::~ShotStatistics() {};
+  ~ShotStatistics() {};
 
   // raw stats returns
   int         getNormalFired() const;
