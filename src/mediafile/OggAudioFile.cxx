@@ -35,7 +35,6 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	else {
 		info = ov_info(&file, -1);
 		int samples = ov_pcm_total(&file, -1);
-		std::cout << ov_streams(&file) << " logical bitstreams\n";
 		init(info->rate, info->channels, samples, 2);
 	}
 }
@@ -52,12 +51,12 @@ std::string	OggAudioFile::getExtension()
 
 bool		OggAudioFile::read(void* buffer, int numFrames)
 {
-	//reading 512 bytes at a time on a 88K file takes forever
 	int result;
 	long bytestotal = numFrames * info->channels * 2;
+	long filelength = bytestotal;
 	while (bytestotal > 0) {
 		long oldoff = ov_pcm_tell(&file) * info->channels * 2;
-		long bytesleft = bytestotal - oldoff;
+		long bytesleft = filelength - oldoff;
 #ifdef WIN32
 		result = ov_read(&file, ((char*) buffer) + oldoff, bytesleft, 0, 2, 1, &stream);
 #else
