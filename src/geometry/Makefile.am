@@ -1,4 +1,6 @@
-SUBDIRS = models
+AUTOMAKE_OPTIONS = subdir-objects
+
+noinst_SUBDIRS = models
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
@@ -28,4 +30,19 @@ libGeometry_a_SOURCES  =		\
 	FlagSceneNode.cxx		\
 	FlagWarpSceneNode.cxx		\
 	TankSceneNode.cxx		\
-	BillboardSceneNode.cxx
+	BillboardSceneNode.cxx		\
+	models/lowtank/barrel.cxx	\
+	models/lowtank/body.cxx		\
+	models/lowtank/ltread.cxx	\
+	models/lowtank/rtread.cxx	\
+	models/lowtank/turret.cxx	\
+	models/medtank/barrel.cxx	\
+	models/medtank/body.cxx		\
+	models/medtank/ltread.cxx	\
+	models/medtank/rtread.cxx	\
+	models/medtank/turret.cxx	\
+	models/hitank/barrel.cxx	\
+	models/hitank/body.cxx		\
+	models/hitank/ltread.cxx	\
+	models/hitank/rtread.cxx	\
+	models/hitank/turret.cxx
