@@ -3,6 +3,13 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* src/ogl/TextureManager.cxx is dependant on code in the client front end 
+  (src/bzflag/texture.cxx's getTexture()).  it shouldn't.  probably worthwhile to 
+  consolidate the two getTexture() funcs in texture.cxx, removing the second one
+  on line 70.  moving texture.cxx to src/ogl carries along dependancies on 
+  libMedia and libCommon (libGLKit presently only depends on gl libs, which is
+  very clean/nice).
+
 * Need to use different, clearly disjoint numbering system on bzfs.  perhaps just
   start from 0001 when 1.10 is released.  otherwise it gets unnecessarily bumped to
   match the client version.  it's a separate communication protocol version.
