@@ -18,22 +18,12 @@ UIMap::UIMap() {
 }
 
 
-void UIMap::addUI(const string& name, UICreator creator) {
-  interfaces[name] = creator;
-}
-
-
-const UIMap::map_t& UIMap::getMap() const {
-  return interfaces;
-}
-
-
 UIMap& UIMap::getInstance() {
   static UIMap uiMap;
   return uiMap;
 }
 
 
-UIAdder::UIAdder(const string& name, UIMap::UICreator creator) {
-  UIMap::getInstance().addUI(name, creator);
+UIAdder::UIAdder(const string& name, UICreator creator) {
+  UIMap::getInstance()[name] = creator;
 }

@@ -21,40 +21,31 @@
 using namespace std;
 
 
+/** The function type that creates interface objects. */
+typedef BZAdminUI* (*UICreator)(const map<PlayerId, string>& players,
+				PlayerId me);
+
+
 /** This class maps strings to BZAdmin interfaces (subclasses of
     BZAdminUI). New interface classes should register using the UIAdder
     class. */
-class UIMap {
+class UIMap : public map<string, UICreator> {
 private:
   /** The constructor is private, this is a singleton. */
   UIMap();
   
 public:
   
-  /** The function type that creates interface objects. */
-  typedef BZAdminUI* (*UICreator)(const map<PlayerId, string>& players,
-				  PlayerId me);
-  /** The type of map that is used internally. */
-  typedef map<string, UICreator> map_t;
-  
-  /** Use this function to add a new UICreator and map it to a string. */
-  void addUI(const string& name, UICreator creator);
-  /** Use this function to get a reference to the internal map. */
-  const map_t& getMap() const;
-  
   /** This function returns the single instance of this class. */
   static UIMap& getInstance();
 
-protected:
-  
-  map_t interfaces;
 };
 
 
 /** A helper class that can be used to add interfaces when the program loads.*/
 class UIAdder {
 public:
-  UIAdder(const string& name, UIMap::UICreator creator);
+  UIAdder(const string& name, UICreator creator);
 };
 
 #endif

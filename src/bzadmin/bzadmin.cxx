@@ -30,23 +30,19 @@ using namespace std;
 */
 
 
-// some global variables
-struct CLOptions {
-  CLOptions() : ui("curses"), showHelp(false) { }
-  string ui;
-  bool showHelp;
-} clOptions;
-
-
 int main(int argc, char** argv) {
 
+  // command line options
+  string uiName("curses");
+  bool showHelp(false);
+
   // no curses, use stdboth as default instead
-  const UIMap::map_t& interfaces(UIMap::getInstance().getMap());
+  const UIMap& interfaces(UIMap::getInstance());
   if (interfaces.find("curses") == interfaces.end())
-    clOptions.ui = "stdboth";
+    uiName = "stdboth";
   
   // build a usage string with all interfaces
-  UIMap::map_t::const_iterator uiIter;
+  UIMap::const_iterator uiIter;
   string uiUsage;
   for (uiIter = interfaces.begin(); uiIter != interfaces.end(); ++uiIter)
     uiUsage += uiIter->first + '|';
@@ -54,9 +50,9 @@ int main(int argc, char** argv) {
   
   // register and parse command line arguments
   OptionParser op;
-  op.registerVariable("ui", clOptions.ui, uiUsage,
+  op.registerVariable("ui", uiName, uiUsage,
 		      "choose a user interface");
-  op.registerVariable("help", clOptions.showHelp, "[-help]",
+  op.registerVariable("help", showHelp, "[-help]",
 		      "print this help message");
   if (!op.parse(argc, argv)) {
     cerr<<op.getError()<<endl;
@@ -64,7 +60,7 @@ int main(int argc, char** argv) {
     cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl;
     return 1;
   }
-  if (clOptions.showHelp) {
+  if (showHelp) {
     cout<<"bzadmin "<<getAppVersion()<<endl;
     op.printUsage(cout, argv[0]);
     cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl<<endl;
@@ -93,9 +89,9 @@ int main(int argc, char** argv) {
   }
   
   // check that the ui is valid
-  uiIter = UIMap::getInstance().getMap().find(clOptions.ui);
-  if (uiIter == UIMap::getInstance().getMap().end()) {
-    cerr<<"There is no interface called \""<<clOptions.ui<<"\"."<<endl;
+  uiIter = UIMap::getInstance().find(uiName);
+  if (uiIter == UIMap::getInstance().end()) {
+    cerr<<"There is no interface called \""<<uiName<<"\"."<<endl;
     return 1;
   }
   
