@@ -104,8 +104,8 @@ CursesUI::CursesUI(BZAdminClient& c) :
   comp.registerWord("save");
   comp.registerWord("/register ");
   comp.registerWord("/reload");
-  comp.registerWord("/reloadmasterban");
-  comp.registerWord("/flushmasterban");
+  comp.registerWord("/masterbanreload");
+  comp.registerWord("/masterbanflush");
   comp.registerWord("/removegroup ");
   comp.registerWord("/replay ");
   comp.registerWord("list");
