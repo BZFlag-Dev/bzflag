@@ -72,7 +72,7 @@ struct CmdLineOptions
     useTeleporters(false), teamKillerDies(true), printScore(false),
     publicizeServer(false), filterFilename(""),
     filterCallsigns(false), filterChat(false), filterSimple(false), voteTime(60),
-    vetoTime(20), votesRequired(3), votePercentage(50.1f),
+    vetoTime(10), votesRequired(3), votePercentage(50.1f),
     voteRepeatTime(300), autoTeam(false), citySize(5)
   {
     int i;
