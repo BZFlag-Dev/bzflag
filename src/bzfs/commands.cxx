@@ -120,7 +120,7 @@ void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 
   // now to kick the player
   int t = playerData->getIndex(); 
-  removePlayer(t, string_util::format("%s", message + 6).c_str());  
+  removePlayer(t, message + 6);
 }
 
 
