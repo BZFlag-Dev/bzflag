@@ -2521,6 +2521,10 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
     return;
   }
 
+  // no anonymous messages
+  messageText += " (";
+  messageText += playerData->accessInfo.getName();
+  messageText += ")";
 
   // send the message
   sendMessage(ServerPlayer, AllPlayers, messageText.c_str() + messageStart );
