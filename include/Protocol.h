@@ -42,7 +42,7 @@ const int		BroadcastPort = 5154;
 
 // URL for default list server
 const char* const	DefaultListServerURL = "http://db.bzflag.org/db/";
-const char* const	DefaultMasterBanURL = "http://bzflag.sourceforge.net/master_ban.txt";
+const char* const	DefaultMasterBanURL = "http://bzflag.org/master-bans.txt";
 
 // multicast ttl's
 const int		DefaultTTL = 8;
@@ -275,10 +275,9 @@ server to player messages:
 #endif // BZF_PROTOCOL_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
