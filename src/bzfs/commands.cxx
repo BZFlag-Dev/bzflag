@@ -1599,7 +1599,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
     if ((cmd =="set") && (clOptions->disableSet)) {
 	sprintf(reply,"%s, /poll set is not available on this server", callsign.c_str());
-     	sendMessage(ServerPlayer, t, reply);
+   	sendMessage(ServerPlayer, t, reply);
 	return;
 	}
     if ((cmd =="flagreset") && (clOptions->disableFlagReset)) {
@@ -1727,7 +1727,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     if (!clOptions->disableKick)
       sendMessage(ServerPlayer, t, "    or /poll kick playername");
     if (!clOptions->disableSet)
- 		sendMessage(ServerPlayer, t, "    or /poll set variable value");
+		sendMessage(ServerPlayer, t, "    or /poll set variable value");
     if (!clOptions->disableFlagReset)
       sendMessage(ServerPlayer, t, "    or /poll flagreset");
 

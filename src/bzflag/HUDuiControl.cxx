@@ -42,7 +42,7 @@ const GLfloat		HUDuiControl::dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
 const GLfloat		HUDuiControl::moreDimTextColor[3] = { 0.4f, 0.4f, 0.4f };
 const GLfloat		HUDuiControl::textColor[3] = { 1.0f, 1.0f, 1.0f };
 OpenGLGState*		HUDuiControl::gstate = NULL;
-int      		HUDuiControl::arrow = -1;
+int   		HUDuiControl::arrow = -1;
 int			HUDuiControl::arrowFrame = 0;
 TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
@@ -235,7 +235,7 @@ void			HUDuiControl::renderFocus()
     float u = (float)(arrowFrame % uFrames) / (float)uFrames;
     float v = (float)(arrowFrame / uFrames) / (float)vFrames;
     fh2 = floorf(1.5f * fontHeight); // this really should not scale the image based on the font,
-    gstate->setState();	      	     // best would be to load an image for each size
+    gstate->setState();	   	     // best would be to load an image for each size
     glColor3f(1.0f, 1.0f, 1.0f);
     float imageXShift = 0.0f;
     float imageYShift = -fh2 * 0.2f;

@@ -11,7 +11,7 @@
 //
 //   ./3ds2bzw model.3ds > model.bzw
 //
-// NOTE:  this program requires lib3ds to 
+// NOTE:  this program requires lib3ds to
 //        compile. to compile the program,
 //        use something like this:
 //
@@ -48,7 +48,7 @@ int main (int argc, char **argv)
   Lib3dsNode* node;
   const char* execname = argv[0];
 
-  while ((1 == 1) && (argc > 1)) {  
+  while ((1 == 1) && (argc > 1)) {
     if (strcmp ("-i", argv[1]) == 0) {
       NormalDir = -1.0;
       argc--;
@@ -86,9 +86,9 @@ int main (int argc, char **argv)
   for (node = File3DS->nodes; node != NULL; node = node->next) {
     printNode (node);
   }
-  
+
   lib3ds_file_free (File3DS);
-  
+
   return 0;
 }
 
@@ -99,7 +99,7 @@ static void printNode (Lib3dsNode *node)
   Lib3dsNode* child;
   for (child = node->childs; child != NULL; child = child->next) {
     printNode (child);
-  } 
+  }
 
   if (node->type == LIB3DS_OBJECT_NODE) {
 
@@ -113,8 +113,8 @@ static void printNode (Lib3dsNode *node)
       if (mesh == NULL) {
         return;
       }
-      
-      Lib3dsVector* normalL = (Lib3dsVector *) 
+
+      Lib3dsVector* normalL = (Lib3dsVector *)
         malloc (3 * sizeof (Lib3dsVector) * mesh->faces);
       lib3ds_mesh_calculate_normals (mesh, normalL);
 
@@ -123,7 +123,7 @@ static void printNode (Lib3dsNode *node)
 
         Lib3dsFace* face = &mesh->faceL[f];
         Lib3dsMaterial* mat = NULL;
-        
+
         const float* vertices[3];
         vertices[0] = mesh->pointL[face->points[0]].pos;
         vertices[1] = mesh->pointL[face->points[1]].pos;
@@ -144,7 +144,7 @@ static void printNode (Lib3dsNode *node)
         double length = (cross[0] * cross[0]) +
                         (cross[1] * cross[1]) +
                         (cross[2] * cross[2]);
-                        
+
         length = sqrt (length);
         if (length < 0.000001) {
           fprintf (stderr, "Ditched face: length = %f\n", length);
@@ -155,9 +155,9 @@ static void printNode (Lib3dsNode *node)
         cross[0] = cross[0] / length;
         cross[1] = cross[1] / length;
         cross[2] = cross[2] / length;
-        
+
         double center[3] = { 0.0f, 0.0f, 0.0f };
-        
+
         printf ("\n");
         printf ("tetra\n");
 
@@ -165,7 +165,7 @@ static void printNode (Lib3dsNode *node)
           mat = lib3ds_file_material_by_name(File3DS, face->material);
 
           if (mat != NULL) {
-            if (UseDiffuse) {            
+            if (UseDiffuse) {
               printf ("  color %i %i %i %i # diffuse\n",
                        (int)(mat->diffuse[0] * 255.5f),
                        (int)(mat->diffuse[1] * 255.5f),
@@ -189,11 +189,11 @@ static void printNode (Lib3dsNode *node)
           center[1] = center[1] + vertex[1];
           center[2] = center[2] + vertex[2];
         }
-        
+
         center[0] = center[0] / 3.0;
         center[1] = center[1] / 3.0;
         center[2] = center[2] / 3.0;
-        
+
         double maxLength = -1.0e38;
         double minLength = +1.0e38;
         for (v = 0; v < 3; v++) {
@@ -222,13 +222,13 @@ static void printNode (Lib3dsNode *node)
           fourthLength = maxLength;
         }
         fourthLength = fourthLength * (0.1 * NormalDir);
-        
+
         double fourth[3];
         fourth[0] = center[0] + (cross[0] * fourthLength);
         fourth[1] = center[1] + (cross[1] * fourthLength);
         fourth[2] = center[2] + (cross[2] * fourthLength);
         printf ("  vertex %f %f %f\n", fourth[0], fourth[1], fourth[2]);
-        
+
         printf ("  visible 0 0 0 1\n");
         printf ("end\n");
       }

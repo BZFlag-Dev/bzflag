@@ -256,7 +256,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	   sendMsg="/ban " + banPattern;
 
 	   if (message != ""){ // add ban length if something is there
- 	     sendMsg = sendMsg + " " + message;
+	     sendMsg = sendMsg + " " + message;
 	   }
 	  */
 	  break;

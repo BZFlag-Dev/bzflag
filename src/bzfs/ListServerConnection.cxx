@@ -198,7 +198,7 @@ void ListServerLink::openLink()
       if (getErrno() != EINPROGRESS) {
 	nerror("connecting to list server");
 	// try to lookup dns name again in case it moved
- 	this->address = Address::getHostAddress(this->hostname);
+	this->address = Address::getHostAddress(this->hostname);
 	closeLink();
       } else {
 	phase = CONNECTING;

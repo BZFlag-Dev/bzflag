@@ -196,14 +196,14 @@ const bool SpawnPosition::isImminentlyDangerous() const
       float enemyAngle = lastState[i].azimuth;
       if (playerData->player.getFlag() >= 0) {
 	// check for dangerous flags
-     	const FlagInfo *finfo = FlagInfo::get(playerData->player.getFlag());
-     	const FlagType *ftype = finfo->flag.type;
- 	// FIXME: any more?
-     	if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L
+   	const FlagInfo *finfo = FlagInfo::get(playerData->player.getFlag());
+   	const FlagType *ftype = finfo->flag.type;
+	// FIXME: any more?
+   	if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L
 	  if (isFacing(enemyPos, enemyAngle, M_PI / 9)) { // he's looking within 20 degrees of spawn point
 	    return true;	// eek, don't spawn here
 	  }
-     	} else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
+   	} else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
 	  if (distanceFrom(enemyPos) < safeSWRadius) { // too close to SW
 	    return true;	// eek, don't spawn here
 	  }

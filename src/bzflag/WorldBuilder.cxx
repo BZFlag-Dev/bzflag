@@ -319,9 +319,9 @@ void* WorldBuilder::unpack(void* buf)
 	int i;
 	for (i = 0; i < delays; i++) {
 	  float delay;
- 	  buf = nboUnpackFloat(buf, delay);
- 	  weapon.delay.push_back(delay);
- 	}
+	  buf = nboUnpackFloat(buf, delay);
+	  weapon.delay.push_back(delay);
+	}
         append(weapon);
 	break;
       }
@@ -353,19 +353,19 @@ void* WorldBuilder::unpack(void* buf)
         int i;
 	for (i = 0; i < flags; i++) {
 	  FlagType *type;
- 	  buf = FlagType::unpack (buf, type);
- 	  zone.flags.push_back(type);
- 	}
+	  buf = FlagType::unpack (buf, type);
+	  zone.flags.push_back(type);
+	}
 	for (i = 0; i < teams; i++) {
 	  uint16_t team;
- 	  buf = nboUnpackUShort(buf, team);
- 	  zone.teams.push_back((TeamColor)team);
- 	}
+	  buf = nboUnpackUShort(buf, team);
+	  zone.teams.push_back((TeamColor)team);
+	}
 	for (i = 0; i < safety; i++) {
 	  uint16_t safety;
- 	  buf = nboUnpackUShort(buf, safety);
- 	  zone.safety.push_back((TeamColor)safety);
- 	}
+	  buf = nboUnpackUShort(buf, safety);
+	  zone.safety.push_back((TeamColor)safety);
+	}
 	append(zone);
 	break;
       }

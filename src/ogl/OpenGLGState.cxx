@@ -74,7 +74,7 @@ class OpenGLGStateState {
 	bool		hasTexture;
 	bool		hasTextureReplace;
 	bool		hasMaterial;
-	int      	texture;
+	int    	texture;
 	OpenGLMaterial	material;
     };
 

@@ -407,9 +407,9 @@ void ServerStartMenu::execute()
       args[arg++] = "-h";
     }
     else {
-   	static const char* rabbitStyles[] = { "random", "score", "killer" };
-   	args[arg++] = "-rabbit";
-   	args[arg++] = rabbitStyles[(((HUDuiList*)list[1])->getIndex()) - 2];
+ 	static const char* rabbitStyles[] = { "random", "score", "killer" };
+ 	args[arg++] = "-rabbit";
+ 	args[arg++] = rabbitStyles[(((HUDuiList*)list[1])->getIndex()) - 2];
     }
 
     // max players
