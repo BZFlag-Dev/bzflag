@@ -473,6 +473,7 @@ void			SceneRenderer::render(
   static const GLfloat blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
   static const GLfloat dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   static const float dimDensity = 0.75f;
+  bool               lighting   = BZDB->isTrue("lighting");
 
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
@@ -488,7 +489,7 @@ void			SceneRenderer::render(
   int numLights = 0;
   if (!sameFrame) {
     clearLights();
-    if (sceneIterator && !blank && BZDB->isTrue("lighting")) {
+    if (sceneIterator && !blank && lighting) {
       // add lights
       sceneIterator->reset();
       SceneNode* node;
@@ -545,7 +546,7 @@ void			SceneRenderer::render(
   frustum.executeView();
 
   // turn sunlight on -- the ground needs it
-  if (BZDB->isTrue("lighting") && sunOrMoonUp) {
+  if (lighting && sunOrMoonUp) {
     theSun.execute(SunLight);
     theSun.enableLight(SunLight);
   }
@@ -628,7 +629,7 @@ void			SceneRenderer::render(
 
   // prepare the other lights but don't turn them on yet --
   // we may need to turn them on when drawing the background.
-  if (BZDB->isTrue("lighting")) {
+  if (lighting) {
     for (i = 0; i < numLights; i++)
       lights[i]->execute(i + reservedLights);
   }
@@ -638,7 +639,7 @@ void			SceneRenderer::render(
     background->render(*this);
 
   if (!blank) {
-    if (BZDB->isTrue("lighting")) {
+    if (lighting) {
       // now turn on the remaining lights
       for (i = 0; i < numLights; i++)
 	OpenGLLight::enableLight(i + reservedLights);
@@ -672,7 +673,7 @@ void			SceneRenderer::render(
     OpenGLGState::resetState();
 
     // shut off lights
-    if (BZDB->isTrue("lighting")) {
+    if (lighting) {
       theSun.enableLight(SunLight, false);
       for (i = 0; i < numLights; i++)
 	OpenGLLight::enableLight(i + reservedLights, false);
