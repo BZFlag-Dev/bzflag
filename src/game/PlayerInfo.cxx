@@ -180,17 +180,21 @@ const char *PlayerInfo::getCallSign() const {
 };
 
 void PlayerInfo::cleanCallSign() {
-  // strip leading whitespace from callsign
   char *sp = callSign;
   char *tp = sp;
-  while (isspace(*sp))
+
+  // strip leading whitespace from callsign
+  while (isspace(*sp)) {
     sp++;
+  }
 
   // strip any non-printable characters and ' and " from callsign
   do {
     if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
-      if (isspace(*sp)) //a moded client sent a weird whitespace
+      // override modified clients that might send non-space whitespace
+      if (isspace(*sp)) {
         *sp = ' ';
+      }
       *tp++ = *sp;
     }
   } while (*++sp);
