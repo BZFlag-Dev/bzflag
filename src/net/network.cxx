@@ -37,12 +37,12 @@ void			nerror(const char* msg)
   std::vector<std::string> args;
   if (msg) {
     args.push_back(msg);
-    args.push_back(strerror(errorno));
+    args.push_back(strerror(errno));
     printError("%s: %s", &args);
   }
   else
   {
-    args.push_back(strerror(errorno));
+    args.push_back(strerror(errno));
     printError("%s", &args);
   }
 }
