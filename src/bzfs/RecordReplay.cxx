@@ -1194,11 +1194,12 @@ prevStatePacket (int seconds)
 static bool
 saveStates ()
 {
+  // order is important
   saveTeamsState ();
   saveFlagsState ();
-  saveRabbitState ();
   savePlayersState ();
   saveVariablesState ();
+  saveRabbitState ();
   
   RecordUpdateTime = getRRtime ();
   
