@@ -44,6 +44,7 @@ bzfs \- BZFlag game server
 [\fB\+s \fIflag-count\fR]
 [\fB\-s \fIflag-count\fR]
 [\fB\-sa\fR]
+[\fB\-speedtol \fIfactor\fR]
 [\fB\-srvmsg \fImessage\fR]
 [\fB\-st \fItime\fR]
 [\fB\-sw \fIcount\fR]
@@ -247,6 +248,9 @@ in the \fInum-flags\fR total.
 .TP
 .B -sa
 Antidote flags are provided for players with bad flags.
+.TP
+\fB\-speedtol \fIfactor\fR
+Override the default speed auto kick factor. The factor should not be less then 1.0.
 .TP
 \fB\-srvmsg \fImessage\fR
 Define a server welcome message.
