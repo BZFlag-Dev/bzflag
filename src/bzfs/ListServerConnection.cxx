@@ -248,6 +248,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   pingInfo.packHex(gameInfo);
 
   // TODO loop through and send any player tokens that need approval
+  // confirm=callsign0%3D1%3A123123123%0D%0Acallsign1%3D1%3A123123123%0D%0A
   // TODO loop through groups we are interested and request those too
   // TODO we probably should convert to a POST instead. List server now allows either
   // send ADD message (must send blank line)
