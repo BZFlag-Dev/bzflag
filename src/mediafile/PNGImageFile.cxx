@@ -513,10 +513,14 @@ PNGRGB& PNGPalette::get(int index)
 	return unknown;
 }
 
-int PNGChunk::IHDR = 'IHDR';
-int PNGChunk::PLTE = 'PLTE';
-int PNGChunk::IDAT = 'IDAT';
-int PNGChunk::IEND = 'IEND';
+#define PNGTAG(t_) ((((int)t_[0]) << 24) | \
+					(((int)t_[1]) << 16) | \
+					(((int)t_[2]) <<  8) | \
+					  (int)t_[3])
+int PNGChunk::IHDR = PNGTAG("IHDR");
+int PNGChunk::PLTE = PNGTAG("PLTE");
+int PNGChunk::IDAT = PNGTAG("IDAT");
+int PNGChunk::IEND = PNGTAG("IEND");
 
 /* 
 PNGChunk *PNGChunk::readChunk(std::istream *stream)
