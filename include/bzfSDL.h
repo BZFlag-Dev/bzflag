@@ -19,9 +19,11 @@
 #  ifdef _MSC_VER
 #    include <SDL/SDL.h>
 #    include <SDL/SDL_thread.h>
+#    include <SDL/SDL_getenv.h>
 #  else // autotools adds an SDL-specific include path
 #    include "SDL.h"
 #    include "SDL_thread.h"
+#    include "SDL_getenv.h"
 #  endif //_WIN32
 #endif //HAVE_SDL
 
