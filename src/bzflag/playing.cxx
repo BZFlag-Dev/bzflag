@@ -3019,8 +3019,7 @@ static void		checkEnvironment()
   const ShotPath* hit = NULL;
   float minTime = Infinity;
 
-  if (myTank->getFlag() != Flags::Thief)
-    myTank->checkHit(myTank, hit, minTime);
+  myTank->checkHit(myTank, hit, minTime);
   int i;
   for (i = 0; i < curMaxPlayers; i++)
     if (player[i])
