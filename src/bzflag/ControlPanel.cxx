@@ -526,7 +526,7 @@ void			ControlPanel::resize()
   // rebuild font gstates
   fm.rebuild();
 
-  maxLines = int(messageAreaPixels[3] / fontSize);
+  maxLines = int(messageAreaPixels[3] / fm.getStrHeight(fontFace, fontSize, " "));
 
   // note that we've been resized at least once
   resized = true;
