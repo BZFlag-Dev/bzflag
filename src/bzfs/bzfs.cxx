@@ -135,7 +135,7 @@ static RejoinList rejoinList;
 static TimeKeeper lastWorldParmChange;
 static bool       isIdentifyFlagIn = false;
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool isFiltered = true);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
@@ -1469,15 +1469,15 @@ static void respondToPing(Address addr)
 }
 
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
+void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool isFiltered)
 {
   long int msglen = strlen(message) + 1; // include null terminator
   const char *msg = message;
 
   if (message[0] == '/' && message[1] == '/')
     msg = &message[1];
-  /* filter all outbound messages */
-  if (clOptions->filterChat) {
+  /* filter all outbound messages unless specified otherwise by isFiltered*/
+  if (clOptions->filterChat && isFiltered) {
     char message2[MessageLen] = {0};
     strncpy(message2, message, MessageLen);
     if (clOptions->filterSimple) {

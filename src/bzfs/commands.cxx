@@ -61,7 +61,7 @@
 // FIXME -- need to pull communication out of bzfs.cxx...
 
 // externs that poll, veto, vote, and clientquery require
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool isFiltered = true);
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
@@ -883,7 +883,7 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
     GameKeeper::Player *p = sortedPlayer[i];
     p->lagInfo.getLagStats(reply);
     if (reply[0])
-      sendMessage(ServerPlayer, t, reply);
+      sendMessage(ServerPlayer, t, reply, false;
   }
 }
 
@@ -945,7 +945,7 @@ void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->player.isPlaying()) {
       otherData->netHandler->getPlayerList(reply);
-      sendMessage(ServerPlayer, t, reply);
+      sendMessage(ServerPlayer, t, reply, false);
     }
   }
   return;

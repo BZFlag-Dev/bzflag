@@ -36,7 +36,7 @@ extern Address serverAddress;
 extern PingPacket getTeamCounts();
 extern uint16_t curMaxPlayers;
 extern int getTarget(const char *victimname);
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool isFiltered = true);
 extern void sendPlayerInfo(void);
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern CmdLineOptions *clOptions;
