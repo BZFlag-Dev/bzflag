@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stdlib.h>
 #include <string.h>
 #include "common.h"
 #include "RenderNode.h"
@@ -20,34 +21,43 @@
 
 static const int	initialSize = 31;
 
+
 RenderNodeList::RenderNodeList() : count(0), size(0), list(NULL)
 {
   // do nothing
 }
+
 
 RenderNodeList::~RenderNodeList()
 {
   delete[] list;
 }
 
-void			RenderNodeList::clear()
+
+void RenderNodeList::clear()
 {
   count = 0;
 }
 
-void			RenderNodeList::append(RenderNode* node)
+
+void RenderNodeList::append(RenderNode* node)
 {
-  if (count == size) grow();
+  if (count == size) {
+    grow();
+  }
   list[count++] = node;
 }
 
-void			RenderNodeList::render() const
+
+void RenderNodeList::render() const
 {
-  for (int i = 0; i < count; i++)
+  for (int i = 0; i < count; i++) {
     list[i]->render();
+  }
 }
 
-void			RenderNodeList::grow()
+
+void RenderNodeList::grow()
 {
   const int newSize = (size == 0) ? initialSize : (size << 1) + 1;
   RenderNode** newList = new RenderNode*[newSize];
@@ -56,6 +66,7 @@ void			RenderNodeList::grow()
   list = newList;
   size = newSize;
 }
+
 
 //
 // RenderNodeGStateList
@@ -67,27 +78,33 @@ RenderNodeGStateList::RenderNodeGStateList() :
   // do nothing
 }
 
+
 RenderNodeGStateList::~RenderNodeGStateList()
 {
   delete[] list;
 }
 
-void			RenderNodeGStateList::clear()
+
+void RenderNodeGStateList::clear()
 {
   count = 0;
 }
 
-void			RenderNodeGStateList::append(RenderNode* node,
+
+void RenderNodeGStateList::append(RenderNode* node,
 						const OpenGLGState* gstate)
 {
-  if (count == size) grow();
+  if (count == size) {
+    grow();
+  }
   list[count].node = node;
   list[count].gstate = gstate;
   list[count].depth = 0.0f;
   count++;
 }
 
-void			RenderNodeGStateList::render() const
+
+void RenderNodeGStateList::render() const
 {
   for (int i = 0; i < count; i++) {
     list[i].gstate->setState();
@@ -95,7 +112,8 @@ void			RenderNodeGStateList::render() const
   }
 }
 
-void			RenderNodeGStateList::grow()
+
+void RenderNodeGStateList::grow()
 {
   const int newSize = (size == 0) ? initialSize : (size << 1) + 1;
   Item* newList = new Item[newSize];
@@ -105,38 +123,38 @@ void			RenderNodeGStateList::grow()
   size = newSize;
 }
 
-void			RenderNodeGStateList::sort(const GLfloat* e)
+
+static int distCompare(const void *p1, const void* p2)
 {
-  int i, j, k;
+  const RenderNodeGStateList::Item* item1 =
+    (const RenderNodeGStateList::Item*) p1;
+  const RenderNodeGStateList::Item* item2 =
+    (const RenderNodeGStateList::Item*) p2;
+
+  if (item1->depth > item2->depth) {
+    return -1;
+  } else {
+    return +1;
+  }
+}
+
+void RenderNodeGStateList::sort(const GLfloat* e)
+{
+  int i;
 
   // get depths
   for (i = 0; i < count; i++) {
     const GLfloat* p = list[i].node->getPosition();
-    list[i].depth = (p[0] - e[0]) * (p[0] - e[0]) +
-		    (p[1] - e[1]) * (p[1] - e[1]) +
-		    (p[2] - e[2]) * (p[2] - e[2]);
+    list[i].depth = ((p[0] - e[0]) * (p[0] - e[0])) +
+		    ((p[1] - e[1]) * (p[1] - e[1])) +
+		    ((p[2] - e[2]) * (p[2] - e[2]));
   }
-
-  // sort
-  for (i = 0; i < count - 1; i++) {
-    // find largest in unsorted list
-    k = i;
-    float z = list[k].depth;
-    for (j = k + 1; j < count; j++) {
-      if (list[j].depth > z) {
-	k = j;
-	z = list[k].depth;
-      }
-    }
-
-    // swap into correct position
-    if (k != i) {
-      const Item item = list[i];
-      list[i] = list[k];
-      list[k] = item;
-    }
-  }
+  
+  qsort (list, count, sizeof(Item), distCompare);
+  
+  return;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***

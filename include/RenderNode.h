@@ -67,13 +67,7 @@ class RenderNodeGStateList {
 
     void		sort(const GLfloat* eye);
 
-  private:
-    // no copying (cos that'd be slow)
-			RenderNodeGStateList(const RenderNodeGStateList&);
-    RenderNodeGStateList& operator=(const RenderNodeGStateList&);
-
-    void		grow();
-
+    // public for the qsort() comparison function
     struct Item {
       public:
 	typedef const OpenGLGState* GStatePtr;
@@ -81,6 +75,13 @@ class RenderNodeGStateList {
 	GStatePtr	gstate;
 	float		depth;
     };
+
+  private:
+    // no copying (cos that'd be slow)
+			RenderNodeGStateList(const RenderNodeGStateList&);
+    RenderNodeGStateList& operator=(const RenderNodeGStateList&);
+    
+    void		grow();
 
   private:
     int			count;
