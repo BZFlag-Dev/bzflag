@@ -4,6 +4,7 @@
 BZFlag 1.10.4
 -------------
 
+* Configfile options equal to the defaults are written to bzc but commented out - Dave Brosius
 * Added -show and -hide options to bzadmin to tell it which messages to show - Lars Luthman
 * Added support for more message types to bzadmin - lan56 @ SF, Lars Luthman
 * Added menu with BZDB editor and playerlist to bzadmin's curses UI - Lars Luthman
