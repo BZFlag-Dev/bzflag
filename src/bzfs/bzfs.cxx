@@ -5773,35 +5773,45 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "argument expected for +f\n");
 	usage(argv[0]);
       }
+
+      char *repeatStr = strchr(argv[i], '{');
+      int rptCnt = 1;
+      if (repeatStr != NULL) {
+	*(repeatStr++) = 0;
+        rptCnt = atoi(repeatStr);
+        if (rptCnt <= 0)
+	  rptCnt = 1;
+      }
+
       if (strcmp(argv[i], "good") == 0) {
-	options.flagCount[VelocityFlag]++;
-	options.flagCount[QuickTurnFlag]++;
-	options.flagCount[OscOverthrusterFlag]++;
-	options.flagCount[RapidFireFlag]++;
-	options.flagCount[MachineGunFlag]++;
-	options.flagCount[GuidedMissileFlag]++;
-	options.flagCount[LaserFlag]++;
-	options.flagCount[RicochetFlag]++;
-	options.flagCount[SuperBulletFlag]++;
-	options.flagCount[InvisibleBulletFlag]++;
-	options.flagCount[StealthFlag]++;
-	options.flagCount[TinyFlag]++;
-	options.flagCount[NarrowFlag]++;
-	options.flagCount[ShieldFlag]++;
-	options.flagCount[SteamrollerFlag]++;
-	options.flagCount[ShockWaveFlag]++;
-	options.flagCount[PhantomZoneFlag]++;
-	options.flagCount[GenocideFlag]++;
-	options.flagCount[JumpingFlag]++;
-	options.flagCount[IdentifyFlag]++;
-	options.flagCount[CloakingFlag]++;
+	options.flagCount[VelocityFlag] += rptCnt;
+	options.flagCount[QuickTurnFlag] += rptCnt;
+	options.flagCount[OscOverthrusterFlag] += rptCnt;
+	options.flagCount[RapidFireFlag] += rptCnt;
+	options.flagCount[MachineGunFlag] += rptCnt;
+	options.flagCount[GuidedMissileFlag] += rptCnt;
+	options.flagCount[LaserFlag] += rptCnt;
+	options.flagCount[RicochetFlag] += rptCnt;
+	options.flagCount[SuperBulletFlag] += rptCnt;
+	options.flagCount[InvisibleBulletFlag] += rptCnt;
+	options.flagCount[StealthFlag] += rptCnt;
+	options.flagCount[TinyFlag] += rptCnt;
+	options.flagCount[NarrowFlag] += rptCnt;
+	options.flagCount[ShieldFlag] += rptCnt;
+	options.flagCount[SteamrollerFlag] += rptCnt;
+	options.flagCount[ShockWaveFlag] += rptCnt;
+	options.flagCount[PhantomZoneFlag] += rptCnt;
+	options.flagCount[GenocideFlag] += rptCnt;
+	options.flagCount[JumpingFlag] += rptCnt;
+	options.flagCount[IdentifyFlag] += rptCnt;
+	options.flagCount[CloakingFlag] += rptCnt;
       }
       else {
 	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
-	options.flagCount[f]++;
+	options.flagCount[f] += rptCnt;
       }
     }
     else if (strcmp(argv[i], "+r") == 0) {
