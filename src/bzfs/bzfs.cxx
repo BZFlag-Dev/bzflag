@@ -7809,7 +7809,8 @@ int main(int argc, char **argv)
     PlayerAccessInfo info;
     info.explicitAllows[idleStats] = true;
     info.explicitAllows[lagStats] = true;
-    groupAccess[std::string("DEFAULT")] = info;
+    info.explicitAllows[flagHistory] = true;
+   groupAccess[std::string("DEFAULT")] = info;
   }
   itr = groupAccess.find(std::string("ADMIN"));
   if (itr == groupAccess.end()) {
