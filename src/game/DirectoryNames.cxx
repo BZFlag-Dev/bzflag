@@ -123,12 +123,6 @@ extern std::string		getCacheDirName()
 }
 
 
-extern std::string		getRecordDirName()
-{
-  return setupString("recordings");
-}
-
-
 extern std::string		getScreenShotDirName()
 {
   return setupString("screenshots");

@@ -52,9 +52,6 @@ bzfs \- BZFlag game server
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]
-[\fB\-recbuf \fIsize\fR]
-[\fB\-recdir \fIdirectory\fR]
-[\fB\-replay\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
 [\fB\-requireudp\fR]
@@ -326,15 +323,6 @@ whoever kills the rabbit becomes the new rabbit.  The \fIrandom\fR
 algorithm randomly picks a new rabbit without regard to score.  (The
 \fIscore\fR algorithm is the original behavior.)
 .TP
-.B -recbuf\fI size\fR
-Start with the recording buffer active, with the specified size (in megabytes).
-.TP
-.B -recdir\fI directory\fR
-Specify the directory for record and replay files.
-.TP
-.B -replay
-Start the server in replay mode.
-.TP
 .B -reportfile\fI filename\fR
 Write messages to the server admin written using the \fB/report\fR command to
 this file. If neither \fB-reportfile\fR or \fB-reportpipe\fR is used the
@@ -601,51 +589,6 @@ Leave the game with a goodbye message (similar to IRC's /part)
 .TP
 .B /viewreports
 View the server's report file.
-.BR
-
-.TP
-.B /record list
-List all files in the recordings directory
-.TP
-.B /record start
-Start recording into the memory buffer
-.TP
-.B /record stop
-Stop recording into the memory buffer
-.TP
-.B /record size <megabytes>
-Set the size of the recording memory buffer
-.TP
-.B /record rate <seconds>
-Set the time between game state updates stored in the recording. This will affect
-the granularity of the 'skips' you can do while replaying a file. It will also
-make the recording files bigger if it is set to a faster update rate.
-.TP
-.B /record stats
-Display the statistics for the current recording (file or buffered)
-.TP
-.B /record file <filename>
-Start recording directly to a file
-.TP
-.B /record save <filename> [seconds]
-Save the recording buffer into a file. If seconds is specified, then only save
-that many previous seconds into the file.
-.BR
-
-.TP
-.B /replay list
-List all files in the recordings directory
-.TP
-.B /replay load <filename>
-Load the specified recording file
-.TP
-.B /replay play
-Start playing the recording. This will oftentimes require that all players connected
-to the server rejoin  (to reload the map, etc...)
-.TP
-.B /replay skip [+/- seconds]
-If seconds is specified, then skip that amount of time in the recording.
-Otherwise, skip forwards until there is activity.
 .BR
 
 .TP

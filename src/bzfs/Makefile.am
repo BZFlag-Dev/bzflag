@@ -69,8 +69,6 @@ bzfs_SOURCES = \
 	ParseMaterial.h \
 	Permissions.h \
 	Permissions.cxx \
-	RecordReplay.cxx \
-	RecordReplay.h \
 	RejoinList.cxx \
 	RejoinList.h \
 	Score.h	\

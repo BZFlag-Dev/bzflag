@@ -76,7 +76,7 @@ static PingPacket pingReply;
 // highest fd used
 static int maxFileDescriptor;
 // Last known position, vel, etc
-PlayerState lastState[MaxPlayers  + ReplayObservers];
+PlayerState lastState[MaxPlayers];
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -105,9 +105,8 @@ static int listServerLinksCount = 0;
 
 // FIXME: should be static, but needed by SpawnPosition
 WorldInfo *world = NULL;
-// FIXME: should be static, but needed by RecordReplay
-char *worldDatabase = NULL;
-uint32_t worldDatabaseSize = 0;
+static char *worldDatabase = NULL;
+static uint32_t worldDatabaseSize = 0;
 
 
 BasesList bases;
@@ -117,8 +116,7 @@ BasesList bases;
 // Client does not check for rabbit to be 255, but it still works
 // because 255 should be > curMaxPlayers and thus no matchign player will
 // be found.
-// FIXME: should be static, but needed by RecordReplay
-uint8_t rabbitIndex = NoPlayer;
+static uint8_t rabbitIndex = NoPlayer;
 
 static RejoinList rejoinList;
 
@@ -192,11 +190,6 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
     }
   }
 
-  // record the packet
-  if (Record::enabled()) {
-    Record::addPacket (code, len, msg);
-  }
-
   return;
 }
 
@@ -206,9 +199,6 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
 //
 static void onGlobalChanged(const std::string& msg, void*)
 {
-  // This Callback is removed in replay mode. As
-  // well, the /set and /reset commands are blocked.
-
   std::string name  = msg;
   std::string value = BZDB.get(msg);
   void *bufStart = getDirectMessageBuffer();
@@ -375,10 +365,6 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     for (unsigned int i = 0; i < receivers.size(); ++i) {
       directMessage(receivers[i], MsgAdminInfo,
 		    (char*)buf - (char*)bufStart, bufStart);
-    }
-    if (Record::enabled()) {
-      Record::addPacket (MsgAdminInfo,
-                         (char*)buf - (char*)bufStart, bufStart, HiddenPacket);
     }
   } else {
     int i, numPlayers = 0;
@@ -567,10 +553,6 @@ static void serverStop()
 
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
 {
-  if (Record::enabled()) {
-    Record::addPacket (code, len, (char*)rawbuf + 4);
-  }
-
   // relay packet to all players except origin
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
@@ -1340,10 +1322,6 @@ static void acceptClient()
 
   // find open slot in players list
   PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)maxPlayers;
-  if (Replay::enabled()) {
-     minPlayerId = MaxPlayers;
-     maxPlayerId = MaxPlayers + ReplayObservers;
-  }
   playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
 
   if (playerIndex < maxPlayerId) {
@@ -1457,10 +1435,6 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
     broadcastMessage(MsgMessage, len, bufStart);
     broadcast = true;
   }
-
-  if (Record::enabled() && !broadcast) { // don't record twice
-    Record::addPacket (MsgMessage, len, bufStart, HiddenPacket);
-  }
 }
 
 
@@ -1514,9 +1488,6 @@ static TeamColor autoTeamSelect(TeamColor t)
 {
   // Asking for Observer gives observer
   if (t == ObserverTeam)
-    return ObserverTeam;
-  // When replaying, joining tank can only be observer
-  if (Replay::enabled())
     return ObserverTeam;
 
   // count current number of players
@@ -2201,8 +2172,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	done = true;
 	exitCode = 0;
       }
-      else if ((clOptions->worldFile == "") &&
-               (!Replay::enabled()) && (!defineWorld())) {
+      else if ((clOptions->worldFile == "") && !defineWorld()) {
 	done = true;
 	exitCode = 1;
       } else {
@@ -3110,12 +3080,6 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "date", 4) == 0 || strncmp(message + 1, "time", 4) == 0) {
     handleDateCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "record", 6) == 0) {
-    handleRecordCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "replay", 6) == 0) {
-    handleReplayCmd(playerData, message);
-
   } else if (strncmp(message + 1, "masterban", 9) == 0) {
     handleMasterBanCmd(playerData, message);
 
@@ -3418,14 +3382,6 @@ static void handleCommand(int t, const void *rawbuf)
         while ((pos < strlen(message)) && (TextUtils::isAlphanumeric(message[pos]))) {
 	  message[pos] = tolower((int)message[pos]);
 	  pos++;
-	}
-	if (Record::enabled()) {
-	  void *buf, *bufStart = getDirectMessageBuffer();
-	  buf = nboPackUByte (bufStart, t);       // the src player
-	  buf = nboPackUByte (buf, targetPlayer); // the dst player
-	  buf = nboPackString (buf, message, strlen(message) + 1);
-	  Record::addPacket (MsgMessage, (char*)buf - (char*)bufStart, bufStart,
-	                     HiddenPacket);
 	}
 	parseCommand(message, t);
       }
@@ -4009,9 +3965,6 @@ int main(int argc, char **argv)
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
 
-  Record::init();
-
-
   // check time bomb
   if (timeBombBoom()) {
     std::cerr << "This release expired on " << timeBombString() << ".\n";
@@ -4098,38 +4051,6 @@ int main(int argc, char **argv)
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
   // Loading extra flag number
   FlagInfo::setExtra(clOptions->numExtraFlags);
-
-  // enable replay server mode
-  if (clOptions->replayServer) {
-
-    Replay::init();
-
-    // we don't send flags to a client that isn't expecting them
-    numFlags = 0;
-
-    // disable the BZDB callbacks
-    for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
-      assert(globalDBItems[gi].name != NULL);
-      BZDB.removeCallback(std::string(globalDBItems[gi].name),
-                          onGlobalChanged, (void*) NULL);
-    }
-
-    // maxPlayers is sent in the world data to the client.
-    // the client then uses this to setup it's players
-    // data structure, so we need to send it the largest
-    // PlayerId it might see.
-    maxPlayers = MaxPlayers + ReplayObservers;
-
-    if (clOptions->maxTeam[ObserverTeam] == 0) {
-      std::cerr << "replay needs at least 1 observer, set to 1" << std::endl;
-      clOptions->maxTeam[ObserverTeam] = 1;
-    }
-    else if (clOptions->maxTeam[ObserverTeam] > ReplayObservers) {
-      std::cerr << "observer count limited to " << ReplayObservers <<
-                   " for replay" << std::endl;
-      clOptions->maxTeam[ObserverTeam] = ReplayObservers;
-    }
-  }
 
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
@@ -4250,11 +4171,6 @@ int main(int argc, char **argv)
     done = true;
   }
 
-  // no original world weapons in replay mode
-  if (Replay::enabled()) {
-    world->getWorldWeapons().clear();
-  }
-
   if (!serverStart()) {
 #if defined(_WIN32)
     WSACleanup();
@@ -4299,10 +4215,6 @@ int main(int argc, char **argv)
     readPassFile(passFile);
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
-
-  if (clOptions->startRecording) {
-    Record::start (ServerPlayer);
-  }
 
 
   /* MAIN SERVER RUN LOOP
@@ -4383,14 +4295,6 @@ int main(int argc, char **argv)
       }
     }
 
-    // get time for the next replay packet (if active)
-    if (Replay::enabled()) {
-      float nextTime = Replay::nextTime ();
-      if (nextTime < waitTime) {
-        waitTime = nextTime;
-      }
-    }
-
     // minmal waitTime
     if (waitTime < 0.0f) {
       waitTime = 0.0f;
@@ -4407,8 +4311,7 @@ int main(int argc, char **argv)
      **************/
 
     // wait for an incoming communication, a flag to hit the ground,
-    // a game countdown to end, a world weapon needed to be fired, 
-    // or a replay packet waiting to be sent.
+    // a game countdown to end, or for a world weapon needed to be fired.
     GameKeeper::Player::freeTCPMutex();
     struct timeval timeout;
     timeout.tv_sec = long(floorf(waitTime));
@@ -4417,12 +4320,7 @@ int main(int argc, char **argv)
     //if (nfound)
     //	DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
-    // send replay packets 
-    // (this check and response should follow immediately after the select() call)
     GameKeeper::Player::passTCPMutex();
-    if (Replay::playing()) {
-      Replay::sendPackets ();
-    }
     
     // Synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
@@ -4813,9 +4711,6 @@ int main(int argc, char **argv)
   delete world; world = NULL;
   delete[] worldDatabase; worldDatabase = NULL;
   delete votingarbiter; votingarbiter = NULL;
-
-  Record::kill();
-  Replay::kill();
 
 #if defined(_WIN32)
   WSACleanup();

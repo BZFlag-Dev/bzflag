@@ -48,7 +48,6 @@
 #include "FlagInfo.h"
 #include "PackVars.h"
 #include "Permissions.h"
-#include "RecordReplay.h"
 #include "MasterBanList.h"
 
 
@@ -393,10 +392,6 @@ void handleSetCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "You do not have permission to run the set command");
     return;
   }
-  if (Replay::enabled()) {
-    sendMessage(ServerPlayer, t, "You can't /set variables in replay mode");
-    return;
-  }
   sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
   snprintf(message2, MessageLen, "Variable Modification Notice by %s of %s",
 	   playerData->player.getCallSign(), message+1);
@@ -411,10 +406,6 @@ void handleResetCmd(GameKeeper::Player *playerData, const char *message)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar)
       && !playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the reset command");
-    return;
-  }
-  if (Replay::enabled()) {
-    sendMessage(ServerPlayer, t, "You can't /reset variables in replay mode");
     return;
   }
   sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
@@ -2004,144 +1995,6 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
 		   otherData->player.getClientVersion()).c_str());
     }
   }
-  return;
-}
-
-
-void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
-{
-  int t = playerData->getIndex();
-  const char *buf = message + 8;
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::record)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the /record command");
-    return;
-  }
-  while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-  if (strncmp (buf, "start", 5) == 0) {
-    Record::start(t);
-  }
-  else if (strncmp (buf, "stop", 4) == 0) {
-    Record::stop(t);
-  }
-  else if (strncmp (buf, "size", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Record::sendHelp (t);
-      return;
-    }
-    int size = atoi (buf);
-    Record::setSize (t, size);
-  }
-  else if (strncmp (buf, "rate", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Record::sendHelp (t);
-      return;
-    }
-    int seconds = atoi (buf);
-    Record::setRate (t, seconds);
-  }
-  else if (strncmp (buf, "stats", 5) == 0) {
-    Record::sendStats(t);
-  }
-  else if (strncmp (buf, "list", 4) == 0) {
-    Replay::sendFileList (t); // stolen from '/replay'
-  }
-  else if (strncmp (buf, "save", 4) == 0) {
-    buf = buf + 4;
-    char filename[MessageLen];
-
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-    if (*buf == '\0') {
-      Record::sendHelp (t);
-    }
-
-    // get the filename
-    sscanf (buf, "%s", filename);
-
-    // FIXME - do this a little better? use quotations for strings?
-    while ((*buf != '\0') && !isspace (*buf)) buf++; // eat filename
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Record::saveBuffer (t, filename, 0);
-    }
-    else {
-      Record::saveBuffer (t, filename, atoi(buf));
-    }
-  }
-  else if (strncmp (buf, "file", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Record::sendHelp (t);
-    }
-    else {
-      Record::saveFile (t, buf);
-    }
-  }
-  else {
-    Record::sendHelp (t);
-  }
-
-  return;
-}
-
-
-void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
-{
-  int t = playerData->getIndex();
-  const char *buf = message + 7;
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::replay)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the /replay command");
-    return;
-  }
-  while ((*buf != '\0') && isspace (*buf)) { // eat whitespace
-    buf++;
-  }
-
-  if (strncmp (buf, "list", 4) == 0) {
-    Replay::sendFileList (t);
-  }
-  else if (strncmp (buf, "load", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Replay::sendHelp (t);
-    }
-    else {
-      Replay::loadFile (t, buf);
-    }
-  }
-  else if (strncmp (buf, "play", 4) == 0) {
-    Replay::play (t);
-  }
-  else if (strncmp (buf, "skip", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Replay::skip (t, 0);
-    }
-    else {
-      int skip = atoi (buf);
-      Replay::skip (t, skip);
-    }
-  }
-  else if (strncmp (buf, "pause", 5) == 0) {
-    Replay::pause (t);
-  }
-  else {
-    Replay::sendHelp (t);
-  }
-
   return;
 }
 

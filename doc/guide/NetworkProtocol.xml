@@ -1181,15 +1181,6 @@ enters a game.  Clients must be prepared to handle them in any order.
 	the sequence number is incremented (modulo 10000). The server
 	manages this number on a per player basis.
 
-  MsgReplayReset
-	+----+----+----+----+----+
-	| 00 | 01 | 72 | 72 | lp |
-	+----+----+----+----+----+
-	Sent by the server to active replay observers to remove state
-	information that they might have regarding players and flags.
-	The 'lp' value is the last player to be removed. PlayerId's above
-	'lp' are replay observers, and are not removed.
-
 
 UDP negotiation:
 

@@ -34,11 +34,10 @@
 #include "Permissions.h"
 #include "LagInfo.h"
 #include "Score.h"
-#include "RecordReplay.h"
 #include "NetHandler.h"
 #include "Authentication.h"
 
-const int PlayerSlot = MaxPlayers + ReplayObservers;
+const int PlayerSlot = MaxPlayers;
 
 typedef void (*tcpCallback)(NetHandler &netPlayer, int i, const RxStatus e);
 

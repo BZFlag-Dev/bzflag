@@ -25,7 +25,6 @@ const char DirectorySeparator = '\\';
 
 extern std::string		getConfigDirName( const char* versionName = NULL );
 extern std::string		getCacheDirName();
-extern std::string		getRecordDirName();
 extern std::string		getScreenShotDirName();
 extern std::string		getTempDirName();
 extern std::string		getWorldDirName();

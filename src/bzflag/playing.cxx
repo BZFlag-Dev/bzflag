@@ -2245,30 +2245,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-    case MsgReplayReset: {
-      int i;
-      unsigned char lastPlayer;
-      msg = nboUnpackUByte(msg, lastPlayer);
-
-      // remove players up to 'lastPlayer'
-      // any PlayerId above lastPlayer is a replay observers
-      for (i=0 ; i<lastPlayer ; i++) {
-	if (removePlayer (i)) {
-	  checkScores = true;
-	}
-      }
-
-      // remove all of the flags
-      for (i=0 ; i<numFlags; i++) {
-	Flag& flag = world->getFlag(i);
-	flag.owner = (PlayerId) -1;
-	flag.status = FlagNoExist;
-	world->initFlag (i);
-      }
-      break;
-    }
-
-      // inter-player relayed message
+    // inter-player relayed message
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall:
     case MsgGMUpdate:

@@ -61,8 +61,6 @@ void PlayerInfo::resetPlayer(bool ctf) {
   lastupdate = now;
   lastmsg    = now;
 
-  replayState = ReplayNone;
-
   playedEarly = false;
 
   restartOnBase = ctf;
@@ -381,15 +379,6 @@ void PlayerInfo::setPlayedEarly(bool early) {
 void PlayerInfo::updateIdleTime() {
   lastupdate = now;
 };
-
-void        PlayerInfo::setReplayState(PlayerReplayState state) {
-  replayState = state;
-}
-
-PlayerReplayState PlayerInfo::getReplayState()
-{
-  return replayState;
-}
 
 
 void PlayerInfo::setTrackerID(unsigned short int t)

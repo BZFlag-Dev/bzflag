@@ -279,30 +279,6 @@ void handleViewReportsCmd(GameKeeper::Player *playerData, const char *message);
  */
 void handleClientqueryCmd(GameKeeper::Player *playerData, const char *);
 
-
-/** /record command hook function
- *
- *  /record start               # start buffering
- *  /record stop                # stop buffering (or saving to file)
- *  /record size <Mbytes>       # set the buffer size, and truncate
- *  /record rate <secs>         # set the state capture rate
- *  /record stats               # display buffer time and memory information
- *  /record file [filename]     # begin capturing straight to file, flush buffer
- *  /record save [filename]     # save buffer to file (or default filename)
- */
-void handleRecordCmd(GameKeeper::Player *playerData, const char *);
-
-
-/** /replay command hook function
- *
- *  /replay list                # list available replay files
- *  /replay load [filename]     # set the replay file (or load the default)
- *  /replay play                # began playing
- *  /replay skip <secs>         # fast foward or rewind in time
- */
-void handleReplayCmd(GameKeeper::Player *playerData, const char *);
-
-
 /** /masterban command hook function
  *
  * /masterban flush             # remove all master ban entries from this server
