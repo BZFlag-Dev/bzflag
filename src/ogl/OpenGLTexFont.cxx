@@ -479,10 +479,7 @@ void			OpenGLTexFont::setSize(float _width, float _height)
 }
 
 void OpenGLTexFont::setColor(unsigned short int index, const float *color) {
-  if (index >= STORED_COLORS) {
-    std::cout << "Color index [" << index << "] is out of range (max is " << STORED_COLORS << ")" << std::endl;
-    return;
-  }
+  assert(index < STORED_COLORS);
 
   storedColor[index][0] = color[0];
   storedColor[index][1] = color[1];
@@ -562,11 +559,11 @@ void			OpenGLTexFont::draw(const char* string, int length,
   bool blinking = false;
   bool underline = false;
   bool textures = false;
-  GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
-  GLfloat grey_color[3]  = {0.5f, 0.5f, 0.5f};
-  GLfloat cyan_color[3]  = {0.5f, 0.8f, 0.85f};
+  const GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
+  const GLfloat grey_color[3]  = {0.5f, 0.5f, 0.5f};
+  const GLfloat cyan_color[3]  = {0.5f, 0.8f, 0.85f};
   GLfloat blinkColor[3];
-  GLfloat *color = white_color;
+  const GLfloat *color = white_color;
   float xpos = x;
 
   if (OpenGLTexture::getFilter() != OpenGLTexture::Off) {
@@ -585,7 +582,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
     const unsigned int c = (unsigned int)string[i];
 
     if (blinking) {
-      float	blinkFactor;
+      float blinkFactor;
 
       blinkFactor = (int)time(NULL);
       blinkFactor = fmodf(blinkFactor, BLINK_RATE) - BLINK_RATE/2.0f;
@@ -610,28 +607,28 @@ void			OpenGLTexFont::draw(const char* string, int length,
 	const float y0 = floorf(y + 0.5f + dy);
 
 	if (underline == true) {
-	  glEnd ();	// GL_QUADS
+	  glEnd();	// GL_QUADS
 
 	  OpenGLGState::resetState();   // FIXME -- full reset required?
 
 	  if (underlineColor == CyanColor) {
-	    glColor3fv (cyan_color);
+	    glColor3fv(cyan_color);
 	  }
 	  else if (underlineColor == GreyColor) {
-	    glColor3fv (grey_color);
+	    glColor3fv(grey_color);
 	  }
 
-	  glBegin (GL_LINES);
+	  glBegin(GL_LINES);
 	  glVertex2f (x, y - 1.0);
 	  glVertex2f (x + width * g.advance + 1.0, y - 1.0);
-	  glEnd ();
+	  glEnd();
 
 	  rep->gstate.setState();
 	  if (blinking)
-	    glColor3fv (blinkColor);
+	    glColor3fv(blinkColor);
 	  else
-	    glColor3fv (color);
-	  glBegin (GL_QUADS);
+	    glColor3fv(color);
+	  glBegin(GL_QUADS);
 	}
 
 	glTexCoord2f(g.u, g.v);
@@ -660,22 +657,22 @@ void			OpenGLTexFont::draw(const char* string, int length,
 
 	if (underline == true) {
 	  if (underlineColor == CyanColor) {
-	    glColor3fv (cyan_color);
+	    glColor3fv(cyan_color);
 	  }
 	  else if (underlineColor == GreyColor) {
-	    glColor3fv (grey_color);
+	    glColor3fv(grey_color);
 	  }
 
-	  glBegin (GL_LINES);
-	  glVertex2f (xpos, y - 1.0);		// compared to textured, -1.0
-	  glVertex2f (xpos + xmove, y - 1.0);	// compared to textured, -1.0
+	  glBegin(GL_LINES);
+	  glVertex2f(xpos, y - 1.0);		// compared to textured, -1.0
+	  glVertex2f(xpos + xmove, y - 1.0);	// compared to textured, -1.0
 	  glEnd ();
 
 	  // because we've underlined first, reset the color
 	  if (blinking)
-	    glColor3fv (blinkColor);
+	    glColor3fv(blinkColor);
 	  else
-	    glColor3fv (color);
+	    glColor3fv(color);
 	}
 
         xpos = xpos + xmove;
@@ -749,13 +746,12 @@ void			OpenGLTexFont::draw(const char* string, int length,
           underline = uline_tmp;
 
           if (color_tmp != -1) {
+            if (cdebug)
             /* we could check up to the number of stored colors,
              * but we don't need that many
              */
             if ((color_tmp < 5) && (color_tmp >= 0)) {
-              color[0] = storedColor[color_tmp][0];
-              color[1] = storedColor[color_tmp][1];
-              color[2] = storedColor[color_tmp][2];
+              color = storedColor[color_tmp];
             }
             else if (color_tmp == GreyColor) {
               color = grey_color;
@@ -769,7 +765,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
               std::cout << "Unknown color encountered in " << __FILE__ << " on line " << __LINE__ << std::endl;
             }
           }
-          glColor3fv (color);
+          glColor3fv(color);
         }
         else {
           // Bad Ending code
@@ -785,7 +781,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
     glEnd();
 }
 
-int OpenGLTexFont::stripAnsiCodes (char * string, int length)
+int OpenGLTexFont::stripAnsiCodes(char * string, int length)
 {
   int i, j;
 
@@ -816,7 +812,7 @@ int OpenGLTexFont::stripAnsiCodes (char * string, int length)
 }
 
 
-int OpenGLTexFont::rawStrlen (const char * string, int length)
+int OpenGLTexFont::rawStrlen(const char * string, int length)
 {
   int i, j;
 
@@ -843,7 +839,7 @@ int OpenGLTexFont::rawStrlen (const char * string, int length)
   return j;
 }
 
-void OpenGLTexFont::setUnderlineColor (int code)
+void OpenGLTexFont::setUnderlineColor(int code)
 {
   switch (code) {
     case 0 :
