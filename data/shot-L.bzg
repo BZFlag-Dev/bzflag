@@ -9,58 +9,65 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-<group>
-  <geometry>
-    <texcoord>
-      0.5 0.5
-      0.0 0.0
-      0.0 0.0
-      0.0 0.0
-      0.0 0.0
+<geometry id="shot-L_textured">
+	<color>
+		1 1 1 1
+	</color>
+	<texcoord>
+    	0.5 0.5
+    	0.0 0.0
+    	0.0 0.0
+    	0.0 0.0
+    	0.0 0.0
 
-      0.0 0.0
-      1.0 0.0
-      0.0 1.0
-      1.0 1.0
+    	0.0 0.0
+    	1.0 0.0
+    	0.0 1.0
+    	1.0 1.0
 
-      0.0 0.0
-      1.0 0.0
-      0.0 1.0
-      1.0 1.0
-    </texcoord>
-    <vertex>
-      0.0  0.0  0.0
-      0.0  1.0  0.0
-      0.0  0.0 -1.0
-      0.0 -1.0  0.0
-      0.0  0.0  1.0
+    	0.0 0.0
+    	1.0 0.0
+    	0.0 1.0
+    	1.0 1.0
+	</texcoord>
+	<vertex>
+    	0.0  0.0  0.0
+    	0.0  1.0  0.0
+    	0.0  0.0 -1.0
+    	0.0 -1.0  0.0
+    	0.0  0.0  1.0
 
-      0.0 0.0 -1.0
-      0.0 0.0  1.0
-      1.0 0.0 -1.0
-      1.0 0.0  1.0
+    	0.0 0.0 -1.0
+    	0.0 0.0  1.0
+    	1.0 0.0 -1.0
+    	1.0 0.0  1.0
 
-      0.0 -1.0  0.0
-      0.0  1.0  0.0
-      1.0 -1.0  0.0
-      1.0  1.0  0.0
-    </vertex>
-    <group>
-      <primitive type=tfan>
-        <index>
-          0 1 2 3 4 1
-        </index>
-      </primitive>
-      <primitive type=tstrip>
-        <index>
-          5 6 7 8
-        </index>
-      </primitive>
-      <primitive type=tstrip>
-        <index>
-          9 10 11 12
-        </index>
-      </primitive>
-    </group>
-  </geometry>
-</group>
+    	0.0 -1.0  0.0
+    	0.0  1.0  0.0
+    	1.0 -1.0  0.0
+    	1.0  1.0  0.0
+	</vertex>
+    <primitive type="tfan">
+    	<index>
+        	0 1 2 3 4 1
+    	</index>
+    </primitive>
+    <primitive type="tstrip">
+    	<index>
+        	5 6 7 8
+    	</index>
+    </primitive>
+    <primitive type="tstrip">
+    	<index>
+        	9 10 11 12
+    	</index>
+    </primitive>
+</geometry>
+
+<gstate id="shot-L">
+	<texture repeat="off" rgba="on" filename="laser.rgb" />
+	<blending src="sa" dst="1" />
+	<culling cull="off" />
+	<depth write="off" />
+	<ref id="shot-L_textured" />
+</gstate>

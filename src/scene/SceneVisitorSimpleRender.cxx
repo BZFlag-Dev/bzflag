@@ -88,6 +88,9 @@ bool					SceneVisitorSimpleRender::traverse(SceneNode* node)
 	if (node == NULL)
 		return false;
 
+	// should we use lighting?
+	lighting = BZDB->isTrue("renderLighting");
+
 	// prep rendering state
 	glPushMatrix();
 	glMatrixMode(GL_PROJECTION);
@@ -250,28 +253,28 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeGeometry* n)
 		glTexCoordPointer(2, GL_FLOAT, 0, texture->get());
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
-	if (hasNormal) {
+	if (lighting && hasNormal) {
 		normalStack.push_back(normal);
 /*
-    specularStack.push_back(n->getSpecularColor());
-    emissiveStack.push_back(n->getEmissiveColor());
-    shininessStack.push_back(n->getShininess());
+		specularStack.push_back(n->getSpecularColor());
+		emissiveStack.push_back(n->getEmissiveColor());
+		shininessStack.push_back(n->getShininess());
 */
-    if (normal->getNum() == 3) {
-      glNormal3fv(normal->get());
-      glDisableClientState(GL_NORMAL_ARRAY);
-    }
-    else {
-      glNormalPointer(GL_FLOAT, 0, normal->get());
-      glEnableClientState(GL_NORMAL_ARRAY);
-    }
+		if (normal->getNum() == 3) {
+		  glNormal3fv(normal->get());
+		  glDisableClientState(GL_NORMAL_ARRAY);
+		}
+		else {
+		  glNormalPointer(GL_FLOAT, 0, normal->get());
+		  glEnableClientState(GL_NORMAL_ARRAY);
+		}
 /*
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, n->getSpecularColor());
-    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, n->getEmissiveColor());
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, n->getShininess());
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, n->getSpecularColor());
+		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, n->getEmissiveColor());
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, n->getShininess());
 */
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_LIGHTING);
+		glEnable(GL_COLOR_MATERIAL);
+		glEnable(GL_LIGHTING);
 	}
 	if (hasVertex) {
 		vertexStack.push_back(vertex);
@@ -306,33 +309,33 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeGeometry* n)
 		else
 			glTexCoordPointer(2, GL_FLOAT, 0, texcoordStack.back()->get());
 	}
-	if (hasNormal) {
+	if (lighting && hasNormal) {
 		normalStack.pop_back();
 /*
-    specularStack.pop_back();
-    emissiveStack.pop_back();
-    shininessStack.pop_back();
+		specularStack.pop_back();
+		emissiveStack.pop_back();
+		shininessStack.pop_back();
 */
-    if (normalStack.empty()) {
-      glDisableClientState(GL_NORMAL_ARRAY);
-      glDisable(GL_COLOR_MATERIAL);
-      glDisable(GL_LIGHTING);
-    }
-    else {
-      normal = normalStack.back();
-      if (normal->getNum() == 3) {
-		glNormal3fv(normal->get());
-		glDisableClientState(GL_NORMAL_ARRAY);
-      }
-      else {
-		glNormalPointer(GL_FLOAT, 0, normal->get());
-      }
+		if (normalStack.empty()) {
+			glDisableClientState(GL_NORMAL_ARRAY);
+			glDisable(GL_COLOR_MATERIAL);
+			glDisable(GL_LIGHTING);
+		}
+		else {
+			normal = normalStack.back();
+			if (normal->getNum() == 3) {
+				glNormal3fv(normal->get());
+				glDisableClientState(GL_NORMAL_ARRAY);
+			}
+			else {
+				glNormalPointer(GL_FLOAT, 0, normal->get());
+			}
 /*
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularStack.back());
-      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissiveStack.back());
-      glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininessStack.back());
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularStack.back());
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissiveStack.back());
+			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininessStack.back());
 */
-    }
+		}
 	}
 	if (hasVertex) {
 		vertexStack.pop_back();
@@ -394,7 +397,7 @@ bool					SceneVisitorSimpleRender::visit(SceneNodePrimitive* n)
 
 bool					SceneVisitorSimpleRender::visit(SceneNodeLight* n)
 {
-	const bool bind = (numLights < maxLights);
+	const bool bind = lighting && (numLights < maxLights);
 	if (bind) {
 		n->compute(getParams());
 		glLightfv(GL_LIGHT0 + numLights, GL_AMBIENT, n->getAmbientColor());

@@ -44,116 +44,188 @@ SceneNode*				SceneDatabaseBuilder::make(const World* world)
 BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 {
 	BzfString primitives;
-	nVertex = 0;
+	BzfString unlighted;
 
-	// add nodes to database
-	const WallObstacles& walls = world->getWalls();
-	const BoxBuildings& boxes = world->getBoxes();
-	const Teleporters& teleporters = world->getTeleporters();
+	nVertex  = 0;
+	color    = "";
+	normal   = "";
+	texcoord = "";
+	vertex   = "";
+
+	const WallObstacles& walls       = world->getWalls();
+	const BoxBuildings& boxes        = world->getBoxes();
+	const Teleporters& teleporters   = world->getTeleporters();
 	const PyramidBuildings& pyramids = world->getPyramids();
-	const BaseBuildings& bases = world->getBases();
+	const BaseBuildings& bases       = world->getBases();
 
 	// walls
 	primitives1 = "";
 	primitives2 = "";
 	primitives3 = "";
+	primitives4 = "";
 	for (WallObstacles::const_iterator wallScan = walls.begin();
 								wallScan != walls.end();
 								++wallScan)
 		addWall(*wallScan);
-	primitives += "<gstate>\n"
-		      "<shading model=flat/>\n"
-		      "<texture filename=\"wall\"/>\n";
-	primitives += primitives1;
-	primitives += "</gstate>\n";
+	primitives +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n"
+					  "<texture filename=\"wall\" />\n";
+	primitives +=	  primitives1;
+	primitives +=   "</gstate>\n";
+	unlighted +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n";
+	unlighted += 	  primitives1;
+	unlighted += 	"</gstate>\n";
 
 	// boxes
 	primitives1 = "";
 	primitives2 = "";
 	primitives3 = "";
+	primitives4 = "";
 	for (BoxBuildings::const_iterator boxScan = boxes.begin();
 								boxScan != boxes.end();
 								++boxScan)
 		addBox(*boxScan);
-	primitives += "<gstate>\n"
-		      "<shading model=\"flat\" />\n"
-		      "<texture filename=\"boxwall\" />\n";
-	primitives += primitives1;
-	primitives += "</gstate>\n";
-	primitives += "<gstate>\n"
-		      "<shading model=\"flat\" />\n"
-		      "<texture filename=\"roof\" />\n";
-	primitives += primitives2;
-	primitives += primitives3;
-	primitives += "</gstate>\n";
+	primitives +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n"
+					  "<texture filename=\"boxwall\" />\n";
+	primitives +=	  primitives1;
+	primitives +=	"</gstate>\n";
+	primitives +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n"
+					  "<texture filename=\"roof\" />\n";
+	primitives +=	  primitives2;
+	primitives +=	  primitives3;
+	primitives +=	"</gstate>\n";
+	unlighted +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n";
+	unlighted +=	  primitives1;
+	unlighted +=	  primitives2;
+	unlighted +=	  primitives3;
+	unlighted +=	"</gstate>\n";
 
 	// teleporters
 	primitives1 = "";
 	primitives2 = "";
 	primitives3 = "";
+	primitives4 = "";
 	for (Teleporters::const_iterator teleporterScan = teleporters.begin();
 								teleporterScan != teleporters.end();
 								++teleporterScan)
 		addTeleporter(*teleporterScan);
-	primitives += "<gstate>\n"
-		      "<shading model=\"flat\" />\n"
-		      "<texture filename=\"caution\" />\n";
-	primitives += primitives1;
-	primitives += "</gstate>\n";
-	primitives += "<gstate>\n"
-		      "<shading model=\"flat\" />\n"
-		      "<blending src=\"sa\" dst=\"1-sa\" />\n"
-		      "<depth write=\"off\" />\n";
-	primitives += primitives2;
-	primitives += "</gstate>\n";
+	primitives +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n"
+					  "<texture filename=\"caution\" />\n";
+	primitives +=	  primitives1;
+	primitives +=	"</gstate>\n";
+	primitives +=	"<choice><mask t=\"renderBlending\">1 2</mask>\n"
+					  "<gstate>\n"
+					    "<shading model=\"flat\" />\n"
+					    "<stipple alpha=\"0.5\" />\n";
+	primitives +=	    primitives2;
+	primitives +=	  "</gstate>\n"
+					  "<gstate>\n"
+					    "<shading model=\"flat\" />\n"
+					    "<blending src=\"sa\" dst=\"1-sa\" />\n"
+					    "<depth write=\"off\" />\n";
+	primitives +=	    primitives2;
+	primitives +=	  "</gstate>\n"
+					"</choice>\n";
+	unlighted +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n";
+	unlighted +=	  primitives1;
+	unlighted +=	"</gstate>\n";
+	unlighted +=	"<choice><mask t=\"renderBlending\">1 2</mask>\n"
+					  "<gstate>\n"
+					    "<shading model=\"flat\" />\n"
+					    "<stipple alpha=\"0.5\" />\n";
+	unlighted +=	    primitives3;
+	unlighted +=	  "</gstate>\n"
+					  "<gstate>\n"
+					    "<shading model=\"flat\" />\n"
+					    "<blending src=\"sa\" dst=\"1-sa\" />\n"
+					    "<depth write=\"off\" />\n";
+	unlighted +=	    primitives3;
+	unlighted +=	  "</gstate>\n"
+					"</choice>\n";
 
 	// pyramids
 	primitives1 = "";
 	primitives2 = "";
 	primitives3 = "";
+	primitives4 = "";
 	for (PyramidBuildings::const_iterator pyramidScan = pyramids.begin();
 								pyramidScan != pyramids.end();
 								++pyramidScan)
 		addPyramid(*pyramidScan);
-	primitives += "<gstate>\n"
-		      "<shading model=\"flat\" />\n"
-		      "<texture filename=\"pyrwall\" />\n";
-	primitives += primitives1;
-	primitives += primitives2;
-	primitives += "</gstate>\n";
+	primitives +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n"
+					  "<texture filename=\"pyrwall\" />\n";
+	primitives +=	  primitives1;
+	primitives +=	  primitives2;
+	primitives +=   "</gstate>\n";
+	unlighted +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n";
+	unlighted +=	  primitives3;
+	unlighted +=	"</gstate>\n";
 
 	// bases
 	primitives1 = "";
 	primitives2 = "";
 	primitives3 = "";
+	primitives4 = "";
 	for (BaseBuildings::const_iterator baseScan = bases.begin();
 								baseScan != bases.end();
 								++baseScan) 
 		addBase(*baseScan);
-	primitives += "<gstate>\n"
-		      "<shading model=\"flat\" />\n"
-		      "<culling cull=\"off\" />\n";
-	primitives += primitives1;
-	primitives += "</gstate>\n";
+	primitives +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n"
+					  "<culling cull=\"off\" />\n";
+	primitives +=	  primitives1;
+	primitives +=	"</gstate>\n";
+	unlighted +=	"<gstate>\n"
+					  "<shading model=\"flat\" />\n"
+					  "<culling cull=\"off\" />\n";
+	unlighted +=	  primitives2;
+	unlighted +=	"</gstate>\n";
 
 	BzfString buffer;
-	buffer += "<group>\n"
-		      "<geometry>\n"
-				"<color>"
-				  "1 1 1 1"
-				"</color>\n";
-	buffer +=     "<texcoord>\n";
-	buffer +=       texcoord;
-	buffer +=     "</texcoord>\n";
-	buffer +=     "<normal>\n";
-	buffer +=       normal;
-	buffer +=     "</normal>\n";
-	buffer +=     "<vertex>\n";
-	buffer +=       vertex;
-	buffer +=     "</vertex>\n";
-	buffer +=     primitives;
-	buffer +=   "</geometry>\n";
-	buffer += "</group>\n";
+	buffer +=	"<choice><mask t=\"renderLighting\">1 2</mask>\n"
+				  "<choice><mask t=\"renderTexturing\">1 2</mask>\n"
+				    "<geometry>\n"
+				      "<color>\n";
+	buffer +=	        color;
+	buffer +=	      "</color>\n";
+	buffer +=	      "<texcoord>\n";
+	buffer +=	        texcoord;
+	buffer +=	      "</texcoord>\n";
+	buffer +=	      "<normal>\n";
+	buffer +=	        normal;
+	buffer +=	      "</normal>\n";
+	buffer +=	      "<vertex>\n";
+	buffer +=	        vertex;
+	buffer +=	      "</vertex>\n";
+	buffer +=	      unlighted;
+	buffer +=	    "</geometry>\n";
+
+	buffer +=	    "<geometry id=\"world_fancy\">\n"
+				      "<color>"
+				        "1 1 1 1"
+				      "</color>\n";
+	buffer +=	      "<texcoord>\n";
+	buffer +=	        texcoord;
+	buffer +=	      "</texcoord>\n";
+	buffer +=	      "<normal>\n";
+	buffer +=	        normal;
+	buffer +=	      "</normal>\n";
+	buffer +=	      "<vertex>\n";
+	buffer +=	        vertex;
+	buffer +=	      "</vertex>\n";
+	buffer +=	      primitives;
+	buffer +=	    "</geometry>\n";
+	buffer +=	  "</choice>\n";
+	buffer +=	  "<ref id=\"world_fancy\" />\n";
+	buffer +=	"</choice>\n";
 
 	return buffer;
 }
@@ -222,6 +294,7 @@ void					SceneDatabaseBuilder::addWall(const WallObstacle& o)
 	const float dy = o.getBreadth();
 	const float dz = o.getHeight();
 
+	color    += "0.5 0.5 0.5 1  0.5 0.5 0.5 1  0.5 0.5 0.5 1  0.5 0.5 0.5 1\n";
 	texcoord += BzfString::format("0 0  0 %f  %f 0  %f %f\n",
 								 0.1f * dz, 0.1f * dy, 0.1f * dy, 0.1f * dz);
 
@@ -295,6 +368,27 @@ void					SceneDatabaseBuilder::addBox(const BoxBuilding& o)
 	const float dy = o.getBreadth();
 	const float dz = o.getHeight();
 	const float tm1 = 1.0f / (0.2f * BoxHeight);
+
+	color +=	"0.75 0.25 0.25 1\n"
+				"0.75 0.25 0.25 1\n"
+				"0.75 0.25 0.25 1\n"
+				"0.75 0.25 0.25 1\n"
+				"0.63 0.25 0.25 1\n"
+				"0.63 0.25 0.25 1\n"
+				"0.75 0.25 0.25 1\n"
+				"0.75 0.25 0.25 1\n"
+				"0.75 0.375 0.375 1\n"
+				"0.75 0.375 0.375 1\n"
+
+				"0.875 0.5 0.5 1\n"
+				"0.875 0.5 0.5 1\n"
+				"0.875 0.5 0.5 1\n"
+				"0.875 0.5 0.5 1\n"
+
+				"0.275 0.2 0.2 1\n"
+				"0.275 0.2 0.2 1\n"
+				"0.275 0.2 0.2 1\n"
+				"0.275 0.2 0.2 1\n";
 
 	texcoord += BzfString::format(
 				" %f %f %f %f"
@@ -387,6 +481,23 @@ void					SceneDatabaseBuilder::addPyramid(const PyramidBuilding& o)
 	m.mult(x);
 	prepNormalMatrix(m, x);
 
+	color +=	"0.25 0.25 0.63 1\n"
+				"0.25 0.25 0.63 1\n"
+				"0.25 0.25 0.63 1\n"
+
+				"0.13 0.13 0.51 1\n"
+				"0.13 0.13 0.51 1\n"
+
+				"0.375 0.375 0.75 1\n"
+				"0.375 0.375 0.75 1\n"
+
+				"0.25 0.25 0.63 1\n"
+				"0.25 0.25 0.63 1\n"
+
+				"0.25 0.25 0.63 1\n"
+				"0.25 0.25 0.63 1\n"
+				"0.25 0.25 0.63 1\n"
+				"0.25 0.25 0.63 1\n";
 	texcoord += BzfString::format(
 				" 0 %f"
 				" %f 0 %f 0"
@@ -416,6 +527,16 @@ void					SceneDatabaseBuilder::addPyramid(const PyramidBuilding& o)
 								"<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d"
 								"</index></primitive></geometry>\n",
+								n + 9, n + 10, n + 12, n + 11);
+
+	primitives3 += BzfString::format("<primitive type=\"triangles\"><index>"
+								"%d %d %d %d %d %d %d %d %d %d %d %d"
+								"</index></primitive>"
+								"<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive>\n",
+								n + 0, n + 1, n + 4, n + 0, n + 3, n + 8,
+								n + 0, n + 7, n + 6, n + 0, n + 5, n + 2,
 								n + 9, n + 10, n + 12, n + 11);
 }
 
@@ -447,6 +568,11 @@ void					SceneDatabaseBuilder::addBase(const BaseBuilding& o)
 	m.mult(x);
 	prepNormalMatrix(m, x);
 
+	color += BzfString::format("%f %f %f 1 %f %f %f 1 %f %f %f 1 %f %f %f 1\n",
+								c[0], c[1], c[2],
+								c[0], c[1], c[2],
+								c[0], c[1], c[2],
+								c[0], c[1], c[2]);
 	texcoord += " 0 0 0 0 0 0 0 0\n";
 
 	unsigned int i;
@@ -461,6 +587,10 @@ void					SceneDatabaseBuilder::addBase(const BaseBuilding& o)
 								"%d %d %d %d"
 								"</index></primitive></geometry>\n",
 								c[0], c[1], c[2],
+								n + 1, n + 0, n + 3, n + 2);
+	primitives2 += BzfString::format("<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive>\n",
 								n + 1, n + 0, n + 3, n + 2);
 }
 
@@ -528,6 +658,52 @@ void					SceneDatabaseBuilder::addTeleporter(const Teleporter& o)
 	Matrix x;
 	prepNormalMatrix(m, x);
 
+	color +=	"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+				"1 0.875 0 1\n"
+
+				"0 0 0 0.5\n"
+				"0 0 0 0.5\n"
+				"0 0 0 0.5\n"
+				"0 0 0 0.5\n"
+
+				"0 0 0 0.5\n"
+				"0 0 0 0.5\n"
+				"0 0 0 0.5\n"
+				"0 0 0 0.5\n";
 	texcoord += "0.0  0.0   0.0  9.5\n"
 		      "0.5  0.0   0.5  9.0\n"
 		      "1.0  0.0   1.0  9.0\n"
@@ -632,6 +808,14 @@ void					SceneDatabaseBuilder::addTeleporter(const Teleporter& o)
 								"%d %d %d %d"
 								"</index></primitive>"
 								"</geometry>\n",
+								n + 36, n + 37, n + 38, n + 39,
+								n + 41, n + 40, n + 43, n + 42);
+	primitives3 += BzfString::format("<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive>"
+								"<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive>\n",
 								n + 36, n + 37, n + 38, n + 39,
 								n + 41, n + 40, n + 43, n + 42);
 }

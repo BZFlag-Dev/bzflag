@@ -9,27 +9,263 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-<group>
+<billboard id="shot_simple">
+  <axis>0 0 0</axis>
   <geometry>
-    <color>
+	<vertex>
+	   0.000000  0.000000  0.000000
+	   1.000000  0.000000  0.000000
+	   0.923880  0.000000  0.382683
+	   0.707107  0.000000  0.707107
+	   0.382683  0.000000  0.923880
+	   0.000000  0.000000  1.000000
+	  -0.382683  0.000000  0.923880
+	  -0.707107  0.000000  0.707107
+	  -0.923880  0.000000  0.382683
+	  -1.000000  0.000000  0.000000
+	  -0.923880  0.000000 -0.382683
+	  -0.707107  0.000000 -0.707107
+	  -0.382683  0.000000 -0.923880
+	  -0.000000  0.000000 -1.000000
+	   0.382683  0.000000 -0.923880
+	   0.707107  0.000000 -0.707107
+	   0.923880  0.000000 -0.382683
+	</vertex>
+	<primitive type="tfan">
+      <index>
+    	0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 1
+      </index>
+	</primitive>
+  </geometry>
+</billboard>
+
+<billboard id="shot_textured">
+  <axis>0 0 0</axis>
+  <geometry>
+	<color>
       1 1 1 1
-    </color>
-    <texcoord>
+	</color>
+	<texcoord>
       0 0
       0 1
       1 0
       1 1
-    </texcoord>
-    <vertex>
+	</texcoord>
+	<vertex>
       -1.0 0.0 -1.0
       -1.0 0.0  1.0
        1.0 0.0 -1.0
        1.0 0.0  1.0
-    </vertex>
-    <primitive type=tstrip>
+	</vertex>
+	<primitive type="tstrip">
       <index>
-        1 0 3 2
+    	1 0 3 2
       </index>
-    </primitive>
+	</primitive>
   </geometry>
-</group>
+</billboard>
+
+# red team shot
+<choice id="shot-r">
+  <mask t="renderBlending">1 2</mask>
+  <geometry id="shot-r-simple">
+	<color>
+      1 1 1 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+      1 0 0 1
+	</color>
+    <gstate>
+      <shading model="smooth" />
+      <culling cull="off" />
+      <ref id="shot_simple" />
+    </gstate>
+  </geometry>
+  <choice>
+    <mask t="renderTexturing">1 2</mask>
+    <ref id="shot-r-simple" />
+    <gstate>
+      <texture repeat="off" rgba="on" filename="rbolt.rgb" />
+      <blending src="sa" dst="1-sa" />
+      <culling cull="off" />
+      <ref id="shot_textured" />
+    </gstate>
+  </choice>
+</choice>
+
+# green team shot
+<choice id="shot-g">
+  <mask t="renderBlending">1 2</mask>
+  <geometry id="shot-g-simple">
+	<color>
+      1 1 1 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+      0 1 0 1
+	</color>
+    <gstate>
+      <shading model="smooth" />
+      <culling cull="off" />
+      <ref id="shot_simple" />
+    </gstate>
+  </geometry>
+  <choice>
+    <mask t="renderTexturing">1 2</mask>
+    <ref id="shot-g-simple" />
+    <gstate>
+      <texture repeat="off" rgba="on" filename="gbolt.rgb" />
+      <blending src="sa" dst="1-sa" />
+      <culling cull="off" />
+      <ref id="shot_textured" />
+    </gstate>
+  </choice>
+</choice>
+
+# blue team shot
+<choice id="shot-b">
+  <mask t="renderBlending">1 2</mask>
+  <geometry id="shot-b-simple">
+	<color>
+      1 1 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+      0 0 1 1
+	</color>
+    <gstate>
+      <shading model="smooth" />
+      <culling cull="off" />
+      <ref id="shot_simple" />
+    </gstate>
+  </geometry>
+  <choice>
+    <mask t="renderTexturing">1 2</mask>
+    <ref id="shot-b-simple" />
+    <gstate>
+      <texture repeat="off" rgba="on" filename="bbolt.rgb" />
+      <blending src="sa" dst="1-sa" />
+      <culling cull="off" />
+      <ref id="shot_textured" />
+    </gstate>
+  </choice>
+</choice>
+
+# purple team shot
+<choice id="shot-p">
+  <mask t="renderBlending">1 2</mask>
+  <geometry id="shot-p-simple">
+	<color>
+      1 1 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+      1 0 1 1
+	</color>
+    <gstate>
+      <shading model="smooth" />
+      <culling cull="off" />
+      <ref id="shot_simple" />
+    </gstate>
+  </geometry>
+  <choice>
+    <mask t="renderTexturing">1 2</mask>
+    <ref id="shot-p-simple" />
+    <gstate>
+      <texture repeat="off" rgba="on" filename="pbolt.rgb" />
+      <blending src="sa" dst="1-sa" />
+      <culling cull="off" />
+      <ref id="shot_textured" />
+    </gstate>
+  </choice>
+</choice>
+
+# rogue shot
+<choice id="shot-y">
+  <mask t="renderBlending">1 2</mask>
+  <geometry id="shot-y-simple">
+	<color>
+      1 1 1 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+      1 1 0 1
+	</color>
+    <gstate>
+      <shading model="smooth" />
+      <culling cull="off" />
+      <ref id="shot_simple" />
+    </gstate>
+  </geometry>
+  <choice>
+    <mask t="renderTexturing">1 2</mask>
+    <ref id="shot-y-simple" />
+    <gstate>
+      <texture repeat="off" rgba="on" filename="ybolt.rgb" />
+      <blending src="sa" dst="1-sa" />
+      <culling cull="off" />
+      <ref id="shot_textured" />
+    </gstate>
+  </choice>
+</choice>

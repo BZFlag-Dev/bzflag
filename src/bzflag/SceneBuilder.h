@@ -58,12 +58,14 @@ private:
 	SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
 private:
+	BzfString			color;
 	BzfString			normal;
 	BzfString			texcoord;
 	BzfString			vertex;
 	BzfString			primitives1;
 	BzfString			primitives2;
 	BzfString			primitives3;
+	BzfString			primitives4;
 	unsigned int		nVertex;
 };
 

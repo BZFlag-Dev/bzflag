@@ -77,6 +77,7 @@ private:
 	ShininessStack		shininessStack;
 	int					numLights;
 	int					maxLights;
+	bool				lighting;
 
 	Instruments			instruments;
 };

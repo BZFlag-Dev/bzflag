@@ -157,19 +157,15 @@
     <item label="Nearest Mipmap Linear" value="nearestmipmaplinear"/>
     <item label="Linear Mipmap Linear" value="linearmipmaplinear"/>
   </combo>
-  <combo label="Quality:" name="renderQuality">
-    <item label="Low" value="0"/>
-    <item label="Medium" value="1"/>
-    <item label="High" value="2"/>
-  </combo>
-  <combo label="Shadows:" name="renderShaowing">
-    <item label="Off" value="0"/>
-    <item label="On" value="1"/>
-  </combo>
-  <combo label="Depth Buffer:" name="renderZBuffer">
-    <item label="Off" value="0"/>
-    <item label="On" value="1"/>
-  </combo>
+#  <combo label="Quality:" name="renderQuality">
+#    <item label="Low" value="0"/>
+#    <item label="Medium" value="1"/>
+#    <item label="High" value="2"/>
+#  </combo>
+#  <combo label="Shadows:" name="renderShaowing">
+#    <item label="Off" value="0"/>
+#    <item label="On" value="1"/>
+#  </combo>
   # include following only if value in DB matches (similarly for unless)
   <if name=renderDebug value="1">
     <combo label="Hidden Line:" name="renderHiddenLine">

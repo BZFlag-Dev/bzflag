@@ -28,6 +28,7 @@ ViewItemPlayerScene::ViewItemPlayerScene()
 	builder.setBlending(GState::kSrcAlpha, GState::kOneMinusSrcAlpha);
 	builder.setDepthFunc(GState::kAlways);
 	builder.setDepthMask(false);
+	builder.setForceBlending(true);
 	fadeGState = builder.getState();
 
 	// prep renderer

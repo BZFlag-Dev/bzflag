@@ -64,6 +64,7 @@ SceneVisitorRender::SceneVisitorRender() :
 								nameFrame("frame"),
 								nameMask("mask"),
 								nameDebug("displayDebug"),
+								nameLighting("renderLighting"),
 								dummyParams("dummy", 0, 0, 1)
 {
 	// create resetter visitor
@@ -276,6 +277,9 @@ void					SceneVisitorRender::draw()
 	const SceneNodeVFFloat* pNormal   = NULL;
 	const SceneNodeVFFloat* pVertex   = NULL;
 
+	// should we use lighting?
+	const bool lighting = BZDB->isTrue(nameLighting);
+
 	// draw
 	const unsigned int n = jobs.size();
 	for (unsigned int i = 0; i < n; ++i) {
@@ -283,7 +287,7 @@ void					SceneVisitorRender::draw()
 		const Job& job = jobs[i];
 
 		// set lights
-		if (lightSetIndex != job.lightSet) {
+		if (lighting && lightSetIndex != job.lightSet) {
 			// lights are pre-transformed
 			glLoadIdentity();
 
@@ -373,7 +377,7 @@ void					SceneVisitorRender::draw()
 				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			}
 		}
-		if (pNormal != job.normal) {
+		if (lighting && pNormal != job.normal) {
 			pNormal = job.normal;
 			numItems = pNormal->getNum();
 			if (numItems < 3) {
@@ -411,10 +415,12 @@ void					SceneVisitorRender::draw()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisable(GL_COLOR_MATERIAL);
-	glDisable(GL_LIGHTING);
-	for (unsigned int j = 0; j < enabledLights; ++j)
-		glDisable(GL_LIGHT0 + j);
+	if (lighting) {
+		glDisable(GL_COLOR_MATERIAL);
+		glDisable(GL_LIGHTING);
+		for (unsigned int j = 0; j < enabledLights; ++j)
+			glDisable(GL_LIGHT0 + j);
+	}
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_TEXTURE);

@@ -100,6 +100,7 @@ private:
 
 	BzfString			nameArea, nameTime, nameFrame, nameMask;
 	BzfString			nameDebug;
+	BzfString			nameLighting;
     Instruments			instruments;
 
     struct LightInfo {

@@ -10,6 +10,8 @@
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 <group>
+
+  # the universe model (all permanent objects in the game)
   <billboard id="universe">
     <center>true</center>
 
@@ -23,10 +25,10 @@
         <scale>12</scale>
         <bias>-0.333333</bias>
         <gstate>
-          <pass number="-10"/>
-          <shading model="smooth"/>
-          <culling cull="off"/>
-          <depth write="off" func="1"/>
+          <pass number="-10" />
+          <shading model="smooth" />
+          <culling cull="off" />
+          <depth write="off" func="1" />
           <geometry>
             <color t="sunAltitude">
               # night
@@ -135,13 +137,13 @@
           <scale>800 800 800</scale>
           <matrix id="starTransform">        # scene mgr hooks in here
             <gstate>
-              <pass number="-9"/>
-              <smoothing smooth=on/>
-              <blending src="sa" dst="1-sa"/>
-              <alpha func=">=" ref=0.2/>
-              <depth write=off func="1"/>
-              <point size="2"/>
-              <include filename="stars.bzg"/>
+              <pass number="-9" />
+              <smoothing smooth="on" />
+              <blending src="sa" dst="1-sa" />
+              <alpha func=">=" ref="0.2" />
+              <depth write=off func="1" />
+              <point size="2" />
+              <include filename="stars.bzg" />
             </gstate>
           </matrix>
         </transform>
@@ -159,10 +161,10 @@
         <scale>18</scale>
         <bias>-0.527778</bias>
         <gstate>
-          <pass number="-8"/>
-          <shading model="smooth"/>
-          <culling cull="off"/>
-          <depth write=off func="1"/>
+          <pass number="-8" />
+          <shading model="smooth" />
+          <culling cull="off" />
+          <depth write="off" func="1" />
           <geometry>
             <color t="sunAltitude">
               # rising/setting color
@@ -195,7 +197,7 @@
                1.000000 -0.007695  0.010591
                1.000000 -0.004045  0.012450
             </vertex>
-            <primitive type=tfan>
+            <primitive type="tfan">
               <index>
                 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 1
               </index>
@@ -212,10 +214,10 @@
       <twist t="moonTwist">0 360</twist>
       <radius>800</radius>
       <gstate>
-        <pass number="-7"/>
-        <shading model="smooth"/>
-        <culling cull="off"/>
-        <depth write=off func="1"/>
+        <pass number="-7" />
+        <shading model="smooth" />
+        <culling cull="off" />
+        <depth write="off" func="1" />
         <geometry>
           <color>
             1 1 1 1
@@ -251,7 +253,7 @@
              1.000000 -0.003388  0.012645  1.000000  0.003388  0.012645
              1.000000  0.000000  0.013091
           </vertex>
-          <primitive type=tstrip>
+          <primitive type="tstrip">
             <index>
               0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
             </index>
@@ -261,317 +263,189 @@
     </spherical>
 
     # sun/moon light sources
-    <parameters>
-      <src>
-        sunAltitude
-        moonAltitude
-      </src>
-      <dst>
-        tSun
-        tMoon
-      </dst>
-      <scale>
-        36
-        36
-      </scale>
-      <bias>
-        -0.444444
-        -0.444444
-      </bias>
-      <choice>
-        <mask t="tSun">
-          4 # sun is down
-          2 # sun is rising/setting (interpolate between sunset and night)
-          2 # sun is rising/setting (interpolate between sunset and day)
-          1 # sun is up
-        </mask>
-
-        # sun is up, moon is irrelevant
-        <spherical>
-          <azimuth t="sunAzimuth">0 360</azimuth>
-          <altitude t="sunAltitude">-90 90</altitude>
-          <light>
-            <ambient>0.35 0.5 0.5</ambient>
-            <diffuse>1.75 1.75 1.4</diffuse>
-            <specular>1.75 1.75 1.4</specular>
-            <position>1 0 0 0</position>
-            <transform>
-              <up>2</up>
-              <group id="scene">
-                <transform>
-                  <scale>800.0 800.0 800.0</scale>
-                  <include filename="background.bzg"/>
-                  <include filename="clouds.bzg"/>
-                  <include filename="ground.bzg"/>
-                </transform>
-                <group id="world">
-                  # scene mgr hooks in here
-                </group>
-              </group>
-            </transform>
-          </light>
-        </spherical>
-
-        # sun is rising/setting.  ignore moon contribution.
-        <spherical>
-          <azimuth t="sunAzimuth">0 360</azimuth>
-          <altitude t="sunAltitude">-90 90</altitude>
-          <light>
-            <ambient t="tSun">0.3 0.3 0.3  0.3 0.3 0.3  0.3 0.3 0.3  0.35 0.50 0.50</ambient>
-            <diffuse t="tSun">0.0 0.0 0.0  0.0 0.0 0.0  0.75 0.27 0.0  1.75 1.75 1.40</diffuse>
-            <specular t="tSun">0.0 0.0 0.0  0.0 0.0 0.0  0.75 0.27 0.0  1.75 1.75 1.40</specular>
-            <position>1 0 0 0</position>
-            <transform>
-              <up>2</up>
-              <ref id="scene"/>
-            </transform>
-          </light>
-        </spherical>
-
-        # sun is down.  FIXME -- should use moonPhase to scale moonlight.
-        <choice>
-          <mask t="tMoon">
-            4 # sun and moon are down
-            2 # sun is down, moon is rising/setting
-            2 # sun is down, moon is rising/setting
-            1 # sun is down, moon is up
+    <choice>
+      <mask t="renderLighting">1 2</mask>
+      <transform>
+        <up>1</up>
+        <group id="scene">
+          <transform>
+            <scale>800.0 800.0 800.0</scale>
+            <include filename="background.bzg" />
+            <include filename="clouds.bzg" />
+            <include filename="ground.bzg" />
+          </transform>
+          <group id="world">
+            # scene mgr hooks in here
+          </group>
+        </group>
+      </transform>
+      <parameters>
+    	<src>
+          sunAltitude
+          moonAltitude
+    	</src>
+    	<dst>
+          tSun
+          tMoon
+    	</dst>
+    	<scale>
+          36
+          36
+    	</scale>
+    	<bias>
+          -0.444444
+          -0.444444
+    	</bias>
+    	<choice>
+          <mask t="tSun">
+        	4 # sun is down
+        	2 # sun is rising/setting (interpolate between sunset and night)
+        	2 # sun is rising/setting (interpolate between sunset and day)
+        	1 # sun is up
           </mask>
 
-          # sun is down, moon is up
+          # sun is up, moon is irrelevant
           <spherical>
-            <azimuth t="moonAzimuth">0 360</azimuth>
-            <altitude t="moonAltitude">-90 90</altitude>
-            <light>
-              <ambient>0.3 0.3 0.3</ambient>
-              <diffuse>0.4 0.4 0.4</diffuse>
-              <specular>0.4 0.4 0.4</specular>
+        	<azimuth t="sunAzimuth">0 360</azimuth>
+        	<altitude t="sunAltitude">-90 90</altitude>
+        	<light>
+              <ambient>0.35 0.5 0.5</ambient>
+              <diffuse>1.75 1.75 1.4</diffuse>
+              <specular>1.75 1.75 1.4</specular>
               <position>1 0 0 0</position>
               <transform>
-                <up>2</up>
-                <ref id="scene"/>
+            	<up>2</up>
+                <ref id="scene" />
               </transform>
-            </light>
+        	</light>
           </spherical>
 
-          # sun is down, moon is rising
+          # sun is rising/setting.  ignore moon contribution.
           <spherical>
-            <azimuth t="moonAzimuth">0 360</azimuth>
-            <altitude t="moonAltitude">-90 90</altitude>
-            <light>
-              <ambient>0.3 0.3 0.3</ambient>
-              <diffuse t="tMoon">0.0 0.0 0.0  0.0 0.0 0.0  0.0 0.0 0.0  0.4 0.4 0.4</diffuse>
-              <specular t="tMoon">0.0 0.0 0.0  0.0 0.0 0.0  0.0 0.0 0.0  0.4 0.4 0.4</specular>
+        	<azimuth t="sunAzimuth">0 360</azimuth>
+        	<altitude t="sunAltitude">-90 90</altitude>
+        	<light>
+              <ambient t="tSun">0.3 0.3 0.3  0.3 0.3 0.3  0.3 0.3 0.3  0.35 0.50 0.50</ambient>
+              <diffuse t="tSun">0.0 0.0 0.0  0.0 0.0 0.0  0.75 0.27 0.0  1.75 1.75 1.40</diffuse>
+              <specular t="tSun">0.0 0.0 0.0  0.0 0.0 0.0  0.75 0.27 0.0  1.75 1.75 1.40</specular>
               <position>1 0 0 0</position>
               <transform>
-                <up>2</up>
-                <ref id="scene"/>
+            	<up>2</up>
+            	<ref id="scene" />
               </transform>
-            </light>
+        	</light>
           </spherical>
 
-          # sun and moon are down
-          <light>
-            <ambient>0.3 0.3 0.3</ambient>
-            <diffuse>0.0 0.0 0.0</diffuse>
-            <specular>0.0 0.0 0.0</specular>
-            <position>1 0 0 0</position>
-            <transform>
-              <up>1</up>
-              <ref id="scene"/>
-            </transform>
-          </light>
-        </choice>
-      </choice>
-    </parameters>
+          # sun is down.  FIXME -- should use moonPhase to scale moonlight.
+          <choice>
+        	<mask t="tMoon">
+              4 # sun and moon are down
+              2 # sun is down, moon is rising/setting
+              2 # sun is down, moon is rising/setting
+              1 # sun is down, moon is up
+        	</mask>
+
+        	# sun is down, moon is up
+        	<spherical>
+              <azimuth t="moonAzimuth">0 360</azimuth>
+              <altitude t="moonAltitude">-90 90</altitude>
+              <light>
+            	<ambient>0.3 0.3 0.3</ambient>
+            	<diffuse>0.4 0.4 0.4</diffuse>
+            	<specular>0.4 0.4 0.4</specular>
+            	<position>1 0 0 0</position>
+            	<transform>
+                  <up>2</up>
+                  <ref id="scene" />
+            	</transform>
+              </light>
+        	</spherical>
+
+        	# sun is down, moon is rising
+        	<spherical>
+              <azimuth t="moonAzimuth">0 360</azimuth>
+              <altitude t="moonAltitude">-90 90</altitude>
+              <light>
+            	<ambient>0.3 0.3 0.3</ambient>
+            	<diffuse t="tMoon">0.0 0.0 0.0  0.0 0.0 0.0  0.0 0.0 0.0  0.4 0.4 0.4</diffuse>
+            	<specular t="tMoon">0.0 0.0 0.0  0.0 0.0 0.0  0.0 0.0 0.0  0.4 0.4 0.4</specular>
+            	<position>1 0 0 0</position>
+            	<transform>
+                  <up>2</up>
+                  <ref id="scene" />
+            	</transform>
+              </light>
+        	</spherical>
+
+        	# sun and moon are down
+        	<light>
+              <ambient>0.3 0.3 0.3</ambient>
+              <diffuse>0.0 0.0 0.0</diffuse>
+              <specular>0.0 0.0 0.0</specular>
+              <position>1 0 0 0</position>
+              <transform>
+            	<up>1</up>
+            	<ref id="scene" />
+              </transform>
+        	</light>
+          </choice>
+    	</choice>
+      </parameters>
+    </choice>
   </billboard>
 
-  # tank models, one per team
-  <group>
-    # plain player
-    <metadata id="player">
-      # FIXME -- need level of detail
-      <include filename="tank1.bzg"/>
-    </metadata>
-
-    # red player
-    <metadata id="player-r">
-      <geometry>
-        <color>1 0.25 0.25 1</color>
-        <ref id="player"/>
-      </geometry>
-    </metadata>
-
-    # green player
-    <metadata id="player-g">
-      <geometry>
-        <color>0.25 1 0.25 1</color>
-        <ref id="player"/>
-      </geometry>
-    </metadata>
-
-    # blue player
-    <metadata id="player-b">
-      <geometry>
-        <color>0.25 0.25 1 1</color>
-        <ref id="player"/>
-      </geometry>
-    </metadata>
-
-    # purple player
-    <metadata id="player-p">
-      <geometry>
-        <color>1 0.25 1 1</color>
-        <ref id="player"/>
-      </geometry>
-    </metadata>
-
-    # rogue player
-    <metadata id="player-y">
-      <geometry>
-        <color>0.5 0.5 0.5 1</color>
-        <ref id="player"/>
-      </geometry>
-    </metadata>
+  # tank models, a generic model then one per team
+  <group id="player">
+    # FIXME -- need level of detail
+    <include filename="tank1.bzg" />
   </group>
 
-  # flag
-  <metadata id="flag">
-    <include filename="flag.bzg"/>
-  </metadata>
+  # red player
+  <geometry id="player-r">
+    <color>1 0.25 0.25 1</color>
+    <ref id="player" />
+  </geometry>
 
-  # explosion
-  <metadata id="explosion">
-    <include filename="explosion.bzg"/>
-  </metadata>
+  # green player
+  <geometry id="player-g">
+    <color>0.25 1 0.25 1</color>
+    <ref id="player" />
+  </geometry>
 
-  # normal shots, one per team
-  <group>
-    # plain shot
-    <metadata id="shot">
-      <billboard>
-        <axis>0 0 0</axis>
-        <include filename="shot.bzg"/>
-      </billboard>
-    </metadata>
+  # blue player
+  <geometry id="player-b">
+    <color>0.25 0.25 1 1</color>
+    <ref id="player" />
+  </geometry>
 
-    # red shot
-    <metadata id="shot-r">
-      <gstate>
-        <texture repeat="off" rgba="on" filename="rbolt.rgb"/>
-        <culling cull=off/>
-        <blending src="sa" dst="1-sa"/>
-        <ref id="shot"/>
-      </gstate>
-    </metadata>
+  # purple player
+  <geometry id="player-p">
+    <color>1 0.25 1 1</color>
+    <ref id="player" />
+  </geometry>
 
-    # green shot
-    <metadata id="shot-g">
-      <gstate>
-        <texture repeat="off" rgba="on" filename="gbolt.rgb"/>
-        <culling cull=off/>
-        <blending src="sa" dst="1-sa"/>
-        <ref id="shot"/>
-      </gstate>
-    </metadata>
+  # rogue player
+  <geometry id="player-y">
+    <color>0.5 0.5 0.5 1</color>
+    <ref id="player" />
+  </geometry>
 
-    # blue shot
-    <metadata id="shot-b">
-      <gstate>
-        <texture repeat="off" rgba="on" filename="bbolt.rgb"/>
-        <culling cull=off/>
-        <blending src="sa" dst="1-sa"/>
-        <ref id="shot"/>
-      </gstate>
-    </metadata>
+  # get flag
+  <include filename="flag.bzg" />
 
-    # purple shot
-    <metadata id="shot-p">
-      <gstate>
-        <texture repeat="off" rgba="on" filename="pbolt.rgb"/>
-        <culling cull=off/>
-        <blending src="sa" dst="1-sa"/>
-        <ref id="shot"/>
-      </gstate>
-    </metadata>
+  # get explosions
+  <include filename="explosion.bzg" />
 
-    # rogue shot
-    <metadata id="shot-y">
-      <gstate>
-        <texture repeat="off" rgba="on" filename="ybolt.rgb"/>
-        <culling cull=off/>
-        <blending src="sa" dst="1-sa"/>
-        <ref id="shot"/>
-      </gstate>
-    </metadata>
-  </group>
+  # get normal shots
+  <include filename="shot.bzg" />
 
   # laser shots
-  <group>
-    # plain shot
-    <metadata id="shot-L-plain">
-      <include filename="shot-L.bzg"/>
-    </metadata>
-
-    # generic shot
-    <metadata id="shot-L">
-      <geometry>
-        <color>
-          1 1 1 1
-        </color>
-        <gstate>
-          # FIXME -- use pass to render later?
-          <texture repeat="off" rgba="on" filename="laser.rgb"/>
-          <culling cull="off"/>
-          <blending src="sa" dst="1"/>
-          <depth write="off"/>
-          <ref id="shot-L-plain"/>
-        </gstate>
-      </geometry>
-    </metadata>
-  </group>
+  <include filename="shot-L.bzg" />
 
   # guided missile shots
-  <group>
-    # plain shot
-    <metadata id="shot-GM-plain">
-      <billboard>
-        <axis>0 0 0</axis>
-        <include filename="shot-GM.bzg"/>
-      </billboard>
-    </metadata>
-
-    # generic shot
-    <metadata id="shot-GM">
-      <geometry>
-        <color>
-          1 1 1 1
-        </color>
-        <gstate>
-          <texture repeat="off" rgba="on" filename="missile.rgb"/>
-          <culling cull="off"/>
-          <blending src="sa" dst="1-sa"/>
-          <alpha func=">=" ref=0.1/>
-          <ref id="shot-GM-plain"/>
-        </gstate>
-      </geometry>
-    </metadata>
-  </group>
+  <include filename="shot-GM.bzg" />
 
   # shock wave shots
-  <group>
-    # plain shot
-    <metadata id="shot-SW-plain">
-      <include filename="shot-SW.bzg"/>
-    </metadata>
-
-    # generic shot
-    <metadata id="shot-SW">
-      <gstate>
-        <culling cull="off"/>
-        <blending src="sa" dst="1-sa"/>
-        <ref id="shot-SW-plain"/>
-      </gstate>
-    </metadata>
-  </group>
+  <include filename="shot-SW.bzg" />
 
 </group>
