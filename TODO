@@ -5,9 +5,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * configure should test and enable the fudged acosf atanf asinf
 
-* server should gravitate lag towards infinity if players do not
-  respond with a lag update instead of leaving it at zero.
-
 * the players have spoken, and hold-the-flag is wanted
 
 * add language translations for the new flags
