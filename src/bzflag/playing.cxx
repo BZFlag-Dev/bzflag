@@ -3109,9 +3109,9 @@ static void		setRobotTarget(RobotPlayer* robot)
 	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit())
 	 || player[j]->getTeam() != robot->getTeam())) {
 
-      if((player[j]->getFlag() == Flags::PhantomZone && player[j]->isFlagActive()) &&
-      		(robot->getFlag() == Flags::PhantomZone && !robot->isFlagActive()) ||
-      		(robot->getFlag() != Flags::PhantomZone))
+      if ((player[j]->getFlag() == Flags::PhantomZone
+	   && player[j]->isFlagActive()) &&
+	  (robot->getFlag() != Flags::PhantomZone || !robot->isFlagActive()))
         continue;
 
       if (World::getWorld()->allowTeamFlags() && 
