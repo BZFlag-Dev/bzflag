@@ -40,7 +40,10 @@
 /* local implementation headers */
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
+#include "StartupInfo.h"
 
+/* from playing.h */
+StartupInfo* getStartupInfo();
 
 char ServerStartMenu::settings[] = "bfaaaaabaaaaa";
 
@@ -349,6 +352,7 @@ void ServerStartMenu::dismiss()
 void ServerStartMenu::execute()
 {
   static const char*	serverApp = "bzfs";
+  bool success = false;
 
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
@@ -497,10 +501,16 @@ void ServerStartMenu::execute()
     }
     else {
       setStatus("Server started.");
+      success = true;
     }
 #elif defined (macintosh)
 
     MacLaunchServer (arg, args);
+
+    // umm...assume it succeeded?
+    // maybe FIXME some mac person?
+    success = true;
+
 #else /* defined(_WIN32) */
 
     // UNIX
@@ -523,13 +533,23 @@ void ServerStartMenu::execute()
     else if (pid != 0) {
       // parent process.  wait a bit and check if child died.
       sleep(1);
-      if (waitpid(pid, NULL, WNOHANG) != 0)
+      if (waitpid(pid, NULL, WNOHANG) != 0) {
 	setStatus("Failed.");
-      else
+      } else {
 	setStatus("Server started.");
+	success = true;
+      }
+
     }
 
 #endif /* defined(_WIN32) */
+
+    if (success) {
+      // set server/port in join menu to localhost:5154
+      StartupInfo* info = getStartupInfo();
+      strcpy(info->serverName, "localhost");
+      info->serverPort = 5154;  //note that if bzfs had to use a fallback port this will be wrong
+    } // success
   }
 }
 
