@@ -22,7 +22,6 @@
 /* common implementation headers */
 #include "BzfDisplay.h"
 #include "SceneRenderer.h"
-#include "BZDBCache.h"
 #include "FontManager.h"
 #include "OpenGLTexture.h"
 
@@ -282,7 +281,7 @@ void			DisplayMenu::resize(int width, int height)
   if (renderer) {
     HUDuiList* tex;
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::blend);
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
     if (BZDB.isTrue("lighting")) {
       if (BZDB.isTrue("tesselation")) {
