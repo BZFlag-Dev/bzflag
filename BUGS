@@ -1,5 +1,7 @@
 recent bugs
 ------------
+- bzadmin defaults to player 0 instead of all even though it says "Send to all:"
+
 - Flaghelp falls into the radar area when radar is 'bigger'
 
 - VC 7.1 release builds do not work, link errors in texture manager. It seems to have
@@ -8,39 +10,39 @@ recent bugs
 - if a modified client sends an invalid id back to the server, the invalid id
   gets propagated to all clients, crashing everyone during unpack() with a
   variety of nasty results.  simple to reproduce, modify the
-	ShotPath.cxx:FiringInfo() shot.id = uint16_t(id); line to be some high 
+	ShotPath.cxx:FiringInfo() shot.id = uint16_t(id); line to be some high
   number and then shoot yourself.  (fhffhqvb reported this)  1) Server should
   check that id's are valid to not propagate garbage and 2) Clients should
-  not have actually crashed in unpack() regardless..  
+  not have actually crashed in unpack() regardless..
 - Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
   in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
   Could we be running off the end of the packet (ie count is fubar'ed?)
   Perhaps add sanity check for not overruning end of buffer.
 
-- On a FFA game, where no purple was allowed a Team size of 65535 was displayed for Purple. 
+- On a FFA game, where no purple was allowed a Team size of 65535 was displayed for Purple.
 
 - Thief delays shooting on theft by firing shots in the ether, this causes display
   problems. Should rely on a simple TimeKeeper timer instead.
 
 - bzc file writing seems to be goofy. Some options never are written into
-  the file, and some (binds) get written more than once. [I have two 
+  the file, and some (binds) get written more than once. [I have two
   bind lines for the same key]
 
 - Rabbit selection is borken. Two things. A player often is Rabbit two times
   in a row, which was intended to be illegal, and high scoring tanks get bypassed.
-  Was playing on ducati where a player was consistantly in #1 slot, but NEVER 
+  Was playing on ducati where a player was consistantly in #1 slot, but NEVER
   was rabbit. (The latter probaby happens when all players have a negative
   score, the formula does not work well then). Nope: Top player was 44-31 or there
   abouts.
 
 - Player kicked after getting V flag (and possibly TH) stolen by another thief.
 
-- bzadmin seems to be less responsive over the network than bzflag - a 
-  bzadmin client can get kicked from a very active game by the server 
+- bzadmin seems to be less responsive over the network than bzflag - a
+  bzadmin client can get kicked from a very active game by the server
   for causing it to queue too many packages (there's a limit at 20kB, when I
   removed it the queue went up to at least 64kB)
 
-- Player continues to see the locked on me message after death until 
+- Player continues to see the locked on me message after death until
   shooter locked onto a different target. (Nidhoggr reported this)
 
 - Sometimes when you pick up MG, the tank automatically, and constantly
