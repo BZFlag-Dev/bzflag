@@ -4257,20 +4257,15 @@ int main(int argc, char **argv)
     }
 
     // update notResponding
-    float notRespondingTime = BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
     for (int h = 0; h < curMaxPlayers; h++) {
-      if (player[h].isPlaying()) {
-	bool oldnr = player[h].notResponding;
-	player[h].notResponding = ((TimeKeeper::getCurrent() - player[h].lastupdate) > notRespondingTime);
+      if (player[h].hasStartedToNotRespond()) {
 	// if player is the rabbit, anoint a new one
-	if (!oldnr && player[h].notResponding && h == rabbitIndex)
+	if (h == rabbitIndex)
 	  anointNewRabbit();
 	// if player is holding a flag, drop it
-	if (!oldnr && player[h].notResponding) {
-	  for (int j = 0; j < numFlags; j++) {
-	    if (flag[j].player == h) {
-	      dropFlag(h, lastState[h].pos);
-	    }
+	for (int j = 0; j < numFlags; j++) {
+	  if (flag[j].player == h) {
+	    dropFlag(h, lastState[h].pos);
 	  }
 	}
       }
@@ -4599,9 +4594,9 @@ int main(int argc, char **argv)
 
     for (i = 0; i < curMaxPlayers; i++) {
       // kick any clients that need to be
-      if (player[i].toBeKicked) {
-	removePlayer(i, player[i].toBeKickedReason.c_str(), false);
-	player[i].toBeKicked = false;
+      std::string reasonToKick = player[i].reasonToKick();
+      if (reasonToKick != "") {
+	removePlayer(i, reasonToKick.c_str(), false);
       }
     }
     // check messages

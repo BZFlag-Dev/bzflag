@@ -195,6 +195,8 @@ public:
   bool        canBeRabbit(bool relaxing = false);
   void        setPaused(bool pauses);
   bool        isTooMuchIdling(TimeKeeper tm, float kickThresh, int index);
+  bool        hasStartedToNotRespond();
+  std::string reasonToKick();
 private:
   void        udpSend(int udpSocket, const void *b, size_t l);
   int         send(const void *buffer, size_t length);
@@ -273,12 +275,12 @@ private:
     bool paused;
     TimeKeeper pausedSince;
 
-public:
     bool notResponding;
     bool toBeKicked;
     std::string toBeKickedReason;
 
 
+public:
     // lag measurement
     float lagavg, jitteravg, lostavg, lagalpha, jitteralpha, lostalpha;
     int lagcount, laglastwarn, lagwarncount;

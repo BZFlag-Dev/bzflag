@@ -993,6 +993,28 @@ bool PlayerInfo::isTooMuchIdling(TimeKeeper tm, float kickThresh, int index) {
   return idling;
 };
 
+bool PlayerInfo::hasStartedToNotRespond() {
+  float notRespondingTime = BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
+  bool startingToNotRespond = false;
+  if (state > PlayerInLimbo) {
+    bool oldnr = notResponding;
+    notResponding = (TimeKeeper::getCurrent() - lastupdate)
+      > notRespondingTime;
+    if (!oldnr && notResponding)
+      startingToNotRespond = true;
+  }
+  return startingToNotRespond;
+}
+
+std::string PlayerInfo::reasonToKick() {
+  std::string reason;
+  if (toBeKicked) {
+    reason = toBeKickedReason;
+  }
+  toBeKicked = false;
+  return reason;
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
