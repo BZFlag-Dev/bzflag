@@ -263,7 +263,8 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 {
   switch (perm) {
     case PlayerAccessInfo::actionMessage: return "actionMessage";
-    case PlayerAccessInfo::adminMessages: return "adminMessages";
+    case PlayerAccessInfo::adminMessageSend: return "adminMessageSend";
+    case PlayerAccessInfo::adminMessageReceive: return "adminMessageReceive";
     case PlayerAccessInfo::antiban : return "antiban";
     case PlayerAccessInfo::antideregister : return "antideregister";
     case PlayerAccessInfo::antikick : return "antikick";
@@ -311,7 +312,8 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
 {
   if (name == "ACTIONMESSAGE") return PlayerAccessInfo::actionMessage;
-  if (name == "ADMINMESSAGES") return PlayerAccessInfo::adminMessages;
+  if (name == "ADMINMESSAGESEND") return PlayerAccessInfo::adminMessageSend;
+  if (name == "ADMINMESSAGERECEIVE") return PlayerAccessInfo::adminMessageReceive;
   if (name == "ANTIBAN") return PlayerAccessInfo::antiban;
   if (name == "ANTIDEREGISTER") return PlayerAccessInfo::antideregister;
   if (name == "ANTIKICK") return PlayerAccessInfo::antikick;

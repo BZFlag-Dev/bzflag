@@ -1531,7 +1531,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
   } else if (targetPlayer == AdminPlayers){
     // admin messages
     std::vector<int> admins
-      = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessages);
+      = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
     for (unsigned int i = 0; i < admins.size(); ++i)
       directMessage(admins[i], MsgMessage, len, bufStart);
   } else {
@@ -3590,21 +3590,17 @@ possible attack from %s\n",
 			     HiddenPacket);
 	}
 	parseCommand(message, t);
-      }
-      else if (targetPlayer == AdminPlayers) {
-	if (playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessages)) {
+      } else if (targetPlayer == AdminPlayers) {
+	if (playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend)) {
 	  sendMessage (t, AdminPlayers, message);
-	}
-	else {
+	} else {
 	  sendMessage(ServerPlayer, t,
 		      "You do not have permission to speak on the admin channel.");
 	}
-      }
-      else if ((targetPlayer < LastRealPlayer) && !realPlayer(targetPlayer)) {
+      } else if ((targetPlayer < LastRealPlayer) && !realPlayer(targetPlayer)) {
 	// check for bogus targets
 	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
-      }
-      else {
+      } else {
 	// most messages should come here
 	sendMessage(t, targetPlayer, message);
       }

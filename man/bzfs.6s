@@ -849,6 +849,10 @@ REQUIREIDENTIFY         user must /identify when using this callsign
 PRIVATEMESSAGE		/msg
 .br
 ACTIONMESSAGE		/me
+.br
+ADMINMESSAGESEND	player may send messages on the admin channel
+.br
+ADMINMESSAGERECEIVE	player receives messages sent to admin channel
 
 .TP
 .B /register {password}

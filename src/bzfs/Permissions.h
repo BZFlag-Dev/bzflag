@@ -41,7 +41,8 @@ public:
   enum AccessPerm
     {
       actionMessage = 0,
-      adminMessages,
+      adminMessageSend,
+      adminMessageReceive,
       antiban,
       antideregister,
       antikick,
