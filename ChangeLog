@@ -2,7 +2,6 @@
 
 			     BZFlag release notes
 
-* Added Acceleration flag (Dave's Dodge flag patch) - Sean Morrison
 * Save world files from the client - Dave Brosius
 * Drop flags on pause after timeout - Sean Morrison
 * Set size of shots on radar - Sean Morrison
