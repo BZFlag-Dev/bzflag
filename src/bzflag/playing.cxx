@@ -1718,7 +1718,9 @@ static void		doMotion()
 	if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
 	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
 	    float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
+	    pos[2] += BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 	    Ray tankRay(pos, dir);
+	    pos[2] -= BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 	    distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
 	    const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
 	    if (!building) {
