@@ -167,7 +167,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     // border pixels from adjacent textures, so must add 2 pixels to
     // width of each texture (if the texture gets split up).
     int width, height, depth;
-    unsigned char* mountainImage = getTextureImage("mountains",
+    unsigned char* mountainImage = getTextureImage("mountain",
 							width, height, depth);
     if (mountainImage) {
       mountainsAvailable = true;
