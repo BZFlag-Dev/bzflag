@@ -6824,8 +6824,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      speedTolerance = (float) atof(argv[i]);
-	  fprintf(stderr, "using speed autokick tolerance of \"%f\"\n", speedTolerance);
+      speedTolerance = (float) atof(argv[i]) / 100.0f;
+	  fprintf(stderr, "using speed autokick tolerance of \"%f\"\n", speedTolerance * 100.0f);
     }
 	else {
       fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
