@@ -40,6 +40,7 @@ bzfs \- BZFlag game server
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
 [\fB\-printscore\fR]
+[\fN\-disableRoger\fR]
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]
 [\fB\-publiclist \fIurl\fR]
@@ -238,6 +239,9 @@ such as /kick messages.
 .TP
 .B -printscore
 Write score to stdout whenever it changes
+.TP
+.B -disableRoger
+Disallow clients from using the ROGER autopilot
 .TP
 \fB-public\fI description\fR
 Advertise this server on the internet with the given \fIdescription\fR.

@@ -75,6 +75,7 @@ const char *usageString =
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
+"[-prohibitRoger] "
 "[-public <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
@@ -151,6 +152,7 @@ const char *extraUsageString =
 #ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
 #endif
+"\t-prohibitRoger: disallow clients from using autopilot\n"
 "\t-public <server-description>\n"
 "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
 "\t-publiclist <list-server-url>\n"
@@ -714,6 +716,9 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       // dump score whenever it changes
       options.printScore = true;
 #endif
+    } else if (strcmp(argv[i], "-prohibitRoger") == 0) {
+      // disallow clients from using autopilot
+      options.prohibitRoger = true;
     } else if (strcmp(argv[i], "-public") == 0) {
       if (++i == argc) {
 	std::cerr << "argument expected for -public\n";
