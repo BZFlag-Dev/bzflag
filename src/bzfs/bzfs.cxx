@@ -270,14 +270,15 @@ bool verifyUserPassword(const std::string &nick, const std::string &pass)
   std::map<std::string, std::string>::iterator itr = passwordDatabase.find(str1);
   if (itr == passwordDatabase.end())
     return false;
-  return (itr->second == pass);
+  return itr->second == MD5(pass).hexdigest();
 }
 
 void setUserPassword(const std::string &nick, const std::string &pass)
 {
   std::string str1 = nick;
   makeupper(str1);
-  passwordDatabase[str1] = pass;
+  // assume it's already a hash when length is 32 (FIXME?)
+  passwordDatabase[str1] = pass.size()==32 ? pass : MD5(pass).hexdigest();
 }
 
 std::string nameFromPerm(AccessPerm perm)
@@ -4026,9 +4027,8 @@ static bool defineWorld()
     strcpy(hexDigest,"t");
   else
     strcpy(hexDigest, "p");
-  char *digest = md5.hex_digest();
-  strcat( hexDigest, md5.hex_digest());
-  delete[] digest;
+  std::string digest = md5.hexdigest();
+  strcat(hexDigest, digest.c_str());
 
   // reset other stuff
   int i;
