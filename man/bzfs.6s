@@ -540,6 +540,16 @@ You are now an administrator!
 .ft R
 
 .TP
+.B /clientquery [callsign]
+Retrieve client version info from all users, or just CALLSIGN if given Example:
+.ft CW
+.nf
+.ne 2
+/clientquery MrApathyCream
+MrApathyCream: Version: BZFlag 1.11.6-20040729-gnu-linux-SDL
+.ft R
+
+.TP
 .B /report {message}
 Write a message to the server administrator. Example:
 .ft CW
