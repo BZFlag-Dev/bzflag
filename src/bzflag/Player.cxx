@@ -286,7 +286,7 @@ void			Player::addPlayer(SceneDatabase* scene,
       GLfloat plane[4];
       plane[0] = plane[1] = 0.0f;
       plane[2] = 1.0f;
-      plane[3] = -0.1f;
+      plane[3] = 0.0f;
       tankNode->setClipPlane(plane);
     }
     else {
