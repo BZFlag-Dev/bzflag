@@ -76,6 +76,7 @@ class MainWindow {
     // for these values that we need every frame.
     void		getMousePosition(int& mx, int& my) const;
     void		getJoyPosition(int& mx, int& my) const;
+    unsigned long	getJoyButtonSet() const;
 
   private:
     // no copying

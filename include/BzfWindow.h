@@ -67,6 +67,7 @@ class BzfWindow {
     virtual void	initJoystick(const char* joystickName);
     virtual boolean	joystick() const { return False; }
     virtual void	getJoy(int& x, int& y) const { x = 0; y = 0; }
+    virtual unsigned long getJoyButtons() const { return 0; }
 
     void		callExposeCallbacks() const;
     void		addExposeCallback(void (*cb)(void*), void* data);

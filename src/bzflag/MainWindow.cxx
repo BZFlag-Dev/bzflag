@@ -241,3 +241,8 @@ void			MainWindow::getJoyPosition(int& mx, int& my) const
   my = ((viewHeight >> 1)*my)/(900);
 }
 
+unsigned long                  MainWindow::getJoyButtonSet() const
+{
+  return window->getJoyButtons();
+}
+
