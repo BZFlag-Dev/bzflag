@@ -37,11 +37,14 @@ class TriWallSceneNode : public WallSceneNode {
 
     void		getExtents(float* mins, float* maxs) const;
     bool		inAxisBox (const float* mins,
-				   const float* maxs) const;
-    int		 getVertexCount () const;
-    const	       GLfloat* getVertex (int vertex) const;
+                           const float* maxs) const;
+    int		 	getVertexCount () const;
+    const		GLfloat* getVertex (int vertex) const;
 
     bool		cull(const ViewFrustum&) const;
+    
+    RenderNode* getRenderNode(int) { return nodes[0]; }
+    int 		getRenderNodeCount() { return 1; }
 
   protected:
     class Geometry : public RenderNode {

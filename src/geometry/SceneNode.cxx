@@ -225,30 +225,6 @@ const GLfloat* SceneNode::getVertex (int) const
 }
 
 
-void SceneNode::enableInvertView()
-{
-  OpenGLGState::setCullFace(GL_FRONT);
-  if (!OpenGLGState::getInvertCull()) {
-    glPolygonMode(GL_BACK, GL_LINE);
-    glPolygonMode(GL_FRONT, GL_FILL);
-  } else {
-    glPolygonMode(GL_FRONT, GL_LINE);
-    glPolygonMode(GL_BACK, GL_FILL);
-  }
-  glLineWidth(2.0f);
-  return;
-}
-
-
-void SceneNode::disableInvertView()
-{
-  glLineWidth(1.0f);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  OpenGLGState::setCullFace(GL_BACK);
-  return;
-}
-
-
 //
 // GLfloat2Array
 //

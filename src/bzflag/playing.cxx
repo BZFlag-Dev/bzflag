@@ -4514,20 +4514,13 @@ void drawFrame(const float dt)
       addExplosions(scene);
 
       // if inside a building, add some eighth dimension scene nodes.
-      const Obstacle* obs = myTank->getContainingBuilding();
-      if (obs != NULL) {
-	// use the parent MeshObstacle instead of the MeshFace
-	// (if available, some mesh faces do not have parents)
-	if (obs->getType() == MeshFace::getClassName()) {
-	  const MeshFace* face = (const MeshFace*) obs;
-	  const MeshObstacle* mesh = face->getMesh();
-	  if (mesh != NULL) {
-	    obs = (const Obstacle*) mesh;
-	  }
-	}
-	// add the inside nodes
-	for (int n = 0; n < obs->getInsideSceneNodeCount(); n++) {
-	  scene->addDynamicNode(obs->getInsideSceneNodeList()[n]);
+      const std::vector<const Obstacle*>& list = myTank->getInsideBuildings();
+      for (unsigned int n = 0; n < list.size(); n++) {
+        const Obstacle* obs = list[n];
+	const int nodeCount = obs->getInsideSceneNodeCount();
+	SceneNode** nodeList = obs->getInsideSceneNodeList();
+	for (int n = 0; n < nodeCount; n++) {
+	  scene->addDynamicNode(nodeList[n]);
 	}
       }
     }

@@ -21,6 +21,7 @@
 #include "WallObstacle.h"
 #include "BZDBCache.h"
 #include "FlagSceneNode.h"
+#include "CollisionManager.h"
 #include "PhysicsDriver.h"
 
 /* local implementation headers */
@@ -793,6 +794,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
       firingStatus = Ready;
     break;
   }
+  
+  // calculate the list of inside buildings
+  insideBuildings.clear(); // clear the list
+  if (location == InBuilding) {
+    collectInsideBuildings();
+  }
 
   // move tank
   move(newPos, newAzimuth);
@@ -897,6 +904,65 @@ bool LocalPlayer::getHitNormal(const Obstacle* o,
   const float* dims = getDimensions();
   return o->getHitNormal(pos1, azimuth1, pos2, azimuth2,
 			 dims[0], dims[1], dims[2], normal);
+}
+
+
+static bool notInObstacleList(const Obstacle* obs,
+                              const std::vector<const Obstacle*>& list)
+{
+  for (unsigned int i = 0; i < list.size(); i++) {
+    if (obs == list[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+void LocalPlayer::collectInsideBuildings()
+{
+  const float* pos = getPosition();
+  const float angle = getAngle();
+  const float* dims = getDimensions();
+  
+  // get the list of possible inside buildings
+  const ObsList* olist =
+    COLLISIONMGR.boxTest (pos, angle, dims[0], dims[1], dims[2]);
+
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    if (obs->inBox(pos, angle, dims[0], dims[1], dims[2])) {
+      if (obs->getType() == MeshFace::getClassName()) {
+        const MeshFace* face = (const MeshFace*) obs;
+        const MeshObstacle* mesh = (const MeshObstacle*) face->getMesh();
+        // check it for the death touch
+        if (deathPhyDrv < 0) {
+          const int driver = face->getPhysicsDriver();
+          const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+          if ((phydrv != NULL) && (phydrv->getIsDeath())) {
+            deathPhyDrv = driver;
+          }
+        }
+        // add the mesh if not already present
+        if (!obs->isDriveThrough() &&
+            notInObstacleList(mesh, insideBuildings)) {
+          insideBuildings.push_back(mesh);
+        }
+      }
+      else if (!obs->isDriveThrough()) {
+        if (obs->getType() == MeshObstacle::getClassName()) {
+          // add the mesh if not already present
+          if (notInObstacleList(obs, insideBuildings)) {
+            insideBuildings.push_back(obs);
+          }
+        } else {
+          insideBuildings.push_back(obs);
+        }
+      }
+    }
+  }
+
+  return;
 }
 
 

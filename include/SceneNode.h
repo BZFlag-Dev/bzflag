@@ -73,10 +73,6 @@ class SceneNode {
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
 
-
-    static void enableInvertView();
-    static void disableInvertView();
-
     virtual int getRenderNodeCount() { return 0; }
     virtual RenderNode*	getRenderNode(int) { return NULL; }
     virtual OpenGLGState* getGState(int) { return NULL; }

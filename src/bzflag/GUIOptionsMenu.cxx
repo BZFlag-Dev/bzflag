@@ -119,6 +119,17 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   list.push_back(option);
 
+  // radar shot leading line
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Leading Shot Line:");
+  option->setCallback(callback, (void*)"F");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+
   // set radar size
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -289,6 +300,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("linedradarshots")));
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("sizedradarshots")));
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::leadingShotLine ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
@@ -361,6 +373,10 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 's':
       BZDB.set("sizedradarshots", TextUtils::format("%d", list->getIndex()));
+      break;
+
+    case 'F':
+      BZDB.set("leadingShotLine", list->getIndex() ? "1" : "0");
       break;
 
     case 'R':

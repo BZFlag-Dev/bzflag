@@ -21,12 +21,22 @@
 
 // common headers
 #include "SceneRenderer.h"
-
+#include "OpenGLGState.h"
+#include "BZDBCache.h"
 
 EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
 {
   sceneNode = node;
   ownTheNode = _ownTheNode;
+  
+  const OpenGLGState* gs = node->getGState(0);
+  if (gs == NULL) {
+    renderNodeCount = 0;
+    renderNodes = NULL;
+    return;
+  }
+
+  notifyStyleChange(); // setup the gstate
 
   renderNodeCount = sceneNode->getRenderNodeCount();
   if (renderNodeCount > 0) {
@@ -69,6 +79,27 @@ bool EighthDimShellNode::cull(const ViewFrustum&) const
 
 void EighthDimShellNode::notifyStyleChange()
 {
+  const OpenGLGState* gs = sceneNode->getGState(0);
+  if (gs == NULL) { // safety
+    return;
+  }
+
+  OpenGLGStateBuilder gb = *gs;
+  
+//  if (BZDBCache::blend) {
+//    gb.setBlending(GL_ONE, GL_ONE);
+//  } else {
+//    gb.setStipple(0.75f);
+//  }
+//  gb.enableSphereMap(true);
+
+//  gb.resetBlending(); // disable blending
+//  gb.enableTexture(false);
+
+  gb.setCulling(GL_FRONT); // invert the culling
+
+  gstate = gb.getState(); // get the modified gstate
+  
   return;
 }
 
@@ -76,11 +107,7 @@ void EighthDimShellNode::notifyStyleChange()
 void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 {
   for (int i = 0; i < renderNodeCount; i++) {
-
-    OpenGLGState* gstate = sceneNode->getGState(i);
-    if ((renderNodes[i] != NULL) && (gstate != NULL)) {
-      renderer.addRenderNode(renderNodes[i], gstate);
-    }
+    renderer.addRenderNode(renderNodes[i], &gstate);
   }
   return;
 }
@@ -105,11 +132,20 @@ EighthDimShellNode::ShellRenderNode::~ShellRenderNode()
 
 void EighthDimShellNode::ShellRenderNode::render()
 {
-  SceneNode::enableInvertView();
+//  glLogicOp(GL_XOR);
+//  glEnable(GL_COLOR_LOGIC_OP);
+//  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);  
+
+  glPolygonMode(GL_BACK, GL_LINE);
+  glLineWidth(3.0f);
 
   renderNode->render();
 
-  SceneNode::disableInvertView();
+  glLineWidth(1.0f);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+//  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);  
+//  glDisable(GL_COLOR_LOGIC_OP);
 
   return;
 }

@@ -50,6 +50,10 @@
 #include "DynamicColor.h"
 
 
+// uncomment for cheaper eighth dimension scene nodes
+//#define SHELL_INSIDE_NODES
+
+
 //
 // SceneDatabaseBuilder
 //
@@ -411,10 +415,18 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
       node->setUseColorTexture(useColorTexture[1]);
     }
 
+#ifdef SHELL_INSIDE_NODES
+    const bool ownTheNode = db->addStaticNode(node, true);
+    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
+    o.addInsideSceneNode(inode);
+#else
     db->addStaticNode(node, false);
+#endif // SHELL_INSIDE_NODES  
+
     part = (part + 1) % 6;
   }
 
+#ifndef SHELL_INSIDE_NODES
   // add the inside node
   GLfloat obstacleSize[3];
   obstacleSize[0] = o.getWidth();
@@ -423,6 +435,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   SceneNode* inode =
     new EighthDBoxSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
+#endif // SHELL_INSIDE_NODES  
 
   delete nodeGen;
 }
@@ -463,10 +476,18 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
     node->setTexture(pyramidTexture);
     node->setUseColorTexture(useColorTexture);
 
+#ifdef SHELL_INSIDE_NODES
+    const bool ownTheNode = db->addStaticNode(node, true);
+    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
+    o.addInsideSceneNode(inode);
+#else
     db->addStaticNode(node, false);
+#endif // SHELL_INSIDE_NODES  
+
     part = (part + 1) % 5;
   }
 
+#ifndef SHELL_INSIDE_NODES
   // add the inside node
   GLfloat obstacleSize[3];
   obstacleSize[0] = o.getWidth();
@@ -475,6 +496,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   SceneNode* inode =
     new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
+#endif // SHELL_INSIDE_NODES  
 
   delete nodeGen;
 }
@@ -544,9 +566,17 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
       }
     }
     part++;
+
+#ifdef SHELL_INSIDE_NODES
+    const bool ownTheNode = db->addStaticNode(node, true);
+    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
+    o.addInsideSceneNode(inode);
+#else
     db->addStaticNode(node, false);
+#endif // SHELL_INSIDE_NODES  
   }
 
+#ifndef SHELL_INSIDE_NODES
   // add the inside node
   GLfloat obstacleSize[3];
   obstacleSize[0] = o.getWidth();
@@ -555,6 +585,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   SceneNode* inode = new
     EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
+#endif // SHELL_INSIDE_NODES  
 
   delete nodeGen;
 }

@@ -33,6 +33,7 @@ public:
 	static bool  smooth;
 	static bool  colorful;
 	static bool  animatedTreads;
+	static bool  leadingShotLine;
 
 	static float maxLOD;
 	static float worldSize;

@@ -862,9 +862,9 @@ void TankSceneNode::TankRenderNode::render()
     }
     else {
       // exploding -- draw back facing stuff first then draw front facing stuff
-      OpenGLGState::setCullFace(GL_FRONT);
+      glCullFace(GL_FRONT);
       renderParts();
-      OpenGLGState::setCullFace(GL_BACK);
+      glCullFace(GL_BACK);
       renderParts();
     }
   }
@@ -982,16 +982,19 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
     glEnable(GL_POLYGON_OFFSET_FILL);
   }
 
-  glDepthFunc(GL_LEQUAL);
+  const float offsetFactor = -0.1f;
+  const float offsetDepth = -1.0f;
 
-  glPolygonOffset(-1.0f, -1.0f);
+  glDepthFunc(GL_LEQUAL);
+  
+  glPolygonOffset(1.0f * offsetFactor, 1.0f * offsetDepth);
   if (left) {
     renderPart(LeftCasing);
   } else {
     renderPart(RightCasing);
   }
 
-  glPolygonOffset(-2.0f, -2.0f);
+  glPolygonOffset(2.0f * offsetFactor, 2.0f * offsetDepth);
   for (int i = 0; i < 4; i++) {
     if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
       continue;
@@ -1003,7 +1006,7 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
     }
   }
 
-  glPolygonOffset(-3.0f, -3.0f);
+  glPolygonOffset(3.0f * offsetFactor, 3.0f * offsetDepth);
   if (left) {
     renderPart(LeftTread);
   } else {

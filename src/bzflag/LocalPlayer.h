@@ -18,6 +18,7 @@
 
 /* system interface headers */
 #include <string>
+#include <vector>
 
 /* common interface headers */
 #include "Obstacle.h"
@@ -65,8 +66,8 @@ public:
   const float*	getAntidoteLocation() const;
   ShotPath*	getShot(int index) const;
   const Player*	getTarget() const;
-  const Obstacle*	getContainingBuilding() const;
   int		getDeathPhysicsDriver() const;
+  const std::vector<const Obstacle*>& getInsideBuildings() const;
 
   void		setTeam(TeamColor);
   void		setDesiredSpeed(float fracOfMaxSpeed);
@@ -135,6 +136,7 @@ private:
   void		doSlideMotion(float dt, float slideTime,
 			  float newAngVel, float* newVelocity);
   float		getNewAngVel(float old, float desired);
+  void		collectInsideBuildings();
 
 private:
   Location	location;
@@ -170,6 +172,7 @@ private:
   bool		wantJump;
   bool		jumpPressed;
   int		deathPhyDrv;	// physics driver that caused death
+  std::vector<const Obstacle*> insideBuildings;
 };
 
 
@@ -198,14 +201,14 @@ inline const Player* LocalPlayer::getRecipient() const
   return recipient;
 }
 
-inline const Obstacle* LocalPlayer::getContainingBuilding() const
-{
-  return insideBuilding;
-}
-
 inline int		LocalPlayer::getDeathPhysicsDriver() const
 {
   return deathPhyDrv;
+}
+
+inline const std::vector<const Obstacle*>& LocalPlayer::getInsideBuildings() const
+{
+  return insideBuildings;
 }
 
 inline LocalPlayer::InputMethod LocalPlayer::getInputMethod() const

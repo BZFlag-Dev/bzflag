@@ -72,11 +72,6 @@ class OpenGLGState {
 				void* userData = NULL);
     static void		initContext();
 
-    static void		setInvertCull(bool value);
-    static bool		getInvertCull();
-
-    static void		setCullFace(GLenum face);
-
   private:
     static void		initGLState();
     static void		initStipple(void* = NULL);
@@ -100,7 +95,6 @@ class OpenGLGState {
   private:
     OpenGLGStateRep*	rep;
     static GLuint	stipples;
-    static bool		invertCull;
 };
 
 class OpenGLGStateBuilder {
@@ -138,21 +132,6 @@ class OpenGLGStateBuilder {
   private:
     OpenGLGStateState*	state;
 };
-
-
-inline void OpenGLGState::setCullFace(GLenum face)
-{
-  if (!invertCull) {
-    glCullFace(face);
-  } else {
-    if (face == GL_FRONT) {
-      glCullFace(GL_BACK);
-    } else {
-      glCullFace(GL_FRONT);
-    }
-  }
-  return;
-}
 
 
 #endif // BZF_OPENGL_GSTATE_H

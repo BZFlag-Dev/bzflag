@@ -11,9 +11,7 @@
  */
 
 /* EighthDimShellNode:
- *  Wraps a normal SceneNode between SceneNode::enableInvertView()
- *  and SceneNode::disableInvertView() calls, to provide a wireframe
- *  view.
+ *  Wraps a normal SceneNode within an inverted-view environment.
  */
 
 #ifndef	BZF_EIGHTH_DIM_SHELL_NODE_H
@@ -21,15 +19,17 @@
 
 #include "common.h"
 #include "SceneNode.h"
+#include "OpenGLGState.h"
 
 class EighthDimShellNode : public SceneNode {
   public:
     EighthDimShellNode(SceneNode *sceneNode, bool ownTheNode);
     ~EighthDimShellNode();
 
+    bool isTranslucent() const { return true; }
     bool cull(const ViewFrustum&) const;
-    void notifyStyleChange();
     void addRenderNodes(SceneRenderer&);
+    void notifyStyleChange();
 
   protected:
     class ShellRenderNode : public RenderNode {
@@ -49,6 +49,7 @@ class EighthDimShellNode : public SceneNode {
 
     int renderNodeCount;
     ShellRenderNode** renderNodes;
+    OpenGLGState gstate;
 };
 
 #endif // BZF_EIGHTH_DIM_SHELL_NODE_H

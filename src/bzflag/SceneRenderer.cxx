@@ -718,15 +718,14 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
     // flip for the reflection drawing
     frustum.flipVertical();
-    OpenGLGState::setInvertCull(true);
+    glFrontFace(GL_CW);
 
     // the reflected scene
     renderScene(_lastFrame, _sameFrame, fullWindow);
 
     // flip back
     frustum.flipVertical();
-    OpenGLGState::setInvertCull(false);
-    OpenGLGState::setCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
     // darken the reflection
     glMatrixMode(GL_PROJECTION);

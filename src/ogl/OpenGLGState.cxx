@@ -411,7 +411,7 @@ void			OpenGLGStateState::resetOpenGLState() const
     glDisable(GL_POLYGON_STIPPLE);
   }
   if (!unsorted.hasCulling || unsorted.culling != GL_BACK) {
-    OpenGLGState::setCullFace(GL_BACK);
+    glCullFace(GL_BACK);
     glEnable(GL_CULL_FACE);
   }
   if (unsorted.hasShading) {
@@ -556,10 +556,10 @@ void			OpenGLGStateState::setOpenGLState(
     if (unsorted.hasCulling) {
       if (oldState->unsorted.hasCulling) {
 	if (unsorted.culling != oldState->unsorted.culling)
-	  OpenGLGState::setCullFace(unsorted.culling);
+	  glCullFace(unsorted.culling);
       }
       else {
-	OpenGLGState::setCullFace(unsorted.culling);
+	glCullFace(unsorted.culling);
 	glEnable(GL_CULL_FACE);
       }
     }
@@ -675,7 +675,7 @@ void			OpenGLGStateState::setOpenGLState(
 
     // texture mapping
     if (unsorted.hasCulling) {
-      OpenGLGState::setCullFace(unsorted.culling);
+      glCullFace(unsorted.culling);
       glEnable(GL_CULL_FACE);
     }
     else {
@@ -952,7 +952,6 @@ static const GLubyte	stipplePattern[NumStipples][4] = {
 				{ 0xff, 0xff, 0xff, 0xff },
 			};
 GLuint			OpenGLGState::stipples = 0u;
-bool			OpenGLGState::invertCull = false;
 
 OpenGLGState::OpenGLGState()
 {
@@ -1168,18 +1167,7 @@ void			OpenGLGState::initGLState()
   glEnable(GL_CULL_FACE);
   glShadeModel(GL_FLAT);
   glDisable(GL_ALPHA_TEST);
-  setCullFace(GL_BACK);
-}
-
-void		    OpenGLGState::setInvertCull(bool value)
-{
-  // NOTE: use glFrontFace() ?
-  invertCull = value;
-}
-
-bool		    OpenGLGState::getInvertCull()
-{
-  return invertCull;
+  glCullFace(GL_BACK);
 }
 
 

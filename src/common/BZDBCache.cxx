@@ -28,6 +28,7 @@ bool  BZDBCache::lighting;
 bool  BZDBCache::smooth;
 bool  BZDBCache::colorful;
 bool  BZDBCache::animatedTreads;
+bool  BZDBCache::leadingShotLine;
 
 float BZDBCache::worldSize;
 float BZDBCache::gravity;
@@ -56,6 +57,7 @@ void BZDBCache::init()
   BZDB.addCallback("smooth", clientCallback, NULL);
   BZDB.addCallback("colorful", clientCallback, NULL);
   BZDB.addCallback("animatedTreads", clientCallback, NULL);
+  BZDB.addCallback("leadingShotLine", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE, serverCallback, NULL);
@@ -107,6 +109,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     colorful = BZDB.isTrue("colorful");
   else if (name == "animatedTreads")
     animatedTreads = BZDB.isTrue("animatedTreads");
+  else if (name == "leadingShotLine")
+    leadingShotLine = BZDB.isTrue("leadingShotLine");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)

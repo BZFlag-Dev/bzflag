@@ -151,6 +151,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "trackMarkCulling",		"3",			true,	StateDatabase::ReadWrite,	NULL },
   { "scrollPages",		"20",			true,	StateDatabase::ReadWrite,	NULL },
   { "remoteSounds",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "leadingShotLine",		"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
