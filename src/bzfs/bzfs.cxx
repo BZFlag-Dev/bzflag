@@ -3733,8 +3733,12 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     }
     // if player is holding a flag, drop it
     for (int j = 0; j < numFlags; j++)
-      if (FlagInfo::get(j)->player == p)
+      if (FlagInfo::get(j)->player == p) {
 	dropFlag(playerData, lastState[p].pos);
+	// Should recheck if player is still available
+	if (!GameKeeper::Player::getPlayerByIndex(p))
+	  return;
+      }
   }
 }
 
