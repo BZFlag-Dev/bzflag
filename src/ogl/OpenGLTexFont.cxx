@@ -290,8 +290,8 @@ void			OpenGLTexFont::BitmapRep::draw(
   for (int i = 0; i < length; i++) {
     c = (unsigned int)string[i];
     if (c >= 32 && c < 127) {
-      c -= 32;
-      glBitmap(glyph[c].width, glyph[c].height, glyph[c].xorig, glyph[c].yorig, glyph[c].xmove, glyph[c].ymove, glyph[c].bitmap);
+      const Glyph& g = glyph[c - 32];
+      glBitmap(g.width, g.height, g.xorig, g.yorig, g.xmove, g.ymove, g.bitmap);
     }
   }
 }
