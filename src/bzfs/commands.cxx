@@ -842,11 +842,8 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
   for (i = 0; i < j; i++) {
     GameKeeper::Player *p = sortedPlayer[i];
     p->lagInfo.getLagStats(reply);
-    if (strlen(reply)) {
-      if (p->accessInfo.isAccessVerified())
-	strcat(reply, " (R)");
+    if (reply[0])
       sendMessage(ServerPlayer, t, reply);
-    }
   }
 }
 
