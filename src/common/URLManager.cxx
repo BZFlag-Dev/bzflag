@@ -82,8 +82,11 @@ URLManager::URLManager()
 
 #ifdef HAVE_CURL
   CURLcode curlResult;
+
+#if LIBCURL_VERSION_NUM >= 0x070a00
   if ((curlResult = curl_global_init(CURL_GLOBAL_NOTHING)))
     DEBUG1("Unexpected error from libcurl; Error: %d\n", curlResult);
+#endif
 
   easyHandle = curl_easy_init();
   if (!easyHandle) {
@@ -108,7 +111,11 @@ URLManager::~URLManager()
 #ifdef HAVE_CURL
   if (easyHandle)
     curl_easy_cleanup((CURL*)easyHandle);
+
+#if LIBCURL_VERSION_NUM >= 0x070a00
   curl_global_cleanup();
+#endif
+
 #endif
 }
 
