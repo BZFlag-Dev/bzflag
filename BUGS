@@ -1,6 +1,45 @@
 recent bugs
 ------------
 
+- GL Bugs: Looks like the handling of gl contexts is severely messed up in
+  bzflag, and there is no very easy cure for this. Someone obviously had
+  noticed this before and commented out a glDelete statement in the
+  lighting code. Details:
+
+  bzflag uses several classes like OpenGLDisplayList to wrap gl objects.
+  These classes use rep subobjects which store the actual state and
+  use reference counting. The state can be as simple as an integer
+  (for display lists). This integer refereces some object which is
+  handled by gl internally and must be created and deleted by calling gl
+  functions (like glGenLists() and glDeleteLists()). The bzflag
+  classes resp. their rep classes call these functions to create and delete
+  the gl objects automatically when necessary, i.e. creation happens when
+  a new object is created from nothing (not a copy) and destruction happens
+  when the ref coun tof the rep object falls to 0.
+
+  The problem happens when the gl context changes, for example when the
+  video resolution is changes on Linux or (I suppose) one switches on
+  Windows with alt tab. It is my understanding now (I myself am clueless
+  about OpenGL), that the above mentioned ids (referring to a gl display list
+  object for example) are related to a gl context. So when the old gl
+  context is destroyed and a new one is created and bzflag creates to
+  gl objects, it might well receive an id which is still bound to a rep
+  object. When that rep object's ref count falls to zero, it will call
+  the gl delete function on that id, but this will now delete the new gl
+  object for the new context -> oops.
+
+  When freeing the gl context, bzflag should probably first delete all
+  gl objects or at least invalidate them, so they won't be deleted when
+  the other context is in place.
+
+  I have tried to simply get rid of all the gldelete calls and then it works
+  more or less, except for a strange effect where the sky/ground is messed
+  up for a fraction of a second after switching resolutions.
+
+  Another note: how is it with contexts and several window like in
+  -view three/stacked? Not that I can test it because these views simply
+  coredump on me.
+
 - bzflag should use the system-supplied zlib if available. Check in
   configure?
 
@@ -39,7 +78,7 @@ recent bugs
   it turns back to normal. Also normal, when I switch off lighting.
   Would someone PLEASE buy chestal a graphics card? his doesn't handle
   the emissive property.
-  (CHestal) This happens with both of my cards, where the one isn't really used
+  (Chestal) This happens with both of my cards, where the one isn't really used
   because it's all software rendering, where the other uses hardware.
   I can reproduce this by joining my test server ducati 59155 with -solo 1.
   As soon as the rabbit bot is in view, other things get white, too.
