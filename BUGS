@@ -1,16 +1,6 @@
 critical bugs
 -------------
 
-- bzc file writing seems to be goofy. Some bindings are never written into
-  the file, and some get written more than once. [I have two bind lines for
-  the same key]  there is trouble remapping the Ident"ify/Respawn" key from
-  "right mouse or i" to something else.  tried remapping to "w" during
-  gameplay and it fails for  windows and os x.  also fails to respawn with
-  right mouse if you try to change the setting during  game.  the values do
-  not appear to be persistent properly either (quit and return and it's
-  displayed wrong).  resetting key map doesn't seem to fully erase the current
-  bindings before reapplying defaults (same bug as above?)
-
 - bunny hunt issues.  observed the player selection consistently toggle
   between the best player (score-wise) and one of the worst players non-stop
   for several (10+) minutes without choosing many intermediate players that
@@ -22,6 +12,11 @@ critical bugs
 
 recent bugs
 ------------
+
+- Shift+Tab seems to be bound to jump without being bound to jump
+
+- menu does not display modified values after quitting and returning, although
+  the bindings appear to remain in effect.  
 
 - issuing a /set command in bzadmin with no arguments does not provide a list
   of settable variables.
