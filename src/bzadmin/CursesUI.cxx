@@ -311,7 +311,7 @@ PlayerId CursesUI::getTarget() const {
 }
 
 
-void CursesUI::handleResize(int lines, int cols) {
+void CursesUI::handleResize(int lines, int) {
 #ifdef HAVE_NCURSES_H
   resizeterm(lines, cols);
   wresize(mainWin, lines - 2, cols);
