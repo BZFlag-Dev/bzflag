@@ -159,6 +159,18 @@ char *getDirectMessageBuffer()
 // FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
 // for MsgShotBegin the receiving buffer gets used directly
+static int directMessage(GameKeeper::Player &playerData,
+			 uint16_t code, int len, const void *msg)
+{
+  // send message to one player
+  void *bufStart = (char *)msg - 2*sizeof(short);
+
+  void *buf = bufStart;
+  buf = nboPackUShort(buf, uint16_t(len));
+  buf = nboPackUShort(buf, code);
+  return pwrite(playerData, bufStart, len + 4);
+}
+
 void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
   GameKeeper::Player *playerData
@@ -166,13 +178,7 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
   if (!playerData)
     return;
 
-  // send message to one player
-  void *bufStart = (char *)msg - 2*sizeof(short);
-
-  void *buf = bufStart;
-  buf = nboPackUShort(buf, uint16_t(len));
-  buf = nboPackUShort(buf, code);
-  pwrite(*playerData, bufStart, len + 4);
+  directMessage(*playerData, code, len, msg);
 }
 
 
@@ -258,6 +264,12 @@ void sendFlagUpdate(FlagInfo &flag)
 // Update the player "playerIndex" with all the flags status
 static void sendFlagUpdate(int playerIndex)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+  int result;
+
   void *buf, *bufStart = getDirectMessageBuffer();
 
   buf = nboPackUShort(bufStart,0); //placeholder
@@ -269,8 +281,10 @@ static void sendFlagUpdate(int playerIndex)
       if ((length + sizeof(uint16_t) + FlagPLen)
 	  > MaxPacketLen - 2*sizeof(uint16_t)) {
 	nboPackUShort(bufStart, cnt);
-	directMessage(playerIndex, MsgFlagUpdate,
-		      (char*)buf - (char*)bufStart, bufStart);
+	result = directMessage(*playerData, MsgFlagUpdate,
+			       (char*)buf - (char*)bufStart, bufStart);
+	if (result == -1)
+	  return;
 	cnt    = 0;
 	length = sizeof(uint16_t);
 	buf    = nboPackUShort(bufStart,0); //placeholder
@@ -284,8 +298,8 @@ static void sendFlagUpdate(int playerIndex)
 
   if (cnt > 0) {
     nboPackUShort(bufStart, cnt);
-    directMessage(playerIndex, MsgFlagUpdate,
-		  (char*)buf - (char*)bufStart, bufStart);
+    result = directMessage(*playerData, MsgFlagUpdate,
+			   (char*)buf - (char*)bufStart, bufStart);
   }
 }
 
@@ -1661,7 +1675,10 @@ static void addPlayer(int playerIndex)
   // accept player
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  directMessage(playerIndex, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
+  int result = directMessage(*playerData, MsgAccept,
+			     (char*)buf-(char*)bufStart, bufStart);
+  if (result == -1)
+    return;
 
   //send SetVars
   { // scoping is mandatory
@@ -1721,6 +1738,10 @@ static void addPlayer(int playerIndex)
     directMessage(playerIndex, MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
   }
 
+  // again check if player was disconnected
+  if (!NetHandler::exists(playerIndex))
+    return;
+
 #ifdef TIMELIMIT
   // send time update to new player if we're counting down
   if (countdownActive && clOptions->timeLimit > 0.0f
@@ -1733,13 +1754,12 @@ static void addPlayer(int playerIndex)
 
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
-    directMessage(playerIndex, MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
+    result = directMessage(*playerData, MsgTimeUpdate,
+			   (char*)buf-(char*)bufStart, bufStart);
+    if (result == -1)
+      return;
   }
 #endif
-
-  // again check if player was disconnected
-  if (!NetHandler::exists(playerIndex))
-    return;
 
   // if first player on team add team's flag
   if (team[teamIndex].team.size == 1
@@ -2203,6 +2223,11 @@ static void sendQueryGame(int playerIndex)
 
 static void sendQueryPlayers(int playerIndex)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
   // count the number of active players
   int numPlayers = GameKeeper::Player::count();
 
@@ -2210,11 +2235,13 @@ static void sendQueryPlayers(int playerIndex)
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUShort(bufStart, NumTeams);
   buf = nboPackUShort(buf, numPlayers);
-  directMessage(playerIndex, MsgQueryPlayers, (char*)buf-(char*)bufStart, bufStart);
+  int result = directMessage(*playerData, MsgQueryPlayers,
+			     (char*)buf-(char*)bufStart, bufStart);
+  if (result == -1)
+    return;
 
   // now send the teams and players
-  if (NetHandler::exists(playerIndex))
-    sendTeamUpdate(playerIndex);
+  sendTeamUpdate(playerIndex);
   GameKeeper::Player *otherData;
   for (int i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
@@ -3751,9 +3778,9 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   if (nextPingSeqno > 0) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUShort(bufStart, nextPingSeqno);
-    directMessage(p, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
-    // Should recheck if player is still available
-    if (!GameKeeper::Player::getPlayerByIndex(p))
+    int result = directMessage(playerData, MsgLagPing,
+			       (char*)buf - (char*)bufStart, bufStart);
+    if (result == -1)
       return;
     if (warn) {
       char message[MessageLen];
