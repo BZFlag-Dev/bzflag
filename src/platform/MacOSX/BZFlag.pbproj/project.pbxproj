@@ -4647,6 +4647,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -4655,6 +4656,7 @@
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libCommonNet;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -4662,7 +4664,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = libCommonNet;
-			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productInstallPath = "@executable_path/../Frameworks";
 			productName = libCommon;
 			productReference = 4E030D41048E83840009E055;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -4754,6 +4756,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-undefined suppress -flat_namespace";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -4762,6 +4765,7 @@
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libGLKit;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -4769,7 +4773,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = libGLKit;
-			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productInstallPath = "@executable_path/../Frameworks";
 			productName = libGLKit;
 			productReference = 4E030D4F048E83B70009E055;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -4905,6 +4909,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-undefined suppress -flat_namespace";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -4912,6 +4917,7 @@
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libGeometry;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_GCC3_PFE_SUPPORT = NO;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
@@ -4920,7 +4926,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = libGeometry;
-			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productInstallPath = "@executable_path/../Frameworks";
 			productName = libGeometry;
 			productReference = 4E030D56048E83C60009E055;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -5013,6 +5019,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-undefined suppress -flat_namespace";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -5021,6 +5028,7 @@
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libObstacle;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_GCC3_PFE_SUPPORT = NO;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
@@ -5029,7 +5037,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = libObstacle;
-			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productInstallPath = "@executable_path/../Frameworks";
 			productName = libObstacle;
 			productReference = 4E030D64048E83E40009E055;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -5130,6 +5138,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -5138,6 +5147,7 @@
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libPlatform;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -5145,7 +5155,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = libPlatform;
-			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productInstallPath = "@executable_path/../Frameworks";
 			productName = libPlatform;
 			productReference = 4E030D6B048E83F10009E055;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -5234,6 +5244,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-undefined suppress -flat_namespace";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -5242,6 +5253,7 @@
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libSceneDB;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -5249,7 +5261,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = libSceneDB;
-			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productInstallPath = "@executable_path/../Frameworks";
 			productName = libSceneDB;
 			productReference = 4E030D72048E84000009E055;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
