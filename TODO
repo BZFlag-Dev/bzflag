@@ -11,8 +11,10 @@ THESE ARE LOWER PRIORITY
 
 * Fix the Windows version of bzadmin so that EOF quits the program, like
   the UNIX version (see checkCommand() in StdBothUI.cxx).
-  Try to build bzadmin on Win32 using PDCurses (it almost works with
-  the X11 version of PDCurses). It currently works with stdin/stdout.
+
+* get a curses system working on windows:  try to build bzadmin on Win32
+  using PDCurses (it almost works with the X11 version of PDCurses). It
+  currently only works with stdin/stdout.
 
 * bzflag should use the system-supplied zlib if available. Check in
   configure and use system if it's good.
@@ -39,8 +41,6 @@ THESE ARE LOWER PRIORITY
   needs to be decoupled from identify and added to menu.
 
 * do ansi color in curses bzadmin
-
-* get a curses system working on windows.
 
 * server should track last reported player and shot positions
 
@@ -217,8 +217,6 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * implement texture cache on client and have server offer
    new textures as part of the world.
-
-* allow user specified textures for tanks.
 
 * allow user specified textures for world.
 
