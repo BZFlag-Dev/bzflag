@@ -4776,11 +4776,11 @@ static void parseCommand(const char *message, int t)
 
       /* make sure the requested player is actually here */
       bool foundPlayer=false;
-      for (int i = 0; i < curMaxPlayers; i++) {
-	sprintf(reply,"DEBUG: comparing %s == %s", voteplayer, player[i].callSign);
+      for (int v = 0; v < curMaxPlayers; v++) {
+	sprintf(reply,"DEBUG: comparing %s == %s", voteplayer, player[v].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
 
-	if (strncmp(player[i].callSign, voteplayer, 256)==0) {
+	if (strncmp(player[v].callSign, voteplayer, 256)==0) {
 	  foundPlayer=true;
 	  break;
 	}
@@ -4938,15 +4938,15 @@ static void parseCommand(const char *message, int t)
 
     // see if the vote response is a valid yes or no answer
     int vote=-1;
-    for (unsigned int i = 0; i < (noCount > yesCount ? noCount : yesCount); i++) {
-      if (i < yesCount) {
-	if (strncmp(answer, yesAnswers[i], 4) == 0) {
+    for (unsigned int v = 0; v < (noCount > yesCount ? noCount : yesCount); v++) {
+      if (v < yesCount) {
+	if (strncmp(answer, yesAnswers[v], 4) == 0) {
 	  vote = 1;
 	  break;
 	}
       }
-      if (i < noCount) {
-	if (strncmp(answer, noAnswers[i], 4) == 0) {
+      if (v < noCount) {
+	if (strncmp(answer, noAnswers[v], 4) == 0) {
 	  vote = 0;
 	  break;
 	}

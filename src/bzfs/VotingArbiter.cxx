@@ -90,7 +90,11 @@ bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollA
   _pollers.push_back(p);
 
   // create the booth to record votes
+#ifdef _WIN32
+  _snprintf(message, 256,  "%s %s", action == POLL_KICK_PLAYER ? "kick" : "ban", player.c_str());
+#else
   snprintf(message, 256,  "%s %s", action == POLL_KICK_PLAYER ? "kick" : "ban", player.c_str());
+#endif
   if (_votingBooth != NULL) {
     delete _votingBooth;
   }

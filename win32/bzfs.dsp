@@ -123,7 +123,7 @@ SOURCE=..\src\bzfs\TextChunkManager.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzfs\VotingPoll.cxx
+SOURCE=..\src\bzfs\VotingArbiter.cxx
 # End Source File
 # Begin Source File
 
@@ -231,7 +231,7 @@ SOURCE=..\include\TimeKeeper.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzfs\VotingPoll.h
+SOURCE=..\src\bzfs\VotingArbiter.h
 # End Source File
 # Begin Source File
 
