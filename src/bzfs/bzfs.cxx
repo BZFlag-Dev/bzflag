@@ -1071,7 +1071,7 @@ class WorldInfo {
    	void setGravity ( float g );
 	void addWall(float x, float y, float z, float r, float w, float h);
     void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
-    void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
+    void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
     void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
     void addBase(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
     void addLink(int from, int to);
@@ -1091,11 +1091,15 @@ class WorldInfo {
 	float size[3];
 	bool shootThrough;
 	bool driveThrough;
+	bool flipZ;
       ObstacleLocation &operator=(const ObstacleLocation &ol)
       {
 	memcpy(pos, ol.pos, sizeof(float) * 3);
 	rotation = ol.rotation;
 	memcpy(size, ol.size, sizeof(float) * 3);
+	shootThrough = ol.shootThrough;
+	driveThrough = ol.driveThrough;
+	flipZ = ol.flipZ;
 	return *this;
       }
     };
@@ -1263,6 +1267,7 @@ class WorldFileObstacle : public WorldFileObject {
     float size[3];
 	bool driveThrough;
 	bool shootThrough;
+	bool flipZ;
 };
 
 WorldFileObstacle::WorldFileObstacle()
@@ -1272,6 +1277,7 @@ WorldFileObstacle::WorldFileObstacle()
   size[0] = size[1] = size[2] = 1.0f;
   driveThrough = false;
   shootThrough = false;
+  flipZ = false;
 }
 
 bool WorldFileObstacle::read(const char *cmd, istream& input)
@@ -1291,6 +1297,8 @@ bool WorldFileObstacle::read(const char *cmd, istream& input)
     driveThrough = true;
     else if (strcasecmp(cmd, "shootthrough") == 0)
     shootThrough = true;
+    else if (strcasecmp(cmd, "flipz") == 0)
+    flipZ = true;
     else
     return false;
   return true;
@@ -1327,7 +1335,7 @@ CustomPyramid::CustomPyramid()
 
 void CustomPyramid::write(WorldInfo *world) const
 {
-  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough);
+  world->addPyramid(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],driveThrough,shootThrough,flipZ);
 }
 
 class CustomGate : public WorldFileObstacle {
@@ -1567,7 +1575,7 @@ void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, flo
   numBoxes++;
 }
 
-void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
+void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot, bool flipZ)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -1585,6 +1593,7 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
   pyramids[numPyramids].size[2] = h;
   pyramids[numPyramids].driveThrough = drive;
   pyramids[numPyramids].shootThrough = shoot;
+  pyramids[numPyramids].flipZ = flipZ;
 numPyramids++;
 }
 
@@ -1739,7 +1748,7 @@ int WorldInfo::packDatabase()
 {
   databaseSize = (2 + 6 * 4) * numWalls +
 		(2 + 2 + 7 * 4) * numBoxes +
-		(2 + 2 + 7 * 4) * numPyramids +
+		(3 + 2 + 7 * 4) * numPyramids +
 		(2 + 2 + 8 * 4) * numTeleporters +
 		(2 + 2 + 4) * 2 * numTeleporters;
   database = new char[databaseSize];
@@ -1779,6 +1788,7 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, pPyramid->size);
     databasePtr = nboPackUByte(databasePtr, pPyramid->driveThrough);
     databasePtr = nboPackUByte(databasePtr, pPyramid->shootThrough);
+    databasePtr = nboPackUByte(databasePtr, pPyramid->flipZ);
 }
 
   // add teleporters

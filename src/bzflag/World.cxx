@@ -691,8 +691,12 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackUByte(buf, tempflags[0]);
 	buf = nboUnpackUByte(buf, tempflags[1]);
+	buf = nboUnpackUByte(buf, tempflags[2]);
 
 	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6],tempflags[0]!=0,tempflags[1]!=0);
+	if (tempflags !=0)
+		pyr.setZFlip();
+
 	append(pyr);
 	break;
       }

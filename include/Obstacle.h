@@ -64,6 +64,9 @@ class Obstacle {
 	bool isDriveThrough() const;
 	bool isShootThrough() const;
 
+	void setZFlip ( void );
+	bool getZFlip ( void ) const;
+
   protected:
     float		getHitNormal(
 				const float* pos1, float azimuth1,
@@ -81,6 +84,7 @@ class Obstacle {
     float		height;
 	bool		driveThrough;
 	bool		shootThrough;
+	bool		ZFlip;
 };
 
 class ObstacleSceneNodeGenerator {

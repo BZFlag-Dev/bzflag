@@ -610,7 +610,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   float o[3], d[3];
   d[0] = v[0];
   d[1] = v[1];
-  d[2] = 0.0f;		// use v[2] to have jumping affect shot velocity
+  d[2] = v[2];		// use v[2] to have jumping affect shot velocity
   o[0] = path.getPosition()[0];
   o[1] = path.getPosition()[1];
   o[2] = path.getPosition()[2];
@@ -627,73 +627,79 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     Ray rs(o, d);
     float t = timeLeft + minTime;
     int face;
-    const Obstacle* building = (const Obstacle*)((e != Through) ?
-				getFirstBuilding(r, Epsilon, t) : NULL);
-    const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
-    t -= minTime;
-    minTime = 0.0f;
+    Obstacle* building = NULL;
+	
+	/* FIXME: make them bounce down and hit the ground and bounce and stuff */
+	if ((o[2]+(d[2]*t)) < 0.0f){
+	 timeLeft = 0.0f;
+	}else{
+		building = (Obstacle*)((e != Through) ?
+					getFirstBuilding(r, Epsilon, t) : NULL);
+		const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
+		t -= minTime;
+		minTime = 0.0f;
 
-    // if hit outer wall with ricochet and hit is above top of wall
-    // then ignore hit.
-    if (!teleporter && building && e == Reflect &&
-	building->getType() == WallObstacle::getClassName() &&
-	o[2] + t * d[2] > building->getHeight())
-      t = timeLeft;
+		// if hit outer wall with ricochet and hit is above top of wall
+		// then ignore hit.
+		if (!teleporter && building && e == Reflect &&
+		building->getType() == WallObstacle::getClassName() &&
+		o[2] + t * d[2] > building->getHeight())
+		  t = timeLeft;
 
-    // construct next shot segment and add it to list
-    TimeKeeper endTime(startTime);
-    if (t < 0.0f) endTime += Epsilon;
-    else endTime += t;
-    ShotPathSegment segment(startTime, endTime, rs, reason);
-    segments.push_back(segment);
-    startTime = endTime;
+		// construct next shot segment and add it to list
+		TimeKeeper endTime(startTime);
+		if (t < 0.0f) endTime += Epsilon;
+		else endTime += t;
+		ShotPathSegment segment(startTime, endTime, rs, reason);
+		segments.push_back(segment);
+		startTime = endTime;
 
-    // used up this much time in segment
-    if (t < 0.0f) timeLeft -= Epsilon;
-    else timeLeft -= t;
+		// used up this much time in segment
+		if (t < 0.0f) timeLeft -= Epsilon;
+		else timeLeft -= t;
 
-    // check in reverse order to see what we hit first
-    reason = ShotPathSegment::Through;
-    if (teleporter) {
-      // entered teleporter -- teleport it
-      int source = World::getWorld()->getTeleporter(teleporter, face);
-      int target = World::getWorld()->getTeleportTarget(source);
-      int outFace;
-      const Teleporter* outTeleporter =
-			World::getWorld()->getTeleporter(target, outFace);
-      o[0] += t * d[0];
-      o[1] += t * d[1];
-      o[2] += t * d[2];
-      teleporter->getPointWRT(*outTeleporter, face, outFace,
-						o, d, 0.0f, o, d, NULL);
-      reason = ShotPathSegment::Teleport;
-    }
+		// check in reverse order to see what we hit first
+		reason = ShotPathSegment::Through;
+		if (teleporter) {
+		  // entered teleporter -- teleport it
+		  int source = World::getWorld()->getTeleporter(teleporter, face);
+		  int target = World::getWorld()->getTeleportTarget(source);
+		  int outFace;
+		  const Teleporter* outTeleporter =
+				World::getWorld()->getTeleporter(target, outFace);
+		  o[0] += t * d[0];
+		  o[1] += t * d[1];
+		  o[2] += t * d[2];
+		  teleporter->getPointWRT(*outTeleporter, face, outFace,
+							o, d, 0.0f, o, d, NULL);
+		  reason = ShotPathSegment::Teleport;
+		}
+		else if (building) {
+		  // hit building -- can bounce off or stop, buildings ignored for Through
+		  switch (e) {
+		case Stop:
+		  timeLeft = 0.0f;
+		  break;
 
-    else if (building) {
-      // hit building -- can bounce off or stop, buildings ignored for Through
-      switch (e) {
-	case Stop:
-	  timeLeft = 0.0f;
-	  break;
+		case Reflect: {
+		  // move origin to point of reflection
+		  o[0] += t * d[0];
+		  o[1] += t * d[1];
+		  o[2] += t * d[2];
 
-	case Reflect: {
-	  // move origin to point of reflection
-	  o[0] += t * d[0];
-	  o[1] += t * d[1];
-	  o[2] += t * d[2];
+		  // reflect direction about normal to building
+		  float normal[3];
+		  building->getNormal(o, normal);
+		  reflect(d, normal);
+		  reason = ShotPathSegment::Ricochet;
+		  break;
 
-	  // reflect direction about normal to building
-	  float normal[3];
-	  building->getNormal(o, normal);
-	  reflect(d, normal);
-	  reason = ShotPathSegment::Ricochet;
-	  break;
-
-	case Through:
-	  assert(0);
+		case Through:
+		  assert(0);
+		}
+		  }
+		}
 	}
-      }
-    }
   } while (timeLeft > Epsilon);
   lastTime = startTime;
 

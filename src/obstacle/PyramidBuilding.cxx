@@ -64,6 +64,9 @@ void			PyramidBuilding::getNormal(const float* p,
   n[0] *= h * getHeight();
   n[1] *= h * getHeight();
   n[2] = h * getWidth();
+
+  if (this->getZFlip())
+	  n[2] *= -1;
 }
 
 bool			PyramidBuilding::isInside(const float* p,
@@ -148,31 +151,47 @@ void			PyramidBuilding::getCorner(int index,
   const float s = sinf(getRotation());
   const float w = getWidth();
   const float h = getBreadth();
+  const float top  = getHeight() + base[2];
   switch (index) {
     case 0:
       pos[0] = base[0] + c * w - s * h;
       pos[1] = base[1] + s * w + c * h;
-      pos[2] = base[2];
+	  if (getZFlip())
+		 pos[2] = top;
+	  else
+		 pos[2] = base[2];
       break;
     case 1:
       pos[0] = base[0] - c * w - s * h;
       pos[1] = base[1] - s * w + c * h;
-      pos[2] = base[2];
+	  if (getZFlip())
+		 pos[2] = top;
+	  else
+		 pos[2] = base[2];
       break;
     case 2:
       pos[0] = base[0] - c * w + s * h;
       pos[1] = base[1] - s * w - c * h;
-      pos[2] = base[2];
+	  if (getZFlip())
+		 pos[2] = top;
+	  else
+		 pos[2] = base[2];
       break;
     case 3:
       pos[0] = base[0] + c * w + s * h;
       pos[1] = base[1] + s * w - c * h;
-      pos[2] = base[2];
+	  if (getZFlip())
+		 pos[2] = top;
+	  else
+		 pos[2] = base[2];
       break;
     case 4:
       pos[0] = base[0];
       pos[1] = base[1];
-      pos[2] = getHeight() + getPosition()[2];
+	  if (getZFlip())
+		 pos[2] = base[2];
+	  else
+		 pos[2] = top;
       break;
   }
 }
@@ -182,12 +201,25 @@ float			PyramidBuilding::shrinkFactor(float z) const
   const float *pos = getPosition();
   z -= pos[2];
 
+  if (getZFlip()){
+  if (z < 0.0f)
+    return 0.0f;
+  if (z > getHeight())
+    return 1.0f;
+  }else{
   if (z < 0.0f)
     return 1.0f;
   if (z > getHeight())
     return 0.0f;
 
-  return (getHeight() - z) / getHeight();
+  }
+
+  float shrink = (getHeight() - z) / getHeight();
+
+  if (getZFlip())
+	  shrink = 1.0f - shrink;
+
+  return shrink;
 }
 
 //
@@ -217,33 +249,33 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
   GLfloat base[3], sCorner[3], tCorner[3];
   switch (incNodeNumber()) {
     case 1:
-      pyramid->getCorner(0, base);
+      pyramid->getCorner(4, base);
       pyramid->getCorner(1, sCorner);
-      pyramid->getCorner(4, tCorner);
+      pyramid->getCorner(0, tCorner);
 	  isSquare = false;
       break;
     case 2:
-      pyramid->getCorner(1, base);
+      pyramid->getCorner(4, base);
       pyramid->getCorner(2, sCorner);
-      pyramid->getCorner(4, tCorner);
+      pyramid->getCorner(1, tCorner);
 	  isSquare = false;
       break;
     case 3:
-      pyramid->getCorner(2, base);
+      pyramid->getCorner(4, base);
       pyramid->getCorner(3, sCorner);
-      pyramid->getCorner(4, tCorner);
+      pyramid->getCorner(2, tCorner);
 	  isSquare = false;
       break;
     case 4:
-      pyramid->getCorner(3, base);
+      pyramid->getCorner(4, base);
       pyramid->getCorner(0, sCorner);
-      pyramid->getCorner(4, tCorner);
+      pyramid->getCorner(3, tCorner);
 	  isSquare = false;
       break;
     case 5:
-      pyramid->getCorner(0, base);
+      pyramid->getCorner(1, base);
       pyramid->getCorner(3, sCorner);
-      pyramid->getCorner(1, tCorner);
+      pyramid->getCorner(0, tCorner);
 	  isSquare = true;
       break;
   }

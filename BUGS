@@ -9,6 +9,8 @@ recent bugs
 
 - doc/protocol is not up to date (version on wiki is mostly correct)
 
+-src/bzflag/ShotStrategy.cxx SegmentedShotStrategy::makeSegments will not handle shots that bounce 'down', it presenly ends them. it should make them bounce when they hit the gound.
+
 
 older bugs in BZFlag
 --------------------

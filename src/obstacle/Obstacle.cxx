@@ -40,6 +40,7 @@ Obstacle::Obstacle(const float* _pos, float _angle,
 
   driveThrough = drive;
   shootThrough = shoot;
+  ZFlip = false;
 }
 
 Obstacle::~Obstacle()
@@ -56,6 +57,16 @@ bool			Obstacle::isDriveThrough() const
 bool			Obstacle::isShootThrough() const
 {
 	return shootThrough;
+}
+
+void 			Obstacle::setZFlip ( void )
+{
+	ZFlip = true;
+}
+
+bool 			Obstacle::getZFlip ( void ) const
+{
+	return ZFlip;
 }
 
 

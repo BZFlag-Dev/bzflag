@@ -33,6 +33,7 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   setModulateColor(1.0f, 1.0f, 1.0f);
   setLightedColor(1.0f, 1.0f, 1.0f);
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
+  ZFlip = false;
 }
 
 WallSceneNode::~WallSceneNode()
