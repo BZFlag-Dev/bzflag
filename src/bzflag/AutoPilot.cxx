@@ -259,7 +259,7 @@ bool	stuckOnWall(float &rotation, float &speed)
   static TimeKeeper lastStuckTime;
   static float stuckRot = 0.0f, stuckSpeed = 0.0f;
 
-  float stuckPeriod = TimeKeeper::getCurrent() - lastStuckTime;
+  float stuckPeriod = TimeKeeper::getTick() - lastStuckTime;
   if (stuckPeriod < 0.5f) {
     rotation = stuckRot;
     speed = stuckSpeed;
@@ -278,7 +278,7 @@ bool	stuckOnWall(float &rotation, float &speed)
 		      || myTank->isPhantomZoned();
 
   if (!phased && (TargetingUtils::getOpenDistance(pos, myAzimuth) < 5.0f)) {
-    lastStuckTime = TimeKeeper::getCurrent();
+    lastStuckTime = TimeKeeper::getTick();
     if (bzfrand() > 0.8f) {
       // Every once in a while, do something nuts
       speed = (float)(bzfrand() * 1.5f - 0.5f);
@@ -518,7 +518,7 @@ bool navigate(float &rotation, float &speed)
   static TimeKeeper lastNavChange;
   static float navRot = 0.0f, navSpeed = 0.0f;
 
-  if ((TimeKeeper::getCurrent() - lastNavChange) < 1.0f) {
+  if ((TimeKeeper::getTick() - lastNavChange) < 1.0f) {
     rotation = navRot;
     speed = navSpeed;
     return true;
@@ -573,7 +573,7 @@ bool navigate(float &rotation, float &speed)
 
   navRot = rotation;
   navSpeed = speed;
-  lastNavChange = TimeKeeper::getCurrent();
+  lastNavChange = TimeKeeper::getTick();
   return true;
 }
 
