@@ -534,9 +534,6 @@ void			ControlPanel::resize()
   FontManager &fm = FontManager::instance();
   fontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
-  // rebuild font gstates
-  fm.rebuild();
-
   // tab widths may have changed
   if (tabs) {
     tabTextWidth.clear();
