@@ -215,6 +215,11 @@ tag each handles.  It can parse files (or parsed XMLTree's) that
 contain those tags, automatically switching between readers as
 necessary.
 
+Sounds
+======
+Sounds are stored as 22.050KHz 16 bit signed integer Ogg Vorbis files.
+To create, make an appropriate wav then oggenc with no arguments other
+than -o output.ogg
 
 The State Database
 ==================
