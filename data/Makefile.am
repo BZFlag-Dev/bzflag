@@ -1,7 +1,6 @@
 SUBDIRS = l10n fonts
 
 EXTRA_DIST =			\
-	32x32.xpm		\
 	blue_basetop.png	\
 	blue_basewall.png	\
 	blue_bolt.png		\
@@ -13,6 +12,8 @@ EXTRA_DIST =			\
 	boxwall.png		\
 	bubble.png		\
 	burrow.wav		\
+	bzflag-256x256.xpm	\
+	bzflag-32x32.xpm	\
 	bzflag-48x48.png	\
 	caution.png		\
 	clouds.png		\
