@@ -86,6 +86,7 @@ const char *usageString =
 "[+s <flag-count>] "
 "[-s <flag-count>] "
 "[-sa] "
+"[-sb] "
 "[-sl <id> <num>]"
 "[-speedtol <tolerance>]"
 "[-srvmsg <text>] "
@@ -160,6 +161,7 @@ const char *extraUsageString =
 "\t+s: always have <num> super flags (default=16)\n"
 "\t-s: allow up to <num> super flags (default=16)\n"
 "\t-sa: insert antidote superflags\n"
+"\t-sb: allow tanks to respawn on buildings\n"
 "\t-sl: limit flag <id> to <num> shots\n"
 "\t-speedtol: multiplyers over normal speed to auto kick at\n\t\tdefaults to 1.25, should not be less then 1.0\n"
 "\t-srvmsg: specify a <msg> to print upon client login\n"
@@ -750,6 +752,9 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-sa") == 0) {
       // insert antidote flags
       options.gameStyle |= int(AntidoteGameStyle);
+    } else if (strcmp(argv[i], "-sb") == 0) {
+      // respawns on buildings
+      options.respawnOnBuildings = true;
     } else if (strcmp(argv[i], "-sl") == 0) {
       // add required flag
       if (i +2 >= argc) {

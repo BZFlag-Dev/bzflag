@@ -56,11 +56,11 @@ struct CmdLineOptions
     idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f),
     linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
     useFallbackPort(false), requireUDP(false), randomBoxes(false),
-    randomCTF(false), flagsOnBuildings(false), oneGameOnly(false),
-    timeManualStart(false), randomHeights(false), useTeleporters(false),
-    teamKillerDies(true), printScore(false), publicizeServer(false),
-    publicizedAddressGiven(false), filterFilename(""), filterCallsigns(false),
-    filterChat(false), filterSimple(false), voteTime(60),
+    randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
+    oneGameOnly(false), timeManualStart(false), randomHeights(false),
+    useTeleporters(false), teamKillerDies(true), printScore(false),
+    publicizeServer(false), publicizedAddressGiven(false), filterFilename(""),
+    filterCallsigns(false), filterChat(false), filterSimple(false), voteTime(60),
     vetoTime(20), votesRequired(3), votePercentage(50.1f),
     voteRepeatTime(300), autoTeam(false),
     debug(0)
@@ -114,6 +114,7 @@ struct CmdLineOptions
   bool			randomBoxes;
   bool			randomCTF;
   bool			flagsOnBuildings;
+  bool			respawnOnBuildings;
   bool			oneGameOnly;
   bool			timeManualStart;
   bool			randomHeights;

@@ -2884,9 +2884,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
+
 static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 {
-  float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+  const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   int team = player[playerId].team;
   if (player[playerId].restartOnBase && team <= PurpleTeam) {
     float x = (baseSize[team][0] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
@@ -2897,33 +2898,43 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
     player[playerId].restartOnBase = false;
   }
   else {
-    float size = BZDB.eval( StateDatabase::BZDB_WORLDSIZE);
+    const bool onGroundOnly = !clOptions->respawnOnBuildings;
+    const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     WorldInfo::ObstacleLocation *building;
 
-    int lastType = IN_PYRAMID;
-    while ((lastType == IN_PYRAMID) || (lastType == IN_TELEPORTER)) {
+    bool foundspot = false;
+    while (!foundspot) {
       pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
       pos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-      pos[2] = ((float)bzfrand() * maxWorldHeight);
+      pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
 
-      int type = world->inBuilding(&building,
-				   pos[0], pos[1], pos[2],
-				   tankRadius, BZDBCache::tankHeight);
-      if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
-	pos[2] = 0.0f;
-	//Find any intersection regardless of z
-	type = world->inBuilding(&building,
-				 pos[0], pos[1], pos[2],
-				 tankRadius, maxWorldHeight);
+      int type = world->inBuilding(&building, pos[0], pos[1], pos[2],
+                                   tankRadius, BZDBCache::tankHeight);
+
+      if (onGroundOnly) {
+        if (type == NOT_IN_BUILDING)
+          foundspot = true;
       }
+      else {
+        if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
+          pos[2] = 0.0f;
+          //Find any intersection regardless of z
+          type = world->inBuilding(&building, pos[0], pos[1], pos[2],
+                                   tankRadius, maxWorldHeight);
+        }
 
-      lastType = NOT_IN_BUILDING;
-      while (type != NOT_IN_BUILDING) {
-	pos[2] = building->pos[2] + building->size[2];
-	lastType = type;
-	type = world->inBuilding(&building,
-				 pos[0], pos[1], pos[2], tankRadius,
-				 BZDBCache::tankHeight);
+        // in a building? try climbing on roof until on top
+        int lastType = type;
+        while (type != NOT_IN_BUILDING) {
+          pos[2] = building->pos[2] + building->size[2];
+          lastType = type;
+          type = world->inBuilding(&building, pos[0], pos[1], pos[2],
+                                   tankRadius, BZDBCache::tankHeight);
+        }
+        // ok, when not on top of pyramid or teleporter
+        if (lastType != IN_PYRAMID  &&  lastType != IN_TELEPORTER) {
+          foundspot = true;
+        }
       }
     }
   }
