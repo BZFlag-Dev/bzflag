@@ -245,10 +245,6 @@ void WeatherRenderer::set ( void )
 		if (dbItemSet("_rainPuddleTexture"))
 			puddleGStateBuilder.setTexture(tm.getTextureID(BZDB.get("_rainPuddleTexture").c_str()));
 
-		OpenGLMaterial puddleMaterial(puddleColor, puddleColor, 0.0f);
-		puddleGStateBuilder.setMaterial(puddleMaterial);
-		puddleState = puddleGStateBuilder.getState();
-
 		// see if the texture is specificly overiden
 		if (dbItemSet("_rainTexture"))
 			gstate.setTexture(tm.getTextureID(BZDB.get("_rainTexture").c_str()));
@@ -300,6 +296,12 @@ void WeatherRenderer::set ( void )
 
 		if (dbItemSet("_rainMaxPuddleTime"))
 			maxPuddleTime = BZDB.eval("_rainMaxPuddleTime");
+
+		// update the actual puddle material
+		OpenGLMaterial puddleMaterial(puddleColor, puddleColor, 0.0f);
+		puddleGStateBuilder.setMaterial(puddleMaterial);
+		puddleState = puddleGStateBuilder.getState();
+
 
 		// make sure we know where to start and stop the rain
 		// we want to compute the heights for us
