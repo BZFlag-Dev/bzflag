@@ -4416,8 +4416,8 @@ void			drawFrame(const float dt)
       // draw center channel
       sceneRenderer->render(false);
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
 
       // set up for drawing left channel
@@ -4476,8 +4476,8 @@ void			drawFrame(const float dt)
       // draw left eye's view
       sceneRenderer->render(false);
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
 
       // set up view for right eye
@@ -4487,8 +4487,8 @@ void			drawFrame(const float dt)
       // draw right eye's view
       sceneRenderer->render(true, true);
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
 
       // draw common stuff
@@ -4517,8 +4517,8 @@ void			drawFrame(const float dt)
       sceneRenderer->render(false);
 #ifndef USE_GL_STEREO
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -4534,8 +4534,8 @@ void			drawFrame(const float dt)
       sceneRenderer->render(true, true);
 #ifndef USE_GL_STEREO
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -4543,8 +4543,8 @@ void			drawFrame(const float dt)
 #ifdef USE_GL_STEREO
       glDrawBuffer(GL_BACK);
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
 #endif
 
@@ -4571,8 +4571,8 @@ void			drawFrame(const float dt)
       // draw left eye's view
       sceneRenderer->render(false);
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
 
       // set up view for right eye
@@ -4584,8 +4584,8 @@ void			drawFrame(const float dt)
       // draw right eye's view
       sceneRenderer->render(true, true);
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
     } else {
       const int zoomFactor = getZoomFactor();
@@ -4631,8 +4631,8 @@ void			drawFrame(const float dt)
 
       // draw other stuff
       hud->render(*sceneRenderer);
-      renderDialog();
       controlPanel->render(*sceneRenderer);
+      renderDialog();
       if (radar) radar->render(*sceneRenderer, blankRadar);
     }
 
