@@ -900,7 +900,7 @@ void			HUDRenderer::renderScoreboard(void)
   qsort(players, plrCount, sizeof(int), tankScoreCompare);
   
   // list player scores
-  bool drewMyScore;
+  bool drewMyScore = false;
   for (i = 0; i < plrCount; i++) {
     RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
     if (!drewMyScore && myTank->getScore() > player->getScore()) {
