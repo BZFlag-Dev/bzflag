@@ -3260,7 +3260,7 @@ static void handleCommand(int t, const void *rawbuf)
       player[t].hasSent(message);
       // check for spamming
       std::string tempmsg = message;
-      for (int c = 0; c <= tempmsg.size() - 1; c++)
+      for (int c = 0; c <= (int)tempmsg.size() - 1; c++)
 	if (isspace(tempmsg[c]))
       	  tempmsg.erase(tempmsg.begin() + c);
       if (strcasecmp(tempmsg.c_str(), player[t].getLastMsg().c_str()) == 0 &&
