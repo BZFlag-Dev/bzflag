@@ -718,9 +718,8 @@ static void readListServer()
   ListServerLink& link = listServerLink;
   if (link.socket != NotConnected) {
     char    buf[256];
-    ssize_t byteCount = recv(link.socket, buf, sizeof(buf), 0);
-    if (byteCount == 0)
-      closeListServer();
+    recv(link.socket, buf, sizeof(buf), 0);
+    closeListServer();
   }
 }
 
@@ -843,12 +842,6 @@ static void sendMessageToListServerForReal()
       DEBUG3("Unable to send to the list server!\n");
       closeListServer();
     } else {
-      // hangup
-#ifdef _WIN32
-      shutdown(link.socket, SD_SEND);
-#else
-      shutdown(link.socket, SHUT_WR);
-#endif
       link.nextMessageType = ListServerLink::NONE;
       link.phase           = ListServerLink::WRITTEN;
     }
