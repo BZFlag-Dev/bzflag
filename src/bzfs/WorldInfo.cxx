@@ -10,7 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "WorldInfo.h"
+
+/* common implementation headers */
+#include "global.h"
+#include "Pack.h"
+#include "Protocol.h"
+
 
 WorldInfo::WorldInfo() :
   maxHeight(0),
@@ -271,13 +278,13 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, box.pos);
     databasePtr = nboPackFloat(databasePtr, box.rotation);
     databasePtr = nboPackVector(databasePtr, box.size);
-	bitMask = 0;
-	if (box.driveThrough)
-		bitMask |= _DRIVE_THRU;
- 	if (box.shootThrough)
-		bitMask |= _SHOOT_THRU;
-	databasePtr = nboPackUByte(databasePtr, bitMask);
- }
+    bitMask = 0;
+    if (box.driveThrough)
+      bitMask |= _DRIVE_THRU;
+    if (box.shootThrough)
+      bitMask |= _SHOOT_THRU;
+    databasePtr = nboPackUByte(databasePtr, bitMask);
+  }
 
   // add pyramids
   for (PyramidList::iterator pyr_it = pyramids.begin(); pyr_it != pyramids.end(); ++pyr_it) {
@@ -287,14 +294,14 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackVector(databasePtr, pyr.pos);
     databasePtr = nboPackFloat(databasePtr, pyr.rotation);
     databasePtr = nboPackVector(databasePtr, pyr.size);
-	bitMask = 0;
-	if (pyr.driveThrough)
-		bitMask |= _DRIVE_THRU;
- 	if (pyr.shootThrough)
-		bitMask |= _SHOOT_THRU;
- 	if (pyr.flipZ)
-		bitMask |= _FLIP_Z;
-	databasePtr = nboPackUByte(databasePtr, bitMask);
+    bitMask = 0;
+    if (pyr.driveThrough)
+      bitMask |= _DRIVE_THRU;
+    if (pyr.shootThrough)
+      bitMask |= _SHOOT_THRU;
+    if (pyr.flipZ)
+      bitMask |= _FLIP_Z;
+    databasePtr = nboPackUByte(databasePtr, bitMask);
   }
 
   // add teleporters
@@ -307,13 +314,13 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackFloat(databasePtr, tele.rotation);
     databasePtr = nboPackVector(databasePtr, tele.size);
     databasePtr = nboPackFloat(databasePtr, tele.border);
- 	bitMask = 0;
-	if (tele.driveThrough)
-		bitMask |= _DRIVE_THRU;
- 	if (tele.shootThrough)
-		bitMask |= _SHOOT_THRU;
-	databasePtr = nboPackUByte(databasePtr, bitMask);
-   // and each link
+    bitMask = 0;
+    if (tele.driveThrough)
+      bitMask |= _DRIVE_THRU;
+    if (tele.shootThrough)
+      bitMask |= _SHOOT_THRU;
+    databasePtr = nboPackUByte(databasePtr, bitMask);
+    // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
@@ -338,10 +345,9 @@ int WorldInfo::getDatabaseSize() const
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

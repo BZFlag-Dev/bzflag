@@ -13,68 +13,58 @@
 #ifndef __WORLDINFO_H__
 #define __WORLDINFO_H__
 
-#if (_MSC_VER)
-// turn off bogus `this used in base member initialization list'
-	#pragma warning(disable: 4786)
-	#pragma warning(disable: 4503)
-	#pragma warning(disable: 4355)
-#endif
+#include "common.h"
 
+/* system interface headers */
 #include <vector>
-#include <string>
-#include <algorithm>
-#include <math.h>
 
-#include "global.h"
-#include "Address.h"
-#include "Protocol.h"
 
 typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
 
-  struct ObstacleLocation {
-    public:
-    float pos[3];
-    float rotation;
-    float size[3];
-    bool shootThrough;
-    bool driveThrough;
-    ObstacleLocation &operator=(const ObstacleLocation &ol)
-    {
-      memcpy(pos, ol.pos, sizeof(float) * 3);
-      rotation = ol.rotation;
-      memcpy(size, ol.size, sizeof(float) * 3);
-      shootThrough = ol.shootThrough;
-      driveThrough = ol.driveThrough;
-      return *this;
-    }
-  };
+struct ObstacleLocation {
+public:
+  float pos[3];
+  float rotation;
+  float size[3];
+  bool shootThrough;
+  bool driveThrough;
+  ObstacleLocation &operator=(const ObstacleLocation &ol)
+  {
+    memcpy(pos, ol.pos, sizeof(float) * 3);
+    rotation = ol.rotation;
+    memcpy(size, ol.size, sizeof(float) * 3);
+    shootThrough = ol.shootThrough;
+    driveThrough = ol.driveThrough;
+    return *this;
+  }
+};
 
-  typedef std::vector<ObstacleLocation> ObstacleLocationList;
+typedef std::vector<ObstacleLocation> ObstacleLocationList;
 
-  struct Teleporter : public ObstacleLocation {
-    public:
-    float border;
-    int to[2];
-  };
+struct Teleporter : public ObstacleLocation {
+public:
+  float border;
+  int to[2];
+};
 
-  typedef std::vector<Teleporter> TeleporterList;
+typedef std::vector<Teleporter> TeleporterList;
 
-  struct Pyramid : public ObstacleLocation {
-    public:
-    bool flipZ;
-    Pyramid &operator=(const Pyramid &p)
-    {
-      flipZ = p.flipZ;
-      return *this;
-    }
-  };
+struct Pyramid : public ObstacleLocation {
+public:
+  bool flipZ;
+  Pyramid &operator=(const Pyramid &p)
+  {
+    flipZ = p.flipZ;
+    return *this;
+  }
+};
 
-  typedef std::vector<Pyramid> PyramidList;
+typedef std::vector<Pyramid> PyramidList;
 
 
 class WorldInfo {
 
- public:
+public:
 
   WorldInfo();
   ~WorldInfo();
@@ -92,25 +82,25 @@ class WorldInfo {
   void *getDatabase() const;
   int getDatabaseSize() const;
 
- private:
+private:
 
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
 
- public:
+public:
 
   /** check collision between world object and a cylinder.
-    * return value is kind of collision.
-    * location will return a pointer to the world colliding object
-    * Checking is quite raw
-    */
+   * return value is kind of collision.
+   * location will return a pointer to the world colliding object
+   * Checking is quite raw
+   */
   InBuildingType inBuilding(ObstacleLocation **location,
 			    float x, float y, float z,
 			    float radius, float height = 0.0f);
   /** check collision between a rectangle and a circle
-    */
+   */
   bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
 
- private:
+private:
 
   float size[2];
   float gravity;
@@ -125,15 +115,12 @@ class WorldInfo {
 };
 
 
-#else
-class WorldInfo;
 #endif /* __WORLDINFO_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -14,8 +14,11 @@
 #pragma warning( 4: 4786 )
 #endif
 
-// class interface header
+/* interface header */
 #include "CustomGate.h"
+
+/* common interface headers */
+#include "StateDatabase.h"
 
 
 CustomGate::CustomGate()
