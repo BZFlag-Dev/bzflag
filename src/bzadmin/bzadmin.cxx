@@ -28,6 +28,11 @@
 #include "version.h"
 
 
+#ifdef _WIN32
+void Player::setDeadReckoning()
+{
+}
+#endif
 /** @file
     This is the main file for bzadmin, the bzflag text client.
 */
