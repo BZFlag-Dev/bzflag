@@ -101,7 +101,9 @@ int			getErrno();
 
 #else /* !defined(_WIN32) */
 
+#ifndef WINVER
 #define WINVER 0x0400
+#endif
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>

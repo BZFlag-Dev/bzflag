@@ -57,7 +57,9 @@
   #endif
 #endif
 
+#ifndef WINVER
 #define WINVER 0x0400
+#endif
 #define _WIN32_WINNT 0x0400
 
 #if(1)
