@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- server can enter an infinite loop on startup in certain situations
+  with -fb on, in resetFlag().  maybe only on certain maps, certainly
+  on thewatch and borgcube.
+
 - in teleporter with (isValid() == false) can mess up the linking
 
 - when a shield flag is dropped due to its owner being shot, it is not
@@ -57,6 +61,11 @@ recent bugs
 - world weapons seem to lag the server when there are many players joined.
   might be related to a rapidly repeating world weapon as well (like once
   a second).
+
+- sometimes a player will get kicked off of a server for "no udp" even when
+  udp is enabled on both ends and working in the middle.  subsequent 
+  connections from the same client to the same server (e.g. rejoin)
+  often work fine.
 
 - sending bzfs a single byte udp packet sends bzfs into lala land. (trepan)
 
