@@ -251,6 +251,11 @@ void FlagInfo::getTextualInfo(char *message)
 	  flag.position[0], flag.position[1], flag.position[2]);
 }
 
+bool FlagInfo::exist()
+{
+  return flag.status != FlagNoExist;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -262,7 +262,7 @@ static void sendFlagUpdate(int playerIndex)
   int length = sizeof(uint16_t);
   for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
     FlagInfo &flag = FlagInfo::flagList[flagIndex];
-    if (flag.flag.status != FlagNoExist) {
+    if (flag.exist()) {
       if ((length + sizeof(uint16_t) + FlagPLen)
 	  > MaxPacketLen - 2*sizeof(uint16_t)) {
 	nboPackUShort(bufStart, cnt);
@@ -1743,8 +1743,7 @@ static void addPlayer(int playerIndex)
       && Team::isColorTeam((TeamColor)teamIndex)) {
     if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamIndex);
-      if (flagid >= 0
-	  && FlagInfo::flagList[flagid].flag.status == FlagNoExist) {
+      if (flagid >= 0 && !FlagInfo::flagList[flagid].exist()) {
 	// reset those flags
 	for (int n = 0; n < clOptions->numTeamFlags[teamIndex]; n++)
 	  resetFlag(FlagInfo::flagList[n+flagid]);
@@ -4387,7 +4386,7 @@ int main(int argc, char **argv)
 	  if (flagid >= 0) {
 	    for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {
 	      FlagInfo &flag = FlagInfo::flagList[flagid + n];
-              if (flag.flag.status != FlagNoExist && flag.player == -1) {
+              if (flag.exist() && flag.player == -1) {
 	        DEBUG1("Flag timeout for team %d\n", i);
                 zapFlag(flag);
 	      }

@@ -37,6 +37,7 @@ public:
   int  getIndex();
   bool landing(const TimeKeeper &tm);
   void getTextualInfo(char *message);
+  bool exist();
 
   static void setSize(int _numFlags);
   static void setAllowed(std::vector<FlagType*> allowed);
