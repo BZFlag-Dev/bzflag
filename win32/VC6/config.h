@@ -20,12 +20,7 @@
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
 
-#if defined(_MSC_VER) && (_MSC_VER == 1100)
-	#define socklen_t int	//VC5 needs this
-#else
-//************* NOTE***********************************
-// VC6 users who have the updated Windows Platform SDK need to comment this line out
-// Out of the box VC users need this line
+#if _MSC_VER < 1200
 	#define socklen_t int 
 #endif //_MSC_VER == 1100
 
