@@ -1345,7 +1345,7 @@
 		140C6245051CC4D500A80164 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = buildDate.cc;
+			path = buildDate.cxx;
 			refType = 4;
 		};
 		140C6246051CC4D500A80164 = {
@@ -1357,7 +1357,7 @@
 		140C6247051CC50400A80164 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = buildDate.cc;
+			path = buildDate.cxx;
 			refType = 4;
 		};
 		140C6248051CC50400A80164 = {
@@ -1369,7 +1369,7 @@
 		140C6249051CC5B800A80164 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = buildDate.cc;
+			path = buildDate.cxx;
 			refType = 4;
 		};
 		140C624A051CC5B800A80164 = {
@@ -1381,7 +1381,7 @@
 		140C624B051CC5D300A80164 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = buildDate.cc;
+			path = buildDate.cxx;
 			refType = 4;
 		};
 		140C624C051CC5D300A80164 = {
@@ -9393,7 +9393,6 @@
 				7BE2CA4C051D096C00FEBA07,
 			);
 			buildSettings = {
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
