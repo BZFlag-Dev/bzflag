@@ -29,6 +29,7 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
 
+    teamBases.resize(1);
     TeamBase &teamBase = teamBases[0];
     switch (team)
     {
@@ -66,6 +67,7 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
     }
 
     teamBase.position[2] = 0.0f;
+    teamBase.rotation = 0.0f;
     teamBase.size[0] = BaseSize / 2.0f;
     teamBase.size[1] = BaseSize / 2.0f;
     teamBase.size[2] = 0.0f;
