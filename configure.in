@@ -26,6 +26,10 @@ if test $HASPOD2MAN = no; then
   AC_MSG_WARN([some man pages will not being generated])
 fi
 AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
+AC_SUBST(AR)
+AC_CHECK_PROG(AR, ar, ar)
+AC_SUBST(AR_FLAGS)
+
 
 # Just for kicks
 echo -n "checking for artificial intelligence for robots..." 1>&6
