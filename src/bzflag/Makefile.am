@@ -17,7 +17,6 @@ bzflag_SOURCES = 			\
 	SceneRenderer.cxx		\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
-	CommandManager.cxx		\
 	CommandsStandard.cxx		\
 	RadarRenderer.cxx		\
 	RadarRenderer.h			\

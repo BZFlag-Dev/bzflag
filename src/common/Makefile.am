@@ -3,6 +3,7 @@ noinst_LIBRARIES = libCommon.a
 libCommon_a_SOURCES  =		 	\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
+	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
