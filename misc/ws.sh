@@ -1,11 +1,18 @@
 #!/bin/sh
 
-echo
-echo "  Please don't blindy convert without insuring that"
-echo "  the resultant visual whitespace remains the same."
-echo "  It's already messed up quite a few files."
-echo
-exit
+# Note: this script will not alter any files that already
+# meet the BZFlag whitespace usage guidelines.
+# if your files are being messed up by this, then chances
+# are they are _already_ messed up when others look at them
+# ie: you are now seeing what others see when they look at your
+# messed up whitespace. If you find that this script can be
+# improved to help your files be more compliant with the
+# BZFlag whitespace guidelines, feel free to improve the script
+# it will soon be run automatically from time to time, so
+# if it messes up your code, then either fix it, or fix your code.
+# Feel free to send specific examples to Tim Riker and he'll try
+# to improve the script.
+#	Thanx! Tim "ws king" Riker
 
 # cleanup whitespace issues
 # could use new sed, but not everybody has that yet
