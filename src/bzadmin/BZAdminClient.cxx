@@ -305,7 +305,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	vbuf = nboUnpackShort(vbuf, reason);
 	vbuf = nboUnpackShort(vbuf, shotId);
 	if (reason == PhysicsDriverDeath) {
-	  vbuf = nboUnpackInt(vbuf, phydrv);
+          int32_t inPhyDrv;
+	  vbuf = nboUnpackInt(vbuf, inPhyDrv);
+          phydrv = int(inPhyDrv);
 	}
 
 	// find the player names and build a kill message string
