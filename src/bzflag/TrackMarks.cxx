@@ -26,6 +26,7 @@
 #include "TimeKeeper.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "PhysicsDriver.h"
 #include "bzfgl.h"
 #include "TextureManager.h"
 #include "SceneRenderer.h"
@@ -40,6 +41,7 @@ typedef struct {
   float pos[3];
   float angle;
   float scale;
+  int phydrv;
   TimeKeeper startTime;
 } TrackEntry;
 
@@ -101,7 +103,6 @@ void TrackMarks::init()
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gb.setMaterial(treadsMaterial);
-  gb.enableMaterial(true);
   treadsState = gb.getState();
   
 //  BZDB.addCallback("_trackMarkTime", bzdbCallback, NULL);
@@ -136,9 +137,11 @@ void TrackMarks::clear()
 }
 
 
-bool TrackMarks::addMark(const float pos[3], float scale, float angle)
+bool TrackMarks::addMark(const float pos[3], float scale, float angle,
+                         int phydrv)
 {
   TrackEntry te;
+  
   if ((pos[2] <= 0.1f) && BZDB.get(StateDatabase::BZDB_MIRROR) != "none") {
     te.type = puddle;
   } else {
@@ -151,13 +154,41 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle)
   }
   te.scale = scale;
   te.angle = angle * (180.0f / M_PI) ;
+  te.phydrv = phydrv;
   TrackList.push_back(te);
   return true;
 }
 
 
-void TrackMarks::update()
+void TrackMarks::update(float dt)
 {
+  std::list<TrackEntry>::iterator it;
+  for (it = TrackList.begin(); it != TrackList.end(); it++) {
+    TrackEntry& te = *it;
+    // update for the Physics Driver
+    if (te.phydrv >= 0) {
+      const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
+      if (phydrv != NULL) {
+        const float* v = phydrv->getVelocity();
+        te.pos[0] += (v[0] * dt);
+        te.pos[1] += (v[1] * dt);
+        
+        const float av = phydrv->getAngularVel();
+        if (av != 0.0f) {
+          const float* ap = phydrv->getAngularPos();
+          const float da = ((av * 2.0f * M_PI) * dt);
+          const float cos_val = cosf(da);
+          const float sin_val = sinf(da);
+          const float dx = te.pos[0] - ap[0];
+          const float dy = te.pos[1] - ap[1];
+          te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
+          te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
+          te.angle += da * (180.0f / M_PI);
+        }
+      }
+    }
+  }
+  
   return;
 }
 
@@ -182,9 +213,6 @@ void TrackMarks::render()
     std::list<TrackEntry>::iterator next = it;
     next++;
     TrackEntry& te = *it;
-    // sanity checks
-    if (nowTime <= te.startTime || te.startTime.getSeconds() <= 0)
-      continue;
     float timeDiff = nowTime - te.startTime;
     if (timeDiff > TrackFadeTime) {
       TrackList.erase(it);
@@ -261,7 +289,7 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
 static void drawTreads(const TrackEntry& te, float lifetime)
 {
   const float ratio = (lifetime / TrackFadeTime);
-    
+  
   treadsState.setState();
   glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
   

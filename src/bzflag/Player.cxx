@@ -270,7 +270,8 @@ void Player::updateTank(float dt, bool local)
         drawMark = false;
       }
       if (drawMark) {
-        TrackMarks::addMark(markPos, dimensionsScale[1], state.azimuth);
+        TrackMarks::addMark(markPos, dimensionsScale[1],
+                            state.azimuth, state.phydrv);
         lastTrackDraw = TimeKeeper::getCurrent();
       }
     }

@@ -39,6 +39,7 @@ public:
     float		velocity[3];		// velocity of tank
     float		azimuth;		// orientation of tank
     float		angVel;			// angular velocity of tank
+    int			phydrv;			// physics driver
 };
 
 

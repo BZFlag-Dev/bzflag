@@ -97,6 +97,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TankGeometryMgr.h"
 #include "motd.h"
 #include "URLManager.h"
+#include "TrackMarks.h"
 #include "md5.h"
 
 // versioning that makes us recompile every time
@@ -4994,6 +4995,9 @@ static void		playingLoop()
     if (world) {
       world->getWorldWeapons()->updateShots(dt);
     }
+    
+    // update track marks
+    TrackMarks::update(dt);
 
     // draw the frame
     drawFrame(dt);

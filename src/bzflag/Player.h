@@ -61,6 +61,7 @@ public:
   const float*	getForward() const;
   const float*	getVelocity() const;
   float		getAngularVelocity() const;
+  int		getPhysicsDriver() const;
   float		getRadius() const;
   void		getMuzzle(float*) const;
   float		getMuzzleHeight() const;
@@ -116,6 +117,7 @@ public:
   void		move(const float* pos, float azimuth);
   void		setVelocity(const float* velocity);
   void		setAngularVelocity(float);
+  void		setPhysicsDriver(int);
   void		changeTeam(TeamColor);
   virtual void	setFlag(FlagType*);
   virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
@@ -312,6 +314,17 @@ inline const float*	Player::getVelocity() const
 inline float		Player::getAngularVelocity() const
 {
   return state.angVel;
+}
+
+inline int		Player::getPhysicsDriver() const
+{
+  return state.phydrv;
+}
+
+inline void		Player::setPhysicsDriver(int driver)
+{
+  state.phydrv = driver;
+  return;
 }
 
 inline short		Player::getWins() const
