@@ -108,8 +108,6 @@ LocalPlayer*		myTank = NULL;
 static BzfDisplay*	display = NULL;
 MainWindow*	mainWindow = NULL;
 static SceneRenderer*	sceneRenderer = NULL;
-static SceneDatabase*	zScene = NULL;
-static SceneDatabase*	bspScene = NULL;
 ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
@@ -340,12 +338,25 @@ SceneRenderer*		getSceneRenderer()
 
 void			setSceneDatabase()
 {
+  SceneDatabase *scene; // FIXME - test the zbuffer here
+  
+  // delete the old database
+  sceneRenderer->setSceneDatabase(NULL);
+
+  // make the scene, and record the processing time
+  TimeKeeper startTime = TimeKeeper::getCurrent();
+  scene = sceneBuilder->make(world);
+  float elapsed = TimeKeeper::getCurrent() - startTime;
+
+  // print debugging info  
   if (BZDB.isTrue("zbuffer")) {
-    sceneRenderer->setSceneDatabase(zScene);
+    DEBUG2("ZSceneDatabase processed in %.3f seconds.\n", elapsed);
+  } else {
+    DEBUG2("BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
   }
-  else {
-    sceneRenderer->setSceneDatabase(bspScene);
-  }
+  
+  // set the scene
+  sceneRenderer->setSceneDatabase(scene);
 }
 
 StartupInfo*		getStartupInfo()
@@ -3732,11 +3743,6 @@ void		leaveGame()
 {
   // delete scene database
   sceneRenderer->setSceneDatabase(NULL);
-  delete zScene;
-  delete bspScene;
-  zScene = NULL;
-  bspScene = NULL;
-
 
   // no more radar
   controlPanel->setRadarRenderer(NULL);
@@ -3898,16 +3904,7 @@ static bool		joinGame(const StartupInfo* info,
   numFlags = world->getMaxFlags();
 
   // make scene database
-  const bool oldUseZBuffer = BZDB.isTrue("zbuffer");
-  BZDB.set("zbuffer", "0");
-  bspScene = sceneBuilder->make(world);
-  BZDB.set("zbuffer", "1");
-  // FIXME - test the zbuffer here
-  if (BZDB.isTrue("zbuffer"))
-    zScene = sceneBuilder->make(world);
-  BZDB.set("zbuffer", oldUseZBuffer ? "1" : "0");
   setSceneDatabase();
-
 
   mainWindow->getWindow()->yieldCurrent();
   // make radar
@@ -5497,11 +5494,7 @@ void			startPlaying(BzfDisplay* _display,
   delete sceneBuilder;
   sceneRenderer->setBackground(NULL);
   sceneRenderer->setSceneDatabase(NULL);
-  delete zScene;
-  delete bspScene;
   World::done();
-  bspScene = NULL;
-  zScene = NULL;
   mainWindow = NULL;
   sceneRenderer = NULL;
   display = NULL;
