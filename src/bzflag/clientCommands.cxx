@@ -438,6 +438,8 @@ std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
   static ComposeDefaultKey composeKeyHandler;
   if (args.size() != 1)
     return "usage: send {all|team|nemesis|recipient|admin}";
+  if (!myTank)
+    return "use send only when connected";
   std::string composePrompt;
   if (args[0] == "all") {
     void* buf = messageMessage;
