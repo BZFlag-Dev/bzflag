@@ -27,9 +27,7 @@ class LinuxPlatformFactory : public PlatformFactory {
     BzfDisplay*		createDisplay(const char* name, const char*);
     BzfVisual*		createVisual(const BzfDisplay*);
     BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
-#ifdef USBJOYSTICK
     BzfJoystick*	createJoystick();
-#endif
 
   private:
 			LinuxPlatformFactory(const LinuxPlatformFactory&);

@@ -17,6 +17,8 @@
  *
  */
 
+#include "common.h"
+
 #ifdef USBJOYSTICK
 #include "BzfJoystick.h"
 #include <X11/Intrinsic.h>

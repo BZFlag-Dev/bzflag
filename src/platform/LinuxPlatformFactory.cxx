@@ -15,6 +15,9 @@
 #include "XVisual.h"
 #include "XWindow.h"
 #include "LinuxMedia.h"
+#ifdef USBJOYSTICK
+  #include "USBJoystick.h"
+#endif
 
 PlatformFactory*	PlatformFactory::getInstance()
 {
@@ -55,12 +58,16 @@ BzfWindow*		LinuxPlatformFactory::createWindow(
   return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-#ifdef USBJOYSTICK
-BzfJoystick*		LinuxPlatformFactory::createJoystick();
+BzfJoystick*		LinuxPlatformFactory::createJoystick()
 {
+#ifdef USBJOYSTICK
+  // only works for USB joysticks under *BSD
   return new USBJoystick;
-}
+#else
+  // no joystick
+  return new BzfJoystick;
 #endif
+}
 
 BzfMedia*		LinuxPlatformFactory::createMedia()
 {

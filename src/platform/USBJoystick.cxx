@@ -17,6 +17,8 @@
  *
  */
 
+#include "common.h"
+
 #ifdef USBJOYSTICK
 
 // Moved bodily from XWindow.h - hope it still works :)
@@ -51,7 +53,7 @@ USBJoystick::~USBJoystick()
     close(fd);
 }
 
-USBJoystick::initJoystick(const char *name)
+void USBJoystick::initJoystick(const char *name)
 {
   report_desc_t rd;
   hid_data *d;
@@ -194,9 +196,10 @@ unsigned long USBJoystick::getJoyButtons() const
   }
 }
 
-unsigned long USBJoystick::getJoyDevices() const
+void USBJoystick::getJoyDevices(std::vector<std::string> &list) const
 {
   //FIXME: Not implemented
+  list.clear();
 }
 
 #endif
