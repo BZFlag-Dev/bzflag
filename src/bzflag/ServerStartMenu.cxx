@@ -490,11 +490,7 @@ void ServerStartMenu::execute()
 #if defined(_WIN32)
 
     // Windows
-#ifdef __MINGW32__
     int result = _spawnvp(_P_DETACH, serverCmd, (char* const*) args);
-#else
-    int result = _spawnvp(_P_DETACH, serverCmd, args);
-#endif
     if (result < 0) {
       if (errno == ENOENT)
 	setStatus("Failed... can't find server program.");
