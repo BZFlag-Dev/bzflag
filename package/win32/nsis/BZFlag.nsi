@@ -27,7 +27,7 @@ InstallDir $PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}
 LicenseText "Please read our following license before installing:"
 LicenseData ..\..\..\COPYING
 
-; Registry key to check for directory (so if you install again, it will 
+; Registry key to check for directory (so if you install again, it will
 ; overwrite the old one automatically)
 InstallDirRegKey HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir"
 
@@ -50,14 +50,14 @@ Section "BZFlag (required)"
 
 	; make the data dir
 	SetOutPath $INSTDIR\data
-	File ..\..\..\data\*.*	
+	File ..\..\..\data\*.*
 	File ..\..\..\misc\hix.bzw
 	File ..\..\..\misc\bzfs.conf
-	File ..\..\..\misc\bzfs_conf.html	
+	File ..\..\..\misc\bzfs_conf.html
 
 	; make the l10n dir
 	SetOutPath $INSTDIR\data\l10n
-	File ..\..\..\data\l10n\*.*	
+	File ..\..\..\data\l10n\*.*
 
 	; make the doc dir
 	SetOutPath $INSTDIR\doc
@@ -80,28 +80,28 @@ Section "Start Menu Shortcuts"
 	SetOutPath $INSTDIR
 	CreateDirectory "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}"
 	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\BZFlag ${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0 
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\BZFlag ${VER_MAJOR}${VER_MINOR} ( Windowed ).lnk" "$INSTDIR\bzflag.exe"  "-window -geometry 800x600" "$INSTDIR\bzflag.exe" 0 
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\BZFlag ${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\BZFlag ${VER_MAJOR}${VER_MINOR} ( Windowed ).lnk" "$INSTDIR\bzflag.exe"  "-window -geometry 800x600" "$INSTDIR\bzflag.exe" 0
 
 	SetOutPath $INSTDIR\data
 	CreateDirectory "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server"
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( Simple Jump Teleport 1 shot).lnk" "$INSTDIR\bzfs.exe" "-p 5156 -pr 5157 -j -t -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0 
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5156 -pr 5157 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0 
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( HIX [Public] FFA ).lnk" "$INSTDIR\bzfs.exe" '-p 5156 -pr 5157 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world HIX.bzw -public "My HIX FFA Server"' "$INSTDIR\bzflag.exe" 0 
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( HIX [Public] CTF ).lnk" "$INSTDIR\bzfs.exe" '-p 5156 -pr 5157 -c -j -fb -world HIX.bzw -public "My HIX CTF Server"' "$INSTDIR\bzflag.exe" 0 
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Data Folder.lnk" "$INSTDIR\data" "" "" 0 
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\BZFS Configuration Builder.lnk" "$INSTDIR\data\bzfs_conf.html" "" "" 0 
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( Simple Jump Teleport 1 shot).lnk" "$INSTDIR\bzfs.exe" "-p 5156 -pr 5157 -j -t -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5156 -pr 5157 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( HIX [Public] FFA ).lnk" "$INSTDIR\bzfs.exe" '-p 5156 -pr 5157 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world HIX.bzw -public "My HIX FFA Server"' "$INSTDIR\bzflag.exe" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( HIX [Public] CTF ).lnk" "$INSTDIR\bzfs.exe" '-p 5156 -pr 5157 -c -j -fb -world HIX.bzw -public "My HIX CTF Server"' "$INSTDIR\bzflag.exe" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Data Folder.lnk" "$INSTDIR\data" "" "" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\BZFS Configuration Builder.lnk" "$INSTDIR\data\bzfs_conf.html" "" "" 0
 	SetOutPath $INSTDIR\doc
 	CreateDirectory "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc"
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\BZFlag [game] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzflag.html" "" "" 0 
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\bzfs [server] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzfs.html" "" "" 0 
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\bzfls [list serv] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzfls.html" "" "" 0 
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\BZFlag [game] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzflag.html" "" "" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\bzfs [server] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzfs.html" "" "" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\bzfls [list serv] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzfls.html" "" "" 0
 SectionEnd
 
 Section "Quick Launch Shortcuts"
 	; shortcut in the "quick launch bar"
 	SetOutPath $INSTDIR
-	CreateShortCut "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0 
+	CreateShortCut "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
 SectionEnd
 
 Function .onInstSuccess

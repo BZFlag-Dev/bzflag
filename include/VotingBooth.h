@@ -37,11 +37,11 @@
  * two default results of any poll if unspecified.
  */
 class VotingBooth
-{	
+{
 private:
-  
+
   static const short int RETRACTED_VOTE;
-  
+
   /** question that is voted upon (optionally provided)
    */
   std::string _question;

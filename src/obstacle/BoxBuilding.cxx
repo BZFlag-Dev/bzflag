@@ -25,7 +25,7 @@ BoxBuilding::BoxBuilding() : Obstacle(), noNodes(false)
   // do nothing
 }
 
-BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h, 
+BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h,
 			 bool drive, bool shoot, bool invisible) :
   Obstacle(p, a, w, b, h,drive,shoot), noNodes(invisible)
 {

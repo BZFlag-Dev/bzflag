@@ -49,7 +49,7 @@ bases.  The object is simply to get as high a score as possible.
 In rabbit-hunt, the lead player is chosen as the target for all
 other players. When the rabbit(target) is destroyed, the live player
 with the next highest score becomes the rabbit. The object is to
-remain the rabbit for as long as possible. The rabbit is marked as 
+remain the rabbit for as long as possible. The rabbit is marked as
 a white tank.
 .SS Options
 .RS
@@ -522,7 +522,7 @@ You tank looks like a teammate when viewed out of the window.
 Bullets, radar and targeting reveal your true identity.
 .TP
 .B Burrow {BU}
-You tank burrows into the ground up to your muzzle, making you 
+You tank burrows into the ground up to your muzzle, making you
 impervious to normal shots, as they sail above you. However
 your tank controls are sluggish, and anyone, no matter what flag
 they have, can crush you like.
@@ -532,7 +532,7 @@ See Stealthed, Cloaked and Masqueraded tanks as normal.
 .TP
 .B Thief (TH)
 Tank is small and fast, when you shoot an opponent, he is not killed,
-but instead, you steal his flag. 
+but instead, you steal his flag.
 .TP
 .B Useless (US)
 It's useless!

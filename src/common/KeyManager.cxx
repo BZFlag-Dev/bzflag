@@ -128,7 +128,7 @@ std::string		KeyManager::get(const BzfKeyEvent& key,
 }
 
 
-std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, bool press) const 
+std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, bool press) const
 {
   std::vector<std::string> keys;
   EventToCommandMap::const_iterator index;

@@ -53,7 +53,7 @@ inline int getBuildDate()
   int year = 1900, month = 0, day = 0;
   char monthStr[512];
   sscanf(buildDate,"%s %d %d", monthStr, &day, &year);
-  
+
   // we want it not as a name but a number
   if (strcmp(monthStr, "Jan") == 0)
           month = 1;
@@ -79,7 +79,7 @@ inline int getBuildDate()
           month = 11;
   else if (strcmp(monthStr, "Dec") == 0)
           month = 12;
-  
+
   return (year*10000) + (month*100)+ day;
 }
 #ifndef BZ_BUILD_DATE

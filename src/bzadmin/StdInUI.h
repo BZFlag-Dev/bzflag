@@ -29,7 +29,7 @@ public:
 
   bool checkCommand(string& str);
 
-  /** This function returns a pointer to a dynamically allocated 
+  /** This function returns a pointer to a dynamically allocated
       StdInUI object. */
   static BZAdminUI* creator(const map<PlayerId, string>& players, PlayerId me);
 

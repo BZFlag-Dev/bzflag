@@ -736,11 +736,11 @@ an admin to veto a poll.
 
 BZFlag worlds come in two varieties, randomly generated ones, and human designed
 ones. By default, bzfs uses randomly generated world unless you specify the -world
-command line or configuration file option. The world file specified by the -world 
+command line or configuration file option. The world file specified by the -world
 option is a text based file that contains a list of world objects. This file can
 be created using programs found on sourceforge.net through cvs, or can be hand edited.
 
-The format of this text file consists of any number of objects listed in any order. 
+The format of this text file consists of any number of objects listed in any order.
 The list of world types consists of
 
 
@@ -761,8 +761,8 @@ The list of world types consists of
 
 Each object is described by placing the type on one line, the word \fIend\fR on a following line,
 and a list of attributes for that object, one per line, inbetween. Attributes may be listed in
-any order. Attributes have default values, and if that is good enough, the attribute need not 
-be listed. Words are always specified in lowercase. Line comments can be specified by placing a 
+any order. Attributes have default values, and if that is good enough, the attribute need not
+be listed. Words are always specified in lowercase. Line comments can be specified by placing a
 # sign at the start of the line.
 
 .br

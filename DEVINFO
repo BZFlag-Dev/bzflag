@@ -80,9 +80,9 @@ but some rules:
 
   1)  indents are 2 characters. Tabs are 8 characters. There are vi and emacs
       settings in each file to adopt, enforce, remind, and encourage this
-      convention. Suggestions welcome here for setting up other environments. 
+      convention. Suggestions welcome here for setting up other environments.
       Here are the lines that should be included at the end of source files:
-      
+
 	// Local Variables: ***
 	// mode:C++ ***
 	// tab-width: 8 ***
@@ -241,7 +241,7 @@ Details -- Version numbers
 
 The BZFlag versioning info is defined in:   include/version.h
 
-There are a number of #defines in that file that define the Major, Minor, 
+There are a number of #defines in that file that define the Major, Minor,
 and Revision versions, as well as the build type, build date, build user, and
 network protocol version.
 
@@ -253,7 +253,7 @@ All "development" versions use an odd number for the minor version number.  All
 "release" versions use an even number for the minor version, e.g.. 1.9.x is a
 development version for a future 1.10 release.  The revision version represents
 signifigant feature changes or stages in a development version, such as a
-change to the network protocol or a move to a definate testing stage.  For 
+change to the network protocol or a move to a definate testing stage.  For
 "release" versions, the revision represents patches or bug fixes to the base
 release, but not new feature development.  This allows the developers to "leave
 some room" for patches and emergency fixes to a release line.

@@ -1099,7 +1099,7 @@ void LocalPlayer::forceReload(float time)
       delete shots[i];
       shots[i] = NULL;
     }
-    
+
     // create shots that must timeout for "time" seconds
     shots[i] = new LocalShotPath(firingInfo);
     /*    shots[i]->boostReloadTime(-(shots[i]->getLifetime()));

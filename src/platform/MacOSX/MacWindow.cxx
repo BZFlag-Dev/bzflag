@@ -33,7 +33,7 @@ struct Settings
   CGGammaValue blueMax;
   CGGammaValue blueGamma;
   double gamma;
-  
+
   Settings() {
     Use_Main_Display = true;
     Capture_Display = true;
@@ -441,7 +441,7 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
 #if DEBUG
   std::cout << "Initial gamma settings: " << settings.gamma << " for (" << settings.redGamma << "," << settings.greenGamma << "," <<settings.blueGamma << std::endl;
 #endif
-  
+
   //hideMouse();
 }
 
@@ -452,7 +452,7 @@ MacWindow::~MacWindow() {
   showMouse();
   gl_context.Reset();
   displays.Release();
-  CGDisplayRestoreColorSyncSettings(); 
+  CGDisplayRestoreColorSyncSettings();
 }
 
 bool MacWindow::isValid() const { return true; }
@@ -519,7 +519,7 @@ void MacWindow::ungrabMouse()
 void MacWindow::showMouse() { ShowCursor(); }
 void MacWindow::hideMouse() { HideCursor(); }
 
-void MacWindow::setGamma(float value)  
+void MacWindow::setGamma(float value)
 {
   CGDisplayErr err;
 

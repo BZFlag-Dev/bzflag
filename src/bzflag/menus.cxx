@@ -3635,7 +3635,7 @@ void			ServerMenu::addToList(ServerItem& info, bool doCache)
     // on save we delete at most as many items as we added
     // if the added list is normal, we weed most out, if we
     // get few items, we weed few items out
-    serverCache->incAddedNum(); 
+    serverCache->incAddedNum();
 
     // make string like "sdfsd.dmsd.com:123"
     char buffer [100];

@@ -248,7 +248,7 @@ void CursesUI::updateCmdWin() {
 }
 
 
-BZAdminUI* CursesUI::creator(const map<PlayerId, string>& players, 
+BZAdminUI* CursesUI::creator(const map<PlayerId, string>& players,
 			     PlayerId me) {
   return new CursesUI(players, me);
 }

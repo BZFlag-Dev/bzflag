@@ -29,7 +29,7 @@ cleanup()
     unlink(tempname);
     free(tempname);
   }
-}	
+}
 
 int
 main(int argc, char *argv[])
@@ -39,7 +39,7 @@ main(int argc, char *argv[])
   char *inp, *outp;
   char versionstring[16];
   char *filename = INNAME;
-  
+
   if (atexit(cleanup) < 0){
     perror("atexit");
     exit(-1);

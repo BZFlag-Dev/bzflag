@@ -62,7 +62,7 @@ class string_util {
       unsigned int startPos = in.find_first_not_of(delims);
       while (startPos != std::string::npos){
 	unsigned int endPos;
-	
+
 	if (maxTokens && (numTokens >= (maxTokens-1)))
 	  endPos = std::string::npos;
 	else
@@ -91,8 +91,8 @@ class string_util {
 	if( isdigit(duration[i]) ) {
 	  t = t * 10 + (duration[i] - '0');
 	}
-        else if(duration[i] == 'h' || duration[i] == 'H') { 
-	  durationInt += (t * 60); 
+        else if(duration[i] == 'h' || duration[i] == 'H') {
+	  durationInt += (t * 60);
 	  t = 0;
 	}
         else if(duration[i] == 'd' || duration[i] == 'D') {
@@ -103,7 +103,7 @@ class string_util {
 	  durationInt += (t * 10080);
 	  t = 0;
 	}
-      } 
+      }
       durationInt += t;
       return durationInt;
     }
@@ -115,7 +115,7 @@ class string_util {
 /** compare_nocase is strait from Stroustrup.  This implementation uses
  * strings instead of char arrays and includes a maxlength bounds check.
  * It compares two strings and returns 0 if equal, <0 if s1 is less than
- * s2, and >0 if s1 is greater than s2. 
+ * s2, and >0 if s1 is greater than s2.
  */
 inline static int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
 {

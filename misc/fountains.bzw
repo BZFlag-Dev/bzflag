@@ -64,7 +64,7 @@ size 8 8 8
 rotation 0
 end
 
-weapon 
+weapon
 position -150 -50 2
 initdelay 10
 rotation 0
@@ -72,7 +72,7 @@ delay 6
 type F
 end
 
-weapon 
+weapon
 position 150 -50 2
 initdelay 10
 rotation 90
@@ -80,7 +80,7 @@ delay 6
 type F
 end
 
-weapon 
+weapon
 position 150 50 2
 initdelay 10
 rotation 180
@@ -88,7 +88,7 @@ delay 6
 type F
 end
 
-weapon 
+weapon
 position -150 50 2
 initdelay 10
 rotation 270

@@ -191,7 +191,7 @@ public:
       sendMessage(ServerPlayer, id, banlistmessage, true);
 
       // add reason, if any
-      if( it->reason.size() ) { 
+      if( it->reason.size() ) {
 	char *pMsg = banlistmessage;
 	sprintf(pMsg, "   reason: %s", it->reason.c_str() );
 	sendMessage(ServerPlayer, id, banlistmessage, true );

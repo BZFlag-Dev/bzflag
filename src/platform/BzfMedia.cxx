@@ -86,7 +86,7 @@ unsigned char*		BzfMedia::readImage(const std::string& filename,
   // try data/filename with replaced extension
   name = replaceExtension(makePath(DEFAULT_MEDIA_DIR.c_str(), filename), getImageExtension());
   image = doReadImage(name.c_str(), width, height, depth);
-  if (image) return image;  
+  if (image) return image;
 
   // try ../data/filename
   name = "../";
@@ -197,11 +197,11 @@ float*			BzfMedia::readSound(const std::string& filename,
   name = replaceExtension(makePath(name.c_str(), filename), getSoundExtension());
   sound = doReadSound(name.c_str(), numFrames, rate);
   if (sound) return sound;
-  
+
 #if DEBUG
 std::cout << "Unable to locate [" << filename << "] audio file (media dir is set to " << mediaDir << ")" << std::endl;
 #endif
-  
+
   return NULL;
 }
 

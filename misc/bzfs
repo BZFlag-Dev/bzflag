@@ -24,7 +24,7 @@ start() {
 	gprintf "Starting %s: " "$prog"
 	daemon $bzfsd_path $bzfsopts
 	RETVAL=$?
-	echo 
+	echo
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
 	return $RETVAL
 }
@@ -36,16 +36,16 @@ stop() {
 	echo
 	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
 	return $RETVAL
-}	
+}
 
 rhstatus() {
 	status $prog
-}	
+}
 
 restart() {
   	stop
 	start
-}	
+}
 
 case "$1" in
   start)

@@ -128,13 +128,13 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
       }
 
       switch(eventButtons) {
-      case ::kEventMouseButtonSecondary: 
+      case ::kEventMouseButtonSecondary:
 	bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
 	break;
-      case ::kEventMouseButtonTertiary: 
+      case ::kEventMouseButtonTertiary:
 	bzf_event.keyDown.button = BzfKeyEvent::MiddleMouse;
 	break;
-      default: 
+      default:
 	/* consistent wth the rest of the mac experience, a command click is
 	 * the same as a right click.
 	 */

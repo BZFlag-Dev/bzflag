@@ -7,16 +7,16 @@ recent bugs
   and BU radius
 
 - depth ordering/culling is incorrect on mac's playground (small field, 4
-  team ctf with large bases and elevated positions for 3 of the bases).  a 
+  team ctf with large bases and elevated positions for 3 of the bases).  a
   flag will be on the ground in front of a base wall, yet it is rendered
   incorrectly as if the wall were in front. (may be related to older depth
   render bug, may be os x specific)
 
 - os x client audio is very choppy when the user has a sound card installed
 
-- trouble remapping the "Identify/Respawn" key from "right mouse or i" to 
+- trouble remapping the "Identify/Respawn" key from "right mouse or i" to
   something else.  tried remapping to "w" during gameplay and it fails for
-  windows and os x.  also fails to respawn with right mouse if you try to 
+  windows and os x.  also fails to respawn with right mouse if you try to
   change the setting during game.  the values do not appear to be persistent
   properly either (quit and return and it's displayed wrong).
 

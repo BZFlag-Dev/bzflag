@@ -37,7 +37,7 @@ public:
 #else
   const float		(*getLastMotionBBox() const)[3];
 #endif
-  void                startingLocation(float bestStartPoint[3], 
+  void                startingLocation(float bestStartPoint[3],
 				       float &startAzimuth,
 				       World *world,
 				       Player *player[],

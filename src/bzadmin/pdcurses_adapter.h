@@ -16,7 +16,7 @@
 
 #define HAVE_PROTO
 #ifdef HAVE_XCURSES_H
-#define XCURSES 
+#define XCURSES
 #include <xcurses.h>
 #else
 #include <curses.h>
@@ -24,9 +24,9 @@
 
 using namespace std;
 
-/** @file 
+/** @file
     This file is needed to get bzadmin to build with PDCurses instead
-    of ncurses. It tries to make PDCurses behave more like ncurses 
+    of ncurses. It tries to make PDCurses behave more like ncurses
     (from bzadmin's point of view).
 */
 

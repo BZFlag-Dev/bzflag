@@ -17,7 +17,7 @@
 #include "OptionParser.h"
 
 
-OptionParser::OptionParser(const string& helpPrefix, 
+OptionParser::OptionParser(const string& helpPrefix,
 			   const string& usageSuffix)
   : helpPre(helpPrefix), usageSuf(usageSuffix) {
 

@@ -504,7 +504,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   if (tank->getFlag() == Flags::Obesity)   scaleFactor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (tank->getFlag() == Flags::Tiny) scaleFactor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (tank->getFlag() == Flags::Thief) scaleFactor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  
+
   // get tank radius
   float radius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS) * scaleFactor;
   const float radius2 = radius * radius;
@@ -553,8 +553,8 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 
-			ShotRadius, 
+			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH),
+			ShotRadius,
 			0.5f * BZDBCache::tankHeight);
     }
     else {
@@ -833,7 +833,7 @@ RapidFireStrategy::~RapidFireStrategy()
   // do nothing
 }
 
-// 
+//
 // ThiefStrategy
 //
 
@@ -1369,8 +1369,8 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-		      0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 
-		      ShotRadius, 
+		      0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH),
+		      ShotRadius,
 		      BZDBCache::tankHeight);
     }
     else {

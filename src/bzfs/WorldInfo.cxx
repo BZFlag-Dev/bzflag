@@ -260,7 +260,7 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, flo
 
 int WorldInfo::packDatabase()
 {
-  databaseSize = 
+  databaseSize =
     (2 + 2 + WorldCodeWallSize) * numWalls +
     (2 + 2 + WorldCodeBoxSize) * numBoxes +
     (2 + 2 + WorldCodePyramidSize) * numPyramids +

@@ -3919,7 +3919,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       player[t].lastupdate = now;
 
       //Don't kick players up to 5 seconds after a world parm has changed, 5-> BZBB var?
-      if (now - lastWorldParmChange > 5.0f) { 
+      if (now - lastWorldParmChange > 5.0f) {
         float gravity = BZDB->eval(StateDatabase::BZDB_GRAVITY);
         if (gravity < 0.0f) {
           float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
