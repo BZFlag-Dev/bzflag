@@ -34,11 +34,6 @@ libCommon_a_SOURCES  =			\
 	md5.cxx			\
 	URLManager.cxx		
 
-if BUILD_REGEX
-libCommon_a_LIBADD = \
-	../regex/libregex.a
-endif
-
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
