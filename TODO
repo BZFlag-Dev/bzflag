@@ -5,9 +5,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * change the version and build release packages
 
-* regenerate the font .fmt files to include the ~ character.  just
-  a matter of compiling and running TextTool.
-
 THESE ARE LOWER PRIORITY
 
 * need to verify that the anti permissions (e.g. antiban) really do
