@@ -9,10 +9,10 @@ CppCompiler=-D__GNUWIN32__ -W -D_WINDOWS -DWIN32 -D_MBCS_@@_
 Includes=..\include;..\win32;.\\
 Linker=-lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=299
+UnitCount=300
 Folders="Header Files","Resource Files","Source Files"
 ObjFiles=
-PrivateResource=
+PrivateResource=bzflag_private.rc
 ResourceIncludes=
 MakeIncludes=
 Icon=
@@ -2948,11 +2948,11 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit300]
-FileName=..\src\regex\utils.h
+FileName=bzflag.rc
 CompileCpp=1
-Folder=Header Files
+Folder=Resource Files
 Compile=1
-Link=1
+Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
