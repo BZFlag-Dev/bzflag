@@ -16,8 +16,6 @@
 #include "BZAdminUI.h"
 #include "UIMap.h"
 
-using namespace std;
-
 
 /** This interface is a combination of StdInUI and StdOutUI. It reads commands
     from stdin and prints the output from the server to stdout. This
@@ -27,12 +25,12 @@ using namespace std;
 class StdBothUI : public BZAdminUI {
 public:
   StdBothUI();
-  virtual void outputMessage(const string& msg);
-  virtual bool checkCommand(string& str);
+  virtual void outputMessage(const std::string& msg);
+  virtual bool checkCommand(std::string& str);
 
   /** This function returns a pointer to a dynamically allocated
       StdBothUI object. */
-  static BZAdminUI* creator(const map<PlayerId, string>& players, PlayerId me);
+  static BZAdminUI* creator(const std::map<PlayerId, std::string>& players, PlayerId me);
 
  protected:
 

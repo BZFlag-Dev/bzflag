@@ -19,21 +19,19 @@
 #include "BZAdminClient.h"
 #include "version.h"
 
-using namespace std;
 
-
-BZAdminClient::BZAdminClient(string callsign, string host,
+BZAdminClient::BZAdminClient(std::string callsign, std::string host,
 			     int port, BZAdminUI* bzInterface)
   : myTeam(ObserverTeam), sLink(Address(host), port), valid(false),
     ui(bzInterface) {
 
   if (sLink.getState() != ServerLink::Okay) {
-    cerr<<"Could not connect to "<<host<<':'<<port<<'.'<<endl;
+    std::cerr<<"Could not connect to "<<host<<':'<<port<<'.'<<std::endl;
     return;
   }
   sLink.sendEnter(TankPlayer, myTeam, callsign.c_str(), "");
   if (sLink.getState() != ServerLink::Okay) {
-    cerr<<"Rejected."<<endl;
+    std::cerr<<"Rejected."<<std::endl;
     return;
   }
   valid = true;
@@ -45,7 +43,7 @@ PlayerId BZAdminClient::getMyId() {
 }
 
 
-BZAdminClient::ServerCode BZAdminClient::getServerString(string& str) {
+BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
   uint16_t code, len;
   char inbuf[MaxPacketLen];
   int e;
@@ -105,7 +103,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(string& str) {
       if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
 	str = (char*)vbuf;
 	if (str == "CLIENTQUERY") {
-	  sendMessage(string("bzadmin ") + getAppVersion(), src);
+	  sendMessage(std::string("bzadmin ") + getAppVersion(), src);
 	  if (ui != NULL)
 	    ui->outputMessage("    [Sent versioninfo per request]");
 	}
@@ -125,7 +123,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(string& str) {
 }
 
 
-map<PlayerId, string>& BZAdminClient::getPlayers() {
+std::map<PlayerId, std::string>& BZAdminClient::getPlayers() {
   return players;
 }
 
@@ -136,7 +134,7 @@ bool BZAdminClient::isValid() const {
 
 
 void BZAdminClient::runLoop() {
-  string str;
+  std::string str;
   ServerCode what(NoMessage);
   while (true) {
     while ((what = getServerString(str)) == GotMessage) {
@@ -168,7 +166,7 @@ void BZAdminClient::runLoop() {
 }
 
 
-void BZAdminClient::sendMessage(const string& msg,
+void BZAdminClient::sendMessage(const std::string& msg,
 				PlayerId target) {
   char buffer[MessageLen];
   char buffer2[1 + MessageLen];
@@ -182,15 +180,15 @@ void BZAdminClient::sendMessage(const string& msg,
 }
 
 
-string BZAdminClient::formatMessage(const string& msg, PlayerId src,
+std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
 				    PlayerId dst, TeamColor dstTeam,
 				    PlayerId me) {
-  string formatted = "    ";
+  std::string formatted = "    ";
 
   // get sender and receiver
-  const string srcName = (src == ServerPlayer ? "SERVER" :
+  const std::string srcName = (src == ServerPlayer ? "SERVER" :
 			  (players.count(src) ? players[src] : "(UNKNOWN)"));
-  const string dstName = (players.count(dst) ? players[dst] : "(UNKNOWN)");
+  const std::string dstName = (players.count(dst) ? players[dst] : "(UNKNOWN)");
 
   // direct message to or from me
   if (dst == me || players.count(dst)) {
@@ -234,8 +232,8 @@ void BZAdminClient::waitForServer() {
   PlayerId me = sLink.getId();
   if (sLink.getState() == ServerLink::Okay) {
     sendMessage("bzadminping", me);
-    string expected = formatMessage("bzadminping", me, me, NoTeam, me);
-    string str;
+    std::string expected = formatMessage("bzadminping", me, me, NoTeam, me);
+    std::string str;
     do {
       getServerString(str);
     } while (str != expected);

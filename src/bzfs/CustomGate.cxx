@@ -27,7 +27,7 @@ CustomGate::CustomGate()
 }
 
 
-bool CustomGate::read(const char *cmd, istream& input)
+bool CustomGate::read(const char *cmd, std::istream& input)
 {
   if (strcmp(cmd, "border") == 0)
     input >> border;

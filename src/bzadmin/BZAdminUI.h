@@ -18,8 +18,6 @@
 #include "Address.h"
 #include "global.h"
 
-using namespace std;
-
 
 /** This class is an abstract base class for all bzadmin interfaces. */
 class BZAdminUI {
@@ -29,10 +27,10 @@ public:
   virtual ~BZAdminUI() { }
 
   /** This function prints a message in the main window. */
-  virtual void outputMessage(const string&) { }
+  virtual void outputMessage(const std::string&) { }
   /** See if the user has entered a command, if it has, store it in str and
       return true. */
-  virtual bool checkCommand(string&) { return false; }
+  virtual bool checkCommand(std::string&) { return false; }
   /** Tell the UI that a player has been added. */
   virtual void addedPlayer(PlayerId) { }
   /** Warn the UI that a player will be removed. */

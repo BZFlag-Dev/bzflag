@@ -1792,7 +1792,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	        continue;
 
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
-		  && (dist < (max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+		  && (dist < (std::max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
 	        myTank->jump();
 	        s = maxShots;
 	        t = curMaxPlayers;
@@ -4894,7 +4894,7 @@ static bool negotiateFlags(ServerLink* serverLink)
 
 static World*		makeWorld(ServerLink* serverLink)
 {
-  istream *cachedWorld = NULL;
+  std::istream *cachedWorld = NULL;
   uint16_t code, len;
   uint32_t size;
   char msg[MaxPacketLen];
@@ -4956,7 +4956,7 @@ static World*		makeWorld(ServerLink* serverLink)
 
     if (worldPath.length() > 0) {
       cleanWorldCache();
-      ostream* cacheOut = FILEMGR->
+      std::ostream* cacheOut = FILEMGR->
         createDataOutStream(worldPath, true, true);
       if (cacheOut != NULL) {
         cacheOut->write(worldDatabase, size);
@@ -4969,7 +4969,7 @@ static World*		makeWorld(ServerLink* serverLink)
   else
     {
       cachedWorld->seekg(0, std::ios::end);
-      streampos size = cachedWorld->tellg();
+      std::streampos size = cachedWorld->tellg();
       cachedWorld->seekg(0);
       worldDatabase = new char[size];
       cachedWorld->read(worldDatabase, size);

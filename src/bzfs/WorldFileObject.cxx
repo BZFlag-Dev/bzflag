@@ -18,7 +18,7 @@
 #include "WorldFileObject.h"
 
 
-bool WorldFileObject::read(const char *cmd, istream& input)
+bool WorldFileObject::read(const char *cmd, std::istream& input)
 {
   std::string name;
   if (strcasecmp(cmd, "name") == 0) {

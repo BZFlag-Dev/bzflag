@@ -59,14 +59,14 @@ StdBothUI::StdBothUI()
 #endif
 }
 
-void StdBothUI::outputMessage(const string& msg) {
-  std::cout<<msg<<endl;
+void StdBothUI::outputMessage(const std::string& msg) {
+  std::cout<<msg<<std::endl;
 }
 
 
 #ifdef _WIN32
 
-bool StdBothUI::checkCommand(string& str) {
+bool StdBothUI::checkCommand(std::string& str) {
   if (WaitForSingleObject(readEvent, 100) == WAIT_OBJECT_0) {
     if (pos > 2) {
       if ((buffer[pos-1] == '\n') || (buffer[pos-1] == '\r') || (pos == MessageLen)) {
@@ -84,7 +84,7 @@ bool StdBothUI::checkCommand(string& str) {
 
 #else
 
-bool StdBothUI::checkCommand(string& str) {
+bool StdBothUI::checkCommand(std::string& str) {
   static char buffer[MessageLen + 1];
   static int pos = 0;
 
@@ -112,7 +112,7 @@ bool StdBothUI::checkCommand(string& str) {
 #endif
 
 
-BZAdminUI* StdBothUI::creator(const map<PlayerId, string>&, PlayerId) {
+BZAdminUI* StdBothUI::creator(const std::map<PlayerId, std::string>&, PlayerId) {
   return new StdBothUI();
 }
 

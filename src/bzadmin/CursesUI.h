@@ -38,8 +38,6 @@
 
 #define CMDLENGTH (MessageLen - 3)
 
-using namespace std;
-
 
 /** This class is an interface for bzadmin that uses ncurses. */
 class CursesUI : public BZAdminUI {
@@ -47,18 +45,18 @@ protected:
 
   /** The parameters to this constructor are a map of all players and the
       local player's PlayerId. */
-  CursesUI(const map<PlayerId, string>& p, PlayerId m);
+  CursesUI(const std::map<PlayerId, std::string>& p, PlayerId m);
 
 public:
 
   ~CursesUI();
 
   /** This function prints a message in the main window. */
-  virtual void outputMessage(const string& msg);
+  virtual void outputMessage(const std::string& msg);
 
   /** See if the user has entered a command, if it has, store it in str and
       return true. */
-  virtual bool checkCommand(string& str);
+  virtual bool checkCommand(std::string& str);
 
   /** Tell the UI that a player has been added. */
   virtual void addedPlayer(PlayerId p);
@@ -72,7 +70,7 @@ public:
 
   /** This function returns a pointer to a dynamically allocated
       CursesUI object. */
-  static BZAdminUI* creator(const map<PlayerId, string>& players, PlayerId me);
+  static BZAdminUI* creator(const std::map<PlayerId, std::string>& players, PlayerId me);
 
 protected:
 
@@ -82,12 +80,12 @@ protected:
   WINDOW* mainWin;
   WINDOW* targetWin;
   WINDOW* cmdWin;
-  string cmd;
-  const map<PlayerId, string>& players;
-  map<PlayerId, string>::const_iterator targetIter;
+  std::string cmd;
+  const std::map<PlayerId, std::string>& players;
+  std::map<PlayerId, std::string>::const_iterator targetIter;
   PlayerId me;
   AutoCompleter comp;
-  vector<string> history;
+  std::vector<std::string> history;
   unsigned int maxHistory;
   unsigned int currentHistory;
 

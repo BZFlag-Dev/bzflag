@@ -17,25 +17,25 @@
 #include "OptionParser.h"
 
 
-OptionParser::OptionParser(const string& helpPrefix,
-			   const string& usageSuffix)
+OptionParser::OptionParser(const std::string& helpPrefix,
+			   const std::string& usageSuffix)
   : helpPre(helpPrefix), usageSuf(usageSuffix) {
 
 }
 
 OptionParser::~OptionParser() {
-  std::map<string, Parser*>::iterator iter;
+  std::map<std::string, Parser*>::iterator iter;
   for (iter = parsers.begin(); iter != parsers.end(); ++iter)
     delete iter->second;
 }
 
 
-const string& OptionParser::getError() const {
+const std::string& OptionParser::getError() const {
   return error;
 }
 
 
-const vector<string>& OptionParser::getParameters() const {
+const std::vector<std::string>& OptionParser::getParameters() const {
   return parameters;
 }
 
@@ -43,10 +43,10 @@ const vector<string>& OptionParser::getParameters() const {
 bool OptionParser::parse(int argc, char** argv) {
   parameters.clear();
   error = "";
-  map<string, Parser*>::iterator iter;
+  std::map<std::string, Parser*>::iterator iter;
   for (int i = 1; i < argc; ++i) {
     if (!strcmp(argv[i], "-help")) {
-      printHelp(cout, argv[0]);
+      printHelp(std::cout, argv[0]);
       return false;
     }
     if (argv[i][0] != '-')
@@ -61,28 +61,28 @@ bool OptionParser::parse(int argc, char** argv) {
     }
   }
   if (error.size() > 0) {
-    cerr<<error<<endl;
-    printUsage(cerr, argv[0]);
-    cerr<<endl;
+    std::cerr<<error<<std::endl;
+    printUsage(std::cerr, argv[0]);
+    std::cerr<<std::endl;
     return false;
   }
   return true;
 }
 
 
-void OptionParser::printHelp(ostream& os, const string& progName) const {
-  os<<helpPre<<endl<<endl;
+void OptionParser::printHelp(std::ostream& os, const std::string& progName) const {
+  os<<helpPre<<std::endl<<std::endl;
   printUsage(os, progName);
-  os<<endl<<endl;
-  map<string, Parser*>::const_iterator iter;
-  os<<"   -help: print this help message"<<endl;
+  os<<std::endl<<std::endl;
+  std::map<std::string, Parser*>::const_iterator iter;
+  os<<"   -help: print this help message"<<std::endl;
   for (iter = parsers.begin(); iter != parsers.end(); ++iter)
-    os<<"   -"<<iter->first<<": "<<iter->second->help<<endl;
+    os<<"   -"<<iter->first<<": "<<iter->second->help<<std::endl;
 }
 
 
-void OptionParser::printUsage(ostream& os, const string& progName) const {
-  map<string, Parser*>::const_iterator iter;
+void OptionParser::printUsage(std::ostream& os, const std::string& progName) const {
+  std::map<std::string, Parser*>::const_iterator iter;
   os<<"Usage: "<<progName<<" [-help] ";
   for (iter = parsers.begin(); iter != parsers.end(); ++iter)
     os<<iter->second->usage<<" ";

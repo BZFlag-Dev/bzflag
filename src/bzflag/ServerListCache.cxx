@@ -82,7 +82,7 @@ void			ServerListCache::saveCache()
 
   char buffer[MAX_STRING+1];
 
-  ostream* outFile = FILEMGR->createDataOutStream(fileName, true, true);
+  std::ostream* outFile = FILEMGR->createDataOutStream(fileName, true, true);
   int lenCpy = MAX_STRING;
   bool doWeed = (cacheAddedNum >0); // weed out as many items as were added
 
@@ -123,7 +123,7 @@ void			ServerListCache::loadCache()
 
   char buffer[MAX_STRING+1];
 
-  ifstream inFile (fileName.c_str(),ios::in|ios::binary);
+  std::ifstream inFile (fileName.c_str(), std::ios::in | std::ios::binary);
   bool infoWorked;
 
   if (inFile) {

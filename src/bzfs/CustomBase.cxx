@@ -38,7 +38,7 @@ CustomBase::CustomBase()
 }
 
 
-bool CustomBase::read(const char *cmd, istream& input) {
+bool CustomBase::read(const char *cmd, std::istream& input) {
   if (strcmp(cmd, "color") == 0) {
     input >> color;
     if ((color >= 0) && (color < CtfTeams)) {

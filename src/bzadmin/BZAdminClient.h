@@ -19,8 +19,6 @@
 #include "BZAdminUI.h"
 #include "ServerLink.h"
 
-using namespace std;
-
 
 /** This class is a client that connects to a BZFlag server and has
     functions for sending and receiving messages. */
@@ -38,11 +36,11 @@ public:
 
   /** A default constructor. It tries to connect to the server at host:port.
       If it doesn't succeed, calls to isValid() will return false. */
-  BZAdminClient(string callsign, string host, int port,
+  BZAdminClient(std::string callsign, std::string host, int port,
 		BZAdminUI* interface = NULL);
 
   /** Formats an incoming message. */
-  string formatMessage(const string& msg, PlayerId src, PlayerId dst,
+  std::string formatMessage(const std::string& msg, PlayerId src, PlayerId dst,
 		       TeamColor dstTeam, PlayerId me);
 
   /** Return the PlayerId that this client has been assigned by the server. */
@@ -50,14 +48,14 @@ public:
 
   /** Returns a reference to a @c map<PlayerId,string> containing the players
       in the game. */
-  map<PlayerId, string>& getPlayers();
+  std::map<PlayerId, std::string>& getPlayers();
 
   /** Checks for new packets from the server, ignores them or stores a
       text message in @c str. Tells @c ui about new or removed players. Returns
       0 if no interesting packets have arrived, 1 if a message has been stored
       in @c str, negative numbers for errors.
   */
-  ServerCode getServerString(string& str);
+  ServerCode getServerString(std::string& str);
 
   /** This function returns @c true if this object has a valid connection
       to a server, @c false if it doesn't. */
@@ -71,7 +69,7 @@ public:
 
   /** Sends the message @c msg to the server with the player or team @c target
       as receiver. */
-  void sendMessage(const string& msg, PlayerId target);
+  void sendMessage(const std::string& msg, PlayerId target);
 
   /** This function changes the BZAdminUI used by the client to communicate
       with the user. The object pointed to by @c interface will not be
@@ -84,7 +82,7 @@ public:
 
 protected:
 
-  map<PlayerId, string> players;
+  std::map<PlayerId, std::string> players;
   TeamColor myTeam;
   ServerLink sLink;
   bool valid;

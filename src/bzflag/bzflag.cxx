@@ -208,7 +208,7 @@ void			printFatalError(const char* fmt, ...)
 #if defined(_WIN32)
   MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
 #else
-  cerr << buffer << endl;
+  std::cerr << buffer << std::endl;
 #endif
   delete display;
   display = NULL;

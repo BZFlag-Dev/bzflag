@@ -112,8 +112,8 @@ class ServerStartMenu : public HUDDialog {
 
 class ServerItem {
   public:
-    void		writeToFile(ostream& out) const; // serialize out
-    bool		readFromFile(istream& in); // serialize in
+  void		writeToFile(std::ostream& out) const; // serialize out
+  bool		readFromFile(std::istream& in); // serialize in
     void		setUpdateTime(); // set last updated to now
     int			getPlayerCount() const;
     time_t		getAgeMinutes() const;
@@ -163,7 +163,7 @@ class ServerMenu : public HUDDialog {
     static const int	NumItems;
 
   private:
-    void		addLabel(const char* string, const char* label);
+    void		addLabel(const char* str, const char* label);
     void		checkEchos();
     void		readServerList(int index);
     void		addToList(ServerItem&, bool doCache=false);

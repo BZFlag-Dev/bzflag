@@ -31,7 +31,7 @@ CustomWorld::CustomWorld()
 }
 
 
-bool CustomWorld::read(const char *cmd, istream& input)
+bool CustomWorld::read(const char *cmd, std::istream& input)
 {
   if (strcmp(cmd, "size") == 0) {
     input >> size;

@@ -24,7 +24,7 @@
 class CustomWorld : public WorldFileObject {
   public:
     CustomWorld();
-    virtual bool read(const char *cmd, istream&);
+  virtual bool read(const char *cmd, std::istream&);
     virtual void write(WorldInfo*) const;
 
   protected:

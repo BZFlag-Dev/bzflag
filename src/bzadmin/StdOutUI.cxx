@@ -23,12 +23,12 @@
 UIAdder StdOutUI::uiAdder("stdout", &StdOutUI::creator);
 
 
-void StdOutUI::outputMessage(const string& msg) {
-  cout<<msg<<endl;
+void StdOutUI::outputMessage(const std::string& msg) {
+  std::cout<<msg<<std::endl;
 }
 
 
-BZAdminUI* StdOutUI::creator(const map<PlayerId, string>&, PlayerId) {
+BZAdminUI* StdOutUI::creator(const std::map<PlayerId, std::string>&, PlayerId) {
   return new StdOutUI();
 }
 

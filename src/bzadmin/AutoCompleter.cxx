@@ -19,29 +19,29 @@
 #include "AutoCompleter.h"
 
 
-void AutoCompleter::registerWord(const string& str) {
+void AutoCompleter::registerWord(const std::string& str) {
   words.insert(lower_bound(words.begin(), words.end(), str), str);
 }
 
 
-void AutoCompleter::unregisterWord(const string& str) {
-  vector<string>::iterator iter = lower_bound(words.begin(), words.end(), str);
+void AutoCompleter::unregisterWord(const std::string& str) {
+  std::vector<std::string>::iterator iter = lower_bound(words.begin(), words.end(), str);
   if (iter != words.end() && *iter == str)
     words.erase(iter);
 }
 
 
-string AutoCompleter::complete(const string& str) {
+std::string AutoCompleter::complete(const std::string& str) {
 
   if (str.size() == 0)
     return str;
 
   // find the first and last word with the prefix str
-  vector<string>::iterator first, last;
+  std::vector<std::string>::iterator first, last;
   first = lower_bound(words.begin(), words.end(), str);
   if (first == words.end() || first->substr(0, str.size()) != str)
     return str;
-  string tmp = str;
+  std::string tmp = str;
   tmp[tmp.size() - 1]++;
   last = lower_bound(first, words.end(), tmp) - 1;
 

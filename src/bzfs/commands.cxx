@@ -454,12 +454,12 @@ void handleReportCmd(int t, const char *message)
   else {
     time_t now = time(NULL);
     char* timeStr = ctime(&now);
-    string reportStr;
+    std::string reportStr;
     reportStr = reportStr + timeStr + "Reported by " +
       player[t].callSign + ": " + (message + 8);
     if (clOptions->reportFile.size() > 0) {
-      ofstream ofs(clOptions->reportFile.c_str(), ios::out | ios::app);
-      ofs<<reportStr<<endl<<endl;
+      std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
+      ofs<<reportStr<<std::endl<<std::endl;
     }
     if (clOptions->reportPipe.size() > 0) {
       FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
@@ -697,7 +697,7 @@ void handleShowgroupCmd(int t, const char *message)
     char *p2 = 0;
     if (p1) p2 = strchr(p1 + 1, '\"');
     if (p2) {
-      settie = string(p1+1, p2-p1-1);
+      settie = std::string(p1+1, p2-p1-1);
       makeupper(settie);
     } else {
       sendMessage(ServerPlayer, t, "wrong format, usage"
@@ -761,8 +761,8 @@ void handleSetgroupCmd(int t, const char *message)
   if (!p2) {
     sendMessage(ServerPlayer, t, "not enough parameters, usage /setgroup \"CALLSIGN\" GROUP");
   } else {
-    string settie(p1+1, p2-p1-1);
-    string group=p2+2;
+    std::string settie(p1+1, p2-p1-1);
+    std::string group=p2+2;
 
     makeupper(settie);
     makeupper(group);
@@ -806,8 +806,8 @@ void handleRemovegroupCmd(int t, const char *message)
   if (!p2) {
     sendMessage(ServerPlayer, t, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
   } else {
-    string settie(p1+1, p2-p1-1);
-    string group=p2+2;
+    std::string settie(p1+1, p2-p1-1);
+    std::string group=p2+2;
 
     makeupper(settie);
     makeupper(group);

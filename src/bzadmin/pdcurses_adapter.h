@@ -22,7 +22,6 @@
 #include <curses.h>
 #endif
 
-using namespace std;
 
 /** @file
     This file is needed to get bzadmin to build with PDCurses instead

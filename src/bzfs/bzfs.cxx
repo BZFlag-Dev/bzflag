@@ -1138,7 +1138,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 }
 
 
-static istream &readToken(istream& input, char *buffer, int n)
+static std::istream &readToken(std::istream& input, char *buffer, int n)
 {
   int c = -1;
 
@@ -1165,7 +1165,7 @@ static istream &readToken(istream& input, char *buffer, int n)
 }
 
 
-static bool readWorldStream(istream& input, const char *location, std::vector<WorldFileObject*>& wlist)
+static bool readWorldStream(std::istream& input, const char *location, std::vector<WorldFileObject*>& wlist)
 {
   int line = 1;
   char buffer[1024];
@@ -1264,9 +1264,9 @@ static WorldInfo *defineWorldFromFile(const char *filename)
 {
   // open file
 #ifdef _WIN32
-	ifstream input(filename, ios::in);//|ios::nocreate);
+  std::ifstream input(filename, std::ios::in);//|ios::nocreate);
 #else
-  ifstream input(filename, ios::in);
+  std::ifstream input(filename, std::ios::in);
 #endif
 
   if (!input) {

@@ -47,8 +47,8 @@ class PingPacket {
     void		packHex(char*) const;
     void		unpackHex(char*);
     void		zeroPlayerCounts();
-    void		writeToFile(ostream& out) const;
-    bool		readFromFile(istream& in);
+  void		writeToFile(std::ostream& out) const;
+  bool		readFromFile(std::istream& in);
     static void		repackHexPlayerCounts(char*, int* counts);
 
     static bool	isRequest(int fd, struct sockaddr_in*);

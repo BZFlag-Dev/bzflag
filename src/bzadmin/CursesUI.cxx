@@ -16,14 +16,12 @@
 
 #include "CursesUI.h"
 
-using namespace std;
-
 
 // add this UI to the map
 UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 
-CursesUI::CursesUI(const map<PlayerId, string>& p, PlayerId m) :
+CursesUI::CursesUI(const std::map<PlayerId, std::string>& p, PlayerId m) :
   players(p), me(m), maxHistory(20), currentHistory(0) {
 
   // initialize ncurses
@@ -95,13 +93,13 @@ CursesUI::~CursesUI() {
 }
 
 
-void CursesUI::outputMessage(const string& msg) {
+void CursesUI::outputMessage(const std::string& msg) {
   waddstr(mainWin, (msg + "\n").c_str());
   wrefresh(mainWin);
 }
 
 
-bool CursesUI::checkCommand(string& str) {
+bool CursesUI::checkCommand(std::string& str) {
   wrefresh(cmdWin);
   str = "";
   int i;
@@ -231,7 +229,7 @@ void CursesUI::updateTargetWin() {
   wclear(targetWin);
   wmove(targetWin, 0, 0);
   wmove(targetWin, 1, 1);
-  string tmp = "Send to ";
+  std::string tmp = "Send to ";
   tmp = tmp + (targetIter == players.end() || targetIter->first == me ?
 	       "all" : targetIter->second) + ":";
   waddstr(targetWin, tmp.c_str());
@@ -248,7 +246,7 @@ void CursesUI::updateCmdWin() {
 }
 
 
-BZAdminUI* CursesUI::creator(const map<PlayerId, string>& players,
+BZAdminUI* CursesUI::creator(const std::map<PlayerId, std::string>& players,
 			     PlayerId me) {
   return new CursesUI(players, me);
 }

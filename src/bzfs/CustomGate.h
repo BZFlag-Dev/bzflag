@@ -24,7 +24,7 @@
 class CustomGate : public WorldFileObstacle {
   public:
     CustomGate();
-    virtual bool read(const char *cmd, istream&);
+  virtual bool read(const char *cmd, std::istream&);
     virtual void write(WorldInfo*) const;
 
   protected:

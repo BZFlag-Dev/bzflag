@@ -20,18 +20,16 @@
 #include "global.h"
 #include "UIMap.h"
 
-using namespace std;
-
 
 /** This class is an interface for bzadmin that reads commands from stdin. */
 class StdOutUI : public BZAdminUI {
 public:
 
-  void outputMessage(const string& msg);
+  void outputMessage(const std::string& msg);
 
   /** This function returns a pointer to a dynamically allocated
       StdOutUI object. */
-  static BZAdminUI* creator(const map<PlayerId, string>& players, PlayerId me);
+  static BZAdminUI* creator(const std::map<PlayerId, std::string>& players, PlayerId me);
 
 protected:
 

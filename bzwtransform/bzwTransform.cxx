@@ -6,8 +6,6 @@
 #include <vector>
 #include <math.h>
 
-using namespace std;
-
 typedef int foo;
 
 #define PI (3.1415926535897932384626433832795f)
@@ -156,7 +154,7 @@ private:
 class BZObject
 {
 public:
-	BZObject( string &type, float *position, float *size, float rotation )
+  BZObject( std::string &type, float *position, float *size, float rotation )
 	{
 		this->type = type;
 		this->position.setValue( position[0], position[1], position[2] );
@@ -170,14 +168,14 @@ public:
 	}
 public:
 
-	string	type;
+  std::string	type;
 	Point3D	position;
 	Point3D	size;
 	float	rotation;
 };
 
 
-void box( ofstream &bzw, Point3D &position, Point3D &size, float rotation, char *comment = NULL )
+void box( std::ofstream &bzw, Point3D &position, Point3D &size, float rotation, char *comment = NULL )
 {
 	if (comment != NULL)
 		bzw << "#" << comment << endl;
@@ -189,7 +187,7 @@ void box( ofstream &bzw, Point3D &position, Point3D &size, float rotation, char 
 	bzw << endl;
 }
 
-void pyramid( ofstream &bzw, Point3D &position, Point3D &size, float rotation, char *comment = NULL )
+void pyramid( std::ofstream &bzw, Point3D &position, Point3D &size, float rotation, char *comment = NULL )
 {
 	if (comment != NULL)
 		bzw << "#" << comment << endl;
@@ -201,11 +199,11 @@ void pyramid( ofstream &bzw, Point3D &position, Point3D &size, float rotation, c
 	bzw << endl;
 }
 
-void generateObjects( ofstream &bzw, vector<BZObject *> objects, Matrix3D &posMatrix, Matrix3D &sizeMatrix, float rotation, int count )
+void generateObjects( std::ofstream &bzw, std::vector<BZObject *> objects, Matrix3D &posMatrix, Matrix3D &sizeMatrix, float rotation, int count )
 {
 	for (int cur = 0; cur < count; cur++)
 	{
-		for (vector<BZObject*>::iterator it = objects.begin(); it != objects.end(); it++)
+	  for (std::vector<BZObject*>::iterator it = objects.begin(); it != objects.end(); it++)
 		{
 			BZObject *object = *it;
 			if (object->isBox())
@@ -222,13 +220,13 @@ void generateObjects( ofstream &bzw, vector<BZObject *> objects, Matrix3D &posMa
 
 
 
-void parsebzwt( ifstream &bzwt, ofstream &bzw )
+void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 {
 	enum { FREE, IN_TRANSFORM, IN_BOX, IN_PYRAMID, IN_MATRIX, IN_POSITION0, IN_POSITION1, IN_POSITION2, IN_SIZE0, IN_SIZE1, IN_SIZE2, IN_ROTATION,
 		IN_MATRIX_POSITION, IN_MATRIX_SIZE, IN_MATRIX_ROTATION, IN_ANGLE, IN_SCALE0, IN_SCALE1, IN_SCALE2, IN_TRANSLATE0, IN_TRANSLATE1, IN_TRANSLATE2, IN_COUNT
 	};
-	stack<int> stateStack;
-	string line, token;
+	std::stack<int> stateStack;
+	std::string line, token;
 	int lineNo = 0;
 	int state = FREE;
 	float position[4];
@@ -237,7 +235,7 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 	float translate[4];
 	float angle;
 
-	vector<BZObject *> objects;
+	std::vector<BZObject *> objects;
 	Matrix3D posMatrix, sizeMatrix, tempMatrix;
 	float rotation;
 	int   count;
@@ -251,10 +249,10 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 
 			if (line.length() == 0) continue;
 			int start = line.find_first_not_of( " \t\n\r" );
-			if (start == string::npos) continue;
+			if (start == std::string::npos) continue;
 			if (line.at(start) == '#') continue;
 
-			istrstream lineStream( line.c_str() );
+			std::istrstream lineStream( line.c_str() );
 
 			while (!lineStream.eof())
 			{
@@ -319,7 +317,7 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 						}
 						else if (token == "end")
 						{
-							BZObject *obj = new BZObject( string("box"), position, size, rotation );
+						  BZObject *obj = new BZObject( std::string("box"), position, size, rotation );
 							objects.push_back( obj );
 							state = IN_TRANSFORM;
 							memset( position, 0, sizeof(float)*4 );
@@ -349,7 +347,7 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 						else if (token == "end")
 						{
 							state = IN_TRANSFORM;
-							BZObject *obj = new BZObject( string("pyramid"), position, size, rotation );
+							BZObject *obj = new BZObject( std::string("pyramid"), position, size, rotation );
 							objects.push_back( obj );
 							state = IN_TRANSFORM;
 							memset( position, 0, sizeof(float)*4 );
@@ -550,11 +548,11 @@ int main( int argc, char **argv )
 		return -1;
 	}
 
-	ifstream bzwt( argv[1] );
+	std::ifstream bzwt( argv[1] );
 
 	if (bzwt.is_open())
 	{
-		ofstream bzw( argv[2] );
+	  std::ofstream bzw( argv[2] );
 		if (bzw.is_open())
 		{
 			parsebzwt( bzwt, bzw );

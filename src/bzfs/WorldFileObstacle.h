@@ -22,7 +22,7 @@
 class WorldFileObstacle : public WorldFileObject {
 public:
   WorldFileObstacle();
-  virtual bool read(const char *cmd, istream&);
+  virtual bool read(const char *cmd, std::istream&);
 
 protected:
   float pos[3];

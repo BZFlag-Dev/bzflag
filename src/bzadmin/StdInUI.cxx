@@ -18,26 +18,24 @@
 
 #include "StdInUI.h"
 
-using namespace std;
-
 
 // add this UI to the map
 UIAdder StdInUI::uiAdder("stdin", &StdInUI::creator);
 
 
-bool StdInUI::checkCommand(string& str) {
-  if (cin.eof()) {
+bool StdInUI::checkCommand(std::string& str) {
+  if (std::cin.eof()) {
     str = "/quit";
     return true;
   }
-  getline(cin, str);
+  getline(std::cin, str);
   if (str == "")
     return false;
   return true;
 }
 
 
-BZAdminUI* StdInUI::creator(const map<PlayerId, string>&, PlayerId) {
+BZAdminUI* StdInUI::creator(const std::map<PlayerId, std::string>&, PlayerId) {
   return new StdInUI();
 }
 

@@ -28,7 +28,6 @@
 // causes persistent rebuilding to obtain build versioning
 #include "version.h"
 
-using namespace std;
 
 /** @file
     This is the main file for bzadmin, the bzflag text client.
@@ -53,7 +52,7 @@ int main(int argc, char** argv) {
   }
 #endif
   // command line options
-  string uiName("curses");
+  std::string uiName("curses");
 
   // no curses, use stdboth as default instead
   const UIMap& interfaces = UIMap::getInstance();
@@ -62,34 +61,34 @@ int main(int argc, char** argv) {
 
   // build a usage string with all interfaces
   UIMap::const_iterator uiIter;
-  string uiUsage;
+  std::string uiUsage;
   for (uiIter = interfaces.begin(); uiIter != interfaces.end(); ++uiIter)
     uiUsage += uiIter->first + '|';
-  uiUsage = string("[-ui ") + uiUsage.substr(0, uiUsage.size() - 1) + ']';
+  uiUsage = std::string("[-ui ") + uiUsage.substr(0, uiUsage.size() - 1) + ']';
 
   // register and parse command line arguments
-  OptionParser op(string("bzadmin ") + getAppVersion(),
+  OptionParser op(std::string("bzadmin ") + getAppVersion(),
 		  "CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ...");
 
-  const string uiOption("ui");
-  const string uiMsg = "choose a user interface";
+  const std::string uiOption("ui");
+  const std::string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
   if (!op.parse(argc, argv))
     return 1;
 
   // check that we have callsign and host in the right format and extract them
   if (op.getParameters().size() == 0) {
-    cerr<<"You have to specify callsign@host."<<endl;
+    std::cerr<<"You have to specify callsign@host."<<std::endl;
     return 1;
   }
-  const string& namehost = op.getParameters()[0];
+  const std::string& namehost = op.getParameters()[0];
   int atPos = namehost.find('@');
   if (atPos == -1) {
-    cerr<<"You have to specify callsign@host."<<endl;
+    std::cerr<<"You have to specify callsign@host."<<std::endl;
     return 1;
   }
-  string name = namehost.substr(0, atPos);
-  string host = namehost.substr(atPos + 1);
+  std::string name = namehost.substr(0, atPos);
+  std::string host = namehost.substr(atPos + 1);
   int port = ServerPort;
   int cPos = host.find(':');
   if (cPos != -1) {
@@ -100,7 +99,7 @@ int main(int argc, char** argv) {
   // check that the ui is valid
   uiIter = UIMap::getInstance().find(uiName);
   if (uiIter == UIMap::getInstance().end()) {
-    cerr<<"There is no interface called \""<<uiName<<"\"."<<endl;
+    std::cerr<<"There is no interface called \""<<uiName<<"\"."<<std::endl;
     return 1;
   }
 

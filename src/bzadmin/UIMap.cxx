@@ -28,7 +28,7 @@ UIMap& UIMap::getInstance() {
 }
 
 
-UIAdder::UIAdder(const string& name, UICreator creator) {
+UIAdder::UIAdder(const std::string& name, UICreator creator) {
   UIMap::getInstance()[name] = creator;
 }
 

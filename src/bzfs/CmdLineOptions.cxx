@@ -326,7 +326,7 @@ char **parseConfFile( const char *file, int &ac)
   std::vector<std::string> tokens;
   ac = 0;
 
-  ifstream confStrm(file);
+  std::ifstream confStrm(file);
   if (confStrm.is_open()) {
      char buffer[1024];
      confStrm.getline(buffer,1024);

@@ -27,7 +27,7 @@ WorldFileObstacle::WorldFileObstacle()
 }
 
 
-bool WorldFileObstacle::read(const char *cmd, istream& input)
+bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 {
   if (strcasecmp(cmd, "position") == 0)
     input >> pos[0] >> pos[1] >> pos[2];

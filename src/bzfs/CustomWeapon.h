@@ -29,7 +29,7 @@
 class CustomWeapon : public WorldFileObstacle {
   public:
     CustomWeapon();
-    virtual bool read(const char *cmd, istream&);
+  virtual bool read(const char *cmd, std::istream&);
     virtual void write(WorldInfo*) const;
 
   protected:

@@ -41,7 +41,7 @@ CustomWeapon::CustomWeapon()
 }
 
 
-bool CustomWeapon::read(const char *cmd, istream& input) {
+bool CustomWeapon::read(const char *cmd, std::istream& input) {
   if (strcmp(cmd, "initdelay") == 0) {
     input >> initdelay;
   }

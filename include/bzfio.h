@@ -27,7 +27,6 @@
 #if !defined(_WIN32)
 #endif
 #include <iostream>
-using namespace std;
 
 #endif
 

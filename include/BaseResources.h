@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-class ostream;
+class std::ostream;
 
 class BaseResources {
   public:
@@ -40,7 +40,7 @@ class BaseResources {
     void		addName(const std::string&);
 
   protected:
-    static ostream&	print(ostream&, const std::string& name,
+  static std::ostream&	print(std::ostream&, const std::string& name,
 					const char* format, ...); // const
     static bool	match(const std::string& wildName,
 					const std::string& name); // const

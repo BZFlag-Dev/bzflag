@@ -2538,7 +2538,7 @@ void			HelpMenu::done()
 // ServerMenu
 //
 
-void			ServerItem::writeToFile(ostream& out) const
+void			ServerItem::writeToFile(std::ostream& out) const
 {
   char buffer[MAX_STRING+1]; // MAX_STRING is inherited from ServerListCache.h
 
@@ -2563,7 +2563,7 @@ void			ServerItem::writeToFile(ostream& out) const
   out.write(&buffer[0], 4);
 }
 
-bool			ServerItem::readFromFile(istream& in)
+bool			ServerItem::readFromFile(std::istream& in)
 {
   char buffer [MAX_STRING+1];
 
