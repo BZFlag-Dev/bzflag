@@ -227,7 +227,7 @@ static void		setVisual(BzfVisual* visual,
 #if defined(DEBUG_RENDERING)
   visual->setStencil(4);
 #endif
-  if (resources.hasValue("multisample"))
+  if (BZDB->isTrue("multisample"))
     visual->setMultisample(4);
 #ifdef USE_GL_STEREO
   if (resources.hasValue("view") &&
@@ -392,7 +392,7 @@ static void		parse(int argc, char** argv,
       noAudio = true;
     }
     else if (strcmp(argv[i], "-multisample") == 0) {
-      resources.addValue("multisample", "");
+      BZDB->set("_multisample", "yes");
     }
     else if (strcmp(argv[i], "-port") == 0) {
       if (++i == argc) {
@@ -701,7 +701,6 @@ void			dumpResources(BzfDisplay* display,
   // don't save these configurations
   BZDB->setPersistent("_window", false);
   BZDB->setPersistent("_multisample", false);
-  db.removeValue("multisample");
 
   const std::vector<std::string> list = getSilenceList();
   
@@ -912,7 +911,7 @@ int			main(int argc, char** argv)
 
     // ignore window name in config file (it's used internally)
     BZDB->unset("_window");
-    db.removeValue("multisample");
+    BZDB->unset("_multisample");
   }
 
   // use UDP?
