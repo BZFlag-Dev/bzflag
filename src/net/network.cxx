@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if !defined(_WIN32)
+#if !defined(WIN32)
 
 #include "ErrorHandler.h"
 #include "network.h"
@@ -20,6 +20,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <vector>
+#include <string>
 
 
 #if defined(_old_linux_)
@@ -32,18 +34,31 @@ extern "C" {
 
 void			nerror(const char* msg)
 {
-  if (msg)
-    printError("%s: %s", msg, strerror(errno));
+  std::vector<std::string> args;
+  if (msg) {
+    args.push_back(msg);
+    args.push_back(strerror(errorno));
+    printError("%s: %s", &args);
+  }
   else
-    printError("%s", strerror(errno));
+  {
+    args.push_back(strerror(errorno));
+    printError("%s", &args);
+  }
 }
 
 void			bzfherror(const char* msg)
 {
-  if (msg)
-    printError("%s: %s", msg, hstrerror(h_errno));
-  else
-    printError("%s", hstrerror(h_errno));
+  std::vector<std::string> args;
+  if (msg) {
+    args.push_back(msg);
+    args.push_back(hstrerror(h_errno));
+    printError("%s: %s", &args);
+  }
+  else {
+    args.push_back(hstrerror(h_errno));
+    printError("%s", &args);
+  }
 }
 
 int			getErrno()
