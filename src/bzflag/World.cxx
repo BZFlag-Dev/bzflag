@@ -651,7 +651,7 @@ bool			World::writeWorld(std::string filename)
     out << "options" << std::endl;
     
     // FIXME - would be nice to get a few other thing
-    //         -fb, -sb, a real -mp, etc... (also, flags?)
+    //         -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
 
     if (allowTeamFlags()) {
       out << "\t-c" << std::endl;
@@ -665,7 +665,7 @@ bool			World::writeWorld(std::string filename)
       out << "2" << std::endl;
     }
     if (allowRabbit())
-      out << "\t-rabbit killer" << std::endl; // FIXME
+      out << "\t-rabbit" << std::endl;
     if (allowJumping())
       out << "\t-j" << std::endl;
     if (allShotsRicochet())

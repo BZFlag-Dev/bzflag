@@ -381,6 +381,15 @@ void ServerStartMenu::execute()
     // always try a fallback port if default port is busy
     args[arg++] = "-pf";
 
+    // load the world map first, so that later arguments can
+    // override any that are present in a map's "options" block
+    if (((HUDuiList*)list[15])->getIndex() != 0) { // not random
+      args[arg++] = "-world";
+      std::vector<std::string> fileList = ((HUDuiList*)list[15])->getList();
+      std::string filename = fileList[((HUDuiList*)list[15])->getIndex()].c_str();
+      args[arg++] = worldFiles[filename].c_str();
+    }
+
     // game style
     if (((HUDuiList*)list[1])->getIndex() == 0) {
       args[arg++] = "-c";
@@ -464,14 +473,6 @@ void ServerStartMenu::execute()
     // server reset
     if (((HUDuiList*)list[14])->getIndex() == 0)
       args[arg++] = "-g";
-
-    // world map file
-    if (((HUDuiList*)list[15])->getIndex() != 0) { // not random
-      args[arg++] = "-world";
-      std::vector<std::string> fileList = ((HUDuiList*)list[15])->getList();
-      std::string filename = fileList[((HUDuiList*)list[15])->getIndex()].c_str();
-      args[arg++] = worldFiles[filename].c_str();
-    }
 
     // no more arguments
     args[arg++] = NULL;
