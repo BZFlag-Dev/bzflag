@@ -376,7 +376,7 @@ static float safetyBasePos[NumTeams][3];
 static const char *worldFile = NULL;
 
 static float lagwarnthresh = -1.0;
-static int maxlagwarn = (int)Infinity;
+static int maxlagwarn = 10000;
 static char *password = NULL;
 
 static void stopPlayerPacketRelay();
