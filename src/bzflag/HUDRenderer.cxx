@@ -1635,8 +1635,8 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
 
   // draw hunting status
-  const float x4 = x2 + (scoreLabelWidth - huntArrowWidth);
-  const float x5 = x2 + (scoreLabelWidth - huntedArrowWidth);
+  const float x4 = xs - huntArrowWidth;
+  const float x5 = xs - huntedArrowWidth;
   if (player->isHunted()) {
     fm.drawString(x5, y, 0, minorFontFace, minorFontSize, "Hunt->");
   } else if (getHuntIndicator()) {
