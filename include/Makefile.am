@@ -1,4 +1,5 @@
 noinst_HEADERS =		\
+	3DOptionsManager.h	\
 	Address.h		\
 	BaseBuilding.h		\
 	BaseResources.h		\
@@ -23,6 +24,8 @@ noinst_HEADERS =		\
 	common.h		\
 	ConfigFileManager.h	\
 	Country.h		\
+	DisplayListManager.h	\
+	DrawablesManager.h	\
 	EighthDBaseSceneNode.h	\
 	EighthDBoxSceneNode.h	\
 	EighthDimSceneNode.h	\
@@ -94,3 +97,6 @@ MAINTAINERCLEANFILES = \
 	config.h.in \
 	stamp-h.in \
 	Makefile.in
+
+EXTRA_DIST = \
+	README
