@@ -17,6 +17,7 @@
 #include "ObstacleMgr.h"
 
 // system headers
+#include <string.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -71,6 +72,30 @@ GroupInstance::GroupInstance()
 
 GroupInstance::~GroupInstance()
 {
+  return;
+}
+
+
+void GroupInstance::setTeam(int _team)
+{
+  team = _team;
+  modifyTeam = true;
+  return;
+}
+
+
+void GroupInstance::setTint(const float _tint[4])
+{
+  memcpy(tint, _tint, sizeof(float[4]));
+  modifyColor = true;
+  return;
+}
+
+
+void GroupInstance::setPhysicsDriver(int _phydrv)
+{
+  phydrv = _phydrv;
+  modifyPhysicsDriver = true;
   return;
 }
 

@@ -164,7 +164,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     xform.addShift(pos);
   }
   xform.append(transform);
-  
+
   MeshObstacle* mesh =
     new MeshObstacle(xform, checkTypes, checkPoints,
                      vertices, normals, texcoords, faces.size(),

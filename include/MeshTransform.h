@@ -72,7 +72,7 @@ class MeshTransform {
         Tool(const MeshTransform& transform);
         ~Tool();
         
-        bool getIsInverted() const;
+        bool isInverted() const;
         void modifyVertex(float vertex[3]) const;
         void modifyNormal(float normal[3]) const;
         void modifyOldStyle(float pos[3], float size[3],
@@ -90,7 +90,7 @@ class MeshTransform {
   friend class MeshTransform::Tool;
 };
 
-inline bool MeshTransform::Tool::getIsInverted() const
+inline bool MeshTransform::Tool::isInverted() const
 {
   return inverted;
 }

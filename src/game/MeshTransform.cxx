@@ -377,6 +377,13 @@ void MeshTransform::Tool::modifyNormal(float n[3]) const
     n[0] = n[1] = 0.0f; // dunno, going with Z...
     n[2] = 1.0f;
   }
+  
+  if (inverted) {
+    n[0] = -n[0];
+    n[1] = -n[1];
+    n[2] = -n[2];
+  }
+  
   return;
 }
 

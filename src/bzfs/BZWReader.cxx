@@ -287,14 +287,20 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
     ++line;
   }
 
+  bool retval = true;
   if (object) {
     errorHandler->fatalError(std::string("missing \"end\" parameter"), line);
-    if (object != fakeObject)
+    if (object != fakeObject) {
       delete object;
-    return false;
+    }
+    retval = false;
   }
-
-  return true;
+  if (groupDef != worldDef) {
+    errorHandler->fatalError(std::string("missing \"enddef\" parameter"), line);
+    delete groupDef;
+    retval = false;
+  }
+  return retval;
 }
 
 

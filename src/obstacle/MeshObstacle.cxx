@@ -40,6 +40,7 @@ MeshObstacle::MeshObstacle()
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
+  inverted = false;
   return;
 }
 
@@ -76,6 +77,11 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
 			   bool bounce, bool drive, bool shoot)
 {
   unsigned int i;
+
+  // get the transform tool
+  MeshTransform::Tool xformtool(transform);
+  inverted = xformtool.isInverted();
+
   // copy the info
   checkTypes = new char[checkTypesL.size()];
   for (i = 0; i < checkTypesL.size(); i++) {
@@ -86,7 +92,6 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   cfvec3ListToArray (normalList, normalCount, normals);
   
   // modify according to the transform
-  MeshTransform::Tool xformtool(transform);
   int j;
   for (j = 0; j < checkCount; j++) {
     xformtool.modifyVertex(checkPoints[j]);
@@ -166,12 +171,13 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     t = new float*[count];
   }
   for (i = 0; i < count; i++) {
-    v[i] = (float*)vertices[_vertices[i]];
+    int index = (inverted ? ((count - 1) - i) : i);
+    v[index] = (float*)vertices[_vertices[i]];
     if (n != NULL) {
-      n[i] = (float*)normals[_normals[i]];
+      n[index] = (float*)normals[_normals[i]];
     }
     if (t != NULL) {
-      t[i] = (float*)texcoords[_texcoords[i]];
+      t[index] = (float*)texcoords[_texcoords[i]];
     }
   }
 
@@ -249,23 +255,26 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
 void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
 {
   MeshFace* face = faces[f];
+
   std::vector<int> vlist;
   std::vector<int> nlist;
   std::vector<int> tlist;
   const int vcount = face->getVertexCount();
   for (int i = 0; i < vcount; i++) {
     int index;
-    index = ((fvec3*)face->getVertex(i)) - vertices;
+    index = ((fvec3*) face->getVertex(i)) - vertices;
     vlist.push_back(index);
+
     if (face->useNormals()) {
-      index = ((fvec3*)face->getNormal(i)) - normals;
+      index = ((fvec3*) face->getNormal(i)) - normals;
       nlist.push_back(index);
     }
     if (face->useTexcoords()) {
-      index = ((fvec2*)face->getTexcoord(i)) - texcoords;
+      index = ((fvec2*) face->getTexcoord(i)) - texcoords;
       tlist.push_back(index);
     }
   }
+  
   mesh->addFace(vlist, nlist, tlist, face->getMaterial(),
                 face->getPhysicsDriver(), face->noClusters(),
                 face->isSmoothBounce(),

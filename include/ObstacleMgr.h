@@ -49,6 +49,10 @@ class GroupInstance {
     GroupInstance();
     ~GroupInstance();
     
+    void setTeam(int team);
+    void setTint(const float tint[4]);
+    void setPhysicsDriver(int phydrv);
+    
     const std::string& getGroupDef() const;
     const MeshTransform& getTransform() const;
     

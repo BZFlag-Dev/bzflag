@@ -123,6 +123,9 @@ class MeshObstacle : public Obstacle {
     MeshFace** faces;
     bool smoothBounce;
     bool noclusters;
+    bool inverted; // used during building. can be ditched if
+                   // edge tables are setup with bi-directional
+                   // ray-vs-face tests and parity counts.
 
     fvec3 mins, maxs;
 };
