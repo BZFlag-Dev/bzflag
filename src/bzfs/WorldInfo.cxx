@@ -28,7 +28,9 @@
 #include "BzMaterial.h"
 #include "PhysicsDriver.h"
 #include "MeshTransform.h"
+#include "TimeKeeper.h"
 
+/* obstacle implementation headers */
 #include "ObstacleMgr.h"
 #include "Obstacle.h"
 #include "BoxBuilding.h"
@@ -41,7 +43,6 @@
 #include "ArcObstacle.h"
 #include "ConeObstacle.h"
 #include "SphereObstacle.h"
-
 
 /* compression library header */
 #include "../zlib/zlib.h"
@@ -480,6 +481,7 @@ int WorldInfo::packDatabase()
 
 
   // compress the map database
+  TimeKeeper startTime = TimeKeeper::getCurrent();
   uLongf gzDBlen = databaseSize + (databaseSize/512) + 12;
   char* gzDB = new char[gzDBlen];
   int code = compress2 ((Bytef*)gzDB, &gzDBlen,
@@ -488,6 +490,7 @@ int WorldInfo::packDatabase()
     printf ("Could not create compressed world database: %i\n", code);
     exit (1);
   }
+  TimeKeeper endTime = TimeKeeper::getCurrent();
 
   // switch to the compressed map database
   uncompressedSize = databaseSize;
@@ -498,6 +501,8 @@ int WorldInfo::packDatabase()
 
   DEBUG1 ("Map size: uncompressed = %i, compressed = %i\n",
 	   uncompressedSize, databaseSize);
+
+  DEBUG3("Compression: %.3f seconds\n", endTime - startTime);
 
   return 1;
 }

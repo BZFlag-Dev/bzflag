@@ -1261,6 +1261,7 @@ static bool defineWorld()
   buf = nboPackUShort(buf, WorldCodeEndSize);
   buf = nboPackUShort(buf, WorldCodeEnd);
 
+  TimeKeeper startTime = TimeKeeper::getCurrent();
   MD5 md5;
   md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
   md5.finalize();
@@ -1271,6 +1272,8 @@ static bool defineWorld()
   }
   std::string digest = md5.hexdigest();
   strcat(hexDigest, digest.c_str());
+  TimeKeeper endTime = TimeKeeper::getCurrent();
+  DEBUG3("MD5 generation: %.3f seconds\n", endTime - startTime);
 
   // water levels probably require flags on buildings
   const float waterLevel = world->getWaterLevel();
