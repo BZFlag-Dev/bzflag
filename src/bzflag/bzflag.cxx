@@ -101,6 +101,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "email",			"default",		true,	StateDatabase::ReadWrite,	NULL },
   { "team",			"Rogue",		true,	StateDatabase::ReadWrite,	NULL },
   { "list",			DefaultListServerURL,	true,	StateDatabase::ReadWrite,	NULL },
+	{ "motdServer",			DefaultMOTDServer,	true,	StateDatabase::ReadWrite,	NULL },
   { "volume",			"10",			true,	StateDatabase::ReadWrite,	NULL },
   { "latitude",			"37.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "longitude",		"122",			true,	StateDatabase::ReadWrite,	NULL },
@@ -577,7 +578,7 @@ static void		parse(int argc, char** argv)
       BZDB.set("locale", argv[i]);
     } else if (strcmp(argv[i], "-motd") == 0) {
       checkArgc(i, argc, argv[i]);
-      BZDB.set("motd", argv[i]);
+      BZDB.set("motdServer", argv[i]);
     } else if (strcmp(argv[i], "-nolist") == 0) {
       startupInfo.listServerURL = "";
       BZDB.set("list", "");
@@ -917,9 +918,6 @@ int			main(int argc, char** argv)
 
   // initialize global objects and classes
   bzfsrand(time(0));
-
-  // set default MOTD URL
-  BZDB.set("motd", "http://bzflag.org/motd.php");
 
     // set default DB entries
   for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
