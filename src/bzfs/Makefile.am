@@ -8,6 +8,20 @@ bzfs_SOURCES = \
 	AccessControlList.h \
 	CmdLineOptions.cxx \
 	CmdLineOptions.h \
+	CustomBase.cxx \
+	CustomBase.h \
+	CustomBox.cxx \
+	CustomBox.h \
+	CustomGate.cxx \
+	CustomGate.h \
+	CustomLink.cxx \
+	CustomLink.h \
+	CustomPyramid.cxx \
+	CustomPyramid.h \
+	CustomWeapon.cxx \
+	CustomWeapon.h \
+	CustomWorld.cxx \
+	CustomWorld.h \
 	FlagInfo.cxx \
 	FlagInfo.h \
 	PackVars.h \
@@ -18,6 +32,10 @@ bzfs_SOURCES = \
 	TextChunkManager.h \
 	VotingArbiter.cxx \
 	VotingArbiter.h \
+	WorldFileObject.cxx \
+	WorldFileObject.h \
+	WorldFileObstacle.cxx \
+	WorldFileObstacle.h \
 	WorldInfo.cxx \
 	WorldInfo.h \
 	WorldWeapons.cxx \
