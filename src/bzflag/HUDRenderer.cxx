@@ -81,7 +81,8 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				hunting(false),
 				huntPosition(0),
 				huntSelection(false),
-				showHunt(false)
+				showHunt(false),
+				tabCompletion(-1)
 {
   int i;
 
@@ -350,6 +351,16 @@ void			HUDRenderer::setAlert(int index, const char* string,
     alertColor[index] = warning ? warningColor : messageColor;
     alertClock[index].setClock(duration);
   }
+}
+
+int			HUDRenderer::getTabCompletionRotation()
+{
+  return tabCompletion;
+}
+
+void      HUDRenderer::setTabCompletionRotation(int what)
+{
+  tabCompletion = what;
 }
 
 bool			HUDRenderer::getComposing() const

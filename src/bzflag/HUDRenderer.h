@@ -91,6 +91,9 @@ public:
 
   void		render(SceneRenderer&);
 
+  void    setTabCompletionRotation(int);
+  int     getTabCompletionRotation();
+
   void		setHunting(bool _hunting);
   bool		getHunting() const;
   void		setHuntIndicator(bool _huntIndicator);
@@ -195,6 +198,8 @@ private:
   float		gameOverLabelWidth;
   std::string	restartLabel;
   std::string	roamingLabel;
+
+  int     tabCompletion;
 
   FlashClock		globalClock;
   FlashClock		scoreClock;
