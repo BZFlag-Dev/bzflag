@@ -230,6 +230,15 @@ unsigned long                  MainWindow::getJoyButtonSet() const
   return window->getJoyButtons();
 }
 
+void                    MainWindow::getJoyDevices(std::vector<std::string>
+						  &list) const
+{
+  window->getJoyDevices(list);
+}
+
+void	                MainWindow::initJoystick(std::string &joystickName) {
+  window->initJoystick(joystickName.c_str());  
+};
 
 // Local Variables: ***
 // mode:C++ ***
