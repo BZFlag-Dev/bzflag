@@ -5416,7 +5416,8 @@ static bool		joinGame(const StartupInfo* info,
     return false;
   }
   BackgroundRenderer::resizeSky();
-
+  sceneRenderer->getBackground()->doInitDisplayLists();
+  
   ServerLink::setServer(serverLink);
   World::setWorld(world);
 

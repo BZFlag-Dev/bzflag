@@ -858,6 +858,7 @@ void			BackgroundRenderer::doInitDisplayLists()
   // with a normal (60 degree) perspective.
   const float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   const float sunRadius = 2.0f * worldSize * atanf(60.0f*M_PI/180.0f) / 60.0f;
+  sunList = OpenGLDisplayList();
   sunList.begin();
     glBegin(GL_TRIANGLE_FAN);
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
@@ -870,10 +871,12 @@ void			BackgroundRenderer::doInitDisplayLists()
   sunList.end();
 
   // make (empty) moon list
+  moonList = OpenGLDisplayList();
   moonList.begin();
   moonList.end();
 
   // make stars list
+  starList = OpenGLDisplayList();
   starList.begin();
     glBegin(GL_POINTS);
     for (i = 0; i < NumStars; i++) {
@@ -903,6 +906,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     gameArea[i][2] = 0.0f;
   }
   if (isRiva128) {
+    simpleGroundList[2] = OpenGLDisplayList();
     simpleGroundList[2].begin();
       glBegin(GL_TRIANGLE_STRIP);
 	renderer.getGroundUV(gameArea[0], uv);
@@ -966,6 +970,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
     ytexdist = (ytexmax - ytexmin) / (float)GROUND_DIVS;
 
+    simpleGroundList[2] = OpenGLDisplayList();
     simpleGroundList[2].begin();
 
       for (i=0 ; i<GROUND_DIVS ; i++) {
@@ -998,6 +1003,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     simpleGroundList[2].end();
   }
 
+  simpleGroundList[0] = OpenGLDisplayList();
   simpleGroundList[0].begin();
     glBegin(GL_TRIANGLE_STRIP);
       glVertex2fv(groundPlane[0]);
@@ -1009,6 +1015,7 @@ void			BackgroundRenderer::doInitDisplayLists()
   simpleGroundList[1] = simpleGroundList[0];
   simpleGroundList[3] = simpleGroundList[2];
 
+  groundList[0] = OpenGLDisplayList();
   groundList[0].begin();
     glBegin(GL_TRIANGLE_STRIP);
       glVertex2fv(gameArea[0]);
@@ -1025,6 +1032,7 @@ void			BackgroundRenderer::doInitDisplayLists()
   groundList[0].end();
   groundList[1] = groundList[0];
 
+  groundList[2] = OpenGLDisplayList();
   groundList[2].begin();
     glBegin(GL_TRIANGLE_STRIP);
       renderer.getGroundUV(gameArea[0], uv);
@@ -1086,6 +1094,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     GLfloat minAlpha = 0.0f;
     if (isRiva128)
       minAlpha = 1.0f;
+    cloudsList = OpenGLDisplayList();
     cloudsList.begin();
       glNormal3f(0.0f, 0.0f, 1.0f);
       // inner clouds -- full opacity
@@ -1169,6 +1178,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 			(float)(numMountainTextures * numFacesPerTexture);
     int n = numFacesPerTexture / 2;
     for (j = 0; j < numMountainTextures; n += numFacesPerTexture, j++) {
+      mountainsList[j] = OpenGLDisplayList();
       mountainsList[j].begin();
 	glBegin(GL_TRIANGLE_STRIP);
 	  for (i = 0; i <= numFacesPerTexture; i++) {
