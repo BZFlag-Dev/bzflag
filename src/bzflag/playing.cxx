@@ -1651,7 +1651,7 @@ static void		doMotion()
   if (motionFreeze) return;
 #endif
 
-  float rotation, speed;
+  float rotation = 0.0f, speed = 1.0f;
 
   if (myTank->isAutoPilot()) {
     //FIXME bot motion
@@ -1866,6 +1866,7 @@ static void		doMotion()
       if (speed < -0.5f) speed = -0.5f;
     }
   }
+
   myTank->setDesiredAngVel(rotation);
   myTank->setDesiredSpeed(speed);
 }
@@ -6546,17 +6547,6 @@ void			startPlaying(BzfDisplay* _display,
 					StartupInfo* _info)
 {
   int i;
-
-    // set default DB entries
-  for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
-    assert(globalDBItems[gi].name != NULL);
-    if (globalDBItems[gi].value != NULL) {
-      BZDB->set(globalDBItems[gi].name, globalDBItems[gi].value);
-      BZDB->setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
-    }
-    BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
-    BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
-  }
 
   // initalization
   display = _display;

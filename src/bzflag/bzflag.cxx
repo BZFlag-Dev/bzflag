@@ -794,6 +794,17 @@ int			main(int argc, char** argv)
   // initialize global objects and classes
   bzfsrand(time(0));
 
+    // set default DB entries
+  for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
+    assert(globalDBItems[gi].name != NULL);
+    if (globalDBItems[gi].value != NULL) {
+      BZDB->set(globalDBItems[gi].name, globalDBItems[gi].value);
+      BZDB->setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
+    }
+    BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
+    BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
+  }
+
   if (getenv("BZFLAGID")) {
     BZDB->set("callsign", getenv("BZFLAGID"));
     strncpy(startupInfo.callsign, getenv("BZFLAGID"),
