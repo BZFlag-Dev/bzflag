@@ -9,7 +9,6 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
 static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 
 // to enforce a game time limit
@@ -28,6 +27,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 const int MaxPlayers = 40;
 const int MaxShots = 10;
 const int udpBufSize = 128000;
+
 #if defined(__sgi)
 #define FD_SETSIZE (MaxPlayers + 10)
 #endif /* defined(__sgi) */
@@ -77,8 +77,9 @@ static const int MaxListServers = 5;
 
 static const float FlagHalfLife = 45.0f;
 // do NOT change
-static int NotConnected = -1;
-static PlayerId InvalidPlayer = 0xff;
+static const int NotConnected = -1;
+static const PlayerId InvalidPlayer = 0xff;
+static const PlayerId ServerPlayer = 253; // FIXME - enum maybe?
 
 //The minimum height above ground an object must be in order
 //to have a flag appear beneath it
@@ -2680,14 +2681,13 @@ static void acceptClient()
 	}
 }
 
-static void sendMessage(PlayerId playerId, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message)
+static void sendMessage(PlayerId playerId, PlayerId targetPlayer, const char *message)
 {
 	// player is sending a message to a particular player, a team, or all.
 	// send MsgMessage
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerId);
 	buf = nboPackUByte(buf, targetPlayer);
-	buf = nboPackUShort(buf, uint16_t(targetTeam));
 	buf = nboPackString(buf, message, MessageLen);
 	broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
 }
@@ -2844,11 +2844,11 @@ static void addPlayer(PlayerId playerId)
 	sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/",
 			(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
 			(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
-	sendMessage(playerId, playerId, player[playerId].team, message);
+	sendMessage(ServerPlayer, playerId, message);
 
 	if (servermsg && (strlen(servermsg) > 0)) {
 		sprintf(message,"%s",servermsg);
-		sendMessage(playerId, playerId, player[playerId].team, message);
+		sendMessage(ServerPlayer, playerId, message);
 	}
 #endif
 }
@@ -3391,7 +3391,7 @@ static void shotFired(int /*playerId*/, const void *buf, int len)
 	broadcastMessage(MsgShotBegin, len, buf);
 }
 
-static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
+static void shotEnded(PlayerId id, int16_t shotIndex, uint16_t reason)
 {
 	// shot has ended prematurely -- send MsgShotEnd
 	void *buf, *bufStart = getDirectMessageBuffer();
@@ -3422,15 +3422,14 @@ static void scoreChanged(PlayerId playerId, uint16_t wins, uint16_t losses)
 				char message[MessageLen];
 				sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
 						int(killer.lagavg * 1000));
-				sendMessage(playerId, playerId,
-						player[playerId].team,message);
+				sendMessage(ServerPlayer, playerId,	message);
 				killer.laglastwarn = killer.lagcount;
 				killer.lagwarncount++;;
 				if (killer.lagwarncount++ > maxlagwarn) {
 					// drop the player
 					sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
 						maxlagwarn);
-					sendMessage(playerId, playerId, killer.team, message);
+					sendMessage(ServerPlayer, playerId, message);
 					removePlayer(playerId);
 				}
 			}
@@ -3475,9 +3474,9 @@ static void parseCommand(const char *message, int t)
 	if (strncmp(message + 1,"password ",9) == 0) {
 		if (password && strncmp(message + 10, password, strlen(password)) == 0) {
 			player[t].Admin = true;
-			sendMessage(t, t, player[t].team, "You are now an administrator!");
+			sendMessage(ServerPlayer, t, "You are now an administrator!");
 		} else {
-			sendMessage(t, t, player[t].team, "Wrong Password!");
+			sendMessage(ServerPlayer, t, "Wrong Password!");
 		}
 	// /shutdownserver terminates the server
 	} else if (player[t].Admin && strncmp(message + 1, "shutdownserver", 8) == 0) {
@@ -3548,7 +3547,7 @@ static void parseCommand(const char *message, int t)
 						flag[i].flag.position[0],
 						flag[i].flag.position[1],
 						flag[i].flag.position[2]);
-				sendMessage(t, t, player[t].team, message);
+				sendMessage(ServerPlayer, t, message);
 			}
 		}
 	// /kick command allows operator to remove players
@@ -3562,12 +3561,12 @@ static void parseCommand(const char *message, int t)
 			char kickmessage[MessageLen];
 			player[i].toBeKicked = false;
 			sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
-			sendMessage(i, i, player[i].team, kickmessage);
+			sendMessage(ServerPlayer, i, kickmessage);
 			removePlayer(i);
 		} else {
 			char errormessage[MessageLen];
 			sprintf(errormessage, "player %s not found", victimname);
-			sendMessage(t, t, player[t].team, errormessage);
+			sendMessage(ServerPlayer, t, errormessage);
 		}
 	}
 	// /lagstats gives simple statistics about players' lags
@@ -3575,13 +3574,13 @@ static void parseCommand(const char *message, int t)
 		for (PlayerId i = 0; i < maxPlayers; i++)
 			if (player[i].fd != NotConnected) {
 				char reply[MessageLen];
-				sprintf(reply,"%-12s(%d) : %4dms (%d)", player[i].callSign,
+				sprintf(reply, "%-12s(%d) : %4dms (%d)", player[i].callSign,
 						i, int(player[i].lagavg*1000), player[i].lagcount);
-				sendMessage(t,t,player[t].team,reply);
+				sendMessage(ServerPlayer, t, reply);
 			}
 	}
 	else {
-		sendMessage(t,t,player[t].team,"unknown command");
+		sendMessage(ServerPlayer, t, "unknown command");
 	}
 }
 
@@ -3723,11 +3722,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		// player sending a message
 		case MsgMessage: {
 			// data: target player, target team, message string
-			PlayerId targetPlayer;
-			uint16_t targetTeam;
+			PlayerId sourcePlayer,targetPlayer;
 			char message[MessageLen];
+			buf = nboUnpackUByte(buf, sourcePlayer); // will ignore this
 			buf = nboUnpackUByte(buf, targetPlayer);
-			buf = nboUnpackUShort(buf, targetTeam);
 			buf = nboUnpackString(buf, message, sizeof(message));
 			DEBUG4("Player %s [%d]: %s\n",player[t].callSign, t, message);
 			// check for command
@@ -3735,7 +3733,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 				parseCommand(message, t);
 			}
 			else
-				sendMessage(t, targetPlayer, TeamColor(targetTeam), message);
+				sendMessage(t, targetPlayer, message);
 			break;
 		}
 

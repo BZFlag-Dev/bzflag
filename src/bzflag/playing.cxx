@@ -73,7 +73,9 @@ public:
 };
 typedef std::vector<ExplosionInfo> ExplosionList;
 
-const uint8_t			NoPlayer = 254;
+const PlayerId			NoPlayer = 255; 	// FIXME - enum maybe?
+const PlayerId			AllPlayers = 254; 	// "
+const PlayerId			ServerPlayer = 253; // "
 
 static ServerLink*		serverLink = NULL;
 static World*			world = NULL;
@@ -98,12 +100,14 @@ static ExplosionList	explosions;
 static float			wallClock;
 static CallbackList<PlayingCallback>	playingCallbacks;
 
-static char				messageMessage[PlayerIdPLen + 2 + MessageLen];
+static char				messageMessage[2 * PlayerIdPLen + MessageLen];
 
 static void				restartPlaying();
 static void				setTarget();
 static void				handleFlagDropped(Player* tank);
 static void				handlePlayerMessage(uint16_t, uint16_t, void*);
+TeamColor  				PlayerIdToTeam(PlayerId id);
+PlayerId				TeamToPlayerId(TeamColor team);
 
 static const float		warningColor[] = { 1.0f, 0.0f, 0.0f };
 static const float		redColor[] = { 1.0f, 0.0f, 0.0f };
@@ -126,7 +130,7 @@ static const char*		blowedUpMessage[] = {
 						};
 static bool				gotBlowedUp(BaseLocalPlayer* tank,
 										BlowedUpReason reason,
-										const PlayerId& killer,
+										PlayerId killer,
 										int shotId = -1);
 
 //
@@ -230,7 +234,7 @@ static void				onSendComposedMessage(const std::string& message, void*)
 		char messageBuffer[MessageLen];
 		memset(messageBuffer, 0, MessageLen);
 		strncpy(messageBuffer, message.c_str(), MessageLen);
-		nboPackString(messageMessage + PlayerIdPLen + 2,
+		nboPackString(messageMessage + 2 * PlayerIdPLen,
 								      messageBuffer, MessageLen);
 		serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
 	}
@@ -510,7 +514,7 @@ static void				doMotion()
 				y = 0.0f;
 
 /* FIXME -- update joystick support;  use events to handle joystick buttons.
-      static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
+	static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
 								BzfKeyEvent::MiddleMouse,
 								BzfKeyEvent::RightMouse,
 								BzfKeyEvent::F1,
@@ -522,11 +526,11 @@ static void				doMotion()
 								BzfKeyEvent::F7,
 								BzfKeyEvent::F8,
 								BzfKeyEvent::F9
-      };
+	  };
 
-      static unsigned long old_buttons = 0;
-      unsigned long new_buttons = mainWindow->getJoyButtons();
-      if (old_buttons != new_buttons)
+	  static unsigned long old_buttons = 0;
+	  unsigned long new_buttons = mainWindow->getJoyButtons();
+	  if (old_buttons != new_buttons)
 		for (int j = 0; j<12; j++)
 		  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
 		    BzfKeyEvent ev;
@@ -535,7 +539,7 @@ static void				doMotion()
 		    ev.shift = 0;
 		    doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
 		  }
-      old_buttons = new_buttons;
+		old_buttons = new_buttons;
 */
 		}
 		else {
@@ -562,36 +566,36 @@ static void				doMotion()
 
 			// compute normalized motion coordinates
 			if (mx < -wNoMotionSize)
-    			x = static_cast<float>(mx + wNoMotionSize) /
+				x = static_cast<float>(mx + wNoMotionSize) /
 					static_cast<float>(wMaxMotionSize - wNoMotionSize);
 			else if (mx > wNoMotionSize)
-    			x = static_cast<float>(mx - wNoMotionSize) /
+				x = static_cast<float>(mx - wNoMotionSize) /
 					static_cast<float>(wMaxMotionSize - wNoMotionSize);
 			else
 				x = 0.0f;
 			if (my < -hNoMotionSize)
-    			y = static_cast<float>(my + hNoMotionSize) /
+				y = static_cast<float>(my + hNoMotionSize) /
 					static_cast<float>(hMaxMotionSize - hNoMotionSize);
 			else if (my > hNoMotionSize)
-    			y = static_cast<float>(my - hNoMotionSize) /
+				y = static_cast<float>(my - hNoMotionSize) /
 					static_cast<float>(hMaxMotionSize - hNoMotionSize);
 			else
 				y = 0.0f;
 		}
 
-    	// calculate desired rotation
-    	rotation = -x;
-    	if (rotation > 1.0f)
-    		rotation = 1.0f;
-    	else if (rotation < -1.0f)
-    		rotation = -1.0f;
+		// calculate desired rotation
+		rotation = -x;
+		if (rotation > 1.0f)
+			rotation = 1.0f;
+		else if (rotation < -1.0f)
+			rotation = -1.0f;
 
-    	// calculate desired speed
-    	speed = -y;
-    	if (speed > 1.0f)
-    		speed = 1.0f;
-    	else if (speed < -0.5f)
-    		speed = -0.5f;
+		// calculate desired speed
+		speed = -y;
+		if (speed > 1.0f)
+			speed = 1.0f;
+		else if (speed < -0.5f)
+			speed = -0.5f;
 	}
 
 	myTank->setDesiredAngVel(rotation);
@@ -672,26 +676,22 @@ static std::string	cmdSend(const std::string&,
 	std::string composePrompt;
 	if (args[0] == "all") {
 		void* buf = messageMessage;
-		buf = nboPackUInt(buf, 0);
-		buf = nboPackShort(buf, 0);
-		buf = nboPackShort(buf, 0);
-		buf = nboPackUShort(buf, uint16_t(RogueTeam));
+		buf = nboPackUByte(buf, myTank->getId());
+		buf = nboPackUByte(buf, AllPlayers);
 		composePrompt = "Send to all: ";
 	}
 	else if (args[0] == "team") {
 		void* buf = messageMessage;
-		buf = nboPackUInt(buf, 0);
-		buf = nboPackShort(buf, 0);
-		buf = nboPackShort(buf, 0);
-		buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
+		buf = nboPackUByte(buf, myTank->getId());
+		buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
 		composePrompt = "Send to teammates: ";
 	}
 	else if (args[0] == "nemesis") {
 		const Player *nemesis = myTank->getNemesis();
 		if (nemesis) {
 			void* buf = messageMessage;
+			buf = nboPackUByte(buf, myTank->getId());
 			buf = nboPackUByte(buf, nemesis->getId());
-			buf = nboPackUShort(buf, uint16_t(RogueTeam));
 			composePrompt = "Send to ";
 			composePrompt += nemesis->getCallSign();
 			composePrompt += ": ";
@@ -745,7 +745,7 @@ static std::string	cmdPause(const std::string&,
 }
 
 /* XXX -- for testing forced recreation of OpenGL context
-      case 'o':
+		case 'o':
 		if (pressed) {
 		  // destroy context and recreate it
 		  OpenGLGState::freeContext();
@@ -879,12 +879,29 @@ Player*					lookupPlayer(PlayerId id)
 	// check my tank first
 	if (myTank->getId() == id)
 		return myTank;
-	if (id == NoPlayer)
+	if (id < maxPlayers)
+		return player[id];
+	else
 		return NULL;
-	return player[id];
 }
 
-static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
+TeamColor  				PlayerIdToTeam(PlayerId id)
+{
+	if (id >= 246 && id<=250)
+		return TeamColor(250 - id);
+	else
+		return NoTeam;
+}
+
+PlayerId				TeamToPlayerId(TeamColor team)
+{
+	if (team == NoTeam)
+		return NoPlayer;
+	else
+		return 250-team;
+}
+
+static BaseLocalPlayer*	getLocalPlayer(const PlayerId id)
 {
 	if (myTank->getId() == id) return myTank;
 	return NULL;
@@ -892,7 +909,7 @@ static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
 
 static ServerLink*		lookupServer(const Player* player)
 {
-	const PlayerId& id = player->getId();
+	PlayerId id = player->getId();
 	if (myTank->getId() == id) return serverLink;
 	return NULL;
 }
@@ -905,15 +922,15 @@ static void				addMessage(const Player* player,
 	if (player) {
 		fullMessage += player->getCallSign();
 #ifndef BWSUPPORT
-    if (color == NULL) {
+	if (color == NULL) {
 #endif
-      fullMessage += " (";
-      fullMessage += Team::getName(player->getTeam());
-      fullMessage += ")";
+		fullMessage += " (";
+		fullMessage += Team::getName(player->getTeam());
+		fullMessage += ")";
 #ifndef BWSUPPORT
-    }
+	}
 #endif
-    fullMessage += ": ";
+	fullMessage += ": ";
 	}
 	fullMessage += msg;
 #if 0
@@ -940,8 +957,8 @@ static void				updateNumPlayers()
 static void				updateHighScores()
 {
 	/* check scores to see if my team and/or have the high score.  change
-   * `>= bestScore' to `> bestScore' if you want to share the number
-   * one spot. */
+	* `>= bestScore' to `> bestScore' if you want to share the number
+	* one spot. */
 	bool anyPlayers = false;
 	int i;
 	for (i = 0; i < maxPlayers; i++)
@@ -981,12 +998,12 @@ static void				updateHighScores()
 			}
 		}
 /* FIXME -- high score blinking
-    hud->setTeamHasHighScore(haveBest);
+	hud->setTeamHasHighScore(haveBest);
 */
 	}
 	else {
 /* FIXME -- high score blinking
-    hud->setTeamHasHighScore(false);
+	hud->setTeamHasHighScore(false);
 */
 	}
 }
@@ -1095,7 +1112,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 			uint16_t timeLeft;
 			msg = nboUnpackUShort(msg, timeLeft);
 /* FIXME -- set BZDB
-      hud->setTimeLeft(timeLeft);
+		hud->setTimeLeft(timeLeft);
 */
 			if (timeLeft == 0) {
 				gameOver = true;
@@ -1103,7 +1120,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 				MSGMGR->insert("alertGameOver", "Time Expired", warningColor);
 			}
 			break;
-    	}
+		}
 
 		case MsgScoreOver: {
 			// unpack packet
@@ -1501,36 +1518,36 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgMessage: {
 			PlayerId src;
 			PlayerId dst;
-			uint16_t team;
 			msg = nboUnpackUByte(msg, src);
 			msg = nboUnpackUByte(msg, dst);
-			msg = nboUnpackUShort(msg, team);
 			Player* srcPlayer = lookupPlayer(src);
 			Player* dstPlayer = lookupPlayer(dst);
-			if (srcPlayer == myTank || dstPlayer == myTank || (!dstPlayer &&
-				(int(team) == int(RogueTeam) ||
-				int(team) == int(myTank->getTeam())))) {
+			TeamColor dstTeam = PlayerIdToTeam(dst);
+			bool toAll = (dst == AllPlayers);
+			bool fromServer = (src == ServerPlayer);
+			const string srcName=srcPlayer ?
+			  srcPlayer->getCallSign() :
+			  fromServer ? "SERVER" : "(UNKNOWN)";
+			const string dstName=dstPlayer ?
+			  dstPlayer->getCallSign() : "(UNKNOWN)";
+
+			if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
+				dstTeam == myTank->getTeam()) {
 				// message is for me
 				std::string fullMsg;
-				if (int(team) != int(RogueTeam)) {
-#ifdef BWSUPPORT
-					fullMsg = "[to ";
-					fullMsg += Team::getName(TeamColor(team));
-					fullMsg += "] ";
-#else
-					fullMsg = "[Team] ";
-#endif
-				}
+
+				// direct message to or from me
 				if (dstPlayer) {
+					// talking to myself? that's strange
 					if (dstPlayer==myTank && srcPlayer==myTank) {
 						fullMsg=(const char*)msg;
 					} else {
 						fullMsg="[";
 						if (srcPlayer == myTank) {
 							fullMsg += "->";
-							fullMsg += dstPlayer ? dstPlayer->getCallSign() : "(UNKNOWN)";
+							fullMsg += dstName;
 						} else {
-							fullMsg += srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)";
+							fullMsg += srcName;
 							fullMsg += "->";
 							if (srcPlayer)
 								myTank->setNemesis(srcPlayer);
@@ -1538,53 +1555,31 @@ static void				handleServerMessage(bool human, uint16_t code,
 						fullMsg += "] ";
 						fullMsg += (const char*)msg;
 					}
-					addMessage(NULL, fullMsg, Team::getRadarColor(RogueTeam));
-					break;
 				}
-				if (!srcPlayer) {
-					/* may unkown not harm us */
-					fullMsg = "(UNKNOWN) ";
+				else {
+					if (dstTeam != NoTeam) {
+#ifdef BWSUPPORT
+						fullMsg = "[to ";
+						fullMsg += Team::getName(TeamColor(dstteam));
+						fullMsg += "] ";
+#else
+						fullMsg = "[Team] ";
+#endif
+					}
+					fullMsg += srcName;
+					fullMsg += ": ";
 					fullMsg += (const char*)msg;
-
-					addMessage(NULL, fullMsg, Team::getRadarColor(RogueTeam));
-					break;
 				}
-				if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
-					char messageBuffer[MessageLen];
-					memset(messageBuffer, 0, MessageLen);
-					sprintf(messageBuffer,"Version %d.%d%c%d+UDP",
-						(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-						(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
-
-					nboPackString(messageMessage + PlayerIdPLen + 2, messageBuffer, MessageLen);
-					serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-					const GLfloat* msgColor;
-					if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
-						msgColor = Team::getRadarColor(RogueTeam);
-					else
-						msgColor = Team::getRadarColor(srcPlayer->getTeam());
-
-					addMessage(srcPlayer,"[Sent versioninfo per request]", msgColor);
-					break;
-				}
-				fullMsg += (const char*)msg;
-				const GLfloat* msgColor;
-				if (srcPlayer->getTeam() == NoTeam)
-					msgColor = Team::getRadarColor(RogueTeam);
-				else
+				const GLfloat* msgColor;;
+				if (srcPlayer)
 					msgColor = Team::getRadarColor(srcPlayer->getTeam());
-				addMessage(srcPlayer, fullMsg, msgColor);
+				else
+					msgColor = Team::getRadarColor(RogueTeam);
+				addMessage(NULL, fullMsg, msgColor);
 
 				// HUD one line display
-				fullMsg = srcPlayer->getCallSign();
-#ifdef BWSUPPORT
-				fullMsg += " (";
-				fullMsg += Team::getName(srcPlayer->getTeam());
-				fullMsg += ")";
-#endif
-				fullMsg += ": ";
-				fullMsg += (const char*)msg;
-				MSGMGR->insert("alertInfo", fullMsg, NULL);
+				if (!srcPlayer || srcPlayer!=myTank)
+					MSGMGR->insert("alertInfo", fullMsg, NULL);
 			}
 			break;
 		}
@@ -1976,7 +1971,7 @@ static void				handleFlagDropped(Player* tank)
 
 static bool				gotBlowedUp(BaseLocalPlayer* tank,
 										BlowedUpReason reason,
-										const PlayerId& killer,
+										PlayerId killer,
 										int shotId)
 {
 	if (!tank->isAlive())
@@ -2047,7 +2042,7 @@ static void				checkEnvironment()
 
 	FlagId flagId = myTank->getFlag();
 	if (flagId != NoFlag && int(flagId) >= int(FirstTeamFlag) &&
-      int(flagId) <= int(LastTeamFlag)) {
+		int(flagId) <= int(LastTeamFlag)) {
 		// have I captured a flag?
 		TeamColor base = world->whoseBase(myTank->getPosition());
 		TeamColor team = myTank->getTeam();
@@ -2057,7 +2052,7 @@ static void				checkEnvironment()
 			serverLink->sendCaptureFlag(base);
 	}
 	else if (flagId == NoFlag && (myTank->getLocation() == LocalPlayer::OnGround ||
-      myTank->getLocation() == LocalPlayer::OnBuilding)) {
+		myTank->getLocation() == LocalPlayer::OnBuilding)) {
 		// Don't grab too fast
 		static TimeKeeper lastGrabSent;
 		if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
