@@ -19,6 +19,12 @@
 
 static GLenum		MY_GL_REPLACE = GL_MODULATE;
 
+
+// for tracking glBegin/End pairs; see include/bzfgl.h
+#ifdef DEBUG
+int __beginendCount;
+#endif
+
 //
 // OpenGLGStateState
 //
