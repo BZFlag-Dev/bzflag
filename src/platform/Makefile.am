@@ -171,7 +171,7 @@ EXTRA_libPlatform_a_SOURCES =		\
 	WinMedia.cxx			\
 	WinMedia.h
 
-EXTRA_DIST = NewMedia.cxx NewMedia.h
+EXTRA_DIST = NewMedia.cxx NewMedia.h BeOSWindow2.cxx
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

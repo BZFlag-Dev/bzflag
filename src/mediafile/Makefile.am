@@ -6,6 +6,8 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 libMediaFile_a_SOURCES =	\
+	AudioFile.cxx		\
+	AudioFile.h		\
 	ImageFile.cxx		\
 	ImageFile.h		\
 	MediaFile.cxx		\
@@ -13,6 +15,9 @@ libMediaFile_a_SOURCES =	\
 	PNGImageFile.h		\
 	SGIImageFile.cxx	\
 	SGIImageFile.h		\
-	AudioFile.h		\
 	WaveAudioFile.h		\
 	WaveAudioFile.cxx
+
+EXTRA_DIST = 			\
+	OggAudioFile.cxx	\
+	OggAudioFile.h
