@@ -21,6 +21,7 @@ EXTRA_DIST = \
 	flag_grab.wav	\
 	flag_lost.wav	\
 	flag_won.wav	\
+	flap.wav	\
 	green_basetop.png	\
 	green_basewall.png	\
 	green_bolt.png	\
