@@ -11,7 +11,7 @@ bzfs \- BZFlag game server
 [\fB\-badwords \fIbadwordfile\fR]
 [\fB\-ban \fIip\fR{,ip}*]
 [\fB\-banfile \fIfilename\fR]
-[\fB\-c\fR]
+[\fB\-c [numteamflags]\fR]
 [\fB\-conf \fIconfigfile\fR]
 [\fB\-cr \fR[\fIdensity\fR]]
 [\fB\-d\fR]
@@ -115,8 +115,9 @@ load the banlist from this file when it starts (if the file exists),
 and write the banlist back to the file when someone gets banned or unbanned.
 If this option isn't given the banlist will not be saved.
 .TP
-.B -c
-Enables the capture-the-flag style game.  By default, the free-for-all
+.B -c [numteamflags]
+Enables the capture-the-flag style game. By default, there is 1 team flag per team.
+You can optionally specify a higher number. By default, the free-for-all
 style is used.
 .TP
 \fB\-conf \fIconfigfilename\fR
