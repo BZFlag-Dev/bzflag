@@ -57,7 +57,13 @@ public:
       when the command line is parsed. */
   template <class T>
   bool registerVariable(const string& option, T& variable,
-			const string& usage = "", const string& help = "");
+			const string& usage = "", const string& help = "")
+  { //VC doesn't support out of class definition of template functions
+    VariableParser<T>* parser = new VariableParser<T>(variable, usage, help);
+    parsers[option] = parser;
+    return true;
+  }
+
 
 protected:
 
@@ -128,15 +134,6 @@ protected:
   string usageSuf;
 };
 
-
-// implement the template functions here
-template <class T>
-bool OptionParser::registerVariable(const string& option, T& variable,
-				    const string& usage, const string& help) {
-  VariableParser<T>* parser = new VariableParser<T>(variable, usage, help);
-  parsers[option] = parser;
-  return true;
-}
 
 
 #endif

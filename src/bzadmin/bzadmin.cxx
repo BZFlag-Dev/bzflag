@@ -56,8 +56,8 @@ int main(int argc, char** argv) {
   OptionParser op(string("bzadmin ") + getAppVersion(),
 		  "CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ...");
 
-  const std::string uiOption = "ui";
-  const std::string uiMsg = "choose a user interface";
+  const string uiOption("ui");
+  const string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
   if (!op.parse(argc, argv))
     return 1;
