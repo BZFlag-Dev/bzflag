@@ -1,9 +1,5 @@
 recent bugs
 ------------
-- bzadmin doesn't redraw / resize windows properly when the terminal is
-  resized, backgrounded, or otherwise sent a signal that is visually
-  destructive.
-
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
   bzfls.pl on Tim's     : 1.8 sec
