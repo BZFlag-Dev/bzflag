@@ -1,13 +1,6 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
-- Burrowed tanks are often getting kicked by speed check on server.
-  Perhaps ignore cheats 2 secs after flag grab as well as current flag drop.
-  Nope won't work, as flag could be picked up on a building.
-
-- Now that the tank parts actually have real sides, there are some depth buffer
-  artifacts with a tank has N
-
 - quol reports that his 1.10.3 server is requiring identification, although
   require identify is not listed anywhere in his group file.  problem still
   happens if he moves the group file out of the way. larsl wonders if this
