@@ -308,8 +308,8 @@ case $host_os in
      macos|darwin*)
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(_BSD_SOCKLEN_T_, int, [BSD Socket Length])
-	CPPFLAGS="$CPPFLAGS -Wall -W";
-	CFLAGS="$CFLAGS -ansi -fno-exceptions";
+	CPPFLAGS="$CPPFLAGS -Wall -Wstrict-prototypes";
+	CFLAGS="$CFLAGS -ansi -fno-exceptions -Wall -Wstrict-prototypes";
 	CXXFLAGS="$CXXFLAGS";;
      windows**)
 	CPPFLAGS="$CPPFLAGS /D \"WIN32\" /D \"_MBCS\"";
