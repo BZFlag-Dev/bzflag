@@ -10,6 +10,10 @@ case $host_os in
 solaris*)
 	AC_DEFINE(ETC_INET)
 	;;
+mingw32*)
+	WINPORT=windows_port.c
+	AC_SUBST(WINPORT)
+	;;
 esac
 
 AC_SEARCH_LIBS(gethostbyname, nsl)
@@ -33,7 +37,7 @@ AC_HELP_STRING([--disable-debug],[Disable debug options]),
     dnl Checks for standard header files, to make memdebug.h inclusions bettter
     AC_HEADER_STDC
 
-    CPPFLAGS="$CPPFLAGS -DCURLDEBUG -I../include"
+    CPPFLAGS="$CPPFLAGS -I../include"
     CFLAGS="$CFLAGS -g" 
 
     dnl set compiler "debug" options to become more picky, and remove
