@@ -90,7 +90,7 @@ LDFLAGS=$X_LIBS
 case $host_os in
   solaris*)
     GLIBS="-lresolv -laudio $GLIBS";
-    LIBS="-lsocket -lnsl";
+    LIBS="-lsocket -lnsl -lresolv";
     LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib";;
   irix*)
     GLIBS="-lXsgivc -lX11 -laudio $GLIBS";;
