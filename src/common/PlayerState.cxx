@@ -23,6 +23,7 @@ PlayerState::PlayerState()
 
 void*	PlayerState::pack(void* buf)
 {
+  buf = nboPackInt(buf, int32_t(order));
   buf = nboPackShort(buf, int16_t(status));
   buf = nboPackVector(buf, pos);
   buf = nboPackVector(buf, velocity);
@@ -33,12 +34,15 @@ void*	PlayerState::pack(void* buf)
 
 void*	PlayerState::unpack(void* buf)
 {
+  int32_t inOrder;
   int16_t inStatus;
+  buf = nboUnpackInt(buf, inOrder);
   buf = nboUnpackShort(buf, inStatus);
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackVector(buf, velocity);
   buf = nboUnpackFloat(buf, azimuth);
   buf = nboUnpackFloat(buf, angVel);
+  order = int(inOrder);
   status = short(inStatus);
   return buf;
 }
