@@ -219,10 +219,10 @@ void AccessControlList::sendBans(PlayerId id)
     double duration = it->banEnd - TimeKeeper::getCurrent();
     if (duration < 365.0f * 24 * 3600)
       sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
+    if( it->fromMaster )
+      sprintf(pMsg + strlen(pMsg), " (m)");
     if (it->bannedBy.length())
       sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
-    if( it->fromMaster )
-      sprintf(pMsg + strlen(pMsg), "(m)");
 
     sendMessage(ServerPlayer, id, banlistmessage);
 
