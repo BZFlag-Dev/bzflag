@@ -124,24 +124,24 @@ void			RobotPlayer::doUpdate(float dt)
   timerForShot  -= dt;
   if (timerForShot < 0.0f)
     timerForShot = 0.0f;
-  bool        shoot   = true;
+  bool        shoot   = false;
   const float azimuth = getAngle();
   // Allow shooting only if angle is near and timer has elapsed
-  if ((int)path.size() == 0 || timerForShot > 0.0f)
-    shoot = false;
-  else
-    for (i = pathIndex; i < (int)path.size(); i++) {
-      float azimuthDiff = pathAzimuth[i] - azimuth;
-      if (azimuthDiff > M_PI)
-	azimuthDiff -= 2.0f * M_PI;
-      else
-	if (azimuthDiff < -M_PI)
-	  azimuthDiff += 2.0f * M_PI;
-      if (fabs(azimuthDiff) > 0.01f) {
-	shoot = false;
-	break;
-      }
-    }
+  if ((int)path.size() != 0 && timerForShot <= 0.0f) {
+    const float* p1     = target->getPosition();
+    const float* p2     = getPosition();
+    float shootingAngle = atan2f(p1[1] - p2[1], p1[0] - p2[0]);
+    if (shootingAngle < 0.0f)
+      shootingAngle += 2.0f * M_PI;
+    float azimuthDiff   = shootingAngle - azimuth;
+    if (azimuthDiff > M_PI)
+      azimuthDiff -= 2.0f * M_PI;
+    else
+      if (azimuthDiff < -M_PI)
+	azimuthDiff += 2.0f * M_PI;
+    if (fabs(azimuthDiff) < 0.01f)
+      shoot = true;
+  }
   if (isAlive() && timeSinceShot > reloadTime / numShots && shoot) {
     timeSinceShot -= reloadTime / numShots;
     for (i = 0; i < numShots; i++)
