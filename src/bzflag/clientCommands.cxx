@@ -22,6 +22,8 @@
 #include "global.h"
 #include "StateDatabase.h"
 #include "TextUtils.h"
+#include "FileManager.h"
+#include "DirectoryNames.h"
 #include "version.h"
 
 /* local implementation headers */
@@ -375,10 +377,12 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
   if (args.size() != 0)
     return "usage: screenshot";
 
-  std::fstream f;
-  std::string filename = string_util::format("bzfi%04d.png", snap++);
-  f.open(filename.c_str(), std::ios::out | std::ios::binary);
-  if (f.is_open()) {
+  std::string filename = getScreenShotDirName();
+  filename += string_util::format("bzfi%04d.png", snap++);
+
+  std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
+
+  if (f != NULL) {
     int w = mainWindow->getWidth(), h = mainWindow->getHeight();
     const unsigned long blength = h * w * 3 + h;    //size of b[] and br[]
     unsigned char* b = new unsigned char[blength];  //screen of pixels + column for filter type required by PNG - filtered data
@@ -406,7 +410,7 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
     int crc = 0;  //used for running CRC values
 
     // Write PNG headers
-    f << "\211PNG\r\n\032\n";
+    (*f) << "\211PNG\r\n\032\n";
 #define PNGTAG(t_) ((((int)t_[0]) << 24) | \
 		   (((int)t_[1]) << 16) | \
 		   (((int)t_[2]) <<  8) | \
@@ -414,30 +418,30 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
 
     // IHDR chunk
     temp = htonl((int) 13);       //(length) IHDR is always 13 bytes long
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     crc = crc32(crc, (unsigned char*) &temp, 4);
     temp = htonl(w);              //(data) Image width
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     crc = crc32(crc, (unsigned char*) &temp, 4);
     temp = htonl(h);              //(data) Image height
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     crc = crc32(crc, (unsigned char*) &temp, 4);
     tempByte = 8;                 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
-    f.write(&tempByte, 1);
+    f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
     tempByte = 2;                 //(data) Color type: RGB = 2
-    f.write(&tempByte, 1);
+    f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
     tempByte = 0;
     int i;
     for (i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
-      f.write(&tempByte, 1);
+      f->write(&tempByte, 1);
       crc = crc32(crc, (unsigned char*) &tempByte, 1);
     }
     crc = htonl(crc);
-    f.write((char*) &crc, 4);    //(crc) write crc
+    f->write((char*) &crc, 4);    //(crc) write crc
 
     // IDAT chunk
     for (i = h - 1; i >= 0; i--) {
@@ -459,42 +463,42 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
     // compress b into bz
     compress2(bz, &zlength, b, blength, 5);
     temp = htonl(zlength);                          //(length) IDAT length after compression
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("IDAT"));                   //(tag) IDAT
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    f.write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
+    f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
     crc = htonl(crc32(crc, bz, zlength));
-    f.write((char*) &crc, 4);                       //(crc) write crc
+    f->write((char*) &crc, 4);                       //(crc) write crc
 
     // tEXt chunk containing bzflag build/version
     temp = htonl((int) 9 + strlen(getAppVersion()));//(length) tEXt is 9 + strlen(getAppVersion())
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));                   //(tag) tEXt
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     crc = crc32(crc = 0, (unsigned char*) &temp, 4);
     strcpy(reinterpret_cast<char*>(b), "Software"); //(data) Keyword
-    f.write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
+    f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
     crc = crc32(crc, b, strlen(reinterpret_cast<const char*>(b)));
     tempByte = 0;			            //(data) Null character separator
-    f.write(&tempByte, 1);
+    f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
     strcpy((char*) b, getAppVersion());             //(data) Text contents (build/version)
-    f.write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
+    f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
     crc = htonl(crc32(crc, b, strlen(reinterpret_cast<const char*>(b))));
-    f.write((char*) &crc, 4);                       //(crc) write crc
+    f->write((char*) &crc, 4);                       //(crc) write crc
 
     // IEND chunk
     temp = htonl((int) 0);        //(length) IEND is always 0 bytes long
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("IEND")); //(tag) IEND
-    f.write((char*) &temp, 4);
+    f->write((char*) &temp, 4);
     crc = htonl(crc32(crc = 0, (unsigned char*) &temp, 4));
     //(data) IEND has no data field
-    f.write((char*) &crc, 4);     //(crc) write crc
+    f->write((char*) &crc, 4);     //(crc) write crc
     delete [] bz;
     delete [] b;
-    f.close();
+    delete f;
     char notify[128];
     snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
     controlPanel->addMessage(notify);
