@@ -95,7 +95,7 @@ Section "Start Menu Shortcuts"
 	CreateDirectory "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc"
 	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\BZFlag [game] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzflag.html" "" "" 0
 	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\bzfs [server] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzfs.html" "" "" 0
-	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\bzfls [list serv] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzfls.html" "" "" 0
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\bzadmin [admin] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzadmin.html" "" "" 0
 SectionEnd
 
 Section "Quick Launch Shortcuts"
