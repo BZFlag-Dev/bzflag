@@ -32,11 +32,6 @@ recent bugs
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
-- Shots that bounce off the ground occasionally reflect in the wrong
-  direction - x/y flipped
-  Actually i think sometimes the bullet misses the bounce against the ground
-  and travels unabatted downward, making it look like an odd angle.
-
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
 
