@@ -84,3 +84,12 @@ std::vector<std::string> MessageOfTheDay::getPrintable(const std::vector<std::st
   }
   return retval;
 }
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
