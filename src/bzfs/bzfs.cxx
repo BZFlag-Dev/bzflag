@@ -365,7 +365,7 @@ struct CmdLineOptions
   : wksPort(ServerPort), reconnectPort(ServerPort+1), gameStyle(PlainGameStyle), servermsg(NULL),
     advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), publicizedTitle(NULL),
     listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0),
-    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
+    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0), teamFlagTimeout(30),
     pingTTL(DefaultTTL), maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f),
     timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
     useFallbackPort(false), alsoUDP(true), requireUDP(false), randomBoxes(false), randomCTF(false),
@@ -406,6 +406,7 @@ struct CmdLineOptions
   int			numAllowedFlags;
   uint16_t		shakeWins;
   uint16_t		shakeTimeout;
+  int			teamFlagTimeout;
   int			pingTTL;
   int			maxlagwarn;
 
@@ -592,6 +593,7 @@ struct TeamInfo {
     Team team;
     // player index with radio
     int radio;
+    TimeKeeper flagTimeout;
 };
 
 class WorldInfo {
@@ -3953,7 +3955,9 @@ static void addPlayer(int playerIndex)
 	++team[teamIndex].team.activeSize == 1) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
-    if ((clOptions.gameStyle & int(TeamFlagGameStyle)) && teamIndex != int(RogueTeam))
+    if ((clOptions.gameStyle & int(TeamFlagGameStyle)) && 
+	teamIndex != int(RogueTeam) && 
+	flag[teamIndex - 1].flag.status == FlagNoExist)
       // can't call resetFlag() here cos it'll screw up protocol for
       // player just joining, so do it later
       resetTeamFlag = true;
@@ -4294,13 +4298,17 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
 	player[playerIndex].type == ComputerPlayer)
       --team[teamNum].team.activeSize;
 
-    // if last active player on team then remove team's flag
+    // if last active player on team then remove team's flag if no one
+    // is carrying it
     if (teamNum != int(RogueTeam) &&
 	(player[playerIndex].type == TankPlayer ||
 	player[playerIndex].type == ComputerPlayer) &&
 	team[teamNum].team.activeSize == 0 &&
-	(clOptions.gameStyle & int(TeamFlagGameStyle)))
-      zapFlag(teamNum - 1);
+	(clOptions.gameStyle & int(TeamFlagGameStyle))) {
+      if (flag[teamNum - 1].player == -1 ||
+	  player[flag[teamNum - 1].player].team == teamNum)
+	zapFlag(teamNum - 1);
+    }      
 
     // send team update
     sendTeamUpdate(teamNum);
@@ -4711,6 +4719,13 @@ static void dropFlag(int playerIndex, float pos[3])
   }
   else
     pFlagInfo->flag.status = FlagGoing;
+  
+  // if it is a team flag, check if there are any players left in that team -
+  // if not, start the flag timeout
+  if (isTeamFlag && team[flagIndex + 1].team.activeSize == 0) {
+    team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
+    team[flagIndex + 1].flagTimeout += clOptions.teamFlagTimeout;
+  }
 
   pFlagInfo->flag.position[0] = pFlagInfo->flag.landingPosition[0];
   pFlagInfo->flag.position[1] = pFlagInfo->flag.landingPosition[1];
@@ -5659,6 +5674,7 @@ static const char *usageString =
 "[-sw <num>] "
 "[-synctime] "
 "[-t] "
+"[-tftimeout <seconds>] "
 #ifdef TIMELIMIT
 "[-time <seconds>] "
 "[-timemanual] "
@@ -5716,6 +5732,7 @@ static const char *extraUsageString =
 "\t-sw: shake bad flags after <num> wins\n"
 "\t-synctime: synchronize time of day on all clients\n"
 "\t-t: allow teleporters\n"
+"\t-tftimeout: set timeout for team flag zapping (default=30)\n"
 #ifdef TIMELIMIT
 "\t-time: set time limit on each game\n"
 "\t-timemanual: countdown for timed games has to be started with /countdown\n"
@@ -6334,6 +6351,18 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       if (options.worldFile != NULL)
 	fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
     }
+    else if (strcmp(argv[i], "-tftimeout") == 0) {
+      // use team flag timeout
+      if (++i == argc) {
+	fprintf(stderr, "argument expected for -tftimeout\n");
+	usage(argv[0]);
+      }
+      options.teamFlagTimeout = atoi(argv[i]);
+      if (options.teamFlagTimeout < 0)
+	options.teamFlagTimeout = 0;
+      fprintf(stderr, "using team flag timeout of %i seconds\n",
+	      options.teamFlagTimeout);
+    }
 #ifdef TIMELIMIT
     else if (strcmp(argv[i], "-time") == 0) {
       if (++i == argc) {
@@ -6846,6 +6875,16 @@ int main(int argc, char **argv)
 	    resetFlag(i);
 	  }
 	}
+      }
+    }
+    
+    // check team flag timeouts
+    for (i = 0; i < NumTeams; ++i) {
+      if (team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
+	  flag[i - 1].flag.status != FlagNoExist &&
+	  flag[i - 1].player == -1) {
+	DEBUG1("Flag timeout for team %d\n", i);
+	zapFlag(i - 1);
       }
     }
 
