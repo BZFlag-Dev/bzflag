@@ -124,7 +124,7 @@ bool PlayerAccessInfo::isAllowedToEnter() {
 };
 
 bool PlayerAccessInfo::isVerified() {
-	return verified;
+  return verified;
 };
 
 void PlayerAccessInfo::storeInfo(const char* pwd) {
