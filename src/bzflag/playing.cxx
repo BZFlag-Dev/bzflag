@@ -3680,8 +3680,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
     }
 
-#ifdef DEBUG
     if (ignore) {
+#ifdef DEBUG
       // to verify working
       std::string msg2 = "Ignored Msg";
       if (silencePlayers[i] != "*") {
@@ -3690,9 +3690,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	//if * just echo a generic Ignored
       }
       addMessage(NULL,msg2);
+#endif
       break;
     }
-#endif
 
     // CLIENTQUERY hack
     if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
