@@ -10,6 +10,8 @@ bzflag_SOURCES =			\
 	ActionBinding.h			\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
+	ComposeDefaultKey.cxx	\
+	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
 	CommandsStandard.cxx		\
@@ -61,6 +63,8 @@ bzflag_SOURCES =			\
 	SceneBuilder.cxx		\
 	SceneBuilder.h			\
 	SceneRenderer.cxx		\
+	ServerCommandKey.cxx	\
+	ServerCommandKey.h		\
 	ServerItem.cxx			\
 	ServerItem.h			\
 	ServerListCache.cxx		\
@@ -75,6 +79,8 @@ bzflag_SOURCES =			\
 	ShotPath.h			\
 	ShotStrategy.cxx		\
 	ShotStrategy.h			\
+	SilenceDefaultKey.cxx	\
+	SilenceDefaultKey.h		\
 	StartupInfo.h			\
 	TargetingUtils.cxx		\
 	TargetingUtils.h		\
@@ -92,7 +98,9 @@ bzflag_SOURCES =			\
 	sound.cxx			\
 	sound.h				\
 	stars.h				\
-	texture.cxx			
+	texture.cxx
+
+
 
 if WIN32
 RESOURCE = bzflag.res
