@@ -103,7 +103,7 @@ TankGeometryMgr::~TankGeometryMgr()
 
 void TankGeometryMgr::deleteLists()
 {
-  // initialize the lists to invalid
+  // delete the list that have been aquired
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
@@ -111,6 +111,7 @@ void TankGeometryMgr::deleteLists()
           GLuint list = displayLists[shadow][lod][size][part];
           if (list != InvalidList) {
             glDeleteLists(list, 1);
+            list = InvalidList;
           }
         }
       }
