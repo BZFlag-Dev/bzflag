@@ -28,6 +28,7 @@ class Frustum {
 			~Frustum();
 
     const float*	getEye() const;
+    const float         getEyeMove() const;
     const float*	getDirection() const;
     const float*	getUp() const;
     const float*	getRight() const;
@@ -62,6 +63,7 @@ class Frustum {
     float		areaFactor;
     float		projectionMatrix[16];
     float		deepProjectionMatrix[16];
+    float               eyeMove;
 };
 
 //
@@ -71,6 +73,11 @@ class Frustum {
 inline const float*	Frustum::getEye() const
 {
   return eye;
+}
+
+inline const float	Frustum::getEyeMove() const
+{
+  return eyeMove;
 }
 
 inline const float*	Frustum::getDirection() const
