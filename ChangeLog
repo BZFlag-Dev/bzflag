@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Improved double-jump response - Dave Rodgers
 * Added physics drivers - Dave Rodgers
 * Unlimited altimeter height - Steve Krenzel
 * Added /uptime command to print elapsed running time - Angelina Carlton
