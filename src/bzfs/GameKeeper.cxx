@@ -36,9 +36,8 @@ GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd,
 			   tcpCallback _clientCallback):
   player(_playerIndex), lagInfo(&player),
-  lastState(&::lastState[_playerIndex]),
-  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-  recvdGlobalLoginMsg(false)
+  lastState(&::lastState[_playerIndex]), recvdGlobalLoginMsg(false),
+  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback)
 {
   playerList[playerIndex] = this;
 
