@@ -881,34 +881,56 @@ void			HUDRenderer::renderScoreboard(void)
   const float dy = minorFont.getSpacing();
   int y = (int)(y0 - dy);
 
-  // print players sorted by score
+  // print non-observing players sorted by score, print observers last
   int plrCount = 0;
+  int obsCount = 0;
   const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
   int* players = new int[curMaxPlayers];
-
-  for (j = 0; j < curMaxPlayers; j++)
-    if (World::getWorld()->getPlayer(j))
-      players[plrCount++] = j;
-
+  RemotePlayer* rp;
+  
+  for (j = 0; j < curMaxPlayers; j++) {
+    if ((rp = World::getWorld()->getPlayer(j))) {
+      if (rp->getCallSign()[0] != '@')
+	players[plrCount++] = j;
+      else
+	players[curMaxPlayers - (++obsCount)] = j;
+    }
+  }
+  
   qsort(players, plrCount, sizeof(int), tankScoreCompare);
-
-  bool drewMyScore = false;
+  
+  // list player scores
+  bool drewMyScore;
   for (i = 0; i < plrCount; i++) {
     RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
     if (!drewMyScore && myTank->getScore() > player->getScore()) {
-      // if i have greater score than remote player draw my name first
+      // if i have greater score than remote player draw my name here
       drawPlayerScore(myTank, x1, x2, x3, (float)y);
-      y -= (int)dy;
       drewMyScore = true;
+      y -= (int)dy;
     }
     drawPlayerScore(player, x1, x2, x3, (float)y);//then draw the remote player
     y -= (int)dy;
   }
-  if (!drewMyScore) {
-    // if my score is smaller or equal to last remote player draw my score
+  if (!drewMyScore && myTank->getCallSign()[0] != '@') {
+    // if my score is smaller or equal to last remote player draw my score here
     drawPlayerScore(myTank, x1, x2, x3, (float)y);
     y -= (int)dy;
+    drewMyScore = true;
   }
+  
+  // list observers
+  y -= (int)dy;
+  for (i = curMaxPlayers - 1; i >= curMaxPlayers - obsCount; --i) {
+    RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
+    drawPlayerScore(player, x1, x2, x3, (float)y);
+    y -= (int)dy;
+  }
+  if (!drewMyScore) {
+    // if I am an observer, list my name
+    drawPlayerScore(myTank, x1, x2, x3, (float)y);
+  }
+  
   delete[] players;
 
   // print teams sorted by score
@@ -1478,8 +1500,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   const float emailWidth = minorFont.getWidth(email);
   const float flagWidth = minorFont.getWidth(flag);
   hudSColor3fv(Team::getRadarColor(player->getTeam()));
-  minorFont.draw(score, x1, y);
-  minorFont.draw(kills, x2, y);
+  if (player->getCallSign()[0] != '@') {
+    minorFont.draw(score, x1, y);
+    minorFont.draw(kills, x2, y);
+  }
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
   minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
