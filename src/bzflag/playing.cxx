@@ -1525,7 +1525,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      ((killerLocal->getTeam() != RogueTeam)
 	       || (World::getWorld()->allowRabbit()))) {
 	    if (killerPlayer == myTank) {
-	      hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
+	      hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
 	      playLocalSound( SFX_KILL_TEAM );
 	      if (myTank->isAutoPilot()) {
 	        char meaculpa[MessageLen];
