@@ -13,6 +13,10 @@
 #ifndef BZF_FILE_MANAGER_H
 #define BZF_FILE_MANAGER_H
 
+#ifdef WIN32
+#pragma warning(4:4786)
+#endif
+
 #include <string>
 #include "common.h"
 #include "bzfio.h"

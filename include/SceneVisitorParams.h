@@ -13,6 +13,10 @@
 #ifndef BZF_SCENE_VISITOR_PARAMS_H
 #define BZF_SCENE_VISITOR_PARAMS_H
 
+#ifdef WIN32
+#pragma warning(4:4786)
+#endif
+
 #include <string>
 #include <map>
 #include <vector>
