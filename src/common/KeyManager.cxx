@@ -34,6 +34,7 @@ const char*		KeyManager::buttonNames[] = {
   "Page Up",
   "Page Down",
   "Insert",
+  "Backspace",
   "Delete",
   "Kp0",
   "Kp1",
