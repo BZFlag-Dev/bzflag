@@ -18,7 +18,7 @@ build-stamp:
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	./configure --quiet --prefix=/usr --enable-debug
 else
-	case $(DEB_BUILD_ARCH) in \
+	case "$(DEB_BUILD_ARCH)" in \
 		i386) ./configure --quiet --prefix=/usr --host=i486-pc-linux-gnu ;; \
 		*) ./configure --quiet --prefix=/usr ;; \
 	esac

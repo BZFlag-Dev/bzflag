@@ -108,6 +108,8 @@ print S pack("n2", 0, 0x7170);
 die $! unless sysread(S, $buffer, 8) == 8;
 ($len,$code,$numTeams,$numPlayers) = unpack("n4", $buffer);
 die $! unless $code == 0x7170;
+
+# TimRiker: re-read the number of teams???
 die $! unless sysread(S, $buffer, 5) == 5;
 ($len,$code,$numTeams) = unpack("n n C", $buffer);
 
