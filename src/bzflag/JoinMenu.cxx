@@ -11,9 +11,6 @@
  */
 
 /* interface header */
-#ifdef _WIN32
-#include <winsock2.h>
-#endif
 #include "JoinMenu.h"
 
 /* local implementation headers */
