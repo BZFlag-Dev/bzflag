@@ -105,6 +105,11 @@ void			QuadWallSceneNode::Geometry::render()
   else drawV();
 }
 
+void			QuadWallSceneNode::Geometry::renderShadow()
+{
+  drawV();
+}
+
 void			QuadWallSceneNode::Geometry::drawV() const
 {
   RENDER(EMITV)

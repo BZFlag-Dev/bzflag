@@ -73,6 +73,7 @@ class QuadWallSceneNode : public WallSceneNode {
 			~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();
+	void		renderShadow();
 	const GLfloat*  getVertex(int i) const;
 	const GLfloat*	getPosition() { return wall->getSphere(); }
       private:

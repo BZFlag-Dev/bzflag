@@ -72,6 +72,11 @@ void			TriWallSceneNode::Geometry::render()
   else drawV();
 }
 
+void			TriWallSceneNode::Geometry::renderShadow()
+{
+  drawV();
+}
+
 
 void			TriWallSceneNode::Geometry::drawV() const
 {

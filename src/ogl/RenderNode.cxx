@@ -52,7 +52,7 @@ void RenderNodeList::append(RenderNode* node)
 void RenderNodeList::render() const
 {
   for (int i = 0; i < count; i++) {
-    list[i]->render();
+    list[i]->renderShadow();
   }
 }
 

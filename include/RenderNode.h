@@ -30,6 +30,7 @@ class RenderNode {
     virtual		~RenderNode() { }
 
     virtual void	render() = 0;
+    virtual void	renderShadow() {render();};
     virtual const GLfloat* getPosition() = 0;
 };
 
