@@ -150,14 +150,15 @@ void EffectsMenu::resize(int width, int height)
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   const int count = list.size();
-  for (int i = 1; i < count; i++) {
+  int i;
+  for (i = 1; i < count; i++) {
     list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 
   // load current settings
-  int i = 1;
+  i = 1;
   ((HUDuiList*)list[i++])->setIndex(int((BZDB.eval("userRainScale") * 10.0f) + 0.5f));
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
