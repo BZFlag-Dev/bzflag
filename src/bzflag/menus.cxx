@@ -3989,7 +3989,20 @@ ServerStartMenu::ServerStartMenu()
    */
 #ifdef _WIN32
   /* add a list of .bzw files found in the current dir */
-  std::string pattern = BZDB.get("directory") + "\\";
+  std::string pattern = BZDB.get("directory");
+  if (pattern.length() == 0) {
+    long availDrives = GetLogicalDrives();
+    for (int i = 2; i < 31; i++) {
+      if (availDrives & (1 << i)) {
+	pattern = 'a' + i;
+	pattern += ":";
+	break;
+      }
+    }
+  }
+
+
+  pattern += "\\";
   WIN32_FIND_DATA findData;
   HANDLE h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {
