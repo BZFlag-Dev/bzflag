@@ -62,6 +62,8 @@ class Teleporter : public Obstacle {
     static std::string	typeName;
 };
 
+const int randomTeleporter = (unsigned short)(-1);
+
 //
 // Teleporter
 //
