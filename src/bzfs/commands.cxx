@@ -572,26 +572,12 @@ void handleFlaghistoryCmd(int t, const char *)
     return;
   }
 
-  char reply[MessageLen] = {0};
-
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i].isPlaying() && !player[i].isObserver()) {
-      char flag[MessageLen];
-      sprintf(reply,"%-16s : ", player[i].getCallSign() );
-      std::vector<FlagType*>::iterator fhIt = player[i].flagHistory.begin();
-
-      while (fhIt != player[i].flagHistory.end()) {
-	FlagType * fDesc = (FlagType*)(*fhIt);
-	if (fDesc->endurance == FlagNormal)
-	  sprintf(flag, "(*%c) ", fDesc->flagName[0]);
-	else
-	  sprintf(flag, "(%s) ", fDesc->flagAbbv);
-	strcat(reply, flag);
-	fhIt++;
-      }
+  char reply[MessageLen];
+  for (int i = 0; i < curMaxPlayers; i++) {
+    player[i].handleFlagHistory(reply);
+    if (strlen(reply))
       sendMessage(ServerPlayer, t, reply, true);
-    }
-  return;
+  }
 }
 
 

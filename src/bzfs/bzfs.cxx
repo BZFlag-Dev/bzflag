@@ -25,8 +25,6 @@ int InvalidPlayer = -1;
 
 float speedTolerance = 1.125f;
 
-#define MAX_FLAG_HISTORY (10)
-
 // Command Line Options
 CmdLineOptions *clOptions;
 
@@ -2747,10 +2745,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  std::vector<FlagType*> *pFH = &player[playerIndex].flagHistory;
-  if (pFH->size() >= MAX_FLAG_HISTORY)
-    pFH->erase(pFH->begin());
-  pFH->push_back(flag[flagIndex].flag.type );
+  player[playerIndex].addFlagToHistory(flag[flagIndex].flag.type);
 }
 
 static void dropFlag(int playerIndex, float pos[3])
@@ -3459,14 +3454,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
 
     // player sending a message
     case MsgMessage: {
-      player[t].lastmsg = TimeKeeper::getCurrent();
       // data: target player/team, message string
       PlayerId targetPlayer;
       char message[MessageLen];
       buf = nboUnpackUByte(buf, targetPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
-      DEBUG1("Player %s [%d]: %s\n",player[t].getCallSign(), t, message);
+      player[t].hasSent(t, message);
       // check for command
       if (message[0] == '/') {
 				/* make commands case insensitive for user-friendlyness */

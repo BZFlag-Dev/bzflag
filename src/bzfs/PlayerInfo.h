@@ -202,6 +202,10 @@ public:
   void        updateLagPlayerUpdate(float timestamp, bool ooo);
   bool        nextPing(float &waitTime);
   int         getNextPingSeqno();
+  void        hasSent(int index, char message[]);
+  void        addFlagToHistory();
+  void        handleFlagHistory(char message[]);
+  void        addFlagToHistory(FlagType* type);
 private:
   void        udpSend(int udpSocket, const void *b, size_t l);
   int         send(const void *buffer, size_t length);
@@ -292,7 +296,6 @@ private:
     TimeKeeper nextping, lastping;
     int pingseqno, pingssent;
 
-public:
     // idle kick + jitter measurement
     float lasttimestamp;
     TimeKeeper lastupdate;
@@ -300,6 +303,7 @@ public:
 
     std::vector<FlagType*> flagHistory;
 
+public:
     // player played before countdown started
     bool playedEarly;
 
