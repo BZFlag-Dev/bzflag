@@ -999,9 +999,10 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 
   // allocate space for flags
   numFlags = options.numExtraFlags;
-  // rogues don't get a flag
-  if (options.gameStyle & TeamFlagGameStyle)
-    numFlags += NumTeams - 1;
+  if (options.gameStyle & TeamFlagGameStyle) {
+    // rogues don't get a flag
+    numFlags += CtfTeams - 1;
+  }
   for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin();
        it != FlagDesc::getFlagMap().end(); ++it) {
     numFlags += options.flagCount[it->second];
@@ -1037,7 +1038,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     flag[0].flag.desc = Flags::RedTeam;
     flag[0].flag.type = FlagNormal;
     flag[1].required = true;
-    flag[1].flag.desc = Flags::RedTeam;
+    flag[1].flag.desc = Flags::GreenTeam;
     flag[1].flag.type = FlagNormal;
     flag[2].required = true;
     flag[2].flag.desc = Flags::BlueTeam;
