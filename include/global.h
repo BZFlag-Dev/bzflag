@@ -83,12 +83,14 @@ enum GameStyle {
 	PlainGameStyle =		0x0000,
 	TeamFlagGameStyle =		0x0001,	// capture the flag
 	SuperFlagGameStyle =		0x0002,	// superflags allowed
-	JumpingGameStyle =		0x0004,	// jumping allowed
-	InertiaGameStyle =		0x0008,	// momentum for all
-	RicochetGameStyle =		0x0010,	// all shots ricochet
-	ShakableGameStyle =		0x0020,	// can drop bad flags
-	AntidoteGameStyle =		0x0040,	// anti-bad flags
-	RabbitChaseGameStyle =		0x0080	// rabbit chase
+
+	JumpingGameStyle =		0x0008,	// jumping allowed
+	InertiaGameStyle =		0x0010,	// momentum for all
+	RicochetGameStyle =		0x0020,	// all shots ricochet
+	ShakableGameStyle =		0x0040,	// can drop bad flags
+	AntidoteGameStyle =		0x0080,	// anti-bad flags
+
+	RabbitChaseGameStyle =		0x0200	// rabbit chase
 };
 
 // map object flags
