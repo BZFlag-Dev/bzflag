@@ -462,14 +462,14 @@ static void		parse(int argc, char** argv,
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-      startupInfo.joystick = (strcmp(argv[i], "yes") == 0);
+      BZDB->set("joystick", argv[i]);
     }
     else if (strcmp(argv[i], "-joystickname") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      startupInfo.joystickName = argv[i];
+      BZDB->set("joystickname", argv[i]);
     }
     else if (strcmp(argv[i], "-v") == 0 ||
 	     strcmp(argv[i], "-version") == 0 ||
@@ -673,11 +673,6 @@ void			dumpResources(BzfDisplay* display,
   BZDB->set("showlabels", renderer.getLabels() ? "yes" : "no");
   db.addValue("showlabels", renderer.getLabels() ? "yes" : "no");
 
-  BZDB->set("joystick", startupInfo.joystick ? "yes" : "no");
-  db.addValue("joystick", startupInfo.joystick ? "yes" : "no");
-  BZDB->set("joystickname", startupInfo.joystickName);
-  db.addValue("joystickname", startupInfo.joystickName);
-
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
   db.addValue("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
 
@@ -836,11 +831,6 @@ int			main(int argc, char** argv)
       startupInfo.serverPort = atoi(BZDB->get("port").c_str());
     }
 
-    if (db.hasValue("joystick"))
-      startupInfo.joystick = (db.getValue("joystick") == "yes");
-    if (db.hasValue("joystickname"))
-      startupInfo.joystickName = db.getValue("joystickname");
-
     // key mapping
     BzfKeyMap& map = getBzfKeyMap();
     for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
@@ -957,8 +947,8 @@ int			main(int argc, char** argv)
   window->setTitle("bzflag");
 
   /* initialize the joystick */
-  if (startupInfo.joystick)
-    window->initJoystick(startupInfo.joystickName.c_str());
+  if (BZDB->isTrue("joystick"))
+    window->initJoystick(BZDB->get("joystickname").c_str());
 
   // set data directory if user specified
   if (db.hasValue("directory"))
