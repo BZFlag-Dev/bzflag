@@ -32,13 +32,26 @@
 
 // missing types
 
+#ifndef int16_t
 typedef signed short	int16_t;
+#endif
+
+#ifndef uint16_t
 typedef unsigned short	uint16_t;
+#endif
+
+#ifndef int32_t
 typedef signed int	int32_t;
+#endif
+
+#ifndef uint32_t
 typedef unsigned int	uint32_t;
+#endif
 
 // there is no sigpipe in Windows
-#  define SIGPIPE SIGINT
+#ifndef SIGINT
+#define SIGPIPE SIGINT
+#endif
 
 /* stuff specific to visual studio */
 #if (_MSC_VER)
@@ -52,10 +65,7 @@ typedef unsigned int	uint32_t;
 #  define snprintf	_snprintf
 
 #endif // _MSC_VER
-
 #endif // __WIN32_H__
-
-
 
 // Local Variables: ***
 // mode: C++ ***

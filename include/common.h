@@ -17,10 +17,6 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
-#ifdef _WIN32
-#  include "win32.h"
-#endif
-
 #include <config.h>
 
 #include <string>
@@ -29,6 +25,10 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "bzfio.h"
+
+#ifdef _WIN32
+#  include "win32.h"
+#endif
 
 extern int debugLevel;
 // Like verbose debug messages?
