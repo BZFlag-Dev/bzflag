@@ -507,7 +507,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameStyle |= int(InertiaGameStyle);
     } else if (strcmp(argv[i], "-admsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      options.advertisemsg = argv[i];
+      if (options.advertisemsg != "") {
+        options.advertisemsg += "\\n";
+      }
+      options.advertisemsg += argv[i];
     } else if (strcmp(argv[i], "-autoTeam") == 0) {
       options.autoTeam = true;
     } else if (strcmp(argv[i], "-b") == 0) {
@@ -917,7 +920,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       std::cerr << "using speed autokick tolerance of \"" << speedTolerance << "\"" << std::endl;
     } else if (strcmp(argv[i], "-srvmsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      options.servermsg = argv[i];
+      if (options.servermsg != "") {
+        options.servermsg += "\\n";
+      }
+      options.servermsg += argv[i];
     } else if (strcmp(argv[i], "-st") == 0) {
       // set shake timeout
       checkArgc(1, i, argc, argv[i]);
