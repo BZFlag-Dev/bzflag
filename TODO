@@ -5,6 +5,11 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * change the version and build release packages
 
+* look closely at how local and global logins / groups interact;
+  most probably some fixing needed (e.g. server owner should be
+  able to only use some specified global groups, maybe via 
+  seocnd group file)
+
 THESE ARE LOWER PRIORITY
 
 * fix the misalignment between the selected server and the one that
