@@ -49,8 +49,7 @@ AudioMenu::AudioMenu()
   if (isSoundOpen()) {
     options->push_back(std::string("Off"));
     option->createSlider(10);
-  }
-  else {
+  } else {
     options->push_back(std::string("Unavailable"));
   }
   option->update();
@@ -121,7 +120,7 @@ void			AudioMenu::resize(int width, int height)
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.5f * ((float)width + 0.5f * titleWidth);
+  x = 0.5f * ((float)width);
   y -= 0.6f * titleFont.getHeight();
   const int count = list.size();
   for (i = 1; i < count; i++) {
