@@ -1,6 +1,10 @@
 README for Solaris platforms
 ----------------------------
 
+As of BZFlag 2.0.0, BZFlag will no longer compile on Sun CC.
+Please use the Solaris GCC port to build BZFlag on Solaris.
+Patches are welcome.
+
 The Solaris port has contributions from Bjorn Augustsson and
 Andrew White.  Bjorn found and fixed a number of problems,
 which crs merged into the first offical release.  Andrew
