@@ -294,8 +294,6 @@ void			BaseLocalPlayer::startingLocation
     if (bestDist < 0.0f)
       located = false;
   } while (!located && ++locateCount <= MaxTries);
-
-  restartOnBase = false;
 }
 
 //
@@ -954,6 +952,9 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
 
   // make me alive now
   setStatus(getStatus() | short(PlayerState::Alive));
+  if (restartOnBase)
+    location = OnBuilding;
+  restartOnBase = false;
 }
 
 void			LocalPlayer::setTeam(TeamColor team)

@@ -355,6 +355,7 @@ void			RobotPlayer::restart(const float* pos, float _azimuth)
 
   // make me alive now
   setStatus(getStatus() | short(PlayerState::Alive));
+  restartOnBase = false;
 }
 
 float			RobotPlayer::getTargetPriority(const

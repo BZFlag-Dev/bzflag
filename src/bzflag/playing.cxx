@@ -3710,6 +3710,7 @@ static void		restartPlaying()
 
   myTank->startingLocation(bestStartPoint, startAzimuth, world,
 			   (Player**) player, curMaxPlayers);
+
   // restart the tank
   myTank->restart(bestStartPoint, startAzimuth);
   if (myTank->getTeam() != ObserverTeam)
@@ -4492,6 +4493,7 @@ static void		updateRobots(float dt)
       float bestStartPoint[3];
       robots[i]->startingLocation(bestStartPoint, startAzimuth, world,
 				  (Player**) player, curMaxPlayers);
+
       robots[i]->restart(bestStartPoint, startAzimuth);
       robotServer[i]->sendAlive(robots[i]->getPosition(), robots[i]->getForward());
       setRobotTarget(robots[i]);
