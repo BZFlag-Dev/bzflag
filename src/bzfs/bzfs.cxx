@@ -3245,7 +3245,7 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-c") == 0) {
 			// capture the flag style
 			gameStyle |= int(TeamFlagGameStyle);
-			if (gameStyle | int(KingoftheHillGameStyle)) {
+			if (gameStyle & int(KingoftheHillGameStyle)) {
 				std::cerr << "Capture the flag incompatible with King of the Hill" << std::endl;
 				usage(argv[0]);
 			}
