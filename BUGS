@@ -1,9 +1,10 @@
 recent bugs
 ------------
 
-- players gets stuck for no reason, can move or turn, but can shoot
-  so far only seen it in ctf mode, happened twice on pop in at base
-  xmission
+- players gets stuck for no reason, can't move or turn, but can shoot.
+  So far only seen it in ctf mode, happened twice on pop in at base,
+  happened to others while driving.
+  Seen on xmission
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
