@@ -137,7 +137,11 @@ void			StateDatabase::setPointer(const std::string& name,
 {
   char address[32];
   memset(address, 0, 32);
+#ifdef _WIN32
+  _snprintf(address, 32, "%lu", (unsigned long)value);
+#else
   snprintf(address, 32, "%lu", (unsigned long)value);
+#endif
   std::string ssaddress = address;
   this->set(name, ssaddress, access);
 }
