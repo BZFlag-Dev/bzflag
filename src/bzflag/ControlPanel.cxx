@@ -351,6 +351,21 @@ void			ControlPanel::render(SceneRenderer& renderer)
     }
   }
 
+  // show scroll indicator if not at end
+  if (messagesOffset > 0 && messageMode >= 0)
+  {
+    int lines = int(messages[messageMode].size());
+    if (lines > 0) {
+      const float size = std::max(float(maxLines) / lines, 0.02f);
+      const float offset = float(messagesOffset) / lines;
+      glColor3f(0.7f, 0.7f, 0.7f);
+      glRecti(messageAreaPixels[0],
+              messageAreaPixels[1] + int(offset * messageAreaPixels[3]),
+              messageAreaPixels[0] + 2,
+              messageAreaPixels[1] + int((offset + size) * messageAreaPixels[3]));
+    }
+  }
+
   // draw messages
   //
   // It works by first breaking the string into a vector of strings (done

@@ -8,7 +8,8 @@ BZFlag 2.0.1
 * Fixed a segfault with SDL and no audio - Alfredo Tupone
 * bzadmin wipes argv to hide possible password - Tim Riker
 * Lagstats and Playerlist no longer filtered - Steve Krenzel
-
+* print errors in red - Frank Thilo
+* simple scroll indicator for control panel - Frank Thilo
 
 BZFlag 2.0.0  "Falcor's Despair" (2004-01-17)
 ---------------------------------------------
