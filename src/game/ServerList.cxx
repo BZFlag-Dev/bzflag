@@ -93,9 +93,11 @@ void ServerList::readServerList(int index, StartupInfo *info)
       // look for TOKEN: and save token if found
       // also look for NOTOK: and record "badtoken" into the token string and print an error
       if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
-	printError("got token:");
 	strncpy(info->token, (char *)(base + strlen(tokenIdentifier)), TokenLen);
+#ifdef DEBUG
+	printError("got token:");
 	printError(info->token);
+#endif
 	base = scan;
 	continue;
       } else if (strncmp(base, noTokenIdentifier, strlen(noTokenIdentifier)) == 0) {
