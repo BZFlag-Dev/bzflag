@@ -34,6 +34,7 @@ class JoinMenu;
 class OptionsMenu;
 class QuitMenu;
 class ServerListCache;
+class SaveWorldMenu;
 
 class MenuDefaultKey : public HUDuiDefaultKey {
   public:

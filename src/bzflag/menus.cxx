@@ -1297,6 +1297,106 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
   }
 }
 
+//
+// SaveWorldMenu
+//
+
+class SaveWorldMenu : public HUDDialog {
+  public:
+			SaveWorldMenu();
+			~SaveWorldMenu();
+
+    HUDuiDefaultKey*	getDefaultKey()
+				{ return MenuDefaultKey::getInstance(); }
+    void		execute();
+    void		resize(int width, int height);
+
+  private:
+    HUDuiTypeIn*	filename;
+    HUDuiLabel*		status;
+};
+
+SaveWorldMenu::SaveWorldMenu()
+{
+  // add controls
+  std::vector<HUDuiControl*>& list = getControls();
+
+  HUDuiLabel* label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setString("Save World");
+  list.push_back(label);
+
+  filename = new HUDuiTypeIn;
+  filename->setFont(MainMenu::getFont());
+  filename->setLabel("File Name:");
+  filename->setMaxLength(255);
+  list.push_back(filename);
+
+  status = new HUDuiLabel;
+  status->setFont(MainMenu::getFont());
+  status->setString("");
+  list.push_back(status);
+
+  initNavigation(list, 1,list.size()-1);
+}
+
+SaveWorldMenu::~SaveWorldMenu()
+{
+}
+
+void			SaveWorldMenu::execute()
+{
+  World *pWorld = World::getWorld();
+  if (pWorld == NULL)
+    status->setString( "No world loaded to save" );
+  else {
+    bool success = World::getWorld()->writeWorld(filename->getString());
+    if (success)
+      status->setString( "File Saved" );
+    else
+      status->setString( "Error saving file" );
+  }
+}
+
+void			SaveWorldMenu::resize(int width, int height)
+{
+  HUDDialog::resize(width, height);
+
+  // use a big font for title, smaller font for the rest
+  const float titleFontWidth = (float)height / 12.0f;
+  const float titleFontHeight = (float)height / 12.0f;
+
+  // use a big font
+  float fontWidth = (float)height / 24.0f;
+  float fontHeight = (float)height / 24.0f;
+
+  // reposition title
+  std::vector<HUDuiControl*>& list = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  title->setFontSize(titleFontWidth, titleFontHeight);
+  const OpenGLTexFont& titleFont = title->getFont();
+  const float titleWidth = titleFont.getWidth(title->getString());
+  float x = 0.5f * ((float)width - titleWidth);
+  float y = (float)height - titleFont.getHeight();
+  title->setPosition(x, y);
+
+  // reposition options
+  x = 0.5f * ((float)width - 0.75f * titleWidth);
+  y -= 0.6f * 3 * titleFont.getHeight();
+  list[1]->setFontSize(fontWidth, fontHeight);
+  const float h = list[1]->getFont().getHeight();
+  const int count = list.size();
+  for (int i = 1; i < count-1; i++) {
+    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setPosition(x, y);
+    y -= 1.0f * h;
+  }
+
+  x = 100.0f;  
+  y -= 100.0f;
+  list[i]->setFontSize(fontWidth, fontHeight);
+  list[i]->setPosition(x, y);
+}
 
 //
 // OptionsMenu
@@ -1321,13 +1421,15 @@ class OptionsMenu : public HUDDialog {
     HUDuiControl*	keyMapping;
     HUDuiControl*	guiOptions;
     HUDuiControl*	clearCache;
+    HUDuiControl*	saveWorld;
     FormatMenu*		formatMenu;
     KeyboardMapMenu*	keyboardMapMenu;
     GUIOptionsMenu*	guiOptionsMenu;
+    SaveWorldMenu*	saveWorldMenu;
 };
 
 OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
-                             guiOptionsMenu(NULL)
+                             guiOptionsMenu(NULL), saveWorldMenu(NULL)
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
@@ -1570,6 +1672,11 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   label->setLabel("GUI Options");
   list.push_back(label);
 
+  saveWorld = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Save World");
+  list.push_back(label);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -1578,6 +1685,7 @@ OptionsMenu::~OptionsMenu()
   delete formatMenu;
   delete keyboardMapMenu;
   delete guiOptionsMenu;
+  delete saveWorldMenu;
 }
 
 void			OptionsMenu::execute()
@@ -1601,6 +1709,10 @@ void			OptionsMenu::execute()
     } else {
       // already cleared -- do nothing
     }
+  }
+  else if (focus == saveWorld) {
+    if (!saveWorldMenu) saveWorldMenu = new SaveWorldMenu;
+    HUDDialogStack::get()->push(saveWorldMenu);
   }
 }
 
@@ -1833,7 +1945,6 @@ float			OptionsMenu::indexToGamma(int index)
     // map index 5 to gamma 1.0 and index 0 to gamma 0.5
     return powf(2.0f, (float)index / 5.0f - 1.0f);
 }
-
 
 //
 // HelpMenu
