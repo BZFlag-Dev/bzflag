@@ -84,20 +84,35 @@ if (!array_key_exists("action", $_GET)) {
   header("Content-type: text/html");
   die('<html>
 <head>
-<title>Entry form</title>
+<title>BZFlag db server</title>
 </head>
 <body>
-    <h1>Enter your post</h1>
-    <form action="" method="get">
-        <p>
-        action <input type="text" name="action" size="80"><br>
-        email  <input type="text" name="email" size="80"><br>
-        callsign  <input type="text" name="callsign" size="80"><br>
-        password  <input type="text" name="password" size="80"><br>
-        <input type="submit" value="Post entry">
-        <input type="reset" value="Clear form">
-    
-</p></form></body></html>');
+  <h1>BZFlag db server</h1>
+  <p>
+  <form action="" method="get">
+    action:<input type="text" name="action" value="LIST" size="80"><br>
+    actions: LIST<br>
+    version:<input type="text" name="version" size="80"><br>
+    actions: ADD REMOVE<br>
+    nameport:<input type="text" name="nameport" size="80"><br>
+    build:<input type="text" name="build" size="80"><br>
+    gameinfo:<input type="text" name="gameinfo" size="80"><br>
+    title:<input type="text" name="title" size="80"><br>
+    actions:  REGISTER CONFIRM AUTH JOIN QUIT<br>
+    callsign:<input type="text" name="callsign" size="80"><br>
+    password:<input type="text" name="password" size="80"><br>
+    email:<input type="text" name="email" size="80"><br>
+    conntime:<input type="text" name="conntime" size="80"><br>
+    actions: SETKARMA GETKARMA<br>
+    target:<input type="text" name="target" size="80"><br>
+    karma:<input type="text" name="karma" size="80"><br>
+    <br>
+    <input type="submit" value="Post entry">
+    <input type="reset" value="Clear form">
+</form>
+</p>
+</body>
+</html>');
 }
  
 header("Content-type: text/plain");
@@ -380,7 +395,7 @@ if ($action == "LIST" ) {
   $result = mysql_query("UPDATE players SET lastmod=" . time() .
                         ", playtime=playtime+$conntime WHERE callsign='$callsign'", $link)
     or die ("Invalid query: " . mysql_error());
-} elseif ($action == "KARMA_ADJ") {
+} elseif ($action == "SETKARMA") {
   #  -- KARMA_ADJ --
   # Set's a player's karma
   $result = mysql_query("SELECT assignments FROM players WHERE callsign='$callsign' " .
@@ -418,7 +433,7 @@ if ($action == "LIST" ) {
       print ("Karma adjustment SUCCESSFUL");
     }
   }
-} elseif ($action == "KARMA_LIST") {
+} elseif ($action == "GETKARMA") {
   #  -- KARMA_LIST --
   # Views the karma for a particular player
   $result = mysql_query("SELECT karma,provisional FROM players WHERE callsign='$callsign'", $link)
