@@ -3343,8 +3343,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall:
     case MsgGMUpdate:
-    case MsgAudio:
-    case MsgVideo:
     case MsgUDPLinkRequest:
     case MsgUDPLinkEstablished:
       break;
@@ -3461,12 +3459,6 @@ possible attack from %s\n",
 	playerData->player.setPlayedEarly();
       }
       playerAlive(t);
-      break;
-    }
-
-    // player sent version string
-    case MsgVersion: {
-      buf = playerData->player.setClientVersion(len, buf);
       break;
     }
 
@@ -3892,8 +3884,6 @@ possible attack from %s\n",
 
     //Fall thru
     case MsgGMUpdate:
-    case MsgAudio:
-    case MsgVideo:
       // observer shouldn't send bulk messages anymore, they used to when it was
       // a server-only hack; but the check does not hurt, either
       if (playerData->player.isObserver())

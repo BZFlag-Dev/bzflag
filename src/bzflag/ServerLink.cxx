@@ -346,8 +346,6 @@ void			ServerLink::send(uint16_t code, uint16_t len,
       case MsgPlayerUpdate:
       case MsgPlayerUpdateSmall:
       case MsgGMUpdate:
-      case MsgAudio:
-      case MsgVideo:
       case MsgUDPLinkRequest:
       case MsgUDPLinkEstablished:
 	needForSpeed=true;
@@ -541,7 +539,7 @@ void			ServerLink::sendEnter(PlayerType type,
 						const char* token)
 {
   if (state != Okay) return;
-  char msg[PlayerIdPLen + 4 + CallSignLen + TokenLen + EmailLen];
+  char msg[PlayerIdPLen + 4 + CallSignLen + EmailLen + TokenLen + VersionLen];
   ::memset(msg, 0, sizeof(msg));
   void* buf = msg;
   buf = nboPackUShort(buf, uint16_t(type));
@@ -552,6 +550,8 @@ void			ServerLink::sendEnter(PlayerType type,
   buf = (void*)((char*)buf + EmailLen);
   ::memcpy(buf, token, ::strlen(token));
   buf = (void*)((char*)buf + TokenLen);
+  ::memcpy(buf, getAppVersion(), ::strlen(getAppVersion()) + 1);
+  buf = (void*)((char*)buf + VersionLen);
   send(MsgEnter, sizeof(msg), msg);
 }
 
@@ -782,12 +782,6 @@ void			ServerLink::confirmIncomingUDP()
 
   printError("Got server's UDP packet back, server using UDP");
   send(MsgUDPLinkEstablished, 0, NULL);
-}
-
-void			ServerLink::sendVersionString()
-{
-  DEBUG3("Sent client version string to server: %s\n", getAppVersion());
-  send(MsgVersion, strlen(getAppVersion()) + 1, getAppVersion());
 }
 
 #ifdef HAVE_KRB5

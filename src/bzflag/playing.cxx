@@ -2517,8 +2517,6 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall:
     case MsgGMUpdate:
-    case MsgAudio:
-    case MsgVideo:
     case MsgLagPing:
       handlePlayerMessage(code, 0, msg);
       break;
@@ -3641,7 +3639,6 @@ static void		addRobots()
 
     robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
     robots[j]->setTeam(AutomaticTeam);
-    robotServer[j]->sendVersionString();
     robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
 			      robots[j]->getCallSign(), robots[j]->getEmailAddress(), "");
 
@@ -3724,9 +3721,6 @@ static void enteringServer(void *buf)
 
   // clear now invalid token
   startupInfo.token[0] = '\0';
-
-  // send my version string
-  serverLink->sendVersionString();
 
   // add robot tanks
 #if defined(ROBOT)

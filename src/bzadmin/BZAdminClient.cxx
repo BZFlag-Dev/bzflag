@@ -89,9 +89,6 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
   // tell BZDB to shut up, we can't have debug data printed to stdout
   BZDB.setDebug(false);
 
-  //send our version string for /clientquery
-  sLink.sendVersionString();
-
   // set a default message mask
   showMessageType(MsgAddPlayer);
   showMessageType(MsgKilled);

@@ -24,9 +24,10 @@
 
 // values affecting struct and class layout
 const int		CallSignLen = 32;	// including terminating NUL
-const int		PasswordLen = 32;   // including terminating NUL
+const int		PasswordLen = 32;	// including terminating NUL
 const int		EmailLen = 128;		// including terminating NUL
-const int		TokenLen = 22;		// now int(10):int(10) and terminating NUL
+const int		TokenLen = 22;		// opaque string (now int(10)) and terminating NUL
+const int		VersionLen = 60;	// including terminating NUL
 const int		MessageLen = 128;	// including terminating NUL
 
 // types of things we can be

@@ -96,6 +96,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, callSign, CallSignLen);
   buf = nboUnpackString(buf, email, EmailLen);
   buf = nboUnpackString(buf, token, TokenLen);
+  buf = nboUnpackString(buf, clientVersion, VersionLen);
   cleanEMail();
 
   // spoof filter holds "SERVER" for robust name comparisons
@@ -270,18 +271,8 @@ bool PlayerInfo::isFlagTransitSafe() {
 };
 
 const char *PlayerInfo::getClientVersion() {
-  return clientVersion.c_str();
+  return clientVersion;
 };
-
-void *PlayerInfo::setClientVersion(size_t length, void *buf) {
-  char *versionString = new char[length];
-  buf = nboUnpackString(buf, versionString, (int)length);
-  clientVersion = std::string(versionString);
-  delete[] versionString;
-  DEBUG2("Player %s [%d] sent version string: %s\n",
-	 callSign, playerIndex, clientVersion.c_str());
-  return buf;
-}
 
 std::string PlayerInfo::getIdleStat() {
   std::string reply;

@@ -97,7 +97,6 @@ public:
   void	setFlag(int flag);
   bool	isFlagTransitSafe();
   const char *getClientVersion();
-  void       *setClientVersion(size_t length, void *buf);
   std::string getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
   void	setPaused(bool pauses);
@@ -135,6 +134,9 @@ private:
   char token[TokenLen];
   // player's email address
   char email[EmailLen];
+  // version information from client
+  char clientVersion[VersionLen];
+
   // player's team
   TeamColor team;
   // true for dead rabbit until respawn
@@ -144,7 +146,6 @@ private:
 
   TimeKeeper lastFlagDropTime;
 
-  std::string clientVersion;
 
   // spam prevention
   std::string lastMsgSent;

@@ -2315,7 +2315,6 @@ msgString (u16 code)
       STRING_CASE (MsgAlive);
       STRING_CASE (MsgAdminInfo);
       STRING_CASE (MsgAddPlayer);
-      STRING_CASE (MsgAudio);
       STRING_CASE (MsgCaptureFlag);
       STRING_CASE (MsgDropFlag);
       STRING_CASE (MsgEnter);
@@ -2346,7 +2345,6 @@ msgString (u16 code)
       STRING_CASE (MsgTeleport);
       STRING_CASE (MsgTransferFlag);
       STRING_CASE (MsgTeamUpdate);
-      STRING_CASE (MsgVideo);
       STRING_CASE (MsgWantWHash);
 
       STRING_CASE (MsgUDPLinkRequest);
