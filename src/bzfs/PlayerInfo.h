@@ -26,6 +26,9 @@
 #include "TimeKeeper.h"
 #include "Address.h"
 #include "PlayerState.h"
+#include "Team.h"
+#include "Protocol.h"
+#include "Flag.h"
 
 // bzfs-specific headers
 
@@ -74,7 +77,7 @@ struct PlayerInfo {
     bool Admin;
     bool restartOnBase;
 
-  // player's registration name
+    // player's registration name
     std::string regName;
     // time accepted
     TimeKeeper time;
