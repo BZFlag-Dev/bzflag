@@ -9,7 +9,7 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Wer
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=429
+UnitCount=431
 Folders="Header Files","Header Files/3d","Header Files/bzflag","Header Files/bzflag/menus","Header Files/common","Header Files/game","Header Files/geometry","Header Files/mediafile","Header Files/net","Header Files/obstacle","Header Files/ogl","Header Files/platform","Header Files/regex","Header Files/scene","Header Files/zlib","Resource Files","Source Files","Source Files/3d","Source Files/bzflag","Source Files/bzflag/menus","Source Files/common","Source Files/game","Source Files/geometry","Source Files/mediafile","Source Files/models","Source Files/net","Source Files/obstacle","Source Files/ogl","Source Files/platform","Source Files/regex","Source Files/scene","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -4329,6 +4329,26 @@ BuildCmd=
 
 [Unit429]
 FileName=..\src\bzflag\Weapon.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit430]
+FileName=..\src\game\LinkManager.cxx
+CompileCpp=1
+Folder=Source Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit431]
+FileName=..\src\bzflag\Plan.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
 Compile=1
