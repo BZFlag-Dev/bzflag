@@ -165,7 +165,7 @@ void FontManager::loadAll(std::string directory)
 
           fontFaces[faceID][pFont->getSize()] = pFont;
         } else {
-          DEBUG4("Font Texture load failed: %s\n", file.getOSName());
+          DEBUG4("Font Texture load failed: %s\n", file.getOSName().c_str());
           delete(pFont);
         }
       }
