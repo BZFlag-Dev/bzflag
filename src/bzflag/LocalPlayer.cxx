@@ -1176,7 +1176,7 @@ bool			LocalPlayer::fireShot()
     // comment following line if you want shots to have the same vertical
     // velocity as the tank when fired.  keeping shots moving horizontally
     // makes the game more playable, though.
-    firingInfo.shot.vel[2] = 0.0f;
+    // firingInfo.shot.vel[2] = 0.0f;
   }
 
   // make shot and put it in the table
