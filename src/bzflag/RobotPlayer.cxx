@@ -408,13 +408,13 @@ void			RobotPlayer::setTarget(const std::vector<BzfRegion*>& regions,
   pathIndex = 0;
 }
 
-BzfRegion*		RobotPlayer::findRegion(const std::vector<BzfRegion*>& list,
+BzfRegion*		RobotPlayer::findRegion(const std::vector<BzfRegion*>& rlist,
 						const float p[2]) const
 {
-  const int count = list.size();
+  const int count = rlist.size();
   for (int i = 0; i < count; i++)
-    if (list[i]->isInside(p))
-      return list[i];
+    if (rlist[i]->isInside(p))
+      return rlist[i];
   return NULL;
 }
 
