@@ -159,6 +159,8 @@ static const char*	bindingList[] = {
   "bind \"Alt+Up Arrow\" up \"roam translate stop\"",
   "bind \"Alt+Down Arrow\" down \"roam translate down\"",
   "bind \"Alt+Down Arrow\" up \"roam translate stop\"",
+  "bind F6 down \"roam cycle subject backward\"",
+  "bind F7 down \"roam cycle subject forward\"",
   "bind F9 down \"roam zoom in\"",
   "bind F9 up \"roam zoom stop\"",
   "bind F10 down \"roam zoom out\"",

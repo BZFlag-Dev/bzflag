@@ -1602,65 +1602,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   if (roaming) {
     bool roamingkey = true;
     switch (key.button) {
-      case BzfKeyEvent::F6:
-	if (pressed) {
-	  if (roamView == roamViewFree)
-	    break;
-	  if (roamView == roamViewFlag) {
-	    // search next team flag
-	    const int maxFlags = world->getMaxFlags();
-	    for (int i = 1; i < maxFlags; i++) {
-	      int j = (roamTrackFlag - i + maxFlags) % maxFlags;
-	      const Flag& flag = world->getFlag(j);
-	      if (flag.desc->flagTeam != NoTeam) {
-		roamTrackFlag = j;
-		break;
-	      }
-	    }
-	  }
-	  else {
-	    for (int i = 2; i <= curMaxPlayers; i++) {
-	      int j = (roamTrackTank - i + curMaxPlayers) % (curMaxPlayers + 1) - 1;
-	      if ((j == -1) || (player[j] && player[j]->isAlive())) {
-		roamTrackTank = roamTrackWinner = j;
-		break;
-	      }
-	    }
-	  }
-	  setRoamingLabel(true);
-	 }
-	 break;
-
-      case BzfKeyEvent::F7:
-	if (pressed) {
-	  if (roamView == roamViewFree)
-	    break;
-	  if (roamView == roamViewFlag) {
-	    // search previous team flag
-	    const int maxFlags = world->getMaxFlags();
-	    for (int i = 1; i < maxFlags; i++) {
-	      int j = (roamTrackFlag + i) % maxFlags;
-	      const Flag& flag = world->getFlag(j);
-	      if (flag.desc->flagTeam != NoTeam) {
-		roamTrackFlag = j;
-		break;
-	      }
-	    }
-	  }
-	  else {
-	    int i, j;
-	    for (i = 2; i <= curMaxPlayers; i++) {
-	      j = (roamTrackTank + i) % (curMaxPlayers + 1) - 1;
-	      if ((j == -1) || (player[j] && player[j]->isAlive())) {
-		roamTrackTank = roamTrackWinner = j;
-		break;
-	      }
-	    }
-	  }
-	  setRoamingLabel(true);
-	}
-	break;
-
       case BzfKeyEvent::F8:
 	if (pressed) {
 	  roamView = roamingView((roamView + 1) % roamViewCount);
@@ -2134,6 +2075,69 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
       roamDZoom = 0.0f;
     } else {
       return "usage: roam zoom {in|out|normal|stop}";
+    }
+  } else if (args[0] == "cycle") {
+    if (args.size() != 3)
+      return "usage: roam cycle {type|subject} {forward|backward}";
+    if (args[1] == "type") {
+      if (args[2] == "forward") {
+      } else if (args[2] == "backward") {
+      } else {
+        return "usage: roam cycle {type|subject} {forward|backward}";
+      }
+    } else if (args[1] == "subject") {
+      if (args[2] == "forward") {
+	if (roamView == roamViewFree) {
+	  // do nothing
+	} else if (roamView == roamViewFlag) {
+	  const int maxFlags = world->getMaxFlags();
+	  for (int i = 1; i < maxFlags; i++) {
+	    int j = (roamTrackFlag + i) % maxFlags;
+	    const Flag& flag = world->getFlag(j);
+	    if (flag.desc->flagTeam != NoTeam) {
+	      roamTrackFlag = j;
+	      break;
+	    }
+	  }
+	} else {
+	  int i, j;
+	  for (i = 2; i <= curMaxPlayers; i++) {
+	    j = (roamTrackTank + i) % (curMaxPlayers + 1) - 1;
+	    if ((j == -1) || (player[j] && player[j]->isAlive())) {
+	      roamTrackTank = roamTrackWinner = j;
+	      break;
+	    }
+	  }
+	}
+	setRoamingLabel(true);
+      } else if (args[2] == "backward") {
+	if (roamView == roamViewFree) {
+	  // do nothing
+	} else if (roamView == roamViewFlag) {
+	  const int maxFlags = world->getMaxFlags();
+	  for (int i = 1; i < maxFlags; i++) {
+	    int j = (roamTrackFlag - i + maxFlags) % maxFlags;
+	    const Flag& flag = world->getFlag(j);
+	    if (flag.desc->flagTeam != NoTeam) {
+	      roamTrackFlag = j;
+	      break;
+	    }
+	  }
+	} else {
+	  for (int i = 2; i <= curMaxPlayers; i++) {
+	    int j = (roamTrackTank - i + curMaxPlayers) % (curMaxPlayers + 1) - 1;
+	    if ((j == -1) || (player[j] && player[j]->isAlive())) {
+	      roamTrackTank = roamTrackWinner = j;
+	      break;
+	    }
+	  }
+	}
+	setRoamingLabel(true);
+      } else {
+        return "usage: roam cycle {type|subject} {forward|backward}";
+      }
+    } else {
+      return "usage: roam cycle {type|subject} {forward|backward}";
     }
   } else {
     return "usage: roam {rotate|translate|zoom|cycle} <args>";
