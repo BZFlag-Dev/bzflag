@@ -2963,7 +2963,7 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
 {
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
-  if (player[playerId].restartOnBase && (player[playerId].type != ComputerPlayer) &&
+  if (player[playerId].restartOnBase &&
       (team >= RedTeam) && (team <= PurpleTeam) && 
       (bases.find(team) != bases.end())) {
     TeamBases &teamBases = bases[team];
