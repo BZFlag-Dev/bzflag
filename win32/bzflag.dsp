@@ -157,6 +157,10 @@ SOURCE=..\src\bzflag\ViewItemPlayerScene.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzflag\ViewItemPWR.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzflag\ViewItemRadar.cxx
 # End Source File
 # Begin Source File
@@ -254,6 +258,10 @@ SOURCE=..\src\bzflag\ViewItemHUD.h
 # Begin Source File
 
 SOURCE=..\src\bzflag\ViewItemPlayerScene.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ViewItemPWR.h
 # End Source File
 # Begin Source File
 
