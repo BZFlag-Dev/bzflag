@@ -3,7 +3,7 @@ FileName=bzflag.dev
 Name=bzflag
 Ver=1
 IsCpp=1
-Type=1
+Type=0
 Compiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
 CppCompiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
 Includes=..\include;..\win32;.
@@ -25,9 +25,9 @@ CommandLine=
 UseCustomMakefile=0
 CustomMakefile=
 IncludeVersionInfo=0
-SupportXPThemes=0
+SupportXPThemes=1
 CompilerSet=0
-CompilerSettings=0000000000000000000100
+CompilerSettings=0000000000000000010100
 
 [Unit2]
 FileName=..\src\bzflag\BackgroundRenderer.cxx
@@ -47,7 +47,7 @@ CompileCpp=1
 Link=1
 Priority=1000
 OverrideBuildCmd=1
-BuildCmd=$(CPP) -c ../src/bzflag/bzflag.cxx -o ../src/bzflag/bzflag.o -I"C:/Dev-Cpp/include/c++/backward"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/c++"  -I"C:/Dev-Cpp/include/c++/mingw32"  -I"../include"  -I"../win32"  -I"." -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS -Wall -Werror  
+BuildCmd=$(CPP) -c ../src/bzflag/bzflag.cxx -o ../src/bzflag/bzflag.o -I"C:/Dev-Cpp/include/c++/backward"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/c++"  -I"C:/Dev-Cpp/include/c++/mingw32"  -I"../include"  -I"../win32"  -I"." -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS -Wall -Werror
 
 [Unit4]
 FileName=..\src\bzflag\callbacks.cxx
