@@ -17,7 +17,7 @@
 
 #ifdef WIN32
 
-void ConvertPath(const std::string &path)
+void ConvertPath(std::string &path)
 {
   std::replace(path.begin(), path.end(), '/', '\\');
 }
