@@ -1608,28 +1608,31 @@ static void		doAutoPilot(float &rotation, float &speed)
       pos[2] -= BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 
       if (myTank->getFlag() == Flags::ShockWave) {
-	bool hasSWTarget = false;
-	for (t = 0; t < curMaxPlayers; t++) {
-	  if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding()) {
+        TimeKeeper now = TimeKeeper::getCurrent();
+        if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+	  bool hasSWTarget = false;
+	  for (t = 0; t < curMaxPlayers; t++) {
+	    if (t != myTank->getId() && player[t] &&
+	      player[t]->isAlive() && !player[t]->isPaused() &&
+	      !player[t]->isNotResponding()) {
 	      
-	    const float *tp = player[t]->getPosition();
-	    float dist = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
-	    if (dist <= BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
-	      if (!myTank->validTeamTarget(player[t])) {
-		hasSWTarget = false;
-		t = curMaxPlayers;
+	      const float *tp = player[t]->getPosition();
+	      float dist = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
+	      if (dist <= BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
+	        if (!myTank->validTeamTarget(player[t])) {
+		  hasSWTarget = false;
+		  t = curMaxPlayers;
+		}
+	        else
+	  	  hasSWTarget = true;
 	      }
-	      else
-		hasSWTarget = true;
 	    }
 	  }
-	}
-	if (hasSWTarget) {
-	  myTank->fireShot();
-	  lastShot = TimeKeeper::getCurrent();;
-	  shotFired = true;
+	  if (hasSWTarget) {
+	    myTank->fireShot();
+	    lastShot = TimeKeeper::getCurrent();;
+	    shotFired = true;
+	  }
 	}
       }
       else {
@@ -1787,9 +1790,9 @@ static void		doAutoPilot(float &rotation, float &speed)
 		if (rotation2 > 1.0f * M_PI) rotation2 -= 2.0f * M_PI;
 
 		if (fabs(rotation1) < fabs(rotation2))
-		  rotation = (dist > 50.0f) ? rotation1 / 2.0f : rotation1;
+		  rotation = rotation1;
 		else
-		  rotation = (dist > 50.0f) ? rotation2 / 2.0f : rotation2;
+		  rotation = rotation2;
 	      }
 	    }
 	  }
