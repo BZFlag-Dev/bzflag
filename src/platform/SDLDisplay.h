@@ -27,6 +27,7 @@ class SDLDisplay : public BzfDisplay {
  public:
   SDLDisplay();
   ~SDLDisplay();
+  void createWindow();
   bool isValid() const {return true;};
   bool isEventPending() const;
   bool getEvent(BzfEvent&) const;
@@ -35,7 +36,6 @@ class SDLDisplay : public BzfDisplay {
   void setWindowSize(int width, int height);
   void getWindowSize(int& width, int& height) const;
   void doSetVideoMode();
-  void makeCurrent();
  private:
   bool fullScreen;
   bool doSetResolution(int) {return true;};
@@ -84,7 +84,7 @@ class SDLWindow : public BzfWindow {
   void  setGamma(float newGamma);
   float getGamma() const;
   bool  hasGammaControl() const;
-  void  makeCurrent();
+  void  makeCurrent() {;};
   void  swapBuffers();
   void  makeContext() {;};
   void  freeContext() {;};

@@ -16,31 +16,14 @@
 #include <stdio.h>
 #include "SDLDisplay.h"
 
-// Cheap hack to write the list of resolutions into a file to aid debugging
-//#define WRITE_RESLIST_TO_FILE
-
-#ifdef WRITE_RESLIST_TO_FILE
-#include <fstream>
-#include "TextUtils.h"
-#endif
-
 static int mx = 0;
 static int my = 0;
 
-SDLDisplay::SDLDisplay()
+SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
+			   base_height(480)
 {
-#ifdef WRITE_RESLIST_TO_FILE
-  std::fstream f;
-  f.open("bzfres.txt", std::ios::out | std::ios::binary);
-  if (!f.is_open()) //since this is a cheap hack, just bail if it doesn't work
-    exit (-1);
-#endif
   if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
     printf("Could not initialize SDL Video subsystem: %s.\n", SDL_GetError());
-#ifdef WRITE_RESLIST_TO_FILE
-    f << string_util::format("Could not initialize SDL Video subsystem: %s.\n", SDL_GetError());
-    f.flush();
-#endif
     exit (-1);
   };
   SDL_Rect **modeList
@@ -58,9 +41,6 @@ SDLDisplay::SDLDisplay()
 	  numResolutions++;
   };
   resolutions = new ResInfo*[numResolutions];
-#ifdef WRITE_RESLIST_TO_FILE
-  f << string_util::format("%d", numResolutions) << "\n";
-#endif
 
   if ((modeList != (SDL_Rect **) 0) && (modeList != (SDL_Rect **) -1)) {
     char name[80];
@@ -79,23 +59,14 @@ SDLDisplay::SDLDisplay()
       if (w == 640 && h == 480)
 	defaultResolutionIndex = j;
       j++;
-#ifdef WRITE_RESLIST_TO_FILE
-  f << name << "\n";
-#endif
     }
   } else {
     // if no modes then make default
     resolutions[0] = new ResInfo ("default", 640, 480, 0);
   }
   
-#ifdef WRITE_RESLIST_TO_FILE
-  f.flush();
-  f.close();
-#endif
   // register modes
   initResolutions(resolutions, numResolutions, defaultResolutionIndex);
-
-  fullScreen = false;
 
   SDL_EnableUNICODE(1);
 
@@ -300,13 +271,23 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   return true;
 }
 
+void SDLDisplay::createWindow() {
+  Uint32 flags = SDL_HWSURFACE | SDL_OPENGL;
+  if (fullScreen)
+    SDL_SetVideoMode(getWidth(), getHeight(), 0, flags | SDL_FULLSCREEN);
+  else
+    SDL_SetVideoMode(base_width, base_height, 0, flags);
+};
+
 void SDLDisplay::setFullscreen() {
   fullScreen = true;
+  createWindow();
 }
 
 void SDLDisplay::setWindowSize(int width, int height) {
   base_width  = width;
   base_height = height;
+  createWindow();
 }
 
 void SDLDisplay::getWindowSize(int& width, int& height) const {
@@ -316,18 +297,6 @@ void SDLDisplay::getWindowSize(int& width, int& height) const {
   } else {
     width  = base_width;
     height = base_height;
-  }
-};
-
-void SDLDisplay::makeCurrent()
-{
-  Uint32         flags;
-  flags = SDL_HWSURFACE | SDL_OPENGL;
-  if (fullScreen) {
-    flags |= SDL_FULLSCREEN;
-    SDL_SetVideoMode(getWidth(), getHeight(), 0, flags);
-  } else {
-    SDL_SetVideoMode(base_width, base_height, 0, flags);
   }
 };
 
@@ -362,11 +331,10 @@ void SDLVisual::setStereo(bool on) {
 };
   
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display)
+  : BzfWindow(_display), x(-1), y(-1),
+    hasGamma(SDL_SetGamma(1.0, 1.0, 1.0) != -1)
 {
-  x          = -1;
-  y          = -1;
-  hasGamma   = (SDL_SetGamma(1.0, 1.0, 1.0) != -1);
+  ((SDLDisplay *)getDisplay())->createWindow();
 };
 
 void SDLWindow::setTitle(const char * title) {
@@ -417,11 +385,6 @@ bool SDLWindow::hasGammaControl() const {
 
 void SDLWindow::swapBuffers() {
   SDL_GL_SwapBuffers();
-};
-
-void SDLWindow::makeCurrent()
-{
-  ((SDLDisplay *)getDisplay())->makeCurrent();
 };
 
 #endif
