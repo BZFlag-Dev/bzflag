@@ -9,7 +9,7 @@ CppCompiler=-DHAVE_HYPOTF -DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATANF -DHAVE_COSF -D
 Includes=..\include;..\win32;.
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=202
+UnitCount=204
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
@@ -2061,6 +2061,26 @@ BuildCmd=
 FileName=..\src\bzfs\CustomMaterial.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit203]
+FileName=..\src\game\PhysicsDriver.cxx
+CompileCpp=1
+Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit204]
+FileName=..\src\bzfs\CustomPhysicsDriver.cxx
+CompileCpp=1
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
