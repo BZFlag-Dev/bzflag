@@ -36,6 +36,10 @@ EXTRA_DIST = \
 	missile.png	\
 	pyrwall.png	\
 	timesbr.png	\
+	thief.png	\
+	wbolt.png	\
+	wlaser.png	\
+	wtbolt.png	\
 	boom.wav	\
 	flag_drop.wav	\
 	jump.wav	\
@@ -56,6 +60,9 @@ EXTRA_DIST = \
 	laser.wav	\
 	pop.wav		\
 	teleport.wav	\
+	steamroller.wav	\
+	hunt_select.wav	\
+	hunt.wav	\
 	Bzflag.fti	\
 	Bzfs.fti	\
 	Bzflag.ftr
