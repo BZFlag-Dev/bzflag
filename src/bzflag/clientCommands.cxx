@@ -102,6 +102,7 @@ const struct CommandListItem commandList[] = {
   { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
   { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
+  { "radarZoom", &cmdRadarZoom, "radarZoom {in/out}: change maxRadar range"},
   { "messagepanel", &cmdMessagePanel,
     "messagepanel {all|chat|server|misc}:  set message tab" },
   { "toggleConsoleAndRadar", &cmdToggleConsoleAndRadar, "toggleConsoleAndRadar:  turn off/on radar and console"},
@@ -340,6 +341,31 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
     buf = nboPackString(buf, messageBuffer, MessageLen);
     serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
 
+  }
+
+  return std::string();
+}
+
+std::string cmdRadarZoom(const std::string&,
+			 const CommandManager::ArgList& args)
+{
+  if (args.size() != 1)
+    return "usage: radarZoom {in|out}";
+
+  float range = BZDB.eval("displayRadarRange");
+
+  if (args[0] == "in") {
+    range *= 1.05;
+    if (range > 1.5)
+      range = 1.5;
+    BZDB.setFloat("displayRadarRange", range);
+  } else if (args[0] == "out") {
+    range /= 1.05;
+    if (range < 0.125)
+      range = 0.125;
+    BZDB.setFloat("displayRadarRange", range);
+  } else {
+    return "usage: radarZoom {in|out}";
   }
 
   return std::string();

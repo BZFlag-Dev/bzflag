@@ -71,6 +71,8 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("toggle displayFlagHelp"), press));
   wayToBindActions.insert(std::make_pair(std::string("scrollpanel up"), press));
   wayToBindActions.insert(std::make_pair(std::string("scrollpanel down"), press));
+  wayToBindActions.insert(std::make_pair(std::string("radarZoom in"), press));
+  wayToBindActions.insert(std::make_pair(std::string("radarZoom out"), press));
   wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 0.25"), press));
   wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 0.5"), press));
   wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 1.0"), press));
@@ -129,6 +131,11 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("Down Arrow"),
 				       std::string("drive reverse")));
   // End default movement keys
+
+  defaultBinding.insert(std::make_pair(std::string("Wheel Up"),
+				       std::string("radarZoom in")));
+  defaultBinding.insert(std::make_pair(std::string("Wheel Down"),
+				       std::string("radarZoom out")));
 
 
   defaultBinding.insert(std::make_pair(std::string("F6"), std::string("roam cycle subject backward")));
