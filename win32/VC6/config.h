@@ -20,13 +20,14 @@
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
 
-#ifndef IPV6_HDRINCL	// use this to see if we have the new TCP headers that include socket len or no
-	// #define socklen_t int //upgrade to the latest SDK
-
-	#if defined(_MSC_VER) && (_MSC_VER == 1100)
-		#define socklen_t int	//VC5 needs this
-	#endif //_MSC_VER == 1100
-#endif //IPV6_HDRINCL
+#if defined(_MSC_VER) && (_MSC_VER == 1100)
+	#define socklen_t int	//VC5 needs this
+#else
+//************* NOTE***********************************
+// VC6 users who have the updated Windows Platform SDK need to comment this line out
+// Out of the box VC users need this line
+	#define socklen_t int 
+#endif //_MSC_VER == 1100
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
