@@ -44,7 +44,7 @@
 
 /* From #include <sys/cdefs.h> */
 #if !defined(__P)
-#  if defined(USE_PROTOTYPES)
+#  if defined(USE_PROTOTYPES) || defined(_MSC_VER)
 #	define __P(args)       args
 #  else
 #	define __P(args)       ()
