@@ -2490,11 +2490,11 @@ static WorldInfo *defineRandomWorld()
   h = PyrHeight;
   for (i = 0; i < CitySize * CitySize; i++) {
     if (randomHeights)
-      h = PyrHeight * 2.0f * (float)bzfrand() + 0.5f;
-    world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
-	WorldSize * ((float)bzfrand() - 0.5f),
-	0.0f, 2.0f * M_PI * (float)bzfrand(),
-	PyrBase, PyrBase, h);
+      h = PyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
+      world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
+	  WorldSize * ((float)bzfrand() - 0.5f),
+	  0.0f, 2.0f * M_PI * (float)bzfrand(),
+	  PyrBase, PyrBase, h);
   }
 
   if (useTeleporters) {
