@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /bin/tar --exclude CVS --exclude .cvsignore $*
+exec /bin/tar --dereference --exclude CVS --exclude .cvsignore $*

@@ -3,39 +3,56 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (1.7g2-1) unstable; urgency=low
+
+  * flatten symlinks Closes: #198137
+
+ -- Tim Riker <Tim@Rikers.org>  Fri, 20 Jun 2003 10:15:54 -0500
+
+bzflag (1.7g2) unstable; urgency=medium
+
+  * automake Closes: #181093, #172306
+  * leave changelog Closes: #181259
+  * build depend libglu-dev Closes: #187947
+  * buildsnap reports correct arch Closes: #181260
+  * double doc removed Closes: #181261
+  * rules supports debug build Closes: #181262
+  * upstream update
+ -- Tim Riker <Tim@Rikers.org>  Wed, 18 Jun 2003 12:33:30 -0500
+
 bzflag (1.7g0) unstable; urgency=medium
 
-  * compatibile with newer compilers Closes: Bug#134031
-  * removed period from description Closes: Bug#151306
+  * compatibile with newer compilers Closes: #134031
+  * removed period from description Closes: #151306
  -- Tim Riker <Tim@Rikers.org>  Sun, 08 Dec 2002 01:37:22 -0700
 
 bzflag (1.7e6) unstable; urgency=medium
 
   * protocol changes - urgency=medium
   * upstream update, many bug fixes and new features
-  * devfs audio support Closes: Bug#144965
-  * simplify descriptions Closes: Bug#124473,Bug#124478
- -- Tim Riker <Tim@Rikers.org>  Date: Wed, 19 Jun 2002 00:12:28 -0600
+  * devfs audio support Closes: #144965
+  * simplify descriptions Closes: #124473,#124478
+ -- Tim Riker <Tim@Rikers.org>  Wed, 19 Jun 2002 00:12:28 -0600
 
 bzflag (1.7e4) unstable frozen; urgency=low
 
-  * include ChangeLog Closes: Bug#113827
-  * correct X depend Closes: Bug#104844
-  * update list server URL (frozen) Closes: Bug#113826
-  * remove explicit c++ depend Closes: Bug#105947
+  * include ChangeLog Closes: #113827
+  * correct X depend Closes: #104844
+  * update list server URL (frozen) Closes: #113826
+  * remove explicit c++ depend Closes: #105947
   * Release Manager: 113826, networking bug fixes for stable and woody
 
  -- Tim Riker <Tim@Rikers.org>  Tue, 27 Nov 2001 03:51:09 -0700
 
 bzflag (1.7e2-1) unstable; urgency=low
 
-  * upload sources as well. Closes: Bug#94433
+  * upload sources as well. Closes: #94433
 
  -- Tim Riker <Tim@Rikers.org>  Wed, 18 Apr 2001 16:25:24 -0600
 
 bzflag (1.7e2) unstable; urgency=low
 
-  * xlibs-dev build depends. Closes: Bug#89794
+  * xlibs-dev build depends. Closes: #89794
 
  -- Tim Riker <Tim@Rikers.org>  Thu, 22 Feb 2001 16:42:22 -0700
 
@@ -48,21 +65,21 @@ bzflag (1.7d.20000324) unstable frozen; urgency=low
 bzflag (1.7d-1) unstable frozen; urgency=low
 
   * License change to GNU GPL.
-  * fix menu file; bzflag is in /usr/games/. Closes: Bug#55149
-  * recompile to depend on libGL and libGLU. Closes: Bug#55232
+  * fix menu file; bzflag is in /usr/games/. Closes: #55149
+  * recompile to depend on libGL and libGLU. Closes: #55232
   * Release Manager: 55232 is RC, please let this through.
 
  -- Anand Kumria <wildfire@progsoc.uts.edu.au>  Sat, 15 Jan 2000 19:56:34 +1100
 
 bzflag (1.7c-3) unstable; urgency=low
 
-  * modify the bzfs script to work in all cases. Closes: Bug#54516
+  * modify the bzfs script to work in all cases. Closes: #54516
 
  -- Anand Kumria <wildfire@progsoc.uts.edu.au>  Tue, 11 Jan 2000 14:28:57 +1100
 
 bzflag (1.7c-2) unstable; urgency=low
 
-  * The bzfs.6 manpage was also in bzflag. Closes: Bug#54336
+  * The bzfs.6 manpage was also in bzflag. Closes: #54336
 
  -- Anand Kumria <wildfire@progsoc.uts.edu.au>  Wed,  5 Jan 2000 15:40:52 +1100
 
