@@ -20,7 +20,7 @@
 // the full scale of a int16_t  (less 1.0 for safety)
 const float smallScale     = 32766.0f;
 
-// 2 cm resolution  (range: +/- 655.34 meters)
+// 2 cm resolution  (range: +/- 655.32 meters)
 const float smallMaxDist   = 0.02f * smallScale;
 
 // 1 cm/sec resolution  (range: +/- 327.66 meters/sec)
