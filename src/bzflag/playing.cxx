@@ -1659,23 +1659,28 @@ static void		doMotion()
     PlayerId t;
     PlayerId target = curMaxPlayers;
 
+    float pos[3], hitPos[3];
+
+    memcpy(pos, myTank->getPosition(), sizeof(pos));
+    memcpy(hitPos, pos, sizeof(hitPos));
+
+    // For some reason Roger likes to drive to NAN, NAN .. not sure why
+
     const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
                         myTank->getFlag() == Flags::PhantomZone;
     bool expelled;
-    const Obstacle *obstacle = myTank->getHitBuilding(myTank->getPosition(), myTank->getAngle(), phased, expelled);
+    const Obstacle *obstacle = myTank->getHitBuilding(pos, myTank->getAngle(), phased, expelled);
 
     //If right next to a building, try to shake free, Roger's not too good at this tho, help
     if (obstacle && !phased) {
-      const float *hitPos = myTank->getPosition();
       const float hitAzimuth = myTank->getAngle();
       float normal[3];
-      myTank->getHitNormal(obstacle, myTank->getPosition(), myTank->getAngle(), hitPos, hitAzimuth, normal);
+      myTank->getHitNormal(obstacle, pos, myTank->getAngle(), hitPos, hitAzimuth, normal);
 
       rotation = normal[1] - normal[0];
       speed = -0.5f;
     }
     else {
-      const float *mp = myTank->getPosition();
       float distance = Infinity;
       for (t = 0; t < curMaxPlayers; t++) {
 	if (t != myTank->getId() && player[t] &&
@@ -1683,7 +1688,7 @@ static void		doMotion()
 	    !player[t]->isNotResponding() &&
 	    (myTank->getTeam() == RogueTeam || player[t]->getTeam() != myTank->getTeam())) {
 	  const float *tp = player[t]->getPosition();
-	  float d = hypotf(tp[0] - mp[0], tp[1] - mp[1]);
+	  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
 	  if (d < distance) {
 	    target = t;
 	    distance = d;
@@ -1702,9 +1707,9 @@ static void		doMotion()
         myTank->setTarget(player[target]);
         // weave towards the player
         const float *tp = player[target]->getPosition();
-        float azimuth = atan2f(tp[1] - mp[1], tp[0] - mp[0]);
+        float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
         if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
-        rotation = atan2f(tp[1] - mp[1], tp[0] - mp[0]) - myTank->getAngle();
+        rotation = atan2f(tp[1] - pos[1], tp[0] - pos[0]) - myTank->getAngle();
         if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
         int period = int(TimeKeeper::getCurrent().getSeconds());
         float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
@@ -1718,8 +1723,6 @@ static void		doMotion()
         TimeKeeper now = TimeKeeper::getCurrent();
 	if (now - lastShot >= 0.5f) {
 	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)) {
-	    const float *vel = myTank->getVelocity();
-	    const float *pos = myTank->getPosition();
 	    float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
 	    Ray tankRay(pos, dir);
 	    distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
@@ -1735,7 +1738,6 @@ static void		doMotion()
 
       if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
         //teach autopilot bad habits
-        const float *apPos = myTank->getPosition();
         for (t = 0; t < curMaxPlayers; t++) {
 	  if (t == myTank->getId() || !player[t] || !player[t]->isAlive() ||
 	      player[t]->isPaused())
@@ -1746,9 +1748,9 @@ static void		doMotion()
 	    if (!shot)
 	      continue;
 	    const float* shotPos = shot->getPosition();
-	    if (fabs(shotPos[2] - apPos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
+	    if (fabs(shotPos[2] - pos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
 	      continue;
-	    const float dist = hypot(shotPos[0] - apPos[0], shotPos[1] - apPos[1]);
+	    const float dist = hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
 	    if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
 	      myTank->jump();
 	      s = maxShots;
@@ -1763,7 +1765,7 @@ static void		doMotion()
     // FIXME speed should drop as distance goes from say 40 to 0?
     printf("p%d an%f az%f dis%f r%f s%f mp %3.1f:%3.1f tp %3.1f:%3.1f\n",
            target, myTank->getAngle(), azimuth, distance,
-           rotation, speed, mp[0],mp[1],tp[0],tp[1]);
+           rotation, speed, pos[0],pos[1],tp[0],tp[1]);
 #endif
 
   }
