@@ -1033,6 +1033,9 @@ int			main(int argc, char** argv)
   // Change audio driver if requested
   if (BZDB.isSet("audioDriver"))
     PlatformFactory::getMedia()->setDriver(BZDB.get("audioDriver"));
+  // Change audio device if requested
+  if (BZDB.isSet("audioDevice"))
+    PlatformFactory::getMedia()->setDevice(BZDB.get("audioDevice"));
 
   // set data directory if user specified
   if (BZDB.isSet("directory"))

@@ -37,6 +37,7 @@ public:
   static void callback(HUDuiControl* w, void* data);
 private:
   HUDuiTypeIn*	driver;
+  HUDuiTypeIn*	device;
 };
 
 

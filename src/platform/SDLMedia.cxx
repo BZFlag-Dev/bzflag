@@ -376,7 +376,12 @@ void        SDLMedia::setDriver(std::string driverName) {
 };
 
 // Setting Audio Device
-void        SDLMedia::setDevice(std::string) {
+void        SDLMedia::setDevice(std::string deviceName) {
+  char envAssign[256];
+  std::string envVar = "SDL_PATH_DSP=" + deviceName;
+  strncpy(envAssign, envVar.c_str(), 255);
+  envAssign[255]     = '\0';
+  putenv(envAssign);
 };
 
 #endif //HAVE_SDL

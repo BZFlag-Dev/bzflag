@@ -29,6 +29,7 @@ AudioMenu::AudioMenu()
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
   std::string currentDriver = BZDB.get("audioDriver");
+  std::string currentDevice = BZDB.get("audioDevice");
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
@@ -70,6 +71,17 @@ AudioMenu::AudioMenu()
   driver = NULL;
 #endif // HAVE_SDL
 
+#ifdef HAVE_SDL
+  device = new HUDuiTypeIn;
+  device->setFont(MainMenu::getFont());
+  device->setLabel("Device:");
+  device->setMaxLength(10);
+  device->setString(currentDevice);
+  list.push_back(device);
+#else
+  device = NULL;
+#endif // HAVE_SDL
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -82,6 +94,8 @@ void			AudioMenu::execute()
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == driver) {
     BZDB.set("audioDriver", driver->getString().c_str());
+  } else if (focus == device) {
+    BZDB.set("audioDevice", device->getString().c_str());
   }
 }
 
