@@ -357,7 +357,6 @@ case $host_os in
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	esac;;
      cygwin)
-	CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE";
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	if test x$no_sdl = xyes; then
@@ -366,7 +365,6 @@ case $host_os in
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu"
 	CFLAGS="$CFLAGS -ansi -fno-exceptions";;
      mingw32)
-	CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";
 	CFLAGS="$CFLAGS -ansi -fno-exceptions";;
