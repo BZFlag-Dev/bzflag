@@ -10,9 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if !defined(_WIN32)
 #include <signal.h>
-#endif
 
 /* some platforms don't have a SIG_PF type. */
 #if !defined(__sgi) && !defined(sun)
