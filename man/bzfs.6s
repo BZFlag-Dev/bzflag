@@ -654,5 +654,11 @@ Remove a user from a group
 Reloads the user, group, and password files (for synchronization between
 multiple servers on the same machine)
 
+.TP
+.B /deregster [callsign]
+
+With an argument, it deregisters another user's callsign. Without, it
+removes your own registration.
+
 .SH SEE ALSO
 bzflag(6), bzfls(6), bzfrelay(6), mrouted(1)
