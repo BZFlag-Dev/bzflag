@@ -1275,7 +1275,6 @@ void Player::setDeadReckoning(float timestamp)
   offset = timestamp - (TimeKeeper::getTick() - TimeKeeper::getNullTime())
     - deltaTime;
 
-  bool discardUpdate = false;
   // at first stage, Delta time is computed as the average of the last
   // differences in time (local & remote) the values is then updated
   // with the new samples, smoothed with the old values
@@ -1284,10 +1283,7 @@ void Player::setDeadReckoning(float timestamp)
     if (fabs(offset) > maxToleratedJitter) {
       // Put a threshold on untimed measurement
       offset = (offset > 0) ? maxToleratedJitter : -maxToleratedJitter;
-      // and discard, but before adjust delta a little
-      discardUpdate = true;
-    }
-    else if (offset > 0) {
+    } else if (offset > 0) {
       // fast alignment to the packet that take less travel time
       // that's for trying to have less lag
       alphaFactor = 1.0f;
@@ -1295,9 +1291,6 @@ void Player::setDeadReckoning(float timestamp)
   }
   // alpha filtering
   deltaTime = deltaTime + (offset * alphaFactor);
-  if (discardUpdate) {
-    return;
-  }
   // when alphaFactor is 1, that really means we are
   // re-initializing deltaTime so offset should be zero
   if (alphaFactor == 1.0f) {
