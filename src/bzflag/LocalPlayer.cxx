@@ -326,8 +326,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     // then only any 100 frames while stuck, take an action
 
     // try to see if we are stuck on a building
-    obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
-			      expelled);
+    obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth,
+                              phased, expelled);
     if (obstacle && expelled) {
       stuckFrameCount++;
       stuck = true;
@@ -387,8 +387,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
 
     // see if we hit anything.  if not then we're done.
-    obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
-			      expelled);
+    obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
+                              phased, expelled);
     if (!obstacle || !expelled) break;
 
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
@@ -435,8 +435,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // see if we hit anything
       bool searchExpelled;
       const Obstacle* searchObstacle =
-	getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
-		       searchExpelled);
+	getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
+	               phased, searchExpelled);
 
       if (!searchObstacle || !searchExpelled) {
         // if no hit then search latter half of time step
@@ -703,7 +703,7 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
   const float* dims = getDimensions();
   const Obstacle* obstacle = World::getWorld()->
     hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2]);
-  
+    
   expelled = (obstacle != NULL);
   if (expelled && phased)
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||

@@ -96,7 +96,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
                                 useDimensions(false),
 				useOverride(false),
 				hidden(false),
-				invisible(false),
+				cloaked(false),
 				clip(false),
 				style(TankRenderNode::Normal),
 				lowRenderNode(this),
@@ -214,7 +214,7 @@ void			TankSceneNode::addRenderNodes(
   // don't draw hidden tanks.  this is mainly to avoid drawing player's
   // tank when player is using view from tank.  can't simply not include
   // player, though, cos then we wouldn't get the tank's shadow.
-  if (hidden || (invisible && (color[3] == 0.0f))) return;
+  if (hidden || (cloaked && (color[3] == 0.0f))) return;
 
   // pick level of detail
   TankRenderNode* node;
@@ -250,7 +250,7 @@ void			TankSceneNode::addRenderNodes(
 void			TankSceneNode::addShadowNodes(
 				SceneRenderer& renderer)
 {
-  if (invisible && (color[3] == 0.0f)) return;
+  if (cloaked && (color[3] == 0.0f)) return;
   renderer.addShadowNode(&shadowRenderNode);
 }
 
@@ -309,12 +309,12 @@ void			TankSceneNode::setClipPlane(const GLfloat* plane)
 void			TankSceneNode::setHidden(bool _hidden)
 {
   hidden = _hidden;
-  invisible = false;
+  cloaked = false;
 }
 
-void			TankSceneNode::setInvisible(bool _invisible)
+void			TankSceneNode::setCloaked(bool _cloaked)
 {
-  invisible = _invisible;
+  cloaked = _cloaked;
   hidden = false;
 }
 
@@ -652,7 +652,7 @@ void			TankSceneNode::TankRenderNode::render()
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
     if (sceneNode->useDimensions) {
       const float* dims = sceneNode->dimensions;
-      glScalef(dims[1], dims[0], dims[2]);
+      glScalef(dims[0], dims[1], dims[2]);
       glEnable(GL_NORMALIZE);
     }
 

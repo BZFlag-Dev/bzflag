@@ -82,8 +82,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   }
 
   // setup the dimension properties
-  dimensions[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  dimensions[1] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  dimensions[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  dimensions[1] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
   dimensions[2] = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
   memcpy (oldDimensions, dimensions, sizeof(float[3]));
   for (int i = 0; i < 3; i++) {  
@@ -257,10 +257,10 @@ void			Player::updateFlagProperties(float dt)
   }
   
   // set the actual dimensions based on the scale
-  dimensions[0] = dimensionsScale[0] * 
-                  0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  dimensions[1] = dimensionsScale[1] *
+  dimensions[0] = dimensionsScale[0] *
                   0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  dimensions[1] = dimensionsScale[1] * 
+                  0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
   dimensions[2] = dimensionsScale[2] *
                   BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
                   
@@ -341,7 +341,7 @@ void			Player::setFlag(FlagType* _flag)
     dimensionsTarget[1] = factor;
   }
   else if (flagType == Flags::Narrow) {
-    dimensionsTarget[0] = 0.001f;
+    dimensionsTarget[1] = 0.001f;
   }
   
   // set the dimension rates
@@ -534,9 +534,9 @@ void			Player::setHidden(bool hidden)
   tankNode->setHidden(hidden);
 }
 
-void			Player::setInvisible(bool invisible)
+void			Player::setCloaked(bool invisible)
 {
-  tankNode->setInvisible(invisible);
+  tankNode->setCloaked(invisible);
 }
 
 int			Player::getMaxShots() const

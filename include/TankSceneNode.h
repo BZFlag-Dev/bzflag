@@ -114,11 +114,11 @@ class TankSceneNode : public SceneNode {
     void		setExplodeFraction(float t);
     void		setClipPlane(const GLfloat* plane);
 
-    // hidden still renders shadow (turns off invisible)
+    // hidden still renders shadow (turns off cloaked)
     void		setHidden(bool hidden = true);
 
-    // invisible renders nothing (turns off hidden)
-    void		setInvisible(bool invisible = true);
+    // cloaked renders nothing if color[3] = 0.0f (turns off hidden)
+    void		setCloaked(bool cloaked = true);
 
     static void		setMaxLOD(int maxLevel);
 
@@ -231,7 +231,7 @@ class TankSceneNode : public SceneNode {
     GLfloat		baseRadius;
     float		dimensions[3]; // tank dimensions
     bool		useDimensions;
-    bool		useOverride, hidden, invisible;
+    bool		useOverride, hidden, cloaked;
     bool		transparent, sort;
     float		explodeFraction;
     bool		clip;

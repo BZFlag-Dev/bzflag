@@ -85,7 +85,7 @@ public:
   void		addToScene(SceneDatabase*, TeamColor effectiveTeam, bool showIDL);
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setHidden(bool hidden = true);
-  void		setInvisible(bool invisible = true);
+  void		setCloaked(bool cloaked = true);
 
   bool		isAlive() const;
   bool		isPaused() const;

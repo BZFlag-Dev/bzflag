@@ -4229,16 +4229,16 @@ void			drawFrame(const float dt)
     SceneDatabase* scene = sceneRenderer->getSceneDatabase();
     if (scene && myTank) {
       // add my tank
-      myTank->addToScene(scene, myTank->getTeam(), false);
-      if (myTank->getFlag() == Flags::Cloaking) {
-	// and make it invisible
-	myTank->setInvisible();
-      } else if (roaming) {
-	myTank->setHidden(false);
-      } else {
-	// or make it hidden
-	myTank->setHidden();
+      if (!(myTank->getFlag() == Flags::Cloaking)) {
+        myTank->addToScene(scene, myTank->getTeam(), false);
+        if (roaming) {
+	  myTank->setHidden(false);
+        } else {
+	  // or make it hidden
+	  myTank->setHidden(true);
+        }
       }
+
       // add my shells
       myTank->addShots(scene, false);
 
@@ -4269,7 +4269,7 @@ void			drawFrame(const float dt)
 	  }
 	  player[i]->addToScene(scene, overrideTeam, true);
 	  if ((player[i]->getFlag() == Flags::Cloaking) && (myTank->getFlag() != Flags::Seer))
-	    player[i]->setInvisible();
+	    player[i]->setCloaked();
 	  else
 	    player[i]->setHidden(roaming && roamView == roamViewFP && roamTrackWinner == i);
 	}
