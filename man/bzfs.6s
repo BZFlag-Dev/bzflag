@@ -46,6 +46,7 @@ bzfs \- BZFlag game server
 [\fB\-synctime\fR]
 [\fB\-t\fR]
 [\fB\-time \fItime-limit\fR]
+[\fB\-tkkr\fIpercent\fR]
 [\fB\-tk\fR]
 [\fB\-ttl \fIttl\fR]
 [\fB\-version\fR]
@@ -243,6 +244,10 @@ Adds teleporters to the game.
 \fB\-time\fI time-limit\fR
 Sets a time limit on the game to \fItime-limit\fR.  The game will be
 stopped \fItime-limit\fR seconds after the first player connects.
+.TP
+.B -tkkr
+Kicks players who's team killing to normal kill ratio is greater than this 
+precentage. A start up grace period is given to players.
 .TP
 .B -tk
 Changes the default behaviour where a player dies when he kills a teammate.
