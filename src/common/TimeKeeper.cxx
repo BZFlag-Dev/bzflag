@@ -24,11 +24,12 @@ static LARGE_INTEGER	qpcLastTime;
 static double		qpcFrequency = 0.0;
 #endif /* !defined(_WIN32) */
 
-TimeKeeper		TimeKeeper::currentTime;
-TimeKeeper		TimeKeeper::tickTime;
-TimeKeeper		TimeKeeper::sunExplodeTime;
-TimeKeeper		TimeKeeper::sunGenesisTime;
-TimeKeeper		TimeKeeper::nullTime;
+TimeKeeper TimeKeeper::currentTime;
+TimeKeeper TimeKeeper::tickTime;
+TimeKeeper TimeKeeper::sunExplodeTime;
+TimeKeeper TimeKeeper::sunGenesisTime;
+TimeKeeper TimeKeeper::nullTime;
+TimeKeeper TimeKeeper::startTime = TimeKeeper::getCurrent();
 
 const TimeKeeper&	TimeKeeper::getCurrent(void)
 {
@@ -77,6 +78,11 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
   }
 #endif /* !defined(_WIN32) */
   return currentTime;
+}
+
+const TimeKeeper&	TimeKeeper::getStartTime(void) // const
+{
+  return startTime;
 }
 
 const TimeKeeper&	TimeKeeper::getTick(void) // const

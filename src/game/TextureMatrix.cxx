@@ -29,7 +29,6 @@ TextureMatrixManager TEXMATRIXMGR;
 
 TextureMatrixManager::TextureMatrixManager()
 {
-  startTime = TimeKeeper::getCurrent();
   return;
 }
 
@@ -54,7 +53,7 @@ void TextureMatrixManager::clear()
 
 void TextureMatrixManager::update()
 {
-  float t = TimeKeeper::getCurrent() - startTime;
+  float t = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
   std::vector<TextureMatrix*>::iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
@@ -151,7 +150,7 @@ TextureMatrix::TextureMatrix()
   rotateFreq = 0.0f;
   uRotateCenter = vRotateCenter = 0.0f;
   uScaleFreq = vScaleFreq = 0.0f;
-  uScaleSize = vScaleSize = 1.0f;
+  uScale = vScale = 1.0f;
   uScaleCenter = vScaleCenter = 0.0f;
 }
 
@@ -186,12 +185,12 @@ void TextureMatrix::setRotateParams (float freq, float uCenter, float vCenter)
 
 void TextureMatrix::setScaleParams (float uFreq, float vFreq, 
                                     float uCenter, float vCenter,
-                                    float uSize, float vSize)
+                                    float _uScale, float _vScale)
 {
   uScaleFreq = uFreq;
   vScaleFreq = vFreq;
-  uScaleSize = uSize;
-  vScaleSize = vSize;
+  uScale = _uScale;
+  vScale = _vScale;
   uScaleCenter = uCenter;
   vScaleCenter = vCenter;
   return;
@@ -228,13 +227,13 @@ void TextureMatrix::update (float t)
   float uScale = 1.0f;
   if (uScaleFreq != 0.0f) {
     uScale = fmodf(t * uScaleFreq, 1.0f);
-    uScale = (1.5f - (0.5f * cos ((M_PI * 2.0f) * uScale))) / uScaleSize;
+    uScale = (1.5f - (0.5f * cos ((M_PI * 2.0f) * uScale))) / uScale;
   }
   
   float vScale = 1.0f;
   if (vScaleFreq != 0.0f) {
     vScale = fmodf(t * vScaleFreq, 1.0f);
-    vScale = (1.5f - (0.5f * cos ((M_PI * 2.0f) * vScale))) / vScaleSize;
+    vScale = (1.5f - (0.5f * cos ((M_PI * 2.0f) * vScale))) / vScale;
   }
 
   float su = uScaleCenter;
@@ -260,8 +259,8 @@ void * TextureMatrix::pack(void *buf)
 
   buf = nboPackFloat (buf, uScaleFreq);
   buf = nboPackFloat (buf, vScaleFreq);
-  buf = nboPackFloat (buf, uScaleSize);
-  buf = nboPackFloat (buf, vScaleSize);
+  buf = nboPackFloat (buf, uScale);
+  buf = nboPackFloat (buf, vScale);
   buf = nboPackFloat (buf, uScaleCenter);
   buf = nboPackFloat (buf, vScaleCenter);
 
@@ -280,8 +279,8 @@ void * TextureMatrix::unpack(void *buf)
 
   buf = nboUnpackFloat (buf, uScaleFreq);
   buf = nboUnpackFloat (buf, vScaleFreq);
-  buf = nboUnpackFloat (buf, uScaleSize);
-  buf = nboUnpackFloat (buf, vScaleSize);
+  buf = nboUnpackFloat (buf, uScale);
+  buf = nboUnpackFloat (buf, vScale);
   buf = nboUnpackFloat (buf, uScaleCenter);
   buf = nboUnpackFloat (buf, vScaleCenter);
 
@@ -308,10 +307,10 @@ void TextureMatrix::print(std::ostream& out, int /*level*/)
                       << uRotateCenter << " " << vRotateCenter << std::endl;
   }
   if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
-      (uScaleSize != 1.0f) || (vScaleSize != 1.0f) ||
+      (uScale != 1.0f) || (vScale != 1.0f) ||
       (uScaleCenter != 0.0f) || (vScaleCenter != 0.0f)) {
     out << "  scale " << uScaleFreq << " " << vScaleFreq << " "
-                      << uScaleSize << " " << vScaleSize << " "
+                      << uScale << " " << vScale << " "
                       << uScaleCenter << " " << vScaleCenter << std::endl;
   }
   

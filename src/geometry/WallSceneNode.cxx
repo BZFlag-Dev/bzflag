@@ -338,6 +338,7 @@ void			WallSceneNode::notifyStyleChange(
 void			WallSceneNode::copyStyle(WallSceneNode* node)
 {
   gstate = node->gstate;
+  dynamicColor = node->dynamicColor;
   setColor(node->color);
   setModulateColor(node->modulateColor);
   setLightedColor(node->lightedColor);
@@ -347,8 +348,9 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
 
 void			WallSceneNode::setColor()
 {
-  if (BZDBCache::texture && useColorTexture)
-      glColor4f(1,1,1,1);
+  if (BZDBCache::texture && useColorTexture) {
+    glColor4f(1,1,1,1);
+  }
   else if (dynamicColor != NULL) {
     myColor4fv(dynamicColor);
   }

@@ -49,6 +49,9 @@ class TimeKeeper {
     /** returns a timekeeper representing the current time */
     static const TimeKeeper&	getCurrent(void);
 
+    /** returns a timekeeper representing the time of program execution */
+    static const TimeKeeper&	getStartTime(void);
+
     /** sets the time to the current time (recalculates) */
     static void			setTick(void);
     /** returns a timekeeper that is updated periodically via setTick */
@@ -68,6 +71,7 @@ private:
     static TimeKeeper	sunExplodeTime;
     static TimeKeeper	sunGenesisTime;
     static TimeKeeper	nullTime;
+    static TimeKeeper	startTime;
 };
 
 //

@@ -23,8 +23,6 @@
 
 const char* MeshFace::typeName = "MeshFace";
 
-static bool makePlane (const float* p1, const float* p2, const float* pc, float* r);
-
 
 MeshFace::MeshFace(MeshObstacle* _mesh)
 {
@@ -59,9 +57,60 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
 
 void MeshFace::finalize()
 {
-  // make plane - FIMXE pick optimal
-  if (!makePlane(vertices[1], vertices[2], vertices[0], plane)) {
-    plane[0] = plane[1] = plane[2] = plane[3] = 0.0f;
+  float maxCrossSqr = 0.0f;
+  float bestCross[3] = { 0.0f, 0.0f, 0.0f };
+  
+  // find the best vertices for making the plane
+  int i, j, k;
+  int bestSet[3] = { -1, -1, -1 };
+  for (i = 0; i < (vertexCount - 2); i++) {
+    for (j = i; j < (vertexCount - 1); j++) {
+      for (k = j; k < (vertexCount - 0); k++) {
+        float edge1[3], edge2[3], cross[3];
+        vec3sub(edge1, vertices[k], vertices[j]);
+        vec3sub(edge2, vertices[i], vertices[j]);
+        vec3cross(cross, edge1, edge2);
+        const float lenSqr = vec3dot(cross, cross);
+        if (lenSqr > maxCrossSqr) {
+          maxCrossSqr = lenSqr;
+          bestSet[0] = i;
+          bestSet[1] = j;
+          bestSet[2] = k;
+          memcpy (bestCross, cross, sizeof(float[3]));
+        }
+      }
+    }
+  }
+  
+  if (maxCrossSqr < +1.0e-20f) {
+    DEBUG1("invalid mesh face\n");
+    print(std::cerr, 3);
+    vertexCount = 0;
+    return;
+  } 
+
+  // make the plane
+  float scale = 1.0f / sqrtf (maxCrossSqr);
+  float* p = plane;
+  const float* vert = vertices[bestSet[1]];
+  p[0] = bestCross[0] * scale;
+  p[1] = bestCross[1] * scale;
+  p[2] = bestCross[2] * scale;
+  p[3] = -((p[0] * vert[0]) + (p[1] * vert[1]) + (p[2] * vert[2]));
+  
+  // see if the whole face is convex
+  for (int v = 0; v < vertexCount; v++) {
+    float a[3], b[3], c[3];
+    vec3sub(a, vertices[(v + 1) % vertexCount], vertices[(v + 0) % vertexCount]);
+    vec3sub(b, vertices[(v + 2) % vertexCount], vertices[(v + 1) % vertexCount]);
+    vec3cross(c, a, b);
+    const float d = vec3dot(c, plane);
+    if (d <= 0.0f) {
+      DEBUG1("non-convex mesh face\n");
+      print(std::cerr, 3);
+      vertexCount = 0;
+      return;
+    }
   }
   
   // setup extents
@@ -115,25 +164,12 @@ const char* MeshFace::getClassName() // const
 
 bool MeshFace::isValid() const
 {
-  if ((plane[0] == 0.0f) && (plane[1] == 0.0f) &&
-      (plane[1] == 0.0f) && (plane[3] == 0.0f)) {
+  // this is used as a tag in finalize()
+  if (vertexCount == 0) {
     return false;
+  } else {
+    return true;
   }
-  
-  // FIXME - make sure that the faces are all convex
-  for (int v = 0; v < vertexCount; v++) {
-    float a[3], b[3], c[3];
-    
-    vec3sub(a, vertices[(v + 1) % vertexCount], vertices[(v + 0) % vertexCount]);
-    vec3sub(b, vertices[(v + 2) % vertexCount], vertices[(v + 1) % vertexCount]);
-    vec3cross(c, a, b);
-    const float d = vec3dot(c, plane);
-    if (d < 0.0f) {
-      return false;
-    }
-  }
-  
-  return true;
 }
 
 
@@ -142,37 +178,6 @@ void MeshFace::getExtents(float* _mins, float* _maxs) const
   memcpy (_mins, mins, sizeof(fvec3));
   memcpy (_maxs, maxs, sizeof(fvec3));
   return;
-}
-
-
-static bool makePlane (const float* p1, const float* p2, const float* pc,
-                       float* r)
-{
-  // make vectors from points
-  float x[3] = {p1[0] - pc[0], p1[1] - pc[1], p1[2] - pc[2]};
-  float y[3] = {p2[0] - pc[0], p2[1] - pc[1], p2[2] - pc[2]};
-  float n[3];
-
-  // cross product to get the normal
-  n[0] = (x[1] * y[2]) - (x[2] * y[1]);
-  n[1] = (x[2] * y[0]) - (x[0] * y[2]);
-  n[2] = (x[0] * y[1]) - (x[1] * y[0]);
-
-  // normalize
-  float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
-  if (len < +1.0e-20f) {
-    return false;
-  } else {
-    len = 1.0f / sqrtf (len);
-  }
-  r[0] = n[0] * len;
-  r[1] = n[1] * len;
-  r[2] = n[2] * len;
-
-  // finish the plane equation: {rx*px + ry*py + rz+pz + rd = 0}
-  r[3] = -((pc[0] * r[0]) + (pc[1] * r[1]) + (pc[2] * r[2]));
-  
-  return true;
 }
 
 

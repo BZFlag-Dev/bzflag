@@ -50,6 +50,7 @@ class MeshMaterial {
     float emission[4];
     float shininess;
     bool useTexture;
+    bool useTextureAlpha;
     bool useColorOnTexture;
 };
 

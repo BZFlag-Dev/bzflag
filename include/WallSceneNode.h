@@ -58,6 +58,7 @@ class WallSceneNode : public SceneNode {
     void		setTexture(const int);
     void		setTextureMatrix(const int);
     void		setDynamicColor(const float* color);
+    void		setBlending(bool blended);
 
     void		setColor();
 
@@ -100,10 +101,8 @@ class WallSceneNode : public SceneNode {
     GLfloat		lightedColor[4];
     GLfloat		lightedModulateColor[4];
     int			style;
-    bool		transparent;
-    bool		modulateTransparent;
-    bool		lightedTransparent;
-    bool		lightedModulateTransparent;
+    bool		isBlended;
+    bool		wantBlending;
     OpenGLGState	gstate;
     bool		ZFlip;
     bool                useColorTexture;

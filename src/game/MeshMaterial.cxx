@@ -31,6 +31,7 @@ void MeshMaterial::reset()
   memcpy (emission, defEmission, sizeof(emission));
   shininess = 0.0f;
   useTexture = true;
+  useTextureAlpha = true;
   useColorOnTexture = true;
   return;
 }
@@ -54,6 +55,7 @@ MeshMaterial::MeshMaterial(const MeshMaterial& m)
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
   useTexture = m.useTexture;
+  useTexture = m.useTextureAlpha;
   useColorOnTexture = m.useColorOnTexture;
   return;
 }
@@ -70,6 +72,7 @@ MeshMaterial& MeshMaterial::operator=(const MeshMaterial& m)
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
   useTexture = m.useTexture;
+  useTexture = m.useTextureAlpha;
   useColorOnTexture = m.useColorOnTexture;
   return *this;
 }
@@ -86,6 +89,7 @@ bool MeshMaterial::operator==(const MeshMaterial& m)
       (memcmp (specular, m.specular, sizeof(float[4])) != 0) ||
       (memcmp (emission, m.emission, sizeof(float[4])) != 0) ||
       (useTexture != m.useTexture) ||
+      (useTextureAlpha != m.useTextureAlpha) ||
       (useColorOnTexture != m.useColorOnTexture)) {
     return false;
   }
@@ -134,6 +138,10 @@ bool MeshMaterial::copyDiffs(const MeshMaterial& moded,
     useTexture = moded.useTexture;
     changed = true;
   }
+  if (orig.useTextureAlpha != moded.useTextureAlpha) {
+    useTextureAlpha = moded.useTextureAlpha;
+    changed = true;
+  }
   if (orig.useColorOnTexture != moded.useColorOnTexture) {
     useColorOnTexture = moded.useColorOnTexture;
     changed = true;
@@ -169,8 +177,11 @@ void* MeshMaterial::pack(void* buf)
   if (useTexture) {
     stateByte = stateByte | (1 << 0);
   }
-  if (useColorOnTexture) {
+  if (useTextureAlpha) {
     stateByte = stateByte | (1 << 1);
+  }
+  if (useColorOnTexture) {
+    stateByte = stateByte | (1 << 2);
   }
   buf = nboPackUByte(buf, stateByte);
   unsigned char len = (unsigned char)texture.size();
@@ -192,11 +203,15 @@ void* MeshMaterial::unpack(void* buf)
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
   useTexture = false;
+  useTextureAlpha = false;
   useColorOnTexture = false;
   if (stateByte & (1 << 0)) {
     useTexture = true;
   } 
   if (stateByte & (1 << 1)) {
+    useTextureAlpha = true;
+  } 
+  if (stateByte & (1 << 2)) {
     useColorOnTexture = true;
   } 
   char textureStr[256];
@@ -234,6 +249,9 @@ void MeshMaterial::print(std::ostream& out, int /*level*/)
   out << "    texmat " << textureMatrix << std::endl;
   if (!useTexture) {
     out << "    notexture" << std::endl;
+  }
+  if (!useTextureAlpha) {
+    out << "    notexalpha" << std::endl;
   }
   if (!useColorOnTexture) {
     out << "    notexcolor" << std::endl;

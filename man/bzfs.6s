@@ -979,6 +979,8 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 .br
 \fB  notexture\fR  # specify that no texture is to be used
 .br
+\fB  notexalpha\fR  # do not use the texture's alpha channel
+.br
 \fB  notexcolor\fR  # the color is not applied to the texture
 .br
   # if a texture is specified, but not found, the default texture

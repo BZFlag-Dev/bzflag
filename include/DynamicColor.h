@@ -98,7 +98,6 @@ class DynamicColorManager {
 
   private:
     std::vector<DynamicColor*> colors;
-    TimeKeeper startTime;
 };
 
 extern DynamicColorManager DYNCOLORMGR;

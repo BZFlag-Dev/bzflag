@@ -40,10 +40,12 @@ class TextureMatrix {
   
   private:
     float matrix[16];
+    float uPos, vPos; // time invariant
+    float uSize, vSize; // time invariant
     float uShiftFreq, vShiftFreq;
     float rotateFreq, uRotateCenter, vRotateCenter;
     float uScaleFreq, vScaleFreq;
-    float uScaleSize, vScaleSize;
+    float uScale, vScale;
     float uScaleCenter, vScaleCenter;
 };
 
@@ -65,7 +67,6 @@ class TextureMatrixManager {
 
   private:
     std::vector<TextureMatrix*> matrices;
-    TimeKeeper startTime;
 };
 
 extern TextureMatrixManager TEXMATRIXMGR;

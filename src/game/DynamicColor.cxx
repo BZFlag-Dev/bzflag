@@ -33,7 +33,6 @@ DynamicColorManager DYNCOLORMGR;
 
 DynamicColorManager::DynamicColorManager()
 {
-  startTime = TimeKeeper::getCurrent();
   return;
 }
 
@@ -58,7 +57,7 @@ void DynamicColorManager::clear()
 
 void DynamicColorManager::update()
 {
-  float t = TimeKeeper::getCurrent() - startTime;
+  float t = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
   std::vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* texmat = *it;

@@ -105,12 +105,12 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
 void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
                                                const MeshMaterial* mat)
 {    
+  TextureManager &tm = TextureManager::instance();
   OpenGLMaterial glMaterial(mat->specular, mat->emission, mat->shininess);
 
   int faceTexture = -1;
   bool gotSpecifiedTexture = false;
   if (mat->useTexture) {
-    TextureManager &tm = TextureManager::instance();
     if (mat->texture.size() > 0) {
       faceTexture = tm.getTextureID(mat->texture.c_str());
     }
@@ -121,8 +121,9 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
     }
   }
 
-  // NOTE: the diffuse color is used,
-  //       and not the ambient color
+  // NOTE: the diffuse color is used, and not the ambient color
+  //       could use the ambient color for non-lighted,and diffuse
+  //       for lighted 
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->dynamicColor);
   const GLfloat* dc = dyncol->getColor();
   node->setDynamicColor(dc);
@@ -132,7 +133,6 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
   node->setLightedModulateColor(mat->diffuse);
   node->setMaterial(glMaterial);
   node->setTexture(faceTexture);  
-  node->setTextureMatrix(mat->textureMatrix);
   if (mat->useColorOnTexture || !gotSpecifiedTexture) {
     // modulate with the color if asked to, or
     // if the specified texture was not available
@@ -140,6 +140,18 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
   } else {
     node->setUseColorTexture(true);
   }
+  node->setTextureMatrix(mat->textureMatrix);
+
+  // deal with the blending setting 
+  bool alpha = false;
+  const ImageInfo& imageInfo = tm.getInfo(faceTexture);
+  if (((dc != NULL) && dyncol->canHaveAlpha()) || // FIXME - don't include color here?
+      (imageInfo.alpha && mat->useTextureAlpha)) {
+    alpha = true;
+  }
+//  node->setBlending(alpha);
+  
+  // the current color can also affect the blending
   if (dc) {
     const float color[4] = { 1.0f, 1.0f, 1.0f, 0.0f }; // alpha value != 1.0f
     if (dyncol->canHaveAlpha()) {

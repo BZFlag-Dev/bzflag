@@ -27,6 +27,9 @@ bool parseMaterial(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "notexture") == 0) {
     material.useTexture = false;
   }
+  else if (strcasecmp(cmd, "notexalpha") == 0) {
+    material.useTextureAlpha = false;
+  }
   else if (strcasecmp(cmd, "notexcolor") == 0) {
     material.useColorOnTexture = false;
   }
