@@ -3679,6 +3679,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	break;
       }
     }
+
+#ifdef DEBUG
     if (ignore) {
       // to verify working
       std::string msg2 = "Ignored Msg";
@@ -3690,6 +3692,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       addMessage(NULL,msg2);
       break;
     }
+#endif
 
     // CLIENTQUERY hack
     if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
