@@ -1,4 +1,5 @@
-# HiX experimental world
+# HiX2 experimental world
+# Copyright (c) 1993 - 2003 Tim Riker
 # by Tim Riker <Tim@Rikers.org>
 #
 # This is a team play world
@@ -57,8 +58,45 @@
 # top of the world
 box
 position 0.0 0.0 29.0
+rotation 0.0
+size     9.6568542495 4.0 16.0
+end
+box
+position 0.0 0.0 29.0
 rotation 45.0
-size     7.5 7.5 16.0
+size     9.6568542495 4.0 16.0
+end
+box
+position 0.0 0.0 29.0
+rotation 90.0
+size     9.6568542495 4.0 16.0
+end
+box
+position 0.0 0.0 29.0
+rotation 135.0
+size     9.6568542495 4.0 16.0
+end
+
+# roof
+pyramid
+position 0.0 0.0 52.0
+rotation 0.0
+size     9.6568542495 4.0 5.0
+end
+pyramid
+position 0.0 0.0 52.0
+rotation 45.0
+size     9.6568542495 4.0 5.0
+end
+pyramid
+position 0.0 0.0 52.0
+rotation 90.0
+size     9.6568542495 4.0 5.0
+end
+pyramid
+position 0.0 0.0 52.0
+rotation 135.0
+size     9.6568542495 4.0 5.0
 end
 
 # cross bars
@@ -75,45 +113,45 @@ end
 
 # walls under crossbars
 box
-position 180.0 180.0 15.0
+position 180.0 180.0 14.0
 rotation 135.0
-size     0.5 150.0 14.0
+size     0.5 150.0 16.0
 end
 box
-position -180.0 -180.0 15.0
+position -180.0 -180.0 14.0
 rotation 135.0
-size     0.5 150.0 14.0
+size     0.5 150.0 16.0
 end
 box
-position 180.0 -180.0 15.0
+position 180.0 -180.0 14.0
 rotation 45.0
-size     0.5 150.0 14.0
+size     0.5 150.0 16.0
 end
 box
-position -180.0 180.0 15.0
+position -180.0 180.0 14.0
 rotation 45.0
-size     0.5 150.0 14.0
+size     0.5 150.0 16.0
 end
-# fat walls along base
+# first level platforms
 box
-position 180.0 180.0 0.0
+position 180.0 180.0 14.0
 rotation 135.0
-size     8.0 107.0 15.0
+size     8.0 107.0 1.0
 end
 box
-position -180.0 -180.0 0.0
+position -180.0 -180.0 14.0
 rotation 135.0
-size     8.0 107.0 15.0
+size     8.0 107.0 1.0
 end
 box
-position 180.0 -180.0 0.0
+position 180.0 -180.0 14.0
 rotation 45.0
-size     8.0 107.0 15.0
+size     8.0 107.0 1.0
 end
 box
-position -180.0 180.0 0.0
+position -180.0 180.0 14.0
 rotation 45.0
-size     8.0 107.0 15.0
+size     8.0 107.0 1.0
 end
 
 # boxes at wall ends for access
@@ -158,6 +196,296 @@ rotation 0.0
 size     30.0 30.0 15.0
 end
 
+# octagons midplatform
+box
+position 180.0 180.0 0.0
+rotation 0.0
+size     19.313708499 8.0 15.0
+end
+box
+position 180.0 180.0 0.0
+rotation 45.0
+size     19.313708499 8.0 15.0
+end
+box
+position 180.0 180.0 0.0
+rotation 90.0
+size     19.313708499 8.0 15.0
+end
+box
+position 180.0 180.0 0.0
+rotation 135.0
+size     19.313708499 8.0 15.0
+end
+
+box
+position -180.0 -180.0 0.0
+rotation 0.0
+size     19.313708499 8.0 15.0
+end
+box
+position -180.0 -180.0 0.0
+rotation 45.0
+size     19.313708499 8.0 15.0
+end
+box
+position -180.0 -180.0 0.0
+rotation 90.0
+size     19.313708499 8.0 15.0
+end
+box
+position -180.0 -180.0 0.0
+rotation 135.0
+size     19.313708499 8.0 15.0
+end
+
+box
+position -180.0 180.0 0.0
+rotation 0.0
+size     19.313708499 8.0 15.0
+end
+box
+position -180.0 180.0 0.0
+rotation 45.0
+size     19.313708499 8.0 15.0
+end
+box
+position -180.0 180.0 0.0
+rotation 90.0
+size     19.313708499 8.0 15.0
+end
+box
+position -180.0 180.0 0.0
+rotation 135.0
+size     19.313708499 8.0 15.0
+end
+
+box
+position 180.0 -180.0 0.0
+rotation 0.0
+size     19.313708499 8.0 15.0
+end
+box
+position 180.0 -180.0 0.0
+rotation 45.0
+size     19.313708499 8.0 15.0
+end
+box
+position 180.0 -180.0 0.0
+rotation 90.0
+size     19.313708499 8.0 15.0
+end
+box
+position 180.0 -180.0 0.0
+rotation 135.0
+size     19.313708499 8.0 15.0
+end
+
+# supports
+pyramid
+position 140.0 140.0 0.0
+rotation 45.0
+size     2.0 2.0 18.0
+end
+pyramid
+position 140.0 140.0 0.0
+rotation 0.0
+size     8.0 1.0 5.0
+end
+pyramid
+position 140.0 140.0 0.0
+rotation 90.0
+size     8.0 1.0 5.0
+end
+pyramid
+position 140.0 140.0 14.0
+rotation 0.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position 140.0 140.0 14.0
+rotation 90.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position 220.0 220.0 0.0
+rotation 45.0
+size     2.0 2.0 18.0
+end
+pyramid
+position 220.0 220.0 0.0
+rotation 0.0
+size     8.0 1.0 5.0
+end
+pyramid
+position 220.0 220.0 0.0
+rotation 90.0
+size     8.0 1.0 5.0
+end
+pyramid
+position 220.0 220.0 14.0
+rotation 0.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position 220.0 220.0 14.0
+rotation 90.0
+size     8.0 -0.5 -2.0
+end
+
+pyramid
+position -140.0 -140.0 0.0
+rotation 45.0
+size     2.0 2.0 18.0
+end
+pyramid
+position -140.0 -140.0 0.0
+rotation 0.0
+size     8.0 1.0 5.0
+end
+pyramid
+position -140.0 -140.0 0.0
+rotation 90.0
+size     8.0 1.0 5.0
+end
+pyramid
+position -140.0 -140.0 14.0
+rotation 0.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position -140.0 -140.0 14.0
+rotation 90.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position -220.0 -220.0 0.0
+rotation 45.0
+size     2.0 2.0 18.0
+end
+pyramid
+position -220.0 -220.0 0.0
+rotation 0.0
+size     8.0 1.0 5.0
+end
+pyramid
+position -220.0 -220.0 0.0
+rotation 90.0
+size     8.0 1.0 5.0
+end
+pyramid
+position -220.0 -220.0 14.0
+rotation 0.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position -220.0 -220.0 14.0
+rotation 90.0
+size     8.0 -0.5 -2.0
+end
+
+pyramid
+position -140.0 140.0 0.0
+rotation 45.0
+size     2.0 2.0 18.0
+end
+pyramid
+position -140.0 140.0 0.0
+rotation 0.0
+size     8.0 1.0 5.0
+end
+pyramid
+position -140.0 140.0 0.0
+rotation 90.0
+size     8.0 1.0 5.0
+end
+pyramid
+position -140.0 140.0 14.0
+rotation 0.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position -140.0 140.0 14.0
+rotation 90.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position -220.0 220.0 0.0
+rotation 45.0
+size     2.0 2.0 18.0
+end
+pyramid
+position -220.0 220.0 0.0
+rotation 0.0
+size     8.0 1.0 5.0
+end
+pyramid
+position -220.0 220.0 0.0
+rotation 90.0
+size     8.0 1.0 5.0
+end
+pyramid
+position -220.0 220.0 14.0
+rotation 0.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position -220.0 220.0 14.0
+rotation 90.0
+size     8.0 -0.5 -2.0
+end
+
+pyramid
+position 140.0 -140.0 0.0
+rotation 45.0
+size     2.0 2.0 18.0
+end
+pyramid
+position 140.0 -140.0 0.0
+rotation 0.0
+size     8.0 1.0 5.0
+end
+pyramid
+position 140.0 -140.0 0.0
+rotation 90.0
+size     8.0 1.0 5.0
+end
+pyramid
+position 140.0 -140.0 14.0
+rotation 0.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position 140.0 -140.0 14.0
+rotation 90.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position 220.0 -220.0 0.0
+rotation 45.0
+size     2.0 2.0 18.0
+end
+pyramid
+position 220.0 -220.0 0.0
+rotation 0.0
+size     8.0 1.0 5.0
+end
+pyramid
+position 220.0 -220.0 0.0
+rotation 90.0
+size     8.0 1.0 5.0
+end
+pyramid
+position 220.0 -220.0 14.0
+rotation 0.0
+size     8.0 -0.5 -2.0
+end
+pyramid
+position 220.0 -220.0 14.0
+rotation 90.0
+size     8.0 -0.5 -2.0
+end
+
 # base guard posts
 box
 position 392.5 0.0 29.0
@@ -181,6 +509,7 @@ size     7.5 7.5 16.0
 end
 
 # walkways on edges
+#overlap platforms to prevent flag hiding
 box
 position 392.5 0.0 29.0
 rotation 0.0
@@ -415,83 +744,83 @@ end
 pyramid
 position -340.0 -45.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position -340.0 45.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position -295.0 0.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position -385.0 0.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 # pyramids around green base
 pyramid
 position 340.0 -45.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 340.0 45.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 295.0 0.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 385.0 0.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 # pyramids around blue base
 pyramid
 position -45.0 -340.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 45.0 -340.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 0.0 -295.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 0.0 -385.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 # pyramids around purple base
 pyramid
 position -45.0 340.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 45.0 340.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 0.0 295.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
 pyramid
 position 0.0 385.0 0.0
 rotation 0.0
-size     10.0 10.0 29.0
+size     7.5 7.5 30.0
 end
