@@ -3,6 +3,7 @@ if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
@@ -20,6 +21,7 @@ if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
@@ -46,6 +48,7 @@ if SOLARIS
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
@@ -67,6 +70,7 @@ if IRIX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
@@ -93,6 +97,7 @@ if HAVE_SDL
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
@@ -108,6 +113,7 @@ else
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
@@ -121,6 +127,7 @@ if BEOS
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
@@ -142,6 +149,7 @@ if WIN32
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
