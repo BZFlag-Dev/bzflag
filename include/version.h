@@ -57,8 +57,9 @@ inline int getBuildDate()
 }
 #endif //_GETBUILD_DATE_
 // protocol version
+// TODO make this sucker an int when we change BZFS stuff
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION "1.9.2"
+#define BZ_PROTO_VERSION "1903"
 #endif //BZ_PROTO_VERSION
 
 #ifndef BZ_MAJOR_VERSION
@@ -70,11 +71,11 @@ inline int getBuildDate()
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV				2
+#define BZ_REV				3
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		 "CVS"
+#define BZ_BUILD_TYPE		 "TEST"
 #endif
 
 #ifndef BZ_BUILD_DATE
