@@ -50,7 +50,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "BzfWindow.h"
 #include "BzfMedia.h"
 #include "PlatformFactory.h"
-#include "Address.h"
 #include "Protocol.h"
 #include "Pack.h"
 #include "ServerLink.h"
@@ -93,6 +92,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "WordFilter.h"
 #include "TextUtils.h"
 #include "TextureManager.h"
+#include "../zlib/zconf.h"
+#include "../zlib/zlib.h"
 
 
 // versioning that makes us recompile every time
@@ -2195,21 +2196,119 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     return "usage: screenshot";
 
   std::fstream f;
-  std::string filename = string_util::format("bzfi%04d.raw", snap++);
+  std::string filename = string_util::format("bzfi%04d.png", snap++);
   f.open(filename.c_str(), std::ios::out | std::ios::binary);
   if (f.is_open()) {
     int w = mainWindow->getWidth(), h = mainWindow->getHeight();
-    // use something like netpbm and the following command to get usable images
-    // rawtoppm -rgb 640 480 bzfi0000.raw | pnmflip -tb | pnmtopng -compression 9 > test.png
-    unsigned char* b = new unsigned char[w * h * 3];
-    glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
-    // apply gamma correction - FIXME
-    /*    unsigned char *ptr = b;
-	  for(int i = 0; i < w * h * 3; i++) {
+    unsigned char* b = new unsigned char[h * w * 3 + h];  //screen of pixels + column for filter type required by PNG
+
+    //Prepare gamma table
+    unsigned char gammaTable[256];
+    if (BZDB.isSet("gamma")) {
+      float gamma = (float) atof(BZDB.get("gamma").c_str());
+      for(int i = 0; i < 256; i++) {
+	float lum = ((float) i) / 256.0;
+	float lumadj = pow(lum, 1.0 / gamma);
+	gammaTable[i] = (unsigned char) (lumadj * 256);
+      }
+    }
+
+    /* Write a PNG stream.
+    FIXME: Note that there are several issues with this code, altho it produces perfectly fine PNGs.
+    1. We do no filtering.  Sub filters would probably work great on BZFlag screenshots.
+    2. Gamma-correction is preapplied by BZFlag's gamma table.  This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
+    3. Timestamp (tIME) chunk is not added to the file, but would be a good idea.
+    */
+    int temp = 0; //temporary values for binary file writing
+    char tempByte = 0;
+    int crc = 0;  //used for running CRC values
+
+    // Write PNG headers
+    f << "\211PNG\r\n\032\n";
+#define PNGTAG(t_) ((((int)t_[0]) << 24) | \
+		   (((int)t_[1]) << 16) | \
+		   (((int)t_[2]) <<  8) | \
+		   (int)t_[3])
+
+    // IHDR chunk
+    temp = htonl((int) 13);       //(length) IHDR is always 13 bytes long
+    f.write((char*) &temp, 4);
+    temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
+    f.write((char*) &temp, 4);
+    crc = crc32(crc, (unsigned char*) &temp, 4);
+    temp = htonl(w);              //(data) Image width
+    f.write((char*) &temp, 4);
+    crc = crc32(crc, (unsigned char*) &temp, 4);
+    temp = htonl(h);              //(data) Image height
+    f.write((char*) &temp, 4);
+    crc = crc32(crc, (unsigned char*) &temp, 4);
+    tempByte = 8;                 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
+    f.write(&tempByte, 1);
+    crc = crc32(crc, (unsigned char*) &tempByte, 1);
+    tempByte = 2;                 //(data) Color type: RGB = 2
+    f.write(&tempByte, 1);
+    crc = crc32(crc, (unsigned char*) &tempByte, 1);
+    tempByte = 0;
+    for (int i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
+      f.write(&tempByte, 1);
+      crc = crc32(crc, (unsigned char*) &tempByte, 1);
+    }
+    crc = htonl(crc);
+    f.write((char*) &crc, 4);    //(crc) write crc
+
+    // IDAT chunk
+    for (i = h - 1; i >= 0; i--) {
+      b[(h - (i + 1)) * (w * 3 + 1)] = 0;  //filter type byte at the beginning of each scanline (0 = no filter)
+      glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + (h - (i + 1)) * (w * 3 + 1) + 1);
+      // apply gamma correction if necessary
+      if (BZDB.isSet("gamma")) {
+	unsigned char *ptr = b + (h - (i + 1)) * (w * 3 + 1) + 1;
+	for(int i = 0; i < w * 3; i++) {
 	  *ptr = gammaTable[*ptr];
 	  ptr++;
-	  }*/
-    f.write(reinterpret_cast<char*>(b), w * h * 3);
+	}
+      }
+    }
+    unsigned char* bz = new unsigned char[h * w * 3 + h + 15];  //just like b, but compressed; might get bigger, so give it room
+    unsigned long zlength = h * w * 3 + h + 15;     //length of bz[], will be changed by zlib to the length of the compressed string contained therein
+    //compress b into bz with best compression
+    compress2(bz, &zlength, b, h * w * 3 + h, 9);
+    temp = htonl(zlength);                          //(length) IDAT length after compression
+    f.write((char*) &temp, 4);
+    temp = htonl(PNGTAG("IDAT"));                   //(tag) IDAT
+    f.write((char*) &temp, 4);
+    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
+    f.write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
+    crc = htonl(crc32(crc, bz, zlength));
+    f.write((char*) &crc, 4);                       //(crc) write crc
+
+    // tEXt chunk containing bzflag build/version
+    temp = htonl((int) 9 + strlen(getAppVersion()));//(length) tEXt is 9 + strlen(getAppVersion())
+    f.write((char*) &temp, 4);
+    temp = htonl(PNGTAG("tEXt"));                   //(tag) tEXt
+    f.write((char*) &temp, 4);
+    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
+    strcpy(reinterpret_cast<char*>(b), "Software"); //(data) Keyword
+    f.write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
+    crc = crc32(crc, b, strlen(reinterpret_cast<const char*>(b)));
+    tempByte = 0;			            //(data) Null character separator
+    f.write(&tempByte, 1);
+    crc = crc32(crc, (unsigned char*) &tempByte, 1);
+    strcpy((char*) b, getAppVersion());             //(data) Text contents (build/version)
+    f.write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
+    crc = htonl(crc32(crc, b, strlen(reinterpret_cast<const char*>(b))));
+    f.write((char*) &crc, 4);                       //(crc) write crc
+
+    // IEND chunk
+    temp = htonl((int) 0);        //(length) IEND is always 0 bytes long
+    f.write((char*) &temp, 4);
+    temp = htonl(PNGTAG("IEND")); //(tag) IEND
+    f.write((char*) &temp, 4);
+    crc = htonl(crc32(crc = 0, (unsigned char*) &temp, 4));
+				  //(data) IEND has no data field
+    f.write((char*) &crc, 4);     //(crc) write crc
+    crc = 0;
+    delete [] bz;
     delete [] b;
     f.close();
     char notify[128];
@@ -3785,7 +3884,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
     PlayerId targetId;
     msg = nboUnpackUByte(msg, targetId);
     Player* targetTank = lookupPlayer(targetId);
-    if (targetTank && (targetTank == myTank)) {
+    if (targetTank && (targetTank == myTank) && (myTank->isAlive())) {
       static TimeKeeper lastLockMsg;
       if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
 	playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);

@@ -19,9 +19,11 @@ recent bugs
   between the best player (score-wise) and one of the worst players non-stop
   for several (10+) minutes without choosing many intermediate players that
   not only had better scores and were not dead and were not previously bunny
-  and had a much better value for 	killCount * (killCount - deathCount)
+  and had a much better value for killCount * (killCount - deathCount)
   mac suspects valid players are getting skipped altogether for some reason..
-  need to test that theory.
+  (player state is not alive ?, etc) need to test that theory. 
+  Perhaps a client hack is foobar'ing it as well. This seems to happen only occasionally.
+  Often rabbit selection works just fine, but when its broken, it stays broken.
 
 - Shift+Tab seems to be bound to jump without being bound to jump
   It doesn't happen on Linux. Shift+Tab action is untranslated by XLookupString
@@ -43,21 +45,10 @@ recent bugs
 - On a FFA game, where no purple was allowed a Team size of 65535 was displayed
   for Purple.
 
-- Rabbit selection is borken. Two things. A player often is Rabbit two times
-  in a row, which was intended to be illegal, and high scoring tanks get
-  bypassed.  Was playing on ducati where a player was consistantly in #1 slot,
-  but NEVER was rabbit. (The latter probaby happens when all players have a
-  negative score, the formula does not work well then). Nope: Top player was
-  44-31 or there abouts. HMM. I played again and the picking was fine. Could it
-  be a cheat client, causing havoc?
-
 - bzadmin seems to be less responsive over the network than bzflag - a
   bzadmin client can get kicked from a very active game by the server
   for causing it to queue too many packages (there's a limit at 20kB, when I
   removed it the queue went up to at least 64kB)
-
-- Player continues to see the locked on me message after death until
-  shooter locked onto a different target. (Nidhoggr reported this)
 
 - Killed tanks continue drifting and leave tank bits floating around on the
   modified gravity ducati.  players seem to continue forwarding after landing
