@@ -23,6 +23,8 @@
 #include "ErrorHandler.h"
 #include "network.h"
 
+// FIXME this should not be here! gag!
+// oversight on Tim's part when checking in patches
 #define INTERNALVERSION 0x17a0
 
 #if defined(_WIN32)
