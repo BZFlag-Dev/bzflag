@@ -57,9 +57,10 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
                            const std::vector<cfvec2>& texcoordList,
                            int _faceCount, bool drive, bool shoot)
 {
+  unsigned int i;
   // copy the info
   checkTypes = new char[checkTypesL.size()];
-  for (unsigned int i = 0; i < checkTypesL.size(); i++) {
+  for (i = 0; i < checkTypesL.size(); i++) {
     checkTypes[i] = checkTypesL[i];
   }
   cfvec3ListToArray (checkList, checkCount, checkPoints);
@@ -67,7 +68,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
   cfvec3ListToArray (normalList, normalCount, normals);
   texcoordCount = texcoordList.size();
   texcoords = new fvec2[texcoordCount];
-  for (int i = 0; i < texcoordCount; i++) {
+  for (i = 0; i < texcoordCount; i++) {
     memcpy (texcoords[i], texcoordList[i].data, sizeof(fvec2));
   }
   faceSize = _faceCount;
@@ -140,15 +141,17 @@ MeshObstacle::~MeshObstacle()
 
 void MeshObstacle::finalize()
 {
+  int f;
+
   // cross-link the face edges - FIXME
-  for (int f = 0; f < faceCount; f++) {
+  for (f = 0; f < faceCount; f++) {
     faces[f]->edges = NULL;
   }
   
   // set the extents
   mins[0] = mins[1] = mins[2] = +MAXFLOAT;
   maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
-  for (int f = 0; f < faceCount; f++) {
+  for (f = 0; f < faceCount; f++) {
     for (int a = 0; a < 3; a++) {
       if (faces[f]->mins[a] < mins[a]) {
         mins[a] = faces[f]->mins[a];

@@ -41,6 +41,8 @@ MeshSceneNodeGenerator::~MeshSceneNodeGenerator()
 WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
                                                    float /*vRepeats*/, bool /*lod*/)
 {
+  int i;
+
   if (faceNumber >= mesh->getFaceCount()) {
     return NULL;
   }
@@ -64,7 +66,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
   // vertices
   const int vertexCount = face->getVertexCount();
   GLfloat3Array vertices(vertexCount);
-  for (int i = 0; i < vertexCount; i++) {
+  for (i = 0; i < vertexCount; i++) {
     memcpy (vertices[i], face->getVertex(i), sizeof(float[3]));
   }
   
@@ -74,14 +76,14 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
     normalCount = vertexCount;
   }
   GLfloat3Array normals(normalCount);
-  for (int i = 0; i < normalCount; i++) {
+  for (i = 0; i < normalCount; i++) {
     memcpy (normals[i], face->getNormal(i), sizeof(float[3]));
   }
   
   // texcoords
   GLfloat2Array texcoords(vertexCount);
   if (face->useTexcoords()) {
-    for (int i = 0; i < vertexCount; i++) {
+    for (i = 0; i < vertexCount; i++) {
       memcpy (texcoords[i], face->getTexcoord(i), sizeof(float[2]));
     }
   } else {
