@@ -125,6 +125,7 @@ void Bundle::ensureNormalText(std::string &msg)
       case 'â':
       case 'à':
       case 'á':
+      case 'ã':
 	msg[i] = 'a';
       break;
       case 'ä':
@@ -149,6 +150,9 @@ void Bundle::ensureNormalText(std::string &msg)
 	i++;
 	msg.insert(i, 1, 'a');
       break;
+      case 'ç':
+	msg[i] = 'c';
+      break;
       case 'é':
       case 'è':
       case 'ê':
@@ -161,6 +165,7 @@ void Bundle::ensureNormalText(std::string &msg)
       break;
       case 'ô':
       case 'ó':
+      case 'õ':
 	msg[i] = 'o';
       break;
       case 'ö':
