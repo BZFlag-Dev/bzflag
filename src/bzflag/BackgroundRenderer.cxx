@@ -359,9 +359,9 @@ void			BackgroundRenderer::setCelestial(
   // make pretransformed display list for sun
   sunXFormList.begin();
     glPushMatrix();
-    glRotatef(atan2f(sunDirection[1], sunDirection[0]) * 180.0f / M_PI,
+    glRotatef(atan2f(sunDirection[1], (float)(sunDirection[0]) * 180.0 / M_PI),
 							0.0f, 0.0f, 1.0f);
-    glRotatef(asinf(sunDirection[2]) * 180.0f / M_PI, 0.0f, -1.0f, 0.0f);
+    glRotatef(asinf((float)(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
     sunList.execute();
     glPopMatrix();
   sunXFormList.end();
@@ -374,7 +374,7 @@ void			BackgroundRenderer::setCelestial(
   coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
   float worldSize = BZDBCache::worldSize;
   const float moonRadius = 2.0f * worldSize *
-				atanf(60.0f * M_PI / 180.0f) / 60.0f;
+				atanf((float)(60.0 * M_PI / 180.0) / 60.0);
   // limbAngle is dependent on moon position but sun is so much farther
   // away that the moon's position is negligible.  rotate sun and moon
   // so that moon is on the horizon in the +x direction, then compute
@@ -390,15 +390,15 @@ void			BackgroundRenderer::setCelestial(
   int moonSegements = (int)BZDB.eval("moonSegments");
   moonList.begin();
     glPushMatrix();
-    glRotatef(atan2f(moonDirection[1], moonDirection[0]) * 180.0f / M_PI,
+    glRotatef(atan2f(moonDirection[1], (float)(moonDirection[0]) * 180.0 / M_PI),
 							0.0f, 0.0f, 1.0f);
-    glRotatef(asinf(moonDirection[2]) * 180.0f / M_PI, 0.0f, -1.0f, 0.0f);
-    glRotatef(limbAngle * 180.0f / M_PI, 1.0f, 0.0f, 0.0f);
+    glRotatef(asinf((float)(moonDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
+    glRotatef((float)(limbAngle * 180.0 / M_PI), 1.0f, 0.0f, 0.0f);
     glBegin(GL_TRIANGLE_STRIP);
     // glTexCoord2f(0,-1);
     glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
       for (int i = 0; i < moonSegements-1; i++) {
-	const float angle = 0.5f * M_PI * float(i-(moonSegements/2)-1) / (moonSegements/2.0f);
+	const float angle = (float)(0.5 * M_PI * double(i-(moonSegements/2)-1) / (moonSegements/2.0));
 	float sinAngle = sinf(angle);
 	float cosAngle = cosf(angle);
 	// glTexCoord2f(coverage*cosAngle,sinAngle);
@@ -606,7 +606,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   // rotate sky so that horizon-point-toward-sun-color is actually
   // toward the sun
   glPushMatrix();
-  glRotatef((atan2f(sunDirection[1], sunDirection[0]) * 180.0f + 135.0f) / M_PI,
+  glRotatef((atan2f(sunDirection[1], (float)(sunDirection[0]) * 180.0 + 135.0) / M_PI),
 							0.0f, 0.0f, 1.0f);
 
   // draw sky
@@ -866,7 +866,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
   if (!init) {
     init = true;
-    const float receiverSliceAngle = 2.0f * M_PI / float(receiverSlices);
+    const float receiverSliceAngle = (float)(2.0 * M_PI / float(receiverSlices));
     for (int i = 0; i <= receiverSlices; i++) {
       angle[i][0] = cosf((float)i * receiverSliceAngle);
       angle[i][1] = sinf((float)i * receiverSliceAngle);
@@ -1018,12 +1018,12 @@ void			BackgroundRenderer::doInitDisplayLists()
   // sun first.  sun is a disk that should be about a half a degree wide
   // with a normal (60 degree) perspective.
   const float worldSize = BZDBCache::worldSize;
-  const float sunRadius = 2.0f * worldSize * atanf(60.0f*M_PI/180.0f) / 60.0f;
+  const float sunRadius = (float)(2.0 * worldSize * atanf(60.0*M_PI/180.0) / 60.0);
   sunList.begin();
     glBegin(GL_TRIANGLE_FAN);
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
       for (i = 0; i < 20; i++) {
-	const float angle = 2.0f * M_PI * float(i) / 19.0f;
+	const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
 	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
 					sunRadius * cosf(angle));
       }
@@ -1270,8 +1270,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     // all the faces using a given texture into the same list.
     const int numFacesPerTexture = (NumMountainFaces +
 				numMountainTextures - 1) / numMountainTextures;
-    const float angleScale = M_PI /
-			(float)(numMountainTextures * numFacesPerTexture);
+    const float angleScale = (float)(M_PI / (numMountainTextures * numFacesPerTexture));
     int n = numFacesPerTexture / 2;
     float hightScale = mountainsMinWidth / 256.0f;
     for (j = 0; j < numMountainTextures; n += numFacesPerTexture, j++) {
@@ -1283,9 +1282,9 @@ void			BackgroundRenderer::doInitDisplayLists()
 	    if (numMountainTextures != 1)
 	      frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) /
 						(float)mountainsMinWidth;
-	    glNormal3f(-M_SQRT1_2 * cosf(angle),
-			 -M_SQRT1_2 * sinf(angle),
-			  M_SQRT1_2);
+	    glNormal3f((float)(-M_SQRT1_2 * cosf(angle)),
+			 (float)(-M_SQRT1_2 * sinf(angle)),
+			  (float)M_SQRT1_2);
 	    glTexCoord2f(frac, 0.02f);
 	    glVertex3f(2.25f * worldSize * cosf(angle),
 			 2.25f * worldSize * sinf(angle),
@@ -1298,14 +1297,14 @@ void			BackgroundRenderer::doInitDisplayLists()
 	glEnd();
 	glBegin(GL_TRIANGLE_STRIP);
 	  for (i = 0; i <= numFacesPerTexture; i++) {
-	    const float angle = M_PI + angleScale * (float)(i + n);
+	    const float angle = (float)(M_PI + angleScale * (double)(i + n));
 	    float frac = (float)i / (float)numFacesPerTexture;
 	    if (numMountainTextures != 1)
 	      frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) /
 						(float)mountainsMinWidth;
-	    glNormal3f(-M_SQRT1_2 * cosf(angle),
-			 -M_SQRT1_2 * sinf(angle),
-			  M_SQRT1_2);
+	    glNormal3f((float)(-M_SQRT1_2 * cosf(angle)),
+			 (float)(-M_SQRT1_2 * sinf(angle)),
+			  (float)M_SQRT1_2);
 	    glTexCoord2f(frac, 0.02f);
 	    glVertex3f(2.25f * worldSize * cosf(angle),
 			 2.25f * worldSize * sinf(angle),

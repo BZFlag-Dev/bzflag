@@ -48,8 +48,8 @@ float TargetingUtils::getTargetAzimuth( const float *src, const float *target )
 float TargetingUtils::getTargetRotation( const float startAzimuth, float targetAzimuth )
 {
   float targetRotation = targetAzimuth - startAzimuth;
-  if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
-  if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
+  if (targetRotation < -1.0f * M_PI) targetRotation += (float)(2.0 * M_PI);
+  if (targetRotation > 1.0f * M_PI) targetRotation -= (float)(2.0 * M_PI);
 
   return targetRotation;
 }
