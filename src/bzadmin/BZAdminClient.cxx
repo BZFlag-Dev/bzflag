@@ -57,6 +57,9 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   // tell BZDB to shut up, we can't have debug data printed to stdout
   BZDB.setDebug(false);
   
+  //send our version string for /clientquery
+  sLink.sendVersionString();
+
   // set a default message mask
   showMessageType(MsgAddPlayer);
   showMessageType(MsgKilled);
@@ -296,12 +299,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
       if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
-	if (strcmp("CLIENTQUERY", (char*)vbuf) == 0) {
-	  sendMessage(std::string("bzadmin ") + getAppVersion(), src);
-	  lastMessage.first = "    [Sent versioninfo per request]";
-	  break;
-	}
-	else if (messageMask[MsgMessage]) {
+	if (messageMask[MsgMessage]) {
 	  lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
 	  PlayerIdMap::const_iterator iter = players.find(src);
 	  lastMessage.second = (iter == players.end() ? 
