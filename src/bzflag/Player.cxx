@@ -265,9 +265,10 @@ void					Player::addPlayerSceneNode(
 		transformSceneNode->scale.push(atof(BZDB->get("obeseFactor").c_str()), atof(BZDB->get("obeseFactor").c_str()), 1.0f);
 	else if (flag == TinyFlag)
 		transformSceneNode->scale.push(atof(BZDB->get("tinyFactor").c_str()), atof(BZDB->get("tinyFactor").c_str()), 1.0f);
-	else if (flag == BurrowFlag)
-		// FIXME -- should set clipping plane
+	else if (flag == ThiefFlag)
 		transformSceneNode->scale.push(atof(BZDB->get("thiefTinyFactor").c_str()), atof(BZDB->get("thiefTinyFactor").c_str()), 1.0f);
+	else if (flag == BurrowFlag) {}
+				// FIXME -- should set clipping plane
 	else if (flag == NarrowFlag)
 		transformSceneNode->scale.push(1.0f, 0.01f, 1.0f);
 
