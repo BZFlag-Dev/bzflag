@@ -598,7 +598,7 @@ to the server rejoin  (to reload the map, etc...)
 .TP
 .B /replay skip [+/- seconds]
 If seconds is specified, then skip that amount of time in the recording.
-Otherwise, skip until there is activity.
+Otherwise, skip forwards until there is activity.
 .BR
 
 .TP
@@ -893,9 +893,13 @@ The list of world types consists of
 .br
 .B	base
 .br
+.B	weapon
+.br
+.B	zone
+.br
 .B	world
 .br
-.B	weapon
+.B	options
 .br
 
 Each object is described by placing the type on one line, the word \fIend\fR on a following line,
@@ -903,8 +907,10 @@ and a list of attributes for that object, one per line, inbetween. Attributes ma
 any order. Attributes have default values, and if that is good enough, the attribute need not
 be listed. Words are always specified in lowercase. Line comments can be specified by placing a
 # sign at the start of the line. For documentation purposes, you can tag each object by adding
-a name attribute. There is set limit to the number of times you may use box, pyramid, teleporter,
-link, base and weapon objects. You must only supply one world object at most.
+a name attribute. There is no set limit to the number of times you may use box, pyramid, teleporter,
+link, base, weapon, and zone objects. You may only supply one world object and one options object.
+The options object contains command line arguments that are used to configure the server's game
+mode, but can not contain server specific options such as -p, -passwd, and -conf.
 
 .br
 In the following examples, the values are the defaults.
@@ -913,13 +919,13 @@ In the following examples, the values are the defaults.
 
 \fBbox\fR
 .br
-\fBname\fR example_box
+\fB  name\fR example_box
 .br
-\fBposition\fR 0.0 0.0 0.0
+\fB  position\fR 0.0 0.0 0.0
 .br
-\fBsize\fR 30.0 30.0 9.42
+\fB  size\fR 30.0 30.0 9.42
 .br
-\fBrotation\fR 0.0
+\fB  rotation\fR 0.0
 .br
 \fBend\fR
 .br
@@ -929,13 +935,13 @@ In the following examples, the values are the defaults.
 
 \fBpyramid\fR
 .br
-\fBname\fR example_pyramid
+\fB  name\fR example_pyramid
 .br
-\fBposition\fR 0.0 0.0 0.0
+\fB  position\fR 0.0 0.0 0.0
 .br
-\fBsize\fR 8.2 8.2 10.25
+\fB  size\fR 8.2 8.2 10.25
 .br
-\fBrotation\fR 0.0
+\fB  rotation\fR 0.0
 .br
 \fBend\fR
 .br
@@ -944,15 +950,15 @@ In the following examples, the values are the defaults.
 
 \fBteleporter\fR
 .br
-\fBname\fR example_teleporter
+\fB  name\fR example_teleporter
 .br
-\fBposition\fR 0.0 0.0 0.0
+\fB  position\fR 0.0 0.0 0.0
 .br
-\fBsize\fR 5.06 4.48 20.16
+\fB  size\fR 5.06 4.48 20.16
 .br
-\fBrotation\fR 0.0
+\fB  rotation\fR 0.0
 .br
-\fBborder\fR 1.12
+\fB  border\fR 1.12
 .br
 \fBend\fR
 .br
@@ -961,11 +967,13 @@ In the following examples, the values are the defaults.
 
 \fBlink\fR
 .br
-\fBname\fR example_link
+\fB  name\fR example_link
 .br
-\fBfrom\fR 0
+\fB  from\fR 0
 .br
-\fBto\fR 0
+\fB  to\fR 0
+.br
+# the 'to' parameter can now be set to 'random'
 .br
 \fBend\fR
 .br
@@ -974,15 +982,15 @@ In the following examples, the values are the defaults.
 
 \fBbase\fR
 .br
-\fBname\fR example_base
+\fB  name\fR example_base
 .br
-\fBposition\fR 0.0 0.0 0.0
+\fB  position\fR 0.0 0.0 0.0
 .br
-\fBsize\fR 60.0 60.0 0.0
+\fB  size\fR 60.0 60.0 0.0
 .br
-\fBrotation\fR 0.0
+\fB  rotation\fR 0.0
 .br
-\fBcolor\fR 0
+\fB  color\fR 0
 .br
 \fBend\fR
 .br
@@ -991,11 +999,11 @@ In the following examples, the values are the defaults.
 
 \fBworld\fR
 .br
-\fBname\fR example_world
+\fB  name\fR example_world
 .br
-\fBsize\fR 800.0
+\fB  size\fR 800.0
 .br
-\fBflagHeight\fR 0.0
+\fB  flagHeight\fR 0.0
 .br
 \fBend\fR
 .br
@@ -1004,21 +1012,60 @@ In the following examples, the values are the defaults.
 
 \fBweapon\fR
 .br
-\fBname\fR example_weapon
+\fB  name\fR example_weapon
 .br
-\fBposition\fR 0.0 0.0 0.0
+\fB  position\fR 0.0 0.0 0.0
 .br
-\fBrotation\fR 0.0
+\fB  rotation\fR 0.0
 .br
-\fBinitdelay\fR 10.0
+\fB  initdelay\fR 10.0
 .br
-\fBdelay\fR 10.0 3.0 5.0 3.0
+\fB  delay\fR 10.0 3.0 5.0 3.0
 .br
-\fBtype\fR V
+\fB  type\fR V
 .br
 \fBend\fR
 .br
 
+.B The Zone object
+
+\fBzone\fR
+.br
+\fB  name\fR example_zone
+.br
+\fB  position\fR 0.0 0.0 0.0
+.br
+\fB  size\fR 0.0 0.0 0.0 
+.br
+\fB  rotation\fR 0.0
+.br
+# where flag may spawn
+.br
+\fB  flag\fR GM SW good bad
+.br
+# where players may spawn
+.br
+\fB  team\fR 0 1 2 3 4
+.br
+# where dropped team flags will fly to
+.br
+\fB  safety\fR 1 2 3 4
+.br
+\fBend\fR
+.br
+
+.B The Options object
+
+\fBoptions\fR
+.br
+  -set _tankSpeed 36
+.br
+  -j +r -ms 3
+.br
+  +f GM{5} +f SW{5}
+.br
+\fBend\fR
+.br
 
 .SH SEE ALSO
 bzflag(6), bzfls(6), bzfrelay(6)
