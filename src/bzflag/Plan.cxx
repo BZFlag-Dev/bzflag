@@ -25,6 +25,11 @@ Plan::Plan(float planDuration)
 }
 
 
+Plan::~Plan()
+{
+}
+
+
 bool Plan::isValid()
 {
 	TimeKeeper now = TimeKeeper();
@@ -52,7 +57,7 @@ Plan *GotoPointPlan::createSubPlan()
 	return NULL;
 }
 
-void GotoPointPlan::execute( float &rotation, float &velocity )
+void GotoPointPlan::execute( float &/*rotation*/, float &/*velocity*/ )
 {
 }
 
@@ -84,7 +89,7 @@ Plan* WeavePlan::createSubPlan()
 	return NULL;
 }
 
-void WeavePlan::execute( float &rotation, float &velocity )
+void WeavePlan::execute( float &/*rotation*/, float &/*velocity*/ )
 {
 }
 

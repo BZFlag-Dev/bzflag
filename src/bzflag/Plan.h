@@ -24,6 +24,7 @@ class Plan
 {
 public:
 	Plan( float planDuration );
+	virtual ~Plan();
 	/**
 	 * checks to make sure this plan is still valid. The default
 	 * implementation just checks for an expiration time, to keep
