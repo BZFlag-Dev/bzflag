@@ -337,11 +337,12 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 
   active = true;
 
+  const bool inWorld = (this == OBSTACLEMGR.getWorld());
+
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& list = lists[type];
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs;
-      const bool inWorld = (this == OBSTACLEMGR.getWorld());
       if (inWorld) {
         obs = list[i];
       } else {
@@ -357,8 +358,12 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
         // generate contained meshes
         MeshObstacle* mesh = getContainedMesh(type, obs);
         if ((mesh != NULL) && mesh->isValid()) {
-          mesh->setSource(Obstacle::GroupDefSource |
-                          Obstacle::ContainerSource);
+          if (inWorld) {
+            mesh->setSource(Obstacle::ContainerSource);
+          } else {
+            mesh->setSource(Obstacle::GroupDefSource |
+                            Obstacle::ContainerSource);
+          }
           obsMod.execute(mesh);
           OBSTACLEMGR.addWorldObstacle(mesh);
         }
