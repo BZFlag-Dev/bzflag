@@ -316,7 +316,7 @@ void			RobotPlayer::explodeTank()
     if (explodeTime2 > tMax2)
       newVelocity[2] = - sqrtf(tMax2) * gravity;
     else
-      newVelocity[2] = - 0.5 * gravity * explodeTime + zMax / explodeTime;
+      newVelocity[2] = - 0.5 * gravity * explodeTime;
   } else {
     newVelocity[2] = oldVelocity[2];
   }
