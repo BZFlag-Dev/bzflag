@@ -2448,8 +2448,9 @@ static void dropFlag(int playerIndex, float pos[3])
     pos[0] = 0.0;
   if (pos[1] < -size || pos[1] > size)
     pos[1] = 0.0;
-  if (pos[2] > maxWorldHeight)
-    pos[2] = 0.0;
+  // Check on max height has been removed until we take into account
+  // jump. People dropping flag while jumping from the
+  // higher objects in the world made it go to the floor
 
   assert(world != NULL);
   const Obstacle* container;
