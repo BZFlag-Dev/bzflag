@@ -3,6 +3,7 @@ recent bugs
 
 - AutoConf needs new verison MACROs before it will build, versions now have OS, build source, and build date in them
 
+- Windows VC project needs a way to dirty /win32/config.h on each build for proper date
 
 - thief gets kicked for speeding sometimes after stealing flag
 
