@@ -165,7 +165,7 @@ struct PlayerInfo {
     // flag index player has
     int flag;
     // player's score
-    int wins, losses;
+    int wins, losses, tks;
     // if player can't multicast
     boolean multicastRelay;
 
@@ -598,6 +598,8 @@ static boolean useTeleporters;
 static boolean teamKillerDies;
 // True if -fb on cmd line
 static boolean flagsOnBuildings;
+// if players tk*100/wins > teamKillerKickRatio -> kicked
+static int teamKillerKickRatio;
 // True if -g on cmd line
 static boolean oneGameOnly;
 static int gameStyle;
@@ -3815,6 +3817,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].flag = -1;
   player[playerIndex].wins = 0;
   player[playerIndex].losses = 0;
+  player[playerIndex].tks = 0;
 
   // update team state and if first active player on team,
   // add team's flag and reset it's score
@@ -4310,6 +4313,21 @@ static void playerKilled(int victimIndex, int killerIndex,
   if (team[int(player[victimIndex].team)].radio == victimIndex)
     releaseRadio(victimIndex);
   player[victimIndex].state = PlayerDead;
+
+  //update tk-score
+  if ((victimIndex != killerIndex) &&
+      (player[victimIndex].team == player[killerIndex].team) &&
+      (player[victimIndex].team != RogueTeam)) {
+     player[killerIndex].tks++;
+     if ((player[killerIndex].tks >= 3) && (teamKillerKickRatio > 0) && // arbitrary 3
+	 ((player[killerIndex].wins == 0) || 
+	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > teamKillerKickRatio)) {
+	 char message[MessageLen];
+	 strcpy( message, "You have been automatically kicked for team killing" );
+         sendMessage(killerIndex, player[killerIndex].id, player[killerIndex].team, message);
+	 directMessage(killerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
+     }
+  }
 
   // send MsgKilled
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -5324,6 +5342,7 @@ static const char *usageString =
 "[-time <seconds>] "
 #endif
 "[-tk] "
+"[-tkkr <percent>] "
 "[-ttl <ttl>] "
 "[-version] "
 "[-world <filename>]";
@@ -5377,6 +5396,7 @@ static const char *extraUsageString =
 "\t-time: set time limit on each game\n"
 #endif
 "\t-tk: player does not die when killing a teammate\n"
+"\t-tkkr: team killer to wins percentage (1-100) above which player is kicked\n"
 "\t-ttl: time-to-live for pings (default=8)\n"
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n";
@@ -5520,6 +5540,7 @@ static void parse(int argc, char **argv)
   useTeleporters = False;
   teamKillerDies = True;
   flagsOnBuildings = False;
+  teamKillerKickRatio = 0;
   oneGameOnly = False;
   numExtraFlags = 0;
   maxShots = 1;
@@ -5679,10 +5700,6 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       debug += count;
-    }
-    else if (strcmp(argv[i], "-tk") == 0) {
-      // team killer does not die
-      teamKillerDies = False;
     }
     else if (strcmp(argv[i], "-fb") == 0) {
       // flags on buildings
@@ -5946,6 +5963,21 @@ static void parse(int argc, char **argv)
       timeElapsed = timeLimit;
     }
 #endif
+    else if (strcmp(argv[i], "-tk") == 0) {
+      // team killer does not die
+      teamKillerDies = False;
+    }
+    else if (strcmp(argv[i], "-tkkr") == 0) {
+      if (++i == argc) {
+	cerr << "argument expected for -tkkr" << endl;
+	usage(argv[0]);
+      }
+      teamKillerKickRatio = atoi(argv[i]);
+      if (teamKillerKickRatio < 0) {
+	 teamKillerKickRatio = 0;
+	 cerr << "disabling team killer kick ratio" << endl;
+      }
+    }
     else if (strcmp(argv[i], "-ttl") == 0) {
       // use a different ttl
       if (++i == argc) {
