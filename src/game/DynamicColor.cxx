@@ -204,7 +204,7 @@ void DynamicColor::finalize()
       possibleAlpha = false;
     }
   }
-  
+
   // sanitize the sequence value
   for (int i = 0; i < 4; i++) {
     std::vector<char>& list = channels[i].sequence.list;
@@ -216,7 +216,7 @@ void DynamicColor::finalize()
       }
     }
   }
-  
+
   return;
 }
 
@@ -333,7 +333,7 @@ void DynamicColor::update (float t)
 
     bool clampUp = false;
     bool clampDown = false;
-    
+
     // sequence rules over the clamps
     const sequenceParams& seq = channel.sequence;
     const unsigned int seqSize = (const unsigned int)seq.list.size();
@@ -351,7 +351,7 @@ void DynamicColor::update (float t)
       else if (seq.list[index] == colorMax) {
         clampUp = true;
       }
-    } 
+    }
     else {
       // check for active clampUp
       for (i = 0; i < channel.clampUps.size(); i++) {
