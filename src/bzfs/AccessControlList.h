@@ -13,6 +13,11 @@
 #ifndef __ACCESSCONTROLLIST_H__
 #define __ACCESSCONTROLLIST_H__
 
+#ifdef _WIN32
+#pragma warning( 4: 4786)
+#endif
+
+
 #include <vector>
 #include <string>
 #include <algorithm>
