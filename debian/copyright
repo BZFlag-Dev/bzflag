@@ -4,28 +4,20 @@ This package was debianized by Anand Kumria <wildfire@progsoc.uts.edu.au>
 
 It was downloaded from http://download.sourceforge.net/bzflag/
 
-Upstream Author(s): Tim Riker <Tim@Rikers.org>
+Upstream Author: Tim Riker <Tim@Rikers.org>
 
 Copyright: Copyright (c) 1993 - 2003 Tim Riker
 
-bzflag is licensed under the GNU General Public Licence. On Debian GNU/Linux
-systems you can the full text of this licence in /usr/share/common-licences/GPL
+It may be redistributed under the terms of the GNU LGPL, Version 2.1
+found on Debian systems in the file /usr/share/common-licenses/LGPL-2.
 
     bzflag - a multiplayer 3D tank battle game
     Copyright (c) 1993 - 2003 Tim Riker
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+    This package is free software;  you can redistribute it and/or
+    modify it under the terms of the license found in the file
+    named COPYING that should have accompanied this file.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-
+    THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+    IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+    WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
