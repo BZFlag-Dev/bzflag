@@ -3744,6 +3744,83 @@ possible attack from %s\n",
   }
 }
 
+static void handleTcp(NetHandler &netPlayer, int i)
+{
+  const RxStatus e = netPlayer.tcpReceive();
+  if (e != ReadAll) {
+    if (e == ReadReset) {
+      removePlayer(i, "ECONNRESET/EPIPE", false);
+    } else if (e == ReadError) {
+      // dump other errors and remove the player
+      nerror("error on read");
+      removePlayer(i, "Read error", false);
+    } else if (e == ReadDiscon) {
+      // disconnected
+      removePlayer(i, "Disconnected", false);
+    } else if (e == ReadHuge) {
+      removePlayer(i, "large packet recvd", false);
+    }
+    return;
+  }
+
+  uint16_t len, code;
+  void *buf = netPlayer.getTcpBuffer();
+  buf = nboUnpackUShort(buf, len);
+  buf = nboUnpackUShort(buf, code);
+
+  // trying to get the real player from the message: bots share tcp
+  // connection with the player
+  PlayerId t = i;
+  switch (code) {
+  case MsgShotBegin: {
+    nboUnpackUByte(buf, t);
+    break;
+  }
+  case MsgPlayerUpdate:
+  case MsgPlayerUpdateSmall: {
+    float timestamp;
+    buf = nboUnpackFloat(buf, timestamp);
+    buf = nboUnpackUByte(buf, t);
+    break;
+  }
+  default:
+    break;
+  }
+  // Make sure is a bot
+  GameKeeper::Player *playerData;
+  if (t != i) {
+    playerData = GameKeeper::Player::getPlayerByIndex(t);
+    if (!playerData || !playerData->player.isBot()) {
+      t = i;
+      playerData = GameKeeper::Player::getPlayerByIndex(t);
+    }
+    // Should check also if bot and player are related
+  } else {
+    playerData = GameKeeper::Player::getPlayerByIndex(t);
+  }
+
+  // simple ruleset, if player sends a MsgShotBegin over TCP he/she
+  // must not be using the UDP link
+  if (clOptions->requireUDP && !playerData->player.isBot()) {
+    if (code == MsgShotBegin) {
+      char message[MessageLen];
+      sprintf(message,"Your end is not using UDP, turn on udp");
+      sendMessage(ServerPlayer, i, message);
+
+      sprintf(message,"upgrade your client http://BZFlag.org/ or");
+      sendMessage(ServerPlayer, i, message);
+
+      sprintf(message,"Try another server, Bye!");
+      sendMessage(ServerPlayer, i, message);
+      removePlayer(i, "no UDP");
+      return;
+    }
+  }
+
+  // handle the command
+  handleCommand(t, netPlayer.getTcpBuffer());
+}
+
 static void terminateServer(int /*sig*/)
 {
   bzSignal(SIGINT, SIG_PF(terminateServer));
@@ -4694,89 +4771,17 @@ int main(int argc, char **argv)
       GameKeeper::Player *playerData;
       NetHandler *netPlayer;
       for (i = 0; i < curMaxPlayers; i++) {
+	playerData = GameKeeper::Player::getPlayerByIndex(i);
+	if (!playerData)
+	  continue;
+	netPlayer = playerData->netHandler;
 	// send whatever we have ... if any
-	playerData = GameKeeper::Player::getPlayerByIndex(i);
-	if (playerData && playerData->netHandler->pflush(&write_set) == -1) {
+	if (netPlayer->pflush(&write_set) == -1) {
 	  removePlayer(i, "ECONNRESET/EPIPE", false);
+	  continue;
 	}
-
-	playerData = GameKeeper::Player::getPlayerByIndex(i);
-	if (playerData && playerData->netHandler->isFdSet(&read_set)) {
-	  netPlayer = playerData->netHandler;
-
-	  const RxStatus e = netPlayer->tcpReceive();
-	  if (e != ReadAll) {
-	    if (e == ReadReset) {
-	      removePlayer(i, "ECONNRESET/EPIPE", false);
-	    } else if (e == ReadError) {
-	      // dump other errors and remove the player
-	      nerror("error on read");
-	      removePlayer(i, "Read error", false);
-	    } else if (e == ReadDiscon) {
-	      // disconnected
-	      removePlayer(i, "Disconnected", false);
-	    } else if (e == ReadHuge) {
-	      removePlayer(i, "large packet recvd", false);
-	    }
-	    continue;
-	  }
-
-	  uint16_t len, code;
-	  void *buf = netPlayer->getTcpBuffer();
-	  buf = nboUnpackUShort(buf, len);
-	  buf = nboUnpackUShort(buf, code);
-
-	  // trying to get the real player from the message cause it
-	  // happens bots share tcp connection with the player
-	  PlayerId t = i;
-	  switch (code) {
-	  case MsgShotBegin: {
-	    nboUnpackUByte(buf, t);
-	    break;
-	  }
-	  case MsgPlayerUpdate:
-	  case MsgPlayerUpdateSmall: {
-	    float timestamp;
-	    buf = nboUnpackFloat(buf, timestamp);
-	    buf = nboUnpackUByte(buf, t);
-	    break;
-	  }
-	  default:
-	    break;
-	  }
-	  // Make sure is a bot
-	  GameKeeper::Player *playerData;
-	  if (t != i) {
-	    playerData = GameKeeper::Player::getPlayerByIndex(t);
-	    if (!playerData || !playerData->player.isBot()) {
-	      t = i;
-	      playerData = GameKeeper::Player::getPlayerByIndex(t);
-	    }
-	    // Should check also if bot and player are related
-	  } else {
-	    playerData = GameKeeper::Player::getPlayerByIndex(t);
-	  }
-
-	  // simple ruleset, if player sends a MsgShotBegin over TCP
-	  // he/she must not be using the UDP link
-	  if (clOptions->requireUDP && !playerData->player.isBot()) {
-	    if (code == MsgShotBegin) {
-	      char message[MessageLen];
-	      sprintf(message,"Your end is not using UDP, turn on udp");
-	      sendMessage(ServerPlayer, i, message);
-
-	      sprintf(message,"upgrade your client http://BZFlag.org/ or");
-	      sendMessage(ServerPlayer, i, message);
-
-	      sprintf(message,"Try another server, Bye!");
-	      sendMessage(ServerPlayer, i, message);
-	      removePlayer(i, "no UDP");
-	      continue;
-	    }
-	  }
-
-	  // handle the command
-	  handleCommand(t, netPlayer->getTcpBuffer());
+	if (netPlayer->isFdSet(&read_set)) {
+	  handleTcp(*netPlayer, i);
 	}
       }
     } else if (nfound < 0) {
