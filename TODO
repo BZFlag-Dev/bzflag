@@ -8,10 +8,6 @@ to do list for bzflag
 * move team base packing into WorldInfo (bzfs)
   and add height (z)
 
-* remove reconnect from server and client
-
-* make server udp/tcp port the same
-
 * support gameinfo requests as one time udp packets (if udp)
 
 * remove flipz from pyr net code and replace with neg height.

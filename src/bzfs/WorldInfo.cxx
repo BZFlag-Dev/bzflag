@@ -142,7 +142,7 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   numTeleporters++;
 }
 
-void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
+void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h, float sx, float sy, float sz, short team, bool drive = false, bool shoot = false)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -158,6 +158,10 @@ void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, fl
   bases[numBases].size[0] = w;
   bases[numBases].size[1] = d;
   bases[numBases].size[2] = h;
+  bases[numBases].team = team;
+  bases[numBases].safety[0] = sx;
+  bases[numBases].safety[1] = sx;
+  bases[numBases].safety[2] = sx;
   bases[numBases].driveThrough = drive;
   bases[numBases].shootThrough = shoot;
   numBases++;

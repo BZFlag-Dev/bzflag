@@ -39,7 +39,7 @@ class WorldInfo {
   void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
   void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
   void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
-  void addBase(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
+  void addBase(float x, float y, float z, float r, float w, float d, float h, float sx, float sy, float sz, short team, bool drive = false, bool shoot = false);
   void addLink(int from, int to);
   float getMaxWorldHeight();
   int packDatabase();
@@ -57,9 +57,11 @@ class WorldInfo {
     float pos[3];
     float rotation;
     float size[3];
+    float safety[3];
     bool shootThrough;
     bool driveThrough;
     bool flipZ;
+    short team;
     ObstacleLocation &operator=(const ObstacleLocation &ol)
     {
       memcpy(pos, ol.pos, sizeof(float) * 3);
