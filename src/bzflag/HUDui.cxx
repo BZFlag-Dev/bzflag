@@ -372,45 +372,52 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
     HUDui::setFocus(getNext());
     return true;
   }
+  
+  if (key.ascii == 0)
+    switch (key.button) {
+      case BzfKeyEvent::Up:
+	HUDui::setFocus(getPrev());
+	break;
 
-  switch (key.button) {
-    case BzfKeyEvent::Up:
-      HUDui::setFocus(getPrev());
-      break;
+      case BzfKeyEvent::Down:
+	HUDui::setFocus(getNext());
+	break;
 
-    case BzfKeyEvent::Down:
-      HUDui::setFocus(getNext());
-      break;
+      case BzfKeyEvent::Left:
+	if (index != -1) {
+	  if (--index < 0) index = list.size() - 1;
+	  doCallback();
+	}
+	break;
 
-    case BzfKeyEvent::Left:
-      if (index != -1) {
-	if (--index < 0) index = list.size() - 1;
-	doCallback();
-      }
-      break;
+      case BzfKeyEvent::Right:
+	if (index != -1) {
+	  if (++index >= (int)list.size()) index = 0;
+	  doCallback();
+	}
+	break;
 
-    case BzfKeyEvent::Right:
-      if (index != -1) {
-	if (++index >= (int)list.size()) index = 0;
-	doCallback();
-      }
-      break;
+      case BzfKeyEvent::Home:
+	if (index != -1) {
+	  index = 0;
+	  doCallback();
+	}
+	break;
 
-    case BzfKeyEvent::Home:
-      if (index != -1) {
-	index = 0;
-	doCallback();
-      }
-      break;
+      case BzfKeyEvent::End:
+	if (index != -1) {
+	  index = list.size() - 1;
+	  doCallback();
+	}
+	break;
 
-    case BzfKeyEvent::End:
-      if (index != -1) {
-	index = list.size() - 1;
-	doCallback();
-      }
-      break;
-
-    default:
+      default:
+	return false;
+    }
+  
+  switch (key.ascii) {
+    case 13:
+    case 27:
       return false;
   }
 
