@@ -46,8 +46,6 @@ older bugs in BZFlag
 see the bug tracker on SourceForge for more
 http://SourceForge.net/tracker/?group_id=3248&atid=103248
 
-* expansion of smaller (e.g. tiny, thin, thief, obese) tanks can result in a stuck tank
-
 * exploding tank parts sometimes move along the ground instead of
    flying up into the air.
 
