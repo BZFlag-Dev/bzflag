@@ -535,8 +535,11 @@ void setRoamingLabel(bool force)
     hud->setRoamingLabel("Roaming");
 }
 
+static enum {None, Left, Right, Up, Down} keyboardMovement;
+
 static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
+  keyboardMovement = None;
   const std::string cmd = KEYMGR.get(key, pressed);
   if (key.ascii == 27) {
     if (pressed) {
@@ -569,9 +572,19 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     if (cmd=="fire")
       fireButton = pressed;
     roamButton = pressed;
-    std::string result = CMDMGR.run(cmd);
-    if (!result.empty())
-      std::cerr << result << std::endl;
+    if (cmd == "turn left") {
+      keyboardMovement = Left;
+    } else if (cmd == "turn right") {
+      keyboardMovement = Right;
+    } else if (cmd == "drive forward") {
+      keyboardMovement = Up;
+    } else if (cmd == "drive reverse") {
+      keyboardMovement = Down;
+    } else {
+      std::string result = CMDMGR.run(cmd);
+      if (!result.empty())
+	std::cerr << result << std::endl;
+    }
     return true;
 
   } else {
@@ -702,19 +715,27 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   // Might be a direction key. Save it for later.
   else if (myTank->isAlive()) {
     if ((myTank->getInputMethod() != LocalPlayer::Keyboard) && pressed) {
-      switch (key.button)
-	{
-	case BzfKeyEvent::Left:
-	case BzfKeyEvent::Right:
-	case BzfKeyEvent::Up:
-	case BzfKeyEvent::Down:
+      if (keyboardMovement != None)
 	  if (BZDB.isTrue("allowInputChange"))
 	    myTank->setInputMethod(LocalPlayer::Keyboard);
-	  break;
-	}
     } 
     if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
-      myTank->setKey(key.button, pressed);
+      switch (keyboardMovement) {
+      case Left:
+	myTank->setKey(BzfKeyEvent::Left, pressed);
+	break;
+      case Right:
+	myTank->setKey(BzfKeyEvent::Right, pressed);
+	break;
+      case Up:
+	myTank->setKey(BzfKeyEvent::Up, pressed);
+	break;
+      case Down:
+	myTank->setKey(BzfKeyEvent::Down, pressed);
+	break;
+      case None:
+	break;
+      }
     }
   }
 }

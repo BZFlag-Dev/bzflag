@@ -99,6 +99,10 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Server Command Key:"));
   controls.push_back(createLabel(NULL, "Hunt Key:"));
   controls.push_back(createLabel(NULL, "AutoPilot Key: "));
+  controls.push_back(createLabel(NULL, "Forward Key: "));
+  controls.push_back(createLabel(NULL, "Reverse Key: "));
+  controls.push_back(createLabel(NULL, "Left Key: "));
+  controls.push_back(createLabel(NULL, "Right Key: "));
   controls.push_back(createLabel(NULL, "Restart:"));
   controls.push_back(createLabel(NULL, "Iconify:"));
   controls.push_back(createLabel(NULL, "Fullscreen:"));
@@ -137,6 +141,10 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("servercommand", ++i);
   initkeymap("hunt", ++i);
   initkeymap("autopilot", ++i);
+  initkeymap("drive forward", ++i);
+  initkeymap("drive reverse", ++i);
+  initkeymap("turn left", ++i);
+  initkeymap("turn right", ++i);
   initkeymap("restart", ++i);
   initkeymap("iconify", ++i);
   initkeymap("fullscreen", ++i);
@@ -302,7 +310,7 @@ void KeyboardMapMenu::onScan(const std::string& name, bool press,
     return;
   if (it->second.key1.empty())
     it->second.key1 = name;
-  else if (it->second.key2.empty())
+  else if (it->second.key2.empty() && it->second.key1 != name)
     it->second.key2 = name;
 }
 
