@@ -38,6 +38,10 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui);
 /** Sends the message msg to the server. */
 void sendMessage(ServerLink& sLink, const string& msg, PlayerId target);
 
+/** Formats an incoming message. */
+string formatMessage(const string& msg, PlayerId src, 
+		     PlayerId dst, TeamColor dstTeam, PlayerId me);
+
 
 // some global variables
 map<PlayerId, string> players;
@@ -134,6 +138,7 @@ int main(int argc, char** argv) {
 
   // main loop
   string str;
+  PlayerId me = sLink.getId();
   while (true) {
     while (getServerString(sLink, str, *ui))
       ui->outputMessage(str);
@@ -143,8 +148,7 @@ int main(int argc, char** argv) {
       sendMessage(sLink, str, ui->getTarget());
       // private messages to other players aren't sent back to us, print here
       if (players.count(ui->getTarget()))
-	ui->outputMessage(string("[->") + players[ui->getTarget()] + "]: " +
-			  str);
+	ui->outputMessage(formatMessage(str, me, ui->getTarget(), NoTeam, me));
     }
   }
   delete ui;
@@ -202,54 +206,12 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
       PlayerId me = sLink.getId();
       vbuf = nboUnpackUByte(vbuf, src);
       vbuf = nboUnpackUByte(vbuf, dst);
-      str = "    ";
       
-      // get sender and receiver
-      TeamColor dstTeam = 
-	(dst >= 244 && dst <= 250 ? TeamColor(250 - dst) : NoTeam);
-      bool toAll = (dst == AllPlayers);
-      bool fromServer = (src == ServerPlayer);
-      const string srcName = 
-	(fromServer ? "SERVER" : 
-	 (players.count(src) ? players[src] : "(UNKNOWN)"));
-      const string dstName = (players.count(dst) ? players[dst] : "(UNKNOWN)");
-      std::string fullMsg;
-      std::string text = (char*)vbuf;
-      
-      // format the message
-      if (toAll || src == me || dst == me || dstTeam == myTeam) {
-	
-	// direct message to or from me
-        if (dst == me || players.count(dst)) {
-	  if (dst == me && src == me) {
-	    fullMsg = text;
-	  }
-	  else {
-	    fullMsg += "[";
-	    if (src == me) {
-	      fullMsg += "->";
-	      fullMsg += dstName;
-	    }
-	    else {
-	      fullMsg += srcName;
-	      fullMsg += "->";
-	    }
-	    fullMsg += "] ";
-	    fullMsg += text;
-	  }
-	}
-
-	// public or team message
-	else {
-	  // team message
-	  if (dstTeam != NoTeam)
-	    fullMsg += "[Team] ";
-	  fullMsg += srcName;
-	  fullMsg += ": ";
-	  fullMsg += text;
-	}
-	
-	str = fullMsg;
+      // is the message for me?
+      TeamColor dstTeam = (dst >= 244 && dst <= 250 ? 
+			   TeamColor(250 - dst) : NoTeam);
+      if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
+	str = formatMessage((char*)vbuf, src, dst, dstTeam, me);
 	return true;
       }
     }
@@ -276,3 +238,41 @@ void sendMessage(ServerLink& sLink, const string& msg, PlayerId target) {
   sLink.send(MsgMessage, sizeof(buffer2), buffer2);
 }
 
+
+string formatMessage(const string& msg, PlayerId src, 
+		     PlayerId dst, TeamColor dstTeam, PlayerId me) {
+  string formatted = "    ";
+  
+  // get sender and receiver
+  const string srcName = (src == ServerPlayer ? "SERVER" : 
+			  (players.count(src) ? players[src] : "(UNKNOWN)"));
+  const string dstName = (players.count(dst) ? players[dst] : "(UNKNOWN)");
+  
+  // direct message to or from me
+  if (dst == me || players.count(dst)) {
+    if (!(src == me && dst == me)) {
+      formatted += "[";
+      if (src == me) {
+	formatted += "->";
+	formatted += dstName;
+      }
+      else {
+	formatted += srcName;
+	formatted += "->";
+      }
+      formatted += "] ";
+    }
+    formatted += msg;
+  }
+  
+  // public or team message
+  else {
+    if (dstTeam != NoTeam)
+      formatted += "[Team] ";
+    formatted += srcName;
+    formatted += ": ";
+    formatted += msg;
+  }
+  
+  return formatted;
+}

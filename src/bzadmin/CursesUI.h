@@ -35,7 +35,7 @@ public:
   
   /** The parameters to this constructor are a map of all players and the
       local player's PlayerId. */
-  CursesUI(map<PlayerId, string>& p, PlayerId m);
+  CursesUI(const map<PlayerId, string>& p, PlayerId m);
   
   ~CursesUI();
   
@@ -65,7 +65,7 @@ protected:
   WINDOW* targetWin;
   WINDOW* cmdWin;
   string cmd;
-  map<PlayerId, string>& players;
+  const map<PlayerId, string>& players;
   map<PlayerId, string>::const_iterator targetIter;  
   PlayerId me;
   AutoCompleter comp;

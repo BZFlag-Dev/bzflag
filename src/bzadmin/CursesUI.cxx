@@ -15,7 +15,7 @@
 using namespace std;
 
 
-CursesUI::CursesUI(map<PlayerId, string>& p, PlayerId m) : 
+CursesUI::CursesUI(const map<PlayerId, string>& p, PlayerId m) : 
   players(p), me(m), maxHistory(20), currentHistory(0) {
   
   // initialize ncurses
@@ -194,16 +194,16 @@ bool CursesUI::checkCommand(string& str) {
 
 
 void CursesUI::addedPlayer(PlayerId p) {
-  comp.registerWord(players[p]);
+  comp.registerWord(players.find(p)->second);
 }
 
 
 void CursesUI::removingPlayer(PlayerId p) {
   if (targetIter->first == p) {
-    targetIter = players.begin();
+    targetIter = players.find(me);
     updateTargetWin();
   }
-  comp.unregisterWord(players[p]);
+  comp.unregisterWord(players.find(p)->second);
 }
 
 
