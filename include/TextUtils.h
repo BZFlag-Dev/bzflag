@@ -80,10 +80,11 @@ public:
 
 
     endPos = (long int)in.find(replaceMe);
-    if (endPos == std::string::npos) return in; // can't find anything to replace
+    if (endPos == (long int)std::string::npos)
+      return in; // can't find anything to replace
     if (replaceMe == "") return in; // can't replace nothing with something -- can do reverse
 
-    while (endPos != std::string::npos){
+    while (endPos != (long int)std::string::npos) {
       // push the  part up to 
       tempStream << in.substr(beginPos,endPos-beginPos); 
       tempStream << withMe;
@@ -119,16 +120,16 @@ public:
     std::ostringstream currentToken;
 	
     pos = (long int)in.find_first_not_of(delims);
-    currentChar = (pos == std::string::npos)? -1: in[pos];
+    currentChar  = (pos == (long int)std::string::npos) ? -1 : in[pos];
     enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
 
-    while (pos != std::string::npos && !enoughTokens){
+    while (pos != (long int)std::string::npos && !enoughTokens) {
 	
       // get next token
       bool tokenDone = false;
       bool foundSlash = false;
 
-      currentChar = (pos < in.size()) ? in[pos] : -1;
+      currentChar = (pos < (long int)in.size()) ? in[pos] : -1;
       while ((currentChar != -1) && !tokenDone){
 
 	tokenDone = false;
@@ -161,7 +162,8 @@ public:
 		  tokenDone = true;
 		  inQuote = false;
 		  //slurp off one additional delimeter if possible
-		  if ( (pos+1 < in.size()) && (delims.find(in[pos+1]) != std::string::npos)){
+		  if ((pos+1 < (long int)in.size())
+		      && (delims.find(in[pos+1]) != std::string::npos)) {
 		    pos++;
 		  }
 
@@ -183,7 +185,7 @@ public:
 	}
 
 	pos ++;
-	currentChar = (pos < in.size() )? in[pos] : -1;
+	currentChar = (pos < (long int)in.size()) ? in[pos] : -1;
       } // end of getting a Token
 		
       if (currentToken.str().size() > 0){ // if the token is something add to list
@@ -201,7 +203,7 @@ public:
 
     } // end of getting all tokens -- either EOL or max tokens reached
 
-    if (enoughTokens && pos != std::string::npos){
+    if (enoughTokens && pos != (long int)std::string::npos) {
       std::string lastToken = in.substr(pos);
       if (lastToken.size() > 0)
 	tokens.push_back(lastToken); 
