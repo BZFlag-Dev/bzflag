@@ -22,7 +22,6 @@ libz_a_SOURCES =	\
 	inftrees.h	\
 	infutil.c	\
 	infutil.h	\
-	maketree.c	\
 	trees.c		\
 	trees.h		\
 	uncompr.c	\
@@ -31,4 +30,7 @@ libz_a_SOURCES =	\
 	zutil.c		\
 	zutil.h
 
-EXTRA_DIST = zlib.html
+EXTRA_DIST = \
+	maketree.c	\
+	zlib.html
+
