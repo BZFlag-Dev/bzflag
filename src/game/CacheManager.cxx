@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
+#include <string>
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -279,13 +279,13 @@ static bool fileExists (const std::string& name)
 
 static void removeDirs(const std::string& path)
 {
-  unsigned int minLen = getConfigDirName().size();
+  unsigned int minLen = (unsigned int)getConfigDirName().size();
   std::string tmp = path;
   while (tmp.size() > minLen) {
 #ifndef _WIN32
-    unsigned int i = tmp.find_last_of('/');
+    unsigned int i = (unsigned int)tmp.find_last_of('/');
 #else
-    unsigned int i = tmp.find_last_of('\\');
+    unsigned int i = (unsigned int)tmp.find_last_of('\\');
 #endif
     tmp = tmp.substr(0, i);
     if (remove(tmp.c_str()) != 0) {
