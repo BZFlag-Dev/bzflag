@@ -51,7 +51,9 @@ void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
 		   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
 		   border, horizontal, driveThrough, shootThrough);
 
+#ifdef USE_TELE_NAMES
   tele->setName(name);
+#endif
   
   groupdef->addObstacle(tele);
 }
