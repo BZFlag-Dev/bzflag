@@ -1453,9 +1453,6 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("zbuffersplit")) {
       RENDERER.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
     }
-    if (BZDBCache::texture) {
-      TextureManager::instance().setMaxFilter(BZDB.get("texture"));
-    }
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");
       const int qualityLevels = countof(configQualityValues);
@@ -1466,6 +1463,11 @@ int			main(int argc, char** argv)
 	}
       }
     }
+
+    TextureManager& tm = TextureManager::instance();
+    tm.setMaxFilter(BZDB.get("texture"));
+    BZDB.set("texture", tm.getMaxFilterName());
+    
     BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 	      RENDERER.useQuality() < 2) ? "1" : "0");
     BZDB.setPersistent("_texturereplace", false);

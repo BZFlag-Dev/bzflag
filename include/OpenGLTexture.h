@@ -55,7 +55,8 @@ class OpenGLTexture {
 			LinearMipmapNearest,
 			NearestMipmapLinear,
 			LinearMipmapLinear,
-			Max = LinearMipmapLinear
+			Max = LinearMipmapLinear,
+			Default = Max
     };
 
 			OpenGLTexture(int width, int height,

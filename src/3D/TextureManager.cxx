@@ -56,8 +56,6 @@ TextureManager::TextureManager()
     procLoader[i].manager = this;
     procLoader[i].proc(procLoader[i]);
   }
-  
-  setMaxFilter(BZDB.get("texture"));
 }
 
 TextureManager::~TextureManager()

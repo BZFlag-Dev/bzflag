@@ -55,7 +55,7 @@ const char*		OpenGLTexture::configFilterNames[] = {
 //
 
 const int OpenGLTexture::filterCount = Max + 1;
-OpenGLTexture::Filter OpenGLTexture::maxFilter = LinearMipmapLinear;
+OpenGLTexture::Filter OpenGLTexture::maxFilter = Default;
 
 
 OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
