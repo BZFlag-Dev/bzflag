@@ -250,7 +250,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
       // choose minimum width
       int minWidth = scaledHeight;
-      if (minWidth > 256) minWidth = 256;
+      if (minWidth > scaledHeight) minWidth = scaledHeight;
       mountainsMinWidth = minWidth;
 
       // prepare each texture
@@ -1123,6 +1123,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     const float angleScale = M_PI /
 			(float)(numMountainTextures * numFacesPerTexture);
     int n = numFacesPerTexture / 2;
+    float hightScale = mountainsMinWidth/256.0f;
     for (j = 0; j < numMountainTextures; n += numFacesPerTexture, j++) {
       mountainsList[j].begin();
 	glBegin(GL_TRIANGLE_STRIP);
@@ -1142,7 +1143,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 	    glTexCoord2f(frac, 0.99f);
 	    glVertex3f(2.25f * worldSize * cosf(angle),
 			 2.25f * worldSize * sinf(angle),
-			 0.45f * worldSize);
+			 0.45f * worldSize*hightScale);
 	  }
 	glEnd();
 	glBegin(GL_TRIANGLE_STRIP);
@@ -1162,7 +1163,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 	    glTexCoord2f(frac, 0.99f);
 	    glVertex3f(2.25f * worldSize * cosf(angle),
 			 2.25f * worldSize * sinf(angle),
-			 0.45f * worldSize);
+			 0.45f * worldSize*hightScale);
 	  }
 	glEnd();
       mountainsList[j].end();
