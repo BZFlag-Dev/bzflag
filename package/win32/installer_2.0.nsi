@@ -10,8 +10,8 @@
 ;--------------------------------
 ;General
 
-	!define VER_MAJOR 1.11
-	!define VER_MINOR .14
+	!define VER_MAJOR 2.0
+	!define VER_MINOR .0
 
 	;Name and file
 	Name "BZFlag ${VER_MAJOR}${VER_MINOR}: - Setup"
