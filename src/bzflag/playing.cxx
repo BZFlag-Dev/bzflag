@@ -1923,15 +1923,16 @@ static void		doMotion()
       mainWindow->getJoyPosition(mx, my);
 
       static const BzfKeyEvent::Button button_map[] = {
-	BzfKeyEvent::LeftMouse,
-	BzfKeyEvent::MiddleMouse,
-	BzfKeyEvent::RightMouse,
+	BzfKeyEvent::BZ_Mouse_Button_1,
+	BzfKeyEvent::BZ_Mouse_Button_2,
+	BzfKeyEvent::BZ_Mouse_Button_3,
 	BzfKeyEvent::BZ_Mouse_Button_4,
 	BzfKeyEvent::BZ_Mouse_Button_5,
 	BzfKeyEvent::BZ_Mouse_Button_6,
 	BzfKeyEvent::BZ_Mouse_Button_7,
 	BzfKeyEvent::BZ_Mouse_Button_8,
 	BzfKeyEvent::BZ_Mouse_Button_9,
+	BzfKeyEvent::BZ_Mouse_Button_10,
 	BzfKeyEvent::F1,
 	BzfKeyEvent::F2,
 	BzfKeyEvent::F3,
