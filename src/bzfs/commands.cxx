@@ -1673,11 +1673,28 @@ void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
 }
  
 
-void handleClientqueryCmd(GameKeeper::Player *playerData, const char *)
+void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
 {
   int t = playerData->getIndex();
   DEBUG2("Clientquery requested by %s [%d]\n",
 	 playerData->player.getCallSign(), t);
+  if (strlen(message + 11) > 0) {
+    std::string name = message + 12;
+    while (isspace(name[0]))
+      name.erase(name.begin());
+    GameKeeper::Player *target;
+    int i;
+    for (i = 0; i < curMaxPlayers;i++) {
+      target = GameKeeper::Player::getPlayerByIndex(i);
+      if (target && strcmp(target->player.getCallSign(), name.c_str()) == 0) {
+        sendMessage(i, t, string_util::format("Version: %s",
+		     target->player.getClientVersion()).c_str());
+        return;
+      }
+    }
+    sendMessage(ServerPlayer, t, "Player not found.");
+    return;
+  }
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
   sendMessage(ServerPlayer, t, 
