@@ -98,6 +98,7 @@ copy debug\*.pdb ..\..\*.pdb
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
+				RuntimeTypeInfo="TRUE"
 				PrecompiledHeaderFile=".\Release/bzflag.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
