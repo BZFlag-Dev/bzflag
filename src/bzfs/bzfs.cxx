@@ -2886,8 +2886,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 {
   float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
-  if (player[playerId].restartOnBase) {
-    int team = player[playerId].team;
+  int team = player[playerId].team;
+  if (player[playerId].restartOnBase && team <= PurpleTeam) {
     float x = (baseSize[team][0] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
     float y = (baseSize[team][1] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
     pos[0] = basePos[team][0] + x * cosf(baseRotation[team]) - y * sinf(baseRotation[team]);
