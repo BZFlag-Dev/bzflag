@@ -102,7 +102,6 @@ bool VotingBooth::vote(std::string voterName, std::string response)
 
 bool VotingBooth::retractVote(const std::string voterName)
 {
-  printf ("VotingBooth::retractVote() %s\n", voterName.c_str());
   VoterResponseMap::iterator i = _vote.find(voterName);
 
   /* if not found, then nothing to retract */
