@@ -5850,7 +5850,7 @@ static void parse(int argc, char **argv)
         cerr << "argument expected for " << argv[i] << endl;
         usage(argv[0]);
       }
-      idlekickthresh = atoi(argv[i]);
+      idlekickthresh = (float) atoi(argv[i]);
     }
     else {
       cerr << "bad argument " << argv[i] << endl;
