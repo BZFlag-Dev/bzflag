@@ -23,5 +23,6 @@ endif
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =				\
+	BZFlag-Info.plist		\
 	MacBZFlag.icns			\
 	mkplist.cxx
