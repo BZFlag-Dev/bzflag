@@ -4077,7 +4077,7 @@ static void parseCommand(const char *message, int t)
   else if (hasPerm(t, PlayerAccessInfo::lagStats) && strncmp(message+1, "lagstats",8) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-	sprintf(reply,"%-16s : %3dms (%d) +- %3dms %s", player[i].callSign,
+	sprintf(reply,"%-16s : %3dms (%d) +- %2dms %s", player[i].callSign,
                 int(player[i].lagavg*1000), player[i].lagcount,
                 int(player[i].jitteravg*1000),
                 player[i].accessInfo.verified ? "(R)" : "");
