@@ -913,7 +913,7 @@ void			HUDRenderer::renderTimes(SceneRenderer& renderer)
     char buf[20];
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
-    headingFont.draw(buf, (float)centerx,
+    headingFont.draw(buf, (float)centerx + maxMotionSize - headingFont.getWidth( buf ),
 		(float)centery + (float) maxMotionSize +
 		3.0f * (headingFont.getSpacing() + headingFont.getDescent()));
   }
@@ -957,11 +957,11 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw flag help
   if (flagHelpClock.isOn()) {
     hudColor3fv(messageColor);
-    y = flagHelpY + (float)(flagHelpLines-1) * minorFont.getSpacing() - (20 * minorFont.getDescent());
+    y = flagHelpY - (20 * minorFont.getDescent());
     const char* flagHelpBase = flagHelp[flagHelpIndex].getString();
     for (i = 0; i < flagHelpLines; i++) {
       y -= minorFont.getSpacing();
-      minorFont.draw(flagHelpBase, (float)(centerx - 2.0f * maxMotionSize), y);
+      minorFont.draw(flagHelpBase, (float)(centerx - minorFont.getWidth(flagHelpBase)/2.0), y);
       while (*flagHelpBase) flagHelpBase++;
       flagHelpBase++;
     }
