@@ -1044,7 +1044,7 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   numTeleporters++;
 }
 
-void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h) 
+void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -4502,6 +4502,17 @@ static void grabFlag(int playerIndex, int flagIndex)
       player[playerIndex].flag != -1 ||
       flag[flagIndex].flag.status != FlagOnGround)
     return;
+
+  // verify position (times 2 for fudge factor)
+  const float radius2 = (TankRadius + FlagRadius) * (TankRadius + FlagRadius) * 2.0f;
+  const float* tpos = player[playerIndex].lastState.pos;
+  const float* fpos = flag[flagIndex].flag.position;
+  if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+	(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) > radius2)) {
+    DEBUG2("player %d tried to grab distant flag\n", playerIndex);
+    return;
+  }
+
   // okay, player can have it
   flag[flagIndex].flag.status = FlagOnTank;
   flag[flagIndex].flag.owner = player[playerIndex].id;
@@ -4748,7 +4759,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   float delta = dx*dx + dy*dy + dz*dz;
   if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd)) {
-    DEBUG2("shot origination %f %f %f to far from tank %f %f %f\n", 
+    DEBUG2("shot origination %f %f %f to far from tank %f %f %f\n",
 	    firingInfo.shot.pos[0], firingInfo.shot.pos[1], firingInfo.shot.pos[2],
 	    player[playerIndex].lastState.pos[0],
 	    player[playerIndex].lastState.pos[1],
@@ -5427,11 +5438,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       // if tank is not driving cannot be sure it didn't toss (V) in flight
       // if tank is not alive cannot be sure it didn't just toss (V)
-      if ((flag[player[t].flag].flag.id == VelocityFlag) 
+      if ((flag[player[t].flag].flag.id == VelocityFlag)
       ||  (player[t].lastState.pos[2] != state.pos[2])
       ||  ((state.status & PlayerState::Alive) == 0))
 	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
-      
+
       if (curPlanarSpeedSqr > (1.0 + maxPlanarSpeedSqr)) {
         char message[MessageLen];
         DEBUG1("kicking Player %s [%d]: tank too fast\n", player[t].callSign, t);
