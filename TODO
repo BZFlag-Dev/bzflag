@@ -42,6 +42,8 @@ THESE ARE LOWER PRIORITY
 
 * do ansi color in curses bzadmin
 
+* make tank scene node not use a list per size mode, just use the scale matrix.
+
 * server should track last reported player and shot positions
 
 * Improve server picked spawn locations
@@ -176,6 +178,15 @@ THESE ARE LOWER PRIORITY
 
 * smarter robots
 
+* Add some sort of spacial sorting method to the world database, searching takes too long.
+
+* Use TextureMatrix to generate UVs for objects at scale, move all objects into lists, and
+  sent to GL card ( perhaps just for "super high" quality ).
+
+* think about combining the texture/quality options to just minimum, low, normal, and high.
+
+* replace stipple shadows with blend shadows. See if there is any reason to keep stipple.
+
 * add type of shot (normal, gm, sw, etc) to killed message
 
 * radio chat:
@@ -185,6 +196,9 @@ THESE ARE LOWER PRIORITY
 * consider integrating with a real full-fledged sky model like stellarium for
   more realistic skies: http://sourceforge.net/projects/stellarium/
   very cool, but very low priority.
+
+* consider allowing maps to spcify image based skyboxes.
+
 
 
 THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
@@ -207,27 +221,40 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * remove flipz from pyr net code and replace with neg height.
 
-* remove shoothrough/drivethrough and replace with one flag
-  meaning passable
+* add a singe passable flag for objects that sets both shootthrough and drivethrough
+  leave the 2 inernal flags seperate for map makers who want to use them.
+  "magnetic" for "force fields" if they want.
 
 * ipv6 support
 
 * consider using ENet http://enet.cubik.org/ for
    the network protocol
 
-* implement texture cache on client and have server offer
-   new textures as part of the world.
+* make the texture manager give out IDs ( wrapered or raw ),
+  and have everyone use the ID, not the image pointer, as it can change.
 
-* allow user specified textures for world.
+* allow user specified textures for world on a per object basis.
 
-* allow user specified textures for tanks that get sent to all players
-  either by name and/or by sending the image data.
+* allow user specified textures for tanks on a per tank basis.
 
-* allow user specified meshes as "tanks" ( this has LOTS of issues ).
+* allow user specified meshes for tank models( this has LOTS of issues )
+  on a per tank basis.
+   figure out what to do with the shadows.
+   figure out what to do with the IDL.
+   figure out what to about LOD.
+   figure out where to atach the flag.
+   figure out how to do the 3 lights on top.
+   figure out how to do team colors if a team skin is not provided.
 
-* supply tank meshes and textures from the server if client does not have.
+* supply tank/map meshes and textures from the server if client does not have.
+    implement resouce cache on client and have server offer
+    new resources as needed. (md5 resouces to ensure they are the same??)
 
-* allow client to choose a mesh from the server list
+* allow client to only choose meshs from the server list
+
+* find some way to limit tank skins to team colors.
+
+* Add a platform that uses SDL.
 
 * implement one way cross server teleporters
 
@@ -238,6 +265,20 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
    a game.  basic text chat facilities.  allows players
    to wait for enough players for a game and to discuss
    strategy, etc.  could build this into bzfs easily.
+
+* look into doing projected textures for light glows, this would
+  get rid of the 8 light limit.
+
+* look into burning global lighting into world, perhaps with lightmaps. Allow map lights.
+
+* look into useing projected textures or some other shadow method that allows for better shadows.
+
+* look into removing the GL 1.0 code and requireing GL 1.1
+
+* see if 3dfx/other old hardware limits are still practical.
+
+* break rending system into seperate lib and allow difrent rednerers that are targeted
+  to hardware or software.
 
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
