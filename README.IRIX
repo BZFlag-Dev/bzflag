@@ -46,10 +46,10 @@ other files..  Repeat the above example compile line for those files
 by replacing multicast with the corresponding file name.  Some files
 will simply take a very long time to compile, so be patient. ;)
 
-The next hurdle to overcome will be a link error for 3 of then
-executables (bzfs, bzflag, bzadmin) that link against libraries that
-contain instantiated templates.  That is to say that the compile will
-fail with "Unresolved text symbol" errors when it tries to link the
+The next hurdle to overcome will be a link error for 2 of then
+executables (bzfs & bzflag) that link against libraries that contain
+instantiated templates.  That is to say that the compile will fail
+with "Unresolved text symbol" errors when it tries to link the
 binaries.
 
 This issue is merely a problem of figuring out the proper compiler
@@ -68,8 +68,22 @@ Basically copy-paste the link line that fails, and replace libCommon.a
 (and libGLKit if you see it) with *.o.  The pre-linker will kick in
 again and build some more, and the link should complete.  You should
 then be able to return to the top-level of the source tree and
-continue compiling.  You'll need to do this for bzflag, bzfs, and
-bzadmin.
+continue compiling.  You'll need to do this for both bzflag and bzfs.
+
+The last problem that you may encounter on older IRIX systems is a
+problem in the curses.h header.  The header uses a symbol name that is
+not valid with the CC C++ compiler:
+
+cc-1084 CC: ERROR File = /usr/include/curses.h, Line = 611
+  The indicated declaration has an invalid combination of type specifiers.
+
+                syncok(WINDOW *, int bool),
+
+Again there is a relatively simple work around, though this one
+involves actually editing a file.  Copy the /usr/include/curses.h file
+to the bzflag include/ directory.  Edit the file and replace "int
+bool" with "int b".  Save the file, and restart make and the build
+should succeed.  Best of luck.
 
 See the generic install instructions in README for more details.
 
