@@ -161,7 +161,7 @@ player to server messages:
   MsgQueryPlayers	request for player list
 			<-- MsgQueryPlayers
   MsgAlive		player says he's coming alive
-			--> /id,/ position, forward-vector
+			--> /id,
 			<== MsgAlive
   MsgKilled		player says he's been killed
 			--> /id,/ killer-id, reason, killer-shot-id

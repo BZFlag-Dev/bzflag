@@ -154,7 +154,6 @@ static std::deque<std::string> messageHistory;
 static unsigned int	messageHistoryIndex = 0;
 static std::vector<std::string>	silencePlayers;
 
-static void		restartPlaying();
 static void		setTarget();
 static void		setHuntTarget();
 static void*		handleMsgSetVars(void *msg);
@@ -2002,7 +2001,7 @@ static std::string cmdRestart(const std::string&, const CommandManager::ArgList&
     return "usage: restart";
   if (myTank != NULL)
     if (!gameOver && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding())
-      restartPlaying();
+      serverLink->sendAlive();
   return std::string();
 }
 
@@ -2989,21 +2988,29 @@ static void		handleServerMessage(bool human, uint16_t code,
 
   case MsgAlive: {
     PlayerId id;
-    float pos[3], forward[3];
+    float pos[3], forward;
     msg = nboUnpackUByte(msg, id);
     msg = nboUnpackVector(msg, pos);
-    msg = nboUnpackVector(msg, forward);
+    msg = nboUnpackFloat(msg, forward);
     int playerIndex = lookupPlayerIndex(id);
-    if (playerIndex >= 0) {
+    
+    if ((playerIndex >= 0) || (playerIndex == -2)) {
       static const float zero[3] = { 0.0f, 0.0f, 0.0f };
       Player* tank = getPlayerByIndex(playerIndex);
+      if (tank == myTank) {
+        myTank->restart(pos, forward);
+        firstLife = false;
+        mainWindow->warpMouse();
+        hud->setAltitudeTape(World::getWorld()->allowJumping());
+      }
       tank->setStatus(PlayerState::Alive);
-      tank->move(pos, atan2f(forward[1], forward[0]));
+      tank->move(pos, forward);
       tank->setVelocity(zero);
       tank->setAngularVelocity(0.0f);
       tank->setDeadReckoning();
       playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
     }
+
     break;
   }
 
@@ -3733,27 +3740,6 @@ static void		doMessages()
       handleServerMessage(false, code, len, msg);
   }
 #endif
-}
-
-static void		restartPlaying()
-{
-  // restart my tank
-  float startAzimuth;
-  float bestStartPoint[3];
-
-  myTank->startingLocation(bestStartPoint, startAzimuth, world,
-			   (Player**) player, curMaxPlayers);
-
-  // restart the tank
-  myTank->restart(bestStartPoint, startAzimuth);
-  if (myTank->getTeam() != ObserverTeam)
-    serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
-  firstLife = false;
-  mainWindow->warpMouse();
-  playLocalSound(SFX_POP);
-
-  // make sure altitude tape is correctly on/off
-  hud->setAltitudeTape(World::getWorld()->allowJumping());
 }
 
 static void		updateFlags(float dt)
@@ -4536,7 +4522,7 @@ static void		updateRobots(float dt)
 				  (Player**) player, curMaxPlayers);
 
       robots[i]->restart(bestStartPoint, startAzimuth);
-      robotServer[i]->sendAlive(robots[i]->getPosition(), robots[i]->getForward());
+      robotServer[i]->sendAlive();
       setRobotTarget(robots[i]);
     }
     else if (pickTarget || !robots[i]->getTarget()

@@ -578,14 +578,9 @@ void			ServerLink::sendEndShot(const PlayerId& source,
   send(MsgShotEnd, sizeof(msg), msg);
 }
 
-void			ServerLink::sendAlive(const float* pos,
-						const float* forward)
+void			ServerLink::sendAlive()
 {
-  char msg[24];
-  void* buf = msg;
-  buf = nboPackVector(buf, pos);
-  buf = nboPackVector(buf, forward);
-  send(MsgAlive, sizeof(msg), msg);
+  send(MsgAlive, 0, NULL);
 }
 
 void			ServerLink::sendTeleport(int from, int to)

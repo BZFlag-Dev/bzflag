@@ -65,7 +65,7 @@ class ServerLink {
     void		sendPlayerUpdate(Player*);
     void		sendBeginShot(const FiringInfo&);
     void		sendEndShot(const PlayerId&, int shotId, int reason);
-    void		sendAlive(const float* pos, const float* fwd);
+    void		sendAlive();
     void		sendTeleport(int from, int to);
     void		sendTransferFlag(const PlayerId&, const PlayerId&);
     void		sendNewRabbit();

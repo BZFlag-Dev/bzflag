@@ -104,6 +104,8 @@ static TimeKeeper lastWorldParmChange;
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
+static void getSpawnLocation( int team, float* pos, float *azimuth);
+
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(int flagIndex);
 static void dropFlag(int playerIndex, float pos[3]);
@@ -2811,6 +2813,36 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
+static void getSpawnLocation( int team, float* pos, float *azimuth)
+{
+  team = 0; //team isn't used presently, just quell the warnings
+
+  float size = BZDB->eval( StateDatabase::BZDB_WORLDSIZE);
+  WorldInfo::ObstacleLocation *building;
+
+  int lastType = IN_PYRAMID;
+  while ((lastType == IN_PYRAMID) || (lastType == IN_TELEPORTER)) {
+    pos[0] = (bzfrand() * size) - (size/2.0f);
+    pos[1] = (bzfrand() * size) - (size/2.0f);
+    pos[2] = (bzfrand() * maxWorldHeight);
+
+    int type = world->inBuilding(&building, pos[0], pos[1], pos[2], 2.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+    if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
+      pos[2] = 0.0f;
+      type = world->inBuilding(&building, pos[0], pos[1], pos[2], 2.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+    }
+
+    lastType = NOT_IN_BUILDING;
+    while (type != NOT_IN_BUILDING) {
+      pos[2] = building->pos[2] + building->size[2] + 0.25f;
+      lastType = type;
+      type = world->inBuilding(&building, pos[0], pos[1], pos[2], 2.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+    }
+  }
+
+  *azimuth = bzfrand() * 2.0f * M_PI;
+}
+
 static void sendWorld(int playerIndex, uint32_t ptr)
 {
   // send another small chunk of the world database
@@ -2882,7 +2914,7 @@ static void sendQueryPlayers(int playerIndex)
       sendPlayerUpdate(i, playerIndex);
 }
 
-static void playerAlive(int playerIndex, const float *pos, const float *fwd)
+static void playerAlive(int playerIndex)
 {
   // player is coming alive.
   player[playerIndex].state = PlayerAlive;
@@ -2893,10 +2925,12 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
     return;
 
   // send MsgAlive
+  float pos[3], fwd;
+  getSpawnLocation(player[playerIndex].team, pos, &fwd);
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackVector(buf,pos);
-  buf = nboPackVector(buf,fwd);
+  buf = nboPackFloat(buf,fwd);
   broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
@@ -3698,11 +3732,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (clOptions->timeLimit>0.0f && !countdownActive)
 	player[t].playedEarly = true;
 #endif
-      // data: position, forward-vector
-      float pos[3], fwd[3];
-      buf = nboUnpackVector(buf, pos);
-      buf = nboUnpackVector(buf, fwd);
-      playerAlive(t, pos, fwd);
+      playerAlive(t);
       break;
     }
 
