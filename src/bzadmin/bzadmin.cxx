@@ -29,13 +29,23 @@ using namespace std;
 */
 
 
+/** These values may be returned by getServerString(). */
+enum ServerCode {
+  GotMessage,
+  NoMessage,
+  Superkilled,
+  CommError
+};
+
+
 // function prototypes
 /** Checks for new packets from the server, ignores them or stores a
     text message in @c str. Tells @c ui about new or removed players. Returns
-    false if no interesting packets have arrived. 
-    @throws std::string
+    0 if no interesting packets have arrived, 1 if a message has been stored
+    in @c str, negative numbers for errors.
 */
-bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui);
+ServerCode getServerString(ServerLink& sLink, string& str, 
+			   BZAdminUI* ui = NULL);
 
 /** Sends the message @c msg to the server with the player or team @c target
     as receiver. */
@@ -44,6 +54,9 @@ void sendMessage(ServerLink& sLink, const string& msg, PlayerId target);
 /** Formats an incoming message. */
 string formatMessage(const string& msg, PlayerId src,
 		     PlayerId dst, TeamColor dstTeam, PlayerId me);
+
+/** Waits until we think the server has processed all our input so far. */
+void waitForServer(ServerLink& sLink);
 
 
 // some global variables
@@ -134,6 +147,7 @@ int main(int argc, char** argv) {
   if (op.getParameters().size() > 1) {
     for (unsigned int i = 1; i < op.getParameters().size(); ++i)
       sendMessage(sLink, op.getParameters()[i], AllPlayers);
+    waitForServer(sLink);
     return 0;
   }
 
@@ -143,42 +157,39 @@ int main(int argc, char** argv) {
   // main loop
   string str;
   PlayerId me = sLink.getId();
-  try {
-    while (true) {
-      while (getServerString(sLink, str, *ui))
-	ui->outputMessage(str);
-      if (ui->checkCommand(str)) {
-	if (str == "/quit")
-	  break;
-	sendMessage(sLink, str, ui->getTarget());
-	// private messages to other players aren't sent back to us, print here
-	if (players.count(ui->getTarget()))
-	  ui->outputMessage(formatMessage(str, me, 
-					  ui->getTarget(), NoTeam, me));
-      }
-    }
-    
-    // we need to know that the server has processed all our messages
-    // send a private message to ourself and wait for it to come back
-    // this assumes that the order of messages isn't changed along the way
-    if (sLink.getState() == ServerLink::Okay) {
-      sendMessage(sLink, "bzadminping", me);
-      string expected = formatMessage("bzadminping", me, me, NoTeam, me);
-      do {
-	getServerString(sLink, str, *ui);
-      } while (str != expected);
+  ServerCode what(NoMessage);
+  while (true) {
+    while ((what = getServerString(sLink, str, ui)) == GotMessage)
+      ui->outputMessage(str);
+    if (what == Superkilled || what == CommError)
+      break;
+    if (ui->checkCommand(str)) {
+      if (str == "/quit")
+	break;
+      sendMessage(sLink, str, ui->getTarget());
+      // private messages to other players aren't sent back to us, print here
+      if (players.count(ui->getTarget()))
+	ui->outputMessage(formatMessage(str, me, 
+					ui->getTarget(), NoTeam, me));
     }
   }
-  catch (const string& error) {
-    ui->outputMessage(string("--- ERROR: ") + error);
-  }
+  switch (what) {
+  case Superkilled:
+    ui->outputMessage("--- ERROR: Server forced disconnect");
+    break;
+  case CommError:
+    ui->outputMessage("--- ERROR: Connection to server lost");
+    break;
+  default:
+    waitForServer(sLink);
+  }  
   delete ui;
 
   return 0;
 }
 
 
-bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
+ServerCode getServerString(ServerLink& sLink, string& str, BZAdminUI* ui) {
   uint16_t code, len;
   char inbuf[MaxPacketLen];
   int e;
@@ -207,20 +218,21 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
       vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
       vbuf = nboUnpackString(vbuf, email, EmailLen);
       players[p] = callsign;
-      if (p != sLink.getId())
-	ui.addedPlayer(p);
+      if (p != sLink.getId() && ui != NULL)
+	ui->addedPlayer(p);
       str = str + "*** '" + callsign + "' joined the game.";
-      return true;
+      return GotMessage;
 
     case MsgRemovePlayer:
       vbuf = nboUnpackUByte(vbuf, p);
       str = str + "*** '" + players[p] + "' left the game.";
-      ui.removingPlayer(p);
+      if (ui != NULL)
+	ui->removingPlayer(p);
       players.erase(p);
-      return true;
+      return GotMessage;
 
     case MsgSuperKill:
-      throw string("Server forced a disconnect");
+      return Superkilled;
 
     case MsgMessage:
 
@@ -238,21 +250,22 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
 	str = (char*)vbuf;
 	if (str == "CLIENTQUERY") {
 	  sendMessage(sLink, string("bzadmin ") + getAppVersion(), src);
-	  ui.outputMessage("    [Sent versioninfo per request]");
+	  if (ui != NULL)
+	    ui->outputMessage("    [Sent versioninfo per request]");
 	}
 	else {
 	  str = formatMessage((char*)vbuf, src, dst, dstTeam, me);
-	  return true;
+	  return GotMessage;
 	}
       }
     }
   }
   
   if (e == -1) {
-    throw string("Server communication error");
+    return CommError;
   }
   
-  return false;
+  return NoMessage;
 }
 
 
@@ -305,4 +318,20 @@ string formatMessage(const string& msg, PlayerId src,
   }
 
   return formatted;
+}
+
+
+void waitForServer(ServerLink& sLink) {
+  // we need to know that the server has processed all our messages
+  // send a private message to ourself and wait for it to come back
+  // this assumes that the order of messages isn't changed along the way
+  PlayerId me = sLink.getId();
+  if (sLink.getState() == ServerLink::Okay) {
+    sendMessage(sLink, "bzadminping", me);
+    string expected = formatMessage("bzadminping", me, me, NoTeam, me);
+    string str;
+    do {
+      getServerString(sLink, str);
+    } while (str != expected);
+  }
 }
