@@ -13,6 +13,9 @@
 /* interface header */
 #include "NetHandler.h"
 
+// system headers
+#include <errno.h>
+
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
   : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0),
