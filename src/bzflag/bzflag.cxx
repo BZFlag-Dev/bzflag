@@ -381,9 +381,9 @@ static void		parse(int argc, char** argv,
 	usage();
       }
       if (strlen(argv[i]) == 0)
-	resources.removeValue("directory");
+	BZDB->unset("directory");
       else
-	resources.addValue("directory", argv[i]);
+	BZDB->set("directory", argv[i]);
     }
     else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
@@ -436,7 +436,7 @@ static void		parse(int argc, char** argv,
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-      resources.addValue("latitude", argv[i]);
+      BZDB->set("latitude", argv[i]);
     }
     else if (strcmp(argv[i], "-longitude") == 0) {
       if (++i == argc) {
@@ -448,7 +448,7 @@ static void		parse(int argc, char** argv,
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-      resources.addValue("longitude", argv[i]);
+      BZDB->set("longitude", argv[i]);
     }
     else if (strcmp(argv[i], "-list") == 0) {
       if (++i == argc) {
@@ -1052,8 +1052,8 @@ int			main(int argc, char** argv)
     window->initJoystick(BZDB->get("joystickname").c_str());
 
   // set data directory if user specified
-  if (db.hasValue("directory"))
-    PlatformFactory::getMedia()->setMediaDirectory(db.getValue("directory"));
+  if (BZDB->isSet("directory"))
+    PlatformFactory::getMedia()->setMediaDirectory(BZDB->get("directory"));
 
     else
     {
