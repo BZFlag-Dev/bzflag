@@ -42,6 +42,7 @@
 				OutputFile=".\..\..\src\bzfs\bzfs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="libcurl.lib"
 				ProgramDatabaseFile="../src/bzfs/bzfs.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
@@ -102,6 +103,7 @@
 				OutputFile=".\..\..\src\bzfs\debug\bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="libcurl.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzfs\debug/bzfs.pdb"
 				SubSystem="1"
