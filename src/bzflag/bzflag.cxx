@@ -712,6 +712,9 @@ void			dumpResources(BzfDisplay* display,
   sprintf(buf, "%d", renderer.getRadarSize());
   db.addValue("radarsize", buf);
 
+  sprintf(buf, "%d", renderer.getMaxMotionFactor());
+  db.addValue("mouseboxsize", buf);
+
   db.addValue("bigfont", renderer.useBigFont() ? "yes" : "no");
 
   // don't save these configurations
@@ -1184,6 +1187,8 @@ int			main(int argc, char** argv)
       renderer.setPanelOpacity((float)atof(db.getValue("panelopacity").c_str()));
     if (db.hasValue("radarsize"))
       renderer.setRadarSize(atoi(db.getValue("radarsize").c_str()));
+    if (db.hasValue("mouseboxsize"))
+      renderer.setMaxMotionFactor(atoi(db.getValue("mouseboxsize").c_str()));
     if (db.hasValue("bigfont"))
       renderer.setBigFont(db.getValue("bigfont") == "yes");
   }

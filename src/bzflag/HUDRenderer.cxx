@@ -254,9 +254,10 @@ void			HUDRenderer::resize(bool firstTime)
     const float xScale = (float)w / (float) MinX;
     const float yScale = (float)vh / (float) MinY;
     const float scale = (xScale < yScale) ? xScale : yScale;
-    maxMotionSize = (int)((float)MaxMotionSize * scale);
-    noMotionSize = (int)((float)NoMotionSize * scale / 2.0f);
-    headingOffset = 22.0f * (scale > 1.0f ? 1.0f : scale);
+    const float effScale =  scale * ( 0.7f + SceneRenderer::getInstance()->getMaxMotionFactor() / 16.667f);
+    maxMotionSize = (int)((float)MaxMotionSize * effScale);
+    noMotionSize = (int)((float)NoMotionSize * effScale / 2.0f);
+    headingOffset = 22.0f * (effScale > 1.0f ? 1.0f : effScale);
   }
 
   // initialize readout spacings

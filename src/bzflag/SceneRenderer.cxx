@@ -90,6 +90,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				radarShotLength(0),
 				panelOpacity(0.3f),
 				radarSize(4),
+				maxMotionFactor(5),
 				useBigFontOn(false),
 				useFogHack(false),
 				viewType(Normal),
@@ -459,7 +460,6 @@ void			SceneRenderer::setRadarSize(int size)
 {
   radarSize = size;
   notifyStyleChange();
-  window.setFullView(panelOpacity < 1.0f);
   window.getWindow()->callResizeCallbacks();
 }
 
@@ -468,6 +468,18 @@ int			SceneRenderer::getRadarSize() const
   return radarSize;
 }
 
+
+void			SceneRenderer::setMaxMotionFactor(int factor)
+{
+  maxMotionFactor = factor;
+  notifyStyleChange();
+  window.getWindow()->callResizeCallbacks();
+}
+
+int			SceneRenderer::getMaxMotionFactor() const
+{
+  return maxMotionFactor;
+}
 
 void			SceneRenderer::setColoredShots(bool _setColoredShots)
 {

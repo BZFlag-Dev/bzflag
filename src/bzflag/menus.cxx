@@ -909,6 +909,26 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   list.push_back(option);
 
+  // set maxmotion size
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Mouse Box Size:");
+  option->setCallback(callback, (void*)"M");
+  options = &option->getList();
+  options->push_back(std::string("[O----------]"));
+  options->push_back(std::string("[-O---------]"));
+  options->push_back(std::string("[--O--------]"));
+  options->push_back(std::string("[---O-------]"));
+  options->push_back(std::string("[----O------]"));
+  options->push_back(std::string("[-----O-----]"));
+  options->push_back(std::string("[------O----]"));
+  options->push_back(std::string("[-------O---]"));
+  options->push_back(std::string("[--------O--]"));
+  options->push_back(std::string("[---------O-]"));
+  options->push_back(std::string("[----------O]"));
+  option->update();
+  list.push_back(option);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -958,6 +978,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useColoredShots() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarShotLength());
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
+    ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
   }
 }
 
@@ -992,6 +1013,12 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'R':
     {
       sceneRenderer->setRadarSize(list->getIndex());
+      break;
+    }
+
+    case 'M':
+    {
+      sceneRenderer->setMaxMotionFactor(list->getIndex());
       break;
     }
   }
