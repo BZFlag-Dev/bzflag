@@ -12,7 +12,10 @@
 
 #include "global.h"
 
-
+// todo: do this for non windows too, as soon as autoconf can make version.h
+#ifdef _MSC_VER 
+#include "version.h"
+#endif
 
 GlobalDBItem				globalDBItems[] = {
 	{ "_angleTolerance",		"0.01",				false, StateDatabase::Locked},

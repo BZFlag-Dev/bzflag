@@ -266,6 +266,10 @@ SOURCE=..\include\TimeKeeper.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\version.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\VotingBooth.h
 # End Source File
 # Begin Source File
