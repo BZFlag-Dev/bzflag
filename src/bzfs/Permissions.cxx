@@ -170,6 +170,9 @@ bool PlayerAccessInfo::exists() {
 bool PlayerAccessInfo::hasGroup(const std::string &group)
 {
   std::string str = group;
+	if (!str.size())
+		return false;
+
   makeupper(str);
 
   return std::find(groups.begin(), groups.end(), str) != groups.end();
