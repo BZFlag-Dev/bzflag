@@ -5564,12 +5564,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       }
 		// make sure the player is still in the map
 	  // test all the map bounds + some fudge factor, just in case
-	  float	fudge = 10.0f;
+	  float	fudge = 5.0f;
 	  bool InBounds = true;
 
-	  if ( (state.pos[1] >= WorldSize + fudge) || (state.pos[1] <= -WorldSize - fudge))
+	  if ( (state.pos[1] >= WorldSize*0.5f + fudge) || (state.pos[1] <= -WorldSize*0.5f - fudge))
 		  InBounds = false;
-	  else if ( (state.pos[0] >= WorldSize + fudge) || (state.pos[0] <= -WorldSize - fudge))
+	  else if ( (state.pos[0] >= WorldSize*0.5f + fudge) || (state.pos[0] <= -WorldSize*0.5f - fudge))
 		  InBounds = false;
 
 	  // kick em cus they are cheating
