@@ -107,6 +107,10 @@ SOURCE=..\src\bzfs\bzfs.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\Permissions.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzfs\TextChunkManager.cxx
 # End Source File
 # Begin Source File
@@ -152,6 +156,10 @@ SOURCE=..\include\multicast.h
 # Begin Source File
 
 SOURCE=..\include\Pack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\Permissions.h
 # End Source File
 # Begin Source File
 
