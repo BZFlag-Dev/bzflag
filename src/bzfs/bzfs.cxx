@@ -409,11 +409,14 @@ bool readGroupsFile(const std::string &filename)
     while ((in >> c) && (!in.eof()) && (c != '\n'))
       perm += c;
 
+
+
     if (name.size() == 0 || perm.size() == 0)
       done = true;
     else {
       makeupper(name);
       PlayerAccessInfo info;
+	  parsePermissionString(perm.c_str(),info.explicitAllows);
       info.verified = true;
       groupAccess[name] = info;
     }
