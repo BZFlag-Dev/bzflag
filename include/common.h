@@ -61,9 +61,6 @@ extern int debugLevel;
 #define vsnprintf _vsnprintf
 #endif
 
-#include <assert.h>
-#include <stddef.h>
-
 // some platforms don't have float versions of the math library
 #if defined(_old_linux_) || defined(__APPLE__) || defined(sun)
 #define	asinf		(float)asin

@@ -11,6 +11,7 @@
  */
 
 #include <string.h>
+#include <assert.h>
 #include "common.h"
 #include "OpenGLGState.h"
 #include "TextureManager.h"

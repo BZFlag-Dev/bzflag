@@ -17,6 +17,7 @@
 // system headers
 #include <ctype.h>
 #include <stdio.h>
+#include <assert.h>
 
 // class-specific headers
 #include "CommandManager.h"

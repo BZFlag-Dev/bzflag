@@ -14,6 +14,7 @@
 #pragma warning( 4:4786)
 #endif
 
+#include <assert.h>
 #include <iostream>
 #include <string>
 #include <string.h>
