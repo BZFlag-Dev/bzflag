@@ -166,7 +166,7 @@ static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
 static char sMsgBuf[MaxPacketLen];
 char *getDirectMessageBuffer()
 {
-  return &sMsgBuf[2*sizeof(short)];
+  return &sMsgBuf[2*sizeof(uint16_t)];
 }
 
 
@@ -177,7 +177,7 @@ static int directMessage(GameKeeper::Player &playerData,
 			 uint16_t code, int len, const void *msg)
 {
   // send message to one player
-  void *bufStart = (char *)msg - 2*sizeof(short);
+  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
 
   void *buf = bufStart;
   buf = nboPackUShort(buf, uint16_t(len));

@@ -36,7 +36,7 @@ class SphereSceneNode;
 class Obstacle;
 
 const int PlayerUpdatePLenMax = PlayerIdPLen + 42 +
-				(3 * sizeof(short)) + sizeof(int);
+				(3 * sizeof(int16_t)) + sizeof(int32_t);
 
 class Player {
 public:
