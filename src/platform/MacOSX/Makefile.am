@@ -1,16 +1,18 @@
 libMac_a_SOURCES =			\
-	SDLMain.h			\
-	SDLMain.m			\
-	MacPlatformFactory.cxx		\
-	MacPlatformFactory.h		\
 	MacDisplay.cxx			\
 	MacDisplay.h			\
+	MacMedia.cxx			\
+	MacMedia.h			\
+	MacPlatformFactory.cxx		\
+	MacPlatformFactory.h		\
 	MacVisual.cxx			\
 	MacVisual.h			\
 	MacWindow.cxx			\
 	MacWindow.h			\
-	MacMedia.cxx			\
-	MacMedia.h
+	SDLMain.h			\
+	SDLMain.m
+
+libMac_a_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
 
 if MACOS
 if CLIENT_INCLUDED
@@ -19,8 +21,6 @@ endif
 endif
 
 MAINTAINERCLEANFILES = Makefile.in
-
-AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
 
 EXTRA_DIST =				\
 	MacBZFlag.icns			\
