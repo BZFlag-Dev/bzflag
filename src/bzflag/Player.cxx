@@ -226,7 +226,7 @@ void			Player::updateFlagProperties(float dt)
 {
   // copy the current dimensions to the old dimensions
   memcpy (oldDimensions, dimensions, sizeof(float[3]));
-
+  
   // update the dimensions
   for (int i = 0; i < 3; i++) {
     if (dimensionsRate[i] != 0.0f) {
@@ -538,7 +538,7 @@ void			Player::setCloaked(bool invisible)
 }
 
 
-void            Player::setLanded(float velocity)
+void            Player::setLandingSpeed(float velocity)
 {
   float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
   if (squishiness < 0.001f) {
@@ -783,7 +783,7 @@ void			Player::doDeadReckoning()
 
   if (((oldStatus & PlayerState::Falling) != 0) &&
       ((inputStatus & PlayerState::Falling) == 0)) {
-    setLanded(oldZSpeed);
+    setLandingSpeed(oldZSpeed);
   }
   oldZSpeed = inputZSpeed;
   oldStatus = inputStatus;

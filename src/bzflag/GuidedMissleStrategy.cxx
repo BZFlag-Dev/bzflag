@@ -169,7 +169,7 @@ void GuidedMissileStrategy::update(float dt)
     desiredDir[0] = targetPos[0] - nextPos[0];
     desiredDir[1] = targetPos[1] - nextPos[1];
     desiredDir[2] = targetPos[2] - nextPos[2];
-    desiredDir[2] += 0.5f * target->getDimensions()[2]; // aim for the heart
+    desiredDir[2] += target->getMuzzleHeight(); // right between the eyes
 
     // compute desired angles
     float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);

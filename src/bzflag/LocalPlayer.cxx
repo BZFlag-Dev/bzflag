@@ -592,14 +592,31 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
 
-  if (gettingSound) {
-    // play landing sound if we weren't on something and now we are
-    if (oldLocation == InAir && (location == OnGround || location == OnBuilding)) {
-      playLocalSound(SFX_LAND);
-      setLanded(oldVelocity[2]);
+  // deal with drop sounds and effects
+  if (entryDrop) {
+    // because the starting position that the server sends can result
+    // in an initial InAir condition, we use this bool to avoid having
+    // a false jump mess with the spawnEffect()
+    // FIXME: this isn't a clean way to do it
+    if ((oldLocation == InAir) == (location == InAir)) {
+      entryDrop = false;
     }
-    else if (location == OnGround && oldPosition[2] == 0.0f && newPos[2] < 0.f)
-      playLocalSound(SFX_BURROW);
+  } else {
+    const bool justLanded =
+      (oldLocation == InAir && (location == OnGround || location == OnBuilding));
+
+    if (justLanded) {
+      setLandingSpeed(oldVelocity[2]);
+    }
+    if (gettingSound) {
+      // play landing sound if we weren't on something and now we are
+      if (justLanded) {
+        playLocalSound(SFX_LAND);
+      }
+      else if (location == OnGround && oldPosition[2] == 0.0f && newPos[2] < 0.f) {
+        playLocalSound(SFX_BURROW);
+      }
+    }
   }
 
   // set falling status
@@ -815,6 +832,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   down  = false;
   doUpdateMotion(0.0f);
   updateHandicap();
+  entryDrop = true;
 
   // make me alive now
   setStatus(getStatus() | short(PlayerState::Alive));

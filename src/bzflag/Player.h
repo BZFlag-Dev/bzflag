@@ -87,7 +87,7 @@ public:
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setHidden(bool hidden = true);
   void		setCloaked(bool cloaked = true);
-  void		setLanded(float velocity);
+  void		setLandingSpeed(float velocity);
   void		spawnEffect();
 
   bool		isAlive() const;

@@ -1546,12 +1546,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	tank->setAngularVelocity(0.0f);
 	tank->setDeadReckoning();
 	tank->spawnEffect();
-	if (tank==myTank) {
+	if (tank == myTank) {
 	  playLocalSound(SFX_POP);
 	  myTank->setSpawning(false);
-	}
-	else
+	} else {
 	  playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
+        }
       }
 
       break;
