@@ -108,7 +108,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "bigfont",			"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "underline",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	setDepthBuffer },
+  { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },
@@ -1094,6 +1094,9 @@ int			main(int argc, char** argv)
 //  glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   OpenGLGState::init();
+
+  // add the zbuffer callback here, after the OpenGL context is initialized
+  BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
 
   // if we're running on 3Dfx fullscreen add a fake cursor.
   // let the defaults file override this, though.

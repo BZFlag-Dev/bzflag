@@ -17,10 +17,6 @@ recent bugs
   expected behavior, but I expect one can also trojan any server's counts 
   using this same technique..
 
-- When changing from zbuffer on to zbuffer off, SceneDatabaseBuilder::make needs
-  to be called to remake the scene database and pick the proper one based on the
-  current options.
-
 - client crashes upon receipt of a corrupted MsgFlagUpdate message.
   (See http://bzflag.secretplace.us/packet.txt for an example)
 

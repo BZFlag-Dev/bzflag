@@ -28,14 +28,8 @@ void setFlagHelp(const std::string& name, void*)
     hud->setFlagHelp(Flags::Null, 0.0);
 }
 
-void setDepthBuffer(const std::string&, void*)
+void setDepthBuffer(const std::string& name, void*)
 {
-  /* FIXME - time dependant callback is not safe.  cannot make
-   * ogl call until the pipeline/context is initialized, whereas
-   * this callback is made when zbuffer is set in config file.
-   * that can crash a client.
-   */
-#if 0
   /* if zbuffer was set and not available, unset it */
   if (BZDB.isTrue(name)) {
     GLint value;
@@ -48,7 +42,6 @@ void setDepthBuffer(const std::string&, void*)
       BZDB.addCallback(name, setDepthBuffer, NULL);
     }
   }
-#endif
 }
 
 // Local Variables: ***
