@@ -717,6 +717,8 @@ Creates a world weapon, or a weapon fired automatically by the world.
 .br
 \fB  rotation\fR 0.0
 .br
+\fB  tilt\fR 0.0
+.br
 \fB  initdelay\fR 10.0
 .br
 \fB  delay\fR 10.0 3.0 5.0 3.0
