@@ -92,13 +92,13 @@ inline int getBuildDate()
 
 // version stuff, as there was no where else
 
-inline const char*			getProtocolVersion()
+inline const char*		getProtocolVersion()
 {
   static std::string protVersion = BZ_PROTO_VERSION;
   return protVersion.c_str();
 }
 
-inline const char*			getServerVersion()
+inline const char*		getServerVersion()
 {
   static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
   return serverVersion.c_str();
@@ -112,12 +112,15 @@ inline const char*		getAppVersion()
     // TODO add current platform, release, cpu, etc
     appVersionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV << "." << BZ_BUILD_DATE
 	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
+#ifdef HAVE_SDL
+    appVersionStream << "-SDL";
+#endif
     appVersion = appVersionStream.str();
   }
   return appVersion.c_str();
 }
 
-#endif //_GETBUILD_DATE_
+#endif //__VERSION_H__
 
 // Local Variables: ***
 // mode:C++ ***
