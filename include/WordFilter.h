@@ -40,7 +40,7 @@
 /** utility method returns truthfully whether 
  * given character is an alphanumeric
  */
-bool isAlphanumeric(const char c)
+inline bool isAlphanumeric(const char c)
 {
   if (  ( c > 96 && c < 123 ) || 
 	( c > 64  && c < 91 ) || 
