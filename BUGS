@@ -1,6 +1,8 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
+- team bases have wrong color in 3D view
+
 - MQ changes color not texture, when using a color texture, blends both color and texture (JM).
 
 - the aggressive filter will occasionally encounter a false-positive match
