@@ -485,11 +485,11 @@ void printout(const std::string& name, void*)
   std::cout << name << " = " << BZDB->get(name) << std::endl;
 }
 
-void listSetVars(const std::string& name, void* userData)
+void listSetVars(const std::string& name, void*)
 {
   char message[100];
 
-  if (BZDB->getPermission(name) == StateDatabase::Permission::Locked) {
+  if (BZDB->getPermission(name) == StateDatabase::Locked) {
     sprintf(message, "/set %s %f", name.c_str(), BZDB->eval(name));
     addMessage(myTank, message, false, NULL);
   }
