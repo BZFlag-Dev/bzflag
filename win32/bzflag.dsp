@@ -285,6 +285,10 @@ SOURCE=..\src\bzflag\playing.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\Protocol.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzflag\RadarRenderer.h
 # End Source File
 # Begin Source File

@@ -55,28 +55,25 @@ const int		MaxPacketLen = 1024;
 // null message code -- should never be sent
 const uint16_t		MsgNull = 0x0000;
 
-// multicast message codes
-const uint16_t		MsgPlayerUpdate = 0x7075;		// 'pu'
-const uint16_t		MsgGMUpdate = 0x676d;			// 'gm'
-const uint16_t		MsgAudio = 0x6175;			// 'au'
-const uint16_t		MsgVideo = 0x7669;			// 'vi'
-
 // server message codes
 const uint16_t		MsgAccept = 0x6163;			// 'ac'
 const uint16_t		MsgAlive = 0x616c;			// 'al'
 const uint16_t		MsgAddPlayer = 0x6170;			// 'ap'
+const uint16_t		MsgAudio = 0x6175;			// 'au'
 const uint16_t		MsgCaptureFlag = 0x6366;		// 'cf'
 const uint16_t		MsgDropFlag = 0x6466;			// 'df'
 const uint16_t		MsgEnter = 0x656e;			// 'en'
 const uint16_t		MsgExit = 0x6578;			// 'ex'
 const uint16_t		MsgFlagUpdate = 0x6675;			// 'fu'
 const uint16_t		MsgGrabFlag = 0x6766;			// 'gf'
+const uint16_t		MsgGMUpdate = 0x676d;			// 'gm'
 const uint16_t		MsgGetWorld = 0x6777;			// 'gw'
 const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
 const uint16_t		MsgNewRabbit = 0x6e52;			// 'nR'
 const uint16_t		MsgNegotiateFlags = 0x6e66;		// 'nf'
 const uint16_t		MsgPause = 0x7061;			// 'pa'
+const uint16_t		MsgPlayerUpdate = 0x7075;		// 'pu'
 const uint16_t		MsgQueryGame = 0x7167;			// 'qg'
 const uint16_t		MsgQueryPlayers = 0x7170;		// 'qp'
 const uint16_t		MsgReject = 0x726a;			// 'rj'
@@ -90,6 +87,7 @@ const uint16_t		MsgTimeUpdate = 0x746f;			// 'to'
 const uint16_t		MsgTeleport = 0x7470;			// 'tp'
 const uint16_t		MsgTransferFlag = 0x7466;		// 'tf'
 const uint16_t		MsgTeamUpdate = 0x7475;			// 'tu'
+const uint16_t		MsgVideo = 0x7669;			// 'vi'
 const uint16_t		MsgWantWHash = 0x7768;			// 'wh'
 
 // world database codes

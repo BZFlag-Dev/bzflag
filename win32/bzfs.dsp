@@ -171,6 +171,10 @@ SOURCE=..\include\Ping.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\Protocol.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\ShotUpdate.h
 # End Source File
 # Begin Source File
