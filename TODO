@@ -9,9 +9,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
-* update the default bad word filter with the plethora of vulgarities
-  provided at http://www.insultmonger.com/
-
 * provide the ability to publish a singer server to multiple list servers.
   (i.e. multiple -publiclist options)  this is useful for a variety of
   reasons, including testing out a new user-reg'd, karmafied list server,
