@@ -89,11 +89,11 @@ extern "C" {
     return (float) acos( (double) x);
   }
 
-  inline float atanf(float x) {       
+  inline float atanf(float x) {
     return (float) atan( (double) x);
   }
-  
-  inline float asinf(float x) {       
+
+  inline float asinf(float x) {
     return (float) asin( (double) x);
   }
 }
