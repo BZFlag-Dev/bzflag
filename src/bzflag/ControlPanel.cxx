@@ -60,7 +60,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
   int lineLen     = string.length();
 
   // if there are tabs in the message, find the last one
-  int lastTab = string.find_last_of('\t', lineLen - 1);
+  int lastTab = string.rfind('\t');
 
   lines.clear();
 
