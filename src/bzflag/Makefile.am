@@ -1,4 +1,6 @@
+if CLIENT_INCLUDED
 bin_PROGRAMS = bzflag
+endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
