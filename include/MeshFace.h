@@ -80,6 +80,9 @@ class MeshFace : public Obstacle {
     bool isBaseFace() const;
     bool isLinkToFace() const;
     bool isLinkFromFace() const;
+    bool isZPlane() const;
+    bool isUpPlane() const;
+    bool isDownPlane() const;
 
     void setLink(const MeshFace* link);
     const MeshFace* getLink() const;
@@ -220,6 +223,21 @@ inline bool MeshFace::isLinkFromFace() const
 inline const MeshFace* MeshFace::getLink() const
 {
   return specialData->linkFace;
+}
+
+inline bool MeshFace::isZPlane() const
+{
+  return ((planeBits & ZPlane) != 0);
+}
+
+inline bool MeshFace::isUpPlane() const
+{
+  return ((planeBits & UpPlane) != 0);
+}
+
+inline bool MeshFace::isDownPlane() const
+{
+  return ((planeBits & DownPlane) != 0);
 }
 
 

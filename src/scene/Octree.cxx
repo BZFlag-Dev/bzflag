@@ -177,6 +177,7 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   DEBUG4 ("Octree::getFrustumList: root count = %i\n", root->getCount());
   root->getFrustumList ();
 
+  // BIG FIXME - occluders must have (getPlane() != NULL)
   OcclMgr.select(CullList, CullListCount);
 
   return CullListCount;

@@ -85,6 +85,28 @@ static void squeezeChildren (ColDetNode** children)
   return;
 }
 
+static int compareZlevels (const void* a, const void* b)
+{
+  const Obstacle* obsA = *((const Obstacle**)a);
+  const Obstacle* obsB = *((const Obstacle**)b);
+  float amins[3], amaxs[3], bmins[3], bmaxs[3];
+  obsA->getExtents(amins, amaxs);
+  obsB->getExtents(bmins, bmaxs);
+  if (fabsf(amaxs[2] - bmaxs[2]) < 1.0e-3) {
+    if (amins[2] > bmins[2]) {
+      return -1;
+    } else {
+      return +1;
+    }
+  }
+  else if (amaxs[2] > bmaxs[2]) {
+    return -1;
+  }
+  else {
+    return +1;
+  }
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -259,12 +281,7 @@ const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
   root->rayTestNodes (ray, timeLeft + 0.1f);
   
   // sort the list of node
-  printf ("RayList:\n");
   qsort (RayList.list, RayList.count, sizeof(ColDetNode*), compareRayNodes);
-  for (int x = 0; x < RayList.count; x++) {
-    printf ("  in: %-8.6f  out: %-8.6f\n",
-            RayList.list[x]->getInTime(), RayList.list[x]->getOutTime());
-  }
 
   return &RayList;
 }
@@ -330,6 +347,13 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
     addToFullList((Obstacle*) tele);
     addToFullList((Obstacle*) tele->getBackLink());
     addToFullList((Obstacle*) tele->getFrontLink());
+  }
+  
+  // FIXME - sort the Z height and size
+  qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareZlevels);
+  for (int q = 0; q < FullList.count; q++) {
+    float mx[3], mn[3];
+    FullList.list[q]->getExtents(mn, mx);
   }
 
   // generate the octree

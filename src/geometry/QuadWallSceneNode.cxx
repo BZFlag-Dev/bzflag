@@ -389,7 +389,9 @@ int                     QuadWallSceneNode::getVertexCount () const
 
 const GLfloat*          QuadWallSceneNode::getVertex (int vertex) const
 {
-  return nodes[0]->getVertex(vertex);
+  // re-map these to a counter-clockwise order
+  const int order[4] = {0, 1, 3, 2};
+  return nodes[0]->getVertex(order[vertex]);
 }
 
 

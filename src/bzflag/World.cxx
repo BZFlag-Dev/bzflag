@@ -253,6 +253,7 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 
   // check everything else
   const ObsList* olist = collisionManager.boxTest (pos, angle, dx, dy, dz);
+
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (!obs->isDriveThrough() && obs->inBox(pos, angle, dx, dy, dz)) {
@@ -262,6 +263,7 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 
   return NULL;
 }
+
 
 const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 					   const float* pos, float angle,
@@ -277,14 +279,58 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
     wallScan++;
   }
 
-  // check everything else
+  // get the list of potential hits from the collision manager
   const ObsList* olist =
     collisionManager.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
+
+  // make a list of the actual hits, or return
+  // immediately if a non-mesh obstacle intersects
+  int hitCount = 0;
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (!obs->isDriveThrough()
         && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
-      return obs;
+      if (obs->getType() != MeshFace::getClassName()) {
+        return obs;
+      } else {
+        olist->list[hitCount] = (Obstacle*) obs;
+        hitCount++;
+      }
+    }
+  }
+
+  if (hitCount > 0) {
+//    printf ("HitCount = %i: ", hitCount);
+    int lastNonZ = -1;
+    // see if we're hitting a ZPlane first
+    for (int i = 0; i < hitCount; i++) {
+      const MeshFace* face = (const MeshFace*) olist->list[i];
+      const float z = face->getPosition()[2];
+      if (face->isUpPlane()) {
+        if ((oldPos[2] >= z) && (pos[2] <= z)) {
+//          printf ("UpPlane\n");
+          return face;
+        }
+      }
+      else if (face->isDownPlane()) {
+        const float zoff = z - dz; // offset for the tank height
+        if ((oldPos[2] <= zoff) && (pos[2] >= zoff)) {
+//          printf ("DownPlane\n");
+          return face;
+        }
+      }
+      else {
+        lastNonZ = i;
+      }
+    }
+
+    // no immediate ZPlane, send something else
+    if (lastNonZ != -1) {
+//      printf ("lastNonZ\n");
+      return olist->list[lastNonZ];
+    } else {
+//      printf ("listZero\n");
+      return olist->list[0];
     }
   }
 

@@ -25,7 +25,10 @@ CustomMesh::CustomMesh()
   face = NULL;
   driveThrough = false;
   shootThrough = false;
+  fragments = true;
   smoothBounce = false;
+  material.setTexture("mesh");
+  
   return;
 }
 
@@ -112,6 +115,10 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
            (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
   }
+  else if ((strcasecmp(cmd, "nofrags") == 0) ||
+           (strcasecmp(cmd, "nofragments") == 0)) {
+    fragments = false;
+  }
   else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;
@@ -132,6 +139,8 @@ void CustomMesh::write(WorldInfo *world) const
   MeshObstacle* mesh = new MeshObstacle(
     checkTypes, checkPoints, vertices, normals, texcoords,
     faces.size(), smoothBounce, driveThrough, shootThrough);
+    
+  mesh->setFragments(fragments);
 
   std::vector<CustomMeshFace*>::const_iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {

@@ -292,10 +292,8 @@ Occluder::Occluder(SceneNode* node)
     }
   }
   else if (planeCount == 5) {
-    // QuadWallSceneNode vertices need to be mapped
-    const int order[4] = { 0, 1, 3, 2};
     for (int i = 0; i < vertexCount; i++) {
-      const float* vertex = node->getVertex(order[i]);
+      const float* vertex = node->getVertex(i);
       vertices[i][0] = vertex[0];
       vertices[i][1] = vertex[1];
       vertices[i][2] = vertex[2];

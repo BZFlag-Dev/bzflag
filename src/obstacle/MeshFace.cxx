@@ -368,31 +368,33 @@ void MeshFace::get3DNormal(const float* p, float* n) const
 
 void MeshFace::getNormal(const float* /*p*/, float* n) const
 {
-  memcpy (n, plane, sizeof(float[3]));
-  n[0] = 0.0f;
-  n[1] = 0.0f;
-  n[2] = 1.0f;
+  if (n) {
+    memcpy (n, plane, sizeof(float[3]));
+  }
+//  n[0] = 0.0f;
+//  n[1] = 0.0f;
+//  n[2] = 1.0f;
   return;
 }
 
 
-/////////////////////////////////////////////////////////////
-//  FIXME - everything after this point is currently JUNK! //
-/////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+//  FIXME - all geometry after this point is currently JUNK! //
+///////////////////////////////////////////////////////////////
 
 
-bool MeshFace::getHitNormal(const float* pos1, float,
-                            const float* pos2, float,
-			    float, float, float height,
+bool MeshFace::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
+                            const float* /*newPos*/, float /*newAngle*/,
+			    float /*dx*/, float /*dy*/, float /*height*/,
 			    float* normal) const
 {
-  pos1 = pos2;
-  height = height;
-  memcpy (normal, plane, sizeof(float[3]));
-  normal[0] = 0.0f;
-  normal[1] = 0.0f;
-  normal[2] = 1.0f;
-  return false;
+  if (normal) {
+    memcpy (normal, plane, sizeof(float[3]));
+  }
+//  normal[0] = 0.0f;
+//  normal[1] = 0.0f;
+//  normal[2] = 1.0f;
+  return true;
 }
 
 
@@ -485,15 +487,27 @@ bool MeshFace::inBox(const float* p, float angle,
   bool hit = testPolygonInAxisBox(vertexCount, v, pln, boxMins, boxMaxs);
   
   delete[] v;
+
   return hit;
 }
 
 
-bool MeshFace::inMovingBox(const float*, float,
-                           const float* p, float angle,
+bool MeshFace::inMovingBox(const float* oldPos, float /*oldAngle*/,
+                           const float* newPos, float newAngle,
                            float dx, float dy, float height) const
 {
-  return inBox(p, angle, dx, dy, height);
+  // expand the box with respect to Z axis motion
+  float pos[3];
+  pos[0] = newPos[0];
+  pos[1] = newPos[1];
+  if (oldPos[2] < newPos[2]) {
+    pos[2] = oldPos[2];
+  } else {
+    pos[2] = newPos[2];
+  }
+  height = height + fabs(oldPos - newPos);
+  
+  return inBox(pos, newAngle, dx, dy, height);
 }
 
 
@@ -558,6 +572,7 @@ void *MeshFace::pack(void *buf)
 
 void *MeshFace::unpack(void *buf)
 {
+  driveThrough = shootThrough = smoothBounce = false;
   // state byte
   unsigned char stateByte = 0;
   buf = nboUnpackUByte(buf, stateByte);
@@ -681,7 +696,7 @@ void MeshFace::print(std::ostream& out, int level)
   MATERIALMGR.printReference(out, bzMaterial);
   out  << std::endl;
   
-  if (smoothBounce && !mesh->hasSmoothBounce()) {
+  if (smoothBounce && !mesh->useSmoothBounce()) {
     out << "    smoothBounce" << std::endl;
   }
   if (driveThrough && !mesh->isDriveThrough()) {

@@ -780,6 +780,7 @@ void TankSceneNode::TankRenderNode::renderParts()
     renderPart(RightCasing);
     if (drawLOD == HighTankLOD) {
       for (int i = 0; i < 4; i++) {
+        // don't need the middle two wheels for shadows
         if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
           continue;
         }
@@ -922,7 +923,7 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
       myColor4f(0.4f * clr[0], 0.4f * clr[1], 0.4f * clr[2], alpha);
       break;
     }
-    case LastTankPart: { // avoid warnings about unused enumerated values
+    default: { // avoid warnings about unused enumerated values
       break;
     }
   }

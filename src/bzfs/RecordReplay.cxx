@@ -99,6 +99,7 @@ typedef struct {
   RRtime filetime;              // amount of time in the file
   u32 player;                   // player that saved this record file
   u32 flagsSize;                // size of the flags data
+  u32 settingsSize;             // size of the game settings
   u32 worldSize;                // size of world database
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];         // player's email
@@ -106,9 +107,10 @@ typedef struct {
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];            // hash of worldDatabase
   char *flags;                  // a list of the flags types
+  char *settings;               // the game settings
   char *world;                  // the world
 } ReplayHeader;
-static const int ReplayHeaderSize = sizeof(ReplayHeader) - (2 * sizeof(char*));
+static const int ReplayHeaderSize = sizeof(ReplayHeader) - (3 * sizeof(char*));
 
 
 // Local Variables
@@ -221,6 +223,11 @@ extern void directMessage(int playerIndex, u16 code,
                           int len, const void *msg);
 extern void sendMessage(int playerIndex, PlayerId targetPlayer,
                         const char *message);
+                        
+extern char* getWorldDatabase();
+extern void setWorldDatabase(char* db);
+extern char* getGameSettings();                        
+extern void setGameSettings(char* db);                        
 
 
 /****************************************************************************/

@@ -47,6 +47,7 @@ class CustomMesh : public WorldFileObstacle {
     std::vector<cfvec3> normals;
     std::vector<cfvec2> texcoords;
     
+    bool fragments;
     bool smoothBounce;
 
     CustomMeshFace* face;

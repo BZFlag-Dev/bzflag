@@ -233,42 +233,39 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
     culledCount = octree->getFrustumList (
                     culledList, staticCount, (const Frustum *) &frustum);
   }
+
+  const Frustum* frustumPtr = (const Frustum *) &frustum;
   
   // add the static nodes
   for (i = 0; i < culledCount; i++) {
-    // NOTE: you can run about 5% faster if you assume that
-    //       all static nodes are WallSceneNodes. You can
-    //       then use getPlaneRaw(), and skip the 'if (plane)'
-    //       test.
-    WallSceneNode* node = (WallSceneNode*) culledList[i];
+    SceneNode* node = culledList[i];
     
     const float* plane = node->getPlane();
-    if (plane) {
+
+    if (plane != NULL) {
+      // see if our eye is behind the plane 
       if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
            plane[3]) <= 0.0f) {
         node->octreeState = SceneNode::OctreeCulled;
         continue;
       }
-
-      // if the Visibility culler tells us that we're
-      // fully visible, then skip the rest of these tests
-      if (node->octreeState != SceneNode::OctreeVisible) {
-        const Frustum* f = (const Frustum *) &frustum;
-        float mins[3], maxs[3];
-        node->getExtents(mins, maxs);
-        if (testAxisBoxInFrustum(mins, maxs, f) == Outside) {
-          node->octreeState = SceneNode::OctreeCulled;
-          continue;
-        }
-      }
-
-      node->addRenderNodes(renderer);
-    } else {
-      if (!node->cull(frustum)) {
-        node->addRenderNodes(renderer);
+    }
+    
+    // if the Visibility culler tells us that we're
+    // fully visible, then skip the extents test
+    if (node->octreeState != SceneNode::OctreeVisible) {
+      float mins[3], maxs[3];
+      node->getExtents(mins, maxs);
+      if (testAxisBoxInFrustum(mins, maxs, frustumPtr) == Outside) {
+        node->octreeState = SceneNode::OctreeCulled;
+        continue;
       }
     }
-      
+    
+    // add the node
+    node->addRenderNodes(renderer);
+    
+    // clear the state
     node->octreeState = SceneNode::OctreeCulled;
   }
   

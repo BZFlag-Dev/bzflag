@@ -673,11 +673,11 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   material.setDiffuse(teleporterLightedColors[2]);
   MeshPolySceneNode* linkNode;
 
-  linkNode = MeshSceneNodeGenerator::getSceneNode(o.getBackLink());
+  linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getBackLink());
   MeshSceneNodeGenerator::setupNodeMaterial(linkNode, &material);
   db->addStaticNode(linkNode);
   
-  linkNode = MeshSceneNodeGenerator::getSceneNode(o.getFrontLink());
+  linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getFrontLink());
   MeshSceneNodeGenerator::setupNodeMaterial(linkNode, &material);
   db->addStaticNode(linkNode);
   

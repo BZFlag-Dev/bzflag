@@ -17,6 +17,7 @@
 #include "MeshFace.h"
 #include "MeshObstacle.h"
 #include "BzMaterial.h"
+#include <vector>
 
 class WallSceneNode;
 class MeshPolySceneNode;
@@ -27,20 +28,32 @@ class MeshSceneNodeGenerator {
 
   public:
     ~MeshSceneNodeGenerator();
+
     WallSceneNode* getNextNode(bool lod);
-    static void setupNodeMaterial(MeshPolySceneNode* node,
+
+    static void setupNodeMaterial(WallSceneNode* node,
                                   const BzMaterial* mat);
-    static MeshPolySceneNode* getSceneNode(const MeshFace* face);
+    static MeshPolySceneNode* getMeshPolySceneNode(const MeshFace* face);
       
+    static bool makeTexcoords(const float* plane,
+                              const GLfloat3Array& vertices,
+                              GLfloat2Array& texcoords);
+
   protected:
     MeshSceneNodeGenerator(const MeshObstacle*);
 
   private:
-    static bool makeTexcoords(const float* plane,
-                              const GLfloat3Array& vertices,
-                              GLfloat2Array& texcoords);
-    int faceNumber;
+    void setupFacesAndFrags();
+
+  private:
+    int currentNode;
     const MeshObstacle* mesh;
+    
+    typedef struct {
+      bool isFace;
+      std::vector<const MeshFace*> faces;
+    } MeshNode;
+    std::vector<MeshNode> nodes;
 };
 
 #endif

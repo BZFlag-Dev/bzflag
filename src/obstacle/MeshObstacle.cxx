@@ -33,6 +33,7 @@ MeshObstacle::MeshObstacle()
   vertices = normals = NULL;
   texcoordCount = 0;
   texcoords = NULL;
+  fragments = true;
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
@@ -77,6 +78,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
   faceSize = _faceCount;
   faceCount = 0;
   faces = new MeshFace*[faceSize];
+  fragments = true;
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
@@ -399,8 +401,11 @@ void *MeshObstacle::pack(void *buf)
   if (isShootThrough()) {
     stateByte |= (1 << 1);
   }
-  if (hasSmoothBounce()) {
+  if (useSmoothBounce()) {
     stateByte |= (1 << 2);
+  }
+  if (useFragments()) {
+    stateByte |= (1 << 3);
   }
   buf = nboPackUByte(buf, stateByte);
 
@@ -450,6 +455,8 @@ void *MeshObstacle::unpack(void *buf)
   }
 
   // unpack the state byte
+  driveThrough = shootThrough = false;
+  smoothBounce = fragments = false;
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
   if (stateByte & (1 << 0)) {
@@ -460,6 +467,9 @@ void *MeshObstacle::unpack(void *buf)
   }
   if (stateByte & (1 << 2)) {
     smoothBounce = true;
+  }
+  if (stateByte & (1 << 3)) {
+    fragments = true;
   }
 
   finalize();

@@ -81,9 +81,15 @@ class MeshObstacle : public Obstacle {
     const fvec3 *getVertices() const;
     const fvec3 *getNormals() const;
     const fvec2 *getTexcoords() const;
+    const int getVertexCount() const;
+    const int getNormalCount() const;
+    const int getTexcoordCount() const;
     int getFaceCount() const;
     const MeshFace* getFace(int face) const;
-    bool hasSmoothBounce() const;
+    bool useSmoothBounce() const;
+
+    bool useFragments() const { return fragments; }
+    void setFragments(bool value) { fragments = value; }
     
     void setIsLocal(bool);
     bool getIsLocal() const;
@@ -111,6 +117,7 @@ class MeshObstacle : public Obstacle {
     int faceCount, faceSize;
     MeshFace** faces;
     bool smoothBounce;
+    bool fragments;
 
     fvec3 mins, maxs;
 };
@@ -140,6 +147,21 @@ inline const fvec2 *MeshObstacle::getTexcoords() const
   return texcoords;
 }
 
+inline const int MeshObstacle::getVertexCount() const
+{
+  return vertexCount;
+}
+
+inline const int MeshObstacle::getNormalCount() const
+{
+  return normalCount;
+}
+
+inline const int MeshObstacle::getTexcoordCount() const
+{
+  return texcoordCount;
+}
+
 inline int MeshObstacle::getFaceCount() const
 {
   return faceCount;
@@ -150,7 +172,7 @@ inline const MeshFace* MeshObstacle::getFace(int face) const
   return faces[face];
 }
 
-inline bool MeshObstacle::hasSmoothBounce() const
+inline bool MeshObstacle::useSmoothBounce() const
 {
   return smoothBounce;
 }

@@ -57,7 +57,6 @@ class SceneNode {
 			SceneNode();
     virtual		~SceneNode();
 
-    void		getRenderNodes(SceneRenderer&);
     const GLfloat*	getSphere() const;
     virtual void        getExtents(float* mins, float* maxs) const;
     virtual bool        inAxisBox (const float* mins, const float* maxs) const;

@@ -2225,9 +2225,10 @@ bool areFoes(TeamColor team1, TeamColor team2)
 static void sendWorld(int playerIndex, uint32_t ptr)
 {
   // send another small chunk of the world database
-  assert(world != NULL && worldDatabase != NULL);
+  assert((world != NULL) && (worldDatabase != NULL));
   void *buf, *bufStart = getDirectMessageBuffer();
-  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t), left = worldDatabaseSize - ptr;
+  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
+  uint32_t left = worldDatabaseSize - ptr;
   if (ptr >= worldDatabaseSize) {
     size = 0;
     left = 0;
@@ -2237,7 +2238,7 @@ static void sendWorld(int playerIndex, uint32_t ptr)
   }
   buf = nboPackUInt(bufStart, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-  directMessage(playerIndex, MsgGetWorld, (char*)buf-(char*)bufStart, bufStart);
+  directMessage(playerIndex, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
 }
 
 static void sendGameSetting(int playerIndex)

@@ -140,15 +140,6 @@ void			SceneNode::setSphere(const GLfloat _sphere[4])
   sphere[3] = _sphere[3];
 }
 
-void			SceneNode::getRenderNodes(SceneRenderer& renderer)
-{
-  if (!cull(renderer.getViewFrustum())) {
-    addRenderNodes(renderer);
-  }
-  // reset the cull state
-  octreeState = OctreeCulled;
-}
-
 void			SceneNode::notifyStyleChange()
 {
   // do nothing
