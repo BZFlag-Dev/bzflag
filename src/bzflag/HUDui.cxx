@@ -543,7 +543,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       return true;
 
     case BzfKeyEvent::Home:
-      cursorPos=0;
+      cursorPos = 0;
       return true;
 
     case BzfKeyEvent::End:
@@ -580,8 +580,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     cursorPos--;
     string = string.substr(0, cursorPos) + string.substr(cursorPos + 1, string.length() - cursorPos + 1);
     onSetFont();
-  }
-  else {
+  } else {
     if (isspace(c)) c = whitespace;
     if ((int)string.length() == maxLength) goto noRoom;
 

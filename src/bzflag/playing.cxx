@@ -497,8 +497,7 @@ static void		showInputStatus()
 {
   if (myTank->getInputMethod() == LocalPlayer::Keyboard)
     controlPanel->addMessage("Keyboard movement");
-  //FIXME - setInputMethod(Joystick) is never called; leaving old mainWindow->Joystick for now
-  else if (mainWindow->joystick() || myTank->getInputMethod() == LocalPlayer::Joystick)
+  else if (myTank->getInputMethod() == LocalPlayer::Joystick)
     controlPanel->addMessage("Joystick movement");
   else if (myTank->getInputMethod() == LocalPlayer::Mouse)
     controlPanel->addMessage("Mouse movement");
@@ -992,11 +991,36 @@ static void		doMotion()
 {
   float rotation = 0.0f, speed = 1.0f;
   bool pressed = myTank->getKeyPressed();
+  const int noMotionSize = hud->getNoMotionSize();
+  const int maxMotionSize = hud->getMaxMotionSize();
 
   // mouse is default steering method; query mouse pos always, not doing so
   // can lead to stuttering movement with X and software rendering (uncertain why)
   int mx, my;
   mainWindow->getMousePosition(mx, my);
+
+  // determine if joystick motion should be used instead of mouse motion
+  // when the player bumps the mouse, LocalPlayer::getInputMethod return Mouse;
+  // make it return Joystick when the user bumps the joystick
+  if (mainWindow->joystick()) {
+    if (myTank->getInputMethod() == LocalPlayer::Joystick) {
+      // if we're using the joystick right now, replace mouse coords with joystick coords
+      mainWindow->getJoyPosition(mx, my);
+    } else {
+      // if the joystick is not active, and we're not forced to some other input method,
+      // see if it's moved and autoswitch
+      if (BZDB.isTrue("allowInputChange")) {
+	int jx, jy;
+	mainWindow->getJoyPosition(jx, jy);
+	// if we aren't using the joystick, but it's moving, start using it
+	if ((jx < -noMotionSize * 2) || (jx > noMotionSize * 2)
+	    || (jy < -noMotionSize * 2) || (jy > noMotionSize * 2)) {
+	  myTank->setInputMethod(LocalPlayer::Joystick);
+	} // joystick motion
+      } // allowInputChange
+    } // getInputMethod == Joystick
+  } // mainWindow->Joystick
+
 
 #if defined(FREEZING)
   if (motionFreeze) return;
@@ -1004,8 +1028,7 @@ static void		doMotion()
 
   if (myTank->isAutoPilot()) {
     doAutoPilot(rotation, speed);
-  }
-  else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
+  } else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
     rotation = myTank->getKeyboardAngVel();
     speed = myTank->getKeyboardSpeed();
 
@@ -1043,16 +1066,11 @@ static void		doMotion()
       rotation /= 2.0f;
       speed /= 2.0f;
     }
-  }
-  else {
-    if (mainWindow->joystick()) {
-      mainWindow->getJoyPosition(mx, my);
-    }
+  } else { // both mouse and joystick
+
+    rotation = 0.0f;
 
     // calculate desired rotation
-    const int noMotionSize = hud->getNoMotionSize();
-    const int maxMotionSize = hud->getMaxMotionSize();
-    rotation = 0.0f;
     if (mx < -noMotionSize) {
       rotation = float(-mx - noMotionSize) / float(maxMotionSize);
       if (rotation > 1.0f) rotation = 1.0f;

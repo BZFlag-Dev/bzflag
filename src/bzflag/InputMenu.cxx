@@ -136,8 +136,6 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
 	  BZDB.set("forceInputDevice", selectedOption);
 	  // Set the current input device to whatever we're forced to
 	  if (myTank) {
-	    // FIXME - right now setInputMethod(Joystick) has no effect
-	    // someone who knows about the joystick code should fix this
 	    myTank->setInputMethod(BZDB.get("forceInputDevice"));
 	  }
 	}
