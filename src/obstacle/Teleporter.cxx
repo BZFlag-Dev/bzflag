@@ -50,20 +50,13 @@ Teleporter::~Teleporter()
 
 void Teleporter::finalize()
 {
-/*
-Teleporter::Teleporter(const float* p, float a, float w,
-		       float b, float h, float _border, bool _horizontal,
-		       bool drive, bool shoot) :
-		       Obstacle(p, a, w, _horizontal ? b : b + 2 * _border,
-				_horizontal ? h : h + _border,drive,shoot),
-		       border(_border), horizontal(_horizontal)
-*/		       
-  const float sizeCopy[3] = { size[0], size[1], size[2] };
+  origSize[0] = size[0];
+  origSize[1] = size[1];
+  origSize[2] = size[2];
+
   if (!horizontal) {
-    size[1] = sizeCopy[1] + (border * 2.0f);
-    size[2] = sizeCopy[2] + border;
-  } else {
-    size[1] = border;
+    size[1] = origSize[1] + (border * 2.0f);
+    size[2] = origSize[2] + border;
   }
   
   makeLinks();
@@ -192,10 +185,12 @@ bool Teleporter::isValid() const
 
 void Teleporter::getExtents(float* mins, float* maxs) const
 {
-  // the same as the default Obstacle::getExtents(), except that we
-  // use the border width instead of size[0] (which for teleporters
-  // is half the distance between the teleporter planes).
+  // the same as the default Obstacle::getExtents(), except
+  // that we use the larger of the border half-width and size[0].
   float sizeX = border * 0.5f;
+  if (size[0] > sizeX) {
+    sizeX = size[0];
+  }
   float xspan = (fabsf(cosf(angle)) * sizeX) + (fabsf(sinf(angle)) * size[1]);
   float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * sizeX);
   mins[0] = pos[0] - xspan;
@@ -243,8 +238,8 @@ bool Teleporter::inCylinder(const float* p, float radius, float height) const
 bool Teleporter::inBox(const float* p, float a,
 		       float dx, float dy, float dz) const
 {
-  if ((p[2] < getHeight() + getPosition()[2] - getBorder())
-	  && (p[2]+dz) >= getPosition()[2]) {
+  if ((p[2] < (getHeight() + getPosition()[2] - getBorder()))
+      && ((p[2] + dz) >= getPosition()[2])) {
     // test individual border columns
     const float c = cosf(getRotation()), s = sinf(getRotation());
     const float d = getBreadth() - 0.5f * getBorder();
@@ -257,12 +252,13 @@ bool Teleporter::inBox(const float* p, float a,
     o[1] = getPosition()[1] - c * d;
     if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return true;
   }
-
-  else if (p[2] <= getHeight() + getPosition()[2]  && p[2] > getPosition()[2]) {
+  else if ((p[2] <= (getPosition()[2] + getHeight())) && 
+           (p[2] > getPosition()[2])) {
     // test crossbar
-    if (testRectRect(p, a, dx, dy, getPosition(), getRotation(),
-					getWidth(), getBreadth()))
+    if (testRectRect(p, a, dx, dy, getPosition(),
+                     getRotation(), getWidth(), getBreadth())) {
       return true;
+    }
   }
 
   return false;
@@ -496,7 +492,7 @@ void* Teleporter::pack(void* buf) const
 {
   buf = nboPackVector(buf, pos);
   buf = nboPackFloat(buf, angle);
-  buf = nboPackVector(buf, size);
+  buf = nboPackVector(buf, origSize);
   buf = nboPackFloat(buf, border);
 
   unsigned char horizontalByte = horizontal ? 1 : 0;
@@ -552,8 +548,8 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
   const float *pos = getPosition();
   out << indent << "  position " << pos[0] << " " << pos[1] << " "
                                  << pos[2] << std::endl;
-  out << indent << "  size " << getWidth() << " " << getBreadth() << " "
-                             << getHeight() << std::endl;
+  out << indent << "  size " << origSize[0] << " " << origSize[1] << " "
+                             << origSize[2] << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
                                  << std::endl;
   out << indent << "  border " << getBorder() << std::endl;

@@ -48,7 +48,7 @@ void CustomGate::write(WorldInfo *world) const
   Teleporter* tele =
     new Teleporter(pos, rotation, 
                    fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-                   border,horizontal, driveThrough,shootThrough);
+                   border, horizontal, driveThrough, shootThrough);
   world->addTeleporter(tele);
 }
 

@@ -677,8 +677,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // see if we teleported
   int face;
-  const Teleporter* teleporter = (const Teleporter*)(!isAlive() ? NULL :
-						     World::getWorld()->crossesTeleporter(oldPosition, newPos, face));
+  const Teleporter* teleporter;
+  if (!isAlive()) {
+    teleporter = NULL;
+  } else {
+    teleporter = World::getWorld()->crossesTeleporter(oldPosition, newPos, face);
+  }
+  
   if (teleporter) {
     if (getFlag() == Flags::PhantomZone) {
       // change zoned state
@@ -691,21 +696,32 @@ void			LocalPlayer::doUpdateMotion(float dt)
       const int source = World::getWorld()->getTeleporter(teleporter, face);
       int target = World::getWorld()->getTeleportTarget(source);
       if (target == randomTeleporter) {
-	target = rand() % (2 * World::getWorld()->getTeleporters().size());
+        target = rand() % (2 * World::getWorld()->getTeleporters().size());
       }
 
       int outFace;
       const Teleporter* outPort =
-	World::getWorld()->getTeleporter(target, outFace);
+        World::getWorld()->getTeleporter(target, outFace);
       teleporter->getPointWRT(*outPort, face, outFace,
-			      newPos, newVelocity, newAzimuth,
-			      newPos, newVelocity, &newAzimuth);
+                              newPos, newVelocity, newAzimuth,
+                              newPos, newVelocity, &newAzimuth);
 
-      // save teleport info
-      setTeleport(lastTime, source, target);
-      server->sendTeleport(source, target);
-      if (gettingSound) {
-	playLocalSound(SFX_TELEPORT);
+      // check for a hit on the other side
+      const Obstacle* teleObs =
+        getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased, expelled);
+      if (teleObs != NULL) {
+        // revert
+        memcpy (newPos, oldPosition, sizeof(float[3]));
+        newVelocity[0] = newVelocity[1] = 0.0f;
+        newVelocity[2] = oldVelocity[2];
+        newAzimuth = oldAzimuth;
+      } else {
+        // save teleport info
+        setTeleport(lastTime, source, target);
+        server->sendTeleport(source, target);
+        if (gettingSound) {
+          playLocalSound(SFX_TELEPORT);
+        }
       }
     }
   }

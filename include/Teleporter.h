@@ -83,9 +83,11 @@ class Teleporter : public Obstacle {
     void finalize();
   
   private:
-    float		border;
-	bool		horizontal;
     static const char*	typeName;
+    
+    float border;
+    bool horizontal;
+    float origSize[3];
 
     MeshFace* backLink;
     MeshFace* frontLink;
