@@ -6829,11 +6829,11 @@ void			startPlaying(BzfDisplay* _display,
   static const GLfloat	zero[3] = { 0.0f, 0.0f, 0.0f };
 
   TextureManager *tm = TextureManager::getTextureManager();
-  for (i = 1; i <= 4; i++) {
+  for (i = 1;; i++) {
     // try loading texture
     OpenGLTexture *tex = tm->getTexture( TX_EXPLOSION, i );
 
-    if (!tex->isValid()) continue;
+    if (!tex || !tex->isValid()) break;
 
     // make explosion scene node
     BillboardSceneNode* explosion = new BillboardSceneNode(zero);
