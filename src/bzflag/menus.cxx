@@ -90,7 +90,7 @@
 #include "version.h"
 
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #define PATH_MAX MAX_PATH
 #endif
 
