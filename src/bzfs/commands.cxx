@@ -92,6 +92,17 @@ extern bool countdownActive;
 // externs that identify and password requires
 extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 
+
+void handleMeCmd(GameKeeper::Player *playerData, const char *message)
+{
+  int t = playerData->getIndex();
+  std::string message2;
+
+  message2 = string_util::format("* %s %s", playerData->player.getCallSign(), message + 3);
+  sendMessage(t, AllPlayers, message2.c_str());
+}
+
+
 void handlePasswordCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
@@ -1823,6 +1834,7 @@ void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
   
   return;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

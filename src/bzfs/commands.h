@@ -17,6 +17,13 @@
 #include "GameKeeper.h"
 
 
+/** me command hook function
+ *
+ * /me command allows player to express an action
+ */
+void handleMeCmd(GameKeeper::Player *playerData, const char *message);
+
+
 /** password command hook function
  *
  * /password command allows player to become operator
