@@ -268,7 +268,7 @@ static std::string	getConfigFileName()
   }
 
   // append the config file name
-  name += "\\bzflag19.bzc";
+  name += "\\My Bzflag Files\\bzflag19.bzc";
   return name;
 
 #elif defined(macintosh)
