@@ -31,12 +31,12 @@ struct Team {
     void*		unpack(void*);
 
   static const char*	getName(TeamColor); // const
-  static const TeamColor	getTeam(std::string); // const
+  static TeamColor	getTeam(std::string); // const
   static const float*	getTankColor(TeamColor); // const
   static const float*	getRadarColor(TeamColor); // const
-  static bool	isColorTeam(TeamColor); // const
+  static bool		isColorTeam(TeamColor); // const
 
-    static void		setColors(TeamColor,
+  static void		setColors(TeamColor,
 				const float* tank,
 				const float* radar);
 

@@ -75,7 +75,8 @@ const char*		Team::getName(TeamColor team) // const
   default: return "Invalid team";
   }
 }
-const TeamColor		Team::getTeam(std::string teamname) // const
+
+TeamColor		Team::getTeam(std::string teamname) // const
 {
   if (teamname == "Automatic") return AutomaticTeam;
   if (teamname == "Rogue") return RogueTeam;
