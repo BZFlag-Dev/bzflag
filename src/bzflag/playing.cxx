@@ -1930,7 +1930,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	srcName = "(UNKNOWN)";
 #endif
       } else
-	srcPlayer->getCallSign();
+	srcName = srcPlayer->getCallSign();
 
       if (dstPlayer == NULL) {
 #ifdef DEBUG
@@ -1943,7 +1943,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	dstName = "(UNKNOWN)";
 #endif
       } else
-	dstPlayer->getCallSign();
+	dstName = dstPlayer->getCallSign();
 
       // CLIENTQUERY hack
       if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
