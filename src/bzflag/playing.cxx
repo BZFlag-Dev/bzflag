@@ -6848,13 +6848,7 @@ void			startPlaying(BzfDisplay* _display,
   }
 
   // get tank textures
-  {
-    static const char* tankFilename = "flage";
-    int width, height;
-    tankTexture = new OpenGLTexture;
-    *tankTexture = getTexture(tankFilename, &width, &height,
-			      OpenGLTexture::LinearMipmapLinear);
-  }
+  tankTexture = tm->getTexture( TX_TANK );
 
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
@@ -6931,7 +6925,6 @@ void			startPlaying(BzfDisplay* _display,
   playingLoop();
 
   // clean up
-  delete tankTexture;
   for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)
     delete prototypeExplosions[ext];
   prototypeExplosions.clear();

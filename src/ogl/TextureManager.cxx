@@ -54,6 +54,8 @@ TextureInit loader[] =
 	{ TX_EXPLOSION, 2, "explode2", OpenGLTexture::Linear },
 	{ TX_EXPLOSION, 3, "explode3", OpenGLTexture::Linear },
 	{ TX_EXPLOSION, 4, "explode4", OpenGLTexture::Linear },
+
+	{ TX_TANK, NO_VARIANT, "flage", OpenGLTexture::LinearMipmapLinear },
 };
 
 
