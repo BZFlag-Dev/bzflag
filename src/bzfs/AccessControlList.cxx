@@ -458,25 +458,23 @@ void AccessControlList::purgeMasters(void) {
 
 std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterBans(void) const {
   std::vector<std::pair<std::string, std::string> >bans;
-
-// MSVC5 has some...issues...with this code (std::make_pair does not return a const pair, but std::vector::push_back expects one)
-#if (!defined(_MSC_VER) || (_MSC_VER > 1100))
   std::string explain;
 
   for (banList_t::const_iterator bItr = banList.begin(); bItr != banList.end(); bItr++) {
     if (bItr->fromMaster) {
       explain = string_util::format("%s (banned by %s)", bItr->reason.c_str(), bItr->bannedBy.c_str());
-      bans.push_back(std::make_pair(inet_ntoa(bItr->addr), explain));
+      const std::pair<std::string, std::string> baninfo = std::make_pair(inet_ntoa(bItr->addr), explain);
+      bans.push_back(baninfo);
     }
   }
 
   for (hostBanList_t::const_iterator hItr = hostBanList.begin(); hItr != hostBanList.end(); hItr++) {
     if (hItr->fromMaster) {
       explain = string_util::format("%s (banned by %s)", hItr->reason.c_str(), hItr->bannedBy.c_str());
-      bans.push_back(std::make_pair(hItr->hostpat, explain));
+      const std::pair<std::string, std::string> baninfo = std::make_pair(hItr->hostpat, explain);
+      bans.push_back(baninfo);
     }
   }
-#endif
 
   return bans;
 }
