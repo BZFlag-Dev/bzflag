@@ -16,5 +16,8 @@ be retrieved from:
 
 It is over 200 MB!
 
+MinGW32, for some reason, seems to have the definitions for the parts
+of DirectX that BZFlag uses, so you may only need the headers.
+
 The needed file from BZFlag is dsound.h, but that will then include
 ddraw.h and d3dtypes.h
