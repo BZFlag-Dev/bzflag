@@ -19,12 +19,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * add language translations for the new flags
 
-* either disable server checks when -handicap mode is enabled, or
-  incorporate the player's handicap value into the check calculations.
-
-* either disable server checks when there are moving surfaces, or
-  incorporate the object's speed into the check calculations.
-
 * improve the mesh collision code (edging)
 
 * speed up the radar rendering
@@ -36,6 +30,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 
 THESE ARE LOWER PRIORITY
+
+* incorporate the player's handicap value into the check calculations.
+
+* incorporate physic drivers into the check calculations.
 
 * kill as many "externs" in .cxx files as possible. evil and wrong.
 
