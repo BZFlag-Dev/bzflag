@@ -3466,7 +3466,7 @@ static void dumpScore()
   for (i = int(RedTeam); i < NumTeams; i++)
     printf(" %d-%d %s", team[i].team.won, team[i].team.lost, Team::getName(TeamColor(i)));
   printf("\n#players\n");
-  for (int i = 0; i < curMaxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     if (player[i].state > PlayerInLimbo)
       printf("%d-%d %s\n", player[i].wins, player[i].losses, player[i].callSign);
   printf("#end\n");
