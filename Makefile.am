@@ -1,4 +1,4 @@
-SUBDIRS = src man package data misc include
+SUBDIRS = src man package data misc include debian
 
 package: FORCE
 	cd package && $(MAKE) targets
