@@ -158,7 +158,7 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
   // hard limit, some drivers have problems with sizes greater
   // then this (espeically if you are using glTexSubImage2D)
   const GLint bzMaxTexSize = 512;
-  if (maxTextureSize > bzMaxTexSize) {
+  if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize)) {
     maxTextureSize = bzMaxTexSize;
   }
 
