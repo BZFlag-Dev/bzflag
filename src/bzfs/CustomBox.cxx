@@ -20,6 +20,8 @@
 // common-interface headers
 #include "StateDatabase.h"
 
+// implementation-specific headers
+#include <math.h>
 
 CustomBox::CustomBox()
 {

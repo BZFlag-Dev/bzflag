@@ -20,6 +20,9 @@
 // common-interface headers
 #include "StateDatabase.h"
 
+// implementation-specific headers
+#include <math.h>
+
 CustomPyramid::CustomPyramid()
 {
   size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
