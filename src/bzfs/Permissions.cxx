@@ -336,7 +336,9 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
   if (name == "POLL") return PlayerAccessInfo::poll;
   if (name == "PRIVATEMESSAGE") return PlayerAccessInfo::privateMessage;
+  if (name == "RECORD") return PlayerAccessInfo::record;
   if (name == "REMOVEPERMS") return PlayerAccessInfo::removePerms;
+  if (name == "REPLAY") return PlayerAccessInfo::replay;
   if (name == "REQUIREIDENTIFY") return PlayerAccessInfo::requireIdentify;
   if (name == "SETALL") return PlayerAccessInfo::setAll;
   if (name == "SETPASSWORD") return PlayerAccessInfo::setPassword;
