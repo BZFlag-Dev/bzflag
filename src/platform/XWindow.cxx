@@ -21,6 +21,7 @@
 #endif
 #include <math.h>
 #include <ctype.h>
+#include <string.h>
 #ifdef XIJOYSTICK
 #include <stdlib.h>
 #include "ErrorHandler.h"
