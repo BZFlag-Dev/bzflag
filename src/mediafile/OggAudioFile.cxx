@@ -35,6 +35,7 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	else {
 		info = ov_info(&file, -1);
 		int samples = ov_pcm_total(&file, -1);
+		std::cout << ov_streams(&file) << " logical bitstreams\n";
 		init(info->rate, info->channels, samples, 2);
 	}
 }
@@ -53,7 +54,15 @@ bool		OggAudioFile::read(void* buffer, int numFrames)
 {
 	int frames;
 	int bytes = numFrames * info->channels * 2;
+	ogg_int64_t oldoff = ov_pcm_tell(&file);
+#if BYTE_ORDER == BIG_ENDIAN
+	frames = ov_read(&file, (char *) buffer, bytes, 1, 2, 1, &stream);
+#else
 	frames = ov_read(&file, (char *) buffer, bytes, 0, 2, 1, &stream);
+#endif
+	ogg_int64_t pcmoff = ov_pcm_tell(&file);
+	std::cout << "requested: " << numFrames << endl;
+	std::cout << "actual:    " << pcmoff  - oldoff << endl << endl;
 	if (frames < 0) {
 		if (frames == OV_HOLE)
 			// OV_HOLE is non-fatal
