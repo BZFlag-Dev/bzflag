@@ -17,6 +17,9 @@
 #ifndef URL_MANAGER_H
 #define URL_MANAGER_H
 
+// bzflag common header
+#include "common.h"
+
 // system headers
 #include <string>
 #include <map>
