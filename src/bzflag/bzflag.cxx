@@ -57,6 +57,8 @@
 #include "BundleMgr.h"
 #include "World.h"
 #include "StateDatabase.h"
+#include "FileManager.h"
+#include "CommandManager.h"
 
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
@@ -73,6 +75,35 @@ static BzfDisplay*	display = NULL;
 
 float		WorldSize =	DEFAULT_WORLD;					// meters
 
+
+// default database entries
+struct DefaultDBItem {
+  const char*			name;
+  const char*			value;
+  bool				persistent;
+  StateDatabase::Permission	permission;
+  StateDatabase::Callback	callback;
+};
+static DefaultDBItem	defaultDBItems[] = {
+  { "udpnet",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "team",			"Rogue",		true,	StateDatabase::ReadWrite,	NULL },
+  { "list",			DefaultListServerURL,	true,	StateDatabase::ReadWrite,	NULL },
+  { "volume",			"10",			true,	StateDatabase::ReadWrite,	NULL },
+  { "latitude",			"37.5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "longitude",		"122",			true,	StateDatabase::ReadWrite,	NULL },
+  { "joystick",			"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "enhancedRadar",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "coloredradarshots",	"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "panelopacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
+  { "radarsize",		"4",			true,	StateDatabase::ReadWrite,	NULL },
+  { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "bigfont",			"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "underline",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL }
+};
 
 #ifdef ROBOT
 // ROBOT -- tidy up
@@ -775,7 +806,17 @@ int			main(int argc, char** argv)
   userTime = *localtime(&timeNow);
 
   CommandsStandard::add();
-  ConfigFileManager::addDefaults();
+
+  // prepare DB entries
+  for (unsigned int i = 0; i < countof(defaultDBItems); ++i) {
+    assert(defaultDBItems[i].name != NULL);
+    if (defaultDBItems[i].value != NULL) {
+      BZDB->set(defaultDBItems[i].name, defaultDBItems[i].value);
+      BZDB->setDefault(defaultDBItems[i].name, defaultDBItems[i].value);
+    }
+    BZDB->setPersistent(defaultDBItems[i].name, defaultDBItems[i].persistent);
+    BZDB->setPermission(defaultDBItems[i].name, defaultDBItems[i].permission);
+  }
 
   // read resources
   {
@@ -1196,6 +1237,11 @@ int			main(int argc, char** argv)
   delete display;
   delete platformFactory;
   delete bm;
+
+  // clean up singletons
+  delete FILEMGR;
+  delete CMDMGR;
+  delete BZDB;
 
   return 0;
 }

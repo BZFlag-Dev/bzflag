@@ -45,9 +45,6 @@ public:
   */
   bool				write(std::string filename);
 
-  /** adds default values to BZDB */
-  static void			addDefaults();
-
   /** Get the singleton instance.
    returns the existing singleton if available, if not, creates
    an instance and returns it.
