@@ -4343,6 +4343,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      (player[t].lastState.velocity[2] == state.velocity[2]) &&
 	      (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
 	      // if we have burrow and are not actively burrowing
+	      // You may have burrow and still be above ground. Must check z in ground!!
  	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD) * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	    else {
 	      // If player is moving vertically, or not alive the speed checks
