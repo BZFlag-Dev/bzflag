@@ -161,6 +161,7 @@ static void		setTarget();
 static void		setHuntTarget();
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
+static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
 static Player*		getPlayerByName( const char* name );
 static void		addMessage(const Player* player, const std::string& msg,
                                    bool highlight=false, const char* oldColor=NULL);
@@ -3107,6 +3108,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
 	    else if (firingInfo.flag == Flags::GuidedMissile)
 	      playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
+	    else if (firingInfo.flag == Flags::Thief)
+	      playWorldSound(SFX_THIEF, pos[0], pos[1], pos[2]);
 	    else
 	      playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
 	  }
@@ -3167,7 +3170,22 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-    case MsgMessage: {
+    case MsgTransferFlag:
+    {
+	PlayerId fromId, toId;
+	unsigned short flagIndex;
+	msg = nboUnpackUByte(msg, fromId);
+	msg = nboUnpackUByte(msg, toId);
+	msg = nboUnpackUShort(msg, flagIndex);
+	msg = world->getFlag(int(flagIndex)).unpack(msg);
+	Player* fromTank = lookupPlayer(fromId);
+	Player* toTank = lookupPlayer(toId);
+	handleFlagTransferred( fromTank, toTank, flagIndex);
+	break;
+    }
+
+
+     case MsgMessage: {
       PlayerId src;
       PlayerId dst;
       msg = nboUnpackUByte(msg, src);
@@ -3770,6 +3788,33 @@ static void		handleFlagDropped(Player* tank)
   tank->setFlag(Flags::Null);
 }
 
+static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex)
+{
+	Flag f = world->getFlag(flagIndex);
+
+	fromTank->setFlag(Flags::Null);
+	toTank->setFlag(f.desc);
+
+	if ((fromTank == myTank) || (toTank == myTank))
+		updateFlag(myTank->getFlag());
+
+	const float *pos = toTank->getPosition();
+	if (f.desc->flagTeam != ::NoTeam) {
+	  if ((toTank->getTeam() == myTank->getTeam()) && (f.desc->flagTeam != myTank->getTeam()))
+	    playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2]);
+	  else if ((fromTank->getTeam() == myTank->getTeam()) && (f.desc->flagTeam == myTank->getTeam())) {
+	    hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
+	    playLocalSound(SFX_ALERT);
+	  }
+	}
+
+	std::string message(toTank->getCallSign());
+	message += " stole ";
+	message += fromTank->getCallSign();
+	message += "'s flag";
+	addMessage(toTank, message);
+}
+
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					BlowedUpReason reason,
 					PlayerId killer,
@@ -3936,7 +3981,9 @@ static void		checkEnvironment()
   // see if i've been shot
   const ShotPath* hit = NULL;
   float minTime = Infinity;
-  myTank->checkHit(myTank, hit, minTime);
+
+  if (myTank->getFlag() != Flags::Thief)
+    myTank->checkHit(myTank, hit, minTime);
   int i;
   for (i = 0; i < curMaxPlayers; i++)
     if (player[i])
@@ -3948,8 +3995,20 @@ static void		checkEnvironment()
     // after dropping our shield flag.
     if (hit->isStoppedByHit())
       serverLink->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
-    const bool stopShot =
-	gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit->getShotId());
+
+    FlagDesc* killerFlag = hit->getFlag();
+    bool stopShot;
+
+    if (killerFlag == Flags::Thief) {
+	if (myTank->getFlag() != Flags::Null) {
+		serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
+	}
+	stopShot = true;
+    }
+    else {
+        stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit->getShotId());
+    }
+
     if (stopShot || hit->isStoppedByHit()) {
       Player* hitter = lookupPlayer(hit->getPlayer());
       if (hitter) hitter->endShot(hit->getShotId());

@@ -160,6 +160,10 @@ const float		ObeseFactor =	2.5f;		// 250% normal size
 const float		WideAngleAng =	M_PI / 1.8f;	// 100 degree fov
 const float		MomentumLinAcc=	1.0f;		//
 const float		MomentumAngAcc=	1.0f;		//
+const float		ThiefVelAd =    1.67f;          // 66% faster
+const float		ThiefTinyFactor=0.5f;		// 50% smaller
+const float		ThiefAdShotVel =1000.0f;	//1000x faster shots
+const float		ThiefAdRate =   10.0f;		//10x faster reload
 
 
 // map object flags

@@ -152,7 +152,7 @@ namespace Flags {
     *OscillationOverthruster, *RapidFire, *MachineGun, *GuidedMissile, *Laser,
     *Ricochet, *SuperBullet, *InvisibleBullet, *Stealth, *Tiny, *Narrow,
     *Shield, *Steamroller, *ShockWave, *PhantomZone, *Genocide, *Jumping,
-    *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Colorblindness,
+    *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Colorblindness,
     *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, *Blindness, *Jamming,
     *WideAngle;
 }

@@ -93,6 +93,7 @@ float			Player::getRadius() const
 {
   if (flag == Flags::Obesity) return TankRadius * ObeseFactor;
   if (flag == Flags::Tiny)    return TankRadius * TinyFactor;
+  if (flag == Flags::Thief)   return TankRadius * ThiefTinyFactor;
   return TankRadius;
 }
 
@@ -102,6 +103,7 @@ void			Player::getMuzzle(float* m) const
   float front = MuzzleFront;
   if (flag == Flags::Obesity) front *= ObeseFactor;
   else if (flag == Flags::Tiny) front *= TinyFactor;
+  else if (flag == Flags::Thief) front *= ThiefTinyFactor;
   m[0] = state.pos[0] + front * forward[0];
   m[1] = state.pos[1] + front * forward[1];
   m[2] = state.pos[2] + front * forward[2] + MuzzleHeight;
@@ -250,6 +252,7 @@ void			Player::addPlayer(SceneDatabase* scene,
     if (flag == Flags::Obesity) tankNode->setObese();
     else if (flag == Flags::Tiny) tankNode->setTiny();
     else if (flag == Flags::Narrow) tankNode->setNarrow();
+    else if (flag == Flags::Thief) tankNode->setThief();
     else tankNode->setNormal();
     tankNode->setExplodeFraction(0.0f);
     scene->addDynamicNode(tankNode);

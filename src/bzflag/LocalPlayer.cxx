@@ -86,6 +86,7 @@ void			BaseLocalPlayer::update()
   float size = TankRadius;
   if (getFlag() == Flags::Obesity) size *= ObeseFactor;
   else if (getFlag() == Flags::Tiny) size *= TinyFactor;
+  else if (getFlag() == Flags::Thief) size *= ThiefTinyFactor;
   bbox[0][0] -= size;
   bbox[1][0] += size;
   bbox[0][1] -= size;
@@ -559,6 +560,10 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
     length *= TinyFactor;
     width *= 2.0f * TinyFactor;
   }
+  else if (getFlag() == Flags::Thief) {
+    length *= ThiefTinyFactor;
+    width *= 2.0f * ThiefTinyFactor;
+  }
   else if (getFlag() == Flags::Narrow) {
     width = 0.0f;
   }
@@ -588,6 +593,10 @@ bool			LocalPlayer::getHitNormal(const Obstacle* o,
   else if (getFlag() == Flags::Tiny) {
     length *= TinyFactor;
     width *= 2.0f * TinyFactor;
+  }
+  else if (getFlag() == Flags::Thief) {
+    length *= ThiefTinyFactor;
+    width *= 2.0f * ThiefTinyFactor;
   }
   else if (getFlag() == Flags::Narrow) {
     width = 0.0f;
@@ -695,6 +704,8 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   // boost speed for certain flags
   if (getFlag() == Flags::Velocity)
     fracOfMaxSpeed *= VelocityAd;
+  else if (getFlag() == Flags::Thief)
+    fracOfMaxSpeed *= ThiefVelAd;
 
   // set desired speed
   desiredSpeed = fracOfMaxSpeed * TankSpeed;
@@ -776,6 +787,8 @@ bool			LocalPlayer::fireShot()
     playLocalSound(SFX_LASER);
   else if (firingInfo.flag == Flags::GuidedMissile)
     playLocalSound(SFX_MISSILE);
+  else if (firingInfo.flag == Flags::Thief)
+    playLocalSound(SFX_THIEF);
   else
     playLocalSound(SFX_FIRE);
 
@@ -921,7 +934,7 @@ bool			LocalPlayer::checkHit(const Player* source,
     if (!shot || shot->isExpired()) continue;
 
     // my own shock wave cannot kill me
-    if (source == this && shot->getFlag() == Flags::ShockWave) continue;
+    if (source == this && ((shot->getFlag() == Flags::ShockWave) || (shot->getFlag() == Flags::Thief))) continue;
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude

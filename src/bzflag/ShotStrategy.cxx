@@ -33,6 +33,7 @@
 static OpenGLTexture*	boltTexture[NumTeams];
 static OpenGLTexture*	tboltTexture[NumTeams];
 static OpenGLTexture*	laserTexture[NumTeams];
+static OpenGLTexture*   thiefTexture;
 static OpenGLTexture*	gmTexture;
 
 //
@@ -59,6 +60,7 @@ void			ShotStrategy::init()
     tboltTexture[i] = new OpenGLTexture;
   for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++)
     laserTexture[i] = new OpenGLTexture;
+  thiefTexture = new OpenGLTexture;
   gmTexture = new OpenGLTexture;
 
   *boltTexture[RogueTeam] = getTexture("ybolt", OpenGLTexture::Linear);
@@ -79,6 +81,7 @@ void			ShotStrategy::init()
   *laserTexture[BlueTeam] = getTexture("blaser", OpenGLTexture::Max);
   *laserTexture[PurpleTeam] = getTexture("plaser", OpenGLTexture::Max);
   *laserTexture[RabbitTeam] = getTexture("wlaser", OpenGLTexture::Max);
+  *thiefTexture = getTexture("thief", OpenGLTexture::Max);
   *gmTexture = getTexture("missile", OpenGLTexture::Max);
 }
 
@@ -87,6 +90,8 @@ void			ShotStrategy::done()
   int i;
   delete gmTexture;
   gmTexture = NULL;
+  delete thiefTexture;
+  thiefTexture = NULL;
 
   for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++) {
     delete boltTexture[i];
@@ -471,6 +476,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   float radius = TankRadius;
   if (tank->getFlag() == Flags::Obesity)   radius *= ObeseFactor;
   else if (tank->getFlag() == Flags::Tiny) radius *= TinyFactor;
+  else if (tank->getFlag() == Flags::Thief) radius *= ThiefTinyFactor;
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -782,6 +788,93 @@ RapidFireStrategy::~RapidFireStrategy()
 {
   // do nothing
 }
+
+// 
+// ThiefStrategy
+//
+
+ThiefStrategy::ThiefStrategy(ShotPath* path) :
+				SegmentedShotStrategy(path, false),
+				cumTime(0.0f)
+{
+  // speed up shell and decrease lifetime
+  FiringInfo& f = getFiringInfo(path);
+  f.lifetime *= ThiefAdRate;
+  f.shot.vel[0] *= ThiefAdShotVel;
+  f.shot.vel[1] *= ThiefAdShotVel;
+  f.shot.vel[2] *= ThiefAdShotVel;
+  setReloadTime(path->getReloadTime() / ThiefAdRate);
+
+  // make segments
+  makeSegments(Stop);
+  setCurrentTime(getLastTime());
+  endTime = f.lifetime;
+
+  // make laser scene nodes
+  const int numSegments = getSegments().size();
+  thiefNodes = new LaserSceneNode*[numSegments];
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
+  TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
+  for (int i = 0; i < numSegments; i++) {
+    const ShotPathSegment& segment = getSegments()[i];
+    const float t = segment.end - segment.start;
+    const Ray& ray = segment.ray;
+    const float* rawdir = ray.getDirection();
+    float dir[3];
+    dir[0] = t * rawdir[0];
+    dir[1] = t * rawdir[1];
+    dir[2] = t * rawdir[2];
+    thiefNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
+    if (thiefTexture && thiefTexture->isValid())
+      thiefNodes[i]->setTexture(*thiefTexture);
+  }
+  setCurrentSegment(numSegments - 1);
+}
+
+ThiefStrategy::~ThiefStrategy()
+{
+  const int numSegments = getSegments().size();
+  for (int i = 0; i < numSegments; i++)
+    delete thiefNodes[i];
+  delete[] thiefNodes;
+}
+
+void			ThiefStrategy::update(float dt)
+{
+  cumTime += dt;
+  if (cumTime >= endTime) setExpired();
+}
+
+void			ThiefStrategy::addShot(SceneDatabase* scene, bool)
+{
+  // laser is so fast we always show every segment
+  const int numSegments = getSegments().size();
+  for (int i = 0; i < numSegments; i++)
+    scene->addDynamicNode(thiefNodes[i]);
+}
+
+void			ThiefStrategy::radarRender() const
+{
+  // draw all segments
+  const std::vector<ShotPathSegment>& segments = getSegments();
+  const int numSegments = segments.size();
+  glBegin(GL_LINES);
+    for (int i = 0; i < numSegments; i++) {
+      const ShotPathSegment& segment = segments[i];
+      const float* origin = segment.ray.getOrigin();
+      const float* direction = segment.ray.getDirection();
+      const float dt = segment.end - segment.start;
+      glVertex2fv(origin);
+      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+    }
+  glEnd();
+}
+
+bool			ThiefStrategy::isStoppedByHit() const
+{
+  return false;
+}
+
 
 //
 // MachineGunStrategy
@@ -1177,6 +1270,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
   float radius = TankRadius;
   if (tank->getFlag() == Flags::Obesity)   radius *= ObeseFactor;
   else if (tank->getFlag() == Flags::Tiny) radius *= TinyFactor;
+  else if (tank->getFlag() == Flags::Thief) radius *= ThiefTinyFactor;
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by

@@ -71,6 +71,8 @@ ShotPath::ShotPath(const FiringInfo& info) :
       strategy = new SuperBulletStrategy(this);
     else if (firingInfo.flag == Flags::ShockWave)
       strategy = new ShockWaveStrategy(this);
+    else if (firingInfo.flag == Flags::Thief)
+      strategy = new ThiefStrategy(this);
     else
       assert(0);    // shouldn't happen
   }

@@ -44,6 +44,7 @@
 #define	SFX_HUNT	22		/* hunting sound */
 #define SFX_HUNT_SELECT	23		/* hunt target selected */
 #define SFX_RUNOVER     24              /* steamroller sound */
+#define SFX_THIEF       25		/* thief sound */
 
 /* prepare sound effects generator and shut it down */
 void			openSound(const char* pname);

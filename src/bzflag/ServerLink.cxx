@@ -530,6 +530,15 @@ void			ServerLink::sendTeleport(int from, int to)
   send(MsgTeleport, sizeof(msg), msg);
 }
 
+void			ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
+{
+  char msg[PlayerIdPLen*2];
+  void* buf = msg;
+  buf = nboPackUByte(buf, from);
+  buf = nboPackUByte(buf, to);
+  send(MsgTransferFlag, sizeof(msg), msg);
+}
+
 void			ServerLink::sendNewRabbit()
 {
   send(MsgNewRabbit, 0, NULL);

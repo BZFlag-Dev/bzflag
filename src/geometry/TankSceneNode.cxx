@@ -213,6 +213,12 @@ void			TankSceneNode::setNarrow()
   setRadius(baseRadius);
 }
 
+void			TankSceneNode::setThief()
+{
+  style = TankRenderNode::Thief;
+  setRadius(ThiefTinyFactor*ThiefTinyFactor*baseRadius);
+}
+
 void			TankSceneNode::setExplodeFraction(float t)
 {
   explodeFraction = t;

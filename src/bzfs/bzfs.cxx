@@ -3936,6 +3936,9 @@ static void shotFired(int playerIndex, void *buf, int len)
   else if (firingInfo.flag == Flags::Velocity) {
       tankSpeed *= VelocityAd;
   }
+  else if (firingInfo.flag == Flags::Thief) {
+      tankSpeed *= ThiefVelAd;
+  }
   else {
       //If shot is different height than player, can't be sure they didn't drop V in air
       if (shooter.lastState.pos[2] != (shot.pos[2]-MuzzleHeight))
@@ -4952,6 +4955,32 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       break;
     }
 
+    // player has transferred flag to another tank
+    case MsgTransferFlag: {
+	PlayerId from, to;
+
+	buf = nboUnpackUByte(buf, from);
+	buf = nboUnpackUByte(buf, to);
+
+	if ((from == InvalidPlayer) || (to == InvalidPlayer))
+		break;
+
+	zapFlag(player[to].flag);
+	char msg[2*PlayerIdPLen + 2 + FlagPLen];
+	void *buf = msg;
+	buf = nboPackUByte(buf, from);
+	buf = nboPackUByte(buf, to);
+	int flagIndex = player[from].flag;
+	buf = nboPackUShort(buf, uint16_t(flagIndex));
+	flag[flagIndex].flag.owner = to;
+	player[to].flag = flagIndex;
+	player[from].flag = -1;
+	buf = flag[flagIndex].flag.pack(buf);
+	broadcastMessage(MsgTransferFlag, sizeof(msg), msg);
+	break;
+    }
+
+
     // player is requesting an additional UDP connection, sending its own UDP port
     case MsgUDPLinkRequest: {
       if (clOptions->alsoUDP) {
@@ -5048,6 +5077,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	// if tank is not alive cannot be sure it didn't just toss (V)
 	if (flag[player[t].flag].flag.desc == Flags::Velocity)
 	  maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
+	else if (flag[player[t].flag].flag.desc == Flags::Thief)
+	  maxPlanarSpeedSqr *= ThiefVelAd * ThiefVelAd;
 	else {
 	  // If player is moving vertically, or not alive the speed checks seem to be problematic
 	  // If this happens, just log it for now, but don't actually kick

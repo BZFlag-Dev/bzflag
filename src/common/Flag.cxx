@@ -83,6 +83,8 @@ namespace Flags {
 						    "MasQuerade (+MQ):  In opponent's hud, you appear as a teammate.");
   FlagDesc *Seer                    = new FlagDesc( "Seer", "SE", FlagUnstable, NormalShot, FlagGood, NoTeam,
 						    "SEer (+SE):  See stealthed, cloaked and masquerading tanks as normal.");
+  FlagDesc *Thief                   = new FlagDesc( "Thief", "TH", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+						    "THief (+TH):  Steal flags.  Small and fast but can't kill.");
   FlagDesc *Colorblindness          = new FlagDesc( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!");
   FlagDesc *Obesity                 = new FlagDesc( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,

@@ -147,6 +147,21 @@ class RapidFireStrategy : public SegmentedShotStrategy {
 			~RapidFireStrategy();
 };
 
+class ThiefStrategy : public SegmentedShotStrategy {
+  public:
+			ThiefStrategy(ShotPath*);
+			~ThiefStrategy();
+    void		update(float dt);
+    bool		isStoppedByHit() const;
+    void		addShot(SceneDatabase*, bool colorblind);
+    void		radarRender() const;
+
+  private:
+    float		cumTime;
+    float		endTime;
+    LaserSceneNode**	thiefNodes;
+};
+
 class MachineGunStrategy : public SegmentedShotStrategy {
   public:
 			MachineGunStrategy(ShotPath*);

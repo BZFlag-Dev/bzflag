@@ -88,6 +88,7 @@ class TankSceneNode : public SceneNode {
     void		setObese();
     void		setTiny();
     void		setNarrow();
+    void		setThief();
     void		setExplodeFraction(float t);
     void		setClipPlane(const GLfloat* plane);
 
@@ -106,7 +107,8 @@ class TankSceneNode : public SceneNode {
 			Normal,
 			Obese,
 			Tiny,
-			Narrow
+			Narrow,
+			Thief
 	};
 
 			TankRenderNode(const TankSceneNode*);

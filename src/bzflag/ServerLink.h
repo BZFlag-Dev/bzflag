@@ -66,7 +66,7 @@ class ServerLink {
     void		sendEndShot(const PlayerId&, int shotId, int reason);
     void		sendAlive(const float* pos, const float* fwd);
     void		sendTeleport(int from, int to);
-    void		sendNewScore(int wins, int losses);
+    void		sendTransferFlag(const PlayerId&, const PlayerId&);
     void		sendNewRabbit();
     void                sendUDPlinkRequest();
     void		enableUDPCon();
