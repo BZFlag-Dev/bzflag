@@ -49,12 +49,10 @@ styles are available.
 %ifarch i386 i486 i586 i686
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"	\
 	./configure --prefix=%{prefix} --enable-robots	\
-	--enable-bzadmin				\
 	--host=i386-pc-linux-gnu
 %else
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"	\
-	./configure --prefix=%{prefix} --enable-robots	\
-	--enable-bzadmin
+	./configure --prefix=%{prefix} --enable-robots
 %endif
 
 make
