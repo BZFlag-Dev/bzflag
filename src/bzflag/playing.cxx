@@ -970,11 +970,18 @@ static void		addMessage(const Player* player,
   BzfString fullMessage;
   if (player) {
     fullMessage += player->getCallSign();
+#ifdef BWSUPPORT
     fullMessage += " (";
     fullMessage += Team::getName(player->getTeam());
-    fullMessage += "): ";
+    fullMessage += ")";
+#endif
+    fullMessage += ": ";
   }
   fullMessage += msg;
+#ifndef BWSUPPORT
+  if (color == NULL)
+    color = Team::getRadarColor(player->getTeam());
+#endif
   controlPanel->addMessage(fullMessage, color);
 }
 
@@ -1612,13 +1619,6 @@ static void		handleServerMessage(boolean human, uint16_t code,
     }
 
     case MsgMessage: {
-      static const GLfloat	teamMsgColor[][3] = {
-				  { 1.0, 1.0, 0.5 },	// broadcast
-				  { 1.0, 0.5, 0.5 },	// red
-				  { 0.5, 1.0, 0.5 },	// green
-				  { 0.5, 0.5, 1.0 },	// blue
-				  { 1.0, 0.5, 1.0 }	// purple
-				};
       PlayerId src;
       PlayerId dst;
       uint16_t team;
@@ -1628,57 +1628,65 @@ static void		handleServerMessage(boolean human, uint16_t code,
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
       if (dstPlayer == myTank || (!dstPlayer && /*srcPlayer != myTank &&*/
-		(int(team) == int(RogueTeam) ||
-		int(team) == int(myTank->getTeam())))) {
+	  (int(team) == int(RogueTeam) ||
+	  int(team) == int(myTank->getTeam())))) {
 	// message is for me
 	BzfString fullMsg;
-	if (dstPlayer) fullMsg = "[direct] ";
+	if (dstPlayer) 
+	  fullMsg = "[direct] ";
 	else if (int(team) != int(RogueTeam)) {
+#ifdef BWSUPPORT
 	  fullMsg = "[to ";
 	  fullMsg += Team::getName(TeamColor(team));
 	  fullMsg += "] ";
+#else
+	  fullMsg = "[Team] ";
+#endif
 	}
 	if (!srcPlayer) {
-		/* may unkown not harm us */
-		fullMsg = "(UNKNOWN) ";
-		fullMsg += (const char*)msg;
+	  /* may unkown not harm us */
+	  fullMsg = "(UNKNOWN) ";
+	  fullMsg += (const char*)msg;
 
-		addMessage(NULL, fullMsg, teamMsgColor[0]);
-		break;
+	  addMessage(NULL, fullMsg, Team::getRadarColor(RogueTeam));
+	  break;
 	}
 	if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
-		char messageBuffer[MessageLen];
-		memset(messageBuffer, 0, MessageLen);
-		sprintf(messageBuffer,"Version %d.%d%c%d",
-		(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
-		if (startupInfo.useUDPconnection) strcat(messageBuffer,"+UDP");
+	  char messageBuffer[MessageLen];
+	  memset(messageBuffer, 0, MessageLen);
+	  sprintf(messageBuffer,"Version %d.%d%c%d",
+	    (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
+	    (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
+	  if (startupInfo.useUDPconnection)
+	    strcat(messageBuffer,"+UDP");
 
-        nboPackString(messageMessage + PlayerIdPLen + 2,
-					messageBuffer, MessageLen);
-		serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-		const GLfloat* msgColor;
-		if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
-		  msgColor = teamMsgColor[0];
-		else
-		  msgColor = teamMsgColor[srcPlayer->getTeam()];
+	  nboPackString(messageMessage + PlayerIdPLen + 2, messageBuffer, MessageLen);
+	  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	  const GLfloat* msgColor;
+	  if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
+	    msgColor = Team::getRadarColor(RogueTeam);
+	  else
+	    msgColor = Team::getRadarColor(srcPlayer->getTeam());
 
-		addMessage(srcPlayer,"[Sent versioninfo per request]", msgColor);
-
-		break;
+	  addMessage(srcPlayer,"[Sent versioninfo per request]", msgColor);
+	  break;
 	}
 	fullMsg += (const char*)msg;
 	const GLfloat* msgColor;
-	if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
-	  msgColor = teamMsgColor[0];
+	if (srcPlayer->getTeam() == NoTeam)
+	  msgColor = Team::getRadarColor(RogueTeam);
 	else
-	  msgColor = teamMsgColor[srcPlayer->getTeam()];
+	  msgColor = Team::getRadarColor(srcPlayer->getTeam());
 	addMessage(srcPlayer, fullMsg, msgColor);
 
+	// HUD one line display
 	fullMsg = srcPlayer->getCallSign();
+#ifdef BWSUPPORT
 	fullMsg += " (";
 	fullMsg += Team::getName(srcPlayer->getTeam());
-	fullMsg += "): ";
+	fullMsg += ")";
+#endif
+	fullMsg += ": ";
 	fullMsg += (const char*)msg;
 	hud->setAlert(0, fullMsg, 3.0f, False);
       }
