@@ -331,11 +331,12 @@ public:
   }
 
   void ban(BzfString &ipList) {
-    ban((char *)(const char *)ipList);
+    ban((const char *)ipList);
   }
 
   void ban(const char *ipList) {
-    char *pStart = (char *)(const char *)ipList;
+    char *buf = strdup(ipList);
+    char *pStart = buf;
     char *pSep;
 
     in_addr mask;
@@ -348,6 +349,7 @@ public:
     }
     if (convert(pStart, mask))
       ban(mask);
+    free(buf);
   }
 
   bool validate(in_addr &ipAddr) {
