@@ -398,7 +398,7 @@ int			StateDatabase::evalInt(const std::string& name)
   return (int)eval(name);
 }
 
-bool		StateDatabase::evalTriplet(const std::string& name, float *data)
+bool		StateDatabase::evalTriplet(const std::string& name, float data[4])
 {
 	if (!isSet(name) || !data)
 		return false;
@@ -407,7 +407,7 @@ bool		StateDatabase::evalTriplet(const std::string& name, float *data)
 	return true;
 }
 
-bool		StateDatabase::evalPair(const std::string& name, float *data)
+bool		StateDatabase::evalPair(const std::string& name, float data[2])
 {
 	if (!isSet(name) || !data)
 		return false;
