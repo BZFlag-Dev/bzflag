@@ -572,9 +572,17 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
       formatted += "[Admin] ";
     else if (dstTeam != NoTeam)
       formatted += "[Team] ";
-    formatted += srcName;
-    formatted += ": ";
-    formatted += msg;
+      
+    // action messages are formatted differently
+    if ((msg[0] == '*') && (msg[1] == ' ') &&
+        (msg[msg.size() - 1] == '*') &&
+        (msg[msg.size() - 2] == '\t')) {
+      formatted += msg.substr(2, msg.size() - 4);
+    } else {
+      formatted += srcName;
+      formatted += ": ";
+      formatted += msg;
+    }
   }
 
   return formatted;
