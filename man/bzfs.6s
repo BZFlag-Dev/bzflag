@@ -765,7 +765,7 @@ The list of world types consists of
 .B	weapon
 .br
 
-Each object is described by placing the type on one line, the world /fIend/fR on a following line,
+Each object is described by placing the type on one line, the word \fIend\fR on a following line,
 and a list of attributes for that object, one per line, inbetween. Attributes may be listed in
 any order. Attributes have default values, and if that is good enough, the attribute need not 
 be listed. Words are always specified in lowercase. Line comments can be specified by placing a 
