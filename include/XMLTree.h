@@ -29,6 +29,8 @@ public:
 	XMLIOException(const XMLStreamPosition&, const char*);
 	XMLIOException(const XMLStreamPosition&, const std::string&);
 
+	virtual ~XMLIOException() throw();
+
 public:
 	XMLStreamPosition	position;
 };

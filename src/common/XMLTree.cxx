@@ -83,6 +83,11 @@ XMLIOException::XMLIOException(const XMLStreamPosition& p,
 	// do nothing
 }
 
+XMLIOException::~XMLIOException() throw()
+{
+	// do nothing
+}
+
 
 //
 // XMLNode
