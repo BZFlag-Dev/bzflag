@@ -4982,8 +4982,9 @@ static void parseCommand(const char *message, int t)
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
     gameOver = true;
 #ifdef TIMELIMIT
-  // /countdown starts timed game
-  } else if (player[t].Admin && strncmp(message + 1, "countdown", 9) == 0) {
+  // /countdown starts timed game, if start is manual, everyone is allowed to
+  } else if ((player[t].Admin || clOptions.timeManualStart) &&
+             strncmp(message + 1, "countdown", 9) == 0) {
     if (clOptions.timeLimit > 0.0f) {
       gameStartTime = TimeKeeper::getCurrent();
       clOptions.timeElapsed = 0.0f;
