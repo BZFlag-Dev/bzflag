@@ -10,9 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* the common header */
+#include "common.h"
+
 /* interface header */
 #include "CustomZone.h"
-#include "common.h"
 
 /* system headers */
 #include <sstream>
@@ -22,6 +24,7 @@
 #include "EntryZones.h"
 #include "Flag.h"
 #include "Team.h"
+
 
 CustomZone::CustomZone()
 {
