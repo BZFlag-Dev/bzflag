@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- the high jump cheat check doesn't work very well with varying or positive
+  gravity
+
 - robots sometimes drive straight through THE MIDDLE of buildings (seen on xmission(hix))
    the code to generate the cells of open space are susceptible
    to roundoff error, causing this effect.
