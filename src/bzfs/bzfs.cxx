@@ -7119,7 +7119,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     }
     else if (strcmp(argv[i], "-helpmsg") == 0) {
       if (i+2 >= argc) {
-	fprintf(stderr, "2 arguments expected for -filemsg\n");
+	fprintf(stderr, "2 arguments expected for -helpmsg\n");
 	usage(argv[0]);
       }
       else {
