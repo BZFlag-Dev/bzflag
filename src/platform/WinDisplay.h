@@ -41,6 +41,9 @@ class WinDisplay : public BzfDisplay {
     int			getFullWidth() const;
     int			getFullHeight() const;
 
+	bool		peekEvent(BzfEvent& event) const;
+
+
     // for other Windows stuff
     class Rep {
       public:
@@ -71,6 +74,8 @@ class WinDisplay : public BzfDisplay {
     bool		doSetResolution(int);
     ResInfo**		getVideoFormats(int& num, int& current);
     static bool		canChangeDepth();
+
+	bool windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const;
 
   private:
     Rep*		rep;

@@ -231,105 +231,111 @@ bool			WinDisplay::isEventPending() const
   return (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0);
 }
 
+bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
+{
+	event.window = WinWindow::lookupWindow(msg.hwnd);
+	switch (msg.message) {
+	case WM_CLOSE:
+	case WM_QUIT:
+	case WM_SYSCOMMAND:
+		if (msg.wParam != SC_CLOSE)
+			break;
+		event.type = BzfEvent::Quit;
+		break;
+
+	case WM_PAINT:
+		event.type = BzfEvent::Redraw;
+		ValidateRect(msg.hwnd, NULL);		// no more WM_PAINTs, please!
+		break;
+
+	case WM_SIZE:
+		event.type = BzfEvent::Resize;
+		event.resize.width = LOWORD(msg.lParam);
+		event.resize.height = HIWORD(msg.lParam);
+		break;
+
+	case WM_MOUSEMOVE:
+		event.type = BzfEvent::MouseMove;
+		event.mouseMove.x = LOWORD(msg.lParam);
+		event.mouseMove.y = HIWORD(msg.lParam);
+		break;
+
+	case WM_APP + 0:
+		event.type = BzfEvent::Map;
+		break;
+
+	case WM_APP + 1:
+		event.type = BzfEvent::Unmap;
+		break;
+
+	case WM_LBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+		event.type = BzfEvent::KeyDown;
+		event.keyDown.ascii = 0;
+		event.keyDown.shift = 0;
+		switch (msg.message) {
+	case WM_LBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::LeftMouse; break;
+	case WM_MBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::MiddleMouse; break;
+	case WM_RBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::RightMouse; break;
+	default:		return false;
+		}
+		break;
+
+	case WM_LBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_RBUTTONUP:
+		event.type = BzfEvent::KeyUp;
+		event.keyUp.ascii = 0;
+		event.keyUp.shift = 0;
+		switch (msg.message) {
+	case WM_LBUTTONUP:	event.keyUp.button = BzfKeyEvent::LeftMouse; break;
+	case WM_MBUTTONUP:	event.keyUp.button = BzfKeyEvent::MiddleMouse; break;
+	case WM_RBUTTONUP:	event.keyUp.button = BzfKeyEvent::RightMouse; break;
+	default:		return false;
+		}
+		break;
+
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+		((WinDisplay*)this)->translated = (bool)(TranslateMessage(&msg) != 0);
+		if (!translated) ((WinDisplay*)this)->charCode = 0;
+		if (isNastyKey(msg)) return false;
+		DispatchMessage(&msg);
+		event.type = BzfEvent::KeyDown;
+		if (!getKey(msg, event.keyDown)) return false;
+		break;
+
+	case WM_KEYUP:
+	case WM_SYSKEYUP: {
+		((WinDisplay*)this)->translated = (bool)(TranslateMessage(&msg) != 0);
+		if (isNastyKey(msg)) return false;
+		DispatchMessage(&msg);
+		event.type = BzfEvent::KeyUp;
+		if (!getKey(msg, event.keyUp)) return false;
+		break;
+					  }
+
+	default:
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+		return false;
+	}
+	return true;
+}
+
 bool			WinDisplay::peekEvent(BzfEvent& event) const
 {
-  return false;
+	MSG msg;
+	if (PeekMessage(&msg, NULL, 0, 0,0) == -1) return false;
+	return windowsEventToBZFEvent(msg,event);
 }
 
 bool			WinDisplay::getEvent(BzfEvent& event) const
 {
   MSG msg;
   if (GetMessage(&msg, NULL, 0, 0) == -1) return false;
-  event.window = WinWindow::lookupWindow(msg.hwnd);
-  switch (msg.message) {
-    case WM_CLOSE:
-    case WM_QUIT:
-    case WM_SYSCOMMAND:
-      if (msg.wParam != SC_CLOSE)
-	  break;
-      event.type = BzfEvent::Quit;
-      break;
-
-    case WM_PAINT:
-      event.type = BzfEvent::Redraw;
-      ValidateRect(msg.hwnd, NULL);		// no more WM_PAINTs, please!
-      break;
-
-    case WM_SIZE:
-      event.type = BzfEvent::Resize;
-      event.resize.width = LOWORD(msg.lParam);
-      event.resize.height = HIWORD(msg.lParam);
-      break;
-
-    case WM_MOUSEMOVE:
-      event.type = BzfEvent::MouseMove;
-      event.mouseMove.x = LOWORD(msg.lParam);
-      event.mouseMove.y = HIWORD(msg.lParam);
-      break;
-
-    case WM_APP + 0:
-      event.type = BzfEvent::Map;
-      break;
-
-    case WM_APP + 1:
-      event.type = BzfEvent::Unmap;
-      break;
-
-    case WM_LBUTTONDOWN:
-    case WM_MBUTTONDOWN:
-    case WM_RBUTTONDOWN:
-      event.type = BzfEvent::KeyDown;
-      event.keyDown.ascii = 0;
-      event.keyDown.shift = 0;
-      switch (msg.message) {
-	case WM_LBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::LeftMouse; break;
-	case WM_MBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::MiddleMouse; break;
-	case WM_RBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::RightMouse; break;
-	default:		return false;
-      }
-      break;
-
-    case WM_LBUTTONUP:
-    case WM_MBUTTONUP:
-    case WM_RBUTTONUP:
-      event.type = BzfEvent::KeyUp;
-      event.keyUp.ascii = 0;
-      event.keyUp.shift = 0;
-      switch (msg.message) {
-	case WM_LBUTTONUP:	event.keyUp.button = BzfKeyEvent::LeftMouse; break;
-	case WM_MBUTTONUP:	event.keyUp.button = BzfKeyEvent::MiddleMouse; break;
-	case WM_RBUTTONUP:	event.keyUp.button = BzfKeyEvent::RightMouse; break;
-	default:		return false;
-      }
-      break;
-
-    case WM_KEYDOWN:
-    case WM_SYSKEYDOWN:
-      ((WinDisplay*)this)->translated = (bool)(TranslateMessage(&msg) != 0);
-      if (!translated) ((WinDisplay*)this)->charCode = 0;
-      if (isNastyKey(msg)) return false;
-      DispatchMessage(&msg);
-      event.type = BzfEvent::KeyDown;
-      if (!getKey(msg, event.keyDown)) return false;
-      break;
-
-    case WM_KEYUP:
-    case WM_SYSKEYUP: {
-      ((WinDisplay*)this)->translated = (bool)(TranslateMessage(&msg) != 0);
-      if (isNastyKey(msg)) return false;
-      DispatchMessage(&msg);
-      event.type = BzfEvent::KeyUp;
-      if (!getKey(msg, event.keyUp)) return false;
-      break;
-    }
-
-    default:
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-      return false;
-  }
-
-  return true;
+  return windowsEventToBZFEvent(msg,event);
 }
 
 void			WinDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
