@@ -906,7 +906,7 @@ void			HUDRenderer::renderTimes(SceneRenderer& renderer)
     sprintf(buf, "FPS: %d", int(fps));
     hudColor3f(1.0f, 1.0f, 1.0f);
     headingFont.draw(buf, (float)(centerx - maxMotionSize),
-		(float)centery + (float) noMotionSize +
+		(float)centery + (float) maxMotionSize +
 		3.0f * (headingFont.getSpacing() + headingFont.getDescent()));
   }
   if (drawTime > 0.0f) {
@@ -914,7 +914,7 @@ void			HUDRenderer::renderTimes(SceneRenderer& renderer)
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
     headingFont.draw(buf, (float)centerx,
-		(float)centery + (float) noMotionSize +
+		(float)centery + (float) maxMotionSize +
 		3.0f * (headingFont.getSpacing() + headingFont.getDescent()));
   }
 }
