@@ -56,6 +56,8 @@ bzfs_SOURCES = \
 	CustomZone.h \
 	EntryZones.cxx \
 	EntryZones.h \
+	Filter.cxx	\
+	Filter.h	\
 	FlagHistory.cxx	\
 	FlagHistory.h	\
 	FlagInfo.cxx \

@@ -46,6 +46,7 @@
 #include "commands.h"
 #include "FlagInfo.h"
 #include "MasterBanList.h"
+#include "Filter.h"
 
 const int udpBufSize = 128000;
 
@@ -110,6 +111,7 @@ WorldInfo *world = NULL;
 char *worldDatabase = NULL;
 uint32_t worldDatabaseSize = 0;
 
+Filter   filter;
 
 BasesList bases;
 
@@ -1640,6 +1642,13 @@ static void addPlayer(int playerIndex)
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
+
+  int filterIndex = 0;
+  Filter::Action filterAction = filter.check(*playerData, filterIndex);
+  if (filterAction == Filter::DROP) {
+    rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
+    return ;
+  }
 
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
