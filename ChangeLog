@@ -5,6 +5,7 @@
 BZFlag 1.11
 -----------
 
+* Added ReverseControls bad flag - Sean Morrison
 * Added Wings good flag - Dave Brosius
 * Added BZDB variables to allow for more realistic friction - Nils McCarthy
 * Added ForwardOnly and ReverseOnly bad flags - Sean Morrison
