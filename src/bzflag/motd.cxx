@@ -16,6 +16,7 @@
 
 #include "motd.h"
 #include "URLManager.h"
+#include "TextUtils.h"
 
 MessageOfTheDay::MessageOfTheDay()
 {
@@ -28,9 +29,18 @@ MessageOfTheDay::~MessageOfTheDay()
 
 const std::string& MessageOfTheDay::get ( const std::string URL )
 {
-	data = "";
-	// get all up on the internet and go get the thing
-	if  (!URLManager::instance().getURL(URL,data))
-		data = "Default MOTD";
-	return data;
+  data = "";
+  // get all up on the internet and go get the thing
+  if (!URLManager::instance().getURL(URL,data)) {
+    data = "Default MOTD";
+  } else {
+    // trim trailing whitespace
+    int l = data.size() - 1;
+    while (isWhitespace(data[l])) {
+      data.erase(l, 1);
+      l--;
+    }
+  }
+
+  return data;
 }
