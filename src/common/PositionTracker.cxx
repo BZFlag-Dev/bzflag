@@ -141,8 +141,8 @@ unsigned short PositionTracker::track(long int id, std::string group)
 bool PositionTracker::update(unsigned short int token, const std::string id, const double position[3], std::string group)
 {
   TrackedItemVector& trackSet = _trackedItem[group];
-  if ((token >= trackSet.size()) || 
-      (trackSet[token]->id != STR_ID) || 
+  if ((token >= trackSet.size()) ||
+      (trackSet[token]->id != STR_ID) ||
       (trackSet[token]->strID != id) ||
       (trackSet[token]->forgotten)) {
     return false;
@@ -258,7 +258,7 @@ bool PositionTracker::addWaypoint(const double from[3], const double to[3], doub
   }
   */
   _waypointDistance[waypoint] = distance;
-  
+
   return true;
 }
 bool PositionTracker::addWaypoint(const float from[3], const float to[3], double distance)

@@ -151,7 +151,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
     } else if (object) {
       if (object != fakeObject) {
         if (!object->read(buffer, *input)) {
-  	  // unknown token
+ 	  // unknown token
 	  errorHandler->warning(std::string("unknown object parameter \"") + std::string(buffer) + std::string("\" - skipping"), line);
 	  // delete object;
 	  // return false;

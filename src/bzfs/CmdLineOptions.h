@@ -36,7 +36,7 @@ const int MaxShots = 10;
 // rabbit selection algorithms
 enum RabbitSelection {
   ScoreRabbitSelection,		// default method based on score
-  KillerRabbitSelection,  	// anoint whoever manages to kill the rabbit
+  KillerRabbitSelection, 	// anoint whoever manages to kill the rabbit
   RandomRabbitSelection		// pick the new rabbit out of a hat
 };
 

@@ -97,7 +97,7 @@ public:
   InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
                                                float x, float y, float z, float r,
                                                float height);
-                                               
+
   /** check collision between world object and a cylinder.
    * return value is kind of collision.
    * location will return a pointer to the world colliding object
@@ -124,7 +124,7 @@ public:
 			       const float* pos, float angle,
 			       float width, float breadth, float height);
 
-                                                                                          
+
   /** see if the CollisionManager's view of the world size
    * matches that of BZDB. if not, reload the CollisionManager
    */

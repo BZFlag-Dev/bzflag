@@ -433,7 +433,7 @@ void CursesUI::initMainMenu(CursesMenu& menu) {
   menu.addItem(new SubmenuCMItem("Edit server variables",
 				  &CursesUI::initServerVarMenu));
   menu.addItem(new SubmenuCMItem("Edit message filter",
-  				 &CursesUI::initFilterMenu));
+ 				 &CursesUI::initFilterMenu));
 }
 
 

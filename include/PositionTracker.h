@@ -86,7 +86,7 @@ public:
   /** add a waypoint to the tracker so that it can calculate shortest
    * paths better.  A negative distance will cause the real distance
    * to be computed and stored, otherwise a non-negative distance will
-   * indicate how "far" the two points are.  Setting the distance to 
+   * indicate how "far" the two points are.  Setting the distance to
    * zero or near zero is akin to a teleporter.
    */
   bool addWaypoint(const double from[3], const double to[3], double distance=-1.0);

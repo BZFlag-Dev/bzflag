@@ -312,7 +312,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	    cumulativeANSICodes += msg[n];
 	    n++;
 	    if ((n < lineLen) && (msg[n] == '[')) {
-  	      cumulativeANSICodes += msg[n];
+ 	      cumulativeANSICodes += msg[n];
 	      n++;
 	      while ((n < lineLen) && ((msg[n] == ';') ||
 		    ((msg[n] >= '0') && (msg[n] <= '9')))) {

@@ -3,7 +3,7 @@ noinst_LIBRARIES = libGame.a
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-libGame_a_SOURCES = 			\
+libGame_a_SOURCES =			\
 	CollisionManager.cxx		\
 	CommandsStandard.cxx		\
 	DelayQueue.cxx			\

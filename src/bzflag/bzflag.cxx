@@ -263,7 +263,7 @@ std::string getCurrentConfigFileName(void)
   return name;
 }
 
-// this function will look for the config, if it's not there, 
+// this function will look for the config, if it's not there,
 // it will TRY and find an old one and copy it
 // so that the update function can upgrade it to the current version
 // the assumption is that there is a unique config per version
@@ -274,7 +274,7 @@ void findConfigFile(void)
   FILE *fp = fopen(configName.c_str(), "rb");
   if (fp) {
     // we found the current file, nothing to do, just return
-    fclose(fp);	
+    fclose(fp);
     return;
   }
 
@@ -304,7 +304,7 @@ void findConfigFile(void)
 
       fread(temp, len, 1, fp);
       fwrite(temp, len, 1, newFile);
-  
+
       free(temp);
 
       fclose(newFile);
@@ -315,10 +315,10 @@ void findConfigFile(void)
 
   // try and find the REALLY old file
   // who uses this sucker any more?
-#if !defined(_WIN32) & !defined(macintosh)		
+#if !defined(_WIN32) & !defined(macintosh)
   std::string realyOldConfigName = getReallyOldConfigFileName();
   fp = fopen(realyOldConfigName.c_str(), "rb");
-  if (fp) {	
+  if (fp) {
     // there is an old config so lets copy it to the new dir and let the update take care of it.
     // apparently only linux needs this so do the magic
     mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
@@ -366,21 +366,21 @@ void updateConfigFile(void)
     // add new default keybindings if there's no conflict
     // iconify
     BzfKeyEvent key;
-    if (KEYMGR.stringToKeyEvent("F4", key) 
+    if (KEYMGR.stringToKeyEvent("F4", key)
         && (KEYMGR.get(key, true) == std::string("")))
       KEYMGR.bind(key, true, "iconify");
     // toggle console & radar
-    if (KEYMGR.stringToKeyEvent("F3", key) 
+    if (KEYMGR.stringToKeyEvent("F3", key)
         && (KEYMGR.get(key, true) == std::string("")))
       KEYMGR.bind(key, true, "toggleConsoleAndRadar");
     // controlpanel tabs - all or nothing
-    if (KEYMGR.stringToKeyEvent("Shift+F1", key) 
+    if (KEYMGR.stringToKeyEvent("Shift+F1", key)
         && (KEYMGR.get(key, true) == std::string(""))
-	&& KEYMGR.stringToKeyEvent("Shift+F2", key) 
+	&& KEYMGR.stringToKeyEvent("Shift+F2", key)
         && (KEYMGR.get(key, true) == std::string(""))
-	&& KEYMGR.stringToKeyEvent("Shift+F3", key) 
+	&& KEYMGR.stringToKeyEvent("Shift+F3", key)
         && (KEYMGR.get(key, true) == std::string(""))
-	&& KEYMGR.stringToKeyEvent("Shift+F4", key) 
+	&& KEYMGR.stringToKeyEvent("Shift+F4", key)
         && (KEYMGR.get(key, true) == std::string(""))) {
       KEYMGR.stringToKeyEvent("Shift+F1", key);
       KEYMGR.bind(key, true, "messagepanel all");
@@ -845,7 +845,7 @@ static void createCacheSignature ()
   //         < http://www.brynosaurus.com/cachedir/ >
 
   const char cacheSignature[] = "Signature: 8a477f597d28d172789f06886806bc55\n";
-  const char cacheComment[] = 
+  const char cacheComment[] =
     "# This file is a cache directory tag created by BZFlag.\n"
     "# For information about cache directory tags, see:\n"
     "#     http://www.brynosaurus.com/cachedir/\n";

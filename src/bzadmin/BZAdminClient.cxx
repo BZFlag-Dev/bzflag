@@ -239,7 +239,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 
     case MsgScoreOver:
       if (messageMask[MsgScoreOver]) {
- 	PlayerId id;
+	PlayerId id;
 	uint16_t team;
 	vbuf = nboUnpackUByte(vbuf, id);
 	vbuf = nboUnpackUShort(vbuf, team);

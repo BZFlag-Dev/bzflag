@@ -196,7 +196,7 @@ private:
   int			inputStatus;		// tank status
   mutable float		inputPos[3];		// tank position
   float			inputSpeed;		// tank horizontal speed
-  mutable float      	inputZSpeed;		// tank vertical speed
+  mutable float     	inputZSpeed;		// tank vertical speed
   float			inputAzimuth;		// direction tank is pointing
   float			inputSpeedAzimuth;	// direction of speed
   float			inputAngVel;		// tank turn rate

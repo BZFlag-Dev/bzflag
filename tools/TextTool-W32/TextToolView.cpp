@@ -374,7 +374,7 @@ void CTextToolView::OnFontSavefontfiles()
 	  CRect	rect;
 	  CBrush	blackBrush(RGB(0,0,0));
 
-  	  COLORREF      rPixel = RGB(0,0,0);
+ 	  COLORREF      rPixel = RGB(0,0,0);
 
 	  rect.SetRect(0,0,m_iMaxTextureWidth,iImageY);
 

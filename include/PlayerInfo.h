@@ -65,7 +65,7 @@ public:
   void	      setLastMsg(std::string msg);
   std::string getLastMsg();
   TimeKeeper  getLastMsgTime();
-  void 	      incSpamWarns();
+  void	      incSpamWarns();
   int	      getSpamWarns();
   void        resetPlayer(bool ctf);
   void        setRestartOnBase(bool on);

@@ -179,7 +179,7 @@ inline FiringInfo&	ShotPath::getFiringInfo()
   return firingInfo;
 }
 
-inline 	TeamColor	ShotPath::getTeam() const
+inline	TeamColor	ShotPath::getTeam() const
 {
   return firingInfo.shot.team;
 }

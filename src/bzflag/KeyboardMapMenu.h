@@ -78,7 +78,7 @@ class KeyboardMapMenu : public HUDDialog {
     KeyboardMapMenuDefaultKey		defaultKey;
     HUDuiControl*			reset;
     HUDuiControl*                       quickKeys;
-    int 				editing;
+    int				editing;
     QuickKeysMenu*			quickKeysMenu;
 };
 

@@ -938,7 +938,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     GLfloat xtexdist, ytexdist;
     float vec[2];
 
-#define GROUND_DIVS 	(4)	//FIXME -- seems to be enough
+#define GROUND_DIVS	(4)	//FIXME -- seems to be enough
 
     xmax = groundPlane[0][0];
     ymax = groundPlane[0][1];

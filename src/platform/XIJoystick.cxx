@@ -48,7 +48,7 @@ static int	ioErrorHandler(Display*)
 
 
 XIJoystick::XIJoystick() : device(NULL),
- 			   devices(NULL),
+			   devices(NULL),
 			   buttonPressType(0),
 			   buttonReleaseType(0)
 {

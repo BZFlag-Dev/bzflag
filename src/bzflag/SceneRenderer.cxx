@@ -623,7 +623,7 @@ void			SceneRenderer::render(
     while ((node = sceneIterator->getNext()) != NULL)
       node->getRenderNodes(*this);
   }
-  
+
   // add the shadow rendering nodes
   if (!blank && BZDBCache::shadows && scene) {
     scene->addShadowNodes(*this);

@@ -219,7 +219,7 @@ SceneNode*		ZSceneIterator::getNext()
 
 
 
-void        		ZSceneIterator::drawCuller()
+void       		ZSceneIterator::drawCuller()
 {
   if (octree) {
     octree->draw ();

@@ -520,7 +520,7 @@ void NetHandler::countMessage(uint16_t code, int len, int direction) {
       i->second.maxSize = len;
     }
   }
-  
+
   if (info->now - perSecondTime[direction] < 1.0f) {
     perSecondCurrentMsg[direction]++;
     perSecondCurrentBytes[direction] += len;

@@ -636,7 +636,7 @@ void			Player::setDeadReckoning(float timestamp)
     if (inputStatus & PlayerState::Alive)
        inputAzimuth -= offset * inputAngVel;
 
-    // update z 
+    // update z
     float deltaSpeed      = BZDB.eval(StateDatabase::BZDB_GRAVITY) * offset;
     inputZSpeed          -= deltaSpeed;
     inputPos[2]          -= (deltaSpeed / 2.0f + inputZSpeed) * offset;

@@ -1232,7 +1232,7 @@ static void dumpScore()
   std::cout << "#teams";
   for (int i = int(RedTeam); i < NumTeams; i++)
     std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' <<
-    	         Team::getName(TeamColor(i));
+   	         Team::getName(TeamColor(i));
   GameKeeper::Player::dumpScore();
   std::cout << "#end\n";
 }
@@ -3499,7 +3499,7 @@ static void handleCommand(int t, const void *rawbuf)
 	  InBounds = false;
 	} else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge)) {
 	  std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
-       	  InBounds = false;
+      	  InBounds = false;
 	}
 
 	static const float burrowFudge = 1.0f; /* linear distance */
@@ -3543,20 +3543,20 @@ static void handleCommand(int t, const void *rawbuf)
 	    // (V)
 	    if (pFlag >= 0) {
 	      FlagInfo &flag = *FlagInfo::get(pFlag);
-  	      if (flag.flag.type == Flags::Velocity)
+ 	      if (flag.flag.type == Flags::Velocity)
 	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
 	      else if (flag.flag.type == Flags::Thief)
 	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
 	      else if (flag.flag.type == Flags::Agility)
 	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
- 	      else if ((flag.flag.type == Flags::Burrow) &&
+	      else if ((flag.flag.type == Flags::Burrow) &&
 	        (lastState[t].pos[2] == state.pos[2]) &&
 	        (lastState[t].velocity[2] == state.velocity[2]) &&
 	        (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
 	        // if we have burrow and are not actively burrowing
 	        // You may have burrow and still be above ground. Must
 	        // check z in ground!!
- 	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+	        maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	    }
 	    float maxPlanarSpeedSqr = maxPlanarSpeed * maxPlanarSpeed;
 
@@ -4212,10 +4212,10 @@ int main(int argc, char **argv)
 		pollAction = action;
 	      // a poll that exists and is closed has ended successfully
 	      if(action != "flagreset")
-	      	sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
+	     	sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
 	      else
-	      	sprintf(message, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
-   	      sendMessage(ServerPlayer, AllPlayers, message);
+	     	sprintf(message, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
+  	      sendMessage(ServerPlayer, AllPlayers, message);
 	      announcedClosure = true;
 	    }
 	  } else {
@@ -4262,9 +4262,9 @@ int main(int argc, char **argv)
 		pollAction = action;
 	      }
 	      if (action != "flagreset")
-	      	sprintf(message, "%s has been %s", target.c_str(), pollAction.c_str());
+	     	sprintf(message, "%s has been %s", target.c_str(), pollAction.c_str());
 	      else
-	      	sprintf(message, "All unused flags have now been reset.");
+	     	sprintf(message, "All unused flags have now been reset.");
 	      sendMessage(ServerPlayer, AllPlayers, message);
 
 	      /* regardless of whether or not the player was found, if the poll
@@ -4300,7 +4300,7 @@ int main(int argc, char **argv)
 		  sprintf(message, "/poll %s", action.c_str());
 		  removePlayer(v, message);
 		}
-     	      } else if (action == "set") {
+    	      } else if (action == "set") {
 		CMDMGR.run(string_util::format("/set %s", target.c_str()));
 	      } else if (action == "flagreset") {
 		CMDMGR.run("flag reset unused");
@@ -4321,8 +4321,8 @@ int main(int argc, char **argv)
 	  if (votingarbiter->isPollSuccessful()) {
 	    if (action != "flagreset")
 	      sprintf(message, "Enough votes were collected to %s %s early.", action.c_str(), target.c_str());
- 	    else
- 	      sprintf(message, "Enough votes were collected to reset all unused flags early.");
+	    else
+	      sprintf(message, "Enough votes were collected to reset all unused flags early.");
 
 	    sendMessage(ServerPlayer, AllPlayers, message);
 

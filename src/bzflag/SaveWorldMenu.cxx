@@ -88,7 +88,7 @@ void SaveWorldMenu::execute()
     std::string fullname = getWorldDirName();
     fullname += filename->getString();
     if (strstr(fullname.c_str(), ".bzw") == NULL)
-    	fullname += ".bzw";
+   	fullname += ".bzw";
     bool success = World::getWorld()->writeWorld(fullname);
     if (success) {
       std::string newLabel = "File Saved: ";

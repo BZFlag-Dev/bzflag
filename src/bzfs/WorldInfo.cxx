@@ -223,7 +223,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
   if (height < Epsilon) {
     height = Epsilon;
   }
-  
+
   float pos[3] = {x, y, z};
 
   for (std::vector<BaseBuilding>::iterator base_it = bases.begin();
@@ -285,7 +285,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
   if (location != NULL) {
     *location = (Obstacle *)NULL;
   }
-    
+
   return NOT_IN_BUILDING;
 }
 

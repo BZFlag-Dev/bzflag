@@ -151,7 +151,7 @@ dist: $(_FORCE)
 	if test ! -d $(PACKAGEDIR); then $(MKDIR) $(PACKAGEDIR); fi; \
 	if test ! -d $(PACKAGEDIR)/irix; then $(MKDIR) $(PACKAGEDIR)/irix; fi; \
 	($(CD) $(PACKAGEDIR)/irix; $(RM) *); \
-	USEALLIMAGES=`grep "^[ 	]*product" < $(SPECFILE) | \
+	USEALLIMAGES=`grep "^[	 ]*product" < $(SPECFILE) | \
 		awk '{list=list $2 " "}END{print list}'`; \
 	$(GENDIST) -verbose -all -root / -source `\pwd`/$(DEPTH) \
 		-idb $(IDBFILE) -spec $(SPECFILE) \

@@ -439,7 +439,7 @@ void		        setConnectStatusCB(ConnectStatusCallback cb)
 
 inline void		connectStatusCB(std::string str)
 {
-  if (connectCallback) 
+  if (connectCallback)
     (*connectCallback)(str);
 }
 
@@ -1437,7 +1437,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
       tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
       std::cerr << "id " << id.port << ':' <<
-      			    id.number << ':' <<
+     			    id.number << ':' <<
 			    callsign << ' ' <<
 			    robots[i]->getId().port << ':' <<
 			    robots[i]->getId().number << ':' <<
@@ -1816,13 +1816,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	message += Team::getName(TeamColor(team));
 	message += " territory";
 	addMessage(capturer, message);
- 	if (capturer == myTank) {
+	if (capturer == myTank) {
 	  hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
 	  playLocalSound( SFX_KILL_TEAM );
 	  if (myTank->isAutoPilot()) {
-   	    char meaculpa[MessageLen];
-   	    memset(meaculpa, 0, MessageLen);
-   	    strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
+  	    char meaculpa[MessageLen];
+  	    memset(meaculpa, 0, MessageLen);
+  	    strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
 	    char *buf = messageMessage;
 	    buf = (char*)nboPackUShort(buf, myTank->getTeam());
 	    nboPackString(buf, meaculpa, MessageLen-1);
@@ -2137,7 +2137,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  admin = true;
 	  // talking to myself? that's strange
 	if (dstPlayer == myTank && srcPlayer == myTank) {
-    	  fullMsg = text;
+   	  fullMsg = text;
 	} else {
 	  if (BZDB.get("killerhighlight") == "1")
 	    fullMsg += ColorStrings[PulsatingColor];
@@ -3178,9 +3178,9 @@ static void		setRobotTarget(RobotPlayer* robot)
         continue;
 
       if (World::getWorld()->allowTeamFlags() &&
-      	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
-      	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
-      	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
+     	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
+     	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
+     	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
 	  (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam)) {
 	bestTarget = player[j];
 	break;

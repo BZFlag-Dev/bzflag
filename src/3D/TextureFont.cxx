@@ -112,7 +112,7 @@ bool TextureFont::load(OSFile &file)
   for (i = 0; i < numberOfCharacters; i++) {
     // check character
     if (!fmtRead(file, "Char", tmpBuf)) return false;
-    if ((tmpBuf.size() < 3) || 
+    if ((tmpBuf.size() < 3) ||
 	(tmpBuf[1] != '\"' || tmpBuf[2] != (i + 32) || tmpBuf[3] != '\"')) {
       DEBUG2("Unexpected character: %s, in font metrics file %s (expected \"%c\").\n",
 	tmpBuf.c_str(), file.getFileName(), (char)(i + 32));
