@@ -1,3 +1,25 @@
+critical bugs
+-------------
+
+- bzc file writing seems to be goofy. Some options never are written into
+  the file, and some (binds) get written more than once. [I have two
+  bind lines for the same key]  there is  trouble remapping the 
+  Identify/Respawn" key from "right mouse or i" to something else.  tried
+  remapping to "w" during gameplay and it fails for  windows and os x.  also 
+  fails to respawn with right mouse if you try to change the setting during
+  game.  the values do not appear to be persistent properly either (quit and
+  return and it's displayed wrong).  resetting key map doesn't seem to fully
+  erase the current bindings before reapplying defaults (same bug as above?)
+
+- if client unsticks itself, the reverse impulse can be too fast resulting in
+  a too fast autokick.  reverse impulse needs to take normal into consideration
+  as well as the max world velocity, etc.
+
+- Sometimes when you pick up MG, the tank automatically, and constantly
+  starts firing all the shots over and over. Seen on Mac and Windows.  Happens
+  every time on the mac client.
+
+
 recent bugs
 ------------
 
@@ -9,10 +31,6 @@ recent bugs
   Perhaps add sanity check for not overruning end of buffer.
 
 - On a FFA game, where no purple was allowed a Team size of 65535 was displayed for Purple.
-
-- bzc file writing seems to be goofy. Some options never are written into
-  the file, and some (binds) get written more than once. [I have two
-  bind lines for the same key]
 
 - Rabbit selection is borken. Two things. A player often is Rabbit two times
   in a row, which was intended to be illegal, and high scoring tanks get bypassed.
@@ -32,9 +50,6 @@ recent bugs
 - Player continues to see the locked on me message after death until
   shooter locked onto a different target. (Nidhoggr reported this)
 
-- Sometimes when you pick up MG, the tank automatically, and constantly
-  starts firing all the shots over and over. Seen on Mac and Windows.
-
 - Killed tanks continue drifting and leave tank bits floating around on the
   modified gravity ducati.  players seem to continue forwarding after landing
   until X time as if gravity was unchanged.
@@ -45,15 +60,6 @@ recent bugs
   into situations where movement is out of control.
 
 - os x client audio is very choppy when the user has a sound card installed
-
-- trouble remapping the "Identify/Respawn" key from "right mouse or i" to
-  something else.  tried remapping to "w" during gameplay and it fails for
-  windows and os x.  also fails to respawn with right mouse if you try to
-  change the setting during game.  the values do not appear to be persistent
-  properly either (quit and return and it's displayed wrong).
-
-- resetting key map doesn't seem to fully erase the current bindings before
-  reapplying defaults (same bug as above?)
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
