@@ -5,6 +5,12 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+EXTRA_bzflag_SOURCES = \
+	ClientAuthentication.cxx	\
+	ClientAuthentication.h		\
+	LoginMenu.cxx			\
+	LoginMenu.h
+
 if HAVE_KRB5
 KRB5 =	ClientAuthentication.cxx	\
 	ClientAuthentication.h		\
