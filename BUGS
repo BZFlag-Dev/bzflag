@@ -1,13 +1,5 @@
 recent bugs
 ------------
-
-- robots drive right through buildings use this one object world to see
-	box
-	position 0 0 0
-	size 400 20 20
-	rotation 0
-	end
-
   
 - OS X client gamma on a secondary display set as main display uses the wrong
   gamma (very very dark); brightness is set incorrectly.
