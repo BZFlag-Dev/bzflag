@@ -8,6 +8,12 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* server should pick client enter position.
+  ## Server has no idea about players shots, this is a key to picking a safe
+  entry location. This isn't a simple change. ##
+  however, it should be changed soon even if the server does a poor job
+  fixing the effectiveness can be done later without changing the clients
+
 * StateDatabase should probably have min max values for eval values
 
 * move version functions to buildDate.cxx
@@ -29,11 +35,6 @@ THESE ARE LOWER PRIORITY
 * server should send less frequent updates for "distant" players
 
 * server should track last reported player and shot positions
-
-* server should pick client enter position.
-  ## Server has no idea about players shots, this is a
-     key to picking a safe entry location. This isn't
-     a simple change. ##
 
 * would be nice if LocalPlayer<->Robots wouldn't relayPackets
   (MsgPlayerUpdate) through server. bzflag should be able to act
