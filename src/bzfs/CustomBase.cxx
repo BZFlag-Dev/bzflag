@@ -37,13 +37,13 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
     input >> color;
     if ((color < 0) || (color >= CtfTeams))
       return false;
-  }
-  else {
+  } else {
     if (!WorldFileObstacle::read(cmd, input))
       return false;
-    if(!clOptions->flagsOnBuildings && (pos[2] != 0)) {
+    if (!clOptions->flagsOnBuildings && ((pos[2] != 0) || (size[2] != 0))) {
       std::cout << "Dropping team base down to 0 because -fb not set\n";
       pos[2] = 0;
+      size[2] = 0;
     }
   }
   return true;
