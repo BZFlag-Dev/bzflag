@@ -25,10 +25,10 @@
 #include "MainWindow.h"
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
+#include "LocalPlayer.h"
 
 /* FIXME - from playing.h */
 MainWindow*    getMainWindow();
-
 
 InputMenu::InputMenu() : keyboardMapMenu(NULL)
 {
@@ -41,16 +41,15 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   label->setString("Input Setting");
   list.push_back(label);
 
+  keyMapping = new HUDuiLabel;
+  keyMapping->setFont(MainMenu::getFont());
+  keyMapping->setLabel("Change Key Mapping");
+  list.push_back(keyMapping);
+
   HUDuiList* option = new HUDuiList;
 
   option = new HUDuiList;
   std::vector<std::string>* options = &option->getList();
-
-  keyMapping = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setLabel("Change Key Mapping");
-  list.push_back(label);
-
   // set joystick Device
   option->setFont(MainMenu::getFont());
   option->setLabel("Joystick device:");
@@ -73,6 +72,18 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->update();
   list.push_back(option);
 
+  forceInput = new HUDuiList;
+  forceInput->setFont(MainMenu::getFont());
+  forceInput->setLabel("Force input device:");
+  forceInput->setCallback(callback, (void*)"F");
+  options = &forceInput->getList();
+  options->push_back("Do not force");
+  options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Keyboard));
+  options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Mouse));
+  options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Joystick));
+  forceInput->update();
+  list.push_back(forceInput);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -92,18 +103,38 @@ void			InputMenu::execute()
 
 void			InputMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
+  std::vector<std::string> *options = &list->getList();
+  std::string selectedOption = (*options)[list->getIndex()];
   switch (((const char*)data)[0]) {
     case 'J':
-      std::vector<std::string> *options = &list->getList();
-      std::string joyDev = (*options)[list->getIndex()];
-      BZDB.set("joystickname", joyDev);
-      getMainWindow()->initJoystick(joyDev);
+      BZDB.set("joystickname", selectedOption);
+      getMainWindow()->initJoystick(selectedOption);
+      break;
+    case 'F':
+      {
+	LocalPlayer*   myTank = LocalPlayer::getMyTank();
+	// Do we force or not?
+	if (selectedOption == "Do not force") {
+	  BZDB.set("allowInputChange", "1");
+	} else {
+	  BZDB.set("allowInputChange", "0");
+	  BZDB.set("forceInputDevice", selectedOption);
+	}
+        // Set the current input device to whatever we're forced to
+	if (myTank) {
+	  // FIXME - right now setInputMethod(Joystick) has no effect
+	  // someone who knows about the joystick code should fix this
+	  myTank->setInputMethod(BZDB.get("forceInputDevice"));
+	}
+      }
+      break;
   }
 }
 
 void			InputMenu::resize(int width, int height)
 {
   HUDDialog::resize(width, height);
+  int i;
 
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
@@ -125,11 +156,22 @@ void			InputMenu::resize(int width, int height)
   x = 0.5f * ((float)width + 0.5f * titleWidth);
   y -= 0.6f * titleFont.getHeight();
   const int count = list.size();
-  for (int i = 1; i < count; i++) {
+  for (i = 1; i < count; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * list[i]->getFont().getHeight();
   }
+
+  // load current settings
+  // FIXME - hardcoded upper bound is ugly
+  std::vector<std::string> *options = &forceInput->getList();
+  for (i = 0; i < 4; i++) {
+    std::string currentOption = (*options)[i];
+    if (BZDB.get("forceInputDevice") == currentOption) 
+      forceInput->setIndex(i);
+  }
+  if (BZDB.isTrue("allowInputChange"))
+    forceInput->setIndex(0);
 }
 
 

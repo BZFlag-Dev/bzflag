@@ -74,7 +74,7 @@ public:
     InAir		// playing in air
   };
   enum InputMethod {	// what device am I using to move around
-    Keyboard,
+    Keyboard = 0,
     Mouse,
     Joystick
   };
@@ -119,6 +119,8 @@ public:
 
   InputMethod	getInputMethod() const;
   void		setInputMethod(InputMethod newInput);
+  void		setInputMethod(std::string newInput);
+  static std::string	getInputMethodName(InputMethod whatInput);
   void		setKeyboardSpeed(float speed);
   void		setKeyboardAngVel(float angVel);
   float		getKeyboardSpeed() const;
@@ -223,6 +225,15 @@ inline LocalPlayer::InputMethod LocalPlayer::getInputMethod() const
 inline void LocalPlayer::setInputMethod(InputMethod newInput)
 {
   inputMethod = newInput;
+}
+
+inline void LocalPlayer::setInputMethod(std::string newInput)
+{
+  // FIXME - using hardcoded upper bound is ugly
+  for (int i = 0; i < 3; i++) {
+    if (newInput == getInputMethodName((InputMethod)i))
+      inputMethod = (InputMethod)i;
+  }
 }
 
 inline void LocalPlayer::setKeyboardSpeed(float speed)

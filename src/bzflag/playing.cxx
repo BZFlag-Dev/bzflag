@@ -672,8 +672,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	case BzfKeyEvent::Right:
 	case BzfKeyEvent::Up:
 	case BzfKeyEvent::Down:
-	  myTank->setInputMethod(LocalPlayer::Keyboard);
-	  showKeyboardStatus();
+	  if (BZDB.isTrue("allowInputChange")) {
+	    myTank->setInputMethod(LocalPlayer::Keyboard);
+	    showKeyboardStatus();
+	  }
 	  break;
 	}
     } else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
@@ -1778,7 +1780,7 @@ static void		doEvent(BzfDisplay* display)
     break;
 
   case BzfEvent::MouseMove:
-    if (myTank && myTank->isAlive() && (myTank->getInputMethod() == LocalPlayer::Keyboard)) {
+    if (myTank && myTank->isAlive() && (myTank->getInputMethod() != LocalPlayer::Mouse) && (BZDB.isTrue("allowInputChange"))) {
       myTank->setInputMethod(LocalPlayer::Mouse);
       showKeyboardStatus();
     }

@@ -330,7 +330,12 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   shots = new LocalShotPath*[numShots];
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
-  inputMethod = Mouse;
+  // set input method
+  if (BZDB.isTrue("allowInputChange")) {
+    inputMethod = Mouse;
+  } else {
+    setInputMethod(BZDB.get("forceInputDevice"));
+  }
 }
 
 LocalPlayer::~LocalPlayer()
@@ -1435,6 +1440,23 @@ void			LocalPlayer::addAntidote(SceneDatabase* scene)
 {
   if (antidoteFlag)
     scene->addDynamicNode(antidoteFlag);
+}
+
+std::string		LocalPlayer::getInputMethodName(InputMethod whatInput)
+{
+  switch (whatInput) {
+    case Keyboard:
+      return std::string("Keyboard");
+      break;
+    case Mouse:
+      return std::string("Mouse");
+      break;
+    case Joystick:
+      return std::string("Joystick");
+      break;
+    default:
+      return std::string("Unnamed Device");
+  }
 }
 
 // Local Variables: ***

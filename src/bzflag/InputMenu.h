@@ -39,6 +39,7 @@ public:
   static void callback(HUDuiControl* w, void* data);
 private:
   HUDuiControl*	   keyMapping;
+  HUDuiList*	   forceInput;
   KeyboardMapMenu* keyboardMapMenu;
 };
 
