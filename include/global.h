@@ -61,27 +61,13 @@ const float		Infinity =	MAXFLOAT;	// arbitrary
 extern float	WorldSize;							// meters
 const float		BaseSize =	60.0f;					// meters
 
-// rough tank geometry
-const float		TankHeight =	2.05f;		// meters
-const float		TankRadius =	4.32f;// meters
-const float		MuzzleHeight =	1.57f;		// meters
-const float		MuzzleFront =	TankRadius+0.1f;// meters
-
 // rough shot geometry
 const float		ShotRadius =	0.5f;		// meters
 const float		ShotLength =	0.5f;		// meters
 const float		ShotTailLength=	4.0f;		// meters
 
-// outer wall geometry
-const float		WallHeight =	3.0f*TankHeight;// meters
-
-// pyramid geometry
-const float		PyrBase =	4.0f*TankHeight;// meters
-const float		PyrHeight =	5.0f*TankHeight;// meters
-
 // box geometry
 const float		BoxBase =	30.0f;// meters
-const float		BoxHeight =	6.0f*MuzzleHeight;// meters
 
 // teleporter geometry (My God, it's full of stars...)
 const float		TeleUnit =	1.12f;// meters
@@ -137,7 +123,7 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-extern GlobalDBItem		globalDBItems[53];
+extern GlobalDBItem		globalDBItems[57];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8

@@ -164,7 +164,7 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
   if (wallTexture.isValid()) wallTexWidth *= wallTexHeight;
 
   // make box styles
-  boxTexWidth = boxTexHeight = 0.2f * BoxHeight;
+  boxTexWidth = boxTexHeight = 0.2f * BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
   boxTexture = getImage(boxwallFilename, &boxTexWidth);
   if (boxTexture.isValid()) boxTexWidth *= boxTexHeight;
   boxTopTexture = getImage(boxtopFilename);

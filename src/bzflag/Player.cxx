@@ -69,7 +69,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     tankNode = new TankSceneNode(state.pos, forward);
     tankIDLNode = new TankIDLSceneNode(tankNode);
     changeTeam(team);
-    pausedSphere = new SphereSceneNode(state.pos, 1.5f * TankRadius);
+    pausedSphere = new SphereSceneNode(state.pos, 1.5f * BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
     pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
     totalCount++;
   }
@@ -91,16 +91,17 @@ Player::~Player()
 
 float			Player::getRadius() const
 {
-  if (flag == Flags::Obesity) return TankRadius * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  if (flag == Flags::Tiny)    return TankRadius * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  if (flag == Flags::Thief)   return TankRadius * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  return TankRadius;
+  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  if (flag == Flags::Obesity) return tankRadius * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  if (flag == Flags::Tiny)    return tankRadius * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  if (flag == Flags::Thief)   return tankRadius * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  return tankRadius;
 }
 
 void			Player::getMuzzle(float* m) const
 {
   // okay okay, I should really compute the up vector instead of using [0,0,1]
-  float front = MuzzleFront;
+  float front = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
   if (flag == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (flag == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (flag == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
@@ -128,7 +129,7 @@ void			Player::move(const float* _pos, float _azimuth)
 
   // compute teleporter proximity
   if (World::getWorld())
-    teleporterProximity = World::getWorld()->getProximity(state.pos, TankRadius);
+    teleporterProximity = World::getWorld()->getProximity(state.pos, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
 }
 
 void			Player::setVelocity(const float* _velocity)
@@ -222,7 +223,7 @@ void			Player::endShot(int index,
 void			Player::updateSparks(float /*dt*/)
 {
   if (flag != Flags::PhantomZone || !isFlagActive()) {
-	  teleporterProximity = World::getWorld()->getProximity(state.pos, TankRadius);
+	  teleporterProximity = World::getWorld()->getProximity(state.pos, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
     if (teleporterProximity == 0.0f) {
       color[3] = 1.0f;
       tankNode->setColor(color);
@@ -305,7 +306,7 @@ void			Player::addPlayer(SceneDatabase* scene,
     scene->addDynamicNode(tankNode);
   }
   if (isAlive() && (isPaused() || isNotResponding())) {
-    pausedSphere->move(state.pos, 1.5f * TankRadius);
+    pausedSphere->move(state.pos, 1.5f * BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
     scene->addDynamicSphere(pausedSphere);
   }
 }

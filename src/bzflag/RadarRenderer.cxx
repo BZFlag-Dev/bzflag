@@ -132,11 +132,13 @@ void			RadarRenderer::drawShot(const ShotPath* shot)
 void RadarRenderer::drawTank(float x, float y, float z)
 {
   // Does not change with height.
-  GLfloat s = TankRadius > 1.5f + 2.0f * ps ? TankRadius : 1.5f + 2.0f * ps;
+  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+  GLfloat s = tankRadius > 1.5f + 2.0f * ps ? tankRadius : 1.5f + 2.0f * ps;
   glRectf(x - s, y - s, x + s, y + s);
 
   // Changes with height.
-  s = s * (z / 2.0f + BoxHeight) / BoxHeight;
+  s = s * (z / 2.0f + boxHeight) / boxHeight;
 
   glBegin(GL_LINE_STRIP);
   glVertex2f(x - s, y);
@@ -166,7 +168,8 @@ void RadarRenderer::drawFlag(float x, float y, float, bool drawAlways)
 
 void RadarRenderer::drawFlagOnTank(float x, float y, float)
 {
-  GLfloat s = 2.5f * TankRadius > 4.0f * ps ? 2.5f * TankRadius : 4.0f * ps;
+  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  GLfloat s = 2.5f * tankRadius > 4.0f * ps ? 2.5f * tankRadius : 4.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(x - s, y);
   glVertex2f(x + s, y);
@@ -334,11 +337,12 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     // draw my shots
     int maxShots = world.getMaxShots();
     int i;
+    float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
     for (i = 0; i < maxShots; i++) {
       const ShotPath* shot = myTank->getShot(i);
       if (shot) {
         const float cs = colorScale(shot->getPosition()[2],
-				    MuzzleHeight, BZDB->isTrue("enhancedradar"));
+				    muzzleHeight, BZDB->isTrue("enhancedradar"));
         glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
         shot->radarRender();
       }
@@ -351,7 +355,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const ShotPath* shot = worldWeapons->getShot(i);
       if (shot) {
         const float cs = colorScale(shot->getPosition()[2],
-				    MuzzleHeight, BZDB->isTrue("enhancedradar"));
+				    muzzleHeight, BZDB->isTrue("enhancedradar"));
         glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
         shot->radarRender();
       }
@@ -426,7 +430,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
             else
               shotcolor = Team::getRadarColor(player->getTeam());
             const float cs = colorScale(shot->getPosition()[2],
-	        MuzzleHeight, BZDB->isTrue("enhancedradar"));
+	        muzzleHeight, BZDB->isTrue("enhancedradar"));
             glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
           }
           else
@@ -445,7 +449,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	continue;
       if (flag.desc->flagTeam != NoTeam)
 	continue;
-      const float cs = colorScale(flag.position[2], MuzzleHeight, BZDB->isTrue("enhancedradar"));
+      const float cs = colorScale(flag.position[2], muzzleHeight, BZDB->isTrue("enhancedradar"));
       const float *flagcolor = flag.desc->getColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       drawFlag(flag.position[0], flag.position[1], flag.position[2]);
@@ -458,7 +462,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       if (flag.desc->flagTeam == NoTeam)
 	continue;
       // Flags change color by height
-      const float cs = colorScale(flag.position[2], MuzzleHeight, BZDB->isTrue("enhancedradar"));
+      const float cs = colorScale(flag.position[2], muzzleHeight, BZDB->isTrue("enhancedradar"));
       const float *flagcolor = flag.desc->getColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       // always draw team flags

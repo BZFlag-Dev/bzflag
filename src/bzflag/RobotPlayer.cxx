@@ -209,7 +209,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
   }
 
   // stop if headed into a building
-  if (World::getWorld()->inBuilding(position, 3.0f * TankRadius)) {
+  if (World::getWorld()->inBuilding(position, 3.0f * BZDB->eval(StateDatabase::BZDB_TANKRADIUS))) {
     position[0] = oldPosition[0];
     position[1] = oldPosition[1];
     position[2] = oldPosition[2];
@@ -310,10 +310,11 @@ void			RobotPlayer::restart()
   // playing.c++ and moved elsewhere (maybe World).
   float startPoint[3];
   startPoint[2] = 0.0f;
+  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
   do {
-    startPoint[0] = (WorldSize - 2.0f * TankRadius) * ((float)bzfrand() - 0.5f);
-    startPoint[1] = (WorldSize - 2.0f * TankRadius) * ((float)bzfrand() - 0.5f);
-  } while (World::getWorld()->inBuilding(startPoint, 2.0f * TankRadius));
+    startPoint[0] = (WorldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+    startPoint[1] = (WorldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+  } while (World::getWorld()->inBuilding(startPoint, 2.0f * tankRadius));
 
   // NOTE -- code taken directly from LocalPlayer
   // put me in limbo

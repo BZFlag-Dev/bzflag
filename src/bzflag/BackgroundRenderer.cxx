@@ -1067,7 +1067,7 @@ void			BackgroundRenderer::doInitDisplayLists()
     for (i = 0; i < 4; i++) {
       cloudsOuter[i][0] = groundPlane[i][0];
       cloudsOuter[i][1] = groundPlane[i][1];
-      cloudsOuter[i][2] = groundPlane[i][2] + 120.0f * TankHeight;
+      cloudsOuter[i][2] = groundPlane[i][2] + 120.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
       cloudsInner[i][0] = uvScale * cloudsOuter[i][0];
       cloudsInner[i][1] = uvScale * cloudsOuter[i][1];
       cloudsInner[i][2] = cloudsOuter[i][2];

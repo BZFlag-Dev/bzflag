@@ -24,6 +24,7 @@
 #include <math.h>
 
 const std::string StateDatabase::BZDB_ANGULARAD         = std::string("_angularAd");
+const std::string StateDatabase::BZDB_BOXHEIGHT         = std::string("_boxHeight");
 const std::string StateDatabase::BZDB_BURROWDEPTH       = std::string("_burrowDepth");
 const std::string StateDatabase::BZDB_BURROWSPEEDAD     = std::string("_burrowSpeedAd");
 const std::string StateDatabase::BZDB_BURROWANGULARAD   = std::string("_burrowAngularAd");
@@ -48,6 +49,8 @@ const std::string StateDatabase::BZDB_MGUNADLIFE 	= std::string("_mGunAdLife");
 const std::string StateDatabase::BZDB_MUZZLEFRONT	= std::string("_muzzleFront");
 const std::string StateDatabase::BZDB_MUZZLEHEIGHT	= std::string("_muzzleHeight");
 const std::string StateDatabase::BZDB_OBESEFACTOR       = std::string("_obeseFactor");
+const std::string StateDatabase::BZDB_PYRBASE           = std::string("_pyrBase");
+const std::string StateDatabase::BZDB_PYRHEIGHT         = std::string("_pyrHeight");
 const std::string StateDatabase::BZDB_RELOADTIME        = std::string("_reloadTime");
 const std::string StateDatabase::BZDB_RFIREADVEL        = std::string("_rFireAdVel");
 const std::string StateDatabase::BZDB_RFIREADRATE       = std::string("_rFireAdRate");
@@ -77,6 +80,7 @@ const std::string StateDatabase::BZDB_THIEFADRATE       = std::string("_thiefAdR
 const std::string StateDatabase::BZDB_THIEFADLIFE	= std::string("_thiefAdLife");
 const std::string StateDatabase::BZDB_TINYFACTOR        = std::string("_tinyFactor");
 const std::string StateDatabase::BZDB_VELOCITYAD        = std::string("_velocityAd");
+const std::string StateDatabase::BZDB_WALLHEIGHT        = std::string("_wallHeight");
 const std::string StateDatabase::BZDB_WIDEANGLEANG      = std::string("_wideAngleAng");
 const std::string StateDatabase::BZDB_WORLDSIZE         = std::string("_worldSize");
 

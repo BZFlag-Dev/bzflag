@@ -48,7 +48,7 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   }
   // shot origin is muzzle for other shots
   else {
-    float front = MuzzleFront;
+	  float front = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
     if (info.flag == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
     else if (info.flag == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
     else if (info.flag == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);

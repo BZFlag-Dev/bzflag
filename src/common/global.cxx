@@ -67,5 +67,9 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_lRAdRate",			"0.5",				false, StateDatabase::Locked},
 	{ "_lockOnAngle",		"0.15",				false, StateDatabase::Locked},
 	{ "_targetingAngle",		"0.3",				false, StateDatabase::Locked},
-	{ "_flagHeight",                "10.0",                         false, StateDatabase::Locked}
+	{ "_flagHeight",                "10.0",                         false, StateDatabase::Locked},
+	{ "_wallHeight",		"3.0*_tankHeight",              false, StateDatabase::Locked},
+	{ "_boxHeight",			"6.0*_muzzleHeight",		false, StateDatabase::Locked},
+	{ "_pyrBase",			"4.0*_tankHeight",		false, StateDatabase::Locked},
+	{ "_pyrHeight",                 "5.0*_tankHeight",		false, StateDatabase::Locked},
 };

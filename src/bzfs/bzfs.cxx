@@ -587,7 +587,7 @@ class CustomBox : public WorldFileObstacle {
 CustomBox::CustomBox()
 {
   size[0] = size[1] = BoxBase;
-  size[2] = BoxHeight;
+  size[2] = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
 }
 
 void CustomBox::write(WorldInfo *world) const
@@ -603,8 +603,8 @@ class CustomPyramid : public WorldFileObstacle {
 
 CustomPyramid::CustomPyramid()
 {
-  size[0] = size[1] = PyrBase;
-  size[2] = PyrHeight;
+  size[0] = size[1] = BZDB->eval(StateDatabase::BZDB_PYRBASE);
+  size[2] = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
 }
 
 void CustomPyramid::write(WorldInfo *world) const
@@ -2006,10 +2006,11 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   }
 
   // make walls
-  world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
-  world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, WallHeight);
-  world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
-  world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
+  float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
+  world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, wallHeight);
+  world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, wallHeight);
+  world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, wallHeight);
+  world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, wallHeight);
 
   // add objects
   const int n = list.size();
@@ -2029,6 +2030,7 @@ static WorldInfo *defineTeamWorld()
       return NULL;
 
     float worldfactor = WorldSize/(float)DEFAULT_WORLD;
+    float pyrBase = BZDB->eval(StateDatabase::BZDB_PYRBASE);
 
     // set team base and team flag safety positions
     basePos[0][0] = 0.0f;
@@ -2047,8 +2049,8 @@ static WorldInfo *defineTeamWorld()
     baseRotation[1] = 0.0f;
     baseSize[1][0] = BaseSize*worldfactor / 2.0f;
     baseSize[1][1] = BaseSize*worldfactor / 2.0f;
-    safetyBasePos[1][0] = basePos[1][0] + 0.5f * BaseSize*worldfactor + PyrBase;
-    safetyBasePos[1][1] = basePos[1][1] + 0.5f * BaseSize *worldfactor+ PyrBase;
+    safetyBasePos[1][0] = basePos[1][0] + 0.5f * BaseSize*worldfactor + pyrBase;
+    safetyBasePos[1][1] = basePos[1][1] + 0.5f * BaseSize *worldfactor+ pyrBase;
     safetyBasePos[1][2] = basePos[1][2];
 
     basePos[2][0] = (WorldSize - BaseSize) / 2.0f;
@@ -2057,8 +2059,8 @@ static WorldInfo *defineTeamWorld()
     baseRotation[2] = 0.0f;
     baseSize[2][0] = BaseSize / 2.0f;
     baseSize[2][1] = BaseSize / 2.0f;
-    safetyBasePos[2][0] = basePos[2][0] - 0.5f * BaseSize - PyrBase;
-    safetyBasePos[2][1] = basePos[2][1] - 0.5f * BaseSize - PyrBase;
+    safetyBasePos[2][0] = basePos[2][0] - 0.5f * BaseSize - pyrBase;
+    safetyBasePos[2][1] = basePos[2][1] - 0.5f * BaseSize - pyrBase;
     safetyBasePos[2][2] = basePos[2][2];
 
     basePos[3][0] = 0.0f;
@@ -2067,8 +2069,8 @@ static WorldInfo *defineTeamWorld()
     baseRotation[3] = 0.0f;
     baseSize[3][0] = BaseSize*worldfactor / 2.0f;
     baseSize[3][1] = BaseSize*worldfactor / 2.0f;
-    safetyBasePos[3][0] = basePos[3][0] - 0.5f * BaseSize*worldfactor - PyrBase;
-    safetyBasePos[3][1] = basePos[3][1] + 0.5f * BaseSize*worldfactor + PyrBase;
+    safetyBasePos[3][0] = basePos[3][0] - 0.5f * BaseSize*worldfactor - pyrBase;
+    safetyBasePos[3][1] = basePos[3][1] + 0.5f * BaseSize*worldfactor + pyrBase;
     safetyBasePos[3][2] = basePos[3][2];
 
     basePos[4][0] = 0.0f;
@@ -2077,101 +2079,103 @@ static WorldInfo *defineTeamWorld()
     baseRotation[4] = 0.0f;
     baseSize[4][0] = BaseSize*worldfactor / 2.0f;
     baseSize[4][1] = BaseSize*worldfactor / 2.0f;
-    safetyBasePos[4][0] = basePos[4][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor;
-    safetyBasePos[4][1] = basePos[4][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor;
+    safetyBasePos[4][0] = basePos[4][0] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor;
+    safetyBasePos[4][1] = basePos[4][1] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor;
     safetyBasePos[4][2] = basePos[4][2];
 
     // make walls
-    world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
-    world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, WallHeight);
-    world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
-    world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
+    float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
+    world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, wallHeight);
+    world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, wallHeight);
+    world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, wallHeight);
+    world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, wallHeight);
 
+    float pyrHeight = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
     // make pyramids
     if (!clOptions->randomCTF || (clOptions->maxTeam[1] > 0)) {
       // around red base
       world->addPyramid(
-	  basePos[1][0] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
-	  basePos[1][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[1][0] + 0.5f * BaseSize*worldfactor - pyrBase*worldfactor,
+	  basePos[1][1] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[1][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
-	  basePos[1][1] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[1][0] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor,
+	  basePos[1][1] - 0.5f * BaseSize*worldfactor + pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[1][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
-	  basePos[1][1] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[1][0] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor,
+	  basePos[1][1] + 0.5f * BaseSize*worldfactor - pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[1][0] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
-	  basePos[1][1] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[1][0] + 0.5f * BaseSize*worldfactor - pyrBase*worldfactor,
+	  basePos[1][1] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
     }
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[2] > 0)) {
       // around green base
       world->addPyramid(
-	  basePos[2][0] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
-	  basePos[2][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[2][0] - 0.5f * BaseSize*worldfactor + pyrBase*worldfactor,
+	  basePos[2][1] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[2][0] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
-	  basePos[2][1] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[2][0] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor,
+	  basePos[2][1] - 0.5f * BaseSize*worldfactor + pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[2][0] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
-	  basePos[2][1] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[2][0] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor,
+	  basePos[2][1] + 0.5f * BaseSize*worldfactor - pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[2][0] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
-	  basePos[2][1] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[2][0] - 0.5f * BaseSize*worldfactor + pyrBase*worldfactor,
+	  basePos[2][1] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
     }
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[3] > 0)) {
       // around blue base
       world->addPyramid(
-	  basePos[3][0] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
-	  basePos[3][1] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[3][0] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor,
+	  basePos[3][1] + 0.5f * BaseSize*worldfactor - pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[3][0] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
-	  basePos[3][1] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[3][0] - 0.5f * BaseSize*worldfactor + pyrBase*worldfactor,
+	  basePos[3][1] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[3][0] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
-	  basePos[3][1] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[3][0] + 0.5f * BaseSize*worldfactor - pyrBase*worldfactor,
+	  basePos[3][1] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[3][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
-	  basePos[3][1] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[3][0] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor,
+	  basePos[3][1] + 0.5f * BaseSize*worldfactor - pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
     }
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[4] > 0)) {
       // around purple base
       world->addPyramid(
-	  basePos[4][0] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
-	  basePos[4][1] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[4][0] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor,
+	  basePos[4][1] - 0.5f * BaseSize*worldfactor + pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[4][0] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
-	  basePos[4][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[4][0] - 0.5f * BaseSize*worldfactor + pyrBase*worldfactor,
+	  basePos[4][1] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[4][0] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
-	  basePos[4][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[4][0] + 0.5f * BaseSize*worldfactor - pyrBase*worldfactor,
+	  basePos[4][1] - 0.5f * BaseSize*worldfactor - pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
-	  basePos[4][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
-	  basePos[4][1] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  basePos[4][0] + 0.5f * BaseSize*worldfactor + pyrBase*worldfactor,
+	  basePos[4][1] - 0.5f * BaseSize*worldfactor + pyrBase*worldfactor, 0.0f, 0.0f,
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
     }
 
     // create symmetric map of random buildings for random CTF mode
     if (clOptions->randomCTF) {
       int i;
-      float h = BoxHeight;
+      float h = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
       bool redGreen = clOptions->maxTeam[1] > 0 || clOptions->maxTeam[2] > 0;
       bool bluePurple = clOptions->maxTeam[3] > 0 || clOptions->maxTeam[4] > 0;
       if (!redGreen && !bluePurple) {
@@ -2179,9 +2183,10 @@ static WorldInfo *defineTeamWorld()
 	exit(20);
       }
       const int numBoxes = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize);
+      const float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
       for (i = 0; i < numBoxes;) {
 	if (clOptions->randomHeights)
-	  h = BoxHeight * (2.0f * (float)bzfrand() + 0.5f);
+	  h = boxHeight * (2.0f * (float)bzfrand() + 0.5f);
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center and bases
@@ -2221,45 +2226,45 @@ static WorldInfo *defineTeamWorld()
       }
 
       // make pyramids
-      h = PyrHeight;
+      h = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
       const int numPyrs = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize * 2);
       for (i = 0; i < numPyrs; i++) {
 	if (clOptions->randomHeights)
-	  h = PyrHeight * (2.0f * (float)bzfrand() + 0.5f);
+	  h = pyrHeight * (2.0f * (float)bzfrand() + 0.5f);
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center or bases
 	if ((redGreen &&
 	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
-	      PyrBase*6*worldfactor ||
+	      pyrBase*6*worldfactor ||
 	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <=
-	      PyrBase*6*worldfactor)) ||
+	      pyrBase*6*worldfactor)) ||
 	    (bluePurple &&
 	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <=
-	      PyrBase*6*worldfactor ||
+	      pyrBase*6*worldfactor ||
 	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <=
-	      PyrBase*6*worldfactor)) ||
+	      pyrBase*6*worldfactor)) ||
 	    (redGreen && bluePurple &&
 	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <=
-	      PyrBase*6*worldfactor ||
+	      pyrBase*6*worldfactor ||
 	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <=
-	      PyrBase*6*worldfactor ||
+	      pyrBase*6*worldfactor ||
 	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <=
-	      PyrBase*6*worldfactor ||
+	      pyrBase*6*worldfactor ||
 	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <=
-	      PyrBase*6*worldfactor)) ||
+	      pyrBase*6*worldfactor)) ||
 	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
 	  continue;
 
 	float angle=2.0f * M_PI * (float)bzfrand();
 	if (redGreen) {
-	  world->addPyramid(x,y, 0.0f, angle,PyrBase*worldfactor, PyrBase*worldfactor, h);
-	  world->addPyramid(-x,-y, 0.0f, angle,PyrBase*worldfactor, PyrBase*worldfactor, h);
+	  world->addPyramid(x,y, 0.0f, angle,pyrBase*worldfactor, pyrBase*worldfactor, h);
+	  world->addPyramid(-x,-y, 0.0f, angle,pyrBase*worldfactor, pyrBase*worldfactor, h);
 	  i+=2;
 	}
 	if (bluePurple) {
-	  world->addPyramid(y,-x,0.0f, angle, PyrBase*worldfactor, PyrBase*worldfactor, h);
-	  world->addPyramid(-y,x,0.0f, angle, PyrBase*worldfactor, PyrBase*worldfactor, h);
+	  world->addPyramid(y,-x,0.0f, angle, pyrBase*worldfactor, pyrBase*worldfactor, h);
+	  world->addPyramid(-y,x,0.0f, angle, pyrBase*worldfactor, pyrBase*worldfactor, h);
 	  i+=2;
 	}
       }
@@ -2353,44 +2358,45 @@ static WorldInfo *defineTeamWorld()
       world->addPyramid(
 	  -(BoxBase*worldfactor + 0.25f * AvenueSize),
 	  -(BoxBase*worldfactor + 0.25f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
 	  (BoxBase*worldfactor + 0.25f * AvenueSize),
 	  -(BoxBase*worldfactor + 0.25f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
 	  -(BoxBase*worldfactor + 0.25f * AvenueSize),
 	  (BoxBase*worldfactor + 0.25f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(
 	  (BoxBase*worldfactor + 0.25f * AvenueSize),
 	  (BoxBase*worldfactor + 0.25f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(0.0f, -(BoxBase *worldfactor+ 0.5f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(0.0f,  (BoxBase*worldfactor + 0.5f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(-(BoxBase*worldfactor + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid( (BoxBase*worldfactor + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
 
       // halfway out from city center
       world->addPyramid(0.0f, -(3.0f * BoxBase*worldfactor + 1.5f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(0.0f,  (3.0f * BoxBase*worldfactor + 1.5f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid(-(3.0f * BoxBase*worldfactor + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       world->addPyramid( (3.0f * BoxBase*worldfactor + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+	  pyrBase*worldfactor, pyrBase*worldfactor, pyrHeight);
       // add boxes, four at once with same height so no team has an advantage
       const float xmin = -0.5f * ((2.0f * BoxBase*worldfactor + AvenueSize) * (CitySize - 1));
       const float ymin = -0.5f * ((2.0f * BoxBase*worldfactor + AvenueSize) * (CitySize - 1));
+      const float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
       for (int j = 0; j <= CitySize/2; j++)
 	for (int i = 0; i < CitySize/2; i++)
       if (i != CitySize/2 || j != CitySize/2) {
-	float h = BoxHeight;
+	float h = boxHeight;
 	if (clOptions->randomHeights)
 	  h *= 2.0f * (float)bzfrand() + 0.5f;
 	world->addBox(
@@ -2468,19 +2474,21 @@ static WorldInfo *defineRandomWorld()
     return NULL;
 
   // make walls
-  world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
-  world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, WallHeight);
-  world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
-  world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
+  float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
+  world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, wallHeight);
+  world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, wallHeight);
+  world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, wallHeight);
+  world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, wallHeight);
 
   float worldfactor = WorldSize/(float)DEFAULT_WORLD;
   // make boxes
   int i;
-  float h = BoxHeight;
+  float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+  float h = boxHeight;
   const int numBoxes = int((0.5f + 0.7f * bzfrand()) * CitySize * CitySize);
   for (i = 0; i < numBoxes; i++) {
     if (clOptions->randomHeights)
-      h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
+      h = boxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
 	  0.0f, 2.0f * M_PI * (float)bzfrand(),
@@ -2488,15 +2496,17 @@ static WorldInfo *defineRandomWorld()
   }
 
   // make pyramids
-  h = PyrHeight;
+  float pyrHeight = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
+  float pyrBase = BZDB->eval(StateDatabase::BZDB_PYRBASE);
+  h = pyrHeight;
   const int numPyrs = int((0.5f + 0.7f * bzfrand()) * CitySize * CitySize);
   for (i = 0; i < numPyrs; i++) {
     if (clOptions->randomHeights)
-      h = PyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
+      h = pyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
 	  0.0f, 2.0f * M_PI * (float)bzfrand(),
-	  PyrBase*worldfactor, PyrBase*worldfactor, h);
+	  pyrBase*worldfactor, pyrBase*worldfactor, h);
   }
 
   if (clOptions->useTeleporters) {
@@ -3231,7 +3241,7 @@ static void resetFlag(int flagIndex)
     }
   } else {
     // random position (not in a building)
-    float r = TankRadius;
+    float r = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
     if (pFlagInfo->flag.desc == Flags::Obesity)
       r *= 2.0f * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
     WorldInfo::ObstacleLocation *obj;
@@ -3767,7 +3777,9 @@ static void grabFlag(int playerIndex, int flagIndex)
 
   //last Pos might be lagged by TankSpeed so include in calculation
   const float flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
-  const float radius2 = (BZDB->eval(StateDatabase::BZDB_TANKSPEED) + TankRadius + flagRadius) * (BZDB->eval(StateDatabase::BZDB_TANKSPEED) + TankRadius + flagRadius);
+  const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  const float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+  const float radius2 = (tankSpeed + tankRadius + flagRadius) * (tankSpeed + tankRadius + flagRadius);
   const float* tpos = player[playerIndex].lastState.pos;
   const float* fpos = flag[flagIndex].flag.position;
   const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
@@ -3885,7 +3897,7 @@ static void dropFlag(int playerIndex, float pos[3])
     // people were cheating by dropping their flag above the nearest
     // convenient building which makes it fly all the way back to
     // your own base.  make it fly to the center of the board.
-    topmosttype = world->inBuilding(&container, 0.0f, 0.0f, 0.0f, TankRadius);
+    topmosttype = world->inBuilding(&container, 0.0f, 0.0f, 0.0f, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
     if (topmosttype == NOT_IN_BUILDING) {
 	drpFlag.flag.landingPosition[0] = 0.0f;
 	drpFlag.flag.landingPosition[1] = 0.0f;
@@ -3912,7 +3924,7 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.flag.position[2] = drpFlag.flag.landingPosition[2];
   drpFlag.flag.launchPosition[0] = pos[0];
   drpFlag.flag.launchPosition[1] = pos[1];
-  drpFlag.flag.launchPosition[2] = pos[2] + TankHeight;
+  drpFlag.flag.launchPosition[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
 
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude
@@ -4062,7 +4074,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   float dy = shooter.lastState.pos[1] - shot.pos[1];
   float dz = shooter.lastState.pos[2] - shot.pos[2];
 
-  float front = MuzzleFront;
+  float front = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
   if (firingInfo.flag == Flags::Obesity)
     front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
 

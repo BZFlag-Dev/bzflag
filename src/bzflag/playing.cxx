@@ -1383,7 +1383,7 @@ enum roamingView {
   roamViewCount
 } roamView = roamViewFP;
 static int		roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
-static float		roamPos[3] = { 0.0f, 0.0f, MuzzleHeight },
+static float		roamPos[3] = { 0.0f, 0.0f, 1.57f },  /* MuzzleHeight */
 			roamDPos[3] = {0.0f, 0.0f, 0.0f};
 static float		roamTheta = 0.0f, roamDTheta = 0.0f;
 static float		roamPhi = 0.0f, roamDPhi = 0.0f;
@@ -2866,7 +2866,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
-	explodePos[2] = pos[2] + MuzzleHeight;
+	explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 	addTankExplosion(explodePos);
       }
       if (killerLocal) {
@@ -3134,7 +3134,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  float explodePos[3];
 	  explodePos[0] = pos[0];
 	  explodePos[1] = pos[1];
-	  explodePos[2] = pos[2] + MuzzleHeight;
+	  explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 	  addTankExplosion(explodePos);
 	}
       }
@@ -3619,12 +3619,13 @@ static void		restartPlaying()
   // If I can't find a safe spot, try to use the best of the unsafe ones.
   // The best one is that which violates the minimum safe distance by the
   // smallest amount.
+  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
   do {
     do {
       if (restartOnBase) {
 	const float* base = world->getBase(int(myTank->getTeam()));
-	const float x = (base[4] - 2.0f * TankRadius) * ((float)bzfrand() - 0.5f);
-	const float y = (base[5] - 2.0f * TankRadius) * ((float)bzfrand() - 0.5f);
+	const float x = (base[4] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+	const float y = (base[5] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
 	startPoint[0] = base[0] + x * cosf(base[3]) - y * sinf(base[3]);
 	startPoint[1] = base[1] + x * sinf(base[3]) + y * cosf(base[3]);
 	if(base[2] != 0) {
@@ -3639,12 +3640,12 @@ static void		restartPlaying()
 	  startPoint[1] = 0.4f * WorldSize * ((float)bzfrand() - 0.5f);
 	}
 	else {
-	  startPoint[0] = (WorldSize - 2.0f * TankRadius) * ((float)bzfrand() - 0.5f);
-	  startPoint[1] = (WorldSize - 2.0f * TankRadius) * ((float)bzfrand() - 0.5f);
+	  startPoint[0] = (WorldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+	  startPoint[1] = (WorldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
 	}
       }
       startAzimuth = 2.0f * M_PI * (float)bzfrand();
-    } while (world->inBuilding(startPoint, 2.0f * TankRadius));
+    } while (world->inBuilding(startPoint, 2.0f * tankRadius));
 
     // use first point as best point, so we'll have a fallback
     if (locateCount == 0) {
@@ -3671,6 +3672,7 @@ static void		restartPlaying()
       const int maxShots = World::getWorld()->getMaxShots();
       float tankLength = BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
       float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+      float tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
       for (int j = 0; j < maxShots; j++) {
 	// get shot and ignore non-existent ones
 	ShotPath* shot = player[i]->getShot(j);
@@ -3682,7 +3684,7 @@ static void		restartPlaying()
 	const Ray ray(shot->getPosition(), shot->getVelocity());
 	const float t = timeRayHitsBlock(ray, startPoint, startAzimuth,
 				4.0f * tankLength, 4.0f * tankWidth,
-				2.0f * TankHeight);
+				2.0f * tankHeight);
 	if (t >= 0.0f && t < MinShotImpact) {
 	  located = false;
 	  break;
@@ -3754,6 +3756,7 @@ static void		restartPlaying()
 
 static void		updateFlags(float dt)
 {
+  float tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
   for (int i = 0; i < numFlags; i++) {
     Flag& flag = world->getFlag(i);
     if (flag.status == FlagOnTank) {
@@ -3763,7 +3766,7 @@ static void		updateFlags(float dt)
 	const float* pos = tank->getPosition();
 	flag.position[0] = pos[0];
 	flag.position[1] = pos[1];
-	flag.position[2] = pos[2] + TankHeight;
+	flag.position[2] = pos[2] + tankHeight;
       }
     }
     world->updateFlag(i, dt);
@@ -3996,7 +3999,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       float explodePos[3];
       explodePos[0] = pos[0];
       explodePos[1] = pos[1];
-      explodePos[2] = pos[2] + MuzzleHeight;
+      explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       addTankExplosion(explodePos);
     }
 
@@ -5209,7 +5212,7 @@ static void		leaveGame()
   float eyePoint[3], targetPoint[3];
   eyePoint[0] = 0.0f;
   eyePoint[1] = 0.0f;
-  eyePoint[2] = 0.0f + MuzzleHeight;
+  eyePoint[2] = 0.0f + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   targetPoint[0] = eyePoint[0] - 1.0f;
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
@@ -5568,8 +5571,9 @@ static void		playingLoop()
       roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
       roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
       roamPos[2] += dt * roamDPos[2];
-      if (roamPos[2] < MuzzleHeight)
-	roamPos[2] = MuzzleHeight;
+      float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      if (roamPos[2] < muzzleHeight)
+	roamPos[2] = muzzleHeight;
       roamTheta  += dt * roamDTheta;
       roamPhi    += dt * roamDPhi;
       roamZoom   += dt * roamDZoom;
@@ -5705,10 +5709,11 @@ static void		playingLoop()
       }
       fov *= M_PI / 180.0f;
 
+      float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       // set projection and view
       eyePoint[0] = myTankPos[0];
       eyePoint[1] = myTankPos[1];
-      eyePoint[2] = myTankPos[2] + MuzzleHeight;
+      eyePoint[2] = myTankPos[2] + muzzleHeight;
       targetPoint[0] = eyePoint[0] + myTankDir[0];
       targetPoint[1] = eyePoint[1] + myTankDir[1];
       targetPoint[2] = eyePoint[2] + myTankDir[2];
@@ -5718,7 +5723,7 @@ static void		playingLoop()
 #ifdef FOLLOWTANK
 	eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
 	eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
-	eyePoint[2] = myTankPos[2] + MuzzleHeight * 3;
+	eyePoint[2] = myTankPos[2] + muzzleHeight * 3;
 	targetPoint[0] = eyePoint[0] + myTankDir[0];
 	targetPoint[1] = eyePoint[1] + myTankDir[1];
 	targetPoint[2] = eyePoint[2] + myTankDir[2];
@@ -5740,7 +5745,7 @@ static void		playingLoop()
 	  else if (roamView == roamViewFollow) {
 	    eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
 	    eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-	    eyePoint[2] = target->getPosition()[2] + MuzzleHeight * 6;
+	    eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
 	    targetPoint[0] = target->getPosition()[0];
 	    targetPoint[1] = target->getPosition()[1];
 	    targetPoint[2] = target->getPosition()[2];
@@ -5749,7 +5754,7 @@ static void		playingLoop()
 	  else if (roamView == roamViewFP) {
 	    eyePoint[0] = target->getPosition()[0];
 	    eyePoint[1] = target->getPosition()[1];
-	    eyePoint[2] = target->getPosition()[2] + MuzzleHeight;
+	    eyePoint[2] = target->getPosition()[2] + muzzleHeight;
 	    targetPoint[0] = eyePoint[0] + targetTankDir[0];
 	    targetPoint[1] = eyePoint[1] + targetTankDir[1];
 	    targetPoint[2] = eyePoint[2] + targetTankDir[2];
@@ -6410,8 +6415,9 @@ static void		findFastConfiguration()
   // across invokations.
 
   // setup projection
-  static const GLfloat eyePoint[3] = { 0.0f, 0.0f, MuzzleHeight };
-  static const GLfloat targetPoint[3] = { 0.0f, 10.0f, MuzzleHeight };
+  float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  static const GLfloat eyePoint[3] = { 0.0f, 0.0f, muzzleHeight };
+  static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
 					1.1f, 1.5f * WorldSize,
 					mainWindow->getWidth(),
@@ -6748,6 +6754,17 @@ void			startPlaying(BzfDisplay* _display,
   }
   else {
     HUDDialogStack::get()->push(mainMenu);
+  }
+
+    // set default DB entries
+  for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
+    assert(globalDBItems[gi].name != NULL);
+    if (globalDBItems[gi].value != NULL) {
+      BZDB->set(globalDBItems[gi].name, globalDBItems[gi].value);
+      BZDB->setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
+    }
+    BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
+    BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
   }
 
   // start game loop

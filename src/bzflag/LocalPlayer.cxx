@@ -86,7 +86,7 @@ void			BaseLocalPlayer::update()
     bbox[0][2] += dt * newVelocity[2];
 
   // expand bounding box to include entire tank
-  float size = TankRadius;
+  float size = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
   if (getFlag() == Flags::Obesity) size *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (getFlag() == Flags::Tiny) size *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (getFlag() == Flags::Thief) size *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
@@ -94,7 +94,7 @@ void			BaseLocalPlayer::update()
   bbox[1][0] += size;
   bbox[0][1] -= size;
   bbox[1][1] += size;
-  bbox[1][2] += TankHeight;
+  bbox[1][2] += BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
 
   // do remaining update stuff
   doUpdate(dt);
@@ -1014,6 +1014,7 @@ void			LocalPlayer::setFlag(FlagDesc* flag)
     if (World::getWorld()->allowShakeWins())
       flagShakingWins = World::getWorld()->getFlagShakeWins();
     if (World::getWorld()->allowAntidote()) {
+      float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
       do {
 	if (World::getWorld()->allowTeamFlags()) {
 	  flagAntidotePos[0] = 0.5f * WorldSize * ((float)bzfrand() - 0.5f);
@@ -1025,7 +1026,7 @@ void			LocalPlayer::setFlag(FlagDesc* flag)
 	  flagAntidotePos[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
 	}
-      } while (World::getWorld()->inBuilding(flagAntidotePos, TankRadius));
+      } while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius));
       antidoteFlag = new FlagSceneNode(flagAntidotePos);
       antidoteFlag->setColor(1.0f, 1.0f, 0.0f);
       World::setFlagTexture(antidoteFlag);

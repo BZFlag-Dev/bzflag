@@ -60,7 +60,7 @@ void			BaseBuilding::getNormal(const float *p, float *n) const
 bool			BaseBuilding::isInside(const float *p, float radius) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     ((p[2]+TankHeight) > getPosition()[2])
+  &&     ((p[2]+BZDB->eval(StateDatabase::BZDB_TANKHEIGHT)) > getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
@@ -68,7 +68,7 @@ bool			BaseBuilding::isInside(const float *p, float angle,
 			float dx, float dy) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     ((p[2]+TankHeight) >= getPosition()[2])
+  &&     ((p[2]+BZDB->eval(StateDatabase::BZDB_TANKHEIGHT)) >= getPosition()[2])
   &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(), p, angle, dx, dy);
 }
 

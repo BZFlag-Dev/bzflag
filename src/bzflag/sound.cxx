@@ -19,7 +19,6 @@
 #include "BzfMedia.h"
 
 const float		SpeedOfSound = 343.0f;			// meters/sec
-const float		MinEventDist = 20.0f * TankRadius;	// meters
 const int		MaxEvents = 30;
 const float		InterAuralDistance = 0.1f;		// meters
 
@@ -438,7 +437,8 @@ static void		recalcEventDistance(SoundEvent* e)
     e->dx *= d;
     e->dy *= d;
     e->d = sqrtf(d2 + d3);
-    e->amplitude = (e->d < MinEventDist) ? 1.0f : MinEventDist / e->d;
+    float minEventDist = 20.0f * BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+    e->amplitude = (e->d < minEventDist) ? 1.0f : minEventDist / e->d;
 
     // compute distance to each ear
     float dx, dy;

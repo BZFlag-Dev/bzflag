@@ -472,7 +472,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   if (getPath().isExpired()) return minTime;
 
   // get tank radius
-  float radius = TankRadius;
+  float radius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
   if (tank->getFlag() == Flags::Obesity)   radius *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (tank->getFlag() == Flags::Thief) radius *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
@@ -484,7 +484,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   float lastTankPositionRaw[3];
   lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
   lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * TankHeight;
+  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
@@ -522,7 +522,9 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), ShotRadius, TankHeight);
+			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 
+			ShotRadius, 
+			BZDB->eval(StateDatabase::BZDB_TANKHEIGHT));
     }
     else {
       // find time when shot hits sphere around tank
@@ -606,7 +608,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   const float* v = path.getVelocity();
   TimeKeeper startTime = path.getStartTime();
   float timeLeft = path.getLifetime();
-  float minTime = MuzzleFront / hypotf(v[0], hypotf(v[1], v[2]));
+  float minTime = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
   if (e == Stop && World::getWorld()->allShotsRicochet())
@@ -1076,12 +1078,13 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // check that first segment doesn't start inside a building
   float startPos[3];
-  startPos[0] = f.shot.pos[0] - MuzzleFront * dir[0];
-  startPos[1] = f.shot.pos[1] - MuzzleFront * dir[1];
-  startPos[2] = f.shot.pos[2] - MuzzleFront * dir[2];
+  float muzzleFront = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
+  startPos[0] = f.shot.pos[0] - muzzleFront * dir[0];
+  startPos[1] = f.shot.pos[1] - muzzleFront * dir[1];
+  startPos[2] = f.shot.pos[2] - muzzleFront * dir[2];
   Ray firstRay = Ray(startPos, dir);
   prevTime = currentTime;
-  prevTime += -MuzzleFront / BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  prevTime += -muzzleFront / BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
   checkBuildings(firstRay);
   prevTime = currentTime;
 
@@ -1153,7 +1156,7 @@ void			GuidedMissileStrategy::update(float dt)
     desiredDir[0] = targetPos[0] - nextPos[0];
     desiredDir[1] = targetPos[1] - nextPos[1];
     desiredDir[2] = targetPos[2] - nextPos[2];
-    desiredDir[2] += MuzzleHeight;	// aim for turret
+    desiredDir[2] += BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);	// aim for turret
 
     // compute desired angles
     float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);
@@ -1273,7 +1276,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
     return minTime;
 
   // get tank radius
-  float radius = TankRadius;
+  float radius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
   if (tank->getFlag() == Flags::Obesity)   radius *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   else if (tank->getFlag() == Flags::Thief) radius *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
@@ -1285,7 +1288,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
   float lastTankPositionRaw[3];
   lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
   lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * TankHeight;
+  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // check each segment
@@ -1317,7 +1320,9 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-		      0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), ShotRadius, TankHeight);
+		      0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 
+		      ShotRadius, 
+		      BZDB->eval(StateDatabase::BZDB_TANKHEIGHT));
     }
     else {
       // find time when shot hits sphere around tank
